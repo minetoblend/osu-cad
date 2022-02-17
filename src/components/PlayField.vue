@@ -7,8 +7,10 @@
 
 <script lang="ts">
 import {PIXI} from "@/pixi";
-import {defineComponent, onMounted, ref} from "vue";
+import {defineComponent, nextTick, onMounted, ref} from "vue";
 import {EditorContext} from "@/objects/Editor";
+import {HitCircle} from "@/objects/HitCircle";
+import {Vec2} from "@/util/math";
 
 export default defineComponent({
   props: [
@@ -52,6 +54,11 @@ export default defineComponent({
       playFieldWrapper.addChild(context.drawablePool.playfield)
 
       setAppSize(canvasWrapper.value!.scrollWidth, canvasWrapper.value!.scrollHeight)
+
+      nextTick(() => {
+
+
+      })
     })
 
     return {

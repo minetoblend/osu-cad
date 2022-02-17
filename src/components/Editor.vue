@@ -8,11 +8,13 @@
   </div>
 </template>
 <script lang="ts">
-import PlayField from "./PlayField";
+import PlayField from "./PlayField.vue";
 import {onBeforeUnmount, provide, shallowRef} from "vue";
 import {EditorContext} from "@/objects/Editor";
 import {ResourceProvider} from "@/draw";
 import {PIXI} from "@/pixi";
+import {HitCircle} from "@/objects/HitCircle";
+import {Vec2} from "@/util/math";
 
 export default {
   components: {PlayField},
@@ -22,6 +24,7 @@ export default {
     const app = new PIXI.Application({
       width: 800,
       height: 600,
+      antialias: true
     })
 
     provide('context', editorContext)
