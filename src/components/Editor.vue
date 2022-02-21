@@ -1,47 +1,43 @@
 <template>
   <div class="editor">
     <template v-if="editorContext">
-      <play-field :context="editorContext" :app="app">
-
-      </play-field>
+      <div class="editor-screen-container">
+        <div>
+          <compose-screen :context="editorContext"/>
+        </div>
+      </div>
+      <div class="timeline-overview-container">
+        <timeline-overview/>
+      </div>
     </template>
   </div>
 </template>
 <script lang="ts">
-import PlayField from "./PlayField.vue";
-import {onBeforeUnmount, provide, shallowRef} from "vue";
+import {provide, shallowRef} from "vue";
 import {EditorContext} from "@/objects/Editor";
 import {ResourceProvider} from "@/draw";
-import {PIXI} from "@/pixi";
-import {HitCircle} from "@/objects/HitCircle";
-import {Vec2} from "@/util/math";
+import {OsuCadConnector} from "@/networking/connector";
+import TimelineOverview from "@/components/TimelineOverview.vue";
+import ComposeScreen from "@/components/screen/compose/ComposeScreen.vue";
 
 export default {
-  components: {PlayField},
+  components: {ComposeScreen, TimelineOverview},
   setup() {
     const editorContext = shallowRef<EditorContext>();
 
-    const app = new PIXI.Application({
-      width: 800,
-      height: 600,
-      antialias: true
-    })
 
     provide('context', editorContext)
-    provide('app', app)
 
     const resourceProvider = new ResourceProvider()
+
     resourceProvider.load().then(() => {
-      editorContext.value = new EditorContext(app, resourceProvider)
+      editorContext.value = new EditorContext(resourceProvider, new OsuCadConnector('http://localhost:3000'))
     })
 
-    onBeforeUnmount(() =>
-        app.destroy()
-    )
+    provide('resources', resourceProvider)
 
     return {
       editorContext,
-      app,
     }
   }
 }
@@ -49,7 +45,29 @@ export default {
 
 <style lang="scss">
 .editor {
+  position: absolute;
   width: 100vw;
   height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  .editor-screen-container {
+    width: 100%;
+    flex-grow: 1;
+    flex-shrink: 1;
+    position: relative;
+  }
+
+  .timeline-overview-container {
+    width: 100%;
+    flex-basis: 6vh;
+    height: 6vh;
+    flex-shrink: 0;
+    flex-grow: 0;
+  }
+
+  .editor-pane {
+
+  }
 }
 </style>

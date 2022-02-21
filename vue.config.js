@@ -7,21 +7,13 @@ module.exports = {
             .loader('file-loader')
 
     },
-    /*configureWebpack: {
-        module: {
-            rules: [
-                {
-                    test: /\.(png|jpg|gif)$/i,
-                    use: [
-                        {
-                            loader: 'url-loader',
-                            options: {
-                                limit: false,
-                            },
-                        },
-                    ]
-                }
-            ]
+    css: {
+        loaderOptions: {
+            sass: {
+                prependData: `
+                    @import "@/_variables.scss";
+                `
+            }
         }
-    }*/
+    }
 }

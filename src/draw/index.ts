@@ -18,8 +18,6 @@ export class ResourceProvider {
         this.loader.add('hitcircleoverlay', HitCircleOverlay)
         this.loader.add('approachcircle', ApproachCircle)
 
-        console.log(HitCircle)
-
         return new Promise((resolve) => {
             this.loader.load((loader, resources) => {
 
@@ -27,7 +25,6 @@ export class ResourceProvider {
                 this.hitCircleOverlay = resources.hitcircleoverlay.texture
                 this.approachCircle = resources.approachcircle.texture
 
-                console.log(resources.hitcircle)
 
                 resolve()
             })
