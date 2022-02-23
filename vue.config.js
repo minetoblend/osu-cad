@@ -1,4 +1,5 @@
-// vue.config.js
+const Dotenv = require('dotenv-webpack');
+
 module.exports = {
     chainWebpack: config => {
         const imgRule = config.module.rule('images')
@@ -14,6 +15,9 @@ module.exports = {
                     @import "@/_variables.scss";
                 `
             }
-        }
+        },
+        plugins: [
+            new Dotenv()
+        ],
     }
 }

@@ -7,7 +7,9 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "axios": "^0.26.0",
     "core-js": "^3.6.5",
+    "dotenv-webpack": "^7.1.0",
     "pixi.js": "^6.2.2",
     "register-service-worker": "^1.7.1",
     "rxjs": "^6.6.7",
@@ -15,6 +17,7 @@
     "socket.io-client": "^4.4.1",
     "uuid": "^8.3.2",
     "vue": "^3.0.0",
+    "vue-axios": "^3.4.1",
     "vue-router": "^4.0.0-0"
   },
   "devDependencies": {
