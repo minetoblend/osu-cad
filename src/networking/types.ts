@@ -1,5 +1,10 @@
 export interface SerializedBeatmapContext {
 
+  beatmapSet: {
+    duration: number
+    id: string
+  }
+
   hitObjects: SerializedHitObject[]
 
 }

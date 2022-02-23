@@ -21,5 +21,10 @@ module.exports = {
                 `
             }
         },
+    },
+    devServer: {
+        disableHostCheck: true,
+        public: 'https://osucad.com/',
+        port: 8080
     }
 }

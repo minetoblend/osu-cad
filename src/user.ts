@@ -1,20 +1,23 @@
-import {ref} from "vue";
-import {Router} from "vue-router";
-import {httpClient} from "@/common-http";
+import { ref } from "vue";
+import { Router } from "vue-router";
+import { httpClient } from "@/common-http";
 
 export const currentUser = ref()
 
 export function setupUserStore(router: Router) {
-    router.beforeEach(async (to, from, next) => {
-        if (to.name !== 'Unauthorized')
+    router.beforeEach(async (to) => {
+        console.log(to.name)
+        if (to.name !== 'Unauthorized') {
+            localStorage.setItem('redirectAfterAuthorize', to.fullPath)
             try {
                 const user = (await httpClient.get('/user/me')).data
                 if (!user)
-                    return next('/unauthorized')
+                    return '/unauthorized'
                 currentUser.value = user
             } catch (e) {
-                return next('/unauthorized')
+                console.log(e)
+                return '/unauthorized'
             }
-        next()
+        }
     })
 }

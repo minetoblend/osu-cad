@@ -61,14 +61,7 @@ export class Playfield extends OsuCadContainer {
 
     this.on('mousedown', evt => this.mouseDownHandler(evt))
 
-    this.on('rightdown', (evt: PIXI.InteractionEvent) => {
-      const pos = evt.data.getLocalPosition(this)
-
-      this.onMouseDown.next({
-        position: new Vec2(pos.x, pos.y),
-        button: evt.data.button
-      })
-    })
+    this.on('rightdown', evt => this.mouseDownHandler(evt))
 
 
   }
@@ -76,11 +69,20 @@ export class Playfield extends OsuCadContainer {
   private mouseDownHandler(evt: PIXI.InteractionEvent) {
     const pos = evt.data.getLocalPosition(this)
 
-    this.onMouseDown.next({
-      position: new Vec2(pos.x, pos.y),
-      button: evt.data.button,
-      hitObject: this.context.getHitObjectAt(this.context.currentTime.value, new Vec2(pos.x, pos.y))
-    })
+    const hitObject = this.context.getHitObjectAt(this.context.playback!.currentTime.value, new Vec2(pos.x, pos.y))
+
+    if(hitObject) {
+      this.onHitObjectMouseDown.next({
+        position: new Vec2(pos.x, pos.y),
+        button: evt.data.button,
+        hitObject
+      })
+    } else {
+      this.onMouseDown.next({
+        position: new Vec2(pos.x, pos.y),
+        button: evt.data.button,
+      })
+    }
   }
 
   initGrid(gridSize: number = 32) {

@@ -8,7 +8,7 @@ const routes: Array<RouteRecordRaw> = [
     component: Home
   },
   {
-    path: '/edit',
+    path: '/edit/:id',
     name: 'Edit',
     component: () => import(/* webpackChunkName: "editor" */ '../views/Edit.vue')
   },
@@ -16,6 +16,18 @@ const routes: Array<RouteRecordRaw> = [
     path: '/unauthorized',
     name: 'Unauthorized',
     component: () => import(/* webpackChunkName: "unauthorized" */ '../views/Unauthorized.vue')
+  },
+  {
+    path: '/authenticated',
+    name: 'Authenticated',
+    redirect: (to)=> {
+      const redirectTo = localStorage.getItem('redirectAfterAuthorize')
+      if(redirectTo) {
+        localStorage.removeItem('redirectAfterAuthorize')
+        return redirectTo
+      }
+      return '/'
+    }
   }
 ]
 

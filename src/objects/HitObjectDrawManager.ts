@@ -22,10 +22,10 @@ export class HitObjectDrawManager {
   onHitObjectChanged(hitObject: HitObject) {
     const drawable = this.getDrawableForHitObject(hitObject)
     if (drawable) {
-      if (Math.abs(hitObject.time - this.context.currentTime.value) > VISIBLE_TIME) {
+      if (Math.abs(hitObject.time - this.context.playback!.currentTime.value) > VISIBLE_TIME) {
         this.removeDrawableHitObject(drawable)
       }
-    } else if (Math.abs(hitObject.time - this.context.currentTime.value) <= VISIBLE_TIME) {
+    } else if (Math.abs(hitObject.time - this.context.playback!.currentTime.value) <= VISIBLE_TIME) {
       this.addDrawableHitObject(this.createDrawableForHitObject(hitObject))
     }
   }
@@ -44,7 +44,7 @@ export class HitObjectDrawManager {
     const keys = this.drawables.keys()
     for (let key of keys) {
       const drawable = this.drawables.get(key)!
-      if (Math.abs(drawable.hitObject.time - this.context.currentTime.value) > VISIBLE_TIME)
+      if (Math.abs(drawable.hitObject.time - this.context.playback!.currentTime.value) > VISIBLE_TIME)
         this.removeDrawableHitObject(drawable)
     }
     this.context.hitObjects.filter(hitObject => Math.abs(hitObject.time - time) <= VISIBLE_TIME)

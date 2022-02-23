@@ -28,7 +28,7 @@ export class OsuCadConnector {
   //gets initialized in the EditorContext constructor, we can assume this always holds a value
   context!: EditorContext
 
-  constructor(readonly url: string) {
+  constructor(readonly url: string, readonly beatmapId: string) {
   }
 
   private onConnect() {
@@ -37,8 +37,8 @@ export class OsuCadConnector {
 
 
   loadContext(context: SerializedBeatmapContext) {
-
-
+    this.context.songDuration.value = context.beatmapSet.duration
+    this.context.beatmapSetId = context.beatmapSet.id
     context.hitObjects.forEach(serializedHitObject => {
         const hitObject = deserializeHitObject(serializedHitObject)
         if (hitObject) {
@@ -46,6 +46,7 @@ export class OsuCadConnector {
         }
       }
     )
+    this.context.loadAudio()
   }
 
   private initializeCallbacks() {
@@ -57,9 +58,9 @@ export class OsuCadConnector {
 
   init() {
     this.socket = io(this.url, {
-      path: '/edit/endpoint',
+      path: '/api/edit/endpoint',
       query: {
-        beatmap: 1234
+        beatmap: this.beatmapId
       },
     })
 

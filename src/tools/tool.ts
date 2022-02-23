@@ -35,9 +35,9 @@ export abstract class ToolWithOverlay<Overlay extends OsuCadContainer> extends T
 }
 
 
-export interface HitObjectMouseEvents {
+export interface ReceiveHitObjectMouseEvents {
 
-  onHitObjectMouseDown?(): void
+  onHitObjectMouseDown?(evt: OsuCadMouseEvent): void
 
   onHitObjectMouseUp?(): void
 

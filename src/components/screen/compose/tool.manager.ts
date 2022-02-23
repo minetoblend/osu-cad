@@ -1,5 +1,5 @@
 import {Ref, shallowRef, watch} from "vue";
-import {ReceivePlayfieldMouseEvents, Tool} from "@/tools/tool";
+import {ReceiveHitObjectMouseEvents, ReceivePlayfieldMouseEvents, Tool} from "@/tools/tool";
 import {EditorContext} from "@/objects/Editor";
 import {Playfield} from "@/components/screen/compose/playfield";
 
@@ -46,6 +46,11 @@ export class ToolManager {
       const tool = this.tool.value as ReceivePlayfieldMouseEvents
       if (tool.onPlayfieldMouseDown)
         tool.onPlayfieldMouseDown(evt)
+    })
+    this.playfield.onHitObjectMouseDown.subscribe(evt => {
+      const tool = this.tool.value as ReceiveHitObjectMouseEvents
+      if (tool.onHitObjectMouseDown)
+        tool.onHitObjectMouseDown(evt)
     })
   }
 

@@ -1,6 +1,6 @@
 <template>
   <div class="editor">
-    <template v-if="editorContext">
+    <template v-if="editorContext && editorContext.initialized.value">
       <div class="editor-screen-container">
         <div>
           <compose-screen :context="editorContext"/>
@@ -19,19 +19,24 @@ import {ResourceProvider} from "@/draw";
 import {OsuCadConnector} from "@/networking/connector";
 import TimelineOverview from "@/components/TimelineOverview.vue";
 import ComposeScreen from "@/components/screen/compose/ComposeScreen.vue";
-
+import {useRoute} from 'vue-router'
+import {AudioEngine} from '../audio'
 export default {
   components: {ComposeScreen, TimelineOverview},
   setup() {
     const editorContext = shallowRef<EditorContext>();
-
-
+    const route = useRoute()
+    const audioEngine = new AudioEngine()
     provide('context', editorContext)
 
     const resourceProvider = new ResourceProvider()
 
     resourceProvider.load().then(() => {
-      editorContext.value = new EditorContext(resourceProvider, new OsuCadConnector('http://localhost:3000'))
+      editorContext.value = new EditorContext(
+        resourceProvider, 
+        new OsuCadConnector(`/`, route.params.id as string),
+        audioEngine
+      )
     })
 
     provide('resources', resourceProvider)

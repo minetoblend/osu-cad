@@ -14,7 +14,7 @@ export abstract class HitObject {
   isSelected = false
 
   get timeRelativeToCurrentTime() {
-    return this.context!.currentTime.value - this.time
+    return this.context!.playback!.currentTime.value - this.time
   }
 
   get timePreemt() {

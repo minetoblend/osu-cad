@@ -7,36 +7,50 @@ import {Difficulty} from "@/objects/Difficulty";
 import {OsuCadConnector} from "@/networking/connector";
 import {Subject} from 'rxjs'
 import {SelectionManager} from "@/objects/selection.manager";
+import { AudioEngine, Sound } from "@/audio";
+import { httpClient } from "@/common-http";
+import { PlaybackManager } from "./playback";
 
 export class EditorContext {
 
   readonly timing = new Timing()
 
+  readonly initialized = ref(false)
+
   private readonly _hitObjects: HitObject[] = []
 
   readonly mode = ref<'compose'>('compose')
 
+  beatmapSetId = ''
+
   readonly difficulty = reactive<Difficulty>({
     healthDrain: 5,
     circleSize: 4,
-    approachRate: 9,
+  approachRate: 9,
     overallDifficulty: 8,
   })
 
   readonly selectionManager: SelectionManager
 
-  currentTime = ref(0)
-
   songDuration = ref(5000)
 
-  constructor(readonly resourceProvider: ResourceProvider, readonly connector: OsuCadConnector) {
+  constructor(readonly resourceProvider: ResourceProvider, readonly connector: OsuCadConnector, readonly audioEngine: AudioEngine) {
 
     connector.context = this
     connector.init()
 
     this.selectionManager = new SelectionManager(this)
+  }
 
-    watch(this.currentTime, (time) => this.onCurrentTimeUpdate.next(time))
+  playback?: PlaybackManager
+
+  async loadAudio() {
+    const audio = await httpClient.get(`/beatmap/${this.beatmapSetId}/audio`, {
+      responseType: 'arraybuffer'
+    })
+    this.playback = new PlaybackManager(this, await this.audioEngine.createSound(audio.data as ArrayBuffer))
+    watch(this.playback.currentTime, (time) => this.onCurrentTimeUpdate.next(time))
+    this.initialized.value = true
   }
 
   get hitObjects() {
@@ -69,12 +83,12 @@ export class EditorContext {
 
   get visibleObjects() {
     return this.hitObjects.filter(hitObject =>
-      hitObject.time > this.currentTime.value - 1000 && hitObject.time < this.currentTime.value + 1000
+      hitObject.time > this.playback!.currentTime.value - 1000 && hitObject.time < this.playback!.currentTime.value + 1000
     )
   }
 
   setCurrentTimeRelative(time: number) {
-    this.currentTime.value = clamp(Math.floor(time * this.songDuration.value), 0, this.songDuration.value)
+    this.playback!.currentTime.value = clamp(Math.floor(time * this.songDuration.value), 0, this.songDuration.value)
   }
 
   removeHitObjectByUuid(uuid: string) {
