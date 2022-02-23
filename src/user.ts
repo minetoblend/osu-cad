@@ -11,6 +11,7 @@ export function setupUserStore(router: Router) {
                 const user = (await httpClient.get('/user/me')).data
                 if (!user)
                     return next('/unauthorized')
+                currentUser.value = user
             } catch (e) {
                 return next('/unauthorized')
             }
