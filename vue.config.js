@@ -8,7 +8,7 @@ module.exports = {
             .loader('file-loader')
 
     },
-    webPackConfig: {
+    configureWebpack: {
         plugins: [
             new Dotenv()
         ],
