@@ -1,4 +1,5 @@
-// vue.config.js
+const Dotenv = require('dotenv-webpack');
+
 module.exports = {
     chainWebpack: config => {
         const imgRule = config.module.rule('images')
@@ -7,21 +8,9 @@ module.exports = {
             .loader('file-loader')
 
     },
-    /*configureWebpack: {
-        module: {
-            rules: [
-                {
-                    test: /\.(png|jpg|gif)$/i,
-                    use: [
-                        {
-                            loader: 'url-loader',
-                            options: {
-                                limit: false,
-                            },
-                        },
-                    ]
-                }
-            ]
-        }
-    }*/
+    configureWebpack: {
+        plugins: [
+            new Dotenv()
+        ],
+    }
 }

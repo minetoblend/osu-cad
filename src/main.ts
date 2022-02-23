@@ -1,6 +1,12 @@
-import { createApp } from 'vue'
+import {createApp} from 'vue'
 import App from './App.vue'
 import './registerServiceWorker'
 import router from './router'
+import {setupUserStore} from "@/user";
 
-createApp(App).use(router).mount('#app')
+setupUserStore(router)
+
+createApp(App)
+    .use(router)
+    .mount('#app')
+
