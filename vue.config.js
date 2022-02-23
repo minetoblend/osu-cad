@@ -8,6 +8,11 @@ module.exports = {
             .loader('file-loader')
 
     },
+    webpackConfig: {
+        plugins: [
+            new Dotenv()
+        ],
+    },
     css: {
         loaderOptions: {
             sass: {
@@ -16,8 +21,5 @@ module.exports = {
                 `
             }
         },
-        plugins: [
-            new Dotenv()
-        ],
     }
 }
