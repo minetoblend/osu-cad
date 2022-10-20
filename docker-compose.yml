@@ -1,0 +1,80 @@
+version: '3'
+services:
+  postgres:
+    command: postgres -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.track=all
+    environment:
+      - POSTGRES_DB=nakama
+      - POSTGRES_PASSWORD=localdb
+    expose:
+      - "8080"
+      - "5432"
+    image: postgres:12.2-alpine
+    ports:
+      - "5432:5432"
+      - "8080:8080"
+    volumes:
+      - data_postgres_nakama:/var/lib/postgresql/data
+
+  postgres_api:
+    command: postgres -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.track=all
+    environment:
+      - POSTGRES_DB=osucad
+      - POSTGRES_PASSWORD=localdb
+    image: postgres:12.2-alpine
+    volumes:
+      - data_postgres_api:/var/lib/postgresql/data
+
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: server
+      # Only will build development stage from our dockerfile
+      target: development
+    volumes:
+      - ./server/src:/usr/src/app/src
+      - data_api:/usr/src/app/data
+    depends_on:
+      - postgres_api
+    links:
+      - "postgres_api:db"
+    env_file:
+      - server/.env
+    # Run a command against the development stage of the image
+    command: npm run start:dev
+    expose:
+      - "3000"
+    ports:
+      - 3000:3000
+
+  nakama:
+    build: .
+    depends_on:
+      - postgres
+    entrypoint:
+      - "/bin/sh"
+      - "-ecx"
+      - >
+        /nakama/nakama migrate up --database.address postgres:localdb@postgres:5432/nakama &&
+        exec /nakama/nakama --config /nakama/data/local.yml --database.address postgres:localdb@postgres:5432/nakama
+    expose:
+      - "7349"
+      - "7350"
+      - "7351"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:7350/" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    links:
+      - "postgres:db"
+      - "api:api"
+    ports:
+      - "7349:7349"
+      - "7350:7350"
+      - "7351:7351"
+    restart: unless-stopped
+
+volumes:
+  data_postgres_nakama:
+  data_postgres_api:
+  data_api:
