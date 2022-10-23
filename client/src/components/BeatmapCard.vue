@@ -34,7 +34,6 @@ async function importMapset(beatmapSet: any, map: any) {
   try {
     const response = await axios.get(apiUrl('/beatmap/import/' + beatmapSet.id), {withCredentials: true})
     loadingBar.finish()
-    console.log(response.data)
     if (response.data.difficulties) {
       const difficulty = response.data.difficulties.find((it: any) => it.difficultyName === map.version)
       if (difficulty) {

@@ -1,19 +1,20 @@
 import {BLEND_MODES, Container, Sprite, Text, Texture} from "pixi.js";
 import cursorTexture from "@/assets/menu-cursor.png";
-import {Vec2} from "@/util/math";
+import {Vec2, Vec2Like} from "@/util/math";
 import {EditorContext} from "@/editor";
-import {watchEffect} from "vue";
 import gsap from 'gsap'
 import {DropShadowFilter} from "@pixi/filter-drop-shadow";
 import {animate} from "@/util/animation";
-import {ServerOpCode} from "@common/opcodes";
+import {UserData} from "@/editor/state/user";
+import {ServerTick} from "protocol/commands";
+import {watchEffect} from "vue";
 
 export class CursorContainer extends Container {
 
     constructor(readonly ctx: EditorContext) {
         super();
 
-        this.ownCursor = new Cursor(this, 0xffffff)
+        this.ownCursor = new Cursor(0xffffff)
         this.addChild(this.ownCursor)
         this.ownCursor.zIndex = 1
 
@@ -23,25 +24,21 @@ export class CursorContainer extends Container {
             })
         ]
 
-        watchEffect(() => this.updateUserCursors())
 
-        this.ctx.commandHandler.onCommand.subscribe(it => {
-            if (it.opCode === ServerOpCode.FailedSelectionAttempt) {
-                const cursor = this.userCursors.get(it.payload.id)
-                if (cursor) {
-                    cursor.onSelectionFailed()
-                } else if (it.payload.id === this.ctx.state.user.sessionId) {
-                    this.ownCursor.onSelectionFailed()
-                }
-            }
+        this.ctx.connector.onCommand('tick').subscribe(tick => this.onTick(tick))
+        watchEffect(() => {
+            this.ctx.users.forEach(user => this.onUserJoined(user))
         })
+        this.ctx.users.onUserLeft.subscribe(user => this.onUserLeft(user))
+
     }
 
-    readonly ownCursor: Cursor
-    readonly userCursors = new Map<string, Cursor>()
-    private ownPos: Vec2 | null = null
 
-    setOwnPos(pos: Vec2 | null) {
+    readonly ownCursor: Cursor
+    readonly userCursors = new Map<number, Cursor>()
+    private ownPos: Vec2 | undefined = undefined
+
+    setOwnPos(pos: Vec2 | undefined) {
         this.ownPos = pos
         this.ownCursor.setPos(pos)
 
@@ -50,47 +47,37 @@ export class CursorContainer extends Container {
         })
     }
 
-    updateUserCursors() {
-        const userState = this.ctx.state.user
-        const users = userState.users.value
+    onUserJoined(user: UserData) {
+        if (this.userCursors.has(user.sessionId) || user.sessionId === this.ctx.users.sessionId || this.ctx.users.sessionId < 0)
+            return;
 
-        const shouldDelete = new Set(this.userCursors.keys())
+        const cursor = new Cursor(user.color.hex, user.username)
+        this.userCursors.set(user.sessionId, cursor)
+        this.addChild(cursor)
+    }
 
-        users.forEach(userData => {
-            if (userState.sessionId === userData.sessionId)
-                return;
+    onUserLeft(user: UserData) {
+        const cursor = this.userCursors.get(user.sessionId)
+        if (cursor) {
+            this.userCursors.delete(user.sessionId)
+            cursor.destroy({children: true})
+        }
+    }
 
-            const existing = this.userCursors.get(userData.sessionId)
-            if (existing) {
-                existing.setPos(userData.cursorPos, true)
-                existing.updateTextVisible(this.ownPos)
-                existing.setTime(userData.currentTime, this.ctx.clock.animatedTime)
-                shouldDelete.delete(userData.sessionId)
-            } else {
-                const cursor = new Cursor(this, userData.color.hex, userData.username)
-                this.addChild(cursor)
-                this.userCursors.set(userData.sessionId, cursor)
-                cursor.setPos(userData.cursorPos)
-                cursor.updateTextVisible(this.ownPos)
-                cursor.setTime(userData.currentTime, this.ctx.clock.animatedTime)
+
+    onTick(tick: ServerTick) {
+        tick.userTicks.forEach(userTick => {
+            const cursor = this.userCursors.get(userTick.id)
+            if(cursor) {
+                cursor?.setPos(userTick.cursorPos, true)
+                cursor.setTime(userTick.currentTime, this.ctx.clock.animatedTime)
             }
         })
-
-        if (shouldDelete.size > 0) {
-            shouldDelete.forEach(key => {
-                const component = this.userCursors.get(key)
-                this.userCursors.delete(key)
-
-                component?.playDisconnectAnimation().then(() => component?.destroy({children: true}))
-            })
-        }
-
-        this.sortChildren()
     }
 }
 
 export class Cursor extends Container {
-    constructor(readonly container: CursorContainer, color: number, name?: string) {
+    constructor(color: number, name?: string) {
         super();
         const cursorSprite = new Sprite(Texture.from(cursorTexture))
         this.addChild(cursorSprite)
@@ -127,8 +114,10 @@ export class Cursor extends Container {
         gsap.to(this, {alpha, duration: 0.2})
     }
 
-    setPos(position: Vec2 | null, animated = false) {
-        if (position) {
+    setPos(pos: Vec2Like | undefined, animated = false) {
+
+        if (pos) {
+            const position = Vec2.from(pos)
             const oldPos = Vec2.from(this.position)
             if (!oldPos.equals(position)) {
                 if (this.tween) {
@@ -147,10 +136,10 @@ export class Cursor extends Container {
             }
         }
 
-        this.visible = !!position
+        // this.visible = !!pos
     }
 
-    updateTextVisible(pos: Vec2 | null) {
+    updateTextVisible(pos: Vec2 | undefined) {
         if (!pos)
             this.setTextVisible(false)
 

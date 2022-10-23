@@ -1,0 +1,215 @@
+syntax = "proto3";
+package proto.commands;
+
+
+message ServerToClientMessage {
+  optional string responseId = 1;
+
+  oneof serverCommand {
+    MultiServerToClientMessage multiple = 2;
+    uint32 heartbeat = 3;
+    UserInfo userJoined = 4;
+    UserInfo userLeft = 5;
+    ServerTick tick = 6;
+    UserList userList = 7;
+    uint64 ownId = 8;
+    HitObject hitObjectCreated = 9;
+    HitObject hitObjectUpdated = 10;
+    uint32 hitObjectDeleted = 11;
+    HitObjectSelected hitObjectSelected = 12;
+    EditorState state = 13;
+    TimingPoint timingPointCreated = 14;
+    TimingPoint timingPointUpdated = 15;
+    uint32 timingPointDeleted = 16;
+    HitObjectOverrideCommand hitObjectOverridden = 17;
+  }
+}
+
+message MultiServerToClientMessage {
+  repeated ServerToClientMessage messages = 1;
+}
+
+message ClientToServerMessage {
+  optional string responseId = 1;
+
+  oneof clientCommand {
+    Vec2 cursorPos = 3;
+    int32 currentTime = 4;
+    SelectHitObject selectHitObject = 5;
+    CreateHitObject createHitObject = 6;
+    UpdateHitObject updateHitObject = 7;
+    DeleteHitObject deleteHitObject = 8;
+    CreateTimingPoint createTimingPoint = 9;
+    UpdateTimingPoint updateTimingPoint = 10;
+    DeleteTimingPoint deleteTimingPoint = 11;
+    HitObjectOverrideCommand setHitObjectOverrides = 17;
+  }
+
+}
+
+message ServerTick {
+  repeated UserTick userTicks = 1;
+}
+
+message UserTick {
+  uint64 id = 1;
+  optional Vec2 cursorPos = 2;
+  int32 currentTime = 3;
+}
+
+message UserInfo {
+  uint64 id = 1;
+  string displayName = 2;
+}
+
+message UserList {
+  repeated UserInfo users = 1;
+}
+
+message CreateHitObject {
+  HitObject hitObject = 1;
+}
+
+message UpdateHitObject {
+  HitObject hitObject = 1;
+}
+
+message DeleteHitObject {
+  repeated uint32 ids = 1;
+}
+
+message HitObjectSelected {
+  repeated uint32  ids = 1;
+  optional uint64 selectedBy = 2;
+}
+
+message SelectHitObject {
+  repeated uint32 ids = 1;
+  bool selected = 2;
+  bool unique = 3;
+}
+
+message EditorState {
+  Beatmap beatmap = 1;
+}
+
+message CreateTimingPoint {
+  TimingPoint timingPoint = 1;
+}
+
+message UpdateTimingPoint {
+  TimingPoint timingPoint = 1;
+}
+
+
+message DeleteTimingPoint {
+  repeated uint32 ids = 1;
+}
+
+message HitObjectOverrideCommand {
+  uint32 id = 1;
+  HitObjectOverrides overrides = 2;
+}
+
+message HitObjectOverrides {
+  optional IVec2 position = 1;
+  optional int32 time = 2;
+  optional uint64 selectedBy = 3;
+  optional bool newCombo = 4;
+  optional SliderControlPoints controlPoints = 5;
+  optional float expectedDistance = 6;
+  optional uint32 repeatCount = 7;
+}
+
+message SliderControlPoints {
+  repeated SliderControlPoint controlPoints = 1;
+}
+
+// region data types
+
+message HitObject {
+  uint32 id = 1;
+  optional uint32 selectedBy = 2;
+
+  int32 startTime = 3;
+  IVec2 position = 4;
+  bool newCombo = 5;
+
+  oneof kind {
+    HitCircle circle = 6;
+    Slider slider = 7;
+    Spinner spinner = 8;
+  }
+}
+
+message HitCircle {
+
+}
+
+message Spinner {
+
+}
+
+
+message Beatmap {
+  Difficulty difficulty = 3;
+  repeated HitObject hitObjects = 4;
+  repeated TimingPoint timingPoints = 5;
+}
+
+message Difficulty {
+  float hpDrainRate = 1;
+  float circleSize = 2;
+  float overallDifficulty = 3;
+  float approachRate = 4;
+  float sliderMultiplier = 5;
+  uint32 sliderTickRate = 6;
+}
+
+message Slider {
+  float expectedDistance = 1;
+  repeated SliderControlPoint controlPoints = 2;
+  uint32 repeats = 3;
+}
+
+message SliderControlPoint {
+  IVec2 position = 1;
+  ControlPointKind kind = 2;
+}
+
+enum ControlPointKind {
+  None = 0;
+  Bezier = 1;
+  Circle = 2;
+  Linear = 3;
+}
+
+message TimingPoint {
+  uint32 id = 1;
+  int32 offset = 2;
+  optional TimingInformation timing = 3;
+  optional float sv = 4;
+  optional float volume = 5;
+}
+
+message TimingInformation {
+  float bpm = 1;
+  uint32 signature = 2;
+}
+
+//endregion
+
+// region util
+
+message Vec2 {
+  float x = 1;
+  float y = 2;
+}
+
+
+message IVec2 {
+  int32 x = 1;
+  int32 y = 2;
+}
+
+// endregion

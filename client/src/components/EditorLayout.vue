@@ -52,7 +52,7 @@ const fileMenu: DropdownOption[] = [
 
 function handleFileMenu(item: string) {
   if (item === 'export:osu') {
-    exportBeatmapState(ctx.state.beatmap)
+    exportBeatmapState(ctx.beatmap)
   }
 }
 
@@ -71,6 +71,7 @@ function handleFileMenu(item: string) {
   flex-direction: column;
   user-select: none;
   height: 100vh;
+  overflow: hidden;
 
   .editor-screen-container {
     flex-grow: 1;

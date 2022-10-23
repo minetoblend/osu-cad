@@ -83,7 +83,7 @@ export class DrawableSliderBody extends Container {
 
         const pointy = this.ctx.beatmapId === '1602707_3273002'
 
-        const result = createSliderGeometry(points, this.ctx.state.beatmap.difficulty.circleRadius, pointy)
+        const result = createSliderGeometry(points, this.ctx.beatmap.difficulty.circleRadius, pointy)
 
         this.#geometry.indexBuffer.update(new Uint16Array(result.indices))
         this.#geometry.getBuffer('aVertexPosition').update(result.vertices)
@@ -115,7 +115,7 @@ export class DrawableSliderBody extends Container {
             return
         }
 
-        const radius = this.ctx.state.beatmap.difficulty.circleRadius
+        const radius = this.ctx.beatmap.difficulty.circleRadius
 
         if (!path.controlPoints.value)
             console.log(path)
@@ -129,8 +129,8 @@ export class DrawableSliderBody extends Container {
             -padding / scale + bounds.y - p1.y - radius
         )
 
-        const textureWidth = (bounds.width + radius * 2) * scale + padding * 2
-        const textureHeight = (bounds.height + radius * 2) * scale + padding * 2
+        const textureWidth = Math.ceil((bounds.width + radius * 2) * scale + padding * 2)
+        const textureHeight = Math.ceil((bounds.height + radius * 2) * scale + padding * 2)
 
         if (this.#renderTexture.width !== textureWidth || this.#renderTexture.height !== textureHeight)
             this.#renderTexture.resize(textureWidth, textureHeight)

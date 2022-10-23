@@ -3,14 +3,11 @@ import {DragEvent} from "@/util/drag";
 import {ViewportTool} from "@/editor/viewport/tools";
 import {Slider} from "@/editor/hitobject/slider";
 import {SliderControlPoint, SliderPath} from "@/editor/hitobject/sliderPath";
-import {ClientOpCode} from "@common/opcodes";
 
 export class ControlPointDragOperation extends DragOperation {
 
     constructor(readonly tool: ViewportTool, readonly hitObject: Slider, readonly controlPointIndex: any) {
         super();
-
-        console.log('drag')
     }
 
     createOverrides(evt: DragEvent) {
@@ -38,11 +35,13 @@ export class ControlPointDragOperation extends DragOperation {
 
         this.hitObject.applyOverrides({path, position}, false)
 
-        this.tool.sendOperationCommand(ClientOpCode.HitObjectOverride, {
+        this.tool.sendOperationCommand('setHitObjectOverrides', {
             id: this.hitObject.id,
             overrides: {
-                controlPoints: path.controlPoints.value,
-                expectedLength: path.expectedLength,
+                controlPoints: {
+                    controlPoints: path.controlPoints.value as any
+                },
+                expectedDistance: path.expectedDistance,
                 position
             }
         })
@@ -53,12 +52,13 @@ export class ControlPointDragOperation extends DragOperation {
     commit(evt: DragEvent): void {
         const {path, position} = this.createOverrides(evt)
 
-        const serialized = this.hitObject.serialized()
-        serialized.controlPoints = path.controlPoints.value
-        serialized.pixelLength = path.expectedLength
-        serialized.position = position
-
-        this.tool.sendMessage(ClientOpCode.UpdateHitObject, serialized)
+        this.tool.sendMessage('updateHitObject', {
+            hitObject: this.hitObject.serialized({
+                controlPoints: path.controlPoints.value,
+                expectedDistance: path.expectedDistance,
+                position
+            })
+        })
     }
 
 
@@ -75,7 +75,7 @@ export class ControlPointDragOperation extends DragOperation {
 
         const snapSize = 0.25 * 100 * sv
 
-        path.expectedLength = Math.floor(length / snapSize) * snapSize
+        path.expectedDistance = Math.floor(length / snapSize) * snapSize
         path.setSnakedRange(path.start, path.end, true)
         path.fullPath.value = path.getRange(0, 1)
 

@@ -1,10 +1,42 @@
-import {SerializedTimingPoint} from "@common/types";
 import {reactive} from "vue";
 import {EditorContext} from "@/editor";
+import {TimingPoint as TimingPointData} from "protocol/commands";
 
 export class TimingManager {
     constructor(readonly ctx: EditorContext) {
+        this.ctx.connector.onCommand('timingPointCreated').subscribe(payload => {
+            const timingPoint = new TimingPoint()
+            timingPoint.updateFrom(payload)
+            this.addTimingPoint(timingPoint)
+            this.ctx.beatmap.hitobjects.applyDefaults()
+        })
 
+        this.ctx.connector.onCommand('timingPointUpdated').subscribe(payload => {
+            const timingPoint = this.findById(payload.id)
+            if (!timingPoint) {
+                throw new Error(`Attempted to update unknown timing point ${payload.id}`)
+            }
+
+            timingPoint.updateFrom(payload)
+
+            this.#timingPoints.sort((a, b) => a.time - b.time)
+            this.#uninheritedTimingPoints.sort((a, b) => a.time - b.time)
+
+            this.ctx.beatmap.hitobjects.hitObjects.forEach(it => it.applyDefaults(this.ctx.beatmap, this.ctx))
+            this.ctx.beatmap.hitobjects.applyDefaults()
+        })
+
+        this.ctx.connector.onCommand('timingPointDeleted').subscribe(id => {
+            this.removeTimingPoint(id)
+            this.ctx.beatmap.hitobjects.applyDefaults()
+        })
+
+        this.ctx.connector.onCommand('state').subscribe(state => {
+            this.timingPoints = []
+            state.beatmap!.timingPoints!.forEach(t => {
+                this.addTimingPoint(new TimingPoint(t))
+            })
+        })
     }
 
 
@@ -15,24 +47,6 @@ export class TimingManager {
         if (this.ctx.beatmapId === '1602707_3273002')
             return 3.6
         return 1.4
-    }
-
-    initFrom(timingPoints: SerializedTimingPoint[]) {
-        this.timingPoints = timingPoints.map(serialized => new TimingPoint(serialized))
-    }
-
-    updateTimingPoint(serialized: SerializedTimingPoint) {
-        const timingPoint = this.findById(serialized.id)
-        if (!timingPoint) {
-            throw new Error(`Attempted to update unknown timing point ${serialized.id}`)
-        }
-
-        timingPoint.updateFrom(serialized)
-
-        this.#timingPoints.sort((a, b) => a.time - b.time)
-        this.#uninheritedTimingPoints.sort((a, b) => a.time - b.time)
-
-        this.ctx.state.beatmap.hitobjects.hitObjects.forEach(it => it.applyDefaults(this.ctx.state.beatmap, this.ctx))
     }
 
     get timingPoints() {
@@ -51,11 +65,6 @@ export class TimingManager {
         return this.#uninheritedTimingPoints
     }
 
-
-    addSerialized(serialized: SerializedTimingPoint) {
-        this.addTimingPoint(new TimingPoint(serialized))
-    }
-
     addTimingPoint(timingPoint: TimingPoint) {
         const index = this.findTimingPointIndex(this.#timingPoints, timingPoint.time).index
         this.#timingPoints.splice(index, 0, timingPoint)
@@ -63,6 +72,7 @@ export class TimingManager {
         if (!timingPoint.isInherited) {
             const uninheritedIndex = this.findTimingPointIndex(this.#uninheritedTimingPoints, timingPoint.time).index
             this.#uninheritedTimingPoints.splice(uninheritedIndex, 0, timingPoint)
+
         }
     }
 
@@ -83,7 +93,7 @@ export class TimingManager {
         return {found: false, index};
     }
 
-    removeTimingPoint(id: string) {
+    removeTimingPoint(id: number) {
         const index = this.#timingPoints.findIndex(it => it.id === id)
         if (index >= 0)
             this.#timingPoints.splice(index, 1)
@@ -93,7 +103,7 @@ export class TimingManager {
             this.#uninheritedTimingPoints.splice(uninheritedIndex, 1)
     }
 
-    findById(id: string): TimingPoint | undefined {
+    findById(id: number): TimingPoint | undefined {
         return this.#timingPoints.find(it => it.id === id)
     }
 
@@ -111,16 +121,12 @@ export class TimingManager {
 
         return uninherited ? this.#uninheritedTimingPoints[index] : this.#timingPoints[index]
     }
-
-    getTimingAt(time: number): {} | undefined {
-        const timingPoint = this.getTimingAt(0)
-        return {bpm: 0, signature: 0};
-    }
+    
 }
 
 export class TimingPoint {
 
-    id!: string
+    id!: number
     time = 0
 
     timing?: {
@@ -130,14 +136,14 @@ export class TimingPoint {
     sv?: number
     volume?: number
 
-    constructor(init?: SerializedTimingPoint) {
+    constructor(init?: TimingPointData) {
         if (init)
             this.updateFrom(init)
     }
 
-    updateFrom(timingPoint: SerializedTimingPoint) {
+    updateFrom(timingPoint: TimingPointData) {
         this.id = timingPoint.id
-        this.time = timingPoint.time
+        this.time = timingPoint.offset
         this.timing = timingPoint.timing
         this.sv = timingPoint.sv
         this.volume = timingPoint.volume
@@ -147,7 +153,7 @@ export class TimingPoint {
         return !this.timing
     }
 
-    serialized(): SerializedTimingPoint {
+    serialized(): TimingPointData {
         let timing = this.timing ? {
             bpm: this.timing.bpm,
             signature: this.timing.signature
@@ -155,7 +161,7 @@ export class TimingPoint {
 
         return {
             id: this.id,
-            time: this.time,
+            offset: this.time,
             timing,
             volume: this.volume,
             sv: this.sv,

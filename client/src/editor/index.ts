@@ -1,10 +1,8 @@
 import {Match} from "@heroiclabs/nakama-js";
-import {EditorConnector, MatchEvent} from "@/editor/connector";
+import {ClientCommandPayload, ClientCommandType, EditorConnector} from "@/editor/connector";
 import {BeatmapState} from "@/editor/state/beatmap";
-import {ClientMessages, ClientOpCode} from "@common/opcodes";
 import {inject} from "vue";
 import {EditorClock} from "@/editor/clock";
-import {CommandHandler} from "@/editor/commandHandler";
 import {UserState} from "@/editor/state/user";
 import {v4 as uuid} from 'uuid'
 import {AudioEngine} from "@/audio/engine";
@@ -21,7 +19,19 @@ export class EditorContext {
         readonly connector: EditorConnector,
         readonly beatmapId: string,
     ) {
-        this.connector.matchEvents().subscribe(value => this.onMatchEvent(value))
+        // this.connector.matchEvents().subscribe(value => this.onMatchEvent(value))
+        this.users = new UserState(this)
+        this.beatmap = new BeatmapState(this)
+        this.connector.onMessage.subscribe(message => {
+            if (message.responseId) {
+                const callbacks = this.#pendingReplies.get(message.responseId)
+                if (callbacks) {
+                    this.#pendingReplies.delete(message.responseId)
+                    //@ts-ignore
+                    callbacks.resolve(message.serverCommand[message.serverCommand.$case])
+                }
+            }
+        })
     }
 
     match?: Match
@@ -29,22 +39,16 @@ export class EditorContext {
 
     readonly clock = new EditorClock()
     readonly audioEngine = new AudioEngine()
-    readonly commandHandler = new CommandHandler(this)
 
-    readonly state = {
-        beatmap: new BeatmapState(this),
-        user: new UserState()
-    }
+    readonly users: UserState
+    readonly beatmap: BeatmapState
 
-    async connect() {
+    async connect(beatmapId: string, token: string) {
+        await this.connector.connect(beatmapId, token)
+
         await this.loadAudio()
 
-        this.connector.matchEvents().subscribe(event => this.commandHandler.handleMatchEvent(event))
-        const match = await this.connector.joinMatchIdForBeatmap(this.beatmapId)
-
-        this.match = match
-
-        setInterval(() => this.sendMessage(ClientOpCode.CurrentTime, {time: this.currentTime}), 200)
+        setInterval(() => this.sendMessage('currentTime', this.currentTime), 200)
     }
 
     async loadAudio() {
@@ -79,24 +83,26 @@ export class EditorContext {
     songAudio?: Sound
     hsSample?: Sample
 
-    sendMessage<T extends keyof ClientMessages>(opCode: T, ...params: Parameters<ClientMessages[T]>) {
-        //only first parameter gets sent
-        const payload = params[0] || {}
-
-        // console.log('send', {opCode, payload})
-
-        return this.connector.sendMatchState(this.match!, opCode, JSON.stringify(payload))
+    sendMessage<T extends ClientCommandType>(opCode: T, payload: ClientCommandPayload<T>) {
+        this.connector.sendMessage({
+            clientCommand: {
+                $case: opCode,
+                [opCode]: payload
+            } as any
+        })
     }
 
-    sendMessageWithResponse<T extends keyof ClientMessages>(opCode: T, ...params: Parameters<ClientMessages[T]>): Promise<MatchEvent> {
-        //only first parameter gets sent
-        const param = params[0] || {}
+    sendMessageWithResponse<T extends ClientCommandType>(opCode: T, payload: ClientCommandPayload<T>) {
 
         const responseId = uuid();
 
-        (param as any).responseId = responseId
-
-        this.connector.sendMatchState(this.match!, opCode, JSON.stringify(param))
+        this.connector.sendMessage({
+            responseId,
+            clientCommand: {
+                $case: opCode,
+                [opCode]: payload
+            } as any
+        })
 
         setTimeout(() => {
             const callbacks = this.#pendingReplies.get(responseId)
@@ -117,14 +123,8 @@ export class EditorContext {
         return this.clock.time
     }
 
-    onMatchEvent(value: MatchEvent) {
-        if (value.payload.responseId) {
-            const callbacks = this.#pendingReplies.get(value.payload.responseId)
-            if (callbacks) {
-                this.#pendingReplies.delete(value.payload.responseId)
-                callbacks.resolve(value)
-            }
-        }
+    destroy() {
+        this.connector.disconnect()
     }
 }
 
@@ -133,5 +133,5 @@ export function useContext(): EditorContext {
 }
 
 export function useState(): BeatmapState {
-    return useContext().state.beatmap
+    return useContext().beatmap
 }

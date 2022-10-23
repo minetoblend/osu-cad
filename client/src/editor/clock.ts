@@ -31,7 +31,6 @@ export class EditorClock {
         this.#sound.value = value
         this.#duration = (value?.duration ?? 1) * 1000
         this.seek(this.time)
-        console.log(value)
     }
 
     get sound() {

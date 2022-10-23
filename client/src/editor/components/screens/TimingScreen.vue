@@ -52,22 +52,29 @@
 import {useContext, useState} from "@/editor";
 import {TimingPoint} from "@/editor/state/timing";
 import {computed, ref} from "vue";
-import {ClientOpCode} from "@common/opcodes";
 import {formatTimestamp} from "@/util/time";
 import TimingPointSettings from "@/editor/components/TimingPointSettings.vue";
 import AsyncButton from "@/components/AsyncButton.vue";
 
 const ctx = useContext()
 const state = useState()
-const selection = ref(new Set<string>())
+const selection = ref(new Set<number>())
 
 
 function createTimingPoint() {
-  return ctx.sendMessage(ClientOpCode.CreateTimingPoint, {time: ctx.currentTime})
+  return ctx.sendMessage('createTimingPoint', {
+    timingPoint: {
+      offset: ctx.currentTime,
+      timing: undefined,
+      volume: undefined,
+      sv: undefined,
+      id: -1
+    }
+  })
 }
 
 function deleteTimingPoint(timingPoint: TimingPoint) {
-  return ctx.sendMessage(ClientOpCode.DeleteTimingPoint, {id: timingPoint.id})
+  return ctx.sendMessage('deleteTimingPoint', {ids: [timingPoint.id]})
 }
 
 

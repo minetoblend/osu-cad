@@ -1,0 +1,24 @@
+{
+  "name": "protocol",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "build": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_opt=oneof=unions --ts_proto_opt=env=browser --ts_proto_opt=esModuleInterop=true --ts_proto_out=. ./commands.proto && tsc",
+    "build:windows": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto.cmd --ts_proto_opt=oneof=unions --ts_proto_opt=env=browser --ts_proto_opt=esModuleInterop=true --ts_proto_out=. ./commands.proto && tsc"
+  },
+  "files": [
+    "commands.js",
+    "commands.d.ts"
+  ],
+  "module": "commands.js",
+  "types": "commands.d.ts",
+  "sideEffects": false,
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ts-proto": "^1.129.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.8.4"
+  }
+}

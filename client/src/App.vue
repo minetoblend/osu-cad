@@ -38,13 +38,11 @@
 
 <script setup lang="ts">
 
-import {EditorConnector} from "@/editor/connector";
-import {provide, ref} from "vue";
+import {ref} from "vue";
 import {darkTheme} from 'naive-ui'
 import axios from "axios";
 import {apiUrl} from "@/api";
 
-const connector = new EditorConnector()
 const initialized = ref(false)
 
 interface UserData {
@@ -61,7 +59,6 @@ async function loadUser() {
   try {
     const response = await axios.get(apiUrl('/user/me '), {withCredentials: true})
     user.value = response.data
-    await connector.connect(response.data.token)
     initialized.value = true
   } catch (e) {
     console.error(e)
@@ -76,8 +73,6 @@ function login() {
   localStorage.setItem('auth-redirect', window.location.pathname)
   window.location.href = apiUrl('/auth/osu')
 }
-
-provide('connector', connector)
 
 </script>
 

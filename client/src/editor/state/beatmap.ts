@@ -1,4 +1,3 @@
-import {SerializedBeatmap} from "@common/types";
 import {TimingManager} from "@/editor/state/timing";
 import {HitObjectManager} from "@/editor/state/hitobject.state";
 import {DifficultyManager} from "@/editor/state/difficulty";
@@ -18,13 +17,5 @@ export class BeatmapState {
     readonly hitobjects
     readonly difficulty
     readonly metadata
-
-    update(state: SerializedBeatmap) {
-        console.log(state)
-        this.difficulty.initFrom(state.difficulty)
-        this.timing.initFrom(state.timingPoints)
-        this.hitobjects.initFrom(state.hitObjects)
-        this.metadata.initFrom(state.metadata)
-    }
 
 }

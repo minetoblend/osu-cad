@@ -7,6 +7,9 @@ FROM node:18-alpine As development
 # Create app directory
 WORKDIR /usr/src/app
 
+RUN mkdir dist/
+RUN chown node:node dist/
+
 # Copy application dependency manifests to the container image.
 # A wildcard is used to ensure copying both package.json AND package-lock.json (when available).
 # Copying this first prevents re-running npm install on every code change.

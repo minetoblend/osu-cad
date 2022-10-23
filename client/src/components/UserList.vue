@@ -6,7 +6,9 @@
         {{ self.username }}
       </p>
       <transition-group name="users">
-        <p class="user" v-for="user in users" :key="user.sessionId" :style="{color: `rgb(${user.color.r * 255}, ${user.color.g * 255}, ${user.color.b * 255})`}" @click="ctx.clock.seek(user.currentTime, true)">
+        <p class="user" v-for="user in users" :key="user.sessionId"
+           :style="{color: `rgb(${user.color.r * 255}, ${user.color.g * 255}, ${user.color.b * 255})`}"
+           @click="ctx.clock.seek(user.currentTime, true)">
           {{ user.username }}
         </p>
       </transition-group>
@@ -22,12 +24,15 @@ import {computed} from "vue";
 
 const ctx = useContext()
 
-const users = computed(() =>
-    ctx.state.user.users.value.filter(it => it.sessionId !== ctx.state.user.sessionId).sort((a, b) => a.sessionId.localeCompare(b.sessionId))
+const users = computed(() => {
+      return ctx.users.filter(it => {
+        return it.sessionId !== ctx.users.sessionId
+      })
+    }
 )
 
 const self = computed(() =>
-    ctx.state.user.users.value.find(it => it.sessionId === ctx.state.user.sessionId)
+    ctx.users.find(it => it.sessionId === ctx.users.sessionId)
 )
 </script>
 

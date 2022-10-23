@@ -40,7 +40,6 @@ export class OsuApiService {
 
         const zip = new AdmZip(response.data)
 
-        console.log(zip.getEntries().map(it => it.entryName))
         zip.extractAllTo(destPath, false)
 
         return destPath

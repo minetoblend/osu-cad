@@ -1,11 +1,10 @@
 import {HitObject} from "@/editor/hitobject";
-import {SerializedHitObject} from "@common/types";
 import {Slider} from "@/editor/hitobject/slider";
 import {shallowReactive} from "vue";
 import {EditorContext} from "@/editor";
 import {HitCircle} from "@/editor/hitobject/circle";
-import {ServerOpCode} from "@common/opcodes";
 import {Subject} from "rxjs";
+import {HitObject as HitObjectData} from 'protocol/commands'
 
 export class HitObjectManager {
     constructor(readonly ctx: EditorContext) {
@@ -43,8 +42,8 @@ export class HitObjectManager {
     }
 
     getHitObjectsInRange(time: number, startPadding: number, endPadding: number = startPadding, andSelected = false): HitObject[] {
-        const objects = this.#hitObjects.map((it, index) => [it, index] as [HitObject, number]).filter(([hitObject, index]) =>
-            (andSelected && hitObject.selectedBy.value === this.ctx.state.user.sessionId) || (hitObject.overriddenEndTime + endPadding) > time && (hitObject.overriddenTime - startPadding) < time
+        const objects = this.#hitObjects.map((it, index) => [it, index] as [HitObject, number]).filter(([hitObject]) =>
+            (andSelected && hitObject.selectedBy.value === this.ctx.users.sessionId) || (hitObject.overriddenEndTime + endPadding) > time && (hitObject.overriddenTime - startPadding) < time
         )
         if (objects.length === 0) return []
         const firstIndex = objects[0][1]
@@ -58,47 +57,23 @@ export class HitObjectManager {
     addHitObject(hitObject: HitObject) {
         let {index} = this.findHitObjectIndex(hitObject.time)
         this.#hitObjects.splice(index, 0, hitObject)
-        hitObject.applyDefaults(this.ctx.state.beatmap, this.ctx)
+        hitObject.applyDefaults(this.ctx.beatmap, this.ctx)
 
         this.onHitObjectAdded.next(hitObject)
     }
 
-    initFrom(seralized: SerializedHitObject[]) {
-        this.hitObjects.forEach(it => {
-            it.destroyed = true
-            this.onHitObjectRemoved.next(it)
-        })
-        this.#hitObjects.splice(0)
-        const hitObjects = seralized.map(it => {
-            switch (it.type) {
-                case "circle":
-                    const circle = new HitCircle()
-                    circle.updateFrom(it)
-                    return circle
-                case "slider":
-                    const slider = new Slider()
-                    slider.updateFrom(it)
-                    return slider
-            }
-        }).filter(it => it) as HitObject[]
 
-        hitObjects.forEach(it => this.addHitObject(it))
-        this.calculateCombos()
-    }
-
-    findById(id: string) {
+    findById(id: number) {
         return this.#hitObjects.find(it => it.id === id)
     }
 
-    setSelectedBy(ids: string[], selectedBy: string | null) {
+    setSelectedBy(ids: number[], selectedBy: number | null) {
         ids.forEach(id => {
             const hitObject = this.findById(id)
             if (hitObject) {
-                if (selectedBy === this.ctx.state.user.sessionId && !hitObject.selectedBy.value) {
+                if (selectedBy === this.ctx.users.sessionId && !hitObject.selectedBy.value) {
                     this.onSelectionAdded.next(hitObject)
-                } else if (hitObject.selectedBy.value === this.ctx.state.user.sessionId && selectedBy === null) {
-                    console.log('selection removed')
-                    console.log(hitObject.selectedBy.value, selectedBy)
+                } else if (hitObject.selectedBy.value === this.ctx.users.sessionId && selectedBy === null) {
                     this.onSelectionRemoved.next(hitObject)
                 }
 
@@ -107,13 +82,29 @@ export class HitObjectManager {
         })
         this.#selection.clear()
         this.hitObjects.forEach(h => {
-            if (h.selectedBy.value === this.ctx.state.user.sessionId)
+            if (h.selectedBy.value === this.ctx.users.sessionId)
                 this.#selection.add(h)
         })
     }
 
     get selection() {
         return [...this.#selection.values()]
+    }
+
+    #addSerializedHitObject(hitObject: HitObjectData) {
+        switch (hitObject.kind?.$case) {
+            case 'circle':
+                const circle = new HitCircle()
+                circle.updateFrom(hitObject)
+                this.addHitObject(circle)
+                break;
+
+            case 'slider':
+                const slider = new Slider()
+                slider.updateFrom(hitObject)
+                this.addHitObject(slider)
+                break;
+        }
     }
 
     private initListeners() {
@@ -126,13 +117,14 @@ export class HitObjectManager {
         })
 
         this.onHitObjectAdded.subscribe(hitObject => {
-            if (hitObject.selectedBy.value === this.ctx.state.user.sessionId)
+            if (hitObject.selectedBy.value === this.ctx.users.sessionId)
                 this.onSelectionAdded.next(hitObject)
 
             this.calculateCombos()
         })
         this.onHitObjectRemoved.subscribe(hitObject => {
-            if (hitObject.selectedBy.value === this.ctx.state.user.sessionId)
+            this.calculateCombos()
+            if (hitObject.selectedBy.value === this.ctx.users.sessionId)
                 this.onSelectionRemoved.next(hitObject)
         })
         this.onHitObjectUpdated.subscribe(() => {
@@ -140,36 +132,47 @@ export class HitObjectManager {
         })
 
 
-        this.ctx.commandHandler.onCommand.subscribe(({opCode, payload}) => {
-            switch (opCode) {
-                case ServerOpCode.HitObjectCreated:
-                    this.createHitObject(payload)
-                    break;
+        this.ctx.connector.onCommand('hitObjectCreated').subscribe(hitObject =>
+            this.#addSerializedHitObject(hitObject)
+        )
 
-                case ServerOpCode.HitObjectUpdated:
-                    this.updateHitObject(payload)
-                    break;
+        this.ctx.connector.onCommand('hitObjectSelected').subscribe(selection => {
+            this.setSelectedBy(selection.ids, selection.selectedBy ?? null)
+        })
 
-                case ServerOpCode.HitObjectOverride:
+        this.ctx.connector.onCommand('hitObjectUpdated').subscribe(hitObject => {
+            const o = this.findById(hitObject.id)
+            if (o){
+                o.updateFrom(hitObject)
+                this.onHitObjectUpdated.next(o)
+            }
+        })
 
-                    if (this.selection.some(it => it.id === payload.id)) {
-                        return;
-                    }
-                    this.setOverrides(payload.id, payload.overrides, true)
-                    break;
+        this.ctx.connector.onCommand('hitObjectDeleted').subscribe(id => {
+            this.deleteHitObjects([id])
+        })
 
-                case ServerOpCode.HitObjectDeleted:
-                    this.deleteHitObjects(payload.ids)
-                    break;
+        this.ctx.connector.onCommand('state').subscribe(state => {
+            this.deleteHitObjects(this.hitObjects.map(it => it.id))
+            state.beatmap!.hitObjects!.forEach(hitObject => this.#addSerializedHitObject(hitObject))
+        })
+
+        this.ctx.connector.onCommand('hitObjectOverridden').subscribe(({id, overrides}) => {
+            const h = this.findById(id)
+            if (h && h.selectedBy.value !== this.ctx.users.sessionId) {
+                this.setOverrides(id, {
+                    ...overrides,
+                    controlPoints: overrides!.controlPoints?.controlPoints ?? null
+                } as any, true)
             }
         })
     }
 
-    setOverrides(id: string, overrides: Record<string, any>, animated = false) {
+    setOverrides(id: number, overrides: Record<string, any>, animated = false) {
         this.findById(id)?.applyOverrides(overrides, animated)
     }
 
-    deleteHitObjects(ids: string[]) {
+    deleteHitObjects(ids: number[]) {
         ids.forEach(id => {
             const index = this.#hitObjects.findIndex(it => it.id === id)
             if (index >= 0) {
@@ -179,29 +182,6 @@ export class HitObjectManager {
                 this.onHitObjectRemoved.next(hitObject)
             }
         })
-    }
-
-    createHitObject(serialized: SerializedHitObject) {
-        switch (serialized.type) {
-            case "circle":
-                const circle = new HitCircle()
-                circle.updateFrom(serialized)
-                this.addHitObject(circle)
-                break
-            case "slider":
-                const slider = new Slider()
-                slider.updateFrom(serialized)
-                this.addHitObject(slider)
-        }
-    }
-
-    private updateHitObject(serialized: SerializedHitObject) {
-        const o = this.findById(serialized.id)
-        if (o) {
-            o.clearOverrides()
-            o.updateFrom(serialized)
-            this.onHitObjectUpdated.next(o)
-        }
     }
 
     calculateCombos() {
@@ -220,5 +200,9 @@ export class HitObjectManager {
 
             currentComboNumber++
         }
+    }
+
+    applyDefaults() {
+        this.hitObjects.forEach(t => t.applyDefaults(this.ctx.beatmap, this.ctx))
     }
 }

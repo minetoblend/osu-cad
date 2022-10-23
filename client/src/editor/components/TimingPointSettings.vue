@@ -24,11 +24,10 @@
 <script setup lang="ts">
 import {PropType} from "vue";
 import {TimingPoint} from "@/editor/state/timing";
-import {ClientOpCode} from "@common/opcodes";
-import {SerializedTimingPoint} from "@common/types";
 import {useContext, useState} from "@/editor";
 import AsyncSwitch from "@/components/AsyncSwitch.vue";
 import AsyncNumberInput from "@/components/AsyncNumberInput.vue";
+import {TimingPoint as TimingPointData} from 'protocol/commands'
 
 const props = defineProps({
   timingPoint: {
@@ -63,16 +62,16 @@ function setSv(timingPoint: TimingPoint, sv: number) {
 }
 
 function setTime(timingPoint: TimingPoint, time: number) {
-  return updateTimingPoint(timingPoint, t => t.time = time)
+  return updateTimingPoint(timingPoint, t => t.offset = time)
 }
 
 
-async function updateTimingPoint(timingPoint: TimingPoint, update: (timingPoint: SerializedTimingPoint) => void) {
+async function updateTimingPoint(timingPoint: TimingPoint, update: (timingPoint: TimingPointData) => void) {
   const serializedTimingPoint = timingPoint.serialized()
 
   update(serializedTimingPoint)
 
-  return ctx.sendMessage(ClientOpCode.UpdateTimingPoint, serializedTimingPoint)
+  return ctx.sendMessage('updateTimingPoint', {timingPoint: serializedTimingPoint})
 
 }
 

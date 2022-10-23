@@ -5,14 +5,13 @@ import {Vec2} from "@/util/math";
 import {drag} from "@/util/drag";
 import {EditorContext} from "@/editor";
 import {PlayfieldDrawable} from "@/editor/viewport/playfield";
-import {ClientOpCode, ServerOpCode} from "@common/opcodes";
 import {shallowRef} from "vue";
 import {DropdownOption} from "naive-ui";
 import {SliderCreateTool} from "@/editor/viewport/tools/slider.tool";
 import {CircleCreateTool} from "@/editor/viewport/tools/circle.tool";
-import {SerializedHitObject} from "@common/types";
 import {getFlippedHitObject} from "@/editor/viewport/tools/util";
 import {Slider} from "@/editor/hitobject/slider";
+import {HitObject as HitObjectData} from "protocol/commands";
 
 const tools: Record<string, ViewportTool> = {
     select: new SelectTool(),
@@ -23,20 +22,24 @@ const tools: Record<string, ViewportTool> = {
 export class ToolManager {
 
     constructor(readonly ctx: EditorContext, readonly playfield: PlayfieldDrawable) {
-        this.selectTool(tools.select)
 
-        // window.addEventListener('keydown', evt => this.onKeyDown(evt))
 
-        this.ctx.commandHandler.onCommand.subscribe(evt => this.onCommand(evt.opCode, evt.payload))
+        this.#tool.value.ctx = this.ctx
+        this.#tool.value.playfield = this.playfield
+        this.#tool.value.beatmap = this.ctx.beatmap
+        this.#tool.value.manager = this
 
-        this.ctx.state.beatmap.hitobjects.onSelectionAdded.subscribe(o => {
+        this.selectTool(tools.select, true)
+
+        this.ctx.beatmap.hitobjects.onSelectionAdded.subscribe(o => {
             this.#tool.value.onSelectionAdded?.(o)
             this.#tool.value.onSelectionChanged?.(o, 'add')
         })
-        this.ctx.state.beatmap.hitobjects.onSelectionRemoved.subscribe(o => {
+        this.ctx.beatmap.hitobjects.onSelectionRemoved.subscribe(o => {
             this.#tool.value.onSelectionRemoved?.(o)
             this.#tool.value.onSelectionChanged?.(o, 'remove')
         })
+
     }
 
     readonly toolOverlay = new Container()
@@ -57,13 +60,18 @@ export class ToolManager {
         return this.#tool.value
     }
 
-    selectTool(tool: ViewportTool) {
+    selectTool(tool: ViewportTool, force = false) {
+        if (tool === this.#tool.value && !force)
+            return
+
+        this.#tool.value.onToolDeactivated?.()
+
         this.#tool.value = tool
         this.toolOverlay.removeChildren()
 
         tool.ctx = this.ctx
         tool.playfield = this.playfield
-        tool.beatmap = this.ctx.state.beatmap
+        tool.beatmap = this.ctx.beatmap
         tool.manager = this
 
         tool.onToolActivated?.()
@@ -83,7 +91,7 @@ export class ToolManager {
             onMouseDown: evt => {
                 this.isMouseDown++
                 if (this.tool.dragOperation)
-                    return this.tool.commitDragOperation( evt)
+                    return this.tool.commitDragOperation(evt)
                 this.tool.onMouseDown?.(evt)
             },
             onDragStart: evt => {
@@ -129,9 +137,9 @@ export class ToolManager {
         if (evt.detail === 'q') {
             const selection = this.tool.selection
             selection.forEach(it => {
-                const serialized = it.serialized()
-                serialized.newCombo = !serialized.newCombo
-                this.tool.sendMessage(ClientOpCode.UpdateHitObject, serialized)
+                this.tool.sendMessage('updateHitObject', {
+                    hitObject: it.serialized({newCombo: !it.newCombo})
+                })
             })
             evt.preventDefault()
         }
@@ -142,11 +150,11 @@ export class ToolManager {
         }
 
         if (evt.detail === 'ctrl+a') {
-            for (let i = 0; i < this.ctx.state.beatmap.hitobjects.hitObjects.length; i += 25) {
+            for (let i = 0; i < this.ctx.beatmap.hitobjects.hitObjects.length; i += 25) {
 
-                this.ctx.sendMessage(ClientOpCode.SelectHitObject, {
-                    ids: this.ctx.state.beatmap.hitobjects.hitObjects
-                        .slice(i, Math.min(i + 25, this.ctx.state.beatmap.hitobjects.hitObjects.length))
+                this.ctx.sendMessage('selectHitObject', {
+                    ids: this.ctx.beatmap.hitobjects.hitObjects
+                        .slice(i, Math.min(i + 25, this.ctx.beatmap.hitobjects.hitObjects.length))
                         .map(it => it.id),
                     selected: true,
                     unique: false
@@ -158,39 +166,38 @@ export class ToolManager {
         }
 
         if (evt.detail === 'ctrl+h') {
-            this.ctx.state.beatmap.hitobjects.selection.forEach(it => {
+            this.ctx.beatmap.hitobjects.selection.forEach(it => {
                 const flipped = getFlippedHitObject(it, 'horizontal')
-                this.ctx.sendMessage(ClientOpCode.UpdateHitObject, flipped)
+                this.ctx.sendMessage('updateHitObject', {hitObject: flipped})
             })
             evt.preventDefault()
         }
 
         if (evt.detail === 'ctrl+j') {
-            this.ctx.state.beatmap.hitobjects.selection.forEach(it => {
+            this.ctx.beatmap.hitobjects.selection.forEach(it => {
                 const flipped = getFlippedHitObject(it, 'vertical')
-                this.ctx.sendMessage(ClientOpCode.UpdateHitObject, flipped)
+                this.ctx.sendMessage('updateHitObject', {hitObject: flipped})
             })
             evt.preventDefault()
         }
 
         if (evt.detail === 'ctrl+c') {
-            this.copiedHitObjects = this.ctx.state.beatmap.hitobjects.selection.map(it =>
-                it.serialized()
-            )
+            this.copiedHitObjects = this.ctx.beatmap.hitobjects.selection.map(it => it.serialized())
             evt.preventDefault()
         }
 
         if (evt.detail === 'ctrl+v') {
             if (this.copiedHitObjects.length > 0) {
-                const offset = this.ctx.currentTime - this.copiedHitObjects[0].time
+                const offset = this.ctx.currentTime - this.copiedHitObjects[0].startTime
                 const hitObjects = this.copiedHitObjects.map(it => {
                     return {
                         ...it,
-                        time: it.time + offset
+                        time: it.startTime + offset
                     }
                 })
+
                 hitObjects.forEach(it =>
-                    this.ctx.sendMessage(ClientOpCode.CreateHitObject, it)
+                    this.ctx.sendMessage('createHitObject', {hitObject: it})
                 )
             }
         }
@@ -198,9 +205,11 @@ export class ToolManager {
         if (evt.detail === 'ctrl+i') {
             const sliders = this.tool.selection.filter(t => t instanceof Slider) as Slider[]
             sliders.forEach(slider => {
-                const serialized = slider.serialized()
-                serialized.repeatCount += 1
-                this.tool.sendMessage(ClientOpCode.UpdateHitObject, serialized)
+                this.tool.sendMessage('updateHitObject', {
+                    hitObject: slider.serialized({
+                        repeats: slider.repeatCount + 1
+                    })
+                })
             })
             evt.preventDefault()
 
@@ -209,12 +218,14 @@ export class ToolManager {
         if (evt.detail === 'ctrl+u') {
             const sliders = this.tool.selection.filter(t => t instanceof Slider) as Slider[]
             sliders.forEach(slider => {
-                const serialized = slider.serialized()
-                if (serialized.repeatCount <= 1)
+                if (slider.repeatCount <= 1)
                     return;
 
-                serialized.repeatCount -= 1
-                this.tool.sendMessage(ClientOpCode.UpdateHitObject, serialized)
+                this.tool.sendMessage('updateHitObject', {
+                    hitObject: slider.serialized({
+                        repeats: slider.repeatCount - 1
+                    })
+                })
             })
             evt.preventDefault()
         }
@@ -233,13 +244,7 @@ export class ToolManager {
         }
     }
 
-    copiedHitObjects: SerializedHitObject[] = []
-
-    private onCommand(opCode: ServerOpCode, payload: any) {
-        if (opCode === ServerOpCode.HitObjectSelection) {
-
-        }
-    }
+    copiedHitObjects: HitObjectData[] = []
 
     handleMouseMove(mousePos: Vec2) {
         this.mousePos = mousePos

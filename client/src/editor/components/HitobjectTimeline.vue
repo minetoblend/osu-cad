@@ -40,7 +40,7 @@ function render() {
   const endTime = currentTime + visibleDuration / 2
 
   const ticks = [
-    ...generateTicks(ctx.state.beatmap.timing.uninheritedTimingPoints, startTime, endTime, 4)
+    ...generateTicks(ctx.beatmap.timing.uninheritedTimingPoints, startTime, endTime, 4)
   ]
 
 
@@ -83,7 +83,7 @@ function render() {
   })
 
   const hitObjects =
-      ctx.state.beatmap.hitobjects.getHitObjectsInRange(currentTime, visibleDuration / 2 + 1000, visibleDuration / 2 + 1000)
+      ctx.beatmap.hitobjects.getHitObjectsInRange(currentTime, visibleDuration / 2 + 1000, visibleDuration / 2 + 1000)
 
   hitObjects.reverse()
 
@@ -95,9 +95,7 @@ function render() {
     g.lineWidth = 10
 
     const x = timeToPx(it.overriddenTime) - g.lineWidth / 2
-    const radius = (height / 2) - 10
-
-
+    const radius = Math.max((height / 2) - 10, 1)
 
     if (duration === 0) {
       g.beginPath()

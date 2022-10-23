@@ -45,12 +45,6 @@ export class BeatmapController {
 
     @Get('/:id')
     async getTest(@Param('id') id: string) {
-
-
-        function isNumeric(value) {
-            return /^-?\d+$/.test(value);
-        }
-
         if (id.includes('_')) {
             const [mapsetId, beatmapId] = id.split('_')
             const mapsetPath = await this.osuApi.downloadBeatmapset(mapsetId)
@@ -74,10 +68,6 @@ export class BeatmapController {
 
                             hitObjects: beatmap.hitObjects.map(it => {
                                 let controlPoints = undefined;
-                                //      None,
-                                //      Bezier,
-                                //      Linear,
-                                //      Circle,
                                 if (it.points) {
                                     controlPoints = []
 
@@ -96,7 +86,7 @@ export class BeatmapController {
                                             kind = 1
                                         }
                                         if (i === 0 && it.curveType === 'pass-through')
-                                            kind = 3
+                                            kind = 2
 
                                         controlPoints.push({
                                             position,
@@ -111,7 +101,7 @@ export class BeatmapController {
                                     time: it.startTime,
                                     position: {x: it.position[0], y: it.position[1]},
                                     repeatCount: it.repeatCount,
-                                    pixelLength: it.pixelLength,
+                                    expectedDistance: it.pixelLength,
                                     curveType: it.curveType,
                                     controlPoints: controlPoints,//: it.points?.map(([x, y]) => ({x, y})),
                                     newCombo: it.newCombo,
@@ -240,7 +230,6 @@ export class BeatmapController {
             const beatmap = await this.beatmapService.findBeatmapById(id)
             beatmap.beatmapData = data
             await this.beatmapService.updateBeatmap(beatmap)
-            console.log('saved beatmap ' + id)
         } catch (e) {
 
         }

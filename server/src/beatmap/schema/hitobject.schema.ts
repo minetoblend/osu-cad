@@ -28,7 +28,7 @@ export interface SliderControlPointV1 {
 export const enum SliderControlPointTypeV1 {
     None,
     Bezier,
-    Linear,
     Circle,
+    Linear,
 }
 

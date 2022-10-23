@@ -1,58 +1,26 @@
-import {Client, Match, Session} from "@heroiclabs/nakama-js";
 import {inject} from "vue";
-import {filter, Subject} from "rxjs";
-import {nakamaHostname, nakamaPort} from "@/api";
+import {concatMap, filter, firstValueFrom, map, Observable, of, Subject} from "rxjs";
+import {ClientToServerMessage, ServerToClientMessage} from "protocol/commands";
+import {Client} from "@/networking";
 
 export class EditorConnector {
-    readonly #client = new Client("defaultkey", nakamaHostname(), nakamaPort().toString(), false, 10_000)
-    readonly #socket = this.#client.createSocket()
-    #session!: Session
+    #client!: Client<ServerToClientMessage, ClientToServerMessage>
 
-    readonly #decoder = new TextDecoder()
-
-    get ownUserId() {
-        return this.#session.user_id
+    get client() {
+        return this.#client
     }
 
-    get ownUserName() {
-        return this.#session.user_id
+    async connect(beatmapId: string, token: string) {
+        this.#client = new Client(ServerToClientMessage, ClientToServerMessage, `ws://${window.location.hostname}:7350/edit/${beatmapId}?token=${token}`)
+
+        this.#client.onMessage.subscribe(this.#onMessage)
+
+        await firstValueFrom(this.#client.onConnect)
+
     }
 
-    async connect(token: string) {
-        this.#session = await this.#client.authenticateCustom(token, true)
-
-        // this.#session = await this.#client.authenticateDevice(deviceId, true, username)
-        await this.#socket.connect(this.#session, true)
-        //
-        this.#setupListeners()
-    }
-
-    async listMatches() {
-        return this.#client.listMatches(
-            this.#session,
-        )
-    }
-
-    async joinMatchIdForBeatmap(beatmap: string): Promise<Match> {
-        const response = await this.#client.rpc(this.#session, 'GetMatchForBeatmap', {beatmap})
-        const payload = response.payload as { match?: string } | undefined
-        if (payload?.match) {
-            return await this.#socket.joinMatch(payload?.match)
-        }
-        throw new Error("Could not find match")
-    }
 
     readonly #onMatchData = new Subject<MatchEvent>()
-
-    #setupListeners() {
-        this.#socket.onmatchdata = matchData => this.#onMatchData.next({
-            matchId: matchData.match_id,
-            opCode: matchData.op_code,
-            payload: JSON.parse(
-                this.#decoder.decode(matchData.data)
-            )
-        })
-    }
 
     matchEvents(matchId?: string) {
         if (!matchId)
@@ -62,24 +30,38 @@ export class EditorConnector {
         )
     }
 
-    sendMatchState(match: Match, opCode: number, payload: string) {
-        return this.#socket.sendMatchState(match.match_id, opCode, payload)
+    readonly #onMessage = new Subject<ServerToClientMessage>()
+
+    readonly onMessage = this.#onMessage.pipe(concatMap(message => {
+        if (message.serverCommand?.$case === 'multiple')
+            return of(...message.serverCommand.multiple.messages)
+        else
+            return of(message)
+    }))
+
+    get onAnyCommand(): Observable<NonNullable<ServerToClientMessage['serverCommand']>> {
+        return this.onMessage
+            .pipe(map(message => message.serverCommand), filter(command => !!command)) as any
     }
 
-    get client() {
-        return this.#client
+    onCommand<T extends NonNullable<ServerToClientMessage['serverCommand']>['$case']>(opCode: T):
+    //@ts-ignore
+        Observable<Extract<NonNullable<ServerToClientMessage['serverCommand']>, { $case: T }>[T]> {
+        return this.onAnyCommand.pipe(filter(command => command.$case === opCode), map(command => command[opCode as keyof typeof command])) as any
     }
 
-    get socket() {
-        return this.#socket
+    sendMessage(message: ClientToServerMessage) {
+        this.client.send(message)
     }
 
-    get session() {
-        return this.#session
+    disconnect() {
+        this.client.close()
     }
-
-
 }
+
+export type ClientCommandType = NonNullable<ClientToServerMessage['clientCommand']>['$case']
+//@ts-ignore somehow this works despite there being an error without the ts-ignore
+export type ClientCommandPayload<T extends ClientCommandType> = NonNullable<Extract<NonNullable<ClientToServerMessage['clientCommand']>, { $case: T }>>[T]
 
 export interface MatchEvent {
     matchId: string,

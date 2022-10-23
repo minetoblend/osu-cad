@@ -34,10 +34,10 @@ export class PlayfieldDrawable extends Container {
     }
 
 
-    #drawableHitObjects = new Map<string, DrawableHitObject>()
+    #drawableHitObjects = new Map<number, DrawableHitObject>()
     #hitObjectContainer = new Container()
 
-    #drawableFollowPoints = new Map<string, DrawableFollowPoint>()
+    #drawableFollowPoints = new Map<number, DrawableFollowPoint>()
     #followPointContainer = new Container()
 
     shouldUpdate = true
@@ -50,7 +50,7 @@ export class PlayfieldDrawable extends Container {
     updateHitObjects() {
         const currentTime = this.context.clock.animatedTime
 
-        const hitObjects = this.context.state.beatmap.hitobjects.getHitObjectsInRange(
+        const hitObjects = this.context.beatmap.hitobjects.getHitObjectsInRange(
             currentTime,
             750,
             1000

@@ -32,8 +32,8 @@ export interface SerializedTimingPoint {
 }
 
 export interface SerializedHitObject<Type extends string = 'circle' | 'slider'> {
-    id: string
-    selectedBy: string | null
+    id: number
+    selectedBy: number | null
     newCombo: boolean
 
     time: number
@@ -69,6 +69,7 @@ export interface SerializedSliderControlPoint {
 export const enum SliderControlPointType {
     None,
     Bezier,
-    Linear,
     Circle,
+    Linear,
+
 }

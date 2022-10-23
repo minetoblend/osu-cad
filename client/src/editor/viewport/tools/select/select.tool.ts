@@ -6,7 +6,6 @@ import {PathVisualizer} from "@/editor/viewport/tools/path.visualizer";
 import {HitObjectDragOperation} from "@/editor/viewport/tools/select/hitobject.drag.operation";
 import {ControlPointDragOperation} from "@/editor/viewport/tools/select/controlPointDragOperation";
 import {SliderControlPointType} from "@common/types";
-import {ClientOpCode} from "@common/opcodes";
 import {Slider} from "@/editor/hitobject/slider";
 import {SliderSubdivideOperation} from "@/editor/viewport/tools/select/slider.subdivide.operation";
 import {createResnappedPath} from "@/editor/viewport/tools/util";
@@ -144,12 +143,9 @@ export class SelectTool extends ViewportTool {
     deleteControlPoints(hitObject: Slider, indices: number[]) {
         const shouldDelete = new Set(indices)
 
-        const serialized = hitObject.serialized()
         const controlPoints = hitObject.path.controlPoints.value.filter((_, index) => !shouldDelete.has(index))
 
-        serialized.controlPoints = controlPoints
-
-        this.sendMessage(ClientOpCode.UpdateHitObject, serialized)
+        this.sendMessage('updateHitObject', {hitObject: hitObject.serialized({controlPoints})})
         return true
 
     }
@@ -163,15 +159,17 @@ export class SelectTool extends ViewportTool {
 
         const path = createResnappedPath(controlPoints, hitObject, this.ctx)
 
-        const serialized = hitObject.serialized()
-        serialized.controlPoints = controlPoints
-        serialized.pixelLength = path.expectedLength
 
         hitObject.applyOverrides({
             path
         }, false)
 
-        this.sendMessage(ClientOpCode.UpdateHitObject, serialized)
+        this.sendMessage('updateHitObject', {
+            hitObject: hitObject.serialized({
+                controlPoints,
+                expectedDistance: path.expectedDistance
+            })
+        })
     }
 
     onDragStart(evt: DragEvent) {
@@ -208,11 +206,14 @@ export class SelectTool extends ViewportTool {
 
             const path = createResnappedPath(controlPoints, hitObject, this.ctx)
 
-            const serialized = hitObject.serialized()
             hitObject.applyOverrides({path}, false)
-            serialized.controlPoints = path.controlPoints.value
-            serialized.pixelLength = path.expectedLength
-            this.sendMessage(ClientOpCode.UpdateHitObject, serialized)
+
+            this.sendMessage('updateHitObject', {
+                hitObject: hitObject.serialized({
+                    controlPoints: path.controlPoints.value,
+                    expectedDistance: path.expectedDistance
+                })
+            })
             return true
         }
 
@@ -222,11 +223,17 @@ export class SelectTool extends ViewportTool {
                 controlPoints.splice(index, 1)
                 const path = createResnappedPath(controlPoints, hitObject, this.ctx)
 
-                const serialized = hitObject.serialized()
                 hitObject.applyOverrides({path}, false)
-                serialized.controlPoints = path.controlPoints.value
-                serialized.pixelLength = path.expectedLength
-                this.sendMessage(ClientOpCode.UpdateHitObject, serialized)
+
+
+
+                this.sendMessage('updateHitObject', {
+                    hitObject: hitObject.serialized({
+                        controlPoints,
+                        expectedDistance: path.expectedDistance
+                    })
+                })
+
             } else {
                 this.showControlPointDropdown(hitObject, index, new Vec2(evt.evt.clientX, evt.evt.clientY))
             }
@@ -240,8 +247,6 @@ export class SelectTool extends ViewportTool {
         if (this.dragOperation)
             return
 
-        console.log(evt.detail)
-
         if (evt.detail === 'r') {
             evt.preventDefault()
             const bounds = new Bounds()
@@ -249,7 +254,6 @@ export class SelectTool extends ViewportTool {
                 bounds.addPoint(it.position)
                 bounds.addPoint(it.endPosition)
             })
-            console.log(bounds, this.selection)
             if (bounds.isEmpty())
                 return;
             const center = new Vec2(
