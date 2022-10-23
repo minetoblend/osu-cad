@@ -1,5 +1,5 @@
 import {HitObject, HitObjectOverrides} from "@/editor/hitobject/index";
-import {SerializedHitObject, SerializedSlider, SliderControlPointType} from "@common/types";
+import {SerializedSlider, SliderControlPointType} from "@common/types";
 import {SliderControlPoint, SliderPath} from "@/editor/hitobject/sliderPath";
 import {Vec2} from "@/util/math";
 import {EditorContext} from "@/editor";
@@ -7,6 +7,7 @@ import {BeatmapState} from "@/editor/state/beatmap";
 import {animate} from "@/util/animation";
 import {ref, shallowRef} from "vue";
 import gsap from 'gsap'
+import {ControlPointKind, HitObject as HitObjectData, Slider as SliderData} from "protocol/commands";
 
 export class Slider extends HitObject<SerializedSlider, SliderOverrides> {
 
@@ -27,7 +28,7 @@ export class Slider extends HitObject<SerializedSlider, SliderOverrides> {
 
 
     get spanDuration() {
-        return this.path.expectedLength * this.velocity
+        return this.path.expectedDistance * this.velocity
     }
 
     constructor() {
@@ -36,7 +37,9 @@ export class Slider extends HitObject<SerializedSlider, SliderOverrides> {
             selectedBy: null,
             time: null,
             controlPoints: null,
-            expectedLength: null
+            expectedDistance: null,
+            repeats: null,
+            newCombo: null,
         });
     }
 
@@ -50,32 +53,26 @@ export class Slider extends HitObject<SerializedSlider, SliderOverrides> {
         return this.time + this.duration
     }
 
-    updateFrom(serialized: SerializedHitObject): void {
-        if (serialized.type !== 'slider')
-            throw Error('Not a slider')
-        let data = serialized as SerializedSlider
+    updateFrom(hitObject: HitObjectData) {
+        super.updateFrom(hitObject)
 
-        super.updateFrom(serialized)
+        const sliderData = (hitObject.kind as any)?.slider as SliderData
 
         this.path.controlPoints.value.splice(0)
-
-        this.path.controlPoints.value.push(...data.controlPoints.map(it => new SliderControlPoint(
-            Vec2.from(it.position),
-            it.kind
+        this.path.controlPoints.value.push(...sliderData.controlPoints.map(it => new SliderControlPoint(
+            Vec2.from(it.position!),
+            it.kind as unknown as SliderControlPointType
         )))
-
-        this.path.expectedLength = data.pixelLength
-
-        this.repeatCount = data.repeatCount
+        this.path.expectedDistance = sliderData.expectedDistance
+        this.repeatCount = sliderData.repeats
+        this.path.calculatePath()
     }
-
 
     applyDefaults(state: BeatmapState, ctx: EditorContext) {
         super.applyDefaults(state, ctx)
 
         const timing = state.timing.getTimingPointAt(this.time, true)!
         const overrides = state.timing.getTimingPointAt(this.time, false)!
-
 
         const sv = state.difficulty.sliderMultiplier.value * (overrides?.sv ?? 1.0)
         let beatDuration = timing.beatDuration!
@@ -135,38 +132,37 @@ export class Slider extends HitObject<SerializedSlider, SliderOverrides> {
         super.clearOverrides()
         this.#overriddenPath.value = undefined
         this.overrides.controlPoints = null
-        this.overrides.expectedLength = null
+        this.overrides.expectedDistance = null
     }
 
-    serialized(): SerializedSlider {
-        const points: Vec2[] = []
-        this.path.controlPoints.value.forEach((p, index) => {
-            if (index === 0)
-                return;
-
-            if (p.kind !== SliderControlPointType.None) {
-                points.push(p.position.clone())
-            }
-            points.push(p.position.clone())
-        })
-
-        let curveType = 'bezier'
-        if (this.path.controlPoints.value[0]?.kind === SliderControlPointType.Circle)
-            curveType = 'pass-through'
+    serialized(overrides?: Partial<SliderOverrides>): HitObjectData {
+        const sliderOverrides: any = {}
+        if (overrides?.expectedDistance !== undefined)
+            sliderOverrides.expectedDistance = overrides.expectedDistance
+        if (overrides?.controlPoints)
+            sliderOverrides.controlPoints = overrides.controlPoints!.map(t => ({
+                position: t.position,
+                kind: t.kind as unknown as ControlPointKind
+            }))
 
         return {
             id: this.id,
-            time: this.time,
-            selectedBy: this.selectedBy.value,
-            position: this.position,
-            type: 'slider',
-            repeatCount: this.repeatCount,
-            controlPoints: this.path.controlPoints.value.map(it => it.clone()),
-            pixelLength: this.path.expectedLength,
-            //@ts-ignore
-            curveType,
-            newCombo: this.newCombo
-        }
+            startTime: overrides?.time ?? this.time,
+            selectedBy: this.selectedBy.value ?? undefined,
+            position: overrides?.position ?? this.position,
+            newCombo: overrides?.newCombo ?? this.newCombo,
+            kind: {
+                $case: 'slider', slider: {
+                    expectedDistance: this.path.expectedDistance,
+                    controlPoints: this.path.controlPoints.value.map(t => ({
+                        position: t.position,
+                        kind: t.kind as unknown as ControlPointKind
+                    })),
+                    repeats: overrides?.repeats ?? this.repeatCount,
+                    ...sliderOverrides
+                }
+            }
+        };
     }
 
     #overriddenPath = shallowRef<SliderPath>()
@@ -179,7 +175,7 @@ export class Slider extends HitObject<SerializedSlider, SliderOverrides> {
             const p = this.#overriddenPath.value!
 
             p.controlPoints.value = this.overrides.controlPoints
-            p.expectedLength = this.overrides.expectedLength ?? this.path.expectedLength
+            p.expectedDistance = this.overrides.expectedDistance ?? this.path.expectedDistance
             p.start = this.path.start
             p.end = this.path.end
             p.calculatePath()
@@ -226,8 +222,8 @@ export class Slider extends HitObject<SerializedSlider, SliderOverrides> {
 
         if (animated) {
 
-            if (overrides.expectedLength) {
-                this.overrides.expectedLength = overrides.expectedLength
+            if (overrides.expectedDistance) {
+                this.overrides.expectedDistance = overrides.expectedDistance
             }
 
             if (overrides.controlPoints) {
@@ -258,11 +254,11 @@ export class Slider extends HitObject<SerializedSlider, SliderOverrides> {
                 this.#overriddenPath.value = overrides.path
                 this.#overriddenPath.value!.setSnakedRange(this.path.start, this.path.end, true)
                 this.overrides.controlPoints = overrides.path.controlPoints
-                this.overrides.expectedLength = overrides.path.expectedLength
+                this.overrides.expectedDistance = overrides.path.expectedDistance
 
             } else {
-                if (overrides.expectedLength) {
-                    this.overrides.expectedLength = overrides.expectedLength
+                if (overrides.expectedDistance) {
+                    this.overrides.expectedDistance = overrides.expectedDistance
                 }
                 if (overrides.controlPoints) {
                     this.overrides.controlPoints = overrides.controlPoints.map((it: any) => new SliderControlPoint(
@@ -282,8 +278,8 @@ export class Slider extends HitObject<SerializedSlider, SliderOverrides> {
     }
 
     get overriddenSpanDuration() {
-        if (this.overrides.expectedLength) {
-            return this.overrides.expectedLength * this.velocity
+        if (this.overrides.expectedDistance) {
+            return this.overrides.expectedDistance * this.velocity
         }
         return this.spanDuration
     }
@@ -294,10 +290,13 @@ export class Slider extends HitObject<SerializedSlider, SliderOverrides> {
             this.#overriddenPath.value.setSnakedRange(start, end)
         }
     }
+
+
 }
 
 
-interface SliderOverrides extends HitObjectOverrides {
+export interface SliderOverrides extends HitObjectOverrides {
     controlPoints: SliderControlPoint[] | null
-    expectedLength: number | null
+    expectedDistance: number | null
+    repeats: number | null
 }

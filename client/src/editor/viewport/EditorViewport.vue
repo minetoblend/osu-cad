@@ -50,7 +50,6 @@ import {Container, Renderer, Ticker} from "pixi.js";
 import {PlayfieldDrawable} from "@/editor/viewport/playfield";
 import {useContext} from "@/editor";
 import {Vec2} from "@/util/math";
-import {ClientOpCode} from "@common/opcodes";
 import {CursorContainer} from "@/editor/viewport/cursorContainer";
 import {ViewportMenuOptions} from "@/editor/viewport/menuOptions";
 import {ToolManager} from "@/editor/viewport/tools/manager";
@@ -161,13 +160,14 @@ watch(() => [cursorInside.value, cursorPos.value], () => {
 setInterval(() => {
   if (cursorChanged) {
     cursorChanged = false
-    if (cursorInside) {
-      ctx.sendMessage(ClientOpCode.CursorPos, {pos: cursorPos.value!})
+    if (cursorInside && cursorPos.value!) {
+      ctx.sendMessage('cursorPos', cursorPos.value!)
+      // ctx.sendMessageLegacy(ClientOpCode.CursorPos, {pos: cursorPos.value!})
     } else {
-      ctx.sendMessage(ClientOpCode.CursorPos, {pos: null})
+      // ctx.sendMessageLegacy(ClientOpCode.CursorPos, {pos: null})
     }
   }
-}, 100)
+}, 50)
 
 function handleMouseDown(evt: MouseEvent) {
   if (!viewportContainer.value || !inFocus) {

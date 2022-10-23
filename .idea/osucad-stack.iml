@@ -2,9 +2,12 @@
 <module type="WEB_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/gameserver/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/wasm/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/wasm/target" />
       <excludeFolder url="file://$MODULE_DIR$/gameserver/build" />
+      <excludeFolder url="file://$MODULE_DIR$/gameserver/target" />
+      <excludeFolder url="file://$MODULE_DIR$/wasm/pkg" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

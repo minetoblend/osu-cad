@@ -8,7 +8,6 @@ import {SliderControlPoint, SliderPath} from "@/editor/hitobject/sliderPath";
 import {Slider} from "@/editor/hitobject/slider";
 import {SliderControlPointType} from "@common/types";
 import {nextTick, ref} from "vue";
-import {ClientOpCode} from "@common/opcodes";
 import {PathVisualizer} from "@/editor/viewport/tools/path.visualizer";
 
 export class SliderCreateTool extends ViewportTool {
@@ -20,22 +19,7 @@ export class SliderCreateTool extends ViewportTool {
 
         if (evt.rightMouseButton) {
             if (this.slider) {
-                this.endOperation()
-                this.#cursor.visible = true
-
-                const serialized = this.slider.serialized()
-
-                serialized.controlPoints = this.slider.overrides.controlPoints!.map(it => it.clone())
-
-                serialized.pixelLength = this.slider.overrides.expectedLength!
-
-                this.sendMessage(ClientOpCode.UpdateHitObject, serialized)
-
-                this.slider = undefined
-                this.currentPoint = undefined
-                this.lastPoint = undefined
-                this.controlPoints.value = undefined
-                this.#pathContainer.removeChildren()
+               this.commit()
             } else
                 this.manager.toolId = 'select'
         }
@@ -56,8 +40,9 @@ export class SliderCreateTool extends ViewportTool {
         this.overlayContainer.addChild(this.#cursor)
         this.overlayContainer.addChild(this.pathVisualizer)
         this.#cursor.visible = true
-
     }
+
+
 
     onMouseMove(mousePos: Vec2) {
         this.#cursor.position.copyFrom(mousePos)
@@ -77,7 +62,7 @@ export class SliderCreateTool extends ViewportTool {
 
             const snapSize = 0.25 * 100 * sv
 
-            path.expectedLength = Math.floor(length / snapSize) * snapSize
+            path.expectedDistance = Math.floor(length / snapSize) * snapSize
             path.setSnakedRange(path.start, path.end, true)
             path.fullPath.value = path.getRange(0, 1)
 
@@ -87,12 +72,14 @@ export class SliderCreateTool extends ViewportTool {
 
 
             this.sendOperationCommand(
-                ClientOpCode.HitObjectOverride,
+                'setHitObjectOverrides',
                 {
                     id: this.slider!.id,
                     overrides: {
-                        controlPoints: path.controlPoints.value.map(it => it.clone()),
-                        expectedLength: path.expectedLength,
+                        controlPoints: {
+                            controlPoints: path.controlPoints.value.map(it => it.clone()) as any
+                        },
+                        expectedDistance: path.expectedDistance,
                     }
                 }
             )
@@ -123,9 +110,11 @@ export class SliderCreateTool extends ViewportTool {
 
                 slider.position = evt.current
 
-                const response = await this.sendMessageWithResponse(ClientOpCode.CreateHitObject, slider.serialized())
+                const response = await this.ctx.sendMessageWithResponse('createHitObject', {
+                    hitObject: slider.serialized()
+                }) as any
 
-                const id = response.payload.id
+                const id = response.id
                 nextTick(() => {
                     this.startOperation()
                     this.#cursor.visible = false
@@ -137,7 +126,6 @@ export class SliderCreateTool extends ViewportTool {
 
                     this.lastPoint = this.controlPoints.value[0]
 
-                    console.log(this.slider)
                     this.pathVisualizer.hitObject = this.slider
 
                     this.isCreating = false
@@ -155,7 +143,26 @@ export class SliderCreateTool extends ViewportTool {
     }
 
     onToolDeactivated() {
+        this.commit()
+    }
 
+    commit() {
+        if(this.slider) {
+
+            this.endOperation()
+            this.#cursor.visible = true
+
+
+            const serialized = this.slider.serialized(this.slider.overrides);
+
+            this.sendMessage('updateHitObject', {hitObject: serialized})
+
+            this.slider = undefined
+            this.currentPoint = undefined
+            this.lastPoint = undefined
+            this.controlPoints.value = undefined
+            this.#pathContainer.removeChildren()
+        }
     }
 
     private addControlPoint(current: Vec2) {

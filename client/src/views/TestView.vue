@@ -1,8 +1,6 @@
 <template>
-  <EditorLayout>
-
-  </EditorLayout>
+  <div></div>
 </template>
 
 <script setup lang="ts">
-import EditorLayout from "@/components/EditorLayout.vue";</script>
+</script>

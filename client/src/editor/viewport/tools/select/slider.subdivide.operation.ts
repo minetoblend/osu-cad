@@ -4,21 +4,17 @@ import {ViewportTool} from "@/editor/viewport/tools";
 import {Slider} from "@/editor/hitobject/slider";
 import {SliderControlPoint, SliderPath} from "@/editor/hitobject/sliderPath";
 import {SliderControlPointType} from "@common/types";
-import {ClientOpCode} from "@common/opcodes";
 
 export class SliderSubdivideOperation extends DragOperation {
     constructor(readonly tool: ViewportTool, readonly hitObject: Slider, readonly lineIndex: number) {
         super();
-        console.log('subdivide')
     }
 
     createPath(evt: DragEvent) {
         const controlPoints = this.hitObject.path.controlPoints.value.map(it => it.clone())
         const p = new SliderControlPoint(evt.current, SliderControlPointType.None)
         controlPoints.splice(this.lineIndex, 0, p)
-        const path = this.createResnappedPath(controlPoints)
-
-        return path
+        return this.createResnappedPath(controlPoints)
     }
 
     onDrag(evt: DragEvent): boolean {
@@ -27,11 +23,11 @@ export class SliderSubdivideOperation extends DragOperation {
 
         this.hitObject.applyOverrides({path}, false)
 
-        this.tool.sendOperationCommand(ClientOpCode.HitObjectOverride, {
+        this.tool.sendOperationCommand('setHitObjectOverrides', {
             id: this.hitObject.id,
             overrides: {
-                controlPoints: path.controlPoints.value,
-                expectedLength: path.expectedLength
+                controlPoints: {controlPoints: path.controlPoints.value as any},
+                expectedDistance: path.expectedDistance
             }
         })
 
@@ -40,11 +36,13 @@ export class SliderSubdivideOperation extends DragOperation {
 
     commit(evt: DragEvent): void {
         const path = this.createPath(evt)
-        const serialzed = this.hitObject.serialized()
-        serialzed.pixelLength = path.expectedLength
-        serialzed.controlPoints = path.controlPoints.value
 
-        this.tool.sendMessage(ClientOpCode.UpdateHitObject, serialzed)
+        this.tool.sendMessage('updateHitObject', {
+            hitObject: this.hitObject.serialized({
+                controlPoints: path.controlPoints.value,
+                expectedDistance: path.expectedDistance
+            })
+        })
     }
 
     createResnappedPath(controlPoints: SliderControlPoint[]) {
@@ -60,7 +58,7 @@ export class SliderSubdivideOperation extends DragOperation {
 
         const snapSize = 0.25 * 100 * sv
 
-        path.expectedLength = Math.floor(length / snapSize) * snapSize
+        path.expectedDistance = Math.floor(length / snapSize) * snapSize
         path.setSnakedRange(path.start, path.end, true)
         path.fullPath.value = path.getRange(0, 1)
 

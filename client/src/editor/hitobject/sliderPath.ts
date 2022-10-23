@@ -41,7 +41,7 @@ export class SliderPath extends DisposableObject {
     readonly controlPoints = ref<SliderControlPoint[]>([])
 
     private _dirty = ref(true)
-    expectedLength: number = 0
+    expectedDistance: number = 0
 
     get dirty() {
         return this._dirty.value
@@ -51,7 +51,7 @@ export class SliderPath extends DisposableObject {
         super()
 
         this.addDisposable(
-            watch(this.controlPoints, v => {
+            watch(this.controlPoints, () => {
                 this.markDirty()
             }, {deep: true})
         )
@@ -95,7 +95,7 @@ export class SliderPath extends DisposableObject {
     getProgress(p: number) {
         let i = 0;
 
-        const d0 = p * this.expectedLength;
+        const d0 = p * this.expectedDistance;
 
         for (; i < this.calculatedPath.count && this.calculatedPath.cumulativeLength[i] < d0; ++i) {
         }
@@ -114,8 +114,8 @@ export class SliderPath extends DisposableObject {
     }
 
     getRange(start: number, end: number) {
-        let d0 = start * this.expectedLength
-        let d1 = end * this.expectedLength
+        let d0 = start * this.expectedDistance
+        let d1 = end * this.expectedDistance
 
         let i = 0;
 

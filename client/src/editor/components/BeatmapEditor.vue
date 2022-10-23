@@ -27,9 +27,9 @@
     <div class="user-list-container">
       <UserList/>
     </div>
-    <n-card class="chat-container" v-if="true">
-      <ChatView :client="client" :session="session" :socket="socket" :room-name="ctx.beatmapId"/>
-    </n-card>
+<!--    <n-card class="chat-container" v-if="true">-->
+<!--      <ChatView :client="client" :session="session" :socket="socket" :room-name="ctx.beatmapId"/>-->
+<!--    </n-card>-->
     <!--    </div>-->
   </shortcut-receiver>
 </template>
@@ -39,7 +39,6 @@
 import TimingScreen from "@/editor/components/screens/TimingScreen.vue";
 import TimelineOverview from "@/editor/components/TimelineOverview.vue";
 import {useContext} from "@/editor";
-import ChatView from "@/components/ChatView.vue";
 import UserList from "@/components/UserList.vue";
 import ShortcutReceiver from "@/components/ShortcutReceiver.vue";
 import ComposeScreen from "@/editor/components/screens/ComposeScreen.vue";
@@ -60,22 +59,22 @@ function handleShortcut(evt: CustomEvent) {
   if (evt.detail === 'arrowleft') {
     let time = ctx.clock.time;
 
-    const timingPoint = findCurrentTimingPoint(ctx.state.beatmap.timing.uninheritedTimingPoints, time)
+    const timingPoint = findCurrentTimingPoint(ctx.beatmap.timing.uninheritedTimingPoints, time)
 
     const divisor = 4
     time -= (timingPoint?.beatLength ?? 800) / divisor
-    time = snapTime(ctx.state.beatmap.timing.uninheritedTimingPoints, time, 4)
+    time = snapTime(ctx.beatmap.timing.uninheritedTimingPoints, time, 4)
     ctx.clock.seek(time, true)
   }
 
   if (evt.detail === 'arrowright') {
     let time = ctx.clock.time;
 
-    const timingPoint = findCurrentTimingPoint(ctx.state.beatmap.timing.uninheritedTimingPoints, time)
+    const timingPoint = findCurrentTimingPoint(ctx.beatmap.timing.uninheritedTimingPoints, time)
 
     const divisor = 4
     time += (timingPoint?.beatLength ?? 800) / divisor
-    time = snapTime(ctx.state.beatmap.timing.uninheritedTimingPoints, time, 4)
+    time = snapTime(ctx.beatmap.timing.uninheritedTimingPoints, time, 4)
     ctx.clock.seek(time, true)
   }
 
@@ -84,7 +83,7 @@ function handleShortcut(evt: CustomEvent) {
 window.addEventListener("wheel", evt => {
   let time = ctx.clock.time;
 
-  const timingPoint = findCurrentTimingPoint(ctx.state.beatmap.timing.uninheritedTimingPoints, time)
+  const timingPoint = findCurrentTimingPoint(ctx.beatmap.timing.uninheritedTimingPoints, time)
 
   const divisor = 4
   let multiplier = 1
@@ -95,7 +94,7 @@ window.addEventListener("wheel", evt => {
     time += (timingPoint?.beatLength ?? 800) / divisor * multiplier
   else
     time -= (timingPoint?.beatLength ?? 800) / divisor * multiplier
-  time = snapTime(ctx.state.beatmap.timing.uninheritedTimingPoints, time, 4)
+  time = snapTime(ctx.beatmap.timing.uninheritedTimingPoints, time, 4)
   ctx.clock.seek(time, true)
 })
 

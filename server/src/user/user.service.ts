@@ -18,8 +18,6 @@ export class UserService {
         let user = await this.userRepository.findOne({where: {profileId}})
 
         if (user) {
-            console.log(profile)
-
             user.displayName = profile.displayName
             user.avatarUrl = profile._json.avatar_url
             user.accessToken = accessToken

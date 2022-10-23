@@ -5,11 +5,10 @@ import {BeatmapState} from "@/editor/state/beatmap";
 import {Vec2} from "@/util/math";
 import {DrawableHitObject} from "@/editor/viewport/drawable/hitobject";
 import {HitObject} from "@/editor/hitobject";
-import {ClientMessages, ClientOpCode} from "@common/opcodes";
 import {DragEvent} from "@/util/drag";
 import {ToolManager} from "@/editor/viewport/tools/manager";
 import {DropdownOption} from "naive-ui";
-import {MatchEvent} from "@/editor/connector";
+import {ClientCommandPayload, ClientCommandType} from "@/editor/connector";
 import {HitCircle} from "@/editor/hitobject/circle";
 import {Slider} from "@/editor/hitobject/slider";
 import {DragOperation} from "@/editor/viewport/tools/operation";
@@ -33,7 +32,7 @@ export abstract class ViewportTool {
 
     getHitObjectsAt(pos: Vec2, selectable = false): HitObject[] {
         return (this.drawableHitObjects as DrawableHitObject[])
-            .filter(it => !selectable || (!it.hitObject!.selectedBy.value || it.hitObject!.selectedBy.value === this.ctx.state.user.sessionId))
+            .filter(it => !selectable || (!it.hitObject!.selectedBy.value || it.hitObject!.selectedBy.value === this.ctx.users.sessionId))
             .filter(it => it.isMouseInside(pos))
             .filter(it => it.isVisibleAt(this.ctx.currentTime))
             .filter(it => !it.hitObject!.destroyed)
@@ -43,7 +42,7 @@ export abstract class ViewportTool {
     getCirclesAt(pos: Vec2, selectable = false): HitCircle[] {
         return (this.drawableHitObjects as DrawableHitObject[])
             .filter(it => it.hitObject instanceof HitCircle)
-            .filter(it => !selectable || (!it.hitObject!.selectedBy.value || it.hitObject!.selectedBy.value === this.ctx.state.user.sessionId))
+            .filter(it => !selectable || (!it.hitObject!.selectedBy.value || it.hitObject!.selectedBy.value === this.ctx.users.sessionId))
             .filter(it => it.isMouseInside(pos))
             .filter(it => it.isVisibleAt(this.ctx.currentTime))
             .filter(it => !it.hitObject!.destroyed)
@@ -53,7 +52,7 @@ export abstract class ViewportTool {
     getSlidersAt(pos: Vec2, selectable = false): Slider[] {
         return (this.drawableHitObjects as DrawableHitObject[])
             .filter(it => it.hitObject instanceof Slider)
-            .filter(it => !selectable || (!it.hitObject!.selectedBy.value || it.hitObject!.selectedBy.value === this.ctx.state.user.sessionId))
+            .filter(it => !selectable || (!it.hitObject!.selectedBy.value || it.hitObject!.selectedBy.value === this.ctx.users.sessionId))
             .filter(it => it.isMouseInside(pos))
             .filter(it => it.isVisibleAt(this.ctx.currentTime))
             .filter(it => !it.hitObject!.destroyed)
@@ -72,7 +71,7 @@ export abstract class ViewportTool {
     }
 
     select(...objects: HitObject[]) {
-        return this.sendMessage(ClientOpCode.SelectHitObject, {
+        return this.sendMessage('selectHitObject', {
             ids: objects.map(it => it.id),
             selected: true,
             unique: true
@@ -80,7 +79,7 @@ export abstract class ViewportTool {
     }
 
     addToSelection(...objects: HitObject[]) {
-        return this.sendMessage(ClientOpCode.SelectHitObject, {
+        return this.sendMessage('selectHitObject', {
             ids: objects.map(it => it.id),
             selected: true,
             unique: false
@@ -88,7 +87,7 @@ export abstract class ViewportTool {
     }
 
     deselect(...objects: HitObject[]) {
-        return this.sendMessage(ClientOpCode.SelectHitObject, {
+        return this.sendMessage('selectHitObject', {
             ids: objects.map(it => it.id),
             selected: false,
             unique: false
@@ -96,7 +95,7 @@ export abstract class ViewportTool {
     }
 
     deselectAll() {
-        return this.sendMessage(ClientOpCode.SelectHitObject, {
+        return this.sendMessage('selectHitObject', {
             ids: [],
             selected: false,
             unique: true
@@ -109,7 +108,7 @@ export abstract class ViewportTool {
     // region operation
 
     #operationInterval: NodeJS.Timer | undefined = undefined
-    #operationScheduledCommands: [ClientOpCode, any][] = []
+    #operationScheduledCommands: [ClientCommandType, any][] = []
 
     async startOperation(start?: () => any, interval = 100) {
 
@@ -126,20 +125,19 @@ export abstract class ViewportTool {
         clearInterval(this.#operationInterval)
     }
 
-
-    sendOperationCommands(commands: [ClientOpCode, any][]) {
+    sendOperationCommands(commands: [ClientCommandType, any][]) {
         this.#operationScheduledCommands = commands
     }
 
-    sendOperationCommand<T extends keyof ClientMessages>(opCode: T, ...params: Parameters<ClientMessages[T]>) {
-        this.#operationScheduledCommands = [[opCode, params[0]]]
+    sendOperationCommand<T extends ClientCommandType>(opCode: T, payload: ClientCommandPayload<T>) {
+        this.#operationScheduledCommands = [[opCode, payload]]
     }
 
     #operationUpdate() {
         if (this.#operationScheduledCommands.length > 0) {
 
             this.#operationScheduledCommands.forEach(([opCode, payload]) => {
-                this.sendMessage(opCode as keyof ClientMessages, payload)
+                this.sendMessage(opCode, payload)
             })
 
             this.#operationScheduledCommands = []
@@ -148,17 +146,13 @@ export abstract class ViewportTool {
 
     // endregion
 
-    sendMessage<T extends keyof ClientMessages>(opCode: T, ...params: Parameters<ClientMessages[T]>) {
-        return this.ctx.sendMessage(opCode, ...params)
-    }
-
-    sendMessageWithResponse<T extends keyof ClientMessages>(opCode: T, ...params: Parameters<ClientMessages[T]>): Promise<MatchEvent> {
-        return this.ctx.sendMessageWithResponse(opCode, ...params)
+    sendMessage<T extends ClientCommandType>(opCode: T, payload: ClientCommandPayload<T>) {
+        this.ctx.sendMessage(opCode, payload)
     }
 
     deleteHitObjects(...hitObjects: HitObject[]) {
         if (hitObjects.length > 0)
-            return this.ctx.sendMessage(ClientOpCode.DeleteHitObject, {ids: hitObjects.map(it => it.id)})
+            this.sendMessage('deleteHitObject', {ids: hitObjects.map(t => t.id)})
     }
 
     showContextMenu(options: DropdownOption[], pos: Vec2, onSelect: (value: string) => void) {

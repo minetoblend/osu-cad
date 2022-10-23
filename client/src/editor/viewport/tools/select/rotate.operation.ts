@@ -3,9 +3,8 @@ import {Vec2} from "@/util/math";
 import {DragOperation} from "@/editor/viewport/tools/operation";
 import {DragEvent} from "@/util/drag";
 import {HitObject} from "@/editor/hitobject";
-import {Slider} from "@/editor/hitobject/slider";
+import {Slider, SliderOverrides} from "@/editor/hitobject/slider";
 import {SliderControlPoint} from "@/editor/hitobject/sliderPath";
-import {ClientOpCode} from "@common/opcodes";
 
 function mod(a: number, n: number) {
     return ((a % n) + n) % n
@@ -21,7 +20,6 @@ export class RotateOperation extends DragOperation {
         super();
         this.startAngle = center.angleTo(startPos)
         this.lastAngle = this.startAngle
-        console.log('rotate')
     }
 
     createOverrides(hitObject: HitObject) {
@@ -33,7 +31,7 @@ export class RotateOperation extends DragOperation {
                 it.position.rotateAround(this.center, this.totalAmount),
                 it.kind
             ))
-            return {position, controlPoints}
+            return {position, controlPoints} as Partial<SliderOverrides>
         }
         return {position}
     }
@@ -49,7 +47,12 @@ export class RotateOperation extends DragOperation {
 
                 it.applyOverrides(overrides, false)
 
-                return [ClientOpCode.HitObjectOverride, {id: it.id, overrides}]
+                return ['setHitObjectOverrides', {
+                    id: it.id, overrides: {
+                        ...overrides,
+                        controlPoints: overrides.controlPoints ? {controlPoints: overrides.controlPoints} : undefined
+                    }
+                }]
             })
         )
 
@@ -59,21 +62,12 @@ export class RotateOperation extends DragOperation {
     }
 
 
-
     commit(evt: DragEvent): void {
-        console.log('finish rotate')
         this.tool.selection.map(it => {
-            const serialized = it.serialized()
             const overrides = this.createOverrides(it)
 
-            console.log({
-                ...serialized,
-                ...overrides
-            })
-
-            this.tool.sendMessage(ClientOpCode.UpdateHitObject, {
-                ...serialized,
-                ...overrides
+            this.tool.sendMessage('updateHitObject', {
+                hitObject: it.serialized(overrides)
             })
         })
     }

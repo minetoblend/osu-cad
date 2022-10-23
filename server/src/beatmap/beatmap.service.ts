@@ -8,7 +8,6 @@ import {User} from "../user/user.entity";
 import * as path from "path";
 import {BeatmapDecoder} from 'osu-parsers'
 import {Beatmap as ParsedBeatmap, HitType, ISlidableObject, PathType} from 'osu-classes'
-import {BeatmapSchema} from "./schema/beatmap.schema";
 import {TimingPointV1} from "./schema/timing.schema";
 import * as uuid from 'uuid'
 import {HitCircleV1, HitObjectV1, SliderControlPointTypeV1, SliderV1} from "./schema/hitobject.schema";
@@ -45,9 +44,7 @@ export class BeatmapService {
         mapSet.title = parsedBeatmaps[0].metadata.title
         mapSet.titleUnicode = parsedBeatmaps[0].metadata.titleUnicode
 
-        const beatmaps = parsedBeatmaps.map(it => this.importBeatmap(it))
-
-        mapSet.difficulties = beatmaps
+        mapSet.difficulties = parsedBeatmaps.map(it => this.importBeatmap(it))
 
         mapSet.owner = user
 
@@ -59,9 +56,6 @@ export class BeatmapService {
             it.mapSet = undefined
         }))
 
-        console.log('rename')
-        console.log(directory)
-        console.log(path.resolve(directory, '..', mapSet.id))
 
         await promisify(rename)(directory, path.resolve(directory, '..', mapSet.id))
 
@@ -97,7 +91,7 @@ export class BeatmapService {
             timingPoint.sv = it.sliderVelocity
         })
 
-        const beatmapJson: BeatmapSchema = {
+        beatmap.beatmapData = {
             version: 1,
             difficulty: {
                 hpDrainRate: parsed.difficulty.drainRate,
@@ -152,13 +146,10 @@ export class BeatmapService {
                         pixelLength: slider.path.expectedDistance,
                         repeatCount: slider.repeats + 1
                     }
-                    console.log(hitObject)
                     return hitObject
                 }
             }).filter(it => it) as HitObjectV1[]
         }
-
-        beatmap.beatmapData = beatmapJson
 
         return beatmap
     }
@@ -168,9 +159,7 @@ export class BeatmapService {
 
         beatmap.difficultyName = parsed.Version
 
-        console.log(Object.keys(parsed))
-
-        const beatmapJson = {
+        beatmap.beatmapData = {
             difficulty: {
                 hpDrainRate: parseFloat(parsed.HPDrainRate),
                 circleSize: parseFloat(parsed.CircleSize),
@@ -182,10 +171,6 @@ export class BeatmapService {
 
             hitObjects: parsed.hitObjects.map(it => {
                 let controlPoints = undefined;
-                //      None,
-                //      Bezier,
-                //      Linear,
-                //      Circle,
                 if (it.points) {
                     controlPoints = []
 
@@ -240,8 +225,6 @@ export class BeatmapService {
                 return t
             })
         }
-
-        beatmap.beatmapData = beatmapJson
 
         return beatmap
     }

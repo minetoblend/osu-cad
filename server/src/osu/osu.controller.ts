@@ -12,7 +12,6 @@ export class OsuController {
     @Get('/me/beatmaps')
     @UseGuards(AuthGuard('jwt'))
     getOwnBeatmaps(@Req() req) {
-        console.log(req.user)
         const pending = this.osuApiService.getOwnBeatmaps(req.user, 'pending')
         const graved = this.osuApiService.getOwnBeatmaps(req.user, 'graveyard')
         const ranked = this.osuApiService.getOwnBeatmaps(req.user, 'ranked')

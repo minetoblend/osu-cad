@@ -1,5 +1,6 @@
 import {SerializedHitCircle} from "@common/types";
 import {HitObject, HitObjectOverrides} from "@/editor/hitobject/index";
+import {HitObject as HitObjectData} from 'protocol/commands'
 
 export class HitCircle extends HitObject<SerializedHitCircle, HitCircleOverrides> {
 
@@ -7,21 +8,22 @@ export class HitCircle extends HitObject<SerializedHitCircle, HitCircleOverrides
         super({
             position: null,
             time: null,
-            selectedBy: null
+            selectedBy: null,
+            newCombo: null,
         });
     }
 
-    serialized(): SerializedHitCircle {
+    serialized(overrides?: Partial<HitCircleOverrides>): HitObjectData {
         return {
             id: this.id,
-            time: this.time,
-            selectedBy: this.selectedBy.value,
-            position: this.position,
-            type: 'circle',
-            newCombo: this.newCombo,
-        }
+            startTime: overrides?.time ?? this.time,
+            selectedBy: this.selectedBy.value ?? undefined,
+            position: overrides?.position ?? this.position,
+            newCombo: overrides?.newCombo ?? this.newCombo,
+            kind: {$case: 'circle', circle: {}}
+        };
     }
 }
 
-interface HitCircleOverrides extends HitObjectOverrides {
+export interface HitCircleOverrides extends HitObjectOverrides {
 }

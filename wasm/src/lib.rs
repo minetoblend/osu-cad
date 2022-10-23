@@ -154,8 +154,8 @@ struct SliderGeometryData {
 enum ControlPointType {
     None,
     Linear,
-    Bezier,
     Circle,
+    Bezier,
 }
 
 impl Into<Vec2> for &JsVec2 {

@@ -99,7 +99,7 @@ export class DrawableSlider extends DrawableHitObject {
         const slider = this.slider
         if (!slider) return;
 
-        const tint = this.ctx.state.beatmap.metadata.getComboColor(slider.comboIndex.value)
+        const tint = this.ctx.beatmap.metadata.getComboColor(slider.comboIndex.value)
         this.#sliderStart.comboNumber = slider.comboNumber.value
 
         this.#tint.value
@@ -146,7 +146,7 @@ export class DrawableSlider extends DrawableHitObject {
         this.#sliderEnd.scale.set(0.55);
 
         if (slider.selectedBy.value) {
-            const color = this.ctx.state.user.getColor(slider.selectedBy.value)!
+            const color = this.ctx.users.getColor(slider.selectedBy.value)!
             this.#sliderBody.outlineColor = color
             this.#sliderStart.overlayTint = color
             this.#sliderEnd.overlayTint = color
@@ -172,9 +172,7 @@ export class DrawableSlider extends DrawableHitObject {
             sliderBallPos.y - slider.overriddenPosition.y
         )
 
-        const velocity = slider.velocity// Math.min(slider.velocity, 25)
-
-        // console.log(slider.velocity)/
+        const velocity = slider.velocity
 
         this.#sliderBall.gotoAndStop((Math.floor(time * 0.2 / velocity)) % 10)
 
@@ -189,7 +187,7 @@ export class DrawableSlider extends DrawableHitObject {
             this.#sliderBall.alpha = 0
             this.#sliderFollowCircle.alpha = 0
             if (this.#selectionOverlay) {
-                this.#selectionOverlay.alpha = slider.selectedBy.value === this.ctx.state.user.sessionId ? 1 : fadeInProgress
+                this.#selectionOverlay.alpha = slider.selectedBy.value === this.ctx.users.sessionId ? 1 : fadeInProgress
             }
             this.#sliderBody.alpha = animate(t, -fadeinTime, -preemptTime, 0, 1)
 
@@ -209,7 +207,7 @@ export class DrawableSlider extends DrawableHitObject {
             this.#sliderBody.alpha = alpha
 
             if (this.#selectionOverlay) {
-                this.#selectionOverlay.alpha = slider.selectedBy.value === this.ctx.state.user.sessionId ? 1 : alpha
+                this.#selectionOverlay.alpha = slider.selectedBy.value === this.ctx.users.sessionId ? 1 : alpha
             }
 
             this.#sliderBall.alpha = 0
@@ -241,15 +239,15 @@ export class DrawableSlider extends DrawableHitObject {
         if (!slider)
             return false
 
-        const radius = this.ctx.state.beatmap.difficulty.circleRadius
+        const radius = this.ctx.beatmap.difficulty.circleRadius
 
 
         if (mousepos.sub(slider.overriddenPosition).lengthSquared < radius * radius)
             return true
 
 
-        for (let d = 0; d < slider!.overriddenPath.expectedLength; d += 20) {
-            if (slider!.overriddenPath.getProgress(d / slider.overriddenPath.expectedLength).sub(mousepos).lengthSquared < (radius * radius))
+        for (let d = 0; d < slider!.overriddenPath.expectedDistance; d += 20) {
+            if (slider!.overriddenPath.getProgress(d / slider.overriddenPath.expectedDistance).sub(mousepos).lengthSquared < (radius * radius))
                 return true
         }
 

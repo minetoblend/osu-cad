@@ -84,7 +84,7 @@ export function exportBeatmapState(state: BeatmapState) {
                     break;
             }
 
-            h.path.controlPoints.value.forEach((it, index) => {
+            h.path.controlPoints.value.forEach((it) => {
                 let kind: PathType | null = null
                 switch (it.kind) {
                     case SliderControlPointType.Linear:
@@ -103,7 +103,7 @@ export function exportBeatmapState(state: BeatmapState) {
                 if (kind)
                     path.controlPoints.push(point)
             })
-            path.expectedDistance = h.path.expectedLength
+            path.expectedDistance = h.path.expectedDistance
             hitObject.path = path
             hitObject.repeats = h.repeatCount - 1
 

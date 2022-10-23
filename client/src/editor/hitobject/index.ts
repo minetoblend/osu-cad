@@ -5,15 +5,16 @@ import {BeatmapState} from "@/editor/state/beatmap";
 import {EditorContext} from "@/editor";
 import {DisposableObject} from "@/util/disposable";
 import gsap from 'gsap'
+import {HitObject as HitObjectData} from "protocol/commands";
 
 export abstract class HitObject<T extends SerializedHitObject = SerializedHitObject, Overrides extends HitObjectOverrides = HitObjectOverrides> extends DisposableObject {
-    id!: string
+    id!: number
 
     readonly #time = ref(0)
     readonly #position = ref(Vec2.zero())
     readonly #newCombo = ref(false)
 
-    readonly selectedBy = ref<string | null>(null)
+    readonly selectedBy = ref<number | null>(null)
 
     comboNumber = ref(0)
     comboIndex = ref(0)
@@ -89,22 +90,19 @@ export abstract class HitObject<T extends SerializedHitObject = SerializedHitObj
         return this.overriddenPosition
     }
 
-    updateFrom(serialized: SerializedHitObject): void {
+    updateFrom(serialized: HitObjectData) {
         this.id = serialized.id
-        this.time = serialized.time
-        this.selectedBy.value = serialized.selectedBy
+        this.time = serialized.startTime
+        this.selectedBy.value = serialized.selectedBy ?? null
         this.newCombo = serialized.newCombo
-
-        this.position = Vec2.from(serialized.position)
+        this.position = Vec2.from(serialized.position!)
     }
 
     applyDefaults(state: BeatmapState, ctx: EditorContext) {
 
     }
 
-    overrideTimeout = null
-
-    abstract serialized(): SerializedHitObject
+    abstract serialized(overrides?: Partial<Overrides>): HitObjectData
 
     tweens: gsap.core.Tween[] = []
 
@@ -146,4 +144,5 @@ export interface HitObjectOverrides {
     position: Vec2 | null
     time: number | null
     selectedBy: string | null
+    newCombo: boolean | null
 }

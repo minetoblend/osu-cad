@@ -84,7 +84,7 @@ function render() {
   g.lineCap = "round"
   g.lineWidth = 1
 
-  ctx.state.beatmap.timing.timingPoints.forEach(it => {
+  ctx.beatmap.timing.timingPoints.forEach(it => {
     const x = timeToPx(it.time)
     if (it.isInherited)
       g.strokeStyle = '#05ff7d'
@@ -97,15 +97,14 @@ function render() {
     g.stroke()
   })
 
-  ctx.state.user.users.value.forEach(userData => {
-    if (userData.sessionId === ctx.state.user.sessionId)
+  ctx.users.forEach(userData => {
+    if (userData.sessionId === ctx.users.sessionId)
       return
     drawTime(userData.currentTime, false, userData.color.rgb)
   })
 
   drawTime(ctx.clock.animatedTime, true)
 }
-
 
 function handleSeek(evt: MouseEvent) {
   drag(evt, {

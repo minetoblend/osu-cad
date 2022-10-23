@@ -1,0 +1,31 @@
+[package]
+name = "gameserver-rust"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tokio = { version = "1.21.2", features = ["full"] }
+tokio-stream = "0.1.11"
+warp = "0.3"
+async-trait = "0.1.58"
+prost = "0.11"
+mini-redis = "0.4"
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.9"
+thiserror = "1.0"
+futures-util = "0.3.25"
+serde_json = "1.0"
+glam = "0.21.3"
+tonic = "0.8"
+reqwest = "0.11.12"
+serde_repr = "0.1"
+
+[dependencies.confy]
+features = ["yaml_conf"]
+default-features = false
+
+
+[build-dependencies]
+tonic-build = "0.8"

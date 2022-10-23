@@ -4,7 +4,6 @@ import {Vec2} from "@/util/math";
 import circlePiece from "@/assets/skin/hitcircleoverlay.png";
 import {DragEvent} from "@/util/drag";
 import {HitCircle} from "@/editor/hitobject/circle";
-import {ClientOpCode} from "@common/opcodes";
 
 export class CircleCreateTool extends ViewportTool {
 
@@ -32,7 +31,9 @@ export class CircleCreateTool extends ViewportTool {
             const circle = new HitCircle()
             circle.position = evt.current
             circle.time = this.ctx.currentTime
-            this.sendMessage(ClientOpCode.CreateHitObject, circle.serialized())
+            this.sendMessage('createHitObject', {
+                hitObject:  circle.serialized()
+            })
         } else if (evt.rightMouseButton) {
             this.manager.toolId = 'select'
         }
