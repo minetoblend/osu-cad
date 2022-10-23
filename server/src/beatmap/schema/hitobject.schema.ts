@@ -16,7 +16,7 @@ export interface HitCircleV1 extends HitObjectV1<'circle'> {
 
 export interface SliderV1 extends HitObjectV1<'slider'> {
     controlPoints: SliderControlPointV1[]
-    pixelLength: number
+    expectedDistance: number
     repeatCount: number
 }
 

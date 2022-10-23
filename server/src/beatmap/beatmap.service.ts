@@ -143,7 +143,7 @@ export class BeatmapService {
                                 position: {x: c.position.x + it.startPosition.x, y: c.position.y + it.startPosition.y}
                             }
                         }),
-                        pixelLength: slider.path.expectedDistance,
+                        expectedDistance: slider.path.expectedDistance,
                         repeatCount: slider.repeats + 1
                     }
                     return hitObject
@@ -204,7 +204,7 @@ export class BeatmapService {
                     time: it.startTime,
                     position: {x: it.position[0], y: it.position[1]},
                     repeatCount: it.repeatCount,
-                    pixelLength: it.pixelLength,
+                    expectedDistance: it.pixelLength,
                     curveType: it.curveType,
                     controlPoints: controlPoints,//: it.points?.map(([x, y]) => ({x, y})),
                     newCombo: it.newCombo,

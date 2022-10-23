@@ -57,7 +57,7 @@ export interface SerializedHitCircle extends SerializedHitObject<'circle'> {
 
 export interface SerializedSlider extends SerializedHitObject<'slider'> {
     controlPoints: SerializedSliderControlPoint[]
-    pixelLength: number
+    expectedDistance: number
     repeatCount: number
 }
 
