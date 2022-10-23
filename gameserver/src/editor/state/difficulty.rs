@@ -10,7 +10,7 @@ pub struct Difficulty {
     pub overall_difficulty: f32,
     pub approach_rate: f32,
     pub slider_multiplier: f32,
-    pub slider_tick_rate: u32,
+    pub slider_tick_rate: f32,
 }
 
 impl Default for Difficulty {
@@ -21,7 +21,7 @@ impl Default for Difficulty {
             overall_difficulty: 8.5,
             approach_rate: 8.5,
             slider_multiplier: 1.4,
-            slider_tick_rate: 1,
+            slider_tick_rate: 1.0,
         }
     }
 }

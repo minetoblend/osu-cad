@@ -1952,7 +1952,7 @@ exports.Difficulty = {
             writer.uint32(45).float(message.sliderMultiplier);
         }
         if (message.sliderTickRate !== 0) {
-            writer.uint32(48).uint32(message.sliderTickRate);
+            writer.uint32(53).float(message.sliderTickRate);
         }
         return writer;
     },
@@ -1979,7 +1979,7 @@ exports.Difficulty = {
                     message.sliderMultiplier = reader.float();
                     break;
                 case 6:
-                    message.sliderTickRate = reader.uint32();
+                    message.sliderTickRate = reader.float();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -2005,7 +2005,7 @@ exports.Difficulty = {
         message.overallDifficulty !== undefined && (obj.overallDifficulty = message.overallDifficulty);
         message.approachRate !== undefined && (obj.approachRate = message.approachRate);
         message.sliderMultiplier !== undefined && (obj.sliderMultiplier = message.sliderMultiplier);
-        message.sliderTickRate !== undefined && (obj.sliderTickRate = Math.round(message.sliderTickRate));
+        message.sliderTickRate !== undefined && (obj.sliderTickRate = message.sliderTickRate);
         return obj;
     },
     fromPartial: function (object) {

@@ -163,7 +163,7 @@ message Difficulty {
   float overallDifficulty = 3;
   float approachRate = 4;
   float sliderMultiplier = 5;
-  uint32 sliderTickRate = 6;
+  float sliderTickRate = 6;
 }
 
 message Slider {
