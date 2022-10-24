@@ -34,10 +34,9 @@ export class DrawableSliderBody extends Container {
     readonly #geometry: Geometry;
     readonly #material: SliderMaterial
     readonly #textureResource: SliderTextureResource;
-
-    get sprite() {
-        return this.#sliderBodySprite
-    }
+    #slider = shallowRef<Slider>()
+    #tint = ref(Color.white)
+    #outlineColor = ref(Color.white)
 
     constructor(readonly ctx: EditorContext, readonly renderer: Renderer, readonly playfield: PlayfieldDrawable, readonly selection = false) {
         super();
@@ -73,6 +72,36 @@ export class DrawableSliderBody extends Container {
 
     }
 
+    get sprite() {
+        return this.#sliderBodySprite
+    }
+
+    get tint() {
+        return this.#tint.value
+    }
+
+    set tint(value) {
+        if (this.#tint.value.equals(value))
+            return;
+        this.#tint.value = value
+        this.#textureResource.tint = value
+        this.#texture.update()
+        this.renderSliderTexture()
+    }
+
+    get outlineColor() {
+        return this.#outlineColor.value
+    }
+
+    set outlineColor(value) {
+        if (value.equals(this.outlineColor))
+            return;
+        this.#outlineColor.value = value
+        this.#textureResource.outlineColor = value
+        this.#texture.update()
+        this.renderSliderTexture()
+    }
+
     updateGeometry() {
         const slider = this.#slider.value
         if (!slider)
@@ -103,8 +132,11 @@ export class DrawableSliderBody extends Container {
 
         const bounds = path.getBounds(snaked)
 
-        if (!bounds)
-            throw new Error('Invalid path')
+        if (!bounds) { // if path has no bounds (i.e. slider with length 0 or no control points), hide the slider body
+            this.#sliderBodySprite.visible = false
+            return;
+        }
+        this.#sliderBodySprite.visible = true
 
         bounds.x = Math.max(bounds.x, -1000)
         bounds.y = Math.max(bounds.y, -1000)
@@ -151,47 +183,13 @@ export class DrawableSliderBody extends Container {
 
     }
 
-
-    #slider = shallowRef<Slider>()
-
     bind(slider: Slider | undefined) {
         this.#slider.value = slider
     }
 
-
     destroy(_options?: IDestroyOptions | boolean) {
         super.destroy({children: true, texture: true, baseTexture: true});
         this.#lifetime.dispose()
-    }
-
-    #tint = ref(Color.white)
-
-    get tint() {
-        return this.#tint.value
-    }
-
-    set tint(value) {
-        if (this.#tint.value.equals(value))
-            return;
-        this.#tint.value = value
-        this.#textureResource.tint = value
-        this.#texture.update()
-        this.renderSliderTexture()
-    }
-
-    #outlineColor = ref(Color.white)
-
-    get outlineColor() {
-        return this.#outlineColor.value
-    }
-
-    set outlineColor(value) {
-        if (value.equals(this.outlineColor))
-            return;
-        this.#outlineColor.value = value
-        this.#textureResource.outlineColor = value
-        this.#texture.update()
-        this.renderSliderTexture()
     }
 
 
