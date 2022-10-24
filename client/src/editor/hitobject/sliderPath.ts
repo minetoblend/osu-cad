@@ -3,28 +3,40 @@ import {ref, shallowRef, watch} from "vue";
 import {DisposableObject} from "@/util/disposable";
 import {Rectangle} from "pixi.js";
 import {PathApproximator} from "@/editor/hitobject/pathApproximator";
-import {SliderControlPointType} from "@common/types";
+import * as Serialized from 'osucad-gameserver'
 
 export class SliderPath extends DisposableObject {
 
     calculatedPath = new CalculatedPath()
-
+    snakedPath = shallowRef<Vec2[]>([])
+    fullPath = shallowRef<Vec2[]>([])
+    readonly controlPoints = ref<SliderControlPoint[]>([])
+    expectedDistance: number = 0
     #start = 0
     #end = 1
 
+    constructor() {
+        super()
+
+        this.addDisposable(
+            watch(this.controlPoints, () => {
+                this.markDirty()
+            }, {deep: true})
+        )
+    }
 
     get start() {
         return this.#start
-    }
-
-    get end() {
-        return this.#end
     }
 
     set start(value) {
         if (isNaN(value))
             debugger;
         this.#start = value
+    }
+
+    get end() {
+        return this.#end
     }
 
     set end(value) {
@@ -35,26 +47,10 @@ export class SliderPath extends DisposableObject {
         return this.fullPath.value[this.fullPath.value.length - 1]
     }
 
-    snakedPath = shallowRef<Vec2[]>([])
-    fullPath = shallowRef<Vec2[]>([])
-
-    readonly controlPoints = ref<SliderControlPoint[]>([])
-
     private _dirty = ref(true)
-    expectedDistance: number = 0
 
     get dirty() {
         return this._dirty.value
-    }
-
-    constructor() {
-        super()
-
-        this.addDisposable(
-            watch(this.controlPoints, () => {
-                this.markDirty()
-            }, {deep: true})
-        )
     }
 
     markDirty() {
@@ -160,8 +156,12 @@ export class SliderPath extends DisposableObject {
     }
 
     getBounds(snaked: boolean) {
-        if (this.calculatedPath.values.length === 0)
+        if (this.dirty)
+            this.calculatePath()
+
+        if (this.calculatedPath.values.length === 0) {
             return null
+        }
 
         const values = snaked ? this.snakedPath.value : this.fullPath.value
 
@@ -199,29 +199,6 @@ export class CalculatedPath {
     #cumulativeLength: number[] = []
     #length = 0
 
-    clear() {
-        this.#points = []
-        this.#length = 0
-        this.#cumulativeLength = []
-    }
-
-    add(position: Vec2) {
-        if (this.#points.length > 0) {
-            const lastX = this.#points[this.#points.length - 2]
-            const lastY = this.#points[this.#points.length - 1]
-
-            if (position.x === lastX && position.y === lastY)
-                return;
-
-            this.#length += Math.hypot(
-                position.x - lastX,
-                position.y - lastY
-            )
-        }
-        this.#points.push(position.x, position.y)
-        this.#cumulativeLength.push(this.#length)
-    }
-
     get points(): Vec2[] {
         const points: Vec2[] = []
         for (let i = 0; i < this.#points.length; i += 2) {
@@ -251,6 +228,29 @@ export class CalculatedPath {
 
     get totalLength() {
         return this.#length
+    }
+
+    clear() {
+        this.#points = []
+        this.#length = 0
+        this.#cumulativeLength = []
+    }
+
+    add(position: Vec2) {
+        if (this.#points.length > 0) {
+            const lastX = this.#points[this.#points.length - 2]
+            const lastY = this.#points[this.#points.length - 1]
+
+            if (position.x === lastX && position.y === lastY)
+                return;
+
+            this.#length += Math.hypot(
+                position.x - lastX,
+                position.y - lastY
+            )
+        }
+        this.#points.push(position.x, position.y)
+        this.#cumulativeLength.push(this.#length)
     }
 
     get(i: number) {
@@ -297,7 +297,43 @@ export class SliderControlPoint {
         this.kind = kind;
     }
 
+    static deserialize(serialized: Serialized.SliderControlPoint | SliderControlPoint): SliderControlPoint {
+        return new SliderControlPoint(Vec2.from(serialized.position),
+            (typeof serialized.kind === 'string') ? ["none", "bezier", "circle", "linear"].indexOf(serialized.kind) : serialized.kind
+        )
+    }
+
     clone(deep = true) {
         return new SliderControlPoint(deep ? this.position.clone() : this.position, this.kind)
     }
+
+    serialize(): Serialized.SliderControlPoint {
+        let kind: Serialized.SliderControlPointKind;
+
+        switch (this.kind) {
+            case SliderControlPointType.None:
+                kind = 'none'
+                break
+            case SliderControlPointType.Bezier:
+                kind = 'bezier'
+                break
+            case SliderControlPointType.Circle:
+                kind = 'circle'
+                break
+            case SliderControlPointType.Linear:
+                kind = 'linear'
+                break
+        }
+        return {
+            position: this.position.rounded,
+            kind
+        }
+    }
+}
+
+export const enum SliderControlPointType {
+    None,
+    Bezier,
+    Circle,
+    Linear
 }

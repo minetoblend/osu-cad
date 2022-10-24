@@ -31,9 +31,7 @@ export class CircleCreateTool extends ViewportTool {
             const circle = new HitCircle()
             circle.position = evt.current
             circle.time = this.ctx.currentTime
-            this.sendMessage('createHitObject', {
-                hitObject:  circle.serialized()
-            })
+            this.sendMessage('createHitObject', circle.serialized())
         } else if (evt.rightMouseButton) {
             this.manager.toolId = 'select'
         }

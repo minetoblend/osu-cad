@@ -14,7 +14,7 @@ import {BeatmapState} from "@/editor/state/beatmap";
 import {BeatmapEncoder, HittableObject, SlidableObject} from 'osu-parsers'
 import {HitCircle} from "@/editor/hitobject/circle";
 import {Slider} from "@/editor/hitobject/slider";
-import {SliderControlPointType} from "@common/types";
+import {SliderControlPointType} from "@/editor/hitobject/sliderPath";
 
 export function exportBeatmapState(state: BeatmapState) {
 

@@ -1,7 +1,7 @@
 import {inject} from "vue";
-import {concatMap, filter, firstValueFrom, map, Observable, of, Subject} from "rxjs";
-import {ClientToServerMessage, ServerToClientMessage} from "protocol/commands";
+import {concatMap, filter, firstValueFrom, from, map, Observable, of, Subject} from "rxjs";
 import {Client} from "@/networking";
+import {ClientCommand, ClientToServerMessage, ServerCommand, ServerToClientMessage} from "osucad-gameserver";
 
 export class EditorConnector {
     #client!: Client<ServerToClientMessage, ClientToServerMessage>
@@ -11,12 +11,11 @@ export class EditorConnector {
     }
 
     async connect(beatmapId: string, token: string) {
-        this.#client = new Client(ServerToClientMessage, ClientToServerMessage, `ws://${window.location.hostname}:7350/edit/${beatmapId}?token=${token}`)
+        this.#client = new Client(`ws://${window.location.hostname}:7350/edit/${beatmapId}?token=${token}`)
 
         this.#client.onMessage.subscribe(this.#onMessage)
 
         await firstValueFrom(this.#client.onConnect)
-
     }
 
 
@@ -33,21 +32,23 @@ export class EditorConnector {
     readonly #onMessage = new Subject<ServerToClientMessage>()
 
     readonly onMessage = this.#onMessage.pipe(concatMap(message => {
-        if (message.serverCommand?.$case === 'multiple')
-            return of(...message.serverCommand.multiple.messages)
+        if (message.command.type === 'multiple') {
+            return from(message.command.payload)
+        }
         else
             return of(message)
     }))
 
-    get onAnyCommand(): Observable<NonNullable<ServerToClientMessage['serverCommand']>> {
-        return this.onMessage
-            .pipe(map(message => message.serverCommand), filter(command => !!command)) as any
-    }
+    readonly onAnyCommand =
+        this.onMessage.pipe(
+            map(message => message.command),
+            filter(command => !!command)
+        )
 
-    onCommand<T extends NonNullable<ServerToClientMessage['serverCommand']>['$case']>(opCode: T):
-    //@ts-ignore
-        Observable<Extract<NonNullable<ServerToClientMessage['serverCommand']>, { $case: T }>[T]> {
-        return this.onAnyCommand.pipe(filter(command => command.$case === opCode), map(command => command[opCode as keyof typeof command])) as any
+
+    onCommand<T extends ServerCommandType>(opCode: T): Observable<ServerCommandPayload<T>> {
+        return this.onAnyCommand
+            .pipe(filter(command => command.type === opCode), map(command => command.payload)) as any
     }
 
     sendMessage(message: ClientToServerMessage) {
@@ -59,9 +60,11 @@ export class EditorConnector {
     }
 }
 
-export type ClientCommandType = NonNullable<ClientToServerMessage['clientCommand']>['$case']
-//@ts-ignore somehow this works despite there being an error without the ts-ignore
-export type ClientCommandPayload<T extends ClientCommandType> = NonNullable<Extract<NonNullable<ClientToServerMessage['clientCommand']>, { $case: T }>>[T]
+export type ServerCommandType = ServerCommand['type']
+export type ServerCommandPayload<T extends ServerCommandType> = NonNullable<Extract<ServerCommand, { type: T }>>['payload']
+
+export type ClientCommandType = ClientCommand['type']
+export type ClientCommandPayload<T extends ClientCommandType> = Extract<ClientCommand, { type: T }>['payload']
 
 export interface MatchEvent {
     matchId: string,

@@ -152,7 +152,7 @@ export abstract class ViewportTool {
 
     deleteHitObjects(...hitObjects: HitObject[]) {
         if (hitObjects.length > 0)
-            this.sendMessage('deleteHitObject', {ids: hitObjects.map(t => t.id)})
+            this.sendMessage('deleteHitObject', hitObjects.map(t => t.id))
     }
 
     showContextMenu(options: DropdownOption[], pos: Vec2, onSelect: (value: string) => void) {

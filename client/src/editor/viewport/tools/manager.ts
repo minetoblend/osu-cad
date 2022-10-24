@@ -11,7 +11,7 @@ import {SliderCreateTool} from "@/editor/viewport/tools/slider.tool";
 import {CircleCreateTool} from "@/editor/viewport/tools/circle.tool";
 import {getFlippedHitObject} from "@/editor/viewport/tools/util";
 import {Slider} from "@/editor/hitobject/slider";
-import {HitObject as HitObjectData} from "protocol/commands";
+import {Serialized} from 'osucad-gameserver'
 
 const tools: Record<string, ViewportTool> = {
     select: new SelectTool(),
@@ -20,6 +20,16 @@ const tools: Record<string, ViewportTool> = {
 }
 
 export class ToolManager {
+
+    readonly toolOverlay = new Container()
+    isMouseDown = 0
+    mousePos = Vec2.zero()
+    copiedHitObjects: Serialized.HitObject[] = []
+    contextMenuOptions = shallowRef<any>()
+    contextMenuPos = Vec2.zero()
+    contextMenuCallback: ((value: string) => void) | null = null
+    #toolId = shallowRef('select')
+    #tool = shallowRef(tools.select!)
 
     constructor(readonly ctx: EditorContext, readonly playfield: PlayfieldDrawable) {
 
@@ -41,11 +51,6 @@ export class ToolManager {
         })
 
     }
-
-    readonly toolOverlay = new Container()
-
-    #toolId = shallowRef('select')
-    #tool = shallowRef(tools.select!)
 
     get toolId() {
         return this.#toolId.value
@@ -81,7 +86,7 @@ export class ToolManager {
         }
     }
 
-    isMouseDown = 0
+    // region contextmenu
 
     handleMouseDown(evt: MouseEvent, offset: Vec2, scale: number) {
 
@@ -122,8 +127,6 @@ export class ToolManager {
         })
     }
 
-    mousePos = Vec2.zero()
-
     handleShortcut(evt: CustomEvent) {
 
 
@@ -137,9 +140,7 @@ export class ToolManager {
         if (evt.detail === 'q') {
             const selection = this.tool.selection
             selection.forEach(it => {
-                this.tool.sendMessage('updateHitObject', {
-                    hitObject: it.serialized({newCombo: !it.newCombo})
-                })
+                this.tool.sendMessage('updateHitObject', it.serialized({newCombo: !it.newCombo}))
             })
             evt.preventDefault()
         }
@@ -168,7 +169,7 @@ export class ToolManager {
         if (evt.detail === 'ctrl+h') {
             this.ctx.beatmap.hitobjects.selection.forEach(it => {
                 const flipped = getFlippedHitObject(it, 'horizontal')
-                this.ctx.sendMessage('updateHitObject', {hitObject: flipped})
+                this.ctx.sendMessage('updateHitObject', flipped)
             })
             evt.preventDefault()
         }
@@ -176,7 +177,7 @@ export class ToolManager {
         if (evt.detail === 'ctrl+j') {
             this.ctx.beatmap.hitobjects.selection.forEach(it => {
                 const flipped = getFlippedHitObject(it, 'vertical')
-                this.ctx.sendMessage('updateHitObject', {hitObject: flipped})
+                this.ctx.sendMessage('updateHitObject', flipped)
             })
             evt.preventDefault()
         }
@@ -192,12 +193,12 @@ export class ToolManager {
                 const hitObjects = this.copiedHitObjects.map(it => {
                     return {
                         ...it,
-                        time: it.startTime + offset
+                        startTime: it.startTime + offset
                     }
                 })
 
                 hitObjects.forEach(it =>
-                    this.ctx.sendMessage('createHitObject', {hitObject: it})
+                    this.ctx.sendMessage('createHitObject', it)
                 )
             }
         }
@@ -205,11 +206,9 @@ export class ToolManager {
         if (evt.detail === 'ctrl+i') {
             const sliders = this.tool.selection.filter(t => t instanceof Slider) as Slider[]
             sliders.forEach(slider => {
-                this.tool.sendMessage('updateHitObject', {
-                    hitObject: slider.serialized({
-                        repeats: slider.repeatCount + 1
-                    })
-                })
+                this.tool.sendMessage('updateHitObject', slider.serialized({
+                    repeats: slider.repeatCount + 1
+                }))
             })
             evt.preventDefault()
 
@@ -221,11 +220,10 @@ export class ToolManager {
                 if (slider.repeatCount <= 1)
                     return;
 
-                this.tool.sendMessage('updateHitObject', {
-                    hitObject: slider.serialized({
-                        repeats: slider.repeatCount - 1
-                    })
-                })
+                this.tool.sendMessage('updateHitObject', slider.serialized({
+                    repeats: slider.repeatCount - 1
+
+                }))
             })
             evt.preventDefault()
         }
@@ -244,8 +242,6 @@ export class ToolManager {
         }
     }
 
-    copiedHitObjects: HitObjectData[] = []
-
     handleMouseMove(mousePos: Vec2) {
         this.mousePos = mousePos
         if (!this.isMouseDown) {
@@ -254,12 +250,6 @@ export class ToolManager {
             this.tool.onMouseMove?.(mousePos)
         }
     }
-
-    // region contextmenu
-
-    contextMenuOptions = shallowRef<any>()
-    contextMenuPos = Vec2.zero()
-    contextMenuCallback: ((value: string) => void) | null = null
 
     showContextMenu(options: DropdownOption[], pos: Vec2, onSelect: (value: string) => void) {
         this.contextMenuOptions.value = options

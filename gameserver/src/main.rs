@@ -3,10 +3,11 @@ use std::net::ToSocketAddrs;
 use std::sync::Arc;
 
 use futures_util::StreamExt;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use tokio::sync::{mpsc, RwLock};
 use tokio_stream::wrappers::UnboundedReceiverStream;
+use ts_rs::TS;
 use warp::{Filter, Rejection};
 use warp::reject::Reject;
 use warp::ws::WebSocket;
@@ -16,12 +17,7 @@ use editor::EditorSession;
 
 pub mod config;
 pub mod editor;
-
-pub mod proto {
-    pub mod commands {
-        tonic::include_proto!("proto.commands");
-    }
-}
+pub mod util;
 
 struct SessionContainer {
     session: Arc<RwLock<EditorSession>>,
@@ -66,13 +62,15 @@ async fn main() -> Result<(), confy::ConfyError> {
     Ok(())
 }
 
-#[derive(Clone, Deserialize)]
+#[derive(Clone, Deserialize, Serialize, TS)]
 pub struct SessionInfo {
+    #[serde(skip_serializing)]
     pub token: String,
+    #[ts(inline)]
     pub user: SessionUserInfo,
 }
 
-#[derive(Clone, Deserialize)]
+#[derive(Clone, Deserialize, Serialize, TS)]
 pub struct SessionUserInfo {
     pub id: u32,
     #[serde(alias = "avatarUrl")]
@@ -91,10 +89,11 @@ struct Query {
 fn get_session_info() -> impl Filter<Extract = (SessionInfo,), Error = Rejection> + Copy {
     warp::filters::query::query().and_then(|query: Query| async move {
         if let Ok(response) = reqwest::Client::new()
-                    .get("http://osucad.com:3000/user/me")
-                    .header("Authorization", format!("Bearer {}", query.token))
-                    .send()
-                    .await {
+            .get("http://osucad.com:3000/user/me")
+            .header("Authorization", format!("Bearer {}", query.token))
+            .send()
+            .await
+        {
             if let Ok(body) = response.text().await {
                 if let Ok(session_info) = serde_json::from_str::<SessionInfo>(body.as_str()) {
                     return Ok(session_info);
@@ -118,7 +117,9 @@ async fn join_beatmap(
             let session = match sessions.get(&beatmap_id) {
                 Some(session) => session.session.clone(),
                 None => {
-                    if let Some(session) = EditorSession::create(beatmap_id.clone(), session_info.token.clone()).await {
+                    if let Some(session) =
+                        EditorSession::create(beatmap_id.clone(), session_info.token.clone()).await
+                    {
                         let session = Arc::new(RwLock::new(session));
 
                         sessions.insert(
@@ -161,7 +162,9 @@ async fn join_beatmap(
                 }
             };
 
-            EditorSession::insert_message(session.clone(), presence, msg.as_bytes()).await
+            if let Ok(message_text) = msg.to_str() {
+                EditorSession::insert_message(session.clone(), presence, message_text).await
+            }
         }
 
         session.write().await.leave(presence);

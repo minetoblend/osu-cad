@@ -1,0 +1,12 @@
+{
+  "name": "osucad-gameserver",
+  "version": "1.0.0",
+  "dependencies": {
+  },
+  "typings": "./index.d.ts",
+  "types": "./index.d.ts",
+  "files": [
+    "index.d.ts",
+    "bindings/*"
+  ]
+}

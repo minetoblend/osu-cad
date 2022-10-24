@@ -27,12 +27,12 @@ services:
   api:
     build:
       dockerfile: Dockerfile
-      context: server
+      context: .
       # Only will build development stage from our dockerfile
       target: development
     volumes:
-      - ./server/src:/usr/src/app/src
-      - data_api:/usr/src/app/data
+      - ./server/src:/usr/src/app/server/src
+      - data_api:/usr/src/app/server/data
     depends_on:
       - postgres_api
     links:

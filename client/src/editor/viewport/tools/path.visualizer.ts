@@ -1,8 +1,7 @@
 import {ref, shallowRef, watchEffect} from "vue";
 import {Graphics, IDestroyOptions} from "pixi.js";
 import {Lifetime} from "@/util/disposable";
-import {SliderControlPoint} from "@/editor/hitobject/sliderPath";
-import {SliderControlPointType} from "@common/types";
+import {SliderControlPoint, SliderControlPointType} from "@/editor/hitobject/sliderPath";
 import {ControlPointType} from "osu-classes";
 import {pairwise} from "@/util/array";
 import {Vec2} from "@/util/math";

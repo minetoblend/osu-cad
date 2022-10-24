@@ -1,10 +1,9 @@
 use std::sync::atomic::AtomicU32;
 
-use glam::IVec2;
 use serde::{Deserialize, Serialize};
-use serde_repr::{Deserialize_repr, Serialize_repr};
+use ts_rs::TS;
 
-use crate::proto::commands::{self, ControlPointKind};
+use crate::util::IVec2;
 
 #[derive(Default, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -60,18 +59,14 @@ impl HitObjectState {
     pub(crate) fn find_selected_by(&self, selected_by: usize) -> Vec<&HitObject> {
         self.hit_objects
             .iter()
-            .filter(|h| {
-                h.selected_by.clone().is_some() && h.selected_by.unwrap() == selected_by
-            })
+            .filter(|h| h.selected_by.clone().is_some() && h.selected_by.unwrap() == selected_by)
             .collect()
     }
 
     pub(crate) fn find_selected_by_mut(&mut self, selected_by: usize) -> Vec<&mut HitObject> {
         self.hit_objects
             .iter_mut()
-            .filter(|h| {
-                h.selected_by.clone().is_some() && h.selected_by.unwrap() == selected_by
-            })
+            .filter(|h| h.selected_by.clone().is_some() && h.selected_by.unwrap() == selected_by)
             .collect()
     }
 
@@ -89,34 +84,23 @@ impl HitObjectState {
 
 pub type HitObjectId = u32;
 
-#[derive(Serialize, Deserialize)]
-#[serde(remote = "IVec2")]
-struct IVec2Def {
-    x: i32,
-    y: i32,
-}
-
 static NEXT_ID: AtomicU32 = AtomicU32::new(0);
 
 fn next_id() -> HitObjectId {
     NEXT_ID.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
 }
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, TS)]
+#[ts(export, rename_all = "camelCase")]
+#[serde(rename_all = "camelCase")]
 pub struct HitObject {
-    #[serde(default = "next_id", skip_deserializing, skip_serializing)]
+    #[serde(default = "next_id")]
     pub id: HitObjectId,
-    #[serde(skip_deserializing, skip_serializing, default)]
+    #[serde(default)]
     pub selected_by: Option<usize>,
-
-    #[serde(alias = "time")]
     pub start_time: i32,
-    #[serde(with = "IVec2Def")]
     pub position: IVec2,
-    #[serde(alias = "newCombo")]
     pub new_combo: bool,
-
-    #[serde(flatten)]
     pub data: HitObjectKind,
 }
 
@@ -124,151 +108,66 @@ impl HitObject {
     pub fn next_id() -> HitObjectId {
         next_id()
     }
+
+    pub fn is_valid(&self) -> bool {
+        match &self.data {
+            HitObjectKind::Slider {
+                expected_distance,
+                control_points,
+                repeats,
+            } => {
+                if control_points.len() < 2 {
+                    return false
+                }
+                if let SliderControlPointKind::None = control_points[0].kind {
+                    return false
+                }
+                *expected_distance > 0.0 && *repeats >= 1
+            }
+            _ => true,
+        }
+    }
 }
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, TS)]
 #[serde(tag = "type")]
+#[ts(export, rename_all = "camelCase")]
 pub enum HitObjectKind {
-    #[serde(alias = "circle")]
+    #[serde(rename = "circle")]
+    #[ts(rename = "circle")]
     HitCircle,
-    #[serde(alias = "slider", rename_all = "camelCase")]
+    #[serde(rename = "slider", rename_all = "camelCase")]
+    #[ts(rename = "slider")]
     Slider {
+        #[ts(rename = "expectedDistance")]
         expected_distance: f32,
+        #[ts(rename = "controlPoints")]
         control_points: Vec<SliderControlPoint>,
         #[serde(alias = "repeatCount")]
         repeats: u16,
     },
     #[serde(alias = "spinner", rename_all = "camelCase")]
+    #[ts(rename = "circle")]
     Spinner {},
 }
 
-#[derive(Serialize_repr, Deserialize_repr, PartialEq, Debug)]
-#[repr(u8)]
-#[serde(remote = "ControlPointKind")]
-enum ControlPointKindDef {
+#[derive(Debug, Clone, Serialize, Deserialize, TS)]
+#[ts(export, rename_all = "camelCase")]
+#[serde(rename_all = "camelCase")]
+pub enum SliderControlPointKind {
+    #[serde(rename = "none")]
     None = 0,
+    #[serde(rename = "bezier")]
     Bezier = 1,
+    #[serde(rename = "circle")]
     Circle = 2,
+    #[serde(rename = "linear")]
     Linear = 3,
 }
 
-mod control_point {
-    use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
-
-    use crate::proto::commands::ControlPointKind;
-
-    pub fn serialize<S>(v: &ControlPointKind, s: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let v = *v as u8;
-
-        v.serialize(s)
-    }
-
-    pub fn deserialize<'de, D>(d: D) -> Result<ControlPointKind, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        use ControlPointKind::*;
-
-        match u8::deserialize(d)? {
-            0 => Ok(None),
-            1 => Ok(Bezier),
-            2 => Ok(Circle),
-            3 => Ok(Linear),
-            o => Err(D::Error::custom(format_args!("Invalid value {}", o))),
-        }
-    }
-}
-
-#[derive(Clone, Serialize, Deserialize)]
-
+#[derive(Debug, Clone, Serialize, Deserialize, TS)]
+#[ts(export, rename_all = "camelCase")]
 pub struct SliderControlPoint {
-    #[serde(with = "IVec2Def")]
     pub position: IVec2,
-    #[serde(with = "control_point")]
-    pub kind: ControlPointKind,
-}
-
-impl From<&HitObject> for commands::HitObject {
-    fn from(val: &HitObject) -> Self {
-        commands::HitObject {
-            id: val.id,
-            new_combo: val.new_combo,
-            position: Some(commands::IVec2 {
-                x: val.position.x,
-                y: val.position.y,
-            }),
-            selected_by: val.selected_by.map(|x| x as u32),
-            start_time: val.start_time,
-            kind: match val.data.clone() {
-                HitObjectKind::HitCircle => {
-                    Some(commands::hit_object::Kind::Circle(commands::HitCircle {}))
-                }
-                HitObjectKind::Slider {
-                    expected_distance,
-                    control_points,
-                    repeats,
-                } => Some(commands::hit_object::Kind::Slider(commands::Slider {
-                    expected_distance,
-                    repeats: repeats as u32,
-                    control_points: control_points
-                        .iter()
-                        .map(|c| commands::SliderControlPoint {
-                            position: Some(commands::IVec2 {
-                                x: c.position.x,
-                                y: c.position.y,
-                            }),
-                            kind: c.kind as i32,
-                        })
-                        .collect(),
-                })),
-                HitObjectKind::Spinner {} => {
-                    Some(commands::hit_object::Kind::Spinner(commands::Spinner {}))
-                }
-            },
-        }
-    }
-}
-
-impl From<HitObject> for commands::HitObject {
-    fn from(val: HitObject) -> Self {
-        commands::HitObject {
-            id: val.id,
-            new_combo: val.new_combo,
-            position: Some(commands::IVec2 {
-                x: val.position.x,
-                y: val.position.y,
-            }),
-            selected_by: val.selected_by.map(|x| x as u32),
-            start_time: val.start_time,
-            kind: match val.data {
-                HitObjectKind::HitCircle => {
-                    Some(commands::hit_object::Kind::Circle(commands::HitCircle {}))
-                }
-                HitObjectKind::Slider {
-                    expected_distance,
-                    control_points,
-                    repeats,
-                } => Some(commands::hit_object::Kind::Slider(commands::Slider {
-                    expected_distance,
-                    repeats: repeats as u32,
-                    control_points: control_points
-                        .iter()
-                        .map(|c| commands::SliderControlPoint {
-                            position: Some(commands::IVec2 {
-                                x: c.position.x,
-                                y: c.position.y,
-                            }),
-                            kind: c.kind as i32,
-                        })
-                        .collect(),
-                })),
-                HitObjectKind::Spinner {} => {
-                    Some(commands::hit_object::Kind::Spinner(commands::Spinner {}))
-                }
-            },
-        }
-    }
+    pub kind: SliderControlPointKind,
 }

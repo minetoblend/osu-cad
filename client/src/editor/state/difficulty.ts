@@ -4,11 +4,11 @@ import {ref} from "vue";
 export class DifficultyManager {
     constructor(readonly ctx: EditorContext) {
         this.ctx.connector.onCommand('state').subscribe(state => {
-            this.hpDrainRate.value = state.beatmap!.difficulty!.hpDrainRate
-            this.circleSize.value = state.beatmap!.difficulty!.circleSize
-            this.approachRate.value = state.beatmap!.difficulty!.approachRate
-            this.overallDifficulty.value = state.beatmap!.difficulty!.overallDifficulty
-            this.sliderMultiplier.value = state.beatmap!.difficulty!.sliderMultiplier
+            this.hpDrainRate.value = state.difficulty.hpDrainRate
+            this.circleSize.value = state.difficulty.circleSize
+            this.approachRate.value = state.difficulty.approachRate
+            this.overallDifficulty.value = state.difficulty.overallDifficulty
+            this.sliderMultiplier.value = state.difficulty.sliderMultiplier
         })
     }
 

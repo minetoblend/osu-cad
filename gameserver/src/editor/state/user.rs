@@ -1,8 +1,9 @@
 use std::sync::Arc;
 
-use glam::Vec2;
+use serde::Serialize;
 
-use crate::{editor::Presence, proto::commands};
+use crate::editor::Presence;
+use crate::util::Vec2;
 
 #[derive(Default)]
 pub struct UserState {
@@ -35,8 +36,9 @@ impl UserState {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Serialize)]
 pub struct UserInfo {
+    #[serde(flatten)]
     pub presence: Arc<Presence>,
     pub cursor_pos: Option<Vec2>,
     pub current_time: i32,
@@ -49,14 +51,5 @@ impl UserInfo {
 
     pub fn display_name(&self) -> &str {
         self.presence.session.user.display_name.as_str()
-    }
-}
-
-impl From<UserInfo> for commands::UserInfo {
-    fn from(val: UserInfo) -> Self {
-        commands::UserInfo {
-            id: val.id() as u64,
-            display_name: val.display_name().into(),
-        }
     }
 }

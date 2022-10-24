@@ -104,11 +104,11 @@ export class EditorClock {
     }
 
     get playbackRate() {
-        return this.sound?.playbackRate.value ?? 1
+        return this.sound?.playbackRate ?? 1
     }
 
     set playbackRate(value) {
         if (this.sound)
-            this.sound.playbackRate.value = value
+            this.sound.playbackRate = value
     }
 }

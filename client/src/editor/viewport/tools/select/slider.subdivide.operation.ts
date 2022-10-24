@@ -2,8 +2,8 @@ import {DragOperation} from "@/editor/viewport/tools/operation";
 import {DragEvent} from "@/util/drag";
 import {ViewportTool} from "@/editor/viewport/tools";
 import {Slider} from "@/editor/hitobject/slider";
-import {SliderControlPoint, SliderPath} from "@/editor/hitobject/sliderPath";
-import {SliderControlPointType} from "@common/types";
+import {SliderControlPoint, SliderControlPointType, SliderPath} from "@/editor/hitobject/sliderPath";
+import {defaultOverrides} from "@/editor/hitobject/overrides";
 
 export class SliderSubdivideOperation extends DragOperation {
     constructor(readonly tool: ViewportTool, readonly hitObject: Slider, readonly lineIndex: number) {
@@ -26,7 +26,8 @@ export class SliderSubdivideOperation extends DragOperation {
         this.tool.sendOperationCommand('setHitObjectOverrides', {
             id: this.hitObject.id,
             overrides: {
-                controlPoints: {controlPoints: path.controlPoints.value as any},
+                ...defaultOverrides(),
+                controlPoints: path.controlPoints.value.map(t => t.serialize()),
                 expectedDistance: path.expectedDistance
             }
         })
@@ -37,15 +38,18 @@ export class SliderSubdivideOperation extends DragOperation {
     commit(evt: DragEvent): void {
         const path = this.createPath(evt)
 
-        this.tool.sendMessage('updateHitObject', {
-            hitObject: this.hitObject.serialized({
+        this.tool.sendMessage('updateHitObject',
+            this.hitObject.serialized({
                 controlPoints: path.controlPoints.value,
-                expectedDistance: path.expectedDistance
+                expectedDistance: path.expectedDistance,
             })
-        })
+        )
     }
 
-    createResnappedPath(controlPoints: SliderControlPoint[]) {
+    createResnappedPath(controlPoints
+                            :
+                            SliderControlPoint[]
+    ) {
         const path = new SliderPath()
         path.controlPoints.value = controlPoints
         path.calculatePath(false)

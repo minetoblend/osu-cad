@@ -1,13 +1,12 @@
-import {SerializedHitObject} from "@common/types";
 import {Vec2} from "@/util/math";
 import {reactive, ref, UnwrapNestedRefs} from "vue";
 import {BeatmapState} from "@/editor/state/beatmap";
 import {EditorContext} from "@/editor";
 import {DisposableObject} from "@/util/disposable";
 import gsap from 'gsap'
-import {HitObject as HitObjectData} from "protocol/commands";
+import {Serialized} from 'osucad-gameserver'
 
-export abstract class HitObject<T extends SerializedHitObject = SerializedHitObject, Overrides extends HitObjectOverrides = HitObjectOverrides> extends DisposableObject {
+export abstract class HitObject<Overrides extends HitObjectOverrides = HitObjectOverrides> extends DisposableObject {
     id!: number
 
     readonly #time = ref(0)
@@ -90,10 +89,11 @@ export abstract class HitObject<T extends SerializedHitObject = SerializedHitObj
         return this.overriddenPosition
     }
 
-    updateFrom(serialized: HitObjectData) {
+    updateFrom(serialized: Serialized.HitObject) {
+        this.clearOverrides()
         this.id = serialized.id
         this.time = serialized.startTime
-        this.selectedBy.value = serialized.selectedBy ?? null
+        this.selectedBy.value = serialized.selectedBy
         this.newCombo = serialized.newCombo
         this.position = Vec2.from(serialized.position!)
     }
@@ -102,7 +102,7 @@ export abstract class HitObject<T extends SerializedHitObject = SerializedHitObj
 
     }
 
-    abstract serialized(overrides?: Partial<Overrides>): HitObjectData
+    abstract serialized(overrides?: Partial<Overrides>): Serialized.HitObject
 
     tweens: gsap.core.Tween[] = []
 

@@ -93,19 +93,30 @@ export class BeatmapController {
                                             kind
                                         })
                                     })
-
+                                    return {
+                                        type: it.objectName,
+                                        time: it.startTime,
+                                        position: {x: it.position[0], y: it.position[1]},
+                                        newCombo: it.newCombo,
+                                        data: {
+                                            type: 'slider',
+                                            repeatCount: it.repeatCount,
+                                            expectedDistance: it.pixelLength,
+                                            curveType: it.curveType,
+                                            controlPoints: controlPoints,//: it.points?.map(([x, y]) => ({x, y})),
+                                        }
+                                    }
                                 }
-
                                 return {
                                     type: it.objectName,
                                     time: it.startTime,
                                     position: {x: it.position[0], y: it.position[1]},
-                                    repeatCount: it.repeatCount,
-                                    expectedDistance: it.pixelLength,
-                                    curveType: it.curveType,
-                                    controlPoints: controlPoints,//: it.points?.map(([x, y]) => ({x, y})),
                                     newCombo: it.newCombo,
+                                    data: {
+                                        type: 'circle',
+                                    }
                                 }
+
                             }),
                             timingPoints: beatmap.timingPoints.map(it => {
                                 let t: any = {
@@ -158,38 +169,6 @@ export class BeatmapController {
                 sliderTickRate: 1
             },
         }
-
-        /*
-        return {
-            hitObjects: beatmap.hitObjects.map(it => {
-                return {
-                    type: it.objectName,
-                    time: it.startTime,
-                    position: {x: it.position[0], y: it.position[1]},
-                    repeatCount: it.repeatCount,
-                    pixelLength: it.pixelLength,
-                    curveType: it.curveType,
-                    points: it.points?.map(([x, y]) => ({x, y})),
-                    newCombo: it.newCombo,
-                }
-            }),
-            timingPoints: beatmap.timingPoints.map(it => {
-                let t: any = {
-                    id: id++,
-                    sv: it.velocity,
-                    time: it.offset,
-                    volume: it.volume
-                }
-                if (it.timingChange) {
-                    t.timing = {
-                        bpm: it.bpm,
-                        signature: it.timingSignature,
-                    }
-                }
-
-                return t
-            })
-        }*/
     }
 
     @Get(':id/audio')

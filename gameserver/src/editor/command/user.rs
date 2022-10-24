@@ -1,10 +1,9 @@
 use std::sync::Arc;
 
-use glam::Vec2;
-
 use crate::editor::{dispatcher::Dispatcher, EditorSession, Presence, state::user::UserInfo};
-use crate::proto::commands::HitObjectSelected;
-use crate::proto::commands::server_to_client_message::ServerCommand;
+use crate::util::Vec2;
+
+use super::messages::{ServerCommand, ServerState};
 
 pub fn handle_join(session: &mut EditorSession, id: usize, dispatcher: &mut Dispatcher) {
     if let Some(presence) = session.presence(id) {
@@ -17,26 +16,28 @@ pub fn handle_join(session: &mut EditorSession, id: usize, dispatcher: &mut Disp
         session.state.users.add_user(user.clone());
 
         dispatcher.broadcast(
-            ServerCommand::OwnId(presence.id as u64),
+            ServerCommand::OwnId(presence.id),
             Some(vec![presence.clone()]),
         );
-        dispatcher.broadcast(ServerCommand::UserJoined(user.into()), None);
+        dispatcher.broadcast(ServerCommand::UserJoined((&user).into()), None);
         dispatcher.broadcast(
-            ServerCommand::UserList(crate::proto::commands::UserList {
-                users: session
+            ServerCommand::UserList(
+                session
                     .state
                     .users
                     .all()
                     .iter()
-                    .map(|u| u.clone().into())
+                    .map(|u| u.into())
                     .collect(),
-            }),
+            ),
             None,
         );
 
         dispatcher.broadcast(
-            ServerCommand::State(crate::proto::commands::EditorState {
-                beatmap: Some((&session.state).into()),
+            ServerCommand::State(ServerState {
+                difficulty: session.state.difficulty.clone(),
+                hit_objects: session.state.hit_objects.all().clone(),
+                timing_points: session.state.timing.all().clone(),
             }),
             Some(vec![presence]),
         )
@@ -45,7 +46,7 @@ pub fn handle_join(session: &mut EditorSession, id: usize, dispatcher: &mut Disp
 
 pub fn handle_leave(session: &mut EditorSession, id: usize, dispatcher: &mut Dispatcher) {
     match session.state.users.remove_user(id) {
-        Some(user) => dispatcher.broadcast(ServerCommand::UserLeft(user.into()), None),
+        Some(user) => dispatcher.broadcast(ServerCommand::UserLeft((&user).into()), None),
         _ => return,
     };
 
@@ -60,10 +61,10 @@ pub fn handle_leave(session: &mut EditorSession, id: usize, dispatcher: &mut Dis
         })
         .collect();
     dispatcher.broadcast(
-        ServerCommand::HitObjectSelected(HitObjectSelected {
+        ServerCommand::HitObjectSelected {
             ids: user_selection,
             selected_by: None,
-        }),
+        },
         None,
     );
 }

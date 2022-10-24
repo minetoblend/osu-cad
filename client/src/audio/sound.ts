@@ -1,26 +1,57 @@
 import {AudioEngine} from "./engine";
-import {ref, watch, WatchStopHandle} from "vue";
+import {ref} from "vue";
 
 export class Sound {
 
     source: AudioBufferSourceNode | null = null
-    private readonly destroyWatcher: WatchStopHandle;
-
-    constructor(readonly buffer: AudioBuffer, readonly engine: AudioEngine) {
-
-        this.destroyWatcher = watch(this.playbackRate, value => {
-            if (this.isPlaying.value) {
-                this.lastTime = this.currentTime
-                this.startTime = this.context.currentTime
-                this.source!.playbackRate.value = value
-            }
-        })
-    }
-
+    // readonly playbackRate = ref(1)
+    readonly isPlaying = ref(false)
     private lastTime = 0
     private startTime = 0
-    readonly playbackRate = ref(1)
-    readonly isPlaying = ref(false)
+    #playbackRate = ref(1)
+
+    constructor(readonly buffer: AudioBuffer, readonly engine: AudioEngine) {
+    }
+
+    get playbackRate() {
+        return this.#playbackRate.value
+    }
+
+    set playbackRate(value) {
+        if (this.isPlaying) {
+            this.pause()
+            this.#playbackRate.value = value
+            this.play()
+        } else {
+            this.#playbackRate.value = value
+        }
+    }
+
+    get currentTime() {
+        if (!this.isPlaying.value)
+            return this.lastTime
+        const elapsed = this.context.currentTime - this.startTime
+
+        return this.lastTime + (elapsed * this.playbackRate)
+    }
+
+    set currentTime(value: number) {
+        if (this.isPlaying.value) {
+            this.stop()
+            this.lastTime = value
+            this.play()
+        } else {
+            this.lastTime = value
+        }
+    }
+
+    get context() {
+        return this.engine.context
+    }
+
+    get duration() {
+        return this.buffer.duration
+    }
 
     play() {
         this.context.resume()
@@ -28,7 +59,7 @@ export class Sound {
         this.source.buffer = this.buffer
         this.source.connect(this.context.destination)
 
-        this.source.playbackRate.value = this.playbackRate.value
+        this.source.playbackRate.value = this.playbackRate
 
         const offset = this.lastTime
 
@@ -54,36 +85,8 @@ export class Sound {
         this.lastTime = time
     }
 
-
-    get currentTime() {
-        if (!this.isPlaying.value)
-            return this.lastTime
-        const elapsed = this.context.currentTime - this.startTime
-
-        return this.lastTime + (elapsed * this.playbackRate.value)
-    }
-
-    set currentTime(value: number) {
-        if (this.isPlaying.value) {
-            this.stop()
-            this.lastTime = value
-            this.play()
-        } else {
-            this.lastTime = value
-        }
-    }
-
-    get context() {
-        return this.engine.context
-    }
-
     destroy() {
         this.stop()
         this.source?.disconnect()
-        this.destroyWatcher()
-    }
-
-    get duration() {
-        return this.buffer.duration
     }
 }
