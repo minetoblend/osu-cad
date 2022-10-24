@@ -28,8 +28,7 @@ export class EditorContext {
                 const callbacks = this.#pendingReplies.get(message.responseId)
                 if (callbacks) {
                     this.#pendingReplies.delete(message.responseId)
-                    //@ts-ignore
-                    callbacks.resolve(message.serverCommand[message.serverCommand.$case])
+                    callbacks.resolve(message.command.payload)
                 }
             }
         })

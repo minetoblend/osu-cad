@@ -13,6 +13,7 @@ use crate::{
 
 #[derive(Serialize, Clone, TS)]
 #[ts(export, rename_all = "camelCase")]
+#[serde(rename_all = "camelCase")]
 pub struct ServerToClientMessage {
     pub response_id: Option<String>,
     pub command: ServerCommand,
@@ -48,6 +49,7 @@ pub enum ServerCommand {
 
 #[derive(Deserialize, TS)]
 #[ts(export, rename_all = "camelCase")]
+#[serde(rename_all = "camelCase")]
 pub struct ClientToServerMessage {
     pub response_id: Option<String>,
     pub command: ClientCommand,
