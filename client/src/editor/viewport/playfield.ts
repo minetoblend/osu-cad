@@ -59,16 +59,18 @@ export class PlayfieldDrawable extends Container {
         let shouldRemove = new Set(this.#drawableHitObjects.keys())
         let shouldAdd: DrawableHitObject[] = []
 
-        hitObjects.forEach(hitObject => {
+        hitObjects.forEach((hitObject, index) => {
             let existing = this.#drawableHitObjects.get(hitObject.id)
             if (existing) {
                 shouldRemove.delete(hitObject.id)
                 existing.update(currentTime)
+                existing.zIndex = hitObjects.length - index
             } else {
                 const drawable = this.getDrawableFor(hitObject)
                 this.#drawableHitObjects.set(hitObject.id, drawable)
                 drawable.update(currentTime)
                 shouldAdd.push(drawable)
+                drawable.zIndex = hitObjects.length - index
             }
         })
 

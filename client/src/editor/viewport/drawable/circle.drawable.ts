@@ -57,7 +57,6 @@ export class DrawableHitCircle extends DrawableHitObject {
     update(time: number) {
         const circle = this.#hitobject.value!
 
-        this.zIndex = -Math.floor(circle.time)
         const t = time - circle.time
         this.radius = this.ctx.beatmap.difficulty.circleRadius
 

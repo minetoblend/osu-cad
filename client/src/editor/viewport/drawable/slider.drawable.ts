@@ -126,8 +126,6 @@ export class DrawableSlider extends DrawableHitObject {
 
         slider.updateProgress(time)
 
-        this.zIndex = -Math.floor(slider.time)
-
         let t = time - slider.time
 
         const fadeinTime = 650
