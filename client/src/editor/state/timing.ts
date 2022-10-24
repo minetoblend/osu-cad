@@ -1,6 +1,6 @@
 import {reactive} from "vue";
 import {EditorContext} from "@/editor";
-import {TimingPoint as TimingPointData} from "protocol/commands";
+import {Serialized} from 'osucad-gameserver'
 
 export class TimingManager {
     constructor(readonly ctx: EditorContext) {
@@ -33,7 +33,7 @@ export class TimingManager {
 
         this.ctx.connector.onCommand('state').subscribe(state => {
             this.timingPoints = []
-            state.beatmap!.timingPoints!.forEach(t => {
+            state.timingPoints!.forEach(t => {
                 this.addTimingPoint(new TimingPoint(t))
             })
         })
@@ -121,7 +121,7 @@ export class TimingManager {
 
         return uninherited ? this.#uninheritedTimingPoints[index] : this.#timingPoints[index]
     }
-    
+
 }
 
 export class TimingPoint {
@@ -129,19 +129,20 @@ export class TimingPoint {
     id!: number
     time = 0
 
-    timing?: {
+    timing: {
         bpm: number
         signature: number
-    }
-    sv?: number
-    volume?: number
+    } | null = null
 
-    constructor(init?: TimingPointData) {
+    sv: number | null = null
+    volume: number | null = null
+
+    constructor(init?: Serialized.TimingPoint) {
         if (init)
             this.updateFrom(init)
     }
 
-    updateFrom(timingPoint: TimingPointData) {
+    updateFrom(timingPoint: Serialized.TimingPoint) {
         this.id = timingPoint.id
         this.time = timingPoint.offset
         this.timing = timingPoint.timing
@@ -153,16 +154,11 @@ export class TimingPoint {
         return !this.timing
     }
 
-    serialized(): TimingPointData {
-        let timing = this.timing ? {
-            bpm: this.timing.bpm,
-            signature: this.timing.signature
-        } : undefined
-
+    serialized(): Serialized.TimingPoint {
         return {
             id: this.id,
             offset: this.time,
-            timing,
+            timing: this.timing,
             volume: this.volume,
             sv: this.sv,
         }

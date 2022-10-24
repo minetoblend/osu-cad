@@ -9,8 +9,8 @@ import * as path from "path";
 import {BeatmapDecoder} from 'osu-parsers'
 import {Beatmap as ParsedBeatmap, HitType, ISlidableObject, PathType} from 'osu-classes'
 import {TimingPointV1} from "./schema/timing.schema";
-import * as uuid from 'uuid'
-import {HitCircleV1, HitObjectV1, SliderControlPointTypeV1, SliderV1} from "./schema/hitobject.schema";
+import {HitObjectV1} from "./schema/hitobject.schema";
+import {SliderControlPointKind} from "osucad-gameserver";
 
 @Injectable()
 export class BeatmapService {
@@ -70,7 +70,6 @@ export class BeatmapService {
 
         parsed.controlPoints.timingPoints.forEach(it => {
             timingPoints.push({
-                id: uuid.v4(),
                 time: it.startTime,
                 timing: {
                     bpm: it.bpm,
@@ -83,7 +82,6 @@ export class BeatmapService {
             let timingPoint = timingPoints.find(t => t.time === it.startTime)
             if (!timingPoint) {
                 timingPoint = {
-                    id: uuid.v4(),
                     time: it.startTime,
                 }
                 timingPoints.push(timingPoint)
@@ -104,47 +102,49 @@ export class BeatmapService {
             timingPoints,
             hitObjects: parsed.hitObjects.map(it => {
                 if ((it.hitType & HitType.Normal) !== 0) {
-                    const hitObject: HitCircleV1 = {
-                        id: uuid.v4(),
-                        time: it.startTime,
+                    const hitObject: HitObjectV1 = {
+                        startTime: it.startTime,
                         position: {x: it.startPosition.x, y: it.startPosition.y},
                         newCombo: (it.hitType & HitType.NewCombo) !== 0,
-                        type: 'circle',
-                        selectedBy: null
+                        selectedBy: null,
+                        data: {
+                            type: 'circle'
+                        }
                     }
                     return hitObject
                 } else if ((it.hitType & HitType.Slider) !== 0) {
                     const slider = it as unknown as ISlidableObject
-                    const hitObject: SliderV1 = {
-                        id: uuid.v4(),
-                        time: it.startTime,
+                    const hitObject: HitObjectV1 = {
+                        startTime: it.startTime,
                         position: {x: it.startPosition.x, y: it.startPosition.y},
                         newCombo: (it.hitType & HitType.NewCombo) !== 0,
-                        type: 'slider',
                         selectedBy: null,
-                        controlPoints: slider.path.controlPoints.map(c => {
-                            let kind = SliderControlPointTypeV1.None
-                            switch (c.type) {
-                                case PathType.Bezier:
-                                    kind = SliderControlPointTypeV1.Bezier;
-                                    break;
-                                case PathType.Catmull:
-                                    kind = SliderControlPointTypeV1.Bezier;
-                                    break;
-                                case PathType.Linear:
-                                    kind = SliderControlPointTypeV1.Linear;
-                                    break;
-                                case PathType.PerfectCurve:
-                                    kind = SliderControlPointTypeV1.Circle;
-                                    break;
-                            }
-                            return {
-                                kind,
-                                position: {x: c.position.x + it.startPosition.x, y: c.position.y + it.startPosition.y}
-                            }
-                        }),
-                        expectedDistance: slider.path.expectedDistance,
-                        repeatCount: slider.repeats + 1
+                        data: {
+                            type: 'slider',
+                            controlPoints: slider.path.controlPoints.map(c => {
+                                let kind: SliderControlPointKind = 'none'
+                                switch (c.type) {
+                                    case PathType.Bezier:
+                                        kind = 'bezier';
+                                        break;
+                                    case PathType.Catmull:
+                                        kind = 'bezier';
+                                        break;
+                                    case PathType.Linear:
+                                        kind = 'linear';
+                                        break;
+                                    case PathType.PerfectCurve:
+                                        kind = 'circle';
+                                        break;
+                                }
+                                return {
+                                    kind,
+                                    position: {x: c.position.x + it.startPosition.x, y: c.position.y + it.startPosition.y}
+                                }
+                            }),
+                            expectedDistance: slider.path.expectedDistance,
+                            repeats: slider.repeats + 1
+                        }
                     }
                     return hitObject
                 }

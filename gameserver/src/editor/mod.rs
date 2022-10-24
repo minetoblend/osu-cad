@@ -1,24 +1,19 @@
 use std::{
-    io::Cursor,
     sync::{Arc, atomic::AtomicUsize},
     time::Duration,
 };
 
-use prost::Message;
+use serde::Serialize;
 use tokio::sync::{mpsc::UnboundedSender, RwLock};
+use ts_rs::TS;
 
-use crate::{
-    proto::{
-        self,
-        commands::{
-            ClientToServerMessage, server_to_client_message::ServerCommand, ServerTick, UserTick,
-        },
-    },
-    SessionInfo,
-};
+use crate::SessionInfo;
 
 use self::{
-    command::{handle_client_command, handle_editor_event},
+    command::{
+        handle_client_command, handle_editor_event,
+        messages::{ClientToServerMessage, ServerCommand, ServerTick},
+    },
     dispatcher::Dispatcher,
     init::load_beatmap,
     state::EditorState,
@@ -32,7 +27,7 @@ pub mod dispatcher;
 mod init;
 pub mod state;
 
-static NEXT_ID: AtomicUsize = AtomicUsize::new(0);
+static NEXT_ID: AtomicUsize = AtomicUsize::new(1);
 
 pub struct EditorSession {
     beatmap_id: String,
@@ -43,7 +38,9 @@ pub struct EditorSession {
 
 impl EditorSession {
     pub async fn create(beatmap_id: String, token: String) -> Option<Self> {
-        load_beatmap(beatmap_id.clone(), token).await.map(|state| Self {
+        load_beatmap(beatmap_id.clone(), token)
+            .await
+            .map(|state| Self {
                 beatmap_id,
                 state,
                 presences: Default::default(),
@@ -86,13 +83,7 @@ impl EditorSession {
                     .users
                     .all()
                     .iter()
-                    .map(|user| UserTick {
-                        id: user.id() as u64,
-                        current_time: user.current_time,
-                        cursor_pos: user
-                            .cursor_pos
-                            .map(|t| proto::commands::Vec2 { x: t.x, y: t.y }),
-                    })
+                    .map(|user| user.into())
                     .collect(),
             }),
             None,
@@ -111,7 +102,6 @@ impl EditorSession {
 
     pub fn join(&mut self, session_info: &SessionInfo, sender: Sender) -> usize {
         let id = NEXT_ID.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-
 
         let presence = Arc::new(Presence {
             id,
@@ -134,12 +124,15 @@ impl EditorSession {
         self.state.events.push(state::EditorEvent::UserLeft { id });
     }
 
-    pub async fn insert_message(session: Arc<RwLock<EditorSession>>, presence: usize, buf: &[u8]) {
-        let message =
-            match crate::proto::commands::ClientToServerMessage::decode(&mut Cursor::new(buf)) {
-                Ok(buf) => buf,
-                Err(_) => return,
-            };
+    pub async fn insert_message(session: Arc<RwLock<EditorSession>>, presence: usize, str: &str) {
+        let message: ClientToServerMessage = match serde_json::from_str(str) {
+            Ok(message) => message,
+            Err(e) => {
+                println!("{:?}: {}", e, str);
+                return;
+            }
+        };
+
         let mut session = session.write().await;
         if let Some(presence) = session.presence(presence) {
             session.messages.push((message, presence))
@@ -151,8 +144,12 @@ impl EditorSession {
     }
 }
 
+#[derive(Serialize, TS)]
 pub struct Presence {
     id: usize,
     session: SessionInfo,
+    #[serde(skip)]
     sender: Sender,
 }
+
+

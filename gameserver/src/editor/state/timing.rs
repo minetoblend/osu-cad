@@ -1,8 +1,7 @@
 use std::{sync::atomic::AtomicU32, time::Duration};
 
 use serde::{Deserialize, Serialize};
-
-use crate::proto;
+use ts_rs::TS;
 
 #[derive(Default, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -18,9 +17,10 @@ fn next_id() -> TimingPointId {
     NEXT_ID.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, TS)]
+#[ts(export, rename_all="camelCase")]
 pub struct TimingPoint {
-    #[serde(default = "next_id", skip_deserializing, skip_serializing)]
+    #[serde(default = "next_id")]
     pub id: TimingPointId,
     #[serde(alias="time")]
     pub offset: i32,
@@ -29,7 +29,8 @@ pub struct TimingPoint {
     pub volume: Option<f32>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, TS)]
+#[ts(export, rename_all="camelCase")]
 pub struct TimingInformation {
     pub bpm: f32,
     pub signature: u8,
@@ -88,37 +89,5 @@ impl TimingPoint {
 
     pub(crate) fn next_id() -> TimingPointId {
         next_id()
-    }
-}
-
-impl From<TimingPoint> for proto::commands::TimingPoint {
-    fn from(val: TimingPoint) -> Self {
-        proto::commands::TimingPoint {
-            id: val.id,
-            offset: val.offset,
-            sv: val.sv,
-            volume: val.volume,
-            timing: val
-                .timing
-                .map(|timing| proto::commands::TimingInformation {
-                    bpm: timing.bpm,
-                    signature: timing.signature as u32,
-                }),
-        }
-    }
-}
-
-impl From<proto::commands::TimingPoint> for TimingPoint {
-    fn from(t: proto::commands::TimingPoint) -> Self {
-        Self {
-            id: t.id,
-            offset: t.offset,
-            sv: t.sv,
-            volume: t.volume,
-            timing: t.timing.map(|timing| TimingInformation {
-                bpm: timing.bpm,
-                signature: timing.signature as u8,
-            }),
-        }
     }
 }

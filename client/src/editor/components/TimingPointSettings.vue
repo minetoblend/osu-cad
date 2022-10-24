@@ -27,7 +27,7 @@ import {TimingPoint} from "@/editor/state/timing";
 import {useContext, useState} from "@/editor";
 import AsyncSwitch from "@/components/AsyncSwitch.vue";
 import AsyncNumberInput from "@/components/AsyncNumberInput.vue";
-import {TimingPoint as TimingPointData} from 'protocol/commands'
+import {Serialized} from 'osucad-gameserver'
 
 const props = defineProps({
   timingPoint: {
@@ -66,12 +66,14 @@ function setTime(timingPoint: TimingPoint, time: number) {
 }
 
 
-async function updateTimingPoint(timingPoint: TimingPoint, update: (timingPoint: TimingPointData) => void) {
-  const serializedTimingPoint = timingPoint.serialized()
+async function updateTimingPoint(timingPoint: TimingPoint, update: (timingPoint: Serialized.TimingPoint) => void) {
+  const serialized = timingPoint.serialized()
 
-  update(serializedTimingPoint)
+  update(serialized)
 
-  return ctx.sendMessage('updateTimingPoint', {timingPoint: serializedTimingPoint})
+  console.log(serialized)
+
+  return ctx.sendMessage('updateTimingPoint', serialized)
 
 }
 

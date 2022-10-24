@@ -94,6 +94,17 @@ export class Vec2 implements IHasMathOperations<Vec2> {
         return this.divF(l)
     }
 
+    get angle() {
+        return Math.atan2(this.y, this.x)
+    }
+
+    get rounded() {
+        return new Vec2(
+            Math.round(this.x),
+            Math.round(this.y)
+        )
+    }
+
     static zero() {
         return new Vec2();
     }
@@ -104,6 +115,20 @@ export class Vec2 implements IHasMathOperations<Vec2> {
 
     static playfieldCentre() {
         return new Vec2(320, 240)
+    }
+
+    static from(from: Vec2Like) {
+        return new Vec2(from.x, from.y)
+    }
+
+    static fromOpt(from?: Vec2Like): Vec2 | undefined {
+        if (!from)
+            return undefined
+        return new Vec2(from.x, from.y)
+    }
+
+    static dot(a: Vec2, b: Vec2) {
+        return a.x * b.x + a.y * b.y
     }
 
     clone() {
@@ -174,7 +199,6 @@ export class Vec2 implements IHasMathOperations<Vec2> {
         )
     }
 
-
     withX(x: number) {
         return new Vec2(x, this.y)
     }
@@ -223,24 +247,10 @@ export class Vec2 implements IHasMathOperations<Vec2> {
         return `(${this.x}, ${this.y})`
     }
 
-    static from(from: Vec2Like) {
-        return new Vec2(from.x, from.y)
-    }
-
-    static fromOpt(from?: Vec2Like): Vec2 | undefined {
-        if (!from)
-            return undefined
-        return new Vec2(from.x, from.y)
-    }
-
     equals(rhs: Vec2) {
         if (!rhs)
             return false
         return this.x === rhs.x && this.y === rhs.y
-    }
-
-    get angle() {
-        return Math.atan2(this.y, this.x)
     }
 
     directionTo(to: Vec2) {
@@ -255,10 +265,6 @@ export class Vec2 implements IHasMathOperations<Vec2> {
 
     angleTo(to: Vec2) {
         return Math.atan2(to.y - this.y, to.x - this.x)
-    }
-
-    static dot(a: Vec2, b: Vec2) {
-        return a.x * b.x + a.y * b.y
     }
 
     rotateAround(center: Vec2, angle: number) {
@@ -353,13 +359,13 @@ export class Color implements IHasMathOperations<Color> {
         return `rgb(${this.r * 255},${this.g * 255},${this.b * 255})`
     }
 
-    rgba(alpha: number) {
-        return `rgba(${this.r * 255},${this.g * 255},${this.b * 255},${alpha})`
-    }
-
     get grayscale() {
         const avg = (this.r + this.g + this.b) / 3
         return new Color(avg, avg, avg)
+    }
+
+    rgba(alpha: number) {
+        return `rgba(${this.r * 255},${this.g * 255},${this.b * 255},${alpha})`
     }
 
     add(rhs: Color): Color {

@@ -33,6 +33,7 @@
     "class-transformer": "^0.5.1",
     "osu-parser": "^0.3.3",
     "osu-parsers": "^3.2.0",
+    "osucad-gameserver": "file:../gameserver",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "passport-osu": "^1.2.0",

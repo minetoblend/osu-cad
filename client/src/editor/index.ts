@@ -12,6 +12,7 @@ import {Sound} from "@/audio/sound";
 import softHitNormal from '@/assets/skin/soft-hitnormal.wav'
 import {Sample} from "@/audio/sample";
 import axios from "axios";
+import {ClientToServerMessage} from "osucad-gameserver";
 
 export class EditorContext {
 
@@ -85,11 +86,12 @@ export class EditorContext {
 
     sendMessage<T extends ClientCommandType>(opCode: T, payload: ClientCommandPayload<T>) {
         this.connector.sendMessage({
-            clientCommand: {
-                $case: opCode,
-                [opCode]: payload
-            } as any
-        })
+            responseId: null,
+            command: {
+                type: opCode,
+                payload: payload
+            }
+        } as ClientToServerMessage)
     }
 
     sendMessageWithResponse<T extends ClientCommandType>(opCode: T, payload: ClientCommandPayload<T>) {
@@ -98,11 +100,11 @@ export class EditorContext {
 
         this.connector.sendMessage({
             responseId,
-            clientCommand: {
-                $case: opCode,
-                [opCode]: payload
-            } as any
-        })
+            command: {
+                type: opCode,
+                payload: payload
+            }
+        } as ClientToServerMessage)
 
         setTimeout(() => {
             const callbacks = this.#pendingReplies.get(responseId)

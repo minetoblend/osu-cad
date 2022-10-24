@@ -63,18 +63,17 @@ const selection = ref(new Set<number>())
 
 function createTimingPoint() {
   return ctx.sendMessage('createTimingPoint', {
-    timingPoint: {
-      offset: ctx.currentTime,
-      timing: undefined,
-      volume: undefined,
-      sv: undefined,
-      id: -1
-    }
-  })
+        offset: ctx.currentTime,
+        timing: null,
+        volume: null,
+        sv: null,
+        id: 0
+      }
+  )
 }
 
 function deleteTimingPoint(timingPoint: TimingPoint) {
-  return ctx.sendMessage('deleteTimingPoint', {ids: [timingPoint.id]})
+  return ctx.sendMessage('deleteTimingPoint', [timingPoint.id])
 }
 
 

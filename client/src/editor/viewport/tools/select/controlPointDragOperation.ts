@@ -3,6 +3,7 @@ import {DragEvent} from "@/util/drag";
 import {ViewportTool} from "@/editor/viewport/tools";
 import {Slider} from "@/editor/hitobject/slider";
 import {SliderControlPoint, SliderPath} from "@/editor/hitobject/sliderPath";
+import {defaultOverrides} from "@/editor/hitobject/overrides";
 
 export class ControlPointDragOperation extends DragOperation {
 
@@ -38,9 +39,8 @@ export class ControlPointDragOperation extends DragOperation {
         this.tool.sendOperationCommand('setHitObjectOverrides', {
             id: this.hitObject.id,
             overrides: {
-                controlPoints: {
-                    controlPoints: path.controlPoints.value as any
-                },
+                ...defaultOverrides(),
+                controlPoints: path.controlPoints.value.map(t => t.serialize()),
                 expectedDistance: path.expectedDistance,
                 position
             }
@@ -52,13 +52,19 @@ export class ControlPointDragOperation extends DragOperation {
     commit(evt: DragEvent): void {
         const {path, position} = this.createOverrides(evt)
 
-        this.tool.sendMessage('updateHitObject', {
-            hitObject: this.hitObject.serialized({
+        console.log(
+            this.hitObject.serialized({
                 controlPoints: path.controlPoints.value,
                 expectedDistance: path.expectedDistance,
                 position
             })
-        })
+        )
+
+        this.tool.sendMessage('updateHitObject', this.hitObject.serialized({
+            controlPoints: path.controlPoints.value,
+            expectedDistance: path.expectedDistance,
+            position
+        }))
     }
 
 

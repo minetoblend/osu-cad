@@ -1,14 +1,11 @@
 use serde::{Deserialize, Serialize};
 
-use crate::proto::commands;
-
 use self::{
     difficulty::Difficulty, hitobject::HitObjectState, timing::TimingState, user::UserState,
 };
 
 pub mod difficulty;
 pub mod hitobject;
-pub mod math;
 pub mod timing;
 pub mod user;
 
@@ -35,14 +32,4 @@ impl EditorState {}
 pub enum EditorEvent {
     UserJoined { id: usize },
     UserLeft { id: usize },
-}
-
-impl From<&EditorState> for commands::Beatmap {
-    fn from(val: &EditorState) -> Self {
-        commands::Beatmap {
-            hit_objects: val.hit_objects.all().iter().map(|h| h.into()).collect(),
-            timing_points: val.timing.all().iter().map(|t| t.clone().into()).collect(),
-            difficulty: Some(val.difficulty.clone().into()),
-        }
-    }
 }

@@ -5,6 +5,7 @@ import {DragEvent} from "@/util/drag";
 import {HitObject} from "@/editor/hitobject";
 import {Slider, SliderOverrides} from "@/editor/hitobject/slider";
 import {SliderControlPoint} from "@/editor/hitobject/sliderPath";
+import {defaultOverrides} from "@/editor/hitobject/overrides";
 
 function mod(a: number, n: number) {
     return ((a % n) + n) % n
@@ -49,6 +50,7 @@ export class RotateOperation extends DragOperation {
 
                 return ['setHitObjectOverrides', {
                     id: it.id, overrides: {
+                        ...defaultOverrides(),
                         ...overrides,
                         controlPoints: overrides.controlPoints ? {controlPoints: overrides.controlPoints} : undefined
                     }
@@ -66,9 +68,7 @@ export class RotateOperation extends DragOperation {
         this.tool.selection.map(it => {
             const overrides = this.createOverrides(it)
 
-            this.tool.sendMessage('updateHitObject', {
-                hitObject: it.serialized(overrides)
-            })
+            this.tool.sendMessage('updateHitObject', it.serialized(overrides))
         })
     }
 

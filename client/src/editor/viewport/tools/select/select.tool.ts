@@ -5,7 +5,7 @@ import {Vec2} from "@/util/math";
 import {PathVisualizer} from "@/editor/viewport/tools/path.visualizer";
 import {HitObjectDragOperation} from "@/editor/viewport/tools/select/hitobject.drag.operation";
 import {ControlPointDragOperation} from "@/editor/viewport/tools/select/controlPointDragOperation";
-import {SliderControlPointType} from "@common/types";
+import {SliderControlPointType} from "@/editor/hitobject/sliderPath";
 import {Slider} from "@/editor/hitobject/slider";
 import {SliderSubdivideOperation} from "@/editor/viewport/tools/select/slider.subdivide.operation";
 import {createResnappedPath} from "@/editor/viewport/tools/util";
@@ -145,7 +145,22 @@ export class SelectTool extends ViewportTool {
 
         const controlPoints = hitObject.path.controlPoints.value.filter((_, index) => !shouldDelete.has(index))
 
-        this.sendMessage('updateHitObject', {hitObject: hitObject.serialized({controlPoints})})
+        if(controlPoints.length < 2)
+            return;
+
+        if(controlPoints[0].kind === SliderControlPointType.None) {
+            if(controlPoints.length == 3 && controlPoints[1].kind === SliderControlPointType.None) {
+                controlPoints[0].kind = SliderControlPointType.Circle
+            } else if (controlPoints.length > 3 && controlPoints[1].kind === SliderControlPointType.None && controlPoints[2].kind !== SliderControlPointType.None) {
+                controlPoints[0].kind = SliderControlPointType.Circle
+            }
+        }
+
+
+        this.sendMessage('updateHitObject', hitObject.serialized({
+            position: controlPoints[0].position,
+            controlPoints
+        }))
         return true
 
     }
@@ -164,12 +179,12 @@ export class SelectTool extends ViewportTool {
             path
         }, false)
 
-        this.sendMessage('updateHitObject', {
-            hitObject: hitObject.serialized({
-                controlPoints,
+        this.sendMessage('updateHitObject',
+            hitObject.serialized({
+                controlPoints: path.controlPoints.value,
                 expectedDistance: path.expectedDistance
             })
-        })
+        )
     }
 
     onDragStart(evt: DragEvent) {
@@ -200,7 +215,7 @@ export class SelectTool extends ViewportTool {
         if (evt.leftMouseButton && evt.ctrlKey) {
 
             const controlPoints = hitObject.path.controlPoints.value.map(it => it.clone())
-            controlPoints[index].kind = (controlPoints[index].kind + 1) % (SliderControlPointType.Circle + 1)
+            controlPoints[index].kind = (controlPoints[index].kind + 1) % (SliderControlPointType.Linear + 1)
             if (index === 0 && controlPoints[index].kind === SliderControlPointType.None)
                 controlPoints[index].kind++
 
@@ -208,32 +223,18 @@ export class SelectTool extends ViewportTool {
 
             hitObject.applyOverrides({path}, false)
 
-            this.sendMessage('updateHitObject', {
-                hitObject: hitObject.serialized({
+            this.sendMessage('updateHitObject',
+                hitObject.serialized({
                     controlPoints: path.controlPoints.value,
                     expectedDistance: path.expectedDistance
                 })
-            })
+            )
             return true
         }
 
         if (evt.rightMouseButton) {
             if (evt.ctrlKey) {
-                const controlPoints = hitObject.path.controlPoints.value.map(it => it.clone())
-                controlPoints.splice(index, 1)
-                const path = createResnappedPath(controlPoints, hitObject, this.ctx)
-
-                hitObject.applyOverrides({path}, false)
-
-
-
-                this.sendMessage('updateHitObject', {
-                    hitObject: hitObject.serialized({
-                        controlPoints,
-                        expectedDistance: path.expectedDistance
-                    })
-                })
-
+                this.deleteControlPoints(hitObject, [index])
             } else {
                 this.showControlPointDropdown(hitObject, index, new Vec2(evt.evt.clientX, evt.evt.clientY))
             }

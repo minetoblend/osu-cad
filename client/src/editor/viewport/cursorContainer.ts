@@ -6,8 +6,8 @@ import gsap from 'gsap'
 import {DropShadowFilter} from "@pixi/filter-drop-shadow";
 import {animate} from "@/util/animation";
 import {UserData} from "@/editor/state/user";
-import {ServerTick} from "protocol/commands";
 import {watchEffect} from "vue";
+import {Serialized} from 'osucad-gameserver'
 
 export class CursorContainer extends Container {
 
@@ -40,7 +40,7 @@ export class CursorContainer extends Container {
 
     setOwnPos(pos: Vec2 | undefined) {
         this.ownPos = pos
-        this.ownCursor.setPos(pos)
+        this.ownCursor.setPos(pos ?? null)
 
         this.userCursors.forEach(it => {
             it.updateTextVisible(pos)
@@ -65,10 +65,10 @@ export class CursorContainer extends Container {
     }
 
 
-    onTick(tick: ServerTick) {
+    onTick(tick: Serialized.ServerTick) {
         tick.userTicks.forEach(userTick => {
             const cursor = this.userCursors.get(userTick.id)
-            if(cursor) {
+            if (cursor) {
                 cursor?.setPos(userTick.cursorPos, true)
                 cursor.setTime(userTick.currentTime, this.ctx.clock.animatedTime)
             }
@@ -114,7 +114,7 @@ export class Cursor extends Container {
         gsap.to(this, {alpha, duration: 0.2})
     }
 
-    setPos(pos: Vec2Like | undefined, animated = false) {
+    setPos(pos: Vec2Like | null, animated = false) {
 
         if (pos) {
             const position = Vec2.from(pos)

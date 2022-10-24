@@ -1,7 +1,0 @@
-syntax = "proto3";
-package proto.util;
-
-message Vec2 {
-    float x = 1;
-    float y = 2;
-}

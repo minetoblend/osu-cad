@@ -4,11 +4,11 @@ import {Container, Sprite, Texture} from "pixi.js";
 
 import circlePiece from '@/assets/skin/hitcircleoverlay.png'
 import {Vec2} from "@/util/math";
-import {SliderControlPoint, SliderPath} from "@/editor/hitobject/sliderPath";
+import {SliderControlPoint, SliderControlPointType, SliderPath} from "@/editor/hitobject/sliderPath";
 import {Slider} from "@/editor/hitobject/slider";
-import {SliderControlPointType} from "@common/types";
 import {nextTick, ref} from "vue";
 import {PathVisualizer} from "@/editor/viewport/tools/path.visualizer";
+import {defaultOverrides} from "@/editor/hitobject/overrides";
 
 export class SliderCreateTool extends ViewportTool {
 
@@ -19,7 +19,7 @@ export class SliderCreateTool extends ViewportTool {
 
         if (evt.rightMouseButton) {
             if (this.slider) {
-               this.commit()
+                this.commit()
             } else
                 this.manager.toolId = 'select'
         }
@@ -41,7 +41,6 @@ export class SliderCreateTool extends ViewportTool {
         this.overlayContainer.addChild(this.pathVisualizer)
         this.#cursor.visible = true
     }
-
 
 
     onMouseMove(mousePos: Vec2) {
@@ -76,9 +75,8 @@ export class SliderCreateTool extends ViewportTool {
                 {
                     id: this.slider!.id,
                     overrides: {
-                        controlPoints: {
-                            controlPoints: path.controlPoints.value.map(it => it.clone()) as any
-                        },
+                        ...defaultOverrides(),
+                        controlPoints: path.controlPoints.value.map(it => it.serialize()),
                         expectedDistance: path.expectedDistance,
                     }
                 }
@@ -110,9 +108,7 @@ export class SliderCreateTool extends ViewportTool {
 
                 slider.position = evt.current
 
-                const response = await this.ctx.sendMessageWithResponse('createHitObject', {
-                    hitObject: slider.serialized()
-                }) as any
+                const response = await this.ctx.sendMessageWithResponse('createHitObject', slider.serialized()) as any
 
                 const id = response.id
                 nextTick(() => {
@@ -133,7 +129,7 @@ export class SliderCreateTool extends ViewportTool {
             } else if (this.slider) {
                 if (this.lastPoint && evt.current.sub(this.lastPoint.position).lengthSquared < 10 * 10) {
                     this.lastPoint!.kind =
-                        (this.lastPoint!.kind + 1) % (SliderControlPointType.Circle + 1)
+                        (this.lastPoint!.kind + 1) % (SliderControlPointType.Linear + 1)
                     this.updateCurrentSection()
                 } else {
                     this.addControlPoint(evt.current)
@@ -147,7 +143,7 @@ export class SliderCreateTool extends ViewportTool {
     }
 
     commit() {
-        if(this.slider) {
+        if (this.slider) {
 
             this.endOperation()
             this.#cursor.visible = true
@@ -155,7 +151,7 @@ export class SliderCreateTool extends ViewportTool {
 
             const serialized = this.slider.serialized(this.slider.overrides);
 
-            this.sendMessage('updateHitObject', {hitObject: serialized})
+            this.sendMessage('updateHitObject', serialized)
 
             this.slider = undefined
             this.currentPoint = undefined

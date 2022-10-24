@@ -4,24 +4,27 @@ import {shallowReactive} from "vue";
 import {EditorContext} from "@/editor";
 import {HitCircle} from "@/editor/hitobject/circle";
 import {Subject} from "rxjs";
-import {HitObject as HitObjectData} from 'protocol/commands'
+import {Serialized} from 'osucad-gameserver'
 
 export class HitObjectManager {
-    constructor(readonly ctx: EditorContext) {
-        this.initListeners()
-    }
-
-    readonly #hitObjects = shallowReactive<HitObject[]>([])
-    readonly #selection = shallowReactive(new Set<HitObject>())
-
     readonly onSelectionAdded = new Subject<HitObject>()
     readonly onSelectionRemoved = new Subject<HitObject>()
     readonly onHitObjectAdded = new Subject<HitObject>()
     readonly onHitObjectUpdated = new Subject<HitObject>()
     readonly onHitObjectRemoved = new Subject<HitObject>()
+    readonly #hitObjects = shallowReactive<HitObject[]>([])
+    readonly #selection = shallowReactive(new Set<HitObject>())
+
+    constructor(readonly ctx: EditorContext) {
+        this.initListeners()
+    }
 
     get hitObjects() {
         return this.#hitObjects
+    }
+
+    get selection() {
+        return [...this.#selection.values()]
     }
 
     findHitObjectIndex(time: number): { found: boolean, index: number } {
@@ -62,7 +65,6 @@ export class HitObjectManager {
         this.onHitObjectAdded.next(hitObject)
     }
 
-
     findById(id: number) {
         return this.#hitObjects.find(it => it.id === id)
     }
@@ -71,7 +73,7 @@ export class HitObjectManager {
         ids.forEach(id => {
             const hitObject = this.findById(id)
             if (hitObject) {
-                if (selectedBy === this.ctx.users.sessionId && !hitObject.selectedBy.value) {
+                if (selectedBy === this.ctx.users.sessionId && hitObject.selectedBy.value === null) {
                     this.onSelectionAdded.next(hitObject)
                 } else if (hitObject.selectedBy.value === this.ctx.users.sessionId && selectedBy === null) {
                     this.onSelectionRemoved.next(hitObject)
@@ -87,12 +89,46 @@ export class HitObjectManager {
         })
     }
 
-    get selection() {
-        return [...this.#selection.values()]
+    setOverrides(id: number, overrides: Record<string, any>, animated = false) {
+        this.findById(id)?.applyOverrides(overrides, animated)
     }
 
-    #addSerializedHitObject(hitObject: HitObjectData) {
-        switch (hitObject.kind?.$case) {
+    deleteHitObjects(ids: number[]) {
+        ids.forEach(id => {
+            const index = this.#hitObjects.findIndex(it => it.id === id)
+            if (index >= 0) {
+                const hitObject = this.#hitObjects[index]
+                hitObject.destroyed = true
+                this.#hitObjects.splice(index, 1)
+                this.onHitObjectRemoved.next(hitObject)
+            }
+        })
+    }
+
+    calculateCombos() {
+        let currentComboNumber = 1
+        let currentComboIndex = 0
+
+        for (let i = 0; i < this.hitObjects.length; i++) {
+            const hitObject = this.hitObjects[i]
+
+            if (hitObject.newCombo) {
+                currentComboIndex += 1 + hitObject.comboOffset.value
+                currentComboNumber = 1
+            }
+            hitObject.comboIndex.value = currentComboIndex
+            hitObject.comboNumber.value = currentComboNumber
+
+            currentComboNumber++
+        }
+    }
+
+    applyDefaults() {
+        this.hitObjects.forEach(t => t.applyDefaults(this.ctx.beatmap, this.ctx))
+    }
+
+    #addSerializedHitObject(hitObject: Serialized.HitObject) {
+        switch (hitObject.data.type) {
             case 'circle':
                 const circle = new HitCircle()
                 circle.updateFrom(hitObject)
@@ -137,12 +173,13 @@ export class HitObjectManager {
         )
 
         this.ctx.connector.onCommand('hitObjectSelected').subscribe(selection => {
-            this.setSelectedBy(selection.ids, selection.selectedBy ?? null)
+            this.setSelectedBy(selection.ids, selection.selectedBy)
         })
 
         this.ctx.connector.onCommand('hitObjectUpdated').subscribe(hitObject => {
+            console.log('hitObjectUpdated', hitObject)
             const o = this.findById(hitObject.id)
-            if (o){
+            if (o) {
                 o.updateFrom(hitObject)
                 this.onHitObjectUpdated.next(o)
             }
@@ -154,55 +191,14 @@ export class HitObjectManager {
 
         this.ctx.connector.onCommand('state').subscribe(state => {
             this.deleteHitObjects(this.hitObjects.map(it => it.id))
-            state.beatmap!.hitObjects!.forEach(hitObject => this.#addSerializedHitObject(hitObject))
+            state.hitObjects.forEach(hitObject => this.#addSerializedHitObject(hitObject))
         })
 
         this.ctx.connector.onCommand('hitObjectOverridden').subscribe(({id, overrides}) => {
             const h = this.findById(id)
             if (h && h.selectedBy.value !== this.ctx.users.sessionId) {
-                this.setOverrides(id, {
-                    ...overrides,
-                    controlPoints: overrides!.controlPoints?.controlPoints ?? null
-                } as any, true)
+                this.setOverrides(id, overrides, true)
             }
         })
-    }
-
-    setOverrides(id: number, overrides: Record<string, any>, animated = false) {
-        this.findById(id)?.applyOverrides(overrides, animated)
-    }
-
-    deleteHitObjects(ids: number[]) {
-        ids.forEach(id => {
-            const index = this.#hitObjects.findIndex(it => it.id === id)
-            if (index >= 0) {
-                const hitObject = this.#hitObjects[index]
-                hitObject.destroyed = true
-                this.#hitObjects.splice(index, 1)
-                this.onHitObjectRemoved.next(hitObject)
-            }
-        })
-    }
-
-    calculateCombos() {
-        let currentComboNumber = 1
-        let currentComboIndex = 0
-
-        for (let i = 0; i < this.hitObjects.length; i++) {
-            const hitObject = this.hitObjects[i]
-
-            if (hitObject.newCombo) {
-                currentComboIndex += 1 + hitObject.comboOffset.value
-                currentComboNumber = 1
-            }
-            hitObject.comboIndex.value = currentComboIndex
-            hitObject.comboNumber.value = currentComboNumber
-
-            currentComboNumber++
-        }
-    }
-
-    applyDefaults() {
-        this.hitObjects.forEach(t => t.applyDefaults(this.ctx.beatmap, this.ctx))
     }
 }

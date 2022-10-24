@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
+use ts_rs::TS;
 
-use crate::proto::commands;
-
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, TS)]
 #[serde(rename_all = "camelCase")]
+#[ts(export)]
 pub struct Difficulty {
     pub hp_drain_rate: f32,
     pub circle_size: f32,
@@ -22,19 +22,6 @@ impl Default for Difficulty {
             approach_rate: 8.5,
             slider_multiplier: 1.4,
             slider_tick_rate: 1.0,
-        }
-    }
-}
-
-impl From<Difficulty> for commands::Difficulty {
-    fn from(val: Difficulty) -> Self {
-        commands::Difficulty {
-            hp_drain_rate: val.hp_drain_rate,
-            circle_size: val.circle_size,
-            overall_difficulty: val.overall_difficulty,
-            approach_rate: val.approach_rate,
-            slider_multiplier: val.slider_multiplier,
-            slider_tick_rate: val.slider_tick_rate,
         }
     }
 }

@@ -1,94 +1,24 @@
 use std::sync::Arc;
 
-use glam::IVec2;
-
-use crate::{
-    editor::{
-        dispatcher::Dispatcher,
-        EditorSession,
-        Presence, state::hitobject::{self, HitObject, HitObjectId, SliderControlPoint},
-    },
-    proto::{
-        self,
-        commands::{self, SelectHitObject, server_to_client_message::ServerCommand},
-    },
+use crate::editor::{
+    dispatcher::Dispatcher,
+    EditorSession,
+    Presence, state::hitobject::{HitObject, HitObjectId},
 };
 
-fn parse_ivec2(v: &proto::commands::IVec2) -> IVec2 {
-    IVec2::new(v.x, v.y)
-}
-
-fn parse_hitobject(hit_object: proto::commands::HitObject) -> HitObject {
-    HitObject {
-        id: hit_object.id,
-        selected_by: hit_object.selected_by.map(|x| x as usize),
-        start_time: hit_object.start_time,
-        position: parse_ivec2(&hit_object.position.unwrap()),
-        new_combo: hit_object.new_combo,
-        data: match hit_object.kind.unwrap() {
-            proto::commands::hit_object::Kind::Circle(_) => hitobject::HitObjectKind::HitCircle,
-            proto::commands::hit_object::Kind::Slider(s) => hitobject::HitObjectKind::Slider {
-                expected_distance: s.expected_distance,
-                control_points: s
-                    .control_points
-                    .iter()
-                    .map(|c| SliderControlPoint {
-                        position: parse_ivec2(&c.position.clone().unwrap()),
-                        kind: c.kind(),
-                    })
-                    .collect(),
-                repeats: s.repeats as u16,
-            },
-            proto::commands::hit_object::Kind::Spinner(_) => hitobject::HitObjectKind::Spinner {},
-        },
-    }
-}
-/*
-fn serialize_hitobject(hit_object: &HitObject) -> proto::commands::HitObject {
-    proto::commands::HitObject {
-        id: hit_object.id,
-        new_combo: hit_object.new_combo,
-        position: Some(proto::commands::IVec2 {
-            x: hit_object.position.x,
-            y: hit_object.position.y,
-        }),
-        selected_by: hit_object.selected_by.map(|x| x as u32),
-        start_time: hit_object.start_time,
-        kind: match hit_object.data.clone() {
-            hitobject::HitObjectKind::HitCircle => Some(proto::commands::hit_object::Kind::Circle(
-                proto::commands::HitCircle {},
-            )),
-            hitobject::HitObjectKind::Slider {
-                expected_distance,
-                control_points,
-                repeats,
-            } => Some(proto::commands::hit_object::Kind::Slider(
-                proto::commands::Slider {
-                    expected_distance,
-                    repeats: repeats as u32,
-                    control_points: control_points
-                        .iter()
-                        .map(|c| proto::commands::SliderControlPoint {
-                            position: Some(proto::commands::IVec2 {
-                                x: hit_object.position.x,
-                                y: hit_object.position.y,
-                            }),
-                            kind: c.kind as i32,
-                        })
-                        .collect(),
-                },
-            )),
-        },
-    }
-}*/
+use super::messages::ServerCommand;
 
 pub fn handle_create_hitobject(
     session: &mut EditorSession,
     presence: Arc<Presence>,
-    hit_object: proto::commands::HitObject,
+    mut hit_object: HitObject,
     response_id: Option<String>,
     dispatcher: &mut Dispatcher,
 ) {
+    if !hit_object.is_valid() {
+        return;
+    }
+
     let overlapping = session
         .state
         .hit_objects
@@ -99,7 +29,6 @@ pub fn handle_create_hitobject(
 
     handle_delete_hitobjects(session, presence.clone(), overlapping, dispatcher, true);
 
-    let mut hit_object = parse_hitobject(hit_object);
     hit_object.id = HitObject::next_id();
     hit_object.selected_by = Some(presence.id);
 
@@ -109,20 +38,9 @@ pub fn handle_create_hitobject(
         .insert_hitobject(hit_object.clone());
 
     dispatcher.broadcast_response(
-        ServerCommand::HitObjectCreated(hit_object.clone().into()),
+        ServerCommand::HitObjectCreated(hit_object),
         response_id,
         None,
-    );
-
-    handle_hitobject_selection(
-        session,
-        presence,
-        SelectHitObject {
-            ids: vec![hit_object.id],
-            selected: true,
-            unique: true,
-        },
-        dispatcher,
     );
 }
 
@@ -130,10 +48,13 @@ pub fn handle_update_hitobject(
     session: &mut EditorSession,
     presence: Arc<Presence>,
     id: HitObjectId,
-    hit_object: proto::commands::HitObject,
+    mut hit_object: HitObject,
     dispatcher: &mut Dispatcher,
 ) {
-    let mut hit_object = parse_hitobject(hit_object);
+    if !hit_object.is_valid() {
+        return;
+    }
+
     hit_object.id = id;
 
     if let Some(original) = session.state.hit_objects.find_by_id(id) {
@@ -151,9 +72,10 @@ pub fn handle_update_hitobject(
         if session
             .state
             .hit_objects
-            .update_hitobject(id, hit_object.clone()).is_ok()
+            .update_hitobject(id, hit_object.clone())
+            .is_ok()
         {
-            dispatcher.broadcast(ServerCommand::HitObjectUpdated(hit_object.into()), None);
+            dispatcher.broadcast(ServerCommand::HitObjectUpdated(hit_object), None);
         }
     }
 }
@@ -166,7 +88,8 @@ pub fn handle_delete_hitobjects(
     and_unselected: bool,
 ) {
     let deleted: Vec<_> = ids
-        .iter().copied()
+        .iter()
+        .copied()
         .filter(|id| {
             if let Some(hit_object) = session.state.hit_objects.find_by_id(*id) {
                 if let Some(selected_by) = hit_object.selected_by {
@@ -190,7 +113,9 @@ pub fn handle_delete_hitobjects(
 pub fn handle_hitobject_selection(
     session: &mut EditorSession,
     presence: Arc<Presence>,
-    selection: SelectHitObject,
+    ids: Vec<HitObjectId>,
+    unique: bool,
+    selected: bool,
     dispatcher: &mut Dispatcher,
 ) {
     let mut selected_ids: Vec<HitObjectId> = Default::default();
@@ -203,10 +128,10 @@ pub fn handle_hitobject_selection(
         .map(|h| h.id)
         .collect();
 
-    if selection.unique {
+    if unique {
         for id in previous_selection {
             if let Some(mut hit_object) = session.state.hit_objects.find_by_id_mut(id) {
-                if !selection.ids.contains(&hit_object.id) {
+                if !ids.contains(&hit_object.id) {
                     hit_object.selected_by = None;
                     deselected_ids.push(id);
                 }
@@ -214,17 +139,17 @@ pub fn handle_hitobject_selection(
         }
     }
 
-    for id in selection.ids {
+    for id in ids.clone() {
         if let Some(mut hit_object) = session.state.hit_objects.find_by_id_mut(id) {
             match hit_object.selected_by {
                 Some(selected_by) => {
-                    if selected_by == presence.id && !selection.selected {
+                    if selected_by == presence.id && !selected {
                         hit_object.selected_by = None;
                         deselected_ids.push(id);
                     }
                 }
                 None => {
-                    if selection.selected {
+                    if selected {
                         hit_object.selected_by = Some(presence.id);
                         selected_ids.push(id);
                     }
@@ -233,22 +158,27 @@ pub fn handle_hitobject_selection(
         }
     }
 
+    println!(
+        "selection ( ids: {:?}, selected: {:?}, unique: {:?} ) selected: {:?} deselected: {:?}",
+        ids, selected, unique, selected_ids, deselected_ids
+    );
+
     if !selected_ids.is_empty() {
         dispatcher.broadcast(
-            ServerCommand::HitObjectSelected(commands::HitObjectSelected {
+            ServerCommand::HitObjectSelected {
                 ids: selected_ids,
-                selected_by: Some(presence.id as u64),
-            }),
+                selected_by: Some(presence.id),
+            },
             None,
         )
     }
 
     if !deselected_ids.is_empty() {
         dispatcher.broadcast(
-            ServerCommand::HitObjectSelected(commands::HitObjectSelected {
+            ServerCommand::HitObjectSelected {
                 ids: deselected_ids,
                 selected_by: None,
-            }),
+            },
             None,
         )
     }

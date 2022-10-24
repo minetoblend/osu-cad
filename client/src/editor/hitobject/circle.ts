@@ -1,8 +1,7 @@
-import {SerializedHitCircle} from "@common/types";
 import {HitObject, HitObjectOverrides} from "@/editor/hitobject/index";
-import {HitObject as HitObjectData} from 'protocol/commands'
+import {Serialized} from 'osucad-gameserver'
 
-export class HitCircle extends HitObject<SerializedHitCircle, HitCircleOverrides> {
+export class HitCircle extends HitObject<HitCircleOverrides> {
 
     constructor() {
         super({
@@ -13,14 +12,14 @@ export class HitCircle extends HitObject<SerializedHitCircle, HitCircleOverrides
         });
     }
 
-    serialized(overrides?: Partial<HitCircleOverrides>): HitObjectData {
+    serialized(overrides?: Partial<HitCircleOverrides>): Serialized.HitObject {
         return {
             id: this.id,
             startTime: overrides?.time ?? this.time,
-            selectedBy: this.selectedBy.value ?? undefined,
-            position: overrides?.position ?? this.position,
+            selectedBy: this.selectedBy.value,
+            position: overrides?.position?.rounded ?? this.position.rounded,
             newCombo: overrides?.newCombo ?? this.newCombo,
-            kind: {$case: 'circle', circle: {}}
+            data: {type: 'circle'}
         };
     }
 }
