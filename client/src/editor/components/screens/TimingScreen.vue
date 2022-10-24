@@ -1,7 +1,7 @@
 <template>
   <div class="editor-screen timing-screen">
     <div class="timingpoint-list">
-      <n-scrollbar style="max-height: 100%">
+      <n-scrollbar >
         <n-table class="timing-table">
           <tbody>
           <tr v-for="timingPoint in state.timing.timingPoints" :key="timingPoint.id" class="entry"
@@ -104,13 +104,15 @@ const selectedTimingPoints = computed(() => {
 
 .timing-screen {
   padding: 1rem 20rem;
-
+  position: absolute !important;
   display: flex;
+  bottom: 0;
+  box-sizing: border-box;
 
   .timingpoint-list {
     flex: 2 1 auto;
-
     margin-right: 12px;
+    height: calc(100% - 2rem);
   }
 
   .timingpoint-settings {
