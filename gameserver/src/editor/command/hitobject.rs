@@ -16,6 +16,7 @@ pub fn handle_create_hitobject(
     dispatcher: &mut Dispatcher,
 ) {
     if !hit_object.is_valid() {
+        println!("Invalid hitobject: {:?}", hit_object);
         return;
     }
 
@@ -55,6 +56,7 @@ pub fn handle_update_hitobject(
     dispatcher: &mut Dispatcher,
 ) {
     if !hit_object.is_valid() {
+        println!("Invalid hitobject: {:?}", hit_object);
         return;
     }
 
