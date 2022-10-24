@@ -1,49 +1,51 @@
 <template>
   <div class="editor-screen timing-screen">
-    <div class="timingpoint-list">
-      <n-scrollbar >
-        <n-table class="timing-table">
-          <tbody>
-          <tr v-for="timingPoint in state.timing.timingPoints" :key="timingPoint.id" class="entry"
-              @click="setSelected(timingPoint, !isSelected(timingPoint), true)">
-            <td>
-              <n-checkbox :checked="isSelected(timingPoint)"
-                          @update:checked="setSelected(timingPoint, $event)"
-                          @click.stop
-              />
-            </td>
-            <td>
-              {{ formatTimestamp(timingPoint.time) }}
-            </td>
-            <td>
-              {{ timingPoint.timing }}
-            </td>
-            <td>
-              {{ timingPoint.sv }}
-            </td>
-            <td>
-              {{ timingPoint.volume }}
-            </td>
-            <td class="shrink">
-              <async-button circle #icon :on-click="() => deleteTimingPoint(timingPoint)">
-                &times
-              </async-button>
-            </td>
-          </tr>
-          </tbody>
-        </n-table>
-      </n-scrollbar>
-    </div>
-    <div class="timingpoint-settings">
-      <async-button type="primary" ghost :on-click="createTimingPoint">
-        Add Timing Point
-        <template #icon>
-          +
-        </template>
-      </async-button>
-      <n-divider/>
-      <TimingPointSettings v-if="selectedTimingPoints.length === 1" :timing-point="selectedTimingPoints[0]"/>
-    </div>
+   <div class="timing-screen-wrapper">
+     <div class="timingpoint-list">
+       <n-scrollbar >
+         <n-table class="timing-table">
+           <tbody>
+           <tr v-for="timingPoint in state.timing.timingPoints" :key="timingPoint.id" class="entry"
+               @click="setSelected(timingPoint, !isSelected(timingPoint), true)">
+             <td>
+               <n-checkbox :checked="isSelected(timingPoint)"
+                           @update:checked="setSelected(timingPoint, $event)"
+                           @click.stop
+               />
+             </td>
+             <td>
+               {{ formatTimestamp(timingPoint.time) }}
+             </td>
+             <td>
+               {{ timingPoint.timing }}
+             </td>
+             <td>
+               {{ timingPoint.sv }}
+             </td>
+             <td>
+               {{ timingPoint.volume }}
+             </td>
+             <td class="shrink">
+               <async-button circle #icon :on-click="() => deleteTimingPoint(timingPoint)">
+                 &times
+               </async-button>
+             </td>
+           </tr>
+           </tbody>
+         </n-table>
+       </n-scrollbar>
+     </div>
+     <div class="timingpoint-settings">
+       <async-button type="primary" ghost :on-click="createTimingPoint">
+         Add Timing Point
+         <template #icon>
+           +
+         </template>
+       </async-button>
+       <n-divider/>
+       <TimingPointSettings v-if="selectedTimingPoints.length === 1" :timing-point="selectedTimingPoints[0]"/>
+     </div>
+   </div>
   </div>
 </template>
 
@@ -103,20 +105,24 @@ const selectedTimingPoints = computed(() => {
 <style lang="scss">
 
 .timing-screen {
-  padding: 1rem 20rem;
-  position: absolute !important;
-  display: flex;
+  position: relative !important;
   bottom: 0;
   box-sizing: border-box;
 
-  .timingpoint-list {
-    flex: 2 1 auto;
-    margin-right: 12px;
-    height: calc(100% - 2rem);
-  }
+  .timing-screen-wrapper {
+    position: absolute;
+    inset: 1rem 20rem;
+    display: flex;
+    bottom: 0;
 
-  .timingpoint-settings {
-    flex: 1 1 auto;
+    .timingpoint-list {
+      flex: 2 1 auto;
+      margin-right: 12px;
+    }
+
+    .timingpoint-settings {
+      flex: 1 1 auto;
+    }
   }
 
 }
