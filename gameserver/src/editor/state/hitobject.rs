@@ -122,7 +122,7 @@ impl HitObject {
                 if let SliderControlPointKind::None = control_points[0].kind {
                     return false
                 }
-                *expected_distance > 0.0 && *repeats >= 1
+                *expected_distance >= 0.0 && *repeats >= 1
             }
             _ => true,
         }
