@@ -98,6 +98,7 @@ pub struct HitObject {
     pub id: HitObjectId,
     #[serde(default)]
     pub selected_by: Option<usize>,
+    #[serde(alias="time")]
     pub start_time: i32,
     pub position: IVec2,
     pub new_combo: bool,
