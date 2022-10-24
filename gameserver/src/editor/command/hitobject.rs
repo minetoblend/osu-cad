@@ -38,10 +38,13 @@ pub fn handle_create_hitobject(
         .insert_hitobject(hit_object.clone());
 
     dispatcher.broadcast_response(
-        ServerCommand::HitObjectCreated(hit_object),
+        ServerCommand::HitObjectCreated(hit_object.clone()),
         response_id,
         None,
     );
+
+    
+    handle_hitobject_selection(session, presence, vec![hit_object.id], true, true, dispatcher);
 }
 
 pub fn handle_update_hitobject(
