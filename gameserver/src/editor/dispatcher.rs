@@ -55,7 +55,7 @@ impl Dispatcher {
                         .send(Ok(warp::ws::Message::text(json.as_str())))
                     {
                         Ok(_) => {}
-                        Err(e) => println!("{:?}", e),
+                        Err(e) => println!("{:?}: {}", e, json),
                     }
                 }
             }
@@ -83,7 +83,7 @@ impl Dispatcher {
                         .send(Ok(warp::ws::Message::text(json.as_str())))
                     {
                         Ok(_) => {}
-                        Err(e) => println!("{:?}", e),
+                        Err(e) => println!("{:?}: {}", e, json),
                     }
                 }
             }
