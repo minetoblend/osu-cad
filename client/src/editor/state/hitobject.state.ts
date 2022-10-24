@@ -177,7 +177,6 @@ export class HitObjectManager {
         })
 
         this.ctx.connector.onCommand('hitObjectUpdated').subscribe(hitObject => {
-            console.log('hitObjectUpdated', hitObject)
             const o = this.findById(hitObject.id)
             if (o) {
                 o.updateFrom(hitObject)

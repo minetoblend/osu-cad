@@ -52,14 +52,6 @@ export class ControlPointDragOperation extends DragOperation {
     commit(evt: DragEvent): void {
         const {path, position} = this.createOverrides(evt)
 
-        console.log(
-            this.hitObject.serialized({
-                controlPoints: path.controlPoints.value,
-                expectedDistance: path.expectedDistance,
-                position
-            })
-        )
-
         this.tool.sendMessage('updateHitObject', this.hitObject.serialized({
             controlPoints: path.controlPoints.value,
             expectedDistance: path.expectedDistance,

@@ -71,8 +71,6 @@ async function updateTimingPoint(timingPoint: TimingPoint, update: (timingPoint:
 
   update(serialized)
 
-  console.log(serialized)
-
   return ctx.sendMessage('updateTimingPoint', serialized)
 
 }
