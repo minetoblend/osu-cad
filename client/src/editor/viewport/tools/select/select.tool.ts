@@ -156,10 +156,12 @@ export class SelectTool extends ViewportTool {
             }
         }
 
+        const path = createResnappedPath(controlPoints, hitObject, this.ctx)
 
         this.sendMessage('updateHitObject', hitObject.serialized({
             position: controlPoints[0].position,
-            controlPoints
+            controlPoints: path.controlPoints.value,
+            expectedDistance: path.expectedDistance
         }))
         return true
 
