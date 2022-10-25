@@ -30,8 +30,6 @@ import EditorLayout from "@/components/EditorLayout.vue";
 
 const ctx = useContext()
 const client = ctx.connector.client
-const session = ctx.connector.session
-const socket = ctx.connector.socket
 
 function handleShortcut(evt: CustomEvent) {
   switch (evt.detail) {
