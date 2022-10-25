@@ -65,7 +65,7 @@ impl EditorSession {
         }
     }
 
-    pub fn tick(&mut self, _tick: TickNumber, dispatcher: &mut Dispatcher) -> bool {
+    pub fn tick(&mut self, tick: TickNumber, dispatcher: &mut Dispatcher) -> bool {
         let events: Vec<_> = self.state.events.splice(.., []).collect();
         for event in events {
             handle_editor_event(self, event, dispatcher)
@@ -96,6 +96,30 @@ impl EditorSession {
         }
 
         dispatcher.flush(self);
+
+        if tick % (30 * 20) == 0 {
+
+            if let Ok(json) = serde_json::to_string(&self.state) {
+                let beatmap_id = self.beatmap_id.clone();
+
+                tokio::spawn(async move {
+                    let response = reqwest::Client::new()
+                        .post(format!(
+                            //todo: select endpoint from config
+                            "http://osucad.com:3000/beatmap/{}",
+                            beatmap_id
+                        ))
+                        .header("Content-Type", "application/json")
+                        .body(json)
+                        .send().await;
+
+                    match response {
+                        Ok(_) => println!("Successfully saved beatmap {}", beatmap_id),
+                        Err(e) => println!("Failed to save beatmap: {:?}", e)
+                    }
+                });
+            }
+        }
 
         self.state.empty_ticks < 10 * 20
     }
@@ -151,5 +175,3 @@ pub struct Presence {
     #[serde(skip)]
     sender: Sender,
 }
-
-
