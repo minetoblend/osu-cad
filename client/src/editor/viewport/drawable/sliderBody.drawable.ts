@@ -136,14 +136,14 @@ export class DrawableSliderBody extends Container {
             this.#sliderBodySprite.visible = false
             return;
         }
-        this.#sliderBodySprite.visible = true
 
         bounds.x = Math.max(bounds.x, -1000)
         bounds.y = Math.max(bounds.y, -1000)
         bounds.width = Math.min(bounds.width, 512 + 1000)
         bounds.height = Math.min(bounds.height, 384 + 1000)
 
-        if (bounds.width === 0 || bounds.height === 0) {
+        if (bounds.width === 0 && bounds.height === 0) {
+            this.#sliderBodySprite.visible = false
             return
         }
 
@@ -181,6 +181,7 @@ export class DrawableSliderBody extends Container {
         })
         this.renderer.gl.disable(this.renderer.gl.DEPTH_TEST)
 
+        this.#sliderBodySprite.visible = true
     }
 
     bind(slider: Slider | undefined) {
