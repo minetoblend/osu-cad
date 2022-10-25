@@ -163,11 +163,6 @@ pub fn handle_hitobject_selection(
         }
     }
 
-    println!(
-        "selection ( ids: {:?}, selected: {:?}, unique: {:?} ) selected: {:?} deselected: {:?}",
-        ids, selected, unique, selected_ids, deselected_ids
-    );
-
     if !selected_ids.is_empty() {
         dispatcher.broadcast(
             ServerCommand::HitObjectSelected {
