@@ -3,35 +3,35 @@
     <n-global-style/>
 
     <n-loading-bar-provider>
+      <n-message-provider>
+        <template v-if="initialized">
+          <template v-if="needsLogin">
+            <div style="width: 100%; height: 100vh; display: flex; align-items: center; justify-content: center">
+              <n-card style="max-width: 512px; margin: auto;">
+                <p>
+                  You are not logged in
+                </p>
+                <n-button @click="login">
+                  Login with osu!
+                </n-button>
 
-      <template v-if="initialized">
-        <template v-if="needsLogin">
-          <div style="width: 100%; height: 100vh; display: flex; align-items: center; justify-content: center">
-            <n-card style="max-width: 512px; margin: auto;">
-              <p>
-                You are not logged in
-              </p>
-              <n-button @click="login">
-                Login with osu!
-              </n-button>
+                <p>
+                  <i>
+                    Use chrome btw. Opera & edge seem to have lag issues
+                  </i>
+                </p>
+              </n-card>
+            </div>
+          </template>
+          <template v-else>
+            <router-view/>
 
-              <p>
-                <i>
-                  Use chrome btw. Opera & edge seem to have lag issues
-                </i>
-              </p>
-            </n-card>
-          </div>
+          </template>
         </template>
         <template v-else>
-          <router-view/>
 
         </template>
-      </template>
-      <template v-else>
-
-      </template>
-
+      </n-message-provider>
     </n-loading-bar-provider>
   </n-config-provider>
 </template>

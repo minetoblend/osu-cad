@@ -8,7 +8,6 @@ export class Sample {
     constructor(readonly buffer: AudioBuffer, readonly engine: AudioEngine) {
         this.gainNode = engine.context.createGain()
         this.gainNode.connect(engine.context.destination)
-
     }
 
     get context() {

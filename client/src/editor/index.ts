@@ -13,8 +13,20 @@ import softHitNormal from '@/assets/skin/soft-hitnormal.wav'
 import {Sample} from "@/audio/sample";
 import axios from "axios";
 import {ClientToServerMessage} from "osucad-gameserver";
+import {firstValueFrom, interval, Observable, Subject} from "rxjs";
 
 export class EditorContext {
+
+    match?: Match
+    readonly clock = new EditorClock()
+    readonly audioEngine = new AudioEngine()
+    readonly users: UserState
+    readonly beatmap: BeatmapState
+    readonly clientTickInterval = interval(200)
+
+    songAudio?: Sound
+    hsSample?: Sample
+    #pendingReplies = new Map<string, { resolve: Function, reject: Function }>()
 
     constructor(
         readonly connector: EditorConnector,
@@ -34,24 +46,42 @@ export class EditorContext {
         })
     }
 
-    match?: Match
+    get currentTime() {
+        return this.clock.time
+    }
 
+    loadWithProgress(beatmapId: string, token: string): Observable<number> {
+        const progress$ = new Subject<number>()
 
-    readonly clock = new EditorClock()
-    readonly audioEngine = new AudioEngine()
+        this.load(beatmapId, token, progress$).then(() => {
+            progress$.complete()
+            console.log('loaded')
+        }).catch(e => console.log(e))
 
-    readonly users: UserState
-    readonly beatmap: BeatmapState
+        return progress$
+    }
 
-    async connect(beatmapId: string, token: string) {
+    async load(beatmapId: string, token: string, progress$: Subject<number>) {
+        firstValueFrom(this.connector.onCommand('state')).then(console.log)
+
         await this.connector.connect(beatmapId, token)
 
-        await this.loadAudio()
+        progress$.next(0.2)
+
+        await firstValueFrom(this.connector.onCommand('state'))
+
+        progress$.next(0.5)
+
+
+        await this.loadAudio(progress$)
+
+        progress$.next(0.75)
+
 
         setInterval(() => this.sendMessage('currentTime', this.currentTime), 200)
     }
 
-    async loadAudio() {
+    async loadAudio(progress$: Subject<number>) {
         const response = await axios.get(apiUrl(`/beatmap/${this.beatmapId}/audio`), {
             responseType: "arraybuffer", withCredentials: true
         })
@@ -64,6 +94,7 @@ export class EditorContext {
             }
 
         } else throw Error('Could not load audio')
+        progress$.next(0.6)
 
         const hsResponse = await axios.get(softHitNormal, {
             responseType: "arraybuffer", withCredentials: true
@@ -79,9 +110,6 @@ export class EditorContext {
         }
 
     }
-
-    songAudio?: Sound
-    hsSample?: Sample
 
     sendMessage<T extends ClientCommandType>(opCode: T, payload: ClientCommandPayload<T>) {
         this.connector.sendMessage({
@@ -116,12 +144,6 @@ export class EditorContext {
         return new Promise((resolve, reject) => {
             this.#pendingReplies.set(responseId, {resolve, reject})
         })
-    }
-
-    #pendingReplies = new Map<string, { resolve: Function, reject: Function }>()
-
-    get currentTime() {
-        return this.clock.time
     }
 
     destroy() {
