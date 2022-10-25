@@ -68,7 +68,7 @@ window.addEventListener("wheel", evt => {
 
   const divisor = 4
   let multiplier = 1
-  if (evt.shiftKey)
+  if (evt.shiftKey || ctx.clock.isPlaying)
     multiplier *= 4
 
   if (evt.deltaY > 0)
