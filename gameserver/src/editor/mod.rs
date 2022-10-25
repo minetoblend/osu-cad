@@ -52,6 +52,8 @@ impl EditorSession {
         let mut interval = tokio::time::interval(Duration::from_millis(50));
         let mut tick: TickNumber = 0;
 
+        println!("Session started for beatmap {}", session.read().await.beatmap_id);
+
         loop {
             interval.tick().await;
 
@@ -63,6 +65,8 @@ impl EditorSession {
 
             tick += 1;
         }
+
+        println!("Session ended for beatmap {}", session.read().await.beatmap_id);
     }
 
     pub fn tick(&mut self, tick: TickNumber, dispatcher: &mut Dispatcher) -> bool {
@@ -139,13 +143,19 @@ impl EditorSession {
             .events
             .push(state::EditorEvent::UserJoined { id });
 
+            println!("User {} joined for beatmap {}", session_info.user.display_name, self.beatmap_id);
+
         id
     }
 
     pub fn leave(&mut self, id: usize) {
-        self.presences.retain(|p| p.id != id);
+        if let Some(presence) = self.presence(id) {
+            println!("User {} left for beatmap {}", presence.session.user.display_name, self.beatmap_id);
 
-        self.state.events.push(state::EditorEvent::UserLeft { id });
+            self.presences.retain(|p| p.id != id);
+
+            self.state.events.push(state::EditorEvent::UserLeft { id });    
+        }
     }
 
     pub async fn insert_message(session: Arc<RwLock<EditorSession>>, presence: usize, str: &str) {
