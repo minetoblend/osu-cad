@@ -58,8 +58,8 @@ export class BeatmapController {
                     const decoder = new BeatmapDecoder()
                     const parsedBeatmap = decoder.decodeFromString(content)
 
-
-                    return this.beatmapService.importBeatmap(parsedBeatmap).beatmapData
+                    if(parsedBeatmap.metadata.beatmapId === parseInt(beatmapId))
+                        return this.beatmapService.importBeatmap(parsedBeatmap).beatmapData
                 }
             }
         }
