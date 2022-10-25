@@ -11,26 +11,9 @@
         <timeline-overview/>
       </template>
     </editor-layout>
-    <!--    <div class="editor-container">-->
-    <!--      <div class="editor-screen-container">-->
-    <!--        <n-tabs type="line" style="height: 100%">-->
-    <!--          <n-tab-pane name="compose" tab="Compose" display-directive="show">-->
-    <!--            <ComposeScreen/>-->
-    <!--          </n-tab-pane>-->
-    <!--          <n-tab-pane name="timing" tab="Timing">-->
-    <!--            <TimingScreen/>-->
-    <!--          </n-tab-pane>-->
-    <!--        </n-tabs>-->
-    <!--      </div>-->
-    <!--      <TimelineOverview/>-->
-
     <div class="user-list-container">
       <UserList/>
     </div>
-<!--    <n-card class="chat-container" v-if="true">-->
-<!--      <ChatView :client="client" :session="session" :socket="socket" :room-name="ctx.beatmapId"/>-->
-<!--    </n-card>-->
-    <!--    </div>-->
   </shortcut-receiver>
 </template>
 
