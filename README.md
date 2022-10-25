@@ -1,4 +1,4 @@
-#osu!cad
+# osucad
 
 ## how to run
 
