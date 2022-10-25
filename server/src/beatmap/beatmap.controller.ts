@@ -9,6 +9,7 @@ import {promisify} from "util";
 import * as fs from "fs";
 import {BeatmapService} from "./beatmap.service";
 import {BeatmapSchema} from "./schema/beatmap.schema";
+import {BeatmapDecoder} from "osu-parsers";
 
 @Controller('beatmap')
 export class BeatmapController {
@@ -49,92 +50,16 @@ export class BeatmapController {
             const [mapsetId, beatmapId] = id.split('_')
             const mapsetPath = await this.osuApi.downloadBeatmapset(mapsetId)
             const files = await promisify(fs.readdir)(mapsetPath)
+
             for (const file of files) {
                 if (file.endsWith('.osu')) {
                     const content = await promisify(fs.readFile)(path.resolve(mapsetPath, file), 'utf-8')
-                    const beatmap = osuParser.parseContent(content)
-                    if (beatmap.BeatmapID === beatmapId) {
+
+                    const decoder = new BeatmapDecoder()
+                    const parsedBeatmap = decoder.decodeFromString(content)
 
 
-                        return {
-                            difficulty: {
-                                hpDrainRate: parseFloat(beatmap.HPDrainRate),
-                                circleSize: parseFloat(beatmap.CircleSize),
-                                overallDifficulty: parseFloat(beatmap.OverallDifficulty),
-                                approachRate: parseFloat(beatmap.ApproachRate),
-                                sliderMultiplier: parseFloat(beatmap.SliderMultiplier),
-                                sliderTickRate: parseFloat(beatmap.SliderTickRate)
-                            },
-
-                            hitObjects: beatmap.hitObjects.map(it => {
-                                let controlPoints = undefined;
-                                if (it.points) {
-                                    controlPoints = []
-
-                                    let shouldSkip = false
-
-                                    it.points.forEach(([x, y], i, arr) => {
-                                        if (shouldSkip) {
-                                            shouldSkip = false
-                                            return
-                                        }
-                                        const position = {x, y}
-
-                                        let kind = i === 0 ? 1 : 0
-                                        if (arr[i + 1] && arr[i + 1][0] === x && arr[i + 1][1] === y) {
-                                            shouldSkip = true
-                                            kind = 1
-                                        }
-                                        if (i === 0 && it.curveType === 'pass-through')
-                                            kind = 2
-
-                                        controlPoints.push({
-                                            position,
-                                            kind
-                                        })
-                                    })
-                                    return {
-                                        type: it.objectName,
-                                        time: it.startTime,
-                                        position: {x: it.position[0], y: it.position[1]},
-                                        newCombo: it.newCombo,
-                                        data: {
-                                            type: 'slider',
-                                            repeatCount: it.repeatCount,
-                                            expectedDistance: it.pixelLength,
-                                            curveType: it.curveType,
-                                            controlPoints: controlPoints,//: it.points?.map(([x, y]) => ({x, y})),
-                                        }
-                                    }
-                                }
-                                return {
-                                    type: it.objectName,
-                                    time: it.startTime,
-                                    position: {x: it.position[0], y: it.position[1]},
-                                    newCombo: it.newCombo,
-                                    data: {
-                                        type: 'circle',
-                                    }
-                                }
-
-                            }),
-                            timingPoints: beatmap.timingPoints.map(it => {
-                                let t: any = {
-                                    sv: it.velocity,
-                                    time: it.offset,
-                                    volume: it.volume
-                                }
-                                if (it.timingChange) {
-                                    t.timing = {
-                                        bpm: it.bpm,
-                                        signature: it.timingSignature,
-                                    }
-                                }
-                                return t
-                            })
-
-                        }
-                    }
+                    return this.beatmapService.importBeatmap(parsedBeatmap).beatmapData
                 }
             }
         }
