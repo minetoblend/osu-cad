@@ -10,12 +10,9 @@ osucad is a collabroative editor for osu! standard beatmaps.
 
 # Development Setup
 ## Requirements
-- (Windows only) [Windows Subsystem for Linux 2 Kernel](https://docs.microsoft.com/windows/wsl/wsl2-kernel)
 - [Docker](https://www.docker.com/)
-    - If on Windows, computer MUST be restarted before running `docker-compose`
 - [Node.js](https://nodejs.org/)
-    - Must be installed on PATH.
-- [rustup](https://www.rust-lang.org/tools/install)
+- [cargo](https://www.rust-lang.org/tools/install)
 - [wasm-pack](https://rustwasm.github.io/wasm-pack/)
 
 ## Gameserver & API
