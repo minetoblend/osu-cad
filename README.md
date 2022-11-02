@@ -6,11 +6,13 @@
     </picture>
 </p>
 <p align="center">
-    _the next standard to osu! mapping collaboration_    
+    <em>the next standard to osu! mapping collaboration</em>    
 </p>
-![](https://img.shields.io/github/license/minetoblend/osu-cad?style=flat-square)
+
+![shield](https://img.shields.io/github/license/minetoblend/osu-cad?style=flat-square)
 
 # About
+Add info about program here.
 
 # Development Setup
 ## Requirements
