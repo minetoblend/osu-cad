@@ -6,7 +6,7 @@
 ![shield](https://img.shields.io/github/license/minetoblend/osu-cad?style=flat-square)
 
 # About
-Add info about program here.
+osucad is a collabroative editor for osu! standard beatmaps.
 
 # Development Setup
 ## Requirements
