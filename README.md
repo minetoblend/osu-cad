@@ -1,7 +1,7 @@
 <p align="center">
     <picture style="width:50%;">
-    <source media="(prefers-color-scheme: dark)" srcset="/assets/title-card.png">
-    <source media="(prefers-color-scheme: light)" srcset="/assets/title-card-light.png">
+    <source media="(prefers-color-scheme: light)" srcset="/assets/title-card.png">
+    <source media="(prefers-color-scheme: dark)" srcset="/assets/title-card-light.png">
     <img alt="osucad logo" src="title-card.png">
     </picture>
 </p>
