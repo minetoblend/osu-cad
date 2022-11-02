@@ -1,13 +1,7 @@
-<p align="center">
-    <picture style="width:50%;">
-    <source media="(prefers-color-scheme: light)" srcset="/assets/title-card.png">
-    <source media="(prefers-color-scheme: dark)" srcset="/assets/title-card-light.png">
-    <img alt="osucad logo" src="title-card.png">
-    </picture>
-</p>
-<p align="center">
-    <em>the next standard to osu! mapping collaboration</em>    
-</p>
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="./osucad.svg">
+<img alt="osucad logo" src="./osucad-dark.svg" width="300">
+</picture>
 
 ![shield](https://img.shields.io/github/license/minetoblend/osu-cad?style=flat-square)
 
