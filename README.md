@@ -6,21 +6,27 @@
 ![shield](https://img.shields.io/github/license/minetoblend/osu-cad?style=flat-square)
 
 # About
+
 osucad is a collabroative editor for osu! standard beatmaps.
 
 # Development Setup
+
 ## Requirements
+
 - [Docker](https://www.docker.com/)
 - [Node.js](https://nodejs.org/)
 - [cargo](https://www.rust-lang.org/tools/install)
 - [wasm-pack](https://rustwasm.github.io/wasm-pack/)
 
-## Gameserver & API
+## Rest server
+
 ### .env
+
 Create `.env` file in `server/`
 
-You can grab the osu! api information [here](https://osu.ppy.sh/home/account/edit#oauth).
-Note: Callback URL MUST be `http://localhost:3000/auth/osu`
+You can create an osu! oauth application [here](https://osu.ppy.sh/home/account/edit#oauth).
+Note: Callback URL MUST be `<host>/auth/osu`
+
 ```yaml
 OSU_CLIENT_ID=
 OSU_CLIENT_SECRET=
@@ -28,40 +34,46 @@ OSU_OAUTH_CALLBACK=http://localhost:3000/auth/osu
 OSU_SCOPES=public,identify
 JWT_SECRET=
 ```
-_JWT Secret can be a random string of letters and numbers if not used for production._
-### local.yml
-Create `local.yml` in root directoy.
-```yml
-console:
-  max_message_size_bytes: 409600
-logger:
-  level: "INFO"
-runtime:
-  js_entrypoint: "build/index.js"
-session:
-  token_expiry_sec: 7200 # 2 hours
-socket:
-  max_message_size_bytes: 4096 # reserved buffer
-  max_request_size_bytes: 131072
-```
 
-### Starting the servers
-To start the servers, run the teminal command below in the root directory.
+### Running the server
+
 ```sh
 docker-compose up
 ```
 
-## Web Client
+## Game sever
 
-### WebAssembly Library
+### Running the server
+
+```sh
+cd gameserver
+cargo run
+```
+
+### Generating type definitions for client
+This is required after modifying any of the commands sent between the game server and the client.
+Webpack sometimes doesn't register the change properly, just restart the dev server in that case.
+```sh
+cd gameserver
+cargo test
+```
+
+_For some reason ts-rs uses `cargo test` command to generate types, don't ask me why_
+
+## Web client
+
+### Building the WASM library
+
 ```sh
 cd wasm
 wasm-pack build --target web
 ```
-### Client
+
+### Running the client
 
 ```sh
 cd client
+npm install
 npm run serve
 ```
 Local website will be found at [http://localhost:8080](http://localhost:8080)
