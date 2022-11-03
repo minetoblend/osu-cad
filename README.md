@@ -1,7 +1,9 @@
-<picture>
-<source media="(prefers-color-scheme: dark)" srcset="./osucad.svg">
-<img alt="osucad logo" src="./osucad-dark.svg" width="300">
-</picture>
+<p align="center">
+    <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./osucad.svg">
+    <img alt="osucad logo" src="./osucad-dark.svg" width="300">
+    </picture>
+</p>
 
 ![shield](https://img.shields.io/github/license/minetoblend/osu-cad?style=flat-square)
 
