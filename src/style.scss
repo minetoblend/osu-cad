@@ -1,0 +1,21 @@
+body {
+  background-color: #1A1A20;
+  color: white;
+  margin: 0;
+  padding: 0;
+  text-rendering: optimizeSpeed;
+
+  --border-radius: 4px;
+}
+
+
+hr {
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  margin: 20px 0;
+  padding: 0;
+}
+
+.text-right {
+  text-align: right;
+}
