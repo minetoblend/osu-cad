@@ -1,0 +1,31 @@
+{
+  "name": "@osucad/unison-client",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "dist/lib.cjs",
+  "types": "src/index.ts",
+  "typings": "src/index.ts",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "author": "",
+  "license": "ISC",
+  "exports": {
+    ".": {
+      "import": "./dist/lib.esm.js",
+      "require": "./dist/lib.cjs"
+    }
+  },
+  "dependencies": {
+    "events": "^3.3.0",
+    "stream": "^0.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.10",
+    "typescript": "^5.0.2",
+    "esbuild": "^0.17.14",
+    "rollup": "^3.20.2",
+    "rollup-plugin-esbuild": "^5.0.0"
+  }
+}

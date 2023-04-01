@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="6adbfe37-7b41-4c74-8ba8-427e3854a7a8" name="Changes" comment="Initial commit">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.vscode/extensions.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.vscode/settings.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/App.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/icons/pause-solid.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/icons/play-solid.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/icons/select.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/icons/volume-full.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/icons/volume-low.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/icons/volume-mid.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/icons/volume-off.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/approachcircle.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/approachcircle@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/cursor-smoke.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/cursor-smoke@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/cursor.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/cursor@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/cursormiddle.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/cursormiddle@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/cursortrail.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/cursortrail@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/default-0.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/default-0@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/default-1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/default-1@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/default-2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/default-2@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/default-3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/default-3@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/default-4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/default-4@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/default-5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/default-5@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/default-6.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/default-6@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/default-7.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/default-7@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/default-8.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/default-8@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/default-9.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/default-9@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/drum-hitclap.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/drum-hitfinish.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/drum-hitnormal.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/drum-hitwhistle.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/drum-sliderslide.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/drum-slidertick.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/drum-sliderwhistle.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/followpoint.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/followpoint@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/hitcircle.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/hitcircle@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/hitcircleoverlay.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/hitcircleoverlay@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/hitcircleselect.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/hitcircleselect@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/normal-hitclap.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/normal-hitfinish.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/normal-hitnormal.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/normal-hitwhistle.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/normal-sliderslide.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/normal-slidertick.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/normal-sliderwhistle.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/score-0.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/score-0@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/score-1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/score-1@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/score-2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/score-2@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/score-3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/score-3@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/score-4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/score-4@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/score-5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/score-5@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/score-6.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/score-6@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/score-7.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/score-7@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/score-8.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/score-8@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/score-9.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/score-9@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/sliderb0.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/sliderb0@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/sliderb1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/sliderb1@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/sliderb2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/sliderb2@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/sliderb3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/sliderb3@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/sliderb4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/sliderb4@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/sliderb5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/sliderb5@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/sliderb6.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/sliderb6@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/sliderb7.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/sliderb7@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/sliderb8.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/sliderb8@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/sliderb9.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/sliderb9@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/sliderfollowcircle.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/sliderfollowcircle@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/sliderscorepoint.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/sliderscorepoint@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/soft-hitclap.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/soft-hitfinish.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/soft-hitnormal.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/soft-hitwhistle.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/soft-sliderslide.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/soft-slidertick.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/soft-sliderwhistle.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/spinner-approachcircle.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/spinner-approachcircle@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/spinner-bottom.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/spinner-bottom@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/spinner-glow.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/spinner-glow@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/spinner-middle.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/spinner-middle2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/spinner-middle2@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/spinner-middle@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/spinner-osu.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/spinner-spin.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/spinner-spin@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/spinner-top.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/spinner-top@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/assets/skin/spinnerspin.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/components/SharedTextInput.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/components/ToolbarButton.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/components/VolumeSlider.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/composables/authenticate.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/composables/clientState.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/composables/seekOnScroll.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/composables/useContainer.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/composables/useCursorPos.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/config/router.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/BeatmapEditor.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/clock.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/components/Timeline.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/components/TimelineHandle.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/components/TimelineOverview.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/components/TimelineRhythm.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/components/TimelineRhythmObject.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/connectedUsers.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/createEditor.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/preferences.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/screens/compose/ComposeScreen.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/screens/compose/ComposeScreenToolbar.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/screens/compose/ComposeScreenViewport.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/screens/compose/drawables/constantSizeContainer.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/screens/compose/drawables/drawableCirclePiece.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/screens/compose/drawables/drawableHitCircle.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/screens/compose/drawables/grid.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/screens/compose/drawables/hitObjectContainer.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/screens/compose/drawables/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/screens/compose/tools/composables/hitObjects.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/screens/compose/tools/composables/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/screens/compose/tools/composables/mouse.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/screens/compose/tools/composables/overlay.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/screens/compose/tools/decorators.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/screens/compose/tools/defineTool.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/screens/compose/tools/selectTool.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/screens/compose/tools/toolContext.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/screens/compose/tools/toolManager.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/screens/compose/viewport.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/screens/timing/TimingPointRow.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/screens/timing/TimingScreen.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/selection.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/sound.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/tokenProvider.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/editor/visibleHitObjects.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/main.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/style.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/unison/runtime.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/utils/animate.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/utils/format.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/views/AuthenticatedView.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/views/EditorView.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/views/HomeView.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/src/vite-env.d.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/tsconfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/tsconfig.node.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-client/vite.config.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-common/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-common/rollup.config.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-common/src/circle.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-common/src/colors.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-common/src/difficulty.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-common/src/hitObject.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-common/src/hitObjectCollection.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-common/src/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-common/src/metadata.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-common/src/preferences.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-common/src/randomColor.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-common/src/timingPoint.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-common/src/timingPointCollection.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-common/src/vec2.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-common/tsconfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/.eslintrc.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/.prettierrc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/nest-cli.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/app.logger.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/app.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/auth/auth.controller.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/auth/auth.controller.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/auth/auth.guard.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/auth/auth.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/auth/interfaces.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/editor/editor.controller.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/editor/editor.controller.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/editor/editor.gateway.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/editor/editor.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/editor/editor.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/editor/editor.unison.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/editor/interfaces.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/editor/preferences/editor.preferences.controller.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/editor/preferences/editor.preferences.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/editor/preferences/editor.preferences.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/editor/preferences/editor.preferences.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/main.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/pulsar/pulsar.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/pulsar/pulsar.service.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/pulsar/pulsar.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/shared/shared.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/users/user.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/users/users.controller.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/users/users.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/src/users/users.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/tsconfig.build.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/osucad-server/tsconfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison-client/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison-client/rollup.config.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison-client/src/client.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison-client/src/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison-client/src/runtime.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison-client/src/signal.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison-client/src/token.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison-client/src/users.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison-client/tsconfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison-server/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison-server/rollup.config.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison-server/src/broadcast.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison-server/src/files.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison-server/src/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison-server/src/runtime.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison-server/src/server.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison-server/src/signals.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison-server/src/socketIoServer.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison-server/src/webSocket.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison-server/tsconfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison/rollup.config.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison/src/document.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison/src/events.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison/src/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison/src/interfaces.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison/src/messages.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison/src/runtime.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison/src/serializer.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison/src/types/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison/src/types/map.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison/src/types/register.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison/src/types/sharedObject.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison/src/types/sortedCollection.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison/src/util.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/unison/tsconfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager">
+    <option name="groupingKeys">
+      <option value="directory" />
+    </option>
+  </component>
+  <component name="ComposerSettings">
+    <execution />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="c9z3aems" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2NqGdfoSdKCctQRlmhG6ohbFDcU" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "C:/Users/minet/osucads/osucad4",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "yarn",
+    "ts.external.directory.path": "C:\\Users\\minet\\osucads\\osucad4\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="6adbfe37-7b41-4c74-8ba8-427e3854a7a8" name="Changes" comment="" />
+      <created>1680384288039</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1680384288039</updated>
+      <workItem from="1680384289304" duration="1872000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Initial commit" />
+    <option name="LAST_COMMIT_MESSAGE" value="Initial commit" />
+  </component>
+</project>
