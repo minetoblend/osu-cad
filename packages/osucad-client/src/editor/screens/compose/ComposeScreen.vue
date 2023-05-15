@@ -1,9 +1,18 @@
 <script setup lang="ts">
-import {useElementSize} from "@vueuse/core";
-import {onMounted, ref, shallowRef} from "vue";
+import { onKeyDown, onKeyStroke, useElementSize } from "@vueuse/core";
+import { onMounted, ref, shallowRef } from "vue";
 import ComposeScreenToolbar from "./ComposeScreenToolbar.vue";
-import {seekOnScroll} from "@/composables/seekOnScroll";
-import {createViewport, Viewport} from "./viewport";
+import { seekOnScroll } from "@/composables/seekOnScroll";
+import { createViewport, Viewport } from "./viewport";
+import { CommandManager } from "@/editor/commands/commandManager";
+import { useEditor } from "@/editor/createEditor";
+import CommandOverlay from "./CommandOverlay.vue";
+import { ToolManager } from "./tools/toolManager";
+import { MoveHitObjectInteraction } from "@/editor/interactions/moveHitObjects";
+import { createPixiApp } from "./renderer";
+import PixiViewport from "./PixiViewport.vue";
+import { ToolInstance, createTool } from "./tool";
+import { SelectTool } from "./tool/selectTool";
 
 const container = ref();
 const canvas = ref();
@@ -12,9 +21,27 @@ const { width: containerWidth, height: containerHeight } =
   useElementSize(container);
 
 const viewport = shallowRef<Viewport>();
+const commandManager = shallowRef<CommandManager>();
+const editor = useEditor()!;
+// const toolManager = shallowRef<ToolManager>();
+const activeTool = shallowRef<ToolInstance>(createTool(SelectTool));
 
 onMounted(() => {
   viewport.value = createViewport(canvas.value!);
+
+  commandManager.value = new CommandManager(
+    editor,
+    canvas.value,
+    viewport.value.mousePos
+  );
+
+  const viewportApp = createPixiApp(PixiViewport, {
+    editor,
+    canvas: canvas.value,
+    activeTool: activeTool,
+  });
+
+  viewportApp.mount(viewport.value.stage);
 });
 
 seekOnScroll(container);
@@ -22,15 +49,20 @@ seekOnScroll(container);
 
 <template>
   <div class="compose-screen">
-    <ComposeScreenToolbar v-if="viewport" class="toolbar" />
+    <ComposeScreenToolbar class="toolbar" v-model:active-tool="activeTool" />
     <div class="viewport">
       <div ref="container" class="viewport-container">
         <canvas
           ref="canvas"
           :width="Math.floor(containerWidth)"
           :height="Math.floor(containerHeight)"
+          @contextmenu.prevent
         />
       </div>
+      <CommandOverlay
+        v-if="commandManager?.currentCommand.value"
+        :command="commandManager?.currentCommand.value"
+      />
     </div>
   </div>
 </template>

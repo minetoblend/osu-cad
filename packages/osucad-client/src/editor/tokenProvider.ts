@@ -1,6 +1,6 @@
-import axios from "axios";
-import {IUnisonTokenProvider} from "@osucad/unison-client";
-import {authenticate} from "@/composables/authenticate";
+import axios, { AxiosError } from "axios";
+import { IUnisonTokenProvider } from "@osucad/unison-client";
+import { authenticate } from "@/composables/authenticate";
 
 export const getToken = async (id: string): Promise<string> => {
   try {
@@ -19,7 +19,13 @@ export const getToken = async (id: string): Promise<string> => {
 export const tokenProvider: IUnisonTokenProvider = {
   getToken: (id) =>
     getToken(id).catch((e) => {
-      authenticate();
+      const error = e.cause as AxiosError | unknown;
+      console.log(error)
+      if (error instanceof AxiosError && error.response?.status === 403) {
+        authenticate();
+        
+      }
+
       throw e;
     }),
 };

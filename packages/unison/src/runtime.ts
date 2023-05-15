@@ -11,6 +11,12 @@ export interface IUnisonRuntime {
 
   submitOp(node: SharedObject, op: unknown, localOpMetadata: unknown): void;
 
+  register(object: SharedObject);
+
+  deregister(object: SharedObject);
+
+  find(path: string): SharedObject | undefined;
+
   on(
     event: "opSubmitted",
     listener: (
@@ -67,5 +73,19 @@ export class UnisonBaseRuntime extends EventEmitter implements IUnisonRuntime {
     localOpMetadata: unknown
   ) {
     this.emit("opSubmitted", node, op, localOpMetadata);
+  }
+
+  readonly objectMap = new Map<string, SharedObject>();
+
+  register(object: SharedObject) {
+    this.objectMap.set(object.path!, object);
+  }
+
+  deregister(object: SharedObject) {
+    this.objectMap.delete(object.path!);
+  }
+
+  find(path: string): SharedObject | undefined {    
+    return this.objectMap.get(path);
   }
 }

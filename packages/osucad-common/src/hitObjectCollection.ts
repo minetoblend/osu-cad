@@ -1,33 +1,63 @@
-import {shallowReactive} from "vue";
-import {IObjectAttributes, ITypeFactory, IUnisonRuntime, SortedCollection,} from "@osucad/unison";
+import { shallowReactive, shallowRef } from "vue";
+import {
+  IObjectAttributes,
+  ITypeFactory,
+  IUnisonRuntime,
+  SortedCollection,
+} from "@osucad/unison";
 
-import {HitObject} from "./hitObject";
+import { HitObject } from "./hitObject";
+import ShortUniqueId from "short-unique-id";
+import { Circle } from "./circle";
+
+const uid = new ShortUniqueId({ length: 6 });
 
 export class HitObjectCollection extends SortedCollection<HitObject> {
   constructor(runtime: IUnisonRuntime) {
     super(runtime, HitObjectCollectionFactory.Attributes, "startTime");
   }
 
+  protected createUniqueId(): string {
+    return uid();
+  }
+
   initializeFirstTime(): void {
     this._items = shallowReactive([] as HitObject[]);
   }
 
-  getRange(startTime: number, endTime: number) {
-    if (this.length === 0) return [];
-    let { index, found } = this.binarySearch(startTime);
-    if (!found && index > 0) index--;
+  insert(item: HitObject): void {
+    if (item.isGhost) {
+      this._insert(item, this.createUniqueId());
+      return;
+    }
+    super.insert(item);
+  }
 
-    const startIndex = index;
+  remove(item: HitObject): void {
+    if (item.isGhost) {
+      this._remove(item);
+      return;
+    }
+    super.remove(item);
+  }
 
-    while (index < this.length && this.get(index)!.startTime < endTime) index++;
-
-    return this.slice(startIndex, index);
+  getRange(startTime: number, endTime: number, include?: Set<string>) {
+    if (include) {
+      return this.items.filter(
+        (o) =>
+          (o.endTime >= startTime && o.startTime < endTime) ||
+          include.has(o.id!)
+      );
+    }
+    return this.items.filter(
+      (o) => o.endTime >= startTime && o.startTime < endTime
+    );
   }
 
   override onItemChange(item: HitObject, key: string, value: any) {
     super.onItemChange(item, key, value);
 
-    if (key === "newCombo") {
+    if (key === "newCombo" || key === 'startTime') {
       this.calculateCombos();
     }
   }

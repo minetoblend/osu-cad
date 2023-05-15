@@ -3,7 +3,11 @@ import esbuild from 'rollup-plugin-esbuild'
 export default [
   {
     input: `src/index.ts`,
-    plugins: [esbuild()],
+    plugins: [esbuild({
+      optimizeDeps: {
+        include: ['fractional-indexing']
+      }
+    })],
     output: [
       {
         file: `dist/lib.cjs`,

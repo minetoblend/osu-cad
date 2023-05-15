@@ -1,26 +1,28 @@
-import { InjectS3, S3 } from 'nestjs-s3';
 import {
   Controller,
   Get,
-  Header,
+  HttpException,
+  HttpStatus,
   Param,
   Res,
   Session,
-  StreamableFile,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { IEditorSessionToken } from './interfaces';
 import { JwtService } from '@nestjs/jwt';
-import { SessionData } from 'express-session';
 import { Response } from 'express';
+import { SessionData } from 'express-session';
+import { InjectS3, S3 } from 'nestjs-s3';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { BeatmapService } from 'src/beatmap/beatmap.service';
+import { IEditorSessionToken } from './interfaces';
+import { AssetService } from 'src/shared/asset.service';
 
 @Controller('editor')
 export class EditorController {
   constructor(
     private readonly jwtService: JwtService,
-    @InjectS3()
-    private readonly s3: S3,
+    private readonly beatmapService: BeatmapService,
+    private readonly assetService: AssetService,
   ) {}
 
   @Get('/token/:beatmap')
@@ -29,6 +31,11 @@ export class EditorController {
     @Session() session: SessionData,
     @Param('beatmap') beatmapId: string,
   ) {
+    const beatmap = await this.beatmapService.findById(beatmapId);
+
+    if (!beatmap)
+      throw new HttpException('Beatmap not found', HttpStatus.NOT_FOUND);
+
     const token: IEditorSessionToken = {
       beatmapId,
       user: session.user!,
@@ -45,18 +52,15 @@ export class EditorController {
 
   @Get('/:beatmap/audio')
   @UseGuards(AuthGuard)
-  @Header('Cache-Control', 'max-age=3600, public')
+  // @1eader('Cache-Control', 'max-age=3600, public')
   async getAudio(
     @Param('beatmap') beatmapId: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const object = await this.s3
-      .getObject({
-        Bucket: 'beatmaps',
-        Key: `Hifumi, Daisuki-AFBLtSZMNGc.mp3`,
-      })
-      .promise();
+    const beatmap = await this.beatmapService.findById(beatmapId);
+    if (!beatmap)
+      throw new HttpException('Beatmap not found', HttpStatus.NOT_FOUND);
 
-    return new StreamableFile(object.Body as Buffer);
+    return this.assetService.getAssetUrl(beatmap.audio);
   }
 }

@@ -1,5 +1,5 @@
-import {ToolContext} from "./toolContext";
-import {effectScope} from "vue";
+import { ToolContext } from "./toolContext";
+import { effectScope } from "vue";
 
 let currentContext: ToolContext | null = null;
 
@@ -18,7 +18,7 @@ export function defineTool(
       currentContext = ctx;
 
       const scope = effectScope();
-      console.log('setup');
+      console.log("setup");
 
       scope.run(setupFn);
       currentContext = null;
@@ -31,6 +31,21 @@ export function defineTool(
       };
     },
   };
+}
+
+export function withToolContext<T>(ctx: ToolContext, fn: () => T): T {
+  if (currentContext)
+    throw new Error(
+      "Tried to setup tool while setup of another tool was still active"
+    );
+  currentContext = ctx;
+
+  try {
+    const result = fn();
+    return result;
+  } finally {
+    currentContext = null;
+  }
 }
 
 export function getToolContext() {

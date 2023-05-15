@@ -8,6 +8,7 @@ import { EditorService } from './editor.service';
 import { PulsarModule } from 'src/pulsar/pulsar.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { v4 as uuid } from 'uuid';
+import { BeatmapModule } from 'src/beatmap/beatmap.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { v4 as uuid } from 'uuid';
     PulsarModule,
     ScheduleModule.forRoot(),
     EditorPreferencesModule,
+    BeatmapModule,
   ],
   controllers: [EditorController],
   providers: [EditorGateway, EditorUnisonService, EditorService],

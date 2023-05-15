@@ -18,11 +18,13 @@ import { PulsarService } from 'src/pulsar/pulsar.service';
   namespace: 'editor',
 })
 export class EditorGateway implements OnGatewayConnection {
-  private readonly socketMap = new Map<string, Socket>();
-  private readonly serverMap = new Map<string, UnisonServer>();
+  private readonly socketMap = new Map<number, Socket>();
+  private readonly serverMap = new Map<number, UnisonServer>();
 
   @WebSocketServer()
   private readonly server: Server;
+
+  idCounter = 0;
 
   constructor(
     private readonly jwtService: JwtService,
@@ -43,9 +45,12 @@ export class EditorGateway implements OnGatewayConnection {
 
     const socket = new SocketIoWebsocket(rawSocket);
 
-    const server = await this.sessionService.getSession(documentId);
+    const server = await this.sessionService.getSession(
+      documentId,
+      this.server,
+    );
 
-    const clientId = rawSocket.id;
+    const clientId = ++this.idCounter;
     const client: IClient = {
       clientId,
       user: {
@@ -56,6 +61,8 @@ export class EditorGateway implements OnGatewayConnection {
         avatarUrl: token.user.avatarUrl,
       },
     };
+
+    socket.emit('clientId', clientId);
 
     this.socketMap.set(clientId, rawSocket);
     this.serverMap.set(clientId, server);

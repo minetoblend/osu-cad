@@ -1,21 +1,11 @@
-import {useEventListener, useMouseInElement} from "@vueuse/core";
-import {computed, Ref} from "vue";
-import {getToolContext} from "../defineTool";
-import {Vec2} from "@osucad/common";
+import { useEventListener, useMouseInElement, useRafFn } from "@vueuse/core";
+import { computed, onScopeDispose, ref, Ref } from "vue";
+import { getToolContext } from "../defineTool";
+import { Vec2 } from "@osucad/common";
 
 export function useViewportMousePos() {
   const ctx = getToolContext();
-
-  const { elementX, elementY } = useMouseInElement(ctx.canvas);
-
-  return computed<Vec2>(() => {
-    const { x, y } = ctx.viewportContainer.toLocal({
-      x: elementX.value,
-      y: elementY.value,
-    });
-
-    return { x, y };
-  });
+  return ctx.mousePos;
 }
 
 export type BeginDragFunction = (
@@ -41,14 +31,17 @@ export function onViewportMouseDown(
     ...(maybeListener ? optionsOrListener : {}),
   };
 
-  const listener: (evt: ViewportMouseEvent, beginDrag: BeginDragFunction) => void =
-    maybeListener ?? optionsOrListener;
+  const listener: (
+    evt: ViewportMouseEvent,
+    beginDrag: BeginDragFunction
+  ) => void = maybeListener ?? optionsOrListener;
 
   const ctx = getToolContext();
 
   const mousePos = useViewportMousePos();
 
   useEventListener(ctx.canvas, "pointerdown", (evt: MouseEvent) => {
+    if (evt.defaultPrevented) return;
     if (options.button !== undefined && evt.button !== options.button) {
       return;
     }
@@ -63,20 +56,26 @@ export function onViewportMouseDown(
     }
 
     listener(new ViewportMouseEvent(evt, mousePos.value), (onDrag, onEnd) => {
-      beginDrag(mousePos, onDrag, onEnd)
+      beginDrag(mousePos, onDrag, onEnd);
     });
   });
 }
 
-onViewportMouseDown.left = (listener: (evt: ViewportMouseEvent, beginDrag: BeginDragFunction) => void) => {
+onViewportMouseDown.left = (
+  listener: (evt: ViewportMouseEvent, beginDrag: BeginDragFunction) => void
+) => {
   onViewportMouseDown({ button: MouseButton.Left }, listener);
 };
 
-onViewportMouseDown.middle = (listener: (evt: ViewportMouseEvent, beginDrag: BeginDragFunction) => void) => {
+onViewportMouseDown.middle = (
+  listener: (evt: ViewportMouseEvent, beginDrag: BeginDragFunction) => void
+) => {
   onViewportMouseDown({ button: MouseButton.Middle }, listener);
 };
 
-onViewportMouseDown.right = (listener: (evt: ViewportMouseEvent, beginDrag: BeginDragFunction) => void) => {
+onViewportMouseDown.right = (
+  listener: (evt: ViewportMouseEvent, beginDrag: BeginDragFunction) => void
+) => {
   onViewportMouseDown({ button: MouseButton.Right }, listener);
 };
 
@@ -103,10 +102,11 @@ export function beginDrag(
 ) {
   const startPos = mousePos.value;
   let lastPos = startPos;
+  let lastEvent: ViewportMouseEvent | undefined;
 
-  window.addEventListener("pointermove", onMove);
+  window.addEventListener("pointermove", onMove, { passive: true });
   window.addEventListener("pointerup", function onUp(evt: PointerEvent) {
-    window.removeEventListener("pointermove", onMove);
+    window.removeEventListener("mousemove", onMove);
     window.removeEventListener("pointerup", onUp);
 
     const event = new ViewportMouseEvent(evt, mousePos.value);
@@ -114,17 +114,25 @@ export function beginDrag(
     event.dragStart = startPos;
 
     onEnd?.(event, startPos);
+
+    pause();
   });
 
-  function onMove(evt: PointerEvent) {
+  function onMove(evt: PointerEvent | MouseEvent) {
     const event = new ViewportMouseEvent(evt, mousePos.value);
     event.dragDelta = Vec2.sub(event.pos, lastPos);
     event.dragStart = startPos;
-
-    onDrag(event, startPos);
-
-    lastPos = event.pos;
+    lastEvent = event;
   }
+
+  const { pause } = useRafFn(() => {
+    if (lastEvent) {
+      const event = lastEvent;
+      lastEvent = undefined;
+      onDrag(event, startPos);
+      lastPos = event.pos;
+    }
+  });
 }
 
 onViewportDrag.left = (options: ViewportDragOptions) => {
@@ -172,6 +180,12 @@ export class ViewportMouseEvent {
   dragDelta?: Vec2;
 
   dragStart?: Vec2;
+
+  get lastPos() {
+    if (!this.dragDelta)
+      throw new Error("Cannot get lastPos before dragDelta is set");
+    return Vec2.sub(this.pos, this.dragDelta);
+  }
 
   get button() {
     return this.event.button;

@@ -1,27 +1,32 @@
-import {HitObjectSelectionManager} from "./selection";
-import {EditorClock} from "./clock";
+import { HitObjectSelectionManager } from "./selection";
+import { EditorClock } from "./clock";
 import {
-    BeatmapColors,
-    BeatmapColorsFactory,
-    BeatmapDifficulty,
-    BeatmapDifficultyFactory,
-    BetamapMetadata,
-    BetamapMetadataFactory,
-    CircleFactory,
-    HitObjectCollection,
-    HitObjectCollectionFactory,
-    TimingPointCollection,
-    TimingPointCollectionFactory,
-    TimingPointFactory,
+  BeatmapColors,
+  BeatmapColorsFactory,
+  BeatmapDifficulty,
+  BeatmapDifficultyFactory,
+  BetamapMetadata,
+  BetamapMetadataFactory,
+  CircleFactory,
+  ControlPointListFactory,
+  HitObjectCollection,
+  HitObjectCollectionFactory,
+  SliderFactory,
+  TimingPointCollection,
+  TimingPointCollectionFactory,
+  TimingPointFactory,
 } from "@osucad/common";
-import {UnisonClient} from "@osucad/unison-client";
-import {tokenProvider} from "./tokenProvider";
-import {useConnectedUsers} from "./connectedUsers";
-import {loadAudio} from "./sound";
-import {createInjectionState} from "@vueuse/core";
-import {onUnmounted} from "vue";
-import {useRoute} from "vue-router";
-import {getEditorPreferences} from "./preferences";
+import { UnisonClient } from "@osucad/unison-client";
+import { tokenProvider } from "./tokenProvider";
+import { useConnectedUsers } from "./connectedUsers";
+import { loadAudio } from "./sound";
+import { createInjectionState } from "@vueuse/core";
+import { onUnmounted } from "vue";
+import { useRoute } from "vue-router";
+import { getEditorPreferences } from "./preferences";
+import { createShortcutListener } from "@/composables/shortcuts";
+import { applyHitObjectDefaults } from "./applyHitObjectDefaults";
+import { trackHitObjectStacking } from "./stackManager";
 
 export async function createEditor(documentId: string) {
   onUnmounted(() => {
@@ -29,6 +34,8 @@ export async function createEditor(documentId: string) {
   });
 
   const route = useRoute();
+
+  const shortcuts = createShortcutListener();
 
   const client = new UnisonClient(
     "https://api.osucad.com/editor",
@@ -48,7 +55,9 @@ export async function createEditor(documentId: string) {
     new BeatmapDifficultyFactory(),
     new HitObjectCollectionFactory(),
     new CircleFactory(),
+    new SliderFactory(),
     new BeatmapColorsFactory(),
+    new ControlPointListFactory(),
   ]);
 
   const preferences = await getEditorPreferences();
@@ -63,6 +72,17 @@ export async function createEditor(documentId: string) {
   );
 
   const selection = new HitObjectSelectionManager(container);
+
+  applyHitObjectDefaults(
+    container.document.objects.hitObjects,
+    container.document.objects.difficulty,
+    container.document.objects.timing
+  );
+
+  // trackHitObjectStacking(
+  //   container.document.objects.hitObjects,
+  //   container.document.objects.difficulty
+  // );
 
   return {
     container,

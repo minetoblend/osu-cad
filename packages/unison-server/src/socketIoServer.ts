@@ -23,4 +23,8 @@ export class SocketIoWebsocket implements IWebSocket {
   offAny(callback: (event: string, data: any) => void): void {
     this.socket.offAny(callback);
   }
+
+  joinRoom(room: string): void {
+    this.socket.join(room);
+  }
 }

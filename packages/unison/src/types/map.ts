@@ -1,8 +1,12 @@
-import {ITypeFactory} from ".";
-import {IUnisonRuntime} from "../runtime";
-import {ISerializableValue} from "../serializer";
-import {assert} from "../util";
-import {IObjectAttributes, IObjectSnapshot, SharedObject,} from "./sharedObject";
+import { ITypeFactory } from ".";
+import { IUnisonRuntime } from "../runtime";
+import { ISerializableValue } from "../serializer";
+import { assert } from "../util";
+import {
+  IObjectAttributes,
+  IObjectSnapshot,
+  SharedObject,
+} from "./sharedObject";
 
 export interface IMapSnapshotData {
   [key: string]: ISerializableValue;
@@ -32,10 +36,10 @@ export interface IMapClearOperation {
 }
 
 export class SharedMap extends SharedObject<IMapOperation, IMapSnapshotData> {
-  readonly #values = new Map<string, unknown>();
-  #localVersion = 0;
-  readonly #pending = new Map<string, number>();
-  #pendingClear: number | undefined = undefined;
+  private readonly _values = new Map<string, unknown>();
+  private _localVersion = 0;
+  private readonly _pending = new Map<string, number>();
+  private _pendingClear: number | undefined = undefined;
 
   constructor(
     runtime: IUnisonRuntime,
@@ -46,40 +50,63 @@ export class SharedMap extends SharedObject<IMapOperation, IMapSnapshotData> {
     this.initializeFirstTime();
   }
 
+  getChild(key: string): SharedObject<unknown, unknown> | undefined {
+    const value = this.get(key);
+    if (value instanceof SharedObject) return value;
+    return undefined;
+  }
+
+  getChildren(): SharedObject<unknown, unknown>[] {
+    return [...this._values]
+      .map(([key, value]) => value)
+      .filter((it) => it instanceof SharedObject) as SharedObject[];
+  }
+
   initializeFirstTime(): void {}
 
   restore(snapshot: IObjectSnapshot<IMapSnapshotData>): void {
-    this.#clear();
-
     for (const [key, value] of Object.entries(snapshot.content)) {
-      this.#set(key, this.serializer.decode(value));
+      const previousValue = this.get(key);
+      if (previousValue instanceof SharedObject) {
+        previousValue.restore(value.value as IObjectSnapshot<any>);
+      } else {
+        this.#delete(key);
+        this.#set(key, this.serializer.decode(value));
+      }
     }
   }
 
   entries() {
-    return this.#values.entries();
+    return this._values.entries();
   }
 
   keys() {
-    return this.#values.keys();
+    return this._values.keys();
   }
 
   values() {
-    return this.#values.values();
+    return this._values.values();
   }
 
   #set(key: string, value: unknown) {
-    const previousValue = this.#values.get(key);
-    this.#values.set(key, value);
+    const previousValue = this._values.get(key);
+
+    if (previousValue instanceof SharedObject) previousValue.detach();
+    if (value instanceof SharedObject) {
+      value.setParent(this, key);
+    }
+
+    this._values.set(key, value);
     this.#onChange(key, value);
     this.runtime.trigger?.(this, key, value, "set");
+
     return previousValue;
   }
 
   set(key: string, value: unknown): void {
     const previousValue = this.#set(key, value);
     if (this.isAttached) {
-      const version = this.#localVersion++;
+      const version = this._localVersion++;
       const op: IMapSetOperation = {
         type: "set",
         key,
@@ -97,21 +124,24 @@ export class SharedMap extends SharedObject<IMapOperation, IMapSnapshotData> {
 
   get(key: string): unknown {
     this.runtime.track?.(this, key, "get");
-    return this.#values.get(key);
+    return this._values.get(key);
   }
 
   #delete(key: string) {
-    const previousValue = this.#values.get(key);
-    this.#values.delete(key);
+    const previousValue = this._values.get(key);
+    this._values.delete(key);
     this.#onChange(key, undefined);
     this.runtime.track?.(this, key, "delete");
+
+    if (previousValue instanceof SharedObject) previousValue.detach();
+
     return previousValue;
   }
 
   delete(key: string): void {
     const previousValue = this.#delete(key);
 
-    const version = this.#localVersion++;
+    const version = this._localVersion++;
     const op: IMapDeleteOperation = {
       type: "delete",
       key,
@@ -124,9 +154,11 @@ export class SharedMap extends SharedObject<IMapOperation, IMapSnapshotData> {
   }
 
   #clear() {
-    const keys = [...this.#values.keys()];
-    this.#values.forEach((_, key) => this.runtime.track?.(this, key, "delete"));
-    this.#values.clear();
+    const keys = [...this._values.keys()];
+    this._values.forEach((_, key) => {
+      this.runtime.track?.(this, key, "delete");
+      this.#delete(key);
+    });
 
     keys.forEach((key) => this.#onChange(key, undefined));
   }
@@ -134,14 +166,14 @@ export class SharedMap extends SharedObject<IMapOperation, IMapSnapshotData> {
   clear(): void {
     const snapshot = this.createSnapshot();
     this.#clear();
-    const version = this.#localVersion++;
+    const version = this._localVersion++;
 
     const op: IMapClearOperation = {
       type: "clear",
       version,
     };
 
-    this.#pendingClear = version;
+    this._pendingClear = version;
 
     this.submitOp(op, {
       previousValues: snapshot,
@@ -151,7 +183,7 @@ export class SharedMap extends SharedObject<IMapOperation, IMapSnapshotData> {
   createSnapshot(): IMapSnapshotData {
     const snapshot = {} as IMapSnapshotData;
 
-    for (const [key, value] of this.#values) {
+    for (const [key, value] of this._values) {
       snapshot[key] = this.serializer.encode(value);
     }
 
@@ -164,7 +196,7 @@ export class SharedMap extends SharedObject<IMapOperation, IMapSnapshotData> {
         if (local) {
           this.#resolvePendingVersion(op.key, op.version);
         } else {
-          if (this.#pending.has(op.key)) return;
+          if (this._pending.has(op.key)) return;
 
           const value = this.serializer.decode(op.value);
 
@@ -177,7 +209,7 @@ export class SharedMap extends SharedObject<IMapOperation, IMapSnapshotData> {
         if (local) {
           this.#resolvePendingVersion(op.key, op.version);
         } else {
-          if (this.#pending.has(op.key)) return;
+          if (this._pending.has(op.key)) return;
 
           this.#delete(op.key);
           this.runtime.trigger?.(this, op.key, undefined, "delete");
@@ -186,13 +218,13 @@ export class SharedMap extends SharedObject<IMapOperation, IMapSnapshotData> {
       }
       case "clear": {
         if (local) {
-          assert(!!this.#pendingClear && op.version <= this.#pendingClear);
-          if (op.version === this.#pendingClear) {
-            this.#pendingClear = undefined;
+          assert(!!this._pendingClear && op.version <= this._pendingClear);
+          if (op.version === this._pendingClear) {
+            this._pendingClear = undefined;
           }
         } else {
-          [...this.#values.keys()].forEach((key) => {
-            if (this.#pending.has(key)) return;
+          [...this._values.keys()].forEach((key) => {
+            if (this._pending.has(key)) return;
             this.#delete(key);
           });
         }
@@ -202,14 +234,14 @@ export class SharedMap extends SharedObject<IMapOperation, IMapSnapshotData> {
   }
 
   #markAsPending(key: string, version: number) {
-    this.#pending.set(key, version);
+    this._pending.set(key, version);
   }
 
   #resolvePendingVersion(key: string, version: number) {
-    const pendingVersion = this.#pending.get(key);
+    const pendingVersion = this._pending.get(key);
     assert(pendingVersion !== undefined && version <= pendingVersion);
     if (version === pendingVersion) {
-      this.#pending.delete(key);
+      this._pending.delete(key);
     }
   }
 
@@ -230,8 +262,8 @@ export class SharedMap extends SharedObject<IMapOperation, IMapSnapshotData> {
   }
 
   #onChange(key: string, value: unknown) {
-    this.emit("change", key, value);
     this.onChange?.(key, value);
+    this.emit("change", key, value);
   }
 
   onChange?(key: string, value: unknown): void;

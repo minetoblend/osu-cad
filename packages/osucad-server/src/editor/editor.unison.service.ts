@@ -1,3 +1,5 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import {
   BeatmapColors,
   BeatmapColorsFactory,
@@ -5,7 +7,6 @@ import {
   BeatmapDifficultyFactory,
   BetamapMetadata,
   BetamapMetadataFactory,
-  Circle,
   CircleFactory,
   HitObjectCollection,
   HitObjectCollectionFactory,
@@ -13,24 +14,32 @@ import {
   TimingPointCollection,
   TimingPointCollectionFactory,
   TimingPointFactory,
+  SliderFactory,
+  ControlPointListFactory,
 } from '@osucad/common';
-import { UnisonServer, UnisonServerRuntime } from '@osucad/unison-server';
 import { Document } from '@osucad/unison';
-import { Injectable, Logger } from '@nestjs/common';
+import { UnisonServer, UnisonServerRuntime } from '@osucad/unison-server';
+import { Server } from 'socket.io';
 import { v4 as uuid } from 'uuid';
-import { Cron } from '@nestjs/schedule';
-
+import { BeatmapService } from '../beatmap/beatmap.service';
+import { Beatmap } from '../beatmap/beatmap.entity';
 @Injectable()
 export class EditorUnisonService {
   private servers = new Map<string, UnisonServer>();
   private pendingSession = new Map<string, Promise<UnisonServer>>();
   private logger = new Logger(EditorUnisonService.name);
 
-  private async createSession(documentId: string): Promise<UnisonServer> {
-    if (this.pendingSession.has(documentId)) {
-      return this.pendingSession.get(documentId)!;
+  constructor(private beatmapService: BeatmapService) {}
+
+  private async createSession(
+    documentId: string,
+    io: Server,
+  ): Promise<UnisonServer> {
+    const pending = this.pendingSession.get(documentId);
+    if (pending) {
+      return await pending;
     }
-    const sessionP = this.createSessionInternal(documentId);
+    const sessionP = this.createSessionInternal(documentId, io);
     this.pendingSession.set(documentId, sessionP);
     const session = await sessionP;
     this.servers.set(documentId, session);
@@ -40,20 +49,27 @@ export class EditorUnisonService {
 
   private async createSessionInternal(
     documentId: string,
+    io: Server,
   ): Promise<UnisonServer> {
-    const document = this.createEmptyDocument();
-
-    return new UnisonServer(uuid(), document);
-  }
-
-  async getSession(documentId: string): Promise<UnisonServer> {
-    if (this.servers.has(documentId)) {
-      return this.servers.get(documentId)!;
+    const beatmap = await this.beatmapService.findById(documentId);
+    if (!beatmap) {
+      throw new Error('Beatmap not found');
     }
-    return this.createSession(documentId);
+
+    const document = this.createDocumentFromBeatmap(beatmap);
+
+    return new UnisonServer(uuid(), document, io);
   }
 
-  @Cron('0 */2 * * * *')
+  async getSession(documentId: string, io: Server): Promise<UnisonServer> {
+    const existing = this.servers.get(documentId);
+    if (existing) {
+      return existing;
+    }
+    return this.createSession(documentId, io);
+  }
+
+  @Cron('0 */10 * * * *')
   async cleanupSessions() {
     this.logger.log('Cleaning up sessions');
     [...this.servers.entries()].forEach(([documentId, session]) => {
@@ -64,16 +80,80 @@ export class EditorUnisonService {
     });
   }
 
-  createEmptyDocument() {
-    const runtime = new UnisonServerRuntime([
+  @Cron('*/30 * * * * *')
+  async saveBeatmaps() {
+    this.logger.log('Saving beatmaps');
+    [...this.servers.entries()]
+      .filter(([_, session]) => session.isDirty)
+      .forEach(async ([documentId, session]) => {
+        const beatmap = await this.beatmapService.findById(documentId);
+        if (!beatmap) return;
+
+        this.logger.log(
+          `Saving beatmap (${beatmap.id}):  ${beatmap.artist} - ${beatmap.title} `,
+        );
+
+        const { hitObjects, timing, difficulty, colors } =
+          session.createSnapshot();
+
+        beatmap.hitObjects = hitObjects;
+        beatmap.timing = timing;
+        beatmap.colors = colors;
+
+        beatmap.difficulty.hpDrainRate = difficulty.hpDrainRate;
+        beatmap.difficulty.circleSize = difficulty.circleSize;
+        beatmap.difficulty.approachRate = difficulty.approachRate;
+        beatmap.difficulty.overallDifficulty = difficulty.overallDifficulty;
+        beatmap.difficulty.sliderMultiplier = difficulty.sliderMultiplier;
+
+        session.isDirty = false;
+
+        await this.beatmapService.save(beatmap);
+      });
+  }
+
+  createRuntime() {
+    return new UnisonServerRuntime([
       new TimingPointCollectionFactory(),
       new TimingPointFactory(),
       new BetamapMetadataFactory(),
       new HitObjectCollectionFactory(),
       new CircleFactory(),
+      new SliderFactory(),
       new BeatmapDifficultyFactory(),
       new BeatmapColorsFactory(),
+      new ControlPointListFactory(),
     ]);
+  }
+
+  createDocumentFromBeatmap(beatmap: Beatmap) {
+    const runtime = this.createRuntime();
+    const document = this.createEmptyDocument(runtime);
+
+    if (beatmap.data) document.restore(beatmap.data);
+
+    const { metadata, timing, hitObjects, colors, difficulty } =
+      document.objects;
+
+    metadata.artist = beatmap.artist;
+    metadata.artistUnicode = beatmap.artistUnicode;
+    metadata.title = beatmap.title;
+    metadata.titleUnicode = beatmap.titleUnicode;
+
+    if (beatmap.hitObjects) hitObjects.restore(beatmap.hitObjects);
+    if (beatmap.timing) timing.restore(beatmap.timing);
+    if (beatmap.colors) colors.restore(beatmap.colors);
+
+    difficulty.hpDrainRate = beatmap.difficulty.hpDrainRate;
+    difficulty.circleSize = beatmap.difficulty.circleSize;
+    difficulty.approachRate = beatmap.difficulty.approachRate;
+    difficulty.overallDifficulty = beatmap.difficulty.overallDifficulty;
+    difficulty.sliderMultiplier = beatmap.difficulty.sliderMultiplier;
+
+    return document;
+  }
+
+  createEmptyDocument(runtime: UnisonServerRuntime) {
     const document = new Document(runtime, {
       metadata: new BetamapMetadata(runtime),
       timing: new TimingPointCollection(runtime),
@@ -81,40 +161,6 @@ export class EditorUnisonService {
       difficulty: new BeatmapDifficulty(runtime),
       colors: new BeatmapColors(runtime),
     });
-
-    const metadata = document.objects.metadata;
-    metadata.artistUnicode = 'quilt heron';
-    metadata.titleUnicode = 'Hifumi Daisuki?';
-
-    const timingPoint = new TimingPoint(runtime);
-    timingPoint.offset = 114;
-    timingPoint.bpm = 161;
-
-    document.objects.timing.insert(timingPoint);
-
-    for (let i = 0; i < 1000; i++) {
-      const circle = new Circle(runtime);
-      circle.position = {
-        x: Math.floor(Math.random() * 512),
-        y: Math.floor(Math.random() * 384),
-      };
-      circle.startTime = 859 + Math.floor((i * timingPoint.beatDuration) / 2);
-
-      if (Math.random() < 0.2) circle.newCombo = true;
-
-      document.objects.hitObjects.insert(circle);
-    }
-
-    document.objects.colors.insert(0x32a852);
-    document.objects.colors.insert(0x4287f5);
-    document.objects.colors.insert(0xf542ec);
-
-    // const circle2 = new Circle(runtime);
-    // circle2.position = { x: 200, y: 100 };
-    // circle2.startTime = 952;
-
-    // document.objects.hitObjects.insert(circle);
-    // document.objects.hitObjects.insert(circle2);
 
     return document;
   }

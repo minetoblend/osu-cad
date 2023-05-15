@@ -43,11 +43,11 @@ export class Serializer {
 }
 
 export interface ISerializableValue {
-  type: string;
+  type: ValueType;
   value: unknown;
 }
 
 export const enum ValueType {
-  Shared = "shared",
-  Plain = "plain",
+  Shared = 0,
+  Plain = 1,
 }

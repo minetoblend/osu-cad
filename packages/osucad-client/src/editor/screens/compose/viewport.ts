@@ -1,16 +1,24 @@
-import {nn} from "@osucad/unison";
-import {onUnmounted, watch, watchEffect} from "vue";
-import {DrawableHitCircle} from "./drawables/drawableHitCircle";
-import {Application, Container} from "pixi.js";
-import {useEditor} from "../../createEditor";
-import {createConstantSizeContainer} from "./drawables/constantSizeContainer";
-import {useElementSize, useEventListener} from "@vueuse/core";
-import {createGrid} from "./drawables/grid";
-import {ToolManager} from "./tools/toolManager";
+import { CommandManager } from "@/editor/commands/commandManager";
+import { Circle, Vec2 } from "@osucad/common";
+import { nn } from "@osucad/unison";
+import { onUnmounted, ref, watch, watchEffect } from "vue";
+import { DrawableHitCircle } from "./drawables/drawableHitCircle";
+import { Application, Container, Sprite, Texture } from "pixi.js";
+import { useEditor } from "../../createEditor";
+import { createConstantSizeContainer } from "./drawables/constantSizeContainer";
+import {
+  onKeyStroke,
+  useElementSize,
+  useEventListener,
+  useRafFn
+} from "@vueuse/core";
+import { createGrid } from "./drawables/grid";
+import { DrawableSlider } from "./drawables/drawableSlider";
+import { DrawableHitObject } from "./drawables/drawableHitObject";
 
 export function createViewport(canvas: HTMLCanvasElement) {
   const ctx = canvas.getContext("webgl2", {
-    desynchronized: true,
+    // desynchronized: true,
     powerPreference: "high-performance",
     depth: true,
     antialias: true,
@@ -21,7 +29,12 @@ export function createViewport(canvas: HTMLCanvasElement) {
   const app = new Application({
     view: canvas,
     context: ctx,
+    backgroundColor: 0x000000,
+    backgroundAlpha: 1,
   });
+
+  // @ts-ignore
+  globalThis.__PIXI_APP__ = app;
 
   const { width, height } = useElementSize(canvas);
 
@@ -29,17 +42,22 @@ export function createViewport(canvas: HTMLCanvasElement) {
     app.renderer.resize(width.value, height.value);
   });
 
-  const { container: viewportContainer } = createConstantSizeContainer(
-    512,
-    384,
-    width,
-    height,
-    50
-  );
+  const { container: viewportContainer, scale: viewportScale } =
+    createConstantSizeContainer(512, 384, width, height, 50);
 
-  const hitObjectContainer = new Container<DrawableHitCircle>();
+  viewportContainer.interactiveChildren = true;
+
+  const hitObjectContainer = new Container<DrawableHitObject>();
+
+  const bg = new Sprite(Texture.WHITE);
+  bg.tint = 0xaaaaaa;
+  bg.scale.set(512 / 16, 384 / 16);
+
+  viewportContainer.addChild(bg, createGrid(), hitObjectContainer);
+
   app.stage.addChild(viewportContainer);
-  viewportContainer.addChild(createGrid(), hitObjectContainer);
+
+  const mousePos = createMousePos(canvas, viewportContainer);
 
   const editor = useEditor()!;
 
@@ -50,7 +68,7 @@ export function createViewport(canvas: HTMLCanvasElement) {
     container.document.objects.hitObjects.off("change", updateHitObjects);
   });
 
-  const hitObjects = new Map<string, DrawableHitCircle>();
+  const hitObjects = new Map<string, DrawableHitObject>();
 
   function updateHitObjects() {
     const shouldRemove = new Set(hitObjects.keys());
@@ -62,16 +80,20 @@ export function createViewport(canvas: HTMLCanvasElement) {
 
     for (const hitObject of container.document.objects.hitObjects.getRange(
       startTime,
-      endTime
+      endTime,
+      editor.selection.value
     )) {
       const existing = hitObjects.get(nn(hitObject.id));
       if (existing) {
-        existing.update();
         shouldRemove.delete(nn(hitObject.id));
 
         existing.zIndex = --i;
       } else {
-        const drawable = new DrawableHitCircle(hitObject, editor);
+        const drawable =
+          hitObject instanceof Circle
+            ? new DrawableHitCircle(hitObject, editor)
+            : new DrawableSlider(hitObject, editor, viewportScale);
+
         hitObjectContainer.addChild(drawable);
         drawable.update();
         hitObjects.set(nn(hitObject.id), drawable);
@@ -90,7 +112,17 @@ export function createViewport(canvas: HTMLCanvasElement) {
     });
   }
 
-  watch(() => clock.currentTimeAnimated, updateHitObjects, { immediate: true });
+  app.ticker.add(() => {
+    hitObjectContainer.children.forEach((drawable) => {
+      drawable.update();
+    });
+  });
+
+  watch(
+    () => [clock.currentTimeAnimated, editor.selection.value],
+    updateHitObjects,
+    { immediate: true, deep: true }
+  );
 
   updateHitObjects();
 
@@ -117,13 +149,44 @@ export function createViewport(canvas: HTMLCanvasElement) {
     );
   });
 
-  const toolManager = new ToolManager(editor, canvas, viewportContainer);
-
-  viewportContainer.addChild(toolManager.overlay);
+  onKeyStroke("a", (evt) => {
+    if (evt.ctrlKey && !document.activeElement?.matches("input")) {
+      evt.preventDefault();
+      editor.selection.select(...container.document.objects.hitObjects.items);
+    }
+  });
 
   return {
-    toolManager
-  }
+    mousePos,
+    stage: viewportContainer,
+  };
+}
+
+export function createMousePos(
+  canvas: HTMLCanvasElement,
+  viewportContainer: Container
+) {
+  const latestMousePos = ref(Vec2.zero());
+
+  useEventListener("pointermove", (e: PointerEvent) => {
+    const rect = canvas.getBoundingClientRect();
+
+    let { x, y } = viewportContainer.toLocal({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+
+    latestMousePos.value = Vec2.create(x, y);
+  });
+
+  const mousePos = ref(Vec2.zero());
+
+  // useRafFn(() => {
+  //   if (!Vec2.equals(mousePos.value, latestMousePos.value))
+  //     mousePos.value = latestMousePos.value;
+  // });
+
+  return latestMousePos
 }
 
 export type Viewport = ReturnType<typeof createViewport>;

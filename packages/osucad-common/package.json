@@ -25,6 +25,8 @@
     "rollup-plugin-esbuild": "^5.0.0"
   },
   "dependencies": {
+    "fractional-indexing": "^3.2.0",
+    "short-unique-id": "^4.4.4",
     "zod": "^3.21.4"
   }
 }

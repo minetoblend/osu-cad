@@ -1,4 +1,12 @@
-import { ColorCycler } from "@osucad/common";
+import { Server } from "socket.io";
+import { unpack } from "msgpackr";
+import {
+  BeatmapColors,
+  BeatmapDifficulty,
+  ColorCycler,
+  HitObjectCollection,
+  TimingPointCollection,
+} from "@osucad/common";
 import { EventEmitter } from "stream";
 import { SignalHandler } from "./signals";
 import { Logger } from "@nestjs/common";
@@ -9,6 +17,7 @@ import {
   IDocumentSnapshot,
   IProcesessedDocumentMessage,
   IClient,
+  ISortedCollectionSnapshotData,
 } from "@osucad/unison";
 import { IWebSocket } from "./webSocket";
 import { MessageDispatcher } from "./broadcast";
@@ -17,9 +26,9 @@ import { FileHandler } from "./files";
 export class UnisonServer extends EventEmitter {
   private readonly logger = new Logger(UnisonServer.name);
 
-  private readonly clients = new Map<string, IClient>();
+  private readonly clients = new Map<number, IClient>();
 
-  private readonly clientState = new Map<string, Map<string, any>>();
+  private readonly clientState = new Map<number, Map<string, any>>();
 
   private readonly messages = new MessageDispatcher<IClient>();
 
@@ -31,9 +40,12 @@ export class UnisonServer extends EventEmitter {
 
   private lastLeaveAt: Date | null = null;
 
+  public isDirty = true;
+
   constructor(
     public readonly id: string,
-    public readonly document: Document<any>
+    public readonly document: Document<any>,
+    public readonly io: Server
   ) {
     super();
     this.signalHandler = new SignalHandler(
@@ -50,6 +62,8 @@ export class UnisonServer extends EventEmitter {
     this.logger.log(
       `${client.user.name} (${client.clientId}) connected to server ${this.id}`
     );
+
+    socket.joinRoom(this.id);
 
     this.clients.set(client.clientId, client);
     this.clientState.set(client.clientId, new Map<string, any>());
@@ -73,25 +87,28 @@ export class UnisonServer extends EventEmitter {
       }))
     );
 
-    socket.on("submitOp", (message: IDocumentMessage | IDocumentMessage[]) => {
+    socket.on("submitOp", (message: IDocumentMessage[] | IDocumentMessage) => {
       const ops = Array.isArray(message) ? message : [message];
-
-      ops.forEach((message) => {
-        const start = performance.now();
+      const time = performance.now();
+      const sequencedOps = ops.map((message) => {
         const op: IProcesessedDocumentMessage = {
-          client,
           clientId: client.clientId,
-          timestamp: Date.now(),
           path: message.path,
           content: message.content,
         };
 
         const obj = this.document.find(op.path);
 
-        this.document.find(op.path)?.handle(op.content, false);
+        if (!obj) console.log("could not find object for ", op.path);
 
-        this.messages.emit("op", op);
+        obj?.handle(op.content, false);
+
+        return op;
       });
+
+      this.isDirty = true;
+
+      this.io.to(this.id).emit("op", sequencedOps);
     });
 
     socket.on("submitClientState", ({ key, value }) => {
@@ -111,5 +128,18 @@ export class UnisonServer extends EventEmitter {
 
   get clientCount() {
     return this.clients.size;
+  }
+
+  createSnapshot() {
+    const { hitObjects, timing, colors, difficulty } = this.document.objects;
+
+    return {
+      hitObjects: (
+        hitObjects as HitObjectCollection
+      ).createSnapshotWithAttributes(),
+      timing: (timing as TimingPointCollection).createSnapshotWithAttributes(),
+      colors: (colors as BeatmapColors).createSnapshotWithAttributes(),
+      difficulty: difficulty as BeatmapDifficulty,
+    };
   }
 }

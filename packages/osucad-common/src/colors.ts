@@ -1,15 +1,20 @@
-import {IObjectAttributes, ITypeFactory, IUnisonRuntime, SharedMap,} from "@osucad/unison";
+import {
+  IObjectAttributes,
+  ITypeFactory,
+  IUnisonRuntime,
+  SharedMap,
+} from "@osucad/unison";
 
 export type IColor = number;
 
 export class BeatmapColors extends SharedMap {
-
   constructor(runtime: IUnisonRuntime) {
     super(runtime, BeatmapColorsFactory.Attributes);
   }
 
   initializeFirstTime(): void {
-    this.set("length", 0);
+    this.set("length", 1);
+    this.set("0", 0xff0000);
   }
 
   private _colors: IColor[] = [];

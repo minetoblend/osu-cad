@@ -8,7 +8,7 @@ export class UserManager extends EventEmitter {
 
   others: IClient[] = [];
 
-  state = reactive(new Map<string, Map<string, any>>());
+  state = reactive(new Map<number, Map<string, any>>());
 
   constructor(private readonly connection: UnisonClientConnection) {
     super();
@@ -57,7 +57,7 @@ export class UserManager extends EventEmitter {
     this.emit(event, user, this.others);
   }
 
-  getClientState(id: string, key: string) {
+  getClientState(id: number, key: string) {
     return this.state.get(id)?.get(key);
   }
 
@@ -70,5 +70,9 @@ export class UserManager extends EventEmitter {
 
   setClientState(key: string, value: any) {
     this.connection.socket.emit("submitClientState", { key, value });
+  }
+
+  getUser(id: number) : IClient | undefined {
+    return this.others.find((u) => u.clientId === id);
   }
 }

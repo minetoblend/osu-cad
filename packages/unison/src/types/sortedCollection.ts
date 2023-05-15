@@ -42,7 +42,7 @@ export class SortedCollection<TItem extends SharedMap> extends SharedObject<
   constructor(
     runtime: IUnisonRuntime,
     attributes: IObjectAttributes,
-    public readonly sortBy: string,
+    public readonly sortBy: string
   ) {
     super(runtime, attributes);
 
@@ -83,6 +83,7 @@ export class SortedCollection<TItem extends SharedMap> extends SharedObject<
     );
     this._items.forEach((item) => {
       this._children.set(nn(item.id), item);
+      this.emit("insert", item);
     });
     this.#onChange();
   }
@@ -105,7 +106,7 @@ export class SortedCollection<TItem extends SharedMap> extends SharedObject<
       case "insert": {
         if (local) return;
         const item = this.serializer.decode(op.value) as TItem;
-        this.#insert(item, op.id);
+        this._insert(item, op.id);
         break;
       }
       case "remove": {
@@ -113,7 +114,7 @@ export class SortedCollection<TItem extends SharedMap> extends SharedObject<
 
         const item = this._items.find((item) => item.id === op.id);
         if (item) {
-          this.#remove(item!);
+          this._remove(item!);
         }
         break;
       }
@@ -121,7 +122,7 @@ export class SortedCollection<TItem extends SharedMap> extends SharedObject<
   }
 
   insert(item: TItem): void {
-    this.#insert(item, this.createUniqueId());
+    this._insert(item, this.createUniqueId());
     const op: ISortedCollectionInsertOperation = {
       type: "insert",
       id: nn(item.id),
@@ -131,13 +132,14 @@ export class SortedCollection<TItem extends SharedMap> extends SharedObject<
     this.submitOp(op);
   }
 
-  #insert(item: TItem, id: string): void {
+  protected _insert(item: TItem, id: string): void {
     const { index } = this.binarySearch(item.get(this.sortBy) as number);
+
+    item.setParent(this, id);
 
     this._items.splice(index, 0, item);
     this._children.set(id, item);
-    item.setParent(this, id);
-
+    
     const onChange = (key, value) => {
       this.onItemChange(item, key, value);
     };
@@ -146,6 +148,7 @@ export class SortedCollection<TItem extends SharedMap> extends SharedObject<
     item.once("detached", () => item.off("change", onChange));
 
     this.emit("insert", item);
+
     this.#onChange();
   }
 
@@ -158,7 +161,7 @@ export class SortedCollection<TItem extends SharedMap> extends SharedObject<
 
   remove(item: TItem): void {
     const id = nn(item.id);
-    this.#remove(item);
+    this._remove(item);
 
     const op: ISortedCollectionRemoveOperation = {
       type: "remove",
@@ -173,17 +176,17 @@ export class SortedCollection<TItem extends SharedMap> extends SharedObject<
     });
   }
 
-  #remove(item: TItem): void {
+  protected _remove(item: TItem): void {
+    const id = nn(item.id);
     const index = this._items.indexOf(item);
     if (index !== -1) {
       this._items.splice(index, 1);
     }
     this._children.delete(nn(item.id));
-    item.detach();
     item.off("change", this.onItemChange);
-
-    this.emit("remove", item);
+    this.emit("remove", item, id);
     this.#onChange();
+    item.detach();
   }
 
   binarySearch(value: number): { index: number; found: boolean } {
@@ -225,8 +228,13 @@ export class SortedCollection<TItem extends SharedMap> extends SharedObject<
     if (key === this.sortBy) {
       const id = nn(item.id);
 
-      this.#remove(item);
-      this.#insert(item, id);
+      const index = this._items.indexOf(item);
+      this._items.splice(index, 1);
+
+      const { index: newIndex } = this.binarySearch(value as number);
+
+      this._items.splice(newIndex, 0, item);
     }
+    this.emit("itemChange", item, key, value);
   }
 }

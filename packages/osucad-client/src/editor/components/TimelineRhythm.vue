@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import {computed, ref} from "vue";
-import {useEditor} from "../createEditor";
+import { computed, ref, watchEffect } from "vue";
+import { useEditor } from "../createEditor";
 import TimelineRhythmObject from "./TimelineRhythmObject.vue";
-import {useElementSize, useEventListener} from "@vueuse/core";
+import { useElementSize, useEventListener } from "@vueuse/core";
 
 const { clock, timing, container, selection } = useEditor()!;
 
@@ -79,6 +79,13 @@ function onPointerDown(evt: PointerEvent) {
       start: Math.min(selectionStart, time),
       end: Math.max(selectionStart, time),
     };
+
+    const selectedObjects = container.document.objects.hitObjects.items.filter(
+      (hitObject) =>
+        hitObject.startTime >= selectionRange.value!.start &&
+        hitObject.startTime <= selectionRange.value!.end
+    );
+    selection.select(...selectedObjects);
   }
 }
 

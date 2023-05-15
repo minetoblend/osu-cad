@@ -3,7 +3,7 @@ import {computed, onBeforeUnmount, reactive, ref} from "vue";
 import {useContainer} from "@/composables/useContainer";
 import {IClient, ISignalMessage, IUser} from "@osucad/unison";
 import {watchThrottled} from "@vueuse/core";
-import {useInputSelection} from "@/composables/useCursorPos";
+import {useInputSelection} from "@/composables/useInputSelection";
 
 const props = defineProps<{
   id: string;

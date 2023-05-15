@@ -1,3 +1,4 @@
+import { pack } from "msgpackr";
 import { UserManager } from "./users";
 import { ITypeFactory } from "@osucad/unison";
 import {
@@ -57,13 +58,15 @@ export class UnisonClient {
       });
     });
 
-    connection.on("op", (op: IProcesessedDocumentMessage) => {
-      const start = performance.mark("opReceived");
-      const isLocal = op.clientId === connection.id;
-      const object = document.find(op.path);
-      if (object) {
-        object.handle(op.content, isLocal);
-      }
+    connection.on("op", (ops: IProcesessedDocumentMessage[]) => {
+      ops.forEach((op) => {
+        const start = performance.mark("opReceived");
+        const isLocal = op.clientId === connection.id;
+        const object = document.find(op.path);
+        if (object) {
+          object.handle(op.content, isLocal);
+        }
+      });
     });
 
     const disconnect = () => {
@@ -94,7 +97,7 @@ export interface IUnisonContainer<TSchema extends object = any> {
 
 export class UnisonClientConnection extends EventEmitter {
   socket: Socket;
-  id: string;
+  id: number;
   constructor(endpoint: string, token: string, documentId: string) {
     super();
     const socket = io(endpoint, {
@@ -104,9 +107,13 @@ export class UnisonClientConnection extends EventEmitter {
       },
       transportOptions: ["polling", "websocket"],
     });
+
     socket.on("connect", () => {
-      this.id = socket.id;
       this.emit("connect");
+    });
+
+    socket.once("clientId", (id: number) => {
+      this.id = id;
     });
 
     socket.on("disconnect", () => {
@@ -150,10 +157,6 @@ export class UnisonClientConnection extends EventEmitter {
       }
     }
     this.#pendingOps.push(op);
-
-    if (this.#pendingOps.length > 50) {
-      this.#flushOps();
-    }
   }
 
   #flushOps() {

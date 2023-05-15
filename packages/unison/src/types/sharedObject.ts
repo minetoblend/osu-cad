@@ -18,10 +18,10 @@ export abstract class SharedObject<
     return this.#id;
   }
 
-  #parent: SharedObject | undefined;
+  private _parent: SharedObject | undefined;
 
   get parent() {
-    return this.#parent;
+    return this._parent;
   }
 
   get path(): string | undefined {
@@ -37,12 +37,22 @@ export abstract class SharedObject<
 
   abstract createSnapshot(): TSnapshot;
 
-  get isAttached() {
-    return !!this.#parent?.isAttached;
+  createSnapshotWithAttributes(): IObjectSnapshot<TSnapshot> {
+    return {
+      attributes: this.attributes,
+      content: this.createSnapshot()
+    }
   }
 
+  get isAttached() {
+    return !!this._parent?.isAttached;
+  }
+
+  isGhost = false;
+
   submitOp(op: TOperation, localOpMetadata?: unknown) {
-    if (this.isAttached) {
+    if (this.isAttached && !this.isGhost) {
+
       this.runtime.submitOp(this, op, localOpMetadata);
     }
     this.emit("opSubmitted", op, localOpMetadata);
@@ -55,14 +65,16 @@ export abstract class SharedObject<
   ): void;
 
   setParent(parent: SharedObject, key: string) {
-    this.#parent = parent;
+    this._parent = parent;
     this.#id = key;
 
     this.emit("attached", parent, key);
+    this.runtime.register(this);
   }
 
   detach() {
-    this.#parent = undefined;
+    this.runtime.deregister(this);
+    this._parent = undefined;
     this.#id = undefined;
     this.emit("detached");
   }
@@ -81,10 +93,7 @@ export abstract class SharedObject<
     return current;
   }
 
-  squashOps?(
-    first: TOperation,
-    second: TOperation
-  ): TOperation | undefined;
+  squashOps?(first: TOperation, second: TOperation): TOperation | undefined;
 }
 
 export interface IObjectSnapshot<T> {

@@ -9,6 +9,10 @@ import { EditorModule } from './editor/editor.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SharedModule } from './shared/shared.module';
 import { PulsarModule } from './pulsar/pulsar.module';
+import { BeatmapModule } from './beatmap/beatmap.module';
+import { S3Asset } from './shared/s3asset.entity';
+import { SharedAsset } from './shared/shared.asset.entity';
+import { Beatmap } from './beatmap/beatmap.entity';
 
 @Module({
   imports: [
@@ -26,7 +30,7 @@ import { PulsarModule } from './pulsar/pulsar.module';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
-        entities: [User, EditorPreferences],
+        entities: [User, EditorPreferences, S3Asset, SharedAsset, Beatmap],
         synchronize: !!configService.get('DB_SYNCHRONIZE'),
       }),
     }),
@@ -35,11 +39,8 @@ import { PulsarModule } from './pulsar/pulsar.module';
     EditorModule,
     SharedModule,
     PulsarModule,
+    BeatmapModule,
   ],
   providers: [AppLoggerMiddleware],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(AppLoggerMiddleware).forRoutes('*');
-  }
-}
+export class AppModule {}

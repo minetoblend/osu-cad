@@ -10,4 +10,6 @@ export interface IWebSocket {
   offAny(callback: (event: string, ...args: any[]) => void): void;
 
   emit(event: string, ...args: any[]): void;
+
+  joinRoom(room: string): void;
 }

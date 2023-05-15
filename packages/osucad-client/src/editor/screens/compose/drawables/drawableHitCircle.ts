@@ -1,62 +1,40 @@
-import {ref, watch} from "vue";
-import {EditorInstance} from "../../../createEditor";
-import {Circle} from "@osucad/common";
-import {Container, IDestroyOptions, Sprite, Texture} from "pixi.js";
-import {animate} from "@/utils/animate";
+import { EditorInstance } from "@/editor/createEditor";
+import { Circle } from "@osucad/common";
+import { Sprite, Texture, Circle as PixiCircle } from "pixi.js";
+import { animate } from "@/utils/animate";
+
+import { DrawableCirclePiece } from "./drawableCirclePiece";
 
 import approachcirclepng from "@/assets/skin/approachcircle@2x.png";
-import {HitObjectSelectionManager} from "@/editor/selection";
-import {DrawableCirclePiece} from "./drawableCirclePiece";
+import hitcircleselectpng from "@/assets/skin/hitcircleselect@2x.png";
+import { DrawableHitObject } from "./drawableHitObject";
+import { IClient } from "@osucad/unison";
 
-export class DrawableHitCircle extends Container {
-  approachCircle: Sprite;
-  circlePiece: DrawableCirclePiece;
+export class DrawableHitCircle extends DrawableHitObject<Circle> {
+  readonly approachCircle = new Sprite(Texture.from(approachcirclepng));
+  readonly circlePiece = new DrawableCirclePiece(this.editor);
+  readonly selectionOverlay = new Sprite(Texture.from(hitcircleselectpng));
 
-  selection: HitObjectSelectionManager;
-
-  constructor(private circle: Circle, private editor: EditorInstance) {
-    super();
-
-    this.circlePiece = new DrawableCirclePiece(editor);
-
-    const approachCircle = new Sprite(Texture.from(approachcirclepng));
-    approachCircle.anchor.set(0.5);
-    this.approachCircle = approachCircle;
-
-    this.addChild(this.circlePiece, this.approachCircle);
-
-    this.scale.set(0.5);
-
-    this.selection = editor.selection;
-
-    this.bind(circle);
+  constructor(private circle: Circle, editor: EditorInstance) {
+    super(circle, editor);
+    this.init();
   }
 
-  #isSelected = ref(false);
-
-  bind(circle: Circle) {
-    this.position.copyFrom(circle.position);
-    circle.on("change", this.onCircleChange);
-
-    watch(
-      () => this.selection.isSelected(circle),
-      (selected) => {
-        if (selected) this.circlePiece.outlineTint = 0xf5d442;
-        else this.circlePiece.outlineTint = 0xffffff;
-      },
-      { immediate: true }
-    );
+  init() {
+    this.hitArea = new PixiCircle(0, 0, 28);
+    this.eventMode = "static";
+    this.approachCircle.anchor.set(0.5);
+    this.selectionOverlay.anchor.set(0.5);
+    this.selectionOverlay.visible = false;
+    this.addChild(this.circlePiece, this.approachCircle, this.selectionOverlay);
+    this.scale.set(this.hitObject.scale);
   }
 
-  unbind() {
-    this.circle?.off("change", this.onCircleChange);
+  bind(circle: Circle): void {
+    if (circle.isGhost) this.cursor = "none";
   }
 
-  onCircleChange = (key: string) => {
-    if (key === "position") this.position.copyFrom(this.circle.position);
-  };
-
-  update() {
+  update(): void {
     const currentTime = this.editor.clock.currentTimeAnimated;
 
     const comboColor = this.editor.container.document.objects.colors.getColor(
@@ -78,30 +56,33 @@ export class DrawableHitCircle extends Container {
         : animate(timeRelative, 0, 200, 1, 1.06)
     );
 
-    this.approachCircle.alpha =
-      timeRelative < 0 ? animate(timeRelative, -timePreempt, 0, 0, 1) : 1;
-
     this.circlePiece.tint = timeRelative <= 0 ? comboColor : 0xffffff;
     this.circlePiece.update();
 
-    // hit circle
+    // alpha
 
-    const circlePieceAlpha =
+    const fadeOut = timeRelative < 0 ? 1 : animate(timeRelative, 0, 800, 1, 0);
+
+    this.circlePiece.alpha =
       timeRelative < 0
         ? animate(timeRelative, -timePreempt, -timePreempt + timeFadeIn, 0, 1)
-        : 1;
+        : fadeOut;
 
-    this.circlePiece.alpha = circlePieceAlpha * circlePieceAlpha;
-
-    const globalAlpha =
-      timeRelative < 0 ? 1 : animate(timeRelative, 0, 800, 1, 0);
-
-    // idk why but squaring this makes it look better
-    this.alpha = globalAlpha * globalAlpha;
+    this.approachCircle.alpha =
+      timeRelative < 0 ? animate(timeRelative, -timePreempt, 0, 0, 1) : fadeOut;
   }
 
-  destroy(options?: boolean | IDestroyOptions | undefined): void {
-    super.destroy(options);
-    this.unbind();
+  onSelected(selected: boolean, selectedBy: IClient[]): void {
+    if (selected) this.selectionOverlay.visible = true;
+    else this.selectionOverlay.visible = false;
+
+    if (selectedBy.length > 0) {
+      this.circlePiece.outlineTint = parseInt(
+        selectedBy[0].data.color.slice(1),
+        16
+      );
+    } else {
+      this.circlePiece.outlineTint = 0xffffff;
+    }
   }
 }

@@ -1,8 +1,13 @@
-import {IObjectAttributes, ITypeFactory, IUnisonRuntime, SharedMap} from "@osucad/unison";
-
-export const PREEMPT_MIN = 400
+import {
+  IObjectAttributes,
+  ITypeFactory,
+  IUnisonRuntime,
+  SharedMap,
+} from "@osucad/unison";
 
 export class BeatmapDifficulty extends SharedMap {
+  static readonly PREEMPT_MIN = 400;
+
   constructor(runtime: IUnisonRuntime) {
     super(runtime, BeatmapDifficultyFactory.Attributes);
   }
@@ -12,6 +17,7 @@ export class BeatmapDifficulty extends SharedMap {
     this.set("circleSize", 4);
     this.set("approachRate", 8);
     this.set("overallDifficulty", 8.5);
+    this.set("sliderMultiplier", 1.4);
   }
 
   get hpDrainRate(): number {
@@ -46,7 +52,15 @@ export class BeatmapDifficulty extends SharedMap {
     this.set("overallDifficulty", value);
   }
 
-  difficultyRange(
+  get sliderMultiplier(): number {
+    return this.get("sliderMultiplier") as number;
+  }
+
+  set sliderMultiplier(value: number) {
+    this.set("sliderMultiplier", value);
+  }
+
+  static difficultyRange(
     diff: number,
     min: number,
     mid: number,
@@ -64,7 +78,7 @@ export class BeatmapDifficulty extends SharedMap {
   }
 
   get timePreempt(): number {
-    return this.difficultyRange(
+    return BeatmapDifficulty.difficultyRange(
       this.approachRate,
       1800,
       1200,
@@ -73,7 +87,7 @@ export class BeatmapDifficulty extends SharedMap {
   }
 
   get timeFadeIn(): number {
-    return 400 * Math.min(1, this.timePreempt / PREEMPT_MIN);
+    return 400 * Math.min(1, this.timePreempt / BeatmapDifficulty.PREEMPT_MIN);
   }
 }
 

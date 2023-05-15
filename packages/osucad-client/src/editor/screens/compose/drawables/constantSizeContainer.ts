@@ -9,7 +9,7 @@ export function createConstantSizeContainer(
   actualHeight: MaybeComputedRef<number>,
   padding: number = 0
 ) {
-  const size = ref(1);
+  const scale = ref(1);
   const x = ref(0);
   const y = ref(0);
 
@@ -24,7 +24,7 @@ export function createConstantSizeContainer(
 
     const ratio = Math.min(widthRatio, heightRatio);
 
-    size.value = ratio;
+    scale.value = ratio;
 
     x.value = (actualWidthValue - targetWidth * ratio) / 2;
     y.value = (actualHeightValue - targetHeight * ratio) / 2;
@@ -34,5 +34,5 @@ export function createConstantSizeContainer(
 
   });
 
-  return { container, size, x, y };
+  return { container, scale, x, y };
 }

@@ -6,6 +6,9 @@ export * from "./difficulty";
 export * from "./hitObject";
 export * from "./hitObjectCollection";
 export * from "./circle";
+export * from "./slider";
+export * from "./sliderPath";
 export * from "./preferences";
 export * from "./colors";
 export * from "./vec2";
+export * from "./controlPointList"

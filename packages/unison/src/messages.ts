@@ -6,8 +6,7 @@ export interface ISignalRequest {
 }
 
 export interface ISignalMessage {
-  clientId: string;
-  client: IClient;
+  clientId: number;
   name: string;
   timestamp: number;
   content: unknown;
@@ -21,7 +20,5 @@ export interface IDocumentMessage {
 }
 
 export interface IProcesessedDocumentMessage extends IDocumentMessage {
-  clientId: string;
-  client: IClient;
-  timestamp: number;
+  clientId: number;
 }

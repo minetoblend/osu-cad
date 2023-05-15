@@ -8,6 +8,6 @@ import '@fontsource/saira/index.css'
 import {router} from "./config/router";
 
 const app = createApp(App)
+app.config.performance = false
 app.use(VueVirtualScroller)
 app.use(router).mount("#app");
-

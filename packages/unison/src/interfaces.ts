@@ -1,5 +1,5 @@
 export interface IClient {
-  clientId: string;
+  clientId: number;
   user: IUser;
 
   data: Record<string, any>;

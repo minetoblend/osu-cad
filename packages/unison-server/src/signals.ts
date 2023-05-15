@@ -10,7 +10,7 @@ export class SignalHandler {
   onSignalRequest(sender: IClient, request: ISignalRequest) {
     const signal: ISignalMessage = {
       clientId: sender.clientId,
-      client: sender,
+    
       name: request.name,
       content: request.content,
       timestamp: Date.now(),

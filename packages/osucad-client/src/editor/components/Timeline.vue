@@ -38,8 +38,8 @@ function cyclePlaybackSpeed() {
   <div class="timeline">
     <div class="timeline-controls">
       <button class="play-pause" @click="togglePlay">
-        <img v-if="clock.isPlaying" src="../../assets/icons/pause-solid.svg" />
-        <img v-else src="../../assets/icons/play-solid.svg" />
+        <img v-if="clock.isPlaying" src="@/assets/icons/pause-solid.svg" />
+        <img v-else src="@/assets/icons/play-solid.svg" />
       </button>
       <VolumeSlider class="volume-control" />
       <button class="playback-speed" @click="cyclePlaybackSpeed">

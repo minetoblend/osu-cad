@@ -5,5 +5,5 @@ export function createVisibleHitObjects(
   hitObjects: HitObjectCollection,
   currentTime: MaybeComputedRef<number>,
 ) {
-
+  
 }
