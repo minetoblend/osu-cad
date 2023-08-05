@@ -241,7 +241,7 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
   }
 
   initReverseArrows() {
-    this.reverseArrowContainer.children.slice(this.slider.spans).forEach(it => it.destroy());
+    this.reverseArrowContainer.children.slice(this.slider.spans - 1).forEach(it => it.destroy());
 
     const afterStart = this.slider.sliderPath.getPositionAtDistance(1);
     const beforeEnd = this.slider.sliderPath.getPositionAtDistance(this.slider.expectedDistance - 1);
