@@ -24,6 +24,7 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
   readonly selectionOutline: DrawableSliderBody;
 
   readonly sliderGeoSource: SliderGeometrySource;
+  readonly selectionGeoSource: SliderGeometrySource;
 
   readonly sliderBallSprite = new DrawableSliderBall();
   readonly followCircleSprite = new DrawableSliderFollowCircle();
@@ -41,6 +42,7 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
     this.approachCircle.anchor.set(0.5);
 
     this.sliderGeoSource = new SliderGeometrySource(slider);
+    this.selectionGeoSource = new SliderGeometrySource(slider);
 
     this.sliderBody = new DrawableSliderBody(
       this.sliderGeoSource,
@@ -48,7 +50,7 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
     );
 
     this.selectionOutline = new DrawableSliderBody(
-      this.sliderGeoSource,
+      this.selectionGeoSource,
       viewportScale,
     );
 
@@ -70,6 +72,7 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
       ],
       () => {
         this.sliderGeoSource.invalidate();
+        this.selectionGeoSource.invalidate();
         this.sliderBody.updateGeometry();
         this.selectionOutline.updateGeometry();
       },
