@@ -52,8 +52,6 @@ const alpha = computed(() => {
   }
 });
 
-watchEffect(() => console.log(alpha.value));
-
 </script>
 
 <template>
