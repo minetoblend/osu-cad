@@ -34,6 +34,6 @@ export default defineConfig({
   },
   server: {
     host: "0.0.0.0",
-    origin: "https://osucad.com",
+    // origin: "https://osucad.com",
   },
 });

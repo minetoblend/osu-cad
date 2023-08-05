@@ -1,4 +1,4 @@
-import { shallowReactive, shallowRef } from "vue";
+import {shallowReactive, shallowRef} from "vue";
 import {
   IObjectAttributes,
   ITypeFactory,
@@ -6,9 +6,9 @@ import {
   SortedCollection,
 } from "@osucad/unison";
 
-import { HitObject } from "./hitObject";
+import {HitObject} from "./hitObject";
 import ShortUniqueId from "short-unique-id";
-import { Circle } from "./circle";
+import {Circle} from "./circle";
 
 const uid = new ShortUniqueId({ length: 6 });
 
@@ -46,18 +46,38 @@ export class HitObjectCollection extends SortedCollection<HitObject> {
       return this.items.filter(
         (o) =>
           (o.endTime >= startTime && o.startTime < endTime) ||
-          include.has(o.id!)
+          include.has(o.id!),
       );
     }
     return this.items.filter(
-      (o) => o.endTime >= startTime && o.startTime < endTime
+      (o) => o.endTime >= startTime && o.startTime < endTime,
     );
+  }
+
+  getPaddedRange(startTime: number, endTime: number, padding: number, include?: Set<string>) {
+    let startIndex = this.items.findIndex(o => o.endTime >= startTime);
+    let endIndex = this.items.findIndex(o => o.startTime >= endTime, startIndex);
+
+    if (startIndex === -1) startIndex = 0;
+    if (endIndex === -1) endIndex = this.items.length - 1;
+
+
+    const items = this.items.slice(Math.max(startIndex - padding, 0), Math.min(endIndex + 1 + padding, this.items.length));
+
+    if (include) {
+      items.push(...this.items.filter(
+        (o) =>
+          include.has(o.id!) && !items.includes(o),
+      ));
+    }
+
+    return items;
   }
 
   override onItemChange(item: HitObject, key: string, value: any) {
     super.onItemChange(item, key, value);
 
-    if (key === "newCombo" || key === 'startTime') {
+    if (key === "newCombo" || key === "startTime") {
       this.calculateCombos();
     }
   }
@@ -84,9 +104,9 @@ export class HitObjectCollection extends SortedCollection<HitObject> {
 }
 
 export class HitObjectCollectionFactory
-  implements ITypeFactory<HitObjectCollection>
-{
-  constructor() {}
+  implements ITypeFactory<HitObjectCollection> {
+  constructor() {
+  }
 
   static readonly Type = "@osucad/hitObjectCollection";
 

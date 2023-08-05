@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@fontsource/saira": "^4.5.12",
+    "@pixi/filter-color-map": "^5.1.1",
+    "@pixi/filter-motion-blur": "^5.1.1",
     "@pixi/sound": "^5.1.1",
     "@types/uuid": "^9.0.1",
     "@vitejs/plugin-basic-ssl": "^1.0.1",
@@ -19,14 +21,15 @@
     "mathjs": "^11.8.0",
     "osu-classes": "^2.2.0",
     "pixi-dashed-line": "^1.4.2",
-    "pixi.js": "^7.2.3",
+    "pixi.js": "^7.2.4",
     "reflect-metadata": "^0.1.13",
     "sass": "^1.60.0",
     "socket.io-client": "^4.6.1",
     "uuid": "^9.0.0",
     "vue": "^3.2.45",
     "vue-router": "4",
-    "vue-virtual-scroller": "^2.0.0-beta.8"
+    "vue-virtual-scroller": "^2.0.0-beta.8",
+    "vue3-pixi-components": "^1.0.5"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",

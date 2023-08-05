@@ -38,7 +38,7 @@ export async function createEditor(documentId: string) {
   const shortcuts = createShortcutListener();
 
   const client = new UnisonClient(
-    "https://api.osucad.com/editor",
+    "http://10.25.120.192:3000/editor",
     tokenProvider
   );
 

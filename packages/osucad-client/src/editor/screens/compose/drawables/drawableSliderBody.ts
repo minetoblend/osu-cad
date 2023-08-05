@@ -119,6 +119,9 @@ export class DrawableSliderBody extends Container {
     let textureHeight =
       (bounds.maxY - bounds.minY) * this.viewportScale.value + padding * 2;
 
+    textureWidth = Math.max(textureWidth, 1024)
+    textureHeight =  Math.max(textureHeight, 1024)
+
     textureWidth = this.nearestPow2(textureWidth);
     textureHeight = this.nearestPow2(textureHeight);    
 

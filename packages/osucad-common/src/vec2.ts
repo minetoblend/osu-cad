@@ -90,4 +90,20 @@ export namespace Vec2 {
       y: a.y + (b.y - a.y) * f,
     };
   }
+
+  export function rotate(a: Vec2, angle: number): Vec2 {
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    return {
+      x: a.x * cos - a.y * sin,
+      y: a.x * sin + a.y * cos,
+    };
+  }
+
+  export function rotateAround(a: Vec2, origin: Vec2, angle: number): Vec2 {
+    return add(
+      origin,
+      rotate(sub(a, origin), angle)
+    );
+  }
 }

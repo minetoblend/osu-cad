@@ -5,7 +5,7 @@ import { log } from "mathjs";
 
 export async function loadAudio(container: IUnisonContainer) {
   const { data: audioUrl } = await axios.get(
-    `https://api.osucad.com/editor/${container.id}/audio`,
+    `http://10.25.120.192:3000/editor/${container.id}/audio`,
     {
       withCredentials: true,
     }
@@ -14,6 +14,8 @@ export async function loadAudio(container: IUnisonContainer) {
   const response = await axios.get(audioUrl, {
     responseType: "arraybuffer",
   });
+
+  console.log(response)
 
   return await new Promise<{ songAudio: Sound }>((resolve, reject) => {
     const sound = Sound.from({

@@ -1,4 +1,3 @@
-import { pack } from "msgpackr";
 import { UserManager } from "./users";
 import { ITypeFactory } from "@osucad/unison";
 import {

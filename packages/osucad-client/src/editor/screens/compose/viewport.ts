@@ -1,20 +1,21 @@
-import { CommandManager } from "@/editor/commands/commandManager";
-import { Circle, Vec2 } from "@osucad/common";
-import { nn } from "@osucad/unison";
-import { onUnmounted, ref, watch, watchEffect } from "vue";
-import { DrawableHitCircle } from "./drawables/drawableHitCircle";
-import { Application, Container, Sprite, Texture } from "pixi.js";
-import { useEditor } from "../../createEditor";
-import { createConstantSizeContainer } from "./drawables/constantSizeContainer";
+import {CommandManager} from "@/editor/commands/commandManager";
+import {Circle, Vec2} from "@osucad/common";
+import {nn} from "@osucad/unison";
+import {onUnmounted, ref, watch, watchEffect} from "vue";
+import {DrawableHitCircle} from "./drawables/drawableHitCircle";
+import {Application, Container, Sprite, Texture} from "pixi.js";
+import {useEditor} from "../../createEditor";
+import {createConstantSizeContainer} from "./drawables/constantSizeContainer";
 import {
   onKeyStroke,
   useElementSize,
   useEventListener,
-  useRafFn
+  useRafFn,
 } from "@vueuse/core";
-import { createGrid } from "./drawables/grid";
-import { DrawableSlider } from "./drawables/drawableSlider";
-import { DrawableHitObject } from "./drawables/drawableHitObject";
+import {createGrid} from "./drawables/grid";
+import {DrawableSlider} from "./drawables/drawableSlider";
+import {DrawableHitObject} from "./drawables/drawableHitObject";
+import {DrawableFollowPoints} from "@/editor/screens/compose/drawables/drawableFollowPoints";
 
 export function createViewport(canvas: HTMLCanvasElement) {
   const ctx = canvas.getContext("webgl2", {
@@ -43,17 +44,18 @@ export function createViewport(canvas: HTMLCanvasElement) {
   });
 
   const { container: viewportContainer, scale: viewportScale } =
-    createConstantSizeContainer(512, 384, width, height, 50);
+    createConstantSizeContainer(512, 384, width, height, 30);
 
   viewportContainer.interactiveChildren = true;
 
   const hitObjectContainer = new Container<DrawableHitObject>();
+  const followPointContainer = new Container<DrawableFollowPoints>();
 
   const bg = new Sprite(Texture.WHITE);
   bg.tint = 0xaaaaaa;
   bg.scale.set(512 / 16, 384 / 16);
 
-  viewportContainer.addChild(bg, createGrid(), hitObjectContainer);
+  viewportContainer.addChild(bg, createGrid(), followPointContainer, hitObjectContainer);
 
   app.stage.addChild(viewportContainer);
 
@@ -78,15 +80,19 @@ export function createViewport(canvas: HTMLCanvasElement) {
 
     let i = 0;
 
-    for (const hitObject of container.document.objects.hitObjects.getRange(
+    const visibleHitObjects = container.document.objects.hitObjects.getPaddedRange(
       startTime,
       endTime,
-      editor.selection.value
-    )) {
+      1,
+      editor.selection.value,
+    );
+
+    visibleHitObjects.sort((a, b) => a.startTime - b.startTime);
+
+    for (const hitObject of visibleHitObjects) {
       const existing = hitObjects.get(nn(hitObject.id));
       if (existing) {
         shouldRemove.delete(nn(hitObject.id));
-
         existing.zIndex = --i;
       } else {
         const drawable =
@@ -100,6 +106,22 @@ export function createViewport(canvas: HTMLCanvasElement) {
 
         drawable.zIndex = --i;
       }
+    }
+
+    followPointContainer.children.slice(visibleHitObjects.length - 1).forEach((drawable) => drawable.destroy());
+    for (let i = 0; i < visibleHitObjects.length - 1; i++) {
+      let first = visibleHitObjects[i];
+      let second = visibleHitObjects[i + 1];
+
+      let drawable = followPointContainer.children[i] as DrawableFollowPoints;
+      if (!drawable) {
+        drawable = new DrawableFollowPoints(first, second, clock);
+        followPointContainer.addChild(drawable);
+      }
+      drawable.start = first;
+      drawable.end = second;
+
+      drawable.update(clock.currentTimeAnimated);
     }
 
     hitObjectContainer.sortChildren();
@@ -121,7 +143,7 @@ export function createViewport(canvas: HTMLCanvasElement) {
   watch(
     () => [clock.currentTimeAnimated, editor.selection.value],
     updateHitObjects,
-    { immediate: true, deep: true }
+    { immediate: true, deep: true },
   );
 
   updateHitObjects();
@@ -145,7 +167,7 @@ export function createViewport(canvas: HTMLCanvasElement) {
         const dy = hitObject.position.y - y;
 
         return Math.sqrt(dx * dx + dy * dy) < 32;
-      }
+      },
     );
   });
 
@@ -164,7 +186,7 @@ export function createViewport(canvas: HTMLCanvasElement) {
 
 export function createMousePos(
   canvas: HTMLCanvasElement,
-  viewportContainer: Container
+  viewportContainer: Container,
 ) {
   const latestMousePos = ref(Vec2.zero());
 
@@ -186,7 +208,7 @@ export function createMousePos(
   //     mousePos.value = latestMousePos.value;
   // });
 
-  return latestMousePos
+  return latestMousePos;
 }
 
 export type Viewport = ReturnType<typeof createViewport>;

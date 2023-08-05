@@ -48,7 +48,7 @@ export class AuthController {
   }
 
   @Get('/callback')
-  @Redirect('https://osucad.com/', 302)
+  @Redirect('http://10.25.120.192:5173/', 302)
   async callback(
     @Query('code') code: string,
     @Query('state') state: string | null,

@@ -1,12 +1,12 @@
-import { shallowReactive } from "vue";
-import { reactive } from "vue";
+import {shallowReactive} from "vue";
+import {reactive} from "vue";
 import {
   IObjectAttributes,
   ITypeFactory,
   IUnisonRuntime,
   SortedCollection,
 } from "@osucad/unison";
-import { TimingPoint } from "./timingPoint";
+import {TimingPoint} from "./timingPoint";
 
 export class TimingPointCollection extends SortedCollection<TimingPoint> {
   constructor(runtime: IUnisonRuntime) {
@@ -33,9 +33,10 @@ export class TimingPointCollection extends SortedCollection<TimingPoint> {
       const increment = timingPoint.beatDuration! / divisor;
       const nextTimingPoint = this.uninheritedTimingPoints[index + 1];
       let time = timingPoint.offset;
-      if (startTime < time) time = startTime - ((startTime - time) % increment);
 
       while (time < Math.min(endTime, nextTimingPoint?.offset ?? endTime)) {
+        if (increment === 0)
+          break;
         time += increment;
 
         const idx = Math.round((time - timingPoint.offset) / increment);
@@ -93,12 +94,12 @@ export class TimingPointCollection extends SortedCollection<TimingPoint> {
     if (round)
       return Math.floor(
         timingPoint.offset +
-          Math.round((time - timingPoint.offset) / increment) * increment
+        Math.round((time - timingPoint.offset) / increment) * increment,
       );
 
     return Math.floor(
       timingPoint.offset +
-        Math.floor((time - timingPoint.offset) / increment) * increment
+      Math.floor((time - timingPoint.offset) / increment) * increment,
     );
   }
 
@@ -118,12 +119,12 @@ export class TimingPointCollection extends SortedCollection<TimingPoint> {
   onInsert(timingPoint: TimingPoint): void {
     if (timingPoint.isInherited) {
       const index = this.inheritedTimingPoints.findIndex(
-        (tp) => tp.offset > timingPoint.offset
+        (tp) => tp.offset > timingPoint.offset,
       );
       this.inheritedTimingPoints.splice(index, 0, timingPoint);
     } else {
       const index = this.uninheritedTimingPoints.findIndex(
-        (tp) => tp.offset > timingPoint.offset
+        (tp) => tp.offset > timingPoint.offset,
       );
       this.uninheritedTimingPoints.splice(index, 0, timingPoint);
     }
@@ -152,7 +153,7 @@ export class TimingPointCollection extends SortedCollection<TimingPoint> {
         if (index > 0) {
           this.uninheritedTimingPoints.splice(index, 1);
           const newIndex = this.uninheritedTimingPoints.findIndex(
-            (tp) => tp.offset > item.offset
+            (tp) => tp.offset > item.offset,
           );
           this.inheritedTimingPoints.splice(newIndex, 0, item);
         }
@@ -161,7 +162,7 @@ export class TimingPointCollection extends SortedCollection<TimingPoint> {
         if (index > 0) {
           this.inheritedTimingPoints.splice(index, 1);
           const newIndex = this.inheritedTimingPoints.findIndex(
-            (tp) => tp.offset > item.offset
+            (tp) => tp.offset > item.offset,
           );
           this.uninheritedTimingPoints.splice(newIndex, 0, item);
         }
@@ -176,7 +177,7 @@ export class TimingPointCollection extends SortedCollection<TimingPoint> {
     while (low <= high) {
       mid = Math.floor((low + high) / 2);
       const itemValue = this.uninheritedTimingPoints[mid].get(
-        this.sortBy
+        this.sortBy,
       ) as number;
 
       if (itemValue === value) {
@@ -209,9 +210,9 @@ interface ITick {
 }
 
 export class TimingPointCollectionFactory
-  implements ITypeFactory<TimingPointCollection>
-{
-  constructor() {}
+  implements ITypeFactory<TimingPointCollection> {
+  constructor() {
+  }
 
   static readonly Type = "@osucad/timingPointCollection";
 

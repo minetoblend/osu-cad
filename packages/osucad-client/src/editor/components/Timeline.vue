@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {formatTimestamp} from "@/utils/format";
 import {useEditor} from "../createEditor";
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import VolumeSlider from "../../components/VolumeSlider.vue";
 import TimelineOverview from "./TimelineOverview.vue";
 import TimelineRhythm from "./TimelineRhythm.vue";

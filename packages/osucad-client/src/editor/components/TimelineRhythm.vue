@@ -29,6 +29,7 @@ const selectionRange = ref<ISelection>();
 const ticks = computed(() => {
   const start = Math.floor(visibleSpan.value.start / 1000) * 1000;
   const end = Math.ceil(visibleSpan.value.end / 1000) * 1000;
+
   return timing.generateTicks(start, end, 4).map((tick) => ({
     time: tick.time,
     type: tick.type,

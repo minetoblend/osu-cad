@@ -1,5 +1,5 @@
-import { Container, Graphics, ObservablePoint, Sprite } from "pixi.js";
-import { createRenderer, camelize, toHandlerKey } from "vue";
+import {Container, Graphics, ObservablePoint, Sprite, Text} from "pixi.js";
+import {createRenderer, camelize, toHandlerKey} from "vue";
 
 
 export const { render: renderPixi, createApp: createPixiApp } = createRenderer<
@@ -14,6 +14,8 @@ export const { render: renderPixi, createApp: createPixiApp } = createRenderer<
         return new Container();
       case "pixi-graphics":
         return new Graphics();
+      case "pixi-text":
+        return new Text();
       default:
         throw new Error(`Unknown type: ${type}`);
     }
@@ -40,6 +42,7 @@ export const { render: renderPixi, createApp: createPixiApp } = createRenderer<
         break;
       case "center":
         if ("anchor" in el) (el.anchor as ObservablePoint).set(0.5);
+        break;
       default:
         Reflect.set(el, key, nextValue);
     }
@@ -68,6 +71,8 @@ export const { render: renderPixi, createApp: createPixiApp } = createRenderer<
   parentNode: (node) => {
     return node.parent;
   },
-  setElementText: () => {},
-  setText: () => {},
+  setElementText: () => {
+  },
+  setText: () => {
+  },
 });

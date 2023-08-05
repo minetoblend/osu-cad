@@ -7,9 +7,9 @@ import {RouteLocationNormalized} from "vue-router";
 
 export class EditorClock {
   constructor(
-    private readonly container: IUnisonContainer,
-    private readonly songAudio: Sound,
-    route: RouteLocationNormalized
+      private readonly container: IUnisonContainer,
+      private readonly songAudio: Sound,
+      route: RouteLocationNormalized
   ) {
     if ("t" in route.query) {
       const time = parseInt(route.query.t as string);
@@ -19,18 +19,18 @@ export class EditorClock {
     useRafFn(() => {
       if (this.isPlaying) {
         this.#currentTime.value =
-          this.#soundInstance.value!.progress * this.songAudio.duration;
+            this.#soundInstance.value!.progress * this.songAudio.duration;
         this.#currentTimeAnimated.value = this.#currentTime.value;
       } else if (
-        Math.abs(this.#currentTime.value - this.#currentTimeAnimated.value) >
-        0.001
+          Math.abs(this.#currentTime.value - this.#currentTimeAnimated.value) >
+          0.001
       ) {
         this.#currentTimeAnimated.value =
-          this.#currentTimeAnimated.value +
-          (this.#currentTime.value - this.#currentTimeAnimated.value) * 0.3;
+            this.#currentTimeAnimated.value +
+            (this.#currentTime.value - this.#currentTimeAnimated.value) * 0.3;
       } else if (
-        this.#currentTime.value !== this.#currentTimeAnimated.value &&
-        Math.abs(this.#currentTime.value - this.#currentTimeAnimated.value) <=
+          this.#currentTime.value !== this.#currentTimeAnimated.value &&
+          Math.abs(this.#currentTime.value - this.#currentTimeAnimated.value) <=
           0.001
       ) {
         this.#currentTimeAnimated.value = this.#currentTime.value;
@@ -38,15 +38,15 @@ export class EditorClock {
     });
 
     watchThrottled(
-      () => [this.currentTime, this.playbackSpeed, this.isPlaying],
-      ([currentTime, playbackSpeed, isPlaying]) => {
-        this.container.users.setClientState("currentTime", {
-          time: currentTime,
-          isPlaying,
-          playbackSpeed,
-        });
-      },
-      { throttle: 100, immediate: true }
+        () => [this.currentTime, this.playbackSpeed, this.isPlaying],
+        ([currentTime, playbackSpeed, isPlaying]) => {
+          this.container.users.setClientState("currentTime", {
+            time: currentTime,
+            isPlaying,
+            playbackSpeed,
+          });
+        },
+        {throttle: 100, immediate: true}
     );
   }
 
@@ -112,6 +112,13 @@ export class EditorClock {
   pause() {
     this.#soundInstance.value?.stop();
     this.#soundInstance.value?.destroy();
+  }
+
+  togglePlay() {
+    if (this.isPlaying)
+      this.pause()
+    else
+      this.play()
   }
 
   seek(time: number, animated = true) {

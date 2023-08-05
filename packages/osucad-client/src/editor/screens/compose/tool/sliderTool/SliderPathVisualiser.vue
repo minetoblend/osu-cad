@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { PathPoint, PathType, Slider, Vec2 } from "@osucad/common";
+import {PathPoint, PathType, Slider, Vec2} from "@osucad/common";
 import SliderPathHandle from "./SliderPathHandle.vue";
 import SliderPathLine from "./SliderPathLine.vue";
-import { useViewport } from "../../tools/composables/mouseEvents";
-import { FederatedPointerEvent, IHitArea } from "pixi.js";
-import { computed } from "vue";
-import { useKeyModifier } from "@vueuse/core";
+import {useViewport} from "../../tools/composables/mouseEvents";
+import {FederatedPointerEvent, IHitArea} from "pixi.js";
+import {computed} from "vue";
+import {useKeyModifier} from "@vueuse/core";
 
 const props = defineProps<{
   slider: Slider;
@@ -14,8 +14,8 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (
-    name: "mousedown:handle",
-    info: { index: number; evt: FederatedPointerEvent }
+      name: "mousedown:handle",
+      info: { index: number; evt: FederatedPointerEvent },
   ): void;
   (name: "insert", info: { index: number; position: Vec2 }): void;
 }>();
@@ -24,10 +24,10 @@ const { mousePos } = useViewport()!;
 
 function isHovering(point: PathPoint) {
   return (
-    Vec2.distanceSq(
-      Vec2.add(point.position, props.slider.position),
-      mousePos.value
-    ) < 36
+      Vec2.distanceSq(
+          Vec2.add(point.position, props.slider.position),
+          mousePos.value,
+      ) < 100
   );
 }
 
@@ -91,23 +91,23 @@ function onPointerDown(evt: FederatedPointerEvent) {
 
 <template>
   <pixi-container :position="slider.position">
-    <SliderPathLine :slider="slider" />
+    <SliderPathLine :slider="slider"/>
     <pixi-container>
       <SliderPathHandle
-        v-if="showNewPoint && newPoint && ctrlDown"
-        :type="null"
-        :position="newPoint.position"
-        :hit-area="createPointHitarea"
-        @pointerdown="onPointerDown"
+          v-if="showNewPoint && newPoint && ctrlDown"
+          :type="null"
+          :position="newPoint.position"
+          :hit-area="createPointHitarea"
+          @pointerdown="onPointerDown"
       />
     </pixi-container>
     <SliderPathHandle
-      v-for="(controlPoint, index) in slider.controlPoints.controlPoints"
-      :key="index"
-      :position="controlPoint.position"
-      :type="controlPoint.type"
-      :hovered="isHovering(controlPoint)"
-      @pointerdown="emit('mousedown:handle', { index, evt: $event })"
+        v-for="(controlPoint, index) in slider.controlPoints.controlPoints"
+        :key="index"
+        :position="controlPoint.position"
+        :type="controlPoint.type"
+        :hovered="isHovering(controlPoint)"
+        @pointerdown="emit('mousedown:handle', { index, evt: $event })"
     />
   </pixi-container>
 </template>

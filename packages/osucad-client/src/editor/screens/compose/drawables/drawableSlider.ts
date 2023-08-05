@@ -1,21 +1,24 @@
-import { EditorInstance } from "@/editor/createEditor";
-import { Circle, Slider, Vec2 } from "@osucad/common";
-import { Sprite, Texture, Circle as PixiCircle, Container } from "pixi.js";
-import { animate } from "@/utils/animate";
+import {EditorInstance} from "@/editor/createEditor";
+import {Slider, Vec2} from "@osucad/common";
+import {Circle as PixiCircle, Container, Sprite, Texture} from "pixi.js";
+import {animate} from "@/utils/animate";
 
-import { DrawableCirclePiece } from "./drawableCirclePiece";
+import {DrawableCirclePiece} from "./drawableCirclePiece";
 
 import approachcirclepng from "@/assets/skin/approachcircle@2x.png";
-import { DrawableHitObject } from "./drawableHitObject";
-import { DrawableSliderBody } from "./drawableSliderBody";
-import { Ref, computed, toRef, watch } from "vue";
-import { IClient } from "@osucad/unison";
-import { SliderGeometrySource } from "./sliderGeometrySource";
-import { DrawableSliderBall } from "./drawableSliderBall";
+import {DrawableHitObject} from "./drawableHitObject";
+import {DrawableSliderBody} from "./drawableSliderBody";
+import {Ref, watch, watchEffect} from "vue";
+import {IClient} from "@osucad/unison";
+import {SliderGeometrySource} from "./sliderGeometrySource";
+import {DrawableSliderBall} from "./drawableSliderBall";
+import {DrawableSliderReverse} from "@/editor/screens/compose/drawables/drawableSliderReverse";
+import {DrawableSliderFollowCircle} from "@/editor/screens/compose/drawables/drawableSliderFollowCircle";
 
 export class DrawableSlider extends DrawableHitObject<Slider> {
   readonly approachCircle = new Sprite(Texture.from(approachcirclepng));
-  readonly circlePiece = new DrawableCirclePiece(this.editor);
+  readonly sliderHead = new DrawableCirclePiece();
+  readonly sliderTail = new DrawableCirclePiece();
   readonly sliderBody: DrawableSliderBody;
 
   readonly selectionOutline: DrawableSliderBody;
@@ -23,11 +26,14 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
   readonly sliderGeoSource: SliderGeometrySource;
 
   readonly sliderBallSprite = new DrawableSliderBall();
+  readonly followCircleSprite = new DrawableSliderFollowCircle();
+
+  readonly reverseArrowContainer = new Container<DrawableSliderReverse>();
 
   constructor(
     private slider: Slider,
     editor: EditorInstance,
-    viewportScale: Readonly<Ref<number>>
+    viewportScale: Readonly<Ref<number>>,
   ) {
     super(slider, editor);
     this.hitArea = new PixiCircle(0, 0, this.hitObject.radius);
@@ -38,12 +44,12 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
 
     this.sliderBody = new DrawableSliderBody(
       this.sliderGeoSource,
-      viewportScale
+      viewportScale,
     );
 
     this.selectionOutline = new DrawableSliderBody(
       this.sliderGeoSource,
-      viewportScale
+      viewportScale,
     );
 
     this.selectionOutline.outlineOnly = true;
@@ -53,9 +59,7 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
 
     this.addChild(this.sliderBody, container, this.selectionOutline);
 
-    container.addChild(this.circlePiece, this.approachCircle);
-
-    container.scale.set(this.hitObject.scale);
+    container.addChild(this.sliderTail, this.reverseArrowContainer, this.sliderHead, this.approachCircle);
 
     watch(
       () => [
@@ -70,43 +74,43 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
         this.selectionOutline.updateGeometry();
       },
       {
-        deep: true
-      }
+        deep: true,
+      },
     );
 
-    this.addChild(this.sliderBallSprite);
+    watchEffect(() => this.initChildren());
+
+    this.addChild(this.sliderBallSprite, this.followCircleSprite);
   }
 
   onHitObjectChange<K extends keyof Slider>(key: K, value: Slider[K]): void {
     super.onHitObjectChange(key, value);
   }
 
+  get comboColor() {
+    return this.editor.container.document.objects.colors.getColor(
+      this.slider.comboIndex,
+    );
+  }
+
   update(): void {
     const currentTime = this.editor.clock.currentTimeAnimated;
 
-    const comboColor = this.editor.container.document.objects.colors.getColor(
-      this.slider.comboIndex
-    );
+    const comboColor = this.comboColor;
 
     const timeRelative = currentTime - this.slider.startTime;
-    const timePreempt =
-      this.editor.container.document.objects.difficulty.timePreempt;
-    const timeFadeIn =
-      this.editor.container.document.objects.difficulty.timeFadeIn;
 
-    // approach circle
-    this.approachCircle.tint = comboColor;
 
     this.approachCircle.scale.set(
-      timeRelative < 0
-        ? animate(timeRelative, -timePreempt, 0, 4, 1)
-        : animate(timeRelative, 0, 200, 1, 1.06)
+      this.slider.scale *
+      (timeRelative < 0
+          ? animate(timeRelative, -this.slider.timePreempt, 0, 4, 1)
+          : animate(timeRelative, 0, 200, 1, 1.06)
+      ),
     );
 
-    this.circlePiece.tint = timeRelative <= 0 ? comboColor : 0xffffff;
-    this.circlePiece.update();
-
-    this.sliderBody.tint = comboColor;
+    this.sliderHead.tint = timeRelative <= 0 ? comboColor : 0xffffff;
+    this.sliderTail.tint = (timeRelative - this.slider.duration) <= 0 ? comboColor : 0xffffff;
 
     // alpha
 
@@ -120,20 +124,26 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
 
     const fadeIn =
       timeRelative < 0
-        ? animate(timeRelative, -timePreempt, -timePreempt + timeFadeIn, 0, 1)
+        ? animate(timeRelative, -this.slider.timePreempt, -this.slider.timePreempt + this.slider.timeFadeIn, 0, 1)
         : 1;
 
     this.sliderGeoSource.snakeInProgress.value =
       timeRelative < 0
-        ? animate(timeRelative, -timePreempt, -timePreempt + timeFadeIn, 0, 1)
+        ? animate(timeRelative, -this.slider.timePreempt, -this.slider.timePreempt + this.slider.timePreempt / 3, 0, 1)
         : 1;
 
-    this.circlePiece.alpha = timeRelative < 0 ? fadeIn : circleFadeOut;
 
     this.sliderBody.alpha = timeRelative < 0 ? fadeIn : fadeOut;
 
     this.approachCircle.alpha =
-      timeRelative < 0 ? animate(timeRelative, -timePreempt, 0, 0, 1) : fadeOut;
+      timeRelative < 0 ? animate(timeRelative, -this.slider.timePreempt, 0, 0, 1)
+        : animate(timeRelative, 0, 800, 1, 0)
+    ;
+
+    this.updateSliderHead(timeRelative);
+    this.updateSliderTail(timeRelative);
+
+    this.reverseArrowContainer.children.forEach((reverse) => reverse.update(timeRelative));
 
     this.sliderBallSprite.visible =
       timeRelative >= 0 && timeRelative <= this.slider.duration;
@@ -148,36 +158,114 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
       //   )
     } else {
       this.sliderGeoSource.snakeInProgress.value = 1;
-      // this.sliderGeoSource.snakeOutProgress.value = 0;
     }
 
-    if (this.sliderBallSprite.visible) {
-      this.sliderBallSprite.scale.set(this.hitObject.scale);
-      const progress = this.slider.getProgressAtTime(currentTime);
+    this.updateSliderBall(currentTime);
+  }
 
-      const position = this.slider.sliderPath.getPositionAtDistance(
-        progress * this.slider.expectedDistance
+  updateSliderHead(timeRelative: number) {
+    this.sliderHead.alpha =
+      timeRelative < 0 ?
+        animate(timeRelative, -this.slider.timePreempt, -this.slider.timePreempt + this.slider.timeFadeIn, 0, 1) :
+        animate(timeRelative, 0, 700, 1, 0)
+    ;
+  }
+
+  updateSliderTail(timeRelative: number) {
+    this.sliderTail.alpha =
+      timeRelative < 0 ?
+        animate(timeRelative, -this.slider.timePreempt + this.slider.timePreempt / 3, 0, 0, 1) :
+        animate(timeRelative, this.slider.duration, this.slider.duration + 700, 1, 0)
+    ;
+  }
+
+  updateSliderBall(currentTime: number) {
+
+    const progress = this.slider.getProgressAtTime(currentTime);
+
+    const sliderBallPosition = this.slider.sliderPath.getPositionAtDistance(
+      progress * this.slider.expectedDistance,
+    );
+
+    this.sliderBallSprite.position.copyFrom(sliderBallPosition);
+
+    const sliderBallFrame = Math.max(
+      Math.floor((progress * this.slider.expectedDistance) / 5) % 10,
+      0,
+    );
+
+    this.sliderBallSprite.currentFrame = isNaN(sliderBallFrame)
+      ? 0
+      : sliderBallFrame;
+
+    const nextPos = this.slider.sliderPath.getPositionAtDistance(
+      progress * this.slider.expectedDistance + 2,
+    );
+
+    const delta = Vec2.sub(nextPos, sliderBallPosition);
+
+    this.sliderBallSprite.rotation = Math.atan2(
+      nextPos.y - sliderBallPosition.y,
+      nextPos.x - sliderBallPosition.x,
+    );
+
+    const timeRelative = currentTime - this.slider.startTime;
+
+    this.followCircleSprite.scale.set(this.hitObject.scale * (
+      timeRelative < 150 || timeRelative < this.slider.duration / 2 ?
+        animate(timeRelative, 0, 150, 0.5, 1) :
+        animate(timeRelative, this.slider.duration, this.slider.duration + 150, 1, 0.75)
+    ));
+
+    this.followCircleSprite.alpha =
+      timeRelative < 150 ?
+        animate(timeRelative, 0, 150, 0, 1) :
+        animate(timeRelative, this.slider.duration, this.slider.duration + 150, 1, 0);
+
+    this.followCircleSprite.position.copyFrom(sliderBallPosition);
+  }
+
+  initChildren() {
+    const comboColor = this.comboColor;
+
+    this.sliderHead.scale.set(this.hitObject.scale);
+    this.sliderTail.scale.set(this.hitObject.scale);
+    this.sliderBallSprite.scale.set(this.hitObject.scale);
+
+    this.sliderTail.position.copyFrom(this.slider.spans % 2 == 1 ? this.slider.sliderPath.endPosition : Vec2.zero());
+
+    this.approachCircle.tint = comboColor;
+    this.sliderBody.tint = comboColor;
+
+    this.initReverseArrows();
+  }
+
+  initReverseArrows() {
+    this.reverseArrowContainer.children.slice(this.slider.spans).forEach(it => it.destroy());
+
+    const afterStart = this.slider.sliderPath.getPositionAtDistance(1);
+    const beforeEnd = this.slider.sliderPath.getPositionAtDistance(this.slider.expectedDistance - 1);
+
+    const sliderEndPos = this.slider.sliderPath.endPosition;
+
+    const startAngle = Math.atan2(afterStart.y, afterStart.x);
+    const endAngle = Math.atan2(beforeEnd.y - sliderEndPos.y, beforeEnd.x - sliderEndPos.x);
+
+    for (let i = 0; i < this.slider.spans - 1; i++) {
+      let reverse = this.reverseArrowContainer.children[i];
+      if (!reverse) {
+        reverse = new DrawableSliderReverse(this.hitObject);
+        this.reverseArrowContainer.addChild(reverse);
+      }
+
+      reverse.scale.set(this.hitObject.scale);
+      reverse.startTime = this.slider.spanDuration * (i + 1);
+      reverse.tint = this.comboColor;
+      reverse.position.copyFrom(
+        i % 2 == 0 ? this.slider.sliderPath.endPosition : Vec2.zero(),
       );
 
-      this.sliderBallSprite.position.copyFrom(position);
-
-      const sliderBallFrame = Math.max(
-        Math.floor((progress * this.slider.expectedDistance) / 5) % 10,
-        0
-      );
-
-      this.sliderBallSprite.currentFrame = isNaN(sliderBallFrame)
-        ? 0
-        : sliderBallFrame;
-
-      const nextPos = this.slider.sliderPath.getPositionAtDistance(
-        progress * this.slider.expectedDistance + 2
-      );
-
-      this.sliderBallSprite.rotation = Math.atan2(
-        nextPos.y - position.y,
-        nextPos.x - position.x
-      );
+      reverse.rotation = i % 2 == 0 ? endAngle : startAngle;
     }
   }
 

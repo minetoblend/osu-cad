@@ -3,6 +3,7 @@ import {provideContainer} from "@/composables/useContainer";
 import Timeline from "./components/Timeline.vue";
 import {createEditor, provideEditor} from "./createEditor";
 import ComposeScreen from "./screens/compose/ComposeScreen.vue";
+import TimingScreen from "@/editor/screens/timing/TimingScreen.vue";
 
 const props = defineProps<{
   id: string;
@@ -14,13 +15,14 @@ provideContainer(editor.container);
 provideEditor(editor);
 </script>
 <template>
-  <!-- <TimingScreen /> -->
   <div class="osucad-editor">
     <div class="editor-screen-container">
-      <ComposeScreen />
+      <!--      <TimingScreen />-->
+      <ComposeScreen/>
+      <!--      <TimingScreen></TimingScreen>-->
     </div>
     <div class="timeline-container">
-      <Timeline />
+      <Timeline/>
     </div>
   </div>
 </template>
@@ -29,7 +31,7 @@ provideEditor(editor);
 
 $timelineHeight: 100px;
 
-.osucad-editor{
+.osucad-editor {
   position: fixed;
   inset: 0;
   background-color: #1a1a20;

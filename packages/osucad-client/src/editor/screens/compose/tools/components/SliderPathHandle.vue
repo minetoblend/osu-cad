@@ -36,6 +36,10 @@ const tint = computed(() => {
       break;
     case PathType.Catmull:
       tint = 0x33a4ff;
+      break;
+    case PathType.BSpline:
+      tint = 0x45ff24;
+      break;
   }
   return tint;
 });

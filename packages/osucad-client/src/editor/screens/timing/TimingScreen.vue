@@ -4,28 +4,38 @@ import {shallowRef} from "vue";
 import {useContainer} from "@/composables/useContainer";
 import TimingPointRow from "./TimingPointRow.vue";
 import Timeline from "../../components/Timeline.vue";
+import {useEditor} from "@/editor/createEditor";
 
 
 const container = useContainer()!;
 
 const timing = container.document.objects.timing as TimingPointCollection;
+const { clock } = useEditor()!
 
 const timingPoints = shallowRef<TimingPoint[]>(timing.items);
 
-timing.on('change', items => {
+timing.on("change", items => {
   timingPoints.value = items;
-})
+});
 
+function createTimingPoint() {
+  const timingPoint = new TimingPoint(container.runtime)
+  timingPoint.offset = Math.round(clock.currentTime)
+  timing.insert(timingPoint)
+}
 </script>
 
 <template>
   <div class="timing-screen">
     <div class="timing-point-table">
       <RecycleScroller :items="timingPoints" :item-size="36" key-field="id" v-slot="{item}" style="height: 100%">
-      <TimingPointRow :timing-point="item"/>
-    </RecycleScroller>
+        <TimingPointRow :timing-point="item"/>
+      </RecycleScroller>
     </div>
-    <Timeline class="timeline" />
+    <button @click="createTimingPoint">
+      Add new Timing Point
+    </button>
+    <!--    <Timeline class="timeline" />-->
   </div>
 </template>
 

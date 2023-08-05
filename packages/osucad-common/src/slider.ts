@@ -1,5 +1,5 @@
-import { ref } from "vue";
-import { Rectangle, IHitArea } from "pixi.js";
+import {ref} from "vue";
+import {Rectangle, IHitArea} from "pixi.js";
 import {
   IMapSnapshotData,
   IObjectAttributes,
@@ -8,11 +8,11 @@ import {
   IUnisonRuntime,
   SharedObject,
 } from "@osucad/unison";
-import { PathPoint, SliderPath } from "./sliderPath";
-import { HitObjectBase } from "./hitObject";
-import { Vec2 } from "./vec2";
-import { BeatmapDifficulty } from "./difficulty";
-import { TimingPointCollection } from "./timingPointCollection";
+import {PathPoint, SliderPath} from "./sliderPath";
+import {HitObjectBase} from "./hitObject";
+import {Vec2} from "./vec2";
+import {BeatmapDifficulty} from "./difficulty";
+import {TimingPointCollection} from "./timingPointCollection";
 import {
   ControlPointList,
   ControlPointListFactory,
@@ -51,6 +51,14 @@ export class Slider extends HitObjectBase implements IHitArea {
 
   get expectedDistance() {
     return this.get("expectedDistance") as number;
+  }
+
+  get endPosition(): Vec2 {
+    if (this.spans % 2 == 1) {
+      return this.pathEndPosition;
+    } else {
+      return this.position;
+    }
   }
 
   set expectedDistance(value: number) {
@@ -102,7 +110,7 @@ export class Slider extends HitObjectBase implements IHitArea {
 
   applyDefaults(
     timing: TimingPointCollection,
-    difficulty: BeatmapDifficulty
+    difficulty: BeatmapDifficulty,
   ): void {
     super.applyDefaults(timing, difficulty);
 
@@ -130,10 +138,12 @@ export class Slider extends HitObjectBase implements IHitArea {
   }
 
   get pathEndPosition() {
-    return Vec2.add(this.position, this.sliderPath.getPositionAtDistance(1));
+    return Vec2.add(this.position, this.sliderPath.endPosition);
   }
 
   getProgressAtTime(time: number) {
+    if (time < this.startTime) return 0;
+    if (time > this.endTime) return this.spans % 2;
     const relative = (time - this.startTime) / this.spanDuration;
     const spanIndex = Math.floor(relative);
     const progressInSpan = relative % 1;
@@ -176,8 +186,8 @@ export class Slider extends HitObjectBase implements IHitArea {
     return Vec2.add(
       this.position,
       this.sliderPath.calculatedPath[
-        this.sliderPath.calculatedPath.length - 1
-      ] ?? Vec2.zero()
+      this.sliderPath.calculatedPath.length - 1
+        ] ?? Vec2.zero(),
     );
   }
 
@@ -186,6 +196,8 @@ export class Slider extends HitObjectBase implements IHitArea {
     if (key === "controlPoints" && this.sliderPath) {
       this._bounds.value = undefined;
     }
+    if (this.sliderPath && key === "expectedDistance" && typeof value === "number")
+      this.sliderPath.expectedDistance = value;
   }
 }
 

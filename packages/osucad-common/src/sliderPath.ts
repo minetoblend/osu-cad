@@ -1,9 +1,9 @@
-import { clamp } from "@vueuse/core";
-import { ref, shallowRef } from "vue";
-import { Bounds } from "pixi.js";
-import { Vec2 } from "./vec2";
-import { Vector2, PathApproximator } from "osu-classes";
-import { ControlPointList } from "./controlPointList";
+import {clamp} from "@vueuse/core";
+import {ref, shallowRef} from "vue";
+import {Bounds} from "pixi.js";
+import {Vec2} from "./vec2";
+import {Vector2, PathApproximator} from "osu-classes";
+import {ControlPointList} from "./controlPointList";
 
 export interface PathPoint {
   position: Vec2;
@@ -15,13 +15,14 @@ export const enum PathType {
   PerfectCurve = "P",
   Bezier = "B",
   Catmull = "C",
+  BSpline = "S",
 }
 
 export class SliderPath {
   constructor(controlPointList: ControlPointList) {
     this.controlPoints = controlPointList.controlPoints;
     controlPointList.on("change", () => {
-      this.isDirty.value = true
+      this.isDirty.value = true;
     });
   }
 
@@ -31,6 +32,14 @@ export class SliderPath {
 
   private _expectedDistance = ref(0);
 
+  get expectedDistance() {
+    return this._expectedDistance.value
+  }
+
+  set expectedDistance(value: number) {
+    this._expectedDistance.value = value;
+  }
+
   get calculatedPath() {
     this.ensureValid();
     return this._calculatedPath.value;
@@ -38,6 +47,10 @@ export class SliderPath {
 
   get cumulativeDistance() {
     return this._cumulativeDistance.value;
+  }
+
+  get endPosition(): Vec2 {
+    return this.getPositionAtDistance(this.expectedDistance);
   }
 
   getRange(start: number, end: number) {
@@ -49,7 +62,8 @@ export class SliderPath {
 
     const cumulativeDistance = this.cumulativeDistance;
 
-    for (; i < this.calculatedPath.length && cumulativeDistance[i] < d0; ++i) {}
+    for (; i < this.calculatedPath.length && cumulativeDistance[i] < d0; ++i) {
+    }
 
     const path: Vec2[] = [];
     path.push(this.interpolateVertices(i, d0));
@@ -113,7 +127,7 @@ export class SliderPath {
         const segment = this.calculateSegment(
           this.controlPoints[segmentStart].type ?? PathType.Bezier,
           segmentStart,
-          i
+          i,
         );
 
         for (const point of segment) {
@@ -123,7 +137,7 @@ export class SliderPath {
           points.push({ x: point.x, y: point.y });
           cumulativeDistance.push(
             cumulativeDistance[cumulativeDistance.length - 1] +
-              Vec2.distance(last, point)
+            Vec2.distance(last, point),
           );
         }
 
@@ -168,6 +182,8 @@ export class SliderPath {
     switch (type) {
       case PathType.Linear:
         return PathApproximator.approximateLinear(points);
+      case PathType.BSpline:
+        return PathApproximator.approximateBSpline(points, 3);
       case PathType.PerfectCurve:
         if (points.length === 3)
           return PathApproximator.approximateCircularArc(points);

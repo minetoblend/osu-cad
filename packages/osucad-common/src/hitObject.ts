@@ -4,11 +4,11 @@ import {
   TimingPointCollection,
   Vec2,
 } from "@osucad/common";
-import { ref, shallowRef } from "vue";
-import { Rectangle, IHitArea } from "pixi.js";
-import { Circle } from "./circle";
-import { Slider } from "./slider";
-import { SharedMap } from "@osucad/unison";
+import {ref, shallowRef} from "vue";
+import {Rectangle, IHitArea} from "pixi.js";
+import {Circle} from "./circle";
+import {Slider} from "./slider";
+import {SharedMap} from "@osucad/unison";
 
 export type HitObject = Circle | Slider;
 
@@ -27,6 +27,10 @@ export abstract class HitObjectBase extends SharedMap implements IHitArea {
 
   set position(value: Vec2) {
     this.set("position", value);
+  }
+
+  get endPosition(): Vec2 {
+    return this.position;
   }
 
   get stackedPosition() {
@@ -58,6 +62,8 @@ export abstract class HitObjectBase extends SharedMap implements IHitArea {
 
   #comboIndex = ref(0);
   #comboNumber = ref(0);
+  #timePreempt = ref(0);
+  #timeFadeIn = ref(0);
 
   get comboIndex() {
     return this.#comboIndex.value;
@@ -75,6 +81,14 @@ export abstract class HitObjectBase extends SharedMap implements IHitArea {
     this.#comboNumber.value = value;
   }
 
+  get timePreempt(): number {
+    return this.#timePreempt.value;
+  }
+
+  get timeFadeIn(): number {
+    return this.#timeFadeIn.value;
+  }
+
   private _scale = shallowRef<number>(1);
 
   get scale() {
@@ -87,6 +101,9 @@ export abstract class HitObjectBase extends SharedMap implements IHitArea {
 
   applyDefaults(timing: TimingPointCollection, difficulty: BeatmapDifficulty) {
     this._scale.value = (1.0 - (0.7 * (difficulty.circleSize - 5)) / 5) / 2;
+
+    this.#timePreempt.value = difficulty.timePreempt;
+    this.#timeFadeIn.value = difficulty.timeFadeIn;
   }
 
   protected _bounds = shallowRef<Rectangle>();

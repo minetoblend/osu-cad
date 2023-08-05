@@ -7,12 +7,12 @@ import { createViewport, Viewport } from "./viewport";
 import { CommandManager } from "@/editor/commands/commandManager";
 import { useEditor } from "@/editor/createEditor";
 import CommandOverlay from "./CommandOverlay.vue";
-import { ToolManager } from "./tools/toolManager";
-import { MoveHitObjectInteraction } from "@/editor/interactions/moveHitObjects";
 import { createPixiApp } from "./renderer";
 import PixiViewport from "./PixiViewport.vue";
 import { ToolInstance, createTool } from "./tool";
 import { SelectTool } from "./tool/selectTool";
+import {CircleTool} from "@/editor/screens/compose/tool/circleTool";
+import {SliderTool} from "@/editor/screens/compose/tool/sliderTool";
 
 const container = ref();
 const canvas = ref();
@@ -23,7 +23,6 @@ const { width: containerWidth, height: containerHeight } =
 const viewport = shallowRef<Viewport>();
 const commandManager = shallowRef<CommandManager>();
 const editor = useEditor()!;
-// const toolManager = shallowRef<ToolManager>();
 const activeTool = shallowRef<ToolInstance>(createTool(SelectTool));
 
 onMounted(() => {
@@ -43,6 +42,10 @@ onMounted(() => {
 
   viewportApp.mount(viewport.value.stage);
 });
+
+onKeyDown('1', () => activeTool.value = createTool(SelectTool))
+onKeyDown('2', () => activeTool.value = createTool(CircleTool))
+onKeyDown('3', () => activeTool.value = createTool(SliderTool))
 
 seekOnScroll(container);
 </script>

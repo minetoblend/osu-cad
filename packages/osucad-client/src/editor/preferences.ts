@@ -6,7 +6,7 @@ export async function getEditorPreferences() {
   const preferences = ref<IPreferences>();
 
   const response = await axios.get(
-    "https://api.osucad.com/editor/preferences",
+    "http://10.25.120.192:3000/editor/preferences",
     {
       withCredentials: true,
     }

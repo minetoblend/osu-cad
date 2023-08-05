@@ -28,7 +28,7 @@ const texture = Texture.from(circlePng, {
 
 const el = shallowRef<Graphics>();
 
-const hitArea = new Circle(0, 0, 8);
+const hitArea = new Circle(0, 0, 10);
 
 const tint = computed(() => {
   let tint = 0xffee33;
@@ -49,8 +49,8 @@ const tint = computed(() => {
 });
 
 const scale = computed(() => {
-  if (props.hovered) return 1.3;
-  return 1;
+  if (props.hovered) return 1.625;
+  return 1.25;
 });
 </script>
 

@@ -1,20 +1,20 @@
 <template>
-  <SelectBox @drag="handleSelectBox" />
+  <SelectBox @drag="handleSelectBox"/>
 </template>
 
 <script setup lang="ts">
-import { Rectangle } from "pixi.js";
+import {Rectangle} from "pixi.js";
 import SelectBox from "./SelectBox.vue";
-import { Ref, inject } from "vue";
-import { useEditor } from "@/editor/createEditor";
-import { HitObject, Vec2 } from "@osucad/common";
+import {Ref, inject} from "vue";
+import {useEditor} from "@/editor/createEditor";
+import {HitObject, Vec2} from "@osucad/common";
 
 const visibleHitObjects = inject("visibleHitObjects") as Ref<HitObject[]>;
 const { selection } = useEditor()!;
 
 const handleSelectBox = (rect: Rectangle) => {
   const objects = visibleHitObjects.value.filter((p) =>
-    rectCircleIntersection(rect, p.position, 28)
+      rectCircleIntersection(rect, p.position, 28),
   );
   selection.select(...objects);
 };
@@ -33,15 +33,15 @@ function rectCircleIntersection(rect: Rectangle, circle: Vec2, r: number) {
   }
 
   if (
-    circleDistance.x <= rect.width / 2 ||
-    circleDistance.y <= rect.height / 2
+      circleDistance.x <= rect.width / 2 ||
+      circleDistance.y <= rect.height / 2
   ) {
     return true;
   }
 
   const cornerDistance_sq =
-    (circleDistance.x - rect.width / 2) * (circleDistance.x - rect.width / 2) +
-    (circleDistance.y - rect.height / 2) * (circleDistance.y - rect.height / 2);
+      (circleDistance.x - rect.width / 2) * (circleDistance.x - rect.width / 2) +
+      (circleDistance.y - rect.height / 2) * (circleDistance.y - rect.height / 2);
 
   return cornerDistance_sq <= r * r;
 }

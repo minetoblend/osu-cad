@@ -4,6 +4,7 @@
     <template #fallback>
       <h1>Connecting to server...</h1>
     </template>
+
   </Suspense>
 </template>
 
@@ -11,6 +12,7 @@
 import {useRoute} from "vue-router";
 import BeatmapEditor from "../editor/BeatmapEditor.vue";
 import {computed} from "@vue/reactivity";
+import TimingScreen from "@/editor/screens/timing/TimingScreen.vue";
 
 const route = useRoute();
 

@@ -5,7 +5,7 @@ import { authenticate } from "@/composables/authenticate";
 export const getToken = async (id: string): Promise<string> => {
   try {
     const response = await axios.get(
-      "https://api.osucad.com/editor/token/" + id,
+      "http://10.25.120.192:3000/editor/token/" + id,
       {
         withCredentials: true,
       }

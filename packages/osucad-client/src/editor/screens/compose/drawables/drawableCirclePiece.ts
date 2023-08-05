@@ -1,4 +1,4 @@
-import {EditorInstance} from "../../../createEditor";
+
 import {Container, Sprite, Texture} from "pixi.js";
 
 import hitcirclepng from "@/assets/skin/hitcircle@2x.png";
@@ -8,7 +8,7 @@ export class DrawableCirclePiece extends Container {
   hitCircle: Sprite;
   hitCircleOverlay: Sprite;
 
-  constructor(private editor: EditorInstance) {
+  constructor() {
     super();
 
     const hitCircle = new Sprite(Texture.from(hitcirclepng));
@@ -22,7 +22,8 @@ export class DrawableCirclePiece extends Container {
     this.hitCircleOverlay = hitCircleOverlay;
   }
 
-  update() {}
+  update() {
+  }
 
   set tint(value: number) {
     this.hitCircle.tint = value;

@@ -33,15 +33,15 @@ export class SliderTextureResource extends Resource {
     const g = (this.tint >> 8) & 0xff;
     const b = this.tint & 0xff;
 
-    const brightness = clamp((((r + g + b) / 3) + Math.max(r, g, b)) / 2 * 1.1, 0, 255)
+    const brightness = clamp((((r + g + b) / 3) + Math.max(r, g, b)) / 2 * 1.2, 0, 255)
 
     function lerp(a: number, b: number, t: number) {
       return a + (b - a) * t
     }
 
-    const rCenter = Math.floor(lerp(r, brightness, 0.35));
-    const gCenter = Math.floor(lerp(g, brightness, 0.35));
-    const bCenter = Math.floor(lerp(b, brightness, 0.35));
+    const rCenter = Math.floor(lerp(r, brightness, 0.45));
+    const gCenter = Math.floor(lerp(g, brightness, 0.45));
+    const bCenter = Math.floor(lerp(b, brightness, 0.45));
 
     if (this.outlineOnly) {
       grd.addColorStop(0.25, "transparent");
