@@ -4,6 +4,7 @@ import Timeline from "./components/Timeline.vue";
 import {createEditor, provideEditor} from "./createEditor";
 import ComposeScreen from "./screens/compose/ComposeScreen.vue";
 import TimingScreen from "@/editor/screens/timing/TimingScreen.vue";
+import {watchDebounced} from "@vueuse/core";
 
 const props = defineProps<{
   id: string;
@@ -13,6 +14,15 @@ const editor = await createEditor(props.id);
 
 provideContainer(editor.container);
 provideEditor(editor);
+
+watchDebounced(() => editor.clock.currentTime, (time) => {
+  const url = new URL(window.location.href);
+  url.searchParams.set("t", time.toString());
+  window.history.replaceState({}, "", url.toString());
+}, {
+  debounce: 1000,
+});
+
 </script>
 <template>
   <div class="osucad-editor" @contextmenu.prevent>
