@@ -9,14 +9,17 @@ import approachcirclepng from "@/assets/skin/approachcircle@2x.png";
 import hitcircleselectpng from "@/assets/skin/hitcircleselect@2x.png";
 import {DrawableHitObject} from "./drawableHitObject";
 import {IClient} from "@osucad/unison";
+import {DrawableComboNumber} from "@/editor/screens/compose/drawables/drawableComboNumber";
 
 export class DrawableHitCircle extends DrawableHitObject<Circle> {
   readonly approachCircle = new Sprite(Texture.from(approachcirclepng));
   readonly circlePiece = new DrawableCirclePiece();
   readonly selectionOverlay = new Sprite(Texture.from(hitcircleselectpng));
+  readonly comboText: DrawableComboNumber;
 
   constructor(private circle: Circle, editor: EditorInstance) {
     super(circle, editor);
+    this.comboText = new DrawableComboNumber(circle);
     this.init();
   }
 
@@ -26,7 +29,7 @@ export class DrawableHitCircle extends DrawableHitObject<Circle> {
     this.approachCircle.anchor.set(0.5);
     this.selectionOverlay.anchor.set(0.5);
     this.selectionOverlay.visible = false;
-    this.addChild(this.circlePiece, this.approachCircle, this.selectionOverlay);
+    this.addChild(this.circlePiece, this.approachCircle, this.selectionOverlay, this.comboText);
     this.scale.set(this.hitObject.scale);
   }
 
@@ -70,6 +73,8 @@ export class DrawableHitCircle extends DrawableHitObject<Circle> {
 
     this.approachCircle.alpha =
       timeRelative < 0 ? animate(timeRelative, -timePreempt, 0, 0, 1) : fadeOut;
+
+    this.comboText.update(timeRelative);
   }
 
   onSelected(selected: boolean, selectedBy: IClient[]): void {

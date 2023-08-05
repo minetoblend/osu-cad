@@ -14,12 +14,14 @@ import {SliderGeometrySource} from "./sliderGeometrySource";
 import {DrawableSliderBall} from "./drawableSliderBall";
 import {DrawableSliderReverse} from "@/editor/screens/compose/drawables/drawableSliderReverse";
 import {DrawableSliderFollowCircle} from "@/editor/screens/compose/drawables/drawableSliderFollowCircle";
+import {DrawableComboNumber} from "@/editor/screens/compose/drawables/drawableComboNumber";
 
 export class DrawableSlider extends DrawableHitObject<Slider> {
   readonly approachCircle = new Sprite(Texture.from(approachcirclepng));
   readonly sliderHead = new DrawableCirclePiece();
   readonly sliderTail = new DrawableCirclePiece();
   readonly sliderBody: DrawableSliderBody;
+  readonly comboNumber: DrawableComboNumber;
 
   readonly selectionOutline: DrawableSliderBody;
 
@@ -57,11 +59,13 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
     this.selectionOutline.outlineOnly = true;
     this.selectionOutline.visible = false;
 
+    this.comboNumber = new DrawableComboNumber(slider);
+
     const container = new Container();
 
     this.addChild(this.sliderBody, container, this.selectionOutline);
 
-    container.addChild(this.sliderTail, this.reverseArrowContainer, this.sliderHead, this.approachCircle);
+    container.addChild(this.sliderTail, this.reverseArrowContainer, this.sliderHead, this.comboNumber, this.approachCircle);
 
     watch(
       () => [
@@ -163,6 +167,8 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
       this.sliderGeoSource.snakeInProgress.value = 1;
     }
 
+    this.comboNumber.update(timeRelative);
+
     this.updateSliderBall(currentTime);
   }
 
@@ -239,6 +245,8 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
 
     this.approachCircle.tint = comboColor;
     this.sliderBody.tint = comboColor;
+
+    this.comboNumber.scale.set(this.hitObject.scale);
 
     this.initReverseArrows();
   }
