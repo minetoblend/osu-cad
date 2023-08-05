@@ -1,24 +1,25 @@
 <script setup lang="ts">
-import { onKeyDown, onKeyStroke, useElementSize } from "@vueuse/core";
-import { onMounted, ref, shallowRef } from "vue";
+import {onKeyDown, onKeyStroke, useElementSize} from "@vueuse/core";
+import {onMounted, ref, shallowRef} from "vue";
 import ComposeScreenToolbar from "./ComposeScreenToolbar.vue";
-import { seekOnScroll } from "@/composables/seekOnScroll";
-import { createViewport, Viewport } from "./viewport";
-import { CommandManager } from "@/editor/commands/commandManager";
-import { useEditor } from "@/editor/createEditor";
+import {seekOnScroll} from "@/composables/seekOnScroll";
+import {createViewport, Viewport} from "./viewport";
+import {CommandManager} from "@/editor/commands/commandManager";
+import {useEditor} from "@/editor/createEditor";
 import CommandOverlay from "./CommandOverlay.vue";
-import { createPixiApp } from "./renderer";
+import {createPixiApp} from "./renderer";
 import PixiViewport from "./PixiViewport.vue";
-import { ToolInstance, createTool } from "./tool";
-import { SelectTool } from "./tool/selectTool";
+import {ToolInstance, createTool} from "./tool";
+import {SelectTool} from "./tool/selectTool";
 import {CircleTool} from "@/editor/screens/compose/tool/circleTool";
 import {SliderTool} from "@/editor/screens/compose/tool/sliderTool";
+import {useHitObjectClipboard} from "@/composables/hitObjectClipboard";
 
 const container = ref();
 const canvas = ref();
 
 const { width: containerWidth, height: containerHeight } =
-  useElementSize(container);
+    useElementSize(container);
 
 const viewport = shallowRef<Viewport>();
 const commandManager = shallowRef<CommandManager>();
@@ -29,9 +30,9 @@ onMounted(() => {
   viewport.value = createViewport(canvas.value!);
 
   commandManager.value = new CommandManager(
-    editor,
-    canvas.value,
-    viewport.value.mousePos
+      editor,
+      canvas.value,
+      viewport.value.mousePos,
   );
 
   const viewportApp = createPixiApp(PixiViewport, {
@@ -43,28 +44,55 @@ onMounted(() => {
   viewportApp.mount(viewport.value.stage);
 });
 
-onKeyDown('1', () => activeTool.value = createTool(SelectTool))
-onKeyDown('2', () => activeTool.value = createTool(CircleTool))
-onKeyDown('3', () => activeTool.value = createTool(SliderTool))
+onKeyDown("1", () => activeTool.value = createTool(SelectTool));
+onKeyDown("2", () => activeTool.value = createTool(CircleTool));
+onKeyDown("3", () => activeTool.value = createTool(SliderTool));
 
 seekOnScroll(container);
+
+const clipboard = useHitObjectClipboard();
+
+onKeyDown("c", evt => {
+  if (evt.ctrlKey)
+    clipboard.write(editor.selection.selectedHitObjects);
+});
+
+onKeyDown("v", evt => {
+  if (evt.ctrlKey) {
+    const hitObjects = clipboard.read(editor.container);
+    if (hitObjects.length === 0) return;
+
+    const time = editor.clock.currentTime;
+    const offset = hitObjects[0].startTime - time;
+
+    hitObjects.forEach(hitObject => {
+      hitObject.startTime -= offset;
+      editor.hitObjects.insert(hitObject);
+      editor.selection.select(hitObject);
+    });
+
+    editor.selection.clear();
+    editor.selection.add(...hitObjects);
+  }
+});
+
 </script>
 
 <template>
   <div class="compose-screen">
-    <ComposeScreenToolbar class="toolbar" v-model:active-tool="activeTool" />
+    <ComposeScreenToolbar class="toolbar" v-model:active-tool="activeTool"/>
     <div class="viewport">
       <div ref="container" class="viewport-container">
         <canvas
-          ref="canvas"
-          :width="Math.floor(containerWidth)"
-          :height="Math.floor(containerHeight)"
-          @contextmenu.prevent
+            ref="canvas"
+            :width="Math.floor(containerWidth)"
+            :height="Math.floor(containerHeight)"
+            @contextmenu.prevent
         />
       </div>
       <CommandOverlay
-        v-if="commandManager?.currentCommand.value"
-        :command="commandManager?.currentCommand.value"
+          v-if="commandManager?.currentCommand.value"
+          :command="commandManager?.currentCommand.value"
       />
     </div>
   </div>
