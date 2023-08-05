@@ -14,6 +14,7 @@ import {SelectTool} from "./tool/selectTool";
 import {CircleTool} from "@/editor/screens/compose/tool/circleTool";
 import {SliderTool} from "@/editor/screens/compose/tool/sliderTool";
 import {useHitObjectClipboard} from "@/composables/hitObjectClipboard";
+import UserList from "@/editor/components/UserList.vue";
 
 const container = ref();
 const canvas = ref();
@@ -95,6 +96,7 @@ onKeyDown("v", evt => {
           :command="commandManager?.currentCommand.value"
       />
     </div>
+    <UserList/>
   </div>
 </template>
 
