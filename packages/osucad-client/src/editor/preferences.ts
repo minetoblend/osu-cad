@@ -6,7 +6,7 @@ export async function getEditorPreferences() {
   const preferences = ref<IPreferences>();
 
   const response = await axios.get(
-    "http://10.25.120.192:3000/editor/preferences",
+    `${import.meta.env.VITE_API_ENDPOINT}/editor/preferences`,
     {
       withCredentials: true,
     }

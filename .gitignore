@@ -3,3 +3,4 @@ caddy_data/
 **/node_modules/
 packages/**/dist/
 Caddyfile
+.env

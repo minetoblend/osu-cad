@@ -1,7 +1,6 @@
 export function authenticate() {
   window.location.href =
-    "http://10.25.120.192:3000/auth/login?redirect=" +
-    encodeURIComponent(window.location.href);
+    `${import.meta.env.VITE_API_ENDPOINT}/auth/login?redirect=${encodeURIComponent(window.location.href)}`;
 }
 
 export function authenticateWithPopup() {
@@ -11,10 +10,9 @@ export function authenticateWithPopup() {
     var left = screen.width / 2 - width / 2;
     var top = screen.height / 2 - height / 2;
     const opened = window.open(
-      "http://10.25.120.192:3000/auth/login?redirect=" +
-        encodeURIComponent("http://10.25.120.192:3000/authenticated"),
+      `${import.meta.env.VITE_API_ENDPOINT}/auth/login?redirect=${encodeURIComponent(`${import.meta.env.VITE_API_ENDPOINT}/authenticated`)}`,
       "_blank",
-      `location=yes,height=${height},width=${width},scrollbars=yes,status=yes,top=${top},left=${left}`
+      `location=yes,height=${height},width=${width},scrollbars=yes,status=yes,top=${top},left=${left}`,
     );
 
     if (!opened) {

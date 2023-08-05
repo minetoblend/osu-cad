@@ -1,10 +1,10 @@
-import { defineConfig } from "vite";
+import {defineConfig} from "vite";
 import vue from "@vitejs/plugin-vue";
-import { resolve } from "path";
-import Components from 'unplugin-vue-components/vite'
-import { BootstrapVueNextResolver } from 'unplugin-vue-components/resolvers'
-import { PixiPlugin } from "./pixiPlugin";
-import Inspect from 'vite-plugin-inspect'
+import {resolve} from "path";
+import Components from "unplugin-vue-components/vite";
+import {BootstrapVueNextResolver} from "unplugin-vue-components/resolvers";
+import {PixiPlugin} from "./pixiPlugin";
+import Inspect from "vite-plugin-inspect";
 
 
 export default defineConfig({
@@ -20,7 +20,7 @@ export default defineConfig({
     Components({
       resolvers: [
         BootstrapVueNextResolver(),
-      ]
+      ],
     }),
     PixiPlugin(),
     Inspect(),
@@ -36,4 +36,5 @@ export default defineConfig({
     host: "0.0.0.0",
     // origin: "https://osucad.com",
   },
+  envDir: resolve(__dirname, "../.."),
 });
