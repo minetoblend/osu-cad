@@ -15,7 +15,7 @@ provideContainer(editor.container);
 provideEditor(editor);
 </script>
 <template>
-  <div class="osucad-editor">
+  <div class="osucad-editor" @contextmenu.prevent>
     <div class="editor-screen-container">
       <!--      <TimingScreen />-->
       <ComposeScreen/>
