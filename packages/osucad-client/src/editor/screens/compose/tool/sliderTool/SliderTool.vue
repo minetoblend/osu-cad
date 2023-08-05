@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { useEditor } from "@/editor/createEditor";
-import { PathType, Slider, Vec2 } from "@osucad/common";
-import { nn } from "@osucad/unison";
-import { computedWithControl } from "@vueuse/shared";
-import { shallowRef, watch } from "vue";
-import { useViewport } from "../../tools/composables/mouseEvents";
-import { globalHitArea } from "../../tools/hitArea";
-import { createSnapManager } from "../snapping";
+import {useEditor} from "@/editor/createEditor";
+import {PathType, Slider, Vec2} from "@osucad/common";
+import {nn} from "@osucad/unison";
+import {computedWithControl} from "@vueuse/shared";
+import {shallowRef, watch} from "vue";
+import {useViewport} from "../../tools/composables/mouseEvents";
+import {globalHitArea} from "../../tools/hitArea";
+import {createSnapManager} from "../snapping";
 import CirclePlacementPreview from "./CirclePlacementPreview.vue";
 import SliderPathVisualiser from "./SliderPathVisualiser.vue";
-import { useKeyModifier } from "@vueuse/core";
-import { FederatedMouseEvent, Point } from "pixi.js";
+import {onKeyDown, useKeyModifier} from "@vueuse/core";
+import {FederatedMouseEvent, Point} from "pixi.js";
 
 const { mousePos } = useViewport()!;
-const { container, clock, hitObjects, timing } = useEditor()!;
+const { container, clock, hitObjects, timing, selection } = useEditor()!;
 
 const activeSlider = shallowRef<Slider>();
 
@@ -28,19 +28,19 @@ const snappedMousePos = computedWithControl(mousePos, () => {
 });
 
 watch(
-  snappedMousePos,
-  (pos) => {
-    if (activeSlider.value && activeSlider.value.controlPoints.length > 1) {
-      activeSlider.value.controlPoints.updateLast({
-        position: Vec2.round(Vec2.sub(pos, activeSlider.value.position)),
-      });
+    snappedMousePos,
+    (pos) => {
+      if (activeSlider.value && activeSlider.value.controlPoints.length > 1) {
+        activeSlider.value.controlPoints.updateLast({
+          position: Vec2.round(Vec2.sub(pos, activeSlider.value.position)),
+        });
 
-      recalculateSliderLength(activeSlider.value);
-    }
-  },
-  {
-    immediate: true,
-  }
+        recalculateSliderLength(activeSlider.value);
+      }
+    },
+    {
+      immediate: true,
+    },
 );
 
 function startPlacingSlider() {
@@ -51,21 +51,23 @@ function startPlacingSlider() {
   s.controlPoints.append({ position: Vec2.zero(), type: null });
 
   const referenceSlider = hitObjects.items.findLast(it => (
-    it.startTime <= clock.currentTime &&
-    it instanceof Slider
-  )) as Slider | undefined
+      it.startTime <= clock.currentTime &&
+      it instanceof Slider
+  )) as Slider | undefined;
 
-  if(referenceSlider)
-    s.velocityMultiplier = referenceSlider.velocityMultiplier
+  if (referenceSlider)
+    s.velocityMultiplier = referenceSlider.velocityMultiplier;
 
   const hitObjectsAtTime = hitObjects.items.filter(
-    (o) => Math.abs(o.startTime - clock.currentTime) < 0.5 && !o.isGhost
+      (o) => Math.abs(o.startTime - clock.currentTime) < 0.5 && !o.isGhost,
   );
   hitObjectsAtTime.forEach((o) => hitObjects.remove(o));
 
   hitObjects.insert(s);
 
   activeSlider.value = s;
+
+  selection.select(activeSlider.value);
 }
 
 function getNextPathType(pathType: PathType | null) {
@@ -103,7 +105,7 @@ function addControlPoint(evt: FederatedMouseEvent) {
   }
 
   let segmentStart = slider.controlPoints.controlPoints.findLastIndex(
-    (controlPoint, index) => controlPoint.type !== null || index === 0
+      (controlPoint, index) => controlPoint.type !== null || index === 0,
   );
   // + 1 because we haven't added the next point yet
   const segmentLength = slider.controlPoints.length - segmentStart + 1;
@@ -129,7 +131,7 @@ function getControlPointAtMousepos(slider: Slider) {
   const thresholdSq = 5 * 5;
 
   const index = slider.controlPoints.controlPoints.findIndex(
-    (it) => Vec2.distanceSq(pos, it.position) < thresholdSq
+      (it) => Vec2.distanceSq(pos, it.position) < thresholdSq,
   );
   return index;
 }
@@ -141,9 +143,9 @@ function onRightDown(evt: FederatedMouseEvent) {
     if (index !== -1) {
       const point = slider.controlPoints.get(index)!;
       if (
-        slider.controlPoints.length > 2 &&
-        point &&
-        point !== slider.controlPoints.last
+          slider.controlPoints.length > 2 &&
+          point &&
+          point !== slider.controlPoints.last
       ) {
         slider.controlPoints.remove(point);
       }
@@ -158,7 +160,7 @@ function recalculateSliderLength(slider: Slider) {
   const { velocity, sliderPath, startTime } = slider;
 
   const fullDistance =
-    sliderPath.cumulativeDistance[sliderPath.cumulativeDistance.length - 1];
+      sliderPath.cumulativeDistance[sliderPath.cumulativeDistance.length - 1];
 
   const fullDuration = fullDistance / velocity;
   const snappedEndTime = timing.snapTime(startTime + fullDuration, 4, false);
@@ -167,21 +169,26 @@ function recalculateSliderLength(slider: Slider) {
 
   slider.expectedDistance = expectedDistance;
 }
+
+onKeyDown("q", () => {
+  if (!activeSlider.value) return;
+  activeSlider.value.newCombo = !activeSlider.value.newCombo;
+});
 </script>
 
 <template>
   <CirclePlacementPreview
-    v-if="!activeSlider"
-    :hit-area="globalHitArea"
-    @mousedown.left="startPlacingSlider"
+      v-if="!activeSlider"
+      :hit-area="globalHitArea"
+      @mousedown.left="startPlacingSlider"
   />
   <pixi-container
-    v-else
-    :hit-area="globalHitArea"
-    @mousedown.left="addControlPoint"
-    @rightdown="onRightDown"
-    cursor="none"
+      v-else
+      :hit-area="globalHitArea"
+      @mousedown.left="addControlPoint"
+      @rightdown="onRightDown"
+      cursor="none"
   >
-    <SliderPathVisualiser :slider="activeSlider" />
+    <SliderPathVisualiser :slider="activeSlider"/>
   </pixi-container>
 </template>
