@@ -7,7 +7,7 @@ export function seekOnScroll(el: MaybeComputedElementRef<HTMLElement>) {
   const timing = container.document.objects.timing;
 
   useEventListener(el, "wheel", (evt: WheelEvent) => {
-    if(evt.shiftKey || evt.ctrlKey || evt.altKey || evt.metaKey) return;
+    if (evt.shiftKey || evt.altKey || evt.metaKey) return;
     evt.preventDefault();
 
     const beatDuration =
@@ -15,7 +15,11 @@ export function seekOnScroll(el: MaybeComputedElementRef<HTMLElement>) {
 
     const divisor = 4;
 
-    const deltaT = (Math.sign(evt.deltaY) * beatDuration) / divisor;
+    let deltaT = (Math.sign(evt.deltaY) * beatDuration) / divisor;
+
+    if (evt.ctrlKey || clock.isPlaying) deltaT *= 4;
+
+
 
     const newTime = timing.snapTime(clock.currentTime + deltaT, divisor);
 
