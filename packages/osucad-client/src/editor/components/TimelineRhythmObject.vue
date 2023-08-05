@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { HitObject, Slider } from "@osucad/common";
-import { computed } from "@vue/reactivity";
-import { useEditor } from "../createEditor";
+import {HitObject, Slider} from "@osucad/common";
+import {computed} from "@vue/reactivity";
+import {useEditor} from "../createEditor";
 
-const { timing, selection, colors } = useEditor()!;
+const { timing, selection, colors, hitObjects } = useEditor()!;
 
 const props = defineProps<{
   hitObject: HitObject;
@@ -18,30 +18,36 @@ const props = defineProps<{
 const style = computed(() => {
   return {
     left: `${
-      ((props.hitObject.startTime - props.start) / (props.end - props.start)) *
-      100
+        ((props.hitObject.startTime - props.start) / (props.end - props.start)) *
+        100
     }%`,
   };
 });
 
 const isSelected = computed(() => {
   return (
-    props.selectionStart === undefined && selection.isSelected(props.hitObject)
+      props.selectionStart === undefined && selection.isSelected(props.hitObject)
   );
 });
 
 const isSelectionCandidate = computed(() => {
   return (
-    props.selectionStart !== undefined &&
-    props.selectionEnd !== undefined &&
-    props.hitObject.startTime >= props.selectionStart &&
-    props.hitObject.startTime <= props.selectionEnd
+      props.selectionStart !== undefined &&
+      props.selectionEnd !== undefined &&
+      props.hitObject.startTime >= props.selectionStart &&
+      props.hitObject.startTime <= props.selectionEnd
   );
 });
 
 function onPointerDown(evt: PointerEvent) {
   let startTime = props.hitObject.startTime;
   let startX = evt.clientX;
+
+  if (evt.button === 2) {
+    evt.preventDefault();
+    hitObjects.remove(props.hitObject);
+    return;
+  }
 
   if (evt.ctrlKey) selection.add(props.hitObject);
   else {
@@ -79,7 +85,7 @@ function onSliderEndPointerDown(evt: PointerEvent) {
   const slider = props.hitObject as Slider;
   if (evt.ctrlKey) {
     const { startTime, endTime, duration, velocity, velocityMultiplier } =
-      slider;
+        slider;
     const startX = evt.clientX;
 
     function onPointerMove(evt: PointerEvent) {
@@ -98,9 +104,9 @@ function onSliderEndPointerDown(evt: PointerEvent) {
 
     window.addEventListener("pointermove", onPointerMove);
     window.addEventListener(
-      "pointerup",
-      () => window.removeEventListener("pointermove", onPointerMove),
-      { once: true }
+        "pointerup",
+        () => window.removeEventListener("pointermove", onPointerMove),
+        { once: true },
     );
     return;
   }
@@ -131,9 +137,9 @@ function onSliderEndPointerDown(evt: PointerEvent) {
 
   window.addEventListener("pointermove", onPointerMove);
   window.addEventListener(
-    "pointerup",
-    () => window.removeEventListener("pointermove", onPointerMove),
-    { once: true }
+      "pointerup",
+      () => window.removeEventListener("pointermove", onPointerMove),
+      { once: true },
   );
 }
 
@@ -148,35 +154,35 @@ const duration = computed(() => {
 });
 
 const background = computed(
-  () => "#" + colors.getColor(props.hitObject.comboIndex).toString(16)
+    () => "#" + colors.getColor(props.hitObject.comboIndex).toString(16),
 );
 
 const velocityMultiplier = computed(() =>
-  props.hitObject instanceof Slider ? props.hitObject.velocityMultiplier : 1
+    props.hitObject instanceof Slider ? props.hitObject.velocityMultiplier : 1,
 );
 
 const spans = computed(() =>
-  props.hitObject instanceof Slider ? props.hitObject.spans : 1
+    props.hitObject instanceof Slider ? props.hitObject.spans : 1,
 );
 </script>
 
 <template>
   <div :style="style" class="timeline-entry">
     <div
-      v-if="type === 'slider'"
-      class="slider"
-      :class="{ selected: isSelected || isSelectionCandidate }"
-      :style="{
+        v-if="type === 'slider'"
+        class="slider"
+        :class="{ selected: isSelected || isSelectionCandidate }"
+        :style="{
         width: `calc(${
           (duration / (props.end - props.start)) * props.width + 'px'
         } + 40px)`,
       }"
-      @pointerdown.stop.prevent="onPointerDown"
+        @pointerdown.stop.prevent="onPointerDown"
     >
       <div
-        class="span"
-        v-for="i in spans - 1"
-        :style="{
+          class="span"
+          v-for="i in spans - 1"
+          :style="{
           left: `${
             (((duration / spans) * (i - 1)) / (props.end - props.start)) *
             props.width
@@ -188,19 +194,19 @@ const spans = computed(() =>
       </div>
     </div>
     <div
-      v-if="type === 'slider'"
-      class="circle"
-      :style="{
+        v-if="type === 'slider'"
+        class="circle"
+        :style="{
         left: (duration / (props.end - props.start)) * props.width + 'px',
       }"
-      @pointerdown.stop.prevent="onSliderEndPointerDown"
+        @pointerdown.stop.prevent="onSliderEndPointerDown"
     />
     <div
-      class="circle"
-      :class="{
+        class="circle"
+        :class="{
         selected: type !== 'slider' && (isSelected || isSelectionCandidate),
       }"
-      @pointerdown.stop.prevent="onPointerDown"
+        @pointerdown.stop.prevent="onPointerDown"
     >
       {{ hitObject.comboNumber }}
     </div>
