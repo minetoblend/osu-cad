@@ -196,7 +196,12 @@ export class SliderPath {
 
   getBounds(): Bounds {
     const bounds = new Bounds();
-    this.calculatedPath.forEach((p) => bounds.addPoint(p));
+    for(let d = 0; d < this.expectedDistance; d += 10) {
+      bounds.addPoint(this.getPositionAtDistance(d))
+    }
+
+    bounds.addPoint(this.endPosition)
+
     return bounds;
   }
 }
