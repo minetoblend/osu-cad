@@ -17,7 +17,7 @@
     "@ygoe/msgpack": "^1.0.3",
     "any-touch": "^2.2.0",
     "axios": "^1.6.2",
-    "gsap": "^3.12.4",\
+    "gsap": "^3.12.4",
     "path": "^0.12.7",
     "pixi.js": "8.0.0-rc.4",
     "socket.io-client": "^4.7.2",
