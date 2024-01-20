@@ -1,0 +1,33 @@
+{
+  "name": "@osucad/common",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "dist/lib.cjs",
+  "types": "src/index.ts",
+  "typings": "src/index.ts",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/lib.esm.js",
+      "require": "./dist/lib.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/msgpack": "^0.0.34",
+    "esbuild": "^0.17.14",
+    "rollup": "^3.20.2",
+    "rollup-plugin-dts": "^6.1.0",
+    "rollup-plugin-esbuild": "^5.0.0"
+  },
+  "dependencies": {
+    "@ygoe/msgpack": "^1.0.3",
+    "variant": "^2.1.0"
+  }
+}

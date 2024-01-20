@@ -1,0 +1,409 @@
+import {Injectable} from "@nestjs/common";
+import {BeatmapService} from "./beatmap.service";
+import {UserEntity} from "../users/user.entity";
+import {UserService} from "../users/user.service";
+import * as unzipper from "unzipper";
+import {Readable} from "stream";
+import * as fs from "fs/promises";
+import {resolve} from "path";
+import {v4 as uuid} from "uuid";
+import {MapsetEntity} from "./mapset.entity";
+import {BeatmapDecoder} from "osu-parsers";
+import {Beatmap, HitSample, PathPoint} from "osu-classes";
+import {Circle, Slider, Spinner, StandardBeatmap, StandardHitObject, StandardRuleset} from "osu-standard-stable";
+import {BeatmapEntity} from "./beatmap.entity";
+import {
+  Additions,
+  defaultHitSound,
+  defaultHitSoundLayers, hitObjectId,
+  HitSound,
+  HitSoundLayer,
+  HitSoundManager, HitSoundSample,
+  PathType,
+  SampleSet,
+  SampleType,
+  SerializedEditorBookmark,
+  SerializedHitObject,
+  SerializedPathPoint,
+  SerializedTimingPoint,
+  SerializedVelocityPoint,
+} from "@osucad/common";
+
+@Injectable()
+export class BeatmapImportService {
+
+  constructor(
+    private readonly beatmapService: BeatmapService,
+    private readonly userService: UserService,
+  ) {
+
+  }
+
+
+  private readonly ruleset = new StandardRuleset();
+
+  async mapsetPath(id: string) {
+    const path = resolve("files/mapsets", id);
+    await fs.mkdir(path, { recursive: true });
+    return path;
+  }
+
+  async importOsz(buffer: Buffer, userId: number): Promise<MapsetEntity | null> {
+    const user = await this.userService.findById(userId);
+    if (!user) throw new Error("User not found");
+
+    const id = uuid();
+
+    const path = await this.mapsetPath(id);
+
+    let mapset: MapsetEntity | undefined;
+
+
+    const zip = Readable.from(buffer)
+      .pipe(unzipper.Parse({ forceStream: true }));
+
+    const allowedFileTypes = [
+      "osu",
+      "mp3",
+      "ogg",
+      "wav",
+      "jpg",
+      "jpeg",
+      "png",
+      "osb",
+      "mp4",
+    ];
+
+    for await (const entry of zip) {
+      try {
+        const fileType = entry.path.split(".").pop() ?? "";
+        if (!allowedFileTypes.includes(fileType)) continue;
+
+        if (entry.path.endsWith(".osu")) {
+          const parsed = new BeatmapDecoder().decodeFromBuffer(await entry.buffer());
+          if (parsed.mode !== 0) continue;
+
+          const osuBeatmap = this.ruleset.applyToBeatmap(parsed);
+
+          if (!mapset)
+            mapset = this.createMapsetFromBeatmap(parsed, id, user);
+
+          const beatmap = this.createDifficultyFromBeatmap(osuBeatmap);
+
+          mapset.beatmaps.push(beatmap);
+
+          continue;
+        }
+        const dir = resolve(path, entry.path, "..");
+        await fs.mkdir(dir, { recursive: true });
+        await fs.writeFile(
+          resolve(path, entry.path),
+          await entry.buffer(),
+        );
+      } catch (e) {
+        console.error(e);
+        await fs.rmdir(path);
+        return null;
+      }
+    }
+
+    if (!mapset) return null;
+
+    await this.beatmapService.createMapset(mapset);
+
+    return mapset;
+  }
+
+  private createMapsetFromBeatmap(parsed: Beatmap, id: string, user: UserEntity) {
+    const mapset = new MapsetEntity();
+    mapset.id = id;
+    mapset.title = parsed.metadata.title;
+    mapset.artist = parsed.metadata.artist;
+    mapset.tags = parsed.metadata.tags;
+    mapset.creator = user;
+    mapset.osuId = (parsed.metadata.beatmapSetId > 0) ? parsed.metadata.beatmapSetId : null;
+    mapset.beatmaps = [];
+    if (parsed.events.backgroundPath) {
+      mapset.background = parsed.events.backgroundPath;
+    }
+    return mapset;
+  }
+
+  private createDifficultyFromBeatmap(imported: StandardBeatmap) {
+    const entity = new BeatmapEntity();
+    entity.name = imported.metadata.version;
+    const difficultyCalculator = this.ruleset.createDifficultyCalculator(imported);
+    entity.starRating = difficultyCalculator.calculate().starRating;
+    entity.osuId = imported.metadata.beatmapId > 0 ? imported.metadata.beatmapId : null;
+
+
+    const hitObjects: SerializedHitObject[] = [];
+    const timing: SerializedTimingPoint[] = [];
+    const velocity: SerializedVelocityPoint[] = [];
+
+    const hitSounds = new HitSoundManager({
+      layers: defaultHitSoundLayers(),
+    });
+
+
+    for (const hitObject of imported.hitObjects) {
+      const hitSound = this.getHitSound(hitObject);
+
+      if (hitObject instanceof Circle) {
+        hitObjects.push({
+          type: "circle",
+          startTime: hitObject.startTime,
+          position: { x: hitObject.startPosition.x, y: hitObject.startPosition.y },
+          newCombo: hitObject.isNewCombo,
+          comboOffset: hitObject.comboOffset,
+          hitSound,
+        });
+
+      } else if (hitObject instanceof Slider) {
+        hitObjects.push({
+          type: "slider",
+          startTime: hitObject.startTime,
+          position: { x: hitObject.startPosition.x, y: hitObject.startPosition.y },
+          newCombo: hitObject.isNewCombo,
+          path: hitObject.path.controlPoints.map(this.convertPathPoint),
+          expectedDistance: hitObject.path.expectedDistance,
+          repeats: hitObject.repeats,
+          comboOffset: hitObject.comboOffset,
+          velocity: null,
+          hitSound,
+          hitSounds: hitObject.nodeSamples.map(s => this.toHitSound(s)),
+        });
+
+      } else if (hitObject instanceof Spinner) {
+        {
+          hitObjects.push({
+            type: "spinner",
+            startTime: hitObject.startTime,
+            position: { x: hitObject.startPosition.x, y: hitObject.startPosition.y },
+            newCombo: hitObject.isNewCombo,
+            duration: hitObject.duration,
+            comboOffset: hitObject.comboOffset,
+            hitSound,
+          });
+        }
+      }
+    }
+
+    function getLayer(sample: HitSample, time: number): HitSoundLayer | undefined {
+      let type: SampleType | undefined = undefined;
+
+      switch (sample.hitSound) {
+        case "Normal":
+          type = SampleType.Normal;
+          break;
+        case "Whistle":
+          type = SampleType.Whistle;
+          break;
+        case "Clap":
+          type = SampleType.Clap;
+          break;
+        case "Finish":
+          type = SampleType.Finish;
+          break;
+      }
+
+      let sampleSet: SampleSet | undefined = undefined;
+
+      let s = sample.sampleSet;
+      if (s === "None")
+        s = imported.controlPoints.samplePointAt(time).sampleSet;
+      if (s === "None") {
+        switch (imported.general.sampleSet) {
+          case 0:
+            s = "Soft";
+            break;
+          case 1:
+            s = "Normal";
+            break;
+          case 2:
+            s = "Soft";
+            break;
+          case 3:
+            s = "Drum";
+            break;
+
+        }
+      }
+
+
+      switch (s) {
+        case "Normal":
+          sampleSet = SampleSet.Normal;
+          break;
+        case "Soft":
+          sampleSet = SampleSet.Soft;
+          break;
+        case "Drum":
+          sampleSet = SampleSet.Drum;
+          break;
+      }
+
+      if (time === 37399) {
+        console.log({ sample, type, sampleSet });
+      }
+
+      if (type === undefined || sampleSet === undefined)
+        return undefined;
+
+      return hitSounds.layers.find(it => it.sampleSet === sampleSet && it.type === type);
+    }
+
+    for (const hitObject of imported.hitObjects) {
+      if (hitObject instanceof Circle) {
+        for (const sample of hitObject.samples) {
+          const layer = getLayer(sample, hitObject.startTime);
+          if (layer)
+            layer.samples.push(new HitSoundSample({
+              time: hitObject.startTime,
+              id: hitObjectId(),
+            }));
+        }
+      } else if (hitObject instanceof Slider) {
+        for (let i = 0; i < hitObject.nodeSamples.length; i++) {
+          let time = hitObject.startTime + i * hitObject.spanDuration;
+          for (const sample of hitObject.nodeSamples[i]) {
+            const layer = getLayer(sample, time);
+            if (layer)
+              layer.samples.push(new HitSoundSample({
+                time,
+                id: hitObjectId(),
+              }));
+          }
+        }
+      }
+    }
+
+    for (const timingPoint of imported.controlPoints.timingPoints) {
+      timing.push({
+        time: timingPoint.startTime,
+        beatLength: timingPoint.beatLength,
+      });
+    }
+
+    for (const velocityPoint of imported.controlPoints.difficultyPoints) {
+      velocity.push({
+        time: velocityPoint.startTime,
+        velocity: velocityPoint.sliderVelocity,
+      });
+    }
+
+    const colors = imported.colors.comboColors.map(c => c.hex);
+
+    const bookmarks: SerializedEditorBookmark[] = imported.editor.bookmarks.map(time => ({ time, name: null }));
+
+
+    let backgroundPath: string | null = null;
+    if (imported.events.backgroundPath) {
+      backgroundPath = imported.events.backgroundPath;
+    }
+
+    const difficulty = {
+      hpDrainRate: imported.difficulty.drainRate,
+      circleSize: imported.difficulty.circleSize,
+      overallDifficulty: imported.difficulty.overallDifficulty,
+      approachRate: imported.difficulty.approachRate,
+      sliderMultiplier: imported.difficulty.sliderMultiplier,
+      sliderTickRate: imported.difficulty.sliderTickRate,
+    };
+
+    const general = {
+      stackLeniency: imported.general.stackLeniency,
+    };
+
+
+    entity.data = {
+      version: 1,
+      hitObjects,
+      controlPoints: {
+        timing,
+        velocity,
+      },
+      colors,
+      bookmarks,
+      backgroundPath,
+      difficulty,
+      general,
+      audioFilename: imported.general.audioFilename,
+      hitSounds: hitSounds.serialize(),
+    };
+
+    return entity;
+  }
+
+
+  convertPathPoint(point: PathPoint): SerializedPathPoint {
+    let type: PathType | null = null;
+    switch (point.type) {
+      case "L":
+        type = PathType.Linear;
+        break;
+      case "P":
+        type = PathType.PerfectCurve;
+        break;
+      case "C":
+        type = PathType.Catmull;
+        break;
+      case "B":
+        type = PathType.Bezier;
+        break;
+    }
+    return {
+      x: point.position.x,
+      y: point.position.y,
+      type,
+    };
+  }
+
+  private getHitSound(hitObject: StandardHitObject): HitSound {
+    return this.toHitSound(hitObject.samples);
+  }
+
+  toHitSound(samples: HitSample[]) {
+    const hitSound = defaultHitSound();
+    for (const sample of samples) {
+      if (sample.hitSound === "Normal") {
+        switch (sample.sampleSet) {
+          case "Drum":
+            hitSound.sampleSet = SampleSet.Drum;
+            break;
+          case "Normal":
+            hitSound.sampleSet = SampleSet.Normal;
+            break;
+          case "Soft":
+            hitSound.sampleSet = SampleSet.Soft;
+            break;
+        }
+      } else {
+        switch (sample.sampleSet) {
+          case "Drum":
+            hitSound.additionSet = SampleSet.Drum;
+            break;
+          case "Normal":
+            hitSound.additionSet = SampleSet.Normal;
+            break;
+          case "Soft":
+            hitSound.additionSet = SampleSet.Soft;
+            break;
+        }
+        switch (sample.hitSound) {
+          case "Whistle":
+            hitSound.additions |= Additions.Whistle;
+            break;
+          case "Finish":
+            hitSound.additions |= Additions.Finish;
+            break;
+          case "Clap":
+            hitSound.additions |= Additions.Clap;
+            break;
+        }
+      }
+    }
+    return hitSound;
+  }
+
+}

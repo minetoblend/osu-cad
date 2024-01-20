@@ -1,0 +1,7 @@
+http://osucad.com {
+	reverse_proxy http://localhost:3000
+}
+
+http://api.osucad.com {
+	reverse_proxy http://localhost:5173
+}
