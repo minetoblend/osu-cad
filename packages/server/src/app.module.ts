@@ -1,6 +1,4 @@
 import {MiddlewareConsumer, Module, NestModule, RequestMethod} from "@nestjs/common";
-import {AppController} from "./app.controller";
-import {AppService} from "./app.service";
 import {FrontendMiddleware} from "./frontend.middleware";
 import {BeatmapModule} from "./beatmap/beatmap.module";
 import {UserModule} from "./users/user.module";
@@ -14,6 +12,7 @@ import {OsuModule} from "./osu/osu.module";
 import * as path from "path";
 import {EditorSessionEntity} from "./editor/editor-session.entity";
 import {ConfigModule} from "@nestjs/config";
+import {ServeStaticModule} from "@nestjs/serve-static";
 
 @Module({
   imports: [
@@ -31,14 +30,22 @@ import {ConfigModule} from "@nestjs/config";
       entities: [UserEntity, MapsetEntity, BeatmapEntity, EditorSessionEntity],
       synchronize: true,
     }),
-    BeatmapModule, UserModule, AuthModule, EditorModule, OsuModule],
-  controllers: [AppController],
-  providers: [AppService],
+    ServeStaticModule.forRoot({
+      rootPath: path.resolve(__dirname, "../../client/dist"),
+    }),
+    BeatmapModule,
+    UserModule,
+    AuthModule,
+    EditorModule,
+    OsuModule,
+  ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): any {
     consumer.apply(FrontendMiddleware)
-      .exclude("api/(.*)", "auth/(.*)", "assets/(.*)")
+      .exclude("api/(.*)", "auth/(.*)", "assets/(.*)", "phaseVocoder.js", "hitsounds/(.*)")
       .forRoutes({
         path: "/**",
         method: RequestMethod.GET,

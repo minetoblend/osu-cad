@@ -74,9 +74,13 @@ export async function createEditorClient(
     console.warn("failed to load background", e);
   }
 
+  console.log("loading audio");
+
   await audioManager.loadAudio();
 
   clock.seek(beatmapManager.hitObjects.first?.startTime ?? 0, false);
+
+  console.log("editor client created");
 
   return { socket, connectedUsers, events, beatmapManager, clock, selection, mods, commandManager, audioManager };
 }

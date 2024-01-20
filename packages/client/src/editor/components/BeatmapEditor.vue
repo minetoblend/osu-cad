@@ -6,10 +6,14 @@ import EditorViewport from "./EditorViewport.vue";
 import {frameStats} from "@osucad/client/src/editor/drawables/DrawableSystem.ts";
 
 const { beatmapId } = defineProps<{
-  beatmapId: number;
+  beatmapId: string;
 }>();
 
+console.log('creating editor')
+
 const editor = await createEditorClient(beatmapId);
+
+console.log('created editor')
 
 provideEditor(editor);
 </script>

@@ -70,13 +70,7 @@ export class TimelineObject extends Drawable {
     this.sliderBodyBackground.alpha = 0.75;
 
     this.endCircle.cursor = `url(${sizeewcursor}) 16 16, auto`;
-
-    this.on("pointerenter", () => {
-      console.log("enter");
-    });
-
     this.eventMode = "dynamic";
-
 
     this.x = this.timeline.getPositionForTime(hitObject.startTime);
 
@@ -93,10 +87,6 @@ export class TimelineObject extends Drawable {
           containers.push(parent);
         parent = parent.parent;
       }
-      console.log(containers.map(container => [
-        container.constructor.name,
-        container.hitArea,
-      ]));
     });
   }
 
@@ -110,7 +100,6 @@ export class TimelineObject extends Drawable {
       evt.preventDefault();
       evt.stopImmediatePropagation();
 
-      console.log(evt);
       if (evt.button === 0) {
         const selection = this.editor.selection;
         if (evt.ctrlKey) {

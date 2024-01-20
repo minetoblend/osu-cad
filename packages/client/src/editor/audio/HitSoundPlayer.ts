@@ -5,7 +5,6 @@ import {AudioManager} from "./AudioManager.ts";
 import {EditorClock} from "../clock.ts";
 import {HitSample, SampleSet, SampleType} from "@osucad/common";
 import {AudioPlayback} from "./AudioPlayback.ts";
-import hitsoft from "@/assets/skin/soft-hitnormal.wav?url";
 
 export class HitSoundPlayer extends Drawable {
 
@@ -30,10 +29,6 @@ export class HitSoundPlayer extends Drawable {
 
   constructor() {
     super();
-    fetch(hitsoft).then(async response => {
-      const arrayBuffer = await response.arrayBuffer();
-      this._hitSound = await this.audioManager.context.decodeAudioData(arrayBuffer);
-    });
 
     this.init();
   }
@@ -70,11 +65,12 @@ export class HitSoundPlayer extends Drawable {
             break;
         }
 
-        const sampleUrl = `https://api.osucad.com/hitsounds/${sampleName}.wav`;
+        const sampleUrl = `/hitsounds/${sampleName}.wav`;
 
         fetch(sampleUrl).then(async response => {
           const arrayBuffer = await response.arrayBuffer();
           const audioBuffer = await this.audioManager.context.decodeAudioData(arrayBuffer);
+          console.log("loaded", sampleName);
           if (this._hitSounds[sampleSet])
             this._hitSounds[sampleSet]![sampleType] = audioBuffer;
         });
@@ -124,8 +120,6 @@ export class HitSoundPlayer extends Drawable {
       hitSamples.push(...hitObject.hitSamples);
     }
 
-    if (!this._hitSound) return;
-
     for (const sample of hitSamples) {
       if (sample.time >= startTime && sample.time <= endTime) {
         this.playSample(sample);
@@ -141,16 +135,18 @@ export class HitSoundPlayer extends Drawable {
     }
 
     const buffer = this._hitSounds[sampleSet]?.[sample.type];
+    console.log(buffer);
 
     if (!buffer) return;
 
-    const delay = ((sample.time - this.clock.currentTime) / this.clock.playbackRate) / 1000
+    const delay = ((sample.time - this.clock.currentTime) / this.clock.playbackRate) / 1000;
 
     const playback = this.audioManager.playSound({
       buffer,
       delay: Math.max(0, delay + 0.03),
       volume: 0.4,
     });
+
 
     this._scheduledHitSamples.add(playback);
     playback.onended = () => {

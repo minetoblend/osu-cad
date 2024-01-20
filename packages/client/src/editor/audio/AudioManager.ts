@@ -39,7 +39,7 @@ export class AudioManager {
     this._audioCache.set(this.beatmapManager.beatmap.audioFilename, audioBuffer);
     this.audioBuffer = audioBuffer;
 
-    await this.context.audioWorklet.addModule("https://api.osucad.com/phaseVocoder.js");
+    await this.context.audioWorklet.addModule("/phaseVocoder.js");
     this.phaseVocoderNode = new AudioWorkletNode(this.context, "phase-vocoder-processor");
     this.phaseVocoderNode.connect(this.gainNode);
 

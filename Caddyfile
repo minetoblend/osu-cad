@@ -1,7 +1,11 @@
-http://osucad.com {
-	reverse_proxy http://localhost:3000
-}
+osucad.com {
 
-http://api.osucad.com {
-	reverse_proxy http://localhost:5173
+    reverse_proxy http://localhost:3000
+
+	@frontend {
+	    not {
+	        path /api*
+            path /auth*
+	    }
+	}
 }

@@ -13,7 +13,7 @@ const loginUrl = computed(() => {
 <template>
   <nav class="oc-navbar">
     <RouterLink class="oc-navbar-logo" to="/">
-      <img src="@/assets/logo-text.svg" alt="osuad logo" height="48">
+      <img src="@/assets/logo-text.svg" alt="osucad logo" height="48">
     </RouterLink>
     <div id="navbar-content">
 
