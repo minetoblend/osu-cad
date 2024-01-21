@@ -104,6 +104,14 @@ export class SelectTool extends ComposeTool {
       case "k":
         this.shiftSelection(1);
         break;
+      case "ctrl++":
+        this.increaseSv();
+        break;
+      case "ctrl+-":
+        this.decreaseSv();
+        break;
+
+
       // case "w":
       //   this.toggleAddition(Additions.Whistle);
       //   break;
@@ -529,7 +537,7 @@ export class SelectTool extends ComposeTool {
   }
 
   private shiftSelection(offset: number) {
-    if(this.selection.size === 0) return;
+    if (this.selection.size === 0) return;
     const hitObjects = [...this.selection.selectedObjects].sort((a, b) => a.startTime - b.startTime);
     const timingPoint = this.editor.beatmapManager.controlPoints.timingPointAt(hitObjects[0].startTime);
 
@@ -567,6 +575,26 @@ export class SelectTool extends ComposeTool {
       hitSound.hitSound.additionSet = sampleSet;
     }
     this.updateHitSounds(hitSounds);
+  }
+
+  private increaseSv() {
+    for (const object of this.selectedObjects) {
+      if (object instanceof Slider) {
+        const sv = object.velocity;
+        this.submit(updateHitObject(object, { velocity: sv + 0.1 }));
+      }
+    }
+    this.editor.commandManager.commit();
+  }
+
+  private decreaseSv() {
+    for (const object of this.selectedObjects) {
+      if (object instanceof Slider) {
+        const sv = object.velocity;
+        this.submit(updateHitObject(object, { velocity: sv - 0.1 }));
+      }
+    }
+    this.editor.commandManager.commit();
   }
 }
 
