@@ -25,6 +25,7 @@ import {MenuItemOptions} from "../drawables/menu/MenuItem.ts";
 import {reverseHitObjects} from "../interaction/reverseHitObjects.ts";
 import {InsertAxisInteraction} from "./interactions/InsertAxisInteraction.ts";
 import {PathApproximator, Vector2} from "osu-classes";
+import {clamp} from "@vueuse/core";
 
 export class SelectTool extends ComposeTool {
   constructor() {
@@ -580,8 +581,8 @@ export class SelectTool extends ComposeTool {
   private increaseSv() {
     for (const object of this.selectedObjects) {
       if (object instanceof Slider) {
-        const sv = object.velocity;
-        this.submit(updateHitObject(object, { velocity: sv + 0.1 }));
+        const velocity = clamp(object.velocity + 0.1, 0.1, 10);
+        this.submit(updateHitObject(object, { velocity }));
       }
     }
     this.editor.commandManager.commit();
@@ -590,8 +591,8 @@ export class SelectTool extends ComposeTool {
   private decreaseSv() {
     for (const object of this.selectedObjects) {
       if (object instanceof Slider) {
-        const sv = object.velocity;
-        this.submit(updateHitObject(object, { velocity: sv - 0.1 }));
+        const velocity = clamp(object.velocity - 0.1, 0.1, 10);
+        this.submit(updateHitObject(object, { velocity }));
       }
     }
     this.editor.commandManager.commit();
