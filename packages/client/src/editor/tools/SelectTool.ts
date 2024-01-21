@@ -98,7 +98,12 @@ export class SelectTool extends ComposeTool {
       case "ctrl+shift+e":
         this.beginInteraction(InsertAxisInteraction);
         break;
-
+      case "j":
+        this.shiftSelection(-1);
+        break;
+      case "k":
+        this.shiftSelection(1);
+        break;
       // case "w":
       //   this.toggleAddition(Additions.Whistle);
       //   break;
@@ -521,6 +526,18 @@ export class SelectTool extends ComposeTool {
         items,
       }));
     }
+  }
+
+  private shiftSelection(offset: number) {
+    if(this.selection.size === 0) return;
+    const hitObjects = [...this.selection.selectedObjects].sort((a, b) => a.startTime - b.startTime);
+    const timingPoint = this.editor.beatmapManager.controlPoints.timingPointAt(hitObjects[0].startTime);
+
+    for (const hitObject of hitObjects) {
+      const startTime = hitObject.startTime + offset * timingPoint.beatLength / this.beatInfo.beatSnap;
+      this.submit(updateHitObject(hitObject, { startTime }));
+    }
+    this.editor.commandManager.commit();
   }
 
   private toggleAddition(addition: Additions) {
