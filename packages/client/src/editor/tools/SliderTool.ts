@@ -55,8 +55,8 @@ export class SliderTool extends ComposeTool {
         { x: 0, y: 0, type: null },
       ];
 
-      const previous = this.editor.beatmapManager.hitObjects.hitObjects.filter(it => it.startTime <= slider.startTime).pop();
-      if (previous && previous instanceof Slider && previous.velocityOverride !== undefined) {
+      const previous = this.editor.beatmapManager.hitObjects.hitObjects.filter(it => it.startTime <= slider.startTime && it instanceof Slider).pop() as Slider | undefined;
+      if (previous && previous.velocityOverride !== undefined) {
         slider.velocityOverride = previous.velocityOverride;
       }
 
