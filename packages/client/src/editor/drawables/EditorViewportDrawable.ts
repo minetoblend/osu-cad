@@ -70,6 +70,11 @@ export class EditorViewportDrawable extends Drawable {
     this.provide(EditorClock, this.editor.clock);
     this.provide(AudioManager, this.editor.audioManager);
 
+    useEventListener("keydown", evt => {
+      if(evt.ctrlKey && evt.key === "s") {
+        evt.preventDefault();
+      }
+    })
 
     this.transformContainer.position.set(0, -100);
     gsap.to(this.transformContainer.position, {
