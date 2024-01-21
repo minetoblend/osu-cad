@@ -105,10 +105,10 @@ export class SelectTool extends ComposeTool {
       case "k":
         this.shiftSelection(1);
         break;
-      case "ctrl++":
+      case "ctrl+o":
         this.increaseSv();
         break;
-      case "ctrl+-":
+      case "ctrl+p":
         this.decreaseSv();
         break;
 
