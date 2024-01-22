@@ -164,7 +164,12 @@ export class BeatmapExportService {
           const point = beatmap.controlPoints.difficultyPointAt(hitObject.startTime);
           if (hitObject.velocity != point.sliderVelocity) {
             const point = new DifficultyPoint();
-            point.sliderVelocity = hitObject.velocity;
+
+            const timingPoint = beatmap.controlPoints.timingPointAt(hitObject.startTime);
+
+            const scoringDistance = 100 * beatmap.difficulty.sliderMultiplier;
+
+            point.sliderVelocity = timingPoint.beatLength / scoringDistance;  //hitObject.velocity * beatmapData.difficulty.sliderMultiplier;
             beatmap.controlPoints.add(point, hitObject.startTime);
           }
         }
