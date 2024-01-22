@@ -30,7 +30,7 @@ export class EditorRoomManager {
           const beatmap = room.beatmap;
 
           const data: BeatmapData = {
-            version: 1,
+            version: 2,
             general: beatmap.general,
             audioFilename: beatmap.audioFilename,
             backgroundPath: beatmap.backgroundPath,

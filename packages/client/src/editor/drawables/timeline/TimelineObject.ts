@@ -191,7 +191,7 @@ export class TimelineObject extends Drawable {
           time = this.editor.beatmapManager.controlPoints!.snap(time, this.beatInfo.beatSnap);
 
           const targetDuration = time - hitObject.startTime!;
-          const velocityOverride = hitObject.velocity * hitObject.duration / targetDuration;
+          const velocityOverride = hitObject.velocity / hitObject.baseVelocity * hitObject.duration / targetDuration;
 
           this.editor.commandManager.submit(updateHitObject(hitObject, {
             velocity: clamp(velocityOverride, 0.1, 10),
@@ -319,7 +319,7 @@ export class TimelineObject extends Drawable {
 
     if (this.hitObject instanceof Slider && this.hitObject.velocityOverride !== null) {
       this.svText.visible = true;
-      this.svText.text = `sv: ${this.hitObject.velocityOverride!.toFixed(2)}x`;
+      this.svText.text = `sv: ${(this.hitObject.velocityOverride!).toFixed(2)}x`;
     } else {
       this.svText.visible = false;
     }

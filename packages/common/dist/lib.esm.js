@@ -847,6 +847,7 @@ class Slider extends HitObject {
     this._hitSounds = [];
     this._velocityOverride = null;
     this.path = new SliderPath();
+    this._baseVelocity = 1;
     this.inheritedVelocity = 1;
     if (options) {
       this.repeats = options.repeats;
@@ -890,9 +891,12 @@ class Slider extends HitObject {
     this._velocityOverride = value != null ? value : null;
     this.onUpdate.emit("velocity");
   }
+  get baseVelocity() {
+    return this._baseVelocity;
+  }
   get velocity() {
     var _a;
-    return (_a = this.velocityOverride) != null ? _a : this.inheritedVelocity;
+    return ((_a = this.velocityOverride) != null ? _a : this.inheritedVelocity) * this._baseVelocity;
   }
   get spanDuration() {
     return this.expectedDistance / this.velocity;
@@ -909,8 +913,9 @@ class Slider extends HitObject {
   applyDefaults(difficulty, controlPoints) {
     super.applyDefaults(difficulty, controlPoints);
     const timingPoint = controlPoints.timingPointAt(this.startTime);
-    const scoringDistance = 100 * difficulty.sliderMultiplier * controlPoints.getVelocityAt(this.startTime);
-    this.inheritedVelocity = scoringDistance / timingPoint.beatLength;
+    const baseScoringDistance = 100 * difficulty.sliderMultiplier;
+    this._baseVelocity = baseScoringDistance / timingPoint.beatLength;
+    this.inheritedVelocity = controlPoints.getVelocityAt(this.startTime);
   }
   serialize() {
     return {

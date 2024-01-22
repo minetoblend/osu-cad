@@ -317,7 +317,7 @@ export class BeatmapImportService {
 
 
     entity.data = {
-      version: 1,
+      version: 2,
       hitObjects,
       controlPoints: {
         timing,

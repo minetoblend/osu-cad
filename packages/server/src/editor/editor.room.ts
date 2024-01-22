@@ -1,14 +1,15 @@
-import {MapsetEntity} from "../beatmap/mapset.entity";
 import {UserEntity} from "../users/user.entity";
 import {Socket} from "socket.io";
 import {
   Beatmap,
   ClientMessages,
-  CommandContext, decodeCommands, defaultHitSoundLayers,
-  EditorCommand, encodeCommands,
-  getCommandHandler, HitSoundManager,
-  Mapset, Presence,
-  ServerMessages,
+  CommandContext,
+  decodeCommands,
+  defaultHitSoundLayers,
+  encodeCommands,
+  getCommandHandler,
+  Presence,
+  ServerMessages, Slider,
   UserSessionInfo,
   VersionedEditorCommand,
 } from "@osucad/common";
@@ -35,8 +36,8 @@ export class EditorRoom {
       audioFilename,
       general,
       hitSounds = { layers: defaultHitSoundLayers() },
+      version,
     } = entity.data;
-
 
     this.beatmap = new Beatmap({
       id: entity.uuid,
@@ -57,6 +58,16 @@ export class EditorRoom {
       general,
       hitSounds,
     });
+
+    if (version < 2) {
+      const controlPoints = this.beatmap.controlPoints;
+      for (const hitObject of this.beatmap.hitObjects.hitObjects) {
+        if (hitObject instanceof Slider && hitObject.velocityOverride !== null) {
+          hitObject.velocityOverride /= hitObject.baseVelocity;
+          console.log(hitObject.velocityOverride);
+        }
+      }
+    }
 
     this.logger = new Logger(`${EditorRoom.name}:${this.beatmap.id}`);
   }

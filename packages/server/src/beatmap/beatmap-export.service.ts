@@ -50,7 +50,7 @@ export class BeatmapExportService {
       if (room) {
         const beatmap = room.beatmap.serialize();
         beatmapData = {
-          version: 1,
+          version: 2,
           general: beatmap.general,
           audioFilename: beatmap.audioFilename,
           backgroundPath: beatmap.backgroundPath,

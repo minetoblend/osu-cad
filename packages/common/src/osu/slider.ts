@@ -71,10 +71,15 @@ export class Slider extends HitObject {
 
   path = new SliderPath();
 
+  private _baseVelocity = 1;
   private inheritedVelocity = 1;
 
+  get baseVelocity() {
+    return this._baseVelocity;
+  }
+
   get velocity() {
-    return this.velocityOverride ?? this.inheritedVelocity;
+    return (this.velocityOverride ?? this.inheritedVelocity) * this._baseVelocity;
   }
 
   get spanDuration() {
@@ -97,9 +102,9 @@ export class Slider extends HitObject {
     super.applyDefaults(difficulty, controlPoints);
     const timingPoint = controlPoints.timingPointAt(this.startTime);
 
-    const scoringDistance = 100 * difficulty.sliderMultiplier * controlPoints.getVelocityAt(this.startTime);
-
-    this.inheritedVelocity = scoringDistance / timingPoint.beatLength;
+    const baseScoringDistance = 100 * difficulty.sliderMultiplier;
+    this._baseVelocity = baseScoringDistance / timingPoint.beatLength;
+    this.inheritedVelocity = controlPoints.getVelocityAt(this.startTime);
   }
 
   serialize(): SerializedSlider {
