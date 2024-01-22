@@ -4,7 +4,6 @@ import {DestroyOptions, FederatedPointerEvent} from "pixi.js";
 import {HitObjectSnapProvider} from "./snapping/HitObjectSnapProvider.ts";
 import {Inject} from "../drawables/di";
 import {ToolContainer} from "./ToolContainer.ts";
-import {SelectTool} from "./SelectTool.ts";
 
 export class HitCircleTool extends ComposeTool {
 
@@ -49,7 +48,8 @@ export class HitCircleTool extends ComposeTool {
         position.y = 384;
       this.currentObject.position = position;
     }
-    this.currentObject.startTime = this.editor.clock.currentTimeAnimated;
+    if (!this.isCreating)
+      this.currentObject.startTime = this.beatInfo.snap(this.editor.clock.currentTimeAnimated);
   }
 
   protected onMouseDown(evt: FederatedPointerEvent) {
