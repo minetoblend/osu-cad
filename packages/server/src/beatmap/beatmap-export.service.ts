@@ -148,7 +148,7 @@ export class BeatmapExportService {
         slider.path.controlPoints = [];
         for (const point of hitObject.path) {
           slider.path.controlPoints.push({
-            position: new Vector2(point.x, point.y),
+            position: new Vector2(Math.round(point.x), Math.round(point.y)),
             type: slider.path.controlPoints.length === 0 ? type : null,
           });
           if (point.type != null && slider.path.controlPoints.length > 1) {
@@ -162,7 +162,7 @@ export class BeatmapExportService {
         slider.path.expectedDistance = hitObject.expectedDistance;
         if (hitObject.velocity !== null && hitObject.velocity !== undefined) {
           const point = beatmap.controlPoints.difficultyPointAt(hitObject.startTime);
-          if (hitObject.velocity != point.sliderVelocity) {
+          if (hitObject.velocity !== undefined) {
             const point = new DifficultyPoint();
 
             const timingPoint = beatmap.controlPoints.timingPointAt(hitObject.startTime);
