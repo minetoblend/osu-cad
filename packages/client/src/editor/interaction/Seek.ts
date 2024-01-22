@@ -60,7 +60,7 @@ export function seekInteraction(
           return;
         }
 
-        let seekAmount = -1 / beatInfo.beatSnap;
+        let seekAmount = 1 / beatInfo.beatSnap;
         if (clock.isPlaying) seekAmount = Math.sign(seekAmount);
         else if (e.shiftKey) seekAmount *= 4;
 
