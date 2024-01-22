@@ -21,7 +21,8 @@ export function seekInteraction(
     if (e.ctrlKey || e.metaKey || e.altKey) return;
 
     let beats = Math.sign(e.deltaY) / beatInfo.beatSnap;
-    if (e.shiftKey || clock.isPlaying) beats *= 4;
+    if (clock.isPlaying) beats = Math.sign(beats);
+    else if (e.shiftKey) beats *= 4;
     seekRelative(beats);
     e.stopPropagation();
   });
