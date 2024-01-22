@@ -9,7 +9,7 @@ export class FrontendMiddleware implements NestMiddleware {
 
     if (process.env.NODE_ENV === "production") {
       const index = await fs.readFile("../client/dist/index.html", "utf-8");
-      const rendered = index.replace(`<!-- USER_DATA -->`, `<script id="user-data" type="application/json">${JSON.stringify(user)}</script>`);
+      const rendered = index.replace(`<!-- USER_DATA -->`, `<script id="user-data" type="application/json">${JSON.stringify(user ?? null)}</script>`);
       res.send(rendered);
     } else {
       res.render("index-dev", {
