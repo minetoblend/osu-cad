@@ -3,7 +3,6 @@ import {BeatmapManager} from "../beatmapManager.ts";
 import {SelectionManager} from "../selection.ts";
 import {binarySearch} from "@osucad/common";
 import {BeatInfo} from "../beatInfo.ts";
-import {Container} from "pixi.js";
 import {EditorViewportDrawable} from "../drawables/EditorViewportDrawable.ts";
 
 export function seekInteraction(
@@ -29,7 +28,8 @@ export function seekInteraction(
 
   useEventListener("keydown", (e) => {
     switch (e.key) {
-      case "ArrowLeft":
+      case "ArrowLeft": {
+
         if (e.metaKey || e.altKey) return;
         if (e.ctrlKey) {
           if (selection.size !== 0) return;
@@ -40,9 +40,15 @@ export function seekInteraction(
             clock.seek(bookmarks[index].time);
           return;
         }
-        seekRelative(-1 / beatInfo.beatSnap * (e.shiftKey ? 4 : 1));
+
+        let seekAmount = -1 / beatInfo.beatSnap;
+        if (clock.isPlaying) seekAmount = Math.sign(seekAmount);
+        else if (e.shiftKey) seekAmount *= 4;
+
+        seekRelative(seekAmount);
         break;
-      case "ArrowRight":
+      }
+      case "ArrowRight": {
         if (e.metaKey || e.altKey) return;
         if (e.ctrlKey) {
           if (selection.size !== 0) return;
@@ -54,8 +60,13 @@ export function seekInteraction(
           return;
         }
 
-        seekRelative(1 / beatInfo.beatSnap * (e.shiftKey ? 4 : 1));
+        let seekAmount = -1 / beatInfo.beatSnap;
+        if (clock.isPlaying) seekAmount = Math.sign(seekAmount);
+        else if (e.shiftKey) seekAmount *= 4;
+
+        seekRelative(seekAmount);
         break;
+      }
       case " ":
         if (clock.isPlaying)
           clock.pause();
