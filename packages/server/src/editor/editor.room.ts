@@ -60,11 +60,9 @@ export class EditorRoom {
     });
 
     if (version < 2) {
-      const controlPoints = this.beatmap.controlPoints;
       for (const hitObject of this.beatmap.hitObjects.hitObjects) {
         if (hitObject instanceof Slider && hitObject.velocityOverride !== null) {
           hitObject.velocityOverride /= hitObject.baseVelocity;
-          console.log(hitObject.velocityOverride);
         }
       }
     }
