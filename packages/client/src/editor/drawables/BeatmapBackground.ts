@@ -22,7 +22,7 @@ export class BeatmapBackground extends Drawable {
   async loadBackground() {
     try {
       const beatmapManager = this.editor.beatmapManager;
-      const texture = await Assets.load(`https://osucad.com/api/mapsets/${beatmapManager.beatmap.setId}/files/${beatmapManager.beatmap.backgroundPath}`);
+      const texture = await Assets.load(`/api/mapsets/${beatmapManager.beatmap.setId}/files/${beatmapManager.beatmap.backgroundPath}`);
       const blurredSprite = new Sprite({
         texture,
         position: { x: 256, y: 192 },

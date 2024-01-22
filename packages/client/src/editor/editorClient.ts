@@ -69,7 +69,7 @@ export async function createEditorClient(
 
   try {
     if (beatmapManager.beatmap.backgroundPath)
-      await Assets.load(`https://osucad.com/api/mapsets/${beatmapManager.beatmap.setId}/files/${beatmapManager.beatmap.backgroundPath}`);
+      await Assets.load(`/api/mapsets/${beatmapManager.beatmap.setId}/files/${beatmapManager.beatmap.backgroundPath}`);
   } catch (e) {
     console.warn("failed to load background", e);
   }

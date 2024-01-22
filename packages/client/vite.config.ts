@@ -22,7 +22,7 @@ export default defineConfig({
 
   },
   server: {
-    origin: "https://api.osucad.com",
+    origin: "http://localhost:5173",
     hmr: true,
   },
   css: {

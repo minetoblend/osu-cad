@@ -67,8 +67,7 @@ const manifest: AssetsManifest = {
 export async function createEditorTextures() {
   Assets.reset();
   await Assets.init({
-    // basePath: 'https://api.osucad.com/src/assets',
-    basePath: new URL("../assets/", import.meta.url).href,
+    basePath: '/assets',
     manifest,
   });
   await Assets.loadBundle(["ui", "osu-skin", "icons"]);
