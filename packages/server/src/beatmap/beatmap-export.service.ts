@@ -167,7 +167,7 @@ export class BeatmapExportService {
 
             const timingPoint = beatmap.controlPoints.timingPointAt(hitObject.startTime);
 
-            const scoringDistance = 100 * beatmap.difficulty.sliderMultiplier * hitObject.velocity;
+            const scoringDistance = 100 * beatmap.difficulty.sliderMultiplier / hitObject.velocity;
 
             point.sliderVelocity = timingPoint.beatLength / scoringDistance;
             beatmap.controlPoints.add(point, hitObject.startTime);
