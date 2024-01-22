@@ -1,7 +1,7 @@
 import {forwardRef, Inject, Injectable} from "@nestjs/common";
 import {EditorRoomManager} from "../editor/editor.room.manager";
 import {BeatmapEntity} from "./beatmap.entity";
-import {Circle, Slider, Spinner, StandardBeatmap, StandardRuleset} from "osu-standard-stable";
+import {Circle, Slider, Spinner, StandardBeatmap} from "osu-standard-stable";
 import {
   Beatmap,
   Color4,
@@ -167,9 +167,9 @@ export class BeatmapExportService {
 
             const timingPoint = beatmap.controlPoints.timingPointAt(hitObject.startTime);
 
-            const scoringDistance = 100 * beatmap.difficulty.sliderMultiplier;
+            const scoringDistance = 100 * beatmap.difficulty.sliderMultiplier * hitObject.velocity;
 
-            point.sliderVelocity = timingPoint.beatLength / scoringDistance;  //hitObject.velocity * beatmapData.difficulty.sliderMultiplier;
+            point.sliderVelocity = timingPoint.beatLength / scoringDistance;
             beatmap.controlPoints.add(point, hitObject.startTime);
           }
         }
