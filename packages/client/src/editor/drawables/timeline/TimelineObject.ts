@@ -54,6 +54,7 @@ export class TimelineObject extends Drawable {
       contains: (x, y) =>
         this.svText.visible && x >= 0 && x <= this.svText.width && y >= 0 && y <= this.svText.height,
     },
+    resolution: 2,
   });
 
   constructor(
