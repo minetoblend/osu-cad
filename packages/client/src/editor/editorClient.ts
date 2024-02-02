@@ -38,7 +38,7 @@ export async function createEditorClient(
     socket.disconnect();
   });
 
-  socket.on("disconnect", (event) => {
+  socket.on("disconnect", () => {
     window.location.reload();
   });
 
@@ -69,7 +69,7 @@ export async function createEditorClient(
 
   try {
     if (beatmapManager.beatmap.backgroundPath)
-      await Assets.load(`/api/mapsets/${beatmapManager.beatmap.setId}/files/${beatmapManager.beatmap.backgroundPath}`);
+      await Assets.load(`/api/assets?mapset=${beatmapManager.beatmap.setId}&path=${encodeURIComponent(beatmapManager.beatmap.backgroundPath)}`);
   } catch (e) {
     console.warn("failed to load background", e);
   }
