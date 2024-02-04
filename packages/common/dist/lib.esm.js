@@ -212,6 +212,18 @@ var PathType = /* @__PURE__ */ ((PathType2) => {
   return PathType2;
 })(PathType || {});
 
+var RightClickBehavior = /* @__PURE__ */ ((RightClickBehavior2) => {
+  RightClickBehavior2["ContextMenu"] = "contextMenu";
+  RightClickBehavior2["Delete"] = "delete";
+  return RightClickBehavior2;
+})(RightClickBehavior || {});
+var RendererSelection = /* @__PURE__ */ ((RendererSelection2) => {
+  RendererSelection2["Auto"] = "auto";
+  RendererSelection2["WebGPU"] = "webgpu";
+  RendererSelection2["WebGL"] = "webgl";
+  return RendererSelection2;
+})(RendererSelection || {});
+
 const ServerMessage = variantModule({
   roomState: fields(),
   userJoined: fields(),
@@ -1784,5 +1796,5 @@ class MapsetMetadata {
   }
 }
 
-export { Additions, AnchorType, Beatmap, ClientMessage, CommandContext, ControlPointManager, EditorCommand, Envelope, EnvelopeControlPoint, HitCircle, HitObject, HitObjectManager, HitObjectType, HitSoundLayer, HitSoundManager, HitSoundSample, Mapset, MapsetMetadata, PathType, Rect, SampleSet, SampleType, ServerMessage, Slider, SliderPath, Spinner, TickType, UpdateHitObjectHandler, UserActivity, Vec2, binarySearch, decodeCommands, decodeUuid, defaultHitSound, defaultHitSoundLayers, deserializeHitObject, encodeCommands, encodeUuid, getCommandHandler, getSamples, hitObjectId, randomString, updateHitObject };
+export { Additions, AnchorType, Beatmap, ClientMessage, CommandContext, ControlPointManager, EditorCommand, Envelope, EnvelopeControlPoint, HitCircle, HitObject, HitObjectManager, HitObjectType, HitSoundLayer, HitSoundManager, HitSoundSample, Mapset, MapsetMetadata, PathType, Rect, RendererSelection, RightClickBehavior, SampleSet, SampleType, ServerMessage, Slider, SliderPath, Spinner, TickType, UpdateHitObjectHandler, UserActivity, Vec2, binarySearch, decodeCommands, decodeUuid, defaultHitSound, defaultHitSoundLayers, deserializeHitObject, encodeCommands, encodeUuid, getCommandHandler, getSamples, hitObjectId, randomString, updateHitObject };
 //# sourceMappingURL=lib.esm.js.map

@@ -13,6 +13,8 @@ import * as path from "path";
 import {EditorSessionEntity} from "./editor/editor-session.entity";
 import {ConfigModule} from "@nestjs/config";
 import {ServeStaticModule} from "@nestjs/serve-static";
+import {PreferencesModule} from './preferences/preferences.module';
+import {MongooseModule} from '@nestjs/mongoose';
 
 @Module({
   imports: [
@@ -30,6 +32,7 @@ import {ServeStaticModule} from "@nestjs/serve-static";
       entities: [UserEntity, MapsetEntity, BeatmapEntity, EditorSessionEntity],
       synchronize: true,
     }),
+    MongooseModule.forRoot('mongodb://localhost:27017/osucad'),
     ServeStaticModule.forRoot({
       rootPath: path.resolve(__dirname, "../../client/dist"),
     }),
@@ -38,6 +41,7 @@ import {ServeStaticModule} from "@nestjs/serve-static";
     AuthModule,
     EditorModule,
     OsuModule,
+    PreferencesModule,
   ],
   controllers: [],
   providers: [],
@@ -45,10 +49,10 @@ import {ServeStaticModule} from "@nestjs/serve-static";
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): any {
     consumer.apply(FrontendMiddleware)
-      .exclude("api/(.*)", "auth/(.*)", "assets/(.*)", "phaseVocoder.js", "hitsounds/(.*)")
-      .forRoutes({
-        path: "/**",
-        method: RequestMethod.GET,
-      });
+        .exclude("api/(.*)", "auth/(.*)", "assets/(.*)", "phaseVocoder.js", "hitsounds/(.*)", "src/(.*)")
+        .forRoutes({
+          path: "/**",
+          method: RequestMethod.GET,
+        });
   }
 }
