@@ -4,6 +4,8 @@ import {ApproachCircle} from "./ApproachCircle.ts";
 import {CirclePiece} from "./CirclePiece.ts";
 import {DrawableComboNumber} from "./DrawableComboNumber.ts";
 import {SelectionCircle} from "./SelectionCircle.ts";
+import {usePreferences} from "@/composables/usePreferences.ts";
+import {animate} from "@/editor/drawables/animate.ts";
 
 export class HitCircleDrawable extends HitObjectDrawable<HitCircle> {
 
@@ -19,9 +21,9 @@ export class HitCircleDrawable extends HitObjectDrawable<HitCircle> {
   onLoad() {
     super.onLoad();
     this.addChild(
-      this.approachCircle,
-      this.circlePiece,
-      this.selectionCircle,
+        this.approachCircle,
+        this.circlePiece,
+        this.selectionCircle,
     );
     this.circlePiece.addChild(this.comboNumber);
   }
@@ -43,5 +45,15 @@ export class HitCircleDrawable extends HitObjectDrawable<HitCircle> {
   onTick() {
     super.onTick();
     this.comboNumber.number = this.hitObject.indexInCombo + 1;
+
+    const time = this.editor.clock.currentTimeAnimated - this.hitObject.startTime;
+    this.comboNumber.alpha = 1
+    if (time > 0) {
+      const {preferences} = usePreferences();
+
+      if (preferences.viewport.hitAnimations) {
+        this.comboNumber.alpha = animate(time, 0, 60, 1, 0)
+      }
+    }
   }
 }

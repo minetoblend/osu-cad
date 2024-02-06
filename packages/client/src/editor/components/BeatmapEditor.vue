@@ -4,42 +4,55 @@ import EventList from "./EventList.vue";
 import UserList from "./UserList.vue";
 import EditorViewport from "./EditorViewport.vue";
 import {frameStats} from "@osucad/client/src/editor/drawables/DrawableSystem.ts";
+import PreferencesOverlay from "@/editor/components/PreferencesOverlay.vue";
+import {isMobile} from "@/util/isMobile.ts";
 
-const { beatmapId } = defineProps<{
+const {beatmapId} = defineProps<{
   beatmapId: string;
 }>();
 
-console.log('creating editor')
-
 const editor = await createEditorClient(beatmapId);
 
-console.log('created editor')
+const fpsList = reactive<number[]>([]);
+watch(() => frameStats.fps, (fps) => {
+  fpsList.push(fps);
+  if (fpsList.length > 60) {
+    fpsList.shift();
+  }
+});
+const averageFps = computed(() => {
+  return fpsList.reduce((a, b) => a + b, 0) / fpsList.length;
+});
 
 provideEditor(editor);
+
+const mobile = isMobile();
 </script>
 
 <template>
   <div class="beatmap-editor">
     <EditorViewport id="viewport"/>
-<!--    <div class="banner">-->
-<!--      Currently making changes (trying to add hitsounds), expect frequent reloads and freezes.-->
-<!--      <div>Ping me on discord if the reloads are becoming too annoying</div>-->
-<!--    </div>-->
+    <!--    <div class="banner">-->
+    <!--      Currently making changes (trying to add hitsounds), expect frequent reloads and freezes.-->
+    <!--      <div>Ping me on discord if the reloads are becoming too annoying</div>-->
+    <!--    </div>-->
     <EventList id="event-list"/>
     <UserList id="user-list"/>
-<!--    <div class="frame-stats">-->
-<!--      <div class="fps">{{ frameStats.fps }}fps</div>-->
-<!--      <div class="frame-time">{{ (frameStats.frameTime.toFixed(1)) }}ms</div>-->
-<!--    </div>-->
+    <div class="frame-stats">
+      <div class="fps">{{ (averageFps).toFixed(0) }}fps</div>
+      <div class="frame-time">{{ (frameStats.frameTime).toFixed(1) }}ms</div>
+    </div>
     <Teleport to="#navbar-content">
-      <button style="margin-right: 1rem" @click="editor.commandManager.undo()">Undo</button>
-      <button style="margin-right: 1rem" @click="editor.commandManager.redo()">Redo</button>
-      <a style="margin-right: 1rem" @click="editor.commandManager.redo()" href="https://discord.gg/JYFTaYDSC6" target="_blank">Report a bug</a>
-      <a class="button" style="margin-right: 1rem" @click="editor.commandManager.redo()" :href="`/api/mapsets/${editor.beatmapManager.beatmap.setId}/export`" target="_blank">Export as .osz</a>
-<!--      <button @click="editor.socket.emit('roll')">Roll</button>-->
+      <button style="margin-right: 1rem" :size="mobile ? 'small': undefined" @click="editor.commandManager.undo()">Undo</button>
+      <button style="margin-right: 1rem" :size="mobile ? 'small': undefined" @click="editor.commandManager.redo()">Redo</button>
+      <a style="margin-right: 1rem" @click="editor.commandManager.redo()" href="https://discord.gg/JYFTaYDSC6"
+         target="_blank">Report a bug</a>
+      <a class="button" style="margin-right: 1rem" @click="editor.commandManager.redo()"
+         :href="`/api/mapsets/${editor.beatmapManager.beatmap.setId}/export`" target="_blank">Export as .osz</a>
+      <!--      <button @click="editor.socket.emit('roll')">Roll</button>-->
     </Teleport>
-
   </div>
+  <PreferencesOverlay/>
 </template>
 
 <style lang="scss" scoped>
@@ -49,6 +62,12 @@ provideEditor(editor);
   //overflow: hidden;
   overflow: clip;
   user-select: none;
+}
+
+@media (max-width: 1024px) {
+  .beatmap-editor {
+    height: calc(100vh - 48px);
+  }
 }
 
 #viewport {
@@ -92,10 +111,10 @@ button {
 
 .frame-stats {
   position: absolute;
-  bottom: 7rem;
+  bottom: 3rem;
   right: 1rem;
   text-align: right;
-  font-size: 2.5rem;
+  font-size: 1.5rem;
 }
 
 .banner {

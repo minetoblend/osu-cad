@@ -21,6 +21,7 @@ export class HitObjectContainer extends Drawable {
     this.hitObjectContainer.enableRenderGroup();
     this.followPointContainer.enableRenderGroup();
     this.interactiveChildren = false;
+    this.eventMode = 'none'
   }
 
   onLoad() {

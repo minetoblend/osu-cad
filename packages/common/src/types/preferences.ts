@@ -10,10 +10,7 @@ export interface BehaviorPreferences {
   rightClickBehavior: RightClickBehavior;
 }
 
-export const enum RightClickBehavior {
-  ContextMenu = 'contextMenu',
-  Delete = 'delete',
-}
+export type RightClickBehavior = 'contextMenu' | 'delete';
 
 export interface AudioPreferences {
   masterVolume: number;
@@ -24,18 +21,14 @@ export interface AudioPreferences {
 }
 
 export interface GraphicsPreferences {
-  renderer: RendererSelection;
+  renderer: 'auto' | 'webgl' | 'webgpu';
   highDpiMode: boolean;
+  resolution: number;
   antialiasing: boolean;
 }
 
-export const enum RendererSelection {
-  Auto = 'auto',
-  WebGPU = 'webgpu',
-  WebGL = 'webgl',
-}
-
 export interface ViewportPreferences {
+  playfieldScale: number;
   snakingSliders: boolean;
   hitAnimations: boolean;
   backgroundDim: number;

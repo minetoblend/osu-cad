@@ -57,5 +57,11 @@ function onInput(evt: Event) {
   &--active {
     border: 2px dashed $primary;
   }
+
+  :slotted(h3) {
+    font-size: 1.25rem;
+    margin: 0;
+    line-height: unset;
+  }
 }
 </style>

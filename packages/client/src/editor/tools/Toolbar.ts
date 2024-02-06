@@ -10,6 +10,7 @@ import {HitCircleTool} from "./HitCircleTool.ts";
 import {ToolContainer} from "./ToolContainer.ts";
 import {SliderTool} from "./SliderTool.ts";
 import {SpinnerTool} from "./SpinnerTool.ts";
+import {isMobile} from "@/util/isMobile.ts";
 
 export class Toolbar extends Component {
   @Inject(VIEWPORT_SIZE)
@@ -43,6 +44,9 @@ export class Toolbar extends Component {
 
   constructor() {
     super();
+    if(isMobile())
+      this.background.visible = false;
+
     this.addChild(this.background, ...this.buttons);
   }
 

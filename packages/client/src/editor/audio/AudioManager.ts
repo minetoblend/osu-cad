@@ -1,5 +1,6 @@
 import {BeatmapManager} from "../beatmapManager.ts";
 import {AudioPlayback} from "./AudioPlayback.ts";
+import {AudioMixer} from "@/editor/audio/AudioMixer.ts";
 
 export class AudioManager {
 
@@ -9,23 +10,26 @@ export class AudioManager {
 
   private audioBuffer!: AudioBuffer;
 
-  private gainNode: GainNode = this.context.createGain();
+  private readonly mixer: AudioMixer;
 
+  /**
+   @deprecated
+   */
   get volume() {
-    return this.gainNode.gain.value;
+    return this.mixer.master.gain.value;
   }
 
+  /**
+   @deprecated
+   */
   set volume(value: number) {
-    this.gainNode.gain.value = value;
-    localStorage.setItem("volume", value.toString());
+    this.mixer.master.gain.value = value;
   }
 
   constructor(
-    private readonly beatmapManager: BeatmapManager,
+      private readonly beatmapManager: BeatmapManager,
   ) {
-    if (localStorage.getItem("volume"))
-      this.volume = parseFloat(localStorage.getItem("volume")!);
-
+    this.mixer = new AudioMixer(this.context)
   }
 
   get songDuration() {
@@ -39,17 +43,18 @@ export class AudioManager {
     this._audioCache.set(this.beatmapManager.beatmap.audioFilename, audioBuffer);
     this.audioBuffer = audioBuffer;
 
+
     await this.context.audioWorklet.addModule("/phaseVocoder.js");
     this.phaseVocoderNode = new AudioWorkletNode(this.context, "phase-vocoder-processor");
-    this.phaseVocoderNode.connect(this.gainNode);
-
-    this.gainNode.connect(this.context.destination);
+    this.phaseVocoderNode.connect(this.mixer.music);
   }
 
   phaseVocoderNode!: AudioWorkletNode;
 
+  private _isPlaying = false;
+
   get isPlaying() {
-    return !!this.source;
+    return this._isPlaying;
   }
 
   startTime = 0;
@@ -83,6 +88,8 @@ export class AudioManager {
       this.pause();
     }
 
+    this._isPlaying = true;
+
     if (this.context.state !== "running")
       await this.context.resume();
 
@@ -95,7 +102,7 @@ export class AudioManager {
     if (this._playbackRate !== 1 && this.maintainPitch)
       source.connect(this.phaseVocoderNode);
     else
-      source.connect(this.gainNode);
+      source.connect(this.mixer.music);
 
     source.start(0, time, duration);
 
@@ -123,6 +130,7 @@ export class AudioManager {
       this.startTime = 0;
       this.pauseTime = time;
     }
+    this._isPlaying = false;
     return time;
   }
 
@@ -136,7 +144,7 @@ export class AudioManager {
     }
   }
 
-  playSound(options: PlaySoundOptions) {
+  playSound(options: PlaySoundOptions, channel: 'music' | 'hitsounds' | 'ui') {
     const {
       buffer,
       offset = 0,
@@ -150,7 +158,7 @@ export class AudioManager {
     const source = this.context.createBufferSource();
     source.buffer = buffer;
 
-    let destination: AudioNode = this.gainNode;
+    let destination: AudioNode = this.mixer[channel];
 
     let nodes: AudioNode[] = [source];
 

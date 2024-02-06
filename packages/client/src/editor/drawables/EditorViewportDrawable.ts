@@ -4,7 +4,7 @@ import {ScaleToFitContainer} from "./scaleToFitContainer.ts";
 import {VIEWPORT_SIZE} from "./injectionKeys.ts";
 import {PlayfieldGrid} from "./playfieldGrid.ts";
 import {Provide} from "./di";
-import {Container} from "pixi.js";
+import {Container, Point} from "pixi.js";
 import {TimelineDrawable} from "./timeline/TimelineDrawable.ts";
 import {EditorInstance} from "../editorClient.ts";
 import {BeatmapBackground} from "./BeatmapBackground.ts";
@@ -22,6 +22,7 @@ import {HitSoundPlayer} from "../audio/HitSoundPlayer.ts";
 import {PopoverContainer} from "./menu/PopoverContainer.ts";
 import {seekInteraction} from "../interaction/Seek.ts";
 import {AxisContainer} from "../AxisContainer.ts";
+import {usePreferences} from "@/composables/usePreferences.ts";
 
 export class EditorViewportDrawable extends Drawable {
 
@@ -43,8 +44,8 @@ export class EditorViewportDrawable extends Drawable {
   private readonly axisContainer = new AxisContainer();
 
   constructor(
-    canvasSize: ISize,
-    editor: EditorInstance,
+      canvasSize: ISize,
+      editor: EditorInstance,
   ) {
     super();
     this.editor = editor;
@@ -53,11 +54,14 @@ export class EditorViewportDrawable extends Drawable {
     const t = window.location.search.includes("hitsounds");
 
     this.playfieldContainer = new ScaleToFitContainer(reactiveComputed(() => {
-      const size = { ...this.canvasSize };
+      const size = {...this.canvasSize};
       if (t)
         size.height -= 400;
+
+
+
       return size;
-    }), { width: 512, height: 384 + 40 }, 40, false);
+    }), {width: 512, height: 384 + 40}, 40, false);
   }
 
   @Provide(HitObjectContainer)
@@ -70,8 +74,10 @@ export class EditorViewportDrawable extends Drawable {
     this.provide(EditorClock, this.editor.clock);
     this.provide(AudioManager, this.editor.audioManager);
 
+    const {preferences} = usePreferences()
+
     useEventListener("keydown", evt => {
-      if(evt.ctrlKey && evt.key === "s") {
+      if (evt.ctrlKey && evt.key === "s") {
         evt.preventDefault();
       }
     })
@@ -103,7 +109,7 @@ export class EditorViewportDrawable extends Drawable {
     this.addChild(this.popoverContainer);
 
     this.popoverContainer.content.addChild(
-      this.beatInfo, this.editor.clock, new HitSoundPlayer(), this.transformContainer, toolbar, timelineContainer, new VolumeControlOverlay(),
+        this.beatInfo, this.editor.clock, new HitSoundPlayer(), this.transformContainer, toolbar, timelineContainer, new VolumeControlOverlay(),
     );
 
     seekInteraction(this.editor.clock, this.editor.beatmapManager, this.editor.selection, this.beatInfo, this);
@@ -114,11 +120,24 @@ export class EditorViewportDrawable extends Drawable {
         new PlayfieldGrid(),
         this.hitObjectContainer,
         new CursorContainer(),
-
       ],
+      position: new Point(256, 192),
+      pivot: new Point(256, 192),
     });
 
-    this.playfieldContainer.content.addChild(new BeatmapBackground(), playfield, this.toolContainer, this.axisContainer);
+
+    const scaleContainer = new Container({
+      position: new Point(256, 192),
+      pivot: new Point(256, 192),
+    })
+
+    watchEffect(() => {
+      scaleContainer.scale.set(preferences.viewport.playfieldScale / 100);
+    })
+
+    scaleContainer.addChild(new BeatmapBackground(), playfield, this.toolContainer, this.axisContainer)
+
+    this.playfieldContainer.content.addChild(scaleContainer)
     this.transformContainer.addChild(this.playfieldContainer);
     gsap.to(timelineContainer, {
       y: 0,

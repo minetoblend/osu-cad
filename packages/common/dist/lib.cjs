@@ -234,18 +234,6 @@ var PathType = /* @__PURE__ */ ((PathType2) => {
   return PathType2;
 })(PathType || {});
 
-var RightClickBehavior = /* @__PURE__ */ ((RightClickBehavior2) => {
-  RightClickBehavior2["ContextMenu"] = "contextMenu";
-  RightClickBehavior2["Delete"] = "delete";
-  return RightClickBehavior2;
-})(RightClickBehavior || {});
-var RendererSelection = /* @__PURE__ */ ((RendererSelection2) => {
-  RendererSelection2["Auto"] = "auto";
-  RendererSelection2["WebGPU"] = "webgpu";
-  RendererSelection2["WebGL"] = "webgl";
-  return RendererSelection2;
-})(RendererSelection || {});
-
 const ServerMessage = variant.variantModule({
   roomState: variant.fields(),
   userJoined: variant.fields(),
@@ -1838,8 +1826,6 @@ exports.Mapset = Mapset;
 exports.MapsetMetadata = MapsetMetadata;
 exports.PathType = PathType;
 exports.Rect = Rect;
-exports.RendererSelection = RendererSelection;
-exports.RightClickBehavior = RightClickBehavior;
 exports.SampleSet = SampleSet;
 exports.SampleType = SampleType;
 exports.ServerMessage = ServerMessage;

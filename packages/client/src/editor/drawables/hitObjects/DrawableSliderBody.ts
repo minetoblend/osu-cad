@@ -8,6 +8,7 @@ import {EditorClock} from "../../clock.ts";
 import {SliderShader} from "./sliderShader.ts";
 import {SliderFilter} from "./SliderFilter.ts";
 import {EditorInstance} from "../../editorClient.ts";
+import {usePreferences} from "@/composables/usePreferences.ts";
 
 export class DrawableSliderBody extends Drawable {
 
@@ -19,7 +20,7 @@ export class DrawableSliderBody extends Drawable {
   private readonly filter = new SliderFilter();
 
   constructor(
-    private readonly hitObject: Slider,
+      private readonly hitObject: Slider,
   ) {
     super();
 
@@ -27,7 +28,7 @@ export class DrawableSliderBody extends Drawable {
     const path = hitObject.path;
 
     this.mesh = new Mesh({
-      geometry: this.geometry = new SliderPathGeometry({ path: path.calculatedRange, radius: this.radius }),
+      geometry: this.geometry = new SliderPathGeometry({path: path.calculatedRange, radius: this.radius}),
       shader: this.shader,
     });
 
@@ -35,8 +36,6 @@ export class DrawableSliderBody extends Drawable {
     this.addChild(this.mesh);
 
     this.mesh.filters = [this.filter];
-
-
   }
 
   get radius() {
@@ -53,7 +52,13 @@ export class DrawableSliderBody extends Drawable {
     return this.hitObject.path;
   }
 
+  snakingSlidersEnabled = true;
+
   onLoad() {
+    const {preferences} = usePreferences();
+    watchEffect(() => {
+      this.snakingSlidersEnabled = preferences.viewport.snakingSliders;
+    })
   }
 
   setup() {
@@ -66,37 +71,41 @@ export class DrawableSliderBody extends Drawable {
 
   onTick() {
     if (
-      (this.editor.clock.currentTimeAnimated < this.hitObject.startTime - this.hitObject.timePreempt) ||
-      (this.editor.clock.currentTimeAnimated > this.hitObject.endTime + 700)
+        (this.editor.clock.currentTimeAnimated < this.hitObject.startTime - this.hitObject.timePreempt) ||
+        (this.editor.clock.currentTimeAnimated > this.hitObject.endTime + 700)
     ) {
       this.alpha = 0;
       return;
     }
     const snakeInDuration = Math.min(
-      this.hitObject.timeFadeIn * 0.5,
-      this.hitObject.spanDuration,
-      200,
+        this.hitObject.timeFadeIn * 0.5,
+        this.hitObject.spanDuration,
+        200,
     );
 
 
-    const snakeInProgress = animate(
-      this.clock.currentTimeAnimated - this.hitObject.startTime,
-      -this.hitObject.timePreempt,
-      -this.hitObject.timePreempt + snakeInDuration,
-      0,
-      this.hitObject.path.expectedDistance,
+    let snakeInDistance = animate(
+        this.clock.currentTimeAnimated - this.hitObject.startTime,
+        -this.hitObject.timePreempt,
+        -this.hitObject.timePreempt + snakeInDuration,
+        0,
+        this.hitObject.path.expectedDistance,
     );
 
-    if (this.snakeInProgress != snakeInProgress || this.pathVersion !== this.hitObject.path.version) {
-      const path = this.hitObject.path.getRange(0, snakeInProgress);
+    if (!this.snakingSlidersEnabled) {
+      snakeInDistance = this.hitObject.path.expectedDistance;
+    }
+
+    if (this.snakeInProgress != snakeInDistance || this.pathVersion !== this.hitObject.path.version) {
+      const path = this.hitObject.path.getRange(0, snakeInDistance);
 
       this.geometry.update(
-        path,
-        this.radius,
+          path,
+          this.radius,
       );
     }
 
-    this.snakeInProgress = snakeInProgress;
+    this.snakeInProgress = snakeInDistance;
     this.pathVersion = this.hitObject.path.version;
   }
 

@@ -26,22 +26,18 @@ export class DrawableComboNumber extends Drawable {
     return Assets.get(`default-${digit}`);
   }
 
-  static digitSpritePool = Array.from({ length: 10 }, (_, i) => new ObjectPool<Sprite & { digit: number }>(
-    () => Object.assign(new Sprite({
-      texture: Assets.get(`default-${i}`),
-      anchor: new Point(0, 0.5),
-    }), { digit: i }), 20, sprite => sprite.destroy()),
+  static digitSpritePool = Array.from({length: 10}, (_, i) => new ObjectPool<Sprite & { digit: number }>(
+      () => Object.assign(new Sprite({
+        texture: Assets.get(`default-${i}`),
+        anchor: new Point(0, 0.5),
+      }), {digit: i}), 20, sprite => sprite.destroy()),
   );
 
   _update() {
     this.removeChildren().forEach(sprite => (
-      DrawableComboNumber.digitSpritePool[(sprite as any).digit].release((sprite as Sprite & { digit: number }))
+        DrawableComboNumber.digitSpritePool[(sprite as any).digit].release((sprite as Sprite & { digit: number }))
     ));
     const digits = this.number.toString().split("").map((digit) => parseInt(digit));
-    // const sprites = digits.map((digit) => new Sprite({
-    //   texture: this._getTextureForDigit(digit),
-    //   anchor: new Point(0, 0.5),
-    // }));
     const sprites = digits.map(digit => DrawableComboNumber.digitSpritePool[digit].get());
     const totalWidth = sprites.map(sprite => sprite.width).reduce((a, b) => a + b, 0);
     this.addChild(...sprites);

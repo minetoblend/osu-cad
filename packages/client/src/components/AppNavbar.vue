@@ -3,11 +3,10 @@
 import UserAvatar from "./UserAvatar.vue";
 import {useCurrentUser} from "../composables/useCurrentUser.ts";
 
-const { user } = useCurrentUser();
+const {user} = useCurrentUser();
 const loginUrl = computed(() => {
   return `/auth/login?redirect=${encodeURIComponent(window.location.pathname)}`;
 });
-
 </script>
 
 <template>
@@ -48,6 +47,12 @@ const loginUrl = computed(() => {
   display: flex;
   align-items: center;
   gap: 0.5em;
+}
+
+@media (max-width: 1024px) {
+  .oc-navbar {
+    height: 48px;
+  }
 }
 
 </style>

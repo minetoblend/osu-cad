@@ -94,6 +94,9 @@ export class HitSoundTimeline extends Component {
   }
 
   onTick() {
+    this.updateChildDrawables = this.visible;
+    if(!this.visible) return;
+
     const controlPoints = this.editor.beatmapManager.controlPoints;
 
     if (!controlPoints) return;

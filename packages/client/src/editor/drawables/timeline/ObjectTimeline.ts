@@ -1,11 +1,12 @@
 import {Component} from "../Component.ts";
-import {Assets, Container, Point, Sprite, StencilMask, Texture} from "pixi.js";
+import {AlphaFilter, Assets, Container, Point, Sprite, StencilMask, Texture} from "pixi.js";
 import {Inject} from "../di";
 import {EditorInstance} from "../../editorClient.ts";
 import {HitObject, TickType} from "@osucad/common";
 import {TimelineObject} from "./TimelineObject.ts";
 import {TimelineZoom} from "../../TimelineZoom.ts";
 import {BeatInfo} from "../../beatInfo.ts";
+import {usePreferences} from "@/composables/usePreferences.ts";
 
 export interface TimelineVisibility {
   currentTime: number;
@@ -63,9 +64,15 @@ export class ObjectTimeline extends Component {
     );
     this.currentTimeMarker.eventMode = "none";
     this.maskSprite.eventMode = "none";
+    this.tickContainer.eventMode = "none";
+
+
+    const {preferences} = usePreferences()
 
     this.addEffect(new StencilMask({ mask: this.maskSprite }));
-    // this.hitObjectContainer.filters = [new AlphaFilter({ alpha: 0.85 })];
+    this.hitObjectContainer.filters = [
+      new AlphaFilter({ alpha: 0.85, resolution: preferences.graphics.highDpiMode ? window.devicePixelRatio : 1 })
+    ];
     this.setupSelectBox();
     this.setupZoom();
     // this.hitObjectContainer.enableRenderGroup();
@@ -166,7 +173,7 @@ export class ObjectTimeline extends Component {
   }
 
   onTick() {
-    performance.mark("computeTicks-started");
+    //performance.mark("computeTicks-started");
 
     const controlPoints = this.editor.beatmapManager.controlPoints;
 
@@ -177,9 +184,9 @@ export class ObjectTimeline extends Component {
 
     const ticks = controlPoints.getTicks(this.startTime, this.endTime, this.beatInfo.beatSnap);
 
-    performance.mark("computeTicks-finished");
+    //performance.mark("computeTicks-finished");
 
-    performance.measure("computeTicks-duration", "computeTicks-started", "computeTicks-finished");
+    //performance.measure("computeTicks-duration", "computeTicks-started", "computeTicks-finished");
 
     const objectY = this.size.y * 0.5;
 
@@ -198,8 +205,8 @@ export class ObjectTimeline extends Component {
 
     this.tickPool.splice(30).forEach(tick => tick.destroy());
 
-    performance.mark("updateTicks-finished");
-    performance.measure("updateTicks-duration", "computeTicks-finished", "updateTicks-finished");
+    //performance.mark("updateTicks-finished");
+    //performance.measure("updateTicks-duration", "computeTicks-finished", "updateTicks-finished");
 
     const hitObjectManager = this.editor.beatmapManager.hitObjects;
     if (!hitObjectManager) return;

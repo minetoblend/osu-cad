@@ -1,17 +1,20 @@
 import {model, Schema} from "mongoose";
 import {
-  AudioPreferences, BeatmapPreferences,
+  AudioPreferences,
+  BeatmapPreferences,
   BehaviorPreferences,
-  GraphicsPreferences, GridPreferences,
-  Preferences, RendererSelection,
-  RightClickBehavior, ViewportPreferences
+  GraphicsPreferences,
+  GridPreferences,
+  Preferences,
+  ViewportPreferences
 } from "@osucad/common";
 
 
 export const BehaviorPreferencesSchema = new Schema<BehaviorPreferences>({
   rightClickBehavior: {
     type: String,
-    enum: [RightClickBehavior.ContextMenu, RightClickBehavior.Delete],
+    enum: ['contextMenu', 'delete'],
+    default: 'contextMenu',
   }
 }, {_id: false})
 
@@ -51,16 +54,22 @@ export const AudioPreferencesSchema = new Schema<AudioPreferences>({
 export const GraphicsPreferencesSchema = new Schema<GraphicsPreferences>({
   renderer: {
     type: String,
-    enum: [RendererSelection.Auto, RendererSelection.WebGL, RendererSelection.WebGPU],
-    default: RendererSelection.Auto,
+    enum: ['auto', 'webgl', 'webgpu'],
+    default: 'webgl',
   },
   highDpiMode: {
     type: Boolean,
     default: true,
   },
+  resolution: {
+    type: Number,
+    min: 0.0,
+    max: 1.0,
+    default: 1.0,
+  },
   antialiasing: {
     type: Boolean,
-    default: true,
+    default: false,
   }
 }, {_id: false})
 
@@ -71,7 +80,7 @@ export const GridPreferencesSchema = new Schema<GridPreferences>({
   },
   color: {
     type: String,
-    default: '#000000',
+    default: '#FFFFFF',
   },
   opacity: {
     type: Number,
@@ -82,6 +91,12 @@ export const GridPreferencesSchema = new Schema<GridPreferences>({
 }, {_id: false})
 
 export const ViewportPreferencesSchema = new Schema<ViewportPreferences>({
+  playfieldScale: {
+    type: Number,
+    min: 0,
+    max: 100,
+    default: 100,
+  },
   snakingSliders: {
     type: Boolean,
     default: true,

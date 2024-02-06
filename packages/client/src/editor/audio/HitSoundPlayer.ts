@@ -121,7 +121,7 @@ export class HitSoundPlayer extends Drawable {
     }
 
     for (const sample of hitSamples) {
-      if (sample.time >= startTime && sample.time <= endTime) {
+      if (sample.time > startTime && sample.time <= endTime) {
         this.playSample(sample);
       }
     }
@@ -135,7 +135,6 @@ export class HitSoundPlayer extends Drawable {
     }
 
     const buffer = this._hitSounds[sampleSet]?.[sample.type];
-    console.log(buffer);
 
     if (!buffer) return;
 
@@ -145,7 +144,7 @@ export class HitSoundPlayer extends Drawable {
       buffer,
       delay: Math.max(0, delay + 0.03),
       volume: 0.4,
-    });
+    }, 'hitsounds');
 
 
     this._scheduledHitSamples.add(playback);

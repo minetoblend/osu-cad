@@ -1,5 +1,5 @@
 import {io, Socket} from "socket.io-client";
-import {BeatmapId, ClientMessages, ServerMessages} from "@osucad/common";
+import {BeatmapId, ClientMessages, Preferences, ServerMessages} from "@osucad/common";
 import {createConnectedUsers, EditorUsersList} from "./connectedUsers.ts";
 import {createEventList, EditorEventsList} from "./events.ts";
 import {InjectionKey} from "vue";
@@ -12,6 +12,8 @@ import {Mod} from "./mods/Mod.ts";
 import {CommandManager} from "./commandHandler.ts";
 import {Assets} from "pixi.js";
 import "./operators/MoveHitObjectsOperator.ts";
+import {usePreferences} from "@/composables/usePreferences.ts";
+import {Connector} from "@/editor/connector/connector.ts";
 
 export type EditorSocket = Socket<ServerMessages, ClientMessages>;
 
@@ -25,12 +27,13 @@ export interface EditorInstance {
   mods: Mod[];
   commandManager: CommandManager;
   audioManager: AudioManager;
+  preferences: Preferences;
 }
 
 export const EditorInstance: InjectionKey<EditorInstance> = Symbol("editor");
 
 export async function createEditorClient(
-  beatmapId: BeatmapId,
+    beatmapId: BeatmapId,
 ): Promise<EditorInstance> {
   const socket = createClient(beatmapId);
 
@@ -49,19 +52,12 @@ export async function createEditorClient(
   const clock = new EditorClock(audioManager);
   const mods = [] as Mod[];
   const commandManager = new CommandManager(beatmapManager, socket);
-  // mods.push(new DepthMod(clock));
-
-
-  // watchEffect(() => {
-  //   const metadata = beatmapManager.mapset?.meatadata;
-  //   const diffName = beatmapManager.beatmap?.name;
-  //   if (metadata && diffName)
-  //     document.title = `${metadata.artist} - ${metadata.title} [${diffName}] - osucad`;
-  // });
+  const {preferences, loaded: preferencesLoaded} = usePreferences();
 
   await Promise.all([
     receiveRoomState(socket),
     createEditorTextures(),
+    until(preferencesLoaded).toBeTruthy(),
   ]);
 
   const selection = new SelectionManager(beatmapManager);
@@ -69,7 +65,7 @@ export async function createEditorClient(
 
   try {
     if (beatmapManager.beatmap.backgroundPath)
-      await Assets.load(`/api/assets?mapset=${beatmapManager.beatmap.setId}&path=${encodeURIComponent(beatmapManager.beatmap.backgroundPath)}`);
+      await Assets.load(`/api/mapsets/${beatmapManager.beatmap.setId}/files/${beatmapManager.beatmap.backgroundPath}`);
   } catch (e) {
     console.warn("failed to load background", e);
   }
@@ -82,7 +78,18 @@ export async function createEditorClient(
 
   console.log("editor client created");
 
-  return { socket, connectedUsers, events, beatmapManager, clock, selection, mods, commandManager, audioManager };
+  return {
+    socket,
+    connectedUsers,
+    events,
+    beatmapManager,
+    clock,
+    selection,
+    mods,
+    commandManager,
+    audioManager,
+    preferences
+  };
 }
 
 function createClient(beatmapId: BeatmapId): EditorSocket {
@@ -90,7 +97,7 @@ function createClient(beatmapId: BeatmapId): EditorSocket {
 
   return io(`${host}/editor`, {
     withCredentials: true,
-    query: { id: beatmapId },
+    query: {id: beatmapId},
   });
 }
 

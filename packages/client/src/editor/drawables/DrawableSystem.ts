@@ -49,10 +49,10 @@ export class DrawableSystem implements System {
     }
   }
 
-  // public postrender() {
-  //   const duration = performance.now() - this._renderStart;
-  //   frameStats.frameTime = duration;
-  // }
+  public postrender() {
+    const duration = performance.now() - this._renderStart;
+    frameStats.frameTime = duration;
+  }
 
   private loadChildren(view: Container, parent?: Drawable) {
     if (isDrawable(view)) {

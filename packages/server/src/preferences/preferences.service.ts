@@ -30,6 +30,7 @@ export class PreferencesService {
   }
 
   async updateUserPreferences(userId: number, preferences: Preferences) {
+    await this.model.validate(preferences)
     return this.model.findOneAndUpdate(
         {
           userId,

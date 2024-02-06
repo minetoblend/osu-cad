@@ -4,12 +4,14 @@ import "../drawables/DrawableSystem.ts";
 import {EditorViewportDrawable} from "../drawables/EditorViewportDrawable.ts";
 import {useEditor} from "../editorClient.ts";
 import gsap from "gsap";
+import {usePreferences} from "@/composables/usePreferences.ts";
+import {isMobile} from "@/util/isMobile.ts";
 
 const app = new Application();
 
 const viewportContainer = ref<HTMLElement>();
 
-const { width, height } = useElementSize(viewportContainer);
+const {width, height} = useElementSize(viewportContainer);
 
 const editor = useEditor();
 
@@ -18,23 +20,26 @@ const viewportSize = reactive({
   height: 0,
 });
 
+const {preferences} = usePreferences();
+
 onMounted(async () => {
 
   const resolution = 1;
   await app.init({
     resizeTo: viewportContainer.value!,
-    preference: "webgl",
+    preference: preferences.graphics.renderer,
     sharedTicker: true,
-    resolution: window.devicePixelRatio,
-    autoDensity: true,
+    resolution: preferences.graphics.highDpiMode ? window.devicePixelRatio : 1.0,
+    autoDensity: preferences.graphics.highDpiMode,
     preferWebGLVersion: 2,
+    useBackBuffer: true,
     webgpu: {
-      antialias: true,
+      antialias: preferences.graphics.antialiasing,
       powerPreference: "high-performance",
       clearBeforeRender: true,
     },
     webgl: {
-      antialias: true,
+      antialias: preferences.graphics.antialiasing,
       powerPreference: "high-performance",
       clearBeforeRender: true,
       preferWebGLVersion: 2,
@@ -66,14 +71,24 @@ onMounted(async () => {
       ease: "power4.out",
     });
   });
-
-
-  console.log(app);
 });
+
+watchEffect(() => {
+  const resolution = preferences.graphics.resolution;
+  if (app.renderer) {
+    app.renderer.resize(
+        viewportSize.width,
+        viewportSize.height,
+        0.25 + (devicePixelRatio - 0.25) * resolution
+    );
+  }
+})
 
 onBeforeUnmount(() => {
   app.destroy();
 });
+
+
 
 </script>
 <template>

@@ -9,6 +9,7 @@ import {ReverseArrowDrawable} from "./ReverseArrowDrawable.ts";
 import {DrawableComboNumber} from "./DrawableComboNumber.ts";
 import {DrawableSliderBody} from "./DrawableSliderBody.ts";
 import {SelectionCircle} from "./SelectionCircle.ts";
+import {usePreferences} from "@/composables/usePreferences.ts";
 
 export class SliderDrawable extends HitObjectDrawable<Slider> {
 
@@ -102,6 +103,17 @@ export class SliderDrawable extends HitObjectDrawable<Slider> {
     const position = this.hitObject.positionAt(this.editor.clock.currentTimeAnimated);
     this.sliderBall.position.copyFrom(Vec2.scale(position, 1 / this.hitObject.scale));
     this.comboNumber.number = this.hitObject.indexInCombo + 1;
+
+    if(time > 0) {
+      const {preferences} = usePreferences();
+      if(preferences.viewport.hitAnimations) {
+        this.comboNumber.visible = false
+      } else {
+        this.comboNumber.visible = true
+      }
+    } else {
+      this.comboNumber.visible = true
+    }
 
     this.sliderBody.setup();
   }

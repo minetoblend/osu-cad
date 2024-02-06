@@ -1,19 +1,30 @@
 import {defineConfig} from "vite";
-import Vue from "@vitejs/plugin-vue";
+import vue from "@vitejs/plugin-vue";
 import {resolve} from "path";
-import VueRouter from "unplugin-vue-router/vite";
-import AutoImport from "unplugin-auto-import/vite";
+import vueRouter from "unplugin-vue-router/vite";
+import autoImport from "unplugin-auto-import/vite";
+import {quasar, transformAssetUrls} from '@quasar/vite-plugin'
+import components from "unplugin-vue-components/vite";
+import {QuasarResolver} from "unplugin-vue-components/resolvers";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    AutoImport({
+    autoImport({
       imports: ["vue", "@vueuse/core"],
     }),
-    VueRouter({}),
-    Vue({
-      isProduction: true,
+    vueRouter({}),
+    components({
+      resolvers: [QuasarResolver()],
     }),
+    vue({
+      isProduction: true,
+      template: {transformAssetUrls}
+    }),
+    quasar({
+      sassVariables: 'src/quasar-variables.scss',
+      devTreeshaking: true
+    })
   ],
   resolve: {
     alias: {

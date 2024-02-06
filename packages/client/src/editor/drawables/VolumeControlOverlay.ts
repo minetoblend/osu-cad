@@ -106,6 +106,7 @@ export class VolumeControlOverlay extends Drawable {
   }
 
   onTick() {
+    this.visible = this.alphaFilter.alpha > 0.01;
     const delta = Ticker.shared.deltaTime;
 
     if (Math.abs(this._animatedVolume - this.audioManager.volume) > 0.01) {
@@ -140,7 +141,6 @@ export class VolumeControlOverlay extends Drawable {
 
     gsap.to(this.alphaFilter, { alpha: 0, duration: 0.125 });
     gsap.to(this.scale, { x: 0.9, y: 0.9, duration: 0.125, ease: "none" });
-
   }
 
 }
