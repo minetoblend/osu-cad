@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "@capacitor/android": "^5.6.0",
-    "@capacitor/core": "^5.6.0",
+    "@capacitor/app": "^5.0.7",
+    "@capacitor/core": "^5.7.0",
     "@fontsource/nunito-sans": "^5.0.8",
     "@fontsource/saira": "^5.0.20",
     "@quasar/extras": "^1.16.9",
@@ -30,7 +31,7 @@
     "zingtouch": "^1.0.6"
   },
   "devDependencies": {
-    "@capacitor/cli": "^5.6.0",
+    "@capacitor/cli": "^5.7.0",
     "@quasar/vite-plugin": "^1.6.0",
     "@types/node": "^20.10.5",
     "@vitejs/plugin-vue": "^4.2.3",

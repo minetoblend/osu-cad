@@ -1,13 +1,12 @@
 import {Drawable} from "../drawables/Drawable.ts";
 import {Inject} from "../drawables/di";
-import {EditorInstance} from "../editorClient.ts";
 import {EditorCommand, HitObject, Vec2} from "@osucad/common";
 import {Container, FederatedPointerEvent} from "pixi.js";
 import {HitObjectContainer} from "../drawables/hitObjects/HitObjectContainer.ts";
 import {BeatInfo} from "../beatInfo.ts";
 import {ToolInteraction} from "./interactions/ToolInteraction.ts";
 import {SelectTool} from "./SelectTool.ts";
-import {ToolContainer} from "./ToolContainer.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 export class ComposeTool extends Drawable {
 
@@ -15,13 +14,13 @@ export class ComposeTool extends Drawable {
 
   constructor() {
     super();
-    this.hitArea = { contains: () => true };
+    this.hitArea = {contains: () => true};
     this.eventMode = "static";
     this.addChild(this.interactionContainer);
   }
 
-  @Inject(EditorInstance)
-  editor!: EditorInstance;
+  @Inject(EditorContext)
+  editor!: EditorContext;
 
   @Inject(BeatInfo)
   beatInfo!: BeatInfo;
@@ -185,8 +184,8 @@ export class ComposeTool extends Drawable {
 
   onTick() {
     this._visibleHitObjects = this.editor.beatmapManager.hitObjects.hitObjects.filter(it =>
-      (this.currentTime >= it.startTime - it.timePreempt && this.currentTime <= it.endTime + 700)
-      || it.isSelected,
+        (this.currentTime >= it.startTime - it.timePreempt && this.currentTime <= it.endTime + 700)
+        || it.isSelected,
     );
     if (this._mousePos != null) {
       this.hoveredHitObjects = this.visibleHitObjects.filter(it => it.contains(this.mousePos)).reverse();
@@ -229,7 +228,7 @@ export class ComposeTool extends Drawable {
       if (this.interaction)
         this.cancelInteraction();
       else if (!(this instanceof SelectTool))
-        (this.parent as ToolContainer).tool = new SelectTool();
+        this.editor.tools.activeTool = new SelectTool();
 
     } else if (evt.key === "Enter") {
       this.completeInteraction();
@@ -251,15 +250,17 @@ export class ComposeTool extends Drawable {
   }
 
   beginInteraction<Args extends any[]>(
-    interactionType: new (tool: this, ...args: Args) => ToolInteraction,
-    ...args: Args
-  ) {
+      interactionType: new (tool: this, ...args: Args) => ToolInteraction,
+      ...args: Args
+  ): ToolInteraction {
     const interaction = new interactionType(this, ...args);
     console.log("begin interaction", interaction);
     this.interaction?.onDestroy?.();
     this.interactionContainer.removeChildren();
     this.interaction = interaction;
     this.interactionContainer.addChild(interaction);
+
+    return interaction
   }
 
   completeInteraction() {

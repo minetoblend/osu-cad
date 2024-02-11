@@ -18,6 +18,10 @@ body {
   margin: 0;
   background-color: $surface-0 !important;
   font-family: $font-family !important;
+
+  &.oc-mobile {
+
+  }
 }
 
 a {

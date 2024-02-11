@@ -1,6 +1,5 @@
 import {Drawable} from "../Drawable.ts";
 import {Inject} from "../di";
-import {EditorInstance} from "../../editorClient.ts";
 import {HitCircle, HitObject, HitObjectType, Slider, Spinner} from "@osucad/common";
 import {HitObjectDrawable} from "./HitObjectDrawable.ts";
 import {HitCircleDrawable} from "./HitCircleDrawable.ts";
@@ -9,11 +8,12 @@ import {Container} from "pixi.js";
 import {FollowPointsDrawable} from "./FollowPointsDrawable.ts";
 import {SelectionOverlay} from "./SelectionOverlay.ts";
 import {SpinnerDrawable} from "./SpinnerDrawable.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 export class HitObjectContainer extends Drawable {
 
-  @Inject(EditorInstance)
-  private readonly editor!: EditorInstance;
+  @Inject(EditorContext)
+  private readonly editor!: EditorContext;
 
   constructor() {
     super();
@@ -31,8 +31,7 @@ export class HitObjectContainer extends Drawable {
     };
     eventContainer.eventMode = "static";
 
-    eventContainer.onpointerdown = (evt) => {
-      console.log("clearing selection");
+    eventContainer.onpointerdown = () => {
       this.editor.selection.clear();
     };
   }
@@ -93,7 +92,7 @@ export class HitObjectContainer extends Drawable {
         this.hitObjectContainer.addChild(drawable);
       }
       drawable.zIndex = hitObjects.length - i;
-      
+
       if (i < hitObjects.length - 1) {
 
         let followPointDrawable = this.followPointDrawableMap.get(hitObject.id);

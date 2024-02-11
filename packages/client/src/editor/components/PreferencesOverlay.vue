@@ -1,5 +1,7 @@
 <script setup lang="ts">
-const visible = ref(false)
+import {usePreferencesVisible} from "@/composables/usePreferencesVisible.ts";
+
+const visible = usePreferencesVisible()
 
 useEventListener('keydown', (evt) => {
   if (evt.key === 'P' && evt.ctrlKey) {

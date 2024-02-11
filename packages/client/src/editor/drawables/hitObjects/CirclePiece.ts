@@ -2,8 +2,8 @@ import {Drawable} from "../Drawable.ts";
 import {Assets, Point, Sprite} from "pixi.js";
 import {animate, Easing} from "../animate.ts";
 import {Inject} from "../di";
-import {EditorInstance} from "../../editorClient.ts";
 import {usePreferences} from "@/composables/usePreferences.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 export class CirclePiece extends Drawable {
 
@@ -26,8 +26,8 @@ export class CirclePiece extends Drawable {
   timeFadeIn = 0;
   startTime = 0;
 
-  @Inject(EditorInstance)
-  editor!: EditorInstance;
+  @Inject(EditorContext)
+  editor!: EditorContext;
 
   onTick() {
     const time = this.editor.clock.currentTimeAnimated - this.startTime;

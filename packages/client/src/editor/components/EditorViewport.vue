@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import {Application, Assets} from "pixi.js";
+import {Application} from "pixi.js";
 import "../drawables/DrawableSystem.ts";
 import {EditorViewportDrawable} from "../drawables/EditorViewportDrawable.ts";
-import {useEditor} from "../editorClient.ts";
 import gsap from "gsap";
 import {usePreferences} from "@/composables/usePreferences.ts";
+import {useEditor} from "@/editor/editorContext.ts";
 import {isMobile} from "@/util/isMobile.ts";
 
 const app = new Application();
@@ -23,8 +23,13 @@ const viewportSize = reactive({
 const {preferences} = usePreferences();
 
 onMounted(async () => {
-
   const resolution = 1;
+
+  let antialias = preferences.graphics.antialiasing
+  if (isMobile()) {
+    antialias = false;
+  }
+
   await app.init({
     resizeTo: viewportContainer.value!,
     preference: 'webgl',
@@ -34,12 +39,12 @@ onMounted(async () => {
     preferWebGLVersion: 2,
     useBackBuffer: true,
     webgpu: {
-      antialias: preferences.graphics.antialiasing,
+      antialias,
       powerPreference: "high-performance",
       clearBeforeRender: true,
     },
     webgl: {
-      antialias: preferences.graphics.antialiasing,
+      antialias,
       powerPreference: "high-performance",
       clearBeforeRender: true,
       preferWebGLVersion: 2,
@@ -89,7 +94,6 @@ watchEffect(() => {
 onBeforeUnmount(() => {
   app.destroy();
 });
-
 
 
 </script>

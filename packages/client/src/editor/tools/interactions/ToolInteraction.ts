@@ -2,7 +2,7 @@ import {ComposeTool} from "../ComposeTool.ts";
 import {FederatedPointerEvent} from "pixi.js";
 import {Drawable} from "../../drawables/Drawable.ts";
 import {Inject} from "../../drawables/di";
-import {EditorInstance} from "../../editorClient.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 export class ToolInteraction extends Drawable {
 
@@ -14,8 +14,8 @@ export class ToolInteraction extends Drawable {
     return false;
   }
 
-  @Inject(EditorInstance)
-  protected editor!: EditorInstance;
+  @Inject(EditorContext)
+  protected editor!: EditorContext;
 
   onMouseDown?(event: FederatedPointerEvent): void;
 
@@ -45,6 +45,10 @@ export class ToolInteraction extends Drawable {
 
   complete() {
     this.tool.completeInteraction();
+  }
+
+  cancel() {
+    this.tool.cancelInteraction();
   }
 
   get mousePos() {

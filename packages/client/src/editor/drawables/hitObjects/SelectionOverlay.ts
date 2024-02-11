@@ -1,15 +1,15 @@
 import {Drawable} from "../Drawable.ts";
 import {HitObject, Slider} from "@osucad/common";
 import {Inject} from "../di";
-import {EditorInstance} from "../../editorClient.ts";
 import {SelectionCircle} from "./SelectionCircle.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 export class SelectionOverlay extends Drawable {
 
   private readonly drawableMap = new Map<HitObject, HitObjectSelection>();
 
-  @Inject(EditorInstance)
-  editor!: EditorInstance;
+  @Inject(EditorContext)
+  editor!: EditorContext;
 
   onTick() {
     return;

@@ -1,9 +1,9 @@
 import {Assets, Point, Sprite} from "pixi.js";
 import {Drawable} from "../Drawable.ts";
 import {Inject} from "../di";
-import {EditorInstance} from "../../editorClient.ts";
 import {animate} from "../animate.ts";
 import {usePreferences} from "@/composables/usePreferences.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 export class ApproachCircle extends Drawable {
 
@@ -21,8 +21,8 @@ export class ApproachCircle extends Drawable {
     this.alpha = 0;
   }
 
-  @Inject(EditorInstance)
-  editor!: EditorInstance;
+  @Inject(EditorContext)
+  editor!: EditorContext;
 
   onLoad() {
     this.onTick();

@@ -1,15 +1,15 @@
 import {Drawable} from "./Drawable.ts";
 import {Inject} from "./di";
-import {EditorInstance} from "../editorClient.ts";
 import {Assets, BlurFilter, Graphics, Point, Sprite} from "pixi.js";
 import gsap from "gsap";
 import {usePreferences} from "@/composables/usePreferences.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 export class BeatmapBackground extends Drawable {
 
 
-  @Inject(EditorInstance)
-  editor!: EditorInstance;
+  @Inject(EditorContext)
+  editor!: EditorContext;
 
   mask = new Graphics()
       .roundRect(0, 0, 512, 384, 2)

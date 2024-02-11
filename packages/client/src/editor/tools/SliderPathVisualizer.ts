@@ -2,8 +2,8 @@ import {Assets, Circle, Container, Graphics, Point, Sprite} from "pixi.js";
 import {Drawable} from "../drawables/Drawable.ts";
 import {HitObject, PathType, Slider} from "@osucad/common";
 import {Inject} from "../drawables/di";
-import {EditorInstance} from "../editorClient.ts";
-import {isMobile} from "../../util/isMobile.ts";
+import {isMobile} from "@/util/isMobile.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 export class SliderPathVisualizer extends Drawable {
 
@@ -93,8 +93,8 @@ export class SliderPathVisualizer extends Drawable {
 
   installHandleListeners?(handle: SliderPathHandle, index: number): void
 
-  @Inject(EditorInstance)
-  protected editor!: EditorInstance;
+  @Inject(EditorContext)
+  protected editor!: EditorContext;
 
 }
 

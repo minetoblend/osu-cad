@@ -7,8 +7,8 @@ import {Inject} from "../di";
 import {EditorClock} from "../../clock.ts";
 import {SliderShader} from "./sliderShader.ts";
 import {SliderFilter} from "./SliderFilter.ts";
-import {EditorInstance} from "../../editorClient.ts";
 import {usePreferences} from "@/composables/usePreferences.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 export class DrawableSliderBody extends Drawable {
 
@@ -42,8 +42,8 @@ export class DrawableSliderBody extends Drawable {
     return this.hitObject.scale * 60 * 1.25;
   }
 
-  @Inject(EditorInstance)
-  private readonly editor!: EditorInstance;
+  @Inject(EditorContext)
+  private readonly editor!: EditorContext;
 
   @Inject(EditorClock)
   private readonly clock!: EditorClock;

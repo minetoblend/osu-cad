@@ -1,4 +1,3 @@
-import {EditorInstance} from "../editorClient.ts";
 import {
   HitObject,
   IVec2,
@@ -10,8 +9,9 @@ import {
   Vec2,
 } from "@osucad/common";
 import {getHitObjectPositions} from "../tools/snapping/HitObjectSnapProvider.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
-export function transformHitObjectsInteraction(editor: EditorInstance) {
+export function transformHitObjectsInteraction(editor: EditorContext) {
 
   useEventListener("keydown", (evt) => {
     if (evt.ctrlKey && evt.code === "KeyH") {
@@ -23,7 +23,7 @@ export function transformHitObjectsInteraction(editor: EditorInstance) {
 
       editor.selection.selectedObjects.forEach((hitObject) => {
         const update: Partial<SerializedHitObject & SerializedSlider> = {
-          position: { x: bounds.left + bounds.right - hitObject.position.x, y: hitObject.position.y },
+          position: {x: bounds.left + bounds.right - hitObject.position.x, y: hitObject.position.y},
         };
 
         if (hitObject instanceof Slider) {
@@ -45,7 +45,7 @@ export function transformHitObjectsInteraction(editor: EditorInstance) {
 
       editor.selection.selectedObjects.forEach((hitObject) => {
         const update: Partial<SerializedHitObject & SerializedSlider> = {
-          position: { x: hitObject.position.x, y: bounds.top + bounds.bottom - hitObject.position.y },
+          position: {x: hitObject.position.x, y: bounds.top + bounds.bottom - hitObject.position.y},
         };
 
         if (hitObject instanceof Slider) {
@@ -98,7 +98,7 @@ export function transformHitObjectsInteraction(editor: EditorInstance) {
 
 }
 
-export function rotateHitObjects(editor: EditorInstance, hitObjects: HitObject[], angle: number, aroundCenter: boolean | Vec2) {
+export function rotateHitObjects(editor: EditorContext, hitObjects: HitObject[], angle: number, aroundCenter: boolean | Vec2) {
   if (hitObjects.length === 0) return;
 
   const bounds = Rect.containingPoints(getHitObjectPositions(hitObjects))!;
@@ -107,9 +107,9 @@ export function rotateHitObjects(editor: EditorInstance, hitObjects: HitObject[]
 
   for (const hitObject of hitObjects) {
     const newPosition = hitObject.position
-      .sub(center)
-      .rotate(angle)
-      .add(center);
+        .sub(center)
+        .rotate(angle)
+        .add(center);
 
     if (hitObject instanceof Slider) {
       editor.commandManager.submit(updateHitObject(hitObject, {

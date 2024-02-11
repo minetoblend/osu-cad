@@ -6,9 +6,12 @@ import {
   EditorCommand,
   HitCircle,
   HitObject,
-  hitObjectId, HitSound,
+  hitObjectId,
+  HitSound,
   IVec2,
-  PathType, SampleSet,
+  PathType,
+  Preferences,
+  SampleSet,
   Slider,
   updateHitObject,
   Vec2,
@@ -26,14 +29,22 @@ import {reverseHitObjects} from "../interaction/reverseHitObjects.ts";
 import {InsertAxisInteraction} from "./interactions/InsertAxisInteraction.ts";
 import {PathApproximator, Vector2} from "osu-classes";
 import {clamp} from "@vueuse/core";
+import {usePreferences} from "@/composables/usePreferences.ts";
+import {LongPressInteraction} from "@/editor/tools/interactions/LongPressInteraction.ts";
 
 export class SelectTool extends ComposeTool {
+
+  preferences: Preferences
+
   constructor() {
     super();
+    const {preferences} = usePreferences()
+    this.preferences = preferences
+
     this.addChild(this.sliderVisualizer);
   }
 
-  private sliderVisualizer = new SelectToolSliderPathVisualizer();
+  private sliderVisualizer = new SelectToolSliderPathVisualizer(this);
   private canCycleSelection = false;
 
   @Inject(PopoverContainer)
@@ -41,13 +52,19 @@ export class SelectTool extends ComposeTool {
 
   protected onMouseDown(evt: FederatedPointerEvent) {
     super.onMouseDown(evt);
-
     if (evt.propagationImmediatelyStopped) return;
+
+    const isDoubleTap =
+      this.lastTap &&
+      performance.now() - this.lastTap.time < 300 &&
+      Vec2.distance(this.lastTap.position, this.mousePos) < 10;
+    this.recognizeDoubleTap()
+
 
     if (this.hasInteraction) return;
     if (evt.button === 0) {
       if (
-        evt.ctrlKey &&
+        (evt.ctrlKey || (evt.pointerType === 'touch' && isDoubleTap)) &&
         this.sliderVisualizer.slider &&
         this.insertControlPoint(this.sliderVisualizer.slider, evt)
       ) {
@@ -55,16 +72,34 @@ export class SelectTool extends ComposeTool {
       }
 
       this.canCycleSelection = !this.trySelectOnMousedown(evt);
-      if (this.hoveredHitObjects.length > 0)
-        this.beginInteraction(MoveHitObjectsInteraction, this.selectedObjects);
+      if (this.hoveredHitObjects.length > 0) {
+        if (evt.pointerType === 'touch') {
+          this.beginInteraction(LongPressInteraction, {
+            action: () => this.showContextMenu(this.toGlobal(this.mousePos)),
+            onMoveCancel: () => {
+              this.beginInteraction(MoveHitObjectsInteraction, this.selectedObjects);
+            }
+          });
+        } else
+          this.beginInteraction(MoveHitObjectsInteraction, this.selectedObjects);
+      }
+
     } else if (evt.button === 2) {
-      if (evt.shiftKey)
+      let action: 'delete' | 'contextmenu' = 'delete';
+      if (this.preferences.behavior.rightClickBehavior === 'contextMenu') {
+        if (!evt.shiftKey)
+          action = 'contextmenu';
+      } else {
+        if (evt.shiftKey)
+          action = 'contextmenu';
+      }
+
+      if (action === 'delete') {
         this.deleteHoveredHitObjects();
-      else {
+      } else {
         this.trySelectOnMousedown(evt);
         evt.stopImmediatePropagation();
         this.showContextMenu(evt.global);
-
       }
     }
   }
@@ -159,14 +194,14 @@ export class SelectTool extends ComposeTool {
       const mainHitSound: HitSoundSelection = {
         type: "main",
         hitObject: hitObject,
-        hitSound: { ...hitObject.hitSound },
+        hitSound: {...hitObject.hitSound},
       };
 
       if (hitObject instanceof Slider) {
         const edgeHitSounds: HitSoundSelection[] = hitObject.hitSounds.map<HitSoundSelection>((hitSound, index) => ({
           type: "edge",
           hitObject: hitObject,
-          hitSound: { ...hitSound },
+          hitSound: {...hitSound},
           index: index,
         }));
         return [mainHitSound, ...edgeHitSounds];
@@ -268,13 +303,13 @@ export class SelectTool extends ComposeTool {
   private deleteHoveredHitObjects() {
     if (this.hoveredHitObjects.some(it => it.isSelected)) {
       this.selection.selectedObjects.forEach(it => this.submit(
-        EditorCommand.deleteHitObject({ id: it.id }),
+        EditorCommand.deleteHitObject({id: it.id}),
       ));
       this.editor.commandManager.commit();
     } else if (this.hoveredHitObjects.length > 0) {
       const closest = this.getClosestToClock(this.hoveredHitObjects)!;
       this.submit(
-        EditorCommand.deleteHitObject({ id: closest.id }),
+        EditorCommand.deleteHitObject({id: closest.id}),
         true,
       );
     }
@@ -295,7 +330,7 @@ export class SelectTool extends ComposeTool {
   private insertControlPoint(slider: Slider, evt: FederatedPointerEvent) {
     const closest = this.getInsertPoint(slider, Vec2.from(evt.getLocalPosition(this)));
     if (closest) {
-      const controlPoints = slider.path.controlPoints.map(it => ({ ...it }));
+      const controlPoints = slider.path.controlPoints.map(it => ({...it}));
       controlPoints.splice(closest.index, 0, {
         x: closest.position.x,
         y: closest.position.y,
@@ -330,7 +365,7 @@ export class SelectTool extends ComposeTool {
       let position = Vec2.add(A, Vec2.scale(AB, t));
 
       const distance = Vec2.distance(position, P);
-      if (distance < 20) {
+      if (distance < 35) {
         if (distance < closestDistance) {
           closest = {
             position,
@@ -350,7 +385,7 @@ export class SelectTool extends ComposeTool {
     const ids: string[] = [];
     if (selection.length === 1 && selection[0] instanceof Slider) {
       const slider = selection[0];
-      this.submit(EditorCommand.deleteHitObject({ id: slider.id }));
+      this.submit(EditorCommand.deleteHitObject({id: slider.id}));
       const timingPoint = this.editor.beatmapManager.controlPoints.timingPointAt(slider.startTime);
       const step = timingPoint.beatLength / this.beatInfo.beatSnap;
       for (let time = slider.startTime; time <= slider.startTime + slider.spanDuration; time += step) {
@@ -389,7 +424,7 @@ export class SelectTool extends ComposeTool {
         tint: 0xEA2463,
         action: () => {
           this.selection.selectedObjects.forEach(object => {
-            this.submit(EditorCommand.deleteHitObject({ id: object.id }));
+            this.submit(EditorCommand.deleteHitObject({id: object.id}));
           });
           this.editor.commandManager.commit();
         },
@@ -410,11 +445,36 @@ export class SelectTool extends ComposeTool {
               x: Math.random() * 30 - 15,
               y: Math.random() * 30 - 15,
             });
-            this.submit(updateHitObject(hitObject, { position }));
+            this.submit(updateHitObject(hitObject, {position}));
           }
           this.editor.commandManager.commit();
         },
       });
+
+    if (this.selection.size === 1 && this.selectedObjects[0] instanceof Slider) {
+      const slider = this.selectedObjects[0]
+      const insertPoint = this.getInsertPoint(slider, this.mousePos);
+      if (insertPoint) {
+        const {position, index} = insertPoint;
+        items.push({
+          text: "Insert control point",
+          action: () => {
+            const path = slider.path.controlPoints.map(it => ({...it}));
+            path.splice(index, 0, {
+              x: position.x,
+              y: position.y,
+              type: null,
+            });
+            this.submit(updateHitObject(slider, {
+              path
+            }), true);
+          },
+        });
+      }
+
+
+    }
+
     if (this.selection.size === 2 && this.selectedObjects.every(it => it instanceof HitCircle)) {
       items.push({
         text: "Create clockwise square",
@@ -544,7 +604,7 @@ export class SelectTool extends ComposeTool {
 
     for (const hitObject of hitObjects) {
       const startTime = hitObject.startTime + offset * timingPoint.beatLength / this.beatInfo.beatSnap;
-      this.submit(updateHitObject(hitObject, { startTime }));
+      this.submit(updateHitObject(hitObject, {startTime}));
     }
     this.editor.commandManager.commit();
   }
@@ -582,7 +642,7 @@ export class SelectTool extends ComposeTool {
     for (const object of this.selectedObjects) {
       if (object instanceof Slider) {
         const velocity = clamp(object.velocity + 0.1, 0.1, 10);
-        this.submit(updateHitObject(object, { velocity }));
+        this.submit(updateHitObject(object, {velocity}));
       }
     }
     this.editor.commandManager.commit();
@@ -592,10 +652,22 @@ export class SelectTool extends ComposeTool {
     for (const object of this.selectedObjects) {
       if (object instanceof Slider) {
         const velocity = clamp(object.velocity - 0.1, 0.1, 10);
-        this.submit(updateHitObject(object, { velocity }));
+        this.submit(updateHitObject(object, {velocity}));
       }
     }
     this.editor.commandManager.commit();
+  }
+
+  private lastTap?: {
+    position: Vec2;
+    time: number;
+  };
+
+  private recognizeDoubleTap() {
+    this.lastTap = {
+      position: this.mousePos,
+      time: performance.now(),
+    };
   }
 }
 

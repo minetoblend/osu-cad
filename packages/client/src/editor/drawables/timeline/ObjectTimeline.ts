@@ -1,12 +1,12 @@
 import {Component} from "../Component.ts";
 import {AlphaFilter, Assets, Container, Point, Sprite, StencilMask, Texture} from "pixi.js";
 import {Inject} from "../di";
-import {EditorInstance} from "../../editorClient.ts";
 import {HitObject, TickType} from "@osucad/common";
 import {TimelineObject} from "./TimelineObject.ts";
 import {TimelineZoom} from "../../TimelineZoom.ts";
 import {BeatInfo} from "../../beatInfo.ts";
 import {usePreferences} from "@/composables/usePreferences.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 export interface TimelineVisibility {
   currentTime: number;
@@ -34,8 +34,8 @@ export class ObjectTimeline extends Component {
   });
 
 
-  @Inject(EditorInstance)
-  private readonly editor!: EditorInstance;
+  @Inject(EditorContext)
+  private readonly editor!: EditorContext;
 
   @Inject(BeatInfo)
   private readonly beatInfo!: BeatInfo;

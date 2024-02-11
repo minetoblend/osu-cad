@@ -503,6 +503,7 @@ class HitObject {
   constructor(options) {
     this.id = hitObjectId();
     this.comboOffset = 0;
+    this._version = 0;
     this._position = new Vec2(0, 0);
     this._hitSound = defaultHitSound();
     this._startTime = 0;
@@ -532,6 +533,9 @@ class HitObject {
         this._hitSound = __spreadValues$3({}, options.hitSound);
     }
   }
+  get version() {
+    return this._version;
+  }
   get position() {
     return this._position;
   }
@@ -541,14 +545,14 @@ class HitObject {
   set hitSound(value) {
     this._hitSound = value;
     this._hitSamples = void 0;
-    this.onUpdate.emit("hitSounds");
+    this._onUpdate("hitSounds");
   }
   set position(value) {
     if (Vec2.equals(value, this._position))
       return;
     this._position = value;
     this._stackedPosition = void 0;
-    this.onUpdate.emit("position");
+    this._onUpdate("position");
   }
   get startTime() {
     return this._startTime;
@@ -557,7 +561,7 @@ class HitObject {
     if (value === this._startTime)
       return;
     this._startTime = value;
-    this.onUpdate.emit("startTime");
+    this._onUpdate("startTime");
   }
   get endTime() {
     return this.startTime + this.duration;
@@ -589,7 +593,7 @@ class HitObject {
   }
   set isNewCombo(value) {
     this._isNewCombo = value;
-    this.onUpdate.emit("newCombo");
+    this._onUpdate("newCombo");
   }
   get stackedPosition() {
     this._stackedPosition = Vec2.sub(this.position, new Vec2(this.stackHeight * 3, this.stackHeight * 3));
@@ -621,6 +625,10 @@ class HitObject {
     return this._hitSamples;
   }
   _updateHitSounds() {
+  }
+  _onUpdate(update) {
+    this._version++;
+    this.onUpdate.emit(update);
   }
 }
 function difficultyRange(diff, min, mid, max) {
@@ -743,7 +751,7 @@ class SliderPath {
   _calculatePath() {
     var _a;
     if (this.controlPoints.length === 0)
-      return [[], []];
+      return [[new Vec2(0, 0)], [0]];
     const points = [
       new Vec2(this.controlPoints[0].x, this.controlPoints[0].y)
     ];

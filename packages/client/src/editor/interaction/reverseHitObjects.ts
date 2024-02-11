@@ -1,8 +1,8 @@
-import {EditorInstance} from "../editorClient.ts";
 import {HitObject, PathType, SerializedPathPoint, Slider, updateHitObject} from "@osucad/common";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 
-export function reverseHitObjectsInteraction(editor: EditorInstance) {
+export function reverseHitObjectsInteraction(editor: EditorContext) {
 
   useEventListener("keydown", (evt) => {
     if (evt.ctrlKey && evt.code === "KeyG") {
@@ -14,7 +14,7 @@ export function reverseHitObjectsInteraction(editor: EditorInstance) {
   });
 }
 
-export function reverseHitObjects(hitObjects: HitObject[], editor: EditorInstance) {
+export function reverseHitObjects(hitObjects: HitObject[], editor: EditorContext) {
   const startTimes = hitObjects.map(it => it.startTime);
   const endTimes = hitObjects.map(it => it.endTime);
 
@@ -31,7 +31,7 @@ export function reverseHitObjects(hitObjects: HitObject[], editor: EditorInstanc
   editor.commandManager.commit();
 }
 
-export function reverseSliderPath(hitObject: Slider, editor: EditorInstance) {
+export function reverseSliderPath(hitObject: Slider, editor: EditorContext) {
   const controlPoints: SerializedPathPoint[] = [];
   const pathTypes = hitObject.path.controlPoints.map(it => it.type).filter(it => it !== null);
 

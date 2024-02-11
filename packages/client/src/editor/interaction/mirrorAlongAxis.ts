@@ -1,11 +1,11 @@
 import {HitObject, Slider, updateHitObject, Vec2} from "@osucad/common";
-import {EditorInstance} from "../editorClient.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 export function mirrorAlongAxis(
   hitObjects: HitObject[],
   axisFrom: Vec2,
   axisTo: Vec2,
-  editor: EditorInstance,
+  editor: EditorContext,
 ) {
 
   for (const hitObject of hitObjects) {

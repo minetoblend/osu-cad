@@ -7,7 +7,7 @@ import {
   getCommandHandler,
   VersionedEditorCommand,
 } from "@osucad/common";
-import {EditorSocket} from "./editorClient.ts";
+import {EditorSocket} from "@/editor/editorSocket.ts";
 
 export class CommandManager {
 

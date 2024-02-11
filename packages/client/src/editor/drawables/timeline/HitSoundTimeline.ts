@@ -2,12 +2,12 @@ import {Component} from "../Component.ts";
 import {Box} from "../Box.ts";
 import {Assets, Container, ObservablePoint, Point, Sprite, Texture, TilingSprite} from "pixi.js";
 import {Inject} from "../di";
-import {EditorInstance} from "../../editorClient.ts";
 import {HitSoundLayerDrawable} from "./HitSoundLayerDrawable.ts";
 import {Rect, TickType} from "@osucad/common";
 import {TimelineZoom} from "../../TimelineZoom.ts";
 import {BeatInfo} from "../../beatInfo.ts";
 import {HitSoundPlacementTool} from "./HitSoundPlacementTool.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 export class HitSoundTimeline extends Component {
 
@@ -34,8 +34,8 @@ export class HitSoundTimeline extends Component {
 
   layerContainer = new Container();
 
-  @Inject(EditorInstance)
-  private readonly editor!: EditorInstance;
+  @Inject(EditorContext)
+  private readonly editor!: EditorContext;
   @Inject(BeatInfo)
   private readonly beatInfo!: BeatInfo;
 

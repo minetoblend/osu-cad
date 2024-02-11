@@ -1,7 +1,7 @@
-import {EditorInstance} from "../editorClient.ts";
 import {EditorCommand} from "@osucad/common";
+import {EditorContext} from "@/editor/editorContext.ts";
 
-export function bookmarkInteractions({ beatmapManager, commandManager, clock }: EditorInstance) {
+export function bookmarkInteractions({ beatmapManager, commandManager, clock }: EditorContext) {
   const bookmarks = beatmapManager.beatmap.bookmarks;
 
   useEventListener("keydown", (e) => {

@@ -5,9 +5,13 @@ import MapsetCard from "@/components/beatmap/MapsetCard.vue";
 import ImportOszCard from "../components/beatmap/ImportOszCard.vue";
 import {useCurrentUser} from "../composables/useCurrentUser.ts";
 
-const { state: mapsets } = useAsyncState<MapsetInfo[]>(() => axios.get("/api/mapsets/own").then(res => res.data), []);
+const {state: mapsets} = useAsyncState<MapsetInfo[]>(() => axios.get("/api/mapsets/own").then(res => res.data), []);
 
-const { user } = useCurrentUser();
+watchEffect(() => {
+  console.log(mapsets.value);
+})
+
+const {user} = useCurrentUser();
 
 function onImported(mapset: MapsetInfo) {
   mapsets.value = [mapset, ...mapsets.value];

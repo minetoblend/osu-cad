@@ -1,5 +1,5 @@
-import {EditorSocket} from "./editorClient.ts";
 import {Beatmap} from "@osucad/common";
+import {EditorSocket} from "@/editor/editorSocket.ts";
 
 export class BeatmapManager {
   beatmap!: Beatmap;

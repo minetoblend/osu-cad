@@ -13,10 +13,10 @@ import {
 import {HitObject, Slider, Spinner, updateHitObject} from "@osucad/common";
 import {ObjectTimeline, TimelineVisibility} from "./ObjectTimeline.ts";
 import {Inject} from "../di";
-import {EditorInstance} from "../../editorClient.ts";
 import sizeewcursor from "@/assets/icons/cursor-sizeew.svg";
 import {clamp} from "@vueuse/core";
 import {BeatInfo} from "../../beatInfo.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 export class TimelineObject extends Drawable {
 
@@ -33,8 +33,8 @@ export class TimelineObject extends Drawable {
     },
   });
 
-  @Inject(EditorInstance)
-  private readonly editor!: EditorInstance;
+  @Inject(EditorContext)
+  private readonly editor!: EditorContext;
 
   getPositionForTime(time: number, visibility: TimelineVisibility) {
     return (time - visibility.startTime) / (visibility.endTime - visibility.startTime) * visibility.width;
@@ -48,18 +48,18 @@ export class TimelineObject extends Drawable {
       fontSize: 12,
       fill: 0xffffff,
     },
-    position: { x: 0, y: 13 },
+    position: {x: 0, y: 13},
     eventMode: "static",
     hitArea: {
       contains: (x, y) =>
-        this.svText.visible && x >= 0 && x <= this.svText.width && y >= 0 && y <= this.svText.height,
+          this.svText.visible && x >= 0 && x <= this.svText.width && y >= 0 && y <= this.svText.height,
     },
     resolution: 2,
   });
 
   constructor(
-    private readonly timeline: ObjectTimeline,
-    hitObject: HitObject,
+      private readonly timeline: ObjectTimeline,
+      hitObject: HitObject,
   ) {
     super();
     this.startCircle = new TimelineCircle(hitObject.startTime);
@@ -135,7 +135,7 @@ export class TimelineObject extends Drawable {
 
           const offset = this.editor.beatmapManager.controlPoints!.snap(time, this.beatInfo.beatSnap) - startTime;
 
-          originalStartTimes.forEach(({ object, time }) => {
+          originalStartTimes.forEach(({object, time}) => {
             this.editor.commandManager.submit(updateHitObject(object, {
               startTime: time + offset,
             }));
@@ -148,7 +148,7 @@ export class TimelineObject extends Drawable {
         addEventListener("pointerup", () => {
           this.removeEventListener("globalpointermove", onMove);
           this.editor.commandManager.commit();
-        }, { once: true });
+        }, {once: true});
       }
     });
 
@@ -181,7 +181,7 @@ export class TimelineObject extends Drawable {
         addEventListener("pointerup", () => {
           this.onglobalpointermove = null;
           this.editor.commandManager.commit();
-        }, { once: true });
+        }, {once: true});
       } else if (evt.shiftKey && hitObject instanceof Slider) {
         evt.preventDefault();
         evt.stopPropagation();
@@ -203,7 +203,7 @@ export class TimelineObject extends Drawable {
         addEventListener("pointerup", () => {
           this.removeEventListener("globalpointermove", onMove);
           this.editor.commandManager.commit();
-        }, { once: true });
+        }, {once: true});
       } else if (hitObject instanceof Spinner) {
         evt.preventDefault();
         evt.stopPropagation();
@@ -225,7 +225,7 @@ export class TimelineObject extends Drawable {
         addEventListener("pointerup", () => {
           this.removeEventListener("globalpointermove", onMove);
           this.editor.commandManager.commit();
-        }, { once: true });
+        }, {once: true});
       }
     };
 
@@ -244,14 +244,14 @@ export class TimelineObject extends Drawable {
       this.startCircle.selected = selected;
       this.endCircle.selected = selected;
 
-      const { off: offSelected } = this.editor.selection.hitObjectSelected.on((hitObject) => {
+      const {off: offSelected} = this.editor.selection.hitObjectSelected.on((hitObject) => {
         if (hitObject === this.hitObject) {
           this.startCircle.selected = true;
           this.endCircle.selected = true;
         }
       });
 
-      const { off: offDeselected } = this.editor.selection.hitObjectDeselected.on((hitObject) => {
+      const {off: offDeselected} = this.editor.selection.hitObjectDeselected.on((hitObject) => {
         if (hitObject === this.hitObject) {
           this.startCircle.selected = false;
           this.endCircle.selected = false;
@@ -391,10 +391,10 @@ export class TimelineRepeatCircle extends TimelineCircle {
     super(time);
 
     this.addChild(new Sprite(
-      {
-        texture: Assets.get("reversearrow"),
-        anchor: new Point(0.5, 0.5),
-      },
+        {
+          texture: Assets.get("reversearrow"),
+          anchor: new Point(0.5, 0.5),
+        },
     ));
   }
 

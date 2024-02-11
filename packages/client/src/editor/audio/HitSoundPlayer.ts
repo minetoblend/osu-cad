@@ -1,20 +1,19 @@
 import {Drawable} from "../drawables/Drawable.ts";
 import {Inject} from "../drawables/di";
-import {EditorInstance} from "../editorClient.ts";
 import {AudioManager} from "./AudioManager.ts";
 import {EditorClock} from "../clock.ts";
 import {HitSample, SampleSet, SampleType} from "@osucad/common";
 import {AudioPlayback} from "./AudioPlayback.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 export class HitSoundPlayer extends Drawable {
 
-  @Inject(EditorInstance) editor!: EditorInstance;
+  @Inject(EditorContext) editor!: EditorContext;
   @Inject(AudioManager) audioManager!: AudioManager;
   @Inject(EditorClock) clock!: EditorClock;
 
   private _scheduledHitSamples = new Set<AudioPlayback>();
   private _isPlaying = false;
-  private _hitSound?: AudioBuffer;
   private _tabIsActive = true;
 
   private _hitSounds: {

@@ -51,6 +51,7 @@ watchEffect(() => {
   .settings-pane {
     min-height: 100%;
     background-color: rgba(white, 0.05);
+    overflow-y: auto;
   }
 
   display: flex;

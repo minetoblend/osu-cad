@@ -80,7 +80,7 @@ export class SliderPath {
   }
 
   private _calculatePath(): [Vec2[], number[]] {
-    if (this.controlPoints.length === 0) return [[], []];
+    if (this.controlPoints.length === 0) return [[new Vec2(0, 0)], [0]];
 
     const points: Vec2[] = [
       new Vec2(this.controlPoints[0].x, this.controlPoints[0].y),

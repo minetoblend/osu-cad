@@ -1,8 +1,7 @@
-import {io, Socket} from "socket.io-client";
-import {BeatmapId, ClientMessages, Preferences, ServerMessages} from "@osucad/common";
-import {createConnectedUsers, EditorUsersList} from "./connectedUsers.ts";
-import {createEventList, EditorEventsList} from "./events.ts";
-import {InjectionKey} from "vue";
+import {io} from "socket.io-client";
+import {BeatmapId} from "@osucad/common";
+import {createConnectedUsers} from "./connectedUsers.ts";
+import {createEventList} from "./events.ts";
 import {createEditorTextures} from "./textures.ts";
 import {BeatmapManager} from "./beatmapManager.ts";
 import {EditorClock} from "./clock.ts";
@@ -13,28 +12,14 @@ import {CommandManager} from "./commandHandler.ts";
 import {Assets} from "pixi.js";
 import "./operators/MoveHitObjectsOperator.ts";
 import {usePreferences} from "@/composables/usePreferences.ts";
-import {Connector} from "@/editor/connector/connector.ts";
+import {ToolManager} from "@/editor/tools/toolManager.ts";
+import {EditorSocket} from "@/editor/editorSocket.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
-export type EditorSocket = Socket<ServerMessages, ClientMessages>;
-
-export interface EditorInstance {
-  socket: EditorSocket;
-  connectedUsers: EditorUsersList;
-  events: EditorEventsList;
-  beatmapManager: BeatmapManager;
-  clock: EditorClock;
-  selection: SelectionManager;
-  mods: Mod[];
-  commandManager: CommandManager;
-  audioManager: AudioManager;
-  preferences: Preferences;
-}
-
-export const EditorInstance: InjectionKey<EditorInstance> = Symbol("editor");
 
 export async function createEditorClient(
     beatmapId: BeatmapId,
-): Promise<EditorInstance> {
+): Promise<EditorContext> {
   const socket = createClient(beatmapId);
 
   onScopeDispose(() => {
@@ -53,6 +38,7 @@ export async function createEditorClient(
   const mods = [] as Mod[];
   const commandManager = new CommandManager(beatmapManager, socket);
   const {preferences, loaded: preferencesLoaded} = usePreferences();
+  const tools = new ToolManager();
 
   await Promise.all([
     receiveRoomState(socket),
@@ -88,7 +74,8 @@ export async function createEditorClient(
     mods,
     commandManager,
     audioManager,
-    preferences
+    preferences,
+    tools,
   };
 }
 
@@ -102,22 +89,7 @@ function createClient(beatmapId: BeatmapId): EditorSocket {
 }
 
 function receiveRoomState(socket: EditorSocket): Promise<void> {
-  return new Promise<void>((resolve) => {
-    socket.once("roomState", () => {
-      console.log("received room state");
-      resolve();
-    });
-  });
-}
-
-export function provideEditor(editor: EditorInstance) {
-  provide(EditorInstance, editor);
-}
-
-export function useEditor(): EditorInstance {
-  const editor = inject(EditorInstance);
-  if (!editor) {
-    throw new Error("editor not found");
-  }
-  return editor;
+  return new Promise<void>(resolve =>
+      socket.once("roomState", () => resolve())
+  );
 }

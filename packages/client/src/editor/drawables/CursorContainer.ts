@@ -2,14 +2,14 @@ import {Assets, BitmapText, Point, Sprite} from "pixi.js";
 import {UserActivity, UserId, UserSessionInfo, Vec2} from "@osucad/common";
 import {Drawable} from "./Drawable.ts";
 import {Inject} from "./di";
-import {EditorInstance} from "../editorClient.ts";
 import gsap from "gsap";
 import {animate} from "./animate.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 export class CursorContainer extends Drawable {
 
-  @Inject(EditorInstance)
-  editor!: EditorInstance;
+  @Inject(EditorContext)
+  editor!: EditorContext;
 
   lastUpdate = performance.now();
   readonly updateInterval = 50;
@@ -71,8 +71,8 @@ class RemoteCursor extends Drawable {
     super();
   }
 
-  @Inject(EditorInstance)
-  private editor!: EditorInstance;
+  @Inject(EditorContext)
+  private editor!: EditorContext;
 
   private username!: BitmapText;
 
@@ -123,7 +123,7 @@ class RemoteCursor extends Drawable {
         duration: 0.05,
       });
     } else {
-      gsap.to(this, { alpha: 0, duration: 0.5 });
+      gsap.to(this, {alpha: 0, duration: 0.5});
     }
   }
 

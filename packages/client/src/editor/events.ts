@@ -1,5 +1,5 @@
-import {useEditor} from "./editorClient.ts";
 import {Ref, VNode} from "vue";
+import {useEditor} from "@/editor/editorContext.ts";
 
 
 export function createEventList(): EditorEventsList {

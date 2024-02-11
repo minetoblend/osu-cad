@@ -9,19 +9,30 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+
         <activity
+            android:name="MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"
-            android:name=".MainActivity"
-            android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBarLaunch"
-            android:launchMode="singleTask"
             android:exported="true"
+            android:label="@string/title_activity_main"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape"
-        >
+            android:theme="@style/AppTheme.NoActionBarLaunch">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" />
+                <data android:scheme="osucad" />
+                <data android:host="dev.osucad.com" />
             </intent-filter>
 
         </activity>
