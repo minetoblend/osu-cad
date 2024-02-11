@@ -27,7 +27,7 @@ onMounted(async () => {
   const resolution = 1;
   await app.init({
     resizeTo: viewportContainer.value!,
-    preference: preferences.graphics.renderer,
+    preference: 'webgl',
     sharedTicker: true,
     resolution: preferences.graphics.highDpiMode ? window.devicePixelRatio : 1.0,
     autoDensity: preferences.graphics.highDpiMode,
@@ -45,6 +45,8 @@ onMounted(async () => {
       preferWebGLVersion: 2,
     },
   });
+
+  console.log("app", app);
 
   app.renderer.view.texture.source.on("resize", () => {
     console.log("resize");

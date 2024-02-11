@@ -4,23 +4,27 @@ import {GraphicsPreferences} from "@osucad/common";
 defineProps<{
   preferences: GraphicsPreferences
 }>()
+
+const availableRenderers = [
+  {
+    name: 'WebGL',
+    value: 'webgl'
+  },
+]
+
 </script>
 
 <template>
   <h3>Graphics</h3>
-  <FormField label="Renderer">
+  <FormField v-if="availableRenderers.length > 1" label="Renderer">
     <ButtonGroup>
       <Button :outline="preferences.renderer !== 'auto'"
               @click="preferences.renderer = 'auto'">
         Auto
       </Button>
-      <Button :outline="preferences.renderer !== 'webgl'"
-              @click="preferences.renderer = 'webgl'">
-        WebGL
-      </Button>
-      <Button :outline="preferences.renderer !== 'webgpu'"
-              @click="preferences.renderer = 'webgpu'">
-        WebGPU
+      <Button v-for="renderer in availableRenderers" :outline="preferences.renderer !== renderer.value"
+              @click="preferences.renderer = renderer.value">
+        {{ renderer.name }}
       </Button>
     </ButtonGroup>
   </FormField>
