@@ -77,7 +77,11 @@ const manifest: AssetsManifest = {
         {
           alias: 'icon-reverse',
           src: 'reverse.png',
-        }
+        },
+        {
+          alias: 'icon-cog',
+          src: 'cog.png',
+        },
       ],
     }),
 
