@@ -18,7 +18,7 @@ axios.defaults.baseURL = import.meta.env.VITE_BASEURL as string;
 console.log('baseurl', import.meta.env.VITE_BASEURL);
 
 if (isMobile() && Capacitor.getPlatform() === 'web' && !window.location.search.includes('redirectToApp')) {
-  window.location = 'osucad://dev.osucad.com' + window.location.pathname + '?redirectToApp';
+  window.location = 'osucad://osucad.com' + window.location.pathname + '?redirectToApp';
   setTimeout(() => {
     if (!document.hidden) {
       init()
