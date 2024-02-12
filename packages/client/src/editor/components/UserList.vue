@@ -24,11 +24,10 @@ function setActiveUser(user: UserSessionInfo) {
 function goToUserTime(user: UserSessionInfo) {
   if (user.presence.activity) {
     match(user.presence.activity!, {
-      default: () => {
-      },
       composeScreen: ({currentTime}) => {
         clock.seek(currentTime)
-      }
+      },
+      default() {},
     })
   }
 }
@@ -37,15 +36,16 @@ function goToUserTime(user: UserSessionInfo) {
 
 <template>
   <div class="oc-userlist">
-    <div class="user" v-for="user in users" @click="goToUserTime(user)" @dblclick="setActiveUser(user)">
+    <div class="user" v-for="user in users" @click="goToUserTime(user)" @dblclick="setActiveUser(user)"
+         @contextmenu.prevent="setActiveUser(user)">
       <UserAvatar :id="user.id" style="margin-right: 0.5rem"/>
       {{ user.username }}
       <div class="user-dropdown" v-if="activeUser === user.sessionId" ref="dropdown">
-        <button @click="kick(user.id)">
-          Kick
+        <button v-if="clock.spectatingUser?.sessionId != user.sessionId" @click="clock.spectate(user)">
+          Spectate
         </button>
-        <button @click="ban(user.id)">
-          Ban
+        <button v-else @click="clock.stopSpectating()">
+          Stop spectating
         </button>
       </div>
     </div>
@@ -77,6 +77,7 @@ function goToUserTime(user: UserSessionInfo) {
       border: none;
       padding: 0.5rem;
       cursor: pointer;
+      white-space: nowrap;
 
       &:hover {
         background: lighten($surface-100, 10%);
