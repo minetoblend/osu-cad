@@ -53,7 +53,7 @@ export class MobileTimelineDrawable extends Component {
 
     this.playButton.setBounds(bounds.splitLeft(bounds.height))
 
-    const seekbarBounds = bounds.splitBottom(this.size.y * 0.25)
+    const seekbarBounds = bounds.splitBottom(this.size.y * 0.2)
     this.seekBar.setBounds(seekbarBounds)
 
     bounds.splitBottom(5)

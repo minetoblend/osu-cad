@@ -120,7 +120,7 @@ export class EditorViewportDrawable extends Drawable {
       const bounds = new Rect(0, 0, this.canvasSize.width, this.canvasSize.height);
 
       this.timeline.setBounds(
-        bounds.splitBottom(75),
+        bounds.splitBottom(85),
       )
 
       this.toolbar.setBounds(
