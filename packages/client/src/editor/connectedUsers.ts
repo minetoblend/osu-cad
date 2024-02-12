@@ -1,7 +1,8 @@
-import {EditorSocket, useEditor} from "./editorClient.ts";
 import {UserId, UserSessionInfo} from "@osucad/common";
 import {EditorEventsList} from "./events.ts";
 import {Ref} from "vue";
+import {EditorSocket} from "@/editor/editorSocket.ts";
+import {useEditor} from "@/editor/editorContext.ts";
 
 export interface EditorUsersList {
   users: Ref<UserSessionInfo[]>;
@@ -25,20 +26,20 @@ export function createConnectedUsers(socket: EditorSocket, events: EditorEventsL
 
   socket.on("userJoined", (user) => {
     users.value.push(user);
-    events.add({ message: `${user.username} joined` });
+    events.add({message: `${user.username} joined`});
   });
 
   socket.on("userLeft", (user, reason) => {
     users.value = users.value.filter(u => u.sessionId !== user.sessionId);
     switch (reason) {
       case "kicked":
-        events.add({ message: `${user.username} was kicked` });
+        events.add({message: `${user.username} was kicked`});
         break;
       case "banned":
-        events.add({ message: `${user.username} was banned` });
+        events.add({message: `${user.username} was banned`});
         break;
       default:
-        events.add({ message: `${user.username} left` });
+        events.add({message: `${user.username} left`});
     }
   });
 
@@ -63,7 +64,7 @@ export function createConnectedUsers(socket: EditorSocket, events: EditorEventsL
     })
   })
 
-  return { users, kick, ban, ownUser };
+  return {users, kick, ban, ownUser};
 }
 
 export function useConnectedUsers(): EditorUsersList {

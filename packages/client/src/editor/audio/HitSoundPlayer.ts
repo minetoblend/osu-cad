@@ -1,20 +1,19 @@
 import {Drawable} from "../drawables/Drawable.ts";
 import {Inject} from "../drawables/di";
-import {EditorInstance} from "../editorClient.ts";
 import {AudioManager} from "./AudioManager.ts";
 import {EditorClock} from "../clock.ts";
 import {HitSample, SampleSet, SampleType} from "@osucad/common";
 import {AudioPlayback} from "./AudioPlayback.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 export class HitSoundPlayer extends Drawable {
 
-  @Inject(EditorInstance) editor!: EditorInstance;
+  @Inject(EditorContext) editor!: EditorContext;
   @Inject(AudioManager) audioManager!: AudioManager;
   @Inject(EditorClock) clock!: EditorClock;
 
   private _scheduledHitSamples = new Set<AudioPlayback>();
   private _isPlaying = false;
-  private _hitSound?: AudioBuffer;
   private _tabIsActive = true;
 
   private _hitSounds: {
@@ -121,7 +120,7 @@ export class HitSoundPlayer extends Drawable {
     }
 
     for (const sample of hitSamples) {
-      if (sample.time >= startTime && sample.time <= endTime) {
+      if (sample.time > startTime && sample.time <= endTime) {
         this.playSample(sample);
       }
     }
@@ -135,7 +134,6 @@ export class HitSoundPlayer extends Drawable {
     }
 
     const buffer = this._hitSounds[sampleSet]?.[sample.type];
-    console.log(buffer);
 
     if (!buffer) return;
 
@@ -145,7 +143,7 @@ export class HitSoundPlayer extends Drawable {
       buffer,
       delay: Math.max(0, delay + 0.03),
       volume: 0.4,
-    });
+    }, 'hitsounds');
 
 
     this._scheduledHitSamples.add(playback);

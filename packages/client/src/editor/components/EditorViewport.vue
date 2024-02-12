@@ -1,45 +1,59 @@
 <script setup lang="ts">
-import {Application, Assets} from "pixi.js";
+import {Application} from "pixi.js";
 import "../drawables/DrawableSystem.ts";
 import {EditorViewportDrawable} from "../drawables/EditorViewportDrawable.ts";
-import {useEditor} from "../editorClient.ts";
 import gsap from "gsap";
+import {usePreferences} from "@/composables/usePreferences.ts";
+import {useEditor} from "@/editor/editorContext.ts";
+import {isMobile} from "@/util/isMobile.ts";
 
 const app = new Application();
 
 const viewportContainer = ref<HTMLElement>();
 
-const { width, height } = useElementSize(viewportContainer);
+const {width, height} = useElementSize(viewportContainer);
 
 const editor = useEditor();
+
+const emit = defineEmits(['initialized']);
 
 const viewportSize = reactive({
   width: 0,
   height: 0,
 });
 
-onMounted(async () => {
+const {preferences} = usePreferences();
 
+onMounted(async () => {
   const resolution = 1;
+
+  let antialias = preferences.graphics.antialiasing
+  if (isMobile()) {
+    antialias = false;
+  }
+
   await app.init({
     resizeTo: viewportContainer.value!,
-    preference: "webgl",
+    preference: 'webgl',
     sharedTicker: true,
-    resolution: window.devicePixelRatio,
-    autoDensity: true,
+    resolution: preferences.graphics.highDpiMode ? window.devicePixelRatio : 1.0,
+    autoDensity: preferences.graphics.highDpiMode,
     preferWebGLVersion: 2,
+    useBackBuffer: true,
     webgpu: {
-      antialias: true,
+      antialias,
       powerPreference: "high-performance",
       clearBeforeRender: true,
     },
     webgl: {
-      antialias: true,
+      antialias,
       powerPreference: "high-performance",
       clearBeforeRender: true,
       preferWebGLVersion: 2,
     },
   });
+
+  console.log("app", app);
 
   app.renderer.view.texture.source.on("resize", () => {
     console.log("resize");
@@ -57,6 +71,11 @@ onMounted(async () => {
 
   app.stage.addChild(viewportDrawable);
 
+  app.render()
+
+  requestAnimationFrame(() => {
+    emit('initialized');
+  })
 
   watch([width, height], ([width, height]) => {
     gsap.to(viewportSize, {
@@ -66,14 +85,23 @@ onMounted(async () => {
       ease: "power4.out",
     });
   });
-
-
-  console.log(app);
 });
+
+watchEffect(() => {
+  const resolution = preferences.graphics.resolution;
+  if (app.renderer) {
+    app.renderer.resize(
+        viewportSize.width,
+        viewportSize.height,
+        0.25 + (devicePixelRatio - 0.25) * resolution
+    );
+  }
+})
 
 onBeforeUnmount(() => {
   app.destroy();
 });
+
 
 </script>
 <template>

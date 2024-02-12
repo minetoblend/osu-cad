@@ -1,7 +1,7 @@
 import {Drawable} from "../Drawable.ts";
 import {BitmapText} from "pixi.js";
 import {Inject} from "../di";
-import {EditorInstance} from "../../editorClient.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 export class CurrentTimeIndicator extends Drawable {
 
@@ -17,37 +17,42 @@ export class CurrentTimeIndicator extends Drawable {
       text: "00",
       style: this.textStyle,
       x: 5,
+      anchor: {x: 0, y: 0.5}
     }),
     seconds: new BitmapText({
       text: "00",
       style: this.textStyle,
       x: 56,
+      anchor: {x: 0, y: 0.5}
     }),
     millis: new BitmapText({
       text: "000",
       style: this.textStyle,
       x: 112,
+      anchor: {x: 0, y: 0.5}
     }),
     separator1: new BitmapText({
       text: ":",
       style: this.textStyle,
       x: 48,
+      anchor: {x: 0, y: 0.5}
     }),
     separator2: new BitmapText({
       text: ":",
       style: this.textStyle,
       x: 102,
+      anchor: {x: 0, y: 0.5}
     }),
   };
 
 
   onLoad() {
-    const { minutes, millis, seconds, separator1, separator2 } = this.timestamp;
+    const {minutes, millis, seconds, separator1, separator2} = this.timestamp;
     this.addChild(minutes, separator1, seconds, separator2, millis);
   }
 
-  @Inject(EditorInstance)
-  private readonly editor!: EditorInstance;
+  @Inject(EditorContext)
+  private readonly editor!: EditorContext;
 
   onTick() {
     this.updateTimestamp();

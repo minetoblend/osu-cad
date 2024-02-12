@@ -34,7 +34,8 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "auto-imports.d.ts",
-    "typed-router.d.ts"
+    "typed-router.d.ts",
+    "components.d.ts"
   ],
   "references": [
     {

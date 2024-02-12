@@ -3,9 +3,8 @@ import {Attribution, SerializedHitObject} from "../types";
 import {SerializedBeatmapDifficulty} from "../protocol";
 import {ControlPointManager} from "./controlPointManager";
 import {Action} from "../util/action";
-import {defaultHitSound, HitSound} from "./hitSound";
+import {defaultHitSound, HitSample, HitSound} from "./hitSound";
 import {randomString} from "../util";
-import {HitSample} from "./hitSound";
 
 export function hitObjectId() {
   return randomString(8);
@@ -23,15 +22,22 @@ export abstract class HitObject {
       this.isNewCombo = options.newCombo;
       this.comboOffset = options.comboOffset ?? 0;
       if (options.hitSound)
-        this._hitSound = { ...options.hitSound };
+        this._hitSound = {...options.hitSound};
     }
   }
 
   abstract readonly type: HitObjectType;
 
+
   id: string = hitObjectId();
 
   comboOffset = 0;
+
+  protected _version = 0
+  get version() {
+    return this._version;
+  }
+
 
   private _position = new Vec2(0, 0);
 
@@ -48,14 +54,14 @@ export abstract class HitObject {
   set hitSound(value: HitSound) {
     this._hitSound = value;
     this._hitSamples = undefined;
-    this.onUpdate.emit("hitSounds");
+    this._onUpdate("hitSounds");
   }
 
   set position(value: Vec2) {
     if (Vec2.equals(value, this._position)) return;
     this._position = value;
     this._stackedPosition = undefined;
-    this.onUpdate.emit("position");
+    this._onUpdate("position");
   }
 
   private _startTime: number = 0;
@@ -67,7 +73,7 @@ export abstract class HitObject {
   set startTime(value: number) {
     if (value === this._startTime) return;
     this._startTime = value;
-    this.onUpdate.emit("startTime");
+    this._onUpdate("startTime");
   }
 
   abstract duration: number;
@@ -105,10 +111,10 @@ export abstract class HitObject {
   applyDefaults(difficulty: SerializedBeatmapDifficulty, controlPoints: ControlPointManager) {
     this.scale = (1.0 - (0.7 * (difficulty.circleSize - 5)) / 5) / 2;
     this.timePreempt = difficultyRange(
-      difficulty.approachRate,
-      1800,
-      1200,
-      450,
+        difficulty.approachRate,
+        1800,
+        1200,
+        450,
     );
     this.timeFadeIn = 400 * Math.min(1, this.timePreempt, 400);
   }
@@ -121,7 +127,7 @@ export abstract class HitObject {
 
   set isNewCombo(value: boolean) {
     this._isNewCombo = value;
-    this.onUpdate.emit("newCombo");
+    this._onUpdate("newCombo");
   }
 
   abstract serialize(): SerializedHitObject
@@ -177,25 +183,30 @@ export abstract class HitObject {
   protected _updateHitSounds() {
   }
 
+  protected _onUpdate(update: HitObjectUpdateType) {
+    this._version++;
+    this.onUpdate.emit(update);
+  }
+
 }
 
 export type HitObjectUpdateType =
-  "startTime"
-  | "position"
-  | "newCombo"
-  | "stackHeight"
-  | "selected"
-  | "combo"
-  | "repeats"
-  | "velocity"
-  | "duration"
-  | "hitSounds";
+    "startTime"
+    | "position"
+    | "newCombo"
+    | "stackHeight"
+    | "selected"
+    | "combo"
+    | "repeats"
+    | "velocity"
+    | "duration"
+    | "hitSounds";
 
 function difficultyRange(
-  diff: number,
-  min: number,
-  mid: number,
-  max: number,
+    diff: number,
+    min: number,
+    mid: number,
+    max: number,
 ): number {
   if (diff > 5) {
     return mid + ((max - mid) * (diff - 5)) / 5;

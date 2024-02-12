@@ -6,6 +6,7 @@ export class EditorClock extends Drawable {
 
   constructor(private readonly audioManager: AudioManager) {
     super();
+    this.eventMode = "none";
   }
 
   private _currentTime = 0;

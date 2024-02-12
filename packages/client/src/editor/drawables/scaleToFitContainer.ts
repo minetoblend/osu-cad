@@ -1,11 +1,10 @@
-import {Drawable} from "./Drawable.ts";
 import {ISize, Vec2} from "@osucad/common";
 import gsap from "gsap";
-import {Container} from "pixi.js";
+import {Container, ObservablePoint} from "pixi.js";
+import {Component} from "@/editor/drawables/Component.ts";
 
-export class ScaleToFitContainer extends Drawable {
+export class ScaleToFitContainer extends Component {
   constructor(
-    private readonly viewportSize: ISize,
     private readonly contentSize: ISize,
     private readonly padding: number = 0,
     private readonly animated: boolean = false,
@@ -22,14 +21,19 @@ export class ScaleToFitContainer extends Drawable {
 
   private _isFirstUpdate = true;
 
+  _onUpdate(point?: ObservablePoint) {
+    super._onUpdate(point);
+    this.update();
+  }
+
   update() {
     const scale = Math.min(
-      this.viewportSize.width / (this.contentSize.width + this.padding * 2),
-      this.viewportSize.height / (this.contentSize.height + this.padding * 2),
+      this.size.x / (this.contentSize.width + this.padding * 2),
+      this.size.y / (this.contentSize.height + this.padding * 2),
     );
     const position = new Vec2(
-      (this.viewportSize.width - this.contentSize.width * scale) / 2,
-      (this.viewportSize.height - this.contentSize.height * scale) / 2,
+      (this.size.x - this.contentSize.width * scale) / 2,
+      (this.size.y - this.contentSize.height * scale) / 2,
     );
     if (!this.animated || this._isFirstUpdate) {
       this.content.scale.set(scale);

@@ -1,13 +1,13 @@
-import {EditorInstance} from "./editorClient.ts";
 import {Drawable} from "./drawables/Drawable.ts";
 import {Inject} from "./drawables/di";
 import {TickType} from "@osucad/common";
 import {clamp} from "@vueuse/core";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 export class BeatInfo extends Drawable {
 
-  @Inject(EditorInstance)
-  editor!: EditorInstance;
+  @Inject(EditorContext)
+  editor!: EditorContext;
 
   beatLength = 0;
   beatProgress = 0;

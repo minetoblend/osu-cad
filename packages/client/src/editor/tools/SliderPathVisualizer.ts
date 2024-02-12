@@ -2,8 +2,8 @@ import {Assets, Circle, Container, Graphics, Point, Sprite} from "pixi.js";
 import {Drawable} from "../drawables/Drawable.ts";
 import {HitObject, PathType, Slider} from "@osucad/common";
 import {Inject} from "../drawables/di";
-import {EditorInstance} from "../editorClient.ts";
-import {isMobile} from "../../util/isMobile.ts";
+import {isMobile} from "@/util/isMobile.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 export class SliderPathVisualizer extends Drawable {
 
@@ -56,14 +56,14 @@ export class SliderPathVisualizer extends Drawable {
     }
 
     this.graphics.moveTo(
-      this.slider.path.controlPoints[0].x,
-      this.slider.path.controlPoints[0].y,
+        this.slider.path.controlPoints[0].x,
+        this.slider.path.controlPoints[0].y,
     );
     let tint = getColorForPathType(this.slider.path.controlPoints[0].type);
     for (let i = 0; i < this.slider.path.controlPoints.length; i++) {
       const point = this.slider.path.controlPoints[i];
       this.graphics.lineTo(point.x, point.y)
-        .stroke(tint);
+          .stroke(tint);
       if (point.type != null)
         tint = getColorForPathType(point.type);
     }
@@ -93,8 +93,8 @@ export class SliderPathVisualizer extends Drawable {
 
   installHandleListeners?(handle: SliderPathHandle, index: number): void
 
-  @Inject(EditorInstance)
-  protected editor!: EditorInstance;
+  @Inject(EditorContext)
+  protected editor!: EditorContext;
 
 }
 
@@ -109,7 +109,7 @@ export class SliderPathHandle extends Drawable {
   constructor() {
     super();
     this.addChild(this.circle);
-    this.hitArea = new Circle(0, 0, isMobile() ? 32 : 32 * 0.3);
+    this.hitArea = new Circle(0, 0, isMobile() ? 24 : 32 * 0.3);
     this.eventMode = "dynamic";
 
     this.onpointerenter = () => {

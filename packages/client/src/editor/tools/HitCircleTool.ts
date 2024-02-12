@@ -4,6 +4,7 @@ import {DestroyOptions, FederatedPointerEvent} from "pixi.js";
 import {HitObjectSnapProvider} from "./snapping/HitObjectSnapProvider.ts";
 import {Inject} from "../drawables/di";
 import {ToolContainer} from "./ToolContainer.ts";
+import {isMobile} from "@/util/isMobile.ts";
 
 export class HitCircleTool extends ComposeTool {
 
@@ -15,10 +16,14 @@ export class HitCircleTool extends ComposeTool {
     this.currentObject = new HitCircle();
     this.currentObject.startTime = this.editor.clock.currentTime;
     this.currentObject.position = this.mousePos;
-    this.editor.beatmapManager.hitObjects.add(this.currentObject);
+    if (!isMobile())
+      this.editor.beatmapManager.hitObjects.add(this.currentObject);
     this.selection.clear();
     this.on("rightdown", this.onRightDown, this);
+
+    this.onTick();
   }
+
 
   private isCreating = false;
 
@@ -81,7 +86,8 @@ export class HitCircleTool extends ComposeTool {
     if (evt.button === 0 && this.isCreating) {
       this.editor.commandManager.commit();
       this.currentObject = new HitCircle();
-      this.editor.beatmapManager.hitObjects.add(this.currentObject);
+      if (!isMobile())
+        this.editor.beatmapManager.hitObjects.add(this.currentObject);
       this.isCreating = false;
     }
   }

@@ -45,23 +45,23 @@ const modelValue = useVModel(props, "modelValue", emit);
 
 
     &:hover {
-      background-color: lighten($surface-50, 2%);
+      background-color: rgba(white, 0.05);
     }
 
     &:active {
-      background-color: darken($surface-50, 2%);
+      background-color: rgba(black, 0.05);
       transform: scale(0.98)
     }
 
     &.active {
-      background-color: $surface-100;
+      background-color: rgba(white, 0.1);
 
       &:hover {
-        background-color: lighten($surface-100, 5%);
+        background-color: rgba(white, 0.2);
       }
 
       &:active {
-        background-color: darken($surface-100, 5%);
+        background-color: rgba(white, 0.3);
       }
     }
 

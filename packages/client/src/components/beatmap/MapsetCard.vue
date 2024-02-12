@@ -12,6 +12,8 @@ const coverUrl = computed(() => {
   return undefined;
 });
 
+console.log(props.mapset)
+
 const beatmaps = useSorted(() => props.mapset.beatmaps, (a, b) => a.starRating - b.starRating);
 
 </script>

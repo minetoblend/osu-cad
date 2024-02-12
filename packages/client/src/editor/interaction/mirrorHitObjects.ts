@@ -1,4 +1,3 @@
-import {EditorInstance} from "../editorClient.ts";
 import {
   HitObject,
   IVec2,
@@ -10,31 +9,52 @@ import {
   Vec2,
 } from "@osucad/common";
 import {getHitObjectPositions} from "../tools/snapping/HitObjectSnapProvider.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
-export function transformHitObjectsInteraction(editor: EditorInstance) {
+export function mirrorHitObjects(editor: EditorContext, axis: "horizontal" | "vertical", bounds: Rect) {
+  if (axis === "horizontal") {
+    editor.selection.selectedObjects.forEach((hitObject) => {
+      const update: Partial<SerializedHitObject & SerializedSlider> = {
+        position: {x: bounds.left + bounds.right - hitObject.position.x, y: hitObject.position.y},
+      };
+
+      if (hitObject instanceof Slider) {
+        update.path = hitObject.path.controlPoints.map((point) => ({
+          ...point,
+          x: -point.x,
+        }));
+      }
+      editor.commandManager.submit(updateHitObject(hitObject, update));
+    });
+    editor.commandManager.commit();
+  }
+  if (axis === "vertical") {
+    editor.selection.selectedObjects.forEach((hitObject) => {
+      const update: Partial<SerializedHitObject & SerializedSlider> = {
+        position: {x: hitObject.position.x, y: bounds.top + bounds.bottom - hitObject.position.y},
+      };
+
+      if (hitObject instanceof Slider) {
+        update.path = hitObject.path.controlPoints.map((point) => ({
+          ...point,
+          y: -point.y,
+        }));
+      }
+      editor.commandManager.submit(updateHitObject(hitObject, update));
+    });
+    editor.commandManager.commit();
+  }
+}
+
+export function transformHitObjectsInteraction(editor: EditorContext) {
 
   useEventListener("keydown", (evt) => {
     if (evt.ctrlKey && evt.code === "KeyH") {
       evt.preventDefault();
-
       if (editor.selection.size === 0) return;
 
       const bounds = evt.shiftKey ? Rect.containingPoints(getHitObjectPositions([...editor.selection.selectedObjects]))! : new Rect(0, 0, 512, 384);
-
-      editor.selection.selectedObjects.forEach((hitObject) => {
-        const update: Partial<SerializedHitObject & SerializedSlider> = {
-          position: { x: bounds.left + bounds.right - hitObject.position.x, y: hitObject.position.y },
-        };
-
-        if (hitObject instanceof Slider) {
-          update.path = hitObject.path.controlPoints.map((point) => ({
-            ...point,
-            x: -point.x,
-          }));
-        }
-        editor.commandManager.submit(updateHitObject(hitObject, update));
-      });
-      editor.commandManager.commit();
+      mirrorHitObjects(editor, "horizontal", bounds);
     } else if (evt.ctrlKey && evt.code === "KeyJ") {
       evt.preventDefault();
 
@@ -43,20 +63,7 @@ export function transformHitObjectsInteraction(editor: EditorInstance) {
       const bounds = evt.shiftKey ? Rect.containingPoints(getHitObjectPositions([...editor.selection.selectedObjects]))! : new Rect(0, 0, 512, 384);
 
 
-      editor.selection.selectedObjects.forEach((hitObject) => {
-        const update: Partial<SerializedHitObject & SerializedSlider> = {
-          position: { x: hitObject.position.x, y: bounds.top + bounds.bottom - hitObject.position.y },
-        };
-
-        if (hitObject instanceof Slider) {
-          update.path = hitObject.path.controlPoints.map((point) => ({
-            ...point,
-            y: -point.y,
-          }));
-        }
-        editor.commandManager.submit(updateHitObject(hitObject, update));
-      });
-      editor.commandManager.commit();
+      mirrorHitObjects(editor, "vertical", bounds);
     } else if (evt.ctrlKey && evt.code === "Period") {
       evt.preventDefault();
       const hitObjects = [...editor.selection.selectedObjects];
@@ -98,7 +105,7 @@ export function transformHitObjectsInteraction(editor: EditorInstance) {
 
 }
 
-export function rotateHitObjects(editor: EditorInstance, hitObjects: HitObject[], angle: number, aroundCenter: boolean | Vec2) {
+export function rotateHitObjects(editor: EditorContext, hitObjects: HitObject[], angle: number, aroundCenter: boolean | Vec2) {
   if (hitObjects.length === 0) return;
 
   const bounds = Rect.containingPoints(getHitObjectPositions(hitObjects))!;

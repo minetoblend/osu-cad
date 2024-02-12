@@ -1,13 +1,12 @@
-import { CapacitorConfig } from '@capacitor/cli';
+import {CapacitorConfig} from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.osucad',
   appName: 'osucad',
-  webDir: 'dist',
+  webDir: 'mobile-dist',
   server: {
     androidScheme: 'https',
-    url: 'https://osucad.com',
-    allowNavigation: ['osucad.com', 'osu.ppy.sh'],
+    allowNavigation: ['dev.osucad.com', 'osu.ppy.sh'],
   }
 };
 

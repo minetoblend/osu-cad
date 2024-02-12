@@ -114,7 +114,7 @@ export class MapsetController {
 
     const path = decodeURIComponent(request.path.split("/files/").slice(1).join("/"));
 
-    if ( path.match(/\.\.\//g) !== null) {
+    if (path.match(/\.\.\//g) !== null) {
       return response.sendStatus(400);
     }
 
@@ -122,13 +122,18 @@ export class MapsetController {
     if (path.length === 0) return response.sendStatus(400);
 
     try {
-      const stream = this.beatmapService.getFileStream(id, path);
-      if (!stream) {
+      const buffer = this.beatmapService.getFileContents(id, path);
+      if (!buffer) {
         return response.sendStatus(404);
       }
 
-      response.header("Cache-Control", "public, max-age=31536000, immutable");
-      stream.pipe(response);
+      response.writeHead(200, [
+        ["Content-Length", buffer.length.toString()],
+        ["Content-Type", "application/octet-stream"],
+        ["Cache-Control", "public, max-age=31536000"],
+      ]);
+      response.write(buffer);
+      response.end();
     } catch (e) {
       console.log(e);
       response.status(404).send("File not found");

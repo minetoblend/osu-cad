@@ -32,20 +32,20 @@ export class SliderFilter extends Filter {
 
     if (!gradient) {
       gradient = new SliderGradient(0, 0, 1, 0)
-        .addColorStop(0.0, 0x000000, 0.0)
-        .addColorStop(0.2, 0x000000, 0.125)
-        .addColorStop(0.22, 0xff0000)
-        .addColorStop(0.3, 0xff0000)
-        .addColorStop(0.32, 0xffff00)
-        .addColorStop(1.0, 0xffffff);
+          .addColorStop(0.0, 0x000000, 0.0)
+          .addColorStop(0.2, 0x000000, 0.125)
+          .addColorStop(0.22, 0xff0000)
+          .addColorStop(0.3, 0xff0000)
+          .addColorStop(0.32, 0xffff00)
+          .addColorStop(1.0, 0xffffff);
 
       gradient.buildLinearGradient();
     }
 
     const sliderUniforms = new UniformGroup({
-      uComboColor: { value: new Float32Array(Color.shared.setValue(0xff0000).toArray()), type: "vec4<f32>" },
-      uBorderColor: { value: new Float32Array(Color.shared.setValue(0xffffff).toArray()), type: "vec4<f32>" },
-      uAlpha: { value: 1.0, type: "f32" },
+      uComboColor: {value: new Float32Array(Color.shared.setValue(0xff0000).toArray()), type: "vec4<f32>"},
+      uBorderColor: {value: new Float32Array(Color.shared.setValue(0xffffff).toArray()), type: "vec4<f32>"},
+      uAlpha: {value: 1.0, type: "f32"},
     });
 
     super({
@@ -58,7 +58,6 @@ export class SliderFilter extends Filter {
         uBackTexture: Texture.EMPTY,
       },
       resolution: window.devicePixelRatio,
-
     });
 
     this.texture = Texture.EMPTY;

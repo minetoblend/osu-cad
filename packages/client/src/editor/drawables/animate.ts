@@ -17,6 +17,10 @@ export function animate(
 
 
 export namespace Easing {
+  export function inQuad(x: number) {
+    return x * x;
+  }
+
   export function outQuad(x: number) {
     return x * (2 - x);
   }

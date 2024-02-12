@@ -9,6 +9,7 @@ struct GlobalFilterUniforms {
 
 struct SliderUniforms {
   uComboColor: vec4<f32>,
+  uBorderColor: vec4<f32>,
   uAlpha:f32,
 };
 

@@ -8,7 +8,7 @@ defineProps<{
 <template>
   <div class="form-field grid">
     <label class="col-4">{{ label }}</label>
-    <div class="form-control" :class="{ ['col-' + fullWidth ? 8 : 4]: true }">
+    <div class="form-control" :class="{ ['col-' + (fullWidth ? 8 : 4)]: true }">
       <slot/>
     </div>
   </div>
@@ -17,9 +17,11 @@ defineProps<{
 <style lang="scss">
 .form-field {
   align-items: center;
+  min-height: 40px;
 
   label {
     text-align: right;
+    padding-right: 1rem;
   }
 
   .form-control {

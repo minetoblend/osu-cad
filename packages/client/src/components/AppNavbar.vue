@@ -1,17 +1,26 @@
 <script setup lang="ts">
-
 import UserAvatar from "./UserAvatar.vue";
 import {useCurrentUser} from "../composables/useCurrentUser.ts";
+import {isMobile} from "@/util/isMobile.ts";
+import {useRoute} from "vue-router";
 
-const { user } = useCurrentUser();
+const mobile = isMobile();
+
+const {user} = useCurrentUser();
 const loginUrl = computed(() => {
   return `/auth/login?redirect=${encodeURIComponent(window.location.pathname)}`;
 });
 
+const route = useRoute();
+const isVisible = computed(() => {
+  console.log(route.fullPath)
+  if (route.fullPath.startsWith('/edit') && mobile) return false
+  return true
+})
 </script>
 
 <template>
-  <nav class="oc-navbar">
+  <nav class="oc-navbar" v-show="isVisible">
     <RouterLink class="oc-navbar-logo" to="/">
       <img src="@/assets/logo-text.svg" alt="osucad logo" height="48">
     </RouterLink>
@@ -48,6 +57,12 @@ const loginUrl = computed(() => {
   display: flex;
   align-items: center;
   gap: 0.5em;
+}
+
+@media (max-width: 1024px) {
+  .oc-navbar {
+    height: 48px;
+  }
 }
 
 </style>

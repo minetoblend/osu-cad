@@ -58,6 +58,26 @@ const manifest: AssetsManifest = {
           alias: "icon-spinner",
           src: "spinner.png",
         },
+        {
+          alias: 'icon-undo',
+          src: 'undo.png',
+        },
+        {
+          alias: 'icon-redo',
+          src: 'redo.png',
+        },
+        {
+          alias: 'icon-size-ew',
+          src: 'size-ew.png',
+        },
+        {
+          alias: 'icon-size-ns',
+          src: 'size-ns.png',
+        },
+        {
+          alias: 'icon-reverse',
+          src: 'reverse.png',
+        }
       ],
     }),
 

@@ -1,9 +1,9 @@
 import {Assets, Point, Sprite} from "pixi.js";
 import {Drawable} from "../Drawable.ts";
 import {Inject} from "../di";
-import {EditorInstance} from "../../editorClient.ts";
 import {animate} from "../animate.ts";
 import {BeatInfo} from "../../beatInfo.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 export class ReverseArrowDrawable extends Drawable {
 
@@ -22,8 +22,8 @@ export class ReverseArrowDrawable extends Drawable {
   }
 
 
-  @Inject(EditorInstance)
-  editor!: EditorInstance;
+  @Inject(EditorContext)
+  editor!: EditorContext;
 
   @Inject(BeatInfo)
   beatInfo!: BeatInfo;

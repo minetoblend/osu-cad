@@ -4,7 +4,7 @@ import {Assets, FederatedPointerEvent, Sprite} from "pixi.js";
 import {Inject} from "../di";
 import {BeatInfo} from "../../beatInfo.ts";
 import {hitObjectId, HitSoundSample, Vec2} from "@osucad/common";
-import {EditorInstance} from "../../editorClient.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 export class HitSoundPlacementTool extends Component {
 
@@ -14,8 +14,8 @@ export class HitSoundPlacementTool extends Component {
     this.addChild(this.previewSample);
   }
 
-  @Inject(EditorInstance)
-  private readonly editor!: EditorInstance;
+  @Inject(EditorContext)
+  private readonly editor!: EditorContext;
 
   get startTime() {
     return this.timeline.startTime;

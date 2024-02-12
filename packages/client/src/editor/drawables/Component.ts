@@ -5,6 +5,15 @@ import {LayoutContext} from "./layout/LayoutContext.ts";
 
 export class Component extends Drawable {
 
+  constructor() {
+    super();
+    this.hitArea = {
+      contains: (x: number, y: number) => {
+        return x >= 0 && x <= this.size.x && y >= 0 && y <= this.size.y;
+      },
+    }
+  }
+
   size = new ObservablePoint(this, 0, 0);
 
   readonly isComponent = true;
@@ -23,11 +32,7 @@ export class Component extends Drawable {
     this.position.set(bounds.x, bounds.y);
   }
 
-  hitArea = {
-    contains: (x: number, y: number) => {
-      return x >= 0 && x <= this.size.x && y >= 0 && y <= this.size.y;
-    },
-  };
+  ;
 
   private _preferredWidth?: number;
   private _preferredHeight?: number;

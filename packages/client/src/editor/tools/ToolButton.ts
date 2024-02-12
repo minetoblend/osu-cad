@@ -3,7 +3,7 @@ import {Texture} from "pixi.js";
 import {NoArgsConstructor} from "@osucad/common";
 import {ComposeTool} from "./ComposeTool.ts";
 import {Inject} from "../drawables/di";
-import {ToolContainer} from "./ToolContainer.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 export class ToolButton extends IconButton {
 
@@ -20,15 +20,15 @@ export class ToolButton extends IconButton {
     this.tool = options.tool;
   }
 
-  @Inject(ToolContainer)
-  private readonly toolContainer!: ToolContainer;
+  @Inject(EditorContext)
+  private readonly editor!: EditorContext;
 
   onLoad() {
     watchEffect(() => {
-      this.active = this.tool === this.toolContainer.tool.constructor;
+      this.active = this.tool === this.editor.tools.activeTool.constructor;
     });
     this.onpointerdown = () => {
-      this.toolContainer.tool = new this.tool();
+      this.editor.tools.activeTool = new this.tool();
     };
   }
 

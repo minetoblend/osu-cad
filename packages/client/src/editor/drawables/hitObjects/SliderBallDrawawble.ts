@@ -1,8 +1,8 @@
 import {Drawable} from "../Drawable.ts";
 import {Assets, Point, Sprite} from "pixi.js";
 import {Inject} from "../di";
-import {EditorInstance} from "../../editorClient.ts";
 import {animate} from "../animate.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 export class SliderBallDrawable extends Drawable {
   sliderb0 = new Sprite({
@@ -22,8 +22,8 @@ export class SliderBallDrawable extends Drawable {
     this.visible = false;
   }
 
-  @Inject(EditorInstance)
-  editor!: EditorInstance;
+  @Inject(EditorContext)
+  editor!: EditorContext;
 
   onTick() {
     const time = this.editor.clock.currentTimeAnimated - this.startTime;

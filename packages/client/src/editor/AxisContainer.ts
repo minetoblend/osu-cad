@@ -2,11 +2,11 @@ import {Drawable} from "./drawables/Drawable.ts";
 import {Vec2} from "@osucad/common";
 import {Point, Rectangle, Sprite, Texture} from "pixi.js";
 import {Inject} from "./drawables/di";
-import {EditorInstance} from "./editorClient.ts";
 import {PopoverContainer} from "./drawables/menu/PopoverContainer.ts";
 import {MenuItemOptions} from "./drawables/menu/MenuItem.ts";
 import {Menu} from "./drawables/menu/Menu.ts";
 import {mirrorAlongAxis} from "./interaction/mirrorAlongAxis.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 export class AxisContainer extends Drawable {
 
@@ -14,8 +14,8 @@ export class AxisContainer extends Drawable {
 
 export class AxisDrawable extends Drawable {
 
-  @Inject(EditorInstance)
-  editor!: EditorInstance;
+  @Inject(EditorContext)
+  editor!: EditorContext;
 
   @Inject(PopoverContainer)
   popoverContainer!: PopoverContainer;

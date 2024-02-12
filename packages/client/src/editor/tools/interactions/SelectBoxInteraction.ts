@@ -15,8 +15,11 @@ export class SelectBoxInteraction extends ToolInteraction {
     const min = Vec2.min(this.startPosition, this.mousePos);
     const end = Vec2.max(this.startPosition, this.mousePos);
     const rect = new Rectangle(min.x, min.y, end.x - min.x, end.y - min.y);
-    this.selectBox.clear()
-      .roundRect(min.x, min.y, end.x - min.x, end.y - min.y, 2)
+    this.selectBox.clear();
+
+    if (rect.width === 0 || rect.height === 0) return;
+
+    this.selectBox.roundRect(min.x, min.y, end.x - min.x, end.y - min.y, 2)
       .stroke(0xffffff);
 
     this.selection.selectAll(

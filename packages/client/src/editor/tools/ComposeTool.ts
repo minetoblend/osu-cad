@@ -1,27 +1,32 @@
 import {Drawable} from "../drawables/Drawable.ts";
 import {Inject} from "../drawables/di";
-import {EditorInstance} from "../editorClient.ts";
 import {EditorCommand, HitObject, Vec2} from "@osucad/common";
 import {Container, FederatedPointerEvent} from "pixi.js";
 import {HitObjectContainer} from "../drawables/hitObjects/HitObjectContainer.ts";
 import {BeatInfo} from "../beatInfo.ts";
 import {ToolInteraction} from "./interactions/ToolInteraction.ts";
 import {SelectTool} from "./SelectTool.ts";
-import {ToolContainer} from "./ToolContainer.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
+import {ButtonPanelButton} from "@/editor/drawables/buttonPanel.ts";
+import {Ref} from "vue";
 
 export class ComposeTool extends Drawable {
 
   private interactionContainer = new Container();
 
+  readonly panelButtons: Ref<ButtonPanelButton[][]> = shallowRef([])
+
+  readonly overlay = new Container()
+
   constructor() {
     super();
-    this.hitArea = { contains: () => true };
+    this.hitArea = {contains: () => true};
     this.eventMode = "static";
     this.addChild(this.interactionContainer);
   }
 
-  @Inject(EditorInstance)
-  editor!: EditorInstance;
+  @Inject(EditorContext)
+  editor!: EditorContext;
 
   @Inject(BeatInfo)
   beatInfo!: BeatInfo;
@@ -102,10 +107,12 @@ export class ComposeTool extends Drawable {
 
   hoveredHitObjects: HitObject[] = [];
 
-  private _mousePos: Vec2 | null = null;
-  private _mouseDownPos: Vec2 | null = null;
-  private _isDragging = false;
-  private _mouseDown?: number;
+  protected _mousePos: Vec2 | null = null;
+  protected _mouseDownPos: Vec2 | null = null;
+  protected _isDragging = false;
+  protected _mouseDown?: number;
+
+  protected _mousePressed = false
 
   protected interaction?: ToolInteraction;
 
@@ -113,11 +120,13 @@ export class ComposeTool extends Drawable {
     this._mouseDownPos = Vec2.from(e.getLocalPosition(this));
     this._mousePos = this._mouseDownPos;
     this._mouseDown = e.button;
+    this._mousePressed = true;
     this.hoveredHitObjects = this.visibleHitObjects.filter(it => it.contains(this.mousePos)).reverse();
     this.onMouseDown(e);
   }
 
   private _onPointerUp(e: FederatedPointerEvent) {
+    this._mousePressed = false;
     this.onMouseUp(e);
     if (this._mouseDownPos != null) {
       if (Vec2.closerThan(this._mouseDownPos, Vec2.from(e.getLocalPosition(this)), 5)) {
@@ -229,7 +238,7 @@ export class ComposeTool extends Drawable {
       if (this.interaction)
         this.cancelInteraction();
       else if (!(this instanceof SelectTool))
-        (this.parent as ToolContainer).tool = new SelectTool();
+        this.editor.tools.activeTool = new SelectTool();
 
     } else if (evt.key === "Enter") {
       this.completeInteraction();
@@ -253,13 +262,15 @@ export class ComposeTool extends Drawable {
   beginInteraction<Args extends any[]>(
     interactionType: new (tool: this, ...args: Args) => ToolInteraction,
     ...args: Args
-  ) {
+  ): ToolInteraction {
     const interaction = new interactionType(this, ...args);
     console.log("begin interaction", interaction);
     this.interaction?.onDestroy?.();
     this.interactionContainer.removeChildren();
     this.interaction = interaction;
     this.interactionContainer.addChild(interaction);
+
+    return interaction
   }
 
   completeInteraction() {

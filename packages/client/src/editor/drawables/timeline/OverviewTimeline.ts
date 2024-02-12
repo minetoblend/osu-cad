@@ -1,8 +1,8 @@
 import {Component} from "../Component.ts";
 import {Graphics} from "pixi.js";
 import {Inject} from "../di";
-import {EditorInstance} from "../../editorClient.ts";
 import {ObservablePoint} from "pixi.js/lib/maths/point/ObservablePoint";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 
 export class OverviewTimeline extends Component {
@@ -14,8 +14,8 @@ export class OverviewTimeline extends Component {
     .fill(0xffffff);
 
 
-  @Inject(EditorInstance)
-  private readonly editor!: EditorInstance;
+  @Inject(EditorContext)
+  private readonly editor!: EditorContext;
 
   onLoad() {
     this.addChild(this.background, this.timestamps, this.currentTimeIndicator);

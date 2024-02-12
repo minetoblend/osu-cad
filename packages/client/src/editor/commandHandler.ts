@@ -7,18 +7,18 @@ import {
   getCommandHandler,
   VersionedEditorCommand,
 } from "@osucad/common";
-import {EditorSocket} from "./editorClient.ts";
+import {EditorSocket} from "@/editor/editorSocket.ts";
 
 export class CommandManager {
 
   private sessionId: number = 0;
-  private history = new History(this);
+  readonly history = new History(this);
 
   constructor(
     private readonly beatmapManager: BeatmapManager,
     private readonly socket: EditorSocket,
   ) {
-    socket.on("roomState", ({ ownUser }) => {
+    socket.on("roomState", ({ownUser}) => {
       this.sessionId = ownUser.sessionId;
     });
     socket.on("commands", (commands: Uint8Array, sessionId: number) => {
@@ -79,7 +79,7 @@ export class CommandManager {
           break;
         }
       }
-    this.commandBuffer.push({ command, version });
+    this.commandBuffer.push({command, version});
   }
 
   private nextVersion = 0;
@@ -123,8 +123,11 @@ class History {
 
   private transaction: HistoryEntry[] = [];
 
-  private undoStack: HistoryEntry[][] = [];
-  private redoStack: HistoryEntry[][] = [];
+  private undoStack: HistoryEntry[][] = shallowReactive([]);
+  private redoStack: HistoryEntry[][] = shallowReactive([]);
+
+  canUndo = computed(() => this.undoStack.length > 0);
+  canRedo = computed(() => this.redoStack.length > 0);
 
   record(command: EditorCommand, context: CommandContext) {
     const handler = getCommandHandler(command);
@@ -148,13 +151,13 @@ class History {
     if (mergedIndices.size > 0)
       this.transaction = this.transaction.filter((_, i) => !mergedIndices.has(i));
 
-    this.transaction.push({ command, reverse });
+    this.transaction.push({command, reverse});
   }
 
   commit() {
     if (this.transaction.length === 0) return false;
     this.undoStack.push(this.transaction);
-    this.redoStack = [];
+    this.redoStack.splice(0, this.redoStack.length)
     this.transaction = [];
     return true;
   }
@@ -166,12 +169,12 @@ class History {
     const redoTransaction: HistoryEntry[] = [];
 
     for (let i = transaction.length - 1; i >= 0; i--) {
-      const { reverse: command } = transaction[i];
+      const {reverse: command} = transaction[i];
       if (command) {
         const reverse = getCommandHandler(command).createUndo?.(command, context, "redo");
         this.manager.submit(command, false);
         if (reverse)
-          redoTransaction.push({ command, reverse });
+          redoTransaction.push({command, reverse});
       }
     }
 
@@ -186,10 +189,10 @@ class History {
     const undoTransaction: HistoryEntry[] = [];
 
     for (let i = transaction.length - 1; i >= 0; i--) {
-      const { command, reverse } = transaction[i];
+      const {command, reverse} = transaction[i];
       if (reverse) {
         this.manager.submit(reverse, false);
-        undoTransaction.push({ command: reverse, reverse: command });
+        undoTransaction.push({command: reverse, reverse: command});
       }
     }
 

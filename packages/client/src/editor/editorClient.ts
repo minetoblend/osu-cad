@@ -1,8 +1,7 @@
-import {io, Socket} from "socket.io-client";
-import {BeatmapId, ClientMessages, ServerMessages} from "@osucad/common";
-import {createConnectedUsers, EditorUsersList} from "./connectedUsers.ts";
-import {createEventList, EditorEventsList} from "./events.ts";
-import {InjectionKey} from "vue";
+import {io} from "socket.io-client";
+import {BeatmapId} from "@osucad/common";
+import {createConnectedUsers} from "./connectedUsers.ts";
+import {createEventList} from "./events.ts";
 import {createEditorTextures} from "./textures.ts";
 import {BeatmapManager} from "./beatmapManager.ts";
 import {EditorClock} from "./clock.ts";
@@ -12,33 +11,27 @@ import {Mod} from "./mods/Mod.ts";
 import {CommandManager} from "./commandHandler.ts";
 import {Assets} from "pixi.js";
 import "./operators/MoveHitObjectsOperator.ts";
+import {usePreferences} from "@/composables/usePreferences.ts";
+import {ToolManager} from "@/editor/tools/toolManager.ts";
+import {EditorSocket} from "@/editor/editorSocket.ts";
+import {EditorContext, globalEditor} from "@/editor/editorContext.ts";
+import fontUrl from '@fontsource/nunito-sans/files/nunito-sans-cyrillic-400-normal.woff2';
+import {Ref} from "vue";
 
-export type EditorSocket = Socket<ServerMessages, ClientMessages>;
-
-export interface EditorInstance {
-  socket: EditorSocket;
-  connectedUsers: EditorUsersList;
-  events: EditorEventsList;
-  beatmapManager: BeatmapManager;
-  clock: EditorClock;
-  selection: SelectionManager;
-  mods: Mod[];
-  commandManager: CommandManager;
-  audioManager: AudioManager;
-}
-
-export const EditorInstance: InjectionKey<EditorInstance> = Symbol("editor");
 
 export async function createEditorClient(
   beatmapId: BeatmapId,
-): Promise<EditorInstance> {
+  progress: Ref<number> = ref(0),
+): Promise<EditorContext> {
   const socket = createClient(beatmapId);
+
+  progress.value = 0.1;
 
   onScopeDispose(() => {
     socket.disconnect();
   });
 
-  socket.on("disconnect", (event) => {
+  socket.on("disconnect", () => {
     window.location.reload();
   });
 
@@ -49,40 +42,59 @@ export async function createEditorClient(
   const clock = new EditorClock(audioManager);
   const mods = [] as Mod[];
   const commandManager = new CommandManager(beatmapManager, socket);
-  // mods.push(new DepthMod(clock));
-
-
-  // watchEffect(() => {
-  //   const metadata = beatmapManager.mapset?.meatadata;
-  //   const diffName = beatmapManager.beatmap?.name;
-  //   if (metadata && diffName)
-  //     document.title = `${metadata.artist} - ${metadata.title} [${diffName}] - osucad`;
-  // });
+  const {preferences, loaded: preferencesLoaded} = usePreferences();
 
   await Promise.all([
     receiveRoomState(socket),
     createEditorTextures(),
+    until(preferencesLoaded).toBeTruthy(),
   ]);
 
+  progress.value = 0.4
+
+  const tools = new ToolManager();
   const selection = new SelectionManager(beatmapManager);
 
 
   try {
     if (beatmapManager.beatmap.backgroundPath)
       await Assets.load(`/api/mapsets/${beatmapManager.beatmap.setId}/files/${beatmapManager.beatmap.backgroundPath}`);
+
+    await Assets.load(fontUrl)
+
   } catch (e) {
     console.warn("failed to load background", e);
   }
 
+  progress.value = 0.5;
+
   console.log("loading audio");
 
-  await audioManager.loadAudio();
+  await audioManager.loadAudio(p => progress.value = 0.5 + p * 0.5);
 
-  clock.seek(beatmapManager.hitObjects.first?.startTime ?? 0, false);
+  await clock.seek(beatmapManager.hitObjects.first?.startTime ?? 0, false);
 
   console.log("editor client created");
 
-  return { socket, connectedUsers, events, beatmapManager, clock, selection, mods, commandManager, audioManager };
+  const ctx: EditorContext = {
+    socket,
+    connectedUsers,
+    events,
+    beatmapManager,
+    clock,
+    selection,
+    mods,
+    commandManager,
+    audioManager,
+    preferences,
+    tools,
+  };
+
+  globalEditor.value = ctx;
+
+  progress.value = 1.0
+
+  return ctx;
 }
 
 function createClient(beatmapId: BeatmapId): EditorSocket {
@@ -90,27 +102,12 @@ function createClient(beatmapId: BeatmapId): EditorSocket {
 
   return io(`${host}/editor`, {
     withCredentials: true,
-    query: { id: beatmapId },
+    query: {id: beatmapId},
   });
 }
 
 function receiveRoomState(socket: EditorSocket): Promise<void> {
-  return new Promise<void>((resolve) => {
-    socket.once("roomState", () => {
-      console.log("received room state");
-      resolve();
-    });
-  });
-}
-
-export function provideEditor(editor: EditorInstance) {
-  provide(EditorInstance, editor);
-}
-
-export function useEditor(): EditorInstance {
-  const editor = inject(EditorInstance);
-  if (!editor) {
-    throw new Error("editor not found");
-  }
-  return editor;
+  return new Promise<void>(resolve =>
+    socket.once("roomState", () => resolve())
+  );
 }

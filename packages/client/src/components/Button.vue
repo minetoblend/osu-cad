@@ -5,12 +5,17 @@ const props = defineProps<{
   variant?: "primary" | "accent";
   size?: "sm" | "md" | "lg";
   disabled?: boolean;
+  outline?: boolean;
 }>();
 const classes = computed(() => {
   const classes: string[] = [
     `oc-btn--${props.variant ?? "primary"}`,
     `oc-btn--${props.size ?? "md"}`,
   ];
+
+  if (props.outline) {
+    classes.push("oc-btn--outline");
+  }
 
   return classes;
 });
@@ -55,10 +60,23 @@ const classes = computed(() => {
         transform: scale(0.98)
       }
 
-      &:active, &:focus {
+      &:focus-visible {
         box-shadow: 0 0 0 $focus-ring-width rgba($color, $focus-ring-alpha);
       }
+
+      &.oc-btn--outline {
+        background-color: transparent;
+        border: 1px solid $color;
+        color: $color;
+
+        &:hover {
+          background-color: rgba($color, 0.1);
+          color: $text-color;
+        }
+      }
     }
+
+
   }
 
   &--sm {

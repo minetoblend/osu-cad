@@ -1,13 +1,19 @@
 import {Button} from "./Button.ts";
 import {Container, ObservablePoint, Point, Sprite, Texture} from "pixi.js";
 
+export interface IconButtonOptions {
+  icon: Texture,
+  iconScale?: number,
+  action?: () => void
+}
+
 export class IconButton extends Button {
 
   protected readonly content = new Container();
   protected readonly sprite: Sprite;
   iconScale: number;
 
-  constructor(options: { icon: Texture, iconScale?: number }) {
+  constructor(options: IconButtonOptions) {
     super();
     this.sprite = new Sprite({
       texture: options.icon,
@@ -16,6 +22,9 @@ export class IconButton extends Button {
     this.addChild(this.content);
     this.content.addChild(this.sprite);
     this.iconScale = options.iconScale ?? 1;
+    if (options.action) {
+      this.on('pointerdown', options.action);
+    }
   }
 
   _onUpdate(point?: ObservablePoint) {

@@ -1,9 +1,9 @@
-import {EditorInstance} from "../editorClient.ts";
 import {Parameter} from "./parameter.ts";
 import "reflect-metadata";
+import {EditorContext} from "@/editor/editorContext.ts";
 
 export interface OperatorContext {
-  editor: EditorInstance;
+  editor: EditorContext;
 }
 
 export interface OperatorOptions {
@@ -30,7 +30,7 @@ export abstract class Operator {
   abstract execute(context: OperatorContext): boolean;
 
   constructor(options: OperatorOptions) {
-    const { label } = options;
+    const {label} = options;
     this.label = label;
   }
 

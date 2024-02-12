@@ -10,10 +10,17 @@ import {HitCircleTool} from "./HitCircleTool.ts";
 import {ToolContainer} from "./ToolContainer.ts";
 import {SliderTool} from "./SliderTool.ts";
 import {SpinnerTool} from "./SpinnerTool.ts";
+import {isMobile} from "@/util/isMobile.ts";
+import {EditorContext} from "@/editor/editorContext.ts";
+import {ComposeTool} from "@/editor/tools/ComposeTool.ts";
 
 export class Toolbar extends Component {
   @Inject(VIEWPORT_SIZE)
   private readonly canvasSize!: ISize;
+
+  @Inject(EditorContext)
+  private readonly editor!: EditorContext;
+
 
   private readonly background = new Box({
     tint: 0x1A1A20,
@@ -43,26 +50,38 @@ export class Toolbar extends Component {
 
   constructor() {
     super();
+    if (isMobile())
+      this.background.visible = false;
+
     this.addChild(this.background, ...this.buttons);
+  }
+
+  get tool() {
+    return this.editor.tools.activeTool;
+  }
+
+  set tool(tool: ComposeTool) {
+    this.editor.tools.activeTool = tool;
+
   }
 
   onLoad() {
     watchEffect(() => this.updateBounds());
     useEventListener("keydown", (evt) => {
-      if (this.toolContainer.tool.acceptsNumberKeys) return;
-      if(evt.ctrlKey || evt.metaKey || evt.altKey || evt.shiftKey) return;
+      if (this.editor.tools.activeTool.acceptsNumberKeys) return;
+      if (evt.ctrlKey || evt.metaKey || evt.altKey || evt.shiftKey) return;
       switch (evt.key) {
         case "1":
-          this.toolContainer.tool = new SelectTool();
+          this.tool = new SelectTool();
           break;
         case "2":
-          this.toolContainer.tool = new HitCircleTool();
+          this.tool = new HitCircleTool();
           break;
         case "3":
-          this.toolContainer.tool = new SliderTool();
+          this.tool = new SliderTool();
           break;
         case "4":
-          this.toolContainer.tool = new SpinnerTool();
+          this.tool = new SpinnerTool();
           break;
       }
     });
@@ -70,10 +89,8 @@ export class Toolbar extends Component {
 
 
   updateBounds() {
-    const timelineScale = Math.max(Math.min(this.canvasSize.height / 720, this.canvasSize.width / 1280), 0.5);
-    const bounds = new Rect(0, 0, 48, this.canvasSize.height - 75 * timelineScale);
-    this.setBounds(bounds);
-
+    if (this.size.x === 0 || this.size.y === 0) return;
+    const bounds = new Rect(0, 0, this.size.x, this.size.y);
     for (const button of this.buttons) {
       button.setBounds(bounds.splitTop(48));
     }

@@ -1,11 +1,9 @@
-import {EditorInstance} from "../editorClient.ts";
 import {EditorCommand, hitObjectId, SerializedHitObject} from "@osucad/common";
+import {EditorContext} from "@/editor/editorContext.ts";
 
-export function copyPasteInteractions(editor: EditorInstance) {
+export function copyPasteInteractions(editor: EditorContext) {
   useEventListener("copy", (e) => {
-    console.log("copy");
     const hitObjects = editor.beatmapManager.hitObjects.hitObjects.filter(it => it.isSelected);
-    console.log(JSON.stringify(hitObjects.map(it => it.serialize())));
     e.clipboardData!.setData(
       "osucad/hitobjects",
       JSON.stringify(hitObjects.map(it => it.serialize())),
@@ -14,9 +12,7 @@ export function copyPasteInteractions(editor: EditorInstance) {
   });
 
   useEventListener("cut", (e) => {
-    console.log("copy");
     const hitObjects = editor.beatmapManager.hitObjects.hitObjects.filter(it => it.isSelected);
-    console.log(JSON.stringify(hitObjects.map(it => it.serialize())));
     e.clipboardData!.setData(
       "osucad/hitobjects",
       JSON.stringify(hitObjects.map(it => it.serialize())),
@@ -32,7 +28,6 @@ export function copyPasteInteractions(editor: EditorInstance) {
 
   useEventListener("paste", (e) => {
     const data = e.clipboardData!.getData("osucad/hitobjects");
-    console.log("paste", data);
     if (!data) return;
 
     const hitObjects = JSON.parse(data) as SerializedHitObject[];
