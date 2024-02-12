@@ -44,6 +44,7 @@ export class CursorContainer extends Drawable {
           cursorPosition: this.mousePos,
           mouseDown: this.mouseDown,
           currentTime: this.editor.clock.currentTime,
+          isPlaying: this.editor.clock.isPlaying,
         }),
       });
       this.lastUpdate = now;
