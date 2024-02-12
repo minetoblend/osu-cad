@@ -7,12 +7,13 @@ import {ISize, Rect} from "@osucad/common";
 import {ToolButton} from "./ToolButton.ts";
 import {SelectTool} from "./SelectTool.ts";
 import {HitCircleTool} from "./HitCircleTool.ts";
-import {ToolContainer} from "./ToolContainer.ts";
 import {SliderTool} from "./SliderTool.ts";
 import {SpinnerTool} from "./SpinnerTool.ts";
 import {isMobile} from "@/util/isMobile.ts";
 import {EditorContext} from "@/editor/editorContext.ts";
 import {ComposeTool} from "@/editor/tools/ComposeTool.ts";
+import {ToolbarButton} from "@/editor/tools/ToolbarButton.ts";
+import {usePreferencesVisible} from "@/composables/usePreferencesVisible.ts";
 
 export class Toolbar extends Component {
   @Inject(VIEWPORT_SIZE)
@@ -45,15 +46,19 @@ export class Toolbar extends Component {
     }),
   ];
 
-  @Inject(ToolContainer)
-  private readonly toolContainer!: ToolContainer;
+  preferencesButton = new ToolbarButton({
+    icon: Assets.get('icon-cog'),
+    action: () => {
+      usePreferencesVisible().value = true;
+    }
+  })
 
   constructor() {
     super();
     if (isMobile())
       this.background.visible = false;
 
-    this.addChild(this.background, ...this.buttons);
+    this.addChild(this.background, ...this.buttons, this.preferencesButton);
   }
 
   get tool() {
@@ -94,6 +99,7 @@ export class Toolbar extends Component {
     for (const button of this.buttons) {
       button.setBounds(bounds.splitTop(48));
     }
+    this.preferencesButton.setBounds(bounds.splitBottom(48));
   }
 
   _onUpdate(point?: ObservablePoint) {
