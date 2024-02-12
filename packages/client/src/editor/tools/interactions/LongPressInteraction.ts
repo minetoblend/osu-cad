@@ -24,6 +24,11 @@ export class LongPressInteraction extends ToolInteraction {
     this.onMoveCancel = options.onMoveCancel;
     this.onMouseUpCancel = options.onMouseUpCancel;
     this.sizeReference = document.querySelector('#dpi')
+
+    addEventListener("pointerup", () => {
+      this.cancel();
+      this.onMouseUpCancel?.();
+    }, {once: true})
   }
 
   private readonly action: () => void;
@@ -77,11 +82,6 @@ export class LongPressInteraction extends ToolInteraction {
         color: 0xffffff,
         width: 5,
       });
-  }
-
-  onMouseUp() {
-    this.cancel();
-    this.onMouseUpCancel?.();
   }
 
 }

@@ -15,6 +15,8 @@ const {width, height} = useElementSize(viewportContainer);
 
 const editor = useEditor();
 
+const emit = defineEmits(['initialized']);
+
 const viewportSize = reactive({
   width: 0,
   height: 0,
@@ -69,6 +71,11 @@ onMounted(async () => {
 
   app.stage.addChild(viewportDrawable);
 
+  app.render()
+
+  requestAnimationFrame(() => {
+    emit('initialized');
+  })
 
   watch([width, height], ([width, height]) => {
     gsap.to(viewportSize, {

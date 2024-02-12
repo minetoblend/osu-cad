@@ -21,7 +21,7 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer {
   installHandleListeners(handle: SliderPathHandle, index: number) {
     handle.onpointerdown = (e) => {
       e.preventDefault();
-      e.stopPropagation();
+      e.stopImmediatePropagation();
 
       const isDoubleTap = e.pointerType === 'touch' && performance.now() - this.lastTap < 300;
       if (e.pointerType === 'touch')
@@ -79,7 +79,6 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer {
             handle.onglobalpointermove = null;
             this.editor.commandManager.commit();
           }, {once: true});
-
         }
 
         if (e.pointerType === 'touch') {
@@ -96,8 +95,6 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer {
         } else {
           drag()
         }
-
-
       }
     };
 

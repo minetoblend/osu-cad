@@ -1,4 +1,3 @@
-import {Drawable} from "../Drawable.ts";
 import {Inject} from "../di";
 import {VIEWPORT_SIZE} from "../injectionKeys.ts";
 import {ISize, Rect} from "@osucad/common";
@@ -9,8 +8,9 @@ import {OverviewTimeline} from "./OverviewTimeline.ts";
 import {TimelineZoom} from "../../TimelineZoom.ts";
 import {PlayButton} from "../PlayButton.ts";
 import {HitSoundTimeline} from "./HitSoundTimeline.ts";
+import {Component} from "@/editor/drawables/Component.ts";
 
-export class TimelineDrawable extends Drawable {
+export class TimelineDrawable extends Component {
 
   @Inject(VIEWPORT_SIZE)
   private readonly canvasSize!: ISize;
@@ -33,7 +33,6 @@ export class TimelineDrawable extends Drawable {
     this.addChild(this.background, this.objectTimeline, this.overviewTimeline, this.timestamp, this.playButton, this.hitSoundTimeline, this.objectTimeline);
     watchEffect(() => this.updateBounds());
     this.timestamp.position.set(10, 16);
-
   }
 
   updateBounds() {

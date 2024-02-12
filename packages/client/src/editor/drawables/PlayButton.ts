@@ -34,7 +34,6 @@ export class PlayButton extends Button {
     };
     this.onpointerenter = () => this.content.scale.set(1.1);
     this.onpointerleave = () => this.content.scale.set(1);
-
   }
 
   @Inject(EditorClock)

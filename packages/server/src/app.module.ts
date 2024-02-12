@@ -46,13 +46,5 @@ import {MongooseModule} from '@nestjs/mongoose';
   controllers: [],
   providers: [],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer): any {
-    consumer.apply(FrontendMiddleware)
-        .exclude("api/(.*)", "auth/(.*)", "assets/(.*)", "phaseVocoder.js", "hitsounds/(.*)", "src/(.*)")
-        .forRoutes({
-          path: "/**",
-          method: RequestMethod.GET,
-        });
-  }
+export class AppModule {
 }

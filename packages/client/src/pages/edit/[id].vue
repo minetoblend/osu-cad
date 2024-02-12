@@ -16,12 +16,5 @@ const loginUrl = computed(() => {
 </script>
 
 <template>
-  <Suspense>
-    <BeatmapEditor :beatmap-id="beatmapId" :key="beatmapId"/>
-    <template #fallback>
-      <div style="padding: 2rem">
-        <h3>Loading...</h3>
-      </div>
-    </template>
-  </Suspense>
+  <BeatmapEditor :beatmap-id="beatmapId" :key="beatmapId"/>
 </template>

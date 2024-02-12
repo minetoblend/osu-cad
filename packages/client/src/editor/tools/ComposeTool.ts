@@ -7,10 +7,16 @@ import {BeatInfo} from "../beatInfo.ts";
 import {ToolInteraction} from "./interactions/ToolInteraction.ts";
 import {SelectTool} from "./SelectTool.ts";
 import {EditorContext} from "@/editor/editorContext.ts";
+import {ButtonPanelButton} from "@/editor/drawables/buttonPanel.ts";
+import {Ref} from "vue";
 
 export class ComposeTool extends Drawable {
 
   private interactionContainer = new Container();
+
+  readonly panelButtons: Ref<ButtonPanelButton[][]> = shallowRef([])
+
+  readonly overlay = new Container()
 
   constructor() {
     super();
@@ -101,10 +107,12 @@ export class ComposeTool extends Drawable {
 
   hoveredHitObjects: HitObject[] = [];
 
-  private _mousePos: Vec2 | null = null;
-  private _mouseDownPos: Vec2 | null = null;
-  private _isDragging = false;
-  private _mouseDown?: number;
+  protected _mousePos: Vec2 | null = null;
+  protected _mouseDownPos: Vec2 | null = null;
+  protected _isDragging = false;
+  protected _mouseDown?: number;
+
+  protected _mousePressed = false
 
   protected interaction?: ToolInteraction;
 
@@ -112,11 +120,13 @@ export class ComposeTool extends Drawable {
     this._mouseDownPos = Vec2.from(e.getLocalPosition(this));
     this._mousePos = this._mouseDownPos;
     this._mouseDown = e.button;
+    this._mousePressed = true;
     this.hoveredHitObjects = this.visibleHitObjects.filter(it => it.contains(this.mousePos)).reverse();
     this.onMouseDown(e);
   }
 
   private _onPointerUp(e: FederatedPointerEvent) {
+    this._mousePressed = false;
     this.onMouseUp(e);
     if (this._mouseDownPos != null) {
       if (Vec2.closerThan(this._mouseDownPos, Vec2.from(e.getLocalPosition(this)), 5)) {
@@ -184,8 +194,8 @@ export class ComposeTool extends Drawable {
 
   onTick() {
     this._visibleHitObjects = this.editor.beatmapManager.hitObjects.hitObjects.filter(it =>
-        (this.currentTime >= it.startTime - it.timePreempt && this.currentTime <= it.endTime + 700)
-        || it.isSelected,
+      (this.currentTime >= it.startTime - it.timePreempt && this.currentTime <= it.endTime + 700)
+      || it.isSelected,
     );
     if (this._mousePos != null) {
       this.hoveredHitObjects = this.visibleHitObjects.filter(it => it.contains(this.mousePos)).reverse();
@@ -250,8 +260,8 @@ export class ComposeTool extends Drawable {
   }
 
   beginInteraction<Args extends any[]>(
-      interactionType: new (tool: this, ...args: Args) => ToolInteraction,
-      ...args: Args
+    interactionType: new (tool: this, ...args: Args) => ToolInteraction,
+    ...args: Args
   ): ToolInteraction {
     const interaction = new interactionType(this, ...args);
     console.log("begin interaction", interaction);

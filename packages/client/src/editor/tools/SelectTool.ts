@@ -11,13 +11,14 @@ import {
   IVec2,
   PathType,
   Preferences,
+  Rect,
   SampleSet,
   Slider,
   updateHitObject,
   Vec2,
 } from "@osucad/common";
 import {RotateHitObjectsInteraction} from "./interactions/RotateHitObjectsInteration.ts";
-import {FederatedPointerEvent} from "pixi.js";
+import {Assets, FederatedPointerEvent} from "pixi.js";
 import {MoveHitObjectsInteraction} from "./interactions/MoveHitObjectsInteraction.ts";
 import {InsertControlPointInteraction} from "./interactions/InsertControlPointInteraction.ts";
 import {ScaleHitObjectsInteraction} from "./interactions/ScaleHitObjectsInteration.ts";
@@ -31,6 +32,10 @@ import {PathApproximator, Vector2} from "osu-classes";
 import {clamp} from "@vueuse/core";
 import {usePreferences} from "@/composables/usePreferences.ts";
 import {LongPressInteraction} from "@/editor/tools/interactions/LongPressInteraction.ts";
+import {ButtonPanelButton} from "@/editor/drawables/buttonPanel.ts";
+import {mirrorHitObjects} from "@/editor/interaction/mirrorHitObjects.ts";
+import {getHitObjectPositions} from "@/editor/tools/snapping/HitObjectSnapProvider.ts";
+import {transformHitObjects} from "@/editor/tools/interactions/TransformHitObjects.ts";
 
 export class SelectTool extends ComposeTool {
 
@@ -41,7 +46,7 @@ export class SelectTool extends ComposeTool {
     const {preferences} = usePreferences()
     this.preferences = preferences
 
-    this.addChild(this.sliderVisualizer);
+    this.overlay.addChild(this.sliderVisualizer);
   }
 
   private sliderVisualizer = new SelectToolSliderPathVisualizer(this);
@@ -668,6 +673,73 @@ export class SelectTool extends ComposeTool {
       position: this.mousePos,
       time: performance.now(),
     };
+  }
+
+  onLoad() {
+    super.onLoad();
+    this.initButtons();
+
+    const canvas = document.querySelector('canvas')! as HTMLCanvasElement;
+    useEventListener(canvas, 'touchstart', (evt: TouchEvent) => {
+      if (evt.targetTouches.length === 2 && this._mouseDown !== undefined && this.selection.size > 0) {
+        evt.preventDefault()
+        this.interaction?.cancel()
+        transformHitObjects(this.editor, this, this.beatInfo)
+      }
+    })
+  }
+
+  buttons = {
+    flipHorizontal: new ButtonPanelButton({
+      icon: Assets.get('icon-size-ew'),
+      action: () => {
+        if (this.selection.size === 0) return;
+        const bounds = Rect.containingPoints(getHitObjectPositions([...this.selectedObjects]))!
+        mirrorHitObjects(this.editor, "horizontal", bounds);
+      },
+    }),
+    flipVertical: new ButtonPanelButton({
+      icon: Assets.get('icon-size-ns'),
+      action: () => {
+        if (this.selection.size === 0) return;
+        const bounds = Rect.containingPoints(getHitObjectPositions([...this.selectedObjects]))!
+        mirrorHitObjects(this.editor, "vertical", bounds);
+      },
+    }),
+    reverse: new ButtonPanelButton({
+      icon: Assets.get('icon-reverse'),
+      action: () => {
+        if (this.selection.size === 0) return;
+        reverseHitObjects([...this.selectedObjects], this.editor)
+      },
+    }),
+  }
+
+  initButtons() {
+    this.panelButtons.value = [
+      [
+        this.buttons.flipHorizontal,
+        this.buttons.flipVertical,
+        this.buttons.reverse,
+      ]
+    ]
+
+    const updateButtons = () => {
+      const hasSelection = this.selection.size > 0
+      this.buttons.flipHorizontal.disabled = !hasSelection
+      this.buttons.flipVertical.disabled = !hasSelection
+      this.buttons.reverse.disabled = !hasSelection
+    }
+
+    updateButtons()
+
+    this.selection.hitObjectSelected.on(updateButtons)
+    this.selection.hitObjectDeselected.on(updateButtons)
+
+    this.addEventListener('destroy', () => {
+      this.selection.hitObjectDeselected.off(updateButtons)
+      this.selection.hitObjectDeselected.off(updateButtons)
+    })
   }
 }
 

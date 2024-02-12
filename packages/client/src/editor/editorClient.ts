@@ -14,13 +14,18 @@ import "./operators/MoveHitObjectsOperator.ts";
 import {usePreferences} from "@/composables/usePreferences.ts";
 import {ToolManager} from "@/editor/tools/toolManager.ts";
 import {EditorSocket} from "@/editor/editorSocket.ts";
-import {EditorContext} from "@/editor/editorContext.ts";
+import {EditorContext, globalEditor} from "@/editor/editorContext.ts";
+import fontUrl from '@fontsource/nunito-sans/files/nunito-sans-cyrillic-400-normal.woff2';
+import {Ref} from "vue";
 
 
 export async function createEditorClient(
-    beatmapId: BeatmapId,
+  beatmapId: BeatmapId,
+  progress: Ref<number> = ref(0),
 ): Promise<EditorContext> {
   const socket = createClient(beatmapId);
+
+  progress.value = 0.1;
 
   onScopeDispose(() => {
     socket.disconnect();
@@ -38,7 +43,6 @@ export async function createEditorClient(
   const mods = [] as Mod[];
   const commandManager = new CommandManager(beatmapManager, socket);
   const {preferences, loaded: preferencesLoaded} = usePreferences();
-  const tools = new ToolManager();
 
   await Promise.all([
     receiveRoomState(socket),
@@ -46,25 +50,33 @@ export async function createEditorClient(
     until(preferencesLoaded).toBeTruthy(),
   ]);
 
+  progress.value = 0.4
+
+  const tools = new ToolManager();
   const selection = new SelectionManager(beatmapManager);
 
 
   try {
     if (beatmapManager.beatmap.backgroundPath)
       await Assets.load(`/api/mapsets/${beatmapManager.beatmap.setId}/files/${beatmapManager.beatmap.backgroundPath}`);
+
+    await Assets.load(fontUrl)
+
   } catch (e) {
     console.warn("failed to load background", e);
   }
 
+  progress.value = 0.5;
+
   console.log("loading audio");
 
-  await audioManager.loadAudio();
+  await audioManager.loadAudio(p => progress.value = 0.5 + p * 0.5);
 
-  clock.seek(beatmapManager.hitObjects.first?.startTime ?? 0, false);
+  await clock.seek(beatmapManager.hitObjects.first?.startTime ?? 0, false);
 
   console.log("editor client created");
 
-  return {
+  const ctx: EditorContext = {
     socket,
     connectedUsers,
     events,
@@ -77,6 +89,12 @@ export async function createEditorClient(
     preferences,
     tools,
   };
+
+  globalEditor.value = ctx;
+
+  progress.value = 1.0
+
+  return ctx;
 }
 
 function createClient(beatmapId: BeatmapId): EditorSocket {
@@ -90,6 +108,6 @@ function createClient(beatmapId: BeatmapId): EditorSocket {
 
 function receiveRoomState(socket: EditorSocket): Promise<void> {
   return new Promise<void>(resolve =>
-      socket.once("roomState", () => resolve())
+    socket.once("roomState", () => resolve())
   );
 }

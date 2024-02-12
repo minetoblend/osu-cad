@@ -1,6 +1,7 @@
 import {BeatmapManager} from "../beatmapManager.ts";
 import {AudioPlayback} from "./AudioPlayback.ts";
 import {AudioMixer} from "@/editor/audio/AudioMixer.ts";
+import axios from "axios";
 
 export class AudioManager {
 
@@ -27,7 +28,7 @@ export class AudioManager {
   }
 
   constructor(
-      private readonly beatmapManager: BeatmapManager,
+    private readonly beatmapManager: BeatmapManager,
   ) {
     this.mixer = new AudioMixer(this.context)
   }
@@ -36,13 +37,21 @@ export class AudioManager {
     return this.audioBuffer.duration;
   }
 
-  async loadAudio() {
-    const response = await fetch(`/api/mapsets/${this.beatmapManager.beatmap.setId}/files/${this.beatmapManager.beatmap.audioFilename}`);
-    const buffer = await response.arrayBuffer();
+  async loadAudio(progress?: (progress: number) => void) {
+    const response = await axios.get(`/api/mapsets/${this.beatmapManager.beatmap.setId}/files/${this.beatmapManager.beatmap.audioFilename}`, {
+      responseType: 'arraybuffer',
+      onDownloadProgress: (e) => {
+        console.log(e)
+        if (progress) {
+          const total = parseFloat(e.event.currentTarget.getResponseHeader('Content-Length'));
+          progress(e.loaded / total);
+        }
+      }
+    });
+    const buffer = response.data;
     const audioBuffer = await this.context.decodeAudioData(buffer);
     this._audioCache.set(this.beatmapManager.beatmap.audioFilename, audioBuffer);
     this.audioBuffer = audioBuffer;
-
 
     await this.context.audioWorklet.addModule("/phaseVocoder.js");
     this.phaseVocoderNode = new AudioWorkletNode(this.context, "phase-vocoder-processor");

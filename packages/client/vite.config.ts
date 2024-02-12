@@ -13,7 +13,9 @@ export default defineConfig({
     autoImport({
       imports: ["vue", "@vueuse/core"],
     }),
-    vueRouter({}),
+    vueRouter({
+      importMode: 'sync',
+    }),
     components({
       resolvers: [QuasarResolver()],
     }),
@@ -33,7 +35,7 @@ export default defineConfig({
 
   },
   server: {
-    origin: "http://localhost:5173",
+    origin: "https://dev.osucad.com",
     hmr: true,
   },
   css: {

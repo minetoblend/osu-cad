@@ -5,7 +5,7 @@ import MapsetCard from "@/components/beatmap/MapsetCard.vue";
 import ImportOszCard from "../components/beatmap/ImportOszCard.vue";
 import {useCurrentUser} from "../composables/useCurrentUser.ts";
 
-const {state: mapsets} = useAsyncState<MapsetInfo[]>(() => axios.get("/api/mapsets/own").then(res => res.data), []);
+const {state: mapsets} = useAsyncState<MapsetInfo[]>(() => axios.get("/api/mapsets/own").then(res => res.data.slice(0, 10)), []);
 
 watchEffect(() => {
   console.log(mapsets.value);

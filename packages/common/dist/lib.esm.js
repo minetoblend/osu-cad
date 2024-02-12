@@ -144,7 +144,7 @@ class Rect {
     return rect;
   }
   splitRight(width) {
-    const rect = new Rect(this.x + this.width, this.y, width, this.height);
+    const rect = new Rect(this.x + this.width - width, this.y, width, this.height);
     this.width -= width;
     return rect;
   }
@@ -173,6 +173,12 @@ class Rect {
     this.y = y;
     this.width = right - x;
     this.height = bottom - y;
+  }
+  shrink(amount) {
+    this.x += amount;
+    this.y += amount;
+    this.width -= amount * 2;
+    this.height -= amount * 2;
   }
   translate({ x, y }) {
     this.x += x;

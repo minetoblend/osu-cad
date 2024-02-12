@@ -36,7 +36,7 @@ export class Rect {
   }
 
   splitRight(width: number): Rect {
-    const rect = new Rect(this.x + this.width, this.y, width, this.height);
+    const rect = new Rect(this.x + this.width - width, this.y, width, this.height);
     this.width -= width;
     return rect;
   }
@@ -72,7 +72,14 @@ export class Rect {
     this.height = bottom - y;
   }
 
-  translate({ x, y }: IVec2) {
+  shrink(amount: number) {
+    this.x += amount;
+    this.y += amount;
+    this.width -= amount * 2;
+    this.height -= amount * 2;
+  }
+
+  translate({x, y}: IVec2) {
     this.x += x;
     this.y += y;
   }

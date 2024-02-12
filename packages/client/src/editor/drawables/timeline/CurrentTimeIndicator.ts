@@ -17,26 +17,31 @@ export class CurrentTimeIndicator extends Drawable {
       text: "00",
       style: this.textStyle,
       x: 5,
+      anchor: {x: 0, y: 0.5}
     }),
     seconds: new BitmapText({
       text: "00",
       style: this.textStyle,
       x: 56,
+      anchor: {x: 0, y: 0.5}
     }),
     millis: new BitmapText({
       text: "000",
       style: this.textStyle,
       x: 112,
+      anchor: {x: 0, y: 0.5}
     }),
     separator1: new BitmapText({
       text: ":",
       style: this.textStyle,
       x: 48,
+      anchor: {x: 0, y: 0.5}
     }),
     separator2: new BitmapText({
       text: ":",
       style: this.textStyle,
       x: 102,
+      anchor: {x: 0, y: 0.5}
     }),
   };
 

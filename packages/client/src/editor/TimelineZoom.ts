@@ -1,5 +1,6 @@
 import {RefProperty} from "../util/RefProperty.ts";
 import gsap from "gsap";
+import {clamp} from "@vueuse/core";
 
 export class TimelineZoom {
 
@@ -30,6 +31,8 @@ export class TimelineZoom {
   }
 
   setZoom(zoom: number) {
+    if (isNaN(zoom)) return;
+    zoom = clamp(zoom, 0.25, 4);
     localStorage.setItem("timeline-zoom", zoom.toString());
     gsap.to(this, {
       zoom,

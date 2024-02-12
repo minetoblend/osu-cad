@@ -27,12 +27,10 @@ export interface EditorContext {
 
 export const EditorContext: InjectionKey<EditorContext> = Symbol("editor");
 
-export function provideEditor(editor: EditorContext) {
-  provide(EditorContext, editor);
-}
+export const globalEditor = shallowRef<EditorContext>()
 
 export function useEditor(): EditorContext {
-  const editor = inject(EditorContext);
+  const editor = globalEditor.value;
   if (!editor) {
     throw new Error("editor not found");
   }

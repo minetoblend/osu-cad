@@ -1,5 +1,5 @@
 import {Drawable} from "./Drawable.ts";
-import {ISize} from "@osucad/common";
+import {ISize, Rect} from "@osucad/common";
 import {ScaleToFitContainer} from "./scaleToFitContainer.ts";
 import {VIEWPORT_SIZE} from "./injectionKeys.ts";
 import {PlayfieldGrid} from "./playfieldGrid.ts";
@@ -9,7 +9,7 @@ import {BeatmapBackground} from "./BeatmapBackground.ts";
 import {HitObjectContainer} from "./hitObjects/HitObjectContainer.ts";
 import {BeatInfo} from "../beatInfo.ts";
 import {EditorClock} from "../clock.ts";
-import {ToolContainer} from "../tools/ToolContainer.ts";
+import {PlayfieldOverlay, ToolContainer} from "../tools/ToolContainer.ts";
 import {CursorContainer} from "./CursorContainer.ts";
 import {VolumeControlOverlay} from "./VolumeControlOverlay.ts";
 import {AudioManager} from "../audio/AudioManager.ts";
@@ -19,6 +19,12 @@ import {seekInteraction} from "../interaction/Seek.ts";
 import {AxisContainer} from "../AxisContainer.ts";
 import {usePreferences} from "@/composables/usePreferences.ts";
 import {EditorContext} from "@/editor/editorContext.ts";
+import {isMobile} from "@/util/isMobile.ts";
+import {TimelineDrawable} from "@/editor/drawables/timeline/TimelineDrawable.ts";
+import {MobileTimelineDrawable} from "@/editor/drawables/timeline/MobileTimelineDrawable.ts";
+import {Component} from "@/editor/drawables/Component.ts";
+import {Toolbar} from "@/editor/tools/Toolbar.ts";
+import {ButtonPanel} from "@/editor/drawables/buttonPanel.ts";
 
 export class EditorViewportDrawable extends Drawable {
 
@@ -26,6 +32,7 @@ export class EditorViewportDrawable extends Drawable {
   private readonly canvasSize: ISize;
 
   readonly playfieldContainer: ScaleToFitContainer;
+  readonly playfieldOverlayContainer: ScaleToFitContainer;
 
   private readonly editor: EditorContext;
 
@@ -39,25 +46,32 @@ export class EditorViewportDrawable extends Drawable {
   private readonly axisContainer = new AxisContainer();
 
   constructor(
-      canvasSize: ISize,
-      editor: EditorContext,
+    canvasSize: ISize,
+    editor: EditorContext,
   ) {
     super();
     this.editor = editor;
     this.canvasSize = canvasSize;
 
-    this.playfieldContainer = new ScaleToFitContainer(this.canvasSize, {width: 512, height: 384 + 40}, 40, false);
+    this.playfieldContainer = new ScaleToFitContainer({width: 512, height: 384}, 20, false);
+    this.playfieldOverlayContainer = new ScaleToFitContainer({width: 512, height: 384}, 20, false);
   }
+
 
   @Provide(HitObjectContainer)
   private hitObjectContainer = new HitObjectContainer();
   @Provide(ToolContainer)
   private toolContainer = new ToolContainer();
 
+  private timeline: Component = new MobileTimelineDrawable()
+  private toolbar = new Toolbar();
+  private buttonPanel?: ButtonPanel;
+
   onLoad() {
     this.provide(EditorContext, this.editor);
     this.provide(EditorClock, this.editor.clock);
     this.provide(AudioManager, this.editor.audioManager);
+    this.provide(PlayfieldOverlay, this.playfieldOverlayContainer);
 
     const {preferences} = usePreferences()
 
@@ -70,12 +84,21 @@ export class EditorViewportDrawable extends Drawable {
     this.addChild(this.popoverContainer);
 
     this.popoverContainer.content.addChild(
-        this.beatInfo,
-        this.editor.clock,
-        new HitSoundPlayer(),
-        this.playfieldContainer,
-        new VolumeControlOverlay()
+      this.beatInfo,
+      this.editor.clock,
+      new HitSoundPlayer(),
+      this.playfieldContainer,
+      this.timeline,
+      this.toolbar,
+      this.playfieldOverlayContainer,
+      new VolumeControlOverlay(),
     );
+
+    this.playfieldOverlayContainer.hitArea = null;
+
+    if (isMobile()) {
+      this.buttonPanel = this.popoverContainer.content.addChild(new ButtonPanel())
+    }
 
     seekInteraction(this.editor.clock, this.editor.beatmapManager, this.editor.selection, this.beatInfo, this);
 
@@ -89,18 +112,29 @@ export class EditorViewportDrawable extends Drawable {
       pivot: new Point(256, 192),
     });
 
-
-    const scaleContainer = new Container({
-      position: new Point(256, 192),
-      pivot: new Point(256, 192),
-    })
+    this.playfieldContainer.content.addChild(
+      new BeatmapBackground(), playfield, this.toolContainer, this.axisContainer
+    )
 
     watchEffect(() => {
-      scaleContainer.scale.set(preferences.viewport.playfieldScale / 100);
-    })
+      const bounds = new Rect(0, 0, this.canvasSize.width, this.canvasSize.height);
 
-    scaleContainer.addChild(new BeatmapBackground(), playfield, this.toolContainer, this.axisContainer)
-    this.playfieldContainer.content.addChild(scaleContainer)
+      this.timeline.setBounds(
+        bounds.splitBottom(75),
+      )
+
+      this.toolbar.setBounds(
+        bounds.splitLeft(50)
+      )
+
+      if (this.buttonPanel) {
+        this.buttonPanel.setBounds(bounds.splitRight(200))
+        bounds.splitLeft(200 - this.toolbar.size.x)
+      }
+
+      this.playfieldContainer.setBounds(bounds);
+      this.playfieldOverlayContainer.setBounds(bounds);
+    })
 
   }
 

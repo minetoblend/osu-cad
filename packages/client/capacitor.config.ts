@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'osucad',
   webDir: 'mobile-dist',
   server: {
-    androidScheme: 'osucad',
+    androidScheme: 'https',
     allowNavigation: ['dev.osucad.com', 'osu.ppy.sh'],
   }
 };

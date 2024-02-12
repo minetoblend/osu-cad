@@ -3,11 +3,11 @@ import {InjectRepository} from "@nestjs/typeorm";
 import {MapsetEntity} from "./mapset.entity";
 import {Repository} from "typeorm";
 import {BeatmapAccess, BeatmapEntity} from "./beatmap.entity";
-import {createReadStream, existsSync} from "fs";
+import {readFileSync, existsSync, statSync} from "fs";
 import * as path from "path";
 import {ParticipantEntity} from "./participant.entity";
 import {BeatmapData, Mapset} from "@osucad/common/dist";
-import {ReadStream} from "typeorm/browser/platform/BrowserPlatformTools";
+import {ReadStream} from "fs";
 import {UserEntity} from "../users/user.entity";
 import {EditorSessionEntity} from "../editor/editor-session.entity";
 
@@ -38,7 +38,7 @@ export class BeatmapService {
 
   async findMapsetById(id: string) {
     return await this.mapsetRepository.findOne({
-      where: { id },
+      where: {id},
       relations: [
         "creator",
         "beatmaps",
@@ -48,7 +48,7 @@ export class BeatmapService {
 
   async findBeatmapById(id: number) {
     return await this.beatmapRepository.findOne({
-      where: { id },
+      where: {id},
       relations: [
         "mapset",
       ],
@@ -57,7 +57,7 @@ export class BeatmapService {
 
   async findBeatmapByUuid(uuid: string) {
     return await this.beatmapRepository.findOne({
-      where: { uuid },
+      where: {uuid},
       relations: [
         "mapset",
       ],
@@ -72,20 +72,20 @@ export class BeatmapService {
     });
   }
 
-  getFileStream(id: string, filePath: string) {
+  getFileContents(id: string, filePath: string): Buffer | null {
     filePath = path.join("files/mapsets", id, filePath);
     if (!existsSync(filePath)) return null;
 
     const relative = path.relative("files/mapsets", filePath);
     if (relative.startsWith("..") || path.isAbsolute(filePath)) return null;
 
-    return createReadStream(filePath);
+    return readFileSync(filePath);
   }
 
   findMapsetsByCreator(id: number) {
     return this.mapsetRepository.find({
       where: {
-        creator: { id },
+        creator: {id},
       },
       relations: [
         "creator",
@@ -98,15 +98,15 @@ export class BeatmapService {
   }
 
   async getAccessType(userId: number, mapsetId: string): Promise<BeatmapAccess> {
-    const { access } = await this.mapsetRepository.findOneOrFail({
-      where: { id: mapsetId },
+    const {access} = await this.mapsetRepository.findOneOrFail({
+      where: {id: mapsetId},
       select: ["access"],
     });
 
     const participant = await this.participantRepository.findOne({
       where: {
-        mapset: { id: mapsetId },
-        user: { id: userId },
+        mapset: {id: mapsetId},
+        user: {id: userId},
       },
     });
 
@@ -124,7 +124,7 @@ export class BeatmapService {
       .innerJoinAndSelect("session.beatmap", "beatmap")
       .innerJoinAndSelect("beatmap.mapset", "mapset")
       .innerJoinAndSelect("mapset.creator", "creator")
-      .where({ user })
+      .where({user})
       .distinctOn(["beatmap.id"])
       .orderBy("session.endDate", "DESC")
       .limit(10)

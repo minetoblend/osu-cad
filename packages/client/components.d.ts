@@ -24,6 +24,7 @@ declare module 'vue' {
     PreferencesForm: typeof import('./src/components/preferences/PreferencesForm.vue')['default']
     ProgressBar: typeof import('./src/components/ProgressBar.vue')['default']
     QColor: typeof import('quasar')['QColor']
+    QLinearProgress: typeof import('quasar')['QLinearProgress']
     QSlider: typeof import('quasar')['QSlider']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
