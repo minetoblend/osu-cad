@@ -15,6 +15,7 @@ import {ConfigModule} from "@nestjs/config";
 import {ServeStaticModule} from "@nestjs/serve-static";
 import {PreferencesModule} from './preferences/preferences.module';
 import {MongooseModule} from '@nestjs/mongoose';
+import {AppLoggerMiddleware} from './app-logger.middleware.ts';
 
 @Module({
   imports: [
@@ -46,5 +47,9 @@ import {MongooseModule} from '@nestjs/mongoose';
   controllers: [],
   providers: [],
 })
-export class AppModule {
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(AppLoggerMiddleware).forRoutes('*');
+  }
 }
+
