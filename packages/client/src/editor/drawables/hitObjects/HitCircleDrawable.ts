@@ -21,9 +21,9 @@ export class HitCircleDrawable extends HitObjectDrawable<HitCircle> {
   onLoad() {
     super.onLoad();
     this.addChild(
-        this.approachCircle,
-        this.circlePiece,
-        this.selectionCircle,
+      this.approachCircle,
+      this.circlePiece,
+      this.selectionCircle,
     );
     this.circlePiece.addChild(this.comboNumber);
   }
@@ -38,7 +38,6 @@ export class HitCircleDrawable extends HitObjectDrawable<HitCircle> {
     this.circlePiece.comboColor = this.comboColor;
     this.approachCircle.tint = this.comboColor;
 
-
     this.selectionCircle.visible = this.hitObject.isSelected;
   }
 
@@ -51,7 +50,7 @@ export class HitCircleDrawable extends HitObjectDrawable<HitCircle> {
     if (time > 0) {
       const {preferences} = usePreferences();
 
-      if (preferences.viewport.hitAnimations) {
+      if (preferences.viewport.hitAnimations || preferences.viewport.hitMarkers) {
         this.comboNumber.alpha = animate(time, 0, 60, 1, 0)
       }
     }

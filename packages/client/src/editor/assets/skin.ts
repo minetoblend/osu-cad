@@ -12,7 +12,7 @@ export function skinBundle(skinPath: string = ""): AssetsBundle {
           "hitcircle.png",
         ],
         loadParser: "loadTextures",
-        data: { autoGenerateMipmaps: true },
+        data: {autoGenerateMipmaps: true},
       },
       {
         alias: "hitcircleoverlay",
@@ -20,7 +20,7 @@ export function skinBundle(skinPath: string = ""): AssetsBundle {
           "hitcircleoverlay@2x.png",
           // "hitcircleoverlay.png",
         ],
-        data: { autoGenerateMipmaps: true },
+        data: {autoGenerateMipmaps: true},
       },
       {
         alias: "approachcircle",
@@ -127,7 +127,13 @@ export function skinBundle(skinPath: string = ""): AssetsBundle {
           "spinner-top.png",
         ],
       },
-      ...Array.from({ length: 10 }, (_, i) => ({
+      {
+        alias: "hitmarker",
+        src: [
+          "hitmarker@2x.png",
+        ],
+      },
+      ...Array.from({length: 10}, (_, i) => ({
         alias: `default-${i}`,
         src: [
           `default-${i}@2x.png`,
