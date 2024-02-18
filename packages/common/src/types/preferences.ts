@@ -55,3 +55,46 @@ export interface DefaultBeatmapSettings {
   sliderMultiplier: number;
   sliderTickRate: number;
 }
+
+export function defaultPreferences(): Preferences {
+  return {
+    behavior: {
+      rightClickBehavior: "contextMenu",
+    },
+    viewport: {
+      playfieldScale: 1,
+      hitAnimations: false,
+      snakingSliders: true,
+      grid: {
+        enabled: true,
+        color: '#ffffff',
+        opacity: 50,
+      },
+      backgroundDim: 50,
+      backgroundBlur: 25,
+    },
+    graphics: {
+      antialiasing: true,
+      resolution: 1,
+      renderer: 'auto',
+      highDpiMode: true,
+    },
+    audio: {
+      masterVolume: 65,
+      musicVolume: 100,
+      hitsoundVolume: 100,
+      uiVolume: 50,
+      hitsoundPanning: 100,
+    },
+    beatmap: {
+      defaultSettings: {
+        approachRate: 9,
+        circleSize: 4,
+        hpDrainRate: 5,
+        overallDifficulty: 8,
+        sliderMultiplier: 1.4,
+        sliderTickRate: 1,
+      }
+    },
+  }
+}
