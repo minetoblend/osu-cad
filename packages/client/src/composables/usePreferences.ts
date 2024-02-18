@@ -13,13 +13,15 @@ export const usePreferences = createGlobalState(() => {
 
   let nonReactivePreferences: Preferences | undefined = undefined
 
-  watchEffect(() => {
-    nonReactivePreferences = JSON.parse(JSON.stringify(preferences.value))
-  })
+  watch(preferences, (preferences) => {
+    nonReactivePreferences = JSON.parse(JSON.stringify(preferences))
+  }, {immediate: true, deep: true})
 
   return {
     preferences: reactiveComputed<Preferences>(() => preferences.value ?? {} as Preferences),
-    nonReactivePreferences: nonReactivePreferences as unknown as Preferences,
+    get nonReactivePreferences() {
+      return nonReactivePreferences as unknown as Preferences
+    },
     loaded: readonly(loaded)
   }
 })

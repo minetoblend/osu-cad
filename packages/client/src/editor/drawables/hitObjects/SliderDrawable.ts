@@ -104,15 +104,13 @@ export class SliderDrawable extends HitObjectDrawable<Slider> {
     this.sliderBall.position.copyFrom(Vec2.scale(position, 1 / this.hitObject.scale));
     this.comboNumber.number = this.hitObject.indexInCombo + 1;
 
-    if(time > 0) {
+    this.comboNumber.alpha = 1
+    if (time > 0) {
       const {preferences} = usePreferences();
-      if(preferences.viewport.hitAnimations) {
-        this.comboNumber.visible = false
-      } else {
-        this.comboNumber.visible = true
+
+      if (preferences.viewport.hitAnimations || preferences.viewport.hitMarkers) {
+        this.comboNumber.alpha = animate(time, 0, 60, 1, 0)
       }
-    } else {
-      this.comboNumber.visible = true
     }
 
     this.sliderBody.setup();

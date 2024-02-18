@@ -32,6 +32,7 @@ export interface ViewportPreferences {
   playfieldScale: number;
   snakingSliders: boolean;
   hitAnimations: boolean;
+  hitMarkers: boolean;
   backgroundDim: number;
   backgroundBlur: number;
   grid: GridPreferences;
@@ -64,6 +65,7 @@ export function defaultPreferences(): Preferences {
     viewport: {
       playfieldScale: 1,
       hitAnimations: false,
+      hitMarkers: false,
       snakingSliders: true,
       grid: {
         enabled: true,
@@ -78,6 +80,7 @@ export function defaultPreferences(): Preferences {
       resolution: 1,
       renderer: 'auto',
       highDpiMode: true,
+      showFps: false,
     },
     audio: {
       masterVolume: 65,

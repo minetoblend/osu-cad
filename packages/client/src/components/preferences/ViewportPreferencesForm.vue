@@ -18,6 +18,9 @@ defineProps<{
   <FormField full-width label="Hit Animations">
     <Switch v-model="preferences.hitAnimations"/>
   </FormField>
+  <FormField full-width label="Hit Markers" v-if="!preferences.hitAnimations">
+    <Switch v-model="preferences.hitMarkers"/>
+  </FormField>
   <FormField label="Background dim">
     <QSlider v-model="preferences.backgroundDim" :min="0" :max="100" label/>
   </FormField>
