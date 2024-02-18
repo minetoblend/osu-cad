@@ -6,6 +6,7 @@ uniform sampler2D uTexture;
 uniform sampler2D uGradient;
 uniform vec4 uComboColor;
 uniform vec4 uBorderColor;
+uniform float uSnakingDistance;
 uniform float uAlpha;
 
 vec4 lighten(vec4 color, float amount) {
@@ -23,6 +24,11 @@ void main()
     vec4 data = texture(uTexture, vTextureCoord);
 
     float progress = data.r;
+    float distanceAlongPath = data.g;
+
+    if(distanceAlongPath > uSnakingDistance) {
+        discard;
+    }
 
     vec4 gradientColor = texture(uGradient, vec2(progress, 0.0));
 

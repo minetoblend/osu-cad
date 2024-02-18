@@ -5,18 +5,19 @@ import {GeometryBuilder} from "./GeometryBuilder.ts";
 interface SliderPathGeometryOptions {
   path: Vec2[];
   radius: number;
+  expectedDistance: number;
 }
 
 export class SliderPathGeometry extends MeshGeometry {
 
   constructor(options: SliderPathGeometryOptions) {
-    const { path, radius } = options;
+    const {path, radius, expectedDistance} = options;
     super({
       positions: new Float32Array(0),
       indices: new Uint32Array(0),
     });
 
-    const geo = this.generatePath(path, radius);
+    const geo = this.generatePath(path, radius, expectedDistance);
 
     this.positions = geo.vertices;
     this.indices = geo.indices;
@@ -24,10 +25,9 @@ export class SliderPathGeometry extends MeshGeometry {
   }
 
 
-
-  private generatePath(path: Vec2[], radius: number) {
-    const { numVertices, numIndices } = this.getGeoCount(path);
-    const geo = new GeometryBuilder(numVertices, numIndices);
+  private generatePath(path: Vec2[], radius: number, expectedDistance: number) {
+    const {numVertices, numIndices} = this.getGeoCount(path);
+    const geo = new GeometryBuilder(numVertices, numIndices, expectedDistance);
 
     for (let i = 1; i < path.length; i++) {
       const curr = path[i];
@@ -45,7 +45,7 @@ export class SliderPathGeometry extends MeshGeometry {
 
         geo.addJoin(curr, theta, thetaDiff, radius);
       } else {
-        geo.addJoin(curr, theta, Math.PI, radius);
+        //geo.addJoin(curr, theta, Math.PI, radius);
       }
     }
 
@@ -103,11 +103,13 @@ export class SliderPathGeometry extends MeshGeometry {
   update(
     path: Vec2[],
     radius: number,
+    expectedDistance: number,
   ) {
-    const geo = this.generatePath(path, radius);
+    const geo = this.generatePath(path, radius, expectedDistance);
 
     this.positions = geo.vertices;
-    this.indices = geo.indices;2
+    this.indices = geo.indices;
+
     this.uvs = geo.uvs;
     this['_boundsDirty'] = true;
   }
