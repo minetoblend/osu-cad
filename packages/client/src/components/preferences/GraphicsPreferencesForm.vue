@@ -34,4 +34,7 @@ const availableRenderers = [
   <FormField label="Antialiasing">
     <Switch v-model="preferences.antialiasing"/>
   </FormField>
+  <FormField label="Show fps">
+    <Switch v-model="preferences.showFps"/>
+  </FormField>
 </template>

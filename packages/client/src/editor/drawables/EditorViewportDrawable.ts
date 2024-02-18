@@ -20,11 +20,11 @@ import {AxisContainer} from "../AxisContainer.ts";
 import {usePreferences} from "@/composables/usePreferences.ts";
 import {EditorContext} from "@/editor/editorContext.ts";
 import {isMobile} from "@/util/isMobile.ts";
-import {TimelineDrawable} from "@/editor/drawables/timeline/TimelineDrawable.ts";
 import {MobileTimelineDrawable} from "@/editor/drawables/timeline/MobileTimelineDrawable.ts";
 import {Component} from "@/editor/drawables/Component.ts";
 import {Toolbar} from "@/editor/tools/Toolbar.ts";
 import {ButtonPanel} from "@/editor/drawables/buttonPanel.ts";
+import {FrameStatsOverlayDrawable} from "@/editor/drawables/FrameStatsOverlayDrawable.ts";
 
 export class EditorViewportDrawable extends Drawable {
 
@@ -73,8 +73,6 @@ export class EditorViewportDrawable extends Drawable {
     this.provide(AudioManager, this.editor.audioManager);
     this.provide(PlayfieldOverlay, this.playfieldOverlayContainer);
 
-    const {preferences} = usePreferences()
-
     useEventListener("keydown", evt => {
       if (evt.ctrlKey && evt.key === "s") {
         evt.preventDefault();
@@ -82,6 +80,8 @@ export class EditorViewportDrawable extends Drawable {
     })
 
     this.addChild(this.popoverContainer);
+
+    const frameStatsOverlay = new FrameStatsOverlayDrawable()
 
     this.popoverContainer.content.addChild(
       this.beatInfo,
@@ -92,6 +92,7 @@ export class EditorViewportDrawable extends Drawable {
       this.toolbar,
       this.playfieldOverlayContainer,
       new VolumeControlOverlay(),
+      frameStatsOverlay
     );
 
     this.playfieldOverlayContainer.hitArea = null;
@@ -122,6 +123,8 @@ export class EditorViewportDrawable extends Drawable {
       this.timeline.setBounds(
         bounds.splitBottom(85),
       )
+
+      frameStatsOverlay.position.set(this.canvasSize.width, this.timeline.position.y)
 
       this.toolbar.setBounds(
         bounds.splitLeft(50)

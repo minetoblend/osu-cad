@@ -25,6 +25,7 @@ export interface GraphicsPreferences {
   highDpiMode: boolean;
   resolution: number;
   antialiasing: boolean;
+  showFps: boolean;
 }
 
 export interface ViewportPreferences {

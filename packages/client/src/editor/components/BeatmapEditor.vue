@@ -52,17 +52,6 @@ App.addListener('backButton', () => {
   router.replace('/')
 })
 
-const fpsList = reactive<number[]>([]);
-watch(() => frameStats.fps, (fps) => {
-  fpsList.push(fps);
-  if (fpsList.length > 60) {
-    fpsList.shift();
-  }
-});
-const averageFps = computed(() => {
-  return fpsList.reduce((a, b) => a + b, 0) / fpsList.length;
-});
-
 const mobile = isMobile();
 
 const loadingOpacity = computed(() => animate(loadProgress.value, 2, 2.5, 1, 0, Easing.inQuad))
@@ -83,10 +72,6 @@ const viewportInitialized = ref(false)
       <!--    </div>-->
       <EventList id="event-list"/>
       <UserList id="user-list"/>
-      <!--    <div class="frame-stats">-->
-      <!--      <div class="fps">{{ (averageFps).toFixed(0) }}fps</div>-->
-      <!--      <div class="frame-time">{{ (frameStats.frameTime).toFixed(1) }}ms</div>-->
-      <!--    </div>-->
       <Teleport to="#navbar-content">
         <button style="margin-right: 1rem" @click="editor.commandManager.undo()">
           Undo
