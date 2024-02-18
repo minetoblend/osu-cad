@@ -1,0 +1,3 @@
+{$HOSTNAME} {
+  reverse_proxy http://server:3000
+}

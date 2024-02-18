@@ -3,11 +3,10 @@ import {InjectRepository} from "@nestjs/typeorm";
 import {MapsetEntity} from "./mapset.entity";
 import {Repository} from "typeorm";
 import {BeatmapAccess, BeatmapEntity} from "./beatmap.entity";
-import {readFileSync, existsSync, statSync} from "fs";
+import {existsSync, readFileSync} from "fs";
 import * as path from "path";
 import {ParticipantEntity} from "./participant.entity";
-import {BeatmapData, Mapset} from "@osucad/common/dist";
-import {ReadStream} from "fs";
+import {BeatmapData} from "@osucad/common";
 import {UserEntity} from "../users/user.entity";
 import {EditorSessionEntity} from "../editor/editor-session.entity";
 
