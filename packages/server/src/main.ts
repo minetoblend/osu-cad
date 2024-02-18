@@ -13,13 +13,15 @@ async function bootstrap() {
   const app =
     await NestFactory.create<NestExpressApplication>(AppModule);
 
-  const redisClient = await createClient().connect();
+  const redisClient = await createClient({
+    url: "redis://redis:6379",
+  }).connect();
 
   const session = expressSession({
-    secret: "session-secret",
+    secret: process.env.SESSION_SECRET ?? "secret",
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 86400000 },
+    cookie: {maxAge: 86400000},
     store: new RedisStore({
       client: redisClient,
       prefix: "osucad:",
