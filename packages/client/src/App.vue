@@ -23,7 +23,7 @@ import TitleBar from "./components/AppNavbar.vue";
 
   main {
     flex-grow: 1;
-    overflow: hidden;
+    overflow-y: auto;
   }
 }
 
