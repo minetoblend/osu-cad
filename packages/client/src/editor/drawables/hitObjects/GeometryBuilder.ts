@@ -5,21 +5,22 @@ export class GeometryBuilder {
   readonly indices: Uint32Array;
   readonly uvs: Float32Array;
 
+  travelDistance = 0;
   vertexCursor = 0;
   indexCursor = 0;
 
-  constructor(numVertices: number, numIndices: number) {
+  constructor(numVertices: number, numIndices: number, readonly totalDistance: number) {
     this.vertices = new Float32Array(numVertices * 2);
     this.uvs = new Float32Array(numVertices * 2);
     this.indices = new Uint32Array(numIndices);
   }
 
-  addVertex(x: number, y: number, z: number) {
+  addVertex(x: number, y: number, z: number, distance: number = this.travelDistance) {
     const index = this.vertexCursor * 2;
     this.vertices[index] = x;
     this.vertices[index + 1] = y;
     this.uvs[index] = z;
-    this.uvs[index + 1] = 0;
+    this.uvs[index + 1] = distance / this.totalDistance;
     this.vertexCursor++;
   }
 
@@ -74,16 +75,18 @@ export class GeometryBuilder {
 
     let cursor = this.vertexCursor;
 
-    this.addVertex(from.x + dirLX, from.y + dirLY, 1.0);
-    this.addVertex(from.x, from.y, 0.0);
-    this.addVertex(from.x - dirLX, from.y - dirLY, 1.0);
-    this.addVertex(to.x + dirLX, to.y + dirLY, 1.0);
-    this.addVertex(to.x, to.y, 0.0);
-    this.addVertex(to.x - dirLX, to.y - dirLY, 1.0);
+    this.addVertex(from.x + dirLX, from.y + dirLY, 1.0, this.travelDistance);
+    this.addVertex(from.x, from.y, 0.0, this.travelDistance);
+    this.addVertex(from.x - dirLX, from.y - dirLY, 1.0, this.travelDistance);
+    this.addVertex(to.x + dirLX, to.y + dirLY, 1.0, this.travelDistance + length);
+    this.addVertex(to.x, to.y, 0.0, this.travelDistance + length);
+    this.addVertex(to.x - dirLX, to.y - dirLY, 1.0, this.travelDistance + length);
 
     this.addTriangleIndices(cursor, cursor + 3, cursor + 1);
     this.addTriangleIndices(cursor + 3, cursor + 4, cursor + 1);
     this.addTriangleIndices(cursor + 1, cursor + 4, cursor + 5);
     this.addTriangleIndices(cursor + 5, cursor + 2, cursor + 1);
+
+    this.travelDistance += length;
   }
 }

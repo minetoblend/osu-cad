@@ -1,41 +1,106 @@
 import {Drawable} from "../Drawable.ts";
-import {Mesh} from "pixi.js";
-import {Slider} from "@osucad/common";
+import {Mesh, MeshGeometry, RenderContainer, WebGLRenderer, CustomRenderPipe} from "pixi.js";
+import {Slider, Vec2} from "@osucad/common";
 import {SliderPathGeometry} from "./SliderPathGeometry.ts";
 import {animate} from "../animate.ts";
 import {Inject} from "../di";
 import {EditorClock} from "../../clock.ts";
 import {SliderShader} from "./sliderShader.ts";
-import {SliderFilter} from "./SliderFilter.ts";
 import {usePreferences} from "@/composables/usePreferences.ts";
 import {EditorContext} from "@/editor/editorContext.ts";
+import {GeometryBuilder} from "@/editor/drawables/hitObjects/GeometryBuilder.ts";
+
+let endCapGeometry: MeshGeometry | null = null;
+
+// little workaround for a pixi bug
+(CustomRenderPipe.prototype as any).updateRenderable = () => {
+}
 
 export class DrawableSliderBody extends Drawable {
 
   private readonly mesh: Mesh;
-
+  private readonly endCap: Mesh;
   private readonly geometry: SliderPathGeometry;
-
   private readonly shader = new SliderShader();
-  private readonly filter = new SliderFilter();
 
-  constructor(
-      private readonly hitObject: Slider,
-  ) {
+  private readonly body = new RenderContainer({
+    render: (renderer) => {
+      if (renderer instanceof WebGLRenderer) {
+        const gl = renderer.gl
+
+        const endPos = this.hitObject.stackedPosition.add(
+          this.hitObject.path.getPositionAtDistance(
+            this.shader.snakeInProgress * this.hitObject.expectedDistance
+          )
+        )
+
+
+        this.mesh.groupTransform
+          .identity()
+          .append(this.groupTransform)
+        this.endCap.groupTransform
+          .identity()
+          .scale(this.radius, this.radius)
+          .translate(endPos.x, endPos.y)
+
+        gl.clearDepth(1)
+        gl.clear(gl.DEPTH_BUFFER_BIT);
+
+        gl.colorMask(false, false, false, false)
+
+        renderer.renderPipes.mesh.execute({
+          renderPipeId: 'mesh',
+          mesh: this.mesh,
+          canBundle: false,
+        })
+
+        renderer.renderPipes.mesh.execute({
+          renderPipeId: 'mesh',
+          mesh: this.endCap,
+          canBundle: false,
+        })
+
+        gl.colorMask(true, true, true, true)
+        gl.depthFunc(gl.EQUAL)
+
+        renderer.renderPipes.mesh.execute({
+          renderPipeId: 'mesh',
+          mesh: this.mesh,
+          canBundle: false,
+        })
+
+        renderer.renderPipes.mesh.execute({
+          renderPipeId: 'mesh',
+          mesh: this.endCap,
+          canBundle: false,
+        })
+
+        gl.depthFunc(gl.LESS)
+      }
+    }
+  })
+
+  constructor(private readonly hitObject: Slider) {
     super();
-
-
-    const path = hitObject.path;
-
     this.mesh = new Mesh({
-      geometry: this.geometry = new SliderPathGeometry({path: path.calculatedRange, radius: this.radius}),
+      geometry: this.geometry = new SliderPathGeometry({
+        path: hitObject.path.calculatedRange,
+        radius: this.radius,
+        expectedDistance: hitObject.path.expectedDistance,
+      }),
       shader: this.shader,
     });
 
-    this.mesh.state.depthTest = true;
-    this.addChild(this.mesh);
+    endCapGeometry ??= generateEndCap();
 
-    this.mesh.filters = [this.filter];
+    this.endCap = new Mesh({
+      geometry: endCapGeometry,
+      shader: this.shader,
+    })
+
+    this.mesh.state.depthTest = true;
+    this.endCap.state.depthTest = true;
+    this.addChild(this.body);
   }
 
   get radius() {
@@ -63,49 +128,52 @@ export class DrawableSliderBody extends Drawable {
 
   setup() {
     const comboColors = this.editor.beatmapManager.beatmap.colors;
-    this.filter.comboColor = comboColors[this.hitObject.comboIndex % comboColors.length];
-    this.filter.borderColor = this.hitObject.isSelected ? 0x3d74ff : 0xffffff;
+    this.shader.comboColor = comboColors[this.hitObject.comboIndex % comboColors.length];
+    this.shader.borderColor = this.hitObject.isSelected ? 0x3d74ff : 0xffffff;
   }
 
   pathVersion = -1;
 
   onTick() {
     if (
-        (this.editor.clock.currentTimeAnimated < this.hitObject.startTime - this.hitObject.timePreempt) ||
-        (this.editor.clock.currentTimeAnimated > this.hitObject.endTime + 700)
+      (this.editor.clock.currentTimeAnimated < this.hitObject.startTime - this.hitObject.timePreempt) ||
+      (this.editor.clock.currentTimeAnimated > this.hitObject.endTime + 700)
     ) {
       this.alpha = 0;
       return;
     }
     const snakeInDuration = Math.min(
-        this.hitObject.timeFadeIn * 0.5,
-        this.hitObject.spanDuration,
-        200,
+      this.hitObject.timeFadeIn * 0.5,
+      this.hitObject.spanDuration,
+      200,
     );
 
 
-    let snakeInDistance = animate(
-        this.clock.currentTimeAnimated - this.hitObject.startTime,
-        -this.hitObject.timePreempt,
-        -this.hitObject.timePreempt + snakeInDuration,
-        0,
-        this.hitObject.path.expectedDistance,
+    let snakeInProgress = animate(
+      this.clock.currentTimeAnimated - this.hitObject.startTime,
+      -this.hitObject.timePreempt,
+      -this.hitObject.timePreempt + snakeInDuration,
+      0,
+      1,
     );
 
     if (!this.snakingSlidersEnabled) {
-      snakeInDistance = this.hitObject.path.expectedDistance;
+      snakeInProgress = 1.0;
     }
 
-    if (this.snakeInProgress != snakeInDistance || this.pathVersion !== this.hitObject.path.version) {
-      const path = this.hitObject.path.getRange(0, snakeInDistance);
+    this.shader.snakeInProgress = snakeInProgress;
+
+    if (this.pathVersion !== this.hitObject.path.version) {
+      const path = this.hitObject.path.getRange(0, this.hitObject.expectedDistance);
 
       this.geometry.update(
-          path,
-          this.radius,
+        path,
+        this.radius,
+        this.hitObject.path.expectedDistance,
       );
     }
 
-    this.snakeInProgress = snakeInDistance;
+    this.snakeInProgress = snakeInProgress;
     this.pathVersion = this.hitObject.path.version;
   }
 
@@ -117,7 +185,35 @@ export class DrawableSliderBody extends Drawable {
   }
 
   set alpha(value: number) {
-    this.filter.alpha = value;
+    this.shader.alpha = value;
   }
+}
 
+function getJoinGeometryCount(thetaDiff: number) {
+  let step = Math.PI / 24.0;
+
+  let absThetaDiff = Math.abs(thetaDiff);
+
+  const amountOfOuterPoints = Math.ceil(absThetaDiff / step) + 1;
+
+  return {
+    vertices: (amountOfOuterPoints + 1) * 3,
+    indices: (amountOfOuterPoints - 1) * 3,
+  };
+}
+
+function generateEndCap() {
+  const {vertices, indices} = getJoinGeometryCount(Math.PI);
+  const builder = new GeometryBuilder(
+    vertices * 2,
+    indices * 2,
+    1
+  );
+  builder.addJoin(Vec2.zero(), 0, Math.PI, 1);
+  builder.addJoin(Vec2.zero(), Math.PI, Math.PI, 1);
+  return new MeshGeometry({
+    positions: builder.vertices,
+    indices: builder.indices,
+    uvs: builder.uvs,
+  })
 }
