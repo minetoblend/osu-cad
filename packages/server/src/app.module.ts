@@ -1,4 +1,4 @@
-import {Module} from "@nestjs/common";
+import {MiddlewareConsumer, Module, NestModule} from "@nestjs/common";
 import {BeatmapModule} from "./beatmap/beatmap.module";
 import {UserModule} from "./users/user.module";
 import {AuthModule} from "./auth/auth.module";
@@ -10,7 +10,7 @@ import {ConfigModule} from "@nestjs/config";
 import {ServeStaticModule} from "@nestjs/serve-static";
 import {PreferencesModule} from './preferences/preferences.module';
 import {MongooseModule} from '@nestjs/mongoose';
-import {AppLoggerMiddleware} from './app-logger.middleware.ts';
+import {AppLoggerMiddleware} from './app-logger.middleware';
 import {dbdatasource} from "./datasource";
 import {AppController} from "./app.controller";
 
