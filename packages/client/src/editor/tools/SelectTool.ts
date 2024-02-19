@@ -283,7 +283,6 @@ export class SelectTool extends ComposeTool {
 
       if (closest)
         if (evt.ctrlKey) {
-          console.log(this.selection.size, this.selection.isSelected(closest))
           if (this.selection.size > 1 && this.selection.isSelected(closest)) {
             this.selection.remove(closest)
           } else {
