@@ -60,10 +60,8 @@ export class AudioManager {
 
   phaseVocoderNode!: AudioWorkletNode;
 
-  private _isPlaying = false;
-
   get isPlaying() {
-    return this._isPlaying;
+    return !!this.source;
   }
 
   startTime = 0;
@@ -92,15 +90,10 @@ export class AudioManager {
     this._update(() => this._maintainPitch = value);
   }
 
-  async play(time: number = 0, duration?: number) {
+  play(time: number = 0, duration?: number) {
     if (this.isPlaying) {
       this.pause();
     }
-
-    this._isPlaying = true;
-
-    if (this.context.state !== "running")
-      await this.context.resume();
 
     const param = this.phaseVocoderNode.parameters.get("pitchFactor") as AudioParam;
     param.value = 1 / this.playbackRate;
@@ -114,7 +107,6 @@ export class AudioManager {
       source.connect(this.mixer.music);
 
     source.start(0, time, duration);
-
 
     this.startTime = time;
     this.contextTimeAtStart = this.context.currentTime;
@@ -139,7 +131,6 @@ export class AudioManager {
       this.startTime = 0;
       this.pauseTime = time;
     }
-    this._isPlaying = false;
     return time;
   }
 
