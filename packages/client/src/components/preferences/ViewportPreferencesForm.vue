@@ -37,4 +37,14 @@ defineProps<{
   <FormField label="Opacity">
     <QSlider v-model="preferences.grid.opacity" :min="0" :max="100" label/>
   </FormField>
+  <h4>Snapping</h4>
+  <FormField label="Objects">
+    <Switch v-model="preferences.snapping.objects.enabled"/>
+  </FormField>
+  <FormField label="Blanket">
+    <Switch v-model="preferences.snapping.blanket.enabled"/>
+  </FormField>
+  <FormField label="Visual Spacing">
+    <Switch v-model="preferences.snapping.visualSpacing.enabled"/>
+  </FormField>
 </template>

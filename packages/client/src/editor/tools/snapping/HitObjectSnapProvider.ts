@@ -1,12 +1,16 @@
 import {SnapProvider, SnapResult} from "./SnapProvider.ts";
-import {HitCircle, HitObject, PathType, Slider, Vec2} from "@osucad/common";
+import {HitCircle, HitObject, PathType, Slider, SnappingPreferences, Vec2} from "@osucad/common";
 import {ComposeTool} from "../ComposeTool.ts";
 import {PathApproximator, Vector2} from "osu-classes";
 import {Graphics} from "pixi.js";
 
 export class HitObjectSnapProvider implements SnapProvider {
   constructor(private readonly tool: ComposeTool) {
+    const preferences = tool.editor.preferences;
+    this.preferences = preferences.viewport.snapping;
   }
+
+  preferences: SnappingPreferences;
 
   visualizer = new Graphics({
     eventMode: "none",
@@ -20,11 +24,20 @@ export class HitObjectSnapProvider implements SnapProvider {
 
     const thresholdSquared = 5 * 5;
 
-    const visibleHitObjectPositions: (Vec2 & { draw?: (g: Graphics) => void })[] = this.tool.visibleHitObjects.flatMap((hitObject) => {
-      if (hitObject.isSelected || exclude?.includes(hitObject)) return [];
-      if (hitObject instanceof HitCircle) return [hitObject.position];
+    const visibleHitObjectPositions: (Vec2 & {
+      draw?: (g: Graphics) => void
+    })[] = this.tool.visibleHitObjects.flatMap((hitObject) => {
+      if (hitObject.isSelected || exclude?.includes(hitObject))
+        return [];
+      if (!this.preferences.objects.enabled)
+        return [];
+      if (hitObject instanceof HitCircle)
+        return [hitObject.position]
+
       if (hitObject instanceof Slider) {
         const positions = [hitObject.position, Vec2.add(hitObject.position, hitObject.path.endPosition)];
+        if (!this.preferences.blanket.enabled)
+          return positions;
 
         const controlPoints = hitObject.path.controlPoints;
         for (let i = 0; i < controlPoints.length; i++) {
@@ -50,10 +63,10 @@ export class HitObjectSnapProvider implements SnapProvider {
                   console.log("draw");
 
                   g.circle(hitObject.position.x + arcProperties.centre.x, hitObject.position.y + arcProperties.centre.y, arcProperties.radius);
-                  g.stroke({ color: 0xffffff, alpha: 0.25, width: 2 });
+                  g.stroke({color: 0xffffff, alpha: 0.25, width: 2});
                   g.moveTo(hitObject.position.x + controlPoints[i].x, hitObject.position.y + controlPoints[i].y);
                   g.arc(hitObject.position.x + arcProperties.centre.x, hitObject.position.y + arcProperties.centre.y, arcProperties.radius, arcProperties.thetaStart, arcProperties.thetaEnd, arcProperties.direction < 0);
-                  g.stroke({ color: 0xffff00, width: 2 });
+                  g.stroke({color: 0xffff00, width: 2});
 
                 },
               }));
@@ -63,11 +76,10 @@ export class HitObjectSnapProvider implements SnapProvider {
         }
         return positions;
       }
-      ;
       return [];
     });
 
-    if (this.visualSpacingDistance >= 0) {
+    if (this.visualSpacingDistance >= 0 && this.preferences.visualSpacing.enabled) {
       const radius = this.tool.visibleHitObjects[0].radius;
 
       const positions = getHitObjectPositions(this.tool.visibleHitObjects.filter(it => !it.isSelected));
@@ -105,7 +117,7 @@ export class HitObjectSnapProvider implements SnapProvider {
                   g.moveTo(b2.x, b2.y);
                   g.lineTo(c2.x, c2.y);
 
-                  g.stroke({ color: 0xffff00, alpha: 0.8, width: 2 });
+                  g.stroke({color: 0xffff00, alpha: 0.8, width: 2});
                 },
               }),
               Object.assign(positions[j].sub(rotated), {
@@ -132,7 +144,7 @@ export class HitObjectSnapProvider implements SnapProvider {
                   g.moveTo(b2.x, b2.y);
                   g.lineTo(c2.x, c2.y);
 
-                  g.stroke({ color: 0xffff00, alpha: 0.8, width: 2 });
+                  g.stroke({color: 0xffff00, alpha: 0.8, width: 2});
                 },
               }),
             );
@@ -173,12 +185,11 @@ export class HitObjectSnapProvider implements SnapProvider {
 
     this.visualizer.clear();
 
-    const radius = (1.0 - (0.7 * (this.tool.editor.beatmapManager.beatmap.difficulty.circleSize - 5)) / 5) / 2 * 59;
     for (const hitObjectPosition of visibleHitObjectPositions) {
 
       this
         .visualizer.circle(hitObjectPosition.x, hitObjectPosition.y, 2)
-        .fill({ color: 0xffffff, alpha: 0.25 })
+        .fill({color: 0xffffff, alpha: 0.25})
       ;
     }
 
