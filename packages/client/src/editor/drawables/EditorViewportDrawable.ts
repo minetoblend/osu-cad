@@ -154,7 +154,7 @@ export class EditorViewportDrawable extends Drawable {
           width: bounds.width,
           height: bounds.height,
           duration: 0.3,
-          easing: Power2.easeOut,
+          ease: Power2.easeOut,
           onUpdate: () => {
             this.playfieldContainer.setBounds(playfieldBounds!);
             this.playfieldOverlayContainer.setBounds(playfieldBounds!);
