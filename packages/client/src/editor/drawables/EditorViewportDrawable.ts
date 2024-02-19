@@ -17,7 +17,6 @@ import {HitSoundPlayer} from "../audio/HitSoundPlayer.ts";
 import {PopoverContainer} from "./menu/PopoverContainer.ts";
 import {seekInteraction} from "../interaction/Seek.ts";
 import {AxisContainer} from "../AxisContainer.ts";
-import {usePreferences} from "@/composables/usePreferences.ts";
 import {EditorContext} from "@/editor/editorContext.ts";
 import {isMobile} from "@/util/isMobile.ts";
 import {MobileTimelineDrawable} from "@/editor/drawables/timeline/MobileTimelineDrawable.ts";
@@ -25,6 +24,8 @@ import {Component} from "@/editor/drawables/Component.ts";
 import {Toolbar} from "@/editor/tools/Toolbar.ts";
 import {ButtonPanel} from "@/editor/drawables/buttonPanel.ts";
 import {FrameStatsOverlayDrawable} from "@/editor/drawables/FrameStatsOverlayDrawable.ts";
+import {usePreferencesVisible} from "@/composables/usePreferencesVisible.ts";
+import gsap from "gsap";
 
 export class EditorViewportDrawable extends Drawable {
 
@@ -117,6 +118,10 @@ export class EditorViewportDrawable extends Drawable {
       new BeatmapBackground(), playfield, this.toolContainer, this.axisContainer
     )
 
+    const preferencesVisible = usePreferencesVisible()
+
+    let playfieldBounds: Rect | undefined = undefined
+
     watchEffect(() => {
       const bounds = new Rect(0, 0, this.canvasSize.width, this.canvasSize.height);
 
@@ -130,13 +135,33 @@ export class EditorViewportDrawable extends Drawable {
         bounds.splitLeft(50)
       )
 
+      if (preferencesVisible.value)
+        bounds.splitLeft(400)
+
       if (this.buttonPanel) {
         this.buttonPanel.setBounds(bounds.splitRight(200))
         bounds.splitLeft(200 - this.toolbar.size.x)
       }
 
-      this.playfieldContainer.setBounds(bounds);
-      this.playfieldOverlayContainer.setBounds(bounds);
+      if (!playfieldBounds) {
+        playfieldBounds = bounds
+        this.playfieldContainer.setBounds(bounds);
+        this.playfieldOverlayContainer.setBounds(playfieldBounds!);
+      } else {
+        gsap.to(playfieldBounds, {
+          x: bounds.x,
+          y: bounds.y,
+          width: bounds.width,
+          height: bounds.height,
+          duration: 0.3,
+          easing: "power2.out",
+          onUpdate: () => {
+            this.playfieldContainer.setBounds(playfieldBounds!);
+            this.playfieldOverlayContainer.setBounds(playfieldBounds!);
+          }
+        })
+      }
+
     })
 
   }
