@@ -25,7 +25,7 @@ import {Toolbar} from "@/editor/tools/Toolbar.ts";
 import {ButtonPanel} from "@/editor/drawables/buttonPanel.ts";
 import {FrameStatsOverlayDrawable} from "@/editor/drawables/FrameStatsOverlayDrawable.ts";
 import {usePreferencesVisible} from "@/composables/usePreferencesVisible.ts";
-import gsap from "gsap";
+import {default as gsap, Power2} from "gsap";
 
 export class EditorViewportDrawable extends Drawable {
 
@@ -154,7 +154,7 @@ export class EditorViewportDrawable extends Drawable {
           width: bounds.width,
           height: bounds.height,
           duration: 0.3,
-          easing: "power2.out",
+          easing: Power2.easeOut,
           onUpdate: () => {
             this.playfieldContainer.setBounds(playfieldBounds!);
             this.playfieldOverlayContainer.setBounds(playfieldBounds!);
