@@ -36,6 +36,7 @@ export interface ViewportPreferences {
   backgroundDim: number;
   backgroundBlur: number;
   grid: GridPreferences;
+  snapping: SnappingPreferences;
 }
 
 export interface GridPreferences {
@@ -57,6 +58,24 @@ export interface DefaultBeatmapSettings {
   sliderTickRate: number;
 }
 
+export interface SnappingPreferences {
+  blanket: {
+    enabled: boolean
+  }
+  visualSpacing: {
+    enabled: boolean
+  }
+  objects: {
+    enabled: boolean
+  }
+  distance: {
+    enabled: boolean
+  }
+  grid: {
+    enabled: boolean
+  }
+}
+
 export function defaultPreferences(): Preferences {
   return {
     behavior: {
@@ -74,6 +93,23 @@ export function defaultPreferences(): Preferences {
       },
       backgroundDim: 50,
       backgroundBlur: 25,
+      snapping: {
+        blanket: {
+          enabled: true,
+        },
+        visualSpacing: {
+          enabled: false,
+        },
+        grid: {
+          enabled: false,
+        },
+        objects: {
+          enabled: true,
+        },
+        distance: {
+          enabled: false,
+        },
+      },
     },
     graphics: {
       antialiasing: true,
