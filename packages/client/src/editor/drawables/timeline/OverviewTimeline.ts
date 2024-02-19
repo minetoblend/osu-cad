@@ -1,8 +1,11 @@
 import {Component} from "../Component.ts";
-import {Graphics} from "pixi.js";
+import {BitmapText, Container, Graphics} from "pixi.js";
 import {Inject} from "../di";
 import {ObservablePoint} from "pixi.js/lib/maths/point/ObservablePoint";
 import {EditorContext} from "@/editor/editorContext.ts";
+import {Drawable} from "@/editor/drawables/Drawable.ts";
+import {UserActivity, UserSessionInfo} from "@osucad/common";
+import {animate} from "@/editor/drawables/animate.ts";
 
 
 export class OverviewTimeline extends Component {
@@ -12,6 +15,7 @@ export class OverviewTimeline extends Component {
   currentTimeIndicator = new Graphics()
     .circle(0, 0, 5)
     .fill(0xffffff);
+  userContainer = new Container();
 
   private _activeTimeDirty = true;
 
@@ -21,7 +25,7 @@ export class OverviewTimeline extends Component {
   private readonly editor!: EditorContext;
 
   onLoad() {
-    this.addChild(this.background, this.activeTimeOverlay, this.timestamps, this.currentTimeIndicator);
+    this.addChild(this.background, this.activeTimeOverlay, this.userContainer, this.timestamps, this.currentTimeIndicator);
     this.updateTimestamps();
     this.setupEvents();
 
@@ -39,10 +43,20 @@ export class OverviewTimeline extends Component {
     hitObjects.onRemoved.addListener(markActiveTimeDirty);
     hitObjects.onUpdated.addListener(markActiveTimeDirty);
 
-    this.once('removed', () => {
+    const onUserJoined = (user: UserSessionInfo) => {
+      if (user.sessionId === this.editor.connectedUsers.ownUser.value?.sessionId) return
+      this.userContainer.addChild(new UserTimeIndicator(user))
+
+    }
+    this.editor.socket.on("userJoined", onUserJoined)
+    this.editor.connectedUsers.users.value.forEach(onUserJoined)
+
+    this.once('destroyed', () => {
       hitObjects.onAdded.removeListener(markActiveTimeDirty);
       hitObjects.onRemoved.removeListener(markActiveTimeDirty);
       hitObjects.onUpdated.removeListener(markActiveTimeDirty);
+
+      this.editor.socket.off("userJoined", onUserJoined)
     })
   }
 
@@ -70,7 +84,7 @@ export class OverviewTimeline extends Component {
     this.editor.clock.seek(time, true);
   }
 
-  private readonly barHeight = 12;
+  readonly barHeight = 12;
 
   _onUpdate(point?: ObservablePoint) {
     super._onUpdate(point);
@@ -83,6 +97,7 @@ export class OverviewTimeline extends Component {
       this.updateTimestamps()
       this.updateActiveTime()
     }
+    this.userContainer.y = this.size.y * 0.5
   }
 
   updateTimestamps() {
@@ -149,7 +164,92 @@ export class OverviewTimeline extends Component {
       }
       lastObjectEnd = hitObject.endTime
     }
-
   }
+}
+
+class UserTimeIndicator extends Drawable {
+  content = new Graphics()
+    .roundRect(
+      -3, -5,
+      6, 10,
+      3
+    )
+    //.circle(0, 0, 5)
+    .fill(0x52cca3)
+
+  constructor(
+    readonly user: UserSessionInfo
+  ) {
+    super();
+    this.addChild(this.content);
+  }
+
+  @Inject(EditorContext)
+  private readonly editor!: EditorContext;
+
+  private _userText?: BitmapText
+
+  onLoad() {
+    this.eventMode = 'static'
+
+    const onUserActivity = (sessionId: number, activity: UserActivity) => {
+      if (sessionId === this.user.sessionId) {
+        if (activity.type === 'composeScreen') {
+          this.visible = true
+          const parent = this.parent?.parent as OverviewTimeline
+          this.position.x =
+            parent.barHeight * 0.5 + activity.currentTime / this.editor.clock.songDuration * (parent.size.x - parent.barHeight)
+        } else {
+          this.visible = false
+        }
+      }
+    }
+
+    const onUserLeft = (user: UserSessionInfo) => {
+      if (user.sessionId === this.user.sessionId) {
+        this.destroy()
+      }
+    }
+
+    this.editor.socket.on("userActivity", onUserActivity)
+    this.editor.socket.on("userLeft", onUserLeft)
+
+    this.once('destroyed', () => {
+      this.editor.socket.off("userActivity", onUserActivity)
+      this.editor.socket.off("userLeft", onUserLeft)
+    })
+
+    this.onglobalpointermove = (evt) => {
+      const pos = evt.getLocalPosition(this)
+      const distance = Math.sqrt(pos.x * pos.x + pos.y * pos.y)
+
+      if (distance < 20) {
+        this.text.visible = true
+        this.text.alpha = animate(distance, 20, 10, 0, 1)
+      } else {
+        this.text.visible = false
+      }
+    }
+  }
+
+
+  get text() {
+    this._userText ??= this.addChild(
+      new BitmapText({
+        text: this.user.username,
+        style: {
+          fontFamily: "Nunito Sans",
+          fontSize: 15,
+          fill: 0xffffff,
+        },
+        anchor: {x: 0, y: 1},
+        x: 5,
+        y: -5,
+        resolution: devicePixelRatio
+      })
+    )
+    return this._userText;
+  }
+
 
 }
