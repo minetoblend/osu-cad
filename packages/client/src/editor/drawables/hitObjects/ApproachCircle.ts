@@ -1,7 +1,7 @@
 import {Assets, Point, Sprite} from "pixi.js";
 import {Drawable} from "../Drawable.ts";
 import {Inject} from "../di";
-import {animate, Easing} from "../animate.ts";
+import {animate} from "../animate.ts";
 import {usePreferences} from "@/composables/usePreferences.ts";
 import {EditorContext} from "@/editor/editorContext.ts";
 
@@ -40,15 +40,10 @@ export class ApproachCircle extends Drawable {
       const {nonReactivePreferences} = usePreferences();
       if (nonReactivePreferences.viewport.hitAnimations) {
         this.alpha = 0;
-      } else if (nonReactivePreferences.viewport.hitMarkers) {
-        this.scale.set(animate(time, 0, 240, 1, 1.2, Easing.outQuad));
-        this.alpha = animate(time, 0, 240, 1, 0);
       } else {
         this.scale.set(animate(time, 0, 100, 1, 1.1));
         this.alpha = animate(time, 0, 700, 1, 0);
       }
-
-
     }
   }
 }

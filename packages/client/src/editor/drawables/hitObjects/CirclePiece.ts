@@ -62,14 +62,11 @@ export class CirclePiece extends Drawable {
           this.overlay.visible = time < 0
           this.circle.visible = time < 0
           this.hitMarker.visible = time >= 0
-          this.hitMarker.scale.set(animate(time, 0, 700, 1.0, 1.1, Easing.outQuad))
         } else {
           this.overlay.visible = true;
           this.circle.visible = true;
           this.hitMarker.visible = false;
         }
-
-
       }
     }
 
