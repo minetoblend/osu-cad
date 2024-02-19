@@ -182,6 +182,7 @@ class UserTimeIndicator extends Drawable {
   ) {
     super();
     this.addChild(this.content);
+    this.visible = false
   }
 
   @Inject(EditorContext)
