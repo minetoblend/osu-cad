@@ -57,6 +57,9 @@ export class EditorClock extends Drawable {
   }
 
   async play() {
+    if (this.audioManager.context.state !== 'running') {
+      await this.audioManager.context.resume();
+    }
     await this.audioManager.play(this.currentTime / 1000);
     this._isPlaying.value = true;
   }
