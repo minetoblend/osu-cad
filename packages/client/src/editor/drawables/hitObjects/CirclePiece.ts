@@ -58,7 +58,6 @@ export class CirclePiece extends Drawable {
         this.circle.tint = 0xffffff;
         this.scale.set(1)
 
-        console.log(nonReactivePreferences.viewport.hitMarkers)
         if (nonReactivePreferences.viewport.hitMarkers) {
           this.overlay.visible = time < 0
           this.circle.visible = time < 0
