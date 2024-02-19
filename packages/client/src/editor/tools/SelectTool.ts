@@ -278,13 +278,17 @@ export class SelectTool extends ComposeTool {
   }
 
   private trySelectOnMousedown(evt: FederatedPointerEvent) {
-    if (!this.hoveredHitObjects.some(it => it.isSelected)) {
+    if (!this.hoveredHitObjects.some(it => it.isSelected) || evt.ctrlKey) {
       const closest = this.getClosestToClock(this.hoveredHitObjects)!;
 
       if (closest)
-        if (evt.ctrlKey)
-          this.selection.add(closest);
-        else
+        if (evt.ctrlKey) {
+          if (this.selection.size > 1 && this.selection.isSelected(closest)) {
+            this.selection.remove(closest)
+          } else {
+            this.selection.add(closest);
+          }
+        } else
           this.selection.select(closest);
       else {
         this.selection.clear();
