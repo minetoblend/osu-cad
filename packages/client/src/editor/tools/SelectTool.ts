@@ -390,7 +390,7 @@ export class SelectTool extends ComposeTool {
       const slider = selection[0];
       this.submit(EditorCommand.deleteHitObject({id: slider.id}));
       const timingPoint = this.editor.beatmapManager.controlPoints.timingPointAt(slider.startTime);
-      const step = timingPoint.beatLength / this.beatInfo.beatSnap;
+      const step = timingPoint.timing.beatLength / this.beatInfo.beatSnap;
       for (let time = slider.startTime; time <= slider.startTime + slider.spanDuration; time += step) {
         const position = slider.positionAt(time).add(slider.position);
 
@@ -606,7 +606,7 @@ export class SelectTool extends ComposeTool {
     const timingPoint = this.editor.beatmapManager.controlPoints.timingPointAt(hitObjects[0].startTime);
 
     for (const hitObject of hitObjects) {
-      const startTime = hitObject.startTime + offset * timingPoint.beatLength / this.beatInfo.beatSnap;
+      const startTime = hitObject.startTime + offset * timingPoint.timing.beatLength / this.beatInfo.beatSnap;
       this.submit(updateHitObject(hitObject, {startTime}));
     }
     this.editor.commandManager.commit();
