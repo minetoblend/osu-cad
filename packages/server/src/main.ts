@@ -8,13 +8,14 @@ import RedisStore from "connect-redis";
 import {createClient} from "redis";
 import {SessionIoAdapter} from "./io.adapter";
 
-
 async function bootstrap() {
   const app =
     await NestFactory.create<NestExpressApplication>(AppModule);
 
+  const redisHost = process.env.REDIS_HOST ?? "redis";
+  const redisPort = parseInt(process.env.REDIS_PORT ?? "6379");
   const redisClient = await createClient({
-    url: "redis://redis:6379",
+    url: `redis://${redisHost}:${redisPort}`,
   }).connect();
 
   const session = expressSession({
