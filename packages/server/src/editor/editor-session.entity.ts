@@ -1,6 +1,12 @@
-import {Column, Entity, Index, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
-import {BeatmapEntity} from "../beatmap/beatmap.entity";
-import {UserEntity} from "../users/user.entity";
+import {
+  Column,
+  Entity,
+  Index,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { BeatmapEntity } from "../beatmap/beatmap.entity";
+import { UserEntity } from "../users/user.entity";
 
 @Entity("editor_session")
 export class EditorSessionEntity {
@@ -20,5 +26,4 @@ export class EditorSessionEntity {
   @Column()
   @Index()
   endDate: Date;
-
 }

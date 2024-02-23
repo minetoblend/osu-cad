@@ -1,6 +1,12 @@
-import {Column, Entity, Generated, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
-import {MapsetEntity} from "./mapset.entity";
-import {BeatmapData, BeatmapInfo} from "@osucad/common";
+import {
+  Column,
+  Entity,
+  Generated,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { MapsetEntity } from "./mapset.entity";
+import { BeatmapData, BeatmapInfo } from "@osucad/common";
 
 @Entity("beatmaps")
 export class BeatmapEntity {
@@ -17,7 +23,7 @@ export class BeatmapEntity {
   @Generated("uuid")
   uuid: string;
 
-  @ManyToOne(() => MapsetEntity, mapset => mapset.beatmaps)
+  @ManyToOne(() => MapsetEntity, (mapset) => mapset.beatmaps)
   mapset: MapsetEntity;
 
   @Column("json")
@@ -30,7 +36,6 @@ export class BeatmapEntity {
       starRating: this.starRating,
     };
   }
-
 }
 
 export const enum BeatmapAccess {

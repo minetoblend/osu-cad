@@ -1,7 +1,7 @@
-import {Column, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
-import {MapsetEntity} from "./mapset.entity";
-import {UserEntity} from "../users/user.entity";
-import {BeatmapAccess} from "./beatmap.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { MapsetEntity } from "./mapset.entity";
+import { UserEntity } from "../users/user.entity";
+import { BeatmapAccess } from "./beatmap.entity";
 
 @Entity("participant")
 export class ParticipantEntity {
@@ -16,5 +16,4 @@ export class ParticipantEntity {
 
   @Column("int")
   access: BeatmapAccess;
-
 }

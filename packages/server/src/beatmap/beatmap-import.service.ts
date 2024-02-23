@@ -1,24 +1,33 @@
-import {Injectable} from "@nestjs/common";
-import {BeatmapService} from "./beatmap.service";
-import {UserEntity} from "../users/user.entity";
-import {UserService} from "../users/user.service";
+import { Injectable } from "@nestjs/common";
+import { BeatmapService } from "./beatmap.service";
+import { UserEntity } from "../users/user.entity";
+import { UserService } from "../users/user.service";
 import * as unzipper from "unzipper";
-import {Readable} from "stream";
+import { Readable } from "stream";
 import * as fs from "fs/promises";
-import {resolve} from "path";
-import {v4 as uuid} from "uuid";
-import {MapsetEntity} from "./mapset.entity";
-import {BeatmapDecoder} from "osu-parsers";
-import {Beatmap, HitSample, PathPoint} from "osu-classes";
-import {Circle, Slider, Spinner, StandardBeatmap, StandardHitObject, StandardRuleset} from "osu-standard-stable";
-import {BeatmapEntity} from "./beatmap.entity";
+import { resolve } from "path";
+import { v4 as uuid } from "uuid";
+import { MapsetEntity } from "./mapset.entity";
+import { BeatmapDecoder } from "osu-parsers";
+import { Beatmap, HitSample, PathPoint } from "osu-classes";
+import {
+  Circle,
+  Slider,
+  Spinner,
+  StandardBeatmap,
+  StandardHitObject,
+  StandardRuleset,
+} from "osu-standard-stable";
+import { BeatmapEntity } from "./beatmap.entity";
 import {
   Additions,
   defaultHitSound,
-  defaultHitSoundLayers, hitObjectId,
+  defaultHitSoundLayers,
+  hitObjectId,
   HitSound,
   HitSoundLayer,
-  HitSoundManager, HitSoundSample,
+  HitSoundManager,
+  HitSoundSample,
   PathType,
   SampleSet,
   SampleType,
@@ -31,14 +40,10 @@ import {
 
 @Injectable()
 export class BeatmapImportService {
-
   constructor(
     private readonly beatmapService: BeatmapService,
     private readonly userService: UserService,
-  ) {
-
-  }
-
+  ) {}
 
   private readonly ruleset = new StandardRuleset();
 
@@ -48,7 +53,10 @@ export class BeatmapImportService {
     return path;
   }
 
-  async importOsz(buffer: Buffer, userId: number): Promise<MapsetEntity | null> {
+  async importOsz(
+    buffer: Buffer,
+    userId: number,
+  ): Promise<MapsetEntity | null> {
     const user = await this.userService.findById(userId);
     if (!user) throw new Error("User not found");
 
@@ -58,9 +66,9 @@ export class BeatmapImportService {
 
     let mapset: MapsetEntity | undefined;
 
-
-    const zip = Readable.from(buffer)
-      .pipe(unzipper.Parse({ forceStream: true }));
+    const zip = Readable.from(buffer).pipe(
+      unzipper.Parse({ forceStream: true }),
+    );
 
     const allowedFileTypes = [
       "osu",
@@ -80,13 +88,14 @@ export class BeatmapImportService {
         if (!allowedFileTypes.includes(fileType)) continue;
 
         if (entry.path.endsWith(".osu")) {
-          const parsed = new BeatmapDecoder().decodeFromBuffer(await entry.buffer());
+          const parsed = new BeatmapDecoder().decodeFromBuffer(
+            await entry.buffer(),
+          );
           if (parsed.mode !== 0) continue;
 
           const osuBeatmap = this.ruleset.applyToBeatmap(parsed);
 
-          if (!mapset)
-            mapset = this.createMapsetFromBeatmap(parsed, id, user);
+          if (!mapset) mapset = this.createMapsetFromBeatmap(parsed, id, user);
 
           const beatmap = this.createDifficultyFromBeatmap(osuBeatmap);
 
@@ -96,10 +105,7 @@ export class BeatmapImportService {
         }
         const dir = resolve(path, entry.path, "..");
         await fs.mkdir(dir, { recursive: true });
-        await fs.writeFile(
-          resolve(path, entry.path),
-          await entry.buffer(),
-        );
+        await fs.writeFile(resolve(path, entry.path), await entry.buffer());
       } catch (e) {
         console.error(e);
         await fs.rmdir(path);
@@ -114,14 +120,19 @@ export class BeatmapImportService {
     return mapset;
   }
 
-  private createMapsetFromBeatmap(parsed: Beatmap, id: string, user: UserEntity) {
+  private createMapsetFromBeatmap(
+    parsed: Beatmap,
+    id: string,
+    user: UserEntity,
+  ) {
     const mapset = new MapsetEntity();
     mapset.id = id;
     mapset.title = parsed.metadata.title;
     mapset.artist = parsed.metadata.artist;
     mapset.tags = parsed.metadata.tags;
     mapset.creator = user;
-    mapset.osuId = (parsed.metadata.beatmapSetId > 0) ? parsed.metadata.beatmapSetId : null;
+    mapset.osuId =
+      parsed.metadata.beatmapSetId > 0 ? parsed.metadata.beatmapSetId : null;
     mapset.beatmaps = [];
     if (parsed.events.backgroundPath) {
       mapset.background = parsed.events.backgroundPath;
@@ -132,10 +143,11 @@ export class BeatmapImportService {
   private createDifficultyFromBeatmap(imported: StandardBeatmap) {
     const entity = new BeatmapEntity();
     entity.name = imported.metadata.version;
-    const difficultyCalculator = this.ruleset.createDifficultyCalculator(imported);
+    const difficultyCalculator =
+      this.ruleset.createDifficultyCalculator(imported);
     entity.starRating = difficultyCalculator.calculate().starRating;
-    entity.osuId = imported.metadata.beatmapId > 0 ? imported.metadata.beatmapId : null;
-
+    entity.osuId =
+      imported.metadata.beatmapId > 0 ? imported.metadata.beatmapId : null;
 
     const hitObjects: SerializedHitObject[] = [];
     const timing: SerializedTimingPoint[] = [];
@@ -145,7 +157,6 @@ export class BeatmapImportService {
       layers: defaultHitSoundLayers(),
     });
 
-
     for (const hitObject of imported.hitObjects) {
       const hitSound = this.getHitSound(hitObject);
 
@@ -153,17 +164,22 @@ export class BeatmapImportService {
         hitObjects.push({
           type: "circle",
           startTime: hitObject.startTime,
-          position: { x: hitObject.startPosition.x, y: hitObject.startPosition.y },
+          position: {
+            x: hitObject.startPosition.x,
+            y: hitObject.startPosition.y,
+          },
           newCombo: hitObject.isNewCombo,
           comboOffset: hitObject.comboOffset,
           hitSound,
         });
-
       } else if (hitObject instanceof Slider) {
         hitObjects.push({
           type: "slider",
           startTime: hitObject.startTime,
-          position: { x: hitObject.startPosition.x, y: hitObject.startPosition.y },
+          position: {
+            x: hitObject.startPosition.x,
+            y: hitObject.startPosition.y,
+          },
           newCombo: hitObject.isNewCombo,
           path: hitObject.path.controlPoints.map(this.convertPathPoint),
           expectedDistance: hitObject.path.expectedDistance,
@@ -171,15 +187,17 @@ export class BeatmapImportService {
           comboOffset: hitObject.comboOffset,
           velocity: null,
           hitSound,
-          hitSounds: hitObject.nodeSamples.map(s => this.toHitSound(s)),
+          hitSounds: hitObject.nodeSamples.map((s) => this.toHitSound(s)),
         });
-
       } else if (hitObject instanceof Spinner) {
         {
           hitObjects.push({
             type: "spinner",
             startTime: hitObject.startTime,
-            position: { x: hitObject.startPosition.x, y: hitObject.startPosition.y },
+            position: {
+              x: hitObject.startPosition.x,
+              y: hitObject.startPosition.y,
+            },
             newCombo: hitObject.isNewCombo,
             duration: hitObject.duration,
             comboOffset: hitObject.comboOffset,
@@ -189,7 +207,10 @@ export class BeatmapImportService {
       }
     }
 
-    function getLayer(sample: HitSample, time: number): HitSoundLayer | undefined {
+    function getLayer(
+      sample: HitSample,
+      time: number,
+    ): HitSoundLayer | undefined {
       let type: SampleType | undefined = undefined;
 
       switch (sample.hitSound) {
@@ -226,10 +247,8 @@ export class BeatmapImportService {
           case 3:
             s = "Drum";
             break;
-
         }
       }
-
 
       switch (s) {
         case "Normal":
@@ -243,10 +262,11 @@ export class BeatmapImportService {
           break;
       }
 
-      if (type === undefined || sampleSet === undefined)
-        return undefined;
+      if (type === undefined || sampleSet === undefined) return undefined;
 
-      return hitSounds.layers.find(it => it.sampleSet === sampleSet && it.type === type);
+      return hitSounds.layers.find(
+        (it) => it.sampleSet === sampleSet && it.type === type,
+      );
     }
 
     for (const hitObject of imported.hitObjects) {
@@ -254,21 +274,25 @@ export class BeatmapImportService {
         for (const sample of hitObject.samples) {
           const layer = getLayer(sample, hitObject.startTime);
           if (layer)
-            layer.samples.push(new HitSoundSample({
-              time: hitObject.startTime,
-              id: hitObjectId(),
-            }));
+            layer.samples.push(
+              new HitSoundSample({
+                time: hitObject.startTime,
+                id: hitObjectId(),
+              }),
+            );
         }
       } else if (hitObject instanceof Slider) {
         for (let i = 0; i < hitObject.nodeSamples.length; i++) {
-          let time = hitObject.startTime + i * hitObject.spanDuration;
+          const time = hitObject.startTime + i * hitObject.spanDuration;
           for (const sample of hitObject.nodeSamples[i]) {
             const layer = getLayer(sample, time);
             if (layer)
-              layer.samples.push(new HitSoundSample({
-                time,
-                id: hitObjectId(),
-              }));
+              layer.samples.push(
+                new HitSoundSample({
+                  time,
+                  id: hitObjectId(),
+                }),
+              );
           }
         }
       }
@@ -288,10 +312,11 @@ export class BeatmapImportService {
       });
     }
 
-    const colors = imported.colors.comboColors.map(c => c.hex);
+    const colors = imported.colors.comboColors.map((c) => c.hex);
 
-    const bookmarks: SerializedEditorBookmark[] = imported.editor.bookmarks.map(time => ({ time, name: null }));
-
+    const bookmarks: SerializedEditorBookmark[] = imported.editor.bookmarks.map(
+      (time) => ({ time, name: null }),
+    );
 
     let backgroundPath: string | null = null;
     if (imported.events.backgroundPath) {
@@ -311,7 +336,6 @@ export class BeatmapImportService {
       stackLeniency: imported.general.stackLeniency,
     };
 
-
     entity.data = {
       version: 2,
       hitObjects,
@@ -330,7 +354,6 @@ export class BeatmapImportService {
 
     return entity;
   }
-
 
   convertPathPoint(point: PathPoint): SerializedPathPoint {
     let type: PathType | null = null;
@@ -401,5 +424,4 @@ export class BeatmapImportService {
     }
     return hitSound;
   }
-
 }

@@ -4,19 +4,17 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import {UserEntity} from "../users/user.entity";
-import {BeatmapAccess, BeatmapEntity} from "./beatmap.entity";
-import {MapsetInfo} from "@osucad/common";
+import { UserEntity } from "../users/user.entity";
+import { BeatmapAccess, BeatmapEntity } from "./beatmap.entity";
+import { MapsetInfo } from "@osucad/common";
 
 @Entity("mapsets")
 export class MapsetEntity {
-  @PrimaryColumn("uuid")
+  @PrimaryGeneratedColumn("uuid")
   id: string;
-
   @Column()
   title: string;
   @Column()
@@ -33,7 +31,7 @@ export class MapsetEntity {
   @ManyToOne(() => UserEntity)
   creator: UserEntity;
 
-  @OneToMany(() => BeatmapEntity, beatmap => beatmap.mapset)
+  @OneToMany(() => BeatmapEntity, (beatmap) => beatmap.mapset)
   beatmaps: BeatmapEntity[];
 
   @CreateDateColumn()
@@ -52,8 +50,7 @@ export class MapsetEntity {
       updatedAt: this.updatedAt.toISOString(),
       backgroundPath: this.background,
       creator: this.creator.getInfo(),
-      beatmaps: this.beatmaps.map(beatmap => beatmap.getInfo()),
+      beatmaps: this.beatmaps.map((beatmap) => beatmap.getInfo()),
     };
   }
-
 }

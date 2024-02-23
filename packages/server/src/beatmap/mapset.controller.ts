@@ -1,49 +1,51 @@
 import {
-  Controller, Get,
-  HttpStatus, Param,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
   ParseFilePipeBuilder,
-  Post, Req, Res,
+  Post,
+  Req,
+  Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
-import {BeatmapImportService} from "./beatmap-import.service";
-import {FileInterceptor} from "@nestjs/platform-express";
+import { BeatmapImportService } from "./beatmap-import.service";
+import { FileInterceptor } from "@nestjs/platform-express";
 import "multer";
-import {AuthGuard} from "../auth/auth.guard";
-import {Request, Response} from "express";
-import {BeatmapService} from "./beatmap.service";
-import {MapsetInfo} from "@osucad/common";
-import {BeatmapExportService} from "./beatmap-export.service";
+import { AuthGuard } from "../auth/auth.guard";
+import { Request, Response } from "express";
+import { BeatmapService } from "./beatmap.service";
+import { MapsetInfo } from "@osucad/common";
+import { BeatmapExportService } from "./beatmap-export.service";
 
 @Controller("api/mapsets")
 export class MapsetController {
-
   constructor(
     private readonly beatmapImportService: BeatmapImportService,
     private readonly beatmapService: BeatmapService,
     private readonly beatmapExportService: BeatmapExportService,
-  ) {
-  }
+  ) {}
 
   @Get("/own")
   @UseGuards(AuthGuard)
-  async getOwnMapsets(
-    @Req() request: Request,
-  ) {
-    const mapsets = await this.beatmapService.findMapsetsByCreator(request.session.user!!.id);
+  async getOwnMapsets(@Req() request: Request) {
+    const mapsets = await this.beatmapService.findMapsetsByCreator(
+      request.session.user!.id,
+    );
 
-    return mapsets.map<MapsetInfo>(mapset => mapset.getInfo());
+    return mapsets.map<MapsetInfo>((mapset) => mapset.getInfo());
   }
 
   @Get("/feed")
   @UseGuards(AuthGuard)
-  async getFeed(
-    @Req() request: Request,
-  ) {
-    const sessions = await this.beatmapService.findLastEditedBeatmaps(request.session.user!!);
+  async getFeed(@Req() request: Request) {
+    const sessions = await this.beatmapService.findLastEditedBeatmaps(
+      request.session.user!,
+    );
 
-    return sessions.map(session => {
+    return sessions.map((session) => {
       const beatmap = session.beatmap;
       const mapset = beatmap.mapset;
       return {
@@ -77,10 +79,14 @@ export class MapsetController {
           },
           errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         }),
-    ) file: Express.Multer.File,
+    )
+    file: Express.Multer.File,
     @Req() request: Request,
   ) {
-    const mapset = await this.beatmapImportService.importOsz(file.buffer, request.session.user!!.id);
+    const mapset = await this.beatmapImportService.importOsz(
+      file.buffer,
+      request.session.user!.id,
+    );
     if (!mapset) throw new Error("Failed to import mapset");
     return mapset.getInfo();
   }
@@ -97,10 +103,12 @@ export class MapsetController {
 
     const archive = await this.beatmapExportService.convertMapset(mapset);
     res.header("Content-Type", "application/zip");
-    res.header("Content-Disposition", `attachment; filename="${mapset.title}.osz"`);
+    res.header(
+      "Content-Disposition",
+      `attachment; filename="${mapset.title}.osz"`,
+    );
     archive.generateNodeStream().pipe(res);
   }
-
 
   @Get(":id/files/*")
   @UseGuards(AuthGuard)
@@ -109,15 +117,16 @@ export class MapsetController {
     @Param("id") id: string,
     @Res() response: Response,
   ) {
-    if (!await this.beatmapService.mapsetExists(id))
+    if (!(await this.beatmapService.mapsetExists(id)))
       throw new Error("Mapset not found");
 
-    const path = decodeURIComponent(request.path.split("/files/").slice(1).join("/"));
+    const path = decodeURIComponent(
+      request.path.split("/files/").slice(1).join("/"),
+    );
 
     if (path.match(/\.\.\//g) !== null) {
       return response.sendStatus(400);
     }
-
 
     if (path.length === 0) return response.sendStatus(400);
 
@@ -138,7 +147,5 @@ export class MapsetController {
       console.log(e);
       response.status(404).send("File not found");
     }
-
   }
-
 }

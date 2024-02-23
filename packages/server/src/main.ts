@@ -1,16 +1,15 @@
-import {NestFactory} from "@nestjs/core";
-import {AppModule} from "./app.module";
-import {join} from "path";
-import {NestExpressApplication} from "@nestjs/platform-express";
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
+import { join } from "path";
+import { NestExpressApplication } from "@nestjs/platform-express";
 import * as exphbs from "express-handlebars";
 import * as expressSession from "express-session";
 import RedisStore from "connect-redis";
-import {createClient} from "redis";
-import {SessionIoAdapter} from "./io.adapter";
+import { createClient } from "redis";
+import { SessionIoAdapter } from "./io.adapter";
 
 async function bootstrap() {
-  const app =
-    await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   const redisHost = process.env.REDIS_HOST ?? "redis";
   const redisPort = parseInt(process.env.REDIS_PORT ?? "6379");
@@ -22,7 +21,7 @@ async function bootstrap() {
     secret: process.env.SESSION_SECRET ?? "secret",
     resave: false,
     saveUninitialized: false,
-    cookie: {maxAge: 86400000},
+    cookie: { maxAge: 86400000 },
     store: new RedisStore({
       client: redisClient,
       prefix: "osucad:",
@@ -45,7 +44,6 @@ async function bootstrap() {
 
   app.engine("hbs", hbs.engine);
   app.setViewEngine("hbs");
-
 
   await app.listen(3000);
 }
