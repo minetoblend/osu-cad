@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import {Operator} from "../../editor/operators/operator.ts";
-import {Vec2} from "@osucad/common";
+import { Operator } from "../../editor/operators/operator.ts";
 
-const props = defineProps<{
+defineProps<{
   operator: Operator
 }>();
 

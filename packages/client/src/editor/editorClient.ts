@@ -1,23 +1,21 @@
-import {io} from "socket.io-client";
-import {BeatmapId} from "@osucad/common";
-import {createConnectedUsers} from "./connectedUsers.ts";
-import {createEventList} from "./events.ts";
-import {createEditorTextures} from "./textures.ts";
-import {BeatmapManager} from "./beatmapManager.ts";
-import {EditorClock} from "./clock.ts";
-import {SelectionManager} from "./selection.ts";
-import {AudioManager} from "./audio/AudioManager.ts";
-import {Mod} from "./mods/Mod.ts";
-import {CommandManager} from "./commandHandler.ts";
-import {Assets} from "pixi.js";
-import "./operators/MoveHitObjectsOperator.ts";
-import {usePreferences} from "@/composables/usePreferences.ts";
-import {ToolManager} from "@/editor/tools/toolManager.ts";
-import {EditorSocket} from "@/editor/editorSocket.ts";
-import {EditorContext, globalEditor} from "@/editor/editorContext.ts";
-import fontUrl from '@fontsource/nunito-sans/files/nunito-sans-cyrillic-400-normal.woff2';
-import {Ref} from "vue";
-
+import { io } from "socket.io-client";
+import { BeatmapId } from "@osucad/common";
+import { createConnectedUsers } from "./connectedUsers.ts";
+import { createEventList } from "./events.ts";
+import { createEditorTextures } from "./textures.ts";
+import { BeatmapManager } from "./beatmapManager.ts";
+import { EditorClock } from "./clock.ts";
+import { SelectionManager } from "./selection.ts";
+import { AudioManager } from "./audio/AudioManager.ts";
+import { Mod } from "./mods/Mod.ts";
+import { CommandManager } from "./commandHandler.ts";
+import { Assets } from "pixi.js";
+import { usePreferences } from "@/composables/usePreferences.ts";
+import { ToolManager } from "@/editor/tools/toolManager.ts";
+import { EditorSocket } from "@/editor/editorSocket.ts";
+import { EditorContext, globalEditor } from "@/editor/editorContext.ts";
+import fontUrl from "@fontsource/nunito-sans/files/nunito-sans-cyrillic-400-normal.woff2";
+import { Ref } from "vue";
 
 export async function createEditorClient(
   beatmapId: BeatmapId,
@@ -42,7 +40,7 @@ export async function createEditorClient(
   const clock = new EditorClock(audioManager);
   const mods = [] as Mod[];
   const commandManager = new CommandManager(beatmapManager, socket);
-  const {preferences, loaded: preferencesLoaded} = usePreferences();
+  const { preferences, loaded: preferencesLoaded } = usePreferences();
 
   await Promise.all([
     receiveRoomState(socket),
@@ -50,18 +48,18 @@ export async function createEditorClient(
     until(preferencesLoaded).toBeTruthy(),
   ]);
 
-  progress.value = 0.4
+  progress.value = 0.4;
 
   const tools = new ToolManager();
   const selection = new SelectionManager(beatmapManager);
 
-
   try {
     if (beatmapManager.beatmap.backgroundPath)
-      await Assets.load(`/api/mapsets/${beatmapManager.beatmap.setId}/files/${beatmapManager.beatmap.backgroundPath}`);
+      await Assets.load(
+        `/api/mapsets/${beatmapManager.beatmap.setId}/files/${beatmapManager.beatmap.backgroundPath}`,
+      );
 
-    await Assets.load(fontUrl)
-
+    await Assets.load(fontUrl);
   } catch (e) {
     console.warn("failed to load background", e);
   }
@@ -70,7 +68,7 @@ export async function createEditorClient(
 
   console.log("loading audio");
 
-  await audioManager.loadAudio(p => progress.value = 0.5 + p * 0.5);
+  await audioManager.loadAudio((p) => (progress.value = 0.5 + p * 0.5));
 
   await clock.seek(beatmapManager.hitObjects.first?.startTime ?? 0, false);
 
@@ -92,7 +90,7 @@ export async function createEditorClient(
 
   globalEditor.value = ctx;
 
-  progress.value = 1.0
+  progress.value = 1.0;
 
   return ctx;
 }
@@ -102,12 +100,12 @@ function createClient(beatmapId: BeatmapId): EditorSocket {
 
   return io(`${host}/editor`, {
     withCredentials: true,
-    query: {id: beatmapId},
+    query: { id: beatmapId },
   });
 }
 
 function receiveRoomState(socket: EditorSocket): Promise<void> {
-  return new Promise<void>(resolve =>
-    socket.once("roomState", () => resolve())
+  return new Promise<void>((resolve) =>
+    socket.once("roomState", () => resolve()),
   );
 }

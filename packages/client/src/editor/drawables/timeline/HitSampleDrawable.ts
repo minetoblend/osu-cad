@@ -1,13 +1,11 @@
-import {Drawable} from "../Drawable.ts";
-import {Assets, Circle, Sprite} from "pixi.js";
-import {Inject} from "../di";
-import {EditorClock} from "../../clock.ts";
-import {HitSoundLayerDrawable} from "./HitSoundLayerDrawable.ts";
-import {animate} from "../animate.ts";
-import {HitSoundSample} from "@osucad/common";
+import { Drawable } from "../Drawable.ts";
+import { Assets, Circle, Sprite } from "pixi.js";
+import { Inject } from "../di";
+import { EditorClock } from "../../clock.ts";
+import { animate } from "../animate.ts";
+import { HitSoundSample } from "@osucad/common";
 
 export class HitSampleDrawable extends Drawable {
-
   expandable = new Sprite({
     texture: Assets.get("hitsample-outline"),
     anchor: { x: 0.5, y: 0.5 },
@@ -21,7 +19,6 @@ export class HitSampleDrawable extends Drawable {
     scale: { x: 0.5, y: 0.5 },
   });
 
-
   outline = new Sprite({
     texture: Assets.get("hitsample-outline"),
     anchor: { x: 0.5, y: 0.5 },
@@ -29,22 +26,20 @@ export class HitSampleDrawable extends Drawable {
     alpha: 1,
   });
 
-  constructor(private readonly layer: HitSoundLayerDrawable, private readonly sample: HitSoundSample) {
+  constructor(private readonly sample: HitSoundSample) {
     super();
-    this.addChild(
-      this.expandable,
-      this.outline,
-      this.sprite,
-    );
+    this.addChild(this.expandable, this.outline, this.sprite);
     this.hitArea = new Circle(0, 0, 10);
-    this.on("pointerdown", () => this.sample.selected = !this.sample.selected);
+    this.on(
+      "pointerdown",
+      () => (this.sample.selected = !this.sample.selected),
+    );
     this.eventMode = "dynamic";
   }
 
   time: number = 0;
 
   color = 0xffffff;
-
 
   @Inject(EditorClock)
   private clock!: EditorClock;
@@ -58,7 +53,6 @@ export class HitSampleDrawable extends Drawable {
     this.expandable.tint = this.color;
     this.outline.tint = this.sample.selected ? 0xffffff : this.color;
 
-
     if (time < 0) {
       this.expandable.visible = false;
     } else {
@@ -66,8 +60,5 @@ export class HitSampleDrawable extends Drawable {
       this.expandable.scale.set(animate(time, 0, 200, 0.75, 1.5));
       this.expandable.alpha = animate(time, 0, 200, 1, 0);
     }
-
-
   }
-
 }

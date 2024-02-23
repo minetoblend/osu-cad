@@ -1,28 +1,26 @@
-import {Component} from "../drawables/Component.ts";
-import {Box} from "../drawables/Box.ts";
-import {Assets, ObservablePoint} from "pixi.js";
-import {Inject} from "../drawables/di";
-import {VIEWPORT_SIZE} from "../drawables/injectionKeys.ts";
-import {ISize, Rect} from "@osucad/common";
-import {ToolButton} from "./ToolButton.ts";
-import {SelectTool} from "./SelectTool.ts";
-import {HitCircleTool} from "./HitCircleTool.ts";
-import {SliderTool} from "./SliderTool.ts";
-import {SpinnerTool} from "./SpinnerTool.ts";
-import {isMobile} from "@/util/isMobile.ts";
-import {EditorContext} from "@/editor/editorContext.ts";
-import {ComposeTool} from "@/editor/tools/ComposeTool.ts";
-import {ToolbarButton} from "@/editor/tools/ToolbarButton.ts";
-import {usePreferencesVisible} from "@/composables/usePreferencesVisible.ts";
-import {onEditorKeyDown} from "@/composables/onEditorKeyDown.ts";
+import { Component } from "../drawables/Component.ts";
+import { Box } from "../drawables/Box.ts";
+import { Assets, ObservablePoint } from "pixi.js";
+import { Inject } from "../drawables/di";
+import { Rect } from "@osucad/common";
+import { ToolButton } from "./ToolButton.ts";
+import { SelectTool } from "./SelectTool.ts";
+import { HitCircleTool } from "./HitCircleTool.ts";
+import { SliderTool } from "./SliderTool.ts";
+import { SpinnerTool } from "./SpinnerTool.ts";
+import { isMobile } from "@/util/isMobile.ts";
+import { EditorContext } from "@/editor/editorContext.ts";
+import { ComposeTool } from "@/editor/tools/ComposeTool.ts";
+import { ToolbarButton } from "@/editor/tools/ToolbarButton.ts";
+import { usePreferencesVisible } from "@/composables/usePreferencesVisible.ts";
+import { onEditorKeyDown } from "@/composables/onEditorKeyDown.ts";
 
 export class Toolbar extends Component {
   @Inject(EditorContext)
   private readonly editor!: EditorContext;
 
-
   private readonly background = new Box({
-    tint: 0x1A1A20,
+    tint: 0x1a1a20,
   });
 
   private buttons: ToolButton[] = [
@@ -45,16 +43,15 @@ export class Toolbar extends Component {
   ];
 
   preferencesButton = new ToolbarButton({
-    icon: Assets.get('icon-cog'),
+    icon: Assets.get("icon-cog"),
     action: () => {
       usePreferencesVisible().value = true;
-    }
-  })
+    },
+  });
 
   constructor() {
     super();
-    if (isMobile())
-      this.background.visible = false;
+    if (isMobile()) this.background.visible = false;
 
     this.addChild(this.background, ...this.buttons, this.preferencesButton);
   }
@@ -65,7 +62,6 @@ export class Toolbar extends Component {
 
   set tool(tool: ComposeTool) {
     this.editor.tools.activeTool = tool;
-
   }
 
   onLoad() {
@@ -90,7 +86,6 @@ export class Toolbar extends Component {
     });
   }
 
-
   updateBounds() {
     if (this.size.x === 0 || this.size.y === 0) return;
     const bounds = new Rect(0, 0, this.size.x, this.size.y);
@@ -104,5 +99,4 @@ export class Toolbar extends Component {
     super._onUpdate(point);
     this.background.scale.copyFrom(this.size);
   }
-
 }

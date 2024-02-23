@@ -1,20 +1,17 @@
 <script setup lang="ts">
-import {createEditorClient} from "../editorClient.ts";
+import { createEditorClient } from "../editorClient.ts";
 import EventList from "./EventList.vue";
 import UserList from "./UserList.vue";
 import EditorViewport from "./EditorViewport.vue";
-import {frameStats} from "@osucad/client/src/editor/drawables/DrawableSystem.ts";
 import PreferencesOverlay from "@/editor/components/PreferencesOverlay.vue";
-import {isMobile} from "@/util/isMobile.ts";
-import {EditorContext} from "@/editor/editorContext.ts";
-import {promiseTimeout} from "@vueuse/core";
+import { EditorContext } from "@/editor/editorContext.ts";
+import { promiseTimeout } from "@vueuse/core";
 import LoadingIcon from "@/editor/components/LoadingIcon.vue";
-import gsap from "gsap";
-import {animate, Easing} from "@/editor/drawables/animate.ts";
-import {App} from "@capacitor/app";
-import {useRouter} from "vue-router";
-import {Power3} from 'gsap'
-import {EditorPopoverHost} from "@/editor/components/popover";
+import gsap, { Power3 } from "gsap";
+import { animate, Easing } from "@/editor/drawables/animate.ts";
+import { App } from "@capacitor/app";
+import { useRouter } from "vue-router";
+import { EditorPopoverHost } from "@/editor/components/popover";
 
 const {beatmapId} = defineProps<{
   beatmapId: string;
@@ -53,8 +50,6 @@ App.addListener('backButton', () => {
   router.replace('/')
 })
 
-const mobile = isMobile();
-
 const loadingOpacity = computed(() => animate(loadProgress.value, 2, 2.5, 1, 0, Easing.inQuad))
 
 const viewportInitialized = ref(false)
@@ -62,18 +57,12 @@ const viewportInitialized = ref(false)
 </script>
 
 <template>
-
   <div class="beatmap-editor">
     <template v-if="editor">
       <EditorViewport id="viewport" @initialized="viewportInitialized = true"/>
-      <EditorPopoverHost/>
-      <!--    <EditorToolbar id="toolbar"/>-->
-      <!--z    <div class="banner">-->
-      <!--      Currently making changes (trying to add hitsounds), expect frequent reloads and freezes.-->
-      <!--      <div>Ping me on discord if the reloads are becoming too annoying</div>-->
-      <!--    </div>-->
       <EventList id="event-list"/>
       <UserList id="user-list"/>
+      <EditorPopoverHost/>
       <Teleport to="#navbar-content">
         <button style="margin-right: 1rem" @click="editor.commandManager.undo()">
           Undo

@@ -1,11 +1,14 @@
-import {Color, ColorSource, DOMAdapter, FillGradient, ImageSource, Matrix, Texture} from "pixi.js";
+import {
+  Color,
+  ColorSource,
+  DOMAdapter,
+  FillGradient,
+  ImageSource,
+  Matrix,
+  Texture,
+} from "pixi.js";
 
 export type GradientType = "linear" | "radial";
-
-// export type GradientSource =
-//     string // CSS gradient string: 'linear-gradient(...)'
-//     | IGradientOptions // Gradient options: { x0, y0, x1, y1, ...}
-//     | Gradient; // class Gradient itself
 
 export interface LinearGradientFillStyle {
   x0: number;
@@ -28,7 +31,7 @@ export class SliderGradient {
 
   public texture!: Texture;
   public transform!: Matrix;
-  public gradientStops: Array<{ offset: number, color: string }> = [];
+  public gradientStops: Array<{ offset: number; color: string }> = [];
 
   constructor(x0: number, y0: number, x1: number, y1: number) {
     this.x0 = x0;
@@ -38,8 +41,15 @@ export class SliderGradient {
     this.y1 = y1;
   }
 
-  public addColorStop(offset: number, color: ColorSource, alpha: number = 1): this {
-    this.gradientStops.push({ offset, color: Color.shared.setValue(color).setAlpha(alpha).toRgbaString() });
+  public addColorStop(
+    offset: number,
+    color: ColorSource,
+    alpha: number = 1,
+  ): this {
+    this.gradientStops.push({
+      offset,
+      color: Color.shared.setValue(color).setAlpha(alpha).toRgbaString(),
+    });
 
     return this;
   }
@@ -57,7 +67,12 @@ export class SliderGradient {
 
     const ctx = canvas.getContext("2d")!;
 
-    const gradient = ctx.createLinearGradient(0, 0, FillGradient.defaultTextureSize, 1);
+    const gradient = ctx.createLinearGradient(
+      0,
+      0,
+      FillGradient.defaultTextureSize,
+      1,
+    );
 
     for (let i = 0; i < gradientStops.length; i++) {
       const stop = gradientStops[i];
@@ -71,10 +86,8 @@ export class SliderGradient {
     this.texture = new Texture({
       source: new ImageSource({
         resource: canvas,
-        style: {
-          addressModeU: "clamp-to-edge",
-          addressModeV: "repeat",
-        },
+        addressModeU: "clamp-to-edge",
+        addressModeV: "repeat",
       }),
     });
 
@@ -88,7 +101,7 @@ export class SliderGradient {
     const dx = x1 - x0;
     const dy = y1 - y0;
 
-    const dist = Math.sqrt((dx * dx) + (dy * dy));
+    const dist = Math.sqrt(dx * dx + dy * dy);
 
     const angle = Math.atan2(dy, dx);
 

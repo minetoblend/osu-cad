@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import {Application, RenderTarget} from "pixi.js";
+import { Application } from "pixi.js";
 import "../drawables/DrawableSystem.ts";
-import {EditorViewportDrawable} from "../drawables/EditorViewportDrawable.ts";
+import { EditorViewportDrawable } from "../drawables/EditorViewportDrawable.ts";
 import gsap from "gsap";
-import {usePreferences} from "@/composables/usePreferences.ts";
-import {useEditor} from "@/editor/editorContext.ts";
-import {isMobile} from "@/util/isMobile.ts";
-import {EditorPopoverHost} from "@/editor/components/popover";
+import { usePreferences } from "@/composables/usePreferences.ts";
+import { useEditor } from "@/editor/editorContext.ts";
+import { isMobile } from "@/util/isMobile.ts";
 
 //RenderTarget.defaultDescriptor.depth = true;
 

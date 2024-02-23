@@ -8,9 +8,9 @@ defineProps<{
 const availableRenderers = [
   {
     name: 'WebGL',
-    value: 'webgl'
+    value: 'webgl' as 'webgl' | 'webgpu'
   },
-]
+] as const
 
 </script>
 

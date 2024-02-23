@@ -1,9 +1,8 @@
-import {Assets, Point, Sprite, Texture} from "pixi.js";
-import {Drawable} from "../Drawable.ts";
-import {ObjectPool} from "../objectPool.ts";
+import { Assets, Point, Sprite } from "pixi.js";
+import { Drawable } from "../Drawable.ts";
+import { ObjectPool } from "../objectPool.ts";
 
 export class DrawableComboNumber extends Drawable {
-
   private _number: number;
 
   constructor(number: number) {
@@ -22,24 +21,39 @@ export class DrawableComboNumber extends Drawable {
     this._update();
   }
 
-  private _getTextureForDigit(digit: number): Texture {
-    return Assets.get(`default-${digit}`);
-  }
-
-  static digitSpritePool = Array.from({length: 10}, (_, i) => new ObjectPool<Sprite & { digit: number }>(
-      () => Object.assign(new Sprite({
-        texture: Assets.get(`default-${i}`),
-        anchor: new Point(0, 0.5),
-      }), {digit: i}), 20, sprite => sprite.destroy()),
+  static digitSpritePool = Array.from(
+    { length: 10 },
+    (_, i) =>
+      new ObjectPool<Sprite & { digit: number }>(
+        () =>
+          Object.assign(
+            new Sprite({
+              texture: Assets.get(`default-${i}`),
+              anchor: new Point(0, 0.5),
+            }),
+            { digit: i },
+          ),
+        20,
+        (sprite) => sprite.destroy(),
+      ),
   );
 
   _update() {
-    this.removeChildren().forEach(sprite => (
-        DrawableComboNumber.digitSpritePool[(sprite as any).digit].release((sprite as Sprite & { digit: number }))
-    ));
-    const digits = this.number.toString().split("").map((digit) => parseInt(digit));
-    const sprites = digits.map(digit => DrawableComboNumber.digitSpritePool[digit].get());
-    const totalWidth = sprites.map(sprite => sprite.width).reduce((a, b) => a + b, 0);
+    this.removeChildren().forEach((sprite) =>
+      DrawableComboNumber.digitSpritePool[(sprite as any).digit].release(
+        sprite as Sprite & { digit: number },
+      ),
+    );
+    const digits = this.number
+      .toString()
+      .split("")
+      .map((digit) => parseInt(digit));
+    const sprites = digits.map((digit) =>
+      DrawableComboNumber.digitSpritePool[digit].get(),
+    );
+    const totalWidth = sprites
+      .map((sprite) => sprite.width)
+      .reduce((a, b) => a + b, 0);
     this.addChild(...sprites);
 
     let x = -totalWidth / 2;
@@ -48,5 +62,4 @@ export class DrawableComboNumber extends Drawable {
       x += sprite.width;
     }
   }
-
 }

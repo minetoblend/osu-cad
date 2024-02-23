@@ -6,6 +6,7 @@ const {currentPopover, hidePopover} = usePixiPopover()
 const popoverRef = ref<HTMLDivElement>()
 
 useEventListener('pointerdown', (evt) => {
+  if(!popoverRef.value) return
   if (evt.target === popoverRef.value || evt.composedPath().includes(popoverRef.value))
     return
   nextTick(() => {

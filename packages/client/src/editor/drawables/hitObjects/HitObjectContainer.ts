@@ -1,27 +1,31 @@
-import {Drawable} from "../Drawable.ts";
-import {Inject} from "../di";
-import {HitCircle, HitObject, HitObjectType, Slider, Spinner} from "@osucad/common";
-import {HitObjectDrawable} from "./HitObjectDrawable.ts";
-import {HitCircleDrawable} from "./HitCircleDrawable.ts";
-import {SliderDrawable} from "./SliderDrawable.ts";
-import {Container} from "pixi.js";
-import {FollowPointsDrawable} from "./FollowPointsDrawable.ts";
-import {SelectionOverlay} from "./SelectionOverlay.ts";
-import {SpinnerDrawable} from "./SpinnerDrawable.ts";
-import {EditorContext} from "@/editor/editorContext.ts";
+import { Drawable } from "../Drawable.ts";
+import { Inject } from "../di";
+import {
+  HitCircle,
+  HitObject,
+  HitObjectType,
+  Slider,
+  Spinner,
+} from "@osucad/common";
+import { HitObjectDrawable } from "./HitObjectDrawable.ts";
+import { HitCircleDrawable } from "./HitCircleDrawable.ts";
+import { SliderDrawable } from "./SliderDrawable.ts";
+import { Container } from "pixi.js";
+import { FollowPointsDrawable } from "./FollowPointsDrawable.ts";
+import { SpinnerDrawable } from "./SpinnerDrawable.ts";
+import { EditorContext } from "@/editor/editorContext.ts";
 
 export class HitObjectContainer extends Drawable {
-
   @Inject(EditorContext)
   private readonly editor!: EditorContext;
 
   constructor() {
     super();
-    this.addChild(this.followPointContainer, this.hitObjectContainer, new SelectionOverlay());
+    this.addChild(this.followPointContainer, this.hitObjectContainer);
     this.hitObjectContainer.enableRenderGroup();
     this.followPointContainer.enableRenderGroup();
     this.interactiveChildren = false;
-    this.eventMode = 'none'
+    this.eventMode = "none";
   }
 
   onLoad() {
@@ -50,23 +54,29 @@ export class HitObjectContainer extends Drawable {
 
   private readonly hitObjectContainer = new Container();
   private readonly hitObjectDrawableMap = new Map<string, HitObjectDrawable>();
-  private readonly followPointDrawableMap = new Map<string, FollowPointsDrawable>();
+  private readonly followPointDrawableMap = new Map<
+    string,
+    FollowPointsDrawable
+  >();
 
   private readonly followPointContainer = new Container();
 
   onTick() {
-    let startIndex = this.hitObjects.hitObjects.findIndex((h) => h.endTime + 700 > this.currentTime);
-    let endIndex = this.hitObjects.hitObjects.findIndex(h => h.startTime - 600 > this.currentTime);
+    let startIndex = this.hitObjects.hitObjects.findIndex(
+      (h) => h.endTime + 700 > this.currentTime,
+    );
+    let endIndex = this.hitObjects.hitObjects.findIndex(
+      (h) => h.startTime - 600 > this.currentTime,
+    );
 
     if (startIndex > 0) startIndex--;
-    if (endIndex == -1)
-      endIndex = this.hitObjects.hitObjects.length;
+    if (endIndex == -1) endIndex = this.hitObjects.hitObjects.length;
     if (endIndex < this.hitObjects.hitObjects.length) endIndex++;
-    if (startIndex === -1)
-      startIndex = this.hitObjects.hitObjects.length - 1;
+    if (startIndex === -1) startIndex = this.hitObjects.hitObjects.length - 1;
 
-    const hitObjects = this.hitObjects.hitObjects.filter((h, i) => (i >= startIndex && i <= endIndex) || h.isSelected);
-
+    const hitObjects = this.hitObjects.hitObjects.filter(
+      (h, i) => (i >= startIndex && i <= endIndex) || h.isSelected,
+    );
 
     const shouldRemove = new Set<string>([...this.hitObjectDrawableMap.keys()]);
     for (let i = 0; i < hitObjects.length; i++) {
@@ -94,10 +104,12 @@ export class HitObjectContainer extends Drawable {
       drawable.zIndex = hitObjects.length - i;
 
       if (i < hitObjects.length - 1) {
-
         let followPointDrawable = this.followPointDrawableMap.get(hitObject.id);
         if (!followPointDrawable) {
-          followPointDrawable = new FollowPointsDrawable(hitObject, hitObjects[i + 1]);
+          followPointDrawable = new FollowPointsDrawable(
+            hitObject,
+            hitObjects[i + 1],
+          );
           this.followPointDrawableMap.set(hitObject.id, followPointDrawable);
           this.followPointContainer.addChild(followPointDrawable);
         } else {
@@ -105,7 +117,6 @@ export class HitObjectContainer extends Drawable {
         }
         followPointDrawable.zIndex = -i;
       }
-
     }
 
     for (const hitObject of shouldRemove) {
@@ -126,11 +137,12 @@ export class HitObjectContainer extends Drawable {
   }
 
   get visibleHitObjects(): HitObject[] {
-    return this.hitObjectContainer.children.map(it => (it as HitObjectDrawable).hitObject);
+    return this.hitObjectContainer.children.map(
+      (it) => (it as HitObjectDrawable).hitObject,
+    );
   }
 
   get hitObjectDrawables(): HitObjectDrawable[] {
     return this.hitObjectContainer.children as HitObjectDrawable[];
   }
-
 }

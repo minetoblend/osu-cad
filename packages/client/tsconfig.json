@@ -9,11 +9,9 @@
       "DOM.Iterable"
     ],
     "skipLibCheck": true,
-    /* Bundler mode */
     "moduleResolution": "node",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
-    "isolatedModules": true,
     "noEmit": true,
     "jsx": "preserve",
     /* Linting */
@@ -36,6 +34,10 @@
     "auto-imports.d.ts",
     "typed-router.d.ts",
     "components.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "../common/**/*",
   ],
   "references": [
     {

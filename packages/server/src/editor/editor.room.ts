@@ -87,6 +87,7 @@ export class EditorRoom {
   accept(
     client: Socket<ClientMessages, ServerMessages>,
     user: UserEntity,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     access: EditorSessionEntity,
   ) {
     const roomUser = new RoomUser(user, client, this.nextSessionId++, this);

@@ -5,7 +5,7 @@ import {UserSessionInfo} from "@osucad/common";
 import {match} from 'variant'
 import {useEditor} from "@/editor/editorContext.ts";
 
-const {users, ownUser, kick, ban} = useConnectedUsers();
+const {users, ownUser} = useConnectedUsers();
 const {clock} = useEditor()
 
 const activeUser = ref<number | null>(null);
