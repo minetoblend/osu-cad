@@ -10,6 +10,7 @@ import { ParticipantEntity } from './participant.entity';
 import { EditorSessionEntity } from '../editor/editor-session.entity';
 import { BeatmapExportService } from './beatmap-export.service';
 import { EditorModule } from '../editor/editor.module';
+import { AssetsModule } from '../assets/assets.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { EditorModule } from '../editor/editor.module';
     ]),
     UserModule,
     forwardRef(() => EditorModule),
+    forwardRef(() => AssetsModule),
   ],
   providers: [BeatmapService, BeatmapImportService, BeatmapExportService],
   controllers: [MapsetController],

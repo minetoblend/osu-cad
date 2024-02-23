@@ -28,6 +28,9 @@ export class MapsetEntity {
   @Column('int')
   access: BeatmapAccess = BeatmapAccess.Private;
 
+  @Column('boolean', { default: false })
+  s3Storage: boolean;
+
   @ManyToOne(() => UserEntity)
   creator: UserEntity;
 
