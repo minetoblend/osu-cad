@@ -1,7 +1,6 @@
-import {hitObjectId} from "./hitObject";
+import { hitObjectId } from './hitObject';
 
 export class HitSoundSample {
-
   constructor(options: SerializedHitSoundSample) {
     this.id = options.id;
     this.time = options.time;
@@ -18,7 +17,6 @@ export class HitSoundSample {
       time: this.time,
     };
   }
-
 }
 
 export interface SerializedHitSoundSample {

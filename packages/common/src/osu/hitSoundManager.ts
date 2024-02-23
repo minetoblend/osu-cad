@@ -1,10 +1,12 @@
-import {HitSoundLayer, SerializedHitSoundLayer} from "./hitSoundLayer";
-import {SampleSet, SampleType} from "./hitSound";
-import {Envelope, SerializedEnvelope} from "./envelope";
+import { HitSoundLayer, SerializedHitSoundLayer } from './hitSoundLayer';
+import { SampleSet, SampleType } from './hitSound';
+import { Envelope, SerializedEnvelope } from './envelope';
 
 export class HitSoundManager {
   constructor(options: SerializedHitSounds) {
-    this.layers = (options.layers ?? []).map(layer => new HitSoundLayer(layer));
+    this.layers = (options.layers ?? []).map(
+      (layer) => new HitSoundLayer(layer),
+    );
     if (options.volume) {
       this.volume = new Envelope(options.volume);
     } else {
@@ -18,11 +20,10 @@ export class HitSoundManager {
 
   serialize(): SerializedHitSounds {
     return {
-      layers: this.layers.map(layer => layer.serialize()),
+      layers: this.layers.map((layer) => layer.serialize()),
       volume: this.volume.serialize(),
     };
   }
-
 }
 
 export interface SerializedHitSounds {
@@ -31,20 +32,27 @@ export interface SerializedHitSounds {
 }
 
 export function defaultHitSoundLayers(): HitSoundLayer[] {
-  const types = [SampleType.Normal, SampleType.Whistle, SampleType.Finish, SampleType.Clap];
+  const types = [
+    SampleType.Normal,
+    SampleType.Whistle,
+    SampleType.Finish,
+    SampleType.Clap,
+  ];
   const sampleSets = [SampleSet.Normal, SampleSet.Soft, SampleSet.Drum];
   const layers: HitSoundLayer[] = [];
   for (const sampleSet of sampleSets) {
     for (const type of types) {
-      layers.push(new HitSoundLayer({
-        name: null,
-        sampleSet,
-        type,
-        customFilename: null,
-        samples: [],
-        volume: 1,
-        enabled: true,
-      }));
+      layers.push(
+        new HitSoundLayer({
+          name: null,
+          sampleSet,
+          type,
+          customFilename: null,
+          samples: [],
+          volume: 1,
+          enabled: true,
+        }),
+      );
     }
   }
   return layers;

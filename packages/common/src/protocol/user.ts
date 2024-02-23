@@ -1,5 +1,5 @@
-import {Presence} from "./presence";
-import {UserInfo} from "../types";
+import { Presence } from './presence';
+import { UserInfo } from '../types';
 
 export type UserId = number;
 
@@ -9,5 +9,4 @@ export interface UserSessionInfo extends UserInfo {
   presence: Presence;
 }
 
-export type UserRole = "admin" | "mapper" | "modder" | "spectator";
-
+export type UserRole = 'admin' | 'mapper' | 'modder' | 'spectator';

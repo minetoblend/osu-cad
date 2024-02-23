@@ -1,14 +1,12 @@
-import {IVec2, Vec2} from "./vec2";
+import { IVec2, Vec2 } from './vec2';
 
 export class Rect {
-
   constructor(
     public x: number,
     public y: number,
     public width: number,
     public height: number,
-  ) {
-  }
+  ) {}
 
   get position(): Vec2 {
     return new Vec2(this.x, this.y);
@@ -36,7 +34,12 @@ export class Rect {
   }
 
   splitRight(width: number): Rect {
-    const rect = new Rect(this.x + this.width - width, this.y, width, this.height);
+    const rect = new Rect(
+      this.x + this.width - width,
+      this.y,
+      width,
+      this.height,
+    );
     this.width -= width;
     return rect;
   }
@@ -80,7 +83,7 @@ export class Rect {
     return this;
   }
 
-  translate({x, y}: IVec2) {
+  translate({ x, y }: IVec2) {
     this.x += x;
     this.y += y;
   }
@@ -113,5 +116,4 @@ export class Rect {
   get top(): number {
     return this.y;
   }
-
 }

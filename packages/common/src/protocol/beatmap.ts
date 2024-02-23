@@ -1,7 +1,10 @@
-import {SerializedEditorBookmark, SerializedHitObject, UserInfo,} from "../types";
-import {SerializedHitSounds} from "../osu/hitSoundManager";
-import {SerializedControlPoint} from "../osu/controlPoint";
-
+import {
+  SerializedEditorBookmark,
+  SerializedHitObject,
+  UserInfo,
+} from '../types';
+import { SerializedHitSounds } from '../osu/hitSoundManager';
+import { SerializedControlPoint } from '../osu/controlPoint';
 
 export type MapsetId = string;
 

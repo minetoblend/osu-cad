@@ -1,16 +1,19 @@
-import {SerializedHitObject} from "../types";
-import {HitObject, HitObjectUpdateType} from "./hitObject";
-import {deserializeHitObject} from "./deserializeHitObject";
-import {SerializedBeatmapDifficulty, SerializedBeatmapGeneral} from "../protocol";
-import {ControlPointManager} from "./controlPointManager";
-import {Vec2} from "../math";
-import {Slider} from "./slider";
-import {HitCircle} from "./hitCircle";
-import {Spinner} from "./spinner";
-import {ref, watch} from "vue";
-import {Action} from "../util/action";
-import {binarySearch} from "../util";
-import {ControlPoint, ControlPointUpdateFlags} from "./controlPoint";
+import { SerializedHitObject } from '../types';
+import { HitObject, HitObjectUpdateType } from './hitObject';
+import { deserializeHitObject } from './deserializeHitObject';
+import {
+  SerializedBeatmapDifficulty,
+  SerializedBeatmapGeneral,
+} from '../protocol';
+import { ControlPointManager } from './controlPointManager';
+import { Vec2 } from '../math';
+import { Slider } from './slider';
+import { HitCircle } from './hitCircle';
+import { Spinner } from './spinner';
+import { ref, watch } from 'vue';
+import { Action } from '../util/action';
+import { binarySearch } from '../util';
+import { ControlPoint, ControlPointUpdateFlags } from './controlPoint';
 
 export class HitObjectManager {
   public hitObjects: HitObject[];
@@ -23,17 +26,31 @@ export class HitObjectManager {
     private readonly controlPoints: ControlPointManager,
     private readonly general: SerializedBeatmapGeneral,
   ) {
-    this.hitObjects = hitObjects.map(hitObject => deserializeHitObject(hitObject));
-    this.hitObjects.forEach(hitObject => this._onAdd(hitObject, true));
+    this.hitObjects = hitObjects.map((hitObject) =>
+      deserializeHitObject(hitObject),
+    );
+    this.hitObjects.forEach((hitObject) => this._onAdd(hitObject, true));
     this.calculateCombos();
-    this.calculateStacking(this.hitObjects, general.stackLeniency, 3, 0, this.hitObjects.length - 1);
+    this.calculateStacking(
+      this.hitObjects,
+      general.stackLeniency,
+      3,
+      0,
+      this.hitObjects.length - 1,
+    );
     watch(this._stackVersion, () => {
-      this.calculateStacking(this.hitObjects, general.stackLeniency, 3, 0, this.hitObjects.length - 1);
+      this.calculateStacking(
+        this.hitObjects,
+        general.stackLeniency,
+        3,
+        0,
+        this.hitObjects.length - 1,
+      );
     });
 
-    controlPoints.onAdded.addListener(this._onControlPointAdded)
-    controlPoints.onRemoved.addListener(this._onControlPointRemoved)
-    controlPoints.onUpdated.addListener(this._onControlPointUpdated)
+    controlPoints.onAdded.addListener(this._onControlPointAdded);
+    controlPoints.onRemoved.addListener(this._onControlPointRemoved);
+    controlPoints.onUpdated.addListener(this._onControlPointUpdated);
   }
 
   private _stackVersion = ref(0);
@@ -75,15 +92,15 @@ export class HitObjectManager {
 
   private _onUpdate(hitObject: HitObject, key: HitObjectUpdateType) {
     switch (key) {
-      case "startTime":
+      case 'startTime':
         this.sortHitObjects();
         this.calculateCombos();
         this._calculateStackingFor(hitObject);
         break;
-      case "newCombo":
+      case 'newCombo':
         this.calculateCombos();
         break;
-      case "position":
+      case 'position':
         this._calculateStackingFor(hitObject);
     }
     this.onUpdated.emit(hitObject, key);
@@ -94,7 +111,7 @@ export class HitObjectManager {
   }
 
   serialize(): SerializedHitObject[] {
-    return this.hitObjects.map(it => it.serialize());
+    return this.hitObjects.map((it) => it.serialize());
   }
 
   private calculateCombos() {
@@ -108,7 +125,7 @@ export class HitObjectManager {
       hitObject.comboIndex = comboIndex;
       hitObject.indexInCombo = indexInCombo;
       indexInCombo++;
-      hitObject.onUpdate.emit("combo");
+      hitObject.onUpdate.emit('combo');
     }
   }
 
@@ -135,7 +152,7 @@ export class HitObjectManager {
     }
     if (stackLeniency === 0) return;
 
-    performance.mark("calculateStacking-start");
+    performance.mark('calculateStacking-start');
 
     if (endIndex < hitObjects.length - 1) {
       for (let i = endIndex; i >= startIndex; i--) {
@@ -147,12 +164,14 @@ export class HitObjectManager {
           const endTime = stackBaseObject.endTime;
           const stackThreshold = objectN.timePreempt * stackLeniency;
 
-          if (objectN.startTime - endTime > stackThreshold)
-            break;
+          if (objectN.startTime - endTime > stackThreshold) break;
 
           if (
-            Vec2.distance(stackBaseObject.position, objectN.position) < stackDistance ||
-            (stackBaseObject instanceof Slider && Vec2.distance(stackBaseObject.endPosition, objectN.position) < stackDistance)
+            Vec2.distance(stackBaseObject.position, objectN.position) <
+              stackDistance ||
+            (stackBaseObject instanceof Slider &&
+              Vec2.distance(stackBaseObject.endPosition, objectN.position) <
+                stackDistance)
           ) {
             stackBaseIndex = n;
             objectN.stackHeight = 0;
@@ -193,12 +212,18 @@ export class HitObjectManager {
             alteredObjects.add(objectN);
           }
 
-          if (objectN instanceof Slider && Vec2.distance(objectN.endPosition, objectI.position) < stackDistance) {
+          if (
+            objectN instanceof Slider &&
+            Vec2.distance(objectN.endPosition, objectI.position) < stackDistance
+          ) {
             const offset = objectI.stackHeight - objectN.stackHeight + 1;
 
             for (let j = n + 1; j <= i; j++) {
               const objectJ = hitObjects[j];
-              if (Vec2.distance(objectN.endPosition, objectJ.position) < stackDistance) {
+              if (
+                Vec2.distance(objectN.endPosition, objectJ.position) <
+                stackDistance
+              ) {
                 objectJ.stackHeight -= offset;
                 objectJ.stackRoot = objectN.id;
                 alteredObjects.add(objectJ);
@@ -208,7 +233,9 @@ export class HitObjectManager {
             break;
           }
 
-          if (Vec2.distance(objectN.position, objectI.position) < stackDistance) {
+          if (
+            Vec2.distance(objectN.position, objectI.position) < stackDistance
+          ) {
             objectN.stackHeight = objectI.stackHeight + 1;
             objectN.stackRoot = objectI.id;
             alteredObjects.add(objectN);
@@ -221,7 +248,9 @@ export class HitObjectManager {
 
           if (objectI.startTime - objectN.endTime > stackThreshold) break;
 
-          if (Vec2.distance(objectN.endPosition, objectI.position) < stackDistance) {
+          if (
+            Vec2.distance(objectN.endPosition, objectI.position) < stackDistance
+          ) {
             objectN.stackHeight = objectI.stackHeight + 1;
             alteredObjects.add(objectN);
             objectI = objectN;
@@ -231,11 +260,15 @@ export class HitObjectManager {
     }
 
     for (const object of alteredObjects) {
-      object.onUpdate.emit("stackHeight");
+      object.onUpdate.emit('stackHeight');
     }
 
-    performance.mark("calculateStacking-end");
-    performance.measure("calculateStacking", "calculateStacking-start", "calculateStacking-end");
+    performance.mark('calculateStacking-end');
+    performance.measure(
+      'calculateStacking',
+      'calculateStacking-start',
+      'calculateStacking-end',
+    );
   }
 
   private _calculateStackingFor(hitObject: HitObject) {
@@ -252,7 +285,11 @@ export class HitObjectManager {
   readonly onUpdated = new Action<[HitObject, HitObjectUpdateType]>();
 
   getAtTime(time: number): HitObject | undefined {
-    let {found, index} = binarySearch(time, this.hitObjects, it => it.startTime);
+    const { found, index } = binarySearch(
+      time,
+      this.hitObjects,
+      (it) => it.startTime,
+    );
     if (found) return this.hitObjects[index];
     if (index === 0) return undefined;
     const hitObject = this.hitObjects[index - 1];
@@ -260,18 +297,31 @@ export class HitObjectManager {
     return undefined;
   }
 
-  _onControlPointAdded = (controlPoint: ControlPoint) => {
-    this.hitObjects.forEach(hitObject => hitObject.applyDefaults(this.difficulty, this.controlPoints));
-  }
+  _onControlPointAdded = () => {
+    this.hitObjects.forEach((hitObject) =>
+      hitObject.applyDefaults(this.difficulty, this.controlPoints),
+    );
+  };
 
-  _onControlPointRemoved = (controlPoint: ControlPoint) => {
-    this.hitObjects.forEach(hitObject => hitObject.applyDefaults(this.difficulty, this.controlPoints));
-  }
+  _onControlPointRemoved = () => {
+    this.hitObjects.forEach((hitObject) =>
+      hitObject.applyDefaults(this.difficulty, this.controlPoints),
+    );
+  };
 
-  _onControlPointUpdated = (controlPoint: ControlPoint, flags: ControlPointUpdateFlags) => {
-    if (flags & (ControlPointUpdateFlags.StartTime | ControlPointUpdateFlags.Velocity | ControlPointUpdateFlags.Timing)) {
-      this.hitObjects.forEach(hitObject => hitObject.applyDefaults(this.difficulty, this.controlPoints));
+  _onControlPointUpdated = (
+    controlPoint: ControlPoint,
+    flags: ControlPointUpdateFlags,
+  ) => {
+    if (
+      flags &
+      (ControlPointUpdateFlags.StartTime |
+        ControlPointUpdateFlags.Velocity |
+        ControlPointUpdateFlags.Timing)
+    ) {
+      this.hitObjects.forEach((hitObject) =>
+        hitObject.applyDefaults(this.difficulty, this.controlPoints),
+      );
     }
-  }
-
+  };
 }

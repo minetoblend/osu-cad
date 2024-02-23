@@ -60,26 +60,26 @@ export interface DefaultBeatmapSettings {
 
 export interface SnappingPreferences {
   blanket: {
-    enabled: boolean
-  }
+    enabled: boolean;
+  };
   visualSpacing: {
-    enabled: boolean
-  }
+    enabled: boolean;
+  };
   objects: {
-    enabled: boolean
-  }
+    enabled: boolean;
+  };
   distance: {
-    enabled: boolean
-  }
+    enabled: boolean;
+  };
   grid: {
-    enabled: boolean
-  }
+    enabled: boolean;
+  };
 }
 
 export function defaultPreferences(): Preferences {
   return {
     behavior: {
-      rightClickBehavior: "contextMenu",
+      rightClickBehavior: 'contextMenu',
     },
     viewport: {
       playfieldScale: 1,
@@ -133,7 +133,7 @@ export function defaultPreferences(): Preferences {
         overallDifficulty: 8,
         sliderMultiplier: 1.4,
         sliderTickRate: 1,
-      }
+      },
     },
-  }
+  };
 }

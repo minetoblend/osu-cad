@@ -1,7 +1,7 @@
-import {SerializedHitObject} from "../../types";
-import {CommandContext, CommandHandler} from "../command";
-import {deserializeHitObject} from "../../osu/deserializeHitObject";
-import {EditorCommand} from "./index";
+import { SerializedHitObject } from '../../types';
+import { CommandContext, CommandHandler } from '../command';
+import { deserializeHitObject } from '../../osu/deserializeHitObject';
+import { EditorCommand } from './index';
 
 export interface CreateHitObjectCommand {
   hitObject: SerializedHitObject;
@@ -13,7 +13,7 @@ export const CreateHitObjectHandler: CommandHandler<CreateHitObjectCommand> = {
       context.hitObjects.add(deserializeHitObject(command.hitObject));
     }
   },
-  createUndo(command: CreateHitObjectCommand, context: CommandContext): EditorCommand | undefined {
+  createUndo(command: CreateHitObjectCommand): EditorCommand | undefined {
     if (command.hitObject.id)
       return EditorCommand.deleteHitObject({
         id: command.hitObject.id,
@@ -34,7 +34,10 @@ export const DeleteHitObjectHandler: CommandHandler<DeleteHitObjectCommand> = {
       }
     }
   },
-  createUndo(command: DeleteHitObjectCommand, context: CommandContext): EditorCommand | undefined {
+  createUndo(
+    command: DeleteHitObjectCommand,
+    context: CommandContext,
+  ): EditorCommand | undefined {
     const hitObject = context.hitObjects.getById(command.id);
     if (hitObject) {
       return EditorCommand.createHitObject({

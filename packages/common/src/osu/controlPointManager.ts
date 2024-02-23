@@ -1,9 +1,12 @@
-import {SerializedControlPoints} from "../protocol";
-import {ControlPoint, ControlPointUpdateFlags, SerializedControlPoint, TimingInfo} from "./controlPoint";
-import {Action} from "../util/action";
-import {SerializedTimingPoint, SerializedVelocityPoint} from "../types";
-import {hitObjectId} from "./hitObject";
-
+import { SerializedControlPoints } from '../protocol';
+import {
+  ControlPoint,
+  ControlPointUpdateFlags,
+  TimingInfo,
+} from './controlPoint';
+import { Action } from '../util/action';
+import { SerializedTimingPoint, SerializedVelocityPoint } from '../types';
+import { hitObjectId } from './hitObject';
 
 export type TimingPoint = ControlPoint & { timing: TimingInfo };
 export type VelocityPoint = ControlPoint & { velocityMultiplier: number };
@@ -17,19 +20,20 @@ const enum SortFlags {
 }
 
 export class ControlPointManager {
-
   readonly controlPoints: ControlPoint[] = [];
   readonly timing: TimingPoint[] = [];
   readonly velocities: VelocityPoint[] = [];
 
-  constructor(
-    controlPoints: SerializedControlPoints,
-  ) {
-    this.controlPoints = controlPoints.controlPoints.map(controlPoint => new ControlPoint(controlPoint));
+  constructor(controlPoints: SerializedControlPoints) {
+    this.controlPoints = controlPoints.controlPoints.map(
+      (controlPoint) => new ControlPoint(controlPoint),
+    );
     for (const controlPoint of this.controlPoints) {
       this._onAdd(controlPoint, true);
     }
-    this._sort(ControlPointUpdateFlags.Timing | ControlPointUpdateFlags.Velocity)
+    this._sort(
+      ControlPointUpdateFlags.Timing | ControlPointUpdateFlags.Velocity,
+    );
   }
 
   onAdded = new Action<[ControlPoint]>();
@@ -61,8 +65,7 @@ export class ControlPointManager {
       controlPoint._inVelocityList = true;
     }
     controlPoint.onUpdate.addListener(this._onUpdate);
-    if (!isInit)
-      this._sort(sortFlags)
+    if (!isInit) this._sort(sortFlags);
     this.onAdded.emit(controlPoint);
   }
 
@@ -85,7 +88,10 @@ export class ControlPointManager {
     this.onRemoved.emit(controlPoint);
   }
 
-  private _onUpdate = (controlPoint: ControlPoint, flags: ControlPointUpdateFlags) => {
+  private _onUpdate = (
+    controlPoint: ControlPoint,
+    flags: ControlPointUpdateFlags,
+  ) => {
     let sortFlags = SortFlags.None;
     if (flags & ControlPointUpdateFlags.StartTime) {
       sortFlags |= SortFlags.All;
@@ -93,7 +99,7 @@ export class ControlPointManager {
       if (flags & ControlPointUpdateFlags.Timing) {
         sortFlags |= SortFlags.Timing;
         if (controlPoint.timing && !controlPoint._inTimingList) {
-          this.timing.push(controlPoint as TimingPoint)
+          this.timing.push(controlPoint as TimingPoint);
           controlPoint._inTimingList = true;
         } else if (!controlPoint.timing && controlPoint._inTimingList) {
           const index = this.timing.indexOf(controlPoint as TimingPoint);
@@ -105,10 +111,16 @@ export class ControlPointManager {
       }
       if (flags & ControlPointUpdateFlags.Velocity) {
         sortFlags |= SortFlags.Velocity;
-        if (controlPoint.velocityMultiplier !== null && !controlPoint._inVelocityList) {
-          this.velocities.push(controlPoint as VelocityPoint)
+        if (
+          controlPoint.velocityMultiplier !== null &&
+          !controlPoint._inVelocityList
+        ) {
+          this.velocities.push(controlPoint as VelocityPoint);
           controlPoint._inVelocityList = true;
-        } else if (controlPoint.velocityMultiplier === null && controlPoint._inVelocityList) {
+        } else if (
+          controlPoint.velocityMultiplier === null &&
+          controlPoint._inVelocityList
+        ) {
           const index = this.velocities.indexOf(controlPoint as VelocityPoint);
           if (index !== -1) {
             this.velocities.splice(index, 1);
@@ -119,7 +131,7 @@ export class ControlPointManager {
     }
     this._sort(sortFlags);
     this.onUpdated.emit(controlPoint, flags);
-  }
+  };
 
   private sortBy = (a: ControlPoint, b: ControlPoint) => a.time - b.time;
 
@@ -137,32 +149,34 @@ export class ControlPointManager {
 
   serialize(): SerializedControlPoints {
     return {
-      controlPoints: this.controlPoints.map(controlPoint => controlPoint.serialize()),
+      controlPoints: this.controlPoints.map((controlPoint) =>
+        controlPoint.serialize(),
+      ),
     };
   }
 
   serializeLegacy(): {
-    timing: SerializedTimingPoint[],
-    velocity: SerializedVelocityPoint[],
+    timing: SerializedTimingPoint[];
+    velocity: SerializedVelocityPoint[];
   } {
     return {
       timing: this.timing
-        .filter(it => it.timing)
-        .map(controlPoint => {
+        .filter((it) => it.timing)
+        .map((controlPoint) => {
           return {
             time: controlPoint.time,
             beatLength: controlPoint.timing.beatLength,
-          }
+          };
         }),
       velocity: this.velocities
-        .filter(it => it.velocityMultiplier !== null)
-        .map(controlPoint => {
+        .filter((it) => it.velocityMultiplier !== null)
+        .map((controlPoint) => {
           return {
             time: controlPoint.time,
             velocity: controlPoint.velocityMultiplier,
-          }
+          };
         }),
-    }
+    };
   }
 
   timingPointAt(time: number): TimingPoint {
@@ -170,9 +184,8 @@ export class ControlPointManager {
       return ControlPoint.default as TimingPoint;
     }
 
-    let {index, found} = this.binarySearch(this.timing, time);
-    if (!found && index > 0)
-      index--;
+    let { index, found } = this.binarySearch(this.timing, time);
+    if (!found && index > 0) index--;
 
     return this.timing[index];
   }
@@ -182,34 +195,31 @@ export class ControlPointManager {
     if (this.velocities.length === 0) {
       return 1;
     }
-    let {index, found} = this.binarySearch(this.velocities, time);
-    if (!found && index > 0)
-      index--;
+    let { index, found } = this.binarySearch(this.velocities, time);
+    if (!found && index > 0) index--;
 
-    if (!found && this.velocities[0].time > time)
-      return 1;
+    if (!found && this.velocities[0].time > time) return 1;
 
     return this.velocities[index].velocityMultiplier;
   }
 
-  getTicks(
-    startTime: number,
-    endTime: number,
-    divisor: number = 4,
-  ) {
+  getTicks(startTime: number, endTime: number, divisor: number = 4) {
     if (this.timing.length == 0) return [];
 
-    let {index, found} = this.binarySearch(this.timing, startTime);
-    if (!found && index > 0)
-      index--;
+    let { index, found } = this.binarySearch(this.timing, startTime);
+    if (!found && index > 0) index--;
 
     const ticks: TickInfo[] = [];
     let timingPoint = this.timing[index];
     let offset = 0;
     if (timingPoint.time > startTime) {
-      offset = -Math.ceil(
-        (timingPoint.time - startTime) / timingPoint.timing.beatLength * divisor,
-      ) * timingPoint.timing.beatLength / divisor;
+      offset =
+        (-Math.ceil(
+          ((timingPoint.time - startTime) / timingPoint.timing.beatLength) *
+            divisor,
+        ) *
+          timingPoint.timing.beatLength) /
+        divisor;
     }
 
     while (timingPoint) {
@@ -218,13 +228,19 @@ export class ControlPointManager {
         endTime,
       );
 
-      const numTicks = Math.ceil((tickEndTime - timingPoint.time - offset) / timingPoint.timing.beatLength * divisor);
+      const numTicks = Math.ceil(
+        ((tickEndTime - timingPoint.time - offset) /
+          timingPoint.timing.beatLength) *
+          divisor,
+      );
       ticks.push(
-        ...Array.from({length: numTicks}, (_, i) => {
-          const time = offset + i * timingPoint.timing.beatLength / divisor;
+        ...Array.from({ length: numTicks }, (_, i) => {
+          const time = offset + (i * timingPoint.timing.beatLength) / divisor;
 
           let type = TickType.Full;
-          let subticks = Math.round(time / timingPoint.timing.beatLength * 48);
+          let subticks = Math.round(
+            (time / timingPoint.timing.beatLength) * 48,
+          );
           subticks = mod(mod(subticks, 48) + 48, 48);
 
           if (subticks % 48 === 0) {
@@ -260,56 +276,61 @@ export class ControlPointManager {
     return ticks;
   }
 
-  private binarySearch(array: { time: number }[], time: number): { index: number, found: boolean } {
+  private binarySearch(
+    array: { time: number }[],
+    time: number,
+  ): { index: number; found: boolean } {
     let left = 0;
     let right = array.length - 1;
     while (left <= right) {
       const mid = Math.floor((left + right) / 2);
       if (array[mid].time === time) {
-        return {index: mid, found: true};
+        return { index: mid, found: true };
       } else if (array[mid].time < time) {
         left = mid + 1;
       } else {
         right = mid - 1;
       }
     }
-    return {index: left, found: false};
+    return { index: left, found: false };
   }
 
-  snap(time: number, divisor: number, type: "round" | "floor" | "ceil" = "round") {
+  snap(
+    time: number,
+    divisor: number,
+    type: 'round' | 'floor' | 'ceil' = 'round',
+  ) {
     const timingPoint = this.timingPointAt(time);
     const offset = time - timingPoint.time;
     const beatLength = timingPoint.timing.beatLength / divisor;
     let beat: number;
     switch (type) {
-      case "round":
+      case 'round':
         beat = Math.round(offset / beatLength);
         break;
-      case "floor":
+      case 'floor':
         beat = Math.floor(offset / beatLength);
         break;
-      case "ceil":
+      case 'ceil':
         beat = Math.ceil(offset / beatLength);
         break;
     }
     return timingPoint.time + beat * beatLength;
   }
 
-  static fromLegacy(
-    options: {
-      timing: SerializedTimingPoint[],
-      velocity: SerializedVelocityPoint[],
-    }
-  ) {
+  static fromLegacy(options: {
+    timing: SerializedTimingPoint[];
+    velocity: SerializedVelocityPoint[];
+  }) {
     const map = new Map<number, ControlPoint>();
-    const controlPoints = new ControlPointManager({controlPoints: []});
+    const controlPoints = new ControlPointManager({ controlPoints: [] });
     for (const timing of options.timing) {
       const controlPoint = new ControlPoint({
         id: hitObjectId(),
         time: timing.time,
         timing: timing,
         velocityMultiplier: null,
-      })
+      });
       controlPoints.add(controlPoint);
       map.set(timing.time, controlPoint);
     }
@@ -323,16 +344,15 @@ export class ControlPointManager {
           time: velocity.time,
           velocityMultiplier: velocity.velocity,
           timing: null,
-        })
+        });
         controlPoints.add(controlPoint);
       }
     }
     return controlPoints;
   }
 
-
   getById(id: string) {
-    return this.controlPoints.find(it => it.id === id);
+    return this.controlPoints.find((it) => it.id === id);
   }
 }
 

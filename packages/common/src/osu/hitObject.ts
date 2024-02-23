@@ -1,43 +1,38 @@
-import {Vec2} from "../math";
-import {Attribution, SerializedHitObject} from "../types";
-import {SerializedBeatmapDifficulty} from "../protocol";
-import {ControlPointManager} from "./controlPointManager";
-import {Action} from "../util/action";
-import {defaultHitSound, HitSample, HitSound} from "./hitSound";
-import {randomString} from "../util";
+import { Vec2 } from '../math';
+import { Attribution, SerializedHitObject } from '../types';
+import { SerializedBeatmapDifficulty } from '../protocol';
+import { ControlPointManager } from './controlPointManager';
+import { Action } from '../util/action';
+import { defaultHitSound, HitSample, HitSound } from './hitSound';
+import { randomString } from '../util';
 
 export function hitObjectId() {
   return randomString(8);
 }
 
 export abstract class HitObject {
-
   constructor(options?: SerializedHitObject) {
     if (options) {
-      if (options.id)
-        this.id = options.id;
+      if (options.id) this.id = options.id;
       this.startTime = options.startTime;
       this.position = new Vec2(options.position.x, options.position.y);
       this.attribution = options.attribution;
       this.isNewCombo = options.newCombo;
       this.comboOffset = options.comboOffset ?? 0;
-      if (options.hitSound)
-        this._hitSound = {...options.hitSound};
+      if (options.hitSound) this._hitSound = { ...options.hitSound };
     }
   }
 
   abstract readonly type: HitObjectType;
 
-
   id: string = hitObjectId();
 
   comboOffset = 0;
 
-  protected _version = 0
+  protected _version = 0;
   get version() {
     return this._version;
   }
-
 
   private _position = new Vec2(0, 0);
 
@@ -54,14 +49,14 @@ export abstract class HitObject {
   set hitSound(value: HitSound) {
     this._hitSound = value;
     this._hitSamples = undefined;
-    this._onUpdate("hitSounds");
+    this._onUpdate('hitSounds');
   }
 
   set position(value: Vec2) {
     if (Vec2.equals(value, this._position)) return;
     this._position = value;
     this._stackedPosition = undefined;
-    this._onUpdate("position");
+    this._onUpdate('position');
   }
 
   private _startTime: number = 0;
@@ -73,7 +68,7 @@ export abstract class HitObject {
   set startTime(value: number) {
     if (value === this._startTime) return;
     this._startTime = value;
-    this._onUpdate("startTime");
+    this._onUpdate('startTime');
   }
 
   abstract duration: number;
@@ -108,13 +103,17 @@ export abstract class HitObject {
 
   stackRoot?: string;
 
-  applyDefaults(difficulty: SerializedBeatmapDifficulty, controlPoints: ControlPointManager) {
+  applyDefaults(
+    difficulty: SerializedBeatmapDifficulty,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    controlPoints: ControlPointManager,
+  ) {
     this.scale = (1.0 - (0.7 * (difficulty.circleSize - 5)) / 5) / 2;
     this.timePreempt = difficultyRange(
-        difficulty.approachRate,
-        1800,
-        1200,
-        450,
+      difficulty.approachRate,
+      1800,
+      1200,
+      450,
     );
     this.timeFadeIn = 400 * Math.min(1, this.timePreempt, 400);
   }
@@ -127,10 +126,10 @@ export abstract class HitObject {
 
   set isNewCombo(value: boolean) {
     this._isNewCombo = value;
-    this._onUpdate("newCombo");
+    this._onUpdate('newCombo');
   }
 
-  abstract serialize(): SerializedHitObject
+  abstract serialize(): SerializedHitObject;
 
   onUpdate = new Action<[HitObjectUpdateType]>();
 
@@ -138,7 +137,10 @@ export abstract class HitObject {
 
   get stackedPosition(): Vec2 {
     //if (this._stackedPosition) return this._stackedPosition;
-    this._stackedPosition = Vec2.sub(this.position, new Vec2(this.stackHeight * 3, this.stackHeight * 3));
+    this._stackedPosition = Vec2.sub(
+      this.position,
+      new Vec2(this.stackHeight * 3, this.stackHeight * 3),
+    );
     return this._stackedPosition;
   }
 
@@ -149,7 +151,8 @@ export abstract class HitObject {
 
   patch(update: Partial<SerializedHitObject>) {
     if (update.newCombo !== undefined) this.isNewCombo = update.newCombo;
-    if (update.position !== undefined) this.position = new Vec2(update.position.x, update.position.y);
+    if (update.position !== undefined)
+      this.position = new Vec2(update.position.x, update.position.y);
     if (update.startTime !== undefined) this.startTime = update.startTime;
     if (update.hitSound !== undefined) this.hitSound = update.hitSound;
   }
@@ -158,7 +161,7 @@ export abstract class HitObject {
     return 59 * this.scale;
   }
 
-  abstract contains(point: Vec2): boolean
+  abstract contains(point: Vec2): boolean;
 
   private _isSelected = false;
   get isSelected(): boolean {
@@ -167,7 +170,7 @@ export abstract class HitObject {
 
   set isSelected(value: boolean) {
     this._isSelected = value;
-    this.onUpdate.emit("selected");
+    this.onUpdate.emit('selected');
   }
 
   protected _hitSamples?: HitSample[];
@@ -180,33 +183,31 @@ export abstract class HitObject {
 
   abstract calculateHitSamples(): HitSample[];
 
-  protected _updateHitSounds() {
-  }
+  protected _updateHitSounds() {}
 
   protected _onUpdate(update: HitObjectUpdateType) {
     this._version++;
     this.onUpdate.emit(update);
   }
-
 }
 
 export type HitObjectUpdateType =
-    "startTime"
-    | "position"
-    | "newCombo"
-    | "stackHeight"
-    | "selected"
-    | "combo"
-    | "repeats"
-    | "velocity"
-    | "duration"
-    | "hitSounds";
+  | 'startTime'
+  | 'position'
+  | 'newCombo'
+  | 'stackHeight'
+  | 'selected'
+  | 'combo'
+  | 'repeats'
+  | 'velocity'
+  | 'duration'
+  | 'hitSounds';
 
 function difficultyRange(
-    diff: number,
-    min: number,
-    mid: number,
-    max: number,
+  diff: number,
+  min: number,
+  mid: number,
+  max: number,
 ): number {
   if (diff > 5) {
     return mid + ((max - mid) * (diff - 5)) / 5;

@@ -1,4 +1,4 @@
-import {UserId} from "../protocol";
+import { UserId } from '../protocol';
 
 export interface Attribution {
   creator: UserId;
@@ -10,4 +10,3 @@ export interface Attribution {
 export interface IHasAttribution {
   attribution?: Attribution;
 }
-

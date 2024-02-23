@@ -1,4 +1,4 @@
-import {SerializedEditorBookmark} from "../types";
+import { SerializedEditorBookmark } from '../types';
 
 export class EditorBookmark {
   time: number;
@@ -15,5 +15,4 @@ export class EditorBookmark {
       name: this.name,
     };
   }
-
 }
