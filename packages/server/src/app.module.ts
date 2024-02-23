@@ -24,8 +24,8 @@ import {AppController} from "./app.controller";
     MongooseModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
-        const host = config.get('MONGO_HOST', 'mongodb');
-        const port = config.get('MONGO_PORT', 27017);
+        const host = config.get('MONGODB_HOST', 'mongodb');
+        const port = config.get('MONGODB_PORT', 27017);
         return {
           uri: `mongodb://${host}:${port}/osucad`,
         }
