@@ -1,7 +1,7 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get } from '@nestjs/common';
 
-@Controller("api/osu")
+@Controller('api/osu')
 export class OsuController {
-  @Get("users/search")
+  @Get('users/search')
   async searchUsers() {}
 }

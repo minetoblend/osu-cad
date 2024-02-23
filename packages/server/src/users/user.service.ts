@@ -1,8 +1,8 @@
-import { Injectable } from "@nestjs/common";
-import { Repository } from "typeorm";
-import { UserEntity } from "./user.entity";
-import { InjectRepository } from "@nestjs/typeorm";
-import { IOsuProfileInformation } from "../auth/interfaces";
+import { Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { UserEntity } from './user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { IOsuProfileInformation } from '../auth/interfaces';
 
 @Injectable()
 export class UserService {

@@ -1,7 +1,7 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { BeatmapService } from "../beatmap/beatmap.service";
-import { EditorRoom } from "./editor.room";
-import { BeatmapData, BeatmapId } from "@osucad/common";
+import { Injectable, Logger } from '@nestjs/common';
+import { BeatmapService } from '../beatmap/beatmap.service';
+import { EditorRoom } from './editor.room';
+import { BeatmapData, BeatmapId } from '@osucad/common';
 
 @Injectable()
 export class EditorRoomManager {
@@ -31,7 +31,7 @@ export class EditorRoomManager {
             audioFilename: beatmap.audioFilename,
             backgroundPath: beatmap.backgroundPath,
             colors: beatmap.colors.map(
-              (color) => "#" + color.toString(16).padStart(6, "0"),
+              (color) => '#' + color.toString(16).padStart(6, '0'),
             ),
             difficulty: beatmap.difficulty,
             bookmarks: beatmap.bookmarks,

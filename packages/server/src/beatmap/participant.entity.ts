@@ -1,11 +1,11 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { MapsetEntity } from "./mapset.entity";
-import { UserEntity } from "../users/user.entity";
-import { BeatmapAccess } from "./beatmap.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { MapsetEntity } from './mapset.entity';
+import { UserEntity } from '../users/user.entity';
+import { BeatmapAccess } from './beatmap.entity';
 
-@Entity("participant")
+@Entity('participant')
 export class ParticipantEntity {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @ManyToOne(() => MapsetEntity)
@@ -14,6 +14,6 @@ export class ParticipantEntity {
   @ManyToOne(() => UserEntity)
   user: UserEntity;
 
-  @Column("int")
+  @Column('int')
   access: BeatmapAccess;
 }

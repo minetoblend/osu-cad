@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import { model, Schema } from 'mongoose';
 import {
   AudioPreferences,
   BeatmapPreferences,
@@ -7,14 +7,14 @@ import {
   GridPreferences,
   Preferences,
   ViewportPreferences,
-} from "@osucad/common";
+} from '@osucad/common';
 
 export const BehaviorPreferencesSchema = new Schema<BehaviorPreferences>(
   {
     rightClickBehavior: {
       type: String,
-      enum: ["contextMenu", "delete"],
-      default: "contextMenu",
+      enum: ['contextMenu', 'delete'],
+      default: 'contextMenu',
     },
   },
   { _id: false },
@@ -60,8 +60,8 @@ export const GraphicsPreferencesSchema = new Schema<GraphicsPreferences>(
   {
     renderer: {
       type: String,
-      enum: ["auto", "webgl", "webgpu"],
-      default: "webgl",
+      enum: ['auto', 'webgl', 'webgpu'],
+      default: 'webgl',
     },
     highDpiMode: {
       type: Boolean,
@@ -89,7 +89,7 @@ export const GridPreferencesSchema = new Schema<GridPreferences>(
     },
     color: {
       type: String,
-      default: "#FFFFFF",
+      default: '#FFFFFF',
     },
     opacity: {
       type: Number,
@@ -202,6 +202,6 @@ export const PreferencesSchema = new Schema<UserPreferences>({
 });
 
 export const PreferencesModel = model<UserPreferences>(
-  "Preferences",
+  'Preferences',
   PreferencesSchema,
 );

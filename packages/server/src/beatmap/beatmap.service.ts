@@ -1,14 +1,14 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { MapsetEntity } from "./mapset.entity";
-import { Repository } from "typeorm";
-import { BeatmapAccess, BeatmapEntity } from "./beatmap.entity";
-import { existsSync, readFileSync } from "fs";
-import * as path from "path";
-import { ParticipantEntity } from "./participant.entity";
-import { BeatmapData } from "@osucad/common";
-import { UserEntity } from "../users/user.entity";
-import { EditorSessionEntity } from "../editor/editor-session.entity";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { MapsetEntity } from './mapset.entity';
+import { Repository } from 'typeorm';
+import { BeatmapAccess, BeatmapEntity } from './beatmap.entity';
+import { existsSync, readFileSync } from 'fs';
+import * as path from 'path';
+import { ParticipantEntity } from './participant.entity';
+import { BeatmapData } from '@osucad/common';
+import { UserEntity } from '../users/user.entity';
+import { EditorSessionEntity } from '../editor/editor-session.entity';
 
 @Injectable()
 export class BeatmapService {
@@ -36,21 +36,21 @@ export class BeatmapService {
   async findMapsetById(id: string) {
     return await this.mapsetRepository.findOne({
       where: { id },
-      relations: ["creator", "beatmaps"],
+      relations: ['creator', 'beatmaps'],
     });
   }
 
   async findBeatmapById(id: number) {
     return await this.beatmapRepository.findOne({
       where: { id },
-      relations: ["mapset"],
+      relations: ['mapset'],
     });
   }
 
   async findBeatmapByUuid(uuid: string) {
     return await this.beatmapRepository.findOne({
       where: { uuid },
-      relations: ["mapset"],
+      relations: ['mapset'],
     });
   }
 
@@ -63,11 +63,11 @@ export class BeatmapService {
   }
 
   getFileContents(id: string, filePath: string): Buffer | null {
-    filePath = path.join("files/mapsets", id, filePath);
+    filePath = path.join('files/mapsets', id, filePath);
     if (!existsSync(filePath)) return null;
 
-    const relative = path.relative("files/mapsets", filePath);
-    if (relative.startsWith("..") || path.isAbsolute(filePath)) return null;
+    const relative = path.relative('files/mapsets', filePath);
+    if (relative.startsWith('..') || path.isAbsolute(filePath)) return null;
 
     return readFileSync(filePath);
   }
@@ -77,9 +77,9 @@ export class BeatmapService {
       where: {
         creator: { id },
       },
-      relations: ["creator", "beatmaps"],
+      relations: ['creator', 'beatmaps'],
       order: {
-        updatedAt: "DESC",
+        updatedAt: 'DESC',
       },
     });
   }
@@ -90,7 +90,7 @@ export class BeatmapService {
   ): Promise<BeatmapAccess> {
     const { access } = await this.mapsetRepository.findOneOrFail({
       where: { id: mapsetId },
-      select: ["access"],
+      select: ['access'],
     });
 
     const participant = await this.participantRepository.findOne({
@@ -110,13 +110,13 @@ export class BeatmapService {
 
   findLastEditedBeatmaps(user: UserEntity) {
     return this.sessionRepository
-      .createQueryBuilder("session")
-      .innerJoinAndSelect("session.beatmap", "beatmap")
-      .innerJoinAndSelect("beatmap.mapset", "mapset")
-      .innerJoinAndSelect("mapset.creator", "creator")
+      .createQueryBuilder('session')
+      .innerJoinAndSelect('session.beatmap', 'beatmap')
+      .innerJoinAndSelect('beatmap.mapset', 'mapset')
+      .innerJoinAndSelect('mapset.creator', 'creator')
       .where({ user })
-      .distinctOn(["beatmap.id"])
-      .orderBy("session.endDate", "DESC")
+      .distinctOn(['beatmap.id'])
+      .orderBy('session.endDate', 'DESC')
       .limit(10)
       .getMany();
   }

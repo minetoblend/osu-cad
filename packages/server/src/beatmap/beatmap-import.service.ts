@@ -1,15 +1,15 @@
-import { Injectable } from "@nestjs/common";
-import { BeatmapService } from "./beatmap.service";
-import { UserEntity } from "../users/user.entity";
-import { UserService } from "../users/user.service";
-import * as unzipper from "unzipper";
-import { Readable } from "stream";
-import * as fs from "fs/promises";
-import { resolve } from "path";
-import { v4 as uuid } from "uuid";
-import { MapsetEntity } from "./mapset.entity";
-import { BeatmapDecoder } from "osu-parsers";
-import { Beatmap, HitSample, PathPoint } from "osu-classes";
+import { Injectable } from '@nestjs/common';
+import { BeatmapService } from './beatmap.service';
+import { UserEntity } from '../users/user.entity';
+import { UserService } from '../users/user.service';
+import * as unzipper from 'unzipper';
+import { Readable } from 'stream';
+import * as fs from 'fs/promises';
+import { resolve } from 'path';
+import { v4 as uuid } from 'uuid';
+import { MapsetEntity } from './mapset.entity';
+import { BeatmapDecoder } from 'osu-parsers';
+import { Beatmap, HitSample, PathPoint } from 'osu-classes';
 import {
   Circle,
   Slider,
@@ -17,8 +17,8 @@ import {
   StandardBeatmap,
   StandardHitObject,
   StandardRuleset,
-} from "osu-standard-stable";
-import { BeatmapEntity } from "./beatmap.entity";
+} from 'osu-standard-stable';
+import { BeatmapEntity } from './beatmap.entity';
 import {
   Additions,
   defaultHitSound,
@@ -36,7 +36,7 @@ import {
   SerializedPathPoint,
   SerializedTimingPoint,
   SerializedVelocityPoint,
-} from "@osucad/common";
+} from '@osucad/common';
 
 @Injectable()
 export class BeatmapImportService {
@@ -48,7 +48,7 @@ export class BeatmapImportService {
   private readonly ruleset = new StandardRuleset();
 
   async mapsetPath(id: string) {
-    const path = resolve("files/mapsets", id);
+    const path = resolve('files/mapsets', id);
     await fs.mkdir(path, { recursive: true });
     return path;
   }
@@ -58,7 +58,7 @@ export class BeatmapImportService {
     userId: number,
   ): Promise<MapsetEntity | null> {
     const user = await this.userService.findById(userId);
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error('User not found');
 
     const id = uuid();
 
@@ -71,23 +71,23 @@ export class BeatmapImportService {
     );
 
     const allowedFileTypes = [
-      "osu",
-      "mp3",
-      "ogg",
-      "wav",
-      "jpg",
-      "jpeg",
-      "png",
-      "osb",
-      "mp4",
+      'osu',
+      'mp3',
+      'ogg',
+      'wav',
+      'jpg',
+      'jpeg',
+      'png',
+      'osb',
+      'mp4',
     ];
 
     for await (const entry of zip) {
       try {
-        const fileType = entry.path.split(".").pop() ?? "";
+        const fileType = entry.path.split('.').pop() ?? '';
         if (!allowedFileTypes.includes(fileType)) continue;
 
-        if (entry.path.endsWith(".osu")) {
+        if (entry.path.endsWith('.osu')) {
           const parsed = new BeatmapDecoder().decodeFromBuffer(
             await entry.buffer(),
           );
@@ -103,7 +103,7 @@ export class BeatmapImportService {
 
           continue;
         }
-        const dir = resolve(path, entry.path, "..");
+        const dir = resolve(path, entry.path, '..');
         await fs.mkdir(dir, { recursive: true });
         await fs.writeFile(resolve(path, entry.path), await entry.buffer());
       } catch (e) {
@@ -162,7 +162,7 @@ export class BeatmapImportService {
 
       if (hitObject instanceof Circle) {
         hitObjects.push({
-          type: "circle",
+          type: 'circle',
           startTime: hitObject.startTime,
           position: {
             x: hitObject.startPosition.x,
@@ -174,7 +174,7 @@ export class BeatmapImportService {
         });
       } else if (hitObject instanceof Slider) {
         hitObjects.push({
-          type: "slider",
+          type: 'slider',
           startTime: hitObject.startTime,
           position: {
             x: hitObject.startPosition.x,
@@ -192,7 +192,7 @@ export class BeatmapImportService {
       } else if (hitObject instanceof Spinner) {
         {
           hitObjects.push({
-            type: "spinner",
+            type: 'spinner',
             startTime: hitObject.startTime,
             position: {
               x: hitObject.startPosition.x,
@@ -214,16 +214,16 @@ export class BeatmapImportService {
       let type: SampleType | undefined = undefined;
 
       switch (sample.hitSound) {
-        case "Normal":
+        case 'Normal':
           type = SampleType.Normal;
           break;
-        case "Whistle":
+        case 'Whistle':
           type = SampleType.Whistle;
           break;
-        case "Clap":
+        case 'Clap':
           type = SampleType.Clap;
           break;
-        case "Finish":
+        case 'Finish':
           type = SampleType.Finish;
           break;
       }
@@ -231,33 +231,33 @@ export class BeatmapImportService {
       let sampleSet: SampleSet | undefined = undefined;
 
       let s = sample.sampleSet;
-      if (s === "None")
+      if (s === 'None')
         s = imported.controlPoints.samplePointAt(time).sampleSet;
-      if (s === "None") {
+      if (s === 'None') {
         switch (imported.general.sampleSet) {
           case 0:
-            s = "Soft";
+            s = 'Soft';
             break;
           case 1:
-            s = "Normal";
+            s = 'Normal';
             break;
           case 2:
-            s = "Soft";
+            s = 'Soft';
             break;
           case 3:
-            s = "Drum";
+            s = 'Drum';
             break;
         }
       }
 
       switch (s) {
-        case "Normal":
+        case 'Normal':
           sampleSet = SampleSet.Normal;
           break;
-        case "Soft":
+        case 'Soft':
           sampleSet = SampleSet.Soft;
           break;
-        case "Drum":
+        case 'Drum':
           sampleSet = SampleSet.Drum;
           break;
       }
@@ -358,16 +358,16 @@ export class BeatmapImportService {
   convertPathPoint(point: PathPoint): SerializedPathPoint {
     let type: PathType | null = null;
     switch (point.type) {
-      case "L":
+      case 'L':
         type = PathType.Linear;
         break;
-      case "P":
+      case 'P':
         type = PathType.PerfectCurve;
         break;
-      case "C":
+      case 'C':
         type = PathType.Catmull;
         break;
-      case "B":
+      case 'B':
         type = PathType.Bezier;
         break;
     }
@@ -385,38 +385,38 @@ export class BeatmapImportService {
   toHitSound(samples: HitSample[]) {
     const hitSound = defaultHitSound();
     for (const sample of samples) {
-      if (sample.hitSound === "Normal") {
+      if (sample.hitSound === 'Normal') {
         switch (sample.sampleSet) {
-          case "Drum":
+          case 'Drum':
             hitSound.sampleSet = SampleSet.Drum;
             break;
-          case "Normal":
+          case 'Normal':
             hitSound.sampleSet = SampleSet.Normal;
             break;
-          case "Soft":
+          case 'Soft':
             hitSound.sampleSet = SampleSet.Soft;
             break;
         }
       } else {
         switch (sample.sampleSet) {
-          case "Drum":
+          case 'Drum':
             hitSound.additionSet = SampleSet.Drum;
             break;
-          case "Normal":
+          case 'Normal':
             hitSound.additionSet = SampleSet.Normal;
             break;
-          case "Soft":
+          case 'Soft':
             hitSound.additionSet = SampleSet.Soft;
             break;
         }
         switch (sample.hitSound) {
-          case "Whistle":
+          case 'Whistle':
             hitSound.additions |= Additions.Whistle;
             break;
-          case "Finish":
+          case 'Finish':
             hitSound.additions |= Additions.Finish;
             break;
-          case "Clap":
+          case 'Clap':
             hitSound.additions |= Additions.Clap;
             break;
         }

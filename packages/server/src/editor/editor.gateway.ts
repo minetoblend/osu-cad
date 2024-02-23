@@ -1,12 +1,12 @@
-import { OnGatewayConnection, WebSocketGateway } from "@nestjs/websockets";
-import { Socket } from "socket.io";
-import { Request } from "express";
-import { EditorRoomManager } from "./editor.room.manager";
-import { Repository } from "typeorm";
-import { EditorSessionEntity } from "./editor-session.entity";
-import { InjectRepository } from "@nestjs/typeorm";
+import { OnGatewayConnection, WebSocketGateway } from '@nestjs/websockets';
+import { Socket } from 'socket.io';
+import { Request } from 'express';
+import { EditorRoomManager } from './editor.room.manager';
+import { Repository } from 'typeorm';
+import { EditorSessionEntity } from './editor-session.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
-@WebSocketGateway({ namespace: "editor" })
+@WebSocketGateway({ namespace: 'editor' })
 export class EditorGateway implements OnGatewayConnection {
   constructor(
     private readonly editorRoomManager: EditorRoomManager,
@@ -21,7 +21,7 @@ export class EditorGateway implements OnGatewayConnection {
       client.disconnect();
       return;
     }
-    const beatmapId = client.handshake.query["id"] as string;
+    const beatmapId = client.handshake.query['id'] as string;
     if (!beatmapId) {
       client.disconnect();
       return;
@@ -32,7 +32,7 @@ export class EditorGateway implements OnGatewayConnection {
 
       if (!room) {
         client.disconnect();
-        console.log("client requested unknown beatmap " + beatmapId);
+        console.log('client requested unknown beatmap ' + beatmapId);
         return;
       }
 

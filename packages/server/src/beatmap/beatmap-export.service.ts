@@ -1,7 +1,7 @@
-import { forwardRef, Inject, Injectable } from "@nestjs/common";
-import { EditorRoomManager } from "../editor/editor.room.manager";
-import { BeatmapEntity } from "./beatmap.entity";
-import { Circle, Slider, Spinner, StandardBeatmap } from "osu-standard-stable";
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { EditorRoomManager } from '../editor/editor.room.manager';
+import { BeatmapEntity } from './beatmap.entity';
+import { Circle, Slider, Spinner, StandardBeatmap } from 'osu-standard-stable';
 import {
   Beatmap,
   Color4,
@@ -13,18 +13,18 @@ import {
   PathType,
   TimingPoint,
   Vector2,
-} from "osu-classes";
+} from 'osu-classes';
 import {
   BeatmapData,
   ControlPointManager,
   PathType as EditorPathType,
-} from "@osucad/common";
-import { MapsetEntity } from "./mapset.entity";
-import { BeatmapEncoder } from "osu-parsers";
-import { BeatmapImportService } from "./beatmap-import.service";
-import * as fs from "fs/promises";
-import * as path from "path";
-import * as JSZip from "jszip";
+} from '@osucad/common';
+import { MapsetEntity } from './mapset.entity';
+import { BeatmapEncoder } from 'osu-parsers';
+import { BeatmapImportService } from './beatmap-import.service';
+import * as fs from 'fs/promises';
+import * as path from 'path';
+import * as JSZip from 'jszip';
 
 @Injectable()
 export class BeatmapExportService {
@@ -82,7 +82,7 @@ export class BeatmapExportService {
   private async writeDirectoryToArchive(archive: JSZip, directoryPath: string) {
     const files = await fs.readdir(directoryPath);
     for (const file of files) {
-      if (file.endsWith(".osu")) continue;
+      if (file.endsWith('.osu')) continue;
 
       const stat = await fs.stat(path.join(directoryPath, file));
       if (stat.isDirectory()) {
@@ -120,7 +120,7 @@ export class BeatmapExportService {
     }
 
     for (const hitObject of beatmapData.hitObjects) {
-      if (hitObject.type === "circle") {
+      if (hitObject.type === 'circle') {
         const circle = new Circle();
         circle.startPosition = new Vector2(
           Math.round(hitObject.position.x),
@@ -133,7 +133,7 @@ export class BeatmapExportService {
         beatmap.hitObjects.push(circle);
       }
 
-      if (hitObject.type === "slider") {
+      if (hitObject.type === 'slider') {
         const slider = new Slider();
         slider.startPosition = new Vector2(
           Math.round(hitObject.position.x),
@@ -185,7 +185,7 @@ export class BeatmapExportService {
         }
         slider.repeats = hitObject.repeats;
         beatmap.hitObjects.push(slider);
-      } else if (hitObject.type === "spinner") {
+      } else if (hitObject.type === 'spinner') {
         const spinner = new Spinner();
         spinner.startTime = Math.round(hitObject.startTime);
         spinner.endTime = Math.round(hitObject.startTime + hitObject.duration);

@@ -1,6 +1,6 @@
-import { IoAdapter } from "@nestjs/platform-socket.io";
-import { NestExpressApplication } from "@nestjs/platform-express";
-import { RequestHandler } from "express";
+import { IoAdapter } from '@nestjs/platform-socket.io';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { RequestHandler } from 'express';
 
 export class SessionIoAdapter extends IoAdapter {
   constructor(

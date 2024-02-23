@@ -1,25 +1,25 @@
-import { Controller, Get, Logger, Query, Redirect, Req } from "@nestjs/common";
-import { HttpService } from "@nestjs/axios";
-import { firstValueFrom, map } from "rxjs";
-import { ITokenInformation } from "./interfaces";
-import { UserEntity } from "../users/user.entity";
-import { Request } from "express";
-import { UserService } from "../users/user.service";
-import { ConfigService } from "@nestjs/config";
+import { Controller, Get, Logger, Query, Redirect, Req } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom, map } from 'rxjs';
+import { ITokenInformation } from './interfaces';
+import { UserEntity } from '../users/user.entity';
+import { Request } from 'express';
+import { UserService } from '../users/user.service';
+import { ConfigService } from '@nestjs/config';
 
-@Controller("/auth")
+@Controller('/auth')
 export class AuthController {
-  private readonly apiEndpoint = "https://osu.ppy.sh/api/v2";
+  private readonly apiEndpoint = 'https://osu.ppy.sh/api/v2';
   private readonly logger = new Logger(AuthController.name);
 
   private readonly clientId = this.configService.getOrThrow<string>(
-    "OSU_OAUTH_CLIENT_ID",
+    'OSU_OAUTH_CLIENT_ID',
   );
   private readonly clientSecret = this.configService.getOrThrow<string>(
-    "OSU_OAUTH_CLIENT_SECRET",
+    'OSU_OAUTH_CLIENT_SECRET',
   );
   private readonly redirectUri = this.configService.getOrThrow<string>(
-    "OSU_OAUTH_REDIRECT_URI",
+    'OSU_OAUTH_REDIRECT_URI',
   );
 
   constructor(
@@ -28,41 +28,41 @@ export class AuthController {
     private readonly configService: ConfigService,
   ) {}
 
-  @Get("/login")
-  @Redirect("https://osu.ppy.sh/", 302)
+  @Get('/login')
+  @Redirect('https://osu.ppy.sh/', 302)
   async authenticate(
     @Req() req: Request,
-    @Query("redirect") redirect: string | null,
+    @Query('redirect') redirect: string | null,
   ) {
-    this.logger.log("User requested authentication");
-    const url = new URL("https://osu.ppy.sh/oauth/authorize");
+    this.logger.log('User requested authentication');
+    const url = new URL('https://osu.ppy.sh/oauth/authorize');
 
-    url.searchParams.append("client_id", this.clientId);
-    url.searchParams.append("redirect_uri", this.redirectUri);
-    url.searchParams.append("response_type", "code");
-    url.searchParams.append("scope", "public identify");
+    url.searchParams.append('client_id', this.clientId);
+    url.searchParams.append('redirect_uri', this.redirectUri);
+    url.searchParams.append('response_type', 'code');
+    url.searchParams.append('scope', 'public identify');
 
     if (redirect) {
-      url.searchParams.append("state", JSON.stringify({ redirect }));
+      url.searchParams.append('state', JSON.stringify({ redirect }));
     }
 
     return { url: url.href };
   }
 
-  @Get("/callback")
-  @Redirect("/", 302)
+  @Get('/callback')
+  @Redirect('/', 302)
   async callback(
-    @Query("code") code: string,
-    @Query("state") state: string | null,
+    @Query('code') code: string,
+    @Query('state') state: string | null,
     @Req() req: Request,
   ) {
     if (!req.session.user) {
       const response = await firstValueFrom(
-        this.http.post("https://osu.ppy.sh/oauth/token", {
+        this.http.post('https://osu.ppy.sh/oauth/token', {
           client_id: this.clientId,
           client_secret: this.clientSecret,
           code,
-          grant_type: "authorization_code",
+          grant_type: 'authorization_code',
           redirect_uri: this.redirectUri,
         }),
       );
@@ -105,7 +105,7 @@ export class AuthController {
   }
 }
 
-declare module "express-session" {
+declare module 'express-session' {
   interface SessionData {
     token?: ITokenInformation;
     user?: UserEntity;

@@ -6,14 +6,14 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { UserEntity } from "../users/user.entity";
-import { BeatmapAccess, BeatmapEntity } from "./beatmap.entity";
-import { MapsetInfo } from "@osucad/common";
+} from 'typeorm';
+import { UserEntity } from '../users/user.entity';
+import { BeatmapAccess, BeatmapEntity } from './beatmap.entity';
+import { MapsetInfo } from '@osucad/common';
 
-@Entity("mapsets")
+@Entity('mapsets')
 export class MapsetEntity {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()
   title: string;
@@ -21,11 +21,11 @@ export class MapsetEntity {
   artist: string;
   @Column({ nullable: true })
   osuId: number | null;
-  @Column("simple-array")
+  @Column('simple-array')
   tags: string[];
   @Column({ nullable: true })
   background: string | null;
-  @Column("int")
+  @Column('int')
   access: BeatmapAccess = BeatmapAccess.Private;
 
   @ManyToOne(() => UserEntity)

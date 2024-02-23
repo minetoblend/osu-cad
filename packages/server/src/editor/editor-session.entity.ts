@@ -4,11 +4,11 @@ import {
   Index,
   ManyToOne,
   PrimaryGeneratedColumn,
-} from "typeorm";
-import { BeatmapEntity } from "../beatmap/beatmap.entity";
-import { UserEntity } from "../users/user.entity";
+} from 'typeorm';
+import { BeatmapEntity } from '../beatmap/beatmap.entity';
+import { UserEntity } from '../users/user.entity';
 
-@Entity("editor_session")
+@Entity('editor_session')
 export class EditorSessionEntity {
   @PrimaryGeneratedColumn()
   id: number;

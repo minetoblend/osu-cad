@@ -1,11 +1,11 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
-import { PreferencesService } from "./preferences.service";
-import { AuthGuard } from "../auth/auth.guard";
-import { Request } from "express";
-import { Preferences } from "@osucad/common";
-import { PreferencesModel } from "./preferences.document";
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { PreferencesService } from './preferences.service';
+import { AuthGuard } from '../auth/auth.guard';
+import { Request } from 'express';
+import { Preferences } from '@osucad/common';
+import { PreferencesModel } from './preferences.document';
 
-@Controller("api/preferences")
+@Controller('api/preferences')
 export class PreferencesController {
   constructor(private readonly preferencesService: PreferencesService) {}
 

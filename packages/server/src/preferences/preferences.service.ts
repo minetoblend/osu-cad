@@ -1,13 +1,13 @@
-import { Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
-import { Preferences } from "@osucad/common";
-import { UserPreferences } from "./preferences.document";
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Preferences } from '@osucad/common';
+import { UserPreferences } from './preferences.document';
 
 @Injectable()
 export class PreferencesService {
   constructor(
-    @InjectModel("preferences")
+    @InjectModel('preferences')
     private readonly model: Model<UserPreferences>,
   ) {}
 

@@ -1,5 +1,5 @@
-import { UserEntity } from "../users/user.entity";
-import { Socket } from "socket.io";
+import { UserEntity } from '../users/user.entity';
+import { Socket } from 'socket.io';
 import {
   Beatmap,
   ClientMessages,
@@ -14,10 +14,10 @@ import {
   Slider,
   UserSessionInfo,
   VersionedEditorCommand,
-} from "@osucad/common";
-import { Logger } from "@nestjs/common";
-import { BeatmapEntity } from "../beatmap/beatmap.entity";
-import { EditorSessionEntity } from "./editor-session.entity";
+} from '@osucad/common';
+import { Logger } from '@nestjs/common';
+import { BeatmapEntity } from '../beatmap/beatmap.entity';
+import { EditorSessionEntity } from './editor-session.entity';
 
 export class EditorRoom {
   private readonly logger: Logger;
@@ -46,7 +46,7 @@ export class EditorRoom {
       metadata: {
         artist: entity.mapset.artist,
         title: entity.mapset.title,
-        tags: entity.mapset.tags.join(" "),
+        tags: entity.mapset.tags.join(' '),
       },
       name: entity.name,
       hitObjects,
@@ -95,7 +95,7 @@ export class EditorRoom {
       `User ${user.username} joined { sessionId: ${roomUser.sessionId} }`,
     );
 
-    roomUser.send("roomState", {
+    roomUser.send('roomState', {
       users: this.users.map((user) => user.getInfo()),
       beatmap: this.beatmap.serialize(),
       chat: { messages: [] },
@@ -103,19 +103,19 @@ export class EditorRoom {
     });
 
     this.users.push(roomUser);
-    this.broadcast("userJoined", roomUser.getInfo());
+    this.broadcast('userJoined', roomUser.getInfo());
 
-    client.on("disconnect", () => this.handleDisconnect(roomUser));
+    client.on('disconnect', () => this.handleDisconnect(roomUser));
 
-    client.on("commands", (commands) => {
+    client.on('commands', (commands) => {
       this.handleCommands(roomUser, decodeCommands(commands));
     });
-    client.on("setPresence", (presence) => {
+    client.on('setPresence', (presence) => {
       roomUser.presence = presence;
-      this.broadcast("userActivity", roomUser.sessionId, presence.activity);
+      this.broadcast('userActivity', roomUser.sessionId, presence.activity);
     });
-    client.on("roll", () => {
-      this.broadcast("roll", roomUser.getInfo());
+    client.on('roll', () => {
+      this.broadcast('roll', roomUser.getInfo());
     });
   }
 
@@ -126,7 +126,7 @@ export class EditorRoom {
     const index = this.users.indexOf(user);
     if (index !== -1) {
       this.users.splice(index, 1);
-      this.broadcast("userLeft", user.getInfo(), "disconnected");
+      this.broadcast('userLeft', user.getInfo(), 'disconnected');
     }
   }
 
@@ -138,14 +138,14 @@ export class EditorRoom {
   }
 
   handleKick(kickedBy: RoomUser, userId: number, reason: string, ban: boolean) {
-    console.log("kick", userId, reason, ban);
+    console.log('kick', userId, reason, ban);
     const users = this.users.filter((u) => u.user.id === userId);
     for (const targetUser of users) {
-      targetUser.send("kicked", reason, ban);
+      targetUser.send('kicked', reason, ban);
       this.broadcast(
-        "userLeft",
+        'userLeft',
         targetUser.getInfo(),
-        ban ? "banned" : "kicked",
+        ban ? 'banned' : 'kicked',
       );
       targetUser.socket.disconnect();
     }
@@ -168,7 +168,7 @@ export class EditorRoom {
         handler.apply(command.command, context);
       }
     }
-    this.broadcast("commands", encodeCommands(commands), roomUser.sessionId);
+    this.broadcast('commands', encodeCommands(commands), roomUser.sessionId);
   }
 }
 
@@ -179,7 +179,7 @@ class RoomUser {
     readonly sessionId: number,
     readonly room: EditorRoom,
   ) {
-    socket.on("kickUser", (id: number, reason: string, ban: boolean) =>
+    socket.on('kickUser', (id: number, reason: string, ban: boolean) =>
       room.handleKick(this, id, reason, ban),
     );
   }
@@ -194,7 +194,7 @@ class RoomUser {
       sessionId: this.sessionId,
       id: this.user.id,
       presence: this.presence,
-      role: "admin",
+      role: 'admin',
       username: this.user.username,
       avatarUrl: this.user.avatarUrl,
     };
