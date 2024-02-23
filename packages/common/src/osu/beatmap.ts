@@ -59,7 +59,7 @@ export class Beatmap {
     this.setId = options.setId;
     this.metadata = new MapsetMetadata(options.metadata);
     this.name = options.name;
-    this.general = options.general ?? { stackLeniency: 0.7 };
+    this.general = options.general ?? {stackLeniency: 0.7};
     this.controlPoints = new ControlPointManager(options.controlPoints);
     this.difficulty = options.difficulty;
     this.hitObjects = new HitObjectManager(options.hitObjects, this.difficulty, this.controlPoints, this.general);
@@ -70,8 +70,7 @@ export class Beatmap {
     if (this.colors.length === 0) {
       this.colors = [0xff0000, 0x00ff00, 0x0000ff];
     }
-    console.log(options.hitSounds)
-    this.hitSounds = new HitSoundManager(options.hitSounds ?? { layers: defaultHitSoundLayers() });
+    this.hitSounds = new HitSoundManager(options.hitSounds ?? {layers: defaultHitSoundLayers()});
 
   }
 

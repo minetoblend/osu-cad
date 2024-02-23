@@ -3,10 +3,11 @@ import {HitCircle, HitObject, PathType, Slider, SnappingPreferences, Vec2} from 
 import {ComposeTool} from "../ComposeTool.ts";
 import {PathApproximator, Vector2} from "osu-classes";
 import {Graphics} from "pixi.js";
+import {usePreferences} from "@/composables/usePreferences.ts";
 
 export class HitObjectSnapProvider implements SnapProvider {
   constructor(private readonly tool: ComposeTool) {
-    const preferences = tool.editor.preferences;
+    const {preferences} = usePreferences()
     this.preferences = preferences.viewport.snapping;
   }
 

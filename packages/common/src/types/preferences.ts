@@ -116,7 +116,7 @@ export function defaultPreferences(): Preferences {
       resolution: 1,
       renderer: 'auto',
       highDpiMode: true,
-      showFps: false,
+      showFps: true,
     },
     audio: {
       masterVolume: 65,

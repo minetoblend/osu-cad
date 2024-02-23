@@ -103,8 +103,9 @@ export class Slider extends HitObject {
     const timingPoint = controlPoints.timingPointAt(this.startTime);
 
     const baseScoringDistance = 100 * difficulty.sliderMultiplier;
-    this._baseVelocity = baseScoringDistance / timingPoint.beatLength;
+    this._baseVelocity = baseScoringDistance / timingPoint.timing.beatLength;
     this.inheritedVelocity = controlPoints.getVelocityAt(this.startTime);
+    this.onUpdate.emit("velocity");
   }
 
   serialize(): SerializedSlider {
@@ -120,8 +121,8 @@ export class Slider extends HitObject {
       expectedDistance: this.expectedDistance,
       comboOffset: this.comboOffset,
       velocity: this.velocityOverride,
-      hitSound: { ...this.hitSound },
-      hitSounds: this.hitSounds.map(s => ({ ...s })),
+      hitSound: {...this.hitSound},
+      hitSounds: this.hitSounds.map(s => ({...s})),
     };
   }
 

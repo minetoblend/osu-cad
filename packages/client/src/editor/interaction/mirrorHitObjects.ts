@@ -10,6 +10,7 @@ import {
 } from "@osucad/common";
 import {getHitObjectPositions} from "../tools/snapping/HitObjectSnapProvider.ts";
 import {EditorContext} from "@/editor/editorContext.ts";
+import {onEditorKeyDown} from "@/composables/onEditorKeyDown.ts";
 
 export function mirrorHitObjects(editor: EditorContext, axis: "horizontal" | "vertical", bounds: Rect) {
   if (axis === "horizontal") {
@@ -48,7 +49,7 @@ export function mirrorHitObjects(editor: EditorContext, axis: "horizontal" | "ve
 
 export function transformHitObjectsInteraction(editor: EditorContext) {
 
-  useEventListener("keydown", (evt) => {
+  onEditorKeyDown((evt) => {
     if (evt.ctrlKey && evt.code === "KeyH") {
       evt.preventDefault();
       if (editor.selection.size === 0) return;

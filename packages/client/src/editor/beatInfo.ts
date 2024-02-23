@@ -3,6 +3,7 @@ import {Inject} from "./drawables/di";
 import {TickType} from "@osucad/common";
 import {clamp} from "@vueuse/core";
 import {EditorContext} from "@/editor/editorContext.ts";
+import {onEditorKeyDown} from "@/composables/onEditorKeyDown.ts";
 
 export class BeatInfo extends Drawable {
 
@@ -17,7 +18,7 @@ export class BeatInfo extends Drawable {
   constructor() {
     super();
     this.eventMode = "static";
-    this.hitArea = { contains: () => true };
+    this.hitArea = {contains: () => true};
   }
 
   onTick() {
@@ -26,8 +27,8 @@ export class BeatInfo extends Drawable {
 
     const timingPoint = controlPoints.timingPointAt(time);
 
-    this.beatLength = timingPoint.beatLength;
-    let progress = (time - timingPoint.time) / timingPoint.beatLength;
+    this.beatLength = timingPoint.timing.beatLength;
+    let progress = (time - timingPoint.time) / timingPoint.timing.beatLength;
     progress = mod(mod(progress, 1) + 1, 1);
     this.beatProgress = progress;
   }
@@ -57,9 +58,9 @@ export class BeatInfo extends Drawable {
       index = clamp(index, 0, BeatInfo.availableBeatsnapTypes.length - 1);
       this.beatSnap = BeatInfo.availableBeatsnapTypes[index];
       console.log(this.beatSnap);
-    }, { passive: false });
+    }, {passive: false});
 
-    useEventListener("keydown", evt => {
+    onEditorKeyDown(evt => {
       if (evt.shiftKey && evt.code.startsWith("Digit")) {
         evt.preventDefault();
         evt.stopPropagation();

@@ -10,6 +10,7 @@ import {Spinner} from "./spinner";
 import {ref, watch} from "vue";
 import {Action} from "../util/action";
 import {binarySearch} from "../util";
+import {ControlPoint, ControlPointUpdateFlags} from "./controlPoint";
 
 export class HitObjectManager {
   public hitObjects: HitObject[];
@@ -23,13 +24,16 @@ export class HitObjectManager {
     private readonly general: SerializedBeatmapGeneral,
   ) {
     this.hitObjects = hitObjects.map(hitObject => deserializeHitObject(hitObject));
-    // this.sortHitObjects();
     this.hitObjects.forEach(hitObject => this._onAdd(hitObject, true));
     this.calculateCombos();
     this.calculateStacking(this.hitObjects, general.stackLeniency, 3, 0, this.hitObjects.length - 1);
     watch(this._stackVersion, () => {
       this.calculateStacking(this.hitObjects, general.stackLeniency, 3, 0, this.hitObjects.length - 1);
     });
+
+    controlPoints.onAdded.addListener(this._onControlPointAdded)
+    controlPoints.onRemoved.addListener(this._onControlPointRemoved)
+    controlPoints.onUpdated.addListener(this._onControlPointUpdated)
   }
 
   private _stackVersion = ref(0);
@@ -248,12 +252,26 @@ export class HitObjectManager {
   readonly onUpdated = new Action<[HitObject, HitObjectUpdateType]>();
 
   getAtTime(time: number): HitObject | undefined {
-    let { found, index } = binarySearch(time, this.hitObjects, it => it.startTime);
+    let {found, index} = binarySearch(time, this.hitObjects, it => it.startTime);
     if (found) return this.hitObjects[index];
     if (index === 0) return undefined;
     const hitObject = this.hitObjects[index - 1];
     if (hitObject.endTime > time) return hitObject;
     return undefined;
+  }
+
+  _onControlPointAdded = (controlPoint: ControlPoint) => {
+    this.hitObjects.forEach(hitObject => hitObject.applyDefaults(this.difficulty, this.controlPoints));
+  }
+
+  _onControlPointRemoved = (controlPoint: ControlPoint) => {
+    this.hitObjects.forEach(hitObject => hitObject.applyDefaults(this.difficulty, this.controlPoints));
+  }
+
+  _onControlPointUpdated = (controlPoint: ControlPoint, flags: ControlPointUpdateFlags) => {
+    if (flags & (ControlPointUpdateFlags.StartTime | ControlPointUpdateFlags.Velocity | ControlPointUpdateFlags.Timing)) {
+      this.hitObjects.forEach(hitObject => hitObject.applyDefaults(this.difficulty, this.controlPoints));
+    }
   }
 
 }

@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import {usePreferencesVisible} from "@/composables/usePreferencesVisible.ts";
+import {onEditorKeyDown} from "@/composables/onEditorKeyDown.ts";
 
 const visible = usePreferencesVisible()
 
-useEventListener('keydown', (evt) => {
-  if (evt.key === 'P' && evt.ctrlKey) {
+onEditorKeyDown((evt) => {
+  if (evt.key === 'o' && evt.ctrlKey) {
     visible.value = !visible.value
     evt.preventDefault()
   }

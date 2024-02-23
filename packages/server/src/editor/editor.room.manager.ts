@@ -37,7 +37,7 @@ export class EditorRoomManager {
             colors: beatmap.colors.map(color => "#" + color.toString(16).padStart(6, "0")),
             difficulty: beatmap.difficulty,
             bookmarks: beatmap.bookmarks,
-            controlPoints: beatmap.controlPoints.serialize(),
+            controlPoints: beatmap.controlPoints.serializeLegacy(),
             hitObjects: beatmap.hitObjects.serialize(),
             hitSounds: beatmap.hitSounds,
           };

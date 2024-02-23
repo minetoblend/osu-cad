@@ -17,6 +17,7 @@ import sizeewcursor from "@/assets/icons/cursor-sizeew.svg";
 import {clamp} from "@vueuse/core";
 import {BeatInfo} from "../../beatInfo.ts";
 import {EditorContext} from "@/editor/editorContext.ts";
+import {TimelinePositionManager} from "@/editor/drawables/timeline/timelinePositionManager.ts";
 
 export class TimelineObject extends Drawable {
 
@@ -52,14 +53,14 @@ export class TimelineObject extends Drawable {
     eventMode: "static",
     hitArea: {
       contains: (x, y) =>
-          this.svText.visible && x >= 0 && x <= this.svText.width && y >= 0 && y <= this.svText.height,
+        this.svText.visible && x >= 0 && x <= this.svText.width && y >= 0 && y <= this.svText.height,
     },
     resolution: 2,
   });
 
   constructor(
-      private readonly timeline: ObjectTimeline,
-      hitObject: HitObject,
+    private readonly timeline: ObjectTimeline,
+    hitObject: HitObject,
   ) {
     super();
     this.startCircle = new TimelineCircle(hitObject.startTime);
@@ -73,7 +74,7 @@ export class TimelineObject extends Drawable {
     this.endCircle.cursor = `url(${sizeewcursor}) 16 16, auto`;
     this.eventMode = "dynamic";
 
-    this.x = this.timeline.getPositionForTime(hitObject.startTime);
+    this.x = this.timeline.positionManager.getPositionForTime(hitObject.startTime);
 
     this.generateRepeats();
 
@@ -93,6 +94,9 @@ export class TimelineObject extends Drawable {
 
   @Inject(BeatInfo)
   private beatInfo!: BeatInfo;
+
+  @Inject(TimelinePositionManager)
+  private positionManager!: TimelinePositionManager;
 
   private installListeners() {
     const hitObject = this.hitObject!;
@@ -129,7 +133,7 @@ export class TimelineObject extends Drawable {
           const pos = evt.getLocalPosition(this.timeline);
 
           const delta = pos.x - lastPos.x;
-          const deltaTime = delta / this.timeline.pixelsPerMs;
+          const deltaTime = delta / this.positionManager.pixelsPerMillisecond;
 
           time += deltaTime;
 
@@ -167,7 +171,7 @@ export class TimelineObject extends Drawable {
 
         this.onglobalpointermove = (evt) => {
           const pos = evt.getLocalPosition(this.timeline);
-          const time = pos.x / this.timeline.pixelsPerMs + this.timeline.startTime;
+          const time = pos.x / this.positionManager.pixelsPerMillisecond + this.positionManager.startTime;
 
 
           const targetDuration = time - hitObject.startTime!;
@@ -188,7 +192,7 @@ export class TimelineObject extends Drawable {
 
         const onMove = (evt: FederatedPointerEvent) => {
           const pos = evt.getLocalPosition(this.timeline);
-          let time = pos.x / this.timeline.pixelsPerMs + this.timeline.startTime;
+          let time = pos.x / this.positionManager.pixelsPerMillisecond + this.positionManager.startTime;
           time = this.editor.beatmapManager.controlPoints!.snap(time, this.beatInfo.beatSnap);
 
           const targetDuration = time - hitObject.startTime!;
@@ -210,14 +214,14 @@ export class TimelineObject extends Drawable {
 
         const onMove = (evt: FederatedPointerEvent) => {
           const pos = evt.getLocalPosition(this.timeline);
-          let time = pos.x / this.timeline.pixelsPerMs + this.timeline.startTime;
+          let time = pos.x / this.positionManager.pixelsPerMillisecond + this.positionManager.startTime;
           time = this.editor.beatmapManager.controlPoints!.snap(time, this.beatInfo.beatSnap);
 
           const targetEndTime = time;
           const endTime = this.editor.beatmapManager.controlPoints.snap(targetEndTime, this.beatInfo.beatSnap);
 
           this.editor.commandManager.submit(updateHitObject(hitObject, {
-            duration: Math.max(endTime - hitObject.startTime, this.editor.beatmapManager.controlPoints.timingPointAt(hitObject.startTime).beatLength / this.beatInfo.beatSnap),
+            duration: Math.max(endTime - hitObject.startTime, this.editor.beatmapManager.controlPoints.timingPointAt(hitObject.startTime).timing.beatLength / this.beatInfo.beatSnap),
           }));
         };
 
@@ -297,16 +301,16 @@ export class TimelineObject extends Drawable {
     const comboColors = this.editor.beatmapManager.beatmap.colors;
     this.comboColor = comboColors[hitObject.comboIndex % comboColors.length];
 
-    this.x = this.timeline.getPositionForTime(hitObject.startTime);
+    this.x = this.positionManager.getPositionForTime(hitObject.startTime);
 
     let endTime = hitObject.endTime;
     if (hitObject instanceof Slider)
       endTime = hitObject.startTime + hitObject.spanDuration * hitObject.spans;
 
-    this.endCircle.x = this.timeline.getPositionForTime(endTime) - this.x;
+    this.endCircle.x = this.positionManager.getPositionForTime(endTime) - this.x;
     for (const child of this.repeats.children) {
       const circle = child as TimelineCircle;
-      circle.x = this.timeline.getPositionForTime(circle.time) - this.x;
+      circle.x = this.positionManager.getPositionForTime(circle.time) - this.x;
     }
 
     this.sliderBodyBackground.scale.x = this.endCircle.x;
@@ -324,7 +328,6 @@ export class TimelineObject extends Drawable {
     } else {
       this.svText.visible = false;
     }
-
   }
 
   private generateRepeats() {
@@ -339,9 +342,8 @@ export class TimelineObject extends Drawable {
     }
   }
 
-
   readonly onHitObjectUpdate = (key: string) => {
-    if (key === "startTime" || key === "position" || key === "repeats" || key === "velocity")
+    if (key === "startTime" || key === "position" || key === "repeats" || key === "velocity" || true)
       this.generateRepeats();
 
     this.comboNumber.text = (this.hitObject!.indexInCombo + 1).toString();
@@ -350,6 +352,8 @@ export class TimelineObject extends Drawable {
   destroy(options?: DestroyOptions) {
     super.destroy(options);
   }
+
+
 }
 
 class TimelineCircle extends Drawable {
@@ -391,10 +395,10 @@ export class TimelineRepeatCircle extends TimelineCircle {
     super(time);
 
     this.addChild(new Sprite(
-        {
-          texture: Assets.get("reversearrow"),
-          anchor: new Point(0.5, 0.5),
-        },
+      {
+        texture: Assets.get("reversearrow"),
+        anchor: new Point(0.5, 0.5),
+      },
     ));
   }
 

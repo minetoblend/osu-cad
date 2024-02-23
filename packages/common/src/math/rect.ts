@@ -77,6 +77,7 @@ export class Rect {
     this.y += amount;
     this.width -= amount * 2;
     this.height -= amount * 2;
+    return this;
   }
 
   translate({x, y}: IVec2) {

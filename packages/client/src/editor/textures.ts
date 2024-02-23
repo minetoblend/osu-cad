@@ -37,6 +37,10 @@ const manifest: AssetsManifest = {
           alias: "hitsample-outline",
           src: "hitsample-outline.png",
         },
+        {
+          alias: "timeline-marker",
+          src: "timeline-marker.png",
+        }
       ],
     }),
     withBasePath("icons", {

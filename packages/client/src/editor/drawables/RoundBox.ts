@@ -40,6 +40,8 @@ export class RoundBox extends Component {
   private draw() {
     const g = this.graphics;
     g.clear();
+    if (this.width === 0 || this.height === 0) return;
+
     if (this.cornerRadius > 0) {
       g.roundRect(0, 0, this.size.x, this.size.y);
     } else {

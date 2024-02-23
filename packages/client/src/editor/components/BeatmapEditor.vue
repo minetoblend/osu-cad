@@ -14,6 +14,7 @@ import {animate, Easing} from "@/editor/drawables/animate.ts";
 import {App} from "@capacitor/app";
 import {useRouter} from "vue-router";
 import {Power3} from 'gsap'
+import {EditorPopoverHost} from "@/editor/components/popover";
 
 const {beatmapId} = defineProps<{
   beatmapId: string;
@@ -65,6 +66,7 @@ const viewportInitialized = ref(false)
   <div class="beatmap-editor">
     <template v-if="editor">
       <EditorViewport id="viewport" @initialized="viewportInitialized = true"/>
+      <EditorPopoverHost/>
       <!--    <EditorToolbar id="toolbar"/>-->
       <!--z    <div class="banner">-->
       <!--      Currently making changes (trying to add hitsounds), expect frequent reloads and freezes.-->
@@ -94,6 +96,7 @@ const viewportInitialized = ref(false)
       </div>
     </div>
   </div>
+
   <PreferencesOverlay/>
 </template>
 

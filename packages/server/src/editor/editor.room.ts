@@ -4,6 +4,7 @@ import {
   Beatmap,
   ClientMessages,
   CommandContext,
+  ControlPointManager,
   decodeCommands,
   defaultHitSoundLayers,
   encodeCommands,
@@ -35,7 +36,7 @@ export class EditorRoom {
       colors,
       audioFilename,
       general,
-      hitSounds = { layers: defaultHitSoundLayers() },
+      hitSounds = {layers: defaultHitSoundLayers()},
       version,
     } = entity.data;
 
@@ -49,7 +50,9 @@ export class EditorRoom {
       },
       name: entity.name,
       hitObjects,
-      controlPoints,
+      controlPoints: ControlPointManager
+        .fromLegacy(controlPoints)
+        .serialize(),
       difficulty,
       bookmarks,
       backgroundPath,

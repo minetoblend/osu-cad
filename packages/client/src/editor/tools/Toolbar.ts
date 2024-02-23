@@ -14,11 +14,9 @@ import {EditorContext} from "@/editor/editorContext.ts";
 import {ComposeTool} from "@/editor/tools/ComposeTool.ts";
 import {ToolbarButton} from "@/editor/tools/ToolbarButton.ts";
 import {usePreferencesVisible} from "@/composables/usePreferencesVisible.ts";
+import {onEditorKeyDown} from "@/composables/onEditorKeyDown.ts";
 
 export class Toolbar extends Component {
-  @Inject(VIEWPORT_SIZE)
-  private readonly canvasSize!: ISize;
-
   @Inject(EditorContext)
   private readonly editor!: EditorContext;
 
@@ -72,7 +70,7 @@ export class Toolbar extends Component {
 
   onLoad() {
     watchEffect(() => this.updateBounds());
-    useEventListener("keydown", (evt) => {
+    onEditorKeyDown((evt) => {
       if (this.editor.tools.activeTool.acceptsNumberKeys) return;
       if (evt.ctrlKey || evt.metaKey || evt.altKey || evt.shiftKey) return;
       switch (evt.key) {
