@@ -1,3 +1,1 @@
-export class InputManager {
-
-}
+export class InputManager {}

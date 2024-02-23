@@ -1,8 +1,8 @@
-import {ToolInteraction} from "@/editor/tools/interactions/ToolInteraction.ts";
-import {Graphics} from "pixi.js";
-import {Vec2} from "@osucad/common";
-import {clamp} from "@vueuse/core";
-import {ComposeTool} from "@/editor/tools/ComposeTool.ts";
+import { ToolInteraction } from '@/editor/tools/interactions/ToolInteraction.ts';
+import { Graphics } from 'pixi.js';
+import { Vec2 } from '@osucad/common';
+import { clamp } from '@vueuse/core';
+import { ComposeTool } from '@/editor/tools/ComposeTool.ts';
 
 interface LongPressInteractionOptions {
   action: () => void;
@@ -11,24 +11,24 @@ interface LongPressInteractionOptions {
   onMouseUpCancel?: () => void;
 }
 
-
 export class LongPressInteraction extends ToolInteraction {
-  constructor(
-    tool: ComposeTool,
-    options: LongPressInteractionOptions,
-  ) {
+  constructor(tool: ComposeTool, options: LongPressInteractionOptions) {
     super(tool);
     this.addChild(this.overlay);
     this.action = options.action;
     this.duration = options.duration ?? 750;
     this.onMoveCancel = options.onMoveCancel;
     this.onMouseUpCancel = options.onMouseUpCancel;
-    this.sizeReference = document.querySelector('#dpi')
+    this.sizeReference = document.querySelector('#dpi');
 
-    addEventListener("pointerup", () => {
-      this.cancel();
-      this.onMouseUpCancel?.();
-    }, {once: true})
+    addEventListener(
+      'pointerup',
+      () => {
+        this.cancel();
+        this.onMouseUpCancel?.();
+      },
+      { once: true },
+    );
   }
 
   private readonly action: () => void;
@@ -39,7 +39,7 @@ export class LongPressInteraction extends ToolInteraction {
   readonly startTime = performance.now();
   readonly sizeReference: HTMLElement | null;
 
-  startPos!: Vec2
+  startPos!: Vec2;
 
   onLoad() {
     this.startPos = this.mousePos;
@@ -48,9 +48,9 @@ export class LongPressInteraction extends ToolInteraction {
 
   onTick() {
     if (this.mousePos.distanceTo(this.startPos) > 10) {
-      this.cancel()
+      this.cancel();
       this.onMoveCancel?.();
-      return
+      return;
     }
 
     const elapsed = performance.now() - this.startTime;
@@ -58,7 +58,7 @@ export class LongPressInteraction extends ToolInteraction {
 
     if (progress === 1) {
       try {
-        this.action()
+        this.action();
       } finally {
         this.complete();
       }
@@ -70,9 +70,9 @@ export class LongPressInteraction extends ToolInteraction {
     const startAngle = Math.PI * 1.5;
     const endAngle = Math.PI * 1.5 + Math.PI * 2 * visibleProgress;
 
-
-    const radius = 1.25 / this.worldTransform.a * (this.sizeReference?.getBoundingClientRect().width ?? 50);
-
+    const radius =
+      (1.25 / this.worldTransform.a) *
+      (this.sizeReference?.getBoundingClientRect().width ?? 50);
 
     this.overlay
       .clear()
@@ -83,5 +83,4 @@ export class LongPressInteraction extends ToolInteraction {
         width: 5,
       });
   }
-
 }

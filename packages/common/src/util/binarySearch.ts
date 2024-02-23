@@ -2,7 +2,7 @@ export function binarySearch<T>(
   needle: number,
   haystack: T[],
   compareBy: (item: T) => number,
-): { index: number, found: boolean } {
+): { index: number; found: boolean } {
   let low = 0;
   let high = haystack.length - 1;
 

@@ -1,17 +1,16 @@
-import {Container, ObservablePoint} from "pixi.js";
-import {Drawable} from "./Drawable.ts";
-import {Rect} from "@osucad/common";
-import {LayoutContext} from "./layout/LayoutContext.ts";
+import { Container, ObservablePoint } from 'pixi.js';
+import { Drawable } from './Drawable.ts';
+import { Rect } from '@osucad/common';
+import { LayoutContext } from './layout/LayoutContext.ts';
 
 export class Component extends Drawable {
-
   constructor() {
     super();
     this.hitArea = {
       contains: (x: number, y: number) => {
         return x >= 0 && x <= this.size.x && y >= 0 && y <= this.size.y;
       },
-    }
+    };
   }
 
   size = new ObservablePoint(this, 0, 0);
@@ -32,8 +31,6 @@ export class Component extends Drawable {
     this.position.set(bounds.x, bounds.y);
   }
 
-  ;
-
   private _preferredWidth?: number;
   private _preferredHeight?: number;
   private _minWidth?: number;
@@ -46,8 +43,7 @@ export class Component extends Drawable {
   }
 
   set preferredWidth(value: number | undefined) {
-    if (value === this._preferredWidth)
-      return;
+    if (value === this._preferredWidth) return;
     this._preferredWidth = value;
     this.invalidateLayout(LayoutInvalidation.Self | LayoutInvalidation.Parent);
   }
@@ -57,8 +53,7 @@ export class Component extends Drawable {
   }
 
   set preferredHeight(value: number | undefined) {
-    if (value === this._preferredHeight)
-      return;
+    if (value === this._preferredHeight) return;
     this._preferredHeight = value;
     this.invalidateLayout(LayoutInvalidation.Self | LayoutInvalidation.Parent);
   }
@@ -68,8 +63,7 @@ export class Component extends Drawable {
   }
 
   set minWidth(value: number | undefined) {
-    if (value === this._minWidth)
-      return;
+    if (value === this._minWidth) return;
     this._minWidth = value;
     this.invalidateLayout(LayoutInvalidation.Self | LayoutInvalidation.Parent);
   }
@@ -79,8 +73,7 @@ export class Component extends Drawable {
   }
 
   set minHeight(value: number | undefined) {
-    if (value === this._minHeight)
-      return;
+    if (value === this._minHeight) return;
     this._minHeight = value;
     this.invalidateLayout(LayoutInvalidation.Self | LayoutInvalidation.Parent);
   }
@@ -96,15 +89,13 @@ export class Component extends Drawable {
   }
 
   set margin(value: number) {
-    if (value === this._margin)
-      return;
+    if (value === this._margin) return;
     this._margin = value;
     this.invalidateLayout(LayoutInvalidation.Self | LayoutInvalidation.Parent);
   }
 
   set maxWidth(value: number | undefined) {
-    if (value === this._maxWidth)
-      return;
+    if (value === this._maxWidth) return;
     this._maxWidth = value;
     this.invalidateLayout(LayoutInvalidation.Self | LayoutInvalidation.Parent);
   }
@@ -114,8 +105,7 @@ export class Component extends Drawable {
   }
 
   set maxHeight(value: number | undefined) {
-    if (value === this._maxHeight)
-      return;
+    if (value === this._maxHeight) return;
     this._maxHeight = value;
     this.invalidateLayout(LayoutInvalidation.Self | LayoutInvalidation.Parent);
   }
@@ -131,8 +121,6 @@ export class Component extends Drawable {
       }
     }
   }
-
-
 }
 
 export const enum LayoutInvalidation {

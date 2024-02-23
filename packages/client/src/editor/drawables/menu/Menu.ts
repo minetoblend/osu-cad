@@ -1,10 +1,10 @@
-import {MenuItem, MenuItemOptions} from "./MenuItem.ts";
-import {Container, Graphics} from "pixi.js";
-import {ISize, Rect} from "@osucad/common";
-import {Drawable} from "../Drawable.ts";
-import gsap from "gsap";
-import {Inject} from "../di";
-import {VIEWPORT_SIZE} from "../injectionKeys.ts";
+import { MenuItem, MenuItemOptions } from './MenuItem.ts';
+import { Container, Graphics } from 'pixi.js';
+import { ISize, Rect } from '@osucad/common';
+import { Drawable } from '../Drawable.ts';
+import gsap from 'gsap';
+import { Inject } from '../di';
+import { VIEWPORT_SIZE } from '../injectionKeys.ts';
 
 export interface MenuOptions {
   items: MenuItemOptions[];
@@ -12,7 +12,6 @@ export interface MenuOptions {
 }
 
 export class Menu extends Drawable {
-
   private contentMask = new Graphics();
 
   @Inject(VIEWPORT_SIZE)
@@ -23,7 +22,7 @@ export class Menu extends Drawable {
 
     const { items, minWidth } = options;
 
-    this.menuItems.addChild(...items.map(item => new MenuItem(item)));
+    this.menuItems.addChild(...items.map((item) => new MenuItem(item)));
     this.addChild(this.background, this.menuItems);
 
     this._minWidth = minWidth ?? 0;
@@ -33,7 +32,6 @@ export class Menu extends Drawable {
     this._calculateLayout();
     this.appear();
   }
-
 
   private background = new Graphics();
 
@@ -53,7 +51,6 @@ export class Menu extends Drawable {
   flipped = false;
 
   private _calculateLayout() {
-
     let width = this._minWidth;
     let height = 0;
 
@@ -84,16 +81,18 @@ export class Menu extends Drawable {
 
     const bounds = new Rect(0, 0, width, height);
 
-    this.background.clear()
+    this.background
+      .clear()
       .roundRect(bounds.x + 2, bounds.y + 2, bounds.width, bounds.height, 5)
       .fill({
         color: 0x000000,
         alpha: 0.2,
       })
       .roundRect(bounds.x, bounds.y, bounds.width, bounds.height, 5)
-      .fill(0x1A1A20);
+      .fill(0x1a1a20);
 
-    this.contentMask.clear()
+    this.contentMask
+      .clear()
       .roundRect(bounds.x, bounds.y, bounds.width, bounds.height, 5)
       .fill(0xffffff);
 
@@ -107,14 +106,14 @@ export class Menu extends Drawable {
     gsap.to(this, {
       alpha: 1,
       duration: 0.2,
-      ease: "back.out",
+      ease: 'back.out',
     });
 
     gsap.to(this.scale, {
       x: 1,
       y: 1,
       duration: 0.2,
-      ease: "back.out",
+      ease: 'back.out',
     });
   }
 
@@ -122,19 +121,18 @@ export class Menu extends Drawable {
     gsap.to(this, {
       alpha: 0,
       duration: 0.1,
-      ease: "power2.in",
+      ease: 'power2.in',
     });
 
     gsap.to(this.scale, {
       x: 0.8,
       y: 0.5,
       duration: 0.1,
-      ease: "power2.in",
+      ease: 'power2.in',
     });
 
     if (destroy) {
       gsap.delayedCall(0.2, () => this.destroy());
     }
   }
-
 }

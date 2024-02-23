@@ -4,11 +4,12 @@
   "description": "",
   "type": "module",
   "main": "dist/lib.cjs",
-  "types": "src/index.ts",
-  "typings": "src/index.ts",
+  "types": "dist/lib.d.ts",
+  "typings": "dist/lib.d.ts",
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w"
+    "build": "tsc --noEmit && rollup -c",
+    "dev": "rollup -c -w",
+    "lint": "eslint \"src/**/*.ts\" --fix"
   },
   "exports": {
     ".": {
@@ -24,7 +25,12 @@
     "esbuild": "^0.17.14",
     "rollup": "^3.20.2",
     "rollup-plugin-dts": "^6.1.0",
-    "rollup-plugin-esbuild": "^5.0.0"
+    "rollup-plugin-esbuild": "^5.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.42.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0"
   },
   "dependencies": {
     "@ygoe/msgpack": "^1.0.3",

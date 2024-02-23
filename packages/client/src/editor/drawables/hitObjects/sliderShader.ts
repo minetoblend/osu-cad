@@ -11,20 +11,20 @@ import {
   TextureShader,
   UniformGroup,
   vertexGlTemplate,
-} from "pixi.js";
-import {SliderGradient} from "@/editor/drawables/SliderGradient.ts";
+} from 'pixi.js';
+import { SliderGradient } from '@/editor/drawables/SliderGradient.ts';
 
 let glProgram: GlProgram | null = null;
 let gradient: SliderGradient | null = null;
 
 export class SliderShader extends Shader implements TextureShader {
-
   texture = Texture.EMPTY;
 
   constructor() {
-    const vertexTemplate = vertexGlTemplate
-      .replace("gl_Position = vec4((modelViewProjectionMatrix * vec3(position, 1.0)).xy, 0.0, 1.0);",
-        "gl_Position = vec4((modelViewProjectionMatrix * vec3(position, 1.0)).xy, aUV.x, 1.0);");
+    const vertexTemplate = vertexGlTemplate.replace(
+      'gl_Position = vec4((modelViewProjectionMatrix * vec3(position, 1.0)).xy, 0.0, 1.0);',
+      'gl_Position = vec4((modelViewProjectionMatrix * vec3(position, 1.0)).xy, aUV.x, 1.0);',
+    );
 
     if (!gradient) {
       gradient = new SliderGradient(0, 0, 1, 0)
@@ -39,7 +39,7 @@ export class SliderShader extends Shader implements TextureShader {
     }
 
     glProgram ??= new GlProgram({
-      name: "slider-shader",
+      name: 'slider-shader',
       ...compileHighShaderGl({
         template: {
           vertex: vertexTemplate,
@@ -49,7 +49,7 @@ export class SliderShader extends Shader implements TextureShader {
           globalUniformsBitGl,
           localUniformBitGl,
           {
-            name: "slider-bit",
+            name: 'slider-bit',
             fragment: {
               header: `
               uniform vec4 uComboColor;
@@ -98,10 +98,16 @@ export class SliderShader extends Shader implements TextureShader {
     });
 
     const sliderUniforms = new UniformGroup({
-      uComboColor: {value: new Float32Array(Color.shared.setValue(0xff0000).toArray()), type: "vec4<f32>"},
-      uBorderColor: {value: new Float32Array(Color.shared.setValue(0xffffff).toArray()), type: "vec4<f32>"},
-      uAlpha: {value: 1.0, type: "f32"},
-      uSnakeInProgress: {value: 0.0, type: "f32"},
+      uComboColor: {
+        value: new Float32Array(Color.shared.setValue(0xff0000).toArray()),
+        type: 'vec4<f32>',
+      },
+      uBorderColor: {
+        value: new Float32Array(Color.shared.setValue(0xffffff).toArray()),
+        type: 'vec4<f32>',
+      },
+      uAlpha: { value: 1.0, type: 'f32' },
+      uSnakeInProgress: { value: 0.0, type: 'f32' },
     });
 
     super({
@@ -119,8 +125,9 @@ export class SliderShader extends Shader implements TextureShader {
   }
 
   set comboColor(value: number) {
-
-    this.resources.sliderUniforms.uniforms.uComboColor = new Float32Array(Color.shared.setValue(value).toArray());
+    this.resources.sliderUniforms.uniforms.uComboColor = new Float32Array(
+      Color.shared.setValue(value).toArray(),
+    );
   }
 
   get borderColor(): number {
@@ -128,8 +135,9 @@ export class SliderShader extends Shader implements TextureShader {
   }
 
   set borderColor(value: number) {
-
-    this.resources.sliderUniforms.uniforms.uBorderColor = new Float32Array(Color.shared.setValue(value).toArray());
+    this.resources.sliderUniforms.uniforms.uBorderColor = new Float32Array(
+      Color.shared.setValue(value).toArray(),
+    );
   }
 
   get alpha(): number {
@@ -137,7 +145,6 @@ export class SliderShader extends Shader implements TextureShader {
   }
 
   set alpha(value: number) {
-
     this.resources.sliderUniforms.uniforms.uAlpha = value;
   }
 

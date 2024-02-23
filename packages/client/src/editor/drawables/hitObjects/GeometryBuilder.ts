@@ -1,4 +1,4 @@
-import {Vec2} from "@osucad/common";
+import { Vec2 } from '@osucad/common';
 
 export class GeometryBuilder {
   readonly vertices: Float32Array;
@@ -9,13 +9,22 @@ export class GeometryBuilder {
   vertexCursor = 0;
   indexCursor = 0;
 
-  constructor(numVertices: number, numIndices: number, readonly totalDistance: number) {
+  constructor(
+    numVertices: number,
+    numIndices: number,
+    readonly totalDistance: number,
+  ) {
     this.vertices = new Float32Array(numVertices * 2);
     this.uvs = new Float32Array(numVertices * 2);
     this.indices = new Uint32Array(numIndices);
   }
 
-  addVertex(x: number, y: number, z: number, distance: number = this.travelDistance) {
+  addVertex(
+    x: number,
+    y: number,
+    z: number,
+    distance: number = this.travelDistance,
+  ) {
     const index = this.vertexCursor * 2;
     this.vertices[index] = x;
     this.vertices[index + 1] = y;
@@ -35,13 +44,13 @@ export class GeometryBuilder {
   }
 
   addJoin(position: Vec2, theta: number, thetaDiff: number, radius: number) {
-    let step = Math.PI / 24.0;
+    const step = Math.PI / 24.0;
 
-    let dir = Math.sign(thetaDiff);
+    const dir = Math.sign(thetaDiff);
 
-    let absThetaDiff = Math.abs(thetaDiff);
+    const absThetaDiff = Math.abs(thetaDiff);
 
-    let amountPoints = Math.ceil(absThetaDiff / step);
+    const amountPoints = Math.ceil(absThetaDiff / step);
 
     if (dir < 0.0) {
       theta += Math.PI;
@@ -51,8 +60,8 @@ export class GeometryBuilder {
     this.addVertex(position.x, position.y, 0);
 
     for (let i = 0; i <= amountPoints; i++) {
-      let angularOffset = Math.min(i * step, absThetaDiff);
-      let angle = theta + dir * angularOffset;
+      const angularOffset = Math.min(i * step, absThetaDiff);
+      const angle = theta + dir * angularOffset;
 
       this.addVertex(
         position.x + Math.sin(angle) * radius,
@@ -73,14 +82,24 @@ export class GeometryBuilder {
     const dirLX = -dirY * radius;
     const dirLY = dirX * radius;
 
-    let cursor = this.vertexCursor;
+    const cursor = this.vertexCursor;
 
     this.addVertex(from.x + dirLX, from.y + dirLY, 1.0, this.travelDistance);
     this.addVertex(from.x, from.y, 0.0, this.travelDistance);
     this.addVertex(from.x - dirLX, from.y - dirLY, 1.0, this.travelDistance);
-    this.addVertex(to.x + dirLX, to.y + dirLY, 1.0, this.travelDistance + length);
+    this.addVertex(
+      to.x + dirLX,
+      to.y + dirLY,
+      1.0,
+      this.travelDistance + length,
+    );
     this.addVertex(to.x, to.y, 0.0, this.travelDistance + length);
-    this.addVertex(to.x - dirLX, to.y - dirLY, 1.0, this.travelDistance + length);
+    this.addVertex(
+      to.x - dirLX,
+      to.y - dirLY,
+      1.0,
+      this.travelDistance + length,
+    );
 
     this.addTriangleIndices(cursor, cursor + 3, cursor + 1);
     this.addTriangleIndices(cursor + 3, cursor + 4, cursor + 1);

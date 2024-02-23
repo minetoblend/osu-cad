@@ -1,18 +1,17 @@
 <script setup lang="ts">
 defineProps<{
   modelValue: boolean;
-}>()
+}>();
 
 const emit = defineEmits<{
-  (event: 'update:modelValue', value: boolean): void
-}>()
-
+  (event: 'update:modelValue', value: boolean): void;
+}>();
 </script>
 
 <template>
   <div class="switch" @click="emit('update:modelValue', !modelValue)">
-    <input type="checkbox" :checked="modelValue"/>
-    <div class="knob"></div>
+    <input type="checkbox" :checked="modelValue" />
+    <div class="knob" />
   </div>
 </template>
 
@@ -44,7 +43,9 @@ $width: 2.5em;
   height: $height;
   background-color: $surface-300;
   border-radius: 50%;
-  transition: left 0.15s ease-out, background-color 0.15s ease-out;
+  transition:
+    left 0.15s ease-out,
+    background-color 0.15s ease-out;
   transform: scale(0.8);
 }
 

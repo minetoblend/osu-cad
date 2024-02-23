@@ -1,5 +1,5 @@
-import {hitObjectId} from "./hitObject";
-import {Action} from "../util/action";
+import { hitObjectId } from './hitObject';
+import { Action } from '../util/action';
 
 export class ControlPoint {
   static default = new ControlPoint({
@@ -9,7 +9,7 @@ export class ControlPoint {
       beatLength: 60_000 / 120,
     },
     velocityMultiplier: 1,
-  })
+  });
 
   constructor(options: SerializedControlPoint) {
     this._id = options.id;
@@ -18,11 +18,11 @@ export class ControlPoint {
     this._velocityMultiplier = options.velocityMultiplier ?? null;
   }
 
-  private _id: string = hitObjectId()
-  private _time: number = 0
-  private _timing: TimingInfo | null
-  private _velocityMultiplier: number | null
-  private _updatesPaused = false
+  private _id: string = hitObjectId();
+  private _time: number = 0;
+  private _timing: TimingInfo | null;
+  private _velocityMultiplier: number | null;
+  private _updatesPaused = false;
 
   onUpdate = new Action<[ControlPoint, ControlPointUpdateFlags]>();
 
@@ -63,7 +63,8 @@ export class ControlPoint {
     this._updatesPaused = true;
     if (update.time !== undefined) this.time = update.time;
     if (update.timing !== undefined) this.timing = update.timing;
-    if (update.velocityMultiplier !== undefined) this.velocityMultiplier = update.velocityMultiplier;
+    if (update.velocityMultiplier !== undefined)
+      this.velocityMultiplier = update.velocityMultiplier;
     this._updatesPaused = false;
     this._notifyUpdate();
   }
@@ -78,7 +79,7 @@ export class ControlPoint {
   }
 
   destroy() {
-    this.onUpdate.removeListeners()
+    this.onUpdate.removeListeners();
   }
 
   _markDirty(flags: ControlPointUpdateFlags) {
@@ -93,20 +94,19 @@ export class ControlPoint {
     this._dirtyFlags = 0;
   }
 
-  _inTimingList = false
-  _inVelocityList = false
-
+  _inTimingList = false;
+  _inVelocityList = false;
 }
 
 export interface SerializedControlPoint {
-  id: string
-  time: number
-  timing: TimingInfo | null
-  velocityMultiplier: number | null
+  id: string;
+  time: number;
+  timing: TimingInfo | null;
+  velocityMultiplier: number | null;
 }
 
 export interface TimingInfo {
-  beatLength: number
+  beatLength: number;
 }
 
 export const enum ControlPointUpdateFlags {

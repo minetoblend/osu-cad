@@ -1,13 +1,13 @@
-import {Vec2} from "@osucad/common";
+import { Vec2 } from '@osucad/common';
 
 function getTheta(from: Vec2, to: Vec2) {
   return Math.atan2(to.y - from.y, to.x - from.x);
 }
 
 function getJoinGeometryCount(thetaDiff: number) {
-  let step = Math.PI / 24.0;
+  const step = Math.PI / 24.0;
 
-  let absThetaDiff = Math.abs(thetaDiff);
+  const absThetaDiff = Math.abs(thetaDiff);
 
   const amountOfOuterPoints = Math.ceil(absThetaDiff / step) + 1;
 
@@ -48,13 +48,13 @@ export class GeometryBuilder {
   }
 
   addJoin(position: Vec2, theta: number, thetaDiff: number, radius: number) {
-    let step = Math.PI / 24.0;
+    const step = Math.PI / 24.0;
 
-    let dir = Math.sign(thetaDiff);
+    const dir = Math.sign(thetaDiff);
 
-    let absThetaDiff = Math.abs(thetaDiff);
+    const absThetaDiff = Math.abs(thetaDiff);
 
-    let amountPoints = Math.ceil(absThetaDiff / step);
+    const amountPoints = Math.ceil(absThetaDiff / step);
 
     if (dir < 0.0) {
       theta += Math.PI;
@@ -64,8 +64,8 @@ export class GeometryBuilder {
     this.addVertex(position.x, position.y, 0);
 
     for (let i = 0; i <= amountPoints; i++) {
-      let angularOffset = Math.min(i * step, absThetaDiff);
-      let angle = theta + dir * angularOffset;
+      const angularOffset = Math.min(i * step, absThetaDiff);
+      const angle = theta + dir * angularOffset;
 
       this.addVertex(
         position.x + Math.sin(angle) * radius,
@@ -86,7 +86,7 @@ export class GeometryBuilder {
     const dirLX = -dirY * radius;
     const dirLY = dirX * radius;
 
-    let cursor = this.vertexCursor;
+    const cursor = this.vertexCursor;
 
     this.addVertex(from.x + dirLX, from.y + dirLY, 1.0);
     this.addVertex(from.x, from.y, 0.0);

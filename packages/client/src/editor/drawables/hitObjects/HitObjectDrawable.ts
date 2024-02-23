@@ -1,16 +1,19 @@
-import {Drawable} from "../Drawable.ts";
-import {HitObject, Vec2} from "@osucad/common";
-import {Inject} from "../di";
-import {DestroyOptions} from "pixi.js";
-import {EditorContext} from "@/editor/editorContext.ts";
+import { Drawable } from '../Drawable.ts';
+import { HitObject, Vec2 } from '@osucad/common';
+import { Inject } from '../di';
+import { DestroyOptions } from 'pixi.js';
+import { EditorContext } from '@/editor/editorContext.ts';
 
-export abstract class HitObjectDrawable<T extends HitObject = HitObject> extends Drawable {
-
+export abstract class HitObjectDrawable<
+  T extends HitObject = HitObject,
+> extends Drawable {
   protected constructor(readonly hitObject: T) {
     super();
     this.hitArea = {
       contains: (x: number, y: number) => {
-        return this.hitObject.contains(Vec2.from(this.parent.toLocal({x, y}, this, undefined, true)));
+        return this.hitObject.contains(
+          Vec2.from(this.parent.toLocal({ x, y }, this, undefined, true)),
+        );
       },
     };
   }
@@ -22,7 +25,7 @@ export abstract class HitObjectDrawable<T extends HitObject = HitObject> extends
     this.setup();
   }
 
-  private _markDirty = () => this._needsSetup = true;
+  private _markDirty = () => (this._needsSetup = true);
 
   comboColor = 0xffffff;
 
@@ -32,7 +35,8 @@ export abstract class HitObjectDrawable<T extends HitObject = HitObject> extends
   setup() {
     this.scale.set(this.hitObject.scale);
     const comboColors = this.editor.beatmapManager.beatmap.colors;
-    this.comboColor = comboColors[this.hitObject.comboIndex % comboColors.length];
+    this.comboColor =
+      comboColors[this.hitObject.comboIndex % comboColors.length];
   }
 
   onTick() {
@@ -51,5 +55,4 @@ export abstract class HitObjectDrawable<T extends HitObject = HitObject> extends
     super.destroy(options);
     this.hitObject.onUpdate.removeListener(this._markDirty);
   }
-
 }

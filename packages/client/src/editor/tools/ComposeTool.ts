@@ -1,28 +1,30 @@
-import {Drawable} from "../drawables/Drawable.ts";
-import {Inject} from "../drawables/di";
-import {EditorCommand, HitObject, Vec2} from "@osucad/common";
-import {Container, FederatedPointerEvent} from "pixi.js";
-import {HitObjectContainer} from "../drawables/hitObjects/HitObjectContainer.ts";
-import {BeatInfo} from "../beatInfo.ts";
-import {ToolInteraction} from "./interactions/ToolInteraction.ts";
-import {SelectTool} from "./SelectTool.ts";
-import {EditorContext} from "@/editor/editorContext.ts";
-import {ButtonPanelButton} from "@/editor/drawables/buttonPanel.ts";
-import {Ref} from "vue";
-import {onEditorKeyDown, onEditorKeyUp} from "@/composables/onEditorKeyDown.ts";
+import { Drawable } from '../drawables/Drawable.ts';
+import { Inject } from '../drawables/di';
+import { EditorCommand, HitObject, Vec2 } from '@osucad/common';
+import { Container, FederatedPointerEvent } from 'pixi.js';
+import { HitObjectContainer } from '../drawables/hitObjects/HitObjectContainer.ts';
+import { BeatInfo } from '../beatInfo.ts';
+import { ToolInteraction } from './interactions/ToolInteraction.ts';
+import { SelectTool } from './SelectTool.ts';
+import { EditorContext } from '@/editor/editorContext.ts';
+import { ButtonPanelButton } from '@/editor/drawables/buttonPanel.ts';
+import { Ref } from 'vue';
+import {
+  onEditorKeyDown,
+  onEditorKeyUp,
+} from '@/composables/onEditorKeyDown.ts';
 
 export class ComposeTool extends Drawable {
-
   private interactionContainer = new Container();
 
-  readonly panelButtons: Ref<ButtonPanelButton[][]> = shallowRef([])
+  readonly panelButtons: Ref<ButtonPanelButton[][]> = shallowRef([]);
 
-  readonly overlay = new Container()
+  readonly overlay = new Container();
 
   constructor() {
     super();
-    this.hitArea = {contains: () => true};
-    this.eventMode = "static";
+    this.hitArea = { contains: () => true };
+    this.eventMode = 'static';
     this.addChild(this.interactionContainer);
   }
 
@@ -54,53 +56,52 @@ export class ComposeTool extends Drawable {
   }
 
   onLoad() {
-    this.on("pointerdown", this._onPointerDown, this);
-    this.on("pointerup", this._onPointerUp, this);
-    this.on("pointerupoutside", this._onPointerUp, this);
+    this.on('pointerdown', this._onPointerDown, this);
+    this.on('pointerup', this._onPointerUp, this);
+    this.on('pointerupoutside', this._onPointerUp, this);
 
-    this.on("globalpointermove", this._onPointerMove, this);
+    this.on('globalpointermove', this._onPointerMove, this);
     const onKeyDown = (e: KeyboardEvent) => {
       switch (e.code) {
-        case "AltLeft":
-        case "AltRight":
+        case 'AltLeft':
+        case 'AltRight':
           this._altDown = true;
           e.preventDefault();
           break;
-        case "ControlLeft":
-        case "ControlRight":
+        case 'ControlLeft':
+        case 'ControlRight':
           this._ctrlDown = true;
           break;
-        case "ShiftLeft":
-        case "ShiftRight":
+        case 'ShiftLeft':
+        case 'ShiftRight':
           this._shiftDown = true;
           break;
       }
 
-      let shortcut = "";
-      if (e.ctrlKey) shortcut += "ctrl+";
-      if (e.shiftKey) shortcut += "shift+";
-      if (e.altKey) shortcut += "alt+";
+      let shortcut = '';
+      if (e.ctrlKey) shortcut += 'ctrl+';
+      if (e.shiftKey) shortcut += 'shift+';
+      if (e.altKey) shortcut += 'alt+';
       shortcut += e.key.toLowerCase();
       this.onKeyDown(e, shortcut);
     };
 
     const onKeyUp = (e: KeyboardEvent) => {
       switch (e.code) {
-        case "AltLeft":
-        case "AltRight":
+        case 'AltLeft':
+        case 'AltRight':
           this._altDown = false;
           break;
-        case "ControlLeft":
-        case "ControlRight":
+        case 'ControlLeft':
+        case 'ControlRight':
           this._ctrlDown = false;
           break;
-        case "ShiftLeft":
-        case "ShiftRight":
+        case 'ShiftLeft':
+        case 'ShiftRight':
           this._shiftDown = false;
           break;
       }
     };
-
 
     onEditorKeyDown(onKeyDown);
     onEditorKeyUp(onKeyUp);
@@ -113,7 +114,7 @@ export class ComposeTool extends Drawable {
   protected _isDragging = false;
   protected _mouseDown?: number;
 
-  protected _mousePressed = false
+  protected _mousePressed = false;
 
   protected interaction?: ToolInteraction;
 
@@ -122,7 +123,9 @@ export class ComposeTool extends Drawable {
     this._mousePos = this._mouseDownPos;
     this._mouseDown = e.button;
     this._mousePressed = true;
-    this.hoveredHitObjects = this.visibleHitObjects.filter(it => it.contains(this.mousePos)).reverse();
+    this.hoveredHitObjects = this.visibleHitObjects
+      .filter((it) => it.contains(this.mousePos))
+      .reverse();
     this.onMouseDown(e);
   }
 
@@ -130,7 +133,13 @@ export class ComposeTool extends Drawable {
     this._mousePressed = false;
     this.onMouseUp(e);
     if (this._mouseDownPos != null) {
-      if (Vec2.closerThan(this._mouseDownPos, Vec2.from(e.getLocalPosition(this)), 5)) {
+      if (
+        Vec2.closerThan(
+          this._mouseDownPos,
+          Vec2.from(e.getLocalPosition(this)),
+          5,
+        )
+      ) {
         this.onClick(e);
       }
     }
@@ -188,18 +197,22 @@ export class ComposeTool extends Drawable {
   }
 
   get acceptsNumberKeys() {
-    if (this.interaction)
-      return this.interaction.acceptsNumberKeys;
+    if (this.interaction) return this.interaction.acceptsNumberKeys;
     return false;
   }
 
   onTick() {
-    this._visibleHitObjects = this.editor.beatmapManager.hitObjects.hitObjects.filter(it =>
-      (this.currentTime >= it.startTime - it.timePreempt && this.currentTime <= it.endTime + 700)
-      || it.isSelected,
-    );
+    this._visibleHitObjects =
+      this.editor.beatmapManager.hitObjects.hitObjects.filter(
+        (it) =>
+          (this.currentTime >= it.startTime - it.timePreempt &&
+            this.currentTime <= it.endTime + 700) ||
+          it.isSelected,
+      );
     if (this._mousePos != null) {
-      this.hoveredHitObjects = this.visibleHitObjects.filter(it => it.contains(this.mousePos)).reverse();
+      this.hoveredHitObjects = this.visibleHitObjects
+        .filter((it) => it.contains(this.mousePos))
+        .reverse();
     }
   }
 
@@ -232,16 +245,13 @@ export class ComposeTool extends Drawable {
   }
 
   protected onKeyDown(evt: KeyboardEvent, shortcut: string) {
-    if (this.interaction?.onKeyDown?.(evt, shortcut) === false)
-      return;
+    if (this.interaction?.onKeyDown?.(evt, shortcut) === false) return;
 
-    if (evt.key === "Escape") {
-      if (this.interaction)
-        this.cancelInteraction();
+    if (evt.key === 'Escape') {
+      if (this.interaction) this.cancelInteraction();
       else if (!(this instanceof SelectTool))
         this.editor.tools.activeTool = new SelectTool();
-
-    } else if (evt.key === "Enter") {
+    } else if (evt.key === 'Enter') {
       this.completeInteraction();
     }
   }
@@ -265,17 +275,17 @@ export class ComposeTool extends Drawable {
     ...args: Args
   ): ToolInteraction {
     const interaction = new interactionType(this, ...args);
-    console.log("begin interaction", interaction);
+    console.log('begin interaction', interaction);
     this.interaction?.onDestroy?.();
     this.interactionContainer.removeChildren();
     this.interaction = interaction;
     this.interactionContainer.addChild(interaction);
 
-    return interaction
+    return interaction;
   }
 
   completeInteraction() {
-    console.log("complete interaction", this.interaction);
+    console.log('complete interaction', this.interaction);
     this.interaction?.onComplete?.();
     this.interaction?.onDestroy?.();
     this.interactionContainer.removeChildren();
@@ -283,7 +293,7 @@ export class ComposeTool extends Drawable {
   }
 
   cancelInteraction() {
-    console.log("cancel interaction", this.interaction);
+    console.log('cancel interaction', this.interaction);
     this.interaction?.onCancel?.();
     this.interaction?.onDestroy?.();
     this.interactionContainer.removeChildren();
@@ -305,5 +315,4 @@ export class ComposeTool extends Drawable {
   get selectedObjects() {
     return [...this.editor.selection.selectedObjects];
   }
-
 }

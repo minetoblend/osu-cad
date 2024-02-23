@@ -1,7 +1,6 @@
-import {Component, Ref} from "vue";
-import {Vec2} from "@osucad/common";
-import Vec2ParameterControl from "../../components/operator/Vec2ParameterControl.vue";
-
+import { Component, Ref } from 'vue';
+import { Vec2 } from '@osucad/common';
+import Vec2ParameterControl from '../../components/operator/Vec2ParameterControl.vue';
 
 export interface ParameterOptions<T> {
   value: T;
@@ -11,7 +10,7 @@ export interface ParameterOptions<T> {
 
 export class Parameter<T> {
   constructor(options: ParameterOptions<T>) {
-    const {value, label, component} = options;
+    const { value, label, component } = options;
     this._value = shallowRef<T>(value);
     this.label = label;
     this.component = component;
@@ -34,7 +33,7 @@ export class Vec2Parameter extends Parameter<Vec2> {
   constructor(options: ParameterOptions<Vec2>) {
     super({
       component: Vec2ParameterControl,
-      ...options
+      ...options,
     });
   }
 }

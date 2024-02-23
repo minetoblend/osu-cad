@@ -1,33 +1,45 @@
 <script setup lang="ts">
-import {usePixiPopover} from './index.ts'
+import { usePixiPopover } from './index.ts';
 
-const {currentPopover, hidePopover} = usePixiPopover()
+const { currentPopover, hidePopover } = usePixiPopover();
 
-const popoverRef = ref<HTMLDivElement>()
+const popoverRef = ref<HTMLDivElement>();
 
 useEventListener('pointerdown', (evt) => {
-  if (evt.target === popoverRef.value || evt.composedPath().includes(popoverRef.value))
-    return
+  if (!popoverRef.value) return;
+  if (
+    evt.target === popoverRef.value ||
+    evt.composedPath().includes(popoverRef.value)
+  )
+    return;
   nextTick(() => {
-    if (!evt.defaultPrevented)
-      hidePopover()
-  })
-})
-
-
+    if (!evt.defaultPrevented) hidePopover();
+  });
+});
 </script>
 
 <template>
   <div class="popover-host">
     <transition :duration="200">
-      <div v-if="currentPopover" class="popover"
-           :style="{
-        top: currentPopover.position.y + 'px',
-        left: currentPopover.position.x + 'px',
-    }">
-        <div class="popover-content" :class="currentPopover.anchor" ref="popoverRef">
-          <component :is="currentPopover.component" v-bind="currentPopover.props" :key="currentPopover.id"
-                     :popover="currentPopover"/>
+      <div
+        v-if="currentPopover"
+        class="popover"
+        :style="{
+          top: currentPopover.position.y + 'px',
+          left: currentPopover.position.x + 'px',
+        }"
+      >
+        <div
+          ref="popoverRef"
+          class="popover-content"
+          :class="currentPopover.anchor"
+        >
+          <component
+            :is="currentPopover.component"
+            v-bind="currentPopover.props"
+            :key="currentPopover.id"
+            :popover="currentPopover"
+          />
         </div>
       </div>
     </transition>
@@ -49,7 +61,6 @@ useEventListener('pointerdown', (evt) => {
       z-index: 100;
       overscroll-behavior: contain;
 
-
       &.top {
         bottom: 100%;
       }
@@ -67,11 +78,13 @@ useEventListener('pointerdown', (evt) => {
       }
     }
 
-    &.v-enter-active, &.v-leave-active {
-      transition: all 0.2s cubic-bezier(.06,.69,.43,1.22);
+    &.v-enter-active,
+    &.v-leave-active {
+      transition: all 0.2s cubic-bezier(0.06, 0.69, 0.43, 1.22);
     }
 
-    &.v-enter-from, &.v-leave-to {
+    &.v-enter-from,
+    &.v-leave-to {
       opacity: 0;
       transform: scale(0.8, 0.5);
     }

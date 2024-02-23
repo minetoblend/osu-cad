@@ -1,22 +1,24 @@
-import {fields, payload, TypeNames, variantModule, VariantOf} from "variant";
-import {UserId} from "./user";
-import {Presence} from "./presence";
-import {EditorCommand} from "./commands";
-
+import { fields, payload, TypeNames, variantModule, VariantOf } from 'variant';
+import { UserId } from './user';
+import { Presence } from './presence';
+import { EditorCommand } from './commands';
 
 export const ClientMessage = variantModule({
-  kickUser: fields<{ id: UserId, reason: string, isBan: boolean }>(),
+  kickUser: fields<{ id: UserId; reason: string; isBan: boolean }>(),
   sendChatMessage: fields<{ message: string }>(),
   leave: fields(),
   setPresence: fields<Presence>(),
-  setRole: fields<{ id: UserId, role: string }>(),
+  setRole: fields<{ id: UserId; role: string }>(),
   commands: payload<EditorCommand>(),
-  roll: fields<{}>(),
 });
 
-export type ClientMessage<T extends TypeNames<typeof ClientMessage>> = VariantOf<typeof ClientMessage, T>;
+export type ClientMessage<T extends TypeNames<typeof ClientMessage>> =
+  VariantOf<typeof ClientMessage, T>;
 
-export type VersionedEditorCommand = { command: EditorCommand, version: number };
+export type VersionedEditorCommand = {
+  command: EditorCommand;
+  version: number;
+};
 
 export interface ClientMessages {
   kickUser(id: UserId, reason: string, isBan: boolean): void;

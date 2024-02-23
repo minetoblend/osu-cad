@@ -1,103 +1,128 @@
 <script setup lang="ts">
-import {createEditorClient} from "../editorClient.ts";
-import EventList from "./EventList.vue";
-import UserList from "./UserList.vue";
-import EditorViewport from "./EditorViewport.vue";
-import {frameStats} from "@osucad/client/src/editor/drawables/DrawableSystem.ts";
-import PreferencesOverlay from "@/editor/components/PreferencesOverlay.vue";
-import {isMobile} from "@/util/isMobile.ts";
-import {EditorContext} from "@/editor/editorContext.ts";
-import {promiseTimeout} from "@vueuse/core";
-import LoadingIcon from "@/editor/components/LoadingIcon.vue";
-import gsap from "gsap";
-import {animate, Easing} from "@/editor/drawables/animate.ts";
-import {App} from "@capacitor/app";
-import {useRouter} from "vue-router";
-import {Power3} from 'gsap'
-import {EditorPopoverHost} from "@/editor/components/popover";
+import { createEditorClient } from '../editorClient.ts';
+import EventList from './EventList.vue';
+import UserList from './UserList.vue';
+import EditorViewport from './EditorViewport.vue';
+import PreferencesOverlay from '@/editor/components/PreferencesOverlay.vue';
+import { EditorContext } from '@/editor/editorContext.ts';
+import { promiseTimeout } from '@vueuse/core';
+import LoadingIcon from '@/editor/components/LoadingIcon.vue';
+import gsap, { Power3 } from 'gsap';
+import { animate, Easing } from '@/editor/drawables/animate.ts';
+import { App } from '@capacitor/app';
+import { useRouter } from 'vue-router';
+import { EditorPopoverHost } from '@/editor/components/popover';
 
-const {beatmapId} = defineProps<{
+const { beatmapId } = defineProps<{
   beatmapId: string;
 }>();
 
-const editor = shallowRef<EditorContext>()
-const loadProgress = ref(0)
+const editor = shallowRef<EditorContext>();
+const loadProgress = ref(0);
 
 onMounted(async () => {
-  const progress = ref(0)
-  const stop = watch(progress, progress => {
-    gsap.to(loadProgress, {value: progress * 0.85, duration: 0.75, ease: Power3.easeOut});
-  }, {immediate: true})
+  const progress = ref(0);
+  const stop = watch(
+    progress,
+    (progress) => {
+      gsap.to(loadProgress, {
+        value: progress * 0.85,
+        duration: 0.75,
+        ease: Power3.easeOut,
+      });
+    },
+    { immediate: true },
+  );
 
   const ctx = await createEditorClient(beatmapId, progress);
   stop();
-  const tween = gsap.getTweensOf(loadProgress)[0]
+  const tween = gsap.getTweensOf(loadProgress)[0];
   if (tween && tween.isActive()) {
-    await tween
+    await tween;
   }
 
-  editor.value = ctx
+  editor.value = ctx;
 
-  await until(viewportInitialized).toBeTruthy()
+  await until(viewportInitialized).toBeTruthy();
 
-  await promiseTimeout(100)
+  await promiseTimeout(100);
 
   requestAnimationFrame(() => {
-    gsap.to(loadProgress, {value: 2.5, duration: 1})
-  })
-})
+    gsap.to(loadProgress, { value: 2.5, duration: 1 });
+  });
+});
 
-const router = useRouter()
+const router = useRouter();
 
 App.addListener('backButton', () => {
-  router.replace('/')
-})
+  router.replace('/');
+});
 
-const mobile = isMobile();
+const loadingOpacity = computed(() =>
+  animate(loadProgress.value, 2, 2.5, 1, 0, Easing.inQuad),
+);
 
-const loadingOpacity = computed(() => animate(loadProgress.value, 2, 2.5, 1, 0, Easing.inQuad))
-
-const viewportInitialized = ref(false)
-
+const viewportInitialized = ref(false);
 </script>
 
 <template>
-
   <div class="beatmap-editor">
     <template v-if="editor">
-      <EditorViewport id="viewport" @initialized="viewportInitialized = true"/>
-      <EditorPopoverHost/>
-      <!--    <EditorToolbar id="toolbar"/>-->
-      <!--z    <div class="banner">-->
-      <!--      Currently making changes (trying to add hitsounds), expect frequent reloads and freezes.-->
-      <!--      <div>Ping me on discord if the reloads are becoming too annoying</div>-->
-      <!--    </div>-->
-      <EventList id="event-list"/>
-      <UserList id="user-list"/>
+      <EditorViewport id="viewport" @initialized="viewportInitialized = true" />
+      <EventList id="event-list" />
+      <UserList id="user-list" />
+      <EditorPopoverHost />
       <Teleport to="#navbar-content">
-        <button style="margin-right: 1rem" @click="editor.commandManager.undo()">
+        <button
+          style="margin-right: 1rem"
+          @click="editor.commandManager.undo()"
+        >
           Undo
         </button>
-        <button style="margin-right: 1rem" @click="editor.commandManager.redo()">
+        <button
+          style="margin-right: 1rem"
+          @click="editor.commandManager.redo()"
+        >
           Redo
         </button>
-        <a style="margin-right: 1rem" @click="editor.commandManager.redo()" href="https://discord.gg/JYFTaYDSC6"
-           target="_blank">Report a bug</a>
-        <a class="button" style="margin-right: 1rem" @click="editor.commandManager.redo()"
-           :href="`/api/mapsets/${editor.beatmapManager.beatmap.setId}/export`" target="_blank">Export as .osz</a>
+        <a
+          style="margin-right: 1rem"
+          href="https://discord.gg/JYFTaYDSC6"
+          target="_blank"
+          @click="editor.commandManager.redo()"
+          >Report a bug</a
+        >
+        <a
+          class="button"
+          style="margin-right: 1rem"
+          :href="`/api/mapsets/${editor.beatmapManager.beatmap.setId}/export`"
+          target="_blank"
+          @click="editor.commandManager.redo()"
+          >Export as .osz</a
+        >
         <!--      <button @click="editor.socket.emit('roll')">Roll</button>-->
       </Teleport>
     </template>
 
-    <div id="loading-icon" v-if="loadProgress < 2.5" :style="{ opacity: loadingOpacity }">
+    <div
+      v-if="loadProgress < 2.5"
+      id="loading-icon"
+      :style="{ opacity: loadingOpacity }"
+    >
       <div>
-        <LoadingIcon :progress="loadProgress"/>
-        <QLinearProgress :value="loadProgress" color="primary" rounded instant-feedback size="6px" />
+        <LoadingIcon :progress="loadProgress" />
+        <QLinearProgress
+          :value="loadProgress"
+          color="primary"
+          rounded
+          instant-feedback
+          size="6px"
+        />
       </div>
     </div>
   </div>
 
-  <PreferencesOverlay/>
+  <PreferencesOverlay />
 </template>
 
 <style lang="scss" scoped>

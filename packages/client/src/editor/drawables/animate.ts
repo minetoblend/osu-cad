@@ -1,4 +1,4 @@
-import {clamp} from "@vueuse/core";
+import { clamp } from '@vueuse/core';
 
 export function animate(
   time: number,
@@ -15,13 +15,12 @@ export function animate(
   return startValue + (endValue - startValue) * progress;
 }
 
-
-export namespace Easing {
-  export function inQuad(x: number) {
+export class Easing {
+  static inQuad(x: number) {
     return x * x;
   }
 
-  export function outQuad(x: number) {
+  static outQuad(x: number) {
     return x * (2 - x);
   }
 }

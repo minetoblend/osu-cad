@@ -1,5 +1,5 @@
-import {Component} from "./Component.ts";
-import {Graphics} from "pixi.js";
+import { Component } from './Component.ts';
+import { Graphics } from 'pixi.js';
 
 export interface BoxOptions {
   tint?: number;
@@ -9,7 +9,6 @@ export interface BoxOptions {
 }
 
 export class RoundBox extends Component {
-
   private graphics = new Graphics();
 
   constructor(options: BoxOptions = {}) {
@@ -49,5 +48,4 @@ export class RoundBox extends Component {
     }
     g.fill(0xffffff);
   }
-
 }

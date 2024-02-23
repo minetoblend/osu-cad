@@ -1,18 +1,17 @@
-import {Inject} from "../di";
-import {VIEWPORT_SIZE} from "../injectionKeys.ts";
-import {ISize, Rect} from "@osucad/common";
-import {Box} from "../Box.ts";
-import {ObjectTimeline} from "./ObjectTimeline.ts";
-import {CurrentTimeIndicator} from "./CurrentTimeIndicator.ts";
-import {OverviewTimeline} from "./OverviewTimeline.ts";
-import {TimelineZoom} from "../../TimelineZoom.ts";
-import {PlayButton} from "../PlayButton.ts";
-import {HitSoundTimeline} from "./HitSoundTimeline.ts";
-import {Component} from "@/editor/drawables/Component.ts";
-import {Rectangle} from "pixi.js";
+import { Inject } from '../di';
+import { VIEWPORT_SIZE } from '../injectionKeys.ts';
+import { ISize, Rect } from '@osucad/common';
+import { Box } from '../Box.ts';
+import { ObjectTimeline } from './ObjectTimeline.ts';
+import { CurrentTimeIndicator } from './CurrentTimeIndicator.ts';
+import { OverviewTimeline } from './OverviewTimeline.ts';
+import { TimelineZoom } from '../../TimelineZoom.ts';
+import { PlayButton } from '../PlayButton.ts';
+import { HitSoundTimeline } from './HitSoundTimeline.ts';
+import { Component } from '@/editor/drawables/Component.ts';
+import { Rectangle } from 'pixi.js';
 
 export class TimelineDrawable extends Component {
-
   @Inject(VIEWPORT_SIZE)
   private readonly canvasSize!: ISize;
 
@@ -23,7 +22,7 @@ export class TimelineDrawable extends Component {
   private readonly hitSoundTimeline = new HitSoundTimeline(this.timelineZoom);
 
   private readonly background = new Box({
-    tint: 0x1A1A20,
+    tint: 0x1a1a20,
   });
 
   private readonly timestamp = new CurrentTimeIndicator();
@@ -31,7 +30,15 @@ export class TimelineDrawable extends Component {
   private readonly playButton = new PlayButton();
 
   onLoad() {
-    this.addChild(this.background, this.objectTimeline, this.overviewTimeline, this.timestamp, this.playButton, this.hitSoundTimeline, this.objectTimeline);
+    this.addChild(
+      this.background,
+      this.objectTimeline,
+      this.overviewTimeline,
+      this.timestamp,
+      this.playButton,
+      this.hitSoundTimeline,
+      this.objectTimeline,
+    );
     watchEffect(() => this.updateBounds());
     this.timestamp.position.set(10, 16);
   }
@@ -55,7 +62,7 @@ export class TimelineDrawable extends Component {
     bounds.splitRight(10);
 
     this.objectTimeline.setBounds(bounds.splitTop(55));
-    console.log(this.objectTimeline.y)
+    console.log(this.objectTimeline.y);
     bounds.splitLeft(50);
     this.overviewTimeline.setBounds(bounds);
 
@@ -68,6 +75,4 @@ export class TimelineDrawable extends Component {
     this.scale.set(scale);
     this.hitArea = new Rectangle(0, -10, this.size.x, this.size.y + 10);
   }
-
-
 }

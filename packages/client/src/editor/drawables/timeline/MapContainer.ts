@@ -1,4 +1,4 @@
-import {Container} from "pixi.js";
+import { Container } from 'pixi.js';
 
 export interface MappedContainerOptions<T> {
   createContainer: (key: T) => Container;
@@ -33,7 +33,7 @@ export class MapContainer<T> extends Container {
       }
       container.zIndex = i;
     }
-    this.sortChildren()
+    this.sortChildren();
 
     for (const item of shouldRemove) {
       const container = this.containerMap.get(item);
@@ -41,10 +41,9 @@ export class MapContainer<T> extends Container {
         if ((container as ICanPreventDiscard).canDiscard === false) {
           continue;
         }
-        container.destroy()
+        container.destroy();
       }
       this.containerMap.delete(item);
     }
   }
-
 }

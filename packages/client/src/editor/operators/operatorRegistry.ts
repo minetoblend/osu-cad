@@ -1,12 +1,6 @@
-import {Operator} from "./operator.ts";
+import { Operator } from './operator.ts';
 
-
-export interface OperatorOptions {
-  id: string;
-  label: string;
-}
-
-export function registerOperator(options: OperatorOptions) {
+export function registerOperator() {
   return <T extends Operator>(constructor: new () => T) => {
     return constructor;
   };

@@ -1,4 +1,4 @@
-import * as uuid from "uuid";
+import * as uuid from 'uuid';
 
 export type EncodedUuid = number[];
 
@@ -8,7 +8,11 @@ export function encodeUuid(uuidString: string): number[] {
   // convert to integer - see answers to https://stackoverflow.com/q/39346517/2860309
 
   return Array.from(
-    new Int32Array(parsedUuid.buffer, 0, parsedUuid.byteLength / Int32Array.BYTES_PER_ELEMENT),
+    new Int32Array(
+      parsedUuid.buffer,
+      0,
+      parsedUuid.byteLength / Int32Array.BYTES_PER_ELEMENT,
+    ),
   );
 }
 

@@ -1,16 +1,15 @@
-import {Injectable} from "@nestjs/common";
-import {Repository} from "typeorm";
-import {UserEntity} from "./user.entity";
-import {InjectRepository} from "@nestjs/typeorm";
-import {IOsuProfileInformation} from "../auth/interfaces";
+import { Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { UserEntity } from './user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { IOsuProfileInformation } from '../auth/interfaces';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly repository: Repository<UserEntity>,
-  ) {
-  }
+  ) {}
   async findById(id: number): Promise<UserEntity | null> {
     return this.repository.findOne({
       where: {
@@ -34,5 +33,4 @@ export class UserService {
     }
     return user;
   }
-
 }

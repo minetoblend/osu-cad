@@ -7,16 +7,23 @@ import {
   Slider,
   updateHitObject,
   Vec2,
-} from "@osucad/common";
-import {getHitObjectPositions} from "../tools/snapping/HitObjectSnapProvider.ts";
-import {EditorContext} from "@/editor/editorContext.ts";
-import {onEditorKeyDown} from "@/composables/onEditorKeyDown.ts";
+} from '@osucad/common';
+import { getHitObjectPositions } from '../tools/snapping/HitObjectSnapProvider.ts';
+import { EditorContext } from '@/editor/editorContext.ts';
+import { onEditorKeyDown } from '@/composables/onEditorKeyDown.ts';
 
-export function mirrorHitObjects(editor: EditorContext, axis: "horizontal" | "vertical", bounds: Rect) {
-  if (axis === "horizontal") {
+export function mirrorHitObjects(
+  editor: EditorContext,
+  axis: 'horizontal' | 'vertical',
+  bounds: Rect,
+) {
+  if (axis === 'horizontal') {
     editor.selection.selectedObjects.forEach((hitObject) => {
       const update: Partial<SerializedHitObject & SerializedSlider> = {
-        position: {x: bounds.left + bounds.right - hitObject.position.x, y: hitObject.position.y},
+        position: {
+          x: bounds.left + bounds.right - hitObject.position.x,
+          y: hitObject.position.y,
+        },
       };
 
       if (hitObject instanceof Slider) {
@@ -29,10 +36,13 @@ export function mirrorHitObjects(editor: EditorContext, axis: "horizontal" | "ve
     });
     editor.commandManager.commit();
   }
-  if (axis === "vertical") {
+  if (axis === 'vertical') {
     editor.selection.selectedObjects.forEach((hitObject) => {
       const update: Partial<SerializedHitObject & SerializedSlider> = {
-        position: {x: hitObject.position.x, y: bounds.top + bounds.bottom - hitObject.position.y},
+        position: {
+          x: hitObject.position.x,
+          y: bounds.top + bounds.bottom - hitObject.position.y,
+        },
       };
 
       if (hitObject instanceof Slider) {
@@ -48,44 +58,49 @@ export function mirrorHitObjects(editor: EditorContext, axis: "horizontal" | "ve
 }
 
 export function transformHitObjectsInteraction(editor: EditorContext) {
-
   onEditorKeyDown((evt) => {
-    if (evt.ctrlKey && evt.code === "KeyH") {
+    if (evt.ctrlKey && evt.code === 'KeyH') {
       evt.preventDefault();
       if (editor.selection.size === 0) return;
 
-      const bounds = evt.shiftKey ? Rect.containingPoints(getHitObjectPositions([...editor.selection.selectedObjects]))! : new Rect(0, 0, 512, 384);
-      mirrorHitObjects(editor, "horizontal", bounds);
-    } else if (evt.ctrlKey && evt.code === "KeyJ") {
+      const bounds = evt.shiftKey
+        ? Rect.containingPoints(
+            getHitObjectPositions([...editor.selection.selectedObjects]),
+          )!
+        : new Rect(0, 0, 512, 384);
+      mirrorHitObjects(editor, 'horizontal', bounds);
+    } else if (evt.ctrlKey && evt.code === 'KeyJ') {
       evt.preventDefault();
 
       if (editor.selection.size === 0) return;
 
-      const bounds = evt.shiftKey ? Rect.containingPoints(getHitObjectPositions([...editor.selection.selectedObjects]))! : new Rect(0, 0, 512, 384);
+      const bounds = evt.shiftKey
+        ? Rect.containingPoints(
+            getHitObjectPositions([...editor.selection.selectedObjects]),
+          )!
+        : new Rect(0, 0, 512, 384);
 
-
-      mirrorHitObjects(editor, "vertical", bounds);
-    } else if (evt.ctrlKey && evt.code === "Period") {
+      mirrorHitObjects(editor, 'vertical', bounds);
+    } else if (evt.ctrlKey && evt.code === 'Period') {
       evt.preventDefault();
       const hitObjects = [...editor.selection.selectedObjects];
       rotateHitObjects(editor, hitObjects, Math.PI / 2, evt.shiftKey);
       editor.commandManager.commit();
-    } else if (evt.ctrlKey && evt.code === "Comma") {
+    } else if (evt.ctrlKey && evt.code === 'Comma') {
       evt.preventDefault();
       const hitObjects = [...editor.selection.selectedObjects];
       rotateHitObjects(editor, hitObjects, -Math.PI / 2, evt.shiftKey);
       editor.commandManager.commit();
-    } else if (evt.ctrlKey && evt.code.startsWith("Arrow")) {
+    } else if (evt.ctrlKey && evt.code.startsWith('Arrow')) {
       evt.preventDefault();
-      evt.stopImmediatePropagation()
+      evt.stopImmediatePropagation();
       const hitObjects = [...editor.selection.selectedObjects];
       moveHitObjects(hitObjects, {
-        x: evt.code === "ArrowLeft" ? -1 : evt.code === "ArrowRight" ? 1 : 0,
-        y: evt.code === "ArrowUp" ? -1 : evt.code === "ArrowDown" ? 1 : 0,
+        x: evt.code === 'ArrowLeft' ? -1 : evt.code === 'ArrowRight' ? 1 : 0,
+        y: evt.code === 'ArrowUp' ? -1 : evt.code === 'ArrowDown' ? 1 : 0,
       });
       editor.commandManager.commit();
     }
-
   });
 
   function moveHitObjects(hitObjects: HitObject[], delta: IVec2) {
@@ -94,24 +109,37 @@ export function transformHitObjectsInteraction(editor: EditorContext) {
 
     if (bounds.x + delta.x < 0) delta.x = -bounds.x;
     if (bounds.y + delta.y < 0) delta.y = -bounds.y;
-    if (bounds.x + bounds.width + delta.x > 512) delta.x = 512 - bounds.x - bounds.width;
-    if (bounds.y + bounds.height + delta.y > 384) delta.y = 384 - bounds.y - bounds.height;
+    if (bounds.x + bounds.width + delta.x > 512)
+      delta.x = 512 - bounds.x - bounds.width;
+    if (bounds.y + bounds.height + delta.y > 384)
+      delta.y = 384 - bounds.y - bounds.height;
 
     for (const hitObject of hitObjects) {
-      editor.commandManager.submit(updateHitObject(hitObject, {
-        position: hitObject.position.add(delta),
-      }));
+      editor.commandManager.submit(
+        updateHitObject(hitObject, {
+          position: hitObject.position.add(delta),
+        }),
+      );
     }
   }
-
 }
 
-export function rotateHitObjects(editor: EditorContext, hitObjects: HitObject[], angle: number, aroundCenter: boolean | Vec2) {
+export function rotateHitObjects(
+  editor: EditorContext,
+  hitObjects: HitObject[],
+  angle: number,
+  aroundCenter: boolean | Vec2,
+) {
   if (hitObjects.length === 0) return;
 
   const bounds = Rect.containingPoints(getHitObjectPositions(hitObjects))!;
 
-  const center = aroundCenter instanceof Vec2 ? aroundCenter : (aroundCenter ? bounds.center : new Vec2(256, 192));
+  const center =
+    aroundCenter instanceof Vec2
+      ? aroundCenter
+      : aroundCenter
+        ? bounds.center
+        : new Vec2(256, 192);
 
   for (const hitObject of hitObjects) {
     const newPosition = hitObject.position
@@ -120,16 +148,20 @@ export function rotateHitObjects(editor: EditorContext, hitObjects: HitObject[],
       .add(center);
 
     if (hitObject instanceof Slider) {
-      editor.commandManager.submit(updateHitObject(hitObject, {
-        position: newPosition,
-        path: hitObject.path.controlPoints.map((point) => ({
-          ...point,
-          ...Vec2.from(point).rotate(angle),
-        })),
-      }));
+      editor.commandManager.submit(
+        updateHitObject(hitObject, {
+          position: newPosition,
+          path: hitObject.path.controlPoints.map((point) => ({
+            ...point,
+            ...Vec2.from(point).rotate(angle),
+          })),
+        }),
+      );
     } else
-      editor.commandManager.submit(updateHitObject(hitObject, {
-        position: newPosition,
-      }));
+      editor.commandManager.submit(
+        updateHitObject(hitObject, {
+          position: newPosition,
+        }),
+      );
   }
 }

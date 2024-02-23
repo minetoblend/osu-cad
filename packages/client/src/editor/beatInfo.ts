@@ -1,12 +1,11 @@
-import {Drawable} from "./drawables/Drawable.ts";
-import {Inject} from "./drawables/di";
-import {TickType} from "@osucad/common";
-import {clamp} from "@vueuse/core";
-import {EditorContext} from "@/editor/editorContext.ts";
-import {onEditorKeyDown} from "@/composables/onEditorKeyDown.ts";
+import { Drawable } from './drawables/Drawable.ts';
+import { Inject } from './drawables/di';
+import { TickType } from '@osucad/common';
+import { clamp } from '@vueuse/core';
+import { EditorContext } from '@/editor/editorContext.ts';
+import { onEditorKeyDown } from '@/composables/onEditorKeyDown.ts';
 
 export class BeatInfo extends Drawable {
-
   @Inject(EditorContext)
   editor!: EditorContext;
 
@@ -17,8 +16,8 @@ export class BeatInfo extends Drawable {
 
   constructor() {
     super();
-    this.eventMode = "static";
-    this.hitArea = {contains: () => true};
+    this.eventMode = 'static';
+    this.hitArea = { contains: () => true };
   }
 
   onTick() {
@@ -45,23 +44,25 @@ export class BeatInfo extends Drawable {
   ];
 
   onLoad() {
+    useEventListener(
+      'wheel',
+      (evt) => {
+        if (!evt.ctrlKey) return;
+        evt.preventDefault();
+        evt.stopPropagation();
 
-    useEventListener("wheel", evt => {
-      if (!evt.ctrlKey) return;
-      evt.preventDefault();
-      evt.stopPropagation();
+        let index = BeatInfo.availableBeatsnapTypes.indexOf(this.beatSnap);
+        if (index === -1) index = 1;
+        index += Math.sign(evt.deltaY);
+        index = clamp(index, 0, BeatInfo.availableBeatsnapTypes.length - 1);
+        this.beatSnap = BeatInfo.availableBeatsnapTypes[index];
+        console.log(this.beatSnap);
+      },
+      { passive: false },
+    );
 
-
-      let index = BeatInfo.availableBeatsnapTypes.indexOf(this.beatSnap);
-      if (index === -1) index = 1;
-      index += Math.sign(evt.deltaY);
-      index = clamp(index, 0, BeatInfo.availableBeatsnapTypes.length - 1);
-      this.beatSnap = BeatInfo.availableBeatsnapTypes[index];
-      console.log(this.beatSnap);
-    }, {passive: false});
-
-    onEditorKeyDown(evt => {
-      if (evt.shiftKey && evt.code.startsWith("Digit")) {
+    onEditorKeyDown((evt) => {
+      if (evt.shiftKey && evt.code.startsWith('Digit')) {
         evt.preventDefault();
         evt.stopPropagation();
 
@@ -75,9 +76,8 @@ export class BeatInfo extends Drawable {
   }
 
   snap(time: number) {
-    return this.editor.beatmapManager.controlPoints.snap(time, this.beatSnap)
+    return this.editor.beatmapManager.controlPoints.snap(time, this.beatSnap);
   }
-
 }
 
 function mod(a: number, n: number) {

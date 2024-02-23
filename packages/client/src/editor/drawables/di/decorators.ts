@@ -1,7 +1,6 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 
-const metadataKey = Symbol("dependency-metadata");
-
+const metadataKey = Symbol('dependency-metadata');
 
 export interface InjectionMetadata {
   inject: Injection[];
@@ -13,15 +12,24 @@ export interface Injection {
   propertyKey: string | symbol;
 }
 
-export function getInjectionMetadata(target: any, create: boolean = false): InjectionMetadata {
+export function getInjectionMetadata(
+  target: any,
+  create: boolean = false,
+): InjectionMetadata {
   if (!Reflect.hasOwnMetadata(metadataKey, target) && create) {
-    const existing = Reflect.getMetadata(metadataKey, target) ?? { inject: [], provide: [] };
+    const existing = Reflect.getMetadata(metadataKey, target) ?? {
+      inject: [],
+      provide: [],
+    };
 
-    Reflect.defineMetadata(metadataKey, {
-      inject: [...existing.inject],
-      provide: [...existing.provide],
-    }, target);
-
+    Reflect.defineMetadata(
+      metadataKey,
+      {
+        inject: [...existing.inject],
+        provide: [...existing.provide],
+      },
+      target,
+    );
   }
   return Reflect.getMetadata(metadataKey, target);
 }

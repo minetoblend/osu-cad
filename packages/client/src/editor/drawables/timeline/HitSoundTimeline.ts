@@ -1,16 +1,23 @@
-import {Component} from "../Component.ts";
-import {Box} from "../Box.ts";
-import {Assets, Container, ObservablePoint, Point, Sprite, Texture, TilingSprite} from "pixi.js";
-import {Inject} from "../di";
-import {HitSoundLayerDrawable} from "./HitSoundLayerDrawable.ts";
-import {Rect, TickType} from "@osucad/common";
-import {TimelineZoom} from "../../TimelineZoom.ts";
-import {BeatInfo} from "../../beatInfo.ts";
-import {HitSoundPlacementTool} from "./HitSoundPlacementTool.ts";
-import {EditorContext} from "@/editor/editorContext.ts";
+import { Component } from '../Component.ts';
+import { Box } from '../Box.ts';
+import {
+  Assets,
+  Container,
+  ObservablePoint,
+  Point,
+  Sprite,
+  Texture,
+  TilingSprite,
+} from 'pixi.js';
+import { Inject } from '../di';
+import { HitSoundLayerDrawable } from './HitSoundLayerDrawable.ts';
+import { Rect, TickType } from '@osucad/common';
+import { TimelineZoom } from '../../TimelineZoom.ts';
+import { BeatInfo } from '../../beatInfo.ts';
+import { HitSoundPlacementTool } from './HitSoundPlacementTool.ts';
+import { EditorContext } from '@/editor/editorContext.ts';
 
 export class HitSoundTimeline extends Component {
-
   constructor(private zoom: TimelineZoom) {
     super();
   }
@@ -18,19 +25,17 @@ export class HitSoundTimeline extends Component {
   private placementTool = new HitSoundPlacementTool(this);
 
   private readonly currentTimeMarker = new Sprite({
-    texture: Assets.get("timeline-tick"),
+    texture: Assets.get('timeline-tick'),
     anchor: new Point(0.5, 0.5),
     scale: new Point(0.55, 0.55),
-    tint: 0x63E2B7,
+    tint: 0x63e2b7,
   });
 
-
   background = new Box({
-    tint: 0x1A1A20,
+    tint: 0x1a1a20,
   });
 
   tickContainer = new Container();
-
 
   layerContainer = new Container();
 
@@ -40,7 +45,6 @@ export class HitSoundTimeline extends Component {
   private readonly beatInfo!: BeatInfo;
 
   private readonly tickPool: Tick[] = [];
-
 
   get hitSounds() {
     return this.editor.beatmapManager.beatmap.hitSounds;
@@ -55,7 +59,7 @@ export class HitSoundTimeline extends Component {
       this.placementTool,
       this.currentTimeMarker,
     );
-    this.visible = window.location.search.includes("hitsounds");
+    this.visible = window.location.search.includes('hitsounds');
     this.updateLayers();
   }
 
@@ -72,7 +76,9 @@ export class HitSoundTimeline extends Component {
     for (const layer of this.layerContainer.children) {
       (layer as HitSoundLayerDrawable).size.x = this.size.x;
     }
-    this.placementTool.setBounds(new Rect(250, 0, this.size.x - 260, this.size.y));
+    this.placementTool.setBounds(
+      new Rect(250, 0, this.size.x - 260, this.size.y),
+    );
   }
 
   updateLayers() {
@@ -81,21 +87,32 @@ export class HitSoundTimeline extends Component {
       const layer = this.hitSounds.layers[i];
       const drawable = new HitSoundLayerDrawable(layer, this);
       this.layerContainer.addChild(drawable);
-      drawable.setBounds(new Rect(0, this.size.y - i * layerHeight - layerHeight, this.size.x, layerHeight));
+      drawable.setBounds(
+        new Rect(
+          0,
+          this.size.y - i * layerHeight - layerHeight,
+          this.size.x,
+          layerHeight,
+        ),
+      );
     }
   }
 
   get startTime() {
-    return this.editor.clock.currentTimeAnimated - this.zoom.visibleDuration * 0.4;
+    return (
+      this.editor.clock.currentTimeAnimated - this.zoom.visibleDuration * 0.4
+    );
   }
 
   get endTime() {
-    return this.editor.clock.currentTimeAnimated + this.zoom.visibleDuration * 0.6;
+    return (
+      this.editor.clock.currentTimeAnimated + this.zoom.visibleDuration * 0.6
+    );
   }
 
   onTick() {
     this.updateChildDrawables = this.visible;
-    if(!this.visible) return;
+    if (!this.visible) return;
 
     const controlPoints = this.editor.beatmapManager.controlPoints;
 
@@ -103,9 +120,13 @@ export class HitSoundTimeline extends Component {
 
     const startTime = this.startTime;
     const endTime = this.endTime;
-    const ticks = controlPoints.getTicks(startTime, endTime, this.beatInfo.beatSnap);
+    const ticks = controlPoints.getTicks(
+      startTime,
+      endTime,
+      this.beatInfo.beatSnap,
+    );
 
-    let skipped = 0;
+    const skipped = 0;
     for (let i = 0; i < ticks.length; i++) {
       let tick = this.tickContainer.children[i] as Tick | undefined;
       const x = this.getPositionForTime(ticks[i].time);
@@ -122,25 +143,29 @@ export class HitSoundTimeline extends Component {
       tick.type = ticks[i].type;
     }
     if (ticks.length - skipped < this.tickContainer.children.length)
-      this.tickPool.push(...(this.tickContainer.removeChildren(ticks.length - skipped) as Tick[]));
+      this.tickPool.push(
+        ...(this.tickContainer.removeChildren(
+          ticks.length - skipped,
+        ) as Tick[]),
+      );
 
-    this.tickPool.splice(30).forEach(tick => tick.destroy());
+    this.tickPool.splice(30).forEach((tick) => tick.destroy());
   }
 
   getPositionForTime(time: number) {
-    return 250 + (time - this.startTime) / (this.endTime - this.startTime) * (this.size.x - 260);
+    return (
+      250 +
+      ((time - this.startTime) / (this.endTime - this.startTime)) *
+        (this.size.x - 260)
+    );
   }
-
-
 }
 
 class Tick extends TilingSprite {
   constructor() {
-    super(
-      {
-        texture: Texture.WHITE,
-      },
-    );
+    super({
+      texture: Texture.WHITE,
+    });
     this.anchor.set(0.5, 0);
   }
 

@@ -1,3 +1,3 @@
 export const usePreferencesVisible = createGlobalState(() => {
-  return ref(false)
-})
+  return ref(false);
+});

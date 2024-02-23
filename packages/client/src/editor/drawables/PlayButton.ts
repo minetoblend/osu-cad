@@ -1,15 +1,14 @@
-import {Button} from "./Button.ts";
-import {Assets, Container, ObservablePoint, Point, Sprite} from "pixi.js";
-import {Inject} from "./di";
-import {EditorClock} from "../clock.ts";
-import {PopoverContainer} from "./menu/PopoverContainer.ts";
-import {Menu} from "./menu/Menu.ts";
-import {IVec2} from "@osucad/common";
+import { Button } from './Button.ts';
+import { Assets, Container, ObservablePoint, Point, Sprite } from 'pixi.js';
+import { Inject } from './di';
+import { EditorClock } from '../clock.ts';
+import { PopoverContainer } from './menu/PopoverContainer.ts';
+import { Menu } from './menu/Menu.ts';
+import { IVec2 } from '@osucad/common';
 
 export class PlayButton extends Button {
-
-  private playTexture = Assets.get("play");
-  private pauseTexture = Assets.get("pause");
+  private playTexture = Assets.get('play');
+  private pauseTexture = Assets.get('pause');
 
   private readonly content = new Container();
   private readonly sprite = new Sprite({
@@ -27,10 +26,8 @@ export class PlayButton extends Button {
         evt.stopImmediatePropagation();
         return;
       }
-      if (this.clock.isPlaying)
-        this.clock.pause();
-      else
-        this.clock.play();
+      if (this.clock.isPlaying) this.clock.pause();
+      else this.clock.play();
     };
     this.onpointerenter = () => this.content.scale.set(1.1);
     this.onpointerleave = () => this.content.scale.set(1);
@@ -51,31 +48,29 @@ export class PlayButton extends Button {
   }
 
   onTick() {
-    if (this.clock.isPlaying)
-      this.sprite.texture = this.pauseTexture;
-    else
-      this.sprite.texture = this.playTexture;
+    if (this.clock.isPlaying) this.sprite.texture = this.pauseTexture;
+    else this.sprite.texture = this.playTexture;
   }
 
   @Inject(PopoverContainer)
   popoverContainer!: PopoverContainer;
 
   private showContextMenu(position: IVec2) {
-
     const playbackSpeeds = [0.25, 0.5, 0.75, 1, 1.5];
 
-    this.popoverContainer.show(position, new Menu({
-      items: [
-        ...playbackSpeeds.map(speed => {
-          return {
-            text: speed + "x Playback",
-            tint: this.clock.playbackRate === speed ? 0x63E2B7 : 0xFFFFFF,
-            action: () => this.clock.playbackRate = speed,
-          };
-        }),
-
-      ],
-    }));
+    this.popoverContainer.show(
+      position,
+      new Menu({
+        items: [
+          ...playbackSpeeds.map((speed) => {
+            return {
+              text: speed + 'x Playback',
+              tint: this.clock.playbackRate === speed ? 0x63e2b7 : 0xffffff,
+              action: () => (this.clock.playbackRate = speed),
+            };
+          }),
+        ],
+      }),
+    );
   }
-
 }

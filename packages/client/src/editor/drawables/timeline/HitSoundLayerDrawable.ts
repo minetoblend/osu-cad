@@ -1,53 +1,73 @@
-import {Component} from "../Component.ts";
-import {HitSoundLayer, SampleSet, SampleType} from "@osucad/common";
-import {Container, FillGradient, Graphics, ObservablePoint, Point, Sprite, Text} from "pixi.js";
-import {Box} from "../Box.ts";
-import {getSampleSetColor} from "./CampleSetColors.ts";
-import {HitSoundLayerToggle} from "./HitSoundLayerToggle.ts";
-import {HitSoundLayerVolumeKnob} from "./HitSoundLayerVolumeKnob.ts";
-import {HitSoundTimeline} from "./HitSoundTimeline.ts";
-import {HitSampleDrawable} from "./HitSampleDrawable.ts";
-import gsap from "gsap";
+import { Component } from '../Component.ts';
+import { HitSoundLayer, SampleSet, SampleType } from '@osucad/common';
+import {
+  Container,
+  FillGradient,
+  Graphics,
+  ObservablePoint,
+  Point,
+  Sprite,
+  Text,
+} from 'pixi.js';
+import { Box } from '../Box.ts';
+import { getSampleSetColor } from './CampleSetColors.ts';
+import { HitSoundLayerToggle } from './HitSoundLayerToggle.ts';
+import { HitSoundLayerVolumeKnob } from './HitSoundLayerVolumeKnob.ts';
+import { HitSoundTimeline } from './HitSoundTimeline.ts';
+import { HitSampleDrawable } from './HitSampleDrawable.ts';
+import gsap from 'gsap';
 
 export class HitSoundLayerDrawable extends Component {
-
   highlightGradient: Sprite;
 
-  constructor(public readonly layer: HitSoundLayer, private readonly timeline: HitSoundTimeline) {
+  constructor(
+    public readonly layer: HitSoundLayer,
+    private readonly timeline: HitSoundTimeline,
+  ) {
     super();
     this.layerToggle = new HitSoundLayerToggle(this.layer);
     this.volumeKnob = new HitSoundLayerVolumeKnob(this.layer);
-    this.addChild(this.layerName, this.hoverBackground, this.centerLineHighlight, this.centerLine, this.indicator, this.layerToggle, this.layerToggle, this.volumeKnob, this.sampleContainer);
+    this.addChild(
+      this.layerName,
+      this.hoverBackground,
+      this.centerLineHighlight,
+      this.centerLine,
+      this.indicator,
+      this.layerToggle,
+      this.layerToggle,
+      this.volumeKnob,
+      this.sampleContainer,
+    );
     let name = layer.name;
     if (!name) {
       if (layer.customFilename) {
         name = layer.customFilename;
       } else {
-        name = "";
+        name = '';
         switch (layer.sampleSet) {
           case SampleSet.Soft:
-            name += "soft";
+            name += 'soft';
             break;
           case SampleSet.Normal:
-            name += "normal";
+            name += 'normal';
             break;
           case SampleSet.Drum:
-            name += "drum";
+            name += 'drum';
             break;
         }
-        name += "-";
+        name += '-';
         switch (layer.type) {
           case SampleType.Normal:
-            name += "hitnormal";
+            name += 'hitnormal';
             break;
           case SampleType.Whistle:
-            name += "hitwhistle";
+            name += 'hitwhistle';
             break;
           case SampleType.Finish:
-            name += "hitfinish";
+            name += 'hitfinish';
             break;
           case SampleType.Clap:
-            name += "hitclap";
+            name += 'hitclap';
             break;
         }
       }
@@ -60,9 +80,11 @@ export class HitSoundLayerDrawable extends Component {
 
     gradient.buildLinearGradient();
 
-    this.highlightGradient = this.addChild(new Sprite({
-      texture: gradient.texture,
-    }));
+    this.highlightGradient = this.addChild(
+      new Sprite({
+        texture: gradient.texture,
+      }),
+    );
 
     this.centerLineHighlight.mask = this.highlightGradient;
 
@@ -74,10 +96,9 @@ export class HitSoundLayerDrawable extends Component {
   });
 
   private readonly layerName = new Text({
-    renderMode: "canvas",
-    text: "",
+    text: '',
     style: {
-      fontFamily: "Nunito Sans",
+      fontFamily: 'Nunito Sans',
       fontSize: 15,
       fill: 0xffffff,
     },
@@ -107,9 +128,9 @@ export class HitSoundLayerDrawable extends Component {
   volumeKnob: HitSoundLayerVolumeKnob;
 
   onLoad() {
-    this.eventMode = "static";
-    this.onpointerenter = () => this.hoverBackground.visible = true;
-    this.onpointerleave = () => this.hoverBackground.visible = false;
+    this.eventMode = 'static';
+    this.onpointerenter = () => (this.hoverBackground.visible = true);
+    this.onpointerleave = () => (this.hoverBackground.visible = false);
   }
 
   _onUpdate(point?: ObservablePoint) {
@@ -129,20 +150,25 @@ export class HitSoundLayerDrawable extends Component {
       .clear()
       .moveTo(250, this.size.y * 0.5)
       .lineTo(this.size.x - 10, this.size.y * 0.5)
-      .stroke({ color: 0x000000, alpha: 1, width: 4, cap: "round" });
+      .stroke({ color: 0x000000, alpha: 1, width: 4, cap: 'round' });
 
     this.centerLineHighlight
       .clear()
       .moveTo(250, this.size.y * 0.5)
       .lineTo(this.size.x - 10, this.size.y * 0.5)
-      .stroke({ color: 0xffffff, alpha: 1, width: 7, cap: "round" });
+      .stroke({ color: 0xffffff, alpha: 1, width: 7, cap: 'round' });
 
     this.centerLineHighlight.tint = getSampleSetColor(this.layer.sampleSet);
 
     this.indicator
       .moveTo(242, 3)
       .lineTo(242, this.size.y - 3)
-      .stroke({ color: getSampleSetColor(this.layer.sampleSet), alpha: 1, width: 4, cap: "round" });
+      .stroke({
+        color: getSampleSetColor(this.layer.sampleSet),
+        alpha: 1,
+        width: 4,
+        cap: 'round',
+      });
 
     this.highlightGradient.position.set(250, 0);
     this.highlightGradient.width = this.size.x - 260;
@@ -151,20 +177,21 @@ export class HitSoundLayerDrawable extends Component {
 
   private sampleDrawables = new Map<string, HitSampleDrawable>();
 
-
   onTick() {
     this.alpha = this.layer.enabled ? 1 : 0.5;
     const startTime = this.timeline.startTime;
     const endTime = this.timeline.endTime;
 
-    const samples = this.layer.samples.filter(it => it.time >= startTime && it.time <= endTime);
+    const samples = this.layer.samples.filter(
+      (it) => it.time >= startTime && it.time <= endTime,
+    );
 
     const shouldDelete = new Set(this.sampleDrawables.keys());
     for (const sample of samples) {
       shouldDelete.delete(sample.id);
       let drawable = this.sampleDrawables.get(sample.id);
       if (!drawable) {
-        drawable = new HitSampleDrawable(this, sample);
+        drawable = new HitSampleDrawable(sample);
         this.sampleDrawables.set(sample.id, drawable);
         this.sampleContainer.addChild(drawable);
       }
@@ -190,7 +217,7 @@ export class HitSoundLayerDrawable extends Component {
     gsap.to(this.indicator, {
       alpha: 0.2,
       duration: 0.5,
-      ease: "power3.out",
+      ease: 'power3.out',
     });
 
     gsap.killTweensOf(this.centerLineHighlight);
@@ -198,7 +225,7 @@ export class HitSoundLayerDrawable extends Component {
     gsap.to(this.centerLineHighlight, {
       alpha: 0,
       duration: 0.5,
-      ease: "power3.out",
+      ease: 'power3.out',
     });
   }
 }

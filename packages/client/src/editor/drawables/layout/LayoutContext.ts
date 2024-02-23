@@ -1,10 +1,5 @@
-import {Vec2} from "@osucad/common";
+import { Vec2 } from '@osucad/common';
 
 export class LayoutContext {
-
-  constructor(
-    public canvasSize: Vec2,
-  ) {
-  }
-
+  constructor(public canvasSize: Vec2) {}
 }

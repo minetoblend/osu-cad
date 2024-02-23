@@ -1,10 +1,9 @@
-import {HitObject, HitObjectType} from "./hitObject";
-import {SerializedHitCircle} from "../types";
-import {Vec2} from "../math";
-import {Additions, defaultHitSound, getSamples, HitSample, HitSound, SampleSet, SampleType} from "./hitSound";
+import { HitObject, HitObjectType } from './hitObject';
+import { SerializedHitCircle } from '../types';
+import { Vec2 } from '../math';
+import { getSamples, HitSample } from './hitSound';
 
 export class HitCircle extends HitObject {
-
   readonly type = HitObjectType.Circle;
 
   constructor(options?: SerializedHitCircle) {
@@ -18,7 +17,7 @@ export class HitCircle extends HitObject {
   serialize(): SerializedHitCircle {
     return {
       id: this.id,
-      type: "circle",
+      type: 'circle',
       position: this.position,
       newCombo: this.isNewCombo,
       startTime: this.startTime,
@@ -35,5 +34,4 @@ export class HitCircle extends HitObject {
   calculateHitSamples(): HitSample[] {
     return getSamples(this.hitSound, this.startTime);
   }
-
 }

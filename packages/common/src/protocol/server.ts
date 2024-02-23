@@ -1,31 +1,36 @@
-import {fields, TypeNames, variantModule, VariantOf} from "variant";
-import {UserId, UserRole, UserSessionInfo} from "./user";
-import {SerializedBeatmap, SerializedMapset} from "./beatmap";
-import {ChatHistory, ChatMessage} from "./chat";
-import {UserActivity} from "./presence";
-import {UserInfo} from "../types";
-import {VersionedEditorCommand} from "./client";
+import { fields, TypeNames, variantModule, VariantOf } from 'variant';
+import { UserId, UserRole, UserSessionInfo } from './user';
+import { SerializedBeatmap, SerializedMapset } from './beatmap';
+import { ChatHistory, ChatMessage } from './chat';
+import { UserActivity } from './presence';
+import { UserInfo } from '../types';
 
 export const ServerMessage = variantModule({
-  roomState: fields<{ users: UserSessionInfo[], mapset: SerializedMapset, chat: ChatHistory }>(),
+  roomState: fields<{
+    users: UserSessionInfo[];
+    mapset: SerializedMapset;
+    chat: ChatHistory;
+  }>(),
   userJoined: fields<{ user: UserSessionInfo }>(),
-  userLeft: fields<{ user: UserInfo, reason: LeaveReason }>(),
-  kicked: fields<{ reason: string, isBan: boolean }>(),
+  userLeft: fields<{ user: UserInfo; reason: LeaveReason }>(),
+  kicked: fields<{ reason: string; isBan: boolean }>(),
   chatMessage: fields<ChatMessage>(),
-  userActivity: fields<{ user: UserId, activity: UserActivity }>(),
-  userRoleChanged: fields<{ id: UserInfo, role: UserRole }>(),
+  userActivity: fields<{ user: UserId; activity: UserActivity }>(),
+  userRoleChanged: fields<{ id: UserInfo; role: UserRole }>(),
 });
 
-export type ServerMessage<T extends TypeNames<typeof ServerMessage> = undefined> = VariantOf<typeof ServerMessage, T>;
+export type ServerMessage<
+  T extends TypeNames<typeof ServerMessage> = undefined,
+> = VariantOf<typeof ServerMessage, T>;
 
-type LeaveReason = "disconnected" | "kicked" | "banned";
+type LeaveReason = 'disconnected' | 'kicked' | 'banned';
 
 export interface ServerMessages {
   roomState(payload: {
-    users: UserSessionInfo[],
-    beatmap: SerializedBeatmap,
-    chat: ChatHistory,
-    ownUser: UserSessionInfo
+    users: UserSessionInfo[];
+    beatmap: SerializedBeatmap;
+    chat: ChatHistory;
+    ownUser: UserSessionInfo;
   }): void;
 
   userJoined(user: UserSessionInfo): void;

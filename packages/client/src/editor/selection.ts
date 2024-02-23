@@ -1,13 +1,12 @@
-import {BeatmapManager} from "./beatmapManager.ts";
-import {HitObject, HitSoundSample} from "@osucad/common";
+import { BeatmapManager } from './beatmapManager.ts';
+import { HitObject, HitSoundSample } from '@osucad/common';
 
 export class SelectionManager {
-
   constructor(beatmapManager: BeatmapManager) {
-    this.hitObjectSelected.on(h => h.isSelected = true);
-    this.hitObjectDeselected.on(h => h.isSelected = false);
+    this.hitObjectSelected.on((h) => (h.isSelected = true));
+    this.hitObjectDeselected.on((h) => (h.isSelected = false));
 
-    beatmapManager.hitObjects.onRemoved.addListener(h => {
+    beatmapManager.hitObjects.onRemoved.addListener((h) => {
       this.remove(h);
     });
   }
@@ -67,5 +66,4 @@ export class SelectionManager {
 
   hitObjectSelected = createEventHook<HitObject>();
   hitObjectDeselected = createEventHook<HitObject>();
-
 }

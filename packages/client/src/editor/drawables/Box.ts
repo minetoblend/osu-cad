@@ -1,4 +1,4 @@
-import {Sprite, Texture} from "pixi.js";
+import { Sprite, Texture } from 'pixi.js';
 
 export interface BoxOptions {
   tint?: number;
@@ -24,5 +24,4 @@ export class Box extends Sprite {
     this.width = width;
     this.height = height;
   }
-
 }

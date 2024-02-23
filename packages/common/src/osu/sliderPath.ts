@@ -1,17 +1,13 @@
-import {PathType, SerializedPathPoint} from "../types";
-import {Vec2} from "../math";
-import {PathApproximator, Vector2} from "osu-classes";
-import {clamp} from "@vueuse/core";
+import { PathType, SerializedPathPoint } from '../types';
+import { Vec2 } from '../math';
+import { PathApproximator, Vector2 } from 'osu-classes';
+import { clamp } from '@vueuse/core';
 
 export class SliderPath {
-
   controlPoints: SerializedPathPoint[];
   private _expectedDistance = 0;
 
-  constructor(
-    path: SerializedPathPoint[] = [],
-    expectedDistance: number = 0,
-  ) {
+  constructor(path: SerializedPathPoint[] = [], expectedDistance: number = 0) {
     this.controlPoints = path;
     this._expectedDistance = expectedDistance;
   }
@@ -106,7 +102,7 @@ export class SliderPath {
           points.push(new Vec2(point.x, point.y));
           cumulativeDistance.push(
             cumulativeDistance[cumulativeDistance.length - 1] +
-            Vec2.distance(last, point),
+              Vec2.distance(last, point),
           );
         }
 
@@ -135,21 +131,19 @@ export class SliderPath {
   }
 
   getRange(start: number, end: number) {
-    let d0 = start;
-    let d1 = end;
+    const d0 = start;
+    const d1 = end;
 
     let i = 0;
 
     const calculatedPath = this.calculatedPath;
-    const cumulativeDistance = this._cumulativeDistance;
+    const cumulativeDistance = this.cumulativeDistance;
 
-    for (; i < calculatedPath.length && cumulativeDistance[i] < d0; ++i) {
-    }
+    for (; i < calculatedPath.length && cumulativeDistance[i] < d0; ++i) {}
 
     const path: Vec2[] = [];
     path.push(this.interpolateVertices(i, d0));
 
-    const t = i;
     for (; i < calculatedPath.length && cumulativeDistance[i] <= d1; ++i) {
       const p = calculatedPath[i];
       if (!Vec2.equals(path[path.length - 1], p)) path.push(p);
@@ -168,11 +162,11 @@ export class SliderPath {
     if (i >= this.calculatedPath.length)
       return this.calculatedPath[this.calculatedPath.length - 1];
 
-    let p0 = this.calculatedPath[i - 1];
-    let p1 = this.calculatedPath[i];
+    const p0 = this.calculatedPath[i - 1];
+    const p1 = this.calculatedPath[i];
 
-    let d0 = this._cumulativeDistance[i - 1];
-    let d1 = this._cumulativeDistance[i];
+    const d0 = this.cumulativeDistance[i - 1];
+    const d1 = this.cumulativeDistance[i];
 
     // Avoid division by and almost-zero number in case two points are extremely close to each other.
     if (Math.abs(d0 - d1) < 0.001) return p0;
@@ -185,7 +179,7 @@ export class SliderPath {
     if (this.calculatedPath.length <= 1) return new Vec2();
     let i = 0;
     const calculatedPath = this.calculatedPath;
-    const cumulativeDistance = this._cumulativeDistance;
+    const cumulativeDistance = this.cumulativeDistance;
     while (i < cumulativeDistance.length - 1) {
       if (cumulativeDistance[i + 1] > d) break;
       i++;
@@ -193,8 +187,7 @@ export class SliderPath {
 
     const start = calculatedPath[i];
     const end = calculatedPath[i + 1];
-    const distance =
-      cumulativeDistance[i + 1] - cumulativeDistance[i];
+    const distance = cumulativeDistance[i + 1] - cumulativeDistance[i];
     let t = (d - cumulativeDistance[i]) / distance;
 
     t = clamp(t, 0, 1);
@@ -206,5 +199,4 @@ export class SliderPath {
       start.y + (end.y - start.y) * t,
     );
   }
-
 }

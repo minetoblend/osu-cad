@@ -1,30 +1,28 @@
 <script setup lang="ts">
-import axios from "axios";
-import {MapsetInfo} from "@osucad/common";
-import MapsetCard from "@/components/beatmap/MapsetCard.vue";
-import ImportOszCard from "../components/beatmap/ImportOszCard.vue";
-import {useCurrentUser} from "../composables/useCurrentUser.ts";
+import axios from 'axios';
+import { MapsetInfo } from '@osucad/common';
+import MapsetCard from '@/components/beatmap/MapsetCard.vue';
+import ImportOszCard from '../components/beatmap/ImportOszCard.vue';
+import { useCurrentUser } from '../composables/useCurrentUser.ts';
 
-const {state: mapsets} = useAsyncState<MapsetInfo[]>(() => axios.get("/api/mapsets/own").then(res => res.data), []);
+const { state: mapsets } = useAsyncState<MapsetInfo[]>(
+  () => axios.get('/api/mapsets/own').then((res) => res.data),
+  [],
+);
 
-watchEffect(() => {
-  console.log(mapsets.value);
-})
-
-const {user} = useCurrentUser();
+const { user } = useCurrentUser();
 
 function onImported(mapset: MapsetInfo) {
   mapsets.value = [mapset, ...mapsets.value];
 }
-
 </script>
 
 <template>
   <div class="page">
     <div class="mapsets">
-      <ImportOszCard @imported="onImported" v-if="user"/>
+      <ImportOszCard v-if="user" @imported="onImported" />
       <template v-for="mapset in mapsets" :key="mapset.id">
-        <MapsetCard :mapset="mapset"/>
+        <MapsetCard :mapset="mapset" />
       </template>
     </div>
   </div>

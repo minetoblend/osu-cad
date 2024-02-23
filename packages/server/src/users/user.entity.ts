@@ -1,7 +1,7 @@
-import {Column, CreateDateColumn, Entity, PrimaryColumn} from "typeorm";
-import {UserInfo} from "@osucad/common";
+import { Column, CreateDateColumn, Entity, PrimaryColumn } from 'typeorm';
+import { UserInfo } from '@osucad/common';
 
-@Entity("users")
+@Entity('users')
 export class UserEntity {
   @PrimaryColumn()
   id: number;
@@ -22,5 +22,4 @@ export class UserEntity {
       avatarUrl: this.avatarUrl,
     };
   }
-
 }

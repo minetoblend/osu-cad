@@ -1,5 +1,5 @@
-import {HitObject, Slider, updateHitObject, Vec2} from "@osucad/common";
-import {EditorContext} from "@/editor/editorContext.ts";
+import { HitObject, Slider, updateHitObject, Vec2 } from '@osucad/common';
+import { EditorContext } from '@/editor/editorContext.ts';
 
 export function mirrorAlongAxis(
   hitObjects: HitObject[],
@@ -7,7 +7,6 @@ export function mirrorAlongAxis(
   axisTo: Vec2,
   editor: EditorContext,
 ) {
-
   for (const hitObject of hitObjects) {
     const position = hitObject.position;
     const angle = Math.atan2(axisTo.y - axisFrom.y, axisTo.x - axisFrom.x);
@@ -23,10 +22,7 @@ export function mirrorAlongAxis(
       const controlPoints = [...hitObject.path.controlPoints];
       for (let i = 0; i < controlPoints.length; i++) {
         const pos = Vec2.from(controlPoints[i]);
-        const newPos = pos
-          .rotate(-angle)
-          .mul(new Vec2(1, -1))
-          .rotate(angle);
+        const newPos = pos.rotate(-angle).mul(new Vec2(1, -1)).rotate(angle);
 
         controlPoints[i] = {
           ...controlPoints[i],
@@ -35,17 +31,20 @@ export function mirrorAlongAxis(
         };
       }
 
-      editor.commandManager.submit(updateHitObject(hitObject, {
-        position: mirroredPosition,
-        path: controlPoints,
-      }));
+      editor.commandManager.submit(
+        updateHitObject(hitObject, {
+          position: mirroredPosition,
+          path: controlPoints,
+        }),
+      );
       continue;
     }
 
-
-    editor.commandManager.submit(updateHitObject(hitObject, {
-      position: mirroredPosition,
-    }));
+    editor.commandManager.submit(
+      updateHitObject(hitObject, {
+        position: mirroredPosition,
+      }),
+    );
   }
 
   editor.commandManager.commit();

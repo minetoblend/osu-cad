@@ -52,12 +52,11 @@ export function getSamples(hitSound: HitSound, time: number): HitSample[] {
       sampleSet: hitSound.sampleSet,
       index: hitSound.index,
       volume: 1.0,
-    }
+    },
   ];
 
   let additionSet = hitSound.additionSet;
-  if(additionSet === SampleSet.Auto)
-    additionSet = hitSound.sampleSet;
+  if (additionSet === SampleSet.Auto) additionSet = hitSound.sampleSet;
 
   if (hitSound.additions & Additions.Whistle) {
     samples.push({

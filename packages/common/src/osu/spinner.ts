@@ -1,13 +1,11 @@
-import {HitObject, HitObjectType} from "./hitObject";
-import {SerializedSpinner} from "../types";
-import {Vec2} from "../math";
-import {HitSample} from "./hitSound";
+import { HitObject, HitObjectType } from './hitObject';
+import { SerializedSpinner } from '../types';
+import { Vec2 } from '../math';
+import { HitSample } from './hitSound';
 
 const spinnerPosition = new Vec2(256, 192);
 
 export class Spinner extends HitObject {
-
-
   constructor(options?: SerializedSpinner) {
     super(options);
     if (options) {
@@ -26,14 +24,13 @@ export class Spinner extends HitObject {
   set duration(value: number) {
     if (value === this._duration) return;
     this._duration = value;
-    this.onUpdate.emit("duration");
+    this.onUpdate.emit('duration');
   }
-
 
   serialize(): SerializedSpinner {
     return {
       id: this.id,
-      type: "spinner",
+      type: 'spinner',
       position: this.position,
       newCombo: this.isNewCombo,
       attribution: this.attribution,
@@ -72,5 +69,4 @@ export class Spinner extends HitObject {
   calculateHitSamples(): HitSample[] {
     return [];
   }
-
 }

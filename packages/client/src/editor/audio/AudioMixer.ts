@@ -1,10 +1,7 @@
-import {usePreferences} from "@/composables/usePreferences.ts";
+import { usePreferences } from '@/composables/usePreferences.ts';
 
 export class AudioMixer {
-
-  constructor(
-      private readonly ctx: AudioContext
-  ) {
+  constructor(ctx: AudioContext) {
     this.master = ctx.createGain();
     this.music = ctx.createGain();
     this.ui = ctx.createGain();
@@ -16,7 +13,7 @@ export class AudioMixer {
 
     this.master.connect(ctx.destination);
 
-    const {preferences, loaded} = usePreferences();
+    const { preferences, loaded } = usePreferences();
 
     watchEffect(() => {
       if (!loaded.value) return;
@@ -25,7 +22,7 @@ export class AudioMixer {
       this.music.gain.value = preferences.audio.musicVolume / 100;
       this.ui.gain.value = preferences.audio.uiVolume / 100;
       this.hitsounds.gain.value = preferences.audio.hitsoundVolume / 100;
-    })
+    });
   }
 
   readonly master: GainNode;

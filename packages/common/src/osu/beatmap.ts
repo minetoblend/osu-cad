@@ -6,13 +6,13 @@ import {
   SerializedBeatmapGeneral,
   SerializedMapset,
   SerializedMapsetMetadata,
-} from "../protocol";
-import {UserInfo} from "../types";
-import {ControlPointManager} from "./controlPointManager";
-import {HitObjectManager} from "./hitObjectManager";
-import {EditorBookmark} from "./bookmark";
-import {Action} from "../util/action";
-import {defaultHitSoundLayers, HitSoundManager} from "./hitSoundManager";
+} from '../protocol';
+import { UserInfo } from '../types';
+import { ControlPointManager } from './controlPointManager';
+import { HitObjectManager } from './hitObjectManager';
+import { EditorBookmark } from './bookmark';
+import { Action } from '../util/action';
+import { defaultHitSoundLayers, HitSoundManager } from './hitSoundManager';
 
 export class Mapset {
   public id: string;
@@ -32,7 +32,6 @@ export class Mapset {
       metadata: this.meatadata.serialize(),
     };
   }
-
 }
 
 export class Beatmap {
@@ -52,26 +51,34 @@ export class Beatmap {
 
   readonly onBookmarksChanged = new Action();
 
-  constructor(
-    options: SerializedBeatmap,
-  ) {
+  constructor(options: SerializedBeatmap) {
     this.id = options.id;
     this.setId = options.setId;
     this.metadata = new MapsetMetadata(options.metadata);
     this.name = options.name;
-    this.general = options.general ?? {stackLeniency: 0.7};
+    this.general = options.general ?? { stackLeniency: 0.7 };
     this.controlPoints = new ControlPointManager(options.controlPoints);
     this.difficulty = options.difficulty;
-    this.hitObjects = new HitObjectManager(options.hitObjects, this.difficulty, this.controlPoints, this.general);
-    this.bookmarks = options.bookmarks.map(bookmark => new EditorBookmark(bookmark)).filter(it => it.time != undefined);
+    this.hitObjects = new HitObjectManager(
+      options.hitObjects,
+      this.difficulty,
+      this.controlPoints,
+      this.general,
+    );
+    this.bookmarks = options.bookmarks
+      .map((bookmark) => new EditorBookmark(bookmark))
+      .filter((it) => it.time != undefined);
     this.backgroundPath = options.backgroundPath;
-    this.colors = options.colors.map(color => parseInt(color.substr(1, 6), 16));
+    this.colors = options.colors.map((color) =>
+      parseInt(color.substr(1, 6), 16),
+    );
     this.audioFilename = options.audioFilename;
     if (this.colors.length === 0) {
       this.colors = [0xff0000, 0x00ff00, 0x0000ff];
     }
-    this.hitSounds = new HitSoundManager(options.hitSounds ?? {layers: defaultHitSoundLayers()});
-
+    this.hitSounds = new HitSoundManager(
+      options.hitSounds ?? { layers: defaultHitSoundLayers() },
+    );
   }
 
   serialize(): SerializedBeatmap {
@@ -83,9 +90,9 @@ export class Beatmap {
       controlPoints: this.controlPoints.serialize(),
       hitObjects: this.hitObjects.serialize(),
       difficulty: this.difficulty,
-      bookmarks: this.bookmarks.map(bookmark => bookmark.serialize()),
+      bookmarks: this.bookmarks.map((bookmark) => bookmark.serialize()),
       backgroundPath: this.backgroundPath,
-      colors: this.colors.map(color => "#" + color.toString(16)),
+      colors: this.colors.map((color) => '#' + color.toString(16)),
       audioFilename: this.audioFilename,
       general: this.general,
       hitSounds: this.hitSounds.serialize(),

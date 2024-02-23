@@ -1,7 +1,6 @@
 <template>
   <div class="oc-btn-group">
-    <slot>
-    </slot>
+    <slot />
   </div>
 </template>
 
@@ -9,7 +8,7 @@
 .oc-btn-group {
   display: flex;
 
-  >.oc-btn {
+  > .oc-btn {
     &:not(:last-child) {
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
@@ -20,10 +19,6 @@
       border-bottom-left-radius: 0;
       border-left-width: 0;
     }
-
-
   }
 }
-
-
 </style>

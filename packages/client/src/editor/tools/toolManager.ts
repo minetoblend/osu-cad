@@ -1,16 +1,9 @@
-import {ShallowRef} from "vue";
-import {ComposeTool} from "./ComposeTool.ts";
-import {SelectTool} from "./SelectTool.ts";
-import {NoArgsConstructor, Vec2} from "@osucad/common";
-
-interface ToolInfo {
-  tool: NoArgsConstructor<ComposeTool>;
-  name: string;
-  icon: string;
-}
+import { ShallowRef } from 'vue';
+import { ComposeTool } from './ComposeTool.ts';
+import { SelectTool } from './SelectTool.ts';
+import { Vec2 } from '@osucad/common';
 
 export class ToolManager {
-
   constructor(tool: ComposeTool = new SelectTool()) {
     this.activeTool = tool;
   }

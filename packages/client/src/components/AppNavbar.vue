@@ -1,40 +1,36 @@
 <script setup lang="ts">
-import UserAvatar from "./UserAvatar.vue";
-import {useCurrentUser} from "../composables/useCurrentUser.ts";
-import {isMobile} from "@/util/isMobile.ts";
-import {useRoute} from "vue-router";
+import UserAvatar from './UserAvatar.vue';
+import { useCurrentUser } from '../composables/useCurrentUser.ts';
+import { isMobile } from '@/util/isMobile.ts';
+import { useRoute } from 'vue-router';
 
 const mobile = isMobile();
 
-const {user} = useCurrentUser();
+const { user } = useCurrentUser();
 const loginUrl = computed(() => {
   return `/auth/login?redirect=${encodeURIComponent(window.location.pathname)}`;
 });
 
 const route = useRoute();
 const isVisible = computed(() => {
-  console.log(route.fullPath)
-  if (route.fullPath.startsWith('/edit') && mobile) return false
-  return true
-})
+  console.log(route.fullPath);
+  if (route.fullPath.startsWith('/edit') && mobile) return false;
+  return true;
+});
 </script>
 
 <template>
-  <nav class="oc-navbar" v-show="isVisible">
+  <nav v-show="isVisible" class="oc-navbar">
     <RouterLink class="oc-navbar-logo" to="/">
-      <img src="@/assets/logo-text.svg" alt="osucad logo" height="48">
+      <img src="@/assets/logo-text.svg" alt="osucad logo" height="48" />
     </RouterLink>
-    <div id="navbar-content">
-
-    </div>
-    <div class="spacer"></div>
-    <RouterLink class="oc-current-user" v-if="user" :to="`/users/${user.id}`">
-      <UserAvatar :id="user.id"/>
+    <div id="navbar-content" />
+    <div class="spacer" />
+    <RouterLink v-if="user" class="oc-current-user" :to="`/users/${user.id}`">
+      <UserAvatar :id="user.id" />
       {{ user.username }}
     </RouterLink>
-    <a v-else :href="loginUrl">
-      log in with osu!
-    </a>
+    <a v-else :href="loginUrl"> log in with osu! </a>
   </nav>
 </template>
 
@@ -49,7 +45,7 @@ const isVisible = computed(() => {
   padding: 0 1em;
 
   .spacer {
-    flex-grow: 1
+    flex-grow: 1;
   }
 }
 
@@ -64,5 +60,4 @@ const isVisible = computed(() => {
     height: 48px;
   }
 }
-
 </style>

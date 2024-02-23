@@ -1,14 +1,14 @@
-import {SampleSet} from "@osucad/common";
+import { SampleSet } from '@osucad/common';
 
 export function getSampleSetColor(sampleSet: SampleSet) {
   switch (sampleSet) {
     case SampleSet.Soft:
-      return 0x63E2B7;
+      return 0x63e2b7;
     case SampleSet.Normal:
-      return 0xFE7C9A;
+      return 0xfe7c9a;
     case SampleSet.Drum:
-      return 0xFFE660;
+      return 0xffe660;
     default:
-      return 0xAAAAAA;
+      return 0xaaaaaa;
   }
 }

@@ -1,10 +1,14 @@
-import {HitObject, Vec2} from "@osucad/common";
-import {HitObjectDrawable} from "./hitObjects/HitObjectDrawable.ts";
-import {EditorClock} from "../clock.ts";
+import { HitObject, Vec2 } from '@osucad/common';
+import { HitObjectDrawable } from './hitObjects/HitObjectDrawable.ts';
+import { EditorClock } from '../clock.ts';
 
 const maxDepth = 100;
 
-export function applyDepth(drawable: HitObjectDrawable, hitObject: HitObject, clock: EditorClock) {
+export function applyDepth(
+  drawable: HitObjectDrawable,
+  hitObject: HitObject,
+  clock: EditorClock,
+) {
   const timePreempt = hitObject.timePreempt;
   const speed = maxDepth / timePreempt;
   const appearTime = hitObject.startTime - timePreempt;
@@ -12,7 +16,9 @@ export function applyDepth(drawable: HitObjectDrawable, hitObject: HitObject, cl
   const z = maxDepth - (Math.max(time, appearTime) - appearTime) * speed;
 
   const scale = scaleForDepth(z);
-  drawable.position.copyFrom(toPlayfieldPosition(scale, hitObject.stackedPosition));
+  drawable.position.copyFrom(
+    toPlayfieldPosition(scale, hitObject.stackedPosition),
+  );
   drawable.scale.set(hitObject.scale * scale);
 
   drawable.hitObject.depthInfo = {
@@ -29,10 +35,6 @@ const cameraPosition = {
 
 function scaleForDepth(depth: number) {
   return -cameraPosition.z / Math.max(1, depth - cameraPosition.z);
-}
-
-function depthForScale(scale: number) {
-  return -cameraPosition.z * scale + cameraPosition.z;
 }
 
 function toPlayfieldPosition(scale: number, positionAtZeroDepth: Vec2) {

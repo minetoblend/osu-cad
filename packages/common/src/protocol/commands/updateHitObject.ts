@@ -1,14 +1,14 @@
-import {CommandContext, CommandHandler} from "../command";
-import {SerializedHitObject} from "../../types";
-import {HitObject} from "../../osu";
-import {EditorCommand} from "./index";
+import { CommandHandler } from '../command';
+import { SerializedHitObject } from '../../types';
+import { HitObject } from '../../osu';
+import { EditorCommand } from './index';
 
 export interface UpdateHitObjectCommand {
   hitObject: string;
   update: Partial<SerializedHitObject>;
 }
 
-const key = "_pendingInfo";
+const key = '_pendingInfo';
 
 interface PendingInfo {
   [key: string]: number;
@@ -24,7 +24,6 @@ export const UpdateHitObjectHandler: CommandHandler<UpdateHitObjectCommand> = {
         setPendingInfo(hitObject, key, context.version);
       }
       hitObject.patch(command.update);
-
     } else if (context.own) {
       const pending = getPendingInfo(hitObject);
       for (const key in command.update) {
@@ -47,21 +46,24 @@ export const UpdateHitObjectHandler: CommandHandler<UpdateHitObjectCommand> = {
     const hitObject = context.hitObjects.getById(command.hitObject);
     if (!hitObject) return;
 
-    let update = {} as any;
+    const update = {} as any;
     const serialized = hitObject.serialize();
     for (const key in command.update) {
       update[key] = serialized[key];
     }
     return {
-      type: "updateHitObject",
+      type: 'updateHitObject',
       hitObject: command.hitObject,
       update: update,
     };
   },
-  merge(a: UpdateHitObjectCommand, b: UpdateHitObjectCommand, context: CommandContext): EditorCommand | undefined {
+  merge(
+    a: UpdateHitObjectCommand,
+    b: UpdateHitObjectCommand,
+  ): EditorCommand | undefined {
     if (a.hitObject === b.hitObject) {
       return {
-        type: "updateHitObject",
+        type: 'updateHitObject',
         hitObject: a.hitObject,
         update: {
           ...a.update,
@@ -71,7 +73,6 @@ export const UpdateHitObjectHandler: CommandHandler<UpdateHitObjectCommand> = {
     }
   },
 };
-
 
 function getPendingInfo(hitObject: HitObject) {
   if (!hitObject[key]) {

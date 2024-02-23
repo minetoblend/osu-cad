@@ -1,4 +1,4 @@
-import {UserInfo} from "../types";
+import { UserInfo } from '../types';
 
 export interface ChatHistory {
   messages: ChatMessage[];

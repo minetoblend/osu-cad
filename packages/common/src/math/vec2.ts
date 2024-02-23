@@ -4,7 +4,6 @@ export interface IVec2 {
 }
 
 export class Vec2 implements IVec2 {
-
   constructor();
   constructor(xy: number);
   constructor(x: number, y: number);
@@ -12,8 +11,7 @@ export class Vec2 implements IVec2 {
   constructor(
     public x: number = 0,
     public y: number = x,
-  ) {
-  }
+  ) {}
 
   static from(other: IVec2) {
     return new Vec2(other.x, other.y);
@@ -79,10 +77,7 @@ export class Vec2 implements IVec2 {
   }
 
   static lerp(a: IVec2, b: IVec2, w: number) {
-    return new Vec2(
-      a.x + (b.x - a.x) * w,
-      a.y + (b.y - a.y) * w,
-    );
+    return new Vec2(a.x + (b.x - a.x) * w, a.y + (b.y - a.y) * w);
   }
 
   static dot(a: IVec2, b: IVec2) {
@@ -108,10 +103,7 @@ export class Vec2 implements IVec2 {
   static rotate(a: IVec2, angle: number) {
     const cos = Math.cos(angle);
     const sin = Math.sin(angle);
-    return new Vec2(
-      a.x * cos - a.y * sin,
-      a.x * sin + a.y * cos,
-    );
+    return new Vec2(a.x * cos - a.y * sin, a.x * sin + a.y * cos);
   }
 
   add(other: IVec2) {
@@ -149,5 +141,4 @@ export class Vec2 implements IVec2 {
   rotate(angle: number) {
     return Vec2.rotate(this, angle);
   }
-
 }

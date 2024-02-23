@@ -1,17 +1,17 @@
 export class Envelope {
-
   constructor(options: SerializedEnvelope) {
-    this.controlPoints = options.controlPoints.map(x => new EnvelopeControlPoint(x));
+    this.controlPoints = options.controlPoints.map(
+      (x) => new EnvelopeControlPoint(x),
+    );
   }
 
   controlPoints: EnvelopeControlPoint[];
 
   serialize(): SerializedEnvelope {
     return {
-      controlPoints: this.controlPoints.map(x => x.serialize()),
+      controlPoints: this.controlPoints.map((x) => x.serialize()),
     };
   }
-
 }
 
 export interface SerializedEnvelope {
@@ -19,7 +19,6 @@ export interface SerializedEnvelope {
 }
 
 export class EnvelopeControlPoint {
-
   constructor(options: SerializedEnvelopeControlPoint) {
     this.time = options.time;
     this.value = options.value;
@@ -37,7 +36,6 @@ export class EnvelopeControlPoint {
       type: this.type,
     };
   }
-
 }
 
 export interface SerializedEnvelopeControlPoint {

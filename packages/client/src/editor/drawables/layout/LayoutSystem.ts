@@ -1,15 +1,18 @@
-import {Container, ExtensionMetadata, extensions, ExtensionType, Renderer} from "pixi.js";
-import {LayoutContext} from "./LayoutContext.ts";
-import {Vec2} from "@osucad/common";
-import {isComponent} from "../Component.ts";
+import {
+  Container,
+  ExtensionMetadata,
+  extensions,
+  ExtensionType,
+  Renderer,
+} from 'pixi.js';
+import { LayoutContext } from './LayoutContext.ts';
+import { Vec2 } from '@osucad/common';
+import { isComponent } from '../Component.ts';
 
 export class LayoutSystem {
   static extension: ExtensionMetadata = {
-    type: [
-      ExtensionType.WebGLSystem,
-      ExtensionType.WebGPUSystem,
-    ],
-    name: "layout",
+    type: [ExtensionType.WebGLSystem, ExtensionType.WebGPUSystem],
+    name: 'layout',
   };
 
   private _renderer: Renderer;

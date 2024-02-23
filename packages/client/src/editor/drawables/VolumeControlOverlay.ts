@@ -1,36 +1,43 @@
-import {Drawable} from "./Drawable.ts";
-import {AlphaFilter, BitmapText, BlurFilter, Circle, Graphics, Point, Ticker} from "pixi.js";
-import {Inject} from "./di";
-import {VIEWPORT_SIZE} from "./injectionKeys.ts";
-import {ISize} from "@osucad/common";
-import {AudioManager} from "../audio/AudioManager.ts";
-import {clamp} from "@vueuse/core";
-import gsap from "gsap";
+import { Drawable } from './Drawable.ts';
+import {
+  AlphaFilter,
+  BitmapText,
+  BlurFilter,
+  Circle,
+  Graphics,
+  Point,
+  Ticker,
+} from 'pixi.js';
+import { Inject } from './di';
+import { VIEWPORT_SIZE } from './injectionKeys.ts';
+import { ISize } from '@osucad/common';
+import { AudioManager } from '../audio/AudioManager.ts';
+import { clamp } from '@vueuse/core';
+import gsap from 'gsap';
 
 export class VolumeControlOverlay extends Drawable {
-
   private background = new Graphics()
     .circle(0, 0, 75)
-    .stroke({ color: 0xFFFFFF, width: 10, alpha: 0.2 });
+    .stroke({ color: 0xffffff, width: 10, alpha: 0.2 });
   private glow = new Graphics();
   private arc = new Graphics();
   private alphaFilter = new AlphaFilter({ alpha: 0 });
 
   private volumeText = new BitmapText({
-    text: "0%",
+    text: '0%',
     style: {
-      fontFamily: "Nunito Sans",
+      fontFamily: 'Nunito Sans',
       fontSize: 26,
     },
     anchor: new Point(0.5, 0.5),
     position: new Point(0, -12),
   });
   private titleText = new BitmapText({
-    text: "Volume",
+    text: 'Volume',
     style: {
-      fontFamily: "Nunito Sans",
+      fontFamily: 'Nunito Sans',
       fontSize: 22,
-      fontWeight: "bold",
+      fontWeight: 'bold',
     },
     anchor: new Point(0.5, 0.5),
     position: new Point(0, 15),
@@ -40,16 +47,20 @@ export class VolumeControlOverlay extends Drawable {
   constructor() {
     super();
 
-    this.addChild(this.background, this.arc, this.glow, this.titleText, this.volumeText);
+    this.addChild(
+      this.background,
+      this.arc,
+      this.glow,
+      this.titleText,
+      this.volumeText,
+    );
 
     this.hitArea = new Circle(0, 0, 100);
-    this.eventMode = "dynamic";
+    this.eventMode = 'dynamic';
     this.filters = [this.alphaFilter];
 
-    this.glow.filters = [
-      new BlurFilter({ strength: 10, blendMode: "add" }),
-    ];
-    this.glow.tint = 0x63E2B7;
+    this.glow.filters = [new BlurFilter({ strength: 10, blendMode: 'add' })];
+    this.glow.tint = 0x63e2b7;
   }
 
   @Inject(VIEWPORT_SIZE)
@@ -61,13 +72,17 @@ export class VolumeControlOverlay extends Drawable {
     watch(this.viewportSize, () => this.update(), { immediate: true });
     this._animatedVolume = this.audioManager.volume;
 
-    this.on("wheel", (evt) => {
+    this.on('wheel', (evt) => {
       if (evt.altKey) {
         evt.stopImmediatePropagation();
 
         this.show();
 
-        this.audioManager.volume = clamp(this.audioManager.volume - Math.sign(evt.deltaY) * 0.05, 0, 1);
+        this.audioManager.volume = clamp(
+          this.audioManager.volume - Math.sign(evt.deltaY) * 0.05,
+          0,
+          1,
+        );
 
         if (this._hideTimeout) clearTimeout(this._hideTimeout);
         this._hideTimeout = setTimeout(() => {
@@ -87,18 +102,22 @@ export class VolumeControlOverlay extends Drawable {
     graphics.clear();
     const volume = Math.max(this._animatedVolume, 0.001);
 
-    graphics.moveTo(0, -75)
+    graphics
+      .moveTo(0, -75)
       .arc(0, 0, 75, Math.PI * 1.5, Math.PI * (1.5 + volume * 2.0), false)
       .stroke({
-        color: 0xFFFFFF,
+        color: 0xffffff,
         width: 10,
-        cap: "round",
-        join: "round",
+        cap: 'round',
+        join: 'round',
       });
   }
 
   update() {
-    this.position.set(this.viewportSize.width - 120, this.viewportSize.height - 220);
+    this.position.set(
+      this.viewportSize.width - 120,
+      this.viewportSize.height - 220,
+    );
     this.drawArc(this.arc);
     this.drawArc(this.glow);
 
@@ -110,7 +129,10 @@ export class VolumeControlOverlay extends Drawable {
     const delta = Ticker.shared.deltaTime;
 
     if (Math.abs(this._animatedVolume - this.audioManager.volume) > 0.01) {
-      this._animatedVolume = this._animatedVolume + (this.audioManager.volume - this._animatedVolume) * Math.min(1, delta * 0.25);
+      this._animatedVolume =
+        this._animatedVolume +
+        (this.audioManager.volume - this._animatedVolume) *
+          Math.min(1, delta * 0.25);
       this.update();
     } else if (this._animatedVolume !== this.audioManager.volume) {
       this._animatedVolume = this.audioManager.volume;
@@ -131,7 +153,7 @@ export class VolumeControlOverlay extends Drawable {
       x: 1,
       y: 1,
       duration: 0.125,
-      ease: "back.out",
+      ease: 'back.out',
     });
   }
 
@@ -140,7 +162,6 @@ export class VolumeControlOverlay extends Drawable {
     this._showing = false;
 
     gsap.to(this.alphaFilter, { alpha: 0, duration: 0.125 });
-    gsap.to(this.scale, { x: 0.9, y: 0.9, duration: 0.125, ease: "none" });
+    gsap.to(this.scale, { x: 0.9, y: 0.9, duration: 0.125, ease: 'none' });
   }
-
 }

@@ -1,6 +1,6 @@
-import {Component, isComponent, LayoutInvalidation} from "../Component.ts";
-import {LayoutContext} from "./LayoutContext.ts";
-import {Container} from "pixi.js";
+import { Component, isComponent, LayoutInvalidation } from '../Component.ts';
+import { LayoutContext } from './LayoutContext.ts';
+import { Container } from 'pixi.js';
 
 export abstract class Layout extends Component {
   readonly isLayout = true;
@@ -25,7 +25,6 @@ export abstract class Layout extends Component {
     this.invalidateLayout(LayoutInvalidation.Self);
     return super.removeChild(...children);
   }
-
 }
 
 export function isLayout(object: unknown): object is Layout {

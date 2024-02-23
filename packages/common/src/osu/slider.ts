@@ -1,13 +1,12 @@
-import {HitObject, HitObjectType} from "./hitObject";
-import {SerializedSlider} from "../types";
-import {SerializedBeatmapDifficulty} from "../protocol";
-import {ControlPointManager} from "./controlPointManager";
-import {SliderPath} from "./sliderPath";
-import {Vec2} from "../math";
-import {defaultHitSound, getSamples, HitSample, HitSound, SampleSet, SampleType} from "./hitSound";
+import { HitObject, HitObjectType } from './hitObject';
+import { SerializedSlider } from '../types';
+import { SerializedBeatmapDifficulty } from '../protocol';
+import { ControlPointManager } from './controlPointManager';
+import { SliderPath } from './sliderPath';
+import { Vec2 } from '../math';
+import { defaultHitSound, getSamples, HitSample, HitSound } from './hitSound';
 
 export class Slider extends HitObject {
-
   readonly type = HitObjectType.Slider;
 
   constructor(options?: SerializedSlider) {
@@ -18,13 +17,11 @@ export class Slider extends HitObject {
       this.velocityOverride = options.velocity;
       this.path = new SliderPath(options.path, options.expectedDistance);
 
-      if (options.hitSounds)
-        this.hitSounds = options.hitSounds;
+      if (options.hitSounds) this.hitSounds = options.hitSounds;
 
       this._updateHitSounds();
     }
   }
-
 
   get expectedDistance() {
     return this.path.expectedDistance;
@@ -42,7 +39,7 @@ export class Slider extends HitObject {
   set repeats(value: number) {
     if (value === this._repeats) return;
     this._repeats = value;
-    this.onUpdate.emit("repeats");
+    this.onUpdate.emit('repeats');
     this._updateHitSounds();
   }
 
@@ -54,7 +51,7 @@ export class Slider extends HitObject {
   set hitSounds(value: HitSound[]) {
     this._hitSounds = value;
     this._hitSamples = undefined;
-    this.onUpdate.emit("hitSounds");
+    this.onUpdate.emit('hitSounds');
   }
 
   private _velocityOverride: number | null = null;
@@ -63,10 +60,10 @@ export class Slider extends HitObject {
     return this._velocityOverride;
   }
 
-  set velocityOverride(value: number | null | undefined) {
+  set velocityOverride(value: number | null) {
     if (value === this._velocityOverride) return;
     this._velocityOverride = value ?? null;
-    this.onUpdate.emit("velocity");
+    this.onUpdate.emit('velocity');
   }
 
   path = new SliderPath();
@@ -79,7 +76,9 @@ export class Slider extends HitObject {
   }
 
   get velocity() {
-    return (this.velocityOverride ?? this.inheritedVelocity) * this._baseVelocity;
+    return (
+      (this.velocityOverride ?? this.inheritedVelocity) * this._baseVelocity
+    );
   }
 
   get spanDuration() {
@@ -98,20 +97,23 @@ export class Slider extends HitObject {
     this.repeats = value - 1;
   }
 
-  applyDefaults(difficulty: SerializedBeatmapDifficulty, controlPoints: ControlPointManager) {
+  applyDefaults(
+    difficulty: SerializedBeatmapDifficulty,
+    controlPoints: ControlPointManager,
+  ) {
     super.applyDefaults(difficulty, controlPoints);
     const timingPoint = controlPoints.timingPointAt(this.startTime);
 
     const baseScoringDistance = 100 * difficulty.sliderMultiplier;
     this._baseVelocity = baseScoringDistance / timingPoint.timing.beatLength;
     this.inheritedVelocity = controlPoints.getVelocityAt(this.startTime);
-    this.onUpdate.emit("velocity");
+    this.onUpdate.emit('velocity');
   }
 
   serialize(): SerializedSlider {
     return {
       id: this.id,
-      type: "slider",
+      type: 'slider',
       path: this.path.controlPoints,
       position: this.position,
       newCombo: this.isNewCombo,
@@ -121,19 +123,21 @@ export class Slider extends HitObject {
       expectedDistance: this.expectedDistance,
       comboOffset: this.comboOffset,
       velocity: this.velocityOverride,
-      hitSound: {...this.hitSound},
-      hitSounds: this.hitSounds.map(s => ({...s})),
+      hitSound: { ...this.hitSound },
+      hitSounds: this.hitSounds.map((s) => ({ ...s })),
     };
   }
 
   override get endPosition(): Vec2 {
-    if (this.repeats % 2 == 0) return Vec2.add(this.position, this.path.endPosition);
+    if (this.repeats % 2 == 0)
+      return Vec2.add(this.position, this.path.endPosition);
     return this.position;
   }
 
   positionAt(time: number) {
     if (time < this.startTime) return Vec2.zero();
-    if (time > this.endTime) return this.repeats % 2 == 0 ? this.path.endPosition : Vec2.zero();
+    if (time > this.endTime)
+      return this.repeats % 2 == 0 ? this.path.endPosition : Vec2.zero();
 
     const spanDuration = this.spanDuration;
     const spanIndex = Math.floor((time - this.startTime) / spanDuration);
@@ -142,7 +146,9 @@ export class Slider extends HitObject {
     let spanProgress = (time - spanStartTime) / spanDuration;
     if (spanIndex % 2 === 1) spanProgress = 1 - spanProgress;
 
-    return this.path.getPositionAtDistance(spanProgress * this.expectedDistance);
+    return this.path.getPositionAtDistance(
+      spanProgress * this.expectedDistance,
+    );
   }
 
   angleAt(time: number) {
@@ -171,7 +177,13 @@ export class Slider extends HitObject {
     const radiusSquared = this.radius * this.radius;
     if (Vec2.closerThanSquared(this.stackedPosition, point, radiusSquared))
       return true;
-    if (Vec2.closerThanSquared(Vec2.add(this.stackedPosition, this.path.endPosition), point, radiusSquared))
+    if (
+      Vec2.closerThanSquared(
+        Vec2.add(this.stackedPosition, this.path.endPosition),
+        point,
+        radiusSquared,
+      )
+    )
       return true;
 
     point = Vec2.sub(point, this.stackedPosition);
@@ -185,13 +197,13 @@ export class Slider extends HitObject {
       while (i < path.length - 1 && this.path.cumulativeDistance[i] < distance)
         i++;
 
-      let p1 = path[i - 1];
-      let p2 = path[i];
-      let d1 = this.path.cumulativeDistance[i - 1];
-      let d2 = this.path.cumulativeDistance[i];
-      let t = (distance - d1) / (d2 - d1);
-      let x = p1.x + (p2.x - p1.x) * t;
-      let y = p1.y + (p2.y - p1.y) * t;
+      const p1 = path[i - 1];
+      const p2 = path[i];
+      const d1 = this.path.cumulativeDistance[i - 1];
+      const d2 = this.path.cumulativeDistance[i];
+      const t = (distance - d1) / (d2 - d1);
+      const x = p1.x + (p2.x - p1.x) * t;
+      const y = p1.y + (p2.y - p1.y) * t;
 
       if (Vec2.closerThanSquared(new Vec2(x, y), point, radiusSquared))
         return true;
@@ -205,12 +217,12 @@ export class Slider extends HitObject {
     if (update.path !== undefined) {
       this.path.controlPoints = update.path;
       this.path.invalidate();
-      this.onUpdate.emit("position");
+      this.onUpdate.emit('position');
     }
     if (update.expectedDistance !== undefined) {
       this.path.expectedDistance = update.expectedDistance;
       this.path.invalidate();
-      this.onUpdate.emit("position");
+      this.onUpdate.emit('position');
     }
     if (update.repeats !== undefined) {
       this.repeats = update.repeats;
@@ -235,18 +247,18 @@ export class Slider extends HitObject {
   protected override _updateHitSounds() {
     if (this._hitSounds.length === this.spans + 1) return;
     if (this._hitSounds.length > this.spans + 1) {
-      const last = this._hitSounds[this._hitSounds.length - 1] ?? defaultHitSound();
+      const last =
+        this._hitSounds[this._hitSounds.length - 1] ?? defaultHitSound();
       this._hitSounds.length = this.spans + 1;
       this._hitSounds[this._hitSounds.length - 1] = last;
-      this.onUpdate.emit("hitSounds");
+      this.onUpdate.emit('hitSounds');
     } else {
-      const last = this._hitSounds[this._hitSounds.length - 1] ?? defaultHitSound();
+      const last =
+        this._hitSounds[this._hitSounds.length - 1] ?? defaultHitSound();
       while (this._hitSounds.length < this.spans + 1) {
         this._hitSounds.push(last);
       }
-      this.onUpdate.emit("hitSounds");
+      this.onUpdate.emit('hitSounds');
     }
-
   }
-
 }

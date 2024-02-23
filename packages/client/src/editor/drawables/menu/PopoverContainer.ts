@@ -1,13 +1,12 @@
-import {Drawable} from "../Drawable.ts";
-import {Menu} from "./Menu.ts";
-import {IVec2} from "@osucad/common";
-import {Container} from "pixi.js";
+import { Drawable } from '../Drawable.ts';
+import { Menu } from './Menu.ts';
+import { IVec2 } from '@osucad/common';
+import { Container } from 'pixi.js';
 
 export class PopoverContainer extends Drawable {
-
   constructor() {
     super();
-    this.eventMode = "auto";
+    this.eventMode = 'auto';
     this.hitArea = { contains: () => true };
     this.addChild(this.content, this._popoverContainer);
   }
@@ -37,5 +36,4 @@ export class PopoverContainer extends Drawable {
     menu.position.copyFrom(position);
     this.addChild(menu);
   }
-
 }
