@@ -17,5 +17,13 @@ export default [
         sourcemap: true,
       }
     ]
+  },
+  {
+    input: `src/index.ts`,
+    plugins: [dts()],
+    output: {
+      file: 'dist/lib.d.ts',
+      format: 'es'
+    }
   }
 ]

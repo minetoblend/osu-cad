@@ -4,8 +4,8 @@
   "description": "",
   "type": "module",
   "main": "dist/lib.cjs",
-  "types": "src/index.ts",
-  "typings": "src/index.ts",
+  "types": "dist/lib.d.ts",
+  "typings": "dist/lib.d.ts",
   "scripts": {
     "build": "tsc --noEmit && rollup -c",
     "dev": "rollup -c -w",
