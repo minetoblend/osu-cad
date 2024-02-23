@@ -1,6 +1,12 @@
 import {DataSource, DataSourceOptions} from 'typeorm';
 import {isProduction} from "./utils/env";
 import * as process from "process";
+import * as dotenv from 'dotenv'
+import * as path from 'path'
+
+dotenv.config({
+  path: path.resolve(__dirname, '../../../.env'),
+})
 
 export const dbdatasource: DataSourceOptions = {
   type: 'mysql',

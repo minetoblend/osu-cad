@@ -6,7 +6,7 @@ import {TypeOrmModule} from "@nestjs/typeorm";
 import {EditorModule} from "./editor/editor.module";
 import {OsuModule} from "./osu/osu.module";
 import * as path from "path";
-import {ConfigModule} from "@nestjs/config";
+import {ConfigModule, ConfigService} from "@nestjs/config";
 import {ServeStaticModule} from "@nestjs/serve-static";
 import {PreferencesModule} from './preferences/preferences.module';
 import {MongooseModule} from '@nestjs/mongoose';
@@ -21,7 +21,16 @@ import {AppController} from "./app.controller";
       envFilePath: path.resolve(__dirname, "../../../.env"),
     }),
     TypeOrmModule.forRoot(dbdatasource),
-    MongooseModule.forRoot('mongodb://mongodb:27017/osucad'),
+    MongooseModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => {
+        const host = config.get('MONGO_HOST', 'mongodb');
+        const port = config.get('MONGO_PORT', 27017);
+        return {
+          uri: `mongodb://${host}:${port}/osucad`,
+        }
+      },
+    }),
     ServeStaticModule.forRoot({
       rootPath: path.resolve(__dirname, "../../client/dist"),
     }),
