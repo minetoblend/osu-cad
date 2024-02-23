@@ -1,5 +1,5 @@
 import {Component} from "@/editor/drawables/Component.ts";
-import {Container, ObservablePoint} from "pixi.js";
+import {Container, ObservablePoint, Rectangle} from "pixi.js";
 import {ObjectTimeline} from "@/editor/drawables/timeline/ObjectTimeline.ts";
 import {TimelineZoom} from "@/editor/TimelineZoom.ts";
 import {Box} from "@/editor/drawables/Box.ts";
@@ -45,7 +45,7 @@ export class MobileTimelineDrawable extends Component {
     const bounds = new Rect(0, 0, this.size.x, this.size.y);
     this.background.setSize(bounds.width, bounds.height)
 
-    bounds.shrink(4)
+    //bounds.shrink(4)
 
     this.timestamp.position.set(10, bounds.y + bounds.height * 0.5);
     this.timestamp.scale.set(0.8)
@@ -59,6 +59,8 @@ export class MobileTimelineDrawable extends Component {
     bounds.splitBottom(5)
 
     this.currentTimeline.setBounds(bounds);
+
+    this.hitArea = new Rectangle(0, -10, this.size.x, this.size.y + 10);
   }
 
 }

@@ -58,6 +58,9 @@ function encodeCommand(command: EditorCommand): EncodedCommand {
         r: payload.time,
       } as EncodedCommand;
     },
+    default: () => {
+      return command as any
+    }
   });
 }
 

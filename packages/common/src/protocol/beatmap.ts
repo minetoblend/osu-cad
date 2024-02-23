@@ -1,11 +1,6 @@
-import {
-  SerializedEditorBookmark,
-  SerializedHitObject,
-  SerializedTimingPoint,
-  SerializedVelocityPoint,
-  UserInfo,
-} from "../types";
+import {SerializedEditorBookmark, SerializedHitObject, UserInfo,} from "../types";
 import {SerializedHitSounds} from "../osu/hitSoundManager";
+import {SerializedControlPoint} from "../osu/controlPoint";
 
 
 export type MapsetId = string;
@@ -41,8 +36,7 @@ export interface SerializedBeatmap {
 }
 
 export interface SerializedControlPoints {
-  timing: SerializedTimingPoint[];
-  velocity: SerializedVelocityPoint[];
+  controlPoints: SerializedControlPoint[];
 }
 
 export interface SerializedBeatmapDifficulty {

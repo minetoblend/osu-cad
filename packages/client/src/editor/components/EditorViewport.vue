@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import {Application} from "pixi.js";
+import {Application, RenderTarget} from "pixi.js";
 import "../drawables/DrawableSystem.ts";
 import {EditorViewportDrawable} from "../drawables/EditorViewportDrawable.ts";
 import gsap from "gsap";
 import {usePreferences} from "@/composables/usePreferences.ts";
 import {useEditor} from "@/editor/editorContext.ts";
 import {isMobile} from "@/util/isMobile.ts";
+import {EditorPopoverHost} from "@/editor/components/popover";
+
+//RenderTarget.defaultDescriptor.depth = true;
 
 const app = new Application();
 
@@ -27,6 +30,7 @@ const {preferences} = usePreferences();
 onMounted(async () => {
   const resolution = 1;
 
+
   let antialias = preferences.graphics.antialiasing
   if (isMobile()) {
     antialias = false;
@@ -37,9 +41,9 @@ onMounted(async () => {
     preference: 'webgl',
     sharedTicker: true,
     resolution: preferences.graphics.highDpiMode ? window.devicePixelRatio : 1.0,
-    autoDensity: preferences.graphics.highDpiMode,
-    preferWebGLVersion: 2,
+    autoDensity: true,
     useBackBuffer: true,
+    depth: true,
     webgpu: {
       antialias,
       powerPreference: "high-performance",
@@ -51,6 +55,7 @@ onMounted(async () => {
       clearBeforeRender: true,
       preferWebGLVersion: 2,
     },
+    eventFeatures: {}
   });
 
   console.log("app", app);
@@ -59,7 +64,7 @@ onMounted(async () => {
     console.log("resize");
   });
 
-  viewportContainer.value!.appendChild(app.canvas);
+  viewportContainer.value!.prepend(app.canvas);
 
   viewportSize.width = width.value;
   viewportSize.height = height.value;
@@ -70,6 +75,10 @@ onMounted(async () => {
   );
 
   app.stage.addChild(viewportDrawable);
+
+  // app.renderer.events.setTargetElement(
+  //     document.getElementById("event-receiver")!,
+  // )
 
   app.render()
 
@@ -105,11 +114,16 @@ onBeforeUnmount(() => {
 
 </script>
 <template>
-  <div class="viewport-container" ref="viewportContainer" @contextmenu.prevent/>
+  <div class="viewport-container" ref="viewportContainer" @contextmenu.prevent>
+    <div id="event-receiver"/>
+  </div>
 </template>
 
 <style lang="scss" scoped>
 .viewport-container {
   cursor: url("@/assets/icons/cursor.svg") 5 2, auto;
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 </style>

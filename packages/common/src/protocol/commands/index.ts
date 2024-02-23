@@ -14,7 +14,14 @@ import {
   RemoveBookmarkCommand,
   RemoveBookmarkHandler,
 } from "./bookmarkCommands";
-import {encodeUuid} from "../../util";
+import {
+  CreateControlPointCommand,
+  CreateControlPointHandler,
+  DeleteControlPointCommand,
+  DeleteControlPointHandler,
+  UpdateControlPointCommand,
+  UpdateControlPointHandler
+} from "./controlPointCommands";
 
 export * from "./updateHitObject";
 export * from "./encoder";
@@ -23,6 +30,9 @@ export const EditorCommand = variantModule({
   updateHitObject: fields<UpdateHitObjectCommand>(),
   createHitObject: fields<CreateHitObjectCommand>(),
   deleteHitObject: fields<DeleteHitObjectCommand>(),
+  updateControlPoint: fields<UpdateControlPointCommand>(),
+  createControlPoint: fields<CreateControlPointCommand>(),
+  deleteControlPoint: fields<DeleteControlPointCommand>(),
   createBookmark: fields<CreateBookmarkCommand>(),
   removeBookmark: fields<RemoveBookmarkCommand>(),
 });
@@ -33,8 +43,12 @@ const commandHandlers: Lookup<VariantsOfUnion<EditorCommand>> = {
   updateHitObject: UpdateHitObjectHandler,
   createHitObject: CreateHitObjectHandler,
   deleteHitObject: DeleteHitObjectHandler,
+  updateControlPoint: UpdateControlPointHandler,
+  createControlPoint: CreateControlPointHandler,
+  deleteControlPoint: DeleteControlPointHandler,
   createBookmark: new CreateBookmarkHandler(),
   removeBookmark: new RemoveBookmarkHandler(),
+
 };
 
 export function getCommandHandler<T extends EditorCommand>(command: T): CommandHandler<T> {

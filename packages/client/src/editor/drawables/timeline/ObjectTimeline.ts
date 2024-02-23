@@ -1,11 +1,13 @@
 import {Component} from "../Component.ts";
-import {AlphaFilter, Assets, Container, Point, Sprite, StencilMask, Texture} from "pixi.js";
-import {Inject} from "../di";
+import {AlphaFilter, Assets, Container, Point, Rectangle, Sprite, StencilMask, Texture} from "pixi.js";
+import {Inject, Provide} from "../di";
 import {HitObject, TickType} from "@osucad/common";
 import {TimelineObject} from "./TimelineObject.ts";
 import {TimelineZoom} from "../../TimelineZoom.ts";
 import {BeatInfo} from "../../beatInfo.ts";
 import {EditorContext} from "@/editor/editorContext.ts";
+import {TimelinePositionManager} from "@/editor/drawables/timeline/timelinePositionManager.ts";
+import {ControlPointTimeline} from "@/editor/drawables/timeline/ControlPointTimeline.ts";
 
 export interface TimelineVisibility {
   currentTime: number;
@@ -22,7 +24,7 @@ export class ObjectTimeline extends Component {
   });
   private readonly eventReceiver = this;// new Container();
   private readonly tickContainer = new Container();
-  private readonly timingPointContainer = new Container();
+  private readonly controlPointTimeline = new ControlPointTimeline()
   private readonly hitObjectContainer = new Container();
   private readonly hitObjectMap = new Map<HitObject, TimelineObject>();
   private readonly currentTimeMarker = new Sprite({
@@ -31,7 +33,6 @@ export class ObjectTimeline extends Component {
     scale: new Point(0.55, 0.55),
     tint: 0x63E2B7,
   });
-
 
   @Inject(EditorContext)
   private readonly editor!: EditorContext;
@@ -48,16 +49,22 @@ export class ObjectTimeline extends Component {
 
   private ontick?: () => void;
 
+  @Provide(TimelinePositionManager)
+  readonly positionManager: TimelinePositionManager
+
   constructor(private readonly zoom: TimelineZoom) {
     super();
+    this.positionManager = new TimelinePositionManager(zoom)
+
     this.addChild(
+      this.positionManager,
       this.background,
       this.selectBox,
       this.tickContainer,
-      this.timingPointContainer,
       this.hitObjectContainer,
       this.currentTimeMarker,
       this.maskSprite,
+      this.controlPointTimeline,
     );
     this.currentTimeMarker.eventMode = "none";
     this.maskSprite.eventMode = "none";
@@ -122,7 +129,7 @@ export class ObjectTimeline extends Component {
         const scaleChange = (t1 - t2) / (p1 - p2);
         const offsetChange = (t1 + t2) / 2 - (p1 + p2) / 2;
 
-        const deltaMs = offsetChange / this.pixelsPerMs;
+        const deltaMs = offsetChange / this.positionManager.pixelsPerMillisecond;
 
         p1 = t1;
         p2 = t2;
@@ -145,7 +152,7 @@ export class ObjectTimeline extends Component {
       if (evt.button === 0 && !evt.ctrlKey && !evt.shiftKey)
         this.editor.selection.clear();
 
-      const selectStartTime = this.getTimeAtPosition(evt.getLocalPosition(this).x);
+      const selectStartTime = this.positionManager.getTimeAtPosition(evt.getLocalPosition(this).x);
       this.selectBox.visible = true;
       this.selectBox.width = 0;
 
@@ -156,13 +163,13 @@ export class ObjectTimeline extends Component {
       };
 
       this.ontick = () => {
-        const time = this.getTimeAtPosition(position);
+        const time = this.positionManager.getTimeAtPosition(position);
 
         const min = Math.min(time, selectStartTime);
         const max = Math.max(time, selectStartTime);
 
-        this.selectBox.x = this.getPositionForTime(min);
-        this.selectBox.width = Math.abs(this.getPositionForTime(max) - this.selectBox.x);
+        this.selectBox.x = this.positionManager.getPositionForTime(min);
+        this.selectBox.width = Math.abs(this.positionManager.getPositionForTime(max) - this.selectBox.x);
 
         const hitObjects = this.editor.beatmapManager.hitObjects.hitObjects.filter((obj) => obj.endTime >= min && obj.startTime <= max);
         this.editor.selection.selectAll(hitObjects);
@@ -199,37 +206,24 @@ export class ObjectTimeline extends Component {
     this.background.height = this.size.y * 0.3333;
     this.background.y = this.size.y * 0.3333;
     this.maskSprite.x = 0;
+    this.maskSprite.y = -this.size.y * 0.5;
     this.maskSprite.scale.x = this.size.x;
-    this.maskSprite.scale.y = this.size.y;
+    this.maskSprite.scale.y = this.size.y * 2;
     //this.eventReceiver.hitArea = new Rectangle(0, 0, this.size.x, this.size.y);
     this.selectBox.height = this.size.y;
     this.currentTimeMarker.position.set(
       this.size.x * 0.4,
       this.size.y * 0.5,
     );
+    this.positionManager.availableWidth = this.size.x;
+    this.controlPointTimeline.size.set(
+      this.size.x,
+      this.size.y * 0.25,
+    );
+    this.hitArea = new Rectangle(0, -10, this.size.x, this.size.y + 10);
   }
 
   private readonly tickPool: Tick[] = [];
-
-  get startTime() {
-    return this.editor.clock.currentTimeAnimated - this.zoom.visibleDuration * 0.4;
-  }
-
-  get endTime() {
-    return this.editor.clock.currentTimeAnimated + this.zoom.visibleDuration * 0.6;
-  }
-
-  getPositionForTime(time: number) {
-    return (time - this.startTime) / (this.endTime - this.startTime) * this.size.x;
-  }
-
-  getTimeAtPosition(position: number) {
-    return this.startTime + position / this.size.x * (this.endTime - this.startTime);
-  }
-
-  get pixelsPerMs() {
-    return this.size.x / (this.endTime - this.startTime);
-  }
 
   onTick() {
 
@@ -237,10 +231,10 @@ export class ObjectTimeline extends Component {
 
     if (!controlPoints) return;
 
-    const startTime = this.startTime;
-    const endTime = this.endTime;
+    const startTime = this.positionManager.startTime;
+    const endTime = this.positionManager.endTime;
 
-    const ticks = controlPoints.getTicks(this.startTime, this.endTime, this.beatInfo.beatSnap);
+    const ticks = controlPoints.getTicks(startTime, endTime, this.beatInfo.beatSnap);
 
     const objectY = this.size.y * 0.5;
 
@@ -250,7 +244,7 @@ export class ObjectTimeline extends Component {
         tick = this.tickPool.pop() ?? new Tick();
         this.tickContainer.addChild(tick);
       }
-      const x = this.getPositionForTime(ticks[i].time);
+      const x = this.positionManager.getPositionForTime(ticks[i].time);
       tick.position.set(x, objectY);
       tick.type = ticks[i].type;
     }
@@ -294,7 +288,6 @@ export class ObjectTimeline extends Component {
       timelineObject.destroy({children: true});
     }
     this.hitObjectContainer.sortChildren();
-
 
     this.ontick?.();
   }

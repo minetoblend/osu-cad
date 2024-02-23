@@ -1,4 +1,5 @@
 export * from "./beatmap";
+export * from "./controlPoint";
 export * from "./controlPointManager";
 export * from "./hitObject";
 export * from "./hitObjectManager";

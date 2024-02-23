@@ -8,6 +8,7 @@ import {
   VersionedEditorCommand,
 } from "@osucad/common";
 import {EditorSocket} from "@/editor/editorSocket.ts";
+import {onEditorKeyDown} from "@/composables/onEditorKeyDown.ts";
 
 export class CommandManager {
 
@@ -28,7 +29,7 @@ export class CommandManager {
         this.onCommandReceived(command, sessionId);
     });
 
-    addEventListener("keydown", (e) => {
+    onEditorKeyDown((e) => {
       if (e.ctrlKey && e.key === "z") {
         e.preventDefault();
         const context = new CommandContext(this.beatmapManager.beatmap, true, true, 0);

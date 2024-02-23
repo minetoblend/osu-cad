@@ -9,6 +9,7 @@ import {SelectTool} from "./SelectTool.ts";
 import {EditorContext} from "@/editor/editorContext.ts";
 import {ButtonPanelButton} from "@/editor/drawables/buttonPanel.ts";
 import {Ref} from "vue";
+import {onEditorKeyDown, onEditorKeyUp} from "@/composables/onEditorKeyDown.ts";
 
 export class ComposeTool extends Drawable {
 
@@ -101,8 +102,8 @@ export class ComposeTool extends Drawable {
     };
 
 
-    useEventListener("keydown", onKeyDown);
-    useEventListener("keyup", onKeyUp);
+    onEditorKeyDown(onKeyDown);
+    onEditorKeyUp(onKeyUp);
   }
 
   hoveredHitObjects: HitObject[] = [];

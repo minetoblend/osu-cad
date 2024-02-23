@@ -7,6 +7,10 @@ export class CommandContext {
     return this.beatmap.hitObjects;
   }
 
+  get controlPoints() {
+    return this.beatmap.controlPoints;
+  }
+
   constructor(
     readonly beatmap: Beatmap,
     readonly local: boolean,

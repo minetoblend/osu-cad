@@ -27,7 +27,7 @@ export class SpinnerTool extends ComposeTool {
       this.submit(updateHitObject(this.placingObject, {
         duration: Math.max(
           this.editor.clock.currentTime - this.placingObject.startTime,
-          this.editor.beatmapManager.controlPoints.timingPointAt(this.editor.clock.currentTime).beatLength / this.beatInfo.beatSnap,
+          this.editor.beatmapManager.controlPoints.timingPointAt(this.editor.clock.currentTime).timing.beatLength / this.beatInfo.beatSnap,
         ),
       }));
 
@@ -38,8 +38,8 @@ export class SpinnerTool extends ComposeTool {
 
   getDuration(spinner: Spinner) {
     const timingPoint = this.editor.beatmapManager.controlPoints.timingPointAt(this.editor.clock.currentTime);
-    const endTime = this.editor.beatmapManager.controlPoints.snap(this.editor.clock.currentTime, this.beatInfo.beatSnap) + timingPoint.beatLength;
-    return Math.max(endTime - spinner.startTime, timingPoint.beatLength / this.beatInfo.beatSnap);
+    const endTime = this.editor.beatmapManager.controlPoints.snap(this.editor.clock.currentTime, this.beatInfo.beatSnap) + timingPoint.timing.beatLength;
+    return Math.max(endTime - spinner.startTime, timingPoint.timing.beatLength / this.beatInfo.beatSnap);
   }
 
   onTick() {

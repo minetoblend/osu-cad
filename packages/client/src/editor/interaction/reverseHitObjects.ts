@@ -1,10 +1,11 @@
 import {HitObject, PathType, SerializedPathPoint, Slider, updateHitObject} from "@osucad/common";
 import {EditorContext} from "@/editor/editorContext.ts";
+import {onEditorKeyDown} from "@/composables/onEditorKeyDown.ts";
 
 
 export function reverseHitObjectsInteraction(editor: EditorContext) {
 
-  useEventListener("keydown", (evt) => {
+  onEditorKeyDown((evt) => {
     if (evt.ctrlKey && evt.code === "KeyG") {
       evt.preventDefault();
       const hitObjects = [...editor.selection.selectedObjects].sort((a, b) => a.startTime - b.startTime);
@@ -21,7 +22,7 @@ export function reverseHitObjects(hitObjects: HitObject[], editor: EditorContext
   let time = startTimes[0];
   for (let i = hitObjects.length - 1; i >= 0; i--) {
     const hitObject = hitObjects[i];
-    editor.commandManager.submit(updateHitObject(hitObject, { startTime: time }));
+    editor.commandManager.submit(updateHitObject(hitObject, {startTime: time}));
     if (i > 0)
       time += hitObjects[i].duration + (startTimes[i] - endTimes[i - 1]);
 

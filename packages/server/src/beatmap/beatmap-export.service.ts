@@ -13,7 +13,7 @@ import {
   TimingPoint,
   Vector2,
 } from "osu-classes";
-import {BeatmapData, PathType as EditorPathType} from "@osucad/common";
+import {BeatmapData, ControlPointManager, PathType as EditorPathType} from "@osucad/common";
 import {MapsetEntity} from "./mapset.entity";
 import {BeatmapEncoder} from "osu-parsers";
 import {BeatmapImportService} from "./beatmap-import.service";
@@ -57,7 +57,7 @@ export class BeatmapExportService {
           colors: beatmap.colors,
           difficulty: beatmap.difficulty,
           bookmarks: beatmap.bookmarks,
-          controlPoints: beatmap.controlPoints,
+          controlPoints: new ControlPointManager(beatmap.controlPoints).serializeLegacy(),
           hitObjects: beatmap.hitObjects,
           hitSounds: beatmap.hitSounds,
         };

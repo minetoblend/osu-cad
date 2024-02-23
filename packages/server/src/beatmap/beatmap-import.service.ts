@@ -243,10 +243,6 @@ export class BeatmapImportService {
           break;
       }
 
-      if (time === 37399) {
-        console.log({ sample, type, sampleSet });
-      }
-
       if (type === undefined || sampleSet === undefined)
         return undefined;
 

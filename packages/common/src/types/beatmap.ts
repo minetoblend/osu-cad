@@ -1,7 +1,8 @@
 import {UserInfo} from "./userInfo";
 import {SerializedHitObject} from "./hitobject";
-import {SerializedBeatmapDifficulty, SerializedBeatmapGeneral, SerializedControlPoints} from "../protocol";
+import {SerializedBeatmapDifficulty, SerializedBeatmapGeneral} from "../protocol";
 import {SerializedHitSounds} from "../osu";
+import {SerializedTimingPoint, SerializedVelocityPoint} from "./timingPoint";
 
 export interface MapsetInfo {
   id: string,
@@ -24,7 +25,10 @@ export interface BeatmapInfo {
 export interface BeatmapData {
   version: number;
   hitObjects: SerializedHitObject[];
-  controlPoints: SerializedControlPoints;
+  controlPoints: {
+    timing: SerializedTimingPoint[];
+    velocity: SerializedVelocityPoint[];
+  };
   colors: string[];
   bookmarks: SerializedEditorBookmark[];
   backgroundPath: string | null;

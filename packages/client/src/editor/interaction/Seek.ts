@@ -14,7 +14,7 @@ export function seekInteraction(
 ) {
 
   container.eventMode = "static";
-  container.hitArea = { contains: () => true };
+  container.hitArea = {contains: () => true};
 
   container.on("wheel", (e) => {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
@@ -34,7 +34,7 @@ export function seekInteraction(
         if (e.ctrlKey) {
           if (selection.size !== 0) return;
           const bookmarks = beatmapManager.beatmap.bookmarks;
-          let { index } = binarySearch(clock.currentTime, bookmarks, (bookmark) => bookmark.time);
+          let {index} = binarySearch(clock.currentTime, bookmarks, (bookmark) => bookmark.time);
           if (index > 0) index--;
           if (bookmarks[index].time < clock.currentTime)
             clock.seek(bookmarks[index].time);
@@ -53,7 +53,7 @@ export function seekInteraction(
         if (e.ctrlKey) {
           if (selection.size !== 0) return;
           const bookmarks = beatmapManager.beatmap.bookmarks;
-          let { index, found } = binarySearch(clock.currentTime, bookmarks, (bookmark) => bookmark.time);
+          let {index, found} = binarySearch(clock.currentTime, bookmarks, (bookmark) => bookmark.time);
           if (found && index < bookmarks.length - 1) index++;
           if (bookmarks[index].time > clock.currentTime)
             clock.seek(bookmarks[index].time);
@@ -105,7 +105,7 @@ export function seekInteraction(
     const controlPoints = beatmapManager.controlPoints;
     const timingPoints = controlPoints.timingPointAt(clock.currentTime);
     const time = controlPoints.snap(clock.currentTime, beatInfo.beatSnap)
-      + beats * timingPoints.beatLength;
+      + beats * timingPoints.timing.beatLength;
     clock.seek(time);
   }
 }

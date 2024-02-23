@@ -9,6 +9,7 @@ import {TimelineZoom} from "../../TimelineZoom.ts";
 import {PlayButton} from "../PlayButton.ts";
 import {HitSoundTimeline} from "./HitSoundTimeline.ts";
 import {Component} from "@/editor/drawables/Component.ts";
+import {Rectangle} from "pixi.js";
 
 export class TimelineDrawable extends Component {
 
@@ -54,6 +55,7 @@ export class TimelineDrawable extends Component {
     bounds.splitRight(10);
 
     this.objectTimeline.setBounds(bounds.splitTop(55));
+    console.log(this.objectTimeline.y)
     bounds.splitLeft(50);
     this.overviewTimeline.setBounds(bounds);
 
@@ -64,6 +66,7 @@ export class TimelineDrawable extends Component {
 
     this.position.set(0, this.canvasSize.height - height * scale);
     this.scale.set(scale);
+    this.hitArea = new Rectangle(0, -10, this.size.x, this.size.y + 10);
   }
 
 
