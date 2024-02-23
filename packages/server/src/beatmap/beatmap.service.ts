@@ -33,6 +33,10 @@ export class BeatmapService {
     return mapset;
   }
 
+  async saveMapset(mapset: MapsetEntity) {
+    return await this.mapsetRepository.save(mapset);
+  }
+
   async findMapsetById(id: string) {
     return await this.mapsetRepository.findOne({
       where: { id },

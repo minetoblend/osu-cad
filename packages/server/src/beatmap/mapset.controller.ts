@@ -19,6 +19,7 @@ import { Request, Response } from 'express';
 import { BeatmapService } from './beatmap.service';
 import { MapsetInfo } from '@osucad/common';
 import { BeatmapExportService } from './beatmap-export.service';
+import { AssetsService } from '../assets/assets.service';
 
 @Controller('api/mapsets')
 export class MapsetController {
@@ -26,6 +27,7 @@ export class MapsetController {
     private readonly beatmapImportService: BeatmapImportService,
     private readonly beatmapService: BeatmapService,
     private readonly beatmapExportService: BeatmapExportService,
+    private readonly assetsService: AssetsService,
   ) {}
 
   @Get('/own')
@@ -129,6 +131,18 @@ export class MapsetController {
     }
 
     if (path.length === 0) return response.sendStatus(400);
+
+    const mapset = await this.beatmapService.findMapsetById(id);
+
+    if (mapset.s3Storage) {
+      const url = await this.assetsService.getAssetUrl(mapset, path);
+
+      if (!url) {
+        return response.sendStatus(404);
+      }
+
+      return response.redirect(url);
+    }
 
     try {
       const buffer = this.beatmapService.getFileContents(id, path);

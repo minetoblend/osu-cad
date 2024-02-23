@@ -13,6 +13,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AppLoggerMiddleware } from './app-logger.middleware';
 import { dbdatasource } from './datasource';
 import { AppController } from './app.controller';
+import { AssetsModule } from './assets/assets.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { AppController } from './app.controller';
     EditorModule,
     OsuModule,
     PreferencesModule,
+    AssetsModule,
   ],
   controllers: [AppController],
   providers: [],

@@ -37,12 +37,14 @@ import {
   SerializedTimingPoint,
   SerializedVelocityPoint,
 } from '@osucad/common';
+import { AssetsService } from '../assets/assets.service';
 
 @Injectable()
 export class BeatmapImportService {
   constructor(
     private readonly beatmapService: BeatmapService,
     private readonly userService: UserService,
+    private readonly assetsService: AssetsService,
   ) {}
 
   private readonly ruleset = new StandardRuleset();
@@ -82,6 +84,8 @@ export class BeatmapImportService {
       'mp4',
     ];
 
+    const assetPaths: string[] = [];
+
     for await (const entry of zip) {
       try {
         const fileType = entry.path.split('.').pop() ?? '';
@@ -106,6 +110,13 @@ export class BeatmapImportService {
         const dir = resolve(path, entry.path, '..');
         await fs.mkdir(dir, { recursive: true });
         await fs.writeFile(resolve(path, entry.path), await entry.buffer());
+
+        let assetPath = entry.path;
+        if (assetPath.startsWith('/')) {
+          assetPath = assetPath.slice(1);
+        }
+
+        assetPaths.push(assetPath);
       } catch (e) {
         console.error(e);
         await fs.rmdir(path);
@@ -116,6 +127,21 @@ export class BeatmapImportService {
     if (!mapset) return null;
 
     await this.beatmapService.createMapset(mapset);
+
+    for (const assetPath of assetPaths) {
+      const assetBuffer = await fs.readFile(resolve(path, assetPath));
+      await this.assetsService.addAssetToMapset({
+        mapset,
+        buffer: assetBuffer,
+        path: assetPath,
+      });
+    }
+
+    mapset.s3Storage = true;
+
+    await this.beatmapService.saveMapset(mapset);
+
+    await fs.rm(path, { recursive: true, force: true });
 
     return mapset;
   }
