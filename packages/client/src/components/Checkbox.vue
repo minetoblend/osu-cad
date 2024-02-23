@@ -1,23 +1,22 @@
 <script setup lang="ts">
 defineProps<{
   modelValue: boolean;
-}>()
+}>();
 
 const emit = defineEmits<{
-  (event: 'update:modelValue', value: boolean): void
-}>()
+  (event: 'update:modelValue', value: boolean): void;
+}>();
 
 const onChange = (e: Event) => {
-  const target = e.target as HTMLInputElement
-  emit('update:modelValue', target.checked)
-}
-
+  const target = e.target as HTMLInputElement;
+  emit('update:modelValue', target.checked);
+};
 </script>
 
 <template>
   <div class="checkbox">
-    <input type="checkbox" :checked="modelValue" @change="onChange"/>
-    <span class="checkmark"></span>
+    <input type="checkbox" :checked="modelValue" @change="onChange" />
+    <span class="checkmark" />
   </div>
 </template>
 
@@ -49,11 +48,11 @@ const onChange = (e: Event) => {
 }
 
 .checkbox input:checked ~ .checkmark {
-  background-color: #2196F3;
+  background-color: #2196f3;
 }
 
 .checkmark:after {
-  content: "";
+  content: '';
   position: absolute;
   display: none;
 }

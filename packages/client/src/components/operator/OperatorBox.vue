@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { Operator } from "../../editor/operators/operator.ts";
+import { Operator } from '../../editor/operators/operator.ts';
 
 defineProps<{
-  operator: Operator
+  operator: Operator;
 }>();
-
 </script>
 
 <template>
@@ -13,10 +12,16 @@ defineProps<{
       {{ operator.label }}
     </div>
     <div class="parameters">
-      <div v-for="parameter in operator.parameters">
-        <div class="label">{{ parameter.label }}</div>
+      <div v-for="(parameter, index) in operator.parameters" :key="index">
+        <div class="label">
+          {{ parameter.label }}
+        </div>
         <div class="parameter-component">
-          <component v-if="parameter.component" :is="parameter.component" v-model="parameter.value"/>
+          <component
+            :is="parameter.component"
+            v-if="parameter.component"
+            v-model="parameter.value"
+          />
         </div>
       </div>
     </div>

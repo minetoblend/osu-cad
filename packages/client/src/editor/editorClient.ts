@@ -1,21 +1,21 @@
-import { io } from "socket.io-client";
-import { BeatmapId } from "@osucad/common";
-import { createConnectedUsers } from "./connectedUsers.ts";
-import { createEventList } from "./events.ts";
-import { createEditorTextures } from "./textures.ts";
-import { BeatmapManager } from "./beatmapManager.ts";
-import { EditorClock } from "./clock.ts";
-import { SelectionManager } from "./selection.ts";
-import { AudioManager } from "./audio/AudioManager.ts";
-import { Mod } from "./mods/Mod.ts";
-import { CommandManager } from "./commandHandler.ts";
-import { Assets } from "pixi.js";
-import { usePreferences } from "@/composables/usePreferences.ts";
-import { ToolManager } from "@/editor/tools/toolManager.ts";
-import { EditorSocket } from "@/editor/editorSocket.ts";
-import { EditorContext, globalEditor } from "@/editor/editorContext.ts";
-import fontUrl from "@fontsource/nunito-sans/files/nunito-sans-cyrillic-400-normal.woff2";
-import { Ref } from "vue";
+import { io } from 'socket.io-client';
+import { BeatmapId } from '@osucad/common';
+import { createConnectedUsers } from './connectedUsers.ts';
+import { createEventList } from './events.ts';
+import { createEditorTextures } from './textures.ts';
+import { BeatmapManager } from './beatmapManager.ts';
+import { EditorClock } from './clock.ts';
+import { SelectionManager } from './selection.ts';
+import { AudioManager } from './audio/AudioManager.ts';
+import { Mod } from './mods/Mod.ts';
+import { CommandManager } from './commandHandler.ts';
+import { Assets } from 'pixi.js';
+import { usePreferences } from '@/composables/usePreferences.ts';
+import { ToolManager } from '@/editor/tools/toolManager.ts';
+import { EditorSocket } from '@/editor/editorSocket.ts';
+import { EditorContext, globalEditor } from '@/editor/editorContext.ts';
+import fontUrl from '@fontsource/nunito-sans/files/nunito-sans-cyrillic-400-normal.woff2';
+import { Ref } from 'vue';
 
 export async function createEditorClient(
   beatmapId: BeatmapId,
@@ -29,7 +29,7 @@ export async function createEditorClient(
     socket.disconnect();
   });
 
-  socket.on("disconnect", () => {
+  socket.on('disconnect', () => {
     window.location.reload();
   });
 
@@ -61,18 +61,18 @@ export async function createEditorClient(
 
     await Assets.load(fontUrl);
   } catch (e) {
-    console.warn("failed to load background", e);
+    console.warn('failed to load background', e);
   }
 
   progress.value = 0.5;
 
-  console.log("loading audio");
+  console.log('loading audio');
 
   await audioManager.loadAudio((p) => (progress.value = 0.5 + p * 0.5));
 
   await clock.seek(beatmapManager.hitObjects.first?.startTime ?? 0, false);
 
-  console.log("editor client created");
+  console.log('editor client created');
 
   const ctx: EditorContext = {
     socket,
@@ -96,7 +96,7 @@ export async function createEditorClient(
 }
 
 function createClient(beatmapId: BeatmapId): EditorSocket {
-  const host = window.origin.replace(/^https/, "wss");
+  const host = window.origin.replace(/^https/, 'wss');
 
   return io(`${host}/editor`, {
     withCredentials: true,
@@ -106,6 +106,6 @@ function createClient(beatmapId: BeatmapId): EditorSocket {
 
 function receiveRoomState(socket: EditorSocket): Promise<void> {
   return new Promise<void>((resolve) =>
-    socket.once("roomState", () => resolve()),
+    socket.once('roomState', () => resolve()),
   );
 }

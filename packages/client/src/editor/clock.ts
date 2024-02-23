@@ -1,16 +1,15 @@
-import {Ticker} from "pixi.js";
-import {Drawable} from "./drawables/Drawable.ts";
-import {AudioManager} from "./audio/AudioManager.ts";
-import {UserSessionInfo} from "@osucad/common";
-import {Inject} from "@/editor/drawables/di";
-import {EditorContext} from "@/editor/editorContext.ts";
-import {match} from "variant";
+import { Ticker } from 'pixi.js';
+import { Drawable } from './drawables/Drawable.ts';
+import { AudioManager } from './audio/AudioManager.ts';
+import { UserSessionInfo } from '@osucad/common';
+import { Inject } from '@/editor/drawables/di';
+import { EditorContext } from '@/editor/editorContext.ts';
+import { match } from 'variant';
 
 export class EditorClock extends Drawable {
-
   constructor(private readonly audioManager: AudioManager) {
     super();
-    this.eventMode = "none";
+    this.eventMode = 'none';
   }
 
   private _spectatingUser = ref<UserSessionInfo>();
@@ -22,7 +21,7 @@ export class EditorClock extends Drawable {
   private _currentTime = 0;
 
   private _currentTimeAnimated = 0;
-  private _isPlaying = {value: false};
+  private _isPlaying = { value: false };
   private _deltaTime = 0;
 
   @Inject(EditorContext)
@@ -82,10 +81,8 @@ export class EditorClock extends Drawable {
     }
 
     this._currentTime = time;
-    if (!animated)
-      this._currentTimeAnimated = time;
+    if (!animated) this._currentTimeAnimated = time;
   }
-
 
   onTick() {
     const time = this._currentTime;
@@ -94,7 +91,9 @@ export class EditorClock extends Drawable {
       this._currentTimeAnimated = this._currentTime;
     } else {
       const t = Math.min(Ticker.shared.deltaTime * 0.5, 1);
-      this._currentTimeAnimated = this._currentTimeAnimated + (this._currentTime - this._currentTimeAnimated) * t;
+      this._currentTimeAnimated =
+        this._currentTimeAnimated +
+        (this._currentTime - this._currentTimeAnimated) * t;
     }
     if (Math.abs(this._currentTime - this._currentTimeAnimated) < 1)
       this._currentTimeAnimated = this._currentTime;
@@ -103,13 +102,12 @@ export class EditorClock extends Drawable {
   }
 
   spectate(user: UserSessionInfo) {
-    if (this._spectatingUser.value === user)
-      return;
+    if (this._spectatingUser.value === user) return;
 
     this._spectatingUser.value = user;
     this.editor.events.add({
       message: `Spectating ${user.username}`,
-    })
+    });
   }
 
   stopSpectating() {
@@ -118,33 +116,33 @@ export class EditorClock extends Drawable {
       this._spectatingUser.value = undefined;
       this.editor.events.add({
         message: `Stopped spectating ${user.username}`,
-      })
+      });
     }
   }
 
   onLoad() {
     this.editor.socket.on('userActivity', (sessionId, activity) => {
       const followingUser = this._spectatingUser.value;
-      if (followingUser && sessionId === followingUser.sessionId && followingUser.presence.activity) {
+      if (
+        followingUser &&
+        sessionId === followingUser.sessionId &&
+        followingUser.presence.activity
+      ) {
         match(activity, {
-          composeScreen: ({currentTime, isPlaying}) => {
+          composeScreen: ({ currentTime, isPlaying }) => {
             if (isPlaying) {
               if (Math.abs(currentTime - this.currentTime) > 1000)
                 this.seek(currentTime, false);
 
-              if (!this.isPlaying)
-                this.play();
+              if (!this.isPlaying) this.play();
             } else {
-              if (this.isPlaying)
-                this.pause();
+              if (this.isPlaying) this.pause();
               this.seek(currentTime, true);
             }
           },
-          default: () => {
-          }
-        })
+          default: () => {},
+        });
       }
-    })
+    });
   }
-
 }

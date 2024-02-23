@@ -1,13 +1,22 @@
-import {Component} from "../Component.ts";
-import {AlphaFilter, Assets, Container, Point, Rectangle, Sprite, StencilMask, Texture} from "pixi.js";
-import {Inject, Provide} from "../di";
-import {HitObject, TickType} from "@osucad/common";
-import {TimelineObject} from "./TimelineObject.ts";
-import {TimelineZoom} from "../../TimelineZoom.ts";
-import {BeatInfo} from "../../beatInfo.ts";
-import {EditorContext} from "@/editor/editorContext.ts";
-import {TimelinePositionManager} from "@/editor/drawables/timeline/timelinePositionManager.ts";
-import {ControlPointTimeline} from "@/editor/drawables/timeline/ControlPointTimeline.ts";
+import { Component } from '../Component.ts';
+import {
+  AlphaFilter,
+  Assets,
+  Container,
+  Point,
+  Rectangle,
+  Sprite,
+  StencilMask,
+  Texture,
+} from 'pixi.js';
+import { Inject, Provide } from '../di';
+import { HitObject, TickType } from '@osucad/common';
+import { TimelineObject } from './TimelineObject.ts';
+import { TimelineZoom } from '../../TimelineZoom.ts';
+import { BeatInfo } from '../../beatInfo.ts';
+import { EditorContext } from '@/editor/editorContext.ts';
+import { TimelinePositionManager } from '@/editor/drawables/timeline/timelinePositionManager.ts';
+import { ControlPointTimeline } from '@/editor/drawables/timeline/ControlPointTimeline.ts';
 
 export interface TimelineVisibility {
   currentTime: number;
@@ -17,21 +26,20 @@ export interface TimelineVisibility {
 }
 
 export class ObjectTimeline extends Component {
-
   private readonly background = new Sprite({
     texture: Texture.WHITE,
     alpha: 0.05,
   });
-  private readonly eventReceiver = this;// new Container();
+  private readonly eventReceiver = this; // new Container();
   private readonly tickContainer = new Container();
-  private readonly controlPointTimeline = new ControlPointTimeline()
+  private readonly controlPointTimeline = new ControlPointTimeline();
   private readonly hitObjectContainer = new Container();
   private readonly hitObjectMap = new Map<HitObject, TimelineObject>();
   private readonly currentTimeMarker = new Sprite({
-    texture: Assets.get("timeline-tick"),
+    texture: Assets.get('timeline-tick'),
     anchor: new Point(0.5, 0.5),
     scale: new Point(0.55, 0.55),
-    tint: 0x63E2B7,
+    tint: 0x63e2b7,
   });
 
   @Inject(EditorContext)
@@ -50,11 +58,11 @@ export class ObjectTimeline extends Component {
   private ontick?: () => void;
 
   @Provide(TimelinePositionManager)
-  readonly positionManager: TimelinePositionManager
+  readonly positionManager: TimelinePositionManager;
 
   constructor(private readonly zoom: TimelineZoom) {
     super();
-    this.positionManager = new TimelinePositionManager(zoom)
+    this.positionManager = new TimelinePositionManager(zoom);
 
     this.addChild(
       this.positionManager,
@@ -66,13 +74,13 @@ export class ObjectTimeline extends Component {
       this.maskSprite,
       this.controlPointTimeline,
     );
-    this.currentTimeMarker.eventMode = "none";
-    this.maskSprite.eventMode = "none";
-    this.tickContainer.eventMode = "none";
+    this.currentTimeMarker.eventMode = 'none';
+    this.maskSprite.eventMode = 'none';
+    this.tickContainer.eventMode = 'none';
 
-    this.addEffect(new StencilMask({mask: this.maskSprite}));
+    this.addEffect(new StencilMask({ mask: this.maskSprite }));
     this.hitObjectContainer.filters = [
-      new AlphaFilter({alpha: 0.85, resolution: window.devicePixelRatio})
+      new AlphaFilter({ alpha: 0.85, resolution: window.devicePixelRatio }),
     ];
     this.setupSelectBox();
     this.setupZoom();
@@ -80,7 +88,7 @@ export class ObjectTimeline extends Component {
 
   setupSelectBox() {
     this.selectBox.visible = false;
-    this.eventMode = "static";
+    this.eventMode = 'static';
 
     const canvas = document.querySelector('canvas')! as HTMLCanvasElement;
 
@@ -88,24 +96,23 @@ export class ObjectTimeline extends Component {
 
     useEventListener(canvas, 'touchstart', (evt) => {
       if (evt.targetTouches.length !== 2) return;
-      if (!touching) return
+      if (!touching) return;
 
-      this.eventMode = 'none'
-      this.onglobalpointermove = null
-      this.ontick = undefined
+      this.eventMode = 'none';
+      this.onglobalpointermove = null;
+      this.ontick = undefined;
 
       if (this.editor.commandManager.commit()) {
-        this.editor.commandManager.undo()
+        this.editor.commandManager.undo();
       }
 
       let p1: number | undefined = undefined;
 
       let p2: number | undefined = undefined;
 
-
       const onMove = (evt: TouchEvent) => {
-        evt.stopImmediatePropagation()
-        evt.preventDefault()
+        evt.stopImmediatePropagation();
+        evt.preventDefault();
 
         const touches = evt.targetTouches;
         if (touches.length !== 2) return;
@@ -113,12 +120,12 @@ export class ObjectTimeline extends Component {
         const t1 = this.toLocal({
           x: touches[0].clientX - canvas.clientLeft,
           y: touches[0].clientY - canvas.clientTop,
-        }).x
+        }).x;
 
         const t2 = this.toLocal({
           x: touches[1].clientX - canvas.clientLeft,
           y: touches[1].clientY - canvas.clientTop,
-        }).x
+        }).x;
 
         if (p1 === undefined || p2 === undefined) {
           p1 = t1;
@@ -129,30 +136,39 @@ export class ObjectTimeline extends Component {
         const scaleChange = (t1 - t2) / (p1 - p2);
         const offsetChange = (t1 + t2) / 2 - (p1 + p2) / 2;
 
-        const deltaMs = offsetChange / this.positionManager.pixelsPerMillisecond;
+        const deltaMs =
+          offsetChange / this.positionManager.pixelsPerMillisecond;
 
         p1 = t1;
         p2 = t2;
 
         this.zoom.setZoom(this.zoom.zoom * scaleChange);
         this.editor.clock.seek(this.editor.clock.currentTime - deltaMs, false);
-      }
+      };
 
-      canvas.addEventListener('touchmove', onMove, {passive: false})
+      canvas.addEventListener('touchmove', onMove, { passive: false });
 
-      canvas.addEventListener('touchend', () => {
-        canvas.removeEventListener('touchmove', onMove)
-        this.eventMode = 'static'
-        this.editor.clock.seek(this.beatInfo.snap(this.editor.clock.currentTime))
-      }, {once: true})
-    })
+      canvas.addEventListener(
+        'touchend',
+        () => {
+          canvas.removeEventListener('touchmove', onMove);
+          this.eventMode = 'static';
+          this.editor.clock.seek(
+            this.beatInfo.snap(this.editor.clock.currentTime),
+          );
+        },
+        { once: true },
+      );
+    });
 
-    this.on("pointerdown", (evt) => {
-      touching = true
+    this.on('pointerdown', (evt) => {
+      touching = true;
       if (evt.button === 0 && !evt.ctrlKey && !evt.shiftKey)
         this.editor.selection.clear();
 
-      const selectStartTime = this.positionManager.getTimeAtPosition(evt.getLocalPosition(this).x);
+      const selectStartTime = this.positionManager.getTimeAtPosition(
+        evt.getLocalPosition(this).x,
+      );
       this.selectBox.visible = true;
       this.selectBox.width = 0;
 
@@ -169,24 +185,28 @@ export class ObjectTimeline extends Component {
         const max = Math.max(time, selectStartTime);
 
         this.selectBox.x = this.positionManager.getPositionForTime(min);
-        this.selectBox.width = Math.abs(this.positionManager.getPositionForTime(max) - this.selectBox.x);
+        this.selectBox.width = Math.abs(
+          this.positionManager.getPositionForTime(max) - this.selectBox.x,
+        );
 
-        const hitObjects = this.editor.beatmapManager.hitObjects.hitObjects.filter((obj) => obj.endTime >= min && obj.startTime <= max);
+        const hitObjects =
+          this.editor.beatmapManager.hitObjects.hitObjects.filter(
+            (obj) => obj.endTime >= min && obj.startTime <= max,
+          );
         this.editor.selection.selectAll(hitObjects);
       };
 
-      addEventListener("pointerup", () => {
+      addEventListener('pointerup', () => {
         this.eventReceiver.onglobalpointermove = null;
         this.ontick = undefined;
         this.selectBox.visible = false;
-        touching = false
+        touching = false;
       });
     });
-
   }
 
   setupZoom() {
-    this.on("wheel", (evt) => {
+    this.on('wheel', (evt) => {
       if (evt.altKey) {
         evt.stopImmediatePropagation();
 
@@ -211,22 +231,15 @@ export class ObjectTimeline extends Component {
     this.maskSprite.scale.y = this.size.y * 2;
     //this.eventReceiver.hitArea = new Rectangle(0, 0, this.size.x, this.size.y);
     this.selectBox.height = this.size.y;
-    this.currentTimeMarker.position.set(
-      this.size.x * 0.4,
-      this.size.y * 0.5,
-    );
+    this.currentTimeMarker.position.set(this.size.x * 0.4, this.size.y * 0.5);
     this.positionManager.availableWidth = this.size.x;
-    this.controlPointTimeline.size.set(
-      this.size.x,
-      this.size.y * 0.25,
-    );
+    this.controlPointTimeline.size.set(this.size.x, this.size.y * 0.25);
     this.hitArea = new Rectangle(0, -10, this.size.x, this.size.y + 10);
   }
 
   private readonly tickPool: Tick[] = [];
 
   onTick() {
-
     const controlPoints = this.editor.beatmapManager.controlPoints;
 
     if (!controlPoints) return;
@@ -234,7 +247,11 @@ export class ObjectTimeline extends Component {
     const startTime = this.positionManager.startTime;
     const endTime = this.positionManager.endTime;
 
-    const ticks = controlPoints.getTicks(startTime, endTime, this.beatInfo.beatSnap);
+    const ticks = controlPoints.getTicks(
+      startTime,
+      endTime,
+      this.beatInfo.beatSnap,
+    );
 
     const objectY = this.size.y * 0.5;
 
@@ -249,9 +266,11 @@ export class ObjectTimeline extends Component {
       tick.type = ticks[i].type;
     }
     if (ticks.length < this.tickContainer.children.length)
-      this.tickPool.push(...(this.tickContainer.removeChildren(ticks.length) as Tick[]));
+      this.tickPool.push(
+        ...(this.tickContainer.removeChildren(ticks.length) as Tick[]),
+      );
 
-    this.tickPool.splice(30).forEach(tick => tick.destroy());
+    this.tickPool.splice(30).forEach((tick) => tick.destroy());
 
     //performance.mark("updateTicks-finished");
     //performance.measure("updateTicks-duration", "computeTicks-finished", "updateTicks-finished");
@@ -259,12 +278,11 @@ export class ObjectTimeline extends Component {
     const hitObjectManager = this.editor.beatmapManager.hitObjects;
     if (!hitObjectManager) return;
 
-    const hitObjects = hitObjectManager.hitObjects.filter(it => {
+    const hitObjects = hitObjectManager.hitObjects.filter((it) => {
       return it.endTime >= startTime && it.startTime <= endTime;
     });
 
     const shouldDelete = new Set<HitObject>(this.hitObjectMap.keys());
-
 
     for (let i = 0; i < hitObjects.length; i++) {
       const hitObject = hitObjects[i];
@@ -285,7 +303,7 @@ export class ObjectTimeline extends Component {
       if (!timelineObject) continue;
       this.hitObjectContainer.removeChild(timelineObject);
       this.hitObjectMap.delete(hitObject);
-      timelineObject.destroy({children: true});
+      timelineObject.destroy({ children: true });
     }
     this.hitObjectContainer.sortChildren();
 
@@ -295,11 +313,9 @@ export class ObjectTimeline extends Component {
 
 class Tick extends Sprite {
   constructor() {
-    super(
-      {
-        texture: Assets.get("timeline-tick"),
-      },
-    );
+    super({
+      texture: Assets.get('timeline-tick'),
+    });
     this.anchor.set(0.5);
     this.scale.set(0.5);
   }

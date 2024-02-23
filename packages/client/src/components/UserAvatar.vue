@@ -1,20 +1,18 @@
 <script setup lang="ts">
-
-import {computed} from "vue";
+import { computed } from 'vue';
 
 const props = defineProps<{
-  id: number
+  id: number;
 }>();
 
 const imageUrl = computed(() => `url("https://a.ppy.sh/${props.id}")`);
 </script>
 
 <template>
-  <div class="oc-user-avatar"/>
+  <div class="oc-user-avatar" />
 </template>
 
 <style lang="scss">
-
 $size: 1.5em;
 
 .oc-user-avatar {

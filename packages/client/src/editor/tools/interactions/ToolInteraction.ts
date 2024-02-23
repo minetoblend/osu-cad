@@ -1,11 +1,10 @@
-import {ComposeTool} from "../ComposeTool.ts";
-import {FederatedPointerEvent} from "pixi.js";
-import {Drawable} from "../../drawables/Drawable.ts";
-import {Inject} from "../../drawables/di";
-import {EditorContext} from "@/editor/editorContext.ts";
+import { ComposeTool } from '../ComposeTool.ts';
+import { FederatedPointerEvent } from 'pixi.js';
+import { Drawable } from '../../drawables/Drawable.ts';
+import { Inject } from '../../drawables/di';
+import { EditorContext } from '@/editor/editorContext.ts';
 
 export class ToolInteraction extends Drawable {
-
   constructor(protected readonly tool: ComposeTool) {
     super();
   }
@@ -78,5 +77,4 @@ export class ToolInteraction extends Drawable {
   get shiftDown() {
     return this.tool.shiftDown;
   }
-
 }

@@ -1,7 +1,7 @@
-import {ISize, Vec2} from "@osucad/common";
-import gsap from "gsap";
-import {Container, ObservablePoint} from "pixi.js";
-import {Component} from "@/editor/drawables/Component.ts";
+import { ISize, Vec2 } from '@osucad/common';
+import gsap from 'gsap';
+import { Container, ObservablePoint } from 'pixi.js';
+import { Component } from '@/editor/drawables/Component.ts';
 
 export class ScaleToFitContainer extends Component {
   constructor(
@@ -10,7 +10,7 @@ export class ScaleToFitContainer extends Component {
     private readonly animated: boolean = false,
   ) {
     super();
-    this.addChild(this.content)
+    this.addChild(this.content);
   }
 
   readonly content = new Container();
@@ -43,17 +43,16 @@ export class ScaleToFitContainer extends Component {
         x: scale,
         y: scale,
         duration: 0.3,
-        ease: "power2.out",
+        ease: 'power2.out',
       });
       gsap.to(this.content.position, {
         x: position.x,
         y: position.y,
         duration: 0.3,
-        ease: "power2.out",
+        ease: 'power2.out',
       });
     }
 
     this._isFirstUpdate = false;
   }
-
 }

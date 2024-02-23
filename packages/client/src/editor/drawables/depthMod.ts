@@ -1,6 +1,6 @@
-import { HitObject, Vec2 } from "@osucad/common";
-import { HitObjectDrawable } from "./hitObjects/HitObjectDrawable.ts";
-import { EditorClock } from "../clock.ts";
+import { HitObject, Vec2 } from '@osucad/common';
+import { HitObjectDrawable } from './hitObjects/HitObjectDrawable.ts';
+import { EditorClock } from '../clock.ts';
 
 const maxDepth = 100;
 

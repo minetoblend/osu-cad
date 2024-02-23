@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import {usePreferencesVisible} from "@/composables/usePreferencesVisible.ts";
-import {onEditorKeyDown} from "@/composables/onEditorKeyDown.ts";
+import { usePreferencesVisible } from '@/composables/usePreferencesVisible.ts';
+import { onEditorKeyDown } from '@/composables/onEditorKeyDown.ts';
 
-const visible = usePreferencesVisible()
+const visible = usePreferencesVisible();
 
 onEditorKeyDown((evt) => {
   if (evt.key === 'o' && evt.ctrlKey) {
-    visible.value = !visible.value
-    evt.preventDefault()
+    visible.value = !visible.value;
+    evt.preventDefault();
   }
-})
+});
 </script>
 
 <template>
   <Transition>
-    <div v-if="visible" class="preferences-overlay" @click="visible=false">
+    <div v-if="visible" class="preferences-overlay" @click="visible = false">
       <div class="preferences-card" @click.stop>
-        <PreferencesForm/>
+        <PreferencesForm />
       </div>
     </div>
   </Transition>
@@ -47,8 +47,6 @@ onEditorKeyDown((evt) => {
       height: 100%;
     }
   }
-
-
 }
 
 .backdrop {
@@ -60,7 +58,8 @@ onEditorKeyDown((evt) => {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-.v-enter-active, .v-leave-active {
+.v-enter-active,
+.v-leave-active {
   .preferences-card {
     transition: all 0.3s;
   }
@@ -68,7 +67,8 @@ onEditorKeyDown((evt) => {
   transition: all 0.3s;
 }
 
-.v-enter-from, .v-leave-to {
+.v-enter-from,
+.v-leave-to {
   .preferences-card {
     transform: translateX(-100%);
   }

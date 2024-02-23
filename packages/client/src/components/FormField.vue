@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineProps<{
-  label?: string
-  fullWidth?: boolean
+  label?: string;
+  fullWidth?: boolean;
 }>();
 </script>
 
@@ -9,7 +9,7 @@ defineProps<{
   <div class="form-field grid">
     <label class="col-4">{{ label }}</label>
     <div class="form-control" :class="{ ['col-' + (fullWidth ? 8 : 4)]: true }">
-      <slot/>
+      <slot />
     </div>
   </div>
 </template>

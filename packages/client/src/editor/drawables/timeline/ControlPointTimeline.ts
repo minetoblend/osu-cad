@@ -1,15 +1,15 @@
-import { Component } from "@/editor/drawables/Component.ts";
-import { Inject } from "@/editor/drawables/di";
-import { TimelinePositionManager } from "@/editor/drawables/timeline/timelinePositionManager.ts";
-import { ControlPoint, EditorCommand, hitObjectId, Vec2 } from "@osucad/common";
-import { MapContainer } from "@/editor/drawables/timeline/MapContainer.ts";
-import { ControlPointMarker } from "@/editor/drawables/timeline/ControlPointMarker.ts";
-import { EditorContext } from "@/editor/editorContext.ts";
-import { FederatedPointerEvent, ObservablePoint, Rectangle } from "pixi.js";
-import { BeatInfo } from "@/editor/beatInfo.ts";
-import { usePixiPopover } from "@/editor/components/popover";
-import ControlPointPopover from "@/editor/components/popover/ControlPointPopover.vue";
-import { onEditorKeyDown } from "@/composables/onEditorKeyDown.ts";
+import { Component } from '@/editor/drawables/Component.ts';
+import { Inject } from '@/editor/drawables/di';
+import { TimelinePositionManager } from '@/editor/drawables/timeline/timelinePositionManager.ts';
+import { ControlPoint, EditorCommand, hitObjectId, Vec2 } from '@osucad/common';
+import { MapContainer } from '@/editor/drawables/timeline/MapContainer.ts';
+import { ControlPointMarker } from '@/editor/drawables/timeline/ControlPointMarker.ts';
+import { EditorContext } from '@/editor/editorContext.ts';
+import { FederatedPointerEvent, ObservablePoint, Rectangle } from 'pixi.js';
+import { BeatInfo } from '@/editor/beatInfo.ts';
+import { usePixiPopover } from '@/editor/components/popover';
+import ControlPointPopover from '@/editor/components/popover/ControlPointPopover.vue';
+import { onEditorKeyDown } from '@/composables/onEditorKeyDown.ts';
 
 export class ControlPointTimeline extends Component {
   @Inject(TimelinePositionManager)
@@ -23,7 +23,7 @@ export class ControlPointTimeline extends Component {
 
   private readonly previewPoint = new ControlPointMarker(
     new ControlPoint({
-      id: "",
+      id: '',
       time: 0,
       timing: null,
       velocityMultiplier: null,
@@ -37,20 +37,20 @@ export class ControlPointTimeline extends Component {
   constructor() {
     super();
     this.addChild(this.timingPointContainer, this.previewPoint);
-    this.eventMode = "static";
+    this.eventMode = 'static';
 
     this.previewPoint.alpha = 0.5;
     this.previewPoint.visible = false;
-    this.previewPoint.eventMode = "none";
+    this.previewPoint.eventMode = 'none';
   }
 
   onLoad() {
-    this.on("pointermove", this.onPointerMove, this);
-    this.on("pointerout", this.onPointerLeave, this);
-    this.on("pointerdown", this.onPointerDown, this);
+    this.on('pointermove', this.onPointerMove, this);
+    this.on('pointerout', this.onPointerLeave, this);
+    this.on('pointerdown', this.onPointerDown, this);
 
     onEditorKeyDown((evt) => {
-      if (evt.ctrlKey && evt.key === "p") {
+      if (evt.ctrlKey && evt.key === 'p') {
         evt.preventDefault();
         const id = hitObjectId();
         const time = this.editor.clock.currentTime;
@@ -70,7 +70,7 @@ export class ControlPointTimeline extends Component {
         const createdControlPoint =
           this.editor.beatmapManager.controlPoints.getById(controlPoint.id);
         this.showPopover(createdControlPoint!);
-      } else if (evt.ctrlKey && evt.key === "P") {
+      } else if (evt.ctrlKey && evt.key === 'P') {
         evt.preventDefault();
         evt.preventDefault();
         const id = hitObjectId();
@@ -194,7 +194,7 @@ export class ControlPointTimeline extends Component {
         controlPoint: controlPoint,
         positionManager: this.positionManager,
       },
-      anchor: "top right",
+      anchor: 'top right',
     });
   }
 

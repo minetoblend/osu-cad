@@ -1,26 +1,26 @@
-import { Drawable } from "../Drawable.ts";
-import { Assets, Circle, Sprite } from "pixi.js";
-import { Inject } from "../di";
-import { EditorClock } from "../../clock.ts";
-import { animate } from "../animate.ts";
-import { HitSoundSample } from "@osucad/common";
+import { Drawable } from '../Drawable.ts';
+import { Assets, Circle, Sprite } from 'pixi.js';
+import { Inject } from '../di';
+import { EditorClock } from '../../clock.ts';
+import { animate } from '../animate.ts';
+import { HitSoundSample } from '@osucad/common';
 
 export class HitSampleDrawable extends Drawable {
   expandable = new Sprite({
-    texture: Assets.get("hitsample-outline"),
+    texture: Assets.get('hitsample-outline'),
     anchor: { x: 0.5, y: 0.5 },
     scale: { x: 0.5, y: 0.5 },
     alpha: 0,
   });
 
   sprite = new Sprite({
-    texture: Assets.get("hitsample"),
+    texture: Assets.get('hitsample'),
     anchor: { x: 0.5, y: 0.5 },
     scale: { x: 0.5, y: 0.5 },
   });
 
   outline = new Sprite({
-    texture: Assets.get("hitsample-outline"),
+    texture: Assets.get('hitsample-outline'),
     anchor: { x: 0.5, y: 0.5 },
     scale: { x: 0.5, y: 0.5 },
     alpha: 1,
@@ -31,10 +31,10 @@ export class HitSampleDrawable extends Drawable {
     this.addChild(this.expandable, this.outline, this.sprite);
     this.hitArea = new Circle(0, 0, 10);
     this.on(
-      "pointerdown",
+      'pointerdown',
       () => (this.sample.selected = !this.sample.selected),
     );
-    this.eventMode = "dynamic";
+    this.eventMode = 'dynamic';
   }
 
   time: number = 0;

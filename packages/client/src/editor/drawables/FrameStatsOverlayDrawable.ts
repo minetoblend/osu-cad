@@ -1,8 +1,8 @@
-import { Component } from "@/editor/drawables/Component.ts";
-import { BitmapText, Graphics } from "pixi.js";
-import { usePreferences } from "@/composables/usePreferences.ts";
-import { frameStats } from "@/editor/drawables/DrawableSystem.ts";
-import { clamp } from "@vueuse/core";
+import { Component } from '@/editor/drawables/Component.ts';
+import { BitmapText, Graphics } from 'pixi.js';
+import { usePreferences } from '@/composables/usePreferences.ts';
+import { frameStats } from '@/editor/drawables/DrawableSystem.ts';
+import { clamp } from '@vueuse/core';
 
 export class FrameStatsOverlayDrawable extends Component {
   frameTimeList: number[] = [];
@@ -10,7 +10,7 @@ export class FrameStatsOverlayDrawable extends Component {
 
   constructor() {
     super();
-    this.eventMode = "none";
+    this.eventMode = 'none';
   }
 
   graph = new Graphics({
@@ -23,9 +23,9 @@ export class FrameStatsOverlayDrawable extends Component {
   });
 
   fpsText = new BitmapText({
-    text: "0",
+    text: '0',
     style: {
-      fontFamily: "Nunito Sans",
+      fontFamily: 'Nunito Sans',
       fontSize: 24,
       fill: 0xffffff,
     },
@@ -34,9 +34,9 @@ export class FrameStatsOverlayDrawable extends Component {
   });
 
   frameTimeText = new BitmapText({
-    text: "0",
+    text: '0',
     style: {
-      fontFamily: "Nunito Sans",
+      fontFamily: 'Nunito Sans',
       fontSize: 24,
       fill: 0xffffff,
     },
@@ -54,8 +54,8 @@ export class FrameStatsOverlayDrawable extends Component {
   }
 
   onTick() {
-    this.fpsText.text = Math.round(frameStats.fps) + "fps";
-    this.frameTimeText.text = frameStats.frameTime.toFixed(1) + "ms";
+    this.fpsText.text = Math.round(frameStats.fps) + 'fps';
+    this.frameTimeText.text = frameStats.frameTime.toFixed(1) + 'ms';
 
     //this.updateTimeList.push(frameStats.updateTime);
     if (this.updateTimeList.length > 100) this.updateTimeList.shift();

@@ -1,6 +1,6 @@
-import {MeshGeometry} from "pixi.js";
-import {Vec2} from "@osucad/common";
-import {GeometryBuilder} from "./GeometryBuilder.ts";
+import { MeshGeometry } from 'pixi.js';
+import { Vec2 } from '@osucad/common';
+import { GeometryBuilder } from './GeometryBuilder.ts';
 
 interface SliderPathGeometryOptions {
   path: Vec2[];
@@ -9,9 +9,8 @@ interface SliderPathGeometryOptions {
 }
 
 export class SliderPathGeometry extends MeshGeometry {
-
   constructor(options: SliderPathGeometryOptions) {
-    const {path, radius, expectedDistance} = options;
+    const { path, radius, expectedDistance } = options;
     super({
       positions: new Float32Array(0),
       indices: new Uint32Array(0),
@@ -24,9 +23,8 @@ export class SliderPathGeometry extends MeshGeometry {
     this.uvs = geo.uvs;
   }
 
-
   private generatePath(path: Vec2[], radius: number, expectedDistance: number) {
-    const {numVertices, numIndices} = this.getGeoCount(path);
+    const { numVertices, numIndices } = this.getGeoCount(path);
     const geo = new GeometryBuilder(numVertices, numIndices, expectedDistance);
 
     for (let i = 1; i < path.length; i++) {
@@ -41,7 +39,8 @@ export class SliderPathGeometry extends MeshGeometry {
       const next = path[i + 1];
       if (next) {
         const thetaNext = this.getTheta(curr, next);
-        const thetaDiff = this.md(thetaNext - theta + Math.PI, Math.PI * 2) - Math.PI;
+        const thetaDiff =
+          this.md(thetaNext - theta + Math.PI, Math.PI * 2) - Math.PI;
 
         geo.addJoin(curr, theta, thetaDiff, radius);
       } else {
@@ -65,7 +64,8 @@ export class SliderPathGeometry extends MeshGeometry {
 
       const theta = this.getTheta(prev, curr);
       const thetaNext = this.getTheta(curr, next);
-      const thetaDiff = this.md(thetaNext - theta + Math.PI, Math.PI * 2) - Math.PI;
+      const thetaDiff =
+        this.md(thetaNext - theta + Math.PI, Math.PI * 2) - Math.PI;
 
       const count = this.getJoinGeometryCount(thetaDiff);
 
@@ -88,9 +88,9 @@ export class SliderPathGeometry extends MeshGeometry {
   }
 
   private getJoinGeometryCount(thetaDiff: number) {
-    let step = Math.PI / 24.0;
+    const step = Math.PI / 24.0;
 
-    let absThetaDiff = Math.abs(thetaDiff);
+    const absThetaDiff = Math.abs(thetaDiff);
 
     const amountOfOuterPoints = Math.ceil(absThetaDiff / step) + 1;
 
@@ -100,11 +100,7 @@ export class SliderPathGeometry extends MeshGeometry {
     };
   }
 
-  update(
-    path: Vec2[],
-    radius: number,
-    expectedDistance: number,
-  ) {
+  update(path: Vec2[], radius: number, expectedDistance: number) {
     const geo = this.generatePath(path, radius, expectedDistance);
 
     this.positions = geo.vertices;
@@ -113,6 +109,4 @@ export class SliderPathGeometry extends MeshGeometry {
     this.uvs = geo.uvs;
     this['_boundsDirty'] = true;
   }
-
-
 }

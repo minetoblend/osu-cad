@@ -1,18 +1,17 @@
-import {HitObjectDrawable} from "./HitObjectDrawable.ts";
-import {Slider, Vec2} from "@osucad/common";
-import {CirclePiece} from "./CirclePiece.ts";
-import {ApproachCircle} from "./ApproachCircle.ts";
-import {Container, DestroyOptions} from "pixi.js";
-import {animate} from "../animate.ts";
-import {SliderBallDrawable} from "./SliderBallDrawawble.ts";
-import {ReverseArrowDrawable} from "./ReverseArrowDrawable.ts";
-import {DrawableComboNumber} from "./DrawableComboNumber.ts";
-import {DrawableSliderBody} from "./DrawableSliderBody.ts";
-import {SelectionCircle} from "./SelectionCircle.ts";
-import {usePreferences} from "@/composables/usePreferences.ts";
+import { HitObjectDrawable } from './HitObjectDrawable.ts';
+import { Slider, Vec2 } from '@osucad/common';
+import { CirclePiece } from './CirclePiece.ts';
+import { ApproachCircle } from './ApproachCircle.ts';
+import { Container, DestroyOptions } from 'pixi.js';
+import { animate } from '../animate.ts';
+import { SliderBallDrawable } from './SliderBallDrawawble.ts';
+import { ReverseArrowDrawable } from './ReverseArrowDrawable.ts';
+import { DrawableComboNumber } from './DrawableComboNumber.ts';
+import { DrawableSliderBody } from './DrawableSliderBody.ts';
+import { SelectionCircle } from './SelectionCircle.ts';
+import { usePreferences } from '@/composables/usePreferences.ts';
 
 export class SliderDrawable extends HitObjectDrawable<Slider> {
-
   private readonly headCircle = new CirclePiece();
   private readonly tailCircle = new CirclePiece();
   private readonly approachCircle = new ApproachCircle();
@@ -31,7 +30,16 @@ export class SliderDrawable extends HitObjectDrawable<Slider> {
     super.onLoad();
     this.sliderBody.alpha = 0;
 
-    this.addChild(this.sliderBody, this.tailCircle, this.reverseArrows, this.approachCircle, this.headCircle, this.sliderBall, this.endSelectionCircle, this.startSelectionCircle);
+    this.addChild(
+      this.sliderBody,
+      this.tailCircle,
+      this.reverseArrows,
+      this.approachCircle,
+      this.headCircle,
+      this.sliderBall,
+      this.endSelectionCircle,
+      this.startSelectionCircle,
+    );
     this.headCircle.addChild(this.comboNumber);
   }
 
@@ -47,13 +55,22 @@ export class SliderDrawable extends HitObjectDrawable<Slider> {
     this.headCircle.timeFadeIn = this.hitObject.timeFadeIn;
     this.headCircle.comboColor = this.comboColor;
     this.tailCircle.startTime = this.hitObject.endTime;
-    this.tailCircle.timePreempt = this.hitObject.timePreempt + Math.min(150, this.hitObject.spanDuration / 2);
+    this.tailCircle.timePreempt =
+      this.hitObject.timePreempt +
+      Math.min(150, this.hitObject.spanDuration / 2);
     this.tailCircle.timeFadeIn = this.hitObject.timeFadeIn;
     this.tailCircle.comboColor = this.comboColor;
-    this.tailCircle.position.copyFrom(Vec2.scale(Vec2.sub(this.hitObject.endPosition, this.hitObject.position), 1 / this.hitObject.scale));
+    this.tailCircle.position.copyFrom(
+      Vec2.scale(
+        Vec2.sub(this.hitObject.endPosition, this.hitObject.position),
+        1 / this.hitObject.scale,
+      ),
+    );
     this.sliderBall.startTime = this.hitObject.startTime;
     this.sliderBall.endTime = this.hitObject.endTime;
-    this.endSelectionCircle.position.copyFrom(Vec2.scale(this.hitObject.path.endPosition, 1 / this.hitObject.scale));
+    this.endSelectionCircle.position.copyFrom(
+      Vec2.scale(this.hitObject.path.endPosition, 1 / this.hitObject.scale),
+    );
     this.startSelectionCircle.visible = this.hitObject.isSelected;
     this.endSelectionCircle.visible = this.hitObject.isSelected;
 
@@ -66,7 +83,8 @@ export class SliderDrawable extends HitObjectDrawable<Slider> {
       circle.timeFadeIn = this.hitObject.timeFadeIn;
       circle.comboColor = this.comboColor;
 
-      const angle = i % 2 == 0 ? this.hitObject.endAngle : this.hitObject.startAngle;
+      const angle =
+        i % 2 == 0 ? this.hitObject.endAngle : this.hitObject.startAngle;
 
       const reverseArrow = new ReverseArrowDrawable();
       reverseArrow.rotation = angle + Math.PI;
@@ -75,7 +93,10 @@ export class SliderDrawable extends HitObjectDrawable<Slider> {
 
       this.reverseArrows.addChild(circle, reverseArrow);
       if (i % 2 === 0) {
-        const position = Vec2.scale(this.hitObject.path.endPosition, 1 / this.hitObject.scale);
+        const position = Vec2.scale(
+          this.hitObject.path.endPosition,
+          1 / this.hitObject.scale,
+        );
         reverseArrow.position.copyFrom(position);
         circle.position.copyFrom(position);
       }
@@ -83,33 +104,52 @@ export class SliderDrawable extends HitObjectDrawable<Slider> {
 
     this.sliderBody.scale.set(1 / this.hitObject.scale);
 
-    this.eventMode = "dynamic";
+    this.eventMode = 'dynamic';
   }
-
 
   onTick() {
     super.onTick();
 
-    const time = this.editor.clock.currentTimeAnimated - this.hitObject.startTime;
+    const time =
+      this.editor.clock.currentTimeAnimated - this.hitObject.startTime;
 
     if (time < 0) {
-      this.sliderBody.alpha = animate(time, -this.hitObject.timePreempt, -this.hitObject.timePreempt + this.hitObject.timeFadeIn, 0, 0.8);
+      this.sliderBody.alpha = animate(
+        time,
+        -this.hitObject.timePreempt,
+        -this.hitObject.timePreempt + this.hitObject.timeFadeIn,
+        0,
+        0.8,
+      );
     } else if (time < this.hitObject.duration) {
       this.sliderBody.alpha = 0.8;
     } else {
-      this.sliderBody.alpha = animate(time, this.hitObject.duration, this.hitObject.duration + 300, 0.8, 0);
+      this.sliderBody.alpha = animate(
+        time,
+        this.hitObject.duration,
+        this.hitObject.duration + 300,
+        0.8,
+        0,
+      );
     }
 
-    const position = this.hitObject.positionAt(this.editor.clock.currentTimeAnimated);
-    this.sliderBall.position.copyFrom(Vec2.scale(position, 1 / this.hitObject.scale));
+    const position = this.hitObject.positionAt(
+      this.editor.clock.currentTimeAnimated,
+    );
+    this.sliderBall.position.copyFrom(
+      Vec2.scale(position, 1 / this.hitObject.scale),
+    );
     this.comboNumber.number = this.hitObject.indexInCombo + 1;
 
-    this.comboNumber.alpha = 1
+    this.comboNumber.alpha = 1;
     if (time > 0) {
-      const {preferences} = usePreferences();
+      const { preferences } = usePreferences();
 
-      if (preferences.viewport.hitAnimations || preferences.viewport.hitMarkers) {
-        this.comboNumber.alpha = animate(time, 0, 60, 1, 0)
+      if (
+        preferences.viewport.hitAnimations ||
+        preferences.viewport.hitMarkers
+      ) {
+        this.comboNumber.alpha = animate(time, 0, 60, 1, 0);
       }
     }
 
@@ -119,5 +159,4 @@ export class SliderDrawable extends HitObjectDrawable<Slider> {
   destroy(options?: DestroyOptions) {
     super.destroy(options);
   }
-
 }

@@ -1,14 +1,13 @@
-import {Button} from "./Button.ts";
-import {Container, ObservablePoint, Point, Sprite, Texture} from "pixi.js";
+import { Button } from './Button.ts';
+import { Container, ObservablePoint, Point, Sprite, Texture } from 'pixi.js';
 
 export interface IconButtonOptions {
-  icon: Texture,
-  iconScale?: number,
-  action?: () => void
+  icon: Texture;
+  iconScale?: number;
+  action?: () => void;
 }
 
 export class IconButton extends Button {
-
   protected readonly content = new Container();
   protected readonly sprite: Sprite;
   iconScale: number;
@@ -45,5 +44,4 @@ export class IconButton extends Button {
   set icon(texture: Texture) {
     this.sprite.texture = texture;
   }
-
 }

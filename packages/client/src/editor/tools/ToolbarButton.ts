@@ -1,14 +1,8 @@
-import {IconButton} from "../drawables/IconButton.ts";
-import {Texture} from "pixi.js";
+import { IconButton } from '../drawables/IconButton.ts';
+import { Texture } from 'pixi.js';
 
 export class ToolbarButton extends IconButton {
-
-  constructor(
-    options: {
-      icon: Texture,
-      action: () => void
-    },
-  ) {
+  constructor(options: { icon: Texture; action: () => void }) {
     super({
       icon: options.icon,
       iconScale: 0.65,

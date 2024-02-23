@@ -1,15 +1,14 @@
 <script setup lang="ts">
-
-import TitleBar from "./components/AppNavbar.vue";
+import TitleBar from './components/AppNavbar.vue';
 </script>
 
 <template>
   <div class="app">
-    <TitleBar/>
+    <TitleBar />
     <main>
-      <RouterView/>
+      <RouterView />
     </main>
-    <div id="dpi"/>
+    <div id="dpi" />
   </div>
 </template>
 

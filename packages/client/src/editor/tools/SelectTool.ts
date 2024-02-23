@@ -1,6 +1,6 @@
-import { ComposeTool } from "./ComposeTool.ts";
-import { SelectBoxInteraction } from "./interactions/SelectBoxInteraction.ts";
-import { SelectToolSliderPathVisualizer } from "./SelectToolSliderPathVisualizer.ts";
+import { ComposeTool } from './ComposeTool.ts';
+import { SelectBoxInteraction } from './interactions/SelectBoxInteraction.ts';
+import { SelectToolSliderPathVisualizer } from './SelectToolSliderPathVisualizer.ts';
 import {
   EditorCommand,
   HitCircle,
@@ -13,25 +13,25 @@ import {
   Slider,
   updateHitObject,
   Vec2,
-} from "@osucad/common";
-import { RotateHitObjectsInteraction } from "./interactions/RotateHitObjectsInteration.ts";
-import { Assets, FederatedPointerEvent } from "pixi.js";
-import { MoveHitObjectsInteraction } from "./interactions/MoveHitObjectsInteraction.ts";
-import { InsertControlPointInteraction } from "./interactions/InsertControlPointInteraction.ts";
-import { ScaleHitObjectsInteraction } from "./interactions/ScaleHitObjectsInteration.ts";
-import { Inject } from "../drawables/di";
-import { PopoverContainer } from "../drawables/menu/PopoverContainer.ts";
-import { Menu } from "../drawables/menu/Menu.ts";
-import { MenuItemOptions } from "../drawables/menu/MenuItem.ts";
-import { reverseHitObjects } from "../interaction/reverseHitObjects.ts";
-import { InsertAxisInteraction } from "./interactions/InsertAxisInteraction.ts";
-import { PathApproximator, Vector2 } from "osu-classes";
-import { usePreferences } from "@/composables/usePreferences.ts";
-import { LongPressInteraction } from "@/editor/tools/interactions/LongPressInteraction.ts";
-import { ButtonPanelButton } from "@/editor/drawables/buttonPanel.ts";
-import { mirrorHitObjects } from "@/editor/interaction/mirrorHitObjects.ts";
-import { getHitObjectPositions } from "@/editor/tools/snapping/HitObjectSnapProvider.ts";
-import { transformHitObjects } from "@/editor/tools/interactions/TransformHitObjects.ts";
+} from '@osucad/common';
+import { RotateHitObjectsInteraction } from './interactions/RotateHitObjectsInteration.ts';
+import { Assets, FederatedPointerEvent } from 'pixi.js';
+import { MoveHitObjectsInteraction } from './interactions/MoveHitObjectsInteraction.ts';
+import { InsertControlPointInteraction } from './interactions/InsertControlPointInteraction.ts';
+import { ScaleHitObjectsInteraction } from './interactions/ScaleHitObjectsInteration.ts';
+import { Inject } from '../drawables/di';
+import { PopoverContainer } from '../drawables/menu/PopoverContainer.ts';
+import { Menu } from '../drawables/menu/Menu.ts';
+import { MenuItemOptions } from '../drawables/menu/MenuItem.ts';
+import { reverseHitObjects } from '../interaction/reverseHitObjects.ts';
+import { InsertAxisInteraction } from './interactions/InsertAxisInteraction.ts';
+import { PathApproximator, Vector2 } from 'osu-classes';
+import { usePreferences } from '@/composables/usePreferences.ts';
+import { LongPressInteraction } from '@/editor/tools/interactions/LongPressInteraction.ts';
+import { ButtonPanelButton } from '@/editor/drawables/buttonPanel.ts';
+import { mirrorHitObjects } from '@/editor/interaction/mirrorHitObjects.ts';
+import { getHitObjectPositions } from '@/editor/tools/snapping/HitObjectSnapProvider.ts';
+import { transformHitObjects } from '@/editor/tools/interactions/TransformHitObjects.ts';
 
 export class SelectTool extends ComposeTool {
   preferences: Preferences;
@@ -63,7 +63,7 @@ export class SelectTool extends ComposeTool {
     if (this.hasInteraction) return;
     if (evt.button === 0) {
       if (
-        (evt.ctrlKey || (evt.pointerType === "touch" && isDoubleTap)) &&
+        (evt.ctrlKey || (evt.pointerType === 'touch' && isDoubleTap)) &&
         this.sliderVisualizer.slider &&
         this.insertControlPoint(this.sliderVisualizer.slider, evt)
       ) {
@@ -72,7 +72,7 @@ export class SelectTool extends ComposeTool {
 
       this.canCycleSelection = !this.trySelectOnMousedown(evt);
       if (this.hoveredHitObjects.length > 0) {
-        if (evt.pointerType === "touch") {
+        if (evt.pointerType === 'touch') {
           this.beginInteraction(LongPressInteraction, {
             action: () => this.showContextMenu(this.toGlobal(this.mousePos)),
             onMoveCancel: () => {
@@ -89,14 +89,14 @@ export class SelectTool extends ComposeTool {
           );
       }
     } else if (evt.button === 2) {
-      let action: "delete" | "contextmenu" = "delete";
-      if (this.preferences.behavior.rightClickBehavior === "contextMenu") {
-        if (!evt.shiftKey) action = "contextmenu";
+      let action: 'delete' | 'contextmenu' = 'delete';
+      if (this.preferences.behavior.rightClickBehavior === 'contextMenu') {
+        if (!evt.shiftKey) action = 'contextmenu';
       } else {
-        if (evt.shiftKey) action = "contextmenu";
+        if (evt.shiftKey) action = 'contextmenu';
       }
 
-      if (action === "delete") {
+      if (action === 'delete') {
         this.deleteHoveredHitObjects();
       } else {
         this.trySelectOnMousedown(evt);
@@ -121,32 +121,32 @@ export class SelectTool extends ComposeTool {
   protected onKeyDown(evt: KeyboardEvent, shortcut: string) {
     super.onKeyDown(evt, shortcut);
     switch (shortcut) {
-      case "ctrl+a":
+      case 'ctrl+a':
         this.selectAllHitObjects();
         break;
-      case "q":
+      case 'q':
         this.toggleNewCombo();
         break;
-      case "ctrl+shift+r":
+      case 'ctrl+shift+r':
         this.beginInteraction(RotateHitObjectsInteraction, [
           ...this.selection.selectedObjects,
         ]);
         break;
-      case "ctrl+shift+s":
+      case 'ctrl+shift+s':
         this.beginInteraction(ScaleHitObjectsInteraction, [
           ...this.selection.selectedObjects,
         ]);
         break;
-      case "ctrl+shift+f":
+      case 'ctrl+shift+f':
         this.sliderToStream();
         break;
-      case "ctrl+shift+e":
+      case 'ctrl+shift+e':
         this.beginInteraction(InsertAxisInteraction);
         break;
-      case "j":
+      case 'j':
         this.shiftSelection(-1);
         break;
-      case "k":
+      case 'k':
         this.shiftSelection(1);
         break;
 
@@ -332,7 +332,7 @@ export class SelectTool extends ComposeTool {
         this.submit(
           EditorCommand.createHitObject({
             hitObject: {
-              type: "circle",
+              type: 'circle',
               id,
               startTime: time,
               position,
@@ -360,7 +360,7 @@ export class SelectTool extends ComposeTool {
     if (this.selection.size > 0)
       items.push(
         {
-          text: "Delete",
+          text: 'Delete',
           tint: 0xea2463,
           action: () => {
             this.selection.selectedObjects.forEach((object) => {
@@ -370,7 +370,7 @@ export class SelectTool extends ComposeTool {
           },
         },
         {
-          text: "Reverse",
+          text: 'Reverse',
           action: () => {
             const hitObjects = [...this.selection.selectedObjects].sort(
               (a, b) => a.startTime - b.startTime,
@@ -379,7 +379,7 @@ export class SelectTool extends ComposeTool {
           },
         },
         {
-          text: "Randomize",
+          text: 'Randomize',
           action: () => {
             const hitObjects = [...this.selection.selectedObjects].sort(
               (a, b) => a.startTime - b.startTime,
@@ -405,7 +405,7 @@ export class SelectTool extends ComposeTool {
       if (insertPoint) {
         const { position, index } = insertPoint;
         items.push({
-          text: "Insert control point",
+          text: 'Insert control point',
           action: () => {
             const path = slider.path.controlPoints.map((it) => ({ ...it }));
             path.splice(index, 0, {
@@ -429,7 +429,7 @@ export class SelectTool extends ComposeTool {
       this.selectedObjects.every((it) => it instanceof HitCircle)
     ) {
       items.push({
-        text: "Create clockwise square",
+        text: 'Create clockwise square',
         action: () => {
           const [first, second] = [...this.selection.selectedObjects].sort(
             (a, b) => a.startTime - b.startTime,
@@ -442,7 +442,7 @@ export class SelectTool extends ComposeTool {
             EditorCommand.createHitObject({
               hitObject: {
                 id: idA,
-                type: "circle",
+                type: 'circle',
                 startTime: second.startTime + interval,
                 position: second.position.add(offset.rotate(Math.PI / 2)),
                 newCombo: false,
@@ -454,7 +454,7 @@ export class SelectTool extends ComposeTool {
             EditorCommand.createHitObject({
               hitObject: {
                 id: idB,
-                type: "circle",
+                type: 'circle',
                 startTime: second.startTime + interval * 2,
                 position: first.position.add(offset.rotate(Math.PI / 2)),
                 newCombo: false,
@@ -471,7 +471,7 @@ export class SelectTool extends ComposeTool {
         },
       });
       items.push({
-        text: "Create counter-clockwise square",
+        text: 'Create counter-clockwise square',
         action: () => {
           const [first, second] = [...this.selection.selectedObjects].sort(
             (a, b) => a.startTime - b.startTime,
@@ -484,7 +484,7 @@ export class SelectTool extends ComposeTool {
             EditorCommand.createHitObject({
               hitObject: {
                 id: idA,
-                type: "circle",
+                type: 'circle',
                 startTime: second.startTime + interval,
                 position: second.position.add(offset.rotate(-Math.PI / 2)),
                 newCombo: false,
@@ -496,7 +496,7 @@ export class SelectTool extends ComposeTool {
             EditorCommand.createHitObject({
               hitObject: {
                 id: idB,
-                type: "circle",
+                type: 'circle',
                 startTime: second.startTime + interval * 2,
                 position: first.position.add(offset.rotate(-Math.PI / 2)),
                 newCombo: false,
@@ -530,7 +530,7 @@ export class SelectTool extends ComposeTool {
         slider.path.controlPoints[0].type === PathType.PerfectCurve
       ) {
         items.push({
-          text: "Create perfect blanket",
+          text: 'Create perfect blanket',
           action: () => {
             if (!slider || !circle) return;
 
@@ -555,7 +555,7 @@ export class SelectTool extends ComposeTool {
       this.selectedObjects[0] instanceof Slider
     ) {
       items.push({
-        text: "Convert to stream",
+        text: 'Convert to stream',
         action: () => {
           this.sliderToStream();
         },
@@ -607,8 +607,8 @@ export class SelectTool extends ComposeTool {
     super.onLoad();
     this.initButtons();
 
-    const canvas = document.querySelector("canvas")! as HTMLCanvasElement;
-    useEventListener(canvas, "touchstart", (evt: TouchEvent) => {
+    const canvas = document.querySelector('canvas')! as HTMLCanvasElement;
+    useEventListener(canvas, 'touchstart', (evt: TouchEvent) => {
       if (
         evt.targetTouches.length === 2 &&
         this._mouseDown !== undefined &&
@@ -623,27 +623,27 @@ export class SelectTool extends ComposeTool {
 
   buttons = {
     flipHorizontal: new ButtonPanelButton({
-      icon: Assets.get("icon-size-ew"),
+      icon: Assets.get('icon-size-ew'),
       action: () => {
         if (this.selection.size === 0) return;
         const bounds = Rect.containingPoints(
           getHitObjectPositions([...this.selectedObjects]),
         )!;
-        mirrorHitObjects(this.editor, "horizontal", bounds);
+        mirrorHitObjects(this.editor, 'horizontal', bounds);
       },
     }),
     flipVertical: new ButtonPanelButton({
-      icon: Assets.get("icon-size-ns"),
+      icon: Assets.get('icon-size-ns'),
       action: () => {
         if (this.selection.size === 0) return;
         const bounds = Rect.containingPoints(
           getHitObjectPositions([...this.selectedObjects]),
         )!;
-        mirrorHitObjects(this.editor, "vertical", bounds);
+        mirrorHitObjects(this.editor, 'vertical', bounds);
       },
     }),
     reverse: new ButtonPanelButton({
-      icon: Assets.get("icon-reverse"),
+      icon: Assets.get('icon-reverse'),
       action: () => {
         if (this.selection.size === 0) return;
         reverseHitObjects([...this.selectedObjects], this.editor);
@@ -672,7 +672,7 @@ export class SelectTool extends ComposeTool {
     this.selection.hitObjectSelected.on(updateButtons);
     this.selection.hitObjectDeselected.on(updateButtons);
 
-    this.addEventListener("destroy", () => {
+    this.addEventListener('destroy', () => {
       this.selection.hitObjectDeselected.off(updateButtons);
       this.selection.hitObjectDeselected.off(updateButtons);
     });

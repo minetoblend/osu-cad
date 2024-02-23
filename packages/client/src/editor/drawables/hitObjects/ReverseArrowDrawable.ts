@@ -1,14 +1,13 @@
-import {Assets, Point, Sprite} from "pixi.js";
-import {Drawable} from "../Drawable.ts";
-import {Inject} from "../di";
-import {animate} from "../animate.ts";
-import {BeatInfo} from "../../beatInfo.ts";
-import {EditorContext} from "@/editor/editorContext.ts";
+import { Assets, Point, Sprite } from 'pixi.js';
+import { Drawable } from '../Drawable.ts';
+import { Inject } from '../di';
+import { animate } from '../animate.ts';
+import { BeatInfo } from '../../beatInfo.ts';
+import { EditorContext } from '@/editor/editorContext.ts';
 
 export class ReverseArrowDrawable extends Drawable {
-
   readonly reverseArrow = new Sprite({
-    texture: Assets.get("reversearrow"),
+    texture: Assets.get('reversearrow'),
     anchor: new Point(0.5, 0.5),
   });
 
@@ -21,7 +20,6 @@ export class ReverseArrowDrawable extends Drawable {
     this.alpha = 0;
   }
 
-
   @Inject(EditorContext)
   editor!: EditorContext;
 
@@ -32,14 +30,17 @@ export class ReverseArrowDrawable extends Drawable {
     const time = this.editor.clock.currentTimeAnimated - this.startTime;
 
     if (time < 0) {
-      this.alpha = animate(time, -this.timePreempt, -this.timePreempt + 150, 0, 1);
+      this.alpha = animate(
+        time,
+        -this.timePreempt,
+        -this.timePreempt + 150,
+        0,
+        1,
+      );
       this.scale.set(1.2 - this.beatInfo.beatProgress * 0.2);
     } else {
       this.alpha = animate(time, 0, 150, 1, 0);
-      this.scale.set(
-        animate(time, 0, 150, 1, 2),
-      );
+      this.scale.set(animate(time, 0, 150, 1, 2));
     }
   }
-
 }

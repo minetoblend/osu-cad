@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import Button from "./Button.vue";
+import Button from './Button.vue';
 
 defineProps<{
   accept?: string;
 }>();
 
 const emit = defineEmits<{
-  (name: "drop", files: File[]): void;
+  (name: 'drop', files: File[]): void;
 }>();
 
 const dropzone = ref<HTMLDivElement>();
@@ -18,7 +18,7 @@ const { isOverDropZone } = useDropZone(dropzone, {
 
 function onDrop(files: File[] | null) {
   if (files === null) return;
-  emit("drop", files);
+  emit('drop', files);
 }
 
 function selectFile() {
@@ -30,15 +30,26 @@ function onInput(evt: Event) {
   if (files === null) return;
   onDrop(Array.from(files));
 }
-
 </script>
 
 <template>
-  <div ref="dropzone" class="oc-dropzone" :class="{ 'oc-dropzone--active': isOverDropZone }">
-    <input id="osz-file" type="file" :accept="accept" style="display: none" ref="fileInput" @input="onInput">
+  <div
+    ref="dropzone"
+    class="oc-dropzone"
+    :class="{ 'oc-dropzone--active': isOverDropZone }"
+  >
+    <input
+      id="osz-file"
+      ref="fileInput"
+      type="file"
+      :accept="accept"
+      style="display: none"
+      @input="onInput"
+    />
     <slot :select="selectFile">
-      <h3>Drag file here or
-        <Button @click="selectFile">Select file</Button>
+      <h3>
+        Drag file here or
+        <Button @click="selectFile"> Select file </Button>
       </h3>
     </slot>
   </div>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {useEvents} from "../events.ts";
+import { useEvents } from '../events.ts';
 
 const { events } = useEvents();
 </script>
@@ -7,21 +7,25 @@ const { events } = useEvents();
 <template>
   <div class="event-list">
     <TransitionGroup name="event">
-      <div class="event" v-for="event in events" :key="event.id">
+      <div v-for="event in events" class="event" :key="event.id">
         {{ event.message }}
       </div>
     </TransitionGroup>
-<!--    <img src="@/assets/subway-surfer.gif">-->
+    <!--    <img src="@/assets/subway-surfer.gif">-->
   </div>
 </template>
 
 <style lang="scss">
 .event {
-  &-enter-active, &-leave-active {
-    transition: opacity 0.1s ease-out, transform 0.1s ease-out
+  &-enter-active,
+  &-leave-active {
+    transition:
+      opacity 0.1s ease-out,
+      transform 0.1s ease-out;
   }
 
-  &-enter-from, &-leave-to {
+  &-enter-from,
+  &-leave-to {
     opacity: 0;
     transform: translateX(-20px);
   }

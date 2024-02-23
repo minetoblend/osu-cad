@@ -1,15 +1,15 @@
-import { HitSoundTimeline } from "./HitSoundTimeline.ts";
-import { Component } from "../Component.ts";
-import { Assets, FederatedPointerEvent, Sprite } from "pixi.js";
-import { Inject } from "../di";
-import { BeatInfo } from "../../beatInfo.ts";
-import { hitObjectId, HitSoundSample, Vec2 } from "@osucad/common";
-import { EditorContext } from "@/editor/editorContext.ts";
+import { HitSoundTimeline } from './HitSoundTimeline.ts';
+import { Component } from '../Component.ts';
+import { Assets, FederatedPointerEvent, Sprite } from 'pixi.js';
+import { Inject } from '../di';
+import { BeatInfo } from '../../beatInfo.ts';
+import { hitObjectId, HitSoundSample, Vec2 } from '@osucad/common';
+import { EditorContext } from '@/editor/editorContext.ts';
 
 export class HitSoundPlacementTool extends Component {
   constructor(private readonly timeline: HitSoundTimeline) {
     super();
-    this.eventMode = "static";
+    this.eventMode = 'static';
     this.addChild(this.previewSample);
   }
 
@@ -35,7 +35,7 @@ export class HitSoundPlacementTool extends Component {
   }
 
   private previewSample = new Sprite({
-    texture: Assets.get("hitsample"),
+    texture: Assets.get('hitsample'),
     anchor: { x: 0.5, y: 0.5 },
     scale: { x: 0.5, y: 0.5 },
     visible: false,

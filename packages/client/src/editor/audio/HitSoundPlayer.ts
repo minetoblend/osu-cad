@@ -1,13 +1,12 @@
-import {Drawable} from "../drawables/Drawable.ts";
-import {Inject} from "../drawables/di";
-import {AudioManager} from "./AudioManager.ts";
-import {EditorClock} from "../clock.ts";
-import {HitSample, SampleSet, SampleType} from "@osucad/common";
-import {AudioPlayback} from "./AudioPlayback.ts";
-import {EditorContext} from "@/editor/editorContext.ts";
+import { Drawable } from '../drawables/Drawable.ts';
+import { Inject } from '../drawables/di';
+import { AudioManager } from './AudioManager.ts';
+import { EditorClock } from '../clock.ts';
+import { HitSample, SampleSet, SampleType } from '@osucad/common';
+import { AudioPlayback } from './AudioPlayback.ts';
+import { EditorContext } from '@/editor/editorContext.ts';
 
 export class HitSoundPlayer extends Drawable {
-
   @Inject(EditorContext) editor!: EditorContext;
   @Inject(AudioManager) audioManager!: AudioManager;
   @Inject(EditorClock) clock!: EditorClock;
@@ -18,8 +17,8 @@ export class HitSoundPlayer extends Drawable {
 
   private _hitSounds: {
     [sampleSet in SampleSet]?: {
-      [sampleType in SampleType]?: AudioBuffer
-    }
+      [sampleType in SampleType]?: AudioBuffer;
+    };
   } = {
     [SampleSet.Normal]: {},
     [SampleSet.Soft]: {},
@@ -34,42 +33,48 @@ export class HitSoundPlayer extends Drawable {
 
   init() {
     const sampleSets = [SampleSet.Normal, SampleSet.Soft, SampleSet.Drum];
-    const sampleTypes = [SampleType.Normal, SampleType.Whistle, SampleType.Finish, SampleType.Clap];
+    const sampleTypes = [
+      SampleType.Normal,
+      SampleType.Whistle,
+      SampleType.Finish,
+      SampleType.Clap,
+    ];
     for (const sampleSet of sampleSets) {
       for (const sampleType of sampleTypes) {
-        let sampleName = "";
+        let sampleName = '';
         switch (sampleSet) {
           case SampleSet.Normal:
-            sampleName += "normal-";
+            sampleName += 'normal-';
             break;
           case SampleSet.Soft:
-            sampleName += "soft-";
+            sampleName += 'soft-';
             break;
           case SampleSet.Drum:
-            sampleName += "drum-";
+            sampleName += 'drum-';
             break;
         }
         switch (sampleType) {
           case SampleType.Normal:
-            sampleName += "hitnormal";
+            sampleName += 'hitnormal';
             break;
           case SampleType.Whistle:
-            sampleName += "hitwhistle";
+            sampleName += 'hitwhistle';
             break;
           case SampleType.Finish:
-            sampleName += "hitfinish";
+            sampleName += 'hitfinish';
             break;
           case SampleType.Clap:
-            sampleName += "hitclap";
+            sampleName += 'hitclap';
             break;
         }
 
         const sampleUrl = `/hitsounds/${sampleName}.wav`;
 
-        fetch(sampleUrl).then(async response => {
+        fetch(sampleUrl).then(async (response) => {
           const arrayBuffer = await response.arrayBuffer();
-          const audioBuffer = await this.audioManager.context.decodeAudioData(arrayBuffer);
-          console.log("loaded", sampleName);
+          const audioBuffer =
+            await this.audioManager.context.decodeAudioData(arrayBuffer);
+          console.log('loaded', sampleName);
           if (this._hitSounds[sampleSet])
             this._hitSounds[sampleSet]![sampleType] = audioBuffer;
         });
@@ -77,12 +82,11 @@ export class HitSoundPlayer extends Drawable {
     }
   }
 
-
   onLoad() {
-    useEventListener("focus", () => {
+    useEventListener('focus', () => {
       this._tabIsActive = true;
     });
-    useEventListener("blur", () => {
+    useEventListener('blur', () => {
       this._tabIsActive = false;
     });
   }
@@ -102,16 +106,16 @@ export class HitSoundPlayer extends Drawable {
     const offset = 100;
 
     let startTime = this.clock.currentTime + offset - this.clock.deltaTime;
-    let endTime = this.clock.currentTime + offset;
+    const endTime = this.clock.currentTime + offset;
 
-
-    if (!this._isPlaying)
-      startTime = this.clock.currentTime;
+    if (!this._isPlaying) startTime = this.clock.currentTime;
     this._isPlaying = true;
 
-    const hitObjects = this.editor.beatmapManager.hitObjects.hitObjects.filter(hitObject => {
-      return hitObject.startTime <= endTime && hitObject.endTime > startTime;
-    });
+    const hitObjects = this.editor.beatmapManager.hitObjects.hitObjects.filter(
+      (hitObject) => {
+        return hitObject.startTime <= endTime && hitObject.endTime > startTime;
+      },
+    );
 
     const hitSamples: HitSample[] = [];
 
@@ -127,7 +131,6 @@ export class HitSoundPlayer extends Drawable {
   }
 
   playSample(sample: HitSample) {
-
     let sampleSet = sample.sampleSet;
     if (sampleSet === SampleSet.Auto) {
       sampleSet = SampleSet.Soft;
@@ -137,19 +140,21 @@ export class HitSoundPlayer extends Drawable {
 
     if (!buffer) return;
 
-    const delay = ((sample.time - this.clock.currentTime) / this.clock.playbackRate) / 1000;
+    const delay =
+      (sample.time - this.clock.currentTime) / this.clock.playbackRate / 1000;
 
-    const playback = this.audioManager.playSound({
-      buffer,
-      delay: Math.max(0, delay + 0.03),
-      volume: 0.4,
-    }, 'hitsounds');
-
+    const playback = this.audioManager.playSound(
+      {
+        buffer,
+        delay: Math.max(0, delay + 0.03),
+        volume: 0.4,
+      },
+      'hitsounds',
+    );
 
     this._scheduledHitSamples.add(playback);
     playback.onended = () => {
       this._scheduledHitSamples.delete(playback);
     };
   }
-
 }

@@ -6,9 +6,9 @@ import {
   ImageSource,
   Matrix,
   Texture,
-} from "pixi.js";
+} from 'pixi.js';
 
-export type GradientType = "linear" | "radial";
+export type GradientType = 'linear' | 'radial';
 
 export interface LinearGradientFillStyle {
   x0: number;
@@ -22,7 +22,7 @@ export interface LinearGradientFillStyle {
 export class SliderGradient {
   public static defaultTextureSize = 256;
 
-  public readonly type: GradientType = "linear";
+  public readonly type: GradientType = 'linear';
 
   public x0: number;
   public y0: number;
@@ -65,7 +65,7 @@ export class SliderGradient {
     canvas.width = defaultSize;
     canvas.height = defaultSize;
 
-    const ctx = canvas.getContext("2d")!;
+    const ctx = canvas.getContext('2d')!;
 
     const gradient = ctx.createLinearGradient(
       0,
@@ -86,8 +86,8 @@ export class SliderGradient {
     this.texture = new Texture({
       source: new ImageSource({
         resource: canvas,
-        addressModeU: "clamp-to-edge",
-        addressModeV: "repeat",
+        addressModeU: 'clamp-to-edge',
+        addressModeV: 'repeat',
       }),
     });
 

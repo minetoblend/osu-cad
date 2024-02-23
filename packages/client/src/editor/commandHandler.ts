@@ -1,4 +1,4 @@
-import {BeatmapManager} from "./beatmapManager.ts";
+import { BeatmapManager } from './beatmapManager.ts';
 import {
   CommandContext,
   decodeCommands,
@@ -6,12 +6,11 @@ import {
   encodeCommands,
   getCommandHandler,
   VersionedEditorCommand,
-} from "@osucad/common";
-import {EditorSocket} from "@/editor/editorSocket.ts";
-import {onEditorKeyDown} from "@/composables/onEditorKeyDown.ts";
+} from '@osucad/common';
+import { EditorSocket } from '@/editor/editorSocket.ts';
+import { onEditorKeyDown } from '@/composables/onEditorKeyDown.ts';
 
 export class CommandManager {
-
   private sessionId: number = 0;
   readonly history = new History(this);
 
@@ -19,82 +18,102 @@ export class CommandManager {
     private readonly beatmapManager: BeatmapManager,
     private readonly socket: EditorSocket,
   ) {
-    socket.on("roomState", ({ownUser}) => {
+    socket.on('roomState', ({ ownUser }) => {
       this.sessionId = ownUser.sessionId;
     });
-    socket.on("commands", (commands: Uint8Array, sessionId: number) => {
-
+    socket.on('commands', (commands: Uint8Array, sessionId: number) => {
       const decoded = decodeCommands(commands);
-      for (const command of decoded)
-        this.onCommandReceived(command, sessionId);
+      for (const command of decoded) this.onCommandReceived(command, sessionId);
     });
 
     onEditorKeyDown((e) => {
-      if (e.ctrlKey && e.key === "z") {
+      if (e.ctrlKey && e.key === 'z') {
         e.preventDefault();
-        const context = new CommandContext(this.beatmapManager.beatmap, true, true, 0);
+        const context = new CommandContext(
+          this.beatmapManager.beatmap,
+          true,
+          true,
+          0,
+        );
         this.history.undo(context);
       }
-      if (e.ctrlKey && e.key === "y") {
+      if (e.ctrlKey && e.key === 'y') {
         e.preventDefault();
-        const context = new CommandContext(this.beatmapManager.beatmap, true, true, 0);
+        const context = new CommandContext(
+          this.beatmapManager.beatmap,
+          true,
+          true,
+          0,
+        );
         this.history.redo(context);
       }
     });
     setInterval(() => {
-      if (this.commandBuffer.length === 0)
-        return;
+      if (this.commandBuffer.length === 0) return;
       const commands = this.commandBuffer;
       this.commandBuffer = [];
-      this.socket.emit("commands", encodeCommands(commands));
+      this.socket.emit('commands', encodeCommands(commands));
     }, 50);
   }
 
   submit(command: EditorCommand, recordHistory = true, commit = false) {
     const version = this.nextVersion++;
-    const context = new CommandContext(this.beatmapManager.beatmap, true, true, version);
+    const context = new CommandContext(
+      this.beatmapManager.beatmap,
+      true,
+      true,
+      version,
+    );
 
-    if (recordHistory)
-      this.history.record(command, context);
+    if (recordHistory) this.history.record(command, context);
     if (this.handle(command, context)) {
       this.addToBuffer(command, version);
     }
-    if (commit)
-      this.history.commit();
+    if (commit) this.history.commit();
   }
 
   commandBuffer: VersionedEditorCommand[] = [];
 
   private addToBuffer(command: EditorCommand, version: number) {
     const handler = getCommandHandler(command);
-    const context = new CommandContext(this.beatmapManager.beatmap, true, true, 0);
+    const context = new CommandContext(
+      this.beatmapManager.beatmap,
+      true,
+      true,
+      0,
+    );
 
     if (handler.merge)
       for (let i = 0; i < this.commandBuffer.length; i++) {
-        if (this.commandBuffer[i].command.type !== command.type)
-          continue;
-        const merged = handler.merge(this.commandBuffer[i].command, command, context);
+        if (this.commandBuffer[i].command.type !== command.type) continue;
+        const merged = handler.merge(
+          this.commandBuffer[i].command,
+          command,
+          context,
+        );
         if (merged) {
           this.commandBuffer.splice(i, 1);
           command = merged;
           break;
         }
       }
-    this.commandBuffer.push({command, version});
+    this.commandBuffer.push({ command, version });
   }
 
   private nextVersion = 0;
 
   private handle(command: EditorCommand, context: CommandContext) {
     const handler = getCommandHandler(command);
-    if (handler.canBeIgnored?.(command, context))
-      return false;
+    if (handler.canBeIgnored?.(command, context)) return false;
 
     handler.apply(command, context);
     return true;
   }
 
-  private onCommandReceived(command: VersionedEditorCommand, sessionId: number) {
+  private onCommandReceived(
+    command: VersionedEditorCommand,
+    sessionId: number,
+  ) {
     // console.log("received command", command);
     const isOwn = sessionId === this.sessionId;
     const beatmap = this.beatmapManager.beatmap;
@@ -103,12 +122,22 @@ export class CommandManager {
   }
 
   undo() {
-    const context = new CommandContext(this.beatmapManager.beatmap, true, true, 0);
+    const context = new CommandContext(
+      this.beatmapManager.beatmap,
+      true,
+      true,
+      0,
+    );
     this.history.undo(context);
   }
 
   redo() {
-    const context = new CommandContext(this.beatmapManager.beatmap, true, true, 0);
+    const context = new CommandContext(
+      this.beatmapManager.beatmap,
+      true,
+      true,
+      0,
+    );
     this.history.redo(context);
   }
 
@@ -118,9 +147,7 @@ export class CommandManager {
 }
 
 class History {
-
-  constructor(private readonly manager: CommandManager) {
-  }
+  constructor(private readonly manager: CommandManager) {}
 
   private transaction: HistoryEntry[] = [];
 
@@ -132,7 +159,7 @@ class History {
 
   record(command: EditorCommand, context: CommandContext) {
     const handler = getCommandHandler(command);
-    let reverse = handler.createUndo?.(command, context, "undo");
+    let reverse = handler.createUndo?.(command, context, 'undo');
 
     const mergedIndices = new Set<number>();
     for (let i = this.transaction.length - 1; i >= 0; i--) {
@@ -150,15 +177,17 @@ class History {
     }
 
     if (mergedIndices.size > 0)
-      this.transaction = this.transaction.filter((_, i) => !mergedIndices.has(i));
+      this.transaction = this.transaction.filter(
+        (_, i) => !mergedIndices.has(i),
+      );
 
-    this.transaction.push({command, reverse});
+    this.transaction.push({ command, reverse });
   }
 
   commit() {
     if (this.transaction.length === 0) return false;
     this.undoStack.push(this.transaction);
-    this.redoStack.splice(0, this.redoStack.length)
+    this.redoStack.splice(0, this.redoStack.length);
     this.transaction = [];
     return true;
   }
@@ -170,17 +199,19 @@ class History {
     const redoTransaction: HistoryEntry[] = [];
 
     for (let i = transaction.length - 1; i >= 0; i--) {
-      const {reverse: command} = transaction[i];
+      const { reverse: command } = transaction[i];
       if (command) {
-        const reverse = getCommandHandler(command).createUndo?.(command, context, "redo");
+        const reverse = getCommandHandler(command).createUndo?.(
+          command,
+          context,
+          'redo',
+        );
         this.manager.submit(command, false);
-        if (reverse)
-          redoTransaction.push({command, reverse});
+        if (reverse) redoTransaction.push({ command, reverse });
       }
     }
 
-    if (redoTransaction.length > 0)
-      this.redoStack.push(redoTransaction);
+    if (redoTransaction.length > 0) this.redoStack.push(redoTransaction);
   }
 
   redo(_context: CommandContext) {
@@ -190,17 +221,15 @@ class History {
     const undoTransaction: HistoryEntry[] = [];
 
     for (let i = transaction.length - 1; i >= 0; i--) {
-      const {command, reverse} = transaction[i];
+      const { command, reverse } = transaction[i];
       if (reverse) {
         this.manager.submit(reverse, false);
-        undoTransaction.push({command: reverse, reverse: command});
+        undoTransaction.push({ command: reverse, reverse: command });
       }
     }
 
-    if (undoTransaction.length > 0)
-      this.undoStack.push(undoTransaction);
+    if (undoTransaction.length > 0) this.undoStack.push(undoTransaction);
   }
-
 }
 
 interface HistoryEntry {

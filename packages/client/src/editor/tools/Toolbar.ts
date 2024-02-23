@@ -1,19 +1,19 @@
-import { Component } from "../drawables/Component.ts";
-import { Box } from "../drawables/Box.ts";
-import { Assets, ObservablePoint } from "pixi.js";
-import { Inject } from "../drawables/di";
-import { Rect } from "@osucad/common";
-import { ToolButton } from "./ToolButton.ts";
-import { SelectTool } from "./SelectTool.ts";
-import { HitCircleTool } from "./HitCircleTool.ts";
-import { SliderTool } from "./SliderTool.ts";
-import { SpinnerTool } from "./SpinnerTool.ts";
-import { isMobile } from "@/util/isMobile.ts";
-import { EditorContext } from "@/editor/editorContext.ts";
-import { ComposeTool } from "@/editor/tools/ComposeTool.ts";
-import { ToolbarButton } from "@/editor/tools/ToolbarButton.ts";
-import { usePreferencesVisible } from "@/composables/usePreferencesVisible.ts";
-import { onEditorKeyDown } from "@/composables/onEditorKeyDown.ts";
+import { Component } from '../drawables/Component.ts';
+import { Box } from '../drawables/Box.ts';
+import { Assets, ObservablePoint } from 'pixi.js';
+import { Inject } from '../drawables/di';
+import { Rect } from '@osucad/common';
+import { ToolButton } from './ToolButton.ts';
+import { SelectTool } from './SelectTool.ts';
+import { HitCircleTool } from './HitCircleTool.ts';
+import { SliderTool } from './SliderTool.ts';
+import { SpinnerTool } from './SpinnerTool.ts';
+import { isMobile } from '@/util/isMobile.ts';
+import { EditorContext } from '@/editor/editorContext.ts';
+import { ComposeTool } from '@/editor/tools/ComposeTool.ts';
+import { ToolbarButton } from '@/editor/tools/ToolbarButton.ts';
+import { usePreferencesVisible } from '@/composables/usePreferencesVisible.ts';
+import { onEditorKeyDown } from '@/composables/onEditorKeyDown.ts';
 
 export class Toolbar extends Component {
   @Inject(EditorContext)
@@ -25,25 +25,25 @@ export class Toolbar extends Component {
 
   private buttons: ToolButton[] = [
     new ToolButton({
-      icon: Assets.get("icon-select"),
+      icon: Assets.get('icon-select'),
       tool: SelectTool,
     }),
     new ToolButton({
-      icon: Assets.get("icon-circle"),
+      icon: Assets.get('icon-circle'),
       tool: HitCircleTool,
     }),
     new ToolButton({
-      icon: Assets.get("icon-slider"),
+      icon: Assets.get('icon-slider'),
       tool: SliderTool,
     }),
     new ToolButton({
-      icon: Assets.get("icon-spinner"),
+      icon: Assets.get('icon-spinner'),
       tool: SpinnerTool,
     }),
   ];
 
   preferencesButton = new ToolbarButton({
-    icon: Assets.get("icon-cog"),
+    icon: Assets.get('icon-cog'),
     action: () => {
       usePreferencesVisible().value = true;
     },
@@ -70,16 +70,16 @@ export class Toolbar extends Component {
       if (this.editor.tools.activeTool.acceptsNumberKeys) return;
       if (evt.ctrlKey || evt.metaKey || evt.altKey || evt.shiftKey) return;
       switch (evt.key) {
-        case "1":
+        case '1':
           this.tool = new SelectTool();
           break;
-        case "2":
+        case '2':
           this.tool = new HitCircleTool();
           break;
-        case "3":
+        case '3':
           this.tool = new SliderTool();
           break;
-        case "4":
+        case '4':
           this.tool = new SpinnerTool();
           break;
       }

@@ -1,7 +1,7 @@
-import {Mod} from "./Mod.ts";
-import {Vec2} from "@osucad/common";
-import {HitObjectDrawable} from "../drawables/hitObjects/HitObjectDrawable.ts";
-import {EditorClock} from "../clock.ts";
+import { Mod } from './Mod.ts';
+import { Vec2 } from '@osucad/common';
+import { HitObjectDrawable } from '../drawables/hitObjects/HitObjectDrawable.ts';
+import { EditorClock } from '../clock.ts';
 
 const cameraPosition = {
   x: 256,
@@ -10,7 +10,6 @@ const cameraPosition = {
 };
 
 export class DepthMod extends Mod {
-
   constructor(private readonly clock: EditorClock) {
     super();
   }
@@ -28,7 +27,9 @@ export class DepthMod extends Mod {
     const z = this.maxDepth - (Math.max(time, appearTime) - appearTime) * speed;
 
     const scale = this.scaleForDepth(z);
-    drawable.position.copyFrom(this.toPlayfieldPosition(scale, hitObject.stackedPosition));
+    drawable.position.copyFrom(
+      this.toPlayfieldPosition(scale, hitObject.stackedPosition),
+    );
     drawable.scale.set(hitObject.scale * scale);
 
     drawable.hitObject.depthInfo = {

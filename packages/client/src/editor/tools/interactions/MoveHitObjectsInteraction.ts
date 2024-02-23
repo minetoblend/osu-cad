@@ -1,11 +1,17 @@
-import {UndoableInteraction} from "./UndoableInteraction.ts";
-import {ComposeTool} from "../ComposeTool.ts";
-import {HitObject, Rect, Slider, updateHitObject, Vec2} from "@osucad/common";
-import {FederatedPointerEvent} from "pixi.js";
-import {getHitObjectPositions, HitObjectSnapProvider} from "../snapping/HitObjectSnapProvider.ts";
+import { UndoableInteraction } from './UndoableInteraction.ts';
+import { ComposeTool } from '../ComposeTool.ts';
+import { HitObject, Rect, Slider, updateHitObject, Vec2 } from '@osucad/common';
+import { FederatedPointerEvent } from 'pixi.js';
+import {
+  getHitObjectPositions,
+  HitObjectSnapProvider,
+} from '../snapping/HitObjectSnapProvider.ts';
 
 export class MoveHitObjectsInteraction extends UndoableInteraction {
-  constructor(tool: ComposeTool, private readonly hitObjects: HitObject[]) {
+  constructor(
+    tool: ComposeTool,
+    private readonly hitObjects: HitObject[],
+  ) {
     super(tool);
     if (hitObjects.length === 0) this.complete();
 
@@ -21,13 +27,17 @@ export class MoveHitObjectsInteraction extends UndoableInteraction {
   }
 
   onDrag(event: FederatedPointerEvent) {
-    let movement = Vec2.from(this.toLocal(Vec2.add(event.movement, this.getGlobalPosition())));
+    let movement = Vec2.from(
+      this.toLocal(Vec2.add(event.movement, this.getGlobalPosition())),
+    );
 
     movement = Vec2.add(movement, this.moveOutsideOffset);
 
     let positions = getHitObjectPositions(this.hitObjects);
     if (this.previousSnapOffset) {
-      positions = positions.map(it => Vec2.add(movement, Vec2.sub(it, this.previousSnapOffset!)));
+      positions = positions.map((it) =>
+        Vec2.add(movement, Vec2.sub(it, this.previousSnapOffset!)),
+      );
       movement = Vec2.sub(movement, this.previousSnapOffset);
       this.previousSnapOffset = new Vec2();
     }
@@ -40,10 +50,12 @@ export class MoveHitObjectsInteraction extends UndoableInteraction {
     }
     const firstPosition = this.hitObjects[0].position;
     const bounds = new Rect(firstPosition.x, firstPosition.y, 0, 0);
-    this.selection.selectedObjects.forEach(hitObject => {
+    this.selection.selectedObjects.forEach((hitObject) => {
       bounds.addPoint(hitObject.position);
       if (hitObject instanceof Slider) {
-        bounds.addPoint(Vec2.add(hitObject.position, hitObject.path.endPosition));
+        bounds.addPoint(
+          Vec2.add(hitObject.position, hitObject.path.endPosition),
+        );
       }
     });
 
@@ -53,20 +65,21 @@ export class MoveHitObjectsInteraction extends UndoableInteraction {
     if (bounds.x < 0) {
       this.moveOutsideOffset.x = bounds.x;
     } else if (bounds.x + bounds.width > 512) {
-      this.moveOutsideOffset.x = (bounds.x + bounds.width) - 512;
+      this.moveOutsideOffset.x = bounds.x + bounds.width - 512;
     }
     if (bounds.y < 0) {
       this.moveOutsideOffset.y = bounds.y;
     } else if (bounds.y + bounds.height > 384) {
-      this.moveOutsideOffset.y = (bounds.y + bounds.height) - 384;
+      this.moveOutsideOffset.y = bounds.y + bounds.height - 384;
     }
     movement = Vec2.sub(movement, this.moveOutsideOffset);
 
-    this.selection.selectedObjects.forEach(hitObject => {
-      this.commandManager.submit(updateHitObject(hitObject, {
-        position: Vec2.add(hitObject.position, movement),
-      }));
+    this.selection.selectedObjects.forEach((hitObject) => {
+      this.commandManager.submit(
+        updateHitObject(hitObject, {
+          position: Vec2.add(hitObject.position, movement),
+        }),
+      );
     });
   }
-
 }

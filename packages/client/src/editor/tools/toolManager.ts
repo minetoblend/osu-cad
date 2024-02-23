@@ -1,7 +1,7 @@
-import { ShallowRef } from "vue";
-import { ComposeTool } from "./ComposeTool.ts";
-import { SelectTool } from "./SelectTool.ts";
-import { Vec2 } from "@osucad/common";
+import { ShallowRef } from 'vue';
+import { ComposeTool } from './ComposeTool.ts';
+import { SelectTool } from './SelectTool.ts';
+import { Vec2 } from '@osucad/common';
 
 export class ToolManager {
   constructor(tool: ComposeTool = new SelectTool()) {

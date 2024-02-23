@@ -1,7 +1,15 @@
-import {Filter, GlProgram, defaultFilterVert, Texture, Color, UniformGroup, GpuProgram} from "pixi.js";
-import {SliderGradient} from "../SliderGradient.ts";
-import fragment from "./SliderFilter.frag?raw";
-import source from "./SliderFilter.wgsl?raw";
+import {
+  Filter,
+  GlProgram,
+  defaultFilterVert,
+  Texture,
+  Color,
+  UniformGroup,
+  GpuProgram,
+} from 'pixi.js';
+import { SliderGradient } from '../SliderGradient.ts';
+import fragment from './SliderFilter.frag?raw';
+import source from './SliderFilter.wgsl?raw';
 
 let glProgram: GlProgram | null = null;
 let gpuProgram: GpuProgram | null = null;
@@ -9,24 +17,23 @@ let gpuProgram: GpuProgram | null = null;
 let gradient: SliderGradient | null = null;
 
 export class SliderFilter extends Filter {
-
   texture: Texture;
 
   constructor() {
     glProgram ??= new GlProgram({
       vertex: defaultFilterVert,
       fragment,
-      name: "slider-filter",
+      name: 'slider-filter',
     });
 
     gpuProgram ??= new GpuProgram({
       vertex: {
         source,
-        entryPoint: "mainVertex",
+        entryPoint: 'mainVertex',
       },
       fragment: {
         source,
-        entryPoint: "mainFragment",
+        entryPoint: 'mainFragment',
       },
     });
 
@@ -43,10 +50,16 @@ export class SliderFilter extends Filter {
     }
 
     const sliderUniforms = new UniformGroup({
-      uComboColor: {value: new Float32Array(Color.shared.setValue(0xff0000).toArray()), type: "vec4<f32>"},
-      uBorderColor: {value: new Float32Array(Color.shared.setValue(0xffffff).toArray()), type: "vec4<f32>"},
-      uAlpha: {value: 1.0, type: "f32"},
-      uSnakingDistance: {value: 0.0, type: "f32"},
+      uComboColor: {
+        value: new Float32Array(Color.shared.setValue(0xff0000).toArray()),
+        type: 'vec4<f32>',
+      },
+      uBorderColor: {
+        value: new Float32Array(Color.shared.setValue(0xffffff).toArray()),
+        type: 'vec4<f32>',
+      },
+      uAlpha: { value: 1.0, type: 'f32' },
+      uSnakingDistance: { value: 0.0, type: 'f32' },
     });
 
     super({
@@ -68,7 +81,9 @@ export class SliderFilter extends Filter {
   }
 
   set comboColor(value: number) {
-    this.resources.sliderUniforms.uniforms.uComboColor = new Float32Array(Color.shared.setValue(value).toArray());
+    this.resources.sliderUniforms.uniforms.uComboColor = new Float32Array(
+      Color.shared.setValue(value).toArray(),
+    );
   }
 
   get borderColor(): number {
@@ -76,7 +91,9 @@ export class SliderFilter extends Filter {
   }
 
   set borderColor(value: number) {
-    this.resources.sliderUniforms.uniforms.uBorderColor = new Float32Array(Color.shared.setValue(value).toArray());
+    this.resources.sliderUniforms.uniforms.uBorderColor = new Float32Array(
+      Color.shared.setValue(value).toArray(),
+    );
   }
 
   get alpha(): number {
@@ -94,5 +111,4 @@ export class SliderFilter extends Filter {
   set snakingDistance(value: number) {
     this.resources.sliderUniforms.uniforms.uSnakingDistance = value;
   }
-
 }

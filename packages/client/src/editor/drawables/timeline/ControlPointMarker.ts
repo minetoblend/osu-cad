@@ -1,20 +1,30 @@
-import {Drawable} from "@/editor/drawables/Drawable.ts";
-import {Assets, DestroyOptions, FederatedPointerEvent, Rectangle, Sprite, Text} from "pixi.js";
-import {Inject} from "@/editor/drawables/di";
-import {TimelinePositionManager} from "@/editor/drawables/timeline/timelinePositionManager.ts";
-import {ControlPoint, ControlPointUpdateFlags, EditorCommand} from "@osucad/common";
-import {EditorContext} from "@/editor/editorContext.ts";
-import {BeatInfo} from "@/editor/beatInfo.ts";
-import {usePixiPopover} from "@/editor/components/popover";
-import ControlPointPopover from "@/editor/components/popover/ControlPointPopover.vue";
+import { Drawable } from '@/editor/drawables/Drawable.ts';
+import {
+  Assets,
+  DestroyOptions,
+  FederatedPointerEvent,
+  Rectangle,
+  Sprite,
+  Text,
+} from 'pixi.js';
+import { Inject } from '@/editor/drawables/di';
+import { TimelinePositionManager } from '@/editor/drawables/timeline/timelinePositionManager.ts';
+import {
+  ControlPoint,
+  ControlPointUpdateFlags,
+  EditorCommand,
+} from '@osucad/common';
+import { EditorContext } from '@/editor/editorContext.ts';
+import { BeatInfo } from '@/editor/beatInfo.ts';
+import { usePixiPopover } from '@/editor/components/popover';
+import ControlPointPopover from '@/editor/components/popover/ControlPointPopover.vue';
 
 export class ControlPointMarker extends Drawable {
-
   sprite = new Sprite({
     texture: Assets.get('timeline-marker'),
-    scale: {x: 0.2, y: 0.2},
-    anchor: {x: 0.5, y: 0.35}
-  })
+    scale: { x: 0.2, y: 0.2 },
+    anchor: { x: 0.5, y: 0.35 },
+  });
 
   @Inject(EditorContext)
   private editor!: EditorContext;
@@ -22,25 +32,30 @@ export class ControlPointMarker extends Drawable {
   constructor(readonly controlPoint: ControlPoint) {
     super();
     this.addChild(this.sprite, this.text);
-    this.x = 200
+    this.x = 200;
     this.hitArea = new Rectangle(-10, -10, 20, 20);
     this.eventMode = 'dynamic';
     this.on('mouseenter', this.onMouseEnter, this);
     this.on('mouseleave', this.onMouseLeave, this);
     this.on('pointerdown', this.onPointerDown, this);
     this.controlPoint.onUpdate.addListener(this._onControlPointUpdate);
-    this._onControlPointUpdate(controlPoint, ControlPointUpdateFlags.All)
+    this._onControlPointUpdate(controlPoint, ControlPointUpdateFlags.All);
   }
 
-  private _onControlPointUpdate = (controlPoint: ControlPoint, flags: ControlPointUpdateFlags) => {
-
-    if (flags & ControlPointUpdateFlags.Timing || flags & ControlPointUpdateFlags.Velocity) {
+  private _onControlPointUpdate = (
+    controlPoint: ControlPoint,
+    flags: ControlPointUpdateFlags,
+  ) => {
+    if (
+      flags & ControlPointUpdateFlags.Timing ||
+      flags & ControlPointUpdateFlags.Velocity
+    ) {
       let text: string | null = null;
 
       if (controlPoint.timing) {
-        text = `bpm: ${Math.round(60_000 / controlPoint.timing.beatLength)}`
+        text = `bpm: ${Math.round(60_000 / controlPoint.timing.beatLength)}`;
       } else if (controlPoint.velocityMultiplier !== null) {
-        text = `sv: ${controlPoint.velocityMultiplier.toFixed(1)}`
+        text = `sv: ${controlPoint.velocityMultiplier.toFixed(1)}`;
       }
 
       if (text) {
@@ -51,14 +66,12 @@ export class ControlPointMarker extends Drawable {
       }
     }
 
-
     if (controlPoint.timing) {
-      this.sprite.tint = 0xEA2463;
+      this.sprite.tint = 0xea2463;
     } else if (controlPoint.velocityMultiplier !== undefined) {
       this.sprite.tint = 0x52cca3;
     }
-  }
-
+  };
 
   @Inject(TimelinePositionManager)
   private positionManager!: TimelinePositionManager;
@@ -79,67 +92,79 @@ export class ControlPointMarker extends Drawable {
   }
   private onPointerDown(evt: FederatedPointerEvent) {
     if (evt.button === 2) {
-      evt.stopPropagation()
-      this.editor.commandManager.submit(EditorCommand.deleteControlPoint({
-        id: this.controlPoint.id
-      }))
+      evt.stopPropagation();
+      this.editor.commandManager.submit(
+        EditorCommand.deleteControlPoint({
+          id: this.controlPoint.id,
+        }),
+      );
       this.editor.commandManager.commit();
     } else if (evt.button === 0) {
       let moved = false;
-      let lastTime = this.positionManager.getTimeAtPosition(evt.getLocalPosition(this.parent).x);
+      let lastTime = this.positionManager.getTimeAtPosition(
+        evt.getLocalPosition(this.parent).x,
+      );
       let unsnappedTime = this.controlPoint.time;
       this.canDiscard = false;
       this.onglobalpointermove = (evt: FederatedPointerEvent) => {
-        let time = this.positionManager.getTimeAtPosition(evt.getLocalPosition(this.parent).x);
+        const time = this.positionManager.getTimeAtPosition(
+          evt.getLocalPosition(this.parent).x,
+        );
         if (time !== lastTime) moved = true;
 
         unsnappedTime += time - lastTime;
         const shouldSnap = !evt.shiftKey && !this.controlPoint.timing;
 
-        this.editor.commandManager.submit(EditorCommand.updateControlPoint({
-          controlPoint: this.controlPoint.id,
-          update: {
-            time: shouldSnap ? this.beatInfo.snap(unsnappedTime) : unsnappedTime
-          }
-        }))
+        this.editor.commandManager.submit(
+          EditorCommand.updateControlPoint({
+            controlPoint: this.controlPoint.id,
+            update: {
+              time: shouldSnap
+                ? this.beatInfo.snap(unsnappedTime)
+                : unsnappedTime,
+            },
+          }),
+        );
 
         lastTime = time;
-      }
-      addEventListener('pointerup', () => {
-        this.onglobalpointermove = null;
-        this.canDiscard = true;
-        this.editor.commandManager.commit();
-        if (!moved) {
-          usePixiPopover().showPopover(
-            {
+      };
+      addEventListener(
+        'pointerup',
+        () => {
+          this.onglobalpointermove = null;
+          this.canDiscard = true;
+          this.editor.commandManager.commit();
+          if (!moved) {
+            usePixiPopover().showPopover({
               position: {
                 x: this.worldTransform.tx + 10,
-                y: this.worldTransform.ty - 10
+                y: this.worldTransform.ty - 10,
               },
               component: ControlPointPopover,
               props: {
                 controlPoint: this.controlPoint,
                 positionManager: this.positionManager,
               },
-              anchor: "top right"
-            },
-          )
-        }
-      }, {once: true})
+              anchor: 'top right',
+            });
+          }
+        },
+        { once: true },
+      );
     }
   }
 
-  canDiscard = true
+  canDiscard = true;
 
   text = new Text({
     visible: false,
-    text: "sv: 1.0",
+    text: 'sv: 1.0',
     style: {
-      fontFamily: "Nunito Sans",
+      fontFamily: 'Nunito Sans',
       fontSize: 12,
       fill: 0xffffff,
     },
-    position: {x: 13, y: -1},
+    position: { x: 13, y: -1 },
   });
 
   destroy(options?: DestroyOptions) {

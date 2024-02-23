@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint \"src/**/*.{ts,vue}\" --fix"
   },
   "dependencies": {
     "@capacitor/android": "^5.6.0",
@@ -35,7 +36,13 @@
     "@capacitor/cli": "^5.7.0",
     "@quasar/vite-plugin": "^1.6.0",
     "@types/node": "^20.10.5",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
     "@vitejs/plugin-vue": "^4.2.3",
+    "eslint": "^8.42.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-vue": "^9.22.0",
     "sass": "^1.33.0",
     "typescript": "^5.0.2",
     "unplugin-auto-import": "^0.17.2",

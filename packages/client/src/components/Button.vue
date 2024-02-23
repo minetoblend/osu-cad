@@ -1,32 +1,29 @@
 <script setup lang="ts">
-import {computed} from "vue";
+import { computed } from 'vue';
 
 const props = defineProps<{
-  variant?: "primary" | "accent";
-  size?: "sm" | "md" | "lg";
+  variant?: 'primary' | 'accent';
+  size?: 'sm' | 'md' | 'lg';
   disabled?: boolean;
   outline?: boolean;
 }>();
 const classes = computed(() => {
   const classes: string[] = [
-    `oc-btn--${props.variant ?? "primary"}`,
-    `oc-btn--${props.size ?? "md"}`,
+    `oc-btn--${props.variant ?? 'primary'}`,
+    `oc-btn--${props.size ?? 'md'}`,
   ];
 
   if (props.outline) {
-    classes.push("oc-btn--outline");
+    classes.push('oc-btn--outline');
   }
 
   return classes;
 });
-
-
 </script>
 
 <template>
   <button class="oc-btn" :class="classes" :disabled="disabled">
-    <slot>
-    </slot>
+    <slot />
   </button>
 </template>
 
@@ -57,7 +54,7 @@ const classes = computed(() => {
 
       &:active {
         background-color: darken($color, 5%);
-        transform: scale(0.98)
+        transform: scale(0.98);
       }
 
       &:focus-visible {
@@ -75,8 +72,6 @@ const classes = computed(() => {
         }
       }
     }
-
-
   }
 
   &--sm {

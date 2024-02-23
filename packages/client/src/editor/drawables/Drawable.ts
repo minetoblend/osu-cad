@@ -1,11 +1,13 @@
-import {Container, DestroyOptions} from "pixi.js";
-import {DependencyContainer, getInjectionMetadata, InjectionMetadata} from "./di";
-import {Constructor} from "@osucad/common";
-import {effectScope, EffectScope, InjectionKey} from "vue";
-
+import { Container, DestroyOptions } from 'pixi.js';
+import {
+  DependencyContainer,
+  getInjectionMetadata,
+  InjectionMetadata,
+} from './di';
+import { Constructor } from '@osucad/common';
+import { effectScope, EffectScope, InjectionKey } from 'vue';
 
 export class Drawable extends Container {
-
   readonly isDrawable = true;
 
   private _isLoaded = false;
@@ -18,13 +20,12 @@ export class Drawable extends Container {
 
   constructor() {
     super();
-    this.once("added", () => this._markForLoad());
+    this.once('added', () => this._markForLoad());
   }
 
   get isLoaded() {
     return this._isLoaded;
   }
-
 
   updateChildDrawables = true;
 
@@ -34,13 +35,11 @@ export class Drawable extends Container {
     this.effectScope.run(() => {
       this._dependencies = new DependencyContainer(parent?._dependencies);
       const metadata = getInjectionMetadata(this, false);
-      if (metadata)
-        this._autoInject(metadata);
+      if (metadata) this._autoInject(metadata);
 
       this.onLoad?.();
 
-      if (metadata)
-        this._autoProvide(metadata);
+      if (metadata) this._autoProvide(metadata);
 
       this._isLoaded = true;
     });
@@ -68,9 +67,9 @@ export class Drawable extends Container {
     }
   }
 
-  onLoad?(): void
+  onLoad?(): void;
 
-  onTick?(): void
+  onTick?(): void;
 
   private _markForLoad(fromChild = false) {
     this.needsLoad = true;
@@ -81,7 +80,7 @@ export class Drawable extends Container {
           try {
             this.load(parent);
           } catch (e) {
-            console.error("Error loading drawable", this, e);
+            console.error('Error loading drawable', this, e);
           }
         }
 
@@ -90,12 +89,11 @@ export class Drawable extends Container {
       }
       parent = parent.parent;
     }
-
   }
 
   provide(key: unknown, value: unknown) {
     if (!this._dependencies)
-      throw new Error("Cannot provide dependency before load");
+      throw new Error('Cannot provide dependency before load');
     this._dependencies.provide(key, value);
   }
 
@@ -108,7 +106,7 @@ export class Drawable extends Container {
 
   inject(key: unknown, optional = false): any {
     if (!this._dependencies)
-      throw new Error("Cannot inject dependency before load");
+      throw new Error('Cannot inject dependency before load');
     return this._dependencies.inject(key, optional);
   }
 
@@ -116,7 +114,6 @@ export class Drawable extends Container {
     super.destroy(options);
     this.effectScope?.stop();
   }
-
 }
 
 export function isDrawable(object: Container): object is Drawable {

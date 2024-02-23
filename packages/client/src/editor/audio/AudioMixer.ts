@@ -1,4 +1,4 @@
-import { usePreferences } from "@/composables/usePreferences.ts";
+import { usePreferences } from '@/composables/usePreferences.ts';
 
 export class AudioMixer {
   constructor(ctx: AudioContext) {

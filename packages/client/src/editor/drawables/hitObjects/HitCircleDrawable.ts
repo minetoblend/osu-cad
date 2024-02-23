@@ -1,14 +1,13 @@
-import {HitCircle} from "@osucad/common";
-import {HitObjectDrawable} from "./HitObjectDrawable.ts";
-import {ApproachCircle} from "./ApproachCircle.ts";
-import {CirclePiece} from "./CirclePiece.ts";
-import {DrawableComboNumber} from "./DrawableComboNumber.ts";
-import {SelectionCircle} from "./SelectionCircle.ts";
-import {usePreferences} from "@/composables/usePreferences.ts";
-import {animate} from "@/editor/drawables/animate.ts";
+import { HitCircle } from '@osucad/common';
+import { HitObjectDrawable } from './HitObjectDrawable.ts';
+import { ApproachCircle } from './ApproachCircle.ts';
+import { CirclePiece } from './CirclePiece.ts';
+import { DrawableComboNumber } from './DrawableComboNumber.ts';
+import { SelectionCircle } from './SelectionCircle.ts';
+import { usePreferences } from '@/composables/usePreferences.ts';
+import { animate } from '@/editor/drawables/animate.ts';
 
 export class HitCircleDrawable extends HitObjectDrawable<HitCircle> {
-
   private readonly circlePiece = new CirclePiece();
   private readonly approachCircle = new ApproachCircle();
   private readonly comboNumber = new DrawableComboNumber(0);
@@ -20,11 +19,7 @@ export class HitCircleDrawable extends HitObjectDrawable<HitCircle> {
 
   onLoad() {
     super.onLoad();
-    this.addChild(
-      this.approachCircle,
-      this.circlePiece,
-      this.selectionCircle,
-    );
+    this.addChild(this.approachCircle, this.circlePiece, this.selectionCircle);
     this.circlePiece.addChild(this.comboNumber);
   }
 
@@ -45,13 +40,17 @@ export class HitCircleDrawable extends HitObjectDrawable<HitCircle> {
     super.onTick();
     this.comboNumber.number = this.hitObject.indexInCombo + 1;
 
-    const time = this.editor.clock.currentTimeAnimated - this.hitObject.startTime;
-    this.comboNumber.alpha = 1
+    const time =
+      this.editor.clock.currentTimeAnimated - this.hitObject.startTime;
+    this.comboNumber.alpha = 1;
     if (time > 0) {
-      const {preferences} = usePreferences();
+      const { preferences } = usePreferences();
 
-      if (preferences.viewport.hitAnimations || preferences.viewport.hitMarkers) {
-        this.comboNumber.alpha = animate(time, 0, 60, 1, 0)
+      if (
+        preferences.viewport.hitAnimations ||
+        preferences.viewport.hitMarkers
+      ) {
+        this.comboNumber.alpha = animate(time, 0, 60, 1, 0);
       }
     }
   }

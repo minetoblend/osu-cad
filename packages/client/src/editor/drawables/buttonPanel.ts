@@ -1,24 +1,24 @@
-import { Component } from "@/editor/drawables/Component.ts";
+import { Component } from '@/editor/drawables/Component.ts';
 import {
   IconButton,
   IconButtonOptions,
-} from "@/editor/drawables/IconButton.ts";
-import { Assets, Graphics, ObservablePoint } from "pixi.js";
-import { Rect } from "@osucad/common";
-import { Inject } from "@/editor/drawables/di";
-import { EditorContext } from "@/editor/editorContext.ts";
+} from '@/editor/drawables/IconButton.ts';
+import { Assets, Graphics, ObservablePoint } from 'pixi.js';
+import { Rect } from '@osucad/common';
+import { Inject } from '@/editor/drawables/di';
+import { EditorContext } from '@/editor/editorContext.ts';
 
 export class ButtonPanel extends Component {
   @Inject(EditorContext)
   private readonly editor!: EditorContext;
 
   private undoButton = new ButtonPanelButton({
-    icon: Assets.get("icon-undo"),
+    icon: Assets.get('icon-undo'),
     action: () => this.editor.commandManager.undo(),
   });
 
   private redoButton = new ButtonPanelButton({
-    icon: Assets.get("icon-redo"),
+    icon: Assets.get('icon-redo'),
     action: () => this.editor.commandManager.redo(),
   });
 
@@ -76,12 +76,12 @@ export class ButtonPanelButton extends IconButton {
     });
     this.addChildAt(this.background, 0);
 
-    this.on("pointerdown", () => {
+    this.on('pointerdown', () => {
       if (!this.disabled) this.iconScale = 0.85;
       this._onUpdate();
     });
 
-    this.on("pointerup", () => {
+    this.on('pointerup', () => {
       this.iconScale = 0.75;
       this._onUpdate();
     });

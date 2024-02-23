@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {MapsetInfo} from "@osucad/common";
+import { MapsetInfo } from '@osucad/common';
 
 const props = defineProps<{
   mapset: MapsetInfo;
@@ -12,28 +12,32 @@ const coverUrl = computed(() => {
   return undefined;
 });
 
-console.log(props.mapset)
+console.log(props.mapset);
 
-const beatmaps = useSorted(() => props.mapset.beatmaps, (a, b) => a.starRating - b.starRating);
-
+const beatmaps = useSorted(
+  () => props.mapset.beatmaps,
+  (a, b) => a.starRating - b.starRating,
+);
 </script>
 
 <template>
   <div class="oc-mapset-card">
-    <div class="cover" :style="{ backgroundImage: coverUrl }"/>
+    <div class="cover" :style="{ backgroundImage: coverUrl }" />
     <div class="info">
-      <div class="cover" :style="{ backgroundImage: coverUrl }"/>
+      <div class="cover" :style="{ backgroundImage: coverUrl }" />
       <div class="title">
         <RouterLink :to="`/edit/${mapset.beatmaps[0].id}`">
           {{ mapset.title }}
         </RouterLink>
       </div>
-      <div class="artist">
-        by {{ mapset.artist }}
-      </div>
+      <div class="artist">by {{ mapset.artist }}</div>
       <div class="beatmaps">
-        <RouterLink v-for="beatmap in beatmaps" :key="beatmap.id" class="beatmap"
-                    :to=" `/edit/${beatmap.id}`">
+        <RouterLink
+          v-for="beatmap in beatmaps"
+          :key="beatmap.id"
+          class="beatmap"
+          :to="`/edit/${beatmap.id}`"
+        >
           {{ beatmap.name }} ({{ beatmap.starRating.toFixed(1) }}*)
         </RouterLink>
       </div>

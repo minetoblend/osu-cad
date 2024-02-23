@@ -1,13 +1,10 @@
-import {Graphics} from "pixi.js";
-import {usePreferences} from "@/composables/usePreferences.ts";
-import {Drawable} from "@/editor/drawables/Drawable.ts";
-import {Preferences} from "@osucad/common";
-
+import { Graphics } from 'pixi.js';
+import { usePreferences } from '@/composables/usePreferences.ts';
+import { Drawable } from '@/editor/drawables/Drawable.ts';
+import { Preferences } from '@osucad/common';
 
 export class PlayfieldGrid extends Drawable {
-
   private readonly graphics = new Graphics();
-
 
   constructor() {
     super();
@@ -15,13 +12,12 @@ export class PlayfieldGrid extends Drawable {
   }
 
   onLoad() {
-    const {preferences, loaded} = usePreferences();
+    const { preferences, loaded } = usePreferences();
     watchEffect(() => {
       if (!loaded.value) return;
-      this.update(preferences)
-    })
+      this.update(preferences);
+    });
   }
-
 
   update(preferences: Preferences) {
     const g = this.graphics;
@@ -46,7 +42,7 @@ export class PlayfieldGrid extends Drawable {
     g.stroke({
       width: 0.5,
       color: preferences.viewport.grid.color,
-      alpha: preferences.viewport.grid.opacity / 100
+      alpha: preferences.viewport.grid.opacity / 100,
     });
 
     if (preferences.viewport.grid.enabled) {
@@ -57,7 +53,7 @@ export class PlayfieldGrid extends Drawable {
       g.stroke({
         width: 1,
         color: preferences.viewport.grid.color,
-        alpha: preferences.viewport.grid.opacity / 100
+        alpha: preferences.viewport.grid.opacity / 100,
       });
     }
   }

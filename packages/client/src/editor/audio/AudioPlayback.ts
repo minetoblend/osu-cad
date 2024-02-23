@@ -2,7 +2,7 @@ interface AudioPlaybackOptions {
   source: AudioBufferSourceNode;
   offset: number;
   startTime: number;
-  duration?: number ;
+  duration?: number;
   volume: number;
   playbackRate: number;
   balance: number;
@@ -10,10 +10,7 @@ interface AudioPlaybackOptions {
 }
 
 export class AudioPlayback {
-
-  constructor(
-    options: AudioPlaybackOptions,
-  ) {
+  constructor(options: AudioPlaybackOptions) {
     this.source = options.source;
     this.startTime = options.startTime;
     this.offset = options.offset;
@@ -47,5 +44,4 @@ export class AudioPlayback {
     this._onEnded?.();
     this.onended?.(this);
   }
-
 }

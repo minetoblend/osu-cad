@@ -1,5 +1,5 @@
-import {Graphics} from "pixi.js";
-import {Vec2} from "@osucad/common";
+import { Graphics } from 'pixi.js';
+import { Vec2 } from '@osucad/common';
 
 export interface DebugBoxOptions {
   tint?: number;
@@ -9,7 +9,6 @@ export interface DebugBoxOptions {
 }
 
 export class DebugBox extends Graphics {
-
   private _size: Vec2;
 
   get size() {
@@ -23,12 +22,7 @@ export class DebugBox extends Graphics {
 
   constructor(options: DebugBoxOptions = {}) {
     super();
-    const {
-      tint = 0xff0000,
-      alpha = 1,
-      width = 0,
-      height = 0,
-    } = options;
+    const { tint = 0xff0000, alpha = 1, width = 0, height = 0 } = options;
 
     this.tint = tint;
     this.alpha = alpha;
@@ -45,5 +39,4 @@ export class DebugBox extends Graphics {
       width: 1,
     });
   }
-
 }

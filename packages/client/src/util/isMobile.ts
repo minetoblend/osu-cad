@@ -1,9 +1,10 @@
-import {Capacitor} from "@capacitor/core";
+import { Capacitor } from '@capacitor/core';
 
-const mobile = Capacitor.getPlatform() === "android" || Capacitor.getPlatform() === "ios";
+const mobile =
+  Capacitor.getPlatform() === 'android' || Capacitor.getPlatform() === 'ios';
 
 export function isMobile() {
-
-  if ('userAgentData' in navigator) return (navigator.userAgentData as any).mobile
-  return mobile
+  if ('userAgentData' in navigator)
+    return (navigator.userAgentData as any).mobile;
+  return mobile;
 }

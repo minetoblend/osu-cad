@@ -1,27 +1,27 @@
 <script setup lang="ts">
 const props = defineProps<{
   items: {
-    label: string
-    value: string
-  }[]
-  modelValue: string
+    label: string;
+    value: string;
+  }[];
+  modelValue: string;
 }>();
 
 const emit = defineEmits<{
-  (event: "update:modelValue", value: string): void
+  (event: 'update:modelValue', value: string): void;
 }>();
 
-const modelValue = useVModel(props, "modelValue", emit);
-
+const modelValue = useVModel(props, 'modelValue', emit);
 </script>
 
 <template>
   <div class="tablist">
-    <button v-for="button in items"
-            :key="button.value"
-            class="tablist-button"
-            :class="{ active: modelValue === button.value }"
-            @click="modelValue = button.value"
+    <button
+      v-for="button in items"
+      :key="button.value"
+      class="tablist-button"
+      :class="{ active: modelValue === button.value }"
+      @click="modelValue = button.value"
     >
       {{ button.label }}
     </button>
@@ -43,14 +43,13 @@ const modelValue = useVModel(props, "modelValue", emit);
     border: none;
     cursor: pointer;
 
-
     &:hover {
       background-color: rgba(white, 0.05);
     }
 
     &:active {
       background-color: rgba(black, 0.05);
-      transform: scale(0.98)
+      transform: scale(0.98);
     }
 
     &.active {
@@ -64,7 +63,6 @@ const modelValue = useVModel(props, "modelValue", emit);
         background-color: rgba(white, 0.3);
       }
     }
-
   }
 }
 </style>

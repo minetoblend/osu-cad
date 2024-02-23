@@ -1,6 +1,6 @@
-import { Assets, Point, Sprite } from "pixi.js";
-import { Drawable } from "../Drawable.ts";
-import { ObjectPool } from "../objectPool.ts";
+import { Assets, Point, Sprite } from 'pixi.js';
+import { Drawable } from '../Drawable.ts';
+import { ObjectPool } from '../objectPool.ts';
 
 export class DrawableComboNumber extends Drawable {
   private _number: number;
@@ -46,7 +46,7 @@ export class DrawableComboNumber extends Drawable {
     );
     const digits = this.number
       .toString()
-      .split("")
+      .split('')
       .map((digit) => parseInt(digit));
     const sprites = digits.map((digit) =>
       DrawableComboNumber.digitSpritePool[digit].get(),

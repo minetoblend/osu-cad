@@ -1,8 +1,11 @@
 export class ObjectPool<T> {
   private readonly pool: T[] = [];
 
-  constructor(private readonly create: () => T, private readonly max = 20, private readonly destroy?: (obj: T) => void) {
-  }
+  constructor(
+    private readonly create: () => T,
+    private readonly max = 20,
+    private readonly destroy?: (obj: T) => void,
+  ) {}
 
   get() {
     if (this.pool.length > 0) {

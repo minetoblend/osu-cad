@@ -1,5 +1,12 @@
-import {Container, ExtensionMetadata, extensions, ExtensionType, Renderer, System} from "pixi.js";
-import {Drawable, isDrawable} from "./Drawable.ts";
+import {
+  Container,
+  ExtensionMetadata,
+  extensions,
+  ExtensionType,
+  Renderer,
+  System,
+} from 'pixi.js';
+import { Drawable, isDrawable } from './Drawable.ts';
 
 export const frameStats = reactive({
   fps: 0,
@@ -9,11 +16,8 @@ export const frameStats = reactive({
 
 export class DrawableSystem implements System {
   static extension: ExtensionMetadata = {
-    type: [
-      ExtensionType.WebGLSystem,
-      ExtensionType.WebGPUSystem,
-    ],
-    name: "drawable",
+    type: [ExtensionType.WebGLSystem, ExtensionType.WebGPUSystem],
+    name: 'drawable',
   };
 
   private _renderer: Renderer;
@@ -34,7 +38,6 @@ export class DrawableSystem implements System {
 
   private _renderStart = 0;
   private _lastFrame = 0;
-
 
   public prerender(): void {
     this._renderStart = performance.now();
@@ -63,7 +66,6 @@ export class DrawableSystem implements System {
 
       view.needsLoad = false;
       parent = view;
-
     }
 
     for (const child of view.children) {
@@ -75,17 +77,15 @@ export class DrawableSystem implements System {
     try {
       view.load(parent);
     } catch (e) {
-      console.error("Error loading drawable", view, e);
+      console.error('Error loading drawable', view, e);
     }
   }
 
   private updateSubtree(view: Container, parent?: Drawable) {
     if (isDrawable(view)) {
       if (!view.isLoaded) {
-        if (parent?.isLoaded)
-          this.loadView(view, parent);
-        else
-          return;
+        if (parent?.isLoaded) this.loadView(view, parent);
+        else return;
       }
       view.onTick?.();
       if (!view.updateChildDrawables) return;

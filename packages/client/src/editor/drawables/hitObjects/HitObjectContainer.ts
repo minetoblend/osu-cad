@@ -1,19 +1,19 @@
-import { Drawable } from "../Drawable.ts";
-import { Inject } from "../di";
+import { Drawable } from '../Drawable.ts';
+import { Inject } from '../di';
 import {
   HitCircle,
   HitObject,
   HitObjectType,
   Slider,
   Spinner,
-} from "@osucad/common";
-import { HitObjectDrawable } from "./HitObjectDrawable.ts";
-import { HitCircleDrawable } from "./HitCircleDrawable.ts";
-import { SliderDrawable } from "./SliderDrawable.ts";
-import { Container } from "pixi.js";
-import { FollowPointsDrawable } from "./FollowPointsDrawable.ts";
-import { SpinnerDrawable } from "./SpinnerDrawable.ts";
-import { EditorContext } from "@/editor/editorContext.ts";
+} from '@osucad/common';
+import { HitObjectDrawable } from './HitObjectDrawable.ts';
+import { HitCircleDrawable } from './HitCircleDrawable.ts';
+import { SliderDrawable } from './SliderDrawable.ts';
+import { Container } from 'pixi.js';
+import { FollowPointsDrawable } from './FollowPointsDrawable.ts';
+import { SpinnerDrawable } from './SpinnerDrawable.ts';
+import { EditorContext } from '@/editor/editorContext.ts';
 
 export class HitObjectContainer extends Drawable {
   @Inject(EditorContext)
@@ -25,7 +25,7 @@ export class HitObjectContainer extends Drawable {
     this.hitObjectContainer.enableRenderGroup();
     this.followPointContainer.enableRenderGroup();
     this.interactiveChildren = false;
-    this.eventMode = "none";
+    this.eventMode = 'none';
   }
 
   onLoad() {
@@ -33,7 +33,7 @@ export class HitObjectContainer extends Drawable {
     eventContainer.hitArea = {
       contains: () => true,
     };
-    eventContainer.eventMode = "static";
+    eventContainer.eventMode = 'static';
 
     eventContainer.onpointerdown = () => {
       this.editor.selection.clear();

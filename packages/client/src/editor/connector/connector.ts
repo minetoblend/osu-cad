@@ -1,7 +1,7 @@
-import ConnectorWorker from './connector.worker.ts?worker'
-import {EventEmitter} from "pixi.js";
-import {ManagerOptions} from "socket.io-client/build/esm/manager";
-import {SocketOptions} from "socket.io-client/build/esm/socket";
+import ConnectorWorker from './connector.worker.ts?worker';
+import { EventEmitter } from 'pixi.js';
+import { ManagerOptions } from 'socket.io-client/build/esm/manager';
+import { SocketOptions } from 'socket.io-client/build/esm/socket';
 
 export class Connector extends EventEmitter {
   private worker = new ConnectorWorker();
@@ -9,7 +9,7 @@ export class Connector extends EventEmitter {
   constructor(url: string, options: Partial<ManagerOptions & SocketOptions>) {
     super();
     this.worker.addEventListener('message', this.onMessage.bind(this));
-    this.worker.postMessage({url, options})
+    this.worker.postMessage({ url, options });
   }
 
   private onMessage(event: MessageEvent) {
@@ -17,6 +17,6 @@ export class Connector extends EventEmitter {
   }
 
   send(message: string, ...payload: any[]) {
-    this.worker.postMessage({type: message, payload});
+    this.worker.postMessage({ type: message, payload });
   }
 }

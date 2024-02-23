@@ -1,13 +1,12 @@
-import {Assets, Sprite} from "pixi.js";
-import {HitObject, Spinner, Vec2} from "@osucad/common";
-import {Inject} from "../di";
-import {EditorClock} from "../../clock.ts";
-import {animate, Easing} from "../animate.ts";
-import {Drawable} from "../Drawable.ts";
+import { Assets, Sprite } from 'pixi.js';
+import { HitObject, Spinner, Vec2 } from '@osucad/common';
+import { Inject } from '../di';
+import { EditorClock } from '../../clock.ts';
+import { animate, Easing } from '../animate.ts';
+import { Drawable } from '../Drawable.ts';
 
 export class FollowPointsDrawable extends Drawable {
-
-  private readonly texture = Assets.get("followpoint");
+  private readonly texture = Assets.get('followpoint');
 
   @Inject(EditorClock)
   clock!: EditorClock;
@@ -52,11 +51,19 @@ export class FollowPointsDrawable extends Drawable {
     }
 
     for (let i = 0; i < amount; i++) {
-
-      const offset = duration * i / amount;
+      const offset = (duration * i) / amount;
 
       const distance =
-        padding + i * gap + animate(currentTime, offset - 600, offset - 400, -10, 0, Easing.outQuad);
+        padding +
+        i * gap +
+        animate(
+          currentTime,
+          offset - 600,
+          offset - 400,
+          -10,
+          0,
+          Easing.outQuad,
+        );
 
       let sprite = this.children[i] as Sprite | undefined;
       if (!sprite) {
@@ -73,11 +80,8 @@ export class FollowPointsDrawable extends Drawable {
 
       if (currentTime < offset)
         sprite.alpha = animate(currentTime, offset - 600, offset - 400, 0, 1);
-      else if (currentTime < offset)
-        sprite.alpha = 1;
-      else
-        sprite.alpha = animate(currentTime, offset, offset + 400, 1, 0);
+      else if (currentTime < offset) sprite.alpha = 1;
+      else sprite.alpha = animate(currentTime, offset, offset + 400, 1, 0);
     }
   }
-
 }

@@ -1,11 +1,10 @@
-import {Constructor} from "@osucad/common";
-import {InjectionKey} from "vue";
+import { Constructor } from '@osucad/common';
+import { InjectionKey } from 'vue';
 
 export class DependencyContainer {
   private dependencies = new Map<unknown, unknown>();
 
-  constructor(private readonly parent?: DependencyContainer) {
-  }
+  constructor(private readonly parent?: DependencyContainer) {}
 
   provide(key: unknown, value: unknown) {
     this.dependencies.set(key, value);
@@ -21,13 +20,11 @@ export class DependencyContainer {
     const value = this.dependencies.get(key);
     if (value !== undefined) return value;
 
-    if (this.parent)
-      return this.parent.inject(key);
+    if (this.parent) return this.parent.inject(key);
 
-    if (optional)
-      return undefined;
-    throw new Error(`No dependency found for key ${(key as any)?.toString?.() ?? key}`);
+    if (optional) return undefined;
+    throw new Error(
+      `No dependency found for key ${(key as any)?.toString?.() ?? key}`,
+    );
   }
-
 }
-

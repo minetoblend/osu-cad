@@ -1,17 +1,19 @@
-import {Ref, VNode} from "vue";
-import {useEditor} from "@/editor/editorContext.ts";
-
+import { Ref, VNode } from 'vue';
+import { useEditor } from '@/editor/editorContext.ts';
 
 export function createEventList(): EditorEventsList {
   const events = ref<Event[]>([]);
 
   let nextId = 0;
 
-  function addEvent(event: Omit<Event, "id">) {
+  function addEvent(event: Omit<Event, 'id'>) {
     const id = nextId++;
     events.value.unshift({ ...event, id });
     setTimeout(() => {
-      events.value.splice(events.value.findIndex(s => s.id === id), 1);
+      events.value.splice(
+        events.value.findIndex((s) => s.id === id),
+        1,
+      );
     }, 10_000);
   }
 
@@ -30,5 +32,5 @@ export interface Event {
 
 export interface EditorEventsList {
   events: Ref<Event[]>;
-  add: (event: Omit<Event, "id">) => void;
+  add: (event: Omit<Event, 'id'>) => void;
 }

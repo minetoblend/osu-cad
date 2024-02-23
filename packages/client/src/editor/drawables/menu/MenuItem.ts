@@ -1,7 +1,7 @@
-import { ObservablePoint, Text } from "pixi.js";
-import { Vec2 } from "@osucad/common";
-import { Component } from "../Component.ts";
-import { Box } from "../Box.ts";
+import { ObservablePoint, Text } from 'pixi.js';
+import { Vec2 } from '@osucad/common';
+import { Component } from '../Component.ts';
+import { Box } from '../Box.ts';
 
 export interface MenuItemOptions {
   text: string;
@@ -18,7 +18,7 @@ export class MenuItem extends Component {
       text,
       tint: options.tint ?? 0xffffff,
       style: {
-        fontFamily: "Nunito Sans",
+        fontFamily: 'Nunito Sans',
         fontSize: 16,
         fill: 0xffffff,
       },
@@ -28,7 +28,7 @@ export class MenuItem extends Component {
 
     this._text.position.copyFrom(this.padding);
 
-    this.eventMode = "static";
+    this.eventMode = 'static';
     this.onpointerenter = () => {
       this._background.visible = true;
     };
@@ -36,7 +36,7 @@ export class MenuItem extends Component {
 
     this._action = options.action;
 
-    this.on("pointerdown", (evt) => {
+    this.on('pointerdown', (evt) => {
       if (evt.button === 0) {
         this._action?.();
         evt.stopImmediatePropagation();
