@@ -62,7 +62,10 @@ function goToUserTime(user: UserSessionInfo) {
           Spectate
         </button>
         <button v-else @click="clock.stopSpectating()">Stop spectating</button>
-        <button v-if="isOwner && ownUser?.id !== user.id" @click="kick(user.id)">
+        <button
+          v-if="isOwner && ownUser?.id !== user.id"
+          @click="kick(user.id)"
+        >
           Kick
         </button>
       </div>
