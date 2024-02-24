@@ -6,7 +6,7 @@ import { MapsetEntity } from '../beatmap/mapset.entity';
 export class AssetEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column()
+  @Column({ type: 'varchar', length: 512 })
   path: string;
   @ManyToOne(() => MapsetEntity, {
     nullable: false,
