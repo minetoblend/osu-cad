@@ -67,9 +67,11 @@ export class ControlPointTimeline extends Component {
           }),
         );
         this.editor.commandManager.commit();
-        const createdControlPoint =
-          this.editor.beatmapManager.controlPoints.getById(controlPoint.id);
-        this.showPopover(createdControlPoint!);
+        if (!this.editor.clock.isPlaying) {
+          const createdControlPoint =
+            this.editor.beatmapManager.controlPoints.getById(controlPoint.id);
+          this.showPopover(createdControlPoint!);
+        }
       } else if (evt.ctrlKey && evt.key === 'P') {
         evt.preventDefault();
         evt.preventDefault();
@@ -91,6 +93,11 @@ export class ControlPointTimeline extends Component {
         const createdControlPoint =
           this.editor.beatmapManager.controlPoints.getById(controlPoint.id);
         this.showPopover(createdControlPoint!);
+        if (!this.editor.clock.isPlaying) {
+          const createdControlPoint =
+            this.editor.beatmapManager.controlPoints.getById(controlPoint.id);
+          this.showPopover(createdControlPoint!);
+        }
       }
     });
   }
@@ -173,10 +180,12 @@ export class ControlPointTimeline extends Component {
       );
       this.editor.commandManager.commit();
 
-      const createdControlPoint =
-        this.editor.beatmapManager.controlPoints.getById(controlPoint.id);
+      if (!this.editor.clock.isPlaying) {
+        const createdControlPoint =
+          this.editor.beatmapManager.controlPoints.getById(controlPoint.id);
 
-      this.showPopover(createdControlPoint!);
+        this.showPopover(createdControlPoint!);
+      }
     }
   }
 
