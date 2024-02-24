@@ -70,7 +70,9 @@ export class ControlPointTimeline extends Component {
         if (!this.editor.clock.isPlaying) {
           const createdControlPoint =
             this.editor.beatmapManager.controlPoints.getById(controlPoint.id);
-          this.showPopover(createdControlPoint!);
+          if (createdControlPoint) {
+            this.showPopover(createdControlPoint);
+          }
         }
       } else if (evt.ctrlKey && evt.key === 'P') {
         evt.preventDefault();
@@ -96,7 +98,9 @@ export class ControlPointTimeline extends Component {
         if (!this.editor.clock.isPlaying) {
           const createdControlPoint =
             this.editor.beatmapManager.controlPoints.getById(controlPoint.id);
-          this.showPopover(createdControlPoint!);
+          if (createdControlPoint) {
+            this.showPopover(createdControlPoint);
+          }
         }
       }
     });
@@ -184,7 +188,9 @@ export class ControlPointTimeline extends Component {
         const createdControlPoint =
           this.editor.beatmapManager.controlPoints.getById(controlPoint.id);
 
-        this.showPopover(createdControlPoint!);
+        if (createdControlPoint) {
+          this.showPopover(createdControlPoint);
+        }
       }
     }
   }
