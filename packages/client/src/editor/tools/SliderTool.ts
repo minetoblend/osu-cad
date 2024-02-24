@@ -312,4 +312,19 @@ export class SliderTool extends ComposeTool {
 
     return { segmentStart: 0, type: null };
   }
+
+  protected onKeyDown(evt: KeyboardEvent, shortcut: string) {
+    super.onKeyDown(evt, shortcut);
+    switch (evt.key) {
+      case 'q':
+        if (this.placingObject)
+          this.submit(
+            updateHitObject(this.placingObject, {
+              newCombo: !this.placingObject.isNewCombo,
+            }),
+          );
+        else this.previewObject!.isNewCombo = !this.previewObject!.isNewCombo;
+        break;
+    }
+  }
 }
