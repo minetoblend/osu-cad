@@ -15,6 +15,7 @@ import { BeatmapSnapshotEntity } from './beatmap-snapshot.entity';
 import { BeatmapSnapshotService } from './beatmap-snapshot.service';
 import { BeatmapPermissionsService } from './beatmap-permissions.service';
 import { BeatmapController } from './beatmap.controller';
+import { OsuUserEntity } from '../osu/osu-user.entity';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { BeatmapController } from './beatmap.controller';
       ParticipantEntity,
       EditorSessionEntity,
       BeatmapSnapshotEntity,
+      OsuUserEntity,
     ]),
     UserModule,
     forwardRef(() => EditorModule),

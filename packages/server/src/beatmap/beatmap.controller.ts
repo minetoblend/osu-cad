@@ -6,6 +6,7 @@ import {
   Get,
   NotFoundException,
   Param,
+  Post,
   Put,
   Query,
   Req,
@@ -18,12 +19,14 @@ import { BeatmapAccess } from '@osucad/common';
 import { AuthGuard } from '../auth/auth.guard';
 import z from 'zod';
 import { BeatmapEntity } from './beatmap.entity';
+import { UserService } from '../users/user.service';
 
 @Controller('api/beatmaps')
 export class BeatmapController {
   constructor(
     private readonly permissionService: BeatmapPermissionsService,
     private readonly beatmapService: BeatmapService,
+    private readonly userService: UserService,
   ) {}
 
   @Get('/access')
@@ -96,9 +99,21 @@ export class BeatmapController {
       throw new ForbiddenException();
     }
 
+    const participants = await this.permissionService.getParticipants(beatmap);
+
     return {
       beatmap: beatmap.getInfo(),
       access: beatmap.access,
+      participants: participants.map((it) => {
+        return {
+          user: {
+            id: it.user.id,
+            username: it.user.username,
+            avatarUrl: it.user.avatarUrl,
+          },
+          access: it.access,
+        };
+      }),
     };
   }
 
@@ -141,5 +156,67 @@ export class BeatmapController {
     await this.beatmapService.setAccess(beatmap, parsedBody.data.access);
 
     return { access: parsedBody.data.access };
+  }
+
+  @Post('/:id/participants/add')
+  @UseGuards(AuthGuard)
+  async addParticipants(
+    @Req() req: Request,
+    @Body() body: { user: number; access: BeatmapAccess },
+  ) {
+    const shape = z.object({
+      users: z.array(z.number()),
+      access: z.union([
+        z.literal(BeatmapAccess.None),
+        z.literal(BeatmapAccess.View),
+        z.literal(BeatmapAccess.Modding),
+        z.literal(BeatmapAccess.Edit),
+      ]),
+    });
+
+    const parsedBody = shape.safeParse(body);
+
+    if (!parsedBody.success) {
+      throw new BadRequestException();
+    }
+
+    const user = req.session.user;
+    const beatmap = await this.beatmapService.findBeatmapByUuid(req.params.id);
+    if (!beatmap || !user) {
+      throw new NotFoundException();
+    }
+
+    const accessLevel = await this.permissionService.getAccess(
+      beatmap,
+      user.id,
+    );
+
+    if (accessLevel < BeatmapAccess.MapsetOwner) {
+      throw new ForbiddenException();
+    }
+
+    for (const user of parsedBody.data.users) {
+      await this.permissionService.setAccess(
+        beatmap,
+        user,
+        parsedBody.data.access,
+      );
+    }
+
+    const participants = await this.permissionService.getParticipants(beatmap);
+
+    return {
+      beatmap: beatmap.getInfo(),
+      participants: participants.map((it) => {
+        return {
+          user: {
+            id: it.user.id,
+            username: it.user.username,
+            avatarUrl: it.user.avatarUrl,
+          },
+          access: it.access,
+        };
+      }),
+    };
   }
 }

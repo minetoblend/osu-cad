@@ -4,6 +4,7 @@ import { SelectionManager } from '../selection.ts';
 import { binarySearch } from '@osucad/common';
 import { BeatInfo } from '../beatInfo.ts';
 import { EditorViewportDrawable } from '../drawables/EditorViewportDrawable.ts';
+import { onEditorKeyDown } from '@/composables/onEditorKeyDown.ts';
 
 export function seekInteraction(
   clock: EditorClock,
@@ -25,7 +26,7 @@ export function seekInteraction(
     e.stopPropagation();
   });
 
-  useEventListener('keydown', (e) => {
+  onEditorKeyDown((e) => {
     switch (e.key) {
       case 'ArrowLeft': {
         if (e.metaKey || e.altKey) return;

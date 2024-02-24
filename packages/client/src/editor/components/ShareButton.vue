@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useEditor } from '@/editor/editorContext.ts';
-import { BeatmapAccess, BeatmapInfo } from '@osucad/common';
+import { BeatmapAccess, BeatmapInfo, UserInfo } from '@osucad/common';
 import { useQuasar } from 'quasar';
 import axios from 'axios';
 import { promiseTimeout } from '@vueuse/core';
@@ -29,16 +29,17 @@ async function showShareDialog() {
       axios.get<{
         beatmap: BeatmapInfo;
         access: BeatmapAccess;
+        participants: {
+          user: UserInfo;
+          access: BeatmapAccess;
+        }[];
       }>(`/api/beatmaps/${beatmapId}/access/settings`),
       promiseTimeout(200),
     ]);
 
     $q.dialog({
       component: ShareDialog,
-      componentProps: {
-        beatmap: response.data.beatmap,
-        access: response.data.access,
-      },
+      componentProps: response.data,
     });
   } finally {
     $q.loading.hide();

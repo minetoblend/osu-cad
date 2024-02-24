@@ -23,6 +23,9 @@ export class EditorRoomManager {
     beatmapService.onAccessChange.addListener(({ beatmap }) =>
       this.onBeatmapAccessChanged(beatmap),
     );
+    permissionsService.onPermissionChange.addListener(({ beatmap, user }) =>
+      this.onBeatmapAccessChanged(beatmap, user),
+    );
 
     setInterval(async () => {
       this.printStats();
@@ -127,11 +130,13 @@ export class EditorRoomManager {
     }
   }
 
-  async onBeatmapAccessChanged(beatmap: BeatmapEntity) {
+  async onBeatmapAccessChanged(beatmap: BeatmapEntity, userId?: number) {
     const room = await this.getRoom(beatmap.uuid);
     if (!room) return;
 
     for (const user of [...room.users]) {
+      if (userId && user.user.id !== userId) continue;
+
       const access = await this.permissionsService.getAccess(
         beatmap,
         user.user.id,
