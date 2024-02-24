@@ -10,6 +10,10 @@ const { state: mapsets } = useAsyncState<MapsetInfo[]>(
   [],
 );
 
+const filteredMapsets = computed(() => {
+  return mapsets.value.filter((mapset) => mapset.beatmaps.length > 0);
+});
+
 const { user } = useCurrentUser();
 
 function onImported(mapset: MapsetInfo) {
@@ -21,7 +25,7 @@ function onImported(mapset: MapsetInfo) {
   <div class="page">
     <div class="mapsets">
       <ImportOszCard v-if="user" @imported="onImported" />
-      <template v-for="mapset in mapsets" :key="mapset.id">
+      <template v-for="mapset in filteredMapsets" :key="mapset.id">
         <MapsetCard :mapset="mapset" />
       </template>
     </div>

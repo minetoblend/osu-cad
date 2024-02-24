@@ -8,8 +8,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { UserEntity } from '../users/user.entity';
-import { BeatmapAccess, BeatmapEntity } from './beatmap.entity';
-import { MapsetInfo } from '@osucad/common';
+import { BeatmapEntity } from './beatmap.entity';
+import { BeatmapAccess, MapsetInfo } from '@osucad/common';
 
 @Entity('mapsets')
 export class MapsetEntity {
@@ -26,7 +26,7 @@ export class MapsetEntity {
   @Column({ nullable: true })
   background: string | null;
   @Column('int')
-  access: BeatmapAccess = BeatmapAccess.Private;
+  access: BeatmapAccess = BeatmapAccess.None;
 
   @Column('boolean', { default: false })
   s3Storage: boolean;
@@ -51,9 +51,18 @@ export class MapsetEntity {
       tags: this.tags,
       createdAt: this.createdAt.toISOString(),
       updatedAt: this.updatedAt.toISOString(),
-      backgroundPath: this.background,
       creator: this.creator.getInfo(),
       beatmaps: this.beatmaps.map((beatmap) => beatmap.getInfo()),
+      links: {
+        self: {
+          href: `/api/mapsets/${this.id}`,
+        },
+        background: {
+          href: `/api/mapsets/${this.id}/files/${encodeURIComponent(
+            this.background,
+          )}`,
+        },
+      },
     };
   }
 }

@@ -13,7 +13,6 @@ const loginUrl = computed(() => {
 
 const route = useRoute();
 const isVisible = computed(() => {
-  console.log(route.fullPath);
   if (route.fullPath.startsWith('/edit') && mobile) return false;
   return true;
 });
@@ -24,8 +23,9 @@ const isVisible = computed(() => {
     <RouterLink class="oc-navbar-logo" to="/">
       <img src="@/assets/logo-text.svg" alt="osucad logo" height="48" />
     </RouterLink>
-    <div id="navbar-content" />
+    <div id="navbar-start" />
     <div class="spacer" />
+    <div id="navbar-end" class="q-mr-md" />
     <RouterLink v-if="user" class="oc-current-user" :to="`/users/${user.id}`">
       <UserAvatar :id="user.id" />
       {{ user.username }}

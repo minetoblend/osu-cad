@@ -66,6 +66,10 @@ export function createConnectedUsers(
     });
   });
 
+  socket.on('accessChanged', (access) => {
+    if (ownUser.value) ownUser.value.access = access;
+  });
+
   return { users, kick, ban, ownUser };
 }
 

@@ -14,6 +14,7 @@ declare module 'vue' {
     ButtonGroup: typeof import('./src/components/ButtonGroup.vue')['default']
     Card: typeof import('./src/components/card/Card.vue')['default']
     Checkbox: typeof import('./src/components/Checkbox.vue')['default']
+    CopyButton: typeof import('./src/components/CopyButton.vue')['default']
     Dropzone: typeof import('./src/components/Dropzone.vue')['default']
     FormField: typeof import('./src/components/FormField.vue')['default']
     GraphicsPreferencesForm: typeof import('./src/components/preferences/GraphicsPreferencesForm.vue')['default']

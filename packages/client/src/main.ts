@@ -8,14 +8,13 @@ import 'primeflex/primeflex.css';
 import { router } from '../router.ts';
 import '@quasar/extras/material-icons/material-icons.css';
 import 'quasar/src/css/index.sass';
-import { Quasar } from 'quasar';
+import { Quasar, Dialog, Loading } from 'quasar';
 import axios from 'axios';
 import { App as CapacitorApp } from '@capacitor/app';
 import { isMobile } from '@/util/isMobile.ts';
 import { Capacitor } from '@capacitor/core';
 
 axios.defaults.baseURL = import.meta.env.VITE_BASEURL as string;
-console.log('baseurl', import.meta.env.VITE_BASEURL);
 
 if (
   isMobile() &&
@@ -40,6 +39,10 @@ function init() {
     .use(Quasar, {
       config: {
         dark: true,
+      },
+      plugins: {
+        Dialog,
+        Loading,
       },
     })
     .mount('#app');

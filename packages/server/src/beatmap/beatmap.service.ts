@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MapsetEntity } from './mapset.entity';
 import { Repository } from 'typeorm';
-import { BeatmapAccess, BeatmapEntity } from './beatmap.entity';
+import { BeatmapEntity } from './beatmap.entity';
 import { existsSync, readFileSync } from 'fs';
 import * as path from 'path';
 import { ParticipantEntity } from './participant.entity';
-import { BeatmapData } from '@osucad/common';
+import { Action, BeatmapAccess, BeatmapData } from '@osucad/common';
 import { UserEntity } from '../users/user.entity';
 import { EditorSessionEntity } from '../editor/editor-session.entity';
 import { BeatmapSnapshotService } from './beatmap-snapshot.service';
@@ -60,6 +60,13 @@ export class BeatmapService {
     });
   }
 
+  async findBeatmapByShareKey(shareId: string) {
+    return await this.beatmapRepository.findOne({
+      where: { shareId },
+      relations: ['mapset'],
+    });
+  }
+
   async mapsetExists(id: string) {
     return await this.mapsetRepository.exist({
       where: {
@@ -84,53 +91,13 @@ export class BeatmapService {
         creator: { id },
       },
       relations: ['creator', 'beatmaps'],
-      select: {
-        id: true,
-        title: true,
-        artist: true,
-        tags: true,
-        createdAt: true,
-        updatedAt: true,
-        background: true,
-        creator: {
-          id: true,
-          username: true,
-          avatarUrl: true,
-        },
-        beatmaps: {
-          id: true,
-          name: true,
-          starRating: true,
-          uuid: true,
-        },
-      },
       order: {
         updatedAt: 'DESC',
       },
     });
   }
 
-  async getAccessType(
-    userId: number,
-    mapsetId: string,
-  ): Promise<BeatmapAccess> {
-    const { access } = await this.mapsetRepository.findOneOrFail({
-      where: { id: mapsetId },
-      select: ['access'],
-    });
-
-    const participant = await this.participantRepository.findOne({
-      where: {
-        mapset: { id: mapsetId },
-        user: { id: userId },
-      },
-    });
-
-    return Math.max(access, participant?.access ?? 0);
-  }
-
   async save(beatmap: BeatmapEntity, data: BeatmapData) {
-    await this.beatmapRepository.save(beatmap);
     await this.snapshotService.createSnapshot(beatmap, data);
   }
 
@@ -146,4 +113,16 @@ export class BeatmapService {
       .limit(10)
       .getMany();
   }
+
+  async setAccess(beatmap: BeatmapEntity, access: BeatmapAccess) {
+    await this.beatmapRepository.update(beatmap.id, {
+      access,
+    });
+    beatmap.access = access;
+    this.onAccessChange.emit({ beatmap, access });
+  }
+
+  readonly onAccessChange = new Action<
+    [{ beatmap: BeatmapEntity; access: BeatmapAccess }]
+  >();
 }

@@ -1,6 +1,6 @@
 import { fields, TypeNames, variantModule, VariantOf } from 'variant';
 import { UserId, UserRole, UserSessionInfo } from './user';
-import { SerializedBeatmap, SerializedMapset } from './beatmap';
+import { BeatmapAccess, SerializedBeatmap, SerializedMapset } from './beatmap';
 import { ChatHistory, ChatMessage } from './chat';
 import { UserActivity } from './presence';
 import { UserInfo } from '../types';
@@ -48,4 +48,6 @@ export interface ServerMessages {
   commands(commands: Uint8Array, sessionId: number): void;
 
   roll(user: UserSessionInfo): void;
+
+  accessChanged(access: BeatmapAccess): void;
 }

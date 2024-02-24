@@ -1,12 +1,14 @@
 import {
+  BeforeInsert,
   Column,
   Entity,
   Generated,
+  Index,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { MapsetEntity } from './mapset.entity';
-import { BeatmapData, BeatmapInfo } from '@osucad/common';
+import { BeatmapAccess, BeatmapInfo, randomString } from '@osucad/common';
 
 @Entity('beatmaps')
 export class BeatmapEntity {
@@ -26,18 +28,31 @@ export class BeatmapEntity {
   @ManyToOne(() => MapsetEntity, (mapset) => mapset.beatmaps)
   mapset: MapsetEntity;
 
+  @Column('int', { default: BeatmapAccess.None })
+  access: BeatmapAccess = BeatmapAccess.None;
+
+  @Column('char', { length: 12, default: 'LEFT(MD5(RAND()), 12)' })
+  @Index('shareId', { unique: true })
+  shareId: string;
+
   getInfo(): BeatmapInfo {
     return {
       id: this.uuid,
       name: this.name,
       starRating: this.starRating,
+      links: {
+        self: {
+          href: `/api/beatmaps/${this.uuid}`,
+        },
+        edit: {
+          href: `/edit/${this.shareId}`,
+        },
+      },
     };
   }
-}
 
-export const enum BeatmapAccess {
-  Private = 0,
-  Spectator = 1,
-  Modder = 2,
-  Mapper = 3,
+  @BeforeInsert()
+  protected generateShareId() {
+    this.shareId = randomString(12);
+  }
 }

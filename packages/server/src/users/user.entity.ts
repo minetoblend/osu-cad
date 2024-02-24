@@ -20,6 +20,14 @@ export class UserEntity {
       id: this.id,
       username: this.username,
       avatarUrl: this.avatarUrl,
+      links: {
+        self: {
+          href: `/api/users/${this.id}`,
+        },
+        profile: {
+          href: `/users/${this.id}`,
+        },
+      },
     };
   }
 }
