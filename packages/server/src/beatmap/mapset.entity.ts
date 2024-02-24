@@ -58,9 +58,7 @@ export class MapsetEntity {
           href: `/api/mapsets/${this.id}`,
         },
         background: {
-          href: `/api/mapsets/${this.id}/files/${encodeURIComponent(
-            this.background,
-          )}`,
+          href: `/api/mapsets/${this.id}/files/${this.background}`,
         },
       },
     };
