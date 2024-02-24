@@ -21,6 +21,9 @@ export class BeatmapSnapshots1708736838564 implements MigrationInterface {
             FROM \`beatmaps\`
             `,
     );
+    await queryRunner.query(
+      `ALTER TABLE \`beatmaps\` CHANGE \`data\` \`data\` json NULL`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

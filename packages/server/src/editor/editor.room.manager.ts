@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { BeatmapService } from '../beatmap/beatmap.service';
 import { EditorRoom } from './editor.room';
 import { BeatmapData, BeatmapId } from '@osucad/common';
+import { BeatmapSnapshotService } from '../beatmap/beatmap-snapshot.service';
 
 @Injectable()
 export class EditorRoomManager {
@@ -12,7 +13,10 @@ export class EditorRoomManager {
 
   private readonly logger = new Logger(EditorRoomManager.name);
 
-  constructor(private readonly beatmapService: BeatmapService) {
+  constructor(
+    private readonly beatmapService: BeatmapService,
+    private readonly snapshotService: BeatmapSnapshotService,
+  ) {
     setInterval(async () => {
       this.printStats();
 
@@ -60,7 +64,16 @@ export class EditorRoomManager {
     this.logger.log(
       `creating room ${beatmapId} for ${beatmap.mapset.artist} - ${beatmap.mapset.title}`,
     );
-    return new EditorRoom(beatmap);
+    const snapshot = await this.snapshotService.getLatestSnapshot(beatmap);
+
+    if (!snapshot) {
+      this.logger.error(
+        `Could not find snapshot for beatmap ${beatmapId}: ${beatmap.mapset.artist} - ${beatmap.mapset.title}`,
+      );
+      return null;
+    }
+
+    return new EditorRoom(beatmap, snapshot.data);
   }
 
   async getRoom(beatmapId: BeatmapId): Promise<EditorRoom | undefined> {

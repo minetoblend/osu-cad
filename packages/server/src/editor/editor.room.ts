@@ -2,6 +2,7 @@ import { UserEntity } from '../users/user.entity';
 import { Socket } from 'socket.io';
 import {
   Beatmap,
+  BeatmapData,
   ClientMessages,
   CommandContext,
   ControlPointManager,
@@ -26,7 +27,10 @@ export class EditorRoom {
 
   hasUnsavedChanges = false;
 
-  constructor(public entity: BeatmapEntity) {
+  constructor(
+    public entity: BeatmapEntity,
+    snapshot: BeatmapData,
+  ) {
     const {
       hitObjects,
       controlPoints,
@@ -38,7 +42,7 @@ export class EditorRoom {
       general,
       hitSounds = { layers: defaultHitSoundLayers() },
       version,
-    } = entity.data;
+    } = snapshot;
 
     this.beatmap = new Beatmap({
       id: entity.uuid,

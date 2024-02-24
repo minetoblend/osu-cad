@@ -21,6 +21,7 @@ import {
 import { BeatmapEntity } from './beatmap.entity';
 import {
   Additions,
+  BeatmapData,
   defaultHitSound,
   defaultHitSoundLayers,
   hitObjectId,
@@ -38,6 +39,7 @@ import {
   SerializedVelocityPoint,
 } from '@osucad/common';
 import { AssetsService } from '../assets/assets.service';
+import { BeatmapSnapshotService } from './beatmap-snapshot.service';
 
 @Injectable()
 export class BeatmapImportService {
@@ -45,6 +47,7 @@ export class BeatmapImportService {
     private readonly beatmapService: BeatmapService,
     private readonly userService: UserService,
     private readonly assetsService: AssetsService,
+    private readonly snapshotService: BeatmapSnapshotService,
   ) {}
 
   private readonly ruleset = new StandardRuleset();
@@ -86,6 +89,8 @@ export class BeatmapImportService {
 
     const assetPaths: string[] = [];
 
+    const snapshots = new Map<string, BeatmapData>();
+
     for await (const entry of zip) {
       try {
         const fileType = entry.path.split('.').pop() ?? '';
@@ -101,9 +106,11 @@ export class BeatmapImportService {
 
           if (!mapset) mapset = this.createMapsetFromBeatmap(parsed, id, user);
 
-          const beatmap = this.createDifficultyFromBeatmap(osuBeatmap);
+          const { beatmap, data } =
+            this.createDifficultyFromBeatmap(osuBeatmap);
 
           mapset.beatmaps.push(beatmap);
+          snapshots.set(beatmap.name, data);
 
           continue;
         }
@@ -127,6 +134,13 @@ export class BeatmapImportService {
     if (!mapset) return null;
 
     await this.beatmapService.createMapset(mapset);
+
+    for (const beatmap of mapset.beatmaps) {
+      const data = snapshots.get(beatmap.name);
+      if (!data) continue;
+
+      await this.snapshotService.createSnapshot(beatmap, data);
+    }
 
     for (const assetPath of assetPaths) {
       const assetBuffer = await fs.readFile(resolve(path, assetPath));
@@ -362,7 +376,7 @@ export class BeatmapImportService {
       stackLeniency: imported.general.stackLeniency,
     };
 
-    entity.data = {
+    const data: BeatmapData = {
       version: 2,
       hitObjects,
       controlPoints: {
@@ -378,7 +392,7 @@ export class BeatmapImportService {
       hitSounds: hitSounds.serialize(),
     };
 
-    return entity;
+    return { beatmap: entity, data };
   }
 
   convertPathPoint(point: PathPoint): SerializedPathPoint {
