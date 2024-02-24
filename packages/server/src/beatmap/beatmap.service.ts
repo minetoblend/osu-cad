@@ -99,6 +99,7 @@ export class BeatmapService {
           id: true,
           name: true,
           starRating: true,
+          uuid: true,
         },
       },
       order: {
