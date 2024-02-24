@@ -22,7 +22,7 @@ export class UserController {
   @UseGuards(AuthGuard)
   async searchUsers(@Query('query') query: string) {
     if (typeof query !== 'string') {
-      throw new Error('Invalid query');
+      throw new BadRequestException('Invalid query');
     }
 
     const users = await this.osuApiService.lookupUser(query);
