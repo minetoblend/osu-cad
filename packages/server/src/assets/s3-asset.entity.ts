@@ -4,7 +4,7 @@ import { Column, Entity, PrimaryColumn } from 'typeorm';
 export class S3AssetEntity {
   @PrimaryColumn({ type: 'varchar' })
   key: string;
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', length: 64 })
   bucket: string;
   @Column({ type: 'int' })
   filesize: number;
