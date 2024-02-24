@@ -7,7 +7,7 @@ const props = defineProps<{
 
 const coverUrl = computed(() => {
   const url = props.mapset.links.background.href;
-  if (url) return `url(${url})`;
+  if (url) return `url('${url}')`;
 });
 
 const beatmaps = useSorted(
