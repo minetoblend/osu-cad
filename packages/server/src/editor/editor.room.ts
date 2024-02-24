@@ -2,6 +2,7 @@ import { UserEntity } from '../users/user.entity';
 import { Socket } from 'socket.io';
 import {
   Beatmap,
+  BeatmapAccess,
   BeatmapData,
   ClientMessages,
   CommandContext,
@@ -18,17 +19,16 @@ import {
 } from '@osucad/common';
 import { Logger } from '@nestjs/common';
 import { BeatmapEntity } from '../beatmap/beatmap.entity';
-import { EditorSessionEntity } from './editor-session.entity';
+import { EditorRoomManager } from './editor.room.manager';
 
 export class EditorRoom {
   private readonly logger: Logger;
 
   readonly beatmap: Beatmap;
 
-  hasUnsavedChanges = false;
-
   constructor(
-    public entity: BeatmapEntity,
+    private readonly manager: EditorRoomManager,
+    public readonly entity: BeatmapEntity,
     snapshot: BeatmapData,
   ) {
     const {
@@ -78,6 +78,8 @@ export class EditorRoom {
     this.logger = new Logger(`${EditorRoom.name}:${this.beatmap.id}`);
   }
 
+  hasUnsavedChanges = false;
+
   private nextSessionId = 0;
 
   readonly users: RoomUser[] = [];
@@ -91,10 +93,15 @@ export class EditorRoom {
   accept(
     client: Socket<ClientMessages, ServerMessages>,
     user: UserEntity,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    access: EditorSessionEntity,
+    access: BeatmapAccess,
   ) {
-    const roomUser = new RoomUser(user, client, this.nextSessionId++, this);
+    const roomUser = new RoomUser(
+      user,
+      client,
+      this.nextSessionId++,
+      this,
+      access,
+    );
 
     this.logger.log(
       `User ${user.username} joined { sessionId: ${roomUser.sessionId} }`,
@@ -143,16 +150,19 @@ export class EditorRoom {
   }
 
   handleKick(kickedBy: RoomUser, userId: number, reason: string, ban: boolean) {
-    console.log('kick', userId, reason, ban);
     const users = this.users.filter((u) => u.user.id === userId);
     for (const targetUser of users) {
       targetUser.send('kicked', reason, ban);
-      this.broadcast(
-        'userLeft',
-        targetUser.getInfo(),
-        ban ? 'banned' : 'kicked',
-      );
-      targetUser.socket.disconnect();
+      this.kick(targetUser.sessionId);
+    }
+  }
+
+  protected kick(sessionId: number) {
+    const user = this.users.find((u) => u.sessionId === sessionId);
+    if (user) {
+      this.broadcast('userLeft', user.getInfo(), 'kicked');
+      this.users.splice(this.users.indexOf(user), 1);
+      user.socket.disconnect();
     }
   }
 
@@ -160,6 +170,13 @@ export class EditorRoom {
     roomUser: RoomUser,
     commands: VersionedEditorCommand[],
   ) {
+    if (roomUser.access < BeatmapAccess.Edit) {
+      this.logger.error(
+        `User ${roomUser.user.username} tried to send commands without edit access`,
+      );
+      return;
+    }
+
     this.hasUnsavedChanges = true;
     for (const command of commands) {
       const context = new CommandContext(
@@ -175,6 +192,19 @@ export class EditorRoom {
     }
     this.broadcast('commands', encodeCommands(commands), roomUser.sessionId);
   }
+
+  setUserAccess(user: RoomUser, access: BeatmapAccess) {
+    console.log('setUserAccess', user.user.username, access, user.access);
+    if (user.access === access) return;
+
+    if (access <= BeatmapAccess.None) {
+      this.kick(user.sessionId);
+    }
+
+    user.access = access;
+
+    user.send('accessChanged', access);
+  }
 }
 
 class RoomUser {
@@ -183,6 +213,7 @@ class RoomUser {
     readonly socket: Socket<ClientMessages, ServerMessages>,
     readonly sessionId: number,
     readonly room: EditorRoom,
+    public access: BeatmapAccess,
   ) {
     socket.on('kickUser', (id: number, reason: string, ban: boolean) =>
       room.handleKick(this, id, reason, ban),
@@ -196,12 +227,10 @@ class RoomUser {
 
   getInfo(): UserSessionInfo {
     return {
+      ...this.user.getInfo(),
       sessionId: this.sessionId,
-      id: this.user.id,
       presence: this.presence,
-      role: 'admin',
-      username: this.user.username,
-      avatarUrl: this.user.avatarUrl,
+      access: this.access,
     };
   }
 

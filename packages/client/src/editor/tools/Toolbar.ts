@@ -14,6 +14,7 @@ import { ComposeTool } from '@/editor/tools/ComposeTool.ts';
 import { ToolbarButton } from '@/editor/tools/ToolbarButton.ts';
 import { usePreferencesVisible } from '@/composables/usePreferencesVisible.ts';
 import { onEditorKeyDown } from '@/composables/onEditorKeyDown.ts';
+import { BeatmapAccess } from '@osucad/common';
 
 export class Toolbar extends Component {
   @Inject(EditorContext)
@@ -52,7 +53,6 @@ export class Toolbar extends Component {
   constructor() {
     super();
     if (isMobile()) this.background.visible = false;
-
     this.addChild(this.background, ...this.buttons, this.preferencesButton);
   }
 
@@ -66,6 +66,18 @@ export class Toolbar extends Component {
 
   onLoad() {
     watchEffect(() => this.updateBounds());
+
+    watchEffect(() => {
+      const ownUser = this.editor.connectedUsers.ownUser.value;
+      const canEdit = ownUser && ownUser.access >= BeatmapAccess.Edit;
+      for (const button of this.buttons) {
+        button.visible = !!canEdit;
+      }
+      if (!canEdit) {
+        this.tool = new SelectTool();
+      }
+    });
+
     onEditorKeyDown((evt) => {
       if (this.editor.tools.activeTool.acceptsNumberKeys) return;
       if (evt.ctrlKey || evt.metaKey || evt.altKey || evt.shiftKey) return;

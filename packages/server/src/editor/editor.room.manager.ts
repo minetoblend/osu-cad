@@ -3,6 +3,8 @@ import { BeatmapService } from '../beatmap/beatmap.service';
 import { EditorRoom } from './editor.room';
 import { BeatmapData, BeatmapId } from '@osucad/common';
 import { BeatmapSnapshotService } from '../beatmap/beatmap-snapshot.service';
+import { BeatmapPermissionsService } from '../beatmap/beatmap-permissions.service';
+import { BeatmapEntity } from '../beatmap/beatmap.entity';
 
 @Injectable()
 export class EditorRoomManager {
@@ -16,7 +18,12 @@ export class EditorRoomManager {
   constructor(
     private readonly beatmapService: BeatmapService,
     private readonly snapshotService: BeatmapSnapshotService,
+    private readonly permissionsService: BeatmapPermissionsService,
   ) {
+    beatmapService.onAccessChange.addListener(({ beatmap }) =>
+      this.onBeatmapAccessChanged(beatmap),
+    );
+
     setInterval(async () => {
       this.printStats();
 
@@ -73,7 +80,7 @@ export class EditorRoomManager {
       return null;
     }
 
-    return new EditorRoom(beatmap, snapshot.data);
+    return new EditorRoom(this, beatmap, snapshot.data);
   }
 
   async getRoom(beatmapId: BeatmapId): Promise<EditorRoom | undefined> {
@@ -117,6 +124,19 @@ export class EditorRoomManager {
           `  |   ${user.user.username} { sessionId: ${user.sessionId} }`,
         );
       }
+    }
+  }
+
+  async onBeatmapAccessChanged(beatmap: BeatmapEntity) {
+    const room = await this.getRoom(beatmap.uuid);
+    if (!room) return;
+
+    for (const user of [...room.users]) {
+      const access = await this.permissionsService.getAccess(
+        beatmap,
+        user.user.id,
+      );
+      room.setUserAccess(user, access);
     }
   }
 }

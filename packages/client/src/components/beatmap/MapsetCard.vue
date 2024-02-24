@@ -6,13 +6,9 @@ const props = defineProps<{
 }>();
 
 const coverUrl = computed(() => {
-  if (props.mapset.backgroundPath) {
-    return `url("/api/mapsets/${props.mapset.id}/files/${props.mapset.backgroundPath}")`;
-  }
-  return undefined;
+  const url = props.mapset.links.background.href;
+  if (url) return `url(${url})`;
 });
-
-console.log(props.mapset);
 
 const beatmaps = useSorted(
   () => props.mapset.beatmaps,
@@ -36,7 +32,7 @@ const beatmaps = useSorted(
           v-for="beatmap in beatmaps"
           :key="beatmap.id"
           class="beatmap"
-          :to="`/edit/${beatmap.id}`"
+          :to="beatmap.links.edit.href"
         >
           {{ beatmap.name }} ({{ beatmap.starRating.toFixed(1) }}*)
         </RouterLink>

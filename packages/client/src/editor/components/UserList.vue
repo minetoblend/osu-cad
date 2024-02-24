@@ -4,12 +4,17 @@ import UserAvatar from '@/components/UserAvatar.vue';
 import { UserSessionInfo } from '@osucad/common';
 import { match } from 'variant';
 import { useEditor } from '@/editor/editorContext.ts';
+import { BeatmapAccess } from '@osucad/common';
 
-const { users, ownUser } = useConnectedUsers();
+const { users, ownUser, kick } = useConnectedUsers();
 const { clock } = useEditor();
 
 const activeUser = ref<number | null>(null);
 const dropdown = ref();
+
+const isOwner = computed(
+  () => ownUser.value && ownUser.value.access >= BeatmapAccess.MapsetOwner,
+);
 
 onClickOutside(dropdown, () => {
   activeUser.value = null;
@@ -57,6 +62,9 @@ function goToUserTime(user: UserSessionInfo) {
           Spectate
         </button>
         <button v-else @click="clock.stopSpectating()">Stop spectating</button>
+        <button v-if="isOwner && ownUser?.id !== user.id" @click="kick(user.id)">
+          Kick
+        </button>
       </div>
     </div>
   </div>

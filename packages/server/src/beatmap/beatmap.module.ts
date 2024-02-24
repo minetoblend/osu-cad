@@ -13,6 +13,8 @@ import { EditorModule } from '../editor/editor.module';
 import { AssetsModule } from '../assets/assets.module';
 import { BeatmapSnapshotEntity } from './beatmap-snapshot.entity';
 import { BeatmapSnapshotService } from './beatmap-snapshot.service';
+import { BeatmapPermissionsService } from './beatmap-permissions.service';
+import { BeatmapController } from './beatmap.controller';
 
 @Module({
   imports: [
@@ -32,8 +34,9 @@ import { BeatmapSnapshotService } from './beatmap-snapshot.service';
     BeatmapImportService,
     BeatmapExportService,
     BeatmapSnapshotService,
+    BeatmapPermissionsService,
   ],
-  controllers: [MapsetController],
-  exports: [BeatmapService, BeatmapSnapshotService],
+  controllers: [MapsetController, BeatmapController],
+  exports: [BeatmapService, BeatmapSnapshotService, BeatmapPermissionsService],
 })
 export class BeatmapModule {}

@@ -9,9 +9,11 @@ import {
 } from '@osucad/common';
 import { EditorSocket } from '@/editor/editorSocket.ts';
 import { onEditorKeyDown } from '@/composables/onEditorKeyDown.ts';
+import { BeatmapAccess } from '@osucad/common';
 
 export class CommandManager {
   private sessionId: number = 0;
+  private canEdit = false;
   readonly history = new History(this);
 
   constructor(
@@ -20,6 +22,10 @@ export class CommandManager {
   ) {
     socket.on('roomState', ({ ownUser }) => {
       this.sessionId = ownUser.sessionId;
+      this.canEdit = ownUser.access >= BeatmapAccess.Edit;
+    });
+    socket.on('accessChanged', (access) => {
+      this.canEdit = access >= BeatmapAccess.Edit;
     });
     socket.on('commands', (commands: Uint8Array, sessionId: number) => {
       const decoded = decodeCommands(commands);
@@ -57,6 +63,11 @@ export class CommandManager {
   }
 
   submit(command: EditorCommand, recordHistory = true, commit = false) {
+    if (!this.canEdit) {
+      // we silently ignore commands if the user can't edit
+      return;
+    }
+
     const version = this.nextVersion++;
     const context = new CommandContext(
       this.beatmapManager.beatmap,
@@ -122,6 +133,7 @@ export class CommandManager {
   }
 
   undo() {
+    if (!this.canEdit) return;
     const context = new CommandContext(
       this.beatmapManager.beatmap,
       true,
@@ -132,6 +144,7 @@ export class CommandManager {
   }
 
   redo() {
+    if (!this.canEdit) return;
     const context = new CommandContext(
       this.beatmapManager.beatmap,
       true,

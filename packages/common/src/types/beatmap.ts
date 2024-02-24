@@ -16,13 +16,28 @@ export interface MapsetInfo {
   updatedAt: string;
   beatmaps: BeatmapInfo[];
   creator: UserInfo;
-  backgroundPath: string | null;
+  links: {
+    self: {
+      href: string;
+    };
+    background: {
+      href: string;
+    };
+  };
 }
 
 export interface BeatmapInfo {
   id: string;
   name: string;
   starRating: number;
+  links: {
+    self: {
+      href: string;
+    };
+    edit: {
+      href: string;
+    };
+  };
 }
 
 export interface BeatmapData {

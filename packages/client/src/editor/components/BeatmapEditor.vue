@@ -12,9 +12,10 @@ import { animate, Easing } from '@/editor/drawables/animate.ts';
 import { App } from '@capacitor/app';
 import { useRouter } from 'vue-router';
 import { EditorPopoverHost } from '@/editor/components/popover';
+import ShareButton from '@/editor/components/ShareButton.vue';
 
-const { beatmapId } = defineProps<{
-  beatmapId: string;
+const { joinKey } = defineProps<{
+  joinKey: string;
 }>();
 
 const editor = shallowRef<EditorContext>();
@@ -34,7 +35,7 @@ onMounted(async () => {
     { immediate: true },
   );
 
-  const ctx = await createEditorClient(beatmapId, progress);
+  const ctx = await createEditorClient(joinKey, progress);
   stop();
   const tween = gsap.getTweensOf(loadProgress)[0];
   if (tween && tween.isActive()) {
@@ -72,24 +73,11 @@ const viewportInitialized = ref(false);
       <EventList id="event-list" />
       <UserList id="user-list" />
       <EditorPopoverHost />
-      <Teleport to="#navbar-content">
-        <button
-          style="margin-right: 1rem"
-          @click="editor.commandManager.undo()"
-        >
-          Undo
-        </button>
-        <button
-          style="margin-right: 1rem"
-          @click="editor.commandManager.redo()"
-        >
-          Redo
-        </button>
+      <Teleport to="#navbar-start">
         <a
           style="margin-right: 1rem"
           href="https://discord.gg/JYFTaYDSC6"
           target="_blank"
-          @click="editor.commandManager.redo()"
           >Report a bug</a
         >
         <a
@@ -97,10 +85,11 @@ const viewportInitialized = ref(false);
           style="margin-right: 1rem"
           :href="`/api/mapsets/${editor.beatmapManager.beatmap.setId}/export`"
           target="_blank"
-          @click="editor.commandManager.redo()"
           >Export as .osz</a
         >
-        <!--      <button @click="editor.socket.emit('roll')">Roll</button>-->
+      </Teleport>
+      <Teleport to="#navbar-end">
+        <ShareButton />
       </Teleport>
     </template>
 

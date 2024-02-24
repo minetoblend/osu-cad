@@ -1,11 +1,12 @@
 import { Presence } from './presence';
 import { UserInfo } from '../types';
+import { BeatmapAccess } from './beatmap';
 
 export type UserId = number;
 
 export interface UserSessionInfo extends UserInfo {
   sessionId: number;
-  role: UserRole;
+  access: BeatmapAccess;
   presence: Presence;
 }
 

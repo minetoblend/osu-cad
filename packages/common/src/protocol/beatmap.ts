@@ -54,3 +54,11 @@ export interface SerializedBeatmapDifficulty {
 export interface SerializedBeatmapGeneral {
   stackLeniency: number;
 }
+
+export const enum BeatmapAccess {
+  None = 0,
+  View = 1,
+  Modding = 2,
+  Edit = 3,
+  MapsetOwner = 4,
+}

@@ -1,5 +1,4 @@
 import { io } from 'socket.io-client';
-import { BeatmapId } from '@osucad/common';
 import { createConnectedUsers } from './connectedUsers.ts';
 import { createEventList } from './events.ts';
 import { createEditorTextures } from './textures.ts';
@@ -18,10 +17,10 @@ import fontUrl from '@fontsource/nunito-sans/files/nunito-sans-cyrillic-400-norm
 import { Ref } from 'vue';
 
 export async function createEditorClient(
-  beatmapId: BeatmapId,
+  joinKey: string,
   progress: Ref<number> = ref(0),
 ): Promise<EditorContext> {
-  const socket = createClient(beatmapId);
+  const socket = createClient(joinKey);
 
   progress.value = 0.1;
 
@@ -29,8 +28,18 @@ export async function createEditorClient(
     socket.disconnect();
   });
 
+  let pageLeaveInProgress = false;
+
   socket.on('disconnect', () => {
+    if (pageLeaveInProgress) return;
     window.location.reload();
+    pageLeaveInProgress = true;
+  });
+
+  socket.on('kicked', () => {
+    if (pageLeaveInProgress) return;
+    window.location.href = '/';
+    pageLeaveInProgress = true;
   });
 
   const events = createEventList();
@@ -95,12 +104,12 @@ export async function createEditorClient(
   return ctx;
 }
 
-function createClient(beatmapId: BeatmapId): EditorSocket {
+function createClient(joinKey: string): EditorSocket {
   const host = window.origin.replace(/^https/, 'wss');
 
   return io(`${host}/editor`, {
     withCredentials: true,
-    query: { id: beatmapId },
+    query: { id: joinKey },
   });
 }
 

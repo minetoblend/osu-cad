@@ -1,15 +1,15 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { MapsetEntity } from './mapset.entity';
 import { UserEntity } from '../users/user.entity';
-import { BeatmapAccess } from './beatmap.entity';
+import { BeatmapEntity } from './beatmap.entity';
+import { BeatmapAccess } from '@osucad/common';
 
 @Entity('participant')
 export class ParticipantEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => MapsetEntity)
-  mapset!: MapsetEntity;
+  @ManyToOne(() => BeatmapEntity)
+  beatmap!: BeatmapEntity;
 
   @ManyToOne(() => UserEntity)
   user: UserEntity;
