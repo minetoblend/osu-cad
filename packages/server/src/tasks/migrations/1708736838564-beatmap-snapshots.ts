@@ -5,7 +5,7 @@ export class BeatmapSnapshots1708736838564 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TABLE \`beatmap_snapshot\` (\`id\` varchar(36) NOT NULL, \`timestamp\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`version\` int NOT NULL, \`data\` json NOT NULL, \`beatmapId\` int NULL, INDEX \`IDX_9f335b3173d84e6675558aeb51\` (\`timestamp\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
+      `CREATE TABLE \`beatmap_snapshot\` (\`id\` varchar(36) NOT NULL, \`timestamp\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`createDate\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`version\` int NOT NULL, \`data\` json NOT NULL, \`beatmapId\` int NULL, INDEX \`IDX_9f335b3173d84e6675558aeb51\` (\`timestamp\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
     );
     await queryRunner.query(
       `ALTER TABLE \`beatmap_snapshot\` ADD CONSTRAINT \`FK_653dc96bbbb6d8aa57a6a0e7940\` FOREIGN KEY (\`beatmapId\`) REFERENCES \`beatmaps\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`,

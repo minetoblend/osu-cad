@@ -20,6 +20,10 @@ export class BeatmapSnapshotEntity {
   @Index()
   timestamp: Date;
 
+  @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
+  @Index()
+  createDate: Date;
+
   @Column()
   version: number;
 
