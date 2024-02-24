@@ -61,15 +61,7 @@ export class ControlPointTimeline extends Component {
           timing:
             this.editor.beatmapManager.controlPoints.timingPointAt(time).timing,
         });
-        this.editor.commandManager.submit(
-          EditorCommand.createControlPoint({
-            controlPoint: controlPoint.serialize(),
-          }),
-        );
-        this.editor.commandManager.commit();
-        const createdControlPoint =
-          this.editor.beatmapManager.controlPoints.getById(controlPoint.id);
-        this.showPopover(createdControlPoint!);
+        this.createControlPoint(controlPoint);
       } else if (evt.ctrlKey && evt.key === 'P') {
         evt.preventDefault();
         evt.preventDefault();
@@ -82,17 +74,27 @@ export class ControlPointTimeline extends Component {
             this.editor.beatmapManager.controlPoints.getVelocityAt(time),
           timing: null,
         });
-        this.editor.commandManager.submit(
-          EditorCommand.createControlPoint({
-            controlPoint: controlPoint.serialize(),
-          }),
-        );
-        this.editor.commandManager.commit();
-        const createdControlPoint =
-          this.editor.beatmapManager.controlPoints.getById(controlPoint.id);
-        this.showPopover(createdControlPoint!);
+        this.createControlPoint(controlPoint);
       }
     });
+  }
+
+  private createControlPoint(
+    controlPoint: ControlPoint,
+  ): ControlPoint | undefined {
+    this.editor.commandManager.submit(
+      EditorCommand.createControlPoint({
+        controlPoint: controlPoint.serialize(),
+      }),
+    );
+
+    this.editor.commandManager.commit();
+    const createdControlPoint =
+      this.editor.beatmapManager.controlPoints.getById(controlPoint.id);
+    if (createdControlPoint && !this.editor.clock.isPlaying) {
+      this.showPopover(createdControlPoint);
+    }
+    return createdControlPoint;
   }
 
   get hasTimingPoints() {
@@ -166,17 +168,7 @@ export class ControlPointTimeline extends Component {
         };
       }
 
-      this.editor.commandManager.submit(
-        EditorCommand.createControlPoint({
-          controlPoint: controlPoint.serialize(),
-        }),
-      );
-      this.editor.commandManager.commit();
-
-      const createdControlPoint =
-        this.editor.beatmapManager.controlPoints.getById(controlPoint.id);
-
-      this.showPopover(createdControlPoint!);
+      this.createControlPoint(controlPoint);
     }
   }
 
