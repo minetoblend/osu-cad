@@ -22,7 +22,7 @@ const beatmaps = useSorted(
     <div class="info">
       <div class="cover" :style="{ backgroundImage: coverUrl }" />
       <div class="title">
-        <RouterLink :to="`/edit/${mapset.beatmaps[0].id}`">
+        <RouterLink :to="mapset.beatmaps[0].links.edit.href">
           {{ mapset.title }}
         </RouterLink>
       </div>
