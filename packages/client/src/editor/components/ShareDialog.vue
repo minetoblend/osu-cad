@@ -82,7 +82,7 @@ watch(selectedUsers, () => {
 
 async function filterFn(
   term: string,
-  update: (fn: (() => void)) => void,
+  update: (fn: () => void) => void,
   abort: () => void,
 ) {
   term = term.trim().toLowerCase();
@@ -242,7 +242,7 @@ async function updateParticipants(users: number[], access: BeatmapAccess) {
         :class="{ saving: isSaving }"
       >
         <q-card-section>
-          <div class="text-h6">Public link beatmap</div>
+          <div class="text-h6">Public link sharing</div>
           <div class="row items-center q-pb-md">
             <q-toggle v-model="linkSharingEnabled" />
             <div
