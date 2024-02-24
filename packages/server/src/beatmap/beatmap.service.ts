@@ -82,6 +82,25 @@ export class BeatmapService {
         creator: { id },
       },
       relations: ['creator', 'beatmaps'],
+      select: {
+        id: true,
+        title: true,
+        artist: true,
+        tags: true,
+        createdAt: true,
+        updatedAt: true,
+        background: true,
+        creator: {
+          id: true,
+          username: true,
+          avatarUrl: true,
+        },
+        beatmaps: {
+          id: true,
+          name: true,
+          starRating: true,
+        },
+      },
       order: {
         updatedAt: 'DESC',
       },
