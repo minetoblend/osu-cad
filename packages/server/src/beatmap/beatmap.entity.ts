@@ -26,9 +26,6 @@ export class BeatmapEntity {
   @ManyToOne(() => MapsetEntity, (mapset) => mapset.beatmaps)
   mapset: MapsetEntity;
 
-  @Column('json')
-  data: BeatmapData;
-
   getInfo(): BeatmapInfo {
     return {
       id: this.uuid,

@@ -9,6 +9,7 @@ import { ParticipantEntity } from './participant.entity';
 import { BeatmapData } from '@osucad/common';
 import { UserEntity } from '../users/user.entity';
 import { EditorSessionEntity } from '../editor/editor-session.entity';
+import { BeatmapSnapshotService } from './beatmap-snapshot.service';
 
 @Injectable()
 export class BeatmapService {
@@ -21,6 +22,7 @@ export class BeatmapService {
     private readonly participantRepository: Repository<ParticipantEntity>,
     @InjectRepository(EditorSessionEntity)
     private readonly sessionRepository: Repository<EditorSessionEntity>,
+    private readonly snapshotService: BeatmapSnapshotService,
   ) {}
 
   async createMapset(mapset: MapsetEntity) {
@@ -128,8 +130,8 @@ export class BeatmapService {
   }
 
   async save(beatmap: BeatmapEntity, data: BeatmapData) {
-    beatmap.data = data;
     await this.beatmapRepository.save(beatmap);
+    await this.snapshotService.createSnapshot(beatmap, data);
   }
 
   findLastEditedBeatmaps(user: UserEntity) {

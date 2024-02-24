@@ -11,6 +11,8 @@ import { EditorSessionEntity } from '../editor/editor-session.entity';
 import { BeatmapExportService } from './beatmap-export.service';
 import { EditorModule } from '../editor/editor.module';
 import { AssetsModule } from '../assets/assets.module';
+import { BeatmapSnapshotEntity } from './beatmap-snapshot.entity';
+import { BeatmapSnapshotService } from './beatmap-snapshot.service';
 
 @Module({
   imports: [
@@ -19,13 +21,19 @@ import { AssetsModule } from '../assets/assets.module';
       BeatmapEntity,
       ParticipantEntity,
       EditorSessionEntity,
+      BeatmapSnapshotEntity,
     ]),
     UserModule,
     forwardRef(() => EditorModule),
     forwardRef(() => AssetsModule),
   ],
-  providers: [BeatmapService, BeatmapImportService, BeatmapExportService],
+  providers: [
+    BeatmapService,
+    BeatmapImportService,
+    BeatmapExportService,
+    BeatmapSnapshotService,
+  ],
   controllers: [MapsetController],
-  exports: [BeatmapService],
+  exports: [BeatmapService, BeatmapSnapshotService],
 })
 export class BeatmapModule {}

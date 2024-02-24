@@ -25,6 +25,7 @@ import { BeatmapImportService } from './beatmap-import.service';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as JSZip from 'jszip';
+import { BeatmapSnapshotService } from './beatmap-snapshot.service';
 
 @Injectable()
 export class BeatmapExportService {
@@ -32,6 +33,7 @@ export class BeatmapExportService {
     @Inject(forwardRef(() => EditorRoomManager))
     private readonly roomManager: EditorRoomManager,
     private readonly beatmapImportService: BeatmapImportService,
+    private readonly snapshotService: BeatmapSnapshotService,
   ) {}
 
   async convertMapset(mapset: MapsetEntity) {
@@ -45,9 +47,13 @@ export class BeatmapExportService {
     await this.writeDirectoryToArchive(archive, path);
 
     for (const beatmap of mapset.beatmaps) {
-      const room = await this.roomManager.getRoom(beatmap.uuid);
+      const snapshot = await this.snapshotService.getLatestSnapshot(beatmap);
 
-      let beatmapData = beatmap.data;
+      if (!snapshot) throw new Error('No snapshot found for beatmap');
+
+      let beatmapData = snapshot.data;
+
+      const room = await this.roomManager.getRoom(beatmap.uuid);
 
       if (room) {
         const beatmap = room.beatmap.serialize();
@@ -104,7 +110,7 @@ export class BeatmapExportService {
   ): StandardBeatmap {
     const beatmap = new StandardBeatmap();
     this.applyMetadata(beatmap, entity);
-    this.applyGeneral(beatmap, entity);
+    this.applyGeneral(beatmap, beatmapData);
     this.applyDifficulty(beatmap, beatmapData);
 
     for (const timingPoint of beatmapData.controlPoints.timing) {
@@ -231,9 +237,9 @@ export class BeatmapExportService {
     beatmap.metadata.version = entity.name;
   }
 
-  private applyGeneral(beatmap: Beatmap, entity: BeatmapEntity) {
-    beatmap.general.stackLeniency = entity.data.general.stackLeniency;
-    beatmap.general.audioFilename = entity.data.audioFilename;
+  private applyGeneral(beatmap: Beatmap, data: BeatmapData) {
+    beatmap.general.stackLeniency = data.general.stackLeniency;
+    beatmap.general.audioFilename = data.audioFilename;
   }
 
   private applyDifficulty(beatmap: Beatmap, data: BeatmapData) {
