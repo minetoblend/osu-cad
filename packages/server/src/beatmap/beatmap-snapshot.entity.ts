@@ -16,10 +16,16 @@ export class BeatmapSnapshotEntity {
   @ManyToOne(() => BeatmapEntity)
   beatmap: BeatmapEntity;
 
+  /**
+   * The timestamp when this snapshot was last updated.
+   */
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
   @Index()
   timestamp: Date;
 
+  /**
+   * The timestamp when this snapshot was initially created.
+   */
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
   @Index()
   createDate: Date;
