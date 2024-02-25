@@ -6,3 +6,4 @@ export * from './timingPoint';
 export * from './attribution';
 export * from './preferences';
 export * from './osuUser';
+export * from './roomInfo';

@@ -26,6 +26,8 @@ export class EditorRoom {
 
   readonly beatmap: Beatmap;
 
+  readonly createdAt = Date.now();
+
   constructor(
     private readonly manager: EditorRoomManager,
     public readonly entity: BeatmapEntity,

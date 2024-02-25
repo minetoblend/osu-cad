@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AdminRoomInfoCard: typeof import('./src/components/admin/AdminRoomInfoCard.vue')['default']
     AppNavbar: typeof import('./src/components/AppNavbar.vue')['default']
     AudioPreferencesForm: typeof import('./src/components/preferences/AudioPreferencesForm.vue')['default']
     BehaviorPreferencesForm: typeof import('./src/components/preferences/BehaviorPreferencesForm.vue')['default']
@@ -22,6 +23,7 @@ declare module 'vue' {
     ImportOszCard: typeof import('./src/components/beatmap/ImportOszCard.vue')['default']
     MapsetCard: typeof import('./src/components/beatmap/MapsetCard.vue')['default']
     OperatorBox: typeof import('./src/components/operator/OperatorBox.vue')['default']
+    PageLayout: typeof import('./src/components/PageLayout.vue')['default']
     PreferencesForm: typeof import('./src/components/preferences/PreferencesForm.vue')['default']
     ProgressBar: typeof import('./src/components/ProgressBar.vue')['default']
     QColor: typeof import('quasar')['QColor']

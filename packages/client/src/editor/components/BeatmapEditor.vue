@@ -116,9 +116,9 @@ const viewportInitialized = ref(false);
 
 <style lang="scss" scoped>
 .beatmap-editor {
-  position: relative;
+  position: absolute;
+  width: 100%;
   height: 100%;
-  //overflow: hidden;
   overflow: clip;
   user-select: none;
 }

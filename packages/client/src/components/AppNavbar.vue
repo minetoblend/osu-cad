@@ -19,19 +19,19 @@ const isVisible = computed(() => {
 </script>
 
 <template>
-  <nav v-show="isVisible" class="oc-navbar">
+  <q-header v-show="isVisible" class="oc-navbar">
     <RouterLink class="oc-navbar-logo" to="/">
       <img src="@/assets/logo-text.svg" alt="osucad logo" height="48" />
     </RouterLink>
     <div id="navbar-start" />
     <div class="spacer" />
     <div id="navbar-end" class="q-mr-md" />
-    <RouterLink v-if="user" class="oc-current-user" :to="`/users/${user.id}`">
+    <span v-if="user" class="oc-current-user">
       <UserAvatar :id="user.id" />
       {{ user.username }}
-    </RouterLink>
+    </span>
     <a v-else :href="loginUrl"> log in with osu! </a>
-  </nav>
+  </q-header>
 </template>
 
 <style lang="scss" scoped>

@@ -144,4 +144,13 @@ export class EditorRoomManager {
       room.setUserAccess(user, access);
     }
   }
+
+  getActiveRooms(): EditorRoom[] {
+    const rooms: EditorRoom[] = [];
+    for (const room of this.rooms.values()) {
+      if (room instanceof Promise) continue;
+      rooms.push(room);
+    }
+    return rooms;
+  }
 }

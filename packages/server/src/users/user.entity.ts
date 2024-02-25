@@ -24,6 +24,7 @@ export class UserEntity {
       username: this.username,
       avatarUrl: this.avatarUrl,
       isAdmin: this.isAdmin,
+      created: this.created.toISOString(),
       links: {
         self: {
           href: `/api/users/${this.id}`,

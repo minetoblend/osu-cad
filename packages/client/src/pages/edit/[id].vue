@@ -30,26 +30,30 @@ const loginUrl = computed(() => {
 </script>
 
 <template>
-  <template v-if="!(isLoading || isUserLoading)">
-    <BeatmapEditor
-      v-if="accessLevel > BeatmapAccess.None"
-      :join-key="joinKey"
-      :key="joinKey"
-    />
-    <div v-else style="padding: 5rem; text-align: center">
-      <template v-if="user">
-        <p>You don't have permission to view this beatmap.</p>
+  <q-page-container>
+    <q-page>
+      <template v-if="!(isLoading || isUserLoading)">
+        <BeatmapEditor
+          v-if="accessLevel > BeatmapAccess.None"
+          :join-key="joinKey"
+          :key="joinKey"
+        />
+        <div v-else style="padding: 5rem; text-align: center">
+          <template v-if="user">
+            <p>You don't have permission to view this beatmap.</p>
+          </template>
+          <template v-else>
+            <p>You need to be logged in to edit beatmaps.</p>
+            <p>
+              <a :href="loginUrl">
+                <Button>Login with osu</Button>
+              </a>
+            </p>
+          </template>
+        </div>
       </template>
-      <template v-else>
-        <p>You need to be logged in to edit beatmaps.</p>
-        <p>
-          <a :href="loginUrl">
-            <Button>Login with osu</Button>
-          </a>
-        </p>
-      </template>
-    </div>
-  </template>
+    </q-page>
+  </q-page-container>
 </template>
 
 <style lang="scss" scoped>

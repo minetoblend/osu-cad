@@ -3,6 +3,7 @@ export interface UserInfo {
   username: string;
   avatarUrl: string | null;
   isAdmin: boolean;
+  created: string;
   links: {
     self: {
       href: string;
