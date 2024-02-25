@@ -17,6 +17,7 @@ import { BeatInfo } from '../../beatInfo.ts';
 import { EditorContext } from '@/editor/editorContext.ts';
 import { TimelinePositionManager } from '@/editor/drawables/timeline/timelinePositionManager.ts';
 import { ControlPointTimeline } from '@/editor/drawables/timeline/ControlPointTimeline.ts';
+import { isMobile } from '@/util/isMobile.ts';
 
 export interface TimelineVisibility {
   currentTime: number;
@@ -72,8 +73,10 @@ export class ObjectTimeline extends Component {
       this.hitObjectContainer,
       this.currentTimeMarker,
       this.maskSprite,
-      this.controlPointTimeline,
     );
+    if (!isMobile()) {
+      this.addChild(this.controlPointTimeline);
+    }
     this.currentTimeMarker.eventMode = 'none';
     this.maskSprite.eventMode = 'none';
     this.tickContainer.eventMode = 'none';

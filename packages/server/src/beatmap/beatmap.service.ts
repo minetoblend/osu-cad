@@ -56,7 +56,7 @@ export class BeatmapService {
   async findBeatmapByUuid(uuid: string) {
     return await this.beatmapRepository.findOne({
       where: { uuid },
-      relations: ['mapset'],
+      relations: ['mapset', 'mapset.creator'],
     });
   }
 

@@ -1,11 +1,13 @@
 import { UserInfo } from '@osucad/common';
 import axios from 'axios';
 
-export function useCurrentUser() {
+export const useCurrentUser = createGlobalState(() => {
   const { state: user, isLoading } = useAsyncState(async () => {
     const response = await axios.get<UserInfo>('/api/users/me');
     return response.data;
   }, null);
 
-  return { user, isLoading };
-}
+  const isAdmin = computed(() => user.value?.isAdmin ?? false);
+
+  return { user, isLoading, isAdmin };
+});

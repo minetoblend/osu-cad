@@ -22,14 +22,18 @@ function onImported(mapset: MapsetInfo) {
 </script>
 
 <template>
-  <div class="page">
-    <div class="mapsets">
-      <ImportOszCard v-if="user" @imported="onImported" />
-      <template v-for="mapset in filteredMapsets" :key="mapset.id">
-        <MapsetCard :mapset="mapset" />
-      </template>
-    </div>
-  </div>
+  <q-page-container>
+    <q-page padding>
+      <page-layout>
+        <div class="mapsets">
+          <ImportOszCard v-if="user" @imported="onImported" />
+          <template v-for="mapset in filteredMapsets" :key="mapset.id">
+            <MapsetCard :mapset="mapset" />
+          </template>
+        </div>
+      </page-layout>
+    </q-page>
+  </q-page-container>
 </template>
 
 <style lang="scss" scoped>

@@ -33,4 +33,21 @@ export class UserService {
     }
     return user;
   }
+
+  searchUsers(options: { search?: string; offset?: number; limit?: number }) {
+    const { search, limit, offset } = options;
+
+    let query = this.repository.createQueryBuilder('user');
+    if (search) {
+      query = query.where('LOWER(user.username) LIKE :search', {
+        search: `%${search}%`,
+      });
+    }
+
+    return query
+      .addOrderBy('user.created', 'DESC')
+      .take(limit)
+      .skip(offset)
+      .getMany();
+  }
 }
