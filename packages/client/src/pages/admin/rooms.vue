@@ -1,13 +1,9 @@
 <script setup lang="ts">
 import axios from 'axios';
-import { RoomInfo, BeatmapAccess } from '@osucad/common';
+import { RoomInfo } from '@osucad/common';
 import AdminRoomInfoCard from '@/components/admin/AdminRoomInfoCard.vue';
 
-const {
-  state: rooms,
-  isLoading,
-  execute,
-} = useAsyncState<RoomInfo[]>(
+const { state: rooms, execute } = useAsyncState<RoomInfo[]>(
   async () => {
     const response = await axios.get<RoomInfo[]>('/api/admin/rooms');
     return response.data;

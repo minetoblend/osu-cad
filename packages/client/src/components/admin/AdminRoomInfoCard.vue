@@ -26,7 +26,7 @@ const formattedRoomAge = useTimeAgo(() => new Date(props.room.createdAt));
     <q-card-section>
       <div class="q-mb-md">
         <div class="row">
-          <q-avatar rounded class="q-mr-md">
+          <q-avatar v-if="room.beatmap.links.thumbnail" rounded class="q-mr-md">
             <img :src="room.beatmap.links.thumbnail.href" />
           </q-avatar>
           <div class="flex-grow-1">
@@ -53,7 +53,12 @@ const formattedRoomAge = useTimeAgo(() => new Date(props.room.createdAt));
               <q-item v-for="user in room.users" :key="user.sessionId">
                 <q-item-section>
                   <div class="row items-center">
-                    <q-avatar rounded size="25px" class="q-mr-md">
+                    <q-avatar
+                      v-if="user.avatarUrl"
+                      rounded
+                      size="25px"
+                      class="q-mr-md"
+                    >
                       <img :src="user.avatarUrl" />
                     </q-avatar>
                     <div>
