@@ -31,8 +31,8 @@ export class BeatmapEntity {
   @Column('int', { default: BeatmapAccess.None })
   access: BeatmapAccess = BeatmapAccess.None;
 
-  @Column('char', { length: 12, default: 'LEFT(MD5(RAND()), 12)' })
-  @Index('shareId', { unique: true })
+  @Column('char', { length: 12, default: '' })
+  @Index({ unique: true })
   shareId: string;
 
   getInfo(): BeatmapInfo {
