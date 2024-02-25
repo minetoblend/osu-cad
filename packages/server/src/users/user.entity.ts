@@ -23,6 +23,7 @@ export class UserEntity {
       id: this.id,
       username: this.username,
       avatarUrl: this.avatarUrl,
+      isAdmin: this.isAdmin,
       links: {
         self: {
           href: `/api/users/${this.id}`,

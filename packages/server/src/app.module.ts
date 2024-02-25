@@ -13,6 +13,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { dbdatasource } from './datasource';
 import { AppController } from './app.controller';
 import { AssetsModule } from './assets/assets.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { AssetsModule } from './assets/assets.module';
     OsuModule,
     PreferencesModule,
     AssetsModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [],
