@@ -5,7 +5,6 @@ export class Test1708887191994 implements MigrationInterface {
     name = 'SyncSchema1708887191994'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        //await queryRunner.query(`ALTER TABLE \`beatmaps\` DROP COLUMN \`data\``);
         await queryRunner.query(`ALTER TABLE \`beatmaps\` DROP FOREIGN KEY \`FK_3b9bb91032dc978aefd964d238d\``);
         await queryRunner.query(`ALTER TABLE \`assets\` DROP FOREIGN KEY \`FK_c01f933a34e086ca57e5223bad1\``);
         await queryRunner.query(`ALTER TABLE \`mapsets\` DROP PRIMARY KEY`);
@@ -30,7 +29,6 @@ export class Test1708887191994 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE \`mapsets\` ADD PRIMARY KEY (\`id\`)`);
         await queryRunner.query(`ALTER TABLE \`assets\` ADD CONSTRAINT \`FK_c01f933a34e086ca57e5223bad1\` FOREIGN KEY (\`mapsetId\`) REFERENCES \`mapsets\`(\`id\`) ON DELETE RESTRICT ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE \`beatmaps\` ADD CONSTRAINT \`FK_3b9bb91032dc978aefd964d238d\` FOREIGN KEY (\`mapsetId\`) REFERENCES \`mapsets\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE \`beatmaps\` ADD \`data\` json NULL`);
     }
 
 }
