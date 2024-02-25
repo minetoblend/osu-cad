@@ -1,24 +1,29 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { BeatmapService } from '../beatmap/beatmap.service';
-import { EditorRoom } from './editor.room';
+import { EditorRoom } from './editor-room';
 import { BeatmapData, BeatmapId } from '@osucad/common';
 import { BeatmapSnapshotService } from '../beatmap/beatmap-snapshot.service';
 import { BeatmapPermissionsService } from '../beatmap/beatmap-permissions.service';
 import { BeatmapEntity } from '../beatmap/beatmap.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { EditorRoomEntity } from './editor-room.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
-export class EditorRoomManager {
+export class EditorRoomService {
   private readonly rooms = new Map<
     BeatmapId,
     EditorRoom | Promise<EditorRoom>
   >();
 
-  private readonly logger = new Logger(EditorRoomManager.name);
+  private readonly logger = new Logger(EditorRoomService.name);
 
   constructor(
     private readonly beatmapService: BeatmapService,
     private readonly snapshotService: BeatmapSnapshotService,
     private readonly permissionsService: BeatmapPermissionsService,
+    @InjectRepository(EditorRoomEntity)
+    private readonly editorRoomRepository: Repository<EditorRoomEntity>,
   ) {
     beatmapService.onAccessChange.addListener(({ beatmap }) =>
       this.onBeatmapAccessChanged(beatmap),
@@ -57,14 +62,18 @@ export class EditorRoomManager {
           await this.beatmapService.save(entity, data);
         }
       }
-      [...this.rooms.keys()].forEach((key) => {
-        const room = this.rooms.get(key);
-        if (room instanceof Promise) return;
+
+      for (const [key, room] of [...this.rooms.entries()]) {
+        if (room instanceof Promise) continue;
         if (room.userCount === 0) {
           this.rooms.delete(key);
+          await room.shutdown();
+          room.roomEntity.endDate = new Date();
+          room.roomEntity.active = false;
+          await this.editorRoomRepository.save(room.roomEntity);
           this.logger.log(`closed room ${key}`);
         }
-      });
+      }
     }, 15_000);
   }
 
@@ -83,7 +92,12 @@ export class EditorRoomManager {
       return null;
     }
 
-    return new EditorRoom(this, beatmap, snapshot.data);
+    const roomEntity = new EditorRoomEntity();
+    roomEntity.beatmap = beatmap;
+
+    await this.editorRoomRepository.save(roomEntity);
+
+    return new EditorRoom(this, roomEntity, beatmap, snapshot.data);
   }
 
   async getRoom(beatmapId: BeatmapId): Promise<EditorRoom | undefined> {

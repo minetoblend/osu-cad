@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { AdminGuard } from './admin-auth.guard';
-import { EditorRoomManager } from '../editor/editor.room.manager';
+import { EditorRoomService } from '../editor/editor-room.service';
 import { RoomInfo } from '@osucad/common';
 import { UserService } from '../users/user.service';
 
@@ -16,7 +16,7 @@ import { UserService } from '../users/user.service';
 export class AdminController {
   constructor(
     private readonly userService: UserService,
-    private readonly roomManager: EditorRoomManager,
+    private readonly roomManager: EditorRoomService,
   ) {}
 
   @Get('users')

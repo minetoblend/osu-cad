@@ -1,5 +1,5 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { EditorRoomManager } from '../editor/editor.room.manager';
+import { EditorRoomService } from '../editor/editor-room.service';
 import { BeatmapEntity } from './beatmap.entity';
 import { Circle, Slider, Spinner, StandardBeatmap } from 'osu-standard-stable';
 import {
@@ -30,8 +30,8 @@ import { BeatmapSnapshotService } from './beatmap-snapshot.service';
 @Injectable()
 export class BeatmapExportService {
   constructor(
-    @Inject(forwardRef(() => EditorRoomManager))
-    private readonly roomManager: EditorRoomManager,
+    @Inject(forwardRef(() => EditorRoomService))
+    private readonly roomManager: EditorRoomService,
     private readonly beatmapImportService: BeatmapImportService,
     private readonly snapshotService: BeatmapSnapshotService,
   ) {}
