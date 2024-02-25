@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { MigrationInterface, QueryRunner } from "typeorm";
 
 export class UserAdminColumn1708889393070 implements MigrationInterface {
