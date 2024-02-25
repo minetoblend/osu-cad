@@ -1,19 +1,24 @@
 import { OnGatewayConnection, WebSocketGateway } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { Request } from 'express';
-import { EditorRoomManager } from './editor.room.manager';
+import { EditorRoomService } from './editor-room.service';
 import { BeatmapPermissionsService } from '../beatmap/beatmap-permissions.service';
 import { BeatmapService } from '../beatmap/beatmap.service';
 import { BeatmapAccess } from '@osucad/common';
 import { UserService } from '../users/user.service';
+import { EditorSessionEntity } from './editor-session.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @WebSocketGateway({ namespace: 'editor' })
 export class EditorGateway implements OnGatewayConnection {
   constructor(
-    private readonly editorRoomManager: EditorRoomManager,
+    private readonly editorRoomManager: EditorRoomService,
     private readonly beatmapService: BeatmapService,
     private readonly permissionService: BeatmapPermissionsService,
     private readonly userService: UserService,
+    @InjectRepository(EditorSessionEntity)
+    private readonly sessionRepository: Repository<EditorSessionEntity>,
   ) {}
 
   async handleConnection(client: Socket) {
@@ -57,7 +62,23 @@ export class EditorGateway implements OnGatewayConnection {
         return;
       }
 
+      const session = new EditorSessionEntity();
+      session.user = user;
+      session.room = room.roomEntity;
+      session.beatmap = room.entity;
+      session.beginDate = new Date();
+      session.endDate = new Date();
+
+      await this.sessionRepository.save(session);
+
       room.accept(client, user, access);
+
+      client.on('disconnect', () => {
+        session.endDate = new Date();
+        session.duration =
+          session.endDate.getTime() - session.beginDate.getTime();
+        this.sessionRepository.save(session);
+      });
     } catch (e) {
       console.error(e);
       client.disconnect();

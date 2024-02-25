@@ -19,7 +19,8 @@ import {
 } from '@osucad/common';
 import { Logger } from '@nestjs/common';
 import { BeatmapEntity } from '../beatmap/beatmap.entity';
-import { EditorRoomManager } from './editor.room.manager';
+import { EditorRoomService } from './editor-room.service';
+import { EditorRoomEntity } from './editor-room.entity';
 
 export class EditorRoom {
   private readonly logger: Logger;
@@ -29,7 +30,8 @@ export class EditorRoom {
   readonly createdAt = Date.now();
 
   constructor(
-    private readonly manager: EditorRoomManager,
+    private readonly service: EditorRoomService,
+    public readonly roomEntity: EditorRoomEntity,
     public readonly entity: BeatmapEntity,
     snapshot: BeatmapData,
   ) {
