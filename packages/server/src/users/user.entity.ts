@@ -15,6 +15,9 @@ export class UserEntity {
   @CreateDateColumn()
   created: Date;
 
+  @Column('boolean', { default: false })
+  isAdmin: boolean;
+
   getInfo(): UserInfo {
     return {
       id: this.id,
