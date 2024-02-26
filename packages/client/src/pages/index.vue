@@ -25,6 +25,10 @@ function onImported(mapset: MapsetInfo) {
   <q-page-container>
     <q-page padding>
       <page-layout>
+        <q-banner class="q-mb-md">
+          Currently compressing background images. Thumbnails may not be
+          available for a few minutes.
+        </q-banner>
         <div class="mapsets">
           <ImportOszCard v-if="user" @imported="onImported" />
           <template v-for="mapset in filteredMapsets" :key="mapset.id">
