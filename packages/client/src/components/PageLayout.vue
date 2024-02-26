@@ -39,4 +39,3 @@
   }
 }
 </style>
-<script setup></script>
