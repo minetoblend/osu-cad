@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AssetsService } from './assets.service';
 import * as fs from 'fs';
 import * as path from 'path';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class MapsetMigratorService {
@@ -12,8 +13,11 @@ export class MapsetMigratorService {
     private readonly assetsService: AssetsService,
     @InjectRepository(MapsetEntity)
     private readonly mapsetRepository: Repository<MapsetEntity>,
+    private readonly configService: ConfigService,
   ) {
-    this.run();
+    if (configService.get('MIGRATE_BEATMAPS_TO_S3') === 'true') {
+      this.run();
+    }
   }
 
   private readonly logger = new Logger(MapsetMigratorService.name);
