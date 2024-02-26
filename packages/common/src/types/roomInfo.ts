@@ -6,9 +6,9 @@ export interface RoomInfo {
     id: string;
     name: string;
     links: {
-      thumbnail?: {
+      thumbnail: {
         href: string;
-      };
+      } | null;
       edit: {
         href: string;
       };

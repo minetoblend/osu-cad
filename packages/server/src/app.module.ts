@@ -14,6 +14,11 @@ import { dbdatasource } from './datasource';
 import { AppController } from './app.controller';
 import { AssetsModule } from './assets/assets.module';
 import { AdminModule } from './admin/admin.module';
+import { BullModule } from '@nestjs/bull';
+import { ScheduleModule } from '@nestjs/schedule';
+import { BullBoardModule } from '@bull-board/nestjs';
+import { ExpressAdapter } from '@bull-board/express';
+import { BullboardAuthMiddleware } from './bullboard-auth.middleware';
 
 @Module({
   imports: [
@@ -43,6 +48,22 @@ import { AdminModule } from './admin/admin.module';
     PreferencesModule,
     AssetsModule,
     AdminModule,
+    BullModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        redis: {
+          host: config.get('REDIS_HOST', 'redis'),
+          port: config.get('REDIS_PORT', 6379),
+          keyPrefix: 'osucad-jobs:',
+        },
+      }),
+    }),
+    BullBoardModule.forRoot({
+      route: '/admin/queues',
+      adapter: ExpressAdapter,
+      middleware: BullboardAuthMiddleware,
+    }),
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [],

@@ -20,6 +20,12 @@ export interface MapsetInfo {
     self: {
       href: string;
     };
+    thumbnailSmall?: {
+      href: string;
+    };
+    thumbnailLarge?: {
+      href: string;
+    };
     background: {
       href: string;
     };
@@ -37,6 +43,12 @@ export interface BeatmapInfo {
     edit: {
       href: string;
     };
+    thumbnailSmall: {
+      href: string;
+    } | null;
+    thumbnailLarge: {
+      href: string;
+    } | null;
   };
 }
 

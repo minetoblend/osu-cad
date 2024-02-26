@@ -44,6 +44,15 @@ export class MapsetEntity {
   updatedAt: Date;
 
   getInfo(): MapsetInfo {
+    const beatmaps = this.beatmaps.map((beatmap) => beatmap.getInfo());
+
+    const thumbnailSmall = beatmaps.find(
+      (beatmap) => beatmap.links.thumbnailSmall,
+    )?.links.thumbnailSmall;
+    const thumbnailLarge = beatmaps.find(
+      (beatmap) => beatmap.links.thumbnailLarge,
+    )?.links.thumbnailLarge;
+
     return {
       id: this.id,
       title: this.title,
@@ -52,11 +61,13 @@ export class MapsetEntity {
       createdAt: this.createdAt.toISOString(),
       updatedAt: this.updatedAt.toISOString(),
       creator: this.creator.getInfo(),
-      beatmaps: this.beatmaps.map((beatmap) => beatmap.getInfo()),
+      beatmaps,
       links: {
         self: {
           href: `/api/mapsets/${this.id}`,
         },
+        thumbnailSmall: thumbnailSmall ?? null,
+        thumbnailLarge: thumbnailLarge ?? null,
         background: {
           href: `/api/mapsets/${this.id}/files/${this.background}`,
         },
