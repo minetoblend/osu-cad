@@ -6,7 +6,7 @@ const props = defineProps<{
 }>();
 
 const coverUrl = computed(() => {
-  const url = props.mapset.links.background.href;
+  const url = props.mapset.links.thumbnailSmall?.href;
   if (url) return `url('${url}')`;
 });
 

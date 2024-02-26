@@ -10,23 +10,24 @@ import {
   Put,
   Query,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { BeatmapPermissionsService } from './beatmap-permissions.service';
 import { BeatmapService } from './beatmap.service';
 import { BeatmapAccess } from '@osucad/common';
 import { AuthGuard } from '../auth/auth.guard';
 import z from 'zod';
 import { BeatmapEntity } from './beatmap.entity';
-import { UserService } from '../users/user.service';
+import { AssetsService } from '../assets/assets.service';
 
 @Controller('api/beatmaps')
 export class BeatmapController {
   constructor(
     private readonly permissionService: BeatmapPermissionsService,
     private readonly beatmapService: BeatmapService,
-    private readonly userService: UserService,
+    private readonly assetsService: AssetsService,
   ) {}
 
   @Get('/access')
@@ -38,8 +39,6 @@ export class BeatmapController {
     const user = req.session.user;
 
     let beatmap: BeatmapEntity | null = null;
-
-    console.log(id, shareKey);
 
     if (id) {
       beatmap = await this.beatmapService.findBeatmapByUuid(id);
@@ -218,5 +217,36 @@ export class BeatmapController {
         };
       }),
     };
+  }
+
+  @Get('/:id/thumbnail/:type')
+  async getThumbnailSmall(
+    @Param('id') id: string,
+    @Param('type') type: string,
+    @Res() res: Response,
+  ) {
+    if (type !== 'small' && type !== 'large') {
+      throw new BadRequestException();
+    }
+
+    const beatmap = await this.beatmapService.findBeatmapByUuid(id);
+    if (!beatmap) {
+      throw new NotFoundException();
+    }
+
+    const asset =
+      type === 'small' ? beatmap.thumbnailSmall : beatmap.thumbnailLarge;
+
+    if (!asset) {
+      throw new NotFoundException();
+    }
+
+    // webp
+
+    const url = await this.assetsService.getS3AssetUrl(asset, {
+      contentType: 'image/webp',
+    });
+
+    res.redirect(url);
   }
 }

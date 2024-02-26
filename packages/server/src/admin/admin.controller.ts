@@ -52,9 +52,11 @@ export class AdminController {
           id: beatmap.uuid,
           name: beatmap.name,
           links: {
-            thumbnail: {
-              href: `/api/mapsets/${mapset.id}/files/${room.beatmap.backgroundPath}`,
-            },
+            thumbnail:
+              (beatmap.thumbnailSmall && {
+                href: `/api/beatmaps/${beatmap.uuid}/thumbnail/small`,
+              }) ??
+              null,
             edit: {
               href: `/edit/${beatmap.shareId}`,
             },

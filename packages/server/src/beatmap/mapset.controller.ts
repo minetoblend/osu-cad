@@ -85,11 +85,16 @@ export class MapsetController {
     file: Express.Multer.File,
     @Req() request: Request,
   ) {
-    const mapset = await this.beatmapImportService.importOsz(
+    const createdMapset = await this.beatmapImportService.importOsz(
       file.buffer,
       request.session.user!.id,
     );
-    if (!mapset) throw new Error('Failed to import mapset');
+    if (!createdMapset) throw new Error('Failed to import mapset');
+
+    const mapset = await this.beatmapService.findMapsetById(createdMapset.id);
+
+    if (!mapset) throw new Error('Mapset not found');
+
     return mapset.getInfo();
   }
 

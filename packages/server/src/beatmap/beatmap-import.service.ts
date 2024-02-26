@@ -40,6 +40,8 @@ import {
 } from '@osucad/common';
 import { AssetsService } from '../assets/assets.service';
 import { BeatmapSnapshotService } from './beatmap-snapshot.service';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class BeatmapImportService {
@@ -48,6 +50,8 @@ export class BeatmapImportService {
     private readonly userService: UserService,
     private readonly assetsService: AssetsService,
     private readonly snapshotService: BeatmapSnapshotService,
+    @InjectRepository(BeatmapEntity)
+    private readonly beatmapRepository: Repository<BeatmapEntity>,
   ) {}
 
   private readonly ruleset = new StandardRuleset();
@@ -135,13 +139,6 @@ export class BeatmapImportService {
 
     await this.beatmapService.createMapset(mapset);
 
-    for (const beatmap of mapset.beatmaps) {
-      const data = snapshots.get(beatmap.name);
-      if (!data) continue;
-
-      await this.snapshotService.createSnapshot(beatmap, data);
-    }
-
     for (const assetPath of assetPaths) {
       const assetBuffer = await fs.readFile(resolve(path, assetPath));
       await this.assetsService.addAssetToMapset({
@@ -149,6 +146,39 @@ export class BeatmapImportService {
         buffer: assetBuffer,
         path: assetPath,
       });
+    }
+
+    for (const beatmap of mapset.beatmaps) {
+      const data = snapshots.get(beatmap.name);
+      if (!data) continue;
+
+      const snapshot = await this.snapshotService.createSnapshot(beatmap, data);
+
+      if (
+        snapshot.data.backgroundPath &&
+        assetPaths.includes(snapshot.data.backgroundPath)
+      ) {
+        const asset = await this.assetsService.getAsset(
+          mapset,
+          snapshot.data.backgroundPath,
+        );
+
+        if (asset) {
+          await this.assetsService.increaseRefCount(asset.asset, 2);
+
+          await this.beatmapRepository.update(
+            {
+              id: beatmap.id,
+            },
+            {
+              thumbnailSmall: asset.asset,
+              thumbnailLarge: asset.asset,
+            },
+          );
+        }
+      }
+
+      await this.beatmapService.queueThumbnailJob(beatmap);
     }
 
     mapset.s3Storage = true;

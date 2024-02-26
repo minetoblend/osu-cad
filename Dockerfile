@@ -17,7 +17,7 @@ RUN yarn workspace @osucad/server build
 RUN yarn workspace @osucad/client build
 
 RUN --mount=type=cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn yarn install --production --ignore-scripts --prefer-offline
-
+RUN --mount=type=cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn yarn workspace @osucad/server add --os=linux --libc=musl --cpu=x64 sharp
 ENV NODE_ENV=production
 
 CMD ["yarn", "workspace", "@osucad/server", "start:prod"]

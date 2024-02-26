@@ -16,6 +16,10 @@ import { BeatmapSnapshotService } from './beatmap-snapshot.service';
 import { BeatmapPermissionsService } from './beatmap-permissions.service';
 import { BeatmapController } from './beatmap.controller';
 import { OsuUserEntity } from '../osu/osu-user.entity';
+import { BullModule } from '@nestjs/bull';
+import { BeatmapThumbnailProcessor } from './beatmap-thumbnail.processor';
+import { BullBoardModule } from '@bull-board/nestjs';
+import { BullAdapter } from '@bull-board/api/bullAdapter';
 
 @Module({
   imports: [
@@ -30,6 +34,13 @@ import { OsuUserEntity } from '../osu/osu-user.entity';
     UserModule,
     forwardRef(() => EditorModule),
     forwardRef(() => AssetsModule),
+    BullModule.registerQueue({
+      name: 'beatmap-thumbnail',
+    }),
+    BullBoardModule.forFeature({
+      name: 'beatmap-thumbnail',
+      adapter: BullAdapter,
+    }),
   ],
   providers: [
     BeatmapService,
@@ -37,6 +48,7 @@ import { OsuUserEntity } from '../osu/osu-user.entity';
     BeatmapExportService,
     BeatmapSnapshotService,
     BeatmapPermissionsService,
+    BeatmapThumbnailProcessor,
   ],
   controllers: [MapsetController, BeatmapController],
   exports: [BeatmapService, BeatmapSnapshotService, BeatmapPermissionsService],

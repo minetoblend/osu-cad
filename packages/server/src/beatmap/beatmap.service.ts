@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MapsetEntity } from './mapset.entity';
 import { Repository } from 'typeorm';
@@ -10,9 +10,12 @@ import { Action, BeatmapAccess, BeatmapData } from '@osucad/common';
 import { UserEntity } from '../users/user.entity';
 import { EditorSessionEntity } from '../editor/editor-session.entity';
 import { BeatmapSnapshotService } from './beatmap-snapshot.service';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
+import { BeatmapThumbnailJob } from './beatmap-thumbnail.processor';
 
 @Injectable()
-export class BeatmapService {
+export class BeatmapService implements OnModuleInit {
   constructor(
     @InjectRepository(MapsetEntity)
     private readonly mapsetRepository: Repository<MapsetEntity>,
@@ -23,7 +26,30 @@ export class BeatmapService {
     @InjectRepository(EditorSessionEntity)
     private readonly sessionRepository: Repository<EditorSessionEntity>,
     private readonly snapshotService: BeatmapSnapshotService,
+    @InjectQueue('beatmap-thumbnail')
+    private readonly thumbnailQueue: Queue<BeatmapThumbnailJob>,
   ) {}
+
+  private readonly logger = new Logger(BeatmapService.name);
+
+  async onModuleInit(): Promise<void> {
+    await this.queueThumbnailJobs();
+  }
+
+  private async queueThumbnailJobs() {
+    const beatmaps = await this.beatmapRepository.find({
+      select: ['id'],
+      where: {
+        needsThumbnail: true,
+      },
+    });
+    this.logger.log(
+      `Queuing ${beatmaps.length} beatmaps for thumbnail generation`,
+    );
+    for (const beatmap of beatmaps) {
+      await this.queueThumbnailJob(beatmap);
+    }
+  }
 
   async createMapset(mapset: MapsetEntity) {
     mapset = await this.mapsetRepository.save(mapset);
@@ -36,27 +62,37 @@ export class BeatmapService {
   }
 
   async saveMapset(mapset: MapsetEntity) {
-    return await this.mapsetRepository.save(mapset);
+    await this.mapsetRepository.save(mapset);
   }
 
   async findMapsetById(id: string) {
     return await this.mapsetRepository.findOne({
       where: { id },
-      relations: ['creator', 'beatmaps'],
+      relations: [
+        'creator',
+        'beatmaps',
+        'beatmaps.thumbnailSmall',
+        'beatmaps.thumbnailLarge',
+      ],
     });
   }
 
   async findBeatmapById(id: number) {
     return await this.beatmapRepository.findOne({
       where: { id },
-      relations: ['mapset'],
+      relations: ['mapset', 'thumbnailLarge', 'thumbnailSmall'],
     });
   }
 
   async findBeatmapByUuid(uuid: string) {
     return await this.beatmapRepository.findOne({
       where: { uuid },
-      relations: ['mapset', 'mapset.creator'],
+      relations: [
+        'mapset',
+        'mapset.creator',
+        'thumbnailLarge',
+        'thumbnailSmall',
+      ],
     });
   }
 
@@ -90,7 +126,12 @@ export class BeatmapService {
       where: {
         creator: { id },
       },
-      relations: ['creator', 'beatmaps'],
+      relations: [
+        'creator',
+        'beatmaps',
+        'beatmaps.thumbnailLarge',
+        'beatmaps.thumbnailSmall',
+      ],
       order: {
         updatedAt: 'DESC',
       },
@@ -125,4 +166,14 @@ export class BeatmapService {
   readonly onAccessChange = new Action<
     [{ beatmap: BeatmapEntity; access: BeatmapAccess }]
   >();
+
+  async queueThumbnailJob(beatmap: BeatmapEntity) {
+    return this.thumbnailQueue.add(
+      { beatmapId: beatmap.id },
+      {
+        removeOnComplete: 1000,
+        removeOnFail: 5000,
+      },
+    );
+  }
 }
