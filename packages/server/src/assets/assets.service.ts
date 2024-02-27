@@ -137,7 +137,7 @@ export class AssetsService {
     await this.cacheManager.set(
       's3:asset:' + s3Asset.key,
       url,
-      expireDuration / 2,
+      (expireDuration / 2) * 1000,
     );
 
     return url;
