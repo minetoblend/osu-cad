@@ -6,7 +6,7 @@ const props = defineProps<{
 }>();
 
 const coverUrl = computed(() => {
-  const url = props.mapset.links.thumbnailSmall?.href;
+  const url = props.mapset.links.thumbnailSmall;
   if (url) return `url('${url}')`;
 });
 
@@ -22,7 +22,7 @@ const beatmaps = useSorted(
     <div class="info">
       <div class="cover" :style="{ backgroundImage: coverUrl }" />
       <div class="title">
-        <RouterLink :to="mapset.beatmaps[0].links.edit.href">
+        <RouterLink :to="mapset.beatmaps[0].links.edit">
           {{ mapset.title }}
         </RouterLink>
       </div>
@@ -32,7 +32,7 @@ const beatmaps = useSorted(
           v-for="beatmap in beatmaps"
           :key="beatmap.id"
           class="beatmap"
-          :to="beatmap.links.edit.href"
+          :to="beatmap.links.edit"
         >
           {{ beatmap.name }} ({{ beatmap.starRating.toFixed(1) }}*)
         </RouterLink>

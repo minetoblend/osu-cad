@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { MapsetEntity } from './mapset.entity';
-import { BeatmapAccess, BeatmapInfo, randomString } from '@osucad/common';
+import { BeatmapAccess, randomString } from '@osucad/common';
 import { S3AssetEntity } from '../assets/s3-asset.entity';
 
 @Entity('beatmaps')
@@ -44,32 +44,6 @@ export class BeatmapEntity {
 
   @ManyToOne(() => S3AssetEntity, { nullable: true })
   thumbnailSmall: S3AssetEntity;
-
-  getInfo(): BeatmapInfo {
-    return {
-      id: this.uuid,
-      name: this.name,
-      starRating: this.starRating,
-      links: {
-        self: {
-          href: `/api/beatmaps/${this.uuid}`,
-        },
-        edit: {
-          href: `/edit/${this.shareId}`,
-        },
-        thumbnailSmall:
-          (this.thumbnailSmall && {
-            href: `/api/beatmaps/${this.uuid}/thumbnail/small`,
-          }) ??
-          null,
-        thumbnailLarge:
-          (this.thumbnailLarge && {
-            href: `/api/beatmaps/${this.uuid}/thumbnail/large`,
-          }) ??
-          null,
-      },
-    };
-  }
 
   @BeforeInsert()
   protected generateShareId() {
