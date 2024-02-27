@@ -12,6 +12,7 @@ export const frameStats = reactive({
   fps: 0,
   frameTime: 0,
   frameStart: 0,
+  updateTime: 0,
 });
 
 export class DrawableSystem implements System {
@@ -50,11 +51,11 @@ export class DrawableSystem implements System {
       this.loadChildren(this._renderer.lastObjectRendered);
       this.updateSubtree(this._renderer.lastObjectRendered);
     }
+    frameStats.updateTime = performance.now() - this._renderStart;
   }
 
   public postrender() {
-    const duration = performance.now() - this._renderStart;
-    frameStats.frameTime = duration;
+    frameStats.frameTime = performance.now() - this._renderStart;
   }
 
   private loadChildren(view: Container, parent?: Drawable) {

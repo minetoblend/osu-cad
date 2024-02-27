@@ -57,7 +57,7 @@ export class FrameStatsOverlayDrawable extends Component {
     this.fpsText.text = Math.round(frameStats.fps) + 'fps';
     this.frameTimeText.text = frameStats.frameTime.toFixed(1) + 'ms';
 
-    //this.updateTimeList.push(frameStats.updateTime);
+    this.updateTimeList.push(frameStats.updateTime);
     if (this.updateTimeList.length > 100) this.updateTimeList.shift();
 
     this.frameTimeList.push(frameStats.frameTime);
