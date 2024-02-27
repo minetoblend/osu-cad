@@ -18,9 +18,7 @@ export default defineConfig({
     autoImport({
       imports: ['vue', '@vueuse/core']
     }),
-    vueRouter({
-      importMode: 'sync'
-    }),
+    vueRouter({}),
     components({
       resolvers: [QuasarResolver()]
     }),
