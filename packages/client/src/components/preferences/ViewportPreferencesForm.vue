@@ -9,9 +9,6 @@ defineProps<{
 
 <template>
   <h3>Viewport</h3>
-  <FormField label="Playfield scale">
-    <QSlider v-model="preferences.playfieldScale" :min="70" :max="100" label />
-  </FormField>
   <FormField full-width label="Snaking sliders">
     <Switch v-model="preferences.snakingSliders" />
   </FormField>
