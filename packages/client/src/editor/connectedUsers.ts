@@ -21,9 +21,11 @@ export function createConnectedUsers(
   const users = ref<UserSessionInfo[]>([]);
   const ownUser = ref<UserSessionInfo>();
 
-  socket.on('roomState', (payload) => {
-    users.value = payload.users;
-    ownUser.value = payload.ownUser;
+  socket.on('connectedUsers', (connectedUsers) => {
+    users.value = connectedUsers;
+  });
+  socket.on('identity', (user) => {
+    ownUser.value = user;
   });
 
   socket.on('userJoined', (user) => {
@@ -59,12 +61,6 @@ export function createConnectedUsers(
   function ban(id: UserId) {
     socket.emit('kickUser', id, '', true);
   }
-
-  socket.on('roll', (user) => {
-    events.add({
-      message: `${user.username} rolled 727`,
-    });
-  });
 
   socket.on('accessChanged', (access) => {
     if (ownUser.value) ownUser.value.access = access;

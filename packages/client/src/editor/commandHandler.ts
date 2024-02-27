@@ -20,7 +20,7 @@ export class CommandManager {
     private readonly beatmapManager: BeatmapManager,
     private readonly socket: EditorSocket,
   ) {
-    socket.on('roomState', ({ ownUser }) => {
+    socket.on('identity', (ownUser) => {
       this.sessionId = ownUser.sessionId;
       this.canEdit = ownUser.access >= BeatmapAccess.Edit;
     });

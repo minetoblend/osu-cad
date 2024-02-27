@@ -115,6 +115,6 @@ function createClient(joinKey: string): EditorSocket {
 
 function receiveRoomState(socket: EditorSocket): Promise<void> {
   return new Promise<void>((resolve) =>
-    socket.once('roomState', () => resolve()),
+    socket.once('beatmap', () => resolve()),
   );
 }

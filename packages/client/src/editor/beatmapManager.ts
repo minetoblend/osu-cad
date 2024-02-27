@@ -5,8 +5,8 @@ export class BeatmapManager {
   beatmap!: Beatmap;
 
   constructor(socket: EditorSocket) {
-    socket.once('roomState', (payload) => {
-      this.beatmap = new Beatmap(payload.beatmap);
+    socket.once('beatmap', (beatmap) => {
+      this.beatmap = new Beatmap(beatmap);
       console.log(this.beatmap);
     });
   }
