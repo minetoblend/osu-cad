@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import {
   GetObjectCommand,
   HeadObjectCommand,
@@ -13,6 +13,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 
 @Injectable()
 export class AssetsService {
@@ -23,6 +24,7 @@ export class AssetsService {
     @InjectRepository(S3AssetEntity)
     private readonly s3AssetRepository: Repository<S3AssetEntity>,
     private readonly configService: ConfigService,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
 
   private creatingAssetMap = new Map<string, Promise<S3AssetEntity>>();
@@ -111,6 +113,11 @@ export class AssetsService {
       contentType?: string;
     } = {},
   ): Promise<string> {
+    const cached = await this.cacheManager.get('s3:asset:' + s3Asset.key);
+    if (cached && typeof cached === 'string') {
+      return cached;
+    }
+
     const command = new GetObjectCommand({
       Bucket: s3Asset.bucket,
       Key: s3Asset.key,
@@ -122,10 +129,18 @@ export class AssetsService {
     const expireDuration = 24 * 60 * 60;
     signingDate = signingDate - (signingDate % ((expireDuration / 2) * 1000));
 
-    return await getSignedUrl(this.s3, command, {
+    const url = await getSignedUrl(this.s3, command, {
       expiresIn: expireDuration,
       signingDate: new Date(signingDate),
     });
+
+    await this.cacheManager.set(
+      's3:asset:' + s3Asset.key,
+      url,
+      expireDuration / 2,
+    );
+
+    return url;
   }
 
   private async getOrCreateS3Asset(
