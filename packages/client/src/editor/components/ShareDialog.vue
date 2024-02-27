@@ -17,7 +17,7 @@ const editor = useEditor();
 
 const { dialogRef, onDialogHide } = useDialogPluginComponent();
 
-const shareUrl = `${window.location.origin}${props.beatmap.links.edit.href}`;
+const shareUrl = `${window.location.origin}${props.beatmap.links.edit}`;
 
 const accessLevel = ref(props.access);
 

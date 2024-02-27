@@ -10,6 +10,7 @@ import { AdminGuard } from './admin-auth.guard';
 import { EditorRoomService } from '../editor/editor-room.service';
 import { RoomInfo } from '@osucad/common';
 import { UserService } from '../users/user.service';
+import { AssetsService } from '../assets/assets.service';
 
 @Controller('api/admin')
 @UseGuards(AuthGuard, AdminGuard)
@@ -17,6 +18,7 @@ export class AdminController {
   constructor(
     private readonly userService: UserService,
     private readonly roomManager: EditorRoomService,
+    private readonly assetsService: AssetsService,
   ) {}
 
   @Get('users')
@@ -39,37 +41,46 @@ export class AdminController {
     return users.map((user) => user.getInfo());
   }
   @Get('rooms')
-  getActiveRooms() {
+  async getActiveRooms() {
     const rooms = this.roomManager.getActiveRooms();
 
-    return rooms.map<RoomInfo>((room) => {
-      const beatmap = room.entity;
-      const mapset = room.entity.mapset;
+    return Promise.all(
+      rooms.map(async (room) => {
+        const beatmap = room.entity;
+        const mapset = room.entity.mapset;
 
-      return {
-        createdAt: room.createdAt,
-        beatmap: {
-          id: beatmap.uuid,
-          name: beatmap.name,
-          links: {
-            thumbnail:
-              (beatmap.thumbnailSmall && {
-                href: `/api/beatmaps/${beatmap.uuid}/thumbnail/small`,
-              }) ??
-              null,
-            edit: {
-              href: `/edit/${beatmap.shareId}`,
+        let thumbnail: string | null = null;
+        if (beatmap.thumbnailSmall) {
+          thumbnail = await this.assetsService.getS3AssetUrl(
+            beatmap.thumbnailSmall,
+          );
+        }
+
+        return {
+          createdAt: room.createdAt,
+          beatmap: {
+            id: beatmap.uuid,
+            name: beatmap.name,
+            links: {
+              thumbnail: thumbnail
+                ? {
+                    href: thumbnail,
+                  }
+                : null,
+              edit: {
+                href: `/edit/${beatmap.shareId}`,
+              },
             },
           },
-        },
-        mapset: {
-          id: mapset.id,
-          artist: mapset.artist,
-          title: mapset.title,
-        },
-        userCount: room.users.length,
-        users: room.users.map((user) => user.getInfo()),
-      };
-    });
+          mapset: {
+            id: mapset.id,
+            artist: mapset.artist,
+            title: mapset.title,
+          },
+          userCount: room.users.length,
+          users: room.users.map((user) => user.getInfo()),
+        };
+      }),
+    );
   }
 }

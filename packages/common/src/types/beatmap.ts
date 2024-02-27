@@ -17,18 +17,9 @@ export interface MapsetInfo {
   beatmaps: BeatmapInfo[];
   creator: UserInfo;
   links: {
-    self: {
-      href: string;
-    };
-    thumbnailSmall?: {
-      href: string;
-    };
-    thumbnailLarge?: {
-      href: string;
-    };
-    background: {
-      href: string;
-    };
+    self: string;
+    thumbnailSmall: string | null;
+    thumbnailLarge: string | null;
   };
 }
 
@@ -37,18 +28,10 @@ export interface BeatmapInfo {
   name: string;
   starRating: number;
   links: {
-    self: {
-      href: string;
-    };
-    edit: {
-      href: string;
-    };
-    thumbnailSmall: {
-      href: string;
-    } | null;
-    thumbnailLarge: {
-      href: string;
-    } | null;
+    self: string;
+    edit: string;
+    thumbnailSmall: string | null;
+    thumbnailLarge: string | null;
   };
 }
 

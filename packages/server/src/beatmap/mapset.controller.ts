@@ -17,9 +17,10 @@ import 'multer';
 import { AuthGuard } from '../auth/auth.guard';
 import { Request, Response } from 'express';
 import { BeatmapService } from './beatmap.service';
-import { MapsetInfo } from '@osucad/common';
 import { BeatmapExportService } from './beatmap-export.service';
 import { AssetsService } from '../assets/assets.service';
+import { MapsetTransformer } from './mapset.transformer';
+import { BeatmapTransformer } from './beatmapTransformer';
 
 @Controller('api/mapsets')
 export class MapsetController {
@@ -28,6 +29,8 @@ export class MapsetController {
     private readonly beatmapService: BeatmapService,
     private readonly beatmapExportService: BeatmapExportService,
     private readonly assetsService: AssetsService,
+    private readonly beatmapTransformer: BeatmapTransformer,
+    private readonly mapsetTransformer: MapsetTransformer,
   ) {}
 
   @Get('/own')
@@ -37,7 +40,9 @@ export class MapsetController {
       request.session.user!.id,
     );
 
-    return mapsets.map<MapsetInfo>((mapset) => mapset.getInfo());
+    return Promise.all(
+      mapsets.map((mapset) => this.mapsetTransformer.transform(mapset)),
+    );
   }
 
   @Get('/feed')
@@ -47,24 +52,26 @@ export class MapsetController {
       request.session.user!,
     );
 
-    return sessions.map((session) => {
-      const beatmap = session.beatmap;
-      const mapset = beatmap.mapset;
-      return {
-        date: session.endDate,
-        beatmap: beatmap.getInfo(),
-        mapset: {
-          id: mapset.id,
-          title: mapset.title,
-          artist: mapset.artist,
-          tags: mapset.tags,
-          createdAt: mapset.createdAt.toISOString(),
-          updatedAt: mapset.updatedAt.toISOString(),
-          backgroundPath: mapset.background,
-          creator: mapset.creator.getInfo(),
-        },
-      };
-    });
+    return Promise.all(
+      sessions.map(async (session) => {
+        const beatmap = session.beatmap;
+        const mapset = beatmap.mapset;
+        return {
+          date: session.endDate,
+          beatmap: await this.beatmapTransformer.transform(beatmap),
+          mapset: {
+            id: mapset.id,
+            title: mapset.title,
+            artist: mapset.artist,
+            tags: mapset.tags,
+            createdAt: mapset.createdAt.toISOString(),
+            updatedAt: mapset.updatedAt.toISOString(),
+            backgroundPath: mapset.background,
+            creator: mapset.creator.getInfo(),
+          },
+        };
+      }),
+    );
   }
 
   @Post('import')
@@ -95,7 +102,7 @@ export class MapsetController {
 
     if (!mapset) throw new Error('Mapset not found');
 
-    return mapset.getInfo();
+    return await this.mapsetTransformer.transform(mapset);
   }
 
   @Get(':id/export')

@@ -21,6 +21,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import z from 'zod';
 import { BeatmapEntity } from './beatmap.entity';
 import { AssetsService } from '../assets/assets.service';
+import { BeatmapTransformer } from './beatmapTransformer';
 
 @Controller('api/beatmaps')
 export class BeatmapController {
@@ -28,6 +29,7 @@ export class BeatmapController {
     private readonly permissionService: BeatmapPermissionsService,
     private readonly beatmapService: BeatmapService,
     private readonly assetsService: AssetsService,
+    private readonly beatmapTransformer: BeatmapTransformer,
   ) {}
 
   @Get('/access')
@@ -80,7 +82,7 @@ export class BeatmapController {
       throw new ForbiddenException();
     }
 
-    return beatmap.getInfo();
+    return await this.beatmapTransformer.transform(beatmap);
   }
 
   @Get('/:id/access/settings')
@@ -101,7 +103,7 @@ export class BeatmapController {
     const participants = await this.permissionService.getParticipants(beatmap);
 
     return {
-      beatmap: beatmap.getInfo(),
+      beatmap: await this.beatmapTransformer.transform(beatmap),
       access: beatmap.access,
       participants: participants.map((it) => {
         return {
@@ -205,7 +207,7 @@ export class BeatmapController {
     const participants = await this.permissionService.getParticipants(beatmap);
 
     return {
-      beatmap: beatmap.getInfo(),
+      beatmap: await this.beatmapTransformer.transform(beatmap),
       participants: participants.map((it) => {
         return {
           user: {
@@ -217,36 +219,5 @@ export class BeatmapController {
         };
       }),
     };
-  }
-
-  @Get('/:id/thumbnail/:type')
-  async getThumbnailSmall(
-    @Param('id') id: string,
-    @Param('type') type: string,
-    @Res() res: Response,
-  ) {
-    if (type !== 'small' && type !== 'large') {
-      throw new BadRequestException();
-    }
-
-    const beatmap = await this.beatmapService.findBeatmapByUuid(id);
-    if (!beatmap) {
-      throw new NotFoundException();
-    }
-
-    const asset =
-      type === 'small' ? beatmap.thumbnailSmall : beatmap.thumbnailLarge;
-
-    if (!asset) {
-      throw new NotFoundException();
-    }
-
-    // webp
-
-    const url = await this.assetsService.getS3AssetUrl(asset, {
-      contentType: 'image/webp',
-    });
-
-    res.redirect(url);
   }
 }
