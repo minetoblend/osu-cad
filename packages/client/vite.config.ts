@@ -6,6 +6,11 @@ import autoImport from 'unplugin-auto-import/vite';
 import { quasar, transformAssetUrls } from '@quasar/vite-plugin';
 import components from 'unplugin-vue-components/vite';
 import { QuasarResolver } from 'unplugin-vue-components/resolvers';
+import * as dotenv from 'dotenv'
+
+dotenv.config({
+  path: resolve(__dirname, '../../.env')
+})
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -29,7 +34,7 @@ export default defineConfig({
     }),
     {
       name: 'insert-environment-vars',
-      transformIndexHtml(html, ctx) {
+      transformIndexHtml(html) {
         let preconnect = '';
         if (process.env.S3_ENDPOINT_URL)
           preconnect += `<link rel="preconnect" href="${process.env.S3_ENDPOINT_URL}" />`;
