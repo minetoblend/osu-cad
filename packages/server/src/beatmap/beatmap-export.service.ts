@@ -26,6 +26,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as JSZip from 'jszip';
 import { BeatmapSnapshotService } from './beatmap-snapshot.service';
+import { BeatmapMigrator } from './beatmap-migrator';
 
 @Injectable()
 export class BeatmapExportService {
@@ -58,7 +59,7 @@ export class BeatmapExportService {
       if (room) {
         const beatmap = room.beatmap.serialize();
         beatmapData = {
-          version: 2,
+          version: BeatmapMigrator.migrations.length,
           general: beatmap.general,
           audioFilename: beatmap.audioFilename,
           backgroundPath: beatmap.backgroundPath,

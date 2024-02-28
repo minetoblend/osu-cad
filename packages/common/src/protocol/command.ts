@@ -14,7 +14,7 @@ export class CommandContext {
     readonly beatmap: Beatmap,
     readonly local: boolean,
     readonly own: boolean,
-    readonly version: number,
+    public version: number,
   ) {}
 }
 

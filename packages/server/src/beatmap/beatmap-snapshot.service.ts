@@ -3,7 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BeatmapSnapshotEntity } from './beatmap-snapshot.entity';
 import { Repository } from 'typeorm';
 import { BeatmapEntity } from './beatmap.entity';
-import { BeatmapData } from '@osucad/common';
+import { Beatmap, BeatmapData } from '@osucad/common';
+import { BeatmapMigrator } from './beatmap-migrator';
 
 @Injectable()
 export class BeatmapSnapshotService {
@@ -13,6 +14,25 @@ export class BeatmapSnapshotService {
   ) {}
 
   private readonly snapshotCombineThreshold = /* 5 minutes */ 5 * 60 * 1000;
+
+  async createSnapshotFromBeatmap(entity: BeatmapEntity, beatmap: Beatmap) {
+    const data: BeatmapData = {
+      version: BeatmapMigrator.migrations.length,
+      general: beatmap.general,
+      audioFilename: beatmap.audioFilename,
+      backgroundPath: beatmap.backgroundPath,
+      colors: beatmap.colors.map(
+        (color) => '#' + color.toString(16).padStart(6, '0'),
+      ),
+      difficulty: beatmap.difficulty,
+      bookmarks: beatmap.bookmarks,
+      controlPoints: beatmap.controlPoints.serializeLegacy(),
+      hitObjects: beatmap.hitObjects.serialize(),
+      hitSounds: beatmap.hitSounds,
+    };
+
+    return this.createSnapshot(entity, data);
+  }
 
   async createSnapshot(
     beatmap: BeatmapEntity,
