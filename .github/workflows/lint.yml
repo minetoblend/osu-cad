@@ -27,7 +27,4 @@ jobs:
           node-version: '18.x'
           cache: 'yarn'
       - run: yarn install --frozen-lockfile
-      - name: Super-linter
-        uses: super-linter/super-linter/slim@v6.2.0  # x-release-please-version
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: yarn lint
