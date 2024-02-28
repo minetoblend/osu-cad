@@ -13,6 +13,7 @@ import { App } from '@capacitor/app';
 import { useRouter } from 'vue-router';
 import { EditorPopoverHost } from '@/editor/components/popover';
 import ShareButton from '@/editor/components/ShareButton.vue';
+import ChatBox from '@/editor/components/ChatBox.vue';
 
 const { joinKey } = defineProps<{
   joinKey: string;
@@ -91,6 +92,7 @@ const viewportInitialized = ref(false);
       <Teleport to="#navbar-end">
         <ShareButton />
       </Teleport>
+      <ChatBox />
     </template>
 
     <div
@@ -110,7 +112,6 @@ const viewportInitialized = ref(false);
       </div>
     </div>
   </div>
-
   <PreferencesOverlay />
 </template>
 

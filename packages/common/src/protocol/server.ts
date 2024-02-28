@@ -24,6 +24,8 @@ export interface ServerMessages {
 
   chatMessageDeleted(id: number): void;
 
+  cursorChatCreated(sessionId: number, message: string): void;
+
   userActivity(sessionId: number, activity: UserActivity): void;
 
   commands(commands: Uint8Array, sessionId: number): void;
