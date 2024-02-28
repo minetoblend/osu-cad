@@ -58,14 +58,14 @@ export default defineComponent({
 .code {
   background-color: rgba(white, 0.2);
   border-radius: 3px;
-  padding: 0.25rem;
+  padding: 0.125rem;
   font-family: monospace;
 }
 
 .timestamp {
   background-color: rgba(white, 0.2);
   border-radius: 3px;
-  padding: 0.25rem;
+  padding: 0.125rem;
   font-family: monospace;
   color: $primary;
   cursor: pointer;
