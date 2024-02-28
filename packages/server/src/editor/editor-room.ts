@@ -154,7 +154,6 @@ export class EditorRoom {
   }
 
   setUserAccess(user: RoomUser, access: BeatmapAccess) {
-    console.log('setUserAccess', user.user.username, access, user.access);
     if (user.access === access) return;
 
     if (access <= BeatmapAccess.None) {
