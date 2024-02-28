@@ -45,7 +45,6 @@ export class ChatHandler extends MessageHandler {
     let currentFragment = '';
 
     const timestampMatches = [...message.matchAll(timestampRegex)];
-    console.log([...timestampMatches]);
 
     for (let i = 0; i < message.length; i++) {
       if (timestampMatches[0]?.index === i) {
