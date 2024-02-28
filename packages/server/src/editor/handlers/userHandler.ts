@@ -1,4 +1,4 @@
-import { Decorator } from './decorator';
+import { OnMessage } from './decorator';
 import { MessageHandler } from './message-handler';
 import { BeatmapAccess } from '@osucad/common';
 import { RoomUser } from '../room-user';
@@ -22,7 +22,7 @@ export class UserHandler extends MessageHandler {
     this.room.broadcast('userLeft', roomUser.getInfo(), 'disconnected');
   }
 
-  @Decorator('kickUser')
+  @OnMessage('kickUser')
   onKickUser(
     roomUser: RoomUser,
     kickedUserId: number,
