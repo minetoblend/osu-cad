@@ -38,4 +38,8 @@ export class RoomUser {
   ) {
     this.socket.emit(message, ...parameters);
   }
+
+  get username() {
+    return this.user.username;
+  }
 }
