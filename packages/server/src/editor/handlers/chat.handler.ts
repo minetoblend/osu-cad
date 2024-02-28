@@ -1,5 +1,5 @@
 import { MessageHandler } from './message-handler';
-import { Decorator } from './decorator';
+import { OnMessage } from './decorator';
 import { RoomUser } from '../room-user';
 import {
   BeatmapAccess,
@@ -21,7 +21,7 @@ export class ChatHandler extends MessageHandler {
     roomUser.socket.emit('chatHistory', this.chatHistory);
   }
 
-  @Decorator('sendChatMessage')
+  @OnMessage('sendChatMessage')
   onSendChatMessage(roomUser: RoomUser, message: string): void {
     if (message.length > 500) return;
 
@@ -106,7 +106,7 @@ export class ChatHandler extends MessageHandler {
     return fragments;
   }
 
-  @Decorator('deleteChatMessage')
+  @OnMessage('deleteChatMessage')
   onDeleteChatMessage(roomUser: RoomUser, messageId: number): void {
     if (roomUser.access < BeatmapAccess.MapsetOwner) return;
 
