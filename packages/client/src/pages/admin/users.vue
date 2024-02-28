@@ -34,7 +34,12 @@ const users = asyncComputed(async () => {
         <q-card flat v-for="user in users" :key="user.id">
           <q-card-section>
             <div class="row">
-              <q-avatar v-if="user.avatarUrl" rounded size="25px" class="q-mr-sm">
+              <q-avatar
+                v-if="user.avatarUrl"
+                rounded
+                size="25px"
+                class="q-mr-sm"
+              >
                 <img :src="user.avatarUrl" :alt="user.username" />
               </q-avatar>
               {{ user.username }}

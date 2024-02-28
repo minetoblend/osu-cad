@@ -1,6 +1,12 @@
 import { RoomUser } from '../room-user';
 import { MessageHandler } from './message-handler';
-import { BeatmapAccess, CommandContext, decodeCommands, encodeCommands, getCommandHandler } from '@osucad/common';
+import {
+  BeatmapAccess,
+  CommandContext,
+  decodeCommands,
+  encodeCommands,
+  getCommandHandler,
+} from '@osucad/common';
 import { Decorator } from './decorator';
 
 export class BeatmapHandler extends MessageHandler {
@@ -13,7 +19,7 @@ export class BeatmapHandler extends MessageHandler {
   onCommands(roomUser: RoomUser, commands: Uint8Array): void {
     if (roomUser.access < BeatmapAccess.Edit) {
       this.logger.error(
-        `User ${roomUser.user.username} tried to send commands without edit access`
+        `User ${roomUser.user.username} tried to send commands without edit access`,
       );
       return;
     }
@@ -25,7 +31,7 @@ export class BeatmapHandler extends MessageHandler {
         this.room.beatmap,
         false,
         false,
-        command.version
+        command.version,
       );
       const handler = getCommandHandler(command.command);
       if (handler) {
@@ -35,7 +41,7 @@ export class BeatmapHandler extends MessageHandler {
     this.room.broadcast(
       'commands',
       encodeCommands(decodedCommands),
-      roomUser.sessionId
+      roomUser.sessionId,
     );
   }
 }
