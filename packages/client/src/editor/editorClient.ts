@@ -15,6 +15,7 @@ import { EditorSocket } from '@/editor/editorSocket.ts';
 import { EditorContext, globalEditor } from '@/editor/editorContext.ts';
 import fontUrl from '@fontsource/nunito-sans/files/nunito-sans-cyrillic-400-normal.woff2';
 import { Ref } from 'vue';
+import { ChatManager } from '@/editor/chat.ts';
 
 export async function createEditorClient(
   joinKey: string,
@@ -50,6 +51,7 @@ export async function createEditorClient(
   const mods = [] as Mod[];
   const commandManager = new CommandManager(beatmapManager, socket);
   const { preferences, loaded: preferencesLoaded } = usePreferences();
+  const chat = new ChatManager(socket);
 
   await Promise.all([
     receiveRoomState(socket),
@@ -95,6 +97,7 @@ export async function createEditorClient(
     audioManager,
     preferences,
     tools,
+    chat,
   };
 
   globalEditor.value = ctx;

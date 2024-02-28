@@ -12,6 +12,8 @@ export interface ClientMessages {
 
   deleteChatMessage(id: number): void;
 
+  sendCursorChat(message: string): void;
+
   setPresence(presence: Presence): void;
 
   commands(commands: Uint8Array): void;
