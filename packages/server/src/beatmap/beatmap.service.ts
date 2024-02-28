@@ -6,13 +6,14 @@ import { BeatmapEntity } from './beatmap.entity';
 import { existsSync, readFileSync } from 'fs';
 import * as path from 'path';
 import { ParticipantEntity } from './participant.entity';
-import { Action, BeatmapAccess, BeatmapData } from '@osucad/common';
+import { BeatmapAccess, BeatmapData } from '@osucad/common';
 import { UserEntity } from '../users/user.entity';
 import { EditorSessionEntity } from '../editor/editor-session.entity';
 import { BeatmapSnapshotService } from './beatmap-snapshot.service';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { BeatmapThumbnailJob } from './beatmap-thumbnail.processor';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class BeatmapService implements OnModuleInit {
@@ -28,6 +29,7 @@ export class BeatmapService implements OnModuleInit {
     private readonly snapshotService: BeatmapSnapshotService,
     @InjectQueue('beatmap-thumbnail')
     private readonly thumbnailQueue: Queue<BeatmapThumbnailJob>,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   private readonly logger = new Logger(BeatmapService.name);
@@ -160,12 +162,8 @@ export class BeatmapService implements OnModuleInit {
       access,
     });
     beatmap.access = access;
-    this.onAccessChange.emit({ beatmap, access });
+    await this.eventEmitter.emitAsync('beatmapPermissionChange', beatmap);
   }
-
-  readonly onAccessChange = new Action<
-    [{ beatmap: BeatmapEntity; access: BeatmapAccess }]
-  >();
 
   async queueThumbnailJob(beatmap: BeatmapEntity) {
     return this.thumbnailQueue.add(

@@ -3,9 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ParticipantEntity } from './participant.entity';
 import { Repository } from 'typeorm';
 import { BeatmapEntity } from './beatmap.entity';
-import { Action, BeatmapAccess } from '@osucad/common';
+import { BeatmapAccess } from '@osucad/common';
 import { MapsetEntity } from './mapset.entity';
 import { OsuUserEntity } from '../osu/osu-user.entity';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class BeatmapPermissionsService {
@@ -16,6 +17,7 @@ export class BeatmapPermissionsService {
     private readonly mapsetRepository: Repository<MapsetEntity>,
     @InjectRepository(OsuUserEntity)
     private readonly osuUserRepository: Repository<OsuUserEntity>,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   public async getAccess(
@@ -86,22 +88,12 @@ export class BeatmapPermissionsService {
       }
     }
 
-    this.onPermissionChange.emit({
+    await this.eventEmitter.emitAsync(
+      'beatmapPermissionChange',
       beatmap,
-      user: userId,
-      access,
-    });
+      userId,
+    );
   }
-
-  onPermissionChange = new Action<
-    [
-      {
-        beatmap: BeatmapEntity;
-        user: number;
-        access: BeatmapAccess;
-      },
-    ]
-  >();
 
   async getParticipants(beatmap: BeatmapEntity) {
     return this.participantRepository.find({
