@@ -23,6 +23,8 @@ export class ChatHandler extends MessageHandler {
 
   @Decorator('sendChatMessage')
   onSendChatMessage(roomUser: RoomUser, message: string): void {
+    if (message.length > 500) return;
+
     if (message.startsWith('!')) {
       this.handleCommand(roomUser, message);
       return;

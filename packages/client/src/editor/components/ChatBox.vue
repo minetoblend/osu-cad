@@ -67,6 +67,7 @@ onMounted(() => {
         filled
         type="textarea"
         autogrow
+        :maxlength="500"
         @keydown.enter="sendMessage"
       />
     </div>
