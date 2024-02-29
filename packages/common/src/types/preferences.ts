@@ -92,7 +92,7 @@ export function defaultPreferences(): Preferences {
         opacity: 50,
       },
       backgroundDim: 50,
-      backgroundBlur: 25,
+      backgroundBlur: 0,
       snapping: {
         blanket: {
           enabled: true,
