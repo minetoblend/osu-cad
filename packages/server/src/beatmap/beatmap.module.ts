@@ -22,6 +22,7 @@ import { BullBoardModule } from '@bull-board/nestjs';
 import { BullAdapter } from '@bull-board/api/bullAdapter';
 import { MapsetTransformer } from './mapset.transformer';
 import { BeatmapTransformer } from './beatmapTransformer';
+import { BeatmapMigrator } from './beatmap-migrator';
 
 @Module({
   imports: [
@@ -53,8 +54,14 @@ import { BeatmapTransformer } from './beatmapTransformer';
     BeatmapThumbnailProcessor,
     BeatmapTransformer,
     MapsetTransformer,
+    BeatmapMigrator,
   ],
   controllers: [MapsetController, BeatmapController],
-  exports: [BeatmapService, BeatmapSnapshotService, BeatmapPermissionsService],
+  exports: [
+    BeatmapService,
+    BeatmapSnapshotService,
+    BeatmapPermissionsService,
+    BeatmapMigrator,
+  ],
 })
 export class BeatmapModule {}

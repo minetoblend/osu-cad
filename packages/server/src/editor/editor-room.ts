@@ -3,32 +3,43 @@ import { Socket } from 'socket.io';
 import {
   Beatmap,
   BeatmapAccess,
-  BeatmapData,
   ClientMessages,
   ControlPointManager,
   defaultHitSoundLayers,
   ServerMessages,
-  Slider,
 } from '@osucad/common';
 import { Logger } from '@nestjs/common';
 import { BeatmapEntity } from '../beatmap/beatmap.entity';
-import { EditorRoomService } from './editor-room.service';
 import { EditorRoomEntity } from './editor-room.entity';
 import { RoomUser } from './room-user';
 import {
   BeatmapHandler,
-  UserHandler,
+  ChatHandler,
   MessageHandler,
   PresenceHandler,
-  ChatHandler,
+  UserHandler,
 } from './handlers';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { BeatmapPermissionsService } from '../beatmap/beatmap-permissions.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { BeatmapMigrator } from '../beatmap/beatmap-migrator';
+import { BeatmapSnapshotService } from '../beatmap/beatmap-snapshot.service';
 
-export class EditorRoom {
-  private readonly logger: Logger;
+export class EditorRoom extends EventEmitter2 {
+  constructor(
+    private readonly permissionsService: BeatmapPermissionsService,
+    @InjectRepository(EditorRoomEntity)
+    private readonly editorRoomRepository: Repository<EditorRoomEntity>,
+    private readonly migrator: BeatmapMigrator,
+    private readonly snapshotService: BeatmapSnapshotService,
+  ) {
+    super();
+  }
 
-  readonly beatmap: Beatmap;
-
-  readonly createdAt = Date.now();
+  logger = new Logger(EditorRoom.name);
+  beatmap: Beatmap;
+  createdAt = Date.now();
 
   stateHandler = new BeatmapHandler(this);
   userHandler = new UserHandler(this);
@@ -36,18 +47,25 @@ export class EditorRoom {
   presenceHandler = new PresenceHandler(this);
 
   readonly handlers: MessageHandler[] = [
-    new BeatmapHandler(this),
-    new PresenceHandler(this),
-    new UserHandler(this),
-    new ChatHandler(this),
+    this.stateHandler,
+    this.userHandler,
+    this.chatHandler,
+    this.presenceHandler,
   ];
 
-  constructor(
-    private readonly service: EditorRoomService,
-    public readonly roomEntity: EditorRoomEntity,
-    public readonly entity: BeatmapEntity,
-    snapshot: BeatmapData,
-  ) {
+  roomEntity = new EditorRoomEntity();
+  entity!: BeatmapEntity;
+
+  async init(entity: BeatmapEntity) {
+    this.entity = entity;
+
+    const snapshot = await this.snapshotService.getLatestSnapshot(entity);
+    if (!snapshot) {
+      throw new Error('No snapshot found for beatmap');
+    }
+
+    const snapshotData = await this.migrator.migrate(snapshot.data);
+
     const {
       hitObjects,
       controlPoints,
@@ -58,8 +76,7 @@ export class EditorRoom {
       audioFilename,
       general,
       hitSounds = { layers: defaultHitSoundLayers() },
-      version,
-    } = snapshot;
+    } = snapshotData;
 
     this.beatmap = new Beatmap({
       id: entity.uuid,
@@ -81,18 +98,10 @@ export class EditorRoom {
       hitSounds,
     });
 
-    if (version < 2) {
-      for (const hitObject of this.beatmap.hitObjects.hitObjects) {
-        if (
-          hitObject instanceof Slider &&
-          hitObject.velocityOverride !== null
-        ) {
-          hitObject.velocityOverride /= hitObject.baseVelocity;
-        }
-      }
-    }
-
-    this.logger = new Logger(`${EditorRoom.name}:${this.beatmap.id}`);
+    this.roomEntity.beatmap = entity;
+    this.roomEntity.beginDate = new Date();
+    this.roomEntity.endDate = new Date();
+    await this.editorRoomRepository.save(this.roomEntity);
   }
 
   hasUnsavedChanges = false;
@@ -105,7 +114,11 @@ export class EditorRoom {
     return this.users.length;
   }
 
-  async shutdown() {}
+  async shutdown() {
+    this.roomEntity.endDate = new Date();
+    this.roomEntity.active = false;
+    await this.editorRoomRepository.save(this.roomEntity);
+  }
 
   accept(
     client: Socket<ClientMessages, ServerMessages>,
@@ -163,5 +176,21 @@ export class EditorRoom {
     user.access = access;
 
     user.send('accessChanged', access);
+  }
+
+  @OnEvent('beatmapPermissionChange', { async: true })
+  async onBeatmapAccessChanged(beatmap: BeatmapEntity, userId?: number) {
+    if (this.entity.id !== beatmap.id) return;
+
+    for (const user of this.users) {
+      if (userId && user.user.id !== userId) continue;
+
+      const access = await this.permissionsService.getAccess(
+        beatmap,
+        user.user.id,
+      );
+
+      this.setUserAccess(user, access);
+    }
   }
 }

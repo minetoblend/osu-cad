@@ -42,6 +42,7 @@ import { AssetsService } from '../assets/assets.service';
 import { BeatmapSnapshotService } from './beatmap-snapshot.service';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { BeatmapMigrator } from './beatmap-migrator';
 
 @Injectable()
 export class BeatmapImportService {
@@ -407,7 +408,7 @@ export class BeatmapImportService {
     };
 
     const data: BeatmapData = {
-      version: 2,
+      version: BeatmapMigrator.migrations.length,
       hitObjects,
       controlPoints: {
         timing,

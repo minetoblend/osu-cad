@@ -24,6 +24,7 @@ import { BeatmapEncoder } from 'osu-parsers';
 import { BeatmapImportService } from './beatmap-import.service';
 import * as JSZip from 'jszip';
 import { BeatmapSnapshotService } from './beatmap-snapshot.service';
+import { BeatmapMigrator } from './beatmap-migrator';
 import { AssetsService } from 'src/assets/assets.service';
 import { AssetEntity } from 'src/assets/asset.entity';
 
@@ -59,7 +60,7 @@ export class BeatmapExportService {
       if (room) {
         const beatmap = room.beatmap.serialize();
         beatmapData = {
-          version: 2,
+          version: BeatmapMigrator.migrations.length,
           general: beatmap.general,
           audioFilename: beatmap.audioFilename,
           backgroundPath: beatmap.backgroundPath,
