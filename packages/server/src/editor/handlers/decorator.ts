@@ -3,7 +3,7 @@ import { RoomUser } from '../room-user';
 
 type Args<T> = T extends (...args: infer U) => any ? U : never;
 
-export function Decorator<T extends keyof ClientMessages>(key: T) {
+export function OnMessage<T extends keyof ClientMessages>(key: T) {
   return function (
     target: any,
     propertyKey: string,

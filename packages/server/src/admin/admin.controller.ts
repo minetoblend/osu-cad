@@ -8,7 +8,6 @@ import {
 import { AuthGuard } from '../auth/auth.guard';
 import { AdminGuard } from './admin-auth.guard';
 import { EditorRoomService } from '../editor/editor-room.service';
-import { RoomInfo } from '@osucad/common';
 import { UserService } from '../users/user.service';
 import { AssetsService } from '../assets/assets.service';
 

@@ -10,10 +10,9 @@ import {
   Put,
   Query,
   Req,
-  Res,
   UseGuards,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { BeatmapPermissionsService } from './beatmap-permissions.service';
 import { BeatmapService } from './beatmap.service';
 import { BeatmapAccess } from '@osucad/common';

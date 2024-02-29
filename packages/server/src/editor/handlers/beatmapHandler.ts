@@ -7,7 +7,7 @@ import {
   encodeCommands,
   getCommandHandler,
 } from '@osucad/common';
-import { Decorator } from './decorator';
+import { OnMessage } from './decorator';
 
 export class BeatmapHandler extends MessageHandler {
   onUserJoin(roomUser: RoomUser) {
@@ -15,7 +15,7 @@ export class BeatmapHandler extends MessageHandler {
     roomUser.send('beatmap', this.room.beatmap.serialize());
   }
 
-  @Decorator('commands')
+  @OnMessage('commands')
   onCommands(roomUser: RoomUser, commands: Uint8Array): void {
     if (roomUser.access < BeatmapAccess.Edit) {
       this.logger.error(

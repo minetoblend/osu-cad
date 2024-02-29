@@ -13,6 +13,8 @@ import { App } from '@capacitor/app';
 import { useRouter } from 'vue-router';
 import { EditorPopoverHost } from '@/editor/components/popover';
 import ShareButton from '@/editor/components/ShareButton.vue';
+import ChatBox from '@/editor/components/ChatBox.vue';
+import { isMobile } from '@/util/isMobile.ts';
 
 const { joinKey } = defineProps<{
   joinKey: string;
@@ -64,6 +66,8 @@ const loadingOpacity = computed(() =>
 );
 
 const viewportInitialized = ref(false);
+
+const mobile = isMobile();
 </script>
 
 <template>
@@ -91,6 +95,7 @@ const viewportInitialized = ref(false);
       <Teleport to="#navbar-end">
         <ShareButton />
       </Teleport>
+      <ChatBox v-if="!mobile" />
     </template>
 
     <div
@@ -110,7 +115,6 @@ const viewportInitialized = ref(false);
       </div>
     </div>
   </div>
-
   <PreferencesOverlay />
 </template>
 

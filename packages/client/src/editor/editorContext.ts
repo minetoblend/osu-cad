@@ -10,6 +10,7 @@ import { Preferences } from '@osucad/common';
 import { ToolManager } from '@/editor/tools/toolManager.ts';
 import { InjectionKey } from 'vue';
 import { EditorSocket } from '@/editor/editorSocket.ts';
+import { ChatManager } from '@/editor/chat.ts';
 
 export interface EditorContext {
   socket: EditorSocket;
@@ -23,6 +24,7 @@ export interface EditorContext {
   audioManager: AudioManager;
   preferences: Preferences;
   tools: ToolManager;
+  chat: ChatManager;
 }
 
 export const EditorContext: InjectionKey<EditorContext> = Symbol('editor');

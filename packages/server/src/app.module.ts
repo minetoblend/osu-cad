@@ -20,6 +20,7 @@ import { BullBoardModule } from '@bull-board/nestjs';
 import { ExpressAdapter } from '@bull-board/express';
 import { BullboardAuthMiddleware } from './bullboard-auth.middleware';
 import { CacheModule } from '@nestjs/cache-manager';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { CacheModule } from '@nestjs/cache-manager';
     }),
     CacheModule.register({ isGlobal: true }),
     ScheduleModule.forRoot(),
+    EventEmitterModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [],

@@ -8,6 +8,7 @@ import { BeatmapEntity } from '../beatmap/beatmap.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EditorRoomEntity } from './editor-room.entity';
 import { Repository } from 'typeorm';
+import { OnEvent } from '@nestjs/event-emitter';
 
 @Injectable()
 export class EditorRoomService {
@@ -25,13 +26,6 @@ export class EditorRoomService {
     @InjectRepository(EditorRoomEntity)
     private readonly editorRoomRepository: Repository<EditorRoomEntity>,
   ) {
-    beatmapService.onAccessChange.addListener(({ beatmap }) =>
-      this.onBeatmapAccessChanged(beatmap),
-    );
-    permissionsService.onPermissionChange.addListener(({ beatmap, user }) =>
-      this.onBeatmapAccessChanged(beatmap, user),
-    );
-
     setInterval(async () => {
       this.printStats();
 
@@ -144,6 +138,7 @@ export class EditorRoomService {
     }
   }
 
+  @OnEvent('beatmapPermissionChange', { async: true })
   async onBeatmapAccessChanged(beatmap: BeatmapEntity, userId?: number) {
     const room = await this.getRoom(beatmap.uuid);
     if (!room) return;
