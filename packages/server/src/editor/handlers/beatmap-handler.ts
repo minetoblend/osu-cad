@@ -15,12 +15,7 @@ export class BeatmapHandler extends MessageHandler {
     roomUser.send('beatmap', this.room.beatmap.serialize());
   }
 
-  readonly reusableContext = new CommandContext(
-    this.room.beatmap,
-    false,
-    false,
-    0,
-  );
+  private reusableContext?: CommandContext;
 
   @OnMessage('commands')
   onCommands(roomUser: RoomUser, commands: Uint8Array): void {
@@ -33,6 +28,14 @@ export class BeatmapHandler extends MessageHandler {
 
     const decodedCommands = decodeCommands(commands);
     this.room.hasUnsavedChanges = true;
+
+    this.reusableContext ??= new CommandContext(
+      this.room.beatmap,
+      false,
+      false,
+      0,
+    );
+
     for (const command of decodedCommands) {
       this.reusableContext.version = command.version;
       const handler = getCommandHandler(command.command);
