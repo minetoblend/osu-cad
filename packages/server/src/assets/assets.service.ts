@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import {
   GetObjectCommand,
+  GetObjectCommandOutput,
   HeadObjectCommand,
   PutObjectCommand,
   S3Client,
@@ -217,15 +218,25 @@ export class AssetsService {
     return asset;
   }
 
-  async getAssetContent(asset: AssetEntity): Promise<Buffer | null> {
+  private async getObject(
+    asset: S3AssetEntity,
+  ): Promise<GetObjectCommandOutput> {
     const command = new GetObjectCommand({
-      Bucket: asset.asset.bucket,
-      Key: asset.asset.key,
+      Bucket: asset.bucket,
+      Key: asset.key,
     });
 
-    const response = await this.s3.send(command);
+    return await this.s3.send(command);
+  }
 
-    const bytes = await response.Body?.transformToByteArray();
+  async getAssetStream(asset: AssetEntity): Promise<ReadableStream | null> {
+    const object = await this.getObject(asset.asset);
+    return object.Body?.transformToWebStream() ?? null;
+  }
+
+  async getAssetContent(asset: AssetEntity): Promise<Buffer | null> {
+    const object = await this.getObject(asset.asset);
+    const bytes = await object.Body?.transformToByteArray();
 
     if (!bytes) {
       return null;
@@ -307,6 +318,17 @@ export class AssetsService {
 
   async getS3Asset(key: string): Promise<S3AssetEntity | null> {
     return this.s3AssetRepository.findOneBy({ key });
+  }
+
+  async getAssetsForBeatmap(mapset: MapsetEntity): Promise<AssetEntity[]> {
+    return this.assetRepository.find({
+      where: {
+        mapset: {
+          id: mapset.id,
+        },
+      },
+      relations: ['asset'],
+    });
   }
 }
 

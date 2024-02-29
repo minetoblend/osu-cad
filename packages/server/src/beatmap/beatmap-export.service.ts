@@ -22,10 +22,10 @@ import {
 import { MapsetEntity } from './mapset.entity';
 import { BeatmapEncoder } from 'osu-parsers';
 import { BeatmapImportService } from './beatmap-import.service';
-import * as fs from 'fs/promises';
-import * as path from 'path';
 import * as JSZip from 'jszip';
 import { BeatmapSnapshotService } from './beatmap-snapshot.service';
+import { AssetsService } from 'src/assets/assets.service';
+import { AssetEntity } from 'src/assets/asset.entity';
 
 @Injectable()
 export class BeatmapExportService {
@@ -34,17 +34,18 @@ export class BeatmapExportService {
     private readonly roomManager: EditorRoomService,
     private readonly beatmapImportService: BeatmapImportService,
     private readonly snapshotService: BeatmapSnapshotService,
+    private readonly assetsService: AssetsService,
   ) {}
 
   async convertMapset(mapset: MapsetEntity) {
     mapset.beatmaps.forEach((it) => (it.mapset = mapset));
 
-    const path = await this.beatmapImportService.mapsetPath(mapset.id);
-
     const archive = new JSZip();
     const encoder = new BeatmapEncoder();
 
-    await this.writeDirectoryToArchive(archive, path);
+    const assets = await this.assetsService.getAssetsForBeatmap(mapset);
+
+    await this.writeAssetsToArchive(archive, assets);
 
     for (const beatmap of mapset.beatmaps) {
       const snapshot = await this.snapshotService.getLatestSnapshot(beatmap);
@@ -85,21 +86,15 @@ export class BeatmapExportService {
     return archive;
   }
 
-  private async writeDirectoryToArchive(archive: JSZip, directoryPath: string) {
-    const files = await fs.readdir(directoryPath);
-    for (const file of files) {
-      if (file.endsWith('.osu')) continue;
+  private async writeAssetsToArchive(archive: JSZip, assets: AssetEntity[]) {
+    for (const asset of assets) {
+      let path = asset.path;
+      if (path.startsWith('/')) path = path.slice(1);
 
-      const stat = await fs.stat(path.join(directoryPath, file));
-      if (stat.isDirectory()) {
-        const folder = archive.folder(file);
-        await this.writeDirectoryToArchive(
-          folder,
-          path.join(directoryPath, file),
-        );
-      } else {
-        const buffer = await fs.readFile(path.join(directoryPath, file));
-        archive.file(file, buffer);
+      const buffer = await this.assetsService.getAssetContent(asset);
+
+      if (buffer) {
+        archive.file(path, buffer);
       }
     }
   }
