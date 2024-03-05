@@ -21,6 +21,7 @@ async function bootstrap() {
     secret: process.env.SESSION_SECRET ?? 'secret',
     resave: false,
     saveUninitialized: false,
+    rolling: true,
     cookie: { maxAge: 86400000 },
     store: new RedisStore({
       client: redisClient,
