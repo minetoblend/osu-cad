@@ -153,7 +153,7 @@ export class ScaleHitObjectsInteraction extends UndoableInteraction {
             position,
             path,
             expectedDistance: hitObject.expectedDistance * scale,
-            velocity: hitObject.velocity * scale,
+            velocity: (hitObject.velocity / hitObject.baseVelocity) * scale,
           }),
         );
       } else {
