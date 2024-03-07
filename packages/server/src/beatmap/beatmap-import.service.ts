@@ -303,7 +303,7 @@ export class BeatmapImportService {
 
       let s = sample.sampleSet;
       if (s === 'None')
-        s = imported.controlPoints.samplePointAt(time).sampleSet;
+        s = imported.controlPoints.samplePointAt(time + 5).sampleSet;
       if (s === 'None') {
         switch (imported.general.sampleSet) {
           case 0:
