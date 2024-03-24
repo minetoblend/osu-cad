@@ -82,6 +82,7 @@ const beatmaps = computed(() => {
       title: mapset.value!.title,
       isOwner: true,
       lastEdited: '',
+      creator: mapset.value!.creator,
       links: {
         edit: beatmap.links.edit,
         thumbnail: beatmap.links.thumbnailSmall,
