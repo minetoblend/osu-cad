@@ -9,6 +9,10 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 10s
+      retries: 10
   redis:
     image: redis:7.2
     restart: always
@@ -21,19 +25,35 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: server
+    restart: always
     env_file:
-      - .env
+      - .env2
     depends_on:
-      - mysql
-      - redis
-      - mongodb
-
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      mongodb:
+        condition: service_started
     links:
       - mysql
       - redis
       - mongodb
     volumes:
       - server_data:/app/packages/server/files
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: client-ssr
+    env_file:
+      - .env2
+    depends_on:
+      server:
+        condition: service_started
+    links:
+      - server
   caddy:
     image: caddy:2.7.6
     ports:

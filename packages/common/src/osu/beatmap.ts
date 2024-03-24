@@ -104,11 +104,15 @@ export class MapsetMetadata {
   title: string;
   artist: string;
   tags: string;
+  beatmapId: number;
+  beatmapSetId: number;
 
   constructor(options: SerializedMapsetMetadata) {
     this.title = options.title;
     this.artist = options.artist;
     this.tags = options.tags;
+    this.beatmapId = options.beatmapId;
+    this.beatmapSetId = options.beatmapSetId;
   }
 
   serialize(): SerializedMapsetMetadata {
@@ -116,6 +120,8 @@ export class MapsetMetadata {
       title: this.title,
       artist: this.artist,
       tags: this.tags,
+      beatmapId: this.beatmapId,
+      beatmapSetId: this.beatmapSetId,
     };
   }
 }

@@ -1,23 +1,30 @@
-from node:lts-alpine
+FROM node:20-slim AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
-WORKDIR /app
+FROM base AS build
+COPY . /usr/src/app
+WORKDIR /usr/src/app
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm run -r build
+RUN pnpm deploy --filter "@osucad/server" --prod /prod/server
+RUN pnpm deploy --filter "@osucad/client" --prod /prod/client
 
-COPY package.json /app
-COPY packages/common/package.json /app/packages/common/package.json
-COPY packages/server/package.json /app/packages/server/package.json
-COPY packages/client/package.json /app/packages/client/package.json
-COPY yarn.lock /app
+FROM base AS server
+COPY --from=build /prod/server /prod/server
+WORKDIR /prod/server
 
-RUN --mount=type=cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn yarn --frozen-lockfile
-
-COPY . /app
-
-RUN yarn workspace @osucad/common build
-RUN yarn workspace @osucad/server build
-RUN yarn workspace @osucad/client build
-
-RUN --mount=type=cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn yarn install --production --ignore-scripts --prefer-offline
-RUN --mount=type=cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn yarn workspace @osucad/server add --os=linux --libc=musl --cpu=x64 sharp
 ENV NODE_ENV=production
 
-CMD ["yarn", "workspace", "@osucad/server", "start:prod"]
+EXPOSE 3000
+CMD [ "pnpm", "start:prod" ]
+
+FROM base AS client-ssr
+COPY --from=build /prod/client /prod/client
+WORKDIR /prod/client
+
+ENV NODE_ENV=production
+
+EXPOSE 5173
+CMD [ "pnpm", "start" ]

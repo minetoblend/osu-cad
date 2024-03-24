@@ -58,7 +58,7 @@ export class CommandManager {
       if (this.commandBuffer.length === 0) return;
       const commands = this.commandBuffer;
       this.commandBuffer = [];
-      this.socket.emit('commands', encodeCommands(commands));
+      this.socket.send('commands', encodeCommands(commands));
     }, 50);
   }
 
@@ -167,8 +167,16 @@ class History {
   private undoStack: HistoryEntry[][] = shallowReactive([]);
   private redoStack: HistoryEntry[][] = shallowReactive([]);
 
-  canUndo = computed(() => this.undoStack.length > 0);
-  canRedo = computed(() => this.redoStack.length > 0);
+  private _canUndo = computed(() => this.undoStack.length > 0);
+  protected _canRedo = computed(() => this.redoStack.length > 0);
+
+  get canUndo() {
+    return this._canUndo.value;
+  }
+
+  get canRedo() {
+    return this._canRedo.value;
+  }
 
   record(command: EditorCommand, context: CommandContext) {
     const handler = getCommandHandler(command);

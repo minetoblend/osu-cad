@@ -9,7 +9,7 @@ import { ModuleRef } from '@nestjs/core';
 export class EditorRoomService {
   private readonly rooms = new Map<
     BeatmapId,
-    EditorRoom | Promise<EditorRoom>
+    EditorRoom | Promise<EditorRoom | null>
   >();
 
   private readonly logger = new Logger(EditorRoomService.name);
@@ -59,10 +59,10 @@ export class EditorRoomService {
     return room;
   }
 
-  async getRoom(beatmapId: BeatmapId): Promise<EditorRoom | undefined> {
+  async getRoom(beatmapId: BeatmapId): Promise<EditorRoom | null> {
     const room = this.rooms.get(beatmapId);
 
-    if (!room) return undefined;
+    if (!room) return null;
 
     return room instanceof Promise ? await room : room;
   }
@@ -76,8 +76,10 @@ export class EditorRoomService {
         else this.rooms.delete(beatmapId);
         return room;
       });
-      this.rooms.set(beatmapId, room);
-      return room;
+      if (room) {
+        this.rooms.set(beatmapId, room);
+      }
+      return room ?? null;
     }
 
     return room instanceof Promise ? await room : room;

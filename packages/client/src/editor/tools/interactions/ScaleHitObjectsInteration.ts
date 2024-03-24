@@ -136,7 +136,6 @@ export class ScaleHitObjectsInteraction extends UndoableInteraction {
     scale: number,
     center: Vec2,
   ) {
-    console.log(hitObjects.length);
     for (const hitObject of hitObjects) {
       const position = hitObject.position.sub(center).scale(scale).add(center);
 

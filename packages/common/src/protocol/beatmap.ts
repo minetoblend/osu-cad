@@ -18,6 +18,8 @@ export interface SerializedMapsetMetadata {
   title: string;
   artist: string;
   tags: string;
+  beatmapId: number;
+  beatmapSetId: number;
 }
 
 export type BeatmapId = string;

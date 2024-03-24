@@ -11,7 +11,7 @@ import {
 import { DestroyOptions, FederatedPointerEvent } from 'pixi.js';
 import { snapSliderLength } from './snapSliderLength.ts';
 import { SliderPathVisualizer } from './SliderPathVisualizer.ts';
-import { isMobile } from '@/util/isMobile.ts';
+import { isMobile } from '@/utils';
 
 export class SliderTool extends ComposeTool {
   private previewObject?: HitCircle;

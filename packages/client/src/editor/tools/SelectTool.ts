@@ -32,6 +32,7 @@ import { ButtonPanelButton } from '@/editor/drawables/buttonPanel.ts';
 import { mirrorHitObjects } from '@/editor/interaction/mirrorHitObjects.ts';
 import { getHitObjectPositions } from '@/editor/tools/snapping/HitObjectSnapProvider.ts';
 import { transformHitObjects } from '@/editor/tools/interactions/TransformHitObjects.ts';
+import { ShortcutId } from '@/editor/shortcuts';
 
 export class SelectTool extends ComposeTool {
   preferences: Preferences;
@@ -118,35 +119,35 @@ export class SelectTool extends ComposeTool {
     }
   }
 
-  protected onKeyDown(evt: KeyboardEvent, shortcut: string) {
+  protected onKeyDown(evt: KeyboardEvent, shortcut: ShortcutId) {
     super.onKeyDown(evt, shortcut);
     switch (shortcut) {
-      case 'ctrl+a':
+      case 'hitobject.select-all':
         this.selectAllHitObjects();
         break;
-      case 'q':
+      case 'hitobject.toggle-newcombo':
         this.toggleNewCombo();
         break;
-      case 'ctrl+shift+r':
+      case 'hitobject.rotate':
         this.beginInteraction(RotateHitObjectsInteraction, [
           ...this.selection.selectedObjects,
         ]);
         break;
-      case 'ctrl+shift+s':
+      case 'hitobject.scale':
         this.beginInteraction(ScaleHitObjectsInteraction, [
           ...this.selection.selectedObjects,
         ]);
         break;
-      case 'ctrl+shift+f':
+      case 'hitobject.convert-to-stream':
         this.sliderToStream();
         break;
-      case 'ctrl+shift+e':
+      case 'axis.create':
         this.beginInteraction(InsertAxisInteraction);
         break;
-      case 'j':
+      case 'hitobject.shift-backward':
         this.shiftSelection(-1);
         break;
-      case 'k':
+      case 'hitobject.shift-forward':
         this.shiftSelection(1);
         break;
 

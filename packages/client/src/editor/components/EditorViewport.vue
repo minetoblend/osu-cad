@@ -5,7 +5,7 @@ import { EditorViewportDrawable } from '../drawables/EditorViewportDrawable.ts';
 import gsap from 'gsap';
 import { usePreferences } from '@/composables/usePreferences.ts';
 import { useEditor } from '@/editor/editorContext.ts';
-import { isMobile } from '@/util/isMobile.ts';
+import { isMobile } from '@/utils';
 
 //RenderTarget.defaultDescriptor.depth = true;
 
@@ -59,10 +59,6 @@ onMounted(async () => {
   });
 
   console.log('app', app);
-
-  app.renderer.view.texture.source.on('resize', () => {
-    console.log('resize');
-  });
 
   viewportContainer.value!.prepend(app.canvas);
 

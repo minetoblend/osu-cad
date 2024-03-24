@@ -1,5 +1,6 @@
 import {
   Controller,
+  ForbiddenException,
   Get,
   HttpStatus,
   Param,
@@ -146,6 +147,8 @@ export class MapsetController {
 
     const mapset = await this.beatmapService.findMapsetById(id);
 
+    if (!mapset) return response.sendStatus(404);
+
     if (mapset.s3Storage) {
       const url = await this.assetsService.getAssetUrl(mapset, path);
 
@@ -173,5 +176,18 @@ export class MapsetController {
       console.log(e);
       response.status(404).send('File not found');
     }
+  }
+
+  @Get(':id')
+  @UseGuards(AuthGuard)
+  async getMapset(@Req() request: Request, @Param('id') id: string) {
+    const mapset = await this.beatmapService.findMapsetById(id);
+    if (!mapset) throw new Error('Mapset not found');
+
+    if (mapset.creator.id !== request.session.user!.id) {
+      throw new ForbiddenException();
+    }
+
+    return this.mapsetTransformer.transform(mapset);
   }
 }

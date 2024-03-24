@@ -1,7 +1,7 @@
 import { PathType, SerializedPathPoint } from '../types';
 import { Vec2 } from '../math';
 import { PathApproximator, Vector2 } from 'osu-classes';
-import { clamp } from '@vueuse/core';
+import { clamp } from '../util/clamp';
 
 export class SliderPath {
   controlPoints: SerializedPathPoint[];

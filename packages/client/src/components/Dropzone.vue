@@ -35,8 +35,8 @@ function onInput(evt: Event) {
 <template>
   <div
     ref="dropzone"
-    class="oc-dropzone"
-    :class="{ 'oc-dropzone--active': isOverDropZone }"
+    class="b-1 b-gray-400 p-4 text-center rounded-md transition-shadow"
+    :class="[isOverDropZone && 'ring ring-primary-600']"
   >
     <input
       id="osz-file"
@@ -56,23 +56,23 @@ function onInput(evt: Event) {
 </template>
 
 <style lang="scss" scoped>
-.oc-dropzone {
-  border: 2px dashed rgba($text-color, 0.35);
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-
-  &--active {
-    border: 2px dashed $primary;
-  }
-
-  :slotted(h3) {
-    font-size: 1.25rem;
-    margin: 0;
-    line-height: unset;
-  }
-}
+//.oc-dropzone {
+//  border: 2px dashed rgba($text-color, 0.35);
+//  padding: 1rem;
+//  display: flex;
+//  flex-direction: column;
+//  align-items: center;
+//  justify-content: center;
+//  border-radius: 8px;
+//
+//  &--active {
+//    border: 2px dashed $primary;
+//  }
+//
+//  :slotted(h3) {
+//    font-size: 1.25rem;
+//    margin: 0;
+//    line-height: unset;
+//  }
+//}
 </style>

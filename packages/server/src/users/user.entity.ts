@@ -9,7 +9,7 @@ export class UserEntity {
   @Column()
   username: string;
 
-  @Column()
+  @Column({})
   avatarUrl: string | null;
 
   @CreateDateColumn()

@@ -26,10 +26,8 @@ export class ButtonPanel extends Component {
 
   onLoad() {
     watchEffect(() => {
-      this.undoButton.disabled =
-        !this.editor.commandManager.history.canUndo.value;
-      this.redoButton.disabled =
-        !this.editor.commandManager.history.canRedo.value;
+      this.undoButton.disabled = !this.editor.commandManager.history.canUndo;
+      this.redoButton.disabled = !this.editor.commandManager.history.canRedo;
     });
 
     watchEffect(() => {

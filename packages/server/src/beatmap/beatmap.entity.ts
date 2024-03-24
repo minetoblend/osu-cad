@@ -5,11 +5,15 @@ import {
   Generated,
   Index,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { MapsetEntity } from './mapset.entity';
 import { BeatmapAccess, randomString } from '@osucad/common';
 import { S3AssetEntity } from '../assets/s3-asset.entity';
+import { EditorSessionEntity } from '../editor/editor-session.entity';
+import { ParticipantEntity } from './participant.entity';
+import { BeatmapLastAccessEntity } from './beatmap-last-access.entity';
 
 @Entity('beatmaps')
 export class BeatmapEntity {
@@ -21,6 +25,8 @@ export class BeatmapEntity {
   osuId: number | null;
   @Column('float')
   starRating: number;
+  @Column('boolean', { default: false })
+  deleted: boolean;
 
   @Column()
   @Generated('uuid')
@@ -44,6 +50,18 @@ export class BeatmapEntity {
 
   @ManyToOne(() => S3AssetEntity, { nullable: true })
   thumbnailSmall: S3AssetEntity;
+
+  @Column({ nullable: true })
+  thumbnailId: string | null;
+
+  @OneToMany(() => EditorSessionEntity, (session) => session.beatmap)
+  sessions: EditorSessionEntity[];
+
+  @OneToMany(() => ParticipantEntity, (participant) => participant.beatmap)
+  participants: ParticipantEntity[];
+
+  @OneToMany(() => BeatmapLastAccessEntity, (lastAccess) => lastAccess.beatmap)
+  lastAccess: BeatmapLastAccessEntity[];
 
   @BeforeInsert()
   protected generateShareId() {

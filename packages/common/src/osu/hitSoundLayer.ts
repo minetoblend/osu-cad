@@ -9,7 +9,8 @@ export class HitSoundLayer {
     this.sampleSet = options.sampleSet;
     this.type = options.type;
     this.customFilename = options.customFilename;
-    this.samples = options.samples.map((sample) => new HitSoundSample(sample));
+    this.samples =
+      options.samples?.map((sample) => new HitSoundSample(sample)) ?? [];
     this.enabled = options.enabled;
     this.volume = options.volume;
   }

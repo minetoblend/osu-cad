@@ -15,13 +15,17 @@ const {
 </script>
 
 <template>
-  <Button v-if="copySupported" class="copy-button" @click="copy(value)">
+  <Button
+    v-if="copySupported"
+    class="flex items-center gap-2 min-w-25"
+    @click="copy(value)"
+  >
     <template v-if="!copied">
-      <q-icon name="content_copy" />
+      <div class="i-fas-copy" name="content_copy" />
       Copy
     </template>
     <template v-else>
-      <q-icon name="check" />
+      <div class="i-fas-check" />
       Copied
     </template>
   </Button>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { GraphicsPreferences } from '@osucad/common';
 
-defineProps<{
+const props = defineProps<{
   preferences: GraphicsPreferences;
 }>();
 
@@ -33,8 +33,8 @@ const availableRenderers = [
       </Button>
     </ButtonGroup>
   </FormField>
-  <FormField label="Resolution">
-    <QSlider v-model="preferences.resolution" :min="0" :max="1" :step="0.01" />
+  <FormField full-width label="Resolution">
+    <Slider v-model="preferences.resolution" :min="0" :max="1" :step="0.01" />
   </FormField>
   <FormField label="Antialiasing">
     <Switch v-model="preferences.antialiasing" />

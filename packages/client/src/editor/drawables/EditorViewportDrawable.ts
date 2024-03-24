@@ -18,7 +18,7 @@ import { PopoverContainer } from './menu/PopoverContainer.ts';
 import { seekInteraction } from '../interaction/Seek.ts';
 import { AxisContainer } from '../AxisContainer.ts';
 import { EditorContext } from '@/editor/editorContext.ts';
-import { isMobile } from '@/util/isMobile.ts';
+import { isMobile } from '@/utils';
 import { MobileTimelineDrawable } from '@/editor/drawables/timeline/MobileTimelineDrawable.ts';
 import { Component } from '@/editor/drawables/Component.ts';
 import { Toolbar } from '@/editor/tools/Toolbar.ts';
@@ -148,7 +148,7 @@ export class EditorViewportDrawable extends Drawable {
 
       frameStatsOverlay.position.set(
         this.canvasSize.width,
-        this.timeline.position.y,
+        this.timeline.position.y - 100,
       );
 
       this.toolbar.setBounds(bounds.splitLeft(50));
@@ -179,6 +179,10 @@ export class EditorViewportDrawable extends Drawable {
         });
       }
     });
+  }
+
+  onTick() {
+    this.editor.beatmapManager.hitObjects;
   }
 
   playfield!: Container;

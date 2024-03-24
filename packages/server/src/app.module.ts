@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { HttpException, Module } from '@nestjs/common';
 import { BeatmapModule } from './beatmap/beatmap.module';
 import { UserModule } from './users/user.module';
 import { AuthModule } from './auth/auth.module';
@@ -21,12 +21,21 @@ import { ExpressAdapter } from '@bull-board/express';
 import { BullboardAuthMiddleware } from './bullboard-auth.middleware';
 import { CacheModule } from '@nestjs/cache-manager';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { SentryInterceptor, SentryModule } from '@ntegral/nestjs-sentry';
+import * as process from 'process';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: path.resolve(__dirname, '../../../.env'),
+    }),
+    SentryModule.forRoot({
+      dsn: 'https://4f654a932c3f8c19509fc108e18235a2@o4506916793745408.ingest.us.sentry.io/4506920217935872',
+      debug: true,
+      environment: process.env.NODE_ENV,
+      logLevels: ['debug'],
     }),
     TypeOrmModule.forRoot(dbdatasource),
     MongooseModule.forRootAsync({
@@ -70,6 +79,19 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     EventEmitterModule.forRoot(),
   ],
   controllers: [AppController],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useFactory: () =>
+        new SentryInterceptor({
+          filters: [
+            {
+              type: HttpException,
+              filter: (exception: HttpException) => 500 > exception.getStatus(),
+            },
+          ],
+        }),
+    },
+  ],
 })
 export class AppModule {}

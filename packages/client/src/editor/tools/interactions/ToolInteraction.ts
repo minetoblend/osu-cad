@@ -3,6 +3,7 @@ import { FederatedPointerEvent } from 'pixi.js';
 import { Drawable } from '../../drawables/Drawable.ts';
 import { Inject } from '../../drawables/di';
 import { EditorContext } from '@/editor/editorContext.ts';
+import { ShortcutId } from '@/editor/shortcuts';
 
 export class ToolInteraction extends Drawable {
   constructor(protected readonly tool: ComposeTool) {
@@ -30,7 +31,7 @@ export class ToolInteraction extends Drawable {
 
   onDragEnd?(event: FederatedPointerEvent): void;
 
-  onKeyDown?(event: KeyboardEvent, shortcut: string): boolean | void;
+  onKeyDown?(event: KeyboardEvent, shortcut?: ShortcutId): boolean | void;
 
   onTick?(): void;
 

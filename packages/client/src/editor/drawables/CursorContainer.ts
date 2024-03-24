@@ -16,6 +16,8 @@ export class CursorContainer extends Drawable {
   mousePos = new Vec2();
   mouseDown = false;
 
+  dirty = true;
+
   onLoad() {
     this.editor.socket.on('userJoined', (user) => {
       this.addUserCursor(user);
@@ -31,21 +33,25 @@ export class CursorContainer extends Drawable {
 
     this.on('globalpointermove', (evt) => {
       this.mousePos = evt.getLocalPosition(this);
+      this.dirty = true;
     });
   }
 
   onTick() {
     const now = performance.now();
     if (now - this.lastUpdate > this.updateInterval) {
-      this.editor.socket.emit('setPresence', {
-        activeBeatmap: null,
-        activity: UserActivity.composeScreen({
-          cursorPosition: this.mousePos,
-          mouseDown: this.mouseDown,
-          currentTime: this.editor.clock.currentTime,
-          isPlaying: this.editor.clock.isPlaying,
-        }),
-      });
+      if (this.dirty) {
+        this.editor.socket.send('setPresence', {
+          activeBeatmap: null,
+          activity: UserActivity.composeScreen({
+            cursorPosition: this.mousePos,
+            mouseDown: this.mouseDown,
+            currentTime: this.editor.clock.currentTime,
+            isPlaying: this.editor.clock.isPlaying,
+          }),
+        });
+        this.dirty = false;
+      }
       this.lastUpdate = now;
     }
   }

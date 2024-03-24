@@ -2,7 +2,7 @@ import { Assets, Circle, Container, Graphics, Point, Sprite } from 'pixi.js';
 import { Drawable } from '../drawables/Drawable.ts';
 import { HitObject, PathType, Slider } from '@osucad/common';
 import { Inject } from '../drawables/di';
-import { isMobile } from '@/util/isMobile.ts';
+import { isMobile } from '@/utils';
 import { EditorContext } from '@/editor/editorContext.ts';
 
 export class SliderPathVisualizer extends Drawable {

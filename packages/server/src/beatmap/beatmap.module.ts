@@ -23,6 +23,8 @@ import { BullAdapter } from '@bull-board/api/bullAdapter';
 import { MapsetTransformer } from './mapset.transformer';
 import { BeatmapTransformer } from './beatmapTransformer';
 import { BeatmapMigrator } from './beatmap-migrator';
+import { BeatmapLastAccessEntity } from './beatmap-last-access.entity';
+import { BeatmapImportModule } from './import/beatmap-import.module';
 
 @Module({
   imports: [
@@ -33,12 +35,17 @@ import { BeatmapMigrator } from './beatmap-migrator';
       EditorSessionEntity,
       BeatmapSnapshotEntity,
       OsuUserEntity,
+      BeatmapLastAccessEntity,
     ]),
     UserModule,
     forwardRef(() => EditorModule),
     forwardRef(() => AssetsModule),
+    forwardRef(() => BeatmapImportModule),
     BullModule.registerQueue({
       name: 'beatmap-thumbnail',
+      defaultJobOptions: {
+        delay: 1000,
+      },
     }),
     BullBoardModule.forFeature({
       name: 'beatmap-thumbnail',

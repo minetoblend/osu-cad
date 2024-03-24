@@ -14,6 +14,7 @@ import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { BeatmapThumbnailJob } from './beatmap-thumbnail.processor';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { BeatmapLastAccessEntity } from './beatmap-last-access.entity';
 
 @Injectable()
 export class BeatmapService implements OnModuleInit {
@@ -26,6 +27,8 @@ export class BeatmapService implements OnModuleInit {
     private readonly participantRepository: Repository<ParticipantEntity>,
     @InjectRepository(EditorSessionEntity)
     private readonly sessionRepository: Repository<EditorSessionEntity>,
+    @InjectRepository(BeatmapLastAccessEntity)
+    private readonly lastAccessRepository: Repository<BeatmapLastAccessEntity>,
     private readonly snapshotService: BeatmapSnapshotService,
     @InjectQueue('beatmap-thumbnail')
     private readonly thumbnailQueue: Queue<BeatmapThumbnailJob>,
@@ -58,6 +61,7 @@ export class BeatmapService implements OnModuleInit {
     for (const beatmap of mapset.beatmaps) {
       beatmap.mapset = mapset;
       await this.beatmapRepository.save(beatmap);
+      await this.markAccessed(beatmap, mapset.creator);
     }
 
     return mapset;
@@ -101,7 +105,7 @@ export class BeatmapService implements OnModuleInit {
   async findBeatmapByShareKey(shareId: string) {
     return await this.beatmapRepository.findOne({
       where: { shareId },
-      relations: ['mapset'],
+      relations: ['mapset', 'mapset.creator'],
     });
   }
 
@@ -152,7 +156,7 @@ export class BeatmapService implements OnModuleInit {
       .innerJoinAndSelect('mapset.creator', 'creator')
       .where({ user })
       .distinctOn(['beatmap.id'])
-      .orderBy('session.endDate', 'DESC')
+      .orderBy('COALESCE(session.endDate, mapset.created)', 'DESC')
       .limit(10)
       .getMany();
   }
@@ -173,5 +177,90 @@ export class BeatmapService implements OnModuleInit {
         removeOnFail: 5000,
       },
     );
+  }
+
+  async getRecentBeatmaps(
+    userId: number,
+    filter: 'all' | 'own' | 'shared-with-me',
+    sort: 'artist' | 'title' | 'recent',
+    search?: string,
+  ) {
+    const query = this.beatmapRepository
+      .createQueryBuilder('beatmap')
+      .leftJoin(
+        'beatmap.lastAccess',
+        'lastAccess',
+        'beatmap.id = lastAccess.beatmapId and lastAccess.userId = :userId',
+      )
+      .innerJoinAndSelect('beatmap.mapset', 'mapset')
+      .innerJoinAndSelect('mapset.creator', 'creator')
+      .andWhere('beatmap.deleted = false');
+
+    if (filter === 'all') {
+      query.leftJoin('beatmap.participants', 'participant').andWhere(
+        `
+        (
+          creator.id = :userId OR
+          beatmap.access > 0 OR
+          (participant.user.id = :userId AND participant.access > 0)
+        )
+      `,
+        { userId },
+      );
+    } else if (filter === 'own') {
+      query.andWhere('creator.id = :userId', { userId });
+    } else if (filter === 'shared-with-me') {
+      query
+        .leftJoin('beatmap.participants', 'participant')
+        .andWhere('creator.id != :userId', { userId })
+        .andWhere(
+          `
+        (
+          (participant.user.id = :userId AND participant.access > 0)
+        )`,
+          { userId },
+        );
+    }
+
+    if (search && search.length > 0) {
+      query.andWhere(
+        '(mapset.artist LIKE :search OR mapset.title LIKE :search OR beatmap.name LIKE :search OR creator.username LIKE :search)',
+        { search: `%${search}%` },
+      );
+    }
+
+    switch (sort) {
+      case 'artist':
+        query.orderBy('mapset.artist', 'ASC');
+        break;
+      case 'title':
+        query.orderBy('mapset.title', 'ASC');
+        break;
+      case 'recent':
+        query.orderBy('lastAccess.date', 'DESC');
+        break;
+    }
+
+    return await query.limit(200).getMany();
+  }
+
+  markAccessed(beatmap: BeatmapEntity, user: UserEntity) {
+    return this.lastAccessRepository
+      .createQueryBuilder()
+      .insert()
+      .into(BeatmapLastAccessEntity)
+      .values({
+        beatmapId: beatmap.id,
+        userId: user.id,
+        date: new Date(),
+      })
+      .orUpdate(['date'])
+      .execute();
+  }
+
+  async deleteBeatmap(beatmap: BeatmapEntity) {
+    await this.beatmapRepository.update(beatmap.id, {
+      deleted: true,
+    });
   }
 }

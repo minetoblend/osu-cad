@@ -22,60 +22,49 @@ const formattedRoomAge = useTimeAgo(() => new Date(props.room.createdAt));
 </script>
 
 <template>
-  <q-card flat>
-    <q-card-section>
-      <div class="q-mb-md">
-        <div class="row">
-          <q-avatar v-if="room.beatmap.links.thumbnail" rounded class="q-mr-md">
-            <img :src="room.beatmap.links.thumbnail.href" />
-          </q-avatar>
-          <div class="flex-grow-1">
-            <div class="row">
-              <div class="text-h6">
-                {{ room.mapset.artist }} - {{ room.mapset.title }}
-                <a :href="room.beatmap.links.edit.href" target="_blank">
-                  <q-icon name="open_in_new" />
-                </a>
-              </div>
-              <q-space />
-              <div class="text-caption">Started {{ formattedRoomAge }} ago</div>
-            </div>
-            <div class="text-subtitle2">
-              {{ room.beatmap.name }}
-            </div>
+  <div class="bg-gray-300 rounded p-2">
+    <div class="flex gap-4">
+      <div class="w-20 h-20 rounded overflow-hidden bg-gray-200">
+        <img
+          v-if="room.beatmap.links.thumbnail"
+          :src="room.beatmap.links.thumbnail.href"
+          class="cover-parent"
+        />
+      </div>
+      <div class="flex-1">
+        <div class="flex">
+          <div class="flex-1 text-lg flex items-center gap-2">
+            {{ room.mapset.title }}
+            <RouterLink :to="room.beatmap.links.edit.href">
+              <div class="i-fas-up-right-from-square block" />
+            </RouterLink>
+          </div>
+          <div class="text-caption text-sm text-gray-800">
+            Started {{ formattedRoomAge }} ago
+          </div>
+        </div>
+        <div>{{ room.mapset.artist }}</div>
+        <div>
+          <span class="px-3 rounded bg-primary-600">
+            {{ room.beatmap.name }}
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="mt-2">
+      <div
+        class="flex gap-2 my-1"
+        v-for="user in room.users"
+        :key="user.sessionId"
+      >
+        <img :src="user.avatarUrl!" class="w-10 h-10 rounded-full" />
+        <div>
+          <div class="font-bold">{{ user.username }}</div>
+          <div class="text-sm text-gray-500">
+            {{ translateAccess(user.access) }}
           </div>
         </div>
       </div>
-      <div class="grid">
-        <div class="col-4">
-          <q-list>
-            <transition-group name="user">
-              <q-item v-for="user in room.users" :key="user.sessionId">
-                <q-item-section>
-                  <div class="row items-center">
-                    <q-avatar
-                      v-if="user.avatarUrl"
-                      rounded
-                      size="25px"
-                      class="q-mr-md"
-                    >
-                      <img :src="user.avatarUrl" />
-                    </q-avatar>
-                    <div>
-                      <div>
-                        {{ user.username }}
-                      </div>
-                      <div class="text-primary">
-                        {{ translateAccess(user.access) }}
-                      </div>
-                    </div>
-                  </div>
-                </q-item-section>
-              </q-item>
-            </transition-group>
-          </q-list>
-        </div>
-      </div>
-    </q-card-section>
-  </q-card>
+    </div>
+  </div>
 </template>

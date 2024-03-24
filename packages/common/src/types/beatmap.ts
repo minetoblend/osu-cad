@@ -1,6 +1,7 @@
 import { UserInfo } from './userInfo';
 import { SerializedHitObject } from './hitobject';
 import {
+  BeatmapAccess,
   SerializedBeatmapDifficulty,
   SerializedBeatmapGeneral,
 } from '../protocol';
@@ -14,7 +15,7 @@ export interface MapsetInfo {
   tags: string[];
   createdAt: string;
   updatedAt: string;
-  beatmaps: BeatmapInfo[];
+  beatmaps: MapsetBeatmapInfo[];
   creator: UserInfo;
   links: {
     self: string;
@@ -23,15 +24,32 @@ export interface MapsetInfo {
   };
 }
 
-export interface BeatmapInfo {
+export interface MapsetBeatmapInfo {
   id: string;
   name: string;
   starRating: number;
+  creator: UserInfo;
   links: {
     self: string;
     edit: string;
     thumbnailSmall: string | null;
     thumbnailLarge: string | null;
+  };
+}
+
+export interface BeatmapInfo {
+  id: string;
+  title: string;
+  artist: string;
+  version: string;
+  lastEdited: string;
+  access: BeatmapAccess;
+  isOwner: boolean;
+  creator: UserInfo;
+  links: {
+    view: string;
+    edit: string;
+    thumbnail: string | null;
   };
 }
 

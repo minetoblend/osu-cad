@@ -13,3 +13,4 @@ export * from './hitSound2';
 export * from './hitSoundManager';
 export * from './hitSoundLayer';
 export * from './envelope';
+export * from './bookmark';

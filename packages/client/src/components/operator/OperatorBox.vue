@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Operator } from '../../editor/operators/operator.ts';
+import { Operator } from '@/editor/operators/operator.ts';
 
 defineProps<{
   operator: Operator;

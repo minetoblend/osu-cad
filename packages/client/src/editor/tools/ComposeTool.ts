@@ -13,6 +13,7 @@ import {
   onEditorKeyDown,
   onEditorKeyUp,
 } from '@/composables/onEditorKeyDown.ts';
+import { resolveShortcut, ShortcutId } from '@/editor/shortcuts';
 
 export class ComposeTool extends Drawable {
   private interactionContainer = new Container();
@@ -78,11 +79,8 @@ export class ComposeTool extends Drawable {
           break;
       }
 
-      let shortcut = '';
-      if (e.ctrlKey) shortcut += 'ctrl+';
-      if (e.shiftKey) shortcut += 'shift+';
-      if (e.altKey) shortcut += 'alt+';
-      shortcut += e.key.toLowerCase();
+      const shortcut = resolveShortcut(e);
+
       this.onKeyDown(e, shortcut);
     };
 
@@ -244,7 +242,7 @@ export class ComposeTool extends Drawable {
     this.interaction?.onDragEnd?.(evt);
   }
 
-  protected onKeyDown(evt: KeyboardEvent, shortcut: string) {
+  protected onKeyDown(evt: KeyboardEvent, shortcut?: ShortcutId) {
     if (this.interaction?.onKeyDown?.(evt, shortcut) === false) return;
 
     if (evt.key === 'Escape') {

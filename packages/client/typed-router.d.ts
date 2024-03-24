@@ -40,11 +40,24 @@ import type {
 declare module 'vue-router/auto/routes' {
   export interface RouteNamedMap {
     '/': RouteRecordInfo<'/', '/', Record<never, never>, Record<never, never>>,
+    '/[...path]': RouteRecordInfo<'/[...path]', '/:path(.*)', { path: ParamValue<true> }, { path: ParamValue<false> }>,
     '/admin': RouteRecordInfo<'/admin', '/admin', Record<never, never>, Record<never, never>>,
     '/admin/': RouteRecordInfo<'/admin/', '/admin', Record<never, never>, Record<never, never>>,
     '/admin/rooms': RouteRecordInfo<'/admin/rooms', '/admin/rooms', Record<never, never>, Record<never, never>>,
     '/admin/users': RouteRecordInfo<'/admin/users', '/admin/users', Record<never, never>, Record<never, never>>,
-    '/edit/[id]': RouteRecordInfo<'/edit/[id]', '/edit/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    '/beatmaps': RouteRecordInfo<'/beatmaps', '/beatmaps', Record<never, never>, Record<never, never>>,
+    '/beatmaps/': RouteRecordInfo<'/beatmaps/', '/beatmaps', Record<never, never>, Record<never, never>>,
+    '/beatmaps/import': RouteRecordInfo<'/beatmaps/import', '/beatmaps/import', Record<never, never>, Record<never, never>>,
+    '/beatmaps/my-beatmaps': RouteRecordInfo<'/beatmaps/my-beatmaps', '/beatmaps/my-beatmaps', Record<never, never>, Record<never, never>>,
+    '/beatmaps/recent': RouteRecordInfo<'/beatmaps/recent', '/beatmaps/recent', Record<never, never>, Record<never, never>>,
+    '/beatmaps/shared-with-me': RouteRecordInfo<'/beatmaps/shared-with-me', '/beatmaps/shared-with-me', Record<never, never>, Record<never, never>>,
+    '/edit': RouteRecordInfo<'/edit', '/edit', Record<never, never>, Record<never, never>>,
+    '/edit/[key]': RouteRecordInfo<'/edit/[key]', '/edit/:key', { key: ParamValue<true> }, { key: ParamValue<false> }>,
+    '/guide': RouteRecordInfo<'/guide', '/guide', Record<never, never>, Record<never, never>>,
+    '/guide/': RouteRecordInfo<'/guide/', '/guide', Record<never, never>, Record<never, never>>,
+    '/guide/keyboard-shortcuts': RouteRecordInfo<'/guide/keyboard-shortcuts', '/guide/keyboard-shortcuts', Record<never, never>, Record<never, never>>,
+    '/guide/overview': RouteRecordInfo<'/guide/overview', '/guide/overview', Record<never, never>, Record<never, never>>,
+    '/users/me': RouteRecordInfo<'/users/me', '/users/me', Record<never, never>, Record<never, never>>,
   }
 }
 

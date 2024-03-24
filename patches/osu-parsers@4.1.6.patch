@@ -1,0 +1,26 @@
+diff --git a/lib/node.cjs b/lib/node.cjs
+index 5b7af2d489d67ba3049426eedf208513920465c8..81914950c33e95e26e3f32993375eafbc32760b8 100644
+--- a/lib/node.cjs
++++ b/lib/node.cjs
+@@ -1690,6 +1690,8 @@ class BeatmapHitObjectDecoder {
+     hitObject.hitSound = Parsing.parseInt(data[4]);
+ 
+     const bankInfo = new osuClasses.SampleBank();
++    bankInfo.normalSet = osuClasses.SampleSet.None;
++    bankInfo.additionSet = osuClasses.SampleSet.None;
+ 
+     this.addExtras(data.slice(5), hitObject, bankInfo, offset, beatmap.fileFormat);
+     this.addComboOffset(hitObject, beatmap);
+diff --git a/lib/node.mjs b/lib/node.mjs
+index f29e0915e53e6a4cdd864a7e10d75aa215a7c685..c63bf4847e0070feb9b7f4e1fd892dcd6bbaf18c 100644
+--- a/lib/node.mjs
++++ b/lib/node.mjs
+@@ -1686,6 +1686,8 @@ class BeatmapHitObjectDecoder {
+     hitObject.hitSound = Parsing.parseInt(data[4]);
+ 
+     const bankInfo = new SampleBank();
++    bankInfo.normalSet = osuClasses.SampleSet.None;
++    bankInfo.additionSet = osuClasses.SampleSet.None;
+ 
+     this.addExtras(data.slice(5), hitObject, bankInfo, offset, beatmap.fileFormat);
+     this.addComboOffset(hitObject, beatmap);

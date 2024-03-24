@@ -10,7 +10,6 @@ import { Vec2 } from '../math';
 import { Slider } from './slider';
 import { HitCircle } from './hitCircle';
 import { Spinner } from './spinner';
-import { ref, watch } from 'vue';
 import { Action } from '../util/action';
 import { binarySearch } from '../util';
 import { ControlPoint, ControlPointUpdateFlags } from './controlPoint';
@@ -38,29 +37,21 @@ export class HitObjectManager {
       0,
       this.hitObjects.length - 1,
     );
-    watch(this._stackVersion, () => {
-      this.calculateStacking(
-        this.hitObjects,
-        general.stackLeniency,
-        3,
-        0,
-        this.hitObjects.length - 1,
-      );
-    });
 
     controlPoints.onAdded.addListener(this._onControlPointAdded);
     controlPoints.onRemoved.addListener(this._onControlPointRemoved);
     controlPoints.onUpdated.addListener(this._onControlPointUpdated);
   }
 
-  private _stackVersion = ref(0);
-
+  stackingDirty = false;
   private _onAdd(hitObject: HitObject, isInit = false) {
     this._hitObjectMap.set(hitObject.id, hitObject);
     hitObject.applyDefaults(this.difficulty, this.controlPoints);
     hitObject.onUpdate.addListener((key) => {
       this._onUpdate(hitObject, key);
     });
+
+    this.stackingDirty = true;
 
     if (!isInit) {
       this.sortHitObjects();
@@ -86,6 +77,7 @@ export class HitObjectManager {
   private _onRemove(hitObject: HitObject) {
     this._hitObjectMap.delete(hitObject.id);
     hitObject.onUpdate.removeListeners();
+    this.stackingDirty = true;
     this.calculateCombos();
     this.onRemoved.emit(hitObject);
   }
@@ -272,8 +264,21 @@ export class HitObjectManager {
   }
 
   private _calculateStackingFor(hitObject: HitObject) {
-    const index = this.hitObjects.indexOf(hitObject);
-    this.calculateStacking(this.hitObjects, 0.9, 3, index, index);
+    // const index = this.hitObjects.indexOf(hitObject);
+    // this.calculateStacking(this.hitObjects, 0.9, 3, index, index);
+    this.stackingDirty = true;
+  }
+
+  updateStacking() {
+    if (!this.stackingDirty) return;
+    this.calculateStacking(
+      this.hitObjects,
+      this.general.stackLeniency,
+      3,
+      0,
+      this.hitObjects.length - 1,
+    );
+    this.stackingDirty = false;
   }
 
   getById(id: string): HitObject | undefined {

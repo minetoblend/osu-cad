@@ -6,9 +6,9 @@ defineProps<{
 </script>
 
 <template>
-  <div class="form-field grid">
+  <div class="row min-h-10 items-center">
     <label class="col-4">{{ label }}</label>
-    <div class="form-control" :class="{ ['col-' + (fullWidth ? 8 : 4)]: true }">
+    <div :class="fullWidth ? 'col-8' : 'col-4'">
       <slot />
     </div>
   </div>

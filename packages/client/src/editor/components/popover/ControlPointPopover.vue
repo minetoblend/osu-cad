@@ -174,91 +174,84 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <q-card class="controlpoint-popover" flat>
-    <q-card-section>
-      <div class="row no-wrap items-center">
-        <q-input
+  <div class="bg-gray-200 rounded p-4 controlpoint-popover">
+    <div>
+      <div class="flex no-wrap items-center">
+        <NumberInput
           v-model="lazyTime"
           label="Time"
-          stack-label
           type="number"
-          dense
-          filled
           style="min-width: 200px"
           @change="updateTime"
         />
       </div>
-      <hr />
-      <div class="row no-wrap items-center">
-        <div style="padding: 0.5rem">
-          <q-toggle v-model="timingEnabled" dense />
+      <hr class="my-4" />
+      <div class="flex no-wrap items-center gap-2">
+        <div>
+          <Switch v-model="timingEnabled" />
         </div>
         <div>Timing</div>
       </div>
-      <div class="row no-wrap items-center q-gutter-md">
-        <q-slider
+      <div class="flex no-wrap items-center gap-2">
+        <Slider
           v-model="bpm"
           :min="30"
           :max="400"
           :step="1"
-          dense
-          :class="{ disabled: !timingEnabled }"
+          :disabled="!timingEnabled"
           style="padding: 0.5rem"
-          @change="commit"
+          @valueCommit="commit"
         />
-        <q-input
+        <NumberInput
           v-model="lazyBpm"
           label="bpm"
           type="number"
           :min="30"
           :max="400"
           :step="1"
-          dense
-          filled
           :class="{ disabled: !timingEnabled }"
-          style="min-width: 120px"
+          :disabled="!timingEnabled"
           @change="updateBpm"
         />
       </div>
-      <hr />
-      <div class="row no-wrap items-center q-gutter-md">
+      <hr class="my-4" />
+      <div class="flex no-wrap items-center gap-2">
         <div style="padding: 0.5rem">
-          <q-toggle v-model="velocityEnabled" dense />
+          <Switch v-model="velocityEnabled" />
         </div>
         <div>Velocity</div>
       </div>
-      <div class="row no-wrap items-center">
-        <q-slider
+      <div class="flex no-wrap items-center gap-2">
+        <Slider
           v-model="velocity"
           :min="0.1"
           :max="10"
           :step="0.05"
-          dense
           :class="{ disabled: !velocityEnabled }"
-          style="padding: 0.5rem"
-          @change="commit"
+          @valueCommit="commit"
         />
 
-        <q-input
+        <NumberInput
           v-model="lazyVelocity"
           type="number"
           :min="0.1"
           :max="10"
           :step="0.1"
-          dense
-          filled
           :class="{ disabled: !velocityEnabled }"
-          style="min-width: 100px"
           @change="updateVelocity"
         />
       </div>
-    </q-card-section>
-  </q-card>
+    </div>
+  </div>
 </template>
 
 <style lang="scss">
 .controlpoint-popover {
   width: 350px;
+}
+
+hr {
+  opacity: 20%;
 }
 
 .disabled {

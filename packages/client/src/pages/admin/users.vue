@@ -19,45 +19,12 @@ const users = asyncComputed(async () => {
 </script>
 
 <template>
-  <page-layout>
-    <div class="column q-gutter-md">
-      <div class="flex">
-        <q-input
-          v-model="searchTerm"
-          style="width: 300px"
-          filled
-          dense
-          label="Search"
-        />
-      </div>
-      <transition-group name="user-card">
-        <q-card flat v-for="user in users" :key="user.id">
-          <q-card-section>
-            <div class="row">
-              <q-avatar
-                v-if="user.avatarUrl"
-                rounded
-                size="25px"
-                class="q-mr-sm"
-              >
-                <img :src="user.avatarUrl" :alt="user.username" />
-              </q-avatar>
-              {{ user.username }}
-              <q-space />
-              Joined
-              {{
-                new Date(user.created).toLocaleDateString(undefined, {
-                  year: 'numeric',
-                  month: 'numeric',
-                  day: 'numeric',
-                })
-              }}
-            </div>
-          </q-card-section>
-        </q-card>
-      </transition-group>
-    </div>
-  </page-layout>
+  <TextInput v-model="searchTerm" type="search" placeholder="Search" />
+  <div class="mt-6 flex flex-col gap-3">
+    <TransitionGroup name="user-card">
+      <AdminUserCard v-for="user in users" :key="user.id" :user="user" />
+    </TransitionGroup>
+  </div>
 </template>
 
 <style lang="scss" scoped>

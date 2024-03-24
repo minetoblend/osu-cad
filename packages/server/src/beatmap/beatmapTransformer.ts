@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { BeatmapEntity } from './beatmap.entity';
-import { BeatmapInfo } from '@osucad/common';
+import { MapsetBeatmapInfo } from '@osucad/common';
 import { AssetsService } from '../assets/assets.service';
 
 @Injectable()
 export class BeatmapTransformer {
   constructor(private readonly assetsService: AssetsService) {}
 
-  async transform(beatmap: BeatmapEntity): Promise<BeatmapInfo> {
+  async transform(beatmap: BeatmapEntity): Promise<MapsetBeatmapInfo> {
     let thumbnailSmall: string | null = null;
     if (beatmap.thumbnailSmall)
       thumbnailSmall = await this.assetsService.getS3AssetUrl(
@@ -24,6 +24,7 @@ export class BeatmapTransformer {
       id: beatmap.uuid,
       name: beatmap.name,
       starRating: beatmap.starRating,
+      creator: beatmap.mapset.creator.getInfo(),
       links: {
         self: `/api/beatmaps/${beatmap.uuid}`,
         edit: `/edit/${beatmap.shareId}`,

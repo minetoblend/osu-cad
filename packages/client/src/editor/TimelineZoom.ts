@@ -1,4 +1,4 @@
-import { RefProperty } from '../util/RefProperty.ts';
+import { RefProperty } from '@/utils';
 import gsap from 'gsap';
 import { clamp } from '@vueuse/core';
 

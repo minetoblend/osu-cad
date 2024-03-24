@@ -16,6 +16,6 @@ self.addEventListener('message', (event) => {
       self.postMessage({ type: 'disconnect' });
     });
   } else {
-    socket.emit(event.data.type, ...event.data.payload);
+    socket.send(event.data.type, ...event.data.payload);
   }
 });

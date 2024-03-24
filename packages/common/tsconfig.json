@@ -8,7 +8,8 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "lib": ["ES2019", "dom"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

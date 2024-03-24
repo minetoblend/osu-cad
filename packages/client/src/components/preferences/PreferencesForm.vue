@@ -59,7 +59,8 @@ watchEffect(() => {
 
   h4 {
     font-size: 1.25rem;
-    margin: 1rem 0;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
   }
 
   .settings-pane {

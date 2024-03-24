@@ -26,10 +26,10 @@ export function seekInteraction(
     e.stopPropagation();
   });
 
-  onEditorKeyDown((e) => {
-    switch (e.key) {
-      case 'ArrowLeft': {
-        if (e.metaKey || e.altKey) return;
+  onEditorKeyDown((e, shortcut) => {
+    switch (shortcut) {
+      case 'clock.seek-backward':
+      case 'clock.seek-backward-fast': {
         if (e.ctrlKey) {
           if (selection.size !== 0) return;
           const bookmarks = beatmapManager.beatmap.bookmarks;
@@ -51,8 +51,8 @@ export function seekInteraction(
         seekRelative(seekAmount);
         break;
       }
-      case 'ArrowRight': {
-        if (e.metaKey || e.altKey) return;
+      case 'clock.seek-forward':
+      case 'clock.seek-forward-fast': {
         if (e.ctrlKey) {
           if (selection.size !== 0) return;
           const bookmarks = beatmapManager.beatmap.bookmarks;
@@ -74,21 +74,18 @@ export function seekInteraction(
         seekRelative(seekAmount);
         break;
       }
-      case ' ':
+      case 'clock.toggle-play':
         if (clock.isPlaying) clock.pause();
         else clock.play();
         break;
-      case 'z':
-        if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
 
+      case 'clock.seek-start':
         const firstHitObject = beatmapManager.hitObjects.hitObjects[0];
         if (firstHitObject && clock.currentTime === firstHitObject.startTime)
           clock.seek(0);
         else clock.seek(firstHitObject?.startTime ?? 0);
         break;
-      case 'v':
-        if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
-
+      case 'clock.seek-end':
         const lastHitObject =
           beatmapManager.hitObjects.hitObjects[
             beatmapManager.hitObjects.hitObjects.length - 1
