@@ -9,7 +9,10 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="switch" @click="emit('update:modelValue', !modelValue)">
+  <div
+    class="switch transition-shadow transition-colors focus-within:(ring-3 ring-primary-600 ring-opacity-35)"
+    @click="emit('update:modelValue', !modelValue)"
+  >
     <input type="checkbox" :checked="modelValue" />
     <div class="knob" />
   </div>
@@ -27,7 +30,6 @@ $width: 2.5em;
   cursor: pointer;
   background-color: $surface-100;
   border-radius: $height * 0.5;
-  transition: background-color 0.15s ease-out;
 }
 
 .switch input {
@@ -57,6 +59,5 @@ $width: 2.5em;
 
 .switch:has(input:checked) {
   background-color: $primary;
-  box-shadow: 0 0 10px rgba($primary, 0.4);
 }
 </style>

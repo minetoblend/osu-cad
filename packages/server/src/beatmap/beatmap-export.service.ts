@@ -145,7 +145,7 @@ export class BeatmapExportService {
         slider.isNewCombo = hitObject.newCombo;
         slider.comboOffset = hitObject.comboOffset ?? 0;
 
-        let type: PathType | null;
+        let type: PathType;
         switch (hitObject.path[0].type) {
           case EditorPathType.Bezier:
             type = PathType.Bezier;
@@ -159,6 +159,8 @@ export class BeatmapExportService {
           case EditorPathType.PerfectCurve:
             type = PathType.PerfectCurve;
             break;
+          default:
+            throw new Error('Invalid path type');
         }
 
         slider.path.curveType = type;

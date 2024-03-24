@@ -40,7 +40,6 @@ export class AudioManager {
       {
         responseType: 'arraybuffer',
         onDownloadProgress: (e) => {
-          console.log(e);
           if (progress) {
             const total = parseFloat(
               e.event.currentTarget.getResponseHeader('Content-Length'),

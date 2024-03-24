@@ -85,35 +85,35 @@ function onUsernameClicked() {
 </script>
 
 <template>
-  <q-item v-once :class="{ 'mentions-me': mentionsMe }">
-    <q-item-section>
-      <div class="row">
-        <div class="text-bold username" :class="{ server: isServer }">
-          <q-avatar class="avatar" size="28px" @click="onUsernameClicked">
-            <img v-if="avatarUrl" :src="avatarUrl" />
-          </q-avatar>
-          {{ username }}
+  <li
+    v-once
+    class="py-2 px-4"
+    :class="[mentionsMe && 'bg-primary-600 bg-opacity-10']"
+  >
+    <div class="flex">
+      <div
+        class="flex flex-1 text-bold"
+        :class="[isServer && 'text-primary-600']"
+      >
+        <div class="avatar w-7 h-7" @click="onUsernameClicked">
+          <img v-if="avatarUrl" class="rounded-full" :src="avatarUrl" />
         </div>
-        <q-space />
-        <div class="text-caption">{{ timestamp }}</div>
+        {{ username }}
       </div>
-      <pre
-        class="message-content"
-      ><chat-fragment v-for="(fragment, index) in message.message"
-                      :key="index"
-                      :fragment="fragment"
-                      :own-user-id="ownUserId"
-                      @timestamp-click="onTimestampClick"
-      /></pre>
-    </q-item-section>
-  </q-item>
+      <div class="text-xs">{{ timestamp }}</div>
+    </div>
+    <pre
+      class="message-content"
+    ><chat-fragment v-for="(fragment, index) in message.message"
+                    :key="index"
+                    :fragment="fragment"
+                    :own-user-id="ownUserId"
+                    @timestamp-click="onTimestampClick"
+    /></pre>
+  </li>
 </template>
 
 <style lang="scss" scoped>
-.mentions-me {
-  background-color: rgba($primary, 0.1);
-}
-
 pre {
   font-family: $font-family;
   white-space: pre-wrap;

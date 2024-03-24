@@ -18,28 +18,18 @@ defineProps<{
   <FormField full-width label="Hit Markers" v-if="!preferences.hitAnimations">
     <Switch v-model="preferences.hitMarkers" />
   </FormField>
-  <FormField label="Background dim">
-    <QSlider v-model="preferences.backgroundDim" :min="0" :max="100" label />
+  <FormField full-width label="Background dim">
+    <Slider v-model="preferences.backgroundDim" :min="0" :max="100" />
   </FormField>
-  <FormField label="Background blur">
-    <QSlider v-model="preferences.backgroundBlur" :min="0" :max="35" label />
+  <FormField full-width label="Background blur">
+    <Slider v-model="preferences.backgroundBlur" :min="0" :max="35" label />
   </FormField>
   <h4>Grid</h4>
   <FormField label="Enabled">
     <Switch v-model="preferences.grid.enabled" />
   </FormField>
-  <FormField label="Color">
-    <QColor
-      v-model="preferences.grid.color"
-      no-footer
-      no-header
-      format-model="hex"
-      flat
-      bordered
-    />
-  </FormField>
-  <FormField label="Opacity">
-    <QSlider v-model="preferences.grid.opacity" :min="0" :max="100" label />
+  <FormField full-width label="Opacity">
+    <Slider v-model="preferences.grid.opacity" :min="0" :max="100" />
   </FormField>
   <h4>Snapping</h4>
   <FormField label="Objects">

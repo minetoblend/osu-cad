@@ -9,7 +9,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { AdminGuard } from './admin-auth.guard';
 import { EditorRoomService } from '../editor/editor-room.service';
 import { UserService } from '../users/user.service';
-import { AssetsService } from '../assets/assets.service';
+import { ImagesService } from '../assets/images.service';
 
 @Controller('api/admin')
 @UseGuards(AuthGuard, AdminGuard)
@@ -17,7 +17,7 @@ export class AdminController {
   constructor(
     private readonly userService: UserService,
     private readonly roomManager: EditorRoomService,
-    private readonly assetsService: AssetsService,
+    private readonly imagesService: ImagesService,
   ) {}
 
   @Get('users')
@@ -48,12 +48,10 @@ export class AdminController {
         const beatmap = room.entity;
         const mapset = room.entity.mapset;
 
-        let thumbnail: string | null = null;
-        if (beatmap.thumbnailSmall) {
-          thumbnail = await this.assetsService.getS3AssetUrl(
-            beatmap.thumbnailSmall,
-          );
-        }
+        const thumbnail = this.imagesService.getImageUrl(
+          beatmap.thumbnailId,
+          'thumbnail',
+        );
 
         return {
           createdAt: room.createdAt,

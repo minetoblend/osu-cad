@@ -31,6 +31,11 @@ export class EditorGateway implements OnGatewayConnection {
 
     const user = await this.userService.findById(request.session.user.id);
 
+    if (!user) {
+      client.disconnect();
+      return;
+    }
+
     const beatmapId = client.handshake.query['id'] as string;
     if (!beatmapId) {
       client.disconnect();
@@ -70,14 +75,16 @@ export class EditorGateway implements OnGatewayConnection {
       session.endDate = new Date();
 
       await this.sessionRepository.save(session);
+      await this.beatmapService.markAccessed(beatmap, user);
 
       room.accept(client, user, access);
 
-      client.on('disconnect', () => {
+      client.on('disconnect', async () => {
         session.endDate = new Date();
         session.duration =
           session.endDate.getTime() - session.beginDate.getTime();
-        this.sessionRepository.save(session);
+        await this.sessionRepository.save(session);
+        await this.beatmapService.markAccessed(beatmap, user);
       });
     } catch (e) {
       console.error(e);

@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -10,6 +11,7 @@ import {
 import { UserEntity } from '../users/user.entity';
 import { BeatmapEntity } from './beatmap.entity';
 import { BeatmapAccess } from '@osucad/common';
+import { AssetEntity } from '../assets/asset.entity';
 
 @Entity('mapsets')
 export class MapsetEntity {
@@ -27,6 +29,8 @@ export class MapsetEntity {
   background: string | null;
   @Column('int')
   access: BeatmapAccess = BeatmapAccess.None;
+  @Column('boolean', { default: false })
+  deleted: boolean;
 
   @Column('boolean', { default: false })
   s3Storage: boolean;
@@ -37,9 +41,14 @@ export class MapsetEntity {
   @OneToMany(() => BeatmapEntity, (beatmap) => beatmap.mapset)
   beatmaps: BeatmapEntity[];
 
+  @OneToMany(() => AssetEntity, (asset) => asset.mapset)
+  assets: AssetEntity[];
+
   @CreateDateColumn()
+  @Index()
   createdAt: Date;
 
   @UpdateDateColumn()
+  @Index()
   updatedAt: Date;
 }

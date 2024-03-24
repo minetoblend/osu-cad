@@ -1,44 +1,81 @@
-import { defineConfig } from 'vite';
+import { build, defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { resolve } from 'path';
-import vueRouter from 'unplugin-vue-router/vite';
 import autoImport from 'unplugin-auto-import/vite';
-import { quasar, transformAssetUrls } from '@quasar/vite-plugin';
 import components from 'unplugin-vue-components/vite';
-import { QuasarResolver } from 'unplugin-vue-components/resolvers';
-import * as dotenv from 'dotenv'
+import router from 'unplugin-vue-router/vite';
+import layouts from 'vite-plugin-vue-layouts';
+import unoCSS from 'unocss/vite';
+import markdown from 'unplugin-vue-markdown/vite';
+import inspect from 'vite-plugin-inspect';
+import * as dotenv from 'dotenv';
+import MarkdownItAnchor from 'markdown-it-anchor'
+import MarkdownItPrism from 'markdown-it-prism'
+
 
 dotenv.config({
   path: resolve(__dirname, '../../.env')
-})
+});
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  optimizeDeps: {
+    include: [
+      'vue',
+      '@vueuse/core',
+      'variant',
+      'osu-classes',
+      '@ygoe/msgpack',
+      'uuid',
+      'socket.io-client',
+      'pixi.js',
+      'reflect-metadata',
+      'unplugin-vue-router/runtime',
+      'gsap',
+      '@capacitor/core'
+    ]
+  },
   plugins: [
     autoImport({
-      imports: ['vue', '@vueuse/core']
+      imports: ['vue', '@vueuse/core', {
+        'vue-router/auto': ['definePage'],
+        '@unhead/vue': ['useServerSeoMeta']
+      }]
     }),
-    vueRouter({}),
+    markdown({
+      headEnabled: true,
+      wrapperClasses: 'prose w-full',
+      markdownItOptions: {
+        linkify: true,
+        html: true,
+        typographer: true
+      },
+      markdownItSetup(md) {
+        md.use(MarkdownItAnchor)
+        md.use(MarkdownItPrism)
+      }
+    }),
+    layouts(),
+    router({
+      extensions: ['.vue', '.md'],
+    }),
     components({
-      resolvers: [QuasarResolver()]
+      resolvers: [
+        (name) => {
+          if (name.startsWith('Layout')) {
+            return resolve(
+              __dirname,
+              'src/layouts/' + name.slice(6).toLowerCase() + '.vue'
+            ).replaceAll('\\', '/');
+          }
+        }
+      ]
     }),
     vue({
-      isProduction: true,
-      template: { transformAssetUrls }
+      include: [/\.vue$/, /\.md$/]
     }),
-    quasar({
-      sassVariables: 'src/quasar-variables.scss',
-      devTreeshaking: true
-    }),
-    {
-      name: 'insert-environment-vars',
-      transformIndexHtml(html) {
-        let preconnect = '';
-        if (process.env.S3_ENDPOINT_URL)
-          preconnect += `<link rel="preconnect" href="${process.env.S3_ENDPOINT_URL}" />`;
-        return html.replace('<!-- preconnect -->', preconnect);
-      }
-    }
+    unoCSS(),
+    inspect()
   ],
   resolve: {
     alias: {
@@ -46,6 +83,9 @@ export default defineConfig({
     }
   },
   server: {
+    headers: {
+      'Document-Policy': 'js-profiling'
+    },
     proxy: {
       '/api': {
         target: 'http://localhost:3000',
@@ -72,5 +112,16 @@ export default defineConfig({
         additionalData: `@import "@/variables.scss";`
       }
     }
+  },
+  build: {
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        ssr: resolve(__dirname, 'ssr.html')
+      }
+    }
+  },
+  define: {
+    __hydrate__: process.env.NODE_ENV === 'production'
   }
 });

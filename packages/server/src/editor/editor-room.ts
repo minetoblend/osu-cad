@@ -4,6 +4,7 @@ import {
   Beatmap,
   BeatmapAccess,
   ClientMessages,
+  compressMessage,
   ControlPointManager,
   defaultHitSoundLayers,
   ServerMessages,
@@ -85,6 +86,8 @@ export class EditorRoom extends EventEmitter2 {
         artist: entity.mapset.artist,
         title: entity.mapset.title,
         tags: entity.mapset.tags.join(' '),
+        beatmapId: entity.osuId ?? -1,
+        beatmapSetId: entity.mapset.osuId ?? -1,
       },
       name: entity.name,
       hitObjects,
@@ -150,8 +153,9 @@ export class EditorRoom extends EventEmitter2 {
     message: T,
     ...parameters: Parameters<ServerMessages[T]>
   ) {
+    const compressed = compressMessage(parameters);
     for (const user of this.users) {
-      user.send(message, ...parameters);
+      user.sendRaw(message, compressed);
     }
   }
 

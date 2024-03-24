@@ -10,7 +10,7 @@ import { DestroyOptions, FederatedPointerEvent } from 'pixi.js';
 import { HitObjectSnapProvider } from './snapping/HitObjectSnapProvider.ts';
 import { Inject } from '../drawables/di';
 import { ToolContainer } from './ToolContainer.ts';
-import { isMobile } from '@/util/isMobile.ts';
+import { isMobile } from '@/utils';
 
 export class HitCircleTool extends ComposeTool {
   private currentObject!: HitCircle;

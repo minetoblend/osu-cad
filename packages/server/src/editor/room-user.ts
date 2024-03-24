@@ -8,15 +8,20 @@ import {
   UserSessionInfo,
 } from '@osucad/common';
 import { EditorRoom } from './editor-room';
+import { CompressedSocket } from './compressed-socket';
 
 export class RoomUser {
   constructor(
     readonly user: UserEntity,
-    readonly socket: Socket<ClientMessages, ServerMessages>,
+    socket: Socket<ClientMessages, ServerMessages>,
     readonly sessionId: number,
     readonly room: EditorRoom,
     public access: BeatmapAccess,
-  ) {}
+  ) {
+    this.socket = new CompressedSocket(socket);
+  }
+
+  socket: CompressedSocket;
 
   presence: Presence = {
     activity: null,
@@ -36,7 +41,10 @@ export class RoomUser {
     message: T,
     ...parameters: Parameters<ServerMessages[T]>
   ) {
-    this.socket.emit(message, ...parameters);
+    this.socket.send(message, ...parameters);
+  }
+  sendRaw<T extends keyof ServerMessages>(message: T, data: Uint8Array) {
+    this.socket.sendRaw(message, data);
   }
 
   get username() {

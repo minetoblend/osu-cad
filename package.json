@@ -11,5 +11,10 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "pnpm": {
+    "patchedDependencies": {
+      "osu-parsers@4.1.6": "patches/osu-parsers@4.1.6.patch"
+    }
+  }
 }

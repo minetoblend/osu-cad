@@ -8,7 +8,7 @@ import { SelectTool } from './SelectTool.ts';
 import { HitCircleTool } from './HitCircleTool.ts';
 import { SliderTool } from './SliderTool.ts';
 import { SpinnerTool } from './SpinnerTool.ts';
-import { isMobile } from '@/util/isMobile.ts';
+import { isMobile } from '@/utils';
 import { EditorContext } from '@/editor/editorContext.ts';
 import { ComposeTool } from '@/editor/tools/ComposeTool.ts';
 import { ToolbarButton } from '@/editor/tools/ToolbarButton.ts';

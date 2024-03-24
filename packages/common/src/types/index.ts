@@ -7,3 +7,4 @@ export * from './attribution';
 export * from './preferences';
 export * from './osuUser';
 export * from './roomInfo';
+export * from './beatmapImport';

@@ -55,11 +55,11 @@ export function createConnectedUsers(
   });
 
   function kick(id: UserId) {
-    socket.emit('kickUser', id, '', false);
+    socket.send('kickUser', id, '', false);
   }
 
   function ban(id: UserId) {
-    socket.emit('kickUser', id, '', true);
+    socket.send('kickUser', id, '', true);
   }
 
   socket.on('accessChanged', (access) => {

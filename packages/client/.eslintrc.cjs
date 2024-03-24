@@ -18,7 +18,7 @@ module.exports = {
     node: true,
     jest: true,
   },
-  ignorePatterns: ['.eslintrc.cjs'],
+  ignorePatterns: ['.eslintrc.cjs', 'dist', 'node_modules', 'vite.config.ts', 'uno.config.ts'],
   rules: {
     'prefer-const': ['error', {
       'destructuring': 'all',

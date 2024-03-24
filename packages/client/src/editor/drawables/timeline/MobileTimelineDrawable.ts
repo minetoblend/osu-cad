@@ -7,7 +7,7 @@ import { Rect } from '@osucad/common';
 import { PlayButton } from '@/editor/drawables/PlayButton.ts';
 import { CurrentTimeIndicator } from '@/editor/drawables/timeline/CurrentTimeIndicator.ts';
 import { OverviewTimeline } from '@/editor/drawables/timeline/OverviewTimeline.ts';
-import { isMobile } from '@/util/isMobile.ts';
+import { isMobile } from '@/utils';
 
 export class MobileTimelineDrawable extends Component {
   mode: 'rhythm' | 'overview' = 'rhythm';

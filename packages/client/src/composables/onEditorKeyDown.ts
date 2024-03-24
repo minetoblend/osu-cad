@@ -1,15 +1,21 @@
-export function onEditorKeyDown(handler: (event: KeyboardEvent) => void): void {
+import { resolveShortcut, ShortcutId } from '@/editor/shortcuts';
+
+export function onEditorKeyDown(
+  handler: (event: KeyboardEvent, shortcut?: ShortcutId) => void,
+): void {
   useEventListener('keydown', (event) => {
     if (!shouldIgnore(event)) {
-      handler(event);
+      handler(event, resolveShortcut(event));
     }
   });
 }
 
-export function onEditorKeyUp(handler: (event: KeyboardEvent) => void): void {
+export function onEditorKeyUp(
+  handler: (event: KeyboardEvent, shortcut?: ShortcutId) => void,
+): void {
   useEventListener('keyup', (event) => {
     if (!shouldIgnore(event)) {
-      handler(event);
+      handler(event, resolveShortcut(event));
     }
   });
 }

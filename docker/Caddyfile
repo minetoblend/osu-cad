@@ -1,3 +1,17 @@
 {$HOSTNAME} {
-  reverse_proxy http://server:3000
+	@backend {
+		path /api/*
+		path /auth/*
+		path /admin/queue/*
+		path /socket.io/*
+	}
+
+	handle @backend {
+		reverse_proxy http://server:3000 {
+			lb_try_duration 30s
+			lb_try_interval 1s
+		}
+	}
+
+	reverse_proxy http://frontend:5173
 }

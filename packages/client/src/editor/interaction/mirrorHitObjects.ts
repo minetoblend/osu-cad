@@ -58,8 +58,8 @@ export function mirrorHitObjects(
 }
 
 export function transformHitObjectsInteraction(editor: EditorContext) {
-  onEditorKeyDown((evt) => {
-    if (evt.ctrlKey && evt.code === 'KeyH') {
+  onEditorKeyDown((evt, shortcut) => {
+    if (shortcut?.startsWith('hitobject.flip-horizontal')) {
       evt.preventDefault();
       if (editor.selection.size === 0) return;
 
@@ -69,9 +69,7 @@ export function transformHitObjectsInteraction(editor: EditorContext) {
           )!
         : new Rect(0, 0, 512, 384);
       mirrorHitObjects(editor, 'horizontal', bounds);
-    } else if (evt.ctrlKey && evt.code === 'KeyJ') {
-      evt.preventDefault();
-
+    } else if (shortcut?.startsWith('hitobject.flip-vertical')) {
       if (editor.selection.size === 0) return;
 
       const bounds = evt.shiftKey
@@ -81,12 +79,12 @@ export function transformHitObjectsInteraction(editor: EditorContext) {
         : new Rect(0, 0, 512, 384);
 
       mirrorHitObjects(editor, 'vertical', bounds);
-    } else if (evt.ctrlKey && evt.code === 'Period') {
+    } else if (shortcut === 'hitobject.rotate-clockwise') {
       evt.preventDefault();
       const hitObjects = [...editor.selection.selectedObjects];
       rotateHitObjects(editor, hitObjects, Math.PI / 2, evt.shiftKey);
       editor.commandManager.commit();
-    } else if (evt.ctrlKey && evt.code === 'Comma') {
+    } else if (shortcut === 'hitobject.rotate-counter-clockwise') {
       evt.preventDefault();
       const hitObjects = [...editor.selection.selectedObjects];
       rotateHitObjects(editor, hitObjects, -Math.PI / 2, evt.shiftKey);

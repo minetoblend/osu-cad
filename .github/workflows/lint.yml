@@ -2,7 +2,7 @@
 name: Lint
 
 on:  # yamllint disable-line rule:truthy
-  push: 
+  push:
     branches: [ 'master' ]
   pull_request:
     branches: [ 'master' ]
@@ -20,16 +20,35 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18.x'
-          cache: 'yarn'
-      - run: yarn install --frozen-lockfile
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - run: pnpm install --frozen-lockfile
       - name: Lint client package
-        run: yarn workspace @osucad/client lint
+        run: pnpm --filter "@osucad/client" lint
       - name: Lint common package
-        run: yarn workspace @osucad/common lint
+        run: pnpm --filter "@osucad/common" lint
       - name: Lint server package
-        run: yarn workspace @osucad/common lint
+        run: pnpm --filter "@osucad/common" lint

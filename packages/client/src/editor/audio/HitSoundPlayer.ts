@@ -27,7 +27,6 @@ export class HitSoundPlayer extends Drawable {
 
   constructor() {
     super();
-
     this.init();
   }
 
@@ -39,6 +38,7 @@ export class HitSoundPlayer extends Drawable {
       SampleType.Finish,
       SampleType.Clap,
     ];
+
     for (const sampleSet of sampleSets) {
       for (const sampleType of sampleTypes) {
         let sampleName = '';

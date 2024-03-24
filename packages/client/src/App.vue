@@ -1,16 +1,25 @@
 <script setup lang="ts">
-import TitleBar from './components/AppNavbar.vue';
-import { useCurrentUser } from '@/composables/useCurrentUser.ts';
+import { useUserStore } from '@/stores/userStore.ts';
+import logoUrl from '@/assets/logo-icon-dark.png';
+import { useServerSeoMeta } from '@unhead/vue';
 
-const { isLoading: userIsLoading } = useCurrentUser();
+const userStore = useUserStore();
+
+if (!userStore.loaded) userStore.loadUser();
+
+useServerSeoMeta({
+  title: 'osucad: online osu beatmap editor',
+  ogTitle: 'osucad: online osu beatmap editor',
+  ogType: 'website',
+  ogUrl: import.meta.env.VITE_BASEURL,
+  ogImage: import.meta.env.VITE_BASEURL + logoUrl,
+});
 </script>
 
 <template>
-  <q-layout v-if="!userIsLoading" view="hHh lpR fFf">
-    <TitleBar />
+  <div v-if="userStore.loaded">
     <RouterView />
-    <div id="dpi" />
-  </q-layout>
+  </div>
 </template>
 
 <style lang="scss">

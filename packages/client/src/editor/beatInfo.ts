@@ -56,7 +56,6 @@ export class BeatInfo extends Drawable {
         index += Math.sign(evt.deltaY);
         index = clamp(index, 0, BeatInfo.availableBeatsnapTypes.length - 1);
         this.beatSnap = BeatInfo.availableBeatsnapTypes[index];
-        console.log(this.beatSnap);
       },
       { passive: false },
     );

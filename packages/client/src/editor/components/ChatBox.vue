@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import ChatMessage from './ChatMessage.vue';
 import { useEditor } from '@/editor/editorContext.ts';
-import { QScrollArea } from 'quasar';
+import ScrollArea from '@/components/common/ScrollArea.vue';
+import LazyChatMessage from '@/editor/components/LazyChatMessage.vue';
+import ChatTextBox from '@/editor/components/ChatTextBox.vue';
 
 const currentMessage = ref('');
 
@@ -9,76 +11,79 @@ const { chat } = useEditor();
 
 const showChat = useLocalStorage('showChat', true);
 
-function sendMessage(evt: KeyboardEvent) {
-  if (evt.shiftKey) return;
+function sendMessage() {
+  if (currentMessage.value.trim().length === 0) {
+    return;
+  }
 
   chat.sendMessage(currentMessage.value);
-
   currentMessage.value = '';
-  evt.preventDefault();
 }
 
-const chatScrollArea = ref<QScrollArea | null>(null);
+const chatScrollArea = ref();
 
 watch(chat.messages, () => {
-  const el = chatScrollArea.value as QScrollArea;
+  const el = unrefElement(chatScrollArea);
   if (el) {
     nextTick(() => {
-      el.setScrollPercentage('vertical', 100);
+      el?.scrollTo(0, el.scrollHeight);
     });
   }
 });
 
 onMounted(() => {
-  const el = chatScrollArea.value as QScrollArea;
+  const el = unrefElement(chatScrollArea);
   if (el) {
-    el.setScrollPercentage('vertical', 100);
+    el.scrollTo({
+      left: 0,
+      top: el.scrollHeight,
+      behavior: 'instant',
+    });
   }
+});
+
+const messages = computed(() => {
+  const messages = chat.messages;
+  if (messages.length > 200) {
+    return messages.slice(messages.length - 200);
+  }
+  return messages;
 });
 </script>
 
 <template>
-  <q-card class="chat-box" flat v-if="showChat">
-    <q-card-section>
-      <div class="row">
-        <div class="text-h6">
-          <q-icon icon="chat" />
-          Chat
-        </div>
-        <q-space />
-        <q-btn icon="close" flat round dense @click="showChat = false" />
+  <Card class="chat-box" v-if="showChat">
+    <div class="p-4">
+      <div class="flex">
+        <div class="flex-1 font-bold text-xl flex items-center gap-2">Chat</div>
+        <button
+          class="bg-transparent w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-400"
+          @click="showChat = false"
+          v-wave
+        >
+          <span class="i-fas-x" />
+        </button>
       </div>
-    </q-card-section>
-
-    <q-scroll-area class="chat-messages" ref="chatScrollArea">
-      <q-list>
-        <chat-message
-          v-for="message in chat.messages"
-          :key="message.id"
-          :message="message"
-        />
-      </q-list>
-    </q-scroll-area>
-    <div class="row">
-      <q-input
-        v-model="currentMessage"
-        dense
-        class="flex-1"
-        filled
-        type="textarea"
-        autogrow
-        :maxlength="500"
-        @keydown.enter="sendMessage"
-      />
     </div>
-  </q-card>
-  <q-btn
-    class="chat-button"
+
+    <ScrollArea class="flex-1" ref="chatScrollArea">
+      <ul>
+        <LazyChatMessage v-for="message in messages" :key="message.id">
+          <ChatMessage :message="message" />
+        </LazyChatMessage>
+      </ul>
+    </ScrollArea>
+    <div class="p-2">
+      <ChatTextBox v-model="currentMessage" @send-message="sendMessage" />
+    </div>
+  </Card>
+  <button
     v-else
-    color="dark"
-    icon="chat"
+    class="btn-gray-200 absolute right-2 bottom-25 px-6 py-4"
     @click="showChat = true"
-  />
+  >
+    <div class="i-fas-message" />
+  </button>
 </template>
 
 <style lang="scss" scoped>
@@ -90,15 +95,5 @@ onMounted(() => {
   flex-direction: column;
   height: 400px;
   bottom: 90px;
-}
-
-.chat-button {
-  position: absolute;
-  right: 5px;
-  bottom: 90px;
-}
-
-.chat-messages {
-  flex: 1;
 }
 </style>

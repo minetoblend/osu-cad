@@ -7,7 +7,7 @@ defineProps<{
 </script>
 
 <template>
-  <h3>Behavior</h3>
+  <h3 class="text-xl">Behavior</h3>
   <FormField full-width label="Right click behavior">
     <ButtonGroup>
       <Button

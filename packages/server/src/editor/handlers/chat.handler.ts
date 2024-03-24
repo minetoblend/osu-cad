@@ -18,7 +18,7 @@ export class ChatHandler extends MessageHandler {
 
   onUserJoin(roomUser: RoomUser) {
     super.onUserJoin(roomUser);
-    roomUser.socket.emit('chatHistory', this.chatHistory);
+    roomUser.send('chatHistory', this.chatHistory);
   }
 
   @OnMessage('sendChatMessage')
@@ -142,7 +142,7 @@ export class ChatHandler extends MessageHandler {
   }
 
   private sendHelp(roomUser: RoomUser) {
-    roomUser.socket.emit('chatMessageCreated', {
+    roomUser.send('chatMessageCreated', {
       id: this.chatHistory.messages.length,
       user: 'server',
       message: helpText,
@@ -190,7 +190,7 @@ export class ChatHandler extends MessageHandler {
     };
 
     this.chatHistory.messages.push(message);
-    user.socket.emit('chatMessageCreated', message);
+    user.send('chatMessageCreated', message);
   }
 
   private kickUser(roomUser: RoomUser, args: string[]) {
@@ -214,7 +214,7 @@ export class ChatHandler extends MessageHandler {
     const message = args.slice(1).join(' ');
 
     for (const user of users) {
-      user.socket.emit('chatMessageCreated', {
+      user.send('chatMessageCreated', {
         id: this.chatHistory.messages.length,
         timestamp: Date.now(),
         user: {
@@ -225,7 +225,7 @@ export class ChatHandler extends MessageHandler {
       });
     }
     if (users.length > 0) {
-      roomUser.socket.emit('chatMessageCreated', {
+      roomUser.send('chatMessageCreated', {
         id: this.chatHistory.messages.length,
         timestamp: Date.now(),
         user: {

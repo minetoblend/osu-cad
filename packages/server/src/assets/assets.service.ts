@@ -112,9 +112,14 @@ export class AssetsService {
     s3Asset: S3AssetEntity,
     options: {
       contentType?: string;
+      filename?: string;
     } = {},
   ): Promise<string> {
-    const cached = await this.cacheManager.get('s3:asset:' + s3Asset.key);
+    let cacheKey = 's3:asset:' + s3Asset.key;
+    if (options.contentType) cacheKey += ':contentType-' + options.contentType;
+    if (options.filename) cacheKey += ':filename-' + options.filename;
+
+    const cached = await this.cacheManager.get(cacheKey);
     if (cached && typeof cached === 'string') {
       return cached;
     }
@@ -123,6 +128,9 @@ export class AssetsService {
       Bucket: s3Asset.bucket,
       Key: s3Asset.key,
       ResponseContentType: options.contentType,
+      ResponseContentDisposition: options.filename
+        ? `attachment; filename="${options.filename}"`
+        : undefined,
     });
 
     let signingDate = Date.now();
@@ -135,11 +143,7 @@ export class AssetsService {
       signingDate: new Date(signingDate),
     });
 
-    await this.cacheManager.set(
-      's3:asset:' + s3Asset.key,
-      url,
-      (expireDuration / 2) * 1000,
-    );
+    await this.cacheManager.set(cacheKey, url, (expireDuration / 2) * 1000);
 
     return url;
   }

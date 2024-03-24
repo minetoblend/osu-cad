@@ -5,6 +5,9 @@ export default [
   {
     input: `src/index.ts`,
     plugins: [esbuild()],
+    external: [
+      'vue'
+    ],
     output: [
       {
         file: 'dist/lib.cjs',

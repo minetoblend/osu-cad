@@ -34,6 +34,6 @@ export class ChatManager {
   }
 
   sendMessage(content: string) {
-    this.socket.emit('sendChatMessage', content);
+    this.socket.send('sendChatMessage', content);
   }
 }

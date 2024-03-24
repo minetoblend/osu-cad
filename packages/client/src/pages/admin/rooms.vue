@@ -24,20 +24,18 @@ const sortedRooms = useSorted(rooms, (a, b) => {
 </script>
 
 <template>
-  <page-layout>
-    <div class="text-h5">
-      {{ rooms.length }} active room{{ rooms.length === 1 ? '' : 's' }}
-    </div>
-    <div class="col q-gutter-md">
-      <transition-group name="room-card">
-        <admin-room-info-card
-          v-for="room in sortedRooms"
-          :key="room.beatmap.id"
-          :room="room"
-        />
-      </transition-group>
-    </div>
-  </page-layout>
+  <div class="text-xl">
+    {{ rooms.length }} active room{{ rooms.length === 1 ? '' : 's' }}
+  </div>
+  <div class="mt-6 flex flex-col gap-3">
+    <TransitionGroup name="room-card">
+      <AdminRoomInfoCard
+        v-for="room in sortedRooms"
+        :key="room.beatmap.id"
+        :room="room"
+      />
+    </TransitionGroup>
+  </div>
 </template>
 
 <style lang="scss" scoped>
@@ -52,19 +50,6 @@ const sortedRooms = useSorted(rooms, (a, b) => {
   &-leave-to {
     opacity: 0;
     transform: translateY(20px);
-  }
-}
-
-.user {
-  &-enter-active,
-  &-leave-active {
-    transition: all 0.3s;
-  }
-
-  &-enter-from,
-  &-leave-to {
-    opacity: 0;
-    transform: translateY(-20px);
   }
 }
 </style>

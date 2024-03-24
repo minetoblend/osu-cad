@@ -103,6 +103,16 @@ export class AuthController {
         .pipe(map((response) => response.data)),
     );
   }
+
+  @Get('/logout')
+  @Redirect('/', 302)
+  logout(@Req() req: Request) {
+    this.logger.log(
+      `User ${req.session.user?.username} (${req.session.user?.id}) logged out`,
+    );
+
+    req.session.destroy(() => {});
+  }
 }
 
 declare module 'express-session' {

@@ -1,56 +1,33 @@
-import { createApp } from 'vue';
-import '@fontsource/nunito-sans/400.css';
-import '@fontsource/nunito-sans/500.css';
-import '@fontsource/nunito-sans/600.css';
-import './style.scss';
+import { createApp as _createApp, createSSRApp, App as VueApp } from 'vue';
 import App from './App.vue';
-import 'primeflex/primeflex.css';
-import { router } from '../router.ts';
-import '@quasar/extras/material-icons/material-icons.css';
-import 'quasar/src/css/index.sass';
-import { Quasar, Dialog, Loading } from 'quasar';
-import axios from 'axios';
-import { App as CapacitorApp } from '@capacitor/app';
-import { isMobile } from '@/util/isMobile.ts';
-import { Capacitor } from '@capacitor/core';
+import { createRouter } from './plugins/router.ts';
+import { createPinia } from 'pinia';
+import { sentry } from './plugins';
+import VWave from 'v-wave';
+import { createHead } from '@unhead/vue';
 
-axios.defaults.baseURL = import.meta.env.VITE_BASEURL as string;
-
-if (
-  isMobile() &&
-  Capacitor.getPlatform() === 'web' &&
-  !window.location.search.includes('redirectToApp')
-) {
-  // @ts-expect-error this works, typescript just thinks it doesn't
-  window.location =
-    'osucad://osucad.com' + window.location.pathname + '?redirectToApp';
-  setTimeout(() => {
-    if (!document.hidden) {
-      init();
-    }
-  }, 500);
-} else {
-  init();
-}
-
-function init() {
-  createApp(App)
-    .use(router)
-    .use(Quasar, {
-      config: {
-        dark: true,
-      },
-      plugins: {
-        Dialog,
-        Loading,
-      },
-    })
-    .mount('#app');
-}
-
-CapacitorApp.addListener('appUrlOpen', (data) => {
-  if (data.url) {
-    const url = new URL(data.url);
-    router.push(url.pathname + url.search);
+export function createApp() {
+  let app: VueApp<Element>;
+  if (__hydrate__ || import.meta.env.SSR) {
+    app = createSSRApp(App);
+  } else {
+    app = _createApp(App);
   }
-});
+
+  const pinia = createPinia();
+  const router = createRouter();
+  const head = createHead();
+
+  app.use(sentry, { router });
+  app.use(router);
+  app.use(pinia);
+  app.use(head);
+
+  if (!import.meta.env.SSR) {
+    app.use(VWave, {});
+  } else {
+    app.directive('wave', {});
+  }
+
+  return { app, router, pinia, head };
+}
