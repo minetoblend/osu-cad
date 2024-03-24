@@ -201,7 +201,7 @@ export class BeatmapService implements OnModuleInit {
         `
         (
           creator.id = :userId OR
-          beatmap.access > 0 OR
+          (beatmap.access > 0 AND lastAccess.date IS NOT NULL) OR
           (participant.user.id = :userId AND participant.access > 0)
         )
       `,
