@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { UserInfo } from '@osucad/common';
 import { useAxios } from '@/composables/useAxios.ts';
 import { ssrContext } from '@/ssr/ssr-context.ts';
+import { useSentry } from '@/plugins';
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -19,10 +20,12 @@ export const useUserStore = defineStore('user', {
   actions: {
     async loadUser() {
       if (this.user) {
-        // Sentry.setUser({
-        //   id: this.user.id,
-        //   username: this.user.username,
-        // });
+        useSentry((sentry) => {
+          sentry.setUser({
+            id: this.user!.id,
+            username: this.user!.username,
+          });
+        });
         return;
       }
 
@@ -43,10 +46,12 @@ export const useUserStore = defineStore('user', {
 
         if (response.data && response.status < 400) {
           this.user = response.data;
-          // Sentry.setUser({
-          //   id: response.data.id,
-          //   username: response.data.username,
-          // });
+          useSentry((sentry) => {
+            sentry.setUser({
+              id: response.data.id,
+              username: response.data.username,
+            });
+          });
         }
       } catch (e) {
         // cookie is invalid, we ignore
