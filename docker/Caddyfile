@@ -2,7 +2,7 @@
 	@backend {
 		path /api/*
 		path /auth/*
-		path /admin/queue/*
+		path /admin/queues/*
 		path /socket.io/*
 	}
 
