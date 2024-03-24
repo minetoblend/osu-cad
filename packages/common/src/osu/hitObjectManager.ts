@@ -10,7 +10,7 @@ import { Vec2 } from '../math';
 import { Slider } from './slider';
 import { HitCircle } from './hitCircle';
 import { Spinner } from './spinner';
-import { Action } from '../util/action';
+import { Action } from '../util';
 import { binarySearch } from '../util';
 import { ControlPoint, ControlPointUpdateFlags } from './controlPoint';
 
@@ -55,7 +55,7 @@ export class HitObjectManager {
 
     if (!isInit) {
       this.sortHitObjects();
-      this._calculateStackingFor(hitObject);
+      this._invalidateStacking();
       this.calculateCombos();
     }
 
@@ -87,13 +87,13 @@ export class HitObjectManager {
       case 'startTime':
         this.sortHitObjects();
         this.calculateCombos();
-        this._calculateStackingFor(hitObject);
+        this._invalidateStacking();
         break;
       case 'newCombo':
         this.calculateCombos();
         break;
       case 'position':
-        this._calculateStackingFor(hitObject);
+        this._invalidateStacking();
     }
     this.onUpdated.emit(hitObject, key);
   }
@@ -263,9 +263,7 @@ export class HitObjectManager {
     );
   }
 
-  private _calculateStackingFor(hitObject: HitObject) {
-    // const index = this.hitObjects.indexOf(hitObject);
-    // this.calculateStacking(this.hitObjects, 0.9, 3, index, index);
+  private _invalidateStacking() {
     this.stackingDirty = true;
   }
 

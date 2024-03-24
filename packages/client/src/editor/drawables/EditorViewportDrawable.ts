@@ -182,7 +182,7 @@ export class EditorViewportDrawable extends Drawable {
   }
 
   onTick() {
-    this.editor.beatmapManager.hitObjects;
+    this.editor.beatmapManager.hitObjects.updateStacking();
   }
 
   playfield!: Container;
