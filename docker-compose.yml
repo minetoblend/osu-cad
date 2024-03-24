@@ -28,7 +28,7 @@ services:
       target: server
     restart: always
     env_file:
-      - .env2
+      - .env
     depends_on:
       mysql:
         condition: service_healthy
@@ -48,7 +48,7 @@ services:
       dockerfile: Dockerfile
       target: client-ssr
     env_file:
-      - .env2
+      - .env
     depends_on:
       server:
         condition: service_started
