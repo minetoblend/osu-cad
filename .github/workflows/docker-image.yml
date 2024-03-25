@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Docker Client Meta
-        id: meta
+        id: meta-client
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_CLIENT }}
@@ -54,14 +54,14 @@ jobs:
           file: Dockerfile
           context: .
           target: client-ssr
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta-client.outputs.tags }}
+          labels: ${{ steps.meta-client.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           push: true
     
       - name: Docker Server Meta
-        id: meta
+        id: meta-server
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_SERVER }}
@@ -77,8 +77,8 @@ jobs:
           file: Dockerfile
           context: .
           target: server
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta-server.outputs.tags }}
+          labels: ${{ steps.meta-server.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           push: true
