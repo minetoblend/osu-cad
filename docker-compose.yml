@@ -22,10 +22,7 @@ services:
     volumes:
       - mongodb_data:/data/db
   server:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: server
+    image: ghcr.io/minetoblend/osu-cad-server:master
     restart: always
     env_file:
       - .env
@@ -43,10 +40,7 @@ services:
     volumes:
       - server_data:/app/packages/server/files
   frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: client-ssr
+    image: ghcr.io/minetoblend/osu-cad-client:master
     env_file:
       - .env
     depends_on:
