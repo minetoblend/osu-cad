@@ -3,6 +3,7 @@ import { UserInfo } from './userInfo';
 export interface AuditEvents {
   login: object;
   logout: object;
+  'user.create': object;
   'mapset.import': {
     mapsetId: string;
     title: string;
