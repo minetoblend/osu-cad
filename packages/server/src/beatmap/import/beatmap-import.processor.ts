@@ -22,6 +22,7 @@ import { BeatmapImportProgress } from '@osucad/common';
 import { ImagesService } from '../../assets/images.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { AuditService } from '../../audit/audit.service';
 
 export interface BeatmapImportJob {
   userId: number;
@@ -51,6 +52,7 @@ export class BeatmapImportProcessor {
     private readonly beatmapSnapshotService: BeatmapSnapshotService,
     private readonly assetQuotaService: AssetQuotaService,
     private readonly imagesService: ImagesService,
+    private readonly auditService: AuditService,
     @InjectRepository(BeatmapEntity)
     private readonly beatmapRepository: Repository<BeatmapEntity>,
     @InjectRepository(MapsetEntity)
@@ -160,6 +162,10 @@ export class BeatmapImportProcessor {
     }
 
     await this.reportProgress({ status: 'done', mapsetId: this.mapset.id });
+    await this.auditService.record(user, 'importMapset', {
+      mapsetId: this.mapset.id,
+      title: `${this.mapset.artist} - ${this.mapset.title}`,
+    });
   }
 
   private async importBeatmap(path: string) {

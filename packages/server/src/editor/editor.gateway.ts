@@ -9,6 +9,7 @@ import { UserService } from '../users/user.service';
 import { EditorSessionEntity } from './editor-session.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { AuditService } from '../audit/audit.service';
 
 @WebSocketGateway({ namespace: 'editor' })
 export class EditorGateway implements OnGatewayConnection {
@@ -17,6 +18,7 @@ export class EditorGateway implements OnGatewayConnection {
     private readonly beatmapService: BeatmapService,
     private readonly permissionService: BeatmapPermissionsService,
     private readonly userService: UserService,
+    private readonly auditService: AuditService,
     @InjectRepository(EditorSessionEntity)
     private readonly sessionRepository: Repository<EditorSessionEntity>,
   ) {}
@@ -77,6 +79,13 @@ export class EditorGateway implements OnGatewayConnection {
       await this.sessionRepository.save(session);
       await this.beatmapService.markAccessed(beatmap, user);
 
+      await this.auditService.record(user, 'joinRoom', {
+        beatmapId: beatmap.uuid,
+        mapsetId: beatmap.mapset.id,
+        title: `${beatmap.mapset.artist} - ${beatmap.mapset.title} [${beatmap.name}]`,
+        access,
+      });
+
       room.accept(client, user, access);
 
       client.on('disconnect', async () => {
@@ -85,6 +94,11 @@ export class EditorGateway implements OnGatewayConnection {
           session.endDate.getTime() - session.beginDate.getTime();
         await this.sessionRepository.save(session);
         await this.beatmapService.markAccessed(beatmap, user);
+        await this.auditService.record(user, 'leaveRoom', {
+          beatmapId: beatmap.uuid,
+          mapsetId: beatmap.mapset.id,
+          title: `${beatmap.mapset.artist} - ${beatmap.mapset.title} [${beatmap.name}]`,
+        });
       });
     } catch (e) {
       console.error(e);

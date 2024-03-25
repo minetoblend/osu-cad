@@ -6,6 +6,7 @@ import { UserEntity } from '../users/user.entity';
 import { Request } from 'express';
 import { UserService } from '../users/user.service';
 import { ConfigService } from '@nestjs/config';
+import { AuditService } from '../audit/audit.service';
 
 @Controller('/auth')
 export class AuthController {
@@ -26,6 +27,7 @@ export class AuthController {
     private readonly http: HttpService,
     private readonly userService: UserService,
     private readonly configService: ConfigService,
+    private readonly auditService: AuditService,
   ) {}
 
   @Get('/login')
@@ -74,6 +76,8 @@ export class AuthController {
 
       const user = await this.userService.findOrCreateByProfile(profile);
 
+      await this.auditService.record(user, 'login', {});
+
       req.session.user = user;
     }
 
@@ -106,10 +110,14 @@ export class AuthController {
 
   @Get('/logout')
   @Redirect('/', 302)
-  logout(@Req() req: Request) {
+  async logout(@Req() req: Request) {
     this.logger.log(
       `User ${req.session.user?.username} (${req.session.user?.id}) logged out`,
     );
+
+    if (req.session.user) {
+      await this.auditService.record(req.session.user, 'logout', {});
+    }
 
     req.session.destroy(() => {});
   }
