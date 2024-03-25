@@ -1,13 +1,6 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  ManyToOne,
-  PrimaryColumn,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { UserEntity } from '../users/user.entity';
-import { AuditEvents } from './audit-events';
+import { AuditAction } from '@osucad/common';
 
 @Entity('audit_event')
 export class AuditEventEntity {
@@ -18,7 +11,7 @@ export class AuditEventEntity {
   user: UserEntity;
 
   @Column({ type: 'varchar', length: 64, nullable: false })
-  action: keyof AuditEvents;
+  action: AuditAction;
 
   @Column({ type: 'json', nullable: false })
   details: Record<string, any>;

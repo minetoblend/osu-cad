@@ -174,7 +174,7 @@ export class BeatmapController {
 
     await this.beatmapService.deleteBeatmap(beatmap);
 
-    await this.auditService.record(user, 'deleteBeatmap', {
+    await this.auditService.record(user, 'beatmap.delete', {
       beatmapId: beatmap.uuid,
       mapsetId: beatmap.mapset.id,
       title: `${beatmap.mapset.artist} - ${beatmap.mapset.title} [${beatmap.name}]`,

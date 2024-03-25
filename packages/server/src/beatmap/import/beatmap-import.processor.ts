@@ -162,7 +162,7 @@ export class BeatmapImportProcessor {
     }
 
     await this.reportProgress({ status: 'done', mapsetId: this.mapset.id });
-    await this.auditService.record(user, 'importMapset', {
+    await this.auditService.record(user, 'mapset.import', {
       mapsetId: this.mapset.id,
       title: `${this.mapset.artist} - ${this.mapset.title}`,
     });

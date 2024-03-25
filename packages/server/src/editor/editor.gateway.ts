@@ -79,7 +79,7 @@ export class EditorGateway implements OnGatewayConnection {
       await this.sessionRepository.save(session);
       await this.beatmapService.markAccessed(beatmap, user);
 
-      await this.auditService.record(user, 'joinRoom', {
+      await this.auditService.record(user, 'room.join', {
         beatmapId: beatmap.uuid,
         mapsetId: beatmap.mapset.id,
         title: `${beatmap.mapset.artist} - ${beatmap.mapset.title} [${beatmap.name}]`,
@@ -94,7 +94,7 @@ export class EditorGateway implements OnGatewayConnection {
           session.endDate.getTime() - session.beginDate.getTime();
         await this.sessionRepository.save(session);
         await this.beatmapService.markAccessed(beatmap, user);
-        await this.auditService.record(user, 'leaveRoom', {
+        await this.auditService.record(user, 'room.leave', {
           beatmapId: beatmap.uuid,
           mapsetId: beatmap.mapset.id,
           title: `${beatmap.mapset.artist} - ${beatmap.mapset.title} [${beatmap.name}]`,
