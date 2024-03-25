@@ -9,13 +9,14 @@ import unoCSS from 'unocss/vite';
 import markdown from 'unplugin-vue-markdown/vite';
 import inspect from 'vite-plugin-inspect';
 import * as dotenv from 'dotenv';
-import MarkdownItAnchor from 'markdown-it-anchor'
-import MarkdownItPrism from 'markdown-it-prism'
+import MarkdownItAnchor from 'markdown-it-anchor';
+import MarkdownItPrism from 'markdown-it-prism';
 
-
-dotenv.config({
-  path: resolve(__dirname, '../../.env')
-});
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config({
+    path: resolve(__dirname, '../../.env'),
+  });
+}
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -32,15 +33,19 @@ export default defineConfig({
       'reflect-metadata',
       'unplugin-vue-router/runtime',
       'gsap',
-      '@capacitor/core'
-    ]
+      '@capacitor/core',
+    ],
   },
   plugins: [
     autoImport({
-      imports: ['vue', '@vueuse/core', {
-        'vue-router/auto': ['definePage'],
-        '@unhead/vue': ['useServerSeoMeta']
-      }]
+      imports: [
+        'vue',
+        '@vueuse/core',
+        {
+          'vue-router/auto': ['definePage'],
+          '@unhead/vue': ['useServerSeoMeta'],
+        },
+      ],
     }),
     markdown({
       headEnabled: true,
@@ -48,12 +53,12 @@ export default defineConfig({
       markdownItOptions: {
         linkify: true,
         html: true,
-        typographer: true
+        typographer: true,
       },
       markdownItSetup(md) {
-        md.use(MarkdownItAnchor)
-        md.use(MarkdownItPrism)
-      }
+        md.use(MarkdownItAnchor);
+        md.use(MarkdownItPrism);
+      },
     }),
     layouts(),
     router({
@@ -65,63 +70,63 @@ export default defineConfig({
           if (name.startsWith('Layout')) {
             return resolve(
               __dirname,
-              'src/layouts/' + name.slice(6).toLowerCase() + '.vue'
+              'src/layouts/' + name.slice(6).toLowerCase() + '.vue',
             ).replaceAll('\\', '/');
           }
-        }
-      ]
+        },
+      ],
     }),
     vue({
-      include: [/\.vue$/, /\.md$/]
+      include: [/\.vue$/, /\.md$/],
     }),
     unoCSS(),
-    inspect()
+    inspect(),
   ],
   resolve: {
     alias: {
-      '@': resolve(__dirname, './src')
-    }
+      '@': resolve(__dirname, './src'),
+    },
   },
   server: {
     headers: {
-      'Document-Policy': 'js-profiling'
+      'Document-Policy': 'js-profiling',
     },
     proxy: {
       '/api': {
         target: 'http://localhost:3000',
-        changeOrigin: true
+        changeOrigin: true,
       },
       '/auth': {
         target: 'http://localhost:3000',
-        changeOrigin: true
+        changeOrigin: true,
       },
       '/admin/queues': {
         target: 'http://localhost:3000',
-        changeOrigin: true
+        changeOrigin: true,
       },
       '/socket.io': {
         target: 'http://localhost:3000',
         ws: true,
-        changeOrigin: true
-      }
-    }
+        changeOrigin: true,
+      },
+    },
   },
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@import "@/variables.scss";`
-      }
-    }
+        additionalData: `@import "@/variables.scss";`,
+      },
+    },
   },
   build: {
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        ssr: resolve(__dirname, 'ssr.html')
-      }
-    }
+        ssr: resolve(__dirname, 'ssr.html'),
+      },
+    },
   },
   define: {
-    __hydrate__: process.env.NODE_ENV === 'production'
-  }
+    __hydrate__: process.env.NODE_ENV === 'production',
+  },
 });

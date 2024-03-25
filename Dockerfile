@@ -7,6 +7,13 @@ FROM base AS build
 COPY . /usr/src/app
 WORKDIR /usr/src/app
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+
+ARG BASEURL
+ARG SSR_API_BASEURL
+
+ENV VITE_BASEURL=$BASEURL
+ENV VITE_SSR_API_BASEURL=$SSR_API_BASEURL
+
 RUN pnpm run -r build
 RUN pnpm deploy --filter "@osucad/server" --prod /prod/server
 RUN pnpm deploy --filter "@osucad/client" --prod /prod/client
