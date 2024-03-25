@@ -1,0 +1,15 @@
+name: Redeploy osucad Stack
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    if: github.actor == 'minetoblend'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy compose webhook
+        uses: joelwmale/webhook-action@2.3.2
+        with:
+          url: ${{ secrets.WEBHOOK_URL }}/redeploy
+          body: '{ "secret": "${{ secrets.WEBHOOK_SECRET }}" }'
