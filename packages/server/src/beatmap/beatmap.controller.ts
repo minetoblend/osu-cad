@@ -20,18 +20,18 @@ import { BeatmapAccess, BeatmapInfo } from '@osucad/common';
 import { AuthGuard } from '../auth/auth.guard';
 import z from 'zod';
 import { BeatmapEntity } from './beatmap.entity';
-import { AssetsService } from '../assets/assets.service';
 import { BeatmapTransformer } from './beatmapTransformer';
 import { ImagesService } from '../assets/images.service';
+import { AuditService } from '../audit/audit.service';
 
 @Controller('api/beatmaps')
 export class BeatmapController {
   constructor(
     private readonly permissionService: BeatmapPermissionsService,
     private readonly beatmapService: BeatmapService,
-    private readonly assetsService: AssetsService,
     private readonly beatmapTransformer: BeatmapTransformer,
     private readonly imagesService: ImagesService,
+    private readonly auditService: AuditService,
   ) {}
 
   @Get()
@@ -173,6 +173,12 @@ export class BeatmapController {
     }
 
     await this.beatmapService.deleteBeatmap(beatmap);
+
+    await this.auditService.record(user, 'beatmap.delete', {
+      beatmapId: beatmap.uuid,
+      mapsetId: beatmap.mapset.id,
+      title: `${beatmap.mapset.artist} - ${beatmap.mapset.title} [${beatmap.name}]`,
+    });
 
     return { success: true };
   }

@@ -17,6 +17,7 @@ declare module 'vue' {
     AppNavSidebarButton: typeof import('./src/components/app/AppNavSidebarButton.vue')['default']
     AppSidebar: typeof import('./src/components/app/AppSidebar.vue')['default']
     AudioPreferencesForm: typeof import('./src/components/preferences/AudioPreferencesForm.vue')['default']
+    AuditEventCard: typeof import('./src/components/admin/AuditEventCard.vue')['default']
     BeatmapCard: typeof import('./src/components/beatmap/BeatmapCard.vue')['default']
     BeatmapCardList: typeof import('./src/components/beatmap/BeatmapCardList.vue')['default']
     BeatmapCardSkeleton: typeof import('./src/components/beatmap/BeatmapCardSkeleton.vue')['default']

@@ -12,8 +12,9 @@ definePage({
 <template>
   <layout-default>
     <template #sidebar>
-      <AppNavSidebarButton to="/admin/rooms" text="rooms" />
-      <AppNavSidebarButton to="/admin/users" text="users" />
+      <AppNavSidebarButton to="/admin/rooms" text="Rooms" />
+      <AppNavSidebarButton to="/admin/users" text="Users" />
+      <AppNavSidebarButton to="/admin/audit-log" text="Audit log" />
     </template>
   </layout-default>
 </template>

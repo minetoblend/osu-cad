@@ -10,6 +10,7 @@ import { AdminGuard } from './admin-auth.guard';
 import { EditorRoomService } from '../editor/editor-room.service';
 import { UserService } from '../users/user.service';
 import { ImagesService } from '../assets/images.service';
+import { AuditService } from '../audit/audit.service';
 
 @Controller('api/admin')
 @UseGuards(AuthGuard, AdminGuard)
@@ -18,6 +19,7 @@ export class AdminController {
     private readonly userService: UserService,
     private readonly roomManager: EditorRoomService,
     private readonly imagesService: ImagesService,
+    private readonly auditService: AuditService,
   ) {}
 
   @Get('users')
@@ -39,6 +41,7 @@ export class AdminController {
     const users = await this.userService.searchUsers({ search, limit, offset });
     return users.map((user) => user.getInfo());
   }
+
   @Get('rooms')
   async getActiveRooms() {
     const rooms = this.roomManager.getActiveRooms();
@@ -79,5 +82,19 @@ export class AdminController {
         };
       }),
     );
+  }
+
+  @Get('audit-events')
+  async getAuditEvents(@Query('after') after?: number) {
+    const events = await this.auditService.getEvents({ after });
+    return events.map((event) => {
+      return {
+        id: event.id,
+        user: event.user.getInfo(),
+        action: event.action,
+        details: event.details,
+        timestamp: event.timestamp,
+      };
+    });
   }
 }

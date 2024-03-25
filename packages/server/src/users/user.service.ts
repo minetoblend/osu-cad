@@ -3,13 +3,16 @@ import { Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IOsuProfileInformation } from '../auth/interfaces';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly repository: Repository<UserEntity>,
+    private readonly auditService: AuditService,
   ) {}
+
   async findById(id: number): Promise<UserEntity | null> {
     return this.repository.findOne({
       where: {
@@ -23,7 +26,11 @@ export class UserService {
     user.id = profile.id;
     user.username = profile.username;
     user.avatarUrl = profile.avatar_url;
-    return this.repository.save(user);
+    await this.repository.save(user);
+
+    await this.auditService.record(user, 'user.create', {});
+
+    return user;
   }
 
   async findOrCreateByProfile(profile: IOsuProfileInformation) {

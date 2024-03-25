@@ -24,6 +24,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { SentryInterceptor, SentryModule } from '@ntegral/nestjs-sentry';
 import * as process from 'process';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { AuditModule } from './audit/audit.module';
 
 @Module({
   imports: [
@@ -77,6 +78,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     CacheModule.register({ isGlobal: true }),
     ScheduleModule.forRoot(),
     EventEmitterModule.forRoot(),
+    AuditModule,
   ],
   controllers: [AppController],
   providers: [
