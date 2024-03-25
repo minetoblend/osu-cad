@@ -15,6 +15,8 @@ const formattedAction = computed(() => {
       return 'Login';
     case 'logout':
       return 'Logout';
+    case 'user.create':
+      return 'Created user';
     case 'mapset.import':
       return 'Imported mapset';
     case 'beatmap.delete':
@@ -46,7 +48,7 @@ const details = computed(() => {
       </div>
     </div>
     <div class="mt-4 text-sm">
-      <div v-for="[key, value] in details">
+      <div v-for="[key, value] in details" :key="key">
         <div class="flex items-center gap-2">
           <div class="font-semibold">{{ key }}</div>
           <div class="text-gray-600">{{ value }}</div>
