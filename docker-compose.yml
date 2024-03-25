@@ -3,7 +3,7 @@ version: "3.3"
 services:
   mysql:
     image: mysql:8.3.0
-    restart: always
+    restart: unless-stopped
     env_file:
       - .env
     volumes:
@@ -15,10 +15,10 @@ services:
       retries: 10
   redis:
     image: redis:7.2
-    restart: always
+    restart: unless-stopped
   mongodb:
     image: mongo:4.4.0
-    restart: always
+    restart: unless-stopped
     volumes:
       - mongodb_data:/data/db
   server:
@@ -41,6 +41,7 @@ services:
       - server_data:/app/packages/server/files
   frontend:
     image: ghcr.io/minetoblend/osu-cad-client:master
+    restart: always
     env_file:
       - .env
     depends_on:
@@ -53,6 +54,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    restart: always
     environment:
       - HOSTNAME=${HOSTNAME}
     volumes:
