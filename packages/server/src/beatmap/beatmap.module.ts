@@ -21,10 +21,11 @@ import { BeatmapThumbnailProcessor } from './beatmap-thumbnail.processor';
 import { BullBoardModule } from '@bull-board/nestjs';
 import { BullAdapter } from '@bull-board/api/bullAdapter';
 import { MapsetTransformer } from './mapset.transformer';
-import { BeatmapTransformer } from './beatmapTransformer';
+import { BeatmapTransformer } from './beatmap.transformer';
 import { BeatmapMigrator } from './beatmap-migrator';
 import { BeatmapLastAccessEntity } from './beatmap-last-access.entity';
 import { BeatmapImportModule } from './import/beatmap-import.module';
+import { MapsetService } from './mapset.service';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { BeatmapImportModule } from './import/beatmap-import.module';
     BeatmapTransformer,
     MapsetTransformer,
     BeatmapMigrator,
+    MapsetService,
   ],
   controllers: [MapsetController, BeatmapController],
   exports: [
@@ -69,6 +71,7 @@ import { BeatmapImportModule } from './import/beatmap-import.module';
     BeatmapSnapshotService,
     BeatmapPermissionsService,
     BeatmapMigrator,
+    MapsetService,
   ],
 })
 export class BeatmapModule {}

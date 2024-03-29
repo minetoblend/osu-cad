@@ -20,7 +20,7 @@ import { BeatmapAccess, BeatmapInfo } from '@osucad/common';
 import { AuthGuard } from '../auth/auth.guard';
 import z from 'zod';
 import { BeatmapEntity } from './beatmap.entity';
-import { BeatmapTransformer } from './beatmapTransformer';
+import { BeatmapTransformer } from './beatmap.transformer';
 import { ImagesService } from '../assets/images.service';
 import { AuditService } from '../audit/audit.service';
 
@@ -56,7 +56,7 @@ export class BeatmapController {
       throw new BadRequestException('Invalid search value');
     }
 
-    const beatmaps = await this.beatmapService.getRecentBeatmaps(
+    const beatmaps = await this.beatmapService.getBeatmaps(
       user!.id,
       filter,
       sort,
@@ -99,9 +99,9 @@ export class BeatmapController {
     let beatmap: BeatmapEntity | null = null;
 
     if (id) {
-      beatmap = await this.beatmapService.findBeatmapByUuid(id);
+      beatmap = await this.beatmapService.findByUuid(id);
     } else if (shareKey) {
-      beatmap = await this.beatmapService.findBeatmapByShareKey(shareKey);
+      beatmap = await this.beatmapService.findByShareId(shareKey);
     } else {
       throw new BadRequestException(
         'Either id or shareId must be provided as a query parameter',
@@ -141,7 +141,7 @@ export class BeatmapController {
   @Get('/:id')
   @UseGuards(AuthGuard)
   async findById(@Req() req: Request, @Param('id') id: string) {
-    const beatmap = await this.beatmapService.findBeatmapByUuid(id);
+    const beatmap = await this.beatmapService.findByUuid(id);
     if (!beatmap) {
       throw new NotFoundException();
     }
@@ -161,7 +161,7 @@ export class BeatmapController {
   @UseGuards(AuthGuard)
   async deleteBeatmap(@Req() req: Request, @Param('id') id: string) {
     const user = req.session.user!;
-    const beatmap = await this.beatmapService.findBeatmapByUuid(id);
+    const beatmap = await this.beatmapService.findByUuid(id);
     if (!beatmap) {
       throw new NotFoundException();
     }
@@ -172,7 +172,7 @@ export class BeatmapController {
       throw new ForbiddenException();
     }
 
-    await this.beatmapService.deleteBeatmap(beatmap);
+    await this.beatmapService.delete(beatmap);
 
     await this.auditService.record(user, 'beatmap.delete', {
       beatmapId: beatmap.uuid,
@@ -187,7 +187,7 @@ export class BeatmapController {
   @UseGuards(AuthGuard)
   async getAccessSettings(@Req() req: Request) {
     const user = req.session.user!;
-    const beatmap = await this.beatmapService.findBeatmapByUuid(req.params.id);
+    const beatmap = await this.beatmapService.findByUuid(req.params.id);
     if (!beatmap) {
       return { access: BeatmapAccess.None };
     }
@@ -238,7 +238,7 @@ export class BeatmapController {
     }
 
     const user = req.session.user;
-    const beatmap = await this.beatmapService.findBeatmapByUuid(req.params.id);
+    const beatmap = await this.beatmapService.findByUuid(req.params.id);
     if (!beatmap || !user) {
       throw new NotFoundException();
     }
@@ -252,7 +252,9 @@ export class BeatmapController {
       throw new ForbiddenException();
     }
 
-    await this.beatmapService.setAccess(beatmap, parsedBody.data.access);
+    await this.beatmapService.updateBeatmap(beatmap, {
+      access: parsedBody.data.access,
+    });
 
     return { access: parsedBody.data.access };
   }
@@ -280,7 +282,7 @@ export class BeatmapController {
     }
 
     const user = req.session.user;
-    const beatmap = await this.beatmapService.findBeatmapByUuid(req.params.id);
+    const beatmap = await this.beatmapService.findByUuid(req.params.id);
     if (!beatmap || !user) {
       throw new NotFoundException();
     }
