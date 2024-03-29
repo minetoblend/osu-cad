@@ -165,6 +165,7 @@ export class BeatmapService implements OnModuleInit {
   }
 
   async delete(beatmap: BeatmapEntity) {
-    return await this.repository.softDelete(beatmap);
+    beatmap.deleted = true;
+    return await this.repository.save(beatmap);
   }
 }
