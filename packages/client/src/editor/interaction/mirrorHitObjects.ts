@@ -70,6 +70,8 @@ export function transformHitObjectsInteraction(editor: EditorContext) {
         : new Rect(0, 0, 512, 384);
       mirrorHitObjects(editor, 'horizontal', bounds);
     } else if (shortcut?.startsWith('hitobject.flip-vertical')) {
+      evt.preventDefault();
+
       if (editor.selection.size === 0) return;
 
       const bounds = evt.shiftKey
