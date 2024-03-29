@@ -7,27 +7,25 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { BeatmapImportService } from './beatmap-import.service';
 import 'multer';
 import { AuthGuard } from '../auth/auth.guard';
 import { Request, Response } from 'express';
-import { BeatmapService } from './beatmap.service';
 import { BeatmapExportService } from './beatmap-export.service';
 import { AssetsService } from '../assets/assets.service';
 import { MapsetTransformer } from './mapset.transformer';
-import { BeatmapTransformer } from './beatmap.transformer';
 import { MapsetService } from './mapset.service';
+import { BeatmapEntity } from './beatmap.entity';
+import { BeatmapPermissionsService } from './beatmap-permissions.service';
+import { BeatmapAccess } from '@osucad/common';
 
 @Controller('api/mapsets')
 export class MapsetController {
   constructor(
-    private readonly beatmapImportService: BeatmapImportService,
-    private readonly beatmapService: BeatmapService,
     private readonly beatmapExportService: BeatmapExportService,
     private readonly assetsService: AssetsService,
-    private readonly beatmapTransformer: BeatmapTransformer,
     private readonly mapsetTransformer: MapsetTransformer,
     private readonly mapsetService: MapsetService,
+    private readonly beatmapPermissionService: BeatmapPermissionsService,
   ) {}
 
   @Get('/own')
@@ -51,6 +49,22 @@ export class MapsetController {
   ) {
     const mapset = await this.mapsetService.findById(id);
     if (!mapset) return res.sendStatus(404);
+
+    const beatmaps: BeatmapEntity[] = [];
+
+    for (const beatmap of mapset.beatmaps) {
+      const access = await this.beatmapPermissionService.getAccess(
+        beatmap,
+        request.session.user!.id,
+      );
+      if (access >= BeatmapAccess.View) {
+        beatmaps.push(beatmap);
+      }
+    }
+
+    if (beatmaps.length === 0) return res.sendStatus(403);
+
+    mapset.beatmaps = beatmaps;
 
     const archive = await this.beatmapExportService.convertMapset(mapset);
     res.header('Content-Type', 'application/zip');
