@@ -42,7 +42,7 @@ export const shortcuts = {
   'hitobject.reverse': keystroke('ctrl+g'),
   'hitobject.flip-horizontal': keystroke('ctrl+h'),
   'hitobject.flip-horizontal.local': keystroke('ctrl+shift+h'),
-  'hitobject.flip-vertical': keystroke('ctrl+shift+j'),
+  'hitobject.flip-vertical': keystroke('ctrl+j'),
   'hitobject.flip-vertical.local': keystroke('ctrl+shift+j'),
   'hitobject.rotate-clockwise': keystroke('ctrl+shift+period'),
   'hitobject.rotate-counter-clockwise': keystroke('ctrl+shift+comma'),
