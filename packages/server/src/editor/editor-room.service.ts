@@ -47,7 +47,7 @@ export class EditorRoomService {
   }
 
   private async createRoom(beatmapId: BeatmapId): Promise<EditorRoom | null> {
-    const beatmap = await this.beatmapService.findBeatmapByUuid(beatmapId);
+    const beatmap = await this.beatmapService.findByUuid(beatmapId);
     if (!beatmap) return null;
     this.logger.log(
       `creating room ${beatmapId} for ${beatmap.mapset.artist} - ${beatmap.mapset.title}`,

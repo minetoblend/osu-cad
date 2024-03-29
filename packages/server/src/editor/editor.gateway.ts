@@ -44,7 +44,7 @@ export class EditorGateway implements OnGatewayConnection {
       return;
     }
 
-    const beatmap = await this.beatmapService.findBeatmapByShareKey(beatmapId);
+    const beatmap = await this.beatmapService.findByShareId(beatmapId);
 
     if (!beatmap) {
       client.disconnect();

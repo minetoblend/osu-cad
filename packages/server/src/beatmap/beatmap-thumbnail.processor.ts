@@ -34,7 +34,7 @@ export class BeatmapThumbnailProcessor {
 
   async createThumbnails({ beatmapId }: BeatmapThumbnailJob) {
     try {
-      const beatmap = await this.beatmapService.findBeatmapById(beatmapId);
+      const beatmap = await this.beatmapService.findById(beatmapId);
       if (!beatmap) {
         return {
           error: 'Beatmap not found',

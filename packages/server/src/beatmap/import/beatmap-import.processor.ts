@@ -23,6 +23,7 @@ import { ImagesService } from '../../assets/images.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuditService } from '../../audit/audit.service';
+import { MapsetService } from '../mapset.service';
 
 export interface BeatmapImportJob {
   userId: number;
@@ -49,6 +50,7 @@ export class BeatmapImportProcessor {
     private readonly userService: UserService,
     private readonly assetsService: AssetsService,
     private readonly beatmapService: BeatmapService,
+    private readonly mapsetService: MapsetService,
     private readonly beatmapSnapshotService: BeatmapSnapshotService,
     private readonly assetQuotaService: AssetQuotaService,
     private readonly imagesService: ImagesService,
@@ -129,7 +131,7 @@ export class BeatmapImportProcessor {
 
     this.mapset.beatmaps = this.beatmaps.map((b) => b.entity);
 
-    await this.beatmapService.createMapset(this.mapset);
+    await this.mapsetService.create(this.mapset);
 
     for (const { entity, beatmap } of this.beatmaps) {
       await this.beatmapSnapshotService.createSnapshotFromBeatmap(
@@ -333,10 +335,6 @@ export class BeatmapImportProcessor {
   private async generateThumbnail(entity: BeatmapEntity, beatmap: Beatmap) {
     try {
       const path = beatmap.backgroundPath;
-      console.log(
-        path,
-        this.assets.map((a) => a.path),
-      );
       const asset = this.assets.find((a) => a.path === path);
       if (!asset) {
         return;
@@ -353,8 +351,6 @@ export class BeatmapImportProcessor {
           beatmapId: entity.id.toString(),
         },
       );
-
-      console.log({ result, success });
 
       await this.beatmapRepository.update(
         { id: entity.id },

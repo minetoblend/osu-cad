@@ -43,6 +43,7 @@ import { BeatmapSnapshotService } from './beatmap-snapshot.service';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BeatmapMigrator } from './beatmap-migrator';
+import { MapsetService } from './mapset.service';
 
 @Injectable()
 export class BeatmapImportService {
@@ -51,6 +52,7 @@ export class BeatmapImportService {
     private readonly userService: UserService,
     private readonly assetsService: AssetsService,
     private readonly snapshotService: BeatmapSnapshotService,
+    private readonly mapsetService: MapsetService,
     @InjectRepository(BeatmapEntity)
     private readonly beatmapRepository: Repository<BeatmapEntity>,
   ) {}
@@ -138,7 +140,7 @@ export class BeatmapImportService {
 
     if (!mapset) return null;
 
-    await this.beatmapService.createMapset(mapset);
+    await this.mapsetService.create(mapset);
 
     for (const assetPath of assetPaths) {
       const assetBuffer = await fs.readFile(resolve(path, assetPath));
@@ -184,7 +186,7 @@ export class BeatmapImportService {
 
     mapset.s3Storage = true;
 
-    await this.beatmapService.saveMapset(mapset);
+    await this.mapsetService.save(mapset);
 
     await fs.rm(path, { recursive: true, force: true });
 
