@@ -19,11 +19,15 @@ export class BeatmapMigrator {
     for (const migration of migrations) {
       data = (await this[migration](data)) as unknown as BeatmapData;
     }
-    data.version = BeatmapMigrator.migrations.length + 1;
+    data.version = BeatmapMigrator.migrations.length;
     return data;
   }
 
-  static readonly migrations: KeyOf<BeatmapMigrator> = ['migrate_svs'];
+  static readonly migrations: KeyOf<BeatmapMigrator> = ['noop', 'migrate_svs'];
+
+  noop(data: BeatmapData): BeatmapData {
+    return data;
+  }
 
   migrate_svs(data: BeatmapData): BeatmapData {
     const controlPoints = ControlPointManager.fromLegacy(data.controlPoints);
