@@ -49,7 +49,7 @@ export class BeatmapSnapshotService {
       });
 
       if (existingSnapshot) {
-        const age = Date.now() - existingSnapshot.timestamp.getTime();
+        const age = Date.now() - existingSnapshot.createDate.getTime();
         if (age < this.snapshotCombineThreshold) {
           existingSnapshot.data = data;
           existingSnapshot.version = data.version ?? 1;
