@@ -15,7 +15,7 @@ export class BeatmapMigrator {
       version = 1;
     }
 
-    const migrations = BeatmapMigrator.migrations.slice(version - 1);
+    const migrations = BeatmapMigrator.migrations.slice(version);
     for (const migration of migrations) {
       data = (await this[migration](data)) as unknown as BeatmapData;
     }
