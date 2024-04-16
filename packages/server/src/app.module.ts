@@ -23,6 +23,7 @@ import { SentryInterceptor, SentryModule } from '@ntegral/nestjs-sentry';
 import * as process from 'process';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AuditModule } from './audit/audit.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { AuditModule } from './audit/audit.module';
     ScheduleModule.forRoot(),
     EventEmitterModule.forRoot(),
     AuditModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [
