@@ -8,8 +8,6 @@ import { OsuModule } from './osu/osu.module';
 import * as path from 'path';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { PreferencesModule } from './preferences/preferences.module';
-import { MongooseModule } from '@nestjs/mongoose';
 import { dbdatasource } from './datasource';
 import { AppController } from './app.controller';
 import { AssetsModule } from './assets/assets.module';
@@ -39,16 +37,6 @@ import { AuditModule } from './audit/audit.module';
       logLevels: ['debug'],
     }),
     TypeOrmModule.forRoot(dbdatasource),
-    MongooseModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => {
-        const host = config.get('MONGODB_HOST', 'mongodb');
-        const port = config.get('MONGODB_PORT', 27017);
-        return {
-          uri: `mongodb://${host}:${port}/osucad`,
-        };
-      },
-    }),
     ServeStaticModule.forRoot({
       rootPath: path.resolve(__dirname, '../../client/dist'),
     }),
@@ -57,7 +45,6 @@ import { AuditModule } from './audit/audit.module';
     AuthModule,
     EditorModule,
     OsuModule,
-    PreferencesModule,
     AssetsModule,
     AdminModule,
     BullModule.forRootAsync({
