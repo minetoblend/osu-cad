@@ -67,6 +67,7 @@ if (!import.meta.env.SSR) {
         userStore.login();
       }
     },
+    { immediate: true, once: true },
   );
 }
 </script>
