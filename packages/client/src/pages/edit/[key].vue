@@ -5,6 +5,7 @@ import { useServerSeoMeta } from '@unhead/vue';
 import { BeatmapAccess, BeatmapInfo } from '@osucad/common';
 import { definePage } from 'vue-router/auto';
 import { useRoute, useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/userStore';
 
 const EditorLoader = defineAsyncComponent(
   () => import('@/editor/components/EditorLoader.vue'),
@@ -18,8 +19,9 @@ definePage({
 
 const route = useRoute('/edit/[key]');
 const key = computed(() => route.params.key);
-
 const title = ref('osucad');
+
+const userStore = useUserStore();
 
 const { data, isLoading } = useLoader('access', async () => {
   const response = await useAxios().get<{
@@ -56,11 +58,22 @@ useRouter().beforeEach((to) => {
   // forcing a location change when leaving the editor to ensure the editor is destroyed properly
   window.location.href = to.fullPath;
 });
+
+if (!import.meta.env.SSR) {
+  whenever(
+    () => userStore.loaded,
+    () => {
+      if (!userStore.isLoggedIn) {
+        userStore.login();
+      }
+    },
+  );
+}
 </script>
 
 <template>
   <layout-editor v-if="!isLoading && data">
-    <ClientOnly v-if="true">
+    <ClientOnly v-if="userStore.isLoggedIn">
       <EditorLoader :join-key="key" :key="key" />
     </ClientOnly>
   </layout-editor>
