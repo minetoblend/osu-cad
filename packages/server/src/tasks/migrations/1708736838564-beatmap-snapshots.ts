@@ -11,17 +11,6 @@ export class BeatmapSnapshots1708736838564 implements MigrationInterface {
       `ALTER TABLE \`beatmap_snapshot\` ADD CONSTRAINT \`FK_653dc96bbbb6d8aa57a6a0e7940\` FOREIGN KEY (\`beatmapId\`) REFERENCES \`beatmaps\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `
-            INSERT INTO \`beatmap_snapshot\` (\`id\`, \`version\`, \`data\`, \`beatmapId\`)
-                SELECT
-                    UUID(),
-                    IFNULL(JSON_EXTRACT(\`data\`, "$.version"), 1),
-                    \`data\`,
-                    \`id\`
-            FROM \`beatmaps\`
-            `,
-    );
-    await queryRunner.query(
       `ALTER TABLE \`beatmaps\` CHANGE \`data\` \`data\` json NULL`,
     );
   }
