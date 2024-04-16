@@ -15,7 +15,6 @@ export const dbdatasource: DataSourceOptions = {
   username: process.env.MYSQL_USER ?? 'osucad',
   password: process.env.MYSQL_PASSWORD ?? 'osucad',
   database: process.env.MYSQL_DATABASE ?? 'osucad',
-  ssl: process.env.MYSQL_SSL === 'true',
   synchronize: false,
   entities: ['dist/**/*.entity.js'],
   migrations: ['dist/tasks/migrations/*.js'],
