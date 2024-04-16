@@ -429,7 +429,7 @@ importers:
         specifier: ^3.0.1
         version: 3.0.1
       osu-parsers:
-        specifier: ^4.1.5
+        specifier: ^4.1.6
         version: 4.1.6(patch_hash=ugoagda5taw6zv5twsd6c5pxn4)(osu-classes@3.0.1)
       osu-standard-stable:
         specifier: ^5.0.0
