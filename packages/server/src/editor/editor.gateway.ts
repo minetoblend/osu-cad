@@ -1,5 +1,9 @@
-import { OnGatewayConnection, WebSocketGateway } from '@nestjs/websockets';
-import { Socket } from 'socket.io';
+import {
+  OnGatewayConnection,
+  WebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
 import { Request } from 'express';
 import { EditorRoomService } from './editor-room.service';
 import { BeatmapPermissionsService } from '../beatmap/beatmap-permissions.service';
@@ -11,7 +15,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuditService } from '../audit/audit.service';
 
-@WebSocketGateway({ namespace: 'editor' })
+@WebSocketGateway({ namespace: 'editor', transports: ['websocket'] })
 export class EditorGateway implements OnGatewayConnection {
   constructor(
     private readonly editorRoomManager: EditorRoomService,
@@ -22,6 +26,9 @@ export class EditorGateway implements OnGatewayConnection {
     @InjectRepository(EditorSessionEntity)
     private readonly sessionRepository: Repository<EditorSessionEntity>,
   ) {}
+
+  @WebSocketServer()
+  private server: Server;
 
   async handleConnection(client: Socket) {
     const request = client.request as unknown as Request;
@@ -61,6 +68,7 @@ export class EditorGateway implements OnGatewayConnection {
 
       const room = await this.editorRoomManager.getRoomOrCreateRoom(
         beatmap.uuid,
+        this.server,
       );
 
       if (!room) {

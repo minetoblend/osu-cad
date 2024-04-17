@@ -4,6 +4,7 @@ import { EditorRoom } from './editor-room';
 import { BeatmapId } from '@osucad/common';
 import { BeatmapSnapshotService } from '../beatmap/beatmap-snapshot.service';
 import { ModuleRef } from '@nestjs/core';
+import { Server } from 'socket.io';
 
 @Injectable()
 export class EditorRoomService {
@@ -46,7 +47,10 @@ export class EditorRoomService {
     }, 15_000);
   }
 
-  private async createRoom(beatmapId: BeatmapId): Promise<EditorRoom | null> {
+  private async createRoom(
+    beatmapId: BeatmapId,
+    server: Server,
+  ): Promise<EditorRoom | null> {
     const beatmap = await this.beatmapService.findByUuid(beatmapId);
     if (!beatmap) return null;
     this.logger.log(
@@ -54,7 +58,7 @@ export class EditorRoomService {
     );
 
     const room = await this.moduleRef.create(EditorRoom);
-    await room.init(beatmap);
+    await room.init(beatmap, server);
 
     return room;
   }
@@ -67,11 +71,14 @@ export class EditorRoomService {
     return room instanceof Promise ? await room : room;
   }
 
-  async getRoomOrCreateRoom(beatmapId: BeatmapId): Promise<EditorRoom | null> {
+  async getRoomOrCreateRoom(
+    beatmapId: BeatmapId,
+    server: Server,
+  ): Promise<EditorRoom | null> {
     let room = this.rooms.get(beatmapId);
 
     if (!room) {
-      room = this.createRoom(beatmapId).then((room) => {
+      room = this.createRoom(beatmapId, server).then((room) => {
         if (room) this.rooms.set(beatmapId, room);
         else this.rooms.delete(beatmapId);
         return room;

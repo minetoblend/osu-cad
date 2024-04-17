@@ -101,6 +101,7 @@ function createSocket(joinKey: string): EditorSocket {
   const socket = io(`${host}/editor`, {
     withCredentials: true,
     query: { id: joinKey },
+    transports: ['websocket'],
   });
   return new EditorSocket(socket);
 }

@@ -1,10 +1,9 @@
 import { UserEntity } from '../users/user.entity';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import {
   Beatmap,
   BeatmapAccess,
   ClientMessages,
-  compressMessage,
   ControlPointManager,
   defaultHitSoundLayers,
   ServerMessages,
@@ -26,6 +25,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BeatmapMigrator } from '../beatmap/beatmap-migrator';
 import { BeatmapSnapshotService } from '../beatmap/beatmap-snapshot.service';
+import { v4 as uuid } from 'uuid';
 
 export class EditorRoom extends EventEmitter2 {
   constructor(
@@ -37,6 +37,8 @@ export class EditorRoom extends EventEmitter2 {
   ) {
     super();
   }
+
+  readonly id = uuid();
 
   logger = new Logger(EditorRoom.name);
   beatmap: Beatmap;
@@ -56,9 +58,11 @@ export class EditorRoom extends EventEmitter2 {
 
   roomEntity = new EditorRoomEntity();
   entity!: BeatmapEntity;
+  server!: Server;
 
-  async init(entity: BeatmapEntity) {
+  async init(entity: BeatmapEntity, server: Server) {
     this.entity = entity;
+    this.server = server;
 
     const snapshot = await this.snapshotService.getLatestSnapshot(entity);
     if (!snapshot) {
@@ -136,6 +140,8 @@ export class EditorRoom extends EventEmitter2 {
       access,
     );
 
+    client.join(this.id);
+
     for (const handler of this.handlers) {
       handler.onUserJoin(roomUser);
     }
@@ -153,10 +159,7 @@ export class EditorRoom extends EventEmitter2 {
     message: T,
     ...parameters: Parameters<ServerMessages[T]>
   ) {
-    const compressed = compressMessage(parameters);
-    for (const user of this.users) {
-      user.sendRaw(message, compressed);
-    }
+    this.server.to(this.id).emit(message, ...parameters);
   }
 
   private handleDisconnect(user: RoomUser) {

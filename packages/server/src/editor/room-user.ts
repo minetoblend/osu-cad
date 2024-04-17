@@ -13,15 +13,13 @@ import { CompressedSocket } from './compressed-socket';
 export class RoomUser {
   constructor(
     readonly user: UserEntity,
-    socket: Socket<ClientMessages, ServerMessages>,
+    readonly socket: Socket<ClientMessages, ServerMessages>,
     readonly sessionId: number,
     readonly room: EditorRoom,
     public access: BeatmapAccess,
   ) {
-    this.socket = new CompressedSocket(socket);
-  }
 
-  socket: CompressedSocket;
+  }
 
   presence: Presence = {
     activity: null,
@@ -41,10 +39,7 @@ export class RoomUser {
     message: T,
     ...parameters: Parameters<ServerMessages[T]>
   ) {
-    this.socket.send(message, ...parameters);
-  }
-  sendRaw<T extends keyof ServerMessages>(message: T, data: Uint8Array) {
-    this.socket.sendRaw(message, data);
+    this.socket.emit(message, ...parameters);
   }
 
   get username() {
