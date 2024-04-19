@@ -1,6 +1,5 @@
-# osucad
+# osucad ![Kofi](https://img.shields.io/badge/Kofi-F16061.svg?logo=ko-fi&logoColor=white)
 
-<a href='https://ko-fi.com/maarvin' target='_blank'><img height='35' style='border:0px;height:35px;' src='https://img.shields.io/badge/Kofi-F16061.svg?logo=ko-fi&logoColor=white' border='0' alt='Support me on ko-fi.com' /></a>
 
 osucad is a browser based osu editor with real-time collaboration.
 
