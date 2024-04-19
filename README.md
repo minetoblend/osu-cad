@@ -1,4 +1,4 @@
-# osucad <a href='https://ko-fi.com/maarvin' target='_blank'><img height='35' style='border:0px;height:35px;' src='https://camo.githubusercontent.com/ce32b4940b9ebf361cfd346ba0582815846406854cd2f701c11a85cb21eaa939/68747470733a2f2f6b6f2d66692e636f6d2f696d672f676974687562627574746f6e5f736d2e737667' border='0' alt='Support me on ko-fi.com' /></a>
+# osucad <a href='https://ko-fi.com/maarvin' target='_blank'><img height='35' style='border:0px;height:35px;' src='https://img.shields.io/badge/Kofi-F16061.svg?logo=ko-fi&logoColor=white' border='0' alt='Support me on ko-fi.com' /></a>
 
 osucad is a browser based osu editor with real-time collaboration.
 
