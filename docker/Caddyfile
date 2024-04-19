@@ -7,11 +7,11 @@
 	}
 
 	handle @backend {
-		reverse_proxy http://server:3000 {
+		reverse_proxy http://api-server:3000 {
 			lb_try_duration 30s
 			lb_try_interval 1s
 		}
 	}
 
-	reverse_proxy http://frontend:5173
+	reverse_proxy http://client:5173
 }

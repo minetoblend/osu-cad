@@ -1,0 +1,91 @@
+version: "3.3"
+
+services:
+  mysql:
+    image: mysql:8.3.0
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3306:3306"
+  redis:
+    image: redis:7.2
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+  minio:
+    image: docker.io/bitnami/minio:2022
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    volumes:
+      - 'minio_data:/data'
+    environment:
+      - MINIO_ROOT_USER=${S3_ACCESS_KEY_ID}
+      - MINIO_ROOT_PASSWORD=${S3_SECRET_ACCESS_KEY}
+      - MINIO_DEFAULT_BUCKETS=${S3_BUCKET_NAME}
+  common:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+      target: common
+    volumes:
+      - ".:/app"
+      - "/app/node_modules"
+      - "/app/packages/common/node_modules"
+      - "./packages/common/dist:/app/packages/common/dist"
+  client:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+      target: client
+    environment:
+      - VITE_BASEURL=http://api-server:3000
+    volumes:
+      - ".:/app"
+      - "/app/node_modules"
+      - "/app/packages/client/node_modules"
+      - "./packages/common/dist:/app/packages/common/dist"
+    ports:
+      - "5173:5173"
+    links:
+      - api-server
+  api-server:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+      target: server
+    volumes:
+      - ".:/app"
+      - "/app/node_modules"
+      - "/app/packages/server/node_modules"
+      - "./packages/common/dist:/app/packages/common/dist"
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    links:
+      - mysql
+      - redis
+      - minio
+  caddy:
+    image: caddy
+    volumes:
+      - "./docker/Caddyfile:/etc/caddy/Caddyfile"
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    links:
+      - client
+      - api-server
+
+volumes:
+  node_modules:
+  common_dist:
+  mysql_data:
+  minio_data:
+

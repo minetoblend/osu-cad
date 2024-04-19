@@ -15,8 +15,9 @@ export abstract class MessageHandler {
   onUserJoin(roomUser: RoomUser) {
     const handlers = Object.getPrototypeOf(this).handlers;
     for (const [event, handler] of Object.entries(handlers)) {
-      roomUser.socket.on(event as keyof ClientMessages, (...args: any[]) =>
-        this[handler as any](roomUser, ...args),
+      roomUser.socket.on(
+        event as Exclude<keyof ClientMessages, number | symbol>,
+        (...args: any[]) => this[handler as any](roomUser, ...args),
       );
     }
   }

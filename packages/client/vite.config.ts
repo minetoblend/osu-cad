@@ -91,25 +91,7 @@ export default defineConfig({
     headers: {
       'Document-Policy': 'js-profiling',
     },
-    proxy: {
-      '/api': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-      },
-      '/auth': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-      },
-      '/admin/queues': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-      },
-      '/socket.io': {
-        target: 'http://localhost:3000',
-        ws: true,
-        changeOrigin: true,
-      },
-    },
+    host: '0.0.0.0',
   },
   css: {
     preprocessorOptions: {
