@@ -97,15 +97,23 @@ export class MapsetController {
 
     const mapset = await this.mapsetService.findById(id);
 
-    if (!mapset) return response.sendStatus(404);
-
-    const url = await this.assetsService.getAssetUrl(mapset, path);
-
-    if (!url) {
+    if (!mapset) {
       return response.sendStatus(404);
     }
 
-    return response.redirect(url);
+    const asset = await this.assetsService.getAsset(mapset, path);
+
+    if (!asset) {
+      return response.sendStatus(404);
+    }
+
+    const buffer = await this.assetsService.getAssetContent(asset);
+
+    if (!buffer) {
+      return response.sendStatus(404);
+    }
+
+    return response.contentType('application/octet-stream').send(buffer);
   }
 
   @Get(':id')
