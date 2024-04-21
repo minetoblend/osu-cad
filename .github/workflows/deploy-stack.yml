@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy compose webhook
-        uses: joelwmale/webhook-action@2.3.2
+        uses: joelwmale/webhook-action@2.4.1
         with:
           url: ${{ secrets.WEBHOOK_URL }}/redeploy
           body: '{ "secret": "${{ secrets.WEBHOOK_SECRET }}" }'
