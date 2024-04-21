@@ -8,7 +8,6 @@ import {
   UserSessionInfo,
 } from '@osucad/common';
 import { EditorRoom } from './editor-room';
-import { CompressedSocket } from './compressed-socket';
 
 export class RoomUser {
   constructor(
@@ -17,9 +16,7 @@ export class RoomUser {
     readonly sessionId: number,
     readonly room: EditorRoom,
     public access: BeatmapAccess,
-  ) {
-
-  }
+  ) {}
 
   presence: Presence = {
     activity: null,
@@ -35,7 +32,7 @@ export class RoomUser {
     };
   }
 
-  send<T extends keyof ServerMessages>(
+  send<T extends Exclude<keyof ServerMessages, number | symbol>>(
     message: T,
     ...parameters: Parameters<ServerMessages[T]>
   ) {

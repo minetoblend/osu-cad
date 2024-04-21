@@ -155,7 +155,7 @@ export class EditorRoom extends EventEmitter2 {
     client.on('disconnect', () => this.handleDisconnect(roomUser));
   }
 
-  broadcast<T extends keyof ServerMessages>(
+  broadcast<T extends Exclude<keyof ServerMessages, number | symbol>>(
     message: T,
     ...parameters: Parameters<ServerMessages[T]>
   ) {

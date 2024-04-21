@@ -1,5 +1,4 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { isProduction } from './utils/env';
 import * as process from 'process';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
@@ -19,7 +18,7 @@ export const dbdatasource: DataSourceOptions = {
   entities: ['dist/**/*.entity.js'],
   migrations: ['dist/tasks/migrations/*.js'],
   migrationsTableName: 'task_migrations',
-  migrationsRun: isProduction,
+  migrationsRun: true,
 };
 
 const dataSource = new DataSource(dbdatasource);
