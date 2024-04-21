@@ -12,7 +12,7 @@ env:
   IMAGE_NAME_CLIENT: ${{ github.repository }}-client
   IMAGE_NAME_SERVER: ${{ github.repository }}-server
   BASEURL: https://osucad.com
-  SSR_API_BASEURL: http://server:3000
+  SSR_API_BASEURL: http://api-server
 
 jobs:
   docker:
@@ -64,8 +64,8 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           push: true
-          
-    
+
+
       - name: Docker Server Meta
         id: meta-server
         uses: docker/metadata-action@v4
