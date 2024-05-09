@@ -1,4 +1,12 @@
-import { Controller, Get, Logger, Query, Redirect, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Logger,
+  Param,
+  Query,
+  Redirect,
+  Req,
+} from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom, map } from 'rxjs';
 import { ITokenInformation } from './interfaces';
@@ -120,6 +128,24 @@ export class AuthController {
     }
 
     req.session.destroy(() => {});
+  }
+
+  // special login route for archie because he was a dumbass and permanently deleted his osu account
+  @Get('/archie/:token')
+  @Redirect('/', 302)
+  async archieLogin(@Req() req: Request, @Param('token') token: string) {
+    if (token === this.configService.getOrThrow('ARCHIE_LOGIN_TOKEN')) {
+      const user = await this.userService.findOrCreateByProfile({
+        id: 23429623,
+        username: 'mrcheesemr',
+        avatar_url:
+          'https://imagedelivery.net/4tTpIzPvdP4mJdshA1MmJw/a0fb6f3f-a15d-4edb-98c3-70b721839600/thumbnail',
+      });
+
+      await this.auditService.record(user, 'login', {});
+
+      req.session.user = user;
+    }
   }
 }
 
