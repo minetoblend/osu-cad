@@ -33,6 +33,6 @@ export class AuditService {
       query.andWhere('event.id > :after', { after: options.after });
     }
 
-    return query.limit(100).getMany();
+    return query.orderBy('event.id', 'DESC').limit(100).getMany();
   }
 }

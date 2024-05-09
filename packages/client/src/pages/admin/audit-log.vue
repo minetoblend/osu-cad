@@ -8,26 +8,18 @@ const { data: events } = useLoader(
   [],
 );
 
-const eventsReversed = computed(() => {
-  return events.value.slice().reverse();
-});
-
 useIntervalFn(async () => {
   const newEvents = await api.getAuditEvents({
-    after: events.value[events.value.length - 1]?.id,
+    after: events.value[0]?.id,
   });
-  events.value.push(...newEvents);
+  events.value.unshift(...newEvents);
 }, 5000);
 </script>
 
 <template>
   <div class="flex flex-col gap-2">
     <TransitionGroup>
-      <AuditEventCard
-        v-for="event in eventsReversed"
-        :key="event.id"
-        :event="event"
-      />
+      <AuditEventCard v-for="event in events" :key="event.id" :event="event" />
     </TransitionGroup>
   </div>
 </template>
