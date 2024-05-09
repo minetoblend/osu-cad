@@ -6,8 +6,11 @@ import PreferencesOverlay from '@/editor/components/PreferencesOverlay.vue';
 import { EditorPopoverHost } from '@/editor/components/popover';
 import ChatBox from '@/editor/components/ChatBox.vue';
 import EditorMenubar from '@/editor/components/menubar/EditorMenubar.vue';
+import { isMobile } from '@/utils';
 
 const emit = defineEmits(['viewportInitialized']);
+
+const mobile = isMobile();
 </script>
 
 <template>
@@ -20,7 +23,7 @@ const emit = defineEmits(['viewportInitialized']);
       />
       <EventList class="absolute top-4 left-16" />
       <UserList class="absolute top-4 right-4" />
-      <ChatBox />
+      <ChatBox v-if="!mobile" />
       <EditorPopoverHost />
       <PreferencesOverlay />
     </div>
