@@ -95,5 +95,6 @@ const messages = computed(() => {
   flex-direction: column;
   height: 400px;
   bottom: 90px;
+  max-height: 65vh;
 }
 </style>
