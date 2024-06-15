@@ -8,7 +8,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/userStore';
 
 const EditorLoader = defineAsyncComponent(
-  () => import('@/editor/components/EditorLoader.vue'),
+  () => import('@/editorOld/components/EditorLoader.vue'),
 );
 
 definePage({

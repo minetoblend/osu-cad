@@ -44,7 +44,6 @@ declare module 'vue' {
     Dropzone: typeof import('./src/components/Dropzone.vue')['default']
     FormField: typeof import('./src/components/FormField.vue')['default']
     GraphicsPreferencesForm: typeof import('./src/components/preferences/GraphicsPreferencesForm.vue')['default']
-    ImportOszCard: typeof import('./src/components/beatmap/ImportOszCard.vue')['default']
     LayoutDefault: typeof import('./src/layouts/default.vue')['default']
     LayoutEditor: typeof import('./src/layouts/editor.vue')['default']
     LayoutLanding: typeof import('./src/layouts/landing.vue')['default']

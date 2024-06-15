@@ -1,4 +1,4 @@
-import { resolveShortcut, ShortcutId } from '@/editor/shortcuts';
+import { resolveShortcut, ShortcutId } from '@/editorOld/shortcuts';
 
 export function onEditorKeyDown(
   handler: (event: KeyboardEvent, shortcut?: ShortcutId) => void,

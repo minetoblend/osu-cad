@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { shortcuts, ShortcutId } from '@/editor/shortcuts';
+import { shortcuts, ShortcutId } from '@/editorOld/shortcuts';
 
 const shortcutTitles: {
   [key in ShortcutId]: string;
