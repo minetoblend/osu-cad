@@ -141,4 +141,13 @@ export class Vec2 implements IVec2 {
   rotate(angle: number) {
     return Vec2.rotate(this, angle);
   }
+
+  copyFrom(other: IVec2) {
+    this.x = other.x;
+    this.y = other.y;
+  }
+
+  clone(): Vec2 {
+    return new Vec2(this.x, this.y);
+  }
 }

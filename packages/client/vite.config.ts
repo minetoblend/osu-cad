@@ -63,6 +63,7 @@ export default defineConfig({
     layouts(),
     router({
       extensions: ['.vue', '.md'],
+      importMode: 'sync',
     }),
     components({
       resolvers: [
