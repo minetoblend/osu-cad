@@ -113,7 +113,11 @@ export class MapsetController {
       return response.sendStatus(404);
     }
 
-    return response.contentType('application/octet-stream').send(buffer);
+    return response
+      .contentType('application/octet-stream')
+      .header('Content-Length', buffer.length.toString())
+      .header('Cache-Control', 'public, max-age=31536000')
+      .send(buffer);
   }
 
   @Get(':id')
