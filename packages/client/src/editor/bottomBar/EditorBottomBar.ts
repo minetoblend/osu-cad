@@ -5,10 +5,11 @@ import { Axes } from '../../framework/drawable/Axes';
 import { ContainerDrawable } from '../../framework/drawable/ContainerDrawable';
 import { Corner } from '../../framework/drawable/Corner';
 import { EditorCornerPiece } from '../topBar/EditorCornerPiece';
-import { OverviewTimeline } from '../topBar/OverviewTimeline';
+import { OverviewTimeline } from '../bottomBar/OverviewTimeline';
 import { MarginPadding } from '../../framework/drawable/MarginPadding';
 import { EditorTimestampContainer } from './EditorTimestampContainer';
 import { Box } from '../../framework/drawable/Box';
+import { PlayButtonContainer } from './PlayButton.ts';
 
 export class EditorBottomBar extends ContainerDrawable {
   constructor() {
@@ -22,9 +23,9 @@ export class EditorBottomBar extends ContainerDrawable {
   @dependencyLoader()
   load() {
     const filter = new BackdropBlurFilter({
-      strength: 24,
+      strength: 10,
       padding: 24,
-      quality: 4,
+      quality: 3,
       resolution: devicePixelRatio,
       antialias: 'on',
     });
@@ -41,7 +42,7 @@ export class EditorBottomBar extends ContainerDrawable {
           new Box({
             relativeSizeAxes: Axes.Both,
             color: 0x222228,
-            alpha: 0.7,
+            alpha: 0.5,
           }),
           new OverviewTimeline({
             relativeSizeAxes: Axes.Both,
@@ -51,14 +52,6 @@ export class EditorBottomBar extends ContainerDrawable {
       }),
     );
 
-    const timeline = new OverviewTimeline();
-    timeline.relativeSizeAxes = Axes.X;
-    timeline.margin = new MarginPadding({ horizontal: 120 });
-    timeline.height = 25;
-    this.add(timeline);
-    timeline.anchor = Anchor.BottomLeft;
-    timeline.origin = Anchor.BottomLeft;
-
     this.add(
       new EditorCornerPiece(Corner.BottomLeft, {
         width: 140,
@@ -67,8 +60,8 @@ export class EditorBottomBar extends ContainerDrawable {
           new ContainerDrawable({
             relativeSizeAxes: Axes.Both,
             padding: new MarginPadding({
-              top: 4,
-              bottom: 4,
+              top: 6,
+              bottom: 6,
               left: 10,
               right: 20,
             }),
@@ -93,6 +86,14 @@ export class EditorBottomBar extends ContainerDrawable {
               left: 20,
               right: 10,
             }),
+            children: [
+              new PlayButtonContainer({
+                width: 36,
+                height: 36,
+                anchor: Anchor.CentreLeft,
+                origin: Anchor.CentreLeft,
+              }),
+            ],
           }),
         ],
       }),

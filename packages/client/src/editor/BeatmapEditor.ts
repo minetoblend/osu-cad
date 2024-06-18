@@ -13,6 +13,7 @@ import { BitmapText } from 'pixi.js';
 import { EditorInputManager } from '@/editor/EditorInputManager.ts';
 import { UISamples } from '@/editor/UISamples.ts';
 import { AudioManager } from '@/framework/audio/AudioManager.ts';
+import { isMobile } from '@/utils';
 
 export class BeatmapEditor extends ContainerDrawable {
   constructor() {
@@ -21,9 +22,23 @@ export class BeatmapEditor extends ContainerDrawable {
     this.addInternal(this.content);
   }
 
+  get resolution() {
+    if (isMobile()) {
+      return {
+        width: 640,
+        height: 480,
+      };
+    }
+
+    return {
+      width: 960,
+      height: 768,
+    };
+  }
+
   private innerContainer = new DrawsizePreservingContainer({
-    width: 960,
-    height: 768,
+    width: this.resolution.width,
+    height: this.resolution.height,
     fit: Fit.Fill,
   });
 
@@ -63,8 +78,6 @@ export class BeatmapEditor extends ContainerDrawable {
 
     // await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    this.add(new EditorInputManager());
-
     this.screenContainer = this.add(
       new ContainerDrawable({
         relativeSizeAxes: Axes.Both,
@@ -78,5 +91,6 @@ export class BeatmapEditor extends ContainerDrawable {
     );
     this.add(new EditorTopBar());
     this.add(new EditorBottomBar());
+    this.add(new EditorInputManager());
   }
 }

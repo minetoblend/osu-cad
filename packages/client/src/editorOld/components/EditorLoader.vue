@@ -52,5 +52,13 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="container" />
+  <div class="editor-container" ref="container" />
 </template>
+
+<style lang="scss">
+.editor-container {
+  //cursor:
+  //  url('@/assets/icons/select.svg') 16 16,
+  //  auto;
+}
+</style>

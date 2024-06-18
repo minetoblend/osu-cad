@@ -26,6 +26,22 @@ export abstract class BaseMouseEvent extends UIEvent {
   get right() {
     return this.button === 2;
   }
+
+  get ctrl() {
+    return this.underlyingEvent.ctrlKey;
+  }
+
+  get shift() {
+    return this.underlyingEvent.shiftKey;
+  }
+
+  currentTarget: Drawable | null = null;
+
+  capturedTarget: Drawable | null = null;
+
+  capture() {
+    this.capturedTarget = this.currentTarget;
+  }
 }
 
 export class MouseDownEvent extends BaseMouseEvent {

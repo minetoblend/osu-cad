@@ -1,13 +1,12 @@
 import { Ticker } from 'pixi.js';
 import { Component } from '../framework/drawable/Component';
 import { lerp } from '../framework/math/lerp';
+import { resolved } from '@/framework/di/DependencyLoader.ts';
+import { Beatmap } from '@osucad/common';
 
 export class EditorClock extends Component {
   constructor() {
     super();
-    addEventListener('wheel', (e) => {
-      this.seek(this.currentTime + Math.sign(e.deltaY) * 100);
-    });
     addEventListener('keydown', (e) => {
       if (e.key === ' ') {
         this.#isPlaying = !this.#isPlaying;
@@ -15,11 +14,18 @@ export class EditorClock extends Component {
     });
   }
 
+  beatSnapDivisor = 4;
+
   #currentTime: number = 0;
 
   #currentTimeAnimated: number = 0;
 
   #isPlaying: boolean = false;
+
+  playbackSpeed = 1;
+
+  @resolved(Beatmap)
+  beatmap!: Beatmap;
 
   get currentTime(): number {
     return this.#currentTime;
@@ -37,8 +43,16 @@ export class EditorClock extends Component {
     return this.currentTime / this.songDuration;
   }
 
+  get progressAnimated(): number {
+    return this.currentTimeAnimated / this.songDuration;
+  }
+
   get isPlaying(): boolean {
     return this.#isPlaying;
+  }
+
+  snap(time: number) {
+    return this.beatmap.controlPoints.snap(time, this.beatSnapDivisor);
   }
 
   seek(time: number, animated = true): void {
@@ -55,7 +69,7 @@ export class EditorClock extends Component {
 
   override onTick() {
     if (this.isPlaying) {
-      this.#currentTime += Ticker.shared.deltaMS;
+      this.#currentTime += Ticker.shared.deltaMS * this.playbackSpeed;
       this.#currentTimeAnimated = this.#currentTime;
     } else if (this.isAnimated) {
       this.#currentTimeAnimated = lerp(
@@ -66,5 +80,13 @@ export class EditorClock extends Component {
     } else {
       this.#currentTimeAnimated = this.#currentTime;
     }
+  }
+
+  play() {
+    this.#isPlaying = true;
+  }
+
+  pause() {
+    this.#isPlaying = false;
   }
 }

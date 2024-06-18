@@ -85,7 +85,7 @@ export class EditorCornerPiece extends ContainerDrawable {
     const a = new Vec2(this.drawSize.x, 0);
     const b = new Vec2(0, this.drawSize.y);
 
-    const extent = 10;
+    const extent = 6;
 
     const ca = c.sub(a).normalize().scale(extent);
     const cb = c.sub(b).normalize().scale(extent);

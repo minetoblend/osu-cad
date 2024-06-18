@@ -2,9 +2,14 @@ import { Component } from '@/framework/drawable/Component.ts';
 import { resolved } from '@/framework/di/DependencyLoader.ts';
 import { Beatmap } from '@osucad/common';
 import { EditorClock } from '@/editor/EditorClock.ts';
+import { UIWheelEvent } from '@/framework/input/events/UIWheelEvent.ts';
 
 export class EditorInputManager extends Component {
   receiveGlobalKeyboardEvents(): boolean {
+    return true;
+  }
+
+  receivePositionalInputAt(): boolean {
     return true;
   }
 
@@ -20,6 +25,16 @@ export class EditorInputManager extends Component {
           this.seekToEnd();
         }
         break;
+      case 'ArrowLeft':
+        if (!event.ctrlKey && !event.metaKey) {
+          this.seekRelative(-1);
+        }
+        break;
+      case 'ArrowRight':
+        if (!event.ctrlKey && !event.metaKey) {
+          this.seekRelative(1);
+        }
+        break;
     }
   }
 
@@ -28,6 +43,18 @@ export class EditorInputManager extends Component {
 
   @resolved(EditorClock)
   clock!: EditorClock;
+
+  seekRelative(ticks: number) {
+    const controlPoint = this.beatmap.controlPoints.timingPointAt(
+      this.clock.currentTime,
+    );
+
+    const time =
+      this.clock.snap(this.clock.currentTime) +
+      (ticks * controlPoint.timing.beatLength) / this.clock.beatSnapDivisor;
+
+    this.clock.seek(time);
+  }
 
   seekToStart() {
     const firstObject = this.beatmap.hitObjects.first;
@@ -53,5 +80,18 @@ export class EditorInputManager extends Component {
     } else {
       this.clock.seek(this.clock.songDuration);
     }
+  }
+
+  onWheel(event: UIWheelEvent): boolean {
+    if (!event.ctrl) {
+      const fast = event.shift || this.clock.isPlaying;
+      if (event.deltaY < 0) {
+        this.seekRelative(fast ? -4 : -1);
+      } else {
+        this.seekRelative(fast ? 4 : 1);
+      }
+      return true;
+    }
+    return false;
   }
 }

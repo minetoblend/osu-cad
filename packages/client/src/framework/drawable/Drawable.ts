@@ -12,37 +12,47 @@ import { Anchor } from './Anchor';
 import { MouseDownEvent } from '../input/events/MouseEvent';
 import { UIEvent } from '../input/events/UIEvent';
 import { InputManager } from '@/framework/input/InputManager.ts';
+import { UIWheelEvent } from '@/framework/input/events/UIWheelEvent.ts';
 
 export interface DrawableOptions {
   position?: IVec2;
+  x?: number;
+  y?: number;
   size?: IVec2;
   width?: number;
   height?: number;
   scale?: IVec2;
   margin?: MarginPadding;
   relativeSizeAxes?: Axes;
+  relativePositionAxes?: Axes;
   origin?: Anchor;
   anchor?: Anchor;
   customAnchor?: IVec2;
   customOrigin?: IVec2;
+  skew?: IVec2;
   alpha?: number;
 }
 
 export abstract class Drawable {
   constructor(options: DrawableOptions = {}) {
     if (options.position) this.position.copyFrom(options.position);
+    if (options.x !== undefined) this.x = options.x;
+    if (options.y !== undefined) this.y = options.y;
     if (options.size) this.size.copyFrom(options.size);
-    if (options.width) this.width = options.width;
-    if (options.height) this.height = options.height;
+    if (options.width !== undefined) this.width = options.width;
+    if (options.height !== undefined) this.height = options.height;
     if (options.scale) this.scale.copyFrom(options.scale);
     if (options.margin) this.margin = options.margin;
     if (options.relativeSizeAxes)
       this.relativeSizeAxes = options.relativeSizeAxes;
+    if (options.relativePositionAxes)
+      this.relativePositionAxes = options.relativePositionAxes;
     if (options.origin) this.origin = options.origin;
     if (options.anchor) this.anchor = options.anchor;
     if (options.customAnchor) this.#customAnchor.copyFrom(options.customAnchor);
     if (options.customOrigin) this.#customOrigin.copyFrom(options.customOrigin);
     if (options.alpha !== undefined) this.alpha = options.alpha;
+    if (options.skew) this.skew.copyFrom(options.skew);
   }
 
   _parent?: CompositeDrawable;
@@ -69,6 +79,7 @@ export abstract class Drawable {
   set width(value: number) {
     if (value !== this.width) {
       this.#size.x = value;
+      this.#drawSize = undefined;
       this.invalidate(Invalidation.DrawSize, InvalidationSource.Self, false);
     }
   }
@@ -80,6 +91,7 @@ export abstract class Drawable {
   set height(value: number) {
     if (value !== this.height) {
       this.#size.y = value;
+      this.#drawSize = undefined;
       this.invalidate(Invalidation.DrawSize, InvalidationSource.Self, false);
     }
   }
@@ -145,6 +157,35 @@ export abstract class Drawable {
     this.invalidate(Invalidation.Transform, InvalidationSource.Self, false);
   }
 
+  get x() {
+    return this.#position.x;
+  }
+
+  set x(value: number) {
+    this.#position.x = value;
+    this.invalidate(Invalidation.Transform, InvalidationSource.Self, false);
+  }
+
+  get y() {
+    return this.#position.y;
+  }
+
+  set y(value: number) {
+    this.#position.y = value;
+    this.invalidate(Invalidation.Transform, InvalidationSource.Self, false);
+  }
+
+  #skew = new Vec2(0, 0);
+
+  get skew() {
+    return this.#skew;
+  }
+
+  set skew(value: Vec2) {
+    this.#skew.copyFrom(value);
+    this.invalidate(Invalidation.Transform, InvalidationSource.Self, false);
+  }
+
   #margin = MarginPadding.default();
 
   #relativeSizeAxes = Axes.None;
@@ -156,6 +197,17 @@ export abstract class Drawable {
   set relativeSizeAxes(value: Axes) {
     this.#relativeSizeAxes = value;
     this.invalidate(Invalidation.DrawSize, InvalidationSource.Self, false);
+  }
+
+  #relativePositionAxes = Axes.None;
+
+  get relativePositionAxes() {
+    return this.#relativePositionAxes;
+  }
+
+  set relativePositionAxes(value: Axes) {
+    this.#relativePositionAxes = value;
+    this.invalidate(Invalidation.Transform, InvalidationSource.Self, false);
   }
 
   get margin() {
@@ -263,10 +315,29 @@ export abstract class Drawable {
   }
 
   get drawPosition() {
-    const position = this.#position.add(this.originPosition);
+    let position = this.#position.clone();
 
-    position.x += this.margin.left;
-    position.y += this.margin.top;
+    if (this.relativePositionAxes & Axes.X) {
+      position.x *= this.parent!.childSize.x;
+    }
+
+    if (this.relativePositionAxes & Axes.Y) {
+      position.y *= this.parent!.childSize.y;
+    }
+
+    position = position.add(this.originPosition);
+
+    if (this.anchor & Anchor.x0) {
+      position.x += this.margin.left;
+    } else if (this.anchor & Anchor.x2) {
+      position.x -= this.margin.right;
+    }
+
+    if (this.anchor & Anchor.y0) {
+      position.y += this.margin.top;
+    } else if (this.anchor & Anchor.y2) {
+      position.y -= this.margin.bottom;
+    }
 
     return position;
   }
@@ -356,7 +427,7 @@ export abstract class Drawable {
   }
 
   handleInvalidations() {
-    if (this._invalidations === Invalidation.DrawSize) {
+    if (this._invalidations & Invalidation.DrawSize) {
       this.#drawSize = undefined;
       this.updateDrawSize();
     }
@@ -382,8 +453,9 @@ export abstract class Drawable {
 
   updateDrawNodeTransform() {
     this.drawNode.position.copyFrom(this.drawPosition);
-    this.drawNode.scale.copyFrom(this.#scale);
+    this.drawNode.scale.copyFrom(this.scale);
     this.drawNode.pivot.copyFrom(this.anchorPosition);
+    this.drawNode.skew.copyFrom(this.skew);
     this.drawNode.alpha = this.#alpha;
   }
 
@@ -472,7 +544,7 @@ export abstract class Drawable {
     return this.handle(event);
   }
 
-  onWheel(event: MouseDownEvent): boolean {
+  onWheel(event: UIWheelEvent): boolean {
     return this.handle(event);
   }
 

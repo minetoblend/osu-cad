@@ -5,4 +5,12 @@ export class UIWheelEvent extends BaseMouseEvent {
   constructor(nativeEvent: WheelEvent, screenSpacePosition: Vec2) {
     super('onWheel', nativeEvent, screenSpacePosition);
   }
+
+  get deltaX() {
+    return (this.underlyingEvent as WheelEvent).deltaX;
+  }
+
+  get deltaY() {
+    return (this.underlyingEvent as WheelEvent).deltaY;
+  }
 }

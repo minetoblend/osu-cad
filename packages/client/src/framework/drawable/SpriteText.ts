@@ -1,4 +1,4 @@
-import { BitmapText, Container, FillInput, Text, TextStyle } from 'pixi.js';
+import { BitmapText, Container, FillInput, TextStyle } from 'pixi.js';
 import { DependencyContainer } from '../di/DependencyContainer';
 import { Vec2 } from '@osucad/common';
 import { Anchor } from './Anchor';
@@ -35,7 +35,7 @@ export class DrawableText extends Drawable {
     this.textDrawNode = new BitmapText({
       style,
       resolution: resolution ?? 2,
-      anchor: this.textAnchor,
+      anchor: { x: 0, y: 0 },
     });
     this.text = text ?? '';
     this.drawNode.addChild(this.textDrawNode);
@@ -54,6 +54,8 @@ export class DrawableText extends Drawable {
   }
 
   set text(value: string) {
+    if (value === this.textDrawNode.text) return;
+
     this.textDrawNode.text = value;
     this.invalidate(
       Invalidation.Geometry | Invalidation.DrawSize,
@@ -109,8 +111,11 @@ export class DrawableText extends Drawable {
   override updateDrawNodeTransform() {
     this.drawNode.position.copyFrom(this.drawPosition);
     this.drawNode.scale.copyFrom(this.scale);
+    this.drawNode.pivot.copyFrom(this.anchorPosition);
+    this.drawNode.skew.copyFrom(this.skew);
+    this.drawNode.alpha = this.alpha;
     // the bitmap font is weirdly offset towards the bottom for some reason
-    this.textDrawNode.y = -this.textDrawNode.style.fontSize * 0.2;
+    this.textDrawNode.y = -this.textDrawNode.style.fontSize * 0.5;
   }
 
   update() {

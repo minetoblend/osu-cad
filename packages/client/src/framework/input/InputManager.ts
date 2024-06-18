@@ -24,7 +24,7 @@ export class InputManager {
     return this.host.stage;
   }
 
-  capturedTarget: Record<string, Drawable> = {};
+  captured?: Drawable;
 
   setupListeners() {
     this.canvas.addEventListener('pointerdown', (e) => this.onPointerDown(e));
@@ -44,6 +44,7 @@ export class InputManager {
     const event = new MouseUpEvent(e, this.getScreenSpacePosition(e));
 
     this.dispatchEvent(event, this.stage);
+    this.captured = undefined;
   };
 
   private onPointerMove = (e: PointerEvent) => {
@@ -59,6 +60,7 @@ export class InputManager {
   };
 
   onWheel = (e: WheelEvent) => {
+    e.preventDefault();
     this.dispatchEvent(
       new UIWheelEvent(e, this.getScreenSpacePosition(e)),
       this.stage,
@@ -71,6 +73,18 @@ export class InputManager {
   }
 
   private dispatchEvent(event: BaseMouseEvent, drawable: Drawable) {
+    if (this.captured) {
+      const result = (
+        this.captured[event.handler] as (evt: UIEvent) => boolean
+      )(event);
+
+      if (result) {
+        return true;
+      }
+    }
+
+    event.currentTarget = drawable;
+
     const receiveEvents = drawable.receivePositionalInputAt(
       event.screenSpacePosition,
     );
@@ -78,17 +92,19 @@ export class InputManager {
       const result = (drawable[event.handler] as (evt: UIEvent) => boolean)(
         event,
       );
+      if (event.capturedTarget) {
+        this.captured = event.capturedTarget;
+        return true;
+      }
       if (result) {
         return true;
       }
     }
 
-    if (
-      drawable.canHaveChildren() &&
-      drawable.interactiveChildren &&
-      (receiveEvents || drawable.childrenCanBeOutOfBounds())
-    ) {
-      for (const child of drawable.internalChildren) {
+    if (drawable.canHaveChildren() && drawable.interactiveChildren) {
+      for (let i = drawable.internalChildren.length - 1; i >= 0; i--) {
+        const child = drawable.internalChildren[i];
+
         if (this.dispatchEvent(event, child)) {
           return true;
         }

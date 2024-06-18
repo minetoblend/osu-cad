@@ -1,10 +1,11 @@
 import { Assets, Container, Sprite, Texture } from 'pixi.js';
 import { Drawable, DrawableOptions } from './Drawable';
 import { Invalidation } from './Invalidation';
-import { Vec2 } from '@osucad/common';
+import { Axes } from './Axes.ts';
 
 export interface DrawableSpriteOptions extends DrawableOptions {
   texture?: string | Texture;
+  color?: number;
 }
 
 export class DrawableSprite extends Drawable {
@@ -18,7 +19,16 @@ export class DrawableSprite extends Drawable {
       });
     } else if (texture) {
       this.texture = texture;
-      this.size = new Vec2(texture.width, texture.height);
+      if (!(this.relativeSizeAxes & Axes.X)) {
+        this.width = texture.width;
+      }
+      if (!(this.relativeSizeAxes & Axes.Y)) {
+        this.height = texture.height;
+      }
+    }
+
+    if (options.color) {
+      this.color = options.color;
     }
   }
 

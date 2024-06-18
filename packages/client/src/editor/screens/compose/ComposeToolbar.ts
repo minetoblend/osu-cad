@@ -8,10 +8,15 @@ import { ToolbarButton } from './ToolbarButton';
 import { resolved } from '@/framework/di/DependencyLoader.ts';
 import { AudioManager } from '@/framework/audio/AudioManager.ts';
 import { UISamples } from '@/editor/UISamples.ts';
+import { Vec2 } from '@osucad/common';
+import { isMobile } from '@/utils';
 
 export class ComposeToolbar extends ContainerDrawable {
   constructor(options: ContainerDrawableOptions = {}) {
     super(options);
+    if (isMobile()) {
+      this.scale = new Vec2(1.3);
+    }
 
     this.add(
       new VBox({
@@ -21,24 +26,28 @@ export class ComposeToolbar extends ContainerDrawable {
           new ToolbarButton({
             width: 48,
             height: 48,
+            key: '1',
             icon: '/src/assets/icons/select.png',
             onClick: () => (this.activeTool = 0),
           }),
           new ToolbarButton({
             width: 48,
             height: 48,
+            key: '2',
             icon: '/src/assets/icons/circle.png',
             onClick: () => (this.activeTool = 1),
           }),
           new ToolbarButton({
             width: 48,
             height: 48,
+            key: '3',
             icon: '/src/assets/icons/slider.png',
             onClick: () => (this.activeTool = 2),
           }),
           new ToolbarButton({
             width: 48,
             height: 48,
+            key: '4',
             icon: '/src/assets/icons/spinner.png',
             onClick: () => (this.activeTool = 3),
           }),
@@ -83,23 +92,4 @@ export class ComposeToolbar extends ContainerDrawable {
 
   @resolved(UISamples)
   uiSamples!: UISamples;
-
-  onGlobalKeyDown(event: KeyboardEvent) {
-    if (!event.shiftKey && !event.ctrlKey) {
-      switch (event.key) {
-        case '1':
-          this.activeTool = 0;
-          break;
-        case '2':
-          this.activeTool = 1;
-          break;
-        case '3':
-          this.activeTool = 2;
-          break;
-        case '4':
-          this.activeTool = 3;
-          break;
-      }
-    }
-  }
 }

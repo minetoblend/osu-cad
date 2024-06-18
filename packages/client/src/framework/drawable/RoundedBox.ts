@@ -1,6 +1,6 @@
-import { Graphics } from "pixi.js";
-import { Drawable, DrawableOptions } from "./Drawable";
-import { Invalidation } from "./Invalidation";
+import { Graphics } from 'pixi.js';
+import { Drawable, DrawableOptions } from './Drawable';
+import { Invalidation } from './Invalidation';
 
 export interface RoundedBoxOptions extends DrawableOptions {
   color?: number;
@@ -82,6 +82,14 @@ export class RoundedBox extends Drawable {
   set color(value: number) {
     this.#color = value;
     this.invalidate(Invalidation.Geometry);
+  }
+
+  get tint() {
+    return this.drawNode.tint;
+  }
+
+  set tint(value: number) {
+    this.drawNode.tint = value;
   }
 
   #fillAlpha = 1;

@@ -27,6 +27,7 @@ export class EditorLoader extends SuspenseContainer {
       off();
       this.dependencies.provide(this.beatmapManager.beatmap!);
       this.dependencies.provide(this.beatmapManager.beatmap!.hitObjects);
+      this.dependencies.provide(this.beatmapManager.beatmap!.controlPoints);
       this.add(editor);
     });
   }

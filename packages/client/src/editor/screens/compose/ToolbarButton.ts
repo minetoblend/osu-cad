@@ -1,5 +1,4 @@
 import gsap from 'gsap';
-import { DropShadowFilter } from 'pixi-filters';
 import { Anchor } from '../../../framework/drawable/Anchor';
 import { Axes } from '../../../framework/drawable/Axes';
 import {
@@ -13,24 +12,26 @@ import { MouseDownEvent } from '../../../framework/input/events/MouseEvent';
 
 export interface ToolbarButtonOptions extends ContainerDrawableOptions {
   icon?: string;
+  key?: string;
   active?: boolean;
-  onClick: (event: MouseDownEvent) => void;
+  onClick: () => void;
 }
 
 export class ToolbarButton extends ContainerDrawable {
   constructor(options: ToolbarButtonOptions) {
-    const { icon, active, onClick, ...rest } = options;
+    const { icon, active, onClick, key, ...rest } = options;
     super(rest);
     this.addInternal(this._background);
     this.addInternal(this._outline);
     this.addInternal(this._content);
     this.onClick = onClick;
+    this.key = key;
     this.icon = this.add(
       new DrawableSprite({
         relativeSizeAxes: Axes.Both,
         texture: icon,
-        width: 0.65,
-        height: 0.65,
+        width: 0.6,
+        height: 0.6,
         anchor: Anchor.Centre,
         origin: Anchor.Centre,
       }),
@@ -63,6 +64,8 @@ export class ToolbarButton extends ContainerDrawable {
   }
 
   icon: DrawableSprite;
+
+  key?: string;
 
   _background = new RoundedBox({
     relativeSizeAxes: Axes.Both,
@@ -153,7 +156,7 @@ export class ToolbarButton extends ContainerDrawable {
 
   override onMouseDown(event: MouseDownEvent): boolean {
     if (event.left) {
-      this.onClick(event);
+      this.onClick();
       gsap.to(this.icon.scale, {
         x: 0.9,
         y: 0.9,
@@ -202,5 +205,37 @@ export class ToolbarButton extends ContainerDrawable {
     return false;
   }
 
-  onClick: (event: MouseDownEvent) => void;
+  onClick: () => void;
+
+  receiveGlobalKeyboardEvents(): boolean {
+    return true;
+  }
+
+  onGlobalKeyDown(event: KeyboardEvent) {
+    if (this.key && event.key === this.key && !event.ctrlKey) {
+      this.onClick();
+      gsap.to(this.icon.scale, {
+        x: 0.9,
+        y: 0.9,
+        duration: 0.05,
+        ease: 'power2.out',
+        onUpdate: () => {
+          this.icon.invalidate(Invalidation.DrawSize);
+        },
+      });
+    }
+  }
+
+  onGlobalKeyUp(event: KeyboardEvent) {
+    if (this.key && event.key === this.key) {
+      gsap.to(this.icon.scale, {
+        x: 1,
+        y: 1,
+        duration: 0.1,
+        onUpdate: () => {
+          this.icon.invalidate(Invalidation.DrawSize);
+        },
+      });
+    }
+  }
 }
