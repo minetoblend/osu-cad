@@ -7,7 +7,7 @@ import { MenuItem } from './MenuItem';
 import gsap from 'gsap';
 import { Anchor } from '@/framework/drawable/Anchor';
 import { MouseDownEvent } from '@/framework/input/events/MouseEvent';
-import { BackdropBlurFilter } from 'pixi-filters';
+import { BackdropBlurFilter, DropShadowFilter } from 'pixi-filters';
 
 export interface MenuOptions {
   items: MenuItem[];
@@ -35,6 +35,14 @@ export class Menu extends ContainerDrawable {
       new BackdropBlurFilter({
         strength: 15,
       }),
+      new DropShadowFilter({
+        offset: {
+          x: 0,
+          y: 2,
+        },
+        quality: 2,
+        alpha: 0.2,
+      })
     ]);
     filter.padding = 15;
 
