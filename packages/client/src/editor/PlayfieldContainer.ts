@@ -13,7 +13,7 @@ export class PlayfieldContainer extends ContainerDrawable {
   constructor(options: ContainerDrawableOptions = {}) {
     super(options);
     this.relativeSizeAxes = Axes.Both;
-    this.drawNode.enableRenderGroup();
+    this.playfieldContent.content.drawNode.enableRenderGroup();
   }
 
   private playfieldContent = new DrawsizePreservingContainer({
