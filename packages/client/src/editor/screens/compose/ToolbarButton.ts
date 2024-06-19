@@ -157,14 +157,11 @@ export class ToolbarButton extends ContainerDrawable {
   override onMouseDown(event: MouseDownEvent): boolean {
     if (event.left) {
       this.onClick();
-      gsap.to(this.icon.scale, {
-        x: 0.9,
-        y: 0.9,
-        duration: 0.05,
-        ease: 'power2.out',
-        onUpdate: () => {
-          this.icon.invalidate(Invalidation.DrawSize);
-        },
+      gsap.to(this.icon, {
+        scaleX: 0.85,
+        scaleY: 0.85,
+        duration: 0.5,
+        ease: 'power4.out',
       });
     }
 
@@ -172,13 +169,10 @@ export class ToolbarButton extends ContainerDrawable {
   }
 
   override onMouseUp(): boolean {
-    gsap.to(this.icon.scale, {
-      x: 1,
-      y: 1,
+    gsap.to(this.icon, {
+      scaleX: 1,
+      scaleY: 1,
       duration: 0.1,
-      onUpdate: () => {
-        this.icon.invalidate(Invalidation.DrawSize);
-      },
     });
     return true;
   }
@@ -194,13 +188,11 @@ export class ToolbarButton extends ContainerDrawable {
     if (!this.active) {
       this.icon.color = 0xbbbec5;
     }
-    gsap.to(this.icon.scale, {
-      x: 1,
-      y: 1,
-      duration: 0.1,
-      onUpdate: () => {
-        this.icon.invalidate(Invalidation.DrawSize);
-      },
+    gsap.to(this.icon, {
+      scaleX: 1,
+      scaleY: 1,
+      duration: 0.25,
+      ease: 'back.out',
     });
     return false;
   }
@@ -214,14 +206,11 @@ export class ToolbarButton extends ContainerDrawable {
   onGlobalKeyDown(event: KeyboardEvent) {
     if (this.key && event.key === this.key && !event.ctrlKey) {
       this.onClick();
-      gsap.to(this.icon.scale, {
-        x: 0.9,
-        y: 0.9,
-        duration: 0.05,
-        ease: 'power2.out',
-        onUpdate: () => {
-          this.icon.invalidate(Invalidation.DrawSize);
-        },
+      gsap.to(this.icon, {
+        scaleX: 0.85,
+        scaleY: 0.85,
+        duration: 0.3,
+        ease: 'power4.out',
       });
     }
   }
@@ -231,7 +220,8 @@ export class ToolbarButton extends ContainerDrawable {
       gsap.to(this.icon.scale, {
         x: 1,
         y: 1,
-        duration: 0.1,
+        duration: 0.25,
+        ease: 'back.out',
         onUpdate: () => {
           this.icon.invalidate(Invalidation.DrawSize);
         },
