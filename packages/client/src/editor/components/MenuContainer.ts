@@ -63,13 +63,7 @@ export class MenuContainer extends ContainerDrawable {
     menu.scaleY = 0.8;
     menu.y -= 10;
 
-    gsap.to(menu, {
-      alpha: 1,
-      scaleY: 1,
-      y: localPosition.y,
-      duration: 0.1,
-      ease: 'power2.out',
-    });
+    
 
     this.addInternal(menu);
     this.openMenus.push(menu);
@@ -79,6 +73,28 @@ export class MenuContainer extends ContainerDrawable {
       menu.parentItem = item;
       item.submenu = menu;
     }
+
+    menu.update()
+
+    if(
+      menu.drawPosition.x + menu.drawSize.x > this.drawSize.x
+    ) {
+      menu.anchor = Anchor.TopRight;
+      const screenSpacePosition = item.drawNode.toGlobal(
+        originPos.mul({ x: 0, y: 1 }),
+      );
+      const localPosition = this.toLocalSpace(screenSpacePosition);
+      menu.position = localPosition.sub({ x: 4, y: 0});
+    }
+
+
+    gsap.to(menu, {
+      alpha: 1,
+      scaleY: 1,
+      y: localPosition.y,
+      duration: 0.1,
+      ease: 'power2.out',
+    });
 
     return menu;
   }
@@ -122,7 +138,7 @@ export class MenuContainer extends ContainerDrawable {
   onMouseDown(event: MouseDownEvent) {
     if (event.left) {
       if (this.children.length > 0) {
-        this.hideAll();
+        this.shouldRemove.push(...this.openMenus);
         return false;
       }
     }

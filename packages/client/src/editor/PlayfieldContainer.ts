@@ -10,6 +10,9 @@ import { EditorGrid } from './EditorGrid';
 import { HitObjectContainer } from '@/editor/playfield/HitObjectContainer.ts';
 import { Menu } from './components/Menu';
 import { MenuItem } from './components/MenuItem';
+import { Anchor } from '@/framework/drawable/Anchor';
+import { VolumeKnob } from './bottomBar/VolumeKnob';
+import { VolumeSelector } from './bottomBar/VolumeSelector';
 
 export class PlayfieldContainer extends ContainerDrawable {
   constructor(options: ContainerDrawableOptions = {}) {

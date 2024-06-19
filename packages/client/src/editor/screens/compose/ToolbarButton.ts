@@ -157,10 +157,11 @@ export class ToolbarButton extends ContainerDrawable {
   override onMouseDown(event: MouseDownEvent): boolean {
     if (event.left) {
       this.onClick();
+      event.capture();
       gsap.to(this.icon, {
         scaleX: 0.85,
         scaleY: 0.85,
-        duration: 0.5,
+        duration: 0.4,
         ease: 'power4.out',
       });
     }
@@ -188,12 +189,6 @@ export class ToolbarButton extends ContainerDrawable {
     if (!this.active) {
       this.icon.color = 0xbbbec5;
     }
-    gsap.to(this.icon, {
-      scaleX: 1,
-      scaleY: 1,
-      duration: 0.25,
-      ease: 'back.out',
-    });
     return false;
   }
 
@@ -209,7 +204,7 @@ export class ToolbarButton extends ContainerDrawable {
       gsap.to(this.icon, {
         scaleX: 0.85,
         scaleY: 0.85,
-        duration: 0.3,
+        duration: 0.25,
         ease: 'power4.out',
       });
     }

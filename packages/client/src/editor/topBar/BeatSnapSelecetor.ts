@@ -7,10 +7,11 @@ import { Anchor } from '@/framework/drawable/Anchor';
 import { MarginPadding } from '@/framework/drawable/MarginPadding';
 import { DrawableText } from '@/framework/drawable/SpriteText';
 import { MouseDownEvent } from '@/framework/input/events/MouseEvent';
-import { E } from 'unplugin-vue-router/dist/options-8dbadba3';
 import gsap from 'gsap';
 import { AudioManager } from '@/framework/audio/AudioManager';
 import { UISamples } from '../UISamples';
+import { MenuContainer } from '../components/MenuContainer';
+import { MenuItem } from '../components/MenuItem';
 
 export class BeatSnapSelector extends ContainerDrawable {
   constructor(options: DrawableOptions) {
@@ -75,8 +76,10 @@ export class BeatSnapSelector extends ContainerDrawable {
   }
 
   decrementSnap() {
-    this.playSound()
-    let index = this.snapTypes.indexOf(this.clock.beatSnapDivisor);
+    this.playSound();
+    let index = this.snapTypes.findIndex(
+      (it) => it >= this.clock.beatSnapDivisor,
+    );
     if (index < 0) {
       index = 0;
     }
@@ -88,9 +91,14 @@ export class BeatSnapSelector extends ContainerDrawable {
   }
 
   incrementSnap() {
-    this.playSound()
+    this.playSound();
     let index = this.snapTypes.indexOf(this.clock.beatSnapDivisor);
-    if (index < 0) index = 0;
+
+    if (index < 0)
+      index = Math.max(
+        0,
+        this.snapTypes.findIndex((it) => it >= this.clock.beatSnapDivisor) - 1,
+      );
     if (index < this.snapTypes.length - 1) {
       index++;
       this.clock.beatSnapDivisor = this.snapTypes[index];
@@ -127,9 +135,148 @@ export class BeatSnapSelector extends ContainerDrawable {
   }
 
   playSound() {
-    this.dependencies.resolve(AudioManager).playSound({
-      buffer: this.dependencies.resolve(UISamples).click,
-    }, 'ui')
+    this.dependencies.resolve(AudioManager).playSound(
+      {
+        buffer: this.dependencies.resolve(UISamples).click,
+      },
+      'ui',
+    );
+  }
+
+  onMouseDown(event: MouseDownEvent): boolean {
+    if (event.right) {
+      this.dependencies.resolve(MenuContainer).show(this, [
+        new MenuItem({
+          text: 'Standard',
+          items: [
+            new MenuItem({
+              text: '1/1',
+              action: () => {
+                this.clock.beatSnapDivisor = 1;
+                this.updateText(0);
+              },
+            }),
+            new MenuItem({
+              text: '1/2',
+              action: () => {
+                this.clock.beatSnapDivisor = 2;
+                this.updateText(0);
+              },
+            }),
+            new MenuItem({
+              text: '1/4',
+              action: () => {
+                this.clock.beatSnapDivisor = 3;
+                this.updateText(0);
+              },
+            }),
+            new MenuItem({
+              text: '1/8',
+              action: () => {
+                this.clock.beatSnapDivisor = 4;
+                this.updateText(0);
+              },
+            }),
+            new MenuItem({
+              text: '1/18',
+              action: () => {
+                this.clock.beatSnapDivisor = 6;
+                this.updateText(0);
+              },
+            }),
+          ],
+        }),
+        new MenuItem({
+          text: 'Swing / Thirds',
+          items: [
+            new MenuItem({
+              text: '1/3',
+              action: () => {
+                this.clock.beatSnapDivisor = 1;
+                this.updateText(0);
+              },
+            }),
+            new MenuItem({
+              text: '1/6',
+              action: () => {
+                this.clock.beatSnapDivisor = 2;
+                this.updateText(0);
+              },
+            }),
+            new MenuItem({
+              text: '1/12',
+              action: () => {
+                this.clock.beatSnapDivisor = 3;
+                this.updateText(0);
+              },
+            }),
+          ],
+        }),
+        new MenuItem({
+          text: 'Other',
+          items: [
+            new MenuItem({
+              text: '1/5',
+              action: () => {
+                this.clock.beatSnapDivisor = 5;
+                this.updateText(0);
+              },
+            }),
+            new MenuItem({
+              text: '1/7',
+              action: () => {
+                this.clock.beatSnapDivisor = 7;
+                this.updateText(0);
+              },
+            }),
+            new MenuItem({
+              text: '1/9',
+              action: () => {
+                this.clock.beatSnapDivisor = 9;
+                this.updateText(0);
+              },
+            }),
+            new MenuItem({
+              text: '1/10',
+              action: () => {
+                this.clock.beatSnapDivisor = 10;
+                this.updateText(0);
+              },
+            }),
+            new MenuItem({
+              text: '1/11',
+              action: () => {
+                this.clock.beatSnapDivisor = 11;
+                this.updateText(0);
+              },
+            }),
+            new MenuItem({
+              text: '1/13',
+              action: () => {
+                this.clock.beatSnapDivisor = 13;
+                this.updateText(0);
+              },
+            }),
+            new MenuItem({
+              text: '1/14',
+              action: () => {
+                this.clock.beatSnapDivisor = 14;
+                this.updateText(0);
+              },
+            }),
+            new MenuItem({
+              text: '1/15',
+              action: () => {
+                this.clock.beatSnapDivisor = 15;
+                this.updateText(0);
+              },
+            }),
+          ],
+        }),
+      ]);
+      return true;
+    }
+    return false;
   }
 }
 

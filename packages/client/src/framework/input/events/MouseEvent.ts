@@ -35,6 +35,10 @@ export abstract class BaseMouseEvent extends UIEvent {
     return this.underlyingEvent.shiftKey;
   }
 
+  get alt() {
+    return this.underlyingEvent.altKey;
+  }
+
   currentTarget: Drawable | null = null;
 
   capturedTarget: Drawable | null = null;

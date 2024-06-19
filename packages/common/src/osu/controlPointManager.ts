@@ -238,27 +238,35 @@ export class ControlPointManager {
           const time = offset + (i * timingPoint.timing.beatLength) / divisor;
 
           let type = TickType.Full;
-          let subticks = Math.round(
-            (time / timingPoint.timing.beatLength) * 48,
-          );
-          subticks = mod(mod(subticks, 48) + 48, 48);
+          let subticks = (time / timingPoint.timing.beatLength) * 48;
 
-          if (subticks % 48 === 0) {
-            type = TickType.Full;
-          } else if (subticks % 24 === 0) {
-            type = TickType.Half;
-          } else if (subticks % 16 === 0) {
-            type = TickType.Third;
-          } else if (subticks % 12 === 0) {
-            type = TickType.Quarter;
-          } else if (subticks % 8 === 0) {
-            type = TickType.Sixth;
-          } else if (subticks % 6 === 0) {
-            type = TickType.Eighth;
-          } else if (subticks % 4 === 0) {
-            type = TickType.Twelfth;
-          } else if (subticks % 3 === 0) {
-            type = TickType.Sixteenth;
+          if (
+            Math.abs(subticks % 1) > 0.001 &&
+            Math.abs(subticks % 1) < 0.999
+          ) {
+            type = TickType.Other;
+          } else {
+            subticks = Math.round(subticks);
+
+            subticks = mod(mod(subticks, 48) + 48, 48);
+
+            if (subticks % 48 === 0) {
+              type = TickType.Full;
+            } else if (subticks % 24 === 0) {
+              type = TickType.Half;
+            } else if (subticks % 16 === 0) {
+              type = TickType.Third;
+            } else if (subticks % 12 === 0) {
+              type = TickType.Quarter;
+            } else if (subticks % 8 === 0) {
+              type = TickType.Sixth;
+            } else if (subticks % 6 === 0) {
+              type = TickType.Eighth;
+            } else if (subticks % 4 === 0) {
+              type = TickType.Twelfth;
+            } else if (subticks % 3 === 0) {
+              type = TickType.Sixteenth;
+            }
           }
 
           return {
@@ -369,6 +377,7 @@ export const enum TickType {
   Eighth = 8,
   Twelfth = 12,
   Sixteenth = 16,
+  Other = 99,
 }
 
 export interface TickInfo {

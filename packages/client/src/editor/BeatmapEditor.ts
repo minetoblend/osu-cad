@@ -15,6 +15,8 @@ import { UISamples } from '@/editor/UISamples.ts';
 import { AudioManager } from '@/framework/audio/AudioManager.ts';
 import { isMobile } from '@/utils';
 import { MenuContainer } from './components/MenuContainer';
+import { VolumeSelector } from './bottomBar/VolumeSelector';
+import { Anchor } from '@/framework/drawable/Anchor';
 
 export class BeatmapEditor extends ContainerDrawable {
   constructor() {
@@ -79,6 +81,35 @@ export class BeatmapEditor extends ContainerDrawable {
 
     // await new Promise((resolve) => setTimeout(resolve, 1000));
 
+    
+    let volumeSelector: VolumeSelector
+    if(isMobile()) {
+      volumeSelector = new VolumeSelector({
+        anchor: Anchor.BottomCentre,
+        origin: Anchor.BottomCentre,
+        scale:  {
+          x: 2.5,
+          y: 2.5,
+        },
+        y: -10,
+        x: -10,
+      });
+    } else {
+      volumeSelector = new VolumeSelector({
+        anchor: Anchor.BottomRight,
+        origin: Anchor.BottomRight,
+        scale: {
+          x: 1.75,
+          y: 1.75,
+        },
+        y: -10,
+        x: -10,
+      });
+    }
+    this.dependencies.provide(volumeSelector);
+
+    this.add(new EditorInputManager());
+
     this.screenContainer = this.add(
       new ContainerDrawable({
         relativeSizeAxes: Axes.Both,
@@ -95,7 +126,8 @@ export class BeatmapEditor extends ContainerDrawable {
 
     this.add(new EditorTopBar());
     this.add(new EditorBottomBar());
-    this.add(new EditorInputManager());
+
+    this.add(volumeSelector);
     this.add(menuContainer);
   }
 }

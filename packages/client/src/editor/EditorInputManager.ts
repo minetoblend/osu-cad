@@ -3,6 +3,8 @@ import { resolved } from '@/framework/di/DependencyLoader.ts';
 import { Beatmap } from '@osucad/common';
 import { EditorClock } from '@/editor/EditorClock.ts';
 import { UIWheelEvent } from '@/framework/input/events/UIWheelEvent.ts';
+import { VolumeSelector } from './bottomBar/VolumeSelector';
+import { usePreferences } from '@/composables/usePreferences';
 
 export class EditorInputManager extends Component {
   receiveGlobalKeyboardEvents(): boolean {
@@ -44,6 +46,9 @@ export class EditorInputManager extends Component {
   @resolved(EditorClock)
   clock!: EditorClock;
 
+  @resolved(VolumeSelector)
+  volumeSelector!: VolumeSelector;
+
   seekRelative(ticks: number) {
     const controlPoint = this.beatmap.controlPoints.timingPointAt(
       this.clock.currentTime,
@@ -83,7 +88,7 @@ export class EditorInputManager extends Component {
   }
 
   onWheel(event: UIWheelEvent): boolean {
-    if (!event.ctrl) {
+    if (!event.ctrl && !event.alt) {
       const fast = event.shift || this.clock.isPlaying;
       if (event.deltaY < 0) {
         this.seekRelative(fast ? -4 : -1);
@@ -92,6 +97,25 @@ export class EditorInputManager extends Component {
       }
       return true;
     }
+
+    if (!event.ctrl && event.alt) {
+      this.volumeSelector.show(true);
+
+      const { preferences } = usePreferences();
+
+      let delta = event.deltaY / 100;
+      if (event.shift) {
+        delta *= 10;
+      }
+
+      preferences.audio.masterVolume = Math.min(
+        100,
+        Math.max(0, preferences.audio.masterVolume + delta * 100),
+      );
+
+      return true;
+    }
+
     return false;
   }
 }

@@ -36,8 +36,7 @@ export class TimelineTick extends Sprite {
         this.tint = 0xffff00;
         this.scale.set(1, 0.4);
         break;
-      case TickType.Twelfth:
-      case TickType.Sixteenth:
+      default:
         this.tint = 0x777777;
         this.scale.set(1, 0.4);
         break;
