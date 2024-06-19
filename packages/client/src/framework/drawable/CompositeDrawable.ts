@@ -10,7 +10,7 @@ export interface CompositeDrawableOptions extends DrawableOptions {
   padding?: number | MarginPadding;
 }
 
-export class CompositeDrawable extends Drawable {
+export class CompositeDrawable<T extends Drawable = Drawable> extends Drawable {
   constructor(options: CompositeDrawableOptions = {}) {
     const { padding, ...rest } = options;
     super(rest);
@@ -26,7 +26,7 @@ export class CompositeDrawable extends Drawable {
 
   readonly drawNode = new Container();
 
-  readonly internalChildren: Drawable[] = [];
+  readonly internalChildren: T[] = [];
 
   #padding = MarginPadding.default();
 
@@ -44,7 +44,7 @@ export class CompositeDrawable extends Drawable {
     }
   }
 
-  addInternal<T extends Drawable>(child: T): T {
+  addInternal<V extends T>(child: V): V {
     this.internalChildren.push(child);
     child._parent = this;
     this.drawNode.addChild(child.drawNode);
@@ -55,7 +55,7 @@ export class CompositeDrawable extends Drawable {
     return child;
   }
 
-  removeInternal(child: Drawable, destroy = true): void {
+  removeInternal(child: T, destroy = true): void {
     const index = this.internalChildren.indexOf(child);
     if (index !== -1) {
       this.internalChildren.splice(index, 1);
@@ -128,9 +128,22 @@ export class CompositeDrawable extends Drawable {
   }
 
   destroy() {
-    super.destroy();
     for (const child of this.internalChildren) {
       child.destroy();
     }
+    this.internalChildren.length = 0;
+    super.destroy();
+  }
+
+  isNestedChild(drawable: Drawable) {
+    for (const child of this.internalChildren) {
+      if (child === drawable) {
+        return true;
+      }
+      if (child.canHaveChildren() && child.isNestedChild(drawable)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

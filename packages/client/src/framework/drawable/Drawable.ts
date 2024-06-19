@@ -107,6 +107,24 @@ export abstract class Drawable {
     this.invalidate(Invalidation.Transform, InvalidationSource.Self, false);
   }
 
+  get scaleY() {
+    return this.#scale.y;
+  }
+
+  set scaleY(value: number) {
+    this.#scale.y = value;
+    this.invalidate(Invalidation.Transform, InvalidationSource.Self, false);
+  }
+
+  get scaleX() {
+    return this.#scale.x;
+  }
+
+  set scaleX(value: number) {
+    this.#scale.x = value;
+    this.invalidate(Invalidation.Transform, InvalidationSource.Self, false);
+  }
+
   receivePositionalInputAt(screenSpacePos: Vec2) {
     return this.contains(screenSpacePos);
   }
@@ -122,7 +140,7 @@ export abstract class Drawable {
     );
   }
 
-  toLocalSpace(screenSpacePos: Vec2) {
+  toLocalSpace(screenSpacePos: IVec2) {
     return Vec2.from(this.drawNode.toLocal(screenSpacePos));
   }
 
@@ -490,6 +508,15 @@ export abstract class Drawable {
     return undefined;
   }
 
+  hasParent(parent: CompositeDrawable) {
+    let current = this._parent;
+    while (current) {
+      if (current === parent) return true;
+      current = current._parent;
+    }
+    return false;
+  }
+
   protected getSuspenseBarrier(): SuspenseContainer | undefined {
     return this.findParent((drawable) => drawable.isSuspenseBarrier) as
       | SuspenseContainer
@@ -509,9 +536,16 @@ export abstract class Drawable {
     this.drawNode.visible = value;
   }
 
+  #destroyed = false;
+
+  get destroyed() {
+    return this.#destroyed;
+  }
+
   destroy() {
     this.parent?.removeInternal(this);
     this.drawNode.destroy();
+    this.#destroyed = true;
   }
 
   canHaveChildren(): this is CompositeDrawable {
@@ -560,6 +594,16 @@ export abstract class Drawable {
   }
 
   // @ts-expect-error - unused param.
+  onGlobalMouseDown(event: MouseDownEvent): boolean {
+    return false;
+  }
+
+  // @ts-expect-error - unused param.
+  onGlobalMouseUp(event: MouseDownEvent): boolean {
+    return false;
+  }
+
+  // @ts-expect-error - unused param.
   onKeyUp(event: KeyboardEvent): boolean {
     return false;
   }
@@ -585,6 +629,10 @@ export abstract class Drawable {
   }
 
   receiveGlobalKeyboardEvents() {
+    return false;
+  }
+
+  receiveGlobalMouseEvents() {
     return false;
   }
 

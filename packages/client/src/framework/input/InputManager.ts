@@ -83,6 +83,16 @@ export class InputManager {
       }
     }
 
+    if (drawable.canHaveChildren() && drawable.interactiveChildren) {
+      for (let i = drawable.internalChildren.length - 1; i >= 0; i--) {
+        const child = drawable.internalChildren[i];
+
+        if (this.dispatchEvent(event, child)) {
+          return true;
+        }
+      }
+    }
+
     event.currentTarget = drawable;
 
     const receiveEvents = drawable.receivePositionalInputAt(
@@ -98,16 +108,6 @@ export class InputManager {
       }
       if (result) {
         return true;
-      }
-    }
-
-    if (drawable.canHaveChildren() && drawable.interactiveChildren) {
-      for (let i = drawable.internalChildren.length - 1; i >= 0; i--) {
-        const child = drawable.internalChildren[i];
-
-        if (this.dispatchEvent(event, child)) {
-          return true;
-        }
       }
     }
   }

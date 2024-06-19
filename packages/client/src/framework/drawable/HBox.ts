@@ -5,15 +5,15 @@ import {
 } from './ContainerDrawable';
 import { Invalidation } from './Invalidation';
 
-export interface VBoxOptions extends ContainerDrawableOptions {
+export interface HBoxOptions extends ContainerDrawableOptions {
   gap?: number;
   alignItems?: AlignItems;
 }
 
 export type AlignItems = 'start' | 'center' | 'end';
 
-export class VBox extends ContainerDrawable {
-  constructor(options: VBoxOptions = {}) {
+export class HBox extends ContainerDrawable {
+  constructor(options: HBoxOptions = {}) {
     super(options);
     this.gap = options.gap ?? 0;
     this.alignItems = options.alignItems ?? 'start';
@@ -44,24 +44,12 @@ export class VBox extends ContainerDrawable {
   override handleInvalidations(): void {
     super.handleInvalidations();
     if (this._invalidations & Invalidation.Layout) {
-      let y = 0;
-
-      let maxWidth = this.children.reduce(
-        (max, child) => Math.max(max, child.requiredSizeToFit.x),
-        0,
-      );
+      let x = 0;
 
       for (const child of this.internalChildren) {
-        const { y: height } = child.requiredSizeToFit;
-        child.position = new Vec2(0, y);
-        y += height + this.gap;
-
-        if (this.alignItems === 'center') {
-          child.position = new Vec2(
-            (maxWidth - child.requiredSizeToFit.x) / 2,
-            child.position.y,
-          );
-        }
+        const { x: width } = child.requiredSizeToFit;
+        child.position = new Vec2(x, 0);
+        x += width + this.gap;
       }
 
       // this.height = y - this.gap + this.padding.vertical;
@@ -78,7 +66,10 @@ export class VBox extends ContainerDrawable {
       height += child.requiredSizeToFit.y + this.gap;
     }
 
-    return new Vec2(width + this.padding.horizontal, height - this.gap + this.padding.vertical);
+    return new Vec2(
+      width + this.padding.horizontal,
+      height - this.gap + this.padding.vertical,
+    );
   }
 
   override childrenCanBeOutOfBounds(): boolean {

@@ -14,6 +14,7 @@ import { EditorInputManager } from '@/editor/EditorInputManager.ts';
 import { UISamples } from '@/editor/UISamples.ts';
 import { AudioManager } from '@/framework/audio/AudioManager.ts';
 import { isMobile } from '@/utils';
+import { MenuContainer } from './components/MenuContainer';
 
 export class BeatmapEditor extends ContainerDrawable {
   constructor() {
@@ -89,8 +90,12 @@ export class BeatmapEditor extends ContainerDrawable {
         children: [new ComposeScreen()],
       }),
     );
+    const menuContainer = new MenuContainer();
+    this.dependencies.provide(menuContainer);
+
     this.add(new EditorTopBar());
     this.add(new EditorBottomBar());
     this.add(new EditorInputManager());
+    this.add(menuContainer);
   }
 }

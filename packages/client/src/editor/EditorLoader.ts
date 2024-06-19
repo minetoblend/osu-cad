@@ -6,6 +6,7 @@ import { BeatmapEditor } from './BeatmapEditor';
 import { LoadingSpinner } from './LoadingSpinner';
 import { EditorSocket } from '@/editor/EditorSocket.ts';
 import { BeatmapManager } from '@/editor/BeatmapManager.ts';
+import { CommandManager } from './CommandManager';
 
 export class EditorLoader extends SuspenseContainer {
   constructor(readonly socket: EditorSocket) {
@@ -22,6 +23,9 @@ export class EditorLoader extends SuspenseContainer {
     const editor = new BeatmapEditor();
     this.dependencies.provide(this.socket);
     this.dependencies.provide(this.beatmapManager);
+    this.dependencies.provide(
+      new CommandManager(this.beatmapManager, this.socket),
+    );
 
     const { off } = this.onLoad.on(async () => {
       off();
@@ -34,5 +38,10 @@ export class EditorLoader extends SuspenseContainer {
 
   createFallback(): Drawable {
     return new LoadingSpinner();
+  }
+
+  destroy(): void {
+    super.destroy();
+    this.socket.disconnect();
   }
 }

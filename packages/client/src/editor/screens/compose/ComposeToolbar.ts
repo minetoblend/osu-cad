@@ -10,6 +10,7 @@ import { AudioManager } from '@/framework/audio/AudioManager.ts';
 import { UISamples } from '@/editor/UISamples.ts';
 import { Vec2 } from '@osucad/common';
 import { isMobile } from '@/utils';
+import { Anchor } from '@/framework/drawable/Anchor';
 
 export class ComposeToolbar extends ContainerDrawable {
   constructor(options: ContainerDrawableOptions = {}) {
@@ -52,6 +53,17 @@ export class ComposeToolbar extends ContainerDrawable {
             onClick: () => (this.activeTool = 3),
           }),
         ],
+      }),
+    );
+    this.add(
+      new ToolbarButton({
+        width: 48,
+        height: 48,
+        key: '5',
+        icon: '/src/assets/icons/grid.png',
+        onClick: () => {},
+        anchor: Anchor.BottomLeft,
+        origin: Anchor.BottomLeft,
       }),
     );
     this.updateState();

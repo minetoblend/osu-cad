@@ -32,7 +32,7 @@ export class AppHost {
       width: window.innerWidth,
       height: window.innerHeight,
       autoDensity: true,
-      antialias: true,
+      antialias: false,
       resolution: window.devicePixelRatio,
       useBackBuffer: true,
       powerPreference: 'high-performance',

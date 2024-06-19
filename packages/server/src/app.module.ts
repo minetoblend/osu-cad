@@ -31,18 +31,18 @@ import { HealthModule } from './health/health.module';
       isGlobal: true,
       envFilePath: path.resolve(__dirname, '../../../.env'),
     }),
-    SentryModule.forRoot({
-      dsn: 'https://4f654a932c3f8c19509fc108e18235a2@o4506916793745408.ingest.us.sentry.io/4506920217935872',
-      debug: true,
-      environment: process.env.NODE_ENV,
-      logLevels: ['debug'],
-    }),
+    // SentryModule.forRoot({
+    //   dsn: 'https://4f654a932c3f8c19509fc108e18235a2@o4506916793745408.ingest.us.sentry.io/4506920217935872',
+    //   debug: true,
+    //   environment: process.env.NODE_ENV,
+    //   logLevels: ['debug'],
+    // }),
     TypeOrmModule.forRoot(dbdatasource),
     ServeStaticModule.forRoot({
       rootPath: path.resolve(__dirname, '../../client/dist'),
     }),
-    BeatmapModule,
     UserModule,
+    BeatmapModule,
     AuthModule,
     EditorModule,
     OsuModule,
@@ -70,19 +70,19 @@ import { HealthModule } from './health/health.module';
     HealthModule,
   ],
   controllers: [AppController],
-  providers: [
-    {
-      provide: APP_INTERCEPTOR,
-      useFactory: () =>
-        new SentryInterceptor({
-          filters: [
-            {
-              type: HttpException,
-              filter: (exception: HttpException) => 500 > exception.getStatus(),
-            },
-          ],
-        }),
-    },
-  ],
+  // providers: [
+  //   {
+  //     provide: APP_INTERCEPTOR,
+  //     useFactory: () =>
+  //       new SentryInterceptor({
+  //         filters: [
+  //           {
+  //             type: HttpException,
+  //             filter: (exception: HttpException) => 500 > exception.getStatus(),
+  //           },
+  //         ],
+  //       }),
+  //   },
+  // ],
 })
 export class AppModule {}

@@ -3,13 +3,14 @@ import {
   CompositeDrawableOptions,
 } from "./CompositeDrawable";
 import { Drawable } from "./Drawable";
+import { Invalidation } from "./Invalidation";
 
-export interface ContainerDrawableOptions extends CompositeDrawableOptions {
-  children?: Drawable[];
+export interface ContainerDrawableOptions<T extends Drawable = Drawable> extends CompositeDrawableOptions {
+  children?: T[];
 }
 
-export class ContainerDrawable extends CompositeDrawable {
-  constructor(options: ContainerDrawableOptions = {}) {
+export class ContainerDrawable<T extends Drawable = Drawable>  extends CompositeDrawable<T> {
+  constructor(options: ContainerDrawableOptions<T> = {}) {
     const { children, ...rest } = options;
     super(rest);
 
@@ -20,33 +21,34 @@ export class ContainerDrawable extends CompositeDrawable {
     }
   }
 
-  get content(): ContainerDrawable {
+  get content(): ContainerDrawable<T> {
     return this;
   }
 
-  get children(): Drawable[] {
+  get children(): T[] {
     if (this.content === this) {
       return this.internalChildren;
     }
     return this.content.children;
   }
 
-  add<T extends Drawable>(child: T): T {
+  add<V extends T>(child: V): V {
     if (this.content === this) {
       this.content.addInternal(child);
     } else {
       this.content.add(child);
     }
+    this.invalidate(Invalidation.Layout);
     return child;
   }
 
-  addAll(children: Drawable[]) {
+  addAll(children: T[]) {
     for (const child of children) {
       this.add(child);
     }
   }
 
-  remove(child: Drawable, destroy = true) {
+  remove(child: T, destroy = true) {
     if (this.content === this) {
       this.content.removeInternal(child, destroy);
     } else {

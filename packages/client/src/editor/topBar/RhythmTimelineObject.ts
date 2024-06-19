@@ -80,7 +80,7 @@ export class RhythmTimelineObject extends ContainerDrawable {
     this.startCircle.color = comboColor;
     if (this.endCircle) this.endCircle.color = comboColor;
 
-    this.startCircle.comboNumber = this.hitObject.comboIndex;
+    this.startCircle.comboNumber = this.hitObject.indexInCombo;
 
     const radius = this.drawSize.y * 0.5;
     this.x = this.timeline.timeToPosition(this.hitObject.startTime) - radius;

@@ -8,6 +8,8 @@ import { DrawsizePreservingContainer } from '../framework/drawable/DrawsizePrese
 import { BeatmapBackground } from './BeatmapBackground';
 import { EditorGrid } from './EditorGrid';
 import { HitObjectContainer } from '@/editor/playfield/HitObjectContainer.ts';
+import { Menu } from './components/Menu';
+import { MenuItem } from './components/MenuItem';
 
 export class PlayfieldContainer extends ContainerDrawable {
   constructor(options: ContainerDrawableOptions = {}) {

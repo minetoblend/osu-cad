@@ -125,4 +125,11 @@ export class DrawableText extends Drawable {
       this.textInvalidations++;
     }
   }
+
+  get requiredSizeToFit(): Vec2 {
+    return new Vec2(
+      this.textDrawNode.width,
+      this.textDrawNode.height,
+    );
+  }
 }

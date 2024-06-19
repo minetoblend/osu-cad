@@ -9,6 +9,10 @@ import { EditorCornerPiece } from './EditorCornerPiece';
 import { RhythmTimeline } from './RhythmTimeline';
 import { Box } from '@/framework/drawable/Box.ts';
 import { RhythmTimelineZoomButtons } from '@/editor/topBar/RhythmTimelineZoomButtons.ts';
+import { Menu } from '../components/Menu';
+import { MenuItem } from '../components/MenuItem';
+import { EditorMenuBar } from './EditorMenuBar';
+import { DropdownSelect } from '../components/DropdownSelect';
 
 export class EditorTopBar extends ContainerDrawable {
   constructor() {
@@ -63,6 +67,16 @@ export class EditorTopBar extends ContainerDrawable {
               vertical: 4,
             }),
           }),
+          new EditorMenuBar(),
+          new DropdownSelect({
+            y: 30,
+            relativeSizeAxes: Axes.X,
+            height: 23,
+            margin: new MarginPadding({
+              left: 8,
+              right: 60
+            })
+          })
         ],
       }),
     );
@@ -73,7 +87,7 @@ export class EditorTopBar extends ContainerDrawable {
         relativeSizeAxes: Axes.Y,
         anchor: Anchor.TopRight,
         origin: Anchor.TopRight,
-        children: [],
+      children: [],
       }),
     );
 
