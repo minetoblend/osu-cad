@@ -1,5 +1,5 @@
 import { ContainerDrawable } from '@/framework/drawable/ContainerDrawable.ts';
-import { Beatmap, HitObject, HitObjectUpdateType, Vec2 } from '@osucad/common';
+import { Beatmap, HitObject, Vec2 } from '@osucad/common';
 import { dependencyLoader, resolved } from '@/framework/di/DependencyLoader.ts';
 
 export class HitObjectDrawable<
@@ -7,14 +7,13 @@ export class HitObjectDrawable<
 > extends ContainerDrawable {
   constructor(public hitObject: T) {
     super();
-    this.position = new Vec2(
-      hitObject.stackedPosition.x,
-      hitObject.stackedPosition.y,
-    );
+    this.hitObject.onUpdate.addListener(this.#onHitObjectUpdate);
   }
 
-  _onUpdate = (type: HitObjectUpdateType) => {
-    this.onUpdate(type);
+  needsSetup = false;
+
+  #onHitObjectUpdate = () => {
+    this.needsSetup = true;
   };
 
   @resolved(Beatmap)
@@ -28,23 +27,22 @@ export class HitObjectDrawable<
   }
 
   setup() {
-    // this.scale = new Vec2(this.hitObject.scale);
+    this.scale = new Vec2(this.hitObject.scale);
+    this.position = this.hitObject.stackedPosition;
     const comboColors = this.beatmap.colors;
     this.comboColor =
       comboColors[this.hitObject.comboIndex % comboColors.length];
   }
 
-  onUpdate(type: HitObjectUpdateType) {
-    if (type === 'position') {
-      this.position = new Vec2(
-        this.hitObject.stackedPosition.x,
-        this.hitObject.stackedPosition.y,
-      );
+  onTick() {
+    if (this.needsSetup) {
+      this.setup();
+      this.needsSetup = false;
     }
   }
 
   destroy() {
-    this.hitObject.onUpdate.removeListener(this._onUpdate);
+    this.hitObject.onUpdate.removeListener(this.#onHitObjectUpdate);
     super.destroy();
   }
 }

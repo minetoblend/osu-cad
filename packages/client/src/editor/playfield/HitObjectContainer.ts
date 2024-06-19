@@ -1,10 +1,16 @@
 import { ContainerDrawable } from '@/framework/drawable/ContainerDrawable.ts';
 import { resolved } from '@/framework/di/DependencyLoader.ts';
-import { HitCircle, HitObjectManager, HitObjectType } from '@osucad/common';
+import {
+  HitCircle,
+  HitObjectManager,
+  HitObjectType,
+  Slider,
+} from '@osucad/common';
 import { Axes } from '@/framework/drawable/Axes.ts';
 import { EditorClock } from '@/editor/EditorClock.ts';
 import { Drawable } from '@/framework/drawable/Drawable.ts';
-import { HitCircleDrawable } from '@/editor/playfield/HitCircleDrawable.ts';
+import { HitCircleDrawable } from '@/editor/hitObjects/HitCircleDrawable.ts';
+import { SliderDrawable } from '@/editor/hitObjects/SliderDrawable.ts';
 
 export class HitObjectContainer extends ContainerDrawable {
   constructor() {
@@ -59,9 +65,9 @@ export class HitObjectContainer extends ContainerDrawable {
           case HitObjectType.Circle:
             drawable = new HitCircleDrawable(hitObject as HitCircle);
             break;
-          // case HitObjectType.Slider:
-          //   drawable = new SliderDrawable(hitObject as Slider);
-          //   break;
+          case HitObjectType.Slider:
+            drawable = new SliderDrawable(hitObject as Slider);
+            break;
           // case HitObjectType.Spinner:
           //   drawable = new SpinnerDrawable(hitObject as Spinner);
           //   break;

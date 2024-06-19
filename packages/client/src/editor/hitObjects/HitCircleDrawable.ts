@@ -1,8 +1,8 @@
-import { HitObjectDrawable } from '@/editor/playfield/HitObjectDrawable.ts';
+import { HitObjectDrawable } from './HitObjectDrawable.ts';
 import { HitCircle, Vec2 } from '@osucad/common';
 import { Anchor } from '@/framework/drawable/Anchor.ts';
-import { CirclePieceDrawable } from '@/editor/playfield/CirclePieceDrawable.ts';
-import { ApproachCircleDrawable } from '@/editor/playfield/ApproachCircleDrawable.ts';
+import { CirclePieceDrawable } from './CirclePieceDrawable.ts';
+import { ApproachCircleDrawable } from './ApproachCircleDrawable.ts';
 
 export class HitCircleDrawable extends HitObjectDrawable {
   constructor(public hitCircle: HitCircle) {
@@ -14,6 +14,7 @@ export class HitCircleDrawable extends HitObjectDrawable {
 
   circlePiece!: CirclePieceDrawable;
   approachCircle!: ApproachCircleDrawable;
+
   override load() {
     this.circlePiece = this.add(new CirclePieceDrawable());
     this.approachCircle = this.add(new ApproachCircleDrawable());
