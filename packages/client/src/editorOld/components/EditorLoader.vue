@@ -3,8 +3,10 @@ import { AppHost } from '@/framework/AppHost.ts';
 import { EditorLoader } from '@/editor/EditorLoader.ts';
 import { createSocket } from '@/editor/EditorSocket.ts';
 
-import { Assets } from 'pixi.js';
+import { Assets, RenderTarget } from 'pixi.js';
 import { DebugOverlay } from '@/framework/debug/DebugOverlay.ts';
+
+RenderTarget.defaultOptions.depth = true;
 
 const props = defineProps<{
   joinKey: string;
