@@ -9,10 +9,9 @@ import { EditorCornerPiece } from './EditorCornerPiece';
 import { RhythmTimeline } from './RhythmTimeline';
 import { Box } from '@/framework/drawable/Box.ts';
 import { RhythmTimelineZoomButtons } from '@/editor/topBar/RhythmTimelineZoomButtons.ts';
-import { Menu } from '../components/Menu';
-import { MenuItem } from '../components/MenuItem';
 import { EditorMenuBar } from './EditorMenuBar';
 import { DropdownSelect } from '../components/DropdownSelect';
+import { BeatSnapSelector } from './BeatSnapSelecetor';
 
 export class EditorTopBar extends ContainerDrawable {
   constructor() {
@@ -74,9 +73,9 @@ export class EditorTopBar extends ContainerDrawable {
             height: 23,
             margin: new MarginPadding({
               left: 8,
-              right: 60
-            })
-          })
+              right: 60,
+            }),
+          }),
         ],
       }),
     );
@@ -87,7 +86,26 @@ export class EditorTopBar extends ContainerDrawable {
         relativeSizeAxes: Axes.Y,
         anchor: Anchor.TopRight,
         origin: Anchor.TopRight,
-      children: [],
+        children: [
+          new ContainerDrawable({
+            relativeSizeAxes: Axes.Both,
+            margin: new MarginPadding({
+              right: 8,
+              top: 4,
+              left: 20,
+              bottom: 8,
+            }),
+            children: [
+              new BeatSnapSelector({
+                origin: Anchor.BottomLeft,
+                anchor: Anchor.BottomLeft,
+                margin: new MarginPadding({
+                  horizontal: 8,
+                })
+              }),
+            ],
+          }),
+        ],
       }),
     );
 
