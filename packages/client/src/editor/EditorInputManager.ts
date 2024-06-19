@@ -5,6 +5,7 @@ import { EditorClock } from '@/editor/EditorClock.ts';
 import { UIWheelEvent } from '@/framework/input/events/UIWheelEvent.ts';
 import { VolumeSelector } from './bottomBar/VolumeSelector';
 import { usePreferences } from '@/composables/usePreferences';
+import gsap from 'gsap';
 
 export class EditorInputManager extends Component {
   receiveGlobalKeyboardEvents(): boolean {
@@ -103,15 +104,20 @@ export class EditorInputManager extends Component {
 
       const { preferences } = usePreferences();
 
-      let delta = event.deltaY / 100;
-      if (event.shift) {
-        delta *= 10;
-      }
+      const delta = event.deltaY / 2000;
 
-      preferences.audio.masterVolume = Math.min(
-        100,
-        Math.max(0, preferences.audio.masterVolume + delta * 100),
-      );
+      const obj = {
+        volume: preferences.audio.masterVolume,
+      };
+
+      gsap.to(obj, {
+        volume: Math.min(100, Math.max(0, obj.volume + delta * 100)),
+        duration: 0.1,
+        ease: 'power2.out',
+        onUpdate: () => {
+          preferences.audio.masterVolume = obj.volume;
+        },
+      });
 
       return true;
     }

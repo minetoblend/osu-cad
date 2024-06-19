@@ -252,7 +252,7 @@ export class VolumeKnob extends ContainerDrawable {
 
   onWheel(event: UIWheelEvent): boolean {
     if (!event.alt) {
-      let delta = event.deltaY / 100;
+      let delta = event.deltaY / 2000;
       if (event.shift) {
         delta /= 10;
       }
