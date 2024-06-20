@@ -158,6 +158,7 @@ export class ToolbarButton extends ContainerDrawable {
     if (event.left) {
       this.onClick();
       event.capture();
+      gsap.killTweensOf(this.icon);
       gsap.to(this.icon, {
         scaleX: 0.85,
         scaleY: 0.85,
@@ -170,6 +171,7 @@ export class ToolbarButton extends ContainerDrawable {
   }
 
   override onMouseUp(): boolean {
+    gsap.killTweensOf(this.icon);
     gsap.to(this.icon, {
       scaleX: 1,
       scaleY: 1,
@@ -201,6 +203,7 @@ export class ToolbarButton extends ContainerDrawable {
   onGlobalKeyDown(event: KeyboardEvent) {
     if (this.key && event.key === this.key && !event.ctrlKey) {
       this.onClick();
+      gsap.killTweensOf(this.icon);
       gsap.to(this.icon, {
         scaleX: 0.85,
         scaleY: 0.85,
@@ -212,9 +215,10 @@ export class ToolbarButton extends ContainerDrawable {
 
   onGlobalKeyUp(event: KeyboardEvent) {
     if (this.key && event.key === this.key) {
-      gsap.to(this.icon.scale, {
-        x: 1,
-        y: 1,
+      gsap.killTweensOf(this.icon);
+      gsap.to(this.icon, {
+        scaleX: 1,
+        scaleY: 1,
         duration: 0.25,
         ease: 'back.out',
         onUpdate: () => {
