@@ -7,6 +7,7 @@ import { DrawableSliderBody } from './DrawableSliderBody.ts';
 import { animate } from '../../editorOld/drawables/animate.ts';
 import { EditorClock } from '../EditorClock.ts';
 import { resolved } from '../../framework/di/DependencyLoader.ts';
+import { DrawableComboNumber } from './DrawableComboNumber.ts';
 
 export class SliderDrawable extends HitObjectDrawable<Slider> {
   constructor(public slider: Slider) {
@@ -18,18 +19,23 @@ export class SliderDrawable extends HitObjectDrawable<Slider> {
   tailCircle!: CirclePieceDrawable;
   approachCircle!: ApproachCircleDrawable;
   sliderBody!: DrawableSliderBody;
+  comboNumber!: DrawableComboNumber;
 
   override load() {
     this.sliderBody = this.add(new DrawableSliderBody(this.hitObject));
     this.headCircle = this.add(new CirclePieceDrawable());
     this.tailCircle = this.add(new CirclePieceDrawable());
     this.approachCircle = this.add(new ApproachCircleDrawable());
+    this.comboNumber = this.add(
+      new DrawableComboNumber(this.hitObject.indexInCombo),
+    );
     this.sliderBody.alpha = 0;
     super.load();
   }
 
   setup() {
     super.setup();
+    this.comboNumber.comboNumber = this.hitObject.indexInCombo;
     this.headCircle.comboColor = this.comboColor;
     this.headCircle.startTime = this.hitObject.startTime;
     this.headCircle.timePreempt = this.hitObject.timePreempt;
@@ -81,6 +87,12 @@ export class SliderDrawable extends HitObjectDrawable<Slider> {
         0.8,
         0,
       );
+    }
+
+    if (time < 0) {
+      this.comboNumber.alpha = this.headCircle.alpha;
+    } else {
+      this.comboNumber.alpha = 0;
     }
   }
 }
