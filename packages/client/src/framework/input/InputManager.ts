@@ -31,7 +31,9 @@ export class InputManager {
     this.canvas.addEventListener('pointerup', (e) => this.onPointerUp(e));
     this.canvas.addEventListener('pointermove', (e) => this.onPointerMove(e));
     this.canvas.addEventListener('wheel', (e) => this.onWheel(e));
-    this.canvas.addEventListener('contextmenu', (e) => e.preventDefault(), { passive: false });
+    this.canvas.addEventListener('contextmenu', (e) => e.preventDefault(), {
+      passive: false,
+    });
     addEventListener('keydown', (e) => this.onKeyDown(e));
     addEventListener('keyup', (e) => this.onKeyUp(e));
   }

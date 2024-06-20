@@ -1,6 +1,6 @@
 export const enum Invalidation {
   Transform = 1 << 0,
-  DrawSize = 1 << 1 | Transform,
+  DrawSize = (1 << 1) | Transform,
   Geometry = 1 << 2,
   Layout = 1 << 3,
 

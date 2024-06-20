@@ -1,4 +1,4 @@
-import { Renderer } from "pixi.js";
-import { InjectionKey } from "./DependencyContainer";
+import { Renderer } from 'pixi.js';
+import { InjectionKey } from './DependencyContainer';
 
-export const RENDERER : InjectionKey<Renderer> = Symbol("Renderer");
+export const RENDERER: InjectionKey<Renderer> = Symbol('Renderer');

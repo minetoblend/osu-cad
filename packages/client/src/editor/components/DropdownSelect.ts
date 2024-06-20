@@ -115,21 +115,21 @@ export class DropdownSelect extends ContainerDrawable {
             shortcut: '3.6*',
             action: () => {
               this.label.text = 'Hard';
-            }
+            },
           }),
           new MenuItem({
             text: 'Insane',
             shortcut: '4.4*',
             action: () => {
               this.label.text = 'Insane';
-            }
+            },
           }),
           new MenuItem({
             text: 'Expert',
             shortcut: '5.6*',
             action: () => {
               this.label.text = 'Expert';
-            }
+            },
           }),
         ]);
       }

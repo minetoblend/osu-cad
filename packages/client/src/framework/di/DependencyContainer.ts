@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error - unused generic type
 export interface InjectionKey<T> extends symbol {}
 
 export type Constructor<T> = new (...args: any[]) => T;
@@ -8,8 +8,8 @@ export class DependencyContainer {
 
   private _dependencies = new Map<any, any>();
 
-  provide<T extends { constructor: Function }>(value: T): void;
-  provide<T extends { constructor: Function }>(
+  provide<T extends { constructor: any }>(value: T): void;
+  provide<T extends { constructor: any }>(
     key: new (...args: any[]) => T,
     value: T,
   ): void;
@@ -26,9 +26,7 @@ export class DependencyContainer {
     throw new Error('Invalid key');
   }
 
-  resolveOptional<T>(
-    key: InjectionKey<T> | Constructor<T>,
-  ): T | undefined {
+  resolveOptional<T>(key: InjectionKey<T> | Constructor<T>): T | undefined {
     return this._dependencies.get(key) ?? this._parent?.resolveOptional(key);
   }
 

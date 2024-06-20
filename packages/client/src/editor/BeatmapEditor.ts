@@ -81,13 +81,12 @@ export class BeatmapEditor extends ContainerDrawable {
 
     // await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    
-    let volumeSelector: VolumeSelector
-    if(isMobile()) {
+    let volumeSelector: VolumeSelector;
+    if (isMobile()) {
       volumeSelector = new VolumeSelector({
         anchor: Anchor.BottomCentre,
         origin: Anchor.BottomCentre,
-        scale:  {
+        scale: {
           x: 2.5,
           y: 2.5,
         },

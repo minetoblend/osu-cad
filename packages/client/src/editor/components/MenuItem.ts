@@ -41,16 +41,18 @@ export class MenuItem extends ContainerDrawable {
     this.action = options.action;
     this.disabled = options.disabled ?? false;
 
-    if(options.shortcut) {
-      this.shortcut = this.addInternal(new DrawableText({
-        text: options.shortcut,
-        fontSize: 10,
-        color: 0xb6b6c3,
-        alpha: 0.75,
-        anchor: Anchor.CentreRight,
-        origin: Anchor.CentreRight,
-        margin: new MarginPadding(4),
-      }))
+    if (options.shortcut) {
+      this.shortcut = this.addInternal(
+        new DrawableText({
+          text: options.shortcut,
+          fontSize: 10,
+          color: 0xb6b6c3,
+          alpha: 0.75,
+          anchor: Anchor.CentreRight,
+          origin: Anchor.CentreRight,
+          margin: new MarginPadding(4),
+        }),
+      );
     }
   }
 
@@ -134,22 +136,24 @@ export class MenuItem extends ContainerDrawable {
     return !this.disabled && super.receivePositionalInputAt(screenSpacePos);
   }
 
-  @dependencyLoader() 
+  @dependencyLoader()
   load() {
-    if(this.items.length > 0 && !this.isRoot) {
-      this.addInternal(new RoundedBox({
-        relativeSizeAxes: Axes.Y,
-        width: 2,
-        cornerRadius: 1,
-        color: 0xffffff,
-        alpha: 0.25,
-        margin: new MarginPadding({
-          vertical: 4,
-          right: 4,
+    if (this.items.length > 0 && !this.isRoot) {
+      this.addInternal(
+        new RoundedBox({
+          relativeSizeAxes: Axes.Y,
+          width: 2,
+          cornerRadius: 1,
+          color: 0xffffff,
+          alpha: 0.25,
+          margin: new MarginPadding({
+            vertical: 4,
+            right: 4,
+          }),
+          anchor: Anchor.CentreRight,
+          origin: Anchor.CentreRight,
         }),
-        anchor: Anchor.CentreRight,
-        origin: Anchor.CentreRight,
-      }))
+      );
     }
   }
 }

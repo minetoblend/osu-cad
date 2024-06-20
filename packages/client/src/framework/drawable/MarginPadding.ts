@@ -13,7 +13,9 @@ export class MarginPadding {
   }
 
   get isZero() {
-    return this.left === 0 && this.right === 0 && this.top === 0 && this.bottom === 0;
+    return (
+      this.left === 0 && this.right === 0 && this.top === 0 && this.bottom === 0
+    );
   }
 
   constructor(
@@ -26,9 +28,9 @@ export class MarginPadding {
           bottom?: number;
           horizontal?: number;
           vertical?: number;
-        } = {}
+        } = {},
   ) {
-    if (typeof options === "number") {
+    if (typeof options === 'number') {
       this.left = options;
       this.right = options;
       this.top = options;

@@ -127,9 +127,6 @@ export class DrawableText extends Drawable {
   }
 
   get requiredSizeToFit(): Vec2 {
-    return new Vec2(
-      this.textDrawNode.width,
-      this.textDrawNode.height,
-    );
+    return new Vec2(this.textDrawNode.width, this.textDrawNode.height);
   }
 }

@@ -63,8 +63,6 @@ export class MenuContainer extends ContainerDrawable {
     menu.scaleY = 0.8;
     menu.y -= 10;
 
-    
-
     this.addInternal(menu);
     this.openMenus.push(menu);
     this.submenus.set(item, menu);
@@ -74,19 +72,16 @@ export class MenuContainer extends ContainerDrawable {
       item.submenu = menu;
     }
 
-    menu.update()
+    menu.update();
 
-    if(
-      menu.drawPosition.x + menu.drawSize.x > this.drawSize.x
-    ) {
+    if (menu.drawPosition.x + menu.drawSize.x > this.drawSize.x) {
       menu.anchor = Anchor.TopRight;
       const screenSpacePosition = item.drawNode.toGlobal(
         originPos.mul({ x: 0, y: 1 }),
       );
       const localPosition = this.toLocalSpace(screenSpacePosition);
-      menu.position = localPosition.sub({ x: 4, y: 0});
+      menu.position = localPosition.sub({ x: 4, y: 0 });
     }
-
 
     gsap.to(menu, {
       alpha: 1,

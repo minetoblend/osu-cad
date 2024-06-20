@@ -1,5 +1,8 @@
 import { ControlPointManager } from '@osucad/common';
-import { dependencyLoader, resolved } from '../../framework/di/DependencyLoader';
+import {
+  dependencyLoader,
+  resolved,
+} from '../../framework/di/DependencyLoader';
 import { Anchor } from '../../framework/drawable/Anchor';
 import { Axes } from '../../framework/drawable/Axes';
 import { ContainerDrawable } from '../../framework/drawable/ContainerDrawable';
@@ -36,11 +39,12 @@ export class EditorTimestampContainer extends ContainerDrawable {
     this.add(this.timestamp);
     this.add(this.bpm);
   }
-  
 
   onTick(): void {
-    const timingPoint = this.controlPoints.timingPointAt(this.clock.currentTime);
-    let bpm = 60_000 / timingPoint.timing.beatLength 
+    const timingPoint = this.controlPoints.timingPointAt(
+      this.clock.currentTime,
+    );
+    let bpm = 60_000 / timingPoint.timing.beatLength;
     bpm = Math.round(bpm * 10) / 10;
     this.bpm.text = `${bpm}bpm`;
   }

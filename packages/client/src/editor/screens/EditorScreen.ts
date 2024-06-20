@@ -1,8 +1,8 @@
-import { Axes } from "../../framework/drawable/Axes";
+import { Axes } from '../../framework/drawable/Axes';
 import {
   ContainerDrawable,
   ContainerDrawableOptions,
-} from "../../framework/drawable/ContainerDrawable";
+} from '../../framework/drawable/ContainerDrawable';
 
 export class EditorScreen extends ContainerDrawable {
   constructor(options: ContainerDrawableOptions = {}) {
@@ -11,6 +11,4 @@ export class EditorScreen extends ContainerDrawable {
       ...options,
     });
   }
-
-  
 }

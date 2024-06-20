@@ -1,12 +1,10 @@
-import { Container, Sprite, Texture } from "pixi.js";
-import { Drawable, DrawableOptions } from "./Drawable";
-import { Invalidation } from "./Invalidation";
+import { Container, Sprite, Texture } from 'pixi.js';
+import { Drawable, DrawableOptions } from './Drawable';
+import { Invalidation } from './Invalidation';
 
 export interface BoxOptions extends DrawableOptions {
   color?: number;
 }
-
-
 
 export class Box extends Drawable {
   constructor(options: BoxOptions = {}) {
@@ -15,7 +13,6 @@ export class Box extends Drawable {
 
     if (color !== undefined) this.color = color;
   }
-
 
   boxSprite = new Sprite({
     texture: Texture.WHITE,

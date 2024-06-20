@@ -12,6 +12,4 @@ export class TimestampFormatter {
       milliseconds.toString().padStart(3, '0'),
     ].join(':');
   }
-
-  
 }

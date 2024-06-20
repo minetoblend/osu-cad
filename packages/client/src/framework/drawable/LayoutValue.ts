@@ -1,12 +1,12 @@
-import { Drawable } from "./Drawable";
-import { Invalidation } from "./Invalidation";
+import { Drawable } from './Drawable';
+import { Invalidation } from './Invalidation';
 
 export class LayoutValue<T> {
   #value: T;
   constructor(
     value: T,
     readonly target: Drawable,
-    readonly invalidation: Invalidation
+    readonly invalidation: Invalidation,
   ) {
     this.#value = value;
   }

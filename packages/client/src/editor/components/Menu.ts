@@ -42,7 +42,7 @@ export class Menu extends ContainerDrawable {
         },
         quality: 2,
         alpha: 0.2,
-      })
+      }),
     ]);
     filter.padding = 15;
 
@@ -74,7 +74,7 @@ export class Menu extends ContainerDrawable {
   handleInvalidations(): void {
     super.handleInvalidations();
     if (this._invalidations & Invalidation.Layout) {
-      let width = Math.max(
+      const width = Math.max(
         this.minWidth,
         this.innerContainer.children.reduce(
           (max, child) => Math.max(max, child.requiredSizeToFit.x),
@@ -121,6 +121,6 @@ export class Menu extends ContainerDrawable {
   }
 
   onMouseDown() {
-    return true
+    return true;
   }
 }

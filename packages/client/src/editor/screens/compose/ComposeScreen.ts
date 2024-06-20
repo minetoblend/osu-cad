@@ -1,11 +1,11 @@
-import { dependencyLoader } from "../../../framework/di/DependencyLoader";
-import { Invalidation } from "../../../framework/drawable/Invalidation";
-import { MarginPadding } from "../../../framework/drawable/MarginPadding";
-import { PlayfieldContainer } from "../../PlayfieldContainer";
-import { EditorScreen } from "../EditorScreen";
-import gsap from "gsap";
-import { ComposeToolbar } from "./ComposeToolbar";
-import { Axes } from "../../../framework/drawable/Axes";
+import { dependencyLoader } from '../../../framework/di/DependencyLoader';
+import { Invalidation } from '../../../framework/drawable/Invalidation';
+import { MarginPadding } from '../../../framework/drawable/MarginPadding';
+import { PlayfieldContainer } from '../../PlayfieldContainer';
+import { EditorScreen } from '../EditorScreen';
+import gsap from 'gsap';
+import { ComposeToolbar } from './ComposeToolbar';
+import { Axes } from '../../../framework/drawable/Axes';
 
 export class ComposeScreen extends EditorScreen {
   playfield!: PlayfieldContainer;
@@ -15,16 +15,18 @@ export class ComposeScreen extends EditorScreen {
     this.playfield = this.add(
       new PlayfieldContainer({
         margin: this.playfieldMargin,
-      })
-    );
-    this.add(new ComposeToolbar({
-      width: 48,
-      relativeSizeAxes: Axes.Y,
-      margin: new MarginPadding({
-        horizontal: 8,
-        vertical: 10,
       }),
-    }))
+    );
+    this.add(
+      new ComposeToolbar({
+        width: 48,
+        relativeSizeAxes: Axes.Y,
+        margin: new MarginPadding({
+          horizontal: 8,
+          vertical: 10,
+        }),
+      }),
+    );
   }
 
   get playfieldMargin() {
@@ -58,10 +60,10 @@ export class ComposeScreen extends EditorScreen {
         gsap.to(this.playfield.margin, {
           ...this.playfieldMargin,
           duration: 0.3,
-          ease: "power2.out",
+          ease: 'power2.out',
           onUpdate: () =>
             this.playfield.invalidate(
-              Invalidation.DrawSize | Invalidation.Transform
+              Invalidation.DrawSize | Invalidation.Transform,
             ),
         });
       }

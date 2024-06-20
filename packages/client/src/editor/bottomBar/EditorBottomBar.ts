@@ -11,7 +11,6 @@ import { EditorTimestampContainer } from './EditorTimestampContainer';
 import { Box } from '../../framework/drawable/Box';
 import { PlayButtonContainer } from './PlayButton.ts';
 
-
 export class EditorBottomBar extends ContainerDrawable {
   constructor() {
     super();
@@ -94,7 +93,6 @@ export class EditorBottomBar extends ContainerDrawable {
                 anchor: Anchor.CentreLeft,
                 origin: Anchor.CentreLeft,
               }),
-              
             ],
           }),
         ],

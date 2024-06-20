@@ -101,7 +101,7 @@ export class EditorTopBar extends ContainerDrawable {
                 anchor: Anchor.BottomLeft,
                 margin: new MarginPadding({
                   horizontal: 8,
-                })
+                }),
               }),
             ],
           }),

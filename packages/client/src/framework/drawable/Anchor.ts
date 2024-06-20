@@ -7,7 +7,6 @@ export const enum Anchor {
   x2 = 1 << 5,
   Custom = 1 << 6,
 
-
   TopLeft = y0 | x0,
   TopCentre = y0 | x1,
   TopRight = y0 | x2,

@@ -1,7 +1,7 @@
-import { Container, Graphics, Ticker } from "pixi.js";
-import { dependencyLoader } from "../framework/di/DependencyLoader";
-import { Drawable } from "../framework/drawable/Drawable";
-import { Axes } from "../framework/drawable/Axes";
+import { Container, Graphics, Ticker } from 'pixi.js';
+import { dependencyLoader } from '../framework/di/DependencyLoader';
+import { Drawable } from '../framework/drawable/Drawable';
+import { Axes } from '../framework/drawable/Axes';
 
 export class LoadingSpinner extends Drawable {
   drawNode = new Container();
@@ -10,7 +10,7 @@ export class LoadingSpinner extends Drawable {
     color: 0xffffff,
     width: 4,
     alpha: 0.5,
-    cap: "round",
+    cap: 'round',
   });
 
   @dependencyLoader()

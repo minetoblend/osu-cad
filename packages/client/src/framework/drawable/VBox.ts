@@ -46,7 +46,7 @@ export class VBox extends ContainerDrawable {
     if (this._invalidations & Invalidation.Layout) {
       let y = 0;
 
-      let maxWidth = this.children.reduce(
+      const maxWidth = this.children.reduce(
         (max, child) => Math.max(max, child.requiredSizeToFit.x),
         0,
       );
@@ -78,7 +78,10 @@ export class VBox extends ContainerDrawable {
       height += child.requiredSizeToFit.y + this.gap;
     }
 
-    return new Vec2(width + this.padding.horizontal, height - this.gap + this.padding.vertical);
+    return new Vec2(
+      width + this.padding.horizontal,
+      height - this.gap + this.padding.vertical,
+    );
   }
 
   override childrenCanBeOutOfBounds(): boolean {
