@@ -88,11 +88,6 @@ export class SliderDrawable extends HitObjectDrawable<Slider> {
         0,
       );
     }
-
-    if (time < 0) {
-      this.comboNumber.alpha = this.headCircle.alpha;
-    } else {
-      this.comboNumber.alpha = 0;
-    }
+    this.comboNumber.alpha = this.headCircle.alpha;
   }
 }

@@ -6,6 +6,8 @@ import { EditorScreen } from '../EditorScreen';
 import gsap from 'gsap';
 import { ComposeToolbar } from './ComposeToolbar';
 import { Axes } from '../../../framework/drawable/Axes';
+import { ComposeTogglesBar } from './ComposeTogglesBar.ts';
+import { Anchor } from '../../../framework/drawable/Anchor.ts';
 
 export class ComposeScreen extends EditorScreen {
   playfield!: PlayfieldContainer;
@@ -19,6 +21,18 @@ export class ComposeScreen extends EditorScreen {
     );
     this.add(
       new ComposeToolbar({
+        width: 48,
+        relativeSizeAxes: Axes.Y,
+        margin: new MarginPadding({
+          horizontal: 8,
+          vertical: 10,
+        }),
+      }),
+    );
+    this.add(
+      new ComposeTogglesBar({
+        anchor: Anchor.TopRight,
+        origin: Anchor.TopRight,
         width: 48,
         relativeSizeAxes: Axes.Y,
         margin: new MarginPadding({
