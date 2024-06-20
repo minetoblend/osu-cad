@@ -71,6 +71,12 @@ export class CompositeDrawable<T extends Drawable = Drawable> extends Drawable {
     }
   }
 
+  removeAllInternal(destroy = true) {
+    for (const child of this.internalChildren) {
+      this.removeInternal(child, destroy);
+    }
+  }
+
   override _load(dependencies: DependencyContainer): void {
     super._load(dependencies);
     for (const child of this.internalChildren) {

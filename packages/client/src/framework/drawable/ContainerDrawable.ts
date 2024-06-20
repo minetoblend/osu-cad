@@ -1,15 +1,18 @@
 import {
   CompositeDrawable,
   CompositeDrawableOptions,
-} from "./CompositeDrawable";
-import { Drawable } from "./Drawable";
-import { Invalidation } from "./Invalidation";
+} from './CompositeDrawable';
+import { Drawable } from './Drawable';
+import { Invalidation } from './Invalidation';
 
-export interface ContainerDrawableOptions<T extends Drawable = Drawable> extends CompositeDrawableOptions {
+export interface ContainerDrawableOptions<T extends Drawable = Drawable>
+  extends CompositeDrawableOptions {
   children?: T[];
 }
 
-export class ContainerDrawable<T extends Drawable = Drawable>  extends CompositeDrawable<T> {
+export class ContainerDrawable<
+  T extends Drawable = Drawable,
+> extends CompositeDrawable<T> {
   constructor(options: ContainerDrawableOptions<T> = {}) {
     const { children, ...rest } = options;
     super(rest);
@@ -53,6 +56,12 @@ export class ContainerDrawable<T extends Drawable = Drawable>  extends Composite
       this.content.removeInternal(child, destroy);
     } else {
       this.content.remove(child, destroy);
+    }
+  }
+
+  removeAll(destroy = true) {
+    for (const child of this.children) {
+      this.remove(child, destroy);
     }
   }
 }
