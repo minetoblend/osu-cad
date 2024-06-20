@@ -39,6 +39,12 @@ export class EditorInputManager extends Component {
         }
         break;
     }
+
+    if (event.ctrlKey && /[0-9]/.test(event.key)) {
+      this.clock.beatSnapDivisor = parseInt(event.key);
+      event.preventDefault();
+      return;
+    }
   }
 
   @resolved(Beatmap)
