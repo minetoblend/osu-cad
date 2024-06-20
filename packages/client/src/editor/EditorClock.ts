@@ -72,6 +72,10 @@ export class EditorClock extends Component {
       this.#currentTime += Ticker.shared.deltaMS * this.playbackSpeed;
       this.#currentTimeAnimated = this.#currentTime;
     } else if (this.isAnimated) {
+      if (Math.abs(this.#currentTimeAnimated - this.#currentTime) < 0.5) {
+        this.#currentTimeAnimated = this.#currentTime;
+      }
+
       this.#currentTimeAnimated = lerp(
         this.#currentTimeAnimated,
         this.#currentTime,
