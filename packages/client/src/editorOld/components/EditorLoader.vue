@@ -3,11 +3,10 @@ import { AppHost } from '@/framework/AppHost.ts';
 import { EditorLoader } from '@/editor/EditorLoader.ts';
 import { createSocket } from '@/editor/EditorSocket.ts';
 
-import fontUrl from '@fontsource/nunito-sans/files/nunito-sans-latin-400-normal.woff2';
-import fontUrlSemibold from '@fontsource/nunito-sans/files/nunito-sans-latin-600-normal.woff2';
-import fontUrlBold from '@fontsource/nunito-sans/files/nunito-sans-latin-700-normal.woff2';
-import { Assets } from 'pixi.js';
+import { Assets, RenderTarget } from 'pixi.js';
 import { DebugOverlay } from '@/framework/debug/DebugOverlay.ts';
+
+RenderTarget.defaultOptions.depth = true;
 
 const props = defineProps<{
   joinKey: string;
