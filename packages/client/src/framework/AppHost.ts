@@ -36,6 +36,7 @@ export class AppHost {
       resolution: window.devicePixelRatio,
       useBackBuffer: true,
       powerPreference: 'high-performance',
+      depth: true,
     });
 
     this.inputManager = new InputManager(this);
