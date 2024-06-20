@@ -135,7 +135,8 @@ export class InputManager {
     }
 
     if (drawable.canHaveChildren() && drawable.interactiveChildren) {
-      for (const child of drawable.internalChildren) {
+      for (let i = drawable.internalChildren.length - 1; i >= 0; i--) {
+        const child = drawable.internalChildren[i];
         this.dispatchHoverEvent(hoverEvent, hoverLostEvent, child);
       }
     }
