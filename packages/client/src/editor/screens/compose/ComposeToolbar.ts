@@ -1,3 +1,10 @@
+import { UISamples } from '@/editor/UISamples.ts';
+import { AudioManager } from '@/framework/audio/AudioManager.ts';
+import { resolved } from '@/framework/di/DependencyLoader.ts';
+import { Anchor } from '@/framework/drawable/Anchor';
+import { isMobile } from '@/utils';
+import { Vec2 } from '@osucad/common';
+import gsap from 'gsap';
 import { Axes } from '../../../framework/drawable/Axes';
 import {
   ContainerDrawable,
@@ -5,12 +12,6 @@ import {
 } from '../../../framework/drawable/ContainerDrawable';
 import { VBox } from '../../../framework/drawable/VBox';
 import { ToolbarButton } from './ToolbarButton';
-import { resolved } from '@/framework/di/DependencyLoader.ts';
-import { AudioManager } from '@/framework/audio/AudioManager.ts';
-import { UISamples } from '@/editor/UISamples.ts';
-import { Vec2 } from '@osucad/common';
-import { isMobile } from '@/utils';
-import { Anchor } from '@/framework/drawable/Anchor';
 
 export class ComposeToolbar extends ContainerDrawable {
   constructor(options: ContainerDrawableOptions = {}) {
@@ -66,6 +67,16 @@ export class ComposeToolbar extends ContainerDrawable {
         origin: Anchor.BottomLeft,
       }),
     );
+
+    // this.drawNode.filters = [
+    //   new CustomBackdropBlur({
+    //     quality: 2,
+    //     strength: 5,
+    //     antialias: 'inherit',
+    //     resolution: devicePixelRatio,
+    //   }),
+    // ];
+
     this.updateState();
   }
 
@@ -93,6 +104,33 @@ export class ComposeToolbar extends ContainerDrawable {
       const child = children[i] as ToolbarButton;
       child.active = i === this.#activeTool;
     }
+  }
+
+  appear() {
+    const children = (this.children[0] as VBox).children;
+    for (let i = 0; i < children.length; i++) {
+      gsap.from(children[i], {
+        x: -50,
+        alpha: 0,
+        duration: 0.4,
+        delay: i * 0.05,
+        ease: 'power3.out',
+      });
+    }
+  }
+
+  hide() {
+    const children = (this.children[0] as VBox).children;
+    for (let i = 0; i < children.length; i++) {
+      gsap.to(children[i], {
+        x: -50,
+        alpha: 0,
+        duration: 0.3,
+        delay: i * 0.05,
+        ease: 'power1.in',
+      });
+    }
+
   }
 
   receiveGlobalKeyboardEvents(): boolean {

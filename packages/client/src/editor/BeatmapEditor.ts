@@ -17,6 +17,8 @@ import { isMobile } from '@/utils';
 import { MenuContainer } from './components/MenuContainer';
 import { VolumeSelector } from './bottomBar/VolumeSelector';
 import { Anchor } from '@/framework/drawable/Anchor';
+import { EditorScreenContainer } from './screens/EditorScreenContainer';
+import { BeatmapBackground } from './BeatmapBackground';
 
 export class BeatmapEditor extends ContainerDrawable {
   constructor() {
@@ -45,13 +47,17 @@ export class BeatmapEditor extends ContainerDrawable {
     fit: Fit.Fill,
   });
 
+  backgroundContainer = new DrawsizePreservingContainer({
+    width: 512,
+    height: 384,
+    fit: Fit.Contain,
+  })
+
   override get content() {
     return this.innerContainer;
   }
 
-  screenContainer = new ContainerDrawable({
-    relativeSizeAxes: Axes.Both,
-  });
+  screenContainer!: EditorScreenContainer;
 
   @resolved(AudioManager)
   audioManager!: AudioManager;
@@ -107,19 +113,26 @@ export class BeatmapEditor extends ContainerDrawable {
     }
     this.dependencies.provide(volumeSelector);
 
+    this.add(this.backgroundContainer)
+    
+    const background = this.backgroundContainer.add(new BeatmapBackground())
+    this.dependencies.provide(background)
+
     this.add(new EditorInputManager());
 
     this.screenContainer = this.add(
-      new ContainerDrawable({
+      new EditorScreenContainer({
         relativeSizeAxes: Axes.Both,
         margin: new MarginPadding({
           top: 84,
           bottom: 48,
           horizontal: 0,
         }),
-        children: [new ComposeScreen()],
+        currentScreen: ComposeScreen,
       }),
     );
+    this.dependencies.provide(this.screenContainer);
+
     const menuContainer = new MenuContainer();
     this.dependencies.provide(menuContainer);
 

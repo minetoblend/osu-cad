@@ -1,14 +1,14 @@
-import { BackdropBlurFilter } from 'pixi-filters';
 import { dependencyLoader } from '../../framework/di/DependencyLoader';
 import { Anchor } from '../../framework/drawable/Anchor';
 import { Axes } from '../../framework/drawable/Axes';
+import { Box } from '../../framework/drawable/Box';
 import { ContainerDrawable } from '../../framework/drawable/ContainerDrawable';
 import { Corner } from '../../framework/drawable/Corner';
-import { EditorCornerPiece } from '../topBar/EditorCornerPiece';
-import { OverviewTimeline } from '../bottomBar/OverviewTimeline';
 import { MarginPadding } from '../../framework/drawable/MarginPadding';
+import { OverviewTimeline } from '../bottomBar/OverviewTimeline';
+import { CustomBackdropBlur } from '../filters/CustomBackdropBlur.ts';
+import { EditorCornerPiece } from '../topBar/EditorCornerPiece';
 import { EditorTimestampContainer } from './EditorTimestampContainer';
-import { Box } from '../../framework/drawable/Box';
 import { PlayButtonContainer } from './PlayButton.ts';
 
 export class EditorBottomBar extends ContainerDrawable {
@@ -22,14 +22,13 @@ export class EditorBottomBar extends ContainerDrawable {
 
   @dependencyLoader()
   load() {
-    const filter = new BackdropBlurFilter({
-      strength: 10,
+    const filter = new CustomBackdropBlur({
+      strength: 5,
       padding: 24,
       quality: 3,
       resolution: devicePixelRatio,
       antialias: 'on',
     });
-    filter.padding = 32;
 
     this.add(
       new ContainerDrawable({

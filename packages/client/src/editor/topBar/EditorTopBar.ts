@@ -1,17 +1,18 @@
-import { BackdropBlurFilter } from 'pixi-filters';
+import { RhythmTimelineZoomButtons } from '@/editor/topBar/RhythmTimelineZoomButtons.ts';
+import { Box } from '@/framework/drawable/Box.ts';
 import { dependencyLoader } from '../../framework/di/DependencyLoader';
 import { Anchor } from '../../framework/drawable/Anchor';
 import { Axes } from '../../framework/drawable/Axes';
 import { ContainerDrawable } from '../../framework/drawable/ContainerDrawable';
 import { Corner } from '../../framework/drawable/Corner';
 import { MarginPadding } from '../../framework/drawable/MarginPadding';
-import { EditorCornerPiece } from './EditorCornerPiece';
-import { RhythmTimeline } from './RhythmTimeline';
-import { Box } from '@/framework/drawable/Box.ts';
-import { RhythmTimelineZoomButtons } from '@/editor/topBar/RhythmTimelineZoomButtons.ts';
-import { EditorMenuBar } from './EditorMenuBar';
 import { DropdownSelect } from '../components/DropdownSelect';
+import { CustomBackdropBlur } from '../filters/CustomBackdropBlur';
 import { BeatSnapSelector } from './BeatSnapSelecetor';
+import { EditorCornerPiece } from './EditorCornerPiece';
+import { EditorMenuBar } from './EditorMenuBar';
+import { RhythmTimeline } from './RhythmTimeline';
+import { EditorScreenSelector } from './EditorScreenSelector';
 
 export class EditorTopBar extends ContainerDrawable {
   constructor() {
@@ -22,7 +23,7 @@ export class EditorTopBar extends ContainerDrawable {
 
   @dependencyLoader()
   load() {
-    const filter = new BackdropBlurFilter({
+    const filter = new CustomBackdropBlur({
       strength: 10,
       padding: 32,
       quality: 3,
@@ -91,7 +92,7 @@ export class EditorTopBar extends ContainerDrawable {
             relativeSizeAxes: Axes.Both,
             margin: new MarginPadding({
               right: 8,
-              top: 4,
+              top: 0,
               left: 20,
               bottom: 8,
             }),
@@ -103,6 +104,7 @@ export class EditorTopBar extends ContainerDrawable {
                   horizontal: 8,
                 }),
               }),
+              new EditorScreenSelector(),
             ],
           }),
         ],

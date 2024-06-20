@@ -1,11 +1,15 @@
 import { Axes } from '@/framework/drawable/Axes';
 import { ContainerDrawable } from '@/framework/drawable/ContainerDrawable';
-import { MenuItem } from './MenuItem';
-import { Menu } from './Menu';
+import type { MenuItem as MenuItemType } from './MenuItem';
+import type { Menu as MenuType } from './Menu';
 import { Anchor } from '@/framework/drawable/Anchor';
 import gsap from 'gsap';
 import { MouseDownEvent } from '@/framework/input/events/MouseEvent';
 import { Drawable } from '@/framework/drawable/Drawable';
+import { dependencyLoader } from '@/framework/di/DependencyLoader';
+
+let MenuItem: typeof import('./MenuItem').MenuItem;
+let Menu: typeof import('./Menu').Menu;
 
 export class MenuContainer extends ContainerDrawable {
   constructor() {
@@ -14,14 +18,20 @@ export class MenuContainer extends ContainerDrawable {
     });
   }
 
-  openMenus: Menu[] = [];
+  @dependencyLoader()
+  async load() {
+    MenuItem ??= (await import('./MenuItem')).MenuItem;
+    Menu ??= (await import('./Menu')).Menu;
+  }
 
-  submenus = new Map<Drawable, Menu>();
-  menuOwners = new Map<Menu, Drawable>();
+  openMenus: MenuType[] = [];
 
-  shouldRemove: Menu[] = [];
+  submenus = new Map<Drawable, MenuType>();
+  menuOwners = new Map<MenuType, Drawable>();
 
-  show(item: Drawable, children: MenuItem[], origin?: Anchor): Menu {
+  shouldRemove: MenuType[] = [];
+
+  show(item: Drawable, children: MenuItemType[], origin?: Anchor): MenuType {
     if (!origin) {
       origin =
         !(item instanceof MenuItem) || item.isRoot
@@ -94,7 +104,7 @@ export class MenuContainer extends ContainerDrawable {
     return menu;
   }
 
-  hide(menu: Menu) {
+  hide(menu: MenuType) {
     const index = this.openMenus.indexOf(menu);
 
     if (index === -1) return;
@@ -140,8 +150,8 @@ export class MenuContainer extends ContainerDrawable {
     return false;
   }
 
-  private isSubmenu(item: Drawable, menu: Menu) {
-    let current = menu as Menu | undefined;
+  private isSubmenu(item: Drawable, menu: MenuType) {
+    let current = menu as MenuType | undefined;
     while (current) {
       if (this.isNestedChild(item)) {
         return true;

@@ -5,9 +5,10 @@ import { ContainerDrawable } from '@/framework/drawable/ContainerDrawable';
 import { DrawableOptions } from '@/framework/drawable/Drawable';
 import { RoundedBox } from '@/framework/drawable/RoundedBox';
 import gsap from 'gsap';
-import { BackdropBlurFilter, DropShadowFilter } from 'pixi-filters';
-import { VolumeKnob } from './VolumeKnob';
+import { DropShadowFilter } from 'pixi-filters';
 import { AlphaFilter } from 'pixi.js';
+import { CustomBackdropBlur } from '../filters/CustomBackdropBlur';
+import { VolumeKnob } from './VolumeKnob';
 
 export class VolumeSelector extends ContainerDrawable {
   constructor(options: DrawableOptions) {
@@ -27,9 +28,9 @@ export class VolumeSelector extends ContainerDrawable {
     );
 
     const [filter] = (background.drawNode.filters = [
-      new BackdropBlurFilter({
+      new CustomBackdropBlur({
         strength: 16,
-        quality: 5,
+        quality: 3,
       }),
       new DropShadowFilter({
         offset: {

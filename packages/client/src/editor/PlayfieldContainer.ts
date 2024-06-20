@@ -33,7 +33,6 @@ export class PlayfieldContainer extends ContainerDrawable {
   load() {
     this.addInternal(this.playfieldContent);
     this.playfieldContent.relativeSizeAxes = Axes.Both;
-    this.add(new BeatmapBackground());
     this.add(new EditorGrid());
     this.add(new HitObjectContainer());
   }

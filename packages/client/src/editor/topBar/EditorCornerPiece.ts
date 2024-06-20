@@ -28,7 +28,7 @@ export class EditorCornerPiece extends ContainerDrawable {
   });
 
   background = new Graphics({
-    alpha: 0.8,
+    alpha: 0.7,
     blendMode: 'none',
   });
 

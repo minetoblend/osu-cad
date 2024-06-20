@@ -1,4 +1,4 @@
-import { dependencyLoader } from '../../../framework/di/DependencyLoader';
+import { dependencyLoader, resolved } from '../../../framework/di/DependencyLoader';
 import { Invalidation } from '../../../framework/drawable/Invalidation';
 import { MarginPadding } from '../../../framework/drawable/MarginPadding';
 import { PlayfieldContainer } from '../../PlayfieldContainer';
@@ -8,6 +8,7 @@ import { ComposeToolbar } from './ComposeToolbar';
 import { Axes } from '../../../framework/drawable/Axes';
 import { ComposeTogglesBar } from './ComposeTogglesBar.ts';
 import { Anchor } from '../../../framework/drawable/Anchor.ts';
+import { BeatmapBackground } from '@/editor/BeatmapBackground';
 
 export class ComposeScreen extends EditorScreen {
   playfield!: PlayfieldContainer;
@@ -17,9 +18,11 @@ export class ComposeScreen extends EditorScreen {
     this.playfield = this.add(
       new PlayfieldContainer({
         margin: this.playfieldMargin,
+        anchor: Anchor.Centre,
+        origin: Anchor.Centre,
       }),
     );
-    this.add(
+    this.toolbar = this.add(
       new ComposeToolbar({
         width: 48,
         relativeSizeAxes: Axes.Y,
@@ -42,6 +45,8 @@ export class ComposeScreen extends EditorScreen {
       }),
     );
   }
+
+  toolbar!: ComposeToolbar;
 
   get playfieldMargin() {
     if (this.drawSize.x <= 1120) {
@@ -82,5 +87,41 @@ export class ComposeScreen extends EditorScreen {
         });
       }
     }
+  }
+
+  @resolved(BeatmapBackground)
+  background!: BeatmapBackground;
+
+  show() {
+    this.toolbar.appear();
+    gsap.from(this.playfield, {
+      alpha: 0,
+      scaleX: 0.9,
+      scaleY: 0.9,
+      duration: 0.4,
+      ease: 'power2.out',
+    })
+    gsap.to(this.background, {
+      scaleX: 1,
+      scaleY: 1,
+      duration: 0.5,
+      ease: 'power3.out',
+    })
+  }
+
+  hide(done: () => void): void {
+    gsap.to(this, {
+      alpha: 0,
+      duration: 0.4,
+      onComplete: done,
+    });
+    gsap.to(this.playfield, {
+      scaleX: 0.9,
+      scaleY: 0.9,
+      duration: 0.4,
+      ease: 'power2.out',
+      onComplete: done,
+    });
+    this.toolbar.hide();
   }
 }
