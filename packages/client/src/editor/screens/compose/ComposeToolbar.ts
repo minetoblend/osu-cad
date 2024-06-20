@@ -11,6 +11,7 @@ import { UISamples } from '@/editor/UISamples.ts';
 import { Vec2 } from '@osucad/common';
 import { isMobile } from '@/utils';
 import { Anchor } from '@/framework/drawable/Anchor';
+import { CustomBackdropBlur } from '@/editor/filters/CustomBackdropBlur';
 
 export class ComposeToolbar extends ContainerDrawable {
   constructor(options: ContainerDrawableOptions = {}) {
@@ -66,6 +67,16 @@ export class ComposeToolbar extends ContainerDrawable {
         origin: Anchor.BottomLeft,
       }),
     );
+
+    this.drawNode.filters = [
+      new CustomBackdropBlur({
+        quality: 2,
+        strength: 5,
+        antialias: 'inherit',
+        resolution: devicePixelRatio,
+      }),
+    ]
+
     this.updateState();
   }
 

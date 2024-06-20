@@ -9,6 +9,7 @@ import { DrawableSprite } from '../../../framework/drawable/DrawableSprite';
 import { Invalidation } from '../../../framework/drawable/Invalidation';
 import { RoundedBox } from '../../../framework/drawable/RoundedBox';
 import { MouseDownEvent } from '../../../framework/input/events/MouseEvent';
+import { CustomBackdropBlur } from '@/editor/filters/CustomBackdropBlur';
 
 export interface ToolbarButtonOptions extends ContainerDrawableOptions {
   icon?: string;
@@ -39,15 +40,6 @@ export class ToolbarButton extends ContainerDrawable {
 
     if (active !== undefined) this.active = active;
 
-    // const [filter] = (this._background.drawNode.filters = [
-    //   new BackdropBlurFilter({
-    //     quality: 4,
-    //     strength: 12,
-    //     antialias: 'on',
-    //     resolution: devicePixelRatio,
-    //   }),
-    // ]);
-    // filter.padding = 16;
 
     this.updateState();
   }

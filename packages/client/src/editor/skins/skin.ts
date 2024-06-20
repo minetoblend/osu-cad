@@ -55,7 +55,10 @@ export class Skin {
   async load() {
     await Promise.all(
       Object.entries(this.textureUrls).map(async ([key, url]) => {
-        this.textures[key as TextureKeys] = await Assets.load(url);
+        this.textures[key as TextureKeys] = await Assets.load({
+          src: url,
+          data: { autoGenerateMipmaps: true },
+        });
       }),
     );
   }

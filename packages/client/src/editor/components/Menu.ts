@@ -1,13 +1,13 @@
+import { Anchor } from '@/framework/drawable/Anchor';
 import { Axes } from '@/framework/drawable/Axes';
 import { ContainerDrawable } from '@/framework/drawable/ContainerDrawable';
 import { Invalidation } from '@/framework/drawable/Invalidation';
 import { RoundedBox } from '@/framework/drawable/RoundedBox';
 import { Vec2 } from '@osucad/common';
-import { MenuItem } from './MenuItem';
 import gsap from 'gsap';
-import { Anchor } from '@/framework/drawable/Anchor';
-import { MouseDownEvent } from '@/framework/input/events/MouseEvent';
-import { BackdropBlurFilter, DropShadowFilter } from 'pixi-filters';
+import { DropShadowFilter } from 'pixi-filters';
+import { CustomBackdropBlur } from '../filters/CustomBackdropBlur';
+import { MenuItem } from './MenuItem';
 
 export interface MenuOptions {
   items: MenuItem[];
@@ -32,8 +32,9 @@ export class Menu extends ContainerDrawable {
     this.minWidth = options.minWidth ?? 150;
 
     const [filter] = (this.background.drawNode.filters = [
-      new BackdropBlurFilter({
-        strength: 15,
+      new CustomBackdropBlur({
+        strength: 10,
+        quality: 3,
       }),
       new DropShadowFilter({
         offset: {
