@@ -1,16 +1,22 @@
-import { Assets, Container, Sprite } from 'pixi.js';
-import { Drawable } from '../framework/drawable/Drawable';
+import { Anchor } from '@/framework/drawable/Anchor';
+import { ContainerDrawable } from '@/framework/drawable/ContainerDrawable';
+import { DrawableSprite } from '@/framework/drawable/DrawableSprite';
+import { Beatmap, Vec2 } from '@osucad/common';
+import { Assets } from 'pixi.js';
 import { dependencyLoader, resolved } from '../framework/di/DependencyLoader';
 import { Axes } from '../framework/drawable/Axes';
-import gsap from 'gsap';
-import { Beatmap } from '@osucad/common';
+import { DrawableOptions } from '@/framework/drawable/Drawable';
 
-export class BeatmapBackground extends Drawable {
-  drawNode = new Container();
-
-  constructor() {
-    super();
-    this.relativeSizeAxes = Axes.Both;
+export class BeatmapBackground extends ContainerDrawable {
+  constructor(
+    options: DrawableOptions = {}
+  ) {
+    super({
+      relativeSizeAxes: Axes.Both,
+      anchor: Anchor.Centre,
+      origin: Anchor.Centre,
+      ...options,
+    });
   }
 
   @resolved(Beatmap)
@@ -21,15 +27,15 @@ export class BeatmapBackground extends Drawable {
     const texture = await Assets.load(
       `/api/mapsets/${this.beatmap.setId}/files/${this.beatmap.backgroundPath}`,
     );
-    const sprite = this.drawNode.addChild(new Sprite({ texture }));
-    sprite.anchor.set(0.5);
-    sprite.scale.set(Math.max(1000 / texture.width, 540 / texture.height));
-    sprite.position.set(512 / 2, 384 / 2);
-    this.drawNode.alpha = 0;
-    gsap.to(this.drawNode, {
-      alpha: 0.75,
-      duration: 0.5,
-    });
+    this.add(
+      new DrawableSprite({
+        texture,
+        anchor: Anchor.Centre,
+        origin: Anchor.Centre,
+        scale: new Vec2(Math.max(1000 / texture.width, 540 / texture.height)),
+        alpha: 0.75,
+      }),
+    );
   }
 
   updateSpriteTransform() {}

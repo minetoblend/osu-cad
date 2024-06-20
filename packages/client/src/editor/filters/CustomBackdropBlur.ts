@@ -22,7 +22,6 @@ export class CustomBackdropBlur extends BlurFilter {
   private _blendPass: Filter;
   constructor(options: BlurFilterOptions) {
     super({
-      kernelSize: 15,
       ...options,
     });
     this.padding = options.padding ?? 32;
@@ -31,12 +30,10 @@ export class CustomBackdropBlur extends BlurFilter {
     this.padding = 0;
 
     this.blurXFilter = new CustomBlurFilterPass({
-      kernelSize: 15,
       ...options,
       horizontal: false,
     });
     this.blurYFilter = new CustomBlurFilterPass({
-      kernelSize: 15,
       ...options,
       horizontal: true,
     });
@@ -90,6 +87,10 @@ export class CustomBackdropBlur extends BlurFilter {
     this['_blendPass'].apply(filterManager, input, output, clearMode);
 
     TexturePool.returnTexture(blurredBackground);
+  }
+
+  protected updatePadding(): void {
+      
   }
 }
 

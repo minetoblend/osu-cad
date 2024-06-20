@@ -12,6 +12,7 @@ import { BeatSnapSelector } from './BeatSnapSelecetor';
 import { EditorCornerPiece } from './EditorCornerPiece';
 import { EditorMenuBar } from './EditorMenuBar';
 import { RhythmTimeline } from './RhythmTimeline';
+import { EditorScreenSelector } from './EditorScreenSelector';
 
 export class EditorTopBar extends ContainerDrawable {
   constructor() {
@@ -91,7 +92,7 @@ export class EditorTopBar extends ContainerDrawable {
             relativeSizeAxes: Axes.Both,
             margin: new MarginPadding({
               right: 8,
-              top: 4,
+              top: 0,
               left: 20,
               bottom: 8,
             }),
@@ -103,6 +104,7 @@ export class EditorTopBar extends ContainerDrawable {
                   horizontal: 8,
                 }),
               }),
+              new EditorScreenSelector(),
             ],
           }),
         ],
