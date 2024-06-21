@@ -24,11 +24,11 @@ export class SliderDrawable extends HitObjectDrawable<Slider> {
   override load() {
     this.sliderBody = this.add(new DrawableSliderBody(this.hitObject));
     this.headCircle = this.add(new CirclePieceDrawable());
-    this.tailCircle = this.add(new CirclePieceDrawable());
     this.approachCircle = this.add(new ApproachCircleDrawable());
     this.comboNumber = this.add(
       new DrawableComboNumber(this.hitObject.indexInCombo),
     );
+    this.tailCircle = this.add(new CirclePieceDrawable());
     this.sliderBody.alpha = 0;
     super.load();
   }
