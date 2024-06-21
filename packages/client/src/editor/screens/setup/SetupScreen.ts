@@ -12,7 +12,7 @@ import { Drawable } from '@/framework/drawable/Drawable';
 import { BeatmapBackgroundSelector } from './BeatmapBackgroundSelector';
 
 export class SetupScreen extends EditorScreen {
-  alphaFilter = new AlphaFilter({ alpha: 1 });
+  alphaFilter = new AlphaFilter({ alpha: 1, resolution: devicePixelRatio });
 
   @resolved(BeatmapBackground)
   background!: BeatmapBackground;
@@ -43,6 +43,7 @@ export class SetupScreen extends EditorScreen {
       new CustomBackdropBlur({
         strength: 50,
         quality: 4,
+        resolution: devicePixelRatio
       }),
       this.alphaFilter,
     ] as const);
