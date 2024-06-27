@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Application } from 'pixi.js';
+import { Application, Ticker } from 'pixi.js';
 import '../drawables/DrawableSystem.ts';
 import { EditorViewportDrawable } from '../drawables/EditorViewportDrawable.ts';
 import gsap from 'gsap';
@@ -26,6 +26,8 @@ const viewportSize = reactive({
 
 const { preferences } = usePreferences();
 
+let lastRender = performance.now();
+
 onMounted(async () => {
   const resolution = 1;
 
@@ -34,7 +36,23 @@ onMounted(async () => {
     antialias = false;
   }
 
+  const canvas = document.createElement('canvas');
+
+  const context = canvas.getContext('webgl2', {
+    antialias,
+    powerPreference: 'high-performance',
+    depth: true,
+    alpha: false,
+    stencil: true,
+    premultipliedAlpha: false,
+    preserveDrawingBuffer: true,
+    failIfMajorPerformanceCaveat: false,
+    desynchronized: true,
+  });
+
   await app.init({
+    canvas,
+    context,
     resizeTo: viewportContainer.value!,
     preference: 'webgl',
     sharedTicker: true,
@@ -77,6 +95,19 @@ onMounted(async () => {
 
   requestAnimationFrame(() => {
     emit('initialized');
+  });
+
+  addEventListener('pointermove', () => {
+    const now = performance.now();
+    // boost up to 200 fps
+    if (now - lastRender > 5) {
+      app.render();
+      lastRender = now;
+    }
+  });
+
+  Ticker.shared.add(() => {
+    lastRender = performance.now();
   });
 
   watch([width, height], ([width, height]) => {

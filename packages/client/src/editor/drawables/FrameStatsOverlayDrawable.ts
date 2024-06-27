@@ -53,8 +53,22 @@ export class FrameStatsOverlayDrawable extends Component {
     });
   }
 
+  lastDraw = performance.now();
+  drawTimes: number[] = [];
+
   onTick() {
-    this.fpsText.text = Math.round(frameStats.fps) + 'fps';
+    const now = performance.now();
+    this.drawTimes.push(now - this.lastDraw);
+    if (this.drawTimes.length > 50) this.drawTimes.shift();
+    this.lastDraw = now;
+
+    const averageDrawTime =
+      this.drawTimes.reduce((a, b) => a + b, 0) / this.drawTimes.length;
+
+    console.log(averageDrawTime);
+
+    this.fpsText.text = Math.round(1000 / averageDrawTime) + 'fps';
+
     this.frameTimeText.text = frameStats.frameTime.toFixed(1) + 'ms';
 
     this.updateTimeList.push(frameStats.updateTime);
