@@ -65,8 +65,6 @@ export class FrameStatsOverlayDrawable extends Component {
     const averageDrawTime =
       this.drawTimes.reduce((a, b) => a + b, 0) / this.drawTimes.length;
 
-    console.log(averageDrawTime);
-
     this.fpsText.text = Math.round(1000 / averageDrawTime) + 'fps';
 
     this.frameTimeText.text = frameStats.frameTime.toFixed(1) + 'ms';
