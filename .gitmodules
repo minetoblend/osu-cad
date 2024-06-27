@@ -1,0 +1,3 @@
+[submodule "packages/framework"]
+	path = packages/framework
+	url = https://github.com/minetoblend/osucad-framework
