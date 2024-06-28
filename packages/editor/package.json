@@ -3,17 +3,24 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "main": "electron/dist/main.js",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "electron": "tsc -p tsconfig-electron.json && electron ."
   },
   "devDependencies": {
+    "@types/node": "^20.14.9",
+    "electron": "^31.1.0",
     "typescript": "^5.2.2",
     "vite": "^5.3.1"
   },
   "dependencies": {
     "@osucad/common": "workspace:*",
+    "osu-classes": "^3.0.1",
+    "osu-parsers": "^4.1.6",
+    "osu-standard-stable": "^5.0.0",
     "osucad-framework": "workspace:*",
     "pixi-filters": "^6.0.4",
     "pixi.js": "^8.2.1",
