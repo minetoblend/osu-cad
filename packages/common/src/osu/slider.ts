@@ -3,7 +3,7 @@ import { SerializedSlider } from '../types';
 import { SerializedBeatmapDifficulty } from '../protocol';
 import { ControlPointManager } from './controlPointManager';
 import { SliderPath } from './sliderPath';
-import { Vec2 } from '../math';
+import { Vec2 } from 'osucad-framework';
 import { defaultHitSound, getSamples, HitSample, HitSound } from './hitSound';
 
 export class Slider extends HitObject {
@@ -175,10 +175,10 @@ export class Slider extends HitObject {
 
   contains(point: Vec2): boolean {
     const radiusSquared = this.radius * this.radius;
-    if (Vec2.closerThanSquared(this.stackedPosition, point, radiusSquared))
+    if (Vec2.closerThanSq(this.stackedPosition, point, radiusSquared))
       return true;
     if (
-      Vec2.closerThanSquared(
+      Vec2.closerThanSq(
         Vec2.add(this.stackedPosition, this.path.endPosition),
         point,
         radiusSquared,
@@ -205,8 +205,7 @@ export class Slider extends HitObject {
       const x = p1.x + (p2.x - p1.x) * t;
       const y = p1.y + (p2.y - p1.y) * t;
 
-      if (Vec2.closerThanSquared(new Vec2(x, y), point, radiusSquared))
-        return true;
+      if (Vec2.closerThanSq(new Vec2(x, y), point, radiusSquared)) return true;
     }
 
     return false;

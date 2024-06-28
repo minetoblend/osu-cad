@@ -1,5 +1,5 @@
 import { PathType, SerializedPathPoint } from '../types';
-import { Vec2 } from '../math';
+import { Vec2 } from 'osucad-framework';
 import { PathApproximator, Vector2 } from 'osu-classes';
 import { clamp } from '../util/clamp';
 

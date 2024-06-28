@@ -1,4 +1,4 @@
-import { IVec2 } from '../math';
+import { IVec2 } from 'osucad-framework';
 import { PathType } from './pathType';
 import { IHasAttribution } from './attribution';
 import { HitSound } from '../osu';

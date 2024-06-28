@@ -1,4 +1,4 @@
-import { Vec2 } from '../math';
+import { Vec2 } from 'osucad-framework';
 import { Attribution, SerializedHitObject } from '../types';
 import { SerializedBeatmapDifficulty } from '../protocol';
 import { ControlPointManager } from './controlPointManager';

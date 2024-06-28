@@ -1,5 +1,5 @@
 import { fields, TypeNames, variantModule, VariantOf } from 'variant';
-import { IVec2 } from '../math';
+import { IVec2 } from 'osucad-framework';
 import { BeatmapId } from './beatmap';
 
 export interface Presence {

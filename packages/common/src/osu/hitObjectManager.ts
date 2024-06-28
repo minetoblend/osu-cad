@@ -6,7 +6,7 @@ import {
   SerializedBeatmapGeneral,
 } from '../protocol';
 import { ControlPointManager } from './controlPointManager';
-import { Vec2 } from '../math';
+import { Vec2 } from 'osucad-framework';
 import { Slider } from './slider';
 import { HitCircle } from './hitCircle';
 import { Spinner } from './spinner';

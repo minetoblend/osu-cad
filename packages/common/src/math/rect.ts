@@ -1,4 +1,4 @@
-import { IVec2, Vec2 } from './vec2';
+import { IVec2, Vec2 } from 'osucad-framework';
 
 export class Rect {
   constructor(

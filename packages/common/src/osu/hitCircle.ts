@@ -1,6 +1,6 @@
 import { HitObject, HitObjectType } from './hitObject';
 import { SerializedHitCircle } from '../types';
-import { Vec2 } from '../math';
+import { Vec2 } from 'osucad-framework';
 import { getSamples, HitSample } from './hitSound';
 
 export class HitCircle extends HitObject {

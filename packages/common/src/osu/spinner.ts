@@ -1,6 +1,6 @@
 import { HitObject, HitObjectType } from './hitObject';
 import { SerializedSpinner } from '../types';
-import { Vec2 } from '../math';
+import { Vec2 } from 'osucad-framework';
 import { HitSample } from './hitSound';
 
 const spinnerPosition = new Vec2(256, 192);

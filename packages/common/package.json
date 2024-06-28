@@ -45,6 +45,7 @@
     "pako": "^2.1.0",
     "uuid": "^9.0.1",
     "variant": "^2.1.0",
-    "vue": "^3.3.4"
+    "vue": "^3.3.4",
+    "osucad-framework": "workspace:*"
   }
 }
