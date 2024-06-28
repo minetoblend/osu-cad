@@ -1,12 +1,13 @@
-import { Axes, Container, dependencyLoader } from "osucad-framework";
+import { AudioManager, Axes, Container, dependencyLoader, resolved } from "osucad-framework";
 import { EditorBottomBar } from "./EditorBottomBar";
-import { EditorTopBar } from "./EditorTopBar";
-import { EditorScreenContainer } from "./EditorScreenContainer";
-import { ThemeColors } from "./ThemeColors";
 import { EditorClock } from "./EditorClock";
+import { EditorMixer } from "./EditorMixer";
+import { EditorScreenContainer } from "./EditorScreenContainer";
+import { EditorTopBar } from "./EditorTopBar";
+import { EditorContext } from "./context/EditorContext";
 
 export class Editor extends Container {
-  constructor() {
+  constructor(readonly context: EditorContext) {
     super({
       relativeSizeAxes: Axes.Both,
     });
@@ -16,10 +17,23 @@ export class Editor extends Container {
   #topBar!: EditorTopBar;
   #bottomBar!: EditorBottomBar;
 
+  @resolved(AudioManager)
+  audioManager!: AudioManager;
+
+  #mixer!: EditorMixer;
+
   @dependencyLoader()
   init() {
-    this.dependencies.provide(new ThemeColors())
-    this.dependencies.provide(new EditorClock())
+    const mixer = new EditorMixer(this.audioManager);
+    this.add(mixer);
+
+    const track = this.audioManager.createTrack(mixer.music, this.context.song);
+
+    const clock = new EditorClock(track);
+    this.add(clock);
+
+    this.dependencies.provide(mixer);
+    this.dependencies.provide(clock);
 
     this.addAll(
       new Container({
@@ -30,5 +44,17 @@ export class Editor extends Container {
       (this.#topBar = new EditorTopBar()),
       (this.#bottomBar = new EditorBottomBar())
     );
+
+    addEventListener('keydown', (e) => {
+      if (e.key === ' ') {
+        if(track.isRunning) {
+          console.log(clock.currentTime)
+          track.stop();
+          console.log(clock.currentTime)
+        } else {
+          track.start();
+        }
+      }
+    })
   }
 }

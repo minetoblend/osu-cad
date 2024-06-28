@@ -25,9 +25,7 @@ export class EditorCornerPiece extends Container {
     this.apply(options);
   }
 
-  #background = new PIXIGraphics({
-    blendMode: 'none'
-  });
+  #background = new PIXIGraphics();
   #outline = new PIXIGraphics();
   #graphicsBacking = new LayoutMember(Invalidation.DrawSize);
 
@@ -59,7 +57,7 @@ export class EditorCornerPiece extends Container {
   update(): void {
     super.update();
 
-    if(!this.#graphicsBacking.isValid) {
+    if (!this.#graphicsBacking.isValid) {
       this.#updateGraphics();
       this.#graphicsBacking.validate();
     }
@@ -69,15 +67,16 @@ export class EditorCornerPiece extends Container {
     const background = this.#background;
     const outline = this.#outline;
     this.#generateShape(background);
-    this.#generateShape(outline);
+
+    outline.context = background.context;
 
     background.fill({
       color: this.theme.translucent,
-      alpha: 0.7,
+      alpha: 0.5,
     });
     outline.stroke({
       color: 0xb9c6dd,
-      width: 0.5,
+      width: 0.75,
       alpha: 0.2,
       alignment: 0,
     });

@@ -6,6 +6,7 @@ import {
   dependencyLoader
 } from "osucad-framework";
 import { PlayfieldGrid } from "./PlayfieldGrid";
+import { BeatmapBackground } from "./BeatmapBackground";
 
 export class PlayfieldContainer extends Container {
   constructor() {
@@ -38,6 +39,7 @@ export class PlayfieldContainer extends Container {
 
   @dependencyLoader()
   init() {
+    this.add(new BeatmapBackground())
     this.add(new PlayfieldGrid())
   }
 }

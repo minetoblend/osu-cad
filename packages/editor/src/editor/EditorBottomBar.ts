@@ -25,14 +25,15 @@ export class EditorBottomBar extends Container {
   init() {
     const filter = new BackdropBlurFilter({
       strength: 15,
-      quality: 4,
+      quality: 2,
+      antialias: 'on',
     });
     filter.padding = 20;
 
     this.addAll(
       new Container({
         relativeSizeAxes: Axes.X,
-        height: 40,
+        height: 35,
         padding: { horizontal: 120 },
         child: new OverviewTimeline(),
         anchor: Anchor.BottomCenter,

@@ -304,6 +304,25 @@ importers:
         version: 5.4.2
 
   packages/editor:
+    dependencies:
+      '@osucad/common':
+        specifier: workspace:*
+        version: link:../common
+      osucad-framework:
+        specifier: workspace:*
+        version: link:../framework
+      pixi-filters:
+        specifier: ^6.0.4
+        version: 6.0.4(pixi.js@8.2.1)
+      pixi.js:
+        specifier: ^8.2.1
+        version: 8.2.1
+      reflect-metadata:
+        specifier: ^0.1.13
+        version: 0.1.14
+      socket.io-client:
+        specifier: ^4.7.2
+        version: 4.7.5
     devDependencies:
       typescript:
         specifier: ^5.2.2
@@ -320,9 +339,6 @@ importers:
       gsap:
         specifier: ^3.12.5
         version: 3.12.5
-      pixi.js:
-        specifier: ^8.2.0
-        version: 8.2.1
     devDependencies:
       '@types/animejs':
         specifier: ^3.1.12
@@ -333,6 +349,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^1.6.0
         version: 1.6.0(vitest@1.6.0)
+      pixi.js:
+        specifier: ^8.2.0
+        version: 8.2.1
       tsup:
         specifier: ^8.1.0
         version: 8.1.0(typescript@5.4.2)
@@ -3910,7 +3929,6 @@ packages:
 
   /@pixi/colord@2.9.6:
     resolution: {integrity: sha512-nezytU2pw587fQstUu1AsJZDVEynjskwOL+kibwcdxsMBFqPsFFNA7xl0ii/gXuDi6M0xj3mfRJj8pBSc2jCfA==}
-    dev: false
 
   /@pkgjs/parseargs@0.11.0:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -4906,11 +4924,9 @@ packages:
 
   /@types/css-font-loading-module@0.0.12:
     resolution: {integrity: sha512-x2tZZYkSxXqWvTDgveSynfjq/T2HyiZHXb00j/+gy19yp70PHCizM48XFdjBCWH7eHBD0R5i/pw9yMBP/BH5uA==}
-    dev: false
 
   /@types/earcut@2.1.4:
     resolution: {integrity: sha512-qp3m9PPz4gULB9MhjGID7wpo3gJ4bTGXm7ltNDsmOvsPduTeHp8wSW9YckBj3mljeOh4F0m2z/0JKAALRKbmLQ==}
-    dev: false
 
   /@types/engine.io@3.1.10:
     resolution: {integrity: sha512-tmuKBF+q3h0nZ075osSKJ55nmvL5lWDjU8+QS/8XZT1YQ4xrxNSW3wXbjeMs8RugGxVpHAEnf9kXiRf7G94acw==}
@@ -4980,6 +4996,10 @@ packages:
     dependencies:
       '@types/node': 20.11.27
     dev: true
+
+  /@types/gradient-parser@0.1.5:
+    resolution: {integrity: sha512-r7K3NkJz3A95WkVVmjs0NcchhHstC2C/VIYNX4JC6tieviUNo774FFeOHjThr3Vw/WCeMP9kAT77MKbIRlO/4w==}
+    dev: false
 
   /@types/http-cache-semantics@4.0.4:
     resolution: {integrity: sha512-1m0bIFVc7eJWyve9S0RnuRgcQqF/Xd5QsUZAZeQFr1Q3/p9JWoQQEqmVy+DPTNpGXwhgIetAoYF8JSc33q29QA==}
@@ -6197,7 +6217,6 @@ packages:
 
   /@webgpu/types@0.1.43:
     resolution: {integrity: sha512-HoP+d+m+Kuq8CsE63BZ3+BYBKAemrqbHUNrCalxrUju5XW+q/094Q3oeIa+2pTraEbO8ckJmGpibzyGT4OV4YQ==}
-    dev: false
 
   /@xml-tools/parser@1.0.11:
     resolution: {integrity: sha512-aKqQ077XnR+oQtHJlrAflaZaL7qZsulWc/i/ZEooar5JiWj1eLt0+Wg28cpa+XLney107wXqneC+oG1IZvxkTA==}
@@ -8326,7 +8345,6 @@ packages:
 
   /earcut@2.2.4:
     resolution: {integrity: sha512-/pjZsA1b4RPHbeWZQn66SWS8nZZWLQQ23oE3Eam7aroEFGEvwKAsJfZ9ytiEMycfzXWpca4FA9QIOehf7PocBQ==}
-    dev: false
 
   /eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
@@ -8803,7 +8821,6 @@ packages:
 
   /eventemitter3@5.0.1:
     resolution: {integrity: sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA==}
-    dev: false
 
   /events@3.3.0:
     resolution: {integrity: sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==}
@@ -10153,7 +10170,6 @@ packages:
 
   /ismobilejs@1.1.1:
     resolution: {integrity: sha512-VaFW53yt8QO61k2WJui0dHf4SlL8lxBofUuUmwBo0ljPk0Drz2TiuDW4jo3wDcv41qy/SxrJ+VAzJ/qYqsmzRw==}
-    dev: false
 
   /istanbul-lib-coverage@3.2.2:
     resolution: {integrity: sha512-O8dpsF+r0WV/8MNRKfnmrtCWhuKjxrq2w+jpzBL5UZKTi2LeVWnWOmWRxFlesJONmc+wLAGvKQZEOanko0LFTg==}
@@ -12084,7 +12100,6 @@ packages:
 
   /parse-svg-path@0.1.2:
     resolution: {integrity: sha512-JyPSBnkTJ0AI8GGJLfMXvKq42cj5c006fnLz6fXy6zfoVjJizi8BNTpu8on8ziI1cKy9d9DGNuY17Ce7wuejpQ==}
-    dev: false
 
   /parse5-htmlparser2-tree-adapter@6.0.1:
     resolution: {integrity: sha512-qPuWvbLgvDGilKc5BoicRovlT4MtYT6JfJyBOMDsKoiT+GiuP5qyrPCnR9HcPECIJJmZh5jRndyNThnhhb/vlA==}
@@ -12237,6 +12252,15 @@ packages:
     engines: {node: '>= 6'}
     dev: true
 
+  /pixi-filters@6.0.4(pixi.js@8.2.1):
+    resolution: {integrity: sha512-W9SjOTF4yo+v9t5YOBtsWhJoFLLRM6DsIk1C2YBNiQhdyX7J/5UIJtPlTMhZ7wQKoFUiyeUAaCzTEdmw/TVD6w==}
+    peerDependencies:
+      pixi.js: '>=8.0.0-0'
+    dependencies:
+      '@types/gradient-parser': 0.1.5
+      pixi.js: 8.2.1
+    dev: false
+
   /pixi.js@8.0.0-rc.9:
     resolution: {integrity: sha512-4xsCeu/qaiKU5zhIU8Ktj3PgHrLh7MGRqmm+7tqewIhGCqdlft2wwxPYmm3pOZczrnzwg+4vqv1QNNHL79vP0w==}
     dependencies:
@@ -12263,7 +12287,6 @@ packages:
       eventemitter3: 5.0.1
       ismobilejs: 1.1.1
       parse-svg-path: 0.1.2
-    dev: false
 
   /pkg-dir@4.2.0:
     resolution: {integrity: sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ==}
@@ -12744,6 +12767,7 @@ packages:
 
   /reflect-metadata@0.2.1:
     resolution: {integrity: sha512-i5lLI6iw9AU3Uu4szRNPPEkomnkjRTaVt9hy/bn5g/oSzekBSMeLZblcjP74AW0vBabqERLLIrz+gR8QYR54Tw==}
+    deprecated: This version has a critical bug in fallback handling. Please upgrade to reflect-metadata@0.2.2 or newer.
     dev: false
 
   /regenerator-runtime@0.14.1:
