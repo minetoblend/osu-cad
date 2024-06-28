@@ -250,6 +250,9 @@ importers:
       osu-classes:
         specifier: ^3.0.1
         version: 3.0.1
+      osucad-framework:
+        specifier: workspace:*
+        version: link:../framework
       pako:
         specifier: ^2.1.0
         version: 2.1.0
