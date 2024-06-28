@@ -48,9 +48,7 @@ export class Editor extends Container {
     addEventListener('keydown', (e) => {
       if (e.key === ' ') {
         if(track.isRunning) {
-          console.log(clock.currentTime)
           track.stop();
-          console.log(clock.currentTime)
         } else {
           track.start();
         }
