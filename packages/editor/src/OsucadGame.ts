@@ -1,8 +1,8 @@
-import { Game, dependencyLoader, isMobile } from "osucad-framework";
-import { Editor } from "./editor/Editor";
-import { Fit, ScalingContainer } from "./editor/ScalingContainer";
-import { EditorContext } from "./editor/context/EditorContext";
-import { ThemeColors } from "./editor/ThemeColors";
+import { Game, dependencyLoader, isMobile } from 'osucad-framework';
+import { Editor } from './editor/Editor';
+import { Fit, ScalingContainer } from './editor/ScalingContainer';
+import { EditorContext } from './editor/context/EditorContext';
+import { ThemeColors } from './editor/ThemeColors';
 
 export class OsucadGame extends Game {
   constructor(readonly context: EditorContext) {
@@ -28,7 +28,6 @@ export class OsucadGame extends Game {
     fit: Fit.Fill,
   });
 
-
   @dependencyLoader()
   async init(): Promise<void> {
     this.dependencies.provide(new ThemeColors());
@@ -37,8 +36,11 @@ export class OsucadGame extends Game {
 
     await this.context.load();
 
-    this.context.provideDependencies(this.dependencies)
+    this.context.provideDependencies(this.dependencies);
 
-    this.#innerContainer.add(new Editor(this.context));
+    const editor = new Editor(this.context);
+    this.add(editor);
+
+    editor.fadeIn({ duration: 300 });
   }
 }

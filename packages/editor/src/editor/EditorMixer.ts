@@ -1,10 +1,7 @@
-import { AudioChannel, AudioManager, Container } from "osucad-framework";
+import { AudioChannel, AudioManager, Container } from 'osucad-framework';
 
 export class EditorMixer extends Container {
-
-  constructor(
-    readonly audioManager: AudioManager
-  ) {
+  constructor(readonly audioManager: AudioManager) {
     super();
     this.music = audioManager.createChannel();
     this.hitsounds = audioManager.createChannel();
@@ -17,8 +14,5 @@ export class EditorMixer extends Container {
 
   readonly userInterface: AudioChannel;
 
-  editorMixer() {
-
-  }
-
+  editorMixer() {}
 }

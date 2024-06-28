@@ -8,11 +8,18 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "electron": "tsc -p tsconfig-electron.json && electron ."
+    "electron": "tsc -p tsconfig-electron.json && electron .",
+    "lint": "eslint \"src/**/*.ts\"",
+    "lint:fix": "eslint --fix \"src/**/*.ts\""
   },
   "devDependencies": {
     "@types/node": "^20.14.9",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
     "electron": "^31.1.0",
+    "eslint": "^8.42.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
     "typescript": "^5.2.2",
     "vite": "^5.3.1"
   },

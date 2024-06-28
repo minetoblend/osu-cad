@@ -6,10 +6,10 @@ import {
   DragStartEvent,
   MouseButton,
   dependencyLoader,
-} from "osucad-framework";
-import { Corner, EditorCornerPiece } from "./EditorCornerPiece";
-import { BackdropBlurFilter } from "pixi-filters";
-import { OverviewTimeline } from "./overviewTimeline/OverviewTimeline";
+} from 'osucad-framework';
+import { Corner, EditorCornerPiece } from './EditorCornerPiece';
+import { BackdropBlurFilter } from 'pixi-filters';
+import { OverviewTimeline } from './overviewTimeline/OverviewTimeline';
 
 export class EditorBottomBar extends Container {
   constructor() {
@@ -56,16 +56,7 @@ export class EditorBottomBar extends Container {
             origin: Anchor.TopRight,
           }),
         ],
-      })
+      }),
     );
-  }
-
-  override onDragStart(e: DragStartEvent): boolean {
-    return e.button === MouseButton.Left;
-  }
-
-  override onDrag(e: DragEvent) {
-    this.position = this.position.add(e.parentSpaceDelta(this));
-    return true;
   }
 }

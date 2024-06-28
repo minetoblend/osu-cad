@@ -3,10 +3,10 @@ import {
   Axes,
   Container,
   DrawSizePreservingFillContainer,
-  dependencyLoader
-} from "osucad-framework";
-import { PlayfieldGrid } from "./PlayfieldGrid";
-import { BeatmapBackground } from "./BeatmapBackground";
+  dependencyLoader,
+} from 'osucad-framework';
+import { PlayfieldGrid } from './PlayfieldGrid';
+import { BeatmapBackground } from './BeatmapBackground';
 
 export class PlayfieldContainer extends Container {
   constructor() {
@@ -18,7 +18,7 @@ export class PlayfieldContainer extends Container {
     this.addInternal(
       (container = new DrawSizePreservingFillContainer({
         targetDrawSize: { x: 512, y: 384 },
-      }))
+      })),
     );
 
     container.add(
@@ -27,7 +27,7 @@ export class PlayfieldContainer extends Container {
         height: 384,
         anchor: Anchor.Center,
         origin: Anchor.Center,
-      }))
+      })),
     );
   }
 
@@ -39,7 +39,7 @@ export class PlayfieldContainer extends Container {
 
   @dependencyLoader()
   init() {
-    this.add(new BeatmapBackground())
-    this.add(new PlayfieldGrid())
+    this.add(new BeatmapBackground());
+    this.add(new PlayfieldGrid());
   }
 }

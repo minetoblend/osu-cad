@@ -14,19 +14,19 @@ export class TimelineTick extends Sprite {
     switch (type) {
       case TickType.Full:
         this.tint = 0xffffff;
-        this.scale.set(1.5, 0.8);
+        this.scale.set(2, 0.8);
         break;
       case TickType.Half:
         this.tint = 0xff0000;
-        this.scale.set(1, 0.7);
+        this.scale.set(1.5, 0.7);
         break;
       case TickType.Third:
         this.tint = 0xff00ff;
-        this.scale.set(1, 0.5);
+        this.scale.set(1.25, 0.5);
         break;
       case TickType.Quarter:
         this.tint = 0x3687f7;
-        this.scale.set(1, 0.5);
+        this.scale.set(1.25, 0.5);
         break;
       case TickType.Sixth:
         this.tint = 0xff77ff;

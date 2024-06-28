@@ -1,5 +1,5 @@
-import { Axes, Container, Invalidation, LayoutMember } from "osucad-framework";
-import { PlayfieldContainer } from "./playfield/PlayfieldContainer";
+import { Axes, Container, Invalidation, LayoutMember } from 'osucad-framework';
+import { PlayfieldContainer } from './playfield/PlayfieldContainer';
 
 export class EditorScreenContainer extends Container {
   constructor() {
@@ -18,10 +18,12 @@ export class EditorScreenContainer extends Container {
     super.update();
 
     if (!this.#paddingBacking.isValid) {
+      console.log(this.drawSize.x);
+
       this.padding = {
-        top: this.drawSize.x < 1250 ? 10 : 0,
-        bottom: this.drawSize.x < 1120 ? 10 : 0,
-      }
+        top: this.drawSize.x < 1740 ? 15 : 0,
+        bottom: this.drawSize.x < 1640 ? 15 : 0,
+      };
       this.#paddingBacking.validate();
     }
   }

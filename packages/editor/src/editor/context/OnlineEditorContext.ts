@@ -1,19 +1,19 @@
-import { Beatmap } from "@osucad/common";
-import { PIXITexture } from "osucad-framework";
-import { Assets } from "pixi.js";
-import { io } from "socket.io-client";
-import { Skin } from "../../skins/Skin";
-import { ConnectedUsersManager } from "./ConnectedUsersManager";
-import { EditorContext } from "./EditorContext";
-import { EditorSocket } from "./EditorSocket";
-import { OnlineBeatmapLoader } from "./OnlineBeatmapLoader";
+import { Beatmap } from '@osucad/common';
+import { PIXITexture } from 'osucad-framework';
+import { Assets } from 'pixi.js';
+import { io } from 'socket.io-client';
+import { Skin } from '../../skins/Skin';
+import { ConnectedUsersManager } from './ConnectedUsersManager';
+import { EditorContext } from './EditorContext';
+import { EditorSocket } from './EditorSocket';
+import { OnlineBeatmapLoader } from './OnlineBeatmapLoader';
 
 export class OnlineEditorContext extends EditorContext {
   #socket: EditorSocket | null = null;
 
   get socket() {
     if (!this.#socket) {
-      throw new Error("Socket not initialized");
+      throw new Error('Socket not initialized');
     }
     return this.#socket;
   }
@@ -41,7 +41,7 @@ export class OnlineEditorContext extends EditorContext {
     if (beatmap.backgroundPath) {
       try {
         return await Assets.load(
-          `/api/mapsets/${beatmap.setId}/files/${beatmap.backgroundPath}`
+          `/api/mapsets/${beatmap.setId}/files/${beatmap.backgroundPath}`,
         );
       } catch (e) {
         // TODO: Sentry.captureException(e);
@@ -53,16 +53,16 @@ export class OnlineEditorContext extends EditorContext {
 
   updateSong(
     file: File,
-    onProgress?: ((progress: number) => void) | undefined
+    onProgress?: ((progress: number) => void) | undefined,
   ): Promise<boolean> {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   updateBackground(
     file: File,
-    onProgress?: ((progress: number) => void) | undefined
+    onProgress?: ((progress: number) => void) | undefined,
   ): Promise<boolean> {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   protected async loadSkin(): Promise<Skin> {

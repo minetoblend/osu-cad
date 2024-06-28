@@ -6,7 +6,7 @@ import {
   Invalidation,
   LayoutMember,
   Vec2,
-} from "osucad-framework";
+} from 'osucad-framework';
 
 export interface ScalingContainerOptions extends ContainerOptions {
   desiredSize: IVec2;
@@ -42,10 +42,8 @@ export class ScalingContainer extends Container {
     this.addLayout(this.#drawSizeBacking);
     this.addInternal(this.#content);
 
-    
     this.#desiredSize = Vec2.from(options.desiredSize);
     this.#fit = options.fit ?? Fit.Contain;
-    
 
     this.apply({
       ...options,
@@ -67,16 +65,16 @@ export class ScalingContainer extends Container {
           scale = new Vec2(
             Math.min(
               this.drawSize.x / this.#desiredSize.x,
-              this.drawSize.y / this.#desiredSize.y
-            )
+              this.drawSize.y / this.#desiredSize.y,
+            ),
           );
           break;
         case Fit.Cover:
           scale = new Vec2(
             Math.max(
               this.drawSize.x / this.#desiredSize.x,
-              this.drawSize.y / this.#desiredSize.y
-            )
+              this.drawSize.y / this.#desiredSize.y,
+            ),
           );
           break;
       }
@@ -100,9 +98,11 @@ export class ScalingContainer extends Container {
         this.#content.size = this.#desiredSize;
         this.#content.position = new Vec2(
           (this.drawSize.x - this.#desiredSize.x * scale.x) / 2,
-          (this.drawSize.y - this.#desiredSize.y * scale.y) / 2
+          (this.drawSize.y - this.#desiredSize.y * scale.y) / 2,
         );
       }
+
+      console.log(this.#content.size);
 
       this.#drawSizeBacking.validate();
     }

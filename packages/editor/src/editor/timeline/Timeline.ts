@@ -1,15 +1,21 @@
-import { Beatmap } from "@osucad/common";
-import { Axes, Box, Container, PIXIContainer, dependencyLoader, resolved } from "osucad-framework";
-import { EditorClock } from "../EditorClock";
-import { ThemeColors } from "../ThemeColors";
-import { TimelineTick } from "./TimelineTick";
+import { Beatmap } from '@osucad/common';
+import {
+  Axes,
+  Box,
+  Container,
+  PIXIContainer,
+  dependencyLoader,
+  resolved,
+} from 'osucad-framework';
+import { EditorClock } from '../EditorClock';
+import { ThemeColors } from '../ThemeColors';
+import { TimelineTick } from './TimelineTick';
 
 export class Timeline extends Container {
   constructor() {
     super({
       relativeSizeAxes: Axes.Both,
     });
-    
   }
 
   @resolved(ThemeColors)
@@ -17,15 +23,16 @@ export class Timeline extends Container {
 
   @dependencyLoader()
   init() {
-    this.addInternal(new Box({
-      relativeSizeAxes: Axes.Both,
-      color: this.theme.translucent,
-      alpha: 0.5,
-    }))
+    this.addInternal(
+      new Box({
+        relativeSizeAxes: Axes.Both,
+        color: this.theme.translucent,
+        alpha: 0.5,
+      }),
+    );
 
-    this.drawNode.addChild(this.#tickContainer = new PIXIContainer());
+    this.drawNode.addChild((this.#tickContainer = new PIXIContainer()));
   }
-
 
   update() {
     super.update();
@@ -39,9 +46,9 @@ export class Timeline extends Container {
   beatmap!: Beatmap;
 
   protected get controlPoints() {
-    return this.beatmap.controlPoints
+    return this.beatmap.controlPoints;
   }
-  
+
   zoom = 1;
 
   get visibleDuration() {
@@ -74,7 +81,7 @@ export class Timeline extends Container {
   get pixelsPerMs() {
     return this.drawSize.x / this.visibleDuration;
   }
-  
+
   #updateTicks() {
     this.#tickContainer.y = this.drawSize.y * 0.5;
     this.#tickContainer.scale.set(1, this.drawSize.y);
@@ -82,7 +89,7 @@ export class Timeline extends Container {
     const ticks = this.controlPoints.getTicks(
       this.startTime,
       this.endTime,
-      4 //this.clock.beatSnapDivisor,
+      4, //this.clock.beatSnapDivisor,
     );
 
     for (let i = this.#tickContainer.children.length; i < ticks.length; i++) {

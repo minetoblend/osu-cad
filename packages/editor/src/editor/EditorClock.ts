@@ -1,4 +1,4 @@
-import { Beatmap, TimingPoint } from "@osucad/common";
+import { Beatmap, TimingPoint } from '@osucad/common';
 import {
   Bindable,
   Container,
@@ -7,7 +7,7 @@ import {
   IFrameBasedClock,
   Track,
   resolved,
-} from "osucad-framework";
+} from 'osucad-framework';
 
 export class EditorClock
   extends Container
@@ -48,7 +48,7 @@ export class EditorClock
     position = timingPoint.time + closestBeat * beatSnapLength;
 
     const nextTimingPoint = this.controlPointInfo.controlPoints.find(
-      (t) => t.timing && t.time > timingPoint.time
+      (t) => t.timing && t.time > timingPoint.time,
     ) as TimingPoint | undefined;
 
     if (nextTimingPoint && position > nextTimingPoint?.time)
@@ -125,7 +125,7 @@ export class EditorClock
   }
 
   get framesPerSecond(): number {
-    throw new Error("Not applicable for EditorClock");
+    throw new Error('Not applicable for EditorClock');
   }
   get timeInfo(): FrameTimeInfo {
     return this.#frameTimeInfo;

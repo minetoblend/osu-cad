@@ -1,7 +1,7 @@
-import { Anchor, Axes, Container, dependencyLoader } from "osucad-framework";
-import { BackdropBlurFilter } from "pixi-filters";
-import { Corner, EditorCornerPiece } from "./EditorCornerPiece";
-import { Timeline } from "./timeline/Timeline";
+import { Anchor, Axes, Container, dependencyLoader } from 'osucad-framework';
+import { BackdropBlurFilter } from 'pixi-filters';
+import { Corner, EditorCornerPiece } from './EditorCornerPiece';
+import { Timeline } from './timeline/Timeline';
 
 export class EditorTopBar extends Container {
   constructor() {
@@ -15,7 +15,7 @@ export class EditorTopBar extends Container {
     const filter = new BackdropBlurFilter({
       strength: 20,
       quality: 3,
-      antialias: "on",
+      antialias: 'on',
     });
     filter.padding = 30;
 
@@ -43,7 +43,7 @@ export class EditorTopBar extends Container {
             origin: Anchor.TopRight,
           }),
         ],
-      })
+      }),
     );
   }
 }

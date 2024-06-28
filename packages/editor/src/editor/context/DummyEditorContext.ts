@@ -1,26 +1,26 @@
-import { Beatmap, defaultHitSoundLayers, hitObjectId } from "@osucad/common";
-import { PIXITexture } from "osucad-framework";
-import { Assets } from "pixi.js";
-import audioUrl from "../../assets/audio.mp3";
-import backgroundUrl from "../../assets/background.jpg";
-import { Skin } from "../../skins/Skin";
-import { EditorContext } from "./EditorContext";
+import { Beatmap, defaultHitSoundLayers, hitObjectId } from '@osucad/common';
+import { PIXITexture } from 'osucad-framework';
+import { Assets } from 'pixi.js';
+import audioUrl from '../../assets/audio.mp3';
+import backgroundUrl from '../../assets/background.jpg';
+import { Skin } from '../../skins/Skin';
+import { EditorContext } from './EditorContext';
 
 export class DummyEditorContext extends EditorContext {
   protected async loadBeatmap(): Promise<Beatmap> {
     return new Beatmap({
-      id: "",
-      setId: "",
-      name: "Dummy Beatmap",
+      id: '',
+      setId: '',
+      name: 'Dummy Beatmap',
       metadata: {
-        artist: "",
-        title: "",
+        artist: '',
+        title: '',
         beatmapId: 0,
         beatmapSetId: 0,
-        tags: "",
+        tags: '',
       },
-      audioFilename: "",
-      backgroundPath: "",
+      audioFilename: '',
+      backgroundPath: '',
       bookmarks: [],
       colors: [],
       controlPoints: {
@@ -53,7 +53,6 @@ export class DummyEditorContext extends EditorContext {
     });
   }
 
-  // @ts-ignore - Unused method
   protected loadSong(beatmap: Beatmap): Promise<AudioBuffer> {
     const context = new AudioContext();
 
@@ -71,19 +70,15 @@ export class DummyEditorContext extends EditorContext {
   }
 
   async updateSong(
-    // @ts-ignore - Unused method
     file: File,
-    // @ts-ignore - Unused method
-    onProgress?: ((progress: number) => void) | undefined
+    onProgress?: ((progress: number) => void) | undefined,
   ): Promise<boolean> {
     return true;
   }
 
   async updateBackground(
-    // @ts-ignore - Unused method
     file: File,
-    // @ts-ignore - Unused method
-    onProgress?: ((progress: number) => void) | undefined
+    onProgress?: ((progress: number) => void) | undefined,
   ): Promise<boolean> {
     return true;
   }

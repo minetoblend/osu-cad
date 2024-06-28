@@ -5,8 +5,8 @@ import {
   ContainerOptions,
   PIXIContainer,
   PIXIGraphics,
-  dependencyLoader
-} from "osucad-framework";
+  dependencyLoader,
+} from 'osucad-framework';
 
 export class PlayfieldGrid extends Container {
   constructor(options: ContainerOptions = {}) {
@@ -14,7 +14,7 @@ export class PlayfieldGrid extends Container {
       width: 512,
       height: 384,
       ...options,
-    })
+    });
   }
 
   createDrawNode(): PIXIContainer {
@@ -34,31 +34,27 @@ export class PlayfieldGrid extends Container {
       () => {
         this.drawGrid();
       },
-      { immediate: true }
+      { immediate: true },
     );
   }
 
   gridSize = new Bindable(16);
 
   updateSubTreeTransforms(): boolean {
-    if(!super.updateSubTreeTransforms()) 
-      return false;
+    if (!super.updateSubTreeTransforms()) return false;
 
     const x1 = this.drawNode.toGlobal({ x: 0, y: 0 }).x;
     const x2 = this.drawNode.toGlobal({ x: 1, y: 0 }).x;
 
     const pixelSize = x2 - x1;
 
-    if (pixelSize === this.#pixelSize) 
-      return true;
+    if (pixelSize === this.#pixelSize) return true;
 
     this.#pixelSize = x2 - x1;
     this.drawGrid();
 
     return true;
   }
-
-
 
   drawGrid() {
     const g = this.drawNode as PIXIGraphics;

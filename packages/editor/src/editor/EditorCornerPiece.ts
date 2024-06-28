@@ -7,8 +7,8 @@ import {
   PIXIGraphics,
   Vec2,
   resolved,
-} from "osucad-framework";
-import { ThemeColors } from "./ThemeColors";
+} from 'osucad-framework';
+import { ThemeColors } from './ThemeColors';
 
 export interface EditorCornerPieceOptions extends ContainerOptions {
   corner: Corner;

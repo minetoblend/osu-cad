@@ -1,4 +1,4 @@
-import { EditorSocket } from "./EditorSocket";
+import { EditorSocket } from './EditorSocket';
 
 export class ConnectedUsersManager {
   constructor() {}

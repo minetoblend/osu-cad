@@ -1,7 +1,7 @@
-import { Beatmap } from "@osucad/common";
-import { Bindable, DependencyContainer, PIXITexture } from "osucad-framework";
-import { Skin } from "../../skins/Skin";
-import { CommandHandler } from "./CommandHandler";
+import { Beatmap } from '@osucad/common';
+import { Bindable, DependencyContainer, PIXITexture } from 'osucad-framework';
+import { Skin } from '../../skins/Skin';
+import { CommandHandler } from './CommandHandler';
 
 export abstract class EditorContext {
   // #region Beatmap
@@ -9,7 +9,7 @@ export abstract class EditorContext {
 
   get beatmap(): Beatmap {
     if (!this.#beatmap) {
-      throw new Error("Beatmap not loaded");
+      throw new Error('Beatmap not loaded');
     }
     return this.#beatmap;
   }
@@ -24,7 +24,7 @@ export abstract class EditorContext {
 
   get commandHandler(): CommandHandler {
     if (!this.#commandHandler) {
-      throw new Error("Command handler not created");
+      throw new Error('Command handler not created');
     }
     return this.#commandHandler;
   }
@@ -37,7 +37,7 @@ export abstract class EditorContext {
 
   get song(): AudioBuffer {
     if (!this.songBindable.value) {
-      throw new Error("Song not loaded");
+      throw new Error('Song not loaded');
     }
 
     return this.songBindable.value!;
@@ -47,19 +47,19 @@ export abstract class EditorContext {
 
   abstract updateSong(
     file: File,
-    onProgress?: (progress: number) => void
+    onProgress?: (progress: number) => void,
   ): Promise<boolean>;
 
   // #endregion
 
   // #region Background
   protected abstract loadBackground(
-    beatmap: Beatmap
+    beatmap: Beatmap,
   ): Promise<PIXITexture | null>;
 
   get background(): PIXITexture {
     if (!this.backgroundBindable.value) {
-      throw new Error("Background not loaded");
+      throw new Error('Background not loaded');
     }
 
     return this.backgroundBindable.value!;
@@ -69,7 +69,7 @@ export abstract class EditorContext {
 
   abstract updateBackground(
     file: File,
-    onProgress?: (progress: number) => void
+    onProgress?: (progress: number) => void,
   ): Promise<boolean>;
   // #endregion
 
@@ -78,7 +78,7 @@ export abstract class EditorContext {
 
   get skin(): Skin {
     if (!this.skinBindable.value) {
-      throw new Error("Skin not loaded");
+      throw new Error('Skin not loaded');
     }
 
     return this.skinBindable.value!;
@@ -100,14 +100,14 @@ export abstract class EditorContext {
     this.#commandHandler = this.createCommandHandler(beatmap);
 
     this.addParallelLoad(
-      async () => (this.songBindable.value = await this.loadSong(beatmap))
+      async () => (this.songBindable.value = await this.loadSong(beatmap)),
     );
     this.addParallelLoad(
-      async () => (this.skinBindable.value = await this.loadSkin())
+      async () => (this.skinBindable.value = await this.loadSkin()),
     );
 
     this.loadBackground(beatmap).then(
-      (background) => (this.backgroundBindable.value = background)
+      (background) => (this.backgroundBindable.value = background),
     );
 
     await Promise.all(this.#loaders.map((loader) => loader()));

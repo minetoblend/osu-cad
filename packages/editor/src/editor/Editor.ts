@@ -1,10 +1,16 @@
-import { AudioManager, Axes, Container, dependencyLoader, resolved } from "osucad-framework";
-import { EditorBottomBar } from "./EditorBottomBar";
-import { EditorClock } from "./EditorClock";
-import { EditorMixer } from "./EditorMixer";
-import { EditorScreenContainer } from "./EditorScreenContainer";
-import { EditorTopBar } from "./EditorTopBar";
-import { EditorContext } from "./context/EditorContext";
+import {
+  AudioManager,
+  Axes,
+  Container,
+  dependencyLoader,
+  resolved,
+} from 'osucad-framework';
+import { EditorBottomBar } from './EditorBottomBar';
+import { EditorClock } from './EditorClock';
+import { EditorMixer } from './EditorMixer';
+import { EditorScreenContainer } from './EditorScreenContainer';
+import { EditorTopBar } from './EditorTopBar';
+import { EditorContext } from './context/EditorContext';
 
 export class Editor extends Container {
   constructor(readonly context: EditorContext) {
@@ -14,7 +20,9 @@ export class Editor extends Container {
   }
 
   #screenContainer!: EditorScreenContainer;
+
   #topBar!: EditorTopBar;
+
   #bottomBar!: EditorBottomBar;
 
   @resolved(AudioManager)
@@ -42,17 +50,17 @@ export class Editor extends Container {
         child: (this.#screenContainer = new EditorScreenContainer()),
       }),
       (this.#topBar = new EditorTopBar()),
-      (this.#bottomBar = new EditorBottomBar())
+      (this.#bottomBar = new EditorBottomBar()),
     );
 
     addEventListener('keydown', (e) => {
       if (e.key === ' ') {
-        if(track.isRunning) {
+        if (track.isRunning) {
           track.stop();
         } else {
           track.start();
         }
       }
-    })
+    });
   }
 }
