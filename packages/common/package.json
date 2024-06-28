@@ -16,7 +16,8 @@
   "exports": {
     ".": {
       "import": "./dist/lib.esm.js",
-      "require": "./dist/lib.cjs"
+      "require": "./dist/lib.cjs",
+      "types": "./dist/lib.d.ts"
     },
     "./package.json": "./package.json"
   },
