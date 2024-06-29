@@ -33,24 +33,28 @@ function isElectron() {
   return false;
 }
 
-const host = new WebGameHost('osucad', {
-  friendlyGameName: 'osucad',
-});
+async function main() {
+  const host = new WebGameHost('osucad', {
+    friendlyGameName: 'osucad',
+  });
 
-let context: EditorContext;
+  let context: EditorContext;
 
-if (isElectron()) {
-  const { ElectronEditorContext } = await import(
-    './editor/context/ElectronEditorContext'
-  );
-  context = new ElectronEditorContext(
-    'C:/Users/minet/AppData/Local/osu!/Songs/1851103 twenty one pilots - Heathens (Magnetude Bootleg)/twenty one pilots - Heathens (Magnetude Bootleg) (funny) [Marathon].osu',
-  );
-} else {
-  const { DummyEditorContext } = await import(
-    './editor/context/DummyEditorContext'
-  );
-  context = new DummyEditorContext();
+  if (isElectron()) {
+    const { ElectronEditorContext } = await import(
+      './editor/context/ElectronEditorContext'
+    );
+    context = new ElectronEditorContext(
+      'C:/Users/minet/AppData/Local/osu!/Songs/1851103 twenty one pilots - Heathens (Magnetude Bootleg)/twenty one pilots - Heathens (Magnetude Bootleg) (funny) [Marathon].osu',
+    );
+  } else {
+    const { DummyEditorContext } = await import(
+      './editor/context/DummyEditorContext'
+    );
+    context = new DummyEditorContext();
+  }
+
+  host.run(new OsucadGame(context));
 }
 
-host.run(new OsucadGame(context));
+main();
