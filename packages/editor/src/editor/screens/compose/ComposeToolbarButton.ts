@@ -56,6 +56,7 @@ export class ComposeToolbarButton extends Container {
         origin: Anchor.Center,
       })),
     );
+    this.#updateState();
   }
 
   #background!: RoundedBox;
@@ -114,6 +115,8 @@ export class ComposeToolbarButton extends Container {
   }
 
   #updateState() {
+    this.drawNode;
+
     if (this.active) {
       this.#icon.color = 0x32d2ac;
 
@@ -127,7 +130,7 @@ export class ComposeToolbarButton extends Container {
       });
     } else {
       this.#background.color = 0x222228;
-      this.#icon.color = 0xbbbec5;
+      this.#icon.color = this.isHovered ? 0xffffff : 0xbbbec5;
       gsap.to(this, {
         outlineVisibility: 0,
         duration: 0.2,
@@ -139,12 +142,12 @@ export class ComposeToolbarButton extends Container {
   }
 
   onHover(e: HoverEvent): boolean {
-    this.active = true;
+    this.#updateState();
     return true;
   }
 
   onHoverLost(e: HoverLostEvent): boolean {
-    this.active = false;
+    this.#updateState();
     return true;
   }
 }
