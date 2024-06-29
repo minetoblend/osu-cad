@@ -102,8 +102,6 @@ export class ScalingContainer extends Container {
         );
       }
 
-      console.log(this.#content.size);
-
       this.#drawSizeBacking.validate();
     }
   }
