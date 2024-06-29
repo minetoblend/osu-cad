@@ -41,7 +41,7 @@ export class TimelineZoomButtons extends Container {
         texture: this.icons.plus,
         action: () => this.timeline.zoomIn(),
         onLongPress: () => {
-          this.timeline.zoomIn(this.time.elapsed);
+          this.timeline.zoomIn(this.time.elapsed * 0.05);
         },
       }),
     );
@@ -54,7 +54,7 @@ export class TimelineZoomButtons extends Container {
         texture: this.icons.minus,
         action: () => this.timeline.zoomOut(),
         onLongPress: () => {
-          this.timeline.zoomOut(this.time.elapsed);
+          this.timeline.zoomOut(this.time.elapsed * 0.05);
         },
       }),
     );
