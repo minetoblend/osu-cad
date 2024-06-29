@@ -1,5 +1,6 @@
 import { Beatmap } from '@osucad/common';
 import {
+  Anchor,
   Axes,
   Box,
   Container,
@@ -33,6 +34,16 @@ export class Timeline extends Container {
     );
 
     this.drawNode.addChild((this.#tickContainer = new PIXIContainer()));
+
+    this.addInternal(
+      new Box({
+        width: 2,
+        relativeSizeAxes: Axes.Y,
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
+        color: this.theme.primary,
+      }),
+    );
   }
 
   update() {
