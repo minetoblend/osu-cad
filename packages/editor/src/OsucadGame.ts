@@ -5,6 +5,9 @@ import { EditorContext } from './editor/context/EditorContext';
 import { ThemeColors } from './editor/ThemeColors';
 import { UIIcons } from './editor/UIIcons';
 import { UIFonts } from './editor/UIFonts';
+import { UISamples } from './UISamples';
+import { resolved } from 'osucad-framework';
+import { AudioManager } from 'osucad-framework';
 
 export class OsucadGame extends Game {
   constructor(readonly context: EditorContext) {
@@ -30,6 +33,9 @@ export class OsucadGame extends Game {
     fit: Fit.Fill,
   });
 
+  @resolved(AudioManager)
+  audioManager!: AudioManager;
+
   @dependencyLoader()
   async init(): Promise<void> {
     this.dependencies.provide(new ThemeColors());
@@ -42,7 +48,18 @@ export class OsucadGame extends Game {
     const fonts = new UIFonts();
     this.dependencies.provide(fonts);
 
-    await Promise.all([this.context.load(), icons.load(), fonts.load()]);
+    const uiChannel = this.audioManager.createChannel();
+    uiChannel.volume = 0.5;
+
+    const samples = new UISamples(this.audioManager, uiChannel);
+    this.dependencies.provide(samples);
+
+    await Promise.all([
+      this.context.load(),
+      icons.load(),
+      fonts.load(),
+      samples.load(),
+    ]);
 
     this.context.provideDependencies(this.dependencies);
 

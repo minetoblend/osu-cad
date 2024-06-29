@@ -9,19 +9,23 @@ import {
   FillMode,
   HoverEvent,
   HoverLostEvent,
+  MouseDownEvent,
+  MouseUpEvent,
   RoundedBox,
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
 import { Texture } from 'pixi.js';
 import { ThemeColors } from '../../ThemeColors';
-import { Anchor } from 'osucad-framework';
+import { Anchor, ButtonTrigger } from 'osucad-framework';
+import { UISamples } from '../../../UISamples';
 
 export class ComposeToolbarButton extends Button {
   constructor(icon: Texture) {
     super();
     this.relativeSizeAxes = Axes.Both;
     this.fillMode = FillMode.Fit;
+    this.trigger = ButtonTrigger.MouseDown;
 
     this.#iconTexture = icon;
   }
@@ -142,13 +146,40 @@ export class ComposeToolbarButton extends Button {
     }
   }
 
+  @resolved(UISamples)
+  samples!: UISamples;
+
   onHover(e: HoverEvent): boolean {
     this.#updateState();
+    this.samples.toolHover.play();
     return true;
   }
 
   onHoverLost(e: HoverLostEvent): boolean {
     this.#updateState();
+    return true;
+  }
+
+  onMouseDown(e: MouseDownEvent): boolean {
+    if (!super.onMouseDown(e)) return false;
+    this.samples.toolSelect.play();
+
+    gsap.to(this.#icon, {
+      scaleX: 0.85,
+      scaleY: 0.85,
+      duration: 0.3,
+      ease: 'power4.out',
+    });
+    return true;
+  }
+
+  onMouseUp(e: MouseUpEvent): boolean {
+    gsap.to(this.#icon, {
+      scaleX: 1,
+      scaleY: 1,
+      duration: 0.3,
+      ease: 'back.out',
+    });
     return true;
   }
 }
