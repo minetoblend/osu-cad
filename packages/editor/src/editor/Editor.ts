@@ -1,6 +1,7 @@
 import {
   AudioManager,
   Axes,
+  Bindable,
   Container,
   dependencyLoader,
   resolved,
@@ -11,6 +12,9 @@ import { EditorMixer } from './EditorMixer';
 import { EditorScreenContainer } from './EditorScreenContainer';
 import { EditorTopBar } from './EditorTopBar';
 import { EditorContext } from './context/EditorContext';
+import { EditorScreenType } from './screens/EditorScreenType';
+import { ComposeScreen } from './screens/compose/ComposeScreen';
+import { SetupScreen } from './screens/setup/SetupScreen';
 
 export class Editor extends Container {
   constructor(readonly context: EditorContext) {
@@ -62,5 +66,25 @@ export class Editor extends Container {
         }
       }
     });
+
+    this.currentScren.addOnChangeListener(
+      (screen) => {
+        this.#updateScreen(screen);
+      },
+      { immediate: true },
+    );
+  }
+
+  readonly currentScren = new Bindable(EditorScreenType.Compose);
+
+  #updateScreen(screen: EditorScreenType) {
+    switch (screen) {
+      case EditorScreenType.Setup:
+        this.#screenContainer.screen = new SetupScreen();
+        break;
+      case EditorScreenType.Compose:
+        this.#screenContainer.screen = new ComposeScreen();
+        break;
+    }
   }
 }

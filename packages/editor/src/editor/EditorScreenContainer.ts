@@ -1,30 +1,31 @@
-import { Axes, Container, Invalidation, LayoutMember } from 'osucad-framework';
-import { PlayfieldContainer } from './playfield/PlayfieldContainer';
+import { Axes, Container } from 'osucad-framework';
+import { EditorScreen } from './screens/EditorScreen';
 
 export class EditorScreenContainer extends Container {
   constructor() {
     super({
       relativeSizeAxes: Axes.Both,
-      padding: { vertical: 10 },
     });
-    this.addLayout(this.#paddingBacking);
-
-    this.add(new PlayfieldContainer());
   }
 
-  #paddingBacking = new LayoutMember(Invalidation.DrawSize);
+  #currentScreen: EditorScreen | null = null;
 
-  update(): void {
-    super.update();
+  get screen(): EditorScreen | null {
+    return this.#currentScreen;
+  }
 
-    if (!this.#paddingBacking.isValid) {
-      console.log(this.drawSize.x);
-
-      this.padding = {
-        top: this.drawSize.x < 1740 ? 15 : 0,
-        bottom: this.drawSize.x < 1640 ? 15 : 0,
-      };
-      this.#paddingBacking.validate();
+  set screen(screen: EditorScreen) {
+    if (screen.constructor.name === this.#currentScreen?.constructor.name) {
+      return;
     }
+
+    if (this.#currentScreen) {
+      this.#currentScreen.hide();
+      this.#currentScreen.expire();
+    }
+
+    this.#currentScreen = screen;
+    this.addInternal(screen);
+    screen.show();
   }
 }
