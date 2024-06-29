@@ -1,4 +1,4 @@
-import { Game, dependencyLoader, isMobile } from 'osucad-framework';
+import { Game, IVec2, dependencyLoader, isMobile } from 'osucad-framework';
 import { Editor } from './editor/Editor';
 import { Fit, ScalingContainer } from './editor/ScalingContainer';
 import { EditorContext } from './editor/context/EditorContext';
@@ -8,13 +8,14 @@ import { UIFonts } from './editor/UIFonts';
 import { UISamples } from './UISamples';
 import { resolved } from 'osucad-framework';
 import { AudioManager } from 'osucad-framework';
+import { EditorMixer } from './editor/EditorMixer';
 
 export class OsucadGame extends Game {
   constructor(readonly context: EditorContext) {
     super();
   }
 
-  get resolution() {
+  get resolution(): IVec2 {
     if (isMobile.any) {
       return {
         x: 640,
@@ -48,10 +49,10 @@ export class OsucadGame extends Game {
     const fonts = new UIFonts();
     this.dependencies.provide(fonts);
 
-    const uiChannel = this.audioManager.createChannel();
-    uiChannel.volume = 0.5;
+    const mixer = new EditorMixer(this.audioManager);
+    this.dependencies.provide(mixer);
 
-    const samples = new UISamples(this.audioManager, uiChannel);
+    const samples = new UISamples(this.audioManager, mixer.userInterface);
     this.dependencies.provide(samples);
 
     await Promise.all([
@@ -64,7 +65,7 @@ export class OsucadGame extends Game {
     this.context.provideDependencies(this.dependencies);
 
     const editor = new Editor(this.context);
-    this.add(editor);
+    this.#innerContainer.add(editor);
 
     editor.fadeIn({ duration: 300 });
   }

@@ -32,19 +32,19 @@ export class Editor extends Container {
   @resolved(AudioManager)
   audioManager!: AudioManager;
 
-  #mixer!: EditorMixer;
+  @resolved(EditorMixer)
+  mixer!: EditorMixer;
 
   @dependencyLoader()
   init() {
-    const mixer = new EditorMixer(this.audioManager);
-    this.add(mixer);
-
-    const track = this.audioManager.createTrack(mixer.music, this.context.song);
+    const track = this.audioManager.createTrack(
+      this.mixer.music,
+      this.context.song,
+    );
 
     const clock = new EditorClock(track);
     this.add(clock);
 
-    this.dependencies.provide(mixer);
     this.dependencies.provide(clock);
 
     this.addAll(
