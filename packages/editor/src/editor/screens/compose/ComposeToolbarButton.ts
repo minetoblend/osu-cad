@@ -1,6 +1,7 @@
 import gsap from 'gsap';
 import {
   Axes,
+  Button,
   Container,
   DrawableSprite,
   FillDirection,
@@ -16,7 +17,7 @@ import { Texture } from 'pixi.js';
 import { ThemeColors } from '../../ThemeColors';
 import { Anchor } from 'osucad-framework';
 
-export class ComposeToolbarButton extends Container {
+export class ComposeToolbarButton extends Button {
   constructor(icon: Texture) {
     super();
     this.relativeSizeAxes = Axes.Both;
