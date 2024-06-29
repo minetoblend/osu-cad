@@ -2,6 +2,7 @@ import { Anchor, Axes, Container, dependencyLoader } from 'osucad-framework';
 import { BackdropBlurFilter } from 'pixi-filters';
 import { Corner, EditorCornerPiece } from './EditorCornerPiece';
 import { Timeline } from './timeline/Timeline';
+import { TimelineZoomButtons } from './timeline/TimelineZoomButtons';
 
 export class EditorTopBar extends Container {
   constructor() {
@@ -19,11 +20,13 @@ export class EditorTopBar extends Container {
     });
     filter.padding = 30;
 
+    const timeline = new Timeline();
+
     this.addAll(
       new Container({
         relativeSizeAxes: Axes.X,
         padding: { horizontal: 170 },
-        child: new Timeline(),
+        child: timeline,
         height: 66,
       }),
       new Container({
@@ -32,12 +35,25 @@ export class EditorTopBar extends Container {
         children: [
           new EditorCornerPiece({
             corner: Corner.TopLeft,
-            width: 200,
+            width: 220,
             relativeSizeAxes: Axes.Y,
+            children: [
+              new Container({
+                relativeSizeAxes: Axes.Y,
+                anchor: Anchor.TopRight,
+                origin: Anchor.TopRight,
+                autoSizeAxes: Axes.X,
+                padding: { horizontal: 6, vertical: 4 },
+                child: new TimelineZoomButtons(timeline, {
+                  relativeSizeAxes: Axes.Y,
+                  width: 30,
+                }),
+              }),
+            ],
           }),
           new EditorCornerPiece({
             corner: Corner.TopRight,
-            width: 200,
+            width: 220,
             relativeSizeAxes: Axes.Y,
             anchor: Anchor.TopRight,
             origin: Anchor.TopRight,

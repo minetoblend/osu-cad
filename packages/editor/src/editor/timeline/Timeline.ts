@@ -10,6 +10,7 @@ import {
 import { EditorClock } from '../EditorClock';
 import { ThemeColors } from '../ThemeColors';
 import { TimelineTick } from './TimelineTick';
+import gsap from 'gsap';
 
 export class Timeline extends Container {
   constructor() {
@@ -108,5 +109,23 @@ export class Timeline extends Container {
       tick.x = this.timeToPosition(tickInfo.time);
       tick.type = tickInfo.type;
     }
+  }
+
+  zoomSpeed = 0.3;
+
+  zoomOut(factor: number = 1) {
+    gsap.to(this, {
+      zoom: Math.min(this.zoom * (1 + this.zoomSpeed * factor), 8),
+      duration: 0.15,
+      ease: 'power2.out',
+    });
+  }
+
+  zoomIn(factor: number = 1) {
+    gsap.to(this, {
+      zoom: Math.max(this.zoom / (1 + this.zoomSpeed * factor), 0.25),
+      duration: 0.15,
+      ease: 'power2.out',
+    });
   }
 }
