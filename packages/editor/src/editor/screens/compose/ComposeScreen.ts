@@ -1,13 +1,16 @@
+import { NoArgsConstructor } from '@osucad/common';
 import {
-  Axes,
+  Bindable,
   Invalidation,
   LayoutMember,
   dependencyLoader,
 } from 'osucad-framework';
-import { EditorScreen } from '../EditorScreen';
 import { PlayfieldContainer } from '../../playfield/PlayfieldContainer';
+import { EditorScreen } from '../EditorScreen';
+import { ComposeTool } from './tools/ComposeTool';
 import { ComposeToolbar } from './ComposeToolbar';
-import { ComposeToolbarButton } from './ComposeToolbarButton';
+import { HitObjectComposer } from './HitObjectComposer';
+import { SelectTool } from './tools/SelectTool';
 
 export class ComposeScreen extends EditorScreen {
   constructor() {
@@ -19,11 +22,15 @@ export class ComposeScreen extends EditorScreen {
 
   #playfieldContainer!: PlayfieldContainer;
   #leftToolbar!: ComposeToolbar;
+  #composer!: HitObjectComposer;
+
+  #activeTool = new Bindable<NoArgsConstructor<ComposeTool>>(SelectTool);
 
   @dependencyLoader()
   init() {
     this.add((this.#playfieldContainer = new PlayfieldContainer()));
-    this.add((this.#leftToolbar = new ComposeToolbar()));
+    this.add((this.#leftToolbar = new ComposeToolbar(this.#activeTool)));
+    this.add((this.#composer = new HitObjectComposer()));
   }
 
   update(): void {
