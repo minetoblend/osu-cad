@@ -92,6 +92,10 @@ export class EditorClock
       current: currentTime,
       elapsed: currentTime - lastTime,
     };
+
+    if (currentTime >= this.track.length) {
+      this.stop();
+    }
   }
 
   get currentTime(): number {
