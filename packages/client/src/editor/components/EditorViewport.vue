@@ -26,8 +26,6 @@ const viewportSize = reactive({
 
 const { preferences } = usePreferences();
 
-let lastRender = performance.now();
-
 onMounted(async () => {
   const resolution = 1;
 
@@ -95,19 +93,6 @@ onMounted(async () => {
 
   requestAnimationFrame(() => {
     emit('initialized');
-  });
-
-  addEventListener('pointermove', () => {
-    const now = performance.now();
-    // boost up to 200 fps
-    if (now - lastRender > 5) {
-      app.render();
-      lastRender = now;
-    }
-  });
-
-  Ticker.shared.add(() => {
-    lastRender = performance.now();
   });
 
   watch([width, height], ([width, height]) => {
