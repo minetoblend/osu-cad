@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@osucad/common": "workspace:*",
+    "gsap": "^3.12.5",
     "osu-classes": "^3.0.1",
     "osu-parsers": "^4.1.6",
     "osu-standard-stable": "^5.0.0",
