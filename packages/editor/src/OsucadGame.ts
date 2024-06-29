@@ -4,6 +4,7 @@ import { Fit, ScalingContainer } from './editor/ScalingContainer';
 import { EditorContext } from './editor/context/EditorContext';
 import { ThemeColors } from './editor/ThemeColors';
 import { UIIcons } from './editor/UIIcons';
+import { UIFonts } from './editor/UIFonts';
 
 export class OsucadGame extends Game {
   constructor(readonly context: EditorContext) {
@@ -36,10 +37,12 @@ export class OsucadGame extends Game {
     this.add(this.#innerContainer);
 
     const icons = new UIIcons();
-
-    await Promise.all([this.context.load(), icons.load()]);
-
     this.dependencies.provide(icons);
+
+    const fonts = new UIFonts();
+    this.dependencies.provide(fonts);
+
+    await Promise.all([this.context.load(), icons.load(), fonts.load()]);
 
     this.context.provideDependencies(this.dependencies);
 
