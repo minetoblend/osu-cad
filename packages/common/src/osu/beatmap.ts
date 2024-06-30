@@ -70,7 +70,7 @@ export class Beatmap {
       .filter((it) => it.time != undefined);
     this.backgroundPath = options.backgroundPath;
     this.colors = options.colors.map((color) =>
-      parseInt(color.substr(1, 6), 16),
+      parseInt(color.substring(1, 6), 16),
     );
     this.audioFilename = options.audioFilename;
     if (this.colors.length === 0) {
