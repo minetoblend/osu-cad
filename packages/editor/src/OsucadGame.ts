@@ -16,6 +16,9 @@ import { resolved } from 'osucad-framework';
 import { AudioManager } from 'osucad-framework';
 import { EditorMixer } from './editor/EditorMixer';
 import { MainCursorContainer } from './MainCursorContainer';
+import { RenderTarget } from 'pixi.js';
+
+RenderTarget.defaultOptions.depth = true;
 
 export class OsucadGame extends Game {
   constructor(readonly context: EditorContext) {
