@@ -1,6 +1,7 @@
 import {
   Anchor,
   Axes,
+  ClickEvent,
   Container,
   ContainerOptions,
   DrawableSprite,
@@ -129,7 +130,6 @@ class ZoomButton extends Container {
 
   onMouseDown(event: MouseDownEvent): boolean {
     if (event.button === MouseButton.Left) {
-      this.action();
       this.background.outlines = [
         {
           color: 0xffffff,
@@ -141,6 +141,11 @@ class ZoomButton extends Container {
       return true;
     }
     return false;
+  }
+
+  onClick(e: ClickEvent): boolean {
+    this.action();
+    return true;
   }
 
   onMouseUp(event: MouseUpEvent): boolean {
