@@ -65,9 +65,10 @@ export class BeatmapConverter {
     this.convertColors();
     this.convertEvents();
     this.convertBookmarks();
-    this.convertHitObjects();
     this.convertControlPoints();
     this.convertHitSounds();
+    this.convertHitObjects();
+
     return this.converted;
   }
 
@@ -98,20 +99,18 @@ export class BeatmapConverter {
       drainRate,
     } = beatmap.difficulty;
 
-    converted.difficulty = {
-      overallDifficulty,
-      approachRate,
-      sliderMultiplier,
-      sliderTickRate,
-      hpDrainRate: drainRate,
-      circleSize,
-    };
+    converted.difficulty.hpDrainRate = drainRate;
+    converted.difficulty.circleSize = circleSize;
+    converted.difficulty.overallDifficulty = overallDifficulty;
+    converted.difficulty.approachRate = approachRate;
+    converted.difficulty.sliderMultiplier = sliderMultiplier;
+    converted.difficulty.sliderTickRate = sliderTickRate;
   }
 
   private convertColors() {
     const { beatmap, converted } = this;
     converted.colors = beatmap.colors.comboColors.map((color) =>
-      parseInt(color.hex.slice(1), 16),
+      parseInt(color.hex.slice(1, 7), 16),
     );
   }
 
