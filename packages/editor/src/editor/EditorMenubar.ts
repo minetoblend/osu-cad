@@ -6,7 +6,7 @@ import {
   Direction,
   Drawable,
   DrawableMenuItem,
-  Menu,
+  MarginPadding,
   MenuItem,
   RoundedBox,
   SpriteText,
@@ -15,11 +15,12 @@ import {
 } from 'osucad-framework';
 import { EditorMenu } from './EditorMenu';
 import { UIFonts } from './UIFonts';
-import { BackdropBlurFilter } from 'pixi-filters';
 
 export class EditorMenubar extends EditorMenu {
   constructor() {
     super(Direction.Horizontal, true);
+
+    this.margin = { horizontal: 8 };
 
     this.backgroundColor = new Color('black').setAlpha(0);
 
@@ -91,7 +92,7 @@ class MenuItemContent extends Container {
         text: this.#text,
         font: this.fonts.nunitoSans,
         style: {
-          fontSize: 16,
+          fontSize: 14,
           fill: 'white',
         },
       })),

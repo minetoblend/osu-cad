@@ -1,24 +1,26 @@
+import gsap from 'gsap';
 import {
   Anchor,
   Axes,
   BasicScrollContainer,
-  Box,
   Color,
   Container,
   Direction,
   Drawable,
   DrawableMenuItem,
+  MarginPadding,
   Menu,
   MenuItem,
   RoundedBox,
   ScrollContainer,
   SpriteText,
+  Vec2,
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import { UIFonts } from './UIFonts';
-import gsap from 'gsap';
+import { Graphics } from 'pixi.js';
 import { ThemeColors } from './ThemeColors';
+import { UIFonts } from './UIFonts';
 
 export class EditorMenu extends Menu {
   @resolved(ThemeColors)
@@ -29,6 +31,13 @@ export class EditorMenu extends Menu {
     if (this.topLevelMenu) return;
 
     this.backgroundColor = new Color(this.theme.translucent).setAlpha(0.7);
+  }
+
+  protected createBackground(): Drawable {
+    return new RoundedBox({
+      relativeSizeAxes: Axes.Both,
+      cornerRadius: 4,
+    });
   }
 
   protected createSubmenu(): Menu {
@@ -43,13 +52,42 @@ export class EditorMenu extends Menu {
     return new BasicScrollContainer(direction);
   }
 
-  animateOpen(): void {
+  override animateOpen(): void {
     if (this.topLevelMenu) {
       super.animateOpen();
       return;
     }
-    this.scaleY = 0.5;
-    gsap.to(this, { scaleY: 1, alpha: 1, duration: 0.2, ease: 'power4.out' });
+    this.fadeIn({ duration: 0.2 });
+  }
+
+  protected override updateSize(newSize: Vec2): void {
+    if (this.size.equals(newSize)) return;
+
+    if (this.direction === Direction.Vertical) {
+      this.scaleY = newSize.y === 0 ? 1 : this.size.y / newSize.y;
+      gsap.to(this, {
+        scaleY: 1,
+        duration: 0.2,
+        ease: 'power4.out',
+      });
+    } else {
+      this.scaleX = this.size.x / newSize.x;
+      gsap.to(this, {
+        scaleX: 1,
+        duration: 0.2,
+        ease: 'power4.out',
+      });
+    }
+    this.size = newSize;
+  }
+
+  override animateClose(): void {
+    if (this.topLevelMenu) {
+      super.animateClose();
+      return;
+    }
+
+    this.fadeOut({ duration: 0.2 });
   }
 }
 
@@ -61,7 +99,7 @@ class DrawableEditorMenuItem extends DrawableMenuItem {
   }
 
   createContent(): Drawable {
-    return new MenuItemContent();
+    return new MenuItemContent(this.item);
   }
 
   createBackground(): Drawable {
@@ -74,10 +112,20 @@ class DrawableEditorMenuItem extends DrawableMenuItem {
 }
 
 class MenuItemContent extends Container {
-  constructor() {
+  constructor(readonly item: MenuItem) {
+    let padding = MarginPadding.from({ horizontal: 8, vertical: 4 });
+
+    if (item.items.length > 0) {
+      padding = new MarginPadding({
+        vertical: 4,
+        left: 8,
+        right: 24,
+      });
+    }
+
     super({
       autoSizeAxes: Axes.Both,
-      padding: { horizontal: 8, vertical: 4 },
+      padding,
     });
   }
 
@@ -98,6 +146,20 @@ class MenuItemContent extends Container {
         },
       })),
     );
+
+    if (this.item.items.length > 0) {
+      const child = new Container({
+        anchor: Anchor.CenterRight,
+        origin: Anchor.CenterRight,
+        x: 10,
+        alpha: 0.5,
+      });
+      this.add(child);
+
+      const g = child.drawNode.addChild(new Graphics());
+
+      g.roundPoly(0, 0, 4, 3, 1, Math.PI * 0.5).fill(0xffffff);
+    }
   }
 
   #text: string = '';
