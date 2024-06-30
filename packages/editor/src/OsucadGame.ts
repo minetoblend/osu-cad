@@ -1,4 +1,10 @@
-import { Game, IVec2, dependencyLoader, isMobile } from 'osucad-framework';
+import {
+  ClickEvent,
+  Game,
+  IVec2,
+  dependencyLoader,
+  isMobile,
+} from 'osucad-framework';
 import { Editor } from './editor/Editor';
 import { Fit, ScalingContainer } from './editor/ScalingContainer';
 import { EditorContext } from './editor/context/EditorContext';
@@ -9,6 +15,7 @@ import { UISamples } from './UISamples';
 import { resolved } from 'osucad-framework';
 import { AudioManager } from 'osucad-framework';
 import { EditorMixer } from './editor/EditorMixer';
+import { MainCursorContainer } from './MainCursorContainer';
 
 export class OsucadGame extends Game {
   constructor(readonly context: EditorContext) {
@@ -43,6 +50,8 @@ export class OsucadGame extends Game {
 
     this.add(this.#innerContainer);
 
+    const cursorContainer = new MainCursorContainer();
+
     const icons = new UIIcons();
     this.dependencies.provide(icons);
 
@@ -66,7 +75,12 @@ export class OsucadGame extends Game {
 
     const editor = new Editor(this.context);
     this.#innerContainer.add(editor);
+    this.add(cursorContainer);
 
     editor.fadeIn({ duration: 300 });
+  }
+
+  onClick(e: ClickEvent): boolean {
+    return true;
   }
 }
