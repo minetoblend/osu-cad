@@ -6,7 +6,6 @@ import {
   Direction,
   Drawable,
   DrawableMenuItem,
-  MarginPadding,
   MenuItem,
   RoundedBox,
   SpriteText,
@@ -15,12 +14,13 @@ import {
 } from 'osucad-framework';
 import { EditorMenu } from './EditorMenu';
 import { UIFonts } from './UIFonts';
+import { CommandHandler } from './context/CommandHandler';
 
 export class EditorMenubar extends EditorMenu {
   constructor() {
     super(Direction.Horizontal, true);
 
-    this.margin = { horizontal: 8 };
+    this.margin = { horizontal: 4, vertical: 2 };
 
     this.backgroundColor = new Color('black').setAlpha(0);
 
@@ -44,19 +44,57 @@ export class EditorMenubar extends EditorMenu {
           }),
         ],
       }),
+      new MenuItem({
+        text: 'Edit',
+        items: [
+          (this.#undoItem = new MenuItem({
+            text: 'Undo',
+          })),
+          (this.#redoItem = new MenuItem({
+            text: 'Redo',
+          })),
+        ],
+      }),
+      new MenuItem({
+        text: 'View',
+      }),
+      new MenuItem({
+        text: 'Help',
+      }),
     ];
   }
 
+  #undoItem!: MenuItem;
+
+  #redoItem!: MenuItem;
+
+  @resolved(CommandHandler)
+  commandHandler!: CommandHandler;
+
+  override load() {
+    super.load();
+
+    this.commandHandler.canUndo.addOnChangeListener(
+      (value) => (this.#undoItem.disabled.value = !value),
+      { immediate: true },
+    );
+    this.commandHandler.canRedo.addOnChangeListener(
+      (value) => (this.#redoItem.disabled.value = !value),
+      { immediate: true },
+    );
+  }
+
   protected override createDrawableMenuItem(item: MenuItem): DrawableMenuItem {
-    return new DrawableEditorMenuItem(item);
+    return new DrawableEditorMenubarItem(item);
   }
 }
 
-class DrawableEditorMenuItem extends DrawableMenuItem {
+class DrawableEditorMenubarItem extends DrawableMenuItem {
   constructor(item: MenuItem) {
     super(item);
     this.backgroundColor = 'transparent';
     this.backgroundColorHover = 'rgba(255, 255, 255, 0.1)';
+    this.padding = { horizontal: 2 };
   }
 
   createContent(): Drawable {
@@ -76,7 +114,7 @@ class MenuItemContent extends Container {
   constructor() {
     super({
       autoSizeAxes: Axes.Both,
-      padding: { horizontal: 8, vertical: 4 },
+      padding: { horizontal: 6, vertical: 2 },
     });
   }
 
