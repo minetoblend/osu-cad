@@ -3,6 +3,7 @@ import { BackdropBlurFilter } from 'pixi-filters';
 import { Corner, EditorCornerPiece } from './EditorCornerPiece';
 import { Timeline } from './timeline/Timeline';
 import { TimelineZoomButtons } from './timeline/TimelineZoomButtons';
+import { EditorMenubar } from './EditorMenubar';
 
 export class EditorTopBar extends Container {
   constructor() {
@@ -48,6 +49,11 @@ export class EditorTopBar extends Container {
                   relativeSizeAxes: Axes.Y,
                   width: 30,
                 }),
+              }),
+              new Container({
+                relativeSizeAxes: Axes.X,
+                autoSizeAxes: Axes.Y,
+                child: new EditorMenubar(),
               }),
             ],
           }),
