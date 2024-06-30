@@ -32,8 +32,8 @@ class Cursor extends CompositeDrawable {
     this.addInternal(
       (this.#sprite = new DrawableSprite({
         texture: this.icons.select,
-        x: 4,
-        y: 3,
+        x: -4,
+        y: -3,
       })),
     );
   }
