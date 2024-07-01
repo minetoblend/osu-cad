@@ -69,6 +69,8 @@ export class BeatmapConverter {
     this.convertHitSounds();
     this.convertHitObjects();
 
+    this.converted.hitObjects.updateStacking();
+
     return this.converted;
   }
 
