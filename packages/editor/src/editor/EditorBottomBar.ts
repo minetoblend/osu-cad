@@ -18,7 +18,7 @@ export class EditorBottomBar extends Container {
     const filter = new BackdropBlurFilter({
       strength: 15,
       quality: 2,
-      antialias: 'on',
+      antialias: 'inherit',
       resolution: devicePixelRatio,
     });
     filter.padding = 30;
