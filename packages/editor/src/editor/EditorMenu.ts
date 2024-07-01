@@ -13,6 +13,7 @@ import {
   MenuItem,
   RoundedBox,
   ScrollContainer,
+  ScrollbarContainer,
   SpriteText,
   Vec2,
   dependencyLoader,
@@ -31,14 +32,16 @@ export class EditorMenu extends Menu {
   load() {
     if (this.topLevelMenu) return;
 
-    this.backgroundColor = new Color(this.theme.translucent).setAlpha(0.7);
+    this.backgroundColor = new Color(this.theme.translucent).setAlpha(0.85);
 
-    this.filters = [
-      new DropShadowFilter({
-        alpha: 0.25,
-        offset: { x: 0, y: 2 },
-      }),
-    ];
+    if (this.parentMenu?.['topLevelMenu']) {
+      this.filters = [
+        new DropShadowFilter({
+          alpha: 0.25,
+          offset: { x: 0, y: 2 },
+        }),
+      ];
+    }
   }
 
   protected createBackground(): Drawable {
@@ -57,7 +60,15 @@ export class EditorMenu extends Menu {
   }
 
   protected createScrollContainer(direction: Direction): ScrollContainer {
-    return new BasicScrollContainer(direction);
+    return new (class extends ScrollContainer {
+      protected createScrollbar(direction: Direction): ScrollbarContainer {
+        return new (class extends ScrollbarContainer {
+          resizeTo(): void {
+            return;
+          }
+        })(direction);
+      }
+    })(direction);
   }
 
   override animateOpen(): void {
@@ -65,28 +76,39 @@ export class EditorMenu extends Menu {
       super.animateOpen();
       return;
     }
-    this.fadeIn({ duration: 0.2 });
+    this.fadeIn({ duration: 200 });
   }
 
+  #targetSize: Vec2 = new Vec2();
+
   protected override updateSize(newSize: Vec2): void {
-    if (this.size.equals(newSize)) return;
+    if (this.#targetSize.equals(newSize)) return;
+
+    gsap.killTweensOf(this, 'width,height');
 
     if (this.direction === Direction.Vertical) {
-      this.scaleY = newSize.y === 0 ? 1 : this.size.y / newSize.y;
+      if (newSize.y === 0) {
+        newSize.x = this.width;
+      }
+
+      if (newSize.y > 0 && this.width === 0) {
+        this.width = newSize.x;
+      }
+
       gsap.to(this, {
-        scaleY: 1,
+        width: newSize.x,
+        height: newSize.y,
         duration: 0.2,
         ease: 'power4.out',
       });
     } else {
-      this.scaleX = this.size.x / newSize.x;
       gsap.to(this, {
-        scaleX: 1,
+        width: newSize.x,
+        height: newSize.y,
         duration: 0.2,
         ease: 'power4.out',
       });
     }
-    this.size = newSize;
   }
 
   override animateClose(): void {
@@ -95,7 +117,7 @@ export class EditorMenu extends Menu {
       return;
     }
 
-    this.fadeOut({ duration: 0.2 });
+    this.fadeOut({ duration: 200 });
   }
 }
 
