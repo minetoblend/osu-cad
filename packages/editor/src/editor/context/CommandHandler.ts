@@ -11,4 +11,14 @@ export class CommandHandler {
   readonly canUndo = new Bindable(false);
 
   readonly canRedo = new Bindable(false);
+
+  undo() {
+    // TODO: Implement undo
+    console.log('undo');
+  }
+
+  redo() {
+    // TODO: Implement redo
+    console.log('redo');
+  }
 }

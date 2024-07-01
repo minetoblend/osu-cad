@@ -3,7 +3,10 @@ import {
   Axes,
   Bindable,
   Container,
+  IKeyBindingHandler,
   Key,
+  KeyBindingPressEvent,
+  PlatformAction,
   ScrollEvent,
   UIEvent,
   dependencyLoader,
@@ -20,11 +23,20 @@ import { ComposeScreen } from './screens/compose/ComposeScreen';
 import { SetupScreen } from './screens/setup/SetupScreen';
 import { KeyDownEvent } from 'osucad-framework';
 
-export class Editor extends Container {
+export class Editor
+  extends Container
+  implements IKeyBindingHandler<PlatformAction>
+{
   constructor(readonly context: EditorContext) {
     super({
       relativeSizeAxes: Axes.Both,
     });
+  }
+
+  readonly isKeyBindingHandler = true;
+
+  canHandleKeyBinding(binding: PlatformAction): boolean {
+    return binding instanceof PlatformAction;
   }
 
   #screenContainer!: EditorScreenContainer;
@@ -109,6 +121,8 @@ export class Editor extends Container {
   }
 
   onKeyDown(e: KeyDownEvent): boolean {
+    if (e.controlPressed || e.altPressed || e.metaPressed) return false;
+
     switch (e.key) {
       case Key.ArrowLeft:
         this.#seek(e, -1);
@@ -121,6 +135,36 @@ export class Editor extends Container {
         return true;
       case Key.ArrowDown:
         this.#seekControlPoint(e, -1);
+        return true;
+      case Key.KeyZ:
+        const firstObjectTime =
+          this.context.beatmap.hitObjects.first?.startTime;
+
+        if (
+          firstObjectTime === undefined ||
+          this.#clock.currentTimeAccurate === firstObjectTime
+        ) {
+          this.#clock.seek(0);
+        } else {
+          this.#clock.seek(firstObjectTime);
+        }
+
+        return true;
+      case Key.KeyX:
+        this.#clock.seek(0);
+        this.#clock.start();
+        return true;
+      case Key.KeyV:
+        if (this.context.beatmap.hitObjects.hitObjects.length === 0) {
+          this.#clock.seek(this.#clock.trackLength);
+          return true;
+        }
+        const lastObjectTime = this.context.beatmap.hitObjects.last!.endTime;
+        this.#clock.seek(
+          this.#clock.currentTimeAccurate === lastObjectTime
+            ? this.#clock.trackLength
+            : lastObjectTime,
+        );
         return true;
     }
 
@@ -152,5 +196,20 @@ export class Editor extends Container {
     if (controlPoint) {
       this.#clock.seek(controlPoint.time);
     }
+  }
+
+  onKeyBindingPressed(e: KeyBindingPressEvent<PlatformAction>): boolean {
+    console.log(e.pressed.name);
+
+    switch (e.pressed) {
+      case PlatformAction.Undo:
+        this.context.commandHandler.undo();
+        return true;
+      case PlatformAction.Redo:
+        this.context.commandHandler.redo();
+        return true;
+    }
+
+    return false;
   }
 }
