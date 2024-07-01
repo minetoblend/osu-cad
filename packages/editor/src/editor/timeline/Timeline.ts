@@ -1,4 +1,4 @@
-import { Beatmap } from '@osucad/common';
+import { Beatmap, HitObject } from '@osucad/common';
 import {
   Anchor,
   Axes,
@@ -12,6 +12,7 @@ import { EditorClock } from '../EditorClock';
 import { ThemeColors } from '../ThemeColors';
 import { TimelineTick } from './TimelineTick';
 import gsap from 'gsap';
+import { TimelineObject } from './TimelineObject';
 
 export class Timeline extends Container {
   constructor() {
@@ -36,6 +37,12 @@ export class Timeline extends Container {
     this.drawNode.addChild((this.#tickContainer = new PIXIContainer()));
 
     this.addInternal(
+      (this.#objectContainer = new Container({
+        relativeSizeAxes: Axes.Both,
+      })),
+    );
+
+    this.addInternal(
       new Box({
         width: 2,
         relativeSizeAxes: Axes.Y,
@@ -46,10 +53,13 @@ export class Timeline extends Container {
     );
   }
 
+  #objectContainer!: Container;
+
   update() {
     super.update();
 
     this.#updateTicks();
+    this.#updateObjects();
   }
 
   #tickContainer!: PIXIContainer<TimelineTick>;
@@ -119,6 +129,37 @@ export class Timeline extends Container {
       const tickInfo = ticks[i];
       tick.x = this.timeToPosition(tickInfo.time);
       tick.type = tickInfo.type;
+    }
+  }
+
+  #hitObjectMap = new Map<HitObject, TimelineObject>();
+
+  #updateObjects() {
+    const startTime = this.startTime - 1000;
+    const endTime = this.endTime + 1000;
+    const objects = this.beatmap.hitObjects.hitObjects.filter(
+      (it) => it.endTime >= startTime && it.startTime <= endTime,
+    );
+
+    const shouldRemove = new Set(this.#hitObjectMap.keys());
+    for (let i = 0; i < objects.length; i++) {
+      const object = objects[i];
+      let drawable = this.#hitObjectMap.get(object);
+      if (!drawable) {
+        drawable = new TimelineObject(object);
+        this.#hitObjectMap.set(object, drawable);
+        this.#objectContainer.add(drawable);
+      }
+      drawable.drawNode.zIndex = objects.length - i;
+      shouldRemove.delete(object);
+    }
+
+    for (const object of shouldRemove) {
+      const drawable = this.#hitObjectMap.get(object);
+      if (drawable) {
+        this.#objectContainer.remove(drawable);
+        this.#hitObjectMap.delete(object);
+      }
     }
   }
 
