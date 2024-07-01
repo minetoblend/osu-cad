@@ -1,19 +1,16 @@
+import gsap from 'gsap';
 import {
-  ClickEvent,
   CompositeDrawable,
   CursorContainer,
   Drawable,
   DrawableSprite,
-  InputManager,
   MouseButton,
   MouseDownEvent,
   MouseUpEvent,
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import { Texture } from 'pixi.js';
 import { UIIcons } from './editor/UIIcons';
-import gsap from 'gsap';
 
 export class MainCursorContainer extends CursorContainer {
   createCursor(): Drawable {
