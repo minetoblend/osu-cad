@@ -201,13 +201,46 @@ export class Editor
   onKeyBindingPressed(e: KeyBindingPressEvent<PlatformAction>): boolean {
     switch (e.pressed) {
       case PlatformAction.Undo:
-        this.context.commandHandler.undo();
+        this.undo();
         return true;
       case PlatformAction.Redo:
-        this.context.commandHandler.redo();
+        this.redo();
+        return true;
+      case PlatformAction.Cut:
+        this.cut();
+        return true;
+      case PlatformAction.Copy:
+        this.copy();
+        return true;
+      case PlatformAction.Paste:
+        this.paste();
         return true;
     }
 
     return false;
+  }
+
+  get commandHandler() {
+    return this.context.commandHandler;
+  }
+
+  undo() {
+    this.commandHandler.undo();
+  }
+
+  redo() {
+    this.commandHandler.redo();
+  }
+
+  cut() {
+    console.log('cut');
+  }
+
+  copy() {
+    console.log('copy');
+  }
+
+  paste() {
+    console.log('paste');
   }
 }
