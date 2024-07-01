@@ -53,8 +53,6 @@ export class OsucadGame extends Game {
 
     this.add(this.#innerContainer);
 
-    const cursorContainer = new MainCursorContainer();
-
     const icons = new UIIcons();
     this.dependencies.provide(icons);
 
@@ -78,7 +76,9 @@ export class OsucadGame extends Game {
 
     const editor = new Editor(this.context);
     this.#innerContainer.add(editor);
-    this.add(cursorContainer);
+    if (!isMobile.any) {
+      this.add(new MainCursorContainer());
+    }
 
     editor.fadeIn({ duration: 300 });
   }
