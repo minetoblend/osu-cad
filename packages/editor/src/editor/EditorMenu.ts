@@ -2,7 +2,6 @@ import gsap from 'gsap';
 import {
   Anchor,
   Axes,
-  BasicScrollContainer,
   Color,
   Container,
   Direction,
@@ -22,7 +21,6 @@ import {
 import { Graphics } from 'pixi.js';
 import { ThemeColors } from './ThemeColors';
 import { UIFonts } from './UIFonts';
-import { DropShadowFilter } from 'pixi-filters';
 
 export class EditorMenu extends Menu {
   @resolved(ThemeColors)
@@ -33,15 +31,6 @@ export class EditorMenu extends Menu {
     if (this.topLevelMenu) return;
 
     this.backgroundColor = new Color(this.theme.translucent).setAlpha(0.85);
-
-    if (this.parentMenu?.['topLevelMenu']) {
-      this.filters = [
-        new DropShadowFilter({
-          alpha: 0.25,
-          offset: { x: 0, y: 2 },
-        }),
-      ];
-    }
   }
 
   protected createBackground(): Drawable {

@@ -6,12 +6,14 @@ import {
   Direction,
   Drawable,
   DrawableMenuItem,
+  Menu,
   MenuItem,
   RoundedBox,
   SpriteText,
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
+import { DropShadowFilter } from 'pixi-filters';
 import { EditorMenu } from './EditorMenu';
 import { UIFonts } from './UIFonts';
 import { CommandHandler } from './context/CommandHandler';
@@ -88,6 +90,20 @@ export class EditorMenubar extends EditorMenu {
 
   protected override createDrawableMenuItem(item: MenuItem): DrawableMenuItem {
     return new DrawableEditorMenubarItem(item);
+  }
+
+  protected createSubmenu(): Menu {
+    const menu = super.createSubmenu();
+
+    menu.filters = [
+      new DropShadowFilter({
+        alpha: 0.25,
+        offset: { x: 0, y: 2 },
+        quality: 2,
+      }),
+    ];
+
+    return menu;
   }
 }
 
