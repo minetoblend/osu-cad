@@ -31,7 +31,7 @@
     "osu-standard-stable": "^5.0.0",
     "osucad-framework": "workspace:*",
     "pixi-filters": "^6.0.4",
-    "pixi.js": "https://pkg.csb.dev/pixijs/pixijs/commit/bd1e1a08/pixi.js",
+    "pixi.js": "https://pkg.csb.dev/pixijs/pixijs/commit/f2243093/pixi.js",
     "reflect-metadata": "^0.1.13",
     "socket.io-client": "^4.7.2"
   }

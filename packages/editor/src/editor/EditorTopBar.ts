@@ -15,7 +15,7 @@ export class EditorTopBar extends Container {
   @dependencyLoader()
   init() {
     const filter = new BackdropBlurFilter({
-      strength: 20,
+      strength: 15,
       quality: 3,
       antialias: 'on',
       resolution: devicePixelRatio,

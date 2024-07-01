@@ -1,14 +1,6 @@
-import {
-  Anchor,
-  Axes,
-  Container,
-  DragEvent,
-  DragStartEvent,
-  MouseButton,
-  dependencyLoader,
-} from 'osucad-framework';
-import { Corner, EditorCornerPiece } from './EditorCornerPiece';
+import { Anchor, Axes, Container, dependencyLoader } from 'osucad-framework';
 import { BackdropBlurFilter } from 'pixi-filters';
+import { Corner, EditorCornerPiece } from './EditorCornerPiece';
 import { OverviewTimeline } from './overviewTimeline/OverviewTimeline';
 
 export class EditorBottomBar extends Container {
@@ -29,7 +21,7 @@ export class EditorBottomBar extends Container {
       antialias: 'on',
       resolution: devicePixelRatio,
     });
-    filter.padding = 20;
+    filter.padding = 30;
 
     this.addAll(
       new Container({
