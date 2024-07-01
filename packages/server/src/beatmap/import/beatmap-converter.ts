@@ -236,7 +236,9 @@ export class BeatmapConverter {
     for (const difficultyPoint of beatmap.controlPoints.difficultyPoints) {
       let controlPoint = map.get(difficultyPoint.startTime);
 
-      if (!controlPoint) {
+      if (controlPoint) {
+        controlPoint.velocityMultiplier = difficultyPoint.sliderVelocity;
+      } else {
         controlPoint = new ControlPoint({
           id: hitObjectId(),
           time: difficultyPoint.startTime,
