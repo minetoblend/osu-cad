@@ -88,6 +88,8 @@ export class EditorClock
   #lastSeekWasAnimated = false;
 
   seek(position: number, animated: boolean = true) {
+    position = clamp(position, 0, this.track.length);
+
     this.#targetTime = position;
     this.#lastSeekWasAnimated = animated;
 
@@ -158,6 +160,7 @@ export class EditorClock
 
   stop() {
     this.track.stop();
+    this.#targetTime = this.currentTimeAccurate;
   }
 
   get framesPerSecond(): number {
