@@ -44,6 +44,8 @@ class Cursor extends CompositeDrawable {
       gsap.to(this.#sprite, {
         scaleX: 0.8,
         scaleY: 0.8,
+        x: -5,
+        y: -4,
         duration: 1.0,
         ease: 'power4.out',
       });
@@ -57,6 +59,8 @@ class Cursor extends CompositeDrawable {
       gsap.to(this.#sprite, {
         scaleX: 1,
         scaleY: 1,
+        x: -4,
+        y: -3,
         duration: 0.2,
         ease: 'back.out',
       });
