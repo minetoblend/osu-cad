@@ -7,6 +7,9 @@ import {
   IFrameBasedClock,
   Track,
   resolved,
+  lerp,
+  clamp,
+  almostEquals,
 } from 'osucad-framework';
 
 export class EditorClock
@@ -40,6 +43,8 @@ export class EditorClock
 
   seekSnapped(position: number) {
     const timingPoint = this.controlPointInfo.timingPointAt(position);
+
+    position -= timingPoint.time;
 
     const beatSnapLength =
       timingPoint.timing.beatLength / this.beatSnapDivisor.value;
@@ -80,32 +85,59 @@ export class EditorClock
     }
   }
 
-  seek(position: number) {
+  #lastSeekWasAnimated = false;
+
+  seek(position: number, animated: boolean = true) {
+    this.#targetTime = position;
+    this.#lastSeekWasAnimated = animated;
+
     return this.track.seek(position);
   }
 
   processFrame(): void {
-    const lastTime = this.currentTime;
-    const currentTime = this.currentTimeAccurate;
+    if (this.isRunning || !this.#lastSeekWasAnimated) {
+      const lastTime = this.currentTime;
+      const currentTime = this.currentTimeAccurate;
+      this.#targetTime = currentTime;
 
-    this.#frameTimeInfo = {
-      current: currentTime,
-      elapsed: currentTime - lastTime,
-    };
+      this.#frameTimeInfo = {
+        current: currentTime,
+        elapsed: currentTime - lastTime,
+      };
 
-    if (currentTime >= this.track.length) {
+      this.#lastSeekWasAnimated = false;
+    } else {
+      const lastTime = this.currentTime;
+      let currentTime = lerp(
+        lastTime,
+        this.#targetTime,
+        clamp(this.parent!.clock.elapsedFrameTime * 0.015),
+      );
+
+      if (almostEquals(currentTime, this.#targetTime, 0.001)) {
+        currentTime = this.#targetTime;
+      }
+
+      this.#frameTimeInfo = {
+        current: currentTime,
+        elapsed: currentTime - lastTime,
+      };
+    }
+
+    if (this.currentTime >= this.track.length) {
       this.stop();
     }
   }
 
   get currentTime(): number {
     return this.#frameTimeInfo.current;
-    // return this.track.currentTime;
   }
 
   get currentTimeAccurate(): number {
     return this.track.currentTime;
   }
+
+  #targetTime = 0;
 
   #frameTimeInfo: FrameTimeInfo = {
     current: 0,
