@@ -4,6 +4,7 @@ export class Skin {
   hitcircle!: Texture;
   hitcircleOverlay!: Texture;
   approachCircle!: Texture;
+  sliderFollowCircle!: Texture;
 
   comboNumbers: Texture[] = [];
 
@@ -23,6 +24,10 @@ export class Skin {
         src: '/assets/skin/approachcircle@2x.png',
         alias: 'approachCircle',
       },
+      {
+        src: '/assets/skin/sliderfollowcircle.png',
+        alias: 'sliderfollowcircle',
+      },
       ...comboNumbers,
     ]);
 
@@ -31,6 +36,7 @@ export class Skin {
     this.hitcircle = Assets.get('hitcircle');
     this.hitcircleOverlay = Assets.get('hitcircleOverlay');
     this.approachCircle = Assets.get('approachCircle');
+    this.sliderFollowCircle = Assets.get('sliderfollowcircle');
 
     for (let i = 0; i < 10; i++) {
       this.comboNumbers.push(Assets.get(`default-${i}`));

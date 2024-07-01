@@ -6,6 +6,7 @@ import { ApproachCircle } from './ApproachCircle';
 import { DrawableSliderBody } from './DrawableSliderBody';
 import { DrawableComboNumber } from './DrawableComboNumber';
 import { animate } from '../../utils/animate';
+import { DrawableSliderBall } from './DrawableSliderBall';
 
 export class DrawableSlider extends DrawableHitObject<Slider> {
   constructor(public slider: Slider) {
@@ -18,6 +19,7 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
   approachCircle!: ApproachCircle;
   sliderBody!: DrawableSliderBody;
   comboNumber!: DrawableComboNumber;
+  sliderBall!: DrawableSliderBall;
 
   override load() {
     this.add((this.sliderBody = new DrawableSliderBody(this.hitObject)));
@@ -27,6 +29,7 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
       (this.comboNumber = new DrawableComboNumber(this.hitObject.indexInCombo)),
     );
     this.add((this.tailCircle = new CirclePiece()));
+    this.add((this.sliderBall = new DrawableSliderBall()));
     super.load();
   }
 
@@ -54,6 +57,9 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
     this.approachCircle.comboColor = this.comboColor;
     this.approachCircle.startTime = this.hitObject.startTime;
     this.approachCircle.timePreempt = this.hitObject.timePreempt;
+
+    this.sliderBall.startTime = this.hitObject.startTime;
+    this.sliderBall.endTime = this.hitObject.endTime;
   }
 
   update() {
@@ -80,5 +86,8 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
       );
     }
     this.comboNumber.alpha = this.headCircle.alpha;
+
+    const position = this.hitObject.positionAt(this.time.current);
+    this.sliderBall.position = Vec2.scale(position, 1 / this.hitObject.scale);
   }
 }
