@@ -50,6 +50,11 @@ export class EditorMenu extends Menu {
 
   protected createScrollContainer(direction: Direction): ScrollContainer {
     return new (class extends ScrollContainer {
+      constructor(direction: Direction) {
+        super(direction);
+        this.clampExtension = 0;
+      }
+
       protected createScrollbar(direction: Direction): ScrollbarContainer {
         return new (class extends ScrollbarContainer {
           resizeTo(): void {
