@@ -143,13 +143,19 @@ class ZoomButton extends Container {
     return false;
   }
 
+  wasLongPress = false;
+
   onClick(e: ClickEvent): boolean {
-    this.action();
+    if (!this.wasLongPress) {
+      this.action();
+    }
+
     return true;
   }
 
   onMouseUp(event: MouseUpEvent): boolean {
     this.background.outlines = [];
+    this.wasLongPress = !!(this.pressedAt && Date.now() - this.pressedAt > 300);
     this.pressedAt = undefined;
     return true;
   }
