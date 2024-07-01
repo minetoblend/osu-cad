@@ -49,9 +49,11 @@ export class EditorMenubar extends EditorMenu {
         items: [
           (this.#undoItem = new MenuItem({
             text: 'Undo',
+            action: () => this.commandHandler.undo(),
           })),
           (this.#redoItem = new MenuItem({
             text: 'Redo',
+            action: () => this.commandHandler.redo(),
           })),
         ],
       }),
