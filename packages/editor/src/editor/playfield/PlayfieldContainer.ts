@@ -7,6 +7,7 @@ import {
 } from 'osucad-framework';
 import { PlayfieldGrid } from './PlayfieldGrid';
 import { BeatmapBackground } from './BeatmapBackground';
+import { HitObjectContainer } from '../hitobjects/HitObjectContainer';
 
 export class PlayfieldContainer extends Container {
   constructor() {
@@ -39,7 +40,10 @@ export class PlayfieldContainer extends Container {
 
   @dependencyLoader()
   init() {
-    this.add(new BeatmapBackground());
-    this.add(new PlayfieldGrid());
+    this.addAll(
+      new BeatmapBackground(),
+      new PlayfieldGrid(),
+      new HitObjectContainer(),
+    );
   }
 }

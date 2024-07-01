@@ -21,6 +21,7 @@ import {
 import { Graphics } from 'pixi.js';
 import { ThemeColors } from './ThemeColors';
 import { UIFonts } from './UIFonts';
+import { DropShadowFilter } from 'pixi-filters';
 
 export class EditorMenu extends Menu {
   @resolved(ThemeColors)
@@ -31,6 +32,13 @@ export class EditorMenu extends Menu {
     if (this.topLevelMenu) return;
 
     this.backgroundColor = new Color(this.theme.translucent).setAlpha(0.7);
+
+    this.filters = [
+      new DropShadowFilter({
+        alpha: 0.25,
+        offset: { x: 0, y: 2 },
+      }),
+    ];
   }
 
   protected createBackground(): Drawable {
@@ -119,7 +127,7 @@ class MenuItemContent extends Container {
       padding = new MarginPadding({
         vertical: 4,
         left: 8,
-        right: 24,
+        right: 32,
       });
     }
 
@@ -141,7 +149,7 @@ class MenuItemContent extends Container {
         text: this.#text,
         font: this.fonts.nunitoSans,
         style: {
-          fontSize: 16,
+          fontSize: 14,
           fill: 'white',
         },
       })),
@@ -151,7 +159,7 @@ class MenuItemContent extends Container {
       const child = new Container({
         anchor: Anchor.CenterRight,
         origin: Anchor.CenterRight,
-        x: 10,
+        x: 20,
         alpha: 0.5,
       });
       this.add(child);

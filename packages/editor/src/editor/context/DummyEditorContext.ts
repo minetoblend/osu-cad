@@ -5,52 +5,19 @@ import audioUrl from '../../assets/audio.mp3';
 import backgroundUrl from '../../assets/background.jpg';
 import { Skin } from '../../skins/Skin';
 import { EditorContext } from './EditorContext';
+// @ts-expect-error no types
+import { BeatmapDecoder } from 'osu-parsers';
+// @ts-expect-error no types
+import { StandardRuleset } from 'osu-standard-stable';
+import sampleBeatmap from './sampleBeatmap.osu?raw';
+import { BeatmapConverter } from '../../beatmaps/BeatmapConverter';
 
 export class DummyEditorContext extends EditorContext {
   protected async loadBeatmap(): Promise<Beatmap> {
-    return new Beatmap({
-      id: '',
-      setId: '',
-      name: 'Dummy Beatmap',
-      metadata: {
-        artist: '',
-        title: '',
-        beatmapId: 0,
-        beatmapSetId: 0,
-        tags: '',
-      },
-      audioFilename: '',
-      backgroundPath: '',
-      bookmarks: [],
-      colors: [],
-      controlPoints: {
-        controlPoints: [
-          {
-            id: hitObjectId(),
-            time: 100,
-            timing: {
-              beatLength: 60_000 / 180,
-            },
-            velocityMultiplier: 1,
-          },
-        ],
-      },
-      difficulty: {
-        circleSize: 4,
-        hpDrainRate: 5,
-        overallDifficulty: 5,
-        sliderMultiplier: 1.4,
-        sliderTickRate: 1,
-        approachRate: 9,
-      },
-      general: {
-        stackLeniency: 0.7,
-      },
-      hitObjects: [],
-      hitSounds: {
-        layers: defaultHitSoundLayers(),
-      },
-    });
+    const beatmap = new BeatmapDecoder().decodeFromString(sampleBeatmap);
+    const standardBeatmap = new StandardRuleset().applyToBeatmap(beatmap);
+
+    return new BeatmapConverter(standardBeatmap).convert();
   }
 
   protected loadSong(beatmap: Beatmap): Promise<AudioBuffer> {
@@ -66,7 +33,11 @@ export class DummyEditorContext extends EditorContext {
   }
 
   protected async loadSkin(): Promise<Skin> {
-    return new Skin();
+    const skin = new Skin();
+
+    await skin.load();
+
+    return skin;
   }
 
   async updateSong(
