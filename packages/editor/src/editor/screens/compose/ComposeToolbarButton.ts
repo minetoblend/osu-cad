@@ -9,6 +9,8 @@ import {
   FillMode,
   HoverEvent,
   HoverLostEvent,
+  Key,
+  KeyDownEvent,
   MouseDownEvent,
   MouseUpEvent,
   RoundedBox,
@@ -21,7 +23,10 @@ import { Anchor, ButtonTrigger } from 'osucad-framework';
 import { UISamples } from '../../../UISamples';
 
 export class ComposeToolbarButton extends Button {
-  constructor(icon: Texture) {
+  constructor(
+    icon: Texture,
+    readonly keyBinding?: Key,
+  ) {
     super();
     this.relativeSizeAxes = Axes.Both;
     this.fillMode = FillMode.Fit;
@@ -43,11 +48,15 @@ export class ComposeToolbarButton extends Button {
         cornerRadius: 8,
         color: this.theme.translucent,
         alpha: 0.8,
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
       })),
       (this.#outline = new RoundedBox({
         relativeSizeAxes: Axes.Both,
         cornerRadius: 8,
         fillAlpha: 0,
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
       })),
       (this.#content = new FillFlowContainer({
         relativeSizeAxes: Axes.Both,
@@ -144,14 +153,59 @@ export class ComposeToolbarButton extends Button {
         },
       });
     }
+
+    if (this.#keyPressed || this.#mouseDown) {
+      gsap.to(this.#icon, {
+        scaleX: 0.85,
+        scaleY: 0.85,
+        duration: 0.3,
+        ease: 'power4.out',
+      });
+
+      // resizing the background and outline instead of main body to make sure layout isn't affected
+      gsap.to(this.#background, {
+        scaleX: 0.95,
+        scaleY: 0.95,
+        duration: 0.3,
+        ease: 'power4.out',
+      });
+      gsap.to(this.#outline, {
+        scaleX: 0.95,
+        scaleY: 0.95,
+        duration: 0.3,
+        ease: 'power4.out',
+      });
+    } else {
+      gsap.to(this.#icon, {
+        scaleX: 1,
+        scaleY: 1,
+        duration: 0.3,
+        ease: 'back.out',
+      });
+
+      gsap.to(this.#background, {
+        scaleX: 1,
+        scaleY: 1,
+        duration: 0.3,
+        ease: 'back.out',
+      });
+      gsap.to(this.#outline, {
+        scaleX: 1,
+        scaleY: 1,
+        duration: 0.3,
+        ease: 'back.out',
+      });
+    }
   }
 
   @resolved(UISamples)
   samples!: UISamples;
 
   onHover(e: HoverEvent): boolean {
+    this.samples.toolHover.play({
+      volume: 0.5,
+    });
     this.#updateState();
-    this.samples.toolHover.play();
     return true;
   }
 
@@ -163,23 +217,42 @@ export class ComposeToolbarButton extends Button {
   onMouseDown(e: MouseDownEvent): boolean {
     if (!super.onMouseDown(e)) return false;
     this.samples.toolSelect.play();
+    this.#mouseDown = true;
+    this.#updateState();
 
-    gsap.to(this.#icon, {
-      scaleX: 0.85,
-      scaleY: 0.85,
-      duration: 0.3,
-      ease: 'power4.out',
-    });
     return true;
   }
 
   onMouseUp(e: MouseUpEvent): boolean {
-    gsap.to(this.#icon, {
-      scaleX: 1,
-      scaleY: 1,
-      duration: 0.3,
-      ease: 'back.out',
-    });
+    this.#mouseDown = false;
+    this.#updateState();
+
     return true;
+  }
+
+  #mouseDown = false;
+
+  #keyPressed = false;
+
+  onKeyDown(e: KeyDownEvent): boolean {
+    if (this.keyBinding === e.key) {
+      this.action?.();
+      this.samples.toolSelect.play();
+      this.#keyPressed = true;
+      this.#updateState();
+
+      return true;
+    }
+    return false;
+  }
+
+  onKeyUp(e: KeyDownEvent): boolean {
+    if (this.keyBinding === e.key) {
+      this.#keyPressed = false;
+      this.#updateState();
+
+      return true;
+    }
+    return false;
   }
 }

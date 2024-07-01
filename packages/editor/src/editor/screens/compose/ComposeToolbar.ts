@@ -5,6 +5,7 @@ import {
   Container,
   FillDirection,
   FillFlowContainer,
+  Key,
   Vec2,
   dependencyLoader,
   resolved,
@@ -36,32 +37,36 @@ export class ComposeToolbar extends Container {
   @dependencyLoader()
   init() {
     this.#toolButtons.add(
-      new ComposeToolbarToolButton(
-        this.icons.select,
-        this.activeTool,
-        SelectTool,
-      ),
+      new ComposeToolbarToolButton({
+        icon: this.icons.select,
+        activeTool: this.activeTool,
+        tool: SelectTool,
+        keyBinding: Key.Digit1,
+      }),
     );
     this.#toolButtons.add(
-      new ComposeToolbarToolButton(
-        this.icons.circle,
-        this.activeTool,
-        HitCircleTool,
-      ),
+      new ComposeToolbarToolButton({
+        icon: this.icons.circle,
+        activeTool: this.activeTool,
+        tool: HitCircleTool,
+        keyBinding: Key.Digit2,
+      }),
     );
     this.#toolButtons.add(
-      new ComposeToolbarToolButton(
-        this.icons.slider,
-        this.activeTool,
-        SliderTool,
-      ),
+      new ComposeToolbarToolButton({
+        icon: this.icons.slider,
+        activeTool: this.activeTool,
+        tool: SliderTool,
+        keyBinding: Key.Digit3,
+      }),
     );
     this.#toolButtons.add(
-      new ComposeToolbarToolButton(
-        this.icons.spinner,
-        this.activeTool,
-        SpinnerTool,
-      ),
+      new ComposeToolbarToolButton({
+        icon: this.icons.spinner,
+        activeTool: this.activeTool,
+        tool: SpinnerTool,
+        keyBinding: Key.Digit4,
+      }),
     );
   }
 

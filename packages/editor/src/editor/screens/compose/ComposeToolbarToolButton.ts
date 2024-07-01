@@ -1,21 +1,30 @@
 import { NoArgsConstructor } from '@osucad/common';
-import { Bindable } from 'osucad-framework';
+import { Bindable, Key } from 'osucad-framework';
 import { Texture } from 'pixi.js';
 import { ComposeTool } from './tools/ComposeTool';
 import { ComposeToolbarButton } from './ComposeToolbarButton';
 
+export interface ComposeToolbarToolButtonOptions {
+  icon: Texture;
+  activeTool: Bindable<NoArgsConstructor<ComposeTool>>;
+  tool: NoArgsConstructor<ComposeTool>;
+  keyBinding?: Key;
+}
+
 export class ComposeToolbarToolButton extends ComposeToolbarButton {
-  constructor(
-    icon: Texture,
-    readonly activeTool: Bindable<NoArgsConstructor<ComposeTool>>,
-    readonly tool: NoArgsConstructor<ComposeTool>,
-  ) {
-    super(icon);
+  constructor(options: ComposeToolbarToolButtonOptions) {
+    super(options.icon, options.keyBinding);
+
+    this.activeTool = options.activeTool;
+    this.tool = options.tool;
 
     this.action = () => {
       this.activeTool.value = this.tool;
     };
   }
+
+  readonly activeTool: Bindable<NoArgsConstructor<ComposeTool>>;
+  readonly tool: NoArgsConstructor<ComposeTool>;
 
   init() {
     super.init();
