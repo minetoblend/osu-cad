@@ -199,8 +199,6 @@ export class Editor
   }
 
   onKeyBindingPressed(e: KeyBindingPressEvent<PlatformAction>): boolean {
-    console.log(e.pressed.name);
-
     switch (e.pressed) {
       case PlatformAction.Undo:
         this.context.commandHandler.undo();
