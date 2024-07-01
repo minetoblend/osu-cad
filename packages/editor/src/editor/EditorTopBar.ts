@@ -18,6 +18,7 @@ export class EditorTopBar extends Container {
       strength: 20,
       quality: 3,
       antialias: 'on',
+      resolution: devicePixelRatio,
     });
     filter.padding = 30;
 
