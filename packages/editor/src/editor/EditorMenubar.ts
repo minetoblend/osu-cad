@@ -57,6 +57,15 @@ export class EditorMenubar extends EditorMenu {
             text: 'Redo',
             action: () => this.commandHandler.redo(),
           })),
+          new MenuItem({
+            text: 'Cut',
+          }),
+          new MenuItem({
+            text: 'Copy',
+          }),
+          new MenuItem({
+            text: 'Paste',
+          }),
         ],
       }),
       new MenuItem({
