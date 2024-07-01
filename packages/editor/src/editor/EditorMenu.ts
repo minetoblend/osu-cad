@@ -128,6 +128,20 @@ class DrawableEditorMenuItem extends DrawableMenuItem {
       relativeSizeAxes: Axes.Both,
     });
   }
+
+  @dependencyLoader()
+  load() {
+    this.item.disabled.addOnChangeListener(
+      (disabled) => {
+        if (disabled) {
+          this.foreground.alpha = 0.5;
+        } else {
+          this.foreground.alpha = 1;
+        }
+      },
+      { immediate: true },
+    );
+  }
 }
 
 class MenuItemContent extends Container {
