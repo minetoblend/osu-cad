@@ -6,6 +6,7 @@ import {
   IKeyBindingHandler,
   Key,
   KeyBindingPressEvent,
+  KeyDownEvent,
   PlatformAction,
   ScrollEvent,
   UIEvent,
@@ -21,7 +22,6 @@ import { EditorContext } from './context/EditorContext';
 import { EditorScreenType } from './screens/EditorScreenType';
 import { ComposeScreen } from './screens/compose/ComposeScreen';
 import { SetupScreen } from './screens/setup/SetupScreen';
-import { KeyDownEvent } from 'osucad-framework';
 
 export class Editor
   extends Container
