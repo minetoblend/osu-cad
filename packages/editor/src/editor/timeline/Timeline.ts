@@ -4,6 +4,9 @@ import {
   Axes,
   Box,
   Container,
+  DragEndEvent,
+  DragEvent,
+  DragStartEvent,
   PIXIContainer,
   dependencyLoader,
   resolved,
@@ -42,6 +45,8 @@ export class Timeline extends Container {
       })),
     );
 
+    this.addInternal(this.#dragBox);
+
     this.addInternal(
       new Box({
         width: 2,
@@ -60,6 +65,14 @@ export class Timeline extends Container {
 
     this.#updateTicks();
     this.#updateObjects();
+
+    if (this.isDragged) {
+      const startTime = Math.min(this.#dragStartTime, this.#dragEndTime);
+      const endTime = Math.max(this.#dragStartTime, this.#dragEndTime);
+
+      this.#dragBox.x = this.timeToPosition(startTime);
+      this.#dragBox.width = this.timeToPosition(endTime) - this.#dragBox.x;
+    }
   }
 
   #tickContainer!: PIXIContainer<TimelineTick>;
@@ -179,5 +192,32 @@ export class Timeline extends Container {
       duration: 0.15,
       ease: 'power2.out',
     });
+  }
+
+  #dragStartTime = 0;
+  #dragEndTime = 0;
+  #dragBox = new Box({
+    relativeSizeAxes: Axes.Y,
+    alpha: 0,
+  });
+
+  onDragStart(e: DragStartEvent): boolean {
+    this.#dragStartTime = this.positionToTime(e.mousePosition.x);
+    this.#dragEndTime = this.#dragStartTime;
+    this.#dragBox.alpha = 0.2;
+
+    return true;
+  }
+
+  onDrag(e: DragEvent): boolean {
+    this.#dragEndTime = this.positionToTime(e.mousePosition.x);
+
+    return true;
+  }
+
+  onDragEnd(e: DragEndEvent): boolean {
+    this.#dragBox.alpha = 0;
+
+    return true;
   }
 }
