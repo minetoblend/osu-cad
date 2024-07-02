@@ -48,10 +48,18 @@ export class CommandManager {
   #commandVersion = 0;
 
   submit(command: IEditorCommand, commit = true) {
-    this.#submit(command, true, commit);
+    this.#submit(command, true);
+
+    if (commit) {
+      this.commit();
+    }
   }
 
-  #submit(command: IEditorCommand, recordHistory = true, commit = false) {
+  commit() {
+    this.#commit();
+  }
+
+  #submit(command: IEditorCommand, recordHistory = true) {
     command.version = this.#commandVersion++;
     if (!this.beforeCommandSubmit(command)) return;
 
@@ -130,6 +138,8 @@ export class CommandManager {
       this.#redoStack.push(redoTransaction);
     }
 
+    this.#updateCanUndoRedo();
+
     return true;
   }
 
@@ -151,7 +161,27 @@ export class CommandManager {
       this.#undoStack.push(undoTransaction);
     }
 
+    this.#updateCanUndoRedo();
+
     return true;
+  }
+
+  #commit() {
+    if (this.#transaction.length === 0) {
+      return false;
+    }
+
+    this.#undoStack.push(this.#transaction);
+    this.#transaction = [];
+
+    this.#redoStack.length = 0;
+
+    return true;
+  }
+
+  #updateCanUndoRedo() {
+    this.canUndo.value = this.#undoStack.length > 0;
+    this.canRedo.value = this.#redoStack.length > 0;
   }
 }
 
