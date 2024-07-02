@@ -3,6 +3,7 @@ import {
   Anchor,
   Axes,
   Container,
+  DragEndEvent,
   DragEvent,
   FillMode,
   MouseButton,
@@ -16,6 +17,7 @@ import {
 import { Timeline } from './Timeline';
 import { EditorClock } from '../EditorClock';
 import { UIFonts } from '../UIFonts';
+import { CommandManager } from '../context/CommandManager';
 
 export class TimelineObject extends Container {
   constructor(readonly hitObject: HitObject) {
@@ -163,6 +165,9 @@ class TimelineObjectStartCircle extends Container {
   @resolved(Beatmap)
   beatmap!: Beatmap;
 
+  @resolved(CommandManager)
+  commandManager!: CommandManager;
+
   onDragStart(event: MouseUpEvent): boolean {
     return event.button === MouseButton.Left;
   }
@@ -176,13 +181,22 @@ class TimelineObjectStartCircle extends Container {
       parent.toLocalSpace(event.screenSpaceMousePosition).x,
     );
 
-    console.log(this.beatmap);
-
-    this.hitObject.startTime = this.beatmap.controlPoints.snap(
+    const snappedTime = this.beatmap.controlPoints.snap(
       time,
       this.editorClock.beatSnapDivisor.value,
     );
 
+    this.hitObject.update(
+      this.commandManager,
+      (it) => (it.startTime = snappedTime),
+      false,
+    );
+
+    return true;
+  }
+
+  onDragEnd(e: DragEndEvent): boolean {
+    this.commandManager.commit();
     return true;
   }
 }
@@ -243,6 +257,9 @@ class SliderEndCircle extends Container {
   @resolved(Beatmap)
   beatmap!: Beatmap;
 
+  @resolved(CommandManager)
+  commandManager!: CommandManager;
+
   onDrag(event: DragEvent): boolean {
     const parent = this.findClosestParentOfType(Timeline);
     if (!parent) {
@@ -257,7 +274,11 @@ class SliderEndCircle extends Container {
         (time - this.hitObject.startTime) / this.hitObject.spanDuration,
       );
 
-      this.hitObject.spans = Math.max(1, spans);
+      this.hitObject.update(
+        this.commandManager,
+        (it) => (it.spans = Math.max(1, spans)),
+        false,
+      );
     } else {
       const endTime = this.beatmap.controlPoints.snap(
         time,
@@ -265,15 +286,26 @@ class SliderEndCircle extends Container {
       );
       const targetDuration = endTime - this.hitObject.startTime;
 
-      this.hitObject.velocityOverride =
+      const velocityOverride =
         ((this.hitObject.velocity / this.hitObject.baseVelocity) *
           this.hitObject.duration) /
         targetDuration;
+
+      this.hitObject.update(
+        this.commandManager,
+        (it) => (it.velocityOverride = velocityOverride),
+        false,
+      );
     }
     return true;
   }
 
-  updateState() {
+  onDragEnd(e: DragEndEvent): boolean {
+    this.commandManager.commit();
+    return true;
+  }
+
+  protected updateState() {
     if (this.isHovered || this.isDragged) {
       this.overlay.alpha = 0.2;
     } else {
