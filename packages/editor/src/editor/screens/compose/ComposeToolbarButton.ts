@@ -132,7 +132,9 @@ export class ComposeToolbarButton extends Button {
     this.drawNode;
 
     if (this.active) {
-      this.#icon.color = 0x32d2ac;
+      this.#icon.color = this.isHovered
+        ? this.theme.primaryHighlight
+        : this.theme.primary;
 
       this.#background.color = 0x303038;
       gsap.to(this, {
@@ -144,7 +146,7 @@ export class ComposeToolbarButton extends Button {
       });
     } else {
       this.#background.color = 0x222228;
-      this.#icon.color = this.isHovered ? 0xffffff : 0xbbbec5;
+      this.#icon.color = this.isHovered ? 'white' : '#bbbec5';
       gsap.to(this, {
         outlineVisibility: 0,
         duration: 0.2,
