@@ -1,22 +1,23 @@
 import {
+  AudioManager,
   ClickEvent,
   Game,
   IVec2,
   dependencyLoader,
   isMobile,
+  resolved,
 } from 'osucad-framework';
-import { Editor } from './editor/Editor';
-import { Fit, ScalingContainer } from './editor/ScalingContainer';
-import { EditorContext } from './editor/context/EditorContext';
-import { ThemeColors } from './editor/ThemeColors';
-import { UIIcons } from './editor/UIIcons';
-import { UIFonts } from './editor/UIFonts';
-import { UISamples } from './UISamples';
-import { resolved } from 'osucad-framework';
-import { AudioManager } from 'osucad-framework';
-import { EditorMixer } from './editor/EditorMixer';
+import { RenderTarget } from 'pixi.js';
 import { MainCursorContainer } from './MainCursorContainer';
-import { RenderTarget, DynamicBitmapFont } from 'pixi.js';
+import { UISamples } from './UISamples';
+import { Editor } from './editor/Editor';
+import { EditorMixer } from './editor/EditorMixer';
+import { Fit, ScalingContainer } from './editor/ScalingContainer';
+import { ThemeColors } from './editor/ThemeColors';
+import { UIFonts } from './editor/UIFonts';
+import { UIIcons } from './editor/UIIcons';
+import { EditorContext } from './editor/context/EditorContext';
+import './editor/mixins/HitObjectMixin';
 
 RenderTarget.defaultOptions.depth = true;
 RenderTarget.defaultOptions.stencil = true;
