@@ -56,6 +56,13 @@ export class TimelineObject extends Container {
       this.add((this.endCircle = new SliderEndCircle(this.hitObject)));
     }
     this.add(this.startCircle);
+
+    this.hitObject.onUpdate.addListener(() => this.setup());
+    this.setup();
+  }
+
+  setup() {
+    this.startCircle.comboNumber = this.hitObject.indexInCombo;
   }
 
   timeline?: Timeline;
@@ -77,9 +84,9 @@ export class TimelineObject extends Container {
       ];
     this.body.fillColor = comboColor;
     this.startCircle.comboColor = comboColor;
-    if (this.endCircle) this.endCircle.comboColor = comboColor;
-
-    this.startCircle.comboNumber = this.hitObject.indexInCombo;
+    if (this.endCircle) {
+      this.endCircle.comboColor = comboColor;
+    }
 
     const radius = this.drawSize.y * 0.5;
     this.x = this.timeline.timeToPosition(this.hitObject.startTime) - radius;
@@ -144,9 +151,7 @@ class TimelineObjectStartCircle extends Container {
   comboNumberText!: SpriteText;
 
   set comboNumber(value: number) {
-    if (value.toString() !== this.comboNumberText.text) {
-      this.comboNumberText.text = (value + 1).toString();
-    }
+    this.comboNumberText.text = (value + 1).toString();
   }
 
   onHover(): boolean {
