@@ -1,7 +1,7 @@
 import { Beatmap } from '@osucad/common';
 import { Bindable, DependencyContainer, PIXITexture } from 'osucad-framework';
 import { Skin } from '../../skins/Skin';
-import { CommandHandler } from './CommandHandler';
+import { CommandManager } from './CommandManager';
 
 export abstract class EditorContext {
   // #region Beatmap
@@ -18,18 +18,18 @@ export abstract class EditorContext {
   // #endregion
 
   // #region CommandHandler
-  protected createCommandHandler(beatmap: Beatmap): CommandHandler {
-    return new CommandHandler(this, beatmap);
+  protected createCommandHandler(beatmap: Beatmap): CommandManager {
+    return new CommandManager(this, beatmap);
   }
 
-  get commandHandler(): CommandHandler {
+  get commandHandler(): CommandManager {
     if (!this.#commandHandler) {
       throw new Error('Command handler not created');
     }
     return this.#commandHandler;
   }
 
-  #commandHandler: CommandHandler | null = null;
+  #commandHandler: CommandManager | null = null;
   // #endregion
 
   // #region Song
@@ -118,6 +118,6 @@ export abstract class EditorContext {
     dependencies.provide(EditorContext, this);
     dependencies.provide(Beatmap, this.beatmap);
     dependencies.provide(Skin, this.skin);
-    dependencies.provide(CommandHandler, this.commandHandler);
+    dependencies.provide(CommandManager, this.commandHandler);
   }
 }
