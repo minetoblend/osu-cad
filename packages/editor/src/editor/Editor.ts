@@ -10,6 +10,7 @@ import {
   PlatformAction,
   ScrollEvent,
   UIEvent,
+  clamp,
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
@@ -108,6 +109,11 @@ export class Editor
 
   onScroll(e: ScrollEvent): boolean {
     const y = e.scrollDelta.y;
+
+    if (e.controlPressed) {
+      this.changeBeatSnapDivisor(-Math.sign(e.scrollDelta.y));
+      return true;
+    }
 
     const amount = e.controlPressed ? 4 : 1;
 
@@ -242,5 +248,25 @@ export class Editor
 
   paste() {
     console.log('paste');
+  }
+
+  changeBeatSnapDivisor(change: number) {
+    let possibleSnapValues = [1, 2, 4, 8, 16];
+    if (this.#clock.beatSnapDivisor.value % 3 === 0) {
+      possibleSnapValues = [1, 2, 3, 6, 12, 16];
+    }
+
+    let index = possibleSnapValues.findIndex(
+      (it) => it >= this.#clock.beatSnapDivisor.value,
+    );
+
+    if (index === -1) {
+      index = 0;
+    }
+
+    this.#clock.beatSnapDivisor.value =
+      possibleSnapValues[
+        clamp(index + change, 0, possibleSnapValues.length - 1)
+      ];
   }
 }

@@ -124,7 +124,7 @@ export class Timeline extends Container {
     const ticks = this.controlPoints.getTicks(
       this.startTime,
       this.endTime,
-      4, //this.clock.beatSnapDivisor,
+      this.editorClock.beatSnapDivisor.value,
     );
 
     for (let i = this.#tickContainer.children.length; i < ticks.length; i++) {
