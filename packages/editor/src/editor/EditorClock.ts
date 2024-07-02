@@ -107,6 +107,8 @@ export class EditorClock
         elapsed: currentTime - lastTime,
       };
 
+      this.currentTimeBindable.value = currentTime;
+
       this.#lastSeekWasAnimated = false;
     } else {
       const lastTime = this.currentTime;
@@ -124,6 +126,8 @@ export class EditorClock
         current: currentTime,
         elapsed: currentTime - lastTime,
       };
+
+      this.currentTimeBindable.value = currentTime;
     }
 
     if (this.currentTime >= this.track.length) {
@@ -145,6 +149,8 @@ export class EditorClock
     current: 0,
     elapsed: 0,
   };
+
+  currentTimeBindable = new Bindable(0);
 
   get elapsedFrameTime(): number {
     return this.#frameTimeInfo.elapsed;
