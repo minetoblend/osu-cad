@@ -32,7 +32,9 @@ export class ComposeScreen extends EditorScreen {
   init() {
     this.add((this.#playfieldContainer = new PlayfieldContainer()));
     this.add((this.#leftToolbar = new ComposeToolbar(this.#activeTool)));
-    this.add((this.#composer = new HitObjectComposer(this.#activeTool)));
+    this.#playfieldContainer.add(
+      (this.#composer = new HitObjectComposer(this.#activeTool)),
+    );
   }
 
   update(): void {
