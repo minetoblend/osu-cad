@@ -6,17 +6,15 @@ import {
   Direction,
   Drawable,
   DrawableMenuItem,
-  Menu,
   MenuItem,
   RoundedBox,
   SpriteText,
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import { DropShadowFilter } from 'pixi-filters';
 import { EditorMenu } from './EditorMenu';
 import { UIFonts } from './UIFonts';
-import { CommandHandler } from './context/CommandHandler';
+import { CommandManager } from './context/CommandManager';
 
 export class EditorMenubar extends EditorMenu {
   constructor() {
@@ -81,8 +79,8 @@ export class EditorMenubar extends EditorMenu {
 
   #redoItem!: MenuItem;
 
-  @resolved(CommandHandler)
-  commandHandler!: CommandHandler;
+  @resolved(CommandManager)
+  commandHandler!: CommandManager;
 
   override load() {
     super.load();
