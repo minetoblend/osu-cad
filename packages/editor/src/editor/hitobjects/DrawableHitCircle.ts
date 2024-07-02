@@ -19,6 +19,8 @@ export class DrawableHitCircle extends DrawableHitObject<HitCircle> {
     this.addAll(
       (this.circlePiece = new CirclePiece()),
       (this.approachCircle = new ApproachCircle()),
+    );
+    this.circlePiece.add(
       (this.comboNumber = new DrawableComboNumber(this.hitObject.indexInCombo)),
     );
 
@@ -39,7 +41,5 @@ export class DrawableHitCircle extends DrawableHitObject<HitCircle> {
 
   update() {
     super.update();
-
-    this.comboNumber.alpha = this.circlePiece.alpha;
   }
 }

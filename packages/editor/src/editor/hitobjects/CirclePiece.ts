@@ -1,15 +1,14 @@
 import {
   Anchor,
-  CompositeDrawable,
+  Container,
   DrawableSprite,
-  Vec2,
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
 import { Skin } from '../../skins/Skin';
 import { animate } from '../../utils/animate';
 
-export class CirclePiece extends CompositeDrawable {
+export class CirclePiece extends Container {
   constructor() {
     super();
 

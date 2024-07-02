@@ -26,10 +26,13 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
       (this.sliderBody = new DrawableSliderBody(this.hitObject)),
       (this.tailCircle = new CirclePiece()),
       (this.headCircle = new CirclePiece()),
-      (this.comboNumber = new DrawableComboNumber(this.hitObject.indexInCombo)),
       (this.approachCircle = new ApproachCircle()),
       (this.sliderBall = new DrawableSliderBall()),
     );
+    this.headCircle.add(
+      (this.comboNumber = new DrawableComboNumber(this.hitObject.indexInCombo)),
+    );
+
     super.load();
   }
 
@@ -85,7 +88,6 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
         0,
       );
     }
-    this.comboNumber.alpha = this.headCircle.alpha;
 
     const position = this.hitObject.positionAt(this.time.current);
     this.sliderBall.position = Vec2.scale(position, 1 / this.hitObject.scale);
