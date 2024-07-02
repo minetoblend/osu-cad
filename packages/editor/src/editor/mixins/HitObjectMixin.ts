@@ -20,24 +20,17 @@ export interface HitObjectMixins {
 const hitObjectMixins: HitObjectMixins = {
   update(this: HitObject, commandManager, updateFn, commit = true) {
     const cloned = deserializeHitObject(this.serialize());
-    const setKeys = new Set<string>();
 
-    const proxy = new Proxy(cloned, {
-      set: (target, prop, value) => {
-        setKeys.add(prop as string);
-
-        return Reflect.set(target, prop, value);
-      },
-    });
-
-    updateFn(proxy);
+    updateFn(cloned);
 
     const patch = {} as Partial<HitObject> & any;
 
     const fullPatch = cloned.serialize();
 
-    for (const key of setKeys) {
-      patch[key] = (fullPatch as any)[key];
+    for (const key in fullPatch) {
+      if ((fullPatch as any)[key] !== (this as any)[key]) {
+        patch[key] = (fullPatch as any)[key];
+      }
     }
 
     commandManager.submit(new UpdateHitObjectCommand(this, patch), commit);
