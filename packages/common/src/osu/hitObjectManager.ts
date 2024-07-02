@@ -76,7 +76,7 @@ export class HitObjectManager {
 
   private _onRemove(hitObject: HitObject) {
     this._hitObjectMap.delete(hitObject.id);
-    hitObject.onUpdate.removeListeners();
+    hitObject.onUpdate.removeAllListeners();
     this.stackingDirty = true;
     this.calculateCombos();
     this.onRemoved.emit(hitObject);
