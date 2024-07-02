@@ -116,9 +116,11 @@ export class HitObjectManager {
         comboIndex += 1 + hitObject.comboOffset;
         indexInCombo = 0;
       }
-      preventNewCombo = hitObject instanceof Spinner;
+      preventNewCombo = false;
+
       hitObject.comboIndex = comboIndex;
       hitObject.indexInCombo = indexInCombo;
+
       indexInCombo++;
       hitObject.onUpdate.emit('combo');
     }
