@@ -1,6 +1,7 @@
 import {
   Beatmap,
   CommandContext,
+  CommandHandler,
   IEditorCommand,
   getCommandHandler,
 } from '@osucad/common';
@@ -49,12 +50,17 @@ export class CommandManager {
 
   #commandVersion = 0;
 
-  submit(command: IEditorCommand, commit = true) {
-    this.#submit(command, true);
+  submit<T>(
+    command: IEditorCommand<CommandHandler<any, T>>,
+    commit = true,
+  ): T | undefined {
+    const result = this.#submit(command, true);
 
     if (commit) {
       this.commit();
     }
+
+    return result;
   }
 
   commit() {
@@ -62,34 +68,40 @@ export class CommandManager {
     this.#updateCanUndoRedo();
   }
 
-  #submit(command: IEditorCommand, recordHistory = true) {
+  #submit<T>(
+    command: IEditorCommand<CommandHandler<any, T>>,
+    recordHistory = true,
+  ): T | undefined {
     command.version = this.#commandVersion++;
-    if (!this.beforeCommandSubmit(command)) return;
+    if (!this.beforeCommandSubmit(command)) return undefined;
 
     if (recordHistory) {
       this.#record(command);
     }
 
-    if (this.#apply(command)) {
-      this.afterCommandSubmit(command);
-    }
+    const result = this.#apply(command);
+    this.afterCommandSubmit(command);
+
+    return result;
   }
 
-  #apply(command: IEditorCommand): boolean {
+  #apply<T>(command: IEditorCommand<CommandHandler<any, T>>): T | undefined {
     const handler = getCommandHandler(command);
 
     if (!handler) {
       console.error(`No handler found for command ${command.type}`);
-      return false;
+      return undefined;
     }
 
-    if (handler.canBeIgnored(this.context, command)) return false;
+    if (handler.canBeIgnored(this.context, command)) {
+      return undefined;
+    }
 
-    handler.apply(this.context, command, 'local');
+    const result = handler.apply(this.context, command, 'local');
 
     this.afterCommandApplied(command);
 
-    return true;
+    return result;
   }
 
   #transaction: HistoryEntry[] = [];
