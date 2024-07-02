@@ -4,6 +4,7 @@ import { IEditorCommand } from './IEditorCommand';
 import { BaseCommand } from './BaseEditorCommand';
 import { SerializedHitObject } from '../types';
 import { HitObject } from '../osu';
+import { registerCommand } from './commandHandlerts';
 
 export type HitObjectPatch = Partial<
   Omit<SerializedHitObject, 'id' | 'attribution'>
@@ -28,6 +29,12 @@ export class UpdateHitObjectCommand extends BaseCommand {
 
     this.patch = patch;
   }
+}
+
+const key = Symbol('pendingInfo');
+
+interface PendingInfo {
+  [key: string]: number;
 }
 
 export class UpdateHitObjectHandler extends CommandHandler<IUpdateHitObjectCommand> {
@@ -124,8 +131,4 @@ export class UpdateHitObjectHandler extends CommandHandler<IUpdateHitObjectComma
   }
 }
 
-const key = Symbol('pendingInfo');
-
-interface PendingInfo {
-  [key: string]: number;
-}
+registerCommand(new UpdateHitObjectHandler());
