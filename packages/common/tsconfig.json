@@ -9,6 +9,7 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "strictNullChecks": true,
+    "noUnusedParameters": false,
     "lib": ["ES2019", "dom"]
   },
   "include": ["src/**/*"],

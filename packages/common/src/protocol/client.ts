@@ -1,11 +1,6 @@
 import { UserId } from './user';
 import { Presence } from './presence';
-import { EditorCommand } from './commands';
-
-export type VersionedEditorCommand = {
-  command: EditorCommand;
-  version: number;
-};
+import { IEditorCommand } from '../commands';
 
 export interface ClientMessages {
   sendChatMessage(message: string): void;
@@ -16,7 +11,7 @@ export interface ClientMessages {
 
   setPresence(presence: Presence): void;
 
-  commands(commands: Uint8Array): void;
+  commands(commands: IEditorCommand[]): void;
 
   kickUser(id: UserId, reason: string, isBan: boolean): void;
 }

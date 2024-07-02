@@ -2,6 +2,7 @@ import { UserSessionInfo } from './user';
 import { BeatmapAccess, SerializedBeatmap } from './beatmap';
 import { ChatHistory, ChatMessage } from './chat';
 import { UserActivity } from './presence';
+import { IEditorCommand } from '../commands';
 
 type LeaveReason = 'disconnected' | 'kicked' | 'banned';
 
@@ -28,7 +29,7 @@ export interface ServerMessages {
 
   userActivity(sessionId: number, activity: UserActivity): void;
 
-  commands(commands: Uint8Array, sessionId: number): void;
+  commands(commands: IEditorCommand[], sessionId: number): void;
 
   accessChanged(access: BeatmapAccess): void;
 }
