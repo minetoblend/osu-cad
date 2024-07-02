@@ -57,6 +57,7 @@ export class CommandManager {
 
   commit() {
     this.#commit();
+    this.#updateCanUndoRedo();
   }
 
   #submit(command: IEditorCommand, recordHistory = true) {
