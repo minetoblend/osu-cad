@@ -116,7 +116,7 @@ export class EditorClock
         clamp(this.parent!.clock.elapsedFrameTime * 0.015),
       );
 
-      if (almostEquals(currentTime, this.#targetTime, 0.001)) {
+      if (almostEquals(currentTime, this.#targetTime, 3)) {
         currentTime = this.#targetTime;
       }
 
