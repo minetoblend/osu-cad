@@ -14,6 +14,7 @@ import {
   MouseUpEvent,
   Vec2,
   almostEquals,
+  clamp,
   dependencyLoader,
 } from 'osucad-framework';
 import { ComposeTool } from './ComposeTool';
@@ -67,7 +68,7 @@ export class HitCircleTool extends ComposeTool {
 
   #createPreviewCircle() {
     const circle = new HitCircle();
-    circle.position = this.mousePosition;
+    circle.position = this.#clampToPlayfieldBounds(this.mousePosition);
     circle.startTime = this.editorClock.currentTime;
 
     this.hitObjects.add(circle);
@@ -79,7 +80,7 @@ export class HitCircleTool extends ComposeTool {
 
   onMouseMove(e: MouseMoveEvent): boolean {
     this.#updateObject((object) => {
-      object.position = e.mousePosition;
+      object.position = this.#clampToPlayfieldBounds(this.mousePosition);
     });
 
     return false;
@@ -158,6 +159,10 @@ export class HitCircleTool extends ComposeTool {
     this.hitObjects.remove(this.#hitObject);
 
     return true;
+  }
+
+  #clampToPlayfieldBounds(position: Vec2) {
+    return new Vec2(clamp(position.x, 0, 512), clamp(position.y, 0, 384));
   }
 }
 
