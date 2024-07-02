@@ -57,6 +57,15 @@ export class EditorMenubar extends EditorMenu {
             text: 'Redo',
             action: () => this.commandHandler.redo(),
           })),
+          new MenuItem({
+            text: 'Cut',
+          }),
+          new MenuItem({
+            text: 'Copy',
+          }),
+          new MenuItem({
+            text: 'Paste',
+          }),
         ],
       }),
       new MenuItem({
@@ -90,20 +99,6 @@ export class EditorMenubar extends EditorMenu {
 
   protected override createDrawableMenuItem(item: MenuItem): DrawableMenuItem {
     return new DrawableEditorMenubarItem(item);
-  }
-
-  protected createSubmenu(): Menu {
-    const menu = super.createSubmenu();
-
-    menu.filters = [
-      new DropShadowFilter({
-        alpha: 0.25,
-        offset: { x: 0, y: 2 },
-        quality: 2,
-      }),
-    ];
-
-    return menu;
   }
 }
 

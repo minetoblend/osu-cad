@@ -1,5 +1,4 @@
 import {
-  Anchor,
   Axes,
   Bindable,
   Container,
@@ -10,18 +9,16 @@ import {
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import { ComposeToolbarButton } from './ComposeToolbarButton';
 import { UIIcons } from '../../UIIcons';
-import { NoArgsConstructor } from '@osucad/common';
-import { ComposeTool } from './tools/ComposeTool';
+import { ToolConstructor } from './ComposeScreen';
 import { ComposeToolbarToolButton } from './ComposeToolbarToolButton';
-import { SelectTool } from './tools/SelectTool';
 import { HitCircleTool } from './tools/HitCircleTool';
+import { SelectTool } from './tools/SelectTool';
 import { SliderTool } from './tools/SliderTool';
 import { SpinnerTool } from './tools/SpinnerTool';
 
 export class ComposeToolbar extends Container {
-  constructor(readonly activeTool: Bindable<NoArgsConstructor<ComposeTool>>) {
+  constructor(protected readonly activeTool: Bindable<ToolConstructor>) {
     super({
       width: 54,
       relativeSizeAxes: Axes.Y,

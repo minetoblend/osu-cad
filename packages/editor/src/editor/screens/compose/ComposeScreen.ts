@@ -7,10 +7,12 @@ import {
 } from 'osucad-framework';
 import { PlayfieldContainer } from '../../playfield/PlayfieldContainer';
 import { EditorScreen } from '../EditorScreen';
-import { ComposeTool } from './tools/ComposeTool';
 import { ComposeToolbar } from './ComposeToolbar';
 import { HitObjectComposer } from './HitObjectComposer';
+import { ComposeTool } from './tools/ComposeTool';
 import { SelectTool } from './tools/SelectTool';
+
+export type ToolConstructor = NoArgsConstructor<ComposeTool>;
 
 export class ComposeScreen extends EditorScreen {
   constructor() {
@@ -24,13 +26,13 @@ export class ComposeScreen extends EditorScreen {
   #leftToolbar!: ComposeToolbar;
   #composer!: HitObjectComposer;
 
-  #activeTool = new Bindable<NoArgsConstructor<ComposeTool>>(SelectTool);
+  #activeTool = new Bindable<ToolConstructor>(SelectTool);
 
   @dependencyLoader()
   init() {
     this.add((this.#playfieldContainer = new PlayfieldContainer()));
     this.add((this.#leftToolbar = new ComposeToolbar(this.#activeTool)));
-    this.add((this.#composer = new HitObjectComposer()));
+    this.add((this.#composer = new HitObjectComposer(this.#activeTool)));
   }
 
   update(): void {
