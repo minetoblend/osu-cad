@@ -5,7 +5,7 @@ import { BaseCommand } from './BaseEditorCommand';
 import { registerCommand } from './commandHandlerts';
 import { DeleteHitObjectCommand } from './DeleteHitObjectCommand';
 import { SerializedHitObject } from '../types';
-import { HitObject, deserializeHitObject } from '../osu';
+import { HitObject, deserializeHitObject, hitObjectId } from '../osu';
 
 export interface ICreateHitObjectCommand extends IEditorCommand {
   hitObject: SerializedHitObject;
@@ -23,6 +23,10 @@ export class CreateHitObjectCommand
 
     if (hitObject instanceof HitObject) {
       hitObject = hitObject.serialize();
+    }
+
+    if (!hitObject.id) {
+      hitObject.id = hitObjectId();
     }
 
     this.hitObject = hitObject;
@@ -52,11 +56,7 @@ export class CreateHitObjectHandler extends CommandHandler<ICreateHitObjectComma
     command: ICreateHitObjectCommand,
   ): IEditorCommand | null {
     if (command.hitObject.id) {
-      const hitObject = hitObjects.getById(command.hitObject.id);
-
-      if (hitObject) {
-        return new DeleteHitObjectCommand(hitObject.id);
-      }
+      return new DeleteHitObjectCommand(command.hitObject.id);
     }
 
     return null;
