@@ -16,9 +16,10 @@ import { resolved } from 'osucad-framework';
 import { AudioManager } from 'osucad-framework';
 import { EditorMixer } from './editor/EditorMixer';
 import { MainCursorContainer } from './MainCursorContainer';
-import { RenderTarget } from 'pixi.js';
+import { RenderTarget, DynamicBitmapFont } from 'pixi.js';
 
 RenderTarget.defaultOptions.depth = true;
+RenderTarget.defaultOptions.stencil = true;
 
 export class OsucadGame extends Game {
   constructor(readonly context: EditorContext) {
