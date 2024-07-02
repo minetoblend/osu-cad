@@ -26,6 +26,10 @@ export abstract class ComposeTool extends CommandContainer {
     return this.toLocalSpace(this.inputManager.currentState.mouse.position);
   }
 
+  get beatSnapDivisor() {
+    return this.editorClock.beatSnapDivisor.value;
+  }
+
   @resolved(Beatmap)
   protected readonly beatmap!: Beatmap;
 
