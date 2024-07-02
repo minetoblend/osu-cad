@@ -1,14 +1,14 @@
 import { CommandContext } from './CommandContext';
 import type { IEditorCommand } from './IEditorCommand';
 
-export abstract class CommandHandler<T extends IEditorCommand> {
+export abstract class CommandHandler<T extends IEditorCommand, TResult = void> {
   abstract get command(): string;
 
   abstract apply(
     ctx: CommandContext,
     command: T,
     source: 'local' | 'remote',
-  ): void;
+  ): TResult;
 
   acknowledge(ctx: CommandContext, command: T): void {}
 

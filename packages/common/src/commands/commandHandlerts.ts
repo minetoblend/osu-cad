@@ -13,8 +13,8 @@ export function registerCommand(handler: CommandHandler<any>) {
   console.debug(`Registered command handler for '${handler.command}'`);
 }
 
-export function getCommandHandler<T extends IEditorCommand>(
-  command: T,
-): CommandHandler<T> | null {
-  return commandHandlers[command.type] as CommandHandler<T> | null;
+export function getCommandHandler<T extends CommandHandler<any>>(
+  command: IEditorCommand<T>,
+): T | null {
+  return commandHandlers[command.type] as T | null;
 }

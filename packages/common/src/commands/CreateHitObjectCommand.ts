@@ -7,7 +7,8 @@ import { DeleteHitObjectCommand } from './DeleteHitObjectCommand';
 import { SerializedHitObject } from '../types';
 import { HitObject, deserializeHitObject, hitObjectId } from '../osu';
 
-export interface ICreateHitObjectCommand extends IEditorCommand {
+export interface ICreateHitObjectCommand
+  extends IEditorCommand<CreateHitObjectHandler> {
   hitObject: SerializedHitObject;
 }
 
@@ -33,7 +34,10 @@ export class CreateHitObjectCommand
   }
 }
 
-export class CreateHitObjectHandler extends CommandHandler<ICreateHitObjectCommand> {
+export class CreateHitObjectHandler extends CommandHandler<
+  ICreateHitObjectCommand,
+  HitObject
+> {
   override get command() {
     return 'createHitObject';
   }
@@ -41,7 +45,7 @@ export class CreateHitObjectHandler extends CommandHandler<ICreateHitObjectComma
   override apply(
     { hitObjects }: CommandContext,
     command: ICreateHitObjectCommand,
-  ): void {
+  ): HitObject {
     const hitObject = deserializeHitObject(command.hitObject);
 
     if (hitObjects.getById(hitObject.id)) {
@@ -49,6 +53,8 @@ export class CreateHitObjectHandler extends CommandHandler<ICreateHitObjectComma
     }
 
     hitObjects.add(hitObject);
+
+    return hitObject;
   }
 
   override createUndoCommand(
