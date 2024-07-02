@@ -45,6 +45,8 @@ export class CommandManager {
 
   protected afterCommandSubmit(command: IEditorCommand) {}
 
+  protected afterCommandApplied(command: IEditorCommand) {}
+
   #commandVersion = 0;
 
   submit(command: IEditorCommand, commit = true) {
@@ -64,14 +66,16 @@ export class CommandManager {
     command.version = this.#commandVersion++;
     if (!this.beforeCommandSubmit(command)) return;
 
-    this.#record(command);
+    if (recordHistory) {
+      this.#record(command);
+    }
 
-    if (this.#handle(command)) {
+    if (this.#apply(command)) {
       this.afterCommandSubmit(command);
     }
   }
 
-  #handle(command: IEditorCommand): boolean {
+  #apply(command: IEditorCommand): boolean {
     const handler = getCommandHandler(command);
 
     if (!handler) {
@@ -82,6 +86,9 @@ export class CommandManager {
     if (handler.canBeIgnored(this.context, command)) return false;
 
     handler.apply(this.context, command, 'local');
+
+    this.afterCommandApplied(command);
+
     return true;
   }
 
