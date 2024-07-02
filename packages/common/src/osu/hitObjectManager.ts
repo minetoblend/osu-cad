@@ -109,11 +109,14 @@ export class HitObjectManager {
   private calculateCombos() {
     let comboIndex = 0;
     let indexInCombo = 0;
+
+    let preventNewCombo = true;
     for (const hitObject of this.hitObjects) {
-      if (hitObject.isNewCombo) {
+      if (hitObject.isNewCombo && !preventNewCombo) {
         comboIndex += 1 + hitObject.comboOffset;
         indexInCombo = 0;
       }
+      preventNewCombo = hitObject instanceof Spinner;
       hitObject.comboIndex = comboIndex;
       hitObject.indexInCombo = indexInCombo;
       indexInCombo++;
