@@ -115,7 +115,7 @@ export class Editor
       return true;
     }
 
-    const amount = e.controlPressed ? 4 : 1;
+    const amount = e.shiftPressed ? 4 : 1;
 
     this.#clock.seekBeats(
       Math.sign(y),
