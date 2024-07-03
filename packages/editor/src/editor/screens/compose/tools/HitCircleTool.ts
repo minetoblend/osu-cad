@@ -2,10 +2,13 @@ import {
   CreateHitObjectCommand,
   DeleteHitObjectCommand,
   HitCircle,
-  UpdateHitObjectCommand,
   hitObjectId,
+  UpdateHitObjectCommand,
 } from '@osucad/common';
 import {
+  almostEquals,
+  clamp,
+  dependencyLoader,
   DragEvent,
   DragStartEvent,
   MouseButton,
@@ -13,9 +16,6 @@ import {
   MouseMoveEvent,
   MouseUpEvent,
   Vec2,
-  almostEquals,
-  clamp,
-  dependencyLoader,
 } from 'osucad-framework';
 import { ComposeTool } from './ComposeTool';
 
@@ -24,8 +24,9 @@ export class HitCircleTool extends ComposeTool {
     super();
   }
 
-  #hitObject!: HitCircle;
   #state: PlacementState = PlacementState.Preview;
+
+  #hitObject!: HitCircle;
 
   @dependencyLoader()
   load() {
@@ -34,10 +35,6 @@ export class HitCircleTool extends ComposeTool {
         this.#updateHitObjectTime();
       }
     });
-  }
-
-  receivePositionalInputAt(screenSpacePosition: Vec2): boolean {
-    return true;
   }
 
   update(): void {
