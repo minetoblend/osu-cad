@@ -9,6 +9,7 @@ export class DrawableComboNumber extends Drawable {
     super();
     this._number = number;
     this._update();
+    this.scale.set(0.65)
   }
 
   public get number(): number {
