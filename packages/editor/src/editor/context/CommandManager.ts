@@ -2,8 +2,8 @@ import {
   Beatmap,
   CommandContext,
   CommandHandler,
-  IEditorCommand,
   getCommandHandler,
+  IEditorCommand,
 } from '@osucad/common';
 import { EditorContext } from './EditorContext';
 import { Bindable } from 'osucad-framework';
@@ -38,6 +38,19 @@ export class CommandManager {
 
   redo(): boolean {
     return this.#redo();
+  }
+
+  undoCurrentTransaction() {
+    const transaction = this.#transaction;
+    for (const { reverse } of transaction) {
+      if (!reverse) {
+        continue;
+      }
+
+      this.#submit(reverse, false);
+    }
+
+    this.#transaction.length = 0;
   }
 
   protected beforeCommandSubmit(command: IEditorCommand): boolean {
