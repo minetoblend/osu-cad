@@ -16,13 +16,16 @@ export class HitObjectComposer extends Container {
   load() {
     this.addInternal(this.#toolContainer);
 
-    this.activeTool.addOnChangeListener((tool) => {
-      if (
-        this.#toolContainer.children.length === 0 ||
-        !(this.#toolContainer.child instanceof tool)
-      ) {
-        this.#toolContainer.child = new tool();
-      }
-    });
+    this.activeTool.addOnChangeListener(
+      (tool) => {
+        if (
+          this.#toolContainer.children.length === 0 ||
+          !(this.#toolContainer.child instanceof tool)
+        ) {
+          this.#toolContainer.child = new tool();
+        }
+      },
+      { immediate: true },
+    );
   }
 }
