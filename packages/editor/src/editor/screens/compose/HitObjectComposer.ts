@@ -68,6 +68,18 @@ export class HitObjectComposer
       case EditorAction.ToggleNewCombo:
         this.#toggleNewCombo();
         return true;
+      case EditorAction.NudgeUp:
+        this.#nudgePosition(0, -1);
+        return true;
+      case EditorAction.NudgeDown:
+        this.#nudgePosition(0, 1);
+        return true;
+      case EditorAction.NudgeLeft:
+        this.#nudgePosition(-1, 0);
+        return true;
+      case EditorAction.NudgeRight:
+        this.#nudgePosition(1, 0);
+        return true;
     }
 
     return false;
@@ -102,6 +114,19 @@ export class HitObjectComposer
           false,
         );
       }
+    }
+
+    this.commandManager.commit();
+  }
+
+  #nudgePosition(dx: number, dy: number) {
+    for (const object of this.selection.selectedObjects) {
+      this.commandManager.submit(
+        new UpdateHitObjectCommand(object, {
+          position: object.position.add({ x: dx, y: dy }),
+        }),
+        false,
+      );
     }
 
     this.commandManager.commit();
