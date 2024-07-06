@@ -68,6 +68,8 @@ export class OsucadGame extends Game {
     const samples = new UISamples(this.audioManager, mixer.userInterface);
     this.dependencies.provide(samples);
 
+    mixer.userInterface.volume = 0.25;
+
     await Promise.all([
       this.context.load(),
       icons.load(),
