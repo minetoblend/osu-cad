@@ -17,6 +17,7 @@ export class EditorActionContainer extends KeyBindingContainer<EditorAction> {
   override get defaultKeyBindings(): IKeyBinding[] {
     return [
       new KeyBinding(KeyCombination.from(InputKey.Space), EditorAction.Play),
+      new KeyBinding(KeyCombination.from(InputKey.C), EditorAction.Play),
       new KeyBinding(
         KeyCombination.from(InputKey.Control, InputKey.H),
         EditorAction.FlipHorizontal,
