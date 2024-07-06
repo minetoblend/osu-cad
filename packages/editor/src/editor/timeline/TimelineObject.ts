@@ -145,10 +145,9 @@ export class TimelineObject extends Container {
       if (!this.selection.isSelected(this.hitObject)) {
         this.selection.select([this.hitObject]);
       }
-
-      return true;
     }
-    return false;
+
+    return true;
   }
 
   onDragStart(event: MouseUpEvent): boolean {
@@ -250,12 +249,12 @@ class TimelineObjectStartCircle extends Container {
 
   onHover(): boolean {
     this.overlay.alpha = 0.2;
-    return false;
+    return true;
   }
 
   onHoverLost(): boolean {
     this.overlay.alpha = 0;
-    return false;
+    return true;
   }
 }
 
@@ -294,6 +293,10 @@ class SliderEndCircle extends Container {
     this.circle.fillColor = value;
   }
 
+  onMouseDown(): boolean {
+    return true;
+  }
+
   onDragStart(event: DragStartEvent): boolean {
     this.updateState();
     return event.button === MouseButton.Left;
@@ -301,12 +304,12 @@ class SliderEndCircle extends Container {
 
   onHover(): boolean {
     this.updateState();
-    return false;
+    return true;
   }
 
   onHoverLost(): boolean {
     this.updateState();
-    return false;
+    return true;
   }
 
   @resolved(EditorClock)
