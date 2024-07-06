@@ -74,6 +74,8 @@ class SelectionOverlayObject extends CompositeDrawable {
   #onUpdate = () => {
     this.position = this.hitObject.stackedPosition;
 
+    this.drawNode.zIndex = -this.hitObject.startTime;
+
     if (this.#startCircle) {
       this.#startCircle.scale = this.hitObject.scale;
     }

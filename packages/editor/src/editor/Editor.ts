@@ -2,17 +2,17 @@ import {
   AudioManager,
   Axes,
   Bindable,
+  clamp,
   Container,
+  dependencyLoader,
   IKeyBindingHandler,
   Key,
   KeyBindingPressEvent,
   KeyDownEvent,
   PlatformAction,
+  resolved,
   ScrollEvent,
   UIEvent,
-  clamp,
-  dependencyLoader,
-  resolved,
 } from 'osucad-framework';
 import { EditorBottomBar } from './EditorBottomBar';
 import { EditorClock } from './EditorClock';
@@ -24,10 +24,12 @@ import { EditorScreenType } from './screens/EditorScreenType';
 import { ComposeScreen } from './screens/compose/ComposeScreen';
 import { SetupScreen } from './screens/setup/SetupScreen';
 import { EditorSelection } from './screens/compose/EditorSelection';
+import { EditorAction } from './EditorAction';
+import { EditorActionContainer } from './EditorActionContainer';
 
 export class Editor
   extends Container
-  implements IKeyBindingHandler<PlatformAction>
+  implements IKeyBindingHandler<PlatformAction | EditorAction>
 {
   constructor(readonly context: EditorContext) {
     super({
@@ -37,8 +39,8 @@ export class Editor
 
   readonly isKeyBindingHandler = true;
 
-  canHandleKeyBinding(binding: PlatformAction): boolean {
-    return binding instanceof PlatformAction;
+  canHandleKeyBinding(binding: PlatformAction | EditorAction): boolean {
+    return binding instanceof PlatformAction || binding instanceof EditorAction;
   }
 
   #screenContainer!: EditorScreenContainer;
@@ -63,7 +65,7 @@ export class Editor
     );
 
     this.#clock = new EditorClock(track);
-    this.add(this.#clock);
+    this.addInternal(this.#clock);
 
     this.dependencies.provide(this.#clock);
 
@@ -81,16 +83,6 @@ export class Editor
       (this.#topBar = new EditorTopBar()),
       (this.#bottomBar = new EditorBottomBar()),
     );
-
-    addEventListener('keydown', (e) => {
-      if (e.key === ' ') {
-        if (track.isRunning) {
-          track.stop();
-        } else {
-          track.start();
-        }
-      }
-    });
 
     this.currentScren.addOnChangeListener(
       (screen) => {
@@ -148,36 +140,6 @@ export class Editor
       case Key.ArrowDown:
         this.#seekControlPoint(e, -1);
         return true;
-      case Key.KeyZ:
-        const firstObjectTime =
-          this.context.beatmap.hitObjects.first?.startTime;
-
-        if (
-          firstObjectTime === undefined ||
-          this.#clock.currentTimeAccurate === firstObjectTime
-        ) {
-          this.#clock.seek(0);
-        } else {
-          this.#clock.seek(firstObjectTime);
-        }
-
-        return true;
-      case Key.KeyX:
-        this.#clock.seek(0);
-        this.#clock.start();
-        return true;
-      case Key.KeyV:
-        if (this.context.beatmap.hitObjects.hitObjects.length === 0) {
-          this.#clock.seek(this.#clock.trackLength);
-          return true;
-        }
-        const lastObjectTime = this.context.beatmap.hitObjects.last!.endTime;
-        this.#clock.seek(
-          this.#clock.currentTimeAccurate === lastObjectTime
-            ? this.#clock.trackLength
-            : lastObjectTime,
-        );
-        return true;
     }
 
     return false;
@@ -210,7 +172,9 @@ export class Editor
     }
   }
 
-  onKeyBindingPressed(e: KeyBindingPressEvent<PlatformAction>): boolean {
+  onKeyBindingPressed(
+    e: KeyBindingPressEvent<PlatformAction | EditorAction>,
+  ): boolean {
     switch (e.pressed) {
       case PlatformAction.Undo:
         this.undo();
@@ -226,6 +190,42 @@ export class Editor
         return true;
       case PlatformAction.Paste:
         this.paste();
+        return true;
+      case EditorAction.SeekToStart:
+        const firstObjectTime =
+          this.context.beatmap.hitObjects.first?.startTime;
+
+        if (
+          firstObjectTime === undefined ||
+          this.#clock.currentTimeAccurate === firstObjectTime
+        ) {
+          this.#clock.seek(0);
+        } else {
+          this.#clock.seek(firstObjectTime);
+        }
+        return true;
+      case EditorAction.Play:
+        if (this.#clock.isRunning) {
+          this.#clock.stop();
+        } else {
+          this.#clock.start();
+        }
+        return true;
+      case EditorAction.PlayFromStart:
+        this.#clock.seek(0);
+        this.#clock.start();
+        return true;
+      case EditorAction.SeekToEnd:
+        if (this.context.beatmap.hitObjects.hitObjects.length === 0) {
+          this.#clock.seek(this.#clock.trackLength);
+          return true;
+        }
+        const lastObjectTime = this.context.beatmap.hitObjects.last!.endTime;
+        this.#clock.seek(
+          this.#clock.currentTimeAccurate === lastObjectTime
+            ? this.#clock.trackLength
+            : lastObjectTime,
+        );
         return true;
     }
 
