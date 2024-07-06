@@ -144,7 +144,7 @@ export class HitCircleTool extends ComposeTool {
   onDrag(e: DragEvent): boolean {
     this.submit(
       new UpdateHitObjectCommand(this.#hitObject, {
-        position: e.mousePosition,
+        position: this.#clampToPlayfieldBounds(e.mousePosition),
         startTime: this.beatmap.controlPoints.snap(
           this.editorClock.currentTime,
           this.editorClock.beatSnapDivisor.value,
