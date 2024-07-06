@@ -9,6 +9,7 @@ import {
 import { CommandContainer } from '../../../CommandContainer';
 import { EditorClock } from '../../../EditorClock';
 import { ComposeToolInteraction } from './interactions/ComposeToolInteraction';
+import { EditorSelection } from '../EditorSelection';
 
 export abstract class ComposeTool extends CommandContainer {
   protected constructor() {
@@ -64,6 +65,9 @@ export abstract class ComposeTool extends CommandContainer {
 
   @resolved(EditorClock)
   protected readonly editorClock!: EditorClock;
+
+  @resolved(EditorSelection)
+  protected readonly selection!: EditorSelection;
 
   #currentInteraction: ComposeToolInteraction | null = null;
 

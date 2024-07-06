@@ -23,6 +23,7 @@ import { EditorContext } from './context/EditorContext';
 import { EditorScreenType } from './screens/EditorScreenType';
 import { ComposeScreen } from './screens/compose/ComposeScreen';
 import { SetupScreen } from './screens/setup/SetupScreen';
+import { EditorSelection } from './screens/compose/EditorSelection';
 
 export class Editor
   extends Container
@@ -65,6 +66,11 @@ export class Editor
     this.add(this.#clock);
 
     this.dependencies.provide(this.#clock);
+
+    const selection = new EditorSelection();
+    this.dependencies.provide(EditorSelection, selection);
+
+    this.addInternal(selection);
 
     this.addAll(
       new Container({

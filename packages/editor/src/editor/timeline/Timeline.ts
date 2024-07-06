@@ -1,4 +1,4 @@
-import { Beatmap, HitObject } from '@osucad/common';
+import { Beatmap, HitObject, HitObjectManager } from '@osucad/common';
 import {
   Anchor,
   Axes,
@@ -9,6 +9,8 @@ import {
   DragEvent,
   DragStartEvent,
   KeyDownEvent,
+  MouseButton,
+  MouseDownEvent,
   PIXIContainer,
   resolved,
 } from 'osucad-framework';
@@ -17,6 +19,7 @@ import { ThemeColors } from '../ThemeColors';
 import { TimelineTick } from './TimelineTick';
 import gsap from 'gsap';
 import { TimelineObject } from './TimelineObject';
+import { EditorSelection } from '../screens/compose/EditorSelection';
 
 export class Timeline extends Container {
   constructor() {
@@ -202,16 +205,47 @@ export class Timeline extends Container {
     alpha: 0,
   });
 
+  @resolved(EditorSelection)
+  selection!: EditorSelection;
+
+  @resolved(HitObjectManager)
+  hitObjects!: HitObjectManager;
+
+  #startSelection: HitObject[] = [];
+
+  onMouseDown(e: MouseDownEvent): boolean {
+    if (e.button === MouseButton.Left && !e.controlPressed) {
+      this.selection.clear();
+    }
+
+    return true;
+  }
+
   onDragStart(e: DragStartEvent): boolean {
     this.#dragStartTime = this.positionToTime(e.mousePosition.x);
     this.#dragEndTime = this.#dragStartTime;
     this.#dragBox.alpha = 0.2;
+
+    this.#startSelection = this.selection.selectedObjects;
 
     return true;
   }
 
   onDrag(e: DragEvent): boolean {
     this.#dragEndTime = this.positionToTime(e.mousePosition.x);
+
+    const selectedObjects = this.hitObjects.hitObjects.filter((it) => {
+      return (
+        it.startTime <= Math.max(this.#dragStartTime, this.#dragEndTime) &&
+        it.endTime >= Math.min(this.#dragStartTime, this.#dragEndTime)
+      );
+    });
+
+    if (e.controlPressed) {
+      this.selection.select([...this.#startSelection, ...selectedObjects]);
+    } else {
+      this.selection.select(selectedObjects);
+    }
 
     return true;
   }

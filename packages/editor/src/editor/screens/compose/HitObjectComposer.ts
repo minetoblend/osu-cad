@@ -1,5 +1,7 @@
 import { Axes, Bindable, Container, dependencyLoader } from 'osucad-framework';
 import type { ToolConstructor } from './ComposeScreen';
+import { EditorSelection } from './EditorSelection';
+import { SelectionOverlay } from './SelectionOverlay';
 
 export class HitObjectComposer extends Container {
   constructor(protected readonly activeTool: Bindable<ToolConstructor>) {
@@ -14,6 +16,8 @@ export class HitObjectComposer extends Container {
 
   @dependencyLoader()
   load() {
+    this.addInternal(new SelectionOverlay());
+
     this.addInternal(this.#toolContainer);
 
     this.activeTool.addOnChangeListener(

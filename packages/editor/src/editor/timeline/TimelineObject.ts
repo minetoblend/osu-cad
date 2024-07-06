@@ -3,21 +3,24 @@ import {
   Anchor,
   Axes,
   Container,
+  dependencyLoader,
   DragEndEvent,
   DragEvent,
+  DragStartEvent,
   FillMode,
   MouseButton,
   MouseDownEvent,
   MouseUpEvent,
+  resolved,
   RoundedBox,
   SpriteText,
-  dependencyLoader,
-  resolved,
 } from 'osucad-framework';
 import { Timeline } from './Timeline';
 import { EditorClock } from '../EditorClock';
 import { UIFonts } from '../UIFonts';
 import { CommandManager } from '../context/CommandManager';
+import { EditorSelection } from '../screens/compose/EditorSelection';
+import { ThemeColors } from '../ThemeColors';
 
 export class TimelineObject extends Container {
   constructor(readonly hitObject: HitObject) {
@@ -49,6 +52,9 @@ export class TimelineObject extends Container {
 
   endCircle?: SliderEndCircle;
 
+  @resolved(ThemeColors)
+  theme!: ThemeColors;
+
   @dependencyLoader()
   load() {
     this.add(this.body);
@@ -59,6 +65,23 @@ export class TimelineObject extends Container {
 
     this.hitObject.onUpdate.addListener(() => this.setup());
     this.setup();
+
+    this.selection.selectionChanged.addListener(([hitObject, selected]) => {
+      if (hitObject !== this.hitObject) return;
+
+      if (selected && this.body.outlines.length === 1) {
+        this.body.outlines = [
+          ...this.body.outlines,
+          {
+            color: this.theme.primary,
+            width: 3,
+            alignment: 0,
+          },
+        ];
+      } else if (!selected) {
+        this.body.outlines = this.body.outlines.slice(0, 1);
+      }
+    });
   }
 
   setup() {
@@ -93,6 +116,77 @@ export class TimelineObject extends Container {
 
     this.width =
       this.timeline.durationToSize(this.hitObject.duration) + radius * 2;
+  }
+
+  @resolved(EditorSelection)
+  selection!: EditorSelection;
+
+  @resolved(CommandManager)
+  commandManager!: CommandManager;
+
+  @resolved(EditorClock)
+  editorClock!: EditorClock;
+
+  onMouseDown(e: MouseDownEvent): boolean {
+    if (e.button === MouseButton.Left) {
+      if (e.controlPressed) {
+        if (
+          this.selection.length <= 1 ||
+          !this.selection.isSelected(this.hitObject)
+        ) {
+          this.selection.select([this.hitObject], true);
+          return true;
+        }
+
+        this.selection.deselect(this.hitObject);
+        return true;
+      }
+
+      if (!this.selection.isSelected(this.hitObject)) {
+        this.selection.select([this.hitObject]);
+      }
+
+      return true;
+    }
+    return false;
+  }
+
+  onDragStart(event: MouseUpEvent): boolean {
+    return event.button === MouseButton.Left;
+  }
+
+  onDrag(event: DragEvent): boolean {
+    const parent = this.findClosestParentOfType(Timeline);
+    if (!parent) {
+      throw new Error('RhtythmTimelineStartCircle must be a child of Timeline');
+    }
+    const time = parent.positionToTime(
+      parent.toLocalSpace(event.screenSpaceMousePosition).x,
+    );
+
+    const snappedTime = this.beatmap.controlPoints.snap(
+      time,
+      this.editorClock.beatSnapDivisor.value,
+    );
+
+    const delta = snappedTime - this.hitObject.startTime;
+
+    if (delta !== 0) {
+      for (const hitObject of this.selection.selectedObjects) {
+        hitObject.update(
+          this.commandManager,
+          (it) => (it.startTime += delta),
+          false,
+        );
+      }
+    }
+
+    return true;
+  }
+
+  onDragEnd(e: DragEndEvent): boolean {
+    this.commandManager.commit();
+    return true;
   }
 }
 
@@ -163,47 +257,6 @@ class TimelineObjectStartCircle extends Container {
     this.overlay.alpha = 0;
     return false;
   }
-
-  @resolved(EditorClock)
-  editorClock!: EditorClock;
-
-  @resolved(Beatmap)
-  beatmap!: Beatmap;
-
-  @resolved(CommandManager)
-  commandManager!: CommandManager;
-
-  onDragStart(event: MouseUpEvent): boolean {
-    return event.button === MouseButton.Left;
-  }
-
-  onDrag(event: DragEvent): boolean {
-    const parent = this.findClosestParentOfType(Timeline);
-    if (!parent) {
-      throw new Error('RhtythmTimelineStartCircle must be a child of Timeline');
-    }
-    const time = parent.positionToTime(
-      parent.toLocalSpace(event.screenSpaceMousePosition).x,
-    );
-
-    const snappedTime = this.beatmap.controlPoints.snap(
-      time,
-      this.editorClock.beatSnapDivisor.value,
-    );
-
-    this.hitObject.update(
-      this.commandManager,
-      (it) => (it.startTime = snappedTime),
-      false,
-    );
-
-    return true;
-  }
-
-  onDragEnd(e: DragEndEvent): boolean {
-    this.commandManager.commit();
-    return true;
-  }
 }
 
 class SliderEndCircle extends Container {
@@ -241,7 +294,7 @@ class SliderEndCircle extends Container {
     this.circle.fillColor = value;
   }
 
-  onDragStart(event: MouseDownEvent): boolean {
+  onDragStart(event: DragStartEvent): boolean {
     this.updateState();
     return event.button === MouseButton.Left;
   }
