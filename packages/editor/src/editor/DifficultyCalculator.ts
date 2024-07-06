@@ -28,6 +28,7 @@ export class DifficultyCalculator extends Container {
       5000,
       true,
     );
+    this.#calculate();
   }
 
   #isCalculating = false;
