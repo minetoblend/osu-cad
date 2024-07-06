@@ -26,6 +26,7 @@ export class EditorClock
     super.update();
 
     this.processFrame();
+    this.updateBeatProgress();
   }
 
   @resolved(Beatmap)
@@ -190,5 +191,22 @@ export class EditorClock
 
   resetSpeedAdjustments(): void {
     this.track.resetSpeedAdjustments();
+  }
+
+  beatLength = 0;
+  beatProgress = 0;
+
+  updateBeatProgress() {
+    const timingPoint = this.controlPointInfo.timingPointAt(this.currentTime);
+
+    function mod(a: number, n: number) {
+      return ((a % n) + n) % n;
+    }
+
+    this.beatLength = timingPoint.timing.beatLength;
+    let progress =
+      (this.currentTime - timingPoint.time) / timingPoint.timing.beatLength;
+    progress = mod(mod(progress, 1) + 1, 1);
+    this.beatProgress = progress;
   }
 }
