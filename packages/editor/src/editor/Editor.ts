@@ -26,6 +26,7 @@ import { SetupScreen } from './screens/setup/SetupScreen';
 import { EditorSelection } from './screens/compose/EditorSelection';
 import { EditorAction } from './EditorAction';
 import { EditorActionContainer } from './EditorActionContainer';
+import { DifficultyCalculator } from './DifficultyCalculator';
 
 export class Editor
   extends Container
@@ -73,6 +74,9 @@ export class Editor
     this.dependencies.provide(EditorSelection, selection);
 
     this.addInternal(selection);
+
+    const difficultyCalculator = new DifficultyCalculator();
+    this.addInternal(difficultyCalculator);
 
     this.addAll(
       new Container({
