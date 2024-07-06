@@ -95,6 +95,11 @@ export class HitCircleTool extends ComposeTool {
       // Removing the object before we readd it through the command manager
       this.hitObjects.remove(hitObject);
 
+      hitObject.startTime = this.beatmap.controlPoints.snap(
+        this.editorClock.currentTime,
+        this.beatSnapDivisor,
+      );
+
       const existing = this.hitObjects.hitObjects.filter((it) =>
         almostEquals(it.startTime, hitObject.startTime, 2),
       );
@@ -104,10 +109,6 @@ export class HitCircleTool extends ComposeTool {
       }
 
       hitObject.id = hitObjectId();
-      hitObject.startTime = this.beatmap.controlPoints.snap(
-        this.editorClock.currentTime,
-        this.beatSnapDivisor,
-      );
 
       this.#hitObject = this.submit(
         new CreateHitObjectCommand(hitObject),
