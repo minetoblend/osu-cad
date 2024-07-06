@@ -4,11 +4,12 @@ import {
   Axes,
   Box,
   Container,
+  dependencyLoader,
   DragEndEvent,
   DragEvent,
   DragStartEvent,
+  KeyDownEvent,
   PIXIContainer,
-  dependencyLoader,
   resolved,
 } from 'osucad-framework';
 import { EditorClock } from '../EditorClock';
@@ -219,5 +220,17 @@ export class Timeline extends Container {
     this.#dragBox.alpha = 0;
 
     return true;
+  }
+
+  onKeyDown(e: KeyDownEvent): boolean {
+    if (e.controlPressed && !e.shiftPressed && e.key.startsWith('Digit')) {
+      const digit = parseInt(e.key[5]);
+      if (digit !== 0) {
+        this.editorClock.beatSnapDivisor.value = digit;
+        return true;
+      }
+    }
+
+    return false;
   }
 }
