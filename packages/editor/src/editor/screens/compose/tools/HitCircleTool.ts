@@ -115,6 +115,8 @@ export class HitCircleTool extends ComposeTool {
         false,
       )!;
 
+      this.selection.select([this.#hitObject]);
+
       return false;
     }
 
