@@ -237,6 +237,8 @@ export class ComposeToolbarButton extends Button {
   #keyPressed = false;
 
   onKeyDown(e: KeyDownEvent): boolean {
+    if (e.controlPressed || e.shiftPressed || e.altPressed) return false;
+
     if (this.keyBinding === e.key) {
       this.action?.();
       this.samples.toolSelect.play();
