@@ -12,11 +12,12 @@ import type { ToolConstructor } from './ComposeScreen';
 import { SelectionOverlay } from './SelectionOverlay';
 import { EditorSelection } from './EditorSelection';
 import { CommandManager } from '../../context/CommandManager';
-import { DeleteHitObjectCommand } from '@osucad/common';
+import { DeleteHitObjectCommand, UpdateHitObjectCommand } from '@osucad/common';
+import { EditorAction } from '../../EditorAction';
 
 export class HitObjectComposer
   extends Container
-  implements IKeyBindingHandler<PlatformAction>
+  implements IKeyBindingHandler<PlatformAction | EditorAction>
 {
   constructor(protected readonly activeTool: Bindable<ToolConstructor>) {
     super({
@@ -49,8 +50,8 @@ export class HitObjectComposer
 
   readonly isKeyBindingHandler = true;
 
-  canHandleKeyBinding(binding: PlatformAction): boolean {
-    return binding instanceof PlatformAction;
+  canHandleKeyBinding(binding: PlatformAction | EditorAction): boolean {
+    return binding instanceof PlatformAction || binding instanceof EditorAction;
   }
 
   @resolved(EditorSelection)
@@ -62,13 +63,47 @@ export class HitObjectComposer
   onKeyBindingPressed(e: KeyBindingPressEvent<PlatformAction>): boolean {
     switch (e.pressed) {
       case PlatformAction.Delete:
-        for (const object of this.selection.selectedObjects) {
-          this.commandManager.submit(new DeleteHitObjectCommand(object), false);
-        }
-        this.commandManager.commit();
+        this.#deleteSelection();
+        return true;
+      case EditorAction.ToggleNewCombo:
+        this.#toggleNewCombo();
         return true;
     }
 
     return false;
+  }
+
+  #deleteSelection() {
+    for (const object of this.selection.selectedObjects) {
+      this.commandManager.submit(new DeleteHitObjectCommand(object), false);
+    }
+    this.commandManager.commit();
+  }
+
+  #toggleNewCombo() {
+    const objects = this.selection.selectedObjects;
+    if (objects.length === 0) return;
+
+    if (objects.every((it) => it.isNewCombo)) {
+      for (const object of objects) {
+        this.commandManager.submit(
+          new UpdateHitObjectCommand(object, {
+            newCombo: false,
+          }),
+          false,
+        );
+      }
+    } else {
+      for (const object of objects) {
+        this.commandManager.submit(
+          new UpdateHitObjectCommand(object, {
+            newCombo: true,
+          }),
+          false,
+        );
+      }
+    }
+
+    this.commandManager.commit();
   }
 }
