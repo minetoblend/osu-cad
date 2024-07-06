@@ -6,11 +6,10 @@ import {
   SerializedBeatmapGeneral,
 } from '../protocol';
 import { ControlPointManager } from './controlPointManager';
-import { Vec2 } from 'osucad-framework';
+import { Action, Vec2 } from 'osucad-framework';
 import { Slider } from './slider';
 import { HitCircle } from './hitCircle';
 import { Spinner } from './spinner';
-import { Action } from '../util';
 import { binarySearch } from '../util';
 import { ControlPoint, ControlPointUpdateFlags } from './controlPoint';
 
@@ -95,7 +94,7 @@ export class HitObjectManager {
       case 'position':
         this._invalidateStacking();
     }
-    this.onUpdated.emit(hitObject, key);
+    this.onUpdated.emit([hitObject, key]);
   }
 
   private sortHitObjects() {
@@ -288,8 +287,8 @@ export class HitObjectManager {
     return this._hitObjectMap.get(id);
   }
 
-  readonly onRemoved = new Action<[HitObject]>();
-  readonly onAdded = new Action<[HitObject]>();
+  readonly onRemoved = new Action<HitObject>();
+  readonly onAdded = new Action<HitObject>();
   readonly onUpdated = new Action<[HitObject, HitObjectUpdateType]>();
 
   getAtTime(time: number): HitObject | undefined {
