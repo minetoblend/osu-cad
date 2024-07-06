@@ -73,7 +73,7 @@ export class TimelineObject extends Container {
         this.body.outlines = [
           ...this.body.outlines,
           {
-            color: this.theme.primary,
+            color: 0xedc43e,
             width: 3,
             alignment: 0,
           },
