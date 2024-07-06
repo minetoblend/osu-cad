@@ -134,6 +134,18 @@ export class EditorCornerPiece extends Container {
         break;
     }
   }
+
+  onMouseDown(): boolean {
+    return true;
+  }
+
+  onHover(): boolean {
+    return true;
+  }
+
+  onHoverLost(): boolean {
+    return true;
+  }
 }
 
 export enum Corner {
