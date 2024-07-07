@@ -18,6 +18,7 @@ import { UIFonts } from './UIFonts';
 import { ThemeColors } from './ThemeColors';
 import gsap from 'gsap';
 import { EditorClock } from './EditorClock';
+import { UISamples } from '../UISamples';
 
 export class BeatSnapDivisorSelector extends CompositeDrawable {
   constructor() {
@@ -156,6 +157,14 @@ class BeatSnapSlider extends CompositeDrawable {
   @resolved(EditorClock)
   editorClock!: EditorClock;
 
+  @resolved(UISamples)
+  samples!: UISamples;
+
+  #lastDrag = 0;
+  #lastDragX = 0;
+
+  #dragSampleDelay = 50;
+
   onDrag(e: DragEvent): boolean {
     const relative = e.mousePosition.x / this.drawSize.x;
 
@@ -164,6 +173,19 @@ class BeatSnapSlider extends CompositeDrawable {
       1,
       16,
     );
+
+    if (
+      this.time.current - this.#lastDrag > this.#dragSampleDelay &&
+      Math.abs(this.#lastDragX - e.mousePosition.x) > 3
+    ) {
+      const pitch = 0.75 + relative * 0.35;
+
+      this.samples.sliderDrag.play({
+        rate: pitch,
+      });
+      this.#lastDrag = this.time.current;
+      this.#lastDragX = e.mousePosition.x;
+    }
 
     return true;
   }
