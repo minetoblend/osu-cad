@@ -57,6 +57,9 @@ export class PreferencesContainer
     this.preferencesVisible.value = false;
   }
 
+  @resolved(UISamples)
+  protected readonly uiSamples!: UISamples;
+
   @dependencyLoader()
   load() {
     this.#preferencesContainer.add((this.#preferences = new Preferences()));
@@ -65,6 +68,8 @@ export class PreferencesContainer
       this.#closeTrap,
       this.#preferencesContainer,
     );
+
+    this.#preferences.x = -1;
 
     this.preferencesVisible.addOnChangeListener(
       (visible) => {
