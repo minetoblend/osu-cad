@@ -148,7 +148,16 @@ class SliderPathVisualizerHandle extends CompositeDrawable {
     this.size = new Vec2(15);
     this.origin = Anchor.Center;
 
-    this.addInternal(
+    this.addAllInternal(
+      (this.#shadow = new RoundedBox({
+        relativeSizeAxes: Axes.Both,
+        size: 0.8,
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
+        cornerRadius: 5,
+        color: 0x000000,
+        alpha: 0.1,
+      })),
       (this.#handle = new RoundedBox({
         relativeSizeAxes: Axes.Both,
         size: 0.6,
@@ -161,6 +170,7 @@ class SliderPathVisualizerHandle extends CompositeDrawable {
     this.type = type;
   }
 
+  #shadow!: RoundedBox;
   #handle!: RoundedBox;
 
   get type() {
@@ -177,6 +187,12 @@ class SliderPathVisualizerHandle extends CompositeDrawable {
   #type: PathType | null = null;
 
   onHover(): boolean {
+    gsap.to(this.#shadow, {
+      scaleX: 1.2,
+      scaleY: 1.2,
+      duration: 0.2,
+      ease: 'back.out',
+    });
     gsap.to(this.#handle, {
       scaleX: 1.2,
       scaleY: 1.2,
@@ -188,6 +204,12 @@ class SliderPathVisualizerHandle extends CompositeDrawable {
   }
 
   onHoverLost(): boolean {
+    gsap.to(this.#shadow, {
+      scaleX: 1,
+      scaleY: 1,
+      duration: 0.2,
+      ease: 'back.out',
+    });
     gsap.to(this.#handle, {
       scaleX: 1,
       scaleY: 1,
