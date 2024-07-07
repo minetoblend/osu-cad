@@ -1,8 +1,10 @@
 import gsap from 'gsap';
 import {
+  Anchor,
   Axes,
   Button,
-  Container,
+  ButtonTrigger,
+  dependencyLoader,
   DrawableSprite,
   FillDirection,
   FillFlowContainer,
@@ -13,13 +15,11 @@ import {
   KeyDownEvent,
   MouseDownEvent,
   MouseUpEvent,
-  RoundedBox,
-  dependencyLoader,
   resolved,
+  RoundedBox,
 } from 'osucad-framework';
 import { Texture } from 'pixi.js';
 import { ThemeColors } from '../../ThemeColors';
-import { Anchor, ButtonTrigger } from 'osucad-framework';
 import { UISamples } from '../../../UISamples';
 
 export class ComposeToolbarButton extends Button {
