@@ -50,8 +50,8 @@ export class EditorBottomBar extends Container {
             child: new Container({
               relativeSizeAxes: Axes.Both,
               padding: new MarginPadding({
-                top: 6,
-                bottom: 6,
+                top: 5,
+                bottom: 5,
                 left: 10,
                 right: 20,
               }),
