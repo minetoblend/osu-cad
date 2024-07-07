@@ -1,4 +1,5 @@
 import {
+  ContainerOptions,
   type IKeyBinding,
   InputKey,
   KeyBinding,
@@ -10,8 +11,9 @@ import {
 import { EditorAction } from './EditorAction';
 
 export class EditorActionContainer extends KeyBindingContainer<EditorAction> {
-  constructor() {
+  constructor(options: ContainerOptions = {}) {
     super(SimultaneousBindingMode.None, KeyCombinationMatchingMode.Modifiers);
+    this.apply(options);
   }
 
   override get defaultKeyBindings(): IKeyBinding[] {
@@ -79,6 +81,10 @@ export class EditorActionContainer extends KeyBindingContainer<EditorAction> {
       new KeyBinding(
         KeyCombination.from(InputKey.X),
         EditorAction.PlayFromStart,
+      ),
+      new KeyBinding(
+        KeyCombination.from(InputKey.Control, InputKey.O),
+        EditorAction.ShowPreferences,
       ),
     ];
   }

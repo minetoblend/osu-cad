@@ -23,4 +23,5 @@ export class EditorAction extends KeyBindingAction {
   static readonly SeekToStart = new EditorAction('MoveToStart');
   static readonly SeekToEnd = new EditorAction('MoveToEnd');
   static readonly PlayFromStart = new EditorAction('PlayFromStart');
+  static readonly ShowPreferences = new EditorAction('ShowPreferences');
 }

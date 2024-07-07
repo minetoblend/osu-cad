@@ -19,6 +19,7 @@ import { UIIcons } from './editor/UIIcons';
 import { EditorContext } from './editor/context/EditorContext';
 import './editor/mixins/HitObjectMixin';
 import { EditorActionContainer } from './editor/EditorActionContainer';
+import { PreferencesContainer } from './editor/preferences/PreferencesContainer';
 
 RenderTarget.defaultOptions.depth = true;
 RenderTarget.defaultOptions.stencil = true;
@@ -79,12 +80,14 @@ export class OsucadGame extends Game {
 
     this.context.provideDependencies(this.dependencies);
 
-    const actionContainer = new EditorActionContainer();
-
-    this.#innerContainer.add(actionContainer);
-
-    const editor = new Editor(this.context);
-    actionContainer.add(editor);
+    let editor: Editor;
+    this.#innerContainer.add(
+      new EditorActionContainer({
+        child: new PreferencesContainer({
+          child: (editor = new Editor(this.context)),
+        }),
+      }),
+    );
 
     if (!isMobile.any) {
       this.add(new MainCursorContainer());
