@@ -198,6 +198,8 @@ export class SliderTool extends ComposeTool {
       this.submit(new DeleteHitObjectCommand(object), false);
     }
 
+    this.selection.clear();
+
     this.#slider = this.submit(new CreateHitObjectCommand(slider), false);
 
     this.#sliderPathVisualizer.slider = this.#slider!;
@@ -210,6 +212,8 @@ export class SliderTool extends ComposeTool {
 
   #endPlacing() {
     this.commit();
+
+    this.selection.select([this.#slider!]);
 
     this.#slider = undefined;
     this.#path = [];
