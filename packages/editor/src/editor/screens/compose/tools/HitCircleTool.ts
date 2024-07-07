@@ -71,7 +71,7 @@ export class HitCircleTool extends ComposeTool {
 
   #createPreviewCircle() {
     const circle = new HitCircle();
-    circle.position = this.#clampToPlayfieldBounds(this.mousePosition);
+    circle.position = this.clampToPlayfieldBounds(this.mousePosition);
     circle.startTime = this.editorClock.currentTime;
 
     this.hitObjects.add(circle);
@@ -83,7 +83,7 @@ export class HitCircleTool extends ComposeTool {
 
   onMouseMove(e: MouseMoveEvent): boolean {
     this.#updateObject((object) => {
-      object.position = this.#clampToPlayfieldBounds(this.mousePosition);
+      object.position = this.clampToPlayfieldBounds(this.mousePosition);
     });
 
     return false;
@@ -150,7 +150,7 @@ export class HitCircleTool extends ComposeTool {
   onDrag(e: DragEvent): boolean {
     this.submit(
       new UpdateHitObjectCommand(this.#hitObject, {
-        position: this.#clampToPlayfieldBounds(e.mousePosition),
+        position: this.clampToPlayfieldBounds(e.mousePosition),
         startTime: this.beatmap.controlPoints.snap(
           this.editorClock.currentTime,
           this.editorClock.beatSnapDivisor.value,
@@ -165,10 +165,6 @@ export class HitCircleTool extends ComposeTool {
     this.hitObjects.remove(this.#hitObject);
 
     return true;
-  }
-
-  #clampToPlayfieldBounds(position: Vec2) {
-    return new Vec2(clamp(position.x, 0, 512), clamp(position.y, 0, 384));
   }
 
   #updateNewCombo(newCombo: boolean) {

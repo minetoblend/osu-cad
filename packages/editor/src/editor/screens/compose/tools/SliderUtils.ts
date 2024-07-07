@@ -1,11 +1,13 @@
-import { CommandManager } from '../../../context/CommandManager';
 import {
   IDistanceSnapProvider,
+  PathType,
+  SerializedPathPoint,
   SerializedSlider,
   Slider,
   UpdateHitObjectCommand,
 } from '@osucad/common';
 import { Vec2 } from 'osucad-framework';
+import { CommandManager } from '../../../context/CommandManager';
 
 export class SliderUtils {
   constructor(
@@ -123,6 +125,99 @@ export class SliderUtils {
         commit,
       );
     }
+  }
+
+  setControlPointType(
+    slider: Slider,
+    index: number,
+    type: PathType | null,
+    commit = false,
+  ) {
+    if (index === 0) {
+      console.assert(
+        type !== null,
+        'Cannot set the type of the first control point to null',
+      );
+    }
+
+    const path = [...slider.path.controlPoints];
+    path[index] = {
+      x: path[index].x,
+      y: path[index].y,
+      type,
+    };
+
+    const originalPath = slider.path.controlPoints;
+
+    slider.path.controlPoints = path;
+    slider.path.invalidate();
+
+    const expectedDistance = this.snapSlider(slider);
+
+    slider.path.controlPoints = originalPath;
+
+    this.commandManager.submit(
+      new UpdateHitObjectCommand(slider, {
+        path,
+        expectedDistance,
+      } as Partial<SerializedSlider>),
+      commit,
+    );
+  }
+
+  getNextControlPointType(
+    currentType: PathType | null,
+    index: number,
+  ): PathType | null {
+    let newType: PathType | null = null;
+
+    switch (currentType) {
+      case null:
+        newType = PathType.Bezier;
+        break;
+      case PathType.Bezier:
+        newType = PathType.PerfectCurve;
+        break;
+      case PathType.PerfectCurve:
+        newType = PathType.Linear;
+        break;
+      case PathType.Linear:
+        newType = null;
+        break;
+    }
+
+    if (index === 0 && newType === null) {
+      newType = PathType.Bezier;
+    }
+
+    return newType;
+  }
+
+  cycleControlPointType(slider: Slider, index: number, commit = false) {
+    const currentType = slider.path.controlPoints[index].type;
+
+    const newType = this.getNextControlPointType(currentType, index);
+
+    this.setControlPointType(slider, index, newType, commit);
+  }
+
+  setPath(slider: Slider, path: SerializedPathPoint[], commit = false) {
+    const originalPath = slider.path.controlPoints;
+
+    slider.path.controlPoints = path;
+    slider.path.invalidate();
+
+    const expectedDistance = this.snapSlider(slider);
+
+    slider.path.controlPoints = originalPath;
+
+    this.commandManager.submit(
+      new UpdateHitObjectCommand(slider, {
+        path,
+        expectedDistance,
+      } as Partial<SerializedSlider>),
+      commit,
+    );
   }
 
   snapSlider(slider: Slider): number {
