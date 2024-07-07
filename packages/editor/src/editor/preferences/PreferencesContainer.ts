@@ -57,9 +57,6 @@ export class PreferencesContainer
     this.preferencesVisible.value = false;
   }
 
-  @resolved(UISamples)
-  protected readonly uiSamples!: UISamples;
-
   @dependencyLoader()
   load() {
     this.#preferencesContainer.add((this.#preferences = new Preferences()));
