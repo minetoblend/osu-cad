@@ -9,7 +9,12 @@ import {
   Vec2,
 } from 'osucad-framework';
 import { SelectBoxInteraction } from './interactions/SelectBoxInteraction';
-import { HitObject, Slider, UpdateHitObjectCommand } from '@osucad/common';
+import {
+  DeleteHitObjectCommand,
+  HitObject,
+  Slider,
+  UpdateHitObjectCommand,
+} from '@osucad/common';
 import { MoveSelectionInteraction } from './interactions/MoveSelectionInteraction';
 import { SliderPathVisualizer } from './SliderPathVisualizer';
 import { DistanceSnapProvider } from './DistanceSnapProvider';
@@ -89,6 +94,25 @@ export class SelectTool extends ComposeTool {
         this.selection.select([candidate]);
       } else {
         this.#canCycleSelection = true;
+      }
+
+      return true;
+    } else if (e.button === MouseButton.Right) {
+      const hovered = this.hoveredHitObjects(e.mousePosition);
+
+      if (hovered.length === 0) {
+        return false;
+      }
+
+      const candidate = this.#getSelectionCandidate(hovered)!;
+
+      if (candidate.isSelected) {
+        for (const object of this.selection.selectedObjects) {
+          this.submit(new DeleteHitObjectCommand(object), false);
+        }
+        this.commit();
+      } else {
+        this.submit(new DeleteHitObjectCommand(candidate));
       }
 
       return true;
@@ -231,7 +255,7 @@ export class SelectTool extends ComposeTool {
 
     if (e.button === MouseButton.Left && this.#isCycleControlPointEvent(e)) {
       this.#sliderUtils.cycleControlPointType(slider, index);
-      return true;
+      return false;
     }
 
     if (!slider.isSelected) {
