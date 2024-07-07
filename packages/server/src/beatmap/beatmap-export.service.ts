@@ -224,7 +224,7 @@ export class BeatmapExportService {
       );
     });
     beatmap.events.backgroundPath = beatmapData.backgroundPath;
-    beatmap.editor.bookmarks = beatmapData.bookmarks.map((it) => it.time);
+    beatmap.editor.bookmarks = beatmapData.bookmarks.map((it) => Math.round(it.time));
     return beatmap;
   }
 
@@ -241,11 +241,11 @@ export class BeatmapExportService {
   }
 
   private applyDifficulty(beatmap: Beatmap, data: BeatmapData) {
-    beatmap.difficulty.drainRate = data.difficulty.hpDrainRate;
-    beatmap.difficulty.circleSize = data.difficulty.circleSize;
-    beatmap.difficulty.overallDifficulty = data.difficulty.overallDifficulty;
-    beatmap.difficulty.approachRate = data.difficulty.approachRate;
-    beatmap.difficulty.sliderMultiplier = data.difficulty.sliderMultiplier;
+    beatmap.difficulty.drainRate = Math.round(data.difficulty.hpDrainRate * 10) / 10;
+    beatmap.difficulty.circleSize = Math.round(data.difficulty.circleSize * 10) / 10;
+    beatmap.difficulty.overallDifficulty = Math.round(data.difficulty.overallDifficulty * 10) / 10;
+    beatmap.difficulty.approachRate = Math.round(data.difficulty.approachRate * 10) / 10;
+    beatmap.difficulty.sliderMultiplier = Math.round(data.difficulty.sliderMultiplier * 10) / 10;
     beatmap.difficulty.sliderTickRate = data.difficulty.sliderTickRate;
   }
 }
