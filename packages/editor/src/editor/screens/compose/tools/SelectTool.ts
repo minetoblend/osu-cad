@@ -214,18 +214,18 @@ export class SelectTool extends ComposeTool {
   #isDragging = false;
 
   #onHandleMouseDown = (index: number, e: MouseDownEvent) => {
+    const slider = this.#sliderPathVisualizer.slider!;
+
     if (e.button === MouseButton.Right) {
-      return this.#sliderUtils.deleteControlPoint(
-        this.#sliderPathVisualizer.slider!,
-        index,
-      );
+      return this.#sliderUtils.deleteControlPoint(slider, index);
     }
 
     if (e.button === MouseButton.Left && e.controlPressed) {
-      return this.#sliderUtils.cycleControlPointType(
-        this.#sliderPathVisualizer.slider!,
-        index,
-      );
+      return this.#sliderUtils.cycleControlPointType(slider, index);
+    }
+
+    if (!slider.isSelected) {
+      this.selection.select([slider]);
     }
 
     return true;
