@@ -30,6 +30,12 @@ export class HitCircleTool extends ComposeTool {
 
   @dependencyLoader()
   load() {
+    this.newCombo.value = false;
+
+    this.newCombo.addOnChangeListener((newCombo) =>
+      this.#updateNewCombo(newCombo),
+    );
+
     this.editorClock.currentTimeBindable.addOnChangeListener(() => {
       if (this.#hitObject) {
         this.#updateHitObjectTime();
@@ -163,6 +169,17 @@ export class HitCircleTool extends ComposeTool {
 
   #clampToPlayfieldBounds(position: Vec2) {
     return new Vec2(clamp(position.x, 0, 512), clamp(position.y, 0, 384));
+  }
+
+  #updateNewCombo(newCombo: boolean) {
+    if (this.#state === PlacementState.Placing) {
+      this.submit(
+        new UpdateHitObjectCommand(this.#hitObject, { newCombo }),
+        false,
+      );
+    } else {
+      this.#hitObject.isNewCombo = newCombo;
+    }
   }
 }
 

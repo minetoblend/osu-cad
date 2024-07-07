@@ -26,9 +26,14 @@ export class EditorSelection extends Container {
   readonly selectionChanged = new Action<[HitObject, boolean]>();
 
   clear() {
+    const selection = [...this.#selection];
+
     for (const hitObject of this.#selection) {
-      this.selectionChanged.emit([hitObject, false]);
       this.#selection.delete(hitObject);
+    }
+
+    for (const object of selection) {
+      this.selectionChanged.emit([object, false]);
     }
   }
 

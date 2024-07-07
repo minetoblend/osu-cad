@@ -9,12 +9,7 @@ import {
   Vec2,
 } from 'osucad-framework';
 import { SelectBoxInteraction } from './interactions/SelectBoxInteraction';
-import {
-  HitObject,
-  SerializedSlider,
-  Slider,
-  UpdateHitObjectCommand,
-} from '@osucad/common';
+import { HitObject, Slider, UpdateHitObjectCommand } from '@osucad/common';
 import { MoveSelectionInteraction } from './interactions/MoveSelectionInteraction';
 import { SliderPathVisualizer } from './SliderPathVisualizer';
 import { DistanceSnapProvider } from './DistanceSnapProvider';
@@ -153,6 +148,8 @@ export class SelectTool extends ComposeTool {
   update() {
     super.update();
 
+    this.#updateNewCombo();
+
     this.#inputManager ??= this.getContainingInputManager();
 
     if (this.#inputManager) {
@@ -194,6 +191,24 @@ export class SelectTool extends ComposeTool {
     this.#sliderPathVisualizer.onHandleDragStarted = this.#onHandleDragStarted;
     this.#sliderPathVisualizer.onHandleDragged = this.#onHandleDragged;
     this.#sliderPathVisualizer.onHandleDragEnded = this.#onHandleDragEnded;
+
+    this.newCombo.addOnChangeListener((newCombo) => {
+      const objects = this.selection.selectedObjects;
+      if (objects.length === 0) return;
+
+      const allNewCombo = objects.every(
+        (it) => it.isNewCombo || it === this.hitObjects.first,
+      );
+      if (allNewCombo !== newCombo) {
+        for (const object of objects) {
+          this.commandManager.submit(
+            new UpdateHitObjectCommand(object, {
+              newCombo,
+            }),
+          );
+        }
+      }
+    });
   }
 
   #isDragging = false;
@@ -231,4 +246,14 @@ export class SelectTool extends ComposeTool {
     this.commit();
     this.#isDragging = false;
   };
+
+  #updateNewCombo() {
+    if (this.selection.length === 0) {
+      this.newCombo.value = false;
+      return;
+    }
+    this.newCombo.value = this.selection.selectedObjects.every(
+      (it) => it.isNewCombo || it === this.hitObjects.first,
+    );
+  }
 }

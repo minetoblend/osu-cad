@@ -27,6 +27,7 @@ import { EditorSelection } from './screens/compose/EditorSelection';
 import { EditorAction } from './EditorAction';
 import { EditorActionContainer } from './EditorActionContainer';
 import { DifficultyCalculator } from './DifficultyCalculator';
+import { NEW_COMBO } from './InjectionTokens';
 
 export class Editor
   extends Container
@@ -58,8 +59,12 @@ export class Editor
   @resolved(EditorMixer)
   mixer!: EditorMixer;
 
+  #newCombo = new Bindable(false);
+
   @dependencyLoader()
   init() {
+    this.dependencies.provide(NEW_COMBO, this.#newCombo);
+
     const track = this.audioManager.createTrack(
       this.mixer.music,
       this.context.song,

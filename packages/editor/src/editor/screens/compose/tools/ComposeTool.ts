@@ -1,6 +1,7 @@
 import { Beatmap, HitObjectManager } from '@osucad/common';
 import {
   Axes,
+  Bindable,
   Container,
   InputManager,
   resolved,
@@ -10,6 +11,7 @@ import { CommandContainer } from '../../../CommandContainer';
 import { EditorClock } from '../../../EditorClock';
 import { ComposeToolInteraction } from './interactions/ComposeToolInteraction';
 import { EditorSelection } from '../EditorSelection';
+import { NEW_COMBO } from '../../../InjectionTokens';
 
 export abstract class ComposeTool extends CommandContainer {
   protected constructor() {
@@ -26,6 +28,9 @@ export abstract class ComposeTool extends CommandContainer {
       })),
     );
   }
+
+  @resolved(NEW_COMBO)
+  protected newCombo!: Bindable<boolean>;
 
   receivePositionalInputAt(): boolean {
     return true;

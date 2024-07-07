@@ -14,6 +14,7 @@ import { EditorSelection } from './EditorSelection';
 import { CommandManager } from '../../context/CommandManager';
 import { DeleteHitObjectCommand, UpdateHitObjectCommand } from '@osucad/common';
 import { EditorAction } from '../../EditorAction';
+import { NEW_COMBO } from '../../InjectionTokens';
 
 export class HitObjectComposer
   extends Container
@@ -92,31 +93,11 @@ export class HitObjectComposer
     this.commandManager.commit();
   }
 
+  @resolved(NEW_COMBO)
+  newCombo!: Bindable<boolean>;
+
   #toggleNewCombo() {
-    const objects = this.selection.selectedObjects;
-    if (objects.length === 0) return;
-
-    if (objects.every((it) => it.isNewCombo)) {
-      for (const object of objects) {
-        this.commandManager.submit(
-          new UpdateHitObjectCommand(object, {
-            newCombo: false,
-          }),
-          false,
-        );
-      }
-    } else {
-      for (const object of objects) {
-        this.commandManager.submit(
-          new UpdateHitObjectCommand(object, {
-            newCombo: true,
-          }),
-          false,
-        );
-      }
-    }
-
-    this.commandManager.commit();
+    this.newCombo.value = !this.newCombo.value;
   }
 
   #nudgePosition(dx: number, dy: number) {

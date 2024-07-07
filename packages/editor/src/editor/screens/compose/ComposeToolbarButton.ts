@@ -70,7 +70,7 @@ export class ComposeToolbarButton extends Button {
         origin: Anchor.Center,
       })),
     );
-    this.#updateState();
+    this.updateState();
   }
 
   #background!: RoundedBox;
@@ -125,10 +125,10 @@ export class ComposeToolbarButton extends Button {
 
   set active(value: boolean) {
     this.#active = value;
-    this.#updateState();
+    this.updateState();
   }
 
-  #updateState() {
+  protected updateState() {
     this.drawNode;
 
     if (this.active) {
@@ -156,7 +156,7 @@ export class ComposeToolbarButton extends Button {
       });
     }
 
-    if (this.#keyPressed || this.#mouseDown) {
+    if (this.keyPressed || this.#mouseDown) {
       gsap.to(this.#icon, {
         scaleX: 0.85,
         scaleY: 0.85,
@@ -207,12 +207,12 @@ export class ComposeToolbarButton extends Button {
     this.samples.toolHover.play({
       volume: 0.5,
     });
-    this.#updateState();
+    this.updateState();
     return true;
   }
 
   onHoverLost(e: HoverLostEvent): boolean {
-    this.#updateState();
+    this.updateState();
     return true;
   }
 
@@ -220,21 +220,21 @@ export class ComposeToolbarButton extends Button {
     if (!super.onMouseDown(e)) return false;
     this.samples.toolSelect.play();
     this.#mouseDown = true;
-    this.#updateState();
+    this.updateState();
 
     return true;
   }
 
   onMouseUp(e: MouseUpEvent): boolean {
     this.#mouseDown = false;
-    this.#updateState();
+    this.updateState();
 
     return true;
   }
 
   #mouseDown = false;
 
-  #keyPressed = false;
+  protected keyPressed = false;
 
   onKeyDown(e: KeyDownEvent): boolean {
     if (e.controlPressed || e.shiftPressed || e.altPressed) return false;
@@ -242,8 +242,8 @@ export class ComposeToolbarButton extends Button {
     if (this.keyBinding === e.key) {
       this.action?.();
       this.samples.toolSelect.play();
-      this.#keyPressed = true;
-      this.#updateState();
+      this.keyPressed = true;
+      this.updateState();
 
       return true;
     }
@@ -252,8 +252,8 @@ export class ComposeToolbarButton extends Button {
 
   onKeyUp(e: KeyDownEvent): boolean {
     if (this.keyBinding === e.key) {
-      this.#keyPressed = false;
-      this.#updateState();
+      this.keyPressed = false;
+      this.updateState();
 
       return true;
     }
