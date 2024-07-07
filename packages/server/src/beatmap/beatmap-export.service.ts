@@ -112,13 +112,13 @@ export class BeatmapExportService {
     for (const timingPoint of beatmapData.controlPoints.timing) {
       const converted = new TimingPoint();
       converted.beatLength = timingPoint.beatLength;
-      beatmap.controlPoints.add(converted, timingPoint.time);
+      beatmap.controlPoints.add(converted, Math.round(timingPoint.time));
     }
     for (const velocityPoint of beatmapData.controlPoints.velocity) {
       const converted = new DifficultyPoint();
       converted.isLegacy = true;
       converted.sliderVelocity = velocityPoint.velocity;
-      beatmap.controlPoints.add(converted, velocityPoint.time);
+      beatmap.controlPoints.add(converted, Math.round(velocityPoint.time));
     }
 
     for (const hitObject of beatmapData.hitObjects) {
@@ -184,7 +184,7 @@ export class BeatmapExportService {
           if (hitObject.velocity) {
             const point = new DifficultyPoint();
             point.sliderVelocity = hitObject.velocity;
-            beatmap.controlPoints.add(point, hitObject.startTime);
+            beatmap.controlPoints.add(point, Math.round(hitObject.startTime));
           }
         }
         slider.repeats = hitObject.repeats;
