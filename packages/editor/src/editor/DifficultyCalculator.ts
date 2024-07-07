@@ -4,7 +4,7 @@ import {
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import Worker from './DifficultyCalculatorWorker?worker';
+import Worker from './DifficultyCalculatorWorker?worker&inline';
 import { Beatmap } from '@osucad/common';
 
 export class DifficultyCalculator extends Container {
