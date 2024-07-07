@@ -68,7 +68,9 @@ export class SliderTool extends ComposeTool {
 
   #createPreviewCircle() {
     this.#previewCircle = new HitCircle();
-    this.#previewCircle.position = this.mousePosition;
+    this.#previewCircle.position = this.clampToPlayfieldBounds(
+      this.mousePosition,
+    );
 
     this.hitObjects.add(this.#previewCircle!);
   }
@@ -85,7 +87,9 @@ export class SliderTool extends ComposeTool {
 
   #updatePreviewCircle() {
     this.#previewCircle!.startTime = this.editorClock.currentTime;
-    this.#previewCircle!.position = this.mousePosition;
+    this.#previewCircle!.position = this.clampToPlayfieldBounds(
+      this.mousePosition,
+    );
   }
 
   onMouseDown(e: MouseDownEvent): boolean {
@@ -188,7 +192,7 @@ export class SliderTool extends ComposeTool {
       { x: 0, y: 0, type: PathType.Bezier },
       { x: 0, y: 0, type: null },
     ];
-    slider.position = this.mousePosition;
+    slider.position = this.clampToPlayfieldBounds(this.mousePosition);
 
     const objectsAtTime = this.hitObjects.hitObjects.filter((it) =>
       almostEquals(it.startTime, slider.startTime, 2),
