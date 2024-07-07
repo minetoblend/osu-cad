@@ -71,6 +71,24 @@ export class HitObjectUtils extends CompositeDrawable {
     }
   }
 
+  rotateHitObjects(
+    hitObjects: HitObject[],
+    center: Vec2,
+    angle: number,
+    commit: boolean = true,
+  ) {
+    if (hitObjects.length === 0) return;
+
+    this.transformHitObjects(
+      new Matrix()
+        .translate(-center.x, -center.y)
+        .rotate(angle)
+        .translate(center.x, center.y),
+      hitObjects,
+      commit,
+    );
+  }
+
   getBounds(hitObjects: HitObject[]) {
     let minX = Number.MAX_VALUE;
     let minY = Number.MAX_VALUE;

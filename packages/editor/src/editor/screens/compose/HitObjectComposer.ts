@@ -7,6 +7,7 @@ import {
   KeyBindingPressEvent,
   PlatformAction,
   resolved,
+  Vec2,
 } from 'osucad-framework';
 import type { ToolConstructor } from './ComposeScreen';
 import { SelectionOverlay } from './SelectionOverlay';
@@ -97,6 +98,22 @@ export class HitObjectComposer
         this.hitObjectUtils.mirrorHitObjects(
           Axes.Y,
           this.selection.selectedObjects,
+          true,
+        );
+        return true;
+      case EditorAction.RotateCW:
+        this.hitObjectUtils.rotateHitObjects(
+          this.selection.selectedObjects,
+          new Vec2(512 / 2, 384 / 2),
+          Math.PI / 2,
+          true,
+        );
+        return true;
+      case EditorAction.RotateCCW:
+        this.hitObjectUtils.rotateHitObjects(
+          this.selection.selectedObjects,
+          new Vec2(512 / 2, 384 / 2),
+          -Math.PI / 2,
           true,
         );
         return true;
