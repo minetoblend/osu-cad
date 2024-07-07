@@ -32,7 +32,7 @@ export class Timestamp extends CompositeDrawable {
     this.addInternal(
       (this.timestamp = new SpriteText({
         text: '',
-        color: 0xb6b6c3,
+        color: this.themeColors.text,
         style: { fontSize: 20, fill: 'white ' },
         origin: Anchor.Center,
         anchor: Anchor.Center,
