@@ -112,7 +112,7 @@ export class Editor
   onScroll(e: ScrollEvent): boolean {
     const y = e.scrollDelta.y;
 
-    if (e.controlPressed) {
+    if (e.shiftPressed) {
       this.changeBeatSnapDivisor(Math.sign(e.scrollDelta.y));
       return true;
     }
