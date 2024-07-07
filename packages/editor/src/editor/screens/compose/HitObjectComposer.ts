@@ -17,6 +17,7 @@ import { DeleteHitObjectCommand, UpdateHitObjectCommand } from '@osucad/common';
 import { EditorAction } from '../../EditorAction';
 import { NEW_COMBO } from '../../InjectionTokens';
 import { HitObjectUtils } from './HitObjectUtils';
+import { EditorClock } from '../../EditorClock';
 
 export class HitObjectComposer
   extends Container
@@ -87,6 +88,12 @@ export class HitObjectComposer
       case EditorAction.NudgeRight:
         this.#nudgePosition(1, 0);
         return true;
+      case EditorAction.NudgeForward:
+        this.#nudgeTiming(1);
+        return true;
+      case EditorAction.NudgeBackward:
+        this.#nudgeTiming(-1);
+        return true;
       case EditorAction.FlipHorizontal:
         this.hitObjectUtils.mirrorHitObjects(
           Axes.X,
@@ -141,6 +148,25 @@ export class HitObjectComposer
       this.commandManager.submit(
         new UpdateHitObjectCommand(object, {
           position: object.position.add({ x: dx, y: dy }),
+        }),
+        false,
+      );
+    }
+
+    this.commandManager.commit();
+  }
+
+  @resolved(EditorClock)
+  editorClock!: EditorClock;
+
+  #nudgeTiming(direction: number) {
+    const beatLength = this.editorClock.beatLength;
+    const divisor = this.editorClock.beatSnapDivisor.value;
+
+    for (const object of this.selection.selectedObjects) {
+      this.commandManager.submit(
+        new UpdateHitObjectCommand(object, {
+          startTime: object.startTime + (direction * beatLength) / divisor,
         }),
         false,
       );
