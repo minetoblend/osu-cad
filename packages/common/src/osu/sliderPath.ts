@@ -2,6 +2,7 @@ import { PathType, SerializedPathPoint } from '../types';
 import { Vec2 } from 'osucad-framework';
 import { PathApproximator, Vector2 } from 'osu-classes';
 import { clamp } from '../util/clamp';
+import { IDistanceSnapProvider } from './IDistanceSnapProvider';
 
 export class SliderPath {
   controlPoints: SerializedPathPoint[];
@@ -198,5 +199,9 @@ export class SliderPath {
       start.x + (end.x - start.x) * t,
       start.y + (end.y - start.y) * t,
     );
+  }
+
+  get calculatedDistance() {
+    return this.cumulativeDistance[this.cumulativeDistance.length - 1];
   }
 }

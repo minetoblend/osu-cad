@@ -1,19 +1,37 @@
 import { ComposeTool } from './ComposeTool';
 import {
   ClickEvent,
+  dependencyLoader,
   DragStartEvent,
+  InputManager,
   MouseButton,
   MouseDownEvent,
   Vec2,
 } from 'osucad-framework';
 import { SelectBoxInteraction } from './interactions/SelectBoxInteraction';
-import { HitObject } from '@osucad/common';
+import {
+  HitObject,
+  SerializedSlider,
+  Slider,
+  UpdateHitObjectCommand,
+} from '@osucad/common';
 import { MoveSelectionInteraction } from './interactions/MoveSelectionInteraction';
+import { SliderPathVisualizer } from './SliderPathVisualizer';
+import { DistanceSnapProvider } from './DistanceSnapProvider';
+import { SliderUtils } from './SliderUtils';
 
 export class SelectTool extends ComposeTool {
   constructor() {
     super();
+
+    this.addAllInternal(this.#sliderPathVisualizer, this.#snapProvider);
   }
+
+  #snapProvider = new DistanceSnapProvider();
+
+  #sliderPathVisualizer = new SliderPathVisualizer();
+
+  #sliderUtils!: SliderUtils;
 
   get visibleObjects(): HitObject[] {
     return this.hitObjects.hitObjects.filter((it) => {
@@ -129,4 +147,88 @@ export class SelectTool extends ComposeTool {
 
     return false;
   }
+
+  #inputManager: InputManager | null = null;
+
+  update() {
+    super.update();
+
+    this.#inputManager ??= this.getContainingInputManager();
+
+    if (this.#inputManager) {
+      const hitObjects = this.hoveredHitObjects(
+        this.toLocalSpace(this.#inputManager.currentState.mouse.position),
+      );
+
+      this.#updateSliderPathVisualizer(hitObjects);
+    }
+  }
+
+  #updateSliderPathVisualizer(hoveredHitObjects: HitObject[]) {
+    if (this.#isDragging) {
+      return;
+    }
+
+    const selection = this.selection.selectedObjects;
+    if (selection.length === 1 && selection[0] instanceof Slider) {
+      this.#sliderPathVisualizer.slider = selection[0];
+    } else if (hoveredHitObjects.every((it) => !it.isSelected)) {
+      const slider = hoveredHitObjects.find((it) => it instanceof Slider) as
+        | Slider
+        | undefined;
+
+      this.#sliderPathVisualizer.slider = slider ?? null;
+    } else {
+      this.#sliderPathVisualizer.slider = null;
+    }
+  }
+
+  @dependencyLoader()
+  load() {
+    this.#sliderUtils = new SliderUtils(
+      this.commandManager,
+      this.#snapProvider,
+    );
+
+    this.#sliderPathVisualizer.onHandleMouseDown = this.#onHandleMouseDown;
+    this.#sliderPathVisualizer.onHandleDragStarted = this.#onHandleDragStarted;
+    this.#sliderPathVisualizer.onHandleDragged = this.#onHandleDragged;
+    this.#sliderPathVisualizer.onHandleDragEnded = this.#onHandleDragEnded;
+  }
+
+  #isDragging = false;
+
+  #onHandleMouseDown = (index: number, e: MouseDownEvent) => {
+    if (e.button === MouseButton.Right) {
+      return this.#sliderUtils.deleteControlPoint(
+        this.#sliderPathVisualizer.slider!,
+        index,
+      );
+    }
+
+    return true;
+  };
+
+  #onHandleDragStarted = (_: number, e: DragStartEvent) => {
+    if (e.button === MouseButton.Left) {
+      this.#isDragging = true;
+      return true;
+    }
+    return false;
+  };
+
+  #onHandleDragged = (index: number, e: DragStartEvent) => {
+    const slider = this.#sliderPathVisualizer.slider!;
+
+    const position = this.toLocalSpace(e.screenSpaceMousePosition);
+
+    this.#sliderUtils.moveControlPoint(slider, index, position, false);
+
+    return true;
+  };
+
+  #onHandleDragEnded = () => {
+    this.commit();
+    this.#isDragging = false;
+  };
 }
