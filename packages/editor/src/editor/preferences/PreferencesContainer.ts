@@ -47,7 +47,7 @@ export class PreferencesContainer
     action: () => this.hidePreferences(),
   });
 
-  readonly preferencesVisible = new Bindable(true);
+  readonly preferencesVisible = new Bindable(false);
 
   showPreferences(): void {
     this.preferencesVisible.value = true;
