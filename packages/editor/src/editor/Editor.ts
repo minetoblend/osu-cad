@@ -120,7 +120,7 @@ export class Editor
     const amount = e.shiftPressed ? 4 : 1;
 
     this.#clock.seekBeats(
-      Math.sign(y),
+      -Math.sign(y),
       !this.#clock.isRunning,
       amount * (this.#clock.isRunning ? 2.5 : 1),
     );
