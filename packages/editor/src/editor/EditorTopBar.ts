@@ -4,6 +4,7 @@ import { Corner, EditorCornerPiece } from './EditorCornerPiece';
 import { Timeline } from './timeline/Timeline';
 import { TimelineZoomButtons } from './timeline/TimelineZoomButtons';
 import { EditorMenubar } from './EditorMenubar';
+import { BeatSnapDivisorSelector } from './BeatSnapDivisorSelector';
 
 export class EditorTopBar extends Container {
   constructor() {
@@ -64,6 +65,19 @@ export class EditorTopBar extends Container {
             relativeSizeAxes: Axes.Y,
             anchor: Anchor.TopRight,
             origin: Anchor.TopRight,
+            child: new Container({
+              relativeSizeAxes: Axes.Both,
+              padding: { horizontal: 8 },
+              children: [
+                new Container({
+                  relativeSizeAxes: Axes.X,
+                  y: 20,
+                  height: 35,
+                  padding: { left: 20 },
+                  child: new BeatSnapDivisorSelector(),
+                }),
+              ],
+            }),
           }),
         ],
       }),
