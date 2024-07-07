@@ -257,7 +257,7 @@ export class Timeline extends Container {
   }
 
   onKeyDown(e: KeyDownEvent): boolean {
-    if (e.controlPressed && !e.shiftPressed && e.key.startsWith('Digit')) {
+    if (!e.controlPressed && e.shiftPressed && e.key.startsWith('Digit')) {
       const digit = parseInt(e.key[5]);
       if (digit !== 0) {
         this.editorClock.beatSnapDivisor.value = digit;
