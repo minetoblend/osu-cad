@@ -1,5 +1,5 @@
 import { Beatmap, Slider } from '@osucad/common';
-import { Container, Vec2, resolved, dependencyLoader } from 'osucad-framework';
+import { Container, resolved, Vec2 } from 'osucad-framework';
 import {
   CustomRenderPipe,
   Mesh,
@@ -11,7 +11,6 @@ import { animate } from '../../utils/animate';
 import { SliderShader } from './SliderShader';
 import { SliderPathGeometry } from './SliderPathGeometry';
 import { GeometryBuilder } from './GeometryBuilder';
-import { EditorSelection } from '../screens/compose/EditorSelection';
 import { ThemeColors } from '../ThemeColors';
 
 let endCapGeometry: MeshGeometry | null = null;
@@ -123,20 +122,8 @@ export class DrawableSliderBody extends Container {
 
   pathVersion = -1;
 
-  @resolved(EditorSelection)
-  selection!: EditorSelection;
-
   @resolved(ThemeColors)
   colors!: ThemeColors;
-
-  @dependencyLoader()
-  load() {
-    this.selection.selectionChanged.addListener(([hitObject, selected]) => {
-      if (hitObject !== this.hitObject) return;
-
-      this.shader.borderColor = selected ? this.colors.selection : 0xffffff;
-    });
-  }
 
   setup() {
     const comboColors = this.beatmap.colors;

@@ -1,15 +1,12 @@
 import {
   Action,
-  CompositeDrawable,
   Container,
   dependencyLoader,
-  DrawableSprite,
   Key,
   KeyDownEvent,
   resolved,
 } from 'osucad-framework';
-import { Skin } from '../../../skins/Skin';
-import { HitObject, HitObjectManager, Slider, Spinner } from '@osucad/common';
+import { HitObject, HitObjectManager } from '@osucad/common';
 
 export class EditorSelection extends Container {
   readonly #selection = new Set<HitObject>();
@@ -76,6 +73,9 @@ export class EditorSelection extends Container {
       if (this.#selection.has(hitObject)) {
         this.deselect(hitObject);
       }
+    });
+    this.selectionChanged.addListener(([hitObject, selected]) => {
+      hitObject.isSelected = selected;
     });
   }
 
