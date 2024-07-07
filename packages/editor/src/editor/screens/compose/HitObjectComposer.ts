@@ -15,6 +15,7 @@ import { CommandManager } from '../../context/CommandManager';
 import { DeleteHitObjectCommand, UpdateHitObjectCommand } from '@osucad/common';
 import { EditorAction } from '../../EditorAction';
 import { NEW_COMBO } from '../../InjectionTokens';
+import { HitObjectUtils } from './HitObjectUtils';
 
 export class HitObjectComposer
   extends Container
@@ -26,6 +27,8 @@ export class HitObjectComposer
     });
   }
 
+  hitObjectUtils!: HitObjectUtils;
+
   #toolContainer = new Container({
     relativeSizeAxes: Axes.Both,
   });
@@ -35,6 +38,8 @@ export class HitObjectComposer
     this.addInternal(new SelectionOverlay());
 
     this.addInternal(this.#toolContainer);
+
+    this.addInternal((this.hitObjectUtils = new HitObjectUtils()));
 
     this.activeTool.addOnChangeListener(
       (tool) => {
@@ -80,6 +85,18 @@ export class HitObjectComposer
         return true;
       case EditorAction.NudgeRight:
         this.#nudgePosition(1, 0);
+        return true;
+      case EditorAction.FlipHorizontal:
+        this.hitObjectUtils.mirrorHitObjects(
+          Axes.X,
+          this.selection.selectedObjects,
+        );
+        return true;
+      case EditorAction.FlipVertical:
+        this.hitObjectUtils.mirrorHitObjects(
+          Axes.Y,
+          this.selection.selectedObjects,
+        );
         return true;
     }
 
