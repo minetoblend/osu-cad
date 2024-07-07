@@ -1,7 +1,14 @@
-import { Anchor, Axes, Container, dependencyLoader } from 'osucad-framework';
+import {
+  Anchor,
+  Axes,
+  Container,
+  dependencyLoader,
+  MarginPadding,
+} from 'osucad-framework';
 import { BackdropBlurFilter } from 'pixi-filters';
 import { Corner, EditorCornerPiece } from './EditorCornerPiece';
 import { OverviewTimeline } from './overviewTimeline/OverviewTimeline';
+import { TimestampContainer } from './TimestampContainer';
 
 export class EditorBottomBar extends Container {
   constructor() {
@@ -40,6 +47,16 @@ export class EditorBottomBar extends Container {
             corner: Corner.BottomLeft,
             width: 140,
             relativeSizeAxes: Axes.Y,
+            child: new Container({
+              relativeSizeAxes: Axes.Both,
+              padding: new MarginPadding({
+                top: 6,
+                bottom: 6,
+                left: 10,
+                right: 20,
+              }),
+              children: [new TimestampContainer()],
+            }),
           }),
           new EditorCornerPiece({
             corner: Corner.BottomRight,
