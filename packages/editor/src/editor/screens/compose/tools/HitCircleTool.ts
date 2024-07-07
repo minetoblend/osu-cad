@@ -7,7 +7,6 @@ import {
 } from '@osucad/common';
 import {
   almostEquals,
-  clamp,
   dependencyLoader,
   DragEvent,
   DragStartEvent,
@@ -15,7 +14,6 @@ import {
   MouseDownEvent,
   MouseMoveEvent,
   MouseUpEvent,
-  Vec2,
 } from 'osucad-framework';
 import { ComposeTool } from './ComposeTool';
 
@@ -127,7 +125,7 @@ export class HitCircleTool extends ComposeTool {
     }
 
     if (e.button === MouseButton.Right) {
-      this.#updateObject((object) => (object.isNewCombo = !object.isNewCombo));
+      this.newCombo.value = !this.newCombo.value;
     }
 
     return false;

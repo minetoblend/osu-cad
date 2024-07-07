@@ -5,6 +5,7 @@ import {
   PathType,
   SerializedPathPoint,
   Slider,
+  UpdateHitObjectCommand,
 } from '@osucad/common';
 import {
   MouseButton,
@@ -46,6 +47,12 @@ export class SliderTool extends ComposeTool {
 
   @dependencyLoader()
   load() {
+    this.newCombo.value = false;
+
+    this.newCombo.addOnChangeListener((newCombo) =>
+      this.#updateNewCombo(newCombo),
+    );
+
     this.#state = PlacementState.Preview;
 
     const distanceSnapProvider = new DistanceSnapProvider();
@@ -92,7 +99,13 @@ export class SliderTool extends ComposeTool {
           return true;
       }
     } else if (e.button === MouseButton.Right) {
-      this.#endPlacing();
+      switch (this.#state) {
+        case PlacementState.Preview:
+          this.newCombo.value = !this.newCombo.value;
+          break;
+        case PlacementState.PlacingPoint:
+          this.#endPlacing();
+      }
     }
 
     return false;
@@ -252,6 +265,14 @@ export class SliderTool extends ComposeTool {
       ...this.#slider!.path.controlPoints,
       { x: position.x, y: position.y, type: null },
     ];
+  }
+
+  #updateNewCombo(newCombo: boolean) {
+    if (this.#previewCircle) {
+      this.#previewCircle.isNewCombo = newCombo;
+    } else {
+      this.submit(new UpdateHitObjectCommand(this.#slider!, { newCombo }));
+    }
   }
 
   dispose(): boolean {
