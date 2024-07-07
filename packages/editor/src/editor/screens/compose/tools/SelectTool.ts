@@ -221,6 +221,13 @@ export class SelectTool extends ComposeTool {
       );
     }
 
+    if (e.button === MouseButton.Left && e.controlPressed) {
+      return this.#sliderUtils.cycleControlPointType(
+        this.#sliderPathVisualizer.slider!,
+        index,
+      );
+    }
+
     return true;
   };
 
