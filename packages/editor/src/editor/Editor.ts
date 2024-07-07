@@ -113,7 +113,7 @@ export class Editor
     const y = e.scrollDelta.y;
 
     if (e.controlPressed) {
-      this.changeBeatSnapDivisor(-Math.sign(e.scrollDelta.y));
+      this.changeBeatSnapDivisor(Math.sign(e.scrollDelta.y));
       return true;
     }
 
