@@ -184,7 +184,6 @@ export class TimelineObject extends Container {
           false,
         );
       }
-      this.commandManager.commit();
     }
 
     return true;
