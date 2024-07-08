@@ -47,8 +47,8 @@ export class ComposeScreen extends EditorScreen {
     if (!this.#paddingBacking.isValid) {
       this.#playfieldContainer.padding = {
         horizontal: this.#toolBar.layoutSize.x,
-        top: this.drawSize.x < 1740 ? 15 : 0,
-        bottom: this.drawSize.x < 1640 ? 15 : 0,
+        top: this.drawSize.x < 1250 ? 15 : 0,
+        bottom: this.drawSize.x < 1110 ? 15 : 0,
       };
       this.#paddingBacking.validate();
     }
