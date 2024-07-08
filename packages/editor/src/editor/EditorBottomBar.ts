@@ -33,7 +33,7 @@ export class EditorBottomBar extends Container {
     this.addAll(
       new Container({
         relativeSizeAxes: Axes.X,
-        height: 35,
+        height: 30,
         padding: { horizontal: 120 },
         child: new OverviewTimeline(),
         anchor: Anchor.BottomCenter,
