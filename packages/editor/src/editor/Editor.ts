@@ -284,4 +284,11 @@ export class Editor
         clamp(index + change, 0, possibleSnapValues.length - 1)
       ];
   }
+
+  update() {
+    super.update();
+
+    this.context.beatmap.hitObjects.updateStacking();
+    this.context.beatmap.hitObjects.calculateCombos();
+  }
 }

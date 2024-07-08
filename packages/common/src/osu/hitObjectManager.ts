@@ -28,7 +28,7 @@ export class HitObjectManager {
       deserializeHitObject(hitObject),
     );
     this.hitObjects.forEach((hitObject) => this._onAdd(hitObject, true));
-    this.calculateCombos();
+    this._invalidateCombos();
     this.calculateStacking(
       this.hitObjects,
       general.stackLeniency,
@@ -43,6 +43,8 @@ export class HitObjectManager {
   }
 
   stackingDirty = false;
+  comboNumbersDirty = false;
+
   private _onAdd(hitObject: HitObject, isInit = false) {
     this._hitObjectMap.set(hitObject.id, hitObject);
     hitObject.applyDefaults(this.difficulty, this.controlPoints);
@@ -50,12 +52,11 @@ export class HitObjectManager {
       this._onUpdate(hitObject, key);
     });
 
-    this.stackingDirty = true;
+    this._invalidateStacking();
+    this._invalidateCombos();
 
     if (!isInit) {
       this.sortHitObjects();
-      this._invalidateStacking();
-      this.calculateCombos();
     }
 
     this.onAdded.emit(hitObject);
@@ -77,7 +78,7 @@ export class HitObjectManager {
     this._hitObjectMap.delete(hitObject.id);
     hitObject.onUpdate.removeAllListeners();
     this.stackingDirty = true;
-    this.calculateCombos();
+    this._invalidateCombos();
     this.onRemoved.emit(hitObject);
   }
 
@@ -85,11 +86,11 @@ export class HitObjectManager {
     switch (key) {
       case 'startTime':
         this.sortHitObjects();
-        this.calculateCombos();
+        this._invalidateCombos();
         this._invalidateStacking();
         break;
       case 'newCombo':
-        this.calculateCombos();
+        this._invalidateCombos();
         break;
       case 'position':
         this._invalidateStacking();
@@ -106,6 +107,8 @@ export class HitObjectManager {
   }
 
   private calculateCombos() {
+    if (!this.comboNumbersDirty) return;
+
     let comboIndex = 0;
     let indexInCombo = 0;
 
@@ -269,6 +272,10 @@ export class HitObjectManager {
 
   private _invalidateStacking() {
     this.stackingDirty = true;
+  }
+
+  private _invalidateCombos() {
+    this.comboNumbersDirty = true;
   }
 
   updateStacking() {
