@@ -1,4 +1,9 @@
-import { Beatmap, HitObject, Slider } from '@osucad/common';
+import {
+  Beatmap,
+  HitObject,
+  Slider,
+  UpdateHitObjectCommand,
+} from '@osucad/common';
 import {
   Anchor,
   Axes,
@@ -172,12 +177,14 @@ export class TimelineObject extends Container {
 
     if (delta !== 0) {
       for (const hitObject of this.selection.selectedObjects) {
-        hitObject.update(
-          this.commandManager,
-          (it) => (it.startTime += delta),
+        this.commandManager.submit(
+          new UpdateHitObjectCommand(hitObject, {
+            startTime: hitObject.startTime + delta,
+          }),
           false,
         );
       }
+      this.commandManager.commit();
     }
 
     return true;
