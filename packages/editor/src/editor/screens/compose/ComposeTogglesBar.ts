@@ -13,6 +13,7 @@ import { UIIcons } from '../../UIIcons';
 import { NewComboButton } from './tools/NewComboButton';
 import { ComposeAdditionButton } from './ComposeAdditionButton';
 import { ThemeColors } from '../../ThemeColors';
+import { SampleType } from '@osucad/common';
 
 export class ComposeTogglesBar extends Container {
   constructor() {
@@ -51,8 +52,9 @@ export class ComposeTogglesBar extends Container {
           cornerRadius: 1,
         }),
       }),
-      new ComposeAdditionButton(this.icons.whistle),
-      new ComposeAdditionButton(this.icons.finish),
+      new ComposeAdditionButton(this.icons.whistle, SampleType.Whistle),
+      new ComposeAdditionButton(this.icons.finish, SampleType.Finish),
+      new ComposeAdditionButton(this.icons.clap, SampleType.Clap),
     );
   }
 

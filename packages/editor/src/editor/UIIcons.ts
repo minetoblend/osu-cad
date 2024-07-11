@@ -16,6 +16,7 @@ import undo from '../assets/icons/undo.png';
 import newCombo from '../assets/icons/new-combo.png';
 import whistle from '../assets/icons/whistle@2x.png';
 import finish from '../assets/icons/finish@2x.png';
+import clap from '../assets/icons/clap@2x.png';
 
 export class UIIcons {
   async load() {
@@ -36,6 +37,7 @@ export class UIIcons {
       { src: newCombo, alias: 'icon-new-combo' },
       { src: whistle, alias: 'icon-whistle' },
       { src: finish, alias: 'icon-finish' },
+      { src: clap, alias: 'icon-clap' },
     ]);
     await Assets.loadBundle('icons');
 
@@ -55,6 +57,7 @@ export class UIIcons {
     this.newCombo = Assets.get('icon-new-combo');
     this.whistle = Assets.get('icon-whistle');
     this.finish = Assets.get('icon-finish');
+    this.clap = Assets.get('icon-clap');
   }
 
   circle!: Texture;
@@ -73,4 +76,5 @@ export class UIIcons {
   newCombo!: Texture;
   whistle!: Texture;
   finish!: Texture;
+  clap!: Texture;
 }
