@@ -135,7 +135,7 @@ class BeatSnapSlider extends CompositeDrawable {
       scaleX: 1.2,
       scaleY: 1.2,
       duration: 0.2,
-      ease: 'back.out',
+      ease: 'power4.out',
     });
     return true;
   }
@@ -145,7 +145,7 @@ class BeatSnapSlider extends CompositeDrawable {
       scaleX: 1,
       scaleY: 1,
       duration: 0.2,
-      ease: 'back.out',
+      ease: 'power4.out',
     });
     return true;
   }
@@ -196,13 +196,13 @@ class BeatSnapSlider extends CompositeDrawable {
     gsap.to(this.#thumb, {
       x: relative,
       duration: 0.2,
-      ease: 'back.out',
+      ease: 'power4.out',
     });
 
     gsap.to(this.#activeTrack, {
       width: relative,
       duration: 0.2,
-      ease: 'back.out',
+      ease: 'power4.out',
     });
   }
 }
