@@ -1,9 +1,10 @@
 import {
+  Additions,
   CreateHitObjectCommand,
   DeleteHitObjectCommand,
   HitCircle,
   hitObjectId,
-  SampleType,
+  setAdditionsEnabled,
   UpdateHitObjectCommand,
 } from '@osucad/common';
 import {
@@ -50,8 +51,8 @@ export class HitCircleTool extends ComposeTool {
     }
   }
 
-  applySampleType(type: SampleType, bindable: Bindable<boolean>): void {
-    // TODO
+  applySampleType(addition: Additions, bindable: Bindable<boolean>): void {
+    // no-op
   }
 
   protected loadComplete(): void {
@@ -124,6 +125,13 @@ export class HitCircleTool extends ComposeTool {
       for (const object of existing) {
         this.submit(new DeleteHitObjectCommand(object), false);
       }
+
+      let additions = Additions.None;
+      if (this.sampleWhistle.value) additions |= Additions.Whistle;
+      if (this.sampleFinish.value) additions |= Additions.Finish;
+      if (this.sampleClap.value) additions |= Additions.Clap;
+
+      hitObject.hitSound.additions = additions;
 
       hitObject.id = hitObjectId();
 

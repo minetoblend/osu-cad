@@ -11,9 +11,11 @@ import {
 } from 'osucad-framework';
 import { SelectBoxInteraction } from './interactions/SelectBoxInteraction';
 import {
+  Additions,
   DeleteHitObjectCommand,
   HitObject,
   SampleType,
+  setAdditionsEnabled,
   Slider,
   UpdateHitObjectCommand,
 } from '@osucad/common';
@@ -176,6 +178,8 @@ export class SelectTool extends ComposeTool {
 
     this.#updateNewComboFromSelection();
 
+    this.#updateAdditionsFromSelection();
+
     this.#inputManager ??= this.getContainingInputManager();
 
     if (this.#inputManager) {
@@ -237,13 +241,30 @@ export class SelectTool extends ComposeTool {
     }
   }
 
-  applySampleType(type: SampleType, bindable: Bindable<boolean>): void {
-    // TODO
-    const value = bindable.value;
-
-    if (value) {
-      bindable.value = false;
+  applySampleType(addition: Additions, bindable: Bindable<boolean>): void {
+    if (this.selection.length === 0) {
+      return;
     }
+
+    const hitObjects = this.selection.selectedObjects;
+
+    for (const hitObject of hitObjects) {
+      this.submit(
+        new UpdateHitObjectCommand(hitObject, {
+          hitSound: {
+            ...hitObject.hitSound,
+            additions: setAdditionsEnabled(
+              hitObject.hitSound.additions,
+              addition,
+              bindable.value,
+            ),
+          },
+        }),
+        false,
+      );
+    }
+
+    this.commit();
   }
 
   #isDragging = false;
@@ -307,5 +328,41 @@ export class SelectTool extends ComposeTool {
     this.newCombo.value = this.selection.selectedObjects.every(
       (it) => it.isNewCombo || it === this.hitObjects.first,
     );
+  }
+
+  #updateAdditionsFromSelection() {
+    if (this.selection.length === 0) {
+      return;
+    }
+
+    for (const addition of [
+      Additions.Whistle,
+      Additions.Finish,
+      Additions.Clap,
+    ]) {
+      const allActive = this.selection.selectedObjects.every(
+        (it) => !!!(it.hitSound.additions & addition),
+      );
+
+      let bindable: Bindable<boolean>;
+
+      switch (addition) {
+        case Additions.Whistle:
+          bindable = this.sampleWhistle;
+          break;
+        case Additions.Finish:
+          bindable = this.sampleFinish;
+          break;
+        case Additions.Clap:
+          bindable = this.sampleClap;
+          break;
+      }
+
+      if (allActive) {
+        bindable!.value = false;
+      } else {
+        bindable!.value = true;
+      }
+    }
   }
 }

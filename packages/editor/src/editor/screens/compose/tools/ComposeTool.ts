@@ -1,4 +1,9 @@
-import { Beatmap, HitObjectManager, SampleType } from '@osucad/common';
+import {
+  Additions,
+  Beatmap,
+  HitObjectManager,
+  SampleType,
+} from '@osucad/common';
 import {
   Axes,
   Bindable,
@@ -73,19 +78,22 @@ export abstract class ComposeTool extends CommandContainer {
       this.applyNewCombo(newCombo),
     );
     this.sampleWhistle.addOnChangeListener((value) =>
-      this.applySampleType(SampleType.Whistle, this.sampleWhistle),
+      this.applySampleType(Additions.Whistle, this.sampleWhistle),
     );
     this.sampleFinish.addOnChangeListener((value) =>
-      this.applySampleType(SampleType.Finish, this.sampleFinish),
+      this.applySampleType(Additions.Finish, this.sampleFinish),
     );
     this.sampleClap.addOnChangeListener((value) =>
-      this.applySampleType(SampleType.Clap, this.sampleClap),
+      this.applySampleType(Additions.Clap, this.sampleClap),
     );
   }
 
   abstract applyNewCombo(newCombo: boolean): void;
 
-  abstract applySampleType(type: SampleType, bindable: Bindable<boolean>): void;
+  abstract applySampleType(
+    addition: Additions,
+    bindable: Bindable<boolean>,
+  ): void;
 
   get mousePosition() {
     return this.toLocalSpace(this.inputManager.currentState.mouse.position);

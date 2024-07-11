@@ -1,12 +1,15 @@
 import {
+  Additions,
   CreateHitObjectCommand,
   DeleteHitObjectCommand,
   HitCircle,
   PathType,
   SampleType,
   SerializedPathPoint,
+  SerializedSlider,
   Slider,
   UpdateHitObjectCommand,
+  setAdditionsEnabled,
 } from '@osucad/common';
 import {
   Bindable,
@@ -196,6 +199,14 @@ export class SliderTool extends ComposeTool {
     ];
     slider.position = this.clampToPlayfieldBounds(this.mousePosition);
 
+    let additions = Additions.None;
+    if (this.sampleWhistle.value) additions |= Additions.Whistle;
+    if (this.sampleFinish.value) additions |= Additions.Finish;
+    if (this.sampleClap.value) additions |= Additions.Clap;
+
+    slider.hitSound.additions = additions;
+    slider.hitSounds.forEach((it) => (it.additions = additions));
+
     const objectsAtTime = this.hitObjects.hitObjects.filter((it) =>
       almostEquals(it.startTime, slider.startTime, 2),
     );
@@ -285,8 +296,8 @@ export class SliderTool extends ComposeTool {
     }
   }
 
-  applySampleType(type: SampleType, bindable: Bindable<boolean>): void {
-    // TODO
+  applySampleType(addition: Additions, bindable: Bindable<boolean>): void {
+    // no-op
   }
 
   dispose(): boolean {

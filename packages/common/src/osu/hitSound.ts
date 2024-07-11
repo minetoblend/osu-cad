@@ -90,3 +90,17 @@ export function getSamples(hitSound: HitSound, time: number): HitSample[] {
 
   return samples;
 }
+
+export function setAdditionsEnabled(
+  additions: Additions,
+  toSet: Additions,
+  enabled: boolean,
+): Additions {
+  if (enabled) {
+    additions |= toSet;
+  } else {
+    additions &= ~toSet;
+  }
+
+  return additions;
+}

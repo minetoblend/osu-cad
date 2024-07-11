@@ -1,9 +1,9 @@
 import { Action, Vec2 } from 'osucad-framework';
-import { Attribution, SerializedHitObject } from '../types';
 import { SerializedBeatmapDifficulty } from '../protocol';
-import { ControlPointManager } from './controlPointManager';
-import { defaultHitSound, HitSample, HitSound } from './hitSound';
+import { Attribution, SerializedHitObject } from '../types';
 import { randomString } from '../util';
+import { ControlPointManager } from './controlPointManager';
+import { HitSample, HitSound, defaultHitSound } from './hitSound';
 
 export function hitObjectId() {
   return randomString(8);
