@@ -9,11 +9,16 @@ import {
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import { UIIcons } from '../../UIIcons';
-import { NewComboButton } from './tools/NewComboButton';
-import { ComposeAdditionButton } from './ComposeAdditionButton';
+import { EditorAction } from '../../EditorAction';
+import {
+  NEW_COMBO,
+  SAMPLE_CLAP,
+  SAMPLE_FINISH,
+  SAMPLE_WHISTLE,
+} from '../../InjectionTokens';
 import { ThemeColors } from '../../ThemeColors';
-import { SampleType } from '@osucad/common';
+import { UIIcons } from '../../UIIcons';
+import { ComposeToggleButton } from './ComposeToggleButton';
 
 export class ComposeTogglesBar extends Container {
   constructor() {
@@ -37,7 +42,11 @@ export class ComposeTogglesBar extends Container {
   @dependencyLoader()
   init() {
     this.addAll(
-      new NewComboButton(this.icons.newCombo),
+      new ComposeToggleButton(
+        this.icons.newCombo,
+        NEW_COMBO,
+        EditorAction.ToggleNewCombo,
+      ),
       new Container({
         relativeSizeAxes: Axes.X,
         height: 12,
@@ -52,9 +61,9 @@ export class ComposeTogglesBar extends Container {
           cornerRadius: 1,
         }),
       }),
-      new ComposeAdditionButton(this.icons.whistle, SampleType.Whistle),
-      new ComposeAdditionButton(this.icons.finish, SampleType.Finish),
-      new ComposeAdditionButton(this.icons.clap, SampleType.Clap),
+      new ComposeToggleButton(this.icons.whistle, SAMPLE_WHISTLE),
+      new ComposeToggleButton(this.icons.finish, SAMPLE_FINISH),
+      new ComposeToggleButton(this.icons.clap, SAMPLE_CLAP),
     );
   }
 

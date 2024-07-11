@@ -73,9 +73,6 @@ export class HitObjectComposer
       case PlatformAction.Delete:
         this.#deleteSelection();
         return true;
-      case EditorAction.ToggleNewCombo:
-        this.#toggleNewCombo();
-        return true;
       case EditorAction.NudgeUp:
         this.#nudgePosition(0, -1);
         return true;
@@ -138,10 +135,6 @@ export class HitObjectComposer
 
   @resolved(NEW_COMBO)
   newCombo!: Bindable<boolean>;
-
-  #toggleNewCombo() {
-    this.newCombo.value = !this.newCombo.value;
-  }
 
   #nudgePosition(dx: number, dy: number) {
     for (const object of this.selection.selectedObjects) {
