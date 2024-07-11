@@ -106,7 +106,7 @@ export class HitObjectManager {
     return this.hitObjects.map((it) => it.serialize());
   }
 
-  private calculateCombos() {
+  calculateCombos() {
     if (!this.comboNumbersDirty) return;
 
     let comboIndex = 0;
