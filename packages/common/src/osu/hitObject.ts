@@ -180,6 +180,13 @@ export abstract class HitObject {
     return this._hitSamples;
   }
 
+  isVisibleAtTime(time: number) {
+    if (time <= this.startTime - this.timePreempt) return false;
+    if (time >= this.endTime + 700) return false;
+
+    return true;
+  }
+
   abstract calculateHitSamples(): HitSample[];
 
   protected _updateHitSounds() {}

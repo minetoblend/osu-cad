@@ -18,6 +18,8 @@ import { UIFonts } from './editor/UIFonts';
 import { UIIcons } from './editor/UIIcons';
 import { EditorContext } from './editor/context/EditorContext';
 import './editor/mixins/HitObjectMixin';
+import { EditorActionContainer } from './editor/EditorActionContainer';
+import { PreferencesContainer } from './editor/preferences/PreferencesContainer';
 
 RenderTarget.defaultOptions.depth = true;
 RenderTarget.defaultOptions.stencil = true;
@@ -67,6 +69,8 @@ export class OsucadGame extends Game {
     const samples = new UISamples(this.audioManager, mixer.userInterface);
     this.dependencies.provide(samples);
 
+    mixer.userInterface.volume = 0.25;
+
     await Promise.all([
       this.context.load(),
       icons.load(),
@@ -76,8 +80,15 @@ export class OsucadGame extends Game {
 
     this.context.provideDependencies(this.dependencies);
 
-    const editor = new Editor(this.context);
-    this.#innerContainer.add(editor);
+    let editor: Editor;
+    this.#innerContainer.add(
+      new EditorActionContainer({
+        child: new PreferencesContainer({
+          child: (editor = new Editor(this.context)),
+        }),
+      }),
+    );
+
     if (!isMobile.any) {
       this.add(new MainCursorContainer());
     }

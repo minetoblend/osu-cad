@@ -5,6 +5,9 @@ export class Skin {
   hitcircleOverlay!: Texture;
   approachCircle!: Texture;
   sliderFollowCircle!: Texture;
+  hitcircleSelect!: Texture;
+  reverseArrow!: Texture;
+  followPoint!: Texture;
 
   comboNumbers: Texture[] = [];
 
@@ -28,6 +31,18 @@ export class Skin {
         src: '/assets/skin/sliderfollowcircle.png',
         alias: 'sliderfollowcircle',
       },
+      {
+        src: '/assets/skin/hitcircleselect@2x.png',
+        alias: 'hitcircleSelect',
+      },
+      {
+        src: '/assets/skin/reversearrow@2x.png',
+        alias: 'reverseArrow',
+      },
+      {
+        src: '/assets/skin/followpoint.png',
+        alias: 'followPoint',
+      },
       ...comboNumbers,
     ]);
 
@@ -37,6 +52,9 @@ export class Skin {
     this.hitcircleOverlay = Assets.get('hitcircleOverlay');
     this.approachCircle = Assets.get('approachCircle');
     this.sliderFollowCircle = Assets.get('sliderfollowcircle');
+    this.hitcircleSelect = Assets.get('hitcircleSelect');
+    this.reverseArrow = Assets.get('reverseArrow');
+    this.followPoint = Assets.get('followPoint');
 
     for (let i = 0; i < 10; i++) {
       this.comboNumbers.push(Assets.get(`default-${i}`));

@@ -3,6 +3,7 @@ import {
   Bindable,
   Container,
   ContainerOptions,
+  KeyDownEvent,
   PIXIContainer,
   PIXIGraphics,
   dependencyLoader,
@@ -83,5 +84,19 @@ export class PlayfieldGrid extends Container {
       alpha: 0.25,
       width: 1 / this.#pixelSize,
     });
+  }
+
+  #gridSizePresets = [4, 8, 16, 32, 64];
+
+  onKeyDown(e: KeyDownEvent): boolean {
+    if (e.key.startsWith('Digit') && e.controlPressed) {
+      const index = parseInt(e.key[5]) - 1;
+      if (index >= 0 && index < this.#gridSizePresets.length) {
+        this.gridSize.value = this.#gridSizePresets[index];
+        return true;
+      }
+    }
+
+    return false;
   }
 }

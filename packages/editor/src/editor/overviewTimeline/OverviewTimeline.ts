@@ -3,6 +3,7 @@ import {
   Box,
   Container,
   dependencyLoader,
+  MouseDownEvent,
   resolved,
 } from 'osucad-framework';
 import { ThemeColors } from '../ThemeColors';
@@ -40,4 +41,8 @@ export class OverviewTimeline extends Container {
     relativeSizeAxes: Axes.Both,
     padding: { horizontal: 30 },
   });
+
+  onMouseDown(): boolean {
+    return true;
+  }
 }

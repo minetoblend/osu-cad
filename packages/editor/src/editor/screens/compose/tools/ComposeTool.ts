@@ -1,14 +1,19 @@
 import { Beatmap, HitObjectManager } from '@osucad/common';
 import {
   Axes,
+  Bindable,
+  clamp,
   Container,
   InputManager,
   resolved,
   UIEvent,
+  Vec2,
 } from 'osucad-framework';
 import { CommandContainer } from '../../../CommandContainer';
 import { EditorClock } from '../../../EditorClock';
 import { ComposeToolInteraction } from './interactions/ComposeToolInteraction';
+import { EditorSelection } from '../EditorSelection';
+import { NEW_COMBO } from '../../../InjectionTokens';
 
 export abstract class ComposeTool extends CommandContainer {
   protected constructor() {
@@ -25,6 +30,9 @@ export abstract class ComposeTool extends CommandContainer {
       })),
     );
   }
+
+  @resolved(NEW_COMBO)
+  protected newCombo!: Bindable<boolean>;
 
   receivePositionalInputAt(): boolean {
     return true;
@@ -64,6 +72,9 @@ export abstract class ComposeTool extends CommandContainer {
 
   @resolved(EditorClock)
   protected readonly editorClock!: EditorClock;
+
+  @resolved(EditorSelection)
+  protected readonly selection!: EditorSelection;
 
   #currentInteraction: ComposeToolInteraction | null = null;
 
@@ -112,5 +123,9 @@ export abstract class ComposeTool extends CommandContainer {
     }
 
     return super.triggerEvent(e);
+  }
+
+  protected clampToPlayfieldBounds(position: Vec2) {
+    return new Vec2(clamp(position.x, 0, 512), clamp(position.y, 0, 384));
   }
 }

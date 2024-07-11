@@ -1,28 +1,21 @@
-import {
-  Beatmap,
-  HitCircle,
-  HitObjectManager,
-  HitObjectType,
-  Slider,
-} from '@osucad/common';
+import { Beatmap, HitCircle, HitObjectType, Slider } from '@osucad/common';
 import {
   Axes,
   Container,
-  Drawable,
   dependencyLoader,
+  Drawable,
   resolved,
 } from 'osucad-framework';
 import { EditorClock } from '../EditorClock';
 import { DrawableHitCircle } from './DrawableHitCircle';
 import { DrawableSlider } from './DrawableSlider';
+import { FollowPointRenderer } from './FollowPointRenderer';
 
 export class HitObjectContainer extends Container {
   constructor() {
     super({
       relativeSizeAxes: Axes.Both,
     });
-    this.add(this.#hitObjectContainer);
-    this.#hitObjectContainer.drawNode.enableRenderGroup();
   }
 
   @resolved(Beatmap)
@@ -39,10 +32,16 @@ export class HitObjectContainer extends Container {
     relativeSizeAxes: Axes.Both,
   });
 
+  #followPointRenderer = new FollowPointRenderer();
+
   @dependencyLoader()
   load() {
     this.clock = this.#hitObjectContainer.clock = this.editorClock;
     this.processCustomClock = false;
+
+    this.add(this.#followPointRenderer);
+    this.add(this.#hitObjectContainer);
+    this.#hitObjectContainer.drawNode.enableRenderGroup();
   }
 
   private readonly hitObjectDrawableMap = new Map<string, Drawable>();
@@ -65,6 +64,8 @@ export class HitObjectContainer extends Container {
     const hitObjects = this.hitObjects.hitObjects.filter(
       (h, i) => (i >= startIndex && i <= endIndex) || h.isSelected,
     );
+
+    this.#followPointRenderer.updateFollowPoints(hitObjects);
 
     const shouldRemove = new Set<string>([...this.hitObjectDrawableMap.keys()]);
     for (let i = 0; i < hitObjects.length; i++) {

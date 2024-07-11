@@ -21,7 +21,6 @@
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
     "typescript": "^5.2.2",
-    "unplugin-turbo-console": "^1.8.9",
     "vite": "^5.3.1"
   },
   "dependencies": {

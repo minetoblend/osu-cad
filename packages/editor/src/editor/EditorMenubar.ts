@@ -15,6 +15,7 @@ import {
 import { EditorMenu } from './EditorMenu';
 import { UIFonts } from './UIFonts';
 import { CommandManager } from './context/CommandManager';
+import { ThemeColors } from './ThemeColors';
 
 export class EditorMenubar extends EditorMenu {
   constructor() {
@@ -132,6 +133,9 @@ class MenuItemContent extends Container {
   @resolved(UIFonts)
   fonts!: UIFonts;
 
+  @resolved(ThemeColors)
+  colors!: ThemeColors;
+
   @dependencyLoader()
   load(): void {
     this.add(
@@ -142,7 +146,7 @@ class MenuItemContent extends Container {
         font: this.fonts.nunitoSans,
         style: {
           fontSize: 14,
-          fill: 'white',
+          fill: this.colors.text,
         },
       })),
     );

@@ -17,12 +17,12 @@ import { SelectTool } from './tools/SelectTool';
 import { SliderTool } from './tools/SliderTool';
 import { SpinnerTool } from './tools/SpinnerTool';
 
-export class ComposeToolbar extends Container {
+export class ComposeToolBar extends Container {
   constructor(protected readonly activeTool: Bindable<ToolConstructor>) {
     super({
-      width: 54,
       relativeSizeAxes: Axes.Y,
-      margin: 10,
+      width: 74,
+      padding: 10,
     });
 
     this.addInternal(this.#toolButtons);

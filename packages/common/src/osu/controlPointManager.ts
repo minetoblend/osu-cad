@@ -295,27 +295,24 @@ export class ControlPointManager {
     return { index: left, found: false };
   }
 
-  snap(
-    time: number,
-    divisor: number,
-    type: 'round' | 'floor' | 'ceil' = 'round',
-  ) {
-    const timingPoint = this.timingPointAt(time);
-    const offset = time - timingPoint.time;
-    const beatLength = timingPoint.timing.beatLength / divisor;
-    let beat: number;
-    switch (type) {
-      case 'round':
-        beat = Math.round(offset / beatLength);
-        break;
-      case 'floor':
-        beat = Math.floor(offset / beatLength);
-        break;
-      case 'ceil':
-        beat = Math.ceil(offset / beatLength);
-        break;
-    }
-    return timingPoint.time + beat * beatLength;
+  snap(position: number, divisor: number) {
+    const timingPoint = this.timingPointAt(position);
+
+    position -= timingPoint.time;
+
+    const beatSnapLength = timingPoint.timing.beatLength / divisor;
+
+    const closestBeat = Math.round(position / beatSnapLength);
+    position = timingPoint.time + closestBeat * beatSnapLength;
+
+    const nextTimingPoint = this.controlPoints.find(
+      (t) => t.timing && t.time > timingPoint.time,
+    ) as TimingPoint | undefined;
+
+    if (nextTimingPoint && position > nextTimingPoint?.time)
+      position = nextTimingPoint.time;
+
+    return position;
   }
 
   static fromLegacy(options: {

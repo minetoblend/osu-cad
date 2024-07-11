@@ -13,6 +13,7 @@ import sizeNs from '../assets/icons/size-ns.png';
 import slider from '../assets/icons/slider.png';
 import spinner from '../assets/icons/spinner.png';
 import undo from '../assets/icons/undo.png';
+import newCombo from '../assets/icons/new-combo.png';
 
 export class UIIcons {
   async load() {
@@ -30,6 +31,7 @@ export class UIIcons {
       { src: slider, alias: 'icon-slider' },
       { src: spinner, alias: 'icon-spinner' },
       { src: undo, alias: 'icon-undo' },
+      { src: newCombo, alias: 'icon-new-combo' },
     ]);
     await Assets.loadBundle('icons');
 
@@ -46,6 +48,7 @@ export class UIIcons {
     this.slider = Assets.get('icon-slider');
     this.spinner = Assets.get('icon-spinner');
     this.undo = Assets.get('icon-undo');
+    this.newCombo = Assets.get('icon-new-combo');
   }
 
   circle!: Texture;
@@ -61,4 +64,5 @@ export class UIIcons {
   slider!: Texture;
   spinner!: Texture;
   undo!: Texture;
+  newCombo!: Texture;
 }

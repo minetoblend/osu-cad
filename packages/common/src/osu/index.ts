@@ -14,3 +14,4 @@ export * from './hitSoundManager';
 export * from './hitSoundLayer';
 export * from './envelope';
 export * from './bookmark';
+export * from './IDistanceSnapProvider';

@@ -1,12 +1,22 @@
 import { Beatmap, Slider } from '@osucad/common';
-import { Container, Vec2, resolved } from 'osucad-framework';
-import { Mesh, MeshGeometry, RenderContainer, WebGLRenderer } from 'pixi.js';
+import { Container, resolved, Vec2 } from 'osucad-framework';
+import {
+  CustomRenderPipe,
+  Mesh,
+  MeshGeometry,
+  RenderContainer,
+  WebGLRenderer,
+} from 'pixi.js';
 import { animate } from '../../utils/animate';
 import { SliderShader } from './SliderShader';
 import { SliderPathGeometry } from './SliderPathGeometry';
 import { GeometryBuilder } from './GeometryBuilder';
+import { ThemeColors } from '../ThemeColors';
 
 let endCapGeometry: MeshGeometry | null = null;
+
+// little workaround for a pixi bug
+(CustomRenderPipe.prototype as any).updateRenderable = () => {};
 
 export class DrawableSliderBody extends Container {
   constructor(readonly hitObject: Slider) {
@@ -111,6 +121,9 @@ export class DrawableSliderBody extends Container {
   beatmap!: Beatmap;
 
   pathVersion = -1;
+
+  @resolved(ThemeColors)
+  colors!: ThemeColors;
 
   setup() {
     const comboColors = this.beatmap.colors;

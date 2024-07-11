@@ -9,7 +9,7 @@ import {
 } from 'osucad-framework';
 import gsap from 'gsap';
 
-export class BasicScrollContainer extends ScrollContainer {
+export class MainScrollContainer extends ScrollContainer {
   constructor(direction: Direction = Direction.Vertical) {
     super(direction);
   }
@@ -30,7 +30,7 @@ class BasicScrollbar extends ScrollbarContainer {
     this.child = new RoundedBox({
       relativeSizeAxes: Axes.Both,
       cornerRadius: 2,
-      alpha: 0.5,
+      alpha: 0.125,
     });
   }
 

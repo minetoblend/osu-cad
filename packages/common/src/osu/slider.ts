@@ -5,6 +5,7 @@ import { ControlPointManager } from './controlPointManager';
 import { SliderPath } from './sliderPath';
 import { Vec2 } from 'osucad-framework';
 import { defaultHitSound, getSamples, HitSample, HitSound } from './hitSound';
+import { IDistanceSnapProvider } from './IDistanceSnapProvider';
 
 export class Slider extends HitObject {
   readonly type = HitObjectType.Slider;
@@ -259,5 +260,11 @@ export class Slider extends HitObject {
       }
       this.onUpdate.emit('hitSounds');
     }
+  }
+
+  snapTo(snapProvider?: IDistanceSnapProvider) {
+    this.expectedDistance =
+      snapProvider?.findSnappedDistance(this, this.path.calculatedDistance) ??
+      this.path.calculatedDistance;
   }
 }

@@ -7,7 +7,6 @@ import {
 } from '@osucad/common';
 import {
   almostEquals,
-  clamp,
   dependencyLoader,
   DragEvent,
   DragStartEvent,
@@ -15,7 +14,6 @@ import {
   MouseDownEvent,
   MouseMoveEvent,
   MouseUpEvent,
-  Vec2,
 } from 'osucad-framework';
 import { ComposeTool } from './ComposeTool';
 
@@ -30,6 +28,12 @@ export class HitCircleTool extends ComposeTool {
 
   @dependencyLoader()
   load() {
+    this.newCombo.value = false;
+
+    this.newCombo.addOnChangeListener((newCombo) =>
+      this.#updateNewCombo(newCombo),
+    );
+
     this.editorClock.currentTimeBindable.addOnChangeListener(() => {
       if (this.#hitObject) {
         this.#updateHitObjectTime();
@@ -65,7 +69,7 @@ export class HitCircleTool extends ComposeTool {
 
   #createPreviewCircle() {
     const circle = new HitCircle();
-    circle.position = this.#clampToPlayfieldBounds(this.mousePosition);
+    circle.position = this.clampToPlayfieldBounds(this.mousePosition);
     circle.startTime = this.editorClock.currentTime;
 
     this.hitObjects.add(circle);
@@ -77,7 +81,7 @@ export class HitCircleTool extends ComposeTool {
 
   onMouseMove(e: MouseMoveEvent): boolean {
     this.#updateObject((object) => {
-      object.position = this.#clampToPlayfieldBounds(this.mousePosition);
+      object.position = this.clampToPlayfieldBounds(this.mousePosition);
     });
 
     return false;
@@ -95,6 +99,11 @@ export class HitCircleTool extends ComposeTool {
       // Removing the object before we readd it through the command manager
       this.hitObjects.remove(hitObject);
 
+      hitObject.startTime = this.beatmap.controlPoints.snap(
+        this.editorClock.currentTime,
+        this.beatSnapDivisor,
+      );
+
       const existing = this.hitObjects.hitObjects.filter((it) =>
         almostEquals(it.startTime, hitObject.startTime, 2),
       );
@@ -104,21 +113,19 @@ export class HitCircleTool extends ComposeTool {
       }
 
       hitObject.id = hitObjectId();
-      hitObject.startTime = this.beatmap.controlPoints.snap(
-        this.editorClock.currentTime,
-        this.beatSnapDivisor,
-      );
 
       this.#hitObject = this.submit(
         new CreateHitObjectCommand(hitObject),
         false,
       )!;
 
+      this.selection.select([this.#hitObject]);
+
       return false;
     }
 
     if (e.button === MouseButton.Right) {
-      this.#updateObject((object) => (object.isNewCombo = !object.isNewCombo));
+      this.newCombo.value = !this.newCombo.value;
     }
 
     return false;
@@ -141,7 +148,7 @@ export class HitCircleTool extends ComposeTool {
   onDrag(e: DragEvent): boolean {
     this.submit(
       new UpdateHitObjectCommand(this.#hitObject, {
-        position: e.mousePosition,
+        position: this.clampToPlayfieldBounds(e.mousePosition),
         startTime: this.beatmap.controlPoints.snap(
           this.editorClock.currentTime,
           this.editorClock.beatSnapDivisor.value,
@@ -158,8 +165,15 @@ export class HitCircleTool extends ComposeTool {
     return true;
   }
 
-  #clampToPlayfieldBounds(position: Vec2) {
-    return new Vec2(clamp(position.x, 0, 512), clamp(position.y, 0, 384));
+  #updateNewCombo(newCombo: boolean) {
+    if (this.#state === PlacementState.Placing) {
+      this.submit(
+        new UpdateHitObjectCommand(this.#hitObject, { newCombo }),
+        false,
+      );
+    } else {
+      this.#hitObject.isNewCombo = newCombo;
+    }
   }
 }
 
