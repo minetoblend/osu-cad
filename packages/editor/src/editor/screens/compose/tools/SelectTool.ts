@@ -12,6 +12,7 @@ import { SelectBoxInteraction } from './interactions/SelectBoxInteraction';
 import {
   DeleteHitObjectCommand,
   HitObject,
+  SampleType,
   Slider,
   UpdateHitObjectCommand,
 } from '@osucad/common';
@@ -172,7 +173,7 @@ export class SelectTool extends ComposeTool {
   update() {
     super.update();
 
-    this.#updateNewCombo();
+    this.#updateNewComboFromSelection();
 
     this.#inputManager ??= this.getContainingInputManager();
 
@@ -215,24 +216,28 @@ export class SelectTool extends ComposeTool {
     this.#sliderPathVisualizer.onHandleDragStarted = this.#onHandleDragStarted;
     this.#sliderPathVisualizer.onHandleDragged = this.#onHandleDragged;
     this.#sliderPathVisualizer.onHandleDragEnded = this.#onHandleDragEnded;
+  }
 
-    this.newCombo.addOnChangeListener((newCombo) => {
-      const objects = this.selection.selectedObjects;
-      if (objects.length === 0) return;
+  applyNewCombo(newCombo: boolean): void {
+    const objects = this.selection.selectedObjects;
+    if (objects.length === 0) return;
 
-      const allNewCombo = objects.every(
-        (it) => it.isNewCombo || it === this.hitObjects.first,
-      );
-      if (allNewCombo !== newCombo) {
-        for (const object of objects) {
-          this.commandManager.submit(
-            new UpdateHitObjectCommand(object, {
-              newCombo,
-            }),
-          );
-        }
+    const allNewCombo = objects.every(
+      (it) => it.isNewCombo || it === this.hitObjects.first,
+    );
+    if (allNewCombo !== newCombo) {
+      for (const object of objects) {
+        this.commandManager.submit(
+          new UpdateHitObjectCommand(object, {
+            newCombo,
+          }),
+        );
       }
-    });
+    }
+  }
+
+  applySampleType(type: SampleType, value: boolean): void {
+    // TODO
   }
 
   #isDragging = false;
@@ -288,7 +293,7 @@ export class SelectTool extends ComposeTool {
     this.#isDragging = false;
   };
 
-  #updateNewCombo() {
+  #updateNewComboFromSelection() {
     if (this.selection.length === 0) {
       this.newCombo.value = false;
       return;

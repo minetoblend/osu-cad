@@ -1,9 +1,10 @@
-import { Beatmap, HitObjectManager } from '@osucad/common';
+import { Beatmap, HitObjectManager, SampleType } from '@osucad/common';
 import {
   Axes,
   Bindable,
   clamp,
   Container,
+  dependencyLoader,
   InputManager,
   resolved,
   UIEvent,
@@ -13,7 +14,12 @@ import { CommandContainer } from '../../../CommandContainer';
 import { EditorClock } from '../../../EditorClock';
 import { ComposeToolInteraction } from './interactions/ComposeToolInteraction';
 import { EditorSelection } from '../EditorSelection';
-import { NEW_COMBO } from '../../../InjectionTokens';
+import {
+  NEW_COMBO,
+  SAMPLE_CLAP,
+  SAMPLE_FINISH,
+  SAMPLE_WHISTLE,
+} from '../../../InjectionTokens';
 
 export abstract class ComposeTool extends CommandContainer {
   protected constructor() {
@@ -34,6 +40,15 @@ export abstract class ComposeTool extends CommandContainer {
   @resolved(NEW_COMBO)
   protected newCombo!: Bindable<boolean>;
 
+  @resolved(SAMPLE_WHISTLE)
+  protected sampleWhistle!: Bindable<boolean>;
+
+  @resolved(SAMPLE_FINISH)
+  protected sampleFinish!: Bindable<boolean>;
+
+  @resolved(SAMPLE_CLAP)
+  protected sampleClap!: Bindable<boolean>;
+
   receivePositionalInputAt(): boolean {
     return true;
   }
@@ -44,17 +59,33 @@ export abstract class ComposeTool extends CommandContainer {
     return this.#content;
   }
 
-  #inputManager: InputManager | null = null;
+  protected inputManager!: InputManager;
 
-  get inputManager(): InputManager {
-    if (!this.#inputManager) {
-      this.#inputManager ??= this.getContainingInputManager();
+  protected loadComplete(): void {
+    super.loadComplete();
 
-      if (!this.#inputManager) throw new Error('InputManager not found');
-    }
-
-    return this.#inputManager;
+    this.inputManager = this.getContainingInputManager()!;
   }
+
+  @dependencyLoader()
+  [Symbol('load')]() {
+    this.newCombo.addOnChangeListener((newCombo) =>
+      this.applyNewCombo(newCombo),
+    );
+    this.sampleWhistle.addOnChangeListener((value) =>
+      this.applySampleType(SampleType.Whistle, value),
+    );
+    this.sampleFinish.addOnChangeListener((value) =>
+      this.applySampleType(SampleType.Finish, value),
+    );
+    this.sampleClap.addOnChangeListener((value) =>
+      this.applySampleType(SampleType.Clap, value),
+    );
+  }
+
+  abstract applyNewCombo(newCombo: boolean): void;
+
+  abstract applySampleType(type: SampleType, value: boolean): void;
 
   get mousePosition() {
     return this.toLocalSpace(this.inputManager.currentState.mouse.position);

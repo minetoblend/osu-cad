@@ -27,7 +27,12 @@ import { EditorSelection } from './screens/compose/EditorSelection';
 import { EditorAction } from './EditorAction';
 import { EditorActionContainer } from './EditorActionContainer';
 import { DifficultyCalculator } from './DifficultyCalculator';
-import { NEW_COMBO } from './InjectionTokens';
+import {
+  NEW_COMBO,
+  SAMPLE_CLAP,
+  SAMPLE_FINISH,
+  SAMPLE_WHISTLE,
+} from './InjectionTokens';
 
 export class Editor
   extends Container
@@ -61,9 +66,18 @@ export class Editor
 
   #newCombo = new Bindable(false);
 
+  #sampleWhistle = new Bindable(false);
+
+  #sampleFinish = new Bindable(false);
+
+  #sampleClap = new Bindable(false);
+
   @dependencyLoader()
   init() {
     this.dependencies.provide(NEW_COMBO, this.#newCombo);
+    this.dependencies.provide(SAMPLE_WHISTLE, this.#sampleWhistle);
+    this.dependencies.provide(SAMPLE_FINISH, this.#sampleFinish);
+    this.dependencies.provide(SAMPLE_CLAP, this.#sampleClap);
 
     const track = this.audioManager.createTrack(
       this.mixer.music,

@@ -3,6 +3,7 @@ import {
   DeleteHitObjectCommand,
   HitCircle,
   PathType,
+  SampleType,
   SerializedPathPoint,
   Slider,
   UpdateHitObjectCommand,
@@ -49,10 +50,6 @@ export class SliderTool extends ComposeTool {
   load() {
     this.newCombo.value = false;
 
-    this.newCombo.addOnChangeListener((newCombo) =>
-      this.#updateNewCombo(newCombo),
-    );
-
     this.#state = PlacementState.Preview;
 
     const distanceSnapProvider = new DistanceSnapProvider();
@@ -75,12 +72,16 @@ export class SliderTool extends ComposeTool {
     this.hitObjects.add(this.#previewCircle!);
   }
 
+  protected loadComplete(): void {
+    super.loadComplete();
+
+    this.#createPreviewCircle();
+  }
+
   update() {
     super.update();
 
     if (this.#state === PlacementState.Preview) {
-      if (!this.#previewCircle) this.#createPreviewCircle();
-
       this.#updatePreviewCircle();
     }
   }
@@ -275,12 +276,16 @@ export class SliderTool extends ComposeTool {
     ];
   }
 
-  #updateNewCombo(newCombo: boolean) {
+  applyNewCombo(newCombo: boolean): void {
     if (this.#previewCircle) {
       this.#previewCircle.isNewCombo = newCombo;
     } else {
       this.submit(new UpdateHitObjectCommand(this.#slider!, { newCombo }));
     }
+  }
+
+  applySampleType(type: SampleType, value: boolean): void {
+    // TODO
   }
 
   dispose(): boolean {

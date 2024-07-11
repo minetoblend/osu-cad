@@ -3,6 +3,7 @@ import {
   DeleteHitObjectCommand,
   HitCircle,
   hitObjectId,
+  SampleType,
   UpdateHitObjectCommand,
 } from '@osucad/common';
 import {
@@ -30,10 +31,6 @@ export class HitCircleTool extends ComposeTool {
   load() {
     this.newCombo.value = false;
 
-    this.newCombo.addOnChangeListener((newCombo) =>
-      this.#updateNewCombo(newCombo),
-    );
-
     this.editorClock.currentTimeBindable.addOnChangeListener(() => {
       if (this.#hitObject) {
         this.#updateHitObjectTime();
@@ -41,12 +38,25 @@ export class HitCircleTool extends ComposeTool {
     });
   }
 
-  update(): void {
-    super.update();
-
-    if (!this.#hitObject) {
-      this.#createPreviewCircle();
+  override applyNewCombo(newCombo: boolean): void {
+    if (this.#state === PlacementState.Placing) {
+      this.submit(
+        new UpdateHitObjectCommand(this.#hitObject, { newCombo }),
+        false,
+      );
+    } else {
+      this.#hitObject.isNewCombo = newCombo;
     }
+  }
+
+  applySampleType(type: SampleType, value: boolean): void {
+    // TODO
+  }
+
+  protected loadComplete(): void {
+    super.loadComplete();
+
+    this.#createPreviewCircle();
   }
 
   #updateHitObjectTime() {
@@ -163,17 +173,6 @@ export class HitCircleTool extends ComposeTool {
     this.hitObjects.remove(this.#hitObject);
 
     return true;
-  }
-
-  #updateNewCombo(newCombo: boolean) {
-    if (this.#state === PlacementState.Placing) {
-      this.submit(
-        new UpdateHitObjectCommand(this.#hitObject, { newCombo }),
-        false,
-      );
-    } else {
-      this.#hitObject.isNewCombo = newCombo;
-    }
   }
 }
 

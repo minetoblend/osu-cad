@@ -50,6 +50,7 @@ export class HitObjectComposer
           !(this.#toolContainer.child instanceof tool)
         ) {
           this.#toolContainer.child = new tool();
+          this.#toolContainer.updateSubTree();
         }
       },
       { immediate: true },
