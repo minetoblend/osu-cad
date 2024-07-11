@@ -120,11 +120,18 @@ export class HitObjectManager {
       }
       preventNewCombo = false;
 
+      const anyChanged =
+        hitObject.comboIndex !== comboIndex ||
+        hitObject.indexInCombo !== indexInCombo;
+
       hitObject.comboIndex = comboIndex;
       hitObject.indexInCombo = indexInCombo;
 
       indexInCombo++;
-      hitObject.onUpdate.emit('combo');
+
+      if (anyChanged) {
+        hitObject.onUpdate.emit('combo');
+      }
     }
   }
 
