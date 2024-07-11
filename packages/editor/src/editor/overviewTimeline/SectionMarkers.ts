@@ -78,8 +78,6 @@ export class SectionMarkers extends OverviewTimelineMarkerContainer {
           sectionEndTime = hitObject.endTime;
         }
 
-        console.log('new section', sectionStartTime, sectionEndTime);
-
         const marker = new SectionMarker({
           width:
             (sectionEndTime - sectionStartTime) / this.editorClock.trackLength,
@@ -88,12 +86,6 @@ export class SectionMarkers extends OverviewTimelineMarkerContainer {
         });
 
         marker.x = sectionStartTime / this.editorClock.trackLength;
-
-        console.log(
-          marker.x,
-          ((sectionEndTime - sectionStartTime) / this.editorClock.trackLength) *
-            this.childSize.x,
-        );
 
         markers.push(marker);
 
