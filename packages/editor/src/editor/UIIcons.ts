@@ -14,6 +14,8 @@ import slider from '../assets/icons/slider.png';
 import spinner from '../assets/icons/spinner.png';
 import undo from '../assets/icons/undo.png';
 import newCombo from '../assets/icons/new-combo.png';
+import whistle from '../assets/icons/whistle@2x.png';
+import finish from '../assets/icons/finish@2x.png';
 
 export class UIIcons {
   async load() {
@@ -32,6 +34,8 @@ export class UIIcons {
       { src: spinner, alias: 'icon-spinner' },
       { src: undo, alias: 'icon-undo' },
       { src: newCombo, alias: 'icon-new-combo' },
+      { src: whistle, alias: 'icon-whistle' },
+      { src: finish, alias: 'icon-finish' },
     ]);
     await Assets.loadBundle('icons');
 
@@ -49,6 +53,8 @@ export class UIIcons {
     this.spinner = Assets.get('icon-spinner');
     this.undo = Assets.get('icon-undo');
     this.newCombo = Assets.get('icon-new-combo');
+    this.whistle = Assets.get('icon-whistle');
+    this.finish = Assets.get('icon-finish');
   }
 
   circle!: Texture;
@@ -65,4 +71,6 @@ export class UIIcons {
   spinner!: Texture;
   undo!: Texture;
   newCombo!: Texture;
+  whistle!: Texture;
+  finish!: Texture;
 }
