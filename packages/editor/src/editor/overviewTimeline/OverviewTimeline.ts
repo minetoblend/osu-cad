@@ -11,6 +11,7 @@ import { BookmarkMarkers } from './BookmarkMarkers';
 import { OverviewTimelineProgressBar } from './OverviewTimelineProgressBar';
 import { TimingPointMarkers } from './TimingPointMarkers';
 import { DifficultyPointMarkers } from './DifficultyPointMarkers';
+import { SectionMarkers } from './SectionMarkers';
 
 export class OverviewTimeline extends Container {
   constructor() {
@@ -38,6 +39,7 @@ export class OverviewTimeline extends Container {
       new TimingPointMarkers(),
       new DifficultyPointMarkers(),
       new OverviewTimelineProgressBar(),
+      new SectionMarkers(),
     );
   }
 

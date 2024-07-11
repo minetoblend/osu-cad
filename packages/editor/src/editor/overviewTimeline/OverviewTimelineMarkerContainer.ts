@@ -4,6 +4,7 @@ import {
   Axes,
   ColorSource,
   CompositeDrawable,
+  Drawable,
   Invalidation,
   LayoutMember,
   RoundedBox,
@@ -21,7 +22,7 @@ export abstract class OverviewTimelineMarkerContainer extends CompositeDrawable 
     this.padding = { vertical: options.verticalPadding ?? 0 };
   }
 
-  abstract createMarkers(): OverviewTimelineMarker[];
+  abstract createMarkers(): Drawable[];
 
   #markersValid = new LayoutMember(Invalidation.None);
 

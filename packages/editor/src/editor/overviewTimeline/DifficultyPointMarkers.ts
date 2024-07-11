@@ -11,7 +11,7 @@ export class DifficultyPointMarkers extends OverviewTimelineMarkerContainer {
       height: 3,
     });
 
-    this.y = 8;
+    this.y = 7;
   }
 
   @resolved(EditorClock)
@@ -36,7 +36,7 @@ export class DifficultyPointMarkers extends OverviewTimelineMarkerContainer {
     return this.beatmap.controlPoints.controlPoints
       .filter((it) => it.velocityMultiplier !== null)
       .map((timingPoint) => {
-        const marker = new OverviewTimelineMarker(0x6af878);
+        const marker = new OverviewTimelineMarker(0x6af878, 2);
 
         marker.x = timingPoint.time / trackLength;
 

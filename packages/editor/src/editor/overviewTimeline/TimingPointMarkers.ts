@@ -11,7 +11,7 @@ export class TimingPointMarkers extends OverviewTimelineMarkerContainer {
       height: 3,
     });
 
-    this.y = 4;
+    this.y = 3;
   }
 
   @resolved(EditorClock)
@@ -36,7 +36,7 @@ export class TimingPointMarkers extends OverviewTimelineMarkerContainer {
     return this.beatmap.controlPoints.controlPoints
       .filter((it) => !!it.timing)
       .map((timingPoint) => {
-        const marker = new OverviewTimelineMarker(0xff265a);
+        const marker = new OverviewTimelineMarker(0xff265a, 1.5);
 
         marker.x = timingPoint.time / trackLength;
 
