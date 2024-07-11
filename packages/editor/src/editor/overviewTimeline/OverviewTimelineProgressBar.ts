@@ -19,10 +19,12 @@ export class OverviewTimelineProgressBar extends CompositeDrawable {
   constructor() {
     super();
 
-    (this.relativeSizeAxes = Axes.Both),
-      (this.anchor = Anchor.Center),
-      (this.origin = Anchor.Center),
-      this.addInternal(this.#track);
+    this.padding = { top: 8 };
+
+    this.relativeSizeAxes = Axes.Both;
+    this.anchor = Anchor.Center;
+    this.origin = Anchor.Center;
+    this.addInternal(this.#track);
     this.addInternal(this.#activeTrack);
     this.addInternal(this.#thumb);
   }

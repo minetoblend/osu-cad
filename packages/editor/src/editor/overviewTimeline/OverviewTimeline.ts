@@ -1,13 +1,16 @@
 import {
+  Anchor,
   Axes,
   Box,
   Container,
   dependencyLoader,
-  MouseDownEvent,
   resolved,
 } from 'osucad-framework';
 import { ThemeColors } from '../ThemeColors';
+import { BookmarkMarkers } from './BookmarkMarkers';
 import { OverviewTimelineProgressBar } from './OverviewTimelineProgressBar';
+import { TimingPointMarkers } from './TimingPointMarkers';
+import { DifficultyPointMarkers } from './DifficultyPointMarkers';
 
 export class OverviewTimeline extends Container {
   constructor() {
@@ -30,7 +33,12 @@ export class OverviewTimeline extends Container {
     );
     this.addInternal(this.#content);
 
-    this.add(new OverviewTimelineProgressBar());
+    this.addAll(
+      new BookmarkMarkers(),
+      new TimingPointMarkers(),
+      new DifficultyPointMarkers(),
+      new OverviewTimelineProgressBar(),
+    );
   }
 
   get content() {
