@@ -36,7 +36,7 @@ export class DifficultyPointMarkers extends OverviewTimelineMarkerContainer {
     return this.beatmap.controlPoints.controlPoints
       .filter((it) => it.velocityMultiplier !== null)
       .map((timingPoint) => {
-        const marker = new OverviewTimelineMarker(0x10eb6b);
+        const marker = new OverviewTimelineMarker(0x6af878);
 
         marker.x = timingPoint.time / trackLength;
 
