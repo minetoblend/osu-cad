@@ -1,5 +1,6 @@
 import { ComposeTool } from './ComposeTool';
 import {
+  Bindable,
   ClickEvent,
   dependencyLoader,
   DragStartEvent,
@@ -236,8 +237,13 @@ export class SelectTool extends ComposeTool {
     }
   }
 
-  applySampleType(type: SampleType, value: boolean): void {
+  applySampleType(type: SampleType, bindable: Bindable<boolean>): void {
     // TODO
+    const value = bindable.value;
+
+    if (value) {
+      bindable.value = false;
+    }
   }
 
   #isDragging = false;

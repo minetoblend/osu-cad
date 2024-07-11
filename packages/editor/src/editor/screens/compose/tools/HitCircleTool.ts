@@ -8,6 +8,7 @@ import {
 } from '@osucad/common';
 import {
   almostEquals,
+  Bindable,
   dependencyLoader,
   DragEvent,
   DragStartEvent,
@@ -44,12 +45,12 @@ export class HitCircleTool extends ComposeTool {
         new UpdateHitObjectCommand(this.#hitObject, { newCombo }),
         false,
       );
-    } else {
+    } else if (this.#hitObject) {
       this.#hitObject.isNewCombo = newCombo;
     }
   }
 
-  applySampleType(type: SampleType, value: boolean): void {
+  applySampleType(type: SampleType, bindable: Bindable<boolean>): void {
     // TODO
   }
 
@@ -87,6 +88,8 @@ export class HitCircleTool extends ComposeTool {
     this.#hitObject = circle;
 
     this.#state = PlacementState.Preview;
+
+    this.newCombo.value = false;
   }
 
   onMouseMove(e: MouseMoveEvent): boolean {
@@ -172,7 +175,7 @@ export class HitCircleTool extends ComposeTool {
   dispose(): boolean {
     this.hitObjects.remove(this.#hitObject);
 
-    return true;
+    return super.dispose();
   }
 }
 

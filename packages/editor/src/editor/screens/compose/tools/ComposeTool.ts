@@ -73,19 +73,19 @@ export abstract class ComposeTool extends CommandContainer {
       this.applyNewCombo(newCombo),
     );
     this.sampleWhistle.addOnChangeListener((value) =>
-      this.applySampleType(SampleType.Whistle, value),
+      this.applySampleType(SampleType.Whistle, this.sampleWhistle),
     );
     this.sampleFinish.addOnChangeListener((value) =>
-      this.applySampleType(SampleType.Finish, value),
+      this.applySampleType(SampleType.Finish, this.sampleFinish),
     );
     this.sampleClap.addOnChangeListener((value) =>
-      this.applySampleType(SampleType.Clap, value),
+      this.applySampleType(SampleType.Clap, this.sampleClap),
     );
   }
 
   abstract applyNewCombo(newCombo: boolean): void;
 
-  abstract applySampleType(type: SampleType, value: boolean): void;
+  abstract applySampleType(type: SampleType, bindable: Bindable<boolean>): void;
 
   get mousePosition() {
     return this.toLocalSpace(this.inputManager.currentState.mouse.position);

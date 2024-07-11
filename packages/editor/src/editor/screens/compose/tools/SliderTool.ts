@@ -9,6 +9,7 @@ import {
   UpdateHitObjectCommand,
 } from '@osucad/common';
 import {
+  Bindable,
   MouseButton,
   MouseDownEvent,
   MouseMoveEvent,
@@ -284,7 +285,7 @@ export class SliderTool extends ComposeTool {
     }
   }
 
-  applySampleType(type: SampleType, value: boolean): void {
+  applySampleType(type: SampleType, bindable: Bindable<boolean>): void {
     // TODO
   }
 
