@@ -1,24 +1,18 @@
 import {
+  Anchor,
   Axes,
-  Bindable,
   Container,
   FillDirection,
   FillFlowContainer,
-  Key,
+  RoundedBox,
   Vec2,
   dependencyLoader,
   resolved,
-  Anchor,
 } from 'osucad-framework';
 import { UIIcons } from '../../UIIcons';
-import { ToolConstructor } from './ComposeScreen';
-import { ComposeToolbarToolButton } from './ComposeToolbarToolButton';
-import { HitCircleTool } from './tools/HitCircleTool';
-import { SelectTool } from './tools/SelectTool';
-import { SliderTool } from './tools/SliderTool';
-import { SpinnerTool } from './tools/SpinnerTool';
-import { ComposeToolbarButton } from './ComposeToolbarButton';
 import { NewComboButton } from './tools/NewComboButton';
+import { ComposeAdditionButton } from './ComposeAdditionButton';
+import { ThemeColors } from '../../ThemeColors';
 
 export class ComposeTogglesBar extends Container {
   constructor() {
@@ -36,9 +30,30 @@ export class ComposeTogglesBar extends Container {
   @resolved(UIIcons)
   icons!: UIIcons;
 
+  @resolved(ThemeColors)
+  colors!: ThemeColors;
+
   @dependencyLoader()
   init() {
-    this.add(new NewComboButton(this.icons.newCombo));
+    this.addAll(
+      new NewComboButton(this.icons.newCombo),
+      new Container({
+        relativeSizeAxes: Axes.X,
+        height: 12,
+        padding: { horizontal: 12 },
+        child: new RoundedBox({
+          relativeSizeAxes: Axes.X,
+          height: 1.5,
+          anchor: Anchor.Center,
+          origin: Anchor.Center,
+          color: 'white',
+          alpha: 0.2,
+          cornerRadius: 1,
+        }),
+      }),
+      new ComposeAdditionButton(this.icons.whistle),
+      new ComposeAdditionButton(this.icons.finish),
+    );
   }
 
   override get content() {
