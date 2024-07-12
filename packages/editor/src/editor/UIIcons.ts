@@ -1,80 +1,39 @@
 import { Assets, Texture } from 'pixi.js';
 
-import circle from '../assets/icons/circle.png';
-import cog from '../assets/icons/cog.png';
-import minus from '../assets/icons/minus.png';
-import pen from '../assets/icons/pen.png';
-import plus from '../assets/icons/plus.png';
-import redo from '../assets/icons/redo.png';
-import reverse from '../assets/icons/reverse.png';
-import select from '../assets/icons/select.png';
-import sizeEw from '../assets/icons/size-ew.png';
-import sizeNs from '../assets/icons/size-ns.png';
-import slider from '../assets/icons/slider.png';
-import spinner from '../assets/icons/spinner.png';
-import undo from '../assets/icons/undo.png';
-import newCombo from '../assets/icons/new-combo.png';
-import whistle from '../assets/icons/whistle@2x.png';
-import finish from '../assets/icons/finish@2x.png';
-import clap from '../assets/icons/clap@2x.png';
+import circle from '../assets/icons/circle.png?texture';
+import cog from '../assets/icons/cog.png?texture';
+import minus from '../assets/icons/minus.png?texture';
+import pen from '../assets/icons/pen.png?texture';
+import plus from '../assets/icons/plus.png?texture';
+import redo from '../assets/icons/redo.png?texture';
+import reverse from '../assets/icons/reverse.png?texture';
+import select from '../assets/icons/select.png?texture';
+import sizeEw from '../assets/icons/size-ew.png?texture';
+import sizeNs from '../assets/icons/size-ns.png?texture';
+import slider from '../assets/icons/slider.png?texture';
+import spinner from '../assets/icons/spinner.png?texture';
+import undo from '../assets/icons/undo.png?texture';
+import newCombo from '../assets/icons/new-combo.png?texture';
+import whistle from '../assets/icons/whistle@2x.png?texture';
+import finish from '../assets/icons/finish@2x.png?texture';
+import clap from '../assets/icons/clap@2x.png?texture';
 
 export class UIIcons {
-  async load() {
-    Assets.addBundle('icons', [
-      { src: circle, alias: 'icon-circle' },
-      { src: cog, alias: 'icon-cog' },
-      { src: minus, alias: 'icon-minus' },
-      { src: pen, alias: 'icon-pen' },
-      { src: plus, alias: 'icon-plus' },
-      { src: redo, alias: 'icon-redo' },
-      { src: reverse, alias: 'icon-reverse' },
-      { src: select, alias: 'icon-select' },
-      { src: sizeEw, alias: 'icon-size-ew' },
-      { src: sizeNs, alias: 'icon-size-ns' },
-      { src: slider, alias: 'icon-slider' },
-      { src: spinner, alias: 'icon-spinner' },
-      { src: undo, alias: 'icon-undo' },
-      { src: newCombo, alias: 'icon-new-combo' },
-      { src: whistle, alias: 'icon-whistle' },
-      { src: finish, alias: 'icon-finish' },
-      { src: clap, alias: 'icon-clap' },
-    ]);
-    await Assets.loadBundle('icons');
-
-    this.circle = Assets.get('icon-circle');
-    this.cog = Assets.get('icon-cog');
-    this.minus = Assets.get('icon-minus');
-    this.pen = Assets.get('icon-pen');
-    this.plus = Assets.get('icon-plus');
-    this.redo = Assets.get('icon-redo');
-    this.reverse = Assets.get('icon-reverse');
-    this.select = Assets.get('icon-select');
-    this.sizeEw = Assets.get('icon-size-ew');
-    this.sizeNs = Assets.get('icon-size-ns');
-    this.slider = Assets.get('icon-slider');
-    this.spinner = Assets.get('icon-spinner');
-    this.undo = Assets.get('icon-undo');
-    this.newCombo = Assets.get('icon-new-combo');
-    this.whistle = Assets.get('icon-whistle');
-    this.finish = Assets.get('icon-finish');
-    this.clap = Assets.get('icon-clap');
-  }
-
-  circle!: Texture;
-  cog!: Texture;
-  minus!: Texture;
-  pen!: Texture;
-  plus!: Texture;
-  redo!: Texture;
-  reverse!: Texture;
-  select!: Texture;
-  sizeEw!: Texture;
-  sizeNs!: Texture;
-  slider!: Texture;
-  spinner!: Texture;
-  undo!: Texture;
-  newCombo!: Texture;
-  whistle!: Texture;
-  finish!: Texture;
-  clap!: Texture;
+  circle = circle;
+  cog = cog;
+  minus = minus;
+  pen = pen;
+  plus = plus;
+  redo = redo;
+  reverse = reverse;
+  select = select;
+  sizeEw = sizeEw;
+  sizeNs = sizeNs;
+  slider = slider;
+  spinner = spinner;
+  undo = undo;
+  newCombo = newCombo;
+  whistle = whistle;
+  finish = finish;
+  clap = clap;
 }

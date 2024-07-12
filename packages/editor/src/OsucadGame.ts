@@ -70,12 +70,7 @@ export class OsucadGame extends Game {
 
     mixer.userInterface.volume = 0.25;
 
-    await Promise.all([
-      this.context.load(),
-      icons.load(),
-      UIFonts.load(),
-      samples.load(),
-    ]);
+    await Promise.all([this.context.load(), UIFonts.load(), samples.load()]);
 
     this.context.provideDependencies(this.dependencies);
 
