@@ -1,16 +1,16 @@
-import { ComposeToolbarButton } from './ComposeToolbarButton';
-import { Texture } from 'pixi.js';
 import {
-  Bindable,
   dependencyLoader,
   IKeyBindingHandler,
   InjectionToken,
   KeyBindingPressEvent,
   resolved,
 } from 'osucad-framework';
-import { EditorSelection } from './EditorSelection';
+import { Texture } from 'pixi.js';
 import { CommandManager } from '../../context/CommandManager';
 import { EditorAction } from '../../EditorAction';
+import { ComposeToolbarButton } from './ComposeToolbarButton';
+import { EditorSelection } from './EditorSelection';
+import { ToggleBindable } from './ToggleBindable';
 
 export class ComposeToggleButton
   extends ComposeToolbarButton
@@ -18,7 +18,7 @@ export class ComposeToggleButton
 {
   constructor(
     icon: Texture,
-    readonly key: InjectionToken<Bindable<boolean>>,
+    readonly key: InjectionToken<ToggleBindable>,
     readonly toggleAction?: EditorAction,
   ) {
     super(icon);
@@ -30,7 +30,7 @@ export class ComposeToggleButton
   @resolved(CommandManager)
   commandManager!: CommandManager;
 
-  #isActive!: Bindable<boolean>;
+  #isActive!: ToggleBindable;
 
   @dependencyLoader()
   load() {
@@ -40,7 +40,14 @@ export class ComposeToggleButton
       immediate: true,
     });
 
-    this.action = () => (this.#isActive.value = !this.#isActive.value);
+    this.action = () => {
+      try {
+        this.#isActive.buttonPressed = true;
+        this.#isActive.toggle();
+      } finally {
+        this.#isActive.buttonPressed = false;
+      }
+    };
   }
 
   readonly isKeyBindingHandler = true;
@@ -53,7 +60,7 @@ export class ComposeToggleButton
     if (e.pressed === this.toggleAction) {
       this.keyPressed = true;
       this.samples.toolSelect.play();
-      this.#isActive.value = !this.#isActive.value;
+      this.action?.();
       this.updateState();
     }
 

@@ -33,6 +33,7 @@ import {
   SAMPLE_FINISH,
   SAMPLE_WHISTLE,
 } from './InjectionTokens';
+import { ToggleBindable } from './screens/compose/ToggleBindable';
 
 export class Editor
   extends Container
@@ -64,13 +65,13 @@ export class Editor
   @resolved(EditorMixer)
   mixer!: EditorMixer;
 
-  #newCombo = new Bindable(false);
+  #newCombo = new ToggleBindable(false);
 
-  #sampleWhistle = new Bindable(false);
+  #sampleWhistle = new ToggleBindable(false);
 
-  #sampleFinish = new Bindable(false);
+  #sampleFinish = new ToggleBindable(false);
 
-  #sampleClap = new Bindable(false);
+  #sampleClap = new ToggleBindable(false);
 
   @dependencyLoader()
   init() {

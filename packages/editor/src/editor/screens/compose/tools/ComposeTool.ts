@@ -25,6 +25,7 @@ import {
   SAMPLE_FINISH,
   SAMPLE_WHISTLE,
 } from '../../../InjectionTokens';
+import { ToggleBindable } from '../ToggleBindable';
 
 export abstract class ComposeTool extends CommandContainer {
   protected constructor() {
@@ -43,16 +44,16 @@ export abstract class ComposeTool extends CommandContainer {
   }
 
   @resolved(NEW_COMBO)
-  protected newCombo!: Bindable<boolean>;
+  protected newCombo!: ToggleBindable;
 
   @resolved(SAMPLE_WHISTLE)
-  protected sampleWhistle!: Bindable<boolean>;
+  protected sampleWhistle!: ToggleBindable;
 
   @resolved(SAMPLE_FINISH)
-  protected sampleFinish!: Bindable<boolean>;
+  protected sampleFinish!: ToggleBindable;
 
   @resolved(SAMPLE_CLAP)
-  protected sampleClap!: Bindable<boolean>;
+  protected sampleClap!: ToggleBindable;
 
   receivePositionalInputAt(): boolean {
     return true;
@@ -74,18 +75,21 @@ export abstract class ComposeTool extends CommandContainer {
 
   @dependencyLoader()
   [Symbol('load')]() {
-    this.newCombo.addOnChangeListener((newCombo) =>
-      this.applyNewCombo(newCombo),
-    );
-    this.sampleWhistle.addOnChangeListener((value) =>
-      this.applySampleType(Additions.Whistle, this.sampleWhistle),
-    );
-    this.sampleFinish.addOnChangeListener((value) =>
-      this.applySampleType(Additions.Finish, this.sampleFinish),
-    );
-    this.sampleClap.addOnChangeListener((value) =>
-      this.applySampleType(Additions.Clap, this.sampleClap),
-    );
+    this.newCombo.addOnChangeListener((newCombo) => {
+      if (this.newCombo.buttonPressed) this.applyNewCombo(newCombo);
+    });
+    this.sampleWhistle.addOnChangeListener(() => {
+      if (this.sampleWhistle.buttonPressed)
+        this.applySampleType(Additions.Whistle, this.sampleWhistle);
+    });
+    this.sampleFinish.addOnChangeListener(() => {
+      if (this.sampleFinish.buttonPressed)
+        this.applySampleType(Additions.Finish, this.sampleFinish);
+    });
+    this.sampleClap.addOnChangeListener(() => {
+      if (this.sampleClap.buttonPressed)
+        this.applySampleType(Additions.Clap, this.sampleClap);
+    });
   }
 
   abstract applyNewCombo(newCombo: boolean): void;

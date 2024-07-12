@@ -7,11 +7,11 @@ import {
 } from 'osucad-framework';
 import { PlayfieldContainer } from '../../playfield/PlayfieldContainer';
 import { EditorScreen } from '../EditorScreen';
+import { ComposeTogglesBar } from './ComposeTogglesBar';
 import { ComposeToolBar } from './ComposeToolBar';
 import { HitObjectComposer } from './HitObjectComposer';
 import { ComposeTool } from './tools/ComposeTool';
 import { SelectTool } from './tools/SelectTool';
-import { ComposeTogglesBar } from './ComposeTogglesBar';
 
 export type ToolConstructor = NoArgsConstructor<ComposeTool>;
 
