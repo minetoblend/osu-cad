@@ -14,7 +14,6 @@ import { Editor } from './editor/Editor';
 import { EditorMixer } from './editor/EditorMixer';
 import { Fit, ScalingContainer } from './editor/ScalingContainer';
 import { ThemeColors } from './editor/ThemeColors';
-import { UIFonts } from './editor/UIFonts';
 import { EditorContext } from './editor/context/EditorContext';
 import './editor/mixins/HitObjectMixin';
 import { EditorActionContainer } from './editor/EditorActionContainer';
@@ -56,8 +55,6 @@ export class OsucadGame extends Game {
 
     this.add(this.#innerContainer);
 
-    this.dependencies.provide(UIFonts, UIFonts);
-
     const mixer = new EditorMixer(this.audioManager);
     this.dependencies.provide(mixer);
 
@@ -66,7 +63,7 @@ export class OsucadGame extends Game {
 
     mixer.userInterface.volume = 0.25;
 
-    await Promise.all([this.context.load(), UIFonts.load(), samples.load()]);
+    await Promise.all([this.context.load(), samples.load()]);
 
     this.context.provideDependencies(this.dependencies);
 

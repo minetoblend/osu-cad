@@ -5,16 +5,33 @@ const texturePlugin: Plugin = {
   name: 'pixi textures',
   enforce: 'pre',
   load(id) {
-    if(!id.endsWith('?texture')) return null;
+    if(id.endsWith('?texture')) {
+      const path = id.split('?')[0]
 
-    const path = id.split('?')[0]
+      return `
+      import { Assets } from 'pixi.js'
+      import url from ${JSON.stringify(path)}
+  
+      export default await Assets.load(url) 
+      `
+    } else if (id.endsWith('.fnt?bmFont')) {
+      const path = id.split('?')[0]
 
-    return `
-    import { Assets } from 'pixi.js'
-    import url from ${JSON.stringify(path)}
+      const texturePath = path.split('.').slice(-1) + '.png'
 
-    export default await Assets.load(url) 
-    `
+      return `
+      import { FontDefinition } from 'osucad-framework'
+
+      const font = new FontDefinition(
+        new URL(${JSON.stringify(path)}, import.meta.url).href,
+        new URL(${JSON.stringify(texturePath)}, import.meta.url).href,
+      )
+
+      await font.load()
+
+      export default font
+      `
+    }
   }
 }
 
