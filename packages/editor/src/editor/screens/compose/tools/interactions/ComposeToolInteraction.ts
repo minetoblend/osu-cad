@@ -1,6 +1,5 @@
-import { CommandContainer } from '../../../../CommandContainer';
 import { Action, Axes, resolved } from 'osucad-framework';
-import { UIFonts } from '../../../../UIFonts';
+import { CommandContainer } from '../../../../CommandContainer';
 import { ThemeColors } from '../../../../ThemeColors';
 
 export class ComposeToolInteraction extends CommandContainer {
@@ -12,9 +11,6 @@ export class ComposeToolInteraction extends CommandContainer {
       relativeSizeAxes: Axes.Both,
     });
   }
-
-  @resolved(UIFonts)
-  fonts!: UIFonts;
 
   @resolved(ThemeColors)
   theme!: ThemeColors;

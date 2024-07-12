@@ -1,3 +1,4 @@
+import gsap from 'gsap';
 import {
   Anchor,
   Axes,
@@ -14,11 +15,10 @@ import {
   SpriteText,
   Vec2,
 } from 'osucad-framework';
-import { UIFonts } from './UIFonts';
-import { ThemeColors } from './ThemeColors';
-import gsap from 'gsap';
-import { EditorClock } from './EditorClock';
 import { UISamples } from '../UISamples';
+import { EditorClock } from './EditorClock';
+import { ThemeColors } from './ThemeColors';
+import { OsucadSpriteText } from '../OsucadSpriteText';
 
 export class BeatSnapDivisorSelector extends CompositeDrawable {
   constructor() {
@@ -26,9 +26,6 @@ export class BeatSnapDivisorSelector extends CompositeDrawable {
 
     this.relativeSizeAxes = Axes.Both;
   }
-
-  @resolved(UIFonts)
-  fonts!: UIFonts;
 
   @resolved(ThemeColors)
   colors!: ThemeColors;
@@ -41,23 +38,17 @@ export class BeatSnapDivisorSelector extends CompositeDrawable {
   @dependencyLoader()
   load() {
     this.addAllInternal(
-      new SpriteText({
+      new OsucadSpriteText({
         text: 'Beat snap divisor',
-        font: this.fonts.nunitoSans,
-        style: {
-          fill: this.colors.text,
-          fontSize: 14,
-        },
+        color: this.colors.text,
+        fontSize: 14,
       }),
-      (this.#beatSnapText = new SpriteText({
+      (this.#beatSnapText = new OsucadSpriteText({
         text: '1/1',
-        font: this.fonts.nunitoSans,
         anchor: Anchor.TopRight,
         origin: Anchor.TopRight,
-        style: {
-          fill: this.colors.text,
-          fontSize: 14,
-        },
+        color: this.colors.text,
+        fontSize: 14,
       })),
       new Container({
         relativeSizeAxes: Axes.Both,

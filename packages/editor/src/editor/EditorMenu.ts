@@ -19,8 +19,8 @@ import {
   resolved,
 } from 'osucad-framework';
 import { Graphics } from 'pixi.js';
+import { OsucadSpriteText } from '../OsucadSpriteText';
 import { ThemeColors } from './ThemeColors';
-import { UIFonts } from './UIFonts';
 
 export class EditorMenu extends Menu {
   @resolved(ThemeColors)
@@ -167,21 +167,14 @@ class MenuItemContent extends Container {
     });
   }
 
-  @resolved(UIFonts)
-  fonts!: UIFonts;
-
   @dependencyLoader()
   load(): void {
     this.add(
-      (this.#spriteText = new SpriteText({
+      (this.#spriteText = new OsucadSpriteText({
         anchor: Anchor.CenterLeft,
         origin: Anchor.CenterLeft,
         text: this.#text,
-        font: this.fonts.nunitoSans,
-        style: {
-          fontSize: 14,
-          fill: 'white',
-        },
+        fontSize: 14,
       })),
     );
 

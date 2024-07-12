@@ -8,7 +8,6 @@ import {
   Anchor,
   Axes,
   Container,
-  dependencyLoader,
   DragEndEvent,
   DragEvent,
   DragStartEvent,
@@ -16,16 +15,17 @@ import {
   MouseButton,
   MouseDownEvent,
   MouseUpEvent,
-  resolved,
   RoundedBox,
   SpriteText,
+  dependencyLoader,
+  resolved,
 } from 'osucad-framework';
-import { Timeline } from './Timeline';
+import { OsucadSpriteText } from '../../OsucadSpriteText';
 import { EditorClock } from '../EditorClock';
-import { UIFonts } from '../UIFonts';
+import { ThemeColors } from '../ThemeColors';
 import { CommandManager } from '../context/CommandManager';
 import { EditorSelection } from '../screens/compose/EditorSelection';
-import { ThemeColors } from '../ThemeColors';
+import { Timeline } from './Timeline';
 
 export class TimelineObject extends Container {
   constructor(readonly hitObject: HitObject) {
@@ -205,22 +205,15 @@ class TimelineObjectStartCircle extends Container {
     this.fillMode = FillMode.Fit;
   }
 
-  @resolved(UIFonts)
-  fonts!: UIFonts;
-
   @dependencyLoader()
   load() {
     this.add(this.circle);
     this.add(
-      (this.comboNumberText = new SpriteText({
+      (this.comboNumberText = new OsucadSpriteText({
         text: '1',
         anchor: Anchor.Center,
         origin: Anchor.Center,
-        font: this.fonts.nunitoSans,
-        style: {
-          fontSize: 15,
-          fill: 'white',
-        },
+        fontSize: 15,
       })),
     );
     this.add(this.overlay);

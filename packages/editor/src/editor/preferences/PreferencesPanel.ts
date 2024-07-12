@@ -5,11 +5,9 @@ import {
   Drawable,
   FillDirection,
   FillFlowContainer,
-  resolved,
-  SpriteText,
   Vec2,
 } from 'osucad-framework';
-import { UIFonts } from '../UIFonts';
+import { OsucadSpriteText } from '../../OsucadSpriteText';
 
 export abstract class PreferencesPanel extends Container {
   constructor() {
@@ -32,19 +30,12 @@ export abstract class PreferencesPanel extends Container {
     return this.#content;
   }
 
-  @resolved(UIFonts)
-  fonts!: UIFonts;
-
   @dependencyLoader()
   load() {
     this.addAll(
-      new SpriteText({
+      new OsucadSpriteText({
         text: this.getTitle(),
-        style: {
-          fontSize: 20,
-          fill: 'white',
-        },
-        font: this.fonts.nunitoSans,
+        fontSize: 20,
       }),
       ...this.createContent(),
     );

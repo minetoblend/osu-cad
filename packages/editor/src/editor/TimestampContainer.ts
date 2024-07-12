@@ -7,10 +7,10 @@ import {
   resolved,
   SpriteText,
 } from 'osucad-framework';
-import { Timestamp } from './Timestamp';
+import { OsucadSpriteText } from '../OsucadSpriteText';
 import { EditorClock } from './EditorClock';
-import { UIFonts } from './UIFonts';
 import { ThemeColors } from './ThemeColors';
+import { Timestamp } from './Timestamp';
 
 export class TimestampContainer extends Container {
   constructor() {
@@ -29,9 +29,6 @@ export class TimestampContainer extends Container {
   @resolved(ControlPointManager)
   controlPoints!: ControlPointManager;
 
-  @resolved(UIFonts)
-  fonts!: UIFonts;
-
   @resolved(ThemeColors)
   colors!: ThemeColors;
 
@@ -39,14 +36,11 @@ export class TimestampContainer extends Container {
   load() {
     this.add(this.timestamp);
     this.add(
-      (this.bpm = new SpriteText({
+      (this.bpm = new OsucadSpriteText({
         text: '180bpm',
         color: this.colors.primary,
-        font: this.fonts.nunitoSans600,
-        style: {
-          fontSize: 12,
-          fill: 'white',
-        },
+        fontWeight: 600,
+        fontSize: 12,
         anchor: Anchor.BottomLeft,
         origin: Anchor.BottomLeft,
       })),

@@ -12,10 +12,10 @@ import {
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
+import { OsucadSpriteText } from '../OsucadSpriteText';
 import { EditorMenu } from './EditorMenu';
-import { UIFonts } from './UIFonts';
-import { CommandManager } from './context/CommandManager';
 import { ThemeColors } from './ThemeColors';
+import { CommandManager } from './context/CommandManager';
 
 export class EditorMenubar extends EditorMenu {
   constructor() {
@@ -130,24 +130,18 @@ class MenuItemContent extends Container {
     });
   }
 
-  @resolved(UIFonts)
-  fonts!: UIFonts;
-
   @resolved(ThemeColors)
   colors!: ThemeColors;
 
   @dependencyLoader()
   load(): void {
     this.add(
-      (this.#spriteText = new SpriteText({
+      (this.#spriteText = new OsucadSpriteText({
         anchor: Anchor.CenterLeft,
         origin: Anchor.CenterLeft,
         text: this.#text,
-        font: this.fonts.nunitoSans,
-        style: {
-          fontSize: 14,
-          fill: this.colors.text,
-        },
+        fontSize: 14,
+        color: this.colors.text,
       })),
     );
   }

@@ -14,6 +14,7 @@ import { EditorClock } from './EditorClock';
 import { TimestampFormatter } from './TimestampFormatter';
 import { ThemeColors } from './ThemeColors';
 import gsap from 'gsap';
+import { OsucadSpriteText } from '../OsucadSpriteText';
 
 export class Timestamp extends CompositeDrawable {
   constructor() {
@@ -30,10 +31,10 @@ export class Timestamp extends CompositeDrawable {
   load() {
     this.addInternal(this.background);
     this.addInternal(
-      (this.timestamp = new SpriteText({
+      (this.timestamp = new OsucadSpriteText({
         text: '',
         color: this.themeColors.text,
-        style: { fontSize: 20, fill: 'white ' },
+        fontSize: 20,
         origin: Anchor.Center,
         anchor: Anchor.Center,
       })),
