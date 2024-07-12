@@ -60,8 +60,7 @@ export class OsucadGame extends Game {
     const icons = new UIIcons();
     this.dependencies.provide(icons);
 
-    const fonts = new UIFonts();
-    this.dependencies.provide(fonts);
+    this.dependencies.provide(UIFonts, UIFonts);
 
     const mixer = new EditorMixer(this.audioManager);
     this.dependencies.provide(mixer);
@@ -74,7 +73,7 @@ export class OsucadGame extends Game {
     await Promise.all([
       this.context.load(),
       icons.load(),
-      fonts.load(),
+      UIFonts.load(),
       samples.load(),
     ]);
 
