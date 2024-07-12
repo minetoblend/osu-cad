@@ -61,9 +61,21 @@ export class ComposeTogglesBar extends Container {
           cornerRadius: 1,
         }),
       }),
-      new ComposeToggleButton(this.icons.whistle, SAMPLE_WHISTLE),
-      new ComposeToggleButton(this.icons.finish, SAMPLE_FINISH),
-      new ComposeToggleButton(this.icons.clap, SAMPLE_CLAP),
+      new ComposeToggleButton(
+        this.icons.whistle,
+        SAMPLE_WHISTLE,
+        EditorAction.ToggleWhistle,
+      ),
+      new ComposeToggleButton(
+        this.icons.finish,
+        SAMPLE_FINISH,
+        EditorAction.ToggleFinish,
+      ),
+      new ComposeToggleButton(
+        this.icons.clap,
+        SAMPLE_CLAP,
+        EditorAction.ToggleClap,
+      ),
     );
   }
 

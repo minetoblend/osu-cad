@@ -45,6 +45,15 @@ export class EditorActionContainer extends KeyBindingContainer<EditorAction> {
         EditorAction.ToggleNewCombo,
       ),
       new KeyBinding(
+        KeyCombination.from(InputKey.W),
+        EditorAction.ToggleWhistle,
+      ),
+      new KeyBinding(
+        KeyCombination.from(InputKey.E),
+        EditorAction.ToggleFinish,
+      ),
+      new KeyBinding(KeyCombination.from(InputKey.R), EditorAction.ToggleClap),
+      new KeyBinding(
         KeyCombination.from(InputKey.Control, InputKey.Shift, InputKey.S),
         EditorAction.Scale,
       ),
