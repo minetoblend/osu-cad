@@ -341,7 +341,7 @@ export class SelectTool extends ComposeTool {
       Additions.Clap,
     ]) {
       const allActive = this.selection.selectedObjects.every(
-        (it) => !!!(it.hitSound.additions & addition),
+        (it) => !!(it.hitSound.additions & addition),
       );
 
       let bindable: Bindable<boolean>;
@@ -358,11 +358,7 @@ export class SelectTool extends ComposeTool {
           break;
       }
 
-      if (allActive) {
-        bindable!.value = false;
-      } else {
-        bindable!.value = true;
-      }
+      bindable!.value = allActive;
     }
   }
 }
