@@ -10,7 +10,7 @@ import {
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import { UIIcons } from './editor/UIIcons';
+import cursorTexture from '@icons/select.png?texture';
 
 export class MainCursorContainer extends CursorContainer {
   createCursor(): Drawable {
@@ -19,16 +19,13 @@ export class MainCursorContainer extends CursorContainer {
 }
 
 class Cursor extends CompositeDrawable {
-  @resolved(UIIcons)
-  icons!: UIIcons;
-
   #sprite!: DrawableSprite;
 
   @dependencyLoader()
   load() {
     this.addInternal(
       (this.#sprite = new DrawableSprite({
-        texture: this.icons.select,
+        texture: cursorTexture,
         x: -4,
         y: -3,
       })),

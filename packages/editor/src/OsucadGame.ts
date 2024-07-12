@@ -15,7 +15,6 @@ import { EditorMixer } from './editor/EditorMixer';
 import { Fit, ScalingContainer } from './editor/ScalingContainer';
 import { ThemeColors } from './editor/ThemeColors';
 import { UIFonts } from './editor/UIFonts';
-import { UIIcons } from './editor/UIIcons';
 import { EditorContext } from './editor/context/EditorContext';
 import './editor/mixins/HitObjectMixin';
 import { EditorActionContainer } from './editor/EditorActionContainer';
@@ -56,9 +55,6 @@ export class OsucadGame extends Game {
     this.dependencies.provide(new ThemeColors());
 
     this.add(this.#innerContainer);
-
-    const icons = new UIIcons();
-    this.dependencies.provide(icons);
 
     this.dependencies.provide(UIFonts, UIFonts);
 

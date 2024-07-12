@@ -9,13 +9,16 @@ import {
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import { UIIcons } from '../../UIIcons';
 import { ToolConstructor } from './ComposeScreen';
 import { ComposeToolbarToolButton } from './ComposeToolbarToolButton';
 import { HitCircleTool } from './tools/HitCircleTool';
 import { SelectTool } from './tools/SelectTool';
 import { SliderTool } from './tools/SliderTool';
 import { SpinnerTool } from './tools/SpinnerTool';
+import selectIcon from '@icons/select.png?texture';
+import circleIcon from '@icons/circle.png?texture';
+import sliderIcon from '@icons/slider.png?texture';
+import spinnerIcon from '@icons/spinner.png?texture';
 
 export class ComposeToolBar extends Container {
   constructor(protected readonly activeTool: Bindable<ToolConstructor>) {
@@ -28,14 +31,11 @@ export class ComposeToolBar extends Container {
     this.addInternal(this.#toolButtons);
   }
 
-  @resolved(UIIcons)
-  icons!: UIIcons;
-
   @dependencyLoader()
   init() {
     this.#toolButtons.add(
       new ComposeToolbarToolButton({
-        icon: this.icons.select,
+        icon: selectIcon,
         activeTool: this.activeTool,
         tool: SelectTool,
         keyBinding: Key.Digit1,
@@ -43,7 +43,7 @@ export class ComposeToolBar extends Container {
     );
     this.#toolButtons.add(
       new ComposeToolbarToolButton({
-        icon: this.icons.circle,
+        icon: circleIcon,
         activeTool: this.activeTool,
         tool: HitCircleTool,
         keyBinding: Key.Digit2,
@@ -51,7 +51,7 @@ export class ComposeToolBar extends Container {
     );
     this.#toolButtons.add(
       new ComposeToolbarToolButton({
-        icon: this.icons.slider,
+        icon: sliderIcon,
         activeTool: this.activeTool,
         tool: SliderTool,
         keyBinding: Key.Digit3,
@@ -59,7 +59,7 @@ export class ComposeToolBar extends Container {
     );
     this.#toolButtons.add(
       new ComposeToolbarToolButton({
-        icon: this.icons.spinner,
+        icon: spinnerIcon,
         activeTool: this.activeTool,
         tool: SpinnerTool,
         keyBinding: Key.Digit4,

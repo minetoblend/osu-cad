@@ -1,4 +1,5 @@
 import { defineConfig, type Plugin } from 'vite';
+import * as path from 'path'
 
 const texturePlugin: Plugin = {
   name: 'pixi textures',
@@ -19,6 +20,11 @@ const texturePlugin: Plugin = {
 
 export default defineConfig({
   plugins: [texturePlugin],
+  resolve: {
+    alias: {
+      '@icons': path.join(__dirname, 'src/assets/icons')
+    }
+  },
   worker: {
     format: 'es'
   },

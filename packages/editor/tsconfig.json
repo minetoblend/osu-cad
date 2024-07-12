@@ -20,6 +20,10 @@
 
     "experimentalDecorators": true,
 
+    "paths": {
+      "@icons/*": ["./src/assets/icons/*"]
+    },
+
     "types": ["@types/node"]
   },
   "include": ["src"]
