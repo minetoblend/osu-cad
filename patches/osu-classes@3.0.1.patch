@@ -1,0 +1,18 @@
+diff --git a/package.json b/package.json
+index 747b04209dcf63335bcc2a3089ac71d85eeb4a2f..ce4e2d0ebc8952632993782451c19393d4be3631 100644
+--- a/package.json
++++ b/package.json
+@@ -3,8 +3,11 @@
+   "version": "3.0.1",
+   "description": "Basic classes, interfaces and utils for creating new osu! rulesets",
+   "exports": {
+-    "import": "./lib/index.mjs",
+-    "require": "./lib/index.cjs"
++    ".": {
++      "import": "./lib/index.mjs",
++      "require": "./lib/index.cjs",
++      "types": "./lib/index.d.ts"
++    }
+   },
+   "types": "./lib/index.d.ts",
+   "scripts": {

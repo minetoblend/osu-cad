@@ -1,0 +1,18 @@
+diff --git a/package.json b/package.json
+index 971213836fe03fe5dcb33e71e2bc217ff15f532b..152587cf1b9e11835eca70ae3688a17c09f77bc9 100644
+--- a/package.json
++++ b/package.json
+@@ -3,8 +3,11 @@
+   "version": "5.0.0",
+   "description": "osu!stable version of osu!standard ruleset based on osu!lazer source code.",
+   "exports": {
+-    "import": "./lib/index.mjs",
+-    "require": "./lib/index.cjs"
++    ".": {
++      "import": "./lib/index.mjs",
++      "require": "./lib/index.cjs",
++      "types": "./lib/index.d.ts"
++    }
+   },
+   "types": "./lib/index.d.ts",
+   "scripts": {
