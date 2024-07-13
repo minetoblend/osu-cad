@@ -1,16 +1,26 @@
 import { defineConfig, type Plugin } from 'vite';
 import PixiAssets from 'unplugin-pixi-assets/vite'
-import * as path from 'path'
+import { resolve, join } from 'path'
+import * as fs from 'fs/promises'
 
 
 const fontsPlugin: Plugin = {
   name: 'fonts',
   enforce: 'pre',
-  load(id) {
+ async load(id) {
     if (id.endsWith('.fnt?bmFont')) {
       const path = id.split('?')[0]
 
-      const texturePath = path.split('.').slice(-1) + '.png'
+      const texturePath = (path.split('.').slice(0, -1)).join('.') + '.png'
+
+      console.log(texturePath)
+
+      this.emitFile({
+        type: 'asset',
+        name: texturePath.split('/').pop(),
+        needsCodeReference: false,
+        source: await fs.readFile(resolve(process.cwd(), texturePath))
+      })
 
       return `
       import { FontDefinition } from 'osucad-framework'
@@ -41,15 +51,33 @@ export default defineConfig({
             stripExtensions: true,
           }
         }
-      ]
+      ],
+      textures: {
+        defaultOptions: {
+          autoGenerateMipmaps: true
+        }
+      }
     })
   ],
   resolve: {
     alias: {
-      '@icons': path.join(__dirname, 'src/assets/icons')
+      '@icons': join(__dirname, 'src/assets/icons')
     }
   },
   worker: {
     format: 'es'
   },
+  build: {
+    target: "esnext",
+    
+    rollupOptions: {
+      output: {
+        assetFileNames(chunkInfo) {
+          if(chunkInfo.name?.includes('nunito-sans'))
+            return `assets/[name].[ext]`
+          return  `assets/[name]-[hash].[ext]`;
+        },
+      }
+    }
+  }
 });
