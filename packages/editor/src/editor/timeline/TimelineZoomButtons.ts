@@ -17,8 +17,6 @@ import {
 import { Timeline } from './Timeline';
 import { Texture } from 'pixi.js';
 import gsap from 'gsap';
-import plusIcon from '@icons/plus.png?texture';
-import minusIcon from '@icons/minus.png?texture';
 
 export class TimelineZoomButtons extends Container {
   constructor(
@@ -37,7 +35,7 @@ export class TimelineZoomButtons extends Container {
       new ZoomButton({
         relativeSizeAxes: Axes.Both,
         height: 0.48,
-        texture: plusIcon,
+        texture: useAsset('icon:plus'),
         action: () => this.timeline.zoomIn(),
         onLongPress: () => {
           this.timeline.zoomIn(this.time.elapsed * 0.05);
@@ -50,7 +48,7 @@ export class TimelineZoomButtons extends Container {
         relativePositionAxes: Axes.Both,
         height: 0.48,
         y: 0.52,
-        texture: minusIcon,
+        texture: useAsset('icon:minus'),
         action: () => this.timeline.zoomOut(),
         onLongPress: () => {
           this.timeline.zoomOut(this.time.elapsed * 0.05);

@@ -15,10 +15,6 @@ import { HitCircleTool } from './tools/HitCircleTool';
 import { SelectTool } from './tools/SelectTool';
 import { SliderTool } from './tools/SliderTool';
 import { SpinnerTool } from './tools/SpinnerTool';
-import selectIcon from '@icons/select.png?texture';
-import circleIcon from '@icons/circle.png?texture';
-import sliderIcon from '@icons/slider.png?texture';
-import spinnerIcon from '@icons/spinner.png?texture';
 
 export class ComposeToolBar extends Container {
   constructor(protected readonly activeTool: Bindable<ToolConstructor>) {
@@ -35,7 +31,7 @@ export class ComposeToolBar extends Container {
   init() {
     this.#toolButtons.add(
       new ComposeToolbarToolButton({
-        icon: selectIcon,
+        icon: useAsset('icon:select'),
         activeTool: this.activeTool,
         tool: SelectTool,
         keyBinding: Key.Digit1,
@@ -43,7 +39,7 @@ export class ComposeToolBar extends Container {
     );
     this.#toolButtons.add(
       new ComposeToolbarToolButton({
-        icon: circleIcon,
+        icon: useAsset('icon:circle'),
         activeTool: this.activeTool,
         tool: HitCircleTool,
         keyBinding: Key.Digit2,
@@ -51,7 +47,7 @@ export class ComposeToolBar extends Container {
     );
     this.#toolButtons.add(
       new ComposeToolbarToolButton({
-        icon: sliderIcon,
+        icon: useAsset('icon:slider'),
         activeTool: this.activeTool,
         tool: SliderTool,
         keyBinding: Key.Digit3,
@@ -59,7 +55,7 @@ export class ComposeToolBar extends Container {
     );
     this.#toolButtons.add(
       new ComposeToolbarToolButton({
-        icon: spinnerIcon,
+        icon: useAsset('icon:spinner'),
         activeTool: this.activeTool,
         tool: SpinnerTool,
         keyBinding: Key.Digit4,

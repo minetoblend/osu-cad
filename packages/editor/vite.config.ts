@@ -1,20 +1,13 @@
 import { defineConfig, type Plugin } from 'vite';
+import PixiAssets from 'unplugin-pixi-assets/vite'
 import * as path from 'path'
 
-const texturePlugin: Plugin = {
-  name: 'pixi textures',
+
+const fontsPlugin: Plugin = {
+  name: 'fonts',
   enforce: 'pre',
   load(id) {
-    if(id.endsWith('?texture')) {
-      const path = id.split('?')[0]
-
-      return `
-      import { Assets } from 'pixi.js'
-      import url from ${JSON.stringify(path)}
-  
-      export default await Assets.load(url) 
-      `
-    } else if (id.endsWith('.fnt?bmFont')) {
+    if (id.endsWith('.fnt?bmFont')) {
       const path = id.split('?')[0]
 
       const texturePath = path.split('.').slice(-1) + '.png'
@@ -36,7 +29,21 @@ const texturePlugin: Plugin = {
 }
 
 export default defineConfig({
-  plugins: [texturePlugin],
+  plugins: [
+    fontsPlugin,
+    PixiAssets({
+      assetsFolder: [
+        {
+          src: 'src/assets/icons',
+          assetIds: {
+            prefix: 'icon:',
+            dotNotation: true,
+            stripExtensions: true,
+          }
+        }
+      ]
+    })
+  ],
   resolve: {
     alias: {
       '@icons': path.join(__dirname, 'src/assets/icons')

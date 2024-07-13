@@ -26,5 +26,5 @@
 
     "types": ["@types/node"]
   },
-  "include": ["src"]
+  "include": ["src", "pixi-assets.d.ts"]
 }

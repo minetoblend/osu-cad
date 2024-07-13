@@ -19,11 +19,6 @@ import {
 import { ThemeColors } from '../../ThemeColors';
 import { ComposeToggleButton } from './ComposeToggleButton';
 
-import clapIcon from '@icons/clap@2x.png?texture';
-import finishIcon from '@icons/finish@2x.png?texture';
-import newComboIcon from '@icons/new-combo.png?texture';
-import whistleIcon from '@icons/whistle@2x.png?texture';
-
 export class ComposeTogglesBar extends Container {
   constructor() {
     super({
@@ -44,7 +39,7 @@ export class ComposeTogglesBar extends Container {
   init() {
     this.addAll(
       new ComposeToggleButton(
-        newComboIcon,
+        useAsset('icon:new-combo'),
         NEW_COMBO,
         EditorAction.ToggleNewCombo,
       ),
@@ -63,16 +58,20 @@ export class ComposeTogglesBar extends Container {
         }),
       }),
       new ComposeToggleButton(
-        whistleIcon,
+        useAsset('icon:whistle@2x'),
         SAMPLE_WHISTLE,
         EditorAction.ToggleWhistle,
       ),
       new ComposeToggleButton(
-        finishIcon,
+        useAsset('icon:finish@2x'),
         SAMPLE_FINISH,
         EditorAction.ToggleFinish,
       ),
-      new ComposeToggleButton(clapIcon, SAMPLE_CLAP, EditorAction.ToggleClap),
+      new ComposeToggleButton(
+        useAsset('icon:clap@2x'),
+        SAMPLE_CLAP,
+        EditorAction.ToggleClap,
+      ),
     );
 
     this.addInternal(

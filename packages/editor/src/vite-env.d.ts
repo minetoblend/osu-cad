@@ -1,4 +1,5 @@
 /// <reference types="vite/client" />
+/// <reference types="unplugin-pixi-assets/client" />
 
 declare module '*.fnt' {
   const src: string;

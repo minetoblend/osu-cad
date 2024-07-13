@@ -10,7 +10,6 @@ import {
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import cursorTexture from '@icons/select.png?texture';
 
 export class MainCursorContainer extends CursorContainer {
   createCursor(): Drawable {
@@ -25,7 +24,7 @@ class Cursor extends CompositeDrawable {
   load() {
     this.addInternal(
       (this.#sprite = new DrawableSprite({
-        texture: cursorTexture,
+        texture: useAsset('icon:select'),
         x: -4,
         y: -3,
       })),
