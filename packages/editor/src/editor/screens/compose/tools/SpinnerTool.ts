@@ -1,4 +1,4 @@
-import { SampleType } from '@osucad/common';
+import { Additions } from '@osucad/common';
 import { Bindable } from 'osucad-framework';
 import { ComposeTool } from './ComposeTool';
 
@@ -11,7 +11,7 @@ export class SpinnerTool extends ComposeTool {
     // TODO
   }
 
-  applySampleType(type: SampleType, bindable: Bindable<boolean>): void {
+  applySampleType(addition: Additions, bindable: Bindable<boolean>): void {
     // TODO
   }
 }

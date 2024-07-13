@@ -5,9 +5,7 @@ import audioUrl from '../../assets/audio.mp3';
 import backgroundUrl from '../../assets/background.jpg';
 import { Skin } from '../../skins/Skin';
 import { EditorContext } from './EditorContext';
-// @ts-expect-error no types
 import { BeatmapDecoder } from 'osu-parsers';
-// @ts-expect-error no types
 import { StandardRuleset } from 'osu-standard-stable';
 import sampleBeatmap from './sampleBeatmap.osu?raw';
 import { BeatmapConverter } from '../../beatmaps/BeatmapConverter';
