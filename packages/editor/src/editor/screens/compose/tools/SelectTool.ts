@@ -1,5 +1,6 @@
 import { ComposeTool } from './ComposeTool';
 import {
+  Anchor,
   Bindable,
   ClickEvent,
   dependencyLoader,
@@ -7,6 +8,7 @@ import {
   InputManager,
   MouseButton,
   MouseDownEvent,
+  RoundedBox,
   Vec2,
 } from 'osucad-framework';
 import { SelectBoxInteraction } from './interactions/SelectBoxInteraction';
@@ -14,7 +16,6 @@ import {
   Additions,
   DeleteHitObjectCommand,
   HitObject,
-  SampleType,
   setAdditionsEnabled,
   Slider,
   UpdateHitObjectCommand,
@@ -23,12 +24,17 @@ import { MoveSelectionInteraction } from './interactions/MoveSelectionInteractio
 import { SliderPathVisualizer } from './SliderPathVisualizer';
 import { DistanceSnapProvider } from './DistanceSnapProvider';
 import { SliderUtils } from './SliderUtils';
+import { InsertControlPointInteraction } from './interactions/InsertControlPointInteraction';
 
 export class SelectTool extends ComposeTool {
   constructor() {
     super();
 
-    this.addAllInternal(this.#sliderPathVisualizer, this.#snapProvider);
+    this.addAllInternal(
+      this.#sliderPathVisualizer,
+      this.#snapProvider,
+      this.#sliderInsertPointVisualizer,
+    );
   }
 
   #snapProvider = new DistanceSnapProvider();
@@ -82,6 +88,17 @@ export class SelectTool extends ComposeTool {
       const candidate = this.#getSelectionCandidate(hovered)!;
 
       if (e.controlPressed) {
+        if (this.#sliderInsertPoint && this.activeSlider) {
+          this.beginInteraction(
+            new InsertControlPointInteraction(
+              this.activeSlider,
+              this.#sliderInsertPoint.position,
+              this.#sliderInsertPoint.index,
+            ),
+          );
+          return true;
+        }
+
         if (
           this.selection.length <= 1 ||
           !this.selection.isSelected(candidate)
@@ -187,28 +204,61 @@ export class SelectTool extends ComposeTool {
         this.toLocalSpace(this.#inputManager.currentState.mouse.position),
       );
 
-      this.#updateSliderPathVisualizer(hitObjects);
+      this.#updateSliderPathVisualizer(
+        hitObjects,
+        this.#inputManager.currentState.keyboard.controlPressed,
+      );
     }
   }
 
-  #updateSliderPathVisualizer(hoveredHitObjects: HitObject[]) {
+  #updateSliderPathVisualizer(
+    hoveredHitObjects: HitObject[],
+    controlPressed: boolean,
+  ) {
     if (this.#isDragging) {
       return;
     }
 
+    let slider: Slider | null = null;
+
     const selection = this.selection.selectedObjects;
     if (selection.length === 1 && selection[0] instanceof Slider) {
-      this.#sliderPathVisualizer.slider = selection[0];
+      slider = selection[0];
     } else if (hoveredHitObjects.every((it) => !it.isSelected)) {
-      const slider = hoveredHitObjects.find((it) => it instanceof Slider) as
-        | Slider
-        | undefined;
+      slider = (hoveredHitObjects.find((it) => it instanceof Slider) ??
+        null) as Slider | null;
+    }
 
-      this.#sliderPathVisualizer.slider = slider ?? null;
+    this.activeSlider = slider;
+
+    if (slider && controlPressed) {
+      this.#sliderInsertPoint = this.#sliderUtils.getInsertPoint(
+        slider,
+        this.mousePosition,
+      );
     } else {
-      this.#sliderPathVisualizer.slider = null;
+      this.#sliderInsertPoint = null;
+    }
+
+    if (this.#sliderInsertPoint) {
+      this.#sliderInsertPointVisualizer.alpha = 1;
+      this.#sliderInsertPointVisualizer.position = slider!.stackedPosition.add(
+        this.#sliderInsertPoint.position,
+      );
+    } else {
+      this.#sliderInsertPointVisualizer.alpha = 0;
     }
   }
+
+  #sliderInsertPoint: { position: Vec2; index: number } | null = null;
+
+  #sliderInsertPointVisualizer: RoundedBox = new RoundedBox({
+    width: 6,
+    height: 6,
+    cornerRadius: 2,
+    origin: Anchor.Center,
+    alpha: 0,
+  });
 
   @dependencyLoader()
   load() {
@@ -216,6 +266,8 @@ export class SelectTool extends ComposeTool {
       this.commandManager,
       this.#snapProvider,
     );
+
+    this.dependencies.provide(this.#snapProvider);
 
     this.#sliderPathVisualizer.onHandleMouseDown = this.#onHandleMouseDown;
     this.#sliderPathVisualizer.onHandleDragStarted = this.#onHandleDragStarted;
@@ -278,7 +330,7 @@ export class SelectTool extends ComposeTool {
   }
 
   #onHandleMouseDown = (index: number, e: MouseDownEvent) => {
-    const slider = this.#sliderPathVisualizer.slider!;
+    const slider = this.activeSlider!;
 
     if (e.button === MouseButton.Right) {
       this.#sliderUtils.deleteControlPoint(slider, index);
@@ -306,7 +358,7 @@ export class SelectTool extends ComposeTool {
   };
 
   #onHandleDragged = (index: number, e: DragStartEvent) => {
-    const slider = this.#sliderPathVisualizer.slider!;
+    const slider = this.activeSlider!;
 
     const position = this.toLocalSpace(e.screenSpaceMousePosition);
 
@@ -360,5 +412,13 @@ export class SelectTool extends ComposeTool {
 
       bindable!.value = allActive;
     }
+  }
+
+  get activeSlider() {
+    return this.#sliderPathVisualizer.slider;
+  }
+
+  set activeSlider(value: Slider | null) {
+    this.#sliderPathVisualizer.slider = value;
   }
 }

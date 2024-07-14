@@ -69,8 +69,6 @@ export abstract class ComposeTool extends CommandContainer {
 
   protected loadComplete(): void {
     super.loadComplete();
-
-    this.inputManager = this.getContainingInputManager()!;
   }
 
   @dependencyLoader()
@@ -149,6 +147,12 @@ export abstract class ComposeTool extends CommandContainer {
     interaction.updateDrawNodeTransform();
 
     console.debug('Interaction started', interaction);
+  }
+
+  update() {
+    super.update();
+
+    this.inputManager ??= this.getContainingInputManager()!;
   }
 
   cancelCurrentInteraction(): boolean {

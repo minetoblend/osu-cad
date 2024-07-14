@@ -228,4 +228,44 @@ export class SliderUtils {
       ) ?? slider.path.calculatedDistance
     );
   }
+
+  getInsertPoint(slider: Slider, mousePos: Vec2) {
+    let last = slider.path.controlPoints[0];
+    let closest: SliderInsertPoint | null = null;
+    let closestDistance: number = Infinity;
+    for (let i = 1; i < slider.path.controlPoints.length; i++) {
+      const current = slider.path.controlPoints[i];
+
+      const A = last;
+      const B = current;
+      const P = Vec2.sub(mousePos, slider.position);
+      const AB = Vec2.sub(B, A);
+      const AP = Vec2.sub(P, A);
+
+      const lengthSquaredAB = AB.lengthSq();
+      let t = (AP.x * AB.x + AP.y * AB.y) / lengthSquaredAB;
+      t = Math.max(0, Math.min(1, t));
+
+      const position = Vec2.add(A, AB.scale(t));
+
+      const distance = position.distance(P);
+      if (distance < 35) {
+        if (distance < closestDistance) {
+          closest = {
+            position,
+            index: i,
+          };
+          closestDistance = distance;
+        }
+      }
+      last = current;
+    }
+
+    return closest;
+  }
+}
+
+export interface SliderInsertPoint {
+  position: Vec2;
+  index: number;
 }
