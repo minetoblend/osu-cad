@@ -2,6 +2,7 @@ import { Beatmap, ControlPointManager, HitObjectManager } from '@osucad/common';
 import { Bindable, DependencyContainer, PIXITexture } from 'osucad-framework';
 import { Skin } from '../../skins/Skin';
 import { CommandManager } from './CommandManager';
+import { BeatmapAsset } from './BeatmapAsset';
 
 export abstract class EditorContext {
   // #region Beatmap
@@ -71,6 +72,7 @@ export abstract class EditorContext {
     file: File,
     onProgress?: (progress: number) => void,
   ): Promise<boolean>;
+
   // #endregion
 
   // #region Skin
@@ -105,6 +107,9 @@ export abstract class EditorContext {
     this.addParallelLoad(
       async () => (this.skinBindable.value = await this.loadSkin()),
     );
+    this.addParallelLoad(
+      async () => (this.beatmapAssets.value = await this.getBeatmapAssets()),
+    );
 
     this.loadBackground(beatmap).then(
       (background) => (this.backgroundBindable.value = background),
@@ -112,6 +117,7 @@ export abstract class EditorContext {
 
     await Promise.all(this.#loaders.map((loader) => loader()));
   }
+
   // #endregion
 
   provideDependencies(dependencies: DependencyContainer) {
@@ -121,5 +127,11 @@ export abstract class EditorContext {
     dependencies.provide(ControlPointManager, this.beatmap.controlPoints);
     dependencies.provide(Skin, this.skin);
     dependencies.provide(CommandManager, this.commandHandler);
+  }
+
+  beatmapAssets = new Bindable<BeatmapAsset[]>([]);
+
+  protected async getBeatmapAssets(): Promise<BeatmapAsset[]> {
+    return [];
   }
 }

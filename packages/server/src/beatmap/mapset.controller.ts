@@ -2,6 +2,7 @@ import {
   Controller,
   ForbiddenException,
   Get,
+  NotFoundException,
   Param,
   Req,
   Res,
@@ -73,6 +74,27 @@ export class MapsetController {
       `attachment; filename="${mapset.title}.osz"`,
     );
     archive.generateNodeStream().pipe(res);
+  }
+
+  @Get(':id/files')
+  @UseGuards(AuthGuard)
+  async getFiles(@Param('id') id: string) {
+    if (!(await this.mapsetService.exists(id)))
+      throw new Error('Mapset not found');
+
+    const mapset = await this.mapsetService.findById(id);
+
+    if (!mapset) {
+      throw new NotFoundException();
+    }
+
+    const assets = await this.assetsService.getAssetsForBeatmap(mapset);
+
+    return assets.map((asset) => ({
+      path: asset.path,
+      filesize: asset.asset.filesize,
+      url: `/api/mapsets/${id}/files/${encodeURIComponent(asset.path)}`,
+    }));
   }
 
   @Get(':id/files/*')

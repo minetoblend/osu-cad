@@ -10,6 +10,7 @@ import audioUrl from '../../assets/audio.mp3';
 import backgroundUrl from '../../assets/background.jpg';
 import { CommandManager } from './CommandManager';
 import { OnlineCommandManager } from './OnlineCommandManager';
+import { BeatmapAsset } from './BeatmapAsset';
 
 export class OnlineEditorContext extends EditorContext {
   readonly socket: EditorSocket;
@@ -84,5 +85,19 @@ export class OnlineEditorContext extends EditorContext {
   provideDependencies(dependencies: DependencyContainer) {
     super.provideDependencies(dependencies);
     dependencies.provide(this.users);
+  }
+
+  protected async getBeatmapAssets(): Promise<BeatmapAsset[]> {
+    const assets = await fetch(`/api/mapsets/${this.beatmap.setId}/files`).then(
+      (res) => res.json(),
+    );
+
+    if (!Array.isArray(assets)) {
+      return [];
+    }
+
+    console.log(assets);
+
+    return assets;
   }
 }
