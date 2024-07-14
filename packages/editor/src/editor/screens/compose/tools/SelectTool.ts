@@ -78,6 +78,19 @@ export class SelectTool extends ComposeTool {
     this.#canCycleSelection = false;
 
     if (e.button === MouseButton.Left) {
+      if (e.controlPressed && this.#sliderInsertPoint && this.activeSlider) {
+        this.selection.select([this.activeSlider], true);
+
+        this.beginInteraction(
+          new InsertControlPointInteraction(
+            this.activeSlider,
+            this.#sliderInsertPoint.position,
+            this.#sliderInsertPoint.index,
+          ),
+        );
+        return true;
+      }
+
       const hovered = this.hoveredHitObjects(e.mousePosition);
 
       if (hovered.length === 0) {
@@ -88,17 +101,6 @@ export class SelectTool extends ComposeTool {
       const candidate = this.#getSelectionCandidate(hovered)!;
 
       if (e.controlPressed) {
-        if (this.#sliderInsertPoint && this.activeSlider) {
-          this.beginInteraction(
-            new InsertControlPointInteraction(
-              this.activeSlider,
-              this.#sliderInsertPoint.position,
-              this.#sliderInsertPoint.index,
-            ),
-          );
-          return true;
-        }
-
         if (
           this.selection.length <= 1 ||
           !this.selection.isSelected(candidate)
