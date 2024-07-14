@@ -9,6 +9,7 @@ import { BackdropBlurFilter } from 'pixi-filters';
 import { Corner, EditorCornerPiece } from './EditorCornerPiece';
 import { OverviewTimeline } from './overviewTimeline/OverviewTimeline';
 import { TimestampContainer } from './TimestampContainer';
+import { PlayButtonContainer } from './PlayButton';
 
 export class EditorBottomBar extends Container {
   constructor() {
@@ -64,6 +65,15 @@ export class EditorBottomBar extends Container {
             relativeSizeAxes: Axes.Y,
             anchor: Anchor.TopRight,
             origin: Anchor.TopRight,
+            padding: {
+              left: 10,
+            },
+            children: [
+              new Container({
+                relativeSizeAxes: Axes.Both,
+                child: new PlayButtonContainer(),
+              }),
+            ],
           }),
         ],
       }),
