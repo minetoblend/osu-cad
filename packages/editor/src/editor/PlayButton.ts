@@ -71,12 +71,9 @@ export class PlayButton extends CompositeDrawable {
 
   onMouseDown(e: MouseDownEvent): boolean {
     if (e.button === MouseButton.Left) {
-      gsap.to(this.#icon, {
-        scaleX: 0.9,
-        scaleY: 0.9,
-        duration: 0.2,
-        ease: 'power4.out',
-      });
+      gsap.killTweensOf(this.#icon);
+
+      this.#icon.scale = 0.9;
 
       if (this.editorClock.isRunning) {
         this.editorClock.stop();
