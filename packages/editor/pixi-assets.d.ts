@@ -22,7 +22,9 @@ declare module 'virtual:pixi-assets' {
     "icon:finish@2x": AssetRecordInfo<"icon:finish@2x", "/src/assets/icons/finish@2x.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
     "icon:minus": AssetRecordInfo<"icon:minus", "/src/assets/icons/minus.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
     "icon:new-combo": AssetRecordInfo<"icon:new-combo", "/src/assets/icons/new-combo.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
+    "icon:pause": AssetRecordInfo<"icon:pause", "/src/assets/icons/pause.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
     "icon:pen": AssetRecordInfo<"icon:pen", "/src/assets/icons/pen.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
+    "icon:play": AssetRecordInfo<"icon:play", "/src/assets/icons/play.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
     "icon:plus": AssetRecordInfo<"icon:plus", "/src/assets/icons/plus.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
     "icon:redo": AssetRecordInfo<"icon:redo", "/src/assets/icons/redo.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
     "icon:reverse": AssetRecordInfo<"icon:reverse", "/src/assets/icons/reverse.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
@@ -33,7 +35,5 @@ declare module 'virtual:pixi-assets' {
     "icon:spinner": AssetRecordInfo<"icon:spinner", "/src/assets/icons/spinner.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
     "icon:undo": AssetRecordInfo<"icon:undo", "/src/assets/icons/undo.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
     "icon:whistle@2x": AssetRecordInfo<"icon:whistle@2x", "/src/assets/icons/whistle@2x.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
-    "icon:play": AssetRecordInfo<"icon:play", "/src/assets/icons/play.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
-    "icon:pause": AssetRecordInfo<"icon:pause", "/src/assets/icons/pause.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
   }
 }
