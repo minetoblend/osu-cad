@@ -70,7 +70,7 @@ export class Beatmap {
       .filter((it) => it.time != undefined);
     this.backgroundPath = options.backgroundPath;
     this.colors = options.colors.map((color) =>
-      parseInt(color.substring(1, 6), 16),
+      parseInt(color.substring(1, 7), 16),
     );
     this.audioFilename = options.audioFilename;
     if (this.colors.length === 0) {
@@ -92,7 +92,9 @@ export class Beatmap {
       difficulty: this.difficulty,
       bookmarks: this.bookmarks.map((bookmark) => bookmark.serialize()),
       backgroundPath: this.backgroundPath,
-      colors: this.colors.map((color) => '#' + color.toString(16)),
+      colors: this.colors.map(
+        (color) => '#' + color.toString(16).padStart(6, '0'),
+      ),
       audioFilename: this.audioFilename,
       general: this.general,
       hitSounds: this.hitSounds.serialize(),
