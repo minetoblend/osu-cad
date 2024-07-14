@@ -25,7 +25,6 @@ import { ComposeScreen } from './screens/compose/ComposeScreen';
 import { SetupScreen } from './screens/setup/SetupScreen';
 import { EditorSelection } from './screens/compose/EditorSelection';
 import { EditorAction } from './EditorAction';
-import { EditorActionContainer } from './EditorActionContainer';
 import { DifficultyCalculator } from './DifficultyCalculator';
 import {
   NEW_COMBO,
@@ -34,6 +33,7 @@ import {
   SAMPLE_WHISTLE,
 } from './InjectionTokens';
 import { ToggleBindable } from './screens/compose/ToggleBindable';
+import { HitsoundPlayer } from './HitsoundPlayer';
 
 export class Editor
   extends Container
@@ -97,6 +97,8 @@ export class Editor
 
     const difficultyCalculator = new DifficultyCalculator();
     this.addInternal(difficultyCalculator);
+
+    this.addInternal(new HitsoundPlayer());
 
     this.addAll(
       new Container({
