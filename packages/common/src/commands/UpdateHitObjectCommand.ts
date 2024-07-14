@@ -61,8 +61,8 @@ export class UpdateHitObjectHandler extends CommandHandler<IUpdateHitObjectComma
       const patch = {} as any;
 
       for (const key in command.patch) {
-        if (key in pending) {
-          patch[key] = Reflect.get(hitObject, key);
+        if (!(key in pending)) {
+          patch[key] = command.patch[key];
         }
       }
 
