@@ -184,7 +184,7 @@ class SliderPathVisualizerHandle extends CompositeDrawable {
     this.#handle.color = getColorForPathType(type);
   }
 
-  #type: PathType | null = null;
+  #type?: PathType | null;
 
   onHover(): boolean {
     gsap.to(this.#shadow, {
@@ -245,8 +245,6 @@ class SliderPathVisualizerHandle extends CompositeDrawable {
 
 function getColorForPathType(type: PathType | null) {
   switch (type) {
-    case null:
-      return 0xcccccc;
     case PathType.Bezier:
       return 0x00ff00;
     case PathType.Catmull:
@@ -255,5 +253,7 @@ function getColorForPathType(type: PathType | null) {
       return 0x0000ff;
     case PathType.Linear:
       return 0xffff00;
+    default:
+      return 0xcccccc;
   }
 }
