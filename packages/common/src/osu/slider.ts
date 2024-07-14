@@ -171,7 +171,7 @@ export class Slider extends HitObject {
   get endAngle() {
     const p1 = this.path.getPositionAtDistance(this.expectedDistance - 1);
     const p2 = this.path.endPosition;
-    return Math.atan2(p2.y - p1.y, p2.x - p1.x);
+    return Math.atan2(p2.y - p1.y, p2.x - p1.x) + Math.PI;
   }
 
   contains(point: Vec2): boolean {
