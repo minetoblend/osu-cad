@@ -3,12 +3,15 @@ import {
   Controller,
   Get,
   InternalServerErrorException,
+  NotFoundException,
+  Param,
   Query,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { UserService } from './user.service';
 import { OsuApiService } from '../osu/osu-api.service';
 import { AssetQuotaService } from '../assets/asset-quota.service';
@@ -56,5 +59,32 @@ export class UserController {
     const users = await this.osuApiService.lookupUser(query);
 
     return users;
+  }
+
+  @Get(':id/avatar')
+  async getAvatar(@Param('id') id: string, @Res() res: Response) {
+    const parsed = parseInt(id);
+    if (isNaN(parsed)) throw new BadRequestException('Invalid id');
+
+    const user = await this.userService.findById(parsed);
+
+    if (!user) throw new NotFoundException();
+
+    const response = await fetch(user.avatarUrl);
+
+    if (!response.ok) {
+      throw new NotFoundException();
+    }
+
+    res.setHeader(
+      'Content-Type',
+      response.headers.get('Content-Type') ?? 'image/png',
+    );
+    res.setHeader('Cache-Control', 'public, max-age=31536000');
+    res.setHeader('Expires', new Date(Date.now() + 31536000000).toUTCString());
+
+    const buffer = await response.arrayBuffer();
+
+    res.send(Buffer.from(buffer));
   }
 }
