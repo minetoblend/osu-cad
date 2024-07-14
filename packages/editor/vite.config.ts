@@ -2,6 +2,7 @@ import { defineConfig, type Plugin } from 'vite';
 import PixiAssets from 'unplugin-pixi-assets/vite'
 import { resolve, join } from 'path'
 import * as fs from 'fs/promises'
+import Dts from 'vite-plugin-dts'
 
 
 const fontsPlugin: Plugin = {
@@ -57,7 +58,8 @@ export default defineConfig({
           autoGenerateMipmaps: true
         }
       }
-    })
+    }),
+    Dts(),
   ],
   resolve: {
     alias: {
@@ -69,8 +71,16 @@ export default defineConfig({
   },
   build: {
     target: "esnext",
-    
+    lib: {
+      entry: resolve(__dirname, 'src/index.ts'),
+      name: 'osucad-editor',
+      formats: ['es'],
+      fileName: 'index',
+
+    },
+
     rollupOptions: {
+
       output: {
         assetFileNames(chunkInfo) {
           if(chunkInfo.name?.includes('nunito-sans'))
