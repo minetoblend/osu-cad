@@ -14,7 +14,9 @@
   "license": "ISC",
   "pnpm": {
     "patchedDependencies": {
-      "osu-parsers@4.1.6": "patches/osu-parsers@4.1.6.patch"
+      "osu-parsers@4.1.6": "patches/osu-parsers@4.1.6.patch",
+      "osu-classes@3.0.1": "patches/osu-classes@3.0.1.patch",
+      "osu-standard-stable@5.0.0": "patches/osu-standard-stable@5.0.0.patch"
     }
   }
 }
