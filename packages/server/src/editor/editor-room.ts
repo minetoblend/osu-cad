@@ -127,17 +127,34 @@ export class EditorRoom extends EventEmitter2 {
     await this.editorRoomRepository.save(this.roomEntity);
   }
 
+  colorIndex = 0;
+
   accept(
     client: Socket<ClientMessages, ServerMessages>,
     user: UserEntity,
     access: BeatmapAccess,
   ) {
+    const colors = [
+      '#52cca3',
+      '#4287f5',
+      '#5834eb',
+      '#bc62f0',
+      '#f062c3',
+      '#f53b6a',
+      '#f58c3b',
+      '#f0db3e',
+      '#88f03e',
+    ];
+
+    const color = colors[this.colorIndex++ % colors.length];
+
     const roomUser = new RoomUser(
       user,
       client,
       this.nextSessionId++,
       this,
       access,
+      color,
     );
 
     client.join(this.id);

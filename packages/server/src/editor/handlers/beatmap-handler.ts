@@ -3,9 +3,8 @@ import { MessageHandler } from './message-handler';
 import {
   BeatmapAccess,
   CommandContext,
-  decodeCommands,
-  encodeCommands,
   getCommandHandler,
+  IEditorCommand,
 } from '@osucad/common';
 import { OnMessage } from './decorator';
 
@@ -15,10 +14,10 @@ export class BeatmapHandler extends MessageHandler {
     roomUser.send('beatmap', this.room.beatmap.serialize());
   }
 
-  private reusableContext?: CommandContext;
+  private context?: CommandContext;
 
   @OnMessage('commands')
-  onCommands(roomUser: RoomUser, commands: Uint8Array): void {
+  onCommands(roomUser: RoomUser, commands: IEditorCommand[]): void {
     if (roomUser.access < BeatmapAccess.Edit) {
       this.logger.error(
         `User ${roomUser.user.username} tried to send commands without edit access`,
@@ -26,29 +25,18 @@ export class BeatmapHandler extends MessageHandler {
       return;
     }
 
-    const decodedCommands = decodeCommands(commands);
     this.room.hasUnsavedChanges = true;
 
-    this.reusableContext ??= new CommandContext(
-      this.room.beatmap,
-      false,
-      false,
-      0,
-    );
+    this.context ??= new CommandContext(this.room.beatmap, true);
 
-    for (const command of decodedCommands) {
-      this.reusableContext.version = command.version;
-      const handler = getCommandHandler(command.command);
+    for (const command of commands) {
+      const handler = getCommandHandler(command);
       if (handler) {
-        this.room.emit('beforeCommand', command.command, this.reusableContext);
-        handler.apply(command.command, this.reusableContext);
-        this.room.emit('afterCommand', command.command, this.reusableContext);
+        this.room.emit('beforeCommand', command, this.context);
+        handler.apply(this.context, command, 'local');
+        this.room.emit('afterCommand', command, this.context);
       }
     }
-    this.room.broadcast(
-      'commands',
-      encodeCommands(decodedCommands),
-      roomUser.sessionId,
-    );
+    this.room.broadcast('commands', commands, roomUser.sessionId);
   }
 }

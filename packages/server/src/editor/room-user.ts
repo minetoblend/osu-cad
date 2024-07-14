@@ -16,6 +16,7 @@ export class RoomUser {
     readonly sessionId: number,
     readonly room: EditorRoom,
     public access: BeatmapAccess,
+    public color: string,
   ) {}
 
   presence: Presence = {
@@ -29,6 +30,7 @@ export class RoomUser {
       sessionId: this.sessionId,
       presence: this.presence,
       access: this.access,
+      color: this.color,
     };
   }
 
