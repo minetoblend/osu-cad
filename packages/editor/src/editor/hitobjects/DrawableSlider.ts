@@ -71,7 +71,7 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
         i % 2 == 0 ? this.hitObject.endAngle : this.hitObject.startAngle;
 
       const reverseArrow = new ReverseArrow();
-      reverseArrow.rotation = angle + Math.PI;
+      reverseArrow.rotation = angle;
       reverseArrow.startTime = time;
       reverseArrow.timePreempt = this.hitObject.timePreempt;
 
