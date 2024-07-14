@@ -8,6 +8,7 @@ export interface UserSessionInfo extends UserInfo {
   sessionId: number;
   access: BeatmapAccess;
   presence: Presence;
+  color: string;
 }
 
 export type UserRole = 'admin' | 'mapper' | 'modder' | 'spectator';
