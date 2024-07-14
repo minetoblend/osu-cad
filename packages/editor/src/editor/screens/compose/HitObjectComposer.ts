@@ -102,14 +102,14 @@ export class HitObjectComposer
         this.hitObjectUtils.mirrorHitObjects(
           Axes.X,
           this.selection.selectedObjects,
-          true,
+          false,
         );
         return true;
       case EditorAction.FlipVertical:
         this.hitObjectUtils.mirrorHitObjects(
           Axes.Y,
           this.selection.selectedObjects,
-          true,
+          false,
         );
         return true;
       case EditorAction.RotateCW:
