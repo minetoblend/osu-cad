@@ -5,9 +5,15 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
+  osu-classes@3.0.1:
+    hash: uj42rdcrhaiparjychylegxxw4
+    path: patches/osu-classes@3.0.1.patch
   osu-parsers@4.1.6:
-    hash: ugoagda5taw6zv5twsd6c5pxn4
+    hash: 6la4lltmpkxf7uij7s6i72vz6u
     path: patches/osu-parsers@4.1.6.patch
+  osu-standard-stable@5.0.0:
+    hash: gnmfmzaob3mmg63cf3tfcacj5e
+    path: patches/osu-standard-stable@5.0.0.patch
 
 importers:
 
@@ -83,7 +89,7 @@ importers:
         version: 0.358.0(vue@3.4.21(typescript@5.4.2))
       osu-classes:
         specifier: ^3.0.1
-        version: 3.0.1
+        version: 3.0.1(patch_hash=uj42rdcrhaiparjychylegxxw4)
       pako:
         specifier: ^2.1.0
         version: 2.1.0
@@ -249,7 +255,7 @@ importers:
         version: 1.0.3
       osu-classes:
         specifier: ^3.0.1
-        version: 3.0.1
+        version: 3.0.1(patch_hash=uj42rdcrhaiparjychylegxxw4)
       osucad-framework:
         specifier: workspace:*
         version: link:../framework
@@ -316,22 +322,22 @@ importers:
         version: 3.12.5
       osu-classes:
         specifier: ^3.0.1
-        version: 3.0.1
+        version: 3.0.1(patch_hash=uj42rdcrhaiparjychylegxxw4)
       osu-parsers:
         specifier: ^4.1.6
-        version: 4.1.6(patch_hash=ugoagda5taw6zv5twsd6c5pxn4)(osu-classes@3.0.1)
+        version: 4.1.6(patch_hash=6la4lltmpkxf7uij7s6i72vz6u)(osu-classes@3.0.1(patch_hash=uj42rdcrhaiparjychylegxxw4))
       osu-standard-stable:
         specifier: ^5.0.0
-        version: 5.0.0(osu-classes@3.0.1)
+        version: 5.0.0(patch_hash=gnmfmzaob3mmg63cf3tfcacj5e)(osu-classes@3.0.1(patch_hash=uj42rdcrhaiparjychylegxxw4))
       osucad-framework:
         specifier: workspace:*
         version: link:../framework
       pixi-filters:
         specifier: ^6.0.4
-        version: 6.0.4(pixi.js@8.2.1)
+        version: 6.0.4(pixi.js@https://pkg.csb.dev/pixijs/pixijs/commit/f2243093/pixi.js)
       pixi.js:
-        specifier: ^8.2.1
-        version: 8.2.1
+        specifier: https://pkg.csb.dev/pixijs/pixijs/commit/f2243093/pixi.js
+        version: https://pkg.csb.dev/pixijs/pixijs/commit/f2243093/pixi.js
       reflect-metadata:
         specifier: ^0.1.13
         version: 0.1.14
@@ -363,6 +369,9 @@ importers:
       typescript:
         specifier: ^5.2.2
         version: 5.4.2
+      unplugin-pixi-assets:
+        specifier: ^0.1.2
+        version: 0.1.2(@nuxt/kit@3.10.3(rollup@3.29.4))(@nuxt/schema@3.10.3(rollup@3.29.4))(esbuild@0.17.19)(pixi.js@https://pkg.csb.dev/pixijs/pixijs/commit/f2243093/pixi.js)(rollup@3.29.4)(vite@5.3.2(@types/node@20.14.9)(sass@1.72.0)(terser@5.29.2))(webpack@5.90.1(esbuild@0.17.19))
       vite:
         specifier: ^5.3.1
         version: 5.3.2(@types/node@20.14.9)(sass@1.72.0)(terser@5.29.2)
@@ -382,15 +391,30 @@ importers:
       '@types/animejs':
         specifier: ^3.1.12
         version: 3.1.12
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^6.0.0
+        version: 6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.2))(eslint@8.57.0)(typescript@5.4.2)
+      '@typescript-eslint/parser':
+        specifier: ^6.0.0
+        version: 6.21.0(eslint@8.57.0)(typescript@5.4.2)
       '@vitest/browser':
         specifier: ^1.6.0
         version: 1.6.0(vitest@1.6.0)(webdriverio@8.39.0(typescript@5.4.2))
       '@vitest/coverage-v8':
         specifier: ^1.6.0
         version: 1.6.0(vitest@1.6.0(@types/node@20.14.9)(@vitest/browser@1.6.0)(happy-dom@8.9.0)(sass@1.72.0)(terser@5.29.2))
+      eslint:
+        specifier: ^8.42.0
+        version: 8.57.0
+      eslint-config-prettier:
+        specifier: ^9.0.0
+        version: 9.1.0(eslint@8.57.0)
+      eslint-plugin-prettier:
+        specifier: ^5.0.0
+        version: 5.1.3(@types/eslint@8.56.5)(eslint-config-prettier@9.1.0(eslint@8.57.0))(eslint@8.57.0)(prettier@3.2.5)
       pixi.js:
-        specifier: ^8.2.0
-        version: 8.2.1
+        specifier: https://pkg.csb.dev/pixijs/pixijs/commit/f2243093/pixi.js
+        version: https://pkg.csb.dev/pixijs/pixijs/commit/f2243093/pixi.js
       tsup:
         specifier: ^8.1.0
         version: 8.1.0(postcss@8.4.38)(ts-node@10.9.2(@types/node@20.14.9)(typescript@5.4.2))(typescript@5.4.2)
@@ -531,13 +555,13 @@ importers:
         version: 3.9.2
       osu-classes:
         specifier: ^3.0.1
-        version: 3.0.1
+        version: 3.0.1(patch_hash=uj42rdcrhaiparjychylegxxw4)
       osu-parsers:
         specifier: ^4.1.6
-        version: 4.1.6(patch_hash=ugoagda5taw6zv5twsd6c5pxn4)(osu-classes@3.0.1)
+        version: 4.1.6(patch_hash=6la4lltmpkxf7uij7s6i72vz6u)(osu-classes@3.0.1(patch_hash=uj42rdcrhaiparjychylegxxw4))
       osu-standard-stable:
         specifier: ^5.0.0
-        version: 5.0.0(osu-classes@3.0.1)
+        version: 5.0.0(patch_hash=gnmfmzaob3mmg63cf3tfcacj5e)(osu-classes@3.0.1(patch_hash=uj42rdcrhaiparjychylegxxw4))
       pako:
         specifier: ^2.1.0
         version: 2.1.0
@@ -3408,6 +3432,11 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
+  acorn@8.12.1:
+    resolution: {integrity: sha512-tcpGyI9zbizT9JbV6oYE477V6mTlXvvi0T0G3SNIYE2apm/G5huBa1+K89VGeovbg+jycCrfhl3ADxErOuO6Jg==}
+    engines: {node: '>=0.4.0'}
+    hasBin: true
+
   add-stream@1.0.0:
     resolution: {integrity: sha512-qQLMr+8o0WC4FZGQTcJiKBVC59JylcPSrTtk6usvmIDFUOCKegapy1VHQwRbFMOFyb/inzUVqHs+eMYKDM1YeQ==}
 
@@ -5883,6 +5912,9 @@ packages:
     resolution: {integrity: sha512-8UnnX2PeRAPZuN12svgR9j7M1uWMovg/CEnIwIG0LFkXSJJe4PdfUGiTGl8V9bsBHFUtfVINcSyYxd7q+kx9fA==}
     engines: {node: '>=12'}
 
+  magic-string@0.30.10:
+    resolution: {integrity: sha512-iIRwTIf0QKV3UAnYK4PU8uiEc4SRh5jX0mwpIwETPpHdhVM4f53RSwS/vXvN1JhGX+Cs7B8qIq3d6AH49O5fAQ==}
+
   magic-string@0.30.5:
     resolution: {integrity: sha512-7xlpfBaQaP/T6Vh8MO/EqXSW5En6INHEvEXQiuff7Gku0PWjU3uf6w/j9o7O+SpB5fOAkrI5HeoNgwjEO0pFsA==}
     engines: {node: '>=12'}
@@ -6600,14 +6632,16 @@ packages:
 
   pixi-filters@6.0.4:
     resolution: {integrity: sha512-W9SjOTF4yo+v9t5YOBtsWhJoFLLRM6DsIk1C2YBNiQhdyX7J/5UIJtPlTMhZ7wQKoFUiyeUAaCzTEdmw/TVD6w==}
+    version: 6.0.4
     peerDependencies:
       pixi.js: '>=8.0.0-0'
 
   pixi.js@8.0.0-rc.9:
     resolution: {integrity: sha512-4xsCeu/qaiKU5zhIU8Ktj3PgHrLh7MGRqmm+7tqewIhGCqdlft2wwxPYmm3pOZczrnzwg+4vqv1QNNHL79vP0w==}
 
-  pixi.js@8.2.1:
-    resolution: {integrity: sha512-aywwPFJe6+Q10+K+paXB/GBJB7QAXM2ICgEKVIONNLYJQ4byC/pETshfIucTIQr5L56VUZedBAj96D72Bxqskg==}
+  pixi.js@https://pkg.csb.dev/pixijs/pixijs/commit/f2243093/pixi.js:
+    resolution: {tarball: https://pkg.csb.dev/pixijs/pixijs/commit/f2243093/pixi.js}
+    version: 8.2.0
 
   pkg-dir@4.2.0:
     resolution: {integrity: sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ==}
@@ -7884,6 +7918,36 @@ packages:
       '@nuxt/kit':
         optional: true
       '@vueuse/core':
+        optional: true
+
+  unplugin-pixi-assets@0.1.2:
+    resolution: {integrity: sha512-tQWWSHmGDNNP5vXa1Rsm1G/TumEs/jSbXnsC6cRfd1WTdJdBGbDF/vddoU5ZN6GXheuiKxPYvnAST+VI+1LIMw==}
+    version: 0.1.2
+    peerDependencies:
+      '@nuxt/kit': ^3
+      '@nuxt/schema': ^3
+      '@pixi/sound': '>=6'
+      esbuild: '*'
+      pixi.js: '>=8'
+      rollup: ^3
+      vite: '>=3'
+      webpack: ^4 || ^5
+    peerDependenciesMeta:
+      '@nuxt/kit':
+        optional: true
+      '@nuxt/schema':
+        optional: true
+      '@pixi/sound':
+        optional: true
+      esbuild:
+        optional: true
+      pixi.js:
+        optional: true
+      rollup:
+        optional: true
+      vite:
+        optional: true
+      webpack:
         optional: true
 
   unplugin-vue-components@0.26.0:
@@ -12269,6 +12333,8 @@ snapshots:
 
   acorn@8.11.3: {}
 
+  acorn@8.12.1: {}
+
   add-stream@1.0.0: {}
 
   agent-base@7.1.1:
@@ -15274,6 +15340,10 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.4.15
 
+  magic-string@0.30.10:
+    dependencies:
+      '@jridgewell/sourcemap-codec': 1.4.15
+
   magic-string@0.30.5:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.4.15
@@ -15843,16 +15913,16 @@ snapshots:
 
   os-tmpdir@1.0.2: {}
 
-  osu-classes@3.0.1: {}
+  osu-classes@3.0.1(patch_hash=uj42rdcrhaiparjychylegxxw4): {}
 
-  osu-parsers@4.1.6(patch_hash=ugoagda5taw6zv5twsd6c5pxn4)(osu-classes@3.0.1):
+  osu-parsers@4.1.6(patch_hash=6la4lltmpkxf7uij7s6i72vz6u)(osu-classes@3.0.1(patch_hash=uj42rdcrhaiparjychylegxxw4)):
     dependencies:
       lzma-js-simple-v2: 1.2.2
-      osu-classes: 3.0.1
+      osu-classes: 3.0.1(patch_hash=uj42rdcrhaiparjychylegxxw4)
 
-  osu-standard-stable@5.0.0(osu-classes@3.0.1):
+  osu-standard-stable@5.0.0(patch_hash=gnmfmzaob3mmg63cf3tfcacj5e)(osu-classes@3.0.1(patch_hash=uj42rdcrhaiparjychylegxxw4)):
     dependencies:
-      osu-classes: 3.0.1
+      osu-classes: 3.0.1(patch_hash=uj42rdcrhaiparjychylegxxw4)
 
   p-cancelable@2.1.1: {}
 
@@ -16012,10 +16082,10 @@ snapshots:
 
   pirates@4.0.6: {}
 
-  pixi-filters@6.0.4(pixi.js@8.2.1):
+  pixi-filters@6.0.4(pixi.js@https://pkg.csb.dev/pixijs/pixijs/commit/f2243093/pixi.js):
     dependencies:
       '@types/gradient-parser': 0.1.5
-      pixi.js: 8.2.1
+      pixi.js: https://pkg.csb.dev/pixijs/pixijs/commit/f2243093/pixi.js
 
   pixi.js@8.0.0-rc.9:
     dependencies:
@@ -16029,7 +16099,7 @@ snapshots:
       ismobilejs: 1.1.1
       parse-svg-path: 0.1.2
 
-  pixi.js@8.2.1:
+  pixi.js@https://pkg.csb.dev/pixijs/pixijs/commit/f2243093/pixi.js:
     dependencies:
       '@pixi/colord': 2.9.6
       '@types/css-font-loading-module': 0.0.12
@@ -17058,6 +17128,18 @@ snapshots:
       type-fest: 0.16.0
       unique-string: 2.0.0
 
+  terser-webpack-plugin@5.3.10(esbuild@0.17.19)(webpack@5.90.1(esbuild@0.17.19)):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.25
+      jest-worker: 27.5.1
+      schema-utils: 3.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.29.2
+      webpack: 5.90.1(esbuild@0.17.19)
+    optionalDependencies:
+      esbuild: 0.17.19
+    optional: true
+
   terser-webpack-plugin@5.3.10(webpack@5.90.1):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
@@ -17486,6 +17568,25 @@ snapshots:
       '@vueuse/core': 10.9.0(vue@3.4.21(typescript@5.4.2))
     transitivePeerDependencies:
       - rollup
+
+  unplugin-pixi-assets@0.1.2(@nuxt/kit@3.10.3(rollup@3.29.4))(@nuxt/schema@3.10.3(rollup@3.29.4))(esbuild@0.17.19)(pixi.js@https://pkg.csb.dev/pixijs/pixijs/commit/f2243093/pixi.js)(rollup@3.29.4)(vite@5.3.2(@types/node@20.14.9)(sass@1.72.0)(terser@5.29.2))(webpack@5.90.1(esbuild@0.17.19)):
+    dependencies:
+      acorn: 8.12.1
+      chokidar: 3.6.0
+      estree-walker: 3.0.3
+      fast-glob: 3.3.2
+      local-pkg: 0.5.0
+      magic-string: 0.30.10
+      pathe: 1.1.2
+      unplugin: 1.10.0
+    optionalDependencies:
+      '@nuxt/kit': 3.10.3(rollup@3.29.4)
+      '@nuxt/schema': 3.10.3(rollup@3.29.4)
+      esbuild: 0.17.19
+      pixi.js: https://pkg.csb.dev/pixijs/pixijs/commit/f2243093/pixi.js
+      rollup: 3.29.4
+      vite: 5.3.2(@types/node@20.14.9)(sass@1.72.0)(terser@5.29.2)
+      webpack: 5.90.1(esbuild@0.17.19)
 
   unplugin-vue-components@0.26.0(@babel/parser@7.24.7)(@nuxt/kit@3.10.3(rollup@3.29.4))(rollup@3.29.4)(vue@3.4.21(typescript@5.4.2)):
     dependencies:
@@ -18029,6 +18130,38 @@ snapshots:
       - '@swc/core'
       - esbuild
       - uglify-js
+
+  webpack@5.90.1(esbuild@0.17.19):
+    dependencies:
+      '@types/eslint-scope': 3.7.7
+      '@types/estree': 1.0.5
+      '@webassemblyjs/ast': 1.12.1
+      '@webassemblyjs/wasm-edit': 1.12.1
+      '@webassemblyjs/wasm-parser': 1.12.1
+      acorn: 8.11.3
+      acorn-import-assertions: 1.9.0(acorn@8.11.3)
+      browserslist: 4.23.0
+      chrome-trace-event: 1.0.3
+      enhanced-resolve: 5.16.0
+      es-module-lexer: 1.4.1
+      eslint-scope: 5.1.1
+      events: 3.3.0
+      glob-to-regexp: 0.4.1
+      graceful-fs: 4.2.11
+      json-parse-even-better-errors: 2.3.1
+      loader-runner: 4.3.0
+      mime-types: 2.1.35
+      neo-async: 2.6.2
+      schema-utils: 3.3.0
+      tapable: 2.2.1
+      terser-webpack-plugin: 5.3.10(esbuild@0.17.19)(webpack@5.90.1(esbuild@0.17.19))
+      watchpack: 2.4.1
+      webpack-sources: 3.2.3
+    transitivePeerDependencies:
+      - '@swc/core'
+      - esbuild
+      - uglify-js
+    optional: true
 
   whatwg-encoding@2.0.0:
     dependencies:
