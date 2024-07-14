@@ -2,12 +2,12 @@ import {
   Anchor,
   Axes,
   Container,
+  dependencyLoader,
   FillDirection,
   FillFlowContainer,
+  resolved,
   RoundedBox,
   Vec2,
-  dependencyLoader,
-  resolved,
 } from 'osucad-framework';
 import { EditorAction } from '../../EditorAction';
 import {
@@ -18,6 +18,8 @@ import {
 } from '../../InjectionTokens';
 import { ThemeColors } from '../../ThemeColors';
 import { ComposeToggleButton } from './ComposeToggleButton';
+import { AdditionToggleButton } from './AdditionToggleButton';
+import { SampleType } from '@osucad/common';
 
 export class ComposeTogglesBar extends Container {
   constructor() {
@@ -57,20 +59,23 @@ export class ComposeTogglesBar extends Container {
           cornerRadius: 1,
         }),
       }),
-      new ComposeToggleButton(
+      new AdditionToggleButton(
         useAsset('icon:whistle@2x'),
         SAMPLE_WHISTLE,
         EditorAction.ToggleWhistle,
+        SampleType.Whistle,
       ),
-      new ComposeToggleButton(
+      new AdditionToggleButton(
         useAsset('icon:finish@2x'),
         SAMPLE_FINISH,
         EditorAction.ToggleFinish,
+        SampleType.Finish,
       ),
-      new ComposeToggleButton(
+      new AdditionToggleButton(
         useAsset('icon:clap@2x'),
         SAMPLE_CLAP,
         EditorAction.ToggleClap,
+        SampleType.Clap,
       ),
     );
 

@@ -1,4 +1,5 @@
 import {
+  Action,
   AudioManager,
   CompositeDrawable,
   dependencyLoader,
@@ -23,6 +24,8 @@ export class HitsoundPlayer extends CompositeDrawable {
 
   @resolved(EditorContext)
   editorContext!: EditorContext;
+
+  samplePlayed = new Action<HitSample>();
 
   @dependencyLoader()
   load() {
@@ -173,7 +176,7 @@ export class HitsoundPlayer extends CompositeDrawable {
     if (sample) {
       const playback = sample.play({
         delay: Math.max(delay, 0),
-        //volume: hitSample.volume * 0.4,
+        volume: hitSample.volume * 0.4,
       });
       this.#scheduledSamples.push(playback);
 
@@ -183,6 +186,10 @@ export class HitsoundPlayer extends CompositeDrawable {
           this.#scheduledSamples.splice(index, 1);
         }
       });
+
+      this.scheduler.addDelayed(() => {
+        this.samplePlayed.emit(hitSample);
+      }, delay);
     }
   }
 

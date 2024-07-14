@@ -98,7 +98,9 @@ export class Editor
     const difficultyCalculator = new DifficultyCalculator();
     this.addInternal(difficultyCalculator);
 
-    this.addInternal(new HitsoundPlayer());
+    const hitSoundPlayer = new HitsoundPlayer();
+    this.dependencies.provide(HitsoundPlayer, hitSoundPlayer);
+    this.addInternal(hitSoundPlayer);
 
     this.addAll(
       new Container({

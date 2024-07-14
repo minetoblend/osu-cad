@@ -30,6 +30,7 @@ export class EditorBottomBar extends Container {
       resolution: devicePixelRatio,
     });
     filter.padding = 30;
+    filter.repeatEdgePixels = false;
 
     this.addAll(
       new Container({
