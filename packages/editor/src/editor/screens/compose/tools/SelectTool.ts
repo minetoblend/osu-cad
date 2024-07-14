@@ -339,7 +339,7 @@ export class SelectTool extends ComposeTool {
 
     if (e.button === MouseButton.Left && this.#isCycleControlPointEvent(e)) {
       this.#sliderUtils.cycleControlPointType(slider, index);
-      return false;
+      return true;
     }
 
     if (!slider.isSelected) {

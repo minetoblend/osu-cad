@@ -4,21 +4,18 @@ import {
   DeleteHitObjectCommand,
   HitCircle,
   PathType,
-  SampleType,
   SerializedPathPoint,
-  SerializedSlider,
   Slider,
   UpdateHitObjectCommand,
-  setAdditionsEnabled,
 } from '@osucad/common';
 import {
+  almostEquals,
   Bindable,
+  dependencyLoader,
   MouseButton,
   MouseDownEvent,
   MouseMoveEvent,
   MouseUpEvent,
-  almostEquals,
-  dependencyLoader,
 } from 'osucad-framework';
 import { ComposeTool } from './ComposeTool';
 import { DistanceSnapProvider } from './DistanceSnapProvider';

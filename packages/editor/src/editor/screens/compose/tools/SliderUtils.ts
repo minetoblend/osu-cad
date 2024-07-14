@@ -147,22 +147,7 @@ export class SliderUtils {
       type,
     };
 
-    const originalPath = slider.path.controlPoints;
-
-    slider.path.controlPoints = path;
-    slider.path.invalidate();
-
-    const expectedDistance = this.snapSlider(slider);
-
-    slider.path.controlPoints = originalPath;
-
-    this.commandManager.submit(
-      new UpdateHitObjectCommand(slider, {
-        path,
-        expectedDistance,
-      } as Partial<SerializedSlider>),
-      commit,
-    );
+    this.setPath(slider, path, commit);
   }
 
   getNextControlPointType(
@@ -230,6 +215,14 @@ export class SliderUtils {
   }
 
   getInsertPoint(slider: Slider, mousePos: Vec2) {
+    if (
+      slider.path.controlPoints.some(
+        (p) => mousePos.sub(slider.stackedPosition).distance(p) < 8,
+      )
+    ) {
+      return null;
+    }
+
     let last = slider.path.controlPoints[0];
     let closest: SliderInsertPoint | null = null;
     let closestDistance: number = Infinity;

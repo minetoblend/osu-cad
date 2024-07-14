@@ -42,19 +42,25 @@ export class HitObjectComposer
     this.addInternal(this.#toolContainer);
 
     this.addInternal((this.hitObjectUtils = new HitObjectUtils()));
+  }
 
-    this.activeTool.addOnChangeListener(
-      (tool) => {
-        if (
-          this.#toolContainer.children.length === 0 ||
-          !(this.#toolContainer.child instanceof tool)
-        ) {
-          this.#toolContainer.child = new tool();
-          this.#toolContainer.updateSubTree();
-        }
-      },
-      { immediate: true },
-    );
+  protected loadComplete() {
+    super.loadComplete();
+
+    this.withScope(() => {
+      this.activeTool.addOnChangeListener(
+        (tool) => {
+          if (
+            this.#toolContainer.children.length === 0 ||
+            !(this.#toolContainer.child instanceof tool)
+          ) {
+            this.#toolContainer.child = new tool();
+            this.#toolContainer.updateSubTree();
+          }
+        },
+        { immediate: true },
+      );
+    });
   }
 
   readonly isKeyBindingHandler = true;
