@@ -2,12 +2,11 @@ import {
   Axes,
   Bindable,
   Container,
+  dependencyLoader,
   FillDirection,
   FillFlowContainer,
   Key,
   Vec2,
-  dependencyLoader,
-  resolved,
 } from 'osucad-framework';
 import { ToolConstructor } from './ComposeScreen';
 import { ComposeToolbarToolButton } from './ComposeToolbarToolButton';

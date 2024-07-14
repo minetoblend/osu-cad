@@ -15,7 +15,11 @@ export class SliderUtils {
     readonly snapProvider: IDistanceSnapProvider,
   ) {}
 
-  deleteControlPoint(slider: Slider, index: number): boolean {
+  deleteControlPoint(
+    slider: Slider,
+    index: number,
+    commit: boolean = true,
+  ): boolean {
     console.assert(
       index >= 0 && index < slider.path.controlPoints.length,
       'Invalid index',
@@ -41,22 +45,7 @@ export class SliderUtils {
 
     path.splice(index, 1);
 
-    const originalPath = slider.path.controlPoints;
-
-    slider.path.controlPoints = [...path];
-    slider.path.invalidate();
-
-    const expectedDistance = this.snapSlider(slider);
-
-    slider.path.controlPoints = originalPath;
-
-    this.commandManager.submit(
-      new UpdateHitObjectCommand(slider, {
-        position,
-        path,
-        expectedDistance,
-      } as Partial<SerializedSlider>),
-    );
+    this.setPath(slider, path, commit);
 
     return true;
   }
@@ -108,22 +97,7 @@ export class SliderUtils {
         type: path[index].type,
       };
 
-      const originalPath = slider.path.controlPoints;
-
-      slider.path.controlPoints = path;
-      slider.path.invalidate();
-
-      const expectedDistance = this.snapSlider(slider);
-
-      slider.path.controlPoints = originalPath;
-
-      this.commandManager.submit(
-        new UpdateHitObjectCommand(slider, {
-          path,
-          expectedDistance,
-        } as Partial<SerializedSlider>),
-        commit,
-      );
+      this.setPath(slider, path, commit);
     }
   }
 
@@ -207,7 +181,7 @@ export class SliderUtils {
 
   snapSlider(slider: Slider): number {
     return (
-      this.snapProvider?.findSnappedDistance(
+      this.snapProvider.findSnappedDistance(
         slider,
         slider.path.calculatedDistance,
       ) ?? slider.path.calculatedDistance

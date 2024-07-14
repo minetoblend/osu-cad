@@ -41,6 +41,7 @@ export class SliderPath {
     this._calculatedPath = undefined;
     this._calculatedRange = undefined;
     this._endPosition = undefined;
+    this._cumulativeDistance = undefined;
     this._version++;
   }
 
