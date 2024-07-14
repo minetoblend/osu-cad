@@ -3,50 +3,35 @@ import { OsucadGame } from './OsucadGame';
 
 import { EditorContext } from './editor/context/EditorContext';
 import './style.css';
-
-function isElectron() {
-  if (
-    typeof window !== 'undefined' &&
-    typeof window.process === 'object' &&
-    'type' in window.process &&
-    window.process.type === 'renderer'
-  ) {
-    return true;
-  }
-
-  if (
-    typeof process !== 'undefined' &&
-    typeof process.versions === 'object' &&
-    !!process.versions.electron
-  ) {
-    return true;
-  }
-
-  if (
-    typeof navigator === 'object' &&
-    typeof navigator.userAgent === 'string' &&
-    navigator.userAgent.indexOf('Electron') >= 0
-  ) {
-    return true;
-  }
-
-  return false;
-}
+import { io } from 'socket.io-client';
 
 async function main() {
   const host = new WebGameHost('osucad', {
     friendlyGameName: 'osucad',
   });
 
+  const pathRegex = /\/edit\/(.*)/;
+
   let context: EditorContext;
 
-  if (isElectron()) {
-    const { ElectronEditorContext } = await import(
-      './editor/context/ElectronEditorContext'
+  const match = pathRegex.exec(window.location.pathname);
+
+  if (match) {
+    const { OnlineEditorContext } = await import(
+      './editor/context/OnlineEditorContext'
     );
-    context = new ElectronEditorContext(
-      'C:/Users/minet/AppData/Local/osu!/Songs/1851103 twenty one pilots - Heathens (Magnetude Bootleg)/twenty one pilots - Heathens (Magnetude Bootleg) (funny) [Marathon].osu',
-    );
+
+    const joinKey = match[1];
+
+    const host = window.origin.replace(/^https/, 'wss');
+
+    const socket = io(`${host}/editor`, {
+      withCredentials: true,
+      query: { id: joinKey },
+      transports: ['websocket'],
+    });
+
+    context = new OnlineEditorContext(socket);
   } else {
     const { DummyEditorContext } = await import(
       './editor/context/DummyEditorContext'

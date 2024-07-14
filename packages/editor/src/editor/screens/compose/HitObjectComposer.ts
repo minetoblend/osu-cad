@@ -22,6 +22,8 @@ import { EditorAction } from '../../EditorAction';
 import { NEW_COMBO } from '../../InjectionTokens';
 import { HitObjectUtils } from './HitObjectUtils';
 import { EditorClock } from '../../EditorClock';
+import { ConnectedUsersManager } from '../../context/ConnectedUsersManager';
+import { ComposerCursorContainer } from './ComposerCursorContainer';
 
 export class HitObjectComposer
   extends Container
@@ -46,6 +48,14 @@ export class HitObjectComposer
     this.addInternal(this.#toolContainer);
 
     this.addInternal((this.hitObjectUtils = new HitObjectUtils()));
+
+    const userManager = this.dependencies.resolveOptional(
+      ConnectedUsersManager,
+    );
+
+    if (userManager) {
+      this.addInternal(new ComposerCursorContainer());
+    }
   }
 
   protected loadComplete() {

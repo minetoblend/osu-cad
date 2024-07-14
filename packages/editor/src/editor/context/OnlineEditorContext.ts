@@ -1,31 +1,34 @@
 import { Beatmap } from '@osucad/common';
-import { PIXITexture } from 'osucad-framework';
+import { DependencyContainer, PIXITexture } from 'osucad-framework';
 import { Assets } from 'pixi.js';
-import { io } from 'socket.io-client';
 import { Skin } from '../../skins/Skin';
 import { ConnectedUsersManager } from './ConnectedUsersManager';
 import { EditorContext } from './EditorContext';
 import { EditorSocket } from './EditorSocket';
 import { OnlineBeatmapLoader } from './OnlineBeatmapLoader';
+import audioUrl from '../../assets/audio.mp3';
+import backgroundUrl from '../../assets/background.jpg';
+import { CommandManager } from './CommandManager';
+import { OnlineCommandManager } from './OnlineCommandManager';
 
 export class OnlineEditorContext extends EditorContext {
-  #socket: EditorSocket | null = null;
+  readonly socket: EditorSocket;
 
-  get socket() {
-    if (!this.#socket) {
-      throw new Error('Socket not initialized');
-    }
-    return this.#socket;
+  constructor(socket: EditorSocket) {
+    super();
+    this.socket = socket;
   }
 
   readonly users = new ConnectedUsersManager();
 
   async load() {
-    this.#socket = io();
-
     this.addParallelLoad(() => this.users.init(this.socket));
 
     await super.load();
+  }
+
+  getAssetPath(filename: string) {
+    return `/api/mapsets/${this.beatmap.setId}/files/${filename}`;
   }
 
   loadBeatmap(): Promise<Beatmap> {
@@ -33,16 +36,17 @@ export class OnlineEditorContext extends EditorContext {
   }
 
   async loadSong(beatmap: Beatmap): Promise<AudioBuffer> {
-    // TODO: Load song from server
-    return new AudioBuffer({ length: 0, sampleRate: 0 });
+    const context = new AudioContext();
+
+    return fetch(this.getAssetPath(beatmap.audioFilename))
+      .then((res) => res.arrayBuffer())
+      .then((arrayBuffer) => context.decodeAudioData(arrayBuffer));
   }
 
   async loadBackground(beatmap: Beatmap): Promise<PIXITexture | null> {
     if (beatmap.backgroundPath) {
       try {
-        return await Assets.load(
-          `/api/mapsets/${beatmap.setId}/files/${beatmap.backgroundPath}`,
-        );
+        return await Assets.load(this.getAssetPath(beatmap.backgroundPath));
       } catch (e) {
         // TODO: Sentry.captureException(e);
         console.error(e);
@@ -66,6 +70,19 @@ export class OnlineEditorContext extends EditorContext {
   }
 
   protected async loadSkin(): Promise<Skin> {
-    return new Skin();
+    const skin = new Skin();
+
+    await skin.load();
+
+    return skin;
+  }
+
+  protected createCommandHandler(beatmap: Beatmap): CommandManager {
+    return new OnlineCommandManager(this, beatmap, this.users, this.socket);
+  }
+
+  provideDependencies(dependencies: DependencyContainer) {
+    super.provideDependencies(dependencies);
+    dependencies.provide(this.users);
   }
 }

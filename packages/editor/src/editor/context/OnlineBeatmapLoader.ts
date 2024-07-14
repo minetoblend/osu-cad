@@ -7,7 +7,9 @@ export class OnlineBeatmapLoader {
   ): Promise<Beatmap> {
     return new Promise((resolve) => {
       socket.once('beatmap', (beatmapData) => {
-        resolve(new Beatmap(beatmapData));
+        const beatmap = new Beatmap(beatmapData);
+        console.log(beatmap);
+        resolve(beatmap);
       });
     });
   }
