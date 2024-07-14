@@ -6,8 +6,6 @@ import { ConnectedUsersManager } from './ConnectedUsersManager';
 import { EditorContext } from './EditorContext';
 import { EditorSocket } from './EditorSocket';
 import { OnlineBeatmapLoader } from './OnlineBeatmapLoader';
-import audioUrl from '../../assets/audio.mp3';
-import backgroundUrl from '../../assets/background.jpg';
 import { CommandManager } from './CommandManager';
 import { OnlineCommandManager } from './OnlineCommandManager';
 import { BeatmapAsset } from './BeatmapAsset';
@@ -95,8 +93,6 @@ export class OnlineEditorContext extends EditorContext {
     if (!Array.isArray(assets)) {
       return [];
     }
-
-    console.log(assets);
 
     return assets;
   }
