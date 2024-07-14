@@ -174,7 +174,7 @@ class SliderPathVisualizerHandle extends CompositeDrawable {
   #handle!: RoundedBox;
 
   get type() {
-    return this.#type;
+    return this.#type!;
   }
 
   set type(type: PathType | null) {
