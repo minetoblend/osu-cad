@@ -13,6 +13,7 @@ import {
   MouseDownEvent,
   PIXIContainer,
   resolved,
+  ScrollEvent,
 } from 'osucad-framework';
 import { EditorClock } from '../EditorClock';
 import { ThemeColors } from '../ThemeColors';
@@ -263,6 +264,16 @@ export class Timeline extends Container {
         this.editorClock.beatSnapDivisor.value = digit;
         return true;
       }
+    }
+
+    return false;
+  }
+
+  onScroll(e: ScrollEvent): boolean {
+    if (e.altPressed) {
+      e.scrollDelta.y > 0 ? this.zoomIn() : this.zoomOut();
+
+      return true;
     }
 
     return false;
