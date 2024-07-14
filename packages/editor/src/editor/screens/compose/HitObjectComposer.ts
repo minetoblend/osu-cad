@@ -13,7 +13,11 @@ import type { ToolConstructor } from './ComposeScreen';
 import { SelectionOverlay } from './SelectionOverlay';
 import { EditorSelection } from './EditorSelection';
 import { CommandManager } from '../../context/CommandManager';
-import { DeleteHitObjectCommand, UpdateHitObjectCommand } from '@osucad/common';
+import {
+  DeleteHitObjectCommand,
+  Slider,
+  UpdateHitObjectCommand,
+} from '@osucad/common';
 import { EditorAction } from '../../EditorAction';
 import { NEW_COMBO } from '../../InjectionTokens';
 import { HitObjectUtils } from './HitObjectUtils';
@@ -125,6 +129,12 @@ export class HitObjectComposer
           this.selection.selectedObjects,
           new Vec2(512 / 2, 384 / 2),
           -Math.PI / 2,
+          true,
+        );
+        return true;
+      case EditorAction.Reverse:
+        this.hitObjectUtils.reverseObjects(
+          this.selection.selectedObjects,
           true,
         );
         return true;

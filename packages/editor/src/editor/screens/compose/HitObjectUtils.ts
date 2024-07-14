@@ -1,10 +1,13 @@
 import {
   HitObject,
+  PathType,
+  SerializedPathPoint,
   SerializedSlider,
   Slider,
   Spinner,
   UpdateHitObjectCommand,
 } from '@osucad/common';
+import { PathApproximator, Vector2 } from 'osu-classes';
 import {
   Axes,
   CompositeDrawable,
@@ -170,5 +173,96 @@ export class HitObjectUtils extends CompositeDrawable {
       }),
       commit,
     );
+  }
+
+  reverseSlider(slider: Slider, commit: boolean = true) {
+    const controlPoints = [...slider.path.controlPoints];
+
+    const endPosition = slider.path.endPosition;
+    controlPoints[controlPoints.length - 1].x = endPosition.x;
+    controlPoints[controlPoints.length - 1].y = endPosition.y;
+
+    const reversed: SerializedPathPoint[] = [];
+    const pathTypes = controlPoints
+      .filter((it) => it.type !== null)
+      .map((it) => it.type);
+
+    const lastPoint = controlPoints[controlPoints.length - 1];
+
+    for (let i = 0; i < controlPoints.length; i++) {
+      const point = controlPoints[i];
+      let pathType: PathType | null = null;
+      if (i === controlPoints.length - 1 || (point.type !== null && i !== 0)) {
+        pathType = pathTypes.shift()!;
+
+        console.assert(pathType !== null, 'Path type should not be null');
+      }
+
+      reversed.unshift({
+        x: point.x - lastPoint.x,
+        y: point.y - lastPoint.y,
+        type: pathType,
+      });
+    }
+
+    if (reversed.length === 3 && reversed[0].type === PathType.PerfectCurve) {
+      const arcProperties = PathApproximator._circularArcProperties(
+        reversed.map((it) => new Vector2(it.x, it.y)),
+      );
+
+      const { centre, radius, thetaStart, thetaRange, direction } =
+        arcProperties;
+
+      const middlePoint = new Vec2(
+        centre.x + radius * Math.cos(thetaStart + (thetaRange / 2) * direction),
+        centre.y + radius * Math.sin(thetaStart + (thetaRange / 2) * direction),
+      );
+
+      reversed[1].x = middlePoint.x;
+      reversed[1].y = middlePoint.y;
+    }
+
+    this.commandManager.submit(
+      new UpdateHitObjectCommand(slider, {
+        position: slider.position.add(lastPoint),
+        path: reversed,
+      } as Partial<SerializedSlider>),
+      false,
+    );
+  }
+
+  reverseObjects(hitObjects: HitObject[], commit: boolean = true) {
+    if (hitObjects.length === 0) return;
+
+    const startTime = hitObjects.reduce(
+      (acc, it) => Math.min(acc, it.startTime),
+      Number.MAX_VALUE,
+    );
+
+    const endTime = hitObjects.reduce(
+      (acc, it) => Math.max(acc, it.endTime),
+      Number.MIN_VALUE,
+    );
+
+    for (let i = 0; i < hitObjects.length; i++) {
+      const hitObject = hitObjects[i];
+
+      const distanceToEnd = endTime - hitObject.endTime;
+
+      if (hitObject instanceof Slider) {
+        this.reverseSlider(hitObject, false);
+      }
+
+      this.commandManager.submit(
+        new UpdateHitObjectCommand(hitObject, {
+          startTime: startTime + distanceToEnd,
+        }),
+        false,
+      );
+    }
+
+    if (commit) {
+      this.commandManager.commit();
+    }
   }
 }

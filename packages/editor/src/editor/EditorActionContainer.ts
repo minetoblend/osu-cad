@@ -95,6 +95,10 @@ export class EditorActionContainer extends KeyBindingContainer<EditorAction> {
         KeyCombination.from(InputKey.Control, InputKey.O),
         EditorAction.ShowPreferences,
       ),
+      new KeyBinding(
+        KeyCombination.from(InputKey.Control, InputKey.G),
+        EditorAction.Reverse,
+      ),
     ];
   }
 }

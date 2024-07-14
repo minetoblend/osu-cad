@@ -1,6 +1,7 @@
 import { ComposeToolInteraction } from './ComposeToolInteraction';
 import { Slider } from '@osucad/common';
 import {
+  dependencyLoader,
   DragEvent,
   DragStartEvent,
   MouseButton,
@@ -25,9 +26,8 @@ export class InsertControlPointInteraction extends ComposeToolInteraction {
   @resolved(DistanceSnapProvider)
   private distanceSnapProvider!: DistanceSnapProvider;
 
-  protected loadComplete() {
-    super.loadComplete();
-
+  @dependencyLoader()
+  load() {
     this.#sliderUtils = new SliderUtils(
       this.commandManager,
       this.distanceSnapProvider,
