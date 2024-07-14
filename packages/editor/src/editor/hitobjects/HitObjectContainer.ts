@@ -62,7 +62,7 @@ export class HitObjectContainer extends Container {
     if (startIndex === -1) startIndex = this.hitObjects.hitObjects.length - 1;
 
     const hitObjects = this.hitObjects.hitObjects.filter(
-      (h, i) => (i >= startIndex && i <= endIndex) || h.isSelected,
+      (h, i) => i >= startIndex && i <= endIndex,
     );
 
     this.#followPointRenderer.updateFollowPoints(hitObjects);
