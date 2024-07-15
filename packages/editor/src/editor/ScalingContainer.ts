@@ -1,12 +1,20 @@
+import type {
+  ContainerOptions,
+  IVec2,
+} from 'osucad-framework';
 import {
   Axes,
   Container,
-  ContainerOptions,
-  IVec2,
   Invalidation,
   LayoutMember,
   Vec2,
 } from 'osucad-framework';
+
+export enum Fit {
+  Contain,
+  Cover,
+  Fill,
+}
 
 export interface ScalingContainerOptions extends ContainerOptions {
   desiredSize: IVec2;
@@ -83,17 +91,19 @@ export class ScalingContainer extends Container {
         this.#content.scale = scale;
         const size = this.#desiredSize.clone();
         if (
-          this.drawSize.x / this.drawSize.y >
-          this.#desiredSize.x / this.#desiredSize.y
+          this.drawSize.x / this.drawSize.y
+          > this.#desiredSize.x / this.#desiredSize.y
         ) {
           size.x = this.drawSize.x * (this.#desiredSize.y / this.drawSize.y);
-        } else {
+        }
+        else {
           size.y = this.drawSize.y * (this.#desiredSize.x / this.drawSize.x);
         }
 
         this.#content.size = size;
         this.#content.position = new Vec2();
-      } else {
+      }
+      else {
         this.#content.scale = scale;
         this.#content.size = this.#desiredSize;
         this.#content.position = new Vec2(
@@ -105,10 +115,4 @@ export class ScalingContainer extends Container {
       this.#drawSizeBacking.validate();
     }
   }
-}
-
-export enum Fit {
-  Contain,
-  Cover,
-  Fill,
 }

@@ -1,11 +1,13 @@
 import { ControlPointManager } from '@osucad/common';
+import type {
+  SpriteText,
+} from 'osucad-framework';
 import {
   Anchor,
   Axes,
   Container,
   dependencyLoader,
   resolved,
-  SpriteText,
 } from 'osucad-framework';
 import { OsucadSpriteText } from '../OsucadSpriteText';
 import { EditorClock } from './EditorClock';

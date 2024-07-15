@@ -1,9 +1,9 @@
+import { io } from 'socket.io-client';
 import { WebGameHost } from 'osucad-framework';
 import { OsucadGame } from './OsucadGame';
 
-import { EditorContext } from './editor/context/EditorContext';
+import type { EditorContext } from './editor/context/EditorContext';
 import './style.css';
-import { io } from 'socket.io-client';
 
 async function main() {
   const host = new WebGameHost('osucad', {
@@ -32,7 +32,8 @@ async function main() {
     });
 
     context = new OnlineEditorContext(socket);
-  } else {
+  }
+  else {
     const { DummyEditorContext } = await import(
       './editor/context/DummyEditorContext'
     );

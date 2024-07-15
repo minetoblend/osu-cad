@@ -1,12 +1,5 @@
-import { Beatmap } from '@osucad/common';
 import {
   Anchor,
-  Axes,
-  CompositeDrawable,
-  Container,
-  Invalidation,
-  LayoutMember,
-  RoundedBox,
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
@@ -39,7 +32,7 @@ export class BookmarkMarkers extends OverviewTimelineMarkerContainer {
     const trackLength = this.editorClock.trackLength;
 
     return this.beatmap.bookmarks.map((bookmark) => {
-      const marker = new OverviewTimelineMarker(0x529aff);
+      const marker = new OverviewTimelineMarker(0x529AFF);
 
       marker.x = bookmark.time / trackLength;
 

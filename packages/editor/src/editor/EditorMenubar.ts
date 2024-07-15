@@ -1,14 +1,16 @@
+import type {
+  Drawable,
+  SpriteText,
+} from 'osucad-framework';
 import {
   Anchor,
   Axes,
   Color,
   Container,
   Direction,
-  Drawable,
   DrawableMenuItem,
   MenuItem,
   RoundedBox,
-  SpriteText,
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
@@ -87,11 +89,11 @@ export class EditorMenubar extends EditorMenu {
     super.load();
 
     this.commandHandler.canUndo.addOnChangeListener(
-      (value) => (this.#undoItem.disabled.value = !value),
+      value => (this.#undoItem.disabled.value = !value),
       { immediate: true },
     );
     this.commandHandler.canRedo.addOnChangeListener(
-      (value) => (this.#redoItem.disabled.value = !value),
+      value => (this.#redoItem.disabled.value = !value),
       { immediate: true },
     );
   }
@@ -156,6 +158,7 @@ class MenuItemContent extends Container {
 
   set text(value: string) {
     this.#text = value;
-    if (this.#spriteText) this.#spriteText.text = value;
+    if (this.#spriteText)
+      this.#spriteText.text = value;
   }
 }

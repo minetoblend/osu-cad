@@ -1,10 +1,12 @@
 import { Beatmap } from '@osucad/common';
+import type {
+  ColorSource,
+  Drawable,
+} from 'osucad-framework';
 import {
   Anchor,
   Axes,
-  ColorSource,
   CompositeDrawable,
-  Drawable,
   Invalidation,
   LayoutMember,
   RoundedBox,

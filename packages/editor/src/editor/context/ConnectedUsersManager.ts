@@ -1,6 +1,6 @@
-import { EditorSocket } from './EditorSocket';
 import { Action, Bindable } from 'osucad-framework';
-import { UserActivity, UserSessionInfo } from '@osucad/common';
+import type { UserActivity, UserSessionInfo } from '@osucad/common';
+import type { EditorSocket } from './EditorSocket';
 
 export class ConnectedUsersManager {
   readonly userJoined = new Action<UserSessionInfo>();
@@ -22,14 +22,13 @@ export class ConnectedUsersManager {
   async init(socket: EditorSocket) {
     this.socket = socket;
 
-    socket.once('identity', (user) => (this.ownUser = user));
+    socket.once('identity', user => (this.ownUser = user));
 
-    socket.on('connectedUsers', (users) => (this.usersBindable.value = users));
-    socket.on('userJoined', (user) => this.#onUserJoined(user));
-    socket.on('userLeft', (user) => this.#onUserLeft(user));
+    socket.on('connectedUsers', users => (this.usersBindable.value = users));
+    socket.on('userJoined', user => this.#onUserJoined(user));
+    socket.on('userLeft', user => this.#onUserLeft(user));
     socket.on('userActivity', (sessionId, activity) =>
-      this.#updateUserActivity(sessionId, activity),
-    );
+      this.#updateUserActivity(sessionId, activity));
   }
 
   #onUserJoined(user: UserSessionInfo) {
@@ -39,14 +38,14 @@ export class ConnectedUsersManager {
 
   #onUserLeft(user: UserSessionInfo) {
     this.usersBindable.value = this.usersBindable.value.filter(
-      (u) => u.sessionId !== user.sessionId,
+      u => u.sessionId !== user.sessionId,
     );
     this.userLeft.emit(user);
   }
 
   #updateUserActivity(sessionId: number, activity: UserActivity) {
     const user = this.usersBindable.value.find(
-      (u) => u.sessionId === sessionId,
+      u => u.sessionId === sessionId,
     );
     if (user) {
       user.presence.activity = activity;

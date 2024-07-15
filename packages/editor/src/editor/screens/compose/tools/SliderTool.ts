@@ -1,26 +1,34 @@
+import type {
+  SerializedPathPoint,
+} from '@osucad/common';
 import {
   Additions,
   CreateHitObjectCommand,
   DeleteHitObjectCommand,
   HitCircle,
   PathType,
-  SerializedPathPoint,
   Slider,
   UpdateHitObjectCommand,
 } from '@osucad/common';
-import {
-  almostEquals,
-  Bindable,
-  dependencyLoader,
-  MouseButton,
+import type {
   MouseDownEvent,
-  MouseMoveEvent,
   MouseUpEvent,
+} from 'osucad-framework';
+import {
+  MouseButton,
+  almostEquals,
+  dependencyLoader,
 } from 'osucad-framework';
 import { ComposeTool } from './ComposeTool';
 import { DistanceSnapProvider } from './DistanceSnapProvider';
 import { SliderPathVisualizer } from './SliderPathVisualizer';
 import { SliderUtils } from './SliderUtils';
+
+enum PlacementState {
+  Preview,
+  PlacingPoint,
+  DraggingPoint,
+}
 
 export class SliderTool extends ComposeTool {
   constructor() {
@@ -40,7 +48,8 @@ export class SliderTool extends ComposeTool {
   #path: SerializedPathPoint[] = [];
 
   get #segmentLength() {
-    if (!this.#slider) return 0;
+    if (!this.#slider)
+      return 0;
 
     return this.#slider!.path.controlPoints.length - this.#segmentStart;
   }
@@ -104,7 +113,8 @@ export class SliderTool extends ComposeTool {
           this.#beginPlacingPoint();
           return true;
       }
-    } else if (e.button === MouseButton.Right) {
+    }
+    else if (e.button === MouseButton.Right) {
       switch (this.#state) {
         case PlacementState.Preview:
           this.newCombo.value = !this.newCombo.value;
@@ -117,23 +127,24 @@ export class SliderTool extends ComposeTool {
     return false;
   }
 
-  onMouseMove(e: MouseMoveEvent): boolean {
+  onMouseMove(): boolean {
     switch (this.#state) {
       case PlacementState.PlacingPoint:
-      case PlacementState.DraggingPoint:
+      case PlacementState.DraggingPoint: {
         const path = [...this.#path];
 
         const position = this.mousePosition.sub(this.#slider!.stackedPosition);
 
         if (position.distance(path[path.length - 2]) < 5) {
           if (
-            this.#segmentLength === 4 &&
-            path[this.#segmentStart].type === PathType.Bezier
+            this.#segmentLength === 4
+            && path[this.#segmentStart].type === PathType.Bezier
           ) {
             path[this.#segmentStart].type = PathType.PerfectCurve;
-          } else if (
-            this.#segmentLength === 5 &&
-            path[this.#segmentStart].type === PathType.PerfectCurve
+          }
+          else if (
+            this.#segmentLength === 5
+            && path[this.#segmentStart].type === PathType.PerfectCurve
           ) {
             path[this.#segmentStart].type = PathType.Bezier;
           }
@@ -143,17 +154,19 @@ export class SliderTool extends ComposeTool {
             path.slice(0, Math.max(path.length - 1, 2)),
             false,
           );
-        } else {
+        }
+        else {
           path[path.length - 1] = { x: position.x, y: position.y, type: null };
 
           if (
-            this.#segmentLength === 3 &&
-            path[this.#segmentStart].type === PathType.Bezier
+            this.#segmentLength === 3
+            && path[this.#segmentStart].type === PathType.Bezier
           ) {
             path[this.#segmentStart].type = PathType.PerfectCurve;
-          } else if (
-            this.#segmentLength === 4 &&
-            path[this.#segmentStart].type === PathType.PerfectCurve
+          }
+          else if (
+            this.#segmentLength === 4
+            && path[this.#segmentStart].type === PathType.PerfectCurve
           ) {
             path[this.#segmentStart].type = PathType.Bezier;
           }
@@ -162,6 +175,7 @@ export class SliderTool extends ComposeTool {
         }
 
         return true;
+      }
     }
 
     return false;
@@ -197,14 +211,17 @@ export class SliderTool extends ComposeTool {
     slider.position = this.clampToPlayfieldBounds(this.mousePosition);
 
     let additions = Additions.None;
-    if (this.sampleWhistle.value) additions |= Additions.Whistle;
-    if (this.sampleFinish.value) additions |= Additions.Finish;
-    if (this.sampleClap.value) additions |= Additions.Clap;
+    if (this.sampleWhistle.value)
+      additions |= Additions.Whistle;
+    if (this.sampleFinish.value)
+      additions |= Additions.Finish;
+    if (this.sampleClap.value)
+      additions |= Additions.Clap;
 
     slider.hitSound.additions = additions;
-    slider.hitSounds.forEach((it) => (it.additions = additions));
+    slider.hitSounds.forEach(it => (it.additions = additions));
 
-    const objectsAtTime = this.hitObjects.hitObjects.filter((it) =>
+    const objectsAtTime = this.hitObjects.hitObjects.filter(it =>
       almostEquals(it.startTime, slider.startTime, 2),
     );
 
@@ -288,12 +305,13 @@ export class SliderTool extends ComposeTool {
   applyNewCombo(newCombo: boolean): void {
     if (this.#previewCircle) {
       this.#previewCircle.isNewCombo = newCombo;
-    } else {
+    }
+    else {
       this.submit(new UpdateHitObjectCommand(this.#slider!, { newCombo }));
     }
   }
 
-  applySampleType(addition: Additions, bindable: Bindable<boolean>): void {
+  applySampleType(): void {
     // no-op
   }
 
@@ -309,10 +327,4 @@ export class SliderTool extends ComposeTool {
 
     return super.dispose();
   }
-}
-
-const enum PlacementState {
-  Preview,
-  PlacingPoint,
-  DraggingPoint,
 }

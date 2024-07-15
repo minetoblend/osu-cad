@@ -1,5 +1,5 @@
 import { MeshGeometry } from 'pixi.js';
-import { Vec2 } from 'osucad-framework';
+import type { Vec2 } from 'osucad-framework';
 import { GeometryBuilder } from './GeometryBuilder';
 
 interface SliderPathGeometryOptions {
@@ -32,19 +32,21 @@ export class SliderPathGeometry extends MeshGeometry {
       const prev = path[i - 1];
       const theta = this.getTheta(prev, curr);
 
-      if (i === 1) geo.addJoin(prev, theta + Math.PI, Math.PI, radius);
+      if (i === 1)
+        geo.addJoin(prev, theta + Math.PI, Math.PI, radius);
 
       geo.addStraightSegment(prev, curr, radius);
 
       const next = path[i + 1];
       if (next) {
         const thetaNext = this.getTheta(curr, next);
-        const thetaDiff =
-          this.md(thetaNext - theta + Math.PI, Math.PI * 2) - Math.PI;
+        const thetaDiff
+          = this.md(thetaNext - theta + Math.PI, Math.PI * 2) - Math.PI;
 
         geo.addJoin(curr, theta, thetaDiff, radius);
-      } else {
-        //geo.addJoin(curr, theta, Math.PI, radius);
+      }
+      else {
+        // geo.addJoin(curr, theta, Math.PI, radius);
       }
     }
 
@@ -64,8 +66,8 @@ export class SliderPathGeometry extends MeshGeometry {
 
       const theta = this.getTheta(prev, curr);
       const thetaNext = this.getTheta(curr, next);
-      const thetaDiff =
-        this.md(thetaNext - theta + Math.PI, Math.PI * 2) - Math.PI;
+      const thetaDiff
+        = this.md(thetaNext - theta + Math.PI, Math.PI * 2) - Math.PI;
 
       const count = this.getJoinGeometryCount(thetaDiff);
 
@@ -107,6 +109,6 @@ export class SliderPathGeometry extends MeshGeometry {
     this.indices = geo.indices;
 
     this.uvs = geo.uvs;
-    this['_boundsDirty'] = true;
+    this._boundsDirty = true;
   }
 }

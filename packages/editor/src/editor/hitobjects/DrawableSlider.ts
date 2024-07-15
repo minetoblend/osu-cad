@@ -1,11 +1,11 @@
-import { Slider } from '@osucad/common';
-import { DrawableHitObject } from './DrawableHitObject';
+import type { Slider } from '@osucad/common';
 import { Anchor, Container, Vec2 } from 'osucad-framework';
+import { animate } from '../../utils/animate';
+import { DrawableHitObject } from './DrawableHitObject';
 import { CirclePiece } from './CirclePiece';
 import { ApproachCircle } from './ApproachCircle';
 import { DrawableSliderBody } from './DrawableSliderBody';
 import { DrawableComboNumber } from './DrawableComboNumber';
-import { animate } from '../../utils/animate';
 import { DrawableSliderBall } from './DrawableSliderBall';
 import { ReverseArrow } from './ReverseArrow';
 
@@ -48,9 +48,9 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
     this.headCircle.timeFadeIn = this.hitObject.timeFadeIn;
     this.headCircle.comboColor = this.comboColor;
     this.tailCircle.startTime = this.hitObject.endTime;
-    this.tailCircle.timePreempt =
-      this.hitObject.timePreempt +
-      Math.min(150, this.hitObject.spanDuration / 2);
+    this.tailCircle.timePreempt
+      = this.hitObject.timePreempt
+      + Math.min(150, this.hitObject.spanDuration / 2);
     this.tailCircle.timeFadeIn = this.hitObject.timeFadeIn;
     this.tailCircle.comboColor = this.comboColor;
     this.tailCircle.position = Vec2.scale(
@@ -67,8 +67,8 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
       circle.timeFadeIn = this.hitObject.timeFadeIn;
       circle.comboColor = this.comboColor;
 
-      const angle =
-        i % 2 == 0 ? this.hitObject.endAngle : this.hitObject.startAngle;
+      const angle
+        = i % 2 === 0 ? this.hitObject.endAngle : this.hitObject.startAngle;
 
       const reverseArrow = new ReverseArrow();
       reverseArrow.rotation = angle;
@@ -109,9 +109,11 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
         0,
         0.8,
       );
-    } else if (time < this.hitObject.duration) {
+    }
+    else if (time < this.hitObject.duration) {
       this.sliderBody.bodyAlpha = 0.8;
-    } else {
+    }
+    else {
       this.sliderBody.bodyAlpha = animate(
         time,
         this.hitObject.duration,

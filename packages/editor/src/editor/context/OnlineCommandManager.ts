@@ -1,13 +1,15 @@
-import { CommandManager } from './CommandManager';
-import { EditorSocket } from './EditorSocket';
-import { EditorContext } from './EditorContext';
-import {
+import type {
   Beatmap,
-  CommandContext,
-  getCommandHandler,
   IEditorCommand,
 } from '@osucad/common';
-import { ConnectedUsersManager } from './ConnectedUsersManager';
+import {
+  CommandContext,
+  getCommandHandler,
+} from '@osucad/common';
+import { CommandManager } from './CommandManager';
+import type { EditorSocket } from './EditorSocket';
+import type { EditorContext } from './EditorContext';
+import type { ConnectedUsersManager } from './ConnectedUsersManager';
 
 export class OnlineCommandManager extends CommandManager {
   constructor(
@@ -34,8 +36,7 @@ export class OnlineCommandManager extends CommandManager {
 
   #init() {
     this.#socket.on('commands', (commands, sessionId) =>
-      this.#onCommandsReceived(commands, sessionId),
-    );
+      this.#onCommandsReceived(commands, sessionId));
   }
 
   #onCommandsReceived(commands: IEditorCommand[], sessionId: number) {
@@ -46,7 +47,8 @@ export class OnlineCommandManager extends CommandManager {
           handler.acknowledge(this.context, command);
         }
       }
-    } else {
+    }
+    else {
       for (const command of commands) {
         const handler = getCommandHandler(command);
         if (handler) {

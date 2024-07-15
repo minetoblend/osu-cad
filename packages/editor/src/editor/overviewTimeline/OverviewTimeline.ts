@@ -1,5 +1,4 @@
 import {
-  Anchor,
   Axes,
   Box,
   Container,

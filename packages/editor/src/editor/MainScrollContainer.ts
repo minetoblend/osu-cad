@@ -1,6 +1,5 @@
 import {
   Axes,
-  Box,
   Direction,
   RoundedBox,
   ScrollContainer,
@@ -42,7 +41,8 @@ class BasicScrollbar extends ScrollbarContainer {
     let size: Vec2;
     if (this.scrollDirection === Direction.Vertical) {
       size = new Vec2(dim_size, val);
-    } else {
+    }
+    else {
       size = new Vec2(val, dim_size);
     }
 

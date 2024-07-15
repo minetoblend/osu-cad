@@ -1,19 +1,21 @@
+import type {
+  InputManager,
+  MouseMoveEvent,
+} from 'osucad-framework';
 import {
   Anchor,
   Axes,
   Bindable,
   CompositeDrawable,
-  dependencyLoader,
   DrawableSprite,
-  InputManager,
+  dependencyLoader,
   lerp,
-  MouseMoveEvent,
   resolved,
 } from 'osucad-framework';
-import { ConnectedUsersManager } from '../../context/ConnectedUsersManager';
-import { UserActivity, UserSessionInfo } from '@osucad/common';
-import { EditorClock } from '../../EditorClock';
+import type { UserActivity, UserSessionInfo } from '@osucad/common';
 import { Assets, Graphics } from 'pixi.js';
+import { ConnectedUsersManager } from '../../context/ConnectedUsersManager';
+import { EditorClock } from '../../EditorClock';
 import { OsucadSpriteText } from '../../../OsucadSpriteText';
 import { animate } from '../../../utils/animate';
 

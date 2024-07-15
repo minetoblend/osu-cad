@@ -4,8 +4,8 @@ import {
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
+import type { Texture } from 'pixi.js';
 import { EditorContext } from '../context/EditorContext';
-import { Texture } from 'pixi.js';
 
 export class BeatmapBackground extends Container {
   constructor() {
@@ -22,7 +22,7 @@ export class BeatmapBackground extends Container {
   @dependencyLoader()
   init() {
     this.context.backgroundBindable.addOnChangeListener(
-      (texture) => this.#updateBackground(texture),
+      texture => this.#updateBackground(texture),
       { immediate: true },
     );
   }
@@ -43,7 +43,8 @@ export class BeatmapBackground extends Container {
       const scale = Math.max(900 / texture.width, 540 / texture.height);
 
       this.#background.scale.set(scale);
-    } else {
+    }
+    else {
       if (this.#background) {
         this.drawNode.removeChild(this.#background);
         this.#background = null;

@@ -1,22 +1,26 @@
+import type {
+  Sample,
+  SamplePlayback,
+} from 'osucad-framework';
 import {
   Action,
   AudioManager,
   CompositeDrawable,
   dependencyLoader,
   resolved,
-  Sample,
-  SamplePlayback,
 } from 'osucad-framework';
-import { EditorClock } from './EditorClock';
-import { EditorContext } from './context/EditorContext';
-import { BeatmapAsset } from './context/BeatmapAsset';
-import { EditorMixer } from './EditorMixer';
+import type {
+  HitSample,
+} from '@osucad/common';
 import {
   HitObjectManager,
-  HitSample,
   SampleSet,
   SampleType,
 } from '@osucad/common';
+import { EditorClock } from './EditorClock';
+import { EditorContext } from './context/EditorContext';
+import type { BeatmapAsset } from './context/BeatmapAsset';
+import { EditorMixer } from './EditorMixer';
 
 export class HitsoundPlayer extends CompositeDrawable {
   @resolved(EditorClock)
@@ -50,8 +54,8 @@ export class HitsoundPlayer extends CompositeDrawable {
         const key = `${sampleSet}-hit${addition}`;
 
         fetch(`/assets/skin/${sampleSet}-hit${addition}.wav`)
-          .then((res) => res.arrayBuffer())
-          .then((buffer) => this.audioManager.context.decodeAudioData(buffer))
+          .then(res => res.arrayBuffer())
+          .then(buffer => this.audioManager.context.decodeAudioData(buffer))
           .then((audioBuffer) => {
             const sample = this.audioManager.createSample(
               this.mixer.hitsounds,
@@ -63,17 +67,18 @@ export class HitsoundPlayer extends CompositeDrawable {
       }
     }
 
-    const regex = /(\w+)-hit(\w+)(\d+)?\.(wav|mp3|ogg)/;
+    const regex = /(\w+)-hit(\w+)?\.(wav|mp3|ogg)/;
 
     for (const asset of assets) {
       const match = asset.path.match(regex);
-      if (!match) continue;
+      if (!match)
+        continue;
 
-      const key = `${match[1]}-hit${match[2]}${match[3] || ''}`;
+      const key = `${match[1]}-hit${match[2]}`;
 
       fetch(asset.url)
-        .then((res) => res.arrayBuffer())
-        .then((buffer) => this.audioManager.context.decodeAudioData(buffer))
+        .then(res => res.arrayBuffer())
+        .then(buffer => this.audioManager.context.decodeAudioData(buffer))
         .then((audioBuffer) => {
           const sample = this.audioManager.createSample(
             this.mixer.hitsounds,
@@ -94,7 +99,7 @@ export class HitsoundPlayer extends CompositeDrawable {
     super.update();
 
     if (!this.editorClock.isRunning) {
-      this.#scheduledSamples.forEach((sample) => sample.stop());
+      this.#scheduledSamples.forEach(sample => sample.stop());
       this.#scheduledSamples.length = 0;
       this.#isPlaying = false;
       return;
@@ -102,8 +107,8 @@ export class HitsoundPlayer extends CompositeDrawable {
 
     const offset = 100;
 
-    let startTime =
-      this.editorClock.currentTime + offset - this.editorClock.timeInfo.elapsed;
+    let startTime
+      = this.editorClock.currentTime + offset - this.editorClock.timeInfo.elapsed;
     const endTime = this.editorClock.currentTime + offset;
 
     if (!this.#isPlaying) {
@@ -113,11 +118,11 @@ export class HitsoundPlayer extends CompositeDrawable {
     this.#isPlaying = true;
 
     const hitObjects = this.hitObjects.hitObjects.filter(
-      (hitObject) =>
+      hitObject =>
         hitObject.startTime <= endTime && hitObject.endTime > startTime,
     );
 
-    const hitSamples = hitObjects.flatMap((it) => it.hitSamples);
+    const hitSamples = hitObjects.flatMap(it => it.hitSamples);
 
     for (const sample of hitSamples) {
       if (sample.time > startTime && sample.time <= endTime) {
@@ -163,15 +168,15 @@ export class HitsoundPlayer extends CompositeDrawable {
 
     const index = hitSample.index === 0 ? '' : hitSample.index.toString();
 
-    const sample =
-      this.samples.get(key) ??
-      this.samples.get(key + index) ??
-      this.defaultSamples.get(key);
+    const sample
+      = this.samples.get(key)
+      ?? this.samples.get(key + index)
+      ?? this.defaultSamples.get(key);
 
     console.log(hitSample.volume);
 
-    const delay =
-      (hitSample.time - this.editorClock.currentTime) / this.editorClock.rate;
+    const delay
+      = (hitSample.time - this.editorClock.currentTime) / this.editorClock.rate;
 
     if (sample) {
       const playback = sample.play({

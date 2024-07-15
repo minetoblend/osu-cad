@@ -1,5 +1,7 @@
-import {
+import type {
   Beatmap as OsuBeatmap,
+} from 'osu-classes';
+import {
   DifficultyPoint,
   HitType,
   PathPoint,
@@ -9,17 +11,19 @@ import {
   Vector2,
 } from 'osu-classes';
 import {
+  StandardBeatmap,
   Circle as StandardCircle,
+  StandardRuleset,
   Slider as StandardSlider,
   Spinner as StandardSpinner,
-  StandardBeatmap,
-  StandardRuleset,
 } from 'osu-standard-stable';
+import type {
+  SerializedBeatmap,
+} from '@osucad/common';
 import {
   Beatmap,
-  HitCircle,
   PathType as EditorPathType,
-  SerializedBeatmap,
+  HitCircle,
   Slider,
   Spinner,
 } from '@osucad/common';
@@ -131,8 +135,8 @@ function convertBeatmap(beatmap: Beatmap): OsuBeatmap {
       );
 
       if (
-        hitObject.velocityOverride !== null &&
-        hitObject.velocityOverride !== undefined
+        hitObject.velocityOverride !== null
+        && hitObject.velocityOverride !== undefined
       ) {
         if (hitObject.velocity) {
           const point = new DifficultyPoint();
@@ -155,8 +159,8 @@ function convertBeatmap(beatmap: Beatmap): OsuBeatmap {
       converted.hitObjects.push(spinner);
     }
 
-    const convertedObject =
-      converted.hitObjects[converted.hitObjects.length - 1];
+    const convertedObject
+      = converted.hitObjects[converted.hitObjects.length - 1];
 
     convertedObject.applyDefaults(
       converted.controlPoints,
@@ -179,11 +183,11 @@ function calculateStarRating(beatmap: Beatmap) {
   return difficulty.starRating;
 }
 
-self.onmessage = (event) => {
+globalThis.onmessage = (event) => {
   const serializedBeatmap = event.data as SerializedBeatmap;
 
   const beatmap = new Beatmap(serializedBeatmap);
 
   const starRating = calculateStarRating(beatmap);
-  self.postMessage({ starRating });
+  globalThis.postMessage({ starRating });
 };

@@ -1,21 +1,22 @@
-import {
-  dependencyLoader,
+import type {
   IKeyBindingHandler,
   InjectionToken,
   KeyBindingPressEvent,
+} from 'osucad-framework';
+import {
+  dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import { Texture } from 'pixi.js';
+import type { Texture } from 'pixi.js';
 import { CommandManager } from '../../context/CommandManager';
-import { EditorAction } from '../../EditorAction';
+import type { EditorAction } from '../../EditorAction';
 import { ComposeToolbarButton } from './ComposeToolbarButton';
 import { EditorSelection } from './EditorSelection';
-import { ToggleBindable } from './ToggleBindable';
+import type { ToggleBindable } from './ToggleBindable';
 
 export class ComposeToggleButton
   extends ComposeToolbarButton
-  implements IKeyBindingHandler<EditorAction>
-{
+  implements IKeyBindingHandler<EditorAction> {
   constructor(
     icon: Texture,
     readonly key: InjectionToken<ToggleBindable>,
@@ -36,7 +37,7 @@ export class ComposeToggleButton
   load() {
     this.#isActive = this.dependencies.resolve(this.key);
 
-    this.#isActive.addOnChangeListener((value) => (this.active = value), {
+    this.#isActive.addOnChangeListener(value => (this.active = value), {
       immediate: true,
     });
 
@@ -44,7 +45,8 @@ export class ComposeToggleButton
       try {
         this.#isActive.buttonPressed = true;
         this.#isActive.toggle();
-      } finally {
+      }
+      finally {
         this.#isActive.buttonPressed = false;
       }
     };

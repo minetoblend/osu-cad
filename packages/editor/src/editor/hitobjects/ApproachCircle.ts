@@ -1,3 +1,6 @@
+import type {
+  Color,
+} from 'osucad-framework';
 import {
   Anchor,
   CompositeDrawable,
@@ -35,6 +38,10 @@ export class ApproachCircle extends CompositeDrawable {
     );
   }
 
+  get comboColor(): Color {
+    return this.approachCircle.color;
+  }
+
   set comboColor(value: number) {
     this.approachCircle.color = value;
   }
@@ -46,7 +53,8 @@ export class ApproachCircle extends CompositeDrawable {
     if (time < 0) {
       this.scale = animate(time, -this.timePreempt, 0, 4, 1);
       this.alpha = animate(time, -this.timePreempt, 0, 0, 1);
-    } else {
+    }
+    else {
       this.scale = animate(time, 0, 100, 1, 1.1);
       this.alpha = animate(time, 0, 700, 1, 0);
     }

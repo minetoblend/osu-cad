@@ -1,14 +1,15 @@
-import { Beatmap, defaultHitSoundLayers, hitObjectId } from '@osucad/common';
-import { PIXITexture } from 'osucad-framework';
+/* eslint-disable unused-imports/no-unused-vars */
+import type { Beatmap } from '@osucad/common';
+import type { PIXITexture } from 'osucad-framework';
 import { Assets } from 'pixi.js';
+import { BeatmapDecoder } from 'osu-parsers';
+import { StandardRuleset } from 'osu-standard-stable';
 import audioUrl from '../../assets/audio.mp3';
 import backgroundUrl from '../../assets/background.jpg';
 import { Skin } from '../../skins/Skin';
-import { EditorContext } from './EditorContext';
-import { BeatmapDecoder } from 'osu-parsers';
-import { StandardRuleset } from 'osu-standard-stable';
-import sampleBeatmap from './sampleBeatmap.osu?raw';
 import { BeatmapConverter } from '../../beatmaps/BeatmapConverter';
+import { EditorContext } from './EditorContext';
+import sampleBeatmap from './sampleBeatmap.osu?raw';
 
 export class DummyEditorContext extends EditorContext {
   protected async loadBeatmap(): Promise<Beatmap> {
@@ -18,12 +19,12 @@ export class DummyEditorContext extends EditorContext {
     return new BeatmapConverter(standardBeatmap).convert();
   }
 
-  protected loadSong(beatmap: Beatmap): Promise<AudioBuffer> {
+  protected loadSong(): Promise<AudioBuffer> {
     const context = new AudioContext();
 
     return fetch(audioUrl)
-      .then((response) => response.arrayBuffer())
-      .then((buffer) => context.decodeAudioData(buffer));
+      .then(response => response.arrayBuffer())
+      .then(buffer => context.decodeAudioData(buffer));
   }
 
   loadBackground(): Promise<PIXITexture | null> {

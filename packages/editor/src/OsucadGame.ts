@@ -1,8 +1,9 @@
+import type {
+  IVec2,
+} from 'osucad-framework';
 import {
   AudioManager,
-  ClickEvent,
   Game,
-  IVec2,
   dependencyLoader,
   isMobile,
   resolved,
@@ -14,7 +15,7 @@ import { Editor } from './editor/Editor';
 import { EditorMixer } from './editor/EditorMixer';
 import { Fit, ScalingContainer } from './editor/ScalingContainer';
 import { ThemeColors } from './editor/ThemeColors';
-import { EditorContext } from './editor/context/EditorContext';
+import type { EditorContext } from './editor/context/EditorContext';
 import './editor/mixins/HitObjectMixin';
 import { EditorActionContainer } from './editor/EditorActionContainer';
 import { PreferencesContainer } from './editor/preferences/PreferencesContainer';
@@ -87,7 +88,7 @@ export class OsucadGame extends Game {
     editor.fadeIn({ duration: 300 });
   }
 
-  onClick(e: ClickEvent): boolean {
+  onClick(): boolean {
     return true;
   }
 }

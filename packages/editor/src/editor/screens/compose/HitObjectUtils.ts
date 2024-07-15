@@ -1,8 +1,10 @@
-import {
+import type {
   HitObject,
-  PathType,
   SerializedPathPoint,
   SerializedSlider,
+} from '@osucad/common';
+import {
+  PathType,
   Slider,
   Spinner,
   UpdateHitObjectCommand,
@@ -11,14 +13,14 @@ import { PathApproximator, Vector2 } from 'osu-classes';
 import {
   Axes,
   CompositeDrawable,
-  dependencyLoader,
   Rectangle,
-  resolved,
   Vec2,
+  dependencyLoader,
+  resolved,
 } from 'osucad-framework';
 import { Matrix } from 'pixi.js';
-import { DistanceSnapProvider } from './tools/DistanceSnapProvider';
 import { CommandManager } from '../../context/CommandManager';
+import { DistanceSnapProvider } from './tools/DistanceSnapProvider';
 
 export class HitObjectUtils extends CompositeDrawable {
   constructor() {
@@ -42,7 +44,8 @@ export class HitObjectUtils extends CompositeDrawable {
     aroundCenter: boolean = false,
     commit: boolean = true,
   ) {
-    if (hitObjects.length === 0) return;
+    if (hitObjects.length === 0)
+      return;
 
     const center = aroundCenter
       ? this.getBounds(hitObjects).center
@@ -80,7 +83,8 @@ export class HitObjectUtils extends CompositeDrawable {
     angle: number,
     commit: boolean = true,
   ) {
-    if (hitObjects.length === 0) return;
+    if (hitObjects.length === 0)
+      return;
 
     this.transformHitObjects(
       new Matrix()
@@ -161,9 +165,13 @@ export class HitObjectUtils extends CompositeDrawable {
         commit,
       );
 
-      const expectedDistance = this.snapProvider.findSnappedDistance(
-        hitObject,
-        hitObject.path.calculatedDistance,
+      this.commandManager.submit(
+        new UpdateHitObjectCommand(hitObject, {
+          expectedDistance: this.snapProvider.findSnappedDistance(
+            hitObject,
+          ),
+        } as Partial<SerializedSlider>),
+        commit,
       );
     }
 
@@ -184,8 +192,8 @@ export class HitObjectUtils extends CompositeDrawable {
 
     const reversed: SerializedPathPoint[] = [];
     const pathTypes = controlPoints
-      .filter((it) => it.type !== null)
-      .map((it) => it.type);
+      .filter(it => it.type !== null)
+      .map(it => it.type);
 
     const lastPoint = controlPoints[controlPoints.length - 1];
 
@@ -207,11 +215,11 @@ export class HitObjectUtils extends CompositeDrawable {
 
     if (reversed.length === 3 && reversed[0].type === PathType.PerfectCurve) {
       const arcProperties = PathApproximator._circularArcProperties(
-        reversed.map((it) => new Vector2(it.x, it.y)),
+        reversed.map(it => new Vector2(it.x, it.y)),
       );
 
-      const { centre, radius, thetaStart, thetaRange, direction } =
-        arcProperties;
+      const { centre, radius, thetaStart, thetaRange, direction }
+        = arcProperties;
 
       const middlePoint = new Vec2(
         centre.x + radius * Math.cos(thetaStart + (thetaRange / 2) * direction),
@@ -227,12 +235,13 @@ export class HitObjectUtils extends CompositeDrawable {
         position: slider.position.add(lastPoint),
         path: reversed,
       } as Partial<SerializedSlider>),
-      false,
+      commit,
     );
   }
 
   reverseObjects(hitObjects: HitObject[], commit: boolean = true) {
-    if (hitObjects.length === 0) return;
+    if (hitObjects.length === 0)
+      return;
 
     const startTime = hitObjects.reduce(
       (acc, it) => Math.min(acc, it.startTime),

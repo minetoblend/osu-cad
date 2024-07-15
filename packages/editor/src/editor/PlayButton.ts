@@ -1,17 +1,19 @@
+import type {
+  MouseDownEvent,
+} from 'osucad-framework';
 import {
   Anchor,
   Axes,
   CompositeDrawable,
   Container,
-  dependencyLoader,
   DrawableSprite,
   FillMode,
   MouseButton,
-  MouseDownEvent,
+  dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import { ThemeColors } from './ThemeColors';
 import gsap from 'gsap';
+import { ThemeColors } from './ThemeColors';
 import { EditorClock } from './EditorClock';
 
 export class PlayButtonContainer extends CompositeDrawable {
@@ -55,7 +57,7 @@ export class PlayButton extends CompositeDrawable {
   #icon!: DrawableSprite;
 
   onHover() {
-    this.#icon.color = 0xffffff;
+    this.#icon.color = 0xFFFFFF;
 
     return true;
   }
@@ -77,7 +79,8 @@ export class PlayButton extends CompositeDrawable {
 
       if (this.editorClock.isRunning) {
         this.editorClock.stop();
-      } else {
+      }
+      else {
         this.editorClock.start();
       }
 

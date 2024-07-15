@@ -5,9 +5,9 @@ import {
   DrawSizePreservingFillContainer,
   dependencyLoader,
 } from 'osucad-framework';
+import { HitObjectContainer } from '../hitobjects/HitObjectContainer';
 import { PlayfieldGrid } from './PlayfieldGrid';
 import { BeatmapBackground } from './BeatmapBackground';
-import { HitObjectContainer } from '../hitobjects/HitObjectContainer';
 
 export class PlayfieldContainer extends Container {
   constructor() {

@@ -1,9 +1,12 @@
-import { Beatmap, HitCircle, HitObjectType, Slider } from '@osucad/common';
+import type { HitCircle, Slider } from '@osucad/common';
+import { Beatmap, HitObjectType } from '@osucad/common';
+import type {
+  Drawable,
+} from 'osucad-framework';
 import {
   Axes,
   Container,
   dependencyLoader,
-  Drawable,
   resolved,
 } from 'osucad-framework';
 import { EditorClock } from '../EditorClock';
@@ -50,16 +53,20 @@ export class HitObjectContainer extends Container {
     super.update();
 
     let startIndex = this.hitObjects.hitObjects.findIndex(
-      (h) => h.endTime + 700 > this.time.current,
+      h => h.endTime + 700 > this.time.current,
     );
     let endIndex = this.hitObjects.hitObjects.findIndex(
-      (h) => h.startTime - 600 > this.time.current,
+      h => h.startTime - 600 > this.time.current,
     );
 
-    if (startIndex > 0) startIndex--;
-    if (endIndex == -1) endIndex = this.hitObjects.hitObjects.length;
-    if (endIndex < this.hitObjects.hitObjects.length) endIndex++;
-    if (startIndex === -1) startIndex = this.hitObjects.hitObjects.length - 1;
+    if (startIndex > 0)
+      startIndex--;
+    if (endIndex === -1)
+      endIndex = this.hitObjects.hitObjects.length;
+    if (endIndex < this.hitObjects.hitObjects.length)
+      endIndex++;
+    if (startIndex === -1)
+      startIndex = this.hitObjects.hitObjects.length - 1;
 
     const hitObjects = this.hitObjects.hitObjects.filter(
       (h, i) => i >= startIndex && i <= endIndex,

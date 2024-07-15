@@ -1,15 +1,17 @@
+import type {
+  TextureShader,
+} from 'pixi.js';
 import {
   Color,
+  GlProgram,
+  Shader,
+  Texture,
+  UniformGroup,
   compileHighShaderGl,
   fragmentGlTemplate,
   globalUniformsBitGl,
-  GlProgram,
   localUniformBitGl,
   roundPixelsBitGl,
-  Shader,
-  Texture,
-  TextureShader,
-  UniformGroup,
   vertexGlTemplate,
 } from 'pixi.js';
 import { SliderGradient } from './SliderGradient';
@@ -30,10 +32,10 @@ export class SliderShader extends Shader implements TextureShader {
       gradient = new SliderGradient(0, 0, 1, 0)
         .addColorStop(0.0, 0x000000, 0.0)
         .addColorStop(0.2, 0x000000, 0.125)
-        .addColorStop(0.22, 0xff0000)
-        .addColorStop(0.3, 0xff0000)
-        .addColorStop(0.32, 0xffff00)
-        .addColorStop(1.0, 0xffffff);
+        .addColorStop(0.22, 0xFF0000)
+        .addColorStop(0.3, 0xFF0000)
+        .addColorStop(0.32, 0xFFFF00)
+        .addColorStop(1.0, 0xFFFFFF);
 
       gradient.buildLinearGradient();
     }
@@ -99,11 +101,11 @@ export class SliderShader extends Shader implements TextureShader {
 
     const sliderUniforms = new UniformGroup({
       uComboColor: {
-        value: new Float32Array(Color.shared.setValue(0xff0000).toArray()),
+        value: new Float32Array(Color.shared.setValue(0xFF0000).toArray()),
         type: 'vec4<f32>',
       },
       uBorderColor: {
-        value: new Float32Array(Color.shared.setValue(0xffffff).toArray()),
+        value: new Float32Array(Color.shared.setValue(0xFFFFFF).toArray()),
         type: 'vec4<f32>',
       },
       uAlpha: { value: 1.0, type: 'f32' },

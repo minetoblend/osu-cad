@@ -1,12 +1,14 @@
-import {
+import type {
   Beatmap,
-  CommandContext,
   CommandHandler,
-  getCommandHandler,
   IEditorCommand,
 } from '@osucad/common';
-import { EditorContext } from './EditorContext';
+import {
+  CommandContext,
+  getCommandHandler,
+} from '@osucad/common';
 import { Bindable } from 'osucad-framework';
+import type { EditorContext } from './EditorContext';
 
 export class CommandManager {
   constructor(
@@ -53,12 +55,15 @@ export class CommandManager {
     this.#transaction.length = 0;
   }
 
+  // eslint-disable-next-line unused-imports/no-unused-vars
   protected beforeCommandSubmit(command: IEditorCommand): boolean {
     return true;
   }
 
+  // eslint-disable-next-line unused-imports/no-unused-vars
   protected afterCommandSubmit(command: IEditorCommand) {}
 
+  // eslint-disable-next-line unused-imports/no-unused-vars
   protected afterCommandApplied(command: IEditorCommand) {}
 
   #commandVersion = 0;
@@ -86,7 +91,8 @@ export class CommandManager {
     recordHistory = true,
   ): T | undefined {
     command.version = this.#commandVersion++;
-    if (!this.beforeCommandSubmit(command)) return undefined;
+    if (!this.beforeCommandSubmit(command))
+      return undefined;
 
     if (recordHistory) {
       this.#record(command);
@@ -121,13 +127,15 @@ export class CommandManager {
 
   #record(command: IEditorCommand) {
     const handler = getCommandHandler(command);
-    if (!handler) return;
+    if (!handler)
+      return;
 
     let reverse = handler.createUndoCommand(this.context, command);
 
     for (let i = this.#transaction.length - 1; i >= 0; i--) {
       const entry = this.#transaction[i];
-      if (entry.command.type !== command.type) continue;
+      if (entry.command.type !== command.type)
+        continue;
 
       const merged = handler.merge(this.context, entry.command, command);
       if (merged) {
@@ -137,8 +145,8 @@ export class CommandManager {
         command = merged;
 
         if (reverse && entry.reverse) {
-          reverse =
-            handler.merge(this.context, reverse, entry.reverse) ?? reverse;
+          reverse
+            = handler.merge(this.context, reverse, entry.reverse) ?? reverse;
         }
       }
     }
@@ -150,7 +158,8 @@ export class CommandManager {
   #redoStack: HistoryEntry[][] = [];
 
   #undo(): boolean {
-    if (this.#undoStack.length === 0) return false;
+    if (this.#undoStack.length === 0)
+      return false;
     const transaction = this.#undoStack.pop()!;
 
     const redoTransaction: HistoryEntry[] = [];
@@ -163,7 +172,8 @@ export class CommandManager {
           command,
         );
         this.#submit(command, false);
-        if (reverse) redoTransaction.push({ command, reverse });
+        if (reverse)
+          redoTransaction.push({ command, reverse });
       }
     }
 
@@ -177,7 +187,8 @@ export class CommandManager {
   }
 
   #redo(): boolean {
-    if (this.#redoStack.length === 0) return false;
+    if (this.#redoStack.length === 0)
+      return false;
     const transaction = this.#redoStack.pop()!;
 
     const undoTransaction: HistoryEntry[] = [];

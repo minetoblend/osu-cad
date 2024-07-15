@@ -1,8 +1,10 @@
+import type {
+  ColorSource,
+  Drawable,
+} from 'osucad-framework';
 import {
   Axes,
-  ColorSource,
   CompositeDrawable,
-  Drawable,
   RoundedBox,
   dependencyLoader,
   resolved,
@@ -30,7 +32,7 @@ export class SectionMarkers extends OverviewTimelineMarkerContainer {
     this.beatmap.hitObjects.onRemoved.addListener(() =>
       this.#onHitObjectUpdate(),
     );
-    this.beatmap.hitObjects.onUpdated.addListener(([hitObject, type]) =>
+    this.beatmap.hitObjects.onUpdated.addListener(() =>
       this.#onHitObjectUpdate(),
     );
   }
@@ -45,8 +47,8 @@ export class SectionMarkers extends OverviewTimelineMarkerContainer {
 
   update(): void {
     if (
-      this.#lastInvalidated !== null &&
-      this.time.current - this.#lastInvalidated > this.#invalidationTimeout
+      this.#lastInvalidated !== null
+      && this.time.current - this.#lastInvalidated > this.#invalidationTimeout
     ) {
       this.invalidateMarkers();
 
@@ -80,12 +82,12 @@ export class SectionMarkers extends OverviewTimelineMarkerContainer {
 
         const marker = new SectionMarker({
           width:
-            (sectionEndTime - sectionStartTime) / this.editorClock.trackLength,
+            (sectionEndTime - sectionStartTime) / trackLength,
           color: 'gray',
           alpha: 1,
         });
 
-        marker.x = sectionStartTime / this.editorClock.trackLength;
+        marker.x = sectionStartTime / trackLength;
 
         markers.push(marker);
 

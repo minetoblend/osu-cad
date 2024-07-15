@@ -1,12 +1,15 @@
-import { ComposeToolInteraction } from './ComposeToolInteraction';
-import { HitObject, Slider, UpdateHitObjectCommand } from '@osucad/common';
-import {
-  dependencyLoader,
-  MouseButton,
+import type { HitObject } from '@osucad/common';
+import { Slider, UpdateHitObjectCommand } from '@osucad/common';
+import type {
   MouseMoveEvent,
   MouseUpEvent,
-  Vec2,
 } from 'osucad-framework';
+import {
+  MouseButton,
+  Vec2,
+  dependencyLoader,
+} from 'osucad-framework';
+import { ComposeToolInteraction } from './ComposeToolInteraction';
 
 export class MoveSelectionInteraction extends ComposeToolInteraction {
   constructor(
@@ -20,16 +23,15 @@ export class MoveSelectionInteraction extends ComposeToolInteraction {
 
   @dependencyLoader()
   load() {
-    this.#startPositions = this.hitObjects.map((it) => it.position);
+    this.#startPositions = this.hitObjects.map(it => it.position);
   }
 
   onMouseMove(e: MouseMoveEvent): boolean {
     const delta = e.mousePosition.sub(this.startPosition);
 
-    let positions = new Array<Vec2>(this.hitObjects.length);
+    let positions: Array<Vec2> = Array.from({ length: this.hitObjects.length });
 
     for (let i = 0; i < this.hitObjects.length; i++) {
-      const hitObject = this.hitObjects[i];
       positions[i] = this.#startPositions[i]!.add(delta);
     }
 
@@ -85,9 +87,11 @@ export class MoveSelectionInteraction extends ComposeToolInteraction {
 
     if (minX < 0 && maxX <= 512) {
       offset.x = -minX;
-    } else if (maxX > 512 && minX >= 0) {
+    }
+    else if (maxX > 512 && minX >= 0) {
       offset.x = 512 - maxX;
-    } else if (minX < 0 && maxX > 512) {
+    }
+    else if (minX < 0 && maxX > 512) {
       constrainX = true;
     }
 
@@ -95,9 +99,11 @@ export class MoveSelectionInteraction extends ComposeToolInteraction {
 
     if (minY < 0 && maxY <= 384) {
       offset.y = -minY;
-    } else if (maxY > 384 && minY >= 0) {
+    }
+    else if (maxY > 384 && minY >= 0) {
       offset.y = 384 - maxY;
-    } else if (minY < 0 && maxY > 384) {
+    }
+    else if (minY < 0 && maxY > 384) {
       constrainY = true;
     }
 

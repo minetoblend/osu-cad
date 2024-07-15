@@ -1,7 +1,7 @@
 export class ThemeColors {
-  readonly primary = 0x52cca3;
-  readonly primaryHighlight = 0x65e6ba;
-  readonly text = 0xb6b6c3;
+  readonly primary = 0x52CCA3;
+  readonly primaryHighlight = 0x65E6BA;
+  readonly text = 0xB6B6C3;
   readonly translucent = 0x222228;
-  readonly selection = 0xed9e3e;
+  readonly selection = 0xED9E3E;
 }

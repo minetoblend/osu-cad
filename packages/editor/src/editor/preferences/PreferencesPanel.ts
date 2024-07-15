@@ -1,11 +1,13 @@
+import type {
+  Drawable,
+} from 'osucad-framework';
 import {
   Axes,
   Container,
-  dependencyLoader,
-  Drawable,
   FillDirection,
   FillFlowContainer,
   Vec2,
+  dependencyLoader,
 } from 'osucad-framework';
 import { OsucadSpriteText } from '../../OsucadSpriteText';
 

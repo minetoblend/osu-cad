@@ -1,22 +1,23 @@
+import type {
+  ContainerOptions,
+  IKeyBindingHandler,
+  KeyBindingPressEvent,
+} from 'osucad-framework';
 import {
   Anchor,
   Axes,
   Bindable,
   Container,
-  ContainerOptions,
   dependencyLoader,
-  IKeyBindingHandler,
-  KeyBindingPressEvent,
 } from 'osucad-framework';
-import { Preferences } from './Preferences';
 import gsap from 'gsap';
 import { EditorAction } from '../EditorAction';
 import { MouseTrap } from '../MouseTrap';
+import { Preferences } from './Preferences';
 
 export class PreferencesContainer
   extends Container
-  implements IKeyBindingHandler<EditorAction>
-{
+  implements IKeyBindingHandler<EditorAction> {
   constructor(options: ContainerOptions = {}) {
     super({
       relativeSizeAxes: Axes.Both,
@@ -96,7 +97,8 @@ export class PreferencesContainer
       });
 
       this.#preferences.show();
-    } else {
+    }
+    else {
       this.#closeTrap.isActive = false;
 
       gsap.to(this.#preferences, {
@@ -129,7 +131,8 @@ export class PreferencesContainer
       case EditorAction.ShowPreferences:
         if (this.preferencesVisible.value) {
           this.hidePreferences();
-        } else {
+        }
+        else {
           this.showPreferences();
         }
         return true;

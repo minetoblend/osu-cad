@@ -1,18 +1,20 @@
-import { ComposeToggleButton } from './ComposeToggleButton';
-import { Texture } from 'pixi.js';
+import type { Texture } from 'pixi.js';
+import type {
+  InjectionToken,
+} from 'osucad-framework';
 import {
   Anchor,
   Axes,
   Container,
-  InjectionToken,
-  resolved,
   RoundedBox,
+  resolved,
 } from 'osucad-framework';
-import { ToggleBindable } from './ToggleBindable';
-import { EditorAction } from '../../EditorAction';
-import { HitSample, SampleType } from '@osucad/common';
-import { HitsoundPlayer } from '../../HitsoundPlayer';
+import type { HitSample, SampleType } from '@osucad/common';
 import gsap from 'gsap';
+import type { EditorAction } from '../../EditorAction';
+import { HitsoundPlayer } from '../../HitsoundPlayer';
+import type { ToggleBindable } from './ToggleBindable';
+import { ComposeToggleButton } from './ComposeToggleButton';
 
 export class AdditionToggleButton extends ComposeToggleButton {
   constructor(
@@ -44,7 +46,8 @@ export class AdditionToggleButton extends ComposeToggleButton {
   }
 
   #onSamplePlayed(sample: HitSample) {
-    if (sample.type !== this.sampleType) return;
+    if (sample.type !== this.sampleType)
+      return;
 
     const sampleHighlight = new RoundedBox({
       relativeSizeAxes: Axes.Both,

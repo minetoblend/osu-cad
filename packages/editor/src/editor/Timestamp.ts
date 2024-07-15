@@ -1,20 +1,22 @@
+import type {
+  MouseDownEvent,
+  SpriteText,
+} from 'osucad-framework';
 import {
   Anchor,
   Axes,
   CompositeDrawable,
-  dependencyLoader,
   MarginPadding,
   MouseButton,
-  MouseDownEvent,
-  resolved,
   RoundedBox,
-  SpriteText,
+  dependencyLoader,
+  resolved,
 } from 'osucad-framework';
+import gsap from 'gsap';
+import { OsucadSpriteText } from '../OsucadSpriteText';
 import { EditorClock } from './EditorClock';
 import { TimestampFormatter } from './TimestampFormatter';
 import { ThemeColors } from './ThemeColors';
-import gsap from 'gsap';
-import { OsucadSpriteText } from '../OsucadSpriteText';
 
 export class Timestamp extends CompositeDrawable {
   constructor() {
@@ -45,7 +47,7 @@ export class Timestamp extends CompositeDrawable {
 
   background = new RoundedBox({
     relativeSizeAxes: Axes.Both,
-    color: 0xffffff,
+    color: 0xFFFFFF,
     alpha: 0,
     cornerRadius: 4,
     margin: new MarginPadding({
@@ -59,7 +61,8 @@ export class Timestamp extends CompositeDrawable {
     super.update();
 
     const currentTime = this.editorClock.currentTime;
-    if (this.#lastTimestamp === currentTime) return;
+    if (this.#lastTimestamp === currentTime)
+      return;
     this.#lastTimestamp = currentTime;
     this.timestamp.text = TimestampFormatter.formatTimestamp(currentTime);
   }
@@ -73,7 +76,7 @@ export class Timestamp extends CompositeDrawable {
       alpha: 0.1,
       duration: 0.1,
     });
-    this.timestamp.color = 0xccccde;
+    this.timestamp.color = 0xCCCCDE;
     return false;
   }
 
@@ -82,7 +85,7 @@ export class Timestamp extends CompositeDrawable {
       alpha: 0,
       duration: 0.1,
     });
-    this.timestamp.color = 0xb6b6c3;
+    this.timestamp.color = 0xB6B6C3;
     gsap.to(this.timestamp.scale, {
       scaleX: 1,
       scaleY: 1,

@@ -2,14 +2,14 @@ import {
   Axes,
   Box,
   Container,
-  dependencyLoader,
   Direction,
   FillDirection,
   FillFlowContainer,
+  dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import { ThemeColors } from '../ThemeColors';
 import { BackdropBlurFilter } from 'pixi-filters';
+import { ThemeColors } from '../ThemeColors';
 import { MainScrollContainer } from '../MainScrollContainer';
 import { AudioPreferencesSection } from './AudioPreferencesSection';
 

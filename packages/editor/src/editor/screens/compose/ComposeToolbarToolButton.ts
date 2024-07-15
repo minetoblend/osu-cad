@@ -1,7 +1,7 @@
-import { NoArgsConstructor } from '@osucad/common';
-import { Bindable, Key } from 'osucad-framework';
-import { Texture } from 'pixi.js';
-import { ComposeTool } from './tools/ComposeTool';
+import type { NoArgsConstructor } from '@osucad/common';
+import type { Bindable, Key } from 'osucad-framework';
+import type { Texture } from 'pixi.js';
+import type { ComposeTool } from './tools/ComposeTool';
 import { ComposeToolbarButton } from './ComposeToolbarButton';
 
 export interface ComposeToolbarToolButtonOptions {

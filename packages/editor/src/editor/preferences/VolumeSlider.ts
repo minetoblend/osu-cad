@@ -1,17 +1,19 @@
 import gsap from 'gsap';
+import type {
+  Bindable,
+  DragEvent,
+  DragStartEvent,
+  MouseDownEvent,
+} from 'osucad-framework';
 import {
   Anchor,
   Axes,
-  Bindable,
-  clamp,
   CompositeDrawable,
   Container,
-  dependencyLoader,
-  DragEvent,
-  DragStartEvent,
   MouseButton,
-  MouseDownEvent,
   RoundedBox,
+  clamp,
+  dependencyLoader,
 } from 'osucad-framework';
 import { OsucadSpriteText } from '../../OsucadSpriteText';
 
@@ -33,7 +35,7 @@ export class VolumeSliderContainer extends Container {
     this.addAllInternal(
       new OsucadSpriteText({
         text: this.title,
-        color: 0xb6b6c3,
+        color: 0xB6B6C3,
         fontSize: 14,
       }),
       new Container({
@@ -51,7 +53,7 @@ export class VolumeSliderContainer extends Container {
         width: 40,
         child: (this.#valueText = new OsucadSpriteText({
           text: '100%',
-          color: 0xb6b6c3,
+          color: 0xB6B6C3,
           fontSize: 14,
         })),
       }),
@@ -125,7 +127,7 @@ export class VolumeSlider extends CompositeDrawable {
     width: 12,
     height: 8,
     cornerRadius: 10,
-    color: 0xffffff,
+    color: 0xFFFFFF,
     anchor: Anchor.CenterLeft,
     origin: Anchor.Center,
   });

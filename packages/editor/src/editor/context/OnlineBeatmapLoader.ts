@@ -1,5 +1,6 @@
-import { Beatmap, ClientMessages, ServerMessages } from '@osucad/common';
-import { Socket } from 'socket.io-client';
+import type { ClientMessages, ServerMessages } from '@osucad/common';
+import { Beatmap } from '@osucad/common';
+import type { Socket } from 'socket.io-client';
 
 export class OnlineBeatmapLoader {
   static loadBeatmap(

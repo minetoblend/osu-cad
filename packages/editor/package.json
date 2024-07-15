@@ -19,11 +19,12 @@
     }
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^2.22.2",
     "@types/node": "^20.14.9",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "electron": "^31.1.0",
-    "eslint": "^8.42.0",
+    "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
     "tsup": "^8.1.0",
@@ -34,6 +35,7 @@
   },
   "dependencies": {
     "@osucad/common": "workspace:*",
+    "dexie": "^4.0.8",
     "gsap": "^3.12.5",
     "osu-classes": "^3.0.1",
     "osu-parsers": "^4.1.6",
@@ -42,6 +44,7 @@
     "pixi-filters": "^6.0.4",
     "pixi.js": "https://pkg.csb.dev/pixijs/pixijs/commit/f2243093/pixi.js",
     "reflect-metadata": "^0.1.13",
+    "rxdb": "^15.28.0",
     "socket.io-client": "^4.7.2"
   }
 }

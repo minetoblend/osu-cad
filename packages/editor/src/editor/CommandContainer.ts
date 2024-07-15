@@ -1,6 +1,6 @@
 import { Container, resolved } from 'osucad-framework';
+import type { CommandHandler, IEditorCommand } from '@osucad/common';
 import { CommandManager } from './context/CommandManager';
-import { CommandHandler, IEditorCommand } from '@osucad/common';
 
 export class CommandContainer extends Container {
   @resolved(CommandManager)

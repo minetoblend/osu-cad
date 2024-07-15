@@ -1,24 +1,26 @@
 import gsap from 'gsap';
-import {
-  Anchor,
-  Axes,
-  clamp,
-  CompositeDrawable,
-  Container,
-  dependencyLoader,
+import type {
   DragEvent,
   DragStartEvent,
   DrawableOptions,
-  MouseButton,
-  resolved,
-  RoundedBox,
   SpriteText,
+} from 'osucad-framework';
+import {
+  Anchor,
+  Axes,
+  CompositeDrawable,
+  Container,
+  MouseButton,
+  RoundedBox,
   Vec2,
+  clamp,
+  dependencyLoader,
+  resolved,
 } from 'osucad-framework';
 import { UISamples } from '../UISamples';
+import { OsucadSpriteText } from '../OsucadSpriteText';
 import { EditorClock } from './EditorClock';
 import { ThemeColors } from './ThemeColors';
-import { OsucadSpriteText } from '../OsucadSpriteText';
 
 export class BeatSnapDivisorSelector extends CompositeDrawable {
   constructor() {
@@ -166,8 +168,8 @@ class BeatSnapSlider extends CompositeDrawable {
     );
 
     if (
-      this.time.current - this.#lastDrag > this.#dragSampleDelay &&
-      Math.abs(this.#lastDragX - e.mousePosition.x) > 3
+      this.time.current - this.#lastDrag > this.#dragSampleDelay
+      && Math.abs(this.#lastDragX - e.mousePosition.x) > 3
     ) {
       const pitch = 0.75 + relative * 0.35;
 

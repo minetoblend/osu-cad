@@ -1,22 +1,19 @@
+import type {
+  ContainerOptions,
+  MouseDownEvent,
+} from 'osucad-framework';
 import {
   Anchor,
   Axes,
-  ClickEvent,
   Container,
-  ContainerOptions,
   DrawableSprite,
-  HoverEvent,
-  HoverLostEvent,
   MouseButton,
-  MouseDownEvent,
-  MouseUpEvent,
   RoundedBox,
   dependencyLoader,
-  resolved,
 } from 'osucad-framework';
-import { Timeline } from './Timeline';
-import { Texture } from 'pixi.js';
+import type { Texture } from 'pixi.js';
 import gsap from 'gsap';
+import type { Timeline } from './Timeline';
 
 export class TimelineZoomButtons extends Container {
   constructor(
@@ -72,7 +69,7 @@ class ZoomButton extends Container {
     this.addInternal(
       (this.background = new RoundedBox({
         relativeSizeAxes: Axes.Both,
-        color: 0xffffff,
+        color: 0xFFFFFF,
         cornerRadius: 6,
         fillAlpha: 0,
       })),
@@ -96,7 +93,7 @@ class ZoomButton extends Container {
   background: RoundedBox;
   sprite: DrawableSprite;
 
-  onHover(event: HoverEvent): boolean {
+  onHover(): boolean {
     gsap.to(this.background, {
       fillAlpha: 0.05,
       duration: 0.1,
@@ -108,7 +105,7 @@ class ZoomButton extends Container {
     return true;
   }
 
-  onHoverLost(event: HoverLostEvent): boolean {
+  onHoverLost(): boolean {
     gsap.to(this.background, {
       fillAlpha: 0.0,
       duration: 0.1,
@@ -128,7 +125,7 @@ class ZoomButton extends Container {
     if (event.button === MouseButton.Left) {
       this.background.outlines = [
         {
-          color: 0xffffff,
+          color: 0xFFFFFF,
           alpha: 0.1,
           width: 2,
         },
@@ -141,7 +138,7 @@ class ZoomButton extends Container {
 
   wasLongPress = false;
 
-  onClick(e: ClickEvent): boolean {
+  onClick(): boolean {
     if (!this.wasLongPress) {
       this.action();
     }
@@ -149,7 +146,7 @@ class ZoomButton extends Container {
     return true;
   }
 
-  onMouseUp(event: MouseUpEvent): boolean {
+  onMouseUp(): boolean {
     this.background.outlines = [];
     this.wasLongPress = !!(this.pressedAt && Date.now() - this.pressedAt > 300);
     this.pressedAt = undefined;

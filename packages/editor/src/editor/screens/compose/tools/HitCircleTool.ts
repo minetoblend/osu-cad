@@ -3,22 +3,26 @@ import {
   CreateHitObjectCommand,
   DeleteHitObjectCommand,
   HitCircle,
-  hitObjectId,
-  setAdditionsEnabled,
   UpdateHitObjectCommand,
+  hitObjectId,
 } from '@osucad/common';
-import {
-  almostEquals,
-  Bindable,
-  dependencyLoader,
+import type {
   DragEvent,
   DragStartEvent,
-  MouseButton,
   MouseDownEvent,
-  MouseMoveEvent,
   MouseUpEvent,
 } from 'osucad-framework';
+import {
+  MouseButton,
+  almostEquals,
+  dependencyLoader,
+} from 'osucad-framework';
 import { ComposeTool } from './ComposeTool';
+
+enum PlacementState {
+  Preview,
+  Placing,
+}
 
 export class HitCircleTool extends ComposeTool {
   constructor() {
@@ -46,12 +50,13 @@ export class HitCircleTool extends ComposeTool {
         new UpdateHitObjectCommand(this.#hitObject, { newCombo }),
         false,
       );
-    } else if (this.#hitObject) {
+    }
+    else if (this.#hitObject) {
       this.#hitObject.isNewCombo = newCombo;
     }
   }
 
-  applySampleType(addition: Additions, bindable: Bindable<boolean>): void {
+  applySampleType(): void {
     // no-op
   }
 
@@ -68,13 +73,14 @@ export class HitCircleTool extends ComposeTool {
       time = this.beatmap.controlPoints.snap(time, this.beatSnapDivisor);
     }
 
-    this.#updateObject((object) => (object.startTime = time));
+    this.#updateObject(object => (object.startTime = time));
   }
 
   #updateObject(fn: (object: HitCircle) => void) {
     if (this.#state === PlacementState.Preview) {
       fn(this.#hitObject);
-    } else {
+    }
+    else {
       this.#hitObject.update(this.commandManager, fn, false);
     }
   }
@@ -93,7 +99,7 @@ export class HitCircleTool extends ComposeTool {
     this.newCombo.value = false;
   }
 
-  onMouseMove(e: MouseMoveEvent): boolean {
+  onMouseMove(): boolean {
     this.#updateObject((object) => {
       object.position = this.clampToPlayfieldBounds(this.mousePosition);
     });
@@ -118,7 +124,7 @@ export class HitCircleTool extends ComposeTool {
         this.beatSnapDivisor,
       );
 
-      const existing = this.hitObjects.hitObjects.filter((it) =>
+      const existing = this.hitObjects.hitObjects.filter(it =>
         almostEquals(it.startTime, hitObject.startTime, 2),
       );
 
@@ -127,9 +133,12 @@ export class HitCircleTool extends ComposeTool {
       }
 
       let additions = Additions.None;
-      if (this.sampleWhistle.value) additions |= Additions.Whistle;
-      if (this.sampleFinish.value) additions |= Additions.Finish;
-      if (this.sampleClap.value) additions |= Additions.Clap;
+      if (this.sampleWhistle.value)
+        additions |= Additions.Whistle;
+      if (this.sampleFinish.value)
+        additions |= Additions.Finish;
+      if (this.sampleClap.value)
+        additions |= Additions.Clap;
 
       hitObject.hitSound.additions = additions;
 
@@ -153,7 +162,8 @@ export class HitCircleTool extends ComposeTool {
   }
 
   onMouseUp(e: MouseUpEvent): boolean {
-    if (e.button !== MouseButton.Left) return false;
+    if (e.button !== MouseButton.Left)
+      return false;
 
     this.commit();
 
@@ -185,9 +195,4 @@ export class HitCircleTool extends ComposeTool {
 
     return super.dispose();
   }
-}
-
-const enum PlacementState {
-  Preview,
-  Placing,
 }

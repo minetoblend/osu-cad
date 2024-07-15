@@ -3,18 +3,18 @@ import {
   UpdateHitObjectCommand,
   deserializeHitObject,
 } from '@osucad/common';
-import { CommandManager } from '../context/CommandManager';
+import type { CommandManager } from '../context/CommandManager';
 
 declare module '@osucad/common' {
   export interface HitObject extends HitObjectMixins {}
 }
 
 export interface HitObjectMixins {
-  update(
+  update: (
     commandManager: CommandManager,
     updateFn: (hitObject: this) => void,
     commit?: boolean,
-  ): void;
+  ) => void;
 }
 
 const hitObjectMixins: HitObjectMixins = {

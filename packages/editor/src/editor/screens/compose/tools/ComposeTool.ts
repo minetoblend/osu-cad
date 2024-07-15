@@ -2,22 +2,22 @@ import {
   Additions,
   Beatmap,
   HitObjectManager,
-  SampleType,
 } from '@osucad/common';
+import type {
+  Bindable,
+  InputManager,
+  UIEvent,
+} from 'osucad-framework';
 import {
   Axes,
-  Bindable,
-  clamp,
   Container,
-  dependencyLoader,
-  InputManager,
-  resolved,
-  UIEvent,
   Vec2,
+  clamp,
+  dependencyLoader,
+  resolved,
 } from 'osucad-framework';
 import { CommandContainer } from '../../../CommandContainer';
 import { EditorClock } from '../../../EditorClock';
-import { ComposeToolInteraction } from './interactions/ComposeToolInteraction';
 import { EditorSelection } from '../EditorSelection';
 import {
   NEW_COMBO,
@@ -25,7 +25,8 @@ import {
   SAMPLE_FINISH,
   SAMPLE_WHISTLE,
 } from '../../../InjectionTokens';
-import { ToggleBindable } from '../ToggleBindable';
+import type { ToggleBindable } from '../ToggleBindable';
+import type { ComposeToolInteraction } from './interactions/ComposeToolInteraction';
 
 export abstract class ComposeTool extends CommandContainer {
   protected constructor() {
@@ -76,7 +77,8 @@ export abstract class ComposeTool extends CommandContainer {
   @dependencyLoader()
   [Symbol('load')]() {
     this.newCombo.addOnChangeListener((newCombo) => {
-      if (this.newCombo.buttonPressed) this.applyNewCombo(newCombo);
+      if (this.newCombo.buttonPressed)
+        this.applyNewCombo(newCombo);
     });
     this.sampleWhistle.addOnChangeListener(() => {
       if (this.sampleWhistle.buttonPressed)

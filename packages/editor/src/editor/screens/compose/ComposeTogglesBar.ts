@@ -2,13 +2,14 @@ import {
   Anchor,
   Axes,
   Container,
-  dependencyLoader,
   FillDirection,
   FillFlowContainer,
-  resolved,
   RoundedBox,
   Vec2,
+  dependencyLoader,
+  resolved,
 } from 'osucad-framework';
+import { SampleType } from '@osucad/common';
 import { EditorAction } from '../../EditorAction';
 import {
   NEW_COMBO,
@@ -19,7 +20,6 @@ import {
 import { ThemeColors } from '../../ThemeColors';
 import { ComposeToggleButton } from './ComposeToggleButton';
 import { AdditionToggleButton } from './AdditionToggleButton';
-import { SampleType } from '@osucad/common';
 
 export class ComposeTogglesBar extends Container {
   constructor() {

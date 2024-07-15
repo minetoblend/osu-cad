@@ -1,21 +1,23 @@
-import { Beatmap, TimingPoint } from '@osucad/common';
-import {
-  Bindable,
-  Container,
+import type { TimingPoint } from '@osucad/common';
+import { Beatmap } from '@osucad/common';
+import type {
   FrameTimeInfo,
   IAdjustableClock,
   IFrameBasedClock,
   Track,
-  resolved,
-  lerp,
-  clamp,
+} from 'osucad-framework';
+import {
+  Bindable,
+  Container,
   almostEquals,
+  clamp,
+  lerp,
+  resolved,
 } from 'osucad-framework';
 
 export class EditorClock
   extends Container
-  implements IFrameBasedClock, IAdjustableClock
-{
+  implements IFrameBasedClock, IAdjustableClock {
   constructor(readonly track: Track) {
     super();
   }
@@ -47,14 +49,14 @@ export class EditorClock
 
     position -= timingPoint.time;
 
-    const beatSnapLength =
-      timingPoint.timing.beatLength / this.beatSnapDivisor.value;
+    const beatSnapLength
+      = timingPoint.timing.beatLength / this.beatSnapDivisor.value;
 
     const closestBeat = Math.round(position / beatSnapLength);
     position = timingPoint.time + closestBeat * beatSnapLength;
 
     const nextTimingPoint = this.controlPointInfo.controlPoints.find(
-      (t) => t.timing && t.time > timingPoint.time,
+      t => t.timing && t.time > timingPoint.time,
     ) as TimingPoint | undefined;
 
     if (nextTimingPoint && position > nextTimingPoint?.time)
@@ -74,14 +76,15 @@ export class EditorClock
   seekBeats(direction: number, snapped = false, amount = 1) {
     const timingPoint = this.controlPointInfo.timingPointAt(this.currentTime);
 
-    const beatSnapLength =
-      timingPoint.timing.beatLength / this.beatSnapDivisor.value;
+    const beatSnapLength
+      = timingPoint.timing.beatLength / this.beatSnapDivisor.value;
 
     const newPosition = this.currentTime + direction * amount * beatSnapLength;
 
     if (snapped) {
       this.seekSnapped(newPosition);
-    } else {
+    }
+    else {
       this.seek(newPosition);
     }
   }
@@ -111,7 +114,8 @@ export class EditorClock
       this.currentTimeBindable.value = currentTime;
 
       this.#lastSeekWasAnimated = false;
-    } else {
+    }
+    else {
       const lastTime = this.currentTime;
       let currentTime = lerp(
         lastTime,
@@ -173,6 +177,7 @@ export class EditorClock
   get framesPerSecond(): number {
     throw new Error('Not applicable for EditorClock');
   }
+
   get timeInfo(): FrameTimeInfo {
     return this.#frameTimeInfo;
   }
@@ -204,8 +209,8 @@ export class EditorClock
     }
 
     this.beatLength = timingPoint.timing.beatLength;
-    let progress =
-      (this.currentTime - timingPoint.time) / timingPoint.timing.beatLength;
+    let progress
+      = (this.currentTime - timingPoint.time) / timingPoint.timing.beatLength;
     progress = mod(mod(progress, 1) + 1, 1);
     this.beatProgress = progress;
   }

@@ -1,4 +1,4 @@
-import { AudioChannel, AudioManager, Sample } from 'osucad-framework';
+import type { AudioChannel, AudioManager, Sample } from 'osucad-framework';
 
 import toolHover from './assets/samples/tool-hover.ogg';
 import toolSelect from './assets/samples/tool-select.ogg';

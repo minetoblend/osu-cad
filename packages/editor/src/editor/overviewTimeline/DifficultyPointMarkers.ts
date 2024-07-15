@@ -1,4 +1,4 @@
-import { Anchor, Axes, dependencyLoader, resolved } from 'osucad-framework';
+import { dependencyLoader, resolved } from 'osucad-framework';
 import { EditorClock } from '../EditorClock';
 import {
   OverviewTimelineMarker,
@@ -34,9 +34,9 @@ export class DifficultyPointMarkers extends OverviewTimelineMarkerContainer {
     const trackLength = this.editorClock.trackLength;
 
     return this.beatmap.controlPoints.controlPoints
-      .filter((it) => it.velocityMultiplier !== null)
+      .filter(it => it.velocityMultiplier !== null)
       .map((timingPoint) => {
-        const marker = new OverviewTimelineMarker(0x6af878, 2);
+        const marker = new OverviewTimelineMarker(0x6AF878, 2);
 
         marker.x = timingPoint.time / trackLength;
 

@@ -1,27 +1,31 @@
+import type {
+  StandardBeatmap,
+} from 'osu-standard-stable';
 import {
   Circle as OsuCircle,
   Slider as OsuSlider,
   Spinner as OsuSpinner,
-  StandardBeatmap,
 } from 'osu-standard-stable';
-import { HitSample, PathPoint } from 'osu-classes';
+import type { HitSample, PathPoint } from 'osu-classes';
+import type {
+  HitSoundLayer,
+  SerializedPathPoint,
+} from '@osucad/common';
 import {
+  Additions,
   Beatmap,
   ControlPoint,
-  defaultHitSoundLayers,
+  EditorBookmark,
   HitCircle,
-  hitObjectId,
+  HitSoundSample,
   PathType,
-  SerializedPathPoint,
+  SampleSet,
+  SampleType,
   Slider,
   Spinner,
-  EditorBookmark,
   defaultHitSound,
-  SampleSet,
-  Additions,
-  HitSoundSample,
-  HitSoundLayer,
-  SampleType,
+  defaultHitSoundLayers,
+  hitObjectId,
 } from '@osucad/common';
 
 export class BeatmapConverter {
@@ -111,8 +115,8 @@ export class BeatmapConverter {
 
   private convertColors() {
     const { beatmap, converted } = this;
-    converted.colors = beatmap.colors.comboColors.map((color) =>
-      parseInt(color.hex.slice(1, 7), 16),
+    converted.colors = beatmap.colors.comboColors.map(color =>
+      Number.parseInt(color.hex.slice(1, 7), 16),
     );
   }
 
@@ -152,7 +156,8 @@ export class BeatmapConverter {
             hitSound,
           }),
         );
-      } else if (hitObject instanceof OsuSlider) {
+      }
+      else if (hitObject instanceof OsuSlider) {
         converted.hitObjects.add(
           new Slider({
             type: 'slider',
@@ -168,12 +173,13 @@ export class BeatmapConverter {
             comboOffset: hitObject.comboOffset,
             velocity: null,
             hitSound,
-            hitSounds: hitObject.nodeSamples.map((s) =>
+            hitSounds: hitObject.nodeSamples.map(s =>
               this.convertHitSound(s),
             ),
           }),
         );
-      } else if (hitObject instanceof OsuSpinner) {
+      }
+      else if (hitObject instanceof OsuSpinner) {
         converted.hitObjects.add(
           new Spinner({
             type: 'spinner',
@@ -239,7 +245,8 @@ export class BeatmapConverter {
 
       if (controlPoint) {
         controlPoint.velocityMultiplier = difficultyPoint.sliderVelocity;
-      } else {
+      }
+      else {
         controlPoint = new ControlPoint({
           id: hitObjectId(),
           time: difficultyPoint.startTime,
@@ -267,7 +274,8 @@ export class BeatmapConverter {
             hitSound.sampleSet = SampleSet.Soft;
             break;
         }
-      } else {
+      }
+      else {
         switch (sample.sampleSet) {
           case 'Drum':
             hitSound.additionSet = SampleSet.Drum;
@@ -302,7 +310,7 @@ export class BeatmapConverter {
       sample: HitSample,
       time: number,
     ): HitSoundLayer | undefined {
-      let type: SampleType | undefined = undefined;
+      let type: SampleType | undefined;
 
       switch (sample.hitSound) {
         case 'Normal':
@@ -319,7 +327,7 @@ export class BeatmapConverter {
           break;
       }
 
-      let sampleSet: SampleSet | undefined = undefined;
+      let sampleSet: SampleSet | undefined;
 
       let s = sample.sampleSet;
       if (s === 'None')
@@ -353,10 +361,11 @@ export class BeatmapConverter {
           break;
       }
 
-      if (type === undefined || sampleSet === undefined) return undefined;
+      if (type === undefined || sampleSet === undefined)
+        return undefined;
 
       return converted.hitSounds.layers.find(
-        (it) => it.sampleSet === sampleSet && it.type === type,
+        it => it.sampleSet === sampleSet && it.type === type,
       );
     }
 
@@ -364,26 +373,29 @@ export class BeatmapConverter {
       if (hitObject instanceof OsuCircle) {
         for (const sample of hitObject.samples) {
           const layer = getLayer(sample, hitObject.startTime);
-          if (layer)
+          if (layer) {
             layer.samples.push(
               new HitSoundSample({
                 time: hitObject.startTime,
                 id: hitObjectId(),
               }),
             );
+          }
         }
-      } else if (hitObject instanceof OsuSlider) {
+      }
+      else if (hitObject instanceof OsuSlider) {
         for (let i = 0; i < hitObject.nodeSamples.length; i++) {
           const time = hitObject.startTime + i * hitObject.spanDuration;
           for (const sample of hitObject.nodeSamples[i]) {
             const layer = getLayer(sample, time);
-            if (layer)
+            if (layer) {
               layer.samples.push(
                 new HitSoundSample({
                   time,
                   id: hitObjectId(),
                 }),
               );
+            }
           }
         }
       }

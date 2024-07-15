@@ -1,14 +1,15 @@
 import gsap from 'gsap';
+import type {
+  Drawable,
+  MouseDownEvent,
+  MouseUpEvent,
+} from 'osucad-framework';
 import {
   CompositeDrawable,
   CursorContainer,
-  Drawable,
   DrawableSprite,
   MouseButton,
-  MouseDownEvent,
-  MouseUpEvent,
   dependencyLoader,
-  resolved,
 } from 'osucad-framework';
 
 export class MainCursorContainer extends CursorContainer {

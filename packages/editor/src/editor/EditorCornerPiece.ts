@@ -1,7 +1,9 @@
+import type {
+  ContainerOptions,
+} from 'osucad-framework';
 import {
   Axes,
   Container,
-  ContainerOptions,
   Invalidation,
   LayoutMember,
   PIXIGraphics,
@@ -9,6 +11,13 @@ import {
   resolved,
 } from 'osucad-framework';
 import { ThemeColors } from './ThemeColors';
+
+export enum Corner {
+  TopLeft,
+  TopRight,
+  BottomLeft,
+  BottomRight,
+}
 
 export interface EditorCornerPieceOptions extends ContainerOptions {
   corner: Corner;
@@ -40,7 +49,8 @@ export class EditorCornerPiece extends Container {
   }
 
   set corner(value: Corner) {
-    if (this.#corner === value) return;
+    if (this.#corner === value)
+      return;
 
     this.#corner = value;
 
@@ -75,7 +85,7 @@ export class EditorCornerPiece extends Container {
       alpha: 0.5,
     });
     outline.stroke({
-      color: 0xb9c6dd,
+      color: 0xB9C6DD,
       width: 0.75,
       alpha: 0.2,
       alignment: 0,
@@ -146,11 +156,4 @@ export class EditorCornerPiece extends Container {
   onHoverLost(): boolean {
     return true;
   }
-}
-
-export enum Corner {
-  TopLeft,
-  TopRight,
-  BottomLeft,
-  BottomRight,
 }

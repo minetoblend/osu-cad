@@ -1,14 +1,15 @@
-import { Beatmap } from '@osucad/common';
-import { DependencyContainer, PIXITexture } from 'osucad-framework';
+/* eslint-disable unused-imports/no-unused-vars */
+import type { Beatmap } from '@osucad/common';
+import type { DependencyContainer, PIXITexture } from 'osucad-framework';
 import { Assets } from 'pixi.js';
 import { Skin } from '../../skins/Skin';
 import { ConnectedUsersManager } from './ConnectedUsersManager';
 import { EditorContext } from './EditorContext';
-import { EditorSocket } from './EditorSocket';
+import type { EditorSocket } from './EditorSocket';
 import { OnlineBeatmapLoader } from './OnlineBeatmapLoader';
-import { CommandManager } from './CommandManager';
+import type { CommandManager } from './CommandManager';
 import { OnlineCommandManager } from './OnlineCommandManager';
-import { BeatmapAsset } from './BeatmapAsset';
+import type { BeatmapAsset } from './BeatmapAsset';
 
 export class OnlineEditorContext extends EditorContext {
   readonly socket: EditorSocket;
@@ -38,15 +39,16 @@ export class OnlineEditorContext extends EditorContext {
     const context = new AudioContext();
 
     return fetch(this.getAssetPath(beatmap.audioFilename))
-      .then((res) => res.arrayBuffer())
-      .then((arrayBuffer) => context.decodeAudioData(arrayBuffer));
+      .then(res => res.arrayBuffer())
+      .then(arrayBuffer => context.decodeAudioData(arrayBuffer));
   }
 
   async loadBackground(beatmap: Beatmap): Promise<PIXITexture | null> {
     if (beatmap.backgroundPath) {
       try {
         return await Assets.load(this.getAssetPath(beatmap.backgroundPath));
-      } catch (e) {
+      }
+      catch (e) {
         // TODO: Sentry.captureException(e);
         console.error(e);
       }
@@ -87,7 +89,7 @@ export class OnlineEditorContext extends EditorContext {
 
   protected async getBeatmapAssets(): Promise<BeatmapAsset[]> {
     const assets = await fetch(`/api/mapsets/${this.beatmap.setId}/files`).then(
-      (res) => res.json(),
+      res => res.json(),
     );
 
     if (!Array.isArray(assets)) {

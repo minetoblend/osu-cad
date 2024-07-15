@@ -1,13 +1,11 @@
+import type {
+  DragEvent,
+  DragStartEvent,
+} from 'osucad-framework';
 import {
   Anchor,
   Axes,
   CompositeDrawable,
-  Container,
-  DragEndEvent,
-  DragEvent,
-  DragStartEvent,
-  HoverEvent,
-  HoverLostEvent,
   MouseButton,
   RoundedBox,
   Vec2,
@@ -40,7 +38,7 @@ export class OverviewTimelineProgressBar extends CompositeDrawable {
     relativeSizeAxes: Axes.X,
     height: 2,
     cornerRadius: 1.5,
-    color: 0xffffff,
+    color: 0xFFFFFF,
     anchor: Anchor.CenterLeft,
     origin: Anchor.CenterLeft,
     alpha: 0.25,
@@ -50,7 +48,7 @@ export class OverviewTimelineProgressBar extends CompositeDrawable {
     relativeSizeAxes: Axes.X,
     height: 2,
     cornerRadius: 1.5,
-    color: 0xffffff,
+    color: 0xFFFFFF,
     anchor: Anchor.CenterLeft,
     origin: Anchor.CenterLeft,
     width: 0,
@@ -88,22 +86,23 @@ class Thumb extends CompositeDrawable {
     this.anchor = Anchor.CenterLeft;
     this.origin = Anchor.Center;
     this.relativePositionAxes = Axes.X;
-    (this.size = new Vec2(10, 6)),
-      this.addInternal(
-        new RoundedBox({
-          relativeSizeAxes: Axes.Both,
-          cornerRadius: 4,
-          color: 0xffffff,
-        }),
-      );
+    this.size = new Vec2(10, 6);
+
+    this.addInternal(
+      new RoundedBox({
+        relativeSizeAxes: Axes.Both,
+        cornerRadius: 4,
+        color: 0xFFFFFF,
+      }),
+    );
   }
 
-  onHover(e: HoverEvent): boolean {
+  onHover(): boolean {
     this.updateState();
     return true;
   }
 
-  onHoverLost(e: HoverLostEvent): boolean {
+  onHoverLost(): boolean {
     this.updateState();
     return true;
   }
@@ -133,7 +132,7 @@ class Thumb extends CompositeDrawable {
     return true;
   }
 
-  onDragEnd(e: DragEndEvent): boolean {
+  onDragEnd(): boolean {
     this.updateState();
     return true;
   }
@@ -141,7 +140,8 @@ class Thumb extends CompositeDrawable {
   updateState() {
     if (this.isHovered || this.isDragged) {
       this.scale = new Vec2(1.2, 1.2);
-    } else {
+    }
+    else {
       this.scale = new Vec2(1, 1);
     }
   }

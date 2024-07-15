@@ -1,22 +1,26 @@
+import type {
+  HitObject,
+} from '@osucad/common';
 import {
   Beatmap,
-  HitObject,
   Slider,
   UpdateHitObjectCommand,
 } from '@osucad/common';
+import type {
+  Color,
+  DragEvent,
+  DragStartEvent,
+  MouseDownEvent,
+  MouseUpEvent,
+  SpriteText,
+} from 'osucad-framework';
 import {
   Anchor,
   Axes,
   Container,
-  DragEndEvent,
-  DragEvent,
-  DragStartEvent,
   FillMode,
   MouseButton,
-  MouseDownEvent,
-  MouseUpEvent,
   RoundedBox,
-  SpriteText,
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
@@ -41,12 +45,12 @@ export class TimelineObject extends Container {
 
   readonly body = new RoundedBox({
     relativeSizeAxes: Axes.Both,
-    color: 0xffffff,
+    color: 0xFFFFFF,
     cornerRadius: 100,
     alpha: 0.9,
     outlines: [
       {
-        color: 0xffffff,
+        color: 0xFFFFFF,
         width: 2,
         alpha: 0.8,
       },
@@ -72,7 +76,8 @@ export class TimelineObject extends Container {
     this.setup();
 
     this.selection.selectionChanged.addListener(([hitObject, selected]) => {
-      if (hitObject !== this.hitObject) return;
+      if (hitObject !== this.hitObject)
+        return;
 
       if (selected && this.body.outlines.length === 1) {
         this.body.outlines = [
@@ -83,7 +88,8 @@ export class TimelineObject extends Container {
             alignment: 0,
           },
         ];
-      } else if (!selected) {
+      }
+      else if (!selected) {
         this.body.outlines = this.body.outlines.slice(0, 1);
       }
     });
@@ -106,8 +112,8 @@ export class TimelineObject extends Container {
       throw new Error('RhythmTimelineObject must be a child of RhythmTimeline');
     }
 
-    const comboColor =
-      this.beatmap.colors[
+    const comboColor
+      = this.beatmap.colors[
         this.hitObject.comboIndex % this.beatmap.colors.length
       ];
     this.body.fillColor = comboColor;
@@ -119,8 +125,8 @@ export class TimelineObject extends Container {
     const radius = this.drawSize.y * 0.5;
     this.x = this.timeline.timeToPosition(this.hitObject.startTime) - radius;
 
-    this.width =
-      this.timeline.durationToSize(this.hitObject.duration) + radius * 2;
+    this.width
+      = this.timeline.durationToSize(this.hitObject.duration) + radius * 2;
   }
 
   @resolved(EditorSelection)
@@ -136,8 +142,8 @@ export class TimelineObject extends Container {
     if (e.button === MouseButton.Left) {
       if (e.controlPressed) {
         if (
-          this.selection.length <= 1 ||
-          !this.selection.isSelected(this.hitObject)
+          this.selection.length <= 1
+          || !this.selection.isSelected(this.hitObject)
         ) {
           this.selection.select([this.hitObject], true);
           return true;
@@ -189,7 +195,7 @@ export class TimelineObject extends Container {
     return true;
   }
 
-  onDragEnd(e: DragEndEvent): boolean {
+  onDragEnd(): boolean {
     this.commandManager.commit();
     return true;
   }
@@ -224,7 +230,7 @@ class TimelineObjectStartCircle extends Container {
     cornerRadius: 100,
     outlines: [
       {
-        color: 0xeeeeee,
+        color: 0xEEEEEE,
         width: 2,
       },
     ],
@@ -236,11 +242,19 @@ class TimelineObjectStartCircle extends Container {
     alpha: 0,
   });
 
+  get comboColor(): Color {
+    return this.circle.fillColor;
+  }
+
   set comboColor(value: number) {
     this.circle.fillColor = value;
   }
 
   comboNumberText!: SpriteText;
+
+  get comboNumber(): number {
+    return Number.parseInt(this.comboNumberText.text) + 1;
+  }
 
   set comboNumber(value: number) {
     this.comboNumberText.text = (value + 1).toString();
@@ -276,7 +290,7 @@ class SliderEndCircle extends Container {
     fillAlpha: 1,
     outlines: [
       {
-        color: 0xeeeeee,
+        color: 0xEEEEEE,
         width: 2,
       },
     ],
@@ -290,6 +304,10 @@ class SliderEndCircle extends Container {
 
   set comboColor(value: number) {
     this.circle.fillColor = value;
+  }
+
+  get comboColor(): Color {
+    return this.circle.fillColor;
   }
 
   onMouseDown(): boolean {
@@ -336,31 +354,32 @@ class SliderEndCircle extends Container {
 
       this.hitObject.update(
         this.commandManager,
-        (it) => (it.spans = Math.max(1, spans)),
+        it => (it.spans = Math.max(1, spans)),
         false,
       );
-    } else {
+    }
+    else {
       const endTime = this.beatmap.controlPoints.snap(
         time,
         this.editorClock.beatSnapDivisor.value,
       );
       const targetDuration = endTime - this.hitObject.startTime;
 
-      const velocityOverride =
-        ((this.hitObject.velocity / this.hitObject.baseVelocity) *
-          this.hitObject.duration) /
-        targetDuration;
+      const velocityOverride
+        = ((this.hitObject.velocity / this.hitObject.baseVelocity)
+        * this.hitObject.duration)
+        / targetDuration;
 
       this.hitObject.update(
         this.commandManager,
-        (it) => (it.velocityOverride = velocityOverride),
+        it => (it.velocityOverride = velocityOverride),
         false,
       );
     }
     return true;
   }
 
-  onDragEnd(e: DragEndEvent): boolean {
+  onDragEnd(): boolean {
     this.commandManager.commit();
     return true;
   }
@@ -368,7 +387,8 @@ class SliderEndCircle extends Container {
   protected updateState() {
     if (this.isHovered || this.isDragged) {
       this.overlay.alpha = 0.2;
-    } else {
+    }
+    else {
       this.overlay.alpha = 0;
     }
   }

@@ -26,7 +26,7 @@ export class CirclePiece extends Container {
   timePreempt = 0;
   timeFadeIn = 0;
 
-  comboColor = 0xffffff;
+  comboColor = 0xFFFFFF;
 
   @dependencyLoader()
   load() {
@@ -57,9 +57,10 @@ export class CirclePiece extends Container {
         1,
       );
       this.hitCircle.color = this.comboColor;
-    } else {
-      this.alpha = animate(time, 0, 700, 0.9, 0, (x) => x ** 4);
-      this.hitCircle.color = 0xffffff;
+    }
+    else {
+      this.alpha = animate(time, 0, 700, 0.9, 0, x => x ** 4);
+      this.hitCircle.color = 0xFFFFFF;
     }
   }
 }

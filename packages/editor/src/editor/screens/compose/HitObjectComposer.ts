@@ -1,34 +1,34 @@
-import {
-  Axes,
+import type {
   Bindable,
-  Container,
-  dependencyLoader,
   IKeyBindingHandler,
   KeyBindingPressEvent,
-  PlatformAction,
-  resolved,
-  Vec2,
 } from 'osucad-framework';
-import type { ToolConstructor } from './ComposeScreen';
-import { SelectionOverlay } from './SelectionOverlay';
-import { EditorSelection } from './EditorSelection';
-import { CommandManager } from '../../context/CommandManager';
+import {
+  Axes,
+  Container,
+  PlatformAction,
+  Vec2,
+  dependencyLoader,
+  resolved,
+} from 'osucad-framework';
 import {
   DeleteHitObjectCommand,
-  Slider,
   UpdateHitObjectCommand,
 } from '@osucad/common';
+import { CommandManager } from '../../context/CommandManager';
 import { EditorAction } from '../../EditorAction';
 import { NEW_COMBO } from '../../InjectionTokens';
-import { HitObjectUtils } from './HitObjectUtils';
 import { EditorClock } from '../../EditorClock';
 import { ConnectedUsersManager } from '../../context/ConnectedUsersManager';
+import { HitObjectUtils } from './HitObjectUtils';
+import { EditorSelection } from './EditorSelection';
+import { SelectionOverlay } from './SelectionOverlay';
+import type { ToolConstructor } from './ComposeScreen';
 import { ComposerCursorContainer } from './ComposerCursorContainer';
 
 export class HitObjectComposer
   extends Container
-  implements IKeyBindingHandler<PlatformAction | EditorAction>
-{
+  implements IKeyBindingHandler<PlatformAction | EditorAction> {
   constructor(protected readonly activeTool: Bindable<ToolConstructor>) {
     super({
       relativeSizeAxes: Axes.Both,
@@ -65,9 +65,10 @@ export class HitObjectComposer
       this.activeTool.addOnChangeListener(
         (tool) => {
           if (
-            this.#toolContainer.children.length === 0 ||
-            !(this.#toolContainer.child instanceof tool)
+            this.#toolContainer.children.length === 0
+            || !(this.#toolContainer.child instanceof tool)
           ) {
+            // eslint-disable-next-line new-cap
             this.#toolContainer.child = new tool();
             this.#toolContainer.updateSubTree();
           }

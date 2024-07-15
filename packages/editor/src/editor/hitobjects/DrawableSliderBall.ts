@@ -45,10 +45,12 @@ export class DrawableSliderBall extends CompositeDrawable {
     if (time < fadeDuration) {
       this.#followCircle.scale = animate(time, 0, fadeDuration, 0.5, 1);
       this.#followCircle.alpha = animate(time, 0, fadeDuration, 0.5, 1);
-    } else if (time < duration) {
+    }
+    else if (time < duration) {
       this.#followCircle.scale = 1;
       this.#followCircle.alpha = 1;
-    } else {
+    }
+    else {
       this.#followCircle.scale = animate(
         time,
         duration,

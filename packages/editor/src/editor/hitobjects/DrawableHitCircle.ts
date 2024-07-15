@@ -1,4 +1,4 @@
-import { HitCircle } from '@osucad/common';
+import type { HitCircle } from '@osucad/common';
 import { Anchor } from 'osucad-framework';
 import { ApproachCircle } from './ApproachCircle';
 import { CirclePiece } from './CirclePiece';

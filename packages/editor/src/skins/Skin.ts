@@ -1,4 +1,5 @@
-import { Assets, Texture } from 'pixi.js';
+import type { Texture } from 'pixi.js';
+import { Assets } from 'pixi.js';
 
 export class Skin {
   hitcircle!: Texture;
@@ -12,7 +13,7 @@ export class Skin {
   comboNumbers: Texture[] = [];
 
   async load() {
-    const comboNumbers = Array.from({ length: 10 }, (_, i) => i).map((i) => ({
+    const comboNumbers = Array.from({ length: 10 }, (_, i) => i).map(i => ({
       src: `/assets/skin/default-${i}.png`,
       alias: `default-${i}`,
     }));

@@ -4,8 +4,8 @@ import {
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import Worker from './DifficultyCalculatorWorker?worker&inline';
 import { Beatmap } from '@osucad/common';
+import Worker from './DifficultyCalculatorWorker?worker&inline';
 
 export class DifficultyCalculator extends Container {
   worker = new Worker();
@@ -37,7 +37,8 @@ export class DifficultyCalculator extends Container {
   beatmap!: Beatmap;
 
   #calculate() {
-    if (this.#isCalculating) return;
+    if (this.#isCalculating)
+      return;
 
     this.#isCalculating = true;
     this.worker.postMessage(this.beatmap.serialize());

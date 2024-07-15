@@ -1,19 +1,21 @@
 import gsap from 'gsap';
+import type {
+  Drawable,
+  MenuItem,
+  SpriteText,
+} from 'osucad-framework';
 import {
   Anchor,
   Axes,
   Color,
   Container,
   Direction,
-  Drawable,
   DrawableMenuItem,
   MarginPadding,
   Menu,
-  MenuItem,
   RoundedBox,
   ScrollContainer,
   ScrollbarContainer,
-  SpriteText,
   Vec2,
   dependencyLoader,
   resolved,
@@ -28,7 +30,8 @@ export class EditorMenu extends Menu {
 
   @dependencyLoader()
   load() {
-    if (this.topLevelMenu) return;
+    if (this.topLevelMenu)
+      return;
 
     this.backgroundColor = new Color(this.theme.translucent).setAlpha(0.85);
   }
@@ -58,7 +61,7 @@ export class EditorMenu extends Menu {
       protected createScrollbar(direction: Direction): ScrollbarContainer {
         return new (class extends ScrollbarContainer {
           resizeTo(): void {
-            return;
+
           }
         })(direction);
       }
@@ -76,7 +79,8 @@ export class EditorMenu extends Menu {
   #targetSize: Vec2 = new Vec2();
 
   protected override updateSize(newSize: Vec2): void {
-    if (this.#targetSize.equals(newSize)) return;
+    if (this.#targetSize.equals(newSize))
+      return;
 
     gsap.killTweensOf(this, 'width,height');
 
@@ -95,7 +99,8 @@ export class EditorMenu extends Menu {
         duration: 0.2,
         ease: 'power4.out',
       });
-    } else {
+    }
+    else {
       gsap.to(this, {
         width: newSize.x,
         height: newSize.y,
@@ -140,7 +145,8 @@ class DrawableEditorMenuItem extends DrawableMenuItem {
       (disabled) => {
         if (disabled) {
           this.foreground.alpha = 0.5;
-        } else {
+        }
+        else {
           this.foreground.alpha = 1;
         }
       },
@@ -189,7 +195,7 @@ class MenuItemContent extends Container {
 
       const g = child.drawNode.addChild(new Graphics());
 
-      g.roundPoly(0, 0, 4, 3, 1, Math.PI * 0.5).fill(0xffffff);
+      g.roundPoly(0, 0, 4, 3, 1, Math.PI * 0.5).fill(0xFFFFFF);
     }
   }
 
@@ -203,6 +209,7 @@ class MenuItemContent extends Container {
 
   set text(value: string) {
     this.#text = value;
-    if (this.#spriteText) this.#spriteText.text = value;
+    if (this.#spriteText)
+      this.#spriteText.text = value;
   }
 }

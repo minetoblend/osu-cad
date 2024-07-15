@@ -2,8 +2,8 @@ import {
   Anchor,
   Axes,
   Container,
-  dependencyLoader,
   MarginPadding,
+  dependencyLoader,
 } from 'osucad-framework';
 import { BackdropBlurFilter } from 'pixi-filters';
 import { Corner, EditorCornerPiece } from './EditorCornerPiece';

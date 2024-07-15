@@ -1,20 +1,23 @@
-import { ComposeToolInteraction } from './ComposeToolInteraction';
-import {
-  dependencyLoader,
-  Key,
+import type {
   KeyDownEvent,
   KeyUpEvent,
-  MouseButton,
   MouseMoveEvent,
   MouseUpEvent,
-  Rectangle,
-  resolved,
-  RoundedBox,
   Vec2,
 } from 'osucad-framework';
+import {
+  Key,
+  MouseButton,
+  Rectangle,
+  RoundedBox,
+  dependencyLoader,
+  resolved,
+} from 'osucad-framework';
+import type { HitObject } from '@osucad/common';
+import { HitObjectManager, Slider, Spinner } from '@osucad/common';
 import { EditorSelection } from '../../EditorSelection';
-import { HitObject, HitObjectManager, Slider, Spinner } from '@osucad/common';
 import { EditorClock } from '../../../../EditorClock';
+import { ComposeToolInteraction } from './ComposeToolInteraction';
 
 export class SelectBoxInteraction extends ComposeToolInteraction {
   constructor(readonly startPosition: Vec2) {
@@ -105,15 +108,15 @@ export class SelectBoxInteraction extends ComposeToolInteraction {
       }
 
       if (
-        maxTime < it.startTime - it.timePreempt ||
-        minTime > it.endTime + 700
+        maxTime < it.startTime - it.timePreempt
+        || minTime > it.endTime + 700
       ) {
         return false;
       }
 
       if (
-        it instanceof Slider &&
-        this.#rect.contains(it.stackedPosition.add(it.path.endPosition))
+        it instanceof Slider
+        && this.#rect.contains(it.stackedPosition.add(it.path.endPosition))
       ) {
         return true;
       }

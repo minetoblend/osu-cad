@@ -1,6 +1,5 @@
+import type { ContainerOptions, IKeyBinding } from 'osucad-framework';
 import {
-  ContainerOptions,
-  type IKeyBinding,
   InputKey,
   KeyBinding,
   KeyBindingContainer,

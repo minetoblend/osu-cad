@@ -1,16 +1,17 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable unused-imports/no-unused-vars */
+/* eslint-disable ts/no-require-imports */
 
-import { Beatmap } from '@osucad/common';
+import type { Beatmap } from '@osucad/common';
 import { BeatmapDecoder } from 'osu-parsers';
 import { StandardRuleset } from 'osu-standard-stable';
-import { PIXITexture } from 'osucad-framework';
+import type { PIXITexture } from 'osucad-framework';
 import { textureFrom } from 'pixi.js';
 import { BeatmapConverter } from '../../beatmaps/BeatmapConverter';
 import { Skin } from '../../skins/Skin';
 import { EditorContext } from './EditorContext';
 
-const { readFile } = require('fs/promises');
-const path = require('path');
+const { readFile } = require('node:fs/promises');
+const path = require('node:path');
 
 export class ElectronEditorContext extends EditorContext {
   constructor(readonly path: string) {

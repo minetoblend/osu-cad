@@ -1,12 +1,15 @@
+import type {
+  KeyDownEvent,
+} from 'osucad-framework';
 import {
   Action,
   Container,
-  dependencyLoader,
   Key,
-  KeyDownEvent,
+  dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import { HitObject, HitObjectManager } from '@osucad/common';
+import type { HitObject } from '@osucad/common';
+import { HitObjectManager } from '@osucad/common';
 
 export class EditorSelection extends Container {
   readonly #selection = new Set<HitObject>();

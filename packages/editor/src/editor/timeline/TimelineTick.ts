@@ -10,30 +10,38 @@ export class TimelineTick extends Sprite {
     });
   }
 
+  #type!: TickType;
+
+  get type() {
+    return this.#type;
+  }
+
   set type(type: TickType) {
+    this.#type = type;
+
     switch (type) {
       case TickType.Full:
-        this.tint = 0xffffff;
+        this.tint = 0xFFFFFF;
         this.scale.set(2, 0.8);
         break;
       case TickType.Half:
-        this.tint = 0xff0000;
+        this.tint = 0xFF0000;
         this.scale.set(1.5, 0.7);
         break;
       case TickType.Third:
-        this.tint = 0xff00ff;
+        this.tint = 0xFF00FF;
         this.scale.set(1.25, 0.5);
         break;
       case TickType.Quarter:
-        this.tint = 0x3687f7;
+        this.tint = 0x3687F7;
         this.scale.set(1.25, 0.5);
         break;
       case TickType.Sixth:
-        this.tint = 0xff77ff;
+        this.tint = 0xFF77FF;
         this.scale.set(1, 0.4);
         break;
       case TickType.Eighth:
-        this.tint = 0xffff00;
+        this.tint = 0xFFFF00;
         this.scale.set(1, 0.4);
         break;
       default:

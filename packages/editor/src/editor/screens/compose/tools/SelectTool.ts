@@ -1,25 +1,29 @@
-import { ComposeTool } from './ComposeTool';
-import {
-  Anchor,
+import type {
   Bindable,
   ClickEvent,
-  dependencyLoader,
   DragStartEvent,
   InputManager,
-  MouseButton,
   MouseDownEvent,
-  RoundedBox,
   Vec2,
 } from 'osucad-framework';
-import { SelectBoxInteraction } from './interactions/SelectBoxInteraction';
+import {
+  Anchor,
+  MouseButton,
+  RoundedBox,
+  dependencyLoader,
+} from 'osucad-framework';
+import type {
+  HitObject,
+} from '@osucad/common';
 import {
   Additions,
   DeleteHitObjectCommand,
-  HitObject,
-  setAdditionsEnabled,
   Slider,
   UpdateHitObjectCommand,
+  setAdditionsEnabled,
 } from '@osucad/common';
+import { ComposeTool } from './ComposeTool';
+import { SelectBoxInteraction } from './interactions/SelectBoxInteraction';
 import { MoveSelectionInteraction } from './interactions/MoveSelectionInteraction';
 import { SliderPathVisualizer } from './SliderPathVisualizer';
 import { DistanceSnapProvider } from './DistanceSnapProvider';
@@ -45,14 +49,15 @@ export class SelectTool extends ComposeTool {
 
   get visibleObjects(): HitObject[] {
     return this.hitObjects.hitObjects.filter((it) => {
-      if (this.selection.isSelected(it)) return true;
+      if (this.selection.isSelected(it))
+        return true;
 
       return it.isVisibleAtTime(this.editorClock.currentTime);
     });
   }
 
   hoveredHitObjects(position: Vec2) {
-    return this.visibleObjects.filter((it) => it.contains(position));
+    return this.visibleObjects.filter(it => it.contains(position));
   }
 
   #getSelectionCandidate(hitObjects: HitObject[]) {
@@ -102,8 +107,8 @@ export class SelectTool extends ComposeTool {
 
       if (e.controlPressed) {
         if (
-          this.selection.length <= 1 ||
-          !this.selection.isSelected(candidate)
+          this.selection.length <= 1
+          || !this.selection.isSelected(candidate)
         ) {
           this.selection.select([candidate], true);
           return true;
@@ -115,12 +120,14 @@ export class SelectTool extends ComposeTool {
 
       if (!this.selection.isSelected(candidate)) {
         this.selection.select([candidate]);
-      } else {
+      }
+      else {
         this.#canCycleSelection = true;
       }
 
       return true;
-    } else if (e.button === MouseButton.Right) {
+    }
+    else if (e.button === MouseButton.Right) {
       const hovered = this.hoveredHitObjects(e.mousePosition);
 
       if (hovered.length === 0) {
@@ -134,7 +141,8 @@ export class SelectTool extends ComposeTool {
           this.submit(new DeleteHitObjectCommand(object), false);
         }
         this.commit();
-      } else {
+      }
+      else {
         this.submit(new DeleteHitObjectCommand(candidate));
       }
 
@@ -172,7 +180,8 @@ export class SelectTool extends ComposeTool {
     if (e.button === MouseButton.Left) {
       if (this.selection.length > 0) {
         const hovered = this.hoveredHitObjects(e.mousePosition);
-        if (hovered.length === 0) return false;
+        if (hovered.length === 0)
+          return false;
 
         const startPosition = this.toLocalSpace(
           e.screenSpaceMouseDownPosition ?? e.screenSpaceMousePosition,
@@ -226,9 +235,10 @@ export class SelectTool extends ComposeTool {
     const selection = this.selection.selectedObjects;
     if (selection.length === 1 && selection[0] instanceof Slider) {
       slider = selection[0];
-    } else if (hoveredHitObjects.every((it) => !it.isSelected)) {
-      slider = (hoveredHitObjects.find((it) => it instanceof Slider) ??
-        null) as Slider | null;
+    }
+    else if (hoveredHitObjects.every(it => !it.isSelected)) {
+      slider = (hoveredHitObjects.find(it => it instanceof Slider)
+      ?? null) as Slider | null;
     }
 
     this.activeSlider = slider;
@@ -238,7 +248,8 @@ export class SelectTool extends ComposeTool {
         slider,
         this.mousePosition,
       );
-    } else {
+    }
+    else {
       this.#sliderInsertPoint = null;
     }
 
@@ -247,7 +258,8 @@ export class SelectTool extends ComposeTool {
       this.#sliderInsertPointVisualizer.position = slider!.stackedPosition.add(
         this.#sliderInsertPoint.position,
       );
-    } else {
+    }
+    else {
       this.#sliderInsertPointVisualizer.alpha = 0;
     }
   }
@@ -279,10 +291,11 @@ export class SelectTool extends ComposeTool {
 
   applyNewCombo(newCombo: boolean): void {
     const objects = this.selection.selectedObjects;
-    if (objects.length === 0) return;
+    if (objects.length === 0)
+      return;
 
     const allNewCombo = objects.every(
-      (it) => it.isNewCombo || it === this.hitObjects.first,
+      it => it.isNewCombo || it === this.hitObjects.first,
     );
     if (allNewCombo !== newCombo) {
       for (const object of objects) {
@@ -380,7 +393,7 @@ export class SelectTool extends ComposeTool {
       return;
     }
     this.newCombo.value = this.selection.selectedObjects.every(
-      (it) => it.isNewCombo || it === this.hitObjects.first,
+      it => it.isNewCombo || it === this.hitObjects.first,
     );
   }
 
@@ -395,7 +408,7 @@ export class SelectTool extends ComposeTool {
       Additions.Clap,
     ]) {
       const allActive = this.selection.selectedObjects.every(
-        (it) => !!(it.hitSound.additions & addition),
+        it => !!(it.hitSound.additions & addition),
       );
 
       let bindable: Bindable<boolean>;

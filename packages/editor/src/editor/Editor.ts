@@ -1,25 +1,27 @@
+import type {
+  IKeyBindingHandler,
+  KeyBindingPressEvent,
+  KeyDownEvent,
+  ScrollEvent,
+  UIEvent,
+} from 'osucad-framework';
 import {
   AudioManager,
   Axes,
   Bindable,
-  clamp,
   Container,
-  dependencyLoader,
-  IKeyBindingHandler,
   Key,
-  KeyBindingPressEvent,
-  KeyDownEvent,
   PlatformAction,
+  clamp,
+  dependencyLoader,
   resolved,
-  ScrollEvent,
-  UIEvent,
 } from 'osucad-framework';
 import { EditorBottomBar } from './EditorBottomBar';
 import { EditorClock } from './EditorClock';
 import { EditorMixer } from './EditorMixer';
 import { EditorScreenContainer } from './EditorScreenContainer';
 import { EditorTopBar } from './EditorTopBar';
-import { EditorContext } from './context/EditorContext';
+import type { EditorContext } from './context/EditorContext';
 import { EditorScreenType } from './screens/EditorScreenType';
 import { ComposeScreen } from './screens/compose/ComposeScreen';
 import { SetupScreen } from './screens/setup/SetupScreen';
@@ -37,8 +39,7 @@ import { HitsoundPlayer } from './HitsoundPlayer';
 
 export class Editor
   extends Container
-  implements IKeyBindingHandler<PlatformAction | EditorAction>
-{
+  implements IKeyBindingHandler<PlatformAction | EditorAction> {
   constructor(readonly context: EditorContext) {
     super({
       relativeSizeAxes: Axes.Both,
@@ -153,7 +154,8 @@ export class Editor
   }
 
   onKeyDown(e: KeyDownEvent): boolean {
-    if (e.controlPressed || e.altPressed || e.metaPressed) return false;
+    if (e.controlPressed || e.altPressed || e.metaPressed)
+      return false;
 
     switch (e.key) {
       case Key.ArrowLeft:
@@ -186,14 +188,14 @@ export class Editor
   #seekControlPoint(e: UIEvent, direction: number) {
     const controlPointInfo = this.context.beatmap.controlPoints;
 
-    const controlPoint =
-      direction < 1
+    const controlPoint
+      = direction < 1
         ? [...controlPointInfo.controlPoints]
             .reverse()
-            .find((cp) => cp.time < this.#clock.currentTimeAccurate)
+            .find(cp => cp.time < this.#clock.currentTimeAccurate)
         : controlPointInfo.controlPoints.find(
-            (cp) => cp.time > this.#clock.currentTimeAccurate,
-          );
+          cp => cp.time > this.#clock.currentTimeAccurate,
+        );
 
     if (controlPoint) {
       this.#clock.seek(controlPoint.time);
@@ -220,22 +222,26 @@ export class Editor
         this.paste();
         return true;
       case EditorAction.SeekToStart:
-        const firstObjectTime =
-          this.context.beatmap.hitObjects.first?.startTime;
+      {
+        const firstObjectTime
+          = this.context.beatmap.hitObjects.first?.startTime;
 
         if (
-          firstObjectTime === undefined ||
-          this.#clock.currentTimeAccurate === firstObjectTime
+          firstObjectTime === undefined
+          || this.#clock.currentTimeAccurate === firstObjectTime
         ) {
           this.#clock.seek(0);
-        } else {
+        }
+        else {
           this.#clock.seek(firstObjectTime);
         }
         return true;
+      }
       case EditorAction.Play:
         if (this.#clock.isRunning) {
           this.#clock.stop();
-        } else {
+        }
+        else {
           this.#clock.start();
         }
         return true;
@@ -244,6 +250,7 @@ export class Editor
         this.#clock.start();
         return true;
       case EditorAction.SeekToEnd:
+      {
         if (this.context.beatmap.hitObjects.hitObjects.length === 0) {
           this.#clock.seek(this.#clock.trackLength);
           return true;
@@ -255,6 +262,7 @@ export class Editor
             : lastObjectTime,
         );
         return true;
+      }
     }
 
     return false;
@@ -291,15 +299,15 @@ export class Editor
     }
 
     let index = possibleSnapValues.findIndex(
-      (it) => it >= this.#clock.beatSnapDivisor.value,
+      it => it >= this.#clock.beatSnapDivisor.value,
     );
 
     if (index === -1) {
       index = 0;
     }
 
-    this.#clock.beatSnapDivisor.value =
-      possibleSnapValues[
+    this.#clock.beatSnapDivisor.value
+      = possibleSnapValues[
         clamp(index + change, 0, possibleSnapValues.length - 1)
       ];
   }

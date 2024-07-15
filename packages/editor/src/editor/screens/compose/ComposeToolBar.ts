@@ -1,14 +1,16 @@
+import type {
+  Bindable,
+} from 'osucad-framework';
 import {
   Axes,
-  Bindable,
   Container,
-  dependencyLoader,
   FillDirection,
   FillFlowContainer,
   Key,
   Vec2,
+  dependencyLoader,
 } from 'osucad-framework';
-import { ToolConstructor } from './ComposeScreen';
+import type { ToolConstructor } from './ComposeScreen';
 import { ComposeToolbarToolButton } from './ComposeToolbarToolButton';
 import { HitCircleTool } from './tools/HitCircleTool';
 import { SelectTool } from './tools/SelectTool';

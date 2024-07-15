@@ -1,4 +1,4 @@
-import { NoArgsConstructor } from '@osucad/common';
+import type { NoArgsConstructor } from '@osucad/common';
 import {
   Bindable,
   Invalidation,
@@ -10,7 +10,7 @@ import { EditorScreen } from '../EditorScreen';
 import { ComposeTogglesBar } from './ComposeTogglesBar';
 import { ComposeToolBar } from './ComposeToolBar';
 import { HitObjectComposer } from './HitObjectComposer';
-import { ComposeTool } from './tools/ComposeTool';
+import type { ComposeTool } from './tools/ComposeTool';
 import { SelectTool } from './tools/SelectTool';
 
 export type ToolConstructor = NoArgsConstructor<ComposeTool>;

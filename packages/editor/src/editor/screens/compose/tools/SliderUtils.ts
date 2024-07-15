@@ -1,13 +1,15 @@
-import {
+import type {
   IDistanceSnapProvider,
-  PathType,
   SerializedPathPoint,
   SerializedSlider,
   Slider,
+} from '@osucad/common';
+import {
+  PathType,
   UpdateHitObjectCommand,
 } from '@osucad/common';
 import { Vec2 } from 'osucad-framework';
-import { CommandManager } from '../../../context/CommandManager';
+import type { CommandManager } from '../../../context/CommandManager';
 
 export class SliderUtils {
   constructor(
@@ -31,7 +33,7 @@ export class SliderUtils {
       return false;
     }
 
-    let position: Vec2 | undefined = undefined;
+    let position: Vec2 | undefined;
 
     if (index === 0) {
       path[1].type ??= path[0].type;
@@ -44,6 +46,15 @@ export class SliderUtils {
     }
 
     path.splice(index, 1);
+
+    if (position) {
+      this.commandManager.submit(
+        new UpdateHitObjectCommand(slider, {
+          position,
+        } as Partial<SerializedSlider>),
+        false,
+      );
+    }
 
     this.setPath(slider, path, commit);
 
@@ -88,7 +99,8 @@ export class SliderUtils {
         } as Partial<SerializedSlider>),
         false,
       );
-    } else {
+    }
+    else {
       const path = [...slider.path.controlPoints];
 
       path[index] = {
@@ -191,7 +203,7 @@ export class SliderUtils {
   getInsertPoint(slider: Slider, mousePos: Vec2) {
     if (
       slider.path.controlPoints.some(
-        (p) => mousePos.sub(slider.stackedPosition).distance(p) < 8,
+        p => mousePos.sub(slider.stackedPosition).distance(p) < 8,
       )
     ) {
       return null;

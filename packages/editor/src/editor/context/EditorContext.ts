@@ -1,8 +1,9 @@
 import { Beatmap, ControlPointManager, HitObjectManager } from '@osucad/common';
-import { Bindable, DependencyContainer, PIXITexture } from 'osucad-framework';
+import type { DependencyContainer, PIXITexture } from 'osucad-framework';
+import { Bindable } from 'osucad-framework';
 import { Skin } from '../../skins/Skin';
 import { CommandManager } from './CommandManager';
-import { BeatmapAsset } from './BeatmapAsset';
+import type { BeatmapAsset } from './BeatmapAsset';
 
 export abstract class EditorContext {
   // #region Beatmap
@@ -112,10 +113,10 @@ export abstract class EditorContext {
     );
 
     this.loadBackground(beatmap).then(
-      (background) => (this.backgroundBindable.value = background),
+      background => (this.backgroundBindable.value = background),
     );
 
-    await Promise.all(this.#loaders.map((loader) => loader()));
+    await Promise.all(this.#loaders.map(loader => loader()));
   }
 
   // #endregion

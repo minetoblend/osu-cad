@@ -1,8 +1,8 @@
 import {
   Anchor,
   CompositeDrawable,
-  dependencyLoader,
   DrawableSprite,
+  dependencyLoader,
   resolved,
 } from 'osucad-framework';
 import { animate } from '../../utils/animate';
@@ -51,7 +51,8 @@ export class ReverseArrow extends CompositeDrawable {
         1,
       );
       this.scale = 1.2 - this.editorClock.beatProgress * 0.2;
-    } else {
+    }
+    else {
       this.alpha = animate(time, 0, 150, 1, 0);
       this.scale = animate(time, 0, 150, 1, 2);
     }

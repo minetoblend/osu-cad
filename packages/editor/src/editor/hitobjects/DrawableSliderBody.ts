@@ -1,5 +1,6 @@
-import { Beatmap, Slider } from '@osucad/common';
-import { Container, resolved, Vec2 } from 'osucad-framework';
+import type { Slider } from '@osucad/common';
+import { Beatmap } from '@osucad/common';
+import { Container, Vec2, resolved } from 'osucad-framework';
 import {
   CustomRenderPipe,
   Mesh,
@@ -8,10 +9,10 @@ import {
   WebGLRenderer,
 } from 'pixi.js';
 import { animate } from '../../utils/animate';
+import { ThemeColors } from '../ThemeColors';
 import { SliderShader } from './SliderShader';
 import { SliderPathGeometry } from './SliderPathGeometry';
 import { GeometryBuilder } from './GeometryBuilder';
-import { ThemeColors } from '../ThemeColors';
 
 let endCapGeometry: MeshGeometry | null = null;
 
@@ -127,18 +128,18 @@ export class DrawableSliderBody extends Container {
 
   setup() {
     const comboColors = this.beatmap.colors;
-    this.shader.comboColor =
-      comboColors[this.hitObject.comboIndex % comboColors.length];
-    this.shader.borderColor = this.hitObject.isSelected ? 0x3d74ff : 0xffffff;
+    this.shader.comboColor
+      = comboColors[this.hitObject.comboIndex % comboColors.length];
+    this.shader.borderColor = this.hitObject.isSelected ? 0x3D74FF : 0xFFFFFF;
   }
 
   update() {
     super.update();
 
     if (
-      this.time.current <
-        this.hitObject.startTime - this.hitObject.timePreempt ||
-      this.time.current > this.hitObject.endTime + 700
+      this.time.current
+      < this.hitObject.startTime - this.hitObject.timePreempt
+      || this.time.current > this.hitObject.endTime + 700
     ) {
       return;
     }

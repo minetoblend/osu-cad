@@ -1,9 +1,10 @@
-import { CompositeDrawable, resolved, Vec2 } from 'osucad-framework';
-import { Skin } from '../../skins/Skin';
-import { HitObject, Spinner } from '@osucad/common';
-import { animate } from '../../utils/animate';
+import { CompositeDrawable, Vec2, resolved } from 'osucad-framework';
+import type { HitObject } from '@osucad/common';
+import { Spinner } from '@osucad/common';
 import { Easing } from 'osu-classes';
 import { Sprite } from 'pixi.js';
+import { animate } from '../../utils/animate';
+import { Skin } from '../../skins/Skin';
 
 export class FollowPointRenderer extends CompositeDrawable {
   @resolved(Skin)
@@ -19,9 +20,9 @@ export class FollowPointRenderer extends CompositeDrawable {
       const next = objects[i + 1];
 
       if (
-        next.isNewCombo ||
-        current instanceof Spinner ||
-        next instanceof Spinner
+        next.isNewCombo
+        || current instanceof Spinner
+        || next instanceof Spinner
       ) {
         continue;
       }
@@ -41,10 +42,10 @@ export class FollowPointRenderer extends CompositeDrawable {
       for (let j = 0; j < amount; j++) {
         const offset = (duration * j) / amount;
 
-        const distance =
-          padding +
-          j * gap +
-          animate(
+        const distance
+          = padding
+          + j * gap
+          + animate(
             currentTime,
             offset - 600,
             offset - 400,
@@ -73,9 +74,13 @@ export class FollowPointRenderer extends CompositeDrawable {
 
         if (currentTime < offset - 400) {
           sprite.alpha = animate(currentTime, offset - 600, offset - 400, 0, 1);
-        } else if (currentTime < offset) {
+        }
+        else if (currentTime < offset) {
           sprite.alpha = 1;
-        } else sprite.alpha = animate(currentTime, offset, offset + 400, 1, 0);
+        }
+        else {
+          sprite.alpha = animate(currentTime, offset, offset + 400, 1, 0);
+        }
       }
 
       childCount += amount;

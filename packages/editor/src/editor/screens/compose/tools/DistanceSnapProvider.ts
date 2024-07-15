@@ -1,22 +1,23 @@
-import {
-  ControlPointManager,
+import type {
   IDistanceSnapProvider,
   Slider,
+} from '@osucad/common';
+import {
+  ControlPointManager,
 } from '@osucad/common';
 import { CompositeDrawable, resolved } from 'osucad-framework';
 import { EditorClock } from '../../../EditorClock';
 
 export class DistanceSnapProvider
   extends CompositeDrawable
-  implements IDistanceSnapProvider
-{
+  implements IDistanceSnapProvider {
   @resolved(ControlPointManager)
   controlPointInfo!: ControlPointManager;
 
   @resolved(EditorClock)
   editorClock!: EditorClock;
 
-  findSnappedDistance(referenceObject: Slider, distance: number): number {
+  findSnappedDistance(referenceObject: Slider): number {
     const length = referenceObject!.path.totalLength;
     const duration = length / referenceObject!.velocity;
     let time = this.controlPointInfo.snap(

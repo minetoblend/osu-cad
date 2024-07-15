@@ -1,26 +1,28 @@
-import { Beatmap, HitObject, HitObjectManager } from '@osucad/common';
+import type { HitObject } from '@osucad/common';
+import { Beatmap, HitObjectManager } from '@osucad/common';
+import type {
+  DragEvent,
+  DragStartEvent,
+  KeyDownEvent,
+  MouseDownEvent,
+  ScrollEvent,
+} from 'osucad-framework';
 import {
   Anchor,
   Axes,
   Box,
   Container,
-  dependencyLoader,
-  DragEndEvent,
-  DragEvent,
-  DragStartEvent,
-  KeyDownEvent,
   MouseButton,
-  MouseDownEvent,
   PIXIContainer,
+  dependencyLoader,
   resolved,
-  ScrollEvent,
 } from 'osucad-framework';
+import gsap from 'gsap';
 import { EditorClock } from '../EditorClock';
 import { ThemeColors } from '../ThemeColors';
-import { TimelineTick } from './TimelineTick';
-import gsap from 'gsap';
-import { TimelineObject } from './TimelineObject';
 import { EditorSelection } from '../screens/compose/EditorSelection';
+import { TimelineTick } from './TimelineTick';
+import { TimelineObject } from './TimelineObject';
 
 export class Timeline extends Container {
   constructor() {
@@ -156,7 +158,7 @@ export class Timeline extends Container {
     const startTime = this.startTime - 1000;
     const endTime = this.endTime + 1000;
     const objects = this.beatmap.hitObjects.hitObjects.filter(
-      (it) => it.endTime >= startTime && it.startTime <= endTime,
+      it => it.endTime >= startTime && it.startTime <= endTime,
     );
 
     const shouldRemove = new Set(this.#hitObjectMap.keys());
@@ -237,21 +239,22 @@ export class Timeline extends Container {
 
     const selectedObjects = this.hitObjects.hitObjects.filter((it) => {
       return (
-        it.startTime <= Math.max(this.#dragStartTime, this.#dragEndTime) &&
-        it.endTime >= Math.min(this.#dragStartTime, this.#dragEndTime)
+        it.startTime <= Math.max(this.#dragStartTime, this.#dragEndTime)
+        && it.endTime >= Math.min(this.#dragStartTime, this.#dragEndTime)
       );
     });
 
     if (e.controlPressed) {
       this.selection.select([...this.#startSelection, ...selectedObjects]);
-    } else {
+    }
+    else {
       this.selection.select(selectedObjects);
     }
 
     return true;
   }
 
-  onDragEnd(e: DragEndEvent): boolean {
+  onDragEnd(): boolean {
     this.#dragBox.alpha = 0;
 
     return true;
@@ -259,7 +262,7 @@ export class Timeline extends Container {
 
   onKeyDown(e: KeyDownEvent): boolean {
     if (!e.controlPressed && e.shiftPressed && e.key.startsWith('Digit')) {
-      const digit = parseInt(e.key[5]);
+      const digit = Number.parseInt(e.key[5]);
       if (digit !== 0) {
         this.editorClock.beatSnapDivisor.value = digit;
         return true;
@@ -271,7 +274,10 @@ export class Timeline extends Container {
 
   onScroll(e: ScrollEvent): boolean {
     if (e.altPressed) {
-      e.scrollDelta.y > 0 ? this.zoomIn() : this.zoomOut();
+      if (e.scrollDelta.y > 0)
+        this.zoomIn();
+      else
+        this.zoomOut();
 
       return true;
     }

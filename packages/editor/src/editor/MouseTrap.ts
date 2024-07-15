@@ -1,9 +1,11 @@
+import type {
+  DrawableOptions,
+  MouseDownEvent,
+} from 'osucad-framework';
 import {
   Axes,
   CompositeDrawable,
-  DrawableOptions,
   MouseButton,
-  MouseDownEvent,
 } from 'osucad-framework';
 
 export interface MouseTrapOptions extends DrawableOptions {

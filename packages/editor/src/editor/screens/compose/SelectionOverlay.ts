@@ -1,13 +1,14 @@
 import {
   Anchor,
   CompositeDrawable,
-  dependencyLoader,
   DrawableSprite,
+  dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import { EditorSelection } from './EditorSelection';
-import { HitObject, Slider, Spinner } from '@osucad/common';
+import type { HitObject } from '@osucad/common';
+import { Slider, Spinner } from '@osucad/common';
 import { Skin } from '../../../skins/Skin';
+import { EditorSelection } from './EditorSelection';
 
 export class SelectionOverlay extends CompositeDrawable {
   @resolved(EditorSelection)
@@ -22,7 +23,8 @@ export class SelectionOverlay extends CompositeDrawable {
         const overlay = new SelectionOverlayObject(hitObject);
         this.#objects.set(hitObject, overlay);
         this.addInternal(overlay);
-      } else if (!selected && this.#objects.has(hitObject)) {
+      }
+      else if (!selected && this.#objects.has(hitObject)) {
         const overlay = this.#objects.get(hitObject)!;
         this.removeInternal(overlay);
         this.#objects.delete(hitObject);

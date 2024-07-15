@@ -1,24 +1,23 @@
 import gsap from 'gsap';
+import type {
+  Key,
+  KeyDownEvent,
+  MouseDownEvent,
+} from 'osucad-framework';
 import {
   Anchor,
   Axes,
   Button,
   ButtonTrigger,
-  dependencyLoader,
   DrawableSprite,
   FillDirection,
   FillFlowContainer,
   FillMode,
-  HoverEvent,
-  HoverLostEvent,
-  Key,
-  KeyDownEvent,
-  MouseDownEvent,
-  MouseUpEvent,
-  resolved,
   RoundedBox,
+  dependencyLoader,
+  resolved,
 } from 'osucad-framework';
-import { Texture } from 'pixi.js';
+import type { Texture } from 'pixi.js';
 import { ThemeColors } from '../../ThemeColors';
 import { UISamples } from '../../../UISamples';
 
@@ -99,16 +98,17 @@ export class ComposeToolbarButton extends Button {
   #updateOutline() {
     if (this.outlineVisibility === 0) {
       this.#outline.outlines = [];
-    } else {
+    }
+    else {
       this.#outline.outlines = [
         {
-          color: 0xc0bfbd,
+          color: 0xC0BFBD,
           width: 1.5 * this.outlineVisibility,
           alpha: 0.25 * this.outlineVisibility,
           alignment: 1,
         },
         {
-          color: 0x32d2ac,
+          color: 0x32D2AC,
           width: 1.5 * this.outlineVisibility,
           alpha: 1 * this.outlineVisibility,
           alignment: 0,
@@ -129,8 +129,6 @@ export class ComposeToolbarButton extends Button {
   }
 
   protected updateState() {
-    this.drawNode;
-
     if (this.active) {
       this.#icon.color = this.isHovered
         ? this.theme.primaryHighlight
@@ -144,7 +142,8 @@ export class ComposeToolbarButton extends Button {
           this.#updateOutline();
         },
       });
-    } else {
+    }
+    else {
       this.#background.color = 0x222228;
       this.#icon.color = this.isHovered ? 'white' : '#bbbec5';
       gsap.to(this, {
@@ -177,7 +176,8 @@ export class ComposeToolbarButton extends Button {
         duration: 0.3,
         ease: 'power4.out',
       });
-    } else {
+    }
+    else {
       gsap.to(this.#icon, {
         scaleX: 1,
         scaleY: 1,
@@ -203,7 +203,7 @@ export class ComposeToolbarButton extends Button {
   @resolved(UISamples)
   samples!: UISamples;
 
-  onHover(e: HoverEvent): boolean {
+  onHover(): boolean {
     this.samples.toolHover.play({
       volume: 0.5,
     });
@@ -211,13 +211,14 @@ export class ComposeToolbarButton extends Button {
     return true;
   }
 
-  onHoverLost(e: HoverLostEvent): boolean {
+  onHoverLost(): boolean {
     this.updateState();
     return true;
   }
 
   onMouseDown(e: MouseDownEvent): boolean {
-    if (!super.onMouseDown(e)) return false;
+    if (!super.onMouseDown(e))
+      return false;
     this.samples.toolSelect.play();
     this.#mouseDown = true;
     this.updateState();
@@ -225,7 +226,7 @@ export class ComposeToolbarButton extends Button {
     return true;
   }
 
-  onMouseUp(e: MouseUpEvent): boolean {
+  onMouseUp(): boolean {
     this.#mouseDown = false;
     this.updateState();
 
@@ -237,7 +238,8 @@ export class ComposeToolbarButton extends Button {
   protected keyPressed = false;
 
   onKeyDown(e: KeyDownEvent): boolean {
-    if (e.controlPressed || e.shiftPressed || e.altPressed) return false;
+    if (e.controlPressed || e.shiftPressed || e.altPressed)
+      return false;
 
     if (this.keyBinding === e.key) {
       this.action?.();

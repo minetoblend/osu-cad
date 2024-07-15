@@ -1,5 +1,5 @@
 import { Axes, Container } from 'osucad-framework';
-import { EditorScreen } from './screens/EditorScreen';
+import type { EditorScreen } from './screens/EditorScreen';
 
 export class EditorScreenContainer extends Container {
   constructor() {

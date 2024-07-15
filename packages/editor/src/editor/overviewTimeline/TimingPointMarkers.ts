@@ -1,4 +1,4 @@
-import { Anchor, Axes, dependencyLoader, resolved } from 'osucad-framework';
+import { dependencyLoader, resolved } from 'osucad-framework';
 import { EditorClock } from '../EditorClock';
 import {
   OverviewTimelineMarker,
@@ -34,9 +34,9 @@ export class TimingPointMarkers extends OverviewTimelineMarkerContainer {
     const trackLength = this.editorClock.trackLength;
 
     return this.beatmap.controlPoints.controlPoints
-      .filter((it) => !!it.timing)
+      .filter(it => !!it.timing)
       .map((timingPoint) => {
-        const marker = new OverviewTimelineMarker(0xff265a, 1.5);
+        const marker = new OverviewTimelineMarker(0xFF265A, 1.5);
 
         marker.x = timingPoint.time / trackLength;
 

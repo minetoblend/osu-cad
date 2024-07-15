@@ -1,7 +1,9 @@
-import {
+import type {
   FontDefinition,
-  SpriteText,
   SpriteTextOptions,
+} from 'osucad-framework';
+import {
+  SpriteText,
 } from 'osucad-framework';
 
 import nunitoSans400 from './assets/fonts/nunito-sans-400.fnt?bmFont';
@@ -42,7 +44,7 @@ export class OsucadSpriteText extends SpriteText {
       ...rest,
       font,
       style: {
-        fill: 0xffffff,
+        fill: 0xFFFFFF,
         fontSize,
       },
     });

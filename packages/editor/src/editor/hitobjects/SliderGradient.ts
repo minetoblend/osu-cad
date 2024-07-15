@@ -1,6 +1,8 @@
+import type {
+  ColorSource,
+} from 'pixi.js';
 import {
   Color,
-  ColorSource,
   DOMAdapter,
   FillGradient,
   ImageSource,

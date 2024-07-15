@@ -1,17 +1,20 @@
-import { PathType, Slider } from '@osucad/common';
+import type { Slider } from '@osucad/common';
+import { PathType } from '@osucad/common';
+import type {
+  DragEndEvent,
+  DragEvent,
+  DragStartEvent,
+  MouseDownEvent,
+} from 'osucad-framework';
 import {
   Anchor,
   Axes,
   CompositeDrawable,
   Container,
-  dependencyLoader,
-  DragEndEvent,
-  DragEvent,
-  DragStartEvent,
-  MouseDownEvent,
   PIXIGraphics,
   RoundedBox,
   Vec2,
+  dependencyLoader,
 } from 'osucad-framework';
 import gsap from 'gsap';
 
@@ -34,7 +37,8 @@ export class SliderPathVisualizer extends CompositeDrawable {
   }
 
   set slider(slider: Slider | null) {
-    if (slider === this.#slider) return;
+    if (slider === this.#slider)
+      return;
 
     if (this.#slider) {
       this.#slider.onUpdate.removeListener(this.#onSliderUpdate);
@@ -47,7 +51,8 @@ export class SliderPathVisualizer extends CompositeDrawable {
 
     if (slider) {
       this.#setup(slider);
-    } else {
+    }
+    else {
       this.#graphics.clear();
       this.#handles.clear();
     }
@@ -90,7 +95,7 @@ export class SliderPathVisualizer extends CompositeDrawable {
     let currentType = controlPoints[0].type!;
     console.assert(
       currentType !== null,
-      "First control point's type cannot be null",
+      'First control point\'s type cannot be null',
     );
 
     g.moveTo(0, 0);
@@ -178,7 +183,8 @@ class SliderPathVisualizerHandle extends CompositeDrawable {
   }
 
   set type(type: PathType | null) {
-    if (type === this.#type) return;
+    if (type === this.#type)
+      return;
 
     this.#type = type;
     this.#handle.color = getColorForPathType(type);
@@ -246,14 +252,14 @@ class SliderPathVisualizerHandle extends CompositeDrawable {
 function getColorForPathType(type: PathType | null) {
   switch (type) {
     case PathType.Bezier:
-      return 0x00ff00;
+      return 0x00FF00;
     case PathType.Catmull:
-      return 0xff0000;
+      return 0xFF0000;
     case PathType.PerfectCurve:
-      return 0x0000ff;
+      return 0x0000FF;
     case PathType.Linear:
-      return 0xffff00;
+      return 0xFFFF00;
     default:
-      return 0xcccccc;
+      return 0xCCCCCC;
   }
 }

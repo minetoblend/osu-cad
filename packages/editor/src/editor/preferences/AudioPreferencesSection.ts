@@ -1,7 +1,8 @@
-import { Axes, Drawable, resolved, RoundedBox } from 'osucad-framework';
-import { PreferencesPanel } from './PreferencesPanel';
+import type { Drawable } from 'osucad-framework';
+import { resolved } from 'osucad-framework';
 import { PreferencesStore } from '../../preferences/PreferencesStore';
-import { VolumeSlider, VolumeSliderContainer } from './VolumeSlider';
+import { PreferencesPanel } from './PreferencesPanel';
+import { VolumeSliderContainer } from './VolumeSlider';
 
 export class AudioPreferencesSection extends PreferencesPanel {
   getTitle(): string {

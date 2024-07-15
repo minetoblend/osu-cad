@@ -1,16 +1,18 @@
-import { ComposeToolInteraction } from './ComposeToolInteraction';
-import { Slider } from '@osucad/common';
-import {
-  dependencyLoader,
+import type { Slider } from '@osucad/common';
+import type {
   DragEvent,
   DragStartEvent,
-  MouseButton,
   MouseUpEvent,
-  resolved,
   Vec2,
+} from 'osucad-framework';
+import {
+  MouseButton,
+  dependencyLoader,
+  resolved,
 } from 'osucad-framework';
 import { SliderUtils } from '../SliderUtils';
 import { DistanceSnapProvider } from '../DistanceSnapProvider';
+import { ComposeToolInteraction } from './ComposeToolInteraction';
 
 export class InsertControlPointInteraction extends ComposeToolInteraction {
   constructor(
