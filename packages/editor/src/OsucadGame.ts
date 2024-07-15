@@ -18,6 +18,7 @@ import { EditorContext } from './editor/context/EditorContext';
 import './editor/mixins/HitObjectMixin';
 import { EditorActionContainer } from './editor/EditorActionContainer';
 import { PreferencesContainer } from './editor/preferences/PreferencesContainer';
+import { PreferencesStore } from './preferences/PreferencesStore';
 
 RenderTarget.defaultOptions.depth = true;
 RenderTarget.defaultOptions.stencil = true;
@@ -55,13 +56,16 @@ export class OsucadGame extends Game {
 
     this.add(this.#innerContainer);
 
+    const preferences = new PreferencesStore();
+    this.dependencies.provide(preferences);
+    preferences.init();
+
     const mixer = new EditorMixer(this.audioManager);
     this.dependencies.provide(mixer);
+    super.add(mixer);
 
     const samples = new UISamples(this.audioManager, mixer.userInterface);
     this.dependencies.provide(samples);
-
-    mixer.userInterface.volume = 0.25;
 
     await Promise.all([this.context.load(), samples.load()]);
 

@@ -11,7 +11,7 @@ import {
 import { ThemeColors } from '../ThemeColors';
 import { BackdropBlurFilter } from 'pixi-filters';
 import { MainScrollContainer } from '../MainScrollContainer';
-import { AudioPreferences } from './AudioPreferences';
+import { AudioPreferencesSection } from './AudioPreferencesSection';
 
 export class Preferences extends Container {
   constructor() {
@@ -53,13 +53,7 @@ export class Preferences extends Container {
   }
 
   protected createContent() {
-    this.addAll(
-      new AudioPreferences(),
-      new AudioPreferences(),
-      new AudioPreferences(),
-      new AudioPreferences(),
-      new AudioPreferences(),
-    );
+    this.addAll(new AudioPreferencesSection());
   }
 
   onClick(): boolean {
