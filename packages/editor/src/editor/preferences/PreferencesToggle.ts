@@ -56,7 +56,7 @@ export class PreferencesToggle extends CompositeDrawable {
         alignment: 0,
         alpha: 0.5,
       };
-    });
+    }, { immediate: true });
   }
 
   #toggle!: RoundedBox;
