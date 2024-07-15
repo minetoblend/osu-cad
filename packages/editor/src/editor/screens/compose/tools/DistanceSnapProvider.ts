@@ -25,11 +25,11 @@ export class DistanceSnapProvider
       this.editorClock.beatSnapDivisor.value,
     );
 
-    const beatLength = this.controlPointInfo.timingPointAt(
-      referenceObject.startTime,
-    ).timing.beatLength;
-
     if (time > referenceObject.startTime + duration) {
+      const beatLength = this.controlPointInfo.timingPointAt(
+        referenceObject.startTime,
+      ).timing.beatLength;
+
       time -= beatLength / this.editorClock.beatSnapDivisor.value;
     }
 
