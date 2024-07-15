@@ -1,6 +1,7 @@
 import type { Drawable } from 'osucad-framework';
 import { resolved } from 'osucad-framework';
 import { PreferencesStore } from '../../preferences/PreferencesStore';
+import { OsucadSpriteText } from '../../OsucadSpriteText';
 import { PreferencesPanel } from './PreferencesPanel';
 import { VolumeSliderContainer } from './VolumeSlider';
 
@@ -14,6 +15,11 @@ export class AudioPreferencesSection extends PreferencesPanel {
 
   createContent(): Drawable[] {
     return [
+      new OsucadSpriteText({
+        text: 'Volume',
+        fontSize: 16,
+        color: 0xB6B6C3,
+      }),
       new VolumeSliderContainer(
         'master',
         this.preferences.audio.masterVolumeBindable,
