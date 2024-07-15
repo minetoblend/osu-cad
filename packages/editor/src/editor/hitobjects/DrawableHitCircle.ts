@@ -1,5 +1,7 @@
 import type { HitCircle } from '@osucad/common';
-import { Anchor } from 'osucad-framework';
+import { Anchor, resolved } from 'osucad-framework';
+import { PreferencesStore } from '../../preferences/PreferencesStore';
+import { animate } from '../../utils/animate';
 import { ApproachCircle } from './ApproachCircle';
 import { CirclePiece } from './CirclePiece';
 import { DrawableComboNumber } from './DrawableComboNumber';
@@ -39,7 +41,17 @@ export class DrawableHitCircle extends DrawableHitObject<HitCircle> {
     this.comboNumber.comboNumber = this.hitObject.indexInCombo;
   }
 
+  @resolved(PreferencesStore)
+  preferences!: PreferencesStore;
+
   update() {
     super.update();
+
+    const time = this.time.current - this.hitObject.startTime;
+
+    this.comboNumber.alpha
+      = time > 0 && this.preferences.viewport.hitAnimations
+        ? animate(time, 0, 50, 1, 0)
+        : 1;
   }
 }

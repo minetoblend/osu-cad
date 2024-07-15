@@ -1,6 +1,7 @@
 import type { Slider } from '@osucad/common';
-import { Anchor, Container, Vec2 } from 'osucad-framework';
+import { Anchor, Container, Vec2, resolved } from 'osucad-framework';
 import { animate } from '../../utils/animate';
+import { PreferencesStore } from '../../preferences/PreferencesStore';
 import { DrawableHitObject } from './DrawableHitObject';
 import { CirclePiece } from './CirclePiece';
 import { ApproachCircle } from './ApproachCircle';
@@ -97,9 +98,17 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
     this.sliderBall.endTime = this.hitObject.endTime;
   }
 
+  @resolved(PreferencesStore)
+  preferences!: PreferencesStore;
+
   update() {
     super.update();
     const time = this.time.current - this.hitObject.startTime;
+
+    this.comboNumber.alpha
+    = time > 0 && this.preferences.viewport.hitAnimations
+        ? animate(time, 0, 50, 1, 0)
+        : 1;
 
     if (time < 0) {
       this.sliderBody.bodyAlpha = animate(

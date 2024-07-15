@@ -10,6 +10,7 @@ import {
 } from 'osucad-framework';
 import { Skin } from '../../skins/Skin';
 import { animate } from '../../utils/animate';
+import { PreferencesStore } from '../../preferences/PreferencesStore';
 
 export class ApproachCircle extends CompositeDrawable {
   constructor() {
@@ -26,6 +27,9 @@ export class ApproachCircle extends CompositeDrawable {
 
   @resolved(Skin)
   skin!: Skin;
+
+  @resolved(PreferencesStore)
+  preferences!: PreferencesStore;
 
   @dependencyLoader()
   load() {
@@ -55,7 +59,10 @@ export class ApproachCircle extends CompositeDrawable {
       this.alpha = animate(time, -this.timePreempt, 0, 0, 1);
     }
     else {
-      this.scale = animate(time, 0, 100, 1, 1.1);
+      this.scale
+      = this.preferences.viewport.hitAnimations
+          ? 0
+          : animate(time, 0, 100, 1, 1.1);
       this.alpha = animate(time, 0, 700, 1, 0);
     }
   }
