@@ -1,3 +1,4 @@
+import './mixins/HitObjectMixin';
 import type {
   IKeyBindingHandler,
   KeyBindingPressEvent,
