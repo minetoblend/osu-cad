@@ -5,11 +5,7 @@ import type {
 import {
   SpriteText,
 } from 'osucad-framework';
-
-import nunitoSans400 from './assets/fonts/nunito-sans-400.fnt?bmFont';
-import nunitoSans500 from './assets/fonts/nunito-sans-500.fnt?bmFont';
-import nunitoSans600 from './assets/fonts/nunito-sans-600.fnt?bmFont';
-import nunitoSans700 from './assets/fonts/nunito-sans-700.fnt?bmFont';
+import { UIFonts } from './UIFonts';
 
 export type OsucadSpriteTextOptions = Omit<
   SpriteTextOptions,
@@ -27,16 +23,16 @@ export class OsucadSpriteText extends SpriteText {
 
     switch (fontWeight) {
       case 500:
-        font = nunitoSans500;
+        font = UIFonts.nunitoSans500;
         break;
       case 600:
-        font = nunitoSans600;
+        font = UIFonts.nunitoSans600;
         break;
       case 700:
-        font = nunitoSans700;
+        font = UIFonts.nunitoSans700;
         break;
       default:
-        font = nunitoSans400;
+        font = UIFonts.nunitoSans400;
         break;
     }
 
