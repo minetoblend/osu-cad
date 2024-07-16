@@ -14,12 +14,20 @@ import {
   lerp,
   resolved,
 } from 'osucad-framework';
+import { PreferencesStore } from '../preferences/PreferencesStore';
 
 export class EditorClock
   extends Container
   implements IFrameBasedClock, IAdjustableClock {
   constructor(readonly track: Track) {
     super();
+  }
+
+  @resolved(PreferencesStore)
+  preferences!: PreferencesStore;
+
+  get offset() {
+    return this.preferences.audio.audioOffset;
   }
 
   readonly isFrameBasedClock = true;
@@ -97,13 +105,17 @@ export class EditorClock
     this.#targetTime = position;
     this.#lastSeekWasAnimated = animated;
 
-    return this.track.seek(position);
+    return this.track.seek(position - this.offset);
   }
 
+  #previousOffset = 0;
+
   processFrame(): void {
-    if (this.isRunning || !this.#lastSeekWasAnimated) {
+    if (this.isRunning || !this.#lastSeekWasAnimated || this.#previousOffset !== this.offset) {
+      this.#previousOffset = this.offset;
+
       const lastTime = this.currentTime;
-      const currentTime = this.currentTimeAccurate;
+      const currentTime = clamp(this.currentTimeAccurate, 0, this.track.length);
       this.#targetTime = currentTime;
 
       this.#frameTimeInfo = {
@@ -145,7 +157,7 @@ export class EditorClock
   }
 
   get currentTimeAccurate(): number {
-    return this.track.currentTime;
+    return this.track.currentTime + this.offset;
   }
 
   #targetTime = 0;
@@ -161,8 +173,10 @@ export class EditorClock
     return this.#frameTimeInfo.elapsed;
   }
 
+  #delayedStart = false;
+
   get isRunning(): boolean {
-    return this.track.isRunning;
+    return this.track.isRunning || this.#delayedStart;
   }
 
   start() {

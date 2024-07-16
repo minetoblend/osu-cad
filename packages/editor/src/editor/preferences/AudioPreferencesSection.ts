@@ -32,7 +32,17 @@ export class AudioPreferencesSection extends PreferencesPanel {
         'hitsounds',
         this.preferences.audio.hitsoundVolumeBindable,
       ),
-      new VolumeSliderContainer('ui', this.preferences.audio.uiVolumeBindable),
+      new VolumeSliderContainer(
+        'user interface',
+        this.preferences.audio.uiVolumeBindable,
+      ),
+      new VolumeSliderContainer(
+        'audio offset',
+        this.preferences.audio.audioOffsetBindable,
+        -100,
+        100,
+        value => `${Math.round(value)}ms`,
+      ),
     ];
   }
 }

@@ -37,7 +37,7 @@ export class Preferences extends Container {
       new Box({
         relativeSizeAxes: Axes.Both,
         color: this.colors.translucent,
-        alpha: 0.9,
+        alpha: 0.8,
         filters: [filter],
       }),
       new Container({

@@ -1,9 +1,12 @@
 import gsap from 'gsap';
 import type {
   Bindable,
+
+  DragEndEvent,
   DragEvent,
   DragStartEvent,
   MouseDownEvent,
+  MouseUpEvent,
 } from 'osucad-framework';
 import {
   Anchor,
@@ -23,6 +26,7 @@ export class VolumeSliderContainer extends Container {
     readonly bindable: Bindable<number>,
     readonly min = 0,
     readonly max = 1,
+    readonly format?: (value: number) => string,
   ) {
     super({
       relativeSizeAxes: Axes.X,
@@ -42,7 +46,7 @@ export class VolumeSliderContainer extends Container {
         relativeSizeAxes: Axes.X,
         height: 20,
         y: 15,
-        padding: { right: 50 },
+        padding: { right: 60 },
         child: new VolumeSlider(this.bindable, this.min, this.max),
       }),
       new Container({
@@ -50,7 +54,7 @@ export class VolumeSliderContainer extends Container {
         origin: Anchor.TopRight,
         y: 15,
         height: 20,
-        width: 40,
+        width: 50,
         child: (this.#valueText = new OsucadSpriteText({
           text: '100%',
           color: 0xB6B6C3,
@@ -61,7 +65,9 @@ export class VolumeSliderContainer extends Container {
 
     this.bindable.addOnChangeListener(
       (value) => {
-        this.#valueText.text = `${Math.round(value * 100)}%`;
+        this.#valueText.text
+          = this.format?.(value)
+          ?? `${Math.round(value * 100)}%`;
       },
       { immediate: true },
     );
@@ -159,6 +165,14 @@ export class VolumeSlider extends CompositeDrawable {
   onDrag(e: DragEvent): boolean {
     const x = e.mousePosition.x / this.drawSize.x;
     this.bindable.value = clamp(x, 0, 1) * (this.max - this.min) + this.min;
+    return true;
+  }
+
+  onDragEnd(e: DragEndEvent): boolean {
+    return true;
+  }
+
+  onMouseUp(e: MouseUpEvent): boolean {
     return true;
   }
 }

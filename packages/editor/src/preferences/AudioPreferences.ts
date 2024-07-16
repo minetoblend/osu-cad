@@ -12,6 +12,7 @@ export class AudioPreferences {
       this.musicVolumeBindable.value = parsed.musicVolume;
       this.hitsoundVolumeBindable.value = parsed.hitsoundVolume;
       this.uiVolumeBindable.value = parsed.uiVolume;
+      this.audioOffsetBindable.value = parsed.audioOffset ?? 0;
     }
 
     this.masterVolumeBindable.addOnChangeListener(() => this.save());
@@ -52,10 +53,19 @@ export class AudioPreferences {
     this.uiVolumeBindable.value = value;
   }
 
+  get audioOffset() {
+    return this.audioOffsetBindable.value;
+  }
+
+  set audioOffset(value: number) {
+    this.audioOffsetBindable.value = value;
+  }
+
   masterVolumeBindable = new Bindable(0.5);
   musicVolumeBindable = new Bindable(0.75);
   hitsoundVolumeBindable = new Bindable(0.75);
   uiVolumeBindable = new Bindable(0.5);
+  audioOffsetBindable = new Bindable(0);
 
   private save() {
     localStorage.setItem(
