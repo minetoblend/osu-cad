@@ -57,7 +57,7 @@ export class HitsoundPlayer extends CompositeDrawable {
       for (const addition of additions) {
         const key = `${sampleSet}-hit${addition}`;
 
-        fetch(`/edit/assets/skin/${sampleSet}-hit${addition}.wav`)
+        fetch(`/assets/skin/${sampleSet}-hit${addition}.wav`)
           .then(res => res.arrayBuffer())
           .then(buffer => this.audioManager.context.decodeAudioData(buffer))
           .then((audioBuffer) => {
