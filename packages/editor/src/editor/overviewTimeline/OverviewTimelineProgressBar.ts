@@ -1,6 +1,7 @@
 import type {
   DragEvent,
   DragStartEvent,
+  MouseDownEvent,
 } from 'osucad-framework';
 import {
   Anchor,
@@ -69,6 +70,19 @@ export class OverviewTimelineProgressBar extends CompositeDrawable {
   }
 
   onDrag(e: DragEvent): boolean {
+    const position = this.toLocalSpace(e.screenSpaceMousePosition);
+
+    const newProgress = Math.max(0, Math.min(1, position.x / this.drawSize.x));
+
+    this.editorClock.seek(newProgress * this.editorClock.trackLength);
+
+    return true;
+  }
+
+  onMouseDown(e: MouseDownEvent): boolean {
+    if (e.button !== MouseButton.Left)
+      return false;
+
     const position = this.toLocalSpace(e.screenSpaceMousePosition);
 
     const newProgress = Math.max(0, Math.min(1, position.x / this.drawSize.x));
