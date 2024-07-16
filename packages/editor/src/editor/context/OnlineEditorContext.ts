@@ -24,6 +24,8 @@ export class OnlineEditorContext extends EditorContext {
   async load() {
     this.addParallelLoad(() => this.users.init(this.socket));
 
+    this.socket.connect();
+
     await super.load();
   }
 
