@@ -146,7 +146,10 @@ export class EditorRoom extends EventEmitter2 {
       '#88f03e',
     ];
 
-    const color = colors[this.colorIndex++ % colors.length];
+    const color = colors[this.colorIndex % colors.length];
+
+    // Length of colors needs to be odd for this to work
+    this.colorIndex += 2;
 
     const roomUser = new RoomUser(
       user,
