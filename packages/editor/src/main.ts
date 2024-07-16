@@ -29,6 +29,7 @@ async function main() {
       withCredentials: true,
       query: { id: joinKey },
       transports: ['websocket'],
+      autoConnect: false,
     });
 
     context = new OnlineEditorContext(socket);
