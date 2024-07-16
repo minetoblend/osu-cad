@@ -60,7 +60,7 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
     );
 
     this.reverseArrows.clear();
-    for (let i = 0; i < this.hitObject.repeats; i++) {
+    for (let i = this.hitObject.repeats -1; i >= 0; i--) {
       const time = this.hitObject.startTime + this.hitObject.spanDuration * i;
       const circle = new CirclePiece();
       circle.startTime = time;
