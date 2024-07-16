@@ -17,6 +17,7 @@ import {
   SampleSet,
   SampleType,
 } from '@osucad/common';
+import { PreferencesStore } from '../preferences/PreferencesStore';
 import { EditorClock } from './EditorClock';
 import { EditorContext } from './context/EditorContext';
 import type { BeatmapAsset } from './context/BeatmapAsset';
@@ -28,6 +29,9 @@ export class HitsoundPlayer extends CompositeDrawable {
 
   @resolved(EditorContext)
   editorContext!: EditorContext;
+
+  @resolved(PreferencesStore)
+  preferences!: PreferencesStore;
 
   samplePlayed = new Action<HitSample>();
 
@@ -53,7 +57,7 @@ export class HitsoundPlayer extends CompositeDrawable {
       for (const addition of additions) {
         const key = `${sampleSet}-hit${addition}`;
 
-        fetch(`/assets/skin/${sampleSet}-hit${addition}.wav`)
+        fetch(`/edit/assets/skin/${sampleSet}-hit${addition}.wav`)
           .then(res => res.arrayBuffer())
           .then(buffer => this.audioManager.context.decodeAudioData(buffer))
           .then((audioBuffer) => {
@@ -105,7 +109,7 @@ export class HitsoundPlayer extends CompositeDrawable {
       return;
     }
 
-    const offset = 100;
+    const offset = 100 - this.preferences.audio.audioOffset;
 
     let startTime
       = this.editorClock.currentTime + offset - this.editorClock.timeInfo.elapsed;
@@ -173,10 +177,8 @@ export class HitsoundPlayer extends CompositeDrawable {
       ?? this.samples.get(key + index)
       ?? this.defaultSamples.get(key);
 
-    console.log(hitSample.volume);
-
     const delay
-      = (hitSample.time - this.editorClock.currentTime) / this.editorClock.rate;
+      = (hitSample.time - this.editorClock.currentTime) / this.editorClock.rate + this.preferences.audio.audioOffset;
 
     if (sample) {
       const playback = sample.play({
