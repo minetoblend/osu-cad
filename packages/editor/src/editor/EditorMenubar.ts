@@ -33,6 +33,7 @@ export class EditorMenubar extends EditorMenu {
         items: [
           new MenuItem({
             text: 'Exit',
+            action: () => window.location.href = '/',
           }),
           new MenuItem({
             text: 'Export',
@@ -71,6 +72,16 @@ export class EditorMenubar extends EditorMenu {
       }),
       new MenuItem({
         text: 'View',
+        items: [
+          new MenuItem({
+            text: 'Fullscreen',
+            action: async () => {
+              await document.body.querySelector('canvas')?.requestFullscreen({
+                navigationUI: 'hide',
+              });
+            },
+          }),
+        ],
       }),
       new MenuItem({
         text: 'Help',
