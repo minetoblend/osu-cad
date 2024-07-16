@@ -106,6 +106,10 @@ export class UpdateHitObjectHandler extends CommandHandler<IUpdateHitObjectComma
     return new UpdateHitObjectCommand(command.id, patch);
   }
 
+  getMergeKey(command: IUpdateHitObjectCommand): string | null {
+    return `merge:hitobject:${command.id}`;
+  }
+
   merge(
     ctx: CommandContext,
     current: IUpdateHitObjectCommand,

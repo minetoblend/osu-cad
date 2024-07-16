@@ -21,6 +21,10 @@ export abstract class CommandHandler<T extends IEditorCommand, TResult = void> {
     return false;
   }
 
+  getMergeKey(command: T): string | null {
+    return null;
+  }
+
   merge(ctx: CommandContext, current: T, other: T): IEditorCommand | null {
     return null;
   }

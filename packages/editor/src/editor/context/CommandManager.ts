@@ -124,6 +124,7 @@ export class CommandManager {
   }
 
   #transaction: HistoryEntry[] = [];
+  #mergeKeys = new Map<string, HistoryEntry>();
 
   #record(command: IEditorCommand) {
     const handler = getCommandHandler(command);
@@ -132,23 +133,22 @@ export class CommandManager {
 
     let reverse = handler.createUndoCommand(this.context, command);
 
-    for (let i = this.#transaction.length - 1; i >= 0; i--) {
-      const entry = this.#transaction[i];
-      if (entry.command.type !== command.type)
-        continue;
+    const mergeKey = handler.getMergeKey(command);
 
-      const merged = handler.merge(this.context, entry.command, command);
-      if (merged) {
-        this.#transaction.splice(i, 1);
-        i--;
+    if (mergeKey) {
+      const mergeWith = this.#mergeKeys.get(mergeKey);
+      if (mergeWith) {
+        const index = this.#transaction.indexOf(mergeWith);
 
-        command = merged;
-
-        if (reverse && entry.reverse) {
-          reverse
-            = handler.merge(this.context, reverse, entry.reverse) ?? reverse;
+        if (index !== -1) {
+          this.#transaction.splice(index, 1);
+          if (mergeWith.reverse) {
+            reverse = handler.merge(this.context, mergeWith.reverse, reverse) ?? reverse;
+          }
         }
       }
+
+      this.#mergeKeys.set(mergeKey, { command, reverse });
     }
 
     this.#transaction.push({ command, reverse });
@@ -217,6 +217,7 @@ export class CommandManager {
 
     this.#undoStack.push(this.#transaction);
     this.#transaction = [];
+    this.#mergeKeys.clear();
 
     this.#redoStack.length = 0;
 
