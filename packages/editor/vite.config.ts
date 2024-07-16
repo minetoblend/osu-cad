@@ -22,7 +22,6 @@ export default defineConfig({
       },
     }),
   ],
-  base: '/edit/',
   resolve: {
     alias: {
       '@icons': join(__dirname, 'src/assets/icons'),
