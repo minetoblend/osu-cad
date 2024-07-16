@@ -109,6 +109,8 @@ export class SliderPathGeometry extends MeshGeometry {
     this.indices = geo.indices;
 
     this.uvs = geo.uvs;
+
+    // @ts-expect-error - private property
     this._boundsDirty = true;
   }
 }
