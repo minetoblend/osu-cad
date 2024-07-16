@@ -22,7 +22,13 @@ export class MouseTrap extends CompositeDrawable {
     this.apply(options);
   }
 
-  isActive = true;
+  get isActive() {
+    return this.alpha > 0;
+  }
+
+  set isActive(value: boolean) {
+    this.alpha = value ? 1 : 0;
+  }
 
   action!: () => void;
 
