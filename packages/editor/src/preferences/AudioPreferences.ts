@@ -19,6 +19,7 @@ export class AudioPreferences {
     this.musicVolumeBindable.addOnChangeListener(() => this.save());
     this.hitsoundVolumeBindable.addOnChangeListener(() => this.save());
     this.uiVolumeBindable.addOnChangeListener(() => this.save());
+    this.audioOffsetBindable.addOnChangeListener(() => this.save());
   }
 
   get masterVolume() {
@@ -75,6 +76,7 @@ export class AudioPreferences {
         musicVolume: this.musicVolume,
         hitsoundVolume: this.hitsoundVolume,
         uiVolume: this.uiVolume,
+        audioOffset: this.audioOffset,
       }),
     );
   }
