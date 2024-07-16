@@ -212,14 +212,18 @@ export class ControlPointManager {
     const ticks: TickInfo[] = [];
     let timingPoint = this.timing[index];
     let offset = 0;
-    if (timingPoint.time > startTime) {
+    if (startTime < timingPoint.time) {
       offset =
-        (-Math.ceil(
-          ((timingPoint.time - startTime) / timingPoint.timing.beatLength) *
-            divisor,
-        ) *
-          timingPoint.timing.beatLength) /
-        divisor;
+        -Math.ceil(
+          (timingPoint.time - startTime) / timingPoint.timing.beatLength,
+        ) * timingPoint.timing.beatLength;
+    }
+
+    if (startTime > timingPoint.time) {
+      offset =
+        Math.ceil(
+          (startTime - timingPoint.time) / timingPoint.timing.beatLength,
+        ) * timingPoint.timing.beatLength;
     }
 
     while (timingPoint) {
