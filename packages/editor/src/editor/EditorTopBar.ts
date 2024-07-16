@@ -22,7 +22,6 @@ export class EditorTopBar extends Container {
       resolution: devicePixelRatio,
     });
     filter.padding = 30;
-    filter.repeatEdgePixels = false;
 
     const timeline = new Timeline();
 
