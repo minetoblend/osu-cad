@@ -105,6 +105,10 @@ export class EditorClock
     this.#targetTime = position;
     this.#lastSeekWasAnimated = animated;
 
+    if (this.isRunning) {
+      this.#frameTimeInfo.current = position;
+    }
+
     return this.track.seek(position - this.offset);
   }
 
