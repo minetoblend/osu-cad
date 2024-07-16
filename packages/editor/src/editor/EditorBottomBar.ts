@@ -10,6 +10,7 @@ import { Corner, EditorCornerPiece } from './EditorCornerPiece';
 import { OverviewTimeline } from './overviewTimeline/OverviewTimeline';
 import { TimestampContainer } from './TimestampContainer';
 import { PlayButtonContainer } from './PlayButton';
+import { ConnectedUsersOverlay } from './online/ConnectedUsersOverlay';
 
 export class EditorBottomBar extends Container {
   constructor() {
@@ -40,6 +41,14 @@ export class EditorBottomBar extends Container {
         child: new OverviewTimeline(),
         anchor: Anchor.BottomCenter,
         origin: Anchor.BottomCenter,
+      }),
+      new Container({
+        relativeSizeAxes: Axes.X,
+        autoSizeAxes: Axes.Y,
+        padding: { right: 10, bottom: 54 },
+        child: new ConnectedUsersOverlay(),
+        anchor: Anchor.BottomRight,
+        origin: Anchor.BottomRight,
       }),
       new Container({
         relativeSizeAxes: Axes.Both,
