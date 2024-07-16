@@ -52,7 +52,7 @@ export class AdditionToggleButton extends ComposeToggleButton {
     const sampleHighlight = new RoundedBox({
       relativeSizeAxes: Axes.Both,
       alpha: 0.2,
-      cornerRadius: 5,
+      cornerRadius: 8,
       anchor: Anchor.Center,
       origin: Anchor.Center,
     });
