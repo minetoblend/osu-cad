@@ -228,6 +228,8 @@ export class CommandManager {
     this.canUndo.value = this.#undoStack.length > 0;
     this.canRedo.value = this.#redoStack.length > 0;
   }
+
+  dispose() {}
 }
 
 interface HistoryEntry {

@@ -2,22 +2,12 @@ import type {
   Drawable,
   SpriteText,
 } from 'osucad-framework';
-import {
-  Anchor,
-  Axes,
-  Color,
-  Container,
-  Direction,
-  DrawableMenuItem,
-  MenuItem,
-  RoundedBox,
-  dependencyLoader,
-  resolved,
-} from 'osucad-framework';
+import { Anchor, Axes, Color, Container, Direction, DrawableMenuItem, MenuItem, RoundedBox, dependencyLoader, resolved } from 'osucad-framework';
 import { OsucadSpriteText } from '../OsucadSpriteText';
 import { EditorMenu } from './EditorMenu';
 import { ThemeColors } from './ThemeColors';
 import { CommandManager } from './context/CommandManager';
+import { Editor } from './Editor';
 
 export class EditorMenubar extends EditorMenu {
   constructor() {
@@ -33,7 +23,7 @@ export class EditorMenubar extends EditorMenu {
         items: [
           new MenuItem({
             text: 'Exit',
-            action: () => window.location.href = '/',
+            action: () => this.exit(),
           }),
           new MenuItem({
             text: 'Export',
@@ -111,6 +101,10 @@ export class EditorMenubar extends EditorMenu {
 
   protected override createDrawableMenuItem(item: MenuItem): DrawableMenuItem {
     return new DrawableEditorMenubarItem(item);
+  }
+
+  exit() {
+    this.findClosestParentOfType(Editor)?.performExit();
   }
 }
 

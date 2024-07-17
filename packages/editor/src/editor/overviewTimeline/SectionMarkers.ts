@@ -61,6 +61,9 @@ export class SectionMarkers extends OverviewTimelineMarkerContainer {
   createMarkers(): Drawable[] {
     const trackLength = this.editorClock.trackLength;
 
+    if (trackLength === 0)
+      return [];
+
     const markers: Drawable[] = [];
 
     const hitObjects = this.beatmap.hitObjects.hitObjects;
@@ -78,6 +81,10 @@ export class SectionMarkers extends OverviewTimelineMarkerContainer {
       if (hitObject.startTime - sectionEndTime > threshold || isLastObject) {
         if (isLastObject) {
           sectionEndTime = hitObject.endTime;
+        }
+
+        if (!isFinite(sectionStartTime) || !isFinite(sectionEndTime)) {
+          break;
         }
 
         const marker = new SectionMarker({

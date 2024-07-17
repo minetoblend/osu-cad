@@ -117,6 +117,14 @@ export abstract class EditorContext {
     );
 
     await Promise.all(this.#loaders.map(loader => loader()));
+
+    this.#loaded = true;
+  }
+
+  #loaded = false;
+
+  get loaded() {
+    return this.#loaded;
   }
 
   // #endregion
@@ -134,5 +142,10 @@ export abstract class EditorContext {
 
   protected async getBeatmapAssets(): Promise<BeatmapAsset[]> {
     return [];
+  }
+
+  dispose() {
+    this.commandHandler.dispose();
+    this.skin.dispose();
   }
 }

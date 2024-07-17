@@ -1,5 +1,5 @@
 import type {
-  ScreenStack,
+  IVec2,
 } from 'osucad-framework';
 import {
   AudioManager,
@@ -11,33 +11,41 @@ import {
 import { RenderTarget } from 'pixi.js';
 import { MainCursorContainer } from './MainCursorContainer';
 import { UISamples } from './UISamples';
+import { Editor } from './editor/Editor';
 import { EditorMixer } from './editor/EditorMixer';
 import { Fit, ScalingContainer } from './editor/ScalingContainer';
 import { ThemeColors } from './editor/ThemeColors';
+import type { EditorContext } from './editor/context/EditorContext';
+import './editor/mixins/HitObjectMixin';
 import { EditorActionContainer } from './editor/EditorActionContainer';
 import { PreferencesContainer } from './editor/preferences/PreferencesContainer';
 import { PreferencesStore } from './preferences/PreferencesStore';
 import { UIFonts } from './UIFonts';
-import { EditorLoader } from './editor/EditorLoader';
-import { OnlineEditorContext } from './editor/context/OnlineEditorContext';
-import { OsucadScreenStack } from './OsucadScreenStack';
-import { BeatmapSelect } from './beatmapSelect/BeatmapSelect';
-import { UserAvatarCache } from './UserAvatarCache';
-import { RootScreen } from './RootScreen';
 
 RenderTarget.defaultOptions.depth = true;
 RenderTarget.defaultOptions.stencil = true;
 
-export class OsucadGame extends Game {
-  constructor() {
+export class OsucadEditorGame extends Game {
+  constructor(readonly context: EditorContext) {
     super();
   }
 
-  #innerContainer = new ScalingContainer({
-    desiredSize: {
+  get resolution(): IVec2 {
+    if (isMobile.any) {
+      return {
+        x: 640,
+        y: 480,
+      };
+    }
+
+    return {
       x: 960,
       y: 768,
-    },
+    };
+  }
+
+  #innerContainer = new ScalingContainer({
+    desiredSize: this.resolution,
     fit: Fit.Fill,
   });
 
@@ -46,8 +54,6 @@ export class OsucadGame extends Game {
 
   @dependencyLoader()
   async init(): Promise<void> {
-    this.dependencies.provide(Game, this);
-
     this.dependencies.provide(new ThemeColors());
 
     this.add(this.#innerContainer);
@@ -64,44 +70,27 @@ export class OsucadGame extends Game {
     this.dependencies.provide(samples);
 
     await Promise.all([
+      this.context.load(),
       samples.load(),
       UIFonts.load(),
     ]);
 
-    const userAvatarCache = new UserAvatarCache();
-    this.dependencies.provide(userAvatarCache);
-    super.add(userAvatarCache);
+    this.context.provideDependencies(this.dependencies);
 
-    let screenStack: ScreenStack;
-
+    let editor: Editor;
     this.#innerContainer.add(
       new EditorActionContainer({
         child: new PreferencesContainer({
-          child: screenStack = new OsucadScreenStack(
-            new RootScreen(),
-            true,
-          ),
+          child: (editor = new Editor(this.context)),
         }),
       }),
     );
-
-    const path = window.location.pathname;
 
     if (!isMobile.any) {
       this.add(new MainCursorContainer());
     }
 
-    const match = path.match(/\/edit\/(\w+)/);
-    if (match) {
-      const joinKey = match[1];
-
-      screenStack.push(new EditorLoader(
-        new OnlineEditorContext(joinKey),
-      ));
-    }
-    else {
-      screenStack.push(new BeatmapSelect());
-    }
+    editor.fadeIn({ duration: 300 });
   }
 
   onClick(): boolean {

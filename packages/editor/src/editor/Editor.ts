@@ -7,16 +7,19 @@ import type {
   UIEvent,
 } from 'osucad-framework';
 import {
+  Anchor,
   AudioManager,
   Axes,
   Bindable,
+  Box,
   Container,
   Key,
   PlatformAction,
+  asyncDependencyLoader,
   clamp,
-  dependencyLoader,
   resolved,
 } from 'osucad-framework';
+import { OsucadScreen } from '../OsucadScreen';
 import { EditorBottomBar } from './EditorBottomBar';
 import { EditorClock } from './EditorClock';
 import { EditorMixer } from './EditorMixer';
@@ -29,22 +32,24 @@ import { SetupScreen } from './screens/setup/SetupScreen';
 import { EditorSelection } from './screens/compose/EditorSelection';
 import { EditorAction } from './EditorAction';
 import { DifficultyCalculator } from './DifficultyCalculator';
-import {
-  NEW_COMBO,
-  SAMPLE_CLAP,
-  SAMPLE_FINISH,
-  SAMPLE_WHISTLE,
-} from './InjectionTokens';
+import { NEW_COMBO, SAMPLE_CLAP, SAMPLE_FINISH, SAMPLE_WHISTLE } from './InjectionTokens';
 import { ToggleBindable } from './screens/compose/ToggleBindable';
 import { HitsoundPlayer } from './HitsoundPlayer';
 
 export class Editor
-  extends Container
+  extends OsucadScreen
   implements IKeyBindingHandler<PlatformAction | EditorAction> {
   constructor(readonly context: EditorContext) {
-    super({
+    super();
+
+    this.alpha = 0;
+    this.anchor = Anchor.Center;
+    this.origin = Anchor.Center;
+
+    this.addInternal(new Box({
+      color: 0x00000,
       relativeSizeAxes: Axes.Both,
-    });
+    }));
   }
 
   readonly isKeyBindingHandler = true;
@@ -75,8 +80,21 @@ export class Editor
 
   #sampleClap = new ToggleBindable(false);
 
-  @dependencyLoader()
-  init() {
+  @asyncDependencyLoader()
+  async init() {
+    try {
+      await this.context.load();
+    }
+    catch (e) {
+      console.error(e);
+
+      this.exit();
+    }
+
+    console.log('loaded');
+
+    this.context.provideDependencies(this.dependencies);
+
     this.dependencies.provide(NEW_COMBO, this.#newCombo);
     this.dependencies.provide(SAMPLE_WHISTLE, this.#sampleWhistle);
     this.dependencies.provide(SAMPLE_FINISH, this.#sampleFinish);
@@ -104,7 +122,7 @@ export class Editor
     this.dependencies.provide(HitsoundPlayer, hitSoundPlayer);
     this.addInternal(hitSoundPlayer);
 
-    this.addAll(
+    this.addAllInternal(
       new Container({
         relativeSizeAxes: Axes.Both,
         padding: { top: 84, bottom: 48 },
@@ -316,7 +334,27 @@ export class Editor
   update() {
     super.update();
 
+    if (!this.context.loaded) {
+      return;
+    }
+
     this.context.beatmap.hitObjects.updateStacking();
     this.context.beatmap.hitObjects.calculateCombos();
+  }
+
+  onEntering(): boolean {
+    this.fadeIn({ duration: 300 });
+
+    return false;
+  }
+
+  dispose(): boolean {
+    this.context.dispose();
+
+    return super.dispose();
+  }
+
+  performExit() {
+    this.exit();
   }
 }

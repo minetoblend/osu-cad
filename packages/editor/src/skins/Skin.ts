@@ -61,4 +61,8 @@ export class Skin {
       this.comboNumbers.push(Assets.get(`default-${i}`));
     }
   }
+
+  dispose() {
+    Assets.unloadBundle('skin');
+  }
 }

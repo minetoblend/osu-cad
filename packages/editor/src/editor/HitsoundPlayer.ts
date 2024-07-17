@@ -116,7 +116,7 @@ export class HitsoundPlayer extends CompositeDrawable {
     const endTime = this.editorClock.currentTime + offset;
 
     if (!this.#isPlaying) {
-      startTime = this.editorClock.currentTime;
+      startTime = this.editorClock.currentTime - 10;
     }
 
     this.#isPlaying = true;
@@ -178,7 +178,7 @@ export class HitsoundPlayer extends CompositeDrawable {
       ?? this.defaultSamples.get(key);
 
     const delay
-      = (hitSample.time - this.editorClock.currentTime) / this.editorClock.rate + this.preferences.audio.audioOffset;
+      = (hitSample.time - this.editorClock.currentTime + this.preferences.audio.audioOffset) / this.editorClock.rate;
 
     if (sample) {
       const playback = sample.play({

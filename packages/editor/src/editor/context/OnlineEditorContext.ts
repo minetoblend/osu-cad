@@ -2,6 +2,7 @@
 import type { Beatmap } from '@osucad/common';
 import type { DependencyContainer, PIXITexture } from 'osucad-framework';
 import { Assets } from 'pixi.js';
+import { io } from 'socket.io-client';
 import { Skin } from '../../skins/Skin';
 import { ConnectedUsersManager } from './ConnectedUsersManager';
 import { EditorContext } from './EditorContext';
@@ -14,9 +15,18 @@ import type { BeatmapAsset } from './BeatmapAsset';
 export class OnlineEditorContext extends EditorContext {
   readonly socket: EditorSocket;
 
-  constructor(socket: EditorSocket) {
+  constructor(readonly joinKey: string) {
     super();
-    this.socket = socket;
+    const hostname = window.origin.replace(/^https/, 'wss');
+
+    this.socket = io(`${hostname}/editor`, {
+      withCredentials: true,
+      query: { id: joinKey },
+      transports: ['websocket'],
+      autoConnect: false,
+      reconnection: false,
+      timeout: 5000,
+    });
   }
 
   readonly users = new ConnectedUsersManager();
@@ -99,5 +109,14 @@ export class OnlineEditorContext extends EditorContext {
     }
 
     return assets;
+  }
+
+  dispose() {
+    super.dispose();
+
+    if (this.beatmap.backgroundPath) {
+      Assets.unload(this.getAssetPath(this.beatmap.backgroundPath));
+    }
+    this.socket.disconnect();
   }
 }
