@@ -68,12 +68,20 @@ export class UserWithAvatar extends CompositeDrawable {
       this.avatarCache.getAvatar(this.user.id)
         .then((texture) => {
           if (texture) {
+            if (this.isDisposed) {
+              texture.destroy();
+
+              return;
+            }
+
             const avatar = createRoundAvatar(
               texture,
               10,
             );
 
             this.#avatarContainer.drawNode.addChild(avatar);
+
+            this.onDispose(() => texture.destroy());
           }
         });
     });

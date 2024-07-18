@@ -1,21 +1,35 @@
-import { CompositeDrawable } from 'osucad-framework';
-import type { Texture, TextureSourceOptions } from 'pixi.js';
-import { Assets } from 'pixi.js';
+import { CompositeDrawable, loadTexture } from 'osucad-framework';
+import type { Texture } from 'pixi.js';
 
 export class UserAvatarCache extends CompositeDrawable {
   cache = new Map<number, Promise<Texture | null>>();
 
   async getAvatar(userId: number) {
     if (!this.cache.has(userId)) {
-      const promise = Assets.load({
-        src: `/api/users/${userId}/avatar`,
-        loadParser: 'loadTextures',
-        data: {
+      const promise = loadTexture(
+        `/api/users/${userId}/avatar`,
+        {
           autoGarbageCollect: true,
-        } as Partial<TextureSourceOptions>,
+        },
+      ).then((texture) => {
+        if (texture) {
+          const destroy = texture.destroy.bind(texture);
+
+          (texture as any).refcount = 0;
+
+          texture.destroy = () => {
+            (texture as any).refcount--;
+
+            if ((texture as any).refcount === 0) {
+              destroy();
+            }
+          };
+        }
+
+        return texture;
       });
 
-      promise.then((texture: Texture) => {
+      promise.then((texture: Texture | null) => {
         if (texture) {
           texture.once('destroy', () => {
             this.cache.delete(userId);
@@ -26,6 +40,14 @@ export class UserAvatarCache extends CompositeDrawable {
       this.cache.set(userId, promise);
     }
 
-    return this.cache.get(userId)!;
+    const texture = this.cache.get(userId)!;
+
+    return texture.then((texture) => {
+      if (texture) {
+        (texture as any).refcount++;
+      }
+
+      return texture;
+    });
   }
 }
