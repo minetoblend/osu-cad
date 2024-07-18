@@ -348,6 +348,13 @@ export class Editor
     return false;
   }
 
+  onExiting(): boolean {
+    this.fadeOut({ duration: 100 });
+    this.expire();
+
+    return false;
+  }
+
   dispose(): boolean {
     this.context.dispose();
 
