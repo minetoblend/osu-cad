@@ -3,16 +3,33 @@ import {
   Axes,
   CompositeDrawable,
   Container,
-  DrawableSprite,
-  FillMode,
   RoundedBox,
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
+
 import type { UserInfo } from '@osucad/common';
-import { Graphics } from 'pixi.js';
+import type { Texture } from 'pixi.js';
+import { Graphics, Matrix } from 'pixi.js';
+
 import { UserAvatarCache } from '../UserAvatarCache';
 import { OsucadSpriteText } from '../OsucadSpriteText';
+
+function createRoundAvatar(
+  texture: Texture,
+  radius: number,
+) {
+  return new Graphics()
+    .circle(radius, radius, radius)
+    .fill({
+      texture,
+      matrix: new Matrix()
+        .scale(
+          2 * radius / texture.width,
+          2 * radius / texture.height,
+        ),
+    });
+}
 
 export class UserWithAvatar extends CompositeDrawable {
   constructor(readonly user: UserInfo) {
@@ -47,24 +64,18 @@ export class UserWithAvatar extends CompositeDrawable {
       }),
     );
 
-    this.avatarCache.getAvatar(this.user.id).then((texture) => {
-      if (texture) {
-        const sprite = new DrawableSprite({
-          texture,
-          relativeSizeAxes: Axes.Both,
+    this.#avatarContainer.onLoadComplete.addListener(() => {
+      this.avatarCache.getAvatar(this.user.id)
+        .then((texture) => {
+          if (texture) {
+            const avatar = createRoundAvatar(
+              texture,
+              10,
+            );
 
+            this.#avatarContainer.drawNode.addChild(avatar);
+          }
         });
-
-        sprite.fillMode = FillMode.Fill;
-
-        this.#avatarContainer.add(sprite);
-
-        sprite.drawNode.mask = sprite.drawNode.addChild(
-          new Graphics()
-            .circle(10, 10, 10)
-            .fill(),
-        );
-      }
     });
   }
 
