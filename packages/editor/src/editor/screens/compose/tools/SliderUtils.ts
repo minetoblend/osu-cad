@@ -36,12 +36,18 @@ export class SliderUtils {
     let position: Vec2 | undefined;
 
     if (index === 0) {
-      path[1].type ??= path[0].type;
+      path[1] = {
+        ...path[1],
+        type: path[1].type ?? path[0].type,
+      };
       position = slider.position.add(path[1]);
 
       for (let i = path.length - 1; i >= 1; i--) {
-        path[i].x -= path[1].x;
-        path[i].y -= path[1].y;
+        path[i] = {
+          x: path[i].x - path[1].x,
+          y: path[i].y - path[1].y,
+          type: path[i].type,
+        };
       }
     }
 
