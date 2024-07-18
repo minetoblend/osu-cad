@@ -28,9 +28,11 @@ export class EditorLoader extends OsucadScreen {
     // this.moveTo({ y: 0, duration: 600, easing: 'expo.out' });
 
     if (this.cover) {
-      if (this.cover.background) {
+      if (this.cover.background?.texture) {
+        const texture = this.cover.background.texture;
+
         const background = new DrawableSprite({
-          texture: this.cover.background.texture,
+          texture,
           relativeSizeAxes: Axes.Both,
           alpha: 0.25,
           width: 0.8,
@@ -39,19 +41,21 @@ export class EditorLoader extends OsucadScreen {
           origin: Anchor.Center,
         });
 
+        this.cover.background.texture = null;
+
         gsap.to(background, {
-          width: 1,
-          height: 1,
+          width: 1.1,
+          height: 1.1,
           duration: 0.6,
           ease: 'expo.out',
         });
 
-        background.fillAspectRatio = this.cover.background.fillAspectRatio;
+        background.fillAspectRatio = texture.width / texture.height;
         background.fillMode = FillMode.Fill;
 
         background.filters = [
           new BlurFilter({
-            strength: 30,
+            strength: 15,
             quality: 5,
           }),
         ];
