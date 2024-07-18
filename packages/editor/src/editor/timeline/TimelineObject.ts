@@ -370,11 +370,13 @@ class SliderEndCircle extends Container {
         * this.hitObject.duration)
         / targetDuration;
 
-      this.hitObject.update(
-        this.commandManager,
-        it => (it.velocityOverride = velocityOverride),
-        false,
-      );
+      if (velocityOverride > 0 && Number.isFinite(velocityOverride)) {
+        this.hitObject.update(
+          this.commandManager,
+          it => (it.velocityOverride = velocityOverride),
+          false,
+        );
+      }
     }
     return true;
   }
