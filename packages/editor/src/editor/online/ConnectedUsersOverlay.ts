@@ -2,7 +2,6 @@ import {
   Anchor,
   Axes,
   Container,
-  DrawableSprite,
   FillDirection,
   FillFlowContainer,
   RoundedBox,
@@ -11,11 +10,12 @@ import {
   resolved,
 } from 'osucad-framework';
 import type { UserSessionInfo } from '@osucad/common';
-import { Assets, Color, Graphics } from 'pixi.js';
+import { Color } from 'pixi.js';
 import gsap from 'gsap';
 import { ConnectedUsersManager } from '../context/ConnectedUsersManager';
 import { OsucadSpriteText } from '../../OsucadSpriteText';
 import { UISamples } from '../../UISamples';
+import { UserAvatarCache } from '../../UserAvatarCache';
 
 export class ConnectedUsersOverlay extends Container {
   @resolved(ConnectedUsersManager)
@@ -144,7 +144,7 @@ export class ConnectedUsersOverlay extends Container {
 }
 
 class UserAvatar extends Container {
-  constructor(user: UserSessionInfo) {
+  constructor(readonly user: UserSessionInfo) {
     super({
       width: 28,
       height: 28,
@@ -152,24 +152,24 @@ class UserAvatar extends Container {
 
     this.anchor = Anchor.BottomRight;
     this.origin = Anchor.Center;
+  }
 
-    Assets.load({
-      src: `/api/users/${user.id}/avatar`,
-      loadParser: 'loadTextures',
-    }).then((texture) => {
+  @resolved(UserAvatarCache)
+  userAvatars!: UserAvatarCache;
+
+  @dependencyLoader()
+  load() {
+    this.userAvatars.getAvatar(this.user.id).then((texture) => {
       if (!texture)
         return;
 
-      const avatar = new DrawableSprite({
+      const avatar = new RoundedBox({
         relativeSizeAxes: Axes.Both,
+        cornerRadius: 14,
         texture,
       });
 
-      avatar.drawNode.mask = this.drawNode.addChild(
-        new Graphics()
-          .circle(14, 14, 14)
-          .fill(),
-      );
+      this.onDispose(() => texture.destroy());
 
       this.add(avatar);
 
@@ -182,7 +182,7 @@ class UserAvatar extends Container {
         fillAlpha: 0,
         outline: {
           width: 1,
-          color: Color.shared.setValue(user.color).toNumber(),
+          color: Color.shared.setValue(this.user.color).toNumber(),
           alpha: 1,
           alignment: 1,
         },
