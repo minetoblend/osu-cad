@@ -232,4 +232,10 @@ export class EditorClock
     progress = mod(mod(progress, 1) + 1, 1);
     this.beatProgress = progress;
   }
+
+  dispose(): boolean {
+    this.track.dispose();
+
+    return super.dispose();
+  }
 }
