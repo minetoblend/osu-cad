@@ -1,14 +1,20 @@
+import type {
+  MouseDownEvent,
+  MouseUpEvent,
+} from 'osucad-framework';
 import {
   Anchor,
   Axes,
   Container,
   FillDirection,
   FillFlowContainer,
+  MouseButton,
   RoundedBox,
   Vec2,
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
+
 import type { UserSessionInfo } from '@osucad/common';
 import { Color } from 'pixi.js';
 import gsap from 'gsap';
@@ -166,14 +172,16 @@ class UserAvatar extends Container {
       const avatar = new RoundedBox({
         relativeSizeAxes: Axes.Both,
         cornerRadius: 14,
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
         texture,
       });
 
       this.onDispose(() => texture.destroy());
 
-      this.add(avatar);
+      this.add(this.#avatar = avatar);
 
-      this.add(new RoundedBox({
+      this.add(this.#ring = new RoundedBox({
         width: 32,
         height: 32,
         anchor: Anchor.Center,
@@ -187,6 +195,90 @@ class UserAvatar extends Container {
           alignment: 1,
         },
       }));
+
+      this.add(this.#username = new Container({
+        autoSizeAxes: Axes.Both,
+        padding: { horizontal: 4, vertical: 2 },
+        anchor: Anchor.TopRight,
+        origin: Anchor.BottomRight,
+        y: -4,
+        alpha: 0,
+        children: [
+          new RoundedBox({
+            relativeSizeAxes: Axes.Both,
+            cornerRadius: 4,
+            alpha: 0.5,
+            color: 0x222228,
+          }),
+          new OsucadSpriteText({
+            text: this.user.username,
+            fontSize: 12,
+            color: 0xB6B6C3,
+          }),
+        ],
+      }));
     });
+  }
+
+  #username!: Container;
+
+  #avatar!: RoundedBox;
+
+  #ring!: RoundedBox;
+
+  onHover(): boolean {
+    this.#username.fadeIn({ duration: 200 });
+
+    return true;
+  }
+
+  onHoverLost(): boolean {
+    this.#username.fadeOut({ duration: 200 });
+
+    return true;
+  }
+
+  onMouseDown(e: MouseDownEvent): boolean {
+    if (e.button === MouseButton.Left) {
+      gsap.to(this.#ring, {
+        scaleX: 0.9,
+        scaleY: 0.9,
+        duration: 0.1,
+        ease: 'power3.out',
+      });
+
+      gsap.to(this.#avatar, {
+        scaleX: 0.9,
+        scaleY: 0.9,
+        duration: 0.1,
+        ease: 'power3.out',
+      });
+
+      return true;
+    }
+
+    return false;
+  }
+
+  onMouseUp(e: MouseUpEvent): boolean {
+    if (e.button === MouseButton.Left) {
+      gsap.to(this.#ring, {
+        scaleX: 1,
+        scaleY: 1,
+        duration: 0.2,
+        ease: 'back.out',
+      });
+
+      gsap.to(this.#avatar, {
+        scaleX: 1,
+        scaleY: 1,
+        duration: 0.2,
+        ease: 'back.out',
+      });
+
+      return true;
+    }
+
+    return false;
   }
 }
