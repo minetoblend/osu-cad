@@ -14,6 +14,14 @@ export default defineConfig({
             stripExtensions: true,
           },
         },
+        {
+          src: 'src/assets/textures',
+          assetIds: {
+            prefix: 'texture:',
+            dotNotation: true,
+            stripExtensions: true,
+          },
+        },
       ],
       textures: {
         defaultOptions: {

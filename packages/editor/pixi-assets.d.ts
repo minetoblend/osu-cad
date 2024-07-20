@@ -35,5 +35,6 @@ declare module 'virtual:pixi-assets' {
     "icon:spinner": AssetRecordInfo<"icon:spinner", "/src/assets/icons/spinner.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
     "icon:undo": AssetRecordInfo<"icon:undo", "/src/assets/icons/undo.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
     "icon:whistle@2x": AssetRecordInfo<"icon:whistle@2x", "/src/assets/icons/whistle@2x.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
+    "texture:logo.with-text": AssetRecordInfo<"texture:logo.with-text", "/src/assets/textures/logo/with-text.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
   }
 }
