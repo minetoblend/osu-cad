@@ -48,18 +48,19 @@ export class UserWithAvatar extends CompositeDrawable {
         text: this.user.username,
         anchor: Anchor.CenterRight,
         origin: Anchor.CenterRight,
-        x: -24,
-        fontSize: 11,
+        x: -30,
+        fontSize: 16,
+        alpha: 0.8,
       }),
       this.#avatarContainer = new Container({
-        width: 20,
-        height: 20,
+        width: 25,
+        height: 25,
         anchor: Anchor.CenterRight,
         origin: Anchor.CenterRight,
         child: new RoundedBox({
           relativeSizeAxes: Axes.Both,
           color: 0x373744,
-          cornerRadius: 10,
+          cornerRadius: 15,
         }),
       }),
     );
@@ -76,7 +77,7 @@ export class UserWithAvatar extends CompositeDrawable {
 
             const avatar = createRoundAvatar(
               texture,
-              10,
+              15,
             );
 
             this.#avatarContainer.drawNode.addChild(avatar);
