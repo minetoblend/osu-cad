@@ -5,6 +5,7 @@ import { Timeline } from './timeline/Timeline';
 import { TimelineZoomButtons } from './timeline/TimelineZoomButtons';
 import { EditorMenubar } from './EditorMenubar';
 import { BeatSnapDivisorSelector } from './BeatSnapDivisorSelector';
+import { EditorScreenSelect } from './EditorScreenSelect';
 
 export class EditorTopBar extends Container {
   constructor() {
@@ -69,11 +70,17 @@ export class EditorTopBar extends Container {
               relativeSizeAxes: Axes.Both,
               padding: { horizontal: 8 },
               children: [
+                new EditorScreenSelect().apply({
+                  autoSizeAxes: Axes.X,
+                  anchor: Anchor.TopCenter,
+                  origin: Anchor.TopCenter,
+                  height: 32,
+                }),
                 new Container({
                   relativeSizeAxes: Axes.X,
-                  y: 20,
+                  y: 35,
                   height: 35,
-                  padding: { left: 20 },
+                  padding: { left: 25, right: 10 },
                   child: new BeatSnapDivisorSelector(),
                 }),
               ],

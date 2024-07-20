@@ -32,7 +32,7 @@ import { SetupScreen } from './screens/setup/SetupScreen';
 import { EditorSelection } from './screens/compose/EditorSelection';
 import { EditorAction } from './EditorAction';
 import { DifficultyCalculator } from './DifficultyCalculator';
-import { NEW_COMBO, SAMPLE_CLAP, SAMPLE_FINISH, SAMPLE_WHISTLE } from './InjectionTokens';
+import { CURRENT_SCREEN, NEW_COMBO, SAMPLE_CLAP, SAMPLE_FINISH, SAMPLE_WHISTLE } from './InjectionTokens';
 import { ToggleBindable } from './screens/compose/ToggleBindable';
 import { HitsoundPlayer } from './HitsoundPlayer';
 
@@ -90,6 +90,7 @@ export class Editor
     this.dependencies.provide(SAMPLE_WHISTLE, this.#sampleWhistle);
     this.dependencies.provide(SAMPLE_FINISH, this.#sampleFinish);
     this.dependencies.provide(SAMPLE_CLAP, this.#sampleClap);
+    this.dependencies.provide(CURRENT_SCREEN, this.currentScreen);
 
     const track = this.audioManager.createTrack(
       this.mixer.music,
@@ -123,7 +124,7 @@ export class Editor
       (this.#bottomBar = new EditorBottomBar()),
     );
 
-    this.currentScren.addOnChangeListener(
+    this.currentScreen.addOnChangeListener(
       (screen) => {
         this.#updateScreen(screen);
       },
@@ -131,7 +132,7 @@ export class Editor
     );
   }
 
-  readonly currentScren = new Bindable(EditorScreenType.Compose);
+  readonly currentScreen = new Bindable(EditorScreenType.Compose);
 
   #updateScreen(screen: EditorScreenType) {
     switch (screen) {
