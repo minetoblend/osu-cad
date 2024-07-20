@@ -1,7 +1,8 @@
 import type { ScreenTransitionEvent } from 'osucad-framework';
-import { Anchor, Axes, Box, dependencyLoader } from 'osucad-framework';
+import { Anchor, Axes, Box, dependencyLoader, resolved } from 'osucad-framework';
 import gsap from 'gsap';
 import { OsucadScreen } from '../OsucadScreen';
+import { GlobalSongPlayback } from '../GlobalSongPlayback';
 import { BeatmapCarousel } from './BeatmapCarousel';
 import { BeatmapSelectBackground } from './BeatmapSelectBackground';
 
@@ -37,11 +38,17 @@ export class BeatmapSelect extends OsucadScreen {
         }),
     );
 
+    this.#carousel.bleedTop = 200;
+    this.#carousel.bleedBottom = 200;
+
     this.#carousel.selectionChanged.addListener((beatmap) => {
       this.#background.currentBeatmap = beatmap;
-      this.#playAudio(beatmap.links.audioUrl);
+      this.globalSongPlayback.playAudio(beatmap.links.audioUrl);
     });
   }
+
+  @resolved(GlobalSongPlayback)
+  globalSongPlayback!: GlobalSongPlayback;
 
   #background!: BeatmapSelectBackground;
 
@@ -50,17 +57,6 @@ export class BeatmapSelect extends OsucadScreen {
   onSuspending(e: ScreenTransitionEvent) {
     this.#carousel.moveTo({ x: this.#carousel.drawSize.x, duration: 300, easing: 'power3.in' });
     this.#carousel.fadeTo({ alpha: 0.5, duration: 300 });
-
-    if (this.#audio) {
-      const audio = this.#audio;
-      this.#audio = undefined;
-
-      gsap.to(audio, { volume: 0, duration: 0.3 });
-      setTimeout(() => {
-        audio.pause();
-        audio.remove();
-      }, 300);
-    }
 
     this.#background.fadeTo({ alpha: 0.8, duration: 300 });
 
@@ -83,6 +79,7 @@ export class BeatmapSelect extends OsucadScreen {
     this.#carousel.alpha = 1;
 
     this.#background.fadeTo({ alpha: 0.5, duration: 300 });
+    this.globalSongPlayback.resume();
 
     gsap.to(this.#background, {
       scaleX: 1,
@@ -94,35 +91,5 @@ export class BeatmapSelect extends OsucadScreen {
     this.fadeIn({ duration: 400 });
 
     super.onResuming(e);
-  }
-
-  #audio?: HTMLAudioElement;
-
-  #playAudio(url: string) {
-    if (this.#audio?.src === url) {
-      return;
-    }
-
-    const oldAudio = this.#audio;
-
-    if (oldAudio) {
-      gsap.to(oldAudio, { volume: 0, duration: 0.3 });
-      setTimeout(() => {
-        oldAudio.pause();
-        oldAudio.remove();
-      }, 300);
-    }
-
-    const audio = this.#audio = new Audio(url);
-
-    audio.src = url;
-    audio.autoplay = true;
-    audio.loop = true;
-    audio.currentTime = 10;
-    audio.crossOrigin = 'anonymous';
-    audio.volume = 0;
-    audio.onplay = () => {
-      gsap.to(audio, { volume: 0.5, duration: 0.3 });
-    };
   }
 }

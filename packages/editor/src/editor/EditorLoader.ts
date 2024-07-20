@@ -1,8 +1,10 @@
 import type { Drawable, GameHost, ScreenTransitionEvent } from 'osucad-framework';
-import { GAME_HOST, ScreenStack, resolved } from 'osucad-framework';
+import { AudioManager, GAME_HOST, LowpassFilter, ScreenStack, resolved } from 'osucad-framework';
 import { OsucadScreen } from '../OsucadScreen';
+import { GlobalSongPlayback } from '../GlobalSongPlayback';
 import type { EditorContext } from './context/EditorContext';
 import { OnlineEditorContext } from './context/OnlineEditorContext';
+import { EditorMixer } from './EditorMixer';
 
 export class EditorLoader extends OsucadScreen {
   constructor(
@@ -18,8 +20,30 @@ export class EditorLoader extends OsucadScreen {
   @resolved(GAME_HOST)
   gameHost!: GameHost;
 
+  @resolved(GlobalSongPlayback)
+  globalSongPlayback!: GlobalSongPlayback;
+
+  @resolved(EditorMixer)
+  mixer!: EditorMixer;
+
+  @resolved(AudioManager)
+  audioManager!: AudioManager;
+
+  #lowPassFilter?: LowpassFilter;
+
   onEntering(e: ScreenTransitionEvent) {
     super.onEntering(e);
+
+    const filter = this.#lowPassFilter = new LowpassFilter({
+      frequency: 20000,
+    });
+
+    this.mixer.music.addFilter(filter);
+
+    filter.frequency!.exponentialRampToValueAtTime(
+      300,
+      this.audioManager.context.currentTime + 0.25,
+    );
 
     this.fadeIn({ duration: 500, easing: 'power3.out' });
 
@@ -28,8 +52,19 @@ export class EditorLoader extends OsucadScreen {
       throw new Error('EditorLoader must be a child of a ScreenStack');
     }
 
-    import('./Editor').then(({ Editor }) => {
-      this.screenStack.push(new Editor(this.context));
+    import('./Editor').then(async ({ Editor }) => {
+      const editor = new Editor(this.context);
+      await this.loadComponentAsync(editor);
+
+      this.screenStack.push(editor);
+    });
+  }
+
+  onSuspending() {
+    this.globalSongPlayback.pause(true).then(() => {
+      if (this.#lowPassFilter) {
+        this.mixer.music.removeFilter(this.#lowPassFilter);
+      }
     });
   }
 

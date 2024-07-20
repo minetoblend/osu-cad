@@ -24,6 +24,7 @@ import { OsucadScreenStack } from './OsucadScreenStack';
 import { BeatmapSelect } from './beatmapSelect/BeatmapSelect';
 import { UserAvatarCache } from './UserAvatarCache';
 import { RootScreen } from './RootScreen';
+import { GlobalSongPlayback } from './GlobalSongPlayback';
 
 RenderTarget.defaultOptions.depth = true;
 RenderTarget.defaultOptions.stencil = true;
@@ -67,6 +68,10 @@ export class OsucadGame extends Game {
       samples.load(),
       UIFonts.load(),
     ]);
+
+    const songPlayback = new GlobalSongPlayback();
+    this.dependencies.provide(songPlayback);
+    super.add(songPlayback);
 
     const userAvatarCache = new UserAvatarCache();
     this.dependencies.provide(userAvatarCache);
