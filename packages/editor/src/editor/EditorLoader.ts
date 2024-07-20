@@ -1,6 +1,5 @@
 import type { Drawable, GameHost, ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
 import { AudioManager, Axes, GAME_HOST, LowpassFilter, ScreenStack, resolved } from 'osucad-framework';
-import gsap from 'gsap';
 import { OsucadScreen } from '../OsucadScreen';
 import { GlobalSongPlayback } from '../GlobalSongPlayback';
 import type { EditorContext } from './context/EditorContext';
@@ -81,15 +80,11 @@ export class EditorLoader extends OsucadScreen {
 
       this.disableLowpassFilter();
 
-      if (this.#loadingSpinner) {
-        this.#loadingSpinner.fadeOut({ duration: 300 });
-        gsap.to(this.#loadingSpinner, {
-          radius: 0,
-          duration: 300,
-        });
-      }
-
       this.screenStack.push(editor);
+
+      setTimeout(() => {
+        this.alpha = 0;
+      }, 500);
     });
   }
 

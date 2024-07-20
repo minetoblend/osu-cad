@@ -342,6 +342,11 @@ export class Editor
   }
 
   onExiting(): boolean {
+    if (this.#exitFromError) {
+      this.#exited = true;
+      return false;
+    }
+
     this.fadeOut({ duration: 100 });
     this.expire();
 
@@ -356,5 +361,25 @@ export class Editor
 
   performExit() {
     this.exit();
+  }
+
+  #exitFromError = false;
+
+  #exited = false;
+
+  updateSubTree(): boolean {
+    try {
+      return super.updateSubTree();
+    }
+    catch (e) {
+      console.error(e);
+
+      if (!this.#exited) {
+        this.#exitFromError = true;
+        this.screenStack.exit(this);
+      }
+
+      return true;
+    }
   }
 }
