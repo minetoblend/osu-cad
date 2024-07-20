@@ -23,6 +23,7 @@ import { BeatmapEntity } from './beatmap.entity';
 import { BeatmapTransformer } from './beatmap.transformer';
 import { ImagesService } from '../assets/images.service';
 import { AuditService } from '../audit/audit.service';
+import { AssetsService } from '../assets/assets.service';
 
 @Controller('api/beatmaps')
 export class BeatmapController {
@@ -32,6 +33,7 @@ export class BeatmapController {
     private readonly beatmapTransformer: BeatmapTransformer,
     private readonly imagesService: ImagesService,
     private readonly auditService: AuditService,
+    private readonly assetsService: AssetsService,
   ) {}
 
   @Get()
@@ -41,7 +43,7 @@ export class BeatmapController {
     @Query('filter') filter: 'own' | 'shared-with-me' | 'all' = 'all',
     @Query('sort') sort: 'artist' | 'title' | 'recent' = 'recent',
     @Query('search') search?: string,
-  ): Promise<(BeatmapInfo & { lastEdited: string })[]> {
+  ) {
     const user = req.session.user;
 
     if (!['own', 'shared-with-me', 'all'].includes(filter)) {
@@ -65,10 +67,21 @@ export class BeatmapController {
 
     return await Promise.all(
       beatmaps.map(async (entity) => {
-        const lastEdited = '';
+        const lastEdited = entity.lastAccess[0]?.date?.toISOString() ?? '';
+
+        let audioUrl = '';
+        try {
+          if (entity.audioFile) {
+            audioUrl = await this.assetsService.getS3AssetUrl(entity.audioFile);
+          }
+        } catch (e) {
+          console.error('Failed to get  audio url', e);
+        }
 
         return {
           id: entity.uuid,
+          setId: entity.mapset.id,
+          starRating: entity.starRating,
           title: entity.mapset.title,
           artist: entity.mapset.artist,
           version: entity.name,
@@ -79,8 +92,12 @@ export class BeatmapController {
           links: {
             edit: `/edit/${entity.shareId}`,
             view: `/beatmaps/${entity.uuid}`,
-            thumbnail:
+            audioUrl: audioUrl,
+            thumbnailSmall:
               this.imagesService.getImageUrl(entity.thumbnailId, 'thumbnail') ??
+              null,
+            thumbnailLarge:
+              this.imagesService.getImageUrl(entity.thumbnailId, 'public') ??
               null,
           },
         };
@@ -129,9 +146,13 @@ export class BeatmapController {
         links: {
           edit: `/edit/${beatmap.shareId}`,
           view: `/beatmaps/${beatmap.uuid}`,
-          thumbnail: this.imagesService.getImageUrl(
+          thumbnailSmall: this.imagesService.getImageUrl(
             beatmap.thumbnailId,
             'thumbnail',
+          ),
+          thumbnailLarge: this.imagesService.getImageUrl(
+            beatmap.thumbnailId,
+            'public',
           ),
         },
       } as BeatmapInfo,

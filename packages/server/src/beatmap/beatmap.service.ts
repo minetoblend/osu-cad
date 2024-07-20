@@ -102,13 +102,14 @@ export class BeatmapService implements OnModuleInit {
   ) {
     const query = this.repository
       .createQueryBuilder('beatmap')
-      .leftJoin(
+      .leftJoinAndSelect(
         'beatmap.lastAccess',
         'lastAccess',
         'beatmap.id = lastAccess.beatmapId and lastAccess.userId = :userId',
       )
       .innerJoinAndSelect('beatmap.mapset', 'mapset')
       .innerJoinAndSelect('mapset.creator', 'creator')
+      .leftJoinAndSelect('beatmap.audioFile', 'audioFile')
       .andWhere('beatmap.deleted = false');
 
     if (filter === 'all') {
