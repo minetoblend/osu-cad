@@ -1,10 +1,12 @@
-import { Axes, Container } from 'osucad-framework';
+import { Anchor, Axes, Container } from 'osucad-framework';
 import type { EditorScreen } from './screens/EditorScreen';
 
 export class EditorScreenContainer extends Container {
   constructor() {
     super({
       relativeSizeAxes: Axes.Both,
+      anchor: Anchor.Center,
+      origin: Anchor.Center,
     });
   }
 

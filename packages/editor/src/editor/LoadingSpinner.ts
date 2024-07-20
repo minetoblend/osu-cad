@@ -32,11 +32,11 @@ export class LoadingSpinner extends CompositeDrawable {
       scale: 0.5,
       anchor: Anchor.Center,
       origin: Anchor.Center,
-      y: 250,
+      y: 200,
     });
 
     this.#logo.fadeIn({ duration: 500 });
-    this.#logo.moveTo({ y: 100, duration: 1000, easing: 'expo.out' });
+    this.#logo.moveTo({ y: 50, duration: 1000, easing: 'expo.out' });
 
     this.addInternal(this.#logo);
   }
@@ -48,7 +48,9 @@ export class LoadingSpinner extends CompositeDrawable {
   updateDrawNodeTransform() {
     super.updateDrawNodeTransform();
 
-    this.#graphics.position.copyFrom(this.drawSize.scale(0.5));
+    this.#graphics.position.copyFrom(
+      this.drawSize.scale(0.5).sub({ x: 0, y: 50 }),
+    );
   }
 
   radius: number = 30;

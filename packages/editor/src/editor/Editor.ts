@@ -84,8 +84,6 @@ export class Editor
   async init() {
     await this.context.load();
 
-    console.log('loaded');
-
     this.context.provideDependencies(this.dependencies);
 
     this.dependencies.provide(NEW_COMBO, this.#newCombo);
@@ -336,7 +334,21 @@ export class Editor
   }
 
   onEntering(): boolean {
-    this.fadeIn({ duration: 300 });
+    this.fadeIn({ duration: 500 });
+
+    this.#topBar.y = -100;
+    this.#topBar.moveTo({ y: 0, duration: 500, easing: 'expo.out' });
+
+    this.#bottomBar.y = 100;
+    this.#bottomBar.moveTo({ y: 0, duration: 500, easing: 'expo.out' });
+
+    this.#screenContainer.scale = 0.9;
+    this.#screenContainer.scaleTo({ scale: 1, duration: 500, easing: 'expo.out' });
+
+    const hitObject = this.context.beatmap.hitObjects.hitObjects[0];
+    if (hitObject) {
+      this.#clock.seek(hitObject.startTime, false);
+    }
 
     return false;
   }

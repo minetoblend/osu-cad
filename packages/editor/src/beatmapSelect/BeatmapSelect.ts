@@ -55,8 +55,9 @@ export class BeatmapSelect extends OsucadScreen {
   #carousel!: BeatmapCarousel;
 
   onSuspending(e: ScreenTransitionEvent) {
-    this.#carousel.moveTo({ x: this.#carousel.drawSize.x, duration: 300, easing: 'power3.in' });
-    this.#carousel.fadeTo({ alpha: 0.5, duration: 300 });
+    this.#carousel.fadeTo({ alpha: 0, duration: 400, easing: 'expo.out' });
+    this.#carousel.scaleTo({ scale: 1.3, easing: 'expo.out', duration: 600 });
+    this.#carousel.moveTo({ x: 500, duration: 600, easing: 'expo.out' });
 
     this.#background.fadeTo({ alpha: 0.1, duration: 300 });
 
@@ -68,13 +69,14 @@ export class BeatmapSelect extends OsucadScreen {
     });
 
     // noop transform to delay when the container gets suspended
-    this.fadeTo({ alpha: 1, duration: 400 });
+    this.fadeTo({ alpha: 1, duration: 600 });
 
     super.onSuspending(e);
   }
 
   onResuming(e: ScreenTransitionEvent) {
     this.#carousel.moveTo({ x: 0, duration: 400, easing: 'power4.out' });
+    this.#carousel.scaleTo({ scale: 1, duration: 400, easing: 'power4.out' });
     this.#carousel.entryAnimation();
     this.#carousel.alpha = 1;
 
