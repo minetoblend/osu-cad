@@ -6,7 +6,9 @@ export class CarouselMapset extends CarouselItem {
   constructor(readonly mapset: MapsetInfo) {
     super();
 
-    this.beatmaps = mapset.beatmaps.map(beatmap => new CarouselBeatmap(beatmap));
+    this.beatmaps = mapset.beatmaps
+      .sort((a, b) => a.starRating - b.starRating)
+      .map(beatmap => new CarouselBeatmap(beatmap));
 
     this.selected.addOnChangeListener((selected) => {
       if (selected) {

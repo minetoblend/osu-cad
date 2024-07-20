@@ -15,6 +15,7 @@ import {
 import type { MapsetInfo } from '@osucad/common';
 import gsap from 'gsap';
 import { OsucadSpriteText } from '../OsucadSpriteText';
+import { FastRoundedBox } from '../drawables/FastRoundedBox';
 import { DrawableCarouselItem } from './DrawableCarouselItem';
 import { CarouselMapset } from './CarouselMapset';
 import { DrawableCarouselBeatmap } from './DrawableCarouselBeatmap';
@@ -26,6 +27,8 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
   constructor(item: CarouselMapset) {
     super(item);
 
+    this.drawNode.enableRenderGroup();
+
     this.mapset = item.mapset;
 
     this.add(this.#beatmapContainer = new Container({
@@ -36,14 +39,9 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
         new DrawableCarouselBeatmap(item),
       ),
     }));
-  }
-
-  @dependencyLoader()
-  load() {
-    this.header.height = CarouselMapset.HEIGHT;
 
     this.header.addAll(
-      new MapsetBackground(this.mapset),
+      this.#background = new MapsetBackground(this.mapset),
       new Container({
         relativeSizeAxes: Axes.Both,
         padding: { horizontal: 20, vertical: 6 },
@@ -67,7 +65,14 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
     );
   }
 
+  @dependencyLoader()
+  load() {
+    this.header.height = CarouselMapset.HEIGHT;
+  }
+
   #beatmapContainer!: Container;
+
+  #background!: MapsetBackground;
 
   override item!: CarouselMapset;
 
@@ -159,14 +164,13 @@ class MapsetBackground extends Container {
       relativeSizeAxes: Axes.Both,
     });
 
-    this.addInternal(new RoundedBox({
+    this.addInternal(new FastRoundedBox({
       relativeSizeAxes: Axes.Both,
       cornerRadius: 10,
-      textureFillMode: FillMode.Fill,
       color: 0x282832,
     }));
 
-    this.schedule(() => {
+    this.scheduler.addDelayed(() => {
       const url = mapset.links.thumbnailLarge;
       if (url) {
         loadTexture(url).then((texture) => {
@@ -178,7 +182,7 @@ class MapsetBackground extends Container {
             texture,
             cornerRadius: 10,
             textureFillMode: FillMode.Fill,
-            color: 'rgb(192, 192, 192)',
+            color: 'rgb(168, 168, 168)',
           });
 
           this.onDispose(() => texture.destroy());
@@ -186,6 +190,6 @@ class MapsetBackground extends Container {
           this.add(background);
         });
       }
-    });
+    }, 20);
   }
 }
