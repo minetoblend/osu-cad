@@ -105,7 +105,10 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
 
     this.#updateBeatmapYPositions();
 
-    this.beatmaps.forEach(it => it.fadeOut({ duration: 100 }));
+    this.beatmaps.forEach((it) => {
+      gsap.killTweensOf(it, 'alpha');
+      it.fadeOut({ duration: 100 });
+    });
   }
 
   update() {
