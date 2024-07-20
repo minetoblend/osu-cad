@@ -5,6 +5,8 @@ import toolSelect from './assets/samples/tool-select.ogg';
 import sliderDrag from './assets/samples/slider-drag.ogg';
 import userJoined from './assets/samples/user-joined.ogg';
 import userLeft from './assets/samples/user-left.ogg';
+import keyMovement from './assets/samples/key-movement.ogg';
+import menuhit from './assets/samples/menuhit.wav';
 
 export class UISamples {
   constructor(
@@ -17,6 +19,8 @@ export class UISamples {
   sliderDrag!: Sample;
   userJoined!: Sample;
   userLeft!: Sample;
+  keyMovement!: Sample;
+  menuhit!: Sample;
 
   async load() {
     await Promise.all([
@@ -25,6 +29,8 @@ export class UISamples {
       this.#loadSample('sliderDrag', sliderDrag),
       this.#loadSample('userJoined', userJoined),
       this.#loadSample('userLeft', userLeft),
+      this.#loadSample('keyMovement', keyMovement),
+      this.#loadSample('menuhit', menuhit),
     ]);
   }
 

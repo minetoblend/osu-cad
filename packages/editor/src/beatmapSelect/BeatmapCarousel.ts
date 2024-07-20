@@ -1,24 +1,18 @@
-import {
-  Action,
-  Axes,
-  CompositeDrawable,
-  Direction,
-  Invalidation,
-  LayoutMember,
-  dependencyLoader,
-} from 'osucad-framework';
-import type { MapsetBeatmapInfo, MapsetInfo } from '@osucad/common';
+import type { KeyDownEvent } from 'osucad-framework';
+import { Action, Axes, CompositeDrawable, Direction, Invalidation, Key, LayoutMember, clamp, dependencyLoader, resolved } from 'osucad-framework';
+import type { BeatmapInfo, MapsetBeatmapInfo, MapsetInfo } from '@osucad/common';
 import { binarySearch } from '@osucad/common';
 import gsap from 'gsap';
 import { BackdropBlurFilter } from 'pixi-filters';
 import { MainScrollContainer } from '../editor/MainScrollContainer';
+import { UISamples } from '../UISamples';
 import { CarouselMapset } from './CarouselMapset';
 import type { DrawableCarouselItem } from './DrawableCarouselItem';
 import { DrawableCarouselMapset } from './DrawableCarouselMapset';
 
-const distance_offscreen_before_unload = 2048;
+const distance_offscreen_before_unload = 512;
 
-const distance_offscreen_to_preload = 768;
+const distance_offscreen_to_preload = 256;
 
 enum PendingScrollOperation {
   None,
@@ -44,7 +38,7 @@ export class BeatmapCarousel extends CompositeDrawable {
 
   @dependencyLoader()
   load() {
-    this.schedule(() => this.#loadMapsets());
+    this.schedule(() => this.loadMapsets());
   }
 
   #scroll!: CarouselScrollContainer;
@@ -54,6 +48,9 @@ export class BeatmapCarousel extends CompositeDrawable {
   #itemsCache = new LayoutMember(Invalidation.DrawSize);
 
   #visibleItems: CarouselMapset[] = [];
+
+  @resolved(UISamples)
+  samples!: UISamples;
 
   update() {
     super.update();
@@ -119,7 +116,7 @@ export class BeatmapCarousel extends CompositeDrawable {
 
     item.header.x = this.#offsetX(dist, this.#visibleHalfHeight) - (parent?.x ?? 0);
 
-    // item.header.multiplicativeAlpha = clamp(1.75 - 1.5 * dist, 0, 1);
+    item.header.alpha = clamp(2 - 1.5 * dist, 0, 1);
   }
 
   #displayRange = { startIndex: -1, endIndex: -1 };
@@ -144,8 +141,8 @@ export class BeatmapCarousel extends CompositeDrawable {
     this.#pendingScrollOperation = PendingScrollOperation.None;
   }
 
-  async #loadMapsets() {
-    const response = await fetch('/api/mapsets/own', {
+  async loadMapsets() {
+    const response = await fetch('/api/beatmaps?sort=recent&filter=own', {
       method: 'GET',
       priority: 'high',
       credentials: 'same-origin',
@@ -156,15 +153,54 @@ export class BeatmapCarousel extends CompositeDrawable {
       return;
     }
 
-    const mapsets = await response.json() as MapsetInfo[];
+    const beatmaps = await response.json() as BeatmapInfo[];
 
-    this.mapsets = mapsets.map(mapset => this.createCarouselMapset(mapset));
+    const map = new Map<string, MapsetInfo>();
+
+    for (const beatmap of beatmaps) {
+      if (!map.has(beatmap.setId)) {
+        map.set(beatmap.setId, {
+          title: beatmap.title,
+          artist: beatmap.artist,
+          creator: beatmap.creator,
+          beatmaps: [],
+          updatedAt: `${beatmap.lastEdited}`,
+          links: {
+            thumbnailSmall: beatmap.links.thumbnailSmall,
+            thumbnailLarge: beatmap.links.thumbnailLarge,
+            self: '',
+          },
+          id: `${beatmap.setId}`,
+          tags: [],
+          createdAt: '',
+        } as MapsetInfo);
+      }
+
+      const mapset = map.get(beatmap.setId)!;
+
+      mapset.beatmaps.push({
+        id: beatmap.id,
+        name: beatmap.version,
+        creator: beatmap.creator,
+        starRating: beatmap.starRating,
+        lastEdited: `${beatmap.lastEdited}`,
+        links: {
+          edit: beatmap.links.edit,
+          audioUrl: beatmap.links.audioUrl,
+          thumbnailLarge: beatmap.links.thumbnailLarge,
+          thumbnailSmall: beatmap.links.thumbnailSmall,
+          self: beatmap.links.view,
+        },
+      });
+    }
+
+    this.mapsets = [...map.values()].map(mapset => this.createCarouselMapset(mapset));
 
     this.#itemsCache.invalidate();
 
-    if (mapsets.length > 0) {
+    if (this.mapsets.length > 0) {
       this.mapsets[
-        Math.floor(Math.random() * mapsets.length)
+        Math.floor(Math.random() * this.mapsets.length)
       ].selected.value = true;
     }
   }
@@ -190,6 +226,8 @@ export class BeatmapCarousel extends CompositeDrawable {
             b.selected.value = false;
             this.#scrollToSelected();
           }
+
+          this.samples.keyMovement.play();
         }
       });
     }
@@ -266,7 +304,7 @@ export class BeatmapCarousel extends CompositeDrawable {
 
   #offsetX(dist: number, halfHeight: number) {
     // The radius of the circle the carousel moves on.
-    const circleRadius = 3;
+    const circleRadius = 4;
     const discriminant = Math.max(0, circleRadius * circleRadius - dist * dist);
     const x = (circleRadius - Math.sqrt(discriminant)) * halfHeight;
 
@@ -286,8 +324,6 @@ export class BeatmapCarousel extends CompositeDrawable {
   }
 
   dispose(): boolean {
-    console.log('disposing BeatmapCarousel');
-
     return super.dispose();
   }
 
@@ -297,6 +333,60 @@ export class BeatmapCarousel extends CompositeDrawable {
     this.#firstScroll = true;
     this.#scrollTarget = this.#scroll.current;
     this.#pendingScrollOperation = PendingScrollOperation.Standard;
+  }
+
+  onKeyDown(e: KeyDownEvent): boolean {
+    switch (e.key) {
+      case Key.F2:
+      {
+        const beatmaps = this.mapsets.flatMap(it => it.beatmaps);
+
+        beatmaps[Math.floor(Math.random() * beatmaps.length)].selected.value = true;
+
+        return true;
+      }
+      case Key.ArrowUp:
+        this.seek(-1);
+        return true;
+      case Key.ArrowDown:
+        this.seek(1);
+        return true;
+      case Key.ArrowLeft:
+        this.seek(-1, true);
+        return true;
+      case Key.ArrowRight:
+        this.seek(1, true);
+        return true;
+    }
+
+    return false;
+  }
+
+  seek(direction: number, skipDifficulties = false) {
+    const index = this.#selectedBeatmapSet?.beatmaps.findIndex(it => it.selected.value);
+
+    if (index === undefined || index === -1) {
+      return;
+    }
+
+    if (!this.#selectedBeatmapSet?.beatmaps[index + direction] || skipDifficulties) {
+      const mapsetIndex = this.mapsets.findIndex(it => it === this.#selectedBeatmapSet);
+
+      if (direction === 1) {
+        if (this.mapsets[mapsetIndex + 1]) {
+          this.mapsets[mapsetIndex + 1].beatmaps[0].selected.value = true;
+        }
+      }
+      else {
+        if (this.mapsets[mapsetIndex - 1]) {
+          this.mapsets[mapsetIndex - 1].beatmaps[this.mapsets[mapsetIndex - 1].beatmaps.length - 1].selected.value = true;
+        }
+      }
+
+      return;
+    }
+
+    this.#selectedBeatmapSet.beatmaps[index + direction].selected.value = true;
   }
 }
 
@@ -309,7 +399,7 @@ class CarouselScrollContainer extends MainScrollContainer {
 
     const filter = new BackdropBlurFilter({
       strength: 10,
-      antialias: 'on',
+      antialias: 'inherit',
       quality: 3,
       resolution: devicePixelRatio,
     });
