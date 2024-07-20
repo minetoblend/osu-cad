@@ -1,11 +1,15 @@
 import type { KeyDownEvent } from 'osucad-framework';
 import { Action, Axes, CompositeDrawable, Direction, Invalidation, Key, LayoutMember, clamp, dependencyLoader, resolved } from 'osucad-framework';
-import type { BeatmapInfo, MapsetBeatmapInfo, MapsetInfo } from '@osucad/common';
+
 import { binarySearch } from '@osucad/common';
 import gsap from 'gsap';
 import { BackdropBlurFilter } from 'pixi-filters';
+import type { BeatmapInfo as BeatmapInfoDto } from '@osucad/common';
 import { MainScrollContainer } from '../editor/MainScrollContainer';
 import { UISamples } from '../UISamples';
+import type { MapsetInfo } from '../beatmaps/MapsetInfo';
+import type { BeatmapInfo } from '../beatmaps/BeatmapInfo';
+import { OnlineBeatmapInfo } from '../beatmaps/OnlineBeatmapInfo';
 import { CarouselMapset } from './CarouselMapset';
 import type { DrawableCarouselItem } from './DrawableCarouselItem';
 import { DrawableCarouselMapset } from './DrawableCarouselMapset';
@@ -153,7 +157,7 @@ export class BeatmapCarousel extends CompositeDrawable {
       return;
     }
 
-    const beatmaps = await response.json() as BeatmapInfo[];
+    const beatmaps = await response.json() as BeatmapInfoDto[];
 
     const map = new Map<string, MapsetInfo>();
 
@@ -165,33 +169,15 @@ export class BeatmapCarousel extends CompositeDrawable {
           creator: beatmap.creator,
           beatmaps: [],
           updatedAt: `${beatmap.lastEdited}`,
-          links: {
-            thumbnailSmall: beatmap.links.thumbnailSmall,
-            thumbnailLarge: beatmap.links.thumbnailLarge,
-            self: '',
-          },
+          thumbnailSmall: beatmap.links.thumbnailSmall,
+          thumbnailLarge: beatmap.links.thumbnailLarge,
           id: `${beatmap.setId}`,
-          tags: [],
-          createdAt: '',
         } as MapsetInfo);
       }
 
       const mapset = map.get(beatmap.setId)!;
 
-      mapset.beatmaps.push({
-        id: beatmap.id,
-        name: beatmap.version,
-        creator: beatmap.creator,
-        starRating: beatmap.starRating,
-        lastEdited: `${beatmap.lastEdited}`,
-        links: {
-          edit: beatmap.links.edit,
-          audioUrl: beatmap.links.audioUrl,
-          thumbnailLarge: beatmap.links.thumbnailLarge,
-          thumbnailSmall: beatmap.links.thumbnailSmall,
-          self: beatmap.links.view,
-        },
-      });
+      mapset.beatmaps.push(new OnlineBeatmapInfo(beatmap));
     }
 
     this.mapsets = [...map.values()].map(mapset => this.createCarouselMapset(mapset));
@@ -207,7 +193,7 @@ export class BeatmapCarousel extends CompositeDrawable {
 
   #selectedBeatmapSet?: CarouselMapset;
 
-  selectionChanged = new Action<MapsetBeatmapInfo>();
+  selectionChanged = new Action<BeatmapInfo>();
 
   createCarouselMapset(mapset: MapsetInfo) {
     const set = new CarouselMapset(mapset);

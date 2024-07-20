@@ -13,7 +13,6 @@ import {
 import { Color } from 'pixi.js';
 import { OsucadSpriteText } from '../OsucadSpriteText';
 import { EditorLoader } from '../editor/EditorLoader';
-import { OnlineEditorContext } from '../editor/context/OnlineEditorContext';
 import { UISamples } from '../UISamples';
 import { DrawableCarouselItem } from './DrawableCarouselItem';
 import { CarouselBeatmap } from './CarouselBeatmap';
@@ -24,13 +23,13 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
 
     let lastEditedText = '';
 
-    if (item.beatmapInfo.lastEdited?.length) {
-      const asDate = new Date(item.beatmapInfo.lastEdited);
-
-      const formatted = asDate.toLocaleDateString('en-US', {
+    if (item.beatmapInfo.lastEdited) {
+      const formatted = item.beatmapInfo.lastEdited.toLocaleDateString('en-US', {
         day: 'numeric',
         month: 'short',
-        year: asDate.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined,
+        year: item.beatmapInfo.lastEdited.getFullYear() !== new Date().getFullYear()
+          ? 'numeric'
+          : undefined,
       });
 
       lastEditedText = `Last edited ${formatted}`;
@@ -76,7 +75,7 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
             ],
           }),
           new OsucadSpriteText({
-            text: this.item.beatmapInfo.name,
+            text: this.item.beatmapInfo.difficultyName,
             anchor: Anchor.CenterLeft,
             origin: Anchor.CenterLeft,
           }),
@@ -175,13 +174,11 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
 
   onClick(): boolean {
     if (this.item.selected.value) {
-      const joinKey = this.item.beatmapInfo.links.edit.split('/').pop()!;
-
       this.samples.menuhit.play();
 
       this.findClosestParentOfType(ScreenStack)
         ?.push(new EditorLoader(
-          new OnlineEditorContext(joinKey),
+          this.item.beatmapInfo.createEditorContext(),
         ));
     }
 

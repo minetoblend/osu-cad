@@ -1,10 +1,10 @@
-import type { MapsetBeatmapInfo } from '@osucad/common';
+import type { BeatmapInfo } from '../beatmaps/BeatmapInfo';
 import { CarouselItem } from './CarouselItem';
 
 export class CarouselBeatmap extends CarouselItem {
   static HEIGHT = 60;
 
-  constructor(readonly beatmapInfo: MapsetBeatmapInfo) {
+  constructor(readonly beatmapInfo: BeatmapInfo) {
     super();
   }
 

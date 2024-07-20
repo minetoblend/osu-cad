@@ -12,8 +12,8 @@ import {
   resolved,
 } from 'osucad-framework';
 
-import type { MapsetBeatmapInfo } from '@osucad/common';
 import { BlurFilter, RenderTexture } from 'pixi.js';
+import type { BeatmapInfo } from '../beatmaps/BeatmapInfo';
 
 export class BeatmapSelectBackground extends CompositeDrawable {
   constructor() {
@@ -35,13 +35,13 @@ export class BeatmapSelectBackground extends CompositeDrawable {
     ];
   }
 
-  #currentBeatmap: MapsetBeatmapInfo | null = null;
+  #currentBeatmap: BeatmapInfo | null = null;
 
-  get currentBeatmap(): MapsetBeatmapInfo | null {
+  get currentBeatmap(): BeatmapInfo | null {
     return this.#currentBeatmap;
   }
 
-  set currentBeatmap(value: MapsetBeatmapInfo | null) {
+  set currentBeatmap(value: BeatmapInfo | null) {
     if (this.#currentBeatmap === value)
       return;
 
@@ -54,8 +54,8 @@ export class BeatmapSelectBackground extends CompositeDrawable {
 
   async #updateTexture() {
     const beatmap = this.#currentBeatmap;
-    if (this.#currentBeatmap?.links.thumbnailLarge) {
-      const texture = await loadTexture(this.#currentBeatmap.links.thumbnailLarge);
+    if (this.#currentBeatmap?.thumbnailLarge) {
+      const texture = await loadTexture(this.#currentBeatmap.thumbnailLarge);
       if (!texture)
         return;
 

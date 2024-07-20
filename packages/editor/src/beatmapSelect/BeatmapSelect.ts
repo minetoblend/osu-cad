@@ -43,7 +43,7 @@ export class BeatmapSelect extends OsucadScreen {
 
     this.#carousel.selectionChanged.addListener((beatmap) => {
       this.#background.currentBeatmap = beatmap;
-      this.globalSongPlayback.playAudio(beatmap.links.audioUrl, 10000);
+      this.globalSongPlayback.playAudio(beatmap.audioUrl, 10000);
     });
   }
 

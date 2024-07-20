@@ -12,10 +12,10 @@ import {
   lerp,
   loadTexture,
 } from 'osucad-framework';
-import type { MapsetInfo } from '@osucad/common';
 import gsap from 'gsap';
 import { OsucadSpriteText } from '../OsucadSpriteText';
 import { FastRoundedBox } from '../drawables/FastRoundedBox';
+import type { MapsetInfo } from '../beatmaps/MapsetInfo';
 import { DrawableCarouselItem } from './DrawableCarouselItem';
 import { CarouselMapset } from './CarouselMapset';
 import { DrawableCarouselBeatmap } from './DrawableCarouselBeatmap';
@@ -174,7 +174,7 @@ class MapsetBackground extends Container {
     }));
 
     this.scheduler.addDelayed(() => {
-      const url = mapset.links.thumbnailLarge;
+      const url = mapset.thumbnailLarge;
       if (url) {
         loadTexture(url).then((texture) => {
           if (!texture)
