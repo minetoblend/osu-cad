@@ -5,6 +5,8 @@ import type {
   DragStartEvent,
   KeyDownEvent,
   MouseDownEvent,
+  PIXIContainer,
+
   ScrollEvent,
 } from 'osucad-framework';
 import {
@@ -13,7 +15,6 @@ import {
   Box,
   Container,
   MouseButton,
-  PIXIContainer,
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
@@ -44,7 +45,13 @@ export class Timeline extends Container {
       }),
     );
 
-    this.drawNode.addChild((this.#tickContainer = new PIXIContainer()));
+    const container = new Container();
+
+    this.addInternal(container);
+
+    this.#tickContainer = container.drawNode as PIXIContainer<TimelineTick>;
+
+    this.#tickContainer.enableRenderGroup();
 
     this.addInternal(
       (this.#objectContainer = new Container({
