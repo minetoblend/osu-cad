@@ -13,7 +13,7 @@ export class GlobalSongPlayback extends CompositeDrawable {
     return this.mixer.music;
   }
 
-  playAudio(url: string) {
+  playAudio(url: string, startTime: number = 0) {
     if (url === this.#url) {
       return;
     }
@@ -25,10 +25,13 @@ export class GlobalSongPlayback extends CompositeDrawable {
 
     const audio = this.#audio = new Audio(url);
     audio.loop = true;
-    audio.currentTime = 10;
+    audio.currentTime = startTime / 1000;
     audio.crossOrigin = 'anonymous';
-    audio.autoplay = true;
     audio.volume = 0;
+
+    audio.play().catch(() => {
+      /* noop */
+    });
 
     gsap.to(audio, {
       volume: 1,
