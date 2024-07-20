@@ -33,7 +33,7 @@ export class MapsetService {
           id: creatorId,
         },
       },
-      relations: ['creator', 'beatmaps'],
+      relations: ['creator', 'beatmaps', 'beatmaps.audioFile'],
     });
   }
 

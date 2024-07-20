@@ -1,6 +1,6 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsWhere, IsNull, Repository } from 'typeorm';
 import { BeatmapEntity } from './beatmap.entity';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { InjectQueue } from '@nestjs/bull';
@@ -8,6 +8,8 @@ import { Queue } from 'bull';
 import { BeatmapThumbnailJob } from './beatmap-thumbnail.processor';
 import { BeatmapLastAccessEntity } from './beatmap-last-access.entity';
 import { UserEntity } from '../users/user.entity';
+import { BeatmapSnapshotService } from './beatmap-snapshot.service';
+import { AssetsService } from '../assets/assets.service';
 
 @Injectable()
 export class BeatmapService implements OnModuleInit {
@@ -16,11 +18,15 @@ export class BeatmapService implements OnModuleInit {
     private readonly repository: Repository<BeatmapEntity>,
     @InjectRepository(BeatmapLastAccessEntity)
     private readonly lastAccessRepository: Repository<BeatmapLastAccessEntity>,
+    private readonly snapshotService: BeatmapSnapshotService,
+    private readonly assetService: AssetsService,
     @InjectQueue('beatmap-thumbnail')
     private readonly thumbnailQueue: Queue<BeatmapThumbnailJob>,
   ) {}
 
   async onModuleInit(): Promise<void> {
+    this.updateBeatmapAudioFile();
+
     const beatmaps = await this.repository.find({
       select: ['id'],
       where: {
@@ -167,5 +173,36 @@ export class BeatmapService implements OnModuleInit {
   async delete(beatmap: BeatmapEntity) {
     beatmap.deleted = true;
     return await this.repository.save(beatmap);
+  }
+
+  async updateBeatmapAudioFile() {
+    const beatmaps = await this.repository.find({
+      where: {
+        audioFile: IsNull(),
+      },
+      relations: ['mapset'],
+    });
+
+    for (const beatmap of beatmaps) {
+      console.log(
+        'Updating audio file for beatmap',
+        `${beatmap.mapset.title} - ${beatmap.mapset.artist} [${beatmap.name}]`,
+      );
+      const snapshot = await this.snapshotService.getLatestSnapshot(beatmap);
+
+      const audioFilename = snapshot.data.audioFilename;
+
+      const asset = await this.assetService.getAsset(
+        beatmap.mapset,
+        audioFilename,
+      );
+
+      console.log(!!asset);
+
+      if (asset) {
+        beatmap.audioFile = asset.asset;
+        await this.save(beatmap);
+      }
+    }
   }
 }

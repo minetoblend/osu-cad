@@ -2,10 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { MapsetEntity } from './mapset.entity';
 import { MapsetBeatmapInfo, MapsetInfo } from '@osucad/common';
 import { ImagesService } from '../assets/images.service';
+import { AssetsService } from '../assets/assets.service';
 
 @Injectable()
 export class MapsetTransformer {
-  constructor(private readonly imageService: ImagesService) {}
+  constructor(
+    private readonly imageService: ImagesService,
+    private readonly assetsService: AssetsService,
+  ) {}
 
   async transform(mapset: MapsetEntity): Promise<MapsetInfo> {
     const beatmaps = await Promise.all(
@@ -26,6 +30,7 @@ export class MapsetTransformer {
               beatmap.thumbnailId,
               'public',
             ),
+            audioUrl: await this.assetsService.getS3AssetUrl(beatmap.audioFile),
           },
         };
       }),
