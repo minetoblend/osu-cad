@@ -1,10 +1,12 @@
-import type { Drawable, GameHost, ScreenTransitionEvent } from 'osucad-framework';
-import { AudioManager, GAME_HOST, LowpassFilter, ScreenStack, resolved } from 'osucad-framework';
+import type { Drawable, GameHost, ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
+import { AudioManager, Axes, GAME_HOST, LowpassFilter, ScreenStack, resolved } from 'osucad-framework';
+import gsap from 'gsap';
 import { OsucadScreen } from '../OsucadScreen';
 import { GlobalSongPlayback } from '../GlobalSongPlayback';
 import type { EditorContext } from './context/EditorContext';
 import { OnlineEditorContext } from './context/OnlineEditorContext';
 import { EditorMixer } from './EditorMixer';
+import { LoadingSpinner } from './LoadingSpinner';
 
 export class EditorLoader extends OsucadScreen {
   constructor(
@@ -31,8 +33,16 @@ export class EditorLoader extends OsucadScreen {
 
   #lowPassFilter?: LowpassFilter;
 
+  #loadingSpinner?: LoadingSpinner;
+
   onEntering(e: ScreenTransitionEvent) {
     super.onEntering(e);
+
+    this.#loadingSpinner = new LoadingSpinner({
+      relativeSizeAxes: Axes.Both,
+    });
+
+    this.addInternal(this.#loadingSpinner);
 
     const filter = this.#lowPassFilter = new LowpassFilter({
       frequency: 20000,
@@ -54,24 +64,66 @@ export class EditorLoader extends OsucadScreen {
 
     import('./Editor').then(async ({ Editor }) => {
       const editor = new Editor(this.context);
-      await this.loadComponentAsync(editor);
+
+      try {
+        await this.loadComponentAsync(editor);
+      }
+      catch (e) {
+        editor.dispose();
+        this.exit();
+      }
+
+      if (this.#exited) {
+        editor.dispose();
+
+        return;
+      }
+
+      this.disableLowpassFilter();
+
+      if (this.#loadingSpinner) {
+        this.#loadingSpinner.fadeOut({ duration: 300 });
+        gsap.to(this.#loadingSpinner, {
+          radius: 0,
+          duration: 300,
+        });
+      }
 
       this.screenStack.push(editor);
     });
   }
 
-  onSuspending() {
-    this.globalSongPlayback.pause(true).then(() => {
-      if (this.#lowPassFilter) {
-        this.mixer.music.removeFilter(this.#lowPassFilter);
-      }
-    });
+  #exited = false;
+
+  onExiting(e: ScreenExitEvent): boolean {
+    this.disableLowpassFilter(false);
+
+    this.#exited = true;
+
+    return super.onExiting(e);
   }
 
   onResuming(e: ScreenTransitionEvent) {
     super.onResuming(e);
 
+    if (this.#loadingSpinner) {
+      this.removeInternal(this.#loadingSpinner);
+    }
+
     this.exit();
+  }
+
+  disableLowpassFilter(pause = true) {
+    if (pause) {
+      this.globalSongPlayback.pause(true).then(() => {
+        if (this.#lowPassFilter) {
+          this.mixer.music.removeFilter(this.#lowPassFilter);
+        }
+      });
+    }
+    else if (this.#lowPassFilter) {
+      this.mixer.music.removeFilter(this.#lowPassFilter);
+    }
   }
 
   getPath(): string {

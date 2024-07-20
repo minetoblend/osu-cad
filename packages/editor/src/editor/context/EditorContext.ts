@@ -145,7 +145,7 @@ export abstract class EditorContext {
   }
 
   dispose() {
-    this.commandHandler.dispose();
-    this.skin.dispose();
+    this.#commandHandler?.dispose();
+    this.skinBindable.value?.dispose();
   }
 }

@@ -82,14 +82,7 @@ export class Editor
 
   @asyncDependencyLoader()
   async init() {
-    try {
-      await this.context.load();
-    }
-    catch (e) {
-      console.error(e);
-
-      this.exit();
-    }
+    await this.context.load();
 
     console.log('loaded');
 

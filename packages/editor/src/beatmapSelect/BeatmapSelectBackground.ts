@@ -13,7 +13,7 @@ import {
 } from 'osucad-framework';
 
 import type { MapsetBeatmapInfo } from '@osucad/common';
-import { RenderTexture } from 'pixi.js';
+import { BlurFilter, RenderTexture } from 'pixi.js';
 
 export class BeatmapSelectBackground extends CompositeDrawable {
   constructor() {
@@ -24,6 +24,15 @@ export class BeatmapSelectBackground extends CompositeDrawable {
     this.origin = Anchor.Center;
 
     this.alpha = 0.2;
+
+    this.drawNode.filters = [
+      new BlurFilter({
+        strength: 10,
+        quality: 3,
+        antialias: 'off',
+        resolution: 1,
+      }),
+    ];
   }
 
   #currentBeatmap: MapsetBeatmapInfo | null = null;

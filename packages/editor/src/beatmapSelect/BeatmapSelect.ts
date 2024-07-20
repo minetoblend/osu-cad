@@ -58,7 +58,7 @@ export class BeatmapSelect extends OsucadScreen {
     this.#carousel.moveTo({ x: this.#carousel.drawSize.x, duration: 300, easing: 'power3.in' });
     this.#carousel.fadeTo({ alpha: 0.5, duration: 300 });
 
-    this.#background.fadeTo({ alpha: 0.8, duration: 300 });
+    this.#background.fadeTo({ alpha: 0.1, duration: 300 });
 
     gsap.to(this.#background, {
       scaleX: 0.85,

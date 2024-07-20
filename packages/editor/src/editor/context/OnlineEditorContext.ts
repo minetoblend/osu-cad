@@ -36,7 +36,12 @@ export class OnlineEditorContext extends EditorContext {
 
     this.socket.connect();
 
-    await super.load();
+    return Promise.race([
+      super.load(),
+      new Promise<void>((_, reject) => {
+        this.socket.once('disconnect', () => reject('Disconnected from server'));
+      }),
+    ]);
   }
 
   getAssetPath(filename: string) {
@@ -113,10 +118,14 @@ export class OnlineEditorContext extends EditorContext {
 
   dispose() {
     super.dispose();
-
-    if (this.beatmap.backgroundPath) {
-      Assets.unload(this.getAssetPath(this.beatmap.backgroundPath));
+    try {
+      if (this.beatmap.backgroundPath) {
+        Assets.unload(this.getAssetPath(this.beatmap.backgroundPath));
+      }
+      this.socket.disconnect();
     }
-    this.socket.disconnect();
+    catch (e) {
+
+    }
   }
 }
