@@ -19,12 +19,19 @@ import { BeatmapLastAccessEntity } from './beatmap-last-access.entity';
 export class BeatmapEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
   @Column()
   name: string;
+
   @Column({ nullable: true })
   osuId: number | null;
+
+  @Column('boolean', { default: true })
+  needsDiffCalc: boolean;
+
   @Column('float')
   starRating: number;
+
   @Column('boolean', { default: false })
   deleted: boolean;
 

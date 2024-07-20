@@ -30,6 +30,7 @@ export class BeatmapTransformer {
         edit: `/edit/${beatmap.shareId}`,
         thumbnailSmall,
         thumbnailLarge,
+        audioUrl: await this.assetsService.getS3AssetUrl(beatmap.audioFile),
       },
     };
   }

@@ -26,6 +26,7 @@ import { BeatmapMigrator } from './beatmap-migrator';
 import { BeatmapLastAccessEntity } from './beatmap-last-access.entity';
 import { BeatmapImportModule } from './import/beatmap-import.module';
 import { MapsetService } from './mapset.service';
+import { BeatmapDifficultyProcessor } from './beatmap-difficulty.processor';
 
 @Module({
   imports: [
@@ -52,6 +53,13 @@ import { MapsetService } from './mapset.service';
       name: 'beatmap-thumbnail',
       adapter: BullAdapter,
     }),
+    BullModule.registerQueue({
+      name: 'beatmap-difficulty',
+    }),
+    BullBoardModule.forFeature({
+      name: 'beatmap-difficulty',
+      adapter: BullAdapter,
+    }),
   ],
   providers: [
     BeatmapService,
@@ -60,6 +68,7 @@ import { MapsetService } from './mapset.service';
     BeatmapSnapshotService,
     BeatmapPermissionsService,
     BeatmapThumbnailProcessor,
+    BeatmapDifficultyProcessor,
     BeatmapTransformer,
     MapsetTransformer,
     BeatmapMigrator,

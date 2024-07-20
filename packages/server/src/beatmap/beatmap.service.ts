@@ -10,6 +10,7 @@ import { BeatmapLastAccessEntity } from './beatmap-last-access.entity';
 import { UserEntity } from '../users/user.entity';
 import { BeatmapSnapshotService } from './beatmap-snapshot.service';
 import { AssetsService } from '../assets/assets.service';
+import { BeatmapDifficultyJob } from './beatmap-difficulty.processor';
 
 @Injectable()
 export class BeatmapService implements OnModuleInit {
@@ -22,6 +23,8 @@ export class BeatmapService implements OnModuleInit {
     private readonly assetService: AssetsService,
     @InjectQueue('beatmap-thumbnail')
     private readonly thumbnailQueue: Queue<BeatmapThumbnailJob>,
+    @InjectQueue('beatmap-difficulty')
+    private readonly difficultyQueue: Queue<BeatmapDifficultyJob>,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -39,6 +42,20 @@ export class BeatmapService implements OnModuleInit {
     for (const beatmap of beatmaps) {
       await this.queueThumbnailJob(beatmap);
     }
+
+    this.repository
+      .find({
+        where: {
+          needsDiffCalc: true,
+        },
+      })
+      .then((beatmaps) => {
+        for (const beatmap of beatmaps) {
+          this.difficultyQueue.add({
+            beatmapId: beatmap.id,
+          });
+        }
+      });
   }
 
   private readonly logger = new Logger(BeatmapService.name);
