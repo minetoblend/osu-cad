@@ -53,4 +53,26 @@ export class ComposeScreen extends EditorScreen {
       this.#paddingBacking.validate();
     }
   }
+
+  show() {
+    super.show();
+
+    this.#toolBar.x = -100;
+    this.#toolBar.moveTo({ x: 0, duration: 750, easing: 'expo.out' });
+
+    this.#togglesBar.x = 100;
+    this.#togglesBar.moveTo({ x: 0, duration: 750, easing: 'expo.out' });
+
+    this.#playfieldContainer.y = 100;
+    this.#playfieldContainer.moveTo({ y: 0, duration: 750, easing: 'expo.out' });
+  }
+
+  hide() {
+    super.hide();
+
+    this.#toolBar.moveTo({ x: -100, duration: 500, easing: 'expo.out' });
+    this.#togglesBar.moveTo({ x: 100, duration: 500, easing: 'expo.out' });
+
+    this.#playfieldContainer.moveTo({ y: 100, duration: 500, easing: 'expo.out' });
+  }
 }
