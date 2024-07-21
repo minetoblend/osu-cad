@@ -25,6 +25,7 @@ import { BeatmapSelect } from './beatmapSelect/BeatmapSelect';
 import { UserAvatarCache } from './UserAvatarCache';
 import { RootScreen } from './RootScreen';
 import { GlobalSongPlayback } from './GlobalSongPlayback';
+import { NotificationOverlay } from './notifications/NotificationOverlay';
 
 RenderTarget.defaultOptions.depth = true;
 RenderTarget.defaultOptions.stencil = true;
@@ -89,6 +90,10 @@ export class OsucadGame extends Game {
         }),
       }),
     );
+
+    const notifications = new NotificationOverlay();
+    this.add(notifications);
+    this.dependencies.provide(notifications);
 
     const path = window.location.pathname;
 

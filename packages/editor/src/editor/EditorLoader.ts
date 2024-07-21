@@ -2,6 +2,8 @@ import type { Drawable, GameHost, ScreenExitEvent, ScreenTransitionEvent } from 
 import { AudioManager, Axes, GAME_HOST, LowpassFilter, ScreenStack, resolved } from 'osucad-framework';
 import { OsucadScreen } from '../OsucadScreen';
 import { GlobalSongPlayback } from '../GlobalSongPlayback';
+import { NotificationOverlay } from '../notifications/NotificationOverlay';
+import { Notification } from '../notifications/Notification';
 import type { EditorContext } from './context/EditorContext';
 import { OnlineEditorContext } from './context/OnlineEditorContext';
 import { EditorMixer } from './EditorMixer';
@@ -70,6 +72,12 @@ export class EditorLoader extends OsucadScreen {
       catch (e) {
         editor.dispose();
         this.exit();
+
+        this.dependencies.resolve(NotificationOverlay).add(new Notification(
+          'Error',
+          'Failed to load editor',
+          0xEB345E,
+        ));
       }
 
       if (this.#exited) {

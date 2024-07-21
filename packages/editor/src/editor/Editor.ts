@@ -20,6 +20,8 @@ import {
   resolved,
 } from 'osucad-framework';
 import { OsucadScreen } from '../OsucadScreen';
+import { NotificationOverlay } from '../notifications/NotificationOverlay';
+import { Notification } from '../notifications/Notification';
 import { EditorBottomBar } from './EditorBottomBar';
 import { EditorClock } from './EditorClock';
 import { EditorMixer } from './EditorMixer';
@@ -390,6 +392,13 @@ export class Editor
       if (!this.#exited) {
         this.#exitFromError = true;
         this.screenStack.exit(this);
+
+        this.dependencies.resolve(NotificationOverlay)
+          .add(new Notification(
+            'Error',
+            'An unexpected error happened.',
+            0xEB345E,
+          ));
       }
 
       return true;
