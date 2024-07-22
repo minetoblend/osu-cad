@@ -132,6 +132,13 @@ class UserCursor extends CompositeDrawable {
       (this.avatar = new UserAvatar(this.user)),
       new DrawableSprite({
         texture: useAsset('icon:select'),
+        color: 0x000000,
+        scale: 0.5,
+        alpha: 0.25,
+        y: 2,
+      }),
+      new DrawableSprite({
+        texture: useAsset('icon:select'),
         color: this.user.color,
         scale: 0.5,
       }),
