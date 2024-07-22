@@ -92,7 +92,14 @@ export class HitsoundPlayer extends CompositeDrawable {
           this.samples.set(key, sample);
         });
     }
+
+    window.addEventListener('visibilitychange', () => {
+      this.windowIsVisible = document.visibilityState === 'visible';
+      console.log(document.visibilityState, this.windowIsVisible);
+    });
   }
+
+  windowIsVisible = true;
 
   @resolved(HitObjectManager)
   hitObjects!: HitObjectManager;
@@ -104,10 +111,17 @@ export class HitsoundPlayer extends CompositeDrawable {
   update() {
     super.update();
 
-    if (!this.editorClock.isRunning || document.visibilityState !== 'visible') {
+    if (!this.editorClock.isRunning || !this.windowIsVisible) {
       this.#scheduledSamples.forEach(sample => sample.stop());
       this.#scheduledSamples.length = 0;
       this.#isPlaying = false;
+      return;
+    }
+
+    // requestAnimationFrame() doesn't get called when the page isn't visible
+    // so we need to skip this update in that case to prevent all the samples that
+    // should have been played during that time from playing all at once
+    if (this.editorClock.timeInfo.elapsed > 1000) {
       return;
     }
 
