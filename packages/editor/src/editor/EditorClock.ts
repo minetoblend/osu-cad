@@ -70,6 +70,8 @@ export class EditorClock
     if (nextTimingPoint && position > nextTimingPoint?.time)
       position = nextTimingPoint.time;
 
+    position = Math.floor(position);
+
     this.seek(position);
   }
 
