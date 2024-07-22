@@ -29,19 +29,23 @@ export interface MapsetBeatmapInfo {
   name: string;
   starRating: number;
   creator: UserInfo;
+  lastEdited?: string;
   links: {
     self: string;
     edit: string;
     thumbnailSmall: string | null;
     thumbnailLarge: string | null;
+    audioUrl: string;
   };
 }
 
 export interface BeatmapInfo {
   id: string;
+  setId: string;
   title: string;
   artist: string;
   version: string;
+  starRating: number;
   lastEdited: string;
   access: BeatmapAccess;
   isOwner: boolean;
@@ -49,7 +53,9 @@ export interface BeatmapInfo {
   links: {
     view: string;
     edit: string;
-    thumbnail: string | null;
+    thumbnailSmall: string | null;
+    thumbnailLarge: string | null;
+    audioUrl: string;
   };
 }
 
