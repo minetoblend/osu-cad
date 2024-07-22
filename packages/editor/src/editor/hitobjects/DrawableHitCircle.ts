@@ -31,11 +31,11 @@ export class DrawableHitCircle extends DrawableHitObject<HitCircle> {
 
   setup() {
     super.setup();
-    this.circlePiece.comboColor = this.comboColor;
+    this.circlePiece.comboColor = this.hitObject.comboColor;
     this.circlePiece.startTime = this.hitObject.startTime;
     this.circlePiece.timePreempt = this.hitObject.timePreempt;
     this.circlePiece.timeFadeIn = this.hitObject.timeFadeIn;
-    this.approachCircle.comboColor = this.comboColor;
+    this.approachCircle.comboColor = this.hitObject.comboColor;
     this.approachCircle.startTime = this.hitObject.startTime;
     this.approachCircle.timePreempt = this.hitObject.timePreempt;
     this.comboNumber.comboNumber = this.hitObject.indexInCombo;

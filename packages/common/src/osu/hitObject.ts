@@ -88,6 +88,8 @@ export abstract class HitObject {
   timePreempt = 0;
   timeFadeIn = 0;
 
+  comboColor: number = 0xffffff;
+
   private _stackHeight = 0;
 
   get stackHeight(): number {

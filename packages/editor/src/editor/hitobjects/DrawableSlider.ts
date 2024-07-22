@@ -43,33 +43,33 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
   setup() {
     super.setup();
     this.comboNumber.comboNumber = this.hitObject.indexInCombo;
-    this.headCircle.comboColor = this.comboColor;
+    this.headCircle.comboColor = this.hitObject.comboColor;
     this.headCircle.startTime = this.hitObject.startTime;
     this.headCircle.timePreempt = this.hitObject.timePreempt;
     this.headCircle.timeFadeIn = this.hitObject.timeFadeIn;
-    this.headCircle.comboColor = this.comboColor;
+    this.headCircle.comboColor = this.hitObject.comboColor;
     this.tailCircle.startTime = this.hitObject.endTime;
     this.tailCircle.timePreempt
       = this.hitObject.timePreempt
       + Math.min(150, this.hitObject.spanDuration / 2);
     this.tailCircle.timeFadeIn = this.hitObject.timeFadeIn;
-    this.tailCircle.comboColor = this.comboColor;
+    this.tailCircle.comboColor = this.hitObject.comboColor;
     this.tailCircle.position = Vec2.scale(
       Vec2.sub(this.hitObject.endPosition, this.hitObject.position),
       1 / this.hitObject.scale,
     );
 
     this.reverseArrows.clear();
-    for (let i = this.hitObject.repeats -1; i >= 0; i--) {
+    for (let i = this.hitObject.repeats; i >= 1; i--) {
       const time = this.hitObject.startTime + this.hitObject.spanDuration * i;
       const circle = new CirclePiece();
       circle.startTime = time;
       circle.timePreempt = this.hitObject.timePreempt;
       circle.timeFadeIn = this.hitObject.timeFadeIn;
-      circle.comboColor = this.comboColor;
+      circle.comboColor = this.hitObject.comboColor;
 
       const angle
-        = i % 2 === 0 ? this.hitObject.endAngle : this.hitObject.startAngle;
+        = i % 2 === 0 ? this.hitObject.startAngle : this.hitObject.endAngle;
 
       const reverseArrow = new ReverseArrow();
       reverseArrow.rotation = angle;
@@ -77,7 +77,7 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
       reverseArrow.timePreempt = this.hitObject.timePreempt;
 
       this.reverseArrows.addAll(circle, reverseArrow);
-      if (i % 2 === 0) {
+      if (i % 2 !== 0) {
         const position = Vec2.scale(
           this.hitObject.path.endPosition,
           1 / this.hitObject.scale,
@@ -90,7 +90,7 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
     this.sliderBody.scale = new Vec2(1 / this.hitObject.scale);
     this.sliderBody.setup();
 
-    this.approachCircle.comboColor = this.comboColor;
+    this.approachCircle.comboColor = this.hitObject.comboColor;
     this.approachCircle.startTime = this.hitObject.startTime;
     this.approachCircle.timePreempt = this.hitObject.timePreempt;
 

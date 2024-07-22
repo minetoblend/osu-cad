@@ -19,8 +19,6 @@ export class DrawableHitObject<
   @resolved(Beatmap)
   beatmap!: Beatmap;
 
-  comboColor = 0xFFFFFF;
-
   @dependencyLoader()
   load() {
     this.setup();
@@ -29,14 +27,6 @@ export class DrawableHitObject<
   setup() {
     this.scale = this.hitObject.scale;
     this.position = this.hitObject.stackedPosition;
-    const comboColors = this.beatmap.colors;
-    if (comboColors.length > 0) {
-      this.comboColor
-        = comboColors[this.hitObject.comboIndex % comboColors.length];
-    }
-    else {
-      this.comboColor = 0xFFFFFF;
-    }
   }
 
   update() {

@@ -12,6 +12,7 @@ import { HitCircle } from './hitCircle';
 import { Spinner } from './spinner';
 import { binarySearch } from '../util';
 import { ControlPoint, ControlPointUpdateFlags } from './controlPoint';
+import { Beatmap } from './beatmap';
 
 export class HitObjectManager {
   public hitObjects: HitObject[];
@@ -20,9 +21,7 @@ export class HitObjectManager {
 
   constructor(
     hitObjects: SerializedHitObject[],
-    private readonly difficulty: SerializedBeatmapDifficulty,
-    private readonly controlPoints: ControlPointManager,
-    private readonly general: SerializedBeatmapGeneral,
+    private readonly beatmap: Beatmap,
   ) {
     this.hitObjects = hitObjects.map((hitObject) =>
       deserializeHitObject(hitObject),
@@ -31,15 +30,19 @@ export class HitObjectManager {
     this._invalidateCombos();
     this.calculateStacking(
       this.hitObjects,
-      general.stackLeniency,
+      this.beatmap.general.stackLeniency,
       3,
       0,
       this.hitObjects.length - 1,
     );
 
-    controlPoints.onAdded.addListener(this._onControlPointAdded);
-    controlPoints.onRemoved.addListener(this._onControlPointRemoved);
-    controlPoints.onUpdated.addListener(this._onControlPointUpdated);
+    this.beatmap.controlPoints.onAdded.addListener(this._onControlPointAdded);
+    this.beatmap.controlPoints.onRemoved.addListener(
+      this._onControlPointRemoved,
+    );
+    this.beatmap.controlPoints.onUpdated.addListener(
+      this._onControlPointUpdated,
+    );
   }
 
   stackingDirty = false;
@@ -47,7 +50,10 @@ export class HitObjectManager {
 
   private _onAdd(hitObject: HitObject, isInit = false) {
     this._hitObjectMap.set(hitObject.id, hitObject);
-    hitObject.applyDefaults(this.difficulty, this.controlPoints);
+    hitObject.applyDefaults(
+      this.beatmap.difficulty,
+      this.beatmap.controlPoints,
+    );
     hitObject.onUpdate.addListener((key) => {
       this._onUpdate(hitObject, key);
     });
@@ -126,6 +132,8 @@ export class HitObjectManager {
 
       hitObject.comboIndex = comboIndex;
       hitObject.indexInCombo = indexInCombo;
+      hitObject.comboColor =
+        this.beatmap.colors[comboIndex % this.beatmap.colors.length];
 
       indexInCombo++;
 
@@ -289,7 +297,7 @@ export class HitObjectManager {
     if (!this.stackingDirty) return;
     this.calculateStacking(
       this.hitObjects,
-      this.general.stackLeniency,
+      this.beatmap.general.stackLeniency,
       3,
       0,
       this.hitObjects.length - 1,
@@ -320,13 +328,19 @@ export class HitObjectManager {
 
   _onControlPointAdded = () => {
     this.hitObjects.forEach((hitObject) =>
-      hitObject.applyDefaults(this.difficulty, this.controlPoints),
+      hitObject.applyDefaults(
+        this.beatmap.difficulty,
+        this.beatmap.controlPoints,
+      ),
     );
   };
 
   _onControlPointRemoved = () => {
     this.hitObjects.forEach((hitObject) =>
-      hitObject.applyDefaults(this.difficulty, this.controlPoints),
+      hitObject.applyDefaults(
+        this.beatmap.difficulty,
+        this.beatmap.controlPoints,
+      ),
     );
   };
 
@@ -341,7 +355,10 @@ export class HitObjectManager {
         ControlPointUpdateFlags.Timing)
     ) {
       this.hitObjects.forEach((hitObject) =>
-        hitObject.applyDefaults(this.difficulty, this.controlPoints),
+        hitObject.applyDefaults(
+          this.beatmap.difficulty,
+          this.beatmap.controlPoints,
+        ),
       );
     }
   };

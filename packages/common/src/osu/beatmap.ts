@@ -59,12 +59,7 @@ export class Beatmap {
     this.general = options.general ?? { stackLeniency: 0.7 };
     this.controlPoints = new ControlPointManager(options.controlPoints);
     this.difficulty = options.difficulty;
-    this.hitObjects = new HitObjectManager(
-      options.hitObjects,
-      this.difficulty,
-      this.controlPoints,
-      this.general,
-    );
+    this.hitObjects = new HitObjectManager(options.hitObjects, this);
     this.bookmarks = options.bookmarks
       .map((bookmark) => new EditorBookmark(bookmark))
       .filter((it) => it.time != undefined);
