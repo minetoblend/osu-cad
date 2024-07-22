@@ -82,5 +82,22 @@ export class TimelineSlider extends TimelineObject<Slider> {
 
     this.#head.selected = selected;
     this.#tail.selected = selected;
+
+    this.#head.edgeSelected = false;
+    this.#tail.edgeSelected = false;
+
+    const repeats = this.#repeatsContainer.children as TimelineRepeatCircle[];
+    for (const repeat of repeats) {
+      repeat.edgeSelected = false;
+    }
+
+    for (const edge of this.hitObject.selectedEdges) {
+      if (edge === 0)
+        this.#head.edgeSelected = true;
+      else if (edge === this.hitObject.repeats + 1)
+        this.#tail.edgeSelected = true;
+      else if (repeats[edge - 1])
+        repeats[edge - 1].edgeSelected = true;
+    }
   }
 }

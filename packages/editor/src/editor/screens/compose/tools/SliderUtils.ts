@@ -248,6 +248,26 @@ export class SliderUtils {
 
     return closest;
   }
+
+  static calculateEdges(currentEdges: number[], newEdges: Set<number>, add: boolean) {
+    if (newEdges.size > 0) {
+      if (add) {
+        if ([...newEdges].every(it => currentEdges.includes(it))) {
+          const combinedEdges = new Set(currentEdges);
+          for (const edge of newEdges) {
+            combinedEdges.delete(edge);
+          }
+
+          return combinedEdges;
+        }
+
+        for (const edge of currentEdges)
+          newEdges.add(edge);
+      }
+    }
+
+    return newEdges;
+  }
 }
 
 export interface SliderInsertPoint {

@@ -1,5 +1,5 @@
 import type { DrawableOptions, Vec2 } from 'osucad-framework';
-import { Axes, CompositeDrawable, resolved } from 'osucad-framework';
+import { Axes, CompositeDrawable, dependencyLoader, resolved } from 'osucad-framework';
 import type { Color, ColorSource } from 'pixi.js';
 import { RoundedRectangle } from 'pixi.js';
 import { ThemeColors } from '../ThemeColors';
@@ -20,16 +20,22 @@ export class TimelineElement extends CompositeDrawable {
       this.body = new TimelineObjectLayer('body', {
         relativeSizeAxes: Axes.Both,
       }),
-      this.outline = new TimelineObjectLayer('outline', {
-        relativeSizeAxes: Axes.Both,
-      }),
       this.overlay = new TimelineObjectLayer('body', {
         relativeSizeAxes: Axes.Both,
         alpha: 0,
       }),
+      this.outline = new TimelineObjectLayer('outline', {
+        relativeSizeAxes: Axes.Both,
+      }),
+
     );
 
     this.apply(options);
+  }
+
+  @dependencyLoader()
+  [Symbol('load')]() {
+    this.#selectionColor = this.theme.selection;
   }
 
   @resolved(ThemeColors)
@@ -51,6 +57,19 @@ export class TimelineElement extends CompositeDrawable {
 
   #selected = false;
 
+  #selectionColor: ColorSource = 0xFFFFFF;
+
+  get selectionColor() {
+    return this.#selectionColor;
+  }
+
+  set selectionColor(value: ColorSource) {
+    this.#selectionColor = value;
+
+    if (this.#selected)
+      this.outline.color = value;
+  }
+
   get selected() {
     return this.#selected;
   }
@@ -61,7 +80,7 @@ export class TimelineElement extends CompositeDrawable {
 
     this.#selected = value;
 
-    this.outline.color = value ? this.theme.selection : 0xFFFFFF;
+    this.outline.color = value ? this.#selectionColor : 0xFFFFFF;
   }
 
   get overlayVisible() {

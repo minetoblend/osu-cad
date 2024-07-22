@@ -102,6 +102,12 @@ export abstract class TimelineObject<T extends HitObject = HitObject> extends Co
     switch (e.button) {
       case MouseButton.Left:
         this.selectFromMouseDown(e);
+
+        this.#dragOffset = this.hitObject.startTime
+        - this.timeline.positionToTime(
+          this.timeline.toLocalSpace(e.screenSpaceMousePosition).x,
+        );
+        this.#lastTime = this.hitObject.startTime;
         return true;
       case MouseButton.Right:
         if (!this.hitObject.isSelected)
@@ -119,6 +125,10 @@ export abstract class TimelineObject<T extends HitObject = HitObject> extends Co
 
     return false;
   }
+
+  #dragOffset = 0;
+
+  #lastTime = 0;
 
   protected selectFromMouseDown(e: MouseDownEvent) {
     if (e.controlPressed) {
@@ -146,18 +156,19 @@ export abstract class TimelineObject<T extends HitObject = HitObject> extends Co
   onDrag(event: DragEvent): boolean {
     const parent = this.findClosestParentOfType(Timeline);
     if (!parent) {
-      throw new Error('RhtythmTimelineStartCircle must be a child of Timeline');
+      throw new Error('RhythmTimelineStartCircle must be a child of Timeline');
     }
     const time = parent.positionToTime(
       parent.toLocalSpace(event.screenSpaceMousePosition).x,
-    );
+    ) + this.#dragOffset;
 
     const snappedTime = this.beatmap.controlPoints.snap(
       time,
       this.editorClock.beatSnapDivisor.value,
     );
 
-    const delta = snappedTime - this.hitObject.startTime;
+    const delta = snappedTime - this.#lastTime;
+    this.#lastTime = snappedTime;
 
     if (delta !== 0) {
       for (const hitObject of this.selection.selectedObjects) {

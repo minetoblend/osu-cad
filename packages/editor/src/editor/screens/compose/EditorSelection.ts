@@ -1,6 +1,4 @@
-import type {
-  KeyDownEvent,
-} from 'osucad-framework';
+import type { KeyDownEvent } from 'osucad-framework';
 import {
   Action,
   Container,
@@ -9,7 +7,7 @@ import {
   resolved,
 } from 'osucad-framework';
 import type { HitObject } from '@osucad/common';
-import { HitObjectManager } from '@osucad/common';
+import { HitObjectManager, Slider } from '@osucad/common';
 
 export class EditorSelection extends Container {
   readonly #selection = new Set<HitObject>();
@@ -72,6 +70,15 @@ export class EditorSelection extends Container {
     this.selectionChanged.emit([hitObject, false]);
   }
 
+  setSelectedEdges(slider: Slider, edges: number[]) {
+    if (!this.#selection.has(slider)) {
+      this.select([slider]);
+    }
+
+    slider.selectedEdges = edges;
+    this.selectionChanged.emit([slider, true]);
+  }
+
   @resolved(HitObjectManager)
   protected readonly hitObjects!: HitObjectManager;
 
@@ -84,6 +91,9 @@ export class EditorSelection extends Container {
     });
     this.selectionChanged.addListener(([hitObject, selected]) => {
       hitObject.isSelected = selected;
+      if (!selected && hitObject instanceof Slider) {
+        hitObject.selectedEdges = [];
+      }
     });
   }
 

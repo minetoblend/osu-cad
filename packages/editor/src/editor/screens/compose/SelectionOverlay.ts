@@ -70,7 +70,7 @@ class SelectionOverlayObject extends CompositeDrawable {
     this.#onUpdate();
   }
 
-  #startCircle?: DrawableSprite;
+  #startCircle!: DrawableSprite;
   #endCircle?: DrawableSprite;
 
   #onUpdate = () => {
@@ -83,10 +83,30 @@ class SelectionOverlayObject extends CompositeDrawable {
     }
 
     if (this.#endCircle) {
-      this.#endCircle.position = this.hitObject.endPosition.sub(
-        this.hitObject.position,
-      );
+      this.#endCircle.position = (this.hitObject as Slider).path.endPosition;
       this.#endCircle.scale = this.hitObject.scale;
+    }
+
+    if (this.hitObject instanceof Slider) {
+      const edges = this.hitObject.selectedEdges;
+
+      let startSelected = false;
+      let endSelected = false;
+
+      for (const edge of edges) {
+        if (edge % 2 === 0)
+          startSelected = true;
+        else
+          endSelected = true;
+      }
+
+      this.#startCircle.color = startSelected
+        ? 0xF21D1D
+        : 0xFFFFFF;
+
+      this.#endCircle!.color = endSelected
+        ? 0xF21D1D
+        : 0xFFFFFF;
     }
   };
 }

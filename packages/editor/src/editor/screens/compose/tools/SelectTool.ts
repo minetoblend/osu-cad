@@ -106,6 +106,10 @@ export class SelectTool extends ComposeTool {
       const candidate = this.#getSelectionCandidate(hovered)!;
 
       if (e.controlPressed) {
+        if (this.selection.isSelected(candidate) && this.#trySelectSliderEdges(candidate, e.mousePosition, true)) {
+          return true;
+        }
+
         if (
           this.selection.length <= 1
           || !this.selection.isSelected(candidate)
@@ -121,7 +125,7 @@ export class SelectTool extends ComposeTool {
       if (!this.selection.isSelected(candidate)) {
         this.selection.select([candidate]);
       }
-      else {
+      else if (!this.#trySelectSliderEdges(candidate, e.mousePosition)) {
         this.#canCycleSelection = true;
       }
 
@@ -243,7 +247,7 @@ export class SelectTool extends ComposeTool {
 
     this.activeSlider = slider;
 
-    if (slider && controlPressed) {
+    if (slider && controlPressed && slider.selectedEdges.length === 0) {
       this.#sliderInsertPoint = this.#sliderUtils.getInsertPoint(
         slider,
         this.mousePosition,
@@ -435,5 +439,40 @@ export class SelectTool extends ComposeTool {
 
   set activeSlider(value: Slider | null) {
     this.#sliderPathVisualizer.slider = value;
+  }
+
+  #trySelectSliderEdges(hitObject: HitObject, position: Vec2, add = false) {
+    if (!(hitObject instanceof Slider)) {
+      return false;
+    }
+
+    const edges = new Set<number>();
+
+    const distanceToStart = position.distance(hitObject.stackedPosition);
+
+    if (distanceToStart < hitObject.radius) {
+      for (let i = 0; i <= hitObject.repeats + 1; i += 2) {
+        edges.add(i);
+      }
+    }
+
+    const distanceToEnd = position.distance(hitObject.stackedPosition.add(hitObject.path.endPosition));
+
+    if (edges.size === 0 && distanceToEnd < hitObject.radius) {
+      for (let i = 1; i <= hitObject.repeats + 1; i += 2) {
+        edges.add(i);
+      }
+    }
+
+    if (edges.size > 0) {
+      this.selection.setSelectedEdges(
+        hitObject,
+        [...SliderUtils.calculateEdges(hitObject.selectedEdges, edges, add)],
+      );
+
+      return true;
+    }
+
+    return false;
   }
 }

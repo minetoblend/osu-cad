@@ -1,3 +1,8 @@
+import type {
+  DragEvent,
+  DragStartEvent,
+  MouseDownEvent,
+} from 'osucad-framework';
 import {
   Anchor,
   FillMode,
@@ -5,14 +10,12 @@ import {
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import type {
-  DragEvent,
-  DragStartEvent,
-} from 'osucad-framework';
 import type { SerializedSlider, Slider } from '@osucad/common';
 import { Beatmap, UpdateHitObjectCommand } from '@osucad/common';
 import { EditorClock } from '../EditorClock';
 import { CommandManager } from '../context/CommandManager';
+import { SliderUtils } from '../screens/compose/tools/SliderUtils';
+import { EditorSelection } from '../screens/compose/EditorSelection';
 import { TimelineElement } from './TimelineElement';
 import { Timeline } from './Timeline';
 
@@ -116,5 +119,44 @@ export class TimelineSliderTail extends TimelineElement {
 
   protected applyState() {
     this.overlay.alpha = (this.isHovered || this.isDragged) ? 0.25 : 0;
+  }
+
+  get edgeSelected() {
+    return this.#edgeSelected;
+  }
+
+  set edgeSelected(value: boolean) {
+    if (this.#edgeSelected === value)
+      return;
+
+    this.#edgeSelected = value;
+
+    this.selectionColor = value
+      ? 0xF21D1D
+      : this.theme.selection;
+  }
+
+  #edgeSelected = false;
+
+  @resolved(EditorSelection)
+  protected selection!: EditorSelection;
+
+  onMouseDown(e: MouseDownEvent): boolean {
+    if (e.button === MouseButton.Left) {
+      if (!this.hitObject.isSelected) {
+        return false;
+      }
+
+      const edges = new Set([this.hitObject.repeats + 1]);
+
+      this.selection.setSelectedEdges(
+        this.hitObject,
+        [...SliderUtils.calculateEdges(this.hitObject.selectedEdges, edges, e.controlPressed)],
+      );
+
+      return true;
+    }
+
+    return false;
   }
 }
