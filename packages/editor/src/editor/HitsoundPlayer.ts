@@ -119,14 +119,14 @@ export class HitsoundPlayer extends CompositeDrawable {
 
     this.lastEndTime = endTime;
 
-    if (!this.#isPlaying) {
-      startTime = this.editorClock.currentTime - 10;
-    }
-
-    const accurateStartTime = Math.floor(this.editorClock.currentTime + offset);
+    const accurateStartTime = Math.floor(this.editorClock.currentTime - this.editorClock.timeInfo.elapsed + offset);
 
     if (Math.abs(accurateStartTime - startTime) > 10) {
       startTime = accurateStartTime;
+    }
+
+    if (!this.#isPlaying) {
+      startTime = this.editorClock.currentTime - 10;
     }
 
     startTime = Math.floor(startTime);
@@ -135,7 +135,7 @@ export class HitsoundPlayer extends CompositeDrawable {
 
     const hitObjects = this.hitObjects.hitObjects.filter(
       hitObject =>
-        hitObject.startTime <= endTime && hitObject.endTime > startTime,
+        hitObject.startTime <= endTime + 10 && hitObject.endTime >= startTime - 10,
     );
 
     const hitSamples = hitObjects.flatMap(it => it.hitSamples);
