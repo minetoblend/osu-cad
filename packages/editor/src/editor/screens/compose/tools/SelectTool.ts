@@ -330,10 +330,10 @@ export class SelectTool extends ComposeTool {
       if (hitObject instanceof Slider) {
         const edges = hitObject.selectedEdges;
 
+        const hitSounds = [...hitObject.hitSounds];
+
         if (edges.length > 0) {
           setHitsound = false;
-
-          const hitSounds = [...hitObject.hitSounds];
 
           for (const edge of edges) {
             if (!hitSounds[edge]) {
@@ -350,9 +350,21 @@ export class SelectTool extends ComposeTool {
               ),
             };
           }
-
-          options.hitSounds = hitSounds;
         }
+        else {
+          for (let i = 0; i < hitSounds.length; i++) {
+            hitSounds[i] = {
+              ...hitSounds[i],
+              additions: setAdditionsEnabled(
+                hitSounds[i].additions,
+                addition,
+                bindable.value,
+              ),
+            };
+          }
+        }
+
+        options.hitSounds = hitSounds;
       }
 
       if (setHitsound) {
