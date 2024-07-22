@@ -1,20 +1,21 @@
 import type { HitObject } from '@osucad/common';
-import { Beatmap, HitObjectManager } from '@osucad/common';
+import { Beatmap, HitCircle, HitObjectManager, Slider } from '@osucad/common';
 import type {
   DragEvent,
   DragStartEvent,
   KeyDownEvent,
   MouseDownEvent,
   PIXIContainer,
-
   ScrollEvent,
 } from 'osucad-framework';
 import {
   Anchor,
+
   Axes,
   Box,
   Container,
   MouseButton,
+  almostEquals,
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
@@ -23,7 +24,9 @@ import { EditorClock } from '../EditorClock';
 import { ThemeColors } from '../ThemeColors';
 import { EditorSelection } from '../screens/compose/EditorSelection';
 import { TimelineTick } from './TimelineTick';
-import { TimelineObject } from './TimelineObject';
+import type { TimelineObject } from './TimelineObject';
+import { TimelineHitCircle } from './TimelineHitCircle';
+import { TimelineSlider } from './TimelineSlider';
 
 export class Timeline extends Container {
   constructor() {
@@ -169,16 +172,42 @@ export class Timeline extends Container {
     );
 
     const shouldRemove = new Set(this.#hitObjectMap.keys());
-    for (let i = 0; i < objects.length; i++) {
+    let previousStartTime = -Infinity;
+    let stackHeight = 0;
+
+    for (let i = objects.length; i >= 0; i--) {
       const object = objects[i];
       let drawable = this.#hitObjectMap.get(object);
       if (!drawable) {
-        drawable = new TimelineObject(object);
-        this.#hitObjectMap.set(object, drawable);
-        this.#objectContainer.add(drawable);
+        const newDrawable = this.createDrawable(object);
+        if (!newDrawable)
+          continue;
+
+        this.#hitObjectMap.set(object, newDrawable);
+        this.#objectContainer.add(newDrawable);
+
+        drawable = newDrawable;
       }
       drawable.drawNode.zIndex = objects.length - i;
       shouldRemove.delete(object);
+    }
+
+    for (let i = 0; i < objects.length; i++) {
+      const object = objects[i];
+      const drawable = this.#hitObjectMap.get(object)!;
+
+      if (almostEquals(object.startTime, previousStartTime)) {
+        stackHeight++;
+
+        drawable.y = -stackHeight * 5;
+      }
+      else {
+        stackHeight = 0;
+
+        drawable.y = 0;
+      }
+
+      previousStartTime = object.startTime;
     }
 
     for (const object of shouldRemove) {
@@ -188,6 +217,16 @@ export class Timeline extends Container {
         this.#hitObjectMap.delete(object);
       }
     }
+  }
+
+  protected createDrawable(object: HitObject): TimelineObject | null {
+    if (object instanceof HitCircle)
+      return new TimelineHitCircle(object);
+
+    if (object instanceof Slider)
+      return new TimelineSlider(object);
+
+    return null;
   }
 
   zoomSpeed = 0.3;
