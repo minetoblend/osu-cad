@@ -19,6 +19,8 @@ export class TimelineSlider extends TimelineObject<Slider> {
 
   @dependencyLoader()
   load() {
+    this.body.outline.alpha = 0;
+
     this.addAll(
       this.#repeatsContainer = new Container({
         relativeSizeAxes: Axes.Both,
