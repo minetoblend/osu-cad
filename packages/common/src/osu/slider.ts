@@ -69,6 +69,8 @@ export class Slider extends HitObject {
 
   path = new SliderPath();
 
+  selectedEdges: number[] = [];
+
   private _baseVelocity = 1;
   private inheritedVelocity = 1;
 
