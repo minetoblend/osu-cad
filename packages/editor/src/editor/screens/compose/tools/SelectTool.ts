@@ -14,6 +14,7 @@ import {
 } from 'osucad-framework';
 import type {
   HitObject,
+  SerializedSlider,
 } from '@osucad/common';
 import {
   Additions,
@@ -320,17 +321,53 @@ export class SelectTool extends ComposeTool {
     const hitObjects = this.selection.selectedObjects;
 
     for (const hitObject of hitObjects) {
+      const options: Partial<SerializedSlider> = {
+
+      };
+
+      let setHitsound = true;
+
+      if (hitObject instanceof Slider) {
+        const edges = hitObject.selectedEdges;
+
+        if (edges.length > 0) {
+          setHitsound = false;
+
+          const hitSounds = [...hitObject.hitSounds];
+
+          for (const edge of edges) {
+            if (!hitSounds[edge]) {
+              console.warn('Hit sound not found for edge', edge);
+              continue;
+            }
+
+            hitSounds[edge] = {
+              ...hitSounds[edge],
+              additions: setAdditionsEnabled(
+                hitSounds[edge].additions,
+                addition,
+                bindable.value,
+              ),
+            };
+          }
+
+          options.hitSounds = hitSounds;
+        }
+      }
+
+      if (setHitsound) {
+        options.hitSound = {
+          ...hitObject.hitSound,
+          additions: setAdditionsEnabled(
+            hitObject.hitSound.additions,
+            addition,
+            bindable.value,
+          ),
+        };
+      }
+
       this.submit(
-        new UpdateHitObjectCommand(hitObject, {
-          hitSound: {
-            ...hitObject.hitSound,
-            additions: setAdditionsEnabled(
-              hitObject.hitSound.additions,
-              addition,
-              bindable.value,
-            ),
-          },
-        }),
+        new UpdateHitObjectCommand(hitObject, options),
         false,
       );
     }
@@ -411,9 +448,27 @@ export class SelectTool extends ComposeTool {
       Additions.Finish,
       Additions.Clap,
     ]) {
-      const allActive = this.selection.selectedObjects.every(
-        it => !!(it.hitSound.additions & addition),
-      );
+      let allActive = true;
+
+      for (const object of this.selection.selectedObjects) {
+        if (object instanceof Slider) {
+          if (object.selectedEdges.length > 0) {
+            for (const edge of object.selectedEdges) {
+              if (!(object.hitSounds[edge].additions & addition)) {
+                allActive = false;
+                break;
+              }
+            }
+
+            continue;
+          }
+        }
+
+        if (!(object.hitSound.additions & addition)) {
+          allActive = false;
+          break;
+        }
+      }
 
       let bindable: Bindable<boolean>;
 
