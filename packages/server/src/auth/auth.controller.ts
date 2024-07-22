@@ -6,15 +6,17 @@ import {
   Query,
   Redirect,
   Req,
+  Res,
 } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom, map } from 'rxjs';
 import { ITokenInformation } from './interfaces';
 import { UserEntity } from '../users/user.entity';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { UserService } from '../users/user.service';
 import { ConfigService } from '@nestjs/config';
 import { AuditService } from '../audit/audit.service';
+import { ClientTokenService } from './client-token.service';
 
 @Controller('/auth')
 export class AuthController {
@@ -36,6 +38,7 @@ export class AuthController {
     private readonly userService: UserService,
     private readonly configService: ConfigService,
     private readonly auditService: AuditService,
+    private readonly clientTokenService: ClientTokenService,
   ) {}
 
   @Get('/login')
@@ -146,6 +149,50 @@ export class AuthController {
 
       req.session.user = user;
     }
+  }
+
+  @Get('/client')
+  async clientLogin(@Req() req: Request, @Res() res: Response) {
+    if (!req.session.user) {
+      res.redirect(
+        `/auth/login?redirect=${encodeURIComponent('/auth/client')}`,
+      );
+
+      return;
+    }
+
+    const token = await this.clientTokenService.createToken(req.session.user);
+
+    res.contentType('text/html').send(`
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>osucad</title>
+  </head>
+  <body>
+    <h1>Successfully logged in, you can close this page now</h1>
+    <script>
+      window.open('osucad://login/callback?token=${token}');
+    </script>
+  </body>
+</html>
+
+      `);
+  }
+
+  @Get('/client/callback')
+  async clientCallback(@Req() req: Request, @Res() res: Response) {
+    const token = req.query.token as string;
+
+    const user = await this.clientTokenService.validateToken(token);
+
+    if (!user) {
+      res.status(404).send('Token not found');
+      return;
+    }
+
+    res.sendStatus(200);
   }
 }
 
