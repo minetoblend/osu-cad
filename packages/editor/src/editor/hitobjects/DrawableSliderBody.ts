@@ -127,10 +127,7 @@ export class DrawableSliderBody extends Container {
   colors!: ThemeColors;
 
   setup() {
-    const comboColors = this.beatmap.colors;
-    this.shader.comboColor
-      = comboColors[this.hitObject.comboIndex % comboColors.length];
-    this.shader.borderColor = this.hitObject.isSelected ? 0x3D74FF : 0xFFFFFF;
+    this.shader.comboColor = this.hitObject.comboColor;
   }
 
   update() {
