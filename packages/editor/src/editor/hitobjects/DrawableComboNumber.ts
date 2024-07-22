@@ -59,11 +59,11 @@ export class DrawableComboNumber extends CompositeDrawable {
     }
     this.addAllInternal(...digits);
 
-    const totalWidth = digits.reduce((acc, digit) => acc + digit.drawSize.x, 0);
+    const totalWidth = digits.reduce((acc, digit) => acc + digit.drawSize.x - 6, 0);
     let currentX = -totalWidth / 2;
     for (const child of digits) {
-      child.x = currentX + child.drawSize.x / 2;
-      currentX += child.drawSize.x;
+      child.x = currentX + (child.drawSize.x - 4) / 2;
+      currentX += (child.drawSize.x - 4);
     }
   }
 }
