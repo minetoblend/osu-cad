@@ -194,7 +194,9 @@ export class Timeline extends Container {
 
     for (let i = 0; i < objects.length; i++) {
       const object = objects[i];
-      const drawable = this.#hitObjectMap.get(object)!;
+      const drawable = this.#hitObjectMap.get(object);
+
+      if(!drawable) continue;
 
       if (almostEquals(object.startTime, previousStartTime)) {
         stackHeight++;
