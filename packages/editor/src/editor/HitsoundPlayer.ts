@@ -99,6 +99,8 @@ export class HitsoundPlayer extends CompositeDrawable {
 
   #scheduledSamples: SamplePlayback[] = [];
 
+  lastEndTime = 0;
+
   update() {
     super.update();
 
@@ -111,13 +113,23 @@ export class HitsoundPlayer extends CompositeDrawable {
 
     const offset = 100 - this.preferences.audio.audioOffset;
 
-    let startTime
-      = this.editorClock.currentTime + offset - this.editorClock.timeInfo.elapsed;
-    const endTime = this.editorClock.currentTime + offset;
+    let startTime = this.lastEndTime;
+
+    const endTime = Math.floor(this.editorClock.currentTime + offset);
+
+    this.lastEndTime = endTime;
 
     if (!this.#isPlaying) {
       startTime = this.editorClock.currentTime - 10;
     }
+
+    const accurateStartTime = Math.floor(this.editorClock.currentTime + offset);
+
+    if (Math.abs(accurateStartTime - startTime) > 10) {
+      startTime = accurateStartTime;
+    }
+
+    startTime = Math.floor(startTime);
 
     this.#isPlaying = true;
 
@@ -179,6 +191,10 @@ export class HitsoundPlayer extends CompositeDrawable {
 
     const delay
       = (hitSample.time - this.editorClock.currentTime + this.preferences.audio.audioOffset) / this.editorClock.rate;
+
+    if (!sample) {
+      console.log(`Sample not found: ${key}`);
+    }
 
     if (sample) {
       const playback = sample.play({
