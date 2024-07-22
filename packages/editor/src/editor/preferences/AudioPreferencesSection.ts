@@ -4,6 +4,7 @@ import { PreferencesStore } from '../../preferences/PreferencesStore';
 import { OsucadSpriteText } from '../../OsucadSpriteText';
 import { PreferencesPanel } from './PreferencesPanel';
 import { VolumeSliderContainer } from './VolumeSlider';
+import { PreferencesToggle } from './PreferencesToggle';
 
 export class AudioPreferencesSection extends PreferencesPanel {
   getTitle(): string {
@@ -39,9 +40,13 @@ export class AudioPreferencesSection extends PreferencesPanel {
       new VolumeSliderContainer(
         'audio offset',
         this.preferences.audio.audioOffsetBindable,
-        -100,
-        100,
+        -250,
+        250,
         value => `${Math.round(value)}ms`,
+      ),
+      new PreferencesToggle(
+        'Automatic offset detection',
+        this.preferences.audio.automaticOffsetBindable,
       ),
     ];
   }

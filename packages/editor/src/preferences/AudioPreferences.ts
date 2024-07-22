@@ -13,6 +13,7 @@ export class AudioPreferences {
       this.hitsoundVolumeBindable.value = parsed.hitsoundVolume;
       this.uiVolumeBindable.value = parsed.uiVolume;
       this.audioOffsetBindable.value = parsed.audioOffset ?? 0;
+      this.automaticOffsetBindable.value = parsed.automaticOffset ?? false;
     }
 
     this.masterVolumeBindable.addOnChangeListener(() => this.save());
@@ -20,6 +21,7 @@ export class AudioPreferences {
     this.hitsoundVolumeBindable.addOnChangeListener(() => this.save());
     this.uiVolumeBindable.addOnChangeListener(() => this.save());
     this.audioOffsetBindable.addOnChangeListener(() => this.save());
+    this.automaticOffsetBindable.addOnChangeListener(() => this.save());
   }
 
   get masterVolume() {
@@ -62,11 +64,20 @@ export class AudioPreferences {
     this.audioOffsetBindable.value = value;
   }
 
+  get automaticOffset() {
+    return this.automaticOffsetBindable.value;
+  }
+
+  set automaticOffset(value: boolean) {
+    this.automaticOffsetBindable.value = value;
+  }
+
   masterVolumeBindable = new Bindable(0.5);
   musicVolumeBindable = new Bindable(0.75);
   hitsoundVolumeBindable = new Bindable(0.75);
   uiVolumeBindable = new Bindable(0.5);
   audioOffsetBindable = new Bindable(0);
+  automaticOffsetBindable = new Bindable(false);
 
   private save() {
     localStorage.setItem(
@@ -77,6 +88,7 @@ export class AudioPreferences {
         hitsoundVolume: this.hitsoundVolume,
         uiVolume: this.uiVolume,
         audioOffset: this.audioOffset,
+        automaticOffset: this.automaticOffset,
       }),
     );
   }

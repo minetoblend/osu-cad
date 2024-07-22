@@ -7,10 +7,12 @@ import type {
   Track,
 } from 'osucad-framework';
 import {
+  AudioManager,
   Bindable,
   Container,
   almostEquals,
   clamp,
+  dependencyLoader,
   lerp,
   resolved,
 } from 'osucad-framework';
@@ -23,8 +25,30 @@ export class EditorClock
     super();
   }
 
+  @dependencyLoader()
+  init() {
+    this.scheduler.addDelayed(() => {
+      if (this.preferences.audio.automaticOffset) {
+        const offset = -this.audioManager.context.outputLatency * 1000;
+
+        if (!almostEquals(offset, this.preferences.audio.audioOffset, 1)) {
+          this.preferences.audio.audioOffset = offset;
+        }
+      }
+    }, 1000, true);
+
+    this.preferences.audio.automaticOffsetBindable.addOnChangeListener((enabled) => {
+      if (enabled) {
+        this.preferences.audio.audioOffset = -this.audioManager.context.outputLatency * 1000;
+      }
+    });
+  }
+
   @resolved(PreferencesStore)
   preferences!: PreferencesStore;
+
+  @resolved(AudioManager)
+  audioManager!: AudioManager;
 
   get offset() {
     return this.preferences.audio.audioOffset;
