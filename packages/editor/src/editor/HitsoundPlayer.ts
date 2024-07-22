@@ -104,7 +104,7 @@ export class HitsoundPlayer extends CompositeDrawable {
   update() {
     super.update();
 
-    if (!this.editorClock.isRunning) {
+    if (!this.editorClock.isRunning || document.visibilityState !== 'visible') {
       this.#scheduledSamples.forEach(sample => sample.stop());
       this.#scheduledSamples.length = 0;
       this.#isPlaying = false;
