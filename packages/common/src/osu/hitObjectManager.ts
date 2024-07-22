@@ -118,13 +118,16 @@ export class HitObjectManager {
     let comboIndex = 0;
     let indexInCombo = 0;
 
-    let preventNewCombo = true;
+    let forceNewCombo = false;
     for (const hitObject of this.hitObjects) {
-      if (hitObject.isNewCombo && !preventNewCombo) {
+      if (hitObject instanceof Spinner) {
+        forceNewCombo = true;
+      } else if (hitObject.isNewCombo || forceNewCombo) {
         comboIndex += 1 + hitObject.comboOffset;
         indexInCombo = 0;
+
+        forceNewCombo = false;
       }
-      preventNewCombo = false;
 
       const anyChanged =
         hitObject.comboIndex !== comboIndex ||
