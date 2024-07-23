@@ -247,6 +247,10 @@ export class Slider extends HitObject {
   }
 
   protected override _updateHitSounds() {
+    this.selectedEdges = this.selectedEdges.filter(
+      (i) => i <= this.repeats + 1,
+    );
+
     if (this._hitSounds.length === this.spans + 1) return;
     if (this._hitSounds.length > this.spans + 1) {
       const last =
