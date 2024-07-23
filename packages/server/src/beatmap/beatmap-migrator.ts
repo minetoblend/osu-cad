@@ -31,12 +31,12 @@ export class BeatmapMigrator {
 
   migrate_svs(data: BeatmapData): BeatmapData {
     const controlPoints = ControlPointManager.fromLegacy(data.controlPoints);
-    const hitObjects = new HitObjectManager(
-      data.hitObjects,
-      data.difficulty,
+    const hitObjects = new HitObjectManager(data.hitObjects, {
+      difficulty: data.difficulty,
       controlPoints,
-      data.general,
-    );
+      colors: [0x000000],
+      general: data.general,
+    });
 
     for (const hitObject of hitObjects.hitObjects) {
       if (hitObject instanceof Slider && hitObject.velocityOverride !== null) {
