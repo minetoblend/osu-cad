@@ -21,7 +21,12 @@ export class HitObjectManager {
 
   constructor(
     hitObjects: SerializedHitObject[],
-    private readonly beatmap: Beatmap,
+    private readonly beatmap: {
+      controlPoints: ControlPointManager;
+      difficulty: SerializedBeatmapDifficulty;
+      general: SerializedBeatmapGeneral;
+      colors: number[];
+    },
   ) {
     this.hitObjects = hitObjects.map((hitObject) =>
       deserializeHitObject(hitObject),
