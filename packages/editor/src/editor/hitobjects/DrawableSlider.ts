@@ -3,12 +3,13 @@ import { Anchor, Container, Vec2, resolved } from 'osucad-framework';
 import { animate } from '../../utils/animate';
 import { PreferencesStore } from '../../preferences/PreferencesStore';
 import { DrawableHitObject } from './DrawableHitObject';
-import { CirclePiece } from './CirclePiece';
 import { ApproachCircle } from './ApproachCircle';
 import { DrawableSliderBody } from './DrawableSliderBody';
 import { DrawableComboNumber } from './DrawableComboNumber';
 import { DrawableSliderBall } from './DrawableSliderBall';
 import { ReverseArrow } from './ReverseArrow';
+import { DrawableSliderTail } from './DrawableSliderTail';
+import { AnimatedCirclePiece } from './AnimatedCirclePiece';
 
 export class DrawableSlider extends DrawableHitObject<Slider> {
   constructor(public slider: Slider) {
@@ -16,8 +17,8 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
     this.origin = Anchor.Center;
   }
 
-  headCircle!: CirclePiece;
-  tailCircle!: CirclePiece;
+  headCircle!: AnimatedCirclePiece;
+  sliderTail!: DrawableSliderTail;
   approachCircle!: ApproachCircle;
   sliderBody!: DrawableSliderBody;
   comboNumber!: DrawableComboNumber;
@@ -27,9 +28,9 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
   override load() {
     this.addAll(
       (this.sliderBody = new DrawableSliderBody(this.hitObject)),
-      (this.tailCircle = new CirclePiece()),
+      (this.sliderTail = new DrawableSliderTail(this.hitObject, 0)),
       (this.reverseArrows = new Container()),
-      (this.headCircle = new CirclePiece()),
+      (this.headCircle = new AnimatedCirclePiece()),
       (this.approachCircle = new ApproachCircle()),
       (this.sliderBall = new DrawableSliderBall()),
     );
@@ -44,29 +45,24 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
     super.setup();
     this.comboNumber.comboNumber = this.hitObject.indexInCombo;
     this.headCircle.comboColor = this.hitObject.comboColor;
-    this.headCircle.startTime = this.hitObject.startTime;
-    this.headCircle.timePreempt = this.hitObject.timePreempt;
+
+    this.headCircle.timeFadeIn = this.hitObject.startTime - this.hitObject.timePreempt;
+    this.headCircle.fadeInDuration = this.hitObject.timeFadeIn;
+    this.headCircle.timeFadeOut = this.hitObject.startTime;
+
     this.headCircle.timeFadeIn = this.hitObject.timeFadeIn;
     this.headCircle.comboColor = this.hitObject.comboColor;
-    this.tailCircle.startTime = this.hitObject.endTime;
-    this.tailCircle.timePreempt
-      = this.hitObject.timePreempt
-      + Math.min(150, this.hitObject.spanDuration / 2);
-    this.tailCircle.timeFadeIn = this.hitObject.timeFadeIn;
-    this.tailCircle.comboColor = this.hitObject.comboColor;
-    this.tailCircle.position = Vec2.scale(
+
+    this.sliderTail.position = Vec2.scale(
       Vec2.sub(this.hitObject.endPosition, this.hitObject.position),
       1 / this.hitObject.scale,
     );
+    this.sliderTail.repeatIndex = this.hitObject.repeats;
 
     this.reverseArrows.clear();
     for (let i = this.hitObject.repeats; i >= 1; i--) {
       const time = this.hitObject.startTime + this.hitObject.spanDuration * i;
-      const circle = new CirclePiece();
-      circle.startTime = time;
-      circle.timePreempt = this.hitObject.timePreempt;
-      circle.timeFadeIn = this.hitObject.timeFadeIn;
-      circle.comboColor = this.hitObject.comboColor;
+      const circle = new DrawableSliderTail(this.hitObject, i - 1);
 
       const angle
         = i % 2 === 0 ? this.hitObject.startAngle : this.hitObject.endAngle;
@@ -104,6 +100,19 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
   update() {
     super.update();
     const time = this.time.current - this.hitObject.startTime;
+
+    if (time < 0) {
+      this.headCircle.alpha = animate(
+        time,
+        -this.slider.timePreempt,
+        -this.slider.timePreempt + this.slider.timeFadeIn,
+        0,
+        1,
+      );
+    }
+    else {
+      this.headCircle.alpha = animate(time, 0, 800, 1, 0);
+    }
 
     this.comboNumber.alpha
     = time > 0 && this.preferences.viewport.hitAnimations

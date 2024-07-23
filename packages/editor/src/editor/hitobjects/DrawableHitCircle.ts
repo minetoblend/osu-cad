@@ -3,9 +3,9 @@ import { Anchor, resolved } from 'osucad-framework';
 import { PreferencesStore } from '../../preferences/PreferencesStore';
 import { animate } from '../../utils/animate';
 import { ApproachCircle } from './ApproachCircle';
-import { CirclePiece } from './CirclePiece';
 import { DrawableComboNumber } from './DrawableComboNumber';
 import { DrawableHitObject } from './DrawableHitObject';
+import { AnimatedCirclePiece } from './AnimatedCirclePiece';
 
 export class DrawableHitCircle extends DrawableHitObject<HitCircle> {
   constructor(public hitCircle: HitCircle) {
@@ -13,13 +13,13 @@ export class DrawableHitCircle extends DrawableHitObject<HitCircle> {
     this.origin = Anchor.Center;
   }
 
-  circlePiece!: CirclePiece;
+  circlePiece!: AnimatedCirclePiece;
   approachCircle!: ApproachCircle;
   comboNumber!: DrawableComboNumber;
 
   override load() {
     this.addAll(
-      (this.circlePiece = new CirclePiece()),
+      (this.circlePiece = new AnimatedCirclePiece()),
       (this.approachCircle = new ApproachCircle()),
     );
     this.circlePiece.add(
@@ -31,10 +31,12 @@ export class DrawableHitCircle extends DrawableHitObject<HitCircle> {
 
   setup() {
     super.setup();
+
     this.circlePiece.comboColor = this.hitObject.comboColor;
-    this.circlePiece.startTime = this.hitObject.startTime;
-    this.circlePiece.timePreempt = this.hitObject.timePreempt;
-    this.circlePiece.timeFadeIn = this.hitObject.timeFadeIn;
+    this.circlePiece.timeFadeIn = this.hitObject.startTime - this.hitObject.timePreempt;
+    this.circlePiece.fadeInDuration = this.hitObject.timeFadeIn;
+    this.circlePiece.timeFadeOut = this.hitObject.startTime;
+
     this.approachCircle.comboColor = this.hitObject.comboColor;
     this.approachCircle.startTime = this.hitObject.startTime;
     this.approachCircle.timePreempt = this.hitObject.timePreempt;
