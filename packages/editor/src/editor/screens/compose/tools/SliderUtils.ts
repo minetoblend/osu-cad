@@ -234,7 +234,7 @@ export class SliderUtils {
       const position = Vec2.add(A, AB.scale(t));
 
       const distance = position.distance(P);
-      if (distance < 35) {
+      if (distance < 100) {
         if (distance < closestDistance) {
           closest = {
             position,
@@ -246,7 +246,7 @@ export class SliderUtils {
       last = current;
     }
 
-    return closest;
+    return { position: closest, distance: closestDistance };
   }
 
   static calculateEdges(currentEdges: number[], newEdges: Set<number>, add: boolean) {

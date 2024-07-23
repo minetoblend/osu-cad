@@ -248,11 +248,23 @@ export class SelectTool extends ComposeTool {
 
     this.activeSlider = slider;
 
-    if (slider && controlPressed && slider.selectedEdges.length === 0) {
-      this.#sliderInsertPoint = this.#sliderUtils.getInsertPoint(
+    if (slider && controlPressed) {
+      const insertPoint = this.#sliderUtils.getInsertPoint(
         slider,
         this.mousePosition,
       );
+
+      if (insertPoint) {
+        if (slider.selectedEdges.length > 0 && insertPoint.distance > 10 && insertPoint.distance < slider.radius) {
+          this.#sliderInsertPoint = null;
+        }
+        else {
+          this.#sliderInsertPoint = insertPoint.position;
+        }
+      }
+      else {
+        this.#sliderInsertPoint = null;
+      }
     }
     else {
       this.#sliderInsertPoint = null;
