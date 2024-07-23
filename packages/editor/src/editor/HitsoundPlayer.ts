@@ -92,14 +92,7 @@ export class HitsoundPlayer extends CompositeDrawable {
           this.samples.set(key, sample);
         });
     }
-
-    window.addEventListener('visibilitychange', () => {
-      this.windowIsVisible = document.visibilityState === 'visible';
-      console.log(document.visibilityState, this.windowIsVisible);
-    });
   }
-
-  windowIsVisible = true;
 
   @resolved(HitObjectManager)
   hitObjects!: HitObjectManager;
@@ -111,7 +104,7 @@ export class HitsoundPlayer extends CompositeDrawable {
   update() {
     super.update();
 
-    if (!this.editorClock.isRunning || !this.windowIsVisible) {
+    if (!this.editorClock.isRunning) {
       this.#scheduledSamples.forEach(sample => sample.stop());
       this.#scheduledSamples.length = 0;
       this.#isPlaying = false;
