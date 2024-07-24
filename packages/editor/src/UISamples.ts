@@ -7,6 +7,7 @@ import userJoined from './assets/samples/user-joined.ogg';
 import userLeft from './assets/samples/user-left.ogg';
 import keyMovement from './assets/samples/key-movement.ogg';
 import menuhit from './assets/samples/menuhit.wav';
+import whoosh from './assets/samples/whoosh.wav';
 
 export class UISamples {
   constructor(
@@ -21,6 +22,7 @@ export class UISamples {
   userLeft!: Sample;
   keyMovement!: Sample;
   menuhit!: Sample;
+  whoosh!: Sample;
 
   async load() {
     await Promise.all([
@@ -31,6 +33,7 @@ export class UISamples {
       this.#loadSample('userLeft', userLeft),
       this.#loadSample('keyMovement', keyMovement),
       this.#loadSample('menuhit', menuhit),
+      this.#loadSample('whoosh', whoosh),
     ]);
   }
 
