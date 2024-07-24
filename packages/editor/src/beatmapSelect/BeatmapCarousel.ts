@@ -396,4 +396,8 @@ class CarouselScrollContainer extends MainScrollContainer {
 
     this.masking = false;
   }
+
+  receivePositionalInputAt(): boolean {
+    return true;
+  }
 }
