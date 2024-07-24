@@ -106,6 +106,12 @@ export class EditorLoader extends OsucadScreen {
     return super.onExiting(e);
   }
 
+  onSuspending(e: ScreenTransitionEvent) {
+    super.onSuspending(e);
+
+    this.fadeOut({ duration: 600 });
+  }
+
   onResuming(e: ScreenTransitionEvent) {
     super.onResuming(e);
 
