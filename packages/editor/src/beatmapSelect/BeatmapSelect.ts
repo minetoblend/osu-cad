@@ -1,10 +1,12 @@
 import type { ScreenTransitionEvent } from 'osucad-framework';
-import { Anchor, Axes, Box, dependencyLoader, resolved } from 'osucad-framework';
+import { Anchor, Axes, Box, Container, dependencyLoader, resolved } from 'osucad-framework';
 import gsap from 'gsap';
 import { OsucadScreen } from '../OsucadScreen';
 import { GlobalSongPlayback } from '../GlobalSongPlayback';
 import { BeatmapCarousel } from './BeatmapCarousel';
 import { BeatmapSelectBackground } from './BeatmapSelectBackground';
+import { CreateBeatmapCard } from './CreateBeatmapCard';
+import { BeatmapImportDropzone } from './BeatmapImportDropzone';
 
 export class BeatmapSelect extends OsucadScreen {
   getPath(): string {
@@ -29,13 +31,30 @@ export class BeatmapSelect extends OsucadScreen {
     }));
 
     this.addAllInternal(
-      this.#background = new BeatmapSelectBackground(),
-      this.#carousel = new BeatmapCarousel()
-        .apply({
-          width: 0.6,
-          anchor: Anchor.CenterRight,
-          origin: Anchor.CenterRight,
-        }),
+      new BeatmapImportDropzone({
+        relativeSizeAxes: Axes.Both,
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
+        children: [
+          this.#background = new BeatmapSelectBackground(),
+          this.#carousel = new BeatmapCarousel()
+            .apply({
+              width: 0.6,
+              anchor: Anchor.CenterRight,
+              origin: Anchor.CenterRight,
+            }),
+          new Container({
+            relativeSizeAxes: Axes.Both,
+            anchor: Anchor.CenterLeft,
+            origin: Anchor.CenterLeft,
+            width: 0.4,
+            padding: 50,
+            children: [
+              new CreateBeatmapCard(),
+            ],
+          }),
+        ],
+      }),
     );
 
     this.#carousel.bleedTop = 200;
