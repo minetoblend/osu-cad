@@ -1,5 +1,5 @@
 import type { ContainerOptions, DropEvent, InputManager } from 'osucad-framework';
-import { Anchor, Axes, Container, LowpassFilter, RoundedBox, dependencyLoader, resolved } from 'osucad-framework';
+import { Action, Anchor, Axes, Container, LowpassFilter, RoundedBox, dependencyLoader, resolved } from 'osucad-framework';
 import gsap from 'gsap';
 import { ThemeColors } from '../editor/ThemeColors';
 import { OsucadSpriteText } from '../OsucadSpriteText';
@@ -7,6 +7,9 @@ import { EditorMixer } from '../editor/EditorMixer';
 import { UISamples } from '../UISamples';
 import { NotificationOverlay } from '../notifications/NotificationOverlay';
 import { Notification } from '../notifications/Notification';
+import { DialogContainer } from '../modals/DialogContainer';
+import type { MapsetInfo } from '../beatmaps/MapsetInfo';
+import { BeatmapImportDialog } from './BeatmapImportDialog';
 
 export interface BeatmapImportDropzoneOptions extends ContainerOptions {}
 
@@ -23,6 +26,8 @@ export class BeatmapImportDropzone extends Container {
 
     this.apply(options);
   }
+
+  uploadFinished = new Action<MapsetInfo>();
 
   readonly #content: Container;
 
@@ -115,8 +120,13 @@ export class BeatmapImportDropzone extends Container {
       const extension = file.name.split('.').pop();
 
       switch (extension) {
-        case 'osz':
+        case 'osz': {
+          const dialog = new BeatmapImportDialog(file);
+          dialog.uploadFinished.addListener(mapset => this.uploadFinished.emit(mapset));
+
+          this.dependencies.resolve(DialogContainer).showDialog(dialog);
           break;
+        }
         default:
           this.notifications.add(new Notification(
             'Cannot import file',
@@ -125,6 +135,8 @@ export class BeatmapImportDropzone extends Container {
           ));
       }
     }
+
+    this.#overlay.hide();
 
     return true;
   }

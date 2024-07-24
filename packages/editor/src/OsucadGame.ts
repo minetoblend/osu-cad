@@ -15,17 +15,18 @@ import { EditorMixer } from './editor/EditorMixer';
 import { Fit, ScalingContainer } from './editor/ScalingContainer';
 import { ThemeColors } from './editor/ThemeColors';
 import { EditorActionContainer } from './editor/EditorActionContainer';
-import { PreferencesContainer } from './editor/preferences/PreferencesContainer';
 import { PreferencesStore } from './preferences/PreferencesStore';
 import { UIFonts } from './UIFonts';
 import { EditorLoader } from './editor/EditorLoader';
 import { OnlineEditorContext } from './editor/context/OnlineEditorContext';
-import { OsucadScreenStack } from './OsucadScreenStack';
 import { BeatmapSelect } from './beatmapSelect/BeatmapSelect';
 import { UserAvatarCache } from './UserAvatarCache';
-import { RootScreen } from './RootScreen';
 import { GlobalSongPlayback } from './GlobalSongPlayback';
 import { NotificationOverlay } from './notifications/NotificationOverlay';
+import { DialogContainer } from './modals/DialogContainer';
+import { PreferencesContainer } from './editor/preferences/PreferencesContainer';
+import { OsucadScreenStack } from './OsucadScreenStack';
+import { RootScreen } from './RootScreen';
 
 RenderTarget.defaultOptions.depth = true;
 RenderTarget.defaultOptions.stencil = true;
@@ -82,11 +83,13 @@ export class OsucadGame extends Game {
 
     this.#innerContainer.add(
       new EditorActionContainer({
-        child: new PreferencesContainer({
-          child: screenStack = new OsucadScreenStack(
-            new RootScreen(),
-            true,
-          ),
+        child: new DialogContainer({
+          child: new PreferencesContainer({
+            child: screenStack = new OsucadScreenStack(
+              new RootScreen(),
+              true,
+            ),
+          }),
         }),
       }),
     );

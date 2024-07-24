@@ -374,6 +374,18 @@ export class BeatmapCarousel extends CompositeDrawable {
 
     this.#selectedBeatmapSet.beatmaps[index + direction].selected.value = true;
   }
+
+  addMapset(mapset: MapsetInfo, select = true) {
+    const carouselMapset = this.createCarouselMapset(mapset);
+
+    this.mapsets.unshift(carouselMapset);
+    this.#itemsCache.invalidate();
+    if (select) {
+      if (carouselMapset.beatmaps[0]) {
+        carouselMapset.beatmaps[0].selected.value = true;
+      }
+    }
+  }
 }
 
 class CarouselScrollContainer extends MainScrollContainer {

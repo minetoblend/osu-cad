@@ -62,6 +62,8 @@ export class FastRoundedBox extends Drawable {
       const texture = RenderTexture.create({
         width: size,
         height: size,
+        antialias: true,
+        resolution: 2,
       });
 
       const graphics = new Graphics()

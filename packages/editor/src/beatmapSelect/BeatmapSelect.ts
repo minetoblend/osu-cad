@@ -30,8 +30,10 @@ export class BeatmapSelect extends OsucadScreen {
       origin: Anchor.Center,
     }));
 
+    let dropzone: BeatmapImportDropzone;
+
     this.addAllInternal(
-      new BeatmapImportDropzone({
+      dropzone = new BeatmapImportDropzone({
         relativeSizeAxes: Axes.Both,
         anchor: Anchor.Center,
         origin: Anchor.Center,
@@ -63,6 +65,10 @@ export class BeatmapSelect extends OsucadScreen {
     this.#carousel.selectionChanged.addListener((beatmap) => {
       this.#background.currentBeatmap = beatmap;
       this.globalSongPlayback.playAudio(beatmap.audioUrl, 10000);
+    });
+
+    dropzone.uploadFinished.addListener((mapset) => {
+      this.#carousel.addMapset(mapset);
     });
   }
 
