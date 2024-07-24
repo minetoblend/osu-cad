@@ -24,6 +24,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuditService } from '../../audit/audit.service';
 import { MapsetService } from '../mapset.service';
+import { BeatmapDifficultyProcessor } from '../beatmap-difficulty.processor';
 
 export interface BeatmapImportJob {
   userId: number;
@@ -60,6 +61,7 @@ export class BeatmapImportProcessor {
     @InjectRepository(MapsetEntity)
     private readonly mapsetRepository: Repository<MapsetEntity>,
     private readonly eventEmitter: EventEmitter2,
+    private readonly difficultyProcessor: BeatmapDifficultyProcessor,
   ) {}
 
   private directory!: string;
@@ -138,29 +140,37 @@ export class BeatmapImportProcessor {
         entity,
         beatmap,
       );
+
+      try {
+        await this.difficultyProcessor.calculateDifficulty({
+          beatmapId: entity.id,
+        });
+      } catch (e) {
+        console.error('Failed to calculate difficulty', e);
+      }
     }
 
     const assetEntries = entries.filter((entry) => entry.type === 'asset');
-    for (const entry of assetEntries) {
-      await this.reportProgress({
-        status: 'importing-assets',
-        total: assetEntries.length,
-        current: entry.path,
-        finished: this.assets.length,
-      });
 
-      await this.importAsset(entry.path);
-    }
+    await Promise.all(
+      assetEntries.map((entry) => this.importAsset(entry.path)),
+    );
 
-    let thumbnailCount = 0;
+    await Promise.all(
+      this.beatmaps.map(({ entity, beatmap }) =>
+        this.generateThumbnail(entity, beatmap),
+      ),
+    );
+
     for (const { entity, beatmap } of this.beatmaps) {
-      await this.reportProgress({
-        status: 'generating-thumbnails',
-        total: this.beatmaps.length,
-        current: entity.name,
-        finished: thumbnailCount++,
-      });
-      await this.generateThumbnail(entity, beatmap);
+      const audioAsset = this.assets.find(
+        (it) => it.path === beatmap.audioFilename,
+      );
+      if (audioAsset) {
+        await this.beatmapRepository.update(entity.id, {
+          audioFile: audioAsset.asset,
+        });
+      }
     }
 
     await this.reportProgress({ status: 'done', mapsetId: this.mapset.id });

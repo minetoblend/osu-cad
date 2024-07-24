@@ -81,6 +81,7 @@ import { BeatmapDifficultyProcessor } from './beatmap-difficulty.processor';
     BeatmapPermissionsService,
     BeatmapMigrator,
     MapsetService,
+    BeatmapDifficultyProcessor,
   ],
 })
 export class BeatmapModule {}
