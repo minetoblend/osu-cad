@@ -67,8 +67,6 @@ export class TimelineSliderHead extends TimelineElement {
         this.hitObject,
         [...SliderUtils.calculateEdges(this.hitObject.selectedEdges, edges, e.controlPressed)],
       );
-
-      return true;
     }
 
     return false;
