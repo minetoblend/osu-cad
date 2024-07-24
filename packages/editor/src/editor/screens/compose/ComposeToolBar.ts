@@ -25,6 +25,8 @@ export class ComposeToolBar extends Container {
       padding: 10,
     });
 
+    this.drawNode.enableRenderGroup();
+
     this.addInternal(this.#toolButtons);
   }
 

@@ -31,6 +31,8 @@ export class ComposeTogglesBar extends Container {
       origin: Anchor.TopRight,
     });
 
+    this.drawNode.enableRenderGroup();
+
     this.addInternal(this.#toggleButtons);
   }
 
