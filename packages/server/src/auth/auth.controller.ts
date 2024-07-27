@@ -63,11 +63,11 @@ export class AuthController {
   }
 
   @Get('/callback')
-  @Redirect('/', 302)
   async callback(
     @Query('code') code: string,
     @Query('state') state: string | null,
     @Req() req: Request,
+    @Res() res: Response,
   ) {
     if (!req.session.user) {
       const response = await firstValueFrom(
@@ -89,6 +89,23 @@ export class AuthController {
 
       await this.auditService.record(user, 'login', {});
 
+      const allowedUsers = [
+        6411631, // maarvin
+        7704651, // visionary
+        9331411, // arkisol
+        7782553, // aesth
+        6573093, // olibomby
+        7279762, // coppertine
+        3827077, // nhlx
+        2688103, // ioexception
+        7320249, // fogsaturate
+      ];
+
+      if (!allowedUsers.includes(user.id)) {
+        res.status(401).send('You are not allowed to access this site.');
+        return;
+      }
+
       req.session.user = user;
     }
 
@@ -102,9 +119,12 @@ export class AuthController {
       const stateData = JSON.parse(state);
 
       if (stateData.redirect) {
-        return { url: stateData.redirect };
+        res.redirect(stateData.redirect);
+        return;
       }
     }
+
+    res.redirect('/');
   }
 
   private getProfileData(token: ITokenInformation) {
