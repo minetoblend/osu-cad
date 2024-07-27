@@ -129,13 +129,9 @@ export class MapsetController {
       return response.sendStatus(404);
     }
 
-    const buffer = await this.assetsService.getAssetContent(asset);
+    const url = await this.assetsService.getS3AssetUrl(asset.asset);
 
-    if (!buffer) {
-      return response.sendStatus(404);
-    }
-
-    return response.contentType('application/octet-stream').send(buffer);
+    return response.redirect(url);
   }
 
   @Get(':id')
