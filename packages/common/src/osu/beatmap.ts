@@ -48,6 +48,7 @@ export class Beatmap {
   public general: SerializedBeatmapGeneral;
   public metadata: MapsetMetadata;
   public hitSounds: HitSoundManager;
+  public previewTime: number | null;
 
   readonly onBookmarksChanged = new Action();
 
@@ -74,6 +75,7 @@ export class Beatmap {
     this.hitSounds = new HitSoundManager(
       options.hitSounds ?? { layers: defaultHitSoundLayers() },
     );
+    this.previewTime = options.previewTime ?? null;
   }
 
   serialize(): SerializedBeatmap {
@@ -93,6 +95,7 @@ export class Beatmap {
       audioFilename: this.audioFilename,
       general: this.general,
       hitSounds: this.hitSounds.serialize(),
+      previewTime: this.previewTime,
     };
   }
 }

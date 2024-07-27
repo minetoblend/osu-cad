@@ -30,6 +30,7 @@ export interface MapsetBeatmapInfo {
   starRating: number;
   creator: UserInfo;
   lastEdited?: string;
+  previewTime: number | null;
   links: {
     self: string;
     edit: string;
@@ -50,6 +51,7 @@ export interface BeatmapInfo {
   access: BeatmapAccess;
   isOwner: boolean;
   creator: UserInfo;
+  previewTime: number | null;
   links: {
     view: string;
     edit: string;
@@ -73,6 +75,7 @@ export interface BeatmapData {
   audioFilename: string;
   general: SerializedBeatmapGeneral;
   hitSounds: SerializedHitSounds;
+  previewTime: number | null;
 }
 
 export interface SerializedEditorBookmark {

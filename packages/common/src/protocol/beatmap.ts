@@ -38,6 +38,7 @@ export interface SerializedBeatmap {
   audioFilename: string;
   general: SerializedBeatmapGeneral;
   hitSounds: SerializedHitSounds;
+  previewTime: number | null;
 }
 
 export interface SerializedControlPoints {
