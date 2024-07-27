@@ -28,6 +28,10 @@ export class AssetsService {
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
 
+  get bucketName(): string {
+    return this.configService.get('S3_BUCKET_NAME');
+  }
+
   private creatingAssetMap = new Map<string, Promise<S3AssetEntity>>();
 
   async addAssetToMapset(
@@ -92,7 +96,7 @@ export class AssetsService {
     }
 
     const command = new GetObjectCommand({
-      Bucket: asset.asset.bucket,
+      Bucket: this.bucketName,
       Key: asset.asset.key,
     });
 
@@ -125,7 +129,7 @@ export class AssetsService {
     }
 
     const command = new GetObjectCommand({
-      Bucket: s3Asset.bucket,
+      Bucket: this.bucketName,
       Key: s3Asset.key,
       ResponseContentType: options.contentType,
       ResponseContentDisposition: options.filename
@@ -189,10 +193,10 @@ export class AssetsService {
     const asset = new S3AssetEntity();
     asset.key = key;
     asset.filesize = buffer.length;
-    asset.bucket = this.configService.get('S3_BUCKET_NAME', 'osucad-assets');
+    asset.bucket = this.configService.get('S3_BUCKET_NAME', 'osucad');
 
     const headCommand = new HeadObjectCommand({
-      Bucket: asset.bucket,
+      Bucket: this.bucketName,
       Key: asset.key,
     });
 
@@ -209,7 +213,7 @@ export class AssetsService {
 
     if (!objectExists) {
       const command = new PutObjectCommand({
-        Bucket: asset.bucket,
+        Bucket: this.bucketName,
         Key: asset.key,
         Body: buffer,
       });
@@ -226,7 +230,7 @@ export class AssetsService {
     asset: S3AssetEntity,
   ): Promise<GetObjectCommandOutput> {
     const command = new GetObjectCommand({
-      Bucket: asset.bucket,
+      Bucket: this.bucketName,
       Key: asset.key,
     });
 
@@ -278,14 +282,11 @@ export class AssetsService {
         const s3Asset = new S3AssetEntity();
         s3Asset.key = hash;
         s3Asset.filesize = buffer.length;
-        s3Asset.bucket = this.configService.get(
-          'S3_BUCKET_NAME',
-          'osucad-assets',
-        );
+        s3Asset.bucket = this.configService.get('S3_BUCKET_NAME', 'osucad');
         s3Asset.refCount = 1;
 
         const command = new PutObjectCommand({
-          Bucket: s3Asset.bucket,
+          Bucket: this.bucketName,
           Key: s3Asset.key,
           Body: buffer,
         });
