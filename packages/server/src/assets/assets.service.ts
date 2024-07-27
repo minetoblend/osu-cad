@@ -271,6 +271,18 @@ export class AssetsService {
         const asset = await this.s3AssetRepository.findOneBy({ key: hash });
 
         if (asset) {
+          const command = new PutObjectCommand({
+            Bucket: this.bucketName,
+            Key: asset.key,
+            Body: buffer,
+          });
+
+          try {
+            await this.s3.send(command);
+          } catch (e) {
+            console.error('Failed to update asset', e);
+          }
+
           await entityManager.update(
             S3AssetEntity,
             { key: asset.key },
