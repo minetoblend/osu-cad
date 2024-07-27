@@ -107,10 +107,6 @@ export class SelectTool extends ComposeTool {
       const candidate = this.#getSelectionCandidate(hovered)!;
 
       if (e.controlPressed) {
-        if (this.selection.isSelected(candidate) && this.#trySelectSliderEdges(candidate, e.mousePosition, true)) {
-          return true;
-        }
-
         if (
           this.selection.length <= 1
           || !this.selection.isSelected(candidate)
@@ -249,22 +245,10 @@ export class SelectTool extends ComposeTool {
     this.activeSlider = slider;
 
     if (slider && controlPressed) {
-      const insertPoint = this.#sliderUtils.getInsertPoint(
+      this.#sliderInsertPoint = this.#sliderUtils.getInsertPoint(
         slider,
         this.mousePosition,
-      );
-
-      if (insertPoint) {
-        if (slider.selectedEdges.length > 0 && insertPoint.distance > 10 && insertPoint.distance < slider.radius) {
-          this.#sliderInsertPoint = null;
-        }
-        else {
-          this.#sliderInsertPoint = insertPoint.position;
-        }
-      }
-      else {
-        this.#sliderInsertPoint = null;
-      }
+      )?.position ?? null;
     }
     else {
       this.#sliderInsertPoint = null;
@@ -520,34 +504,35 @@ export class SelectTool extends ComposeTool {
     this.#sliderPathVisualizer.slider = value;
   }
 
-  #trySelectSliderEdges(hitObject: HitObject, position: Vec2, add = false) {
+  #trySelectSliderEdges(hitObject: HitObject, position: Vec2) {
     if (!(hitObject instanceof Slider)) {
       return false;
     }
 
-    const edges = new Set<number>();
-
     const distanceToStart = position.distance(hitObject.stackedPosition);
 
     if (distanceToStart < hitObject.radius) {
+      const edges: number[] = [];
+
       for (let i = 0; i <= hitObject.repeats + 1; i += 2) {
-        edges.add(i);
+        edges.push(i);
       }
+
+      this.selection.setSelectedEdges(hitObject, edges);
+
+      return true;
     }
 
     const distanceToEnd = position.distance(hitObject.stackedPosition.add(hitObject.path.endPosition));
 
-    if (edges.size === 0 && distanceToEnd < hitObject.radius) {
-      for (let i = 1; i <= hitObject.repeats + 1; i += 2) {
-        edges.add(i);
-      }
-    }
+    if (distanceToEnd < hitObject.radius) {
+      const edges: number[] = [];
 
-    if (edges.size > 0) {
-      this.selection.setSelectedEdges(
-        hitObject,
-        [...SliderUtils.calculateEdges(hitObject.selectedEdges, edges, add)],
-      );
+      for (let i = 1; i <= hitObject.repeats + 1; i += 2) {
+        edges.push(i);
+      }
+
+      this.selection.setSelectedEdges(hitObject, edges);
 
       return true;
     }
