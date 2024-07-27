@@ -45,7 +45,7 @@ export class BeatmapSelect extends OsucadScreen {
               anchor: Anchor.CenterRight,
               origin: Anchor.CenterRight,
             }),
-          new Container({
+          this.#menu = new Container({
             relativeSizeAxes: Axes.Both,
             anchor: Anchor.CenterLeft,
             origin: Anchor.CenterLeft,
@@ -64,13 +64,15 @@ export class BeatmapSelect extends OsucadScreen {
 
     this.#carousel.selectionChanged.addListener((beatmap) => {
       this.#background.currentBeatmap = beatmap;
-      this.globalSongPlayback.playAudio(beatmap.audioUrl, 10000);
+      this.globalSongPlayback.playAudio(beatmap.audioUrl, beatmap.previewPoint ?? 10000);
     });
 
     dropzone.uploadFinished.addListener((mapset) => {
       this.#carousel.addMapset(mapset);
     });
   }
+
+  #menu!: Container;
 
   @resolved(GlobalSongPlayback)
   globalSongPlayback!: GlobalSongPlayback;
@@ -83,6 +85,9 @@ export class BeatmapSelect extends OsucadScreen {
     this.#carousel.fadeTo({ alpha: 0, duration: 400, easing: 'expo.out' });
     this.#carousel.scaleTo({ scale: 1.3, easing: 'expo.out', duration: 600 });
     this.#carousel.moveTo({ x: 500, duration: 600, easing: 'expo.out' });
+
+    this.#menu.moveTo({ x: -500, duration: 600, easing: 'expo.out' });
+    this.#menu.fadeOut({ duration: 400, easing: 'expo.out' });
 
     this.#background.fadeTo({ alpha: 0.1, duration: 300 });
 
@@ -104,6 +109,9 @@ export class BeatmapSelect extends OsucadScreen {
     this.#carousel.scaleTo({ scale: 1, duration: 400, easing: 'power4.out' });
     this.#carousel.entryAnimation();
     this.#carousel.alpha = 1;
+
+    this.#menu.moveTo({ x: 0, duration: 400, easing: 'power4.out' });
+    this.#menu.fadeIn({ duration: 400 });
 
     this.#background.fadeTo({ alpha: 0.5, duration: 300 });
     this.globalSongPlayback.resume();
