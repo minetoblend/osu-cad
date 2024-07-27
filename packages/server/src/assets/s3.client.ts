@@ -13,7 +13,7 @@ export const s3ClientProvider: Provider = {
         accessKeyId: configService.getOrThrow('S3_ACCESS_KEY_ID'),
         secretAccessKey: configService.getOrThrow('S3_SECRET_ACCESS_KEY'),
       },
-      forcePathStyle: true,
+      forcePathStyle: Boolean(configService.get('S3_FORCE_PATH_STYLE', false)),
     });
   },
 };
