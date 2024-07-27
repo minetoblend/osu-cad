@@ -17,6 +17,7 @@ export class OnlineBeatmapInfo implements BeatmapInfo {
     this.difficultyName = dto.version;
     this.starRating = dto.starRating;
     this.lastEdited = dto.lastEdited ? new Date(dto.lastEdited) : null;
+    this.previewPoint = dto.previewTime ? dto.previewTime : null;
 
     this.joinKey = dto.links.edit.split('/').pop()!;
   }
@@ -43,7 +44,7 @@ export class OnlineBeatmapInfo implements BeatmapInfo {
 
   readonly joinKey: string;
 
-  readonly previewPoint: number | null = null;
+  readonly previewPoint: number | null;
 
   createEditorContext(): EditorContext {
     return new OnlineEditorContext(this.joinKey);
