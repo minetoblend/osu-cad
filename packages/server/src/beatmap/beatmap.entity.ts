@@ -58,7 +58,10 @@ export class BeatmapEntity {
   @ManyToOne(() => S3AssetEntity, { nullable: true })
   thumbnailSmall: S3AssetEntity;
 
-  @ManyToOne(() => S3AssetEntity, { nullable: true })
+  @Column('integer', { nullable: true })
+  previewTime: number | null;
+
+  @ManyToOne(() => S3AssetEntity, { nullable: true, eager: true })
   audioFile: S3AssetEntity;
 
   @Column({ nullable: true })

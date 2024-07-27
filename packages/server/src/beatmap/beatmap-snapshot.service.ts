@@ -11,6 +11,8 @@ export class BeatmapSnapshotService {
   constructor(
     @InjectRepository(BeatmapSnapshotEntity)
     private readonly repository: Repository<BeatmapSnapshotEntity>,
+    @InjectRepository(BeatmapEntity)
+    private readonly beatmapRepository: Repository<BeatmapEntity>,
   ) {}
 
   private readonly snapshotCombineThreshold = /* 5 minutes */ 5 * 60 * 1000;
@@ -29,6 +31,7 @@ export class BeatmapSnapshotService {
       controlPoints: beatmap.controlPoints.serializeLegacy(),
       hitObjects: beatmap.hitObjects.serialize(),
       hitSounds: beatmap.hitSounds,
+      previewTime: beatmap.previewTime,
     };
 
     return this.createSnapshot(entity, data);
@@ -46,6 +49,10 @@ export class BeatmapSnapshotService {
           },
         },
         order: { timestamp: 'DESC' },
+      });
+
+      await this.beatmapRepository.update(beatmap.id, {
+        previewTime: data.previewTime,
       });
 
       if (existingSnapshot) {
@@ -81,5 +88,9 @@ export class BeatmapSnapshotService {
       },
       order: { timestamp: 'DESC' },
     });
+  }
+
+  async saveSnapshot(snapshot: BeatmapSnapshotEntity) {
+    return this.repository.save(snapshot);
   }
 }

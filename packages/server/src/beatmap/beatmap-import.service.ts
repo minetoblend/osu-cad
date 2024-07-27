@@ -423,6 +423,7 @@ export class BeatmapImportService {
       general,
       audioFilename: imported.general.audioFilename,
       hitSounds: hitSounds.serialize(),
+      previewTime: imported.general.previewTime,
     };
 
     return { beatmap: entity, data };

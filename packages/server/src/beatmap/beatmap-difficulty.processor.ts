@@ -4,10 +4,10 @@ import { BeatmapService } from './beatmap.service';
 import { BeatmapSnapshotService } from './beatmap-snapshot.service';
 import { Job } from 'bull';
 import { BeatmapThumbnailJob } from './beatmap-thumbnail.processor';
-
-import * as Lazer from 'smoogipoo.osu-native';
 import { BeatmapExportService } from './beatmap-export.service';
 import { BeatmapEncoder } from 'osu-parsers';
+//@ts-ignore
+import * as Lazer from 'smoogipoo.osu-native';
 
 export interface BeatmapDifficultyJob {
   beatmapId: number;
@@ -28,7 +28,7 @@ export class BeatmapDifficultyProcessor implements OnModuleInit {
 
   osu!: Lazer;
 
-  @Process({ concurrency: 5 })
+  @Process({ concurrency: 1 })
   async process(job: Job<BeatmapThumbnailJob>) {
     return this.calculateDifficulty(job.data);
   }

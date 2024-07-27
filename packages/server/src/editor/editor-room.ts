@@ -103,6 +103,7 @@ export class EditorRoom extends EventEmitter2 {
       audioFilename,
       general,
       hitSounds,
+      previewTime: snapshotData.previewTime,
     });
 
     this.roomEntity.beatmap = entity;

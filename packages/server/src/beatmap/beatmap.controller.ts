@@ -89,6 +89,7 @@ export class BeatmapController {
           access: entity.access,
           isOwner: entity.mapset.creator.id === user?.id,
           creator: entity.mapset.creator.getInfo(),
+          previewTime: entity.previewTime,
           links: {
             edit: `/edit/${entity.shareId}`,
             view: `/beatmaps/${entity.uuid}`,

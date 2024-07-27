@@ -25,6 +25,7 @@ export class BeatmapTransformer {
       name: beatmap.name,
       starRating: beatmap.starRating,
       creator: beatmap.mapset.creator.getInfo(),
+      previewTime: beatmap.previewTime,
       links: {
         self: `/api/beatmaps/${beatmap.uuid}`,
         edit: `/edit/${beatmap.shareId}`,

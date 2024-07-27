@@ -56,6 +56,7 @@ export class BeatmapConverter {
       beatmapSetId: -1,
     },
     controlPoints: { controlPoints: [] },
+    previewTime: null,
   });
 
   convert() {
@@ -75,6 +76,7 @@ export class BeatmapConverter {
     const { beatmap, converted } = this;
     converted.general.stackLeniency = beatmap.general.stackLeniency;
     converted.audioFilename = beatmap.general.audioFilename;
+    converted.previewTime = beatmap.general.previewTime;
   }
 
   private convertMetadata() {

@@ -72,6 +72,7 @@ export class BeatmapExportService {
           ).serializeLegacy(),
           hitObjects: beatmap.hitObjects,
           hitSounds: beatmap.hitSounds,
+          previewTime: beatmap.previewTime ?? 0,
         };
       }
 
@@ -238,6 +239,7 @@ export class BeatmapExportService {
   private applyGeneral(beatmap: Beatmap, data: BeatmapData) {
     beatmap.general.stackLeniency = data.general.stackLeniency;
     beatmap.general.audioFilename = data.audioFilename;
+    beatmap.general.previewTime = data.previewTime ?? 0;
   }
 
   private applyDifficulty(beatmap: Beatmap, data: BeatmapData) {

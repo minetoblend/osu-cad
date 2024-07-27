@@ -133,13 +133,18 @@ export class BeatmapImportProcessor {
 
     this.mapset.beatmaps = this.beatmaps.map((b) => b.entity);
 
+    console.log('Creating mapset', this.mapset);
+
     await this.mapsetService.create(this.mapset);
 
     for (const { entity, beatmap } of this.beatmaps) {
+      console.log('Creating snapshot', entity.id);
       await this.beatmapSnapshotService.createSnapshotFromBeatmap(
         entity,
         beatmap,
       );
+
+      console.log('Calculating difficulty', entity.id);
 
       try {
         await this.difficultyProcessor.calculateDifficulty({
@@ -152,20 +157,25 @@ export class BeatmapImportProcessor {
 
     const assetEntries = entries.filter((entry) => entry.type === 'asset');
 
-    await Promise.all(
-      assetEntries.map((entry) => this.importAsset(entry.path)),
-    );
+    console.log('Importing assets', assetEntries.length);
+
+    for (const entry of assetEntries) {
+      await this.importAsset(entry.path);
+      console.log('Imported asset', entry.path);
+    }
 
     await Promise.all(
-      this.beatmaps.map(({ entity, beatmap }) =>
-        this.generateThumbnail(entity, beatmap),
-      ),
+      this.beatmaps.map(async ({ entity, beatmap }) => {
+        await this.generateThumbnail(entity, beatmap);
+        console.log('Generated thumbnail', entity.name);
+      }),
     );
 
     for (const { entity, beatmap } of this.beatmaps) {
       const audioAsset = this.assets.find(
         (it) => it.path === beatmap.audioFilename,
       );
+      console.log('Found audio asset', audioAsset);
       if (audioAsset) {
         await this.beatmapRepository.update(entity.id, {
           audioFile: audioAsset.asset,
@@ -333,11 +343,15 @@ export class BeatmapImportProcessor {
   private async importAsset(path: string) {
     const buffer = await fs.promises.readFile(join(this.directory, path));
 
+    console.log('Importing asset', path);
+
     const asset = await this.assetsService.addAssetToMapset({
       mapset: this.mapset,
       buffer,
       path,
     });
+
+    console.log('Imported asset', path, asset);
 
     this.assets.push(asset);
   }

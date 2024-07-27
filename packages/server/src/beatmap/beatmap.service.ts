@@ -11,6 +11,9 @@ import { UserEntity } from '../users/user.entity';
 import { BeatmapSnapshotService } from './beatmap-snapshot.service';
 import { AssetsService } from '../assets/assets.service';
 import { BeatmapDifficultyJob } from './beatmap-difficulty.processor';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+
+export const BeatmapAssetChanged = 'beatmap-asset-changed';
 
 @Injectable()
 export class BeatmapService implements OnModuleInit {
@@ -25,6 +28,7 @@ export class BeatmapService implements OnModuleInit {
     private readonly thumbnailQueue: Queue<BeatmapThumbnailJob>,
     @InjectQueue('beatmap-difficulty')
     private readonly difficultyQueue: Queue<BeatmapDifficultyJob>,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -201,26 +205,33 @@ export class BeatmapService implements OnModuleInit {
       relations: ['mapset'],
     });
 
-    for (const beatmap of beatmaps) {
-      console.log(
-        'Updating audio file for beatmap',
-        `${beatmap.mapset.title} - ${beatmap.mapset.artist} [${beatmap.name}]`,
+    for (let i = 0; i < beatmaps.length; i += 10) {
+      console.log(`Updating audio file ${i} / ${beatmaps.length}`);
+
+      await Promise.all(
+        beatmaps.slice(i, i + 10).map(async (beatmap) => {
+          const snapshot =
+            await this.snapshotService.getLatestSnapshot(beatmap);
+
+          if (!snapshot) {
+            return;
+          }
+
+          const audioFilename = snapshot.data.audioFilename;
+
+          const asset = await this.assetService.getAsset(
+            beatmap.mapset,
+            audioFilename,
+          );
+
+          console.log(!!asset);
+
+          if (asset) {
+            beatmap.audioFile = asset.asset;
+            await this.save(beatmap);
+          }
+        }),
       );
-      const snapshot = await this.snapshotService.getLatestSnapshot(beatmap);
-
-      const audioFilename = snapshot.data.audioFilename;
-
-      const asset = await this.assetService.getAsset(
-        beatmap.mapset,
-        audioFilename,
-      );
-
-      console.log(!!asset);
-
-      if (asset) {
-        beatmap.audioFile = asset.asset;
-        await this.save(beatmap);
-      }
     }
   }
 }

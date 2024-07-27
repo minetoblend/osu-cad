@@ -19,6 +19,7 @@ export class MapsetTransformer {
           name: beatmap.name,
           starRating: beatmap.starRating,
           creator: mapset.creator.getInfo(),
+          previewTime: beatmap.previewTime,
           links: {
             self: '/api/beatmaps/' + beatmap.uuid,
             edit: '/edit/' + beatmap.shareId,
@@ -30,7 +31,9 @@ export class MapsetTransformer {
               beatmap.thumbnailId,
               'public',
             ),
-            audioUrl: await this.assetsService.getS3AssetUrl(beatmap.audioFile),
+            audioUrl: beatmap.audioFile
+              ? await this.assetsService.getS3AssetUrl(beatmap.audioFile)
+              : null,
           },
         };
       }),
