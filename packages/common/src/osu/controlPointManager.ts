@@ -263,6 +263,8 @@ export class ControlPointManager {
             type = TickType.Twelfth;
           } else if (subticks % 3 === 0) {
             type = TickType.Sixteenth;
+          } else {
+            type = TickType.Other;
           }
 
           return {
@@ -366,6 +368,7 @@ export const enum TickType {
   Eighth = 8,
   Twelfth = 12,
   Sixteenth = 16,
+  Other = -1,
 }
 
 export interface TickInfo {
