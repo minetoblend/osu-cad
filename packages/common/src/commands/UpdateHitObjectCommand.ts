@@ -67,6 +67,7 @@ export class UpdateHitObjectHandler extends CommandHandler<IUpdateHitObjectComma
       }
 
       hitObject.patch(patch);
+      return;
     }
 
     for (const key in command.patch) {
