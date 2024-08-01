@@ -26,6 +26,7 @@ import {
   SAMPLE_WHISTLE,
 } from '../../../InjectionTokens';
 import type { ToggleBindable } from '../ToggleBindable';
+import { HitObjectComposer } from '../HitObjectComposer';
 import type { ComposeToolInteraction } from './interactions/ComposeToolInteraction';
 
 export abstract class ComposeTool extends CommandContainer {
@@ -72,6 +73,11 @@ export abstract class ComposeTool extends CommandContainer {
     super.loadComplete();
 
     this.inputManager = this.getContainingInputManager()!;
+    this.composer = this.findClosestParentOfType(HitObjectComposer)!;
+
+    if (!this.composer) {
+      throw new Error('ComposeTool must be a child oif HitObjectComposer');
+    }
   }
 
   @dependencyLoader()
@@ -120,6 +126,8 @@ export abstract class ComposeTool extends CommandContainer {
 
   @resolved(EditorSelection)
   protected readonly selection!: EditorSelection;
+
+  protected composer!: HitObjectComposer;
 
   #currentInteraction: ComposeToolInteraction | null = null;
 

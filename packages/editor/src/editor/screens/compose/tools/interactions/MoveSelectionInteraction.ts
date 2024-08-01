@@ -1,5 +1,5 @@
 import type { HitObject } from '@osucad/common';
-import { Slider, UpdateHitObjectCommand } from '@osucad/common';
+import { Slider, Spinner, UpdateHitObjectCommand } from '@osucad/common';
 import type {
   MouseMoveEvent,
   MouseUpEvent,
@@ -9,6 +9,7 @@ import {
   Vec2,
   dependencyLoader,
 } from 'osucad-framework';
+import { SnapVisualizer } from '../../snapping/SnapResult';
 import { ComposeToolInteraction } from './ComposeToolInteraction';
 
 export class MoveSelectionInteraction extends ComposeToolInteraction {
@@ -21,9 +22,12 @@ export class MoveSelectionInteraction extends ComposeToolInteraction {
 
   #startPositions!: Vec2[];
 
+  #snapVisualizer = new SnapVisualizer();
+
   @dependencyLoader()
   load() {
     this.#startPositions = this.hitObjects.map(it => it.position);
+    this.addInternal(this.#snapVisualizer);
   }
 
   onMouseMove(e: MouseMoveEvent): boolean {
@@ -33,6 +37,28 @@ export class MoveSelectionInteraction extends ComposeToolInteraction {
 
     for (let i = 0; i < this.hitObjects.length; i++) {
       positions[i] = this.#startPositions[i]!.add(delta);
+    }
+
+    const { offset: snapOffset, target: snapTarget, snapTargets } = this.composer.snapHitObjectPosition(
+      this.hitObjects.flatMap((it, i) => {
+        if (it instanceof Spinner)
+          return [];
+
+        if (it instanceof Slider) {
+          return [
+            positions[i],
+            positions[i].add(it.path.endPosition),
+          ];
+        }
+
+        return [positions[i]];
+      }),
+    );
+
+    this.#snapVisualizer.drawTargets(snapTargets, snapTarget);
+
+    if (snapOffset) {
+      positions = positions.map(it => it.add(snapOffset));
     }
 
     positions = this.moveIntoBounds(this.hitObjects, positions);

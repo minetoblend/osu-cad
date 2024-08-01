@@ -1,6 +1,7 @@
 import { Action, Axes, resolved } from 'osucad-framework';
 import { CommandContainer } from '../../../../CommandContainer';
 import { ThemeColors } from '../../../../ThemeColors';
+import { HitObjectComposer } from '../../HitObjectComposer';
 
 export class ComposeToolInteraction extends CommandContainer {
   readonly completed = new Action<ComposeToolInteraction>();
@@ -13,7 +14,15 @@ export class ComposeToolInteraction extends CommandContainer {
   }
 
   @resolved(ThemeColors)
-  theme!: ThemeColors;
+  protected theme!: ThemeColors;
+
+  protected composer!: HitObjectComposer;
+
+  protected loadComplete() {
+    super.loadComplete();
+
+    this.composer = this.findClosestParentOfType(HitObjectComposer)!;
+  }
 
   receivePositionalInputAt(): boolean {
     return true;

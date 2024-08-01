@@ -13,6 +13,7 @@ import {
 } from 'osucad-framework';
 import {
   DeleteHitObjectCommand,
+  HitObjectManager,
   UpdateHitObjectCommand,
 } from '@osucad/common';
 import { CommandManager } from '../../context/CommandManager';
@@ -25,6 +26,9 @@ import { EditorSelection } from './EditorSelection';
 import { SelectionOverlay } from './SelectionOverlay';
 import type { ToolConstructor } from './ComposeScreen';
 import { ComposerCursorContainer } from './ComposerCursorContainer';
+import type { IPositionSnapProvider } from './snapping/IPositionSnapProvider';
+import { HitObjectSnapProvider } from './snapping/HitObjectSnapProvider';
+import type { SnapTarget } from './snapping/SnapTarget';
 
 export class HitObjectComposer
   extends Container
@@ -56,6 +60,10 @@ export class HitObjectComposer
     if (userManager) {
       this.addInternal(new ComposerCursorContainer());
     }
+
+    this.snapProviders = [
+      new HitObjectSnapProvider(this.hitObjects, this.selection, this.editorClock),
+    ];
   }
 
   protected loadComplete() {
@@ -89,6 +97,9 @@ export class HitObjectComposer
 
   @resolved(CommandManager)
   commandManager!: CommandManager;
+
+  @resolved(HitObjectManager)
+  hitObjects!: HitObjectManager;
 
   onKeyBindingPressed(e: KeyBindingPressEvent<PlatformAction>): boolean {
     switch (e.pressed) {
@@ -194,5 +205,41 @@ export class HitObjectComposer
     }
 
     this.commandManager.commit();
+  }
+
+  snapProviders!: IPositionSnapProvider[];
+
+  snapHitObjectPosition(
+    positions: Vec2[],
+    threshold = 5,
+  ): { offset: Vec2 | null; target: SnapTarget | null; snapTargets: SnapTarget[] } {
+    const snapTargets = this.snapProviders.flatMap(it => it.getSnapTargets());
+
+    const offsets = snapTargets.map((it) => {
+      return {
+        target: it,
+        offset: it.getSnapOffset(positions),
+      };
+    }).filter(it => it.offset !== null);
+
+    if (offsets.length > 0) {
+      let closest = offsets[0];
+      let closestDistance = closest.offset!.lengthSq();
+      const closestTarget = snapTargets[0];
+
+      for (let i = 1; i < offsets.length; i++) {
+        const distance = offsets[i].offset!.lengthSq();
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closest = offsets[i];
+        }
+      }
+
+      if (closestDistance < threshold ** 2)
+        return { offset: closest.offset!, target: closest.target, snapTargets };
+    }
+
+    return { offset: null, target: null, snapTargets };
   }
 }
