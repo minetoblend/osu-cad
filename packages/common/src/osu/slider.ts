@@ -235,11 +235,12 @@ export class Slider extends HitObject {
     if (update.hitSounds !== undefined) {
       this.hitSounds = update.hitSounds;
     }
+
+    this._hitSamples = undefined;
   }
 
   calculateHitSamples(): HitSample[] {
     return [
-      //...getSamples(this.hitSound, this.startTime),
       ...this.hitSounds.flatMap((hitSound, i) => {
         return getSamples(hitSound, this.startTime + i * this.spanDuration);
       }),
@@ -251,7 +252,6 @@ export class Slider extends HitObject {
       (i) => i <= this.repeats + 1,
     );
 
-    if (this._hitSounds.length === this.spans + 1) return;
     if (this._hitSounds.length > this.spans + 1) {
       const last =
         this._hitSounds[this._hitSounds.length - 1] ?? defaultHitSound();
