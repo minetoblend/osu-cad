@@ -9,6 +9,7 @@ export class ControlPoint {
       beatLength: 60_000 / 120,
     },
     velocityMultiplier: 1,
+    volume: 100,
   });
 
   constructor(options: SerializedControlPoint) {
@@ -16,6 +17,7 @@ export class ControlPoint {
     this._time = options.time;
     this._timing = options.timing ?? null;
     this._velocityMultiplier = options.velocityMultiplier ?? null;
+    this._volume = options.volume ?? 100;
   }
 
   private _id: string = hitObjectId();
@@ -23,6 +25,7 @@ export class ControlPoint {
   private _timing: TimingInfo | null;
   private _velocityMultiplier: number | null;
   private _updatesPaused = false;
+  private _volume = 100;
 
   onUpdate = new Action<[ControlPoint, ControlPointUpdateFlags]>();
 
@@ -59,6 +62,15 @@ export class ControlPoint {
     this._markDirty(ControlPointUpdateFlags.Velocity);
   }
 
+  get volume() {
+    return this._volume;
+  }
+
+  set volume(value) {
+    this._volume = value;
+    this._markDirty(ControlPointUpdateFlags.Volume);
+  }
+
   patch(update: Partial<SerializedControlPoint>) {
     this._updatesPaused = true;
     if (update.time !== undefined) this.time = update.time;
@@ -75,6 +87,7 @@ export class ControlPoint {
       time: this.time,
       timing: this.timing,
       velocityMultiplier: this.velocityMultiplier,
+      volume: this._volume,
     };
   }
 
@@ -103,6 +116,7 @@ export interface SerializedControlPoint {
   time: number;
   timing: TimingInfo | null;
   velocityMultiplier: number | null;
+  volume: number;
 }
 
 export interface TimingInfo {
@@ -114,5 +128,6 @@ export const enum ControlPointUpdateFlags {
   StartTime = 1 << 0,
   Timing = 1 << 1,
   Velocity = 1 << 2,
-  All = StartTime | Timing | Velocity,
+  Volume = 1 << 3,
+  All = StartTime | Timing | Velocity | Volume,
 }
