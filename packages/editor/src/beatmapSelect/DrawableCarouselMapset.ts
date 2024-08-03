@@ -193,6 +193,6 @@ class MapsetBackground extends Container {
           this.add(background);
         });
       }
-    }, 20);
+    }, 100);
   }
 }
