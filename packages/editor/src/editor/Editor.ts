@@ -7,6 +7,7 @@ import type {
   UIEvent,
 } from 'osucad-framework';
 import {
+  Action,
   Anchor,
   AudioManager,
   Axes,
@@ -59,6 +60,8 @@ export class Editor
   canHandleKeyBinding(binding: PlatformAction | EditorAction): boolean {
     return binding instanceof PlatformAction || binding instanceof EditorAction;
   }
+
+  readonly requestSelectTool = new Action();
 
   #screenContainer!: EditorScreenContainer;
 

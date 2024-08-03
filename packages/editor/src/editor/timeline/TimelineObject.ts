@@ -19,6 +19,7 @@ import { EditorClock } from '../EditorClock';
 import { ThemeColors } from '../ThemeColors';
 import { CommandManager } from '../context/CommandManager';
 import { EditorSelection } from '../screens/compose/EditorSelection';
+import { Editor } from '../Editor';
 import { Timeline } from './Timeline';
 import { TimelineElement } from './TimelineElement';
 
@@ -67,6 +68,8 @@ export abstract class TimelineObject<T extends HitObject = HitObject> extends Co
     }
 
     this.setup();
+
+    this.selectionChanged(this.hitObject.isSelected);
   }
 
   setup() {
@@ -141,11 +144,14 @@ export abstract class TimelineObject<T extends HitObject = HitObject> extends Co
       }
 
       this.selection.deselect(this.hitObject);
+      this.findClosestParentOfType(Editor)?.requestSelectTool.emit();
+
       return true;
     }
 
     if (!this.selection.isSelected(this.hitObject)) {
       this.selection.select([this.hitObject]);
+      this.findClosestParentOfType(Editor)?.requestSelectTool.emit();
     }
   }
 

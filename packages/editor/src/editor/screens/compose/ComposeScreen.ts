@@ -7,6 +7,7 @@ import {
 } from 'osucad-framework';
 import { PlayfieldContainer } from '../../playfield/PlayfieldContainer';
 import { EditorScreen } from '../EditorScreen';
+import { Editor } from '../../Editor';
 import { ComposeTogglesBar } from './ComposeTogglesBar';
 import { ComposeToolBar } from './ComposeToolBar';
 import { HitObjectComposer } from './HitObjectComposer';
@@ -39,6 +40,15 @@ export class ComposeScreen extends EditorScreen {
     this.#playfieldContainer.add(
       (this.#composer = new HitObjectComposer(this.#activeTool)),
     );
+  }
+
+  protected loadComplete() {
+    super.loadComplete();
+
+    this.findClosestParentOfType(Editor)?.requestSelectTool.addListener(() => {
+      if (this.#activeTool.value !== SelectTool)
+        this.#activeTool.value = SelectTool;
+    });
   }
 
   update(): void {
