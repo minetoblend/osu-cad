@@ -20,9 +20,13 @@ export class TimelineTick extends Sprite {
     this.#type = type;
 
     switch (type) {
-      case TickType.Full:
+      case TickType.Full | TickType.Downbeat:
         this.tint = 0xFFFFFF;
         this.scale.set(1.5, 1);
+        break;
+      case TickType.Full:
+        this.tint = 0xFFFFFF;
+        this.scale.set(1.5, 0.8);
         break;
       case TickType.Half:
         this.tint = 0xFF0000;

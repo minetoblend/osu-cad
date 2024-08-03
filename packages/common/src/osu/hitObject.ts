@@ -28,6 +28,8 @@ export abstract class HitObject {
 
   comboOffset = 0;
 
+  isGhost = false;
+
   protected _version = 0;
   get version() {
     return this._version;

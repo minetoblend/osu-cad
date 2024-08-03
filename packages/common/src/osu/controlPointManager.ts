@@ -245,10 +245,17 @@ export class ControlPointManager {
           let subticks = Math.round(
             (time / timingPoint.timing.beatLength) * 48,
           );
+
+          const isDownBeat = subticks % (48 * 4) === 0;
+
           subticks = mod(mod(subticks, 48) + 48, 48);
 
           if (subticks % 48 === 0) {
             type = TickType.Full;
+
+            if (isDownBeat) {
+              type |= TickType.Downbeat;
+            }
           } else if (subticks % 24 === 0) {
             type = TickType.Half;
           } else if (subticks % 16 === 0) {
@@ -369,6 +376,7 @@ export const enum TickType {
   Twelfth = 12,
   Sixteenth = 16,
   Other = -1,
+  Downbeat = 128,
 }
 
 export interface TickInfo {
