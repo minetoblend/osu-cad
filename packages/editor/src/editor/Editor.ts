@@ -38,6 +38,7 @@ import { DifficultyCalculator } from './DifficultyCalculator';
 import { CURRENT_SCREEN, NEW_COMBO, SAMPLE_CLAP, SAMPLE_FINISH, SAMPLE_WHISTLE } from './InjectionTokens';
 import { ToggleBindable } from './screens/compose/ToggleBindable';
 import { HitsoundPlayer } from './HitsoundPlayer';
+import { TimingScreen } from './screens/timing/TimingScreen';
 
 export class Editor
   extends OsucadScreen
@@ -137,7 +138,7 @@ export class Editor
     );
   }
 
-  readonly currentScreen = new Bindable(EditorScreenType.Compose);
+  readonly currentScreen = new Bindable(EditorScreenType.Timing);
 
   #updateScreen(screen: EditorScreenType) {
     switch (screen) {
@@ -146,6 +147,9 @@ export class Editor
         break;
       case EditorScreenType.Compose:
         this.#screenContainer.screen = new ComposeScreen();
+        break;
+      case EditorScreenType.Timing:
+        this.#screenContainer.screen = new TimingScreen();
         break;
     }
   }

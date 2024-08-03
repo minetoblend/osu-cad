@@ -58,6 +58,7 @@ export class EditorScreenSelect extends Container {
     this.addAll(
       new ScreenSelectButton('Setup', EditorScreenType.Setup),
       new ScreenSelectButton('Compose', EditorScreenType.Compose),
+      new ScreenSelectButton('Timing', EditorScreenType.Timing),
     );
 
     this.updateSubTree();
