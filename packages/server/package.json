@@ -75,6 +75,7 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
     "sharp": "^0.33.2",
+    "smoogipoo.osu-native": "^2024.727.2",
     "socket.io": "^4.7.2",
     "typeorm": "^0.3.17",
     "unzipper": "^0.10.14",
