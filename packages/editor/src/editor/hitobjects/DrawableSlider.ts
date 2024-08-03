@@ -50,7 +50,6 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
     this.headCircle.fadeInDuration = this.hitObject.timeFadeIn;
     this.headCircle.timeFadeOut = this.hitObject.startTime;
 
-    this.headCircle.timeFadeIn = this.hitObject.timeFadeIn;
     this.headCircle.comboColor = this.hitObject.comboColor;
 
     this.sliderTail.position = Vec2.scale(
