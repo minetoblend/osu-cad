@@ -119,7 +119,7 @@ export class SelectTool extends ComposeTool {
         return true;
       }
 
-      if (!this.selection.isSelected(candidate)) {
+      if (!this.selection.isSelected(candidate) && hovered.every(it => !it.isSelected)) {
         this.selection.select([candidate]);
       }
       else if (!this.#trySelectSliderEdges(candidate, e.mousePosition)) {
