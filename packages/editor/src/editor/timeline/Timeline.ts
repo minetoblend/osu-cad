@@ -168,7 +168,7 @@ export class Timeline extends Container {
     const startTime = this.startTime - 1000;
     const endTime = this.endTime + 1000;
     const objects = this.beatmap.hitObjects.hitObjects.filter(
-      it => it.endTime >= startTime && it.startTime <= endTime,
+      it => it.endTime >= startTime && it.startTime <= endTime && !it.isGhost,
     );
 
     const shouldRemove = new Set(this.#hitObjectMap.keys());

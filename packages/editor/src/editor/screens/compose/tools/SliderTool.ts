@@ -78,6 +78,7 @@ export class SliderTool extends ComposeTool {
     this.#previewCircle.position = this.clampToPlayfieldBounds(
       this.mousePosition,
     );
+    this.#previewCircle.isGhost = true;
 
     this.hitObjects.add(this.#previewCircle!);
   }
@@ -243,8 +244,6 @@ export class SliderTool extends ComposeTool {
 
   #endPlacing() {
     this.commit();
-
-    this.selection.select([this.#slider!]);
 
     this.#slider = undefined;
     this.#path = [];

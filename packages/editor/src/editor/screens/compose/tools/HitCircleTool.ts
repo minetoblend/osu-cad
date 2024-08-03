@@ -89,6 +89,7 @@ export class HitCircleTool extends ComposeTool {
     const circle = new HitCircle();
     circle.position = this.clampToPlayfieldBounds(this.mousePosition);
     circle.startTime = this.editorClock.currentTime;
+    circle.isGhost = true;
 
     this.hitObjects.add(circle);
 
