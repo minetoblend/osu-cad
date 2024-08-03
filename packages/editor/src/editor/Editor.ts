@@ -138,7 +138,7 @@ export class Editor
     );
   }
 
-  readonly currentScreen = new Bindable(EditorScreenType.Timing);
+  readonly currentScreen = new Bindable(EditorScreenType.Compose);
 
   #updateScreen(screen: EditorScreenType) {
     switch (screen) {
