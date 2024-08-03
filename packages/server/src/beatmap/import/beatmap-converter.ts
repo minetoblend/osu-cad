@@ -22,8 +22,6 @@ import {
   HitSoundLayer,
   SampleType,
 } from '@osucad/common';
-import { HitSample, PathPoint } from 'osu-classes';
-
 export class BeatmapConverter {
   constructor(private readonly beatmap: StandardBeatmap) {}
 
@@ -229,6 +227,8 @@ export class BeatmapConverter {
           beatLength: timingPoint.beatLength,
         },
         velocityMultiplier: null,
+        volume: 100,
+        kiai: false,
       });
       map.set(timingPoint.startTime, controlPoint);
 
@@ -244,10 +244,22 @@ export class BeatmapConverter {
           time: difficultyPoint.startTime,
           timing: null,
           velocityMultiplier: difficultyPoint.sliderVelocity,
+          volume: 100,
+          kiai: false,
         });
-      }
 
-      converted.controlPoints.add(controlPoint);
+        converted.controlPoints.add(controlPoint);
+      } else {
+        controlPoint.velocityMultiplier = difficultyPoint.sliderVelocity;
+      }
+    }
+
+    for (const effectPoint of beatmap.controlPoints.effectPoints) {
+      const controlPoint = map.get(effectPoint.startTime);
+
+      if (controlPoint) {
+        controlPoint.kiai = effectPoint.kiai;
+      }
     }
   }
 
@@ -389,3 +401,5 @@ export class BeatmapConverter {
     }
   }
 }
+
+import { HitSample, PathPoint } from 'osu-classes';
