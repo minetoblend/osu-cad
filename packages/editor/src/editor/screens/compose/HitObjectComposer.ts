@@ -21,6 +21,7 @@ import { EditorAction } from '../../EditorAction';
 import { NEW_COMBO } from '../../InjectionTokens';
 import { EditorClock } from '../../EditorClock';
 import { ConnectedUsersManager } from '../../context/ConnectedUsersManager';
+import { HitObjectClipboard } from '../../CopyPasteHandler';
 import { HitObjectUtils } from './HitObjectUtils';
 import { EditorSelection } from './EditorSelection';
 import { SelectionOverlay } from './SelectionOverlay';
@@ -56,6 +57,8 @@ export class HitObjectComposer
     const userManager = this.dependencies.resolveOptional(
       ConnectedUsersManager,
     );
+
+    this.addInternal(new HitObjectClipboard());
 
     if (userManager) {
       this.addInternal(new ComposerCursorContainer());
