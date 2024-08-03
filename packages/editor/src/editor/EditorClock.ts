@@ -162,7 +162,7 @@ export class EditorClock
       let currentTime = lerp(
         lastTime,
         this.#targetTime,
-        clamp(this.parent!.clock.elapsedFrameTime * 0.015),
+        clamp(this.parent!.clock.elapsedFrameTime * 0.03),
       );
 
       if (almostEquals(currentTime, this.#targetTime, 3)) {
