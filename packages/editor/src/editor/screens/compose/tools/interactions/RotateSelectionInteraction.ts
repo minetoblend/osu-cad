@@ -8,6 +8,7 @@ import type {
 } from 'osucad-framework';
 import {
   Action,
+
   Anchor,
   Axes,
   CompositeDrawable,
@@ -23,6 +24,7 @@ import { Graphics, Matrix } from 'pixi.js';
 import { HitObjectUtils } from '../../HitObjectUtils';
 import { HitObjectComposer } from '../../HitObjectComposer';
 import { OsucadSpriteText } from '../../../../../OsucadSpriteText';
+import { Ring } from '../../../../../drawables/Ring';
 import { ComposeToolInteraction } from './ComposeToolInteraction';
 
 export class RotateSelectionInteraction extends ComposeToolInteraction {
@@ -159,16 +161,10 @@ class RotationHandle extends CompositeDrawable {
     this.height = radius * 2;
 
     this.addAllInternal(
-      this.#circle = new RoundedBox({
+      this.#circle = new Ring({
         relativeSizeAxes: Axes.Both,
-        cornerRadius: radius,
-        fillAlpha: 0,
         alpha: 0.5,
-        outlines: [{
-          width: 1.5,
-          color: 0xEDD661,
-          alpha: 1,
-        }],
+        color: 0xEDD661,
       }),
       new RotationHandleCenter(position => this.onMove.emit(position)),
       this.#currentAngleText = new OsucadSpriteText({
@@ -196,7 +192,7 @@ class RotationHandle extends CompositeDrawable {
 
   #currentRotation = 0;
 
-  #circle: RoundedBox;
+  #circle: Ring;
 
   #currentAngleText!: OsucadSpriteText;
 
