@@ -108,7 +108,7 @@ export class UpdateHitObjectHandler extends CommandHandler<IUpdateHitObjectComma
   }
 
   getMergeKey(command: IUpdateHitObjectCommand): string | null {
-    return `merge:hitobject:${command.id}`;
+    return `update:hitobject:${command.id}`;
   }
 
   merge(
