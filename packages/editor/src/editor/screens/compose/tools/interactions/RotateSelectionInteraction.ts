@@ -165,6 +165,7 @@ class RotationHandle extends CompositeDrawable {
         relativeSizeAxes: Axes.Both,
         alpha: 0.5,
         color: 0xEDD661,
+        strokeWidth: 1.5,
       }),
       new RotationHandleCenter(position => this.onMove.emit(position)),
       this.#currentAngleText = new OsucadSpriteText({
