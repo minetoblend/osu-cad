@@ -29,9 +29,13 @@ export class RotationGizmo extends CompositeDrawable {
 
   snappedAngle = new Bindable(0);
 
+  onRotate = new Action<number>();
+
   rotateEnd = new Action<number>();
 
   #angleVisualizer = new RotationVisualizer(this.radius);
+
+  #snapVisualizer = new SnapVisualizer(this.radius + 10);
 
   @dependencyLoader()
   load() {
@@ -42,7 +46,10 @@ export class RotationGizmo extends CompositeDrawable {
         strokeWidth: 1.5,
         alpha: 0.5,
       }),
+      this.#snapVisualizer,
     );
+
+    this.#snapVisualizer.alpha = 0;
 
     this.snappedAngle.addOnChangeListener((value) => {
       this.#angleVisualizer.angle = value;
@@ -77,13 +84,18 @@ export class RotationGizmo extends CompositeDrawable {
 
   #lastAngle = 0;
 
+  #startAngle = 0;
+
   get rotationCenter() {
     return this.drawSize.scale(0.5);
   }
 
   onMouseDown(e: MouseDownEvent): boolean {
     if (e.button === MouseButton.Left) {
-      this.#lastAngle = e.mousePosition.sub(this.rotationCenter).angle();
+      this.#startAngle = this.#lastAngle = e.mousePosition.sub(this.rotationCenter).angle();
+
+      this.#angleVisualizer.rotation = this.#startAngle;
+
       return true;
     }
 
@@ -101,6 +113,9 @@ export class RotationGizmo extends CompositeDrawable {
   snapAngleDegrees = 15;
 
   onDrag(e: DragEvent): boolean {
+    if (this.isDisposed)
+      return false;
+
     const angle = e.mousePosition.sub(this.rotationCenter).angle();
 
     let delta = angle - this.#lastAngle;
@@ -129,7 +144,14 @@ export class RotationGizmo extends CompositeDrawable {
       const snapAngle = this.snapAngleDegrees * Math.PI / 180;
 
       snappedAngle = Math.round(snappedAngle / snapAngle) * snapAngle;
+
+      this.#snapVisualizer.alpha = 0.5;
     }
+    else {
+      this.#snapVisualizer.alpha = 0;
+    }
+
+    this.onRotate.emit(snappedAngle - this.snappedAngle.value);
 
     this.snappedAngle.value = snappedAngle;
 
@@ -142,6 +164,8 @@ export class RotationGizmo extends CompositeDrawable {
     this.currentAngle.value = this.snappedAngle.value;
 
     this.rotateEnd.emit(this.snappedAngle.value);
+
+    this.#snapVisualizer.alpha = 0;
 
     return true;
   }
@@ -177,8 +201,32 @@ class RotationVisualizer extends GraphicsDrawable {
       return;
 
     g.moveTo(0, 0)
-      .arc(0, 0, this.readius, -Math.PI / 2, this.#angle - Math.PI / 2, this.#angle < 0)
+      .arc(0, 0, this.readius, 0, this.#angle, this.#angle < 0)
       .lineTo(0, 0)
       .fill({ color: 0xFFFFFF });
+  }
+}
+
+class SnapVisualizer extends GraphicsDrawable {
+  constructor(readonly radius: number) {
+    super();
+
+    this.anchor = Anchor.Center;
+  }
+
+  updateGraphics(g: Graphics) {
+    g.clear();
+
+    for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 12) {
+      const sin = Math.sin(angle);
+      const cos = Math.cos(angle);
+
+      const innerRadius = this.radius - 5;
+
+      g.moveTo(cos * innerRadius, sin * innerRadius);
+      g.lineTo(cos * this.radius, sin * this.radius);
+    }
+
+    g.stroke({ color: 0xFFFFFF, width: 1 });
   }
 }
