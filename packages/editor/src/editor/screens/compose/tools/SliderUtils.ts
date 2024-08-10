@@ -159,6 +159,9 @@ export class SliderUtils {
         newType = PathType.Linear;
         break;
       case PathType.Linear:
+        newType = PathType.Catmull;
+        break;
+      case PathType.Catmull:
         newType = null;
         break;
     }
