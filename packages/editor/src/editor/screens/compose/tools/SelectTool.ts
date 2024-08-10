@@ -2,7 +2,9 @@ import type {
   Bindable,
   ClickEvent,
   DragStartEvent,
+  IKeyBindingHandler,
   InputManager,
+  KeyBindingPressEvent,
   MouseDownEvent,
   Vec2,
 } from 'osucad-framework';
@@ -23,6 +25,7 @@ import {
   UpdateHitObjectCommand,
   setAdditionsEnabled,
 } from '@osucad/common';
+import { EditorAction } from '../../../EditorAction';
 import { ComposeTool } from './ComposeTool';
 import { SelectBoxInteraction } from './interactions/SelectBoxInteraction';
 import { MoveSelectionInteraction } from './interactions/MoveSelectionInteraction';
@@ -30,8 +33,9 @@ import { SliderPathVisualizer } from './SliderPathVisualizer';
 import { DistanceSnapProvider } from './DistanceSnapProvider';
 import { SliderUtils } from './SliderUtils';
 import { InsertControlPointInteraction } from './interactions/InsertControlPointInteraction';
+import { RotateSelectionInteraction } from './interactions/RotateSelectionInteraction';
 
-export class SelectTool extends ComposeTool {
+export class SelectTool extends ComposeTool implements IKeyBindingHandler<EditorAction> {
   constructor() {
     super();
 
@@ -317,9 +321,7 @@ export class SelectTool extends ComposeTool {
     const hitObjects = this.selection.selectedObjects;
 
     for (const hitObject of hitObjects) {
-      const options: Partial<SerializedSlider> = {
-
-      };
+      const options: Partial<SerializedSlider> = {};
 
       let setHitsound = true;
 
@@ -537,6 +539,25 @@ export class SelectTool extends ComposeTool {
       return true;
     }
 
+    return false;
+  }
+
+  readonly isKeyBindingHandler = true;
+
+  canHandleKeyBinding(binding: EditorAction): boolean {
+    return binding instanceof EditorAction;
+  }
+
+  onKeyBindingPressed?(e: KeyBindingPressEvent<EditorAction>): boolean {
+    switch (e.pressed) {
+      case EditorAction.Rotate:
+        if (this.selection.length > 0) {
+          this.beginInteraction(
+            new RotateSelectionInteraction(this.selection.selectedObjects),
+          );
+        }
+        return true;
+    }
     return false;
   }
 }
