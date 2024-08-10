@@ -1,4 +1,5 @@
 import type { HitObject } from '@osucad/common';
+import { Slider } from '@osucad/common';
 import type { KeyDownEvent } from 'osucad-framework';
 import { Container, Key, Vec2, dependencyLoader } from 'osucad-framework';
 import type { Rectangle } from 'osucad-framework/math';
@@ -39,6 +40,8 @@ export class ScaleSelectionInteraction extends ComposeToolInteraction {
 
   currentRotation: number = 0;
 
+  #converted = false;
+
   @dependencyLoader()
   load() {
     this.addAllInternal(
@@ -64,11 +67,15 @@ export class ScaleSelectionInteraction extends ComposeToolInteraction {
       this.#updateTransform();
     });
 
-    this.#rotationGizmo.snappedAngle.addOnChangeListener((value) => {
-      this.currentRotation = value;
-      this.#scaleGizmo.rotation = value;
+    this.#rotationGizmo.onRotate.addListener((value) => {
+      this.currentRotation += value;
+      this.#scaleGizmo.rotation = this.currentRotation;
 
       this.#updateTransform();
+    });
+
+    this.#rotationGizmo.rotateEnd.addListener(() => {
+      this.#rotationGizmo.currentAngle.value = this.#rotationGizmo.snappedAngle.value = 0;
     });
 
     this.#translateGizmo.positionValue.addOnChangeListener((value) => {
@@ -105,6 +112,15 @@ export class ScaleSelectionInteraction extends ComposeToolInteraction {
       .translate(center.x, center.y);
 
     this.commandManager.undoCurrentTransaction();
+
+    if (this.currentScale.x !== this.currentScale.y && !this.#converted) {
+      for (const object of this.hitObjects) {
+        if (object instanceof Slider) {
+          this.#utils.convertToBezier(object);
+        }
+      }
+      this.#converted = true;
+    }
 
     this.#utils.transformHitObjects(
       transform,
