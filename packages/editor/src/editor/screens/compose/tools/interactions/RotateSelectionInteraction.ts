@@ -38,7 +38,7 @@ export class RotateSelectionInteraction extends ComposeToolInteraction {
     this.selectionCenter = this.selectionBounds.center;
   }
 
-  selectionCenter!: Vec2;
+  selectionCenter: Vec2;
 
   selectionBounds: Rectangle;
 
