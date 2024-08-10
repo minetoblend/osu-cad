@@ -8,12 +8,7 @@ import type {
   MouseDownEvent,
   Vec2,
 } from 'osucad-framework';
-import {
-  Anchor,
-  MouseButton,
-  RoundedBox,
-  dependencyLoader,
-} from 'osucad-framework';
+import { Anchor, MouseButton, RoundedBox, dependencyLoader } from 'osucad-framework';
 import type {
   HitObject,
   SerializedSlider,
@@ -34,12 +29,13 @@ import { DistanceSnapProvider } from './DistanceSnapProvider';
 import { SliderUtils } from './SliderUtils';
 import { InsertControlPointInteraction } from './interactions/InsertControlPointInteraction';
 import { RotateSelectionInteraction } from './interactions/RotateSelectionInteraction';
+import { ScaleSelectionInteraction } from './interactions/ScaleSelectionInteraction';
 
 export class SelectTool extends ComposeTool implements IKeyBindingHandler<EditorAction> {
   constructor() {
     super();
 
-    this.addAllInternal(
+    this.addAll(
       this.#sliderPathVisualizer,
       this.#snapProvider,
       this.#sliderInsertPointVisualizer,
@@ -554,6 +550,13 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Editor
         if (this.selection.length > 0) {
           this.beginInteraction(
             new RotateSelectionInteraction(this.selection.selectedObjects),
+          );
+        }
+        return true;
+      case EditorAction.Scale:
+        if (this.selection.length > 0) {
+          this.beginInteraction(
+            new ScaleSelectionInteraction(this.selection.selectedObjects),
           );
         }
         return true;

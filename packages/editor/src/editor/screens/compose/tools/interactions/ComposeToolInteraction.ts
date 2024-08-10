@@ -1,4 +1,4 @@
-import { Action, Axes, resolved } from 'osucad-framework';
+import { Action, Axes, dependencyLoader, resolved } from 'osucad-framework';
 import { CommandContainer } from '../../../../CommandContainer';
 import { ThemeColors } from '../../../../ThemeColors';
 import { HitObjectComposer } from '../../HitObjectComposer';
@@ -17,6 +17,11 @@ export class ComposeToolInteraction extends CommandContainer {
   protected theme!: ThemeColors;
 
   protected composer!: HitObjectComposer;
+
+  @dependencyLoader()
+  [Symbol('load')]() {
+    this.commandManager.beforeUndo.addListener(() => this.cancel());
+  }
 
   protected loadComplete() {
     super.loadComplete();
