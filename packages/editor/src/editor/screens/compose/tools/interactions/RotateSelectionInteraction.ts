@@ -272,21 +272,8 @@ class RotationHandle extends CompositeDrawable {
   #startAngle?: number;
 
   #updateGraphics() {
-    const g = this.#rotationVisualizer;
-    g.clear();
-
-    if (this.#currentRotation === 0)
-      return;
-
     const center = this.rotationCenter;
     const radius = this.radius;
-
-    g
-      .moveTo(center.x, center.y)
-      .arc(center.x, center.y, radius, this.#startAngle ?? -Math.PI / 2, this.#currentRotation + (this.#startAngle ?? -Math.PI / 2), this.#currentRotation < 0)
-      .lineTo(center.x, center.y)
-      .fill({ color: 0xE6D375, alpha: 0.5 })
-    ;
 
     this.#currentAngleText.text = `${Math.round(this.#currentRotation * 180 / Math.PI)}deg`;
 
@@ -298,6 +285,19 @@ class RotationHandle extends CompositeDrawable {
       duration: 200,
       easing: 'power2.out',
     });
+
+    const g = this.#rotationVisualizer;
+    g.clear();
+
+    if (this.#currentRotation === 0)
+      return;
+
+    g
+      .moveTo(center.x, center.y)
+      .arc(center.x, center.y, radius, this.#startAngle ?? -Math.PI / 2, this.#currentRotation + (this.#startAngle ?? -Math.PI / 2), this.#currentRotation < 0)
+      .lineTo(center.x, center.y)
+      .fill({ color: 0xE6D375, alpha: 0.5 })
+    ;
   }
 }
 
