@@ -241,6 +241,10 @@ class RotationHandle extends CompositeDrawable {
       delta -= Math.sign(delta) * 2 * Math.PI;
     }
 
+    if (e.shiftPressed) {
+      delta *= 0.1;
+    }
+
     this.onRotate.emit(delta);
 
     this.#lastAngle = angle;
