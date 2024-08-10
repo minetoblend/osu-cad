@@ -7,7 +7,7 @@ import {
   CommandContext,
   getCommandHandler,
 } from '@osucad/common';
-import { Bindable } from 'osucad-framework';
+import { Action, Bindable } from 'osucad-framework';
 import type { EditorContext } from './EditorContext';
 
 export class CommandManager {
@@ -143,8 +143,11 @@ export class CommandManager {
 
         if (index !== -1) {
           this.#transaction.splice(index, 1);
+
+          command = handler.merge(this.context, mergeWith.command, command) ?? command;
+
           if (mergeWith.reverse) {
-            reverse = handler.merge(this.context, mergeWith.reverse, reverse) ?? reverse;
+            reverse = handler.merge(this.context, reverse, mergeWith.reverse) ?? reverse;
           }
         }
       }
@@ -159,8 +162,14 @@ export class CommandManager {
   #redoStack: HistoryEntry[][] = [];
 
   #undo(): boolean {
+    if (this.#transaction.length)
+      this.#commit();
+
     if (this.#undoStack.length === 0)
       return false;
+
+    this.beforeUndo.emit();
+
     const transaction = this.#undoStack.pop()!;
 
     const redoTransaction: HistoryEntry[] = [];
@@ -190,6 +199,9 @@ export class CommandManager {
   #redo(): boolean {
     if (this.#redoStack.length === 0)
       return false;
+
+    this.beforeRedo.emit();
+
     const transaction = this.#redoStack.pop()!;
 
     const undoTransaction: HistoryEntry[] = [];
@@ -231,6 +243,10 @@ export class CommandManager {
   }
 
   dispose() {}
+
+  beforeUndo = new Action();
+
+  beforeRedo = new Action();
 }
 
 interface HistoryEntry {
