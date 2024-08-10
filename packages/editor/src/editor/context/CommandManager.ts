@@ -44,7 +44,7 @@ export class CommandManager {
 
   undoCurrentTransaction() {
     const transaction = this.#transaction;
-    for (const { reverse } of transaction) {
+    for (const { reverse } of transaction.reverse()) {
       if (!reverse) {
         continue;
       }
