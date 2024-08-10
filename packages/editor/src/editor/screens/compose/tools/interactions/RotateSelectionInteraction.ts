@@ -116,11 +116,8 @@ export class RotateSelectionInteraction extends ComposeToolInteraction {
     this.#handle.currentRotation = this.snappedRotation;
   }
 
-  onMouseDown(e: MouseDownEvent): boolean {
-    if (e.button === MouseButton.Right) {
-      this.complete();
-      return true;
-    }
+  onMouseDown(): boolean {
+    this.complete();
 
     return false;
   }
