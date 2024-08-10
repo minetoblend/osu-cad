@@ -137,8 +137,9 @@ export class CommandManager {
 
     if (mergeKey) {
       const mergeWith = this.#mergeKeys.get(mergeKey);
+
       if (mergeWith) {
-        const index = this.#transaction.indexOf(mergeWith);
+        const index = this.#transaction.findIndex(it => it.command === mergeWith.command);
 
         if (index !== -1) {
           this.#transaction.splice(index, 1);
