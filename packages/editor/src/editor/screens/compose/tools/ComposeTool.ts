@@ -134,7 +134,7 @@ export abstract class ComposeTool extends CommandContainer {
   #interactionContainer: Container;
 
   beginInteraction(interaction: ComposeToolInteraction) {
-    this.cancelCurrentInteraction();
+    this.completeCurrentInteraction();
 
     this.withScope(() => {
       interaction.completed.addListener(() => {
@@ -164,6 +164,15 @@ export abstract class ComposeTool extends CommandContainer {
   cancelCurrentInteraction(): boolean {
     if (this.#currentInteraction) {
       this.#currentInteraction.cancel();
+      return true;
+    }
+
+    return false;
+  }
+
+  completeCurrentInteraction(): boolean {
+    if (this.#currentInteraction) {
+      this.#currentInteraction.complete();
       return true;
     }
 
