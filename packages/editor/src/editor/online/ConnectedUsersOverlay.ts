@@ -24,8 +24,8 @@ import { UISamples } from '../../UISamples';
 import { UserAvatarCache } from '../../UserAvatarCache';
 
 export class ConnectedUsersOverlay extends Container {
-  @resolved(ConnectedUsersManager)
-  private users!: ConnectedUsersManager;
+  @resolved(ConnectedUsersManager, true)
+  private users?: ConnectedUsersManager;
 
   constructor() {
     super({
@@ -60,6 +60,9 @@ export class ConnectedUsersOverlay extends Container {
 
   @dependencyLoader()
   load() {
+    if (!this.users)
+      return;
+
     this.addAllInternal(this.#items, this.#textFlow);
 
     for (const user of this.users.users) {
