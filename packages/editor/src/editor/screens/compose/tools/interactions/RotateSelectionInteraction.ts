@@ -8,7 +8,6 @@ import type {
 } from 'osucad-framework';
 import {
   Action,
-
   Anchor,
   Axes,
   CompositeDrawable,
