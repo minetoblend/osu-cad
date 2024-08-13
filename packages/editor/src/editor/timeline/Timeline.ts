@@ -73,6 +73,15 @@ export class Timeline extends Container {
         color: this.theme.primary,
       }),
     );
+
+    this.hitObjects.onUpdated.addListener(([hitObject, type]) => {
+      if (type === 'startTime') {
+        const drawable = this.#hitObjectMap.get(hitObject);
+        if (drawable) {
+          this.#objectContainer.changeChildDepth(drawable, hitObject.startTime);
+        }
+      }
+    });
   }
 
   #objectContainer!: Container;
@@ -184,11 +193,14 @@ export class Timeline extends Container {
           continue;
 
         this.#hitObjectMap.set(object, newDrawable);
+
+        newDrawable.depth = object.startTime;
+
         this.#objectContainer.add(newDrawable);
 
         drawable = newDrawable;
       }
-      drawable.drawNode.zIndex = objects.length - i;
+
       shouldRemove.delete(object);
     }
 
@@ -196,7 +208,8 @@ export class Timeline extends Container {
       const object = objects[i];
       const drawable = this.#hitObjectMap.get(object);
 
-      if(!drawable) continue;
+      if (!drawable)
+        continue;
 
       if (almostEquals(object.startTime, previousStartTime)) {
         stackHeight++;

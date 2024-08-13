@@ -18,6 +18,7 @@ import { SliderUtils } from '../screens/compose/tools/SliderUtils';
 import { EditorSelection } from '../screens/compose/EditorSelection';
 import { TimelineElement } from './TimelineElement';
 import { Timeline } from './Timeline';
+import { TimelineSlider } from './TimelineSlider';
 
 export class TimelineSliderTail extends TimelineElement {
   constructor(readonly hitObject: Slider) {
@@ -46,6 +47,10 @@ export class TimelineSliderTail extends TimelineElement {
   commandManager!: CommandManager;
 
   onDragStart(event: DragStartEvent): boolean {
+    if (this.findClosestParentOfType(TimelineSlider)!.mouseDownWasHead) {
+      return false;
+    }
+
     if (event.button === MouseButton.Left) {
       this.applyState();
 
@@ -142,6 +147,10 @@ export class TimelineSliderTail extends TimelineElement {
   protected selection!: EditorSelection;
 
   onMouseDown(e: MouseDownEvent): boolean {
+    if (this.findClosestParentOfType(TimelineSlider)!.mouseDownWasHead) {
+      return false;
+    }
+
     if (e.button === MouseButton.Left) {
       if (!this.hitObject.isSelected) {
         return false;

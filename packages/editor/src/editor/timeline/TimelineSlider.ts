@@ -70,6 +70,8 @@ export class TimelineSlider extends TimelineObject<Slider> {
     }
   }
 
+  mouseDownWasHead = false;
+
   update() {
     super.update();
 

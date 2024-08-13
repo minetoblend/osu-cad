@@ -5,6 +5,7 @@ import { SliderUtils } from '../screens/compose/tools/SliderUtils';
 import { EditorSelection } from '../screens/compose/EditorSelection';
 import { TimelineElement } from './TimelineElement';
 import { TimelineComboNumber } from './TimelineComboNumber';
+import { TimelineSlider } from './TimelineSlider';
 
 export class TimelineSliderHead extends TimelineElement {
   constructor(readonly hitObject: Slider) {
@@ -56,6 +57,8 @@ export class TimelineSliderHead extends TimelineElement {
   protected selection!: EditorSelection;
 
   onMouseDown(e: MouseDownEvent): boolean {
+    this.findClosestParentOfType(TimelineSlider)!.mouseDownWasHead = true;
+
     if (e.button === MouseButton.Left) {
       if (!this.hitObject.isSelected) {
         return false;
@@ -70,5 +73,10 @@ export class TimelineSliderHead extends TimelineElement {
     }
 
     return false;
+  }
+
+  onMouseUp(): boolean {
+    this.findClosestParentOfType(TimelineSlider)!.mouseDownWasHead = false;
+    return true;
   }
 }
