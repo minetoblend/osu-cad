@@ -45,6 +45,16 @@ export class HitObjectContainer extends Container {
     this.add(this.#followPointRenderer);
     this.add(this.#hitObjectContainer);
     this.#hitObjectContainer.drawNode.enableRenderGroup();
+
+    this.hitObjects.onUpdated.addListener(([hitObject, type]) => {
+      if (type === 'startTime') {
+        const drawable = this.hitObjectDrawableMap.get(hitObject.id);
+
+        if (drawable) {
+          this.#hitObjectContainer.changeChildDepth(drawable, hitObject.startTime);
+        }
+      }
+    });
   }
 
   private readonly hitObjectDrawableMap = new Map<string, Drawable>();
@@ -94,10 +104,11 @@ export class HitObjectContainer extends Container {
             continue;
         }
 
+        drawable.depth = hitObject.startTime;
+
         this.hitObjectDrawableMap.set(hitObject.id, drawable);
         this.#hitObjectContainer.add(drawable);
       }
-      drawable.drawNode.zIndex = hitObjects.length - i;
     }
 
     for (const hitObject of shouldRemove) {
