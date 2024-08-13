@@ -95,6 +95,7 @@ export class RotationGizmo extends CompositeDrawable {
       this.#startAngle = this.#lastAngle = e.mousePosition.sub(this.rotationCenter).angle();
 
       this.#angleVisualizer.rotation = this.#startAngle;
+      this.#snapVisualizer.rotation = this.#startAngle;
 
       return true;
     }
