@@ -14,6 +14,7 @@ import { Color } from 'pixi.js';
 import { OsucadSpriteText } from '../OsucadSpriteText';
 import { EditorLoader } from '../editor/EditorLoader';
 import { UISamples } from '../UISamples';
+import { FastRoundedBox } from '../drawables/FastRoundedBox';
 import { DrawableCarouselItem } from './DrawableCarouselItem';
 import { CarouselBeatmap } from './CarouselBeatmap';
 
@@ -40,48 +41,53 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
         relativeSizeAxes: Axes.Both,
         fillColor: 0x282832,
         cornerRadius: 10,
-        alpha: 0.8,
-      }),
-      this.#lastEdited = new OsucadSpriteText({
-        text: lastEditedText,
-        anchor: Anchor.CenterRight,
-        origin: Anchor.CenterRight,
-        color: 0xB6B6C3,
-        fontSize: 14,
-      }),
-      new FillFlowContainer({
-        padding: { horizontal: 20, vertical: 6 },
-        relativeSizeAxes: Axes.Both,
-        spacing: new Vec2(8),
-        children: [
-          new Container({
-            autoSizeAxes: Axes.Both,
-            anchor: Anchor.CenterLeft,
-            origin: Anchor.CenterLeft,
-            children: [
-              new RoundedBox({
-                relativeSizeAxes: Axes.Both,
-                color: this.getDifficultyColor(),
-                cornerRadius: 4,
-                alpha: 0.9,
-              }),
-              new Container({
-                autoSizeAxes: Axes.Both,
-                padding: { horizontal: 4, vertical: 1 },
-                child: new OsucadSpriteText({
-                  text: `${this.item.beatmapInfo.starRating.toFixed(2)}`,
-                }),
-              }),
-            ],
-          }),
-          new OsucadSpriteText({
-            text: this.item.beatmapInfo.difficultyName,
-            anchor: Anchor.CenterLeft,
-            origin: Anchor.CenterLeft,
-          }),
-        ],
+        alpha: 0.9,
       }),
     );
+
+    this.scheduler.addDelayed(() => {
+      this.header.addAll(
+        this.#lastEdited = new OsucadSpriteText({
+          text: lastEditedText,
+          anchor: Anchor.CenterRight,
+          origin: Anchor.CenterRight,
+          color: 0xB6B6C3,
+          fontSize: 14,
+        }),
+        new FillFlowContainer({
+          padding: { horizontal: 20, vertical: 6 },
+          relativeSizeAxes: Axes.Both,
+          spacing: new Vec2(8),
+          children: [
+            new Container({
+              autoSizeAxes: Axes.Both,
+              anchor: Anchor.CenterLeft,
+              origin: Anchor.CenterLeft,
+              children: [
+                new FastRoundedBox({
+                  relativeSizeAxes: Axes.Both,
+                  color: this.getDifficultyColor(),
+                  cornerRadius: 4,
+                  alpha: 0.9,
+                }),
+                new Container({
+                  autoSizeAxes: Axes.Both,
+                  padding: { horizontal: 4, vertical: 1 },
+                  child: new OsucadSpriteText({
+                    text: `${this.item.beatmapInfo.starRating.toFixed(2)}`,
+                  }),
+                }),
+              ],
+            }),
+            new OsucadSpriteText({
+              text: this.item.beatmapInfo.difficultyName,
+              anchor: Anchor.CenterLeft,
+              origin: Anchor.CenterLeft,
+            }),
+          ],
+        }),
+      );
+    }, 50);
   }
 
   #lastEdited!: OsucadSpriteText;
@@ -188,6 +194,7 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
   update() {
     super.update();
 
-    this.#lastEdited.x = -this.header.x - this.movementContainer.x - 20;
+    if (this.#lastEdited)
+      this.#lastEdited.x = -this.header.x - this.movementContainer.x - 20;
   }
 }

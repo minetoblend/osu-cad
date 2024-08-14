@@ -3,10 +3,12 @@ import { Anchor, Axes, Box, Container, dependencyLoader, resolved } from 'osucad
 import gsap from 'gsap';
 import { OsucadScreen } from '../OsucadScreen';
 import { GlobalSongPlayback } from '../GlobalSongPlayback';
+import { EditorEnvironment } from '../environment/EditorEnvironment';
+import type { BeatmapStore } from '../environment/BeatmapStore';
 import { BeatmapCarousel } from './BeatmapCarousel';
 import { BeatmapSelectBackground } from './BeatmapSelectBackground';
-import { CreateBeatmapCard } from './CreateBeatmapCard';
 import { BeatmapImportDropzone } from './BeatmapImportDropzone';
+import { BeatmapSelectSearchHeader } from './BeatmapSelectSearchHeader';
 
 export class BeatmapSelect extends OsucadScreen {
   getPath(): string {
@@ -20,8 +22,15 @@ export class BeatmapSelect extends OsucadScreen {
     this.origin = Anchor.Center;
   }
 
+  @resolved(EditorEnvironment)
+  environment!: EditorEnvironment;
+
+  beatmapStore!: BeatmapStore;
+
   @dependencyLoader()
   load() {
+    this.beatmapStore = this.environment.createBeatmapStore();
+
     this.addInternal(new Box({
       relativeSizeAxes: Axes.Both,
       color: 0x0B0B0D,
@@ -39,7 +48,7 @@ export class BeatmapSelect extends OsucadScreen {
         origin: Anchor.Center,
         children: [
           this.#background = new BeatmapSelectBackground(),
-          this.#carousel = new BeatmapCarousel()
+          this.#carousel = new BeatmapCarousel(this.beatmapStore.beatmaps)
             .apply({
               width: 0.6,
               anchor: Anchor.CenterRight,
@@ -47,20 +56,27 @@ export class BeatmapSelect extends OsucadScreen {
             }),
           this.#menu = new Container({
             relativeSizeAxes: Axes.Both,
-            anchor: Anchor.CenterLeft,
-            origin: Anchor.CenterLeft,
+            anchor: Anchor.BottomLeft,
+            origin: Anchor.BottomLeft,
             width: 0.4,
+            height: 0.8,
             padding: 50,
             children: [
-              new CreateBeatmapCard(),
+              // new CreateBeatmapCard(),
             ],
+          }),
+          new BeatmapSelectSearchHeader().apply({
+            relativeSizeAxes: Axes.X,
+            anchor: Anchor.TopRight,
+            origin: Anchor.TopRight,
+            height: 150,
           }),
         ],
       }),
     );
 
-    this.#carousel.bleedTop = 200;
-    this.#carousel.bleedBottom = 200;
+    this.#carousel.bleedTop = 300;
+    this.#carousel.bleedBottom = 300;
 
     this.#carousel.selectionChanged.addListener((beatmap) => {
       this.#background.currentBeatmap = beatmap;

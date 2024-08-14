@@ -1,8 +1,6 @@
 import type { HitCircle, Slider } from '@osucad/common';
 import { Beatmap, HitObjectType } from '@osucad/common';
-import type {
-  Drawable,
-} from 'osucad-framework';
+
 import {
   Axes,
   Container,
@@ -13,6 +11,7 @@ import { EditorClock } from '../EditorClock';
 import { DrawableHitCircle } from './DrawableHitCircle';
 import { DrawableSlider } from './DrawableSlider';
 import { FollowPointRenderer } from './FollowPointRenderer';
+import type { DrawableHitObject } from './DrawableHitObject';
 
 export class HitObjectContainer extends Container {
   constructor() {
@@ -31,7 +30,7 @@ export class HitObjectContainer extends Container {
   @resolved(EditorClock)
   editorClock!: EditorClock;
 
-  #hitObjectContainer = new Container({
+  #hitObjectContainer = new Container<DrawableHitObject>({
     relativeSizeAxes: Axes.Both,
   });
 
@@ -57,7 +56,7 @@ export class HitObjectContainer extends Container {
     });
   }
 
-  private readonly hitObjectDrawableMap = new Map<string, Drawable>();
+  private readonly hitObjectDrawableMap = new Map<string, DrawableHitObject>();
 
   update() {
     super.update();

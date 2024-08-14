@@ -60,6 +60,7 @@ export class BeatmapConverter {
       beatmapSetId: -1,
     },
     controlPoints: { controlPoints: [] },
+    previewTime: 0,
   });
 
   convert() {
@@ -234,6 +235,8 @@ export class BeatmapConverter {
           beatLength: timingPoint.beatLength,
         },
         velocityMultiplier: null,
+        volume: 100,
+        kiai: false,
       });
       map.set(timingPoint.startTime, controlPoint);
 
@@ -252,6 +255,8 @@ export class BeatmapConverter {
           time: difficultyPoint.startTime,
           timing: null,
           velocityMultiplier: difficultyPoint.sliderVelocity,
+          volume: 100,
+          kiai: false,
         });
       }
 

@@ -1,25 +1,29 @@
 import type {
+  Drawable,
   Vec2,
 } from 'osucad-framework';
 import {
   Anchor,
   Axes,
   Container,
+  DrawableSprite,
   FillMode,
   RoundedBox,
   almostEquals,
   dependencyLoader,
   lerp,
-  loadTexture,
+  resolved,
 } from 'osucad-framework';
+
 import gsap from 'gsap';
 import { OsucadSpriteText } from '../OsucadSpriteText';
 import { FastRoundedBox } from '../drawables/FastRoundedBox';
-import type { MapsetInfo } from '../beatmaps/MapsetInfo';
+import type { MapsetInfo } from './MapsetInfo';
 import { DrawableCarouselItem } from './DrawableCarouselItem';
 import { CarouselMapset } from './CarouselMapset';
 import { DrawableCarouselBeatmap } from './DrawableCarouselBeatmap';
 import { UserWithAvatar } from './UserWithAvatar';
+import { CarouselLoadQueue } from './CarouselLoadQueue';
 
 export class DrawableCarouselMapset extends DrawableCarouselItem {
   static HEIGHT = 80;
@@ -35,9 +39,6 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
       relativeSizeAxes: Axes.Both,
       x: 100,
       padding: { top: DrawableCarouselMapset.HEIGHT },
-      children: this.item.beatmaps.map(item =>
-        new DrawableCarouselBeatmap(item),
-      ),
     }));
 
     this.header.addAll(
@@ -56,7 +57,7 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
             alpha: 0.8,
             y: 20,
           }),
-          this.avatar = new UserWithAvatar(this.mapset.creator).apply({
+          this.creatorInfo = this.createCreatorInfo().apply({
             anchor: Anchor.CenterRight,
             origin: Anchor.CenterRight,
           }),
@@ -65,12 +66,14 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
     );
   }
 
+  beatmapsCreated = false;
+
   @dependencyLoader()
   load() {
     this.header.height = CarouselMapset.HEIGHT;
   }
 
-  #beatmapContainer!: Container;
+  #beatmapContainer!: Container<DrawableCarouselBeatmap>;
 
   #background!: MapsetBackground;
 
@@ -78,7 +81,7 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
 
   readonly mapset: MapsetInfo;
 
-  avatar!: UserWithAvatar;
+  creatorInfo!: Drawable;
 
   protected selected() {
     super.selected();
@@ -88,6 +91,16 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
       duration: 0.5,
       ease: 'expo.out',
     });
+
+    if (!this.beatmapsCreated) {
+      this.beatmapsCreated = true;
+      this.#beatmapContainer.clear();
+      this.#beatmapContainer.addAll(
+        ...this.item.beatmaps.map(item =>
+          new DrawableCarouselBeatmap(item),
+        ),
+      );
+    }
 
     this.beatmaps.forEach(it => it.fadeIn({ duration: 400 }));
 
@@ -108,13 +121,27 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
     this.beatmaps.forEach((it) => {
       gsap.killTweensOf(it, 'alpha');
       it.fadeOut({ duration: 100 });
+      it.expire();
+    });
+    this.beatmapsCreated = false;
+  }
+
+  createCreatorInfo() {
+    if (this.mapset.author) {
+      return new UserWithAvatar(this.mapset.author);
+    }
+
+    return new OsucadSpriteText({
+      text: this.mapset.authorName,
+      fontSize: 16,
+      alpha: 0.8,
     });
   }
 
   update() {
     super.update();
 
-    this.avatar.x = -this.header.x - this.movementContainer.x;
+    this.creatorInfo.x = -this.header.x - this.movementContainer.x;
 
     const targetY = this.item.carouselYPosition;
 
@@ -152,8 +179,16 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
     }
   }
 
+  get parallax() {
+    return this.#background.parallax;
+  }
+
+  set parallax(value: number) {
+    this.#background.parallax = value;
+  }
+
   get beatmaps() {
-    return this.#beatmapContainer.children as DrawableCarouselBeatmap[];
+    return this.#beatmapContainer.children;
   }
 
   receivePositionalInputAt(screenSpacePosition: Vec2): boolean {
@@ -162,7 +197,7 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
 }
 
 class MapsetBackground extends Container {
-  constructor(mapset: MapsetInfo) {
+  constructor(readonly mapset: MapsetInfo) {
     super({
       relativeSizeAxes: Axes.Both,
     });
@@ -172,27 +207,81 @@ class MapsetBackground extends Container {
       cornerRadius: 10,
       color: 0x282832,
     }));
+  }
 
-    this.scheduler.addDelayed(() => {
-      const url = mapset.thumbnailLarge;
-      if (url) {
-        loadTexture(url).then((texture) => {
-          if (!texture)
-            return;
+  @resolved(CarouselLoadQueue)
+  carouselLoadQueue!: CarouselLoadQueue;
 
-          const background = new RoundedBox({
-            relativeSizeAxes: Axes.Both,
-            texture,
-            cornerRadius: 10,
-            textureFillMode: FillMode.Fill,
-            color: 'rgb(168, 168, 168)',
-          });
+  @dependencyLoader()
+  load() {
+    // scheduling this with 50ms delay to avoid loading too many textures at once when fast-seeking
+    this.scheduler.addDelayed(() => this.loadBackground(), 50);
+  }
 
-          this.onDispose(() => texture.destroy());
+  async loadBackground() {
+    const texture = await this.mapset.loadThumbnailLarge();
+    if (!texture)
+      return;
 
-          this.add(background);
-        });
-      }
-    }, 100);
+    const mask = new RoundedBox({
+      relativeSizeAxes: Axes.Both,
+      cornerRadius: 10,
+    });
+
+    const background = this.background = new DrawableSprite({
+      relativeSizeAxes: Axes.Both,
+      fillMode: FillMode.Fill,
+      fillAspectRatio: texture.width / texture.height,
+      texture,
+      color: 'rgb(168, 168, 168)',
+      anchor: Anchor.Center,
+      origin: Anchor.Center,
+    });
+
+    background.drawNode.mask = mask.drawNode;
+
+    this.onDispose(() => texture.destroy());
+
+    this.carouselLoadQueue.add({
+      load: () => {
+        this.addAll(background, mask);
+        background.y = this.parallax * this.parallaxMultiplier;
+
+        background.fadeIn({ duration: 250 });
+      },
+      shouldLoad: () => !this.isDisposed,
+    });
+  }
+
+  background?: DrawableSprite;
+
+  #parallax = 0;
+
+  get parallax() {
+    return this.#parallax;
+  }
+
+  set parallax(value: number) {
+    if (value === this.#parallax)
+      return;
+
+    this.#parallax = value;
+  }
+
+  updateParallax() {
+    if (this.background) {
+      const targetY = this.#parallax * this.parallaxMultiplier;
+      this.background.y = lerp(targetY, this.background.y, Math.exp(-0.01 * this.time.elapsed));
+    }
+  }
+
+  update() {
+    super.update();
+
+    this.updateParallax();
+  }
+
+  get parallaxMultiplier() {
+    return 50;
   }
 }

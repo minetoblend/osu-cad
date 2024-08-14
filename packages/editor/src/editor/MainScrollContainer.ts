@@ -1,14 +1,8 @@
-import {
-  Axes,
-  Direction,
-  RoundedBox,
-  ScrollContainer,
-  ScrollbarContainer,
-  Vec2,
-} from 'osucad-framework';
+import type { Drawable } from 'osucad-framework';
+import { Axes, Direction, RoundedBox, ScrollContainer, ScrollbarContainer, Vec2 } from 'osucad-framework';
 import gsap from 'gsap';
 
-export class MainScrollContainer extends ScrollContainer {
+export class MainScrollContainer<T extends Drawable = Drawable> extends ScrollContainer<T> {
   constructor(direction: Direction = Direction.Vertical) {
     super(direction);
   }

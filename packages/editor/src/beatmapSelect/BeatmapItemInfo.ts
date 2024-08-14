@@ -1,9 +1,15 @@
+import type { UserInfo } from '@osucad/common';
+import type { Texture } from 'pixi.js';
 import type { EditorContext } from '../editor/context/EditorContext';
 
-export interface BeatmapInfo {
+export interface BeatmapItemInfo {
   readonly id: string;
 
   readonly setId: string;
+
+  readonly author: UserInfo | null;
+
+  readonly authorName: string;
 
   readonly artist: string;
 
@@ -13,9 +19,9 @@ export interface BeatmapInfo {
 
   readonly starRating: number;
 
-  readonly thumbnailSmall: string | null;
+  loadThumbnailSmall: () => Promise<Texture | null>;
 
-  readonly thumbnailLarge: string | null;
+  loadThumbnailLarge: () => Promise<Texture | null>;
 
   readonly audioUrl: string;
 

@@ -1,4 +1,3 @@
-import type { ScreenExitEvent } from 'osucad-framework';
 import {
   Action,
   Anchor,
@@ -19,8 +18,8 @@ import axios from 'axios';
 import { Dialog } from '../modals/Dialog';
 import { ThemeColors } from '../editor/ThemeColors';
 import { OsucadSpriteText } from '../OsucadSpriteText';
-import type { MapsetInfo } from '../beatmaps/MapsetInfo';
-import { OnlineBeatmapInfo } from '../beatmaps/OnlineBeatmapInfo';
+import { OnlineBeatmapInfo } from '../beatmap/OnlineBeatmapInfo';
+import type { MapsetInfo } from './MapsetInfo';
 
 type UploadStatus =
   | BeatmapImportProgress
@@ -136,6 +135,7 @@ export class BeatmapImportDialog extends Dialog {
               setId: response.data.id,
               lastEdited: '',
               starRating: b.starRating,
+              previewTime: b.previewTime,
               links: {
                 audioUrl: b.links.audioUrl,
                 thumbnailLarge: b.links.thumbnailLarge,
@@ -148,9 +148,10 @@ export class BeatmapImportDialog extends Dialog {
           }),
           artist: response.data.artist,
           title: response.data.title,
-          creator: response.data.creator,
-          thumbnailLarge: response.data.links.thumbnailLarge,
-          thumbnailSmall: response.data.links.thumbnailSmall,
+          author: response.data.creator,
+          authorName: response.data.creator.username,
+          loadThumbnailLarge: async () => null,
+          loadThumbnailSmall: async () => null,
         });
 
         this.exit();
@@ -209,7 +210,7 @@ export class BeatmapImportDialog extends Dialog {
     );
   }
 
-  onExiting(e: ScreenExitEvent): boolean {
+  onExiting(): boolean {
     gsap.to(this.#content, {
       height: 0,
       duration: 0.2,

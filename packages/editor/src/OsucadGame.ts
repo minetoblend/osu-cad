@@ -27,6 +27,8 @@ import { DialogContainer } from './modals/DialogContainer';
 import { PreferencesContainer } from './editor/preferences/PreferencesContainer';
 import { OsucadScreenStack } from './OsucadScreenStack';
 import { RootScreen } from './RootScreen';
+import { autodetectEditorEnvironment } from './environment/autodetectEditorEnvironment';
+import { EditorEnvironment } from './environment/EditorEnvironment';
 
 RenderTarget.defaultOptions.depth = true;
 RenderTarget.defaultOptions.stencil = true;
@@ -50,6 +52,8 @@ export class OsucadGame extends Game {
   @dependencyLoader()
   async init(): Promise<void> {
     this.dependencies.provide(Game, this);
+
+    this.dependencies.provide(EditorEnvironment, await autodetectEditorEnvironment());
 
     this.dependencies.provide(new ThemeColors());
 

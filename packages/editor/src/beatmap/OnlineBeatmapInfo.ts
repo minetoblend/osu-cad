@@ -1,14 +1,18 @@
-import type { BeatmapInfo as BeatmapInfoDto } from '@osucad/common';
+import type { BeatmapInfo as BeatmapInfoDto, UserInfo } from '@osucad/common';
+import type { Texture } from 'pixi.js';
+import { loadTexture } from 'osucad-framework';
 import type { EditorContext } from '../editor/context/EditorContext';
 import { OnlineEditorContext } from '../editor/context/OnlineEditorContext';
-import type { BeatmapInfo } from './BeatmapInfo';
+import type { BeatmapItemInfo } from '../beatmapSelect/BeatmapItemInfo';
 
-export class OnlineBeatmapInfo implements BeatmapInfo {
+export class OnlineBeatmapInfo implements BeatmapItemInfo {
   constructor(
     dto: BeatmapInfoDto,
   ) {
     this.id = dto.id;
     this.setId = dto.setId;
+    this.author = dto.creator;
+    this.authorName = dto.creator.username;
     this.artist = dto.artist;
     this.title = dto.title;
     this.thumbnailSmall = dto.links.thumbnailSmall;
@@ -25,6 +29,10 @@ export class OnlineBeatmapInfo implements BeatmapInfo {
   readonly id: string;
 
   readonly setId: string;
+
+  readonly author: UserInfo;
+
+  readonly authorName: string;
 
   readonly artist: string;
 
@@ -48,5 +56,13 @@ export class OnlineBeatmapInfo implements BeatmapInfo {
 
   createEditorContext(): EditorContext {
     return new OnlineEditorContext(this.joinKey);
+  }
+
+  async loadThumbnailSmall(): Promise<Texture | null> {
+    return this.thumbnailSmall ? loadTexture(this.thumbnailSmall) : null;
+  }
+
+  async loadThumbnailLarge(): Promise<Texture | null> {
+    return this.thumbnailLarge ? loadTexture(this.thumbnailLarge) : null;
   }
 }

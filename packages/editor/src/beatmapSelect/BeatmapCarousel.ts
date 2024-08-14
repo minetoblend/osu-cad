@@ -1,18 +1,28 @@
-import type { KeyDownEvent } from 'osucad-framework';
-import { Action, Axes, CompositeDrawable, Direction, Invalidation, Key, LayoutMember, clamp, dependencyLoader, resolved } from 'osucad-framework';
-
+import type { Bindable, KeyDownEvent } from 'osucad-framework';
+import {
+  Action,
+  Axes,
+  CompositeDrawable,
+  Direction,
+  Invalidation,
+  Key,
+  LayoutMember,
+  clamp,
+  dependencyLoader,
+  resolved,
+} from 'osucad-framework';
 import { binarySearch } from '@osucad/common';
 import gsap from 'gsap';
 import { BackdropBlurFilter } from 'pixi-filters';
-import type { BeatmapInfo as BeatmapInfoDto } from '@osucad/common';
 import { MainScrollContainer } from '../editor/MainScrollContainer';
 import { UISamples } from '../UISamples';
-import type { MapsetInfo } from '../beatmaps/MapsetInfo';
-import type { BeatmapInfo } from '../beatmaps/BeatmapInfo';
-import { OnlineBeatmapInfo } from '../beatmaps/OnlineBeatmapInfo';
+import { EditorEnvironment } from '../environment/EditorEnvironment';
+import type { BeatmapItemInfo } from './BeatmapItemInfo';
+import type { MapsetInfo } from './MapsetInfo';
 import { CarouselMapset } from './CarouselMapset';
 import type { DrawableCarouselItem } from './DrawableCarouselItem';
 import { DrawableCarouselMapset } from './DrawableCarouselMapset';
+import { CarouselLoadQueue } from './CarouselLoadQueue';
 
 const distance_offscreen_before_unload = 512;
 
@@ -25,7 +35,9 @@ enum PendingScrollOperation {
 }
 
 export class BeatmapCarousel extends CompositeDrawable {
-  constructor() {
+  constructor(
+    readonly beatmaps: Bindable<BeatmapItemInfo[]>,
+  ) {
     super();
 
     this.relativeSizeAxes = Axes.Both;
@@ -39,11 +51,6 @@ export class BeatmapCarousel extends CompositeDrawable {
   bleedTop = 0;
 
   bleedBottom = 0;
-
-  @dependencyLoader()
-  load() {
-    this.schedule(() => this.loadMapsets());
-  }
 
   #scroll!: CarouselScrollContainer;
 
@@ -81,9 +88,7 @@ export class BeatmapCarousel extends CompositeDrawable {
         ),
       );
 
-      for (const child of this.#scroll.children) {
-        const panel = child as DrawableCarouselItem;
-
+      for (const panel of this.#scroll.children) {
         if (toDisplay.delete(panel.item as CarouselMapset)) {
           continue;
         }
@@ -103,15 +108,28 @@ export class BeatmapCarousel extends CompositeDrawable {
       }
     }
 
-    for (const child of this.#scroll.children) {
-      const item = child as DrawableCarouselMapset;
-
+    for (const item of this.#scroll.children) {
       this.#updateItem(item);
+
+      item.parallax = (this.#scroll.current - item.y) / this.drawSize.y;
 
       for (const beatmap of item.beatmaps) {
         this.#updateItem(beatmap, item);
       }
     }
+
+    this.#carouselLoadQueue.loadNext();
+  }
+
+  #carouselLoadQueue = new CarouselLoadQueue();
+
+  @dependencyLoader()
+  load() {
+    this.dependencies.provide(this.#carouselLoadQueue);
+
+    this.beatmaps.addOnChangeListener((beatmaps) => {
+      this.beatmapsUpdated(beatmaps);
+    }, { immediate: true });
   }
 
   #updateItem(item: DrawableCarouselItem, parent?: DrawableCarouselItem) {
@@ -145,42 +163,33 @@ export class BeatmapCarousel extends CompositeDrawable {
     this.#pendingScrollOperation = PendingScrollOperation.None;
   }
 
-  async loadMapsets() {
-    const response = await fetch('/api/beatmaps?sort=recent&filter=own', {
-      method: 'GET',
-      priority: 'high',
-      credentials: 'same-origin',
-    });
+  @resolved(EditorEnvironment)
+  environment!: EditorEnvironment;
 
-    if (!response.ok) {
-      console.error('Failed to load mapsets');
-      return;
-    }
-
-    const beatmaps = await response.json() as BeatmapInfoDto[];
-
-    const map = new Map<string, MapsetInfo>();
+  beatmapsUpdated(beatmaps: BeatmapItemInfo[]) {
+    const mapsets = new Map<string, MapsetInfo>();
 
     for (const beatmap of beatmaps) {
-      if (!map.has(beatmap.setId)) {
-        map.set(beatmap.setId, {
+      if (!mapsets.has(beatmap.setId)) {
+        mapsets.set(beatmap.setId, {
           title: beatmap.title,
           artist: beatmap.artist,
-          creator: beatmap.creator,
+          author: beatmap.author,
+          authorName: beatmap.authorName,
           beatmaps: [],
           updatedAt: `${beatmap.lastEdited}`,
-          thumbnailSmall: beatmap.links.thumbnailSmall,
-          thumbnailLarge: beatmap.links.thumbnailLarge,
+          loadThumbnailSmall: () => beatmap.loadThumbnailSmall(),
+          loadThumbnailLarge: () => beatmap.loadThumbnailLarge(),
           id: `${beatmap.setId}`,
         } as MapsetInfo);
       }
 
-      const mapset = map.get(beatmap.setId)!;
+      const mapset = mapsets.get(beatmap.setId)!;
 
-      mapset.beatmaps.push(new OnlineBeatmapInfo(beatmap));
+      mapset.beatmaps.push(beatmap);
     }
 
-    this.mapsets = [...map.values()].map(mapset => this.createCarouselMapset(mapset));
+    this.mapsets = [...mapsets.values()].map(mapset => this.createCarouselMapset(mapset));
 
     this.#itemsCache.invalidate();
 
@@ -193,7 +202,7 @@ export class BeatmapCarousel extends CompositeDrawable {
 
   #selectedBeatmapSet?: CarouselMapset;
 
-  selectionChanged = new Action<BeatmapInfo>();
+  selectionChanged = new Action<BeatmapItemInfo>();
 
   createCarouselMapset(mapset: MapsetInfo) {
     const set = new CarouselMapset(mapset);
@@ -290,7 +299,7 @@ export class BeatmapCarousel extends CompositeDrawable {
 
   #offsetX(dist: number, halfHeight: number) {
     // The radius of the circle the carousel moves on.
-    const circleRadius = 4;
+    const circleRadius = 3;
     const discriminant = Math.max(0, circleRadius * circleRadius - dist * dist);
     const x = (circleRadius - Math.sqrt(discriminant)) * halfHeight;
 
@@ -323,8 +332,7 @@ export class BeatmapCarousel extends CompositeDrawable {
 
   onKeyDown(e: KeyDownEvent): boolean {
     switch (e.key) {
-      case Key.F2:
-      {
+      case Key.F2: {
         const beatmaps = this.mapsets.flatMap(it => it.beatmaps);
 
         beatmaps[Math.floor(Math.random() * beatmaps.length)].selected.value = true;
@@ -388,7 +396,7 @@ export class BeatmapCarousel extends CompositeDrawable {
   }
 }
 
-class CarouselScrollContainer extends MainScrollContainer {
+class CarouselScrollContainer extends MainScrollContainer<DrawableCarouselMapset> {
   constructor() {
     super(Direction.Vertical);
 
@@ -396,7 +404,7 @@ class CarouselScrollContainer extends MainScrollContainer {
     this.scrollContent['autoSizeAxes'] = Axes.None;
 
     const filter = new BackdropBlurFilter({
-      strength: 10,
+      strength: 15,
       antialias: 'inherit',
       quality: 3,
       resolution: devicePixelRatio,

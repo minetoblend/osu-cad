@@ -1,4 +1,4 @@
-import type { MapsetInfo } from '../beatmaps/MapsetInfo';
+import type { MapsetInfo } from './MapsetInfo';
 import { CarouselItem } from './CarouselItem';
 import { CarouselBeatmap } from './CarouselBeatmap';
 

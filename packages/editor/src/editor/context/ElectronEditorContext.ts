@@ -6,7 +6,7 @@ import { BeatmapDecoder } from 'osu-parsers';
 import { StandardRuleset } from 'osu-standard-stable';
 import type { PIXITexture } from 'osucad-framework';
 import { textureFrom } from 'pixi.js';
-import { BeatmapConverter } from '../../beatmaps/BeatmapConverter';
+import { BeatmapConverter } from '../../beatmap/BeatmapConverter';
 import { Skin } from '../../skins/Skin';
 import { EditorContext } from './EditorContext';
 
@@ -27,7 +27,9 @@ export class ElectronEditorContext extends EditorContext {
     const beatmap = new BeatmapDecoder().decodeFromString(contents);
     const standardBeatmap = new StandardRuleset().applyToBeatmap(beatmap);
 
-    return new BeatmapConverter(standardBeatmap).convert();
+    const converted = new BeatmapConverter(standardBeatmap).convert();
+    console.log(converted);
+    return converted;
   }
 
   protected async loadSong(beatmap: Beatmap): Promise<AudioBuffer> {
@@ -56,7 +58,11 @@ export class ElectronEditorContext extends EditorContext {
   }
 
   protected async loadSkin(): Promise<Skin> {
-    return new Skin();
+    const skin = new Skin();
+
+    await skin.load();
+
+    return skin;
   }
 
   async updateSong(

@@ -61,7 +61,6 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
     this.reverseArrows.clear();
     for (let i = this.hitObject.repeats; i >= 1; i--) {
       const time = this.hitObject.startTime + this.hitObject.spanDuration * i;
-      const circle = new DrawableSliderTail(this.hitObject, i - 1);
 
       const angle
         = i % 2 === 0 ? this.hitObject.startAngle : this.hitObject.endAngle;
@@ -71,14 +70,17 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
       reverseArrow.startTime = time;
       reverseArrow.timePreempt = this.hitObject.timePreempt;
 
-      this.reverseArrows.addAll(circle, reverseArrow);
+      if (i > 0) {
+        reverseArrow.spanDuration = this.hitObject.spanDuration;
+      }
+
+      this.reverseArrows.addAll(reverseArrow);
       if (i % 2 !== 0) {
         const position = Vec2.scale(
           this.hitObject.path.endPosition,
           1 / this.hitObject.scale,
         );
         reverseArrow.position = position;
-        circle.position = position;
       }
     }
 
@@ -99,19 +101,6 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
   update() {
     super.update();
     const time = this.time.current - this.hitObject.startTime;
-
-    if (time < 0) {
-      this.headCircle.alpha = animate(
-        time,
-        -this.slider.timePreempt,
-        -this.slider.timePreempt + this.slider.timeFadeIn,
-        0,
-        1,
-      );
-    }
-    else {
-      this.headCircle.alpha = animate(time, 0, 800, 1, 0);
-    }
 
     this.comboNumber.alpha
     = time > 0 && this.preferences.viewport.hitAnimations

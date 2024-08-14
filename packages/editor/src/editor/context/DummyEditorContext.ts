@@ -7,7 +7,7 @@ import { StandardRuleset } from 'osu-standard-stable';
 import audioUrl from '../../assets/audio.mp3';
 import backgroundUrl from '../../assets/background.jpg';
 import { Skin } from '../../skins/Skin';
-import { BeatmapConverter } from '../../beatmaps/BeatmapConverter';
+import { BeatmapConverter } from '../../beatmap/BeatmapConverter';
 import { EditorContext } from './EditorContext';
 import sampleBeatmap from './sampleBeatmap.osu?raw';
 

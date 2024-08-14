@@ -33,6 +33,7 @@ export class ReverseArrow extends CompositeDrawable {
 
   startTime = 0;
   timePreempt = 0;
+  spanDuration = 0;
 
   @resolved(EditorClock)
   editorClock!: EditorClock;
@@ -42,6 +43,9 @@ export class ReverseArrow extends CompositeDrawable {
 
     const time = this.time.current - this.startTime;
 
+    if (time < -this.spanDuration) {
+      this.alpha = 0;
+    }
     if (time < 0) {
       this.alpha = animate(
         time,

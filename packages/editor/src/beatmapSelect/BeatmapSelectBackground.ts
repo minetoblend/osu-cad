@@ -8,12 +8,11 @@ import {
   DrawableSprite,
   FillMode,
   GAME_HOST,
-  loadTexture,
   resolved,
 } from 'osucad-framework';
 
 import { BlurFilter, RenderTexture } from 'pixi.js';
-import type { BeatmapInfo } from '../beatmaps/BeatmapInfo';
+import type { BeatmapItemInfo } from './BeatmapItemInfo';
 
 export class BeatmapSelectBackground extends CompositeDrawable {
   constructor() {
@@ -35,13 +34,13 @@ export class BeatmapSelectBackground extends CompositeDrawable {
     ];
   }
 
-  #currentBeatmap: BeatmapInfo | null = null;
+  #currentBeatmap: BeatmapItemInfo | null = null;
 
-  get currentBeatmap(): BeatmapInfo | null {
+  get currentBeatmap(): BeatmapItemInfo | null {
     return this.#currentBeatmap;
   }
 
-  set currentBeatmap(value: BeatmapInfo | null) {
+  set currentBeatmap(value: BeatmapItemInfo | null) {
     if (this.#currentBeatmap === value)
       return;
 
@@ -54,22 +53,20 @@ export class BeatmapSelectBackground extends CompositeDrawable {
 
   async #updateTexture() {
     const beatmap = this.#currentBeatmap;
-    if (this.#currentBeatmap?.thumbnailLarge) {
-      const texture = await loadTexture(this.#currentBeatmap.thumbnailLarge);
-      if (!texture)
-        return;
 
+    const texture = await this.#currentBeatmap?.loadThumbnailLarge();
+
+    if (this.#currentSprite) {
+      this.#currentSprite.fadeOut({
+        duration: 300,
+      });
+      this.#currentSprite.expire();
+    }
+
+    if (texture) {
       if (this.isDisposed || beatmap !== this.#currentBeatmap) {
         texture.destroy();
         return;
-      }
-
-      if (this.#currentSprite) {
-        this.#currentSprite.fadeOut({
-          duration: 300,
-
-        });
-        this.#currentSprite.expire();
       }
 
       const renderTexture = RenderTexture.create({
@@ -116,17 +113,7 @@ export class BeatmapSelectBackground extends CompositeDrawable {
 
       sprite.fadeIn({
         duration: 300,
-
       });
-    }
-    else if (this.#currentSprite) {
-      this.#currentSprite.fadeOut({
-        duration: 300,
-
-      });
-      this.#currentSprite.expire();
-
-      this.#currentSprite = null;
     }
   }
 

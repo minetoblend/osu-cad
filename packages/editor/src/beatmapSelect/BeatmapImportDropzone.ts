@@ -8,7 +8,7 @@ import { UISamples } from '../UISamples';
 import { NotificationOverlay } from '../notifications/NotificationOverlay';
 import { Notification } from '../notifications/Notification';
 import { DialogContainer } from '../modals/DialogContainer';
-import type { MapsetInfo } from '../beatmaps/MapsetInfo';
+import type { MapsetInfo } from './MapsetInfo';
 import { BeatmapImportDialog } from './BeatmapImportDialog';
 
 export interface BeatmapImportDropzoneOptions extends ContainerOptions {}
