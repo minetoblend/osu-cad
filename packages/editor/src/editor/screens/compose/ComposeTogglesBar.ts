@@ -20,12 +20,13 @@ import {
 import { ThemeColors } from '../../ThemeColors';
 import { ComposeToggleButton } from './ComposeToggleButton';
 import { AdditionToggleButton } from './AdditionToggleButton';
+import { ComposeToolbarButton } from './ComposeToolbarButton';
 
 export class ComposeTogglesBar extends Container {
   constructor() {
     super({
       relativeSizeAxes: Axes.Y,
-      width: 74,
+      width: ComposeToolbarButton.SIZE + 20,
       padding: 10,
       anchor: Anchor.TopRight,
       origin: Anchor.TopRight,
@@ -79,14 +80,6 @@ export class ComposeTogglesBar extends Container {
         EditorAction.ToggleClap,
         SampleType.Clap,
       ),
-    );
-
-    this.addInternal(
-      new Container({
-        autoSizeAxes: Axes.Both,
-        anchor: Anchor.BottomRight,
-        origin: Anchor.BottomRight,
-      }),
     );
   }
 

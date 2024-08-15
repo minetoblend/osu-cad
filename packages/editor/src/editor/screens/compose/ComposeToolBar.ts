@@ -10,12 +10,13 @@ import { SpinnerTool } from './tools/SpinnerTool';
 import { ZWaveSliderTool } from './tools/ZWaveSliderTool';
 import { WaveSliderTool } from './tools/WaveSliderTool';
 import { BirdSliderTool } from './tools/BirdSliderTool';
+import { ComposeToolbarButton } from './ComposeToolbarButton';
 
 export class ComposeToolBar extends Container {
   constructor(protected readonly activeTool: Bindable<ComposeTool>) {
     super({
       relativeSizeAxes: Axes.Y,
-      width: 74,
+      width: ComposeToolbarButton.SIZE + 20,
       padding: 10,
     });
 

@@ -29,7 +29,7 @@ export class ComposeToolbarButton extends Button {
     this.#iconTexture = icon;
   }
 
-  static readonly SIZE = 64;
+  static readonly SIZE = 54;
 
   @resolved(ThemeColors)
   theme!: ThemeColors;
