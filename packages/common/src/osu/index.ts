@@ -7,6 +7,7 @@ export * from './hitCircle';
 export * from './slider';
 export * from './spinner';
 export * from './sliderPath';
+export * from './PathPoint';
 export * from './deserializeHitObject';
 export * from './hitSound';
 export * from './hitSound2';

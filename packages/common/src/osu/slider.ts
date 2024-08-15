@@ -6,6 +6,7 @@ import { SliderPath } from './sliderPath';
 import { Vec2 } from 'osucad-framework';
 import { defaultHitSound, getSamples, HitSample, HitSound } from './hitSound';
 import { IDistanceSnapProvider } from './IDistanceSnapProvider';
+import { PathPoint } from './PathPoint';
 
 export class Slider extends HitObject {
   readonly type = HitObjectType.Slider;
@@ -16,7 +17,10 @@ export class Slider extends HitObject {
     if (options) {
       this.repeats = options.repeats;
       this.velocityOverride = options.velocity;
-      this.path = new SliderPath(options.path, options.expectedDistance);
+      this.path = SliderPath.deserialize(
+        options.path,
+        options.expectedDistance,
+      );
 
       if (options.hitSounds) this.hitSounds = options.hitSounds;
 
@@ -217,7 +221,7 @@ export class Slider extends HitObject {
   patch(update: Partial<SerializedSlider>) {
     super.patch(update);
     if (update.path !== undefined) {
-      this.path.controlPoints = update.path;
+      this.path.controlPoints = update.path.map(PathPoint.deserialize);
       this.path.invalidate();
       this.onUpdate.emit('position');
     }

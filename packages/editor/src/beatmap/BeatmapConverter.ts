@@ -6,10 +6,9 @@ import {
   Slider as OsuSlider,
   Spinner as OsuSpinner,
 } from 'osu-standard-stable';
-import type { HitSample, PathPoint } from 'osu-classes';
+import type { HitSample, PathPoint as OsuPathPoint } from 'osu-classes';
 import type {
   HitSoundLayer,
-  SerializedPathPoint,
 } from '@osucad/common';
 import {
   Additions,
@@ -18,6 +17,7 @@ import {
   EditorBookmark,
   HitCircle,
   HitSoundSample,
+  PathPoint,
   PathType,
   SampleSet,
   SampleType,
@@ -27,6 +27,7 @@ import {
   defaultHitSoundLayers,
   hitObjectId,
 } from '@osucad/common';
+import { Vec2 } from 'osucad-framework';
 
 export class BeatmapConverter {
   constructor(private readonly beatmap: StandardBeatmap) {}
@@ -199,7 +200,7 @@ export class BeatmapConverter {
     }
   }
 
-  private convertPathPoint(point: PathPoint): SerializedPathPoint {
+  private convertPathPoint(point: OsuPathPoint): PathPoint {
     let type: PathType | null = null;
     switch (point.type) {
       case 'L':
@@ -215,11 +216,7 @@ export class BeatmapConverter {
         type = PathType.Bezier;
         break;
     }
-    return {
-      x: point.position.x,
-      y: point.position.y,
-      type,
-    };
+    return new PathPoint(Vec2.from(point.position), type);
   }
 
   private convertControlPoints() {

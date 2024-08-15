@@ -2,6 +2,7 @@ import { IVec2 } from 'osucad-framework';
 import { PathType } from './pathType';
 import { IHasAttribution } from './attribution';
 import { HitSound } from '../osu';
+import { SerializedZWavePathPreset } from '../osu/SliderPathPreset';
 
 export interface HitObjectBase extends IHasAttribution {
   id?: string;
@@ -23,6 +24,7 @@ export interface SerializedSlider extends HitObjectBase {
   expectedDistance: number;
   velocity: number | null;
   hitSounds?: HitSound[];
+  preset?: SerializedZWavePathPreset;
 }
 
 export interface SerializedPathPoint extends IVec2 {

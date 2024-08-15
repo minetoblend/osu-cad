@@ -9,7 +9,7 @@ import { resolve } from 'path';
 import { v4 as uuid } from 'uuid';
 import { MapsetEntity } from './mapset.entity';
 import { BeatmapDecoder } from 'osu-parsers';
-import { Beatmap, HitSample, PathPoint } from 'osu-classes';
+import { Beatmap, HitSample, PathPoint as OsuPathPoint } from 'osu-classes';
 import {
   Circle,
   Slider,
@@ -34,10 +34,11 @@ import {
   SampleType,
   SerializedEditorBookmark,
   SerializedHitObject,
-  SerializedPathPoint,
   SerializedTimingPoint,
   SerializedVelocityPoint,
+  PathPoint,
 } from '@osucad/common';
+import { Vec2 } from 'osucad-framework';
 import { AssetsService } from '../assets/assets.service';
 import { BeatmapSnapshotService } from './beatmap-snapshot.service';
 import { Repository } from 'typeorm';
@@ -429,7 +430,7 @@ export class BeatmapImportService {
     return { beatmap: entity, data };
   }
 
-  convertPathPoint(point: PathPoint): SerializedPathPoint {
+  convertPathPoint(point: OsuPathPoint): PathPoint {
     let type: PathType | null = null;
     switch (point.type) {
       case 'L':
@@ -445,11 +446,7 @@ export class BeatmapImportService {
         type = PathType.Bezier;
         break;
     }
-    return {
-      x: point.position.x,
-      y: point.position.y,
-      type,
-    };
+    return new PathPoint(Vec2.from(point.position), type);
   }
 
   private getHitSound(hitObject: StandardHitObject): HitSound {

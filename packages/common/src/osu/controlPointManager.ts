@@ -336,6 +336,8 @@ export class ControlPointManager {
         time: timing.time,
         timing: timing,
         velocityMultiplier: null,
+        volume: 100,
+        kiai: false,
       });
       controlPoints.add(controlPoint);
       map.set(timing.time, controlPoint);
@@ -350,6 +352,8 @@ export class ControlPointManager {
           time: velocity.time,
           velocityMultiplier: velocity.velocity,
           timing: null,
+          volume: 100,
+          kiai: false,
         });
         controlPoints.add(controlPoint);
       }

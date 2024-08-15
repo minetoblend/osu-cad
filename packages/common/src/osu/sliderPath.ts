@@ -2,13 +2,13 @@ import { PathType, SerializedPathPoint } from '../types';
 import { Vec2 } from 'osucad-framework';
 import { PathApproximator, Vector2 } from 'osu-classes';
 import { clamp } from '../util/clamp';
-import { IDistanceSnapProvider } from './IDistanceSnapProvider';
+import { PathPoint } from './PathPoint';
 
 export class SliderPath {
-  controlPoints: SerializedPathPoint[];
+  controlPoints: PathPoint[];
   private _expectedDistance = 0;
 
-  constructor(path: SerializedPathPoint[] = [], expectedDistance: number = 0) {
+  constructor(path: PathPoint[] = [], expectedDistance: number = 0) {
     this.controlPoints = path;
     this._expectedDistance = expectedDistance;
   }
@@ -204,5 +204,9 @@ export class SliderPath {
 
   get calculatedDistance() {
     return this.cumulativeDistance[this.cumulativeDistance.length - 1];
+  }
+
+  static deserialize(path: SerializedPathPoint[], expectedDistance: number) {
+    return new SliderPath(path.map(PathPoint.deserialize), expectedDistance);
   }
 }
