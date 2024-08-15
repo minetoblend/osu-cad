@@ -227,7 +227,7 @@ export class ComposeToolbarButton extends Button {
     if (e.controlPressed || e.shiftPressed || e.altPressed)
       return false;
 
-    if (this.keyBinding === e.key) {
+    if (this.keyBinding === e.key && !e.repeat) {
       this.action?.();
       this.samples.toolSelect.play();
       this.keyPressed = true;
