@@ -1,4 +1,5 @@
 import type { Slider } from '@osucad/common';
+import { PathPoint } from '@osucad/common';
 import type {
   DragEvent,
   DragStartEvent,
@@ -36,10 +37,7 @@ export class InsertControlPointInteraction extends ComposeToolInteraction {
     );
 
     const path = [...this.slider.path.controlPoints];
-    path.splice(this.index, 0, {
-      ...this.startPosition,
-      type: null,
-    });
+    path.splice(this.index, 0, new PathPoint(this.startPosition));
 
     this.#sliderUtils.setPath(this.slider, path, false);
   }
@@ -52,10 +50,7 @@ export class InsertControlPointInteraction extends ComposeToolInteraction {
     const position = e.mousePosition.sub(this.slider.stackedPosition);
 
     const path = [...this.slider.path.controlPoints];
-    path[this.index] = {
-      ...position,
-      type: path[this.index].type,
-    };
+    path[this.index] = path[this.index].withPosition(position);
 
     this.#sliderUtils.setPath(this.slider, path, false);
 

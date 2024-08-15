@@ -11,10 +11,11 @@ import { Editor } from '../../Editor';
 import { ComposeTogglesBar } from './ComposeTogglesBar';
 import { ComposeToolBar } from './ComposeToolBar';
 import { HitObjectComposer } from './HitObjectComposer';
+import type { DrawableComposeTool } from './tools/DrawableComposeTool';
 import type { ComposeTool } from './tools/ComposeTool';
 import { SelectTool } from './tools/SelectTool';
 
-export type ToolConstructor = NoArgsConstructor<ComposeTool>;
+export type ToolConstructor = NoArgsConstructor<DrawableComposeTool>;
 
 export class ComposeScreen extends EditorScreen {
   constructor() {
@@ -30,7 +31,7 @@ export class ComposeScreen extends EditorScreen {
 
   #composer!: HitObjectComposer;
 
-  #activeTool = new Bindable<ToolConstructor>(SelectTool);
+  #activeTool = new Bindable<ComposeTool>(new SelectTool());
 
   @dependencyLoader()
   init() {
@@ -45,10 +46,9 @@ export class ComposeScreen extends EditorScreen {
   protected loadComplete() {
     super.loadComplete();
 
-    this.findClosestParentOfType(Editor)?.requestSelectTool.addListener(() => {
-      if (this.#activeTool.value !== SelectTool)
-        this.#activeTool.value = SelectTool;
-    });
+    this.findClosestParentOfType(Editor)?.requestSelectTool.addListener(() =>
+      this.#activeTool.value = new SelectTool(),
+    );
   }
 
   update(): void {

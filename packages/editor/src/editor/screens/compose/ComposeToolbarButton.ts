@@ -1,19 +1,13 @@
 import gsap from 'gsap';
-import type {
-  Key,
-  KeyDownEvent,
-  MouseDownEvent,
-} from 'osucad-framework';
+import type { Key, KeyDownEvent, MouseDownEvent, MouseUpEvent } from 'osucad-framework';
 import {
   Anchor,
   Axes,
   Button,
-  ButtonTrigger,
+  Container,
   DrawableSprite,
-  FillDirection,
-  FillFlowContainer,
-  FillMode,
   RoundedBox,
+  Vec2,
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
@@ -27,39 +21,59 @@ export class ComposeToolbarButton extends Button {
     readonly keyBinding?: Key,
   ) {
     super();
-    this.relativeSizeAxes = Axes.Both;
-    this.fillMode = FillMode.Fit;
-    this.trigger = ButtonTrigger.MouseDown;
+
+    this.size = new Vec2(ComposeToolbarButton.SIZE);
+
+    // this.trigger = ButtonTrigger.MouseDown;
 
     this.#iconTexture = icon;
   }
+
+  static readonly SIZE = 64;
 
   @resolved(ThemeColors)
   theme!: ThemeColors;
 
   #iconTexture: Texture;
 
+  get iconTexture() {
+    return this.#iconTexture;
+  }
+
+  set iconTexture(value: Texture) {
+    this.#iconTexture = value;
+    if (this.#icon) {
+      this.#icon.texture = value;
+    }
+  }
+
   @dependencyLoader()
   init() {
     this.addAllInternal(
-      (this.#background = new RoundedBox({
+      this.backgroundContainer = new Container({
         relativeSizeAxes: Axes.Both,
-        cornerRadius: 8,
-        color: this.theme.translucent,
-        alpha: 0.8,
         anchor: Anchor.Center,
         origin: Anchor.Center,
-      })),
-      (this.#outline = new RoundedBox({
+        children: [
+          (this.#background = new RoundedBox({
+            relativeSizeAxes: Axes.Both,
+            cornerRadius: 8,
+            color: this.theme.translucent,
+            alpha: 0.8,
+            anchor: Anchor.Center,
+            origin: Anchor.Center,
+          })),
+          (this.#outline = new RoundedBox({
+            relativeSizeAxes: Axes.Both,
+            cornerRadius: 8,
+            fillAlpha: 0,
+            anchor: Anchor.Center,
+            origin: Anchor.Center,
+          })),
+        ],
+      }),
+      (this.#content = new Container({
         relativeSizeAxes: Axes.Both,
-        cornerRadius: 8,
-        fillAlpha: 0,
-        anchor: Anchor.Center,
-        origin: Anchor.Center,
-      })),
-      (this.#content = new FillFlowContainer({
-        relativeSizeAxes: Axes.Both,
-        direction: FillDirection.Vertical,
       })),
       (this.#icon = new DrawableSprite({
         texture: this.#iconTexture,
@@ -72,11 +86,13 @@ export class ComposeToolbarButton extends Button {
     this.updateState();
   }
 
+  backgroundContainer!: Container;
+
   #background!: RoundedBox;
 
   #outline!: RoundedBox;
 
-  #content!: FillFlowContainer;
+  #content!: Container;
 
   #icon!: DrawableSprite;
 
@@ -110,7 +126,7 @@ export class ComposeToolbarButton extends Button {
         {
           color: 0x32D2AC,
           width: 1.5 * this.outlineVisibility,
-          alpha: 1 * this.outlineVisibility,
+          alpha: this.outlineVisibility,
           alignment: 0,
         },
       ];
@@ -156,47 +172,15 @@ export class ComposeToolbarButton extends Button {
     }
 
     if (this.keyPressed || this.#mouseDown) {
-      gsap.to(this.#icon, {
-        scaleX: 0.85,
-        scaleY: 0.85,
-        duration: 0.3,
-        ease: 'power4.out',
-      });
+      this.#icon.scaleTo({ scale: 0.85, duration: 300, easing: 'power4.out' });
 
       // resizing the background and outline instead of main body to make sure layout isn't affected
-      gsap.to(this.#background, {
-        scaleX: 0.95,
-        scaleY: 0.95,
-        duration: 0.3,
-        ease: 'power4.out',
-      });
-      gsap.to(this.#outline, {
-        scaleX: 0.95,
-        scaleY: 0.95,
-        duration: 0.3,
-        ease: 'power4.out',
-      });
+      this.backgroundContainer.scaleTo({ scale: 0.95, duration: 300, easing: 'power4.out' });
     }
     else {
-      gsap.to(this.#icon, {
-        scaleX: 1,
-        scaleY: 1,
-        duration: 0.3,
-        ease: 'back.out',
-      });
+      this.#icon.scaleTo({ scale: 1, duration: 300, easing: 'back.out' });
 
-      gsap.to(this.#background, {
-        scaleX: 1,
-        scaleY: 1,
-        duration: 0.3,
-        ease: 'back.out',
-      });
-      gsap.to(this.#outline, {
-        scaleX: 1,
-        scaleY: 1,
-        duration: 0.3,
-        ease: 'back.out',
-      });
+      this.backgroundContainer.scaleTo({ scale: 1, duration: 300, easing: 'back.out' });
     }
   }
 
@@ -219,6 +203,7 @@ export class ComposeToolbarButton extends Button {
   onMouseDown(e: MouseDownEvent): boolean {
     if (!super.onMouseDown(e))
       return false;
+
     this.samples.toolSelect.play();
     this.#mouseDown = true;
     this.updateState();
@@ -226,7 +211,8 @@ export class ComposeToolbarButton extends Button {
     return true;
   }
 
-  onMouseUp(): boolean {
+  // eslint-disable-next-line unused-imports/no-unused-vars
+  onMouseUp(e: MouseUpEvent): boolean {
     this.#mouseDown = false;
     this.updateState();
 
@@ -260,5 +246,9 @@ export class ComposeToolbarButton extends Button {
       return true;
     }
     return false;
+  }
+
+  get acceptsFocus(): boolean {
+    return true;
   }
 }

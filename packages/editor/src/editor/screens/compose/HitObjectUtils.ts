@@ -1,9 +1,9 @@
 import type {
   HitObject,
-  SerializedPathPoint,
   SerializedSlider,
 } from '@osucad/common';
 import {
+  PathPoint,
   PathType,
   Slider,
   Spinner,
@@ -180,10 +180,9 @@ export class HitObjectUtils extends CompositeDrawable {
     const controlPoints = [...slider.path.controlPoints];
 
     const endPosition = slider.path.endPosition;
-    controlPoints[controlPoints.length - 1].x = endPosition.x;
-    controlPoints[controlPoints.length - 1].y = endPosition.y;
+    controlPoints[controlPoints.length - 1] = controlPoints[controlPoints.length - 1].withPosition(endPosition);
 
-    const reversed: SerializedPathPoint[] = [];
+    const reversed: PathPoint[] = [];
     const pathTypes = controlPoints
       .filter(it => it.type !== null)
       .map(it => it.type);
@@ -199,11 +198,7 @@ export class HitObjectUtils extends CompositeDrawable {
         console.assert(pathType !== null, 'Path type should not be null');
       }
 
-      reversed.unshift({
-        x: point.x - lastPoint.x,
-        y: point.y - lastPoint.y,
-        type: pathType,
-      });
+      reversed.unshift(new PathPoint(point.position.sub(lastPoint.position), pathType));
     }
 
     if (reversed.length === 3 && reversed[0].type === PathType.PerfectCurve) {
@@ -219,8 +214,7 @@ export class HitObjectUtils extends CompositeDrawable {
         centre.y + radius * Math.sin(thetaStart + (thetaRange / 2) * direction),
       );
 
-      reversed[1].x = middlePoint.x;
-      reversed[1].y = middlePoint.y;
+      reversed[1] = reversed[1].withPosition(middlePoint);
     }
 
     this.commandManager.submit(
@@ -274,7 +268,7 @@ export class HitObjectUtils extends CompositeDrawable {
     if (path.length <= 2)
       return;
 
-    const newPath: SerializedPathPoint[] = [];
+    const newPath: PathPoint[] = [];
 
     let segmentType = path[0].type;
     let segmentStart = 0;
@@ -286,7 +280,7 @@ export class HitObjectUtils extends CompositeDrawable {
         const segmentEnd = i;
         const segment = path.slice(segmentStart, segmentEnd + 1);
 
-        let newSegment: SerializedPathPoint[] = segment;
+        let newSegment: PathPoint[] = segment;
 
         if (segmentType === PathType.PerfectCurve) {
           newSegment = this.convertCircularArcToBezier(
@@ -309,12 +303,12 @@ export class HitObjectUtils extends CompositeDrawable {
     );
   }
 
-  convertCircularArcToBezier(segment: Vec2[]): SerializedPathPoint[] {
+  convertCircularArcToBezier(segment: Vec2[]): PathPoint[] {
     if (segment.length !== 3)
-      return segment.map((it, index) => ({ x: it.x, y: it.y, type: index === 0 ? PathType.Bezier : null }));
+      return segment.map((it, index) => new PathPoint(it, index === 0 ? PathType.Bezier : null));
     const cs = PathApproximator._circularArcProperties(segment.map(it => new Vector2(it.x, it.y)));
     if (!cs.isValid)
-      return segment.map((it, index) => ({ x: it.x, y: it.y, type: index === 0 ? PathType.Bezier : null }));
+      return segment.map((it, index) => new PathPoint(it, index === 0 ? PathType.Bezier : null));
 
     let preset = this.circlePresets[this.circlePresets.length - 1];
 
@@ -355,7 +349,7 @@ export class HitObjectUtils extends CompositeDrawable {
       arc[i] = rotator.apply(arc[i]);
     }
 
-    return arc.map((it, index) => ({ x: it.x, y: it.y, type: index === 0 ? PathType.Bezier : null }));
+    return arc.map((it, index) => new PathPoint(it, index === 0 ? PathType.Bezier : null));
   }
 
   readonly circlePresets: CircleBezierPreset[] = [

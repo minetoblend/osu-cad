@@ -1,15 +1,18 @@
+import type { Texture } from 'pixi.js';
 import { ComposeTool } from './ComposeTool';
+import type { DrawableComposeTool } from './DrawableComposeTool';
+import { DrawableSpinnerTool } from './DrawableSpinnerTool';
 
 export class SpinnerTool extends ComposeTool {
-  constructor() {
-    super();
+  get icon(): Texture {
+    return useAsset('icon:spinner');
   }
 
-  applyNewCombo(): void {
-    // TODO
+  isSameTool(tool: ComposeTool): boolean {
+    return tool instanceof SpinnerTool;
   }
 
-  applySampleType(): void {
-    // TODO
+  createDrawableTool(): DrawableComposeTool {
+    return new DrawableSpinnerTool();
   }
 }

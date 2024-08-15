@@ -1,6 +1,6 @@
 import type {
   IDistanceSnapProvider,
-  SerializedPathPoint,
+  PathPoint,
   SerializedSlider,
   Slider,
 } from '@osucad/common';
@@ -36,18 +36,12 @@ export class SliderUtils {
     let position: Vec2 | undefined;
 
     if (index === 0) {
-      path[1] = {
-        ...path[1],
-        type: path[1].type ?? path[0].type,
-      };
+      path[1] = path[1].withType(path[1].type ?? path[0].type);
+
       position = slider.position.add(path[1]);
 
       for (let i = path.length - 1; i >= 1; i--) {
-        path[i] = {
-          x: path[i].x - path[1].x,
-          y: path[i].y - path[1].y,
-          type: path[i].type,
-        };
+        path[i] = path[i].moveBy(path[1].position.scale(-1));
       }
     }
 
@@ -81,11 +75,7 @@ export class SliderUtils {
       const path = [...slider.path.controlPoints];
 
       for (let i = 1; i < path.length; i++) {
-        path[i] = {
-          x: path[i].x - delta.x,
-          y: path[i].y - delta.y,
-          type: path[i].type,
-        };
+        path[i] = path[i].moveBy(delta.scale(-1));
       }
 
       const originalPath = slider.path.controlPoints;
@@ -109,11 +99,7 @@ export class SliderUtils {
     else {
       const path = [...slider.path.controlPoints];
 
-      path[index] = {
-        x: position.x - slider.stackedPosition.x,
-        y: position.y - slider.stackedPosition.y,
-        type: path[index].type,
-      };
+      path[index] = path[index].withPosition(position.sub(slider.stackedPosition));
 
       this.setPath(slider, path, commit);
     }
@@ -133,11 +119,7 @@ export class SliderUtils {
     }
 
     const path = [...slider.path.controlPoints];
-    path[index] = {
-      x: path[index].x,
-      y: path[index].y,
-      type,
-    };
+    path[index] = path[index].withType(type);
 
     this.setPath(slider, path, commit);
   }
@@ -181,7 +163,7 @@ export class SliderUtils {
     this.setControlPointType(slider, index, newType, commit);
   }
 
-  setPath(slider: Slider, path: SerializedPathPoint[], commit = false) {
+  setPath(slider: Slider, path: PathPoint[], commit = false) {
     const originalPath = slider.path.controlPoints;
 
     slider.path.controlPoints = path;

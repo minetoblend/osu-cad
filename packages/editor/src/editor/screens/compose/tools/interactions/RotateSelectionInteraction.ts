@@ -10,7 +10,10 @@ import {
   Action,
   Anchor,
   Axes,
+  Bindable,
   CompositeDrawable,
+  FillDirection,
+  FillFlowContainer,
   Key,
   MouseButton,
   RoundedBox,
@@ -24,6 +27,7 @@ import { HitObjectUtils } from '../../HitObjectUtils';
 import { HitObjectComposer } from '../../HitObjectComposer';
 import { OsucadSpriteText } from '../../../../../OsucadSpriteText';
 import { Ring } from '../../../../../drawables/Ring';
+import { DraggableDialogBox } from '../../../../../userInterface/DraggableDialogBox';
 import { ComposeToolInteraction } from './ComposeToolInteraction';
 
 export class RotateSelectionInteraction extends ComposeToolInteraction {
@@ -35,6 +39,8 @@ export class RotateSelectionInteraction extends ComposeToolInteraction {
     this.selectionBounds = new HitObjectUtils().getBounds(this.hitObjects);
 
     this.selectionCenter = this.selectionBounds.center;
+
+    this.rotationCenter = new Bindable(this.selectionCenter);
   }
 
   selectionCenter: Vec2;
@@ -45,13 +51,9 @@ export class RotateSelectionInteraction extends ComposeToolInteraction {
 
   #previousTransform = new Matrix();
 
-  #customRotationCenter?: Vec2;
+  rotationCenter: Bindable<Vec2>;
 
   #handle!: RotationHandle;
-
-  get rotationCenter() {
-    return this.#customRotationCenter ?? this.selectionCenter;
-  }
 
   @dependencyLoader()
   load() {
@@ -60,51 +62,52 @@ export class RotateSelectionInteraction extends ComposeToolInteraction {
       this.selectionCenter,
     );
 
-    this.addAllInternal(this.#hitobjectUtils, handle);
+    this.addAllInternal(
+      this.#hitobjectUtils,
+      handle,
+      new RotateDialogBox(this),
+    );
 
-    handle.onRotate.addListener(delta => this.rotation += delta);
-    handle.onRotateEnd.addListener(() => this.rotation = this.snappedRotation);
+    handle.onRotate.addListener(delta => this.setRotation(this.currentRotation.value + delta));
+    handle.onRotateEnd.addListener(() => this.setRotation(this.snappedRotation));
 
     handle.onMove.addListener((position) => {
       handle.position = position;
-      this.#customRotationCenter = position;
-      this.#updateTransform();
+      this.rotationCenter.value = position;
     });
+
+    this.currentRotation.addOnChangeListener(() => this.#updateTransform());
+    this.rotationCenter.addOnChangeListener(() => this.#updateTransform());
   }
 
-  get rotation() {
-    return this.#rotation;
-  }
-
-  set rotation(value: number) {
+  setRotation(value: number) {
     if (value > Math.PI * 2)
       value -= 2 * Math.PI;
     if (value < -Math.PI * 2)
       value += 2 * Math.PI;
 
-    this.#rotation = value;
-    this.#updateTransform();
+    this.currentRotation.value = value;
   }
 
-  #rotation = 0;
+  currentRotation = new Bindable(0);
 
-  snapRotation = false;
+  snapRotation = new Bindable(false);
 
   get snappedRotation() {
-    if (!this.snapRotation)
-      return this.rotation;
+    if (!this.snapRotation.value)
+      return this.currentRotation.value;
 
     // 15 degrees
     const snapAngle = Math.PI / 12;
 
-    return Math.round(this.rotation / snapAngle) * snapAngle;
+    return Math.round(this.currentRotation.value / snapAngle) * snapAngle;
   }
 
   #updateTransform() {
     const transform = new Matrix()
-      .translate(-this.rotationCenter.x, -this.rotationCenter.y)
+      .translate(-this.rotationCenter.value.x, -this.rotationCenter.value.y)
       .rotate(this.snappedRotation)
-      .translate(this.rotationCenter.x, this.rotationCenter.y);
+      .translate(this.rotationCenter.value.x, this.rotationCenter.value.y);
 
     this.#hitobjectUtils.transformHitObjects(
       transform.clone().append(this.#previousTransform.invert()),
@@ -127,7 +130,7 @@ export class RotateSelectionInteraction extends ComposeToolInteraction {
     switch (e.key) {
       case Key.ControlLeft:
       case Key.ControlRight:
-        this.snapRotation = true;
+        this.snapRotation.value = true;
         return true;
       case Key.Escape:
         this.cancel();
@@ -141,7 +144,7 @@ export class RotateSelectionInteraction extends ComposeToolInteraction {
     switch (e.key) {
       case Key.ControlLeft:
       case Key.ControlRight:
-        this.snapRotation = false;
+        this.snapRotation.value = false;
         return true;
     }
 
@@ -382,5 +385,23 @@ class RotationHandleCenter extends CompositeDrawable {
     super.loadComplete();
 
     this.#composer = this.findClosestParentOfType(HitObjectComposer)!;
+  }
+}
+
+class RotateDialogBox extends DraggableDialogBox {
+  constructor(
+    readonly interaction: RotateSelectionInteraction,
+  ) {
+    super();
+  }
+
+  getTitle(): string {
+    return 'Rotate';
+  }
+
+  createContent() {
+    return new FillFlowContainer({
+      direction: FillDirection.Vertical,
+    });
   }
 }

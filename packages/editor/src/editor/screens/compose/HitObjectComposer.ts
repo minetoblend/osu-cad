@@ -25,16 +25,17 @@ import { HitObjectClipboard } from '../../CopyPasteHandler';
 import { HitObjectUtils } from './HitObjectUtils';
 import { EditorSelection } from './EditorSelection';
 import { SelectionOverlay } from './SelectionOverlay';
-import type { ToolConstructor } from './ComposeScreen';
 import { ComposerCursorContainer } from './ComposerCursorContainer';
 import type { IPositionSnapProvider } from './snapping/IPositionSnapProvider';
 import { HitObjectSnapProvider } from './snapping/HitObjectSnapProvider';
 import type { SnapTarget } from './snapping/SnapTarget';
+import type { ComposeTool } from './tools/ComposeTool';
+import type { DrawableComposeTool } from './tools/DrawableComposeTool';
 
 export class HitObjectComposer
   extends Container
   implements IKeyBindingHandler<PlatformAction | EditorAction> {
-  constructor(protected readonly activeTool: Bindable<ToolConstructor>) {
+  constructor(protected readonly activeTool: Bindable<ComposeTool>) {
     super({
       relativeSizeAxes: Axes.Both,
     });
@@ -42,7 +43,7 @@ export class HitObjectComposer
 
   hitObjectUtils!: HitObjectUtils;
 
-  #toolContainer = new Container({
+  #toolContainer = new Container<DrawableComposeTool>({
     relativeSizeAxes: Axes.Both,
   });
 
@@ -69,6 +70,8 @@ export class HitObjectComposer
     ];
   }
 
+  #previousTool!: ComposeTool;
+
   protected loadComplete() {
     super.loadComplete();
 
@@ -77,10 +80,10 @@ export class HitObjectComposer
         (tool) => {
           if (
             this.#toolContainer.children.length === 0
-            || !(this.#toolContainer.child instanceof tool)
+            || !(tool.isSameTool(this.#previousTool))
           ) {
-            // eslint-disable-next-line new-cap
-            this.#toolContainer.child = new tool();
+            this.#toolContainer.child = tool.createDrawableTool();
+            this.#previousTool = tool;
             this.#toolContainer.updateSubTree();
           }
         },
@@ -228,7 +231,6 @@ export class HitObjectComposer
     if (offsets.length > 0) {
       let closest = offsets[0];
       let closestDistance = closest.offset!.lengthSq();
-      const closestTarget = snapTargets[0];
 
       for (let i = 1; i < offsets.length; i++) {
         const distance = offsets[i].offset!.lengthSq();

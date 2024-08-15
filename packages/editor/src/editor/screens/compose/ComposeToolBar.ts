@@ -1,24 +1,18 @@
-import type {
-  Bindable,
-} from 'osucad-framework';
-import {
-  Axes,
-  Container,
-  FillDirection,
-  FillFlowContainer,
-  Key,
-  Vec2,
-  dependencyLoader,
-} from 'osucad-framework';
-import type { ToolConstructor } from './ComposeScreen';
+import type { Bindable } from 'osucad-framework';
+import { Axes, Container, FillDirection, FillFlowContainer, Key, Vec2, dependencyLoader } from 'osucad-framework';
 import { ComposeToolbarToolButton } from './ComposeToolbarToolButton';
-import { HitCircleTool } from './tools/HitCircleTool';
+import { SliderPresetButton } from './SliderPresetButton';
+import type { ComposeTool } from './tools/ComposeTool';
 import { SelectTool } from './tools/SelectTool';
+import { HitCircleTool } from './tools/HitCircleTool';
 import { SliderTool } from './tools/SliderTool';
 import { SpinnerTool } from './tools/SpinnerTool';
+import { ZWaveSliderTool } from './tools/ZWaveSliderTool';
+import { WaveSliderTool } from './tools/WaveSliderTool';
+import { BirdSliderTool } from './tools/BirdSliderTool';
 
 export class ComposeToolBar extends Container {
-  constructor(protected readonly activeTool: Bindable<ToolConstructor>) {
+  constructor(protected readonly activeTool: Bindable<ComposeTool>) {
     super({
       relativeSizeAxes: Axes.Y,
       width: 74,
@@ -34,33 +28,43 @@ export class ComposeToolBar extends Container {
   init() {
     this.#toolButtons.add(
       new ComposeToolbarToolButton({
-        icon: useAsset('icon:select'),
         activeTool: this.activeTool,
-        tool: SelectTool,
+        tool: new SelectTool(),
         keyBinding: Key.Digit1,
       }),
     );
     this.#toolButtons.add(
       new ComposeToolbarToolButton({
-        icon: useAsset('icon:circle'),
         activeTool: this.activeTool,
-        tool: HitCircleTool,
+        tool: new HitCircleTool(),
         keyBinding: Key.Digit2,
       }),
     );
     this.#toolButtons.add(
       new ComposeToolbarToolButton({
-        icon: useAsset('icon:slider'),
         activeTool: this.activeTool,
-        tool: SliderTool,
+        tool: new SliderTool(),
         keyBinding: Key.Digit3,
+        children: [
+          new SliderPresetButton({
+            activeTool: this.activeTool,
+            tool: new WaveSliderTool(),
+          }),
+          new SliderPresetButton({
+            activeTool: this.activeTool,
+            tool: new ZWaveSliderTool(),
+          }),
+          new SliderPresetButton({
+            activeTool: this.activeTool,
+            tool: new BirdSliderTool(),
+          }),
+        ],
       }),
     );
     this.#toolButtons.add(
       new ComposeToolbarToolButton({
-        icon: useAsset('icon:spinner'),
         activeTool: this.activeTool,
-        tool: SpinnerTool,
+        tool: new SpinnerTool(),
         keyBinding: Key.Digit4,
       }),
     );
