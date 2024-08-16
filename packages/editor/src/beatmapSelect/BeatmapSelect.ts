@@ -129,7 +129,7 @@ export class BeatmapSelect extends OsucadScreen {
     this.#menu.moveTo({ x: 0, duration: 400, easing: 'power4.out' });
     this.#menu.fadeIn({ duration: 400 });
 
-    this.#background.fadeTo({ alpha: 0.5, duration: 300 });
+    this.#background.fadeTo({ alpha: 0.3, duration: 300 });
     this.globalSongPlayback.resume();
 
     gsap.to(this.#background, {

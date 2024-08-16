@@ -22,7 +22,7 @@ export class BeatmapSelectBackground extends CompositeDrawable {
     this.anchor = Anchor.Center;
     this.origin = Anchor.Center;
 
-    this.alpha = 0.2;
+    this.alpha = 0.3;
 
     this.drawNode.filters = [
       new BlurFilter({
@@ -55,6 +55,9 @@ export class BeatmapSelectBackground extends CompositeDrawable {
     const beatmap = this.#currentBeatmap;
 
     const texture = await this.#currentBeatmap?.loadThumbnailLarge();
+
+    if (this.#currentSprite?.texture === texture)
+      return;
 
     if (this.#currentSprite) {
       this.#currentSprite.fadeOut({
