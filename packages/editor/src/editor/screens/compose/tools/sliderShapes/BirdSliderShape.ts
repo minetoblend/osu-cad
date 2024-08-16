@@ -19,23 +19,31 @@ export class BirdSliderShape extends SliderShape {
 
   tailSize: number;
 
+  get correctedTailSize() {
+    if (this.endPosition.x < this.startPosition.x)
+      return -this.tailSize;
+
+    return this.tailSize;
+  }
+
   createPathPoints(): PathPoint[] {
     const endPosition = this.endPosition.sub(this.startPosition);
 
     const length = endPosition.length();
 
-    const tailOffset = endPosition.rotate(Math.PI / 2).scale(this.tailSize);
+    const tailOffset = endPosition.rotate(Math.PI / 2).scale(this.correctedTailSize);
+
     const tailPosition = endPosition.scale(0.5).add(tailOffset);
 
     const startCurveAnchor = this.curveAnchor
       .scale(length * 0.5)
-      .mul({ x: 1, y: this.tailSize })
+      .mul({ x: 1, y: this.correctedTailSize })
       .rotate(endPosition.angle());
 
     const endCurveAnchor = endPosition.add(
       this.curveAnchor
         .scale(length * 0.5)
-        .mul({ x: -1, y: this.tailSize })
+        .mul({ x: -1, y: this.correctedTailSize })
         .rotate(endPosition.angle()),
     );
 
@@ -66,7 +74,7 @@ export class BirdSliderShape extends SliderShape {
         anchorPos.x = 2 - anchorPos.x;
       }
 
-      anchorPos.y /= this.tailSize;
+      anchorPos.y /= this.correctedTailSize;
 
       this.curveAnchor = anchorPos;
     }
@@ -78,7 +86,10 @@ export class BirdSliderShape extends SliderShape {
 
       const distance = relativePosition.sub(center).length();
 
-      const isNegative = relativePosition.sub(center).cross(span) > 0;
+      let isNegative = relativePosition.sub(center).cross(span) > 0;
+
+      if (this.endPosition.x < this.startPosition.x)
+        isNegative = !isNegative;
 
       this.tailSize = distance / this.endPosition.sub(this.startPosition).length() * (isNegative ? -1 : 1);
     }
