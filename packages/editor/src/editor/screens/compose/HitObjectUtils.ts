@@ -143,17 +143,12 @@ export class HitObjectUtils extends CompositeDrawable {
         .clone()
         .translate(-transform.tx, -transform.ty);
 
-      const path = hitObject.path.controlPoints.map((p) => {
-        return {
-          ...Vec2.from(pointTransform.apply(p)),
-          type: p.type,
-        };
-      });
+      const path = hitObject.path.controlPoints.map(p => p.transformBy(pointTransform));
 
       this.commandManager.submit(
         new UpdateHitObjectCommand(hitObject, {
           position: newPosition,
-          path,
+          path: path.map(it => it.serialize()),
         } as Partial<SerializedSlider>),
         commit,
       );
@@ -166,6 +161,8 @@ export class HitObjectUtils extends CompositeDrawable {
         } as Partial<SerializedSlider>),
         commit,
       );
+
+      return;
     }
 
     this.commandManager.submit(
@@ -263,7 +260,7 @@ export class HitObjectUtils extends CompositeDrawable {
   }
 
   convertToBezier(slider: Slider) {
-    const path = structuredClone(slider.path.controlPoints);
+    const path = slider.path.controlPoints;
 
     if (path.length <= 2)
       return;
@@ -284,7 +281,7 @@ export class HitObjectUtils extends CompositeDrawable {
 
         if (segmentType === PathType.PerfectCurve) {
           newSegment = this.convertCircularArcToBezier(
-            segment.map(it => Vec2.from(it)),
+            segment.map(it => it.position),
           );
         }
 
@@ -294,6 +291,8 @@ export class HitObjectUtils extends CompositeDrawable {
         segmentType = point.type;
       }
     }
+
+    console.log(newPath);
 
     this.commandManager.submit(
       new UpdateHitObjectCommand(slider, {
