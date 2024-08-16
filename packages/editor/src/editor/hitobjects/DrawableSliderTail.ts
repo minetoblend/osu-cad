@@ -44,9 +44,12 @@ export class DrawableSliderTail extends CompositeDrawable {
 
     let timeFadeIn = this.slider.startTime - this.slider.timePreempt;
 
-    // if (this.repeatIndex === 0) {
-    timeFadeIn += this.slider.timePreempt / 3;
-    // }
+    if (this.repeatIndex === 0) {
+      timeFadeIn += this.slider.timePreempt / 3;
+    }
+    else {
+      timeFadeIn = Math.max(timeFadeIn, this.slider.startTime - this.slider.spanDuration * this.repeatIndex);
+    }
 
     this.#circlePiece.timeFadeIn = timeFadeIn;
     this.#circlePiece.fadeInDuration = this.slider.timeFadeIn;

@@ -53,7 +53,7 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
     this.headCircle.comboColor = this.hitObject.comboColor;
 
     this.sliderTail.position = Vec2.scale(
-      Vec2.sub(this.hitObject.endPosition, this.hitObject.position),
+      this.hitObject.endPosition.sub(this.hitObject.position),
       1 / this.hitObject.scale,
     );
     this.sliderTail.repeatIndex = this.hitObject.repeats;
@@ -61,6 +61,12 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
     this.reverseArrows.clear();
     for (let i = this.hitObject.repeats; i >= 1; i--) {
       const time = this.hitObject.startTime + this.hitObject.spanDuration * i;
+
+      const circle = new DrawableSliderTail(this.slider, i - 1);
+
+      if (i % 2 === 1) {
+        circle.position = Vec2.scale(this.hitObject.path.endPosition, 1 / this.hitObject.scale);
+      }
 
       const angle
         = i % 2 === 0 ? this.hitObject.startAngle : this.hitObject.endAngle;
@@ -74,13 +80,12 @@ export class DrawableSlider extends DrawableHitObject<Slider> {
         reverseArrow.spanDuration = this.hitObject.spanDuration;
       }
 
-      this.reverseArrows.addAll(reverseArrow);
+      this.reverseArrows.addAll(circle, reverseArrow);
       if (i % 2 !== 0) {
-        const position = Vec2.scale(
+        reverseArrow.position = Vec2.scale(
           this.hitObject.path.endPosition,
           1 / this.hitObject.scale,
         );
-        reverseArrow.position = position;
       }
     }
 
