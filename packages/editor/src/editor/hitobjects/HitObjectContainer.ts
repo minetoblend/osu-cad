@@ -1,6 +1,5 @@
-import type { HitCircle, Slider } from '@osucad/common';
+import type { HitCircle, Slider, Spinner } from '@osucad/common';
 import { Beatmap, HitObjectType } from '@osucad/common';
-
 import {
   Axes,
   Container,
@@ -12,6 +11,7 @@ import { DrawableHitCircle } from './DrawableHitCircle';
 import { DrawableSlider } from './DrawableSlider';
 import { FollowPointRenderer } from './FollowPointRenderer';
 import type { DrawableHitObject } from './DrawableHitObject';
+import { DrawableSpinner } from './DrawableSpinner';
 
 export class HitObjectContainer extends Container {
   constructor() {
@@ -38,7 +38,7 @@ export class HitObjectContainer extends Container {
 
   @dependencyLoader()
   load() {
-    this.clock = this.#hitObjectContainer.clock = this.editorClock;
+    this.clock = this.editorClock;
     this.processCustomClock = false;
 
     this.add(this.#followPointRenderer);
@@ -96,9 +96,9 @@ export class HitObjectContainer extends Container {
           case HitObjectType.Slider:
             drawable = new DrawableSlider(hitObject as Slider);
             break;
-          // case HitObjectType.Spinner:
-          //   drawable = new SpinnerDrawable(hitObject as Spinner);
-          //   break;
+          case HitObjectType.Spinner:
+            drawable = new DrawableSpinner(hitObject as Spinner);
+            break;
           default:
             continue;
         }
