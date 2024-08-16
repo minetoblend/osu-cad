@@ -199,7 +199,9 @@ export class Slider extends HitObject {
     let distance = 0;
     const step = 10;
     let i = 1;
-    while (distance < this.path.expectedDistance) {
+    while (
+      distance < Math.min(this.path.expectedDistance, this.path.totalLength)
+    ) {
       distance += step;
       while (i < path.length - 1 && this.path.cumulativeDistance[i] < distance)
         i++;
