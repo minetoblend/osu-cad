@@ -142,8 +142,8 @@ class DrawableEditorMenuItem extends DrawableMenuItem {
   @dependencyLoader()
   load() {
     this.item.disabled.addOnChangeListener(
-      (disabled) => {
-        if (disabled) {
+      (e) => {
+        if (e.value) {
           this.foreground.alpha = 0.5;
         }
         else {

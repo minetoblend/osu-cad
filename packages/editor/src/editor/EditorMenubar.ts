@@ -90,11 +90,11 @@ export class EditorMenubar extends EditorMenu {
     super.load();
 
     this.commandHandler.canUndo.addOnChangeListener(
-      value => (this.#undoItem.disabled.value = !value),
+      ({ value }) => (this.#undoItem.disabled.value = !value),
       { immediate: true },
     );
     this.commandHandler.canRedo.addOnChangeListener(
-      value => (this.#redoItem.disabled.value = !value),
+      ({ value }) => (this.#redoItem.disabled.value = !value),
       { immediate: true },
     );
   }

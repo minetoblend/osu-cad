@@ -43,7 +43,7 @@ export class BeatSnapDivisorSelector extends CompositeDrawable {
       new OsucadSpriteText({
         text: 'Beat snap divisor',
         color: this.colors.text,
-        fontSize: 14,
+        fontSize: 12,
       }),
       (this.#beatSnapText = new OsucadSpriteText({
         text: '1/1',
@@ -62,8 +62,8 @@ export class BeatSnapDivisorSelector extends CompositeDrawable {
     );
 
     this.editorClock.beatSnapDivisor.addOnChangeListener(
-      (divisor) => {
-        this.#beatSnapText.text = `1/${divisor}`;
+      (e) => {
+        this.#beatSnapText.text = `1/${e.value}`;
       },
       { immediate: true },
     );

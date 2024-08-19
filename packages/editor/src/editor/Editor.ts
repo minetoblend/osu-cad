@@ -123,7 +123,7 @@ export class Editor
     this.addAllInternal(
       new Container({
         relativeSizeAxes: Axes.Both,
-        padding: { top: 84, bottom: 48 },
+        padding: { top: 28, bottom: 48 },
         child: (this.#screenContainer = new EditorScreenContainer()),
       }),
       (this.#topBar = new EditorTopBar()),
@@ -131,7 +131,7 @@ export class Editor
     );
 
     this.currentScreen.addOnChangeListener(
-      (screen) => {
+      ({ value: screen }) => {
         this.#updateScreen(screen);
       },
       { immediate: true },
