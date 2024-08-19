@@ -37,7 +37,7 @@ export class ComposeToggleButton
   load() {
     this.#isActive = this.dependencies.resolve(this.key);
 
-    this.#isActive.addOnChangeListener(value => (this.active = value), {
+    this.#isActive.addOnChangeListener(({ value }) => (this.active = value), {
       immediate: true,
     });
 

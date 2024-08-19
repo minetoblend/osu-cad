@@ -51,8 +51,8 @@ export class RotationGizmo extends CompositeDrawable {
 
     this.#snapVisualizer.alpha = 0;
 
-    this.snappedAngle.addOnChangeListener((value) => {
-      this.#angleVisualizer.angle = value;
+    this.snappedAngle.addOnChangeListener((e) => {
+      this.#angleVisualizer.angle = e.value;
     });
   }
 

@@ -33,9 +33,9 @@ export abstract class DrawableHitObjectPlacementTool<T extends HitObject> extend
     this.createPreviewObject();
 
     this.withScope(() => {
-      this.editorClock.currentTimeBindable.addOnChangeListener((time) => {
+      this.editorClock.currentTimeBindable.addOnChangeListener((e) => {
         if (this.#previewObject) {
-          this.#previewObject.startTime = time;
+          this.#previewObject.startTime = e.value;
         }
       });
     });

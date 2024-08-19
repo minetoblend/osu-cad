@@ -56,7 +56,7 @@ export class ScaleSelectionInteraction extends ComposeToolInteraction {
       }),
     );
 
-    this.#scaleGizmo.scaleValue.addOnChangeListener((value) => {
+    this.#scaleGizmo.scaleValue.addOnChangeListener(({ value }) => {
       if (Math.abs(value.x) < 0.05)
         value.x = 0.05 * Math.sign(value.x);
 
@@ -78,7 +78,7 @@ export class ScaleSelectionInteraction extends ComposeToolInteraction {
       this.#rotationGizmo.currentAngle.value = this.#rotationGizmo.snappedAngle.value = 0;
     });
 
-    this.#translateGizmo.positionValue.addOnChangeListener((value) => {
+    this.#translateGizmo.positionValue.addOnChangeListener(({ value }) => {
       const snapResult = this.findClosestParentOfType(HitObjectComposer)!.snapHitObjectPosition([value]);
 
       if (snapResult.offset) {

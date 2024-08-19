@@ -240,9 +240,9 @@ class UniformScaleHandle extends CompositeDrawable {
 
   @dependencyLoader()
   load() {
-    this.#currentScale.addOnChangeListener((value) => {
-      this.#handle.x = this.radius * value;
-      this.#handle.y = -this.radius * value;
+    this.#currentScale.addOnChangeListener((e) => {
+      this.#handle.x = this.radius * e.value;
+      this.#handle.y = -this.radius * e.value;
     });
   }
 

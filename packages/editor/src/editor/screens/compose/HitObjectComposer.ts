@@ -77,7 +77,7 @@ export class HitObjectComposer
 
     this.withScope(() => {
       this.activeTool.addOnChangeListener(
-        (tool) => {
+        ({ value: tool }) => {
           if (
             this.#toolContainer.children.length === 0
             || !(tool.isSameTool(this.#previousTool))

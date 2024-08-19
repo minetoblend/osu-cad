@@ -38,7 +38,7 @@ export class ComposeToolbarToolButton extends ComposeToolbarButton {
     this.tool = options.tool;
 
     this.action = () => {
-      this.activeTool.set(this.tool, true);
+      this.activeTool.setValue(this.activeTool.value, this.tool);
       this.submenu?.hide();
     };
 
@@ -78,7 +78,7 @@ export class ComposeToolbarToolButton extends ComposeToolbarButton {
     }
 
     this.activeTool.addOnChangeListener(
-      (tool) => {
+      ({ value: tool }) => {
         this.active = this.tool.isActive(tool);
 
         if (!this.active) {

@@ -83,8 +83,8 @@ export abstract class DrawableComposeTool extends CommandContainer {
 
   @dependencyLoader()
   [Symbol('load')]() {
-    this.newCombo.addOnChangeListener((newCombo) => {
-      this.applyNewCombo(newCombo);
+    this.newCombo.addOnChangeListener((e) => {
+      this.applyNewCombo(e.value);
     });
     this.sampleWhistle.addOnChangeListener(() => {
       if (this.sampleWhistle.buttonPressed)
