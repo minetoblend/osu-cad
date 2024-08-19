@@ -71,6 +71,7 @@ export class EditorScreenSelect extends Container {
     });
   }
 }
+
 class ScreenSelectButton extends Button {
   constructor(
     readonly title: string,
@@ -104,7 +105,7 @@ class ScreenSelectButton extends Button {
           anchor: Anchor.CenterLeft,
           origin: Anchor.CenterLeft,
           color: this.colors.text,
-          fontSize: 14,
+          fontSize: 16,
         }),
       }),
     );
@@ -114,7 +115,7 @@ class ScreenSelectButton extends Button {
     super.loadComplete();
 
     this.withScope(() => {
-      this.currentScreen.addOnChangeListener((screen) => {
+      this.currentScreen.addOnChangeListener(({ value: screen }) => {
         this.active = screen === this.screen;
       }, { immediate: true });
     });
