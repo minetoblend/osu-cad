@@ -6,14 +6,7 @@ import type {
   MouseUpEvent,
   Vec2,
 } from 'osucad-framework';
-import {
-  Anchor,
-  Axes,
-  Container,
-  MouseButton,
-  dependencyLoader,
-  resolved,
-} from 'osucad-framework';
+import { Anchor, Axes, Container, MouseButton, dependencyLoader, resolved } from 'osucad-framework';
 import type { ColorSource } from 'pixi.js';
 import { EditorClock } from '../EditorClock';
 import { ThemeColors } from '../ThemeColors';

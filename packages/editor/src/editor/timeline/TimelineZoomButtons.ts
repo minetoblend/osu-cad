@@ -22,7 +22,7 @@ export class TimelineZoomButtons extends Container {
   ) {
     super({
       ...options,
-      skew: { x: -0.25, y: 0 },
+      skew: { x: 0.25, y: 0 },
     });
   }
 
@@ -82,7 +82,7 @@ class ZoomButton extends Container {
         anchor: Anchor.Center,
         origin: Anchor.Center,
         alpha: 0.25,
-        skew: { x: 0.25, y: 0 },
+        skew: { x: -0.25, y: 0 },
       })),
     );
   }

@@ -1,5 +1,5 @@
 import type { HitObject } from '@osucad/common';
-import { Beatmap, HitCircle, HitObjectManager, Slider } from '@osucad/common';
+import { Beatmap, HitCircle, HitObjectManager, Slider, Spinner } from '@osucad/common';
 import type {
   DragEvent,
   DragStartEvent,
@@ -27,6 +27,7 @@ import { TimelineTick } from './TimelineTick';
 import type { TimelineObject } from './TimelineObject';
 import { TimelineHitCircle } from './TimelineHitCircle';
 import { TimelineSlider } from './TimelineSlider';
+import { TimelineSpinner } from './TimelineSpinner';
 
 export class Timeline extends Container {
   constructor() {
@@ -237,9 +238,10 @@ export class Timeline extends Container {
   protected createDrawable(object: HitObject): TimelineObject | null {
     if (object instanceof HitCircle)
       return new TimelineHitCircle(object);
-
     if (object instanceof Slider)
       return new TimelineSlider(object);
+    if (object instanceof Spinner)
+      return new TimelineSpinner(object);
 
     return null;
   }
