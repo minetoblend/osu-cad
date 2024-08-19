@@ -72,7 +72,7 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
         return true;
       }
 
-      const candidate = this.findClosestToCurrentTime(hovered)!;
+      const candidate = this.getSelectionCandidate(hovered)!;
 
       if (e.controlPressed) {
         if (
@@ -103,7 +103,7 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
         return false;
       }
 
-      const candidate = this.findClosestToCurrentTime(hovered)!;
+      const candidate = this.getSelectionCandidate(hovered)!;
 
       if (candidate.isSelected) {
         for (const object of this.selection.selectedObjects) {

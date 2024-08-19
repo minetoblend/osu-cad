@@ -192,19 +192,20 @@ export abstract class DrawableComposeTool extends CommandContainer {
   }
 
   protected get visibleObjects(): HitObject[] {
-    return this.hitObjects.hitObjects.filter((it) => {
-      if (this.selection.isSelected(it))
-        return true;
-
-      return it.isVisibleAtTime(this.editorClock.currentTime);
-    });
+    return this.hitObjects.hitObjects.filter(it =>
+      it.isSelected || it.isVisibleAtTime(this.editorClock.currentTime),
+    );
   }
 
   protected hoveredHitObjects(position: Vec2) {
     return this.visibleObjects.filter(it => it.contains(position));
   }
 
-  protected findClosestToCurrentTime(hitObjects: HitObject[]) {
+  protected getSelectionCandidate(hitObjects: HitObject[]) {
+    const selected = hitObjects.find(it => it.isSelected);
+    if (selected)
+      return selected;
+
     let min = Infinity;
     let candidate: HitObject | null = null;
 

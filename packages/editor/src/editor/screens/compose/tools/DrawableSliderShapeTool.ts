@@ -100,7 +100,7 @@ export abstract class DrawableSliderShapeTool<T extends SliderShape> extends Dra
 
       const hovered = this.hoveredHitObjects(e.mousePosition);
 
-      const toSelect = this.findClosestToCurrentTime(hovered)!;
+      const toSelect = this.getSelectionCandidate(hovered)!;
 
       if (toSelect) {
         this.selection.select([toSelect]);
@@ -118,7 +118,7 @@ export abstract class DrawableSliderShapeTool<T extends SliderShape> extends Dra
       else {
         const hovered = this.hoveredHitObjects(e.mousePosition);
 
-        const toDelete = this.findClosestToCurrentTime(hovered)!;
+        const toDelete = this.getSelectionCandidate(hovered)!;
 
         if (toDelete) {
           this.submit(new DeleteHitObjectCommand(toDelete), true);
