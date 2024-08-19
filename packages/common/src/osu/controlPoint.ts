@@ -120,6 +120,13 @@ export class ControlPoint {
     this._dirtyFlags = 0;
   }
 
+  clone() {
+    return new ControlPoint({
+      ...this.serialize(),
+      id: hitObjectId(),
+    });
+  }
+
   _inTimingList = false;
   _inVelocityList = false;
 }

@@ -190,6 +190,18 @@ export class ControlPointManager {
     return this.timing[index];
   }
 
+  createTimingPointAt(time: number) {
+    const existing = this.timingPointAt(time);
+    if (existing.time === time) return existing;
+
+    const timingPoint = existing.clone();
+    timingPoint.time = time;
+
+    this.add(timingPoint);
+
+    return timingPoint;
+  }
+
   getVelocityAt(time: number): number {
     time += 1;
     if (this.velocities.length === 0) {
@@ -221,7 +233,7 @@ export class ControlPointManager {
 
     if (startTime > timingPoint.time) {
       offset =
-        Math.ceil(
+        Math.floor(
           (startTime - timingPoint.time) / timingPoint.timing.beatLength,
         ) * timingPoint.timing.beatLength;
     }
