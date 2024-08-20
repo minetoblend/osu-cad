@@ -22,7 +22,7 @@ export class BeatmapBackground extends Container {
   @dependencyLoader()
   init() {
     this.context.backgroundBindable.addOnChangeListener(
-      texture => this.#updateBackground(texture),
+      ({ value: texture }) => this.#updateBackground(texture),
       { immediate: true },
     );
   }
