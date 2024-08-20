@@ -5,7 +5,7 @@ import { TimelineObject } from './TimelineObject';
 import { TimelineSliderTail } from './TimelineSliderTail';
 import { TimelineSliderHead } from './TimelineSliderHead';
 import { TimelineRepeatCircle } from './TimelineRepeatCircle';
-import { TimelineSliderSVBadge } from './TimelineSliderSVBadge';
+import { TimelineVelocityBadge } from './TimelineVelocityBadge';
 
 export class TimelineSlider extends TimelineObject<Slider> {
   constructor(slider: Slider) {
@@ -28,7 +28,7 @@ export class TimelineSlider extends TimelineObject<Slider> {
       }),
       this.#tail = new TimelineSliderTail(this.hitObject),
       this.#head = new TimelineSliderHead(this.hitObject),
-      new TimelineSliderSVBadge(this.hitObject),
+      new TimelineVelocityBadge(this.hitObject),
     );
   }
 

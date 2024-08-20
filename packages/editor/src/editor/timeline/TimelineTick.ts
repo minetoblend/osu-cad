@@ -6,7 +6,8 @@ export class TimelineTick extends Sprite {
     super({
       texture: Texture.WHITE,
       width: 4,
-      anchor: { x: 0.5, y: 0.5 },
+      anchor: { x: 0.5, y: 1 },
+      y: 1,
     });
   }
 
@@ -26,31 +27,31 @@ export class TimelineTick extends Sprite {
         break;
       case TickType.Full:
         this.tint = 0xFFFFFF;
-        this.scale.set(1.5, 0.8);
+        this.scale.set(1.5, 0.75);
         break;
       case TickType.Half:
         this.tint = 0xFF0000;
-        this.scale.set(1.5, 0.8);
+        this.scale.set(1.5, 0.75);
         break;
       case TickType.Third:
         this.tint = 0xFF00FF;
-        this.scale.set(1.25, 0.65);
+        this.scale.set(1.25, 0.5);
         break;
       case TickType.Quarter:
         this.tint = 0x3687F7;
-        this.scale.set(1.25, 0.6);
+        this.scale.set(1.25, 0.5);
         break;
       case TickType.Sixth:
         this.tint = 0xFF77FF;
-        this.scale.set(1, 0.6);
+        this.scale.set(1, 0.4);
         break;
       case TickType.Eighth:
         this.tint = 0xFFFF00;
-        this.scale.set(1, 0.5);
+        this.scale.set(1, 0.35);
         break;
       default:
         this.tint = 0x777777;
-        this.scale.set(1, 0.5);
+        this.scale.set(1, 0.3);
         break;
     }
   }

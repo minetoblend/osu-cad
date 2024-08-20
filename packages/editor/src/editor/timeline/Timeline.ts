@@ -145,8 +145,9 @@ export class Timeline extends Container {
   }
 
   #updateTicks() {
-    this.#tickContainer.y = this.drawSize.y * 0.5;
-    this.#tickContainer.scale.set(1, this.drawSize.y);
+    this.#tickContainer.y = this.drawSize.y;
+    this.#tickContainer.scale.set(1, 15);
+    this.#tickContainer.pivot.y = 1;
 
     const ticks = this.controlPoints.getTicks(
       this.startTime,

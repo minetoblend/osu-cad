@@ -5,6 +5,7 @@ import {
   Anchor,
   Axes,
   CompositeDrawable,
+  Container,
   MouseButton,
   dependencyLoader,
   resolved,
@@ -15,12 +16,12 @@ import { FastRoundedBox } from '../../drawables/FastRoundedBox';
 import { OsucadSpriteText } from '../../OsucadSpriteText';
 import { CommandManager } from '../context/CommandManager';
 
-export class TimelineSliderSVBadge extends CompositeDrawable {
+export class TimelineVelocityBadge extends CompositeDrawable {
   constructor(readonly slider: Slider) {
     super();
 
     this.origin = Anchor.BottomLeft;
-    this.y = -1;
+    this.y = -2;
   }
 
   @dependencyLoader()
@@ -38,11 +39,15 @@ export class TimelineSliderSVBadge extends CompositeDrawable {
         relativeSizeAxes: Axes.Both,
         color: 0x222228,
         alpha: 0.75,
-        cornerRadius: 2,
+        cornerRadius: 3,
       }),
-      this.#text = new OsucadSpriteText({
-        text: 'SV: 1.0',
-        fontSize: 10,
+      new Container({
+        autoSizeAxes: Axes.Both,
+        padding: { horizontal: 4, vertical: 2 },
+        child: this.#text = new OsucadSpriteText({
+          text: 'SV: 1.0',
+          fontSize: 10,
+        }),
       }),
     );
 
@@ -58,7 +63,9 @@ export class TimelineSliderSVBadge extends CompositeDrawable {
     else {
       this.show();
 
-      this.#text.text = `SV ${this.slider.velocityOverride.toFixed(2)}`;
+      const rounded = Math.round(this.slider.velocityOverride * 100) / 100;
+
+      this.#text.text = `SV ${rounded.toFixed(2)}`;
     }
   }
 

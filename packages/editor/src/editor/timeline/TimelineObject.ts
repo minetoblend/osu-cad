@@ -20,7 +20,7 @@ export abstract class TimelineObject<T extends HitObject = HitObject> extends Co
   protected constructor(readonly hitObject: T) {
     super({
       relativeSizeAxes: Axes.Y,
-      height: 0.55,
+      height: 0.5,
       anchor: Anchor.CenterLeft,
       origin: Anchor.CenterLeft,
     });
