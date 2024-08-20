@@ -9,6 +9,9 @@ export class Skin {
   hitcircleSelect!: Texture;
   reverseArrow!: Texture;
   followPoint!: Texture;
+  spinnerBottom!: Texture;
+  spinnerMiddle!: Texture;
+  spinnerTop!: Texture;
 
   comboNumbers: Texture[] = [];
 
