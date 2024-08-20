@@ -47,6 +47,18 @@ export class Skin {
         src: '/assets/skin/followpoint.png',
         alias: 'followPoint',
       },
+      {
+        src: '/assets/skin/spinner-bottom@2x.png',
+        alias: 'spinnerBottom',
+      },
+      {
+        src: '/assets/skin/spinner-middle@2x.png',
+        alias: 'spinnerMiddle',
+      },
+      {
+        src: '/assets/skin/spinner-top@2x.png',
+        alias: 'spinnerTop',
+      },
       ...comboNumbers,
     ]);
 
@@ -59,6 +71,9 @@ export class Skin {
     this.hitcircleSelect = Assets.get('hitcircleSelect');
     this.reverseArrow = Assets.get('reverseArrow');
     this.followPoint = Assets.get('followPoint');
+    this.spinnerBottom = Assets.get('spinnerBottom');
+    this.spinnerMiddle = Assets.get('spinnerMiddle');
+    this.spinnerTop = Assets.get('spinnerTop');
 
     for (let i = 0; i < 10; i++) {
       this.comboNumbers.push(Assets.get(`default-${i}`));
