@@ -70,7 +70,7 @@ export class PreferencesContainer
     this.#preferences.x = -1;
 
     this.preferencesVisible.addOnChangeListener(
-      (visible) => {
+      ({ value: visible }) => {
         this.#updateVisibility(visible);
       },
       { immediate: true },

@@ -1,7 +1,6 @@
 import gsap from 'gsap';
 import type {
   Bindable,
-
   DragEndEvent,
   DragEvent,
   DragStartEvent,
@@ -64,7 +63,7 @@ export class VolumeSliderContainer extends Container {
     );
 
     this.bindable.addOnChangeListener(
-      (value) => {
+      ({ value }) => {
         this.#valueText.text
           = this.format?.(value)
           ?? `${Math.round(value * 100)}%`;
@@ -92,7 +91,7 @@ export class VolumeSlider extends CompositeDrawable {
   @dependencyLoader()
   load() {
     this.bindable.addOnChangeListener(
-      (value) => {
+      ({ value }) => {
         value = (value - this.min) / (this.max - this.min);
 
         gsap.to(this.#thumb, {

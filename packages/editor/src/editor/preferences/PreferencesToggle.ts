@@ -44,7 +44,7 @@ export class PreferencesToggle extends CompositeDrawable {
       }),
     );
 
-    this.bindable.addOnChangeListener((value) => {
+    this.bindable.addOnChangeListener(({ value }) => {
       gsap.to(this.#toggle, {
         fillAlpha: value ? 1 : 0,
         duration: 0.2,
