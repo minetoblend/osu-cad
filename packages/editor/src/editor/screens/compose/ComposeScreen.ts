@@ -46,7 +46,7 @@ export class ComposeScreen extends EditorScreen {
     this.addInternal(this.#content = new Container({
       relativeSizeAxes: Axes.Both,
       padding: {
-        top: 60,
+        top: 75,
       },
     }));
 
@@ -71,7 +71,7 @@ export class ComposeScreen extends EditorScreen {
 
     this.addInternal(this.#topBar = new Container({
       relativeSizeAxes: Axes.X,
-      height: 60,
+      height: 75,
       children: [
         new Box({
           relativeSizeAxes: Axes.Both,
@@ -136,7 +136,7 @@ export class ComposeScreen extends EditorScreen {
       this.#playfieldContainer.padding = {
         horizontal: this.#toolBar.layoutSize.x,
         top: this.drawSize.x < 1250 ? 20 : 10,
-        bottom: this.drawSize.x < 1110 ? 15 : 0,
+        bottom: this.drawSize.x < 1110 ? 15 : -10,
       };
       this.#paddingBacking.validate();
     }
