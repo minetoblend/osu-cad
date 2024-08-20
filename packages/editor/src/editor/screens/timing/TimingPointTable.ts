@@ -1,5 +1,5 @@
-import type { KeyDownEvent, ScrollContainer } from 'osucad-framework';
-import { Axes, Container, Direction, Key, clamp, dependencyLoader, resolved } from 'osucad-framework';
+import type { IKeyBindingHandler, KeyBindingPressEvent, KeyDownEvent, ScrollContainer } from 'osucad-framework';
+import { Axes, Container, Direction, Key, PlatformAction, clamp, dependencyLoader, resolved } from 'osucad-framework';
 import type { ControlPoint } from '@osucad/common';
 import { ControlPointManager } from '@osucad/common';
 import { MainScrollContainer } from '../../MainScrollContainer';
@@ -7,7 +7,7 @@ import { EditorClock } from '../../EditorClock';
 import { TimingPointRow } from './TimingPointRow';
 import { ControlPointSelection } from './ControlPointSelection';
 
-export class TimingPointTable extends Container {
+export class TimingPointTable extends Container implements IKeyBindingHandler<PlatformAction> {
   @resolved(ControlPointManager)
   controlPoints!: ControlPointManager;
 
@@ -18,6 +18,31 @@ export class TimingPointTable extends Container {
     super({
       relativeSizeAxes: Axes.Both,
     });
+  }
+
+  readonly isKeyBindingHandler = true;
+
+  canHandleKeyBinding(binding: PlatformAction): boolean {
+    return binding instanceof PlatformAction;
+  }
+
+  onKeyBindingPressed(e: KeyBindingPressEvent<PlatformAction>): boolean {
+    switch (e.pressed) {
+      case PlatformAction.SelectAll:
+        this.selectAll();
+        return true;
+      case PlatformAction.Cut:
+        this.cut();
+        return true;
+      case PlatformAction.Copy:
+        this.copy();
+        return true;
+      case PlatformAction.Paste:
+        this.paste();
+        return true;
+    }
+
+    return false;
   }
 
   @dependencyLoader()
@@ -174,4 +199,16 @@ export class TimingPointTable extends Container {
       this.#scroll.scrollTo(scrollTarget - this.#scroll.drawSize.y + 50);
     }
   }
+
+  selectAll() {
+
+  }
+
+  cut() {
+
+  }
+
+  copy() {}
+
+  paste() {}
 }
