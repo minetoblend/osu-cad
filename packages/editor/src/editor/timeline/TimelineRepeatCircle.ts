@@ -8,15 +8,15 @@ import {
   RoundedBox,
   resolved,
 } from 'osucad-framework';
-import type { Slider } from '@osucad/common';
 import { EditorSelection } from '../screens/compose/EditorSelection';
 import { SliderUtils } from '../screens/compose/tools/SliderUtils';
+import type { Slider } from '../../beatmap/hitObjects/Slider';
 
 export class TimelineRepeatCircle extends CompositeDrawable {
   constructor(readonly hitObject: Slider, readonly index: number) {
     super();
 
-    this.apply({
+    this.with({
       relativeSizeAxes: Axes.Both,
       relativePositionAxes: Axes.X,
       size: 0.7,

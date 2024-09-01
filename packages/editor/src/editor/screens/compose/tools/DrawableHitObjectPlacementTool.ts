@@ -1,7 +1,12 @@
-import type { Additions, HitObject } from '@osucad/common';
-import { CreateHitObjectCommand, DeleteHitObjectCommand, HitCircle } from '@osucad/common';
+import type { Additions } from '@osucad/common';
 import type { Bindable, Vec2 } from 'osucad-framework';
-import { almostEquals } from 'osucad-framework';
+import { almostEquals, resolved } from 'osucad-framework';
+import type { CommandProxy } from '../../../commands/CommandProxy';
+import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
+import { HitCircle } from '../../../../beatmap/hitObjects/HitCircle';
+import { OsuPlayfield } from '../../../hitobjects/OsuPlayfield';
+import { DeleteHitObjectCommand } from '../../../commands/DeleteHitObjectCommand';
+import { CreateHitObjectCommand } from '../../../commands/CreateHitObjectCommand';
 import { DrawableComposeTool } from './DrawableComposeTool';
 
 enum PlacementState {
@@ -9,10 +14,10 @@ enum PlacementState {
   Placing,
 }
 
-export abstract class DrawableHitObjectPlacementTool<T extends HitObject> extends DrawableComposeTool {
-  #hitObject?: T;
+export abstract class DrawableHitObjectPlacementTool<T extends OsuHitObject> extends DrawableComposeTool {
+  #hitObject?: CommandProxy<T>;
 
-  #previewObject?: HitObject;
+  #previewObject?: OsuHitObject;
 
   #state = PlacementState.Preview;
 
@@ -41,14 +46,22 @@ export abstract class DrawableHitObjectPlacementTool<T extends HitObject> extend
     });
   }
 
+  @resolved(OsuPlayfield)
+  protected playfield!: OsuPlayfield;
+
   protected createPreviewObject() {
     const circle = new HitCircle();
 
     circle.position = this.clampToPlayfieldBounds(this.mousePosition);
     circle.startTime = this.editorClock.currentTime;
-    circle.isGhost = true;
 
-    this.hitObjects.add(circle);
+    circle.startTimeBindable.addOnChangeListener(() => {
+      circle.applyDefaults(this.beatmap.controlPoints, this.beatmap.difficulty);
+    }, { immediate: true });
+
+    this.playfield.addHitObject(circle);
+
+    console.log(circle);
 
     this.#previewObject = circle;
 
@@ -64,31 +77,32 @@ export abstract class DrawableHitObjectPlacementTool<T extends HitObject> extend
     this.#state = PlacementState.Placing;
 
     if (this.#previewObject) {
-      this.hitObjects.remove(this.#previewObject);
+      this.playfield.removeHitObject(this.#previewObject);
       this.#previewObject = undefined;
     }
 
     const object = this.createObject();
 
-    const objectsAtTime = this.hitObjects.hitObjects.filter(it => almostEquals(it.startTime, object.startTime, 2));
+    const objectsAtTime = this.hitObjects.filter(it => almostEquals(it.startTime, object.startTime, 2));
 
     for (const h of objectsAtTime) {
       this.submit(new DeleteHitObjectCommand(h), false);
     }
 
-    this.#hitObject = this.submit(
+    this.submit(
       new CreateHitObjectCommand(object),
       false,
     );
 
-    if (!this.#hitObject) {
-      throw new Error('No HitObject created');
-    }
+    const created = this.hitObjects.getById(object.id);
+    console.assert(created !== undefined, 'HitObject was not created');
 
-    this.onPlacementStart(this.#hitObject);
+    this.#hitObject = this.createProxy(created!);
+
+    this.onPlacementStart(this.#hitObject!);
   }
 
-  protected onPlacementStart(hitObject: T) {
+  protected onPlacementStart(hitObject: CommandProxy<T>) {
   }
 
   finishPlacing() {
@@ -107,14 +121,13 @@ export abstract class DrawableHitObjectPlacementTool<T extends HitObject> extend
     super.update();
 
     if (this.#previewObject) {
-      this.#previewObject.position = this.clampToPlayfieldBounds(this.mousePosition);
+      this.#previewObject.position = this.getSnappedPosition(this.mousePosition);
     }
   }
 
   applyNewCombo(newCombo: boolean): void {
-    console.log('applyNewCombo', newCombo);
     if (this.#previewObject) {
-      this.#previewObject.isNewCombo = newCombo;
+      this.#previewObject.newCombo = newCombo;
     }
   }
 
@@ -134,9 +147,9 @@ export abstract class DrawableHitObjectPlacementTool<T extends HitObject> extend
     return this.beatmap.controlPoints.snap(this.editorClock.currentTime, this.editorClock.beatSnapDivisor.value);
   }
 
-  dispose(): boolean {
+  dispose(disposing: boolean = true) {
     if (this.#previewObject) {
-      this.hitObjects.remove(this.#previewObject);
+      this.playfield.removeHitObject(this.#previewObject);
       this.#previewObject = undefined;
     }
 
@@ -144,6 +157,6 @@ export abstract class DrawableHitObjectPlacementTool<T extends HitObject> extend
       this.commit();
     }
 
-    return super.dispose();
+    super.dispose(disposing);
   }
 }

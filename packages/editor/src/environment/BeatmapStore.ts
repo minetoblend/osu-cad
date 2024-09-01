@@ -7,10 +7,6 @@ export abstract class BeatmapStore {
   loading = new Bindable(false);
   beatmaps = new Bindable([] as BeatmapItemInfo[]);
 
-  constructor() {
-    this.init();
-  }
-
   async init() {
     try {
       this.beatmaps.value = await this.loadBeatmaps();

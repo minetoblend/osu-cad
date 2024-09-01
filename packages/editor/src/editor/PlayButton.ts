@@ -13,6 +13,7 @@ import {
   resolved,
 } from 'osucad-framework';
 import gsap from 'gsap';
+import { getIcon } from '../OsucadIcons';
 import { ThemeColors } from './ThemeColors';
 import { EditorClock } from './EditorClock';
 
@@ -45,7 +46,7 @@ export class PlayButton extends CompositeDrawable {
   load() {
     this.addInternal(
       (this.#icon = new DrawableSprite({
-        texture: useAsset('icon:play'),
+        texture: getIcon('play'),
         relativeSizeAxes: Axes.Both,
         color: this.colors.text,
         anchor: Anchor.Center,
@@ -109,8 +110,8 @@ export class PlayButton extends CompositeDrawable {
     if (this.editorClock.isRunning !== this.#isPlaying) {
       this.#isPlaying = this.editorClock.isRunning;
       this.#icon.texture = this.#isPlaying
-        ? useAsset('icon:pause')
-        : useAsset('icon:play');
+        ? getIcon('pause')
+        : getIcon('play');
     }
   }
 }

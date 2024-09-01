@@ -1,27 +1,11 @@
-import type {
-  IKeyBindingHandler,
-  InjectionToken,
-  KeyBindingPressEvent,
-} from 'osucad-framework';
-import {
-  dependencyLoader,
-  resolved,
-} from 'osucad-framework';
+import { dependencyLoader, resolved } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
 import { CommandManager } from '../../context/CommandManager';
-import type { EditorAction } from '../../EditorAction';
 import { ComposeToolbarButton } from './ComposeToolbarButton';
 import { EditorSelection } from './EditorSelection';
-import type { ToggleBindable } from './ToggleBindable';
 
-export class ComposeToggleButton
-  extends ComposeToolbarButton
-  implements IKeyBindingHandler<EditorAction> {
-  constructor(
-    icon: Texture,
-    readonly key: InjectionToken<ToggleBindable>,
-    readonly toggleAction?: EditorAction,
-  ) {
+export class ComposeToggleButton extends ComposeToolbarButton {
+  constructor(icon: Texture) {
     super(icon);
   }
 
@@ -31,46 +15,25 @@ export class ComposeToggleButton
   @resolved(CommandManager)
   commandManager!: CommandManager;
 
-  #isActive!: ToggleBindable;
-
   @dependencyLoader()
-  load() {
-    this.#isActive = this.dependencies.resolve(this.key);
-
-    this.#isActive.addOnChangeListener(({ value }) => (this.active = value), {
-      immediate: true,
-    });
-
-    this.action = () => {
-      try {
-        this.#isActive.buttonPressed = true;
-        this.#isActive.toggle();
-      }
-      finally {
-        this.#isActive.buttonPressed = false;
-      }
-    };
+  [Symbol('load')]() {
+    this.action = this.#action.bind(this);
   }
 
-  readonly isKeyBindingHandler = true;
+  #action() {
+    this.active.toggle();
 
-  canHandleKeyBinding(binding: EditorAction): boolean {
-    return binding === this.toggleAction;
+    console.log('toggle', this.active.value);
+
+    if (this.active.value)
+      this.onActivate();
+    else
+      this.onDeactivate();
   }
 
-  onKeyBindingPressed(e: KeyBindingPressEvent<EditorAction>): boolean {
-    if (e.pressed === this.toggleAction) {
-      this.keyPressed = true;
-      this.samples.toolSelect.play();
-      this.action?.();
-      this.updateState();
-    }
-
-    return false;
+  protected onActivate() {
   }
 
-  onKeyBindingReleased() {
-    this.keyPressed = false;
-    this.updateState();
+  protected onDeactivate() {
   }
 }

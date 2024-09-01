@@ -53,7 +53,7 @@ export class ScalingContainer extends Container {
     this.#desiredSize = Vec2.from(options.desiredSize);
     this.#fit = options.fit ?? Fit.Contain;
 
-    this.apply({
+    this.with({
       ...options,
       relativeSizeAxes: Axes.Both,
     });

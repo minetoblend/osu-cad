@@ -1,8 +1,7 @@
 import type { DrawableOptions } from 'osucad-framework';
-import { Anchor, Axes, CompositeDrawable, DrawableSprite } from 'osucad-framework';
+import { Anchor, Axes, CompositeDrawable, Container, DrawableSprite, EasingFunction } from 'osucad-framework';
 import { Graphics } from 'pixi.js';
 import { Easing } from 'osu-classes';
-import gsap from 'gsap';
 
 export class LoadingSpinner extends CompositeDrawable {
   constructor(options: DrawableOptions) {
@@ -10,40 +9,36 @@ export class LoadingSpinner extends CompositeDrawable {
 
     this.relativeSizeAxes = Axes.Both;
 
-    this.apply(options);
+    this.with(options);
 
-    this.#graphics = this.drawNode.addChild(new Graphics({
+    this.addInternal(this.#graphicsContainer = new Container());
 
-    }));
+    this.#graphics = this.#graphicsContainer.drawNode.addChild(new Graphics());
 
-    gsap.from(this, {
-      radius: 0,
-      duration: 1,
-      ease: 'expo.out',
-    });
-
-    gsap.from(this.#graphics, {
-      alpha: 0,
-      duration: 0.6,
-    });
+    const radius = this.radius;
+    this.transformTo('radius', radius, 1000, EasingFunction.OutExpo);
+    this.#graphicsContainer.fadeInFromZero(600);
 
     this.#logo = new DrawableSprite({
-      texture: useAsset('texture:logo.with-text'),
+      // TODO
+      // texture: useAsset('texture:logo.with-text'),
       scale: 0.5,
       anchor: Anchor.Center,
       origin: Anchor.Center,
       y: 200,
     });
 
-    this.#logo.fadeIn({ duration: 500 });
-    this.#logo.moveTo({ y: 50, duration: 1000, easing: 'expo.out' });
+    this.#logo.fadeIn(500);
+    this.#logo.moveToY(50, 1000, EasingFunction.OutExpo);
 
     this.addInternal(this.#logo);
   }
 
-  #logo: DrawableSprite;
+  readonly #logo: DrawableSprite;
 
-  #graphics: Graphics;
+  readonly #graphics: Graphics;
+
+  readonly #graphicsContainer: Container;
 
   updateDrawNodeTransform() {
     super.updateDrawNodeTransform();

@@ -1,22 +1,12 @@
 import type { Bindable, KeyDownEvent } from 'osucad-framework';
-import {
-  Action,
-  Axes,
-  CompositeDrawable,
-  Direction,
-  Invalidation,
-  Key,
-  LayoutMember,
-  clamp,
-  dependencyLoader,
-  resolved,
-} from 'osucad-framework';
+import { Action, Axes, CompositeDrawable, Direction, Invalidation, Key, LayoutMember, ScreenStack, clamp, dependencyLoader, resolved } from 'osucad-framework';
 import { binarySearch } from '@osucad/common';
 import gsap from 'gsap';
 import { BackdropBlurFilter } from 'pixi-filters';
 import { MainScrollContainer } from '../editor/MainScrollContainer';
 import { UISamples } from '../UISamples';
 import { EditorEnvironment } from '../environment/EditorEnvironment';
+import { EditorLoader } from '../editor/EditorLoader';
 import type { BeatmapItemInfo } from './BeatmapItemInfo';
 import type { MapsetInfo } from './MapsetInfo';
 import { CarouselMapset } from './CarouselMapset';
@@ -127,9 +117,7 @@ export class BeatmapCarousel extends CompositeDrawable {
   load() {
     this.dependencies.provide(this.#carouselLoadQueue);
 
-    this.beatmaps.addOnChangeListener((beatmaps) => {
-      this.beatmapsUpdated(beatmaps);
-    }, { immediate: true });
+    this.beatmaps.addOnChangeListener(e => this.beatmapsUpdated(e.value), { immediate: true });
   }
 
   #updateItem(item: DrawableCarouselItem, parent?: DrawableCarouselItem) {
@@ -208,7 +196,7 @@ export class BeatmapCarousel extends CompositeDrawable {
     const set = new CarouselMapset(mapset);
 
     for (const beatmap of set.beatmaps) {
-      beatmap.selected.addOnChangeListener((selected) => {
+      beatmap.selected.addOnChangeListener(({ value: selected }) => {
         if (selected) {
           this.#selectedBeatmapSet = set;
           this.selectionChanged.emit(beatmap.beatmapInfo);
@@ -318,10 +306,6 @@ export class BeatmapCarousel extends CompositeDrawable {
     return this.#scroll.current - this.bleedTop;
   }
 
-  dispose(): boolean {
-    return super.dispose();
-  }
-
   #firstScroll = true;
 
   entryAnimation() {
@@ -351,6 +335,15 @@ export class BeatmapCarousel extends CompositeDrawable {
       case Key.ArrowRight:
         this.seek(1, true);
         return true;
+      case Key.Enter:
+      {
+        const beatmap = this.#selectedBeatmapSet?.beatmaps.find(it => it.selected.value);
+        if (beatmap) {
+          this.findClosestParentOfType(ScreenStack)?.push(new EditorLoader(beatmap.beatmapInfo.createEditorContext()));
+        }
+
+        return true;
+      }
     }
 
     return false;

@@ -1,5 +1,6 @@
-import type { PathPoint, PathType } from '@osucad/common';
 import type { Vec2 } from 'osucad-framework';
+import type { PathPoint } from '../../../../beatmap/hitObjects/PathPoint';
+import type { PathType } from '../../../../beatmap/hitObjects/PathType';
 
 export class SliderPathBuilder {
   constructor(

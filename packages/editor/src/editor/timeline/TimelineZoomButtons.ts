@@ -13,6 +13,7 @@ import {
 } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
 import gsap from 'gsap';
+import { getIcon } from '../../OsucadIcons';
 import type { Timeline } from './Timeline';
 
 export class TimelineZoomButtons extends Container {
@@ -32,7 +33,7 @@ export class TimelineZoomButtons extends Container {
       new ZoomButton({
         relativeSizeAxes: Axes.Both,
         height: 0.48,
-        texture: useAsset('icon:plus'),
+        texture: getIcon('plus'),
         action: () => this.timeline.zoomIn(),
         onLongPress: () => {
           this.timeline.zoomIn(this.time.elapsed * 0.05);
@@ -45,7 +46,7 @@ export class TimelineZoomButtons extends Container {
         relativePositionAxes: Axes.Both,
         height: 0.48,
         y: 0.52,
-        texture: useAsset('icon:minus'),
+        texture: getIcon('minus'),
         action: () => this.timeline.zoomOut(),
         onLongPress: () => {
           this.timeline.zoomOut(this.time.elapsed * 0.05);

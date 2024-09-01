@@ -1,12 +1,12 @@
 import { Anchor, Axes, CompositeDrawable, FillMode, dependencyLoader } from 'osucad-framework';
-import type { HitObject } from '@osucad/common';
 import { OsucadSpriteText } from '../../OsucadSpriteText';
+import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
 
 export class TimelineComboNumber extends CompositeDrawable {
-  constructor(readonly hitObject: HitObject) {
+  constructor(readonly hitObject: OsuHitObject) {
     super();
 
-    this.apply({
+    this.with({
       relativeSizeAxes: Axes.Both,
       fillMode: FillMode.Fit,
       anchor: Anchor.Center,
@@ -26,8 +26,8 @@ export class TimelineComboNumber extends CompositeDrawable {
       }),
     );
 
-    this.hitObject.onUpdate.addListener((type) => {
-      if (type === 'combo') {
+    this.hitObject.changed.addListener((event) => {
+      if (event.propertyName === 'combo') {
         this.comboNumberText.text = (this.hitObject.indexInCombo + 1).toString();
       }
     });

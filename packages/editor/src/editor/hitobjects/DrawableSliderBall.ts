@@ -1,70 +1,59 @@
 import {
   Anchor,
+  Axes,
   CompositeDrawable,
-  DrawableSprite,
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import { Skin } from '../../skins/Skin';
-import { animate } from '../../utils/animate';
+import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
+import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
+import { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
+import { DrawableHitObject } from './DrawableHitObject';
+import type { DrawableSlider } from './DrawableSlider';
 
 export class DrawableSliderBall extends CompositeDrawable {
-  constructor() {
-    super();
-    this.alwaysPresent = true;
-  }
-
-  @resolved(Skin)
-  skin!: Skin;
-
-  #followCircle!: DrawableSprite;
+  @resolved(DrawableHitObject)
+  drawableSlider!: DrawableSlider;
 
   @dependencyLoader()
   load() {
+    this.size = OsuHitObject.object_dimensions;
+    this.origin = Anchor.Center;
+
     this.addAllInternal(
-      (this.#followCircle = new DrawableSprite({
-        texture: this.skin.sliderFollowCircle,
+      new SkinnableDrawable(OsuSkinComponentLookup.SliderFollowCircle).with({
+        relativeSizeAxes: Axes.Both,
         anchor: Anchor.Center,
         origin: Anchor.Center,
-      })),
+      }),
+      this.ball = new SkinnableDrawable(OsuSkinComponentLookup.SliderBall).with({
+        relativeSizeAxes: Axes.Both,
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
+      }),
     );
   }
 
-  startTime = 0;
-  endTime = 0;
+  protected ball!: SkinnableDrawable;
 
-  update(): void {
-    super.update();
+  override clearTransformsAfter(time: number, propagateChildren?: boolean, targetMember?: string) {
+    super.clearTransformsAfter(time, false, targetMember);
+  }
 
-    const time = this.time.current - this.startTime;
-    const duration = this.endTime - this.startTime;
+  override applyTransformsAt(time: number) {
+    super.applyTransformsAt(time, false);
+  }
 
-    const fadeDuration = Math.min(150, duration);
+  updateProgress(completionProgress: number) {
+    const slider = this.drawableSlider.hitObject!;
 
-    this.alpha = time > 0 && time < duration + fadeDuration ? 1 : 0;
-    if (time < fadeDuration) {
-      this.#followCircle.scale = animate(time, 0, fadeDuration, 0.5, 1);
-      this.#followCircle.alpha = animate(time, 0, fadeDuration, 0.5, 1);
-    }
-    else if (time < duration) {
-      this.#followCircle.scale = 1;
-      this.#followCircle.alpha = 1;
-    }
-    else {
-      this.#followCircle.scale = animate(
-        time,
-        duration,
-        duration + fadeDuration,
-        1,
-        0.5,
-      );
-      this.#followCircle.alpha = animate(
-        time,
-        duration,
-        duration + fadeDuration,
-        1,
-        0,
-      );
-    }
+    const position = this.position = slider.curvePositionAt(completionProgress);
+
+    const diff = position.sub(slider.curvePositionAt(Math.min(1, completionProgress + 0.1 / slider.path.expectedDistance)));
+
+    if (diff.length() < 0.1)
+      return;
+
+    this.ball.rotation = -Math.atan2(diff.x, diff.y) - Math.PI * 0.5;
   }
 }

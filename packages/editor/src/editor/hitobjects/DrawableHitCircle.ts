@@ -1,59 +1,94 @@
-import type { HitCircle } from '@osucad/common';
-import { Anchor, resolved } from 'osucad-framework';
+import { Anchor, Axes, Container, EasingFunction, dependencyLoader, resolved } from 'osucad-framework';
 import { PreferencesStore } from '../../preferences/PreferencesStore';
-import { animate } from '../../utils/animate';
-import { ApproachCircle } from './ApproachCircle';
-import { DrawableComboNumber } from './DrawableComboNumber';
-import { DrawableHitObject } from './DrawableHitObject';
-import { AnimatedCirclePiece } from './AnimatedCirclePiece';
+import type { HitCircle } from '../../beatmap/hitObjects/HitCircle';
+import { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
+import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
+import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
+import type { DrawableComboNumber } from './DrawableComboNumber';
+import { DrawableOsuHitObject } from './DrawableOsuHitObject';
 
-export class DrawableHitCircle extends DrawableHitObject<HitCircle> {
-  constructor(public hitCircle: HitCircle) {
-    super(hitCircle);
-    this.origin = Anchor.Center;
+export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle> {
+  constructor() {
+    super();
   }
 
-  circlePiece!: AnimatedCirclePiece;
-  approachCircle!: ApproachCircle;
+  circlePiece!: SkinnableDrawable;
+  approachCircle!: SkinnableDrawable;
   comboNumber!: DrawableComboNumber;
 
-  override load() {
-    this.addAll(
-      (this.circlePiece = new AnimatedCirclePiece()),
-      (this.approachCircle = new ApproachCircle()),
-    );
-    this.circlePiece.add(
-      (this.comboNumber = new DrawableComboNumber(this.hitObject.indexInCombo)),
+  #scaleContainer!: Container;
+
+  @dependencyLoader()
+  load() {
+    this.origin = Anchor.Center;
+    this.size = OsuHitObject.object_dimensions;
+
+    this.addInternal(
+      this.#scaleContainer = new Container({
+        relativeSizeAxes: Axes.Both,
+        origin: Anchor.Center,
+        anchor: Anchor.Center,
+        children: [
+          this.circlePiece = new SkinnableDrawable(OsuSkinComponentLookup.HitCircle).with({
+            anchor: Anchor.Center,
+            origin: Anchor.Center,
+            alpha: 0,
+          }),
+          this.approachCircle = new SkinnableDrawable(OsuSkinComponentLookup.ApproachCircle).with({
+            anchor: Anchor.Center,
+            origin: Anchor.Center,
+            relativeSizeAxes: Axes.Both,
+            alpha: 0,
+            scale: 4,
+          }),
+        ],
+      }),
     );
 
-    super.load();
+    // this.circlePiece.add(
+    //   (this.comboNumber = new DrawableComboNumber(this.hitObject.indexInCombo)),
+    // );
+
+    this.positionBindable.addOnChangeListener(() => this.updatePosition());
+    this.stackHeightBindable.addOnChangeListener(() => this.updatePosition());
+    this.scaleBindable.addOnChangeListener(scale => this.#scaleContainer.scale = scale.value);
   }
 
-  setup() {
-    super.setup();
+  updateInitialTransforms() {
+    this.circlePiece.fadeInFromZero(this.hitObject!.timeFadeIn);
 
-    this.circlePiece.comboColor = this.hitObject.comboColor;
-    this.circlePiece.timeFadeIn = this.hitObject.startTime - this.hitObject.timePreempt;
-    this.circlePiece.fadeInDuration = this.hitObject.timeFadeIn;
-    this.circlePiece.timeFadeOut = this.hitObject.startTime;
+    this.approachCircle.fadeOut().fadeTo(0.9, Math.min(this.hitObject!.timeFadeIn * 2, this.hitObject!.timePreempt));
+    this.approachCircle.scaleTo(4).scaleTo(1, this.hitObject!.timePreempt);
+  }
 
-    this.approachCircle.comboColor = this.hitObject.comboColor;
-    this.approachCircle.startTime = this.hitObject.startTime;
-    this.approachCircle.timePreempt = this.hitObject.timePreempt;
-    this.comboNumber.comboNumber = this.hitObject.indexInCombo;
+  updateStartTimeTransforms() {
+    if (this.preferences.viewport.hitAnimations) {
+      this.circlePiece.fadeOut(240);
+      this.circlePiece.scaleTo(1.5, 240);
+      this.approachCircle.fadeOut();
+
+      this.lifetimeEnd = this.hitObject!.endTime + 240;
+    }
+    else {
+      this.circlePiece.fadeOut(700);
+
+      this.approachCircle.scaleTo(1.1, 120, EasingFunction.OutCubic);
+      this.approachCircle.fadeOut(700);
+
+      this.lifetimeEnd = this.hitObject!.endTime + 700;
+    }
+  }
+
+  protected updateEndTimeTransforms() {
+    super.updateEndTimeTransforms();
+
+    this.delay(800).fadeOut();
+  }
+
+  protected updatePosition() {
+    this.position = this.hitObject!.stackedPosition;
   }
 
   @resolved(PreferencesStore)
   preferences!: PreferencesStore;
-
-  update() {
-    super.update();
-
-    const time = this.time.current - this.hitObject.startTime;
-
-    this.comboNumber.alpha
-      = time > 0 && this.preferences.viewport.hitAnimations
-        ? animate(time, 0, 50, 1, 0)
-        : 1;
-  }
 }

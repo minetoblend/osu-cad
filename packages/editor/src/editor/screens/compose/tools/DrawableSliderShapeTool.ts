@@ -1,12 +1,3 @@
-import {
-  Additions,
-  DeleteHitObjectCommand,
-  PathPoint,
-  PathType,
-  type SerializedSlider,
-  Slider,
-  UpdateHitObjectCommand,
-} from '@osucad/common';
 import type {
   Bindable,
   DragStartEvent,
@@ -19,7 +10,14 @@ import {
   dependencyLoader,
 } from 'osucad-framework';
 
+import type { Additions } from '@osucad/common';
 import { Editor } from '../../../Editor';
+import { Slider } from '../../../../beatmap/hitObjects/Slider';
+import { PathPoint } from '../../../../beatmap/hitObjects/PathPoint';
+import { PathType } from '../../../../beatmap/hitObjects/PathType';
+import type { CommandProxy } from '../../../commands/CommandProxy';
+import { DeleteHitObjectCommand } from '../../../commands/DeleteHitObjectCommand';
+import { UpdateHitObjectCommand } from '../../../commands/UpdateHitObjectCommand';
 import { DrawableHitObjectPlacementTool } from './DrawableHitObjectPlacementTool';
 import { SliderPathVisualizer } from './SliderPathVisualizer';
 import { SliderUtils } from './SliderUtils';
@@ -53,28 +51,28 @@ export abstract class DrawableSliderShapeTool<T extends SliderShape> extends Dra
 
     slider.position = this.getSnappedPosition(this.mousePosition);
     slider.startTime = this.snappedTime;
-    slider.isNewCombo = this.newCombo.value;
+    slider.newCombo = this.newCombo.value;
 
     slider.path.controlPoints = [
       new PathPoint(Vec2.zero(), PathType.Bezier),
       new PathPoint(Vec2.zero()),
     ];
 
-    let additions = Additions.None;
-    if (this.sampleWhistle.value)
-      additions |= Additions.Whistle;
-    if (this.sampleFinish.value)
-      additions |= Additions.Finish;
-    if (this.sampleClap.value)
-      additions |= Additions.Clap;
-
-    slider.hitSound.additions = additions;
-    slider.hitSounds.forEach(it => (it.additions = additions));
+    // let additions = Additions.None;
+    // if (this.sampleWhistle.value)
+    //   additions |= Additions.Whistle;
+    // if (this.sampleFinish.value)
+    //   additions |= Additions.Finish;
+    // if (this.sampleClap.value)
+    //   additions |= Additions.Clap;
+    //
+    // slider.hitSound.additions = additions;
+    // slider.hitSounds.forEach(it => (it.additions = additions));
 
     return slider;
   }
 
-  protected onPlacementStart(hitObject: Slider) {
+  protected onPlacementStart(hitObject: CommandProxy<Slider>) {
     super.onPlacementStart(hitObject);
 
     this.isPlacingEnd = true;
@@ -171,15 +169,15 @@ export abstract class DrawableSliderShapeTool<T extends SliderShape> extends Dra
     let velocity = (this.hitObject.velocity / this.hitObject.baseVelocity);
 
     if (this.hitObject.path.expectedDistance > 0) {
-      velocity *= this.hitObject.path.totalLength / this.hitObject.path.expectedDistance;
+      velocity *= this.hitObject.path.calculatedDistance / this.hitObject.path.expectedDistance;
     }
 
     this.submit(
       new UpdateHitObjectCommand(this.hitObject, {
         position: this.shape.startPosition,
-        velocity,
-        expectedDistance: this.hitObject.path.totalLength,
-      } as Partial<SerializedSlider>),
+        velocityOverride: velocity,
+        expectedDistance: this.hitObject.path.calculatedDistance,
+      }),
       false,
     );
   }

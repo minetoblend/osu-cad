@@ -1,5 +1,5 @@
 import type { ContainerOptions, DropEvent, InputManager } from 'osucad-framework';
-import { Action, Anchor, Axes, Container, LowpassFilter, RoundedBox, dependencyLoader, resolved } from 'osucad-framework';
+import { Action, Anchor, Axes, Container, EasingFunction, LowpassFilter, RoundedBox, dependencyLoader, resolved } from 'osucad-framework';
 import gsap from 'gsap';
 import { ThemeColors } from '../editor/ThemeColors';
 import { OsucadSpriteText } from '../OsucadSpriteText';
@@ -7,9 +7,7 @@ import { EditorMixer } from '../editor/EditorMixer';
 import { UISamples } from '../UISamples';
 import { NotificationOverlay } from '../notifications/NotificationOverlay';
 import { Notification } from '../notifications/Notification';
-import { DialogContainer } from '../modals/DialogContainer';
 import type { MapsetInfo } from './MapsetInfo';
-import { BeatmapImportDialog } from './BeatmapImportDialog';
 
 export interface BeatmapImportDropzoneOptions extends ContainerOptions {}
 
@@ -24,7 +22,7 @@ export class BeatmapImportDropzone extends Container {
       masking: true,
     }));
 
-    this.apply(options);
+    this.with(options);
   }
 
   uploadFinished = new Action<MapsetInfo>();
@@ -121,10 +119,11 @@ export class BeatmapImportDropzone extends Container {
 
       switch (extension) {
         case 'osz': {
-          const dialog = new BeatmapImportDialog(file);
-          dialog.uploadFinished.addListener(mapset => this.uploadFinished.emit(mapset));
-
-          this.dependencies.resolve(DialogContainer).showDialog(dialog);
+          // TODO: reimplement beatmap import
+          // const dialog = new BeatmapImportDialog(file);
+          // dialog.uploadFinished.addListener(mapset => this.uploadFinished.emit(mapset));
+          //
+          // this.dependencies.resolve(DialogContainer).showDialog(dialog);
           break;
         }
         default:
@@ -193,11 +192,11 @@ class DropzoneOverlay extends Container {
   samples!: UISamples;
 
   show() {
-    this.#outline.scaleTo({ scale: 1, duration: 600, easing: 'expo.out' });
-    this.fadeIn({ duration: 400 });
+    this.#outline.scaleTo(1, 600, EasingFunction.OutExpo);
+    this.fadeIn(400);
 
     this.#text.y = 50;
-    this.#text.moveTo({ y: 0, duration: 600, easing: 'expo.out' });
+    this.#text.moveToY(0, 600, EasingFunction.OutExpo);
 
     gsap.to(this.#filter.frequency, {
       value: 500,
@@ -208,10 +207,10 @@ class DropzoneOverlay extends Container {
   }
 
   hide() {
-    this.#outline.scaleTo({ scale: 1.1, duration: 600, easing: 'expo.out' });
-    this.fadeOut({ duration: 250 });
+    this.#outline.scaleTo(1.1, 600, EasingFunction.OutExpo);
+    this.fadeOut(250);
 
-    this.#text.moveTo({ y: 50, duration: 400 });
+    this.#text.moveToY(50, 400);
 
     gsap.to(this.#filter.frequency, {
       value: 22000,
@@ -225,9 +224,9 @@ class DropzoneOverlay extends Container {
     frequency: 22000,
   });
 
-  dispose(): boolean {
+  dispose(disposing: boolean = true) {
     this.mixer.music.removeFilter(this.#filter);
 
-    return super.dispose();
+    super.dispose(disposing);
   }
 }

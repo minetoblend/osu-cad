@@ -4,10 +4,12 @@ import type {
 } from 'osucad-framework';
 import {
   Anchor,
+
   Axes,
   Bindable,
   CompositeDrawable,
   DrawableSprite,
+  Vec2,
   dependencyLoader,
   lerp,
   resolved,
@@ -18,6 +20,7 @@ import { ConnectedUsersManager } from '../../context/ConnectedUsersManager';
 import { EditorClock } from '../../EditorClock';
 import { OsucadSpriteText } from '../../../OsucadSpriteText';
 import { animate } from '../../../utils/animate';
+import { getIcon } from '../../../OsucadIcons';
 
 export class ComposerCursorContainer extends CompositeDrawable {
   constructor() {
@@ -131,14 +134,14 @@ class UserCursor extends CompositeDrawable {
     this.addAllInternal(
       (this.avatar = new UserAvatar(this.user)),
       new DrawableSprite({
-        texture: useAsset('icon:select'),
+        texture: getIcon('select'),
         color: 0x000000,
         scale: 0.5,
         alpha: 0.25,
         y: 2,
       }),
       new DrawableSprite({
-        texture: useAsset('icon:select'),
+        texture: getIcon('select'),
         color: this.user.color,
         scale: 0.5,
       }),
@@ -156,14 +159,11 @@ class UserCursor extends CompositeDrawable {
     this.#activity = activity;
 
     if (!activity || activity.type !== 'composeScreen') {
-      this.fadeTo({ alpha: 0, duration: 300 });
+      this.fadeOut(300);
       return;
     }
 
-    this.moveTo({
-      position: activity.cursorPosition,
-      duration: 100,
-    });
+    this.moveTo(Vec2.from(activity.cursorPosition), 100);
   }
 
   update() {

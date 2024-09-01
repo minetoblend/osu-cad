@@ -44,3 +44,10 @@ export class UISamples {
     );
   }
 }
+
+type Test<T> =
+  T extends string ? `string: ${T}`
+    : T extends number ? `number: ${T}`
+      : never;
+
+const test: Test<'123'> = `string: 123`;

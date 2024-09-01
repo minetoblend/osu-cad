@@ -1,39 +1,28 @@
 import { join } from 'node:path';
 import { defineConfig } from 'vite';
-import PixiAssets from 'unplugin-pixi-assets/vite';
+import commonjsExternals from 'vite-plugin-commonjs-externals';
 
 export default defineConfig({
   plugins: [
-    PixiAssets({
-      assetsFolder: [
-        {
-          src: 'src/assets/icons',
-          assetIds: {
-            prefix: 'icon:',
-            dotNotation: true,
-            stripExtensions: true,
-          },
-        },
-        {
-          src: 'src/assets/textures',
-          assetIds: {
-            prefix: 'texture:',
-            dotNotation: true,
-            stripExtensions: true,
-          },
-        },
+    commonjsExternals({
+      externals: [
+        'node:fs',
+        'node:fs/promises',
+        'node:path',
       ],
-      textures: {
-        defaultOptions: {
-          autoGenerateMipmaps: true,
-        },
-      },
     }),
   ],
   resolve: {
     alias: {
       '@icons': join(__dirname, 'src/assets/icons'),
     },
+  },
+  esbuild: {
+    target: 'chrome127',
+    include: /\.(m?[jt]s|[jt]sx)$/,
+    exclude: [],
+    keepNames: true,
+
   },
   worker: {
     format: 'es',

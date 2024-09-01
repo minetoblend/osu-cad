@@ -1,4 +1,4 @@
-import { Anchor, Axes, Container, VisibilityContainer } from 'osucad-framework';
+import { Anchor, Axes, Container, EasingFunction, VisibilityContainer } from 'osucad-framework';
 import type { ComposeToolbarButton } from './ComposeToolbarButton';
 
 export class ComposeToolbarButtonSubmenu extends VisibilityContainer {
@@ -35,28 +35,28 @@ export class ComposeToolbarButtonSubmenu extends VisibilityContainer {
 
     let curX = 0;
 
-    this.moveTo({ x: 1, duration: 300, easing: 'expo.out' });
+    this.moveToX(1, 300, EasingFunction.OutExpo);
 
     for (let i = 0; i < this.#content.children.length; i++) {
       const child = this.#content.children[i];
 
       const duration = 250 + i * 50;
 
-      child.fadeIn({ duration, easing: 'expo.out' });
-      child.moveTo({ x: curX, duration, easing: 'expo.out' });
-      child.scaleTo({ scale: 1, duration, easing: 'expo.out' });
+      child.fadeIn(duration, EasingFunction.OutExpo);
+      child.moveToX(curX, duration, EasingFunction.OutExpo);
+      child.scaleTo(1, duration, EasingFunction.OutExpo);
 
       curX += child.drawSize.x + gap;
     }
   }
 
   popOut() {
-    this.moveTo({ x: 0.5, duration: 300, easing: 'expo.out' });
+    this.moveToX(0.5, 300, EasingFunction.OutExpo);
 
     for (const child of this.children) {
-      child.fadeOut({ duration: 300, easing: 'expo.out' });
-      child.moveTo({ x: 0, duration: 300, easing: 'expo.out' });
-      child.scaleTo({ scale: 0.75, duration: 300, easing: 'expo.out' });
+      child.fadeOut(300, EasingFunction.OutExpo);
+      child.moveToX(0, 300, EasingFunction.OutExpo);
+      child.scaleTo(0.75, 300, EasingFunction.OutExpo);
     }
   }
 }

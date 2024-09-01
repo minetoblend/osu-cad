@@ -43,6 +43,7 @@
     "@ygoe/msgpack": "^1.0.3",
     "osu-classes": "^3.0.1",
     "pako": "^2.1.0",
+    "pixi.js": "https://pkg.csb.dev/pixijs/pixijs/commit/f2243093/pixi.js",
     "uuid": "^9.0.1",
     "variant": "^2.1.0",
     "vue": "^3.3.4",

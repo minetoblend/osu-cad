@@ -1,30 +1,17 @@
-import gsap from 'gsap';
-import type { Key, KeyDownEvent, MouseDownEvent, MouseUpEvent } from 'osucad-framework';
-import {
-  Anchor,
-  Axes,
-  Button,
-  Container,
-  DrawableSprite,
-  RoundedBox,
-  Vec2,
-  dependencyLoader,
-  resolved,
-} from 'osucad-framework';
+import type { MouseDownEvent, MouseUpEvent } from 'osucad-framework';
+import { Anchor, Axes, BindableBoolean, Button, Container, DrawableSprite, EasingFunction, RoundedBox, Vec2, dependencyLoader, resolved } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
 import { ThemeColors } from '../../ThemeColors';
 import { UISamples } from '../../../UISamples';
+import { FastRoundedBox } from '../../../drawables/FastRoundedBox';
 
 export class ComposeToolbarButton extends Button {
   constructor(
     icon: Texture,
-    readonly keyBinding?: Key,
   ) {
     super();
 
     this.size = new Vec2(ComposeToolbarButton.SIZE);
-
-    // this.trigger = ButtonTrigger.MouseDown;
 
     this.#iconTexture = icon;
   }
@@ -55,7 +42,7 @@ export class ComposeToolbarButton extends Button {
         anchor: Anchor.Center,
         origin: Anchor.Center,
         children: [
-          (this.#background = new RoundedBox({
+          (this.#background = new FastRoundedBox({
             relativeSizeAxes: Axes.Both,
             cornerRadius: 8,
             color: this.theme.translucent,
@@ -83,12 +70,19 @@ export class ComposeToolbarButton extends Button {
         origin: Anchor.Center,
       })),
     );
+
+    this.active.valueChanged.addListener(this.updateState, this);
+  }
+
+  protected loadComplete() {
+    super.loadComplete();
+
     this.updateState();
   }
 
   backgroundContainer!: Container;
 
-  #background!: RoundedBox;
+  #background!: FastRoundedBox;
 
   #outline!: RoundedBox;
 
@@ -107,8 +101,13 @@ export class ComposeToolbarButton extends Button {
   }
 
   set outlineVisibility(value: number) {
+    if (value === this.#outlineVisibility)
+      return;
+
     this.#outlineVisibility = value;
     this.#outline.alpha = value;
+
+    this.#updateOutline();
   }
 
   #updateOutline() {
@@ -133,54 +132,33 @@ export class ComposeToolbarButton extends Button {
     }
   }
 
-  #active = false;
-
-  get active() {
-    return this.#active;
-  }
-
-  set active(value: boolean) {
-    this.#active = value;
-    this.updateState();
-  }
+  readonly active = new BindableBoolean();
 
   protected updateState() {
-    if (this.active) {
+    if (this.active.value) {
       this.#icon.color = this.isHovered
         ? this.theme.primaryHighlight
         : this.theme.primary;
 
       this.#background.color = 0x303038;
-      gsap.to(this, {
-        outlineVisibility: 1,
-        duration: 0.2,
-        onUpdate: () => {
-          this.#updateOutline();
-        },
-      });
+      this.transformTo('outlineVisibility', 1, 200);
     }
     else {
       this.#background.color = 0x222228;
       this.#icon.color = this.isHovered ? 'white' : '#bbbec5';
-      gsap.to(this, {
-        outlineVisibility: 0,
-        duration: 0.2,
-        onUpdate: () => {
-          this.#updateOutline();
-        },
-      });
+      this.transformTo('outlineVisibility', 0, 200);
     }
 
-    if (this.keyPressed || this.#mouseDown) {
-      this.#icon.scaleTo({ scale: 0.85, duration: 300, easing: 'power4.out' });
+    if (this.armed) {
+      this.#icon.scaleTo(0.85, 300, EasingFunction.OutQuart);
 
       // resizing the background and outline instead of main body to make sure layout isn't affected
-      this.backgroundContainer.scaleTo({ scale: 0.95, duration: 300, easing: 'power4.out' });
+      this.backgroundContainer.scaleTo(0.95, 300, EasingFunction.OutQuart);
     }
     else {
-      this.#icon.scaleTo({ scale: 1, duration: 300, easing: 'back.out' });
+      this.#icon.scaleTo(1, 300, EasingFunction.OutBack);
 
-      this.backgroundContainer.scaleTo({ scale: 1, duration: 300, easing: 'back.out' });
+      this.backgroundContainer.scaleTo(1, 300, EasingFunction.OutBack);
     }
   }
 
@@ -205,47 +183,30 @@ export class ComposeToolbarButton extends Button {
       return false;
 
     this.samples.toolSelect.play();
-    this.#mouseDown = true;
+    this.armed = true;
     this.updateState();
 
     return true;
   }
 
-  // eslint-disable-next-line unused-imports/no-unused-vars
-  onMouseUp(e: MouseUpEvent): boolean {
-    this.#mouseDown = false;
+  onMouseUp(e: MouseUpEvent) {
+    this.armed = false;
     this.updateState();
-
-    return true;
   }
 
-  #mouseDown = false;
+  #armed = false;
 
-  protected keyPressed = false;
-
-  onKeyDown(e: KeyDownEvent): boolean {
-    if (e.controlPressed || e.shiftPressed || e.altPressed)
-      return false;
-
-    if (this.keyBinding === e.key && !e.repeat) {
-      this.action?.();
-      this.samples.toolSelect.play();
-      this.keyPressed = true;
-      this.updateState();
-
-      return true;
-    }
-    return false;
+  get armed() {
+    return this.#armed;
   }
 
-  onKeyUp(e: KeyDownEvent): boolean {
-    if (this.keyBinding === e.key) {
-      this.keyPressed = false;
-      this.updateState();
+  protected set armed(value) {
+    if (value === this.#armed)
+      return;
 
-      return true;
-    }
-    return false;
+    this.#armed = value;
+
+    this.updateState();
   }
 
   get acceptsFocus(): boolean {

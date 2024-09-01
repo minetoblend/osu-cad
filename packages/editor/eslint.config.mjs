@@ -7,6 +7,10 @@ export default antfu({
   typescript: {
     overrides: {
       'no-console': 'off',
+      "unused-imports/no-unused-vars": "off",
+      'no-lone-blocks': 'off',
+      'ts/no-require-imports': 'off',
+      'ts/prefer-literal-enum-member': 'off'
     },
   },
 })

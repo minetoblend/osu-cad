@@ -1,8 +1,8 @@
 import type { MouseDownEvent } from 'osucad-framework';
 import { FillMode, MouseButton, dependencyLoader, resolved } from 'osucad-framework';
-import type { Slider } from '@osucad/common';
 import { SliderUtils } from '../screens/compose/tools/SliderUtils';
 import { EditorSelection } from '../screens/compose/EditorSelection';
+import type { Slider } from '../../beatmap/hitObjects/Slider';
 import { TimelineElement } from './TimelineElement';
 import { TimelineComboNumber } from './TimelineComboNumber';
 import { TimelineSlider } from './TimelineSlider';

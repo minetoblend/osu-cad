@@ -3,6 +3,7 @@ import type {
   ClickEvent,
   DrawableOptions,
   Key,
+  KeyDownEvent,
   MouseDownEvent,
   MouseUpEvent,
 } from 'osucad-framework';
@@ -32,10 +33,11 @@ export interface ComposeToolbarToolButtonOptions {
 
 export class ComposeToolbarToolButton extends ComposeToolbarButton {
   constructor(options: ComposeToolbarToolButtonOptions) {
-    super(options.tool.icon, options.keyBinding);
+    super(options.tool.icon);
 
     this.activeTool = options.activeTool;
     this.tool = options.tool;
+    this.keyBinding = options.keyBinding;
 
     this.action = () => {
       this.activeTool.setValue(this.activeTool.value, this.tool);
@@ -50,6 +52,8 @@ export class ComposeToolbarToolButton extends ComposeToolbarButton {
   readonly activeTool: Bindable<ComposeTool>;
   readonly tool: ComposeTool;
 
+  readonly keyBinding?: Key;
+
   childItems: ComposeToolbarButton[] = [];
 
   submenu?: ComposeToolbarButtonSubmenu;
@@ -59,7 +63,7 @@ export class ComposeToolbarToolButton extends ComposeToolbarButton {
 
     if (this.childItems.length > 0) {
       this.addAll(
-        this.submenu = new ComposeToolbarButtonSubmenu(this.childItems).apply({
+        this.submenu = new ComposeToolbarButtonSubmenu(this.childItems).with({
           depth: 1,
         }),
       );
@@ -79,9 +83,9 @@ export class ComposeToolbarToolButton extends ComposeToolbarButton {
 
     this.activeTool.addOnChangeListener(
       ({ value: tool }) => {
-        this.active = this.tool.isActive(tool);
+        this.active.value = this.tool.isActive(tool);
 
-        if (!this.active) {
+        if (!this.active.value) {
           this.submenu?.hide();
           this.iconTexture = this.tool.icon;
         }
@@ -109,7 +113,7 @@ export class ComposeToolbarToolButton extends ComposeToolbarButton {
     return super.onMouseDown(e);
   }
 
-  onMouseUp(e: MouseUpEvent): boolean {
+  onMouseUp(e: MouseUpEvent) {
     if (e.button === MouseButton.Left) {
       this.#mouseDownTime = null;
 
@@ -123,7 +127,7 @@ export class ComposeToolbarToolButton extends ComposeToolbarButton {
       }
     }
 
-    return super.onMouseUp(e);
+    super.onMouseUp(e);
   }
 
   longPressDuration = 400;
@@ -156,8 +160,21 @@ export class ComposeToolbarToolButton extends ComposeToolbarButton {
     return super.onClick(e);
   }
 
-  get acceptsFocus(): boolean {
-    return true;
+  onKeyDown(e: KeyDownEvent): boolean {
+    if (this.keyBinding && e.key === this.keyBinding) {
+      this.armed = true;
+      this.triggerAction();
+    }
+
+    return false;
+  }
+
+  onKeyUp(e: KeyDownEvent) {
+    if (this.keyBinding && e.key === this.keyBinding) {
+      this.armed = false;
+    }
+
+    return false;
   }
 
   onFocusLost(): boolean {
@@ -171,7 +188,7 @@ class SubmenuCaret extends GraphicsDrawable {
   constructor(options: DrawableOptions) {
     super();
 
-    this.apply(options);
+    this.with(options);
   }
 
   updateGraphics(g: Graphics) {

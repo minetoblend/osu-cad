@@ -16,7 +16,7 @@ export class DialogContainer extends Container {
       this.#screenStack = new ScreenStack(),
     );
 
-    this.apply(options);
+    this.with(options);
   }
 
   @dependencyLoader()
@@ -76,13 +76,13 @@ class DialogOverlay extends Box {
   isVisible = false;
 
   show() {
-    this.fadeTo({ alpha: 0.5, duration: 200 });
+    this.fadeTo(0.5, 200);
 
     this.isVisible = true;
   }
 
   hide() {
-    this.fadeOut({ duration: 200 });
+    this.fadeOut(200);
 
     this.isVisible = false;
   }

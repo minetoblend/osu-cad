@@ -1,13 +1,10 @@
-/* eslint-disable unused-imports/no-unused-vars */
 /* eslint-disable ts/no-require-imports */
 
-import type { Beatmap } from '@osucad/common';
-import { BeatmapDecoder } from 'osu-parsers';
-import { StandardRuleset } from 'osu-standard-stable';
 import type { PIXITexture } from 'osucad-framework';
 import { textureFrom } from 'pixi.js';
-import { BeatmapConverter } from '../../beatmap/BeatmapConverter';
 import { Skin } from '../../skins/Skin';
+import { StableBeatmapParser } from '../../beatmap/StableBeatmapParser';
+import type { Beatmap } from '../../beatmap/Beatmap';
 import { EditorContext } from './EditorContext';
 
 const { readFile } = require('node:fs/promises');
@@ -24,19 +21,21 @@ export class ElectronEditorContext extends EditorContext {
 
   protected async loadBeatmap(): Promise<Beatmap> {
     const contents = await readFile(this.path, 'utf-8');
-    const beatmap = new BeatmapDecoder().decodeFromString(contents);
-    const standardBeatmap = new StandardRuleset().applyToBeatmap(beatmap);
 
-    const converted = new BeatmapConverter(standardBeatmap).convert();
-    console.log(converted);
-    return converted;
+    const parser = new StableBeatmapParser();
+
+    const beatmap = await parser.parse(contents);
+
+    console.log(beatmap);
+
+    return beatmap;
   }
 
   protected async loadSong(beatmap: Beatmap): Promise<AudioBuffer> {
     const context = new AudioContext();
 
     const buffer = await readFile(
-      path.join(this.beatmapDirectory, beatmap.audioFilename),
+      path.join(this.beatmapDirectory, beatmap.settings.audioFilename),
     );
     const arrayBuffer = new Uint8Array(buffer).buffer;
 
@@ -44,8 +43,11 @@ export class ElectronEditorContext extends EditorContext {
   }
 
   async loadBackground(beatmap: Beatmap): Promise<PIXITexture | null> {
+    if (beatmap.settings.backgroundFilename === null)
+      return null;
+
     const buffer = await readFile(
-      path.join(this.beatmapDirectory, beatmap.backgroundPath),
+      path.join(this.beatmapDirectory, beatmap.settings.backgroundFilename),
     );
 
     const blob = new Blob([buffer]);

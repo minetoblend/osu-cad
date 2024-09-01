@@ -1,11 +1,12 @@
 import type { Texture } from 'pixi.js';
+import { getIcon } from '../../../../OsucadIcons';
 import { ComposeTool } from './ComposeTool';
 import type { DrawableComposeTool } from './DrawableComposeTool';
 import { DrawableSpinnerTool } from './DrawableSpinnerTool';
 
 export class SpinnerTool extends ComposeTool {
   get icon(): Texture {
-    return useAsset('icon:spinner');
+    return getIcon('spinner');
   }
 
   isSameTool(tool: ComposeTool): boolean {

@@ -1,22 +1,23 @@
-import type { ControlPoint, ControlPointManager } from '@osucad/common';
 import { Action } from 'osucad-framework';
+import type { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
+import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup';
 
 export class ControlPointSelection {
   constructor(
-    private readonly controlPoints: ControlPointManager,
+    private readonly controlPoints: ControlPointInfo,
   ) {
 
   }
 
-  selection = new Set<ControlPoint>();
+  selection = new Set<ControlPointGroup>();
 
-  selectionChanged = new Action<[ControlPoint, boolean]>();
+  selectionChanged = new Action<[ControlPointGroup, boolean]>();
 
-  isSelected(c: ControlPoint) {
+  isSelected(c: ControlPointGroup) {
     return this.selection.has(c);
   }
 
-  select(c: ControlPoint) {
+  select(c: ControlPointGroup) {
     if (this.isSelected(c))
       return;
 
@@ -24,7 +25,7 @@ export class ControlPointSelection {
     this.selectionChanged.emit([c, true]);
   }
 
-  deselect(c: ControlPoint) {
+  deselect(c: ControlPointGroup) {
     if (!this.isSelected(c))
       return;
 
@@ -39,14 +40,14 @@ export class ControlPointSelection {
     this.selection.clear();
   }
 
-  selectUntil(c: ControlPoint) {
+  selectUntil(c: ControlPointGroup) {
     const start = [...this.selection].pop();
     if (!start || start === c)
       return;
 
-    const startIndex = this.controlPoints.controlPoints.indexOf(start);
+    const startIndex = this.controlPoints.groups.indexOf(start);
 
-    const endIndex = this.controlPoints.controlPoints.indexOf(c);
+    const endIndex = this.controlPoints.groups.indexOf(c);
 
     if (startIndex === -1 || endIndex === -1)
       return;
@@ -56,7 +57,7 @@ export class ControlPointSelection {
 
     this.clear();
     for (let i = minIndex; i <= maxIndex; i++) {
-      this.select(this.controlPoints.controlPoints[i]);
+      this.select(this.controlPoints.groups.get(i)!);
     }
   }
 }

@@ -1,6 +1,9 @@
-import { Additions, PathPoint, PathType, Slider, UpdateHitObjectCommand } from '@osucad/common';
+import type { Additions } from '@osucad/common';
 import type { Bindable, MouseDownEvent, MouseUpEvent } from 'osucad-framework';
 import { MouseButton, Vec2, dependencyLoader } from 'osucad-framework';
+import { Slider } from '../../../../beatmap/hitObjects/Slider';
+import { PathPoint } from '../../../../beatmap/hitObjects/PathPoint';
+import { PathType } from '../../../../beatmap/hitObjects/PathType';
 import { DrawableHitObjectPlacementTool } from './DrawableHitObjectPlacementTool';
 import { SliderPathVisualizer } from './SliderPathVisualizer';
 import { SliderUtils } from './SliderUtils';
@@ -46,7 +49,7 @@ export class DrawableSliderTool extends DrawableHitObjectPlacementTool<Slider> {
 
     slider.position = this.getSnappedPosition(this.mousePosition);
     slider.startTime = this.snappedTime;
-    slider.isNewCombo = this.newCombo.value;
+    slider.newCombo = this.newCombo.value;
 
     slider.path.controlPoints = [
       new PathPoint(Vec2.zero(), PathType.Bezier),
@@ -55,16 +58,16 @@ export class DrawableSliderTool extends DrawableHitObjectPlacementTool<Slider> {
 
     this.path.setPath([...slider.path.controlPoints]);
 
-    let additions = Additions.None;
-    if (this.sampleWhistle.value)
-      additions |= Additions.Whistle;
-    if (this.sampleFinish.value)
-      additions |= Additions.Finish;
-    if (this.sampleClap.value)
-      additions |= Additions.Clap;
+    // let additions = Additions.None;
+    // if (this.sampleWhistle.value)
+    //   additions |= Additions.Whistle;
+    // if (this.sampleFinish.value)
+    //   additions |= Additions.Finish;
+    // if (this.sampleClap.value)
+    //   additions |= Additions.Clap;
 
-    slider.hitSound.additions = additions;
-    slider.hitSounds.forEach(it => (it.additions = additions));
+    // slider.hitSound.additions = additions;
+    // slider.hitSounds.forEach(it => (it.additions = additions));
 
     return slider;
   }
@@ -73,7 +76,7 @@ export class DrawableSliderTool extends DrawableHitObjectPlacementTool<Slider> {
     super.applyNewCombo(newCombo);
 
     if (this.isPlacing) {
-      this.submit(new UpdateHitObjectCommand(this.hitObject, { newCombo }), false);
+      this.hitObject.newCombo = newCombo;
     }
   }
 
@@ -124,7 +127,6 @@ export class DrawableSliderTool extends DrawableHitObjectPlacementTool<Slider> {
         this.sliderUtils.setPath(
           this.hitObject,
           this.path.controlPoints.slice(0, Math.max(this.path.length - 1, 2)),
-          false,
         );
       }
       else {
@@ -143,7 +145,7 @@ export class DrawableSliderTool extends DrawableHitObjectPlacementTool<Slider> {
           this.path.setType(this.segmentStart, PathType.Bezier);
         }
 
-        this.sliderUtils.setPath(this.hitObject, this.path.controlPoints, false);
+        this.sliderUtils.setPath(this.hitObject, this.path.controlPoints);
       }
 
       return true;
@@ -161,10 +163,6 @@ export class DrawableSliderTool extends DrawableHitObjectPlacementTool<Slider> {
     }
 
     return false;
-  }
-
-  beginPlacing() {
-    super.beginPlacing();
   }
 
   #beginPlacingPoint(): void {
@@ -192,7 +190,6 @@ export class DrawableSliderTool extends DrawableHitObjectPlacementTool<Slider> {
         this.sliderUtils.setPath(
           this.hitObject,
           path.controlPoints.slice(0, Math.max(path.length - 1, 2)),
-          false,
         );
 
         return;

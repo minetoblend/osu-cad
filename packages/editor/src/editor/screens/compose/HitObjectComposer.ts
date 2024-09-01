@@ -1,30 +1,29 @@
-import type {
-  Bindable,
-  IKeyBindingHandler,
-  KeyBindingPressEvent,
-} from 'osucad-framework';
+import type { Bindable, IKeyBindingHandler, KeyBindingPressEvent } from 'osucad-framework';
 import {
   Axes,
   Container,
+  DrawSizePreservingFillContainer,
   PlatformAction,
   Vec2,
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import {
-  DeleteHitObjectCommand,
-  HitObjectManager,
-  UpdateHitObjectCommand,
-} from '@osucad/common';
 import { CommandManager } from '../../context/CommandManager';
 import { EditorAction } from '../../EditorAction';
 import { NEW_COMBO } from '../../InjectionTokens';
 import { EditorClock } from '../../EditorClock';
 import { ConnectedUsersManager } from '../../context/ConnectedUsersManager';
 import { HitObjectClipboard } from '../../CopyPasteHandler';
+import { HitObjectList } from '../../../beatmap/hitObjects/HitObjectList';
+import { BeatmapBackground } from '../../playfield/BeatmapBackground';
+import { PlayfieldGrid } from '../../playfield/PlayfieldGrid';
+import { OsuPlayfield } from '../../hitobjects/OsuPlayfield';
+import { Playfield } from '../../hitobjects/Playfield';
+import { DeleteHitObjectCommand } from '../../commands/DeleteHitObjectCommand';
+import { UpdateHitObjectCommand } from '../../commands/UpdateHitObjectCommand';
 import { HitObjectUtils } from './HitObjectUtils';
 import { EditorSelection } from './EditorSelection';
-import { SelectionOverlay } from './SelectionOverlay';
+import { SelectionOverlay } from './selection/SelectionOverlay';
 import { ComposerCursorContainer } from './ComposerCursorContainer';
 import type { IPositionSnapProvider } from './snapping/IPositionSnapProvider';
 import { HitObjectSnapProvider } from './snapping/HitObjectSnapProvider';
@@ -47,13 +46,34 @@ export class HitObjectComposer
     relativeSizeAxes: Axes.Both,
   });
 
+  playfield!: OsuPlayfield;
+
   @dependencyLoader()
   load() {
-    this.addInternal(new SelectionOverlay());
+    this.addAllInternal(this.hitObjectUtils = new HitObjectUtils());
 
-    this.addInternal(this.#toolContainer);
+    this.addAllInternal(
+      new DrawSizePreservingFillContainer({
+        targetDrawSize: { x: 512, y: 384 },
+        child: new Container({
+          width: 512,
+          height: 384,
+          children: [
+            new BeatmapBackground(),
+            new PlayfieldGrid(),
+            this.playfield = new OsuPlayfield().with({
+              clock: this.editorClock,
+              processCustomClock: false,
+            }),
+            new SelectionOverlay(),
+            this.#toolContainer,
+          ],
+        }),
+      }),
+    );
 
-    this.addInternal((this.hitObjectUtils = new HitObjectUtils()));
+    this.dependencies.provide(Playfield, this.playfield);
+    this.dependencies.provide(OsuPlayfield, this.playfield);
 
     const userManager = this.dependencies.resolveOptional(
       ConnectedUsersManager,
@@ -104,8 +124,8 @@ export class HitObjectComposer
   @resolved(CommandManager)
   commandManager!: CommandManager;
 
-  @resolved(HitObjectManager)
-  hitObjects!: HitObjectManager;
+  @resolved(HitObjectList)
+  hitObjects!: HitObjectList;
 
   onKeyBindingPressed(e: KeyBindingPressEvent<PlatformAction>): boolean {
     switch (e.pressed) {

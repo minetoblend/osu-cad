@@ -1,7 +1,9 @@
-import { Beatmap, ControlPointManager, HitObjectManager } from '@osucad/common';
 import type { DependencyContainer, PIXITexture } from 'osucad-framework';
 import { Bindable } from 'osucad-framework';
+import { Beatmap } from '../../beatmap/Beatmap';
 import { Skin } from '../../skins/Skin';
+import { ControlPointInfo } from '../../beatmap/timing/ControlPointInfo';
+import { HitObjectList } from '../../beatmap/hitObjects/HitObjectList';
 import { CommandManager } from './CommandManager';
 import type { BeatmapAsset } from './BeatmapAsset';
 
@@ -132,8 +134,8 @@ export abstract class EditorContext {
   provideDependencies(dependencies: DependencyContainer) {
     dependencies.provide(EditorContext, this);
     dependencies.provide(Beatmap, this.beatmap);
-    dependencies.provide(HitObjectManager, this.beatmap.hitObjects);
-    dependencies.provide(ControlPointManager, this.beatmap.controlPoints);
+    dependencies.provide(HitObjectList, this.beatmap.hitObjects);
+    dependencies.provide(ControlPointInfo, this.beatmap.controlPoints);
     dependencies.provide(Skin, this.skin);
     dependencies.provide(CommandManager, this.commandHandler);
   }

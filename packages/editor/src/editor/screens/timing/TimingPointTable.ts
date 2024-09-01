@@ -1,15 +1,16 @@
 import type { IKeyBindingHandler, KeyBindingPressEvent, KeyDownEvent, ScrollContainer } from 'osucad-framework';
 import { Axes, Container, Direction, Key, PlatformAction, clamp, dependencyLoader, resolved } from 'osucad-framework';
-import type { ControlPoint } from '@osucad/common';
-import { ControlPointManager } from '@osucad/common';
+
 import { MainScrollContainer } from '../../MainScrollContainer';
 import { EditorClock } from '../../EditorClock';
+import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
+import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup';
 import { TimingPointRow } from './TimingPointRow';
 import { ControlPointSelection } from './ControlPointSelection';
 
 export class TimingPointTable extends Container implements IKeyBindingHandler<PlatformAction> {
-  @resolved(ControlPointManager)
-  controlPoints!: ControlPointManager;
+  @resolved(ControlPointInfo)
+  controlPoints!: ControlPointInfo;
 
   @resolved(EditorClock)
   editorClock!: EditorClock;
@@ -54,35 +55,35 @@ export class TimingPointTable extends Container implements IKeyBindingHandler<Pl
     this.#scroll.relativeSizeAxes = Axes.Both;
     this.#scroll.distanceDecayJump = 0.025;
 
-    this.selection.selectionChanged.addListener(([object, selected]) => {
-      const row = this.#visibleRows.get(object);
-      if (row) {
-        row.selected = selected;
-      }
-    });
+    // this.selection.selectionChanged.addListener(([object, selected]) => {
+    //   const row = this.#visibleRows.get(object);
+    //   if (row) {
+    //     row.selected = selected;
+    //   }
+    // });
   }
 
   #scroll!: ScrollContainer;
 
-  #visibleRows = new Map<ControlPoint, TimingPointRow>();
+  #visibleRows = new Map<ControlPointGroup, TimingPointRow>();
 
   update() {
     super.update();
 
     const rowHeight = 25;
 
-    this.#scroll.scrollContent.height = this.controlPoints.controlPoints.length * rowHeight + 100;
+    this.#scroll.scrollContent.height = this.controlPoints.groups.length * rowHeight + 100;
 
     const scrollStart = this.#scroll.current;
     const scrollEnd = scrollStart + this.#scroll.drawSize.y;
 
     const startIndex = Math.max(Math.floor(scrollStart / rowHeight) - 10, 0);
-    const endIndex = Math.min(Math.ceil(scrollEnd / rowHeight) + 10, this.controlPoints.controlPoints.length - 1);
+    const endIndex = Math.min(Math.ceil(scrollEnd / rowHeight) + 10, this.controlPoints.groups.length - 1);
 
     const toDelete = new Set(this.#visibleRows.keys());
 
     for (let i = startIndex; i <= endIndex; i++) {
-      const controlPoint = this.controlPoints.controlPoints[i];
+      const controlPoint = this.controlPoints.groups.get(i);
 
       if (!controlPoint)
         continue;
@@ -97,7 +98,7 @@ export class TimingPointTable extends Container implements IKeyBindingHandler<Pl
 
       const row = new TimingPointRow(controlPoint);
 
-      row.selected = this.selection.isSelected(controlPoint);
+      // row.selected = this.selection.isSelected(controlPoint);
 
       row.y = i * rowHeight;
 
@@ -132,20 +133,20 @@ export class TimingPointTable extends Container implements IKeyBindingHandler<Pl
         this.moveSelection(10, e.shiftPressed);
         return true;
       case Key.Home:
-        if (this.controlPoints.controlPoints.length === 0)
+        if (this.controlPoints.groups.length === 0)
           return true;
 
         this.selection.clear();
-        this.selection.select(this.controlPoints.controlPoints[0]);
+        // this.selection.select(this.controlPoints.controlPoints[0]);
         this.scrollIntoView(0);
         return true;
       case Key.End:
-        if (this.controlPoints.controlPoints.length === 0)
+        if (this.controlPoints.groups.length === 0)
           return true;
 
         this.selection.clear();
-        this.selection.select(this.controlPoints.controlPoints[this.controlPoints.controlPoints.length - 1]);
-        this.scrollIntoView(this.controlPoints.controlPoints.length - 1);
+        // this.selection.select(this.controlPoints.controlPoints[this.controlPoints.controlPoints.length - 1]);
+        this.scrollIntoView(this.controlPoints.groups.length - 1);
         return true;
       case Key.Enter:
         if (this.selection.selection.size === 1) {
@@ -160,9 +161,9 @@ export class TimingPointTable extends Container implements IKeyBindingHandler<Pl
     let index = Math.floor(this.#scroll.current / 25);
 
     if (this.selection.selection.size > 0) {
-      const controlPoint = [...this.selection.selection].pop()!;
+      // const controlPoint = [...this.selection.selection].pop()!;
 
-      index = this.controlPoints.controlPoints.indexOf(controlPoint);
+      // index = this.controlPoints.controlPoints.indexOf(controlPoint);
 
       if (index === -1)
         return;
@@ -170,20 +171,20 @@ export class TimingPointTable extends Container implements IKeyBindingHandler<Pl
 
     index += offset;
 
-    index = clamp(index, 0, this.controlPoints.controlPoints.length - 1);
+    index = clamp(index, 0, this.controlPoints.groups.length - 1);
 
     if (addToSelection) {
       for (let i = 0; i <= Math.abs(offset); i++) {
-        const c = this.controlPoints.controlPoints[index - offset + i * Math.sign(offset)];
-        if (!c)
-          continue;
+        // const c = this.controlPoints.controlPoints[index - offset + i * Math.sign(offset)];
+        // if (!c)
+        //   continue;
 
-        this.selection.select(c);
+        // this.selection.select(c);
       }
     }
     else {
       this.selection.clear();
-      this.selection.select(this.controlPoints.controlPoints[index]);
+      // this.selection.select(this.controlPoints.controlPoints[index]);
     }
 
     this.scrollIntoView(index);

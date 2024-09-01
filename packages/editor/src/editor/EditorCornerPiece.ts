@@ -31,7 +31,7 @@ export class EditorCornerPiece extends Container {
     this.drawNode.addChild(this.#background, this.#outline);
     this.addInternal(this.#content);
 
-    this.apply(options);
+    this.with(options);
   }
 
   #background = new PIXIGraphics();

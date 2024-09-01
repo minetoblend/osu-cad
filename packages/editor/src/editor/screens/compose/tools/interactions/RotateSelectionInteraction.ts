@@ -1,10 +1,11 @@
-import type { HitObject } from '@osucad/common';
 import type {
   DragEvent,
   DragStartEvent,
+  IVec2,
   KeyDownEvent,
   KeyUpEvent,
   MouseDownEvent,
+  Rectangle,
 } from 'osucad-framework';
 import {
   Action,
@@ -12,6 +13,7 @@ import {
   Axes,
   Bindable,
   CompositeDrawable,
+  EasingFunction,
   FillDirection,
   FillFlowContainer,
   Key,
@@ -20,19 +22,18 @@ import {
   Vec2,
   dependencyLoader,
 } from 'osucad-framework';
-
-import type { IVec2, Rectangle } from 'osucad-framework/math';
 import { Graphics, Matrix } from 'pixi.js';
 import { HitObjectUtils } from '../../HitObjectUtils';
 import { HitObjectComposer } from '../../HitObjectComposer';
 import { OsucadSpriteText } from '../../../../../OsucadSpriteText';
 import { Ring } from '../../../../../drawables/Ring';
 import { DraggableDialogBox } from '../../../../../userInterface/DraggableDialogBox';
+import type { OsuHitObject } from '../../../../../beatmap/hitObjects/OsuHitObject';
 import { ComposeToolInteraction } from './ComposeToolInteraction';
 
 export class RotateSelectionInteraction extends ComposeToolInteraction {
   constructor(
-    readonly hitObjects: HitObject[],
+    readonly hitObjects: OsuHitObject[],
   ) {
     super();
 
@@ -283,14 +284,14 @@ class RotationHandle extends CompositeDrawable {
 
     this.#currentAngleText.text = `${Math.round(this.#currentRotation * 180 / Math.PI)}deg`;
 
-    this.#currentAngleText.moveTo({
-      position: new Vec2(
-        Math.cos(this.#currentRotation + (this.#startAngle ?? -Math.PI)) * (radius + 30),
-        Math.sin(this.#currentRotation + (this.#startAngle ?? -Math.PI)) * (radius + 10),
-      ),
-      duration: 200,
-      easing: 'power2.out',
-    });
+    this.#currentAngleText.moveTo(
+      new Vec2(radius)
+        .rotate(this.#currentRotation + (this.#startAngle ?? -Math.PI))
+        .mul({ x: 30, y: 10 })
+      ,
+      200,
+      EasingFunction.OutQuad,
+    );
 
     const g = this.#rotationVisualizer;
     g.clear();

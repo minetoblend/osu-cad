@@ -24,7 +24,7 @@ export class Slider extends HitObject {
 
       if (options.hitSounds) this.hitSounds = options.hitSounds;
 
-      this._updateHitSounds();
+      this.updateHitSounds();
     }
   }
 
@@ -45,7 +45,7 @@ export class Slider extends HitObject {
     if (value === this._repeats) return;
     this._repeats = value;
     this.onUpdate.emit('repeats');
-    this._updateHitSounds();
+    this.updateHitSounds();
   }
 
   private _hitSounds: HitSound[] = [];
@@ -253,7 +253,7 @@ export class Slider extends HitObject {
     ];
   }
 
-  protected override _updateHitSounds() {
+  override updateHitSounds() {
     this.selectedEdges = this.selectedEdges.filter(
       (i) => i <= this.repeats + 1,
     );

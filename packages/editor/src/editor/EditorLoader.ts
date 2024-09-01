@@ -1,11 +1,10 @@
 import type { Drawable, GameHost, ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
-import { AudioManager, Axes, GAME_HOST, LowpassFilter, ScreenStack, resolved } from 'osucad-framework';
+import { AudioManager, Axes, EasingFunction, GAME_HOST, LowpassFilter, ScreenStack, resolved } from 'osucad-framework';
 import { OsucadScreen } from '../OsucadScreen';
 import { GlobalSongPlayback } from '../GlobalSongPlayback';
 import { NotificationOverlay } from '../notifications/NotificationOverlay';
 import { Notification } from '../notifications/Notification';
 import type { EditorContext } from './context/EditorContext';
-import { OnlineEditorContext } from './context/OnlineEditorContext';
 import { EditorMixer } from './EditorMixer';
 import { LoadingSpinner } from './LoadingSpinner';
 
@@ -56,7 +55,7 @@ export class EditorLoader extends OsucadScreen {
       this.audioManager.context.currentTime + 0.25,
     );
 
-    this.fadeIn({ duration: 500, easing: 'power3.out' });
+    this.fadeIn(500, EasingFunction.OutCubic);
 
     const screenStack = this.findClosestParentOfType(ScreenStack);
     if (!screenStack) {
@@ -70,6 +69,7 @@ export class EditorLoader extends OsucadScreen {
         await this.loadComponentAsync(editor);
       }
       catch (e) {
+        console.error(e);
         editor.dispose();
         this.exit();
 
@@ -109,7 +109,7 @@ export class EditorLoader extends OsucadScreen {
   onSuspending(e: ScreenTransitionEvent) {
     super.onSuspending(e);
 
-    this.fadeOut({ duration: 600 });
+    this.fadeOut(600);
   }
 
   onResuming(e: ScreenTransitionEvent) {
@@ -136,10 +136,6 @@ export class EditorLoader extends OsucadScreen {
   }
 
   getPath(): string {
-    if (this.context instanceof OnlineEditorContext) {
-      return `/edit/${this.context.joinKey}`;
-    }
-
     return '/edit';
   }
 }

@@ -1,6 +1,5 @@
-import type { HitObject } from '@osucad/common';
-import { Beatmap, HitCircle, HitObjectManager, Slider, Spinner } from '@osucad/common';
 import type {
+  Bindable,
   DragEvent,
   DragStartEvent,
   KeyDownEvent,
@@ -10,19 +9,24 @@ import type {
 } from 'osucad-framework';
 import {
   Anchor,
-
   Axes,
   Box,
   Container,
+  EasingFunction,
   MouseButton,
   almostEquals,
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import gsap from 'gsap';
 import { EditorClock } from '../EditorClock';
 import { ThemeColors } from '../ThemeColors';
 import { EditorSelection } from '../screens/compose/EditorSelection';
+import { Beatmap } from '../../beatmap/Beatmap';
+import { HitObjectList } from '../../beatmap/hitObjects/HitObjectList';
+import { HitCircle } from '../../beatmap/hitObjects/HitCircle';
+import { Slider } from '../../beatmap/hitObjects/Slider';
+import { Spinner } from '../../beatmap/hitObjects/Spinner';
+import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
 import { TimelineTick } from './TimelineTick';
 import type { TimelineObject } from './TimelineObject';
 import { TimelineHitCircle } from './TimelineHitCircle';
@@ -74,15 +78,6 @@ export class Timeline extends Container {
         color: this.theme.primary,
       }),
     );
-
-    this.hitObjects.onUpdated.addListener(([hitObject, type]) => {
-      if (type === 'startTime') {
-        const drawable = this.#hitObjectMap.get(hitObject);
-        if (drawable) {
-          this.#objectContainer.changeChildDepth(drawable, hitObject.startTime);
-        }
-      }
-    });
   }
 
   #objectContainer!: Container;
@@ -149,11 +144,13 @@ export class Timeline extends Container {
     this.#tickContainer.scale.set(1, 15);
     this.#tickContainer.pivot.y = 1;
 
-    const ticks = this.controlPoints.getTicks(
-      this.startTime,
-      this.endTime,
-      this.editorClock.beatSnapDivisor.value,
-    );
+    const ticks = [
+      ...this.controlPoints.tickGenerator.generateTicks(
+        this.startTime,
+        this.endTime,
+        this.editorClock.beatSnapDivisor.value,
+      ),
+    ];
 
     for (let i = this.#tickContainer.children.length; i < ticks.length; i++) {
       this.#tickContainer.addChild(new TimelineTick());
@@ -173,13 +170,13 @@ export class Timeline extends Container {
     }
   }
 
-  #hitObjectMap = new Map<HitObject, TimelineObject>();
+  #hitObjectMap = new Map<OsuHitObject, TimelineObject>();
 
   #updateObjects() {
     const startTime = this.startTime - 1000;
     const endTime = this.endTime + 1000;
-    const objects = this.beatmap.hitObjects.hitObjects.filter(
-      it => it.endTime >= startTime && it.startTime <= endTime && !it.isGhost,
+    const objects = this.beatmap.hitObjects.filter(
+      it => it.endTime >= startTime && it.startTime <= endTime,
     );
 
     const shouldRemove = new Set(this.#hitObjectMap.keys());
@@ -194,11 +191,7 @@ export class Timeline extends Container {
         if (!newDrawable)
           continue;
 
-        this.#hitObjectMap.set(object, newDrawable);
-
-        newDrawable.depth = object.startTime;
-
-        this.#objectContainer.add(newDrawable);
+        this.#addObject(newDrawable, object);
 
         drawable = newDrawable;
       }
@@ -228,15 +221,11 @@ export class Timeline extends Container {
     }
 
     for (const object of shouldRemove) {
-      const drawable = this.#hitObjectMap.get(object);
-      if (drawable) {
-        this.#objectContainer.remove(drawable);
-        this.#hitObjectMap.delete(object);
-      }
+      this.#removeObject(object);
     }
   }
 
-  protected createDrawable(object: HitObject): TimelineObject | null {
+  protected createDrawable(object: OsuHitObject): TimelineObject | null {
     if (object instanceof HitCircle)
       return new TimelineHitCircle(object);
     if (object instanceof Slider)
@@ -250,19 +239,17 @@ export class Timeline extends Container {
   zoomSpeed = 0.3;
 
   zoomOut(factor: number = 1) {
-    gsap.to(this, {
-      zoom: Math.min(this.zoom * (1 + this.zoomSpeed * factor), 8),
-      duration: 0.15,
-      ease: 'power2.out',
-    });
+    const zoom = Math.min(this.zoom * (1 + this.zoomSpeed * factor), 8);
+    this.zoomTo(zoom, 150, EasingFunction.OutQuad);
   }
 
   zoomIn(factor: number = 1) {
-    gsap.to(this, {
-      zoom: Math.max(this.zoom / (1 + this.zoomSpeed * factor), 0.25),
-      duration: 0.15,
-      ease: 'power2.out',
-    });
+    const zoom = Math.max(this.zoom / (1 + this.zoomSpeed * factor), 0.25);
+    this.zoomTo(zoom, 150, EasingFunction.OutQuad);
+  }
+
+  zoomTo(zoom: number, duration: number, easing: EasingFunction) {
+    return this.transformTo('zoom', zoom, duration, easing);
   }
 
   #dragStartTime = 0;
@@ -275,10 +262,10 @@ export class Timeline extends Container {
   @resolved(EditorSelection)
   selection!: EditorSelection;
 
-  @resolved(HitObjectManager)
-  hitObjects!: HitObjectManager;
+  @resolved(HitObjectList)
+  hitObjects!: HitObjectList;
 
-  #startSelection: HitObject[] = [];
+  #startSelection: OsuHitObject[] = [];
 
   onMouseDown(e: MouseDownEvent): boolean {
     if (e.button === MouseButton.Left && !e.controlPressed) {
@@ -301,7 +288,7 @@ export class Timeline extends Container {
   onDrag(e: DragEvent): boolean {
     this.#dragEndTime = this.positionToTime(e.mousePosition.x);
 
-    const selectedObjects = this.hitObjects.hitObjects.filter((it) => {
+    const selectedObjects = this.hitObjects.filter((it) => {
       return (
         it.startTime <= Math.max(this.#dragStartTime, this.#dragEndTime)
         && it.endTime >= Math.min(this.#dragStartTime, this.#dragEndTime)
@@ -347,5 +334,39 @@ export class Timeline extends Container {
     }
 
     return false;
+  }
+
+  #startTimeMap = new Map<OsuHitObject, Bindable<number>>();
+
+  #addObject(drawable: TimelineObject, object: OsuHitObject) {
+    this.#hitObjectMap.set(object, drawable);
+
+    drawable.depth = object.startTime;
+
+    const startTime = object.startTimeBindable.getBoundCopy();
+
+    this.#startTimeMap.set(object, startTime);
+
+    startTime.valueChanged.addListener(() => {
+      this.#objectContainer.changeChildDepth(drawable, object.startTime);
+    });
+
+    this.#objectContainer.add(drawable);
+  }
+
+  #removeObject(object: OsuHitObject) {
+    const drawable = this.#hitObjectMap.get(object);
+    if (!drawable)
+      return;
+
+    this.#objectContainer.remove(drawable);
+
+    this.#hitObjectMap.delete(object);
+
+    const startTime = this.#startTimeMap.get(object);
+    if (startTime) {
+      startTime.unbindAll();
+      this.#startTimeMap.delete(object);
+    }
   }
 }

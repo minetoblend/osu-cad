@@ -11,7 +11,7 @@ export class Ring extends GraphicsDrawable {
   constructor(options: RingOptions) {
     super();
 
-    this.apply(options);
+    this.with(options);
   }
 
   get strokeWidth() {

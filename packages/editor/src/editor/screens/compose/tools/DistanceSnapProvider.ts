@@ -1,24 +1,18 @@
-import type {
-  IDistanceSnapProvider,
-  Slider,
-} from '@osucad/common';
-import {
-  ControlPointManager,
-} from '@osucad/common';
 import { CompositeDrawable, resolved } from 'osucad-framework';
 import { EditorClock } from '../../../EditorClock';
+import { ControlPointInfo } from '../../../../beatmap/timing/ControlPointInfo';
+import type { Slider } from '../../../../beatmap/hitObjects/Slider';
 
 export class DistanceSnapProvider
-  extends CompositeDrawable
-  implements IDistanceSnapProvider {
-  @resolved(ControlPointManager)
-  controlPointInfo!: ControlPointManager;
+  extends CompositeDrawable {
+  @resolved(ControlPointInfo)
+  controlPointInfo!: ControlPointInfo;
 
   @resolved(EditorClock)
   editorClock!: EditorClock;
 
   findSnappedDistance(referenceObject: Slider): number {
-    const length = referenceObject!.path.totalLength;
+    const length = referenceObject!.path.calculatedDistance;
     const duration = length / referenceObject!.velocity;
     let time = this.controlPointInfo.snap(
       referenceObject!.startTime + duration,
@@ -26,9 +20,7 @@ export class DistanceSnapProvider
     );
 
     if (time > referenceObject.startTime + duration) {
-      const beatLength = this.controlPointInfo.timingPointAt(
-        referenceObject.startTime,
-      ).timing.beatLength;
+      const beatLength = this.controlPointInfo.timingPointAt(referenceObject.startTime).beatLength;
 
       time -= beatLength / this.editorClock.beatSnapDivisor.value;
     }

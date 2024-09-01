@@ -32,6 +32,9 @@ declare module 'virtual:pixi-assets' {
     "icon:size-ew": AssetRecordInfo<"icon:size-ew", "/src/assets/icons/size-ew.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
     "icon:size-ns": AssetRecordInfo<"icon:size-ns", "/src/assets/icons/size-ns.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
     "icon:slider": AssetRecordInfo<"icon:slider", "/src/assets/icons/slider.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
+    "icon:slidershape-bird@2x": AssetRecordInfo<"icon:slidershape-bird@2x", "/src/assets/icons/slidershape-bird@2x.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
+    "icon:slidershape-wave@2x": AssetRecordInfo<"icon:slidershape-wave@2x", "/src/assets/icons/slidershape-wave@2x.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
+    "icon:slidershape-zwave@2x": AssetRecordInfo<"icon:slidershape-zwave@2x", "/src/assets/icons/slidershape-zwave@2x.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
     "icon:spinner": AssetRecordInfo<"icon:spinner", "/src/assets/icons/spinner.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
     "icon:undo": AssetRecordInfo<"icon:undo", "/src/assets/icons/undo.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>
     "icon:whistle@2x": AssetRecordInfo<"icon:whistle@2x", "/src/assets/icons/whistle@2x.png", import("pixi.js").Texture,  import("pixi.js").TextureSourceOptions>

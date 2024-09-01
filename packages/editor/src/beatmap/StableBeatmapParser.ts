@@ -1,4 +1,22 @@
+import { EffectType, HitType } from 'osu-classes';
+
+import { Vec2 } from 'osucad-framework';
+import { Color } from 'pixi.js';
+import { SliderPathBuilder } from '../editor/screens/compose/tools/SliderPathBuilder';
 import { Beatmap } from './Beatmap';
+import { SamplePoint } from './timing/SamplePoint';
+import { EffectPoint } from './timing/EffectPoint';
+import { TimingPoint } from './timing/TimingPoint';
+import { DifficultyPoint } from './timing/DifficultyPoint';
+import { HitCircle } from './hitObjects/HitCircle';
+import { Slider } from './hitObjects/Slider';
+import { Spinner } from './hitObjects/Spinner';
+import { PathPoint } from './hitObjects/PathPoint';
+import { PathType } from './hitObjects/PathType';
+import { SampleSet } from './hitSounds/SampleSet';
+import type { Additions } from './hitSounds/Additions';
+import { HitSound } from './hitSounds/HitSound';
+import type { OsuHitObject } from './hitObjects/OsuHitObject';
 
 enum BeatmapSection {
   General = 'General',
@@ -11,8 +29,13 @@ enum BeatmapSection {
   HitObjects = 'HitObjects',
 }
 
+export interface ParseBeatmapOptions {
+  hitObjects?: boolean;
+  timingPoints?: boolean;
+}
+
 export class StableBeatmapParser {
-  parse(fileContent: string): Beatmap {
+  async parse(fileContent: string, options: ParseBeatmapOptions = {}): Promise<Beatmap> {
     const lines = fileContent.split('\n').map(it => it.trim());
 
     let currentSection: BeatmapSection | null = null;
@@ -36,7 +59,7 @@ export class StableBeatmapParser {
       }
 
       if (currentSection) {
-        this.#parseLine(beatmap, currentSection, line);
+        await this.#parseLine(beatmap, currentSection, line, options);
       }
     }
 
@@ -53,7 +76,7 @@ export class StableBeatmapParser {
     return null;
   }
 
-  #parseLine(beatmap: Beatmap, section: BeatmapSection, line: string) {
+  async #parseLine(beatmap: Beatmap, section: BeatmapSection, line: string, options: ParseBeatmapOptions) {
     switch (section) {
       case BeatmapSection.General:
         this.#parseGeneral(beatmap, line);
@@ -64,6 +87,31 @@ export class StableBeatmapParser {
       case BeatmapSection.Editor:
         this.#parseEditor(beatmap, line);
         break;
+      case BeatmapSection.Difficulty:
+        this.#parseDifficulty(beatmap, line);
+        break;
+      case BeatmapSection.TimingPoints:
+        if (options.timingPoints === false)
+          return;
+        this.#parseTimingPoints(beatmap, line);
+        break;
+      case BeatmapSection.Colours:
+        this.#parseColors(beatmap, line);
+        break;
+      case BeatmapSection.Events:
+        this.#parseEvents(beatmap, line);
+        break;
+      case BeatmapSection.HitObjects:
+        if (options.hitObjects === false)
+          return;
+        this.#parseHitObject(beatmap, line);
+
+        if (typeof WorkerGlobalScope === 'undefined' || globalThis instanceof WorkerGlobalScope) {
+          if (beatmap.hitObjects.length % 100 === 0)
+            await new Promise(resolve => setTimeout(resolve, 10));
+        }
+
+        break;
     }
   }
 
@@ -72,38 +120,34 @@ export class StableBeatmapParser {
 
     switch (key) {
       case 'Title':
-        beatmap.beatmapInfo.metadata.title = value;
+        beatmap.metadata.title = value;
         break;
       case 'TitleUnicode':
-        beatmap.beatmapInfo.metadata.titleUnicode = value;
+        beatmap.metadata.titleUnicode = value;
         break;
       case 'Artist':
-        beatmap.beatmapInfo.metadata.artist = value;
+        beatmap.metadata.artist = value;
         break;
       case 'ArtistUnicode':
-        beatmap.beatmapInfo.metadata.artistUnicode = value;
+        beatmap.metadata.artistUnicode = value;
         break;
       case 'Creator':
-        beatmap.beatmapInfo.metadata.author = {
-          onlineId: null,
-          username: value,
-          avatarUrl: null,
-        };
+        beatmap.metadata.creator = value;
         break;
       case 'Version':
-        beatmap.beatmapInfo.difficultyName = value;
+        beatmap.metadata.difficultyName = value;
         break;
       case 'Source':
-        beatmap.beatmapInfo.metadata.source = value;
+        beatmap.metadata.source = value;
         break;
       case 'Tags':
-        beatmap.beatmapInfo.metadata.tags = value;
+        beatmap.metadata.tags = value;
         break;
       case 'BeatmapID':
-        beatmap.beatmapInfo.osuWebId = Number.parseInt(value);
+        beatmap.metadata.osuWebId = Number.parseInt(value);
         break;
       case 'BeatmapSetID':
-        beatmap.beatmapInfo.beatmapSetInfo.osuWebId = Number.parseInt(value);
+        beatmap.metadata.osuWebSetId = Number.parseInt(value);
         break;
     }
   }
@@ -113,58 +157,58 @@ export class StableBeatmapParser {
 
     switch (key) {
       case 'AudioFilename':
-        beatmap.beatmapInfo.audioFilename = value;
+        beatmap.settings.audioFilename = value;
         break;
       case 'AudioLeadIn':
-        beatmap.beatmapInfo.audioLeadIn = Number.parseInt(value);
+        beatmap.settings.audioLeadIn = Number.parseInt(value);
         break;
       case 'AudioHash':
-        beatmap.beatmapInfo.audioHash = value;
+        beatmap.settings.audioHash = value;
         break;
       case 'PreviewTime':
-        beatmap.beatmapInfo.previewTime = Number.parseInt(value);
+        beatmap.settings.previewTime = Number.parseInt(value);
         break;
       case 'Countdown':
-        beatmap.beatmapInfo.countdown = Number.parseInt(value);
+        beatmap.settings.countdown = Number.parseInt(value);
         break;
       case 'SampleSet':
-        beatmap.beatmapInfo.sampleSet = value;
+        beatmap.settings.sampleSet = value;
         break;
       case 'StackLeniency':
-        beatmap.beatmapInfo.stackLeniency = Number.parseFloat(value);
+        beatmap.settings.stackLeniency = Number.parseFloat(value);
         break;
       case 'Mode':
-        beatmap.beatmapInfo.mode = Number.parseInt(value);
+        beatmap.settings.mode = Number.parseInt(value);
         break;
       case 'LetterboxInBreaks':
-        beatmap.beatmapInfo.letterboxInBreaks = value === '1';
+        beatmap.settings.letterboxInBreaks = value === '1';
         break;
       case 'UseSkinSprites':
-        beatmap.beatmapInfo.useSkinSprites = value === '1';
+        beatmap.settings.useSkinSprites = value === '1';
         break;
       case 'AlwaysShowPlayfield':
-        beatmap.beatmapInfo.alwaysShowPlayfield = value === '1';
+        beatmap.settings.alwaysShowPlayfield = value === '1';
         break;
       case 'OverlayPosition':
-        beatmap.beatmapInfo.overlayPosition = value;
+        beatmap.settings.overlayPosition = value;
         break;
       case 'SkinPreference':
-        beatmap.beatmapInfo.skinPreference = value;
+        beatmap.settings.skinPreference = value;
         break;
       case 'EpilepsyWarning':
-        beatmap.beatmapInfo.epilepsyWarning = value === '1';
+        beatmap.settings.epilepsyWarning = value === '1';
         break;
       case 'CountdownOffset':
-        beatmap.beatmapInfo.countdownOffset = Number.parseInt(value);
+        beatmap.settings.countdownOffset = Number.parseInt(value);
         break;
       case 'SpecialStyle':
-        beatmap.beatmapInfo.specialStyle = value === '1';
+        beatmap.settings.specialStyle = value === '1';
         break;
       case 'WidescreenStoryboard':
-        beatmap.beatmapInfo.widescreenStoryboard = value === '1';
+        beatmap.settings.widescreenStoryboard = value === '1';
         break;
       case 'SamplesMatchPlaybackRate':
-        beatmap.beatmapInfo.samplesMatchPlaybackRate = value === '1';
+        beatmap.settings.samplesMatchPlaybackRate = value === '1';
         break;
     }
   }
@@ -174,20 +218,237 @@ export class StableBeatmapParser {
 
     switch (key) {
       case 'Bookmarks':
-        beatmap.beatmapInfo.editor.bookmarks = value.split(',').map(it => Number.parseInt(it));
+        beatmap.settings.editor.bookmarks = value.split(',').map(it => Number.parseInt(it));
         break;
       case 'DistanceSpacing':
-        beatmap.beatmapInfo.editor.distanceSpacing = Number.parseFloat(value);
+        beatmap.settings.editor.distanceSpacing = Number.parseFloat(value);
         break;
       case 'BeatDivisor':
-        beatmap.beatmapInfo.editor.beatDivisor = Number.parseInt(value);
+        beatmap.settings.editor.beatDivisor = Number.parseInt(value);
         break;
       case 'GridSize':
-        beatmap.beatmapInfo.editor.gridSize = Number.parseInt(value);
+        beatmap.settings.editor.gridSize = Number.parseInt(value);
         break;
       case 'TimelineZoom':
-        beatmap.beatmapInfo.editor.timelineZoom = Number.parseFloat(value);
+        beatmap.settings.editor.timelineZoom = Number.parseFloat(value);
         break;
+    }
+  }
+
+  #parseTimingPoints(beatmap: Beatmap, line: string) {
+    const values = line.split(',');
+    if (values.length <= 1)
+      return;
+
+    const uninherited = values[6] === '1';
+
+    const startTime = Number.parseFloat(values[0]);
+
+    const group = beatmap.controlPoints.controlPointGroupAtTime(startTime, true);
+
+    const volume = Number.parseInt(values[5]) / 100;
+
+    let sampleSet = SampleSet.Auto;
+    switch (values[3]) {
+      case '1':
+        sampleSet = SampleSet.Normal;
+        break;
+      case '2':
+        sampleSet = SampleSet.Soft;
+        break;
+      case '3':
+        sampleSet = SampleSet.Drum;
+    }
+
+    const sampleIndex = Number.parseInt(values[4]);
+
+    beatmap.controlPoints.addToGroup(group, new SamplePoint(volume, sampleSet, sampleIndex), true);
+
+    const effectFlags = Number.parseInt(values[7]);
+
+    const kiaiMode = !!(effectFlags & EffectType.Kiai);
+
+    beatmap.controlPoints.addToGroup(group, new EffectPoint(kiaiMode), true);
+
+    if (uninherited) {
+      const beatLength = Number.parseFloat(values[1]);
+      const meter = Number.parseInt(values[2]);
+
+      group.add(new TimingPoint(beatLength, meter));
+      group.add(new DifficultyPoint(1));
+    }
+    else {
+      const sliderVelocity = -100 / Number.parseFloat(values[1]);
+
+      beatmap.controlPoints.addToGroup(group, new DifficultyPoint(sliderVelocity), true);
+    }
+  }
+
+  #parseHitObject(beatmap: Beatmap, line: string) {
+    const values = line.split(',');
+
+    const x = Number.parseInt(values[0]);
+    const y = Number.parseInt(values[1]);
+    const startTime = Number.parseFloat(values[2]);
+    const type = Number.parseInt(values[3]);
+    const newCombo = !!(type & HitType.NewCombo);
+
+    const comboOffset = (type & HitType.ComboOffset) >> 4;
+
+    let hitObject: OsuHitObject | undefined;
+
+    let hitSampleIndex = 5;
+
+    if (type & HitType.Normal) {
+      const circle = hitObject = new HitCircle();
+      circle.position = new Vec2(x, y);
+      circle.startTime = startTime;
+      circle.newCombo = newCombo;
+      circle.comboOffset = comboOffset;
+    }
+    else if (type & HitType.Slider) {
+      const slider = hitObject = new Slider();
+      slider.position = new Vec2(x, y);
+      slider.startTime = startTime;
+      slider.newCombo = newCombo;
+      slider.comboOffset = comboOffset;
+
+      const pathString = values[5];
+      const [pathTypeLetter, ...pathPoints] = pathString.split('|');
+
+      let pathType: PathType;
+      switch (pathTypeLetter) {
+        case 'B':
+          pathType = PathType.Bezier;
+          break;
+        case 'C':
+          pathType = PathType.Catmull;
+          break;
+        case 'L':
+          pathType = PathType.Linear;
+          break;
+        case 'P':
+          pathType = PathType.PerfectCurve;
+          break;
+        default:
+          throw new Error(`Unknown path type: ${pathTypeLetter}`);
+      }
+
+      const path = new SliderPathBuilder([
+        new PathPoint(new Vec2(), pathType),
+      ]);
+
+      for (const p of pathPoints) {
+        const [x, y] = p.split(':').map(it => Number.parseFloat(it));
+
+        const position = new Vec2(x, y).sub(slider.position);
+
+        if (position.equals(path.get(-1).position)) {
+          path.setType(-1, PathType.Bezier);
+          continue;
+        }
+
+        path.append(new PathPoint(position));
+      }
+
+      slider.path.controlPoints = path.controlPoints;
+      slider.path.expectedDistance = Number.parseFloat(values[7]);
+
+      slider.repeatCount = Number.parseInt(values[6]) - 1;
+
+      hitSampleIndex = 10;
+
+      if (values[8]) {
+        const edgeSounds = values[8].split('|').map(it => Number.parseInt(it) >> 1);
+        const edgeSets = values[9].split('|').map((it) => {
+          const [normalSet, additionSet] = it.split(':');
+          return {
+            normalSet: Number.parseInt(normalSet),
+            additionSet: Number.parseInt(additionSet),
+          };
+        });
+
+        console.assert(edgeSets.length === edgeSounds.length && edgeSets.length === slider.spanCount + 1);
+
+        const hitSounds: HitSound[] = [];
+        for (let i = 0; i < edgeSets.length; i++) {
+          hitSounds.push(new HitSound(
+            edgeSets[i].normalSet,
+            edgeSets[i].additionSet,
+            edgeSounds[i],
+          ));
+        }
+
+        console.log(edgeSounds);
+
+        slider.hitSounds = hitSounds;
+      }
+
+      slider.ensureHitSoundsAreValid();
+    }
+    else if (type & HitType.Spinner) {
+      const spinner = hitObject = new Spinner();
+      spinner.startTime = startTime;
+      spinner.duration = Number.parseFloat(values[5]) - startTime;
+      spinner.newCombo = newCombo;
+      spinner.position = new Vec2(x, y);
+
+      hitSampleIndex = 6;
+    }
+
+    if (!hitObject)
+      return;
+
+    const samples = (values[hitSampleIndex] ?? '0:0:0:0:').split(':');
+    const [sampleSet, additionSampleSet] = samples.slice(0, 4).map(it => Number.parseInt(it));
+
+    const additions = Number.parseInt(values[4]) as Additions;
+
+    hitObject.hitSound = new HitSound(sampleSet, additionSampleSet, additions);
+
+    beatmap.hitObjects.add(hitObject);
+  }
+
+  #parseDifficulty(beatmap: Beatmap, line: string) {
+    const [key, value] = line.split(':').map(it => it.trim());
+
+    switch (key) {
+      case 'HPDrainRate':
+        beatmap.difficulty.hpDrainRate = Number.parseFloat(value);
+        break;
+      case 'CircleSize':
+        beatmap.difficulty.circleSize = Number.parseFloat(value);
+        break;
+      case 'OverallDifficulty':
+        beatmap.difficulty.overallDifficulty = Number.parseFloat(value);
+        break;
+      case 'ApproachRate':
+        beatmap.difficulty.approachRate = Number.parseFloat(value);
+        break;
+      case 'SliderMultiplier':
+        beatmap.difficulty.sliderMultiplier = Number.parseFloat(value);
+        break;
+      case 'SliderTickRate':
+        beatmap.difficulty.sliderTickRate = Number.parseFloat(value);
+        break;
+    }
+  }
+
+  #parseColors(beatmap: Beatmap, line: string) {
+    const [key, value] = line.split(':').map(it => it.trim());
+
+    if (key.startsWith('Combo')) {
+      const [r, g, b] = value.split(',').map(it => Number.parseInt(it));
+
+      beatmap.colors.addComboColor(new Color({ r, g, b }));
+    }
+  }
+
+  #parseEvents(beatmap: Beatmap, line: string) {
+    if (line.startsWith('0,0,')) {
+      const filename = line.split(',')[2];
+
+      beatmap.settings.backgroundFilename = filename.slice(1, -1);
     }
   }
 }

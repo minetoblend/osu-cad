@@ -26,15 +26,15 @@ export class SectionMarkers extends OverviewTimelineMarkerContainer {
 
   @dependencyLoader()
   load() {
-    this.beatmap.hitObjects.onAdded.addListener(() =>
+    this.beatmap.hitObjects.added.addListener(() =>
       this.#onHitObjectUpdate(),
     );
-    this.beatmap.hitObjects.onRemoved.addListener(() =>
+    this.beatmap.hitObjects.removed.addListener(() =>
       this.#onHitObjectUpdate(),
     );
-    this.beatmap.hitObjects.onUpdated.addListener(() =>
-      this.#onHitObjectUpdate(),
-    );
+    // this.beatmap.hitObjects.updated.addListener(() =>
+    //   this.#onHitObjectUpdate(),
+    // );
   }
 
   #lastInvalidated: number | null = null;
@@ -66,7 +66,11 @@ export class SectionMarkers extends OverviewTimelineMarkerContainer {
 
     const markers: Drawable[] = [];
 
-    const hitObjects = this.beatmap.hitObjects.hitObjects;
+    const hitObjects = this.beatmap.hitObjects.items;
+
+    if (hitObjects.length < 2) {
+      return markers;
+    }
 
     const threshold = 3000;
 
@@ -83,7 +87,7 @@ export class SectionMarkers extends OverviewTimelineMarkerContainer {
           sectionEndTime = hitObject.endTime;
         }
 
-        if (!isFinite(sectionStartTime) || !isFinite(sectionEndTime)) {
+        if (!Number.isFinite(sectionStartTime) || !Number.isFinite(sectionEndTime)) {
           break;
         }
 

@@ -19,22 +19,23 @@ export class TimingPointMarkers extends OverviewTimelineMarkerContainer {
 
   @dependencyLoader()
   load() {
-    this.beatmap.controlPoints.onAdded.addListener(() =>
+    this.beatmap.controlPoints.groupAdded.addListener(() =>
       this.invalidateMarkers(),
     );
-    this.beatmap.controlPoints.onRemoved.addListener(() =>
+    this.beatmap.controlPoints.groupRemoved.addListener(() =>
       this.invalidateMarkers(),
     );
-    this.beatmap.controlPoints.onUpdated.addListener(() =>
-      this.invalidateMarkers(),
-    );
+    // this.beatmap.controlPoints.updated.addListener(() =>
+    //   this.invalidateMarkers(),
+    // );
   }
 
   createMarkers(): OverviewTimelineMarker[] {
     const trackLength = this.editorClock.trackLength;
 
-    return this.beatmap.controlPoints.controlPoints
-      .filter(it => !!it.timing)
+    return this.beatmap.controlPoints
+      .timingPoints
+      .items
       .map((timingPoint) => {
         const marker = new OverviewTimelineMarker(0xFF265A, 1.5);
 

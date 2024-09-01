@@ -1,5 +1,3 @@
-import type { Slider } from '@osucad/common';
-import { PathPoint } from '@osucad/common';
 import type {
   DragEvent,
   DragStartEvent,
@@ -13,6 +11,8 @@ import {
 } from 'osucad-framework';
 import { SliderUtils } from '../SliderUtils';
 import { DistanceSnapProvider } from '../DistanceSnapProvider';
+import { PathPoint } from '../../../../../beatmap/hitObjects/PathPoint';
+import type { Slider } from '../../../../../beatmap/hitObjects/Slider';
 import { ComposeToolInteraction } from './ComposeToolInteraction';
 
 export class InsertControlPointInteraction extends ComposeToolInteraction {
@@ -39,7 +39,7 @@ export class InsertControlPointInteraction extends ComposeToolInteraction {
     const path = [...this.slider.path.controlPoints];
     path.splice(this.index, 0, new PathPoint(this.startPosition));
 
-    this.#sliderUtils.setPath(this.slider, path, false);
+    this.#sliderUtils.setPath(this.slider, path);
   }
 
   onDragStart(e: DragStartEvent): boolean {
@@ -52,7 +52,7 @@ export class InsertControlPointInteraction extends ComposeToolInteraction {
     const path = [...this.slider.path.controlPoints];
     path[this.index] = path[this.index].withPosition(position);
 
-    this.#sliderUtils.setPath(this.slider, path, false);
+    this.#sliderUtils.setPath(this.slider, path);
 
     return true;
   }

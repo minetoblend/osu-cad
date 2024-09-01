@@ -1,5 +1,5 @@
 import type { ScreenTransitionEvent } from 'osucad-framework';
-import { Anchor, Axes, Box, Container, dependencyLoader, resolved } from 'osucad-framework';
+import { Anchor, Axes, Box, Container, EasingFunction, dependencyLoader, resolved } from 'osucad-framework';
 import gsap from 'gsap';
 import { OsucadScreen } from '../OsucadScreen';
 import { GlobalSongPlayback } from '../GlobalSongPlayback';
@@ -8,7 +8,8 @@ import type { BeatmapStore } from '../environment/BeatmapStore';
 import { BeatmapCarousel } from './BeatmapCarousel';
 import { BeatmapSelectBackground } from './BeatmapSelectBackground';
 import { BeatmapImportDropzone } from './BeatmapImportDropzone';
-import { BeatmapSelectSearchHeader } from './BeatmapSelectSearchHeader';
+import { BeatmapSelectHeader } from './BeatmapSelectHeader';
+import { BeatmapSelectFilter } from './BeatmapSelectFilter';
 
 export class BeatmapSelect extends OsucadScreen {
   getPath(): string {
@@ -27,9 +28,13 @@ export class BeatmapSelect extends OsucadScreen {
 
   beatmapStore!: BeatmapStore;
 
+  filter!: BeatmapSelectFilter;
+
   @dependencyLoader()
   load() {
     this.beatmapStore = this.environment.createBeatmapStore();
+
+    this.filter = new BeatmapSelectFilter(this.beatmapStore.beatmaps);
 
     this.addInternal(new Box({
       relativeSizeAxes: Axes.Both,
@@ -49,7 +54,7 @@ export class BeatmapSelect extends OsucadScreen {
         children: [
           this.#background = new BeatmapSelectBackground(),
           this.#carousel = new BeatmapCarousel(this.beatmapStore.beatmaps)
-            .apply({
+            .with({
               width: 0.6,
               anchor: Anchor.CenterRight,
               origin: Anchor.CenterRight,
@@ -65,12 +70,7 @@ export class BeatmapSelect extends OsucadScreen {
               // new CreateBeatmapCard(),
             ],
           }),
-          new BeatmapSelectSearchHeader().apply({
-            relativeSizeAxes: Axes.X,
-            anchor: Anchor.TopRight,
-            origin: Anchor.TopRight,
-            height: 150,
-          }),
+          this.#header = new BeatmapSelectHeader(this.filter),
         ],
       }),
     );
@@ -90,6 +90,8 @@ export class BeatmapSelect extends OsucadScreen {
 
   #menu!: Container;
 
+  #header!: BeatmapSelectHeader;
+
   @resolved(GlobalSongPlayback)
   globalSongPlayback!: GlobalSongPlayback;
 
@@ -98,14 +100,16 @@ export class BeatmapSelect extends OsucadScreen {
   #carousel!: BeatmapCarousel;
 
   onSuspending(e: ScreenTransitionEvent) {
-    this.#carousel.fadeTo({ alpha: 0, duration: 400, easing: 'expo.out' });
-    this.#carousel.scaleTo({ scale: 1.3, easing: 'expo.out', duration: 600 });
-    this.#carousel.moveTo({ x: 500, duration: 600, easing: 'expo.out' });
+    this.#carousel.fadeTo(0, 400, EasingFunction.OutExpo);
+    this.#carousel.scaleTo(1.3, 600, EasingFunction.OutExpo);
+    this.#carousel.moveToX(500, 600, EasingFunction.OutExpo);
 
-    this.#menu.moveTo({ x: -500, duration: 600, easing: 'expo.out' });
-    this.#menu.fadeOut({ duration: 400, easing: 'expo.out' });
+    this.#menu.moveToX(-500, 600, EasingFunction.OutExpo);
+    this.#menu.fadeOut(400, EasingFunction.OutExpo);
 
-    this.#background.fadeTo({ alpha: 0.1, duration: 300 });
+    this.#background.fadeTo(0.1, 300);
+
+    this.#header.hide();
 
     gsap.to(this.#background, {
       scaleX: 0.85,
@@ -115,21 +119,23 @@ export class BeatmapSelect extends OsucadScreen {
     });
 
     // noop transform to delay when the container gets suspended
-    this.fadeTo({ alpha: 1, duration: 600 });
+    this.fadeIn(600);
 
     super.onSuspending(e);
   }
 
   onResuming(e: ScreenTransitionEvent) {
-    this.#carousel.moveTo({ x: 0, duration: 400, easing: 'power4.out' });
-    this.#carousel.scaleTo({ scale: 1, duration: 400, easing: 'power4.out' });
+    this.#carousel.moveToX(0, 400, EasingFunction.OutQuart);
+    this.#carousel.scaleTo(1, 400, EasingFunction.OutQuart);
     this.#carousel.entryAnimation();
     this.#carousel.alpha = 1;
 
-    this.#menu.moveTo({ x: 0, duration: 400, easing: 'power4.out' });
-    this.#menu.fadeIn({ duration: 400 });
+    this.#menu.moveToX(0, 400, EasingFunction.OutQuart);
+    this.#menu.fadeIn(400);
 
-    this.#background.fadeTo({ alpha: 0.3, duration: 300 });
+    this.#header.show();
+
+    this.#background.fadeTo(0.3, 300);
     this.globalSongPlayback.resume();
 
     gsap.to(this.#background, {
@@ -139,7 +145,7 @@ export class BeatmapSelect extends OsucadScreen {
       ease: 'expo.out',
     });
 
-    this.fadeIn({ duration: 400 });
+    this.fadeInFromZero(400);
 
     super.onResuming(e);
   }

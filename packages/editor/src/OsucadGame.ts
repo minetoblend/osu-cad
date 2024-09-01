@@ -1,13 +1,5 @@
-import type {
-  ScreenStack,
-} from 'osucad-framework';
-import {
-  AudioManager,
-  Game,
-  dependencyLoader,
-  isMobile,
-  resolved,
-} from 'osucad-framework';
+import type { PIXIRenderer, ScreenStack } from 'osucad-framework';
+import { AudioManager, Game, IRenderer, dependencyLoader, isMobile, resolved } from 'osucad-framework';
 import { RenderTarget } from 'pixi.js';
 import { MainCursorContainer } from './MainCursorContainer';
 import { UISamples } from './UISamples';
@@ -17,8 +9,6 @@ import { ThemeColors } from './editor/ThemeColors';
 import { EditorActionContainer } from './editor/EditorActionContainer';
 import { PreferencesStore } from './preferences/PreferencesStore';
 import { UIFonts } from './UIFonts';
-import { EditorLoader } from './editor/EditorLoader';
-import { OnlineEditorContext } from './editor/context/OnlineEditorContext';
 import { BeatmapSelect } from './beatmapSelect/BeatmapSelect';
 import { UserAvatarCache } from './UserAvatarCache';
 import { GlobalSongPlayback } from './GlobalSongPlayback';
@@ -29,14 +19,23 @@ import { OsucadScreenStack } from './OsucadScreenStack';
 import { RootScreen } from './RootScreen';
 import { autodetectEditorEnvironment } from './environment/autodetectEditorEnvironment';
 import { EditorEnvironment } from './environment/EditorEnvironment';
+import { OsucadIcons } from './OsucadIcons';
+import { createDefaultSkin } from './skinning/CreateDefaultSkin';
+import { ISkinSource } from './skinning/ISkinSource';
+import { SkinSource } from './skinning/SkinSource';
+import type { IResourcesProvider } from './io/IResourcesProvider';
+import { SkinStore } from './environment/SkinStore';
 
 RenderTarget.defaultOptions.depth = true;
 RenderTarget.defaultOptions.stencil = true;
 
-export class OsucadGame extends Game {
+export class OsucadGame extends Game implements IResourcesProvider {
   constructor() {
     super();
   }
+
+  @resolved(IRenderer)
+  renderer!: PIXIRenderer;
 
   #innerContainer = new ScalingContainer({
     desiredSize: {
@@ -53,7 +52,22 @@ export class OsucadGame extends Game {
   async init(): Promise<void> {
     this.dependencies.provide(Game, this);
 
-    this.dependencies.provide(EditorEnvironment, await autodetectEditorEnvironment());
+    const environment = await autodetectEditorEnvironment();
+
+    await environment.load();
+
+    this.dependencies.provide(EditorEnvironment, environment);
+
+    const skinStore = environment.createSkinStore();
+
+    await skinStore.load();
+
+    const skin = await skinStore.skins.value[0].loadSkin(this);
+
+    const defaultSkin = await createDefaultSkin();
+
+    this.dependencies.provide(ISkinSource, new SkinSource(skin, defaultSkin));
+    this.dependencies.provide(SkinStore, skinStore);
 
     this.dependencies.provide(new ThemeColors());
 
@@ -73,6 +87,7 @@ export class OsucadGame extends Game {
     await Promise.all([
       samples.load(),
       UIFonts.load(),
+      OsucadIcons.load(),
     ]);
 
     const songPlayback = new GlobalSongPlayback();
@@ -108,17 +123,17 @@ export class OsucadGame extends Game {
       this.add(new MainCursorContainer());
     }
 
-    const match = path.match(/\/edit\/(\w+)/);
-    if (match) {
-      const joinKey = match[1];
-
-      screenStack.push(new EditorLoader(
-        new OnlineEditorContext(joinKey),
-      ));
-    }
-    else {
-      screenStack.push(new BeatmapSelect());
-    }
+    // const match = path.match(/\/edit\/(\w+)/);
+    // if (match) {
+    //   const joinKey = match[1];
+    //
+    //   screenStack.push(new EditorLoader(
+    //     new OnlineEditorContext(joinKey),
+    //   ));
+    // }
+    // else {
+    screenStack.push(new BeatmapSelect());
+    // }
   }
 
   onClick(): boolean {

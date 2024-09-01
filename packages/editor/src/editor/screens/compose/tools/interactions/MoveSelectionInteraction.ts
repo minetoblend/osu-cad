@@ -1,5 +1,3 @@
-import type { HitObject } from '@osucad/common';
-import { Slider, Spinner, UpdateHitObjectCommand } from '@osucad/common';
 import type {
   MouseMoveEvent,
   MouseUpEvent,
@@ -10,11 +8,17 @@ import {
   dependencyLoader,
 } from 'osucad-framework';
 import { SnapVisualizer } from '../../snapping/SnapResult';
+import type { HitObject } from '../../../../../beatmap/hitObjects/HitObject';
+import type { OsuHitObject } from '../../../../../beatmap/hitObjects/OsuHitObject';
+import type { CommandProxy } from '../../../../commands/CommandProxy';
+import { Spinner } from '../../../../../beatmap/hitObjects/Spinner';
+import { Slider } from '../../../../../beatmap/hitObjects/Slider';
+import { UpdateHitObjectCommand } from '../../../../commands/UpdateHitObjectCommand';
 import { ComposeToolInteraction } from './ComposeToolInteraction';
 
 export class MoveSelectionInteraction extends ComposeToolInteraction {
   constructor(
-    readonly hitObjects: HitObject[],
+    readonly hitObjects: OsuHitObject[],
     readonly startPosition: Vec2,
   ) {
     super();
@@ -24,10 +28,13 @@ export class MoveSelectionInteraction extends ComposeToolInteraction {
 
   #snapVisualizer = new SnapVisualizer();
 
+  #proxies!: CommandProxy<OsuHitObject>[];
+
   @dependencyLoader()
   load() {
     this.#startPositions = this.hitObjects.map(it => it.position);
     this.addInternal(this.#snapVisualizer);
+    this.#proxies = this.hitObjects.map(it => this.createProxy(it));
   }
 
   onMouseMove(e: MouseMoveEvent): boolean {

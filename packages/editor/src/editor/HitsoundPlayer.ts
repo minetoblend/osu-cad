@@ -1,23 +1,10 @@
-import type {
-  Sample,
-  SamplePlayback,
-} from 'osucad-framework';
-import {
-  Action,
-  AudioManager,
-  CompositeDrawable,
-  dependencyLoader,
-  resolved,
-} from 'osucad-framework';
-import type {
-  HitSample,
-} from '@osucad/common';
-import {
-  HitObjectManager,
-  SampleSet,
-  SampleType,
-} from '@osucad/common';
+import type { Sample, SamplePlayback } from 'osucad-framework';
+import { Action, AudioManager, CompositeDrawable, FramedClock, OffsetClock, dependencyLoader, resolved } from 'osucad-framework';
 import { PreferencesStore } from '../preferences/PreferencesStore';
+import { HitObjectList } from '../beatmap/hitObjects/HitObjectList';
+import type { HitSample } from '../beatmap/hitSounds/HitSample';
+import { SampleSet } from '../beatmap/hitSounds/SampleSet';
+import { SampleType } from '../beatmap/hitSounds/SampleType';
 import { EditorClock } from './EditorClock';
 import { EditorContext } from './context/EditorContext';
 import type { BeatmapAsset } from './context/BeatmapAsset';
@@ -35,9 +22,19 @@ export class HitsoundPlayer extends CompositeDrawable {
 
   samplePlayed = new Action<HitSample>();
 
+  #offsetClock!: OffsetClock;
+
   @dependencyLoader()
   load() {
     this.loadAssets(this.editorContext.beatmapAssets.value);
+
+    this.#offsetClock = new OffsetClock(this.editorClock, -this.preferences.audio.audioOffset);
+
+    this.clock = new FramedClock(this.#offsetClock);
+
+    this.preferences.audio.audioOffsetBindable.addOnChangeListener((offset) => {
+      this.#offsetClock.offset = -offset.value;
+    });
   }
 
   @resolved(AudioManager)
@@ -94,8 +91,8 @@ export class HitsoundPlayer extends CompositeDrawable {
     }
   }
 
-  @resolved(HitObjectManager)
-  hitObjects!: HitObjectManager;
+  @resolved(HitObjectList)
+  hitObjects!: HitObjectList;
 
   #scheduledSamples: SamplePlayback[] = [];
 
@@ -111,22 +108,20 @@ export class HitsoundPlayer extends CompositeDrawable {
       return;
     }
 
-    // requestAnimationFrame() doesn't get called when the page isn't visible
+    // requestAnimationFrame() doesn't get called when the page isn't visible,
     // so we need to skip this update in that case to prevent all the samples that
     // should have been played during that time from playing all at once
     if (this.editorClock.timeInfo.elapsed > 1000) {
       return;
     }
 
-    const offset = 100 - this.preferences.audio.audioOffset;
-
     let startTime = this.lastEndTime;
 
-    const endTime = Math.floor(this.editorClock.currentTime + offset);
+    const endTime = Math.floor(this.time.current);
 
     this.lastEndTime = endTime;
 
-    const accurateStartTime = Math.floor(this.editorClock.currentTime - this.editorClock.timeInfo.elapsed + offset);
+    const accurateStartTime = Math.floor(this.time.current - this.time.elapsed);
 
     if (Math.abs(accurateStartTime - startTime) > 10) {
       startTime = accurateStartTime;
@@ -140,9 +135,9 @@ export class HitsoundPlayer extends CompositeDrawable {
 
     this.#isPlaying = true;
 
-    const hitObjects = this.hitObjects.hitObjects.filter(
+    const hitObjects = this.hitObjects.filter(
       hitObject =>
-        hitObject.startTime <= endTime + 10 && hitObject.endTime >= startTime - 10,
+        hitObject.startTime <= endTime && hitObject.endTime >= startTime,
     );
 
     const hitSamples = hitObjects.flatMap(it => it.hitSamples);
@@ -172,7 +167,9 @@ export class HitsoundPlayer extends CompositeDrawable {
 
     let type = 'normal';
 
-    switch (hitSample.type) {
+    let isLooping = false;
+
+    switch (hitSample.sampleType) {
       case SampleType.Normal:
         type = 'normal';
         break;
@@ -185,6 +182,10 @@ export class HitsoundPlayer extends CompositeDrawable {
       case SampleType.Clap:
         type = 'clap';
         break;
+      case SampleType.SliderSlider:
+        type = 'sliderslide';
+        isLooping = true;
+        break;
     }
 
     const key = `${sampleSet}-hit${type}`;
@@ -196,8 +197,7 @@ export class HitsoundPlayer extends CompositeDrawable {
       ?? this.samples.get(key + index)
       ?? this.defaultSamples.get(key);
 
-    const delay
-      = (hitSample.time - this.editorClock.currentTime + this.preferences.audio.audioOffset) / this.editorClock.rate;
+    const delay = (hitSample.time - this.time.current) / this.editorClock.rate;
 
     if (!sample) {
       console.log(`Sample not found: ${key}`);
@@ -206,9 +206,9 @@ export class HitsoundPlayer extends CompositeDrawable {
     if (sample) {
       const playback = sample.play({
         delay: Math.max(delay, 0),
-        volume: hitSample.volume * 0.4,
+        volume: hitSample.volume,
+        loop: hitSample.sampleType === SampleType.SliderSlider,
       });
-      this.#scheduledSamples.push(playback);
 
       playback.onEnded.addListener(() => {
         const index = this.#scheduledSamples.indexOf(playback);
@@ -224,4 +224,22 @@ export class HitsoundPlayer extends CompositeDrawable {
   }
 
   #isPlaying = false;
+}
+
+class SlideSample {
+  constructor(
+    readonly sample: HitSample,
+    readonly playback: SamplePlayback,
+  ) {
+  }
+
+  get startTime() {
+    return this.sample.time;
+  }
+
+  get endTime() {
+    return this.sample.duration ?? 0;
+  }
+
+  started = false;
 }

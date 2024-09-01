@@ -60,8 +60,7 @@ export class EditorMenu extends Menu {
 
       protected createScrollbar(direction: Direction): ScrollbarContainer {
         return new (class extends ScrollbarContainer {
-          resizeTo(): void {
-
+          resizeScrollbarTo(): void {
           }
         })(direction);
       }
@@ -73,7 +72,7 @@ export class EditorMenu extends Menu {
       super.animateOpen();
       return;
     }
-    this.fadeIn({ duration: 200 });
+    this.fadeIn(200);
   }
 
   #targetSize: Vec2 = new Vec2();
@@ -116,7 +115,7 @@ export class EditorMenu extends Menu {
       return;
     }
 
-    this.fadeOut({ duration: 200 });
+    this.fadeOut(200);
   }
 }
 

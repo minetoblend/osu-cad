@@ -75,7 +75,7 @@ export class Preferences extends Container {
     autoSizeAxes: Axes.Y,
   });
 
-  #content = new MainScrollContainer(Direction.Vertical).apply({
+  #content = new MainScrollContainer(Direction.Vertical).with({
     relativeSizeAxes: Axes.Both,
     child: this.#items,
   });
@@ -85,13 +85,13 @@ export class Preferences extends Container {
   }
 
   override show() {
-    this.fadeIn({ duration: 400 });
+    this.fadeIn(400);
     const scrollTarget = this.#content.current;
     this.#content.scrollBy(-1000, false);
     this.#content.scrollTo(scrollTarget);
   }
 
   override hide() {
-    this.fadeOut({ duration: 400 });
+    this.fadeOut(400);
   }
 }

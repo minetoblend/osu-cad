@@ -74,7 +74,7 @@ class BeatSnapSlider extends CompositeDrawable {
   constructor(options: DrawableOptions = {}) {
     super();
 
-    this.apply(options);
+    this.with(options);
   }
 
   @resolved(ThemeColors)

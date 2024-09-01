@@ -1,7 +1,10 @@
-import type { Slider } from '@osucad/common';
-import { Beatmap } from '@osucad/common';
-import { Container, Vec2, resolved } from 'osucad-framework';
+import { Bindable, Drawable, Vec2, dependencyLoader, resolved } from 'osucad-framework';
+import type {
+  ColorSource,
+  Container,
+} from 'pixi.js';
 import {
+  Color,
   CustomRenderPipe,
   Mesh,
   MeshGeometry,
@@ -10,28 +13,35 @@ import {
 } from 'pixi.js';
 import { animate } from '../../utils/animate';
 import { ThemeColors } from '../ThemeColors';
+import type { Slider } from '../../beatmap/hitObjects/Slider';
 import { SliderShader } from './SliderShader';
 import { SliderPathGeometry } from './SliderPathGeometry';
 import { GeometryBuilder } from './GeometryBuilder';
+import { DrawableHitObject } from './DrawableHitObject';
 
 let endCapGeometry: MeshGeometry | null = null;
 
 // little workaround for a pixi bug
-(CustomRenderPipe.prototype as any).updateRenderable = () => {};
+(CustomRenderPipe.prototype as any).updateRenderable = () => {
+};
 
-export class DrawableSliderBody extends Container {
-  constructor(readonly hitObject: Slider) {
+export class DrawableSliderBody extends Drawable {
+  constructor() {
     super();
 
     this.alwaysPresent = true;
 
     this.mesh = new Mesh({
       geometry: (this.geometry = new SliderPathGeometry({
-        path: hitObject.path.calculatedRange,
+        path: [
+          new Vec2(),
+          new Vec2(0, 0),
+        ],
         radius: this.radius,
-        expectedDistance: hitObject.path.expectedDistance,
+        expectedDistance: 0,
       })),
       shader: this.shader,
+      renderable: false,
     });
 
     endCapGeometry ??= generateEndCap();
@@ -39,26 +49,65 @@ export class DrawableSliderBody extends Container {
     this.endCap = new Mesh({
       geometry: endCapGeometry!,
       shader: this.shader,
+      renderable: false,
+    });
+
+    this.startCap = new Mesh({
+      geometry: endCapGeometry!,
+      shader: this.shader,
+      renderable: false,
     });
 
     this.mesh.state.depthTest = true;
     this.endCap.state.depthTest = true;
-    this.drawNode.addChild(this.#body);
+    this.startCap.state.depthTest = true;
+
+    this.#body.addChild(this.mesh, this.endCap, this.startCap);
+  }
+
+  createDrawNode(): Container {
+    return this.#body;
   }
 
   private readonly mesh: Mesh;
   private readonly endCap: Mesh;
+  private readonly startCap: Mesh;
   private readonly geometry: SliderPathGeometry;
   private readonly shader = new SliderShader();
 
   snakeInEnabled = true;
   snakeOutEnabled = true;
 
+  #hitObject?: Slider;
+
+  set hitObject(hitObject) {
+    if (hitObject === this.#hitObject)
+      return;
+
+    if (hitObject) {
+      hitObject.path.invalidated.addListener(this.#invalidatePath);
+      this.#pathIsInvalid = true;
+    }
+    if (this.#hitObject) {
+      this.#hitObject.path.invalidated.removeListener(this.#invalidatePath);
+    }
+    this.#hitObject = hitObject;
+  }
+
+  get hitObject() {
+    return this.#hitObject;
+  }
+
+  #invalidatePath = () => this.#pathIsInvalid = true;
+
   get path() {
-    return this.hitObject.path;
+    return this.hitObject?.path;
   }
 
   get radius() {
+    if (!this.hitObject)
+      return 0;
+
     return this.hitObject.scale * 60 * 1.25;
   }
 
@@ -67,28 +116,24 @@ export class DrawableSliderBody extends Container {
       if (renderer instanceof WebGLRenderer) {
         const gl = renderer.gl;
 
-        const endPos = this.hitObject.stackedPosition.add(
-          this.hitObject.path.getPositionAtDistance(
-            this.shader.snakeInProgress * this.hitObject.expectedDistance,
-          ),
-        );
-
-        this.mesh.groupTransform
-          .identity()
-          .append(this.drawNode.groupTransform);
-        this.endCap.groupTransform
-          .identity()
-          .scale(this.radius, this.radius)
-          .translate(endPos.x, endPos.y);
-
         gl.clearDepth(1);
         gl.clear(gl.DEPTH_BUFFER_BIT);
 
         gl.colorMask(false, false, false, false);
 
+        this.mesh.renderable = true;
+        this.endCap.renderable = true;
+        this.startCap.renderable = true;
+
         renderer.renderPipes.mesh.execute({
           renderPipeId: 'mesh',
           mesh: this.mesh,
+          canBundle: false,
+        });
+
+        renderer.renderPipes.mesh.execute({
+          renderPipeId: 'mesh',
+          mesh: this.startCap,
           canBundle: false,
         });
 
@@ -109,37 +154,36 @@ export class DrawableSliderBody extends Container {
 
         renderer.renderPipes.mesh.execute({
           renderPipeId: 'mesh',
+          mesh: this.startCap,
+          canBundle: false,
+        });
+
+        renderer.renderPipes.mesh.execute({
+          renderPipeId: 'mesh',
           mesh: this.endCap,
           canBundle: false,
         });
 
         gl.depthFunc(gl.LESS);
+
+        this.mesh.renderable = false;
+        this.endCap.renderable = false;
+        this.startCap.renderable = false;
       }
     },
   });
-
-  @resolved(Beatmap)
-  beatmap!: Beatmap;
 
   pathVersion = -1;
 
   @resolved(ThemeColors)
   colors!: ThemeColors;
 
-  setup() {
-    this.shader.comboColor = this.hitObject.comboColor;
-  }
-
   update() {
     super.update();
 
-    if (
-      this.time.current
-      < this.hitObject.startTime - this.hitObject.timePreempt
-      || this.time.current > this.hitObject.endTime + 700
-    ) {
+    if (!this.hitObject)
       return;
-    }
+
     const snakeInDuration = Math.min(
       this.hitObject.timeFadeIn * 0.5,
       this.hitObject.spanDuration,
@@ -160,31 +204,55 @@ export class DrawableSliderBody extends Container {
 
     this.shader.snakeInProgress = snakeInProgress;
 
-    if (this.pathVersion !== this.hitObject.path.version) {
-      const path = this.hitObject.path.getRange(
+    const startPos = Vec2.zero();
+
+    const endPos = this.hitObject.path.getPositionAt(
+      snakeInProgress,
+    );
+
+    this.startCap.position.copyFrom(startPos);
+    this.startCap.scale = this.radius;
+
+    this.endCap.position.copyFrom(endPos);
+    this.endCap.scale = this.radius;
+
+    if (this.#pathIsInvalid) {
+      const range = this.hitObject.path.getRange(
         0,
         this.hitObject.expectedDistance,
       );
 
       this.geometry.update(
-        path,
+        range.path,
         this.radius,
         this.hitObject.path.expectedDistance,
       );
     }
 
     this.snakeInProgress = snakeInProgress;
-    this.pathVersion = this.hitObject.path.version;
+    this.#pathIsInvalid = false;
   }
+
+  #pathIsInvalid = true;
 
   snakeInProgress = 0;
 
-  get bodyAlpha() {
-    return this.shader.alpha;
+  @resolved(DrawableHitObject)
+  private drawableHitObject!: DrawableHitObject;
+
+  private accentColor = new Bindable<ColorSource>(0xFFFFFF);
+
+  @dependencyLoader()
+  load() {
+    this.accentColor.addOnChangeListener(color => this.shader.comboColor = new Color(color.value), {
+      immediate: true,
+    });
   }
 
-  set bodyAlpha(value: number) {
-    this.shader.alpha = value;
+  protected loadComplete() {
+    super.loadComplete();
+
+    this.accentColor.bindTo(this.drawableHitObject.accentColor);
   }
 }
 
@@ -206,6 +274,11 @@ function generateEndCap() {
   const builder = new GeometryBuilder(vertices * 2, indices * 2, 1);
   builder.addJoin(Vec2.zero(), 0, Math.PI, 1);
   builder.addJoin(Vec2.zero(), Math.PI, Math.PI, 1);
+
+  for (let i = 1; i < builder.uvs.length; i += 2) {
+    builder.uvs[i] = -1;
+  }
+
   return new MeshGeometry({
     positions: builder.vertices,
     indices: builder.indices,

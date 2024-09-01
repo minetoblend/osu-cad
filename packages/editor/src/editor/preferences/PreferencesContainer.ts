@@ -23,7 +23,7 @@ export class PreferencesContainer
       relativeSizeAxes: Axes.Both,
     });
 
-    this.apply(options);
+    this.with(options);
   }
 
   #content = new Container({

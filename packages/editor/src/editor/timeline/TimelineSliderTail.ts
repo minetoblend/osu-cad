@@ -10,12 +10,13 @@ import {
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import type { SerializedSlider, Slider } from '@osucad/common';
-import { Beatmap, UpdateHitObjectCommand } from '@osucad/common';
 import { EditorClock } from '../EditorClock';
 import { CommandManager } from '../context/CommandManager';
 import { SliderUtils } from '../screens/compose/tools/SliderUtils';
 import { EditorSelection } from '../screens/compose/EditorSelection';
+import { Beatmap } from '../../beatmap/Beatmap';
+import type { Slider } from '../../beatmap/hitObjects/Slider';
+import { UpdateHitObjectCommand } from '../commands/UpdateHitObjectCommand';
 import { TimelineElement } from './TimelineElement';
 import { Timeline } from './Timeline';
 import { TimelineSlider } from './TimelineSlider';
@@ -27,7 +28,7 @@ export class TimelineSliderTail extends TimelineElement {
       fillMode: FillMode.Fit,
     });
 
-    this.apply({
+    this.with({
       anchor: Anchor.CenterRight,
       origin: Anchor.CenterRight,
     });
@@ -77,8 +78,8 @@ export class TimelineSliderTail extends TimelineElement {
 
       this.commandManager.submit(
         new UpdateHitObjectCommand(this.hitObject, {
-          repeats: Math.max(0, spans - 1),
-        } as Partial<SerializedSlider>),
+          repeatCount: Math.max(0, spans - 1),
+        }),
         false,
       );
     }
@@ -97,8 +98,8 @@ export class TimelineSliderTail extends TimelineElement {
       if (velocityOverride > 0 && Number.isFinite(velocityOverride)) {
         this.commandManager.submit(
           new UpdateHitObjectCommand(this.hitObject, {
-            velocity: velocityOverride,
-          } as Partial<SerializedSlider>),
+            velocityOverride,
+          }),
           false,
         );
       }
@@ -156,7 +157,7 @@ export class TimelineSliderTail extends TimelineElement {
         return false;
       }
 
-      const edges = new Set([this.hitObject.repeats + 1]);
+      const edges = new Set([this.hitObject.repeatCount + 1]);
 
       this.selection.setSelectedEdges(
         this.hitObject,

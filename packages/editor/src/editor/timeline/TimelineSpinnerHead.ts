@@ -1,5 +1,5 @@
-import type { Spinner } from '@osucad/common';
 import { FillMode, dependencyLoader } from 'osucad-framework';
+import type { Spinner } from '../../beatmap/hitObjects/Spinner';
 import { TimelineElement } from './TimelineElement';
 import { TimelineComboNumber } from './TimelineComboNumber';
 

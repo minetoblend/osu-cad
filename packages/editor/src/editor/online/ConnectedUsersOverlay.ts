@@ -6,6 +6,7 @@ import {
   Anchor,
   Axes,
   Container,
+  EasingFunction,
   FillDirection,
   FillFlowContainer,
   MouseButton,
@@ -41,7 +42,7 @@ export class ConnectedUsersOverlay extends Container {
     autoSizeAxes: Axes.Y,
     spacing: new Vec2(8),
     layoutDuration: 500,
-    layoutEasing: 'back.out',
+    layoutEasing: EasingFunction.OutBack,
     anchor: Anchor.BottomRight,
     origin: Anchor.BottomRight,
     y: -20,
@@ -76,7 +77,7 @@ export class ConnectedUsersOverlay extends Container {
       avatar.x = 20;
       avatar.rotation = Math.PI / 2;
 
-      avatar.rotateTo({ rotation: 0, duration: 500, easing: 'back.out' });
+      avatar.rotateTo(0, 500, EasingFunction.OutBack);
 
       this.#items.insert(this.count--, avatar);
       this.#avatarMap.set(user.sessionId, avatar);
@@ -104,7 +105,7 @@ export class ConnectedUsersOverlay extends Container {
     autoSizeAxes: Axes.Y,
     spacing: new Vec2(4),
     layoutDuration: 200,
-    layoutEasing: 'power3.out',
+    layoutEasing: EasingFunction.OutCubic,
     anchor: Anchor.BottomRight,
     origin: Anchor.BottomRight,
     y: -40,
@@ -230,13 +231,13 @@ class UserAvatar extends Container {
   #ring!: RoundedBox;
 
   onHover(): boolean {
-    this.#username.fadeIn({ duration: 200 });
+    this.#username.fadeIn(200);
 
     return true;
   }
 
   onHoverLost(): boolean {
-    this.#username.fadeOut({ duration: 200 });
+    this.#username.fadeOut(200);
 
     return true;
   }

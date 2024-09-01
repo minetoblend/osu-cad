@@ -1,20 +1,15 @@
-import type {
-  IDistanceSnapProvider,
-  PathPoint,
-  SerializedSlider,
-  Slider,
-} from '@osucad/common';
-import {
-  PathType,
-  UpdateHitObjectCommand,
-} from '@osucad/common';
 import { Vec2 } from 'osucad-framework';
 import type { CommandManager } from '../../../context/CommandManager';
+import type { Slider } from '../../../../beatmap/hitObjects/Slider';
+import { UpdateHitObjectCommand } from '../../../commands/UpdateHitObjectCommand';
+import { PathType } from '../../../../beatmap/hitObjects/PathType';
+import type { PathPoint } from '../../../../beatmap/hitObjects/PathPoint';
+import type { DistanceSnapProvider } from './DistanceSnapProvider';
 
 export class SliderUtils {
   constructor(
     readonly commandManager: CommandManager,
-    readonly snapProvider: IDistanceSnapProvider,
+    readonly snapProvider: DistanceSnapProvider,
   ) {}
 
   deleteControlPoint(
@@ -51,7 +46,7 @@ export class SliderUtils {
       this.commandManager.submit(
         new UpdateHitObjectCommand(slider, {
           position,
-        } as Partial<SerializedSlider>),
+        }),
         false,
       );
     }
@@ -90,9 +85,9 @@ export class SliderUtils {
       this.commandManager.submit(
         new UpdateHitObjectCommand(slider, {
           position,
-          path,
+          controlPoints: path,
           expectedDistance,
-        } as Partial<SerializedSlider>),
+        }),
         false,
       );
     }
@@ -175,9 +170,9 @@ export class SliderUtils {
 
     this.commandManager.submit(
       new UpdateHitObjectCommand(slider, {
-        path,
+        controlPoints: path,
         expectedDistance,
-      } as Partial<SerializedSlider>),
+      }),
       commit,
     );
   }
@@ -186,7 +181,6 @@ export class SliderUtils {
     return (
       this.snapProvider.findSnappedDistance(
         slider,
-        slider.path.calculatedDistance,
       ) ?? slider.path.calculatedDistance
     );
   }

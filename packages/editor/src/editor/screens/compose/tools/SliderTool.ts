@@ -1,4 +1,5 @@
 import type { Texture } from 'pixi.js';
+import { getIcon } from '../../../../OsucadIcons';
 import { ComposeTool } from './ComposeTool';
 import { DrawableSliderTool } from './DrawableSliderTool';
 import type { DrawableComposeTool } from './DrawableComposeTool';
@@ -6,7 +7,7 @@ import { SliderPresetTool } from './SliderPresetTool';
 
 export class SliderTool extends ComposeTool {
   get icon(): Texture {
-    return useAsset('icon:slider');
+    return getIcon('slider');
   }
 
   isSameTool(tool: ComposeTool): boolean {

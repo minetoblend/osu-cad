@@ -30,7 +30,7 @@ export class TimelineElement extends CompositeDrawable {
 
     );
 
-    this.apply(options);
+    this.with(options);
   }
 
   @dependencyLoader()

@@ -19,7 +19,7 @@ export class MouseTrap extends CompositeDrawable {
 
     this.relativeSizeAxes = Axes.Both;
 
-    this.apply(options);
+    this.with(options);
   }
 
   get isActive() {

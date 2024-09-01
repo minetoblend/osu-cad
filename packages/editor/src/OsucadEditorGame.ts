@@ -90,7 +90,7 @@ export class OsucadEditorGame extends Game {
       this.add(new MainCursorContainer());
     }
 
-    editor.fadeIn({ duration: 300 });
+    editor.fadeInFromZero(300);
   }
 
   onClick(): boolean {

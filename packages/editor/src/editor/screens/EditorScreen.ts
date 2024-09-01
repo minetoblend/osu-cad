@@ -7,10 +7,10 @@ export class EditorScreen extends Container {
   }
 
   show() {
-    this.fadeIn({ duration: 300 });
+    this.fadeIn(300);
   }
 
   hide() {
-    this.fadeOut({ duration: 300 });
+    this.fadeOut(300);
   }
 }

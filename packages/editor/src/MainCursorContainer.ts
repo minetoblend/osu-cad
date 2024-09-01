@@ -11,6 +11,7 @@ import {
   MouseButton,
   dependencyLoader,
 } from 'osucad-framework';
+import { getIcon } from './OsucadIcons';
 
 export class MainCursorContainer extends CursorContainer {
   createCursor(): Drawable {
@@ -26,14 +27,14 @@ class Cursor extends CompositeDrawable {
   load() {
     this.addAllInternal(
       (this.#shadow = new DrawableSprite({
-        texture: useAsset('icon:select'),
+        texture: getIcon('select'),
         x: -4,
         y: -1,
         color: 0x000000,
         alpha: 0.2,
       })),
       (this.#sprite = new DrawableSprite({
-        texture: useAsset('icon:select'),
+        texture: getIcon('select'),
         x: -4,
         y: -3,
       })),

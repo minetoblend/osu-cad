@@ -1,22 +1,17 @@
 /* eslint-disable unused-imports/no-unused-vars */
-import type { Beatmap } from '@osucad/common';
 import type { PIXITexture } from 'osucad-framework';
 import { Assets } from 'pixi.js';
-import { BeatmapDecoder } from 'osu-parsers';
-import { StandardRuleset } from 'osu-standard-stable';
 import audioUrl from '../../assets/audio.mp3';
 import backgroundUrl from '../../assets/background.jpg';
 import { Skin } from '../../skins/Skin';
-import { BeatmapConverter } from '../../beatmap/BeatmapConverter';
+import { StableBeatmapParser } from '../../beatmap/StableBeatmapParser';
+import type { Beatmap } from '../../beatmap/Beatmap';
 import { EditorContext } from './EditorContext';
 import sampleBeatmap from './sampleBeatmap.osu?raw';
 
 export class DummyEditorContext extends EditorContext {
   protected async loadBeatmap(): Promise<Beatmap> {
-    const beatmap = new BeatmapDecoder().decodeFromString(sampleBeatmap);
-    const standardBeatmap = new StandardRuleset().applyToBeatmap(beatmap);
-
-    return new BeatmapConverter(standardBeatmap).convert();
+    return new StableBeatmapParser().parse(sampleBeatmap);
   }
 
   protected loadSong(): Promise<AudioBuffer> {

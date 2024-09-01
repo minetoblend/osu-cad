@@ -4,23 +4,19 @@ import {
   Container,
   FillDirection,
   FillFlowContainer,
-  RoundedBox,
   Vec2,
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import { SampleType } from '@osucad/common';
 import { EditorAction } from '../../EditorAction';
-import {
-  NEW_COMBO,
-  SAMPLE_CLAP,
-  SAMPLE_FINISH,
-  SAMPLE_WHISTLE,
-} from '../../InjectionTokens';
+
 import { ThemeColors } from '../../ThemeColors';
-import { ComposeToggleButton } from './ComposeToggleButton';
+import { OsucadIcons } from '../../../OsucadIcons';
+import { Additions } from '../../../beatmap/hitSounds/Additions';
+import { FastRoundedBox } from '../../../drawables/FastRoundedBox';
 import { AdditionToggleButton } from './AdditionToggleButton';
 import { ComposeToolbarButton } from './ComposeToolbarButton';
+import { ComposeComboToggleButton } from './ComposeComboToggleButton';
 
 export class ComposeTogglesBar extends Container {
   constructor() {
@@ -34,7 +30,11 @@ export class ComposeTogglesBar extends Container {
 
     this.drawNode.enableRenderGroup();
 
-    this.addInternal(this.#toggleButtons);
+    this.addInternal(this.#content = new FillFlowContainer({
+      relativeSizeAxes: Axes.Both,
+      direction: FillDirection.Vertical,
+      spacing: new Vec2(6),
+    }));
   }
 
   @resolved(ThemeColors)
@@ -43,53 +43,48 @@ export class ComposeTogglesBar extends Container {
   @dependencyLoader()
   init() {
     this.addAll(
-      new ComposeToggleButton(
-        useAsset('icon:new-combo'),
-        NEW_COMBO,
-        EditorAction.ToggleNewCombo,
-      ),
-      new Container({
-        relativeSizeAxes: Axes.X,
-        height: 12,
-        padding: { horizontal: 12 },
-        child: new RoundedBox({
-          relativeSizeAxes: Axes.X,
-          height: 1.5,
-          anchor: Anchor.Center,
-          origin: Anchor.Center,
-          color: 'white',
-          alpha: 0.2,
-          cornerRadius: 1,
-        }),
-      }),
+      new ComposeComboToggleButton(),
+      new Separator(),
       new AdditionToggleButton(
-        useAsset('icon:whistle@2x'),
-        SAMPLE_WHISTLE,
+        OsucadIcons.get('whistle@2x'),
+        Additions.Whistle,
         EditorAction.ToggleWhistle,
-        SampleType.Whistle,
       ),
       new AdditionToggleButton(
-        useAsset('icon:finish@2x'),
-        SAMPLE_FINISH,
+        OsucadIcons.get('finish@2x'),
+        Additions.Finish,
         EditorAction.ToggleFinish,
-        SampleType.Finish,
       ),
       new AdditionToggleButton(
-        useAsset('icon:clap@2x'),
-        SAMPLE_CLAP,
+        OsucadIcons.get('clap@2x'),
+        Additions.Clap,
         EditorAction.ToggleClap,
-        SampleType.Clap,
       ),
     );
   }
 
   override get content() {
-    return this.#toggleButtons;
+    return this.#content;
   }
 
-  #toggleButtons = new FillFlowContainer({
-    relativeSizeAxes: Axes.Both,
-    direction: FillDirection.Vertical,
-    spacing: new Vec2(6),
-  });
+  readonly #content: FillFlowContainer;
+}
+
+class Separator extends Container {
+  constructor() {
+    super({
+      relativeSizeAxes: Axes.X,
+      height: 12,
+      padding: { horizontal: 12 },
+      child: new FastRoundedBox({
+        relativeSizeAxes: Axes.X,
+        height: 1.5,
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
+        color: 'white',
+        alpha: 0.2,
+        cornerRadius: 1,
+      }),
+    });
+  }
 }

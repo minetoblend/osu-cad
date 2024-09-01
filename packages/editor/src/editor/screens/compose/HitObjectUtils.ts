@@ -1,18 +1,13 @@
-import type {
-  HitObject,
-  SerializedSlider,
-} from '@osucad/common';
-import {
-  PathPoint,
-  PathType,
-  Slider,
-  Spinner,
-  UpdateHitObjectCommand,
-} from '@osucad/common';
 import { PathApproximator, Vector2 } from 'osu-classes';
 import { Axes, CompositeDrawable, Rectangle, Vec2, dependencyLoader, resolved } from 'osucad-framework';
 import { Matrix } from 'pixi.js';
 import { CommandManager } from '../../context/CommandManager';
+import { UpdateHitObjectCommand } from '../../commands/UpdateHitObjectCommand';
+import { Slider } from '../../../beatmap/hitObjects/Slider';
+import type { OsuHitObject } from '../../../beatmap/hitObjects/OsuHitObject';
+import { Spinner } from '../../../beatmap/hitObjects/Spinner';
+import { PathPoint } from '../../../beatmap/hitObjects/PathPoint';
+import { PathType } from '../../../beatmap/hitObjects/PathType';
 import { DistanceSnapProvider } from './tools/DistanceSnapProvider';
 
 export class HitObjectUtils extends CompositeDrawable {
@@ -33,7 +28,7 @@ export class HitObjectUtils extends CompositeDrawable {
 
   mirrorHitObjects(
     axis: Axes,
-    hitObjects: HitObject[],
+    hitObjects: OsuHitObject[],
     aroundCenter: boolean = false,
     commit: boolean = true,
   ) {
@@ -71,7 +66,7 @@ export class HitObjectUtils extends CompositeDrawable {
   }
 
   rotateHitObjects(
-    hitObjects: HitObject[],
+    hitObjects: OsuHitObject[],
     center: Vec2,
     angle: number,
     commit: boolean = true,
@@ -89,7 +84,7 @@ export class HitObjectUtils extends CompositeDrawable {
     );
   }
 
-  getBounds(hitObjects: HitObject[]) {
+  getBounds(hitObjects: OsuHitObject[]) {
     let minX = Number.MAX_VALUE;
     let minY = Number.MAX_VALUE;
     let maxX = Number.MIN_VALUE;
@@ -118,7 +113,7 @@ export class HitObjectUtils extends CompositeDrawable {
 
   transformHitObjects(
     transform: Matrix,
-    hitObjects: HitObject[],
+    hitObjects: OsuHitObject[],
     commit: boolean = true,
   ) {
     for (let i = 0; i < hitObjects.length; i++) {
@@ -132,7 +127,7 @@ export class HitObjectUtils extends CompositeDrawable {
 
   transformHitObject(
     transform: Matrix,
-    hitObject: HitObject,
+    hitObject: OsuHitObject,
     commit: boolean = true,
   ) {
     const position = hitObject.position;
@@ -148,9 +143,9 @@ export class HitObjectUtils extends CompositeDrawable {
       this.commandManager.submit(
         new UpdateHitObjectCommand(hitObject, {
           position: newPosition,
-          path: path.map(it => it.serialize()),
-        } as Partial<SerializedSlider>),
-        commit,
+          controlPoints: path.map(it => it.toPlain()),
+        }),
+        false,
       );
 
       this.commandManager.submit(
@@ -158,7 +153,7 @@ export class HitObjectUtils extends CompositeDrawable {
           expectedDistance: this.snapProvider.findSnappedDistance(
             hitObject,
           ),
-        } as Partial<SerializedSlider>),
+        }),
         commit,
       );
 
@@ -217,13 +212,13 @@ export class HitObjectUtils extends CompositeDrawable {
     this.commandManager.submit(
       new UpdateHitObjectCommand(slider, {
         position: slider.position.add(lastPoint),
-        path: reversed,
-      } as Partial<SerializedSlider>),
+        controlPoints: reversed,
+      }),
       commit,
     );
   }
 
-  reverseObjects(hitObjects: HitObject[], commit: boolean = true) {
+  reverseObjects(hitObjects: OsuHitObject[], commit: boolean = true) {
     if (hitObjects.length === 0)
       return;
 
@@ -292,13 +287,11 @@ export class HitObjectUtils extends CompositeDrawable {
       }
     }
 
-    console.log(newPath);
-
     this.commandManager.submit(
       new UpdateHitObjectCommand(slider, {
-        path: newPath,
-      } as Partial<SerializedSlider>),
-      true,
+        controlPoints: newPath,
+      }),
+      false,
     );
   }
 

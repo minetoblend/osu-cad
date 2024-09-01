@@ -10,11 +10,11 @@ import {
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import type { SerializedSlider, Slider } from '@osucad/common';
-import { UpdateHitObjectCommand } from '@osucad/common';
 import { FastRoundedBox } from '../../drawables/FastRoundedBox';
 import { OsucadSpriteText } from '../../OsucadSpriteText';
 import { CommandManager } from '../context/CommandManager';
+import type { Slider } from '../../beatmap/hitObjects/Slider';
+import { UpdateHitObjectCommand } from '../commands/UpdateHitObjectCommand';
 
 export class TimelineVelocityBadge extends CompositeDrawable {
   constructor(readonly slider: Slider) {
@@ -26,11 +26,7 @@ export class TimelineVelocityBadge extends CompositeDrawable {
 
   @dependencyLoader()
   load() {
-    this.slider.onUpdate.addListener((type) => {
-      if (type === 'velocity') {
-        this.setup();
-      }
-    });
+    this.slider.velocityBindable.valueChanged.addListener(this.setup, this);
 
     this.autoSizeAxes = Axes.Both;
 
@@ -76,8 +72,8 @@ export class TimelineVelocityBadge extends CompositeDrawable {
     if (e.button === MouseButton.Right) {
       this.commandManager.submit(
         new UpdateHitObjectCommand(this.slider, {
-          velocity: null,
-        } as Partial<SerializedSlider>),
+          velocityOverride: null,
+        }),
       );
 
       return true;

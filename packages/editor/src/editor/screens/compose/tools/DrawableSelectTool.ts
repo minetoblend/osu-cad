@@ -1,26 +1,20 @@
 import type {
-  Bindable,
   ClickEvent,
   DragStartEvent,
   IKeyBindingHandler,
-  InputManager,
   KeyBindingPressEvent,
   MouseDownEvent,
+  ValueChangedEvent,
   Vec2,
 } from 'osucad-framework';
 import { Anchor, MouseButton, RoundedBox, dependencyLoader } from 'osucad-framework';
-import type {
-  HitObject,
-  SerializedSlider,
-} from '@osucad/common';
-import {
-  Additions,
-  DeleteHitObjectCommand,
-  Slider,
-  UpdateHitObjectCommand,
-  setAdditionsEnabled,
-} from '@osucad/common';
 import { EditorAction } from '../../../EditorAction';
+import type { HitObject } from '../../../../beatmap/hitObjects/HitObject';
+import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
+import { Slider } from '../../../../beatmap/hitObjects/Slider';
+import { UpdateHitObjectCommand } from '../../../commands/UpdateHitObjectCommand';
+import { DeleteHitObjectCommand } from '../../../commands/DeleteHitObjectCommand';
+import { Additions } from '../../../../beatmap/hitSounds/Additions';
 import { DrawableComposeTool } from './DrawableComposeTool';
 import { SelectBoxInteraction } from './interactions/SelectBoxInteraction';
 import { MoveSelectionInteraction } from './interactions/MoveSelectionInteraction';
@@ -73,7 +67,6 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
       }
 
       const candidate = this.getSelectionCandidate(hovered)!;
-
       if (e.controlPressed) {
         if (
           this.selection.length <= 1
@@ -137,7 +130,7 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
 
   #canCycleSelection = false;
 
-  #cycleSelection(hitObjects: HitObject[]) {
+  #cycleSelection(hitObjects: OsuHitObject[]) {
     const currentSelection = [...this.selection.selectedObjects];
     const index = hitObjects.indexOf(currentSelection[0]);
     if (index !== -1) {
@@ -168,27 +161,20 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
     return false;
   }
 
-  #inputManager: InputManager | null = null;
-
   update() {
     super.update();
 
+    this.#updateSliderPathVisualizer(
+      this.hoveredHitObjects(this.mousePosition),
+      this.inputManager.currentState.keyboard.controlPressed,
+    );
+  }
+
+  updateAfterChildren() {
+    super.updateAfterChildren();
+
     this.#updateNewComboFromSelection();
-
     this.#updateAdditionsFromSelection();
-
-    this.#inputManager ??= this.getContainingInputManager();
-
-    if (this.#inputManager) {
-      const hitObjects = this.hoveredHitObjects(
-        this.toLocalSpace(this.#inputManager.currentState.mouse.position),
-      );
-
-      this.#updateSliderPathVisualizer(
-        hitObjects,
-        this.#inputManager.currentState.keyboard.controlPressed,
-      );
-    }
   }
 
   #updateSliderPathVisualizer(
@@ -245,10 +231,7 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
 
   @dependencyLoader()
   load() {
-    this.#sliderUtils = new SliderUtils(
-      this.commandManager,
-      this.#snapProvider,
-    );
+    this.#sliderUtils = new SliderUtils(this.commandManager, this.#snapProvider);
 
     this.dependencies.provide(this.#snapProvider);
 
@@ -258,44 +241,40 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
     this.#sliderPathVisualizer.onHandleDragEnded = this.#onHandleDragEnded;
   }
 
-  applyNewCombo(newCombo: boolean): void {
+  protected applyNewComboState(event: ValueChangedEvent<boolean>) {
+    super.applyNewComboState(event);
+
     const objects = this.selection.selectedObjects;
     if (objects.length === 0)
       return;
 
-    const allNewCombo = objects.every(
-      it => it.isNewCombo || it === this.hitObjects.first,
-    );
-    if (allNewCombo !== newCombo) {
+    const newCombo = event.value;
+
+    if (this.newComboEnabledForEntireSelection !== newCombo) {
       for (const object of objects) {
         this.commandManager.submit(
-          new UpdateHitObjectCommand(object, {
-            newCombo,
-          }),
+          new UpdateHitObjectCommand(object, { newCombo }),
+          false,
         );
       }
     }
+
+    this.commit();
   }
 
-  applySampleType(addition: Additions, bindable: Bindable<boolean>): void {
-    if (this.selection.length === 0) {
+  protected applyAdditionsState(event: ValueChangedEvent<Additions>) {
+    super.applyAdditionsState(event);
+    if (this.selection.length === 0)
       return;
-    }
 
-    const hitObjects = this.selection.selectedObjects;
-
-    for (const hitObject of hitObjects) {
-      const options: Partial<SerializedSlider> = {};
-
-      let setHitsound = true;
-
+    for (const hitObject of this.selection) {
       if (hitObject instanceof Slider) {
         const edges = hitObject.selectedEdges;
 
-        const hitSounds = [...hitObject.hitSounds];
-
         if (edges.length > 0) {
-          setHitsound = false;
+          const hitSounds = [...hitObject.hitSounds];
+
+          let didUpdate = false;
 
           for (const edge of edges) {
             if (!hitSounds[edge]) {
@@ -303,47 +282,34 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
               continue;
             }
 
-            hitSounds[edge] = {
-              ...hitSounds[edge],
-              additions: setAdditionsEnabled(
-                hitSounds[edge].additions,
-                addition,
-                bindable.value,
-              ),
-            };
+            if (hitSounds[edge].additions === event.value)
+              continue;
+
+            hitSounds[edge] = hitSounds[edge].withAdditions(event.value);
+
+            didUpdate = true;
+          }
+
+          if (didUpdate) {
+            this.submit(
+              new UpdateHitObjectCommand(hitObject, {
+                hitSounds,
+              }),
+              false,
+            );
+            continue
           }
         }
-        else {
-          for (let i = 0; i < hitSounds.length; i++) {
-            hitSounds[i] = {
-              ...hitSounds[i],
-              additions: setAdditionsEnabled(
-                hitSounds[i].additions,
-                addition,
-                bindable.value,
-              ),
-            };
-          }
-        }
-
-        options.hitSounds = hitSounds;
       }
 
-      if (setHitsound) {
-        options.hitSound = {
-          ...hitObject.hitSound,
-          additions: setAdditionsEnabled(
-            hitObject.hitSound.additions,
-            addition,
-            bindable.value,
-          ),
-        };
+      if (hitObject.hitSound.additions !== event.value) {
+        this.submit(
+          new UpdateHitObjectCommand(hitObject, {
+            hitSound: hitObject.hitSound.withAdditions(event.value),
+          }),
+          false,
+        );
       }
-
-      this.submit(
-        new UpdateHitObjectCommand(hitObject, options),
-        false,
-      );
     }
 
     this.commit();
@@ -392,7 +358,7 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
 
     const position = this.toLocalSpace(e.screenSpaceMousePosition);
 
-    this.#sliderUtils.moveControlPoint(slider, index, position, false);
+    this.#sliderUtils.moveControlPoint(slider, index, position);
 
     return true;
   };
@@ -407,59 +373,43 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
       this.newCombo.value = false;
       return;
     }
-    this.newCombo.value = this.selection.selectedObjects.every(
-      it => it.isNewCombo || it === this.hitObjects.first,
+
+    this.newCombo.value = this.newComboEnabledForEntireSelection;
+  }
+
+  get newComboEnabledForEntireSelection() {
+    return this.selection.selectedObjects.every(
+      it => it.newCombo || it === this.hitObjects.first,
     );
   }
 
   #updateAdditionsFromSelection() {
     if (this.selection.length === 0) {
+      this.additions.value = Additions.None;
       return;
     }
 
-    for (const addition of [
-      Additions.Whistle,
-      Additions.Finish,
-      Additions.Clap,
-    ]) {
-      let allActive = true;
+    let additions = Additions.All;
 
-      for (const object of this.selection.selectedObjects) {
-        if (object instanceof Slider) {
-          if (object.selectedEdges.length > 0) {
-            for (const edge of object.selectedEdges) {
-              if (!(object.hitSounds[edge].additions & addition)) {
-                allActive = false;
-                break;
-              }
-            }
+    for (const object of this.selection) {
+      if (object instanceof Slider) {
+        if (object.selectedEdges.length > 0) {
+          for (const edge of object.selectedEdges) {
+            const hitSound = object.hitSounds[edge];
+            if (!hitSound)
+              continue;
 
-            continue;
+            additions &= hitSound.additions;
           }
-        }
 
-        if (!(object.hitSound.additions & addition)) {
-          allActive = false;
-          break;
+          continue;
         }
       }
 
-      let bindable: Bindable<boolean>;
-
-      switch (addition) {
-        case Additions.Whistle:
-          bindable = this.sampleWhistle;
-          break;
-        case Additions.Finish:
-          bindable = this.sampleFinish;
-          break;
-        case Additions.Clap:
-          bindable = this.sampleClap;
-          break;
-      }
-
-      bindable!.value = allActive;
+      additions &= object.hitSound.additions;
     }
+
+    this.additions.value = additions;
   }
 
   get activeSlider() {
@@ -480,7 +430,7 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
     if (distanceToStart < hitObject.radius) {
       const edges: number[] = [];
 
-      for (let i = 0; i <= hitObject.repeats + 1; i += 2) {
+      for (let i = 0; i <= hitObject.repeatCount + 1; i += 2) {
         edges.push(i);
       }
 
@@ -494,7 +444,7 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
     if (distanceToEnd < hitObject.radius) {
       const edges: number[] = [];
 
-      for (let i = 1; i <= hitObject.repeats + 1; i += 2) {
+      for (let i = 1; i <= hitObject.repeatCount + 1; i += 2) {
         edges.push(i);
       }
 

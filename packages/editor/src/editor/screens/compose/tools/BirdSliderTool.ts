@@ -1,4 +1,5 @@
 import type { Texture } from 'pixi.js';
+import { getIcon } from '../../../../OsucadIcons';
 import type { ComposeTool } from './ComposeTool';
 import type { DrawableComposeTool } from './DrawableComposeTool';
 import { SliderPresetTool } from './SliderPresetTool';
@@ -6,7 +7,7 @@ import { DrawableBirdSliderTool } from './DrawableBirdSliderTool';
 
 export class BirdSliderTool extends SliderPresetTool {
   get icon(): Texture {
-    return useAsset('icon:slidershape-bird@2x');
+    return getIcon('slidershape-bird@2x');
   }
 
   isSameTool(): boolean {

@@ -31,7 +31,7 @@ export class EditorTopBar extends Container {
         filters: [filter],
       }),
       new EditorMenubar(),
-      new EditorScreenSelect().apply({
+      new EditorScreenSelect().with({
         autoSizeAxes: Axes.X,
         relativeSizeAxes: Axes.Y,
         anchor: Anchor.TopCenter,

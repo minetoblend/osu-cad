@@ -1,4 +1,3 @@
-import { Beatmap } from '@osucad/common';
 import type {
   ColorSource,
   Drawable,
@@ -12,6 +11,7 @@ import {
   RoundedBox,
   resolved,
 } from 'osucad-framework';
+import { Beatmap } from '../../beatmap/Beatmap';
 
 export abstract class OverviewTimelineMarkerContainer extends CompositeDrawable {
   constructor(options: { height: number; verticalPadding?: number }) {

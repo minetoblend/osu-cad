@@ -1,6 +1,6 @@
 import { BrowserWindow, app } from 'electron';
 
-function createWindow() {
+async function createWindow() {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
@@ -17,11 +17,12 @@ function createWindow() {
   });
 
   // win.setMenu(null);
-  win.loadURL('http://localhost:5173');
 
   win.once('ready-to-show', () => {
     win.show();
   });
+
+  await win.loadURL('http://localhost:5173');
 }
 
 app.whenReady().then(createWindow);

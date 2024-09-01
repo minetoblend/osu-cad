@@ -7,6 +7,7 @@ import {
   Axes,
   Container,
   DrawableSprite,
+  EasingFunction,
   FillMode,
   RoundedBox,
   almostEquals,
@@ -14,7 +15,6 @@ import {
   lerp,
   resolved,
 } from 'osucad-framework';
-
 import gsap from 'gsap';
 import { OsucadSpriteText } from '../OsucadSpriteText';
 import { FastRoundedBox } from '../drawables/FastRoundedBox';
@@ -57,7 +57,7 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
             alpha: 0.8,
             y: 20,
           }),
-          this.creatorInfo = this.createCreatorInfo().apply({
+          this.creatorInfo = this.createCreatorInfo().with({
             anchor: Anchor.CenterRight,
             origin: Anchor.CenterRight,
           }),
@@ -86,11 +86,7 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
   protected selected() {
     super.selected();
 
-    gsap.to(this.movementContainer, {
-      x: -100,
-      duration: 0.5,
-      ease: 'expo.out',
-    });
+    this.movementContainer.moveToX(-100, 500, EasingFunction.OutQuart);
 
     if (!this.beatmapsCreated) {
       this.beatmapsCreated = true;
@@ -102,7 +98,7 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
       );
     }
 
-    this.beatmaps.forEach(it => it.fadeIn({ duration: 400 }));
+    this.beatmaps.forEach(it => it.fadeInFromZero(400));
 
     this.#updateBeatmapYPositions();
   }
@@ -110,17 +106,13 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
   protected deselected() {
     super.deselected();
 
-    gsap.to(this.movementContainer, {
-      x: 0,
-      duration: 0.5,
-      ease: 'power4.out',
-    });
+    this.movementContainer.moveToX(0, 500, EasingFunction.OutQuart);
 
     this.#updateBeatmapYPositions();
 
     this.beatmaps.forEach((it) => {
       gsap.killTweensOf(it, 'alpha');
-      it.fadeOut({ duration: 100 });
+      it.fadeOut(100);
       it.expire();
     });
     this.beatmapsCreated = false;
@@ -247,7 +239,7 @@ class MapsetBackground extends Container {
         this.addAll(background, mask);
         background.y = this.parallax * this.parallaxMultiplier;
 
-        background.fadeIn({ duration: 250 });
+        background.fadeInFromZero(250);
       },
       shouldLoad: () => !this.isDisposed,
     });

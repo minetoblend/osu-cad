@@ -60,9 +60,7 @@ export class BeatmapSelectBackground extends CompositeDrawable {
       return;
 
     if (this.#currentSprite) {
-      this.#currentSprite.fadeOut({
-        duration: 300,
-      });
+      this.#currentSprite.fadeOut(300);
       this.#currentSprite.expire();
     }
 
@@ -76,28 +74,6 @@ export class BeatmapSelectBackground extends CompositeDrawable {
         width: texture.width * 4,
         height: texture.height * 4,
       });
-
-      const renderer = this.gameHost.renderer.internalRenderer;
-
-      // const blurred = new PIXISprite({
-      //   texture,
-      //   scale: 4,
-      // });
-      //
-      // blurred.filters = [
-      //   new BlurFilter({
-      //     quality: 4,
-      //     strength: 5,
-      //   }),
-      // ];
-      //
-      // renderer.render({
-      //   container: blurred,
-      //   target: renderTexture,
-      // });
-      //
-      // texture.destroy();
-      // blurred.destroy();
 
       const sprite = new DrawableSprite({
         texture,
@@ -114,9 +90,7 @@ export class BeatmapSelectBackground extends CompositeDrawable {
 
       sprite.onDispose(() => renderTexture.destroy());
 
-      sprite.fadeIn({
-        duration: 300,
-      });
+      sprite.fadeInFromZero(300);
     }
   }
 

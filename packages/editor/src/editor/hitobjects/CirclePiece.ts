@@ -8,42 +8,64 @@ import {
 import type { Color, ColorSource } from 'pixi.js';
 import { PreferencesStore } from '../../preferences/PreferencesStore';
 import { Skin } from '../../skins/Skin';
+import { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
+import { DrawableComboNumber } from './DrawableComboNumber';
+import { DrawableOsuHitObject } from './DrawableOsuHitObject';
 
 export class CirclePiece extends Container {
+  constructor(
+    protected readonly hasNumber = true,
+  ) {
+    super({
+      size: OsuHitObject.object_dimensions,
+      anchor: Anchor.Center,
+      origin: Anchor.Center,
+    });
+  }
+
   @resolved(Skin)
-  skin!: Skin;
+  private skin!: Skin;
 
   @resolved(PreferencesStore)
-  preferences!: PreferencesStore;
+  private preferences!: PreferencesStore;
 
-  hitCircle!: DrawableSprite;
-  hitCircleOverlay!: DrawableSprite;
+  @resolved(DrawableOsuHitObject)
+  private drawableHitObject!: DrawableOsuHitObject<any>;
 
-  startTime = 0;
-  timePreempt = 0;
-  timeFadeIn = 0;
+  protected circleSprite!: DrawableSprite;
+  protected overlaySprite!: DrawableSprite;
 
   get comboColor(): Color {
-    return this.hitCircle.color;
+    return this.circleSprite.color;
   }
 
   set comboColor(color: ColorSource) {
-    this.hitCircle.color = color;
+    this.circleSprite.color = color;
   }
 
   @dependencyLoader()
   load() {
     this.addAllInternal(
-      (this.hitCircle = new DrawableSprite({
+      (this.circleSprite = new DrawableSprite({
         texture: this.skin.hitcircle,
         origin: Anchor.Center,
         anchor: Anchor.Center,
       })),
-      (this.hitCircleOverlay = new DrawableSprite({
+      (this.overlaySprite = new DrawableSprite({
         texture: this.skin.hitcircleOverlay,
         origin: Anchor.Center,
         anchor: Anchor.Center,
       })),
     );
+
+    if (this.hasNumber) {
+      const comboNumber = new DrawableComboNumber();
+
+      this.addInternal(comboNumber);
+
+      this.drawableHitObject.indexInComboBindable.addOnChangeListener((e) => {
+        comboNumber.comboNumber = e.value + 1;
+      }, { immediate: true });
+    }
   }
 }

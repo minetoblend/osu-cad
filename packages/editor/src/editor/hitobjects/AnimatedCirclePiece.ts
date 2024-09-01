@@ -1,5 +1,6 @@
 import { Container, resolved } from 'osucad-framework';
 import { Easing } from 'osu-classes';
+import { Color } from 'pixi.js';
 import { PreferencesStore } from '../../preferences/PreferencesStore';
 import { animate } from '../../utils/animate';
 import { CirclePiece } from './CirclePiece';
@@ -19,7 +20,7 @@ export class AnimatedCirclePiece extends Container {
 
   timeFadeOut = 0;
 
-  comboColor = 0xFFFFFF;
+  comboColor = new Color(0xFFFFFF);
 
   readonly circlePiece: CirclePiece;
 

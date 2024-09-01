@@ -10,7 +10,7 @@ export class CarouselMapset extends CarouselItem {
       .sort((a, b) => a.starRating - b.starRating)
       .map(beatmap => new CarouselBeatmap(beatmap));
 
-    this.selected.addOnChangeListener((selected) => {
+    this.selected.addOnChangeListener(({ value: selected }) => {
       if (selected) {
         if (this.beatmaps.every(it => !it.selected.value))
           this.beatmaps[0].selected.value = true;
@@ -21,8 +21,8 @@ export class CarouselMapset extends CarouselItem {
     }, { immediate: true });
 
     for (const beatmap of this.beatmaps) {
-      beatmap.selected.addOnChangeListener((selected) => {
-        this.beatmapStateChanged(beatmap, selected);
+      beatmap.selected.addOnChangeListener((e) => {
+        this.beatmapStateChanged(beatmap, e.value);
       });
     }
   }

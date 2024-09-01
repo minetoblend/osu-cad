@@ -1,9 +1,10 @@
-import { Action, Vec2 } from 'osucad-framework';
+import { Action, Comparer, Vec2 } from 'osucad-framework';
 import { SerializedBeatmapDifficulty } from '../protocol';
 import { Attribution, SerializedHitObject } from '../types';
 import { randomString } from '../util';
 import { ControlPointManager } from './controlPointManager';
 import { HitSample, HitSound, defaultHitSound } from './hitSound';
+import { Color } from 'pixi.js';
 
 export function hitObjectId() {
   return randomString(8);
@@ -90,7 +91,7 @@ export abstract class HitObject {
   timePreempt = 0;
   timeFadeIn = 0;
 
-  comboColor: number = 0xffffff;
+  comboColor = new Color(0xffffff);
 
   private _stackHeight = 0;
 
@@ -193,7 +194,7 @@ export abstract class HitObject {
 
   abstract calculateHitSamples(): HitSample[];
 
-  protected _updateHitSounds() {}
+  protected updateHitSounds() {}
 
   protected _onUpdate(update: HitObjectUpdateType) {
     this._version++;
@@ -234,4 +235,10 @@ export const enum HitObjectType {
   Circle = 1,
   Slider = 2,
   Spinner = 3,
+}
+
+export class HitObjectComparer implements Comparer<HitObject> {
+  compare(a: HitObject, b: HitObject): number {
+    return a.startTime - b.startTime;
+  }
 }

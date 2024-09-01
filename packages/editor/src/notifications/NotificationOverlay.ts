@@ -1,5 +1,5 @@
 import type { Drawable } from 'osucad-framework';
-import { Anchor, Axes, Container, FillDirection, FillFlowContainer } from 'osucad-framework';
+import { Anchor, Axes, Container, EasingFunction, FillDirection, FillFlowContainer } from 'osucad-framework';
 import type { Notification } from './Notification';
 
 export class NotificationOverlay extends Container {
@@ -18,7 +18,7 @@ export class NotificationOverlay extends Container {
     anchor: Anchor.TopRight,
     origin: Anchor.TopRight,
     layoutDuration: 300,
-    layoutEasing: 'expo.out',
+    layoutEasing: EasingFunction.OutExpo,
     spacing: { x: 0, y: 6 },
   });
 
@@ -35,7 +35,7 @@ export class NotificationOverlay extends Container {
 
     notification.x = 200;
     notification.alpha = 0;
-    notification.fadeIn({ duration: 200 });
+    notification.fadeIn(200);
 
     this.#content.insert(-(this.#notificationCount++), notification);
 
@@ -43,8 +43,8 @@ export class NotificationOverlay extends Container {
   }
 
   dismiss(notification: Notification) {
-    notification.fadeOut({ duration: 200 });
-    notification.movementContainer.moveTo({ x: 200, duration: 200 });
+    notification.fadeOut(200);
+    notification.movementContainer.moveToX(200, 200);
     notification.expire();
   }
 }

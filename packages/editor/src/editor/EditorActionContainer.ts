@@ -12,7 +12,7 @@ import { EditorAction } from './EditorAction';
 export class EditorActionContainer extends KeyBindingContainer<EditorAction> {
   constructor(options: ContainerOptions = {}) {
     super(SimultaneousBindingMode.None, KeyCombinationMatchingMode.Modifiers);
-    this.apply(options);
+    this.with(options);
   }
 
   override get defaultKeyBindings(): IKeyBinding[] {

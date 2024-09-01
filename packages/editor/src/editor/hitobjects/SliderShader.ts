@@ -57,6 +57,7 @@ export class SliderShader extends Shader implements TextureShader {
               uniform vec4 uComboColor;
               uniform vec4 uBorderColor;
               uniform float uSnakeInProgress;
+              uniform float uSnakeOutProgress;
               uniform float uAlpha;
               uniform sampler2D uGradient;
               
@@ -73,10 +74,18 @@ export class SliderShader extends Shader implements TextureShader {
               main: `
               float progress = 1.0 - vUV.x;
               float distanceAlongPath = vUV.y;
-          
-              if(distanceAlongPath > uSnakeInProgress) {
+
+              if (distanceAlongPath >= 0.0) {
+                if(distanceAlongPath > uSnakeInProgress) {
                   discard;
-              }
+                }
+                
+                if(distanceAlongPath < uSnakeOutProgress) {
+                  discard;
+                }
+              }          
+          
+              
           
               vec4 gradientColor = texture(uGradient, vec2(progress, 0.0));
           
@@ -101,7 +110,7 @@ export class SliderShader extends Shader implements TextureShader {
 
     const sliderUniforms = new UniformGroup({
       uComboColor: {
-        value: new Float32Array(Color.shared.setValue(0xFF0000).toArray()),
+        value: new Float32Array(Color.shared.setValue(0xFF0000).setAlpha(0.9).toArray()),
         type: 'vec4<f32>',
       },
       uBorderColor: {
@@ -110,6 +119,7 @@ export class SliderShader extends Shader implements TextureShader {
       },
       uAlpha: { value: 1.0, type: 'f32' },
       uSnakeInProgress: { value: 0.0, type: 'f32' },
+      uSnakeOutProgress: { value: 0.0, type: 'f32' },
     });
 
     super({
@@ -126,9 +136,9 @@ export class SliderShader extends Shader implements TextureShader {
     return this.resources.sliderUniforms.uniforms.uComboColor;
   }
 
-  set comboColor(value: number) {
+  set comboColor(value: Color) {
     this.resources.sliderUniforms.uniforms.uComboColor = new Float32Array(
-      Color.shared.setValue(value).toArray(),
+      value.toArray(),
     );
   }
 
@@ -157,5 +167,14 @@ export class SliderShader extends Shader implements TextureShader {
   set snakeInProgress(value: number) {
     if (this.resources.sliderUniforms)
       this.resources.sliderUniforms.uniforms.uSnakeInProgress = value;
+  }
+
+  get snakeOutProgress(): number {
+    return this.resources.sliderUniforms.uniforms.uSnakeOutProgress;
+  }
+
+  set snakeOutProgress(value: number) {
+    if (this.resources.sliderUniforms)
+      this.resources.sliderUniforms.uniforms.uSnakeOutProgress = value;
   }
 }

@@ -1,27 +1,23 @@
-import type {
-  Beatmap,
-  CommandHandler,
-  IEditorCommand,
-} from '@osucad/common';
-import {
-  CommandContext,
-  getCommandHandler,
-} from '@osucad/common';
 import { Action, Bindable } from 'osucad-framework';
+import type { Beatmap } from '../../beatmap/Beatmap';
+import { CommandContext } from '../commands/CommandContext';
+import type { EditorCommand } from '../commands/EditorCommand';
+import { CommandSource } from '../commands/CommandSource';
 import type { EditorContext } from './EditorContext';
 
 export class CommandManager {
   constructor(
     readonly editorContext: EditorContext,
     readonly beatmap: Beatmap,
-  ) {}
+  ) {
+  }
 
   readonly canUndo = new Bindable(false);
 
   readonly canRedo = new Bindable(false);
 
   createContext(): CommandContext {
-    return new CommandContext(this.beatmap, true);
+    return new CommandContext(this.beatmap);
   }
 
   #context: CommandContext | null = null;
@@ -55,23 +51,24 @@ export class CommandManager {
     this.#transaction.length = 0;
   }
 
-  // eslint-disable-next-line unused-imports/no-unused-vars
-  protected beforeCommandSubmit(command: IEditorCommand): boolean {
+  protected beforeCommandSubmit(command: EditorCommand): boolean {
     return true;
   }
 
-  // eslint-disable-next-line unused-imports/no-unused-vars
-  protected afterCommandSubmit(command: IEditorCommand) {}
+  protected afterCommandSubmit(command: EditorCommand) {
+  }
 
-  // eslint-disable-next-line unused-imports/no-unused-vars
-  protected afterCommandApplied(command: IEditorCommand) {}
+  protected afterCommandApplied(command: EditorCommand) {
+  }
 
   #commandVersion = 0;
 
-  submit<T>(
-    command: IEditorCommand<CommandHandler<any, T>>,
+  submit(
+    command: EditorCommand,
     commit = true,
-  ): T | undefined {
+  ) {
+    console.log('Command submitted', command);
+
     const result = this.#submit(command, true);
 
     if (commit) {
@@ -86,10 +83,10 @@ export class CommandManager {
     this.#updateCanUndoRedo();
   }
 
-  #submit<T>(
-    command: IEditorCommand<CommandHandler<any, T>>,
+  #submit(
+    command: EditorCommand,
     recordHistory = true,
-  ): T | undefined {
+  ) {
     command.version = this.#commandVersion++;
     if (!this.beforeCommandSubmit(command))
       return undefined;
@@ -98,42 +95,27 @@ export class CommandManager {
       this.#record(command);
     }
 
-    const result = this.#apply(command);
+    this.#apply(command);
     this.afterCommandSubmit(command);
-
-    return result;
   }
 
-  #apply<T>(command: IEditorCommand<CommandHandler<any, T>>): T | undefined {
-    const handler = getCommandHandler(command);
-
-    if (!handler) {
-      console.error(`No handler found for command ${command.type}`);
-      return undefined;
+  #apply(command: EditorCommand) {
+    if (command.isRedundant(this.context)) {
+      return false;
     }
 
-    if (handler.canBeIgnored(this.context, command)) {
-      return undefined;
-    }
-
-    const result = handler.apply(this.context, command, 'local');
+    command.apply(this.context, CommandSource.Local);
 
     this.afterCommandApplied(command);
-
-    return result;
   }
 
   #transaction: HistoryEntry[] = [];
   #mergeKeys = new Map<string, HistoryEntry>();
 
-  #record(command: IEditorCommand) {
-    const handler = getCommandHandler(command);
-    if (!handler)
-      return;
+  #record(command: EditorCommand) {
+    let reverse = command.createUndo(this.context);
 
-    let reverse = handler.createUndoCommand(this.context, command);
-
-    const mergeKey = handler.getMergeKey(command);
+    const mergeKey = command.mergeKey;
 
     if (mergeKey) {
       const mergeWith = this.#mergeKeys.get(mergeKey);
@@ -144,10 +126,10 @@ export class CommandManager {
         if (index !== -1) {
           this.#transaction.splice(index, 1);
 
-          command = handler.merge(this.context, mergeWith.command, command) ?? command;
+          command = mergeWith.command.mergeWith(this.context, command) ?? command;
 
           if (mergeWith.reverse) {
-            reverse = handler.merge(this.context, reverse, mergeWith.reverse) ?? reverse;
+            reverse = reverse?.mergeWith(this.context, mergeWith.reverse) ?? reverse;
           }
         }
       }
@@ -177,10 +159,7 @@ export class CommandManager {
     for (let i = transaction.length - 1; i >= 0; i--) {
       const { reverse: command } = transaction[i];
       if (command) {
-        const reverse = getCommandHandler(command)?.createUndoCommand(
-          this.context,
-          command,
-        );
+        const reverse = command.createUndo(this.context);
         this.#submit(command, false);
         if (reverse)
           redoTransaction.push({ command, reverse });
@@ -242,7 +221,8 @@ export class CommandManager {
     this.canRedo.value = this.#redoStack.length > 0;
   }
 
-  dispose() {}
+  dispose() {
+  }
 
   beforeUndo = new Action();
 
@@ -250,6 +230,6 @@ export class CommandManager {
 }
 
 interface HistoryEntry {
-  command: IEditorCommand;
-  reverse: IEditorCommand | null;
+  command: EditorCommand;
+  reverse: EditorCommand | null;
 }

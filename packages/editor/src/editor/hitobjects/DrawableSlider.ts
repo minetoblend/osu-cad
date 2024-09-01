@@ -1,140 +1,116 @@
-import type { Slider } from '@osucad/common';
-import { Anchor, Container, Vec2, resolved } from 'osucad-framework';
-import { animate } from '../../utils/animate';
-import { PreferencesStore } from '../../preferences/PreferencesStore';
-import { DrawableHitObject } from './DrawableHitObject';
-import { ApproachCircle } from './ApproachCircle';
+import { Anchor, Axes, Container, clamp, dependencyLoader } from 'osucad-framework';
+import type { Slider } from '../../beatmap/hitObjects/Slider';
+import { DrawableOsuHitObject } from './DrawableOsuHitObject';
+import type { DrawableHitObject } from './DrawableHitObject';
 import { DrawableSliderBody } from './DrawableSliderBody';
-import { DrawableComboNumber } from './DrawableComboNumber';
-import { DrawableSliderBall } from './DrawableSliderBall';
-import { ReverseArrow } from './ReverseArrow';
+import { DrawableSliderHead } from './DrawableSliderHead';
 import { DrawableSliderTail } from './DrawableSliderTail';
-import { AnimatedCirclePiece } from './AnimatedCirclePiece';
+import { DrawableSliderTick } from './DrawableSliderTick';
+import { DrawableSliderRepeat } from './DrawableSliderRepeat';
+import { DrawableSliderBall } from './DrawableSliderBall';
 
-export class DrawableSlider extends DrawableHitObject<Slider> {
-  constructor(public slider: Slider) {
-    super(slider);
+export class DrawableSlider extends DrawableOsuHitObject<Slider> {
+  constructor() {
+    super();
     this.origin = Anchor.Center;
+
+    this.ball = new DrawableSliderBall();
+    this.ball.alwaysPresent = true;
+    this.ball.alpha = 0;
+    this.ball.bypassAutoSizeAxes = Axes.Both;
   }
 
-  headCircle!: AnimatedCirclePiece;
-  sliderTail!: DrawableSliderTail;
-  approachCircle!: ApproachCircle;
-  sliderBody!: DrawableSliderBody;
-  comboNumber!: DrawableComboNumber;
-  sliderBall!: DrawableSliderBall;
-  reverseArrows!: Container;
+  body!: DrawableSliderBody;
 
-  override load() {
-    this.addAll(
-      (this.sliderBody = new DrawableSliderBody(this.hitObject)),
-      (this.sliderTail = new DrawableSliderTail(this.hitObject, 0)),
-      (this.reverseArrows = new Container()),
-      (this.headCircle = new AnimatedCirclePiece()),
-      (this.approachCircle = new ApproachCircle()),
-      (this.sliderBall = new DrawableSliderBall()),
-    );
-    this.headCircle.add(
-      (this.comboNumber = new DrawableComboNumber(this.hitObject.indexInCombo)),
+  readonly ball: DrawableSliderBall;
+
+  #headContainer!: Container;
+  #tailContainer!: Container;
+  #tickContainer!: Container;
+  #repeatContainer!: Container;
+
+  @dependencyLoader()
+  load() {
+    this.addAllInternal(
+      this.body = new DrawableSliderBody().with({
+        alpha: 0,
+      }),
+      this.#tailContainer = new Container({ relativeSizeAxes: Axes.Both }),
+      this.#tickContainer = new Container({ relativeSizeAxes: Axes.Both }),
+      this.#repeatContainer = new Container({ relativeSizeAxes: Axes.Both }),
+      this.#headContainer = new Container({ relativeSizeAxes: Axes.Both }),
+      this.ball,
     );
 
-    super.load();
+    this.positionBindable.addOnChangeListener(() => this.position = this.hitObject!.stackedPosition);
+    this.stackHeightBindable.addOnChangeListener(() => this.position = this.hitObject!.stackedPosition);
+    this.scaleBindable.addOnChangeListener(scale => this.ball.scale = scale.value);
   }
 
-  setup() {
-    super.setup();
-    this.comboNumber.comboNumber = this.hitObject.indexInCombo;
-    this.headCircle.comboColor = this.hitObject.comboColor;
+  onApplied() {
+    super.onApplied();
 
-    this.headCircle.timeFadeIn = this.hitObject.startTime - this.hitObject.timePreempt;
-    this.headCircle.fadeInDuration = this.hitObject.timeFadeIn;
-    this.headCircle.timeFadeOut = this.hitObject.startTime;
-
-    this.headCircle.comboColor = this.hitObject.comboColor;
-
-    this.sliderTail.position = Vec2.scale(
-      this.hitObject.endPosition.sub(this.hitObject.position),
-      1 / this.hitObject.scale,
-    );
-    this.sliderTail.repeatIndex = this.hitObject.repeats;
-
-    this.reverseArrows.clear();
-    for (let i = this.hitObject.repeats; i >= 1; i--) {
-      const time = this.hitObject.startTime + this.hitObject.spanDuration * i;
-
-      const circle = new DrawableSliderTail(this.slider, i - 1);
-
-      if (i % 2 === 1) {
-        circle.position = Vec2.scale(this.hitObject.path.endPosition, 1 / this.hitObject.scale);
-      }
-
-      const angle
-        = i % 2 === 0 ? this.hitObject.startAngle : this.hitObject.endAngle;
-
-      const reverseArrow = new ReverseArrow();
-      reverseArrow.rotation = angle;
-      reverseArrow.startTime = time;
-      reverseArrow.timePreempt = this.hitObject.timePreempt;
-
-      if (i > 0) {
-        reverseArrow.spanDuration = this.hitObject.spanDuration;
-      }
-
-      this.reverseArrows.addAll(circle, reverseArrow);
-      if (i % 2 !== 0) {
-        reverseArrow.position = Vec2.scale(
-          this.hitObject.path.endPosition,
-          1 / this.hitObject.scale,
-        );
-      }
-    }
-
-    this.sliderBody.scale = new Vec2(1 / this.hitObject.scale);
-    this.sliderBody.setup();
-
-    this.approachCircle.comboColor = this.hitObject.comboColor;
-    this.approachCircle.startTime = this.hitObject.startTime;
-    this.approachCircle.timePreempt = this.hitObject.timePreempt;
-
-    this.sliderBall.startTime = this.hitObject.startTime;
-    this.sliderBall.endTime = this.hitObject.endTime;
+    this.body.hitObject = this.hitObject!;
   }
 
-  @resolved(PreferencesStore)
-  preferences!: PreferencesStore;
+  onFreed() {
+    super.onFreed();
 
-  update() {
-    super.update();
-    const time = this.time.current - this.hitObject.startTime;
+    this.body.hitObject = undefined;
+  }
 
-    this.comboNumber.alpha
-    = time > 0 && this.preferences.viewport.hitAnimations
-        ? animate(time, 0, 50, 1, 0)
-        : 1;
+  protected updateInitialTransforms() {
+    this.body.fadeInFromZero(this.hitObject!.timeFadeIn);
+  }
 
-    if (time < 0) {
-      this.sliderBody.bodyAlpha = animate(
-        time,
-        -this.hitObject.timePreempt,
-        -this.hitObject.timePreempt + this.hitObject.timeFadeIn,
-        0,
-        0.8,
-      );
+  protected updateStartTimeTransforms() {
+    super.updateStartTimeTransforms();
+
+    this.ball.fadeIn();
+    this.ball.scaleTo(this.hitObject!.scale);
+  }
+
+  protected override updateEndTimeTransforms() {
+    super.updateEndTimeTransforms();
+
+    this.fadeOut(700);
+    this.expire();
+  }
+
+  protected addNestedHitObject(hitObject: DrawableHitObject) {
+    super.addNestedHitObject(hitObject);
+
+    switch (hitObject.constructor) {
+      case DrawableSliderHead:
+        this.#headContainer.child = hitObject;
+        break;
+      case DrawableSliderTail:
+        this.#tailContainer.child = hitObject;
+        break;
+      case DrawableSliderTick:
+        this.#tickContainer.add(hitObject);
+        break;
+      case DrawableSliderRepeat:
+        hitObject.depth = (hitObject as DrawableSliderRepeat).hitObject!.repeatIndex;
+        this.#repeatContainer.add(hitObject);
+        break;
     }
-    else if (time < this.hitObject.duration) {
-      this.sliderBody.bodyAlpha = 0.8;
-    }
-    else {
-      this.sliderBody.bodyAlpha = animate(
-        time,
-        this.hitObject.duration,
-        this.hitObject.duration + 300,
-        0.8,
-        0,
-      );
-    }
+  }
 
-    const position = this.hitObject.positionAt(this.time.current);
-    this.sliderBall.position = Vec2.scale(position, 1 / this.hitObject.scale);
+  protected clearNestedHitObjects() {
+    super.clearNestedHitObjects();
+
+    this.#headContainer.clear(false);
+    this.#tailContainer.clear(false);
+    this.#tickContainer.clear(false);
+    this.#repeatContainer.clear(false);
+  }
+
+  updateAfterChildren() {
+    super.updateAfterChildren();
+
+    const completionProgress = clamp((this.time.current - this.hitObject!.startTime) / this.hitObject!.duration, 0, 1);
+
+    this.ball.updateProgress(completionProgress);
   }
 }

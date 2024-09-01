@@ -1,4 +1,3 @@
-import { ControlPointManager } from '@osucad/common';
 import type {
   SpriteText,
 } from 'osucad-framework';
@@ -10,6 +9,7 @@ import {
   resolved,
 } from 'osucad-framework';
 import { OsucadSpriteText } from '../OsucadSpriteText';
+import { ControlPointInfo } from '../beatmap/timing/ControlPointInfo';
 import { EditorClock } from './EditorClock';
 import { ThemeColors } from './ThemeColors';
 import { Timestamp } from './Timestamp';
@@ -28,8 +28,8 @@ export class TimestampContainer extends Container {
   @resolved(EditorClock)
   editorClock!: EditorClock;
 
-  @resolved(ControlPointManager)
-  controlPoints!: ControlPointManager;
+  @resolved(ControlPointInfo)
+  controlPoints!: ControlPointInfo;
 
   @resolved(ThemeColors)
   colors!: ThemeColors;
@@ -52,10 +52,9 @@ export class TimestampContainer extends Container {
   update(): void {
     super.update();
 
-    const timingPoint = this.controlPoints.timingPointAt(
-      this.editorClock.currentTime,
-    );
-    let bpm = 60_000 / timingPoint.timing.beatLength;
+    const timingPoint = this.controlPoints.timingPointAt(this.editorClock.currentTime);
+
+    let bpm = 60_000 / timingPoint.beatLength;
     bpm = Math.round(bpm * 10) / 10;
     this.bpm.text = `${bpm}bpm`;
   }

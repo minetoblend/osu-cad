@@ -1,6 +1,6 @@
-import type { HitCircle } from '@osucad/common';
 import type { ColorSource } from 'pixi.js';
 import { dependencyLoader } from 'osucad-framework';
+import type { HitCircle } from '../../beatmap/hitObjects/HitCircle';
 import { TimelineObject } from './TimelineObject';
 import { TimelineComboNumber } from './TimelineComboNumber';
 

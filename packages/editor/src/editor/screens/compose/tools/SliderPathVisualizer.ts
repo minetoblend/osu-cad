@@ -1,22 +1,18 @@
-import type { Slider } from '@osucad/common';
-import { PathType } from '@osucad/common';
-import type {
-  DragEndEvent,
-  DragEvent,
-  DragStartEvent,
-  MouseDownEvent,
-} from 'osucad-framework';
+import type { DragEndEvent, DragEvent, DragStartEvent, MouseDownEvent } from 'osucad-framework';
 import {
   Anchor,
   Axes,
+  Cached,
   CompositeDrawable,
   Container,
+  EasingFunction,
   PIXIGraphics,
   RoundedBox,
   Vec2,
   dependencyLoader,
 } from 'osucad-framework';
-import gsap from 'gsap';
+import type { Slider } from '../../../../beatmap/hitObjects/Slider';
+import { PathType } from '../../../../beatmap/hitObjects/PathType';
 
 export class SliderPathVisualizer extends CompositeDrawable {
   constructor() {
@@ -41,24 +37,25 @@ export class SliderPathVisualizer extends CompositeDrawable {
       return;
 
     if (this.#slider) {
-      this.#slider.onUpdate.removeListener(this.#onSliderUpdate);
+      this.#slider.path.invalidated.removeListener(this.#onSliderUpdate);
+      this.#slider.positionBindable.valueChanged.removeListener(this.#onSliderUpdate);
+      this.#slider.stackHeightBindable.valueChanged.removeListener(this.#onSliderUpdate);
     }
 
     this.#slider = slider;
-    this.#pathVersion = -1;
-
-    slider?.onUpdate.addListener(this.#onSliderUpdate);
 
     if (slider) {
-      this.#setup(slider);
+      slider.path.invalidated.addListener(this.#onSliderUpdate, this);
+      slider.positionBindable.valueChanged.addListener(this.#onSliderUpdate, this);
+      slider.stackHeightBindable.valueChanged.addListener(this.#onSliderUpdate, this);
+
+      this.#onSliderUpdate();
     }
     else {
       this.#graphics.clear();
       this.#handles.clear();
     }
   }
-
-  #pathVersion = -1;
 
   #graphics = new PIXIGraphics();
 
@@ -69,23 +66,21 @@ export class SliderPathVisualizer extends CompositeDrawable {
     this.addInternal(this.#handles);
   }
 
-  #onSliderUpdate = () => {
-    console.assert(this.#slider !== null, 'Slider should not be null');
-    this.#setup(this.#slider!);
-  };
+  #pathCache = new Cached();
 
   update() {
     super.update();
 
-    if (this.#slider && this.#slider.path.version !== this.#pathVersion) {
-      this.#updatePath(this.#slider);
-      this.#pathVersion = this.#slider.path.version;
+    if (!this.#pathCache.isValid && this.slider) {
+      this.#updatePath(this.slider);
+      this.#pathCache.validate();
     }
   }
 
-  #setup(slider: Slider) {
-    this.position = slider.stackedPosition;
-  }
+  #onSliderUpdate() {
+    this.position = this.#slider!.stackedPosition;
+    this.#pathCache.invalidate();
+  };
 
   #updatePath(slider: Slider) {
     const g = this.#graphics;
@@ -142,6 +137,12 @@ export class SliderPathVisualizer extends CompositeDrawable {
       handle.position = controlPoints[i];
     }
   }
+
+  dispose(isDisposing?: boolean) {
+    this.slider = null;
+
+    super.dispose(isDisposing);
+  }
 }
 
 class SliderPathVisualizerHandle extends CompositeDrawable {
@@ -193,35 +194,15 @@ class SliderPathVisualizerHandle extends CompositeDrawable {
   #type?: PathType | null;
 
   onHover(): boolean {
-    gsap.to(this.#shadow, {
-      scaleX: 1.2,
-      scaleY: 1.2,
-      duration: 0.2,
-      ease: 'back.out',
-    });
-    gsap.to(this.#handle, {
-      scaleX: 1.2,
-      scaleY: 1.2,
-      duration: 0.2,
-      ease: 'back.out',
-    });
+    this.#shadow.scaleTo(1.2, 200, EasingFunction.OutBack);
+    this.#handle.scaleTo(1.2, 200, EasingFunction.OutBack);
 
     return true;
   }
 
   onHoverLost(): boolean {
-    gsap.to(this.#shadow, {
-      scaleX: 1,
-      scaleY: 1,
-      duration: 0.2,
-      ease: 'back.out',
-    });
-    gsap.to(this.#handle, {
-      scaleX: 1,
-      scaleY: 1,
-      duration: 0.2,
-      ease: 'back.out',
-    });
+    this.#shadow.scaleTo(1, 200, EasingFunction.OutBack);
+    this.#handle.scaleTo(1, 200, EasingFunction.OutBack);
 
     return true;
   }

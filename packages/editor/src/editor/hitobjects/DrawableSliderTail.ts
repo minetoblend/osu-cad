@@ -1,58 +1,76 @@
-import { Anchor, CompositeDrawable, dependencyLoader } from 'osucad-framework';
-import type { Slider } from '@osucad/common';
-import { AnimatedCirclePiece } from './AnimatedCirclePiece';
+import { Anchor, Axes, Container, dependencyLoader, resolved } from 'osucad-framework';
+import type { SliderTailCircle } from '../../beatmap/hitObjects/SliderTailCircle';
+import { PreferencesStore } from '../../preferences/PreferencesStore';
+import type { Slider } from '../../beatmap/hitObjects/Slider';
+import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
+import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
+import { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
+import { DrawableOsuHitObject } from './DrawableOsuHitObject';
 
-export class DrawableSliderTail extends CompositeDrawable {
-  constructor(
-    readonly slider: Slider,
-    repeatIndex: number,
-  ) {
+export class DrawableSliderTail extends DrawableOsuHitObject<SliderTailCircle> {
+  constructor() {
     super();
-    this.origin = Anchor.Center;
-
-    this.#repeatIndex = repeatIndex;
   }
 
-  #circlePiece!: AnimatedCirclePiece;
+  #scaleContainer!: Container;
 
-  #repeatIndex: number;
-
-  get repeatIndex() {
-    return this.#repeatIndex;
-  }
-
-  set repeatIndex(value: number) {
-    if (this.#repeatIndex === value)
-      return;
-
-    this.#repeatIndex = value;
-
-    this.#setup();
-  }
+  circlePiece!: SkinnableDrawable;
 
   @dependencyLoader()
   load() {
-    this.addInternal(this.#circlePiece = new AnimatedCirclePiece());
+    this.origin = Anchor.Center;
+    this.size = OsuHitObject.object_dimensions;
 
-    this.slider.onUpdate.addListener(() => this.#setup());
+    this.addInternal(
+      this.#scaleContainer = new Container({
+        relativeSizeAxes: Axes.Both,
+        origin: Anchor.Center,
+        anchor: Anchor.Center,
+        children: [
+          this.circlePiece = new SkinnableDrawable(OsuSkinComponentLookup.SliderTailHitCircle),
+        ],
+      }),
+    );
 
-    this.#setup();
+    this.scaleBindable.addOnChangeListener(scale => this.#scaleContainer.scale = scale.value);
   }
 
-  #setup() {
-    this.#circlePiece.comboColor = this.slider.comboColor;
+  get slider() {
+    return this.parentHitObject?.hitObject as Slider | undefined;
+  }
 
-    let timeFadeIn = this.slider.startTime - this.slider.timePreempt;
+  updateInitialTransforms() {
+    this.circlePiece
+      .fadeOut()
+      .delay((this.slider?.timePreempt ?? 0) / 3)
+      .fadeIn(this.hitObject!.timeFadeIn);
+  }
 
-    if (this.repeatIndex === 0) {
-      timeFadeIn += this.slider.timePreempt / 3;
-    }
-    else {
-      timeFadeIn = Math.max(timeFadeIn, this.slider.startTime - this.slider.spanDuration * this.repeatIndex);
-    }
+  @resolved(PreferencesStore)
+  preferences!: PreferencesStore;
 
-    this.#circlePiece.timeFadeIn = timeFadeIn;
-    this.#circlePiece.fadeInDuration = this.slider.timeFadeIn;
-    this.#circlePiece.timeFadeOut = this.slider.startTime + this.slider.spanDuration * (this.repeatIndex + 1);
+  protected updateEndTimeTransforms() {
+    super.updateEndTimeTransforms();
+
+    this.delay(800).fadeOut();
+  }
+
+  onApplied() {
+    super.onApplied();
+
+    this.updatePosition();
+
+    (this.parentHitObject!.hitObject as Slider).path.invalidated.addListener(this.updatePosition, this);
+  }
+
+  onFreed() {
+    super.onFreed();
+
+    (this.parentHitObject!.hitObject as Slider).path.invalidated.removeListener(this.updatePosition);
+  }
+
+  updatePosition() {
+    if (this.slider)
+      this.position = this.slider.curvePositionAt(this.hitObject!.repeatIndex % 2 === 0 ? 1 : 0);
   }
 }

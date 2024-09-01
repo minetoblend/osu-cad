@@ -1,0 +1,87 @@
+import {
+  Anchor,
+  Axes,
+  CompositeDrawable,
+  Container,
+  DrawableSprite,
+  Vec2,
+  dependencyLoader,
+  resolved,
+} from 'osucad-framework';
+import { Color } from 'pixi.js';
+import { ISkinSource } from '../ISkinSource';
+import type { DrawableSpinner } from '../../editor/hitobjects/DrawableSpinner';
+import { DrawableHitObject } from '../../editor/hitobjects/DrawableHitObject';
+
+export class StableSpinnerBody extends CompositeDrawable {
+  @resolved(ISkinSource)
+  protected skin!: ISkinSource;
+
+  #scaleContainer!: Container;
+
+  @resolved(DrawableHitObject)
+  protected spinner!: DrawableSpinner;
+
+  #glow!: DrawableSprite;
+  #discBottom!: DrawableSprite;
+  #discTop!: DrawableSprite;
+  #spinningMiddle!: DrawableSprite;
+  #fixedMiddle!: DrawableSprite;
+
+  @dependencyLoader()
+  load() {
+    const glowColor = new Color('rgb(3, 151, 255)');
+
+    this.anchor = Anchor.Center;
+    this.origin = Anchor.Center;
+
+    this.size = new Vec2(640, 480);
+    this.position = new Vec2(0, -8);
+
+    this.addInternal(this.#scaleContainer = new Container({
+      scale: new Vec2(0.625),
+      anchor: Anchor.TopCenter,
+      origin: Anchor.Center,
+      relativeSizeAxes: Axes.Both,
+      y: 219,
+      children: [
+        this.#glow = new DrawableSprite({
+          anchor: Anchor.Center,
+          origin: Anchor.Center,
+          texture: this.skin.getTexture('spinner-glow'),
+          blendMode: 'add',
+          color: glowColor,
+        }),
+        this.#discBottom = new DrawableSprite({
+          anchor: Anchor.Center,
+          origin: Anchor.Center,
+          texture: this.skin.getTexture('spinner-bottom'),
+        }),
+        this.#discTop = new DrawableSprite({
+          anchor: Anchor.Center,
+          origin: Anchor.Center,
+          texture: this.skin.getTexture('spinner-top'),
+        }),
+        this.#fixedMiddle = new DrawableSprite({
+          anchor: Anchor.Center,
+          origin: Anchor.Center,
+          texture: this.skin.getTexture('spinner-middle'),
+        }),
+        this.#spinningMiddle = new DrawableSprite({
+          anchor: Anchor.Center,
+          origin: Anchor.Center,
+          texture: this.skin.getTexture('spinner-middle2'),
+          blendMode: 'add',
+        }),
+      ],
+    }));
+  }
+
+  update() {
+    super.update();
+    if (this.spinner) {
+      this.#discTop.rotation = this.spinner.spin;
+      this.#discBottom.rotation = this.spinner.spin * 0.25;
+    }
+  }
+}

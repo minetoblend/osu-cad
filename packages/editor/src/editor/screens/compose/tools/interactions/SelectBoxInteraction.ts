@@ -13,10 +13,12 @@ import {
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import type { HitObject } from '@osucad/common';
-import { HitObjectManager, Slider, Spinner } from '@osucad/common';
 import { EditorSelection } from '../../EditorSelection';
 import { EditorClock } from '../../../../EditorClock';
+import { HitObjectList } from '../../../../../beatmap/hitObjects/HitObjectList';
+import type { OsuHitObject } from '../../../../../beatmap/hitObjects/OsuHitObject';
+import { Spinner } from '../../../../../beatmap/hitObjects/Spinner';
+import { Slider } from '../../../../../beatmap/hitObjects/Slider';
 import { ComposeToolInteraction } from './ComposeToolInteraction';
 
 export class SelectBoxInteraction extends ComposeToolInteraction {
@@ -24,7 +26,7 @@ export class SelectBoxInteraction extends ComposeToolInteraction {
     super();
   }
 
-  #selectionAtStart: HitObject[] = [];
+  #selectionAtStart: OsuHitObject[] = [];
 
   @dependencyLoader()
   load() {
@@ -61,8 +63,8 @@ export class SelectBoxInteraction extends ComposeToolInteraction {
   @resolved(EditorSelection)
   selection!: EditorSelection;
 
-  @resolved(HitObjectManager)
-  hitObjects!: HitObjectManager;
+  @resolved(HitObjectList)
+  hitObjects!: HitObjectList;
 
   @resolved(EditorClock)
   editorClock!: EditorClock;
@@ -102,7 +104,7 @@ export class SelectBoxInteraction extends ComposeToolInteraction {
     const minTime = Math.min(this.#startTime, this.#endTime);
     const maxTime = Math.max(this.#startTime, this.#endTime);
 
-    const hitObjects = this.hitObjects.hitObjects.filter((it) => {
+    const hitObjects = this.hitObjects.filter((it) => {
       if (it instanceof Spinner) {
         return false;
       }

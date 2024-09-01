@@ -32,8 +32,8 @@ export class SliderPathGeometry extends MeshGeometry {
       const prev = path[i - 1];
       const theta = this.getTheta(prev, curr);
 
-      if (i === 1)
-        geo.addJoin(prev, theta + Math.PI, Math.PI, radius);
+      // if (i === 1)
+      // geo.addJoin(prev, theta + Math.PI, Math.PI, radius);
 
       geo.addStraightSegment(prev, curr, radius);
 
@@ -56,8 +56,8 @@ export class SliderPathGeometry extends MeshGeometry {
   private getGeoCount(path: Vec2[]) {
     const halfCircleCount = this.getJoinGeometryCount(Math.PI);
 
-    let numVertices = (path.length - 1) * 6 * 3 + halfCircleCount.vertices * 2;
-    let numIndices = (path.length - 1) * 12 + halfCircleCount.indices * 2;
+    let numVertices = (path.length - 1) * 6 * 3;// + halfCircleCount.vertices * 2;
+    let numIndices = (path.length - 1) * 12;// + halfCircleCount.indices * 2;
 
     for (let i = 1; i < path.length - 1; i++) {
       const prev = path[i - 1];

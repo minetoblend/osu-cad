@@ -1,11 +1,4 @@
-import type { HitObject } from '@osucad/common';
-import { Beatmap, DeleteHitObjectCommand, UpdateHitObjectCommand } from '@osucad/common';
-import type {
-  DragEvent,
-  MouseDownEvent,
-  MouseUpEvent,
-  Vec2,
-} from 'osucad-framework';
+import type { DragEvent, MouseDownEvent, MouseUpEvent, Vec2 } from 'osucad-framework';
 import { Anchor, Axes, Container, MouseButton, dependencyLoader, resolved } from 'osucad-framework';
 import type { ColorSource } from 'pixi.js';
 import { EditorClock } from '../EditorClock';
@@ -13,10 +6,14 @@ import { ThemeColors } from '../ThemeColors';
 import { CommandManager } from '../context/CommandManager';
 import { EditorSelection } from '../screens/compose/EditorSelection';
 import { Editor } from '../Editor';
+import { Beatmap } from '../../beatmap/Beatmap';
+import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
+import { DeleteHitObjectCommand } from '../commands/DeleteHitObjectCommand';
+import { UpdateHitObjectCommand } from '../commands/UpdateHitObjectCommand';
 import { Timeline } from './Timeline';
 import { TimelineElement } from './TimelineElement';
 
-export abstract class TimelineObject<T extends HitObject = HitObject> extends Container {
+export abstract class TimelineObject<T extends OsuHitObject = OsuHitObject> extends Container {
   protected constructor(readonly hitObject: T) {
     super({
       relativeSizeAxes: Axes.Y,
@@ -42,7 +39,7 @@ export abstract class TimelineObject<T extends HitObject = HitObject> extends Co
 
     this.body.body.alpha = 0.8;
 
-    this.hitObject.onUpdate.addListener(() => this.setup());
+    this.hitObject.changed.addListener(() => this.setup());
 
     this.selection.selectionChanged.addListener(([hitObject, selected]) => {
       if (hitObject !== this.hitObject)

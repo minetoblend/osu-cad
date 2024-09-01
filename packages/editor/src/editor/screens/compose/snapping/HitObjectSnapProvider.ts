@@ -1,15 +1,18 @@
-import type { HitObject, HitObjectManager } from '@osucad/common';
-import { PathType, Slider, Spinner } from '@osucad/common';
 import { PathApproximator, Vector2 } from 'osu-classes';
 import { Vec2 } from 'osucad-framework';
 import type { EditorSelection } from '../EditorSelection';
 import type { EditorClock } from '../../../EditorClock';
+import type { HitObjectList } from '../../../../beatmap/hitObjects/HitObjectList';
+import type { HitObject } from '../../../../beatmap/hitObjects/HitObject';
+import { Slider } from '../../../../beatmap/hitObjects/Slider';
+import { PathType } from '../../../../beatmap/hitObjects/PathType';
+import { Spinner } from '../../../../beatmap/hitObjects/Spinner';
 import type { IPositionSnapProvider } from './IPositionSnapProvider';
 import { PositionSnapTarget } from './SnapTarget';
 
 export class HitObjectSnapProvider implements IPositionSnapProvider {
   constructor(
-    private readonly hitObjectManager: HitObjectManager,
+    private readonly hitObjects: HitObjectList,
     private readonly selection: EditorSelection,
     private readonly clock: EditorClock,
   ) {}
@@ -17,7 +20,7 @@ export class HitObjectSnapProvider implements IPositionSnapProvider {
   getSnapTargets() {
     const currentTime = this.clock.currentTime;
 
-    const hitObjects = this.hitObjectManager.hitObjects.filter(it => !it.isSelected && it.isVisibleAtTime(currentTime));
+    const hitObjects = this.hitObjects.filter(it => !this.selection.isSelected(it) && it.isVisibleAtTime(currentTime));
 
     const positions = hitObjects.flatMap((it) => {
       if (it instanceof Spinner)

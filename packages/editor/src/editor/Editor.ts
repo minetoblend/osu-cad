@@ -1,11 +1,4 @@
-import './mixins/HitObjectMixin';
-import type {
-  IKeyBindingHandler,
-  KeyBindingPressEvent,
-  KeyDownEvent,
-  ScrollEvent,
-  UIEvent,
-} from 'osucad-framework';
+import type { IKeyBindingHandler, KeyBindingPressEvent, KeyDownEvent, ScrollEvent, UIEvent } from 'osucad-framework';
 import {
   Action,
   Anchor,
@@ -14,6 +7,7 @@ import {
   Bindable,
   Box,
   Container,
+  EasingFunction,
   Key,
   PlatformAction,
   asyncDependencyLoader,
@@ -23,6 +17,10 @@ import {
 import { OsucadScreen } from '../OsucadScreen';
 import { NotificationOverlay } from '../notifications/NotificationOverlay';
 import { Notification } from '../notifications/Notification';
+import { BeatmapStackingProcessor } from '../beatmap/beatmapProcessors/BeatmapStackingProcessor';
+import { BeatmapComboProcessor } from '../beatmap/beatmapProcessors/BeatmapComboProcessor';
+import { AdditionsBindable } from '../beatmap/hitSounds/AdditionsBindable';
+import { Additions } from '../beatmap/hitSounds/Additions';
 import { EditorBottomBar } from './EditorBottomBar';
 import { EditorClock } from './EditorClock';
 import { EditorMixer } from './EditorMixer';
@@ -34,8 +32,7 @@ import { ComposeScreen } from './screens/compose/ComposeScreen';
 import { SetupScreen } from './screens/setup/SetupScreen';
 import { EditorSelection } from './screens/compose/EditorSelection';
 import { EditorAction } from './EditorAction';
-import { DifficultyCalculator } from './DifficultyCalculator';
-import { CURRENT_SCREEN, NEW_COMBO, SAMPLE_CLAP, SAMPLE_FINISH, SAMPLE_WHISTLE } from './InjectionTokens';
+import { ADDITIONS, CURRENT_SCREEN, NEW_COMBO } from './InjectionTokens';
 import { ToggleBindable } from './screens/compose/ToggleBindable';
 import { HitsoundPlayer } from './HitsoundPlayer';
 import { TimingScreen } from './screens/timing/TimingScreen';
@@ -80,22 +77,18 @@ export class Editor
 
   #newCombo = new ToggleBindable(false);
 
-  #sampleWhistle = new ToggleBindable(false);
-
-  #sampleFinish = new ToggleBindable(false);
-
-  #sampleClap = new ToggleBindable(false);
+  #additions = new AdditionsBindable(Additions.None);
 
   @asyncDependencyLoader()
   async init() {
     await this.context.load();
 
+    this.context.beatmap.hitObjects.applyDefaultsImmediately = false;
+
     this.context.provideDependencies(this.dependencies);
 
     this.dependencies.provide(NEW_COMBO, this.#newCombo);
-    this.dependencies.provide(SAMPLE_WHISTLE, this.#sampleWhistle);
-    this.dependencies.provide(SAMPLE_FINISH, this.#sampleFinish);
-    this.dependencies.provide(SAMPLE_CLAP, this.#sampleClap);
+    this.dependencies.provide(ADDITIONS, this.#additions);
     this.dependencies.provide(CURRENT_SCREEN, this.currentScreen);
 
     const track = this.audioManager.createTrack(
@@ -112,9 +105,6 @@ export class Editor
     this.dependencies.provide(EditorSelection, selection);
 
     this.addInternal(selection);
-
-    const difficultyCalculator = new DifficultyCalculator();
-    this.addInternal(difficultyCalculator);
 
     const hitSoundPlayer = new HitsoundPlayer();
     this.dependencies.provide(HitsoundPlayer, hitSoundPlayer);
@@ -135,6 +125,11 @@ export class Editor
         this.#updateScreen(screen);
       },
       { immediate: true },
+    );
+
+    this.addAllInternal(
+      new BeatmapStackingProcessor(),
+      new BeatmapComboProcessor(),
     );
   }
 
@@ -210,10 +205,9 @@ export class Editor
 
     const controlPoint
       = direction < 1
-        ? [...controlPointInfo.controlPoints]
-            .reverse()
+        ? [...controlPointInfo.groups].reverse()
             .find(cp => cp.time < this.#clock.currentTimeAccurate)
-        : controlPointInfo.controlPoints.find(
+        : controlPointInfo.groups.find(
           cp => cp.time > this.#clock.currentTimeAccurate,
         );
 
@@ -241,8 +235,7 @@ export class Editor
       case PlatformAction.Paste:
         this.paste();
         return true;
-      case EditorAction.SeekToStart:
-      {
+      case EditorAction.SeekToStart: {
         const firstObjectTime
           = this.context.beatmap.hitObjects.first?.startTime;
 
@@ -269,9 +262,8 @@ export class Editor
         this.#clock.seek(0);
         this.#clock.start();
         return true;
-      case EditorAction.SeekToEnd:
-      {
-        if (this.context.beatmap.hitObjects.hitObjects.length === 0) {
+      case EditorAction.SeekToEnd: {
+        if (this.context.beatmap.hitObjects.length === 0) {
           this.#clock.seek(this.#clock.trackLength);
           return true;
         }
@@ -332,30 +324,19 @@ export class Editor
       ];
   }
 
-  update() {
-    super.update();
-
-    if (!this.context.loaded) {
-      return;
-    }
-
-    this.context.beatmap.hitObjects.updateStacking();
-    this.context.beatmap.hitObjects.calculateCombos();
-  }
-
   onEntering(): boolean {
-    this.fadeIn({ duration: 500 });
+    this.fadeIn(500);
 
     this.#topBar.y = -100;
-    this.#topBar.moveTo({ y: 0, duration: 500, easing: 'expo.out' });
+    this.#topBar.moveToY(0, 500, EasingFunction.OutExpo);
 
     this.#bottomBar.y = 100;
-    this.#bottomBar.moveTo({ y: 0, duration: 500, easing: 'expo.out' });
+    this.#bottomBar.moveToY(0, 500, EasingFunction.OutExpo);
 
     this.#screenContainer.scale = 0.9;
-    this.#screenContainer.scaleTo({ scale: 1, duration: 500, easing: 'expo.out' });
+    this.#screenContainer.scaleTo(1, 500, EasingFunction.OutExpo);
 
-    const hitObject = this.context.beatmap.hitObjects.hitObjects[0];
+    const hitObject = this.context.beatmap.hitObjects.first;
     if (hitObject) {
       this.#clock.seek(hitObject.startTime, false);
     }
@@ -369,16 +350,16 @@ export class Editor
       return false;
     }
 
-    this.fadeOut({ duration: 100 });
+    this.fadeOut(100);
     this.expire();
 
     return false;
   }
 
-  dispose(): boolean {
+  dispose(disposing: boolean = true) {
     this.context.dispose();
 
-    return super.dispose();
+    super.dispose(disposing);
   }
 
   performExit() {
@@ -410,5 +391,11 @@ export class Editor
 
       return true;
     }
+  }
+
+  updateAfterChildren() {
+    super.updateAfterChildren();
+
+    this.context.beatmap.hitObjects.applyDefaultsWhereNeeded();
   }
 }

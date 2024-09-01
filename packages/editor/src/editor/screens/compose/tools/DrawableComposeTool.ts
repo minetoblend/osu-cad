@@ -1,13 +1,8 @@
-import {
-  Additions,
-  Beatmap,
-  type HitObject,
-  HitObjectManager,
-} from '@osucad/common';
 import type {
-  Bindable,
+  BindableBoolean,
   InputManager,
   UIEvent,
+  ValueChangedEvent,
 } from 'osucad-framework';
 import {
   Axes,
@@ -21,13 +16,15 @@ import { CommandContainer } from '../../../CommandContainer';
 import { EditorClock } from '../../../EditorClock';
 import { EditorSelection } from '../EditorSelection';
 import {
+  ADDITIONS,
   NEW_COMBO,
-  SAMPLE_CLAP,
-  SAMPLE_FINISH,
-  SAMPLE_WHISTLE,
 } from '../../../InjectionTokens';
-import type { ToggleBindable } from '../ToggleBindable';
 import { HitObjectComposer } from '../HitObjectComposer';
+import { Beatmap } from '../../../../beatmap/Beatmap';
+import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
+import { OsuPlayfield } from '../../../hitobjects/OsuPlayfield';
+import type { Additions } from '../../../../beatmap/hitSounds/Additions';
+import type { AdditionsBindable } from '../../../../beatmap/hitSounds/AdditionsBindable';
 import type { ComposeToolInteraction } from './interactions/ComposeToolInteraction';
 
 export abstract class DrawableComposeTool extends CommandContainer {
@@ -47,16 +44,10 @@ export abstract class DrawableComposeTool extends CommandContainer {
   }
 
   @resolved(NEW_COMBO)
-  protected newCombo!: ToggleBindable;
+  protected newCombo!: BindableBoolean;
 
-  @resolved(SAMPLE_WHISTLE)
-  protected sampleWhistle!: ToggleBindable;
-
-  @resolved(SAMPLE_FINISH)
-  protected sampleFinish!: ToggleBindable;
-
-  @resolved(SAMPLE_CLAP)
-  protected sampleClap!: ToggleBindable;
+  @resolved(ADDITIONS)
+  protected additions!: AdditionsBindable;
 
   receivePositionalInputAt(): boolean {
     return true;
@@ -70,6 +61,12 @@ export abstract class DrawableComposeTool extends CommandContainer {
 
   protected inputManager!: InputManager;
 
+  @dependencyLoader()
+  [Symbol('load')]() {
+    this.newCombo.valueChanged.addListener(this.applyNewComboState, this);
+    this.additions.valueChanged.addListener(this.applyAdditionsState, this);
+  }
+
   protected loadComplete(): void {
     super.loadComplete();
 
@@ -81,33 +78,13 @@ export abstract class DrawableComposeTool extends CommandContainer {
     }
   }
 
-  @dependencyLoader()
-  [Symbol('load')]() {
-    this.newCombo.addOnChangeListener((e) => {
-      this.applyNewCombo(e.value);
-    });
-    this.sampleWhistle.addOnChangeListener(() => {
-      if (this.sampleWhistle.buttonPressed)
-        this.applySampleType(Additions.Whistle, this.sampleWhistle);
-    });
-    this.sampleFinish.addOnChangeListener(() => {
-      if (this.sampleFinish.buttonPressed)
-        this.applySampleType(Additions.Finish, this.sampleFinish);
-    });
-    this.sampleClap.addOnChangeListener(() => {
-      if (this.sampleClap.buttonPressed)
-        this.applySampleType(Additions.Clap, this.sampleClap);
-    });
+  protected applyNewComboState(event: ValueChangedEvent<boolean>): void {
   }
 
-  abstract applyNewCombo(newCombo: boolean): void;
+  protected applyAdditionsState(event: ValueChangedEvent<Additions>): void {
+  }
 
-  abstract applySampleType(
-    addition: Additions,
-    bindable: Bindable<boolean>,
-  ): void;
-
-  get mousePosition() {
+  protected get mousePosition() {
     return this.toLocalSpace(this.inputManager.currentState.mouse.position);
   }
 
@@ -118,8 +95,9 @@ export abstract class DrawableComposeTool extends CommandContainer {
   @resolved(Beatmap)
   protected readonly beatmap!: Beatmap;
 
-  @resolved(HitObjectManager)
-  protected readonly hitObjects!: HitObjectManager;
+  protected get hitObjects() {
+    return this.beatmap.hitObjects;
+  }
 
   @resolved(EditorClock)
   protected readonly editorClock!: EditorClock;
@@ -133,7 +111,7 @@ export abstract class DrawableComposeTool extends CommandContainer {
 
   #interactionContainer: Container;
 
-  beginInteraction(interaction: ComposeToolInteraction) {
+  protected beginInteraction(interaction: ComposeToolInteraction) {
     this.completeCurrentInteraction();
 
     this.withScope(() => {
@@ -161,7 +139,7 @@ export abstract class DrawableComposeTool extends CommandContainer {
     console.debug('Interaction started', interaction);
   }
 
-  cancelCurrentInteraction(): boolean {
+  protected cancelCurrentInteraction(): boolean {
     if (this.#currentInteraction) {
       this.#currentInteraction.cancel();
       return true;
@@ -170,7 +148,7 @@ export abstract class DrawableComposeTool extends CommandContainer {
     return false;
   }
 
-  completeCurrentInteraction(): boolean {
+  protected completeCurrentInteraction(): boolean {
     if (this.#currentInteraction) {
       this.#currentInteraction.complete();
       return true;
@@ -191,23 +169,26 @@ export abstract class DrawableComposeTool extends CommandContainer {
     return new Vec2(clamp(position.x, 0, 512), clamp(position.y, 0, 384));
   }
 
-  protected get visibleObjects(): HitObject[] {
-    return this.hitObjects.hitObjects.filter(it =>
-      it.isSelected || it.isVisibleAtTime(this.editorClock.currentTime),
-    );
+  @resolved(OsuPlayfield)
+  protected playfield!: OsuPlayfield;
+
+  protected get visibleObjects(): OsuHitObject[] {
+    const entries = this.playfield.hitObjectContainer.aliveEntries.keys();
+
+    return [...entries].map(it => it.hitObject).filter(it => it.isVisibleAtTime(this.editorClock.currentTime)) as OsuHitObject[];
   }
 
-  protected hoveredHitObjects(position: Vec2) {
+  protected hoveredHitObjects(position: Vec2): OsuHitObject[] {
     return this.visibleObjects.filter(it => it.contains(position));
   }
 
-  protected getSelectionCandidate(hitObjects: HitObject[]) {
+  protected getSelectionCandidate(hitObjects: OsuHitObject[]) {
     const selected = hitObjects.find(it => it.isSelected);
     if (selected)
       return selected;
 
     let min = Infinity;
-    let candidate: HitObject | null = null;
+    let candidate: OsuHitObject | null = null;
 
     for (const hitObject of hitObjects) {
       const distance = Math.min(

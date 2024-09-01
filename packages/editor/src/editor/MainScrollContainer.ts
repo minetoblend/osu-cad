@@ -27,7 +27,7 @@ class BasicScrollbar extends ScrollbarContainer {
     });
   }
 
-  override resizeTo(
+  override resizeScrollbarTo(
     val: number,
     duration: number = 0,
     easing: gsap.EaseFunction | gsap.EaseString = 'none',

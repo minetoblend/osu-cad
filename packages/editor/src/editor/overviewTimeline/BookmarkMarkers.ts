@@ -4,8 +4,10 @@ import {
   resolved,
 } from 'osucad-framework';
 import { EditorClock } from '../EditorClock';
-import {
+import type {
   OverviewTimelineMarker,
+} from './OverviewTimelineMarkerContainer';
+import {
   OverviewTimelineMarkerContainer,
 } from './OverviewTimelineMarkerContainer';
 
@@ -25,18 +27,19 @@ export class BookmarkMarkers extends OverviewTimelineMarkerContainer {
 
   @dependencyLoader()
   load() {
-    this.beatmap.onBookmarksChanged.addListener(() => this.invalidateMarkers());
+    // this.beatmap.onBookmarksChanged.addListener(() => this.invalidateMarkers());
   }
 
   createMarkers(): OverviewTimelineMarker[] {
-    const trackLength = this.editorClock.trackLength;
+    // const trackLength = this.editorClock.trackLength;
 
-    return this.beatmap.bookmarks.map((bookmark) => {
-      const marker = new OverviewTimelineMarker(0x529AFF);
-
-      marker.x = bookmark.time / trackLength;
-
-      return marker;
-    });
+    // return this.beatmap.bookmarks.map((bookmark) => {
+    //   const marker = new OverviewTimelineMarker(0x529AFF);
+    //
+    //   marker.x = bookmark.time / trackLength;
+    //
+    //   return marker;
+    // });
+    return [];
   }
 }

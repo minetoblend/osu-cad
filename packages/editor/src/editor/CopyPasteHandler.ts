@@ -1,10 +1,15 @@
 import type { IKeyBindingHandler, KeyBindingPressEvent } from 'osucad-framework';
 import { CompositeDrawable, PlatformAction, resolved } from 'osucad-framework';
-import type { HitObject, SerializedHitObject } from '@osucad/common';
-import { CreateHitObjectCommand, DeleteHitObjectCommand, deserializeHitObject, hitObjectId } from '@osucad/common';
+import { hitObjectId } from '@osucad/common';
+import type { SerializedOsuHitObject } from '../beatmap/serialization/HitObjects';
+import { deserializeHitObject, serializeHitObject } from '../beatmap/serialization/HitObjects';
+import type { OsuHitObject } from '../beatmap/hitObjects/OsuHitObject';
+import { HitObjectList } from '../beatmap/hitObjects/HitObjectList';
 import { EditorSelection } from './screens/compose/EditorSelection';
 import { CommandManager } from './context/CommandManager';
 import { EditorClock } from './EditorClock';
+import { DeleteHitObjectCommand } from './commands/DeleteHitObjectCommand';
+import { CreateHitObjectCommand } from './commands/CreateHitObjectCommand';
 
 const hitObjectMimeType = 'web x-osucad/hitobjects+json';
 
@@ -18,10 +23,13 @@ export class HitObjectClipboard extends CompositeDrawable implements IKeyBinding
   @resolved(EditorClock)
   editorClock!: EditorClock;
 
+  @resolved(HitObjectList)
+  hitObjects!: HitObjectList;
+
   #serializeSelection() {
     return this.selection.selectedObjects
       .sort((a, b) => b.startTime - a.startTime)
-      .map(it => it.serialize());
+      .map(serializeHitObject);
   }
 
   #formatTimestamp() {
@@ -66,7 +74,7 @@ export class HitObjectClipboard extends CompositeDrawable implements IKeyBinding
   }
 
   async cut() {
-    this.copy();
+    await this.copy();
     for (const h of [...this.selection.selectedObjects]) {
       this.commandManager.submit(new DeleteHitObjectCommand(h), false);
     }
@@ -81,9 +89,9 @@ export class HitObjectClipboard extends CompositeDrawable implements IKeyBinding
           const content = await item.getType(hitObjectMimeType);
           const textContent = await content.text();
 
-          const parsed = JSON.parse(textContent) as SerializedHitObject[];
+          const parsed = JSON.parse(textContent) as SerializedOsuHitObject[];
 
-          const hitObjects = parsed.map(it => deserializeHitObject(it))
+          const hitObjects = parsed.map(deserializeHitObject)
             .sort((b, a) => b.startTime - a.startTime);
 
           if (hitObjects.length === 0)
@@ -91,19 +99,21 @@ export class HitObjectClipboard extends CompositeDrawable implements IKeyBinding
 
           const startTime = hitObjects[0].startTime;
 
-          const created: HitObject[] = [];
+          const created: OsuHitObject[] = [];
 
           for (const h of hitObjects) {
             h.id = hitObjectId();
             const offset = h.startTime - startTime;
             h.startTime = this.editorClock.currentTime + offset;
 
-            created.push(
-              this.commandManager.submit(
-                new CreateHitObjectCommand(h.serialize()),
-                false,
-              )!,
+            this.commandManager.submit(
+              new CreateHitObjectCommand(h),
+              false,
             );
+
+            const obj = this.hitObjects.getById(h.id);
+            if (obj)
+              created.push(obj);
           }
 
           this.commandManager.commit();

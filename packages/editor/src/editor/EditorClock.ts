@@ -1,5 +1,4 @@
 import type { TimingPoint } from '@osucad/common';
-import { Beatmap } from '@osucad/common';
 import type {
   FrameTimeInfo,
   IAdjustableClock,
@@ -17,6 +16,7 @@ import {
   resolved,
 } from 'osucad-framework';
 import { PreferencesStore } from '../preferences/PreferencesStore';
+import { Beatmap } from '../beatmap/Beatmap';
 
 export class EditorClock
   extends Container
@@ -82,13 +82,13 @@ export class EditorClock
     position -= timingPoint.time;
 
     const beatSnapLength
-      = timingPoint.timing.beatLength / this.beatSnapDivisor.value;
+      = timingPoint.beatLength / this.beatSnapDivisor.value;
 
     const closestBeat = Math.round(position / beatSnapLength);
     position = timingPoint.time + closestBeat * beatSnapLength;
 
-    const nextTimingPoint = this.controlPointInfo.controlPoints.find(
-      t => t.timing && t.time > timingPoint.time,
+    const nextTimingPoint = this.controlPointInfo.timingPoints.find(
+      t => t.time > timingPoint.time,
     ) as TimingPoint | undefined;
 
     if (nextTimingPoint && position > nextTimingPoint?.time)
@@ -111,7 +111,7 @@ export class EditorClock
     const timingPoint = this.controlPointInfo.timingPointAt(this.currentTime);
 
     const beatSnapLength
-      = timingPoint.timing.beatLength / this.beatSnapDivisor.value;
+      = timingPoint.beatLength / this.beatSnapDivisor.value;
 
     const newPosition = this.currentTime + direction * amount * beatSnapLength;
 
@@ -162,7 +162,7 @@ export class EditorClock
       let currentTime = lerp(
         lastTime,
         this.#targetTime,
-        clamp(this.parent!.clock.elapsedFrameTime * 0.03),
+        clamp(this.parent!.clock!.elapsedFrameTime * 0.03),
       );
 
       if (almostEquals(currentTime, this.#targetTime, 3)) {
@@ -252,16 +252,16 @@ export class EditorClock
       return ((a % n) + n) % n;
     }
 
-    this.beatLength = timingPoint.timing.beatLength;
+    this.beatLength = timingPoint.beatLength;
     let progress
-      = (this.currentTime - timingPoint.time) / timingPoint.timing.beatLength;
+      = (this.currentTime - timingPoint.time) / timingPoint.beatLength;
     progress = mod(mod(progress, 1) + 1, 1);
     this.beatProgress = progress;
   }
 
-  dispose(): boolean {
+  dispose(disposing: boolean = true) {
     this.track.dispose();
 
-    return super.dispose();
+    super.dispose(disposing);
   }
 }

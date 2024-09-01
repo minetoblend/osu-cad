@@ -5,15 +5,15 @@ import { ComposeToolbarToolButton } from './ComposeToolbarToolButton';
 export class SliderPresetButton extends ComposeToolbarToolButton {
   onMouseDown(e: MouseDownEvent): boolean {
     if (e.button === MouseButton.Left) {
-      this.active = true;
+      this.active.value = true;
     }
 
     return super.onMouseDown(e);
   }
 
-  onMouseUp(e: MouseUpEvent): boolean {
+  onMouseUp(e: MouseUpEvent) {
     if (e.button === MouseButton.Left) {
-      this.active = false;
+      this.active.value = false;
     }
 
     return super.onMouseUp(e);

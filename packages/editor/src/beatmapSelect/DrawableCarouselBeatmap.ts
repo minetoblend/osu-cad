@@ -2,6 +2,7 @@ import {
   Anchor,
   Axes,
   Container,
+  EasingFunction,
   FillFlowContainer,
   RoundedBox,
   ScreenStack,
@@ -152,11 +153,11 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
       alignment: 0,
     }];
 
-    this.movementContainer.moveTo({
-      x: -50,
-      duration: 500,
-      easing: 'expo.out',
-    });
+    this.movementContainer.moveToX(
+      -50,
+      500,
+      EasingFunction.OutExpo,
+    );
 
     this.header.filters = [];
   }
@@ -166,11 +167,7 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
 
     this.#background.outlines = [];
 
-    this.movementContainer.moveTo({
-      x: 0,
-      duration: 500,
-      easing: 'expo.out',
-    });
+    this.movementContainer.moveToX(0, 500, EasingFunction.OutExpo);
 
     this.header.filters = [];
   }

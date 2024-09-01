@@ -3,10 +3,12 @@ import type {
 } from 'osucad-framework';
 import {
   Anchor,
+
   Axes,
   Box,
   Button,
   Container,
+  EasingFunction,
   FillDirection,
   FillFlowContainer,
   LoadState,
@@ -66,8 +68,8 @@ export class EditorScreenSelect extends Container {
 
   setActiveButton(button: ScreenSelectButton) {
     this.schedule(() => {
-      this.#underline.moveTo({ x: button.x, duration: 300, easing: 'expo.out' });
-      this.#underline.scaleTo({ scaleX: button.drawSize.x, duration: 300, easing: 'expo.out' });
+      this.#underline.moveToX(button.x, 300, EasingFunction.OutExpo);
+      this.#underline.scaleTo(new Vec2(button.drawSize.x, 1), 300, EasingFunction.OutExpo);
     });
   }
 }

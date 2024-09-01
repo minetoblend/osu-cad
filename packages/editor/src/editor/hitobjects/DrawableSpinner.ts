@@ -1,96 +1,66 @@
-import type { Spinner } from '@osucad/common';
-import { Anchor, Container, DrawableSprite, resolved } from 'osucad-framework';
-import { Skin } from '../../skins/Skin';
-import { animate } from '../../utils/animate';
-import { DrawableHitObject } from './DrawableHitObject';
+import { Anchor, Axes, EasingFunction, dependencyLoader } from 'osucad-framework';
+import type { TransformSequenceProxy } from 'osucad-framework';
+import type { Spinner } from '../../beatmap/hitObjects/Spinner';
+import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
+import { AspectContainer } from '../../beatmap/hitObjects/AspectContainer';
+import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
+import { DrawableOsuHitObject } from './DrawableOsuHitObject';
 
-export class DrawableSpinner extends DrawableHitObject<Spinner> {
-  @resolved(Skin)
-  skin!: Skin;
+export class DrawableSpinner extends DrawableOsuHitObject<Spinner> {
+  body!: SkinnableDrawable;
 
+  @dependencyLoader()
   load() {
-    super.load();
-
-    this.addInternal(this.#content = new Container());
-
-    this.anchor = Anchor.Center;
     this.origin = Anchor.Center;
+    this.relativeSizeAxes = Axes.Both;
 
-    this.addAll(
-      this.bottom = new DrawableSprite({
-        texture: this.skin.spinnerBottom,
+    this.addAllInternal(
+      new AspectContainer({
         anchor: Anchor.Center,
         origin: Anchor.Center,
-        alpha: 0.8,
-      }),
-      this.middle = new DrawableSprite({
-        texture: this.skin.spinnerMiddle,
-        anchor: Anchor.Center,
-        origin: Anchor.Center,
-      }),
-      this.top = new DrawableSprite({
-        texture: this.skin.spinnerTop,
-        anchor: Anchor.Center,
-        origin: Anchor.Center,
+        relativeSizeAxes: Axes.Y,
+        children: [
+          this.body = new SkinnableDrawable(OsuSkinComponentLookup.SpinnerBody),
+        ],
       }),
     );
+
+    this.positionBindable.valueChanged.addListener(position => this.position = position.value);
   }
 
-  bottom!: DrawableSprite;
-  middle!: DrawableSprite;
-  top!: DrawableSprite;
+  spin = 0;
 
-  #content!: Container;
+  protected updateInitialTransforms() {
+    super.updateInitialTransforms();
 
-  get content() {
-    return this.#content;
+    const totalTime = this.hitObject!.duration + this.hitObject!.timePreempt + 240;
+
+    const spinUpTime = Math.min(400, totalTime / 3);
+    const spinDownTime = Math.min(600, totalTime * 2 / 3);
+
+    const spinTime = totalTime - spinUpTime - spinDownTime;
+
+    const spinSpeed = 8 * Math.min(1, this.hitObject!.duration / 600) / spinUpTime;
+
+    let curSpin: number;
+
+    this.fadeInFromZero(this.hitObject!.timeFadeIn);
+
+    this.spinTo(curSpin = spinSpeed * spinUpTime * 0.5, spinUpTime, EasingFunction.InQuad)
+      .then()
+      .spinTo(curSpin = curSpin + spinSpeed * spinTime, spinTime)
+      .then()
+      .spinTo(curSpin + spinSpeed * spinDownTime * 0.5, spinDownTime, EasingFunction.OutQuad);
   }
 
-  setup() {
-    this.scale = 0.6;
+  protected updateEndTimeTransforms() {
+    super.updateEndTimeTransforms();
+
+    this.fadeOut(240)
+      .expire();
   }
 
-  currentRotation = 0;
-
-  update() {
-    super.update();
-
-    const timeSinceStart
-      = this.time.current - this.hitObject.startTime;
-
-    const spinUpTime = Math.min(750, this.hitObject.duration * 0.666);
-    const spinDownTime = Math.min(350, this.hitObject.duration * 0.333);
-
-    let spinSpeed = 0;
-
-    if (timeSinceStart < 0) {
-      this.#content.alpha = animate(timeSinceStart, -this.hitObject.timePreempt, -this.hitObject.timePreempt + this.hitObject.timeFadeIn, 0, 1);
-    }
-    else if (timeSinceStart < spinUpTime) {
-      spinSpeed = (timeSinceStart / spinUpTime) ** 2;
-      this.#content.alpha = 1;
-    }
-    else if (timeSinceStart > this.hitObject.duration) {
-      this.#content.alpha = animate(
-        timeSinceStart,
-        this.hitObject.duration,
-        this.hitObject.duration + spinDownTime,
-        1,
-        0,
-      );
-      spinSpeed = ((this.hitObject.duration - timeSinceStart + spinDownTime) / spinDownTime) ** 2;
-    }
-    else if (timeSinceStart < this.hitObject.duration) {
-      spinSpeed = 1;
-      this.#content.alpha = 1;
-    }
-    spinSpeed *= 2.5;
-
-    const rotationDelta = spinSpeed * this.time.elapsed * 0.0125;
-
-    this.currentRotation += rotationDelta;
-
-    this.top.rotation = this.currentRotation;
-    this.bottom.rotation = this.currentRotation * 0.25;
+  protected spinTo(spin: number, duration: number, easing: EasingFunction = EasingFunction.Default): TransformSequenceProxy<this> {
+    return this.transformTo('spin', spin, duration, easing);
   }
 }

@@ -13,7 +13,7 @@ export class FastRoundedBox extends Drawable {
   constructor(options: FastRoundedBoxOptions = {}) {
     super();
 
-    this.apply(options);
+    this.with(options);
   }
 
   @resolved(GAME_HOST)

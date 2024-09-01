@@ -6,25 +6,26 @@ import {
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import type { HitObject } from '@osucad/common';
-import { HitObjectManager, Slider } from '@osucad/common';
+import { HitObjectList } from '../../../beatmap/hitObjects/HitObjectList';
+import { Slider } from '../../../beatmap/hitObjects/Slider';
+import type { OsuHitObject } from '../../../beatmap/hitObjects/OsuHitObject';
 
-export class EditorSelection extends Container {
-  readonly #selection = new Set<HitObject>();
+export class EditorSelection extends Container implements Iterable<OsuHitObject> {
+  readonly #selection = new Set<OsuHitObject>();
 
   get length(): number {
     return this.#selection.size;
   }
 
-  get selectedObjects(): HitObject[] {
+  get selectedObjects(): OsuHitObject[] {
     return Array.from(this.#selection);
   }
 
-  isSelected(hitObject: HitObject): boolean {
+  isSelected(hitObject: OsuHitObject): boolean {
     return this.#selection.has(hitObject);
   }
 
-  readonly selectionChanged = new Action<[HitObject, boolean]>();
+  readonly selectionChanged = new Action<[OsuHitObject, boolean]>();
 
   clear() {
     const selection = [...this.#selection];
@@ -38,7 +39,7 @@ export class EditorSelection extends Container {
     }
   }
 
-  select(hitObjects: HitObject[], add: boolean = false) {
+  select(hitObjects: ReadonlyArray<OsuHitObject>, add: boolean = false) {
     if (!add) {
       const removed = new Set(this.#selection);
 
@@ -61,7 +62,7 @@ export class EditorSelection extends Container {
     }
   }
 
-  deselect(hitObject: HitObject) {
+  deselect(hitObject: OsuHitObject) {
     if (!this.#selection.has(hitObject)) {
       return;
     }
@@ -79,13 +80,13 @@ export class EditorSelection extends Container {
     this.selectionChanged.emit([slider, true]);
   }
 
-  @resolved(HitObjectManager)
-  protected readonly hitObjects!: HitObjectManager;
+  @resolved(HitObjectList)
+  protected readonly hitObjects!: HitObjectList;
 
   @dependencyLoader()
   load() {
-    this.hitObjects.onRemoved.addListener((hitObject) => {
-      if (this.#selection.has(hitObject)) {
+    this.hitObjects.removed.addListener((hitObject) => {
+      if (hitObject.isSelected) {
         this.deselect(hitObject);
       }
     });
@@ -99,10 +100,14 @@ export class EditorSelection extends Container {
 
   onKeyDown(e: KeyDownEvent): boolean {
     if (e.controlPressed && e.key === Key.KeyA) {
-      this.select(this.hitObjects.hitObjects);
+      this.select(this.hitObjects.items);
       return true;
     }
 
     return false;
+  }
+
+  [Symbol.iterator](): Iterator<OsuHitObject> {
+    return this.#selection[Symbol.iterator]();
   }
 }

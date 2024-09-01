@@ -1,70 +1,85 @@
 import type { Texture } from 'pixi.js';
-import type {
-  InjectionToken,
-} from 'osucad-framework';
-import {
-  Anchor,
-  Axes,
-  Container,
-  RoundedBox,
-  resolved,
-} from 'osucad-framework';
-import type { HitSample, SampleType } from '@osucad/common';
-import gsap from 'gsap';
-import type { EditorAction } from '../../EditorAction';
+import type { IKeyBindingHandler, KeyBindingPressEvent, KeyBindingReleaseEvent } from 'osucad-framework';
+import { dependencyLoader, resolved } from 'osucad-framework';
+import { EditorAction } from '../../EditorAction';
 import { HitsoundPlayer } from '../../HitsoundPlayer';
-import type { ToggleBindable } from './ToggleBindable';
+import type { Additions } from '../../../beatmap/hitSounds/Additions';
+import { additionToSampleType } from '../../../beatmap/hitSounds/SampleType';
+import { ADDITIONS } from '../../InjectionTokens';
+import type { AdditionsBindable } from '../../../beatmap/hitSounds/AdditionsBindable';
 import { ComposeToggleButton } from './ComposeToggleButton';
+import { SampleHighlightContainer } from './SampleHighlightContainer';
 
-export class AdditionToggleButton extends ComposeToggleButton {
+export class AdditionToggleButton extends ComposeToggleButton
+  implements IKeyBindingHandler<EditorAction> {
   constructor(
     icon: Texture,
-    key: InjectionToken<ToggleBindable>,
-    toggleAction: EditorAction,
-    readonly sampleType: SampleType,
+    readonly addition: Additions,
+    readonly keyBinding: EditorAction,
   ) {
-    super(icon, key, toggleAction);
+    super(icon);
   }
 
   @resolved(HitsoundPlayer)
   hitsoundPlayer!: HitsoundPlayer;
 
-  #sampleContainer = new Container({
-    relativeSizeAxes: Axes.Both,
-  });
+  @resolved(ADDITIONS)
+  protected activeAdditions!: AdditionsBindable;
 
+  @dependencyLoader()
   load() {
-    this.addInternal(this.#sampleContainer);
-
-    this.withScope(() =>
-      this.hitsoundPlayer.samplePlayed.addListener((sample) => {
-        this.#onSamplePlayed(sample);
+    this.addInternal(
+      new SampleHighlightContainer(additionToSampleType(this.addition)).with({
+        depth: 1,
       }),
     );
-
-    super.load();
   }
 
-  #onSamplePlayed(sample: HitSample) {
-    if (sample.type !== this.sampleType)
-      return;
+  protected loadComplete() {
+    super.loadComplete();
 
-    const sampleHighlight = new RoundedBox({
-      relativeSizeAxes: Axes.Both,
-      alpha: 0.2,
-      cornerRadius: 8,
-      anchor: Anchor.Center,
-      origin: Anchor.Center,
-    });
+    this.activeAdditions.valueChanged.addListener(this.#additionsChanged, this);
+  }
 
-    gsap.to(sampleHighlight, {
-      scaleX: 1.5,
-      scaleY: 1.5,
-      alpha: 0,
-      duration: 0.2,
-    });
+  #additionsChanged() {
+    this.active.value = this.activeAdditions.has(this.addition);
+  }
 
-    this.#sampleContainer.add(sampleHighlight);
-    sampleHighlight.expire();
+  protected onActivate() {
+    super.onActivate();
+
+    this.activeAdditions.add(this.addition);
+  }
+
+  protected onDeactivate() {
+    super.onDeactivate();
+
+    this.activeAdditions.remove(this.addition);
+  }
+
+  dispose(isDisposing: boolean = true) {
+    super.dispose(isDisposing);
+  }
+
+  readonly isKeyBindingHandler = true;
+
+  canHandleKeyBinding(binding: EditorAction): boolean {
+    return binding instanceof EditorAction;
+  }
+
+  onKeyBindingPressed(e: KeyBindingPressEvent<EditorAction>): boolean {
+    if (e.pressed === this.keyBinding) {
+      this.triggerAction();
+      this.armed = true;
+
+      return true;
+    }
+
+    return false;
+  }
+
+  onKeyBindingReleased(e: KeyBindingReleaseEvent<EditorAction>) {
+    if (e.pressed === this.keyBinding)
+      this.armed = false;
   }
 }

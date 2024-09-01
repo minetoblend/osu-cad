@@ -1,6 +1,6 @@
-import type { Spinner } from '@osucad/common';
 import type { DragEvent, DragStartEvent } from 'osucad-framework';
 import { Anchor, FillMode, MouseButton } from 'osucad-framework';
+import type { Spinner } from '../../beatmap/hitObjects/Spinner';
 import { TimelineElement } from './TimelineElement';
 
 export class TimelineSpinnerTail extends TimelineElement {

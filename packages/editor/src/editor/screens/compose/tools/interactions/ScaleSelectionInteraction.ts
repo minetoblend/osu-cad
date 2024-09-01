@@ -1,11 +1,10 @@
-import type { HitObject } from '@osucad/common';
-import { Slider } from '@osucad/common';
-import type { KeyDownEvent } from 'osucad-framework';
+import type { KeyDownEvent, Rectangle } from 'osucad-framework';
 import { Container, Key, Vec2, dependencyLoader } from 'osucad-framework';
-import type { Rectangle } from 'osucad-framework/math';
 import { Matrix } from 'pixi.js';
 import { HitObjectUtils } from '../../HitObjectUtils';
 import { HitObjectComposer } from '../../HitObjectComposer';
+import type { OsuHitObject } from '../../../../../beatmap/hitObjects/OsuHitObject';
+import { Slider } from '../../../../../beatmap/hitObjects/Slider';
 import { ComposeToolInteraction } from './ComposeToolInteraction';
 import { ScaleGizmo } from './ScaleGizmo';
 import { RotationGizmo } from './RotationGizmo';
@@ -13,7 +12,7 @@ import { TranslateGizmo } from './TranslateGizmo';
 
 export class ScaleSelectionInteraction extends ComposeToolInteraction {
   constructor(
-    readonly hitObjects: HitObject[],
+    readonly hitObjects: OsuHitObject[],
   ) {
     super();
 
@@ -111,7 +110,7 @@ export class ScaleSelectionInteraction extends ComposeToolInteraction {
       .rotate(this.currentRotation)
       .translate(center.x, center.y);
 
-    this.commandManager.undoCurrentTransaction();
+    // this.commandManager.undoCurrentTransaction();
 
     if (this.currentScale.x !== this.currentScale.y && !this.#converted) {
       for (const object of this.hitObjects) {
@@ -123,11 +122,15 @@ export class ScaleSelectionInteraction extends ComposeToolInteraction {
     }
 
     this.#utils.transformHitObjects(
-      transform,
+      transform.clone().append(this.#previousTransform.invert()),
       this.hitObjects,
       false,
     );
+
+    this.#previousTransform = transform;
   }
+
+  #previousTransform = new Matrix();
 
   onKeyDown(e: KeyDownEvent): boolean {
     if (e.key === Key.Escape) {

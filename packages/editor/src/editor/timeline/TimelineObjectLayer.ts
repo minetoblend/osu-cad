@@ -34,7 +34,7 @@ export class TimelineObjectLayer extends Drawable {
       }),
     );
 
-    this.apply(options);
+    this.with(options);
   }
 
   @resolved(GAME_HOST)

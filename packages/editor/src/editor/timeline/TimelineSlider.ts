@@ -1,6 +1,5 @@
-import type { Slider } from '@osucad/common';
-import { Axes, Container, dependencyLoader } from 'osucad-framework';
-
+import { Axes, Container, EasingFunction, dependencyLoader } from 'osucad-framework';
+import type { Slider } from '../../beatmap/hitObjects/Slider';
 import { TimelineObject } from './TimelineObject';
 import { TimelineSliderTail } from './TimelineSliderTail';
 import { TimelineSliderHead } from './TimelineSliderHead';
@@ -37,12 +36,12 @@ export class TimelineSlider extends TimelineObject<Slider> {
   setup() {
     super.setup();
 
-    const { comboColor, repeats } = this.hitObject;
+    const { comboColor, repeatCount } = this.hitObject;
 
     this.#head.bodyColor = comboColor;
     this.#tail.bodyColor = comboColor;
 
-    this.#setupRepeats(repeats);
+    this.#setupRepeats(repeatCount);
 
     this.#firstSetup = false;
   }
@@ -63,7 +62,7 @@ export class TimelineSlider extends TimelineObject<Slider> {
 
         if (!this.#firstSetup) {
           child.scale = 0;
-          child.scaleTo({ scaleX: 1, scaleY: 1, duration: 300, easing: 'back.out' });
+          child.scaleTo(1, 300, EasingFunction.OutBack);
         }
       }
 
@@ -100,7 +99,7 @@ export class TimelineSlider extends TimelineObject<Slider> {
     for (const edge of this.hitObject.selectedEdges) {
       if (edge === 0)
         this.#head.edgeSelected = true;
-      else if (edge === this.hitObject.repeats + 1)
+      else if (edge === this.hitObject.repeatCount + 1)
         this.#tail.edgeSelected = true;
       else if (repeats[edge - 1])
         repeats[edge - 1].edgeSelected = true;

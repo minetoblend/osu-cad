@@ -1,7 +1,7 @@
-import { Axes, Container, RoundedBox, dependencyLoader, resolved } from 'osucad-framework';
-import { ControlPointManager } from '@osucad/common';
+import { Axes, Container, EasingFunction, RoundedBox, dependencyLoader, resolved } from 'osucad-framework';
 import { EditorScreen } from '../EditorScreen';
 import { ThemeColors } from '../../ThemeColors';
+import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
 import { ControlPointSelection } from './ControlPointSelection';
 import { TimingPointTable } from './TimingPointTable';
 
@@ -14,8 +14,8 @@ export class TimingScreen extends EditorScreen {
   @resolved(ThemeColors)
   colors!: ThemeColors;
 
-  @resolved(ControlPointManager)
-  controlPoints!: ControlPointManager;
+  @resolved(ControlPointInfo)
+  controlPoints!: ControlPointInfo;
 
   @dependencyLoader()
   load() {
@@ -42,7 +42,7 @@ export class TimingScreen extends EditorScreen {
 
   show() {
     this.y = 300;
-    this.moveTo({ y: 0, duration: 400, easing: 'expo.out' });
-    this.fadeIn({ duration: 400 });
+    this.moveToY(0, 400, EasingFunction.OutExpo);
+    this.fadeIn(400);
   }
 }
