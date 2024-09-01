@@ -1,5 +1,4 @@
-import type { Additions } from '@osucad/common';
-import type { Bindable, MouseDownEvent, MouseUpEvent } from 'osucad-framework';
+import type { MouseDownEvent, MouseUpEvent } from 'osucad-framework';
 import { MouseButton, Vec2, dependencyLoader } from 'osucad-framework';
 import { Slider } from '../../../../beatmap/hitObjects/Slider';
 import { PathPoint } from '../../../../beatmap/hitObjects/PathPoint';
@@ -78,10 +77,6 @@ export class DrawableSliderTool extends DrawableHitObjectPlacementTool<Slider> {
     if (this.isPlacing) {
       this.hitObject.newCombo = newCombo;
     }
-  }
-
-  applySampleType(_addition: Additions, _bindable: Bindable<boolean>): void {
-    // no-op
   }
 
   onMouseDown(e: MouseDownEvent): boolean {

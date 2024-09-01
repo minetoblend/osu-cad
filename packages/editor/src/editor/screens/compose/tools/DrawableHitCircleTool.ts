@@ -1,5 +1,4 @@
-import type { Additions } from '@osucad/common';
-import type { Bindable, MouseDownEvent, MouseMoveEvent, MouseUpEvent } from 'osucad-framework';
+import type { MouseDownEvent, MouseMoveEvent, MouseUpEvent } from 'osucad-framework';
 import { MouseButton } from 'osucad-framework';
 import { HitCircle } from '../../../../beatmap/hitObjects/HitCircle';
 import { DrawableHitObjectPlacementTool } from './DrawableHitObjectPlacementTool';
@@ -43,9 +42,5 @@ export class DrawableHitCircleTool extends DrawableHitObjectPlacementTool<HitCir
       this.hitObject.position = this.getSnappedPosition(e.mousePosition);
     }
     return true;
-  }
-
-  applySampleType(addition: Additions, bindable: Bindable<boolean>): void {
-    throw new Error('Method not implemented.');
   }
 }

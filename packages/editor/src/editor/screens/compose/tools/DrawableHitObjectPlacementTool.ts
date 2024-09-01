@@ -1,5 +1,4 @@
-import type { Additions } from '@osucad/common';
-import type { Bindable, Vec2 } from 'osucad-framework';
+import type { Vec2 } from 'osucad-framework';
 import { almostEquals, resolved } from 'osucad-framework';
 import type { CommandProxy } from '../../../commands/CommandProxy';
 import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
@@ -130,8 +129,6 @@ export abstract class DrawableHitObjectPlacementTool<T extends OsuHitObject> ext
       this.#previewObject.newCombo = newCombo;
     }
   }
-
-  abstract applySampleType(addition: Additions, bindable: Bindable<boolean>): void;
 
   getSnappedPosition(position: Vec2) {
     const snapResult = this.composer.snapHitObjectPosition([position]);

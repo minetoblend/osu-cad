@@ -1,5 +1,4 @@
 import type {
-  Bindable,
   DragStartEvent,
   MouseDownEvent,
   MouseMoveEvent,
@@ -9,8 +8,6 @@ import {
   Vec2,
   dependencyLoader,
 } from 'osucad-framework';
-
-import type { Additions } from '@osucad/common';
 import { Editor } from '../../../Editor';
 import { Slider } from '../../../../beatmap/hitObjects/Slider';
 import { PathPoint } from '../../../../beatmap/hitObjects/PathPoint';
@@ -58,16 +55,8 @@ export abstract class DrawableSliderShapeTool<T extends SliderShape> extends Dra
       new PathPoint(Vec2.zero()),
     ];
 
-    // let additions = Additions.None;
-    // if (this.sampleWhistle.value)
-    //   additions |= Additions.Whistle;
-    // if (this.sampleFinish.value)
-    //   additions |= Additions.Finish;
-    // if (this.sampleClap.value)
-    //   additions |= Additions.Clap;
-    //
-    // slider.hitSound.additions = additions;
-    // slider.hitSounds.forEach(it => (it.additions = additions));
+    slider.hitSound = slider.hitSound.withAdditions(this.additions.value);
+    slider.hitSounds = [slider.hitSound, slider.hitSound];
 
     return slider;
   }
@@ -180,9 +169,6 @@ export abstract class DrawableSliderShapeTool<T extends SliderShape> extends Dra
       }),
       false,
     );
-  }
-
-  applySampleType(addition: Additions, bindable: Bindable<boolean>): void {
   }
 
   #onHandleMouseDown = () => !this.isPlacingEnd;
