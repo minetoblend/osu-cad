@@ -2,6 +2,7 @@ import { Anchor, Axes, DrawableSprite, dependencyLoader, resolved } from 'osucad
 import type { Slider } from '../../../../beatmap/hitObjects/Slider';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
 import { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
+import { EditorSelection } from '../EditorSelection';
 import { DrawableSelection } from './DrawableSelection';
 
 export class DrawableSliderSelection extends DrawableSelection<Slider> {
@@ -15,6 +16,9 @@ export class DrawableSliderSelection extends DrawableSelection<Slider> {
   headCircle!: DrawableSprite;
 
   tailCircle!: DrawableSprite;
+
+  @resolved(EditorSelection)
+  protected selection!: EditorSelection;
 
   @dependencyLoader()
   load() {
@@ -42,12 +46,21 @@ export class DrawableSliderSelection extends DrawableSelection<Slider> {
       this.headCircle.scale = scale.value;
       this.tailCircle.scale = scale.value;
     });
+
+    this.selection.selectionChanged.addListener(([hitObject, selected]) => {
+      if (hitObject !== this.hitObject || !selected)
+        return;
+
+      this.#updateEdgeSelection();
+    });
   }
 
   protected onApply(hitObject: Slider) {
     super.onApply(hitObject);
 
     this.hitObject.path.invalidated.addListener(this.updatePosition, this);
+
+    this.#updateEdgeSelection();
   }
 
   onFree(hitObject: OsuHitObject) {
@@ -69,5 +82,22 @@ export class DrawableSliderSelection extends DrawableSelection<Slider> {
   #updatePositions() {
     this.position = this.hitObject.stackedPosition;
     this.tailCircle.position = this.hitObject.path.endPosition;
+  }
+
+  #updateEdgeSelection() {
+    const edges = this.hitObject.selectedEdges;
+
+    let headSelected = false;
+    let tailSelected = false;
+
+    for (const edge of edges) {
+      if (edge % 2 === 0)
+        headSelected = true;
+      else
+        tailSelected = true;
+    }
+
+    this.headCircle.color = headSelected ? 0xFF0000 : 0xFFFFFF;
+    this.tailCircle.color = tailSelected ? 0xFF0000 : 0xFFFFFF;
   }
 }
