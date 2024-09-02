@@ -59,8 +59,7 @@ export abstract class DrawableHitObjectPlacementTool<T extends OsuHitObject> ext
     }, { immediate: true });
 
     this.playfield.addHitObject(circle);
-
-    console.log(circle);
+    this.playfield.updateSubTree();
 
     this.#previewObject = circle;
 
@@ -97,6 +96,8 @@ export abstract class DrawableHitObjectPlacementTool<T extends OsuHitObject> ext
     console.assert(created !== undefined, 'HitObject was not created');
 
     this.#hitObject = this.createProxy(created!);
+
+    this.playfield.updateSubTree();
 
     this.onPlacementStart(this.#hitObject!);
   }
