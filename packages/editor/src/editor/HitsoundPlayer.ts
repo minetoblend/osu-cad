@@ -111,7 +111,7 @@ export class HitsoundPlayer extends CompositeDrawable {
     // requestAnimationFrame() doesn't get called when the page isn't visible,
     // so we need to skip this update in that case to prevent all the samples that
     // should have been played during that time from playing all at once
-    if (this.editorClock.timeInfo.elapsed > 1000) {
+    if (Math.abs(this.time.current - this.lastEndTime) > 1000) {
       return;
     }
 
@@ -120,12 +120,6 @@ export class HitsoundPlayer extends CompositeDrawable {
     const endTime = Math.floor(this.time.current);
 
     this.lastEndTime = endTime;
-
-    const accurateStartTime = Math.floor(this.time.current - this.time.elapsed);
-
-    if (Math.abs(accurateStartTime - startTime) > 10) {
-      startTime = accurateStartTime;
-    }
 
     if (!this.#isPlaying) {
       startTime = this.editorClock.currentTime - 10;
