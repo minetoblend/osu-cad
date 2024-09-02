@@ -129,7 +129,7 @@ export class SelectTool extends ComposeTool {
         this.toggleNewCombo();
         break;
       case 'hitobject.rotate':
-        if (this.selection.selectedObjects.length > 0) {
+        if (this.selectedObjects.length > 0) {
           this.beginInteraction(RotateHitObjectsInteraction, [
             ...this.selection.selectedObjects,
           ]);
