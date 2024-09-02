@@ -19,6 +19,7 @@ export class DrawableSpinner extends DrawableOsuHitObject<Spinner> {
         anchor: Anchor.Center,
         origin: Anchor.Center,
         relativeSizeAxes: Axes.Y,
+        alpha: 0,
         children: [
           this.body = new SkinnableDrawable(OsuSkinComponentLookup.SpinnerBody),
         ],
@@ -30,21 +31,21 @@ export class DrawableSpinner extends DrawableOsuHitObject<Spinner> {
 
   spin = 0;
 
-  protected updateInitialTransforms() {
-    super.updateInitialTransforms();
+  protected updateStartTimeTransforms() {
+    super.updateStartTimeTransforms();
 
-    const totalTime = this.hitObject!.duration + this.hitObject!.timePreempt + 240;
+    const totalTime = this.hitObject!.duration + 240;
 
     const spinUpTime = Math.min(400, totalTime / 3);
     const spinDownTime = Math.min(600, totalTime * 2 / 3);
 
-    const spinTime = totalTime - spinUpTime - spinDownTime;
+    const spinTime = Math.max(totalTime - spinUpTime - spinDownTime, 0);
 
-    const spinSpeed = 8 * Math.min(1, this.hitObject!.duration / 600) / spinUpTime;
+    const spinSpeed = 8 * spinUpTime;
 
     let curSpin: number;
 
-    this.fadeInFromZero(this.hitObject!.timeFadeIn);
+    this.fadeInFromZero(Math.min(this.hitObject!.timeFadeIn, totalTime));
 
     this.spinTo(curSpin = spinSpeed * spinUpTime * 0.5, spinUpTime, EasingFunction.InQuad)
       .then()
