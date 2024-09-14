@@ -69,9 +69,9 @@ export abstract class HitObject {
     for (const h of this.nestedHitObjects)
       h.applyDefaults(controlPointInfo, difficulty);
 
-    this.startTimeBindable.valueChanged.removeListener(this.#onStartTimeChanged);
+    this.startTimeBindable.valueChanged.removeListener(this.onStartTimeChanged);
 
-    this.startTimeBindable.valueChanged.addListener(this.#onStartTimeChanged);
+    this.startTimeBindable.valueChanged.addListener(this.onStartTimeChanged, this);
 
     this.defaultsApplied.emit(this);
   }
@@ -93,7 +93,7 @@ export abstract class HitObject {
     this.#nestedHitObjects.add(hitObject);
   }
 
-  #onStartTimeChanged = (time: ValueChangedEvent<number>) => {
+  protected onStartTimeChanged(time: ValueChangedEvent<number>) {
     const offset = time.value - time.previousValue;
 
     for (const nested of this.nestedHitObjects)

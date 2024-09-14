@@ -40,10 +40,9 @@ export class StableSpinnerBody extends CompositeDrawable {
 
     this.addInternal(this.#scaleContainer = new Container({
       scale: new Vec2(0.625),
-      anchor: Anchor.TopCenter,
+      anchor: Anchor.Center,
       origin: Anchor.Center,
       relativeSizeAxes: Axes.Both,
-      y: 219,
       children: [
         this.#glow = new DrawableSprite({
           anchor: Anchor.Center,
@@ -51,6 +50,7 @@ export class StableSpinnerBody extends CompositeDrawable {
           texture: this.skin.getTexture('spinner-glow'),
           blendMode: 'add',
           color: glowColor,
+          alpha: 0.5
         }),
         this.#discBottom = new DrawableSprite({
           anchor: Anchor.Center,

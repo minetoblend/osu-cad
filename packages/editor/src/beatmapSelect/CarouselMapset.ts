@@ -13,7 +13,7 @@ export class CarouselMapset extends CarouselItem {
     this.selected.addOnChangeListener(({ value: selected }) => {
       if (selected) {
         if (this.beatmaps.every(it => !it.selected.value))
-          this.beatmaps[0].selected.value = true;
+          (this.beatmaps.find(it => it.visible.value) ?? this.beatmaps[0]).selected.value = true;
       }
       else {
         this.beatmaps.forEach(beatmap => beatmap.selected.value = false);
@@ -33,7 +33,7 @@ export class CarouselMapset extends CarouselItem {
 
   override get totalHeight() {
     return CarouselMapset.HEIGHT + (this.selected.value
-      ? this.beatmaps.reduce((acc, beatmap) => acc + beatmap.totalHeight, 0)
+      ? this.beatmaps.filter(it => it.visible.value).reduce((acc, beatmap) => acc + beatmap.totalHeight, 0)
       : 0
     );
   }

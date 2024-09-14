@@ -1,6 +1,5 @@
 import type { ScreenTransitionEvent } from 'osucad-framework';
 import { Anchor, Axes, Box, Container, EasingFunction, dependencyLoader, resolved } from 'osucad-framework';
-import gsap from 'gsap';
 import { OsucadScreen } from '../OsucadScreen';
 import { GlobalSongPlayback } from '../GlobalSongPlayback';
 import { EditorEnvironment } from '../environment/EditorEnvironment';
@@ -32,7 +31,7 @@ export class BeatmapSelect extends OsucadScreen {
 
   @dependencyLoader()
   load() {
-    this.beatmapStore = this.environment.createBeatmapStore();
+    this.beatmapStore = this.environment.beatmaps;
 
     this.filter = new BeatmapSelectFilter(this.beatmapStore.beatmaps);
 
@@ -86,6 +85,10 @@ export class BeatmapSelect extends OsucadScreen {
     dropzone.uploadFinished.addListener((mapset) => {
       this.#carousel.addMapset(mapset);
     });
+
+    this.filter.visibleBeatmaps.addOnChangeListener((ids) => {
+      this.#carousel.applyFilter(ids.value);
+    })
   }
 
   #menu!: Container;
@@ -100,7 +103,7 @@ export class BeatmapSelect extends OsucadScreen {
   #carousel!: BeatmapCarousel;
 
   onSuspending(e: ScreenTransitionEvent) {
-    this.#carousel.fadeTo(0, 400, EasingFunction.OutExpo);
+    this.#carousel.fadeOut(400, EasingFunction.OutExpo);
     this.#carousel.scaleTo(1.3, 600, EasingFunction.OutExpo);
     this.#carousel.moveToX(500, 600, EasingFunction.OutExpo);
 
@@ -111,12 +114,7 @@ export class BeatmapSelect extends OsucadScreen {
 
     this.#header.hide();
 
-    gsap.to(this.#background, {
-      scaleX: 0.85,
-      scaleY: 0.85,
-      duration: 0.6,
-      ease: 'expo.out',
-    });
+    this.#background.scaleTo(0.85, 1000, EasingFunction.OutExpo);
 
     // noop transform to delay when the container gets suspended
     this.fadeIn(600);
@@ -138,12 +136,7 @@ export class BeatmapSelect extends OsucadScreen {
     this.#background.fadeTo(0.3, 300);
     this.globalSongPlayback.resume();
 
-    gsap.to(this.#background, {
-      scaleX: 1,
-      scaleY: 1,
-      duration: 0.5,
-      ease: 'expo.out',
-    });
+    this.#background.scaleTo(1, 500, EasingFunction.OutExpo);
 
     this.fadeInFromZero(400);
 

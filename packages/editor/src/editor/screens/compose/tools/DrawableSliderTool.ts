@@ -49,6 +49,11 @@ export class DrawableSliderTool extends DrawableHitObjectPlacementTool<Slider> {
     slider.position = this.getSnappedPosition(this.mousePosition);
     slider.startTime = this.snappedTime;
     slider.newCombo = this.newCombo.value;
+    slider.hitSound = this.hitSoundState.asHitSound();
+    slider.hitSounds = [
+      this.hitSoundState.asHitSound(),
+      this.hitSoundState.asHitSound(),
+    ]
 
     slider.path.controlPoints = [
       new PathPoint(Vec2.zero(), PathType.Bezier),
@@ -56,17 +61,6 @@ export class DrawableSliderTool extends DrawableHitObjectPlacementTool<Slider> {
     ];
 
     this.path.setPath([...slider.path.controlPoints]);
-
-    // let additions = Additions.None;
-    // if (this.sampleWhistle.value)
-    //   additions |= Additions.Whistle;
-    // if (this.sampleFinish.value)
-    //   additions |= Additions.Finish;
-    // if (this.sampleClap.value)
-    //   additions |= Additions.Clap;
-
-    // slider.hitSound.additions = additions;
-    // slider.hitSounds.forEach(it => (it.additions = additions));
 
     return slider;
   }

@@ -1,0 +1,9 @@
+{
+  "name": "editor",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "packages/editor/src",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project editor --web",
+  "targets": {}
+}

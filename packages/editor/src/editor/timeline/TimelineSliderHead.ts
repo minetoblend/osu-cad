@@ -1,11 +1,12 @@
 import type { MouseDownEvent } from 'osucad-framework';
-import { FillMode, MouseButton, dependencyLoader, resolved } from 'osucad-framework';
+import { dependencyLoader, FillMode, MouseButton, resolved } from 'osucad-framework';
 import { SliderUtils } from '../screens/compose/tools/SliderUtils';
 import { EditorSelection } from '../screens/compose/EditorSelection';
 import type { Slider } from '../../beatmap/hitObjects/Slider';
 import { TimelineElement } from './TimelineElement';
 import { TimelineComboNumber } from './TimelineComboNumber';
 import { TimelineSlider } from './TimelineSlider';
+import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection.ts';
 
 export class TimelineSliderHead extends TimelineElement {
   constructor(readonly hitObject: Slider) {
@@ -57,26 +58,23 @@ export class TimelineSliderHead extends TimelineElement {
   protected selection!: EditorSelection;
 
   onMouseDown(e: MouseDownEvent): boolean {
-    this.findClosestParentOfType(TimelineSlider)!.mouseDownWasHead = true;
+    this.findClosestParentOfType(TimelineSlider)!.mouseDownWasChild = true;
 
     if (e.button === MouseButton.Left) {
       if (!this.hitObject.isSelected) {
         return false;
       }
 
-      const edges = new Set([0]);
-
-      this.selection.setSelectedEdges(
-        this.hitObject,
-        [...SliderUtils.calculateEdges(this.hitObject.selectedEdges, edges, e.controlPressed)],
-      );
+      if (e.controlPressed) {
+        SliderUtils.toggleEdge(this.selection, this.hitObject.subSelection, 0)
+      } else {
+        this.selection.setSliderSelection(
+          this.hitObject,
+          SliderSelectionType.Start
+        )
+      }
     }
 
     return false;
-  }
-
-  onMouseUp(): boolean {
-    this.findClosestParentOfType(TimelineSlider)!.mouseDownWasHead = false;
-    return true;
   }
 }

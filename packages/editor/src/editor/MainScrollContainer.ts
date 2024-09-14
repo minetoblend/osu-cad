@@ -18,7 +18,7 @@ class BasicScrollbar extends ScrollbarContainer {
   constructor(direction: Direction) {
     super(direction);
 
-    this.alpha = 0;
+    // this.alpha = 0;
 
     this.child = new RoundedBox({
       relativeSizeAxes: Axes.Both,

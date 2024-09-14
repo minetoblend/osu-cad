@@ -4,7 +4,7 @@ import type { SkinStore } from './SkinStore';
 export abstract class EditorEnvironment {
   abstract load(): Promise<void>;
 
-  abstract createBeatmapStore(): BeatmapStore;
+  abstract readonly beatmaps: BeatmapStore;
 
-  abstract createSkinStore(): SkinStore;
+  abstract readonly skins: SkinStore;
 }

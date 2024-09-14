@@ -26,12 +26,18 @@ export class TimelineComboNumber extends CompositeDrawable {
       }),
     );
 
-    this.hitObject.changed.addListener((event) => {
-      if (event.propertyName === 'combo') {
-        this.comboNumberText.text = (this.hitObject.indexInCombo + 1).toString();
-      }
-    });
+    this.hitObject.indexInComboBindable.valueChanged.addListener(this.comboNumberChanged, this);
+  }
+
+  comboNumberChanged() {
+    this.comboNumberText.text = (this.hitObject.indexInCombo + 1).toString();
   }
 
   protected comboNumberText!: OsucadSpriteText;
+
+  dispose(isDisposing: boolean = true) {
+    this.hitObject.indexInComboBindable.valueChanged.removeListener(this.comboNumberChanged);
+
+    super.dispose(isDisposing);
+  }
 }

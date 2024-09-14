@@ -19,6 +19,8 @@ export interface BeatmapItemInfo {
 
   readonly starRating: number;
 
+  backgroundPath: () => Promise<string | null>;
+
   loadThumbnailSmall: () => Promise<Texture | null>;
 
   loadThumbnailLarge: () => Promise<Texture | null>;

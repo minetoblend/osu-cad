@@ -50,10 +50,15 @@ export class DrawableSliderRepeat extends DrawableOsuHitObject<SliderRepeat> {
 
   protected onApply(entry: HitObjectLifetimeEntry) {
     super.onApply(entry);
+  }
 
-    this.position = this.hitObject!.position.sub(this.drawableSlider.hitObject!.position);
-
+  updatePosition(
+    start: Vec2,
+    end: Vec2,
+  ) {
     const isAtEnd = this.hitObject!.repeatIndex % 2 === 0;
+
+    this.position = isAtEnd ? end : start;
 
     const curve = this.slider!.path.calculatedRange.path;
 
@@ -80,7 +85,7 @@ export class DrawableSliderRepeat extends DrawableOsuHitObject<SliderRepeat> {
 
     const delayFadeIn = this.hitObject!.repeatIndex === 0;
 
-    this.#animDuration = Math.min(700, this.hitObject!.spanDuration);
+    this.#animDuration = Math.min(700, this.hitObject!.spanDuration * 2);
 
     this.fadeOut()
       .delay(delayFadeIn ? (this.slider?.timePreempt ?? 0) / 3 : 0)
@@ -91,5 +96,6 @@ export class DrawableSliderRepeat extends DrawableOsuHitObject<SliderRepeat> {
     super.updateEndTimeTransforms();
 
     this.fadeOut(this.#animDuration);
+    this.arrow.fadeOut(300);
   }
 }

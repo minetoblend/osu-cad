@@ -34,37 +34,35 @@ export class StableFollowCircle extends CompositeDrawable {
   protected loadComplete() {
     super.loadComplete();
 
-    this.drawableHitObject.hitObjectApplied.addListener(this.#onHitObjectApplied, this);
-    this.#onHitObjectApplied(this.drawableHitObject);
+    this.drawableHitObject.applyCustomUpdateState.addListener(this.#applyCustomState, this);
+    this.#applyCustomState(this.drawableHitObject);
   }
 
-  #onHitObjectApplied(parentObject: DrawableHitObject) {
+  #applyCustomState(parentObject: DrawableHitObject) {
     const hitObject = parentObject!.hitObject as Slider;
 
-    const remainingTime = hitObject.endTime - hitObject.startTime;
+    const remainingTime = Math.max(hitObject.endTime - hitObject.startTime, 0);
 
     this.applyTransformsAt(Number.MIN_VALUE);
     this.clearTransformsAfter(Number.MIN_VALUE);
 
-    {
-      using _ = this.beginAbsoluteSequence(hitObject.startTime);
-
+    this.absoluteSequence(hitObject.startTime, () => {
       this
         .scaleTo(1).scaleTo(2, Math.min(180, remainingTime), EasingFunction.Out)
         .fadeTo(0).fadeTo(1, Math.min(60, remainingTime));
-    }
+    });
 
     for (const nested of hitObject.nestedHitObjects) {
       if (nested instanceof SliderTick || nested instanceof SliderRepeat) {
-        using _ = this.beginAbsoluteSequence(nested.startTime);
-        this.scaleTo(2.2).scaleTo(2, 200);
+        this.absoluteSequence(nested.startTime, () => {
+          this.scaleTo(2.2).scaleTo(2, 200);
+        })
       }
     }
 
-    {
-      using _ = this.beginAbsoluteSequence(hitObject.endTime);
+    this.absoluteSequence(hitObject.endTime, () => {
       this.scaleTo(1.6, 200, EasingFunction.Out)
         .fadeOut(200, EasingFunction.In);
-    }
+    })
   }
 }

@@ -9,6 +9,7 @@ import {
 import { HitObjectList } from '../../../beatmap/hitObjects/HitObjectList';
 import { Slider } from '../../../beatmap/hitObjects/Slider';
 import type { OsuHitObject } from '../../../beatmap/hitObjects/OsuHitObject';
+import { SliderSelectionType } from '../../../beatmap/hitObjects/SliderSelection.ts';
 
 export class EditorSelection extends Container implements Iterable<OsuHitObject> {
   readonly #selection = new Set<OsuHitObject>();
@@ -71,12 +72,12 @@ export class EditorSelection extends Container implements Iterable<OsuHitObject>
     this.selectionChanged.emit([hitObject, false]);
   }
 
-  setSelectedEdges(slider: Slider, edges: number[]) {
-    if (!this.#selection.has(slider)) {
+  setSliderSelection(slider: Slider, type: SliderSelectionType, edges?: number[]) {
+    if (!this.#selection.has(slider))
       this.select([slider]);
-    }
 
-    slider.selectedEdges = edges;
+    slider.subSelection.select(type, edges);
+
     this.selectionChanged.emit([slider, true]);
   }
 
@@ -93,7 +94,7 @@ export class EditorSelection extends Container implements Iterable<OsuHitObject>
     this.selectionChanged.addListener(([hitObject, selected]) => {
       hitObject.isSelected = selected;
       if (!selected && hitObject instanceof Slider) {
-        hitObject.selectedEdges = [];
+        hitObject.subSelection.clear();
       }
     });
   }

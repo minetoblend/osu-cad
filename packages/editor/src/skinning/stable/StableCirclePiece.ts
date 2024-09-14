@@ -2,15 +2,17 @@ import {
   Anchor,
   Axes,
   Bindable,
+  Color,
   CompositeDrawable,
-  DrawableSprite,
   dependencyLoader,
+  DrawableSprite,
   resolved,
 } from 'osucad-framework';
-import type { ColorSource } from 'pixi.js';
 import { ISkinSource } from '../ISkinSource';
 import { DrawableComboNumber } from '../../editor/hitobjects/DrawableComboNumber';
 import { DrawableHitObject } from '../../editor/hitobjects/DrawableHitObject';
+import { OsucadConfigManager } from '../../config/OsucadConfigManager.ts';
+import { OsucadSettings } from '../../config/OsucadSettings.ts';
 
 export class StableCirclePiece extends CompositeDrawable {
   constructor(priorityLookupPrefix: string | null = null, readonly hasComboNumber: boolean = true) {
@@ -21,7 +23,7 @@ export class StableCirclePiece extends CompositeDrawable {
     this.relativeSizeAxes = Axes.Both;
   }
 
-  accentColor = new Bindable<ColorSource>(0xFFFFFF);
+  accentColor = new Bindable(new Color(0xFFFFFF));
 
   readonly #priorityLookup: string | null = null;
 
@@ -33,6 +35,11 @@ export class StableCirclePiece extends CompositeDrawable {
 
   #circle!: DrawableSprite;
 
+  @resolved(OsucadConfigManager)
+  private config!: OsucadConfigManager;
+
+  hitAnimationsEnabled = new Bindable(false);
+
   @dependencyLoader()
   load() {
     const circleName = this.#priorityLookup && this.skin.getTexture(this.#priorityLookup) ? this.#priorityLookup : 'hitcircle';
@@ -43,15 +50,21 @@ export class StableCirclePiece extends CompositeDrawable {
         anchor: Anchor.Center,
         origin: Anchor.Center,
       }),
-      this.#circle = new DrawableSprite({
+      new DrawableSprite({
         texture: this.skin.getTexture(`${circleName}overlay`),
         anchor: Anchor.Center,
         origin: Anchor.Center,
       }),
     );
 
+    this.#circle.texture?.on('destroy', () => {
+      console.trace('HitCircle texture destroyed');
+    })
+
+    this.config.bindWith(OsucadSettings.HitAnimations, this.hitAnimationsEnabled);
+
     if (this.hasComboNumber) {
-      this.addInternal(new DrawableComboNumber());
+      this.addInternal(this.comboNumber = new DrawableComboNumber());
     }
 
     if (this.drawableHitObject) {
@@ -61,7 +74,13 @@ export class StableCirclePiece extends CompositeDrawable {
     }
 
     this.accentColor.valueChanged.addListener(this.#updateColorTransforms, this);
+
+    this.hitAnimationsEnabled.valueChanged.addListener(this.#updateColorTransforms, this);
+
+    this.#updateColorTransforms();
   }
+
+  comboNumber: DrawableComboNumber | null = null;
 
   override clearTransforms() {
   }
@@ -72,23 +91,28 @@ export class StableCirclePiece extends CompositeDrawable {
   override applyTransformsAt() {
   }
 
-  protected loadComplete() {
-    super.loadComplete();
-
-    this.#updateColorTransforms();
-  }
-
   #updateColorTransforms() {
-    this.#circle.clearTransforms(false, 'color');
-
-    this.#circle.color = this.accentColor.value;
+    super.clearTransforms();
 
     if (!this.drawableHitObject?.hitObject)
       return;
 
-    {
-      using _ = this.#circle.beginAbsoluteSequence(this.drawableHitObject!.hitObject!.startTime, false);
-      this.#circle.fadeColor(0xFFFFFF);
+    const hitObject = this.drawableHitObject.hitObject;
+
+    this.absoluteSequence(hitObject.startTime - hitObject.timePreempt, () => this.#updateInitialTransforms());
+    this.absoluteSequence(hitObject.startTime, () => this.#updateStartTimeTransforms());
+  }
+
+  #updateInitialTransforms() {
+    this.comboNumber?.fadeIn()
+    this.#circle.fadeColor(this.accentColor.value);
+  }
+
+  #updateStartTimeTransforms() {
+    if (this.hitAnimationsEnabled.value) {
+      this.comboNumber?.fadeOut(50);
+    } else {
+      this.#circle.fadeColor(0xffffff);
     }
   }
 
@@ -96,5 +120,7 @@ export class StableCirclePiece extends CompositeDrawable {
     super.dispose(isDisposing);
 
     this.drawableHitObject?.applyCustomUpdateState.removeListener(this.#updateColorTransforms);
+
+    console.log('Disposing', this);
   }
 }

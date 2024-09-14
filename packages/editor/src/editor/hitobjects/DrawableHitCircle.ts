@@ -1,25 +1,44 @@
-import { Anchor, Axes, Container, EasingFunction, dependencyLoader, resolved } from 'osucad-framework';
-import { PreferencesStore } from '../../preferences/PreferencesStore';
+import {
+  Anchor,
+  Axes,
+  Bindable,
+  Container,
+  dependencyLoader,
+  Drawable,
+  EasingFunction,
+  resolved,
+} from 'osucad-framework';
 import type { HitCircle } from '../../beatmap/hitObjects/HitCircle';
 import { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
 import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
 import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
-import type { DrawableComboNumber } from './DrawableComboNumber';
 import { DrawableOsuHitObject } from './DrawableOsuHitObject';
+import { OsucadConfigManager } from '../../config/OsucadConfigManager.ts';
+import { OsucadSettings } from '../../config/OsucadSettings.ts';
 
 export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle> {
-  constructor() {
-    super();
+  constructor(h?: HitCircle) {
+    super(h);
   }
 
-  circlePiece!: SkinnableDrawable;
+  circlePiece!: Drawable;
   approachCircle!: SkinnableDrawable;
-  comboNumber!: DrawableComboNumber;
+
+  get circlePieceComponent() {
+    return OsuSkinComponentLookup.HitCircle;
+  }
 
   #scaleContainer!: Container;
 
+  readonly hitAnimationsEnabled = new Bindable(false);
+
+  @resolved(OsucadConfigManager)
+  private config!: OsucadConfigManager;
+
   @dependencyLoader()
   load() {
+    this.config.bindWith(OsucadSettings.HitAnimations, this.hitAnimationsEnabled);
+
     this.origin = Anchor.Center;
     this.size = OsuHitObject.object_dimensions;
 
@@ -29,7 +48,7 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle> {
         origin: Anchor.Center,
         anchor: Anchor.Center,
         children: [
-          this.circlePiece = new SkinnableDrawable(OsuSkinComponentLookup.HitCircle).with({
+          this.circlePiece = new SkinnableDrawable(this.circlePieceComponent).with({
             anchor: Anchor.Center,
             origin: Anchor.Center,
             alpha: 0,
@@ -45,13 +64,11 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle> {
       }),
     );
 
-    // this.circlePiece.add(
-    //   (this.comboNumber = new DrawableComboNumber(this.hitObject.indexInCombo)),
-    // );
-
     this.positionBindable.addOnChangeListener(() => this.updatePosition());
     this.stackHeightBindable.addOnChangeListener(() => this.updatePosition());
     this.scaleBindable.addOnChangeListener(scale => this.#scaleContainer.scale = scale.value);
+
+    this.hitAnimationsEnabled.valueChanged.addListener(() => this.scheduler.addOnce(this.updateState, this));
   }
 
   updateInitialTransforms() {
@@ -62,14 +79,13 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle> {
   }
 
   updateStartTimeTransforms() {
-    if (this.preferences.viewport.hitAnimations) {
+    if (this.hitAnimationsEnabled.value) {
       this.circlePiece.fadeOut(240);
       this.circlePiece.scaleTo(1.5, 240);
       this.approachCircle.fadeOut();
 
       this.lifetimeEnd = this.hitObject!.endTime + 240;
-    }
-    else {
+    } else {
       this.circlePiece.fadeOut(700);
 
       this.approachCircle.scaleTo(1.1, 120, EasingFunction.OutCubic);
@@ -88,7 +104,4 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle> {
   protected updatePosition() {
     this.position = this.hitObject!.stackedPosition;
   }
-
-  @resolved(PreferencesStore)
-  preferences!: PreferencesStore;
 }

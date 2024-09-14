@@ -1,6 +1,6 @@
 import type { MouseDownEvent, MouseUpEvent } from 'osucad-framework';
 import { Anchor, Axes, BindableBoolean, Button, Container, DrawableSprite, EasingFunction, RoundedBox, Vec2, dependencyLoader, resolved } from 'osucad-framework';
-import type { Texture } from 'pixi.js';
+import { Graphics, Texture } from 'pixi.js';
 import { ThemeColors } from '../../ThemeColors';
 import { UISamples } from '../../../UISamples';
 import { FastRoundedBox } from '../../../drawables/FastRoundedBox';

@@ -67,7 +67,7 @@ export class SamplePoint extends ControlPoint {
     if (!(existing instanceof SamplePoint))
       return false;
 
-    return this.volume === existing.volume;
+    return this.volume === existing.volume && this.sampleSet === existing.sampleSet && this.sampleIndex === existing.sampleIndex;
   }
 
   deepClone(): ControlPoint {

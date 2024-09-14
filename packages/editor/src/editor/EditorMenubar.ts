@@ -7,7 +7,7 @@ import { OsucadSpriteText } from '../OsucadSpriteText';
 import { EditorMenu } from './EditorMenu';
 import { ThemeColors } from './ThemeColors';
 import { CommandManager } from './context/CommandManager';
-import { Editor } from './Editor';
+import { Editor } from './Editor.ts';
 
 export class EditorMenubar extends EditorMenu {
   constructor() {
@@ -51,12 +51,25 @@ export class EditorMenubar extends EditorMenu {
           })),
           new MenuItem({
             text: 'Cut',
+            action: () => this.editor?.cut()
           }),
           new MenuItem({
             text: 'Copy',
+            action: () => this.editor?.copy()
           }),
           new MenuItem({
             text: 'Paste',
+            action: () => this.editor?.paste()
+          }),
+          new MenuItem({
+            text: 'Reverse',
+            action: () => this.reverseSelection(),
+            items: [
+              new MenuItem({
+                text: 'Without reversing sliders',
+                action: () => this.reverseSelection()
+              }),
+            ]
           }),
         ],
       }),
@@ -86,6 +99,10 @@ export class EditorMenubar extends EditorMenu {
   @resolved(CommandManager)
   commandHandler!: CommandManager;
 
+  reverseSelection() {
+    console.log('reverse');
+  }
+
   override load() {
     super.load();
 
@@ -104,7 +121,18 @@ export class EditorMenubar extends EditorMenu {
   }
 
   exit() {
-    this.findClosestParentOfType(Editor)?.performExit();
+    this.editor?.performExit();
+  }
+
+  get editor() {
+    return this.findClosestParentOfType(Editor);
+  }
+
+  override updateSubTree(): boolean {
+    performance.mark('EditorMenubar#updateSubTree');
+    const result = super.updateSubTree();
+    performance.measure('EditorMenubar#updateSubTree', 'EditorMenubar#updateSubTree');
+    return result;
   }
 }
 

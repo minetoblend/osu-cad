@@ -1,5 +1,6 @@
 import type { TimingPoint } from '@osucad/common';
-import type {
+import {
+  BindableBoolean,
   FrameTimeInfo,
   IAdjustableClock,
   IFrameBasedClock,
@@ -17,6 +18,8 @@ import {
 } from 'osucad-framework';
 import { PreferencesStore } from '../preferences/PreferencesStore';
 import { Beatmap } from '../beatmap/Beatmap';
+import { OsucadConfigManager } from '../config/OsucadConfigManager.ts';
+import { OsucadSettings } from '../config/OsucadSettings.ts';
 
 export class EditorClock
   extends Container
@@ -25,8 +28,15 @@ export class EditorClock
     super();
   }
 
+  animatedSeek = new BindableBoolean(true)
+
+  @resolved(OsucadConfigManager)
+  config!: OsucadConfigManager;
+
   @dependencyLoader()
   init() {
+    this.config.bindWith(OsucadSettings.AnimatedSeek, this.animatedSeek);
+
     this.scheduler.addDelayed(() => {
       if (this.preferences.audio.automaticOffset) {
         const offset = -this.audioManager.context.outputLatency * 1000;
@@ -125,8 +135,13 @@ export class EditorClock
 
   #lastSeekWasAnimated = false;
 
+  isSeeking = false;
+
   seek(position: number, animated: boolean = true) {
+    animated = false;
     position = clamp(position, 0, this.track.length);
+
+    this.isSeeking = true;
 
     this.#targetTime = position;
     this.#lastSeekWasAnimated = animated;
@@ -134,6 +149,8 @@ export class EditorClock
     if (this.isRunning) {
       this.#frameTimeInfo.current = position;
     }
+
+    this.schedule(() => this.isSeeking = false);
 
     return this.track.seek(position - this.offset);
   }
@@ -160,9 +177,9 @@ export class EditorClock
     else {
       const lastTime = this.currentTime;
       let currentTime = lerp(
-        lastTime,
         this.#targetTime,
-        clamp(this.parent!.clock!.elapsedFrameTime * 0.03),
+        lastTime,
+        Math.exp(-this.parent!.clock!.elapsedFrameTime * 0.03),
       );
 
       if (almostEquals(currentTime, this.#targetTime, 3)) {

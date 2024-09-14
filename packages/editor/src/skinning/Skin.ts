@@ -1,5 +1,4 @@
-import type { Drawable, IDisposable, Sample } from 'osucad-framework';
-import { DrawableSprite } from 'osucad-framework';
+import { AudioChannel, Drawable, DrawableSprite, IDisposable, Sample } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
 import type { IResourcesProvider } from '../io/IResourcesProvider';
 import type { ISkin } from './ISkin';
@@ -11,30 +10,35 @@ import { SpriteComponentLookup } from './SkinnableSprite';
 import { SkinnableTextureAnimation } from './DrawableAnimation';
 import { SkinConfiguration } from './SkinConfiguration';
 import { StableSkinConfigurationDecoder } from './StableSkinConfigurationDecoder';
-import type { ISampleInfo } from './ISampleInfo';
 import type { SkinInfo } from './SkinInfo';
+import { SampleStore } from './stable/SampleStore.ts';
 
 export abstract class Skin implements IDisposable, ISkin {
   protected readonly textures: TextureStore | null = null;
+
+  protected readonly samples: SampleStore | null = null;
 
   readonly name: string;
 
   #store = new ResourceStore<ArrayBuffer>();
 
+  protected get store() {
+    return this.#store;
+  }
+
   async load() {
     const configuration = await this.#store.getAsync(this.configurationFilename);
     if (configuration) {
       this.parseConfiguration(configuration);
-    }
-    else {
+    } else {
       this.configuration = new SkinConfiguration();
     }
   }
 
   #resources: IResourcesProvider | null = null;
 
-  protected constructor(info: SkinInfo, resources?: IResourcesProvider, fallbackStore?: IResourceStore<ArrayBuffer>, readonly configurationFilename = 'skin.ini') {
-    this.#resources = resources ?? null;
+  protected constructor(info: SkinInfo, resources: IResourcesProvider, fallbackStore?: IResourceStore<ArrayBuffer>, readonly configurationFilename = 'skin.ini') {
+    this.#resources = resources;
 
     this.name = info.name;
 
@@ -42,12 +46,11 @@ export abstract class Skin implements IDisposable, ISkin {
       this.#store.addStore(fallbackStore);
 
       this.textures = new TextureStore(fallbackStore);
+      this.samples = new SampleStore(resources.audioManager, fallbackStore);
     }
   }
 
   abstract getTexture(componentName: string): Texture | null;
-
-  abstract getSample(sampleInfo: ISampleInfo): Sample | null;
 
   getDrawableComponent(lookup: ISkinComponentLookup): Drawable | null {
     if (lookup instanceof SpriteComponentLookup) {
@@ -113,6 +116,12 @@ export abstract class Skin implements IDisposable, ISkin {
 
   protected parseConfiguration(config: ArrayBuffer) {
     this.configuration = new StableSkinConfigurationDecoder().decode(config);
+  }
+
+  async getSample(channel: AudioChannel, name: string): Promise<Sample | null> {
+    const sample = await this.samples?.getSample(channel, name);
+
+    return sample ?? null;
   }
 
   #isDisposed = false;

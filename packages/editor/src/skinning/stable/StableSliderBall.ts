@@ -1,11 +1,11 @@
 import {
   Anchor,
-  Axes,
+  Axes, clamp,
   CompositeDrawable,
+  dependencyLoader,
   Drawable,
   DrawableSprite,
   PIXIContainer,
-  dependencyLoader,
   resolved,
 } from 'osucad-framework';
 import { Mesh, QuadGeometry } from 'pixi.js';
@@ -55,14 +55,8 @@ export class StableSliderBall extends CompositeDrawable {
   #updateStateTransforms() {
     const slider = this.drawableHitObject.hitObject!;
 
-    {
-      using _ = this.beginAbsoluteSequence(slider.startTime);
-      this.fadeIn();
-    }
-    {
-      using _ = this.beginAbsoluteSequence(slider.endTime);
-      this.fadeOut();
-    }
+    this.absoluteSequence(slider.startTime, () => this.fadeIn())
+    this.absoluteSequence(slider.endTime, () => this.fadeOut())
   }
 
   dispose(isDisposing?: boolean) {
@@ -106,7 +100,9 @@ export class MainSliderBall extends Drawable {
 
     const slider = this.drawableHitObject.hitObject!;
 
-    const distance = slider.path.expectedDistance * slider.getProgressAtTime(this.time.current);
+    const completionProgress = clamp((this.time.current - this.drawableHitObject.hitObject!.startTime) / this.drawableHitObject.hitObject!.duration, 0, 1);
+
+    const distance = slider.path.expectedDistance * slider.progressAt(completionProgress);
 
     const radius = slider.radius;
 

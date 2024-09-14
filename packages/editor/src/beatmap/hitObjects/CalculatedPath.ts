@@ -1,4 +1,4 @@
-import { Vec2, clamp } from 'osucad-framework';
+import { Vec2, clamp, IVec2 } from 'osucad-framework';
 
 export class CalculatedPath {
   constructor(
@@ -14,9 +14,12 @@ export class CalculatedPath {
     return this.vertices.length;
   }
 
-  getPositionAtDistance(d: number): Vec2 {
-    if (this.vertices.length <= 1)
-      return new Vec2();
+  getPositionAtDistance<T extends IVec2>(d: number, out: T): T {
+    if (this.vertices.length <= 1) {
+      out.x = 0;
+      out.y = 0;
+      return out;
+    }
     let i = 0;
     const vertices = this.vertices;
     const cumulativeDistance = this.cumulativeDistance;
@@ -33,12 +36,15 @@ export class CalculatedPath {
 
     t = clamp(t, 0, 1);
 
-    if (!end)
-      return start;
+    if (!end) {
+      out.x = start.x;
+      out.y = start.y;
+      return out;
+    }
 
-    return new Vec2(
-      start.x + (end.x - start.x) * t,
-      start.y + (end.y - start.y) * t,
-    );
+    out.x = start.x + (end.x - start.x) * t;
+    out.y = start.y + (end.y - start.y) * t;
+
+    return out;
   }
 }

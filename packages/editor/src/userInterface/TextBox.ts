@@ -1,5 +1,20 @@
 import type { ClickEvent, IKeyBindingHandler, KeyBindingPressEvent } from 'osucad-framework';
-import { Action, Anchor, Axes, BindableWithCurrent, Cached, CompositeDrawable, Container, EasingFunction, MouseButton, PlatformAction, TextInputSource, clamp, dependencyLoader, resolved } from 'osucad-framework';
+import {
+  Action,
+  Anchor,
+  Axes,
+  BindableWithCurrent,
+  Cached,
+  CompositeDrawable,
+  Container,
+  EasingFunction,
+  MouseButton,
+  PlatformAction,
+  TextInputSource,
+  clamp,
+  dependencyLoader,
+  resolved,
+} from 'osucad-framework';
 
 import { BitmapFontManager } from 'pixi.js';
 import gsap from 'gsap';
@@ -7,6 +22,7 @@ import { FastRoundedBox } from '../drawables/FastRoundedBox';
 import { OsucadSpriteText } from '../OsucadSpriteText';
 import { ThemeColors } from '../editor/ThemeColors';
 import { animate } from '../utils/animate';
+import { DoubleClickEvent } from '../../../framework/src/input/events/DoubleClickEvent.ts';
 
 export class TextBox extends Container implements IKeyBindingHandler<PlatformAction> {
   constructor() {
@@ -91,6 +107,8 @@ export class TextBox extends Container implements IKeyBindingHandler<PlatformAct
         ],
       }),
     );
+
+    this.current.addOnChangeListener(e => this.text = e.value);
   }
 
   #textContainer!: Container;
@@ -129,16 +147,17 @@ export class TextBox extends Container implements IKeyBindingHandler<PlatformAct
       return 0;
     }
 
-    const whiteSpaceWidth = 4.1;
+    const { width, scale, lines } = BitmapFontManager.getLayout(text, this.#spriteText.style);
 
-    if (text.trim().length === 0)
-      return text.length * whiteSpaceWidth;
+    let whiteSpaceWidth = 4.1;
 
-    const measurement = BitmapFontManager.measureText(text, this.#spriteText.style);
+    if (lines.length > 0) {
+      whiteSpaceWidth = lines[0].spaceWidth * scale;
+    }
 
     const trailingWhitespaceCount = text.length - text.trimEnd().length;
 
-    return measurement.width * measurement.scale + trailingWhitespaceCount * whiteSpaceWidth;
+    return width * scale + trailingWhitespaceCount * whiteSpaceWidth;
   }
 
   cursor = new TextCursor();
@@ -175,8 +194,7 @@ export class TextBox extends Container implements IKeyBindingHandler<PlatformAct
       const positionEnd = this.getPositionAt(this.cursor.rangeRight);
 
       this.#caret.setPosition(position, positionEnd - position);
-    }
-    else {
+    } else {
       this.#caret.setPosition(position);
     }
   }
@@ -198,14 +216,14 @@ export class TextBox extends Container implements IKeyBindingHandler<PlatformAct
 
   onFocus() {
     this.startAcceptingInput();
+    this.#textAndLayout.invalidate();
 
     return true;
   }
 
-  onFocusLost(): boolean {
+  onFocusLost() {
     this.endAcceptingInput();
-
-    return true;
+    this.#textAndLayout.invalidate();
   }
 
   #onTextInput = (text: string) => {
@@ -237,6 +255,8 @@ export class TextBox extends Container implements IKeyBindingHandler<PlatformAct
 
     this.#text = value;
     this.#textAndLayout.invalidate();
+
+    this.current.value = value;
   }
 
   protected insertTextAtCursor(text: string) {
@@ -279,11 +299,9 @@ export class TextBox extends Container implements IKeyBindingHandler<PlatformAct
         position = this.#getStartOfWordBackward(this.text, position);
 
       this.cursor.moveTo(clamp(position, 0, this.text.length));
-    }
-    else if (this.cursor.isRange) {
+    } else if (this.cursor.isRange) {
       this.cursor.moveTo(position);
-    }
-    else {
+    } else {
       this.cursor.moveTo(clamp(position + direction, 0, this.text.length));
     }
   }
@@ -370,8 +388,72 @@ export class TextBox extends Container implements IKeyBindingHandler<PlatformAct
     return true;
   }
 
+  getIndexAt(position: number) {
+    const layout = BitmapFontManager.getLayout(this.text, this.#spriteText.style);
+
+    if (layout.lines.length > 0) {
+      const line = layout.lines[0];
+
+      let cursorPosition = 0;
+
+      if (position >= layout.width * layout.scale) {
+        cursorPosition = this.text.length;
+      } else {
+        for (let i = 0; i < line.charPositions.length; i++) {
+          cursorPosition = i;
+
+          if (i < line.charPositions.length - 1) {
+            const boundary = (line.charPositions[i] + line.charPositions[i + 1]) / 2 * layout.scale;
+
+            if (position < boundary) {
+              break;
+            }
+          } else {
+            if (position < line.charPositions[i] * layout.scale) {
+              break;
+            }
+          }
+        }
+      }
+      return cursorPosition;
+    }
+
+    return 0;
+  }
+
   onClick(e: ClickEvent): boolean {
-    return e.button === MouseButton.Left;
+    if (e.button === MouseButton.Left) {
+      const position = e.mousePosition.x - 8;
+
+
+      this.cursor.moveTo(this.getIndexAt(position));
+
+
+      return true;
+    }
+
+    return false;
+  }
+
+  onDoubleClick(e: DoubleClickEvent): boolean {
+    if (e.button === MouseButton.Left) {
+      const position = this.getIndexAt(e.mousePosition.x - 8);
+
+      const start = this.#getStartOfWordBackward(this.text, position);
+      let end = start
+      for(let i = start + 1; i < this.text.length; i++) {
+        if(this.text[i] === ' ') {
+          break;
+        }
+        end = i;
+      }
+
+      this.cursor.setRange(start, end + 1);
+
+      return true;
+    }
+
+    return  false;
   }
 }
 
@@ -411,8 +493,7 @@ class Caret extends CompositeDrawable {
         duration: 0.1,
         ease: 'expo.out',
       });
-    }
-    else {
+    } else {
       this.moveToX(position - 1, 100, EasingFunction.OutExpo);
       this.fadeIn(100);
       gsap.to(this, {
@@ -435,12 +516,10 @@ class Caret extends CompositeDrawable {
 
       if (time < this.flashInRatio) {
         this.#caret.alpha = animate(time, 0, this.flashInRatio, 0.75, 1);
-      }
-      else {
+      } else {
         this.#caret.alpha = animate(time, this.flashInRatio, 1, 1, 0.5);
       }
-    }
-    else {
+    } else {
       this.#caret.alpha = 0.4;
     }
   }

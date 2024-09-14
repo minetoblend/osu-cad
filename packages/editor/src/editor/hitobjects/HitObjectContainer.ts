@@ -121,4 +121,11 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
 
     this.#startTimeMap.set(drawable, bindable);
   }
+
+  override updateSubTree(): boolean {
+    performance.mark('HitObjectContainer#updateSubTree');
+    const result = super.updateSubTree();
+    performance.measure('HitObjectContainer#updateSubTree', 'HitObjectContainer#updateSubTree');
+    return result;
+  }
 }

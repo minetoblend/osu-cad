@@ -16,7 +16,7 @@ import { CommandContainer } from '../../../CommandContainer';
 import { EditorClock } from '../../../EditorClock';
 import { EditorSelection } from '../EditorSelection';
 import {
-  ADDITIONS,
+  ADDITIONS, HITSOUND,
   NEW_COMBO,
 } from '../../../InjectionTokens';
 import { HitObjectComposer } from '../HitObjectComposer';
@@ -26,6 +26,7 @@ import { OsuPlayfield } from '../../../hitobjects/OsuPlayfield';
 import type { Additions } from '../../../../beatmap/hitSounds/Additions';
 import type { AdditionsBindable } from '../../../../beatmap/hitSounds/AdditionsBindable';
 import type { ComposeToolInteraction } from './interactions/ComposeToolInteraction';
+import { HitSoundState, HitSoundStateChangeEvent } from '../../../../beatmap/hitSounds/BindableHitSound.ts';
 
 export abstract class DrawableComposeTool extends CommandContainer {
   protected constructor() {
@@ -46,10 +47,10 @@ export abstract class DrawableComposeTool extends CommandContainer {
   @resolved(NEW_COMBO)
   protected newCombo!: BindableBoolean;
 
-  @resolved(ADDITIONS)
-  protected additions!: AdditionsBindable;
+  @resolved(HITSOUND)
+  protected hitSoundState!: HitSoundState;
 
-  receivePositionalInputAt(): boolean {
+  receivePositionalInputAtLocal(): boolean {
     return true;
   }
 
@@ -64,7 +65,7 @@ export abstract class DrawableComposeTool extends CommandContainer {
   @dependencyLoader()
   [Symbol('load')]() {
     this.newCombo.valueChanged.addListener(this.applyNewComboState, this);
-    this.additions.valueChanged.addListener(this.applyAdditionsState, this);
+    this.hitSoundState.changed.addListener(this.applyHitSoundState, this);
   }
 
   protected loadComplete(): void {
@@ -81,7 +82,7 @@ export abstract class DrawableComposeTool extends CommandContainer {
   protected applyNewComboState(event: ValueChangedEvent<boolean>): void {
   }
 
-  protected applyAdditionsState(event: ValueChangedEvent<Additions>): void {
+  protected applyHitSoundState(event: HitSoundStateChangeEvent): void {
   }
 
   protected get mousePosition() {
@@ -203,5 +204,12 @@ export abstract class DrawableComposeTool extends CommandContainer {
     }
 
     return candidate;
+  }
+
+  updateSubTree(): boolean {
+    performance.mark(`ComposeTool#${this.constructor.name}#updateSubTree`);
+    const result = super.updateSubTree();
+    performance.measure(`ComposeTool#${this.constructor.name}#updateSubTree`, `ComposeTool#${this.constructor.name}#updateSubTree`);
+    return result;
   }
 }

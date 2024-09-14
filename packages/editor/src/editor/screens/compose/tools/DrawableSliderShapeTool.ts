@@ -55,7 +55,7 @@ export abstract class DrawableSliderShapeTool<T extends SliderShape> extends Dra
       new PathPoint(Vec2.zero()),
     ];
 
-    slider.hitSound = slider.hitSound.withAdditions(this.additions.value);
+    slider.hitSound = this.hitSoundState.asHitSound();
     slider.hitSounds = [slider.hitSound, slider.hitSound];
 
     return slider;

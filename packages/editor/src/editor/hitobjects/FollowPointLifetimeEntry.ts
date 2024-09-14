@@ -83,7 +83,7 @@ export class FollowPointLifetimeEntry extends LifetimeEntry {
     const { fadeInTime } = FollowPointConnection.getFadeTimes(this.start, this.end!, fraction);
 
     this.lifetimeStart = fadeInTime;
-    this.lifetimeEnd = Number.MAX_VALUE;
+    this.lifetimeEnd = this.end.startTime + 2000;
 
     this.invalidated.emit();
   }

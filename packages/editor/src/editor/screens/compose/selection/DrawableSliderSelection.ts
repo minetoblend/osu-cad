@@ -45,28 +45,25 @@ export class DrawableSliderSelection extends DrawableSelection<Slider> {
     this.scaleBindable.addOnChangeListener((scale) => {
       this.headCircle.scale = scale.value;
       this.tailCircle.scale = scale.value;
-    });
-
-    this.selection.selectionChanged.addListener(([hitObject, selected]) => {
-      if (hitObject !== this.hitObject || !selected)
-        return;
-
-      this.#updateEdgeSelection();
-    });
-  }
+    });}
 
   protected onApply(hitObject: Slider) {
     super.onApply(hitObject);
 
-    this.hitObject.path.invalidated.addListener(this.updatePosition, this);
+    hitObject.path.invalidated.addListener(this.updatePosition, this);
+
+    hitObject.subSelection.changed.addListener(this.#updateEdgeSelection, this);
+
 
     this.#updateEdgeSelection();
   }
 
-  onFree(hitObject: OsuHitObject) {
+  onFree(hitObject: Slider) {
     super.onFree(hitObject);
 
-    this.hitObject.path.invalidated.removeListener(this.updatePosition);
+    hitObject.path.invalidated.removeListener(this.updatePosition);
+
+    hitObject.subSelection.changed.removeListener(this.#updateEdgeSelection);
   }
 
   protected onDefaultsApplied() {
@@ -85,17 +82,8 @@ export class DrawableSliderSelection extends DrawableSelection<Slider> {
   }
 
   #updateEdgeSelection() {
-    const edges = this.hitObject.selectedEdges;
-
-    let headSelected = false;
-    let tailSelected = false;
-
-    for (const edge of edges) {
-      if (edge % 2 === 0)
-        headSelected = true;
-      else
-        tailSelected = true;
-    }
+    let headSelected = this.hitObject.subSelection.anyHeadSelected;
+    let tailSelected = this.hitObject.subSelection.anyTailSelected;
 
     this.headCircle.color = headSelected ? 0xFF0000 : 0xFFFFFF;
     this.tailCircle.color = tailSelected ? 0xFF0000 : 0xFFFFFF;

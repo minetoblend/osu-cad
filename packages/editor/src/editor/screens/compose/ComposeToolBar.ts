@@ -11,6 +11,7 @@ import { ZWaveSliderTool } from './tools/ZWaveSliderTool';
 import { WaveSliderTool } from './tools/WaveSliderTool';
 import { BirdSliderTool } from './tools/BirdSliderTool';
 import { ComposeToolbarButton } from './ComposeToolbarButton';
+import { SampleSetControl } from './SampleSetControl.ts';
 
 export class ComposeToolBar extends Container {
   constructor(protected readonly activeTool: Bindable<ComposeTool>) {
@@ -27,6 +28,13 @@ export class ComposeToolBar extends Container {
 
   @dependencyLoader()
   init() {
+    this.#toolButtons.add(new SampleSetControl());
+    this.#toolButtons.add(new SampleSetControl('Additions', true));
+    this.#toolButtons.add(
+      new Container({
+        height: 4,
+      })
+    )
     this.#toolButtons.add(
       new ComposeToolbarToolButton({
         activeTool: this.activeTool,

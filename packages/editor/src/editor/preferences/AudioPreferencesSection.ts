@@ -5,14 +5,16 @@ import { OsucadSpriteText } from '../../OsucadSpriteText';
 import { PreferencesPanel } from './PreferencesPanel';
 import { VolumeSliderContainer } from './VolumeSlider';
 import { PreferencesToggle } from './PreferencesToggle';
+import { OsucadConfigManager } from '../../config/OsucadConfigManager.ts';
+import { OsucadSettings } from '../../config/OsucadSettings.ts';
 
 export class AudioPreferencesSection extends PreferencesPanel {
   getTitle(): string {
     return 'Audio';
   }
 
-  @resolved(PreferencesStore)
-  preferences!: PreferencesStore;
+  @resolved(OsucadConfigManager)
+  config!: OsucadConfigManager;
 
   createContent(): Drawable[] {
     return [
@@ -23,30 +25,38 @@ export class AudioPreferencesSection extends PreferencesPanel {
       }),
       new VolumeSliderContainer(
         'master',
-        this.preferences.audio.masterVolumeBindable,
+        this.config.getBindable(OsucadSettings.MasterVolume)!,
+        0,
+        100,
+        value => `${Math.round(value)}%`,
       ),
       new VolumeSliderContainer(
         'music',
-        this.preferences.audio.musicVolumeBindable,
+        this.config.getBindable(OsucadSettings.MusicVolume)!,
+        0,
+        100,
+        value => `${Math.round(value)}%`,
       ),
       new VolumeSliderContainer(
         'hitsounds',
-        this.preferences.audio.hitsoundVolumeBindable,
+        this.config.getBindable(OsucadSettings.HitsoundVolume)!,
+        0,
+        100,
+        value => `${Math.round(value)}%`,
       ),
       new VolumeSliderContainer(
         'user interface',
-        this.preferences.audio.uiVolumeBindable,
+        this.config.getBindable(OsucadSettings.UIVolume)!,
+        0,
+        100,
+        value => `${Math.round(value)}%`,
       ),
       new VolumeSliderContainer(
         'audio offset',
-        this.preferences.audio.audioOffsetBindable,
+        this.config.getBindable(OsucadSettings.AudioOffset)!,
         -250,
         250,
         value => `${Math.round(value)}ms`,
-      ),
-      new PreferencesToggle(
-        'Automatic offset detection',
-        this.preferences.audio.automaticOffsetBindable,
       ),
     ];
   }

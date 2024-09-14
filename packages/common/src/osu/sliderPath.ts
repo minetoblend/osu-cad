@@ -3,6 +3,7 @@ import { Vec2 } from 'osucad-framework';
 import { PathApproximator, Vector2 } from 'osu-classes';
 import { clamp } from '../util/clamp';
 import { PathPoint } from './PathPoint';
+import { Bounds } from 'pixi.js';
 
 export class SliderPath {
   controlPoints: PathPoint[];
@@ -112,6 +113,8 @@ export class SliderPath {
       }
     }
 
+
+
     return [points, cumulativeDistance];
   }
 
@@ -125,6 +128,8 @@ export class SliderPath {
       case PathType.PerfectCurve:
         if (points.length === 3)
           return PathApproximator.approximateCircularArc(points);
+        return PathApproximator.approximateBezier(points);
+
       case PathType.Bezier:
         return PathApproximator.approximateBezier(points);
       case PathType.Catmull:

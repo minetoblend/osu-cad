@@ -1,13 +1,17 @@
-import { Axes, Container } from 'osucad-framework';
+import { Axes, Container, Invalidation, InvalidationSource } from 'osucad-framework';
 
-export class EditorScreen extends Container {
+export class EditorScreen extends Container{
   constructor() {
     super();
     this.relativeSizeAxes = Axes.Both;
   }
 
+  get disposeOnDeathRemoval(): boolean {
+    return false;
+  }
+
   show() {
-    this.fadeIn(300);
+    this.fadeInFromZero(300);
   }
 
   hide() {

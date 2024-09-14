@@ -30,6 +30,8 @@ export class ComposeTogglesBar extends Container {
 
     this.drawNode.enableRenderGroup();
 
+    this.childrenWillGoOutOfBounds = false;
+
     this.addInternal(this.#content = new FillFlowContainer({
       relativeSizeAxes: Axes.Both,
       direction: FillDirection.Vertical,

@@ -62,7 +62,7 @@ export class UpdateHitObjectHandler extends CommandHandler<IUpdateHitObjectComma
 
       for (const key in command.patch) {
         if (!(key in pending)) {
-          patch[key] = command.patch[key];
+          patch[key] = (command.patch as any)[key];
         }
       }
 
@@ -77,7 +77,7 @@ export class UpdateHitObjectHandler extends CommandHandler<IUpdateHitObjectComma
     hitObject.patch(command.patch);
   }
 
-  acknowledge(ctx: CommandContext, command: IUpdateHitObjectCommand): void {
+  override acknowledge(ctx: CommandContext, command: IUpdateHitObjectCommand): void {
     const hitObject = ctx.hitObjects.getById(command.id);
 
     if (!hitObject) return;
@@ -107,11 +107,11 @@ export class UpdateHitObjectHandler extends CommandHandler<IUpdateHitObjectComma
     return new UpdateHitObjectCommand(command.id, patch);
   }
 
-  getMergeKey(command: IUpdateHitObjectCommand): string | null {
+  override getMergeKey(command: IUpdateHitObjectCommand): string | null {
     return `update:hitobject:${command.id}`;
   }
 
-  merge(
+  override merge(
     ctx: CommandContext,
     current: IUpdateHitObjectCommand,
     other: IUpdateHitObjectCommand,

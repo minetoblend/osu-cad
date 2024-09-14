@@ -1,4 +1,4 @@
-import { Action, Comparer } from 'osucad-framework';
+import { Action, BindableNumber, Comparer } from 'osucad-framework';
 
 export abstract class ControlPoint {
   static readonly COMPARER = new class extends Comparer<ControlPoint> {
@@ -13,17 +13,17 @@ export abstract class ControlPoint {
     this.changed.emit(this);
   }
 
-  #time = 0;
+  timeBindable = new BindableNumber()
 
   get time() {
-    return this.#time;
+    return this.timeBindable.value;
   }
 
   set time(value: number) {
-    if (value === this.#time)
+    if (value === this.timeBindable.value)
       return;
 
-    this.#time = value;
+    this.timeBindable.value = value;
     this.raiseChanged();
   }
 

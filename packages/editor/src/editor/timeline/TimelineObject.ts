@@ -1,5 +1,18 @@
-import type { DragEvent, MouseDownEvent, MouseUpEvent, Vec2 } from 'osucad-framework';
-import { Anchor, Axes, Container, MouseButton, dependencyLoader, resolved } from 'osucad-framework';
+import {
+  Anchor,
+  Axes,
+  Cached,
+  Container,
+  dependencyLoader,
+  DragEvent,
+  Invalidation,
+  InvalidationSource,
+  MouseButton,
+  MouseDownEvent,
+  MouseUpEvent,
+  resolved,
+  Vec2,
+} from 'osucad-framework';
 import type { ColorSource } from 'pixi.js';
 import { EditorClock } from '../EditorClock';
 import { ThemeColors } from '../ThemeColors';
@@ -39,7 +52,8 @@ export abstract class TimelineObject<T extends OsuHitObject = OsuHitObject> exte
 
     this.body.body.alpha = 0.8;
 
-    this.hitObject.changed.addListener(() => this.setup());
+    this.hitObject.changed.addListener(this.setup, this);
+    this.hitObject.defaultsApplied.addListener(this.setup, this);
 
     this.selection.selectionChanged.addListener(([hitObject, selected]) => {
       if (hitObject !== this.hitObject)
@@ -57,6 +71,8 @@ export abstract class TimelineObject<T extends OsuHitObject = OsuHitObject> exte
       throw new Error('RhythmTimelineObject must be a child of RhythmTimeline');
     }
 
+    this.timeline.zoomBindable.valueChanged.addListener(this.updatePosition, this);
+
     this.setup();
 
     this.selectionChanged(this.hitObject.isSelected);
@@ -64,18 +80,37 @@ export abstract class TimelineObject<T extends OsuHitObject = OsuHitObject> exte
 
   setup() {
     this.body.bodyColor = this.hitObject.comboColor;
+    this.updatePosition()
   }
 
   protected selectionChanged(selected: boolean) {
     this.body.selected = selected;
   }
 
+  protected positionBacking = new Cached();
+
   update() {
     super.update();
 
+    if (!this.positionBacking.isValid) {
+      this.updatePosition();
+      this.positionBacking.validate();
+    }
+  }
+
+  updatePosition() {
     const radius = this.drawSize.y * 0.5;
-    this.x = this.timeline.timeToPosition(this.hitObject.startTime) - radius;
+
+    this.x = this.hitObject.startTime * this.timeline.pixelsPerMs - radius;
     this.width = this.timeline.durationToSize(this.hitObject.duration) + radius * 2;
+  }
+
+  override onInvalidate(invalidation: Invalidation, source: InvalidationSource): boolean {
+    if (invalidation & Invalidation.DrawSize && source === InvalidationSource.Parent) {
+      this.updatePosition();
+    }
+
+    return super.onInvalidate(invalidation, source);
   }
 
   protected applyComboColor(color: ColorSource) {
@@ -97,9 +132,9 @@ export abstract class TimelineObject<T extends OsuHitObject = OsuHitObject> exte
         this.selectFromMouseDown(e);
 
         this.#dragOffset = this.hitObject.startTime
-        - this.timeline.positionToTime(
-          this.timeline.toLocalSpace(e.screenSpaceMousePosition).x,
-        );
+          - this.timeline.positionToTime(
+            this.timeline.toLocalSpace(e.screenSpaceMousePosition).x,
+          );
         this.#lastTime = this.hitObject.startTime;
         return true;
       case MouseButton.Right:
@@ -143,6 +178,8 @@ export abstract class TimelineObject<T extends OsuHitObject = OsuHitObject> exte
       this.selection.select([this.hitObject]);
       this.findClosestParentOfType(Editor)?.requestSelectTool.emit();
     }
+
+    return false;
   }
 
   onDragStart(event: MouseUpEvent): boolean {
@@ -187,5 +224,11 @@ export abstract class TimelineObject<T extends OsuHitObject = OsuHitObject> exte
 
   contains(screenSpacePosition: Vec2): boolean {
     return this.body.contains(screenSpacePosition);
+  }
+
+  dispose(isDisposing: boolean = true) {
+    this.timeline.zoomBindable.valueChanged.removeListener(this.updatePosition);
+
+    super.dispose(isDisposing);
   }
 }

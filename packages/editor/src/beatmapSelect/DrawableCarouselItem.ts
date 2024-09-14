@@ -1,8 +1,8 @@
-import { Axes, Container, dependencyLoader } from 'osucad-framework';
+import { Axes, Container, dependencyLoader, Drawable, PoolableDrawable } from 'osucad-framework';
 import type { CarouselItem } from './CarouselItem';
 
-export class DrawableCarouselItem extends Container {
-  constructor(readonly item: CarouselItem) {
+export class DrawableCarouselItem extends PoolableDrawable {
+  constructor(item?: CarouselItem) {
     super();
 
     this.relativeSizeAxes = Axes.X;
@@ -18,26 +18,48 @@ export class DrawableCarouselItem extends Container {
         ],
       }),
     );
+
+    if (item)
+      this.item = item;
   }
+
+  #item: CarouselItem | null = null;
+
+  get item() : CarouselItem {
+    return this.#item!;
+  }
+
+  set item(value: CarouselItem | null) {
+    this.#item = value;
+  }
+
+  protected prepareForUse() {
+    this.item.selected.valueChanged.addListener(this.applyState, this);
+    this.applyState();
+  }
+
+  protected freeAfterUse() {
+    this.item.selected.valueChanged.removeListener(this.applyState);
+  }
+
 
   @dependencyLoader()
   [Symbol('load')]() {
-    this.item.selected.addOnChangeListener(
-      () => {
-        this.applyState();
-      },
-      { immediate: true },
-    );
+
   }
 
   readonly header: CarouselHeader;
 
   protected movementContainer: Container;
 
-  #content: Container;
+  readonly #content: Container;
 
   get content() {
     return this.#content;
+  }
+
+  add(drawable: Drawable) {
+    this.#content.add(drawable);
   }
 
   protected applyState() {

@@ -8,8 +8,8 @@ export class HitSample {
     readonly sampleSet: SampleSet,
     readonly sampleType: SampleType,
     readonly volume: number,
-    readonly duration?: number,
     readonly index = 0,
+    readonly duration?: number,
   ) {
   }
 

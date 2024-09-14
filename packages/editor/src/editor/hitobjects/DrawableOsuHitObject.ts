@@ -3,6 +3,12 @@ import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
 import { DrawableHitObject } from './DrawableHitObject';
 
 export class DrawableOsuHitObject<T extends OsuHitObject = OsuHitObject> extends DrawableHitObject {
+  constructor(hitObject: T) {
+    super(hitObject);
+
+    this.drawNode.enableRenderGroup();
+  }
+
   positionBindable = new Bindable(new Vec2());
 
   stackHeightBindable = new Bindable(0);

@@ -11,6 +11,7 @@ import {
 import { EditorSelection } from '../screens/compose/EditorSelection';
 import { SliderUtils } from '../screens/compose/tools/SliderUtils';
 import type { Slider } from '../../beatmap/hitObjects/Slider';
+import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection.ts';
 
 export class TimelineRepeatCircle extends CompositeDrawable {
   constructor(readonly hitObject: Slider, readonly index: number) {
@@ -95,12 +96,15 @@ export class TimelineRepeatCircle extends CompositeDrawable {
         return false;
       }
 
-      const edges = new Set([this.index + 1]);
-
-      this.selection.setSelectedEdges(
-        this.hitObject,
-        [...SliderUtils.calculateEdges(this.hitObject.selectedEdges, edges, e.controlPressed)],
-      );
+      if (e.controlPressed) {
+        SliderUtils.toggleEdge(this.selection, this.hitObject.subSelection, this.index + 1)
+      } else {
+        this.selection.setSliderSelection(
+          this.hitObject,
+          SliderSelectionType.Custom,
+          [this.index + 1],
+        );
+      }
 
       return true;
     }

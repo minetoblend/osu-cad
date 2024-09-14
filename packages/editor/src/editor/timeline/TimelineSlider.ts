@@ -1,10 +1,19 @@
-import { Axes, Container, EasingFunction, dependencyLoader } from 'osucad-framework';
+import {
+  Axes,
+  Container,
+  EasingFunction,
+  dependencyLoader,
+  MouseDownEvent,
+  MouseButton,
+  MouseUpEvent,
+} from 'osucad-framework';
 import type { Slider } from '../../beatmap/hitObjects/Slider';
 import { TimelineObject } from './TimelineObject';
 import { TimelineSliderTail } from './TimelineSliderTail';
 import { TimelineSliderHead } from './TimelineSliderHead';
 import { TimelineRepeatCircle } from './TimelineRepeatCircle';
 import { TimelineVelocityBadge } from './TimelineVelocityBadge';
+import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection.ts';
 
 export class TimelineSlider extends TimelineObject<Slider> {
   constructor(slider: Slider) {
@@ -73,6 +82,8 @@ export class TimelineSlider extends TimelineObject<Slider> {
 
   mouseDownWasHead = false;
 
+  mouseDownWasChild = false;
+
   update() {
     super.update();
 
@@ -88,21 +99,39 @@ export class TimelineSlider extends TimelineObject<Slider> {
     this.#head.selected = selected;
     this.#tail.selected = selected;
 
-    this.#head.edgeSelected = false;
-    this.#tail.edgeSelected = false;
+    this.#head.edgeSelected = this.hitObject.subSelection.startSelected;
+    this.#tail.edgeSelected = this.hitObject.subSelection.endSelected;
 
     const repeats = this.#repeatsContainer.children as TimelineRepeatCircle[];
+    const selection = this.hitObject.subSelection;
+
     for (const repeat of repeats) {
-      repeat.edgeSelected = false;
+      repeat.edgeSelected = !selection.bodySelected && selection.selectedEdges.has(repeat.index + 1);
     }
 
-    for (const edge of this.hitObject.selectedEdges) {
-      if (edge === 0)
-        this.#head.edgeSelected = true;
-      else if (edge === this.hitObject.repeatCount + 1)
-        this.#tail.edgeSelected = true;
-      else if (repeats[edge - 1])
-        repeats[edge - 1].edgeSelected = true;
+    if (this.hitObject.subSelection.type === SliderSelectionType.Body) {
+      this.body.outline.alpha = 1;
+      this.body.outline.color = 0xFF0000;
+    } else {
+      this.body.outline.alpha = 0;
     }
+  }
+
+  protected override selectFromMouseDown(e: MouseDownEvent): boolean {
+    if (!this.mouseDownWasChild
+      && e.button === MouseButton.Left
+      && !e.controlPressed
+      && this.hitObject.subSelection.type !== SliderSelectionType.Body
+      && this.hitObject.isSelected
+    ) {
+      this.selection.setSliderSelection(this.hitObject, SliderSelectionType.Body);
+      return true;
+    }
+
+    return super.selectFromMouseDown(e);
+  }
+
+  onMouseUp(e: MouseUpEvent) {
+    this.mouseDownWasChild = false;
   }
 }

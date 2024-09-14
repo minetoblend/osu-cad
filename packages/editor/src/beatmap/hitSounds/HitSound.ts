@@ -16,7 +16,7 @@ export class HitSound {
     if (this.additions & Additions.Whistle)
       yield SampleType.Whistle;
     if (this.additions & Additions.Finish)
-      yield SampleType.Whistle;
+      yield SampleType.Finish;
     if (this.additions & Additions.Clap)
       yield SampleType.Clap;
   }

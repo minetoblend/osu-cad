@@ -1,9 +1,22 @@
-import { Axes, Container, EasingFunction, RoundedBox, dependencyLoader, resolved } from 'osucad-framework';
+import {
+  Axes,
+  Box,
+  Container,
+  dependencyLoader,
+  Direction,
+  EasingFunction,
+  MaskingContainer,
+  resolved,
+} from 'osucad-framework';
 import { EditorScreen } from '../EditorScreen';
 import { ThemeColors } from '../../ThemeColors';
 import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
 import { ControlPointSelection } from './ControlPointSelection';
-import { TimingPointTable } from './TimingPointTable';
+import { TimingPointTable } from './TimingPointTable.ts';
+import { MetronomePlayer } from './MetronomePlayer.ts';
+import { TimingPointRow } from './TimingPointRow.ts';
+import { MainScrollContainer } from '../../MainScrollContainer.ts';
+import { TimingPointProperties } from './properties/TimingPointProperties.ts';
 
 export class TimingScreen extends EditorScreen {
   constructor() {
@@ -21,18 +34,32 @@ export class TimingScreen extends EditorScreen {
   load() {
     this.dependencies.provide(this.selection = new ControlPointSelection(this.controlPoints));
 
+    this.addInternal(new MetronomePlayer())
+
     this.addAllInternal(
-      new RoundedBox({
+      new MaskingContainer({
         relativeSizeAxes: Axes.Both,
-        color: this.colors.translucent,
         cornerRadius: 4,
-      }),
-      new Container({
-        relativeSizeAxes: Axes.Both,
-        width: 0.75,
-        padding: { vertical: 5 },
         children: [
-          new TimingPointTable(),
+          new Box({
+            relativeSizeAxes: Axes.Both,
+            color: this.colors.translucent,
+          }),
+          new Container({
+            relativeSizeAxes: Axes.Both,
+            child: new TimingPointTable().with({
+              relativeSizeAxes: Axes.Y,
+              width: TimingPointRow.MIN_WIDTH,
+            }),
+          }),
+          new Container({
+            relativeSizeAxes: Axes.Both,
+            padding: { left: TimingPointRow.MIN_WIDTH },
+            child: new MainScrollContainer(Direction.Vertical).with({
+              relativeSizeAxes: Axes.Both,
+              child: new TimingPointProperties()
+            })
+          }),
         ],
       }),
     );
@@ -41,8 +68,12 @@ export class TimingScreen extends EditorScreen {
   selection!: ControlPointSelection;
 
   show() {
-    this.y = 300;
-    this.moveToY(0, 400, EasingFunction.OutExpo);
-    this.fadeIn(400);
+    this.moveToY(300).moveToY(0, 300, EasingFunction.OutExpo);
+    this.fadeInFromZero(300);
+  }
+
+  hide() {
+    this.moveToY(300, 400, EasingFunction.OutExpo);
+    this.fadeOut(300);
   }
 }

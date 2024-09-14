@@ -7,6 +7,8 @@ import { OsuPlayfield } from '../../../hitobjects/OsuPlayfield';
 import { DeleteHitObjectCommand } from '../../../commands/DeleteHitObjectCommand';
 import { CreateHitObjectCommand } from '../../../commands/CreateHitObjectCommand';
 import { DrawableComposeTool } from './DrawableComposeTool';
+import { HITSOUND } from '../../../InjectionTokens.ts';
+import { HitSoundState } from '../../../../beatmap/hitSounds/BindableHitSound.ts';
 
 enum PlacementState {
   Preview,
@@ -19,6 +21,9 @@ export abstract class DrawableHitObjectPlacementTool<T extends OsuHitObject> ext
   #previewObject?: OsuHitObject;
 
   #state = PlacementState.Preview;
+
+  @resolved(HITSOUND)
+  protected hitSoundState!: HitSoundState;
 
   get isPlacing() {
     return this.#state === PlacementState.Placing;

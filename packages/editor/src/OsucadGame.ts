@@ -1,5 +1,13 @@
-import type { PIXIRenderer, ScreenStack } from 'osucad-framework';
-import { AudioManager, Game, IRenderer, dependencyLoader, isMobile, resolved } from 'osucad-framework';
+import {
+  AudioManager,
+  dependencyLoader,
+  Game,
+  IRenderer,
+  isMobile,
+  PIXIRenderer,
+  resolved,
+  ScreenStack,
+} from 'osucad-framework';
 import { RenderTarget } from 'pixi.js';
 import { MainCursorContainer } from './MainCursorContainer';
 import { UISamples } from './UISamples';
@@ -17,25 +25,28 @@ import { DialogContainer } from './modals/DialogContainer';
 import { PreferencesContainer } from './editor/preferences/PreferencesContainer';
 import { OsucadScreenStack } from './OsucadScreenStack';
 import { RootScreen } from './RootScreen';
-import { autodetectEditorEnvironment } from './environment/autodetectEditorEnvironment';
 import { EditorEnvironment } from './environment/EditorEnvironment';
 import { OsucadIcons } from './OsucadIcons';
-import { createDefaultSkin } from './skinning/CreateDefaultSkin';
 import { ISkinSource } from './skinning/ISkinSource';
-import { SkinSource } from './skinning/SkinSource';
-import type { IResourcesProvider } from './io/IResourcesProvider';
-import { SkinStore } from './environment/SkinStore';
+import { IResourcesProvider } from './io/IResourcesProvider';
+import { BeatmapStore, SkinStore } from './environment';
+import { FpsOverlay } from './FpsOverlay';
+import { OsucadConfigManager } from './config/OsucadConfigManager.ts';
+import { SkinSwitcher } from './SkinSwitcher.ts';
 
 RenderTarget.defaultOptions.depth = true;
 RenderTarget.defaultOptions.stencil = true;
 
 export class OsucadGame extends Game implements IResourcesProvider {
-  constructor() {
+  constructor(
+    readonly environment: EditorEnvironment,
+  ) {
     super();
   }
 
   @resolved(IRenderer)
   renderer!: PIXIRenderer;
+
 
   #innerContainer = new ScalingContainer({
     desiredSize: {
@@ -52,22 +63,19 @@ export class OsucadGame extends Game implements IResourcesProvider {
   async init(): Promise<void> {
     this.dependencies.provide(Game, this);
 
-    const environment = await autodetectEditorEnvironment();
+    await this.environment.load();
 
-    await environment.load();
+    const config = new OsucadConfigManager();
+    config.load();
 
-    this.dependencies.provide(EditorEnvironment, environment);
+    this.dependencies.provide(IResourcesProvider, this);
 
-    const skinStore = environment.createSkinStore();
+    this.dependencies.provide(OsucadConfigManager, config);
 
-    await skinStore.load();
+    this.dependencies.provide(EditorEnvironment, this.environment);
 
-    const skin = await skinStore.skins.value[0].loadSkin(this);
-
-    const defaultSkin = await createDefaultSkin();
-
-    this.dependencies.provide(ISkinSource, new SkinSource(skin, defaultSkin));
-    this.dependencies.provide(SkinStore, skinStore);
+    this.dependencies.provide(BeatmapStore, this.environment.beatmaps);
+    this.dependencies.provide(SkinStore, this.environment.skins);
 
     this.dependencies.provide(new ThemeColors());
 
@@ -101,15 +109,18 @@ export class OsucadGame extends Game implements IResourcesProvider {
     let screenStack: ScreenStack;
 
     this.#innerContainer.add(
-      new EditorActionContainer({
-        child: new DialogContainer({
-          child: new PreferencesContainer({
-            child: screenStack = new OsucadScreenStack(
-              new RootScreen(),
-              true,
-            ),
+      new FpsOverlay({
+        child:
+          new EditorActionContainer({
+            child: new DialogContainer({
+              child: new PreferencesContainer({
+                child: screenStack = new OsucadScreenStack(
+                  new RootScreen(),
+                  true,
+                ),
+              }),
+            }),
           }),
-        }),
       }),
     );
 
@@ -117,26 +128,21 @@ export class OsucadGame extends Game implements IResourcesProvider {
     this.add(notifications);
     this.dependencies.provide(notifications);
 
-    const path = window.location.pathname;
+    const skinSwitcher = new SkinSwitcher(this.environment.skins);
+    await this.loadComponentAsync(skinSwitcher);
+    this.add(skinSwitcher);
+
+    this.dependencies.provide(ISkinSource, skinSwitcher);
 
     if (!isMobile.any) {
       this.add(new MainCursorContainer());
     }
 
-    // const match = path.match(/\/edit\/(\w+)/);
-    // if (match) {
-    //   const joinKey = match[1];
-    //
-    //   screenStack.push(new EditorLoader(
-    //     new OnlineEditorContext(joinKey),
-    //   ));
-    // }
-    // else {
     screenStack.push(new BeatmapSelect());
-    // }
   }
 
   onClick(): boolean {
     return true;
   }
 }
+

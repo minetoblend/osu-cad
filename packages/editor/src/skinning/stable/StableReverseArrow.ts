@@ -41,6 +41,7 @@ export class StableReverseArrow extends CompositeDrawable {
     super.loadComplete();
 
     this.accentColor = this.drawableRepeat.accentColor.getBoundCopy();
+
     this.accentColor.addOnChangeListener((c) => {
       this.#arrow.color = c.value.red + c.value.green + c.value.blue > (600 / 255) ? 0x000000 : 0xFFFFFF;
     }, { immediate: true });

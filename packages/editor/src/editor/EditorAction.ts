@@ -12,10 +12,23 @@ export class EditorAction extends KeyBindingAction {
   static readonly RotateCW = new EditorAction('RotateCW');
   static readonly RotateCCW = new EditorAction('RotateCCW');
   static readonly Reverse = new EditorAction('Reverse');
+
   static readonly ToggleNewCombo = new EditorAction('ToggleNewCombo');
+
   static readonly ToggleWhistle = new EditorAction('ToggleWhistle');
   static readonly ToggleFinish = new EditorAction('ToggleFinish');
   static readonly ToggleClap = new EditorAction('ToggleClap');
+
+  static readonly ToggleSampleSetAuto = new EditorAction('ToggleSampleSetAuto');
+  static readonly ToggleSampleSetNormal = new EditorAction('ToggleSampleSetNormal');
+  static readonly ToggleSampleSetSoft = new EditorAction('ToggleSampleSetSoft');
+  static readonly ToggleSampleSetDrum = new EditorAction('ToggleSampleSetDrum');
+
+  static readonly ToggleAdditionSampleSetAuto = new EditorAction('ToggleAdditionSampleSetAuto');
+  static readonly ToggleAdditionSampleSetNormal = new EditorAction('ToggleAdditionSampleSetNormal');
+  static readonly ToggleAdditionSampleSetSoft = new EditorAction('ToggleAdditionSampleSetSoft');
+  static readonly ToggleAdditionSampleSetDrum = new EditorAction('ToggleAdditionSampleSetDrum');
+
   static readonly Scale = new EditorAction('Scale');
   static readonly NudgeBackward = new EditorAction('NudgeBackward');
   static readonly NudgeForward = new EditorAction('NudgeForward');

@@ -1,35 +1,28 @@
 {
+  "extends": "../../tsconfig.base.json",
+  "files": [],
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": false,
     "module": "ESNext",
-    "lib": [
-      "ES2020",
-      "DOM",
-      "DOM.Iterable",
-      "webworker"
-    ],
-    "skipLibCheck": true,
+    "lib": ["ESNext", "DOM", "WebWorker"],
+    "moduleResolution": "Bundler",
 
-    /* Bundler mode */
-    "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    "moduleDetection": "force",
+    "esModuleInterop": false,
     "noEmit": true,
-
-    /* Linting */
+    "moduleDetection": "force",
     "strict": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": true,
-
-    "experimentalDecorators": true,
-
-    "paths": {
-      "@icons/*": ["./src/assets/icons/*"]
-    },
-
-    "types": ["@types/node"]
+    "skipLibCheck": true,
+    "types": ["vite/client"]
   },
-  "include": ["src", "pixi-assets.d.ts"]
+  "include": ["src"],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
 }

@@ -28,8 +28,8 @@ export class Preferences extends Container {
   @dependencyLoader()
   load() {
     const filter = new BackdropBlurFilter({
-      strength: 15,
-      quality: 2,
+      strength: 24,
+      quality: 3,
     });
     filter.padding = 20;
 

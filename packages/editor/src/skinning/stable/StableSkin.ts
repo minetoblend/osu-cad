@@ -1,6 +1,5 @@
 import type { Color, Texture } from 'pixi.js';
-import type { Drawable, Sample } from 'osucad-framework';
-import { Bindable } from 'osucad-framework';
+import { Bindable, Drawable } from 'osucad-framework';
 import { Skin } from '../Skin';
 import type { IHasComboColors } from '../IHasComboColors';
 import type { IHasComboInformation } from '../../beatmap/hitObjects/IHasComboInformation';
@@ -10,7 +9,6 @@ import { OsuSkinComponentLookup } from '../OsuSkinComponentLookup';
 import { OsuSkinComponents } from '../OsuSkinComponents';
 import type { IResourcesProvider } from '../../io/IResourcesProvider';
 import type { SkinInfo } from '../SkinInfo';
-import type { ISampleInfo } from '../ISampleInfo';
 import { StableCirclePiece } from './StableCirclePiece';
 import { StableApproachCircle } from './StableApproachCircle';
 import { StableFollowCircle } from './StableFollowCircle';
@@ -39,6 +37,8 @@ export class StableSkin extends Skin {
           return new StableApproachCircle();
 
         case OsuSkinComponents.SliderHeadHitCircle:
+          return new StableCirclePiece('sliderstartcircle');
+
         case OsuSkinComponents.SliderTailHitCircle:
           return new StableCirclePiece('sliderendcircle', false);
 
@@ -72,7 +72,7 @@ export class StableSkin extends Skin {
     return color ? new Bindable(color) : null;
   }
 
-  constructor(info: SkinInfo, resources?: IResourcesProvider, fallbackStore?: IResourceStore<ArrayBuffer>, configurationFilename?: string) {
+  constructor(info: SkinInfo, resources: IResourcesProvider, fallbackStore?: IResourceStore<ArrayBuffer>, configurationFilename?: string) {
     super(info, resources, fallbackStore, configurationFilename);
   }
 
@@ -111,6 +111,7 @@ export class StableSkin extends Skin {
       this.loadTexture('default-7'),
       this.loadTexture('default-8'),
       this.loadTexture('default-9'),
+      ...this.store.getAvailableResources().filter(it => it.endsWith('.wav')).map(it => this.store.getAsync(it)),
     ]);
   }
 
@@ -179,6 +180,7 @@ export class StableSkin extends Skin {
           ].join('')
         : `${componentName}@2x`;
 
+      console.log(this.textures?.canLoad(twoTimesFilename), twoTimesFilename);
       if (this.textures?.canLoad(twoTimesFilename)) {
         texture = await this.textures?.load(twoTimesFilename, 2) ?? null;
       }
@@ -215,9 +217,5 @@ export class StableSkin extends Skin {
 
     if (frameCount === 0)
       await this.loadTexture(componentName);
-  }
-
-  getSample(sampleInfo: ISampleInfo): Sample | null {
-    return null;
   }
 }

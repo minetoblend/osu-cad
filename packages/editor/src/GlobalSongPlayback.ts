@@ -18,8 +18,10 @@ export class GlobalSongPlayback extends CompositeDrawable {
       return;
     }
 
-    if (this.#audio)
+    if (this.#audio) {
+      URL.revokeObjectURL(this.#audio.src);
       this.stop(true);
+    }
 
     this.#url = url;
 
@@ -29,8 +31,10 @@ export class GlobalSongPlayback extends CompositeDrawable {
     audio.crossOrigin = 'anonymous';
     audio.volume = 0;
 
-    audio.play().catch(() => {
-      /* noop */
+    fetch(url).then(res => res.arrayBuffer()).then(data => {
+      audio.src = URL.createObjectURL(new Blob([data]));
+      if(audio === this.#audio)
+        audio.play()
     });
 
     gsap.to(audio, {

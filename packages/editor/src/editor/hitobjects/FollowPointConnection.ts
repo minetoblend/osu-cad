@@ -39,8 +39,6 @@ export class FollowPointConnection extends PoolableDrawableWithLifetime<FollowPo
   #refresh() {
     console.assert(this.pool !== null);
 
-    this.clearInternal(false);
-
     const entry = this.entry;
 
     if (!entry?.end)
@@ -60,6 +58,8 @@ export class FollowPointConnection extends PoolableDrawableWithLifetime<FollowPo
 
     let finalTransformEndTime = startTime;
 
+    let count = 0;
+
     for (let d = Math.floor(FollowPointConnection.SPACING * 1.5); d < distance - FollowPointConnection.SPACING; d += FollowPointConnection.SPACING) {
       const fraction = d / distance;
 
@@ -68,9 +68,11 @@ export class FollowPointConnection extends PoolableDrawableWithLifetime<FollowPo
 
       const { fadeInTime, fadeOutTime } = FollowPointConnection.getFadeTimes(start, end, d / distance);
 
-      let fp: FollowPoint;
+      let fp: FollowPoint = this.internalChildren[count] as FollowPoint;
 
-      this.addInternal(fp = this.pool!.get());
+      if (!fp) {
+        this.addInternal(fp = this.pool!.get());
+      }
 
       fp.clearTransforms();
 
@@ -90,7 +92,14 @@ export class FollowPointConnection extends PoolableDrawableWithLifetime<FollowPo
 
         finalTransformEndTime = fp.lifetimeEnd;
       }
+
+      count++;
     }
+
+    while (this.internalChildren.length > count) {
+      this.removeInternal(this.internalChildren[this.internalChildren.length - 1], false);
+    }
+
 
     entry.lifetimeEnd = finalTransformEndTime;
   }

@@ -51,7 +51,7 @@ export class DrawableSliderBall extends CompositeDrawable {
 
     const diff = position.sub(slider.curvePositionAt(Math.min(1, completionProgress + 0.1 / slider.path.expectedDistance)));
 
-    if (diff.length() < 0.1)
+    if (diff.length() < 0.05)
       return;
 
     this.ball.rotation = -Math.atan2(diff.x, diff.y) - Math.PI * 0.5;

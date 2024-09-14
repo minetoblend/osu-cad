@@ -1,8 +1,5 @@
 import { Bindable, Drawable, Vec2, dependencyLoader, resolved } from 'osucad-framework';
-import type {
-  ColorSource,
-  Container,
-} from 'pixi.js';
+import type { Container } from 'pixi.js';
 import {
   Color,
   CustomRenderPipe,
@@ -18,12 +15,13 @@ import { SliderShader } from './SliderShader';
 import { SliderPathGeometry } from './SliderPathGeometry';
 import { GeometryBuilder } from './GeometryBuilder';
 import { DrawableHitObject } from './DrawableHitObject';
+import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection.ts';
 
 let endCapGeometry: MeshGeometry | null = null;
 
 // little workaround for a pixi bug
-(CustomRenderPipe.prototype as any).updateRenderable = () => {
-};
+(CustomRenderPipe.prototype as any).updateRenderable = () => {};
+(CustomRenderPipe.prototype as any).destroyRenderable = () => {};
 
 export class DrawableSliderBody extends Drawable {
   constructor() {
@@ -39,6 +37,7 @@ export class DrawableSliderBody extends Drawable {
         ],
         radius: this.radius,
         expectedDistance: 0,
+
       })),
       shader: this.shader,
       renderable: false,
@@ -85,11 +84,13 @@ export class DrawableSliderBody extends Drawable {
       return;
 
     if (hitObject) {
-      hitObject.path.invalidated.addListener(this.#invalidatePath);
+      hitObject.path.invalidated.addListener(this.#invalidatePath, this);
+      hitObject.subSelection.changed.addListener(this.#updateSelection, this);
       this.#pathIsInvalid = true;
     }
     if (this.#hitObject) {
       this.#hitObject.path.invalidated.removeListener(this.#invalidatePath);
+      this.#hitObject.subSelection.changed.removeListener(this.#updateSelection);
     }
     this.#hitObject = hitObject;
   }
@@ -98,7 +99,9 @@ export class DrawableSliderBody extends Drawable {
     return this.#hitObject;
   }
 
-  #invalidatePath = () => this.#pathIsInvalid = true;
+  #invalidatePath() {
+    this.#pathIsInvalid = true
+  }
 
   get path() {
     return this.hitObject?.path;
@@ -125,44 +128,20 @@ export class DrawableSliderBody extends Drawable {
         this.endCap.renderable = true;
         this.startCap.renderable = true;
 
-        renderer.renderPipes.mesh.execute({
-          renderPipeId: 'mesh',
-          mesh: this.mesh,
-          canBundle: false,
-        });
+        renderer.renderPipes.mesh.execute(this.mesh);
 
-        renderer.renderPipes.mesh.execute({
-          renderPipeId: 'mesh',
-          mesh: this.startCap,
-          canBundle: false,
-        });
+        renderer.renderPipes.mesh.execute(this.startCap);
 
-        renderer.renderPipes.mesh.execute({
-          renderPipeId: 'mesh',
-          mesh: this.endCap,
-          canBundle: false,
-        });
+        renderer.renderPipes.mesh.execute(this.endCap);
 
         gl.colorMask(true, true, true, true);
         gl.depthFunc(gl.EQUAL);
 
-        renderer.renderPipes.mesh.execute({
-          renderPipeId: 'mesh',
-          mesh: this.mesh,
-          canBundle: false,
-        });
+        renderer.renderPipes.mesh.execute(this.mesh);
 
-        renderer.renderPipes.mesh.execute({
-          renderPipeId: 'mesh',
-          mesh: this.startCap,
-          canBundle: false,
-        });
+        renderer.renderPipes.mesh.execute(this.startCap);
 
-        renderer.renderPipes.mesh.execute({
-          renderPipeId: 'mesh',
-          mesh: this.endCap,
-          canBundle: false,
-        });
+        renderer.renderPipes.mesh.execute(this.endCap);
 
         gl.depthFunc(gl.LESS);
 
@@ -172,8 +151,6 @@ export class DrawableSliderBody extends Drawable {
       }
     },
   });
-
-  pathVersion = -1;
 
   @resolved(ThemeColors)
   colors!: ThemeColors;
@@ -240,7 +217,7 @@ export class DrawableSliderBody extends Drawable {
   @resolved(DrawableHitObject)
   private drawableHitObject!: DrawableHitObject;
 
-  private accentColor = new Bindable<ColorSource>(0xFFFFFF);
+  private accentColor = new Bindable(new Color(0xFFFFFF));
 
   @dependencyLoader()
   load() {
@@ -254,6 +231,15 @@ export class DrawableSliderBody extends Drawable {
 
     this.accentColor.bindTo(this.drawableHitObject.accentColor);
   }
+
+  set selected(value: boolean) {
+    this.shader.borderColor = value ? 0xFF0000 : 0xFFFFFF;
+  }
+
+  #updateSelection() {
+    this.selected = this.hitObject!.subSelection.type === SliderSelectionType.Body;
+  }
+
 }
 
 function getJoinGeometryCount(thetaDiff: number) {

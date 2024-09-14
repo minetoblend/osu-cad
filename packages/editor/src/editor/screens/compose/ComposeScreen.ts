@@ -4,16 +4,15 @@ import {
   Bindable,
   Box,
   Container,
+  dependencyLoader,
   EasingFunction,
   Invalidation,
   LayoutMember,
   Vec2,
-  dependencyLoader,
 } from 'osucad-framework';
 import { BackdropBlurFilter } from 'pixi-filters';
 import { EditorScreen } from '../EditorScreen';
 import { Editor } from '../../Editor';
-import { Timeline } from '../../timeline/Timeline';
 import { Corner, EditorCornerPiece } from '../../EditorCornerPiece';
 import { BeatSnapDivisorSelector } from '../../BeatSnapDivisorSelector';
 import { TimelineZoomButtons } from '../../timeline/TimelineZoomButtons';
@@ -22,6 +21,7 @@ import { ComposeToolBar } from './ComposeToolBar';
 import { HitObjectComposer } from './HitObjectComposer';
 import type { ComposeTool } from './tools/ComposeTool';
 import { SelectTool } from './tools/SelectTool';
+import { ComposeScreenTimeline } from '../../timeline/ComposeScreenTimeline.ts';
 
 export class ComposeScreen extends EditorScreen {
   constructor() {
@@ -68,7 +68,7 @@ export class ComposeScreen extends EditorScreen {
     });
     filter.padding = 30;
 
-    const timeline = new Timeline();
+    const timeline = new ComposeScreenTimeline();
 
     this.addInternal(
       this.#topBar = new Container({
@@ -148,13 +148,14 @@ export class ComposeScreen extends EditorScreen {
   show() {
     super.show();
 
-    this.#toolBar.moveTo(new Vec2(-100, -70)).moveTo(new Vec2(), 750, EasingFunction.OutExpo);
+    this.#toolBar.moveTo(new Vec2(-100, -70)).moveTo(new Vec2(), 500, EasingFunction.OutExpo);
 
-    this.#togglesBar.moveTo(new Vec2(100, -60)).moveTo(new Vec2(0, 10), 750, EasingFunction.OutExpo);
+    this.#togglesBar.moveTo(new Vec2(100, -60)).moveTo(new Vec2(0, 10), 500, EasingFunction.OutExpo);
 
-    this.#topBar.moveToY(-70).moveToY(0, 750, EasingFunction.OutExpo);
+    this.#topBar.moveToY(-70).moveToY(0, 500, EasingFunction.OutExpo);
 
-    this.#composer.moveToY(100).moveToY(0, 750, EasingFunction.OutExpo);
+    this.#composer.moveToY(100).moveToY(0, 500, EasingFunction.OutExpo);
+    this.#composer.fadeInFromZero(400)
   }
 
   hide() {

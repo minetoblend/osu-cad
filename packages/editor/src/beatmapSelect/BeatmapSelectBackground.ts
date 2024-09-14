@@ -1,18 +1,16 @@
-import type {
-  GameHost,
-} from 'osucad-framework';
 import {
   Anchor,
   Axes,
-  CompositeDrawable,
+  CompositeDrawable, Container,
   DrawableSprite,
   FillMode,
   GAME_HOST,
+  GameHost,
+  loadTexture,
   resolved,
 } from 'osucad-framework';
-
-import { BlurFilter, RenderTexture } from 'pixi.js';
 import type { BeatmapItemInfo } from './BeatmapItemInfo';
+import { BlurFilter } from 'pixi.js';
 
 export class BeatmapSelectBackground extends CompositeDrawable {
   constructor() {
@@ -24,17 +22,28 @@ export class BeatmapSelectBackground extends CompositeDrawable {
 
     this.alpha = 0.3;
 
-    this.drawNode.filters = [
+    this.#content.drawNode.filters = [
       new BlurFilter({
         strength: 10,
         quality: 3,
         antialias: 'off',
-        resolution: 1,
+        resolution: 0.5,
       }),
     ];
+
+    this.addInternal(this.#content);
   }
 
+  #content: Container = new Container({
+    relativeSizeAxes: Axes.Both,
+    scale: 1.2,
+    anchor: Anchor.Center,
+    origin: Anchor.Center,
+  });
+
   #currentBeatmap: BeatmapItemInfo | null = null;
+
+  #currentBackgroundPath: string | null = null;
 
   get currentBeatmap(): BeatmapItemInfo | null {
     return this.#currentBeatmap;
@@ -54,9 +63,9 @@ export class BeatmapSelectBackground extends CompositeDrawable {
   async #updateTexture() {
     const beatmap = this.#currentBeatmap;
 
-    const texture = await this.#currentBeatmap?.loadThumbnailLarge();
+    const backgroundPath = await beatmap?.backgroundPath();
 
-    if (this.#currentSprite?.texture === texture)
+    if (this.#currentBackgroundPath === backgroundPath)
       return;
 
     if (this.#currentSprite) {
@@ -64,33 +73,37 @@ export class BeatmapSelectBackground extends CompositeDrawable {
       this.#currentSprite.expire();
     }
 
+    if (!backgroundPath) {
+      this.#currentBackgroundPath = null;
+      return;
+    }
+
+    const texture = await loadTexture(backgroundPath);
+
+    this.#currentBackgroundPath = backgroundPath;
+
     if (texture) {
       if (this.isDisposed || beatmap !== this.#currentBeatmap) {
-        texture.destroy();
+        texture.destroy(true);
         return;
       }
-
-      const renderTexture = RenderTexture.create({
-        width: texture.width * 4,
-        height: texture.height * 4,
-      });
 
       const sprite = new DrawableSprite({
         texture,
         relativeSizeAxes: Axes.Both,
-        scale: 1.2,
+        fillMode: FillMode.Fill,
+
         anchor: Anchor.Center,
         origin: Anchor.Center,
       });
 
-      sprite.fillMode = FillMode.Fill;
-      sprite.fillAspectRatio = texture.width / texture.height;
+      this.#content.add(sprite);
 
-      this.addInternal(this.#currentSprite = sprite);
-
-      sprite.onDispose(() => renderTexture.destroy());
+      sprite.onDispose(() => texture.destroy(true));
 
       sprite.fadeInFromZero(300);
+
+      this.#currentSprite = sprite;
     }
   }
 

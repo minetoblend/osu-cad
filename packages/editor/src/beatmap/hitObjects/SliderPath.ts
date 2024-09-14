@@ -148,12 +148,12 @@ export class SliderPath {
     return this.calculatedPath.cumulativeDistance[this.calculatedPath.length - 1] ?? 0;
   }
 
-  getPositionAt(progress: number) {
-    return this.calculatedPath.getPositionAtDistance(progress * this.expectedDistance);
+  getPositionAt(progress: number, out: Vec2 = new Vec2()) {
+    return this.calculatedPath.getPositionAtDistance(progress * this.expectedDistance, out);
   }
 
-  getPositionAtDistance(distance: number) {
-    return this.calculatedPath.getPositionAtDistance(distance);
+  getPositionAtDistance(distance: number, out: Vec2) {
+    return this.calculatedPath.getPositionAtDistance(distance, out);
   }
 
   getRange(start: number, end: number) {

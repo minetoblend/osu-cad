@@ -3,17 +3,6 @@ import type { ISkin } from '../skinning/ISkin';
 import type { IResourcesProvider } from '../io/IResourcesProvider';
 
 export abstract class SkinStore {
-  protected abstract loadSkins(): Promise<SkinProvider[]>;
-
-  async load() {
-    try {
-      this.skins.value = [...await this.loadSkins()];
-    }
-    catch (e) {
-      console.error('Failed to load skins', e);
-    }
-  }
-
   readonly skins = new Bindable<SkinProvider[]>([]);
 }
 

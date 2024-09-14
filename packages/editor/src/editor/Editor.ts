@@ -1,4 +1,12 @@
-import type { IKeyBindingHandler, KeyBindingPressEvent, KeyDownEvent, ScrollEvent, UIEvent } from 'osucad-framework';
+import {
+  DrawablePool,
+  IKeyBindingHandler,
+  KeyBindingPressEvent,
+  KeyDownEvent,
+  NoArgsConstructor,
+  ScrollEvent,
+  UIEvent,
+} from 'osucad-framework';
 import {
   Action,
   Anchor,
@@ -32,10 +40,13 @@ import { ComposeScreen } from './screens/compose/ComposeScreen';
 import { SetupScreen } from './screens/setup/SetupScreen';
 import { EditorSelection } from './screens/compose/EditorSelection';
 import { EditorAction } from './EditorAction';
-import { ADDITIONS, CURRENT_SCREEN, NEW_COMBO } from './InjectionTokens';
+import { ADDITIONS, CURRENT_SCREEN, HITSOUND, NEW_COMBO } from './InjectionTokens';
 import { ToggleBindable } from './screens/compose/ToggleBindable';
 import { HitsoundPlayer } from './HitsoundPlayer';
 import { TimingScreen } from './screens/timing/TimingScreen';
+import { HitSoundState } from '../beatmap/hitSounds/BindableHitSound.ts';
+import type { EditorScreen } from './screens/EditorScreen.ts';
+import { BeatmapEncoder } from '../beatmap/BeatmapEncoder.ts';
 
 export class Editor
   extends OsucadScreen
@@ -77,11 +88,15 @@ export class Editor
 
   #newCombo = new ToggleBindable(false);
 
+  #hitSound = new HitSoundState();
+
   #additions = new AdditionsBindable(Additions.None);
 
   @asyncDependencyLoader()
   async init() {
     await this.context.load();
+
+    console.log(new BeatmapEncoder().encode(this.context.beatmap));
 
     this.context.beatmap.hitObjects.applyDefaultsImmediately = false;
 
@@ -89,6 +104,7 @@ export class Editor
 
     this.dependencies.provide(NEW_COMBO, this.#newCombo);
     this.dependencies.provide(ADDITIONS, this.#additions);
+    this.dependencies.provide(HITSOUND, this.#hitSound);
     this.dependencies.provide(CURRENT_SCREEN, this.currentScreen);
 
     const track = this.audioManager.createTrack(
@@ -120,16 +136,20 @@ export class Editor
       (this.#bottomBar = new EditorBottomBar()),
     );
 
+    this.addAllInternal(
+      new BeatmapStackingProcessor(),
+      new BeatmapComboProcessor(),
+    );
+  }
+
+  protected loadComplete() {
+    super.loadComplete();
+
     this.currentScreen.addOnChangeListener(
       ({ value: screen }) => {
         this.#updateScreen(screen);
       },
       { immediate: true },
-    );
-
-    this.addAllInternal(
-      new BeatmapStackingProcessor(),
-      new BeatmapComboProcessor(),
     );
   }
 
@@ -173,6 +193,9 @@ export class Editor
       return false;
 
     switch (e.key) {
+      case Key.Escape:
+        this.exit();
+        return true;
       case Key.ArrowLeft:
         this.#seek(e, -1);
         return true;
@@ -393,8 +416,8 @@ export class Editor
     }
   }
 
-  updateAfterChildren() {
-    super.updateAfterChildren();
+  update() {
+    super.update();
 
     this.context.beatmap.hitObjects.applyDefaultsWhereNeeded();
   }

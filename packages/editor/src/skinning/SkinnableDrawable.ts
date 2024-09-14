@@ -72,7 +72,10 @@ export class SkinnableDrawable extends SkinReloadableDrawable {
       this.drawable.origin = Anchor.Center;
     }
 
-    this.internalChild = this.drawable;
+    if(this.internalChildren.length > 0)
+      this.removeInternal(this.internalChild, true);
+
+    this.addInternal(this.drawable);
   }
 
   update() {

@@ -1,4 +1,4 @@
-import type { Drawable, Sample } from 'osucad-framework';
+import { AudioChannel, Drawable, Sample } from 'osucad-framework';
 import { Action } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
 import type { ISkin } from './ISkin';
@@ -53,9 +53,9 @@ export class SkinSource implements ISkinSource {
     return null;
   }
 
-  getSample(sampleInfo: ISampleInfo): Sample | null {
+  async getSample(channel: AudioChannel, name: string): Promise<Sample | null> {
     for (const source of this.allSources) {
-      const sample = source.getSample(sampleInfo);
+      const sample = source.getSample(channel, name);
       if (sample)
         return sample;
     }

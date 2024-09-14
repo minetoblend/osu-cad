@@ -1,21 +1,19 @@
-import type {
-  Drawable,
-  Vec2,
-} from 'osucad-framework';
 import {
+  almostEquals,
   Anchor,
   Axes,
   Container,
+  dependencyLoader,
+  Drawable,
   DrawableSprite,
   EasingFunction,
   FillMode,
-  RoundedBox,
-  almostEquals,
-  dependencyLoader,
+  HoverLostEvent,
   lerp,
   resolved,
+  RoundedBox,
+  Vec2,
 } from 'osucad-framework';
-import gsap from 'gsap';
 import { OsucadSpriteText } from '../OsucadSpriteText';
 import { FastRoundedBox } from '../drawables/FastRoundedBox';
 import type { MapsetInfo } from './MapsetInfo';
@@ -24,16 +22,17 @@ import { CarouselMapset } from './CarouselMapset';
 import { DrawableCarouselBeatmap } from './DrawableCarouselBeatmap';
 import { UserWithAvatar } from './UserWithAvatar';
 import { CarouselLoadQueue } from './CarouselLoadQueue';
+import { ImageSource } from 'pixi.js';
+import { BeatmapCarousel } from './BeatmapCarousel.ts';
+import { OsucadConfigManager } from '../config/OsucadConfigManager.ts';
+import { OsucadSettings } from '../config/OsucadSettings.ts';
+
 
 export class DrawableCarouselMapset extends DrawableCarouselItem {
   static HEIGHT = 80;
 
-  constructor(item: CarouselMapset) {
+  constructor(item?: CarouselMapset) {
     super(item);
-
-    this.drawNode.enableRenderGroup();
-
-    this.mapset = item.mapset;
 
     this.add(this.#beatmapContainer = new Container({
       relativeSizeAxes: Axes.Both,
@@ -41,18 +40,15 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
       padding: { top: DrawableCarouselMapset.HEIGHT },
     }));
 
-    this.header.addAll(
-      this.#background = new MapsetBackground(this.mapset),
+    this.header.add(
       new Container({
         relativeSizeAxes: Axes.Both,
         padding: { horizontal: 20, vertical: 6 },
         children: [
-          new OsucadSpriteText({
-            text: this.mapset.title,
+          this.title = new OsucadSpriteText({
             fontSize: 18,
           }),
-          new OsucadSpriteText({
-            text: this.mapset.artist,
+          this.artist = new OsucadSpriteText({
             fontSize: 16,
             alpha: 0.8,
             y: 20,
@@ -63,7 +59,7 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
           }),
         ],
       }),
-    );
+    )
   }
 
   beatmapsCreated = false;
@@ -73,15 +69,57 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
     this.header.height = CarouselMapset.HEIGHT;
   }
 
+  readonly title: OsucadSpriteText;
+
+  readonly artist: OsucadSpriteText;
+
+  protected prepareForUse() {
+    super.prepareForUse();
+
+    for (const beatmap of this.carouselMapset.beatmaps) {
+      beatmap.visible.valueChanged.addListener(this.#scheduleUpdateBeatmapYPositions, this);
+    }
+
+    this.title.text = this.mapset.title;
+    this.artist.text = this.mapset.artist;
+    this.creatorInfo.text = this.mapset.authorName;
+
+    this.header.addAll(
+      this.#background = new MapsetBackground(this.mapset).with({ depth: 1 }),
+    );
+  }
+
+  #scheduleUpdateBeatmapYPositions() {
+    this.scheduler.addOnce(this.#updateBeatmapYPositions, this);
+  }
+
+  protected freeAfterUse() {
+    super.freeAfterUse();
+
+    for (const beatmap of this.carouselMapset.beatmaps) {
+      beatmap.visible.valueChanged.removeListener(this.#scheduleUpdateBeatmapYPositions);
+    }
+
+    this.#beatmapContainer.clear();
+
+    this.header.remove(this.#background);
+
+    this.beatmapsCreated = false;
+  }
+
   #beatmapContainer!: Container<DrawableCarouselBeatmap>;
 
   #background!: MapsetBackground;
 
-  override item!: CarouselMapset;
+  get carouselMapset() {
+    return this.item as CarouselMapset;
+  }
 
-  readonly mapset: MapsetInfo;
+  get mapset() {
+    return this.carouselMapset.mapset;
+  }
 
-  creatorInfo!: Drawable;
+  creatorInfo!: OsucadSpriteText;
 
   protected selected() {
     super.selected();
@@ -92,13 +130,10 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
       this.beatmapsCreated = true;
       this.#beatmapContainer.clear();
       this.#beatmapContainer.addAll(
-        ...this.item.beatmaps.map(item =>
-          new DrawableCarouselBeatmap(item),
-        ),
+        ...this.carouselMapset.beatmaps
+          .map(item => new DrawableCarouselBeatmap(item)),
       );
     }
-
-    this.beatmaps.forEach(it => it.fadeInFromZero(400));
 
     this.#updateBeatmapYPositions();
   }
@@ -110,21 +145,12 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
 
     this.#updateBeatmapYPositions();
 
-    this.beatmaps.forEach((it) => {
-      gsap.killTweensOf(it, 'alpha');
-      it.fadeOut(100);
-      it.expire();
-    });
+    this.beatmaps.forEach((it) => it.fadeOut(100).expire());
     this.beatmapsCreated = false;
   }
 
   createCreatorInfo() {
-    if (this.mapset.author) {
-      return new UserWithAvatar(this.mapset.author);
-    }
-
     return new OsucadSpriteText({
-      text: this.mapset.authorName,
       fontSize: 16,
       alpha: 0.8,
     });
@@ -137,10 +163,9 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
 
     const targetY = this.item.carouselYPosition;
 
-    if (almostEquals(this.y, targetY, 0.01)) {
+    if (almostEquals(this.y, targetY, 0.1)) {
       this.y = targetY;
-    }
-    else {
+    } else {
       this.y = lerp(targetY, this.y, Math.exp(-0.01 * this.time.elapsed));
     }
   }
@@ -153,30 +178,30 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
     for (const child of this.#beatmapContainer.children) {
       const panel = child as DrawableCarouselBeatmap;
 
-      if (isSelected) {
-        gsap.to(panel, {
-          y: yPos,
-          duration: 0.5,
-          ease: 'power4.out',
-        });
-        yPos += panel.item.totalHeight;
+      if (!panel.item.visible.value) {
+        panel.moveToY(0, 500, EasingFunction.OutQuart);
+        panel.fadeOut(100);
+        continue;
       }
-      else {
-        gsap.to(panel, {
-          y: 0,
-          duration: 0.5,
-          ease: 'power4.out',
-        });
+
+      panel.fadeIn(400);
+
+      if (isSelected) {
+        panel.moveToY(yPos, 500, EasingFunction.OutQuart);
+        yPos += panel.item.totalHeight;
+      } else {
+        panel.moveToY(0, 500, EasingFunction.OutQuart);
       }
     }
   }
 
   get parallax() {
-    return this.#background.parallax;
+    return this.#background?.parallax ?? 0;
   }
 
   set parallax(value: number) {
-    this.#background.parallax = value;
+    if (this.#background)
+      this.#background.parallax = value;
   }
 
   get beatmaps() {
@@ -193,12 +218,6 @@ class MapsetBackground extends Container {
     super({
       relativeSizeAxes: Axes.Both,
     });
-
-    this.addInternal(new FastRoundedBox({
-      relativeSizeAxes: Axes.Both,
-      cornerRadius: 10,
-      color: 0x282832,
-    }));
   }
 
   @resolved(CarouselLoadQueue)
@@ -207,42 +226,88 @@ class MapsetBackground extends Container {
   @dependencyLoader()
   load() {
     // scheduling this with 50ms delay to avoid loading too many textures at once when fast-seeking
-    this.scheduler.addDelayed(() => this.loadBackground(), 50);
+    this.scheduler.addDelayed(() => this.loadBackground(), 100);
+
+    this.addAllInternal(new FastRoundedBox({
+        relativeSizeAxes: Axes.Both,
+        cornerRadius: 10,
+        color: 0x282832,
+      }),
+      this.#content = new Container({
+        relativeSizeAxes: Axes.Both,
+      }),
+      this.#hoverHighlight = new FastRoundedBox({
+        relativeSizeAxes: Axes.Both,
+        cornerRadius: 10,
+        alpha: 0,
+      }),
+    );
   }
 
+  #content!: Container;
+
+  get content() {
+    return this.#content;
+  }
+
+  #hoverHighlight!: FastRoundedBox;
+
+  @resolved(OsucadConfigManager)
+  config!: OsucadConfigManager;
+
   async loadBackground() {
-    const texture = await this.mapset.loadThumbnailLarge();
-    if (!texture)
+    if (this.config.get(OsucadSettings.SongSelectPreventLoadOnScroll) && this.findClosestParentOfType(BeatmapCarousel)!.isFastSeeking) {
+      this.scheduler.addDelayed(() => this.loadBackground(), 50);
       return;
-
-    const mask = new RoundedBox({
-      relativeSizeAxes: Axes.Both,
-      cornerRadius: 10,
-    });
-
-    const background = this.background = new DrawableSprite({
-      relativeSizeAxes: Axes.Both,
-      fillMode: FillMode.Fill,
-      fillAspectRatio: texture.width / texture.height,
-      texture,
-      color: 'rgb(168, 168, 168)',
-      anchor: Anchor.Center,
-      origin: Anchor.Center,
-    });
-
-    background.drawNode.mask = mask.drawNode;
-
-    this.onDispose(() => texture.destroy());
+    }
 
     this.carouselLoadQueue.add({
-      load: () => {
-        this.addAll(background, mask);
-        background.y = this.parallax * this.parallaxMultiplier;
+      load: async () => {
+        const texture = await this.mapset.loadThumbnailLarge();
+        if (!texture)
+          return;
 
-        background.fadeInFromZero(250);
+        const source = texture.source as ImageSource;
+
+        const resource = source.resource as ImageBitmap;
+
+        this.onDispose(() => {
+          texture.destroy(true);
+          resource.close();
+        });
+
+        this.carouselLoadQueue.add({
+          load: () => {
+
+            const mask = new RoundedBox({
+              relativeSizeAxes: Axes.Both,
+              cornerRadius: 10,
+            });
+
+            const background = this.background = new DrawableSprite({
+              relativeSizeAxes: Axes.Both,
+              fillMode: FillMode.Fill,
+              texture,
+              color: 'rgb(168, 168, 168)',
+              anchor: Anchor.Center,
+              origin: Anchor.Center,
+            });
+
+            background.drawNode.mask = mask.drawNode;
+
+            this.addAll(background, mask);
+            background.y = this.parallax * this.parallaxMultiplier;
+
+            background.fadeInFromZero(250);
+          },
+          shouldLoad: () => !this.isDisposed,
+        });
+
       },
       shouldLoad: () => !this.isDisposed,
     });
+
+
   }
 
   background?: DrawableSprite;
@@ -275,5 +340,14 @@ class MapsetBackground extends Container {
 
   get parallaxMultiplier() {
     return 50;
+  }
+
+  onHover(): boolean {
+    this.#hoverHighlight.fadeTo(0.1);
+    return true;
+  }
+
+  onHoverLost(e: HoverLostEvent) {
+    this.#hoverHighlight.fadeOut(50);
   }
 }

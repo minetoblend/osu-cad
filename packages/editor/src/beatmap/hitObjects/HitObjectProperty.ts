@@ -18,7 +18,7 @@ export class HitObjectProperty<T> {
 
   get bindable(): Bindable<T> {
     if (this.#backingBindable === undefined) {
-      this.#backingBindable = new Bindable(this.#defaultValue!);
+      this.#backingBindable = new Bindable<T>(this.#defaultValue!);
       this.#backingBindable.value = this.#backingValue!;
       this.#backingValue = undefined;
       this.#defaultValue = undefined;

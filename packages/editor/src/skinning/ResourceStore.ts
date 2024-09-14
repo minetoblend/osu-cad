@@ -67,7 +67,7 @@ export class ResourceStore<T> implements IResourceStore<T> {
   }
 
   get(name: string): T | null {
-    const filenames = this.getFilenames(name);
+    const filenames = [...this.getFilenames(name)];
     const stores = this.#getStores();
 
     for (const store of stores) {

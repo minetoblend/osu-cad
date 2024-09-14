@@ -1,8 +1,9 @@
 import { StableSkin } from './stable/StableSkin';
 import type { IResourceStore } from './IResourceStore';
 import type { SkinInfo } from './SkinInfo';
+import { IResourcesProvider } from '../io/IResourcesProvider.ts';
 
-export async function createDefaultSkin() {
+export async function createDefaultSkin(resourceProvider: IResourcesProvider) {
   const store = new DefaultSkinResourceStore();
 
   const info: SkinInfo = {
@@ -10,7 +11,7 @@ export async function createDefaultSkin() {
     creator: '',
   };
 
-  const skin = new StableSkin(info, undefined, store);
+  const skin = new StableSkin(info, resourceProvider, store);
 
   await skin.load();
 
@@ -18,6 +19,10 @@ export async function createDefaultSkin() {
 }
 
 class DefaultSkinResourceStore implements IResourceStore<ArrayBuffer> {
+  constructor() {
+    console.log(this.getAvailableResources())
+  }
+
   #resources = new Map<string, ArrayBuffer>();
 
   #loaded = new Set<string>();
@@ -78,14 +83,14 @@ class DefaultSkinResourceStore implements IResourceStore<ArrayBuffer> {
     if (!this.#entryMap) {
       this.#entryMap = {};
 
-      const entries = import.meta.glob('/src/assets/skin/*', {
+      const entries = import.meta.glob('../assets/skin/*', {
         eager: true,
         query: '?url',
         import: 'default',
       });
 
       for (const key in entries) {
-        this.#entryMap[key.replace('/src/assets/skin/', '')] = entries[key];
+        this.#entryMap[key.replace('../assets/skin/', '')] = entries[key];
       }
     }
 

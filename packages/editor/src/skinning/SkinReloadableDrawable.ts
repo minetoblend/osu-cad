@@ -34,7 +34,8 @@ export class SkinReloadableDrawable extends PoolableDrawable {
 
   #onChange() {
     this.#pendingSkinChange?.cancel();
-    this.#pendingSkinChange = this.scheduler.add(this.#skinChanged, this);
+    // this.#pendingSkinChange = this.scheduler.add(this.#skinChanged, this);
+    this.#skinChanged()
   }
 
   #skinChanged() {

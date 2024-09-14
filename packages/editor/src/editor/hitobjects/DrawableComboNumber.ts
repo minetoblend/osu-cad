@@ -1,10 +1,4 @@
-import {
-  Anchor,
-  CompositeDrawable,
-  DrawableSprite,
-  dependencyLoader,
-  resolved,
-} from 'osucad-framework';
+import { Anchor, Bindable, CompositeDrawable, dependencyLoader, DrawableSprite, resolved } from 'osucad-framework';
 import { ISkinSource } from '../../skinning/ISkinSource';
 import { DrawableHitObject } from './DrawableHitObject';
 import { DrawableOsuHitObject } from './DrawableOsuHitObject';
@@ -15,12 +9,18 @@ export class DrawableComboNumber extends CompositeDrawable {
 
     this.origin = Anchor.Center;
     this.anchor = Anchor.Center;
+    this.drawNode.enableRenderGroup();
   }
+
+  indexInComboBindable = new Bindable(0);
 
   @dependencyLoader()
   load() {
-    this.generateObjects();
+    this.indexInComboBindable.bindTo(this.parentHitObject!.indexInComboBindable);
+
+    this.indexInComboBindable.addOnChangeListener((e) => this.comboNumber = e.value + 1, { immediate: true });
   }
+
 
   #comboNumber = 1;
 
@@ -34,21 +34,7 @@ export class DrawableComboNumber extends CompositeDrawable {
   }
 
   @resolved(DrawableHitObject, true)
-  drawableHitObject?: DrawableHitObject;
-
-  protected loadComplete() {
-    super.loadComplete();
-
-    if (this.drawableHitObject) {
-      const hitObject = this.drawableHitObject;
-      if (!(hitObject instanceof DrawableOsuHitObject))
-        return;
-
-      this.withScope(() => {
-        hitObject.indexInComboBindable.addOnChangeListener(index => this.comboNumber = index.value + 1, { immediate: true });
-      });
-    }
-  }
+  parentHitObject?: DrawableOsuHitObject;
 
   @resolved(ISkinSource)
   private skin!: ISkinSource;
@@ -82,5 +68,11 @@ export class DrawableComboNumber extends CompositeDrawable {
       child.x = currentX + (child.drawSize.x - 4) / 2;
       currentX += (child.drawSize.x - 4);
     }
+  }
+
+  override dispose(isDisposing: boolean = true) {
+    this.indexInComboBindable.unbindAll()
+
+    super.dispose(isDisposing);
   }
 }

@@ -14,7 +14,7 @@ import { Spinner } from './hitObjects/Spinner';
 import { PathPoint } from './hitObjects/PathPoint';
 import { PathType } from './hitObjects/PathType';
 import { SampleSet } from './hitSounds/SampleSet';
-import type { Additions } from './hitSounds/Additions';
+import { Additions } from './hitSounds/Additions';
 import { HitSound } from './hitSounds/HitSound';
 import type { OsuHitObject } from './hitObjects/OsuHitObject';
 
@@ -157,7 +157,7 @@ export class StableBeatmapParser {
 
     switch (key) {
       case 'AudioFilename':
-        beatmap.settings.audioFilename = value;
+        beatmap.settings.audioFileName = value;
         break;
       case 'AudioLeadIn':
         beatmap.settings.audioLeadIn = Number.parseInt(value);
@@ -276,8 +276,7 @@ export class StableBeatmapParser {
 
       group.add(new TimingPoint(beatLength, meter));
       group.add(new DifficultyPoint(1));
-    }
-    else {
+    } else {
       const sliderVelocity = -100 / Number.parseFloat(values[1]);
 
       beatmap.controlPoints.addToGroup(group, new DifficultyPoint(sliderVelocity), true);
@@ -297,7 +296,14 @@ export class StableBeatmapParser {
 
     let hitObject: OsuHitObject | undefined;
 
-    let hitSampleIndex = 5;
+    function parseHitSound(index: number) {
+      const samples = (values[index] ?? '0:0:0:0:').split(':');
+      const [sampleSet, additionSampleSet] = samples.slice(0, 4).map(it => Number.parseInt(it));
+
+      const additions = (Number.parseInt(values[4]) >> 1) as Additions;
+
+      return new HitSound(sampleSet, additionSampleSet, additions);
+    }
 
     if (type & HitType.Normal) {
       const circle = hitObject = new HitCircle();
@@ -305,8 +311,8 @@ export class StableBeatmapParser {
       circle.startTime = startTime;
       circle.newCombo = newCombo;
       circle.comboOffset = comboOffset;
-    }
-    else if (type & HitType.Slider) {
+      circle.hitSound = parseHitSound(5);
+    } else if (type & HitType.Slider) {
       const slider = hitObject = new Slider();
       slider.position = new Vec2(x, y);
       slider.startTime = startTime;
@@ -356,55 +362,46 @@ export class StableBeatmapParser {
 
       slider.repeatCount = Number.parseInt(values[6]) - 1;
 
-      hitSampleIndex = 10;
+      const hitSound = slider.hitSound = parseHitSound(10);
 
-      if (values[8]) {
-        const edgeSounds = values[8].split('|').map(it => Number.parseInt(it) >> 1);
-        const edgeSets = values[9].split('|').map((it) => {
-          const [normalSet, additionSet] = it.split(':');
-          return {
-            normalSet: Number.parseInt(normalSet),
-            additionSet: Number.parseInt(additionSet),
-          };
-        });
 
-        console.assert(edgeSets.length === edgeSounds.length && edgeSets.length === slider.spanCount + 1);
+      const edgeSounds = values[8]?.split('|').map(it => Number.parseInt(it) >> 1) ?? new Array(slider.spanCount + 1).fill(hitSound.additions);
+      const edgeSets = values[9]?.split('|').map((it) => {
+        const [normalSet, additionSet] = it.split(':');
+        return {
+          normalSet: Number.parseInt(normalSet),
+          additionSet: Number.parseInt(additionSet),
+        };
+      }) ?? new Array(slider.spanCount + 1).fill({
+        normalSet: hitSound.sampleSet,
+        additionSet: hitSound.additionSampleSet,
+      });
 
-        const hitSounds: HitSound[] = [];
-        for (let i = 0; i < edgeSets.length; i++) {
-          hitSounds.push(new HitSound(
-            edgeSets[i].normalSet,
-            edgeSets[i].additionSet,
-            edgeSounds[i],
-          ));
-        }
-
-        console.log(edgeSounds);
-
-        slider.hitSounds = hitSounds;
+      const hitSounds: HitSound[] = [];
+      for (let i = 0; i < edgeSets.length; i++) {
+        hitSounds.push(new HitSound(
+          edgeSets[i]?.normalSet ?? SampleSet.Auto,
+          edgeSets[i].additionSet ?? SampleSet.Auto,
+          edgeSounds[i] ?? Additions.None,
+        ));
       }
 
+      slider.hitSounds = hitSounds;
+
+
       slider.ensureHitSoundsAreValid();
-    }
-    else if (type & HitType.Spinner) {
+    } else if (type & HitType.Spinner) {
       const spinner = hitObject = new Spinner();
       spinner.startTime = startTime;
       spinner.duration = Number.parseFloat(values[5]) - startTime;
       spinner.newCombo = newCombo;
       spinner.position = new Vec2(x, y);
 
-      hitSampleIndex = 6;
+      spinner.hitSound = parseHitSound(6);
     }
 
     if (!hitObject)
       return;
-
-    const samples = (values[hitSampleIndex] ?? '0:0:0:0:').split(':');
-    const [sampleSet, additionSampleSet] = samples.slice(0, 4).map(it => Number.parseInt(it));
-
-    const additions = Number.parseInt(values[4]) as Additions;
-
-    hitObject.hitSound = new HitSound(sampleSet, additionSampleSet, additions);
 
     beatmap.hitObjects.add(hitObject);
   }

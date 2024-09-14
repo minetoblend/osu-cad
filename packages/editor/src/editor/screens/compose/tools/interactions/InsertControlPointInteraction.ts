@@ -1,19 +1,11 @@
-import type {
-  DragEvent,
-  DragStartEvent,
-  MouseUpEvent,
-  Vec2,
-} from 'osucad-framework';
-import {
-  MouseButton,
-  dependencyLoader,
-  resolved,
-} from 'osucad-framework';
+import type { DragEvent, DragStartEvent, MouseUpEvent, Vec2 } from 'osucad-framework';
+import { dependencyLoader, MouseButton, resolved } from 'osucad-framework';
 import { SliderUtils } from '../SliderUtils';
 import { DistanceSnapProvider } from '../DistanceSnapProvider';
 import { PathPoint } from '../../../../../beatmap/hitObjects/PathPoint';
 import type { Slider } from '../../../../../beatmap/hitObjects/Slider';
 import { ComposeToolInteraction } from './ComposeToolInteraction';
+import { PathType } from '../../../../../beatmap/hitObjects/PathType.ts';
 
 export class InsertControlPointInteraction extends ComposeToolInteraction {
   constructor(
@@ -38,6 +30,10 @@ export class InsertControlPointInteraction extends ComposeToolInteraction {
 
     const path = [...this.slider.path.controlPoints];
     path.splice(this.index, 0, new PathPoint(this.startPosition));
+
+    if (path.length === 3) {
+      path[0] = path[0].withType(PathType.PerfectCurve);
+    }
 
     this.#sliderUtils.setPath(this.slider, path);
   }

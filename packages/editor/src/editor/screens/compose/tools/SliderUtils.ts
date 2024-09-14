@@ -5,12 +5,16 @@ import { UpdateHitObjectCommand } from '../../../commands/UpdateHitObjectCommand
 import { PathType } from '../../../../beatmap/hitObjects/PathType';
 import type { PathPoint } from '../../../../beatmap/hitObjects/PathPoint';
 import type { DistanceSnapProvider } from './DistanceSnapProvider';
+import { SliderSelection, SliderSelectionType } from '../../../../beatmap/hitObjects/SliderSelection.ts';
+import { EditorSelection } from '../EditorSelection';
 
 export class SliderUtils {
+
   constructor(
     readonly commandManager: CommandManager,
     readonly snapProvider: DistanceSnapProvider,
-  ) {}
+  ) {
+  }
 
   deleteControlPoint(
     slider: Slider,
@@ -90,8 +94,7 @@ export class SliderUtils {
         }),
         false,
       );
-    }
-    else {
+    } else {
       const path = [...slider.path.controlPoints];
 
       path[index] = path[index].withPosition(position.sub(slider.stackedPosition));
@@ -228,16 +231,26 @@ export class SliderUtils {
     return { position: closest, distance: closestDistance };
   }
 
-  static calculateEdges(currentEdges: number[], newEdges: Set<number>, add: boolean) {
+  static toggleEdge(selection: EditorSelection, subSelection: SliderSelection, index: number) {
+    const edges = new Set(subSelection.selectedEdges);
+
+    if (!edges.delete(index)) {
+      edges.add(index);
+    }
+
+    selection.setSliderSelection(subSelection.slider, SliderSelectionType.Custom, [...edges]);
+  }
+
+  static calculateEdges(currentEdges: Set<number>, newEdges: Set<number>, add: boolean) {
     if (newEdges.size > 0) {
       if (add) {
-        if ([...newEdges].every(it => currentEdges.includes(it))) {
+        if ([...newEdges].every(it => currentEdges.has(it))) {
           const combinedEdges = new Set(currentEdges);
           for (const edge of newEdges) {
             combinedEdges.delete(edge);
           }
 
-          return combinedEdges;
+          return [...combinedEdges];
         }
 
         for (const edge of currentEdges)
@@ -245,7 +258,7 @@ export class SliderUtils {
       }
     }
 
-    return newEdges;
+    return [...newEdges];
   }
 }
 

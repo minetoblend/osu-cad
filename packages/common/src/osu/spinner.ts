@@ -61,12 +61,12 @@ export class Spinner extends HitObject {
     // we ignore this
   }
 
-  patch(update: Partial<SerializedSpinner>) {
+  override patch(update: Partial<SerializedSpinner>) {
     super.patch(update);
     if (update.duration !== undefined) this.duration = update.duration;
   }
 
-  calculateHitSamples(): HitSample[] {
+  override calculateHitSamples(): HitSample[] {
     return [];
   }
 }

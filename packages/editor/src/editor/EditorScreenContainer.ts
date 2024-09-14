@@ -1,4 +1,4 @@
-import { Anchor, Axes, Container } from 'osucad-framework';
+import { Anchor, Axes, Container, NoArgsConstructor } from 'osucad-framework';
 import type { EditorScreen } from './screens/EditorScreen';
 
 export class EditorScreenContainer extends Container {
@@ -11,6 +11,7 @@ export class EditorScreenContainer extends Container {
   }
 
   #currentScreen: EditorScreen | null = null;
+
 
   get screen(): EditorScreen | null {
     return this.#currentScreen;

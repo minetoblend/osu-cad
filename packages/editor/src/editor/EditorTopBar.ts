@@ -39,4 +39,11 @@ export class EditorTopBar extends Container {
       }),
     );
   }
+
+  override updateSubTree(): boolean {
+    performance.mark('EditorTopBar#updateSubTree');
+    const result = super.updateSubTree();
+    performance.measure('EditorTopBar#updateSubTree', 'EditorTopBar#updateSubTree');
+    return result;
+  }
 }

@@ -1,4 +1,4 @@
-import { Anchor, Axes, dependencyLoader } from 'osucad-framework';
+import { Anchor, Axes, BindableBoolean, dependencyLoader, resolved } from 'osucad-framework';
 import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
 import type { HitObject } from '../../beatmap/hitObjects/HitObject';
 import { HitCircle } from '../../beatmap/hitObjects/HitCircle';
@@ -18,9 +18,16 @@ import { DrawableSliderTick } from './DrawableSliderTick';
 import { DrawableSliderRepeat } from './DrawableSliderRepeat';
 import { FollowPointRenderer } from './FollowPointRenderer';
 import { DrawableSpinner } from './DrawableSpinner';
+import { OsucadConfigManager } from '../../config/OsucadConfigManager.ts';
+import { OsucadSettings } from '../../config/OsucadSettings.ts';
 
 export class OsuPlayfield extends Playfield {
   protected followPoints!: FollowPointRenderer;
+
+  followPointsEnabled = new BindableBoolean(true);
+
+  @resolved(OsucadConfigManager)
+  config!: OsucadConfigManager;
 
   @dependencyLoader()
   load() {
@@ -33,13 +40,17 @@ export class OsuPlayfield extends Playfield {
       }),
     );
 
-    this.registerPool(HitCircle, DrawableHitCircle, 20, 100);
-    this.registerPool(Slider, DrawableSlider, 20, 100);
-    this.registerPool(SliderHeadCircle, DrawableSliderHead, 20, 100);
-    this.registerPool(SliderTailCircle, DrawableSliderTail, 20, 100);
-    this.registerPool(SliderTick, DrawableSliderTick, 20, 100);
-    this.registerPool(SliderRepeat, DrawableSliderRepeat, 20, 100);
+    this.registerPool(HitCircle, DrawableHitCircle, 10, 100);
+    this.registerPool(Slider, DrawableSlider, 5, 100);
+    this.registerPool(SliderHeadCircle, DrawableSliderHead, 5, 100);
+    this.registerPool(SliderTailCircle, DrawableSliderTail, 5, 100);
+    this.registerPool(SliderTick, DrawableSliderTick, 10, 100);
+    this.registerPool(SliderRepeat, DrawableSliderRepeat, 10, 100);
     this.registerPool(Spinner, DrawableSpinner, 1, 5);
+
+    this.config.bindWith(OsucadSettings.FollowPoints, this.followPointsEnabled);
+
+    this.followPointsEnabled.addOnChangeListener((e) => this.followPoints.alpha = e.value ? 1 : 0, { immediate: true });
   }
 
   protected createLifeTimeEntry(hitObject: HitObject): HitObjectLifetimeEntry {

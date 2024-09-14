@@ -1,6 +1,6 @@
 import type { Bindable } from 'osucad-framework';
-import { DrawableSprite, Vec2, dependencyLoader, resolved } from 'osucad-framework';
-import type { ColorSource } from 'pixi.js';
+import { dependencyLoader, DrawableSprite, resolved, Vec2 } from 'osucad-framework';
+import type { Color } from 'pixi.js';
 import { ISkinSource } from '../ISkinSource';
 import { DrawableHitObject } from '../../editor/hitobjects/DrawableHitObject';
 
@@ -14,7 +14,7 @@ export class StableApproachCircle extends DrawableSprite {
   @resolved(ISkinSource)
   private skin!: ISkinSource;
 
-  private accentColor!: Bindable<ColorSource>;
+  private accentColor!: Bindable<Color>;
 
   @resolved(DrawableHitObject)
   private drawableHitObject!: DrawableHitObject;

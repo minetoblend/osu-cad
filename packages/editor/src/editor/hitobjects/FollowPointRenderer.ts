@@ -6,9 +6,12 @@ import { FollowPointLifetimeEntry } from './FollowPointLifetimeEntry';
 import { FollowPointConnection } from './FollowPointConnection';
 import { FollowPoint } from './FollowPoint';
 
+
 export class FollowPointRenderer extends PooledDrawableWithLifetimeContainer<FollowPointLifetimeEntry, FollowPointConnection> {
   constructor() {
     super();
+
+    this.drawNode.enableRenderGroup()
   }
 
   #connectionPool!: DrawablePool<FollowPointConnection>;
@@ -69,10 +72,6 @@ export class FollowPointRenderer extends PooledDrawableWithLifetimeContainer<Fol
     }
 
     this.addEntry(newEntry);
-  }
-
-  protected addDrawable(entry: FollowPointLifetimeEntry, drawable: FollowPointConnection) {
-    super.addDrawable(entry, drawable);
   }
 
   #removeEntry(hitObject: OsuHitObject) {

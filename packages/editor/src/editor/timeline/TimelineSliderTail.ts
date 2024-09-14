@@ -1,7 +1,7 @@
-import type {
+import {
   DragEvent,
   DragStartEvent,
-  MouseDownEvent,
+  MouseDownEvent, MouseUpEvent,
 } from 'osucad-framework';
 import {
   Anchor,
@@ -20,6 +20,7 @@ import { UpdateHitObjectCommand } from '../commands/UpdateHitObjectCommand';
 import { TimelineElement } from './TimelineElement';
 import { Timeline } from './Timeline';
 import { TimelineSlider } from './TimelineSlider';
+import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection.ts';
 
 export class TimelineSliderTail extends TimelineElement {
   constructor(readonly hitObject: Slider) {
@@ -48,10 +49,6 @@ export class TimelineSliderTail extends TimelineElement {
   commandManager!: CommandManager;
 
   onDragStart(event: DragStartEvent): boolean {
-    if (this.findClosestParentOfType(TimelineSlider)!.mouseDownWasHead) {
-      return false;
-    }
-
     if (event.button === MouseButton.Left) {
       this.applyState();
 
@@ -82,6 +79,8 @@ export class TimelineSliderTail extends TimelineElement {
         }),
         false,
       );
+
+
     }
     else {
       const endTime = this.beatmap.controlPoints.snap(
@@ -148,25 +147,32 @@ export class TimelineSliderTail extends TimelineElement {
   protected selection!: EditorSelection;
 
   onMouseDown(e: MouseDownEvent): boolean {
-    if (this.findClosestParentOfType(TimelineSlider)!.mouseDownWasHead) {
+    if (this.findClosestParentOfType(TimelineSlider)!.mouseDownWasChild)
       return false;
-    }
+
+    this.findClosestParentOfType(TimelineSlider)!.mouseDownWasChild = true;
 
     if (e.button === MouseButton.Left) {
       if (!this.hitObject.isSelected) {
         return false;
       }
 
-      const edges = new Set([this.hitObject.repeatCount + 1]);
-
-      this.selection.setSelectedEdges(
-        this.hitObject,
-        [...SliderUtils.calculateEdges(this.hitObject.selectedEdges, edges, e.controlPressed)],
-      );
+      if (e.controlPressed) {
+        SliderUtils.toggleEdge(this.selection, this.hitObject.subSelection, this.hitObject.repeatCount + 1);
+      } else {
+        this.selection.setSliderSelection(
+          this.hitObject,
+          SliderSelectionType.End
+        )
+      }
 
       return true;
     }
 
     return false;
+  }
+
+  onMouseUp(e: MouseUpEvent) {
+    this.findClosestParentOfType(TimelineSlider)!.mouseDownWasChild = false;
   }
 }

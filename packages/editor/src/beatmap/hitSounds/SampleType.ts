@@ -5,7 +5,8 @@ export enum SampleType {
   Whistle = 1,
   Finish = 2,
   Clap = 3,
-  SliderSlider = 4,
+  SliderSlide = 4,
+  SliderWhistle = 5,
 }
 
 export function additionToSampleType(additions: Additions) {

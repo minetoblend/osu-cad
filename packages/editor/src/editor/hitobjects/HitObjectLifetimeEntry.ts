@@ -11,9 +11,11 @@ export class HitObjectLifetimeEntry extends LifetimeEntry {
     super();
 
     this.#startTimeBindable.bindTo(hitObject.startTimeBindable);
-    this.#startTimeBindable.addOnChangeListener(this.#setInitialLifetime, { immediate: true });
+    this.#startTimeBindable.valueChanged.addListener(this.setInitialLifetime, this);
 
-    hitObject.defaultsApplied.addListener(this.#setInitialLifetime);
+    hitObject.defaultsApplied.addListener(this.setInitialLifetime, this);
+
+    this.setInitialLifetime();
   }
 
   #realLifetimeStart = Number.MIN_VALUE;
@@ -53,5 +55,7 @@ export class HitObjectLifetimeEntry extends LifetimeEntry {
     return 10000;
   }
 
-  #setInitialLifetime = () => this.lifetimeStart = this.hitObject.startTime - this.initialLifetimeOffset;
+  protected setInitialLifetime() {
+    this.lifetimeStart = this.hitObject.startTime - this.initialLifetimeOffset
+  };
 }

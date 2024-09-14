@@ -22,6 +22,5 @@ export class BeatmapSettings {
   specialStyle = false;
   widescreenStoryboard = false;
   samplesMatchPlaybackRate = false;
-  audioFilename = '';
   backgroundFilename: string | null = null;
 }

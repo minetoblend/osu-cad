@@ -237,7 +237,7 @@ export const enum HitObjectType {
   Spinner = 3,
 }
 
-export class HitObjectComparer implements Comparer<HitObject> {
+export class HitObjectComparer extends Comparer<HitObject> {
   compare(a: HitObject, b: HitObject): number {
     return a.startTime - b.startTime;
   }

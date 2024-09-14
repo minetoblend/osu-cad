@@ -25,7 +25,7 @@ export abstract class PreferencesPanel extends Container {
     relativeSizeAxes: Axes.X,
     autoSizeAxes: Axes.Y,
     spacing: new Vec2(4),
-    padding: { horizontal: 8, vertical: 8 },
+    padding: { horizontal: 12, vertical: 8 },
   });
 
   get content() {

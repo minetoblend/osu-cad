@@ -1,5 +1,15 @@
-import { Sprite, Texture } from 'pixi.js';
+import { Color, Sprite, Texture } from 'pixi.js';
 import { TickType } from '@osucad/common';
+
+const tickColors = {
+  [TickType.Full]: new Color(0xFFFFFF),
+  [TickType.Half]: new Color(0xFF0000),
+  [TickType.Third]: new Color(0xFF00FF),
+  [TickType.Quarter]: new Color(0x3687F7),
+  [TickType.Sixth]: new Color(0xFF77FF),
+  [TickType.Eighth]: new Color(0xFFFF00),
+  [TickType.Other]: new Color(0x777777),
+} as const
 
 export class TimelineTick extends Sprite {
   constructor() {
@@ -20,37 +30,33 @@ export class TimelineTick extends Sprite {
   set type(type: TickType) {
     this.#type = type;
 
+    const color = tickColors[type as keyof typeof tickColors] ?? tickColors[TickType.Other];
+
+    this.tint = color;
+
     switch (type) {
       case TickType.Full | TickType.Downbeat:
-        this.tint = 0xFFFFFF;
         this.scale.set(1.5, 1);
         break;
       case TickType.Full:
-        this.tint = 0xFFFFFF;
         this.scale.set(1.5, 0.75);
         break;
       case TickType.Half:
-        this.tint = 0xFF0000;
         this.scale.set(1.5, 0.75);
         break;
       case TickType.Third:
-        this.tint = 0xFF00FF;
         this.scale.set(1.25, 0.5);
         break;
       case TickType.Quarter:
-        this.tint = 0x3687F7;
         this.scale.set(1.25, 0.5);
         break;
       case TickType.Sixth:
-        this.tint = 0xFF77FF;
         this.scale.set(1, 0.4);
         break;
       case TickType.Eighth:
-        this.tint = 0xFFFF00;
         this.scale.set(1, 0.35);
         break;
       default:
-        this.tint = 0x777777;
         this.scale.set(1, 0.3);
         break;
     }

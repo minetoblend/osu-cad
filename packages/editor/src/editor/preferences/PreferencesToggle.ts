@@ -1,8 +1,7 @@
-import type { Bindable } from 'osucad-framework';
-import { Anchor, Axes, CompositeDrawable, RoundedBox, dependencyLoader, resolved } from 'osucad-framework';
-import gsap from 'gsap';
+import { Anchor, Axes, Bindable, CompositeDrawable, dependencyLoader, resolved } from 'osucad-framework';
 import { OsucadSpriteText } from '../../OsucadSpriteText';
 import { ThemeColors } from '../ThemeColors';
+import { Toggle, ToggleTrigger } from '../../userInterface/Toggle.ts';
 
 export class PreferencesToggle extends CompositeDrawable {
   constructor(
@@ -11,7 +10,7 @@ export class PreferencesToggle extends CompositeDrawable {
   ) {
     super();
     this.relativeSizeAxes = Axes.X;
-    this.height = 20;
+    this.height = 24;
   }
 
   @resolved(ThemeColors)
@@ -27,42 +26,11 @@ export class PreferencesToggle extends CompositeDrawable {
         anchor: Anchor.CenterLeft,
         origin: Anchor.CenterLeft,
       }),
-      this.#toggle = new RoundedBox({
-        width: 18,
-        height: 10,
-        cornerRadius: 5,
-        x: -2,
+      new Toggle({ bindable: this.bindable, trigger: ToggleTrigger.MouseDown }).with({
         anchor: Anchor.CenterRight,
         origin: Anchor.CenterRight,
-        fillColor: this.colors.primary,
-        outline: {
-          width: 1.5,
-          color: this.colors.text,
-          alignment: 0,
-          alpha: 0.5,
-        },
+        scale: 0.65,
       }),
     );
-
-    this.bindable.addOnChangeListener(({ value }) => {
-      gsap.to(this.#toggle, {
-        fillAlpha: value ? 1 : 0,
-        duration: 0.2,
-      });
-
-      this.#toggle.outline = {
-        width: 1.5,
-        color: value ? this.colors.primary : this.colors.text,
-        alignment: 0,
-        alpha: 0.5,
-      };
-    }, { immediate: true });
-  }
-
-  #toggle!: RoundedBox;
-
-  onClick(): boolean {
-    this.bindable.value = !this.bindable.value;
-    return true;
   }
 }

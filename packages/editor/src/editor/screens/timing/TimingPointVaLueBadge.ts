@@ -14,13 +14,27 @@ import { ThemeColors } from '../../ThemeColors';
 
 export class TimingPointValueBadge extends CompositeDrawable {
   constructor(
-    readonly title: string,
     readonly value: string,
-    readonly valueColor: ColorSource,
+    valueColor: ColorSource,
   ) {
     super();
 
     this.autoSizeAxes = Axes.Both;
+    this.anchor = Anchor.CenterLeft;
+    this.origin = Anchor.CenterLeft;
+
+    this.#textColor = valueColor;
+  }
+
+  #textColor: ColorSource;
+
+  get textColor() {
+    return this.#textColor;
+  }
+
+  set textColor(value) {
+    this.#textColor = value;
+    this.#text.color = value;
   }
 
   #text!: OsucadSpriteText;
@@ -47,27 +61,13 @@ export class TimingPointValueBadge extends CompositeDrawable {
       new Container({
         padding: { horizontal: 4, vertical: 1 },
         autoSizeAxes: Axes.Both,
-        child: new FillFlowContainer({
-          autoSizeAxes: Axes.Both,
-          spacing: { x: 4, y: 0 },
-          children: [
-            new OsucadSpriteText({
-              fontSize: 10,
-              fontWeight: 600,
-              text: this.title,
-              color: this.colors.text,
-              anchor: Anchor.CenterLeft,
-              origin: Anchor.CenterLeft,
-            }),
-            this.#text = new OsucadSpriteText({
-              fontSize: 11,
-              fontWeight: 600,
-              text: this.value,
-              color: this.valueColor,
-              anchor: Anchor.CenterLeft,
-              origin: Anchor.CenterLeft,
-            }),
-          ],
+        child: this.#text = new OsucadSpriteText({
+          fontSize: 11,
+          fontWeight: 600,
+          text: this.value,
+          color: this.textColor,
+          anchor: Anchor.CenterLeft,
+          origin: Anchor.CenterLeft,
         }),
       }),
     );

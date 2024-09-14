@@ -1,5 +1,13 @@
 import type { Sample, SamplePlayback } from 'osucad-framework';
-import { Action, AudioManager, CompositeDrawable, FramedClock, OffsetClock, dependencyLoader, resolved } from 'osucad-framework';
+import {
+  Action,
+  AudioManager,
+  CompositeDrawable,
+  dependencyLoader,
+  FramedClock,
+  OffsetClock,
+  resolved,
+} from 'osucad-framework';
 import { PreferencesStore } from '../preferences/PreferencesStore';
 import { HitObjectList } from '../beatmap/hitObjects/HitObjectList';
 import type { HitSample } from '../beatmap/hitSounds/HitSample';
@@ -7,8 +15,14 @@ import { SampleSet } from '../beatmap/hitSounds/SampleSet';
 import { SampleType } from '../beatmap/hitSounds/SampleType';
 import { EditorClock } from './EditorClock';
 import { EditorContext } from './context/EditorContext';
-import type { BeatmapAsset } from './context/BeatmapAsset';
 import { EditorMixer } from './EditorMixer';
+import { ISkinSource } from '../skinning/ISkinSource.ts';
+import { LifetimeEntryManager } from '../pooling/LifetimeEntryManager.ts';
+import { LifetimeEntry } from '../pooling/LifetimeEntry.ts';
+import { HitObjectLifetimeEntry } from './hitobjects/HitObjectLifetimeEntry.ts';
+import { OsuHitObject } from '../beatmap/hitObjects/OsuHitObject.ts';
+import { LifetimeBoundaryKind } from '../pooling/LifetimeBoundaryKind.ts';
+import { LifetimeBoundaryCrossingDirection } from '../pooling/LifetimeBoundaryCrossingDirection.ts';
 
 export class HitsoundPlayer extends CompositeDrawable {
   @resolved(EditorClock)
@@ -24,9 +38,12 @@ export class HitsoundPlayer extends CompositeDrawable {
 
   #offsetClock!: OffsetClock;
 
+  #lifetimeManager = new LifetimeEntryManager();
+
   @dependencyLoader()
   load() {
-    this.loadAssets(this.editorContext.beatmapAssets.value);
+    this.loadAssets();
+
 
     this.#offsetClock = new OffsetClock(this.editorClock, -this.preferences.audio.audioOffset);
 
@@ -35,6 +52,68 @@ export class HitsoundPlayer extends CompositeDrawable {
     this.preferences.audio.audioOffsetBindable.addOnChangeListener((offset) => {
       this.#offsetClock.offset = -offset.value;
     });
+
+    this.#lifetimeManager.entryBecameAlive.addListener(this.#onEntryBecameAlive, this);
+    this.#lifetimeManager.entryBecameDead.addListener(this.#onEntryBecameDead, this);
+    this.#lifetimeManager.entryCrossedBoundary.addListener(this.#onEntryCrossedBoundary, this);
+
+    this.hitObjects.added.addListener(this.#onHitObjectAdded, this);
+    this.hitObjects.removed.addListener(this.#onHitObjectRemoved, this);
+
+    for (const hitObject of this.hitObjects) {
+      this.#onHitObjectAdded(hitObject);
+    }
+  }
+
+  #onEntryBecameAlive(entry: LifetimeEntry) {
+    const hitObject = (entry as HitSoundLifetimeEntry).hitObject as OsuHitObject;
+
+    if (this.time.elapsed > 200 || !this.editorClock.isRunning || this.editorClock.isSeeking)
+      return;
+
+    for (const sample of hitObject.hitSamples) {
+      this.#playSample(entry as HitSoundLifetimeEntry, sample);
+    }
+  }
+
+  #onEntryCrossedBoundary([entry, boundaryKind, crossingDirection]: [LifetimeEntry, LifetimeBoundaryKind, LifetimeBoundaryCrossingDirection]) {
+    const hitObject = (entry as HitSoundLifetimeEntry).hitObject as OsuHitObject;
+
+    if (this.time.elapsed > 500 || !this.editorClock.isRunning || this.editorClock.isSeeking)
+      return;
+
+    if (hitObject.duration === 0 && boundaryKind === LifetimeBoundaryKind.Start && crossingDirection === LifetimeBoundaryCrossingDirection.Forward) {
+      for (const sample of hitObject.hitSamples) {
+        this.#playSample(entry as HitSoundLifetimeEntry, sample);
+      }
+    }
+
+  }
+
+  #onEntryBecameDead(entry: LifetimeEntry) {
+    for (const playback of (entry as HitSoundLifetimeEntry).loopingSamples) {
+      playback.stop();
+    }
+
+    (entry as HitSoundLifetimeEntry).loopingSamples = [];
+  }
+
+  #entries = new Map<OsuHitObject, HitObjectLifetimeEntry>();
+
+  #onHitObjectAdded(hitObject: OsuHitObject) {
+    const lifetimeEntry = new HitSoundLifetimeEntry(hitObject);
+    this.#lifetimeManager.addEntry(lifetimeEntry);
+
+    this.#entries.set(hitObject, lifetimeEntry);
+  }
+
+  #onHitObjectRemoved(hitObject: OsuHitObject) {
+    const lifetimeEntry = this.#entries.get(hitObject);
+    if (lifetimeEntry) {
+      this.#lifetimeManager.removeEntry(lifetimeEntry);
+
+      this.#entries.delete(hitObject);
+    }
   }
 
   @resolved(AudioManager)
@@ -46,50 +125,59 @@ export class HitsoundPlayer extends CompositeDrawable {
   samples = new Map<string, Sample>();
   defaultSamples = new Map<string, Sample>();
 
-  loadAssets(assets: BeatmapAsset[]) {
+  loadAssets() {
     const sampleSets = ['normal', 'soft', 'drum'];
-    const additions = ['normal', 'whistle', 'finish', 'clap'];
+    const additions = ['hitnormal', 'hitwhistle', 'hitfinish', 'hitclap', 'sliderslide', 'sliderwhistle'];
 
-    for (const sampleSet of sampleSets) {
-      for (const addition of additions) {
-        const key = `${sampleSet}-hit${addition}`;
+    const sampleFilenames = sampleSets.flatMap(sampleSet => additions.map(addition => `${sampleSet}-${addition}`));
 
-        fetch(`/assets/skin/${sampleSet}-hit${addition}.wav`)
-          .then(res => res.arrayBuffer())
-          .then(buffer => this.audioManager.context.decodeAudioData(buffer))
-          .then((audioBuffer) => {
-            const sample = this.audioManager.createSample(
-              this.mixer.hitsounds,
-              audioBuffer,
-            );
+    const found = new Set<string>();
 
-            this.defaultSamples.set(key, sample);
-          });
-      }
-    }
+    const resources = this.editorContext.resources.getAvailableResources();
 
-    const regex = /(\w+)-hit(\w+)?\.(wav|mp3|ogg)/;
+    const audioFilename = /([\w-]+(\d*)).(?:wav|mp3|ogg)/;
 
-    for (const asset of assets) {
-      const match = asset.path.match(regex);
+    for (const asset of resources) {
+
+      const match = asset.match(audioFilename);
+
       if (!match)
         continue;
 
-      const key = `${match[1]}-hit${match[2]}`;
+      const [, key] = match;
 
-      fetch(asset.url)
-        .then(res => res.arrayBuffer())
-        .then(buffer => this.audioManager.context.decodeAudioData(buffer))
-        .then((audioBuffer) => {
-          const sample = this.audioManager.createSample(
-            this.mixer.hitsounds,
-            audioBuffer,
-          );
+      if (!key)
+        continue;
 
-          this.samples.set(key, sample);
-        });
+      const data = this.editorContext.getResource(asset);
+      if (!data)
+        continue;
+
+      found.add(key);
+
+      this.audioManager
+        .createSampleFromArrayBuffer(this.mixer.hitsounds, data)
+        .then(sample => this.samples.set(key, sample))
+        .catch(err => console.warn(`Failed to decode audio for "${key}"`, err));
+    }
+
+    for (const key of sampleFilenames) {
+      if (found.has(key))
+        continue;
+
+      this.skin.getSample(this.mixer.hitsounds, key).then(sample => {
+        if (!sample) {
+          console.warn(`Could not find sample for ${key}`);
+          return;
+        }
+
+        this.samples.set(key, sample);
+      });
     }
   }
+
+  @resolved(ISkinSource)
+  skin!: ISkinSource;
 
   @resolved(HitObjectList)
   hitObjects!: HitObjectList;
@@ -98,52 +186,39 @@ export class HitsoundPlayer extends CompositeDrawable {
 
   lastEndTime = 0;
 
+  #wasPlaying = false;
+
   update() {
     super.update();
 
-    if (!this.editorClock.isRunning) {
-      this.#scheduledSamples.forEach(sample => sample.stop());
-      this.#scheduledSamples.length = 0;
-      this.#isPlaying = false;
-      return;
-    }
+    const isPlaying = this.editorClock.isRunning;
 
-    // requestAnimationFrame() doesn't get called when the page isn't visible,
-    // so we need to skip this update in that case to prevent all the samples that
-    // should have been played during that time from playing all at once
-    if (Math.abs(this.time.current - this.lastEndTime) > 1000) {
-      return;
-    }
+    if (isPlaying && !this.#wasPlaying) {
+      for (const entry of this.#lifetimeManager.activeEntries) {
 
-    let startTime = this.lastEndTime;
-
-    const endTime = Math.floor(this.time.current);
-
-    this.lastEndTime = endTime;
-
-    if (!this.#isPlaying) {
-      startTime = this.editorClock.currentTime - 10;
-    }
-
-    startTime = Math.floor(startTime);
-
-    this.#isPlaying = true;
-
-    const hitObjects = this.hitObjects.filter(
-      hitObject =>
-        hitObject.startTime <= endTime && hitObject.endTime >= startTime,
-    );
-
-    const hitSamples = hitObjects.flatMap(it => it.hitSamples);
-
-    for (const sample of hitSamples) {
-      if (sample.time > startTime && sample.time <= endTime) {
-        this.#playSample(sample);
+        for (const sample of (entry as HitSoundLifetimeEntry).hitObject.hitSamples) {
+          if (sample.time >= this.editorClock.currentTime)
+            this.#playSample(entry as HitSoundLifetimeEntry, sample);
+        }
       }
     }
+
+    this.#wasPlaying = isPlaying;
+
+    if (!isPlaying) {
+      this.#scheduledSamples.forEach(sample => sample.stop());
+      this.#scheduledSamples.length = 0;
+    }
+
+    this.#lifetimeManager.update(this.time.current);
+    return;
   }
 
-  #playSample(hitSample: HitSample) {
+
+  #playSample(entry: HitSoundLifetimeEntry, hitSample: HitSample) {
+    if (!this.editorClock.isRunning)
+      return;
+
     let sampleSet = 'soft';
 
     switch (hitSample.sampleSet) {
@@ -165,44 +240,49 @@ export class HitsoundPlayer extends CompositeDrawable {
 
     switch (hitSample.sampleType) {
       case SampleType.Normal:
-        type = 'normal';
+        type = 'hitnormal';
         break;
       case SampleType.Whistle:
-        type = 'whistle';
+        type = 'hitwhistle';
         break;
       case SampleType.Finish:
-        type = 'finish';
+        type = 'hitfinish';
         break;
       case SampleType.Clap:
-        type = 'clap';
+        type = 'hitclap';
         break;
-      case SampleType.SliderSlider:
+      case SampleType.SliderSlide:
         type = 'sliderslide';
+        isLooping = true;
+        break;
+      case SampleType.SliderWhistle:
+        type = 'sliderwhistle';
         isLooping = true;
         break;
     }
 
-    const key = `${sampleSet}-hit${type}`;
+    const key = `${sampleSet}-${type}`;
 
     const index = hitSample.index === 0 ? '' : hitSample.index.toString();
 
     const sample
-      = this.samples.get(key)
-      ?? this.samples.get(key + index)
-      ?? this.defaultSamples.get(key);
+      = this.samples.get(key + index)
+      ?? this.samples.get(key);
 
     const delay = (hitSample.time - this.time.current) / this.editorClock.rate;
-
-    if (!sample) {
-      console.log(`Sample not found: ${key}`);
-    }
 
     if (sample) {
       const playback = sample.play({
         delay: Math.max(delay, 0),
         volume: hitSample.volume,
-        loop: hitSample.sampleType === SampleType.SliderSlider,
+        loop: isLooping,
       });
+
+      if (isLooping) {
+        entry.loopingSamples.push(playback);
+      }
+
+      this.#scheduledSamples.push(playback);
 
       playback.onEnded.addListener(() => {
         const index = this.#scheduledSamples.indexOf(playback);
@@ -217,23 +297,31 @@ export class HitsoundPlayer extends CompositeDrawable {
     }
   }
 
-  #isPlaying = false;
+  override dispose(isDisposing: boolean = true) {
+    for (const playback of this.#scheduledSamples) {
+      playback.stop();
+    }
+
+    super.dispose(isDisposing);
+  }
 }
 
-class SlideSample {
-  constructor(
-    readonly sample: HitSample,
-    readonly playback: SamplePlayback,
-  ) {
+class HitSoundLifetimeEntry extends HitObjectLifetimeEntry {
+  constructor(hitObject: OsuHitObject) {
+    super(hitObject);
   }
 
-  get startTime() {
-    return this.sample.time;
+  loopingSamples: SamplePlayback[] = [];
+
+  get initialLifetimeOffset() {
+    return 0;
   }
 
-  get endTime() {
-    return this.sample.duration ?? 0;
+  protected setInitialLifetime() {
+    super.setInitialLifetime();
+
+    this.lifetimeEnd = this.hitObject.endTime;
   }
 
-  started = false;
+  override hitObject!: OsuHitObject;
 }

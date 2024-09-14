@@ -16,7 +16,6 @@ export class CreateHitObjectCommand
   extends BaseCommand
   implements ICreateHitObjectCommand
 {
-  version = 0;
   hitObject: SerializedHitObject;
 
   constructor(hitObject: SerializedHitObject | HitObject) {

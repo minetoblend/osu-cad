@@ -1,34 +1,51 @@
-import { join } from 'node:path';
+/// <reference types='vitest' />
 import { defineConfig } from 'vite';
+
+import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import commonjsExternals from 'vite-plugin-commonjs-externals';
 
 export default defineConfig({
+  root: __dirname,
+  cacheDir: '../../node_modules/.vite/packages/editor',
+
+  server: {
+    port: 4200,
+    host: 'localhost',
+  },
+
+  preview: {
+    port: 4300,
+    host: 'localhost',
+  },
+
   plugins: [
+    nxViteTsPaths(),
     commonjsExternals({
       externals: [
         'node:fs',
         'node:fs/promises',
         'node:path',
+        'node:process',
       ],
     }),
   ],
-  resolve: {
-    alias: {
-      '@icons': join(__dirname, 'src/assets/icons'),
-    },
-  },
-  esbuild: {
-    target: 'chrome127',
-    include: /\.(m?[jt]s|[jt]sx)$/,
-    exclude: [],
-    keepNames: true,
 
-  },
   worker: {
     format: 'es',
+    plugins: () => [nxViteTsPaths()],
   },
+
+  esbuild: {
+    target: 'chrome113',
+  },
+
   build: {
-    target: 'esnext',
+    outDir: '../../dist/packages/editor',
+    emptyOutDir: true,
+    reportCompressedSize: true,
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
     rollupOptions: {
       output: {
         assetFileNames(chunkInfo) {
@@ -37,6 +54,6 @@ export default defineConfig({
           return `assets/[name]-[hash].[ext]`;
         },
       },
-    },
+    }
   },
 });

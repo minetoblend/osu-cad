@@ -1,6 +1,6 @@
-import type {
+import {
   AudioChannel,
-  AudioManager,
+  AudioManager, Bindable,
 } from 'osucad-framework';
 import {
   Container,
@@ -8,6 +8,8 @@ import {
   resolved,
 } from 'osucad-framework';
 import { PreferencesStore } from '../preferences/PreferencesStore';
+import { OsucadConfigManager } from '../config/OsucadConfigManager.ts';
+import { OsucadSettings } from '../config/OsucadSettings.ts';
 
 export class EditorMixer extends Container {
   constructor(readonly audioManager: AudioManager) {
@@ -23,33 +25,27 @@ export class EditorMixer extends Container {
 
   readonly userInterface: AudioChannel;
 
-  editorMixer() {}
+  @resolved(OsucadConfigManager)
+  config!: OsucadConfigManager;
 
-  @resolved(PreferencesStore)
-  preferences!: PreferencesStore;
+  masterVolume = new Bindable(100);
+
+  musicVolume = new Bindable(100);
+
+  hitsoundVolume = new Bindable(100);
+
+  uiVolume = new Bindable(100);
 
   @dependencyLoader()
   load() {
-    const audioPreferences = this.preferences.audio;
+    this.masterVolume.addOnChangeListener(e => this.audioManager.masterVolume = Math.pow(e.value / 100, 2));
+    this.musicVolume.addOnChangeListener(e => this.music.volume = Math.pow(e.value / 100, 2));
+    this.hitsoundVolume.addOnChangeListener(e => this.hitsounds.volume = Math.pow(e.value / 100, 2));
+    this.uiVolume.addOnChangeListener(e => this.userInterface.volume = Math.pow(e.value / 100, 2));
 
-    audioPreferences.masterVolumeBindable.addOnChangeListener(
-      ({ value }) => (this.audioManager.masterVolume = value),
-      { immediate: true },
-    );
-
-    audioPreferences.musicVolumeBindable.addOnChangeListener(
-      ({ value }) => (this.music.volume = value),
-      { immediate: true },
-    );
-
-    audioPreferences.hitsoundVolumeBindable.addOnChangeListener(
-      ({ value }) => (this.hitsounds.volume = value),
-      { immediate: true },
-    );
-
-    audioPreferences.uiVolumeBindable.addOnChangeListener(
-      ({ value }) => (this.userInterface.volume = value),
-      { immediate: true },
-    );
+    this.config.bindWith(OsucadSettings.MasterVolume, this.masterVolume);
+    this.config.bindWith(OsucadSettings.MusicVolume, this.musicVolume);
+    this.config.bindWith(OsucadSettings.HitsoundVolume, this.hitsoundVolume);
+    this.config.bindWith(OsucadSettings.UIVolume, this.uiVolume);
   }
 }

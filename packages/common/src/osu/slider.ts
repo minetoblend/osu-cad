@@ -104,7 +104,7 @@ export class Slider extends HitObject {
     this.repeats = value - 1;
   }
 
-  applyDefaults(
+  override applyDefaults(
     difficulty: SerializedBeatmapDifficulty,
     controlPoints: ControlPointManager,
   ) {
@@ -158,7 +158,7 @@ export class Slider extends HitObject {
     );
   }
 
-  angleAt(time: number) {
+  angleAt(time: number): number {
     if (time <= this.startTime + 1) {
       return this.angleAt(this.startTime + 1);
     }
@@ -220,7 +220,7 @@ export class Slider extends HitObject {
     return false;
   }
 
-  patch(update: Partial<SerializedSlider>) {
+  override patch(update: Partial<SerializedSlider>) {
     super.patch(update);
     if (update.path !== undefined) {
       this.path.controlPoints = update.path.map(PathPoint.deserialize);

@@ -1,7 +1,8 @@
 import gsap from 'gsap';
-import type {
-  Drawable,
-  MenuItem,
+import {
+  ClickableContainer,
+  Drawable, EasingFunction, HoverEvent,
+  MenuItem, MouseDownEvent, MouseUpEvent,
   SpriteText,
 } from 'osucad-framework';
 import {
@@ -23,6 +24,7 @@ import {
 import { Graphics } from 'pixi.js';
 import { OsucadSpriteText } from '../OsucadSpriteText';
 import { ThemeColors } from './ThemeColors';
+import { FastRoundedBox } from '../drawables/FastRoundedBox.ts';
 
 export class EditorMenu extends Menu {
   @resolved(ThemeColors)
@@ -84,29 +86,14 @@ export class EditorMenu extends Menu {
     gsap.killTweensOf(this, 'width,height');
 
     if (this.direction === Direction.Vertical) {
-      if (newSize.y === 0) {
+      if (newSize.y === 0)
         newSize.x = this.width;
-      }
 
-      if (newSize.y > 0 && this.width === 0) {
+      if (newSize.y > 0 && this.width === 0)
         this.width = newSize.x;
-      }
+    }
 
-      gsap.to(this, {
-        width: newSize.x,
-        height: newSize.y,
-        duration: 0.2,
-        ease: 'power4.out',
-      });
-    }
-    else {
-      gsap.to(this, {
-        width: newSize.x,
-        height: newSize.y,
-        duration: 0.2,
-        ease: 'power4.out',
-      });
-    }
+    this.resizeTo(newSize, 200, EasingFunction.OutQuart);
   }
 
   override animateClose(): void {
@@ -131,6 +118,7 @@ class DrawableEditorMenuItem extends DrawableMenuItem {
   }
 
   createBackground(): Drawable {
+
     return new RoundedBox({
       color: 'transparent',
       cornerRadius: 4,
@@ -144,8 +132,7 @@ class DrawableEditorMenuItem extends DrawableMenuItem {
       (e) => {
         if (e.value) {
           this.foreground.alpha = 0.5;
-        }
-        else {
+        } else {
           this.foreground.alpha = 1;
         }
       },
@@ -175,12 +162,12 @@ class MenuItemContent extends Container {
   @dependencyLoader()
   load(): void {
     this.add(
-      (this.#spriteText = new OsucadSpriteText({
+      this.#spriteText = new OsucadSpriteText({
         anchor: Anchor.CenterLeft,
         origin: Anchor.CenterLeft,
         text: this.#text,
         fontSize: 14,
-      })),
+      }),
     );
 
     if (this.item.items.length > 0) {
@@ -210,5 +197,36 @@ class MenuItemContent extends Container {
     this.#text = value;
     if (this.#spriteText)
       this.#spriteText.text = value;
+  }
+}
+
+class SplitItemBackground extends ClickableContainer {
+  constructor(readonly item: DrawableEditorMenuItem) {
+    super({
+      relativeSizeAxes: Axes.Both,
+    });
+
+    this.child = this.#background = new FastRoundedBox({
+      color: 'black',
+      cornerRadius: 4,
+      relativeSizeAxes: Axes.Both,
+    });
+
+    this.action = this.item.item.action.value!;
+  }
+
+  #background!: Drawable;
+
+  onHover(): boolean {
+    this.updateBackgroundColor();
+    return true;
+  }
+
+  onHoverLost() {
+    this.updateBackgroundColor();
+  }
+
+  updateBackgroundColor() {
+    this.#background.fadeColor(this.isHovered ? this.item.backgroundColorHover : this.item.backgroundColor);
   }
 }

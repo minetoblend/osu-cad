@@ -25,6 +25,8 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
 
     let lastEditedText = '';
 
+    this.alpha = 0;
+
     if (item.beatmapInfo.lastEdited) {
       const formatted = item.beatmapInfo.lastEdited.toLocaleDateString('en-US', {
         day: 'numeric',
@@ -75,13 +77,13 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
                   autoSizeAxes: Axes.Both,
                   padding: { horizontal: 4, vertical: 1 },
                   child: new OsucadSpriteText({
-                    text: `${this.item.beatmapInfo.starRating.toFixed(2)}`,
+                    text: `${this.carouselBeatmap.beatmapInfo.starRating.toFixed(2)}`,
                   }),
                 }),
               ],
             }),
             new OsucadSpriteText({
-              text: this.item.beatmapInfo.difficultyName,
+              text: this.carouselBeatmap.beatmapInfo.difficultyName,
               anchor: Anchor.CenterLeft,
               origin: Anchor.CenterLeft,
             }),
@@ -109,7 +111,7 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
       [9.0, new Color('black')],
     ];
 
-    const difficulty = this.item.beatmapInfo.starRating;
+    const difficulty = this.carouselBeatmap.beatmapInfo.starRating;
 
     for (let i = 1; i < stops.length; i++) {
       if (difficulty < stops[i][0]) {
@@ -134,7 +136,9 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
     return 0x000000;
   }
 
-  item!: CarouselBeatmap;
+  get carouselBeatmap() {
+    return this.item as CarouselBeatmap;
+  }
 
   @dependencyLoader()
   load() {
@@ -181,7 +185,7 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
 
       this.findClosestParentOfType(ScreenStack)
         ?.push(new EditorLoader(
-          this.item.beatmapInfo.createEditorContext(),
+          this.carouselBeatmap.beatmapInfo.createEditorContext(),
         ));
     }
 

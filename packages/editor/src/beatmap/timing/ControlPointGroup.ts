@@ -1,6 +1,10 @@
 import { Action } from 'osucad-framework';
 import { objectId } from '../ObjectId';
 import { ControlPoint } from './ControlPoint';
+import { TimingPoint } from './TimingPoint.ts';
+import { DifficultyPoint } from './DifficultyPoint.ts';
+import { SamplePoint } from './SamplePoint.ts';
+import { EffectPoint } from './EffectPoint.ts';
 
 export interface ControlPointGroupChangeEvent {
   group: ControlPointGroup;
@@ -73,14 +77,38 @@ export class ControlPointGroup extends ControlPoint {
 
     controlPoint.time = this.time;
 
+    if (controlPoint instanceof TimingPoint)
+      this.timing = controlPoint;
+    else if (controlPoint instanceof DifficultyPoint)
+      this.difficulty = controlPoint;
+    else if (controlPoint instanceof SamplePoint)
+      this.sample = controlPoint;
+    else if (controlPoint instanceof EffectPoint)
+      this.effect = controlPoint;
+
     return true;
   }
+
+  timing: TimingPoint | null = null;
+
+  difficulty: DifficultyPoint | null = null;
+
+  sample: SamplePoint | null = null;
+
+  effect: EffectPoint | null = null;
 
   remove(controlPoint: ControlPoint): boolean {
     if (!this.#children.delete(controlPoint))
       return false;
 
     this.removed.emit({ group: this, controlPoint });
+
+    if (controlPoint === this.timing)
+      this.timing = null;
+    else if (controlPoint === this.difficulty)
+      this.difficulty = null;
+    else if (controlPoint === this.sample)
+      this.sample = null;
 
     return true;
   }

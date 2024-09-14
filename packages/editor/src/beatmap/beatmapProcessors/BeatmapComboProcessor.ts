@@ -26,6 +26,7 @@ export class BeatmapComboProcessor extends BeatmapProcessor {
   }
 
   #calculateCombos() {
+    performance.mark('BeatmapComboProcessor#calculateCombos');
     let comboIndex = 0;
     let indexInCombo = 0;
 
@@ -47,6 +48,8 @@ export class BeatmapComboProcessor extends BeatmapProcessor {
 
       indexInCombo++;
     }
+
+    performance.measure('BeatmapComboProcessor#calculateCombos', 'BeatmapComboProcessor#calculateCombos');
   }
 
   @resolved(ISkinSource)

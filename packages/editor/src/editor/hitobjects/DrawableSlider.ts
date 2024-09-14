@@ -1,13 +1,15 @@
-import { Anchor, Axes, Container, clamp, dependencyLoader } from 'osucad-framework';
+import { Anchor, Axes, Bindable, clamp, Container, dependencyLoader, resolved, Vec2 } from 'osucad-framework';
 import type { Slider } from '../../beatmap/hitObjects/Slider';
 import { DrawableOsuHitObject } from './DrawableOsuHitObject';
-import type { DrawableHitObject } from './DrawableHitObject';
+import { DrawableHitObject } from './DrawableHitObject';
 import { DrawableSliderBody } from './DrawableSliderBody';
 import { DrawableSliderHead } from './DrawableSliderHead';
-import { DrawableSliderTail } from './DrawableSliderTail';
 import { DrawableSliderTick } from './DrawableSliderTick';
 import { DrawableSliderRepeat } from './DrawableSliderRepeat';
 import { DrawableSliderBall } from './DrawableSliderBall';
+import { OsucadConfigManager } from '../../config/OsucadConfigManager.ts';
+import { OsucadSettings } from '../../config/OsucadSettings.ts';
+import { DrawableSliderTail } from './DrawableSliderTail.ts';
 
 export class DrawableSlider extends DrawableOsuHitObject<Slider> {
   constructor() {
@@ -29,8 +31,13 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider> {
   #tickContainer!: Container;
   #repeatContainer!: Container;
 
+  @resolved(OsucadConfigManager)
+  protected config!: OsucadConfigManager;
+
   @dependencyLoader()
   load() {
+    this.config.bindWith(OsucadSettings.HitAnimations, this.hitAnimationsEnabled);
+
     this.addAllInternal(
       this.body = new DrawableSliderBody().with({
         alpha: 0,
@@ -70,10 +77,12 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider> {
     this.ball.scaleTo(this.hitObject!.scale);
   }
 
+  hitAnimationsEnabled = new Bindable(false);
+
   protected override updateEndTimeTransforms() {
     super.updateEndTimeTransforms();
 
-    this.fadeOut(700);
+    this.fadeOut(this.hitAnimationsEnabled.value ? 240 : 700);
     this.expire();
   }
 
@@ -82,10 +91,10 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider> {
 
     switch (hitObject.constructor) {
       case DrawableSliderHead:
-        this.#headContainer.child = hitObject;
+        this.#headContainer.add(hitObject);
         break;
       case DrawableSliderTail:
-        this.#tailContainer.child = hitObject;
+        this.#tailContainer.add(hitObject);
         break;
       case DrawableSliderTick:
         this.#tickContainer.add(hitObject);
@@ -112,5 +121,12 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider> {
     const completionProgress = clamp((this.time.current - this.hitObject!.startTime) / this.hitObject!.duration, 0, 1);
 
     this.ball.updateProgress(completionProgress);
+
+    const start = new Vec2();
+    const end = this.hitObject!.path.endPosition;
+
+    for (const h of this.#repeatContainer.children as DrawableSliderRepeat[]) {
+      h.updatePosition(start, end);
+    }
   }
 }

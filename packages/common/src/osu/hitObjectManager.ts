@@ -13,6 +13,7 @@ import { Spinner } from './spinner';
 import { binarySearch } from '../util';
 import { ControlPoint, ControlPointUpdateFlags } from './controlPoint';
 import { Beatmap } from './beatmap';
+import { Color } from 'pixi.js';
 
 export class HitObjectManager {
   public hitObjects: HitObject[];
@@ -141,7 +142,7 @@ export class HitObjectManager {
       hitObject.comboIndex = comboIndex;
       hitObject.indexInCombo = indexInCombo;
       hitObject.comboColor =
-        this.beatmap.colors[comboIndex % this.beatmap.colors.length];
+        new Color(this.beatmap.colors[comboIndex % this.beatmap.colors.length]);
 
       indexInCombo++;
 

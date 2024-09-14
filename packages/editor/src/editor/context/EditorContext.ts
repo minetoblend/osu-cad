@@ -1,7 +1,6 @@
-import type { DependencyContainer, PIXITexture } from 'osucad-framework';
+import type { DependencyContainer, IResourceStore, PIXITexture } from 'osucad-framework';
 import { Bindable } from 'osucad-framework';
 import { Beatmap } from '../../beatmap/Beatmap';
-import { Skin } from '../../skins/Skin';
 import { ControlPointInfo } from '../../beatmap/timing/ControlPointInfo';
 import { HitObjectList } from '../../beatmap/hitObjects/HitObjectList';
 import { CommandManager } from './CommandManager';
@@ -37,7 +36,26 @@ export abstract class EditorContext {
   // #endregion
 
   // #region Song
-  protected abstract loadSong(beatmap: Beatmap): Promise<AudioBuffer>;
+  abstract resources: IResourceStore<ArrayBuffer>
+
+  getResource(name: string): ArrayBuffer | null {
+      return this.resources.get(name);
+  }
+
+  protected async loadSong(beatmap: Beatmap): Promise<AudioBuffer> {
+    const data = await this.getResource(beatmap.settings.audioFileName);
+
+    if (!data) {
+      throw new Error(`Audio file not found: "${beatmap.settings.audioFileName}"`);
+    }
+
+    const context = new AudioContext();
+
+    const copy = new ArrayBuffer(data.byteLength);
+    new Uint8Array(copy).set(new Uint8Array(data));
+
+    return context.decodeAudioData(copy);
+  }
 
   get song(): AudioBuffer {
     if (!this.songBindable.value) {
@@ -48,11 +66,6 @@ export abstract class EditorContext {
   }
 
   readonly songBindable = new Bindable<AudioBuffer | null>(null);
-
-  abstract updateSong(
-    file: File,
-    onProgress?: (progress: number) => void,
-  ): Promise<boolean>;
 
   // #endregion
 
@@ -71,25 +84,6 @@ export abstract class EditorContext {
 
   readonly backgroundBindable = new Bindable<PIXITexture | null>(null);
 
-  abstract updateBackground(
-    file: File,
-    onProgress?: (progress: number) => void,
-  ): Promise<boolean>;
-
-  // #endregion
-
-  // #region Skin
-  protected abstract loadSkin(): Promise<Skin>;
-
-  get skin(): Skin {
-    if (!this.skinBindable.value) {
-      throw new Error('Skin not loaded');
-    }
-
-    return this.skinBindable.value!;
-  }
-
-  readonly skinBindable = new Bindable<Skin | null>(null);
   // #endregion
 
   // #region initialization
@@ -106,9 +100,6 @@ export abstract class EditorContext {
 
     this.addParallelLoad(
       async () => (this.songBindable.value = await this.loadSong(beatmap)),
-    );
-    this.addParallelLoad(
-      async () => (this.skinBindable.value = await this.loadSkin()),
     );
     this.addParallelLoad(
       async () => (this.beatmapAssets.value = await this.getBeatmapAssets()),
@@ -136,7 +127,6 @@ export abstract class EditorContext {
     dependencies.provide(Beatmap, this.beatmap);
     dependencies.provide(HitObjectList, this.beatmap.hitObjects);
     dependencies.provide(ControlPointInfo, this.beatmap.controlPoints);
-    dependencies.provide(Skin, this.skin);
     dependencies.provide(CommandManager, this.commandHandler);
   }
 
@@ -148,6 +138,5 @@ export abstract class EditorContext {
 
   dispose() {
     this.#commandHandler?.dispose();
-    this.skinBindable.value?.dispose();
   }
 }

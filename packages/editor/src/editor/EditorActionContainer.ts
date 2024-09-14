@@ -53,6 +53,38 @@ export class EditorActionContainer extends KeyBindingContainer<EditorAction> {
       ),
       new KeyBinding(KeyCombination.from(InputKey.R), EditorAction.ToggleClap),
       new KeyBinding(
+        KeyCombination.from(InputKey.Shift, InputKey.Q),
+        EditorAction.ToggleSampleSetAuto,
+      ),
+      new KeyBinding(
+        KeyCombination.from(InputKey.Shift, InputKey.W),
+        EditorAction.ToggleSampleSetNormal,
+      ),
+      new KeyBinding(
+        KeyCombination.from(InputKey.Shift, InputKey.E),
+        EditorAction.ToggleSampleSetSoft,
+      ),
+      new KeyBinding(
+        KeyCombination.from(InputKey.Shift, InputKey.R),
+        EditorAction.ToggleSampleSetDrum,
+      ),
+      new KeyBinding(
+        KeyCombination.from(InputKey.Control, InputKey.Q),
+        EditorAction.ToggleAdditionSampleSetAuto,
+      ),
+      new KeyBinding(
+        KeyCombination.from(InputKey.Control, InputKey.W),
+        EditorAction.ToggleAdditionSampleSetNormal,
+      ),
+      new KeyBinding(
+        KeyCombination.from(InputKey.Control, InputKey.E),
+        EditorAction.ToggleAdditionSampleSetSoft,
+      ),
+      new KeyBinding(
+        KeyCombination.from(InputKey.Control, InputKey.R),
+        EditorAction.ToggleAdditionSampleSetDrum,
+      ),
+      new KeyBinding(
         KeyCombination.from(InputKey.Control, InputKey.Shift, InputKey.S),
         EditorAction.Scale,
       ),

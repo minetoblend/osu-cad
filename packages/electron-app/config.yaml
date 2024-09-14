@@ -1,0 +1,7 @@
+version: 1
+paths:
+  osu:
+    installPath: C:\Users\minet\AppData\Local\osu!\
+    osuDBPath: C:\Users\minet\AppData\Local\osu!\osu!.db
+    songsPath: C:\Users\minet\AppData\Local\osu!\Songs
+    skinsPath: C:\Users\minet\AppData\Local\osu!\Skins

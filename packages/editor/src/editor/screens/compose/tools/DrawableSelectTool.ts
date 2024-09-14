@@ -7,7 +7,7 @@ import type {
   ValueChangedEvent,
   Vec2,
 } from 'osucad-framework';
-import { Anchor, MouseButton, RoundedBox, dependencyLoader } from 'osucad-framework';
+import { Anchor, dependencyLoader, MouseButton, RoundedBox } from 'osucad-framework';
 import { EditorAction } from '../../../EditorAction';
 import type { HitObject } from '../../../../beatmap/hitObjects/HitObject';
 import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
@@ -24,6 +24,9 @@ import { SliderUtils } from './SliderUtils';
 import { InsertControlPointInteraction } from './interactions/InsertControlPointInteraction';
 import { RotateSelectionInteraction } from './interactions/RotateSelectionInteraction';
 import { ScaleSelectionInteraction } from './interactions/ScaleSelectionInteraction';
+import { HitSoundStateChangeEvent } from '../../../../beatmap/hitSounds/BindableHitSound.ts';
+import { SampleSet } from '../../../../beatmap/hitSounds/SampleSet.ts';
+import { SliderSelectionType } from '../../../../beatmap/hitObjects/SliderSelection.ts';
 
 export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindingHandler<EditorAction> {
   constructor() {
@@ -82,14 +85,12 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
 
       if (!this.selection.isSelected(candidate) && hovered.every(it => !it.isSelected)) {
         this.selection.select([candidate]);
-      }
-      else if (!this.#trySelectSliderEdges(candidate, e.mousePosition)) {
+      } else if (!this.#trySelectSliderEdges(candidate, e.mousePosition)) {
         this.#canCycleSelection = true;
       }
 
       return true;
-    }
-    else if (e.button === MouseButton.Right) {
+    } else if (e.button === MouseButton.Right) {
       const hovered = this.hoveredHitObjects(e.mousePosition);
 
       if (hovered.length === 0) {
@@ -103,8 +104,7 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
           this.submit(new DeleteHitObjectCommand(object), false);
         }
         this.commit();
-      }
-      else {
+      } else {
         this.submit(new DeleteHitObjectCommand(candidate));
       }
 
@@ -174,7 +174,6 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
     super.updateAfterChildren();
 
     this.#updateNewComboFromSelection();
-    this.#updateAdditionsFromSelection();
   }
 
   #updateSliderPathVisualizer(
@@ -190,10 +189,9 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
     const selection = this.selection.selectedObjects;
     if (selection.length === 1 && selection[0] instanceof Slider) {
       slider = selection[0];
-    }
-    else if (hoveredHitObjects.every(it => !it.isSelected)) {
+    } else if (hoveredHitObjects.every(it => !it.isSelected)) {
       slider = (hoveredHitObjects.find(it => it instanceof Slider)
-      ?? null) as Slider | null;
+        ?? null) as Slider | null;
     }
 
     this.activeSlider = slider;
@@ -203,8 +201,7 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
         slider,
         this.mousePosition,
       )?.position ?? null;
-    }
-    else {
+    } else {
       this.#sliderInsertPoint = null;
     }
 
@@ -213,8 +210,7 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
       this.#sliderInsertPointVisualizer.position = slider!.stackedPosition.add(
         this.#sliderInsertPoint.position,
       );
-    }
-    else {
+    } else {
       this.#sliderInsertPointVisualizer.alpha = 0;
     }
   }
@@ -239,6 +235,10 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
     this.#sliderPathVisualizer.onHandleDragStarted = this.#onHandleDragStarted;
     this.#sliderPathVisualizer.onHandleDragged = this.#onHandleDragged;
     this.#sliderPathVisualizer.onHandleDragEnded = this.#onHandleDragEnded;
+
+    this.selection.selectionChanged.addListener(this.#updateHitSoundsFromSelection, this);
+
+    this.#updateHitSoundsFromSelection();
   }
 
   protected applyNewComboState(event: ValueChangedEvent<boolean>) {
@@ -262,55 +262,82 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
     this.commit();
   }
 
-  protected applyAdditionsState(event: ValueChangedEvent<Additions>) {
-    super.applyAdditionsState(event);
+  protected applyHitSoundState(event: HitSoundStateChangeEvent) {
+    super.applyHitSoundState(event);
     if (this.selection.length === 0)
       return;
 
-    for (const hitObject of this.selection) {
-      if (hitObject instanceof Slider) {
-        const edges = hitObject.selectedEdges;
+    const type = event[0];
 
-        if (edges.length > 0) {
-          const hitSounds = [...hitObject.hitSounds];
+    if (type === 'additions') {
+      const changed = event[1];
 
-          let didUpdate = false;
+      for (const hitObject of this.selection) {
+        if (hitObject instanceof Slider) {
+          const patch = hitObject.subSelection.createAdditionsPatch(this.hitSoundState.additions, changed);
 
-          for (const edge of edges) {
-            if (!hitSounds[edge]) {
-              console.warn('Hit sound not found for edge', edge);
-              continue;
-            }
+          if (patch)
+            this.submit(new UpdateHitObjectCommand(hitObject, patch), false);
 
-            if (hitSounds[edge].additions === event.value)
-              continue;
+          continue;
+        }
 
-            hitSounds[edge] = hitSounds[edge].withAdditions(event.value);
+        const newAdditions = (hitObject.hitSound.additions & ~changed) | (this.hitSoundState.additions & changed);
 
-            didUpdate = true;
-          }
-
-          if (didUpdate) {
-            this.submit(
-              new UpdateHitObjectCommand(hitObject, {
-                hitSounds,
-              }),
-              false,
-            );
-            continue
-          }
+        if (hitObject.hitSound.additions !== newAdditions) {
+          this.submit(
+            new UpdateHitObjectCommand(hitObject, {
+              hitSound: hitObject.hitSound.withAdditions(newAdditions),
+            }),
+            false,
+          );
         }
       }
+    }
 
-      if (hitObject.hitSound.additions !== event.value) {
+    if (type === 'sampleSet') {
+      for (const hitObject of this.selection.selectedObjects) {
+        if (hitObject instanceof Slider) {
+          const patch = hitObject.subSelection.createSampleSetPatch(this.hitSoundState.sampleSet);
+
+          if (patch)
+            this.submit(new UpdateHitObjectCommand(hitObject, patch), false);
+
+          continue;
+        }
+
+        if (hitObject.hitSound.sampleSet !== this.hitSoundState.sampleSet) {
+          this.submit(
+            new UpdateHitObjectCommand(hitObject, {
+              hitSound: hitObject.hitSound.withSampleSet(this.hitSoundState.sampleSet),
+            }),
+            false,
+          );
+        }
+      }
+    }
+
+    if (type === 'additionSampleSet') {
+      for (const hitObject of this.selection.selectedObjects) {
+        if (hitObject instanceof Slider) {
+          const patch = hitObject.subSelection.createAdditionSampleSetPatch(this.hitSoundState.additionsSampleSet);
+
+          if (patch)
+            this.submit(new UpdateHitObjectCommand(hitObject, patch), false);
+
+          continue;
+        }
+
+        const hitSound = hitObject.hitSound.withAdditionSampleSet(this.hitSoundState.additionsSampleSet);
         this.submit(
           new UpdateHitObjectCommand(hitObject, {
-            hitSound: hitObject.hitSound.withAdditions(event.value),
+            hitSound,
           }),
           false,
         );
       }
     }
+
 
     this.commit();
   }
@@ -354,7 +381,9 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
   };
 
   #onHandleDragged = (index: number, e: DragStartEvent) => {
-    const slider = this.activeSlider!;
+    const slider = this.activeSlider;
+    if (!slider)
+      return false;
 
     const position = this.toLocalSpace(e.screenSpaceMousePosition);
 
@@ -383,9 +412,11 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
     );
   }
 
-  #updateAdditionsFromSelection() {
+  #updateHitSoundsFromSelection() {
     if (this.selection.length === 0) {
-      this.additions.value = Additions.None;
+      this.hitSoundState.setAdditions(Additions.None, false);
+      this.hitSoundState.setSampleSet(SampleSet.Auto, false);
+      this.hitSoundState.setAdditionSampleSet(SampleSet.Auto, false);
       return;
     }
 
@@ -393,23 +424,64 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
 
     for (const object of this.selection) {
       if (object instanceof Slider) {
-        if (object.selectedEdges.length > 0) {
-          for (const edge of object.selectedEdges) {
-            const hitSound = object.hitSounds[edge];
-            if (!hitSound)
-              continue;
-
-            additions &= hitSound.additions;
-          }
-
-          continue;
-        }
+        additions &= object.subSelection.getCombinedAdditions();
+        continue;
       }
 
       additions &= object.hitSound.additions;
     }
 
-    this.additions.value = additions;
+    this.hitSoundState.setAdditions(additions, false);
+
+    let sampleSet = null;
+
+    for (const object of this.selection.selectedObjects) {
+      if (object instanceof Slider) {
+        const combinedSampleSet = object.subSelection.getCombinedSampleSet('sampleSet');
+
+        if (sampleSet === null) {
+          sampleSet = combinedSampleSet;
+        } else if (combinedSampleSet !== sampleSet) {
+          sampleSet = SampleSet.Auto;
+          break;
+        }
+        continue;
+      }
+
+      if (sampleSet === null) {
+        sampleSet = object.hitSound.sampleSet;
+      } else if (object.hitSound.sampleSet !== sampleSet) {
+        sampleSet = SampleSet.Auto;
+        break;
+      }
+    }
+
+    this.hitSoundState.setSampleSet(sampleSet ?? SampleSet.Auto, false);
+
+    sampleSet = null;
+
+    for (const object of this.selection.selectedObjects) {
+      if (object instanceof Slider) {
+        const combinedSampleSet = object.subSelection.getCombinedSampleSet('additionSampleSet');
+
+        if (sampleSet === null) {
+          sampleSet = combinedSampleSet;
+        } else if (combinedSampleSet !== sampleSet) {
+          sampleSet = SampleSet.Auto;
+          break;
+        }
+        continue;
+      }
+
+      if (sampleSet === null) {
+        sampleSet = object.hitSound.additionSampleSet;
+      } else if (object.hitSound.additionSampleSet !== sampleSet) {
+        sampleSet = SampleSet.Auto;
+        break;
+      }
+    }
+
+    this.hitSoundState.setAdditionSampleSet(sampleSet ?? SampleSet.Auto, false);
   }
 
   get activeSlider() {
@@ -428,32 +500,21 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
     const distanceToStart = position.distance(hitObject.stackedPosition);
 
     if (distanceToStart < hitObject.radius) {
-      const edges: number[] = [];
-
-      for (let i = 0; i <= hitObject.repeatCount + 1; i += 2) {
-        edges.push(i);
-      }
-
-      this.selection.setSelectedEdges(hitObject, edges);
-
+      this.selection.setSliderSelection(hitObject, SliderSelectionType.Head);
       return true;
     }
 
     const distanceToEnd = position.distance(hitObject.stackedPosition.add(hitObject.path.endPosition));
 
     if (distanceToEnd < hitObject.radius) {
-      const edges: number[] = [];
-
-      for (let i = 1; i <= hitObject.repeatCount + 1; i += 2) {
-        edges.push(i);
-      }
-
-      this.selection.setSelectedEdges(hitObject, edges);
+      this.selection.setSliderSelection(hitObject, SliderSelectionType.Tail);
 
       return true;
     }
 
-    return false;
+    this.selection.setSliderSelection(hitObject, SliderSelectionType.Body);
+
+    return true;
   }
 
   readonly isKeyBindingHandler = true;

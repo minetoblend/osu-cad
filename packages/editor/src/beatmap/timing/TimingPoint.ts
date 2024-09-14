@@ -38,7 +38,7 @@ export class TimingPoint extends ControlPoint {
     this.beatLength = 60_000 / value;
   }
 
-  #meter;
+  #meter: number = 4;
 
   get meter() {
     return this.#meter;

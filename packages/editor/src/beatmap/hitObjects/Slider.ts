@@ -1,4 +1,4 @@
-import type { IVec2, ReadonlyBindable } from 'osucad-framework';
+import type { IVec2, ReadonlyBindable, ValueChangedEvent } from 'osucad-framework';
 import { CachedValue, Vec2 } from 'osucad-framework';
 import type { BeatmapDifficultyInfo } from '../BeatmapDifficultyInfo';
 import type { ControlPointInfo } from '../timing/ControlPointInfo';
@@ -19,6 +19,8 @@ import { SliderHeadCircle } from './SliderHeadCircle';
 import { SliderTailCircle } from './SliderTailCircle';
 import { SliderRepeat } from './SliderRepeat';
 import { PathPoint } from './PathPoint';
+import { Additions } from '../hitSounds/Additions.ts';
+import { SliderSelection } from './SliderSelection.ts';
 
 export class Slider extends OsuHitObject implements IPatchable<SerializedSlider> {
   constructor() {
@@ -26,6 +28,7 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
 
     this.path.invalidated.addListener(() => {
       this.#updateNestedPositions();
+      this.requestApplyDefaults();
     });
   }
 
@@ -49,7 +52,12 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
   }
 
   set repeatCount(value: number) {
+    if (value === this.#repeatCount) return;
+
     this.#repeatCount = value;
+
+    this.ensureHitSoundsAreValid();
+    this.requestApplyDefaults()
   }
 
   get spanCount() {
@@ -156,15 +164,25 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
     const scoringDistance = this.velocity * timingPoint.beatLength;
 
     this.#tickDistance = this.generateTicks ? (scoringDistance / difficulty.sliderTickRate * this.tickDistanceMultiplier) : Infinity;
+
+    this.subSelection.update()
   }
 
-  getPositionAtTime(time: number) {
-    return this.stackedPosition.add(this.getPathPositionAtTime(time));
+  getPositionAtTime(time: number, out = new Vec2()) {
+    this.getPathPositionAtTime(time, out)
+
+    const stackedPosition = this.stackedPosition;
+
+    out.x = stackedPosition.x;
+    out.y = stackedPosition.y;
+
+    return out;
   }
 
-  getPathPositionAtTime(time: number) {
+  getPathPositionAtTime(time: number, out: Vec2) {
     return this.path.getPositionAtDistance(
       this.getProgressAtTime(time) * this.expectedDistance,
+      out,
     );
   }
 
@@ -184,12 +202,12 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
 
     if (time < 0)
       return 0;
-    if (time > this.endTime)
+    if (time > this.duration)
       return this.repeatCount % 2 === 0 ? 1 : 0;
 
-    const spanIndex = Math.floor((time - this.startTime) / this.spanDuration);
+    const spanIndex = Math.floor(time / this.spanDuration);
 
-    const spanStartTime = this.startTime + spanIndex * this.spanDuration;
+    const spanStartTime = spanIndex * this.spanDuration;
 
     let spanProgress = (time - spanStartTime) / this.spanDuration;
     if (spanIndex % 2 === 1)
@@ -198,7 +216,7 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
     return spanProgress;
   }
 
-  selectedEdges: number[] = [];
+  readonly subSelection = new SliderSelection(this);
 
   contains(point: IVec2): boolean {
     if (this.headCircle?.contains(point) || this.tailCircle?.contains(point))
@@ -214,7 +232,7 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
     let i = 1;
     while (
       distance < Math.min(this.path.expectedDistance, this.path.calculatedDistance)
-    ) {
+      ) {
       distance += step;
       while (i < path.length - 1 && this.path.calculatedPath.cumulativeDistance[i] < distance)
         i++;
@@ -247,8 +265,8 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
     return p;
   }
 
-  curvePositionAt(progress: number): Vec2 {
-    return this.path.getPositionAt(this.progressAt(progress));
+  curvePositionAt(progress: number, out: Vec2 = new Vec2()): Vec2 {
+    return this.path.getPositionAt(this.progressAt(progress), out);
   }
 
   get endPosition() {
@@ -260,6 +278,12 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
 
   #updateNestedPositions() {
     this.#endPositionCache.invalidate();
+
+    if (this.headCircle)
+      this.headCircle.position = this.position;
+
+    if (this.tailCircle)
+      this.tailCircle.position = this.endPosition;
   }
 
   #hitSounds = new HitObjectProperty<readonly HitSound[]>(this, 'hitSounds', []);
@@ -303,7 +327,7 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
               spanIndex: e.spanIndex,
               spanStartTime: e.spanStartTime,
               startTime: e.time,
-              position: this.position.add(this.path.getPositionAt(e.pathProgress)),
+              position: this.position.add(this.path.getPositionAt(e.pathProgress, new Vec2())),
               stackHeight: this.stackHeight,
             }),
           );
@@ -369,11 +393,26 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
     this.addHitSample(new HitSample(
       this.startTime,
       sampleSet,
-      SampleType.SliderSlider,
+      SampleType.SliderSlide,
       samplePoint.volume,
       samplePoint.sampleIndex,
       this.duration,
     ));
+
+    let additionSampleSet = this.hitSound.additionSampleSet;
+    if (additionSampleSet === SampleSet.Auto)
+      additionSampleSet = sampleSet;
+
+    if (this.hitSound.additions & Additions.Whistle) {
+      this.addHitSample(new HitSample(
+        this.startTime,
+        additionSampleSet,
+        SampleType.SliderWhistle,
+        samplePoint.volume,
+        samplePoint.sampleIndex,
+        this.duration,
+      ));
+    }
 
     for (let i = 0; i < this.hitSounds.length; i++) {
       const time = this.startTime + this.spanDuration * i;
@@ -421,10 +460,16 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
 
     while (hitSounds.length < this.spanCount + 1) {
       hitSounds.push(
-        hitSounds[hitSounds.length - 1] ?? HitSound.Default,
+        hitSounds[hitSounds.length - 1] ?? this.hitSound,
       );
     }
 
     this.hitSounds = hitSounds;
+
+    this.subSelection.update();
+  }
+
+  protected override onStartTimeChanged(time: ValueChangedEvent<number>) {
+    super.onStartTimeChanged(time);
   }
 }

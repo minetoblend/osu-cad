@@ -3,12 +3,12 @@ import type { IKeyBindingHandler, KeyBindingPressEvent, KeyBindingReleaseEvent }
 import { dependencyLoader, resolved } from 'osucad-framework';
 import { EditorAction } from '../../EditorAction';
 import { HitsoundPlayer } from '../../HitsoundPlayer';
-import type { Additions } from '../../../beatmap/hitSounds/Additions';
-import { additionToSampleType } from '../../../beatmap/hitSounds/SampleType';
-import { ADDITIONS } from '../../InjectionTokens';
-import type { AdditionsBindable } from '../../../beatmap/hitSounds/AdditionsBindable';
+import { Additions } from '../../../beatmap/hitSounds/Additions';
 import { ComposeToggleButton } from './ComposeToggleButton';
 import { SampleHighlightContainer } from './SampleHighlightContainer';
+import { HITSOUND } from '../../InjectionTokens.ts';
+import { HitSoundState } from '../../../beatmap/hitSounds/BindableHitSound.ts';
+import { additionToSampleType, SampleType } from '../../../beatmap/hitSounds/SampleType.ts';
 
 export class AdditionToggleButton extends ComposeToggleButton
   implements IKeyBindingHandler<EditorAction> {
@@ -23,38 +23,39 @@ export class AdditionToggleButton extends ComposeToggleButton
   @resolved(HitsoundPlayer)
   hitsoundPlayer!: HitsoundPlayer;
 
-  @resolved(ADDITIONS)
-  protected activeAdditions!: AdditionsBindable;
+  @resolved(HITSOUND)
+  protected hitSoundState!: HitSoundState;
 
   @dependencyLoader()
   load() {
     this.addInternal(
-      new SampleHighlightContainer(additionToSampleType(this.addition)).with({
-        depth: 1,
-      }),
+      new SampleHighlightContainer(this.addition === Additions.Whistle ? [
+        SampleType.Whistle,
+        SampleType.SliderWhistle,
+      ] : additionToSampleType(this.addition)),
     );
   }
 
   protected loadComplete() {
     super.loadComplete();
 
-    this.activeAdditions.valueChanged.addListener(this.#additionsChanged, this);
+    this.hitSoundState.additionsBindable.valueChanged.addListener(this.#additionsChanged, this);
   }
 
   #additionsChanged() {
-    this.active.value = this.activeAdditions.has(this.addition);
+    this.active.value = this.hitSoundState.hasAdditions(this.addition);
   }
 
   protected onActivate() {
     super.onActivate();
 
-    this.activeAdditions.add(this.addition);
+    this.hitSoundState.setAdditions(this.hitSoundState.additions | this.addition);
   }
 
   protected onDeactivate() {
     super.onDeactivate();
 
-    this.activeAdditions.remove(this.addition);
+    this.hitSoundState.setAdditions(this.hitSoundState.additions & ~this.addition);
   }
 
   dispose(isDisposing: boolean = true) {

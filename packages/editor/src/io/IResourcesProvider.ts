@@ -3,7 +3,7 @@ import type { Renderer } from 'pixi.js';
 
 export interface IResourcesProvider {
   readonly renderer: Renderer;
-  readonly audioManager: AudioManager | null;
+  readonly audioManager: AudioManager;
 }
 
 // eslint-disable-next-line ts/no-redeclare

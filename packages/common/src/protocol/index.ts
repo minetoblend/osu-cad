@@ -4,4 +4,3 @@ export * from './user';
 export * from './beatmap';
 export * from './presence';
 export * from './chat';
-export * from './compression';

@@ -24,6 +24,7 @@ const iconKeys = [
   'spinner',
   'undo',
   'whistle@2x',
+  'logo-text'
 ] as const;
 
 export const OsucadIcons = new class OsucadIcons {

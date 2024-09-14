@@ -43,6 +43,13 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
     return true;
   }
 
+  override updateSubTree(): boolean {
+    performance.mark(`${this.constructor.name}#updateSubTree`);
+    const result = super.updateSubTree();
+    performance.measure(`${this.constructor.name}#updateSubTree`, `${this.constructor.name}#updateSubTree`);
+    return result;
+  }
+
   override get isPresent(): boolean {
     return super.isPresent || this.isIdle;
   }
@@ -52,7 +59,7 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
   }
 
   @resolved(IPooledHitObjectProvider)
-  private pooledObjectProvider!: IPooledHitObjectProvider;
+  protected pooledObjectProvider!: IPooledHitObjectProvider;
 
   isInitialized = false;
 
@@ -82,7 +89,8 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
       this.lifetimeStart = this.hitObject!.startTime - this.initialLifetimeOffset;
 
     for (const h of this.hitObject!.nestedHitObjects) {
-      const pooledDrawableNested = this.pooledObjectProvider?.getPooledDrawableRepresentation(h, this);
+      const pooledDrawableNested = this.getNestedHitObject(h)
+        ?? this.pooledObjectProvider?.getPooledDrawableRepresentation(h, this);
 
       const drawableNested = pooledDrawableNested ?? this.createNestedHitObject(h);
       if (!drawableNested)
@@ -121,6 +129,10 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
 
       this.updateComboColor();
     }
+  }
+
+  protected getNestedHitObject(hitObject: HitObject): DrawableHitObject | null {
+    return null;
   }
 
   protected override loadAsyncComplete() {
@@ -165,8 +177,6 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
 
   #onDefaultsApplied = () => {
     this.apply(this.entry!);
-
-    this.updateState();
 
     this.defaultsApplied.emit(this);
   };

@@ -2,17 +2,16 @@ import type { Bindable, IKeyBindingHandler, KeyBindingPressEvent } from 'osucad-
 import {
   Axes,
   Container,
+  dependencyLoader,
   DrawSizePreservingFillContainer,
   PlatformAction,
-  Vec2,
-  dependencyLoader,
   resolved,
+  Vec2,
 } from 'osucad-framework';
 import { CommandManager } from '../../context/CommandManager';
 import { EditorAction } from '../../EditorAction';
 import { NEW_COMBO } from '../../InjectionTokens';
 import { EditorClock } from '../../EditorClock';
-import { ConnectedUsersManager } from '../../context/ConnectedUsersManager';
 import { HitObjectClipboard } from '../../CopyPasteHandler';
 import { HitObjectList } from '../../../beatmap/hitObjects/HitObjectList';
 import { BeatmapBackground } from '../../playfield/BeatmapBackground';
@@ -24,7 +23,6 @@ import { UpdateHitObjectCommand } from '../../commands/UpdateHitObjectCommand';
 import { HitObjectUtils } from './HitObjectUtils';
 import { EditorSelection } from './EditorSelection';
 import { SelectionOverlay } from './selection/SelectionOverlay';
-import { ComposerCursorContainer } from './ComposerCursorContainer';
 import type { IPositionSnapProvider } from './snapping/IPositionSnapProvider';
 import { HitObjectSnapProvider } from './snapping/HitObjectSnapProvider';
 import type { SnapTarget } from './snapping/SnapTarget';
@@ -75,15 +73,7 @@ export class HitObjectComposer
     this.dependencies.provide(Playfield, this.playfield);
     this.dependencies.provide(OsuPlayfield, this.playfield);
 
-    const userManager = this.dependencies.resolveOptional(
-      ConnectedUsersManager,
-    );
-
     this.addInternal(new HitObjectClipboard());
-
-    if (userManager) {
-      this.addInternal(new ComposerCursorContainer());
-    }
 
     this.snapProviders = [
       new HitObjectSnapProvider(this.hitObjects, this.selection, this.editorClock),
@@ -110,6 +100,13 @@ export class HitObjectComposer
         { immediate: true },
       );
     });
+  }
+
+  override updateSubTree(): boolean {
+    performance.mark('HitObjectComposer#updateSubTree');
+    const result = super.updateSubTree();
+    performance.measure('HitObjectComposer#updateSubTree', 'HitObjectComposer#updateSubTree');
+    return result;
   }
 
   readonly isKeyBindingHandler = true;
