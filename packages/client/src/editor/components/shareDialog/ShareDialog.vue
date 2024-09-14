@@ -96,7 +96,7 @@ async function updateParticipants(users: number[], access: BeatmapAccess) {
 
 function addParticipant(user: OsuUser) {
   console.log('addParticipant', user);
-  updateParticipants([user.id], BeatmapAccess.View);
+  updateParticipants([user.id], BeatmapAccess.Edit);
 }
 </script>
 
