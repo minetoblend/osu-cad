@@ -22,6 +22,10 @@ export class MainMenuPreferencesSection extends PreferencesPanel {
         'Parallax',
         this.config.getBindable(OsucadSettings.SongSelectParallax)!,
       ),
+      new PreferencesToggle(
+        'Blur Backgrounds',
+        this.config.getBindable(OsucadSettings.SongSelectBackgroundBlur)!,
+      ),
     ];
   }
 }
