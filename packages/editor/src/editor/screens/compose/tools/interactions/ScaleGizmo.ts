@@ -119,6 +119,11 @@ class DirectionalScaleHandle extends CompositeDrawable {
     return this.isDragged || this.#handle.receivePositionalInputAt(screenSpacePosition);
   }
 
+  receivePositionalInputAtLocal(localPosition: Vec2): boolean {
+    const local = this.#handle.localTransform.applyInverse(localPosition, new Vec2());
+    return this.isDragged || this.#handle.receivePositionalInputAtLocal(local);
+  }
+
   onHover(): boolean {
     this.#updateState();
 
@@ -256,6 +261,12 @@ class UniformScaleHandle extends CompositeDrawable {
 
   receivePositionalInputAt(screenSpacePosition: Vec2): boolean {
     return this.isDragged || this.#handle.receivePositionalInputAt(screenSpacePosition);
+  }
+
+  receivePositionalInputAtLocal(localPosition: Vec2): boolean {
+    const local = this.#handle.localTransform.applyInverse(localPosition, new Vec2());
+
+    return this.isDragged || this.#handle.receivePositionalInputAtLocal(local);
   }
 
   onHover(): boolean {
