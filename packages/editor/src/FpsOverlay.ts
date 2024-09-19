@@ -1,14 +1,12 @@
-import {
-  Anchor,
-  Axes,
-  Container,
+import type {
   ContainerOptions,
-  dependencyLoader, FillDirection, FillFlowContainer,
-  FrameStatistics,
-  PIXIGraphics, StatisticsCounterType,
+  KeyDownEvent,
+  PIXIGraphics,
 } from 'osucad-framework';
-import { OsucadSpriteText } from './OsucadSpriteText.ts';
+import { Anchor, Axes, BindableBoolean, Container, dependencyLoader, FillDirection, FillFlowContainer, FrameStatistics, Key, StatisticsCounterType } from 'osucad-framework';
+
 import { GraphicsDrawable } from './drawables/GraphicsDrawable.ts';
+import { OsucadSpriteText } from './OsucadSpriteText.ts';
 
 export class FpsOverlay extends Container {
   constructor(options: ContainerOptions = {}) {
@@ -20,7 +18,7 @@ export class FpsOverlay extends Container {
       this.#content = new Container({
         relativeSizeAxes: Axes.Both,
       }),
-      new FillFlowContainer({
+      this.#overlay = new FillFlowContainer({
         direction: FillDirection.Vertical,
         padding: 5,
         autoSizeAxes: Axes.Both,
@@ -48,11 +46,15 @@ export class FpsOverlay extends Container {
     this.with(options);
   }
 
-  readonly #content!: Container;
+  readonly #content: Container;
+
+  readonly #overlay: FillFlowContainer;
 
   get content() {
     return this.#content;
   }
+
+  active = new BindableBoolean(false);
 
   #text!: OsucadSpriteText;
 
@@ -68,15 +70,22 @@ export class FpsOverlay extends Container {
     super.update();
   }
 
+  @dependencyLoader()
+  load() {
+    this.active.addOnChangeListener(e => this.#overlay.alpha = e.value ? 1 : 0, { immediate: true });
+  }
+
   updateAfterChildren() {
     const now = performance.now();
 
+    if (!this.active.value)
+      return;
 
     const frameTime = now - this.#lastUpdateTime;
 
     this.#lastFrameTimes.push(frameTime);
 
-    const bufferSize = 400
+    const bufferSize = 400;
 
     if (this.#lastFrameTimes.length > bufferSize)
       this.#lastFrameTimes.shift();
@@ -94,7 +103,6 @@ export class FpsOverlay extends Container {
     const now = performance.now();
 
     const updateTime = now - this.#updateTime;
-
 
     const fpsFrameTimes = this.#lastFrameTimes.slice(Math.max(0, this.#lastFrameTimes.length - 20));
 
@@ -119,6 +127,15 @@ export class FpsOverlay extends Container {
   #frameGraph!: FrameGraph;
 
   #lastTextUpdate = 0;
+
+  onKeyDown(e: KeyDownEvent): boolean {
+    if (e.key === Key.F10) {
+      this.active.toggle();
+      return true;
+    }
+
+    return false;
+  }
 }
 
 class FrameGraph extends GraphicsDrawable {
@@ -168,7 +185,7 @@ class FrameGraph extends GraphicsDrawable {
       alpha: 0.5,
     });
 
-    for(const i of [5, 10, 20, 50, 100]) {
+    for (const i of [5, 10, 20, 50, 100]) {
       const y = height - i * scale;
       if (y < 0)
         continue;
@@ -183,6 +200,6 @@ class FrameGraph extends GraphicsDrawable {
       width: 1,
     });
 
-    g.roundRect(0, 0, width, height, 2).stroke(0xffffff);
+    g.roundRect(0, 0, width, height, 2).stroke(0xFFFFFF);
   }
 }
