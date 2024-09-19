@@ -1,6 +1,6 @@
+import type { OsuHitObject } from '../hitObjects/OsuHitObject';
 import { Cached, Component, resolved } from 'osucad-framework';
 import { Beatmap } from '../Beatmap';
-import type { OsuHitObject } from '../hitObjects/OsuHitObject';
 
 export abstract class BeatmapProcessor extends Component {
   @resolved(Beatmap)

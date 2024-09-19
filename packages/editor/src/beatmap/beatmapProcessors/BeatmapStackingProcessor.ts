@@ -1,6 +1,6 @@
-import { Vec2 } from 'osucad-framework';
 import type { HitObject } from '../hitObjects/HitObject';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
+import { Vec2 } from 'osucad-framework';
 import { HitCircle } from '../hitObjects/HitCircle';
 import { Slider } from '../hitObjects/Slider';
 import { Spinner } from '../hitObjects/Spinner';
@@ -60,8 +60,6 @@ export class BeatmapStackingProcessor extends BeatmapProcessor {
     if (stackLeniency === 0)
       return;
 
-    performance.mark('calculateStacking-start');
-
     if (endIndex < hitObjects.length - 1) {
       for (let i = endIndex; i >= startIndex; i--) {
         let stackBaseIndex = i;
@@ -79,8 +77,8 @@ export class BeatmapStackingProcessor extends BeatmapProcessor {
             Vec2.distance(stackBaseObject.position, objectN.position)
             < stackDistance
             || (stackBaseObject instanceof Slider
-            && Vec2.distance(stackBaseObject.endPosition, objectN.position)
-            < stackDistance)
+              && Vec2.distance(stackBaseObject.endPosition, objectN.position)
+              < stackDistance)
           ) {
             stackBaseIndex = n;
             objectN.stackHeight = 0;
