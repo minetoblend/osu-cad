@@ -1,25 +1,30 @@
-import { Anchor, Axes, BindableNumber, Container, dependencyLoader, resolved } from 'osucad-framework';
-import { PreferencesStore } from '../../preferences/PreferencesStore';
-import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
-import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
+import type { Slider } from '../../beatmap/hitObjects/Slider.ts';
+import type { SliderTailCircle } from '../../beatmap/hitObjects/SliderTailCircle.ts';
+import { Anchor, Axes, BindableBoolean, BindableNumber, Container, dependencyLoader, resolved } from 'osucad-framework';
 import { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
+import { OsucadConfigManager } from '../../config/OsucadConfigManager.ts';
+import { OsucadSettings } from '../../config/OsucadSettings.ts';
+import { PreferencesStore } from '../../preferences/PreferencesStore';
+import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
+import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
 import { DrawableOsuHitObject } from './DrawableOsuHitObject.ts';
-import { SliderTailCircle } from '../../beatmap/hitObjects/SliderTailCircle.ts';
-import { Slider } from '../../beatmap/hitObjects/Slider.ts';
 
 export class DrawableSliderTail extends DrawableOsuHitObject<SliderTailCircle> {
-  constructor() {
-    super();
-  }
-
   #scaleContainer!: Container;
 
   circlePiece!: SkinnableDrawable;
 
   scaleBindable = new BindableNumber(0);
 
+  hitAnimations = new BindableBoolean();
+
+  @resolved(OsucadConfigManager)
+  config!: OsucadConfigManager;
+
   @dependencyLoader()
   load() {
+    this.config.bindWith(OsucadSettings.HitAnimations, this.hitAnimations);
+
     this.origin = Anchor.Center;
     this.size = OsuHitObject.object_dimensions;
 
@@ -29,14 +34,16 @@ export class DrawableSliderTail extends DrawableOsuHitObject<SliderTailCircle> {
         origin: Anchor.Center,
         anchor: Anchor.Center,
         children: [
-          this.circlePiece = new SkinnableDrawable(OsuSkinComponentLookup.SliderTailHitCircle),
+          this.circlePiece = new SkinnableDrawable(OsuSkinComponentLookup.SliderTailHitCircle).with({
+            anchor: Anchor.Center,
+            origin: Anchor.Center,
+          }),
         ],
       }),
     );
 
     this.scaleBindable.addOnChangeListener(scale => this.#scaleContainer.scale = scale.value);
   }
-
 
   get slider() {
     return (this.parentHitObject?.hitObject ?? null) as Slider | null;
@@ -54,6 +61,10 @@ export class DrawableSliderTail extends DrawableOsuHitObject<SliderTailCircle> {
 
   protected updateEndTimeTransforms() {
     this.delay(800).fadeOut();
+
+    if (this.hitAnimations.value) {
+      this.circlePiece.scaleTo(1.5, 240).fadeOut(240);
+    }
   }
 
   onApplied() {
@@ -61,11 +72,15 @@ export class DrawableSliderTail extends DrawableOsuHitObject<SliderTailCircle> {
 
     this.scaleBindable.bindTo(this.hitObject!.scaleBindable);
     this.slider!.path.invalidated.addListener(this.updatePosition, this);
+
+    this.hitAnimations.valueChanged.addListener(this.updateState, this);
   }
 
   onFreed() {
     this.scaleBindable.unbindFrom(this.hitObject!.scaleBindable);
     this.slider!.path.invalidated.removeListener(this.updatePosition);
+
+    this.hitAnimations.valueChanged.removeListener(this.updateState);
   }
 
   updatePosition() {
