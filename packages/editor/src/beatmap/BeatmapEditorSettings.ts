@@ -14,7 +14,15 @@ export class BeatmapEditorSettings {
     this.beatDivisorBindable.value = value;
   }
 
-  gridSize = 4;
+  gridSizeBindable = new Bindable(4);
+
+  get gridSize() {
+    return this.gridSizeBindable.value;
+  }
+
+  set gridSize(value) {
+    this.gridSizeBindable.value = value;
+  }
 
   timelineZoom = 1;
 }
