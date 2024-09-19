@@ -1,36 +1,28 @@
-import { Bindable } from 'osucad-framework';
+import type { ScheduledDelegate } from 'osucad-framework';
 import type { BeatmapItemInfo } from './BeatmapItemInfo';
-import lunr from 'lunr';
+import { Bindable, Component } from 'osucad-framework';
 
-export class BeatmapSelectFilter {
+import { BeatmapSearchIndex } from './BeatmapSearchIndex.ts';
+
+export class BeatmapSelectFilter extends Component {
   constructor(
     readonly beatmaps: Bindable<BeatmapItemInfo[]>,
   ) {
-    this.index = lunr(function () {
-      this.ref('id');
-      this.field('title');
-      this.field('artist');
-      this.field('author');
-      this.field('version');
+    super();
 
-      for (const beatmap of beatmaps.value) {
-        this.add({
-          id: beatmap.id,
-          title: beatmap.title,
-          artist: beatmap.artist,
-          author: beatmap.authorName,
-          version: beatmap.difficultyName,
-        });
-      }
+    for (const beatmap of beatmaps.value)
+      this.#index.add(beatmap);
+
+    this.searchTerm.addOnChangeListener(() => {
+      if (this.#scheduledDelegate)
+        this.#scheduledDelegate.cancel();
+      this.#scheduledDelegate = this.scheduler.addDelayed(() => this.updateFilter(), 100);
     });
-
-    this.searchTerm.addOnChangeListener(() => this.updateFilter());
 
     this.updateFilter();
   }
 
-
-  readonly index: lunr.Index;
+  #index = new BeatmapSearchIndex();
 
   searchTerm = new Bindable('');
 
@@ -38,46 +30,16 @@ export class BeatmapSelectFilter {
 
   readonly visibleBeatmaps = new Bindable<Set<string> | null>(null);
 
+  #scheduledDelegate: ScheduledDelegate | null = null;
+
   updateFilter() {
     const term = this.searchTerm.value.trim();
 
-    const words = term.split(' ')
-      .filter(word => word.length > 1)
-      .map(word => {
-        let field: string | undefined;
-
-        if (word.includes('=')) {
-          const [fieldName, value] = word.split('=');
-          field = fieldName;
-          word = value;
-        }
-
-        if (!word.startsWith('+') && !word.startsWith('-') && !word.includes(':')) {
-          word = '+' + word;
-        }
-
-        if (!word.endsWith('*') && !word.endsWith('insane')) {
-          word = word + '*';
-        }
-
-        if (field)
-          return `${field}:${word}`;
-
-        return word;
-      });
-
-    if (words.length === 0) {
+    if (term.length === 0) {
       this.visibleBeatmaps.value = null;
       return;
     }
 
-    try {
-      const result = this.index.search(words.join(' '));
-
-      this.visibleBeatmaps.value = new Set(result.flatMap(it => it.ref)) as Set<string>;
-    } catch (e) {
-      console.warn(e);
-      this.visibleBeatmaps.value = null;
-    }
+    this.visibleBeatmaps.value = new Set(this.#index.search(this.searchTerm.value).map(it => it.id));
   }
 }
