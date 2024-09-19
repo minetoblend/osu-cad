@@ -1,3 +1,4 @@
+import type { Slider } from '../../beatmap/hitObjects/Slider';
 import {
   Anchor,
   Axes,
@@ -5,13 +6,12 @@ import {
   FillMode,
   MouseButton,
   type MouseDownEvent,
-  RoundedBox,
   resolved,
+  RoundedBox,
 } from 'osucad-framework';
+import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection.ts';
 import { EditorSelection } from '../screens/compose/EditorSelection';
 import { SliderUtils } from '../screens/compose/tools/SliderUtils';
-import type { Slider } from '../../beatmap/hitObjects/Slider';
-import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection.ts';
 
 export class TimelineRepeatCircle extends CompositeDrawable {
   constructor(readonly hitObject: Slider, readonly index: number) {
@@ -97,8 +97,9 @@ export class TimelineRepeatCircle extends CompositeDrawable {
       }
 
       if (e.controlPressed) {
-        SliderUtils.toggleEdge(this.selection, this.hitObject.subSelection, this.index + 1)
-      } else {
+        SliderUtils.toggleEdge(this.selection, this.hitObject.subSelection, this.index + 1);
+      }
+      else {
         this.selection.setSliderSelection(
           this.hitObject,
           SliderSelectionType.Custom,

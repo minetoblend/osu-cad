@@ -1,6 +1,6 @@
 import type { DrawableOptions, Vec2 } from 'osucad-framework';
-import { Axes, CompositeDrawable, dependencyLoader, resolved } from 'osucad-framework';
 import type { Color, ColorSource } from 'pixi.js';
+import { Axes, CompositeDrawable, dependencyLoader, resolved } from 'osucad-framework';
 import { RoundedRectangle } from 'pixi.js';
 import { ThemeColors } from '../ThemeColors';
 import { TimelineObjectLayer } from './TimelineObjectLayer';

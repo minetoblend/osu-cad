@@ -2,19 +2,19 @@ import type {
   ContainerOptions,
   MouseDownEvent,
 } from 'osucad-framework';
+import type { Texture } from 'pixi.js';
+import type { Timeline } from './Timeline';
+import gsap from 'gsap';
 import {
   Anchor,
   Axes,
   Container,
+  dependencyLoader,
   DrawableSprite,
   MouseButton,
   RoundedBox,
-  dependencyLoader,
 } from 'osucad-framework';
-import type { Texture } from 'pixi.js';
-import gsap from 'gsap';
 import { getIcon } from '../../OsucadIcons';
-import type { Timeline } from './Timeline';
 
 export class TimelineZoomButtons extends Container {
   constructor(

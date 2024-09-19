@@ -1,19 +1,24 @@
-import {
-  Axes,
-  Container,
-  EasingFunction,
-  dependencyLoader,
+import type {
   MouseDownEvent,
-  MouseButton,
   MouseUpEvent,
 } from 'osucad-framework';
 import type { Slider } from '../../beatmap/hitObjects/Slider';
-import { TimelineObject } from './TimelineObject';
-import { TimelineSliderTail } from './TimelineSliderTail';
-import { TimelineSliderHead } from './TimelineSliderHead';
-import { TimelineRepeatCircle } from './TimelineRepeatCircle';
-import { TimelineVelocityBadge } from './TimelineVelocityBadge';
+import {
+  Axes,
+
+  Container,
+  dependencyLoader,
+  EasingFunction,
+  MouseButton,
+  Vec2,
+} from 'osucad-framework';
+
 import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection.ts';
+import { TimelineObject } from './TimelineObject';
+import { TimelineRepeatCircle } from './TimelineRepeatCircle';
+import { TimelineSliderHead } from './TimelineSliderHead';
+import { TimelineSliderTail } from './TimelineSliderTail';
+import { TimelineVelocityBadge } from './TimelineVelocityBadge';
 
 export class TimelineSlider extends TimelineObject<Slider> {
   constructor(slider: Slider) {
@@ -36,9 +41,18 @@ export class TimelineSlider extends TimelineObject<Slider> {
       }),
       this.#tail = new TimelineSliderTail(this.hitObject),
       this.#head = new TimelineSliderHead(this.hitObject),
-      new TimelineVelocityBadge(this.hitObject),
+      this.#velocityBadge = new TimelineVelocityBadge(this.hitObject),
     );
+
+    this.compactTimeline.addOnChangeListener((e) => {
+      if (e.value)
+        this.#velocityBadge.moveTo(new Vec2(15), 200, EasingFunction.OutExpo);
+      else
+        this.#velocityBadge.moveTo(new Vec2(0), 200, EasingFunction.OutExpo);
+    }, { immediate: true });
   }
+
+  #velocityBadge!: TimelineVelocityBadge;
 
   #firstSetup = true;
 
@@ -112,7 +126,8 @@ export class TimelineSlider extends TimelineObject<Slider> {
     if (this.hitObject.subSelection.type === SliderSelectionType.Body) {
       this.body.outline.alpha = 1;
       this.body.outline.color = 0xFF0000;
-    } else {
+    }
+    else {
       this.body.outline.alpha = 0;
     }
   }

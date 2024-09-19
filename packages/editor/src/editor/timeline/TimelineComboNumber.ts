@@ -1,6 +1,6 @@
-import { Anchor, Axes, CompositeDrawable, FillMode, dependencyLoader } from 'osucad-framework';
-import { OsucadSpriteText } from '../../OsucadSpriteText';
 import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
+import { Anchor, Axes, CompositeDrawable, dependencyLoader, FillMode } from 'osucad-framework';
+import { OsucadSpriteText } from '../../OsucadSpriteText';
 
 export class TimelineComboNumber extends CompositeDrawable {
   constructor(readonly hitObject: OsuHitObject) {

@@ -1,7 +1,7 @@
-import { FillMode, dependencyLoader } from 'osucad-framework';
 import type { Spinner } from '../../beatmap/hitObjects/Spinner';
-import { TimelineElement } from './TimelineElement';
+import { dependencyLoader, FillMode } from 'osucad-framework';
 import { TimelineComboNumber } from './TimelineComboNumber';
+import { TimelineElement } from './TimelineElement';
 
 export class TimelineSpinnerHead extends TimelineElement {
   constructor(readonly hitObject: Spinner) {

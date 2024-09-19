@@ -1,26 +1,27 @@
-import {
+import type {
   DragEvent,
   DragStartEvent,
-  MouseDownEvent, MouseUpEvent,
+  MouseDownEvent,
+  MouseUpEvent,
 } from 'osucad-framework';
+import type { Slider } from '../../beatmap/hitObjects/Slider';
 import {
   Anchor,
+  dependencyLoader,
   FillMode,
   MouseButton,
-  dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import { EditorClock } from '../EditorClock';
-import { CommandManager } from '../context/CommandManager';
-import { SliderUtils } from '../screens/compose/tools/SliderUtils';
-import { EditorSelection } from '../screens/compose/EditorSelection';
 import { Beatmap } from '../../beatmap/Beatmap';
-import type { Slider } from '../../beatmap/hitObjects/Slider';
-import { UpdateHitObjectCommand } from '../commands/UpdateHitObjectCommand';
-import { TimelineElement } from './TimelineElement';
-import { Timeline } from './Timeline';
-import { TimelineSlider } from './TimelineSlider';
 import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection.ts';
+import { UpdateHitObjectCommand } from '../commands/UpdateHitObjectCommand';
+import { CommandManager } from '../context/CommandManager';
+import { EditorClock } from '../EditorClock';
+import { EditorSelection } from '../screens/compose/EditorSelection';
+import { SliderUtils } from '../screens/compose/tools/SliderUtils';
+import { Timeline } from './Timeline';
+import { TimelineElement } from './TimelineElement';
+import { TimelineSlider } from './TimelineSlider';
 
 export class TimelineSliderTail extends TimelineElement {
   constructor(readonly hitObject: Slider) {
@@ -79,8 +80,6 @@ export class TimelineSliderTail extends TimelineElement {
         }),
         false,
       );
-
-
     }
     else {
       const endTime = this.beatmap.controlPoints.snap(
@@ -91,8 +90,8 @@ export class TimelineSliderTail extends TimelineElement {
 
       const velocityOverride
         = ((this.hitObject.velocity / this.hitObject.baseVelocity)
-        * this.hitObject.duration)
-        / targetDuration;
+          * this.hitObject.duration)
+          / targetDuration;
 
       if (velocityOverride > 0 && Number.isFinite(velocityOverride)) {
         this.commandManager.submit(
@@ -159,11 +158,12 @@ export class TimelineSliderTail extends TimelineElement {
 
       if (e.controlPressed) {
         SliderUtils.toggleEdge(this.selection, this.hitObject.subSelection, this.hitObject.repeatCount + 1);
-      } else {
+      }
+      else {
         this.selection.setSliderSelection(
           this.hitObject,
-          SliderSelectionType.End
-        )
+          SliderSelectionType.End,
+        );
       }
 
       return true;

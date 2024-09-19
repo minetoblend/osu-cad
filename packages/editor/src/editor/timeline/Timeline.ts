@@ -1,19 +1,9 @@
-import { BindableNumber, KeyDownEvent, MouseDownEvent, PIXIContainer, ScrollEvent } from 'osucad-framework';
-import {
-  Anchor,
-  Axes,
-  Box,
-  Container,
-  dependencyLoader,
-  EasingFunction,
-  MouseButton,
-  resolved,
-} from 'osucad-framework';
-import { EditorClock } from '../EditorClock';
-import { ThemeColors } from '../ThemeColors';
-import { EditorSelection } from '../screens/compose/EditorSelection';
+import type { KeyDownEvent, PIXIContainer, ScrollEvent } from 'osucad-framework';
+import { Anchor, Axes, BindableNumber, Box, Container, dependencyLoader, EasingFunction, resolved } from 'osucad-framework';
 import { Beatmap } from '../../beatmap/Beatmap';
 import { HitObjectList } from '../../beatmap/hitObjects/HitObjectList';
+import { EditorClock } from '../EditorClock';
+import { ThemeColors } from '../ThemeColors';
 import { TimelineTick } from './TimelineTick';
 
 export class Timeline extends Container {
@@ -55,9 +45,7 @@ export class Timeline extends Container {
         color: this.theme.primary,
       }),
     );
-
   }
-
 
   update() {
     super.update();
@@ -116,7 +104,6 @@ export class Timeline extends Container {
   }
 
   #updateTicks() {
-    performance.mark('Timeline#updateTicks');
     this.#tickContainer.y = this.drawSize.y;
     this.#tickContainer.scale.set(1, 15);
     this.#tickContainer.pivot.y = 1;
@@ -145,8 +132,6 @@ export class Timeline extends Container {
       tick.x = this.timeToPosition(tickInfo.time);
       tick.type = tickInfo.type;
     }
-
-    performance.measure('Timeline#updateTicks', 'Timeline#updateTicks');
   }
 
   zoomSpeed = 0.3;
@@ -165,19 +150,8 @@ export class Timeline extends Container {
     return this.transformTo('zoom', zoom, duration, easing);
   }
 
-  @resolved(EditorSelection)
-  selection!: EditorSelection;
-
   @resolved(HitObjectList)
   hitObjects!: HitObjectList;
-
-  onMouseDown(e: MouseDownEvent): boolean {
-    if (e.button === MouseButton.Left && !e.controlPressed) {
-      this.selection.clear();
-    }
-
-    return true;
-  }
 
   onKeyDown(e: KeyDownEvent): boolean {
     if (!e.controlPressed && e.shiftPressed && e.key.startsWith('Digit')) {
@@ -204,4 +178,3 @@ export class Timeline extends Container {
     return false;
   }
 }
-

@@ -1,4 +1,6 @@
-import { Timeline } from './Timeline.ts';
+import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject.ts';
+import type { LifetimeEntry } from '../../pooling/LifetimeEntry.ts';
+import type { TimelineObject } from './TimelineObject.ts';
 import {
   Axes,
   type Bindable,
@@ -7,20 +9,24 @@ import {
   dependencyLoader,
   type DragEvent,
   type DragStartEvent,
+  MouseButton,
+  type MouseDownEvent,
+  resolved,
 } from '../../../../framework/src';
-import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject.ts';
-import { LifetimeEntry } from '../../pooling/LifetimeEntry.ts';
-import { HitObjectLifetimeEntry } from '../hitobjects/HitObjectLifetimeEntry.ts';
-import type { TimelineObject } from './TimelineObject.ts';
-import { LifetimeEntryManager } from '../../pooling/LifetimeEntryManager.ts';
 import { HitCircle } from '../../beatmap/hitObjects/HitCircle.ts';
-import { TimelineHitCircle } from './TimelineHitCircle.ts';
 import { Slider } from '../../beatmap/hitObjects/Slider.ts';
-import { TimelineSlider } from './TimelineSlider.ts';
 import { Spinner } from '../../beatmap/hitObjects/Spinner.ts';
+import { LifetimeEntryManager } from '../../pooling/LifetimeEntryManager.ts';
+import { HitObjectLifetimeEntry } from '../hitobjects/HitObjectLifetimeEntry.ts';
+import { EditorSelection } from '../screens/compose/EditorSelection.ts';
+import { Timeline } from './Timeline.ts';
+import { TimelineHitCircle } from './TimelineHitCircle.ts';
+import { TimelineSlider } from './TimelineSlider.ts';
 import { TimelineSpinner } from './TimelineSpinner.ts';
 
 export class ComposeScreenTimeline extends Timeline {
+  @resolved(EditorSelection)
+  selection!: EditorSelection;
 
   @dependencyLoader()
   load() {
@@ -31,7 +37,6 @@ export class ComposeScreenTimeline extends Timeline {
     );
 
     this.addInternal(this.#dragBox);
-
 
     this.hitObjects.added.addListener(this.#onHitObjectAdded, this);
     this.hitObjects.removed.addListener(this.#onHitObjectRemoved, this);
@@ -47,21 +52,30 @@ export class ComposeScreenTimeline extends Timeline {
   #entries = new Map<OsuHitObject, TimelineLifefetimeEntry>();
 
   #onHitObjectAdded(hitObject: OsuHitObject) {
+    if (hitObject.synthetic)
+      return;
+
     const entry = new TimelineLifefetimeEntry(hitObject);
 
-    this.#entryManager.addEntry(entry)
+    this.#entryManager.addEntry(entry);
 
     this.#entries.set(hitObject, entry);
   }
 
   #onHitObjectRemoved(hitObject: OsuHitObject) {
     const entry = this.#entries.get(hitObject);
-    if (!entry) {
-      console.warn(`Could not find entry for ${hitObject}`);
+    if (!entry)
       return;
-    }
 
     this.#entryManager.removeEntry(entry);
+  }
+
+  onMouseDown(e: MouseDownEvent): boolean {
+    if (e.button === MouseButton.Left && !e.controlPressed) {
+      this.selection.clear();
+    }
+
+    return true;
   }
 
   #entryManager = new LifetimeEntryManager();
@@ -152,7 +166,8 @@ export class ComposeScreenTimeline extends Timeline {
 
     if (e.controlPressed) {
       this.selection.select([...this.#startSelection, ...selectedObjects]);
-    } else {
+    }
+    else {
       this.selection.select(selectedObjects);
     }
 
@@ -172,7 +187,7 @@ export class ComposeScreenTimeline extends Timeline {
 
     this.#objectContainer.x = -this.startTime * this.pixelsPerMs;
 
-    this.#entryManager.update(this.startTime, this.endTime)
+    this.#entryManager.update(this.startTime, this.endTime);
 
     if (this.isDragged) {
       const startTime = Math.min(this.#dragStartTime, this.#dragEndTime);
@@ -183,13 +198,6 @@ export class ComposeScreenTimeline extends Timeline {
     }
   }
 
-  override updateSubTree(): boolean {
-    performance.mark('ComposeScreenTimeline#updateSubTree');
-    const result = super.updateSubTree();
-    performance.measure('ComposeScreenTimeline#updateSubTree', 'ComposeScreenTimeline#updateSubTree');
-    return result;
-  }
-
   #dragStartTime = 0;
   #dragEndTime = 0;
   #dragBox = new Box({
@@ -198,9 +206,7 @@ export class ComposeScreenTimeline extends Timeline {
   });
 }
 
-
 class TimelineLifefetimeEntry extends HitObjectLifetimeEntry {
-
   constructor(hitObject: OsuHitObject) {
     super(hitObject);
   }
@@ -214,6 +220,4 @@ class TimelineLifefetimeEntry extends HitObjectLifetimeEntry {
 
     this.lifetimeEnd = this.hitObject.endTime + 500;
   }
-
-
 }

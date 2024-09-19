@@ -1,12 +1,12 @@
 import type { MouseDownEvent } from 'osucad-framework';
-import { dependencyLoader, FillMode, MouseButton, resolved } from 'osucad-framework';
-import { SliderUtils } from '../screens/compose/tools/SliderUtils';
-import { EditorSelection } from '../screens/compose/EditorSelection';
 import type { Slider } from '../../beatmap/hitObjects/Slider';
-import { TimelineElement } from './TimelineElement';
-import { TimelineComboNumber } from './TimelineComboNumber';
-import { TimelineSlider } from './TimelineSlider';
+import { dependencyLoader, FillMode, MouseButton, resolved } from 'osucad-framework';
 import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection.ts';
+import { EditorSelection } from '../screens/compose/EditorSelection';
+import { SliderUtils } from '../screens/compose/tools/SliderUtils';
+import { TimelineComboNumber } from './TimelineComboNumber';
+import { TimelineElement } from './TimelineElement';
+import { TimelineSlider } from './TimelineSlider';
 
 export class TimelineSliderHead extends TimelineElement {
   constructor(readonly hitObject: Slider) {
@@ -66,12 +66,13 @@ export class TimelineSliderHead extends TimelineElement {
       }
 
       if (e.controlPressed) {
-        SliderUtils.toggleEdge(this.selection, this.hitObject.subSelection, 0)
-      } else {
+        SliderUtils.toggleEdge(this.selection, this.hitObject.subSelection, 0);
+      }
+      else {
         this.selection.setSliderSelection(
           this.hitObject,
-          SliderSelectionType.Start
-        )
+          SliderSelectionType.Start,
+        );
       }
     }
 

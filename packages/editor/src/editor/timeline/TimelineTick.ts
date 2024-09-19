@@ -1,5 +1,5 @@
-import { Color, Sprite, Texture } from 'pixi.js';
 import { TickType } from '@osucad/common';
+import { Color, Sprite, Texture } from 'pixi.js';
 
 const tickColors = {
   [TickType.Full]: new Color(0xFFFFFF),
@@ -9,7 +9,7 @@ const tickColors = {
   [TickType.Sixth]: new Color(0xFF77FF),
   [TickType.Eighth]: new Color(0xFFFF00),
   [TickType.Other]: new Color(0x777777),
-} as const
+} as const;
 
 export class TimelineTick extends Sprite {
   constructor() {

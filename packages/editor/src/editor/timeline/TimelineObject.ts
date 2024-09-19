@@ -1,36 +1,29 @@
-import {
-  Anchor,
-  Axes,
-  Cached,
-  Container,
-  dependencyLoader,
+import type {
   DragEvent,
-  Invalidation,
-  InvalidationSource,
-  MouseButton,
   MouseDownEvent,
   MouseUpEvent,
-  resolved,
   Vec2,
 } from 'osucad-framework';
 import type { ColorSource } from 'pixi.js';
-import { EditorClock } from '../EditorClock';
-import { ThemeColors } from '../ThemeColors';
-import { CommandManager } from '../context/CommandManager';
-import { EditorSelection } from '../screens/compose/EditorSelection';
-import { Editor } from '../Editor';
-import { Beatmap } from '../../beatmap/Beatmap';
 import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
+import { Anchor, BindableBoolean, Cached, Container, dependencyLoader, EasingFunction, Invalidation, InvalidationSource, MouseButton, resolved } from 'osucad-framework';
+import { Beatmap } from '../../beatmap/Beatmap';
+import { OsucadConfigManager } from '../../config/OsucadConfigManager.ts';
+import { OsucadSettings } from '../../config/OsucadSettings.ts';
 import { DeleteHitObjectCommand } from '../commands/DeleteHitObjectCommand';
 import { UpdateHitObjectCommand } from '../commands/UpdateHitObjectCommand';
+import { CommandManager } from '../context/CommandManager';
+import { Editor } from '../Editor';
+import { EditorClock } from '../EditorClock';
+import { EditorSelection } from '../screens/compose/EditorSelection';
+import { ThemeColors } from '../ThemeColors';
 import { Timeline } from './Timeline';
 import { TimelineElement } from './TimelineElement';
 
 export abstract class TimelineObject<T extends OsuHitObject = OsuHitObject> extends Container {
   protected constructor(readonly hitObject: T) {
     super({
-      relativeSizeAxes: Axes.Y,
-      height: 0.5,
+      height: 40,
       anchor: Anchor.CenterLeft,
       origin: Anchor.CenterLeft,
     });
@@ -46,8 +39,15 @@ export abstract class TimelineObject<T extends OsuHitObject = OsuHitObject> exte
   @resolved(Beatmap)
   protected beatmap!: Beatmap;
 
+  compactTimeline = new BindableBoolean();
+
+  @resolved(OsucadConfigManager)
+  config!: OsucadConfigManager;
+
   @dependencyLoader()
   [Symbol('load')]() {
+    this.config.bindWith(OsucadSettings.CompactTimeline, this.compactTimeline);
+
     this.add(this.body = new TimelineElement());
 
     this.body.body.alpha = 0.8;
@@ -61,6 +61,9 @@ export abstract class TimelineObject<T extends OsuHitObject = OsuHitObject> exte
 
       this.selectionChanged(selected);
     });
+
+    this.compactTimeline.addOnChangeListener(e => this.moveToY(e.value ? -5 : 0, 200, EasingFunction.OutExpo));
+    this.y = this.compactTimeline.value ? -5 : 0;
   }
 
   protected loadComplete() {
@@ -71,7 +74,7 @@ export abstract class TimelineObject<T extends OsuHitObject = OsuHitObject> exte
       throw new Error('RhythmTimelineObject must be a child of RhythmTimeline');
     }
 
-    this.timeline.zoomBindable.valueChanged.addListener(this.updatePosition, this);
+    this.timeline.zoomBindable.valueChanged.addListener(this.invalidatePosition, this);
 
     this.setup();
 
@@ -80,7 +83,7 @@ export abstract class TimelineObject<T extends OsuHitObject = OsuHitObject> exte
 
   setup() {
     this.body.bodyColor = this.hitObject.comboColor;
-    this.updatePosition()
+    this.updatePosition();
   }
 
   protected selectionChanged(selected: boolean) {
@@ -96,6 +99,10 @@ export abstract class TimelineObject<T extends OsuHitObject = OsuHitObject> exte
       this.updatePosition();
       this.positionBacking.validate();
     }
+  }
+
+  invalidatePosition() {
+    this.positionBacking.invalidate();
   }
 
   updatePosition() {
@@ -132,9 +139,9 @@ export abstract class TimelineObject<T extends OsuHitObject = OsuHitObject> exte
         this.selectFromMouseDown(e);
 
         this.#dragOffset = this.hitObject.startTime
-          - this.timeline.positionToTime(
-            this.timeline.toLocalSpace(e.screenSpaceMousePosition).x,
-          );
+        - this.timeline.positionToTime(
+          this.timeline.toLocalSpace(e.screenSpaceMousePosition).x,
+        );
         this.#lastTime = this.hitObject.startTime;
         return true;
       case MouseButton.Right:

@@ -1,20 +1,22 @@
 import type {
+  HoverEvent,
   MouseDownEvent,
 } from 'osucad-framework';
+import type { Slider } from '../../beatmap/hitObjects/Slider';
 import {
   Anchor,
   Axes,
   CompositeDrawable,
   Container,
-  MouseButton,
   dependencyLoader,
+  MouseButton,
   resolved,
 } from 'osucad-framework';
+
 import { FastRoundedBox } from '../../drawables/FastRoundedBox';
 import { OsucadSpriteText } from '../../OsucadSpriteText';
-import { CommandManager } from '../context/CommandManager';
-import type { Slider } from '../../beatmap/hitObjects/Slider';
 import { UpdateHitObjectCommand } from '../commands/UpdateHitObjectCommand';
+import { CommandManager } from '../context/CommandManager';
 
 export class TimelineVelocityBadge extends CompositeDrawable {
   constructor(readonly slider: Slider) {
@@ -80,5 +82,9 @@ export class TimelineVelocityBadge extends CompositeDrawable {
     }
 
     return false;
+  }
+
+  onHover(e: HoverEvent): boolean {
+    return true;
   }
 }
