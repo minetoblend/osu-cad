@@ -10,9 +10,22 @@ declare global {
   interface ExposedAPI {
     get stableDetected(): boolean;
 
+    osuPaths: {
+      installPath: string;
+      songsPath: string | null;
+      skinsPath: string | null;
+      dbPath: string | null;
+    } | null;
+
     loadBeatmaps(): Promise<(OsuBeatmap[]) | null>;
 
     loadSkins(): Promise<ElectronSkinInfo[]>;
+
+    saveBeatmap(
+      directory: string,
+      filename: string,
+      content: string,
+    ): Promise<boolean>;
   }
 
   interface ElectronSkinInfo {
