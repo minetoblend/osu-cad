@@ -1,38 +1,40 @@
+import type {
+  PIXIRenderer,
+  ScreenStack,
+} from 'osucad-framework';
 import {
   AudioManager,
   dependencyLoader,
   Game,
   IRenderer,
   isMobile,
-  PIXIRenderer,
   resolved,
-  ScreenStack,
 } from 'osucad-framework';
 import { RenderTarget } from 'pixi.js';
-import { MainCursorContainer } from './MainCursorContainer';
-import { UISamples } from './UISamples';
+import { BeatmapSelect } from './beatmapSelect/BeatmapSelect';
+import { OsucadConfigManager } from './config/OsucadConfigManager.ts';
+import { EditorActionContainer } from './editor/EditorActionContainer';
 import { EditorMixer } from './editor/EditorMixer';
+import { PreferencesContainer } from './editor/preferences/PreferencesContainer';
 import { Fit, ScalingContainer } from './editor/ScalingContainer';
 import { ThemeColors } from './editor/ThemeColors';
-import { EditorActionContainer } from './editor/EditorActionContainer';
-import { PreferencesStore } from './preferences/PreferencesStore';
-import { UIFonts } from './UIFonts';
-import { BeatmapSelect } from './beatmapSelect/BeatmapSelect';
-import { UserAvatarCache } from './UserAvatarCache';
-import { GlobalSongPlayback } from './GlobalSongPlayback';
-import { NotificationOverlay } from './notifications/NotificationOverlay';
-import { DialogContainer } from './modals/DialogContainer';
-import { PreferencesContainer } from './editor/preferences/PreferencesContainer';
-import { OsucadScreenStack } from './OsucadScreenStack';
-import { RootScreen } from './RootScreen';
-import { EditorEnvironment } from './environment/EditorEnvironment';
-import { OsucadIcons } from './OsucadIcons';
-import { ISkinSource } from './skinning/ISkinSource';
-import { IResourcesProvider } from './io/IResourcesProvider';
 import { BeatmapStore, SkinStore } from './environment';
+import { EditorEnvironment } from './environment/EditorEnvironment';
 import { FpsOverlay } from './FpsOverlay';
-import { OsucadConfigManager } from './config/OsucadConfigManager.ts';
+import { GlobalSongPlayback } from './GlobalSongPlayback';
+import { IResourcesProvider } from './io/IResourcesProvider';
+import { MainCursorContainer } from './MainCursorContainer';
+import { DialogContainer } from './modals/DialogContainer';
+import { NotificationOverlay } from './notifications/NotificationOverlay';
+import { OsucadIcons } from './OsucadIcons';
+import { OsucadScreenStack } from './OsucadScreenStack';
+import { PreferencesStore } from './preferences/PreferencesStore';
+import { RootScreen } from './RootScreen';
+import { ISkinSource } from './skinning/ISkinSource';
 import { SkinSwitcher } from './SkinSwitcher.ts';
+import { UIFonts } from './UIFonts';
+import { UISamples } from './UISamples';
+import { UserAvatarCache } from './UserAvatarCache';
 
 RenderTarget.defaultOptions.depth = true;
 RenderTarget.defaultOptions.stencil = true;
@@ -46,7 +48,6 @@ export class OsucadGame extends Game implements IResourcesProvider {
 
   @resolved(IRenderer)
   renderer!: PIXIRenderer;
-
 
   #innerContainer = new ScalingContainer({
     desiredSize: {
@@ -145,4 +146,3 @@ export class OsucadGame extends Game implements IResourcesProvider {
     return true;
   }
 }
-

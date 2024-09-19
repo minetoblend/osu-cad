@@ -1,22 +1,24 @@
+import type {
+  AudioChannel,
+  Drawable,
+  KeyDownEvent,
+  Sample,
+} from 'osucad-framework';
+import type { Texture } from 'pixi.js';
+import type { SkinProvider, SkinStore } from './environment';
+import type { ISkin } from './skinning/ISkin.ts';
+import type { ISkinComponentLookup } from './skinning/ISkinComponentLookup.ts';
+import type { ISkinSource } from './skinning/ISkinSource.ts';
 import {
   Action,
   asyncDependencyLoader,
-  AudioChannel,
   Axes,
   CompositeDrawable,
-  Drawable,
   Key,
-  KeyDownEvent,
   resolved,
-  Sample,
 } from 'osucad-framework';
-import { SkinProvider, SkinStore } from './environment';
 import { IResourcesProvider } from './io/IResourcesProvider.ts';
-import { ISkin } from './skinning/ISkin.ts';
 import { createDefaultSkin } from './skinning/CreateDefaultSkin.ts';
-import { ISkinSource } from './skinning/ISkinSource.ts';
-import { ISkinComponentLookup } from './skinning/ISkinComponentLookup.ts';
-import { Texture } from 'pixi.js';
 
 export class SkinSwitcher extends CompositeDrawable implements ISkinSource {
   constructor(readonly skinStore: SkinStore) {
@@ -107,9 +109,10 @@ export class SkinSwitcher extends CompositeDrawable implements ISkinSource {
       console.log('Loaded skin', skin.name);
 
       if (previousSkin) {
-        this.scheduler.addDelayed(() => previousSkin.dispose(), 1000)
+        this.scheduler.addDelayed(() => previousSkin.dispose(), 1000);
       }
-    } catch (e) {
+    }
+    catch (e) {
       console.error(e);
     }
   }
@@ -117,7 +120,7 @@ export class SkinSwitcher extends CompositeDrawable implements ISkinSource {
   loadNextSkin() {
     const index = this.skinStore.skins.value.indexOf(this.#activeSkinProvider!);
 
-    console.log(index)
+    console.log(index);
 
     const nextIndex = (index + 1) % this.skinStore.skins.value.length;
 
@@ -135,5 +138,6 @@ export class SkinSwitcher extends CompositeDrawable implements ISkinSource {
       return true;
     }
 
-    return false;  }
+    return false;
+  }
 }
