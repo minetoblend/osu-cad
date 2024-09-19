@@ -2,7 +2,7 @@ import { contextBridge } from 'electron';
 import { electronAPI } from '@electron-toolkit/preload';
 
 // Custom APIs for renderer
-const api : ExposedAPI = {
+const api: ExposedAPI = {
   get stableDetected(): boolean {
     const result = electronAPI.ipcRenderer.sendSync('stableDetected');
 
@@ -11,13 +11,23 @@ const api : ExposedAPI = {
     return result;
   },
 
+  get osuPaths() {
+    return electronAPI.ipcRenderer.sendSync('osuPaths');
+  },
+
   loadBeatmaps(): Promise<any> {
     return electronAPI.ipcRenderer.invoke('loadBeatmaps');
   },
 
   loadSkins(): Promise<any> {
     return electronAPI.ipcRenderer.invoke('loadSkins');
-  }
+  },
+
+  saveBeatmap(directory: string,
+              filename: string,
+              content: string): Promise<any> {
+    return electronAPI.ipcRenderer.invoke('saveBeatmap', directory, filename, content);
+  },
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to
