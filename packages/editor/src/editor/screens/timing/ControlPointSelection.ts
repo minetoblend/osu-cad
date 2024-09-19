@@ -6,7 +6,7 @@ export class ControlPointSelection {
   constructor(
     private readonly controlPoints: ControlPointInfo,
   ) {
-
+    controlPoints.groupRemoved.addListener(this.deselect, this);
   }
 
   selection = new Set<ControlPointGroup>();
