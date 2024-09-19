@@ -1,5 +1,6 @@
-import { Bindable, Drawable, Vec2, dependencyLoader, resolved } from 'osucad-framework';
 import type { Container } from 'pixi.js';
+import type { Slider } from '../../beatmap/hitObjects/Slider';
+import { Bindable, dependencyLoader, Drawable, resolved, Vec2 } from 'osucad-framework';
 import {
   Color,
   CustomRenderPipe,
@@ -8,14 +9,13 @@ import {
   RenderContainer,
   WebGLRenderer,
 } from 'pixi.js';
+import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection.ts';
 import { animate } from '../../utils/animate';
 import { ThemeColors } from '../ThemeColors';
-import type { Slider } from '../../beatmap/hitObjects/Slider';
-import { SliderShader } from './SliderShader';
-import { SliderPathGeometry } from './SliderPathGeometry';
-import { GeometryBuilder } from './GeometryBuilder';
 import { DrawableHitObject } from './DrawableHitObject';
-import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection.ts';
+import { GeometryBuilder } from './GeometryBuilder';
+import { SliderPathGeometry } from './SliderPathGeometry';
+import { SliderShader } from './SliderShader';
 
 let endCapGeometry: MeshGeometry | null = null;
 
@@ -93,6 +93,8 @@ export class DrawableSliderBody extends Drawable {
       this.#hitObject.subSelection.changed.removeListener(this.#updateSelection);
     }
     this.#hitObject = hitObject;
+
+    this.#updateSelection();
   }
 
   get hitObject() {
@@ -100,7 +102,7 @@ export class DrawableSliderBody extends Drawable {
   }
 
   #invalidatePath() {
-    this.#pathIsInvalid = true
+    this.#pathIsInvalid = true;
   }
 
   get path() {
@@ -237,9 +239,12 @@ export class DrawableSliderBody extends Drawable {
   }
 
   #updateSelection() {
+    if (!this.hitObject) {
+      this.selected = false;
+      return;
+    }
     this.selected = this.hitObject!.subSelection.type === SliderSelectionType.Body;
   }
-
 }
 
 function getJoinGeometryCount(thetaDiff: number) {
