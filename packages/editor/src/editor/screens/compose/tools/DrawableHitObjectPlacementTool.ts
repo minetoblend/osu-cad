@@ -111,9 +111,13 @@ export abstract class DrawableHitObjectPlacementTool<T extends OsuHitObject> ext
   protected onPlacementStart(hitObject: CommandProxy<T>) {
   }
 
+  protected onPlacementFinish(hitObject: CommandProxy<T>) {}
+
   finishPlacing() {
     if (this.#state !== PlacementState.Placing)
       return;
+
+    this.onPlacementFinish(this.#hitObject!);
 
     this.commit();
 
