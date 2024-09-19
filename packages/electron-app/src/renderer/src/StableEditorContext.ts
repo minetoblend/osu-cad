@@ -75,12 +75,6 @@ export class StableEditorContext extends EditorContext {
     return texture;
   }
 
-  async createBackup() {
-    const contents = this.resources.get(this.osuBeatmap.osu_file_name);
-
-    return null;
-  }
-
   async save() {
     return await window.api.saveBeatmap(this.osuBeatmap.folder_name, this.osuBeatmap.osu_file_name, new StableBeatmapEncoder().encode(this.beatmap));
   }
