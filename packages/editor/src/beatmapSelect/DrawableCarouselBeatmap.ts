@@ -46,6 +46,12 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
         cornerRadius: 10,
         alpha: 0.9,
       }),
+      this.#hoverHighlight = new FastRoundedBox({
+        relativeSizeAxes: Axes.Both,
+        cornerRadius: 10,
+        alpha: 0,
+        depth: -1000,
+      }),
     );
 
     this.scheduler.addDelayed(() => {
@@ -94,6 +100,8 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
   }
 
   #lastEdited!: OsucadSpriteText;
+
+  #hoverHighlight!: FastRoundedBox;
 
   getDifficultyColor() {
     const stops: [number, Color][] = [
@@ -197,5 +205,15 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
 
     if (this.#lastEdited)
       this.#lastEdited.x = -this.header.x - this.movementContainer.x - 20;
+  }
+
+  onHover(e: HoverEvent): boolean {
+    this.#hoverHighlight.fadeTo(0.1).fadeTo(0.05, 300, EasingFunction.OutExpo);
+
+    return true;
+  }
+
+  onHoverLost(e: HoverLostEvent) {
+    this.#hoverHighlight.fadeOut();
   }
 }
