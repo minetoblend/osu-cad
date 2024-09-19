@@ -49,7 +49,11 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
     this.#canCycleSelection = false;
 
     if (e.button === MouseButton.Left) {
-      if (e.controlPressed && this.#sliderInsertPoint && this.activeSlider) {
+      const hovered = this.hoveredHitObjects(e.mousePosition);
+
+      const candidate = this.getSelectionCandidate(hovered);
+
+      if (e.controlPressed && this.#sliderInsertPoint && this.activeSlider && (!candidate || candidate === this.activeSlider)) {
         this.selection.select([this.activeSlider], true);
 
         this.beginInteraction(
@@ -62,14 +66,11 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
         return true;
       }
 
-      const hovered = this.hoveredHitObjects(e.mousePosition);
-
-      if (hovered.length === 0) {
+      if (!candidate) {
         this.beginInteraction(new SelectBoxInteraction(e.mousePosition));
         return true;
       }
 
-      const candidate = this.getSelectionCandidate(hovered)!;
       if (e.controlPressed) {
         if (
           this.selection.length <= 1
@@ -85,12 +86,14 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
 
       if (!this.selection.isSelected(candidate) && hovered.every(it => !it.isSelected)) {
         this.selection.select([candidate]);
-      } else if (!this.#trySelectSliderEdges(candidate, e.mousePosition)) {
+      }
+      else if (!this.#trySelectSliderEdges(candidate, e.mousePosition)) {
         this.#canCycleSelection = true;
       }
 
       return true;
-    } else if (e.button === MouseButton.Right) {
+    }
+    else if (e.button === MouseButton.Right) {
       const hovered = this.hoveredHitObjects(e.mousePosition);
 
       if (hovered.length === 0) {
@@ -104,7 +107,8 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
           this.submit(new DeleteHitObjectCommand(object), false);
         }
         this.commit();
-      } else {
+      }
+      else {
         this.submit(new DeleteHitObjectCommand(candidate));
       }
 
