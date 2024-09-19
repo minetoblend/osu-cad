@@ -50,6 +50,8 @@ export class TimelineSlider extends TimelineObject<Slider> {
       else
         this.#velocityBadge.moveTo(new Vec2(0), 200, EasingFunction.OutExpo);
     }, { immediate: true });
+
+    this.hitObject.path.invalidated.addListener(this.invalidatePosition, this);
   }
 
   #velocityBadge!: TimelineVelocityBadge;
@@ -148,5 +150,11 @@ export class TimelineSlider extends TimelineObject<Slider> {
 
   onMouseUp(e: MouseUpEvent) {
     this.mouseDownWasChild = false;
+  }
+
+  dispose(isDisposing: boolean = true) {
+    this.hitObject.path.invalidated.removeListener(this.invalidatePosition);
+
+    super.dispose(isDisposing);
   }
 }
