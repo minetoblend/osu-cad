@@ -1,11 +1,11 @@
-import { type IVec2, Vec2 } from 'osucad-framework';
-import type { IPathPoint } from '../hitObjects/PathPoint';
-import { PathPoint } from '../hitObjects/PathPoint';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
+import type { IPathPoint } from '../hitObjects/PathPoint';
+import type { SerializedHitSound } from './HitSound';
+import { type IVec2, Vec2 } from 'osucad-framework';
 import { HitCircle } from '../hitObjects/HitCircle';
+import { PathPoint } from '../hitObjects/PathPoint';
 import { Slider } from '../hitObjects/Slider';
 import { Spinner } from '../hitObjects/Spinner';
-import type { SerializedHitSound } from './HitSound';
 import { deserializeHitSound, serializeHitSound } from './HitSound';
 
 export interface SerializedHitObject<TType extends string = string> {

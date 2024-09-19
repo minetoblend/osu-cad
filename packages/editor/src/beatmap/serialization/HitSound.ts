@@ -1,6 +1,6 @@
-import { HitSound } from '../hitSounds/HitSound';
-import type { SampleSet } from '../hitSounds/SampleSet';
 import type { Additions } from '../hitSounds/Additions';
+import type { SampleSet } from '../hitSounds/SampleSet';
+import { HitSound } from '../hitSounds/HitSound';
 
 export interface SerializedHitSound {
   sampleSet: SampleSet;
