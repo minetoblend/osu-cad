@@ -58,13 +58,13 @@ export abstract class DrawableHitObjectPlacementTool<T extends OsuHitObject> ext
 
     circle.position = this.clampToPlayfieldBounds(this.mousePosition);
     circle.startTime = this.editorClock.currentTime;
+    circle.synthetic = true;
 
     circle.startTimeBindable.addOnChangeListener(() => {
       circle.applyDefaults(this.beatmap.controlPoints, this.beatmap.difficulty);
     }, { immediate: true });
 
-    this.playfield.addHitObject(circle);
-    this.playfield.updateSubTree();
+    this.beatmap.hitObjects.add(circle);
 
     this.#previewObject = circle;
 
@@ -80,8 +80,9 @@ export abstract class DrawableHitObjectPlacementTool<T extends OsuHitObject> ext
     this.#state = PlacementState.Placing;
 
     if (this.#previewObject) {
-      this.playfield.removeHitObject(this.#previewObject);
+      this.beatmap.hitObjects.remove(this.#previewObject);
       this.#previewObject = undefined;
+      this.playfield.updateSubTree();
     }
 
     const object = this.createObject();
@@ -152,7 +153,7 @@ export abstract class DrawableHitObjectPlacementTool<T extends OsuHitObject> ext
 
   dispose(disposing: boolean = true) {
     if (this.#previewObject) {
-      this.playfield.removeHitObject(this.#previewObject);
+      this.beatmap.hitObjects.remove(this.#previewObject);
       this.#previewObject = undefined;
     }
 
