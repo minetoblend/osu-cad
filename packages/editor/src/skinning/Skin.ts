@@ -1,17 +1,18 @@
-import { AudioChannel, Drawable, DrawableSprite, IDisposable, Sample } from 'osucad-framework';
+import type { AudioChannel, Drawable, IDisposable, Sample } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
 import type { IResourcesProvider } from '../io/IResourcesProvider';
+import type { IResourceStore } from './IResourceStore';
 import type { ISkin } from './ISkin';
 import type { ISkinComponentLookup } from './ISkinComponentLookup';
-import { TextureStore } from './TextureStore';
-import type { IResourceStore } from './IResourceStore';
-import { ResourceStore } from './ResourceStore';
-import { SpriteComponentLookup } from './SkinnableSprite';
-import { SkinnableTextureAnimation } from './DrawableAnimation';
-import { SkinConfiguration } from './SkinConfiguration';
-import { StableSkinConfigurationDecoder } from './StableSkinConfigurationDecoder';
 import type { SkinInfo } from './SkinInfo';
+import { DrawableSprite } from 'osucad-framework';
+import { SkinnableTextureAnimation } from './DrawableAnimation';
+import { ResourceStore } from './ResourceStore';
+import { SkinConfiguration } from './SkinConfiguration';
+import { SpriteComponentLookup } from './SkinnableSprite';
 import { SampleStore } from './stable/SampleStore.ts';
+import { StableSkinConfigurationDecoder } from './StableSkinConfigurationDecoder';
+import { TextureStore } from './TextureStore';
 
 export abstract class Skin implements IDisposable, ISkin {
   protected readonly textures: TextureStore | null = null;
@@ -30,7 +31,8 @@ export abstract class Skin implements IDisposable, ISkin {
     const configuration = await this.#store.getAsync(this.configurationFilename);
     if (configuration) {
       this.parseConfiguration(configuration);
-    } else {
+    }
+    else {
       this.configuration = new SkinConfiguration();
     }
   }

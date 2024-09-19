@@ -1,10 +1,8 @@
-import { AudioChannel, Drawable, Sample } from 'osucad-framework';
-import { Action } from 'osucad-framework';
+import type { Action, AudioChannel, Drawable, Sample } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
 import type { ISkin } from './ISkin';
 import type { ISkinComponentLookup } from './ISkinComponentLookup';
 import type { ISkinSource } from './ISkinSource';
-import type { ISampleInfo } from './ISampleInfo';
 
 export class SkinSource implements ISkinSource {
   constructor(...skins: ISkin[]) {

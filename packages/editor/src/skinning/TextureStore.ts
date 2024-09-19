@@ -1,7 +1,7 @@
 import type { Texture, TextureSource } from 'pixi.js';
-import { ImageSource } from 'pixi.js';
-import { loadTexture } from 'osucad-framework';
 import type { IResourceStore } from './IResourceStore';
+import { loadTexture } from 'osucad-framework';
+import { ImageSource } from 'pixi.js';
 import { ResourceStore } from './ResourceStore';
 
 export class TextureStore {

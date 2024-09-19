@@ -1,7 +1,7 @@
-/* eslint-disable ts/method-signature-style */
-import { AudioChannel, Drawable, Sample } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
 import type { ISkinComponentLookup } from './ISkinComponentLookup';
+/* eslint-disable ts/method-signature-style */
+import type { AudioChannel, Drawable, Sample } from 'osucad-framework';
 
 export interface ISkin {
   getDrawableComponent(lookup: ISkinComponentLookup): Drawable | null;

@@ -1,5 +1,5 @@
 import type { DependencyContainer, ScheduledDelegate } from 'osucad-framework';
-import { Action, PoolableDrawable, dependencyLoader } from 'osucad-framework';
+import { Action, dependencyLoader, PoolableDrawable } from 'osucad-framework';
 import { ISkinSource } from './ISkinSource';
 
 export class SkinReloadableDrawable extends PoolableDrawable {
@@ -35,7 +35,7 @@ export class SkinReloadableDrawable extends PoolableDrawable {
   #onChange() {
     this.#pendingSkinChange?.cancel();
     // this.#pendingSkinChange = this.scheduler.add(this.#skinChanged, this);
-    this.#skinChanged()
+    this.#skinChanged();
   }
 
   #skinChanged() {

@@ -1,5 +1,5 @@
-import { Color } from 'pixi.js';
 import type { SkinInfo } from './SkinInfo';
+import { Color } from 'pixi.js';
 
 export class SkinConfiguration {
   readonly skinInfo: SkinInfo = {

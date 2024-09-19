@@ -1,7 +1,7 @@
-import { StableSkin } from './stable/StableSkin';
+import type { IResourcesProvider } from '../io/IResourcesProvider.ts';
 import type { IResourceStore } from './IResourceStore';
 import type { SkinInfo } from './SkinInfo';
-import { IResourcesProvider } from '../io/IResourcesProvider.ts';
+import { StableSkin } from './stable/StableSkin';
 
 export async function createDefaultSkin(resourceProvider: IResourcesProvider) {
   const store = new DefaultSkinResourceStore();
@@ -20,7 +20,7 @@ export async function createDefaultSkin(resourceProvider: IResourcesProvider) {
 
 class DefaultSkinResourceStore implements IResourceStore<ArrayBuffer> {
   constructor() {
-    console.log(this.getAvailableResources())
+    console.log(this.getAvailableResources());
   }
 
   #resources = new Map<string, ArrayBuffer>();
@@ -64,10 +64,12 @@ class DefaultSkinResourceStore implements IResourceStore<ArrayBuffer> {
         console.log('Loaded resource', name, data.byteLength);
 
         return data;
-      }).catch(() => {
+      })
+      .catch(() => {
         console.warn('Failed to load resource', name);
         return null;
-      }).finally(() => {
+      })
+      .finally(() => {
         this.#loadPromises.delete(name);
         this.#loaded.add(name);
       });

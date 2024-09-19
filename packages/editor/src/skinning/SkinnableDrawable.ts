@@ -1,8 +1,8 @@
 import type { Drawable } from 'osucad-framework';
-import { Anchor, Axes, Cached, EmptyDrawable, FillMode, Vec2 } from 'osucad-framework';
-import { SkinReloadableDrawable } from './SkinReloadableDrawable';
 import type { ISkinComponentLookup } from './ISkinComponentLookup';
 import type { ISkinSource } from './ISkinSource';
+import { Anchor, Axes, Cached, EmptyDrawable, FillMode, Vec2 } from 'osucad-framework';
+import { SkinReloadableDrawable } from './SkinReloadableDrawable';
 
 enum ConfineMode {
   NoScaling,
@@ -72,7 +72,7 @@ export class SkinnableDrawable extends SkinReloadableDrawable {
       this.drawable.origin = Anchor.Center;
     }
 
-    if(this.internalChildren.length > 0)
+    if (this.internalChildren.length > 0)
       this.removeInternal(this.internalChild, true);
 
     this.addInternal(this.drawable);
