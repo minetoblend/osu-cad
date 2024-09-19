@@ -70,7 +70,7 @@ export class CommandManager {
     command: EditorCommand,
     commit = true,
   ) {
-    console.log('Command submitted', command);
+    console.debug('Command submitted', command);
 
     const result = this.#submit(command, true);
 
