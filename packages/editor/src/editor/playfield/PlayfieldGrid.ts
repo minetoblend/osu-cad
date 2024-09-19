@@ -21,12 +21,7 @@ export class PlayfieldGrid extends Container {
   }
 
   createDrawNode(): PIXIContainer {
-    return new PIXIGraphics({
-      filters: new AlphaFilter({
-        alpha: 0.5,
-        resolution: devicePixelRatio,
-      }),
-    });
+    return new PIXIGraphics();
   }
 
   #pixelSize = 1;
