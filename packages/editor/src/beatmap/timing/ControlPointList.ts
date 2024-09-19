@@ -3,7 +3,9 @@ import { ObservableSortedList } from 'osucad-framework';
 import { ControlPoint } from './ControlPoint';
 
 export class ControlPointList<T extends ControlPoint> extends ObservableSortedList<T> {
-  constructor() {
+  constructor(
+    readonly controlPointAppliedRetroactive = true,
+  ) {
     super(ControlPoint.COMPARER);
   }
 
@@ -27,7 +29,7 @@ export class ControlPointList<T extends ControlPoint> extends ObservableSortedLi
 
     index = ~index;
 
-    if (index > 0)
+    if (index > 0 && this.controlPointAppliedRetroactive)
       index--;
 
     return this.get(index);

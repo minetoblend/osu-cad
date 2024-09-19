@@ -16,7 +16,7 @@ export class ControlPointInfo {
 
   difficultyPoints = new ControlPointList<DifficultyPoint>();
 
-  effectPoints = new ControlPointList<EffectPoint>();
+  effectPoints = new ControlPointList<EffectPoint>(false);
 
   samplePoints = new ControlPointList<SamplePoint>();
 
