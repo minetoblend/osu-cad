@@ -1,16 +1,18 @@
+import type {
+  KeyDownEvent,
+} from 'osucad-framework';
+import type { BeatmapSelectFilter } from './BeatmapSelectFilter';
 import {
   Anchor,
   Axes,
   Box,
   Container,
-  EasingFunction,
   dependencyLoader,
+  EasingFunction,
+  Key,
   resolved,
-  KeyDownEvent, Key,
 } from 'osucad-framework';
 import { ThemeColors } from '../editor/ThemeColors';
-import { TextBox } from '../userInterface/TextBox';
-import type { BeatmapSelectFilter } from './BeatmapSelectFilter';
 import { AlwaysFocusedTextBox } from './AlwaysFocusedTextBox.ts';
 
 export class BeatmapSelectHeader extends Container {
@@ -43,10 +45,14 @@ export class BeatmapSelectHeader extends Container {
     );
 
     const textBox = new AlwaysFocusedTextBox();
+    textBox.placeholderText = 'Search';
 
     this.add(textBox);
 
     textBox.current = this.filter.searchTerm.getBoundCopy();
+
+    textBox.commitOnEnter = false;
+    textBox.commitImmediately = true;
 
     this.scheduler.addDelayed(() => {
       console.log(this.getContainingFocusManager()!.changeFocus(textBox));
