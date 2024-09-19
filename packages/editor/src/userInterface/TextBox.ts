@@ -1,30 +1,37 @@
-import type { ClickEvent, IKeyBindingHandler, KeyBindingPressEvent } from 'osucad-framework';
+import type {
+  Bindable,
+  ClickEvent,
+  IKeyBindingHandler,
+  KeyBindingPressEvent,
+  KeyDownEvent,
+} from 'osucad-framework';
+import type { DoubleClickEvent } from '../../../framework/src/input/events/DoubleClickEvent.ts';
 import {
   Action,
   Anchor,
   Axes,
   BindableWithCurrent,
   Cached,
+  clamp,
   CompositeDrawable,
   Container,
+  dependencyLoader,
   EasingFunction,
+  Key,
+  LoadState,
   MouseButton,
   PlatformAction,
-  TextInputSource,
-  clamp,
-  dependencyLoader,
   resolved,
+  TextInputSource,
 } from 'osucad-framework';
-
 import { BitmapFontManager } from 'pixi.js';
-import gsap from 'gsap';
+import { TabbableContainer } from '../../../framework/src/graphics/containers/TabbableContainer.ts';
 import { FastRoundedBox } from '../drawables/FastRoundedBox';
-import { OsucadSpriteText } from '../OsucadSpriteText';
 import { ThemeColors } from '../editor/ThemeColors';
+import { OsucadSpriteText } from '../OsucadSpriteText';
 import { animate } from '../utils/animate';
-import { DoubleClickEvent } from '../../../framework/src/input/events/DoubleClickEvent.ts';
 
-export class TextBox extends Container implements IKeyBindingHandler<PlatformAction> {
+export class TextBox extends TabbableContainer implements IKeyBindingHandler<PlatformAction> {
   constructor() {
     super({
       relativeSizeAxes: Axes.X,
@@ -39,6 +46,10 @@ export class TextBox extends Container implements IKeyBindingHandler<PlatformAct
   }
 
   onKeyBindingPressed(e: KeyBindingPressEvent<PlatformAction>): boolean {
+    console.log('onKeyBindingPressed', e);
+    if (!this.hasFocus)
+      return false;
+
     switch (e.pressed) {
       case PlatformAction.MoveForwardChar:
         this.#moveCursor(1, false);
@@ -73,6 +84,23 @@ export class TextBox extends Container implements IKeyBindingHandler<PlatformAct
         return true;
       case PlatformAction.SelectAll:
         this.#selectAll();
+    }
+
+    return false;
+  }
+
+  onKeyDown(e: KeyDownEvent): boolean {
+    if (super.onKeyDown(e))
+      return true;
+
+    if (!this.hasFocus)
+      return false;
+
+    switch (e.key) {
+      case Key.Enter:
+        if (this.commitOnEnter) {
+          this.commit();
+        }
     }
 
     return false;
@@ -115,18 +143,34 @@ export class TextBox extends Container implements IKeyBindingHandler<PlatformAct
 
   #placeholder!: OsucadSpriteText;
 
+  #placeholderText = '';
+
+  get placeholderText() {
+    return this.#placeholderText;
+  }
+
+  set placeholderText(value) {
+    this.#placeholderText = value;
+    if (this.loadState >= LoadState.Ready)
+      this.#placeholder.text = value;
+  }
+
   #caret!: Caret;
 
   #spriteText!: OsucadSpriteText;
 
   #textAndLayout = new Cached();
 
+  get canBeTabbedTo(): boolean {
+    return !this.current.disabled;
+  }
+
   @resolved(ThemeColors)
   colors!: ThemeColors;
 
   createPlaceholder(): OsucadSpriteText {
     return new OsucadSpriteText({
-      text: 'Search',
+      text: this.placeholderText,
       color: this.colors.text,
       alpha: 0.5,
     });
@@ -194,7 +238,8 @@ export class TextBox extends Container implements IKeyBindingHandler<PlatformAct
       const positionEnd = this.getPositionAt(this.cursor.rangeRight);
 
       this.#caret.setPosition(position, positionEnd - position);
-    } else {
+    }
+    else {
       this.#caret.setPosition(position);
     }
   }
@@ -224,6 +269,9 @@ export class TextBox extends Container implements IKeyBindingHandler<PlatformAct
   onFocusLost() {
     this.endAcceptingInput();
     this.#textAndLayout.invalidate();
+
+    if (this.commitOnFocusLost)
+      this.commit();
   }
 
   #onTextInput = (text: string) => {
@@ -256,7 +304,25 @@ export class TextBox extends Container implements IKeyBindingHandler<PlatformAct
     this.#text = value;
     this.#textAndLayout.invalidate();
 
-    this.current.value = value;
+    if (this.commitImmediately)
+      this.commit();
+  }
+
+  commitImmediately = false;
+
+  commitOnFocusLost = true;
+
+  commitOnEnter = true;
+
+  readonly onCommit = new Action<string>();
+
+  commit() {
+    this.current.value = this.text;
+    this.onCommit.emit(this.text);
+  }
+
+  cancel() {
+    this.text = this.current.value;
   }
 
   protected insertTextAtCursor(text: string) {
@@ -299,9 +365,11 @@ export class TextBox extends Container implements IKeyBindingHandler<PlatformAct
         position = this.#getStartOfWordBackward(this.text, position);
 
       this.cursor.moveTo(clamp(position, 0, this.text.length));
-    } else if (this.cursor.isRange) {
+    }
+    else if (this.cursor.isRange) {
       this.cursor.moveTo(position);
-    } else {
+    }
+    else {
       this.cursor.moveTo(clamp(position + direction, 0, this.text.length));
     }
   }
@@ -398,7 +466,8 @@ export class TextBox extends Container implements IKeyBindingHandler<PlatformAct
 
       if (position >= layout.width * layout.scale) {
         cursorPosition = this.text.length;
-      } else {
+      }
+      else {
         for (let i = 0; i < line.charPositions.length; i++) {
           cursorPosition = i;
 
@@ -408,7 +477,8 @@ export class TextBox extends Container implements IKeyBindingHandler<PlatformAct
             if (position < boundary) {
               break;
             }
-          } else {
+          }
+          else {
             if (position < line.charPositions[i] * layout.scale) {
               break;
             }
@@ -425,9 +495,8 @@ export class TextBox extends Container implements IKeyBindingHandler<PlatformAct
     if (e.button === MouseButton.Left) {
       const position = e.mousePosition.x - 8;
 
-
       this.cursor.moveTo(this.getIndexAt(position));
-
+      this.#caret.finishTransforms();
 
       return true;
     }
@@ -440,9 +509,9 @@ export class TextBox extends Container implements IKeyBindingHandler<PlatformAct
       const position = this.getIndexAt(e.mousePosition.x - 8);
 
       const start = this.#getStartOfWordBackward(this.text, position);
-      let end = start
-      for(let i = start + 1; i < this.text.length; i++) {
-        if(this.text[i] === ' ') {
+      let end = start;
+      for (let i = start + 1; i < this.text.length; i++) {
+        if (this.text[i] === ' ') {
           break;
         }
         end = i;
@@ -453,7 +522,27 @@ export class TextBox extends Container implements IKeyBindingHandler<PlatformAct
       return true;
     }
 
-    return  false;
+    return false;
+  }
+
+  bindToNumber(bindable: Bindable<number>) {
+    const format = (value: number) => (Math.round(value * 10000) / 10000).toString();
+
+    bindable.addOnChangeListener(e => this.text = format(e.value), { immediate: true });
+
+    this.onCommit.addListener((e) => {
+      const value = Number.parseFloat(e);
+
+      if (!Number.isNaN(value)) {
+        bindable.value = value;
+        bindable.triggerChange();
+      }
+      else {
+        this.text = format(bindable.value);
+      }
+    });
+
+    return this;
   }
 }
 
@@ -486,21 +575,14 @@ class Caret extends CompositeDrawable {
 
     if (this.isRange) {
       this.moveToX(position, 100, EasingFunction.OutExpo);
-      this.fadeTo(0.4);
+      this.fadeTo(0.6);
       this.#caret.alpha = 1;
-      gsap.to(this, {
-        width,
-        duration: 0.1,
-        ease: 'expo.out',
-      });
-    } else {
+      this.resizeWidthTo(width, 100, EasingFunction.OutExpo);
+    }
+    else {
       this.moveToX(position - 1, 100, EasingFunction.OutExpo);
-      this.fadeIn(100);
-      gsap.to(this, {
-        width: 2,
-        duration: 0.1,
-        ease: 'expo.out',
-      });
+      this.fadeIn(100, EasingFunction.OutExpo);
+      this.resizeWidthTo(2, 100, EasingFunction.OutExpo);
     }
   }
 
@@ -516,10 +598,12 @@ class Caret extends CompositeDrawable {
 
       if (time < this.flashInRatio) {
         this.#caret.alpha = animate(time, 0, this.flashInRatio, 0.75, 1);
-      } else {
+      }
+      else {
         this.#caret.alpha = animate(time, this.flashInRatio, 1, 1, 0.5);
       }
-    } else {
+    }
+    else {
       this.#caret.alpha = 0.4;
     }
   }
