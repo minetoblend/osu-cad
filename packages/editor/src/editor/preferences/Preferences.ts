@@ -2,15 +2,15 @@ import {
   Axes,
   Box,
   Container,
+  dependencyLoader,
   Direction,
   FillDirection,
   FillFlowContainer,
-  dependencyLoader,
   resolved,
 } from 'osucad-framework';
 import { BackdropBlurFilter } from 'pixi-filters';
-import { ThemeColors } from '../ThemeColors';
 import { MainScrollContainer } from '../MainScrollContainer';
+import { ThemeColors } from '../ThemeColors';
 import { AudioPreferencesSection } from './AudioPreferencesSection';
 import { MainMenuPreferencesSection } from './MainMenuPreferencesSection.ts';
 import { ViewportPreferencesSection } from './ViewportPreferencesSection';
@@ -30,7 +30,7 @@ export class Preferences extends Container {
   load() {
     const filter = new BackdropBlurFilter({
       strength: 24,
-      quality: 3,
+      quality: 4,
     });
     filter.padding = 20;
 

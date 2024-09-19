@@ -1,9 +1,8 @@
 import { type Drawable, resolved } from 'osucad-framework';
-import { PreferencesStore } from '../../preferences/PreferencesStore';
-import { PreferencesPanel } from './PreferencesPanel';
-import { PreferencesToggle } from './PreferencesToggle';
 import { OsucadConfigManager } from '../../config/OsucadConfigManager.ts';
 import { OsucadSettings } from '../../config/OsucadSettings.ts';
+import { PreferencesPanel } from './PreferencesPanel';
+import { PreferencesToggle } from './PreferencesToggle';
 
 export class ViewportPreferencesSection extends PreferencesPanel {
   getTitle(): string {

@@ -1,4 +1,3 @@
-import gsap from 'gsap';
 import type {
   Bindable,
   DragEndEvent,
@@ -7,15 +6,16 @@ import type {
   MouseDownEvent,
   MouseUpEvent,
 } from 'osucad-framework';
+import gsap from 'gsap';
 import {
   Anchor,
   Axes,
+  clamp,
   CompositeDrawable,
   Container,
+  dependencyLoader,
   MouseButton,
   RoundedBox,
-  clamp,
-  dependencyLoader,
 } from 'osucad-framework';
 import { OsucadSpriteText } from '../../OsucadSpriteText';
 

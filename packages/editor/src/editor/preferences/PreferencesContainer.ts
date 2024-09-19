@@ -3,6 +3,7 @@ import type {
   IKeyBindingHandler,
   KeyBindingPressEvent,
 } from 'osucad-framework';
+import gsap from 'gsap';
 import {
   Anchor,
   Axes,
@@ -10,7 +11,6 @@ import {
   Container,
   dependencyLoader,
 } from 'osucad-framework';
-import gsap from 'gsap';
 import { EditorAction } from '../EditorAction';
 import { MouseTrap } from '../MouseTrap';
 import { Preferences } from './Preferences';

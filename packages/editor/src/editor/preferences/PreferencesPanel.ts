@@ -4,10 +4,10 @@ import type {
 import {
   Axes,
   Container,
+  dependencyLoader,
   FillDirection,
   FillFlowContainer,
   Vec2,
-  dependencyLoader,
 } from 'osucad-framework';
 import { OsucadSpriteText } from '../../OsucadSpriteText';
 

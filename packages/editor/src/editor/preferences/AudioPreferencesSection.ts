@@ -5,9 +5,6 @@ import { OsucadSettings } from '../../config/OsucadSettings.ts';
 import { OsucadSpriteText } from '../../OsucadSpriteText';
 import { PreferencesPanel } from './PreferencesPanel';
 import { VolumeSliderContainer } from './VolumeSlider';
-import { PreferencesToggle } from './PreferencesToggle';
-import { OsucadConfigManager } from '../../config/OsucadConfigManager.ts';
-import { OsucadSettings } from '../../config/OsucadSettings.ts';
 
 export class AudioPreferencesSection extends PreferencesPanel {
   getTitle(): string {
