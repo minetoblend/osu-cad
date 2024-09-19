@@ -74,8 +74,8 @@ export class DrawableSliderTool extends DrawableHitObjectPlacementTool<Slider> {
     return slider;
   }
 
-  applyNewCombo(newCombo: boolean): void {
-    super.applyNewCombo(newCombo);
+  applyNewComboState(newCombo: boolean): void {
+    super.applyNewComboState(newCombo);
 
     if (this.isPlacing) {
       this.hitObject.newCombo = newCombo;
