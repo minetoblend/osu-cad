@@ -1,12 +1,12 @@
+import type {
+  OverviewTimelineMarker,
+} from './OverviewTimelineMarkerContainer';
 import {
   Anchor,
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
 import { EditorClock } from '../EditorClock';
-import type {
-  OverviewTimelineMarker,
-} from './OverviewTimelineMarkerContainer';
 import {
   OverviewTimelineMarkerContainer,
 } from './OverviewTimelineMarkerContainer';

@@ -8,9 +8,9 @@ import {
   Axes,
   CompositeDrawable,
   MouseButton,
+  resolved,
   RoundedBox,
   Vec2,
-  resolved,
 } from 'osucad-framework';
 import { EditorClock } from '../EditorClock';
 

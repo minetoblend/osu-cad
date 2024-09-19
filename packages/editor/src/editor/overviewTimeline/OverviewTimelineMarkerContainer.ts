@@ -8,8 +8,8 @@ import {
   CompositeDrawable,
   Invalidation,
   LayoutMember,
-  RoundedBox,
   resolved,
+  RoundedBox,
 } from 'osucad-framework';
 import { Beatmap } from '../../beatmap/Beatmap';
 

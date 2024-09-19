@@ -7,10 +7,10 @@ import {
 } from 'osucad-framework';
 import { ThemeColors } from '../ThemeColors';
 import { BookmarkMarkers } from './BookmarkMarkers';
-import { OverviewTimelineProgressBar } from './OverviewTimelineProgressBar';
-import { TimingPointMarkers } from './TimingPointMarkers';
 import { DifficultyPointMarkers } from './DifficultyPointMarkers';
+import { OverviewTimelineProgressBar } from './OverviewTimelineProgressBar';
 import { SectionMarkers } from './SectionMarkers';
+import { TimingPointMarkers } from './TimingPointMarkers';
 
 export class OverviewTimeline extends Container {
   constructor() {

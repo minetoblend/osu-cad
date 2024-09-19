@@ -5,9 +5,9 @@ import type {
 import {
   Axes,
   CompositeDrawable,
-  RoundedBox,
   dependencyLoader,
   resolved,
+  RoundedBox,
 } from 'osucad-framework';
 import { EditorClock } from '../EditorClock';
 import { OverviewTimelineMarkerContainer } from './OverviewTimelineMarkerContainer';
