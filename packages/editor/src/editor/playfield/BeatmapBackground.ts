@@ -1,10 +1,10 @@
+import type { Texture } from 'pixi.js';
 import {
   Container,
-  PIXISprite,
   dependencyLoader,
+  PIXISprite,
   resolved,
 } from 'osucad-framework';
-import type { Texture } from 'pixi.js';
 import { EditorContext } from '../context/EditorContext';
 
 export class BeatmapBackground extends Container {

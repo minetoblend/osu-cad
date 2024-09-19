@@ -4,9 +4,9 @@ import type {
   PIXIContainer,
 } from 'osucad-framework';
 import {
-  AlphaFilter,
-  Bindable,
+  BindableNumber,
   Container,
+  dependencyLoader,
   PIXIGraphics,
   resolved,
 } from 'osucad-framework';
