@@ -139,4 +139,6 @@ export abstract class EditorContext {
   dispose() {
     this.#commandHandler?.dispose();
   }
+
+  save?(): Promise<boolean>;
 }
