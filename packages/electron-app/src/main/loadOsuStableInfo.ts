@@ -3,6 +3,8 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
+import log from 'electron-log/main';
+
 async function canAccess(path: string) {
   try {
     await fs.access(path);
@@ -25,6 +27,8 @@ async function findOsuInstallPath() {
   try {
     const registryKey = 'HKCR\\osu!\\shell\\open\\command';
 
+    log.info(`Checking for osu! install path in windows registry`);
+
     const results = await regedit.list([registryKey]);
     const result = results[registryKey];
 
@@ -34,14 +38,28 @@ async function findOsuInstallPath() {
         .split(' ')[0]
         .replace(/osu!.exe/, '');
 
+      log.info(`Found osu! install path in windows registry at: ${installPath}`);
+
       // Trying to access the install path to make sure it's valid
-      if (await isDir(installPath))
+      if (await isDir(installPath) && await canAccess(path.join(installPath, 'osu!.db')))
         return installPath;
 
+      log.warn(`osu! install path from registry was not a valid osu! install directory`)
     }
   } catch (e) {
-    console.error('Error when detecting osu! install path', e);
+    log.error('Error when checking for osu! install path in registry', e);
   }
+
+  const username = os.userInfo().username;
+
+  const fallbackPath = `C:\\Users\\${username}\\AppData\\Local\\osu!`;
+
+  log.info(`Falling back to osu! install path at ${fallbackPath}`);
+
+  if (await isDir(fallbackPath) && await canAccess(path.join(fallbackPath, 'osu!.db')))
+    return fallbackPath;
+
+  log.warn(`No osu! install directory found at ${fallbackPath}`);
 
   return null;
 }
@@ -49,16 +67,28 @@ async function findOsuInstallPath() {
 async function findOsuSongsPath(installPath: string) {
   const username = os.userInfo().username;
 
-  const cfgPath = path.join(installPath, 'osu!.cfg');
+  const cfgPath = path.join(installPath, `osu!.${username}.cfg`);
 
   let songsPath = path.join(installPath, 'Songs');
 
   try {
+    log.info(`Checking for osu! songs path in ${cfgPath}`);
+
     const cfg = await fs.readFile(cfgPath, 'utf-8');
 
     const match = cfg.match(/BeatmapDirectory = (.*)/);
     if (match) {
-      songsPath = path.join(installPath, match[1]);
+      const songDir = match[1].trim();
+
+      if (path.isAbsolute(songDir))
+        songsPath = songDir;
+      else
+        songsPath = path.join(installPath, songDir);
+
+      if (await isDir(songsPath))
+        return songsPath;
+
+      log.warn(`osu! songs path in ${cfgPath} was invalid`);
     }
   } catch (e) {
     console.error(`Failed to read osu!.${username}.cfg`, e);
@@ -66,6 +96,8 @@ async function findOsuSongsPath(installPath: string) {
 
   if (await isDir(songsPath))
     return songsPath;
+
+  log.warn(`No osu! songs path found at default location: ${songsPath}`);
 
   return null;
 }
@@ -75,6 +107,8 @@ async function findOsuSkinsPath(installPath: string) {
   if (await isDir(skinsPath))
     return skinsPath;
 
+  log.warn(`osu! skins path not found at default location: ${skinsPath}`);
+
   return null;
 }
 
@@ -82,6 +116,8 @@ async function findOsuDBPath(installPath: string) {
   const dbPath = path.join(installPath, 'osu!.db');
   if (await canAccess(dbPath))
     return dbPath;
+
+  log.warn(`osu! database file not found at default location: ${dbPath}`);
 
   return null;
 }
@@ -95,17 +131,17 @@ export async function loadOsuStableInfo(): Promise<OsuStableInfo | null> {
   if (!installPath)
     return null;
 
-  console.log(`Detected osu! install path at: ${installPath}`);
+  log.info(`Detected osu! install path at: ${installPath}`);
 
   const songsPath = await findOsuSongsPath(installPath);
   const skinsPath = await findOsuSkinsPath(installPath);
   const dbPath = await findOsuDBPath(installPath);
 
-  if (!songsPath)
-    console.warn('Failed to detect osu! songs path');
+  if (songsPath)
+    log.info(`Detected osu! songs path at: ${songsPath}`);
 
-  if (!skinsPath)
-    console.warn('Failed to detect osu! skins path');
+  if (skinsPath)
+    log.info(`Detected osu! skins path at: ${skinsPath}`);
 
   return {
     installPath,
