@@ -1,21 +1,21 @@
 import type {
   MouseDownEvent,
 } from 'osucad-framework';
+import gsap from 'gsap';
 import {
   Anchor,
   Axes,
   CompositeDrawable,
   Container,
+  dependencyLoader,
   DrawableSprite,
   FillMode,
   MouseButton,
-  dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import gsap from 'gsap';
 import { getIcon } from '../OsucadIcons';
-import { ThemeColors } from './ThemeColors';
 import { EditorClock } from './EditorClock';
+import { ThemeColors } from './ThemeColors';
 
 export class PlayButtonContainer extends CompositeDrawable {
   constructor() {

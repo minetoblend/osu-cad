@@ -1,15 +1,15 @@
 import type { IKeyBindingHandler, KeyBindingPressEvent } from 'osucad-framework';
-import { CompositeDrawable, PlatformAction, resolved } from 'osucad-framework';
-import { hitObjectId } from '@osucad/common';
-import type { SerializedOsuHitObject } from '../beatmap/serialization/HitObjects';
-import { deserializeHitObject, serializeHitObject } from '../beatmap/serialization/HitObjects';
 import type { OsuHitObject } from '../beatmap/hitObjects/OsuHitObject';
+import type { SerializedOsuHitObject } from '../beatmap/serialization/HitObjects';
+import { hitObjectId } from '@osucad/common';
+import { CompositeDrawable, PlatformAction, resolved } from 'osucad-framework';
 import { HitObjectList } from '../beatmap/hitObjects/HitObjectList';
-import { EditorSelection } from './screens/compose/EditorSelection';
+import { deserializeHitObject, serializeHitObject } from '../beatmap/serialization/HitObjects';
+import { CreateHitObjectCommand } from './commands/CreateHitObjectCommand';
+import { DeleteHitObjectCommand } from './commands/DeleteHitObjectCommand';
 import { CommandManager } from './context/CommandManager';
 import { EditorClock } from './EditorClock';
-import { DeleteHitObjectCommand } from './commands/DeleteHitObjectCommand';
-import { CreateHitObjectCommand } from './commands/CreateHitObjectCommand';
+import { EditorSelection } from './screens/compose/EditorSelection';
 
 const hitObjectMimeType = 'web x-osucad/hitobjects+json';
 

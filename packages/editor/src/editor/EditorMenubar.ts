@@ -1,15 +1,31 @@
 import type {
   Drawable,
+  IKeyBindingHandler,
+  KeyBindingPressEvent,
   SpriteText,
 } from 'osucad-framework';
-import { Anchor, Axes, Color, Container, Direction, DrawableMenuItem, MenuItem, RoundedBox, dependencyLoader, resolved } from 'osucad-framework';
+import {
+  Anchor,
+  Axes,
+  Color,
+  Container,
+  dependencyLoader,
+  Direction,
+  DrawableMenuItem,
+  MenuItem,
+  PlatformAction,
+  resolved,
+  RoundedBox,
+} from 'osucad-framework';
+import { Notification } from '../notifications/Notification.ts';
+import { NotificationOverlay } from '../notifications/NotificationOverlay.ts';
 import { OsucadSpriteText } from '../OsucadSpriteText';
-import { EditorMenu } from './EditorMenu';
-import { ThemeColors } from './ThemeColors';
 import { CommandManager } from './context/CommandManager';
 import { Editor } from './Editor.ts';
+import { EditorMenu } from './EditorMenu';
+import { ThemeColors } from './ThemeColors';
 
-export class EditorMenubar extends EditorMenu {
+export class EditorMenubar extends EditorMenu implements IKeyBindingHandler<PlatformAction> {
   constructor() {
     super(Direction.Horizontal, true);
 
@@ -22,8 +38,8 @@ export class EditorMenubar extends EditorMenu {
         text: 'File',
         items: [
           new MenuItem({
-            text: 'Exit',
-            action: () => this.exit(),
+            text: 'Save',
+            action: () => this.save(),
           }),
           new MenuItem({
             text: 'Export',
@@ -35,6 +51,10 @@ export class EditorMenubar extends EditorMenu {
                 text: 'Export as .osz',
               }),
             ],
+          }),
+          new MenuItem({
+            text: 'Exit',
+            action: () => this.exit(),
           }),
         ],
       }),
@@ -51,15 +71,15 @@ export class EditorMenubar extends EditorMenu {
           })),
           new MenuItem({
             text: 'Cut',
-            action: () => this.editor?.cut()
+            action: () => this.editor?.cut(),
           }),
           new MenuItem({
             text: 'Copy',
-            action: () => this.editor?.copy()
+            action: () => this.editor?.copy(),
           }),
           new MenuItem({
             text: 'Paste',
-            action: () => this.editor?.paste()
+            action: () => this.editor?.paste(),
           }),
           new MenuItem({
             text: 'Reverse',
@@ -67,9 +87,9 @@ export class EditorMenubar extends EditorMenu {
             items: [
               new MenuItem({
                 text: 'Without reversing sliders',
-                action: () => this.reverseSelection()
+                action: () => this.reverseSelection(),
               }),
-            ]
+            ],
           }),
         ],
       }),
@@ -103,6 +123,36 @@ export class EditorMenubar extends EditorMenu {
     console.log('reverse');
   }
 
+  @resolved(NotificationOverlay)
+  notifications!: NotificationOverlay;
+
+  async save() {
+    let result = false;
+
+    if (this.editor!.commandHandler.hasUnsavedChanges) {
+      result = await this.editor!.context.save?.() ?? false;
+    }
+    else {
+      result = true;
+    }
+
+    if (result) {
+      this.notifications.add(new Notification(
+        'Saved beatmap',
+        undefined,
+        this.theme.primary,
+      ));
+      this.editor!.commandHandler.hasUnsavedChanges = false;
+    }
+    else {
+      this.notifications.add(new Notification(
+        'Error',
+        'An unexpected error happened when saving the beatmap.',
+        0xEB345E,
+      ));
+    }
+  }
+
   override load() {
     super.load();
 
@@ -129,10 +179,23 @@ export class EditorMenubar extends EditorMenu {
   }
 
   override updateSubTree(): boolean {
-    performance.mark('EditorMenubar#updateSubTree');
     const result = super.updateSubTree();
-    performance.measure('EditorMenubar#updateSubTree', 'EditorMenubar#updateSubTree');
     return result;
+  }
+
+  readonly isKeyBindingHandler = true;
+
+  canHandleKeyBinding(binding: PlatformAction) {
+    return binding instanceof PlatformAction;
+  }
+
+  onKeyBindingPressed(e: KeyBindingPressEvent<PlatformAction>) {
+    if (e.pressed === PlatformAction.Save) {
+      this.save();
+      return true;
+    }
+
+    return false;
   }
 }
 

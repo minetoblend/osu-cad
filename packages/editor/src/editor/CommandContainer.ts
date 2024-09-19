@@ -1,9 +1,9 @@
-import { Container, resolved } from 'osucad-framework';
 import type { OsuHitObject } from '../beatmap/hitObjects/OsuHitObject';
-import { CommandManager } from './context/CommandManager';
-import type { EditorCommand } from './commands/EditorCommand';
 import type { CommandProxy } from './commands/CommandProxy';
+import type { EditorCommand } from './commands/EditorCommand';
+import { Container, resolved } from 'osucad-framework';
 import { createCommandProxy } from './commands/CommandProxy';
+import { CommandManager } from './context/CommandManager';
 
 export class CommandContainer extends Container {
   @resolved(CommandManager)

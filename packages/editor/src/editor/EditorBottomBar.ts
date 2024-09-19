@@ -2,14 +2,14 @@ import {
   Anchor,
   Axes,
   Container,
-  MarginPadding,
   dependencyLoader,
+  MarginPadding,
 } from 'osucad-framework';
 import { BackdropBlurFilter } from 'pixi-filters';
 import { Corner, EditorCornerPiece } from './EditorCornerPiece';
 import { OverviewTimeline } from './overviewTimeline/OverviewTimeline';
-import { TimestampContainer } from './TimestampContainer';
 import { PlayButtonContainer } from './PlayButton';
+import { TimestampContainer } from './TimestampContainer';
 
 export class EditorBottomBar extends Container {
   constructor() {
@@ -81,12 +81,5 @@ export class EditorBottomBar extends Container {
         ],
       }),
     );
-  }
-
-  override updateSubTree(): boolean {
-    performance.mark('EditorBottomBar#updateSubTree');
-    const result = super.updateSubTree();
-    performance.measure('EditorBottomBar#updateSubTree', 'EditorBottomBar#updateSubTree');
-    return result;
   }
 }

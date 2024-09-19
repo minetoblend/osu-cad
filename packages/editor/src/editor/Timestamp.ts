@@ -2,21 +2,21 @@ import type {
   MouseDownEvent,
   SpriteText,
 } from 'osucad-framework';
+import gsap from 'gsap';
 import {
   Anchor,
   Axes,
   CompositeDrawable,
+  dependencyLoader,
   MarginPadding,
   MouseButton,
-  RoundedBox,
-  dependencyLoader,
   resolved,
+  RoundedBox,
 } from 'osucad-framework';
-import gsap from 'gsap';
 import { OsucadSpriteText } from '../OsucadSpriteText';
 import { EditorClock } from './EditorClock';
-import { TimestampFormatter } from './TimestampFormatter';
 import { ThemeColors } from './ThemeColors';
+import { TimestampFormatter } from './TimestampFormatter';
 
 export class Timestamp extends CompositeDrawable {
   constructor() {

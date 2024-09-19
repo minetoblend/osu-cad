@@ -1,25 +1,26 @@
 import type { TimingPoint } from '@osucad/common';
-import {
-  BindableBoolean,
+import type {
   FrameTimeInfo,
   IAdjustableClock,
   IFrameBasedClock,
   Track,
 } from 'osucad-framework';
 import {
+  almostEquals,
   AudioManager,
   Bindable,
-  Container,
-  almostEquals,
+  BindableBoolean,
+  BindableNumber,
   clamp,
+  Container,
   dependencyLoader,
   lerp,
   resolved,
 } from 'osucad-framework';
-import { PreferencesStore } from '../preferences/PreferencesStore';
 import { Beatmap } from '../beatmap/Beatmap';
 import { OsucadConfigManager } from '../config/OsucadConfigManager.ts';
 import { OsucadSettings } from '../config/OsucadSettings.ts';
+import { PreferencesStore } from '../preferences/PreferencesStore';
 
 export class EditorClock
   extends Container
@@ -28,7 +29,7 @@ export class EditorClock
     super();
   }
 
-  animatedSeek = new BindableBoolean(true)
+  animatedSeek = new BindableBoolean(true);
 
   @resolved(OsucadConfigManager)
   config!: OsucadConfigManager;
@@ -36,22 +37,7 @@ export class EditorClock
   @dependencyLoader()
   init() {
     this.config.bindWith(OsucadSettings.AnimatedSeek, this.animatedSeek);
-
-    this.scheduler.addDelayed(() => {
-      if (this.preferences.audio.automaticOffset) {
-        const offset = -this.audioManager.context.outputLatency * 1000;
-
-        if (!almostEquals(offset, this.preferences.audio.audioOffset, 1)) {
-          this.preferences.audio.audioOffset = offset;
-        }
-      }
-    }, 1000, true);
-
-    this.preferences.audio.automaticOffsetBindable.addOnChangeListener((enabled) => {
-      if (enabled) {
-        this.preferences.audio.audioOffset = -this.audioManager.context.outputLatency * 1000;
-      }
-    });
+    this.config.bindWith(OsucadSettings.AudioOffset, this.offsetBindable);
   }
 
   @resolved(PreferencesStore)
@@ -60,8 +46,10 @@ export class EditorClock
   @resolved(AudioManager)
   audioManager!: AudioManager;
 
+  offsetBindable = new BindableNumber(0);
+
   get offset() {
-    return this.preferences.audio.audioOffset;
+    return this.offsetBindable.value;
   }
 
   readonly isFrameBasedClock = true;
@@ -138,7 +126,9 @@ export class EditorClock
   isSeeking = false;
 
   seek(position: number, animated: boolean = true) {
-    animated = false;
+    if (!this.animatedSeek.value)
+      animated = false;
+
     position = clamp(position, 0, this.track.length);
 
     this.isSeeking = true;
@@ -261,6 +251,8 @@ export class EditorClock
 
   beatLength = 0;
   beatProgress = 0;
+  beatIndex = 0;
+  timingPointProgress = 0;
 
   updateBeatProgress() {
     const timingPoint = this.controlPointInfo.timingPointAt(this.currentTime);
@@ -270,9 +262,14 @@ export class EditorClock
     }
 
     this.beatLength = timingPoint.beatLength;
-    let progress
-      = (this.currentTime - timingPoint.time) / timingPoint.beatLength;
+    let progress = (this.currentTime - timingPoint.time) / timingPoint.beatLength;
+
+    this.timingPointProgress = progress;
+
+    this.beatIndex = Math.floor(progress);
+
     progress = mod(mod(progress, 1) + 1, 1);
+
     this.beatProgress = progress;
   }
 

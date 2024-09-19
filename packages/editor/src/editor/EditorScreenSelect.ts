@@ -8,18 +8,18 @@ import {
   Box,
   Button,
   Container,
+  dependencyLoader,
   EasingFunction,
   FillDirection,
   FillFlowContainer,
   LoadState,
-  Vec2,
-  dependencyLoader,
   resolved,
+  Vec2,
 } from 'osucad-framework';
 import { OsucadSpriteText } from '../OsucadSpriteText';
-import { ThemeColors } from './ThemeColors';
-import { EditorScreenType } from './screens/EditorScreenType';
 import { CURRENT_SCREEN } from './InjectionTokens';
+import { EditorScreenType } from './screens/EditorScreenType';
+import { ThemeColors } from './ThemeColors';
 
 export class EditorScreenSelect extends Container {
   constructor() {

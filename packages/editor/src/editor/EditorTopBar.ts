@@ -1,8 +1,8 @@
 import { Anchor, Axes, Box, Container, dependencyLoader } from 'osucad-framework';
 import { BackdropBlurFilter } from 'pixi-filters';
-import { Timeline } from './timeline/Timeline';
 import { EditorMenubar } from './EditorMenubar';
 import { EditorScreenSelect } from './EditorScreenSelect';
+import { Timeline } from './timeline/Timeline';
 
 export class EditorTopBar extends Container {
   constructor() {
@@ -38,12 +38,5 @@ export class EditorTopBar extends Container {
         origin: Anchor.TopCenter,
       }),
     );
-  }
-
-  override updateSubTree(): boolean {
-    performance.mark('EditorTopBar#updateSubTree');
-    const result = super.updateSubTree();
-    performance.measure('EditorTopBar#updateSubTree', 'EditorTopBar#updateSubTree');
-    return result;
   }
 }

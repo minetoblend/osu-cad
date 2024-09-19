@@ -8,8 +8,8 @@ import {
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import { OsucadSpriteText } from '../OsucadSpriteText';
 import { ControlPointInfo } from '../beatmap/timing/ControlPointInfo';
+import { OsucadSpriteText } from '../OsucadSpriteText';
 import { EditorClock } from './EditorClock';
 import { ThemeColors } from './ThemeColors';
 import { Timestamp } from './Timestamp';

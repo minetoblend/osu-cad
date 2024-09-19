@@ -1,6 +1,5 @@
 import type { Drawable } from 'osucad-framework';
-import { Axes, Direction, RoundedBox, ScrollContainer, ScrollbarContainer, Vec2 } from 'osucad-framework';
-import gsap from 'gsap';
+import { Axes, Direction, EasingFunction, RoundedBox, ScrollbarContainer, ScrollContainer, Vec2 } from 'osucad-framework';
 
 export class MainScrollContainer<T extends Drawable = Drawable> extends ScrollContainer<T> {
   constructor(direction: Direction = Direction.Vertical) {
@@ -30,7 +29,7 @@ class BasicScrollbar extends ScrollbarContainer {
   override resizeScrollbarTo(
     val: number,
     duration: number = 0,
-    easing: gsap.EaseFunction | gsap.EaseString = 'none',
+    easing: EasingFunction = EasingFunction.None,
   ): void {
     let size: Vec2;
     if (this.scrollDirection === Direction.Vertical) {
@@ -40,16 +39,11 @@ class BasicScrollbar extends ScrollbarContainer {
       size = new Vec2(val, dim_size);
     }
 
-    if (duration === 0 || easing === 'none') {
+    if (duration === 0 || easing === EasingFunction.None) {
       this.size = size;
       return;
     }
 
-    gsap.to(this, {
-      width: size.x,
-      height: size.y,
-      duration: duration / 1000,
-      ease: easing,
-    });
+    this.resizeTo(size, duration, easing);
   }
 }

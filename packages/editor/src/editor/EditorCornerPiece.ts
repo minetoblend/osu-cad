@@ -7,8 +7,8 @@ import {
   Invalidation,
   LayoutMember,
   PIXIGraphics,
-  Vec2,
   resolved,
+  Vec2,
 } from 'osucad-framework';
 import { ThemeColors } from './ThemeColors';
 

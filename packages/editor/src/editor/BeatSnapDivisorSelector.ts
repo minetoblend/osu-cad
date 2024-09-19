@@ -1,24 +1,24 @@
-import gsap from 'gsap';
 import type {
   DragEvent,
   DragStartEvent,
   DrawableOptions,
   SpriteText,
 } from 'osucad-framework';
+import gsap from 'gsap';
 import {
   Anchor,
   Axes,
+  clamp,
   CompositeDrawable,
   Container,
+  dependencyLoader,
   MouseButton,
+  resolved,
   RoundedBox,
   Vec2,
-  clamp,
-  dependencyLoader,
-  resolved,
 } from 'osucad-framework';
-import { UISamples } from '../UISamples';
 import { OsucadSpriteText } from '../OsucadSpriteText';
+import { UISamples } from '../UISamples';
 import { EditorClock } from './EditorClock';
 import { ThemeColors } from './ThemeColors';
 

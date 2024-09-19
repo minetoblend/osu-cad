@@ -1,30 +1,31 @@
-import gsap from 'gsap';
-import {
-  ClickableContainer,
-  Drawable, EasingFunction, HoverEvent,
-  MenuItem, MouseDownEvent, MouseUpEvent,
+import type {
+  Drawable,
+  MenuItem,
   SpriteText,
 } from 'osucad-framework';
+import gsap from 'gsap';
 import {
   Anchor,
   Axes,
+  ClickableContainer,
   Color,
   Container,
+  dependencyLoader,
   Direction,
   DrawableMenuItem,
+  EasingFunction,
   MarginPadding,
   Menu,
-  RoundedBox,
-  ScrollContainer,
-  ScrollbarContainer,
-  Vec2,
-  dependencyLoader,
   resolved,
+  RoundedBox,
+  ScrollbarContainer,
+  ScrollContainer,
+  Vec2,
 } from 'osucad-framework';
 import { Graphics } from 'pixi.js';
+import { FastRoundedBox } from '../drawables/FastRoundedBox.ts';
 import { OsucadSpriteText } from '../OsucadSpriteText';
 import { ThemeColors } from './ThemeColors';
-import { FastRoundedBox } from '../drawables/FastRoundedBox.ts';
 
 export class EditorMenu extends Menu {
   @resolved(ThemeColors)
@@ -118,7 +119,6 @@ class DrawableEditorMenuItem extends DrawableMenuItem {
   }
 
   createBackground(): Drawable {
-
     return new RoundedBox({
       color: 'transparent',
       cornerRadius: 4,
@@ -132,7 +132,8 @@ class DrawableEditorMenuItem extends DrawableMenuItem {
       (e) => {
         if (e.value) {
           this.foreground.alpha = 0.5;
-        } else {
+        }
+        else {
           this.foreground.alpha = 1;
         }
       },
