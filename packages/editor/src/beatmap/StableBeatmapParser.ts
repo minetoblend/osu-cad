@@ -1,22 +1,22 @@
-import { EffectType, HitType } from 'osu-classes';
+import type { OsuHitObject } from './hitObjects/OsuHitObject';
 
+import { EffectType, HitType } from 'osu-classes';
 import { Vec2 } from 'osucad-framework';
 import { Color } from 'pixi.js';
 import { SliderPathBuilder } from '../editor/screens/compose/tools/SliderPathBuilder';
 import { Beatmap } from './Beatmap';
-import { SamplePoint } from './timing/SamplePoint';
-import { EffectPoint } from './timing/EffectPoint';
-import { TimingPoint } from './timing/TimingPoint';
-import { DifficultyPoint } from './timing/DifficultyPoint';
 import { HitCircle } from './hitObjects/HitCircle';
-import { Slider } from './hitObjects/Slider';
-import { Spinner } from './hitObjects/Spinner';
 import { PathPoint } from './hitObjects/PathPoint';
 import { PathType } from './hitObjects/PathType';
-import { SampleSet } from './hitSounds/SampleSet';
+import { Slider } from './hitObjects/Slider';
+import { Spinner } from './hitObjects/Spinner';
 import { Additions } from './hitSounds/Additions';
 import { HitSound } from './hitSounds/HitSound';
-import type { OsuHitObject } from './hitObjects/OsuHitObject';
+import { SampleSet } from './hitSounds/SampleSet';
+import { DifficultyPoint } from './timing/DifficultyPoint';
+import { EffectPoint } from './timing/EffectPoint';
+import { SamplePoint } from './timing/SamplePoint';
+import { TimingPoint } from './timing/TimingPoint';
 
 enum BeatmapSection {
   General = 'General',
@@ -107,7 +107,7 @@ export class StableBeatmapParser {
         this.#parseHitObject(beatmap, line);
 
         if (typeof WorkerGlobalScope === 'undefined' || globalThis instanceof WorkerGlobalScope) {
-          if (beatmap.hitObjects.length % 100 === 0)
+          if (beatmap.hitObjects.length % 500 === 0)
             await new Promise(resolve => setTimeout(resolve, 10));
         }
 
@@ -276,7 +276,8 @@ export class StableBeatmapParser {
 
       group.add(new TimingPoint(beatLength, meter));
       group.add(new DifficultyPoint(1));
-    } else {
+    }
+    else {
       const sliderVelocity = -100 / Number.parseFloat(values[1]);
 
       beatmap.controlPoints.addToGroup(group, new DifficultyPoint(sliderVelocity), true);
@@ -312,7 +313,8 @@ export class StableBeatmapParser {
       circle.newCombo = newCombo;
       circle.comboOffset = comboOffset;
       circle.hitSound = parseHitSound(5);
-    } else if (type & HitType.Slider) {
+    }
+    else if (type & HitType.Slider) {
       const slider = hitObject = new Slider();
       slider.position = new Vec2(x, y);
       slider.startTime = startTime;
@@ -364,7 +366,6 @@ export class StableBeatmapParser {
 
       const hitSound = slider.hitSound = parseHitSound(10);
 
-
       const edgeSounds = values[8]?.split('|').map(it => Number.parseInt(it) >> 1) ?? new Array(slider.spanCount + 1).fill(hitSound.additions);
       const edgeSets = values[9]?.split('|').map((it) => {
         const [normalSet, additionSet] = it.split(':');
@@ -388,9 +389,9 @@ export class StableBeatmapParser {
 
       slider.hitSounds = hitSounds;
 
-
       slider.ensureHitSoundsAreValid();
-    } else if (type & HitType.Spinner) {
+    }
+    else if (type & HitType.Spinner) {
       const spinner = hitObject = new Spinner();
       spinner.startTime = startTime;
       spinner.duration = Number.parseFloat(values[5]) - startTime;
