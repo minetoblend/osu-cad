@@ -287,7 +287,6 @@ class RotationHandle extends CompositeDrawable {
     this.#currentAngleText.moveTo(
       new Vec2(radius)
         .rotate(this.#currentRotation + (this.#startAngle ?? -Math.PI))
-        .mul({ x: 30, y: 10 })
       ,
       200,
       EasingFunction.OutQuad,
