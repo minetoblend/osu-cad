@@ -169,4 +169,16 @@ export abstract class DrawableHitObjectPlacementTool<T extends OsuHitObject> ext
 
     super.dispose(disposing);
   }
+
+  onKeyDown(e: KeyDownEvent): boolean {
+    if (e.key === Key.Escape) {
+      this.finishPlacing();
+
+      this.findClosestParentOfType(Editor)?.requestSelectTool.emit();
+
+      return true;
+    }
+
+    return false;
+  }
 }
