@@ -1,6 +1,6 @@
-import type { SerializedSlider } from '../../../beatmap/serialization/HitObjects';
-import type { Slider } from '../../../beatmap/hitObjects/Slider';
 import type { PathPoint } from '../../../beatmap/hitObjects/PathPoint';
+import type { Slider } from '../../../beatmap/hitObjects/Slider';
+import type { SerializedSlider } from '../../../beatmap/serialization/HitObjects';
 import { OsuHitObjectPatchEncoder } from './OsuHitObjectPatchEncoder';
 
 export class SliderPatchEncoder extends OsuHitObjectPatchEncoder<Slider, SerializedSlider> {

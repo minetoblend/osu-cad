@@ -1,5 +1,5 @@
-import type { SerializedSpinner } from '../../../beatmap/serialization/HitObjects';
 import type { Spinner } from '../../../beatmap/hitObjects/Spinner';
+import type { SerializedSpinner } from '../../../beatmap/serialization/HitObjects';
 import { OsuHitObjectPatchEncoder } from './OsuHitObjectPatchEncoder';
 
 export class SpinnerPatchEncoder extends OsuHitObjectPatchEncoder<Spinner, SerializedSpinner> {
