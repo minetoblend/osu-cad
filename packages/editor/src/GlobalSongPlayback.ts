@@ -1,5 +1,5 @@
-import { AudioManager, CompositeDrawable, resolved } from 'osucad-framework';
 import gsap from 'gsap';
+import { AudioManager, CompositeDrawable, resolved } from 'osucad-framework';
 import { EditorMixer } from './editor/EditorMixer';
 
 export class GlobalSongPlayback extends CompositeDrawable {
@@ -19,7 +19,6 @@ export class GlobalSongPlayback extends CompositeDrawable {
     }
 
     if (this.#audio) {
-      URL.revokeObjectURL(this.#audio.src);
       this.stop(true);
     }
 
@@ -31,11 +30,7 @@ export class GlobalSongPlayback extends CompositeDrawable {
     audio.crossOrigin = 'anonymous';
     audio.volume = 0;
 
-    fetch(url).then(res => res.arrayBuffer()).then(data => {
-      audio.src = URL.createObjectURL(new Blob([data]));
-      if(audio === this.#audio)
-        audio.play()
-    });
+    audio.play();
 
     gsap.to(audio, {
       volume: 1,
