@@ -1,13 +1,13 @@
-import { Action } from 'osucad-framework';
+import type { ControlPoint } from './ControlPoint';
 import type { ControlPointGroupChangeEvent } from './ControlPointGroup';
+import { Action } from 'osucad-framework';
 import { ControlPointGroup } from './ControlPointGroup';
 import { ControlPointList } from './ControlPointList';
-import { TickGenerator } from './TickGenerator';
-import { TimingPoint } from './TimingPoint';
 import { DifficultyPoint } from './DifficultyPoint';
 import { EffectPoint } from './EffectPoint';
-import type { ControlPoint } from './ControlPoint';
 import { SamplePoint } from './SamplePoint';
+import { TickGenerator } from './TickGenerator';
+import { TimingPoint } from './TimingPoint';
 
 export class ControlPointInfo {
   groups = new ControlPointList<ControlPointGroup>();

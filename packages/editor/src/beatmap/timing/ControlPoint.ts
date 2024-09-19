@@ -13,7 +13,7 @@ export abstract class ControlPoint {
     this.changed.emit(this);
   }
 
-  timeBindable = new BindableNumber()
+  timeBindable = new BindableNumber();
 
   get time() {
     return this.timeBindable.value;

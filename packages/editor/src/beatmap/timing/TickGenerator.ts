@@ -1,7 +1,7 @@
-import { TickType } from '@osucad/common';
 import type { SortedList } from 'osucad-framework';
-import { ControlPointGroup } from './ControlPointGroup';
 import type { TimingPoint } from './TimingPoint';
+import { TickType } from '@osucad/common';
+import { ControlPointGroup } from './ControlPointGroup';
 
 export class TickGenerator {
   constructor(

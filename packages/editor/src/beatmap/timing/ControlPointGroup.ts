@@ -1,10 +1,10 @@
 import { Action } from 'osucad-framework';
 import { objectId } from '../ObjectId';
 import { ControlPoint } from './ControlPoint';
-import { TimingPoint } from './TimingPoint.ts';
 import { DifficultyPoint } from './DifficultyPoint.ts';
-import { SamplePoint } from './SamplePoint.ts';
 import { EffectPoint } from './EffectPoint.ts';
+import { SamplePoint } from './SamplePoint.ts';
+import { TimingPoint } from './TimingPoint.ts';
 
 export interface ControlPointGroupChangeEvent {
   group: ControlPointGroup;
@@ -34,7 +34,7 @@ export class ControlPointGroup extends ControlPoint {
       child.time = value;
   }
 
-  deepClone(): ControlPoint {
+  deepClone(): ControlPointGroup {
     const clone = new ControlPointGroup(this.time);
 
     clone.copyFrom(this);
