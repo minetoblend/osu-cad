@@ -1,8 +1,10 @@
-import { Action } from 'osucad-framework';
-import { LifetimeEntry } from '../../pooling/LifetimeEntry';
 import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
+import { Action } from 'osucad-framework';
 import { Spinner } from '../../beatmap/hitObjects/Spinner';
+import { LifetimeEntry } from '../../pooling/LifetimeEntry';
 import { FollowPointConnection } from './FollowPointConnection';
+
+let uid = 0;
 
 export class FollowPointLifetimeEntry extends LifetimeEntry {
   readonly invalidated = new Action();
@@ -13,6 +15,8 @@ export class FollowPointLifetimeEntry extends LifetimeEntry {
 
     this.start = start;
   }
+
+  uid = uid++;
 
   #end: OsuHitObject | null = null;
 
@@ -35,13 +39,15 @@ export class FollowPointLifetimeEntry extends LifetimeEntry {
   #bindEvents() {
     this.unbindEvents();
 
-    if (!this.#end)
+    if (!this.end)
       return;
 
     this.start.defaultsApplied.addListener(this.#onDefaultsApplied, this);
     this.start.positionBindable.valueChanged.addListener(this.#onPositionChanged, this);
-    this.#end.defaultsApplied.addListener(this.#onDefaultsApplied, this);
-    this.#end.positionBindable.valueChanged.addListener(this.#onPositionChanged, this);
+
+    this.end!.defaultsApplied.addListener(this.#onEndDefaultsApplied, this);
+    this.end!.positionBindable.valueChanged.addListener(this.#onEndPositionChanged, this);
+    this.end!.newComboBindable.valueChanged.addListener(this.#onEndDefaultsApplied, this);
 
     this.#wasBound = true;
   }
@@ -55,8 +61,9 @@ export class FollowPointLifetimeEntry extends LifetimeEntry {
     this.start.defaultsApplied.removeListener(this.#onDefaultsApplied);
     this.start.positionBindable.removeOnChangeListener(this.#onPositionChanged);
 
-    this.end!.defaultsApplied.removeListener(this.#onDefaultsApplied);
-    this.end!.positionBindable.removeOnChangeListener(this.#onPositionChanged);
+    this.end!.defaultsApplied.removeListener(this.#onEndDefaultsApplied);
+    this.end!.positionBindable.valueChanged.removeListener(this.#onEndPositionChanged);
+    this.end!.newComboBindable.valueChanged.removeListener(this.#onEndDefaultsApplied);
 
     this.#wasBound = false;
   }
@@ -65,12 +72,25 @@ export class FollowPointLifetimeEntry extends LifetimeEntry {
     this.#refreshLifetimes();
   }
 
+  #onEndDefaultsApplied() {
+    this.#refreshLifetimes();
+  }
+
   #onPositionChanged() {
+    this.#refreshLifetimes();
+  }
+
+  #onEndPositionChanged() {
     this.#refreshLifetimes();
   }
 
   #refreshLifetimes() {
     if (this.end === null || this.end.newCombo || this.start instanceof Spinner || this.end instanceof Spinner) {
+      this.lifetimeEnd = this.lifetimeStart;
+      return;
+    }
+
+    if (this.start.endTime === this.end.startTime) {
       this.lifetimeEnd = this.lifetimeStart;
       return;
     }
