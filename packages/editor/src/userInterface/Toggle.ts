@@ -1,7 +1,10 @@
+import type {
+  Bindable,
+  MouseDownEvent,
+} from 'osucad-framework';
 import {
   Anchor,
   Axes,
-  Bindable,
   BindableWithCurrent,
   CompositeDrawable,
   Container,
@@ -9,19 +12,17 @@ import {
   EasingFunction,
   FillMode,
   MouseButton,
-  MouseDownEvent,
   resolved,
   RoundedBox,
   Vec2,
 } from 'osucad-framework';
-import { ThemeColors } from '../editor/ThemeColors.ts';
 import { FastRoundedBox } from '../drawables/FastRoundedBox.ts';
+import { ThemeColors } from '../editor/ThemeColors.ts';
 
 export enum ToggleTrigger {
   Click,
   MouseDown,
 }
-
 
 export interface ToggleOptions {
   bindable?: Bindable<boolean>;
@@ -29,7 +30,6 @@ export interface ToggleOptions {
 }
 
 export class Toggle extends CompositeDrawable {
-
   constructor(options?: ToggleOptions) {
     super();
 
@@ -77,7 +77,7 @@ export class Toggle extends CompositeDrawable {
                 outlines: [{
                   width: 2.5,
                   alignment: 1,
-                  color: 0xffffff,
+                  color: 0xFFFFFF,
                 }],
                 anchor: Anchor.Center,
                 origin: Anchor.Center,
@@ -92,7 +92,7 @@ export class Toggle extends CompositeDrawable {
         alpha: 0,
         anchor: Anchor.Center,
         origin: Anchor.Center,
-        color: 0xffffff,
+        color: 0xFFFFFF,
         blendMode: 'add',
       }),
     );
@@ -103,7 +103,9 @@ export class Toggle extends CompositeDrawable {
   protected loadComplete() {
     super.loadComplete();
 
-    this.#updateState()
+    this.#updateState();
+
+    this.finishTransforms(true);
   }
 
   #background!: RoundedBox;
@@ -139,7 +141,6 @@ export class Toggle extends CompositeDrawable {
   }
 
   #updateState() {
-
     if (this.value) {
       this.#scaleContainer
         .resizeTo(new Vec2(0.5, 1), 200, EasingFunction.OutExpo)
@@ -149,7 +150,8 @@ export class Toggle extends CompositeDrawable {
       this.#background
         .fadeColor(this.colors.primary, 200, EasingFunction.OutExpo)
         .fadeTo(1, 200, EasingFunction.OutExpo);
-    } else {
+    }
+    else {
       this.#scaleContainer
         .resizeTo(new Vec2(1), 200, EasingFunction.OutExpo)
         .moveToX(0, 200, EasingFunction.OutExpo)
