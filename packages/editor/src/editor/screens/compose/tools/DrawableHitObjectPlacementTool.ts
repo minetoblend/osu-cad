@@ -131,7 +131,9 @@ export abstract class DrawableHitObjectPlacementTool<T extends OsuHitObject> ext
     super.update();
 
     if (this.#previewObject) {
-      this.#previewObject.position = this.getSnappedPosition(this.mousePosition);
+      const position = this.getSnappedPosition(this.mousePosition);
+      if (!position.equals(this.#previewObject.position))
+        this.#previewObject.position = position;
     }
   }
 
