@@ -245,22 +245,18 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
     this.#updateHitSoundsFromSelection();
   }
 
-  protected applyNewComboState(event: ValueChangedEvent<boolean>) {
-    super.applyNewComboState(event);
+  protected applyNewComboState(newCombo: boolean) {
+    super.applyNewComboState(newCombo);
 
     const objects = this.selection.selectedObjects;
     if (objects.length === 0)
       return;
 
-    const newCombo = event.value;
-
-    if (this.newComboEnabledForEntireSelection !== newCombo) {
-      for (const object of objects) {
-        this.commandManager.submit(
-          new UpdateHitObjectCommand(object, { newCombo }),
-          false,
-        );
-      }
+    for (const object of objects) {
+      this.commandManager.submit(
+        new UpdateHitObjectCommand(object, { newCombo }),
+        false,
+      );
     }
 
     this.commit();
