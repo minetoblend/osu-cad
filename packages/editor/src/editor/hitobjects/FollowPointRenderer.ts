@@ -1,17 +1,16 @@
 import type { Bindable } from 'osucad-framework';
-import { DrawablePool, SortedList, dependencyLoader } from 'osucad-framework';
-import { PooledDrawableWithLifetimeContainer } from '../../pooling/PooledDrawableWithLifetimeContainer';
 import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
-import { FollowPointLifetimeEntry } from './FollowPointLifetimeEntry';
-import { FollowPointConnection } from './FollowPointConnection';
+import { dependencyLoader, DrawablePool, SortedList } from 'osucad-framework';
+import { PooledDrawableWithLifetimeContainer } from '../../pooling/PooledDrawableWithLifetimeContainer';
 import { FollowPoint } from './FollowPoint';
-
+import { FollowPointConnection } from './FollowPointConnection';
+import { FollowPointLifetimeEntry } from './FollowPointLifetimeEntry';
 
 export class FollowPointRenderer extends PooledDrawableWithLifetimeContainer<FollowPointLifetimeEntry, FollowPointConnection> {
   constructor() {
     super();
 
-    this.drawNode.enableRenderGroup()
+    this.drawNode.enableRenderGroup();
   }
 
   #connectionPool!: DrawablePool<FollowPointConnection>;
@@ -24,7 +23,7 @@ export class FollowPointRenderer extends PooledDrawableWithLifetimeContainer<Fol
       if (comp !== 0)
         return comp;
 
-      return -1;
+      return a.uid - b.uid;
     },
   });
 

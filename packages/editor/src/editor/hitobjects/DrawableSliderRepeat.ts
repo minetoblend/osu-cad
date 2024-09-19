@@ -1,11 +1,11 @@
-import { Anchor, Axes, Container, Vec2, almostEquals, dependencyLoader } from 'osucad-framework';
 import type { SliderRepeat } from '../../beatmap/hitObjects/SliderRepeat';
-import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
-import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
-import { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
-import { DrawableOsuHitObject } from './DrawableOsuHitObject';
-import type { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
 import type { DrawableSlider } from './DrawableSlider';
+import type { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
+import { almostEquals, Anchor, Axes, Container, dependencyLoader, Vec2 } from 'osucad-framework';
+import { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
+import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
+import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
+import { DrawableOsuHitObject } from './DrawableOsuHitObject';
 
 export class DrawableSliderRepeat extends DrawableOsuHitObject<SliderRepeat> {
   circlePiece!: SkinnableDrawable;

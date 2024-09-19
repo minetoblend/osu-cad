@@ -1,6 +1,6 @@
+import type { HitObject } from '../../beatmap/hitObjects/HitObject';
 import { Bindable } from 'osucad-framework';
 import { LifetimeEntry } from '../../pooling/LifetimeEntry';
-import type { HitObject } from '../../beatmap/hitObjects/HitObject';
 
 export class HitObjectLifetimeEntry extends LifetimeEntry {
   nestedEntries: HitObjectLifetimeEntry[] = [];
@@ -56,6 +56,6 @@ export class HitObjectLifetimeEntry extends LifetimeEntry {
   }
 
   protected setInitialLifetime() {
-    this.lifetimeStart = this.hitObject.startTime - this.initialLifetimeOffset
+    this.lifetimeStart = this.hitObject.startTime - this.initialLifetimeOffset;
   };
 }

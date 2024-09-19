@@ -1,9 +1,9 @@
-import { Anchor, Axes, EasingFunction, dependencyLoader } from 'osucad-framework';
 import type { TransformSequenceProxy } from 'osucad-framework';
 import type { Spinner } from '../../beatmap/hitObjects/Spinner';
-import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
+import { Anchor, Axes, dependencyLoader, EasingFunction } from 'osucad-framework';
 import { AspectContainer } from '../../beatmap/hitObjects/AspectContainer';
 import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
+import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
 import { DrawableOsuHitObject } from './DrawableOsuHitObject';
 
 export class DrawableSpinner extends DrawableOsuHitObject<Spinner> {
@@ -38,7 +38,6 @@ export class DrawableSpinner extends DrawableOsuHitObject<Spinner> {
     this.fadeTo(0)
       .delay(this.hitObject!.timePreempt - this.hitObject!.timeFadeIn)
       .fadeInFromZero(this.hitObject!.timeFadeIn);
-
   }
 
   protected updateStartTimeTransforms() {

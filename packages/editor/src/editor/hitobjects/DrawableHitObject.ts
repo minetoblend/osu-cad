@@ -1,13 +1,13 @@
+import type { HitObject } from '../../beatmap/hitObjects/HitObject';
+import type { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
 import { Action, Bindable, dependencyLoader, resolved } from 'osucad-framework';
 import { Color } from 'pixi.js';
-import { PoolableDrawableWithLifetime } from '../../pooling/PoolableDrawableWithLifetime';
-import type { HitObject } from '../../beatmap/hitObjects/HitObject';
-import { hasComboInformation } from '../../beatmap/hitObjects/IHasComboInformation';
 import { Beatmap } from '../../beatmap/Beatmap';
-import type { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
+import { hasComboInformation } from '../../beatmap/hitObjects/IHasComboInformation';
+import { PoolableDrawableWithLifetime } from '../../pooling/PoolableDrawableWithLifetime';
 
-import { SyntheticHitObjectEntry } from './SyntheticHitObjectEntry';
 import { IPooledHitObjectProvider } from './IPooledHitObjectProvider';
+import { SyntheticHitObjectEntry } from './SyntheticHitObjectEntry';
 
 export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLifetimeEntry> {
   defaultsApplied = new Action<DrawableHitObject>();
@@ -41,13 +41,6 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
 
   override get requiresChildrenUpdate(): boolean {
     return true;
-  }
-
-  override updateSubTree(): boolean {
-    performance.mark(`${this.constructor.name}#updateSubTree`);
-    const result = super.updateSubTree();
-    performance.measure(`${this.constructor.name}#updateSubTree`, `${this.constructor.name}#updateSubTree`);
-    return result;
   }
 
   override get isPresent(): boolean {

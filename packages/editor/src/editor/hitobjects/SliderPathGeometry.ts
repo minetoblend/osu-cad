@@ -1,5 +1,5 @@
-import { MeshGeometry } from 'pixi.js';
 import type { Vec2 } from 'osucad-framework';
+import { MeshGeometry } from 'pixi.js';
 import { GeometryBuilder } from './GeometryBuilder';
 
 interface SliderPathGeometryOptions {

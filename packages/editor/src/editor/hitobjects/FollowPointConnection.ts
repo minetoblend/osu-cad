@@ -1,10 +1,10 @@
 import type { DrawablePool } from 'osucad-framework';
-import { EasingFunction, Vec2 } from 'osucad-framework';
-
-import { PoolableDrawableWithLifetime } from '../../pooling/PoolableDrawableWithLifetime';
-import { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
-import type { FollowPointLifetimeEntry } from './FollowPointLifetimeEntry';
 import type { FollowPoint } from './FollowPoint';
+
+import type { FollowPointLifetimeEntry } from './FollowPointLifetimeEntry';
+import { EasingFunction, Vec2 } from 'osucad-framework';
+import { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
+import { PoolableDrawableWithLifetime } from '../../pooling/PoolableDrawableWithLifetime';
 
 export class FollowPointConnection extends PoolableDrawableWithLifetime<FollowPointLifetimeEntry> {
   static readonly SPACING = 32;
@@ -99,7 +99,6 @@ export class FollowPointConnection extends PoolableDrawableWithLifetime<FollowPo
     while (this.internalChildren.length > count) {
       this.removeInternal(this.internalChildren[this.internalChildren.length - 1], false);
     }
-
 
     entry.lifetimeEnd = finalTransformEndTime;
   }

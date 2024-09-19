@@ -1,6 +1,6 @@
-import { Action } from 'osucad-framework';
 import type { HitObject } from '../../beatmap/hitObjects/HitObject';
 import type { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
+import { Action } from 'osucad-framework';
 import { SyntheticHitObjectEntry } from './SyntheticHitObjectEntry';
 
 export class HitObjectEntryManager {

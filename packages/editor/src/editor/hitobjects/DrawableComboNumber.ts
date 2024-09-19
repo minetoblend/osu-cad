@@ -1,7 +1,7 @@
+import type { DrawableOsuHitObject } from './DrawableOsuHitObject';
 import { Anchor, Bindable, CompositeDrawable, dependencyLoader, DrawableSprite, resolved } from 'osucad-framework';
 import { ISkinSource } from '../../skinning/ISkinSource';
 import { DrawableHitObject } from './DrawableHitObject';
-import { DrawableOsuHitObject } from './DrawableOsuHitObject';
 
 export class DrawableComboNumber extends CompositeDrawable {
   constructor() {
@@ -18,9 +18,8 @@ export class DrawableComboNumber extends CompositeDrawable {
   load() {
     this.indexInComboBindable.bindTo(this.parentHitObject!.indexInComboBindable);
 
-    this.indexInComboBindable.addOnChangeListener((e) => this.comboNumber = e.value + 1, { immediate: true });
+    this.indexInComboBindable.addOnChangeListener(e => this.comboNumber = e.value + 1, { immediate: true });
   }
-
 
   #comboNumber = 1;
 
@@ -71,7 +70,7 @@ export class DrawableComboNumber extends CompositeDrawable {
   }
 
   override dispose(isDisposing: boolean = true) {
-    this.indexInComboBindable.unbindAll()
+    this.indexInComboBindable.unbindAll();
 
     super.dispose(isDisposing);
   }

@@ -1,6 +1,6 @@
-import { Anchor, PoolableDrawable, dependencyLoader } from 'osucad-framework';
-import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
+import { Anchor, dependencyLoader, PoolableDrawable } from 'osucad-framework';
 import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
+import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
 
 export class FollowPoint extends PoolableDrawable {
   get removeWhenNotAlive() {

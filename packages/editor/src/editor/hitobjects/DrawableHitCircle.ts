@@ -1,20 +1,22 @@
+import type {
+  Drawable,
+} from 'osucad-framework';
+import type { HitCircle } from '../../beatmap/hitObjects/HitCircle';
 import {
   Anchor,
   Axes,
   Bindable,
   Container,
   dependencyLoader,
-  Drawable,
   EasingFunction,
   resolved,
 } from 'osucad-framework';
-import type { HitCircle } from '../../beatmap/hitObjects/HitCircle';
 import { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
-import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
-import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
-import { DrawableOsuHitObject } from './DrawableOsuHitObject';
 import { OsucadConfigManager } from '../../config/OsucadConfigManager.ts';
 import { OsucadSettings } from '../../config/OsucadSettings.ts';
+import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
+import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
+import { DrawableOsuHitObject } from './DrawableOsuHitObject';
 
 export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle> {
   constructor(h?: HitCircle) {
@@ -85,7 +87,8 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle> {
       this.approachCircle.fadeOut();
 
       this.lifetimeEnd = this.hitObject!.endTime + 240;
-    } else {
+    }
+    else {
       this.circlePiece.fadeOut(700);
 
       this.approachCircle.scaleTo(1.1, 120, EasingFunction.OutCubic);

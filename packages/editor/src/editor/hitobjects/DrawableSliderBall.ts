@@ -1,3 +1,4 @@
+import type { DrawableSlider } from './DrawableSlider';
 import {
   Anchor,
   Axes,
@@ -5,11 +6,10 @@ import {
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
-import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
 import { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
+import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
+import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
 import { DrawableHitObject } from './DrawableHitObject';
-import type { DrawableSlider } from './DrawableSlider';
 
 export class DrawableSliderBall extends CompositeDrawable {
   @resolved(DrawableHitObject)

@@ -1,11 +1,11 @@
-import { Anchor, EasingFunction, dependencyLoader } from 'osucad-framework';
 import type { SliderTick } from '../../beatmap/hitObjects/SliderTick';
-import { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
-import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
-import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
-import { DrawableOsuHitObject } from './DrawableOsuHitObject';
-import type { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
 import type { DrawableSlider } from './DrawableSlider';
+import type { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
+import { Anchor, dependencyLoader, EasingFunction } from 'osucad-framework';
+import { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
+import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
+import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
+import { DrawableOsuHitObject } from './DrawableOsuHitObject';
 
 export class DrawableSliderTick extends DrawableOsuHitObject<SliderTick> {
   #scaleContainer!: SkinnableDrawable;

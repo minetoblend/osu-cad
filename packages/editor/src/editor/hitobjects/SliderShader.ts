@@ -3,15 +3,15 @@ import type {
 } from 'pixi.js';
 import {
   Color,
-  GlProgram,
-  Shader,
-  Texture,
-  UniformGroup,
   compileHighShaderGl,
   fragmentGlTemplate,
   globalUniformsBitGl,
+  GlProgram,
   localUniformBitGl,
   roundPixelsBitGl,
+  Shader,
+  Texture,
+  UniformGroup,
   vertexGlTemplate,
 } from 'pixi.js';
 import { SliderGradient } from './SliderGradient';

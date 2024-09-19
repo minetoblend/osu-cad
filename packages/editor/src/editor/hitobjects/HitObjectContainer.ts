@@ -1,11 +1,11 @@
+import type { HitObject } from '../../beatmap/hitObjects/HitObject';
+import type { LifetimeEntry } from '../../pooling/LifetimeEntry';
+import type { DrawableHitObject } from './DrawableHitObject';
+import type { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
 import { Action, Axes, Bindable, LoadState, resolved } from 'osucad-framework';
 import { PooledDrawableWithLifetimeContainer } from '../../pooling/PooledDrawableWithLifetimeContainer';
-import type { LifetimeEntry } from '../../pooling/LifetimeEntry';
-import type { HitObject } from '../../beatmap/hitObjects/HitObject';
-import type { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
-import type { DrawableHitObject } from './DrawableHitObject';
-import { IPooledHitObjectProvider } from './IPooledHitObjectProvider';
 import { DrawableSpinner } from './DrawableSpinner';
+import { IPooledHitObjectProvider } from './IPooledHitObjectProvider';
 
 export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitObjectLifetimeEntry, DrawableHitObject> {
   readonly hitObjectUsageBegan = new Action<HitObject>();

@@ -1,25 +1,25 @@
-import { Anchor, Axes, BindableBoolean, dependencyLoader, resolved } from 'osucad-framework';
-import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
 import type { HitObject } from '../../beatmap/hitObjects/HitObject';
+import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
+import { Anchor, Axes, BindableBoolean, dependencyLoader, resolved } from 'osucad-framework';
 import { HitCircle } from '../../beatmap/hitObjects/HitCircle';
 import { Slider } from '../../beatmap/hitObjects/Slider';
 import { SliderHeadCircle } from '../../beatmap/hitObjects/SliderHeadCircle';
+import { SliderRepeat } from '../../beatmap/hitObjects/SliderRepeat';
 import { SliderTailCircle } from '../../beatmap/hitObjects/SliderTailCircle';
 import { SliderTick } from '../../beatmap/hitObjects/SliderTick';
-import { SliderRepeat } from '../../beatmap/hitObjects/SliderRepeat';
 import { Spinner } from '../../beatmap/hitObjects/Spinner';
-import { Playfield } from './Playfield';
-import { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
+import { OsucadConfigManager } from '../../config/OsucadConfigManager.ts';
+import { OsucadSettings } from '../../config/OsucadSettings.ts';
 import { DrawableHitCircle } from './DrawableHitCircle';
 import { DrawableSlider } from './DrawableSlider';
 import { DrawableSliderHead } from './DrawableSliderHead';
+import { DrawableSliderRepeat } from './DrawableSliderRepeat';
 import { DrawableSliderTail } from './DrawableSliderTail';
 import { DrawableSliderTick } from './DrawableSliderTick';
-import { DrawableSliderRepeat } from './DrawableSliderRepeat';
-import { FollowPointRenderer } from './FollowPointRenderer';
 import { DrawableSpinner } from './DrawableSpinner';
-import { OsucadConfigManager } from '../../config/OsucadConfigManager.ts';
-import { OsucadSettings } from '../../config/OsucadSettings.ts';
+import { FollowPointRenderer } from './FollowPointRenderer';
+import { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
+import { Playfield } from './Playfield';
 
 export class OsuPlayfield extends Playfield {
   protected followPoints!: FollowPointRenderer;
@@ -50,7 +50,7 @@ export class OsuPlayfield extends Playfield {
 
     this.config.bindWith(OsucadSettings.FollowPoints, this.followPointsEnabled);
 
-    this.followPointsEnabled.addOnChangeListener((e) => this.followPoints.alpha = e.value ? 1 : 0, { immediate: true });
+    this.followPointsEnabled.addOnChangeListener(e => this.followPoints.alpha = e.value ? 1 : 0, { immediate: true });
   }
 
   protected createLifeTimeEntry(hitObject: HitObject): HitObjectLifetimeEntry {
