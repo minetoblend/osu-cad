@@ -1,7 +1,7 @@
 import type { BeatmapDifficultyInfo } from '../BeatmapDifficultyInfo';
 import type { ControlPointInfo } from '../timing/ControlPointInfo';
-import { HitCircle } from './HitCircle';
 import type { Slider } from './Slider';
+import { HitCircle } from './HitCircle';
 
 export class SliderEndCircle extends HitCircle {
   repeatIndex = 0;

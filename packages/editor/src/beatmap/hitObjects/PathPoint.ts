@@ -1,6 +1,6 @@
 import type { IVec2 } from 'osucad-framework';
-import { Vec2 } from 'osucad-framework';
 import type { Matrix } from 'pixi.js';
+import { Vec2 } from 'osucad-framework';
 import { PathType } from './PathType';
 
 export interface IPathPoint {

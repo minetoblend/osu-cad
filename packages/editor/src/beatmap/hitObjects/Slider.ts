@@ -1,26 +1,26 @@
 import type { IVec2, ReadonlyBindable, ValueChangedEvent } from 'osucad-framework';
-import { CachedValue, Vec2 } from 'osucad-framework';
-import type { BeatmapDifficultyInfo } from '../BeatmapDifficultyInfo';
-import type { ControlPointInfo } from '../timing/ControlPointInfo';
 import type { IPatchable } from '../../editor/commands/IPatchable';
+import type { BeatmapDifficultyInfo } from '../BeatmapDifficultyInfo';
+import type { HitSound } from '../hitSounds/HitSound';
+import type { SerializedSlider } from '../serialization/HitObjects';
+import type { ControlPointInfo } from '../timing/ControlPointInfo';
+import { CachedValue, Vec2 } from 'osucad-framework';
 import { SliderPatchEncoder } from '../../editor/commands/patchEncoder/SliderPatchEncoder';
-import { HitSound } from '../hitSounds/HitSound';
+import { Additions } from '../hitSounds/Additions.ts';
 import { HitSample } from '../hitSounds/HitSample';
 import { SampleSet } from '../hitSounds/SampleSet';
 import { SampleType } from '../hitSounds/SampleType';
 import { deserializeHitSound } from '../serialization/HitSound';
-import type { SerializedSlider } from '../serialization/HitObjects';
-import { OsuHitObject } from './OsuHitObject';
 import { HitObjectProperty } from './HitObjectProperty';
-import { SliderPath } from './SliderPath';
-import { SliderEventGenerator } from './SliderEventGenerator';
-import { SliderTick } from './SliderTick';
-import { SliderHeadCircle } from './SliderHeadCircle';
-import { SliderTailCircle } from './SliderTailCircle';
-import { SliderRepeat } from './SliderRepeat';
+import { OsuHitObject } from './OsuHitObject';
 import { PathPoint } from './PathPoint';
-import { Additions } from '../hitSounds/Additions.ts';
+import { SliderEventGenerator } from './SliderEventGenerator';
+import { SliderHeadCircle } from './SliderHeadCircle';
+import { SliderPath } from './SliderPath';
+import { SliderRepeat } from './SliderRepeat';
 import { SliderSelection } from './SliderSelection.ts';
+import { SliderTailCircle } from './SliderTailCircle';
+import { SliderTick } from './SliderTick';
 
 export class Slider extends OsuHitObject implements IPatchable<SerializedSlider> {
   constructor() {

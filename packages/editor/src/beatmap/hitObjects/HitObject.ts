@@ -1,10 +1,10 @@
 import type { IVec2, ValueChangedEvent } from 'osucad-framework';
-import { Action, Comparer, SortedList } from 'osucad-framework';
-import type { ControlPointInfo } from '../timing/ControlPointInfo';
 import type { BeatmapDifficultyInfo } from '../BeatmapDifficultyInfo';
+import type { ControlPointInfo } from '../timing/ControlPointInfo';
+import { Action, Comparer, SortedList } from 'osucad-framework';
 import { objectId } from '../ObjectId';
-import { hasComboInformation } from './IHasComboInformation';
 import { HitObjectProperty } from './HitObjectProperty';
+import { hasComboInformation } from './IHasComboInformation';
 
 export abstract class HitObject {
   static readonly control_point_leniency = 1;

@@ -1,21 +1,21 @@
+import type { IPatchable } from '../../editor/commands/IPatchable';
+import type { PatchEncoder } from '../../editor/commands/patchEncoder/PatchEncoder';
+import type { BeatmapDifficultyInfo } from '../BeatmapDifficultyInfo';
+import type { SerializedOsuHitObject } from '../serialization/HitObjects';
+import type { ControlPointInfo } from '../timing/ControlPointInfo';
+import type { HitCircle } from './HitCircle';
+import type { IHasComboInformation } from './IHasComboInformation';
+import type { Slider } from './Slider';
+import type { Spinner } from './Spinner';
 import { Action, Vec2 } from 'osucad-framework';
 import { Color } from 'pixi.js';
-import type { BeatmapDifficultyInfo } from '../BeatmapDifficultyInfo';
-import type { ControlPointInfo } from '../timing/ControlPointInfo';
-import type { IPatchable } from '../../editor/commands/IPatchable';
-import type { SerializedOsuHitObject } from '../serialization/HitObjects';
-import type { PatchEncoder } from '../../editor/commands/patchEncoder/PatchEncoder';
-import { HitSound } from '../hitSounds/HitSound';
 import { HitSample } from '../hitSounds/HitSample';
-import { SampleType } from '../hitSounds/SampleType';
+import { HitSound } from '../hitSounds/HitSound';
 import { SampleSet } from '../hitSounds/SampleSet';
+import { SampleType } from '../hitSounds/SampleType';
 import { deserializeHitSound } from '../serialization/HitSound';
 import { HitObject } from './HitObject';
 import { HitObjectProperty } from './HitObjectProperty';
-import type { IHasComboInformation } from './IHasComboInformation';
-import type { HitCircle } from './HitCircle';
-import type { Spinner } from './Spinner';
-import type { Slider } from './Slider';
 
 export abstract class OsuHitObject extends HitObject implements IHasComboInformation, IPatchable<SerializedOsuHitObject> {
   readonly needsDefaultsApplied = new Action<OsuHitObject>();

@@ -1,5 +1,5 @@
-import { Bindable } from 'osucad-framework';
 import type { HitObject } from './HitObject';
+import { Bindable } from 'osucad-framework';
 
 export class HitObjectProperty<T> {
   constructor(

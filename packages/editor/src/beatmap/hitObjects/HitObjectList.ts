@@ -1,8 +1,8 @@
 import type { Bindable } from 'osucad-framework';
-import { ObservableSortedList } from 'osucad-framework';
 import type { Beatmap } from '../Beatmap';
-import { HitObject } from './HitObject';
 import type { OsuHitObject } from './OsuHitObject';
+import { ObservableSortedList } from 'osucad-framework';
+import { HitObject } from './HitObject';
 
 export class HitObjectList extends ObservableSortedList<OsuHitObject> {
   applyDefaultsImmediately = true;

@@ -1,9 +1,9 @@
+import type { PathPoint } from './PathPoint';
 import { Action, CachedValue, List, Vec2 } from 'osucad-framework';
 import { CalculatedPath } from './CalculatedPath';
-import { PathRange } from './PathRange';
-import type { PathPoint } from './PathPoint';
-import { PathType } from './PathType';
 import { PathApproximator } from './PathApproximator';
+import { PathRange } from './PathRange';
+import { PathType } from './PathType';
 
 export class SliderPath {
   readonly invalidated = new Action();

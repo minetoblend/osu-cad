@@ -1,5 +1,5 @@
-import { Vec2 } from 'osucad-framework';
 import type { CalculatedPath } from './CalculatedPath';
+import { Vec2 } from 'osucad-framework';
 
 export class PathRange {
   constructor(
