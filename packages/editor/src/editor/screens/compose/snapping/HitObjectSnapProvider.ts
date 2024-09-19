@@ -1,13 +1,13 @@
+import type { HitObject } from '../../../../beatmap/hitObjects/HitObject';
+import type { HitObjectList } from '../../../../beatmap/hitObjects/HitObjectList';
+import type { EditorClock } from '../../../EditorClock';
+import type { EditorSelection } from '../EditorSelection';
+import type { IPositionSnapProvider } from './IPositionSnapProvider';
 import { PathApproximator, Vector2 } from 'osu-classes';
 import { Vec2 } from 'osucad-framework';
-import type { EditorSelection } from '../EditorSelection';
-import type { EditorClock } from '../../../EditorClock';
-import type { HitObjectList } from '../../../../beatmap/hitObjects/HitObjectList';
-import type { HitObject } from '../../../../beatmap/hitObjects/HitObject';
-import { Slider } from '../../../../beatmap/hitObjects/Slider';
 import { PathType } from '../../../../beatmap/hitObjects/PathType';
+import { Slider } from '../../../../beatmap/hitObjects/Slider';
 import { Spinner } from '../../../../beatmap/hitObjects/Spinner';
-import type { IPositionSnapProvider } from './IPositionSnapProvider';
 import { PositionSnapTarget } from './SnapTarget';
 
 export class HitObjectSnapProvider implements IPositionSnapProvider {
