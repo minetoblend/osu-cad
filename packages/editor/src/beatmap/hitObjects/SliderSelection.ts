@@ -98,27 +98,32 @@ export class SliderSelection {
   }
 
   #setType(type: SliderSelectionType) {
-    if (this.#type === type) return;
+    if (this.#type === type)
+      return;
 
     this.#type = type;
     this.update();
   }
 
   get anyHeadSelected() {
-    if (this.bodySelected) return false;
+    if (this.bodySelected)
+      return false;
 
     for (const edge of this.#selectedEdges) {
-      if (edge % 2 === 0) return true;
+      if (edge % 2 === 0)
+        return true;
     }
 
     return false;
   }
 
   get anyTailSelected() {
-    if (this.bodySelected) return false;
+    if (this.bodySelected)
+      return false;
 
     for (const edge of this.#selectedEdges) {
-      if (edge % 2 === 1) return true;
+      if (edge % 2 === 1)
+        return true;
     }
 
     return false;
@@ -238,8 +243,6 @@ export class SliderSelection {
   createAdditionsPatch(additions: Additions, changed: Additions): HitObjectPatch<Slider> | null {
     let didUpdate = false;
     const patch: HitObjectPatch<Slider> = {};
-
-    console.log({ additions, changed })
 
     function applyChange(value: Additions) {
       return (value & ~changed) | (additions & changed);
