@@ -20,6 +20,8 @@ export class SliderPath {
 
     this.#expectedDistance = value;
     this.#invalidateRange();
+
+    this.invalidated.emit();
   }
 
   #controlPoints: readonly PathPoint[] = [];
