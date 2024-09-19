@@ -102,7 +102,11 @@ export class BeatmapSelect extends OsucadScreen {
 
   #carousel!: BeatmapCarousel;
 
+  #isActive = true;
+
   onSuspending(e: ScreenTransitionEvent) {
+    this.#isActive = false;
+
     this.#carousel.fadeOut(400, EasingFunction.OutExpo);
     this.#carousel.scaleTo(1.3, 600, EasingFunction.OutExpo);
     this.#carousel.moveToX(500, 600, EasingFunction.OutExpo);
@@ -123,6 +127,8 @@ export class BeatmapSelect extends OsucadScreen {
   }
 
   onResuming(e: ScreenTransitionEvent) {
+    this.#isActive = true;
+
     this.#carousel.moveToX(0, 400, EasingFunction.OutQuart);
     this.#carousel.scaleTo(1, 400, EasingFunction.OutQuart);
     this.#carousel.entryAnimation();
@@ -141,5 +147,13 @@ export class BeatmapSelect extends OsucadScreen {
     this.fadeInFromZero(400);
 
     super.onResuming(e);
+  }
+
+  get propagatePositionalInputSubTree(): boolean {
+    return this.#isActive && super.propagatePositionalInputSubTree;
+  }
+
+  get propagateNonPositionalInputSubTree(): boolean {
+    return this.#isActive && super.propagateNonPositionalInputSubTree;
   }
 }
