@@ -1,9 +1,9 @@
 import type { Drawable } from 'osucad-framework';
-import { CompositeDrawable } from 'osucad-framework';
-import { LifetimeEntryManager } from './LifetimeEntryManager';
 import type { LifetimeEntry } from './LifetimeEntry';
-import { LifetimeBoundaryKind } from './LifetimeBoundaryKind';
+import { CompositeDrawable } from 'osucad-framework';
 import { LifetimeBoundaryCrossingDirection } from './LifetimeBoundaryCrossingDirection';
+import { LifetimeBoundaryKind } from './LifetimeBoundaryKind';
+import { LifetimeEntryManager } from './LifetimeEntryManager';
 
 export abstract class PooledDrawableWithLifetimeContainer<TEntry extends LifetimeEntry, TDrawable extends Drawable> extends CompositeDrawable {
   get entries() {

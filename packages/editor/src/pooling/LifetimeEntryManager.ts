@@ -1,8 +1,8 @@
-import { Action, List, SortedList } from 'osucad-framework';
 import type { LifetimeEntry } from './LifetimeEntry';
-import { LifetimeEntryState } from './LifetimeEntryState';
-import { LifetimeBoundaryKind } from './LifetimeBoundaryKind';
+import { Action, List, SortedList } from 'osucad-framework';
 import { LifetimeBoundaryCrossingDirection } from './LifetimeBoundaryCrossingDirection';
+import { LifetimeBoundaryKind } from './LifetimeBoundaryKind';
+import { LifetimeEntryState } from './LifetimeEntryState';
 
 export class LifetimeEntryManager {
   #newEntries = new List<LifetimeEntry>(0);
