@@ -31,9 +31,9 @@ const glProgram = compileHighShaderGlProgram({
           );
           
           float angle = atan(dir.x, dir.z) - uAngle;
-          
-          float stripe = smoothstep(-0.05, 0.05, cos(angle * 6.0));
-           
+
+          float stripe = smoothstep(-0.05, 0.05, cos(angle * 4.0));
+
           vec3 color = vec3(stripe);
           
           float brightness = dot(dir, vec3(0.0, 1.0, 0.0));
