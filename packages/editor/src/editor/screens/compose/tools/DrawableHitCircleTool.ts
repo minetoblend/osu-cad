@@ -13,6 +13,7 @@ export class DrawableHitCircleTool extends DrawableHitObjectPlacementTool<HitCir
 
     circle.position = this.getSnappedPosition(this.mousePosition);
     circle.startTime = this.editorClock.currentTime;
+    circle.newCombo = this.newCombo.value;
 
     circle.hitSound = this.hitSoundState.asHitSound();
 
