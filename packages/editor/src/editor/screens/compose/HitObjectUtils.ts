@@ -261,11 +261,9 @@ export class HitObjectUtils extends CompositeDrawable {
     }
   }
 
-  convertToBezier(slider: Slider) {
-    const path = slider.path.controlPoints;
-
+  static pathToBezier(path: PathPoint[]) {
     if (path.length <= 2)
-      return;
+      return path;
 
     const newPath: PathPoint[] = [];
 
@@ -294,15 +292,21 @@ export class HitObjectUtils extends CompositeDrawable {
       }
     }
 
+    return newPath;
+  }
+
+  convertToBezier(slider: Slider) {
+    const path = HitObjectUtils.pathToBezier([...slider.path.controlPoints]);
+
     this.commandManager.submit(
       new UpdateHitObjectCommand(slider, {
-        controlPoints: newPath,
+        controlPoints: path,
       }),
       false,
     );
   }
 
-  convertCircularArcToBezier(segment: Vec2[]): PathPoint[] {
+  static convertCircularArcToBezier(segment: Vec2[]): PathPoint[] {
     if (segment.length !== 3)
       return segment.map((it, index) => new PathPoint(it, index === 0 ? PathType.Bezier : null));
     const cs = PathApproximator._circularArcProperties(segment.map(it => new Vector2(it.x, it.y)));
@@ -351,7 +355,7 @@ export class HitObjectUtils extends CompositeDrawable {
     return arc.map((it, index) => new PathPoint(it, index === 0 ? PathType.Bezier : null));
   }
 
-  readonly circlePresets: CircleBezierPreset[] = [
+  static readonly circlePresets: CircleBezierPreset[] = [
     {
       maxAngle: 0.4993379862754501,
       points: [
