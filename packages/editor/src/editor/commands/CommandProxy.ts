@@ -1,6 +1,6 @@
-import { Action } from 'osucad-framework';
-import type { CommandManager } from '../context/CommandManager';
 import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
+import type { CommandManager } from '../context/CommandManager';
+import { Action } from 'osucad-framework';
 import { UpdateHitObjectCommand } from './UpdateHitObjectCommand';
 
 export type CommandProxyable = OsuHitObject;

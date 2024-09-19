@@ -1,8 +1,8 @@
 import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
 import type { HitObjectPatch } from '../../beatmap/serialization/HitObjects';
+import type { CommandContext } from './CommandContext';
 import { serializeHitObject } from '../../beatmap/serialization/HitObjects';
 import { EditorCommand } from './EditorCommand';
-import type { CommandContext } from './CommandContext';
 
 export class UpdateHitObjectCommand<T extends OsuHitObject> extends EditorCommand {
   constructor(hitObject: T | string, readonly patch: HitObjectPatch<T>) {

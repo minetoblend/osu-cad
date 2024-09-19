@@ -1,10 +1,10 @@
 import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
 import type { SerializedOsuHitObject } from '../../beatmap/serialization/HitObjects';
-import { deserializeHitObject, serializeHitObject } from '../../beatmap/serialization/HitObjects';
-
-import { EditorCommand } from './EditorCommand';
 import type { CommandContext } from './CommandContext';
+
+import { deserializeHitObject, serializeHitObject } from '../../beatmap/serialization/HitObjects';
 import { DeleteHitObjectCommand } from './DeleteHitObjectCommand';
+import { EditorCommand } from './EditorCommand';
 
 export class CreateHitObjectCommand extends EditorCommand {
   constructor(hitObject: OsuHitObject) {

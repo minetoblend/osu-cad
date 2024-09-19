@@ -1,7 +1,7 @@
 import type { HitObject } from '../../beatmap/hitObjects/HitObject';
 import type { CommandContext } from './CommandContext';
-import { EditorCommand } from './EditorCommand';
 import { CreateHitObjectCommand } from './CreateHitObjectCommand';
+import { EditorCommand } from './EditorCommand';
 
 export class DeleteHitObjectCommand extends EditorCommand {
   constructor(hitObject: HitObject | string) {
