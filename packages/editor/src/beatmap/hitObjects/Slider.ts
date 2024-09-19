@@ -52,12 +52,13 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
   }
 
   set repeatCount(value: number) {
-    if (value === this.#repeatCount) return;
+    if (value === this.#repeatCount)
+      return;
 
     this.#repeatCount = value;
 
     this.ensureHitSoundsAreValid();
-    this.requestApplyDefaults()
+    this.requestApplyDefaults();
   }
 
   get spanCount() {
@@ -165,11 +166,11 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
 
     this.#tickDistance = this.generateTicks ? (scoringDistance / difficulty.sliderTickRate * this.tickDistanceMultiplier) : Infinity;
 
-    this.subSelection.update()
+    this.subSelection.update();
   }
 
   getPositionAtTime(time: number, out = new Vec2()) {
-    this.getPathPositionAtTime(time, out)
+    this.getPathPositionAtTime(time, out);
 
     const stackedPosition = this.stackedPosition;
 
@@ -232,7 +233,7 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
     let i = 1;
     while (
       distance < Math.min(this.path.expectedDistance, this.path.calculatedDistance)
-      ) {
+    ) {
       distance += step;
       while (i < path.length - 1 && this.path.calculatedPath.cumulativeDistance[i] < distance)
         i++;
