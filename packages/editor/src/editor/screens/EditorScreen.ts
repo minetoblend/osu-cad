@@ -1,6 +1,6 @@
-import { Axes, Container, Invalidation, InvalidationSource } from 'osucad-framework';
+import { Axes, Container } from 'osucad-framework';
 
-export class EditorScreen extends Container{
+export class EditorScreen extends Container {
   constructor() {
     super();
     this.relativeSizeAxes = Axes.Both;
