@@ -1,4 +1,4 @@
-import { protocol } from 'electron';
+import { protocol, net } from 'electron';
 import fs from 'node:fs/promises';
 import { join, relative, resolve } from 'path';
 import log from 'electron-log/main';
@@ -12,6 +12,7 @@ protocol.registerSchemesAsPrivileged([
       standard: true,
       supportFetchAPI: true,
       bypassCSP: true,
+      stream: true
     },
   },
 ]);
@@ -20,17 +21,7 @@ export function setupProtocol(osuPaths: OsuStableInfo | null) {
   const logger = log.create({ logId: 'osu-stable protocol handler' });
 
   protocol.handle('osu-stable', async (request) => {
-    const time = performance.now();
-
-    const response = await handle(request);
-
-    const duration = performance.now() - time;
-
-    const { host, pathname, searchParams } = new URL(request.url);
-
-    logger.info(`osu-stable://${host}${decodeURIComponent(pathname)}?${searchParams.toString()} [${response.status}] ${duration.toFixed(2)}ms`);
-
-    return response;
+    return await handle(request);
   });
 
   async function handle(request: Request): Promise<Response> {
@@ -38,6 +29,7 @@ export function setupProtocol(osuPaths: OsuStableInfo | null) {
       return new Response('Not found', { status: 404 });
     }
 
+    // eslint-disable-next-line prefer-const
     let { host, pathname, searchParams } = new URL(request.url);
 
     pathname = decodeURI(pathname.slice(1));
@@ -77,9 +69,9 @@ export function setupProtocol(osuPaths: OsuStableInfo | null) {
     try {
       const stats = await fs.stat(filePath);
       if (stats.isFile()) {
-        const buffer = await fs.readFile(filePath);
-
-        return new Response(buffer);
+        return net.fetch(`file://${filePath}`, {
+          headers: request.headers,
+        })
       }
 
       if (stats.isDirectory()) {
