@@ -1,4 +1,8 @@
 import type { Bindable, IKeyBindingHandler, KeyBindingPressEvent } from 'osucad-framework';
+import type { IPositionSnapProvider } from './snapping/IPositionSnapProvider';
+import type { SnapTarget } from './snapping/SnapTarget';
+import type { ComposeTool } from './tools/ComposeTool';
+import type { DrawableComposeTool } from './tools/DrawableComposeTool';
 import {
   Axes,
   Container,
@@ -8,26 +12,22 @@ import {
   resolved,
   Vec2,
 } from 'osucad-framework';
-import { CommandManager } from '../../context/CommandManager';
-import { EditorAction } from '../../EditorAction';
-import { NEW_COMBO } from '../../InjectionTokens';
-import { EditorClock } from '../../EditorClock';
-import { HitObjectClipboard } from '../../CopyPasteHandler';
 import { HitObjectList } from '../../../beatmap/hitObjects/HitObjectList';
-import { BeatmapBackground } from '../../playfield/BeatmapBackground';
-import { PlayfieldGrid } from '../../playfield/PlayfieldGrid';
-import { OsuPlayfield } from '../../hitobjects/OsuPlayfield';
-import { Playfield } from '../../hitobjects/Playfield';
 import { DeleteHitObjectCommand } from '../../commands/DeleteHitObjectCommand';
 import { UpdateHitObjectCommand } from '../../commands/UpdateHitObjectCommand';
-import { HitObjectUtils } from './HitObjectUtils';
+import { CommandManager } from '../../context/CommandManager';
+import { HitObjectClipboard } from '../../CopyPasteHandler';
+import { EditorAction } from '../../EditorAction';
+import { EditorClock } from '../../EditorClock';
+import { OsuPlayfield } from '../../hitobjects/OsuPlayfield';
+import { Playfield } from '../../hitobjects/Playfield';
+import { NEW_COMBO } from '../../InjectionTokens';
+import { BeatmapBackground } from '../../playfield/BeatmapBackground';
+import { PlayfieldGrid } from '../../playfield/PlayfieldGrid';
 import { EditorSelection } from './EditorSelection';
+import { HitObjectUtils } from './HitObjectUtils';
 import { SelectionOverlay } from './selection/SelectionOverlay';
-import type { IPositionSnapProvider } from './snapping/IPositionSnapProvider';
 import { HitObjectSnapProvider } from './snapping/HitObjectSnapProvider';
-import type { SnapTarget } from './snapping/SnapTarget';
-import type { ComposeTool } from './tools/ComposeTool';
-import type { DrawableComposeTool } from './tools/DrawableComposeTool';
 
 export class HitObjectComposer
   extends Container
@@ -102,13 +102,6 @@ export class HitObjectComposer
     });
   }
 
-  override updateSubTree(): boolean {
-    performance.mark('HitObjectComposer#updateSubTree');
-    const result = super.updateSubTree();
-    performance.measure('HitObjectComposer#updateSubTree', 'HitObjectComposer#updateSubTree');
-    return result;
-  }
-
   readonly isKeyBindingHandler = true;
 
   canHandleKeyBinding(binding: PlatformAction | EditorAction): boolean {
@@ -124,7 +117,7 @@ export class HitObjectComposer
   @resolved(HitObjectList)
   hitObjects!: HitObjectList;
 
-  onKeyBindingPressed(e: KeyBindingPressEvent<PlatformAction>): boolean {
+  onKeyBindingPressed(e: KeyBindingPressEvent<PlatformAction | EditorAction>): boolean {
     switch (e.pressed) {
       case PlatformAction.Delete:
         this.#deleteSelection();
@@ -235,8 +228,9 @@ export class HitObjectComposer
   snapHitObjectPosition(
     positions: Vec2[],
     threshold = 5,
+    ignoreSelected = true,
   ): { offset: Vec2 | null; target: SnapTarget | null; snapTargets: SnapTarget[] } {
-    const snapTargets = this.snapProviders.flatMap(it => it.getSnapTargets());
+    const snapTargets = this.snapProviders.flatMap(it => it.getSnapTargets(ignoreSelected));
 
     const offsets = snapTargets.map((it) => {
       return {

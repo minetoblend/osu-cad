@@ -1,17 +1,17 @@
-import type { KeyDownEvent } from 'osucad-framework';
+import type { IKeyBindingHandler, KeyBindingPressEvent } from 'osucad-framework';
+import type { OsuHitObject } from '../../../beatmap/hitObjects/OsuHitObject';
+import type { SliderSelectionType } from '../../../beatmap/hitObjects/SliderSelection.ts';
 import {
   Action,
   Container,
-  Key,
   dependencyLoader,
+  PlatformAction,
   resolved,
 } from 'osucad-framework';
 import { HitObjectList } from '../../../beatmap/hitObjects/HitObjectList';
 import { Slider } from '../../../beatmap/hitObjects/Slider';
-import type { OsuHitObject } from '../../../beatmap/hitObjects/OsuHitObject';
-import { SliderSelectionType } from '../../../beatmap/hitObjects/SliderSelection.ts';
 
-export class EditorSelection extends Container implements Iterable<OsuHitObject> {
+export class EditorSelection extends Container implements Iterable<OsuHitObject>, IKeyBindingHandler<PlatformAction> {
   readonly #selection = new Set<OsuHitObject>();
 
   get length(): number {

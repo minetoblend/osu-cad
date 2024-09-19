@@ -1,5 +1,5 @@
-import { dependencyLoader, resolved } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
+import { dependencyLoader, resolved } from 'osucad-framework';
 import { CommandManager } from '../../context/CommandManager';
 import { ComposeToolbarButton } from './ComposeToolbarButton';
 import { EditorSelection } from './EditorSelection';
@@ -22,8 +22,6 @@ export class ComposeToggleButton extends ComposeToolbarButton {
 
   #action() {
     this.active.toggle();
-
-    console.log('toggle', this.active.value);
 
     if (this.active.value)
       this.onActivate();

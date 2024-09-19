@@ -1,5 +1,5 @@
-import { Anchor, Axes, Container, EasingFunction, VisibilityContainer } from 'osucad-framework';
 import type { ComposeToolbarButton } from './ComposeToolbarButton';
+import { Anchor, Axes, Container, EasingFunction, VisibilityContainer } from 'osucad-framework';
 
 export class ComposeToolbarButtonSubmenu extends VisibilityContainer {
   constructor(children: ComposeToolbarButton[]) {

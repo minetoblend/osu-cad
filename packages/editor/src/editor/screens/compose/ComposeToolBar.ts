@@ -1,17 +1,17 @@
 import type { Bindable } from 'osucad-framework';
-import { Axes, Container, FillDirection, FillFlowContainer, Key, Vec2, dependencyLoader } from 'osucad-framework';
-import { ComposeToolbarToolButton } from './ComposeToolbarToolButton';
-import { SliderPresetButton } from './SliderPresetButton';
 import type { ComposeTool } from './tools/ComposeTool';
-import { SelectTool } from './tools/SelectTool';
+import { Axes, Container, dependencyLoader, FillDirection, FillFlowContainer, Key, Vec2 } from 'osucad-framework';
+import { ComposeToolbarButton } from './ComposeToolbarButton';
+import { ComposeToolbarToolButton } from './ComposeToolbarToolButton';
+import { SampleSetControl } from './SampleSetControl.ts';
+import { SliderPresetButton } from './SliderPresetButton';
+import { BirdSliderTool } from './tools/BirdSliderTool';
 import { HitCircleTool } from './tools/HitCircleTool';
+import { SelectTool } from './tools/SelectTool';
 import { SliderTool } from './tools/SliderTool';
 import { SpinnerTool } from './tools/SpinnerTool';
-import { ZWaveSliderTool } from './tools/ZWaveSliderTool';
 import { WaveSliderTool } from './tools/WaveSliderTool';
-import { BirdSliderTool } from './tools/BirdSliderTool';
-import { ComposeToolbarButton } from './ComposeToolbarButton';
-import { SampleSetControl } from './SampleSetControl.ts';
+import { ZWaveSliderTool } from './tools/ZWaveSliderTool';
 
 export class ComposeToolBar extends Container {
   constructor(protected readonly activeTool: Bindable<ComposeTool>) {
@@ -33,8 +33,8 @@ export class ComposeToolBar extends Container {
     this.#toolButtons.add(
       new Container({
         height: 4,
-      })
-    )
+      }),
+    );
     this.#toolButtons.add(
       new ComposeToolbarToolButton({
         activeTool: this.activeTool,

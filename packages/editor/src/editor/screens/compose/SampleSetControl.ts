@@ -1,40 +1,45 @@
+import type {
+  FocusLostEvent,
+  IKeyBindingHandler,
+  KeyBindingPressEvent,
+  KeyBindingReleaseEvent,
+  MouseDownEvent,
+} from 'osucad-framework';
+import type { HitSoundState } from '../../../beatmap/hitSounds/BindableHitSound.ts';
 import {
   Anchor,
   Axes,
   Bindable,
   BindableBoolean,
   Box,
-  Button, ClickEvent,
   CompositeDrawable,
   Container,
   dependencyLoader,
   DrawableSprite,
   EasingFunction,
   FillDirection,
-  FillFlowContainer, FocusLostEvent, IKeyBindingHandler, KeyBindingPressEvent,
+  FillFlowContainer,
   MaskingContainer,
   MouseButton,
-  MouseDownEvent,
   resolved,
   RoundedBox,
   Vec2,
 } from 'osucad-framework';
+
 import { SampleSet } from '../../../beatmap/hitSounds/SampleSet.ts';
-import { OsucadSpriteText } from '../../../OsucadSpriteText.ts';
-import { OsucadConfigManager } from '../../../config/OsucadConfigManager.ts';
-import { HITSOUND } from '../../InjectionTokens.ts';
-import { HitSoundState } from '../../../beatmap/hitSounds/BindableHitSound.ts';
-import { OsucadIcons } from '../../../OsucadIcons.ts';
-import { OsucadSettings } from '../../../config/OsucadSettings.ts';
-import { ThemeColors } from '../../ThemeColors.ts';
-import { EditorAction } from '../../EditorAction.ts';
-import { SampleHighlightContainer } from './SampleHighlightContainer.ts';
 import { SampleType } from '../../../beatmap/hitSounds/SampleType.ts';
+import { OsucadConfigManager } from '../../../config/OsucadConfigManager.ts';
+import { OsucadSettings } from '../../../config/OsucadSettings.ts';
+import { OsucadIcons } from '../../../OsucadIcons.ts';
+import { OsucadSpriteText } from '../../../OsucadSpriteText.ts';
+import { EditorAction } from '../../EditorAction.ts';
+import { HITSOUND } from '../../InjectionTokens.ts';
+import { ThemeColors } from '../../ThemeColors.ts';
+import { SampleHighlightContainer } from './SampleHighlightContainer.ts';
 
 const buttonSize = new Vec2(46, 42);
 
 export class SampleSetControl extends CompositeDrawable {
-
   constructor(readonly title: string = 'Sampleset', readonly additions = false) {
     super();
   }
@@ -75,7 +80,6 @@ export class SampleSetControl extends CompositeDrawable {
           new Container({
             autoSizeAxes: Axes.Both,
             children: [
-
               this.#mask = new MaskingContainer({
                 autoSizeAxes: Axes.Y,
                 cornerRadius: 5,
@@ -169,7 +173,7 @@ export class SampleSetControl extends CompositeDrawable {
     if (this.alwaysExpanded.value)
       this.expanded.value = true;
 
-    this.alwaysExpanded.addOnChangeListener(e => {
+    this.alwaysExpanded.addOnChangeListener((e) => {
       this.expanded.value = e.value;
     });
 
@@ -187,7 +191,8 @@ export class SampleSetControl extends CompositeDrawable {
       if (this.expanded.value) {
         this.#movementContainer.moveToX(0, 200, EasingFunction.OutExpo);
         this.#activeHighlight.moveToX(this.#movementContainer.children.findIndex(c => c.sampleSet === this.sampleSet.value) * buttonSize.x, 200, EasingFunction.OutExpo);
-      } else {
+      }
+      else {
         this.#movementContainer.moveToX(-index * buttonSize.x, 200, EasingFunction.OutExpo);
         this.#activeHighlight.moveToX(0, 200, EasingFunction.OutExpo);
       }
@@ -203,7 +208,7 @@ export class SampleSetControl extends CompositeDrawable {
     this.#mask.resizeWidthTo(targetWidth, 200, EasingFunction.OutExpo);
   }
 
-  #mask!: MaskingContainer;
+  #mask!: Container;
 
   #movementContainer!: Container<SampleSetButton>;
 
@@ -236,11 +241,9 @@ export class SampleSetControl extends CompositeDrawable {
 
     return false;
   }
-
 }
 
 class SampleSetButton extends CompositeDrawable implements IKeyBindingHandler<EditorAction> {
-
   constructor(readonly sampleSet: SampleSet, readonly text: string, readonly additions = false) {
     super();
 
@@ -291,8 +294,9 @@ class SampleSetButton extends CompositeDrawable implements IKeyBindingHandler<Ed
   #updateState() {
     if (this.isActive.value) {
       this.#content.color = this.isHovered ? this.theme.primaryHighlight : this.theme.primary;
-    } else {
-      this.#content.color = this.isHovered ? 0xffffff : this.theme.text;
+    }
+    else {
+      this.#content.color = this.isHovered ? 0xFFFFFF : this.theme.text;
     }
 
     if (this.armed)
@@ -383,13 +387,10 @@ class SampleSetButton extends CompositeDrawable implements IKeyBindingHandler<Ed
     return false;
   }
 
-  onKeyBindingReleased(e: KeyBindingPressEvent<EditorAction>): boolean {
+  onKeyBindingReleased(e: KeyBindingReleaseEvent<EditorAction>) {
     if (e.pressed === this.keyBinding) {
       this.armed = false;
-      return true;
     }
-
-    return false;
   }
 
   get keyBinding() {
@@ -404,7 +405,8 @@ class SampleSetButton extends CompositeDrawable implements IKeyBindingHandler<Ed
         case SampleSet.Drum:
           return EditorAction.ToggleAdditionSampleSetDrum;
       }
-    } else {
+    }
+    else {
       switch (this.sampleSet) {
         case SampleSet.Auto:
           return EditorAction.ToggleSampleSetAuto;
@@ -459,16 +461,13 @@ class Header extends FillFlowContainer {
 
   @dependencyLoader()
   load() {
-    this.alwaysExpanded.addOnChangeListener(e => {
-        if (e.value)
-          this.#icon.texture = OsucadIcons.get('minus');
-        else
-          this.#icon.texture = OsucadIcons.get('plus');
-      },
-      { immediate: true },
-    );
+    this.alwaysExpanded.addOnChangeListener((e) => {
+      if (e.value)
+        this.#icon.texture = OsucadIcons.get('minus');
+      else
+        this.#icon.texture = OsucadIcons.get('plus');
+    }, { immediate: true });
   }
-
 
   get acceptsFocus(): boolean {
     // We want the parent to close on click
@@ -503,4 +502,3 @@ class Header extends FillFlowContainer {
       this.#icon.scaleTo(1, 300, EasingFunction.OutBack);
   }
 }
-

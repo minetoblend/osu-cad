@@ -1,27 +1,33 @@
+import type { ComposeTool } from './tools/ComposeTool';
 import {
   Anchor,
   Axes,
   Bindable,
+  BindableBoolean,
   Box,
   Container,
   dependencyLoader,
   EasingFunction,
   Invalidation,
   LayoutMember,
+  resolved,
   Vec2,
 } from 'osucad-framework';
 import { BackdropBlurFilter } from 'pixi-filters';
-import { EditorScreen } from '../EditorScreen';
+import { OsucadConfigManager } from '../../../config/OsucadConfigManager.ts';
+import { OsucadSettings } from '../../../config/OsucadSettings.ts';
+import { BeatSnapDivisorSelector } from '../../BeatSnapDivisorSelector';
 import { Editor } from '../../Editor';
 import { Corner, EditorCornerPiece } from '../../EditorCornerPiece';
-import { BeatSnapDivisorSelector } from '../../BeatSnapDivisorSelector';
+import { HitsoundPlayer } from '../../HitsoundPlayer.ts';
+import { ComposeScreenTimeline } from '../../timeline/ComposeScreenTimeline.ts';
 import { TimelineZoomButtons } from '../../timeline/TimelineZoomButtons';
+import { EditorScreen } from '../EditorScreen';
 import { ComposeTogglesBar } from './ComposeTogglesBar';
 import { ComposeToolBar } from './ComposeToolBar';
+import { EditorSelection } from './EditorSelection.ts';
 import { HitObjectComposer } from './HitObjectComposer';
-import type { ComposeTool } from './tools/ComposeTool';
 import { SelectTool } from './tools/SelectTool';
-import { ComposeScreenTimeline } from '../../timeline/ComposeScreenTimeline.ts';
 
 export class ComposeScreen extends EditorScreen {
   constructor() {
@@ -124,7 +130,6 @@ export class ComposeScreen extends EditorScreen {
                       child: new BeatSnapDivisorSelector(),
                     }),
                   }),
-
                 ],
               }),
             ],
@@ -184,7 +189,7 @@ export class ComposeScreen extends EditorScreen {
     this.#topBar.moveToY(-70).moveToY(0, 500, EasingFunction.OutExpo);
 
     this.#composer.moveToY(100).moveToY(0, 500, EasingFunction.OutExpo);
-    this.#composer.fadeInFromZero(400)
+    this.#composer.fadeInFromZero(400);
   }
 
   hide() {

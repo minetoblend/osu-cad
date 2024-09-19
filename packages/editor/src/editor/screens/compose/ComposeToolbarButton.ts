@@ -1,9 +1,9 @@
 import type { MouseDownEvent, MouseUpEvent } from 'osucad-framework';
-import { Anchor, Axes, BindableBoolean, Button, Container, DrawableSprite, EasingFunction, RoundedBox, Vec2, dependencyLoader, resolved } from 'osucad-framework';
-import { Graphics, Texture } from 'pixi.js';
-import { ThemeColors } from '../../ThemeColors';
-import { UISamples } from '../../../UISamples';
+import type { Texture } from 'pixi.js';
+import { Anchor, Axes, BindableBoolean, Button, Container, dependencyLoader, DrawableSprite, EasingFunction, resolved, RoundedBox, Vec2 } from 'osucad-framework';
 import { FastRoundedBox } from '../../../drawables/FastRoundedBox';
+import { UISamples } from '../../../UISamples';
+import { ThemeColors } from '../../ThemeColors';
 
 export class ComposeToolbarButton extends Button {
   constructor(

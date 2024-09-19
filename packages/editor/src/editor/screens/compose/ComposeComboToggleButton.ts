@@ -1,10 +1,20 @@
-import type { BindableBoolean } from 'osucad-framework';
-import { dependencyLoader, resolved } from 'osucad-framework';
-import { NEW_COMBO } from '../../InjectionTokens';
+import type {
+  Action,
+  IKeyBindingHandler,
+  KeyBindingPressEvent,
+  KeyBindingReleaseEvent,
+} from 'osucad-framework';
+import {
+  BindableBoolean,
+  dependencyLoader,
+  resolved,
+} from 'osucad-framework';
 import { OsucadIcons } from '../../../OsucadIcons';
+import { EditorAction } from '../../EditorAction.ts';
+import { NEW_COMBO, NEW_COMBO_APPLIED } from '../../InjectionTokens';
 import { ComposeToggleButton } from './ComposeToggleButton';
 
-export class ComposeComboToggleButton extends ComposeToggleButton {
+export class ComposeComboToggleButton extends ComposeToggleButton implements IKeyBindingHandler<EditorAction> {
   constructor() {
     super(OsucadIcons.get('new-combo'));
   }

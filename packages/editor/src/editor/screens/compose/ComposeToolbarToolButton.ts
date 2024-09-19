@@ -7,22 +7,22 @@ import type {
   MouseDownEvent,
   MouseUpEvent,
 } from 'osucad-framework';
+import type { Graphics } from 'pixi.js';
+import type { ComposeTool } from './tools/ComposeTool';
 import {
   Anchor,
   Axes,
   ClickableContainer,
   Container,
-  MouseButton,
-  Visibility,
   dependencyLoader,
+  MouseButton,
   resolved,
+  Visibility,
 } from 'osucad-framework';
-import type { Graphics } from 'pixi.js';
 import { GraphicsDrawable } from '../../../drawables/GraphicsDrawable';
 import { ThemeColors } from '../../ThemeColors';
 import { ComposeToolbarButton } from './ComposeToolbarButton';
 import { ComposeToolbarButtonSubmenu } from './ComposeToolbarButtonSubmenu';
-import type { ComposeTool } from './tools/ComposeTool';
 
 export interface ComposeToolbarToolButtonOptions {
   tool: ComposeTool;

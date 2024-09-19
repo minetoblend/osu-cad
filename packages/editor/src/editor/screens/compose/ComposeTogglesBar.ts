@@ -2,21 +2,21 @@ import {
   Anchor,
   Axes,
   Container,
+  dependencyLoader,
   FillDirection,
   FillFlowContainer,
-  Vec2,
-  dependencyLoader,
   resolved,
+  Vec2,
 } from 'osucad-framework';
-import { EditorAction } from '../../EditorAction';
-
-import { ThemeColors } from '../../ThemeColors';
-import { OsucadIcons } from '../../../OsucadIcons';
 import { Additions } from '../../../beatmap/hitSounds/Additions';
+
 import { FastRoundedBox } from '../../../drawables/FastRoundedBox';
+import { OsucadIcons } from '../../../OsucadIcons';
+import { EditorAction } from '../../EditorAction';
+import { ThemeColors } from '../../ThemeColors';
 import { AdditionToggleButton } from './AdditionToggleButton';
-import { ComposeToolbarButton } from './ComposeToolbarButton';
 import { ComposeComboToggleButton } from './ComposeComboToggleButton';
+import { ComposeToolbarButton } from './ComposeToolbarButton';
 
 export class ComposeTogglesBar extends Container {
   constructor() {

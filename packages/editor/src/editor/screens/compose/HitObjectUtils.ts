@@ -1,13 +1,13 @@
-import { PathApproximator, Vector2 } from 'osu-classes';
-import { Axes, CompositeDrawable, Rectangle, Vec2, dependencyLoader, resolved } from 'osucad-framework';
-import { Matrix } from 'pixi.js';
-import { CommandManager } from '../../context/CommandManager';
-import { UpdateHitObjectCommand } from '../../commands/UpdateHitObjectCommand';
-import { Slider } from '../../../beatmap/hitObjects/Slider';
 import type { OsuHitObject } from '../../../beatmap/hitObjects/OsuHitObject';
-import { Spinner } from '../../../beatmap/hitObjects/Spinner';
+import { PathApproximator, Vector2 } from 'osu-classes';
+import { Axes, CompositeDrawable, dependencyLoader, Rectangle, resolved, Vec2 } from 'osucad-framework';
+import { Matrix } from 'pixi.js';
 import { PathPoint } from '../../../beatmap/hitObjects/PathPoint';
 import { PathType } from '../../../beatmap/hitObjects/PathType';
+import { Slider } from '../../../beatmap/hitObjects/Slider';
+import { Spinner } from '../../../beatmap/hitObjects/Spinner';
+import { UpdateHitObjectCommand } from '../../commands/UpdateHitObjectCommand';
+import { CommandManager } from '../../context/CommandManager';
 import { DistanceSnapProvider } from './tools/DistanceSnapProvider';
 
 export class HitObjectUtils extends CompositeDrawable {

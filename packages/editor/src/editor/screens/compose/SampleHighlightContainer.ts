@@ -1,10 +1,9 @@
-import { Anchor, Axes, CompositeDrawable, dependencyLoader, EasingFunction, resolved } from 'osucad-framework';
-import type { SampleType } from '../../../beatmap/hitSounds/SampleType';
-import { HitsoundPlayer } from '../../HitsoundPlayer';
 import type { HitSample } from '../../../beatmap/hitSounds/HitSample';
+import type { SampleSet } from '../../../beatmap/hitSounds/SampleSet.ts';
+import type { SampleType } from '../../../beatmap/hitSounds/SampleType';
+import { Anchor, Axes, CompositeDrawable, dependencyLoader, EasingFunction, resolved } from 'osucad-framework';
 import { FastRoundedBox } from '../../../drawables/FastRoundedBox';
-import { SampleSet } from '../../../beatmap/hitSounds/SampleSet.ts';
-import { NineSliceSprite } from 'pixi.js';
+import { HitsoundPlayer } from '../../HitsoundPlayer';
 
 export class SampleHighlightContainer extends CompositeDrawable {
   constructor(
@@ -31,7 +30,8 @@ export class SampleHighlightContainer extends CompositeDrawable {
     if (Array.isArray(this.sampleType)) {
       if (!this.sampleType.includes(sample.sampleType))
         return;
-    } else {
+    }
+    else {
       if (sample.sampleType !== this.sampleType)
         return;
     }
