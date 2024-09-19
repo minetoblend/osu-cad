@@ -118,7 +118,7 @@ export class EditorSelection extends Container implements Iterable<OsuHitObject>
     return false;
   }
 
-  [Symbol.iterator](): Iterator<OsuHitObject> {
-    return this.#selection[Symbol.iterator]();
+  selectAll() {
+    this.select(this.hitObjects.items);
   }
 }
