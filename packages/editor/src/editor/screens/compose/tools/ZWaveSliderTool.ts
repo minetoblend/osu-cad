@@ -1,9 +1,9 @@
 import type { Texture } from 'pixi.js';
-import { getIcon } from '../../../../OsucadIcons';
 import type { ComposeTool } from './ComposeTool';
 import type { DrawableComposeTool } from './DrawableComposeTool';
-import { SliderPresetTool } from './SliderPresetTool';
+import { getIcon } from '../../../../OsucadIcons';
 import { DrawableZWaveSliderTool } from './DrawableZWaveSliderTool';
+import { SliderPresetTool } from './SliderPresetTool';
 
 export class ZWaveSliderTool extends SliderPresetTool {
   get icon(): Texture {

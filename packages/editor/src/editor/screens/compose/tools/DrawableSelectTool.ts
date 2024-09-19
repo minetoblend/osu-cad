@@ -4,29 +4,28 @@ import type {
   IKeyBindingHandler,
   KeyBindingPressEvent,
   MouseDownEvent,
-  ValueChangedEvent,
   Vec2,
 } from 'osucad-framework';
-import { Anchor, dependencyLoader, MouseButton, RoundedBox } from 'osucad-framework';
-import { EditorAction } from '../../../EditorAction';
 import type { HitObject } from '../../../../beatmap/hitObjects/HitObject';
 import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
+import type { HitSoundStateChangeEvent } from '../../../../beatmap/hitSounds/BindableHitSound.ts';
+import { Anchor, dependencyLoader, MouseButton, RoundedBox } from 'osucad-framework';
 import { Slider } from '../../../../beatmap/hitObjects/Slider';
-import { UpdateHitObjectCommand } from '../../../commands/UpdateHitObjectCommand';
-import { DeleteHitObjectCommand } from '../../../commands/DeleteHitObjectCommand';
+import { SliderSelectionType } from '../../../../beatmap/hitObjects/SliderSelection.ts';
 import { Additions } from '../../../../beatmap/hitSounds/Additions';
-import { DrawableComposeTool } from './DrawableComposeTool';
-import { SelectBoxInteraction } from './interactions/SelectBoxInteraction';
-import { MoveSelectionInteraction } from './interactions/MoveSelectionInteraction';
-import { SliderPathVisualizer } from './SliderPathVisualizer';
+import { SampleSet } from '../../../../beatmap/hitSounds/SampleSet.ts';
+import { DeleteHitObjectCommand } from '../../../commands/DeleteHitObjectCommand';
+import { UpdateHitObjectCommand } from '../../../commands/UpdateHitObjectCommand';
+import { EditorAction } from '../../../EditorAction';
 import { DistanceSnapProvider } from './DistanceSnapProvider';
-import { SliderUtils } from './SliderUtils';
+import { DrawableComposeTool } from './DrawableComposeTool';
 import { InsertControlPointInteraction } from './interactions/InsertControlPointInteraction';
+import { MoveSelectionInteraction } from './interactions/MoveSelectionInteraction';
 import { RotateSelectionInteraction } from './interactions/RotateSelectionInteraction';
 import { ScaleSelectionInteraction } from './interactions/ScaleSelectionInteraction';
-import { HitSoundStateChangeEvent } from '../../../../beatmap/hitSounds/BindableHitSound.ts';
-import { SampleSet } from '../../../../beatmap/hitSounds/SampleSet.ts';
-import { SliderSelectionType } from '../../../../beatmap/hitObjects/SliderSelection.ts';
+import { SelectBoxInteraction } from './interactions/SelectBoxInteraction';
+import { SliderPathVisualizer } from './SliderPathVisualizer';
+import { SliderUtils } from './SliderUtils';
 
 export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindingHandler<EditorAction> {
   constructor() {
@@ -193,7 +192,8 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
     const selection = this.selection.selectedObjects;
     if (selection.length === 1 && selection[0] instanceof Slider) {
       slider = selection[0];
-    } else if (hoveredHitObjects.every(it => !it.isSelected)) {
+    }
+    else if (hoveredHitObjects.every(it => !it.isSelected)) {
       slider = (hoveredHitObjects.find(it => it instanceof Slider)
         ?? null) as Slider | null;
     }
@@ -205,7 +205,8 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
         slider,
         this.mousePosition,
       )?.position ?? null;
-    } else {
+    }
+    else {
       this.#sliderInsertPoint = null;
     }
 
@@ -214,7 +215,8 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
       this.#sliderInsertPointVisualizer.position = slider!.stackedPosition.add(
         this.#sliderInsertPoint.position,
       );
-    } else {
+    }
+    else {
       this.#sliderInsertPointVisualizer.alpha = 0;
     }
   }
@@ -338,7 +340,6 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
       }
     }
 
-
     this.commit();
   }
 
@@ -441,7 +442,8 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
 
         if (sampleSet === null) {
           sampleSet = combinedSampleSet;
-        } else if (combinedSampleSet !== sampleSet) {
+        }
+        else if (combinedSampleSet !== sampleSet) {
           sampleSet = SampleSet.Auto;
           break;
         }
@@ -450,7 +452,8 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
 
       if (sampleSet === null) {
         sampleSet = object.hitSound.sampleSet;
-      } else if (object.hitSound.sampleSet !== sampleSet) {
+      }
+      else if (object.hitSound.sampleSet !== sampleSet) {
         sampleSet = SampleSet.Auto;
         break;
       }
@@ -466,7 +469,8 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
 
         if (sampleSet === null) {
           sampleSet = combinedSampleSet;
-        } else if (combinedSampleSet !== sampleSet) {
+        }
+        else if (combinedSampleSet !== sampleSet) {
           sampleSet = SampleSet.Auto;
           break;
         }
@@ -475,7 +479,8 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
 
       if (sampleSet === null) {
         sampleSet = object.hitSound.additionSampleSet;
-      } else if (object.hitSound.additionSampleSet !== sampleSet) {
+      }
+      else if (object.hitSound.additionSampleSet !== sampleSet) {
         sampleSet = SampleSet.Auto;
         break;
       }

@@ -1,14 +1,15 @@
-import type { Vec2 } from 'osucad-framework';
-import { almostEquals, resolved } from 'osucad-framework';
-import type { CommandProxy } from '../../../commands/CommandProxy';
+import type { KeyDownEvent, Vec2 } from 'osucad-framework';
 import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
+import type { HitSoundState } from '../../../../beatmap/hitSounds/BindableHitSound.ts';
+import type { CommandProxy } from '../../../commands/CommandProxy';
+import { almostEquals, Key, resolved } from 'osucad-framework';
 import { HitCircle } from '../../../../beatmap/hitObjects/HitCircle';
-import { OsuPlayfield } from '../../../hitobjects/OsuPlayfield';
-import { DeleteHitObjectCommand } from '../../../commands/DeleteHitObjectCommand';
 import { CreateHitObjectCommand } from '../../../commands/CreateHitObjectCommand';
-import { DrawableComposeTool } from './DrawableComposeTool';
+import { DeleteHitObjectCommand } from '../../../commands/DeleteHitObjectCommand';
+import { Editor } from '../../../Editor.ts';
+import { OsuPlayfield } from '../../../hitobjects/OsuPlayfield';
 import { HITSOUND } from '../../../InjectionTokens.ts';
-import { HitSoundState } from '../../../../beatmap/hitSounds/BindableHitSound.ts';
+import { DrawableComposeTool } from './DrawableComposeTool';
 
 enum PlacementState {
   Preview,

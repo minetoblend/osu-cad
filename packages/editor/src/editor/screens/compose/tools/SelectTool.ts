@@ -1,7 +1,7 @@
 import type { Texture } from 'pixi.js';
+import type { DrawableComposeTool } from './DrawableComposeTool';
 import { getIcon } from '../../../../OsucadIcons';
 import { ComposeTool } from './ComposeTool';
-import type { DrawableComposeTool } from './DrawableComposeTool';
 import { DrawableSelectTool } from './DrawableSelectTool';
 
 export class SelectTool extends ComposeTool {

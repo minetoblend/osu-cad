@@ -1,9 +1,9 @@
 import type { Texture } from 'pixi.js';
-import { getIcon } from '../../../../OsucadIcons';
 import type { ComposeTool } from './ComposeTool';
 import type { DrawableComposeTool } from './DrawableComposeTool';
-import { SliderPresetTool } from './SliderPresetTool';
+import { getIcon } from '../../../../OsucadIcons';
 import { DrawableBirdSliderTool } from './DrawableBirdSliderTool';
+import { SliderPresetTool } from './SliderPresetTool';
 
 export class BirdSliderTool extends SliderPresetTool {
   get icon(): Texture {

@@ -2,7 +2,7 @@ import type {
   KeyDownEvent,
   ScrollEvent,
 } from 'osucad-framework';
-import { Key, clamp } from 'osucad-framework';
+import { clamp, Key } from 'osucad-framework';
 
 import { DrawableSliderShapeTool } from './DrawableSliderShapeTool';
 import { BirdSliderShape } from './sliderShapes/BirdSliderShape';

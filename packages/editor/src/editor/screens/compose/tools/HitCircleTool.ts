@@ -1,7 +1,7 @@
 import type { Texture } from 'pixi.js';
+import type { DrawableComposeTool } from './DrawableComposeTool';
 import { getIcon } from '../../../../OsucadIcons';
 import { ComposeTool } from './ComposeTool';
-import type { DrawableComposeTool } from './DrawableComposeTool';
 import { DrawableHitCircleTool } from './DrawableHitCircleTool';
 
 export class HitCircleTool extends ComposeTool {

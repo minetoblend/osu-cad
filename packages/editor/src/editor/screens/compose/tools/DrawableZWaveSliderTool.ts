@@ -6,8 +6,8 @@ import {
   Key,
   Vec2,
 } from 'osucad-framework';
-import { ZWaveSliderShape } from './sliderShapes/ZWaveSliderShape';
 import { DrawableSliderShapeTool } from './DrawableSliderShapeTool';
+import { ZWaveSliderShape } from './sliderShapes/ZWaveSliderShape';
 
 export class DrawableZWaveSliderTool extends DrawableSliderShapeTool<ZWaveSliderShape> {
   constructor() {

@@ -1,17 +1,17 @@
 import type { DragEndEvent, DragEvent, DragStartEvent, MouseDownEvent } from 'osucad-framework';
+import type { Slider } from '../../../../beatmap/hitObjects/Slider';
 import {
   Anchor,
   Axes,
   Cached,
   CompositeDrawable,
   Container,
+  dependencyLoader,
   EasingFunction,
   PIXIGraphics,
   RoundedBox,
   Vec2,
-  dependencyLoader,
 } from 'osucad-framework';
-import type { Slider } from '../../../../beatmap/hitObjects/Slider';
 import { PathType } from '../../../../beatmap/hitObjects/PathType';
 
 export class SliderPathVisualizer extends CompositeDrawable {

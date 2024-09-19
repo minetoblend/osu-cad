@@ -3,23 +3,23 @@ import type {
   MouseDownEvent,
   MouseMoveEvent,
 } from 'osucad-framework';
+import type { CommandProxy } from '../../../commands/CommandProxy';
+import type { SliderShape } from './sliderShapes/SliderShape';
 import {
+  dependencyLoader,
   MouseButton,
   Vec2,
-  dependencyLoader,
 } from 'osucad-framework';
-import { Editor } from '../../../Editor';
-import { Slider } from '../../../../beatmap/hitObjects/Slider';
 import { PathPoint } from '../../../../beatmap/hitObjects/PathPoint';
 import { PathType } from '../../../../beatmap/hitObjects/PathType';
-import type { CommandProxy } from '../../../commands/CommandProxy';
+import { Slider } from '../../../../beatmap/hitObjects/Slider';
 import { DeleteHitObjectCommand } from '../../../commands/DeleteHitObjectCommand';
 import { UpdateHitObjectCommand } from '../../../commands/UpdateHitObjectCommand';
+import { Editor } from '../../../Editor';
+import { DistanceSnapProvider } from './DistanceSnapProvider';
 import { DrawableHitObjectPlacementTool } from './DrawableHitObjectPlacementTool';
 import { SliderPathVisualizer } from './SliderPathVisualizer';
 import { SliderUtils } from './SliderUtils';
-import { DistanceSnapProvider } from './DistanceSnapProvider';
-import type { SliderShape } from './sliderShapes/SliderShape';
 
 export abstract class DrawableSliderShapeTool<T extends SliderShape> extends DrawableHitObjectPlacementTool<Slider> {
   protected sliderPathVisualizer = new SliderPathVisualizer();
