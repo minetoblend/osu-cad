@@ -16,6 +16,8 @@ export class CommandManager {
 
   readonly canRedo = new Bindable(false);
 
+  hasUnsavedChanges = false;
+
   createContext(): CommandContext {
     return new CommandContext(this.beatmap);
   }
@@ -56,6 +58,7 @@ export class CommandManager {
   }
 
   protected afterCommandSubmit(command: EditorCommand) {
+    this.hasUnsavedChanges = true;
   }
 
   protected afterCommandApplied(command: EditorCommand) {
