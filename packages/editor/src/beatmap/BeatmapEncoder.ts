@@ -1,25 +1,24 @@
-import { Beatmap } from './Beatmap.ts';
-import yaml from 'yaml';
-import { BeatmapMetadata } from './BeatmapMetadata.ts';
-import { BeatmapDifficultyInfo } from './BeatmapDifficultyInfo.ts';
-import { BeatmapColors } from './BeatmapColors.ts';
+import type { Vec2 } from '../../../framework/src';
+import type { Beatmap } from './Beatmap.ts';
+import type { BeatmapColors } from './BeatmapColors.ts';
+import type { BeatmapDifficultyInfo } from './BeatmapDifficultyInfo.ts';
+import type { BeatmapMetadata } from './BeatmapMetadata.ts';
+import type { BeatmapSettings } from './BeatmapSettings.ts';
+import type { HitObjectList } from './hitObjects/HitObjectList.ts';
+import type { OsuHitObject } from './hitObjects/OsuHitObject.ts';
+import type { IPathPoint } from './hitObjects/PathPoint.ts';
+import type { HitSound } from './hitSounds/HitSound.ts';
+import type { ControlPointInfo } from './timing/ControlPointInfo.ts';
 import { Color } from 'pixi.js';
-import { BeatmapSettings } from './BeatmapSettings.ts';
-import { ControlPointInfo } from './timing/ControlPointInfo.ts';
-import { SampleSet } from './hitSounds/SampleSet.ts';
-import { OsuHitObject } from './hitObjects/OsuHitObject.ts';
-import { HitObjectList } from './hitObjects/HitObjectList.ts';
+import yaml from 'yaml';
 import { HitCircle } from './hitObjects/HitCircle.ts';
-import { Slider } from './hitObjects/Slider.ts';
-import { Vec2 } from '../../../framework/src';
-import { HitSound } from './hitSounds/HitSound.ts';
-import { Additions } from './hitSounds/Additions.ts';
-import { IPathPoint } from './hitObjects/PathPoint.ts';
 import { PathType } from './hitObjects/PathType.ts';
+import { Slider } from './hitObjects/Slider.ts';
 import { Spinner } from './hitObjects/Spinner.ts';
+import { Additions } from './hitSounds/Additions.ts';
+import { SampleSet } from './hitSounds/SampleSet.ts';
 
 export class BeatmapEncoder {
-
   encode(beatmap: Beatmap) {
     const document = new yaml.Document({
       version: 1,
@@ -35,7 +34,7 @@ export class BeatmapEncoder {
     return document.toString({
       nullStr: '',
       indentSeq: false,
-      flowCollectionPadding: false
+      flowCollectionPadding: false,
     });
   }
 
@@ -108,49 +107,47 @@ export class BeatmapEncoder {
   }
 
   #encodeControlPoints(document: yaml.Document, controlPoints: ControlPointInfo) {
-    document.set('controlPoints',
-      controlPoints.groups.items
-        .filter(group => group.children.size > 0)
-        .map(group => {
-          const object: any = {
-            time: group.time,
+    document.set('controlPoints', controlPoints.groups.items
+      .filter(group => group.children.size > 0)
+      .map((group) => {
+        const object: any = {
+          time: group.time,
+        };
+
+        if (group.timing) {
+          object.timing = {
+            bpm: Math.round(group.timing.bpm * 1000) / 1000,
+            meter: group.timing.meter === 4 ? null : group.timing.meter,
           };
+        }
 
-          if (group.timing) {
-            object.timing = {
-              bpm: Math.round(group.timing.bpm * 1000) / 1000,
-              meter: group.timing.meter === 4 ? null : group.timing.meter,
-            };
-          }
+        if (group.difficulty) {
+          object.difficulty = {
+            sliderVelocity: Math.round(group.difficulty.sliderVelocity * 100) / 100,
+          };
+        }
 
-          if (group.difficulty) {
-            object.difficulty = {
-              sliderVelocity: Math.round(group.difficulty.sliderVelocity * 100) / 100,
-            };
-          }
+        if (group.sample) {
+          let sampleSet = this.#encodeSampleSet(group.sample.sampleSet);
 
-          if (group.sample) {
-            let sampleSet = this.#encodeSampleSet(group.sample.sampleSet);
+          if (group.sample.sampleIndex !== 1)
+            sampleSet += `:${group.sample.sampleIndex}`;
 
-            if (group.sample.sampleIndex !== 1)
-              sampleSet += `:${group.sample.sampleIndex}`;
+          object.sample = {
+            time: group.sample.time,
+            sampleSet,
+            volume: Math.round(group.sample.volume * 100) / 100,
+          };
+        }
 
-            object.sample = {
-              time: group.sample.time,
-              sampleSet,
-              volume: Math.round(group.sample.volume * 100) / 100,
-            };
-          }
+        if (group.effect) {
+          object.effect = {
+            time: group.effect.kiaiMode,
+          };
+        }
 
-          if (group.effect) {
-            object.effect = {
-              time: group.effect.kiaiMode,
-            };
-          }
-
-          return object;
-        }),
-    );
+        return object;
+      }));
   }
 
   #encodeHitObjects(document: yaml.Document, hitObjects: HitObjectList) {
@@ -254,14 +251,14 @@ export class BeatmapEncoder {
     return document.createNode(
       pathPoint.type === null
         ? [
-          this.#toPrecision(pathPoint.position.x, 2),
-          this.#toPrecision(pathPoint.position.y, 2),
-        ]
+            this.#toPrecision(pathPoint.position.x, 2),
+            this.#toPrecision(pathPoint.position.y, 2),
+          ]
         : [
-          this.#toPrecision(pathPoint.position.x, 2),
-          this.#toPrecision(pathPoint.position.y, 2),
-          this.#encodePathType(document, pathPoint.type),
-        ],
+            this.#toPrecision(pathPoint.position.x, 2),
+            this.#toPrecision(pathPoint.position.y, 2),
+            this.#encodePathType(document, pathPoint.type),
+          ],
       { flow: true },
     );
   }
