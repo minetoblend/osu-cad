@@ -17,10 +17,10 @@ export class HitObjectSnapProvider implements IPositionSnapProvider {
     private readonly clock: EditorClock,
   ) {}
 
-  getSnapTargets() {
+  getSnapTargets(ignoreSelected: boolean) {
     const currentTime = this.clock.currentTime;
 
-    const hitObjects = this.hitObjects.filter(it => !this.selection.isSelected(it) && it.isVisibleAtTime(currentTime));
+    const hitObjects = this.hitObjects.filter(it => (!ignoreSelected || !this.selection.isSelected(it)) && it.isVisibleAtTime(currentTime));
 
     const positions = hitObjects.flatMap((it) => {
       if (it instanceof Spinner)
