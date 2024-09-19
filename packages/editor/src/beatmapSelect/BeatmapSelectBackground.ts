@@ -23,7 +23,7 @@ export class BeatmapSelectBackground extends CompositeDrawable {
     this.alpha = 0.3;
 
     this.#content.drawNode.filters = [
-      new BlurFilter({
+      this.blurFilter = new BlurFilter({
         strength: 10,
         quality: 3,
         antialias: 'off',
@@ -33,6 +33,8 @@ export class BeatmapSelectBackground extends CompositeDrawable {
 
     this.addInternal(this.#content);
   }
+
+  blurFilter: BlurFilter;
 
   #content: Container = new Container({
     relativeSizeAxes: Axes.Both,
@@ -44,6 +46,34 @@ export class BeatmapSelectBackground extends CompositeDrawable {
   #currentBeatmap: BeatmapItemInfo | null = null;
 
   #currentBackgroundPath: string | null = null;
+
+  backgroundBlur = new BindableBoolean();
+
+  get blurStrength() {
+    return this.blurFilter.strength;
+  }
+
+  set blurStrength(value) {
+    this.blurFilter.strength = value;
+
+    if (value <= 0 && this.#content.filters.length > 0)
+      this.#content.filters = [];
+    else if (value > 0 && this.#content.filters.length === 0)
+      this.#content.filters = [this.blurFilter];
+  }
+
+  @resolved(OsucadConfigManager)
+  config!: OsucadConfigManager;
+
+  @dependencyLoader()
+  load() {
+    this.config.bindWith(OsucadSettings.SongSelectBackgroundBlur, this.backgroundBlur);
+
+    this.backgroundBlur.addOnChangeListener(
+      e => this.transformTo('blurStrength', e.value ? 10 : 0, 350, EasingFunction.OutExpo),
+      { immediate: true },
+    );
+  }
 
   get currentBeatmap(): BeatmapItemInfo | null {
     return this.#currentBeatmap;
