@@ -1,9 +1,9 @@
-import { Bindable, Vec2, dependencyLoader } from 'osucad-framework';
 import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
+import { Bindable, dependencyLoader, Vec2 } from 'osucad-framework';
 import { DrawableHitObject } from './DrawableHitObject';
 
 export class DrawableOsuHitObject<T extends OsuHitObject = OsuHitObject> extends DrawableHitObject {
-  constructor(hitObject: T) {
+  constructor(hitObject?: T) {
     super(hitObject);
 
     this.drawNode.enableRenderGroup();
