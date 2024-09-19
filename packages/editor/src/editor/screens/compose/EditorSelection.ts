@@ -99,9 +99,19 @@ export class EditorSelection extends Container implements Iterable<OsuHitObject>
     });
   }
 
-  onKeyDown(e: KeyDownEvent): boolean {
-    if (e.controlPressed && e.key === Key.KeyA) {
-      this.select(this.hitObjects.items);
+  [Symbol.iterator](): Iterator<OsuHitObject> {
+    return this.#selection[Symbol.iterator]();
+  }
+
+  readonly isKeyBindingHandler = true;
+
+  canHandleKeyBinding(binding: PlatformAction): boolean {
+    return binding instanceof PlatformAction;
+  }
+
+  onKeyBindingPressed(e: KeyBindingPressEvent<PlatformAction>): boolean {
+    if (e.pressed === PlatformAction.SelectAll) {
+      this.selectAll();
       return true;
     }
 
