@@ -78,7 +78,7 @@ export class ScaleSelectionInteraction extends ComposeToolInteraction {
     });
 
     this.#translateGizmo.positionValue.addOnChangeListener(({ value }) => {
-      const snapResult = this.findClosestParentOfType(HitObjectComposer)!.snapHitObjectPosition([value]);
+      const snapResult = this.#composer.snapHitObjectPosition([value], 5, false);
 
       if (snapResult.offset) {
         value = value.add(snapResult.offset);
@@ -90,6 +90,14 @@ export class ScaleSelectionInteraction extends ComposeToolInteraction {
       this.#updateTransform();
       this.updateSubTreeTransforms();
     });
+  }
+
+  #composer!: HitObjectComposer;
+
+  loadComplete() {
+    super.loadComplete();
+
+    this.#composer = this.findClosestParentOfType(HitObjectComposer)!;
   }
 
   onMouseDown(): boolean {
