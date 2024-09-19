@@ -29,7 +29,7 @@ export class PreferencesToggle extends CompositeDrawable {
       new Toggle({ bindable: this.bindable, trigger: ToggleTrigger.MouseDown }).with({
         anchor: Anchor.CenterRight,
         origin: Anchor.CenterRight,
-        scale: 0.65,
+        scale: 0.85,
       }),
     );
   }
