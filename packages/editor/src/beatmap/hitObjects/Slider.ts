@@ -419,7 +419,7 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
       const time = this.startTime + this.spanDuration * i;
       const hitSound = this.hitSounds[i];
 
-      const samplePoint = controlPointInfo.samplePointAt(time);
+      const samplePoint = controlPointInfo.samplePointAt(Math.ceil(time));
 
       let sampleSet = hitSound.sampleSet;
       if (sampleSet === SampleSet.Auto)
