@@ -504,6 +504,20 @@ export class BeatmapCarousel extends CompositeDrawable {
 
     return scrollSpeed > 1;
   }
+
+  #mouseWasInside = false;
+
+  updateAfterChildren() {
+    super.updateAfterChildren();
+
+    const mouseIsInside = this.contains(this.getContainingInputManager()!.currentState.mouse.position);
+
+    if (!mouseIsInside && this.#mouseWasInside) {
+      this.#scrollToSelected();
+    }
+
+    this.#mouseWasInside = mouseIsInside;
+  }
 }
 
 class CarouselScrollContainer extends MainScrollContainer<DrawableCarouselMapset> {
