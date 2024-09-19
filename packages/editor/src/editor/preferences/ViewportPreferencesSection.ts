@@ -27,7 +27,10 @@ export class ViewportPreferencesSection extends PreferencesPanel {
         'Animated seek',
         this.config.getBindable(OsucadSettings.AnimatedSeek)!,
       ),
-
+      new PreferencesToggle(
+        'Compact timeline',
+        this.config.getBindable(OsucadSettings.CompactTimeline)!,
+      ),
     ];
   }
 }
