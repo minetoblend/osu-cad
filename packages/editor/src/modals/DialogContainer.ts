@@ -1,6 +1,6 @@
 import type { ContainerOptions, KeyDownEvent, MouseDownEvent, UIEvent } from 'osucad-framework';
-import { Axes, Box, Container, ScreenStack, dependencyLoader } from 'osucad-framework';
 import type { Dialog } from './Dialog';
+import { Axes, Box, Container, dependencyLoader, ScreenStack } from 'osucad-framework';
 
 export class DialogContainer extends Container {
   constructor(options: ContainerOptions = {}) {

@@ -1,6 +1,6 @@
 import type { Drawable } from 'osucad-framework';
-import { Anchor, Axes, Container, EasingFunction, FillDirection, FillFlowContainer } from 'osucad-framework';
 import type { Notification } from './Notification';
+import { Anchor, Axes, Container, EasingFunction, FillDirection, FillFlowContainer } from 'osucad-framework';
 
 export class NotificationOverlay extends Container {
   constructor() {
