@@ -1,14 +1,14 @@
 import type { ScreenTransitionEvent } from 'osucad-framework';
-import { Anchor, Axes, Box, Container, EasingFunction, dependencyLoader, resolved } from 'osucad-framework';
-import { OsucadScreen } from '../OsucadScreen';
-import { GlobalSongPlayback } from '../GlobalSongPlayback';
-import { EditorEnvironment } from '../environment/EditorEnvironment';
 import type { BeatmapStore } from '../environment/BeatmapStore';
+import { Anchor, Axes, Box, Container, dependencyLoader, EasingFunction, resolved } from 'osucad-framework';
+import { EditorEnvironment } from '../environment/EditorEnvironment';
+import { GlobalSongPlayback } from '../GlobalSongPlayback';
+import { OsucadScreen } from '../OsucadScreen';
 import { BeatmapCarousel } from './BeatmapCarousel';
-import { BeatmapSelectBackground } from './BeatmapSelectBackground';
 import { BeatmapImportDropzone } from './BeatmapImportDropzone';
-import { BeatmapSelectHeader } from './BeatmapSelectHeader';
+import { BeatmapSelectBackground } from './BeatmapSelectBackground';
 import { BeatmapSelectFilter } from './BeatmapSelectFilter';
+import { BeatmapSelectHeader } from './BeatmapSelectHeader';
 
 export class BeatmapSelect extends OsucadScreen {
   getPath(): string {
@@ -33,7 +33,9 @@ export class BeatmapSelect extends OsucadScreen {
   load() {
     this.beatmapStore = this.environment.beatmaps;
 
-    this.filter = new BeatmapSelectFilter(this.beatmapStore.beatmaps);
+    this.addInternal(
+      this.filter = new BeatmapSelectFilter(this.beatmapStore.beatmaps),
+    );
 
     this.addInternal(new Box({
       relativeSizeAxes: Axes.Both,
@@ -88,7 +90,7 @@ export class BeatmapSelect extends OsucadScreen {
 
     this.filter.visibleBeatmaps.addOnChangeListener((ids) => {
       this.#carousel.applyFilter(ids.value);
-    })
+    });
   }
 
   #menu!: Container;
@@ -114,7 +116,7 @@ export class BeatmapSelect extends OsucadScreen {
     this.#menu.moveToX(-500, 600, EasingFunction.OutExpo);
     this.#menu.fadeOut(400, EasingFunction.OutExpo);
 
-    this.#background.fadeTo(0.1, 300);
+    this.#background.fadeTo(0, 600);
 
     this.#header.hide();
 

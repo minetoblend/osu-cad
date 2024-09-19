@@ -1,19 +1,19 @@
+import type { UserInfo } from '@osucad/common';
+
+import type { Texture } from 'pixi.js';
 import {
   Anchor,
   Axes,
   CompositeDrawable,
   Container,
-  RoundedBox,
   dependencyLoader,
   resolved,
+  RoundedBox,
 } from 'osucad-framework';
-
-import type { UserInfo } from '@osucad/common';
-import type { Texture } from 'pixi.js';
 import { Graphics, Matrix } from 'pixi.js';
 
-import { UserAvatarCache } from '../UserAvatarCache';
 import { OsucadSpriteText } from '../OsucadSpriteText';
+import { UserAvatarCache } from '../UserAvatarCache';
 
 function createRoundAvatar(
   texture: Texture,

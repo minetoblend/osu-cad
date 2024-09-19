@@ -1,5 +1,6 @@
-import { Axes, Container, dependencyLoader, Drawable, PoolableDrawable } from 'osucad-framework';
+import type { Drawable } from 'osucad-framework';
 import type { CarouselItem } from './CarouselItem';
+import { Axes, Container, dependencyLoader, PoolableDrawable } from 'osucad-framework';
 
 export class DrawableCarouselItem extends PoolableDrawable {
   constructor(item?: CarouselItem) {
@@ -25,7 +26,7 @@ export class DrawableCarouselItem extends PoolableDrawable {
 
   #item: CarouselItem | null = null;
 
-  get item() : CarouselItem {
+  get item(): CarouselItem {
     return this.#item!;
   }
 
@@ -41,7 +42,6 @@ export class DrawableCarouselItem extends PoolableDrawable {
   protected freeAfterUse() {
     this.item.selected.valueChanged.removeListener(this.applyState);
   }
-
 
   @dependencyLoader()
   [Symbol('load')]() {

@@ -1,7 +1,6 @@
 import { TextBox } from '../userInterface/TextBox';
 
 export class AlwaysFocusedTextBox extends TextBox {
-
   override onFocusLost() {
     super.onFocusLost();
 
@@ -13,5 +12,4 @@ export class AlwaysFocusedTextBox extends TextBox {
 
     this.getContainingFocusManager()?.changeFocus(this);
   }
-
 }

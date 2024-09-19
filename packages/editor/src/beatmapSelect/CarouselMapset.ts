@@ -1,6 +1,6 @@
 import type { MapsetInfo } from './MapsetInfo';
-import { CarouselItem } from './CarouselItem';
 import { CarouselBeatmap } from './CarouselBeatmap';
+import { CarouselItem } from './CarouselItem';
 
 export class CarouselMapset extends CarouselItem {
   constructor(readonly mapset: MapsetInfo) {

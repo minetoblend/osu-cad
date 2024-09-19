@@ -1,6 +1,5 @@
 import { Bindable } from 'osucad-framework';
 
-
 export abstract class CarouselItem {
   carouselYPosition: number = 0;
 

@@ -1,10 +1,10 @@
 import type { IKeyBindingHandler, KeyBindingPressEvent } from 'osucad-framework';
-import { Action, Anchor, Axes, Bindable, CompositeDrawable, Container, EasingFunction, PlatformAction, TextInputSource, clamp, dependencyLoader, resolved } from 'osucad-framework';
-import { BitmapFontManager } from 'pixi.js';
 import gsap from 'gsap';
+import { Action, Anchor, Axes, Bindable, clamp, CompositeDrawable, Container, dependencyLoader, EasingFunction, PlatformAction, resolved, TextInputSource } from 'osucad-framework';
+import { BitmapFontManager } from 'pixi.js';
 import { FastRoundedBox } from '../drawables/FastRoundedBox';
-import { OsucadSpriteText } from '../OsucadSpriteText';
 import { ThemeColors } from '../editor/ThemeColors';
+import { OsucadSpriteText } from '../OsucadSpriteText';
 import { animate } from '../utils/animate';
 
 export class SearchTextBox extends Container implements IKeyBindingHandler<PlatformAction> {

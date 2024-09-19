@@ -1,6 +1,6 @@
-import { Anchor, Axes, Container, FillDirection, FillFlowContainer, RoundedBox, dependencyLoader, resolved } from 'osucad-framework';
-import { OsucadSpriteText } from '../OsucadSpriteText';
+import { Anchor, Axes, Container, dependencyLoader, FillDirection, FillFlowContainer, resolved, RoundedBox } from 'osucad-framework';
 import { ThemeColors } from '../editor/ThemeColors';
+import { OsucadSpriteText } from '../OsucadSpriteText';
 
 export class CreateBeatmapCard extends Container {
   constructor() {

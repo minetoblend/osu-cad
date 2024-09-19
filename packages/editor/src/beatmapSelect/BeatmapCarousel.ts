@@ -1,3 +1,10 @@
+import type {
+  KeyDownEvent,
+} from 'osucad-framework';
+import type { BeatmapItemInfo } from './BeatmapItemInfo';
+import type { DrawableCarouselItem } from './DrawableCarouselItem';
+import type { MapsetInfo } from './MapsetInfo';
+import { binarySearch } from '@osucad/common';
 import {
   Action,
   Axes,
@@ -5,29 +12,25 @@ import {
   clamp,
   CompositeDrawable,
   dependencyLoader,
-  Direction, DrawablePool,
+  Direction,
+  DrawablePool,
   Invalidation,
   Key,
-  KeyDownEvent,
   LayoutMember,
   lerp,
   resolved,
   ScreenStack,
 } from 'osucad-framework';
-import { binarySearch } from '@osucad/common';
 import { BackdropBlurFilter } from 'pixi-filters';
-import { MainScrollContainer } from '../editor/MainScrollContainer';
-import { UISamples } from '../UISamples';
-import { EditorEnvironment } from '../environment/EditorEnvironment';
-import { EditorLoader } from '../editor/EditorLoader';
-import type { BeatmapItemInfo } from './BeatmapItemInfo';
-import type { MapsetInfo } from './MapsetInfo';
-import { CarouselMapset } from './CarouselMapset';
-import type { DrawableCarouselItem } from './DrawableCarouselItem';
-import { DrawableCarouselMapset } from './DrawableCarouselMapset';
-import { CarouselLoadQueue } from './CarouselLoadQueue';
 import { OsucadConfigManager } from '../config/OsucadConfigManager.ts';
 import { OsucadSettings } from '../config/OsucadSettings.ts';
+import { EditorLoader } from '../editor/EditorLoader';
+import { MainScrollContainer } from '../editor/MainScrollContainer';
+import { EditorEnvironment } from '../environment/EditorEnvironment';
+import { UISamples } from '../UISamples';
+import { CarouselLoadQueue } from './CarouselLoadQueue';
+import { CarouselMapset } from './CarouselMapset';
+import { DrawableCarouselMapset } from './DrawableCarouselMapset';
 
 const distance_offscreen_before_unload = 1024;
 
@@ -82,7 +85,6 @@ export class BeatmapCarousel extends CompositeDrawable {
     this.#scrollDelta = lerp(this.#scrollDelta, scrollDelta, Math.min(this.time.elapsed * 0.015, 1));
     this.#lastScrollPosition = this.#scroll.current;
 
-
     const revalidateItems = !this.#itemsCache.isValid;
 
     if (revalidateItems) {
@@ -122,7 +124,7 @@ export class BeatmapCarousel extends CompositeDrawable {
       }
 
       for (const item of toDisplay) {
-        const panel = this.#mapsetPool.get(it => it.item = item)
+        const panel = this.#mapsetPool.get(it => it.item = item);
         panel.drawNode.zIndex = item.carouselYPosition;
         panel.y = item.carouselYPosition;
         panel.fadeInFromZero(200);
@@ -187,7 +189,8 @@ export class BeatmapCarousel extends CompositeDrawable {
 
       if (this.#pendingScrollOperation === PendingScrollOperation.Standard) {
         this.#scroll.scrollTo(this.#scrollTarget);
-      } else if (this.#pendingScrollOperation === PendingScrollOperation.Immediate) {
+      }
+      else if (this.#pendingScrollOperation === PendingScrollOperation.Immediate) {
         const scrollChange = this.#scrollTarget - this.#scroll.current;
         this.#scroll.scrollTo(this.#scrollTarget, false);
         for (const i of this.#scroll.children)
@@ -239,7 +242,8 @@ export class BeatmapCarousel extends CompositeDrawable {
         for (const beatmap of mapset.beatmaps)
           beatmap.visible.value = true;
       }
-    } else {
+    }
+    else {
       for (const mapset of this.mapsets) {
         let anyVisible = false;
         for (const beatmap of mapset.beatmaps) {
@@ -299,8 +303,6 @@ export class BeatmapCarousel extends CompositeDrawable {
     this.#visibleItems.length = 0;
 
     let currentY = this.#visibleHalfHeight;
-
-    let oldScrollTarget = this.#scrollTarget;
 
     this.#scrollTarget = null;
 
@@ -459,10 +461,10 @@ export class BeatmapCarousel extends CompositeDrawable {
         const mapset = this.mapsets[mapsetIndex + direction];
 
         if (mapset.visible.value) {
-          const beatmap =
-            direction > 0 ?
-              mapset.beatmaps.find(it => it.visible.value) :
-              mapset.beatmaps.findLast(it => it.visible.value);
+          const beatmap
+            = direction > 0
+              ? mapset.beatmaps.find(it => it.visible.value)
+              : mapset.beatmaps.findLast(it => it.visible.value);
 
           if (beatmap) {
             beatmap.selected.value = true;

@@ -1,16 +1,24 @@
+import type {
+  GameHost,
+} from 'osucad-framework';
+import type { BeatmapItemInfo } from './BeatmapItemInfo';
 import {
   Anchor,
   Axes,
-  CompositeDrawable, Container,
+  BindableBoolean,
+  CompositeDrawable,
+  Container,
+  dependencyLoader,
   DrawableSprite,
+  EasingFunction,
   FillMode,
   GAME_HOST,
-  GameHost,
   loadTexture,
   resolved,
 } from 'osucad-framework';
-import type { BeatmapItemInfo } from './BeatmapItemInfo';
 import { BlurFilter } from 'pixi.js';
+import { OsucadConfigManager } from '../config/OsucadConfigManager.ts';
+import { OsucadSettings } from '../config/OsucadSettings.ts';
 
 export class BeatmapSelectBackground extends CompositeDrawable {
   constructor() {

@@ -1,23 +1,12 @@
-import {
-  Anchor,
-  Axes,
-  Container,
-  EasingFunction,
-  FillFlowContainer,
-  RoundedBox,
-  ScreenStack,
-  Vec2,
-  dependencyLoader,
-  lerp,
-  resolved,
-} from 'osucad-framework';
+import type { HoverEvent, HoverLostEvent } from 'osucad-framework';
+import { Anchor, Axes, Container, dependencyLoader, EasingFunction, FillFlowContainer, lerp, resolved, RoundedBox, ScreenStack, Vec2 } from 'osucad-framework';
 import { Color } from 'pixi.js';
-import { OsucadSpriteText } from '../OsucadSpriteText';
-import { EditorLoader } from '../editor/EditorLoader';
-import { UISamples } from '../UISamples';
 import { FastRoundedBox } from '../drawables/FastRoundedBox';
-import { DrawableCarouselItem } from './DrawableCarouselItem';
+import { EditorLoader } from '../editor/EditorLoader';
+import { OsucadSpriteText } from '../OsucadSpriteText';
+import { UISamples } from '../UISamples';
 import { CarouselBeatmap } from './CarouselBeatmap';
+import { DrawableCarouselItem } from './DrawableCarouselItem';
 
 export class DrawableCarouselBeatmap extends DrawableCarouselItem {
   constructor(item: CarouselBeatmap) {
