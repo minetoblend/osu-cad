@@ -8,9 +8,9 @@ import {
   Bindable,
   Box,
   CompositeDrawable,
+  dependencyLoader,
   MouseButton,
   Vec2,
-  dependencyLoader,
 } from 'osucad-framework';
 
 export class TranslateGizmo extends CompositeDrawable {

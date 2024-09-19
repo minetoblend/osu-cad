@@ -7,12 +7,14 @@ import type {
   MouseDownEvent,
   Rectangle,
 } from 'osucad-framework';
+import type { OsuHitObject } from '../../../../../beatmap/hitObjects/OsuHitObject';
 import {
   Action,
   Anchor,
   Axes,
   Bindable,
   CompositeDrawable,
+  dependencyLoader,
   EasingFunction,
   FillDirection,
   FillFlowContainer,
@@ -20,15 +22,13 @@ import {
   MouseButton,
   RoundedBox,
   Vec2,
-  dependencyLoader,
 } from 'osucad-framework';
 import { Graphics, Matrix } from 'pixi.js';
-import { HitObjectUtils } from '../../HitObjectUtils';
-import { HitObjectComposer } from '../../HitObjectComposer';
-import { OsucadSpriteText } from '../../../../../OsucadSpriteText';
 import { Ring } from '../../../../../drawables/Ring';
+import { OsucadSpriteText } from '../../../../../OsucadSpriteText';
 import { DraggableDialogBox } from '../../../../../userInterface/DraggableDialogBox';
-import type { OsuHitObject } from '../../../../../beatmap/hitObjects/OsuHitObject';
+import { HitObjectComposer } from '../../HitObjectComposer';
+import { HitObjectUtils } from '../../HitObjectUtils';
 import { ComposeToolInteraction } from './ComposeToolInteraction';
 
 export class RotateSelectionInteraction extends ComposeToolInteraction {

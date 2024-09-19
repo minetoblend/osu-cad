@@ -4,15 +4,17 @@ import type {
 } from 'osucad-framework';
 import {
   Action,
+
   Anchor,
+
   Bindable,
   Box,
   CompositeDrawable,
   Container,
+  dependencyLoader,
   Direction,
   MouseButton,
   Vec2,
-  dependencyLoader,
 } from 'osucad-framework';
 import { DragLine } from './DragLine';
 
@@ -275,10 +277,8 @@ class UniformScaleHandle extends CompositeDrawable {
     return true;
   }
 
-  onHoverLost(): boolean {
+  onHoverLost() {
     this.#updateState();
-
-    return true;
   }
 
   #updateState() {

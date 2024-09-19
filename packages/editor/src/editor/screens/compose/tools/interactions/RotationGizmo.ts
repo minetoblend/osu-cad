@@ -3,18 +3,18 @@ import type {
   MouseDownEvent,
   Vec2,
 } from 'osucad-framework';
+import type { Graphics } from 'pixi.js';
 import {
   Action,
   Anchor,
   Axes,
   Bindable,
   CompositeDrawable,
-  MouseButton,
   dependencyLoader,
+  MouseButton,
 } from 'osucad-framework';
-import type { Graphics } from 'pixi.js';
-import { Ring } from '../../../../../drawables/Ring';
 import { GraphicsDrawable } from '../../../../../drawables/GraphicsDrawable';
+import { Ring } from '../../../../../drawables/Ring';
 
 export class RotationGizmo extends CompositeDrawable {
   constructor(center: Vec2, readonly radius: number = 75) {

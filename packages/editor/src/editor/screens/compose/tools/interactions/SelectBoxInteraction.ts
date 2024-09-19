@@ -5,20 +5,20 @@ import type {
   MouseUpEvent,
   Vec2,
 } from 'osucad-framework';
+import type { OsuHitObject } from '../../../../../beatmap/hitObjects/OsuHitObject';
 import {
+  dependencyLoader,
   Key,
   MouseButton,
   Rectangle,
-  RoundedBox,
-  dependencyLoader,
   resolved,
+  RoundedBox,
 } from 'osucad-framework';
-import { EditorSelection } from '../../EditorSelection';
-import { EditorClock } from '../../../../EditorClock';
 import { HitObjectList } from '../../../../../beatmap/hitObjects/HitObjectList';
-import type { OsuHitObject } from '../../../../../beatmap/hitObjects/OsuHitObject';
-import { Spinner } from '../../../../../beatmap/hitObjects/Spinner';
 import { Slider } from '../../../../../beatmap/hitObjects/Slider';
+import { Spinner } from '../../../../../beatmap/hitObjects/Spinner';
+import { EditorClock } from '../../../../EditorClock';
+import { EditorSelection } from '../../EditorSelection';
 import { ComposeToolInteraction } from './ComposeToolInteraction';
 
 export class SelectBoxInteraction extends ComposeToolInteraction {

@@ -1,11 +1,11 @@
 import type { DragEvent, DragStartEvent, MouseUpEvent, Vec2 } from 'osucad-framework';
-import { dependencyLoader, MouseButton, resolved } from 'osucad-framework';
-import { SliderUtils } from '../SliderUtils';
-import { DistanceSnapProvider } from '../DistanceSnapProvider';
-import { PathPoint } from '../../../../../beatmap/hitObjects/PathPoint';
 import type { Slider } from '../../../../../beatmap/hitObjects/Slider';
-import { ComposeToolInteraction } from './ComposeToolInteraction';
+import { dependencyLoader, MouseButton, resolved } from 'osucad-framework';
+import { PathPoint } from '../../../../../beatmap/hitObjects/PathPoint';
 import { PathType } from '../../../../../beatmap/hitObjects/PathType.ts';
+import { DistanceSnapProvider } from '../DistanceSnapProvider';
+import { SliderUtils } from '../SliderUtils';
+import { ComposeToolInteraction } from './ComposeToolInteraction';
 
 export class InsertControlPointInteraction extends ComposeToolInteraction {
   constructor(

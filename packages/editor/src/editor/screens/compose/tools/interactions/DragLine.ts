@@ -1,5 +1,5 @@
 import type { Graphics } from 'pixi.js';
-import { Vec2, dependencyLoader, resolved } from 'osucad-framework';
+import { dependencyLoader, resolved, Vec2 } from 'osucad-framework';
 import { GraphicsDrawable } from '../../../../../drawables/GraphicsDrawable';
 import { ThemeColors } from '../../../../ThemeColors';
 

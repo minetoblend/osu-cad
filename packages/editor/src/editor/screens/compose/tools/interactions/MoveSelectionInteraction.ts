@@ -2,18 +2,18 @@ import type {
   MouseMoveEvent,
   MouseUpEvent,
 } from 'osucad-framework';
-import {
-  MouseButton,
-  Vec2,
-  dependencyLoader,
-} from 'osucad-framework';
-import { SnapVisualizer } from '../../snapping/SnapResult';
 import type { HitObject } from '../../../../../beatmap/hitObjects/HitObject';
 import type { OsuHitObject } from '../../../../../beatmap/hitObjects/OsuHitObject';
 import type { CommandProxy } from '../../../../commands/CommandProxy';
-import { Spinner } from '../../../../../beatmap/hitObjects/Spinner';
+import {
+  dependencyLoader,
+  MouseButton,
+  Vec2,
+} from 'osucad-framework';
 import { Slider } from '../../../../../beatmap/hitObjects/Slider';
+import { Spinner } from '../../../../../beatmap/hitObjects/Spinner';
 import { UpdateHitObjectCommand } from '../../../../commands/UpdateHitObjectCommand';
+import { SnapVisualizer } from '../../snapping/SnapResult';
 import { ComposeToolInteraction } from './ComposeToolInteraction';
 
 export class MoveSelectionInteraction extends ComposeToolInteraction {

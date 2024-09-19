@@ -1,13 +1,13 @@
 import type { KeyDownEvent, Rectangle } from 'osucad-framework';
-import { Container, Key, Vec2, dependencyLoader } from 'osucad-framework';
-import { Matrix } from 'pixi.js';
-import { HitObjectUtils } from '../../HitObjectUtils';
-import { HitObjectComposer } from '../../HitObjectComposer';
 import type { OsuHitObject } from '../../../../../beatmap/hitObjects/OsuHitObject';
+import { Container, dependencyLoader, Key, Vec2 } from 'osucad-framework';
+import { Matrix } from 'pixi.js';
 import { Slider } from '../../../../../beatmap/hitObjects/Slider';
+import { HitObjectComposer } from '../../HitObjectComposer';
+import { HitObjectUtils } from '../../HitObjectUtils';
 import { ComposeToolInteraction } from './ComposeToolInteraction';
-import { ScaleGizmo } from './ScaleGizmo';
 import { RotationGizmo } from './RotationGizmo';
+import { ScaleGizmo } from './ScaleGizmo';
 import { TranslateGizmo } from './TranslateGizmo';
 
 export class ScaleSelectionInteraction extends ComposeToolInteraction {
