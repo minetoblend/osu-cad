@@ -1,7 +1,7 @@
-import { Anchor, Axes, DrawableSprite, dependencyLoader, resolved } from 'osucad-framework';
 import type { Slider } from '../../../../beatmap/hitObjects/Slider';
-import { ISkinSource } from '../../../../skinning/ISkinSource';
+import { Anchor, Axes, dependencyLoader, DrawableSprite, resolved } from 'osucad-framework';
 import { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
+import { ISkinSource } from '../../../../skinning/ISkinSource';
 import { EditorSelection } from '../EditorSelection';
 import { DrawableSelection } from './DrawableSelection';
 
@@ -45,7 +45,8 @@ export class DrawableSliderSelection extends DrawableSelection<Slider> {
     this.scaleBindable.addOnChangeListener((scale) => {
       this.headCircle.scale = scale.value;
       this.tailCircle.scale = scale.value;
-    });}
+    });
+  }
 
   protected onApply(hitObject: Slider) {
     super.onApply(hitObject);
@@ -53,7 +54,6 @@ export class DrawableSliderSelection extends DrawableSelection<Slider> {
     hitObject.path.invalidated.addListener(this.updatePosition, this);
 
     hitObject.subSelection.changed.addListener(this.#updateEdgeSelection, this);
-
 
     this.#updateEdgeSelection();
   }
@@ -82,8 +82,8 @@ export class DrawableSliderSelection extends DrawableSelection<Slider> {
   }
 
   #updateEdgeSelection() {
-    let headSelected = this.hitObject.subSelection.anyHeadSelected;
-    let tailSelected = this.hitObject.subSelection.anyTailSelected;
+    const headSelected = this.hitObject.subSelection.anyHeadSelected;
+    const tailSelected = this.hitObject.subSelection.anyTailSelected;
 
     this.headCircle.color = headSelected ? 0xFF0000 : 0xFFFFFF;
     this.tailCircle.color = tailSelected ? 0xFF0000 : 0xFFFFFF;

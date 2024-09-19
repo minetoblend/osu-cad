@@ -1,5 +1,5 @@
-import { Bindable, LoadState, PoolableDrawable, Vec2, dependencyLoader } from 'osucad-framework';
 import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
+import { Bindable, dependencyLoader, LoadState, PoolableDrawable, Vec2 } from 'osucad-framework';
 
 export abstract class DrawableSelection<T extends OsuHitObject = OsuHitObject> extends PoolableDrawable {
   #hitObject: T | null = null;

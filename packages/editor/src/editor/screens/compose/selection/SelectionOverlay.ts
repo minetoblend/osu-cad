@@ -1,22 +1,22 @@
+import type { Constructor } from '@osucad/common';
 import type {
   NoArgsConstructor,
 } from 'osucad-framework';
+import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
+import type { DrawableSelection } from './DrawableSelection';
 import {
   Axes,
+  clamp,
   CompositeDrawable,
   Container,
-  DrawablePool,
-  clamp,
   dependencyLoader,
+  DrawablePool,
   resolved,
 } from 'osucad-framework';
-import type { Constructor } from '@osucad/common';
-import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
-import { EditorSelection } from '../EditorSelection';
 import { HitCircle } from '../../../../beatmap/hitObjects/HitCircle';
-import { Slider } from '../../../../beatmap/hitObjects/Slider';
 import { HitObjectList } from '../../../../beatmap/hitObjects/HitObjectList';
-import type { DrawableSelection } from './DrawableSelection';
+import { Slider } from '../../../../beatmap/hitObjects/Slider';
+import { EditorSelection } from '../EditorSelection';
 import { DrawableHitCircleSelection } from './DrawableHitCircleSelection';
 import { DrawableSliderSelection } from './DrawableSliderSelection';
 

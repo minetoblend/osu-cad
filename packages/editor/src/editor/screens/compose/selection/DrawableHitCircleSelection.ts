@@ -1,5 +1,5 @@
-import { Anchor, Axes, DrawableSprite, dependencyLoader, resolved } from 'osucad-framework';
 import type { HitCircle } from '../../../../beatmap/hitObjects/HitCircle';
+import { Anchor, Axes, dependencyLoader, DrawableSprite, resolved } from 'osucad-framework';
 import { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
 import { DrawableSelection } from './DrawableSelection';
