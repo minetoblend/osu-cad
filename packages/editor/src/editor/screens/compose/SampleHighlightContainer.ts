@@ -42,13 +42,6 @@ export class SampleHighlightContainer extends CompositeDrawable {
     this.scheduler.addOnce(this.addHighlight, this);
   }
 
-  override updateSubTree(): boolean {
-    performance.mark('SampleHighlightContainer#updateSubTree');
-    const result = super.updateSubTree();
-    performance.measure('SampleHighlightContainer#updateSubTree', 'SampleHighlightContainer#updateSubTree');
-    return result;
-  }
-
   sampleHighlight = new SampleHighlightSprite(this.cornerRadius);
 
   addHighlight() {
