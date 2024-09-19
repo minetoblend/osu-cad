@@ -196,8 +196,8 @@ export abstract class DrawableSliderShapeTool<T extends SliderShape> extends Dra
     this.findClosestParentOfType(Editor)?.requestSelectTool?.emit();
   }
 
-  applyNewCombo(newCombo: boolean) {
-    super.applyNewCombo(newCombo);
+  protected override applyNewComboState(newCombo: boolean) {
+    super.applyNewComboState(newCombo);
 
     if (this.isPlacing) {
       this.submit(new UpdateHitObjectCommand(this.hitObject, { newCombo }), false);
