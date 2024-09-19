@@ -5,6 +5,8 @@ import { setupEnvironment } from './ElectronEnvironment.ts';
 import { setupProtocol } from './protocol.ts';
 import { loadOsuStableInfo } from './loadOsuStableInfo.ts';
 
+app.commandLine.appendSwitch ("disable-http-cache");
+
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
