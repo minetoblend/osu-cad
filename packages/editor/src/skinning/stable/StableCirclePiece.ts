@@ -8,11 +8,11 @@ import {
   DrawableSprite,
   resolved,
 } from 'osucad-framework';
-import { ISkinSource } from '../ISkinSource';
-import { DrawableComboNumber } from '../../editor/hitobjects/DrawableComboNumber';
-import { DrawableHitObject } from '../../editor/hitobjects/DrawableHitObject';
 import { OsucadConfigManager } from '../../config/OsucadConfigManager.ts';
 import { OsucadSettings } from '../../config/OsucadSettings.ts';
+import { DrawableComboNumber } from '../../editor/hitobjects/DrawableComboNumber';
+import { DrawableHitObject } from '../../editor/hitobjects/DrawableHitObject';
+import { ISkinSource } from '../ISkinSource';
 
 export class StableCirclePiece extends CompositeDrawable {
   constructor(priorityLookupPrefix: string | null = null, readonly hasComboNumber: boolean = true) {
@@ -59,7 +59,7 @@ export class StableCirclePiece extends CompositeDrawable {
 
     this.#circle.texture?.on('destroy', () => {
       console.trace('HitCircle texture destroyed');
-    })
+    });
 
     this.config.bindWith(OsucadSettings.HitAnimations, this.hitAnimationsEnabled);
 
@@ -104,15 +104,16 @@ export class StableCirclePiece extends CompositeDrawable {
   }
 
   #updateInitialTransforms() {
-    this.comboNumber?.fadeIn()
+    this.comboNumber?.fadeIn();
     this.#circle.fadeColor(this.accentColor.value);
   }
 
   #updateStartTimeTransforms() {
     if (this.hitAnimationsEnabled.value) {
       this.comboNumber?.fadeOut(50);
-    } else {
-      this.#circle.fadeColor(0xffffff);
+    }
+    else {
+      this.#circle.fadeColor(0xFFFFFF);
     }
   }
 
@@ -120,7 +121,5 @@ export class StableCirclePiece extends CompositeDrawable {
     super.dispose(isDisposing);
 
     this.drawableHitObject?.applyCustomUpdateState.removeListener(this.#updateColorTransforms);
-
-    console.log('Disposing', this);
   }
 }

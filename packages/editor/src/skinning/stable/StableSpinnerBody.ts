@@ -1,17 +1,17 @@
+import type { DrawableSpinner } from '../../editor/hitobjects/DrawableSpinner';
 import {
   Anchor,
   Axes,
   CompositeDrawable,
   Container,
-  DrawableSprite,
-  Vec2,
   dependencyLoader,
+  DrawableSprite,
   resolved,
+  Vec2,
 } from 'osucad-framework';
 import { Color } from 'pixi.js';
-import { ISkinSource } from '../ISkinSource';
-import type { DrawableSpinner } from '../../editor/hitobjects/DrawableSpinner';
 import { DrawableHitObject } from '../../editor/hitobjects/DrawableHitObject';
+import { ISkinSource } from '../ISkinSource';
 
 export class StableSpinnerBody extends CompositeDrawable {
   @resolved(ISkinSource)
@@ -50,7 +50,7 @@ export class StableSpinnerBody extends CompositeDrawable {
           texture: this.skin.getTexture('spinner-glow'),
           blendMode: 'add',
           color: glowColor,
-          alpha: 0.5
+          alpha: 0.5,
         }),
         this.#discBottom = new DrawableSprite({
           anchor: Anchor.Center,

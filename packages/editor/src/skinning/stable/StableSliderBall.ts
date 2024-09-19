@@ -1,6 +1,8 @@
+import type { DrawableSlider } from '../../editor/hitobjects/DrawableSlider';
 import {
   Anchor,
-  Axes, clamp,
+  Axes,
+  clamp,
   CompositeDrawable,
   dependencyLoader,
   Drawable,
@@ -10,7 +12,6 @@ import {
 } from 'osucad-framework';
 import { Mesh, QuadGeometry } from 'pixi.js';
 import { DrawableHitObject } from '../../editor/hitobjects/DrawableHitObject';
-import type { DrawableSlider } from '../../editor/hitobjects/DrawableSlider';
 import { ISkinSource } from '../ISkinSource';
 import { SliderBallShader } from './SliderBallShader';
 
@@ -55,8 +56,8 @@ export class StableSliderBall extends CompositeDrawable {
   #updateStateTransforms() {
     const slider = this.drawableHitObject.hitObject!;
 
-    this.absoluteSequence(slider.startTime, () => this.fadeIn())
-    this.absoluteSequence(slider.endTime, () => this.fadeOut())
+    this.absoluteSequence(slider.startTime, () => this.fadeIn());
+    this.absoluteSequence(slider.endTime, () => this.fadeOut());
   }
 
   dispose(isDisposing?: boolean) {

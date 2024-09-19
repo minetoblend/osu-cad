@@ -1,5 +1,6 @@
-import { IResourceStore } from '../IResourceStore.ts';
-import { AudioChannel, AudioManager, ResourceStore, Sample } from 'osucad-framework';
+import type { AudioChannel, AudioManager, Sample } from 'osucad-framework';
+import type { IResourceStore } from '../IResourceStore.ts';
+import { ResourceStore } from 'osucad-framework';
 
 export class SampleStore {
   #audioManager: AudioManager;
@@ -24,13 +25,10 @@ export class SampleStore {
       return null;
     }
 
-    console.log(name, data)
-
     return this.#audioManager.createSampleFromArrayBuffer(channel, data).catch((e) => {
       console.warn(`Failed to load sample "${name}"`, e);
 
       return null;
     });
   }
-
 }

@@ -1,4 +1,4 @@
-import { Shader, UniformGroup, compileHighShaderGlProgram, localUniformBitGl, roundPixelsBitGl } from 'pixi.js';
+import { compileHighShaderGlProgram, localUniformBitGl, roundPixelsBitGl, Shader, UniformGroup } from 'pixi.js';
 
 const glProgram = compileHighShaderGlProgram({
   name: 'mesh',
@@ -12,32 +12,32 @@ const glProgram = compileHighShaderGlProgram({
         `,
         main: /* glsl */ `
           #define PI 3.1415926535897932384626433832795
-        
+
           vec2 circlePos = (vUV - 0.5) * 2.0;
-          
+
           circlePos /= 0.95;
-          
+
           float distance = length(circlePos);
-          
+
           if (distance > 1.0) {
             discard;
           }
-          
+
           float alpha = 1.0 - smoothstep(0.975, 1.0, distance);
-          
+
           vec3 dir = vec3(
             circlePos.xy,
             sqrt(1.0 - dot(circlePos.xy, circlePos.xy))
           );
-          
+
           float angle = atan(dir.x, dir.z) - uAngle;
 
           float stripe = smoothstep(-0.05, 0.05, cos(angle * 4.0));
 
           vec3 color = vec3(stripe);
-          
+
           float brightness = dot(dir, vec3(0.0, 1.0, 0.0));
-          
+
           color *= brightness * 0.25 + 0.75;
 
           outColor = vec4(color, 1.0) * alpha;
