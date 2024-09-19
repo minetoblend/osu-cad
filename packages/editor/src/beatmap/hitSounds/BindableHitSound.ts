@@ -1,7 +1,7 @@
-import { Additions } from './Additions.ts';
-import { SampleSet } from './SampleSet.ts';
 import { Action, Bindable } from 'osucad-framework';
+import { Additions } from './Additions.ts';
 import { HitSound } from './HitSound.ts';
+import { SampleSet } from './SampleSet.ts';
 
 export type HitSoundStateChangeEvent = ['additions', Additions] | ['sampleSet'] | ['additionSampleSet'];
 
@@ -33,7 +33,6 @@ export class HitSoundState {
     if (emitChange)
       this.changed.emit(['additions', difference]);
   }
-
 
   get sampleSet() {
     return this.sampleSetBindable.value;

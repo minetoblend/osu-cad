@@ -1,6 +1,6 @@
 import type { SampleSet } from './SampleSet';
-import { SampleType } from './SampleType';
 import { Additions } from './Additions';
+import { SampleType } from './SampleType';
 
 export class HitSample {
   constructor(
