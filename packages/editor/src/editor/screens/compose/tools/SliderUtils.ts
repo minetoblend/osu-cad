@@ -1,15 +1,16 @@
-import { Vec2 } from 'osucad-framework';
-import type { CommandManager } from '../../../context/CommandManager';
-import type { Slider } from '../../../../beatmap/hitObjects/Slider';
-import { UpdateHitObjectCommand } from '../../../commands/UpdateHitObjectCommand';
-import { PathType } from '../../../../beatmap/hitObjects/PathType';
 import type { PathPoint } from '../../../../beatmap/hitObjects/PathPoint';
+import type { Slider } from '../../../../beatmap/hitObjects/Slider';
+import type { SliderSelection } from '../../../../beatmap/hitObjects/SliderSelection.ts';
+import type { CommandManager } from '../../../context/CommandManager';
+import type { EditorSelection } from '../EditorSelection';
 import type { DistanceSnapProvider } from './DistanceSnapProvider';
-import { SliderSelection, SliderSelectionType } from '../../../../beatmap/hitObjects/SliderSelection.ts';
-import { EditorSelection } from '../EditorSelection';
+import { Vec2 } from 'osucad-framework';
+import { PathType } from '../../../../beatmap/hitObjects/PathType';
+import { SliderSelectionType } from '../../../../beatmap/hitObjects/SliderSelection.ts';
+import { DeleteHitObjectCommand } from '../../../commands/DeleteHitObjectCommand.ts';
+import { UpdateHitObjectCommand } from '../../../commands/UpdateHitObjectCommand';
 
 export class SliderUtils {
-
   constructor(
     readonly commandManager: CommandManager,
     readonly snapProvider: DistanceSnapProvider,
@@ -29,6 +30,7 @@ export class SliderUtils {
     const path = [...slider.path.controlPoints];
 
     if (path.length <= 2) {
+      this.commandManager.submit(new DeleteHitObjectCommand(slider), commit);
       return false;
     }
 
@@ -94,7 +96,8 @@ export class SliderUtils {
         }),
         false,
       );
-    } else {
+    }
+    else {
       const path = [...slider.path.controlPoints];
 
       path[index] = path[index].withPosition(position.sub(slider.stackedPosition));
