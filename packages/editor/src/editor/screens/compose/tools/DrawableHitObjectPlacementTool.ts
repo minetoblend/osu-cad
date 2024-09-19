@@ -137,7 +137,7 @@ export abstract class DrawableHitObjectPlacementTool<T extends OsuHitObject> ext
     }
   }
 
-  applyNewCombo(newCombo: boolean): void {
+  protected override applyNewComboState(newCombo: boolean): void {
     if (this.#previewObject) {
       this.#previewObject.newCombo = newCombo;
     }
