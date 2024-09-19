@@ -1,9 +1,9 @@
-import { BeatmapSettings } from './BeatmapSettings';
-import { BeatmapDifficultyInfo } from './BeatmapDifficultyInfo';
 import { BeatmapColors } from './BeatmapColors';
+import { BeatmapDifficultyInfo } from './BeatmapDifficultyInfo';
 import { BeatmapMetadata } from './BeatmapMetadata';
-import { ControlPointInfo } from './timing/ControlPointInfo';
+import { BeatmapSettings } from './BeatmapSettings';
 import { HitObjectList } from './hitObjects/HitObjectList';
+import { ControlPointInfo } from './timing/ControlPointInfo';
 
 export class Beatmap {
   readonly settings = new BeatmapSettings();
