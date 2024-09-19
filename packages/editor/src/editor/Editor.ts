@@ -1,52 +1,47 @@
-import {
-  DrawablePool,
+import type {
   IKeyBindingHandler,
   KeyBindingPressEvent,
   KeyDownEvent,
-  NoArgsConstructor,
   ScrollEvent,
   UIEvent,
 } from 'osucad-framework';
+import type { EditorContext } from './context/EditorContext';
 import {
   Action,
   Anchor,
+  asyncDependencyLoader,
   AudioManager,
   Axes,
   Bindable,
   Box,
+  clamp,
   Container,
   EasingFunction,
   Key,
   PlatformAction,
-  asyncDependencyLoader,
-  clamp,
   resolved,
 } from 'osucad-framework';
-import { OsucadScreen } from '../OsucadScreen';
-import { NotificationOverlay } from '../notifications/NotificationOverlay';
-import { Notification } from '../notifications/Notification';
-import { BeatmapStackingProcessor } from '../beatmap/beatmapProcessors/BeatmapStackingProcessor';
 import { BeatmapComboProcessor } from '../beatmap/beatmapProcessors/BeatmapComboProcessor';
-import { AdditionsBindable } from '../beatmap/hitSounds/AdditionsBindable';
+import { BeatmapStackingProcessor } from '../beatmap/beatmapProcessors/BeatmapStackingProcessor';
 import { Additions } from '../beatmap/hitSounds/Additions';
+import { AdditionsBindable } from '../beatmap/hitSounds/AdditionsBindable';
+import { HitSoundState } from '../beatmap/hitSounds/BindableHitSound.ts';
+import { Notification } from '../notifications/Notification';
+import { NotificationOverlay } from '../notifications/NotificationOverlay';
+import { OsucadScreen } from '../OsucadScreen';
+import { BeatmapSampleStore } from './BeatmapSampleStore.ts';
+import { EditorAction } from './EditorAction';
 import { EditorBottomBar } from './EditorBottomBar';
 import { EditorClock } from './EditorClock';
 import { EditorMixer } from './EditorMixer';
 import { EditorScreenContainer } from './EditorScreenContainer';
 import { EditorTopBar } from './EditorTopBar';
-import type { EditorContext } from './context/EditorContext';
-import { EditorScreenType } from './screens/EditorScreenType';
+import { ADDITIONS, CURRENT_SCREEN, HITSOUND, NEW_COMBO, NEW_COMBO_APPLIED } from './InjectionTokens';
 import { ComposeScreen } from './screens/compose/ComposeScreen';
-import { SetupScreen } from './screens/setup/SetupScreen';
-import { EditorSelection } from './screens/compose/EditorSelection';
-import { EditorAction } from './EditorAction';
-import { ADDITIONS, CURRENT_SCREEN, HITSOUND, NEW_COMBO } from './InjectionTokens';
 import { ToggleBindable } from './screens/compose/ToggleBindable';
-import { HitsoundPlayer } from './HitsoundPlayer';
+import { EditorScreenType } from './screens/EditorScreenType';
+import { SetupScreen } from './screens/setup/SetupScreen';
 import { TimingScreen } from './screens/timing/TimingScreen';
-import { HitSoundState } from '../beatmap/hitSounds/BindableHitSound.ts';
-import type { EditorScreen } from './screens/EditorScreen.ts';
-import { BeatmapEncoder } from '../beatmap/BeatmapEncoder.ts';
 
 export class Editor
   extends OsucadScreen
@@ -62,6 +57,8 @@ export class Editor
       color: 0x00000,
       relativeSizeAxes: Axes.Both,
     }));
+
+    this.drawNode.enableRenderGroup();
   }
 
   readonly isKeyBindingHandler = true;
@@ -69,6 +66,8 @@ export class Editor
   canHandleKeyBinding(binding: PlatformAction | EditorAction): boolean {
     return binding instanceof PlatformAction || binding instanceof EditorAction;
   }
+
+  readonly sampleStore = new BeatmapSampleStore();
 
   readonly requestSelectTool = new Action();
 
@@ -88,6 +87,8 @@ export class Editor
 
   #newCombo = new ToggleBindable(false);
 
+  #newComboApplied = new Action<boolean>();
+
   #hitSound = new HitSoundState();
 
   #additions = new AdditionsBindable(Additions.None);
@@ -96,13 +97,16 @@ export class Editor
   async init() {
     await this.context.load();
 
-    console.log(new BeatmapEncoder().encode(this.context.beatmap));
-
     this.context.beatmap.hitObjects.applyDefaultsImmediately = false;
 
     this.context.provideDependencies(this.dependencies);
 
+    await this.loadComponentAsync(this.sampleStore);
+
+    this.dependencies.provide(BeatmapSampleStore, this.sampleStore);
+
     this.dependencies.provide(NEW_COMBO, this.#newCombo);
+    this.dependencies.provide(NEW_COMBO_APPLIED, this.#newComboApplied);
     this.dependencies.provide(ADDITIONS, this.#additions);
     this.dependencies.provide(HITSOUND, this.#hitSound);
     this.dependencies.provide(CURRENT_SCREEN, this.currentScreen);
@@ -116,15 +120,6 @@ export class Editor
     this.addInternal(this.#clock);
 
     this.dependencies.provide(this.#clock);
-
-    const selection = new EditorSelection();
-    this.dependencies.provide(EditorSelection, selection);
-
-    this.addInternal(selection);
-
-    const hitSoundPlayer = new HitsoundPlayer();
-    this.dependencies.provide(HitsoundPlayer, hitSoundPlayer);
-    this.addInternal(hitSoundPlayer);
 
     this.addAllInternal(
       new Container({
@@ -228,8 +223,7 @@ export class Editor
 
     const controlPoint
       = direction < 1
-        ? [...controlPointInfo.groups].reverse()
-            .find(cp => cp.time < this.#clock.currentTimeAccurate)
+        ? [...controlPointInfo.groups].reverse().find(cp => cp.time < this.#clock.currentTimeAccurate)
         : controlPointInfo.groups.find(
           cp => cp.time > this.#clock.currentTimeAccurate,
         );
