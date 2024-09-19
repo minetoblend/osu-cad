@@ -1,16 +1,9 @@
-import gsap from 'gsap';
 import type {
   Drawable,
   MouseDownEvent,
   MouseUpEvent,
 } from 'osucad-framework';
-import {
-  CompositeDrawable,
-  CursorContainer,
-  DrawableSprite,
-  MouseButton,
-  dependencyLoader,
-} from 'osucad-framework';
+import { CompositeDrawable, CursorContainer, dependencyLoader, DrawableSprite, EasingFunction, MouseButton, Vec2 } from 'osucad-framework';
 import { getIcon } from './OsucadIcons';
 
 export class MainCursorContainer extends CursorContainer {
@@ -43,50 +36,22 @@ class Cursor extends CompositeDrawable {
 
   onMouseDown(e: MouseDownEvent): boolean {
     if (e.button === MouseButton.Left) {
-      gsap.killTweensOf(this.#sprite);
-      gsap.to(this.#sprite, {
-        scaleX: 0.8,
-        scaleY: 0.8,
-        x: -5,
-        y: -4,
-        duration: 1.0,
-        ease: 'power4.out',
-      });
+      this.#sprite.scaleTo(0.8, 1000, EasingFunction.OutQuart);
+      this.#sprite.moveTo(new Vec2(-5, -4), 1000, EasingFunction.OutQuart);
 
-      gsap.killTweensOf(this.#shadow);
-      gsap.to(this.#shadow, {
-        scaleX: 0.8,
-        scaleY: 0.8,
-        x: -5,
-        y: -2,
-        duration: 1.0,
-        ease: 'power4.out',
-      });
+      this.#shadow.scaleTo(0.8, 1000, EasingFunction.OutQuart);
+      this.#shadow.moveTo(new Vec2(-5, -2), 1000, EasingFunction.OutQuart);
     }
     return false;
   }
 
   onMouseUp(e: MouseUpEvent): boolean {
     if (e.button === MouseButton.Left) {
-      gsap.killTweensOf(this.#sprite);
-      gsap.to(this.#sprite, {
-        scaleX: 1,
-        scaleY: 1,
-        x: -4,
-        y: -3,
-        duration: 0.2,
-        ease: 'back.out',
-      });
+      this.#sprite.scaleTo(1, 200, EasingFunction.OutBack);
+      this.#sprite.moveTo(new Vec2(-4, -3), 200, EasingFunction.OutBack);
 
-      gsap.killTweensOf(this.#shadow);
-      gsap.to(this.#shadow, {
-        scaleX: 1,
-        scaleY: 1,
-        x: -4,
-        y: -1,
-        duration: 0.2,
-        ease: 'back.out',
-      });
+      this.#shadow.scaleTo(1, 200, EasingFunction.OutBack);
+      this.#shadow.moveTo(new Vec2(-4, -1), 200, EasingFunction.OutBack);
     }
     return false;
   }
