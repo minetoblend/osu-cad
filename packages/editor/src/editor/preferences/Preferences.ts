@@ -12,6 +12,7 @@ import { BackdropBlurFilter } from 'pixi-filters';
 import { ThemeColors } from '../ThemeColors';
 import { MainScrollContainer } from '../MainScrollContainer';
 import { AudioPreferencesSection } from './AudioPreferencesSection';
+import { MainMenuPreferencesSection } from './MainMenuPreferencesSection.ts';
 import { ViewportPreferencesSection } from './ViewportPreferencesSection';
 
 export class Preferences extends Container {
@@ -57,6 +58,7 @@ export class Preferences extends Container {
     this.addAll(
       new AudioPreferencesSection(),
       new ViewportPreferencesSection(),
+      new MainMenuPreferencesSection(),
     );
   }
 
