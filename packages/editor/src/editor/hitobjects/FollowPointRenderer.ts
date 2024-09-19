@@ -77,6 +77,9 @@ export class FollowPointRenderer extends PooledDrawableWithLifetimeContainer<Fol
   #removeEntry(hitObject: OsuHitObject) {
     const index = this.#lifetimeEntries.findIndex(entry => entry.start === hitObject);
 
+    if (index < 0)
+      return;
+
     const entry = this.#lifetimeEntries.get(index)!;
     entry.unbindEvents();
 
