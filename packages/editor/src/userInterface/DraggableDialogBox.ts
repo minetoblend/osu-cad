@@ -8,11 +8,11 @@ import {
   Axes,
   CompositeDrawable,
   Container,
+  dependencyLoader,
   FillDirection,
   FillFlowContainer,
   MouseButton,
   Vec2,
-  dependencyLoader,
 } from 'osucad-framework';
 import { BackdropBlurFilter } from 'pixi-filters';
 import { FastRoundedBox } from '../drawables/FastRoundedBox';
