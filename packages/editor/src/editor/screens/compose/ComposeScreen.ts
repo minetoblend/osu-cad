@@ -46,8 +46,24 @@ export class ComposeScreen extends EditorScreen {
 
   #topBar!: Container;
 
+  compactTimeline = new BindableBoolean();
+
+  @resolved(OsucadConfigManager)
+  config!: OsucadConfigManager;
+
   @dependencyLoader()
   init() {
+    this.config.bindWith(OsucadSettings.CompactTimeline, this.compactTimeline);
+
+    const selection = new EditorSelection();
+    this.dependencies.provide(EditorSelection, selection);
+
+    this.addInternal(selection);
+
+    const hitSoundPlayer = new HitsoundPlayer();
+    this.dependencies.provide(HitsoundPlayer, hitSoundPlayer);
+    this.addInternal(hitSoundPlayer);
+
     this.addInternal(this.#content = new Container({
       relativeSizeAxes: Axes.Both,
       padding: {
@@ -122,6 +138,10 @@ export class ComposeScreen extends EditorScreen {
         ],
       }),
     );
+
+    this.compactTimeline.addOnChangeListener((e) => {
+      this.transformTo('timelineHeight', e.value ? 60 : 75, 200, EasingFunction.OutExpo);
+    }, { immediate: true });
   }
 
   protected loadComplete() {
@@ -130,6 +150,15 @@ export class ComposeScreen extends EditorScreen {
     this.findClosestParentOfType(Editor)?.requestSelectTool.addListener(() =>
       this.#activeTool.value = new SelectTool(),
     );
+  }
+
+  get timelineHeight() {
+    return this.#topBar.height;
+  }
+
+  set timelineHeight(value) {
+    this.#topBar.height = value;
+    this.#content.padding = { top: value };
   }
 
   update(): void {
