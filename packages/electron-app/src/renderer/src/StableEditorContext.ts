@@ -3,6 +3,7 @@ import { Beatmap } from 'packages/editor/src/beatmap/Beatmap';
 import { OsuBeatmap } from 'osu-db-parser';
 import log from 'electron-log/renderer';
 import { StableResourceStore } from './StableResourceStore.ts';
+import { StableBeatmapEncoder } from '../../../../editor/src/beatmap/StableBeatmapEncoder.ts';
 
 const logger = log.create({ logId: 'ElectronEditorContext' });
 
@@ -81,7 +82,6 @@ export class StableEditorContext extends EditorContext {
   }
 
   async save() {
-    await this.createBackup()
-
+    return await window.api.saveBeatmap(this.osuBeatmap.folder_name, this.osuBeatmap.osu_file_name, new StableBeatmapEncoder().encode(this.beatmap));
   }
 }
