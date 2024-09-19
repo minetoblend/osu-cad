@@ -1,7 +1,7 @@
-import { Color, resolved } from 'osucad-framework';
-import { Spinner } from '../hitObjects/Spinner';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
+import { Color, resolved } from 'osucad-framework';
 import { ISkinSource } from '../../skinning/ISkinSource';
+import { Spinner } from '../hitObjects/Spinner';
 import { BeatmapProcessor } from './BeatmapProcessor';
 
 export class BeatmapComboProcessor extends BeatmapProcessor {
@@ -26,7 +26,6 @@ export class BeatmapComboProcessor extends BeatmapProcessor {
   }
 
   #calculateCombos() {
-    performance.mark('BeatmapComboProcessor#calculateCombos');
     let comboIndex = 0;
     let indexInCombo = 0;
 
@@ -35,7 +34,7 @@ export class BeatmapComboProcessor extends BeatmapProcessor {
       if (hitObject instanceof Spinner) {
         forceNewCombo = true;
       }
-      else if (hitObject.newCombo || forceNewCombo) {
+      else if ((hitObject.newCombo && hitObject !== this.beatmap.hitObjects.first) || forceNewCombo) {
         comboIndex += 1 + hitObject.comboOffset;
         indexInCombo = 0;
 
@@ -48,8 +47,6 @@ export class BeatmapComboProcessor extends BeatmapProcessor {
 
       indexInCombo++;
     }
-
-    performance.measure('BeatmapComboProcessor#calculateCombos', 'BeatmapComboProcessor#calculateCombos');
   }
 
   @resolved(ISkinSource)
