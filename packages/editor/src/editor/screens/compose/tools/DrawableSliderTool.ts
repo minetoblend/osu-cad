@@ -1,13 +1,14 @@
 import type { MouseDownEvent, MouseUpEvent } from 'osucad-framework';
-import { MouseButton, Vec2, dependencyLoader } from 'osucad-framework';
-import { Slider } from '../../../../beatmap/hitObjects/Slider';
+import type { CommandProxy } from '../../../commands/CommandProxy.ts';
+import { dependencyLoader, MouseButton, Vec2 } from 'osucad-framework';
 import { PathPoint } from '../../../../beatmap/hitObjects/PathPoint';
 import { PathType } from '../../../../beatmap/hitObjects/PathType';
+import { Slider } from '../../../../beatmap/hitObjects/Slider';
+import { DistanceSnapProvider } from './DistanceSnapProvider';
 import { DrawableHitObjectPlacementTool } from './DrawableHitObjectPlacementTool';
+import { SliderPathBuilder } from './SliderPathBuilder';
 import { SliderPathVisualizer } from './SliderPathVisualizer';
 import { SliderUtils } from './SliderUtils';
-import { DistanceSnapProvider } from './DistanceSnapProvider';
-import { SliderPathBuilder } from './SliderPathBuilder';
 
 export class DrawableSliderTool extends DrawableHitObjectPlacementTool<Slider> {
   constructor() {
@@ -41,6 +42,14 @@ export class DrawableSliderTool extends DrawableHitObjectPlacementTool<Slider> {
     );
 
     this.addAllInternal(distanceSnapProvider, this.sliderPathVisualizer);
+
+    this.commandManager.beforeUndo.addListener(this.onUndo, this);
+  }
+
+  onUndo() {
+    if (this.isPlacing) {
+      this.finishPlacing();
+    }
   }
 
   createObject(): Slider {
@@ -53,7 +62,7 @@ export class DrawableSliderTool extends DrawableHitObjectPlacementTool<Slider> {
     slider.hitSounds = [
       this.hitSoundState.asHitSound(),
       this.hitSoundState.asHitSound(),
-    ]
+    ];
 
     slider.path.controlPoints = [
       new PathPoint(Vec2.zero(), PathType.Bezier),
@@ -201,5 +210,17 @@ export class DrawableSliderTool extends DrawableHitObjectPlacementTool<Slider> {
 
   protected onPlacementStart(hitObject: Slider) {
     this.sliderPathVisualizer.slider = hitObject;
+  }
+
+  protected onPlacementFinish(hitObject: CommandProxy<Slider>) {
+    super.onPlacementFinish(hitObject);
+
+    this.sliderPathVisualizer.slider = null;
+  }
+
+  dispose(disposing: boolean = true) {
+    this.commandManager.beforeUndo.removeListener(this.onUndo);
+
+    super.dispose(disposing);
   }
 }
