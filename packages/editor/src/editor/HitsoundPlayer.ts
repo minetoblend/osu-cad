@@ -1,28 +1,19 @@
-import type { Sample, SamplePlayback } from 'osucad-framework';
-import {
-  Action,
-  AudioManager,
-  CompositeDrawable,
-  dependencyLoader,
-  FramedClock,
-  OffsetClock,
-  resolved,
-} from 'osucad-framework';
-import { PreferencesStore } from '../preferences/PreferencesStore';
-import { HitObjectList } from '../beatmap/hitObjects/HitObjectList';
+import type { SamplePlayback } from 'osucad-framework';
+import type { OsuHitObject } from '../beatmap/hitObjects/OsuHitObject.ts';
 import type { HitSample } from '../beatmap/hitSounds/HitSample';
-import { SampleSet } from '../beatmap/hitSounds/SampleSet';
+import type { LifetimeEntry } from '../pooling/LifetimeEntry.ts';
+import { Action, BindableNumber, CompositeDrawable, dependencyLoader, FramedClock, OffsetClock, resolved } from 'osucad-framework';
+import { HitObjectList } from '../beatmap/hitObjects/HitObjectList';
 import { SampleType } from '../beatmap/hitSounds/SampleType';
-import { EditorClock } from './EditorClock';
-import { EditorContext } from './context/EditorContext';
-import { EditorMixer } from './EditorMixer';
-import { ISkinSource } from '../skinning/ISkinSource.ts';
-import { LifetimeEntryManager } from '../pooling/LifetimeEntryManager.ts';
-import { LifetimeEntry } from '../pooling/LifetimeEntry.ts';
-import { HitObjectLifetimeEntry } from './hitobjects/HitObjectLifetimeEntry.ts';
-import { OsuHitObject } from '../beatmap/hitObjects/OsuHitObject.ts';
-import { LifetimeBoundaryKind } from '../pooling/LifetimeBoundaryKind.ts';
+import { OsucadConfigManager } from '../config/OsucadConfigManager.ts';
+import { OsucadSettings } from '../config/OsucadSettings.ts';
 import { LifetimeBoundaryCrossingDirection } from '../pooling/LifetimeBoundaryCrossingDirection.ts';
+import { LifetimeBoundaryKind } from '../pooling/LifetimeBoundaryKind.ts';
+import { LifetimeEntryManager } from '../pooling/LifetimeEntryManager.ts';
+import { BeatmapSampleStore } from './BeatmapSampleStore.ts';
+import { EditorContext } from './context/EditorContext';
+import { EditorClock } from './EditorClock';
+import { HitObjectLifetimeEntry } from './hitobjects/HitObjectLifetimeEntry.ts';
 
 export class HitsoundPlayer extends CompositeDrawable {
   @resolved(EditorClock)
@@ -31,27 +22,30 @@ export class HitsoundPlayer extends CompositeDrawable {
   @resolved(EditorContext)
   editorContext!: EditorContext;
 
-  @resolved(PreferencesStore)
-  preferences!: PreferencesStore;
-
   samplePlayed = new Action<HitSample>();
 
   #offsetClock!: OffsetClock;
 
   #lifetimeManager = new LifetimeEntryManager();
 
+  audioOffset = new BindableNumber();
+
+  hitSoundOffset = new BindableNumber();
+
+  @resolved(OsucadConfigManager)
+  config!: OsucadConfigManager;
+
   @dependencyLoader()
   load() {
-    this.loadAssets();
+    this.config.bindWith(OsucadSettings.AudioOffset, this.audioOffset);
+    this.config.bindWith(OsucadSettings.HitSoundOffset, this.hitSoundOffset);
 
-
-    this.#offsetClock = new OffsetClock(this.editorClock, -this.preferences.audio.audioOffset);
+    this.#offsetClock = new OffsetClock(this.editorClock, -(this.audioOffset.value + this.hitSoundOffset.value));
 
     this.clock = new FramedClock(this.#offsetClock);
 
-    this.preferences.audio.audioOffsetBindable.addOnChangeListener((offset) => {
-      this.#offsetClock.offset = -offset.value;
-    });
+    this.audioOffset.addOnChangeListener(() => this.#offsetClock.offset = -(this.audioOffset.value + this.hitSoundOffset.value));
+    this.hitSoundOffset.addOnChangeListener(() => this.#offsetClock.offset = -(this.audioOffset.value + this.hitSoundOffset.value));
 
     this.#lifetimeManager.entryBecameAlive.addListener(this.#onEntryBecameAlive, this);
     this.#lifetimeManager.entryBecameDead.addListener(this.#onEntryBecameDead, this);
@@ -87,7 +81,6 @@ export class HitsoundPlayer extends CompositeDrawable {
         this.#playSample(entry as HitSoundLifetimeEntry, sample);
       }
     }
-
   }
 
   #onEntryBecameDead(entry: LifetimeEntry) {
@@ -116,68 +109,8 @@ export class HitsoundPlayer extends CompositeDrawable {
     }
   }
 
-  @resolved(AudioManager)
-  audioManager!: AudioManager;
-
-  @resolved(EditorMixer)
-  mixer!: EditorMixer;
-
-  samples = new Map<string, Sample>();
-  defaultSamples = new Map<string, Sample>();
-
-  loadAssets() {
-    const sampleSets = ['normal', 'soft', 'drum'];
-    const additions = ['hitnormal', 'hitwhistle', 'hitfinish', 'hitclap', 'sliderslide', 'sliderwhistle'];
-
-    const sampleFilenames = sampleSets.flatMap(sampleSet => additions.map(addition => `${sampleSet}-${addition}`));
-
-    const found = new Set<string>();
-
-    const resources = this.editorContext.resources.getAvailableResources();
-
-    const audioFilename = /([\w-]+(\d*)).(?:wav|mp3|ogg)/;
-
-    for (const asset of resources) {
-
-      const match = asset.match(audioFilename);
-
-      if (!match)
-        continue;
-
-      const [, key] = match;
-
-      if (!key)
-        continue;
-
-      const data = this.editorContext.getResource(asset);
-      if (!data)
-        continue;
-
-      found.add(key);
-
-      this.audioManager
-        .createSampleFromArrayBuffer(this.mixer.hitsounds, data)
-        .then(sample => this.samples.set(key, sample))
-        .catch(err => console.warn(`Failed to decode audio for "${key}"`, err));
-    }
-
-    for (const key of sampleFilenames) {
-      if (found.has(key))
-        continue;
-
-      this.skin.getSample(this.mixer.hitsounds, key).then(sample => {
-        if (!sample) {
-          console.warn(`Could not find sample for ${key}`);
-          return;
-        }
-
-        this.samples.set(key, sample);
-      });
-    }
-  }
-
-  @resolved(ISkinSource)
-  skin!: ISkinSource;
+  @resolved(BeatmapSampleStore)
+  sampleStore!: BeatmapSampleStore;
 
   @resolved(HitObjectList)
   hitObjects!: HitObjectList;
@@ -195,7 +128,6 @@ export class HitsoundPlayer extends CompositeDrawable {
 
     if (isPlaying && !this.#wasPlaying) {
       for (const entry of this.#lifetimeManager.activeEntries) {
-
         for (const sample of (entry as HitSoundLifetimeEntry).hitObject.hitSamples) {
           if (sample.time >= this.editorClock.currentTime)
             this.#playSample(entry as HitSoundLifetimeEntry, sample);
@@ -211,63 +143,15 @@ export class HitsoundPlayer extends CompositeDrawable {
     }
 
     this.#lifetimeManager.update(this.time.current);
-    return;
   }
-
 
   #playSample(entry: HitSoundLifetimeEntry, hitSample: HitSample) {
     if (!this.editorClock.isRunning)
       return;
 
-    let sampleSet = 'soft';
+    const isLooping = hitSample.sampleType === SampleType.SliderSlide || hitSample.sampleType === SampleType.SliderWhistle;
 
-    switch (hitSample.sampleSet) {
-      case SampleSet.Auto:
-      case SampleSet.Soft:
-        sampleSet = 'soft';
-        break;
-      case SampleSet.Normal:
-        sampleSet = 'normal';
-        break;
-      case SampleSet.Drum:
-        sampleSet = 'drum';
-        break;
-    }
-
-    let type = 'normal';
-
-    let isLooping = false;
-
-    switch (hitSample.sampleType) {
-      case SampleType.Normal:
-        type = 'hitnormal';
-        break;
-      case SampleType.Whistle:
-        type = 'hitwhistle';
-        break;
-      case SampleType.Finish:
-        type = 'hitfinish';
-        break;
-      case SampleType.Clap:
-        type = 'hitclap';
-        break;
-      case SampleType.SliderSlide:
-        type = 'sliderslide';
-        isLooping = true;
-        break;
-      case SampleType.SliderWhistle:
-        type = 'sliderwhistle';
-        isLooping = true;
-        break;
-    }
-
-    const key = `${sampleSet}-${type}`;
-
-    const index = hitSample.index === 0 ? '' : hitSample.index.toString();
-
-    const sample
-      = this.samples.get(key + index)
-      ?? this.samples.get(key);
+    const sample = this.sampleStore.getSample(hitSample);
 
     const delay = (hitSample.time - this.time.current) / this.editorClock.rate;
 
@@ -301,6 +185,15 @@ export class HitsoundPlayer extends CompositeDrawable {
     for (const playback of this.#scheduledSamples) {
       playback.stop();
     }
+
+    for (const entry of this.#lifetimeManager.activeEntries) {
+      const samples = (entry as HitSoundLifetimeEntry).loopingSamples;
+      for (const sample of samples) {
+        sample.stop();
+      }
+    }
+
+    console.log('dispose hitsound player');
 
     super.dispose(isDisposing);
   }
