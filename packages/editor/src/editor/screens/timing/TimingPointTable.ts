@@ -1,3 +1,8 @@
+import type {
+  ScrollContainer,
+} from 'osucad-framework';
+import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup';
+
 import {
   Axes,
   Box,
@@ -7,13 +12,12 @@ import {
   DrawablePool,
   lerp,
   resolved,
-  ScrollContainer,
 } from 'osucad-framework';
-
-import { MainScrollContainer } from '../../MainScrollContainer';
-import { EditorClock } from '../../EditorClock';
 import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
-import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup';
+import { EditorClock } from '../../EditorClock';
+import { MainScrollContainer } from '../../MainScrollContainer';
+import { ControlPointSelection } from './ControlPointSelection.ts';
+import { KiaiBadge } from './KiaiBadge.ts';
 import { TimingPointRow } from './TimingPointRow';
 import { TimingPointTableHeader } from './TimingPointTableHeader.ts';
 
@@ -28,6 +32,8 @@ export class TimingPointTable extends Container {
     super({
       relativeSizeAxes: Axes.Both,
     });
+
+    this.drawNode.enableRenderGroup();
   }
 
   #scroll!: ScrollContainer;
@@ -60,28 +66,46 @@ export class TimingPointTable extends Container {
         padding: { top: TimingPointRow.HEIGHT },
         child: this.#scroll = new MainScrollContainer(Direction.Vertical).with({
           relativeSizeAxes: Axes.Both,
+          children: [
+            this.#rowContainer = new Container({
+              relativeSizeAxes: Axes.Both,
+            }),
+            this.#kiaiContainer = new Container({
+              x: TimingPointRow.COLUMNS.effects.x,
+            }),
+          ],
         }),
       }),
       new TimingPointTableHeader(),
     );
 
-    // @ts-ignore
     this.#scroll.scrollContent.autoSizeAxes = Axes.None;
   }
 
   #rows = new Map<ControlPointGroup, TimingPointRow>();
 
+  #rowContainer = new Container();
+  #kiaiContainer = new Container();
+
+  @resolved(ControlPointSelection)
+  selection!: ControlPointSelection;
+
   update() {
     super.update();
 
-    const startIndex = Math.max(Math.floor(this.#scroll.current / TimingPointRow.HEIGHT), 0);
-    const endIndex = startIndex + Math.ceil(this.#scroll.drawSize.y / TimingPointRow.HEIGHT) + 1;
+    const bleed = 5;
+
+    const startIndex = Math.max(Math.floor(this.#scroll.current / TimingPointRow.HEIGHT) - bleed, 0);
+    const endIndex = startIndex + Math.ceil(this.#scroll.drawHeight / TimingPointRow.HEIGHT) + bleed * 2;
 
     const toDelete = new Set(this.#rows.keys());
 
     let y = startIndex * TimingPointRow.HEIGHT;
 
     const activeGroup = this.controlPoints.groups.controlPointAt(this.editorClock.currentTime);
+
+    let lastWasKiai = false;
+    const kiaiIndex = 0;
 
     for (let i = startIndex; i < endIndex; i++) {
       const controlPoint = this.controlPoints.groups.get(i);
@@ -91,7 +115,7 @@ export class TimingPointTable extends Container {
       toDelete.delete(controlPoint);
 
       if (!this.#rows.has(controlPoint)) {
-        const row = this.#pool.get(it => {
+        const row = this.#pool.get((it) => {
           it.controlPoint = controlPoint;
           it.depth = controlPoint.time;
         });
@@ -99,16 +123,42 @@ export class TimingPointTable extends Container {
         row.y = y;
         row.active = controlPoint === activeGroup;
 
-        this.#scroll.add(row);
+        this.#rowContainer.add(row);
         this.#rows.set(controlPoint, row);
-
-
-      } else {
+      }
+      else {
         const row = this.#rows.get(controlPoint)!;
 
         row.y = lerp(y, row.y, Math.exp(-0.05 * this.time.elapsed));
         row.active = controlPoint === activeGroup;
       }
+
+      if (!lastWasKiai && controlPoint.effect?.kiaiMode) {
+        let numKiai = 1;
+        for (let j = i + 1; j < endIndex; j++) {
+          const controlPoint = this.controlPoints.groups.get(j);
+          if (!controlPoint)
+            break;
+
+          if (controlPoint.effect?.kiaiMode !== false)
+            numKiai++;
+          else
+            break;
+        }
+
+        const height = TimingPointRow.HEIGHT * numKiai;
+
+        let drawable = this.#kiaiContainer.children[kiaiIndex];
+        if (!drawable) {
+          drawable = new KiaiBadge();
+          this.#kiaiContainer.add(drawable);
+        }
+
+        drawable.y = y;
+        drawable.height = height;
+      }
+
+      lastWasKiai = !!controlPoint.effect?.kiaiMode;
 
       y += TimingPointRow.HEIGHT;
     }
@@ -117,7 +167,7 @@ export class TimingPointTable extends Container {
 
     for (const c of toDelete) {
       const row = this.#rows.get(c)!;
-      this.#scroll.remove(row, false);
+      this.#rowContainer.remove(row, false);
       this.#rows.delete(c);
     }
   }
@@ -134,7 +184,7 @@ export class TimingPointTable extends Container {
     const activeGroup = this.controlPoints.groups.controlPointAt(this.editorClock.currentTime);
 
     if (activeGroup) {
-      let index = this.controlPoints.groups.indexOf(activeGroup);
+      const index = this.controlPoints.groups.indexOf(activeGroup);
 
       this.#scroll.scrollTo(index * TimingPointRow.HEIGHT, animated);
     }

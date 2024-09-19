@@ -1,22 +1,15 @@
-import {
-  Axes,
-  Box,
-  Container,
-  dependencyLoader,
-  Direction,
-  EasingFunction,
-  MaskingContainer,
-  resolved,
-} from 'osucad-framework';
-import { EditorScreen } from '../EditorScreen';
-import { ThemeColors } from '../../ThemeColors';
+import type { DependencyContainer } from 'osucad-framework';
+import { Axes, Box, Container, dependencyLoader, Direction, EasingFunction, MaskingContainer, resolved } from 'osucad-framework';
 import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
-import { ControlPointSelection } from './ControlPointSelection';
-import { TimingPointTable } from './TimingPointTable.ts';
-import { MetronomePlayer } from './MetronomePlayer.ts';
-import { TimingPointRow } from './TimingPointRow.ts';
 import { MainScrollContainer } from '../../MainScrollContainer.ts';
-import { TimingPointProperties } from './properties/TimingPointProperties.ts';
+import { ThemeColors } from '../../ThemeColors';
+import { EditorScreen } from '../EditorScreen';
+import { ControlPointSelection } from './ControlPointSelection';
+import { MetronomePlayer } from './MetronomePlayer.ts';
+import { ControlPointProperties } from './properties/ControlPointProperties.ts';
+import { TimingPointRow } from './TimingPointRow.ts';
+import { TimingPointTable } from './TimingPointTable.ts';
+import { TimingScreenTimeline } from './TimingScreenTimeline.ts';
 
 export class TimingScreen extends EditorScreen {
   constructor() {
@@ -31,10 +24,10 @@ export class TimingScreen extends EditorScreen {
   controlPoints!: ControlPointInfo;
 
   @dependencyLoader()
-  load() {
-    this.dependencies.provide(this.selection = new ControlPointSelection(this.controlPoints));
+  load(dependencies: DependencyContainer) {
+    dependencies.provide(this.selection = new ControlPointSelection(this.controlPoints));
 
-    this.addInternal(new MetronomePlayer())
+    this.addInternal(new MetronomePlayer());
 
     this.addAllInternal(
       new MaskingContainer({
@@ -47,18 +40,37 @@ export class TimingScreen extends EditorScreen {
           }),
           new Container({
             relativeSizeAxes: Axes.Both,
-            child: new TimingPointTable().with({
-              relativeSizeAxes: Axes.Y,
-              width: TimingPointRow.MIN_WIDTH,
-            }),
+            children: [
+              new Container({
+                relativeSizeAxes: Axes.Both,
+                child: new TimingPointTable().with({
+                  relativeSizeAxes: Axes.Y,
+                  width: TimingPointRow.MIN_WIDTH + 200,
+                }),
+              }),
+              new Container({
+                relativeSizeAxes: Axes.Both,
+                padding: { left: TimingPointRow.MIN_WIDTH + 200 },
+                child: new MainScrollContainer(Direction.Vertical).with({
+                  relativeSizeAxes: Axes.Both,
+                  child: new ControlPointProperties(),
+                }),
+              }),
+            ],
+            padding: { top: 45 },
           }),
           new Container({
-            relativeSizeAxes: Axes.Both,
-            padding: { left: TimingPointRow.MIN_WIDTH },
-            child: new MainScrollContainer(Direction.Vertical).with({
-              relativeSizeAxes: Axes.Both,
-              child: new TimingPointProperties()
-            })
+            relativeSizeAxes: Axes.X,
+            height: 45,
+
+            children: [
+              new Box({
+                relativeSizeAxes: Axes.Both,
+                color: 0x101014,
+                alpha: 1,
+              }),
+              new TimingScreenTimeline(),
+            ],
           }),
         ],
       }),

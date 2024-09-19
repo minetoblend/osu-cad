@@ -1,7 +1,7 @@
 import { Anchor, Axes, CompositeDrawable, dependencyLoader, resolved } from 'osucad-framework';
-import { TimingPointRow } from './TimingPointRow.ts';
 import { OsucadSpriteText } from '../../../OsucadSpriteText.ts';
 import { ThemeColors } from '../../ThemeColors.ts';
+import { TimingPointRow } from './TimingPointRow.ts';
 
 export class TimingPointTableHeader extends CompositeDrawable {
   constructor() {

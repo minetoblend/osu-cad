@@ -1,3 +1,5 @@
+import type { ClickEvent } from 'osucad-framework';
+import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup.ts';
 import {
   Anchor,
   Axes,
@@ -8,13 +10,14 @@ import {
   PoolableDrawable,
   resolved,
 } from 'osucad-framework';
-import { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup.ts';
-import { OsucadSpriteText } from '../../../OsucadSpriteText.ts';
-import { TimestampFormatter } from '../../TimestampFormatter.ts';
-import { TimingPointValueBadge } from './TimingPointValueBadge.ts';
 import { SampleSet } from '../../../beatmap/hitSounds/SampleSet.ts';
-import { EditorClock } from '../../EditorClock.ts';
 import { FastRoundedBox } from '../../../drawables/FastRoundedBox.ts';
+import { OsucadSpriteText } from '../../../OsucadSpriteText.ts';
+import { EditorClock } from '../../EditorClock.ts';
+import { ThemeColors } from '../../ThemeColors.ts';
+import { TimestampFormatter } from '../../TimestampFormatter.ts';
+import { ControlPointSelection } from './ControlPointSelection.ts';
+import { TimingPointValueBadge } from './TimingPointValueBadge.ts';
 
 export class TimingPointRow extends PoolableDrawable {
   constructor() {
@@ -85,10 +88,15 @@ export class TimingPointRow extends PoolableDrawable {
 
   startTime = new BindableNumber();
 
+  @resolved(ControlPointSelection)
+  selection!: ControlPointSelection;
+
   protected onAssign(controlPoint: ControlPointGroup) {
     this.startTime.bindTo(controlPoint.timeBindable);
 
     controlPoint.changed.addListener(this.#updateState, this);
+
+    this.#onSelectionChanged([controlPoint, this.selection.isSelected(controlPoint)]);
 
     this.#updateState();
   }
@@ -99,20 +107,29 @@ export class TimingPointRow extends PoolableDrawable {
     controlPoint.changed.removeListener(this.#updateState);
   }
 
+  #onSelectionChanged([controlPoint, selected]: [ControlPointGroup, boolean]) {
+    if (controlPoint !== this.controlPoint)
+      return;
+
+    this.selected = selected;
+  }
+
   #updateState() {
     const controlPoint = this.controlPoint!;
 
     if (controlPoint.timing) {
       this.#timing.alpha = 1;
       this.#timing.text = `${controlPoint.timing.bpm.toFixed(2)}bpm ${controlPoint.timing.meter}/4`;
-    } else {
+    }
+    else {
       this.#timing.alpha = 0;
     }
 
     if (controlPoint.difficulty) {
       this.#sliderVelocity.alpha = 1;
       this.#sliderVelocity.text = `${controlPoint.difficulty.sliderVelocity.toFixed(2)}`;
-    } else {
+    }
+    else {
       this.#sliderVelocity.alpha = 0;
     }
 
@@ -124,7 +141,7 @@ export class TimingPointRow extends PoolableDrawable {
       switch (controlPoint.sample.sampleSet) {
         case SampleSet.Auto:
           sampleSet = 'auto';
-          break;
+          break; z;
         case SampleSet.Normal:
           sampleSet = 'normal';
           break;
@@ -137,25 +154,17 @@ export class TimingPointRow extends PoolableDrawable {
       }
 
       if (controlPoint.sample.sampleIndex !== 0)
-        sampleSet += ':' + controlPoint.sample.sampleIndex;
+        sampleSet += `:${controlPoint.sample.sampleIndex}`;
 
       this.#hitSounds.text = `${Math.round(controlPoint.sample.volume * 100).toString().padStart(3, ' ')}% ${sampleSet}`;
-    } else {
+    }
+    else {
       this.#hitSounds.alpha = 0;
     }
-
-    if (controlPoint.effect) {
-      if (controlPoint.effect.kiaiMode) {
-        this.#effects.alpha = 1;
-        this.#effects.textColor = 0xE035F0;
-      } else {
-        this.#effects.alpha = 0.5;
-        this.#effects.textColor = 0xFFFFFF;
-      }
-    } else {
-      this.#effects.alpha = 0;
-    }
   }
+
+  @resolved(ThemeColors)
+  colors!: ThemeColors;
 
   @dependencyLoader()
   load() {
@@ -163,6 +172,11 @@ export class TimingPointRow extends PoolableDrawable {
     this.height = TimingPointRow.HEIGHT;
 
     this.addAllInternal(
+      this.#background = new Box({
+        relativeSizeAxes: Axes.Both,
+        color: this.colors.primary,
+        alpha: 0,
+      }),
       new Container({
         relativeSizeAxes: Axes.Both,
         padding: 8,
@@ -184,13 +198,13 @@ export class TimingPointRow extends PoolableDrawable {
             x: TimingPointRow.COLUMNS.hitSounds.x,
             width: TimingPointRow.COLUMNS.hitSounds.width,
             relativeSizeAxes: Axes.Y,
-            child: this.#hitSounds = new TimingPointValueBadge('', 0x207bfa),
+            child: this.#hitSounds = new TimingPointValueBadge('', 0x207BFA),
           }),
           new Container({
             x: TimingPointRow.COLUMNS.sliderVelocity.x,
             width: TimingPointRow.COLUMNS.sliderVelocity.width,
             relativeSizeAxes: Axes.Y,
-            child: this.#sliderVelocity = new TimingPointValueBadge('', 0xfcba03),
+            child: this.#sliderVelocity = new TimingPointValueBadge('', 0xFCBA03),
           }),
           new Container({
             relativeSizeAxes: Axes.Both,
@@ -202,12 +216,6 @@ export class TimingPointRow extends PoolableDrawable {
               color: 0x343440,
             }),
           }),
-          new Container({
-            x: TimingPointRow.COLUMNS.effects.x,
-            width: TimingPointRow.COLUMNS.effects.width,
-            relativeSizeAxes: Axes.Y,
-            child: this.#effects = new TimingPointValueBadge('kiai', 0xe035f0),
-          }),
         ],
       }),
       this.#hoverHighlight = new Box({
@@ -217,7 +225,11 @@ export class TimingPointRow extends PoolableDrawable {
     );
 
     this.startTime.addOnChangeListener(time => this.#timestamp.text = TimestampFormatter.formatTimestamp(time.value));
+
+    this.selection.selectionChanged.addListener(this.#onSelectionChanged, this);
   }
+
+  #background!: Box;
 
   #timestamp!: OsucadSpriteText;
 
@@ -226,8 +238,6 @@ export class TimingPointRow extends PoolableDrawable {
   #sliderVelocity!: TimingPointValueBadge;
 
   #hitSounds!: TimingPointValueBadge;
-
-  #effects!: TimingPointValueBadge;
 
   @resolved(EditorClock)
   editorClock!: EditorClock;
@@ -264,4 +274,37 @@ export class TimingPointRow extends PoolableDrawable {
       this.#hoverHighlight.alpha = this.#active ? 0.05 : 0;
   }
 
+  #selected = false;
+
+  get selected() {
+    return this.#selected;
+  }
+
+  set selected(value) {
+    if (this.#selected === value)
+      return;
+
+    this.#background.alpha = value ? 1 : 0;
+
+    this.#selected = value;
+  }
+
+  onClick(e: ClickEvent): boolean {
+    if (e.shiftPressed) {
+      this.selection.selectUntil(this.controlPoint!);
+      return true;
+    }
+
+    if (!e.controlPressed)
+      this.selection.clear();
+    this.selection.select(this.controlPoint!);
+
+    return true;
+  }
+
+  override dispose(isDisposing: boolean = true) {
+    super.dispose(isDisposing);
+
+    this.selection.selectionChanged.removeListener(this.#onSelectionChanged);
+  }
 }

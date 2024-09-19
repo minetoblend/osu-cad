@@ -1,15 +1,14 @@
+import type { ColorSource } from 'pixi.js';
 import {
   Anchor,
   Axes,
   CompositeDrawable,
   Container,
-  FillFlowContainer,
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import type { ColorSource } from 'pixi.js';
-import { OsucadSpriteText } from '../../../OsucadSpriteText';
 import { FastRoundedBox } from '../../../drawables/FastRoundedBox';
+import { OsucadSpriteText } from '../../../OsucadSpriteText';
 import { ThemeColors } from '../../ThemeColors';
 
 export class TimingPointValueBadge extends CompositeDrawable {

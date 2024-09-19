@@ -1,6 +1,6 @@
-import { Action } from 'osucad-framework';
-import type { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
 import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup';
+import type { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
+import { Action } from 'osucad-framework';
 
 export class ControlPointSelection {
   constructor(

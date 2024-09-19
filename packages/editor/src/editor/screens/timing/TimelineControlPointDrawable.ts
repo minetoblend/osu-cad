@@ -1,11 +1,10 @@
+import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup.ts';
+import type { TimingPoint } from '../../../beatmap/timing/TimingPoint.ts';
 import { Anchor, Axes, Box, CompositeDrawable, dependencyLoader, resolved } from 'osucad-framework';
-import { Timeline } from '../../timeline/Timeline.ts';
-import { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup.ts';
-import { TimingPoint } from '../../../beatmap/timing/TimingPoint.ts';
 import { ThemeColors } from '../../ThemeColors.ts';
+import { Timeline } from '../../timeline/Timeline.ts';
 
 export class TimelineControlPointDrawable extends CompositeDrawable {
-
   constructor(readonly controlPoint: ControlPointGroup) {
     super();
   }
@@ -13,14 +12,22 @@ export class TimelineControlPointDrawable extends CompositeDrawable {
   @dependencyLoader()
   load() {
     this.relativeSizeAxes = Axes.Y;
-    this.width = 8;
+    this.width = 2;
     this.anchor = Anchor.BottomLeft;
     this.origin = Anchor.BottomCenter;
 
-    this.controlPoint.changed.addListener(() => this.scheduler.addOnce(this.#updateState, this))
+    this.addInternal(
+      this.#line = new Box({
+        relativeSizeAxes: Axes.Both,
+      }),
+    );
+
+    this.controlPoint.changed.addListener(() => this.scheduler.addOnce(this.#updateState, this));
 
     this.#updateState();
   }
+
+  #line!: Box;
 
   @resolved(ThemeColors)
   theme!: ThemeColors;
@@ -28,15 +35,14 @@ export class TimelineControlPointDrawable extends CompositeDrawable {
   #timingPoint!: TimingPoint;
 
   #updateState() {
-    let isInherited = true;
+    const isInherited = !this.controlPoint.timing;
 
-    for (const child of this.controlPoint.children) {
-      if (child instanceof TimingPoint)
-        isInherited = false;
+    if (isInherited) {
+      this.#line.color = this.theme.primary;
     }
-
-
-
+    else {
+      this.#line.color = 0xF03265;
+    }
   }
 
   protected loadComplete() {
@@ -48,7 +54,7 @@ export class TimelineControlPointDrawable extends CompositeDrawable {
   timeline!: Timeline;
 
   update() {
+    super.update();
     this.x = this.timeline.timeToPosition(this.controlPoint.time);
   }
-
 }

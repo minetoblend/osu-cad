@@ -12,7 +12,7 @@ import {
 import { OsucadSpriteText } from '../../../../OsucadSpriteText.ts';
 import { Toggle } from '../../../../userInterface/Toggle.ts';
 
-export abstract class TimingPropertiesSection extends Container {
+export abstract class ControlPointPropertiesSection extends Container {
   protected constructor(readonly title: string) {
     super();
   }

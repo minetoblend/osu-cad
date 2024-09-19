@@ -1,12 +1,11 @@
-import { Timeline } from '../../timeline/Timeline.ts';
+import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup.ts';
 import { Axes, Container, dependencyLoader } from 'osucad-framework';
-import { LifetimeEntryManager } from '../../../pooling/LifetimeEntryManager.ts';
-import { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup.ts';
 import { LifetimeEntry } from '../../../pooling/LifetimeEntry.ts';
+import { LifetimeEntryManager } from '../../../pooling/LifetimeEntryManager.ts';
+import { Timeline } from '../../timeline/Timeline.ts';
 import { TimelineControlPointDrawable } from './TimelineControlPointDrawable.ts';
 
 export class TimingScreenTimeline extends Timeline {
-
   @dependencyLoader()
   load() {
     this.addInternal(this.#controlPointContainer);
@@ -83,5 +82,4 @@ class ControlPointLifetimeEntry extends LifetimeEntry {
   protected updateLifetime() {
     this.lifetimeStart = this.lifetimeEnd = this.controlPoint.time;
   }
-
 }
