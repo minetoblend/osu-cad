@@ -1,4 +1,4 @@
-import { Vec2, clamp } from 'osucad-framework';
+import { clamp, Vec2 } from 'osucad-framework';
 import { PathPoint } from '../../../../../beatmap/hitObjects/PathPoint';
 import { PathType } from '../../../../../beatmap/hitObjects/PathType';
 import { SliderShape } from './SliderShape';

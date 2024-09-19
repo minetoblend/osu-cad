@@ -1,5 +1,5 @@
-import { CompositeDrawable, Vec2 } from 'osucad-framework';
 import type { PathPoint } from '../../../../../beatmap/hitObjects/PathPoint';
+import { CompositeDrawable, Vec2 } from 'osucad-framework';
 
 export abstract class SliderShape extends CompositeDrawable {
   protected constructor() {
