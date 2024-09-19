@@ -59,6 +59,13 @@ export class AudioPreferencesSection extends PreferencesPanel {
         250,
         value => `${Math.round(value)}ms`,
       ),
+      new VolumeSliderContainer(
+        'Hitsound offset',
+        this.config.getBindable(OsucadSettings.HitSoundOffset)!,
+        -250,
+        250,
+        value => `${Math.round(value)}ms`,
+      ),
     ];
   }
 }
