@@ -8,8 +8,9 @@ import {
   Bindable,
   Container,
   PIXIGraphics,
-  dependencyLoader,
+  resolved,
 } from 'osucad-framework';
+import { Beatmap } from '../../beatmap/Beatmap.ts';
 
 export class PlayfieldGrid extends Container {
   constructor(options: ContainerOptions = {}) {
@@ -20,6 +21,9 @@ export class PlayfieldGrid extends Container {
     });
   }
 
+  @resolved(Beatmap)
+  beatmap!: Beatmap;
+
   createDrawNode(): PIXIContainer {
     return new PIXIGraphics();
   }
@@ -28,15 +32,15 @@ export class PlayfieldGrid extends Container {
 
   @dependencyLoader()
   init() {
-    this.gridSize.addOnChangeListener(
-      () => {
-        this.drawGrid();
-      },
-      { immediate: true },
-    );
+    this.alpha = 0.5;
+
+    this.gridSize.bindTo(this.beatmap.settings.editor.gridSizeBindable);
+    this.gridSize.addOnChangeListener(() => this.drawGrid(), { immediate: true });
+
+    this.beatmap.settings.editor.gridSizeBindable.addOnChangeListener(e => console.log(e));
   }
 
-  gridSize = new Bindable(16);
+  gridSize = new BindableNumber(16);
 
   updateSubTreeTransforms(): boolean {
     if (!super.updateSubTreeTransforms())
