@@ -1,9 +1,7 @@
-import { OsucadSettings } from './OsucadSettings.ts';
 import { ConfigManager } from './ConfigManager.ts';
+import { OsucadSettings } from './OsucadSettings.ts';
 
 export class OsucadConfigManager extends ConfigManager<OsucadSettings<any>> {
-
-
   initializeDefaults() {
     this.setDefault(OsucadSettings.Skin, 'default');
     this.setDefault(OsucadSettings.MasterVolume, 50);
@@ -11,11 +9,13 @@ export class OsucadConfigManager extends ConfigManager<OsucadSettings<any>> {
     this.setDefault(OsucadSettings.HitsoundVolume, 75);
     this.setDefault(OsucadSettings.UIVolume, 50);
     this.setDefault(OsucadSettings.AudioOffset, 0);
+    this.setDefault(OsucadSettings.HitSoundOffset, 0);
 
     this.setDefault(OsucadSettings.HitAnimations, false);
     this.setDefault(OsucadSettings.FollowPoints, true);
     this.setDefault(OsucadSettings.SampleSetExpanded, false);
     this.setDefault(OsucadSettings.AnimatedSeek, true);
+    this.setDefault(OsucadSettings.CompactTimeline, false);
 
     this.setDefault(OsucadSettings.SongSelectParallax, true);
     this.setDefault(OsucadSettings.SongSelectPreventLoadOnScroll, false);
@@ -51,9 +51,9 @@ export class OsucadConfigManager extends ConfigManager<OsucadSettings<any>> {
 
           bindable.value = value;
         }
-      } catch (e) {
+      }
+      catch (e) {
         console.error(e);
-        return;
       }
     }
   }

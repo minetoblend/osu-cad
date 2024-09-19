@@ -1,4 +1,4 @@
-import { ConfigKey } from './ConfigManager.ts';
+import type { ConfigKey } from './ConfigManager.ts';
 
 export class OsucadSettings<T> implements ConfigKey<T> {
   __type__!: T;
@@ -14,15 +14,15 @@ export class OsucadSettings<T> implements ConfigKey<T> {
   static readonly HitsoundVolume = new OsucadSettings<number>('HitsoundVolume');
   static readonly UIVolume = new OsucadSettings<number>('UIVolume');
   static readonly AudioOffset = new OsucadSettings<number>('AudioOffset');
+  static readonly HitSoundOffset = new OsucadSettings<number>('HitSoundOffset');
 
   static readonly HitAnimations = new OsucadSettings<boolean>('HitAnimations');
   static readonly FollowPoints = new OsucadSettings<boolean>('FollowPoints');
   static readonly SampleSetExpanded = new OsucadSettings<boolean>('SampleSetExpanded');
   static readonly AnimatedSeek = new OsucadSettings<boolean>('AnimatedSeek');
+  static readonly CompactTimeline = new OsucadSettings<boolean>('CompactTimeline');
 
   static readonly SongSelectPreventLoadOnScroll = new OsucadSettings<boolean>('SongSelectPreventLoadOnScroll');
   static readonly SongSelectParallax = new OsucadSettings<boolean>('SongSelectParallax');
   static readonly SongSelectBackgroundBlur = new OsucadSettings<boolean>('SongSelectBackgroundBlur');
-
-
 }

@@ -1,7 +1,6 @@
 import { Bindable } from 'osucad-framework';
 
 export abstract class ConfigManager<TLookup extends ConfigKey<any>> {
-
   protected get addMissingEntries() {
     return true;
   }
@@ -19,8 +18,8 @@ export abstract class ConfigManager<TLookup extends ConfigKey<any>> {
 
     if (!bindable) {
       this.setDefault(key, value);
-      return;
-    } else {
+    }
+    else {
       bindable.value = value;
     }
   }
