@@ -23,7 +23,7 @@ export class HitObjectSnapProvider implements IPositionSnapProvider {
     const hitObjects = this.hitObjects.filter(it => (!ignoreSelected || !this.selection.isSelected(it)) && it.isVisibleAtTime(currentTime));
 
     const positions = hitObjects.flatMap((it) => {
-      if (it instanceof Spinner)
+      if (it instanceof Spinner || it.synthetic)
         return [];
 
       if (it instanceof Slider)
