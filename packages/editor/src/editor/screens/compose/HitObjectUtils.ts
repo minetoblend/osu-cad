@@ -48,6 +48,7 @@ export class HitObjectUtils extends CompositeDrawable {
             .translate(center.x, center.y),
           hitObjects,
           commit,
+          false,
         );
 
         break;
@@ -59,6 +60,7 @@ export class HitObjectUtils extends CompositeDrawable {
             .translate(center.x, center.y),
           hitObjects,
           commit,
+          false,
         );
 
         break;
@@ -115,12 +117,14 @@ export class HitObjectUtils extends CompositeDrawable {
     transform: Matrix,
     hitObjects: OsuHitObject[],
     commit: boolean = true,
+    resnapLength: boolean = true,
   ) {
     for (let i = 0; i < hitObjects.length; i++) {
       this.transformHitObject(
         transform,
         hitObjects[i],
         commit && i === hitObjects.length - 1,
+        resnapLength,
       );
     }
   }
@@ -129,6 +133,7 @@ export class HitObjectUtils extends CompositeDrawable {
     transform: Matrix,
     hitObject: OsuHitObject,
     commit: boolean = true,
+    resnapLength: boolean = true,
   ) {
     const position = hitObject.position;
     const newPosition = Vec2.from(transform.apply(position));
@@ -148,14 +153,16 @@ export class HitObjectUtils extends CompositeDrawable {
         false,
       );
 
-      this.commandManager.submit(
-        new UpdateHitObjectCommand(hitObject, {
-          expectedDistance: this.snapProvider.findSnappedDistance(
-            hitObject,
-          ),
-        }),
-        commit,
-      );
+      if (resnapLength) {
+        this.commandManager.submit(
+          new UpdateHitObjectCommand(hitObject, {
+            expectedDistance: this.snapProvider.findSnappedDistance(
+              hitObject,
+            ),
+          }),
+          commit,
+        );
+      }
 
       return;
     }
