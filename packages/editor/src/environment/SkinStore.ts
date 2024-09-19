@@ -1,6 +1,6 @@
-import { Bindable } from 'osucad-framework';
-import type { ISkin } from '../skinning/ISkin';
 import type { IResourcesProvider } from '../io/IResourcesProvider';
+import type { ISkin } from '../skinning/ISkin';
+import { Bindable } from 'osucad-framework';
 
 export abstract class SkinStore {
   readonly skins = new Bindable<SkinProvider[]>([]);
