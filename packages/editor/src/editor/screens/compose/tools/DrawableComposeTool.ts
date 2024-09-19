@@ -1,32 +1,31 @@
 import type {
-  BindableBoolean,
+  Action,
   InputManager,
   UIEvent,
-  ValueChangedEvent,
 } from 'osucad-framework';
+import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
+import type { HitSoundState, HitSoundStateChangeEvent } from '../../../../beatmap/hitSounds/BindableHitSound.ts';
+import type { ComposeToolInteraction } from './interactions/ComposeToolInteraction';
 import {
   Axes,
-  Container,
-  Vec2,
+  BindableBoolean,
   clamp,
+  Container,
   dependencyLoader,
   resolved,
+  Vec2,
 } from 'osucad-framework';
+import { Beatmap } from '../../../../beatmap/Beatmap';
 import { CommandContainer } from '../../../CommandContainer';
 import { EditorClock } from '../../../EditorClock';
-import { EditorSelection } from '../EditorSelection';
-import {
-  ADDITIONS, HITSOUND,
-  NEW_COMBO,
-} from '../../../InjectionTokens';
-import { HitObjectComposer } from '../HitObjectComposer';
-import { Beatmap } from '../../../../beatmap/Beatmap';
-import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
 import { OsuPlayfield } from '../../../hitobjects/OsuPlayfield';
-import type { Additions } from '../../../../beatmap/hitSounds/Additions';
-import type { AdditionsBindable } from '../../../../beatmap/hitSounds/AdditionsBindable';
-import type { ComposeToolInteraction } from './interactions/ComposeToolInteraction';
-import { HitSoundState, HitSoundStateChangeEvent } from '../../../../beatmap/hitSounds/BindableHitSound.ts';
+import {
+  HITSOUND,
+  NEW_COMBO,
+  NEW_COMBO_APPLIED,
+} from '../../../InjectionTokens';
+import { EditorSelection } from '../EditorSelection';
+import { HitObjectComposer } from '../HitObjectComposer';
 
 export abstract class DrawableComposeTool extends CommandContainer {
   protected constructor() {
@@ -44,8 +43,10 @@ export abstract class DrawableComposeTool extends CommandContainer {
     );
   }
 
-  @resolved(NEW_COMBO)
-  protected newCombo!: BindableBoolean;
+  protected newCombo = new BindableBoolean();
+
+  @resolved(NEW_COMBO_APPLIED)
+  protected newComboApplied!: Action<boolean>;
 
   @resolved(HITSOUND)
   protected hitSoundState!: HitSoundState;
@@ -64,7 +65,8 @@ export abstract class DrawableComposeTool extends CommandContainer {
 
   @dependencyLoader()
   [Symbol('load')]() {
-    this.newCombo.valueChanged.addListener(this.applyNewComboState, this);
+    this.newCombo.bindTo(this.dependencies.resolve(NEW_COMBO));
+    this.newComboApplied.addListener(this.applyNewComboState, this);
     this.hitSoundState.changed.addListener(this.applyHitSoundState, this);
   }
 
@@ -79,7 +81,7 @@ export abstract class DrawableComposeTool extends CommandContainer {
     }
   }
 
-  protected applyNewComboState(event: ValueChangedEvent<boolean>): void {
+  protected applyNewComboState(newCombo: boolean): void {
   }
 
   protected applyHitSoundState(event: HitSoundStateChangeEvent): void {
@@ -204,12 +206,5 @@ export abstract class DrawableComposeTool extends CommandContainer {
     }
 
     return candidate;
-  }
-
-  updateSubTree(): boolean {
-    performance.mark(`ComposeTool#${this.constructor.name}#updateSubTree`);
-    const result = super.updateSubTree();
-    performance.measure(`ComposeTool#${this.constructor.name}#updateSubTree`, `ComposeTool#${this.constructor.name}#updateSubTree`);
-    return result;
   }
 }
