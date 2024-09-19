@@ -1,10 +1,10 @@
 import type { DependencyContainer, IResourceStore, PIXITexture } from 'osucad-framework';
+import type { BeatmapAsset } from './BeatmapAsset';
 import { Bindable } from 'osucad-framework';
 import { Beatmap } from '../../beatmap/Beatmap';
-import { ControlPointInfo } from '../../beatmap/timing/ControlPointInfo';
 import { HitObjectList } from '../../beatmap/hitObjects/HitObjectList';
+import { ControlPointInfo } from '../../beatmap/timing/ControlPointInfo';
 import { CommandManager } from './CommandManager';
-import type { BeatmapAsset } from './BeatmapAsset';
 
 export abstract class EditorContext {
   // #region Beatmap
@@ -36,10 +36,10 @@ export abstract class EditorContext {
   // #endregion
 
   // #region Song
-  abstract resources: IResourceStore<ArrayBuffer>
+  abstract resources: IResourceStore<ArrayBuffer>;
 
   getResource(name: string): ArrayBuffer | null {
-      return this.resources.get(name);
+    return this.resources.get(name);
   }
 
   protected async loadSong(beatmap: Beatmap): Promise<AudioBuffer> {

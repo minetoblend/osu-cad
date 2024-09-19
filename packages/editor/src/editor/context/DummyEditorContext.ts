@@ -1,9 +1,8 @@
-/* eslint-disable unused-imports/no-unused-vars */
 import type { PIXITexture } from 'osucad-framework';
+import type { Beatmap } from '../../beatmap/Beatmap';
 import { Assets } from 'pixi.js';
 import backgroundUrl from '../../assets/background.jpg';
 import { StableBeatmapParser } from '../../beatmap/StableBeatmapParser';
-import type { Beatmap } from '../../beatmap/Beatmap';
 import { EditorContext } from './EditorContext';
 import sampleBeatmap from './sampleBeatmap.osu?raw';
 
