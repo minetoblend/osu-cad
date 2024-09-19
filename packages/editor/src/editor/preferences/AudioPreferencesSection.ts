@@ -1,6 +1,7 @@
 import type { Drawable } from 'osucad-framework';
 import { resolved } from 'osucad-framework';
-import { PreferencesStore } from '../../preferences/PreferencesStore';
+import { OsucadConfigManager } from '../../config/OsucadConfigManager.ts';
+import { OsucadSettings } from '../../config/OsucadSettings.ts';
 import { OsucadSpriteText } from '../../OsucadSpriteText';
 import { PreferencesPanel } from './PreferencesPanel';
 import { VolumeSliderContainer } from './VolumeSlider';
@@ -24,35 +25,35 @@ export class AudioPreferencesSection extends PreferencesPanel {
         color: 0xB6B6C3,
       }),
       new VolumeSliderContainer(
-        'master',
+        'Master',
         this.config.getBindable(OsucadSettings.MasterVolume)!,
         0,
         100,
         value => `${Math.round(value)}%`,
       ),
       new VolumeSliderContainer(
-        'music',
+        'Music',
         this.config.getBindable(OsucadSettings.MusicVolume)!,
         0,
         100,
         value => `${Math.round(value)}%`,
       ),
       new VolumeSliderContainer(
-        'hitsounds',
+        'Hitsounds',
         this.config.getBindable(OsucadSettings.HitsoundVolume)!,
         0,
         100,
         value => `${Math.round(value)}%`,
       ),
       new VolumeSliderContainer(
-        'user interface',
+        'User interface',
         this.config.getBindable(OsucadSettings.UIVolume)!,
         0,
         100,
         value => `${Math.round(value)}%`,
       ),
       new VolumeSliderContainer(
-        'audio offset',
+        'Audio offset',
         this.config.getBindable(OsucadSettings.AudioOffset)!,
         -250,
         250,
