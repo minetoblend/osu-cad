@@ -6,10 +6,6 @@ export class EditorScreen extends Container{
     this.relativeSizeAxes = Axes.Both;
   }
 
-  get disposeOnDeathRemoval(): boolean {
-    return false;
-  }
-
   show() {
     this.fadeInFromZero(300);
   }
