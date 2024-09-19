@@ -1,4 +1,4 @@
-import antfu from '@antfu/eslint-config'
+import antfu from '@antfu/eslint-config';
 
 export default antfu({
   stylistic: {
@@ -7,10 +7,11 @@ export default antfu({
   typescript: {
     overrides: {
       'no-console': 'off',
-      "unused-imports/no-unused-vars": "off",
+      'unused-imports/no-unused-vars': 'off',
       'no-lone-blocks': 'off',
       'ts/no-require-imports': 'off',
-      'ts/prefer-literal-enum-member': 'off'
+      'ts/prefer-literal-enum-member': 'off',
+      '@typescript-eslint/no-empty-function': 'off',
     },
   },
-})
+});
