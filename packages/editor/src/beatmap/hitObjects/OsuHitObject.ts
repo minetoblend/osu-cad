@@ -30,6 +30,8 @@ export abstract class OsuHitObject extends HitObject implements IHasComboInforma
     this.startTimeBindable.valueChanged.addListener(this.requestApplyDefaults, this);
   }
 
+  synthetic = false;
+
   static readonly object_radius = 64;
 
   static readonly object_dimensions = new Vec2(OsuHitObject.object_radius * 2);
