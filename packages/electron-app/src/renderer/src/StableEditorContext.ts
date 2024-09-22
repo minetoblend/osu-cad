@@ -4,12 +4,13 @@ import { OsuBeatmap } from 'osu-db-parser';
 import log from 'electron-log/renderer';
 import { StableResourceStore } from './StableResourceStore.ts';
 import { StableBeatmapEncoder } from '../../../../editor/src/beatmap/StableBeatmapEncoder.ts';
+import { StableBeatmapInfo } from './StableBeatmapStore.ts';
 
 const logger = log.create({ logId: 'ElectronEditorContext' });
 
 export class StableEditorContext extends EditorContext {
   constructor(
-    readonly osuBeatmap: OsuBeatmap,
+    readonly osuBeatmap: StableBeatmapInfo,
   ) {
     super();
   }
@@ -17,10 +18,10 @@ export class StableEditorContext extends EditorContext {
   resources!: StableResourceStore;
 
   async load(): Promise<void> {
-    const resources = await StableResourceStore.create(`osu-stable://songs?path=${encodeURIComponent(this.osuBeatmap.folder_name)}&load`);
+    const resources = await StableResourceStore.create(`osu-stable://songs?path=${encodeURIComponent(this.osuBeatmap.folderName)}&load`);
 
     if (!resources) {
-      throw new Error(`Beatmap resources not found: "${this.osuBeatmap.folder_name}"`);
+      throw new Error(`Beatmap resources not found: "${this.osuBeatmap.folderName}"`);
     }
 
     this.resources = resources;
@@ -29,9 +30,9 @@ export class StableEditorContext extends EditorContext {
   }
 
   protected loadBeatmap(): Promise<Beatmap> {
-    const file = this.resources.get(this.osuBeatmap.osu_file_name);
+    const file = this.resources.get(this.osuBeatmap.osuFileName);
     if (!file) {
-      throw new Error(`Beatmap not found: "${this.osuBeatmap.osu_file_name}"`);
+      throw new Error(`Beatmap not found: "${this.osuBeatmap.osuFileName}"`);
     }
 
     const fileContent = new TextDecoder().decode(file);
@@ -76,6 +77,6 @@ export class StableEditorContext extends EditorContext {
   }
 
   async save() {
-    return await window.api.saveBeatmap(this.osuBeatmap.folder_name, this.osuBeatmap.osu_file_name, new StableBeatmapEncoder().encode(this.beatmap));
+    return await window.api.saveBeatmap(this.osuBeatmap.folderName, this.osuBeatmap.osuFileName, new StableBeatmapEncoder().encode(this.beatmap));
   }
 }

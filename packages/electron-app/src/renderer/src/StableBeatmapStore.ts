@@ -19,60 +19,46 @@ export class StableBeatmapStore extends BeatmapStore {
   }
 }
 
-class StableBeatmapInfo implements BeatmapItemInfo {
-  constructor(readonly osuBeatmap: OsuBeatmap) {
+export class StableBeatmapInfo implements BeatmapItemInfo {
+  constructor(osuBeatmap: OsuBeatmap) {
+    this.id = osuBeatmap.md5;
+    this.setId = osuBeatmap.folder_name;
+    this.authorName = osuBeatmap.creator_name;
+    this.artist = osuBeatmap.artist_name;
+    this.title = osuBeatmap.song_title;
+    this.difficultyName = osuBeatmap.difficulty;
+    this.starRating = osuBeatmap.star_rating_standard[0] ?? 0;
+    this.folderName = osuBeatmap.folder_name;
+    this.osuFileName = osuBeatmap.osu_file_name;
+    this.audioUrl = this.#relativePath(osuBeatmap.audio_file_name);
+
+    this.previewPoint = osuBeatmap.preview_offset;
   }
 
-  get id() {
-    return this.osuBeatmap.md5;
-  }
+  readonly id: string;
 
-  get setId() {
-    return this.osuBeatmap.folder_name;
-  }
+  readonly setId: string;
 
-  get authorName() {
-    return this.osuBeatmap.creator_name;
-  }
+  readonly authorName: string;
 
-  author = null;
+  readonly title: string;
 
-  get artist() {
-    return this.osuBeatmap.artist_name;
-  }
+  readonly difficultyName: string;
 
-  get title() {
-    return this.osuBeatmap.song_title;
-  }
+  readonly author = null;
 
-  get difficultyName() {
-    return this.osuBeatmap.difficulty;
-  }
+  readonly artist: string;
 
-  get starRating() {
-    return this.osuBeatmap.star_rating_standard[0] ?? 0;
-  }
+  readonly starRating: number;
 
-  get audioUrl() {
-    return this.#relativePath(this.osuBeatmap.audio_file_name);
-  }
+  readonly audioUrl: string;
 
-  get lastEdited() {
-    if (!this.osuBeatmap.last_modification_time || this.osuBeatmap.last_modification_time < 0)
-      return null;
+  readonly lastEdited: Date | null = null;
 
-    // TDOO: Fix this
-    // return new Date(this.osuBeatmap.last_modification_time / 1e+4 + new Date('0001-01-01T00:00:00Z').getTime());
-
-    return null
-  }
-
-  get previewPoint() {
-    return this.osuBeatmap.preview_offset;
-  }
+  readonly previewPoint: number;
 
   #relativePath(path: string) {
-    return `osu-stable://songs?path=${encodeURIComponent(this.osuBeatmap.folder_name + '/' + path)}`;
+    return `osu-stable://songs?path=${encodeURIComponent(this.folderName + '/' + path)}`;
   }
 
   async backgroundPath() {
@@ -106,10 +92,14 @@ class StableBeatmapInfo implements BeatmapItemInfo {
     return null;
   }
 
+  folderName: string;
+
+  osuFileName: string;
+
   #parsedSettings?: Promise<BeatmapSettings | null>;
 
   protected get settings(): Promise<BeatmapSettings | null> {
-    this.#parsedSettings ??= fetch(`osu-stable://songs/${this.osuBeatmap.folder_name}/${this.osuBeatmap.osu_file_name}`)
+    this.#parsedSettings ??= fetch(`osu-stable://songs/${this.folderName}/${this.osuFileName}`)
       .then(r => r.text())
       .then(text => new StableBeatmapParser().parse(text, { hitObjects: false, timingPoints: false }))
       .then(beatmap => beatmap.settings)
@@ -119,6 +109,6 @@ class StableBeatmapInfo implements BeatmapItemInfo {
   }
 
   createEditorContext(): EditorContext {
-    return new StableEditorContext(this.osuBeatmap);
+    return new StableEditorContext(this);
   }
 }
