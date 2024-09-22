@@ -1,14 +1,46 @@
-import type {
+import {
+  BindableBoolean,
+  CompositeDrawable,
+  CursorContainer,
+  dependencyLoader,
   Drawable,
+  DrawableSprite,
+  EasingFunction,
+  MouseButton,
   MouseDownEvent,
   MouseUpEvent,
+  resolved,
+  Vec2,
+  Visibility,
 } from 'osucad-framework';
-import { CompositeDrawable, CursorContainer, dependencyLoader, DrawableSprite, EasingFunction, MouseButton, Vec2 } from 'osucad-framework';
 import { getIcon } from './OsucadIcons';
+import { OsucadSettings } from './config/OsucadSettings.ts';
+import { OsucadConfigManager } from './config/OsucadConfigManager.ts';
+import cursorTexture from './assets/icons/select.png'
 
 export class MainCursorContainer extends CursorContainer {
   createCursor(): Drawable {
     return new Cursor();
+  }
+
+  @resolved(OsucadConfigManager)
+  config!: OsucadConfigManager;
+
+  useNativeCursor = new BindableBoolean(true);
+
+  @dependencyLoader()
+  load() {
+    this.config.bindWith(OsucadSettings.NativeCursor, this.useNativeCursor);
+
+    this.useNativeCursor.addOnChangeListener(e => {
+      if (e.value) {
+        this.state.value = Visibility.Hidden;
+        document.body.style.cursor = `url('${cursorTexture}') 4 2, auto`;
+      } else {
+        this.state.value = Visibility.Visible;
+        document.body.style.cursor = 'none';
+      }
+    }, { immediate: true });
   }
 }
 
