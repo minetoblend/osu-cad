@@ -34,7 +34,11 @@ class StableSkinInfo extends SkinProvider {
 
     const skin = new StableSkin({ name: this.name, creator: '' }, resources, store ?? undefined);
 
+    performance.mark('loadSkin')
+
     await skin.load();
+
+    performance.measure('loadSkin', 'loadSkin')
 
     return skin;
   }

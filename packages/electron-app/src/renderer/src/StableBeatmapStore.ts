@@ -11,11 +11,14 @@ export class StableBeatmapStore extends BeatmapStore {
       return;
     }
 
-    const beatmaps = await window.api.loadBeatmaps() ?? [];
+    const response = await fetch('osu-stable://beatmap-index');
+    if (response.ok) {
+      const beatmaps = await response.json() as OsuBeatmap[];
 
-    console.log(`Found ${beatmaps.length} beatmaps`);
+      console.log(`Found ${beatmaps.length} beatmaps`);
 
-    this.beatmaps.value = beatmaps.map(osuBeatmap => new StableBeatmapInfo(osuBeatmap));
+      this.beatmaps.value = beatmaps.map(osuBeatmap => new StableBeatmapInfo(osuBeatmap));
+    }
   }
 }
 
@@ -64,7 +67,7 @@ export class StableBeatmapInfo implements BeatmapItemInfo {
   async backgroundPath() {
     const filename = await this.settings.then(it => it?.backgroundFilename);
     if (filename)
-      return this.#relativePath(filename)
+      return this.#relativePath(filename);
 
     return null;
   }

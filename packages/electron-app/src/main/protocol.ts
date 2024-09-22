@@ -3,6 +3,8 @@ import fs from 'node:fs/promises';
 import { join, relative, resolve } from 'path';
 import log from 'electron-log/main';
 import { OsuStableInfo } from './loadOsuStableInfo.ts';
+import createWorker from './BeatmapLoadWorker.ts?nodeWorker';
+import { OsuBeatmap } from 'osu-db-parser';
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -16,6 +18,8 @@ protocol.registerSchemesAsPrivileged([
     },
   },
 ]);
+
+const worker = createWorker();
 
 export function setupProtocol(osuPaths: OsuStableInfo | null) {
   const logger = log.create({ logId: 'osu-stable protocol handler' });
@@ -37,6 +41,13 @@ export function setupProtocol(osuPaths: OsuStableInfo | null) {
     let basePath = osuPaths.installPath;
 
     switch (host) {
+      case 'beatmap-index':
+        if (!osuPaths.dbPath)
+          return new Response('Not found', { status: 404 });
+
+        const beatmaps = await loadBeatmaps(osuPaths);
+
+        return new Response(JSON.stringify(beatmaps), { headers: { 'Content-Type': 'application/json' } });
       case 'songs':
         if (!osuPaths.songsPath)
           return new Response('Not found', { status: 404 });
@@ -142,4 +153,15 @@ async function* walk(dir: string): AsyncGenerator<string> {
     if (d.isDirectory()) yield* walk(entry);
     else if (d.isFile()) yield entry;
   }
+}
+
+async function loadBeatmaps(osuPaths: OsuStableInfo): Promise<(OsuBeatmap)[] | null> {
+  if (!osuPaths.dbPath)
+    return null;
+
+  worker.postMessage({
+    dbPath: osuPaths.dbPath
+  })
+
+  return await new Promise(resolve => worker.once('message', resolve));
 }

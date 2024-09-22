@@ -1,9 +1,10 @@
 import { ipcMain } from 'electron';
-import { readFile, writeFile, readdir, mkdir, copyFile } from 'node:fs/promises';
-import OsuDBParser, { OsuBeatmap } from 'osu-db-parser';
+import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
+import { OsuBeatmap } from 'osu-db-parser';
 import { OsuStableInfo } from './loadOsuStableInfo.ts';
 import path from 'node:path';
-import log from 'electron-log/main'
+import log from 'electron-log/main';
+import createWorker from './BeatmapLoadWorker.ts?nodeWorker';
 
 export async function setupEnvironment(osuPaths: OsuStableInfo | null) {
   ipcMain.on('stableDetected', (event) => {
@@ -110,20 +111,15 @@ async function loadSkins(osuPaths: OsuStableInfo): Promise<ElectronSkinInfo[]> {
   }
 }
 
+const worker = createWorker();
+
 async function loadBeatmaps(osuPaths: OsuStableInfo): Promise<(OsuBeatmap)[] | null> {
   if (!osuPaths.dbPath)
     return null;
 
-  try {
-    const buffer = await readFile(osuPaths.dbPath);
-    const osuDB = new OsuDBParser(buffer);
+  worker.postMessage({
+    dbPath: osuPaths.dbPath
+  })
 
-    const data = osuDB.getOsuDBData();
-
-    return data.beatmaps.filter(it => it.mode === 0);
-  } catch (e) {
-    console.error('Failed to load beatmaps', e);
-
-    return null;
-  }
+  return await new Promise(resolve => worker.once('message', resolve));
 }
