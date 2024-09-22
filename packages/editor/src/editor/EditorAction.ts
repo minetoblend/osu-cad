@@ -29,6 +29,8 @@ export class EditorAction extends KeyBindingAction {
   static readonly ToggleAdditionSampleSetSoft = new EditorAction('ToggleAdditionSampleSetSoft');
   static readonly ToggleAdditionSampleSetDrum = new EditorAction('ToggleAdditionSampleSetDrum');
 
+  static readonly ToggleGridSnap = new EditorAction('ToggleGridSnap');
+
   static readonly Scale = new EditorAction('Scale');
   static readonly NudgeBackward = new EditorAction('NudgeBackward');
   static readonly NudgeForward = new EditorAction('NudgeForward');

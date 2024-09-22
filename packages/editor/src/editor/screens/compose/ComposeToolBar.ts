@@ -1,4 +1,4 @@
-import type { Bindable } from 'osucad-framework';
+import { Anchor, Bindable } from 'osucad-framework';
 import type { ComposeTool } from './tools/ComposeTool';
 import { Axes, Container, dependencyLoader, FillDirection, FillFlowContainer, Key, Vec2 } from 'osucad-framework';
 import { ComposeToolbarButton } from './ComposeToolbarButton';
@@ -12,6 +12,7 @@ import { SliderTool } from './tools/SliderTool';
 import { SpinnerTool } from './tools/SpinnerTool';
 import { WaveSliderTool } from './tools/WaveSliderTool';
 import { ZWaveSliderTool } from './tools/ZWaveSliderTool';
+import { ToolbarGridSnapToggle } from './ToolbarGridSnapToggle.ts';
 
 export class ComposeToolBar extends Container {
   constructor(protected readonly activeTool: Bindable<ComposeTool>) {
@@ -77,6 +78,13 @@ export class ComposeToolBar extends Container {
         keyBinding: Key.Digit4,
       }),
     );
+
+    this.addInternal(this.#toggleButtons.with({
+      depth: 1,
+      children: [
+        new ToolbarGridSnapToggle()
+      ]
+    }))
   }
 
   override get content() {
@@ -90,8 +98,11 @@ export class ComposeToolBar extends Container {
   });
 
   #toggleButtons = new FillFlowContainer({
-    relativeSizeAxes: Axes.Both,
+    relativeSizeAxes: Axes.X,
+    autoSizeAxes: Axes.Y,
     direction: FillDirection.Vertical,
     spacing: new Vec2(6),
+    anchor: Anchor.BottomLeft,
+    origin: Anchor.BottomLeft,
   });
 }

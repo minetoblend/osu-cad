@@ -9,9 +9,10 @@ import {
   dependencyLoader,
   EasingFunction,
   Invalidation,
+  Key,
+  KeyDownEvent,
   LayoutMember,
   resolved,
-  Vec2,
 } from 'osucad-framework';
 import { BackdropBlurFilter } from 'pixi-filters';
 import { OsucadConfigManager } from '../../../config/OsucadConfigManager.ts';
@@ -23,8 +24,6 @@ import { HitsoundPlayer } from '../../HitsoundPlayer.ts';
 import { ComposeScreenTimeline } from '../../timeline/ComposeScreenTimeline.ts';
 import { TimelineZoomButtons } from '../../timeline/TimelineZoomButtons';
 import { EditorScreen } from '../EditorScreen';
-import { ComposeTogglesBar } from './ComposeTogglesBar';
-import { ComposeToolBar } from './ComposeToolBar';
 import { EditorSelection } from './EditorSelection.ts';
 import { HitObjectComposer } from './HitObjectComposer';
 import { SelectTool } from './tools/SelectTool';
@@ -36,10 +35,6 @@ export class ComposeScreen extends EditorScreen {
   }
 
   #paddingBacking = new LayoutMember(Invalidation.DrawSize);
-
-  #toolBar!: ComposeToolBar;
-  #togglesBar!: ComposeTogglesBar;
-
   #composer!: HitObjectComposer;
 
   #content!: Container;
@@ -77,10 +72,10 @@ export class ComposeScreen extends EditorScreen {
       },
     }));
     this.add(this.#composer = new HitObjectComposer(this.#activeTool));
-    this.add((this.#toolBar = new ComposeToolBar(this.#activeTool)));
-    this.add((this.#togglesBar = new ComposeTogglesBar().with({
-      y: 10,
-    })));
+    // this.add((this.#toolBar = new ComposeToolBar(this.#activeTool)));
+    // this.add((this.#togglesBar = new ComposeTogglesBar().with({
+    //   y: 10,
+    // })));
 
     const filter = new BackdropBlurFilter({
       strength: 15,
@@ -90,7 +85,7 @@ export class ComposeScreen extends EditorScreen {
     });
     filter.padding = 30;
 
-    const timeline = new ComposeScreenTimeline();
+    const timeline = this.timeline =  new ComposeScreenTimeline();
 
     this.addInternal(
       this.#topBar = new Container({
@@ -171,7 +166,6 @@ export class ComposeScreen extends EditorScreen {
 
     if (!this.#paddingBacking.isValid) {
       this.#composer.padding = {
-        horizontal: this.#toolBar.layoutSize.x,
         top: this.drawSize.x < 1250 ? 20 : 10,
         bottom: this.drawSize.x < 1110 ? 15 : -10,
       };
@@ -182,24 +176,29 @@ export class ComposeScreen extends EditorScreen {
   show() {
     super.show();
 
-    this.#toolBar.moveTo(new Vec2(-100, -70)).moveTo(new Vec2(), 500, EasingFunction.OutExpo);
-
-    this.#togglesBar.moveTo(new Vec2(100, -60)).moveTo(new Vec2(0, 10), 500, EasingFunction.OutExpo);
-
     this.#topBar.moveToY(-70).moveToY(0, 500, EasingFunction.OutExpo);
 
-    this.#composer.moveToY(100).moveToY(0, 500, EasingFunction.OutExpo);
-    this.#composer.fadeInFromZero(400);
+    this.#composer.show()
+
   }
 
   hide() {
     super.hide();
 
-    this.#toolBar.moveTo(new Vec2(-100, -70), 500, EasingFunction.OutExpo);
-    this.#togglesBar.moveTo(new Vec2(100, -60), 500, EasingFunction.OutExpo);
-
     this.#topBar.moveToY(-70, 500, EasingFunction.OutExpo);
 
-    this.#composer.moveToY(100, 500, EasingFunction.OutExpo);
+    this.#composer.hide()
+  }
+
+  timeline!: ComposeScreenTimeline;
+
+  onKeyDown(e: KeyDownEvent): boolean {
+
+    if (e.key === Key.F4) {
+      this.timeline.alpha = this.timeline.alpha === 0 ? 1 : 0;
+      return true;
+    }
+
+    return false;
   }
 }

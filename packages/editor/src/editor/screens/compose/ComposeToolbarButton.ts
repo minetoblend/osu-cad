@@ -1,9 +1,30 @@
-import type { MouseDownEvent, MouseUpEvent } from 'osucad-framework';
-import type { Texture } from 'pixi.js';
-import { Anchor, Axes, BindableBoolean, Button, Container, dependencyLoader, DrawableSprite, EasingFunction, resolved, RoundedBox, Vec2 } from 'osucad-framework';
+import {
+  ClickableContainer, ClickEvent,
+  DrawableOptions,
+  MouseButton,
+  MouseDownEvent,
+  MouseUpEvent, ScheduledDelegate,
+  Visibility,
+} from 'osucad-framework';
+import type { Graphics, Texture } from 'pixi.js';
+import {
+  Anchor,
+  Axes,
+  BindableBoolean,
+  Button,
+  Container,
+  dependencyLoader,
+  DrawableSprite,
+  EasingFunction,
+  resolved,
+  RoundedBox,
+  Vec2,
+} from 'osucad-framework';
 import { FastRoundedBox } from '../../../drawables/FastRoundedBox';
 import { UISamples } from '../../../UISamples';
 import { ThemeColors } from '../../ThemeColors';
+import { ComposeToolbarButtonSubmenu } from './ComposeToolbarButtonSubmenu.ts';
+import { GraphicsDrawable } from '../../../drawables/GraphicsDrawable.ts';
 
 export class ComposeToolbarButton extends Button {
   constructor(
@@ -62,13 +83,20 @@ export class ComposeToolbarButton extends Button {
       (this.#content = new Container({
         relativeSizeAxes: Axes.Both,
       })),
-      (this.#icon = new DrawableSprite({
-        texture: this.#iconTexture,
+      this.scaleContainer = new Container({
         relativeSizeAxes: Axes.Both,
-        size: 0.65,
         anchor: Anchor.Center,
         origin: Anchor.Center,
-      })),
+        children: [
+          (this.#icon = new DrawableSprite({
+            texture: this.#iconTexture,
+            relativeSizeAxes: Axes.Both,
+            size: 0.65,
+            anchor: Anchor.Center,
+            origin: Anchor.Center,
+          })),
+        ],
+      }),
     );
 
     this.active.valueChanged.addListener(this.updateState, this);
@@ -90,6 +118,8 @@ export class ComposeToolbarButton extends Button {
 
   #icon!: DrawableSprite;
 
+  protected scaleContainer!: Container;
+
   get content() {
     return this.#content;
   }
@@ -107,14 +137,15 @@ export class ComposeToolbarButton extends Button {
     this.#outlineVisibility = value;
     this.#outline.alpha = value;
 
+    this.#outline.drawNode.visible = value > 0;
+
     this.#updateOutline();
   }
 
   #updateOutline() {
     if (this.outlineVisibility === 0) {
       this.#outline.outlines = [];
-    }
-    else {
+    } else {
       this.#outline.outlines = [
         {
           color: 0xC0BFBD,
@@ -142,21 +173,19 @@ export class ComposeToolbarButton extends Button {
 
       this.#background.color = 0x303038;
       this.transformTo('outlineVisibility', 1, 200);
-    }
-    else {
+    } else {
       this.#background.color = 0x222228;
       this.#icon.color = this.isHovered ? 'white' : '#bbbec5';
       this.transformTo('outlineVisibility', 0, 200);
     }
 
     if (this.armed) {
-      this.#icon.scaleTo(0.85, 300, EasingFunction.OutQuart);
+      this.scaleContainer.scaleTo(0.85, 300, EasingFunction.OutQuart);
 
       // resizing the background and outline instead of main body to make sure layout isn't affected
       this.backgroundContainer.scaleTo(0.95, 300, EasingFunction.OutQuart);
-    }
-    else {
-      this.#icon.scaleTo(1, 300, EasingFunction.OutBack);
+    } else {
+      this.scaleContainer.scaleTo(1, 300, EasingFunction.OutBack);
 
       this.backgroundContainer.scaleTo(1, 300, EasingFunction.OutBack);
     }
@@ -178,9 +207,26 @@ export class ComposeToolbarButton extends Button {
     return true;
   }
 
+  #showSubmenuDelegate?: ScheduledDelegate;
+
+  #preventNextClick = false;
+
   onMouseDown(e: MouseDownEvent): boolean {
     if (!super.onMouseDown(e))
       return false;
+
+    if (e.button === MouseButton.Left) {
+      this.#showSubmenuDelegate = this.scheduler.addDelayed(() => {
+        this.getContainingFocusManager()!.changeFocus(this);
+        this.submenu?.show();
+        this.#preventNextClick = true;
+      }, 400)
+    }
+
+    if (e.button === MouseButton.Right) {
+      this.getContainingFocusManager()!.changeFocus(this);
+      this.submenu?.show();
+    }
 
     this.samples.toolSelect.play();
     this.armed = true;
@@ -190,6 +236,19 @@ export class ComposeToolbarButton extends Button {
   }
 
   onMouseUp(e: MouseUpEvent) {
+    this.#showSubmenuDelegate?.cancel();
+
+    if (e.button === MouseButton.Left) {
+      if (this.submenu?.state.value === Visibility.Visible) {
+        for (const child of this.submenu.children) {
+          if (child.isHovered && child instanceof ClickableContainer) {
+            child.action?.();
+            break;
+          }
+        }
+      }
+    }
+
     this.armed = false;
     this.updateState();
   }
@@ -211,5 +270,68 @@ export class ComposeToolbarButton extends Button {
 
   get acceptsFocus(): boolean {
     return true;
+  }
+
+  submenu?: ComposeToolbarButtonSubmenu;
+
+  protected addSubmenu(childItems: ComposeToolbarButton[]) {
+    this.add(
+      this.submenu = new ComposeToolbarButtonSubmenu(childItems).with({
+        depth: 1,
+      }),
+    );
+    this.backgroundContainer.add(
+      new Container({
+        relativeSizeAxes: Axes.Both,
+        padding: 6,
+        child: new SubmenuCaret({
+          width: 8,
+          height: 8,
+          anchor: Anchor.BottomRight,
+          origin: Anchor.BottomRight,
+        }),
+      }),
+    );
+  }
+
+  override onClick(e: ClickEvent): boolean {
+    if (this.#preventNextClick) {
+      this.#preventNextClick = false;
+
+      return true;
+    }
+
+    return super.onClick(e);
+  }
+
+  onFocusLost() {
+    this.submenu?.hide();
+  }
+}
+
+class SubmenuCaret extends GraphicsDrawable {
+  constructor(options: DrawableOptions) {
+    super();
+
+    this.with(options);
+  }
+
+  updateGraphics(g: Graphics) {
+    g.clear();
+
+    g.roundShape([
+      { x: this.drawSize.x, y: 0 },
+      { x: this.drawSize.x, y: this.drawSize.y, radius: 2 },
+      { x: 0, y: this.drawSize.y },
+    ], 1)
+      .fill(0xFFFFFF);
+  }
+
+  @resolved(ThemeColors)
+  colors!: ThemeColors;
+
+  @dependencyLoader()
+  load() {
+    this.color = this.colors.text;
   }
 }

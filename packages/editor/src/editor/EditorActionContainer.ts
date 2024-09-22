@@ -49,6 +49,7 @@ export class EditorActionContainer extends KeyBindingContainer<EditorAction> {
       new KeyBinding(KeyCombination.from(InputKey.X), EditorAction.PlayFromStart),
       new KeyBinding(KeyCombination.from(InputKey.Control, InputKey.O), EditorAction.ShowPreferences),
       new KeyBinding(KeyCombination.from(InputKey.Control, InputKey.G), EditorAction.Reverse),
+      new KeyBinding(KeyCombination.from(InputKey.T), EditorAction.ToggleGridSnap),
     ];
   }
 }

@@ -1,26 +1,6 @@
-import type {
-  Bindable,
-  ClickEvent,
-  DrawableOptions,
-  Key,
-  KeyDownEvent,
-  MouseDownEvent,
-  MouseUpEvent,
-} from 'osucad-framework';
-import type { Graphics } from 'pixi.js';
+import type { Bindable, ClickEvent, Key, KeyDownEvent, MouseDownEvent, MouseUpEvent } from 'osucad-framework';
+import { ClickableContainer, MouseButton, Visibility } from 'osucad-framework';
 import type { ComposeTool } from './tools/ComposeTool';
-import {
-  Anchor,
-  Axes,
-  ClickableContainer,
-  Container,
-  dependencyLoader,
-  MouseButton,
-  resolved,
-  Visibility,
-} from 'osucad-framework';
-import { GraphicsDrawable } from '../../../drawables/GraphicsDrawable';
-import { ThemeColors } from '../../ThemeColors';
 import { ComposeToolbarButton } from './ComposeToolbarButton';
 import { ComposeToolbarButtonSubmenu } from './ComposeToolbarButtonSubmenu';
 
@@ -56,30 +36,11 @@ export class ComposeToolbarToolButton extends ComposeToolbarButton {
 
   childItems: ComposeToolbarButton[] = [];
 
-  submenu?: ComposeToolbarButtonSubmenu;
-
   init() {
     super.init();
 
-    if (this.childItems.length > 0) {
-      this.addAll(
-        this.submenu = new ComposeToolbarButtonSubmenu(this.childItems).with({
-          depth: 1,
-        }),
-      );
-      this.backgroundContainer.add(
-        new Container({
-          relativeSizeAxes: Axes.Both,
-          padding: 6,
-          child: new SubmenuCaret({
-            width: 8,
-            height: 8,
-            anchor: Anchor.BottomRight,
-            origin: Anchor.BottomRight,
-          }),
-        }),
-      );
-    }
+    if (this.childItems.length > 0)
+      this.addSubmenu(this.childItems);
 
     this.activeTool.addOnChangeListener(
       ({ value: tool }) => {
@@ -88,8 +49,7 @@ export class ComposeToolbarToolButton extends ComposeToolbarButton {
         if (!this.active.value) {
           this.submenu?.hide();
           this.iconTexture = this.tool.icon;
-        }
-        else {
+        } else {
           this.iconTexture = tool.icon;
         }
       },
@@ -104,10 +64,6 @@ export class ComposeToolbarToolButton extends ComposeToolbarButton {
       case MouseButton.Left:
         this.#mouseDownTime = this.time.current;
         break;
-      case MouseButton.Right:
-        this.getContainingFocusManager()!.changeFocus(this);
-        this.submenu?.show();
-        break;
     }
 
     return super.onMouseDown(e);
@@ -116,52 +72,19 @@ export class ComposeToolbarToolButton extends ComposeToolbarButton {
   onMouseUp(e: MouseUpEvent) {
     if (e.button === MouseButton.Left) {
       this.#mouseDownTime = null;
-
-      if (this.submenu?.state.value === Visibility.Visible) {
-        for (const child of this.submenu.children) {
-          if (child.isHovered && child instanceof ClickableContainer) {
-            child.action?.();
-            break;
-          }
-        }
-      }
     }
 
     super.onMouseUp(e);
   }
 
-  longPressDuration = 400;
 
-  #preventNextClick = false;
 
   override update() {
     super.update();
-
-    if (
-      this.#mouseDownTime !== null
-      && this.time.current - this.#mouseDownTime > this.longPressDuration
-    ) {
-      this.getContainingFocusManager()!.changeFocus(this);
-      this.submenu?.show();
-
-      this.#preventNextClick = true;
-
-      this.#mouseDownTime = null;
-    }
-  }
-
-  onClick(e: ClickEvent): boolean {
-    if (this.#preventNextClick) {
-      this.#preventNextClick = false;
-
-      return true;
-    }
-
-    return super.onClick(e);
   }
 
   onKeyDown(e: KeyDownEvent): boolean {
-    if (this.keyBinding && e.key === this.keyBinding) {
+    if (this.keyBinding && e.key === this.keyBinding && !e.controlPressed && !e.shiftPressed && !e.altPressed) {
       this.armed = true;
       this.triggerAction();
     }
@@ -176,37 +99,5 @@ export class ComposeToolbarToolButton extends ComposeToolbarButton {
 
     return false;
   }
-
-  onFocusLost(): boolean {
-    this.submenu?.hide();
-
-    return true;
-  }
 }
 
-class SubmenuCaret extends GraphicsDrawable {
-  constructor(options: DrawableOptions) {
-    super();
-
-    this.with(options);
-  }
-
-  updateGraphics(g: Graphics) {
-    g.clear();
-
-    g.roundShape([
-      { x: this.drawSize.x, y: 0 },
-      { x: this.drawSize.x, y: this.drawSize.y, radius: 2 },
-      { x: 0, y: this.drawSize.y },
-    ], 1)
-      .fill(0xFFFFFF);
-  }
-
-  @resolved(ThemeColors)
-  colors!: ThemeColors;
-
-  @dependencyLoader()
-  load() {
-    this.color = this.colors.text;
-  }
-}

@@ -5,11 +5,16 @@ export abstract class SnapTarget {
   abstract getSnapOffset(positions: Vec2[]): Vec2 | null;
 
   draw(g: Graphics, active: boolean = false) {}
+
+  get bypassRadius() {
+    return false;
+  }
 }
 
 export class PositionSnapTarget extends SnapTarget {
   constructor(
     readonly position: Vec2,
+    readonly radius?: number
   ) {
     super();
   }

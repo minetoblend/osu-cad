@@ -1,6 +1,13 @@
-import type { Bindable, IKeyBindingHandler, KeyBindingPressEvent } from 'osucad-framework';
+import {
+  Bindable,
+  BindableBoolean, EasingFunction,
+  IKeyBindingHandler,
+  Key,
+  KeyBindingPressEvent,
+  KeyDownEvent,
+} from 'osucad-framework';
 import type { IPositionSnapProvider } from './snapping/IPositionSnapProvider';
-import type { SnapTarget } from './snapping/SnapTarget';
+import { PositionSnapTarget, SnapTarget } from './snapping/SnapTarget';
 import type { ComposeTool } from './tools/ComposeTool';
 import type { DrawableComposeTool } from './tools/DrawableComposeTool';
 import {
@@ -28,6 +35,10 @@ import { EditorSelection } from './EditorSelection';
 import { HitObjectUtils } from './HitObjectUtils';
 import { SelectionOverlay } from './selection/SelectionOverlay';
 import { HitObjectSnapProvider } from './snapping/HitObjectSnapProvider';
+import { ComposeToolBar } from './ComposeToolBar.ts';
+import { ComposeTogglesBar } from './ComposeTogglesBar.ts';
+import { GridSnapProvider } from './snapping/GridSnapProvider.ts';
+import { Beatmap } from '../../../beatmap/Beatmap.ts';
 
 export class HitObjectComposer
   extends Container
@@ -46,12 +57,14 @@ export class HitObjectComposer
 
   playfield!: OsuPlayfield;
 
+  gridSnapEnabled = new BindableBoolean(false);
+
   @dependencyLoader()
   load() {
     this.addAllInternal(this.hitObjectUtils = new HitObjectUtils());
 
     this.addAllInternal(
-      new DrawSizePreservingFillContainer({
+      this.#playfieldContainer = new DrawSizePreservingFillContainer({
         targetDrawSize: { x: 512, y: 384 },
         child: new Container({
           width: 512,
@@ -77,10 +90,31 @@ export class HitObjectComposer
 
     this.snapProviders = [
       new HitObjectSnapProvider(this.hitObjects, this.selection, this.editorClock),
+      new GridSnapProvider(this.beatmap.settings.editor.gridSizeBindable, this.gridSnapEnabled,),
     ];
+
+    this.add(this.#toolbarContainer = new Container({
+      relativeSizeAxes: Axes.Both,
+      padding: { bottom: 10 },
+      children: [
+        this.#toolBar = new ComposeToolBar(this.activeTool),
+        this.#togglesBar = new ComposeTogglesBar().with({ y: 10 }),
+      ],
+    }));
   }
 
+  @resolved(Beatmap)
+  beatmap!: Beatmap;
+
   #previousTool!: ComposeTool;
+
+  #playfieldContainer!: DrawSizePreservingFillContainer;
+
+  #toolbarContainer!: Container;
+
+  #toolBar!: ComposeToolBar;
+
+  #togglesBar!: ComposeTogglesBar;
 
   protected loadComplete() {
     super.loadComplete();
@@ -252,10 +286,36 @@ export class HitObjectComposer
         }
       }
 
-      if (closestDistance < threshold ** 2)
+      if (closest.target.bypassRadius || closestDistance < threshold ** 2)
         return { offset: closest.offset!, target: closest.target, snapTargets };
     }
 
     return { offset: null, target: null, snapTargets };
+  }
+
+  onKeyDown(e: KeyDownEvent): boolean {
+    if (e.key === Key.F5) {
+      this.playfield.alpha = this.playfield.alpha === 1 ? 0 : 1;
+      return true;
+    }
+
+    return false;
+  }
+
+  override show() {
+    this.#playfieldContainer.moveToY(100).moveToY(0, 500, EasingFunction.OutExpo);
+    this.fadeInFromZero(400);
+
+    this.#toolbarContainer.moveToY(-70).moveToY(0, 500, EasingFunction.OutExpo);
+    this.#toolBar.moveToX(-100).moveToX(0, 500, EasingFunction.OutExpo);
+    this.#togglesBar.moveToX(100).moveToX(0, 500, EasingFunction.OutExpo);
+  }
+
+  override hide() {
+    this.#playfieldContainer.moveToY(100, 500, EasingFunction.OutExpo);
+
+    this.#toolbarContainer.moveToY(-70, 500, EasingFunction.OutExpo);
+    this.#toolBar.moveToX(-100, 500, EasingFunction.OutExpo);
+    this.#togglesBar.moveToX(100, 500, EasingFunction.OutExpo);
   }
 }
