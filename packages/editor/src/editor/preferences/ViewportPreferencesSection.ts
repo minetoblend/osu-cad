@@ -30,6 +30,10 @@ export class ViewportPreferencesSection extends PreferencesPanel {
         'Compact timeline',
         this.config.getBindable(OsucadSettings.CompactTimeline)!,
       ),
+      new PreferencesToggle(
+        'Use native cursor',
+        this.config.getBindable(OsucadSettings.NativeCursor)!,
+      ),
     ];
   }
 }
