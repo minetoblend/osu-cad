@@ -15,6 +15,7 @@ const iconKeys = [
   'redo',
   'reverse',
   'select',
+  'select@2x',
   'size-ew',
   'size-ns',
   'slider',
