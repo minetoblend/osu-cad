@@ -1,4 +1,4 @@
-import { app, BrowserWindow, shell } from 'electron';
+import { app, BrowserWindow, shell, session } from 'electron';
 import { join } from 'path';
 import { electronApp, is } from '@electron-toolkit/utils';
 import { setupEnvironment } from './ElectronEnvironment.ts';
@@ -47,6 +47,13 @@ function createWindow(): void {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(async () => {
+  try {
+    await session.defaultSession.loadExtension(join(process.cwd(), 'pixi-devtools'))
+  } catch (e) {
+    // silently fail
+  }
+
+
   const osuStableInfo = await loadOsuStableInfo();
 
   await setupEnvironment(osuStableInfo);
