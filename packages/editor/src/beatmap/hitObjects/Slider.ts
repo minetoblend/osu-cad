@@ -229,7 +229,7 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
 
     const path = this.path.calculatedPath.vertices;
     let distance = 0;
-    const step = 10;
+    const step = this.radius * 0.3;
     let i = 1;
     while (
       distance < Math.min(this.path.expectedDistance, this.path.calculatedDistance)
