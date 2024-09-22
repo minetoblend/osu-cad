@@ -69,10 +69,6 @@ export class OsucadGame extends Game implements IResourcesProvider {
 
     this.add(this.#innerContainer);
 
-    const preferences = new PreferencesStore();
-    this.dependencies.provide(preferences);
-    preferences.init();
-
     const mixer = new EditorMixer(this.audioManager);
     this.dependencies.provide(mixer);
     super.add(mixer);
