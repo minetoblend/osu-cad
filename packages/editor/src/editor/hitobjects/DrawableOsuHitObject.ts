@@ -5,8 +5,6 @@ import { DrawableHitObject } from './DrawableHitObject';
 export class DrawableOsuHitObject<T extends OsuHitObject = OsuHitObject> extends DrawableHitObject {
   constructor(hitObject?: T) {
     super(hitObject);
-
-    this.drawNode.enableRenderGroup();
   }
 
   positionBindable = new Bindable(new Vec2());
