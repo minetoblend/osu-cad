@@ -100,7 +100,8 @@ class Thumb extends CompositeDrawable {
     this.anchor = Anchor.CenterLeft;
     this.origin = Anchor.Center;
     this.relativePositionAxes = Axes.X;
-    this.size = new Vec2(10, 6);
+    this.size = new Vec2(30, 26);
+    this.padding = 10;
 
     this.addInternal(
       new RoundedBox({
