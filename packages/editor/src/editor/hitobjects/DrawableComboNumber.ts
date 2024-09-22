@@ -9,7 +9,6 @@ export class DrawableComboNumber extends CompositeDrawable {
 
     this.origin = Anchor.Center;
     this.anchor = Anchor.Center;
-    this.drawNode.enableRenderGroup();
   }
 
   indexInComboBindable = new Bindable(0);
