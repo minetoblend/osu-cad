@@ -48,7 +48,6 @@ export class ToolbarGridSnapToggle extends ComposeToggleButton implements IKeyBi
     if(e.key === Key.ShiftLeft) {
       this.#actualValue = this.active.value;
       this.active.value = !this.active.value;
-      return true;
     }
 
     return false;
