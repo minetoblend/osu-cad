@@ -35,15 +35,12 @@ export class TextureStore {
     if (!data)
       return null;
 
-    const blob = new Blob([data]);
-    const url = URL.createObjectURL(blob);
-
-    const texture = await loadTexture(url, {
+    const texture = await loadTexture(data, {
       resolution,
     });
-    if (!texture) {
+
+    if (!texture)
       return null;
-    }
 
     this.#textures.set(name, texture);
 
