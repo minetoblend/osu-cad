@@ -125,7 +125,6 @@ export class LifetimeEntryManager {
   }
 
   update(startTime: number, endTime: number = startTime): boolean {
-    performance.mark('LifetimeEntryManager#update');
     endTime = Math.max(endTime, startTime);
 
     let aliveEntriesChanged = false;
@@ -171,8 +170,6 @@ export class LifetimeEntryManager {
       const entry = this.#eventQueue.shift()!;
       this.entryCrossedBoundary.emit(entry);
     }
-
-    performance.measure('LifetimeEntryManager#update', 'LifetimeEntryManager#update');
 
     return aliveEntriesChanged;
   }
