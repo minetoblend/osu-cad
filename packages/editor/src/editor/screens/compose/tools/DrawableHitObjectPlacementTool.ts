@@ -112,7 +112,8 @@ export abstract class DrawableHitObjectPlacementTool<T extends OsuHitObject> ext
   protected onPlacementStart(hitObject: CommandProxy<T>) {
   }
 
-  protected onPlacementFinish(hitObject: CommandProxy<T>) {}
+  protected onPlacementFinish(hitObject: CommandProxy<T>) {
+  }
 
   finishPlacing() {
     if (this.#state !== PlacementState.Placing)
@@ -126,6 +127,8 @@ export abstract class DrawableHitObjectPlacementTool<T extends OsuHitObject> ext
 
     this.#state = PlacementState.Preview;
     this.createPreviewObject();
+
+    this.newCombo.value = false;
   }
 
   update() {
