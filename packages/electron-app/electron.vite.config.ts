@@ -25,6 +25,7 @@ export default defineConfig({
     build: {
       // minify: process.env.NODE_ENV === 'production',
       minify: false,
+      sourcemap: false,
 
       rollupOptions: {
         output: {
@@ -39,7 +40,7 @@ export default defineConfig({
 
     server: {
       headers: {
-        'Document-Policy': 'js-profiling'
+        'Document-Policy': 'js-profiling',
       }
     }
   },
