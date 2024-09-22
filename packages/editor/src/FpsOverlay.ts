@@ -163,7 +163,7 @@ class FrameGraph extends GraphicsDrawable {
     const width = this.drawSize.x;
     const height = this.drawSize.y;
 
-    const max = Math.max(...this.#frameTimes, 20);
+    const max = Math.max(...this.#frameTimes, 10);
     const min = 0;
 
     const scale = height / (max - min);
