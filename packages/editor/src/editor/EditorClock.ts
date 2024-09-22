@@ -20,7 +20,6 @@ import {
 import { Beatmap } from '../beatmap/Beatmap';
 import { OsucadConfigManager } from '../config/OsucadConfigManager.ts';
 import { OsucadSettings } from '../config/OsucadSettings.ts';
-import { PreferencesStore } from '../preferences/PreferencesStore';
 
 export class EditorClock
   extends Container
@@ -39,9 +38,6 @@ export class EditorClock
     this.config.bindWith(OsucadSettings.AnimatedSeek, this.animatedSeek);
     this.config.bindWith(OsucadSettings.AudioOffset, this.offsetBindable);
   }
-
-  @resolved(PreferencesStore)
-  preferences!: PreferencesStore;
 
   @resolved(AudioManager)
   audioManager!: AudioManager;

@@ -4,7 +4,6 @@ import { Anchor, Axes, BindableBoolean, BindableNumber, Container, dependencyLoa
 import { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
 import { OsucadConfigManager } from '../../config/OsucadConfigManager.ts';
 import { OsucadSettings } from '../../config/OsucadSettings.ts';
-import { PreferencesStore } from '../../preferences/PreferencesStore';
 import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
 import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
 import { DrawableOsuHitObject } from './DrawableOsuHitObject.ts';
@@ -55,9 +54,6 @@ export class DrawableSliderTail extends DrawableOsuHitObject<SliderTailCircle> {
       .delay((this.slider!.timePreempt ?? 0) / 3)
       .fadeIn(this.slider!.timeFadeIn);
   }
-
-  @resolved(PreferencesStore)
-  preferences!: PreferencesStore;
 
   protected updateEndTimeTransforms() {
     this.delay(800).fadeOut();
