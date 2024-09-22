@@ -128,6 +128,10 @@ export class BeatmapSelect extends OsucadScreen {
     super.onSuspending(e);
   }
 
+  onEntering(e: ScreenTransitionEvent) {
+    this.onResuming(e)
+  }
+
   onResuming(e: ScreenTransitionEvent) {
     this.#isActive = true;
 
