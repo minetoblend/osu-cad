@@ -49,12 +49,18 @@ export class OsucadGame extends Game implements IResourcesProvider {
   @resolved(AudioManager)
   audioManager!: AudioManager;
 
+  config!: OsucadConfigManager;
+
+  mixer!: EditorMixer;
+
   @dependencyLoader()
   async init(): Promise<void> {
     this.dependencies.provide(Game, this);
 
     const config = new OsucadConfigManager();
     config.load();
+
+    this.config = config;
 
     this.dependencies.provide(IResourcesProvider, this);
 
@@ -73,10 +79,11 @@ export class OsucadGame extends Game implements IResourcesProvider {
     this.dependencies.provide(mixer);
     super.add(mixer);
 
+    this.mixer = mixer;
+
     const samples = new UISamples(this.audioManager, mixer.userInterface);
     this.dependencies.provide(samples);
 
-    let screenStack: ScreenStack;
 
     let intro: IntroSequence;
 
@@ -92,7 +99,7 @@ export class OsucadGame extends Game implements IResourcesProvider {
           new EditorActionContainer({
             child: new DialogContainer({
               child: new PreferencesContainer({
-                child: screenStack = new OsucadScreenStack(
+                child: new OsucadScreenStack(
                   intro = new IntroSequence(),
                   true,
                 ),
