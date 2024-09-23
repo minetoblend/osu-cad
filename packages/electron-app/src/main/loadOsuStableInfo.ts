@@ -23,7 +23,16 @@ async function isDir(path: string) {
   }
 }
 
-async function findOsuInstallPath() {
+async function searchPathForOsuInstall(defaultPath: string) {
+  if (await isDir(defaultPath) && await canAccess(path.join(defaultPath, 'osu!.db')))
+    return defaultPath;
+
+  log.warn(`No osu! install directory found at ${defaultPath}`);
+
+  return null;
+}
+
+async function findOsuInstallPathWin32() {
   try {
     const registryKey = 'HKCR\\osu!\\shell\\open\\command';
 
@@ -56,12 +65,32 @@ async function findOsuInstallPath() {
 
   log.info(`Falling back to osu! install path at ${fallbackPath}`);
 
-  if (await isDir(fallbackPath) && await canAccess(path.join(fallbackPath, 'osu!.db')))
-    return fallbackPath;
+  return await searchPathForOsuInstall(fallbackPath);
+}
 
-  log.warn(`No osu! install directory found at ${fallbackPath}`);
+async function findOsuInstallPathLinux() {
+  const defaultPath = path.join(os.homedir(), '.local/share/osu-wine/osu!');
 
-  return null;
+  return await searchPathForOsuInstall(defaultPath);
+}
+
+async function findOsuInstallPathDarwin() {
+  const defaultPath = '/Applications/osu!.app/Contents/Resources/drive_c/osu!';
+
+  return await searchPathForOsuInstall(defaultPath);
+}
+
+async function findOsuInstallPath() {
+  switch (process.platform) {
+    case 'win32':
+      return findOsuInstallPathWin32();
+    case 'linux':
+      return findOsuInstallPathLinux();
+    case 'darwin':
+      return findOsuInstallPathDarwin();
+    default:
+      return null;
+  }
 }
 
 async function findOsuSongsPath(installPath: string) {
