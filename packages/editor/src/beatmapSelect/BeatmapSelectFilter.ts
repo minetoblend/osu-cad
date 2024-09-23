@@ -13,6 +13,8 @@ export class BeatmapSelectFilter extends Component {
     for (const beatmap of beatmaps.value)
       this.#index.add(beatmap);
 
+    this.#index.build()
+
     this.searchTerm.addOnChangeListener(() => {
       if (this.#scheduledDelegate)
         this.#scheduledDelegate.cancel();

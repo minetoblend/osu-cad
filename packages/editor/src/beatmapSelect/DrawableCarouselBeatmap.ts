@@ -7,6 +7,7 @@ import { OsucadSpriteText } from '../OsucadSpriteText';
 import { UISamples } from '../UISamples';
 import { CarouselBeatmap } from './CarouselBeatmap';
 import { DrawableCarouselItem } from './DrawableCarouselItem';
+import { IResourcesProvider } from '../io/IResourcesProvider.ts';
 
 export class DrawableCarouselBeatmap extends DrawableCarouselItem {
   constructor(item: CarouselBeatmap) {
@@ -182,7 +183,7 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
 
       this.findClosestParentOfType(ScreenStack)
         ?.push(new EditorLoader(
-          this.carouselBeatmap.beatmapInfo.createEditorContext(),
+          this.carouselBeatmap.beatmapInfo.createEditorContext(this.dependencies.resolve(IResourcesProvider)),
         ));
     }
 

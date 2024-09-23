@@ -1,5 +1,6 @@
 import type { BeatmapItemInfo } from './BeatmapItemInfo.ts';
 import { SortedList } from '../../../framework/src';
+import { compare } from 'fast-string-compare'
 
 /**
  * An attempt at making a full text search index for the beatmap search.
@@ -17,6 +18,8 @@ export class BeatmapSearchIndex {
 
   #allEntries = new Set<BeatmapItemInfo>();
 
+  #entryBuilder = new Map<string, BeatmapItemInfo[]>();
+
   #getWords(str: string) {
     return str.toLowerCase().trim().split(' ').filter(it => it.length > 0);
   }
@@ -28,16 +31,21 @@ export class BeatmapSearchIndex {
       if (word.length === 0)
         continue;
 
-      const entry = this.#index.get({ word } as any);
+      const entry = this.#entryBuilder.get(word);
       if (entry) {
-        entry.entries.push(beatmap);
+        entry.push(beatmap);
         continue;
       }
 
-      this.#index.add({
-        term: word,
-        entries: [beatmap],
-      });
+      this.#entryBuilder.set(word, [beatmap]);
+    }
+  }
+
+  build() {
+    const entries = [...this.#entryBuilder.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+
+    for (const [word, items] of entries) {
+      this.#index.add({ term: word, entries: items });
     }
   }
 
@@ -45,7 +53,7 @@ export class BeatmapSearchIndex {
     term: string;
     entries: BeatmapItemInfo[];
   }>({
-    compare: (a, b) => a.term.localeCompare(b.term),
+    compare: (a, b) => compare(a.term, b.term),
   });
 
   search(str: string) {
