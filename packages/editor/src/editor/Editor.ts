@@ -111,12 +111,7 @@ export class Editor
     this.dependencies.provide(HITSOUND, this.#hitSound);
     this.dependencies.provide(CURRENT_SCREEN, this.currentScreen);
 
-    const track = this.audioManager.createTrack(
-      this.mixer.music,
-      this.context.song,
-    );
-
-    this.#clock = new EditorClock(track);
+    this.#clock = new EditorClock(this.context.song);
     this.addInternal(this.#clock);
 
     this.dependencies.provide(this.#clock);
@@ -223,10 +218,10 @@ export class Editor
 
     const controlPoint
       = direction < 1
-        ? [...controlPointInfo.groups].reverse().find(cp => cp.time < this.#clock.currentTimeAccurate)
-        : controlPointInfo.groups.find(
-          cp => cp.time > this.#clock.currentTimeAccurate,
-        );
+      ? [...controlPointInfo.groups].reverse().find(cp => cp.time < this.#clock.currentTimeAccurate)
+      : controlPointInfo.groups.find(
+        cp => cp.time > this.#clock.currentTimeAccurate,
+      );
 
     if (controlPoint) {
       this.#clock.seek(controlPoint.time);
@@ -261,8 +256,7 @@ export class Editor
           || this.#clock.currentTimeAccurate === firstObjectTime
         ) {
           this.#clock.seek(0);
-        }
-        else {
+        } else {
           this.#clock.seek(firstObjectTime);
         }
         return true;
@@ -270,8 +264,7 @@ export class Editor
       case EditorAction.Play:
         if (this.#clock.isRunning) {
           this.#clock.stop();
-        }
-        else {
+        } else {
           this.#clock.start();
         }
         return true;
@@ -337,7 +330,7 @@ export class Editor
 
     this.#clock.beatSnapDivisor.value
       = possibleSnapValues[
-        clamp(index + change, 0, possibleSnapValues.length - 1)
+      clamp(index + change, 0, possibleSnapValues.length - 1)
       ];
   }
 
@@ -390,8 +383,7 @@ export class Editor
   updateSubTree(): boolean {
     try {
       return super.updateSubTree();
-    }
-    catch (e) {
+    } catch (e) {
       console.error(e);
 
       if (!this.#exited) {
