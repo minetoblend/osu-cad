@@ -1,6 +1,7 @@
 import type { UserInfo } from '@osucad/common';
 import type { Texture } from 'pixi.js';
 import type { EditorContext } from '../editor/context/EditorContext';
+import { IResourcesProvider } from '../io/IResourcesProvider.ts';
 
 export interface BeatmapItemInfo {
   readonly id: string;
@@ -31,5 +32,5 @@ export interface BeatmapItemInfo {
 
   readonly previewPoint: number | null;
 
-  createEditorContext: () => EditorContext;
+  createEditorContext: (resources: IResourcesProvider) => EditorContext;
 }

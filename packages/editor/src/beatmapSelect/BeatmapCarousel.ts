@@ -31,6 +31,7 @@ import { UISamples } from '../UISamples';
 import { CarouselLoadQueue } from './CarouselLoadQueue';
 import { CarouselMapset } from './CarouselMapset';
 import { DrawableCarouselMapset } from './DrawableCarouselMapset';
+import { IResourcesProvider } from '../io/IResourcesProvider.ts';
 
 const distance_offscreen_before_unload = 1024;
 
@@ -420,7 +421,7 @@ export class BeatmapCarousel extends CompositeDrawable {
       case Key.Enter: {
         const beatmap = this.#selectedBeatmapSet?.beatmaps.find(it => it.selected.value);
         if (beatmap) {
-          this.findClosestParentOfType(ScreenStack)?.push(new EditorLoader(beatmap.beatmapInfo.createEditorContext()));
+          this.findClosestParentOfType(ScreenStack)?.push(new EditorLoader(beatmap.beatmapInfo.createEditorContext(this.dependencies.resolve(IResourcesProvider))));
         }
 
         return true;
