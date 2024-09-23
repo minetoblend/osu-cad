@@ -10,6 +10,7 @@ export class OsucadConfigManager extends ConfigManager<OsucadSettings<any>> {
     this.setDefault(OsucadSettings.UIVolume, 50);
     this.setDefault(OsucadSettings.AudioOffset, 0);
     this.setDefault(OsucadSettings.HitSoundOffset, 0);
+    this.setDefault(OsucadSettings.UseAudioStreaming, false);
 
     this.setDefault(OsucadSettings.HitAnimations, false);
     this.setDefault(OsucadSettings.FollowPoints, true);

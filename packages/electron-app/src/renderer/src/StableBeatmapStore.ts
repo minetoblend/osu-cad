@@ -3,6 +3,7 @@ import { BeatmapItemInfo } from 'packages/editor/src/beatmapSelect/BeatmapItemIn
 import { OsuBeatmap } from 'osu-db-parser';
 import { BeatmapSettings } from '../../../../editor/src/beatmap/BeatmapSettings.ts';
 import { StableEditorContext } from './StableEditorContext.ts';
+import { IResourcesProvider } from '../../../../editor/src/io/IResourcesProvider.ts';
 
 export class StableBeatmapStore extends BeatmapStore {
   async load() {
@@ -111,7 +112,7 @@ export class StableBeatmapInfo implements BeatmapItemInfo {
     return this.#parsedSettings;
   }
 
-  createEditorContext(): EditorContext {
-    return new StableEditorContext(this);
+  createEditorContext(resources: IResourcesProvider): EditorContext {
+    return new StableEditorContext(resources, this);
   }
 }

@@ -1,12 +1,14 @@
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite';
 
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
-import { resolve } from 'path';
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 export default defineConfig({
   main: {
     plugins: [externalizeDepsPlugin()],
+    worker: {
+      plugins: [externalizeDepsPlugin()],
+    }
   },
   preload: {
     plugins: [externalizeDepsPlugin()],

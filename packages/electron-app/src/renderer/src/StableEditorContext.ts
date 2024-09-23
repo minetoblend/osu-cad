@@ -1,28 +1,34 @@
-import { EditorContext, loadTexture, PIXITexture, StableBeatmapParser } from '@osucad/editor';
+import { EditorContext, loadTexture, PIXITexture, StableBeatmapParser, Track } from '@osucad/editor';
 import { Beatmap } from 'packages/editor/src/beatmap/Beatmap';
-import { OsuBeatmap } from 'osu-db-parser';
 import log from 'electron-log/renderer';
 import { StableResourceStore } from './StableResourceStore.ts';
 import { StableBeatmapEncoder } from '../../../../editor/src/beatmap/StableBeatmapEncoder.ts';
 import { StableBeatmapInfo } from './StableBeatmapStore.ts';
+import { join } from 'path';
+import { IResourcesProvider } from '../../../../editor/src/io/IResourcesProvider.ts';
+import { OsucadSettings } from '../../../../editor/src/config/OsucadSettings.ts';
 
 const logger = log.create({ logId: 'ElectronEditorContext' });
 
 export class StableEditorContext extends EditorContext {
   constructor(
+    resourcesProvider: IResourcesProvider,
     readonly osuBeatmap: StableBeatmapInfo,
   ) {
-    super();
+    super(resourcesProvider);
   }
 
   resources!: StableResourceStore;
 
   async load(): Promise<void> {
+    console.log('loading resources');
+
     const resources = await StableResourceStore.create(`osu-stable://songs?path=${encodeURIComponent(this.osuBeatmap.folderName)}&load`);
 
-    if (!resources) {
+    if (!resources)
       throw new Error(`Beatmap resources not found: "${this.osuBeatmap.folderName}"`);
-    }
+
+    console.log(`loaded resources, found ${resources.getAvailableResources().length} entries`);
 
     this.resources = resources;
 
@@ -30,6 +36,7 @@ export class StableEditorContext extends EditorContext {
   }
 
   protected loadBeatmap(): Promise<Beatmap> {
+    console.log('loading beatmap');
     const file = this.resources.get(this.osuBeatmap.osuFileName);
     if (!file) {
       throw new Error(`Beatmap not found: "${this.osuBeatmap.osuFileName}"`);
@@ -37,7 +44,11 @@ export class StableEditorContext extends EditorContext {
 
     const fileContent = new TextDecoder().decode(file);
 
-    return new StableBeatmapParser().parse(fileContent);
+    const beatmap = new StableBeatmapParser().parse(fileContent);
+
+    console.log('loaded beatmap');
+
+    return beatmap;
   }
 
   protected async loadBackground(beatmap: Beatmap): Promise<PIXITexture | null> {
@@ -78,5 +89,15 @@ export class StableEditorContext extends EditorContext {
 
   async save() {
     return await window.api.saveBeatmap(this.osuBeatmap.folderName, this.osuBeatmap.osuFileName, new StableBeatmapEncoder().encode(this.beatmap));
+  }
+
+  protected async loadSong(beatmap: Beatmap): Promise<Track> {
+    if (this.resourcesProvider.config.get(OsucadSettings.UseAudioStreaming)) {
+      const mixer = this.resourcesProvider.mixer;
+
+      return this.resourcesProvider.audioManager.createStreamedTrackFromUrl(mixer.music, `osu-stable://songs?path=${encodeURIComponent(join(this.osuBeatmap.folderName, this.beatmap.settings.audioFileName))}`);
+    }
+
+    return super.loadSong(beatmap);
   }
 }

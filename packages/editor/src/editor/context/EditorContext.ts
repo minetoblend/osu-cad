@@ -1,12 +1,25 @@
-import type { DependencyContainer, IResourceStore, PIXITexture } from 'osucad-framework';
-import type { BeatmapAsset } from './BeatmapAsset';
-import { Bindable } from 'osucad-framework';
+import {
+  AudioChannel,
+  AudioManager,
+  Bindable,
+  DependencyContainer,
+  IResourceStore,
+  PIXITexture,
+  Track,
+} from 'osucad-framework';
 import { Beatmap } from '../../beatmap/Beatmap';
 import { HitObjectList } from '../../beatmap/hitObjects/HitObjectList';
 import { ControlPointInfo } from '../../beatmap/timing/ControlPointInfo';
 import { CommandManager } from './CommandManager';
+import { IResourcesProvider } from '../../io/IResourcesProvider.ts';
 
 export abstract class EditorContext {
+
+  constructor(
+    readonly resourcesProvider: IResourcesProvider,
+  ) {
+  }
+
   // #region Beatmap
   protected abstract loadBeatmap(): Promise<Beatmap>;
 
@@ -42,8 +55,9 @@ export abstract class EditorContext {
     return this.resources.get(name);
   }
 
-  protected async loadSong(beatmap: Beatmap): Promise<AudioBuffer> {
-    const data = await this.getResource(beatmap.settings.audioFileName);
+  protected async loadSong(beatmap: Beatmap): Promise<Track> {
+    console.log('loading song');
+    const data = this.getResource(beatmap.settings.audioFileName);
 
     if (!data) {
       throw new Error(`Audio file not found: "${beatmap.settings.audioFileName}"`);
@@ -54,10 +68,14 @@ export abstract class EditorContext {
     const copy = new ArrayBuffer(data.byteLength);
     new Uint8Array(copy).set(new Uint8Array(data));
 
-    return context.decodeAudioData(copy);
+    const audioBuffer = await context.decodeAudioData(copy);
+
+    console.log('loaded song audio buffer');
+
+    return this.resourcesProvider.audioManager.createTrack(this.resourcesProvider.mixer.music, audioBuffer);
   }
 
-  get song(): AudioBuffer {
+  get song(): Track {
     if (!this.songBindable.value) {
       throw new Error('Song not loaded');
     }
@@ -65,7 +83,7 @@ export abstract class EditorContext {
     return this.songBindable.value!;
   }
 
-  readonly songBindable = new Bindable<AudioBuffer | null>(null);
+  readonly songBindable = new Bindable<Track | null>(null);
 
   // #endregion
 
@@ -102,11 +120,7 @@ export abstract class EditorContext {
       async () => (this.songBindable.value = await this.loadSong(beatmap)),
     );
     this.addParallelLoad(
-      async () => (this.beatmapAssets.value = await this.getBeatmapAssets()),
-    );
-
-    this.loadBackground(beatmap).then(
-      background => (this.backgroundBindable.value = background),
+      async () => this.backgroundBindable.value = await this.loadBackground(beatmap),
     );
 
     await Promise.all(this.#loaders.map(loader => loader()));
@@ -128,12 +142,6 @@ export abstract class EditorContext {
     dependencies.provide(HitObjectList, this.beatmap.hitObjects);
     dependencies.provide(ControlPointInfo, this.beatmap.controlPoints);
     dependencies.provide(CommandManager, this.commandHandler);
-  }
-
-  beatmapAssets = new Bindable<BeatmapAsset[]>([]);
-
-  protected async getBeatmapAssets(): Promise<BeatmapAsset[]> {
-    return [];
   }
 
   dispose() {

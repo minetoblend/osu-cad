@@ -15,6 +15,7 @@ export class OsucadSettings<T> implements ConfigKey<T> {
   static readonly UIVolume = new OsucadSettings<number>('UIVolume');
   static readonly AudioOffset = new OsucadSettings<number>('AudioOffset');
   static readonly HitSoundOffset = new OsucadSettings<number>('HitSoundOffset');
+  static readonly UseAudioStreaming = new OsucadSettings<boolean>('UseAudioStreaming');
 
   static readonly HitAnimations = new OsucadSettings<boolean>('HitAnimations');
   static readonly FollowPoints = new OsucadSettings<boolean>('FollowPoints');
