@@ -37,7 +37,7 @@ export class BeatmapSampleStore extends Component {
 
     const resources = this.editorContext.resources.getAvailableResources();
 
-    const audioFilename = /([a-z-]+(\d*)).(?:wav|mp3|ogg)/;
+    const audioFilename = /((?:soft|normal|drum)-((?:hitnormal|hitwhistle|hitfinish|hitclap|sliderslide|sliderwhistle)-\d+))\.wav$/i;
 
     const promises: Promise<any>[] = [];
 
@@ -61,7 +61,10 @@ export class BeatmapSampleStore extends Component {
       promises.push(
         this.audioManager
           .createSampleFromArrayBuffer(this.mixer.hitsounds, data)
-          .then(sample => this.beatmapSamples.set(key, sample))
+          .then(sample => {
+            console.log(`Loaded beatmap sample "${key}"`);
+            this.beatmapSamples.set(key, sample)
+          })
           .catch(err => console.warn(`Failed to decode audio for "${key}"`, err)),
       );
     }
