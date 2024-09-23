@@ -55,7 +55,7 @@ export abstract class DraggableDialogBox extends CompositeDrawable {
         children: [
           new Container({
             autoSizeAxes: Axes.Both,
-            padding: 4,
+            padding: 10,
             children: [
               new OsucadSpriteText({
                 fontSize: 12,
