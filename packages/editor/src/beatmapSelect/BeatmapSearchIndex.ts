@@ -1,6 +1,6 @@
 import type { BeatmapItemInfo } from './BeatmapItemInfo';
+import { compare } from 'fast-string-compare';
 import { SortedList } from '../../../framework/src';
-import { compare } from 'fast-string-compare'
 
 /**
  * An attempt at making a full text search index for the beatmap search.
@@ -14,11 +14,19 @@ export class BeatmapSearchIndex {
     this.#addString(beatmap, beatmap.difficultyName);
 
     this.#allEntries.add(beatmap);
+
+    const creatorBeatmaps = this.#creators.get(beatmap.authorName.toLowerCase());
+    if (creatorBeatmaps)
+      creatorBeatmaps.push(beatmap);
+    else
+      this.#creators.set(beatmap.authorName.toLowerCase(), [beatmap]);
   }
 
   #allEntries = new Set<BeatmapItemInfo>();
 
   #entryBuilder = new Map<string, BeatmapItemInfo[]>();
+
+  #creators = new Map<string, BeatmapItemInfo[]>();
 
   #getWords(str: string) {
     return str.toLowerCase().trim().split(' ').filter(it => it.length > 0);
@@ -63,14 +71,15 @@ export class BeatmapSearchIndex {
       return [];
 
     const starsRegex = /stars([<>])([\d.]+)/i;
+    const creatorRegex = /creator=(.+)/i;
 
     const filters: ((entry: BeatmapItemInfo) => boolean)[] = [];
 
     for (let i = 0; i < words.length; i++) {
       const word = words[i];
-      const match = starsRegex.exec(word);
-      if (match) {
-        const [_, operator, value] = match;
+      const starsMatch = starsRegex.exec(word);
+      if (starsMatch) {
+        const [_, operator, value] = starsMatch;
 
         const parsed = Number.parseFloat(value);
         if (Number.isNaN(parsed))
@@ -80,6 +89,31 @@ export class BeatmapSearchIndex {
           filters.push(entry => entry.starRating < parsed);
         else if (operator === '>')
           filters.push(entry => entry.starRating > parsed);
+
+        words.splice(i--, 1);
+      }
+
+      const creatorMatch = creatorRegex.exec(word);
+      if (creatorMatch) {
+        let [_, value] = creatorMatch;
+        value = value.toLowerCase();
+
+        const beatmapIds = new Set<string>();
+
+        for (const creatorName of this.#creators.keys()) {
+          if (creatorName.startsWith(value)) {
+            const creatorBeatmaps = this.#creators.get(creatorName);
+            if (creatorBeatmaps) {
+              for (const beatmap of creatorBeatmaps)
+                beatmapIds.add(beatmap.id);
+            }
+          }
+        }
+
+        if (beatmapIds.size === 0)
+          return [];
+
+        filters.push(entry => beatmapIds.has(entry.id));
 
         words.splice(i--, 1);
       }
