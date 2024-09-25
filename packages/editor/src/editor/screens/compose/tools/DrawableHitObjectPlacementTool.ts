@@ -1,16 +1,15 @@
-import { dependencyLoader, KeyDownEvent, Vec2 } from 'osucad-framework';
+import type { KeyDownEvent, Vec2 } from 'osucad-framework';
 import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
 import type { HitSoundState } from '../../../../beatmap/hitSounds/BindableHitSound';
-import type { CommandProxy } from '../../../commands/CommandProxy';
-import { almostEquals, Key, resolved } from 'osucad-framework';
+import { almostEquals, dependencyLoader, Key, resolved } from 'osucad-framework';
 import { HitCircle } from '../../../../beatmap/hitObjects/HitCircle';
 import { CreateHitObjectCommand } from '../../../commands/CreateHitObjectCommand';
 import { DeleteHitObjectCommand } from '../../../commands/DeleteHitObjectCommand';
 import { Editor } from '../../../Editor';
 import { OsuPlayfield } from '../../../hitobjects/OsuPlayfield';
 import { HITSOUND } from '../../../InjectionTokens';
-import { DrawableComposeTool } from './DrawableComposeTool';
 import { SnapVisualizer } from '../snapping/SnapResult';
+import { DrawableComposeTool } from './DrawableComposeTool';
 
 enum PlacementState {
   Preview,
@@ -18,7 +17,7 @@ enum PlacementState {
 }
 
 export abstract class DrawableHitObjectPlacementTool<T extends OsuHitObject> extends DrawableComposeTool {
-  #hitObject?: CommandProxy<T>;
+  #hitObject?: T;
 
   #snapVisualizer = new SnapVisualizer();
 
@@ -110,17 +109,17 @@ export abstract class DrawableHitObjectPlacementTool<T extends OsuHitObject> ext
     const created = this.hitObjects.getById(object.id);
     console.assert(created !== undefined, 'HitObject was not created');
 
-    this.#hitObject = this.createProxy(created!);
+    this.#hitObject = created as T;
 
     this.playfield.updateSubTree();
 
     this.onPlacementStart(this.#hitObject!);
   }
 
-  protected onPlacementStart(hitObject: CommandProxy<T>) {
+  protected onPlacementStart(hitObject: T) {
   }
 
-  protected onPlacementFinish(hitObject: CommandProxy<T>) {
+  protected onPlacementFinish(hitObject: T) {
   }
 
   finishPlacing() {
