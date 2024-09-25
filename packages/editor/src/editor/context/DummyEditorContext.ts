@@ -6,11 +6,13 @@ import { StableBeatmapParser } from '../../beatmap/StableBeatmapParser';
 import { EditorContext } from './EditorContext';
 import sampleBeatmap from './sampleBeatmap.osu?raw';
 
+// @ts-ignore
 export class DummyEditorContext extends EditorContext {
   protected async loadBeatmap(): Promise<Beatmap> {
     return new StableBeatmapParser().parse(sampleBeatmap);
   }
 
+  // @ts-ignore
   protected async getResource(name: string): Promise<ArrayBuffer | null> {
     return null;
   }

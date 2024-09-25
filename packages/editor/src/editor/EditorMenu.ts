@@ -23,7 +23,7 @@ import {
   Vec2,
 } from 'osucad-framework';
 import { Graphics } from 'pixi.js';
-import { FastRoundedBox } from '../drawables/FastRoundedBox.ts';
+import { FastRoundedBox } from '../drawables/FastRoundedBox';
 import { OsucadSpriteText } from '../OsucadSpriteText';
 import { ThemeColors } from './ThemeColors';
 

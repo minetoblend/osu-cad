@@ -1,11 +1,11 @@
 import type { Drawable } from 'osucad-framework';
 import { resolved } from 'osucad-framework';
-import { OsucadConfigManager } from '../../config/OsucadConfigManager.ts';
-import { OsucadSettings } from '../../config/OsucadSettings.ts';
+import { OsucadConfigManager } from '../../config/OsucadConfigManager';
+import { OsucadSettings } from '../../config/OsucadSettings';
 import { OsucadSpriteText } from '../../OsucadSpriteText';
 import { PreferencesPanel } from './PreferencesPanel';
 import { VolumeSliderContainer } from './VolumeSlider';
-import { PreferencesToggle } from './PreferencesToggle.ts';
+import { PreferencesToggle } from './PreferencesToggle';
 
 export class AudioPreferencesSection extends PreferencesPanel {
   getTitle(): string {

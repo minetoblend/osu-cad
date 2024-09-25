@@ -13,7 +13,7 @@ import {
   Vec2,
 } from 'osucad-framework';
 
-import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection.ts';
+import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection';
 import { TimelineObject } from './TimelineObject';
 import { TimelineRepeatCircle } from './TimelineRepeatCircle';
 import { TimelineSliderHead } from './TimelineSliderHead';

@@ -58,7 +58,7 @@ export abstract class DraggableDialogBox extends CompositeDrawable {
             padding: 10,
             children: [
               new OsucadSpriteText({
-                fontSize: 12,
+                fontSize: 16,
                 text: this.getTitle(),
                 color: 0xB6B6C3,
               }),
@@ -66,7 +66,7 @@ export abstract class DraggableDialogBox extends CompositeDrawable {
           }),
           new Container({
             autoSizeAxes: Axes.Both,
-            padding: 4,
+            padding: 10,
             children: [
               this.createContent(),
             ],

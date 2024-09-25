@@ -1,6 +1,6 @@
 import { almostEquals, Bindable, Vec2 } from 'osucad-framework';
-import { IPositionSnapProvider } from './IPositionSnapProvider.ts';
-import { SnapTarget } from './SnapTarget.ts';
+import { IPositionSnapProvider } from './IPositionSnapProvider';
+import { SnapTarget } from './SnapTarget';
 
 export class GridSnapProvider implements IPositionSnapProvider {
   constructor(

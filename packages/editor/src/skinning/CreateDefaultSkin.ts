@@ -1,4 +1,4 @@
-import type { IResourcesProvider } from '../io/IResourcesProvider.ts';
+import type { IResourcesProvider } from '../io/IResourcesProvider';
 import type { IResourceStore } from './IResourceStore';
 import type { SkinInfo } from './SkinInfo';
 import { StableSkin } from './stable/StableSkin';

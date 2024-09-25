@@ -1,5 +1,5 @@
-import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup.ts';
-import { DrawableHitCircle } from './DrawableHitCircle.ts';
+import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
+import { DrawableHitCircle } from './DrawableHitCircle';
 
 export class DrawableSliderHead extends DrawableHitCircle {
   constructor() {

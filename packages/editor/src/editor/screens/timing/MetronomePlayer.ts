@@ -10,11 +10,11 @@ import {
   resolved,
 } from 'osucad-framework';
 
-import { Beatmap } from '../../../beatmap/Beatmap.ts';
-import { OsucadConfigManager } from '../../../config/OsucadConfigManager.ts';
-import { OsucadSettings } from '../../../config/OsucadSettings.ts';
-import { UISamples } from '../../../UISamples.ts';
-import { EditorClock } from '../../EditorClock.ts';
+import { Beatmap } from '../../../beatmap/Beatmap';
+import { OsucadConfigManager } from '../../../config/OsucadConfigManager';
+import { OsucadSettings } from '../../../config/OsucadSettings';
+import { UISamples } from '../../../UISamples';
+import { EditorClock } from '../../EditorClock';
 
 export class MetronomePlayer extends Component {
   @resolved(EditorClock)

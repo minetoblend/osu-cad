@@ -13,7 +13,7 @@ import {
   resolved,
 } from 'osucad-framework';
 import { Beatmap } from '../../beatmap/Beatmap';
-import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection.ts';
+import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection';
 import { UpdateHitObjectCommand } from '../commands/UpdateHitObjectCommand';
 import { CommandManager } from '../context/CommandManager';
 import { EditorClock } from '../EditorClock';

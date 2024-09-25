@@ -1,19 +1,19 @@
 import type { SamplePlayback } from 'osucad-framework';
-import type { OsuHitObject } from '../beatmap/hitObjects/OsuHitObject.ts';
+import type { OsuHitObject } from '../beatmap/hitObjects/OsuHitObject';
 import type { HitSample } from '../beatmap/hitSounds/HitSample';
-import type { LifetimeEntry } from '../pooling/LifetimeEntry.ts';
+import type { LifetimeEntry } from '../pooling/LifetimeEntry';
 import { Action, BindableNumber, CompositeDrawable, dependencyLoader, FramedClock, OffsetClock, resolved } from 'osucad-framework';
 import { HitObjectList } from '../beatmap/hitObjects/HitObjectList';
 import { SampleType } from '../beatmap/hitSounds/SampleType';
-import { OsucadConfigManager } from '../config/OsucadConfigManager.ts';
-import { OsucadSettings } from '../config/OsucadSettings.ts';
-import { LifetimeBoundaryCrossingDirection } from '../pooling/LifetimeBoundaryCrossingDirection.ts';
-import { LifetimeBoundaryKind } from '../pooling/LifetimeBoundaryKind.ts';
-import { LifetimeEntryManager } from '../pooling/LifetimeEntryManager.ts';
-import { BeatmapSampleStore } from './BeatmapSampleStore.ts';
+import { OsucadConfigManager } from '../config/OsucadConfigManager';
+import { OsucadSettings } from '../config/OsucadSettings';
+import { LifetimeBoundaryCrossingDirection } from '../pooling/LifetimeBoundaryCrossingDirection';
+import { LifetimeBoundaryKind } from '../pooling/LifetimeBoundaryKind';
+import { LifetimeEntryManager } from '../pooling/LifetimeEntryManager';
+import { BeatmapSampleStore } from './BeatmapSampleStore';
 import { EditorContext } from './context/EditorContext';
 import { EditorClock } from './EditorClock';
-import { HitObjectLifetimeEntry } from './hitobjects/HitObjectLifetimeEntry.ts';
+import { HitObjectLifetimeEntry } from './hitobjects/HitObjectLifetimeEntry';
 
 export class HitsoundPlayer extends CompositeDrawable {
   @resolved(EditorClock)

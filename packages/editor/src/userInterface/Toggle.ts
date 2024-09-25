@@ -16,8 +16,8 @@ import {
   RoundedBox,
   Vec2,
 } from 'osucad-framework';
-import { FastRoundedBox } from '../drawables/FastRoundedBox.ts';
-import { ThemeColors } from '../editor/ThemeColors.ts';
+import { FastRoundedBox } from '../drawables/FastRoundedBox';
+import { ThemeColors } from '../editor/ThemeColors';
 
 export enum ToggleTrigger {
   Click,

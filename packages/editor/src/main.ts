@@ -1,5 +1,6 @@
+import 'reflect-metadata'
 import { WebGameHost } from 'osucad-framework';
-import { PlaygroundGame } from './playground/PlaygroundGame.ts';
+import { PlaygroundGame } from './playground/PlaygroundGame';
 import './style.css';
 
 async function main() {

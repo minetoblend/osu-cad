@@ -1,8 +1,8 @@
 import type { KeyDownEvent, KeyUpEvent } from 'osucad-framework';
 import { Anchor, Axes, Box, CompositeDrawable, Container, dependencyLoader, EasingFunction, FillDirection, FillFlowContainer, Key, resolved } from 'osucad-framework';
-import { FastRoundedBox } from '../../../../drawables/FastRoundedBox.ts';
-import { EditorClock } from '../../../EditorClock.ts';
-import { ThemeColors } from '../../../ThemeColors.ts';
+import { FastRoundedBox } from '../../../../drawables/FastRoundedBox';
+import { EditorClock } from '../../../EditorClock';
+import { ThemeColors } from '../../../ThemeColors';
 
 export class Metronome extends CompositeDrawable {
   @resolved(ThemeColors)

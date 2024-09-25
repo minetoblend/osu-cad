@@ -1,6 +1,6 @@
 import type { Action, Bindable, BindableBoolean, InjectionToken } from 'osucad-framework';
 import type { AdditionsBindable } from '../beatmap/hitSounds/AdditionsBindable';
-import type { HitSoundState } from '../beatmap/hitSounds/BindableHitSound.ts';
+import type { HitSoundState } from '../beatmap/hitSounds/BindableHitSound';
 import type { EditorScreenType } from './screens/EditorScreenType';
 
 export const NEW_COMBO: InjectionToken<BindableBoolean> = Symbol('NEW_COMBO');

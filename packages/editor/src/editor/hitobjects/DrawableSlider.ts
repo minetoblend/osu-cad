@@ -1,14 +1,14 @@
 import type { Slider } from '../../beatmap/hitObjects/Slider';
 import type { DrawableHitObject } from './DrawableHitObject';
 import { Anchor, Axes, Bindable, clamp, Container, dependencyLoader, resolved, Vec2 } from 'osucad-framework';
-import { OsucadConfigManager } from '../../config/OsucadConfigManager.ts';
-import { OsucadSettings } from '../../config/OsucadSettings.ts';
+import { OsucadConfigManager } from '../../config/OsucadConfigManager';
+import { OsucadSettings } from '../../config/OsucadSettings';
 import { DrawableOsuHitObject } from './DrawableOsuHitObject';
 import { DrawableSliderBall } from './DrawableSliderBall';
 import { DrawableSliderBody } from './DrawableSliderBody';
 import { DrawableSliderHead } from './DrawableSliderHead';
 import { DrawableSliderRepeat } from './DrawableSliderRepeat';
-import { DrawableSliderTail } from './DrawableSliderTail.ts';
+import { DrawableSliderTail } from './DrawableSliderTail';
 import { DrawableSliderTick } from './DrawableSliderTick';
 
 export class DrawableSlider extends DrawableOsuHitObject<Slider> {

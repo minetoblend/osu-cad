@@ -6,7 +6,7 @@ import type { SerializedSlider } from '../serialization/HitObjects';
 import type { ControlPointInfo } from '../timing/ControlPointInfo';
 import { CachedValue, Vec2 } from 'osucad-framework';
 import { SliderPatchEncoder } from '../../editor/commands/patchEncoder/SliderPatchEncoder';
-import { Additions } from '../hitSounds/Additions.ts';
+import { Additions } from '../hitSounds/Additions';
 import { HitSample } from '../hitSounds/HitSample';
 import { SampleSet } from '../hitSounds/SampleSet';
 import { SampleType } from '../hitSounds/SampleType';
@@ -18,7 +18,7 @@ import { SliderEventGenerator } from './SliderEventGenerator';
 import { SliderHeadCircle } from './SliderHeadCircle';
 import { SliderPath } from './SliderPath';
 import { SliderRepeat } from './SliderRepeat';
-import { SliderSelection } from './SliderSelection.ts';
+import { SliderSelection } from './SliderSelection';
 import { SliderTailCircle } from './SliderTailCircle';
 import { SliderTick } from './SliderTick';
 

@@ -2,7 +2,7 @@ import type { DrawableOptions } from 'osucad-framework';
 import { Easing } from 'osu-classes';
 import { Anchor, Axes, CompositeDrawable, Container, dependencyLoader, DrawableSprite, EasingFunction } from 'osucad-framework';
 import { Graphics } from 'pixi.js';
-import { OsucadIcons } from '../OsucadIcons.ts';
+import { OsucadIcons } from '../OsucadIcons';
 
 export class LoadingSpinner extends CompositeDrawable {
   constructor(options: DrawableOptions) {

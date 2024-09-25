@@ -14,8 +14,8 @@ import {
   Visibility,
 } from 'osucad-framework';
 import { getIcon } from './OsucadIcons';
-import { OsucadSettings } from './config/OsucadSettings.ts';
-import { OsucadConfigManager } from './config/OsucadConfigManager.ts';
+import { OsucadSettings } from './config/OsucadSettings';
+import { OsucadConfigManager } from './config/OsucadConfigManager';
 import cursorTexture from './assets/icons/select.png'
 
 export class MainCursorContainer extends CursorContainer {

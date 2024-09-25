@@ -11,7 +11,7 @@ import {
   PIXIGraphics,
   resolved,
 } from 'osucad-framework';
-import { Beatmap } from '../../beatmap/Beatmap.ts';
+import { Beatmap } from '../../beatmap/Beatmap';
 
 export class PlayfieldGrid extends Container {
   constructor(options: ContainerOptions = {}) {

@@ -1,22 +1,22 @@
 import type { Vec2 } from '../../../framework/src';
-import type { Beatmap } from './Beatmap.ts';
-import type { BeatmapColors } from './BeatmapColors.ts';
-import type { BeatmapDifficultyInfo } from './BeatmapDifficultyInfo.ts';
-import type { BeatmapMetadata } from './BeatmapMetadata.ts';
-import type { BeatmapSettings } from './BeatmapSettings.ts';
-import type { HitObjectList } from './hitObjects/HitObjectList.ts';
-import type { OsuHitObject } from './hitObjects/OsuHitObject.ts';
-import type { IPathPoint } from './hitObjects/PathPoint.ts';
-import type { HitSound } from './hitSounds/HitSound.ts';
-import type { ControlPointInfo } from './timing/ControlPointInfo.ts';
+import type { Beatmap } from './Beatmap';
+import type { BeatmapColors } from './BeatmapColors';
+import type { BeatmapDifficultyInfo } from './BeatmapDifficultyInfo';
+import type { BeatmapMetadata } from './BeatmapMetadata';
+import type { BeatmapSettings } from './BeatmapSettings';
+import type { HitObjectList } from './hitObjects/HitObjectList';
+import type { OsuHitObject } from './hitObjects/OsuHitObject';
+import type { IPathPoint } from './hitObjects/PathPoint';
+import type { HitSound } from './hitSounds/HitSound';
+import type { ControlPointInfo } from './timing/ControlPointInfo';
 import { Color } from 'pixi.js';
 import yaml from 'yaml';
-import { HitCircle } from './hitObjects/HitCircle.ts';
-import { PathType } from './hitObjects/PathType.ts';
-import { Slider } from './hitObjects/Slider.ts';
-import { Spinner } from './hitObjects/Spinner.ts';
-import { Additions } from './hitSounds/Additions.ts';
-import { SampleSet } from './hitSounds/SampleSet.ts';
+import { HitCircle } from './hitObjects/HitCircle';
+import { PathType } from './hitObjects/PathType';
+import { Slider } from './hitObjects/Slider';
+import { Spinner } from './hitObjects/Spinner';
+import { Additions } from './hitSounds/Additions';
+import { SampleSet } from './hitSounds/SampleSet';
 
 export class BeatmapEncoder {
   encode(beatmap: Beatmap) {

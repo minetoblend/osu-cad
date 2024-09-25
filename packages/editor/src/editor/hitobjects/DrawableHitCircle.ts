@@ -12,8 +12,8 @@ import {
   resolved,
 } from 'osucad-framework';
 import { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
-import { OsucadConfigManager } from '../../config/OsucadConfigManager.ts';
-import { OsucadSettings } from '../../config/OsucadSettings.ts';
+import { OsucadConfigManager } from '../../config/OsucadConfigManager';
+import { OsucadSettings } from '../../config/OsucadSettings';
 import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
 import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
 import { DrawableOsuHitObject } from './DrawableOsuHitObject';

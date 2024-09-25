@@ -1,5 +1,5 @@
 import type { HitSample } from '../../../beatmap/hitSounds/HitSample';
-import type { SampleSet } from '../../../beatmap/hitSounds/SampleSet.ts';
+import type { SampleSet } from '../../../beatmap/hitSounds/SampleSet';
 import type { SampleType } from '../../../beatmap/hitSounds/SampleType';
 import { Anchor, Axes, CompositeDrawable, dependencyLoader, EasingFunction, resolved } from 'osucad-framework';
 import { FastRoundedBox } from '../../../drawables/FastRoundedBox';

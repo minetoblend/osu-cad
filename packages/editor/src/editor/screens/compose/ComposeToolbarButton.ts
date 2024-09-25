@@ -23,8 +23,8 @@ import {
 import { FastRoundedBox } from '../../../drawables/FastRoundedBox';
 import { UISamples } from '../../../UISamples';
 import { ThemeColors } from '../../ThemeColors';
-import { ComposeToolbarButtonSubmenu } from './ComposeToolbarButtonSubmenu.ts';
-import { GraphicsDrawable } from '../../../drawables/GraphicsDrawable.ts';
+import { ComposeToolbarButtonSubmenu } from './ComposeToolbarButtonSubmenu';
+import { GraphicsDrawable } from '../../../drawables/GraphicsDrawable';
 
 export class ComposeToolbarButton extends Button {
   constructor(

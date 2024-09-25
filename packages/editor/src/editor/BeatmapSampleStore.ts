@@ -1,11 +1,11 @@
 import type { Sample } from 'osucad-framework';
-import type { HitSample } from '../beatmap/hitSounds/HitSample.ts';
+import type { HitSample } from '../beatmap/hitSounds/HitSample';
 import { asyncDependencyLoader, AudioManager, Component, resolved } from 'osucad-framework';
-import { SampleSet } from '../beatmap/hitSounds/SampleSet.ts';
-import { SampleType } from '../beatmap/hitSounds/SampleType.ts';
-import { ISkinSource } from '../skinning/ISkinSource.ts';
-import { EditorContext } from './context/EditorContext.ts';
-import { EditorMixer } from './EditorMixer.ts';
+import { SampleSet } from '../beatmap/hitSounds/SampleSet';
+import { SampleType } from '../beatmap/hitSounds/SampleType';
+import { ISkinSource } from '../skinning/ISkinSource';
+import { EditorContext } from './context/EditorContext';
+import { EditorMixer } from './EditorMixer';
 
 export class BeatmapSampleStore extends Component {
   @resolved(AudioManager)

@@ -15,9 +15,9 @@ import {
   FillFlowContainer,
   resolved,
 } from 'osucad-framework';
-import { MainScrollContainer } from '../editor/MainScrollContainer.ts';
-import { ThemeColors } from '../editor/ThemeColors.ts';
-import { OsucadSpriteText } from '../OsucadSpriteText.ts';
+import { MainScrollContainer } from '../editor/MainScrollContainer';
+import { ThemeColors } from '../editor/ThemeColors';
+import { OsucadSpriteText } from '../OsucadSpriteText';
 
 export class PlaygroundExplorer extends CompositeDrawable {
   @dependencyLoader()

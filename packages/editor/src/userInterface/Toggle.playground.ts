@@ -1,6 +1,6 @@
 import { Axes, dependencyLoader } from 'osucad-framework';
-import { Playground } from '../playground/Playground.ts';
-import { Toggle } from './Toggle.ts';
+import { Playground } from '../playground/Playground';
+import { Toggle } from './Toggle';
 
 export class TogglePlayground extends Playground {
   @dependencyLoader()

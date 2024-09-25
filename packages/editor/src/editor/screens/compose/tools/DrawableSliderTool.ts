@@ -1,5 +1,5 @@
 import type { MouseDownEvent, MouseUpEvent } from 'osucad-framework';
-import type { CommandProxy } from '../../../commands/CommandProxy.ts';
+import type { CommandProxy } from '../../../commands/CommandProxy';
 import { dependencyLoader, MouseButton, Vec2 } from 'osucad-framework';
 import { PathPoint } from '../../../../beatmap/hitObjects/PathPoint';
 import { PathType } from '../../../../beatmap/hitObjects/PathType';

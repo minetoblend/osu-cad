@@ -1,6 +1,6 @@
 import { Axes, Container, dependencyLoader } from 'osucad-framework';
-import { Playground } from '../../../../playground/Playground.ts';
-import { ControlPointProperties } from './ControlPointProperties.ts';
+import { Playground } from '../../../../playground/Playground';
+import { ControlPointProperties } from './ControlPointProperties';
 
 export class ControlPointPropertiesPlayground extends Playground {
   @dependencyLoader()

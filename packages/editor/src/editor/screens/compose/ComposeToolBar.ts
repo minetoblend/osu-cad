@@ -3,7 +3,7 @@ import type { ComposeTool } from './tools/ComposeTool';
 import { Axes, Container, dependencyLoader, FillDirection, FillFlowContainer, Key, Vec2 } from 'osucad-framework';
 import { ComposeToolbarButton } from './ComposeToolbarButton';
 import { ComposeToolbarToolButton } from './ComposeToolbarToolButton';
-import { SampleSetControl } from './SampleSetControl.ts';
+import { SampleSetControl } from './SampleSetControl';
 import { SliderPresetButton } from './SliderPresetButton';
 import { BirdSliderTool } from './tools/BirdSliderTool';
 import { HitCircleTool } from './tools/HitCircleTool';
@@ -12,7 +12,7 @@ import { SliderTool } from './tools/SliderTool';
 import { SpinnerTool } from './tools/SpinnerTool';
 import { WaveSliderTool } from './tools/WaveSliderTool';
 import { ZWaveSliderTool } from './tools/ZWaveSliderTool';
-import { ToolbarGridSnapToggle } from './ToolbarGridSnapToggle.ts';
+import { ToolbarGridSnapToggle } from './ToolbarGridSnapToggle';
 
 export class ComposeToolBar extends Container {
   constructor(protected readonly activeTool: Bindable<ComposeTool>) {

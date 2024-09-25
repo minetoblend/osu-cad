@@ -7,7 +7,7 @@ import { OsucadSpriteText } from '../OsucadSpriteText';
 import { UISamples } from '../UISamples';
 import { CarouselBeatmap } from './CarouselBeatmap';
 import { DrawableCarouselItem } from './DrawableCarouselItem';
-import { IResourcesProvider } from '../io/IResourcesProvider.ts';
+import { IResourcesProvider } from '../io/IResourcesProvider';
 
 export class DrawableCarouselBeatmap extends DrawableCarouselItem {
   constructor(item: CarouselBeatmap) {

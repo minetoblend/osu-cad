@@ -1,5 +1,5 @@
-import { ConfigManager } from './ConfigManager.ts';
-import { OsucadSettings } from './OsucadSettings.ts';
+import { ConfigManager } from './ConfigManager';
+import { OsucadSettings } from './OsucadSettings';
 
 export class OsucadConfigManager extends ConfigManager<OsucadSettings<any>> {
   initializeDefaults() {

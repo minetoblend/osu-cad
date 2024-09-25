@@ -17,11 +17,11 @@ import {
   resolved,
   RoundedBox,
 } from 'osucad-framework';
-import { OsucadConfigManager } from '../config/OsucadConfigManager.ts';
-import { OsucadSettings } from '../config/OsucadSettings.ts';
+import { OsucadConfigManager } from '../config/OsucadConfigManager';
+import { OsucadSettings } from '../config/OsucadSettings';
 import { FastRoundedBox } from '../drawables/FastRoundedBox';
 import { OsucadSpriteText } from '../OsucadSpriteText';
-import { BeatmapCarousel } from './BeatmapCarousel.ts';
+import { BeatmapCarousel } from './BeatmapCarousel';
 import { CarouselLoadQueue } from './CarouselLoadQueue';
 import { CarouselMapset } from './CarouselMapset';
 import { DrawableCarouselBeatmap } from './DrawableCarouselBeatmap';

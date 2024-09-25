@@ -15,16 +15,16 @@ import {
   resolved,
 } from 'osucad-framework';
 import { BackdropBlurFilter } from 'pixi-filters';
-import { OsucadConfigManager } from '../../../config/OsucadConfigManager.ts';
-import { OsucadSettings } from '../../../config/OsucadSettings.ts';
+import { OsucadConfigManager } from '../../../config/OsucadConfigManager';
+import { OsucadSettings } from '../../../config/OsucadSettings';
 import { BeatSnapDivisorSelector } from '../../BeatSnapDivisorSelector';
 import { Editor } from '../../Editor';
 import { Corner, EditorCornerPiece } from '../../EditorCornerPiece';
-import { HitsoundPlayer } from '../../HitsoundPlayer.ts';
-import { ComposeScreenTimeline } from '../../timeline/ComposeScreenTimeline.ts';
+import { HitsoundPlayer } from '../../HitsoundPlayer';
+import { ComposeScreenTimeline } from '../../timeline/ComposeScreenTimeline';
 import { TimelineZoomButtons } from '../../timeline/TimelineZoomButtons';
 import { EditorScreen } from '../EditorScreen';
-import { EditorSelection } from './EditorSelection.ts';
+import { EditorSelection } from './EditorSelection';
 import { HitObjectComposer } from './HitObjectComposer';
 import { SelectTool } from './tools/SelectTool';
 

@@ -4,7 +4,7 @@ import type {
   UIEvent,
 } from 'osucad-framework';
 import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
-import type { HitSoundState, HitSoundStateChangeEvent } from '../../../../beatmap/hitSounds/BindableHitSound.ts';
+import type { HitSoundState, HitSoundStateChangeEvent } from '../../../../beatmap/hitSounds/BindableHitSound';
 import type { ComposeToolInteraction } from './interactions/ComposeToolInteraction';
 import {
   Axes,

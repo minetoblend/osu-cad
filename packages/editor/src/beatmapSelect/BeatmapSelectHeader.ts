@@ -13,7 +13,7 @@ import {
   resolved,
 } from 'osucad-framework';
 import { ThemeColors } from '../editor/ThemeColors';
-import { AlwaysFocusedTextBox } from './AlwaysFocusedTextBox.ts';
+import { AlwaysFocusedTextBox } from './AlwaysFocusedTextBox';
 
 export class BeatmapSelectHeader extends Container {
   constructor(readonly filter: BeatmapSelectFilter) {

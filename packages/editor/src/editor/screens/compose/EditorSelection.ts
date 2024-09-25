@@ -1,6 +1,6 @@
 import type { IKeyBindingHandler, KeyBindingPressEvent } from 'osucad-framework';
 import type { OsuHitObject } from '../../../beatmap/hitObjects/OsuHitObject';
-import type { SliderSelectionType } from '../../../beatmap/hitObjects/SliderSelection.ts';
+import type { SliderSelectionType } from '../../../beatmap/hitObjects/SliderSelection';
 import {
   Action,
   Container,

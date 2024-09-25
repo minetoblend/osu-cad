@@ -9,7 +9,7 @@ import {
   RenderContainer,
   WebGLRenderer,
 } from 'pixi.js';
-import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection.ts';
+import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection';
 import { animate } from '../../utils/animate';
 import { ThemeColors } from '../ThemeColors';
 import { DrawableHitObject } from './DrawableHitObject';

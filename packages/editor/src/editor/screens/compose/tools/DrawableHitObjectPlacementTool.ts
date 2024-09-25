@@ -1,15 +1,16 @@
-import type { KeyDownEvent, Vec2 } from 'osucad-framework';
+import { dependencyLoader, KeyDownEvent, Vec2 } from 'osucad-framework';
 import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
-import type { HitSoundState } from '../../../../beatmap/hitSounds/BindableHitSound.ts';
+import type { HitSoundState } from '../../../../beatmap/hitSounds/BindableHitSound';
 import type { CommandProxy } from '../../../commands/CommandProxy';
 import { almostEquals, Key, resolved } from 'osucad-framework';
 import { HitCircle } from '../../../../beatmap/hitObjects/HitCircle';
 import { CreateHitObjectCommand } from '../../../commands/CreateHitObjectCommand';
 import { DeleteHitObjectCommand } from '../../../commands/DeleteHitObjectCommand';
-import { Editor } from '../../../Editor.ts';
+import { Editor } from '../../../Editor';
 import { OsuPlayfield } from '../../../hitobjects/OsuPlayfield';
-import { HITSOUND } from '../../../InjectionTokens.ts';
+import { HITSOUND } from '../../../InjectionTokens';
 import { DrawableComposeTool } from './DrawableComposeTool';
+import { SnapVisualizer } from '../snapping/SnapResult';
 
 enum PlacementState {
   Preview,
@@ -18,6 +19,8 @@ enum PlacementState {
 
 export abstract class DrawableHitObjectPlacementTool<T extends OsuHitObject> extends DrawableComposeTool {
   #hitObject?: CommandProxy<T>;
+
+  #snapVisualizer = new SnapVisualizer();
 
   #previewObject?: OsuHitObject;
 
@@ -49,6 +52,11 @@ export abstract class DrawableHitObjectPlacementTool<T extends OsuHitObject> ext
         }
       });
     });
+  }
+
+  @dependencyLoader()
+  [Symbol('load')]() {
+    this.addInternal(this.#snapVisualizer);
   }
 
   @resolved(OsuPlayfield)
@@ -153,6 +161,8 @@ export abstract class DrawableHitObjectPlacementTool<T extends OsuHitObject> ext
     if (snapResult.offset) {
       position = position.add(snapResult.offset);
     }
+
+    this.#snapVisualizer.drawTargets(snapResult.snapTargets, snapResult.target);
 
     return this.clampToPlayfieldBounds(position);
   }

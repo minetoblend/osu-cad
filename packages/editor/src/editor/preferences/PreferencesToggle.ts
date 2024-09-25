@@ -1,7 +1,7 @@
 import type { Bindable } from 'osucad-framework';
 import { Anchor, Axes, CompositeDrawable, dependencyLoader, resolved } from 'osucad-framework';
 import { OsucadSpriteText } from '../../OsucadSpriteText';
-import { Toggle, ToggleTrigger } from '../../userInterface/Toggle.ts';
+import { Toggle, ToggleTrigger } from '../../userInterface/Toggle';
 import { ThemeColors } from '../ThemeColors';
 
 export class PreferencesToggle extends CompositeDrawable {

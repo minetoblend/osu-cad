@@ -13,10 +13,10 @@ export class DistanceSnapProvider
 
   findSnappedDistance(referenceObject: Slider): number {
     const length = referenceObject!.path.calculatedDistance;
-    const duration = length / referenceObject!.velocity;
+    const duration = Math.ceil(length / referenceObject!.velocity);
     let time = this.controlPointInfo.snap(
       // adding a tiny bit of length to make up for precision errors shortening the slider
-      referenceObject!.startTime + duration * 1.01,
+      Math.ceil(referenceObject!.startTime + duration) + 1,
       this.editorClock.beatSnapDivisor.value,
     );
 

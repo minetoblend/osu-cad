@@ -1,12 +1,12 @@
 import type { IKeyBindingHandler, KeyBindingPressEvent, KeyBindingReleaseEvent } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
-import type { HitSoundState } from '../../../beatmap/hitSounds/BindableHitSound.ts';
+import type { HitSoundState } from '../../../beatmap/hitSounds/BindableHitSound';
 import { dependencyLoader, resolved } from 'osucad-framework';
 import { Additions } from '../../../beatmap/hitSounds/Additions';
-import { additionToSampleType, SampleType } from '../../../beatmap/hitSounds/SampleType.ts';
+import { additionToSampleType, SampleType } from '../../../beatmap/hitSounds/SampleType';
 import { EditorAction } from '../../EditorAction';
 import { HitsoundPlayer } from '../../HitsoundPlayer';
-import { HITSOUND } from '../../InjectionTokens.ts';
+import { HITSOUND } from '../../InjectionTokens';
 import { ComposeToggleButton } from './ComposeToggleButton';
 import { SampleHighlightContainer } from './SampleHighlightContainer';
 

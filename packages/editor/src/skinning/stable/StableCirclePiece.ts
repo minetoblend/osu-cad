@@ -8,8 +8,8 @@ import {
   DrawableSprite,
   resolved,
 } from 'osucad-framework';
-import { OsucadConfigManager } from '../../config/OsucadConfigManager.ts';
-import { OsucadSettings } from '../../config/OsucadSettings.ts';
+import { OsucadConfigManager } from '../../config/OsucadConfigManager';
+import { OsucadSettings } from '../../config/OsucadSettings';
 import { DrawableComboNumber } from '../../editor/hitobjects/DrawableComboNumber';
 import { DrawableHitObject } from '../../editor/hitobjects/DrawableHitObject';
 import { ISkinSource } from '../ISkinSource';

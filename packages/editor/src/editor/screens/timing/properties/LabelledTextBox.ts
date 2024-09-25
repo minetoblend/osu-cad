@@ -1,20 +1,18 @@
 import type { Action, Bindable } from 'osucad-framework';
-import { Anchor, Axes, CompositeDrawable, Container, dependencyLoader } from 'osucad-framework';
-import { OsucadSpriteText } from '../../../../OsucadSpriteText.ts';
-import { TextBox } from '../../../../userInterface/TextBox.ts';
+import { Anchor, Axes, CompositeDrawable, Container, dependencyLoader, resolved } from 'osucad-framework';
+import { OsucadSpriteText } from '../../../../OsucadSpriteText';
+import { TextBox } from '../../../../userInterface/TextBox';
+import { ThemeColors } from '../../../ThemeColors.ts';
 
 export class LabelledTextBox extends CompositeDrawable {
   constructor(readonly label: string) {
     super();
-  }
 
-  @dependencyLoader()
-  load() {
     this.relativeSizeAxes = Axes.X;
     this.height = 40;
 
     this.addAllInternal(
-      new OsucadSpriteText({
+      this.#label = new OsucadSpriteText({
         text: this.label,
         fontSize: 14,
         anchor: Anchor.CenterLeft,
@@ -34,7 +32,21 @@ export class LabelledTextBox extends CompositeDrawable {
     this.onCommit = this.#textBox.onCommit;
   }
 
-  #textBox!: TextBox;
+  @resolved(ThemeColors)
+  colors!: ThemeColors;
+
+  @dependencyLoader()
+  load() {
+    this.#label.color = this.colors.text;
+  }
+
+  readonly #textBox: TextBox;
+
+  readonly #label: OsucadSpriteText;
+
+  get textBox() {
+    return this.#textBox;
+  }
 
   get text() {
     return this.#textBox.text;

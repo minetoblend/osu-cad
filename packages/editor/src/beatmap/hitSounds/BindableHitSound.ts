@@ -1,7 +1,7 @@
 import { Action, Bindable } from 'osucad-framework';
-import { Additions } from './Additions.ts';
-import { HitSound } from './HitSound.ts';
-import { SampleSet } from './SampleSet.ts';
+import { Additions } from './Additions';
+import { HitSound } from './HitSound';
+import { SampleSet } from './SampleSet';
 
 export type HitSoundStateChangeEvent = ['additions', Additions] | ['sampleSet'] | ['additionSampleSet'];
 

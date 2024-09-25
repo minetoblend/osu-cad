@@ -1,4 +1,4 @@
-import { ControlPointPropertiesSection } from './ControlPointPropertiesSection.ts';
+import { ControlPointPropertiesSection } from './ControlPointPropertiesSection';
 
 export class SampleProperties extends ControlPointPropertiesSection {
   constructor() {

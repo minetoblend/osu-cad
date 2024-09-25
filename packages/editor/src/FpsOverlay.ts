@@ -5,8 +5,8 @@ import type {
 } from 'osucad-framework';
 import { Anchor, Axes, BindableBoolean, Container, dependencyLoader, FillDirection, FillFlowContainer, FrameStatistics, Key, StatisticsCounterType } from 'osucad-framework';
 
-import { GraphicsDrawable } from './drawables/GraphicsDrawable.ts';
-import { OsucadSpriteText } from './OsucadSpriteText.ts';
+import { GraphicsDrawable } from './drawables/GraphicsDrawable';
+import { OsucadSpriteText } from './OsucadSpriteText';
 
 export class FpsOverlay extends Container {
   constructor(options: ContainerOptions = {}) {

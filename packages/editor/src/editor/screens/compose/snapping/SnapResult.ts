@@ -3,10 +3,10 @@ import { Drawable } from 'osucad-framework';
 import { Graphics } from 'pixi.js';
 
 export class SnapVisualizer extends Drawable {
-  #visualizer!: Graphics;
+  #visualizer: Graphics = new Graphics();
 
   createDrawNode(): Graphics {
-    return this.#visualizer = new Graphics();
+    return this.#visualizer;
   }
 
   drawTargets(

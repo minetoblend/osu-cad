@@ -1,17 +1,17 @@
 import type { Color } from 'pixi.js';
-import type { Beatmap } from './Beatmap.ts';
-import type { OsuHitObject } from './hitObjects/OsuHitObject.ts';
-import type { HitSound } from './hitSounds/HitSound.ts';
+import type { Beatmap } from './Beatmap';
+import type { OsuHitObject } from './hitObjects/OsuHitObject';
+import type { HitSound } from './hitSounds/HitSound';
 import { HitType } from 'osu-classes';
 import { almostEquals, clamp } from 'osucad-framework';
-import { HitObjectUtils } from '../editor/screens/compose/HitObjectUtils.ts';
-import { HitCircle } from './hitObjects/HitCircle.ts';
-import { PathType } from './hitObjects/PathType.ts';
-import { Slider } from './hitObjects/Slider.ts';
-import { Spinner } from './hitObjects/Spinner.ts';
-import { ControlPointGroup } from './timing/ControlPointGroup.ts';
-import { ControlPointInfo } from './timing/ControlPointInfo.ts';
-import { DifficultyPoint } from './timing/DifficultyPoint.ts';
+import { HitObjectUtils } from '../editor/screens/compose/HitObjectUtils';
+import { HitCircle } from './hitObjects/HitCircle';
+import { PathType } from './hitObjects/PathType';
+import { Slider } from './hitObjects/Slider';
+import { Spinner } from './hitObjects/Spinner';
+import { ControlPointGroup } from './timing/ControlPointGroup';
+import { ControlPointInfo } from './timing/ControlPointInfo';
+import { DifficultyPoint } from './timing/DifficultyPoint';
 
 export class StableBeatmapEncoder {
   encode(beatmap: Beatmap): string {

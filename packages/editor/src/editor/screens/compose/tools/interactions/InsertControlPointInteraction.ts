@@ -2,7 +2,7 @@ import type { DragEvent, DragStartEvent, MouseUpEvent, Vec2 } from 'osucad-frame
 import type { Slider } from '../../../../../beatmap/hitObjects/Slider';
 import { dependencyLoader, MouseButton, resolved } from 'osucad-framework';
 import { PathPoint } from '../../../../../beatmap/hitObjects/PathPoint';
-import { PathType } from '../../../../../beatmap/hitObjects/PathType.ts';
+import { PathType } from '../../../../../beatmap/hitObjects/PathType';
 import { DistanceSnapProvider } from '../DistanceSnapProvider';
 import { SliderUtils } from '../SliderUtils';
 import { ComposeToolInteraction } from './ComposeToolInteraction';

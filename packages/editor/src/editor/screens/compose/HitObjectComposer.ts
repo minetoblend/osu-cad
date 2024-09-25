@@ -35,10 +35,10 @@ import { EditorSelection } from './EditorSelection';
 import { HitObjectUtils } from './HitObjectUtils';
 import { SelectionOverlay } from './selection/SelectionOverlay';
 import { HitObjectSnapProvider } from './snapping/HitObjectSnapProvider';
-import { ComposeToolBar } from './ComposeToolBar.ts';
-import { ComposeTogglesBar } from './ComposeTogglesBar.ts';
-import { GridSnapProvider } from './snapping/GridSnapProvider.ts';
-import { Beatmap } from '../../../beatmap/Beatmap.ts';
+import { ComposeToolBar } from './ComposeToolBar';
+import { ComposeTogglesBar } from './ComposeTogglesBar';
+import { GridSnapProvider } from './snapping/GridSnapProvider';
+import { Beatmap } from '../../../beatmap/Beatmap';
 
 export class HitObjectComposer
   extends Container

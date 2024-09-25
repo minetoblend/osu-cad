@@ -1,12 +1,12 @@
 import { DependencyContainer, provide } from '../../../framework/src';
 import { dependencyLoader, Game } from '../../../framework/src';
-import { Fit, ScalingContainer } from '../editor/ScalingContainer.ts';
-import { ThemeColors } from '../editor/ThemeColors.ts';
-import { MainCursorContainer } from '../MainCursorContainer.ts';
-import { OsucadIcons } from '../OsucadIcons.ts';
-import { UIFonts } from '../UIFonts.ts';
-import { PlaygroundExplorer } from './PlaygroundExplorer.ts';
-import { OsucadConfigManager } from '../config/OsucadConfigManager.ts';
+import { Fit, ScalingContainer } from '../editor/ScalingContainer';
+import { ThemeColors } from '../editor/ThemeColors';
+import { MainCursorContainer } from '../MainCursorContainer';
+import { OsucadIcons } from '../OsucadIcons';
+import { UIFonts } from '../UIFonts';
+import { PlaygroundExplorer } from './PlaygroundExplorer';
+import { OsucadConfigManager } from '../config/OsucadConfigManager';
 
 @provide(Game)
 export class PlaygroundGame extends Game {

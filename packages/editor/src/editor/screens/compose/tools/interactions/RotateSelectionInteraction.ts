@@ -8,12 +8,15 @@ import type {
   Rectangle,
 } from 'osucad-framework';
 import type { OsuHitObject } from '../../../../../beatmap/hitObjects/OsuHitObject';
+import { Vector2 } from 'osu-classes';
+
 import {
   Action,
   Anchor,
   Axes,
   Bindable,
   CompositeDrawable,
+  Container,
   dependencyLoader,
   EasingFunction,
   FillDirection,
@@ -26,7 +29,9 @@ import {
 import { Graphics, Matrix } from 'pixi.js';
 import { Ring } from '../../../../../drawables/Ring';
 import { OsucadSpriteText } from '../../../../../OsucadSpriteText';
+import { ButtonGroupSelect } from '../../../../../userInterface/ButtonGroupSelect.ts';
 import { DraggableDialogBox } from '../../../../../userInterface/DraggableDialogBox';
+import { LabelledTextBox } from '../../../timing/properties/LabelledTextBox';
 import { HitObjectComposer } from '../../HitObjectComposer';
 import { HitObjectUtils } from '../../HitObjectUtils';
 import { ComposeToolInteraction } from './ComposeToolInteraction';
@@ -54,19 +59,40 @@ export class RotateSelectionInteraction extends ComposeToolInteraction {
 
   rotationCenter: Bindable<Vec2>;
 
-  #handle!: RotationHandle;
+  rotationHandle!: RotationHandle;
 
   @dependencyLoader()
   load() {
-    const handle = this.#handle = new RotationHandle(
+    const handle = this.rotationHandle = new RotationHandle(
       80,
       this.selectionCenter,
     );
 
+    let boxAnchor = Anchor.TopLeft;
+
+    if (this.selectionBounds.left > 256 || this.selectionBounds.right < 256)
+      boxAnchor |= Anchor.x1;
+    else if (this.selectionBounds.center.x < 256)
+      boxAnchor |= Anchor.x2;
+
+    if (this.selectionBounds.bottom < 192 || this.selectionBounds.top > 192)
+      boxAnchor |= Anchor.y1;
+    else if (this.selectionBounds.center.y < 192)
+      boxAnchor |= Anchor.y2;
+
     this.addAllInternal(
       this.#hitobjectUtils,
       handle,
-      new RotateDialogBox(this),
+      new Container({
+        scale: 0.5,
+        relativeSizeAxes: Axes.Both,
+        size: new Vector2(2),
+        padding: 15,
+        child: new RotateDialogBox(this).with({
+          anchor: boxAnchor,
+          origin: boxAnchor,
+        }),
+      }),
     );
 
     handle.onRotate.addListener(delta => this.setRotation(this.currentRotation.value + delta));
@@ -118,7 +144,7 @@ export class RotateSelectionInteraction extends ComposeToolInteraction {
 
     this.#previousTransform = transform;
 
-    this.#handle.currentRotation = this.snappedRotation;
+    this.rotationHandle.currentRotation = this.snappedRotation;
   }
 
   onMouseDown(): boolean {
@@ -399,9 +425,92 @@ class RotateDialogBox extends DraggableDialogBox {
     return 'Rotate';
   }
 
+  angleInput!: LabelledTextBox;
+
+  centerMode = new Bindable<CenterMode>('selection');
+
+  centerModeInput!: ButtonGroupSelect<CenterMode>;
+
   createContent() {
-    return new FillFlowContainer({
+    const container = new FillFlowContainer({
       direction: FillDirection.Vertical,
+      width: 200,
+      autoSizeAxes: Axes.Y,
+      children: [
+        this.angleInput = new LabelledTextBox('Angle'),
+        this.centerModeInput = new ButtonGroupSelect<CenterMode>({
+          relativeSizeAxes: Axes.X,
+          height: 30,
+          items: [
+            {
+              label: 'Selection',
+              value: 'selection',
+            },
+            {
+              label: 'Playfield',
+              value: 'playfield',
+            },
+          ],
+        }),
+      ],
+    });
+
+    this.angleInput.tabbableContentContainer = container;
+
+    this.centerModeInput.tabbableContentContainer = container;
+
+    return container;
+  }
+
+  protected loadComplete() {
+    super.loadComplete();
+
+    this.interaction.currentRotation.addOnChangeListener((e) => {
+      const value = Math.round(this.interaction.snappedRotation * 180 / Math.PI * 10) / 10;
+      this.angleInput.text = (value).toString();
+
+      if (this.angleInput.textBox.cursor.isRange)
+        this.angleInput.textBox.selectAll();
+    }, { immediate: true });
+
+    this.angleInput.onCommit.addListener(() => {
+      const value = Number.parseFloat(this.angleInput.text);
+
+      if (!Number.isNaN(value)) {
+        this.interaction.currentRotation.value = value * Math.PI / 180;
+        this.interaction.currentRotation.triggerChange();
+      }
+    });
+
+    this.angleInput.textBox.onLoadComplete.addListener(() => {
+      this.getContainingFocusManager()!.changeFocus(this.angleInput.textBox);
+      this.angleInput.textBox.selectAll();
+    });
+
+    this.centerModeInput.current = this.centerMode;
+
+    this.centerMode.addOnChangeListener((e) => {
+      switch (e.value) {
+        case 'selection':
+          this.interaction.rotationCenter.value = this.interaction.selectionCenter;
+          this.interaction.rotationHandle.position = this.interaction.selectionCenter;
+          break;
+        case 'playfield':
+          this.interaction.rotationCenter.value = new Vec2(512 / 2, 384 / 2);
+          this.interaction.rotationHandle.position = new Vec2(512 / 2, 384 / 2);
+          break;
+      }
+    });
+
+    this.interaction.rotationCenter.addOnChangeListener((e) => {
+      if (e.value.equals(this.interaction.selectionCenter))
+        this.centerMode.value = 'selection';
+      else if (e.value.equals(new Vec2(512 / 2, 384 / 2)))
+        this.centerMode.value = 'playfield';
+      else
+        this.centerMode.value = 'other';
     });
   }
 }
+
+type CenterMode = 'selection' | 'playfield' | 'other';

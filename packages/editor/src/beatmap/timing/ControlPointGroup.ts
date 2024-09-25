@@ -1,10 +1,10 @@
 import { Action } from 'osucad-framework';
 import { objectId } from '../ObjectId';
 import { ControlPoint } from './ControlPoint';
-import { DifficultyPoint } from './DifficultyPoint.ts';
-import { EffectPoint } from './EffectPoint.ts';
-import { SamplePoint } from './SamplePoint.ts';
-import { TimingPoint } from './TimingPoint.ts';
+import { DifficultyPoint } from './DifficultyPoint';
+import { EffectPoint } from './EffectPoint';
+import { SamplePoint } from './SamplePoint';
+import { TimingPoint } from './TimingPoint';
 
 export interface ControlPointGroupChangeEvent {
   group: ControlPointGroup;

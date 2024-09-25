@@ -16,10 +16,10 @@ import {
 import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
 import { EditorClock } from '../../EditorClock';
 import { MainScrollContainer } from '../../MainScrollContainer';
-import { ControlPointSelection } from './ControlPointSelection.ts';
-import { KiaiBadge } from './KiaiBadge.ts';
+import { ControlPointSelection } from './ControlPointSelection';
+import { KiaiBadge } from './KiaiBadge';
 import { TimingPointRow } from './TimingPointRow';
-import { TimingPointTableHeader } from './TimingPointTableHeader.ts';
+import { TimingPointTableHeader } from './TimingPointTableHeader';
 
 export class TimingPointTable extends Container {
   @resolved(ControlPointInfo)

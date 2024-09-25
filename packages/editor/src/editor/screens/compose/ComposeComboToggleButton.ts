@@ -10,7 +10,7 @@ import {
   resolved,
 } from 'osucad-framework';
 import { OsucadIcons } from '../../../OsucadIcons';
-import { EditorAction } from '../../EditorAction.ts';
+import { EditorAction } from '../../EditorAction';
 import { NEW_COMBO, NEW_COMBO_APPLIED } from '../../InjectionTokens';
 import { ComposeToggleButton } from './ComposeToggleButton';
 

@@ -1,9 +1,9 @@
-import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup.ts';
+import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup';
 import { Axes, Container, dependencyLoader } from 'osucad-framework';
-import { LifetimeEntry } from '../../../pooling/LifetimeEntry.ts';
-import { LifetimeEntryManager } from '../../../pooling/LifetimeEntryManager.ts';
-import { Timeline } from '../../timeline/Timeline.ts';
-import { TimelineControlPointDrawable } from './TimelineControlPointDrawable.ts';
+import { LifetimeEntry } from '../../../pooling/LifetimeEntry';
+import { LifetimeEntryManager } from '../../../pooling/LifetimeEntryManager';
+import { Timeline } from '../../timeline/Timeline';
+import { TimelineControlPointDrawable } from './TimelineControlPointDrawable';
 
 export class TimingScreenTimeline extends Timeline {
   @dependencyLoader()

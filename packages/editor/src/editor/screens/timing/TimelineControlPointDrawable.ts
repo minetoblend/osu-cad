@@ -1,8 +1,8 @@
-import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup.ts';
-import type { TimingPoint } from '../../../beatmap/timing/TimingPoint.ts';
+import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup';
+import type { TimingPoint } from '../../../beatmap/timing/TimingPoint';
 import { Anchor, Axes, Box, CompositeDrawable, dependencyLoader, resolved } from 'osucad-framework';
-import { ThemeColors } from '../../ThemeColors.ts';
-import { Timeline } from '../../timeline/Timeline.ts';
+import { ThemeColors } from '../../ThemeColors';
+import { Timeline } from '../../timeline/Timeline';
 
 export class TimelineControlPointDrawable extends CompositeDrawable {
   constructor(readonly controlPoint: ControlPointGroup) {

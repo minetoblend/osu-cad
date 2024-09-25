@@ -1,6 +1,6 @@
-import { ComposeToolbarButton } from './ComposeToolbarButton.ts';
-import { OsucadIcons } from '../../../OsucadIcons.ts';
-import { OsucadSpriteText } from '../../../OsucadSpriteText.ts';
+import { ComposeToolbarButton } from './ComposeToolbarButton';
+import { OsucadIcons } from '../../../OsucadIcons';
+import { OsucadSpriteText } from '../../../OsucadSpriteText';
 import {
   Anchor,
   Axes,
@@ -11,11 +11,11 @@ import {
   type KeyDownEvent,
   resolved,
 } from 'osucad-framework';
-import { Beatmap } from '../../../beatmap/Beatmap.ts';
-import { ThemeColors } from '../../ThemeColors.ts';
-import { ComposeToggleButton } from './ComposeToggleButton.ts';
-import { HitObjectComposer } from './HitObjectComposer.ts';
-import { EditorAction } from '../../EditorAction.ts';
+import { Beatmap } from '../../../beatmap/Beatmap';
+import { ThemeColors } from '../../ThemeColors';
+import { ComposeToggleButton } from './ComposeToggleButton';
+import { HitObjectComposer } from './HitObjectComposer';
+import { EditorAction } from '../../EditorAction';
 
 export class ToolbarGridSnapToggle extends ComposeToggleButton implements IKeyBindingHandler<EditorAction> {
   constructor() {

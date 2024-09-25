@@ -1,6 +1,6 @@
-import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject.ts';
-import type { LifetimeEntry } from '../../pooling/LifetimeEntry.ts';
-import type { TimelineObject } from './TimelineObject.ts';
+import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
+import type { LifetimeEntry } from '../../pooling/LifetimeEntry';
+import type { TimelineObject } from './TimelineObject';
 import {
   Axes,
   type Bindable,
@@ -13,16 +13,16 @@ import {
   type MouseDownEvent,
   resolved,
 } from '../../../../framework/src';
-import { HitCircle } from '../../beatmap/hitObjects/HitCircle.ts';
-import { Slider } from '../../beatmap/hitObjects/Slider.ts';
-import { Spinner } from '../../beatmap/hitObjects/Spinner.ts';
-import { LifetimeEntryManager } from '../../pooling/LifetimeEntryManager.ts';
-import { HitObjectLifetimeEntry } from '../hitobjects/HitObjectLifetimeEntry.ts';
-import { EditorSelection } from '../screens/compose/EditorSelection.ts';
-import { Timeline } from './Timeline.ts';
-import { TimelineHitCircle } from './TimelineHitCircle.ts';
-import { TimelineSlider } from './TimelineSlider.ts';
-import { TimelineSpinner } from './TimelineSpinner.ts';
+import { HitCircle } from '../../beatmap/hitObjects/HitCircle';
+import { Slider } from '../../beatmap/hitObjects/Slider';
+import { Spinner } from '../../beatmap/hitObjects/Spinner';
+import { LifetimeEntryManager } from '../../pooling/LifetimeEntryManager';
+import { HitObjectLifetimeEntry } from '../hitobjects/HitObjectLifetimeEntry';
+import { EditorSelection } from '../screens/compose/EditorSelection';
+import { Timeline } from './Timeline';
+import { TimelineHitCircle } from './TimelineHitCircle';
+import { TimelineSlider } from './TimelineSlider';
+import { TimelineSpinner } from './TimelineSpinner';
 
 export class ComposeScreenTimeline extends Timeline {
   @resolved(EditorSelection)

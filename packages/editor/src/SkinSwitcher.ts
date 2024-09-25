@@ -6,9 +6,9 @@ import type {
 } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
 import type { SkinProvider, SkinStore } from './environment';
-import type { ISkin } from './skinning/ISkin.ts';
-import type { ISkinComponentLookup } from './skinning/ISkinComponentLookup.ts';
-import type { ISkinSource } from './skinning/ISkinSource.ts';
+import type { ISkin } from './skinning/ISkin';
+import type { ISkinComponentLookup } from './skinning/ISkinComponentLookup';
+import type { ISkinSource } from './skinning/ISkinSource';
 import {
   Action,
   asyncDependencyLoader,
@@ -17,8 +17,8 @@ import {
   Key,
   resolved,
 } from 'osucad-framework';
-import { IResourcesProvider } from './io/IResourcesProvider.ts';
-import { createDefaultSkin } from './skinning/CreateDefaultSkin.ts';
+import { IResourcesProvider } from './io/IResourcesProvider';
+import { createDefaultSkin } from './skinning/CreateDefaultSkin';
 
 export class SkinSwitcher extends CompositeDrawable implements ISkinSource {
   constructor(readonly skinStore: SkinStore) {

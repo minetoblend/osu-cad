@@ -1,6 +1,6 @@
-import { Playground } from '../playground/Playground.ts';
+import { Playground } from '../playground/Playground';
 import { Axes, dependencyLoader } from '../../../framework/src';
-import { IntroSequence } from './IntroSequence.ts';
+import { IntroSequence } from './IntroSequence';
 
 export class IntroSequencePlayground extends Playground {
 

@@ -1,11 +1,11 @@
-import type {
+import {
   Bindable,
   ClickEvent,
   IKeyBindingHandler,
   KeyBindingPressEvent,
-  KeyDownEvent,
+  KeyDownEvent, KeyUpEvent, Scheduler,
 } from 'osucad-framework';
-import type { DoubleClickEvent } from '../../../framework/src/input/events/DoubleClickEvent.ts';
+import type { DoubleClickEvent } from '../../../framework/src/input/events/DoubleClickEvent';
 import {
   Action,
   Anchor,
@@ -25,7 +25,7 @@ import {
   TextInputSource,
 } from 'osucad-framework';
 import { BitmapFontManager } from 'pixi.js';
-import { TabbableContainer } from '../../../framework/src/graphics/containers/TabbableContainer.ts';
+import { TabbableContainer } from '../../../framework/src/graphics/containers/TabbableContainer';
 import { FastRoundedBox } from '../drawables/FastRoundedBox';
 import { ThemeColors } from '../editor/ThemeColors';
 import { OsucadSpriteText } from '../OsucadSpriteText';
@@ -83,28 +83,52 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
         this.#deleteBackwardWord();
         return true;
       case PlatformAction.SelectAll:
-        this.#selectAll();
+        this.selectAll();
+        return true;
     }
 
     return false;
   }
 
   onKeyDown(e: KeyDownEvent): boolean {
-    if (super.onKeyDown(e))
-      return true;
-
     if (!this.hasFocus)
       return false;
 
     switch (e.key) {
+      case Key.Escape:
+        if (!e.repeat)
+          this.killFocus();
+        return true;
       case Key.Enter:
-        if (this.commitOnEnter) {
+      case Key.NumpadEnter:
+        if (e.altPressed)
+          return false;
+
+        if (!e.repeat && this.commitOnEnter) {
           this.commit();
+
+          return true;
         }
+
+        return false;
+      case Key.Backspace:
+      case Key.Delete:
+        return false;
     }
 
-    return false;
+    let wasBlocking = this.#textInputBlocking;
+    this.#textInputScheduler.update();
+
+    console.log('wasBlocking', wasBlocking, 'isBlocking', this.#textInputBlocking);
+
+    return super.onKeyDown(e) || this.#textInputBlocking;
   }
+
+  onKeyUp() {
+    this.scheduler.addOnce(this.#revertBlockingStateIfRequired, this);
+  }
+
+  readonly #textInputScheduler = new Scheduler(null);
 
   @dependencyLoader()
   [Symbol('load')]() {
@@ -137,6 +161,12 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
     );
 
     this.current.addOnChangeListener(e => this.text = e.value);
+  }
+
+  update() {
+    super.update();
+
+    this.#textInputScheduler.update();
   }
 
   #textContainer!: Container;
@@ -238,8 +268,7 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
       const positionEnd = this.getPositionAt(this.cursor.rangeRight);
 
       this.#caret.setPosition(position, positionEnd - position);
-    }
-    else {
+    } else {
       this.#caret.setPosition(position);
     }
   }
@@ -254,6 +283,8 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
   }
 
   protected endAcceptingInput() {
+    this.#textInputBlocking = false;
+
     console.log('endAcceptingInput');
     this.textInput.deactivate();
     this.textInput.onTextInput.removeListener(this.#onTextInput);
@@ -274,9 +305,19 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
       this.commit();
   }
 
-  #onTextInput = (text: string) => {
+  #textInputBlocking = false;
+
+  #onTextInput = (text: string) => this.#textInputScheduler.add(() => {
+    this.#textInputBlocking = true;
     this.insertTextAtCursor(text);
-  };
+
+    this.scheduler.addOnce(this.#revertBlockingStateIfRequired, this);
+  });
+
+  #revertBlockingStateIfRequired() {
+    if (this.#textInputBlocking && !this.getContainingInputManager()!.currentState.keyboard.keys.hasAnyButtonPressed)
+      this.#textInputBlocking = false;
+  }
 
   #current = new BindableWithCurrent<string>('');
 
@@ -365,11 +406,9 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
         position = this.#getStartOfWordBackward(this.text, position);
 
       this.cursor.moveTo(clamp(position, 0, this.text.length));
-    }
-    else if (this.cursor.isRange) {
+    } else if (this.cursor.isRange) {
       this.cursor.moveTo(position);
-    }
-    else {
+    } else {
       this.cursor.moveTo(clamp(position + direction, 0, this.text.length));
     }
   }
@@ -440,7 +479,7 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
     this.#deleteRange(start, end);
   }
 
-  #selectAll() {
+  selectAll() {
     this.cursor.setRange(0, this.text.length);
   }
 
@@ -466,8 +505,7 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
 
       if (position >= layout.width * layout.scale) {
         cursorPosition = this.text.length;
-      }
-      else {
+      } else {
         for (let i = 0; i < line.charPositions.length; i++) {
           cursorPosition = i;
 
@@ -477,8 +515,7 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
             if (position < boundary) {
               break;
             }
-          }
-          else {
+          } else {
             if (position < line.charPositions[i] * layout.scale) {
               break;
             }
@@ -536,13 +573,16 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
       if (!Number.isNaN(value)) {
         bindable.value = value;
         bindable.triggerChange();
-      }
-      else {
+      } else {
         this.text = format(bindable.value);
       }
     });
 
     return this;
+  }
+
+  killFocus() {
+    this.getContainingFocusManager()?.changeFocus(null);
   }
 }
 
@@ -578,8 +618,7 @@ class Caret extends CompositeDrawable {
       this.fadeTo(0.6);
       this.#caret.alpha = 1;
       this.resizeWidthTo(width, 100, EasingFunction.OutExpo);
-    }
-    else {
+    } else {
       this.moveToX(position - 1, 100, EasingFunction.OutExpo);
       this.fadeIn(100, EasingFunction.OutExpo);
       this.resizeWidthTo(2, 100, EasingFunction.OutExpo);
@@ -598,12 +637,10 @@ class Caret extends CompositeDrawable {
 
       if (time < this.flashInRatio) {
         this.#caret.alpha = animate(time, 0, this.flashInRatio, 0.75, 1);
-      }
-      else {
+      } else {
         this.#caret.alpha = animate(time, this.flashInRatio, 1, 1, 0.5);
       }
-    }
-    else {
+    } else {
       this.#caret.alpha = 0.4;
     }
   }

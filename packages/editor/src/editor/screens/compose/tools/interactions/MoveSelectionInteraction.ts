@@ -28,13 +28,11 @@ export class MoveSelectionInteraction extends ComposeToolInteraction {
 
   #snapVisualizer = new SnapVisualizer();
 
-  #proxies!: CommandProxy<OsuHitObject>[];
 
   @dependencyLoader()
   load() {
     this.#startPositions = this.hitObjects.map(it => it.position);
     this.addInternal(this.#snapVisualizer);
-    this.#proxies = this.hitObjects.map(it => this.createProxy(it));
   }
 
   onMouseMove(e: MouseMoveEvent): boolean {

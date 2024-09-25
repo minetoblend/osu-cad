@@ -5,7 +5,7 @@ import type {
   KeyBindingReleaseEvent,
   MouseDownEvent,
 } from 'osucad-framework';
-import type { HitSoundState } from '../../../beatmap/hitSounds/BindableHitSound.ts';
+import type { HitSoundState } from '../../../beatmap/hitSounds/BindableHitSound';
 import {
   Anchor,
   Axes,
@@ -26,16 +26,16 @@ import {
   Vec2,
 } from 'osucad-framework';
 
-import { SampleSet } from '../../../beatmap/hitSounds/SampleSet.ts';
-import { SampleType } from '../../../beatmap/hitSounds/SampleType.ts';
-import { OsucadConfigManager } from '../../../config/OsucadConfigManager.ts';
-import { OsucadSettings } from '../../../config/OsucadSettings.ts';
-import { OsucadIcons } from '../../../OsucadIcons.ts';
-import { OsucadSpriteText } from '../../../OsucadSpriteText.ts';
-import { EditorAction } from '../../EditorAction.ts';
-import { HITSOUND } from '../../InjectionTokens.ts';
-import { ThemeColors } from '../../ThemeColors.ts';
-import { SampleHighlightContainer } from './SampleHighlightContainer.ts';
+import { SampleSet } from '../../../beatmap/hitSounds/SampleSet';
+import { SampleType } from '../../../beatmap/hitSounds/SampleType';
+import { OsucadConfigManager } from '../../../config/OsucadConfigManager';
+import { OsucadSettings } from '../../../config/OsucadSettings';
+import { OsucadIcons } from '../../../OsucadIcons';
+import { OsucadSpriteText } from '../../../OsucadSpriteText';
+import { EditorAction } from '../../EditorAction';
+import { HITSOUND } from '../../InjectionTokens';
+import { ThemeColors } from '../../ThemeColors';
+import { SampleHighlightContainer } from './SampleHighlightContainer';
 
 const buttonSize = new Vec2(46, 42);
 

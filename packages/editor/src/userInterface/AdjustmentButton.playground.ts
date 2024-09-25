@@ -1,6 +1,6 @@
 import { dependencyLoader } from 'osucad-framework';
-import { Playground } from '../playground/Playground.ts';
-import { AdjustmentButton } from './AdjustmentButton.ts';
+import { Playground } from '../playground/Playground';
+import { AdjustmentButton } from './AdjustmentButton';
 
 export class AdjustmentButtonPlayground extends Playground {
   @dependencyLoader()

@@ -17,8 +17,8 @@ import {
   resolved,
 } from 'osucad-framework';
 import { BlurFilter } from 'pixi.js';
-import { OsucadConfigManager } from '../config/OsucadConfigManager.ts';
-import { OsucadSettings } from '../config/OsucadSettings.ts';
+import { OsucadConfigManager } from '../config/OsucadConfigManager';
+import { OsucadSettings } from '../config/OsucadSettings';
 
 export class BeatmapSelectBackground extends CompositeDrawable {
   constructor() {

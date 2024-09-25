@@ -9,8 +9,8 @@ import {
   dependencyLoader,
   resolved,
 } from 'osucad-framework';
-import { OsucadConfigManager } from '../config/OsucadConfigManager.ts';
-import { OsucadSettings } from '../config/OsucadSettings.ts';
+import { OsucadConfigManager } from '../config/OsucadConfigManager';
+import { OsucadSettings } from '../config/OsucadSettings';
 
 export class EditorMixer extends Container {
   constructor(readonly audioManager: AudioManager) {

@@ -1,11 +1,11 @@
 import type { IPatchable } from '../../editor/commands/IPatchable';
 import type { SerializedSpinner } from '../serialization/HitObjects';
-import type { ControlPointInfo } from '../timing/ControlPointInfo.ts';
+import type { ControlPointInfo } from '../timing/ControlPointInfo';
 import { Vec2 } from 'osucad-framework';
 import { SpinnerPatchEncoder } from '../../editor/commands/patchEncoder/SpinnerPatchEncoder';
-import { HitSample } from '../hitSounds/HitSample.ts';
-import { SampleSet } from '../hitSounds/SampleSet.ts';
-import { SampleType } from '../hitSounds/SampleType.ts';
+import { HitSample } from '../hitSounds/HitSample';
+import { SampleSet } from '../hitSounds/SampleSet';
+import { SampleType } from '../hitSounds/SampleType';
 import { OsuHitObject } from './OsuHitObject';
 
 export class Spinner extends OsuHitObject implements IPatchable<SerializedSpinner> {

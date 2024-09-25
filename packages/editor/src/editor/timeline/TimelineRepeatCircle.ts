@@ -9,7 +9,7 @@ import {
   resolved,
   RoundedBox,
 } from 'osucad-framework';
-import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection.ts';
+import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection';
 import { EditorSelection } from '../screens/compose/EditorSelection';
 import { SliderUtils } from '../screens/compose/tools/SliderUtils';
 

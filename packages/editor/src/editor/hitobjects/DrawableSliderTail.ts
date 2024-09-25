@@ -1,12 +1,12 @@
-import type { Slider } from '../../beatmap/hitObjects/Slider.ts';
-import type { SliderTailCircle } from '../../beatmap/hitObjects/SliderTailCircle.ts';
+import type { Slider } from '../../beatmap/hitObjects/Slider';
+import type { SliderTailCircle } from '../../beatmap/hitObjects/SliderTailCircle';
 import { Anchor, Axes, BindableBoolean, BindableNumber, Container, dependencyLoader, resolved } from 'osucad-framework';
 import { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
-import { OsucadConfigManager } from '../../config/OsucadConfigManager.ts';
-import { OsucadSettings } from '../../config/OsucadSettings.ts';
+import { OsucadConfigManager } from '../../config/OsucadConfigManager';
+import { OsucadSettings } from '../../config/OsucadSettings';
 import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
 import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
-import { DrawableOsuHitObject } from './DrawableOsuHitObject.ts';
+import { DrawableOsuHitObject } from './DrawableOsuHitObject';
 
 export class DrawableSliderTail extends DrawableOsuHitObject<SliderTailCircle> {
   #scaleContainer!: Container;

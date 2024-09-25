@@ -1,5 +1,5 @@
 import { Anchor, dependencyLoader, lerp, Vec2 } from 'osucad-framework';
-import { GraphicsDrawable } from '../drawables/GraphicsDrawable.ts';
+import { GraphicsDrawable } from '../drawables/GraphicsDrawable';
 import { Graphics } from 'pixi.js';
 
 export class IntroSlider extends GraphicsDrawable {

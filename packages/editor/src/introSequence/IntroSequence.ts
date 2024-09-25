@@ -1,4 +1,4 @@
-import { OsucadScreen } from '../OsucadScreen.ts';
+import { OsucadScreen } from '../OsucadScreen';
 import {
   Anchor,
   Axes,
@@ -12,10 +12,10 @@ import {
   RoundedBox, ScreenExitEvent,
   Vec2,
 } from 'osucad-framework';
-import { IntroSlider } from './IntroSlider.ts';
+import { IntroSlider } from './IntroSlider';
 import { AlphaFilter } from 'pixi.js';
-import { OsucadIcons } from '../OsucadIcons.ts';
-import { ThemeColors } from '../editor/ThemeColors.ts';
+import { OsucadIcons } from '../OsucadIcons';
+import { ThemeColors } from '../editor/ThemeColors';
 import osucadText from '../assets/textures/osucad-text.png';
 
 export class IntroSequence extends OsucadScreen {

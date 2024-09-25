@@ -1,4 +1,4 @@
-import type { ControlPointGroup } from '../../../../beatmap/timing/ControlPointGroup.ts';
+import type { ControlPointGroup } from '../../../../beatmap/timing/ControlPointGroup';
 import { Bindable, Component, dependencyLoader } from 'osucad-framework';
 
 export class ControlPointFacade extends Component {

@@ -1,6 +1,6 @@
-import { BeatmapStore } from './BeatmapStore.ts';
-import { EditorEnvironment } from './EditorEnvironment.ts';
-import { SkinStore } from './SkinStore.ts';
+import { BeatmapStore } from './BeatmapStore';
+import { EditorEnvironment } from './EditorEnvironment';
+import { SkinStore } from './SkinStore';
 
 export class EmptyEnvironment extends EditorEnvironment {
   async load(): Promise<void> {

@@ -9,8 +9,8 @@ import {
   FillFlowContainer,
   Vec2,
 } from 'osucad-framework';
-import { OsucadSpriteText } from '../../../../OsucadSpriteText.ts';
-import { Toggle } from '../../../../userInterface/Toggle.ts';
+import { OsucadSpriteText } from '../../../../OsucadSpriteText';
+import { Toggle } from '../../../../userInterface/Toggle';
 
 export abstract class ControlPointPropertiesSection extends Container {
   protected constructor(readonly title: string) {

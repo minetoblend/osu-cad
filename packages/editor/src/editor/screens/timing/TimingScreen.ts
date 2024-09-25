@@ -1,15 +1,15 @@
 import type { DependencyContainer } from 'osucad-framework';
 import { Axes, Box, Container, dependencyLoader, Direction, EasingFunction, MaskingContainer, resolved } from 'osucad-framework';
 import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
-import { MainScrollContainer } from '../../MainScrollContainer.ts';
+import { MainScrollContainer } from '../../MainScrollContainer';
 import { ThemeColors } from '../../ThemeColors';
 import { EditorScreen } from '../EditorScreen';
 import { ControlPointSelection } from './ControlPointSelection';
-import { MetronomePlayer } from './MetronomePlayer.ts';
-import { ControlPointProperties } from './properties/ControlPointProperties.ts';
-import { TimingPointRow } from './TimingPointRow.ts';
-import { TimingPointTable } from './TimingPointTable.ts';
-import { TimingScreenTimeline } from './TimingScreenTimeline.ts';
+import { MetronomePlayer } from './MetronomePlayer';
+import { ControlPointProperties } from './properties/ControlPointProperties';
+import { TimingPointRow } from './TimingPointRow';
+import { TimingPointTable } from './TimingPointTable';
+import { TimingScreenTimeline } from './TimingScreenTimeline';
 
 export class TimingScreen extends EditorScreen {
   constructor() {

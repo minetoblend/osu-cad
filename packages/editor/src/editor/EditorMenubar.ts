@@ -17,11 +17,11 @@ import {
   resolved,
   RoundedBox,
 } from 'osucad-framework';
-import { Notification } from '../notifications/Notification.ts';
-import { NotificationOverlay } from '../notifications/NotificationOverlay.ts';
+import { Notification } from '../notifications/Notification';
+import { NotificationOverlay } from '../notifications/NotificationOverlay';
 import { OsucadSpriteText } from '../OsucadSpriteText';
 import { CommandManager } from './context/CommandManager';
-import { Editor } from './Editor.ts';
+import { Editor } from './Editor';
 import { EditorMenu } from './EditorMenu';
 import { ThemeColors } from './ThemeColors';
 

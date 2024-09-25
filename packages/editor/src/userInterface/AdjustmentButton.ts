@@ -19,8 +19,8 @@ import {
   resolved,
   Vec2,
 } from 'osucad-framework';
-import { ThemeColors } from '../editor/ThemeColors.ts';
-import { OsucadSpriteText } from '../OsucadSpriteText.ts';
+import { ThemeColors } from '../editor/ThemeColors';
+import { OsucadSpriteText } from '../OsucadSpriteText';
 
 export interface AdjustmentButtonOptions {
   size?: IVec2;

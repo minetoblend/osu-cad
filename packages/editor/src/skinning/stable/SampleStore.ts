@@ -1,5 +1,5 @@
 import type { AudioChannel, AudioManager, Sample } from 'osucad-framework';
-import type { IResourceStore } from '../IResourceStore.ts';
+import type { IResourceStore } from '../IResourceStore';
 import { ResourceStore } from 'osucad-framework';
 
 export class SampleStore {

@@ -25,11 +25,11 @@ import { BeatmapComboProcessor } from '../beatmap/beatmapProcessors/BeatmapCombo
 import { BeatmapStackingProcessor } from '../beatmap/beatmapProcessors/BeatmapStackingProcessor';
 import { Additions } from '../beatmap/hitSounds/Additions';
 import { AdditionsBindable } from '../beatmap/hitSounds/AdditionsBindable';
-import { HitSoundState } from '../beatmap/hitSounds/BindableHitSound.ts';
+import { HitSoundState } from '../beatmap/hitSounds/BindableHitSound';
 import { Notification } from '../notifications/Notification';
 import { NotificationOverlay } from '../notifications/NotificationOverlay';
 import { OsucadScreen } from '../OsucadScreen';
-import { BeatmapSampleStore } from './BeatmapSampleStore.ts';
+import { BeatmapSampleStore } from './BeatmapSampleStore';
 import { EditorAction } from './EditorAction';
 import { EditorBottomBar } from './EditorBottomBar';
 import { EditorClock } from './EditorClock';

@@ -1,4 +1,4 @@
-import type { BeatmapItemInfo } from './BeatmapItemInfo.ts';
+import type { BeatmapItemInfo } from './BeatmapItemInfo';
 import { SortedList } from '../../../framework/src';
 import { compare } from 'fast-string-compare'
 

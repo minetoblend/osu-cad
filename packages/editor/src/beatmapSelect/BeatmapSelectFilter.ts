@@ -2,7 +2,7 @@ import type { ScheduledDelegate } from 'osucad-framework';
 import type { BeatmapItemInfo } from './BeatmapItemInfo';
 import { Bindable, Component } from 'osucad-framework';
 
-import { BeatmapSearchIndex } from './BeatmapSearchIndex.ts';
+import { BeatmapSearchIndex } from './BeatmapSearchIndex';
 
 export class BeatmapSelectFilter extends Component {
   constructor(

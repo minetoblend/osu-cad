@@ -7,13 +7,13 @@ import {
   FillFlowContainer,
   resolved,
 } from 'osucad-framework';
-import { ControlPointSelection } from '../ControlPointSelection.ts';
-import { ControlPointFacade } from './ControlPointFacade.ts';
-import { DifficultyProperties } from './DifficultyProperties.ts';
-import { EffectProperties } from './EffectProperties.ts';
-import { LabelledTextBox } from './LabelledTextBox.ts';
-import { SampleProperties } from './SampleProperties.ts';
-import { TimingProperties } from './TimingProperties.ts';
+import { ControlPointSelection } from '../ControlPointSelection';
+import { ControlPointFacade } from './ControlPointFacade';
+import { DifficultyProperties } from './DifficultyProperties';
+import { EffectProperties } from './EffectProperties';
+import { LabelledTextBox } from './LabelledTextBox';
+import { SampleProperties } from './SampleProperties';
+import { TimingProperties } from './TimingProperties';
 
 export class ControlPointProperties extends FillFlowContainer {
   constructor() {

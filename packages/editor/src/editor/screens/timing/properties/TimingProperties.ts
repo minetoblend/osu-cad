@@ -6,10 +6,10 @@ import {
   FillDirection,
   FillFlowContainer,
 } from 'osucad-framework';
-import { AdjustmentButton } from '../../../../userInterface/AdjustmentButton.ts';
-import { ControlPointPropertiesSection } from './ControlPointPropertiesSection.ts';
-import { LabelledTextBox } from './LabelledTextBox.ts';
-import { Metronome } from './Metronome.ts';
+import { AdjustmentButton } from '../../../../userInterface/AdjustmentButton';
+import { ControlPointPropertiesSection } from './ControlPointPropertiesSection';
+import { LabelledTextBox } from './LabelledTextBox';
+import { Metronome } from './Metronome';
 
 export class TimingProperties extends ControlPointPropertiesSection {
   constructor() {

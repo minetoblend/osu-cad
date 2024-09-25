@@ -239,18 +239,33 @@ export class HitObjectUtils extends CompositeDrawable {
       Number.MIN_VALUE,
     );
 
+    const newCombos = hitObjects.map(it => it.newCombo);
+
+    const moreThanOneObject = hitObjects.length > 1;
+
     for (let i = 0; i < hitObjects.length; i++) {
       const hitObject = hitObjects[i];
 
-      const distanceToEnd = endTime - hitObject.endTime;
+      if (moreThanOneObject) {
+        this.commandManager.submit(
+          new UpdateHitObjectCommand(hitObject, {
+            startTime: endTime - (hitObject.endTime - startTime),
+          }),
+          false,
+        );
+      }
 
       if (hitObject instanceof Slider) {
         this.reverseSlider(hitObject, false);
       }
+    }
+
+    for (let i = 0; i < hitObjects.length; i++) {
+      const hitObject = hitObjects[i];
 
       this.commandManager.submit(
         new UpdateHitObjectCommand(hitObject, {
-          startTime: startTime + distanceToEnd,
+          newCombo: newCombos[i],
         }),
         false,
       );

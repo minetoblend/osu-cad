@@ -11,7 +11,7 @@ import { Beatmap } from '../../beatmap/Beatmap';
 import { HitObjectList } from '../../beatmap/hitObjects/HitObjectList';
 import { ControlPointInfo } from '../../beatmap/timing/ControlPointInfo';
 import { CommandManager } from './CommandManager';
-import { IResourcesProvider } from '../../io/IResourcesProvider.ts';
+import { IResourcesProvider } from '../../io/IResourcesProvider';
 
 export abstract class EditorContext {
 

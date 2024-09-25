@@ -1,4 +1,4 @@
-import type { ConfigKey } from './ConfigManager.ts';
+import type { ConfigKey } from './ConfigManager';
 
 export class OsucadSettings<T> implements ConfigKey<T> {
   __type__!: T;

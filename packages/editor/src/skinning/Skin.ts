@@ -10,7 +10,7 @@ import { SkinnableTextureAnimation } from './DrawableAnimation';
 import { ResourceStore } from './ResourceStore';
 import { SkinConfiguration } from './SkinConfiguration';
 import { SpriteComponentLookup } from './SkinnableSprite';
-import { SampleStore } from './stable/SampleStore.ts';
+import { SampleStore } from './stable/SampleStore';
 import { StableSkinConfigurationDecoder } from './StableSkinConfigurationDecoder';
 import { TextureStore } from './TextureStore';
 

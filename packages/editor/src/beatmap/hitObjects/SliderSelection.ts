@@ -1,8 +1,8 @@
-import type { Additions } from '../hitSounds/Additions.ts';
-import type { HitObjectPatch } from '../serialization/HitObjects.ts';
-import type { Slider } from './Slider.ts';
+import type { Additions } from '../hitSounds/Additions';
+import type { HitObjectPatch } from '../serialization/HitObjects';
+import type { Slider } from './Slider';
 import { Action } from 'osucad-framework';
-import { SampleSet } from '../hitSounds/SampleSet.ts';
+import { SampleSet } from '../hitSounds/SampleSet';
 
 export enum SliderSelectionType {
   Body = 1,

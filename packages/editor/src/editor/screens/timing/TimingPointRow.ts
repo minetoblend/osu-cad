@@ -1,5 +1,5 @@
 import type { ClickEvent } from 'osucad-framework';
-import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup.ts';
+import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup';
 import {
   Anchor,
   Axes,
@@ -10,14 +10,14 @@ import {
   PoolableDrawable,
   resolved,
 } from 'osucad-framework';
-import { SampleSet } from '../../../beatmap/hitSounds/SampleSet.ts';
-import { FastRoundedBox } from '../../../drawables/FastRoundedBox.ts';
-import { OsucadSpriteText } from '../../../OsucadSpriteText.ts';
-import { EditorClock } from '../../EditorClock.ts';
-import { ThemeColors } from '../../ThemeColors.ts';
-import { TimestampFormatter } from '../../TimestampFormatter.ts';
-import { ControlPointSelection } from './ControlPointSelection.ts';
-import { TimingPointValueBadge } from './TimingPointValueBadge.ts';
+import { SampleSet } from '../../../beatmap/hitSounds/SampleSet';
+import { FastRoundedBox } from '../../../drawables/FastRoundedBox';
+import { OsucadSpriteText } from '../../../OsucadSpriteText';
+import { EditorClock } from '../../EditorClock';
+import { ThemeColors } from '../../ThemeColors';
+import { TimestampFormatter } from '../../TimestampFormatter';
+import { ControlPointSelection } from './ControlPointSelection';
+import { TimingPointValueBadge } from './TimingPointValueBadge';
 
 export class TimingPointRow extends PoolableDrawable {
   constructor() {
@@ -141,7 +141,7 @@ export class TimingPointRow extends PoolableDrawable {
       switch (controlPoint.sample.sampleSet) {
         case SampleSet.Auto:
           sampleSet = 'auto';
-          break; z;
+          break;
         case SampleSet.Normal:
           sampleSet = 'normal';
           break;

@@ -1,6 +1,6 @@
-import { ComposeToolInteraction } from './ComposeToolInteraction.ts';
-import type { Slider } from '../../../../../beatmap/hitObjects/Slider.ts';
-import { PathPoint } from '../../../../../beatmap/hitObjects/PathPoint.ts';
+import { ComposeToolInteraction } from './ComposeToolInteraction';
+import type { Slider } from '../../../../../beatmap/hitObjects/Slider';
+import { PathPoint } from '../../../../../beatmap/hitObjects/PathPoint';
 
 export class CornerRadiusInteraction extends ComposeToolInteraction {
   constructor(
