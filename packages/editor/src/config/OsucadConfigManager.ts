@@ -18,6 +18,7 @@ export class OsucadConfigManager extends ConfigManager<OsucadSettings<any>> {
     this.setDefault(OsucadSettings.AnimatedSeek, true);
     this.setDefault(OsucadSettings.CompactTimeline, false);
     this.setDefault(OsucadSettings.NativeCursor, false);
+    this.setDefault(OsucadSettings.PlayIntroSequence, true);
 
     this.setDefault(OsucadSettings.SongSelectParallax, true);
     this.setDefault(OsucadSettings.SongSelectPreventLoadOnScroll, false);

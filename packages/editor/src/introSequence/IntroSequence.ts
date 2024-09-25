@@ -1,4 +1,4 @@
-import { OsucadScreen } from '../OsucadScreen';
+import type { ScreenExitEvent } from 'osucad-framework';
 import {
   Anchor,
   Axes,
@@ -9,22 +9,32 @@ import {
   EasingFunction,
   loadTexture,
   resolved,
-  RoundedBox, ScreenExitEvent,
+  RoundedBox,
   Vec2,
 } from 'osucad-framework';
-import { IntroSlider } from './IntroSlider';
 import { AlphaFilter } from 'pixi.js';
-import { OsucadIcons } from '../OsucadIcons';
-import { ThemeColors } from '../editor/ThemeColors';
 import osucadText from '../assets/textures/osucad-text.png';
+import { OsucadConfigManager } from '../config/OsucadConfigManager.ts';
+import { OsucadSettings } from '../config/OsucadSettings.ts';
+import { ThemeColors } from '../editor/ThemeColors';
+import { OsucadIcons } from '../OsucadIcons';
+import { OsucadScreen } from '../OsucadScreen';
+import { IntroSlider } from './IntroSlider';
 
 export class IntroSequence extends OsucadScreen {
-
   @resolved(ThemeColors)
   colors!: ThemeColors;
 
+  @resolved(OsucadConfigManager)
+  config!: OsucadConfigManager;
+
   @dependencyLoader()
   async load() {
+    if (!this.config.get(OsucadSettings.PlayIntroSequence)) {
+      this.schedule(() => this.finish());
+      return;
+    }
+
     this.addInternal(
       new Box({
         relativeSizeAxes: Axes.Both,
@@ -42,7 +52,7 @@ export class IntroSequence extends OsucadScreen {
     });
 
     const slider = new IntroSlider().with({
-      color: 0x7e7e8f,
+      color: 0x7E7E8F,
     });
 
     const circle = new RoundedBox({
@@ -52,9 +62,9 @@ export class IntroSequence extends OsucadScreen {
       size: 64,
       cornerRadius: 32,
       fillAlpha: 0.5,
-      color: 0x7e7e8f,
+      color: 0x7E7E8F,
       outlines: [{
-        color: 0xffffff,
+        color: 0xFFFFFF,
         width: 15,
         alignment: 1,
       }],
@@ -86,7 +96,7 @@ export class IntroSequence extends OsucadScreen {
       filters: [this.alphaFilter],
     }));
 
-    this.addDelay(500, true)
+    this.addDelay(500, true);
 
     this.transformTo('containerAlpha', 0.75, 1000);
     slider.transformTo('snakeInProgress', 1, 1000, EasingFunction.OutCubic);
@@ -121,7 +131,6 @@ export class IntroSequence extends OsucadScreen {
     {
       using _ = this.beginDelayedSequence(900, true);
 
-
       cursor
         .moveToX(-22, 100, EasingFunction.InQuad)
         .moveToY(15, 100, EasingFunction.InQuad)
@@ -135,7 +144,6 @@ export class IntroSequence extends OsucadScreen {
       .scaleTo(1.5)
       .scaleTo(1, 2000, EasingFunction.OutExpo);
 
-
     this.scheduler.addDelayed(() => this.finish(), 2500);
   }
 
@@ -145,25 +153,25 @@ export class IntroSequence extends OsucadScreen {
 
   nextScreenLoaded(nextScreen: OsucadScreen) {
     if (this.#finished)
-      this.#presentNextScreen(nextScreen)
+      this.#presentNextScreen(nextScreen);
     else
-      this.#presentOnFinish = nextScreen
+      this.#presentOnFinish = nextScreen;
   }
 
   finish() {
     this.#finished = true;
-    if(this.#presentOnFinish)
-      this.#presentNextScreen(this.#presentOnFinish)
+    if (this.#presentOnFinish)
+      this.#presentNextScreen(this.#presentOnFinish);
   }
 
   #presentNextScreen(screen: OsucadScreen) {
     const screenStack = this.screenStack;
     this.exit();
-    screenStack.push(screen)
+    screenStack.push(screen);
   }
 
   onExiting(e: ScreenExitEvent): boolean {
-    this.movementContainer.scaleTo(1.5, 300, EasingFunction.InCubic);
+    this.movementContainer?.scaleTo(1.5, 300, EasingFunction.InCubic);
     this.transformTo('containerAlpha', 0, 300);
 
     return super.onExiting(e);
@@ -186,5 +194,4 @@ export class IntroSequence extends OsucadScreen {
   set containerAlpha(value) {
     this.alphaFilter.alpha = value;
   }
-
 }
