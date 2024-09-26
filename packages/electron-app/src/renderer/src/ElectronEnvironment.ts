@@ -1,6 +1,6 @@
 import { EditorEnvironment } from '@osucad/editor';
-import { StableBeatmapStore } from './StableBeatmapStore.ts';
-import { ElectronSkinStore } from './ElectronSkinStore.ts';
+import { StableBeatmapStore } from './StableBeatmapStore';
+import { ElectronSkinStore } from './ElectronSkinStore';
 
 export class ElectronEnvironment extends EditorEnvironment {
   readonly beatmaps = new StableBeatmapStore();

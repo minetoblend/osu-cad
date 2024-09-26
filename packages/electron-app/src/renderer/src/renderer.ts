@@ -1,6 +1,6 @@
 import { OsucadGame, WebGameHost } from '../../../../editor/src';
 import '../assets/main.css';
-import { ElectronEnvironment } from './ElectronEnvironment.ts';
+import { ElectronEnvironment } from './ElectronEnvironment';
 
 
 const environment = new ElectronEnvironment();

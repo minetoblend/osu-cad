@@ -1,9 +1,9 @@
 import { app, BrowserWindow, shell, session } from 'electron';
 import { join } from 'path';
 import { electronApp, is } from '@electron-toolkit/utils';
-import { setupEnvironment } from './ElectronEnvironment.ts';
-import { setupProtocol } from './protocol.ts';
-import { loadOsuStableInfo } from './loadOsuStableInfo.ts';
+import { setupEnvironment } from './ElectronEnvironment';
+import { setupProtocol } from './protocol';
+import { loadOsuStableInfo } from './loadOsuStableInfo';
 
 app.commandLine.appendSwitch ("disable-http-cache");
 

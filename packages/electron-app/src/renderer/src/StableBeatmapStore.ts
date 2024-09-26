@@ -1,9 +1,9 @@
 import { BeatmapStore, EditorContext, loadTexture, StableBeatmapParser } from '@osucad/editor';
 import { BeatmapItemInfo } from 'packages/editor/src/beatmapSelect/BeatmapItemInfo';
 import { OsuBeatmap } from 'osu-db-parser';
-import { BeatmapSettings } from '../../../../editor/src/beatmap/BeatmapSettings.ts';
-import { StableEditorContext } from './StableEditorContext.ts';
-import { IResourcesProvider } from '../../../../editor/src/io/IResourcesProvider.ts';
+import { BeatmapSettings } from '../../../../editor/src/beatmap/BeatmapSettings';
+import { StableEditorContext } from './StableEditorContext';
+import { IResourcesProvider } from '../../../../editor/src/io/IResourcesProvider';
 
 export class StableBeatmapStore extends BeatmapStore {
   async load() {

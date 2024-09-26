@@ -1,12 +1,12 @@
 import { EditorContext, loadTexture, PIXITexture, StableBeatmapParser, Track } from '@osucad/editor';
 import { Beatmap } from 'packages/editor/src/beatmap/Beatmap';
 import log from 'electron-log/renderer';
-import { StableResourceStore } from './StableResourceStore.ts';
-import { StableBeatmapEncoder } from '../../../../editor/src/beatmap/StableBeatmapEncoder.ts';
-import { StableBeatmapInfo } from './StableBeatmapStore.ts';
+import { StableResourceStore } from './StableResourceStore';
+import { StableBeatmapEncoder } from '../../../../editor/src/beatmap/StableBeatmapEncoder';
+import { StableBeatmapInfo } from './StableBeatmapStore';
 import { join } from 'path';
-import { IResourcesProvider } from '../../../../editor/src/io/IResourcesProvider.ts';
-import { OsucadSettings } from '../../../../editor/src/config/OsucadSettings.ts';
+import { IResourcesProvider } from '../../../../editor/src/io/IResourcesProvider';
+import { OsucadSettings } from '../../../../editor/src/config/OsucadSettings';
 
 const logger = log.create({ logId: 'ElectronEditorContext' });
 

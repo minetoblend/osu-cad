@@ -2,7 +2,7 @@ import { protocol, net } from 'electron';
 import fs from 'node:fs/promises';
 import { join, relative, resolve } from 'path';
 import log from 'electron-log/main';
-import { OsuStableInfo } from './loadOsuStableInfo.ts';
+import { OsuStableInfo } from './loadOsuStableInfo';
 import createWorker from './BeatmapLoadWorker.ts?nodeWorker';
 import { OsuBeatmap } from 'osu-db-parser';
 
