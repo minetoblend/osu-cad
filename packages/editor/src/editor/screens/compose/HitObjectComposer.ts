@@ -358,7 +358,7 @@ export class HitObjectComposer
 
         const center = parent.toLocalSpace(screenSpaceCenter).sub(parent.childSize.scale(0.5));
 
-        background.moveTo(center.div(parent.childSize), 0, EasingFunction.OutExpo);
+        background.moveTo(center.div(parent.childSize), 500, EasingFunction.OutExpo);
 
         const screenSpaceHeight = this.playfield.toScreenSpace(new Vec2(0, 480)).y - this.playfield.toScreenSpace(new Vec2()).y;
 
@@ -368,7 +368,7 @@ export class HitObjectComposer
 
         console.log('background size', width, height);
 
-        background.resizeTo(new Vec2(width, height), 0, EasingFunction.OutExpo);
+        background.resizeTo(new Vec2(width, height), 500, EasingFunction.OutExpo);
       });
     });
   }
