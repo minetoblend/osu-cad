@@ -49,6 +49,7 @@ export class StableCirclePiece extends CompositeDrawable {
         texture: this.skin.getTexture(circleName),
         anchor: Anchor.Center,
         origin: Anchor.Center,
+        alpha: 0.25,
       }),
       new DrawableSprite({
         texture: this.skin.getTexture(`${circleName}overlay`),
@@ -106,6 +107,7 @@ export class StableCirclePiece extends CompositeDrawable {
   #updateInitialTransforms() {
     this.comboNumber?.fadeIn();
     this.#circle.fadeColor(this.accentColor.value);
+    this.#circle.fadeTo(0.25);
   }
 
   #updateStartTimeTransforms() {
@@ -114,6 +116,7 @@ export class StableCirclePiece extends CompositeDrawable {
     }
     else {
       this.#circle.fadeColor(0xFFFFFF);
+      this.#circle.fadeIn();
     }
   }
 

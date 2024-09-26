@@ -1,14 +1,7 @@
 import type { Container } from 'pixi.js';
 import type { Slider } from '../../beatmap/hitObjects/Slider';
-import { Bindable, dependencyLoader, Drawable, resolved, Vec2 } from 'osucad-framework';
-import {
-  Color,
-  CustomRenderPipe,
-  Mesh,
-  MeshGeometry,
-  RenderContainer,
-  WebGLRenderer,
-} from 'pixi.js';
+import { Bindable, dependencyLoader, Drawable, PIXIContainer, resolved, Vec2 } from 'osucad-framework';
+import { AlphaFilter, Color, CustomRenderPipe, Mesh, MeshGeometry } from 'pixi.js';
 import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection';
 import { animate } from '../../utils/animate';
 import { ThemeColors } from '../ThemeColors';
@@ -37,10 +30,9 @@ export class DrawableSliderBody extends Drawable {
         ],
         radius: this.radius,
         expectedDistance: 0,
-
       })),
       shader: this.shader,
-      renderable: false,
+      blendMode: 'none',
     });
 
     endCapGeometry ??= generateEndCap();
@@ -48,13 +40,13 @@ export class DrawableSliderBody extends Drawable {
     this.endCap = new Mesh({
       geometry: endCapGeometry!,
       shader: this.shader,
-      renderable: false,
+      blendMode: 'none',
     });
 
     this.startCap = new Mesh({
       geometry: endCapGeometry!,
       shader: this.shader,
-      renderable: false,
+      blendMode: 'none',
     });
 
     this.mesh.state.depthTest = true;
@@ -116,42 +108,14 @@ export class DrawableSliderBody extends Drawable {
     return this.hitObject.scale * 60 * 1.25;
   }
 
-  readonly #body = new RenderContainer({
-    render: (renderer) => {
-      if (renderer instanceof WebGLRenderer) {
-        const gl = renderer.gl;
+  #alphaFilter = new AlphaFilter({
+    alpha: 1,
+  });
 
-        gl.clearDepth(1);
-        gl.clear(gl.DEPTH_BUFFER_BIT);
-
-        gl.colorMask(false, false, false, false);
-
-        this.mesh.renderable = true;
-        this.endCap.renderable = true;
-        this.startCap.renderable = true;
-
-        renderer.renderPipes.mesh.execute(this.mesh);
-
-        renderer.renderPipes.mesh.execute(this.startCap);
-
-        renderer.renderPipes.mesh.execute(this.endCap);
-
-        gl.colorMask(true, true, true, true);
-        gl.depthFunc(gl.EQUAL);
-
-        renderer.renderPipes.mesh.execute(this.mesh);
-
-        renderer.renderPipes.mesh.execute(this.startCap);
-
-        renderer.renderPipes.mesh.execute(this.endCap);
-
-        gl.depthFunc(gl.LESS);
-
-        this.mesh.renderable = false;
-        this.endCap.renderable = false;
-        this.startCap.renderable = false;
-      }
-    },
+  readonly #body = new PIXIContainer({
+    filters: [
+      this.#alphaFilter,
+    ],
   });
 
   @resolved(ThemeColors)
@@ -223,7 +187,7 @@ export class DrawableSliderBody extends Drawable {
 
   @dependencyLoader()
   load() {
-    this.accentColor.addOnChangeListener(color => this.shader.comboColor = new Color(color.value), {
+    this.accentColor.addOnChangeListener(color => this.shader.comboColor = new Color(color.value).setAlpha(0.9), {
       immediate: true,
     });
   }
@@ -244,6 +208,14 @@ export class DrawableSliderBody extends Drawable {
       return;
     }
     this.selected = this.hitObject!.subSelection.type === SliderSelectionType.Body;
+  }
+
+  get alpha() {
+    return this.#alphaFilter.alpha;
+  }
+
+  set alpha(value) {
+    this.#alphaFilter.alpha = value;
   }
 }
 

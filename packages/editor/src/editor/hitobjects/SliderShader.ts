@@ -119,7 +119,7 @@ export class SliderShader extends Shader implements TextureShader {
       },
       uAlpha: { value: 1.0, type: 'f32' },
       uSnakeInProgress: { value: 0.0, type: 'f32' },
-      uSnakeOutProgress: { value: 0.0, type: 'f32' },
+      uSnakeOutProgress: { value: -0.1, type: 'f32' },
     });
 
     super({
