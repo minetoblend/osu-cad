@@ -1,3 +1,6 @@
+import type {
+  KeyDownEvent,
+} from 'osucad-framework';
 import type { ComposeTool } from './tools/ComposeTool';
 import {
   Anchor,
@@ -10,7 +13,6 @@ import {
   EasingFunction,
   Invalidation,
   Key,
-  KeyDownEvent,
   LayoutMember,
   resolved,
 } from 'osucad-framework';
@@ -18,7 +20,6 @@ import { BackdropBlurFilter } from 'pixi-filters';
 import { OsucadConfigManager } from '../../../config/OsucadConfigManager';
 import { OsucadSettings } from '../../../config/OsucadSettings';
 import { BeatSnapDivisorSelector } from '../../BeatSnapDivisorSelector';
-import { Editor } from '../../Editor';
 import { Corner, EditorCornerPiece } from '../../EditorCornerPiece';
 import { HitsoundPlayer } from '../../HitsoundPlayer';
 import { ComposeScreenTimeline } from '../../timeline/ComposeScreenTimeline';
@@ -85,7 +86,7 @@ export class ComposeScreen extends EditorScreen {
     });
     filter.padding = 30;
 
-    const timeline = this.timeline =  new ComposeScreenTimeline();
+    const timeline = this.timeline = new ComposeScreenTimeline();
 
     this.addInternal(
       this.#topBar = new Container({
@@ -147,7 +148,7 @@ export class ComposeScreen extends EditorScreen {
   protected loadComplete() {
     super.loadComplete();
 
-    this.findClosestParentOfType(Editor)?.requestSelectTool.addListener(() =>
+    this.editor.requestSelectTool.addListener(() =>
       this.#activeTool.value = new SelectTool(),
     );
   }
@@ -178,8 +179,7 @@ export class ComposeScreen extends EditorScreen {
 
     this.#topBar.moveToY(-70).moveToY(0, 500, EasingFunction.OutExpo);
 
-    this.#composer.show()
-
+    this.#composer.show();
   }
 
   hide() {
@@ -187,13 +187,12 @@ export class ComposeScreen extends EditorScreen {
 
     this.#topBar.moveToY(-70, 500, EasingFunction.OutExpo);
 
-    this.#composer.hide()
+    this.#composer.hide();
   }
 
   timeline!: ComposeScreenTimeline;
 
   onKeyDown(e: KeyDownEvent): boolean {
-
     if (e.key === Key.F4) {
       this.timeline.alpha = this.timeline.alpha === 0 ? 1 : 0;
       return true;

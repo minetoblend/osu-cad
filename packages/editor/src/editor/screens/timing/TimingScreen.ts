@@ -1,4 +1,5 @@
 import type { DependencyContainer } from 'osucad-framework';
+import type { EditorBackground } from '../../EditorBackground.ts';
 import { Axes, Box, Container, dependencyLoader, Direction, EasingFunction, MaskingContainer, resolved } from 'osucad-framework';
 import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
 import { MainScrollContainer } from '../../MainScrollContainer';
@@ -80,12 +81,18 @@ export class TimingScreen extends EditorScreen {
   selection!: ControlPointSelection;
 
   show() {
+    super.show();
+
     this.moveToY(300).moveToY(0, 300, EasingFunction.OutExpo);
-    this.fadeInFromZero(300);
   }
 
   hide() {
     this.moveToY(300, 400, EasingFunction.OutExpo);
     this.fadeOut(300);
+  }
+
+  adjustBackground(background: EditorBackground) {
+    background.scaleTo(1.35, 500, EasingFunction.OutExpo)
+      .fadeTo(0.35, 500, EasingFunction.OutQuad);
   }
 }

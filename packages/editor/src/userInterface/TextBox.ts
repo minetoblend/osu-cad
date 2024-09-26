@@ -1,9 +1,9 @@
-import {
+import type {
   Bindable,
   ClickEvent,
   IKeyBindingHandler,
   KeyBindingPressEvent,
-  KeyDownEvent, KeyUpEvent, Scheduler,
+  KeyDownEvent,
 } from 'osucad-framework';
 import type { DoubleClickEvent } from '../../../framework/src/input/events/DoubleClickEvent';
 import {
@@ -22,6 +22,7 @@ import {
   MouseButton,
   PlatformAction,
   resolved,
+  Scheduler,
   TextInputSource,
 } from 'osucad-framework';
 import { BitmapFontManager } from 'pixi.js';
@@ -46,7 +47,6 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
   }
 
   onKeyBindingPressed(e: KeyBindingPressEvent<PlatformAction>): boolean {
-    console.log('onKeyBindingPressed', e);
     if (!this.hasFocus)
       return false;
 
@@ -116,10 +116,7 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
         return false;
     }
 
-    let wasBlocking = this.#textInputBlocking;
     this.#textInputScheduler.update();
-
-    console.log('wasBlocking', wasBlocking, 'isBlocking', this.#textInputBlocking);
 
     return super.onKeyDown(e) || this.#textInputBlocking;
   }
@@ -268,7 +265,8 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
       const positionEnd = this.getPositionAt(this.cursor.rangeRight);
 
       this.#caret.setPosition(position, positionEnd - position);
-    } else {
+    }
+    else {
       this.#caret.setPosition(position);
     }
   }
@@ -406,9 +404,11 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
         position = this.#getStartOfWordBackward(this.text, position);
 
       this.cursor.moveTo(clamp(position, 0, this.text.length));
-    } else if (this.cursor.isRange) {
+    }
+    else if (this.cursor.isRange) {
       this.cursor.moveTo(position);
-    } else {
+    }
+    else {
       this.cursor.moveTo(clamp(position + direction, 0, this.text.length));
     }
   }
@@ -505,7 +505,8 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
 
       if (position >= layout.width * layout.scale) {
         cursorPosition = this.text.length;
-      } else {
+      }
+      else {
         for (let i = 0; i < line.charPositions.length; i++) {
           cursorPosition = i;
 
@@ -515,7 +516,8 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
             if (position < boundary) {
               break;
             }
-          } else {
+          }
+          else {
             if (position < line.charPositions[i] * layout.scale) {
               break;
             }
@@ -573,7 +575,8 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
       if (!Number.isNaN(value)) {
         bindable.value = value;
         bindable.triggerChange();
-      } else {
+      }
+      else {
         this.text = format(bindable.value);
       }
     });
@@ -618,7 +621,8 @@ class Caret extends CompositeDrawable {
       this.fadeTo(0.6);
       this.#caret.alpha = 1;
       this.resizeWidthTo(width, 100, EasingFunction.OutExpo);
-    } else {
+    }
+    else {
       this.moveToX(position - 1, 100, EasingFunction.OutExpo);
       this.fadeIn(100, EasingFunction.OutExpo);
       this.resizeWidthTo(2, 100, EasingFunction.OutExpo);
@@ -637,10 +641,12 @@ class Caret extends CompositeDrawable {
 
       if (time < this.flashInRatio) {
         this.#caret.alpha = animate(time, 0, this.flashInRatio, 0.75, 1);
-      } else {
+      }
+      else {
         this.#caret.alpha = animate(time, this.flashInRatio, 1, 1, 0.5);
       }
-    } else {
+    }
+    else {
       this.#caret.alpha = 0.4;
     }
   }

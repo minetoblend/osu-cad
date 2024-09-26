@@ -1,7 +1,10 @@
-import type { ScreenTransitionEvent } from 'osucad-framework';
+import type { Bindable, DependencyContainer, ScreenTransitionEvent } from 'osucad-framework';
+import type { BackgroundScreen } from '../BackgroundScreen.ts';
 import type { BeatmapStore } from '../environment/BeatmapStore';
-import { Anchor, Axes, Box, Container, dependencyLoader, EasingFunction, resolved } from 'osucad-framework';
+import type { BeatmapItemInfo } from './BeatmapItemInfo.ts';
+import { Anchor, Axes, Container, dependencyLoader, EasingFunction, resolved } from 'osucad-framework';
 import { EditorEnvironment } from '../environment/EditorEnvironment';
+import { GlobalBeatmapBindable } from '../GlobalBeatmapBindable.ts';
 import { GlobalSongPlayback } from '../GlobalSongPlayback';
 import { OsucadScreen } from '../OsucadScreen';
 import { BeatmapCarousel } from './BeatmapCarousel';
@@ -13,6 +16,10 @@ import { BeatmapSelectHeader } from './BeatmapSelectHeader';
 export class BeatmapSelect extends OsucadScreen {
   getPath(): string {
     return '/';
+  }
+
+  createBackground(): BackgroundScreen | null {
+    return new BeatmapSelectBackground();
   }
 
   constructor() {
@@ -29,21 +36,15 @@ export class BeatmapSelect extends OsucadScreen {
 
   filter!: BeatmapSelectFilter;
 
+  beatmap!: Bindable<BeatmapItemInfo | null>;
+
   @dependencyLoader()
-  load() {
+  load(dependencies: DependencyContainer) {
     this.beatmapStore = this.environment.beatmaps;
 
     this.addInternal(
       this.filter = new BeatmapSelectFilter(this.beatmapStore.beatmaps),
     );
-
-    this.addInternal(new Box({
-      relativeSizeAxes: Axes.Both,
-      color: 0x0B0B0D,
-      size: 2,
-      anchor: Anchor.Center,
-      origin: Anchor.Center,
-    }));
 
     let dropzone: BeatmapImportDropzone;
 
@@ -53,7 +54,6 @@ export class BeatmapSelect extends OsucadScreen {
         anchor: Anchor.Center,
         origin: Anchor.Center,
         children: [
-          this.#background = new BeatmapSelectBackground(),
           this.#carousel = new BeatmapCarousel(this.beatmapStore.beatmaps)
             .with({
               width: 0.6,
@@ -79,8 +79,10 @@ export class BeatmapSelect extends OsucadScreen {
     this.#carousel.bleedTop = 300;
     this.#carousel.bleedBottom = 300;
 
+    this.beatmap = dependencies.resolve(GlobalBeatmapBindable).getBoundCopy();
+
     this.#carousel.selectionChanged.addListener((beatmap) => {
-      this.#background.currentBeatmap = beatmap;
+      this.beatmap.value = beatmap;
       this.globalSongPlayback.playAudio(beatmap.audioUrl, beatmap.previewPoint ?? 10000);
     });
 
@@ -100,8 +102,6 @@ export class BeatmapSelect extends OsucadScreen {
   @resolved(GlobalSongPlayback)
   globalSongPlayback!: GlobalSongPlayback;
 
-  #background!: BeatmapSelectBackground;
-
   #carousel!: BeatmapCarousel;
 
   #isActive = true;
@@ -116,11 +116,12 @@ export class BeatmapSelect extends OsucadScreen {
     this.#menu.moveToX(-500, 600, EasingFunction.OutExpo);
     this.#menu.fadeOut(400, EasingFunction.OutExpo);
 
-    this.#background.fadeTo(0, 600);
-
     this.#header.hide();
 
-    this.#background.scaleTo(0.85, 1000, EasingFunction.OutExpo);
+    this.applyToBackground((background) => {
+      background.scaleTo(0.85, 700, EasingFunction.OutExpo);
+      background.fadeTo(0.2, 1000, EasingFunction.OutExpo);
+    });
 
     // noop transform to delay when the container gets suspended
     this.fadeIn(600);
@@ -129,10 +130,18 @@ export class BeatmapSelect extends OsucadScreen {
   }
 
   onEntering(e: ScreenTransitionEvent) {
-    this.onResuming(e)
+    super.onEntering(e);
+
+    this.show();
   }
 
   onResuming(e: ScreenTransitionEvent) {
+    super.onResuming(e);
+
+    this.show();
+  }
+
+  show() {
     this.#isActive = true;
 
     this.#carousel.moveToX(0, 400, EasingFunction.OutQuart);
@@ -145,14 +154,14 @@ export class BeatmapSelect extends OsucadScreen {
 
     this.#header.show();
 
-    this.#background.fadeTo(0.3, 300);
     this.globalSongPlayback.resume();
 
-    this.#background.scaleTo(1, 500, EasingFunction.OutExpo);
+    this.applyToBackground((background) => {
+      background.scaleTo(1, 500, EasingFunction.OutExpo);
+      background.fadeTo(1, 300, EasingFunction.OutExpo);
+    });
 
     this.fadeInFromZero(400);
-
-    super.onResuming(e);
   }
 
   get propagatePositionalInputSubTree(): boolean {

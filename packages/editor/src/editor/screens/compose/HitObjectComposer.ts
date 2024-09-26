@@ -1,44 +1,48 @@
-import {
+import type {
   Bindable,
-  BindableBoolean, EasingFunction,
   IKeyBindingHandler,
-  Key,
+  InvalidationSource,
   KeyBindingPressEvent,
   KeyDownEvent,
 } from 'osucad-framework';
 import type { IPositionSnapProvider } from './snapping/IPositionSnapProvider';
-import { PositionSnapTarget, SnapTarget } from './snapping/SnapTarget';
+import type { SnapTarget } from './snapping/SnapTarget';
 import type { ComposeTool } from './tools/ComposeTool';
 import type { DrawableComposeTool } from './tools/DrawableComposeTool';
 import {
   Axes,
+  BindableBoolean,
   Container,
   dependencyLoader,
   DrawSizePreservingFillContainer,
+  EasingFunction,
+  Invalidation,
+  Key,
   PlatformAction,
   resolved,
   Vec2,
 } from 'osucad-framework';
+import { Beatmap } from '../../../beatmap/Beatmap';
 import { HitObjectList } from '../../../beatmap/hitObjects/HitObjectList';
 import { DeleteHitObjectCommand } from '../../commands/DeleteHitObjectCommand';
 import { UpdateHitObjectCommand } from '../../commands/UpdateHitObjectCommand';
 import { CommandManager } from '../../context/CommandManager';
 import { HitObjectClipboard } from '../../CopyPasteHandler';
+import { Editor } from '../../Editor.ts';
 import { EditorAction } from '../../EditorAction';
 import { EditorClock } from '../../EditorClock';
 import { OsuPlayfield } from '../../hitobjects/OsuPlayfield';
 import { Playfield } from '../../hitobjects/Playfield';
 import { NEW_COMBO } from '../../InjectionTokens';
-import { BeatmapBackground } from '../../playfield/BeatmapBackground';
 import { PlayfieldGrid } from '../../playfield/PlayfieldGrid';
+import { ComposeTogglesBar } from './ComposeTogglesBar';
+import { ComposeToolBar } from './ComposeToolBar';
+import { ComposeToolbarButton } from './ComposeToolbarButton.ts';
 import { EditorSelection } from './EditorSelection';
 import { HitObjectUtils } from './HitObjectUtils';
 import { SelectionOverlay } from './selection/SelectionOverlay';
-import { HitObjectSnapProvider } from './snapping/HitObjectSnapProvider';
-import { ComposeToolBar } from './ComposeToolBar';
-import { ComposeTogglesBar } from './ComposeTogglesBar';
 import { GridSnapProvider } from './snapping/GridSnapProvider';
-import { Beatmap } from '../../../beatmap/Beatmap';
+import { HitObjectSnapProvider } from './snapping/HitObjectSnapProvider';
 
 export class HitObjectComposer
   extends Container
@@ -64,21 +68,24 @@ export class HitObjectComposer
     this.addAllInternal(this.hitObjectUtils = new HitObjectUtils());
 
     this.addAllInternal(
-      this.#playfieldContainer = new DrawSizePreservingFillContainer({
-        targetDrawSize: { x: 512, y: 384 },
-        child: new Container({
-          width: 512,
-          height: 384,
-          children: [
-            new BeatmapBackground(),
-            new PlayfieldGrid(),
-            this.playfield = new OsuPlayfield().with({
-              clock: this.editorClock,
-              processCustomClock: false,
-            }),
-            new SelectionOverlay(),
-            this.#toolContainer,
-          ],
+      new Container({
+        relativeSizeAxes: Axes.Both,
+        padding: { horizontal: 20 + ComposeToolbarButton.SIZE },
+        child: this.#playfieldContainer = new DrawSizePreservingFillContainer({
+          targetDrawSize: { x: 512, y: 384 },
+          child: new Container({
+            width: 512,
+            height: 384,
+            children: [
+              new PlayfieldGrid(),
+              this.playfield = new OsuPlayfield().with({
+                clock: this.editorClock,
+                processCustomClock: false,
+              }),
+              new SelectionOverlay(),
+              this.#toolContainer,
+            ],
+          }),
         }),
       }),
     );
@@ -90,7 +97,7 @@ export class HitObjectComposer
 
     this.snapProviders = [
       new HitObjectSnapProvider(this.hitObjects, this.selection, this.editorClock),
-      new GridSnapProvider(this.beatmap.settings.editor.gridSizeBindable, this.gridSnapEnabled,),
+      new GridSnapProvider(this.beatmap.settings.editor.gridSizeBindable, this.gridSnapEnabled),
     ];
 
     this.add(this.#toolbarContainer = new Container({
@@ -133,6 +140,12 @@ export class HitObjectComposer
         },
         { immediate: true },
       );
+    });
+
+    this.#playfieldContainer.content.invalidated.addListener(([_, invalidation]) => {
+      if ((invalidation & (Invalidation.DrawSize | Invalidation.Transform)) > 0) {
+        this.scheduler.addOnce(this.updateBackgroundSize, this);
+      }
     });
   }
 
@@ -309,6 +322,16 @@ export class HitObjectComposer
     this.#toolbarContainer.moveToY(-70).moveToY(0, 500, EasingFunction.OutExpo);
     this.#toolBar.moveToX(-100).moveToX(0, 500, EasingFunction.OutExpo);
     this.#togglesBar.moveToX(100).moveToX(0, 500, EasingFunction.OutExpo);
+
+    this.scheduler.addOnce(this.updateBackgroundSize, this);
+  }
+
+  override onInvalidate(invalidation: Invalidation, source: InvalidationSource): boolean {
+    if ((invalidation & Invalidation.DrawSize) > 0) {
+      this.scheduler.addOnce(this.updateBackgroundSize, this);
+    }
+
+    return super.onInvalidate(invalidation, source);
   }
 
   override hide() {
@@ -317,5 +340,36 @@ export class HitObjectComposer
     this.#toolbarContainer.moveToY(-70, 500, EasingFunction.OutExpo);
     this.#toolBar.moveToX(-100, 500, EasingFunction.OutExpo);
     this.#togglesBar.moveToX(100, 500, EasingFunction.OutExpo);
+  }
+
+  updateBackgroundSize() {
+    const editor = this.findClosestParentOfType(Editor)!;
+
+    if (!this.playfield.isLoaded) {
+      this.scheduler.addOnce(this.updateBackgroundSize, this);
+      return;
+    }
+
+    editor.scheduler.add(() => {
+      editor.applyToBackground((background) => {
+        const parent = background.parent!;
+
+        const screenSpaceCenter = this.playfield.toScreenSpace(new Vec2(512 / 2, 384 / 2));
+
+        const center = parent.toLocalSpace(screenSpaceCenter).sub(parent.childSize.scale(0.5));
+
+        background.moveTo(center.div(parent.childSize), 0, EasingFunction.OutExpo);
+
+        const screenSpaceHeight = this.playfield.toScreenSpace(new Vec2(0, 480)).y - this.playfield.toScreenSpace(new Vec2()).y;
+
+        const height = (parent.toLocalSpace(new Vec2(0, screenSpaceHeight)).y - parent.toLocalSpace(new Vec2()).y) / parent.childSize.y;
+
+        const width = height * (640 / 480) * parent.childSize.y / parent.childSize.x;
+
+        console.log('background size', width, height);
+
+        background.resizeTo(new Vec2(width, height), 0, EasingFunction.OutExpo);
+      });
+    });
   }
 }

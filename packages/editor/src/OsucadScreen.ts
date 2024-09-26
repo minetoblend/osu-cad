@@ -1,5 +1,46 @@
-import { Screen } from 'osucad-framework';
+import type { ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
+import type { BackgroundScreen } from './BackgroundScreen.ts';
+import { resolved, Screen } from 'osucad-framework';
+import { BackgroundScreenStack } from './BackgroundScreenStack.ts';
 
 export abstract class OsucadScreen extends Screen {
   getPath?(): string;
+
+  createBackground(): BackgroundScreen | null {
+    return null;
+  }
+
+  @resolved(BackgroundScreenStack, true)
+  protected backgroundStack?: BackgroundScreenStack;
+
+  #ownedBackground: BackgroundScreen | null = null;
+
+  onEntering(e: ScreenTransitionEvent) {
+    super.onEntering(e);
+
+    console.log(this.backgroundStack, this.dependencies);
+    if (this.backgroundStack) {
+      const background = this.#ownedBackground = this.createBackground();
+
+      console.log(background, this);
+
+      if (background)
+        this.backgroundStack.push(background);
+    }
+  }
+
+  onExiting(e: ScreenExitEvent): boolean {
+    if (super.onExiting(e))
+      return true;
+
+    if (this.#ownedBackground && this.backgroundStack?.currentScreen === this.#ownedBackground)
+      this.#ownedBackground.exit();
+
+    return false;
+  }
+
+  applyToBackground(callback: (background: BackgroundScreen) => void) {
+    if (this.#ownedBackground)
+      callback(this.#ownedBackground);
+  }
 }

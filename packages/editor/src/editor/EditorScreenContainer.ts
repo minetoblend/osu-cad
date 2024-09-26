@@ -28,6 +28,9 @@ export class EditorScreenContainer extends Container {
 
     this.#currentScreen = screen;
     this.addInternal(screen);
-    screen.show();
+    if (screen.isLoaded)
+      screen.show();
+    else
+      screen.onLoadComplete.addListener(() => screen.show());
   }
 }

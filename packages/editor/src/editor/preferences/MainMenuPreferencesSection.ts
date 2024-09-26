@@ -27,6 +27,11 @@ export class MainMenuPreferencesSection extends PreferencesPanel {
         'Blur Backgrounds',
         this.config.getBindable(OsucadSettings.SongSelectBackgroundBlur)!,
       ),
+      new PreferencesToggle(
+        'Play Intro Sequence',
+        this.config.getBindable(OsucadSettings.PlayIntroSequence)!,
+
+      ),
     ];
   }
 }

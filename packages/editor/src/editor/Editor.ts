@@ -2,9 +2,12 @@ import type {
   IKeyBindingHandler,
   KeyBindingPressEvent,
   KeyDownEvent,
+  ScreenExitEvent,
+  ScreenTransitionEvent,
   ScrollEvent,
   UIEvent,
 } from 'osucad-framework';
+import type { BackgroundScreen } from '../BackgroundScreen.ts';
 import type { EditorContext } from './context/EditorContext';
 import {
   Action,
@@ -13,7 +16,6 @@ import {
   AudioManager,
   Axes,
   Bindable,
-  Box,
   clamp,
   Container,
   EasingFunction,
@@ -31,6 +33,7 @@ import { NotificationOverlay } from '../notifications/NotificationOverlay';
 import { OsucadScreen } from '../OsucadScreen';
 import { BeatmapSampleStore } from './BeatmapSampleStore';
 import { EditorAction } from './EditorAction';
+import { EditorBackground } from './EditorBackground.ts';
 import { EditorBottomBar } from './EditorBottomBar';
 import { EditorClock } from './EditorClock';
 import { EditorMixer } from './EditorMixer';
@@ -52,11 +55,6 @@ export class Editor
     this.alpha = 0;
     this.anchor = Anchor.Center;
     this.origin = Anchor.Center;
-
-    this.addInternal(new Box({
-      color: 0x00000,
-      relativeSizeAxes: Axes.Both,
-    }));
 
     this.drawNode.enableRenderGroup();
   }
@@ -198,6 +196,16 @@ export class Editor
       case Key.ArrowDown:
         this.#seekControlPoint(e, -1);
         return true;
+
+      case Key.F1:
+        this.currentScreen.value = EditorScreenType.Compose;
+        return true;
+      case Key.F3:
+        this.currentScreen.value = EditorScreenType.Timing;
+        return true;
+      case Key.F4:
+        this.currentScreen.value = EditorScreenType.Setup;
+        return true;
     }
 
     return false;
@@ -218,10 +226,10 @@ export class Editor
 
     const controlPoint
       = direction < 1
-      ? [...controlPointInfo.groups].reverse().find(cp => cp.time < this.#clock.currentTimeAccurate)
-      : controlPointInfo.groups.find(
-        cp => cp.time > this.#clock.currentTimeAccurate,
-      );
+        ? [...controlPointInfo.groups].reverse().find(cp => cp.time < this.#clock.currentTimeAccurate)
+        : controlPointInfo.groups.find(
+          cp => cp.time > this.#clock.currentTimeAccurate,
+        );
 
     if (controlPoint) {
       this.#clock.seek(controlPoint.time);
@@ -256,7 +264,8 @@ export class Editor
           || this.#clock.currentTimeAccurate === firstObjectTime
         ) {
           this.#clock.seek(0);
-        } else {
+        }
+        else {
           this.#clock.seek(firstObjectTime);
         }
         return true;
@@ -264,7 +273,8 @@ export class Editor
       case EditorAction.Play:
         if (this.#clock.isRunning) {
           this.#clock.stop();
-        } else {
+        }
+        else {
           this.#clock.start();
         }
         return true;
@@ -330,11 +340,13 @@ export class Editor
 
     this.#clock.beatSnapDivisor.value
       = possibleSnapValues[
-      clamp(index + change, 0, possibleSnapValues.length - 1)
+        clamp(index + change, 0, possibleSnapValues.length - 1)
       ];
   }
 
-  onEntering(): boolean {
+  onEntering(e: ScreenTransitionEvent): boolean {
+    super.onEntering(e);
+
     this.fadeIn(500);
 
     this.#topBar.y = -100;
@@ -354,7 +366,9 @@ export class Editor
     return false;
   }
 
-  onExiting(): boolean {
+  onExiting(e: ScreenExitEvent): boolean {
+    if (super.onExiting(e))
+      return true;
     if (this.#exitFromError) {
       this.#exited = true;
       return false;
@@ -383,7 +397,8 @@ export class Editor
   updateSubTree(): boolean {
     try {
       return super.updateSubTree();
-    } catch (e) {
+    }
+    catch (e) {
       console.error(e);
 
       if (!this.#exited) {
@@ -406,5 +421,9 @@ export class Editor
     super.update();
 
     this.context.beatmap.hitObjects.applyDefaultsWhereNeeded();
+  }
+
+  createBackground(): BackgroundScreen | null {
+    return new EditorBackground(this.context.backgroundBindable);
   }
 }

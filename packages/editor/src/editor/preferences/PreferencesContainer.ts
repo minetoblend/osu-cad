@@ -1,16 +1,5 @@
-import type {
-  ContainerOptions,
-  IKeyBindingHandler,
-  KeyBindingPressEvent,
-} from 'osucad-framework';
-import gsap from 'gsap';
-import {
-  Anchor,
-  Axes,
-  Bindable,
-  Container,
-  dependencyLoader,
-} from 'osucad-framework';
+import type { ContainerOptions, IKeyBindingHandler, KeyBindingPressEvent } from 'osucad-framework';
+import { Anchor, Axes, Bindable, Container, dependencyLoader, EasingFunction } from 'osucad-framework';
 import { EditorAction } from '../EditorAction';
 import { MouseTrap } from '../MouseTrap';
 import { Preferences } from './Preferences';
@@ -81,40 +70,22 @@ export class PreferencesContainer
     if (visible) {
       this.#closeTrap.isActive = true;
 
-      gsap.to(this.#preferences, {
-        x: 0,
-        duration: 0.4,
-        ease: 'power4.out',
-      });
+      this.#preferences.moveToX(0, 400, EasingFunction.OutQuart);
 
-      gsap.to(this.#content, {
-        x: 50,
-        scaleX: 0.9,
-        scaleY: 0.9,
-        alpha: 0.5,
-        duration: 0.4,
-        ease: 'power4.out',
-      });
+      this.#content.moveToX(50, 400, EasingFunction.OutQuart);
+      this.#content.scaleTo(0.9, 400, EasingFunction.OutQuart);
+      this.#content.moveToY(50, 400, EasingFunction.OutQuart);
 
       this.#preferences.show();
     }
     else {
       this.#closeTrap.isActive = false;
 
-      gsap.to(this.#preferences, {
-        x: -1,
-        duration: 0.4,
-        ease: 'power4.out',
-      });
+      this.#preferences.moveToX(-1, 400, EasingFunction.OutQuart);
 
-      gsap.to(this.#content, {
-        x: 0,
-        scaleX: 1,
-        scaleY: 1,
-        alpha: 1,
-        duration: 0.4,
-        ease: 'power4.out',
-      });
+      this.#content.moveToX(0, 400, EasingFunction.OutQuart);
+      this.#content.scaleTo(1, 400, EasingFunction.OutQuart);
+      this.#content.moveToY(0, 400, EasingFunction.OutQuart);
 
       this.#preferences.hide();
     }

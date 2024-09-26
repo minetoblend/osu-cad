@@ -1,12 +1,16 @@
 import type {
+  Bindable,
+  DependencyContainer,
   GameHost,
+  ScreenTransitionEvent,
+  ValueChangedEvent,
 } from 'osucad-framework';
 import type { BeatmapItemInfo } from './BeatmapItemInfo';
 import {
   Anchor,
   Axes,
   BindableBoolean,
-  CompositeDrawable,
+  Box,
   Container,
   dependencyLoader,
   DrawableSprite,
@@ -16,11 +20,15 @@ import {
   loadTexture,
   resolved,
 } from 'osucad-framework';
+
 import { BlurFilter } from 'pixi.js';
+import { BackgroundScreen } from '../BackgroundScreen.ts';
 import { OsucadConfigManager } from '../config/OsucadConfigManager';
 import { OsucadSettings } from '../config/OsucadSettings';
+import { EditorBackground } from '../editor/EditorBackground.ts';
+import { GlobalBeatmapBindable } from '../GlobalBeatmapBindable.ts';
 
-export class BeatmapSelectBackground extends CompositeDrawable {
+export class BeatmapSelectBackground extends BackgroundScreen {
   constructor() {
     super();
 
@@ -28,30 +36,38 @@ export class BeatmapSelectBackground extends CompositeDrawable {
     this.anchor = Anchor.Center;
     this.origin = Anchor.Center;
 
-    this.alpha = 0.3;
-
-    this.#content.drawNode.filters = [
-      this.blurFilter = new BlurFilter({
-        strength: 10,
-        quality: 3,
-        antialias: 'off',
-        resolution: 0.5,
+    this.addInternal(
+      new Box({
+        relativeSizeAxes: Axes.Both,
+        color: 0x0B0B0D,
+        size: 2,
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
       }),
-    ];
+    );
 
-    this.addInternal(this.#content);
+    this.addInternal(this.#content = new Container({
+      relativeSizeAxes: Axes.Both,
+      scale: 1.2,
+      anchor: Anchor.Center,
+      origin: Anchor.Center,
+      alpha: 0.5,
+      filters: [
+        this.blurFilter = new BlurFilter({
+          strength: 10,
+          quality: 3,
+          antialias: 'off',
+          resolution: 0.5,
+        }),
+      ],
+    }));
   }
+
+  beatmap!: Bindable<BeatmapItemInfo | null>;
 
   blurFilter: BlurFilter;
 
-  #content: Container = new Container({
-    relativeSizeAxes: Axes.Both,
-    scale: 1.2,
-    anchor: Anchor.Center,
-    origin: Anchor.Center,
-  });
-
-  #currentBeatmap: BeatmapItemInfo | null = null;
+  #content: Container;
 
   #currentBackgroundPath: string | null = null;
 
@@ -74,32 +90,23 @@ export class BeatmapSelectBackground extends CompositeDrawable {
   config!: OsucadConfigManager;
 
   @dependencyLoader()
-  load() {
+  load(dependencies: DependencyContainer) {
+    this.beatmap = dependencies.resolve(GlobalBeatmapBindable).getBoundCopy();
+
     this.config.bindWith(OsucadSettings.SongSelectBackgroundBlur, this.backgroundBlur);
 
     this.backgroundBlur.addOnChangeListener(
       e => this.transformTo('blurStrength', e.value ? 10 : 0, 350, EasingFunction.OutExpo),
       { immediate: true },
     );
-  }
 
-  get currentBeatmap(): BeatmapItemInfo | null {
-    return this.#currentBeatmap;
-  }
-
-  set currentBeatmap(value: BeatmapItemInfo | null) {
-    if (this.#currentBeatmap === value)
-      return;
-
-    this.#currentBeatmap = value;
-
-    this.#updateTexture();
+    this.beatmap.addOnChangeListener(e => this.#updateTexture(e), { immediate: true });
   }
 
   #currentSprite: DrawableSprite | null = null;
 
-  async #updateTexture() {
-    const beatmap = this.#currentBeatmap;
+  async #updateTexture(e: ValueChangedEvent<BeatmapItemInfo | null>) {
+    const beatmap = e.value;
 
     const backgroundPath = await beatmap?.backgroundPath();
 
@@ -109,6 +116,7 @@ export class BeatmapSelectBackground extends CompositeDrawable {
     if (this.#currentSprite) {
       this.#currentSprite.fadeOut(300);
       this.#currentSprite.expire();
+      this.#currentSprite = null;
     }
 
     if (!backgroundPath) {
@@ -121,7 +129,7 @@ export class BeatmapSelectBackground extends CompositeDrawable {
     this.#currentBackgroundPath = backgroundPath;
 
     if (texture) {
-      if (this.isDisposed || beatmap !== this.#currentBeatmap) {
+      if (this.isDisposed || beatmap !== this.beatmap.value) {
         texture.destroy(true);
         return;
       }
@@ -147,4 +155,27 @@ export class BeatmapSelectBackground extends CompositeDrawable {
 
   @resolved(GAME_HOST)
   gameHost!: GameHost;
+
+  onEntering(e: ScreenTransitionEvent) {
+    super.onEntering(e);
+
+    this.fadeInFromZero(500);
+  }
+
+  onSuspending(e: ScreenTransitionEvent) {
+    super.onSuspending(e);
+
+    this.fadeOut(500);
+  }
+
+  onResuming(e: ScreenTransitionEvent) {
+    super.onResuming(e);
+
+    this.fadeInFromZero(500);
+
+    if (e.source instanceof EditorBackground) {
+      this.scaleTo(e.source.scale.x / 1.2)
+        .scaleTo(1, 500, EasingFunction.OutExpo);
+    }
+  }
 }

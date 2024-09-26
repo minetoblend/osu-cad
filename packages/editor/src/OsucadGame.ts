@@ -1,4 +1,4 @@
-import type { PIXIRenderer, ScreenStack } from 'osucad-framework';
+import type { PIXIRenderer } from 'osucad-framework';
 import { AudioManager, dependencyLoader, Game, IRenderer, isMobile, resolved } from 'osucad-framework';
 import { RenderTarget } from 'pixi.js';
 import { BeatmapSelect } from './beatmapSelect/BeatmapSelect';
@@ -11,7 +11,9 @@ import { ThemeColors } from './editor/ThemeColors';
 import { BeatmapStore, SkinStore } from './environment';
 import { EditorEnvironment } from './environment/EditorEnvironment';
 import { FpsOverlay } from './FpsOverlay';
+import { GlobalBeatmapBindable } from './GlobalBeatmapBindable.ts';
 import { GlobalSongPlayback } from './GlobalSongPlayback';
+import { IntroSequence } from './introSequence/IntroSequence';
 import { IResourcesProvider } from './io/IResourcesProvider';
 import { MainCursorContainer } from './MainCursorContainer';
 import { DialogContainer } from './modals/DialogContainer';
@@ -23,7 +25,6 @@ import { SkinSwitcher } from './SkinSwitcher';
 import { UIFonts } from './UIFonts';
 import { UISamples } from './UISamples';
 import { UserAvatarCache } from './UserAvatarCache';
-import { IntroSequence } from './introSequence/IntroSequence';
 
 RenderTarget.defaultOptions.depth = true;
 RenderTarget.defaultOptions.stencil = true;
@@ -84,6 +85,8 @@ export class OsucadGame extends Game implements IResourcesProvider {
     const samples = new UISamples(this.audioManager, mixer.userInterface);
     this.dependencies.provide(samples);
 
+    const beatmap = new GlobalBeatmapBindable(null);
+    this.dependencies.provide(beatmap);
 
     let intro: IntroSequence;
 
@@ -123,14 +126,12 @@ export class OsucadGame extends Game implements IResourcesProvider {
     this.add(notifications);
     this.dependencies.provide(notifications);
 
-
     const skinSwitcher = new SkinSwitcher(this.environment.skins);
 
-    const beatmapSelect = new BeatmapSelect()
+    const beatmapSelect = new BeatmapSelect();
 
     await Promise.all([
       this.loadComponentAsync(skinSwitcher),
-      this.loadComponentAsync(beatmapSelect)
     ]);
 
     this.add(skinSwitcher);
@@ -141,7 +142,7 @@ export class OsucadGame extends Game implements IResourcesProvider {
       this.add(new MainCursorContainer());
     }
 
-    intro.nextScreenLoaded(beatmapSelect)
+    intro.nextScreenLoaded(beatmapSelect);
   }
 
   onClick(): boolean {
