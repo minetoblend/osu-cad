@@ -28,20 +28,25 @@ export class SetupScreen extends EditorScreen {
       relativeSizeAxes: Axes.Both,
       relativePositionAxes: Axes.X,
       width: 0.6,
-      height: 1.1,
+      padding: { bottom: -48 },
       x: -0.6,
       children: [
         new Box({
           relativeSizeAxes: Axes.Both,
           color: 0x151517,
         }),
-        new MainScrollContainer(Direction.Vertical).with({
+        new Container({
           relativeSizeAxes: Axes.Both,
-          children: [
-            new Container({
-              height: 2000,
-            }),
-          ],
+          padding: { bottom: 30 },
+          child: new MainScrollContainer(Direction.Vertical).with({
+            relativeSizeAxes: Axes.Both,
+            masking: false,
+            children: [
+              new Container({
+                height: 2000,
+              }),
+            ],
+          }),
         }),
       ],
     }));
