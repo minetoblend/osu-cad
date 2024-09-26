@@ -3,7 +3,6 @@ import type {
 } from 'osucad-framework';
 import type { EditorBackground } from '../../EditorBackground.ts';
 import {
-  Anchor,
   Axes,
   Box,
   Container,
@@ -11,10 +10,9 @@ import {
   Direction,
   EasingFunction,
 } from 'osucad-framework';
-import { OsucadSpriteText } from '../../../OsucadSpriteText.ts';
 import { MainScrollContainer } from '../../MainScrollContainer.ts';
-import { ThemeColors } from '../../ThemeColors.ts';
 import { EditorScreen } from '../EditorScreen';
+import { BackgroundSelectButton } from './BackgroundSelectButton.ts';
 
 export class SetupScreen extends EditorScreen {
   constructor() {
@@ -23,29 +21,7 @@ export class SetupScreen extends EditorScreen {
 
   @dependencyLoader()
   load(dependencies: DependencyContainer) {
-    const colors = dependencies.resolve(ThemeColors);
-
-    let text: OsucadSpriteText;
-
-    this.addInternal(this.backgroundTextContainer = new Container({
-      relativeSizeAxes: Axes.Both,
-      width: 0.4,
-      anchor: Anchor.TopRight,
-      origin: Anchor.TopRight,
-      child: text = new OsucadSpriteText({
-        text: 'Click to select background\n(Coming soon)',
-        color: colors.text,
-        fontSize: 28,
-        anchor: Anchor.Center,
-        origin: Anchor.Center,
-      }),
-    }));
-
-    text.style.align = 'center';
-
-    this.backgroundTextContainer
-      .moveToY(200)
-      .moveToY(0, 500, EasingFunction.OutExpo);
+    this.addInternal(this.backgroundSelect = new BackgroundSelectButton());
 
     this.addInternal(this.#content = new Container({
       relativeSizeAxes: Axes.Both,
@@ -74,7 +50,7 @@ export class SetupScreen extends EditorScreen {
 
   #content!: Container;
 
-  backgroundTextContainer!: Container;
+  backgroundSelect!: BackgroundSelectButton;
 
   adjustBackground(background: EditorBackground) {
     background.fadeTo(0.5, 500, EasingFunction.OutQuad);
@@ -88,12 +64,19 @@ export class SetupScreen extends EditorScreen {
     return 0;
   }
 
+  show() {
+    this.backgroundSelect
+      .fadeInFromZero(500)
+      .moveToY(200)
+      .moveToY(0, 500, EasingFunction.OutExpo);
+  }
+
   hide() {
     this.fadeTo(1, 500);
 
     this.#content.moveToX(-0.6, 500, EasingFunction.OutExpo);
 
-    this.backgroundTextContainer
+    this.backgroundSelect
       .moveToY(100, 500, EasingFunction.OutExpo)
       .fadeOut(300);
 
