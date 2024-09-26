@@ -21,7 +21,7 @@ export class EditorScreen extends Container {
   }
 
   protected get fadeOutDuration() {
-    return 300;
+    return 180;
   }
 
   show() {
@@ -31,7 +31,7 @@ export class EditorScreen extends Container {
   }
 
   hide() {
-    this.fadeOut(this.fadeOutDuration);
+    this.fadeOut(this.fadeOutDuration, EasingFunction.OutQuad);
   }
 
   adjustBackground(background: EditorBackground) {

@@ -9,6 +9,7 @@ import {
   dependencyLoader,
   Direction,
   EasingFunction,
+  Vec2,
 } from 'osucad-framework';
 import { MainScrollContainer } from '../../MainScrollContainer.ts';
 import { EditorScreen } from '../EditorScreen';
@@ -56,7 +57,7 @@ export class SetupScreen extends EditorScreen {
     background.fadeTo(0.5, 500, EasingFunction.OutQuad);
     background.scaleTo(1.2, 500, EasingFunction.OutExpo);
 
-    background.resizeWidthTo(0.35, 500, EasingFunction.OutExpo);
+    background.resizeTo(new Vec2(0.35, 1), 500, EasingFunction.OutExpo);
     background.moveToX(0.3, 500, EasingFunction.OutExpo);
   }
 
@@ -65,6 +66,8 @@ export class SetupScreen extends EditorScreen {
   }
 
   show() {
+    super.show();
+
     this.backgroundSelect
       .fadeInFromZero(500)
       .moveToY(200)

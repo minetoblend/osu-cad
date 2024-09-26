@@ -335,12 +335,16 @@ export class HitObjectComposer
   }
 
   override hide() {
-    this.#playfieldContainer.moveToY(100, 500, EasingFunction.OutExpo);
+    this.#isHidden = true;
 
+    this.#playfieldContainer.moveToY(100, 500, EasingFunction.OutExpo);
     this.#toolbarContainer.moveToY(-70, 500, EasingFunction.OutExpo);
     this.#toolBar.moveToX(-100, 500, EasingFunction.OutExpo);
+
     this.#togglesBar.moveToX(100, 500, EasingFunction.OutExpo);
   }
+
+  #isHidden = false;
 
   updateBackgroundSize() {
     const editor = this.findClosestParentOfType(Editor)!;
@@ -351,6 +355,10 @@ export class HitObjectComposer
     }
 
     editor.scheduler.add(() => {
+      // We don't want to update the background size anymore if the screen is currently hiding.
+      if (this.#isHidden)
+        return;
+
       editor.applyToBackground((background) => {
         const parent = background.parent!;
 
