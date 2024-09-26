@@ -1,3 +1,4 @@
+import { BindableNumber } from 'osucad-framework';
 import { ControlPoint } from './ControlPoint';
 
 export class TimingPoint extends ControlPoint {
@@ -7,28 +8,25 @@ export class TimingPoint extends ControlPoint {
   ) {
     super();
 
-    this.#beatLength = beatLength;
-    this.#meter = meter;
+    this.beatLengthBindable.value = beatLength;
+    this.meterBindable.value = meter;
   }
 
   static readonly default = new TimingPoint(60_000 / 120);
 
-  #beatLength;
+  readonly beatLengthBindable = new BindableNumber(60_000 / 120);
 
   get beatLength() {
-    return this.#beatLength;
+    return this.beatLengthBindable.value;
   }
 
   set beatLength(value: number) {
-    if (value === this.#beatLength)
-      return;
-
-    this.#beatLength = value;
+    this.beatLengthBindable.value = value;
     this.raiseChanged();
   }
 
   get bpm() {
-    if (this.#beatLength === 0)
+    if (this.beatLength === 0)
       return 0;
 
     return 60_000 / this.beatLength;
@@ -38,17 +36,14 @@ export class TimingPoint extends ControlPoint {
     this.beatLength = 60_000 / value;
   }
 
-  #meter: number = 4;
+  meterBindable = new BindableNumber(4);
 
   get meter() {
-    return this.#meter;
+    return this.meterBindable.value;
   }
 
   set meter(value: number) {
-    if (value === this.#meter)
-      return;
-
-    this.#meter = value;
+    this.meterBindable.value = value;
     this.raiseChanged();
   }
 
@@ -69,7 +64,7 @@ export class TimingPoint extends ControlPoint {
     this.meter = other.meter;
   }
 
-  deepClone(): ControlPoint {
+  deepClone(): TimingPoint {
     const clone = new TimingPoint(this.beatLength, this.meter);
     clone.copyFrom(this);
     return clone;

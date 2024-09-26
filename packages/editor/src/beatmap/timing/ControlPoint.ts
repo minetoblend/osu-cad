@@ -7,24 +7,24 @@ export abstract class ControlPoint {
     }
   }();
 
+  protected constructor() {
+    this.timeBindable.valueChanged.addListener(this.raiseChanged, this);
+  }
+
   changed = new Action<ControlPoint>();
 
   raiseChanged() {
     this.changed.emit(this);
   }
 
-  timeBindable = new BindableNumber();
+  readonly timeBindable = new BindableNumber();
 
   get time() {
     return this.timeBindable.value;
   }
 
   set time(value: number) {
-    if (value === this.timeBindable.value)
-      return;
-
     this.timeBindable.value = value;
-    this.raiseChanged();
   }
 
   abstract isRedundant(existing?: ControlPoint): boolean;

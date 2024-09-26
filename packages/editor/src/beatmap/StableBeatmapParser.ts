@@ -242,11 +242,11 @@ export class StableBeatmapParser {
 
     const uninherited = values[6] === '1';
 
-    const startTime = Number.parseFloat(values[0]);
+    const startTime = Number.parseInt(values[0]);
 
     const group = beatmap.controlPoints.controlPointGroupAtTime(startTime, true);
 
-    const volume = Number.parseInt(values[5]) / 100;
+    const volume = Number.parseInt(values[5]);
 
     let sampleSet = SampleSet.Auto;
     switch (values[3]) {

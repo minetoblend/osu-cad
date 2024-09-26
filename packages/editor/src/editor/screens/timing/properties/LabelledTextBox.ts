@@ -20,7 +20,7 @@ export class LabelledTextBox extends CompositeDrawable {
       }),
       new Container({
         relativeSizeAxes: Axes.Both,
-        padding: { left: 80 },
+        padding: { left: 120 },
         child: this.#textBox = new TextBox().with({
           relativeSizeAxes: Axes.X,
           anchor: Anchor.CenterLeft,
@@ -80,5 +80,10 @@ export class LabelledTextBox extends CompositeDrawable {
 
   set tabbableContentContainer(value) {
     this.#textBox.tabbableContentContainer = value;
+  }
+
+  withTabbableContentContainer(value: CompositeDrawable): this {
+    this.tabbableContentContainer = value;
+    return this;
   }
 }

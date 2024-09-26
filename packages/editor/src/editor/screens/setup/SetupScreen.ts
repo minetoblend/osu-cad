@@ -1,6 +1,3 @@
-import type {
-  DependencyContainer,
-} from 'osucad-framework';
 import type { EditorBackground } from '../../EditorBackground.ts';
 import {
   Axes,
@@ -21,7 +18,7 @@ export class SetupScreen extends EditorScreen {
   }
 
   @dependencyLoader()
-  load(dependencies: DependencyContainer) {
+  load() {
     this.addInternal(this.backgroundSelect = new BackgroundSelectButton());
 
     this.addInternal(this.#content = new Container({

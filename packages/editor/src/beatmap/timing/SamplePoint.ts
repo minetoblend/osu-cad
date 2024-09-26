@@ -1,4 +1,4 @@
-import { clamp } from 'osucad-framework';
+import { Bindable, BindableNumber } from 'osucad-framework';
 import { SampleSet } from '../hitSounds/SampleSet';
 import { ControlPoint } from './ControlPoint';
 
@@ -10,54 +10,43 @@ export class SamplePoint extends ControlPoint {
   ) {
     super();
 
-    this.#volume = volume;
-    this.#sampleSet = sampleSet;
-    this.#sampleIndex = sampleIndex;
+    this.volumeBindable.value = volume;
+    this.sampleSetBindable.value = sampleSet;
+    this.sampleIndexBindable.value = sampleIndex;
+
+    this.volumeBindable.valueChanged.addListener(this.raiseChanged, this);
+    this.sampleSetBindable.valueChanged.addListener(this.raiseChanged, this);
+    this.sampleIndexBindable.valueChanged.addListener(this.raiseChanged, this);
   }
 
   static readonly default = new SamplePoint(100, SampleSet.Normal, 0);
 
-  #volume: number;
-  #sampleSet: SampleSet;
-  #sampleIndex;
+  volumeBindable = new BindableNumber(100).withRange(5, 100).withPrecision(1);
+  sampleSetBindable = new Bindable<SampleSet>(SampleSet.Normal);
+  sampleIndexBindable = new BindableNumber(0).withMinValue(0).withPrecision(1);
 
   get volume() {
-    return this.#volume;
+    return this.volumeBindable.value;
   }
 
   set volume(value: number) {
-    value = Math.round(value);
-    value = clamp(value, 5, 100);
-
-    if (value === this.#volume)
-      return;
-
-    this.#volume = value;
-    this.raiseChanged();
+    this.volumeBindable.value = value;
   }
 
   get sampleSet() {
-    return this.#sampleSet;
+    return this.sampleSetBindable.value;
   }
 
   set sampleSet(value: SampleSet) {
-    if (value === this.#sampleSet)
-      return;
-
-    this.#sampleSet = value;
-    this.raiseChanged();
+    this.sampleSetBindable.value = value;
   }
 
   get sampleIndex() {
-    return this.#sampleIndex;
+    return this.sampleIndexBindable.value;
   }
 
   set sampleIndex(value: number) {
-    if (value === this.#sampleIndex)
-      return;
-
-    this.#sampleIndex = value;
-    this.raiseChanged();
+    this.sampleIndexBindable.value = value;
   }
 
   isRedundant(existing?: ControlPoint | undefined): boolean {
@@ -70,7 +59,7 @@ export class SamplePoint extends ControlPoint {
     return this.volume === existing.volume && this.sampleSet === existing.sampleSet && this.sampleIndex === existing.sampleIndex;
   }
 
-  deepClone(): ControlPoint {
+  deepClone(): SamplePoint {
     const clone = new SamplePoint(this.volume, this.sampleSet, this.sampleIndex);
     clone.copyFrom(this);
     return clone;

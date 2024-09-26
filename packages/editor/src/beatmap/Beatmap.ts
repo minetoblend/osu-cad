@@ -12,4 +12,10 @@ export class Beatmap {
   readonly colors = new BeatmapColors();
   readonly controlPoints = new ControlPointInfo();
   readonly hitObjects = new HitObjectList(this);
+
+  constructor() {
+    this.controlPoints.anyPointChanged.addListener(() => {
+      this.hitObjects.requestApplyDefaultsToAll();
+    });
+  }
 }

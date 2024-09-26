@@ -167,4 +167,12 @@ export class Playfield extends Container implements IPooledHitObjectProvider {
   protected onNewDrawableHitObject(drawable: DrawableHitObject) {
 
   }
+
+  override dispose(isDisposing: boolean = true) {
+    for (const hitObject of this.beatmap.hitObjects) {
+      this.removeHitObject(hitObject);
+    }
+
+    super.dispose(isDisposing);
+  }
 }

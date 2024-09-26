@@ -66,6 +66,16 @@ export class HitObjectList extends ObservableSortedList<OsuHitObject> {
       this.#needsDefaultsApplied.add(hitObject);
   }
 
+  requestApplyDefaultsToAll() {
+    if (this.applyDefaultsImmediately) {
+      this.applyDefaultsToAll();
+      return;
+    }
+
+    for (const hitObject of this)
+      this.#needsDefaultsApplied.add(hitObject);
+  }
+
   applyDefaultsWhereNeeded() {
     for (const h of this.#needsDefaultsApplied) {
       this.applyDefaultsToHitObject(h);

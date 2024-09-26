@@ -201,6 +201,7 @@ export class Editor
         this.currentScreen.value = EditorScreenType.Compose;
         return true;
       case Key.F3:
+      case Key.F6:
         this.currentScreen.value = EditorScreenType.Timing;
         return true;
       case Key.F4:

@@ -33,7 +33,7 @@ export class EffectPoint extends ControlPoint {
     return this.kiaiMode === existing.kiaiMode;
   }
 
-  deepClone(): ControlPoint {
+  deepClone(): EffectPoint {
     const clone = new EffectPoint();
     clone.copyFrom(this);
     return clone;

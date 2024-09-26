@@ -10,6 +10,9 @@ export class Metronome extends CompositeDrawable {
 
   @dependencyLoader()
   load() {
+    this.updateClock(this.editorClock);
+    this.processCustomClock = false;
+
     this.relativeSizeAxes = Axes.X;
     this.autoSizeAxes = Axes.Y;
 
@@ -118,7 +121,7 @@ export class Metronome extends CompositeDrawable {
       beatIndex = Math.floor(beatIndex);
     }
 
-    if (this.lastBeat !== beatIndex) {
+    if (this.lastBeat !== beatIndex && this.editorClock.currentTime === this.editorClock.targetTime) {
       let side = beatIndex % 2 === 0 ? this.leftBox : this.rightBox;
 
       if (beatIndex % 1 !== 0)

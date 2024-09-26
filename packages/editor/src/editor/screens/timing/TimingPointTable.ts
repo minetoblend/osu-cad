@@ -1,25 +1,13 @@
-import type {
-  ScrollContainer,
-} from 'osucad-framework';
+import type { DependencyContainer, ScrollContainer } from 'osucad-framework';
 import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup';
-
-import {
-  Axes,
-  Box,
-  Container,
-  dependencyLoader,
-  Direction,
-  DrawablePool,
-  lerp,
-  resolved,
-} from 'osucad-framework';
+import { Axes, Bindable, Box, Container, dependencyLoader, Direction, DrawablePool, lerp, resolved } from 'osucad-framework';
 import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
 import { EditorClock } from '../../EditorClock';
 import { MainScrollContainer } from '../../MainScrollContainer';
-import { ControlPointSelection } from './ControlPointSelection';
 import { KiaiBadge } from './KiaiBadge';
 import { TimingPointRow } from './TimingPointRow';
 import { TimingPointTableHeader } from './TimingPointTableHeader';
+import { TimingScreenDependencies } from './TimingScreenDependencies.ts';
 
 export class TimingPointTable extends Container {
   @resolved(ControlPointInfo)
@@ -40,8 +28,14 @@ export class TimingPointTable extends Container {
 
   readonly #pool = new DrawablePool(TimingPointRow, 25, 100);
 
+  activeControlPoint = new Bindable<ControlPointGroup | null>(null);
+
   @dependencyLoader()
-  load() {
+  load(dependencies: DependencyContainer) {
+    const { activeControlPoint } = dependencies.resolve(TimingScreenDependencies);
+
+    this.activeControlPoint.bindTo(activeControlPoint);
+
     this.addAllInternal(
       this.#pool,
       new Container({
@@ -87,9 +81,6 @@ export class TimingPointTable extends Container {
   #rowContainer = new Container();
   #kiaiContainer = new Container();
 
-  @resolved(ControlPointSelection)
-  selection!: ControlPointSelection;
-
   update() {
     super.update();
 
@@ -101,8 +92,6 @@ export class TimingPointTable extends Container {
     const toDelete = new Set(this.#rows.keys());
 
     let y = startIndex * TimingPointRow.HEIGHT;
-
-    const activeGroup = this.controlPoints.groups.controlPointAt(this.editorClock.currentTime);
 
     let lastWasKiai = false;
     const kiaiIndex = 0;
@@ -121,7 +110,7 @@ export class TimingPointTable extends Container {
         });
 
         row.y = y;
-        row.active = controlPoint === activeGroup;
+        row.active = controlPoint === this.activeControlPoint.value;
 
         this.#rowContainer.add(row);
         this.#rows.set(controlPoint, row);
@@ -130,7 +119,7 @@ export class TimingPointTable extends Container {
         const row = this.#rows.get(controlPoint)!;
 
         row.y = lerp(y, row.y, Math.exp(-0.05 * this.time.elapsed));
-        row.active = controlPoint === activeGroup;
+        row.active = controlPoint === this.activeControlPoint.value;
       }
 
       if (!lastWasKiai && controlPoint.effect?.kiaiMode) {

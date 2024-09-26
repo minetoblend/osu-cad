@@ -195,6 +195,10 @@ export class EditorClock
 
   #targetTime = 0;
 
+  get targetTime() {
+    return this.#targetTime;
+  }
+
   #frameTimeInfo: FrameTimeInfo = {
     current: 0,
     elapsed: 0,

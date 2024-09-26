@@ -71,11 +71,9 @@ export class ControlPointGroup extends ControlPoint {
       }
     }
 
-    this.#children.add(controlPoint);
-
-    this.added.emit({ group: this, controlPoint });
-
     controlPoint.time = this.time;
+
+    this.#children.add(controlPoint);
 
     if (controlPoint instanceof TimingPoint)
       this.timing = controlPoint;
@@ -85,6 +83,12 @@ export class ControlPointGroup extends ControlPoint {
       this.sample = controlPoint;
     else if (controlPoint instanceof EffectPoint)
       this.effect = controlPoint;
+
+    controlPoint.changed.addListener(this.raiseChanged, this);
+
+    this.added.emit({ group: this, controlPoint });
+
+    this.raiseChanged();
 
     return true;
   }
@@ -101,14 +105,18 @@ export class ControlPointGroup extends ControlPoint {
     if (!this.#children.delete(controlPoint))
       return false;
 
-    this.removed.emit({ group: this, controlPoint });
-
     if (controlPoint === this.timing)
       this.timing = null;
     else if (controlPoint === this.difficulty)
       this.difficulty = null;
     else if (controlPoint === this.sample)
       this.sample = null;
+
+    controlPoint.changed.removeListener(this.raiseChanged, this);
+
+    this.removed.emit({ group: this, controlPoint });
+
+    this.raiseChanged();
 
     return true;
   }

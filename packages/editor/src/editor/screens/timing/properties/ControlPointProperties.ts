@@ -1,18 +1,18 @@
+import type { Bindable } from 'osucad-framework';
+import type { ControlPointGroup } from '../../../../beatmap/timing/ControlPointGroup.ts';
 import {
   Axes,
-  Bindable,
+  BindableNumber,
+  BindableWithCurrent,
   Container,
   dependencyLoader,
   FillDirection,
   FillFlowContainer,
-  resolved,
 } from 'osucad-framework';
-import { ControlPointSelection } from '../ControlPointSelection';
-import { ControlPointFacade } from './ControlPointFacade';
 import { DifficultyProperties } from './DifficultyProperties';
-import { EffectProperties } from './EffectProperties';
 import { LabelledTextBox } from './LabelledTextBox';
 import { SampleProperties } from './SampleProperties';
+import { TABBABLE_CONTAINER } from './TABBABLE_CONTAINER.ts';
 import { TimingProperties } from './TimingProperties';
 
 export class ControlPointProperties extends FillFlowContainer {
@@ -24,47 +24,69 @@ export class ControlPointProperties extends FillFlowContainer {
     });
   }
 
-  @resolved(ControlPointSelection)
-  selection!: ControlPointSelection;
+  readonly #current = new BindableWithCurrent<ControlPointGroup | null>(null);
 
-  #facade!: ControlPointFacade;
+  get controlPointBindable(): Bindable<ControlPointGroup | null> {
+    return this.#current;
+  }
 
-  offset = new Bindable<number | null>(null);
+  get current() {
+    return this.#current.current;
+  }
+
+  set current(value) {
+    this.#current.current = value;
+  }
+
+  offset = new BindableNumber(0);
 
   @dependencyLoader()
   load() {
-    this.addInternal(this.#facade = new ControlPointFacade());
+    this.dependencies.provide(TABBABLE_CONTAINER, this);
 
     this.add(
       new Container({
         relativeSizeAxes: Axes.X,
         autoSizeAxes: Axes.Y,
         padding: 12,
-        child: new LabelledTextBox('Offset'),
+        child: new LabelledTextBox('Offset')
+          .bindToNumber(this.offset)
+          .withTabbableContentContainer(this),
       }),
     );
 
     const timingProperties = new TimingProperties();
 
     this.add(timingProperties);
-    this.add(new DifficultyProperties());
     this.add(new SampleProperties());
-    this.add(new EffectProperties());
+    this.add(new DifficultyProperties());
+    // this.add(new EffectProperties());
+  }
 
-    this.selection.selectionChanged.addListener(this.#onSelectionChanged, this);
+  protected loadComplete() {
+    super.loadComplete();
+
+    this.#current.valueChanged.addListener((e) => {
+      if (e.previousValue)
+        this.unbindFromControlPointGroup(e.previousValue!);
+
+      if (e.value)
+        this.bindToControlPointGroup(e.value!);
+    });
+
+    if (this.controlPointBindable.value)
+      this.bindToControlPointGroup(this.controlPointBindable.value);
+  }
+
+  protected bindToControlPointGroup(controlPointGroup: ControlPointGroup) {
+    this.offset.bindTo(controlPointGroup.timeBindable);
+  }
+
+  protected unbindFromControlPointGroup(controlPointGroup: ControlPointGroup) {
+    this.offset.unbindFrom(controlPointGroup.timeBindable);
   }
 
   override dispose(isDisposing: boolean = true) {
-    this.selection.selectionChanged.removeListener(this.#onSelectionChanged);
-
     super.dispose(isDisposing);
-  }
-
-  #onSelectionChanged() {
-    this.scheduler.addOnce(this.#updateFacade, this);
-  }
-
-  #updateFacade() {
-    this.#facade.controlPoints = [...this.selection.selection];
   }
 }

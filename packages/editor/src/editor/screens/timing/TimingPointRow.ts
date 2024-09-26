@@ -1,23 +1,15 @@
-import type { ClickEvent } from 'osucad-framework';
+import type { ClickEvent, DependencyContainer, MouseDownEvent } from 'osucad-framework';
 import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup';
-import {
-  Anchor,
-  Axes,
-  BindableNumber,
-  Box,
-  Container,
-  dependencyLoader,
-  PoolableDrawable,
-  resolved,
-} from 'osucad-framework';
+import { Anchor, Axes, Bindable, BindableNumber, Box, Container, dependencyLoader, MouseButton, PoolableDrawable, resolved } from 'osucad-framework';
 import { SampleSet } from '../../../beatmap/hitSounds/SampleSet';
+import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo.ts';
 import { FastRoundedBox } from '../../../drawables/FastRoundedBox';
 import { OsucadSpriteText } from '../../../OsucadSpriteText';
 import { EditorClock } from '../../EditorClock';
 import { ThemeColors } from '../../ThemeColors';
 import { TimestampFormatter } from '../../TimestampFormatter';
-import { ControlPointSelection } from './ControlPointSelection';
 import { TimingPointValueBadge } from './TimingPointValueBadge';
+import { TimingScreenDependencies } from './TimingScreenDependencies.ts';
 
 export class TimingPointRow extends PoolableDrawable {
   constructor() {
@@ -88,30 +80,28 @@ export class TimingPointRow extends PoolableDrawable {
 
   startTime = new BindableNumber();
 
-  @resolved(ControlPointSelection)
-  selection!: ControlPointSelection;
+  activeControlPoint = new Bindable<ControlPointGroup | null>(null);
 
   protected onAssign(controlPoint: ControlPointGroup) {
     this.startTime.bindTo(controlPoint.timeBindable);
 
-    controlPoint.changed.addListener(this.#updateState, this);
+    controlPoint.added.addListener(this.#scheduleUpdateState, this);
+    controlPoint.removed.addListener(this.#scheduleUpdateState, this);
+    controlPoint.changed.addListener(this.#scheduleUpdateState, this);
 
-    this.#onSelectionChanged([controlPoint, this.selection.isSelected(controlPoint)]);
-
-    this.#updateState();
+    this.#scheduleUpdateState();
   }
 
   protected onFree(controlPoint: ControlPointGroup) {
     this.startTime.unbindFrom(controlPoint.timeBindable);
 
-    controlPoint.changed.removeListener(this.#updateState);
+    controlPoint.added.removeListener(this.#scheduleUpdateState, this);
+    controlPoint.removed.removeListener(this.#scheduleUpdateState, this);
+    controlPoint.changed.removeListener(this.#scheduleUpdateState, this);
   }
 
-  #onSelectionChanged([controlPoint, selected]: [ControlPointGroup, boolean]) {
-    if (controlPoint !== this.controlPoint)
-      return;
-
-    this.selected = selected;
+  #scheduleUpdateState() {
+    this.scheduler.addOnce(this.#updateState, this);
   }
 
   #updateState() {
@@ -156,7 +146,7 @@ export class TimingPointRow extends PoolableDrawable {
       if (controlPoint.sample.sampleIndex !== 0)
         sampleSet += `:${controlPoint.sample.sampleIndex}`;
 
-      this.#hitSounds.text = `${Math.round(controlPoint.sample.volume * 100).toString().padStart(3, ' ')}% ${sampleSet}`;
+      this.#hitSounds.text = `${Math.round(controlPoint.sample.volume).toString().padStart(3, ' ')}% ${sampleSet}`;
     }
     else {
       this.#hitSounds.alpha = 0;
@@ -167,7 +157,11 @@ export class TimingPointRow extends PoolableDrawable {
   colors!: ThemeColors;
 
   @dependencyLoader()
-  load() {
+  load(dependencies: DependencyContainer) {
+    const { activeControlPoint } = dependencies.resolve(TimingScreenDependencies);
+
+    this.activeControlPoint.bindTo(activeControlPoint);
+
     this.relativeSizeAxes = Axes.X;
     this.height = TimingPointRow.HEIGHT;
 
@@ -225,8 +219,6 @@ export class TimingPointRow extends PoolableDrawable {
     );
 
     this.startTime.addOnChangeListener(time => this.#timestamp.text = TimestampFormatter.formatTimestamp(time.value));
-
-    this.selection.selectionChanged.addListener(this.#onSelectionChanged, this);
   }
 
   #background!: Box;
@@ -241,12 +233,6 @@ export class TimingPointRow extends PoolableDrawable {
 
   @resolved(EditorClock)
   editorClock!: EditorClock;
-
-  onDoubleClick(): boolean {
-    this.editorClock.seek(this.controlPoint!.time, false);
-
-    return true;
-  }
 
   #active = false;
 
@@ -290,21 +276,26 @@ export class TimingPointRow extends PoolableDrawable {
   }
 
   onClick(e: ClickEvent): boolean {
-    if (e.shiftPressed) {
-      this.selection.selectUntil(this.controlPoint!);
-      return true;
+    if (!this.active) {
+      this.activeControlPoint.value = this.controlPoint;
     }
-
-    if (!e.controlPressed)
-      this.selection.clear();
-    this.selection.select(this.controlPoint!);
 
     return true;
   }
 
-  override dispose(isDisposing: boolean = true) {
-    super.dispose(isDisposing);
+  onDoubleClick(): boolean {
+    this.editorClock.seek(this.controlPoint!.time);
 
-    this.selection.selectionChanged.removeListener(this.#onSelectionChanged);
+    return true;
+  }
+
+  @resolved(ControlPointInfo)
+  controlPointInfo!: ControlPointInfo;
+
+  onMouseDown(e: MouseDownEvent): boolean {
+    if (e.button === MouseButton.Right)
+      this.controlPointInfo.remove(this.controlPoint!);
+
+    return true;
   }
 }

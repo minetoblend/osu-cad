@@ -179,7 +179,7 @@ export class StableBeatmapEncoder {
           group.timing.meter,
           samplePoint.sampleSet,
           samplePoint.sampleIndex,
-          clamp(Math.round(samplePoint.volume * 100), 5, 100),
+          clamp(Math.round(samplePoint.volume), 5, 100),
           1,
           effects,
         ].join(',');
@@ -192,7 +192,7 @@ export class StableBeatmapEncoder {
           0,
           samplePoint.sampleSet,
           samplePoint.sampleIndex,
-          clamp(Math.round(samplePoint.volume * 100), 5, 100),
+          clamp(Math.round(samplePoint.volume), 5, 100),
           0,
           effects,
         ];

@@ -3,6 +3,7 @@ import type {
   MouseDownEvent,
 } from 'osucad-framework';
 import {
+  Action,
   Anchor,
   Axes,
   BindableWithCurrent,
@@ -16,6 +17,7 @@ import {
   RoundedBox,
   Vec2,
 } from 'osucad-framework';
+
 import { FastRoundedBox } from '../drawables/FastRoundedBox';
 import { ThemeColors } from '../editor/ThemeColors';
 
@@ -138,6 +140,11 @@ export class Toggle extends CompositeDrawable {
 
   toggle() {
     this.value = !this.value;
+
+    if (this.value)
+      this.onActivate.emit();
+    else
+      this.onDeactivate.emit();
   }
 
   #updateState() {
@@ -185,6 +192,10 @@ export class Toggle extends CompositeDrawable {
 
     return false;
   }
+
+  onActivate = new Action();
+
+  onDeactivate = new Action();
 
   onMouseDown(e: MouseDownEvent): boolean {
     if (e.button === MouseButton.Left && this.trigger === ToggleTrigger.MouseDown) {

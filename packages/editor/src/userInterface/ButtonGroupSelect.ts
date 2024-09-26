@@ -9,8 +9,24 @@ import type {
   KeyDownEvent,
   MouseDownEvent,
 } from 'osucad-framework';
-import { Anchor, Axes, BindableBoolean, BindableWithCurrent, Box, CompositeDrawable, Container, dependencyLoader, EasingFunction, Key, MaskingContainer, MouseButton, resolved, RoundedBox, TabbableContainer } from 'osucad-framework';
-
+import type { ColorSource } from 'pixi.js';
+import {
+  Anchor,
+  Axes,
+  BindableBoolean,
+  BindableWithCurrent,
+  Box,
+  CompositeDrawable,
+  Container,
+  dependencyLoader,
+  EasingFunction,
+  Key,
+  MaskingContainer,
+  MouseButton,
+  resolved,
+  RoundedBox,
+  TabbableContainer,
+} from 'osucad-framework';
 import { ThemeColors } from '../editor/ThemeColors';
 import { OsucadSpriteText } from '../OsucadSpriteText';
 
@@ -56,6 +72,20 @@ export class ButtonGroupSelect<T> extends TabbableContainer {
   @resolved(ThemeColors)
   colors!: ThemeColors;
 
+  #background!: Box;
+
+  #backgroundColor: ColorSource = 0x222228;
+
+  get backgroundColor() {
+    return this.#backgroundColor;
+  }
+
+  set backgroundColor(value: ColorSource) {
+    this.#backgroundColor = value;
+    if (this.#background)
+      this.#background.color = value;
+  }
+
   @dependencyLoader()
   load() {
     this.addAllInternal(
@@ -74,9 +104,9 @@ export class ButtonGroupSelect<T> extends TabbableContainer {
         relativeSizeAxes: Axes.Both,
         cornerRadius: 6,
         children: [
-          new Box({
+          this.#background = new Box({
             relativeSizeAxes: Axes.Both,
-            color: this.colors.translucent,
+            color: this.#backgroundColor,
           }),
           this.#content = new Container({
             relativeSizeAxes: Axes.Both,
@@ -149,6 +179,16 @@ export class ButtonGroupSelect<T> extends TabbableContainer {
 
     this.current.value = this.items[index].value;
   }
+
+  withCurrent(value: Bindable<T>): this {
+    this.current = value;
+    return this;
+  }
+
+  withBackgroundColor(value: ColorSource): this {
+    this.backgroundColor = value;
+    return this;
+  }
 }
 
 class ButtonGroupSelectButton extends CompositeDrawable {
@@ -214,6 +254,8 @@ class ButtonGroupSelectButton extends CompositeDrawable {
   }
 
   onClick(e: ClickEvent): boolean {
-    return this.findClosestParentOfType(ButtonGroupSelect)!.current.value = this.item.value;
+    this.findClosestParentOfType(ButtonGroupSelect)!.current.value = this.item.value;
+
+    return true;
   }
 }

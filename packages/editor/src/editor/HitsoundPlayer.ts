@@ -158,7 +158,7 @@ export class HitsoundPlayer extends CompositeDrawable {
     if (sample) {
       const playback = sample.play({
         delay: Math.max(delay, 0),
-        volume: hitSample.volume,
+        volume: hitSample.volume / 100,
         loop: isLooping,
       });
 

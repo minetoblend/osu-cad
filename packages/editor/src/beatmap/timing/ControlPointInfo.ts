@@ -24,6 +24,8 @@ export class ControlPointInfo {
 
   groupRemoved = new Action<ControlPointGroup>();
 
+  anyPointChanged = new Action();
+
   constructor() {
     this.groups.added.addListener(this.#onGroupAdded.bind(this));
     this.groups.removed.addListener(this.#onGroupRemoved.bind(this));
@@ -37,6 +39,10 @@ export class ControlPointInfo {
     return true;
   }
 
+  remove(controlPoint: ControlPointGroup): boolean {
+    return this.groups.remove(controlPoint);
+  }
+
   controlPointGroupAtTime(time: number, create: true): ControlPointGroup;
 
   controlPointGroupAtTime(time: number, create?: false): ControlPointGroup | undefined;
@@ -45,7 +51,7 @@ export class ControlPointInfo {
     const controlPoint = new ControlPointGroup();
     controlPoint.time = time;
 
-    const index = this.groups.binarySearch(controlPoint);
+    const index = this.groups.findIndex(it => it.time === time);
 
     if (index >= 0) {
       return this.groups.get(index)!;
@@ -111,6 +117,14 @@ export class ControlPointInfo {
     for (const child of group.children) {
       this.#onAddedToGroup({ group, controlPoint: child });
     }
+
+    group.changed.addListener(this.#onAnyPointChanged, this);
+
+    this.#onAnyPointChanged();
+  }
+
+  #onAnyPointChanged() {
+    this.anyPointChanged.emit();
   }
 
   #onGroupRemoved(group: ControlPointGroup) {
@@ -119,6 +133,8 @@ export class ControlPointInfo {
     for (const child of group.children) {
       this.#onRemovedFromGroup({ group, controlPoint: child });
     }
+
+    group.changed.removeListener(this.#onAnyPointChanged);
   }
 
   #onAddedToGroup = (event: ControlPointGroupChangeEvent) => {
