@@ -1,4 +1,5 @@
 import type {
+  DependencyContainer,
   FocusLostEvent,
   IKeyBindingHandler,
   KeyBindingPressEvent,
@@ -7,7 +8,6 @@ import type {
 } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
 import type { HitSoundState } from '../../../beatmap/hitSounds/BindableHitSound';
-
 import {
   Anchor,
   Axes,
@@ -27,6 +27,7 @@ import {
   RoundedBox,
   Vec2,
 } from 'osucad-framework';
+
 import { SampleSet } from '../../../beatmap/hitSounds/SampleSet';
 import { SampleType } from '../../../beatmap/hitSounds/SampleType';
 import { OsucadConfigManager } from '../../../config/OsucadConfigManager';
@@ -34,7 +35,7 @@ import { OsucadSettings } from '../../../config/OsucadSettings';
 import { OsucadIcons } from '../../../OsucadIcons';
 import { OsucadSpriteText } from '../../../OsucadSpriteText';
 import { EditorAction } from '../../EditorAction';
-import { HITSOUND } from '../../InjectionTokens';
+import { EditorDependencies } from '../../EditorDependencies.ts';
 import { ThemeColors } from '../../ThemeColors';
 import { SampleHighlightContainer } from './SampleHighlightContainer';
 
@@ -48,7 +49,6 @@ export class SampleSetControl extends CompositeDrawable {
   @resolved(OsucadConfigManager)
   private config!: OsucadConfigManager;
 
-  @resolved(HITSOUND)
   protected hitSoundState!: HitSoundState;
 
   readonly expanded = new BindableBoolean();
@@ -58,7 +58,11 @@ export class SampleSetControl extends CompositeDrawable {
   alwaysExpanded = new BindableBoolean(true);
 
   @dependencyLoader()
-  load() {
+  load(dependencies: DependencyContainer) {
+    const { hitSound } = dependencies.resolve(EditorDependencies);
+
+    this.hitSoundState = hitSound;
+
     this.config.bindWith(
       OsucadSettings.SampleSetExpanded,
       this.alwaysExpanded,
@@ -252,7 +256,11 @@ class SampleSetButton extends CompositeDrawable implements IKeyBindingHandler<Ed
   }
 
   @dependencyLoader()
-  load() {
+  load(dependencies: DependencyContainer) {
+    const { hitSound } = dependencies.resolve(EditorDependencies);
+
+    this.hitSoundState = hitSound;
+
     this.addAllInternal(
       this.#content = new Container({
         relativeSizeAxes: Axes.Both,
@@ -307,7 +315,6 @@ class SampleSetButton extends CompositeDrawable implements IKeyBindingHandler<Ed
       this.#content.scaleTo(1, 300, EasingFunction.OutBack);
   }
 
-  @resolved(HITSOUND)
   protected hitSoundState!: HitSoundState;
 
   activate() {

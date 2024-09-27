@@ -1,8 +1,10 @@
+import type { InvalidationSource, ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
 import type { EditorBackground } from '../EditorBackground.ts';
-import { Axes, Container, EasingFunction } from 'osucad-framework';
+import { Action, Axes, dependencyLoader, EasingFunction, Invalidation, Screen } from 'osucad-framework';
 import { Editor } from '../Editor.ts';
+import { BackgroundAdjustment } from './BackgroundAdjustment.ts';
 
-export class EditorScreen extends Container {
+export class EditorScreen extends Screen {
   constructor() {
     super();
     this.relativeSizeAxes = Axes.Both;
@@ -10,32 +12,65 @@ export class EditorScreen extends Container {
 
   editor!: Editor;
 
+  @dependencyLoader()
+  [Symbol('load')]() {
+    if (this.bottomTimelinePadding)
+      this.padding = { bottom: 48 };
+  }
+
   protected loadComplete() {
     super.loadComplete();
 
     this.editor = this.findClosestParentOfType(Editor)!;
   }
 
-  protected get fadeInDuration() {
-    return 300;
-  }
-
   protected get fadeOutDuration() {
     return 180;
   }
 
-  show() {
-    this.fadeInFromZero(this.fadeInDuration);
+  onEntering(e: ScreenTransitionEvent) {
+    super.onEntering(e);
 
-    this.editor.applyToBackground(background => this.adjustBackground(background as EditorBackground));
+    this.editor.applyToBackground((editorBackground) => {
+      const adjustment = new BackgroundAdjustment();
+      this.adjustBackground(adjustment);
+
+      const background = (editorBackground as EditorBackground).background;
+
+      background.moveTo(adjustment.position, adjustment.moveDuration, EasingFunction.OutExpo);
+      background.resizeTo(adjustment.size, adjustment.resizeDuration, EasingFunction.OutExpo);
+      background.scaleTo(adjustment.scale, adjustment.scaleDuration, EasingFunction.OutExpo);
+      background.fadeTo(adjustment.alpha, adjustment.fadeDuration, EasingFunction.OutQuad);
+    });
   }
 
-  hide() {
-    this.fadeOut(this.fadeOutDuration, EasingFunction.OutQuad);
+  onExiting(e: ScreenExitEvent): boolean {
+    if (super.onExiting(e))
+      return true;
+
+    if (this.fadeOutDuration > 0)
+      this.fadeOut(this.fadeOutDuration, EasingFunction.OutQuad);
+
+    return false;
   }
 
-  adjustBackground(background: EditorBackground) {
-    background.scaleTo(1, 500, EasingFunction.OutExpo);
-    background.fadeTo(1, 500, EasingFunction.OutQuad);
+  protected adjustBackground(background: BackgroundAdjustment) {
+  }
+
+  protected adjustBlurredBackground?(background: BackgroundAdjustment): void;
+
+  protected get bottomTimelinePadding() {
+    return true;
+  }
+
+  exited = new Action();
+
+  override onInvalidate(invalidation: Invalidation, source: InvalidationSource): boolean {
+    if (invalidation & Invalidation.Parent) {
+      if (this.parent === null)
+        this.exited.emit();
+    }
+
+    return super.onInvalidate(invalidation, source);
   }
 }

@@ -71,7 +71,7 @@ export class ControlPointGroup extends ControlPoint {
       }
     }
 
-    controlPoint.time = this.time;
+    controlPoint.timeBindable.bindTo(this.timeBindable);
 
     this.#children.add(controlPoint);
 
@@ -113,6 +113,8 @@ export class ControlPointGroup extends ControlPoint {
       this.sample = null;
 
     controlPoint.changed.removeListener(this.raiseChanged, this);
+
+    controlPoint.timeBindable.unbindFrom(this.timeBindable);
 
     this.removed.emit({ group: this, controlPoint });
 

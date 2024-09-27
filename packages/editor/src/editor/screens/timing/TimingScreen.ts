@@ -1,19 +1,10 @@
 import type {
   DependencyContainer,
+  ScreenExitEvent,
+  ScreenTransitionEvent,
 } from 'osucad-framework';
-import type { EditorBackground } from '../../EditorBackground.ts';
-import {
-  Anchor,
-  Axes,
-  Bindable,
-  Box,
-  Container,
-  dependencyLoader,
-  Direction,
-  EasingFunction,
-  MaskingContainer,
-  resolved,
-} from 'osucad-framework';
+import type { BackgroundAdjustment } from '../BackgroundAdjustment.ts';
+import { Anchor, Axes, Bindable, Box, Container, dependencyLoader, Direction, EasingFunction, MarginPadding, MaskingContainer, resolved } from 'osucad-framework';
 import { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup.ts';
 import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
 import { OsucadButton } from '../../../userInterface/OsucadButton.ts';
@@ -31,7 +22,8 @@ import { TimingScreenTimeline } from './TimingScreenTimeline';
 export class TimingScreen extends EditorScreen {
   constructor() {
     super();
-    this.padding = 10;
+
+    this.relativePositionAxes = Axes.Y;
   }
 
   @resolved(ThemeColors)
@@ -49,6 +41,12 @@ export class TimingScreen extends EditorScreen {
     ));
 
     this.addInternal(new MetronomePlayer());
+
+    this.padding = new MarginPadding({
+      horizontal: 10,
+      top: 10,
+      bottom: 58,
+    });
 
     this.addAllInternal(
       new MaskingContainer({
@@ -126,20 +124,26 @@ export class TimingScreen extends EditorScreen {
 
   #controlPointProperties!: ControlPointProperties;
 
-  show() {
-    super.show();
+  onEntering(e: ScreenTransitionEvent) {
+    super.onEntering(e);
 
-    this.moveToY(300).moveToY(0, 300, EasingFunction.OutExpo);
+    this.fadeInFromZero(500);
+
+    this.moveToY(1).moveToY(0, 400, EasingFunction.OutExpo);
   }
 
-  hide() {
-    this.moveToY(300, 400, EasingFunction.OutExpo);
-    this.fadeOut(300);
+  onExiting(e: ScreenExitEvent): boolean {
+    if (super.onExiting(e))
+      return true;
+
+    this.moveToY(1, 400, EasingFunction.OutExpo);
+
+    return false;
   }
 
-  adjustBackground(background: EditorBackground) {
-    background.scaleTo(1.35, 500, EasingFunction.OutExpo)
-      .fadeTo(0.35, 500, EasingFunction.OutQuad);
+  protected override adjustBackground(background: BackgroundAdjustment) {
+    background.size = 1.35;
+    background.alpha = 0.35;
   }
 
   @resolved(EditorClock)

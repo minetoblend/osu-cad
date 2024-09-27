@@ -121,4 +121,12 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
 
     this.#startTimeMap.set(drawable, bindable);
   }
+
+  override dispose(isDisposing: boolean = true) {
+    for (const entry of [...this.aliveEntries.keys()]) {
+      this.removeEntry(entry);
+    }
+
+    super.dispose(isDisposing);
+  }
 }

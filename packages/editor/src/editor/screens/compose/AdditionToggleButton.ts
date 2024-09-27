@@ -1,12 +1,20 @@
-import type { IKeyBindingHandler, KeyBindingPressEvent, KeyBindingReleaseEvent } from 'osucad-framework';
+import type {
+  DependencyContainer,
+  IKeyBindingHandler,
+  KeyBindingPressEvent,
+  KeyBindingReleaseEvent,
+} from 'osucad-framework';
 import type { Texture } from 'pixi.js';
 import type { HitSoundState } from '../../../beatmap/hitSounds/BindableHitSound';
-import { dependencyLoader, resolved } from 'osucad-framework';
+import {
+  dependencyLoader,
+  resolved,
+} from 'osucad-framework';
 import { Additions } from '../../../beatmap/hitSounds/Additions';
 import { additionToSampleType, SampleType } from '../../../beatmap/hitSounds/SampleType';
 import { EditorAction } from '../../EditorAction';
+import { EditorDependencies } from '../../EditorDependencies.ts';
 import { HitsoundPlayer } from '../../HitsoundPlayer';
-import { HITSOUND } from '../../InjectionTokens';
 import { ComposeToggleButton } from './ComposeToggleButton';
 import { SampleHighlightContainer } from './SampleHighlightContainer';
 
@@ -23,11 +31,14 @@ export class AdditionToggleButton extends ComposeToggleButton
   @resolved(HitsoundPlayer)
   hitsoundPlayer!: HitsoundPlayer;
 
-  @resolved(HITSOUND)
   protected hitSoundState!: HitSoundState;
 
   @dependencyLoader()
-  load() {
+  load(dependencies: DependencyContainer) {
+    const { hitSound } = dependencies.resolve(EditorDependencies);
+
+    this.hitSoundState = hitSound;
+
     this.addInternal(
       new SampleHighlightContainer(this.addition === Additions.Whistle
         ? [

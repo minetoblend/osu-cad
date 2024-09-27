@@ -6,9 +6,11 @@ import type {
   ScreenTransitionEvent,
   ScrollEvent,
   UIEvent,
+  ValueChangedEvent,
 } from 'osucad-framework';
 import type { BackgroundScreen } from '../BackgroundScreen.ts';
 import type { EditorContext } from './context/EditorContext';
+import type { EditorScreen } from './screens/EditorScreen.ts';
 import {
   Action,
   Anchor,
@@ -25,9 +27,6 @@ import {
 } from 'osucad-framework';
 import { BeatmapComboProcessor } from '../beatmap/beatmapProcessors/BeatmapComboProcessor';
 import { BeatmapStackingProcessor } from '../beatmap/beatmapProcessors/BeatmapStackingProcessor';
-import { Additions } from '../beatmap/hitSounds/Additions';
-import { AdditionsBindable } from '../beatmap/hitSounds/AdditionsBindable';
-import { HitSoundState } from '../beatmap/hitSounds/BindableHitSound';
 import { Notification } from '../notifications/Notification';
 import { NotificationOverlay } from '../notifications/NotificationOverlay';
 import { OsucadScreen } from '../OsucadScreen';
@@ -36,13 +35,15 @@ import { EditorAction } from './EditorAction';
 import { EditorBackground } from './EditorBackground.ts';
 import { EditorBottomBar } from './EditorBottomBar';
 import { EditorClock } from './EditorClock';
+import { EditorDependencies } from './EditorDependencies.ts';
 import { EditorMixer } from './EditorMixer';
 import { EditorScreenContainer } from './EditorScreenContainer';
 import { EditorTopBar } from './EditorTopBar';
-import { ADDITIONS, CURRENT_SCREEN, HITSOUND, NEW_COMBO, NEW_COMBO_APPLIED } from './InjectionTokens';
+import { OsuPlayfield } from './hitobjects/OsuPlayfield.ts';
+import { HitsoundPlayer } from './HitsoundPlayer.ts';
 import { ComposeScreen } from './screens/compose/ComposeScreen';
-import { ToggleBindable } from './screens/compose/ToggleBindable';
 import { EditorScreenType } from './screens/EditorScreenType';
+import { HitSoundsScreen } from './screens/hitsounds/HitSoundsScreen.ts';
 import { SetupScreen } from './screens/setup/SetupScreen';
 import { TimingScreen } from './screens/timing/TimingScreen';
 
@@ -83,17 +84,17 @@ export class Editor
   @resolved(EditorMixer)
   mixer!: EditorMixer;
 
-  #newCombo = new ToggleBindable(false);
-
-  #newComboApplied = new Action<boolean>();
-
-  #hitSound = new HitSoundState();
-
-  #additions = new AdditionsBindable(Additions.None);
-
   @asyncDependencyLoader()
   async init() {
     await this.context.load();
+
+    const editorDependencies = new EditorDependencies(
+      new OsuPlayfield(),
+    );
+
+    this.dependencies.provide(EditorDependencies, editorDependencies);
+
+    this.currentScreen.bindTo(editorDependencies.currentScreen);
 
     this.context.beatmap.hitObjects.applyDefaultsImmediately = false;
 
@@ -103,21 +104,21 @@ export class Editor
 
     this.dependencies.provide(BeatmapSampleStore, this.sampleStore);
 
-    this.dependencies.provide(NEW_COMBO, this.#newCombo);
-    this.dependencies.provide(NEW_COMBO_APPLIED, this.#newComboApplied);
-    this.dependencies.provide(ADDITIONS, this.#additions);
-    this.dependencies.provide(HITSOUND, this.#hitSound);
-    this.dependencies.provide(CURRENT_SCREEN, this.currentScreen);
-
     this.#clock = new EditorClock(this.context.song);
     this.addInternal(this.#clock);
 
     this.dependencies.provide(this.#clock);
 
+    this.loadComponent(editorDependencies.reusablePlayfield);
+
+    const hitSoundPlayer = new HitsoundPlayer();
+    this.dependencies.provide(HitsoundPlayer, hitSoundPlayer);
+    this.addInternal(hitSoundPlayer);
+
     this.addAllInternal(
       new Container({
         relativeSizeAxes: Axes.Both,
-        padding: { top: 28, bottom: 48 },
+        padding: { top: 28 },
         child: (this.#screenContainer = new EditorScreenContainer()),
       }),
       (this.#topBar = new EditorTopBar()),
@@ -133,27 +134,31 @@ export class Editor
   protected loadComplete() {
     super.loadComplete();
 
-    this.currentScreen.addOnChangeListener(
-      ({ value: screen }) => {
-        this.#updateScreen(screen);
-      },
-      { immediate: true },
-    );
+    this.currentScreen.addOnChangeListener(e => this.#updateScreen(e), { immediate: true });
   }
 
   readonly currentScreen = new Bindable(EditorScreenType.Compose);
 
-  #updateScreen(screen: EditorScreenType) {
-    switch (screen) {
+  #updateScreen(screen: ValueChangedEvent<EditorScreenType>) {
+    let screenToShow: EditorScreen;
+
+    switch (screen.value) {
       case EditorScreenType.Setup:
-        this.#screenContainer.screen = new SetupScreen();
+        screenToShow = new SetupScreen();
         break;
       case EditorScreenType.Compose:
-        this.#screenContainer.screen = new ComposeScreen();
+        screenToShow = new ComposeScreen();
         break;
       case EditorScreenType.Timing:
-        this.#screenContainer.screen = new TimingScreen();
+        screenToShow = new TimingScreen();
         break;
+      case EditorScreenType.Hitsounds:
+        screenToShow = new HitSoundsScreen();
+        break;
+    }
+
+    if (!this.#screenContainer.showScreen(screenToShow) && screen.previousValue !== undefined) {
+      this.currentScreen.value = screen.previousValue;
     }
   }
 

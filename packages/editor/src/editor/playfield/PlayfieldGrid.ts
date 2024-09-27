@@ -1,25 +1,45 @@
-import {
+import type {
   ContainerOptions,
-  definitelyBigger,
   KeyDownEvent,
   PIXIContainer,
 } from 'osucad-framework';
 import {
   BindableNumber,
   Container,
+  definitelyBigger,
   dependencyLoader,
+  Invalidation,
   PIXIGraphics,
   resolved,
 } from 'osucad-framework';
 import { Beatmap } from '../../beatmap/Beatmap';
 
+export interface PlayfieldGridOptions extends ContainerOptions {
+  customGridSize?: number;
+}
+
 export class PlayfieldGrid extends Container {
-  constructor(options: ContainerOptions = {}) {
+  constructor(options: PlayfieldGridOptions = {}) {
     super({
       width: 512,
       height: 384,
-      ...options,
     });
+
+    this.with(options);
+  }
+
+  #customGridSize?: number;
+
+  get customGridSize() {
+    return this.#customGridSize;
+  }
+
+  set customGridSize(value: number | undefined) {
+    if (value === this.#customGridSize)
+      return;
+
+    this.#customGridSize = value;
+    this.invalidate(Invalidation.Transform);
   }
 
   @resolved(Beatmap)
@@ -35,13 +55,17 @@ export class PlayfieldGrid extends Container {
   init() {
     this.alpha = 0.5;
 
-    this.gridSize.bindTo(this.beatmap.settings.editor.gridSizeBindable);
-    this.gridSize.addOnChangeListener(() => this.drawGrid(), { immediate: true });
+    this.gridSizeBindable.bindTo(this.beatmap.settings.editor.gridSizeBindable);
+    this.gridSizeBindable.addOnChangeListener(() => this.drawGrid(), { immediate: true });
 
     this.beatmap.settings.editor.gridSizeBindable.addOnChangeListener(e => console.log(e));
   }
 
-  gridSize = new BindableNumber(16);
+  gridSizeBindable = new BindableNumber(16);
+
+  get gridSize() {
+    return this.customGridSize ?? this.gridSizeBindable.value;
+  }
 
   updateSubTreeTransforms(): boolean {
     if (!super.updateSubTreeTransforms())
@@ -69,10 +93,9 @@ export class PlayfieldGrid extends Container {
       width: 2 / this.#pixelSize,
     });
 
-    const size = this.gridSize.value;
+    const size = this.gridSize;
 
     if (definitelyBigger(size, 0)) {
-
       g.beginPath();
       for (let i = size; i <= 512 - size; i += size) {
         g.moveTo(i, 0).lineTo(i, 384);
@@ -96,7 +119,7 @@ export class PlayfieldGrid extends Container {
     if (e.key.startsWith('Digit') && e.controlPressed) {
       const index = Number.parseInt(e.key[5]) - 1;
       if (index >= 0 && index < this.#gridSizePresets.length) {
-        this.gridSize.value = this.#gridSizePresets[index];
+        this.gridSizeBindable.value = this.#gridSizePresets[index];
         return true;
       }
     }

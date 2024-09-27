@@ -1,10 +1,11 @@
-import { Anchor, Bindable } from 'osucad-framework';
+import type { Bindable } from 'osucad-framework';
 import type { ComposeTool } from './tools/ComposeTool';
-import { Axes, Container, dependencyLoader, FillDirection, FillFlowContainer, Key, Vec2 } from 'osucad-framework';
+import { Anchor, Axes, Container, dependencyLoader, FillDirection, FillFlowContainer, Key, Vec2 } from 'osucad-framework';
 import { ComposeToolbarButton } from './ComposeToolbarButton';
 import { ComposeToolbarToolButton } from './ComposeToolbarToolButton';
 import { SampleSetControl } from './SampleSetControl';
 import { SliderPresetButton } from './SliderPresetButton';
+import { ToolbarGridSnapToggle } from './ToolbarGridSnapToggle';
 import { BirdSliderTool } from './tools/BirdSliderTool';
 import { HitCircleTool } from './tools/HitCircleTool';
 import { SelectTool } from './tools/SelectTool';
@@ -12,7 +13,6 @@ import { SliderTool } from './tools/SliderTool';
 import { SpinnerTool } from './tools/SpinnerTool';
 import { WaveSliderTool } from './tools/WaveSliderTool';
 import { ZWaveSliderTool } from './tools/ZWaveSliderTool';
-import { ToolbarGridSnapToggle } from './ToolbarGridSnapToggle';
 
 export class ComposeToolBar extends Container {
   constructor(protected readonly activeTool: Bindable<ComposeTool>) {
@@ -82,9 +82,9 @@ export class ComposeToolBar extends Container {
     this.addInternal(this.#toggleButtons.with({
       depth: 1,
       children: [
-        new ToolbarGridSnapToggle()
-      ]
-    }))
+        new ToolbarGridSnapToggle(),
+      ],
+    }));
   }
 
   override get content() {
@@ -105,4 +105,11 @@ export class ComposeToolBar extends Container {
     anchor: Anchor.BottomLeft,
     origin: Anchor.BottomLeft,
   });
+
+  collapseChildren() {
+    const sampleSetControls = this.findChildrenOfType(SampleSetControl);
+    for (const control of sampleSetControls) {
+      control.expanded.value = false;
+    }
+  }
 }

@@ -85,7 +85,7 @@ export abstract class PooledDrawableWithLifetimeContainer<TEntry extends Lifetim
   };
 
   clear() {
-    for (const entry of [...this.entries]) {
+    for (const [entry, drawable] of [...this.entries.entries()]) {
       this.removeEntry(entry);
     }
 

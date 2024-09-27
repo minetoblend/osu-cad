@@ -2,8 +2,9 @@ import type { Constructor } from '@osucad/common';
 import type { NoArgsConstructor } from 'osucad-framework';
 import type { HitObject } from '../../beatmap/hitObjects/HitObject';
 import type { DrawableHitObject } from './DrawableHitObject';
-import { Action, Axes, Container, DrawablePool, Lazy, provide, resolved } from 'osucad-framework';
+import { Action, Axes, Container, dependencyLoader, DrawablePool, Lazy, provide, resolved } from 'osucad-framework';
 import { Beatmap } from '../../beatmap/Beatmap';
+import { EditorClock } from '../EditorClock.ts';
 import { HitObjectContainer } from './HitObjectContainer';
 import { HitObjectEntryManager } from './HitObjectEntryManager';
 import { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
@@ -67,6 +68,15 @@ export class Playfield extends Container implements IPooledHitObjectProvider {
 
   @resolved(Beatmap)
   beatmap!: Beatmap;
+
+  @resolved(EditorClock)
+  editorClock!: EditorClock;
+
+  @dependencyLoader()
+  [Symbol('load')]() {
+    this.clock = this.editorClock;
+    this.processCustomClock = false;
+  }
 
   protected loadComplete() {
     super.loadComplete();
@@ -170,7 +180,7 @@ export class Playfield extends Container implements IPooledHitObjectProvider {
 
   override dispose(isDisposing: boolean = true) {
     for (const hitObject of this.beatmap.hitObjects) {
-      this.removeHitObject(hitObject);
+      // this.removeHitObject(hitObject);
     }
 
     super.dispose(isDisposing);

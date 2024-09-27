@@ -1,6 +1,4 @@
-import type {
-  KeyDownEvent,
-} from 'osucad-framework';
+import type { ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
 import type { ComposeTool } from './tools/ComposeTool';
 import {
   Anchor,
@@ -12,7 +10,6 @@ import {
   dependencyLoader,
   EasingFunction,
   Invalidation,
-  Key,
   LayoutMember,
   resolved,
 } from 'osucad-framework';
@@ -21,7 +18,6 @@ import { OsucadConfigManager } from '../../../config/OsucadConfigManager';
 import { OsucadSettings } from '../../../config/OsucadSettings';
 import { BeatSnapDivisorSelector } from '../../BeatSnapDivisorSelector';
 import { Corner, EditorCornerPiece } from '../../EditorCornerPiece';
-import { HitsoundPlayer } from '../../HitsoundPlayer';
 import { ComposeScreenTimeline } from '../../timeline/ComposeScreenTimeline';
 import { TimelineZoomButtons } from '../../timeline/TimelineZoomButtons';
 import { EditorScreen } from '../EditorScreen';
@@ -36,17 +32,14 @@ export class ComposeScreen extends EditorScreen {
   }
 
   #paddingBacking = new LayoutMember(Invalidation.DrawSize);
-  #composer!: HitObjectComposer;
 
-  #content!: Container;
+  composer!: HitObjectComposer;
 
-  get content() {
-    return this.#content;
-  }
+  mainContent!: Container;
 
   #activeTool = new Bindable<ComposeTool>(new SelectTool());
 
-  #topBar!: Container;
+  topBar!: Container;
 
   compactTimeline = new BindableBoolean();
 
@@ -62,21 +55,15 @@ export class ComposeScreen extends EditorScreen {
 
     this.addInternal(selection);
 
-    const hitSoundPlayer = new HitsoundPlayer();
-    this.dependencies.provide(HitsoundPlayer, hitSoundPlayer);
-    this.addInternal(hitSoundPlayer);
-
-    this.addInternal(this.#content = new Container({
+    this.addInternal(this.mainContent = new Container({
       relativeSizeAxes: Axes.Both,
       padding: {
         top: 75,
       },
+      children: [
+        this.composer = new HitObjectComposer(this.#activeTool),
+      ],
     }));
-    this.add(this.#composer = new HitObjectComposer(this.#activeTool));
-    // this.add((this.#toolBar = new ComposeToolBar(this.#activeTool)));
-    // this.add((this.#togglesBar = new ComposeTogglesBar().with({
-    //   y: 10,
-    // })));
 
     const filter = new BackdropBlurFilter({
       strength: 15,
@@ -89,7 +76,7 @@ export class ComposeScreen extends EditorScreen {
     const timeline = this.timeline = new ComposeScreenTimeline();
 
     this.addInternal(
-      this.#topBar = new Container({
+      this.topBar = new Container({
         relativeSizeAxes: Axes.X,
         height: 75,
         children: [
@@ -154,19 +141,19 @@ export class ComposeScreen extends EditorScreen {
   }
 
   get timelineHeight() {
-    return this.#topBar.height;
+    return this.topBar.height;
   }
 
   set timelineHeight(value) {
-    this.#topBar.height = value;
-    this.#content.padding = { top: value };
+    this.topBar.height = value;
+    this.mainContent.padding = { top: value };
   }
 
   update(): void {
     super.update();
 
     if (!this.#paddingBacking.isValid) {
-      this.#composer.padding = {
+      this.composer.padding = {
         top: this.drawSize.x < 1250 ? 20 : 10,
         bottom: this.drawSize.x < 1110 ? 15 : -10,
       };
@@ -174,30 +161,26 @@ export class ComposeScreen extends EditorScreen {
     }
   }
 
-  show() {
-    super.show();
+  onEntering(e: ScreenTransitionEvent) {
+    super.onEntering(e);
 
-    this.#topBar.moveToY(-70).moveToY(0, 500, EasingFunction.OutExpo);
+    this.topBar.moveToY(-70).moveToY(0, 500, EasingFunction.OutExpo);
 
-    this.#composer.show();
+    this.composer.onEntering();
   }
 
-  hide() {
-    super.hide();
-
-    this.#topBar.moveToY(-70, 500, EasingFunction.OutExpo);
-
-    this.#composer.hide();
-  }
-
-  timeline!: ComposeScreenTimeline;
-
-  onKeyDown(e: KeyDownEvent): boolean {
-    if (e.key === Key.F4) {
-      this.timeline.alpha = this.timeline.alpha === 0 ? 1 : 0;
+  onExiting(e: ScreenExitEvent) {
+    if (super.onExiting(e))
       return true;
-    }
+
+    this.topBar.moveToY(-70, 500, EasingFunction.OutExpo);
+
+    this.composer.onExiting(e);
+
+    this.fadeTo(1, 1000);
 
     return false;
   }
+
+  timeline!: ComposeScreenTimeline;
 }

@@ -1,15 +1,9 @@
-import type { EditorBackground } from '../../EditorBackground.ts';
-import {
-  Axes,
-  Box,
-  Container,
-  dependencyLoader,
-  Direction,
-  EasingFunction,
-  Vec2,
-} from 'osucad-framework';
+import type { ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
+import type { BackgroundAdjustment } from '../BackgroundAdjustment.ts';
+import { Axes, Box, Container, dependencyLoader, Direction, EasingFunction } from 'osucad-framework';
 import { MainScrollContainer } from '../../MainScrollContainer.ts';
 import { EditorScreen } from '../EditorScreen';
+import { HitSoundsScreen } from '../hitsounds/HitSoundsScreen.ts';
 import { BackgroundSelectButton } from './BackgroundSelectButton.ts';
 
 export class SetupScreen extends EditorScreen {
@@ -55,20 +49,14 @@ export class SetupScreen extends EditorScreen {
 
   backgroundSelect!: BackgroundSelectButton;
 
-  adjustBackground(background: EditorBackground) {
-    background.fadeTo(0.5, 500, EasingFunction.OutQuad);
-    background.scaleTo(1.2, 500, EasingFunction.OutExpo);
-
-    background.resizeTo(new Vec2(0.35, 1), 500, EasingFunction.OutExpo);
-    background.moveToX(0.3, 500, EasingFunction.OutExpo);
+  adjustBackground(background: BackgroundAdjustment) {
+    background.alpha = 0.5;
+    background.width = 0.4;
+    background.x = 0.3;
   }
 
-  protected override get fadeInDuration() {
-    return 0;
-  }
-
-  show() {
-    super.show();
+  onEntering(e: ScreenTransitionEvent) {
+    super.onEntering(e);
 
     this.backgroundSelect
       .fadeInFromZero(500)
@@ -76,18 +64,18 @@ export class SetupScreen extends EditorScreen {
       .moveToY(0, 500, EasingFunction.OutExpo);
   }
 
-  hide() {
+  onExiting(e: ScreenExitEvent): boolean {
+    if (super.onExiting(e))
+      return true;
+
     this.fadeTo(1, 500);
 
-    this.#content.moveToX(-0.6, 500, EasingFunction.OutExpo);
+    this.#content.moveToX(e.next instanceof HitSoundsScreen ? -0.7 : -0.6, 500, EasingFunction.OutExpo);
 
     this.backgroundSelect
       .moveToY(100, 500, EasingFunction.OutExpo)
       .fadeOut(300);
 
-    this.editor.applyToBackground((background) => {
-      background.moveToX(0, 500, EasingFunction.OutExpo);
-      background.resizeWidthTo(1, 500, EasingFunction.OutExpo);
-    });
+    return false;
   }
 }

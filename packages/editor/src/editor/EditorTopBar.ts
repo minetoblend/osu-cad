@@ -1,8 +1,6 @@
 import { Anchor, Axes, Box, Container, dependencyLoader } from 'osucad-framework';
-import { BackdropBlurFilter } from 'pixi-filters';
 import { EditorMenubar } from './EditorMenubar';
 import { EditorScreenSelect } from './EditorScreenSelect';
-import { Timeline } from './timeline/Timeline';
 
 export class EditorTopBar extends Container {
   constructor() {
@@ -13,22 +11,10 @@ export class EditorTopBar extends Container {
 
   @dependencyLoader()
   init() {
-    const filter = new BackdropBlurFilter({
-      strength: 15,
-      quality: 3,
-      antialias: 'inherit',
-      resolution: devicePixelRatio,
-    });
-    filter.padding = 30;
-
-    const timeline = new Timeline();
-
     this.addAll(
       new Box({
         relativeSizeAxes: Axes.Both,
         color: 0x222228,
-        alpha: 0.9,
-        filters: [filter],
       }),
       new EditorMenubar(),
       new EditorScreenSelect().with({

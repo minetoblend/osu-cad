@@ -1,10 +1,8 @@
-import type {
-  Bindable,
-} from 'osucad-framework';
+import type { DependencyContainer } from 'osucad-framework';
 import {
   Anchor,
-
   Axes,
+  Bindable,
   Box,
   Button,
   Container,
@@ -17,7 +15,7 @@ import {
   Vec2,
 } from 'osucad-framework';
 import { OsucadSpriteText } from '../OsucadSpriteText';
-import { CURRENT_SCREEN } from './InjectionTokens';
+import { EditorDependencies } from './EditorDependencies.ts';
 import { EditorScreenType } from './screens/EditorScreenType';
 import { ThemeColors } from './ThemeColors';
 
@@ -61,6 +59,7 @@ export class EditorScreenSelect extends Container {
       new ScreenSelectButton('Setup', EditorScreenType.Setup),
       new ScreenSelectButton('Compose', EditorScreenType.Compose),
       new ScreenSelectButton('Timing', EditorScreenType.Timing),
+      new ScreenSelectButton('Hitsounds', EditorScreenType.Hitsounds),
     );
 
     this.updateSubTree();
@@ -92,11 +91,14 @@ class ScreenSelectButton extends Button {
   @resolved(ThemeColors)
   colors!: ThemeColors;
 
-  @resolved(CURRENT_SCREEN)
-  currentScreen!: Bindable<EditorScreenType>;
+  currentScreen = new Bindable<EditorScreenType>(EditorScreenType.Compose);
 
   @dependencyLoader()
-  load() {
+  load(dependencies: DependencyContainer) {
+    const { currentScreen } = dependencies.resolve(EditorDependencies);
+
+    this.currentScreen.bindTo(currentScreen);
+
     this.addAllInternal(
       new Container({
         autoSizeAxes: Axes.X,

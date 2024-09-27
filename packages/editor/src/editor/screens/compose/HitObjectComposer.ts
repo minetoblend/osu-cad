@@ -1,46 +1,29 @@
-import type {
-  Bindable,
-  IKeyBindingHandler,
-  InvalidationSource,
-  KeyBindingPressEvent,
-  KeyDownEvent,
-} from 'osucad-framework';
+import type { Bindable, DependencyContainer, IKeyBindingHandler, KeyBindingPressEvent, ScreenExitEvent } from 'osucad-framework';
 import type { IPositionSnapProvider } from './snapping/IPositionSnapProvider';
 import type { SnapTarget } from './snapping/SnapTarget';
 import type { ComposeTool } from './tools/ComposeTool';
 import type { DrawableComposeTool } from './tools/DrawableComposeTool';
-import {
-  Axes,
-  BindableBoolean,
-  Container,
-  dependencyLoader,
-  DrawSizePreservingFillContainer,
-  EasingFunction,
-  Invalidation,
-  Key,
-  PlatformAction,
-  resolved,
-  Vec2,
-} from 'osucad-framework';
+import { Axes, BindableBoolean, Container, dependencyLoader, DrawSizePreservingFillContainer, EasingFunction, PlatformAction, resolved, Vec2 } from 'osucad-framework';
 import { Beatmap } from '../../../beatmap/Beatmap';
 import { HitObjectList } from '../../../beatmap/hitObjects/HitObjectList';
 import { DeleteHitObjectCommand } from '../../commands/DeleteHitObjectCommand';
 import { UpdateHitObjectCommand } from '../../commands/UpdateHitObjectCommand';
 import { CommandManager } from '../../context/CommandManager';
 import { HitObjectClipboard } from '../../CopyPasteHandler';
-import { Editor } from '../../Editor.ts';
 import { EditorAction } from '../../EditorAction';
 import { EditorClock } from '../../EditorClock';
+import { EditorDependencies } from '../../EditorDependencies.ts';
 import { OsuPlayfield } from '../../hitobjects/OsuPlayfield';
 import { Playfield } from '../../hitobjects/Playfield';
-import { NEW_COMBO } from '../../InjectionTokens';
-import { PlayfieldGrid } from '../../playfield/PlayfieldGrid';
+import { PlayfieldGrid } from '../../playfield/PlayfieldGrid.ts';
+import { EditorScreenUtils } from '../EditorScreenUtils.ts';
+import { HitSoundsScreen } from '../hitsounds/HitSoundsScreen.ts';
 import { ComposeTogglesBar } from './ComposeTogglesBar';
 import { ComposeToolBar } from './ComposeToolBar';
 import { ComposeToolbarButton } from './ComposeToolbarButton.ts';
 import { EditorSelection } from './EditorSelection';
 import { HitObjectUtils } from './HitObjectUtils';
-import { SelectionOverlay } from './selection/SelectionOverlay';
+import { SelectionOverlay } from './selection/SelectionOverlay.ts';
 import { GridSnapProvider } from './snapping/GridSnapProvider';
 import { HitObjectSnapProvider } from './snapping/HitObjectSnapProvider';
 
@@ -63,28 +46,25 @@ export class HitObjectComposer
 
   gridSnapEnabled = new BindableBoolean(false);
 
+  #grid!: PlayfieldGrid;
+
   @dependencyLoader()
-  load() {
+  load(dependencies: DependencyContainer) {
+    const { reusablePlayfield } = dependencies.resolve(EditorDependencies);
+
+    this.playfield = reusablePlayfield;
+
     this.addAllInternal(this.hitObjectUtils = new HitObjectUtils());
 
     this.addAllInternal(
       new Container({
         relativeSizeAxes: Axes.Both,
         padding: { horizontal: 20 + ComposeToolbarButton.SIZE },
-        child: this.#playfieldContainer = new DrawSizePreservingFillContainer({
+        child: this.#drawSizeContainer = new DrawSizePreservingFillContainer({
           targetDrawSize: { x: 512, y: 384 },
-          child: new Container({
+          child: this.#playfieldContainer = new Container({
             width: 512,
             height: 384,
-            children: [
-              new PlayfieldGrid(),
-              this.playfield = new OsuPlayfield().with({
-                clock: this.editorClock,
-                processCustomClock: false,
-              }),
-              new SelectionOverlay(),
-              this.#toolContainer,
-            ],
           }),
         }),
       }),
@@ -115,7 +95,9 @@ export class HitObjectComposer
 
   #previousTool!: ComposeTool;
 
-  #playfieldContainer!: DrawSizePreservingFillContainer;
+  #drawSizeContainer!: DrawSizePreservingFillContainer;
+
+  #playfieldContainer!: Container;
 
   #toolbarContainer!: Container;
 
@@ -140,12 +122,6 @@ export class HitObjectComposer
         },
         { immediate: true },
       );
-    });
-
-    this.#playfieldContainer.content.invalidated.addListener(([_, invalidation]) => {
-      if ((invalidation & (Invalidation.DrawSize | Invalidation.Transform)) > 0) {
-        this.scheduler.addOnce(this.updateBackgroundSize, this);
-      }
     });
   }
 
@@ -235,9 +211,6 @@ export class HitObjectComposer
     this.commandManager.commit();
   }
 
-  @resolved(NEW_COMBO)
-  newCombo!: Bindable<boolean>;
-
   #nudgePosition(dx: number, dy: number) {
     for (const object of this.selection.selectedObjects) {
       this.commandManager.submit(
@@ -306,78 +279,40 @@ export class HitObjectComposer
     return { offset: null, target: null, snapTargets };
   }
 
-  onKeyDown(e: KeyDownEvent): boolean {
-    if (e.key === Key.F5) {
-      this.playfield.alpha = this.playfield.alpha === 1 ? 0 : 1;
-      return true;
-    }
-
-    return false;
-  }
-
-  override show() {
-    this.#playfieldContainer.moveToY(100).moveToY(0, 500, EasingFunction.OutExpo);
-    this.fadeInFromZero(400);
-
+  onEntering() {
+    this.#drawSizeContainer.moveToY(100).moveToY(0, 500, EasingFunction.OutExpo);
     this.#toolbarContainer.moveToY(-70).moveToY(0, 500, EasingFunction.OutExpo);
     this.#toolBar.moveToX(-100).moveToX(0, 500, EasingFunction.OutExpo);
     this.#togglesBar.moveToX(100).moveToX(0, 500, EasingFunction.OutExpo);
 
-    this.scheduler.addOnce(this.updateBackgroundSize, this);
+    this.#toolbarContainer.fadeInFromZero(400);
+
+    if (this.playfield.parent)
+      EditorScreenUtils.matchScreenSpaceDrawQuad(this.playfield.parent, this.#playfieldContainer, true);
+    else
+      this.#playfieldContainer.fadeInFromZero(400);
+
+    this.#playfieldContainer.add(this.#grid = new PlayfieldGrid());
+    EditorScreenUtils.insertPlayfield(this.playfield, this.#playfieldContainer);
+    this.#playfieldContainer.addAll(new SelectionOverlay(), this.#toolContainer);
   }
 
-  override onInvalidate(invalidation: Invalidation, source: InvalidationSource): boolean {
-    if ((invalidation & Invalidation.DrawSize) > 0) {
-      this.scheduler.addOnce(this.updateBackgroundSize, this);
-    }
-
-    return super.onInvalidate(invalidation, source);
-  }
-
-  override hide() {
-    this.#isHidden = true;
-
-    this.#playfieldContainer.moveToY(100, 500, EasingFunction.OutExpo);
+  onExiting(e: ScreenExitEvent) {
+    this.#drawSizeContainer.moveToY(100, 500, EasingFunction.OutExpo);
     this.#toolbarContainer.moveToY(-70, 500, EasingFunction.OutExpo);
-    this.#toolBar.moveToX(-100, 500, EasingFunction.OutExpo);
+    this.#toolBar
+      .moveToX(-100, 500, EasingFunction.OutExpo)
+      .fadeOut(500, EasingFunction.OutQuad);
 
-    this.#togglesBar.moveToX(100, 500, EasingFunction.OutExpo);
-  }
+    this.#togglesBar
+      .moveToX(100, 500, EasingFunction.OutExpo)
+      .fadeOut(500, EasingFunction.OutQuad);
 
-  #isHidden = false;
+    this.#toolBar.collapseChildren();
 
-  updateBackgroundSize() {
-    const editor = this.findClosestParentOfType(Editor)!;
-
-    if (!this.playfield.isLoaded) {
-      this.scheduler.addOnce(this.updateBackgroundSize, this);
-      return;
-    }
-
-    editor.scheduler.add(() => {
-      // We don't want to update the background size anymore if the screen is currently hiding.
-      if (this.#isHidden)
-        return;
-
-      editor.applyToBackground((background) => {
-        const parent = background.parent!;
-
-        const screenSpaceCenter = this.playfield.toScreenSpace(new Vec2(512 / 2, 384 / 2));
-
-        const center = parent.toLocalSpace(screenSpaceCenter).sub(parent.childSize.scale(0.5));
-
-        background.moveTo(center.div(parent.childSize), 500, EasingFunction.OutExpo);
-
-        const screenSpaceHeight = this.playfield.toScreenSpace(new Vec2(0, 480)).y - this.playfield.toScreenSpace(new Vec2()).y;
-
-        const height = (parent.toLocalSpace(new Vec2(0, screenSpaceHeight)).y - parent.toLocalSpace(new Vec2()).y) / parent.childSize.y;
-
-        const width = height * (640 / 480) * parent.childSize.y / parent.childSize.x;
-
-        console.log('background size', width, height);
-
-        background.resizeTo(new Vec2(width, height), 500, EasingFunction.OutExpo);
-      });
-    });
+    if (e.next && e.next instanceof HitSoundsScreen)
+      this.#grid.alpha = 0;
+    else
+      this.#playfieldContainer.fadeOut(300, EasingFunction.OutQuad);
   }
 }

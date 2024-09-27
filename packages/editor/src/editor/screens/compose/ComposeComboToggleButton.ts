@@ -7,11 +7,10 @@ import type {
 import {
   BindableBoolean,
   dependencyLoader,
-  resolved,
 } from 'osucad-framework';
 import { OsucadIcons } from '../../../OsucadIcons';
 import { EditorAction } from '../../EditorAction';
-import { NEW_COMBO, NEW_COMBO_APPLIED } from '../../InjectionTokens';
+import { EditorDependencies } from '../../EditorDependencies.ts';
 import { ComposeToggleButton } from './ComposeToggleButton';
 
 export class ComposeComboToggleButton extends ComposeToggleButton implements IKeyBindingHandler<EditorAction> {
@@ -21,12 +20,14 @@ export class ComposeComboToggleButton extends ComposeToggleButton implements IKe
 
   newCombo = new BindableBoolean();
 
-  @resolved(NEW_COMBO_APPLIED)
   newComboApplied!: Action<boolean>;
 
   @dependencyLoader()
   load() {
-    this.newCombo.bindTo(this.dependencies.resolve(NEW_COMBO));
+    const { newCombo, newComboApplied } = this.dependencies.resolve(EditorDependencies);
+
+    this.newCombo.bindTo(newCombo);
+    this.newComboApplied = newComboApplied;
 
     this.active.bindTo(this.newCombo);
   }

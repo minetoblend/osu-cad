@@ -1,5 +1,6 @@
 import type {
   Action,
+  DependencyContainer,
   InputManager,
   UIEvent,
 } from 'osucad-framework';
@@ -18,12 +19,8 @@ import {
 import { Beatmap } from '../../../../beatmap/Beatmap';
 import { CommandContainer } from '../../../CommandContainer';
 import { EditorClock } from '../../../EditorClock';
+import { EditorDependencies } from '../../../EditorDependencies.ts';
 import { OsuPlayfield } from '../../../hitobjects/OsuPlayfield';
-import {
-  HITSOUND,
-  NEW_COMBO,
-  NEW_COMBO_APPLIED,
-} from '../../../InjectionTokens';
 import { EditorSelection } from '../EditorSelection';
 import { HitObjectComposer } from '../HitObjectComposer';
 
@@ -45,10 +42,8 @@ export abstract class DrawableComposeTool extends CommandContainer {
 
   protected newCombo = new BindableBoolean();
 
-  @resolved(NEW_COMBO_APPLIED)
   protected newComboApplied!: Action<boolean>;
 
-  @resolved(HITSOUND)
   protected hitSoundState!: HitSoundState;
 
   receivePositionalInputAtLocal(): boolean {
@@ -64,8 +59,14 @@ export abstract class DrawableComposeTool extends CommandContainer {
   protected inputManager!: InputManager;
 
   @dependencyLoader()
-  [Symbol('load')]() {
-    this.newCombo.bindTo(this.dependencies.resolve(NEW_COMBO));
+  [Symbol('load')](dependencies: DependencyContainer) {
+    const { newCombo, newComboApplied, hitSound } = dependencies.resolve(EditorDependencies);
+
+    this.newComboApplied = newComboApplied;
+
+    this.newCombo.bindTo(newCombo);
+    this.hitSoundState = hitSound;
+
     this.newComboApplied.addListener(this.applyNewComboState, this);
     this.hitSoundState.changed.addListener(this.applyHitSoundState, this);
   }
