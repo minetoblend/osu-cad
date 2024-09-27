@@ -1,5 +1,4 @@
 import type { InvalidationSource, ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
-import type { EditorBackground } from '../EditorBackground.ts';
 import { Action, Axes, dependencyLoader, EasingFunction, Invalidation, Screen } from 'osucad-framework';
 import { Editor } from '../Editor.ts';
 import { BackgroundAdjustment } from './BackgroundAdjustment.ts';
@@ -31,11 +30,9 @@ export class EditorScreen extends Screen {
   onEntering(e: ScreenTransitionEvent) {
     super.onEntering(e);
 
-    this.editor.applyToBackground((editorBackground) => {
+    this.editor.applyToBackground((background) => {
       const adjustment = new BackgroundAdjustment();
       this.adjustBackground(adjustment);
-
-      const background = (editorBackground as EditorBackground).background;
 
       background.moveTo(adjustment.position, adjustment.moveDuration, EasingFunction.OutExpo);
       background.resizeTo(adjustment.size, adjustment.resizeDuration, EasingFunction.OutExpo);
@@ -56,8 +53,6 @@ export class EditorScreen extends Screen {
 
   protected adjustBackground(background: BackgroundAdjustment) {
   }
-
-  protected adjustBlurredBackground?(background: BackgroundAdjustment): void;
 
   protected get bottomTimelinePadding() {
     return true;
