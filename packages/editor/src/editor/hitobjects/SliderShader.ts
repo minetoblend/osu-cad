@@ -31,8 +31,8 @@ export class SliderShader extends Shader implements TextureShader {
     if (!gradient) {
       gradient = new SliderGradient(0, 0, 1, 0)
         .addColorStop(0.0, 0x000000, 0.0)
-        .addColorStop(0.2, 0x000000, 0.125)
-        .addColorStop(0.22, 0xFF0000)
+        .addColorStop(0.19, 0x000000, 0.125)
+        .addColorStop(0.21, 0xFF0000)
         .addColorStop(0.3, 0xFF0000)
         .addColorStop(0.32, 0xFFFF00)
         .addColorStop(1.0, 0xFFFFFF);
@@ -60,7 +60,7 @@ export class SliderShader extends Shader implements TextureShader {
               uniform float uSnakeOutProgress;
               uniform float uAlpha;
               uniform sampler2D uGradient;
-              
+
               vec4 lighten(vec4 color, float amount) {
                 amount *= 0.5;
                 return vec4(
@@ -79,26 +79,26 @@ export class SliderShader extends Shader implements TextureShader {
                 if(distanceAlongPath > uSnakeInProgress) {
                   discard;
                 }
-                
+
                 if(distanceAlongPath < uSnakeOutProgress) {
                   discard;
                 }
-              }          
-          
-              
-          
+              }
+
+
+
               vec4 gradientColor = texture(uGradient, vec2(progress, 0.0));
-          
+
               vec4 color = vec4(vec3(gradientColor.r) * uBorderColor.rgb, gradientColor.a);
-          
+
               vec4 innerColor = uComboColor * vec4(vec3(1.0 / 1.1), 1.0);
               vec4 outerColor = lighten(uComboColor, 0.5);
-          
+
               vec4 bodyColor = mix(innerColor, outerColor, gradientColor.b);
               color = mix(color, bodyColor, gradientColor.g);
-          
+
               color *= uAlpha;
-              
+
               outColor = color;
             `,
             },

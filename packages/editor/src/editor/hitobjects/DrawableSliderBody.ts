@@ -105,7 +105,7 @@ export class DrawableSliderBody extends Drawable {
     if (!this.hitObject)
       return 0;
 
-    return this.hitObject.scale * 60 * 1.25;
+    return this.hitObject.scale * 59 * 1.25;
   }
 
   #alphaFilter = new AlphaFilter({
