@@ -44,6 +44,9 @@ export class FpsOverlay extends Container {
     this.#text.style.align = 'right';
 
     this.with(options);
+
+    for (let i = 0; i < 100; i++)
+      this.#lastFrameTimes.push(0);
   }
 
   readonly #content: Container;
