@@ -103,7 +103,14 @@ export class MainSliderBall extends Drawable {
 
     const completionProgress = clamp((this.time.current - this.drawableHitObject.hitObject!.startTime) / this.drawableHitObject.hitObject!.duration, 0, 1);
 
-    const distance = slider.path.expectedDistance * slider.progressAt(completionProgress);
+    let distance = slider.path.expectedDistance * slider.progressAt(completionProgress);
+
+    const spanDuration = slider.spanDuration;
+    const spanIndex = Math.floor((this.time.current - slider.startTime) / spanDuration);
+
+    if (spanIndex % 2 === 1) {
+      distance = slider.path.expectedDistance - distance;
+    }
 
     const radius = slider.radius;
 
