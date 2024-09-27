@@ -5,7 +5,9 @@ import type {
   KeyBindingReleaseEvent,
   MouseDownEvent,
 } from 'osucad-framework';
+import type { Texture } from 'pixi.js';
 import type { HitSoundState } from '../../../beatmap/hitSounds/BindableHitSound';
+
 import {
   Anchor,
   Axes,
@@ -25,7 +27,6 @@ import {
   RoundedBox,
   Vec2,
 } from 'osucad-framework';
-
 import { SampleSet } from '../../../beatmap/hitSounds/SampleSet';
 import { SampleType } from '../../../beatmap/hitSounds/SampleType';
 import { OsucadConfigManager } from '../../../config/OsucadConfigManager';
@@ -92,10 +93,10 @@ export class SampleSetControl extends CompositeDrawable {
                   this.#movementContainer = new FillFlowContainer<SampleSetButton>({
                     autoSizeAxes: Axes.Both,
                     children: [
-                      new SampleSetButton(SampleSet.Auto, 'Auto', this.additions),
-                      new SampleSetButton(SampleSet.Normal, 'Normal', this.additions),
-                      new SampleSetButton(SampleSet.Soft, 'Soft', this.additions),
-                      new SampleSetButton(SampleSet.Drum, 'Drum', this.additions),
+                      new SampleSetButton(SampleSet.Auto, 'Auto', OsucadIcons.get('sampleset-auto'), this.additions),
+                      new SampleSetButton(SampleSet.Normal, 'Normal', OsucadIcons.get('sampleset-normal'), this.additions),
+                      new SampleSetButton(SampleSet.Soft, 'Soft', OsucadIcons.get('sampleset-soft'), this.additions),
+                      new SampleSetButton(SampleSet.Drum, 'Drum', OsucadIcons.get('sampleset-drum'), this.additions),
                     ],
                   }),
                   this.#activeHighlight = new RoundedBox({
@@ -244,7 +245,7 @@ export class SampleSetControl extends CompositeDrawable {
 }
 
 class SampleSetButton extends CompositeDrawable implements IKeyBindingHandler<EditorAction> {
-  constructor(readonly sampleSet: SampleSet, readonly text: string, readonly additions = false) {
+  constructor(readonly sampleSet: SampleSet, readonly text: string, readonly icon: Texture, readonly additions = false) {
     super();
 
     this.size = buttonSize;
@@ -258,20 +259,19 @@ class SampleSetButton extends CompositeDrawable implements IKeyBindingHandler<Ed
         anchor: Anchor.Center,
         origin: Anchor.Center,
         children: [
-          new OsucadSpriteText({
-            text: this.text.slice(0, 1),
-            fontWeight: 600,
-            fontSize: 14,
+          new DrawableSprite({
+            texture: this.icon,
             anchor: Anchor.Center,
             origin: Anchor.Center,
-            y: -7,
+            size: new Vec2(18, 18),
+            y: -6,
           }),
           new OsucadSpriteText({
             text: this.text,
             fontSize: 10,
             anchor: Anchor.Center,
             origin: Anchor.Center,
-            y: 7,
+            y: 8,
           }),
         ],
       }),
@@ -284,6 +284,8 @@ class SampleSetButton extends CompositeDrawable implements IKeyBindingHandler<Ed
     this.isActive.valueChanged.addListener(this.#updateState, this);
 
     bindable.addOnChangeListener(e => this.isActive.value = e.value === this.sampleSet, { immediate: true });
+
+    this.#updateState();
   }
 
   #content!: Container;
