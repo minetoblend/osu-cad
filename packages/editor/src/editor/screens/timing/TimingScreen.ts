@@ -4,7 +4,7 @@ import type {
   ScreenTransitionEvent,
 } from 'osucad-framework';
 import type { BackgroundAdjustment } from '../BackgroundAdjustment.ts';
-import { Anchor, Axes, Bindable, Box, Container, dependencyLoader, Direction, EasingFunction, MarginPadding, MaskingContainer, resolved } from 'osucad-framework';
+import { Anchor, Axes, Bindable, Box, Container, dependencyLoader, Direction, EasingFunction, MaskingContainer, resolved } from 'osucad-framework';
 import { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup.ts';
 import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
 import { OsucadButton } from '../../../userInterface/OsucadButton.ts';
@@ -42,19 +42,12 @@ export class TimingScreen extends EditorScreen {
 
     this.addInternal(new MetronomePlayer());
 
-    this.padding = new MarginPadding({
-      horizontal: 10,
-      top: 10,
-      bottom: 58,
-    });
-
     this.addAllInternal(
       new MaskingContainer({
         relativeSizeAxes: Axes.Both,
-        width: 0.8,
+        width: 0.9,
         anchor: Anchor.TopCenter,
         origin: Anchor.TopCenter,
-        cornerRadius: 4,
         children: [
           new Box({
             relativeSizeAxes: Axes.Both,
@@ -68,7 +61,7 @@ export class TimingScreen extends EditorScreen {
                 children: [
                   new TimingPointTable().with({
                     relativeSizeAxes: Axes.Y,
-                    width: TimingPointRow.MIN_WIDTH + 100,
+                    width: TimingPointRow.MIN_WIDTH + 200,
                   }),
                   new Container({
                     relativeSizeAxes: Axes.Both,
@@ -76,6 +69,7 @@ export class TimingScreen extends EditorScreen {
                     child: new OsucadButton({
                       anchor: Anchor.BottomLeft,
                       origin: Anchor.BottomLeft,
+                      y: -48,
                     })
                       .primary()
                       .withText('Add at current time')
@@ -91,7 +85,7 @@ export class TimingScreen extends EditorScreen {
               }),
               new Container({
                 relativeSizeAxes: Axes.Both,
-                padding: { left: TimingPointRow.MIN_WIDTH + 100 },
+                padding: { left: TimingPointRow.MIN_WIDTH + 200 },
                 child: new MainScrollContainer(Direction.Vertical).with({
                   relativeSizeAxes: Axes.Both,
                   child: this.#controlPointProperties = new ControlPointProperties(),
@@ -103,7 +97,6 @@ export class TimingScreen extends EditorScreen {
           new Container({
             relativeSizeAxes: Axes.X,
             height: 45,
-
             children: [
               new Box({
                 relativeSizeAxes: Axes.Both,
@@ -127,7 +120,7 @@ export class TimingScreen extends EditorScreen {
   onEntering(e: ScreenTransitionEvent) {
     super.onEntering(e);
 
-    this.fadeInFromZero(500);
+    this.fadeInFromZero(500, EasingFunction.OutQuad);
 
     this.moveToY(1).moveToY(0, 400, EasingFunction.OutExpo);
   }
@@ -136,7 +129,7 @@ export class TimingScreen extends EditorScreen {
     if (super.onExiting(e))
       return true;
 
-    this.moveToY(1, 400, EasingFunction.OutExpo);
+    this.moveToY(1, 500, EasingFunction.OutExpo);
 
     return false;
   }
@@ -148,4 +141,8 @@ export class TimingScreen extends EditorScreen {
 
   @resolved(EditorClock)
   editorClock!: EditorClock;
+
+  protected get bottomTimelinePadding(): boolean {
+    return false;
+  }
 }

@@ -152,7 +152,7 @@ export class TimingPointTable extends Container {
       y += TimingPointRow.HEIGHT;
     }
 
-    this.#scroll.scrollContent.height = this.controlPoints.groups.length * TimingPointRow.HEIGHT;
+    this.#scroll.scrollContent.height = this.controlPoints.groups.length * TimingPointRow.HEIGHT + 100;
 
     for (const c of toDelete) {
       const row = this.#rows.get(c)!;
