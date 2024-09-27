@@ -444,6 +444,7 @@ class Header extends FillFlowContainer {
         text: this.title,
         fontSize: 14,
         alpha: 0.9,
+        margin: { left: 2 },
         anchor: Anchor.CenterLeft,
         origin: Anchor.CenterLeft,
       }),
