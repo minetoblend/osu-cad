@@ -9,7 +9,12 @@ import type {
 import type { HitObject } from '../../../../beatmap/hitObjects/HitObject';
 import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
 import type { HitSoundStateChangeEvent } from '../../../../beatmap/hitSounds/BindableHitSound';
-import { Anchor, dependencyLoader, MouseButton, RoundedBox } from 'osucad-framework';
+import {
+  Anchor,
+  dependencyLoader,
+  MouseButton,
+  RoundedBox,
+} from 'osucad-framework';
 import { Slider } from '../../../../beatmap/hitObjects/Slider';
 import { SliderSelectionType } from '../../../../beatmap/hitObjects/SliderSelection';
 import { Additions } from '../../../../beatmap/hitSounds/Additions';
@@ -85,12 +90,14 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
 
       if (!this.selection.isSelected(candidate) && hovered.every(it => !it.isSelected)) {
         this.selection.select([candidate]);
-      } else if (!this.#trySelectSliderEdges(candidate, e.mousePosition)) {
+      }
+      else if (!this.#trySelectSliderEdges(candidate, e.mousePosition)) {
         this.#canCycleSelection = true;
       }
 
       return true;
-    } else if (e.button === MouseButton.Right) {
+    }
+    else if (e.button === MouseButton.Right) {
       const hovered = this.hoveredHitObjects(e.mousePosition);
 
       if (hovered.length === 0) {
@@ -104,7 +111,8 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
           this.submit(new DeleteHitObjectCommand(object), false);
         }
         this.commit();
-      } else {
+      }
+      else {
         this.submit(new DeleteHitObjectCommand(candidate));
       }
 
@@ -189,7 +197,8 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
     const selection = this.selection.selectedObjects;
     if (selection.length === 1 && selection[0] instanceof Slider) {
       slider = selection[0];
-    } else if (hoveredHitObjects.every(it => !it.isSelected)) {
+    }
+    else if (hoveredHitObjects.every(it => !it.isSelected)) {
       slider = (hoveredHitObjects.find(it => it instanceof Slider)
         ?? null) as Slider | null;
     }
@@ -201,7 +210,8 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
         slider,
         this.mousePosition,
       )?.position ?? null;
-    } else {
+    }
+    else {
       this.#sliderInsertPoint = null;
     }
 
@@ -210,7 +220,8 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
       this.#sliderInsertPointVisualizer.position = slider!.stackedPosition.add(
         this.#sliderInsertPoint.position,
       );
-    } else {
+    }
+    else {
       this.#sliderInsertPointVisualizer.alpha = 0;
     }
   }
@@ -436,7 +447,8 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
 
         if (sampleSet === null) {
           sampleSet = combinedSampleSet;
-        } else if (combinedSampleSet !== sampleSet) {
+        }
+        else if (combinedSampleSet !== sampleSet) {
           sampleSet = SampleSet.Auto;
           break;
         }
@@ -445,7 +457,8 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
 
       if (sampleSet === null) {
         sampleSet = object.hitSound.sampleSet;
-      } else if (object.hitSound.sampleSet !== sampleSet) {
+      }
+      else if (object.hitSound.sampleSet !== sampleSet) {
         sampleSet = SampleSet.Auto;
         break;
       }
@@ -461,7 +474,8 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
 
         if (sampleSet === null) {
           sampleSet = combinedSampleSet;
-        } else if (combinedSampleSet !== sampleSet) {
+        }
+        else if (combinedSampleSet !== sampleSet) {
           sampleSet = SampleSet.Auto;
           break;
         }
@@ -470,7 +484,8 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
 
       if (sampleSet === null) {
         sampleSet = object.hitSound.additionSampleSet;
-      } else if (object.hitSound.additionSampleSet !== sampleSet) {
+      }
+      else if (object.hitSound.additionSampleSet !== sampleSet) {
         sampleSet = SampleSet.Auto;
         break;
       }

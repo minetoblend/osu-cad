@@ -164,7 +164,10 @@ export class ComposeScreen extends EditorScreen {
   onEntering(e: ScreenTransitionEvent) {
     super.onEntering(e);
 
-    this.topBar.moveToY(-70).moveToY(0, 500, EasingFunction.OutExpo);
+    this.topBar
+      .fadeInFromZero(500, EasingFunction.OutQuad)
+      .moveToY(-70)
+      .moveToY(0, 500, EasingFunction.OutExpo);
 
     this.composer.onEntering();
   }
@@ -173,7 +176,9 @@ export class ComposeScreen extends EditorScreen {
     if (super.onExiting(e))
       return true;
 
-    this.topBar.moveToY(-70, 500, EasingFunction.OutExpo);
+    this.topBar
+      .fadeOut(500, EasingFunction.OutQuad)
+      .moveToY(-70, 500, EasingFunction.OutExpo);
 
     this.composer.onExiting(e);
 
