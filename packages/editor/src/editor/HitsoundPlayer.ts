@@ -94,6 +94,9 @@ export class HitsoundPlayer extends CompositeDrawable {
   #entries = new Map<OsuHitObject, HitObjectLifetimeEntry>();
 
   #onHitObjectAdded(hitObject: OsuHitObject) {
+    if (hitObject.synthetic)
+      return;
+
     const lifetimeEntry = new HitSoundLifetimeEntry(hitObject);
     this.#lifetimeManager.addEntry(lifetimeEntry);
 
