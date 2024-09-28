@@ -1,36 +1,50 @@
+import type {
+  DragEvent,
+  DragStartEvent,
+  IKeyBindingHandler,
+  KeyBindingPressEvent,
+  MouseDownEvent,
+} from 'osucad-framework';
 import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
+import type { ControlPointGroup } from '../../beatmap/timing/ControlPointGroup.ts';
 import type { LifetimeEntry } from '../../pooling/LifetimeEntry';
 import type { TimelineObject } from './TimelineObject';
 import {
+  Anchor,
   Axes,
-  type Bindable,
+  Bindable,
   Box,
+  clamp,
   Container,
   dependencyLoader,
-  type DragEvent,
-  type DragStartEvent,
+  EasingFunction,
   MouseButton,
-  type MouseDownEvent,
   resolved,
-} from '../../../../framework/src';
+} from 'osucad-framework';
 import { HitCircle } from '../../beatmap/hitObjects/HitCircle';
 import { Slider } from '../../beatmap/hitObjects/Slider';
 import { Spinner } from '../../beatmap/hitObjects/Spinner';
 import { LifetimeEntryManager } from '../../pooling/LifetimeEntryManager';
+import { EditorAction } from '../EditorAction.ts';
 import { HitObjectLifetimeEntry } from '../hitobjects/HitObjectLifetimeEntry';
+import { ControlPointPropertiesOverlay } from '../screens/compose/ControlPointPropertiesOverlay.ts';
 import { EditorSelection } from '../screens/compose/EditorSelection';
+import { TimelineControlPointContainer } from '../screens/timing/TimelineControlPointContainer.ts';
 import { Timeline } from './Timeline';
 import { TimelineHitCircle } from './TimelineHitCircle';
 import { TimelineSlider } from './TimelineSlider';
 import { TimelineSpinner } from './TimelineSpinner';
 
-export class ComposeScreenTimeline extends Timeline {
+export class ComposeScreenTimeline extends Timeline implements IKeyBindingHandler<EditorAction> {
   @resolved(EditorSelection)
   selection!: EditorSelection;
 
+  readonly activeControlPoint = new Bindable<ControlPointGroup | null>(null);
+
   @dependencyLoader()
   load() {
-    this.addInternal(
+    this.addAllInternal(
+      new TimelineControlPointContainer(),
       (this.#objectContainer = new Container({
         relativeSizeAxes: Axes.Both,
       })),
@@ -44,9 +58,28 @@ export class ComposeScreenTimeline extends Timeline {
     this.#entryManager.entryBecameAlive.addListener(this.#onEntryBecameAlive, this);
     this.#entryManager.entryBecameDead.addListener(this.#onEntryBecameDead, this);
 
-    for (const hitObject of this.hitObjects) {
+    for (const hitObject of this.hitObjects)
       this.#onHitObjectAdded(hitObject);
-    }
+
+    this.addInternal(this.#controlPointOverlay = new ControlPointPropertiesOverlay(this.activeControlPoint)
+      .with({
+        anchor: Anchor.BottomLeft,
+        origin: Anchor.TopCenter,
+        depth: -1,
+        y: 4,
+      }));
+
+    this.activeControlPoint.addOnChangeListener((e) => {
+      if (e.value && e.previousValue)
+        this.#updateControlPointProperties(true);
+      else
+        this.#updateControlPointProperties(false, true);
+    });
+
+    this.controlPoints.groupRemoved.addListener((group) => {
+      if (this.activeControlPoint.value === group)
+        this.activeControlPoint.value = null;
+    });
   }
 
   #entries = new Map<OsuHitObject, TimelineLifefetimeEntry>();
@@ -196,7 +229,36 @@ export class ComposeScreenTimeline extends Timeline {
       this.#dragBox.x = this.timeToPosition(startTime);
       this.#dragBox.width = this.timeToPosition(endTime) - this.#dragBox.x;
     }
+
+    this.#updateControlPointProperties();
   }
+
+  #updateControlPointProperties(animated = false, force = false) {
+    if (!this.activeControlPoint.value)
+      return;
+
+    if (!animated && this.#controlPointOverlay.transforms.length > 0 && !force && !this.editorClock.isRunning)
+      return;
+
+    const time = this.activeControlPoint.value.time;
+
+    let minX = 100;
+    let maxX = this.childSize.x - 100;
+
+    const drawWidth = this.#controlPointOverlay.drawWidth;
+
+    minX += drawWidth * 0.5;
+    maxX -= drawWidth * 0.5;
+
+    const position = clamp(this.timeToPosition(time), minX, maxX);
+
+    if (animated)
+      this.#controlPointOverlay.moveToX(position, 300, EasingFunction.OutExpo);
+    else
+      this.#controlPointOverlay.x = position;
+  }
+
+  #controlPointOverlay!: ControlPointPropertiesOverlay;
 
   #dragStartTime = 0;
   #dragEndTime = 0;
@@ -204,6 +266,41 @@ export class ComposeScreenTimeline extends Timeline {
     relativeSizeAxes: Axes.Y,
     alpha: 0,
   });
+
+  readonly isKeyBindingHandler = true;
+
+  canHandleKeyBinding(action: EditorAction): boolean {
+    return action instanceof EditorAction;
+  }
+
+  onKeyBindingPressed(e: KeyBindingPressEvent<EditorAction>): boolean {
+    switch (e.pressed) {
+      case EditorAction.CreateInheritedControlPoint:
+        this.insertControlPoint(false);
+        return true;
+      case EditorAction.CreateUninheritedControlPoint:
+        this.insertControlPoint(true);
+        return true;
+    }
+
+    return false;
+  }
+
+  insertControlPoint(uninherited: boolean) {
+    const time = Math.round(this.editorClock.targetTime);
+
+    const group = this.controlPoints.controlPointGroupAtTime(time, true);
+
+    if (uninherited && !group.timing) {
+      const timingPoint = this.controlPoints.timingPointAt(time);
+
+      group.add(timingPoint.deepClone());
+    }
+
+    this.controlPoints.add(group);
+
+    this.activeControlPoint.value = group;
+  }
 }
 
 class TimelineLifefetimeEntry extends HitObjectLifetimeEntry {

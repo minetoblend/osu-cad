@@ -1,4 +1,4 @@
-import type { Bindable } from 'osucad-framework';
+import type { Bindable, MouseDownEvent } from 'osucad-framework';
 import type { ControlPointGroup } from '../../../../beatmap/timing/ControlPointGroup.ts';
 import {
   Axes,
@@ -9,6 +9,7 @@ import {
   FillDirection,
   FillFlowContainer,
 } from 'osucad-framework';
+
 import { DifficultyProperties } from './DifficultyProperties';
 import { LabelledTextBox } from './LabelledTextBox';
 import { SampleProperties } from './SampleProperties';
@@ -16,7 +17,7 @@ import { TABBABLE_CONTAINER } from './TABBABLE_CONTAINER.ts';
 import { TimingProperties } from './TimingProperties';
 
 export class ControlPointProperties extends FillFlowContainer {
-  constructor() {
+  constructor(readonly minimal = false) {
     super({
       relativeSizeAxes: Axes.X,
       autoSizeAxes: Axes.Y,
@@ -55,7 +56,7 @@ export class ControlPointProperties extends FillFlowContainer {
       }),
     );
 
-    const timingProperties = new TimingProperties();
+    const timingProperties = new TimingProperties(this.minimal);
 
     this.add(timingProperties);
     this.add(new SampleProperties());
@@ -88,5 +89,9 @@ export class ControlPointProperties extends FillFlowContainer {
 
   override dispose(isDisposing: boolean = true) {
     super.dispose(isDisposing);
+  }
+
+  onMouseDown(e: MouseDownEvent): boolean {
+    return true;
   }
 }

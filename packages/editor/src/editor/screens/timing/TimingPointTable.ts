@@ -24,7 +24,7 @@ export class TimingPointTable extends Container {
     this.drawNode.enableRenderGroup();
   }
 
-  #scroll!: ScrollContainer;
+  scroll!: ScrollContainer;
 
   readonly #pool = new DrawablePool(TimingPointRow, 25, 100);
 
@@ -58,7 +58,7 @@ export class TimingPointTable extends Container {
       new Container({
         relativeSizeAxes: Axes.Both,
         padding: { top: TimingPointRow.HEIGHT },
-        child: this.#scroll = new MainScrollContainer(Direction.Vertical).with({
+        child: this.scroll = new MainScrollContainer(Direction.Vertical).with({
           relativeSizeAxes: Axes.Both,
           children: [
             this.#rowContainer = new Container({
@@ -73,7 +73,7 @@ export class TimingPointTable extends Container {
       new TimingPointTableHeader(),
     );
 
-    this.#scroll.scrollContent.autoSizeAxes = Axes.None;
+    this.scroll.scrollContent.autoSizeAxes = Axes.None;
   }
 
   #rows = new Map<ControlPointGroup, TimingPointRow>();
@@ -86,8 +86,8 @@ export class TimingPointTable extends Container {
 
     const bleed = 5;
 
-    const startIndex = Math.max(Math.floor(this.#scroll.current / TimingPointRow.HEIGHT) - bleed, 0);
-    const endIndex = startIndex + Math.ceil(this.#scroll.drawHeight / TimingPointRow.HEIGHT) + bleed * 2;
+    const startIndex = Math.max(Math.floor(this.scroll.current / TimingPointRow.HEIGHT) - bleed, 0);
+    const endIndex = startIndex + Math.ceil(this.scroll.drawHeight / TimingPointRow.HEIGHT) + bleed * 2;
 
     const toDelete = new Set(this.#rows.keys());
 
@@ -152,7 +152,7 @@ export class TimingPointTable extends Container {
       y += TimingPointRow.HEIGHT;
     }
 
-    this.#scroll.scrollContent.height = this.controlPoints.groups.length * TimingPointRow.HEIGHT + 100;
+    this.scroll.scrollContent.height = this.controlPoints.groups.length * TimingPointRow.HEIGHT + 100;
 
     for (const c of toDelete) {
       const row = this.#rows.get(c)!;
@@ -164,9 +164,7 @@ export class TimingPointTable extends Container {
   protected loadComplete() {
     super.loadComplete();
 
-    this.#scroll.scrollContent.height = this.controlPoints.groups.length * TimingPointRow.HEIGHT;
-
-    this.schedule(() => this.scrollToActive(false));
+    this.scroll.scrollContent.height = this.controlPoints.groups.length * TimingPointRow.HEIGHT;
   }
 
   scrollToActive(animated = true) {
@@ -175,7 +173,7 @@ export class TimingPointTable extends Container {
     if (activeGroup) {
       const index = this.controlPoints.groups.indexOf(activeGroup);
 
-      this.#scroll.scrollTo(index * TimingPointRow.HEIGHT, animated);
+      this.scroll.scrollTo(index * TimingPointRow.HEIGHT, animated);
     }
   }
 }

@@ -35,7 +35,7 @@ export abstract class ControlPointPropertiesSection<T extends ControlPoint = nev
 
   toggle!: Toggle;
 
-  abstract getControlPointFromGroup(group: ControlPointGroup): T | null;
+  protected abstract getControlPointFromGroup(group: ControlPointGroup): T | null;
 
   @dependencyLoader()
   load() {

@@ -14,7 +14,7 @@ import { LabelledTextBox } from './LabelledTextBox';
 import { Metronome } from './Metronome';
 
 export class TimingProperties extends ControlPointPropertiesSection<TimingPoint> {
-  constructor() {
+  constructor(readonly minimal = false) {
     super('Timing');
   }
 
@@ -58,34 +58,40 @@ export class TimingProperties extends ControlPointPropertiesSection<TimingPoint>
 
     this.offset.precision = 1;
 
-    this.add(
-      new FillFlowContainer({
+    const content = new FillFlowContainer({
+      relativeSizeAxes: Axes.X,
+      autoSizeAxes: Axes.Y,
+      direction: FillDirection.Vertical,
+    });
+
+    this.add(content);
+
+    if (!this.minimal) {
+      content.add(
+        new Metronome().with({ padding: { left: 80 } }),
+      );
+    }
+    content.addAll(
+      new Container({
         relativeSizeAxes: Axes.X,
         autoSizeAxes: Axes.Y,
-        direction: FillDirection.Vertical,
-        children: [
-          new Metronome().with({ padding: { left: 80 } }),
-          new Container({
-            relativeSizeAxes: Axes.X,
-            autoSizeAxes: Axes.Y,
-            padding: { left: 80 },
-            child: new BpmAdjustment(
-              this.offset.getBoundCopy(),
-              this.beatLength.getBoundCopy(),
-            ),
-          }),
-          this.#bpmText = new LabelledTextBox('BPM')
-            .withTabbableContentContainer(this.tabbableContentContainer),
-          this.#meterText = new LabelledTextBox('Meter')
-            .bindToNumber(this.meter)
-            .withTabbableContentContainer(this.tabbableContentContainer),
-        ],
+        padding: { left: 80 },
+        child: new BpmAdjustment(
+          this.offset.getBoundCopy(),
+          this.beatLength.getBoundCopy(),
+        ),
       }),
+      this.#bpmText = new LabelledTextBox('BPM')
+        .withTabbableContentContainer(this.tabbableContentContainer),
+      this.#meterText = new LabelledTextBox('Meter')
+        .bindToNumber(this.meter)
+        .withTabbableContentContainer(this.tabbableContentContainer),
     );
 
     this.#bpmText.onCommit.addListener((text) => {
-      const value = Number.parseInt(text);
-      if (Number.isNaN(value) && value > 0) {
+      const value = Number.parseFloat(text);
+      console.log(value);
+      if (!Number.isNaN(value) && value > 0) {
         this.beatLength.value = 60_000 / value;
       }
 

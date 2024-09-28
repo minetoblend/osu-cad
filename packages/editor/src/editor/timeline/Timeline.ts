@@ -12,11 +12,13 @@ export class Timeline extends Container {
       relativeSizeAxes: Axes.Both,
     });
 
-    this.childrenWillGoOutOfBounds = false;
+    // this.childrenWillGoOutOfBounds = false;
   }
 
   @resolved(ThemeColors)
   theme!: ThemeColors;
+
+  overlayContainer!: Container;
 
   @dependencyLoader()
   init() {
@@ -28,21 +30,26 @@ export class Timeline extends Container {
       }),
     );
 
-    const container = new Container();
+    const tickContainer = new Container();
 
-    this.addInternal(container);
+    this.addInternal(tickContainer);
 
-    this.#tickContainer = container.drawNode as PIXIContainer<TimelineTick>;
+    this.#tickContainer = tickContainer.drawNode as PIXIContainer<TimelineTick>;
 
     this.#tickContainer.enableRenderGroup();
 
-    this.addInternal(
+    this.addAllInternal(
       new Box({
         width: 2,
         relativeSizeAxes: Axes.Y,
         anchor: Anchor.Center,
         origin: Anchor.Center,
         color: this.theme.primary,
+        depth: -1,
+      }),
+      this.overlayContainer = new Container({
+        relativeSizeAxes: Axes.Both,
+        depth: -2,
       }),
     );
   }

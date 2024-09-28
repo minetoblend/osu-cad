@@ -50,6 +50,8 @@ export class EditorActionContainer extends KeyBindingContainer<EditorAction> {
       new KeyBinding(KeyCombination.from(InputKey.Control, InputKey.O), EditorAction.ShowPreferences),
       new KeyBinding(KeyCombination.from(InputKey.Control, InputKey.G), EditorAction.Reverse),
       new KeyBinding(KeyCombination.from(InputKey.T), EditorAction.ToggleGridSnap),
+      new KeyBinding(KeyCombination.from(InputKey.Control, InputKey.Shift, InputKey.P), EditorAction.CreateInheritedControlPoint),
+      new KeyBinding(KeyCombination.from(InputKey.Control, InputKey.P), EditorAction.CreateUninheritedControlPoint),
     ];
   }
 }

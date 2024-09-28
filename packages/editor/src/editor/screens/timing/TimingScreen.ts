@@ -59,7 +59,7 @@ export class TimingScreen extends EditorScreen {
               new Container({
                 relativeSizeAxes: Axes.Both,
                 children: [
-                  new TimingPointTable().with({
+                  this.#timingPointTable = new TimingPointTable().with({
                     relativeSizeAxes: Axes.Y,
                     width: TimingPointRow.MIN_WIDTH + 200,
                   }),
@@ -117,13 +117,27 @@ export class TimingScreen extends EditorScreen {
 
   #controlPointProperties!: ControlPointProperties;
 
+  #timingPointTable!: TimingPointTable;
+
   onEntering(e: ScreenTransitionEvent) {
     super.onEntering(e);
 
     this.fadeInFromZero(500, EasingFunction.OutQuad);
 
     this.moveToY(1).moveToY(0, 400, EasingFunction.OutExpo);
+
+    this.#timingPointTable.scrollToActive(false);
+
+    this.#initialTableScroll = this.#timingPointTable.scroll.current;
+
+    this.#isEntering = true;
+
+    this.scheduler.addDelayed(() => this.#isEntering = false, 400);
   }
+
+  #initialTableScroll = 0;
+
+  #isEntering = false;
 
   onExiting(e: ScreenExitEvent): boolean {
     if (super.onExiting(e))
@@ -144,5 +158,12 @@ export class TimingScreen extends EditorScreen {
 
   protected get bottomTimelinePadding(): boolean {
     return false;
+  }
+
+  updateAfterChildren() {
+    super.updateAfterChildren();
+
+    if (this.#isEntering)
+      this.#timingPointTable.scroll.scrollTo(this.#initialTableScroll + this.drawPosition.y, false);
   }
 }

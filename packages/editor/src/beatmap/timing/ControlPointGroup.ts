@@ -51,9 +51,8 @@ export class ControlPointGroup extends ControlPoint {
   copyFrom(other: this) {
     super.copyFrom(other);
 
-    for (const child of other.children) {
+    for (const child of other.children)
       this.add(child.deepClone());
-    }
   }
 
   added = new Action<ControlPointGroupChangeEvent>();
