@@ -30,19 +30,19 @@ export class TickGenerator {
     while (timingPoint) {
       const nextTimingPoint = this.timingPoints.get(++index);
 
-      let time = offset;
+      let time = timingPoint.time + offset;
 
       offset = 0;
 
       while (true) {
-        if (nextTimingPoint && time - timingPoint.time >= nextTimingPoint.time)
+        if (nextTimingPoint && time >= nextTimingPoint.time)
           break;
 
-        if (time + timingPoint.time > endTime)
+        if (time > endTime)
           return;
 
         let subTicks = Math.round(
-          (time / timingPoint.beatLength) * 48,
+          ((time - timingPoint.time) / timingPoint.beatLength) * 48,
         );
 
         const isDownBeat = Math.abs(subTicks) % (48 * 4) === 0;
@@ -79,7 +79,7 @@ export class TickGenerator {
           type = TickType.Other;
         }
 
-        yield new TickInfo(timingPoint.time + time, type, isDownBeat);
+        yield new TickInfo(time, type, isDownBeat);
 
         time += timingPoint.beatLength / divisor;
       }
