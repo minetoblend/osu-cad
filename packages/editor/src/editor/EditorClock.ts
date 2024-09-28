@@ -107,7 +107,13 @@ export class EditorClock
     const beatSnapLength
       = timingPoint.beatLength / this.beatSnapDivisor.value;
 
-    const newPosition = this.currentTime + direction * amount * beatSnapLength;
+    let newPosition = this.currentTime + direction * amount * beatSnapLength;
+
+    if (newPosition < timingPoint.time) {
+      const previousTimingPoint = this.controlPointInfo.timingPointAt(newPosition);
+
+      newPosition = this.currentTime + direction * amount * (previousTimingPoint.beatLength / this.beatSnapDivisor.value);
+    }
 
     if (snapped) {
       this.seekSnapped(newPosition);
