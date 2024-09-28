@@ -203,6 +203,9 @@ export class Editor
         return true;
 
       case Key.F1:
+        this.currentScreen.value = EditorScreenType.Setup;
+        return true;
+      case Key.F2:
         this.currentScreen.value = EditorScreenType.Compose;
         return true;
       case Key.F3:
@@ -210,7 +213,7 @@ export class Editor
         this.currentScreen.value = EditorScreenType.Timing;
         return true;
       case Key.F4:
-        this.currentScreen.value = EditorScreenType.Setup;
+        this.currentScreen.value = EditorScreenType.Hitsounds;
         return true;
     }
 
