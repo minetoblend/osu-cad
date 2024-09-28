@@ -166,7 +166,7 @@ export class ComposeScreen extends EditorScreen {
 
     this.topBar
       .fadeInFromZero(500, EasingFunction.OutQuad)
-      .moveToY(-70)
+      .moveToY(-120)
       .moveToY(0, 500, EasingFunction.OutExpo);
 
     this.composer.onEntering();
@@ -178,7 +178,7 @@ export class ComposeScreen extends EditorScreen {
 
     this.topBar
       .fadeOut(500, EasingFunction.OutQuad)
-      .moveToY(-70, 500, EasingFunction.OutExpo);
+      .moveToY(-120, 500, EasingFunction.OutExpo);
 
     this.composer.onExiting(e);
 
