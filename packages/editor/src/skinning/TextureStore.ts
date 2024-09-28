@@ -66,6 +66,7 @@ export class TextureStore {
         alphaMode: 'premultiply-alpha-on-upload',
         label,
         resolution,
+        autoGenerateMipmaps: true,
       });
     }
     catch (e) {
