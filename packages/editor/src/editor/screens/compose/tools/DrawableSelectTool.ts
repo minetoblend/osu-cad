@@ -391,7 +391,13 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
     if (!slider)
       return false;
 
-    const position = this.toLocalSpace(e.screenSpaceMousePosition);
+    let position = this.toLocalSpace(e.screenSpaceMousePosition);
+
+    const { offset } = this.composer.snapHitObjectPosition([position]);
+
+    if (offset)
+      position = position.add(offset);
+
 
     this.#sliderUtils.moveControlPoint(slider, index, position);
 
