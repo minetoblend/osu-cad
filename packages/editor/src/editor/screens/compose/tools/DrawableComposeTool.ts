@@ -46,7 +46,7 @@ export abstract class DrawableComposeTool extends CommandContainer {
 
   protected hitSoundState!: HitSoundState;
 
-  receivePositionalInputAtLocal(): boolean {
+  receivePositionalInputAt(): boolean {
     return true;
   }
 
