@@ -1,21 +1,13 @@
-import { ComposeToolbarButton } from './ComposeToolbarButton';
+import type { IKeyBindingHandler, KeyBindingPressEvent, KeyBindingReleaseEvent, KeyDownEvent } from 'osucad-framework';
+import { Anchor, Axes, BindableNumber, ButtonTrigger, Container, dependencyLoader, Key, resolved } from 'osucad-framework';
+import { Beatmap } from '../../../beatmap/Beatmap';
 import { OsucadIcons } from '../../../OsucadIcons';
 import { OsucadSpriteText } from '../../../OsucadSpriteText';
-import {
-  Anchor,
-  Axes,
-  BindableNumber,
-  ButtonTrigger,
-  Container,
-  dependencyLoader, IKeyBindingHandler, Key, KeyBindingPressEvent, KeyBindingReleaseEvent,
-  type KeyDownEvent,
-  resolved,
-} from 'osucad-framework';
-import { Beatmap } from '../../../beatmap/Beatmap';
+import { EditorAction } from '../../EditorAction';
 import { ThemeColors } from '../../ThemeColors';
 import { ComposeToggleButton } from './ComposeToggleButton';
+import { ComposeToolbarButton } from './ComposeToolbarButton';
 import { HitObjectComposer } from './HitObjectComposer';
-import { EditorAction } from '../../EditorAction';
 
 export class ToolbarGridSnapToggle extends ComposeToggleButton implements IKeyBindingHandler<EditorAction> {
   constructor() {
@@ -45,7 +37,7 @@ export class ToolbarGridSnapToggle extends ComposeToggleButton implements IKeyBi
   #actualValue = false;
 
   onKeyDown(e: KeyDownEvent): boolean {
-    if(e.key === Key.ShiftLeft) {
+    if (e.key === Key.ShiftLeft) {
       this.#actualValue = this.active.value;
       this.active.value = !this.active.value;
     }
@@ -54,14 +46,14 @@ export class ToolbarGridSnapToggle extends ComposeToggleButton implements IKeyBi
   }
 
   onKeyUp(e: KeyDownEvent) {
-    if(e.key === Key.ShiftLeft)
+    if (e.key === Key.ShiftLeft)
       this.active.value = this.#actualValue;
   }
 
   protected loadComplete() {
     super.loadComplete();
 
-    this.active.bindTo(this.findClosestParentOfType(HitObjectComposer)!.gridSnapEnabled)
+    this.active.bindTo(this.findClosestParentOfType(HitObjectComposer)!.gridSnapEnabled);
   }
 
   readonly isKeyBindingHandler = true;
@@ -71,9 +63,22 @@ export class ToolbarGridSnapToggle extends ComposeToggleButton implements IKeyBi
   }
 
   onKeyBindingPressed(e: KeyBindingPressEvent<EditorAction>): boolean {
-    if(e.pressed === EditorAction.ToggleGridSnap) {
+    if (e.pressed === EditorAction.ToggleGridSnap) {
       this.armed = true;
       this.triggerAction();
+      return true;
+    }
+
+    if (e.pressed === EditorAction.ToggleGridSize) {
+      this.armed = true;
+
+      const gridSize = this.beatmap.settings.editor.gridSizeBindable.value;
+      const availableGridSizes = [4, 8, 16, 32, 64];
+
+      const index = (availableGridSizes.indexOf(gridSize) + 1) % availableGridSizes.length;
+
+      this.beatmap.settings.editor.gridSizeBindable.value = availableGridSizes[index];
+
       return true;
     }
 
@@ -81,7 +86,7 @@ export class ToolbarGridSnapToggle extends ComposeToggleButton implements IKeyBi
   }
 
   onKeyBindingReleased(e: KeyBindingReleaseEvent<EditorAction>) {
-    if(e.pressed === EditorAction.ToggleGridSnap)
+    if (e.pressed === EditorAction.ToggleGridSnap || e.pressed === EditorAction.ToggleGridSize)
       this.armed = false;
   }
 }
@@ -110,7 +115,7 @@ class GridSizeButton extends ComposeToolbarButton {
         relativeSizeAxes: Axes.Both,
         padding: { horizontal: 4, vertical: 2 },
         child: new OsucadSpriteText({
-          text: this.gridSize.toString() + 'px',
+          text: `${this.gridSize.toString()}px`,
           anchor: Anchor.BottomRight,
           origin: Anchor.BottomRight,
           fontSize: 8,
