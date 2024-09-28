@@ -85,6 +85,11 @@ export class SelectBoxInteraction extends ComposeToolInteraction {
     this.#selectBox.position = min;
     this.#selectBox.size = max.sub(min);
 
+    if (this.#selectBox.size.x <= 0 || this.#selectBox.size.y <= 0)
+      this.#selectBox.alpha = 0;
+    else
+      this.#selectBox.alpha = 1;
+
     this.#controlPressed = e.controlPressed;
 
     this.#updateSelection();
