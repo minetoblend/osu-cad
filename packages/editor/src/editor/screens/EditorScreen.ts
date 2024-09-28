@@ -9,6 +9,10 @@ export class EditorScreen extends Screen {
     this.relativeSizeAxes = Axes.Both;
   }
 
+  override get removeWhenNotAlive() {
+    return true;
+  }
+
   editor!: Editor;
 
   @dependencyLoader()

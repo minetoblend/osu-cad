@@ -314,5 +314,7 @@ export class HitObjectComposer
       this.#grid.alpha = 0;
     else
       this.#playfieldContainer.fadeOut(300, EasingFunction.OutQuad);
+
+    this.#playfieldContainer.remove(this.#toolContainer, true);
   }
 }
