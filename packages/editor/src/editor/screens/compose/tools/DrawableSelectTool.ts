@@ -163,6 +163,7 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
             startPosition,
           ),
         );
+        return true;
       }
     }
 
@@ -397,7 +398,6 @@ export class DrawableSelectTool extends DrawableComposeTool implements IKeyBindi
 
     if (offset)
       position = position.add(offset);
-
 
     this.#sliderUtils.moveControlPoint(slider, index, position);
 
