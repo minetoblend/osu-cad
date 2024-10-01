@@ -32,15 +32,21 @@ export class StableSkinConfigurationDecoder {
       if (!currentSection)
         continue;
 
-      this.#parseLine(skin, currentSection, line);
+      try {
+        this.#parseLine(skin, currentSection, line);
+      }
+      catch (e) {
+        console.warn('Failed to decode line in skin', e);
+      }
     }
-
-    console.log(skin);
 
     return skin;
   }
 
   #parseLine(skin: SkinConfiguration, section: Section, line: string) {
+    if (line.includes('//'))
+      line = line.substring(0, line.indexOf('//'));
+
     const [key, value] = line.split(':').map(s => s.trim());
     if (!key || value === undefined)
       return;
