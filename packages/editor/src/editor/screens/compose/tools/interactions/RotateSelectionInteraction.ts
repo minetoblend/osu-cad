@@ -9,7 +9,6 @@ import type {
 } from 'osucad-framework';
 import type { OsuHitObject } from '../../../../../beatmap/hitObjects/OsuHitObject';
 import { Vector2 } from 'osu-classes';
-
 import {
   Action,
   Anchor,
@@ -31,6 +30,7 @@ import { Ring } from '../../../../../drawables/Ring';
 import { OsucadSpriteText } from '../../../../../OsucadSpriteText';
 import { ButtonGroupSelect } from '../../../../../userInterface/ButtonGroupSelect.ts';
 import { DraggableDialogBox } from '../../../../../userInterface/DraggableDialogBox';
+import { OsucadButton } from '../../../../../userInterface/OsucadButton.ts';
 import { LabelledTextBox } from '../../../timing/properties/LabelledTextBox';
 import { HitObjectComposer } from '../../HitObjectComposer';
 import { HitObjectUtils } from '../../HitObjectUtils';
@@ -158,6 +158,9 @@ export class RotateSelectionInteraction extends ComposeToolInteraction {
       case Key.ControlLeft:
       case Key.ControlRight:
         this.snapRotation.value = true;
+        return true;
+      case Key.Enter:
+        this.complete();
         return true;
       case Key.Escape:
         this.cancel();
@@ -432,12 +435,14 @@ class RotateDialogBox extends DraggableDialogBox {
   centerModeInput!: ButtonGroupSelect<CenterMode>;
 
   createContent() {
-    const container = new FillFlowContainer({
+    return new FillFlowContainer({
       direction: FillDirection.Vertical,
       width: 200,
       autoSizeAxes: Axes.Y,
+      spacing: new Vec2(8),
       children: [
-        this.angleInput = new LabelledTextBox('Angle'),
+        this.angleInput = new LabelledTextBox('Angle')
+          .withTabbableContentContainer(this),
         this.centerModeInput = new ButtonGroupSelect<CenterMode>({
           relativeSizeAxes: Axes.X,
           height: 30,
@@ -451,15 +456,19 @@ class RotateDialogBox extends DraggableDialogBox {
               value: 'playfield',
             },
           ],
+        }).adjust(it => it.tabbableContentContainer = this),
+        new FillFlowContainer({
+          autoSizeAxes: Axes.Both,
+          spacing: new Vec2(4),
+          anchor: Anchor.TopRight,
+          origin: Anchor.TopRight,
+          children: [
+            new OsucadButton().withText('Ok').withAction(() => this.interaction.complete()),
+            new OsucadButton().withText('Cancel').withAction(() => this.interaction.cancel()),
+          ],
         }),
       ],
     });
-
-    this.angleInput.tabbableContentContainer = container;
-
-    this.centerModeInput.tabbableContentContainer = container;
-
-    return container;
   }
 
   protected loadComplete() {
