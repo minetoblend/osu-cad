@@ -28,7 +28,7 @@ export default defineConfig({
       // minify: process.env.NODE_ENV === 'production',
       minify: false,
       sourcemap: false,
-
+      target: 'chrome113',
       rollupOptions: {
         output: {
           assetFileNames(chunkInfo) {
