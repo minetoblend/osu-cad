@@ -365,7 +365,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
     this.#color.setValue(value);
 
-    this.updateDrawNodeColor()
+    this.updateDrawNodeColor();
   }
 
   get tint() {
@@ -379,7 +379,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     this.#color.setValue(value);
     this.#color.setAlpha(alpha);
 
-    this.updateDrawNodeColor()
+    this.updateDrawNodeColor();
   }
 
   #alpha = 1;
@@ -396,7 +396,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
     this.#alpha = value;
 
-    this.updateDrawNodeColor()
+    this.updateDrawNodeColor();
 
     if (this.isPresent !== wasPresent)
       this.invalidate(Invalidation.Presence);
@@ -1315,7 +1315,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   validateSuperTree(invalidation: Invalidation) {
     if (this.#invalidationState.validate(invalidation) && this.#parent !== null)
-        this.#parent.validateSuperTree(invalidation);
+      this.#parent.validateSuperTree(invalidation);
   }
 
   // #endregion
