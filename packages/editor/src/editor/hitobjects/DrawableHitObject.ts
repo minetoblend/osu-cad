@@ -199,18 +199,9 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
 
     this.animationStartTime.value = initialTransformsTime;
 
-    {
-      using _ = this.beginAbsoluteSequence(initialTransformsTime);
-      this.updateInitialTransforms();
-    }
-    {
-      using _ = this.beginAbsoluteSequence(this.hitObject!.startTime);
-      this.updateStartTimeTransforms();
-    }
-    {
-      using _ = this.beginAbsoluteSequence(this.hitObject!.endTime);
-      this.updateEndTimeTransforms();
-    }
+    this.absoluteSequence({ time: initialTransformsTime, recursive: true }, () => this.updateInitialTransforms());
+    this.absoluteSequence({ time: this.hitObject!.startTime, recursive: true }, () => this.updateStartTimeTransforms());
+    this.absoluteSequence({ time: this.hitObject!.endTime, recursive: true }, () => this.updateEndTimeTransforms());
 
     if (this.lifetimeEnd === Number.MAX_VALUE)
       this.lifetimeEnd = Math.max(this.latestTransformEndTime, this.hitObject!.endTime);
