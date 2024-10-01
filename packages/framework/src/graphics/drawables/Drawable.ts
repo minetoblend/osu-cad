@@ -225,7 +225,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
     this.#height = value;
 
-    this.invalidate(Invalidation.DrawSize);
+    this.#invalidateParentSizeDependencies(Invalidation.DrawSize, Axes.Y);
   }
 
   get size(): Vec2 {
@@ -262,10 +262,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     if (this.#scale.equals(value))
       return;
 
+    this.drawNode.scale.copyFrom(value);
+
     this.#scale.x = value.x;
     this.#scale.y = value.y;
 
-    this.invalidate(Invalidation.Transform);
+    this.#parent?.invalidateChildrenSizeDependencies(Invalidation.Transform, Axes.Both, this);
   }
 
   get drawScale() {
