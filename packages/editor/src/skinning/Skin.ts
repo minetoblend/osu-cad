@@ -5,9 +5,10 @@ import type { IResourceStore } from './IResourceStore';
 import type { ISkin } from './ISkin';
 import type { ISkinComponentLookup } from './ISkinComponentLookup';
 import type { SkinInfo } from './SkinInfo';
-import { DrawableSprite } from 'osucad-framework';
+import { Bindable, DrawableSprite } from 'osucad-framework';
 import { SkinnableTextureAnimation } from './DrawableAnimation';
 import { ResourceStore } from './ResourceStore';
+import { SkinConfig } from './SkinConfig.ts';
 import { SkinConfiguration } from './SkinConfiguration';
 import { SpriteComponentLookup } from './SkinnableSprite';
 import { SampleStore } from './stable/SampleStore';
@@ -141,6 +142,16 @@ export abstract class Skin implements IDisposable, ISkin {
 
   toString() {
     return `${this.constructor.name} { name: ${this.name} }`;
+  }
+
+  getConfig<T>(key: SkinConfig<T>): Bindable<T> | null;
+
+  getConfig<T>(key: SkinConfig<T>): any {
+    switch (key) {
+      case SkinConfig.ComboColors:
+        return new Bindable(this.configuration.comboColors);
+    }
+    return null;
   }
 }
 

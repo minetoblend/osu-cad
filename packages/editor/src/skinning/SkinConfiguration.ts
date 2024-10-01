@@ -20,7 +20,7 @@ export class SkinConfiguration {
 
   customComboColors: Color[] = [];
 
-  get comboColors() {
+  get comboColors(): Color[] {
     if (this.customComboColors.length > 0)
       return this.customComboColors;
     if (this.allowDefaultComboColorsFallback)
