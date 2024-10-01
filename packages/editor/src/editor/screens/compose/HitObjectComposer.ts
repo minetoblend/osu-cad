@@ -280,17 +280,19 @@ export class HitObjectComposer
   }
 
   onEntering() {
-    this.#drawSizeContainer.moveToY(100).moveToY(0, 500, EasingFunction.OutExpo);
     this.#toolbarContainer.moveToY(-70).moveToY(0, 500, EasingFunction.OutExpo);
     this.#toolBar.moveToX(-100).moveToX(0, 500, EasingFunction.OutExpo);
     this.#togglesBar.moveToX(100).moveToX(0, 500, EasingFunction.OutExpo);
 
     this.#toolbarContainer.fadeInFromZero(400);
 
-    if (this.playfield.parent)
+    if (this.playfield.parent) {
       EditorScreenUtils.matchScreenSpaceDrawQuad(this.playfield.parent, this.#playfieldContainer, true);
-    else
+    }
+    else {
+      this.#drawSizeContainer.moveToY(100).moveToY(0, 500, EasingFunction.OutExpo);
       this.#playfieldContainer.fadeInFromZero(400);
+    }
 
     this.#playfieldContainer.add(this.#grid = new PlayfieldGrid());
     EditorScreenUtils.insertPlayfield(this.playfield, this.#playfieldContainer);
