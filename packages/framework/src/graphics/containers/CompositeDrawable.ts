@@ -1001,6 +1001,20 @@ export class CompositeDrawable extends Drawable {
     for (const child of this.#internalChildren)
       child.collectAbsoluteSequenceActionsFromSubTree(newTransformStartTime, actions);
   }
+
+  findChildrenOfType<T extends Drawable>(type: abstract new (...args: any[]) => T): T[] {
+    const result: T[] = [];
+
+    for (const child of this.#internalChildren.items) {
+      if (child instanceof type)
+        result.push(child);
+
+      if (child instanceof CompositeDrawable)
+        result.push(...child.findChildrenOfType(type));
+    }
+
+    return result;
+  }
 }
 
 const enum ChildLifeStateChange {
