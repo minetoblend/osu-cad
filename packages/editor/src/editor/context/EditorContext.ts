@@ -1,20 +1,12 @@
-import {
-  AudioChannel,
-  AudioManager,
-  Bindable,
-  DependencyContainer,
-  IResourceStore,
-  PIXITexture,
-  Track,
-} from 'osucad-framework';
+import type { DependencyContainer, IResourceStore, PIXITexture, Track } from 'osucad-framework';
+import type { IResourcesProvider } from '../../io/IResourcesProvider';
+import { Bindable } from 'osucad-framework';
 import { Beatmap } from '../../beatmap/Beatmap';
 import { HitObjectList } from '../../beatmap/hitObjects/HitObjectList';
 import { ControlPointInfo } from '../../beatmap/timing/ControlPointInfo';
 import { CommandManager } from './CommandManager';
-import { IResourcesProvider } from '../../io/IResourcesProvider';
 
 export abstract class EditorContext {
-
   constructor(
     readonly resourcesProvider: IResourcesProvider,
   ) {
