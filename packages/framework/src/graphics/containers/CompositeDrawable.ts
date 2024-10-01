@@ -239,6 +239,8 @@ export class CompositeDrawable extends Drawable {
     signal?.addEventListener('abort', () => linkedAbortController.abort());
     this.#disposalAbortController.signal.addEventListener('abort', () => linkedAbortController.abort());
 
+    console.log(this, components, this.dependencies);
+
     const deps = new DependencyContainer(this.dependencies);
     deps.provide(linkedAbortController.signal);
 
