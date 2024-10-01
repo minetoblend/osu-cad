@@ -19,7 +19,7 @@ import { almostEquals } from '../../utils/almostEquals';
 import { clamp } from '../../utils/clamp';
 import { debugAssert } from '../../utils/debugAssert';
 import { Anchor, Axes, Direction, Invalidation, LayoutComputed } from '../drawables';
-import { EasingFunction } from '../transforms/EasingFunction.ts';
+import { EasingFunction } from '../transforms/EasingFunction';
 
 const distance_decay_clamping = 0.012;
 
@@ -86,6 +86,10 @@ export abstract class ScrollContainer<T extends Drawable = Drawable> extends Con
 
   get target(): number {
     return this.#target;
+  }
+
+  protected set target(value: number) {
+    this.#target = value;
   }
 
   #target = 0;

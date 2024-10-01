@@ -1,8 +1,8 @@
 import type { KeyDownEvent } from '../../input';
 import type { Drawable } from '../drawables';
 import { Key } from '../../input';
-import { CompositeDrawable } from './CompositeDrawable.ts';
-import { Container } from './Container.ts';
+import { CompositeDrawable } from './CompositeDrawable';
+import { Container } from './Container';
 
 export class TabbableContainer<T extends Drawable = Drawable> extends Container<T> {
   get canBeTabbedTo(): boolean {
@@ -39,7 +39,7 @@ export class TabbableContainer<T extends Drawable = Drawable> extends Container<
         return drawable;
 
       if (drawable instanceof CompositeDrawable) {
-        const newChildren = drawable.internalChildren;
+        const newChildren = drawable.aliveInternalChildren;
         let bound = reverse ? newChildren.length : 0;
 
         if (!started) {
@@ -60,5 +60,10 @@ export class TabbableContainer<T extends Drawable = Drawable> extends Container<
     }
 
     return null;
+  }
+
+  withTabbableContentContainer(value: CompositeDrawable): this {
+    this.tabbableContentContainer = value;
+    return this;
   }
 }

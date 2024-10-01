@@ -1,7 +1,7 @@
 import { Vec2 } from '../../math';
 import { Axes, Direction } from '../drawables';
 import { Box } from '../shapes';
-import { EasingFunction } from '../transforms/EasingFunction.ts';
+import { EasingFunction } from '../transforms/EasingFunction';
 import { ScrollbarContainer, ScrollContainer } from './ScrollContainer';
 
 export class BasicScrollContainer extends ScrollContainer {

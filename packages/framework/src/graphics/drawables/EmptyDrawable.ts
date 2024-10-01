@@ -1,5 +1,5 @@
-import { PIXIContainer } from '../../pixi.ts';
-import { Drawable } from './Drawable.ts';
+import { PIXIContainer } from '../../pixi';
+import { Drawable } from './Drawable';
 
 export class EmptyDrawable extends Drawable {
   override createDrawNode(): PIXIContainer {

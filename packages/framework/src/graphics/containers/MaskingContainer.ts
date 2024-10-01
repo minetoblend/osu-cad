@@ -1,7 +1,7 @@
-import type { ContainerOptions } from './Container.ts';
+import type { ContainerOptions } from './Container';
 import { Graphics } from 'pixi.js';
 import { Invalidation, LayoutMember } from '../drawables';
-import { Container } from './Container.ts';
+import { Container } from './Container';
 
 export interface MaskingContainerOptions extends ContainerOptions {
   cornerRadius?: number;

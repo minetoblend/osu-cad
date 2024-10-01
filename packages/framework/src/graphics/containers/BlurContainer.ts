@@ -1,6 +1,6 @@
-import type { Drawable } from '../drawables/index.ts';
+import type { Drawable } from '../drawables/index';
 import { BlurFilter, type Filter } from 'pixi.js';
-import { Container, type ContainerOptions } from './Container.ts';
+import { Container, type ContainerOptions } from './Container';
 
 export interface BlurContainerOptions<T extends Drawable = Drawable> extends ContainerOptions<T> {
   blurStrength?: number;

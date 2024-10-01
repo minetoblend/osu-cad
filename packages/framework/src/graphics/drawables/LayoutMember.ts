@@ -1,6 +1,6 @@
 import type { Drawable, Invalidation } from './Drawable';
-import { FrameStatistics } from '../../statistics/FrameStatistics.ts';
-import { StatisticsCounterType } from '../../statistics/StatisticsCounterType.ts';
+import { FrameStatistics } from '../../statistics/FrameStatistics';
+import { StatisticsCounterType } from '../../statistics/StatisticsCounterType';
 import { InvalidationSource } from './Drawable';
 
 export class LayoutMember {
