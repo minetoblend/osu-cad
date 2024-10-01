@@ -73,6 +73,11 @@ class OsuHitObjectLifetimeEntry extends HitObjectLifetimeEntry {
     super(hitObject);
 
     this.lifetimeEnd = hitObject.endTime + 700;
+
+    hitObject.defaultsApplied.addListener((e) => {
+      if (this.lifetimeEnd < hitObject.endTime + 700)
+        this.lifetimeEnd = hitObject.endTime + 700;
+    });
   }
 
   get initialLifetimeOffset() {
