@@ -1,89 +1,88 @@
-import type { Action, Bindable } from 'osucad-framework';
-import { Anchor, Axes, CompositeDrawable, Container, dependencyLoader, resolved } from 'osucad-framework';
-import { OsucadSpriteText } from '../../../../OsucadSpriteText';
+import type { Bindable, CompositeDrawable } from 'osucad-framework';
+import type { EditorCommand } from '../../../commands/EditorCommand.ts';
+import { resolved } from 'osucad-framework';
+import { LabelledDrawable } from '../../../../userInterface/LabelledDrawable.ts';
 import { TextBox } from '../../../../userInterface/TextBox';
 import { ThemeColors } from '../../../ThemeColors.ts';
 
-export class LabelledTextBox extends CompositeDrawable {
-  constructor(readonly label: string) {
+export class LabelledTextBox extends LabelledDrawable<TextBox> {
+  constructor(label: string) {
     super();
+    this.labelText = label;
+  }
 
-    this.relativeSizeAxes = Axes.X;
-    this.height = 40;
-
-    this.addAllInternal(
-      this.#label = new OsucadSpriteText({
-        text: this.label,
-        fontSize: 14,
-        anchor: Anchor.CenterLeft,
-        origin: Anchor.CenterLeft,
-      }),
-      new Container({
-        relativeSizeAxes: Axes.Both,
-        padding: { left: 120 },
-        child: this.#textBox = new TextBox().with({
-          relativeSizeAxes: Axes.X,
-          anchor: Anchor.CenterLeft,
-          origin: Anchor.CenterLeft,
-        }),
-      }),
-    );
-
-    this.onCommit = this.#textBox.onCommit;
+  protected createDrawable(): TextBox {
+    return new TextBox();
   }
 
   @resolved(ThemeColors)
   colors!: ThemeColors;
 
-  @dependencyLoader()
-  load() {
-    this.#label.color = this.colors.text;
-  }
-
-  readonly #textBox: TextBox;
-
-  readonly #label: OsucadSpriteText;
-
   get textBox() {
-    return this.#textBox;
+    return this.drawable;
   }
 
   get text() {
-    return this.#textBox.text;
+    return this.textBox?.text ?? '';
   }
 
   set text(value: string) {
-    this.#textBox.text = value;
+    this.doWhenLoaded(() => this.textBox.text = value);
   }
 
-  get current() {
-    return this.#textBox.current;
+  get current(): Bindable<string> {
+    return this.textBox.current;
   }
 
-  set current(value) {
-    this.#textBox.current = value;
+  set current(value: Bindable<string>) {
+    this.textBox.current = value;
   }
 
-  onCommit!: Action<string>;
+  get onCommit() {
+    return this.drawable.onCommit;
+  }
 
   bindToNumber(bindable: Bindable<number>) {
-    this.onLoadComplete.addListener(() => {
-      this.#textBox.bindToNumber(bindable);
-    });
+    this.doWhenLoaded(() => this.textBox.bindToNumber(bindable));
 
     return this;
   }
 
   get tabbableContentContainer() {
-    return this.#textBox.tabbableContentContainer;
+    return this.textBox.tabbableContentContainer;
   }
 
   set tabbableContentContainer(value) {
-    this.#textBox.tabbableContentContainer = value;
+    this.textBox.tabbableContentContainer = value;
   }
 
   withTabbableContentContainer(value: CompositeDrawable): this {
-    this.tabbableContentContainer = value;
+    this.doWhenLoaded(() => this.tabbableContentContainer = value);
+
+    return this;
+  }
+
+  withCurrent(value: Bindable<string>) {
+    this.doWhenLoaded(() => this.current = value);
+    return this;
+  }
+
+  notBlank() {
+    this.doWhenLoaded(() => this.textBox.notBlank());
+    return this;
+  }
+
+  asciiOnly() {
+    this.doWhenLoaded(() => this.textBox.asciiOnly());
+    return this;
+  }
+
+  bindWithCommandManager(
+    bindable: Bindable<string>,
+    createCommand: (value: string) => EditorCommand | null,
+  ) {
+    this.doWhenLoaded(() => this.drawable.bindWithCommandManager(bindable, createCommand));
+
     return this;
   }
 }
