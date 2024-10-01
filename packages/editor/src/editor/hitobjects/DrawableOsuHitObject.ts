@@ -31,6 +31,7 @@ export class DrawableOsuHitObject<T extends OsuHitObject = OsuHitObject> extends
     this.stackHeightBindable.bindTo(this.hitObject!.stackHeightBindable);
     this.scaleBindable.bindTo(this.hitObject!.scaleBindable);
     this.indexInComboBindable.bindTo(this.hitObject!.indexInComboBindable);
+    this.accentColor.bindTo(this.hitObject!.comboColorBindable);
   }
 
   onFreed() {
@@ -38,9 +39,13 @@ export class DrawableOsuHitObject<T extends OsuHitObject = OsuHitObject> extends
     this.stackHeightBindable.unbindFrom(this.hitObject!.stackHeightBindable);
     this.scaleBindable.unbindFrom(this.hitObject!.scaleBindable);
     this.indexInComboBindable.unbindFrom(this.hitObject!.indexInComboBindable);
+    this.accentColor.unbindFrom(this.hitObject!.comboColorBindable);
   }
 
   get initialLifetimeOffset(): number {
     return this.hitObject!.timePreempt;
+  }
+
+  protected updateComboColor() {
   }
 }
