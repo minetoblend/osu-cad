@@ -1,67 +1,125 @@
-import type { ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
+import type {
+  DependencyContainer,
+  ScreenExitEvent,
+  ScreenTransitionEvent,
+} from 'osucad-framework';
+import type { OsuPlayfield } from '../../hitobjects/OsuPlayfield.ts';
 import type { BackgroundAdjustment } from '../BackgroundAdjustment.ts';
-import { Axes, Box, Container, dependencyLoader, Direction, EasingFunction } from 'osucad-framework';
-import { MainScrollContainer } from '../../MainScrollContainer.ts';
+import {
+  Anchor,
+  Axes,
+  Box,
+  Container,
+  dependencyLoader,
+  DrawSizePreservingFillContainer,
+  EasingFunction,
+} from 'osucad-framework';
+import { LabelWidthProvider } from '../../../userInterface/LabelledDrawable.ts';
+import { EditorDependencies } from '../../EditorDependencies.ts';
+import { PlayfieldGrid } from '../../playfield/PlayfieldGrid.ts';
 import { EditorScreen } from '../EditorScreen';
+import { EditorScreenUtils } from '../EditorScreenUtils.ts';
 import { HitSoundsScreen } from '../hitsounds/HitSoundsScreen.ts';
 import { BackgroundSelectButton } from './BackgroundSelectButton.ts';
+import { SetupScreenContainer } from './SetupScreenContainer.ts';
 
 export class SetupScreen extends EditorScreen {
   constructor() {
     super();
   }
 
-  @dependencyLoader()
-  load() {
-    this.addInternal(this.backgroundSelect = new BackgroundSelectButton());
+  #playfield!: OsuPlayfield;
 
-    this.addInternal(this.#content = new Container({
-      relativeSizeAxes: Axes.Both,
-      relativePositionAxes: Axes.X,
-      width: 0.6,
-      padding: { bottom: -48 },
-      x: -0.6,
-      children: [
-        new Box({
-          relativeSizeAxes: Axes.Both,
-          color: 0x151517,
+  #playfieldContainer!: Container;
+
+  #rightContainer!: Container;
+
+  @dependencyLoader()
+  load(dependencies: DependencyContainer) {
+    const { reusablePlayfield } = dependencies.resolve(EditorDependencies);
+
+    this.#playfield = reusablePlayfield;
+
+    this.dependencies.provide(new LabelWidthProvider(160));
+
+    this.addAllInternal(
+      this.#rightContainer = new Container({
+        relativeSizeAxes: Axes.Both,
+        relativePositionAxes: Axes.X,
+        width: 0.5,
+        anchor: Anchor.TopRight,
+        origin: Anchor.TopRight,
+        padding: {
+          horizontal: 30,
+          vertical: 100,
+        },
+        child: new DrawSizePreservingFillContainer({
+          targetDrawSize: { x: 512, y: 384 },
+          children: [
+            this.#playfieldContainer = new Container({
+              width: 512,
+              height: 384,
+              children: [
+                this.#grid = new PlayfieldGrid({ customGridSize: 16 }),
+              ],
+            }),
+          ],
         }),
-        new Container({
-          relativeSizeAxes: Axes.Both,
-          padding: { bottom: 30 },
-          child: new MainScrollContainer(Direction.Vertical).with({
+      }),
+
+      this.backgroundSelect = new BackgroundSelectButton(),
+      this.#content = new Container({
+        relativeSizeAxes: Axes.Both,
+        relativePositionAxes: Axes.X,
+        width: 0.5,
+        padding: { bottom: -48 },
+        x: -0.5,
+        children: [
+          new Box({
             relativeSizeAxes: Axes.Both,
-            masking: false,
-            children: [
-              new Container({
-                height: 2000,
-              }),
-            ],
+            color: 0x222228,
           }),
-        }),
-      ],
-    }));
+          new Container({
+            relativeSizeAxes: Axes.Both,
+            padding: { vertical: 30 },
+            child: new SetupScreenContainer(),
+          }),
+        ],
+      }),
+    );
 
     this.#content.moveToX(0, 500, EasingFunction.OutExpo);
   }
 
   #content!: Container;
 
+  #grid!: PlayfieldGrid;
+
   backgroundSelect!: BackgroundSelectButton;
 
   adjustBackground(background: BackgroundAdjustment) {
     background.alpha = 0.5;
-    background.width = 0.4;
-    background.x = 0.3;
+    background.width = 0.5;
+    background.x = 0.25;
   }
 
   onEntering(e: ScreenTransitionEvent) {
     super.onEntering(e);
 
     this.backgroundSelect
-      .fadeInFromZero(500)
-      .moveToY(200)
-      .moveToY(0, 500, EasingFunction.OutExpo);
+      .fadeInFromZero(500, EasingFunction.OutQuad)
+      .moveToX(0.5)
+      .moveToX(0, 500, EasingFunction.OutExpo);
+
+    if (this.#playfield.parent) {
+      EditorScreenUtils.matchScreenSpaceDrawQuad(this.#playfield.parent, this.#playfieldContainer, true);
+    }
+    else {
+      this.#rightContainer.fadeInFromZero(500, EasingFunction.OutQuad)
+        .moveToX(0.5)
+        .moveToX(0, 500, EasingFunction.OutExpo);
+    }
+    EditorScreenUtils.insertPlayfield(this.#playfield, this.#playfieldContainer);
   }
 
   onExiting(e: ScreenExitEvent): boolean {
@@ -70,11 +128,18 @@ export class SetupScreen extends EditorScreen {
 
     this.fadeTo(1, 500);
 
-    this.#content.moveToX(e.next instanceof HitSoundsScreen ? -0.7 : -0.6, 500, EasingFunction.OutExpo);
+    this.#content.moveToX(e.next instanceof HitSoundsScreen ? -0.7 : -0.5, 500, EasingFunction.OutExpo);
+
+    this.#rightContainer.fadeOut(500, EasingFunction.OutQuad)
+      .moveToX(0.5, 500, EasingFunction.OutExpo);
 
     this.backgroundSelect
-      .moveToY(100, 500, EasingFunction.OutExpo)
+      .moveToX(0.5, 500, EasingFunction.OutExpo)
       .fadeOut(300);
+
+    this.#playfieldContainer.fadeOut(500, EasingFunction.OutExpo);
+
+    this.#grid.hide();
 
     return false;
   }

@@ -1,33 +1,24 @@
-import {
-  Anchor,
-  Axes,
-  CompositeDrawable,
-  type DependencyContainer,
-  dependencyLoader,
-} from 'osucad-framework';
-import { OsucadSpriteText } from '../../../OsucadSpriteText.ts';
-import { ThemeColors } from '../../ThemeColors.ts';
+import { Anchor, Axes, CompositeDrawable, dependencyLoader } from 'osucad-framework';
+import { OsucadButton } from '../../../userInterface/OsucadButton.ts';
 
 export class BackgroundSelectButton extends CompositeDrawable {
   @dependencyLoader()
-  load(dependencies: DependencyContainer) {
-    const colors = dependencies.resolve(ThemeColors);
-
+  load() {
     this.relativeSizeAxes = Axes.Both;
+    this.relativePositionAxes = Axes.X;
     this.anchor = Anchor.TopRight;
     this.origin = Anchor.TopRight;
-    this.width = 0.4;
+    this.width = 0.5;
 
-    this.addInternal(this.text = new OsucadSpriteText({
-      text: 'Click to select background\n(Coming soon)',
-      color: colors.text,
-      fontSize: 28,
-      anchor: Anchor.Center,
-      origin: Anchor.Center,
-    }));
+    this.padding = 30;
 
-    this.text.style.align = 'center';
+    this.addInternal(
+      new OsucadButton().adjust((it) => {
+        it.text = 'Change Background';
+        it.backgroundAlpha = 0.8;
+        it.autoSizeAxes = Axes.Y;
+        it.relativeSizeAxes = Axes.X;
+      }, true),
+    );
   }
-
-  text!: OsucadSpriteText;
 }
