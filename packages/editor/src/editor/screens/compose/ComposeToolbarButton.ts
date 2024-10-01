@@ -1,30 +1,26 @@
-import {
-  ClickableContainer, ClickEvent,
-  DrawableOptions,
-  MouseButton,
-  MouseDownEvent,
-  MouseUpEvent, ScheduledDelegate,
-  Visibility,
-} from 'osucad-framework';
+import type { ClickEvent, DrawableOptions, MouseDownEvent, MouseUpEvent, ScheduledDelegate } from 'osucad-framework';
 import type { Graphics, Texture } from 'pixi.js';
 import {
   Anchor,
   Axes,
   BindableBoolean,
   Button,
+  ClickableContainer,
   Container,
   dependencyLoader,
   DrawableSprite,
   EasingFunction,
+  MouseButton,
   resolved,
   RoundedBox,
   Vec2,
+  Visibility,
 } from 'osucad-framework';
 import { FastRoundedBox } from '../../../drawables/FastRoundedBox';
+import { GraphicsDrawable } from '../../../drawables/GraphicsDrawable';
 import { UISamples } from '../../../UISamples';
 import { ThemeColors } from '../../ThemeColors';
 import { ComposeToolbarButtonSubmenu } from './ComposeToolbarButtonSubmenu';
-import { GraphicsDrawable } from '../../../drawables/GraphicsDrawable';
 
 export class ComposeToolbarButton extends Button {
   constructor(
@@ -145,7 +141,8 @@ export class ComposeToolbarButton extends Button {
   #updateOutline() {
     if (this.outlineVisibility === 0) {
       this.#outline.outlines = [];
-    } else {
+    }
+    else {
       this.#outline.outlines = [
         {
           color: 0xC0BFBD,
@@ -173,7 +170,8 @@ export class ComposeToolbarButton extends Button {
 
       this.#background.color = 0x303038;
       this.transformTo('outlineVisibility', 1, 200);
-    } else {
+    }
+    else {
       this.#background.color = 0x222228;
       this.#icon.color = this.isHovered ? 'white' : '#bbbec5';
       this.transformTo('outlineVisibility', 0, 200);
@@ -184,7 +182,8 @@ export class ComposeToolbarButton extends Button {
 
       // resizing the background and outline instead of main body to make sure layout isn't affected
       this.backgroundContainer.scaleTo(0.95, 300, EasingFunction.OutQuart);
-    } else {
+    }
+    else {
       this.scaleContainer.scaleTo(1, 300, EasingFunction.OutBack);
 
       this.backgroundContainer.scaleTo(1, 300, EasingFunction.OutBack);
@@ -220,7 +219,7 @@ export class ComposeToolbarButton extends Button {
         this.getContainingFocusManager()!.changeFocus(this);
         this.submenu?.show();
         this.#preventNextClick = true;
-      }, 400)
+      }, 400);
     }
 
     if (e.button === MouseButton.Right) {
