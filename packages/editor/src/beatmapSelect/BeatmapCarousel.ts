@@ -128,7 +128,7 @@ export class BeatmapCarousel extends CompositeDrawable {
         const panel = this.#mapsetPool.get(it => it.item = item);
         panel.drawNode.zIndex = item.carouselYPosition;
         panel.y = item.carouselYPosition;
-        panel.fadeInFromZero(200);
+        panel.fadeTo(0.75).fadeIn(200);
 
         this.#scroll.add(panel);
       }
