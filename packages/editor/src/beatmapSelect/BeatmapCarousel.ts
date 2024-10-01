@@ -27,11 +27,11 @@ import { OsucadSettings } from '../config/OsucadSettings';
 import { EditorLoader } from '../editor/EditorLoader';
 import { MainScrollContainer } from '../editor/MainScrollContainer';
 import { EditorEnvironment } from '../environment/EditorEnvironment';
+import { IResourcesProvider } from '../io/IResourcesProvider';
 import { UISamples } from '../UISamples';
 import { CarouselLoadQueue } from './CarouselLoadQueue';
 import { CarouselMapset } from './CarouselMapset';
 import { DrawableCarouselMapset } from './DrawableCarouselMapset';
-import { IResourcesProvider } from '../io/IResourcesProvider';
 
 const distance_offscreen_before_unload = 1024;
 
