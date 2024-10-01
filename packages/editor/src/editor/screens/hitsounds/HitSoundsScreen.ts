@@ -1,4 +1,8 @@
-import type { DependencyContainer, ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
+import type {
+  DependencyContainer,
+  ScreenExitEvent,
+  ScreenTransitionEvent,
+} from 'osucad-framework';
 import type { OsuPlayfield } from '../../hitobjects/OsuPlayfield.ts';
 import type { BackgroundAdjustment } from '../BackgroundAdjustment.ts';
 import {
@@ -9,14 +13,18 @@ import {
   dependencyLoader,
   DrawSizePreservingFillContainer,
   EasingFunction,
+  FillFlowContainer,
   resolved,
   Vec2,
 } from 'osucad-framework';
 import { EditorClock } from '../../EditorClock.ts';
 import { EditorDependencies } from '../../EditorDependencies.ts';
+import { EditorMixer } from '../../EditorMixer.ts';
 import { PlayfieldGrid } from '../../playfield/PlayfieldGrid.ts';
 import { EditorScreen } from '../EditorScreen.ts';
 import { EditorScreenUtils } from '../EditorScreenUtils.ts';
+import { HitSoundsTimeline } from './HitSoundsTimeline.ts';
+import { VolumeMeter } from './VolumeMeter.ts';
 
 export class HitSoundsScreen extends EditorScreen {
   adjustBackground(background: BackgroundAdjustment) {
@@ -38,6 +46,9 @@ export class HitSoundsScreen extends EditorScreen {
 
   @resolved(EditorClock)
   editorClock!: EditorClock;
+
+  @resolved(EditorMixer)
+  mixer!: EditorMixer;
 
   get playfieldWidth() {
     return 0.35;
@@ -91,6 +102,26 @@ export class HitSoundsScreen extends EditorScreen {
             origin: Anchor.BottomRight,
             scale: new Vec2(1, 3),
           }),
+          new Container({
+            relativeSizeAxes: Axes.Both,
+            padding: 12,
+            children: [
+              new FillFlowContainer({
+                relativeSizeAxes: Axes.Both,
+                spacing: new Vec2(10),
+                children: [
+                  new VolumeMeter(this.mixer.music, 'Music').with({
+                    relativeSizeAxes: Axes.Y,
+                    width: 20,
+                  }),
+                  new VolumeMeter(this.mixer.hitsounds, 'Hitsounds').with({
+                    relativeSizeAxes: Axes.Y,
+                    width: 20,
+                  }),
+                ],
+              }),
+            ],
+          }),
         ],
       }),
       this.#bottomArea = new Container({
@@ -106,7 +137,9 @@ export class HitSoundsScreen extends EditorScreen {
           }),
           this.mainContent = new Container({
             relativeSizeAxes: Axes.Both,
-            padding: 20,
+            children: [
+              new HitSoundsTimeline(),
+            ],
           }),
         ],
       }),
