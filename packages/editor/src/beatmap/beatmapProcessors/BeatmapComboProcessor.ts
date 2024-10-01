@@ -1,13 +1,15 @@
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
-import { Color, resolved } from 'osucad-framework';
+import { BindableBoolean, Color, dependencyLoader, resolved } from 'osucad-framework';
+import { OsucadConfigManager } from '../../config/OsucadConfigManager.ts';
+import { OsucadSettings } from '../../config/OsucadSettings.ts';
 import { ISkinSource } from '../../skinning/ISkinSource';
+import { SkinConfig } from '../../skinning/SkinConfig.ts';
 import { Spinner } from '../hitObjects/Spinner';
 import { BeatmapProcessor } from './BeatmapProcessor';
 
 export class BeatmapComboProcessor extends BeatmapProcessor {
   onHitObjectAdded(hitObject: OsuHitObject) {
     super.onHitObjectAdded(hitObject);
-
     hitObject.newComboBindable.valueChanged.addListener(this.state.invalidate, this.state);
     hitObject.comboOffsetBindable.valueChanged.addListener(this.state.invalidate, this.state);
     hitObject.startTimeBindable.valueChanged.addListener(this.state.invalidate, this.state);
@@ -52,9 +54,34 @@ export class BeatmapComboProcessor extends BeatmapProcessor {
   @resolved(ISkinSource)
   protected skin!: ISkinSource;
 
+  @resolved(OsucadConfigManager)
+  protected config!: OsucadConfigManager;
+
+  #skinComboColors: Color[] = [];
+
+  useBeatmapComboColors = new BindableBoolean(true);
+
+  @dependencyLoader()
+  load() {
+    this.skin.sourceChanged.addListener(this.#skinChanged);
+    this.config.bindWith(OsucadSettings.BeatmapComboColors, this.useBeatmapComboColors);
+
+    this.useBeatmapComboColors.valueChanged.addListener(() => this.state.invalidate());
+
+    this.#skinChanged();
+  }
+
+  #skinChanged() {
+    this.#skinComboColors = this.skin.getConfig(SkinConfig.ComboColors)?.value ?? [];
+    this.state.invalidate();
+  }
+
   protected getComboColor(comboIndex: number) {
-    if (this.beatmap.colors.comboColors.length > 0)
+    if (this.useBeatmapComboColors.value && this.beatmap.colors.comboColors.length > 0)
       return this.beatmap.colors.getComboColor(comboIndex);
+
+    if (this.#skinComboColors.length > 0)
+      return this.#skinComboColors[comboIndex % this.#skinComboColors.length];
 
     return new Color(0xFFFFFF);
   }
