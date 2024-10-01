@@ -53,6 +53,7 @@ export class BeatmapSelectHeader extends Container {
 
     textBox.commitOnEnter = false;
     textBox.commitImmediately = true;
+    textBox.clearOnEscape = true;
 
     this.scheduler.addDelayed(() => {
       console.log(this.getContainingFocusManager()!.changeFocus(textBox));
