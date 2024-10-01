@@ -4,7 +4,6 @@ import type {
 } from 'osucad-framework';
 import type { HitObject } from '../../../../../beatmap/hitObjects/HitObject';
 import type { OsuHitObject } from '../../../../../beatmap/hitObjects/OsuHitObject';
-import type { CommandProxy } from '../../../../commands/CommandProxy';
 import {
   dependencyLoader,
   MouseButton,
@@ -27,7 +26,6 @@ export class MoveSelectionInteraction extends ComposeToolInteraction {
   #startPositions!: Vec2[];
 
   #snapVisualizer = new SnapVisualizer();
-
 
   @dependencyLoader()
   load() {
