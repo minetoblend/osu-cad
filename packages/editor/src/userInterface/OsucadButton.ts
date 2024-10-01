@@ -1,15 +1,6 @@
-import type {
-  Drawable,
-} from 'osucad-framework';
+import type { Drawable } from 'osucad-framework';
 import type { ColorSource } from 'pixi.js';
-import {
-
-  Axes,
-  Button,
-  Container,
-  dependencyLoader,
-  resolved,
-} from 'osucad-framework';
+import { Anchor, Axes, Button, Container, dependencyLoader, resolved } from 'osucad-framework';
 import { FastRoundedBox } from '../drawables/FastRoundedBox.ts';
 import { ThemeColors } from '../editor/ThemeColors.ts';
 import { OsucadSpriteText } from '../OsucadSpriteText.ts';
@@ -18,6 +9,8 @@ export class OsucadButton extends Button {
   #backgroundColor: ColorSource = 0x1E1E23;
 
   #backgroundHoverColor: ColorSource = 0x2E2E33;
+
+  #backgroundAlpha = 1;
 
   get backgroundColor() {
     return this.#backgroundColor;
@@ -37,8 +30,18 @@ export class OsucadButton extends Button {
     this.scheduler.addOnce(this.updateBackground, this);
   }
 
+  get backgroundAlpha() {
+    return this.#backgroundAlpha;
+  }
+
+  set backgroundAlpha(value) {
+    this.#backgroundAlpha = value;
+    this.scheduler.addOnce(this.updateBackground, this);
+  }
+
   protected updateBackground() {
-    this.#background.color = this.isHovered ? this.#backgroundHoverColor : this.#backgroundColor;
+    this.#background.color = this.isHovered ? this.backgroundHoverColor : this.backgroundColor;
+    this.#background.alpha = this.backgroundAlpha;
   }
 
   #background!: Drawable;
@@ -61,6 +64,8 @@ export class OsucadButton extends Button {
         autoSizeAxes: Axes.Both,
         padding: 8,
         child: this.#spriteText = this.createText(),
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
       }),
     );
   }
