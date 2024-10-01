@@ -90,14 +90,4 @@ export class StableEditorContext extends EditorContext {
   async save() {
     return await window.api.saveBeatmap(this.osuBeatmap.folderName, this.osuBeatmap.osuFileName, new StableBeatmapEncoder().encode(this.beatmap));
   }
-
-  protected async loadSong(beatmap: Beatmap): Promise<Track> {
-    if (this.resourcesProvider.config.get(OsucadSettings.UseAudioStreaming)) {
-      const mixer = this.resourcesProvider.mixer;
-
-      return this.resourcesProvider.audioManager.createStreamedTrackFromUrl(mixer.music, `osu-stable://songs?path=${encodeURIComponent(join(this.osuBeatmap.folderName, this.beatmap.settings.audioFileName))}`);
-    }
-
-    return super.loadSong(beatmap);
-  }
 }
