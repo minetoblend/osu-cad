@@ -703,7 +703,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   }
 
   get layoutRectangle(): Rectangle {
-    return new Rectangle(-this.margin.left, -this.margin.top, this.drawSize.x, this.drawSize.y);
+    return new Rectangle(-this.margin.left, -this.margin.top, this.layoutSize.x, this.layoutSize.y);
   }
 
   get boundingBox(): Rectangle {
