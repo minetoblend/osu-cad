@@ -7,12 +7,11 @@ import {
   CompositeDrawable,
   Container,
   dependencyLoader,
-  EasingFunction,
   PIXIGraphics,
-  RoundedBox,
   Vec2,
 } from 'osucad-framework';
 import { PathType } from '../../../../beatmap/hitObjects/PathType';
+import { FastRoundedBox } from '../../../../drawables/FastRoundedBox.ts';
 
 export class SliderPathVisualizer extends CompositeDrawable {
   constructor() {
@@ -155,7 +154,7 @@ class SliderPathVisualizerHandle extends CompositeDrawable {
     this.origin = Anchor.Center;
 
     this.addAllInternal(
-      (this.#shadow = new RoundedBox({
+      (this.#shadow = new FastRoundedBox({
         relativeSizeAxes: Axes.Both,
         size: 0.8,
         anchor: Anchor.Center,
@@ -164,7 +163,7 @@ class SliderPathVisualizerHandle extends CompositeDrawable {
         color: 0x000000,
         alpha: 0.1,
       })),
-      (this.#handle = new RoundedBox({
+      (this.#handle = new FastRoundedBox({
         relativeSizeAxes: Axes.Both,
         size: 0.6,
         anchor: Anchor.Center,
@@ -176,8 +175,15 @@ class SliderPathVisualizerHandle extends CompositeDrawable {
     this.type = type;
   }
 
-  #shadow!: RoundedBox;
-  #handle!: RoundedBox;
+  override updateSubTree(): boolean {
+    if (!this.isLoaded)
+      return super.updateSubTree();
+
+    return true;
+  }
+
+  #shadow!: FastRoundedBox;
+  #handle!: FastRoundedBox;
 
   get type() {
     return this.#type!;
@@ -194,15 +200,15 @@ class SliderPathVisualizerHandle extends CompositeDrawable {
   #type?: PathType | null;
 
   onHover(): boolean {
-    this.#shadow.scaleTo(1.2, 200, EasingFunction.OutBack);
-    this.#handle.scaleTo(1.2, 200, EasingFunction.OutBack);
+    this.#shadow.scale = 1.2;
+    this.#handle.scale = 1.2;
 
     return true;
   }
 
   onHoverLost(): boolean {
-    this.#shadow.scaleTo(1, 200, EasingFunction.OutBack);
-    this.#handle.scaleTo(1, 200, EasingFunction.OutBack);
+    this.#shadow.scale = 1;
+    this.#handle.scale = 1;
 
     return true;
   }
