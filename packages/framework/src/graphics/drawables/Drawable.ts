@@ -103,6 +103,14 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return this;
   }
 
+  adjust(fn: (drawable: this) => void, ensureLoaded: boolean = false): this {
+    if (ensureLoaded && this.loadState < LoadState.Ready)
+      this.onLoadComplete.addListener(() => fn(this));
+    else
+      fn(this);
+    return this;
+  }
+
   label?: string;
 
   get name() {
