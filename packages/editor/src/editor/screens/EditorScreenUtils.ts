@@ -56,7 +56,7 @@ export class EditorScreenUtils {
 
     const targetSize = targetBottomRight.sub(targetTopLeft);
 
-    const originalPosition = target.position;
+    const originalPosition = target.position.clone();
     const originalScale = target.scale.clone();
 
     target.position = targetTopLeft;
