@@ -59,10 +59,14 @@ export class HitsoundPlayer extends CompositeDrawable {
     }
   }
 
+  get isSeeking() {
+    return this.editorClock.timeSinceLastSeek < 50;
+  }
+
   #onEntryBecameAlive(entry: LifetimeEntry) {
     const hitObject = (entry as HitSoundLifetimeEntry).hitObject as OsuHitObject;
 
-    if (this.time.elapsed > 200 || !this.editorClock.isRunning || this.editorClock.isSeeking)
+    if (this.time.elapsed > 200 || !this.editorClock.isRunning || this.isSeeking)
       return;
 
     for (const sample of hitObject.hitSamples) {
@@ -73,7 +77,7 @@ export class HitsoundPlayer extends CompositeDrawable {
   #onEntryCrossedBoundary([entry, boundaryKind, crossingDirection]: [LifetimeEntry, LifetimeBoundaryKind, LifetimeBoundaryCrossingDirection]) {
     const hitObject = (entry as HitSoundLifetimeEntry).hitObject as OsuHitObject;
 
-    if (this.time.elapsed > 500 || !this.editorClock.isRunning || this.editorClock.isSeeking)
+    if (this.time.elapsed > 500 || !this.editorClock.isRunning || this.isSeeking)
       return;
 
     if (hitObject.duration === 0 && boundaryKind === LifetimeBoundaryKind.Start && crossingDirection === LifetimeBoundaryCrossingDirection.Forward) {

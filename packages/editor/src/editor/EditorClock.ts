@@ -130,6 +130,12 @@ export class EditorClock
 
   isSeeking = false;
 
+  lastSeekTime = 0;
+
+  get timeSinceLastSeek() {
+    return super.clock!.currentTime - this.lastSeekTime;
+  }
+
   seek(position: number, animated: boolean = true) {
     if (!this.animatedSeek.value)
       animated = false;
@@ -137,6 +143,7 @@ export class EditorClock
     position = clamp(position, 0, this.track.length);
 
     this.isSeeking = true;
+    this.lastSeekTime = super.clock!.currentTime;
 
     this.#targetTime = position;
     this.#lastSeekWasAnimated = animated;
