@@ -41,13 +41,14 @@ export function setupProtocol(osuPaths: OsuStableInfo | null) {
     let basePath = osuPaths.installPath;
 
     switch (host) {
-      case 'beatmap-index':
+      case 'beatmap-index': {
         if (!osuPaths.dbPath)
           return new Response('Not found', { status: 404 });
 
         const beatmaps = await loadBeatmaps(osuPaths);
 
         return new Response(JSON.stringify(beatmaps), { headers: { 'Content-Type': 'application/json' } });
+      }
       case 'songs':
         if (!osuPaths.songsPath)
           return new Response('Not found', { status: 404 });
