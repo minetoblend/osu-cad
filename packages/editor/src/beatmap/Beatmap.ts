@@ -14,8 +14,9 @@ export class Beatmap {
   readonly hitObjects = new HitObjectList(this);
 
   constructor() {
-    this.controlPoints.anyPointChanged.addListener(() => {
-      this.hitObjects.requestApplyDefaultsToAll();
-    });
+    this.controlPoints.anyPointChanged.addListener(controlPoint =>
+      this.hitObjects.invalidateFromControlPoint(controlPoint),
+    );
+    this.difficulty.invalidated.addListener(() => this.hitObjects.invalidateAll());
   }
 }

@@ -24,7 +24,9 @@ export class ControlPointInfo {
 
   groupRemoved = new Action<ControlPointGroup>();
 
-  anyPointChanged = new Action();
+  anyPointChanged = new Action<ControlPoint>();
+
+  #idMap = new Map<string, ControlPointGroup>();
 
   constructor() {
     this.groups.added.addListener(this.#onGroupAdded.bind(this));
@@ -160,7 +162,7 @@ export class ControlPointInfo {
     return group.add(controlPoint);
   }
 
-  protected listFor<T extends ControlPoint>(controlPoint: T): ControlPointList<T> | undefined {
+  listFor<T extends ControlPoint>(controlPoint: T): ControlPointList<T> | undefined {
     switch (controlPoint.constructor) {
       case TimingPoint:
         return this.timingPoints as any;
