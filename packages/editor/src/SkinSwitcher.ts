@@ -1,5 +1,6 @@
 import type {
   AudioChannel,
+  Bindable,
   Drawable,
   KeyDownEvent,
   Sample,
@@ -9,6 +10,7 @@ import type { SkinProvider, SkinStore } from './environment';
 import type { ISkin } from './skinning/ISkin';
 import type { ISkinComponentLookup } from './skinning/ISkinComponentLookup';
 import type { ISkinSource } from './skinning/ISkinSource';
+import type { SkinConfig } from './skinning/SkinConfig.ts';
 import {
   Action,
   asyncDependencyLoader,
@@ -139,5 +141,14 @@ export class SkinSwitcher extends CompositeDrawable implements ISkinSource {
     }
 
     return false;
+  }
+
+  getConfig<T>(key: SkinConfig<T>): Bindable<T> | null {
+    for (const skin of this.activeSources) {
+      const value = skin.getConfig(key);
+      if (value)
+        return value;
+    }
+    return null;
   }
 }
