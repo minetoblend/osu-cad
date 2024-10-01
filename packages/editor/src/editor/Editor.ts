@@ -457,7 +457,11 @@ export class Editor
   update() {
     super.update();
 
-    this.context.beatmap.hitObjects.applyDefaultsWhereNeeded();
+    this.context.beatmap.hitObjects.applyDefaultsWhereNeeded(
+      this.#clock.currentTime - 3000,
+      this.#clock.currentTime + 3000,
+      10,
+    );
   }
 
   createBackground(): BackgroundScreen | null {
