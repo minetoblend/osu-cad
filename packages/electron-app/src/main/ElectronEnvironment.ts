@@ -4,6 +4,7 @@ import { OsuBeatmap } from 'osu-db-parser';
 import { OsuStableInfo } from './loadOsuStableInfo';
 import path from 'node:path';
 import log from 'electron-log/main';
+// @ts-expect-error importing a worker
 import createWorker from './BeatmapLoadWorker.ts?nodeWorker';
 
 export async function setupEnvironment(osuPaths: OsuStableInfo | null) {
