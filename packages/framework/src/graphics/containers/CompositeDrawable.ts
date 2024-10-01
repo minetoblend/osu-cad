@@ -902,10 +902,10 @@ export class CompositeDrawable extends Drawable {
   }
 
   override dispose(isDisposing: boolean = true) {
+    super.dispose(isDisposing);
+
     this.#disposalAbortController?.abort();
     this.#internalChildren.items.forEach(c => c.dispose());
-
-    super.dispose(isDisposing);
   }
 
   override applyTransformsAt(time: number, propagateChildren: boolean = false) {
