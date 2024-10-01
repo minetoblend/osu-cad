@@ -4,7 +4,18 @@ import type {
   ScreenTransitionEvent,
 } from 'osucad-framework';
 import type { BackgroundAdjustment } from '../BackgroundAdjustment.ts';
-import { Anchor, Axes, Bindable, Box, Container, dependencyLoader, Direction, EasingFunction, MaskingContainer, resolved } from 'osucad-framework';
+import {
+  Anchor,
+  Axes,
+  Bindable,
+  Box,
+  Container,
+  dependencyLoader,
+  Direction,
+  EasingFunction,
+  MaskingContainer,
+  resolved,
+} from 'osucad-framework';
 import { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup.ts';
 import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
 import { OsucadButton } from '../../../userInterface/OsucadButton.ts';
@@ -52,6 +63,7 @@ export class TimingScreen extends EditorScreen {
           new Box({
             relativeSizeAxes: Axes.Both,
             color: this.colors.translucent,
+            alpha: 0.9,
           }),
           new Container({
             relativeSizeAxes: Axes.Both,
@@ -127,17 +139,7 @@ export class TimingScreen extends EditorScreen {
     this.moveToY(1).moveToY(0, 400, EasingFunction.OutExpo);
 
     this.#timingPointTable.scrollToActive(false);
-
-    this.#initialTableScroll = this.#timingPointTable.scroll.current;
-
-    this.#isEntering = true;
-
-    this.scheduler.addDelayed(() => this.#isEntering = false, 400);
   }
-
-  #initialTableScroll = 0;
-
-  #isEntering = false;
 
   onExiting(e: ScreenExitEvent): boolean {
     if (super.onExiting(e))
@@ -162,8 +164,5 @@ export class TimingScreen extends EditorScreen {
 
   updateAfterChildren() {
     super.updateAfterChildren();
-
-    if (this.#isEntering)
-      this.#timingPointTable.scroll.scrollTo(this.#initialTableScroll + this.drawPosition.y, false);
   }
 }
