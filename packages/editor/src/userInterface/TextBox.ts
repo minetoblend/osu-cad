@@ -6,6 +6,7 @@ import type {
   KeyDownEvent,
 } from 'osucad-framework';
 import type { DoubleClickEvent } from '../../../framework/src/input/events/DoubleClickEvent';
+import type { EditorCommand } from '../editor/commands/EditorCommand.ts';
 import {
   Action,
   Anchor,
@@ -28,6 +29,7 @@ import {
 import { BitmapFontManager } from 'pixi.js';
 import { TabbableContainer } from '../../../framework/src/graphics/containers/TabbableContainer';
 import { FastRoundedBox } from '../drawables/FastRoundedBox';
+import { CommandManager } from '../editor/context/CommandManager.ts';
 import { ThemeColors } from '../editor/ThemeColors';
 import { OsucadSpriteText } from '../OsucadSpriteText';
 import { animate } from '../utils/animate';
@@ -96,8 +98,12 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
 
     switch (e.key) {
       case Key.Escape:
-        if (!e.repeat)
+
+        if (!e.repeat) {
+          if (this.clearOnEscape && this.text.length > 0)
+            this.current.value = '';
           this.killFocus();
+        }
         return true;
       case Key.Enter:
       case Key.NumpadEnter:
@@ -139,6 +145,7 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
       this.#textContainer = new Container({
         relativeSizeAxes: Axes.Both,
         padding: { horizontal: 8, vertical: 7 },
+        masking: true,
         children: [
           this.#placeholder = this.createPlaceholder().with({
             anchor: Anchor.CenterLeft,
@@ -157,7 +164,7 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
       }),
     );
 
-    this.current.addOnChangeListener(e => this.text = e.value);
+    this.current.addOnChangeListener(e => this.text = e.value, { immediate: true });
   }
 
   update() {
@@ -269,6 +276,11 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
     else {
       this.#caret.setPosition(position);
     }
+
+    if (!this.#caretShouldAnimate) {
+      this.#caret.finishTransforms(true);
+      this.#caretShouldAnimate = true;
+    }
   }
 
   @resolved(TextInputSource)
@@ -355,7 +367,17 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
 
   readonly onCommit = new Action<string>();
 
+  validators: ((text: string) => boolean)[] = [];
+
   commit() {
+    const text = this.text;
+    for (const validator of this.validators) {
+      if (!validator(text)) {
+        this.text = this.current.value;
+        return;
+      }
+    }
+
     this.current.value = this.text;
     this.onCommit.emit(this.text);
   }
@@ -530,12 +552,14 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
     return 0;
   }
 
+  #caretShouldAnimate = true;
+
   onClick(e: ClickEvent): boolean {
     if (e.button === MouseButton.Left) {
       const position = e.mousePosition.x - 8;
 
       this.cursor.moveTo(this.getIndexAt(position));
-      this.#caret.finishTransforms();
+      this.#caretShouldAnimate = false;
 
       return true;
     }
@@ -586,6 +610,44 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
 
   killFocus() {
     this.getContainingFocusManager()?.changeFocus(null);
+  }
+
+  notBlank() {
+    this.validators.push(text => text.trim() !== '');
+    return this;
+  }
+
+  asciiOnly() {
+    // eslint-disable-next-line no-control-regex
+    this.validators.push(text => /^[\x00-\x7F]*$/.test(text));
+    return this;
+  }
+
+  validateWhileTyping = false;
+
+  clearOnEscape = false;
+
+  bindWithCommandManager(
+    bindable: Bindable<string>,
+    createCommand: (value: string) => EditorCommand | null,
+  ) {
+    this.doWhenLoaded(() => {
+      const commandManager = this.dependencies.resolve(CommandManager);
+
+      this.text = bindable.value;
+
+      bindable.valueChanged.addListener(e => this.text = e.value);
+
+      this.current.valueChanged.addListener((e) => {
+        const command = createCommand(e.value);
+        if (command)
+          commandManager.submit(command, false);
+      });
+
+      this.onCommit.addListener(() => commandManager.commit());
+    });
+
+    return this;
   }
 }
 
