@@ -12,6 +12,8 @@ export class DrawableSprite extends Drawable {
   constructor(options: DrawableSpriteOptions = {}) {
     super();
 
+    this.#sprite = new PIXISprite();
+
     this.with(options);
 
     if (options.texture) {
@@ -27,13 +29,13 @@ export class DrawableSprite extends Drawable {
     }
   }
 
-  #sprite!: PIXISprite;
+  readonly #sprite: PIXISprite;
 
   resizeToTexture = false;
 
   override createDrawNode() {
     return new PIXIContainer({
-      children: [(this.#sprite = new PIXISprite())],
+      children: [this.#sprite],
     });
   }
 
@@ -49,19 +51,18 @@ export class DrawableSprite extends Drawable {
 
     this.#texture = value;
 
-    // ensure the draw node is created
-    this.drawNode;
-
     this.#sprite.texture = value || Texture.EMPTY;
 
     this.fillAspectRatio = (value?.width ?? 1) / (value?.height ?? 1);
 
-    this.invalidate(Invalidation.DrawSize);
+    this.invalidate(Invalidation.DrawSize | Invalidation.Transform);
   }
 
   override updateDrawNodeTransform(): void {
     super.updateDrawNodeTransform();
 
-    this.#sprite.setSize(this.drawSize.x, this.drawSize.y);
+    const drawSize = this.drawSize;
+
+    this.#sprite.setSize(drawSize.x, drawSize.y);
   }
 }
