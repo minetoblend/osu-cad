@@ -1506,6 +1506,13 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return true;
   }
 
+  doWhenLoaded(fn: () => void) {
+    if (this.loadState >= LoadState.Ready)
+      fn();
+    else
+      this.onLoadComplete.addListener(fn);
+  }
+
   // #endregion
 
   // #region transforms
