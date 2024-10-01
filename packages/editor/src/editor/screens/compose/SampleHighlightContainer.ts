@@ -55,7 +55,7 @@ export class SampleHighlightContainer extends CompositeDrawable {
   }
 
   dispose(isDisposing?: boolean) {
-    this.hitsoundPlayer.samplePlayed.removeListener(this.#onSamplePlayed);
+    this.hitsoundPlayer.samplePlayed.removeListener(this.#onSamplePlayed, this);
 
     super.dispose(isDisposing);
   }
