@@ -27,7 +27,6 @@ export class TimelineElement extends CompositeDrawable {
       this.outline = new TimelineObjectLayer('outline', {
         relativeSizeAxes: Axes.Both,
       }),
-
     );
 
     this.with(options);

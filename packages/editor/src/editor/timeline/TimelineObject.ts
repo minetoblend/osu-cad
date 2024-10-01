@@ -106,16 +106,15 @@ export abstract class TimelineObject<T extends OsuHitObject = OsuHitObject> exte
   }
 
   updatePosition() {
-    const radius = this.drawSize.y * 0.5;
+    const radius = this.drawHeight * 0.5;
 
     this.x = this.hitObject.startTime * this.timeline.pixelsPerMs - radius;
     this.width = this.timeline.durationToSize(this.hitObject.duration) + radius * 2;
   }
 
   override onInvalidate(invalidation: Invalidation, source: InvalidationSource): boolean {
-    if (invalidation & Invalidation.DrawSize && source === InvalidationSource.Parent) {
+    if (invalidation & Invalidation.DrawSize && source === InvalidationSource.Parent)
       this.updatePosition();
-    }
 
     return super.onInvalidate(invalidation, source);
   }
