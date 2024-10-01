@@ -1,5 +1,20 @@
-import type { Drawable } from 'osucad-framework';
-import { Axes, Direction, EasingFunction, RoundedBox, ScrollbarContainer, ScrollContainer, Vec2 } from 'osucad-framework';
+import type {
+  Drawable,
+  MouseDownEvent,
+  MouseMoveEvent,
+  MouseUpEvent,
+  UIEvent,
+} from 'osucad-framework';
+import {
+  Axes,
+  Direction,
+  EasingFunction,
+  MouseButton,
+  RoundedBox,
+  ScrollbarContainer,
+  ScrollContainer,
+  Vec2,
+} from 'osucad-framework';
 
 export class MainScrollContainer<T extends Drawable = Drawable> extends ScrollContainer<T> {
   constructor(direction: Direction = Direction.Vertical) {
@@ -8,6 +23,60 @@ export class MainScrollContainer<T extends Drawable = Drawable> extends ScrollCo
 
   protected override createScrollbar(direction: Direction): ScrollbarContainer {
     return new BasicScrollbar(direction);
+  }
+
+  #rightClickScroll = false;
+
+  get rightClickScroll(): boolean {
+    return this.#rightClickScroll;
+  }
+
+  set rightClickScroll(value: boolean) {
+    this.#rightClickScroll = value;
+  }
+
+  override onMouseDown(e: MouseDownEvent): boolean {
+    if (e.button === MouseButton.Right && this.rightClickScroll) {
+      this.#beginRightClickScroll(e);
+      return true;
+    }
+
+    return super.onMouseDown(e);
+  }
+
+  onMouseMove(e: MouseMoveEvent): boolean {
+    if (this.#isRightClickScrolling) {
+      this.#updateRightClickScrollPosition(e);
+      return true;
+    }
+
+    return super.onMouseMove?.(e) ?? false;
+  }
+
+  onMouseUp(e: MouseUpEvent) {
+    if (this.#isRightClickScrolling && e.button === MouseButton.Right) {
+      this.#endRightClickScroll();
+      return true;
+    }
+
+    super.onMouseUp?.(e);
+  }
+
+  #isRightClickScrolling = false;
+
+  #beginRightClickScroll(e: MouseDownEvent) {
+    this.#isRightClickScrolling = true;
+    this.#updateRightClickScrollPosition(e);
+  }
+
+  #updateRightClickScrollPosition(e: UIEvent) {
+    const position = e.mousePosition.y / this.drawSize.y;
+
+    this.target = position * this.scrollableExtent;
+  }
+
+  #endRightClickScroll() {
+    this.#isRightClickScrolling = false;
   }
 }
 
