@@ -1,7 +1,14 @@
+import type { Patchable } from '../../editor/commands/Patchable.ts';
 import { BindableNumber } from 'osucad-framework';
+import { PatchUtils } from '../../editor/commands/PatchUtils.ts';
 import { ControlPoint } from './ControlPoint';
 
-export class TimingPoint extends ControlPoint {
+export interface TimingPointPatch {
+  beatLength: number;
+  meter: number;
+}
+
+export class TimingPoint extends ControlPoint implements Patchable<TimingPointPatch> {
   constructor(
     beatLength: number,
     meter: number = 4,
@@ -68,5 +75,16 @@ export class TimingPoint extends ControlPoint {
     const clone = new TimingPoint(this.beatLength, this.meter);
     clone.copyFrom(this);
     return clone;
+  }
+
+  applyPatch(patch: Partial<TimingPointPatch>) {
+    PatchUtils.applyPatch(patch, this);
+  }
+
+  asPatch(): TimingPointPatch {
+    return {
+      beatLength: this.beatLength,
+      meter: this.meter,
+    };
   }
 }

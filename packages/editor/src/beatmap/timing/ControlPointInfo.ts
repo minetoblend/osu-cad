@@ -29,8 +29,8 @@ export class ControlPointInfo {
   #idMap = new Map<string, ControlPointGroup>();
 
   constructor() {
-    this.groups.added.addListener(this.#onGroupAdded.bind(this));
-    this.groups.removed.addListener(this.#onGroupRemoved.bind(this));
+    this.groups.added.addListener(this.#onGroupAdded, this);
+    this.groups.removed.addListener(this.#onGroupRemoved, this);
   }
 
   add(controlPoint: ControlPointGroup): boolean {
@@ -111,6 +111,8 @@ export class ControlPointInfo {
   readonly tickGenerator = new TickGenerator(this.timingPoints);
 
   #onGroupAdded(group: ControlPointGroup) {
+    this.#idMap.set(group.id, group);
+
     this.groupAdded.emit(group);
 
     group.added.addListener(e => this.#onAddedToGroup(e));
@@ -122,14 +124,16 @@ export class ControlPointInfo {
 
     group.changed.addListener(this.#onAnyPointChanged, this);
 
-    this.#onAnyPointChanged();
+    this.#onAnyPointChanged(group);
   }
 
-  #onAnyPointChanged() {
-    this.anyPointChanged.emit();
+  #onAnyPointChanged(child: ControlPoint) {
+    this.anyPointChanged.emit(child);
   }
 
   #onGroupRemoved(group: ControlPointGroup) {
+    this.#idMap.delete(group.id);
+
     this.groupRemoved.emit(group);
 
     for (const child of group.children) {
@@ -173,5 +177,9 @@ export class ControlPointInfo {
       case SamplePoint:
         return this.samplePoints as any;
     }
+  }
+
+  getById(id: string) {
+    return this.#idMap.get(id);
   }
 }

@@ -1,6 +1,20 @@
+import type { CommandContext } from '../editor/commands/CommandContext.ts';
+import type { Patchable } from '../editor/commands/Patchable.ts';
 import { Bindable } from 'osucad-framework';
+import { PatchUtils } from '../editor/commands/PatchUtils.ts';
 
-export class BeatmapMetadata {
+export interface BeatmapMetadataPatch {
+  artist: string;
+  artistUnicode: string;
+  title: string;
+  titleUnicode: string;
+  source: string;
+  creator: string;
+  difficultyName: string;
+  previewTime: number;
+}
+
+export class BeatmapMetadata implements Patchable<BeatmapMetadataPatch> {
   artistBindable = new Bindable('');
 
   get artist() {
@@ -94,4 +108,32 @@ export class BeatmapMetadata {
   osuWebId = 0;
 
   osuWebSetId = 0;
+
+  applyPatch(patch: Partial<BeatmapMetadataPatch>, ctx: CommandContext) {
+    PatchUtils.applyPatch(patch, this);
+  }
+
+  asPatch(): BeatmapMetadataPatch {
+    const {
+      artist,
+      artistUnicode,
+      title,
+      titleUnicode,
+      source,
+      creator,
+      difficultyName,
+      previewTime,
+    } = this;
+
+    return {
+      artist,
+      artistUnicode,
+      title,
+      titleUnicode,
+      source,
+      creator,
+      difficultyName,
+      previewTime,
+    };
+  }
 }

@@ -1,7 +1,14 @@
+import type { CommandContext } from '../../editor/commands/CommandContext.ts';
+import type { Patchable } from '../../editor/commands/Patchable.ts';
 import { BindableNumber } from 'osucad-framework';
+import { PatchUtils } from '../../editor/commands/PatchUtils.ts';
 import { ControlPoint } from './ControlPoint';
 
-export class DifficultyPoint extends ControlPoint {
+export interface DifficultyPointPatch {
+  sliderVelocity: number;
+}
+
+export class DifficultyPoint extends ControlPoint implements Patchable<DifficultyPointPatch> {
   constructor(sliderVelocity: number = 1) {
     super();
 
@@ -12,7 +19,7 @@ export class DifficultyPoint extends ControlPoint {
 
   static default = new DifficultyPoint(1);
 
-  sliderVelocityBindable = new BindableNumber(1).withRange(0.1, 10).withPrecision(0.1);
+  sliderVelocityBindable = new BindableNumber(1).withRange(0.1, 10).withPrecision(0.01);
 
   get sliderVelocity() {
     return this.sliderVelocityBindable.value;
@@ -42,5 +49,15 @@ export class DifficultyPoint extends ControlPoint {
     super.copyFrom(other);
 
     this.sliderVelocity = other.sliderVelocity;
+  }
+
+  applyPatch(patch: Partial<DifficultyPointPatch>, ctx: CommandContext) {
+    PatchUtils.applyPatch(patch, this);
+  }
+
+  asPatch(): DifficultyPointPatch {
+    return {
+      sliderVelocity: this.sliderVelocity,
+    };
   }
 }

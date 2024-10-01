@@ -12,13 +12,13 @@ export class ControlPointList<T extends ControlPoint> extends ObservableSortedLi
   onAdded(item: T) {
     super.onAdded(item);
 
-    item.changed.addListener(this.#onControlPointChanged);
+    item.timeBindable.valueChanged.addListener(this.#startTimeChanged, this);
   }
 
   onRemoved(item: T) {
     super.onRemoved(item);
 
-    item.changed.removeListener(this.#onControlPointChanged);
+    item.timeBindable.valueChanged.removeListener(this.#startTimeChanged, this);
   }
 
   controlPointAt(time: number): T | undefined {
@@ -35,7 +35,7 @@ export class ControlPointList<T extends ControlPoint> extends ObservableSortedLi
     return this.get(index);
   }
 
-  #onControlPointChanged = () => {
+  #startTimeChanged() {
     this.sort();
   };
 }

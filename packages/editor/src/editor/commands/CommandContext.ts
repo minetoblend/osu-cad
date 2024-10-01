@@ -10,4 +10,8 @@ export class CommandContext {
   get hitObjects() {
     return this.beatmap.hitObjects;
   }
+
+  get controlPoints() {
+    return this.beatmap.controlPoints;
+  }
 }

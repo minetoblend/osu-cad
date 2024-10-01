@@ -1,95 +1,109 @@
-import { Action } from 'osucad-framework';
+import type { CommandContext } from '../editor/commands/CommandContext.ts';
+import type { Patchable } from '../editor/commands/Patchable.ts';
+import { Action, Bindable, BindableNumber } from 'osucad-framework';
+import { PatchUtils } from '../editor/commands/PatchUtils.ts';
 
-export class BeatmapDifficultyInfo implements PlainBeatmapDifficultyInfo {
+export interface BeatmapDifficultyPatch {
+  hpDrainRate: number;
+  circleSize: number;
+  approachRate: number;
+  overallDifficulty: number;
+  sliderMultiplier: number;
+  sliderTickRate: number;
+}
+
+export class BeatmapDifficultyInfo implements PlainBeatmapDifficultyInfo, Patchable<BeatmapDifficultyPatch> {
+  constructor() {
+    for (const key in this) {
+      const value = this[key];
+      if (value instanceof Bindable)
+        value.addOnChangeListener(() => this.invalidated.emit());
+    }
+  }
+
+  hpDrainRateBindable = Object.assign(new BindableNumber(5), {
+    minValue: 0,
+    maxValue: 10,
+    precision: 0.1,
+  });
+
   get hpDrainRate() {
-    return this.#hpDrainRate;
+    return this.hpDrainRateBindable.value;
   }
 
   set hpDrainRate(value) {
-    if (value === this.#hpDrainRate)
-      return;
-
-    this.#hpDrainRate = value;
-
-    this.onUpdate.emit('hpDrainRate');
+    this.hpDrainRateBindable.value = value;
   }
 
+  circleSizeBindable = Object.assign(new BindableNumber(5), {
+    minValue: 0,
+    maxValue: 10,
+    precision: 0.1,
+  });
+
   get circleSize() {
-    return this.#circleSize;
+    return this.circleSizeBindable.value;
   }
 
   set circleSize(value) {
-    if (value === this.#circleSize)
-      return;
-
-    this.#circleSize = value;
-
-    this.onUpdate.emit('circleSize');
+    this.circleSizeBindable.value = value;
   }
 
+  approachRateBindable = Object.assign(new BindableNumber(5), {
+    minValue: 0,
+    maxValue: 10,
+    precision: 0.1,
+  });
+
   get approachRate() {
-    return this.#approachRate;
+    return this.approachRateBindable.value;
   }
 
   set approachRate(value) {
-    if (value === this.#approachRate)
-      return;
-
-    this.#approachRate = value;
-
-    this.onUpdate.emit('approachRate');
+    this.approachRateBindable.value = value;
   }
 
+  overallDifficultyBindable = Object.assign(new BindableNumber(5), {
+    minValue: 0,
+    maxValue: 10,
+    precision: 0.1,
+  });
+
   get overallDifficulty() {
-    return this.#overallDifficulty;
+    return this.overallDifficultyBindable.value;
   }
 
   set overallDifficulty(value) {
-    if (value === this.#overallDifficulty)
-      return;
-
-    this.#overallDifficulty = value;
-
-    this.onUpdate.emit('overallDifficulty');
+    this.overallDifficultyBindable.value = value;
   }
 
+  sliderMultiplierBindable = Object.assign(new BindableNumber(1.4), {
+    minValue: 0.4,
+    maxValue: 3.6,
+    precision: 0.1,
+  });
+
   get sliderMultiplier() {
-    return this.#sliderMultiplier;
+    return this.sliderMultiplierBindable.value;
   }
 
   set sliderMultiplier(value) {
-    if (value === this.#sliderMultiplier)
-      return;
-
-    this.#sliderMultiplier = value;
-
-    this.onUpdate.emit('sliderMultiplier');
+    this.sliderMultiplierBindable.value = value;
   }
 
+  sliderTickRateBindable = Object.assign(new BindableNumber(1.4), {
+    minValue: 1,
+    maxValue: 4,
+    precision: 1,
+  });
+
   get sliderTickRate() {
-    return this.#sliderTickRate;
+    return this.sliderTickRateBindable.value;
   }
 
   set sliderTickRate(value) {
-    if (value === this.#sliderTickRate)
-      return;
-
-    this.#sliderTickRate = value;
-
-    this.onUpdate.emit('sliderTickRate');
+    this.sliderTickRateBindable.value = value;
   }
-
-  #hpDrainRate = 5;
-
-  #circleSize = 4;
-
-  #approachRate = 9;
-
-  #overallDifficulty = 8;
-
-  #sliderMultiplier = 1.4;
-
-  #sliderTickRate = 1;
 
   assignFrom(data: PlainBeatmapDifficultyInfo) {
     this.hpDrainRate = data.hpDrainRate;
@@ -120,7 +134,7 @@ export class BeatmapDifficultyInfo implements PlainBeatmapDifficultyInfo {
     };
   }
 
-  onUpdate = new Action<keyof PlainBeatmapDifficultyInfo>();
+  invalidated = new Action();
 
   difficultyRange(difficulty: number, min: number, mid: number, max: number) {
     if (difficulty > 5)
@@ -136,6 +150,14 @@ export class BeatmapDifficultyInfo implements PlainBeatmapDifficultyInfo {
 
     return (1.0 - 0.7 * this.difficultyRange(this.circleSize, -1, 0, 1)) / 2 * (applyFudge ? broken_gamefield_rounding_allowance : 1);
   }
+
+  applyPatch(patch: Partial<BeatmapDifficultyPatch>, ctx: CommandContext) {
+    PatchUtils.applyPatch(patch, this);
+  }
+
+  asPatch(): BeatmapDifficultyPatch {
+    return this.toPlain();
+  }
 }
 
 export interface PlainBeatmapDifficultyInfo {
@@ -145,5 +167,4 @@ export interface PlainBeatmapDifficultyInfo {
   overallDifficulty: number;
   sliderMultiplier: number;
   sliderTickRate: number;
-
 }

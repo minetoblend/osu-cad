@@ -1,6 +1,12 @@
+import type { Patchable } from '../../editor/commands/Patchable.ts';
+import { PatchUtils } from '../../editor/commands/PatchUtils.ts';
 import { ControlPoint } from './ControlPoint';
 
-export class EffectPoint extends ControlPoint {
+export interface EffectPointPatch {
+  kiaiMode?: boolean;
+}
+
+export class EffectPoint extends ControlPoint implements Patchable<EffectPointPatch> {
   constructor(kiaiMode: boolean = false) {
     super();
 
@@ -43,5 +49,15 @@ export class EffectPoint extends ControlPoint {
     super.copyFrom(other);
 
     this.kiaiMode = other.kiaiMode;
+  }
+
+  applyPatch(patch: Partial<EffectPointPatch>) {
+    PatchUtils.applyPatch(patch, this);
+  }
+
+  asPatch(): EffectPointPatch {
+    return {
+      kiaiMode: this.kiaiMode,
+    };
   }
 }
