@@ -1,5 +1,5 @@
-import type { ITransformable } from './ITransformable.ts';
-import type { Transform } from './Transform.ts';
+import type { ITransformable } from './ITransformable';
+import type { Transform } from './Transform';
 
 export class TransformSequence<T extends ITransformable> {
   readonly #transforms: Transform[] = [];

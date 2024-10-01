@@ -1,10 +1,10 @@
 import type { ClickEvent } from './events/ClickEvent';
-import type { DoubleClickEvent } from './events/DoubleClickEvent.ts';
+import type { DoubleClickEvent } from './events/DoubleClickEvent';
 import type { DragEndEvent } from './events/DragEndEvent';
 import type { DragEvent } from './events/DragEvent';
 import type { DragStartEvent } from './events/DragStartEvent';
-import type { DropEvent } from './events/DropEvent.ts';
-import type { FocusEvent } from './events/FocusEvent.ts';
+import type { DropEvent } from './events/DropEvent';
+import type { FocusEvent } from './events/FocusEvent';
 import type { FocusLostEvent } from './events/FocusLostEvent';
 import type { HoverEvent } from './events/HoverEvent';
 import type { HoverLostEvent } from './events/HoverLostEvent';

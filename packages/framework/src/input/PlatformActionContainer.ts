@@ -17,4 +17,8 @@ export class PlatformActionContainer extends KeyBindingContainer<PlatformAction>
   override get defaultKeyBindings(): IKeyBinding[] {
     return this.host.platformKeyBindings;
   }
+
+  protected override get prioritised(): boolean {
+    return true;
+  }
 }

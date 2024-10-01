@@ -1,4 +1,4 @@
-import type { IDrawablePool } from './IDrawablePool.ts';
+import type { IDrawablePool } from './IDrawablePool';
 import { CompositeDrawable } from '../containers';
 import { Invalidation, InvalidationSource } from '../drawables';
 

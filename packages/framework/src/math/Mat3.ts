@@ -1,6 +1,6 @@
-import { Vec2 } from './Vec2.ts';
+import { Vec2 } from './Vec2';
 import { almostEquals } from '../utils';
-import { Quad } from './Quad.ts';
+import { Quad } from './Quad';
 import { Matrix } from 'pixi.js';
 
 export class Mat3 {

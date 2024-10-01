@@ -1,4 +1,4 @@
-import { StatisticsCounterType } from './StatisticsCounterType.ts';
+import { StatisticsCounterType } from './StatisticsCounterType';
 
 export class FrameStatistics {
   private static COUNTERS = new Array<number>(StatisticsCounterType.Length);

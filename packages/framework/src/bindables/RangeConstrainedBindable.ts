@@ -1,6 +1,6 @@
-import type { Comparer } from '../utils/Comparer.ts';
-import { Action } from './Action.ts';
-import { Bindable } from './Bindable.ts';
+import type { Comparer } from '../utils/Comparer';
+import { Action } from './Action';
+import { Bindable } from './Bindable';
 
 export abstract class RangeConstrainedBindable<T> extends Bindable<T> {
   readonly minValueChanged = new Action<T>();
@@ -192,5 +192,21 @@ export abstract class RangeConstrainedBindable<T> extends Bindable<T> {
 
   #setValue(value: T) {
     super.value = this.clampValue(value, this.#minValue, this.#maxValue);
+  }
+
+  withMinValue(value: T): this {
+    this.minValue = value;
+    return this;
+  }
+
+  withMaxValue(value: T): this {
+    this.maxValue = value;
+    return this;
+  }
+
+  withRange(min: T, max: T): this {
+    this.minValue = min;
+    this.maxValue = max;
+    return this;
   }
 }

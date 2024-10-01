@@ -1,7 +1,7 @@
 import { AudioChannel } from './AudioChannel';
 import { Sample } from './sample/Sample';
 import { AudioBufferTrack } from './track/AudioBufferTrack';
-import { AudioElementTrack } from './track/AudioElementTrack.ts';
+import { AudioElementTrack } from './track/AudioElementTrack';
 
 export class AudioManager {
   constructor() {
@@ -32,9 +32,13 @@ export class AudioManager {
     el.load();
 
     await new Promise((resolve, reject) => {
-      el.oncanplay = resolve;
+      el.onloadedmetadata = resolve;
       el.onerror = reject;
     });
+
+    console.log(el.duration);
+
+    el.ondurationchange = () => console.log(el.duration);
 
     return new AudioElementTrack(this.context, channel, el);
   }

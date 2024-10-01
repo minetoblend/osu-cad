@@ -1,12 +1,12 @@
 import type { Drawable } from '../drawables';
-import type { IAnimation } from './IAnimation.ts';
+import type { IAnimation } from './IAnimation';
 import { dependencyLoader } from '../../di';
 import { FramedClock, type IFrameBasedClock } from '../../timing';
-import { ManualClock } from '../../timing/ManualClock.ts';
+import { ManualClock } from '../../timing/ManualClock';
 import { clamp } from '../../utils';
 import { Container } from '../containers';
 import { Axes } from '../drawables';
-import { CustomisableSizeCompositeDrawable } from './CustomisableSizeCompositeDrawable.ts';
+import { CustomisableSizeCompositeDrawable } from './CustomisableSizeCompositeDrawable';
 
 export abstract class AnimationClockComposite extends CustomisableSizeCompositeDrawable implements IAnimation {
   readonly #startAtCurrentTime: boolean;

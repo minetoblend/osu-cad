@@ -1,4 +1,4 @@
-import type { IAnimation } from './IAnimation.ts';
+import type { IAnimation } from './IAnimation';
 
 export interface IFramedAnimation extends IAnimation {
   get frameCount(): number;

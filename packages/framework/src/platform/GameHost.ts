@@ -13,13 +13,12 @@ import { KeyboardHandler } from '../input/handlers/KeyboardHandler';
 import { MouseHandler } from '../input/handlers/MouseHandler';
 import { TouchHandler } from '../input/handlers/TouchHandler';
 import { PlatformActionContainer } from '../input/PlatformActionContainer';
-import { TextInputSource } from '../input/TextInputSource.ts';
+import { TextInputSource } from '../input/TextInputSource';
 import { UserInputManager } from '../input/UserInputManager';
 import { Vec2 } from '../math';
 import { IRenderer, Renderer } from '../renderers/Renderer';
-import { FrameStatistics } from '../statistics/FrameStatistics.ts';
+import { FrameStatistics } from '../statistics/FrameStatistics';
 import { FramedClock } from '../timing/FramedClock';
-import { globalTransformQueue } from './transformQueue.ts';
 
 export interface GameHostOptions {
   friendlyGameName?: string;

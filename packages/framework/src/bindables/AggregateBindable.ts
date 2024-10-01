@@ -1,4 +1,4 @@
-import { Bindable } from './Bindable.ts';
+import { Bindable } from './Bindable';
 
 export class AggregateBindable<T> {
   #aggregateFunction: (a: T, b: T) => T;

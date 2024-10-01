@@ -15,8 +15,8 @@ export class AudioChannel implements IDisposable {
     return this.manager.createSample(this, buffer);
   }
 
-  #input: GainNode;
-  #output: GainNode;
+  readonly #input: GainNode;
+  readonly #output: GainNode;
 
   get input() {
     return this.#input;

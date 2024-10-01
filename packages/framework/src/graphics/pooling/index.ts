@@ -1,3 +1,3 @@
-export { DrawablePool } from './DrawablePool.ts';
-export { type IDrawablePool } from './IDrawablePool.ts';
-export { PoolableDrawable } from './PoolableDrawable.ts';
+export { DrawablePool } from './DrawablePool';
+export { type IDrawablePool } from './IDrawablePool';
+export { PoolableDrawable } from './PoolableDrawable';

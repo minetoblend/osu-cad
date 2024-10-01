@@ -1,8 +1,8 @@
-import type { IFramedAnimation } from './IFramedAnimation.ts';
+import type { IFramedAnimation } from './IFramedAnimation';
 import { Cached } from '../../caching';
-import { FrameData } from '../../timing/FrameData.ts';
+import { FrameData } from '../../timing/FrameData';
 import { clamp } from '../../utils';
-import { AnimationClockComposite } from './AnimationClockComposite.ts';
+import { AnimationClockComposite } from './AnimationClockComposite';
 
 export abstract class Animation<T> extends AnimationClockComposite implements IFramedAnimation {
   defaultFrameLength = 1000 / 60;

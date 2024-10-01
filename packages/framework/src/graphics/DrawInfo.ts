@@ -1,5 +1,5 @@
 import { Vec2 } from '../math';
-import { Mat3 } from '../math/Mat3.ts';
+import { Mat3 } from '../math/Mat3';
 
 export class DrawInfo {
   localMatrix: Mat3;

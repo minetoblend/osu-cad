@@ -1,8 +1,8 @@
 import { Action } from '../bindables';
 import { Axes, CompositeDrawable, type Drawable, LoadState } from '../graphics';
-import { type IScreen, isScreen } from './IScreen.ts';
-import { ScreenExitEvent } from './ScreenExitEvent.ts';
-import { ScreenTransitionEvent } from './ScreenTransitionEvent.ts';
+import { type IScreen, isScreen } from './IScreen';
+import { ScreenExitEvent } from './ScreenExitEvent';
+import { ScreenTransitionEvent } from './ScreenTransitionEvent';
 
 export class ScreenStack extends CompositeDrawable {
   readonly screenPushed = new Action<{

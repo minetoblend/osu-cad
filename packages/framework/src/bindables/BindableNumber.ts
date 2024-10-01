@@ -1,9 +1,9 @@
-import type { Comparer } from '../utils/Comparer.ts';
-import type { Bindable } from './Bindable.ts';
+import type { Comparer } from '../utils/Comparer';
+import type { Bindable } from './Bindable';
 import { clamp } from '../utils';
-import { NumberComparer } from '../utils/NumberComparer.ts';
-import { Action } from './Action.ts';
-import { RangeConstrainedBindable } from './RangeConstrainedBindable.ts';
+import { NumberComparer } from '../utils/NumberComparer';
+import { Action } from './Action';
+import { RangeConstrainedBindable } from './RangeConstrainedBindable';
 
 export class BindableNumber extends RangeConstrainedBindable<number> {
   readonly precisionChanged = new Action<number>();
@@ -145,5 +145,10 @@ export class BindableNumber extends RangeConstrainedBindable<number> {
 
   protected override isValidRange(min: number, max: number): boolean {
     return min <= max;
+  }
+
+  withPrecision(value: number): this {
+    this.precision = value;
+    return this;
   }
 }

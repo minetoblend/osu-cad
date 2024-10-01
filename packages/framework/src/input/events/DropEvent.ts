@@ -1,4 +1,4 @@
-import type { InputState } from '../state/InputState.ts';
+import type { InputState } from '../state/InputState';
 import { UIEvent } from './UIEvent';
 
 export class DropEvent extends UIEvent {

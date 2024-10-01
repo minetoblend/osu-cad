@@ -90,12 +90,10 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
       return false;
 
     if (this.prioritised) {
-      const index = queue.indexOf(this);
-      if (index !== -1) {
-        queue.splice(index, 1);
-      }
+      console.assert(queue.remove(this));
       queue.push(this);
     }
+
 
     return true;
   }

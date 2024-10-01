@@ -21,9 +21,12 @@ export class Action<T = void> {
     }
   }
 
-  removeListener(fn: (value: T) => void): boolean {
+  removeListener(fn: (value: T) => void, receiver?: any): boolean {
     for (let i = 0; i < this.#listeners.length; i++) {
       if (this.#listeners[i].fn === fn) {
+        if (receiver && this.#listeners[i].receiver !== receiver)
+          continue;
+
         this.#listeners.splice(i, 1);
         return true;
       }

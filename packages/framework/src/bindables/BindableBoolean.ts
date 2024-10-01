@@ -1,4 +1,4 @@
-import { Bindable } from './Bindable.ts';
+import { Bindable } from './Bindable';
 
 export class BindableBoolean extends Bindable<boolean> {
   constructor(defaultValue: boolean = false) {

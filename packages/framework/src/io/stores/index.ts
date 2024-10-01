@@ -1,2 +1,2 @@
-export * from './IResourceStore.ts';
-export * from './ResourceStore.ts';
+export * from './IResourceStore';
+export * from './ResourceStore';

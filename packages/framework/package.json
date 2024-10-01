@@ -1,12 +1,15 @@
 {
   "name": "osucad-framework",
   "version": "0.0.1",
-  "dependencies": {},
+  "dependencies": {
+    "@swc/helpers": "~0.5.11"
+  },
   "main": "./index.js",
   "module": "./index.mjs",
   "typings": "./index.d.ts",
   "private": true,
   "scripts": {
     "dev": "vite"
-  }
+  },
+  "devDependencies": {}
 }

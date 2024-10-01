@@ -1,5 +1,5 @@
-import type { Transformable } from './Transformable.ts';
-import { Usable } from '../../types/IUsable.ts';
+import type { Transformable } from './Transformable';
+import { Usable } from '../../types/IUsable';
 import { almostEquals } from '../../utils';
 
 export class DelayedSequenceSender extends Usable {

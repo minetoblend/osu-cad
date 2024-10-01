@@ -1,5 +1,5 @@
 import { Action } from '../bindables';
-import { SortedList } from './SortedList.ts';
+import { SortedList } from './SortedList';
 
 export class ObservableSortedList<T> extends SortedList<T> {
   added = new Action<T>();

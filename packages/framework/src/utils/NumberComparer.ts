@@ -1,4 +1,4 @@
-import { Comparer } from './Comparer.ts';
+import { Comparer } from './Comparer';
 
 export class NumberComparer extends Comparer<number> {
   static readonly Instance = new NumberComparer();

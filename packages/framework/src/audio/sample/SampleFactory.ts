@@ -1,4 +1,4 @@
-import type { AudioChannel } from '../AudioChannel.ts';
+import type { AudioChannel } from '../AudioChannel';
 
 export class SampleFactory {
   constructor(

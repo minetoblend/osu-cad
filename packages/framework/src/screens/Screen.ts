@@ -1,11 +1,11 @@
 import type { IFrameBasedClock } from '../timing';
-import type { IScreen } from './IScreen.ts';
-import type { ScreenExitEvent } from './ScreenExitEvent.ts';
-import type { ScreenTransitionEvent } from './ScreenTransitionEvent.ts';
+import type { IScreen } from './IScreen';
+import type { ScreenExitEvent } from './ScreenExitEvent';
+import type { ScreenTransitionEvent } from './ScreenTransitionEvent';
 import { resolved } from '../di';
-import { Game } from '../Game.ts';
+import { Game } from '../Game';
 import { Axes, CompositeDrawable } from '../graphics';
-import { ScreenStack } from './ScreenStack.ts';
+import { ScreenStack } from './ScreenStack';
 
 export abstract class Screen extends CompositeDrawable implements IScreen {
   readonly isScreen = true;

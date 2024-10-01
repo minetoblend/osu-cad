@@ -1,6 +1,6 @@
 import type { FrameTimeInfo } from '../../timing';
-import type { IUsable } from '../../types/IUsable.ts';
-import type { Transform } from './Transform.ts';
+import type { IUsable } from '../../types/IUsable';
+import type { Transform } from './Transform';
 
 export interface ITransformable {
   beginDelayedSequence: (delay: number, recursive?: boolean) => IUsable;

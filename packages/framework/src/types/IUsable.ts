@@ -1,4 +1,4 @@
-import type { IDisposable } from './IDisposable.ts';
+import type { IDisposable } from './IDisposable';
 
 export interface IUsable extends IDisposable {
   [Symbol.dispose]: () => void;

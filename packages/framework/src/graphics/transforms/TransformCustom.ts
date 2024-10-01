@@ -1,7 +1,7 @@
-import type { ITransformable } from './ITransformable.ts';
+import type { ITransformable } from './ITransformable';
 import { Color } from 'pixi.js';
-import { Interpolation } from './Interpolation.ts';
-import { TypedTransform } from './Transform.ts';
+import { Interpolation } from './Interpolation';
+import { TypedTransform } from './Transform';
 
 export class TransformCustom<TValue, T extends ITransformable> extends TypedTransform<TValue, T> {
   constructor(propertyOrFieldName: string, grouping?: string) {

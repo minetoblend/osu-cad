@@ -1,7 +1,5 @@
 /// <reference types='vitest' />
 import { defineConfig } from 'vite';
-import dts from 'vite-plugin-dts';
-import * as path from 'path';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 
 export default defineConfig({
@@ -10,10 +8,6 @@ export default defineConfig({
 
   plugins: [
     nxViteTsPaths(),
-    dts({
-      entryRoot: 'src',
-      tsconfigPath: path.join(__dirname, 'tsconfig.lib.json'),
-    }),
   ],
 
   // Uncomment this if you are using workers.

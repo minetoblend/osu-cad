@@ -1,9 +1,9 @@
-import type { IResourceStore } from '../../io/stores/IResourceStore.ts';
-import type { AudioChannel } from '../AudioChannel.ts';
-import type { ISampleStore } from './ISampleStore.ts';
-import type { Sample } from './Sample.ts';
-import { ResourceStore } from '../../io/stores/ResourceStore.ts';
-import { SampleFactory } from './SampleFactory.ts';
+import type { IResourceStore } from '../../io/stores/IResourceStore';
+import type { AudioChannel } from '../AudioChannel';
+import type { ISampleStore } from './ISampleStore';
+import type { Sample } from './Sample';
+import { ResourceStore } from '../../io/stores/ResourceStore';
+import { SampleFactory } from './SampleFactory';
 
 export class SampleStore implements ISampleStore {
   readonly #store: ResourceStore<ArrayBuffer>;

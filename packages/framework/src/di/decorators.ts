@@ -8,6 +8,7 @@ const provideKey = Symbol('Provide');
 export function dependencyLoader(): MethodDecorator {
   return function (target: any, propertyKey: string | symbol) {
     const loaders = getDependencyLoaders(target);
+
     Reflect.defineMetadata(key, [...loaders, propertyKey], target);
   };
 }
@@ -18,8 +19,7 @@ export function asyncDependencyLoader(): MethodDecorator {
     Reflect.defineMetadata(asyncKey, [...loaders, propertyKey], target);
   };
 }
-
-export function getDependencyLoaders(target: any): (string | symbol)[] {
+export function getDependencyLoaders(target: any): string[] {
   return Reflect.getMetadata(key, target) ?? [];
 }
 
@@ -30,6 +30,7 @@ export function getAsyncDependencyLoaders(target: any): (string | symbol)[] {
 export function resolved(type: any, optional = false): PropertyDecorator {
   return function (target: any, propertyKey: string | symbol) {
     const injections = getInjections(target);
+
     Reflect.defineMetadata(injectKey, [...injections, { key: propertyKey, type, optional }], target);
   };
 }

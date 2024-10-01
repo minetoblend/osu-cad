@@ -1,6 +1,6 @@
-import type { InputState } from '../../state/InputState.ts';
-import type { FileDropInput } from '../FileDropInput.ts';
-import { InputStateChangeEvent } from './InputStateChangeEvent.ts';
+import type { InputState } from '../../state/InputState';
+import type { FileDropInput } from '../FileDropInput';
+import { InputStateChangeEvent } from './InputStateChangeEvent';
 
 export class DropStateChangeEvent extends InputStateChangeEvent {
   constructor(state: InputState, input: FileDropInput) {

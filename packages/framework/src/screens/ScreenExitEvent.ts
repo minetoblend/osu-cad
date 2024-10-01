@@ -1,10 +1,10 @@
-import type { IScreen } from './IScreen.ts';
-import { ScreenTransitionEvent } from './ScreenTransitionEvent.ts';
+import type { IScreen } from './IScreen';
+import { ScreenTransitionEvent } from './ScreenTransitionEvent';
 
 export class ScreenExitEvent extends ScreenTransitionEvent {
   constructor(
-    last: IScreen,
-    next: IScreen | null,
+    readonly last: IScreen,
+    readonly next: IScreen | null,
     readonly destination: IScreen | null,
   ) {
     super(last, next);

@@ -1,5 +1,5 @@
 import type { Drawable } from '../graphics/drawables/Drawable';
-import type { List } from '../utils/List.ts';
+import type { List } from '../utils/List';
 import type { UIEvent } from './events/UIEvent';
 import type { InputManager } from './InputManager';
 import type { InputState } from './state/InputState';

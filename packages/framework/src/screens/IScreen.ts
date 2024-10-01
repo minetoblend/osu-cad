@@ -1,6 +1,6 @@
 import type { Drawable } from '../graphics';
-import type { ScreenExitEvent } from './ScreenExitEvent.ts';
-import type { ScreenTransitionEvent } from './ScreenTransitionEvent.ts';
+import type { ScreenExitEvent } from './ScreenExitEvent';
+import type { ScreenTransitionEvent } from './ScreenTransitionEvent';
 
 export interface IScreen extends Drawable {
   readonly isScreen: true;

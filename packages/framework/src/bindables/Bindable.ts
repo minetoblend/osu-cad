@@ -1,5 +1,5 @@
 import { WeakList } from '../utils';
-import { Action } from './Action.ts';
+import { Action } from './Action';
 
 export type BindableListener<T> = (value: T) => void;
 
@@ -103,7 +103,7 @@ export class Bindable<T> implements ReadonlyBindable<T> {
         if (bindable === source)
           continue;
 
-        bindable.setValue(beforePropagation, this.#value, bypassChecks, this);
+        bindable.setValue(previousValue, this.#value, bypassChecks, this);
       }
     }
 
@@ -123,7 +123,7 @@ export class Bindable<T> implements ReadonlyBindable<T> {
         if (bindable === source)
           continue;
 
-        bindable.setDefaultValue(beforePropagation, this.#defaultValue, bypassChecks, this);
+        bindable.setDefaultValue(previousValue, this.#defaultValue, bypassChecks, this);
       }
     }
 
@@ -155,7 +155,7 @@ export class Bindable<T> implements ReadonlyBindable<T> {
   unbindEvents() {
     this.valueChanged.removeAllListeners();
     this.disabledChanged.removeAllListeners();
-    this.defaultChanged.removeAllListeners;
+    this.defaultChanged.removeAllListeners();
   }
 
   unbindBindings() {
@@ -180,10 +180,13 @@ export class Bindable<T> implements ReadonlyBindable<T> {
 
   unbindFrom(bindable: Bindable<T>) {
     if (!this.bindings)
-      return;
+      return false;
 
-    this.#removeWeakReference(bindable);
+    if (!this.#removeWeakReference(bindable))
+      return false;
+
     bindable.#removeWeakReference(this);
+    return true;
   }
 
   protected bindings?: WeakList<Bindable<T>>;
@@ -207,7 +210,7 @@ export class Bindable<T> implements ReadonlyBindable<T> {
   }
 
   #removeWeakReference(bindable: Bindable<T>) {
-    this.bindings?.remove(bindable);
+    return this.bindings?.remove(bindable) ?? false;
   }
 
   protected equals(a: T, b: T): boolean {
@@ -246,8 +249,8 @@ export interface AddOnChangeListenerOptions {
 }
 
 export interface ValueChangedEvent<T> {
-  value: T;
-  previousValue: T;
+  readonly value: T;
+  readonly previousValue: T;
 }
 
 export interface ReadonlyBindable<T> {

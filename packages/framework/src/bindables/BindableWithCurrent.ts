@@ -1,4 +1,4 @@
-import { Bindable } from './Bindable.ts';
+import { Bindable } from './Bindable';
 
 export class BindableWithCurrent<T> extends Bindable<T> {
   constructor(defaultValue: T) {

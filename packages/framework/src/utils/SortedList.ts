@@ -1,4 +1,4 @@
-import type { IComparer } from './IComparer.ts';
+import type { IComparer } from './IComparer';
 
 export class SortedList<T> {
   #items: T[] = [];

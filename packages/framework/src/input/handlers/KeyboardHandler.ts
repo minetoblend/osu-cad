@@ -88,6 +88,8 @@ export class KeyboardHandler extends InputHandler {
       case 'w':
       case 'W':
         return event.ctrlKey || event.metaKey;
+      case 'Tab':
+        return true;
     }
 
     return false;

@@ -1,8 +1,8 @@
 import type { Vec2 } from '../../math';
-import type { ColorSource } from '../../pixi.ts';
-import type { Drawable } from '../drawables/Drawable.ts';
-import { EasingFunction } from './EasingFunction.ts';
-import { TransformSequence } from './TransformSequence.ts';
+import type { ColorSource } from '../../pixi';
+import type { Drawable } from '../drawables/Drawable';
+import { EasingFunction } from './EasingFunction';
+import { TransformSequence } from './TransformSequence';
 
 export class DrawableTransformSequence<T extends Drawable> extends TransformSequence<T> {
   fadeTo(alpha: number, duration: number = 0, easing: EasingFunction = EasingFunction.Default) {

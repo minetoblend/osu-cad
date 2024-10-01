@@ -1,10 +1,10 @@
 import type { NoArgsConstructor } from '../../types';
-import type { IDrawablePool } from './IDrawablePool.ts';
-import type { PoolableDrawable } from './PoolableDrawable.ts';
+import type { IDrawablePool } from './IDrawablePool';
+import type { PoolableDrawable } from './PoolableDrawable';
 import { dependencyLoader } from '../../di';
 import { CompositeDrawable } from '../containers';
 import { LoadState } from '../drawables';
-import { loadSymbol } from '../drawables/loadSymbol.ts';
+import { loadSymbol } from '../drawables/loadSymbol';
 
 export class DrawablePool<T extends PoolableDrawable> extends CompositeDrawable implements IDrawablePool {
   constructor(drawableClass: NoArgsConstructor<T>, initialSize: number, maximumSize?: number) {
@@ -24,7 +24,7 @@ export class DrawablePool<T extends PoolableDrawable> extends CompositeDrawable 
   readonly #pool: T[] = [];
 
   @dependencyLoader()
-  [loadSymbol()]() {
+  _load() {
     this.#pool.length = this.#initialSize;
     for (let i = 0; i < this.#initialSize; i++) {
       this.#pool[i] = this.#create();

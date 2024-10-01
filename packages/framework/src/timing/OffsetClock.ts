@@ -1,4 +1,4 @@
-import type { IClock } from './IClock.ts';
+import type { IClock } from './IClock';
 
 export class OffsetClock implements IClock {
   constructor(

@@ -1,5 +1,5 @@
-import type { IScreen } from './IScreen.ts';
+import type { IScreen } from './IScreen';
 
 export class ScreenTransitionEvent {
-  constructor(source: null | IScreen, newScreen: IScreen | null) {}
+  constructor(readonly source: null | IScreen, readonly newScreen: IScreen | null) {}
 }

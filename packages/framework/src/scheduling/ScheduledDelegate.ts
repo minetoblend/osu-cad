@@ -1,4 +1,4 @@
-import { debugAssert } from '../utils/debugAssert.ts';
+import { debugAssert } from '../utils/debugAssert';
 
 export class ScheduledDelegate {
   constructor(

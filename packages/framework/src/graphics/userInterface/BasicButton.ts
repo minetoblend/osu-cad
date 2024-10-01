@@ -1,4 +1,4 @@
-import type { ValueChangedEvent } from '../../bindables/Bindable.ts';
+import type { ValueChangedEvent } from '../../bindables/Bindable';
 import type { ClickEvent } from '../../input/events/ClickEvent';
 import type { HoverEvent } from '../../input/events/HoverEvent';
 import type { DrawableOptions } from '../drawables/Drawable';
@@ -7,7 +7,7 @@ import { Anchor } from '../drawables/Anchor';
 import { Axes } from '../drawables/Axes';
 import { Box } from '../shapes/Box';
 import { SpriteText } from '../text/SpriteText';
-import { EasingFunction } from '../transforms/EasingFunction.ts';
+import { EasingFunction } from '../transforms/EasingFunction';
 import { Button } from './Button';
 
 export interface BasicButtonOptions extends DrawableOptions {

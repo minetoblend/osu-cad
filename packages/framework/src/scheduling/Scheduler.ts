@@ -1,5 +1,5 @@
 import { type IClock, StopwatchClock } from '../timing';
-import { ScheduledDelegate } from './ScheduledDelegate.ts';
+import { ScheduledDelegate } from './ScheduledDelegate';
 
 export class Scheduler {
   readonly #runQueue: ScheduledDelegate[] = [];

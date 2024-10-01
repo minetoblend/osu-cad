@@ -1,7 +1,7 @@
-import type { Transformable } from './Transformable.ts';
+import type { Transformable } from './Transformable';
 import { SortedList } from '../../utils';
-import { debugAssert } from '../../utils/debugAssert.ts';
-import { Transform } from './Transform.ts';
+import { debugAssert } from '../../utils/debugAssert';
+import { Transform } from './Transform';
 
 export class TargetGroupingTransformTracker {
   constructor(

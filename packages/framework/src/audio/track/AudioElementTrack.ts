@@ -27,14 +27,12 @@ export class AudioElementTrack extends Track {
     if (position > this.length)
       return false;
 
+    console.log('seeking', position, this.el.seekable.end(0));
+
     this.el.currentTime = position / 1000;
 
     return true;
   }
-
-  #offset = 0;
-  #timeAtStart = 0;
-  #contextTimeAtStart = 0;
 
   protected get contextTimeMillis() {
     return performance.now();
@@ -46,17 +44,7 @@ export class AudioElementTrack extends Track {
 
     this.el.play();
 
-    this.#contextTimeAtStart = this.contextTimeMillis;
-    this.#timeAtStart = this.#offset;
-
-    this.el.play().then(() => {
-      this.#contextTimeAtStart = this.contextTimeMillis;
-    });
-
-    this.el.onended = (ev) => {
-      if (this.contextTimeMillis - this.#offset < this.length - 10)
-        return;
-      this.#offset += (this.contextTimeMillis - this.#contextTimeAtStart) * this.rate;
+    this.el.onended = () => {
       this.raiseCompleted();
     };
   }
@@ -66,8 +54,6 @@ export class AudioElementTrack extends Track {
       return;
 
     this.el.pause();
-
-    this.#offset = this.el.currentTime;
   }
 
   override get isRunning(): boolean {
@@ -88,9 +74,7 @@ export class AudioElementTrack extends Track {
 
     this.stop();
     this.#rate = value;
-    if (this.#source) {
-      this.el.playbackRate = value;
-    }
+    this.el.playbackRate = value;
     this.start();
   }
 

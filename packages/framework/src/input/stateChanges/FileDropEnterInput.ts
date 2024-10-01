@@ -1,5 +1,5 @@
-import type { InputState } from '../state/InputState.ts';
-import type { IInput } from './IInput.ts';
+import type { InputState } from '../state/InputState';
+import type { IInput } from './IInput';
 
 export class FileDropEnterInput implements IInput {
   constructor(readonly files: FileList | null) {}

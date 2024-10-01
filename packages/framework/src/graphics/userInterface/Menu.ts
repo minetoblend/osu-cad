@@ -68,7 +68,7 @@ export abstract class Menu extends CompositeDrawable {
     return this.#submenuContainer;
   }
 
-  protected readonly positionLayout = new LayoutMember(Invalidation.DrawInfo | Invalidation.RequiredParentSizeToFit);
+  protected readonly positionLayout = new LayoutMember(Invalidation.Transform | Invalidation.RequiredParentSizeToFit);
 
   constructor(direction: Direction, topLevelMenu: boolean = false) {
     super();

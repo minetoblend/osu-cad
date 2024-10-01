@@ -1,5 +1,5 @@
 import type { ILerp } from '../../types';
-import type { EasingFunction } from './EasingFunction.ts';
+import type { EasingFunction } from './EasingFunction';
 import { Color } from 'pixi.js';
 import { lerp } from '../../math';
 

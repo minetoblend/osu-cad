@@ -6,7 +6,7 @@ import { type Drawable, Invalidation } from '../graphics/drawables/Drawable';
 import { debugAssert } from '../utils/debugAssert';
 import { ButtonEventManager } from './ButtonEventManager';
 import { ClickEvent } from './events/ClickEvent';
-import { DoubleClickEvent } from './events/DoubleClickEvent.ts';
+import { DoubleClickEvent } from './events/DoubleClickEvent';
 import { DragEndEvent } from './events/DragEndEvent';
 import { DragEvent } from './events/DragEvent';
 import { DragStartEvent } from './events/DragStartEvent';

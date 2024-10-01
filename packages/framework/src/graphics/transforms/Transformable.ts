@@ -1,12 +1,12 @@
 import type { IFrameBasedClock } from '../../timing';
-import type { FrameTimeInfo } from '../../timing/FrameTimeInfo.ts';
+import type { FrameTimeInfo } from '../../timing/FrameTimeInfo';
 import type { List } from '../../utils';
-import type { ITransformable } from './ITransformable.ts';
-import type { Transform } from './Transform.ts';
-import { type IUsable, ValueInvokeOnDisposal } from '../../types/IUsable.ts';
+import type { ITransformable } from './ITransformable';
+import type { Transform } from './Transform';
+import { type IUsable, ValueInvokeOnDisposal } from '../../types/IUsable';
 import { almostEquals } from '../../utils';
-import { AbsoluteSequenceSender } from './AbsoluteSequenceSender.ts';
-import { TargetGroupingTransformTracker } from './TargetGroupingTransformTracker.ts';
+import { AbsoluteSequenceSender } from './AbsoluteSequenceSender';
+import { TargetGroupingTransformTracker } from './TargetGroupingTransformTracker';
 
 export abstract class Transformable implements ITransformable {
   abstract get clock(): IFrameBasedClock | null;
@@ -187,8 +187,9 @@ export abstract class Transformable implements ITransformable {
   absoluteSequence(options: number | { time: number; recursive?: boolean }, block: () => void) {
     options = typeof options === 'number' ? { time: options, recursive: true } : options;
 
-    using _ = this.beginAbsoluteSequence(options.time, options.recursive);
+    const sender = this.beginAbsoluteSequence(options.time, options.recursive);
     block();
+    sender.dispose();
   }
 
   addTransform(transform: Transform, customTransformID?: number): void {

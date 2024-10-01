@@ -1,6 +1,6 @@
-import type { LoadImageBitmapOptions } from './WorkerManager.ts';
+import type { LoadImageBitmapOptions } from './WorkerManager';
 import { ImageSource, path, Texture, type TextureSourceOptions } from 'pixi.js';
-import { WorkerManager } from './WorkerManager.ts';
+import { WorkerManager } from './WorkerManager';
 
 export async function loadTexture(src: string | ArrayBuffer, options: TextureSourceOptions = {}, opts2: LoadImageBitmapOptions = {}): Promise<Texture | null> {
   try {

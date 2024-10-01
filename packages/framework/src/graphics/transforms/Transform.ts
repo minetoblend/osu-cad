@@ -1,6 +1,6 @@
 import type { IComparer } from '../../utils';
-import type { ITransformable } from './ITransformable.ts';
-import { EasingFunction } from './EasingFunction.ts';
+import type { ITransformable } from './ITransformable';
+import { EasingFunction } from './EasingFunction';
 
 export abstract class Transform {
   static COMPARER: IComparer<Transform> = {
