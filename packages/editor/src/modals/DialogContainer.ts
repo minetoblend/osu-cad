@@ -55,10 +55,8 @@ export class DialogContainer extends Container {
   }
 
   onDialogExited() {
-    console.log('onDialogExited', this.currentDialog);
-    if (!this.currentDialog) {
+    if (!this.currentDialog)
       this.#overlay.hide();
-    }
   }
 }
 
@@ -76,7 +74,7 @@ class DialogOverlay extends Box {
   isVisible = false;
 
   show() {
-    this.fadeTo(0.5, 200);
+    this.fadeTo(0.75, 200);
 
     this.isVisible = true;
   }
@@ -98,7 +96,7 @@ class DialogOverlay extends Box {
   }
 
   onMouseDown(e: MouseDownEvent): boolean {
-    return false;
+    return true;
   }
 
   onKeyDown(e: KeyDownEvent): boolean {

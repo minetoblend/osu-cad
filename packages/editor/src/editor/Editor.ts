@@ -27,6 +27,7 @@ import {
 } from 'osucad-framework';
 import { BeatmapComboProcessor } from '../beatmap/beatmapProcessors/BeatmapComboProcessor';
 import { BeatmapStackingProcessor } from '../beatmap/beatmapProcessors/BeatmapStackingProcessor';
+import { DialogContainer } from '../modals/DialogContainer.ts';
 import { Notification } from '../notifications/Notification';
 import { NotificationOverlay } from '../notifications/NotificationOverlay';
 import { OsucadScreen } from '../OsucadScreen';
@@ -36,6 +37,7 @@ import { EditorBackground } from './EditorBackground.ts';
 import { EditorBottomBar } from './EditorBottomBar';
 import { EditorClock } from './EditorClock';
 import { EditorDependencies } from './EditorDependencies.ts';
+import { EditorExitDialog } from './EditorExitDialog.ts';
 import { EditorMixer } from './EditorMixer';
 import { EditorScreenContainer } from './EditorScreenContainer';
 import { EditorTopBar } from './EditorTopBar';
@@ -187,7 +189,10 @@ export class Editor
 
     switch (e.key) {
       case Key.Escape:
-        this.exit();
+        if (this.currentScreen.value !== EditorScreenType.Compose)
+          this.currentScreen.value = EditorScreenType.Compose;
+        else
+          this.exit();
         return true;
       case Key.ArrowLeft:
         this.#seek(e, -1);
@@ -375,12 +380,35 @@ export class Editor
     return false;
   }
 
+  #confirmedExit = false;
+
   onExiting(e: ScreenExitEvent): boolean {
     if (super.onExiting(e))
       return true;
     if (this.#exitFromError) {
       this.#exited = true;
+
       return false;
+    }
+
+    if (this.commandHandler.hasUnsavedChanges && !this.#confirmedExit) {
+      const dialogContainer = this.findClosestParentOfType(DialogContainer)!;
+      if (dialogContainer.currentDialog)
+        return true;
+
+      const dialog = new EditorExitDialog();
+
+      dialogContainer.showDialog(dialog);
+
+      dialog.exitRequested.addListener(async (e) => {
+        if (e.shouldSave)
+          await this.context.save?.();
+
+        this.#confirmedExit = true;
+        this.exit();
+      });
+
+      return true;
     }
 
     this.fadeOut(100);
