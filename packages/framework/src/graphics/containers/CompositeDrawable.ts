@@ -1,14 +1,14 @@
-import type { Scheduler } from '../../scheduling/Scheduler.ts';
-import type { IComparer } from '../../utils/IComparer.ts';
-import type { AbsoluteSequenceSender } from '../transforms/AbsoluteSequenceSender.ts';
-import { Action } from '../../bindables/Action.ts';
+import type { Scheduler } from '../../scheduling/Scheduler';
+import type { IComparer } from '../../utils/IComparer';
+import type { AbsoluteSequenceSender } from '../transforms/AbsoluteSequenceSender';
+import { Action } from '../../bindables/Action';
 import { DependencyContainer } from '../../di';
 import { type IVec2, Vec2 } from '../../math/Vec2';
 import { PIXIContainer, PIXIGraphics } from '../../pixi';
-import { type IUsable, ValueInvokeOnDisposal } from '../../types/IUsable.ts';
+import { type IUsable, ValueInvokeOnDisposal } from '../../types/IUsable';
 import { debugAssert } from '../../utils/debugAssert';
-import { List } from '../../utils/List.ts';
-import { SortedList } from '../../utils/SortedList.ts';
+import { List } from '../../utils/List';
+import { SortedList } from '../../utils/SortedList';
 import { Anchor } from '../drawables';
 import { Axes } from '../drawables/Axes';
 import {
@@ -22,7 +22,7 @@ import {
 } from '../drawables/Drawable';
 import { LayoutMember } from '../drawables/LayoutMember';
 import { MarginPadding, type MarginPaddingOptions } from '../drawables/MarginPadding';
-import { EasingFunction } from '../transforms/EasingFunction.ts';
+import { EasingFunction } from '../transforms/EasingFunction';
 
 export interface CompositeDrawableOptions extends DrawableOptions {
   padding?: MarginPaddingOptions;
@@ -115,7 +115,8 @@ export class CompositeDrawable extends Drawable {
     if (this.loadState >= LoadState.Loading) {
       if (drawable.loadState >= LoadState.Ready) {
         drawable.parent = this;
-      } else {
+      }
+      else {
         this.#loadChild(drawable);
       }
     }
@@ -484,7 +485,8 @@ export class CompositeDrawable extends Drawable {
 
     if (value === Axes.None) {
       this.#childrenSizeDependencies.validate();
-    } else {
+    }
+    else {
       this.#childrenSizeDependencies.invalidate();
     }
 
@@ -600,7 +602,8 @@ export class CompositeDrawable extends Drawable {
         this.makeChildAlive(child);
         state = ChildLifeStateChange.MadeAlive;
       }
-    } else {
+    }
+    else {
       if (child.isAlive || child.removeWhenNotAlive) {
         if (this.makeChildDead(child))
           state |= ChildLifeStateChange.Removed;
@@ -633,14 +636,12 @@ export class CompositeDrawable extends Drawable {
     if (!this.receivePositionalInputAtSubTreeLocal(localPos))
       return false;
 
-
     for (const child of this.#aliveInternalChildren.items) {
       child.drawNode.updateLocalTransform();
 
       const local = child.drawNode.localTransform.applyInverse(localPos, this._tempVec2);
 
       child.buildPositionalInputQueueLocal(local, queue);
-
     }
 
     return true;
@@ -775,7 +776,6 @@ export class CompositeDrawable extends Drawable {
   }
 
   #computeAutoSize() {
-
     if (this.autoSizeAxes === Axes.None)
       return this.drawSize;
 
@@ -844,7 +844,8 @@ export class CompositeDrawable extends Drawable {
     if (duration === 0) {
       this.baseWidth = size.x;
       this.baseHeight = size.y;
-    } else {
+    }
+    else {
       this.transformTo('baseWidth', size.x, duration, easing);
       this.transformTo('baseHeight', size.y, duration, easing);
     }
@@ -887,7 +888,8 @@ export class CompositeDrawable extends Drawable {
 
       this.drawNode.addChild(this.#maskingContainer);
       this.drawNode.mask = this.#maskingContainer;
-    } else if (!this.#masking && this.#maskingContainer) {
+    }
+    else if (!this.#masking && this.#maskingContainer) {
       this.drawNode.removeChild(this.#maskingContainer)?.destroy();
       this.drawNode.mask = null;
 
