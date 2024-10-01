@@ -4,7 +4,6 @@ import type { DrawableHitObject } from './DrawableHitObject';
 import type { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
 import { Action, Axes, Bindable, LoadState, resolved } from 'osucad-framework';
 import { PooledDrawableWithLifetimeContainer } from '../../pooling/PooledDrawableWithLifetimeContainer';
-import { DrawableSpinner } from './DrawableSpinner';
 import { IPooledHitObjectProvider } from './IPooledHitObjectProvider';
 
 export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitObjectLifetimeEntry, DrawableHitObject> {
@@ -78,10 +77,6 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
   }
 
   getDrawableDepth(drawable: DrawableHitObject) {
-    if (drawable instanceof DrawableSpinner) {
-      return Number.MIN_VALUE;
-    }
-
     return drawable.startTimeBindable.value;
   }
 
