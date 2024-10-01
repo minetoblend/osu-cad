@@ -138,7 +138,11 @@ export class SliderPathVisualizer extends CompositeDrawable {
   }
 
   dispose(isDisposing?: boolean) {
-    this.slider = null;
+    if (this.#slider) {
+      this.#slider.path.invalidated.removeListener(this.#onSliderUpdate);
+      this.#slider.positionBindable.valueChanged.removeListener(this.#onSliderUpdate);
+      this.#slider.stackHeightBindable.valueChanged.removeListener(this.#onSliderUpdate);
+    }
 
     super.dispose(isDisposing);
   }
