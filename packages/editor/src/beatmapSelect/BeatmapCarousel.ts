@@ -530,6 +530,8 @@ class CarouselScrollContainer extends MainScrollContainer<DrawableCarouselMapset
     // eslint-disable-next-line dot-notation
     this.scrollContent['autoSizeAxes'] = Axes.None;
 
+    this.rightClickScroll = true;
+
     const filter = new BackdropBlurFilter({
       strength: 15,
       antialias: 'inherit',
