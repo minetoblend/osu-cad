@@ -47,6 +47,7 @@ export class SelectBoxInteraction extends ComposeToolInteraction {
       (this.#selectBox = new RoundedBox({
         cornerRadius: 1,
         fillAlpha: 0.1,
+        alpha: 0,
         width: 0,
         height: 0,
         outline: {
