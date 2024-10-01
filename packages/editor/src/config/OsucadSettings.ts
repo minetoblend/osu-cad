@@ -22,6 +22,7 @@ export class OsucadSettings<T> implements ConfigKey<T> {
   static readonly SampleSetExpanded = new OsucadSettings<boolean>('SampleSetExpanded');
   static readonly AnimatedSeek = new OsucadSettings<boolean>('AnimatedSeek');
   static readonly CompactTimeline = new OsucadSettings<boolean>('CompactTimeline');
+  static readonly BeatmapComboColors = new OsucadSettings<boolean>('BeatmapComboColors');
   static readonly NativeCursor = new OsucadSettings<boolean>('NativeCursor');
   static readonly PlayIntroSequence = new OsucadSettings<boolean>('PlayIntroSequence');
 

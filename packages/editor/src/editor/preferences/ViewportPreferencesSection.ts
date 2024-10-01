@@ -31,6 +31,10 @@ export class ViewportPreferencesSection extends PreferencesPanel {
         this.config.getBindable(OsucadSettings.CompactTimeline)!,
       ),
       new PreferencesToggle(
+        'Use beatmap combo colors',
+        this.config.getBindable(OsucadSettings.BeatmapComboColors)!,
+      ),
+      new PreferencesToggle(
         'Use native cursor',
         this.config.getBindable(OsucadSettings.NativeCursor)!,
       ),
