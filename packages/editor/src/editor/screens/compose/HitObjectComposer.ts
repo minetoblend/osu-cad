@@ -1,9 +1,25 @@
-import type { Bindable, DependencyContainer, IKeyBindingHandler, KeyBindingPressEvent, ScreenExitEvent } from 'osucad-framework';
+import type {
+  Bindable,
+  DependencyContainer,
+  IKeyBindingHandler,
+  KeyBindingPressEvent,
+  ScreenExitEvent,
+} from 'osucad-framework';
 import type { IPositionSnapProvider } from './snapping/IPositionSnapProvider';
 import type { SnapTarget } from './snapping/SnapTarget';
 import type { ComposeTool } from './tools/ComposeTool';
 import type { DrawableComposeTool } from './tools/DrawableComposeTool';
-import { Axes, BindableBoolean, Container, dependencyLoader, DrawSizePreservingFillContainer, EasingFunction, PlatformAction, resolved, Vec2 } from 'osucad-framework';
+import {
+  Axes,
+  BindableBoolean,
+  Container,
+  dependencyLoader,
+  DrawSizePreservingFillContainer,
+  EasingFunction,
+  PlatformAction,
+  resolved,
+  Vec2,
+} from 'osucad-framework';
 import { Beatmap } from '../../../beatmap/Beatmap';
 import { HitObjectList } from '../../../beatmap/hitObjects/HitObjectList';
 import { DeleteHitObjectCommand } from '../../commands/DeleteHitObjectCommand';
@@ -27,14 +43,16 @@ import { SelectionOverlay } from './selection/SelectionOverlay.ts';
 import { GridSnapProvider } from './snapping/GridSnapProvider';
 import { HitObjectSnapProvider } from './snapping/HitObjectSnapProvider';
 
-export class HitObjectComposer
-  extends Container
-  implements IKeyBindingHandler<PlatformAction | EditorAction> {
-  constructor(protected readonly activeTool: Bindable<ComposeTool>) {
+export class HitObjectComposer extends Container implements IKeyBindingHandler<PlatformAction | EditorAction> {
+  constructor(activeTool: Bindable<ComposeTool>) {
     super({
       relativeSizeAxes: Axes.Both,
     });
+
+    this.activeTool = activeTool.getBoundCopy();
   }
+
+  protected readonly activeTool: Bindable<ComposeTool>;
 
   hitObjectUtils!: HitObjectUtils;
 
@@ -108,21 +126,18 @@ export class HitObjectComposer
   protected loadComplete() {
     super.loadComplete();
 
-    this.withScope(() => {
-      this.activeTool.addOnChangeListener(
-        ({ value: tool }) => {
-          if (
-            this.#toolContainer.children.length === 0
-            || !(tool.isSameTool(this.#previousTool))
-          ) {
-            this.#toolContainer.child = tool.createDrawableTool();
-            this.#previousTool = tool;
-            this.#toolContainer.updateSubTree();
-          }
-        },
-        { immediate: true },
-      );
-    });
+    this.activeTool.valueChanged.addListener(this.#onToolChanged, this);
+    this.#onToolChanged();
+  }
+
+  #onToolChanged() {
+    const tool = this.activeTool.value;
+
+    if (this.#toolContainer.children.length === 0 || !(tool.isSameTool(this.#previousTool))) {
+      this.#toolContainer.child = tool.createDrawableTool();
+      this.#previousTool = tool;
+      this.#toolContainer.updateSubTreeTransforms();
+    }
   }
 
   readonly isKeyBindingHandler = true;
@@ -318,5 +333,7 @@ export class HitObjectComposer
       this.#playfieldContainer.fadeOut(300, EasingFunction.OutQuad);
 
     this.#playfieldContainer.remove(this.#toolContainer, true);
+
+    this.activeTool.unbindAll();
   }
 }
