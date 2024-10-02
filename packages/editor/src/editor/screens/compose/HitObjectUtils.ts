@@ -1,7 +1,7 @@
 import type { OsuHitObject } from '../../../beatmap/hitObjects/OsuHitObject';
-import { PathApproximator, Vector2 } from 'osu-classes';
 import { Axes, CompositeDrawable, dependencyLoader, Rectangle, resolved, Vec2 } from 'osucad-framework';
 import { Matrix } from 'pixi.js';
+import { PathApproximator } from '../../../beatmap/hitObjects/PathApproximator.ts';
 import { PathPoint } from '../../../beatmap/hitObjects/PathPoint';
 import { PathType } from '../../../beatmap/hitObjects/PathType';
 import { Slider } from '../../../beatmap/hitObjects/Slider';
@@ -201,19 +201,24 @@ export class HitObjectUtils extends CompositeDrawable {
     }
 
     if (reversed.length === 3 && reversed[0].type === PathType.PerfectCurve) {
-      const arcProperties = PathApproximator._circularArcProperties(
-        reversed.map(it => new Vector2(it.x, it.y)),
-      );
+      const arcProperties = PathApproximator._circularArcProperties(reversed.map(it => it.position));
 
-      const { centre, radius, thetaStart, thetaRange, direction }
-        = arcProperties;
+      const { centre, radius, thetaStart, thetaRange, direction, isValid } = arcProperties;
 
-      const middlePoint = new Vec2(
-        centre.x + radius * Math.cos(thetaStart + (thetaRange / 2) * direction),
-        centre.y + radius * Math.sin(thetaStart + (thetaRange / 2) * direction),
-      );
+      if (isValid) {
+        const middlePoint = new Vec2(
+          centre.x + radius * Math.cos(thetaStart + (thetaRange / 2) * direction),
+          centre.y + radius * Math.sin(thetaStart + (thetaRange / 2) * direction),
+        );
 
-      reversed[1] = reversed[1].withPosition(middlePoint);
+        const endPoint = new Vec2(
+          centre.x + radius * Math.cos(thetaStart + thetaRange * direction),
+          centre.y + radius * Math.sin(thetaStart + thetaRange * direction),
+        );
+
+        reversed[1] = reversed[1].withPosition(middlePoint);
+        reversed[2] = reversed[2].withPosition(endPoint);
+      }
     }
 
     this.commandManager.submit(
@@ -324,7 +329,7 @@ export class HitObjectUtils extends CompositeDrawable {
   static convertCircularArcToBezier(segment: Vec2[]): PathPoint[] {
     if (segment.length !== 3)
       return segment.map((it, index) => new PathPoint(it, index === 0 ? PathType.Bezier : null));
-    const cs = PathApproximator._circularArcProperties(segment.map(it => new Vector2(it.x, it.y)));
+    const cs = PathApproximator._circularArcProperties(segment);
     if (!cs.isValid)
       return segment.map((it, index) => new PathPoint(it, index === 0 ? PathType.Bezier : null));
 
