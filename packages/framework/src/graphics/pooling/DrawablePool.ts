@@ -24,11 +24,10 @@ export class DrawablePool<T extends PoolableDrawable> extends CompositeDrawable 
   readonly #pool: T[] = [];
 
   @dependencyLoader()
-  _load() {
+  [Symbol('load')]() {
     this.#pool.length = this.#initialSize;
-    for (let i = 0; i < this.#initialSize; i++) {
+    for (let i = 0; i < this.#initialSize; i++)
       this.#pool[i] = this.#create();
-    }
 
     this.loadComponents(this.#pool);
   }
