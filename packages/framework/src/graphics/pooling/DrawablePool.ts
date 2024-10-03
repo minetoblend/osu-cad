@@ -4,7 +4,6 @@ import type { PoolableDrawable } from './PoolableDrawable';
 import { dependencyLoader } from '../../di';
 import { CompositeDrawable } from '../containers';
 import { LoadState } from '../drawables';
-import { loadSymbol } from '../drawables/loadSymbol';
 
 export class DrawablePool<T extends PoolableDrawable> extends CompositeDrawable implements IDrawablePool {
   constructor(drawableClass: NoArgsConstructor<T>, initialSize: number, maximumSize?: number) {
@@ -49,10 +48,7 @@ export class DrawablePool<T extends PoolableDrawable> extends CompositeDrawable 
     if (this.#maximumSize !== null && this.countAvailable > this.#maximumSize) {
       drawable.setPool(null);
 
-      if (drawable.disposeOnDeathRemoval) {
-        drawable.dispose();
-        // TODO: disposeChildAsync
-      }
+      drawable.dispose();
     }
     else {
       this.#pool.push(drawable);
@@ -106,9 +102,10 @@ export class DrawablePool<T extends PoolableDrawable> extends CompositeDrawable 
   }
 
   override dispose(isDisposing: boolean = true) {
-    for (const p of this.#pool) {
+    for (const p of this.#pool)
       p.dispose();
-    }
+
+    console.log('disposing drawable pool for ', this.#drawableClass.name);
 
     this.#countInUse = 0;
     this.#countExcessConstructed = 0;
