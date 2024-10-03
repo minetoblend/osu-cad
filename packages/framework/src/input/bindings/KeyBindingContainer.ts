@@ -90,10 +90,9 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
       return false;
 
     if (this.prioritised) {
-      console.assert(queue.remove(this));
+      queue.remove(this);
       queue.push(this);
     }
-
 
     return true;
   }
