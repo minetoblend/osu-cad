@@ -262,7 +262,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     if (this.#scale.equals(value))
       return;
 
-    this.drawNode.scale.copyFrom(value);
+    this.drawNode.scale?.copyFrom(value);
 
     this.#scale.x = value.x;
     this.#scale.y = value.y;
