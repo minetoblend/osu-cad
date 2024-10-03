@@ -163,10 +163,11 @@ export abstract class MouseButtonEventManager extends ButtonEventManager<MouseBu
   #handleDragDrawableBegin(draggedDrawable: Drawable) {
     this.draggedDrawable = draggedDrawable;
     draggedDrawable.isDragged = true;
-    draggedDrawable.invalidated.addListener(this.#draggedDrawableInvalidated);
+    draggedDrawable.invalidated.addListener(this.#draggedDrawableInvalidated, this);
   }
 
-  #draggedDrawableInvalidated = ([drawable, invalidation]: [Drawable, Invalidation]) => {
+  #draggedDrawableInvalidated([drawable, invalidation]: [Drawable, Invalidation]) {
+    console.log(' invalidated', invalidation);
     if (invalidation & Invalidation.Parent) {
       // end drag if no longer rooted.
       if (!drawable.isRootedAt(this.inputManager))
@@ -180,7 +181,7 @@ export abstract class MouseButtonEventManager extends ButtonEventManager<MouseBu
     if (previousDragged === null)
       return;
 
-    previousDragged.invalidated.removeListener(this.#draggedDrawableInvalidated);
+    previousDragged.invalidated.removeListener(this.#draggedDrawableInvalidated, this);
     previousDragged.isDragged = false;
 
     this.draggedDrawable = null;
