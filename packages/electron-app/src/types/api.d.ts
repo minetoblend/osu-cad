@@ -26,6 +26,16 @@ declare global {
       filename: string,
       content: string,
     ): Promise<boolean>;
+
+    checkForUpdates(): void;
+
+    onUpdateAvailable(fn: () => void): () => void;
+
+    onUpdateDownloadProgress(fn: (percent: number) => void): () => void;
+
+    onUpdateDownloadComplete(fn: () => void): () => void;
+
+    installUpdate()
   }
 
   interface ElectronSkinInfo {

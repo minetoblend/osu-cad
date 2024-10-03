@@ -28,6 +28,26 @@ const api: ExposedAPI = {
               content: string): Promise<any> {
     return electronAPI.ipcRenderer.invoke('saveBeatmap', directory, filename, content);
   },
+
+  checkForUpdates() {
+    electronAPI.ipcRenderer.send('checkForUpdates')
+  },
+
+  onUpdateAvailable(fn: () => void) {
+    return electronAPI.ipcRenderer.on('updateAvailable', fn)
+  },
+
+  onUpdateDownloadProgress(fn: (percent: number) => void) {
+    return electronAPI.ipcRenderer.on('updateDownloadProgress', (_, progress) => fn(progress))
+  },
+
+  onUpdateDownloadComplete(fn: () => void) {
+    return electronAPI.ipcRenderer.on('updateDownloadComplete', fn)
+  },
+
+  installUpdate() {
+    return electronAPI.ipcRenderer.send('installUpdate')
+  }
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to

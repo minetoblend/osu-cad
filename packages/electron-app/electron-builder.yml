@@ -15,7 +15,8 @@ asarUnpack:
 asar: false
 win:
   executableName: osucad
-nsis:
+  target: nsis-web
+nsisWeb:
   artifactName: osucad-${version}-setup.${ext}
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
@@ -40,8 +41,11 @@ appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
 publish:
-  provider: generic
-  url: https://example.com/auto-updates
+  provider: s3
+  bucket: osucad-releases
+  region: fra1
+  acl: public-read
+  endpoint: https://fra1.digitaloceanspaces.com
 fileAssociations:
   - ext: osucad
     name: osucad

@@ -1,3 +1,7 @@
-provider: generic
-url: https://example.com/auto-updates
+provider: s3
+bucket: osucad
+path: releases/
+region: fra1
+endpoint: https://osucad.fra1.digitaloceanspaces.com/releases/
+
 updaterCacheDirName: electron-app-updater

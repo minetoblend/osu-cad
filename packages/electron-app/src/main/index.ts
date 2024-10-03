@@ -1,9 +1,10 @@
-import { app, BrowserWindow, shell, session } from 'electron';
+import { app, BrowserWindow, shell, session, ipcMain } from 'electron';
 import { join } from 'path';
 import { electronApp, is } from '@electron-toolkit/utils';
 import { setupEnvironment } from './ElectronEnvironment';
 import { setupProtocol } from './protocol';
 import { loadOsuStableInfo } from './loadOsuStableInfo';
+import { checkForUpdates } from './auto-update';
 
 app.commandLine.appendSwitch ("disable-http-cache");
 
@@ -41,6 +42,8 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
   }
+
+  checkForUpdates(mainWindow);
 }
 
 // This method will be called when Electron has finished
@@ -53,7 +56,6 @@ app.whenReady().then(async () => {
     // silently fail
   }
 
-
   const osuStableInfo = await loadOsuStableInfo();
 
   await setupEnvironment(osuStableInfo);
@@ -62,8 +64,6 @@ app.whenReady().then(async () => {
 
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.osucad');
-
-
   createWindow();
 
   app.on('activate', function () {
@@ -84,3 +84,5 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
+
+

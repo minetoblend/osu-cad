@@ -20,7 +20,7 @@ export class LazyStableResourceStore implements IResourceStore<ArrayBuffer> {
       const json = (await response.json()) as {
         name: string;
         isDirectory: boolean;
-      }[]
+      }[];
 
       const entries = json
         .filter(it => !it.isDirectory)
@@ -45,16 +45,21 @@ export class LazyStableResourceStore implements IResourceStore<ArrayBuffer> {
 
     const path = `${this.directory}/${key}`;
 
-    const response = await fetch(path);
-    if (!response.ok) {
+    try {
+      const response = await fetch(path);
+      if (!response.ok) {
+        return null;
+      }
+
+      const data = await response.arrayBuffer();
+
+      this.#entries.set(key.toLowerCase(), data);
+
+      return data;
+    } catch (e) {
+      console.error('Error when loading resource', key, e)
       return null;
     }
-
-    const data = await response.arrayBuffer();
-
-    this.#entries.set(key.toLowerCase(), data);
-
-    return data;
   }
 
   getAvailableResources(): string[] {
