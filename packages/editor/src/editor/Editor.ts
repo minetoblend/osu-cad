@@ -90,9 +90,9 @@ export class Editor
   async init() {
     await this.context.load();
 
-    const editorDependencies = new EditorDependencies(
-      new OsuPlayfield(),
-    );
+    const editorDependencies = new EditorDependencies(new OsuPlayfield());
+
+    this.onDispose(() => editorDependencies.reusablePlayfield.dispose());
 
     this.dependencies.provide(EditorDependencies, editorDependencies);
 
