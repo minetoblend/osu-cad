@@ -63,6 +63,18 @@ export class StableSkin extends Skin {
 
         case OsuSkinComponents.SpinnerBody:
           return new StableSpinnerBody();
+
+        case OsuSkinComponents.Cursor:
+          return this.getAnimation('cursor', {
+            animatable: false,
+            looping: false,
+          });
+
+        case OsuSkinComponents.CursorTrail:
+          return this.getAnimation('cursor', {
+            animatable: false,
+            looping: false,
+          });
       }
     }
 

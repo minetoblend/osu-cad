@@ -34,6 +34,7 @@ const iconKeys = [
   'sampleset-drum',
   'timeline-marker',
   'caret-left',
+  'cursorpath',
 ] as const;
 
 export const OsucadIcons = new class OsucadIcons {

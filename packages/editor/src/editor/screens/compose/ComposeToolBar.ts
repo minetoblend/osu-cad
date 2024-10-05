@@ -1,6 +1,10 @@
 import type { Bindable } from 'osucad-framework';
 import type { ComposeTool } from './tools/ComposeTool';
-import { Anchor, Axes, Container, dependencyLoader, FillDirection, FillFlowContainer, Key, Vec2 } from 'osucad-framework';
+import { Anchor, Axes, Container, dependencyLoader, FillDirection, FillFlowContainer, Key, resolved, Vec2 } from 'osucad-framework';
+import { OsucadConfigManager } from '../../../config/OsucadConfigManager.ts';
+import { OsucadSettings } from '../../../config/OsucadSettings.ts';
+import { OsucadIcons } from '../../../OsucadIcons.ts';
+import { ComposeToggleButton } from './ComposeToggleButton.ts';
 import { ComposeToolbarButton } from './ComposeToolbarButton';
 import { ComposeToolbarToolButton } from './ComposeToolbarToolButton';
 import { SampleSetControl } from './SampleSetControl';
@@ -82,10 +86,16 @@ export class ComposeToolBar extends Container {
     this.addInternal(this.#toggleButtons.with({
       depth: 1,
       children: [
+        new ComposeToggleButton(OsucadIcons.get('cursorpath')).adjust(
+          it => this.config.bindWith(OsucadSettings.ShowGameplayCursor, it.active),
+        ),
         new ToolbarGridSnapToggle(),
       ],
     }));
   }
+
+  @resolved(OsucadConfigManager)
+  config!: OsucadConfigManager;
 
   override get content() {
     return this.#toolButtons;

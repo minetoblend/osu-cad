@@ -21,6 +21,7 @@ export class OsucadConfigManager extends ConfigManager<OsucadSettings<any>> {
     this.setDefault(OsucadSettings.BeatmapComboColors, true);
     this.setDefault(OsucadSettings.NativeCursor, false);
     this.setDefault(OsucadSettings.PlayIntroSequence, true);
+    this.setDefault(OsucadSettings.ShowGameplayCursor, false);
 
     this.setDefault(OsucadSettings.SongSelectParallax, true);
     this.setDefault(OsucadSettings.SongSelectPreventLoadOnScroll, false);

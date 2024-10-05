@@ -174,8 +174,8 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
 
     const stackedPosition = this.stackedPosition;
 
-    out.x = stackedPosition.x;
-    out.y = stackedPosition.y;
+    out.x += stackedPosition.x;
+    out.y += stackedPosition.y;
 
     return out;
   }

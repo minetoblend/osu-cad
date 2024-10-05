@@ -38,6 +38,7 @@ import { ComposeTogglesBar } from './ComposeTogglesBar';
 import { ComposeToolBar } from './ComposeToolBar';
 import { ComposeToolbarButton } from './ComposeToolbarButton.ts';
 import { EditorSelection } from './EditorSelection';
+import { GameplayVisualizer } from './gameplayVisualizer/GameplayVisualizer.ts';
 import { HitObjectUtils } from './HitObjectUtils';
 import { SelectionOverlay } from './selection/SelectionOverlay.ts';
 import { GridSnapProvider } from './snapping/GridSnapProvider';
@@ -311,7 +312,11 @@ export class HitObjectComposer extends Container implements IKeyBindingHandler<P
 
     this.#playfieldContainer.add(this.#grid = new PlayfieldGrid());
     EditorScreenUtils.insertPlayfield(this.playfield, this.#playfieldContainer);
-    this.#playfieldContainer.addAll(new SelectionOverlay(), this.#toolContainer);
+    this.#playfieldContainer.addAll(
+      new SelectionOverlay(),
+      this.#toolContainer,
+      new GameplayVisualizer(),
+    );
   }
 
   onExiting(e: ScreenExitEvent) {
