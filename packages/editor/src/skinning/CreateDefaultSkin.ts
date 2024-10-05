@@ -34,9 +34,8 @@ class DefaultSkinResourceStore implements IResourceStore<ArrayBuffer> {
   }
 
   async getAsync(name: string) {
-    if (this.#resources.has(name)) {
+    if (this.#resources.has(name))
       return this.#resources.get(name)!;
-    }
 
     return this.#load(name);
   }
