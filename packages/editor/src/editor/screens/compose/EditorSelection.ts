@@ -80,6 +80,9 @@ export class EditorSelection extends Component implements Iterable<OsuHitObject>
 
   @dependencyLoader()
   load() {
+    for (const hitObject of this.hitObjects)
+      hitObject.isSelected = false;
+
     this.hitObjects.removed.addListener((hitObject) => {
       if (hitObject.isSelected) {
         this.deselect(hitObject);
