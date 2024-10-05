@@ -1,4 +1,4 @@
-import type { HitObject } from '../../beatmap/hitObjects/HitObject';
+import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject.ts';
 import { Bindable } from 'osucad-framework';
 import { LifetimeEntry } from '../../pooling/LifetimeEntry';
 
@@ -7,7 +7,7 @@ export class HitObjectLifetimeEntry extends LifetimeEntry {
 
   readonly #startTimeBindable = new Bindable(0);
 
-  constructor(readonly hitObject: HitObject) {
+  constructor(readonly hitObject: OsuHitObject) {
     super();
 
     this.#startTimeBindable.bindTo(hitObject.startTimeBindable);
