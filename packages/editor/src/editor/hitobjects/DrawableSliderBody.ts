@@ -3,6 +3,8 @@ import type { Slider } from '../../beatmap/hitObjects/Slider';
 import { Bindable, dependencyLoader, Drawable, PIXIContainer, resolved, Vec2 } from 'osucad-framework';
 import { AlphaFilter, Color, CustomRenderPipe, Mesh, MeshGeometry } from 'pixi.js';
 import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection';
+import { ISkinSource } from '../../skinning/ISkinSource.ts';
+import { SkinConfig } from '../../skinning/SkinConfig.ts';
 import { animate } from '../../utils/animate';
 import { ThemeColors } from '../ThemeColors';
 import { DrawableHitObject } from './DrawableHitObject';
@@ -55,6 +57,9 @@ export class DrawableSliderBody extends Drawable {
 
     this.#body.addChild(this.mesh, this.endCap, this.startCap);
   }
+
+  @resolved(ISkinSource)
+  skin!: ISkinSource;
 
   createDrawNode(): Container {
     return this.#body;
@@ -176,6 +181,12 @@ export class DrawableSliderBody extends Drawable {
     this.#pathIsInvalid = false;
   }
 
+  dispose(isDisposing: boolean = true) {
+    this.skin.sourceChanged.removeListener(this.#skinChanged, this);
+
+    super.dispose(isDisposing);
+  }
+
   #pathIsInvalid = true;
 
   snakeInProgress = 0;
@@ -187,19 +198,53 @@ export class DrawableSliderBody extends Drawable {
 
   @dependencyLoader()
   load() {
-    this.accentColor.addOnChangeListener(color => this.shader.comboColor = new Color(color.value).setAlpha(0.9), {
-      immediate: true,
-    });
+    this.accentColor.valueChanged.addListener(this.#updateColor, this);
+    this.sliderTrackOverride.valueChanged.addListener(this.#updateColor, this);
+    this.skin.sourceChanged.addListener(this.#skinChanged, this);
+  }
+
+  sliderTrackOverride = new Bindable<Color | null>(null);
+
+  borderColor = new Bindable<Color | null>(null);
+
+  #skinChanged() {
+    this.sliderTrackOverride.value = this.skin.getConfig(SkinConfig.SliderTrackOverride)?.value ?? null;
+    this.borderColor.value = this.skin.getConfig(SkinConfig.SliderBorder)?.value ?? null;
+
+    this.#updateBorderColor();
+  }
+
+  #updateColor() {
+    const color = this.sliderTrackOverride.value ?? this.accentColor.value;
+
+    this.shader.comboColor = new Color(color).setAlpha(0.8);
   }
 
   protected loadComplete() {
     super.loadComplete();
 
     this.accentColor.bindTo(this.drawableHitObject.accentColor);
+
+    this.#skinChanged();
+  }
+
+  #selected = false;
+
+  get selected() {
+    return this.#selected;
   }
 
   set selected(value: boolean) {
-    this.shader.borderColor = value ? 0xFF0000 : 0xFFFFFF;
+    if (this.#selected === value)
+      return;
+
+    this.#selected = value;
+
+    this.#updateBorderColor();
+  }
+
+  #updateBorderColor() {
+    this.shader.borderColor = this.selected ? 0xFF0000 : this.borderColor.value?.toNumber() ?? 0xFFFFFF;
   }
 
   #updateSelection() {
