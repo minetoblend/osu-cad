@@ -9,7 +9,7 @@ export interface ISkin {
 
   getTexture(componentName: string): Texture | null;
 
-  getSample(channel: AudioChannel, name: string): Promise<Sample | null>;
+  getSample(channel: AudioChannel, name: string): Sample | null;
 
   dispose(): void;
 

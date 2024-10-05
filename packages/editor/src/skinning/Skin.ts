@@ -36,6 +36,7 @@ export abstract class Skin implements IDisposable, ISkin {
     else {
       this.configuration = new SkinConfiguration();
     }
+    await this.samples?.loadAvailable();
   }
 
   #resources: IResourcesProvider | null = null;
@@ -103,8 +104,6 @@ export abstract class Skin implements IDisposable, ISkin {
       return new DrawableSprite({ texture });
     }
 
-    return new DrawableSprite({ texture: textures[Math.floor(textures.length * 2 / 3)] });
-
     const animation = new SkinnableTextureAnimation(startAtCurrentTime);
     animation.loop = looping;
     animation.defaultFrameLength = 1000 / textures.length;
@@ -121,10 +120,8 @@ export abstract class Skin implements IDisposable, ISkin {
     this.configuration = new StableSkinConfigurationDecoder().decode(config);
   }
 
-  async getSample(channel: AudioChannel, name: string): Promise<Sample | null> {
-    const sample = await this.samples?.getSample(channel, name);
-
-    return sample ?? null;
+  getSample(channel: AudioChannel, name: string): Sample | null {
+    return this.samples?.getSample(channel, name) ?? null;
   }
 
   #isDisposed = false;
