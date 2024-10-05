@@ -73,7 +73,7 @@ export function setupProtocol(osuPaths: OsuStableInfo | null) {
 
     pathname = searchParams.get('path') ?? pathname;
 
-    const filePath = resolve(basePath, pathname);
+    const filePath = join(basePath, pathname)
 
     if (relative(basePath, filePath).startsWith('..')) {
       return new Response('Not found', { status: 404 });
@@ -82,16 +82,29 @@ export function setupProtocol(osuPaths: OsuStableInfo | null) {
     try {
       const stats = await fs.stat(filePath);
       if (stats.isFile()) {
-        return net.fetch(`file://${filePath}`, {
-          headers: request.headers,
-        })
+
+        try {
+          const response = await net.fetch(`file://${filePath}`, {
+            headers: request.headers,
+          })
+
+          if (response.ok)
+            return response;
+        } catch (e) {
+          // this can fail if the file has weird formatting isn't there
+        }
+
+        try {
+          const data = await fs.readFile(filePath);
+          return new Response(data);
+        } catch (e) {
+          return new Response('Not found', { status: 404 });
+        }
       }
 
       if (stats.isDirectory()) {
         if (searchParams.get('entries') !== null) {
           const entries = await fs.opendir(filePath);
-
-          console.log('loading entries for ', basePath, filePath, pathname, osuPaths.skinsPath);
 
           const files: {
             name: string;

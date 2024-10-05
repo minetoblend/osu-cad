@@ -34,8 +34,13 @@ export class SampleStore {
     return name;
   }
 
-  async loadAvailable() {
-    const names = this.#resources.getAvailableResources().filter(filename => this.#extensions.some(ext => filename.endsWith(ext)));
+  async loadAvailable(
+    filter?: (name: string) => boolean,
+  ) {
+    const names = this.#resources.getAvailableResources().filter(filename =>
+      this.#extensions.some(ext => filename.endsWith(ext))
+      && (!filter || filter(filename)),
+    );
 
     console.log('Loading samples', names, this.#resources.getAvailableResources());
 

@@ -22,7 +22,6 @@ export class TextureStore {
   #textures = new Map<string, Texture | null>();
 
   canLoad(name: string) {
-    console.log(name, this.#store.canLoad(name));
     return this.#store.canLoad(name);
   }
 
@@ -58,8 +57,6 @@ export class TextureStore {
   async #createTextureSource(label: string, data: ArrayBuffer, resolution: number): Promise<TextureSource | null> {
     try {
       const imageBitmap = await createImageBitmap(new Blob([data]));
-
-      console.log('Loaded texture', label, imageBitmap);
 
       return new ImageSource({
         resource: imageBitmap,

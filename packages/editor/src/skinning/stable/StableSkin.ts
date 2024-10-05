@@ -99,16 +99,25 @@ export class StableSkin extends Skin {
     return true;
   }
 
+  #hitSoundRegex = /((?:soft|normal|drum)-((?:hitnormal|hitwhistle|hitfinish|hitclap|sliderslide|sliderwhistle)\d*))(?:\.wav|\.ogg|\.mp3)$/i;
+
+  #isHitSound(filename: string): boolean {
+    return this.#hitSoundRegex.test(filename);
+  }
+
   async load() {
     await super.load();
     await Promise.all([
+      await this.samples?.loadAvailable(this.#isHitSound.bind(this)),
       this.loadTexture('hitcircle'),
       this.loadTexture('hitcircleoverlay'),
       this.loadTexture('approachcircle'),
       this.loadTexture('sliderfollowcircle'),
       this.loadTexture('sliderscorepoint'),
       this.loadTexture('sliderstartcircle'),
+      this.loadTexture('sliderstartcircleoverlay'),
       this.loadTexture('sliderendcircle'),
+      this.loadTexture('sliderendcircleoverlay'),
       this.loadTexture('reversearrow'),
       this.loadTexture('sliderb-spec'),
       this.loadTexture('hitcircleselect'),
@@ -202,7 +211,6 @@ export class StableSkin extends Skin {
           ].join('')
         : `${componentName}@2x`;
 
-      console.log(this.textures?.canLoad(twoTimesFilename), twoTimesFilename);
       if (this.textures?.canLoad(twoTimesFilename)) {
         texture = await this.textures?.load(twoTimesFilename, 2) ?? null;
       }

@@ -2,7 +2,7 @@ import { SkinProvider, SkinStore } from '@osucad/editor';
 import { IResourcesProvider } from '../../../../editor/src/io/IResourcesProvider';
 import { ISkin } from '../../../../editor/src/skinning/ISkin';
 import { StableSkin } from '../../../../editor/src/skinning/stable/StableSkin';
-import { StableResourceStore } from './StableResourceStore.ts';
+import { LazyStableResourceStore } from './LazyStableResourceStore.ts';
 
 export class ElectronSkinStore extends SkinStore {
   async load() {
@@ -29,7 +29,7 @@ class StableSkinInfo extends SkinProvider {
   path: string;
 
   async loadSkin(resources: IResourcesProvider): Promise<ISkin> {
-    const store = await StableResourceStore.create(this.path + '&load');
+    const store = await LazyStableResourceStore.create(this.path);
 
     const skin = new StableSkin({ name: this.name, creator: '' }, resources, store ?? undefined);
 

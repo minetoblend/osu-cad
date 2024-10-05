@@ -57,10 +57,6 @@ export class StableCirclePiece extends CompositeDrawable {
       }),
     );
 
-    this.#circle.texture?.on('destroy', () => {
-      console.trace('HitCircle texture destroyed');
-    });
-
     this.config.bindWith(OsucadSettings.HitAnimations, this.hitAnimationsEnabled);
 
     if (this.hasComboNumber) {

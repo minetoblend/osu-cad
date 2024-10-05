@@ -43,6 +43,9 @@ export class LazyStableResourceStore implements IResourceStore<ArrayBuffer> {
     if (this.has(key))
       return this.get(key)!;
 
+    if (!this.canLoad(key))
+      return null;
+
     const path = `${this.directory}/${key}`;
 
     try {

@@ -36,7 +36,6 @@ export abstract class Skin implements IDisposable, ISkin {
     else {
       this.configuration = new SkinConfiguration();
     }
-    await this.samples?.loadAvailable();
   }
 
   #resources: IResourcesProvider | null = null;

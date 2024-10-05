@@ -93,8 +93,8 @@ export class SliderShader extends Shader implements TextureShader {
 
               vec4 comboColor = vec4(uComboColor.rgb * uComboColor.a, uComboColor.a);
 
-              vec4 innerColor = uComboColor * vec4(vec3(1.0 / 1.1), 1.0);
-              vec4 outerColor = lighten(uComboColor, 0.5);
+              vec4 innerColor = comboColor * vec4(vec3(1.0 / 1.1), 1.0);
+              vec4 outerColor = lighten(comboColor, 0.5);
 
               vec4 bodyColor = mix(innerColor, outerColor, gradientColor.b);
               color = mix(color, bodyColor, gradientColor.g);
