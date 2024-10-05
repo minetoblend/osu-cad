@@ -6,5 +6,13 @@ export class SkinConfig<T> {
   constructor(readonly name: string) {
   }
 
-  static ComboColors = new SkinConfig<Color[]>('');
+  static ComboColors = new SkinConfig<Color[]>('ComboColors');
+
+  static SliderTrackOverride = new SkinConfig<Color | null>('SliderTrackOverride');
+
+  static SliderBorder = new SkinConfig<Color | null>('SliderBorder');
+
+  static AllowSliderBallTint = new SkinConfig<boolean>('AllowSliderBallTint');
+
+  static HitCircleOverlap = new SkinConfig<number>('HitCircleOverlap');
 }

@@ -147,6 +147,28 @@ export abstract class Skin implements IDisposable, ISkin {
     switch (key) {
       case SkinConfig.ComboColors:
         return new Bindable(this.configuration.comboColors);
+
+      case SkinConfig.SliderTrackOverride:
+        return new Bindable(this.configuration.customColors.get('SliderTrackOverride') ?? null);
+
+      case SkinConfig.SliderBorder:
+        return new Bindable(this.configuration.customColors.get('SliderBorder') ?? null);
+
+      case SkinConfig.AllowSliderBallTint:
+        return new Bindable(this.configuration.configMap.get('AllowSliderBallTint') === '1');
+
+      case SkinConfig.HitCircleOverlap:
+      {
+        const value = this.configuration.configMap.get('HitCircleOverlap');
+        if (value === undefined)
+          return new Bindable(-2);
+
+        const parsed = Number.parseFloat(value);
+        if (Number.isNaN(parsed))
+          return new Bindable(-2);
+
+        return new Bindable(parsed);
+      }
     }
     return null;
   }
