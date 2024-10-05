@@ -122,7 +122,13 @@ export function setupProtocol(osuPaths: OsuStableInfo | null) {
 
           let size = 0;
 
+          const allPaths: string[] = [];
+
           for await (const entry of walk(filePath)) {
+            allPaths.push(entry);
+          }
+
+          await Promise.all(allPaths.map(async entry => {
             const buffer = await fs.readFile(entry);
 
             size += buffer.byteLength;
@@ -132,7 +138,7 @@ export function setupProtocol(osuPaths: OsuStableInfo | null) {
             }
 
             formData.set(relative(filePath, entry), new Blob([buffer]));
-          }
+          }))
 
           return new Response(formData);
         }
