@@ -7,7 +7,8 @@ export class OsucadSettings<T> implements ConfigKey<T> {
   }
 
   static readonly Version = new OsucadSettings<number>('Version');
-  static readonly Skin = new OsucadSettings<string>('Skin');
+  static readonly Skin = new OsucadSettings<string | null>('Skin');
+  static readonly UseSkinHitSounds = new OsucadSettings<boolean>('UseSkinHitSounds');
 
   static readonly MasterVolume = new OsucadSettings<number>('MasterVolume');
   static readonly MusicVolume = new OsucadSettings<number>('MusicVolume');

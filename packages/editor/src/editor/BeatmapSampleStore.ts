@@ -22,13 +22,10 @@ export class BeatmapSampleStore extends Component {
 
   beatmapSamples = new Map<string, Sample>();
 
-  skinSamples = new Map<string, Sample>();
-
   @asyncDependencyLoader()
   async load() {
     await Promise.all([
       this.#loadBeatmapSamples(),
-      this.#loadSkinSamples(),
     ]);
   }
 
@@ -66,30 +63,6 @@ export class BeatmapSampleStore extends Component {
             this.beatmapSamples.set(key, sample);
           })
           .catch(err => console.warn(`Failed to decode audio for "${key}"`, err)),
-      );
-    }
-
-    await Promise.all(promises);
-  }
-
-  async #loadSkinSamples() {
-    const sampleSets = ['normal', 'soft', 'drum'];
-    const additions = ['hitnormal', 'hitwhistle', 'hitfinish', 'hitclap', 'sliderslide', 'sliderwhistle'];
-
-    const sampleFilenames = sampleSets.flatMap(sampleSet => additions.map(addition => `${sampleSet}-${addition}`));
-
-    const promises: Promise<any>[] = [];
-
-    for (const key of sampleFilenames) {
-      promises.push(
-        this.skin.getSample(this.mixer.hitsounds, key).then((sample) => {
-          if (!sample) {
-            console.warn(`Could not find sample for ${key}`);
-            return;
-          }
-
-          this.skinSamples.set(key, sample);
-        }),
       );
     }
 
@@ -136,11 +109,11 @@ export class BeatmapSampleStore extends Component {
     }
 
     if (sample.index === 1) {
-      const sample = this.beatmapSamples.get(key) ?? this.skinSamples.get(key);
+      const sample = this.beatmapSamples.get(key) ?? this.skin.getSample(this.mixer.hitsounds, key);
       if (sample)
         return sample;
     }
 
-    return this.beatmapSamples.get(key + sample.index) ?? this.skinSamples.get(key) ?? null;
+    return this.beatmapSamples.get(key + sample.index) ?? this.skin.getSample(this.mixer.hitsounds, key) ?? null;
   }
 }

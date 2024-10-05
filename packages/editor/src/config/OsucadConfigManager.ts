@@ -3,7 +3,8 @@ import { OsucadSettings } from './OsucadSettings';
 
 export class OsucadConfigManager extends ConfigManager<OsucadSettings<any>> {
   initializeDefaults() {
-    this.setDefault(OsucadSettings.Skin, 'default');
+    this.setDefault(OsucadSettings.Skin, null);
+    this.setDefault(OsucadSettings.UseSkinHitSounds, true);
     this.setDefault(OsucadSettings.MasterVolume, 50);
     this.setDefault(OsucadSettings.MusicVolume, 75);
     this.setDefault(OsucadSettings.HitsoundVolume, 75);
