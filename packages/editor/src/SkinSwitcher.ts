@@ -1,6 +1,5 @@
 import type {
   AudioChannel,
-  Bindable,
   Drawable,
   KeyDownEvent,
   Sample,
@@ -11,15 +10,11 @@ import type { ISkin } from './skinning/ISkin';
 import type { ISkinComponentLookup } from './skinning/ISkinComponentLookup';
 import type { ISkinSource } from './skinning/ISkinSource';
 import type { SkinConfig } from './skinning/SkinConfig.ts';
-import {
-  Action,
-  asyncDependencyLoader,
-  Axes,
-  CompositeDrawable,
-  Key,
-  resolved,
-} from 'osucad-framework';
+import { Action, Anchor, asyncDependencyLoader, Axes, Bindable, BindableBoolean, Box, CompositeDrawable, Container, dependencyLoader, EasingFunction, Key, MaskingContainer, resolved } from 'osucad-framework';
+import { OsucadConfigManager } from './config/OsucadConfigManager.ts';
+import { OsucadSettings } from './config/OsucadSettings.ts';
 import { IResourcesProvider } from './io/IResourcesProvider';
+import { OsucadSpriteText } from './OsucadSpriteText.ts';
 import { createDefaultSkin } from './skinning/CreateDefaultSkin';
 
 export class SkinSwitcher extends CompositeDrawable implements ISkinSource {
@@ -51,11 +46,41 @@ export class SkinSwitcher extends CompositeDrawable implements ISkinSource {
     this.sourceChanged.emit();
   }
 
+  @resolved(OsucadConfigManager)
+  config!: OsucadConfigManager;
+
+  useSkinHitSounds = new BindableBoolean(true);
+
   @asyncDependencyLoader()
   async load() {
+    this.config.bindWith(OsucadSettings.UseSkinHitSounds, this.useSkinHitSounds);
+
     this.defaultSkin = await createDefaultSkin(this.resources);
     this.activeSources = [this.defaultSkin];
+
+    this.relativeSizeAxes = Axes.Both;
+
+    const initialSkinName = this.config.get(OsucadSettings.Skin) ?? null;
+
+    if (initialSkinName) {
+      const skin = this.skinStore.skins.value.find(it => it.name === initialSkinName);
+      if (skin)
+        await this.loadSkin(skin);
+    }
+
+    this.loadingSkin.valueChanged.addListener((evt) => {
+      if (this.#skinLoadingOverlay) {
+        this.#skinLoadingOverlay.hide();
+        this.#skinLoadingOverlay.expire();
+        this.#skinLoadingOverlay = null;
+      }
+
+      if (evt.value)
+        this.addInternal(this.#skinLoadingOverlay = new SkinLoadingOverlay(evt.value));
+    });
   }
+
+  #skinLoadingOverlay: SkinLoadingOverlay | null = null;
 
   readonly sourceChanged = new Action();
 
@@ -87,9 +112,12 @@ export class SkinSwitcher extends CompositeDrawable implements ISkinSource {
     return null;
   }
 
-  async getSample(channel: AudioChannel, name: string): Promise<Sample | null> {
+  getSample(channel: AudioChannel, name: string): Sample | null {
+    if (!this.useSkinHitSounds.value)
+      return this.defaultSkin.getSample(channel, name);
+
     for (const source of this.activeSources) {
-      const sample = await source.getSample(channel, name);
+      const sample = source.getSample(channel, name);
       if (sample)
         return sample;
     }
@@ -99,8 +127,15 @@ export class SkinSwitcher extends CompositeDrawable implements ISkinSource {
 
   #activeSkinProvider: SkinProvider | null = null;
 
+  loadingSkin = new Bindable<SkinProvider | null>(null);
+
   async loadSkin(skin: SkinProvider) {
+    if (this.loadingSkin.value)
+      return;
+
     const previousSkin = this.#activeSkin;
+
+    this.loadingSkin.value = skin;
 
     console.log('Loading skin', skin.name);
 
@@ -108,15 +143,14 @@ export class SkinSwitcher extends CompositeDrawable implements ISkinSource {
       this.activeSkin = await skin.loadSkin(this.resources);
       this.#activeSkinProvider = skin;
 
-      console.log('Loaded skin', skin.name);
-
-      if (previousSkin) {
+      if (previousSkin)
         this.scheduler.addDelayed(() => previousSkin.dispose(), 1000);
-      }
     }
     catch (e) {
       console.error(e);
     }
+
+    this.loadingSkin.value = null;
   }
 
   loadNextSkin() {
@@ -150,5 +184,61 @@ export class SkinSwitcher extends CompositeDrawable implements ISkinSource {
         return value;
     }
     return null;
+  }
+}
+
+class SkinLoadingOverlay extends MaskingContainer {
+  constructor(readonly skin: SkinProvider) {
+    super();
+  }
+
+  @dependencyLoader()
+  load() {
+    this.autoSizeAxes = Axes.Y;
+    this.width = 500;
+
+    this.anchor = Anchor.BottomLeft;
+    this.origin = Anchor.BottomLeft;
+
+    this.x = 50;
+    this.y = -50;
+
+    this.cornerRadius = 6;
+
+    this.addAllInternal(
+      new Box({
+        relativeSizeAxes: Axes.Both,
+        color: 0x222228,
+        alpha: 0.9,
+      }),
+      new Container({
+        relativeSizeAxes: Axes.X,
+        autoSizeAxes: Axes.Y,
+        padding: 18,
+        children: [
+          new OsucadSpriteText({
+            text: `Loading skin ${this.skin.name}...`,
+            fontSize: 20,
+            anchor: Anchor.CenterLeft,
+            origin: Anchor.CenterLeft,
+          }),
+        ],
+      }),
+    );
+  }
+
+  protected loadComplete() {
+    super.loadComplete();
+
+    this
+      .moveToX(-50)
+      .moveToX(50, 500, EasingFunction.OutExpo)
+      .fadeInFromZero(500, EasingFunction.OutQuad);
+  }
+
+  hide() {
+    this
+      .moveToX(-50, 350, EasingFunction.OutExpo)
+      .fadeOut(350, EasingFunction.OutQuad);
   }
 }

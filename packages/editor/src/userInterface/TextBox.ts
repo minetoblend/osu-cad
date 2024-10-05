@@ -1,6 +1,7 @@
 import type {
   Bindable,
   ClickEvent,
+  Drawable,
   IKeyBindingHandler,
   KeyBindingPressEvent,
   KeyDownEvent,
@@ -96,6 +97,9 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
     if (!this.hasFocus)
       return false;
 
+    if (this.ignoredKeys.length > 0 && this.ignoredKeys.includes(e.key))
+      return false;
+
     switch (e.key) {
       case Key.Escape:
 
@@ -133,15 +137,12 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
 
   readonly #textInputScheduler = new Scheduler(null);
 
+  ignoredKeys: Key[] = [];
+
   @dependencyLoader()
   [Symbol('load')]() {
     this.addAllInternal(
-      new FastRoundedBox({
-        relativeSizeAxes: Axes.Both,
-        color: 0x000000,
-        alpha: 0.4,
-        cornerRadius: 4,
-      }),
+      this.createBackground(),
       this.#textContainer = new Container({
         relativeSizeAxes: Axes.Both,
         padding: { horizontal: 8, vertical: 7 },
@@ -202,7 +203,7 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
   @resolved(ThemeColors)
   colors!: ThemeColors;
 
-  createPlaceholder(): OsucadSpriteText {
+  protected createPlaceholder(): OsucadSpriteText {
     return new OsucadSpriteText({
       text: this.placeholderText,
       color: this.colors.text,
@@ -210,7 +211,16 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
     });
   }
 
-  createText(): OsucadSpriteText {
+  protected createBackground(): Drawable {
+    return new FastRoundedBox({
+      relativeSizeAxes: Axes.Both,
+      color: 0x000000,
+      alpha: 0.4,
+      cornerRadius: 4,
+    });
+  }
+
+  protected createText(): OsucadSpriteText {
     return new OsucadSpriteText({
       color: this.colors.text,
     });
@@ -648,6 +658,10 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
     });
 
     return this;
+  }
+
+  withIgnoredKeys(...keys: Key[]) {
+    this.ignoredKeys = keys;
   }
 }
 

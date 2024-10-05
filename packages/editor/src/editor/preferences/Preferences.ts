@@ -13,6 +13,7 @@ import { MainScrollContainer } from '../MainScrollContainer';
 import { ThemeColors } from '../ThemeColors';
 import { AudioPreferencesSection } from './AudioPreferencesSection';
 import { MainMenuPreferencesSection } from './MainMenuPreferencesSection';
+import { SkinSection } from './SkinSection.ts';
 import { ViewportPreferencesSection } from './ViewportPreferencesSection';
 
 export class Preferences extends Container {
@@ -58,6 +59,7 @@ export class Preferences extends Container {
     this.addAll(
       new AudioPreferencesSection(),
       new ViewportPreferencesSection(),
+      new SkinSection(),
       new MainMenuPreferencesSection(),
     );
   }
