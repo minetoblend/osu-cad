@@ -1,17 +1,11 @@
 import type { IKeyBindingHandler, KeyBindingPressEvent } from 'osucad-framework';
 import type { OsuHitObject } from '../../../beatmap/hitObjects/OsuHitObject';
 import type { SliderSelectionType } from '../../../beatmap/hitObjects/SliderSelection';
-import {
-  Action,
-  Container,
-  dependencyLoader,
-  PlatformAction,
-  resolved,
-} from 'osucad-framework';
+import { Action, Component, dependencyLoader, PlatformAction, resolved } from 'osucad-framework';
 import { HitObjectList } from '../../../beatmap/hitObjects/HitObjectList';
 import { Slider } from '../../../beatmap/hitObjects/Slider';
 
-export class EditorSelection extends Container implements Iterable<OsuHitObject>, IKeyBindingHandler<PlatformAction> {
+export class EditorSelection extends Component implements Iterable<OsuHitObject>, IKeyBindingHandler<PlatformAction> {
   readonly #selection = new Set<OsuHitObject>();
 
   get length(): number {
@@ -120,5 +114,12 @@ export class EditorSelection extends Container implements Iterable<OsuHitObject>
 
   selectAll() {
     this.select(this.hitObjects.items);
+  }
+
+  override dispose(isDisposing: boolean = true) {
+    for (const h of [...this.#selection])
+      this.deselect(h);
+
+    super.dispose(isDisposing);
   }
 }
