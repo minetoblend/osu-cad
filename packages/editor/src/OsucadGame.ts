@@ -96,6 +96,11 @@ export class OsucadGame extends Game implements IResourcesProvider {
       OsucadIcons.load(),
     ]);
 
+    const skinSwitcher = new SkinSwitcher(this.environment.skins);
+
+    this.dependencies.provide(ISkinSource, skinSwitcher);
+    this.dependencies.provide(SkinSwitcher, skinSwitcher);
+
     this.#innerContainer.add(
       new FpsOverlay({
         child:
@@ -126,8 +131,6 @@ export class OsucadGame extends Game implements IResourcesProvider {
     this.add(notifications);
     this.dependencies.provide(notifications);
 
-    const skinSwitcher = new SkinSwitcher(this.environment.skins);
-
     const beatmapSelect = new BeatmapSelect();
 
     await Promise.all([
@@ -135,8 +138,6 @@ export class OsucadGame extends Game implements IResourcesProvider {
     ]);
 
     this.add(skinSwitcher);
-
-    this.dependencies.provide(ISkinSource, skinSwitcher);
 
     if (!isMobile.any) {
       this.add(new MainCursorContainer());
