@@ -251,7 +251,7 @@ export class TargetGroupingTransformTracker {
       }
 
       t.apply(t.endTime);
-      // t.TriggerComplete();
+      t.triggerComplete();
     }
   }
 
@@ -281,6 +281,6 @@ export class TargetGroupingTransformTracker {
   }
 
   #resetLastAppliedCache() {
-    for (const tracked of this.#targetMembers) this.#lastAppliedTransformIndices[tracked]=0;
+    for (const tracked of this.#targetMembers) this.#lastAppliedTransformIndices[tracked] = 0;
   }
 }
