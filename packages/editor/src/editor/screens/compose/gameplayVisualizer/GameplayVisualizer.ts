@@ -1,10 +1,20 @@
 import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject.ts';
-import { Axes, BindableBoolean, clamp, dependencyLoader, resolved, Vec2, VisibilityContainer } from 'osucad-framework';
+import {
+  Axes,
+  BindableBoolean,
+  clamp,
+  dependencyLoader,
+  EasingFunction,
+  resolved,
+  Vec2,
+  VisibilityContainer,
+} from 'osucad-framework';
 import { HitObjectList } from '../../../../beatmap/hitObjects/HitObjectList.ts';
 import { Slider } from '../../../../beatmap/hitObjects/Slider.ts';
 import { Spinner } from '../../../../beatmap/hitObjects/Spinner.ts';
 import { OsucadConfigManager } from '../../../../config/OsucadConfigManager.ts';
 import { OsucadSettings } from '../../../../config/OsucadSettings.ts';
+import { animate } from '../../../../utils/animate.ts';
 import { EditorClock } from '../../../EditorClock.ts';
 import { GameplayCursor } from './GameplayCursor.ts';
 
@@ -25,9 +35,14 @@ export class GameplayVisualizer extends VisibilityContainer {
     this.isVisible.addOnChangeListener(evt => evt.value ? this.show() : this.hide(), { immediate: true });
   }
 
-  override popIn() { this.alpha = 1; }
+  override popIn() {
+    this.alpha = 1;
+    this.#firstUpdateSinceShow = true;
+  }
 
-  override popOut() { this.alpha = 0; }
+  override popOut() {
+    this.alpha = 0;
+  }
 
   protected cursor!: GameplayCursor;
 
@@ -35,6 +50,8 @@ export class GameplayVisualizer extends VisibilityContainer {
   protected hitObjects!: HitObjectList;
 
   #currentHitObjectIndex = 0;
+
+  #firstUpdateSinceShow = true;
 
   update() {
     super.update();
@@ -51,20 +68,71 @@ export class GameplayVisualizer extends VisibilityContainer {
     const time = this.editorClock.currentTime;
 
     if (hitObject) {
-      if (time >= hitObject.startTime && time < hitObject.endTime) {
-        this.cursor.position = this.#getHitObjectPositionAt(hitObject, time);
-        return;
+      let position: Vec2;
+
+      if (
+        (time >= hitObject.startTime && time < this.#getEndTime(hitObject))
+        || (this.#currentHitObjectIndex === 0 && time < hitObject.startTime)
+      ) {
+        position = this.#getHitObjectPositionAt(hitObject, time);
+      }
+      else {
+        const next = this.hitObjects.get(this.#currentHitObjectIndex + 1);
+        if (!next)
+          return;
+
+        const duration = next.startTime - hitObject.endTime;
+
+        const startPosition = hitObject.stackedEndPosition;
+        const endPosition = next.stackedPosition;
+
+        const distance = startPosition.distance(endPosition);
+
+        const cursorDance = duration > 350 && distance < 200;
+
+        const progress = clamp((time - this.#getEndTime(hitObject)) / duration, 0, 1);
+
+        position = startPosition.lerp(endPosition, progress);
+
+        if (cursorDance) {
+          const factor
+            = progress < 0.55
+              ? animate(progress, 0, 0.55, 0, 1, EasingFunction.OutCubic)
+              : animate(progress, 0.55, 1, 1, 0, EasingFunction.InCubic);
+
+          let direction = distance === 0
+            ? new Vec2(0, -1)
+            : endPosition.sub(startPosition).normalize().rotate(Math.PI / 2);
+
+          if (direction.y > 0)
+            direction.scaleInPlace(-1);
+
+          direction = direction.lerp(new Vec2(0, -1), 0.5);
+
+          position.addInPlace(direction.scale(factor * Math.max(distance * 0.5, 60)));
+        }
       }
 
-      const next = this.hitObjects.get(this.#currentHitObjectIndex + 1);
-      if (!next)
-        return;
-
-      const duration = Math.min(next.startTime - hitObject.endTime, 400);
-      const progress = clamp((time - hitObject.endTime) / duration, 0, 1);
-
-      this.cursor.position = hitObject.stackedEndPosition.lerp(next.stackedPosition, progress);
+      if (this.#firstUpdateSinceShow) {
+        this.cursor.position = position;
+        this.#firstUpdateSinceShow = false;
+      }
+      else {
+        this.cursor.position = position.lerp(this.cursor.position, Math.exp(-0.05 * this.time.elapsed));
+      }
     }
+  }
+
+  #getEndTime(hitObject: OsuHitObject) {
+    if (hitObject instanceof Slider) {
+      // slider leniency
+      return Math.max(
+        hitObject.endTime - 36,
+        hitObject.startTime + hitObject.duration * 0.5,
+      );
+    }
+
+    return hitObject.endTime;
   }
 
   #getHitObjectPositionAt(hitObject: OsuHitObject, time: number) {
@@ -91,7 +159,7 @@ export class GameplayVisualizer extends VisibilityContainer {
   #updateHitObjectIndex(): OsuHitObject | null {
     let index = clamp(this.#currentHitObjectIndex, 0, this.hitObjects.length - 1);
 
-    while (index > 0 && this.editorClock.currentTime < this.hitObjects.get(index - 1)!.endTime)
+    while (index > 0 && this.editorClock.currentTime < this.hitObjects.get(index)!.startTime)
       index--;
 
     while (index < this.hitObjects.length - 1 && this.editorClock.currentTime > this.hitObjects.get(index + 1)!.startTime)

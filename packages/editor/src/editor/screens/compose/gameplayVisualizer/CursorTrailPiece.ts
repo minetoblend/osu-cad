@@ -5,7 +5,11 @@ import { SkinnableDrawable } from '../../../../skinning/SkinnableDrawable';
 export class CursorTrailPiece extends PoolableDrawable {
   @dependencyLoader()
   load() {
-    this.addInternal(new SkinnableDrawable(OsuSkinComponentLookup.CursorTrail));
+    this.addInternal(
+      new SkinnableDrawable(OsuSkinComponentLookup.CursorTrail).with({
+        alpha: 0.35,
+      }),
+    );
   }
 
   override get removeCompletedTransforms() {
