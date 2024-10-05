@@ -19,16 +19,63 @@ export class SampleStore {
     this.#resources.addExtension('mp3');
   }
 
-  async getSample(channel: AudioChannel, name: string): Promise<Sample | null> {
-    const data = this.#resources.get(name);
-    if (!data) {
-      return null;
+  #buffers = new Map<string, AudioBuffer>();
+
+  #extensions = ['.wav', '.ogg', '.mp3'];
+
+  #stripExtension(name: string) {
+    for (const extension of this.#extensions) {
+      if (name.endsWith(extension)) {
+        name = name.slice(0, -extension.length);
+        break;
+      }
     }
 
-    return this.#audioManager.createSampleFromArrayBuffer(channel, data).catch((e) => {
-      console.warn(`Failed to load sample "${name}"`, e);
+    return name;
+  }
 
+  async loadAvailable() {
+    const names = this.#resources.getAvailableResources().filter(filename => this.#extensions.some(ext => filename.endsWith(ext)));
+
+    console.log('Loading samples', names, this.#resources.getAvailableResources());
+
+    await Promise.all(names.map(name => this.loadSample(name)));
+  }
+
+  async loadSample(name: string): Promise<AudioBuffer | null> {
+    let data = this.#resources.get(name);
+    if (!data)
+      data = await this.#resources.getAsync(name);
+    if (!data)
       return null;
-    });
+
+    const sample = await this.#audioManager.context.decodeAudioData(data)
+      .catch((e) => {
+        console.warn(`Failed to load sample "${name}"`, e);
+        return null;
+      });
+
+    if (sample) {
+      this.#buffers.set(this.#stripExtension(name), sample);
+    }
+
+    return sample;
+  }
+
+  #samples = new Map<string, Sample>();
+
+  getSample(channel: AudioChannel, name: string): Sample | null {
+    let sample = this.#samples.get(name);
+
+    if (!sample) {
+      const buffer = this.#buffers.get(this.#stripExtension(name));
+
+      if (buffer) {
+        sample = this.#audioManager.createSample(channel, buffer);
+        this.#samples.set(name, sample);
+      }
+    }
+
+    return sample ?? null;
   }
 }
