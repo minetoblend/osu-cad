@@ -18,6 +18,7 @@ export class DistanceSnapProvider
       // adding a tiny bit of length to make up for precision errors shortening the slider
       Math.ceil(referenceObject!.startTime + duration) + 1,
       this.editorClock.beatSnapDivisor.value,
+      false,
     );
 
     if (time > referenceObject.startTime + duration) {

@@ -68,7 +68,7 @@ export class ControlPointInfo {
     return undefined;
   }
 
-  snap(time: number, divisor: number) {
+  snap(time: number, divisor: number, rounded: boolean = true) {
     const timingPoint = this.timingPointAt(time);
 
     if (!timingPoint)
@@ -78,14 +78,15 @@ export class ControlPointInfo {
     const beats = (Math.max(time, 0) - timingPoint.time) / beatSnapLength;
 
     const closestBeat = beats < 0 ? -Math.round(-beats) : Math.round(beats);
-    const snappedTime = Math.floor(
-      timingPoint.time + closestBeat * beatSnapLength,
-    );
+    let snappedTime = timingPoint.time + closestBeat * beatSnapLength;
+
+    if (rounded)
+      snappedTime = Math.floor(snappedTime);
 
     if (snappedTime >= 0)
       return snappedTime;
 
-    return snappedTime + beatSnapLength;
+    return rounded ? Math.floor(snappedTime + beatSnapLength) : snappedTime + beatSnapLength;
   }
 
   timingPointAt(time: number) {
