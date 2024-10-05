@@ -1,8 +1,7 @@
-import type { Bindable, ClickEvent, Key, KeyDownEvent, MouseDownEvent, MouseUpEvent } from 'osucad-framework';
-import { ClickableContainer, MouseButton, Visibility } from 'osucad-framework';
+import type { Bindable, Key, KeyDownEvent, MouseDownEvent, MouseUpEvent } from 'osucad-framework';
 import type { ComposeTool } from './tools/ComposeTool';
+import { MouseButton } from 'osucad-framework';
 import { ComposeToolbarButton } from './ComposeToolbarButton';
-import { ComposeToolbarButtonSubmenu } from './ComposeToolbarButtonSubmenu';
 
 export interface ComposeToolbarToolButtonOptions {
   tool: ComposeTool;
@@ -49,7 +48,8 @@ export class ComposeToolbarToolButton extends ComposeToolbarButton {
         if (!this.active.value) {
           this.submenu?.hide();
           this.iconTexture = this.tool.icon;
-        } else {
+        }
+        else {
           this.iconTexture = tool.icon;
         }
       },
@@ -77,8 +77,6 @@ export class ComposeToolbarToolButton extends ComposeToolbarButton {
     super.onMouseUp(e);
   }
 
-
-
   override update() {
     super.update();
   }
@@ -96,8 +94,5 @@ export class ComposeToolbarToolButton extends ComposeToolbarButton {
     if (this.keyBinding && e.key === this.keyBinding) {
       this.armed = false;
     }
-
-    return false;
   }
 }
-
