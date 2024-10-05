@@ -120,13 +120,13 @@ export abstract class DrawableComposeTool extends CommandContainer {
 
     this.withScope(() => {
       interaction.completed.addListener(() => {
-        console.debug('Interaction completed', interaction);
+        console.debug('Interaction completed', interaction.label ?? interaction.constructor.name);
         if (this.#currentInteraction === interaction) {
           this.#currentInteraction = null;
         }
       });
       interaction.cancelled.addListener(() => {
-        console.debug('Interaction cancelled', interaction);
+        console.debug('Interaction cancelled', interaction.label ?? interaction.constructor.name);
         if (this.#currentInteraction === interaction) {
           this.#currentInteraction = null;
         }
@@ -140,7 +140,7 @@ export abstract class DrawableComposeTool extends CommandContainer {
     this.#interactionContainer.updateChildrenLife();
     interaction.updateDrawNodeTransform();
 
-    console.debug('Interaction started', interaction);
+    console.debug('Interaction started', interaction.label ?? interaction.constructor.name);
   }
 
   protected cancelCurrentInteraction(): boolean {
