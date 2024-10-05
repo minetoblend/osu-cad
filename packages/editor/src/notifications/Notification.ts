@@ -1,4 +1,12 @@
-import { Axes, CompositeDrawable, Container, RoundedBox } from 'osucad-framework';
+import {
+  Axes,
+  CompositeDrawable,
+  Container,
+  FillDirection,
+  FillFlowContainer,
+  RoundedBox,
+  Vec2,
+} from 'osucad-framework';
 import { OsucadSpriteText } from '../OsucadSpriteText';
 import { NotificationOverlay } from './NotificationOverlay';
 
@@ -13,16 +21,6 @@ export class Notification extends CompositeDrawable {
     this.autoSizeAxes = Axes.Y;
     this.relativeSizeAxes = Axes.X;
     this.alpha = 0.9;
-
-    const descriptionDrawable = new OsucadSpriteText({
-      text: description ?? '',
-      y: 22,
-      alpha: 0.85,
-      fontSize: 16,
-    });
-
-    descriptionDrawable.style.wordWrap = true;
-    descriptionDrawable.style.wordWrapWidth = 340;
 
     this.addAllInternal(
       this.movementContainer = new Container({
@@ -42,8 +40,11 @@ export class Notification extends CompositeDrawable {
               },
             ],
           }),
-          new Container({
-            autoSizeAxes: Axes.Both,
+          this.mainContent = new FillFlowContainer({
+            relativeSizeAxes: Axes.X,
+            autoSizeAxes: Axes.Y,
+            spacing: new Vec2(4),
+            direction: FillDirection.Vertical,
             padding: 12,
             children: [
               new OsucadSpriteText({
@@ -51,15 +52,33 @@ export class Notification extends CompositeDrawable {
                 color: 0xB6B6C3,
                 fontSize: 18,
               }),
-              descriptionDrawable,
             ],
           }),
         ],
       }),
     );
+
+    if (description) {
+      const descriptionDrawable = new OsucadSpriteText({
+        text: description,
+        alpha: 0.85,
+        fontSize: 16,
+      });
+
+      descriptionDrawable.style.wordWrap = true;
+      descriptionDrawable.style.wordWrapWidth = 340;
+
+      this.mainContent.add(descriptionDrawable);
+    }
   }
 
-  movementContainer!: Container;
+  readonly movementContainer: Container;
+
+  protected readonly mainContent: Container;
+
+  get dismissAutomatically() {
+    return true;
+  }
 
   dismiss() {
     this.findClosestParentOfType(NotificationOverlay)?.dismiss(this);

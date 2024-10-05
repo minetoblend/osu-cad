@@ -29,9 +29,8 @@ export class NotificationOverlay extends Container {
   #notificationCount = 0;
 
   add<T extends Drawable>(notification: T & Notification): T {
-    this.scheduler.addDelayed(() => {
-      this.dismiss(notification);
-    }, 5000);
+    if (notification.dismissAutomatically)
+      this.scheduler.addDelayed(() => this.dismiss(notification), 5000);
 
     notification.x = 200;
     notification.alpha = 0;
