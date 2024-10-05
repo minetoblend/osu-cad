@@ -98,6 +98,8 @@ export class ScaleSelectionInteraction extends ComposeToolInteraction {
     super.loadComplete();
 
     this.#composer = this.findClosestParentOfType(HitObjectComposer)!;
+
+    this.#updateTransform();
   }
 
   onMouseDown(): boolean {
