@@ -204,6 +204,8 @@ class SliderPathVisualizerHandle extends CompositeDrawable {
   #type?: PathType | null;
 
   onHover(): boolean {
+    if (this.isDisposed)
+      return false;
     this.#shadow.scale = 1.2;
     this.#handle.scale = 1.2;
 
@@ -211,6 +213,8 @@ class SliderPathVisualizerHandle extends CompositeDrawable {
   }
 
   onHoverLost(): boolean {
+    if (this.isDisposed)
+      return false;
     this.#shadow.scale = 1;
     this.#handle.scale = 1;
 
