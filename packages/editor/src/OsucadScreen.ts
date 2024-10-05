@@ -18,11 +18,8 @@ export abstract class OsucadScreen extends Screen {
   onEntering(e: ScreenTransitionEvent) {
     super.onEntering(e);
 
-    console.log(this.backgroundStack, this.dependencies);
     if (this.backgroundStack) {
       const background = this.#ownedBackground = this.createBackground();
-
-      console.log(background, this);
 
       if (background)
         this.backgroundStack.push(background);
