@@ -11,4 +11,5 @@ export enum OsuSkinComponents {
   SpinnerBody,
   Cursor,
   CursorTrail,
+  HitCircleSelect,
 }

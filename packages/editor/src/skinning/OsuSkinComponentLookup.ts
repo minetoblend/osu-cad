@@ -14,4 +14,5 @@ export class OsuSkinComponentLookup extends GameplaySkinComponentLookup<OsuSkinC
   static SpinnerBody = new OsuSkinComponentLookup(OsuSkinComponents.SpinnerBody);
   static Cursor = new OsuSkinComponentLookup(OsuSkinComponents.Cursor);
   static CursorTrail = new OsuSkinComponentLookup(OsuSkinComponents.CursorTrail);
+  static HitCircleSelect = new OsuSkinComponentLookup(OsuSkinComponents.HitCircleSelect);
 }

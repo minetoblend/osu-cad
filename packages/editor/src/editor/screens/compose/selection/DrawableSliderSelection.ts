@@ -1,7 +1,9 @@
 import type { Slider } from '../../../../beatmap/hitObjects/Slider';
-import { Anchor, Axes, dependencyLoader, DrawableSprite, resolved } from 'osucad-framework';
+import { Anchor, Axes, dependencyLoader, resolved } from 'osucad-framework';
 import { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
+import { OsuSkinComponentLookup } from '../../../../skinning/OsuSkinComponentLookup.ts';
+import { SkinnableDrawable } from '../../../../skinning/SkinnableDrawable.ts';
 import { EditorSelection } from '../EditorSelection';
 import { DrawableSelection } from './DrawableSelection';
 
@@ -13,9 +15,9 @@ export class DrawableSliderSelection extends DrawableSelection<Slider> {
   @resolved(ISkinSource)
   protected skin!: ISkinSource;
 
-  headCircle!: DrawableSprite;
+  headCircle!: SkinnableDrawable;
 
-  tailCircle!: DrawableSprite;
+  tailCircle!: SkinnableDrawable;
 
   @resolved(EditorSelection)
   protected selection!: EditorSelection;
@@ -26,14 +28,12 @@ export class DrawableSliderSelection extends DrawableSelection<Slider> {
     this.size = OsuHitObject.object_dimensions;
 
     this.addAllInternal(
-      this.tailCircle = new DrawableSprite({
-        texture: this.skin.getTexture('hitcircleselect'),
+      this.tailCircle = new SkinnableDrawable(OsuSkinComponentLookup.HitCircleSelect).with({
         relativeSizeAxes: Axes.Both,
         anchor: Anchor.Center,
         origin: Anchor.Center,
       }),
-      this.headCircle = new DrawableSprite({
-        texture: this.skin.getTexture('hitcircleselect'),
+      this.headCircle = new SkinnableDrawable(OsuSkinComponentLookup.HitCircleSelect).with({
         relativeSizeAxes: Axes.Both,
         anchor: Anchor.Center,
         origin: Anchor.Center,
