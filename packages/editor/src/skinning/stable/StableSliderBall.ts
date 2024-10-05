@@ -2,6 +2,7 @@ import type { DrawableSlider } from '../../editor/hitobjects/DrawableSlider';
 import {
   Anchor,
   Axes,
+  Bindable,
   clamp,
   CompositeDrawable,
   dependencyLoader,
@@ -10,37 +11,73 @@ import {
   PIXIContainer,
   resolved,
 } from 'osucad-framework';
-import { Mesh, QuadGeometry } from 'pixi.js';
+import { Color, Mesh, QuadGeometry } from 'pixi.js';
 import { DrawableHitObject } from '../../editor/hitobjects/DrawableHitObject';
+import { SkinnableTextureAnimation } from '../DrawableAnimation.ts';
 import { ISkinSource } from '../ISkinSource';
+import { SkinConfig } from '../SkinConfig.ts';
 import { SliderBallShader } from './SliderBallShader';
 
 export class StableSliderBall extends CompositeDrawable {
+  constructor(readonly sliderb: Drawable | null) {
+    super();
+  }
+
   @resolved(ISkinSource)
   private skin!: ISkinSource;
+
+  allowSliderBallTint = false;
+
+  sliderBall!: Drawable;
+
+  accentColor = new Bindable<Color>(new Color(0xFFFFFF));
 
   @dependencyLoader()
   load() {
     this.relativeSizeAxes = Axes.Both;
 
-    this.addAllInternal(
-      new MainSliderBall(),
-      this.#specular = new DrawableSprite({
-        texture: this.skin.getTexture('sliderb-spec'),
-        relativeSizeAxes: Axes.Both,
-        blendMode: 'add',
+    if (this.sliderb instanceof SkinnableTextureAnimation || (this.sliderb instanceof DrawableSprite && this.sliderb.texture)) {
+      this.addInternal(this.sliderBall = this.sliderb.with({
         anchor: Anchor.Center,
         origin: Anchor.Center,
-      }),
-    );
+      }));
+    }
+    else {
+      this.addAllInternal(
+        this.sliderBall = new MainSliderBall(),
+        this.#specular = new DrawableSprite({
+          texture: this.skin.getTexture('sliderb-spec'),
+          relativeSizeAxes: Axes.Both,
+          blendMode: 'add',
+          anchor: Anchor.Center,
+          origin: Anchor.Center,
+        }),
+      );
+    }
+
+    this.accentColor.valueChanged.addListener(this.#updateColors, this);
+
+    this.skin.sourceChanged.addListener(this.#skinChanged, this);
+    this.#skinChanged();
   }
 
-  #specular!: DrawableSprite;
+  #skinChanged() {
+    this.allowSliderBallTint = this.skin.getConfig(SkinConfig.AllowSliderBallTint)?.value ?? false;
+
+    this.#updateColors();
+  }
+
+  #updateColors() {
+    this.sliderBall.color = this.allowSliderBallTint ? this.drawableHitObject.accentColor.value : 0xFFFFFF;
+  }
+
+  #specular: DrawableSprite | null = null;
 
   updateAfterChildren() {
     super.updateAfterChildren();
 
-    this.#specular.rotation = -this.parent!.rotation;
+    if (this.#specular)
+      this.#specular.rotation = -this.parent!.rotation;
   }
 
   @resolved(DrawableHitObject)
@@ -51,9 +88,14 @@ export class StableSliderBall extends CompositeDrawable {
 
     this.drawableHitObject.applyCustomUpdateState.addListener(this.#updateStateTransforms, this);
     this.#updateStateTransforms();
+
+    this.accentColor.bindTo(this.drawableHitObject.accentColor);
+    this.#updateColors();
   }
 
   #updateStateTransforms() {
+    this.clearTransformsAfter(Number.MIN_VALUE);
+
     const slider = this.drawableHitObject.hitObject!;
 
     this.absoluteSequence(slider.startTime, () => this.fadeIn());
@@ -63,7 +105,9 @@ export class StableSliderBall extends CompositeDrawable {
   dispose(isDisposing?: boolean) {
     super.dispose(isDisposing);
 
-    this.drawableHitObject.applyCustomUpdateState.removeListener(this.#updateStateTransforms);
+    this.drawableHitObject.applyCustomUpdateState.removeListener(this.#updateStateTransforms, this);
+
+    this.skin.sourceChanged.removeListener(this.#skinChanged, this);
   }
 }
 

@@ -53,7 +53,13 @@ export class StableSkin extends Skin {
           return new StableReverseArrow();
 
         case OsuSkinComponents.SliderBall:
-          return new StableSliderBall();
+          return new StableSliderBall(
+            this.getAnimation('sliderb', {
+              animatable: true,
+              looping: true,
+              animationSeparator: '',
+            }),
+          );
 
         case OsuSkinComponents.SpinnerBody:
           return new StableSpinnerBody();
@@ -95,6 +101,7 @@ export class StableSkin extends Skin {
       this.loadTexture('sliderb-spec'),
       this.loadTexture('hitcircleselect'),
       this.loadAnimation('followpoint', true),
+      this.loadAnimation('sliderb', true),
       this.loadTexture('spinner-approachcircle'),
       this.loadTexture('spinner-background'),
       this.loadTexture('spinner-bottom'),
