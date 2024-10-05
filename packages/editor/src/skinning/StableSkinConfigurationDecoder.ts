@@ -17,9 +17,12 @@ export class StableSkinConfigurationDecoder {
 
     let currentSection: Section | null = null;
 
-    for (const line of lines) {
+    for (let line of lines) {
       if (line.startsWith('//'))
         continue;
+
+      if (line.endsWith('\r'))
+        line = line.slice(0, -1);
 
       if (line.startsWith('[') && line.endsWith(']')) {
         const section = line.substring(1, line.length - 1);
