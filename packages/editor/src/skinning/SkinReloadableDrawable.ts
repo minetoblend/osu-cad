@@ -10,7 +10,7 @@ export class SkinReloadableDrawable extends PoolableDrawable {
   onSkinChanged = new Action();
 
   @dependencyLoader()
-  load(dependencies: DependencyContainer) {
+  [Symbol('load')](dependencies: DependencyContainer) {
     this.currentSkin = dependencies.resolve(ISkinSource);
     this.currentSkin.sourceChanged.addListener(this.#onChange, this);
   }
@@ -49,7 +49,7 @@ export class SkinReloadableDrawable extends PoolableDrawable {
     super.dispose(disposing);
 
     if (this.currentSkin)
-      this.currentSkin.sourceChanged.removeListener(this.#onChange);
+      this.currentSkin.sourceChanged.removeListener(this.#onChange, this);
 
     this.onSkinChanged.removeAllListeners();
   }
