@@ -9,4 +9,6 @@ export enum OsuSkinComponents {
   SliderBall,
   FollowPoint,
   SpinnerBody,
+  Cursor,
+  CursorTrail,
 }
