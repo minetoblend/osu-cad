@@ -13,7 +13,7 @@ function createWindow(): void {
   const mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
-    show: false,
+    show: is.dev,
     fullscreen: true,
     simpleFullscreen: true,
     autoHideMenuBar: true,
@@ -27,7 +27,8 @@ function createWindow(): void {
   });
 
   mainWindow.on('ready-to-show', () => {
-    mainWindow.show();
+    if (!is.dev)
+      mainWindow.show();
   });
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
