@@ -109,6 +109,8 @@ export class StableSkin extends Skin {
       this.loadTexture('spinner-middle'),
       this.loadTexture('spinner-middle2'),
       this.loadTexture('spinner-top'),
+      this.loadTexture('cursor'),
+      this.loadTexture('cursortrail'),
       this.loadTexture('default-0'),
       this.loadTexture('default-1'),
       this.loadTexture('default-2'),
