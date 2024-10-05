@@ -63,7 +63,7 @@ export class BeatmapComboProcessor extends BeatmapProcessor {
 
   @dependencyLoader()
   load() {
-    this.skin.sourceChanged.addListener(this.#skinChanged);
+    this.skin.sourceChanged.addListener(this.#skinChanged, this);
     this.config.bindWith(OsucadSettings.BeatmapComboColors, this.useBeatmapComboColors);
 
     this.useBeatmapComboColors.valueChanged.addListener(() => this.state.invalidate());
