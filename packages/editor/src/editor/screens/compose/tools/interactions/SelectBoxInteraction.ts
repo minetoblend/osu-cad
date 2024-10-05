@@ -158,13 +158,10 @@ export class SelectBoxInteraction extends ComposeToolInteraction {
     return false;
   }
 
-  onKeyUp(e: KeyUpEvent): boolean {
+  onKeyUp(e: KeyUpEvent) {
     if (e.key === Key.ControlLeft || e.key === Key.ControlRight) {
       this.#controlPressed = false;
       this.#updateSelection();
-      return true;
     }
-
-    return false;
   }
 }

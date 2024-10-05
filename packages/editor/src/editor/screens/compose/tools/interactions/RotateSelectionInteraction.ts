@@ -170,15 +170,12 @@ export class RotateSelectionInteraction extends ComposeToolInteraction {
     return false;
   }
 
-  onKeyUp(e: KeyUpEvent): boolean {
+  onKeyUp(e: KeyUpEvent) {
     switch (e.key) {
       case Key.ControlLeft:
       case Key.ControlRight:
         this.snapRotation.value = false;
-        return true;
     }
-
-    return false;
   }
 }
 
