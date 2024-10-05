@@ -1,4 +1,3 @@
-import type { ColorSource } from 'pixi.js';
 import type { HitCircle } from '../../beatmap/hitObjects/HitCircle';
 import { dependencyLoader } from 'osucad-framework';
 import { TimelineComboNumber } from './TimelineComboNumber';
@@ -16,11 +15,5 @@ export class TimelineHitCircle extends TimelineObject {
 
   setup() {
     super.setup();
-  }
-
-  protected applyComboColor(color: ColorSource) {
-    super.applyComboColor(color);
-
-    console.log(color);
   }
 }
