@@ -52,14 +52,16 @@ export class Preferences extends Container {
       }),
     );
 
+    this.#content.scrollContent.padding = { right: 10 };
+
     this.createContent();
   }
 
   protected createContent() {
     this.addAll(
       new AudioPreferencesSection(),
-      new ViewportPreferencesSection(),
       new SkinSection(),
+      new ViewportPreferencesSection(),
       new MainMenuPreferencesSection(),
     );
   }

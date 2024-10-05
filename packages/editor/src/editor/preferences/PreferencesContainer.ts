@@ -30,7 +30,7 @@ export class PreferencesContainer
 
   #preferencesContainer = new Container({
     relativeSizeAxes: Axes.Y,
-    width: 300,
+    width: 400,
   });
 
   #closeTrap = new MouseTrap({
