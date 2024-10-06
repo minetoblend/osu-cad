@@ -1,12 +1,11 @@
-import { EditorContext, loadTexture, PIXITexture, StableBeatmapParser, Track } from '@osucad/editor';
+import { EditorContext, loadTexture, PIXITexture, StableBeatmapParser } from '@osucad/editor';
 import { Beatmap } from 'packages/editor/src/beatmap/Beatmap';
 import log from 'electron-log/renderer';
 import { StableResourceStore } from './StableResourceStore';
 import { StableBeatmapEncoder } from '../../../../editor/src/beatmap/StableBeatmapEncoder';
 import { StableBeatmapInfo } from './StableBeatmapStore';
-import { join } from 'path';
 import { IResourcesProvider } from '../../../../editor/src/io/IResourcesProvider';
-import { OsucadSettings } from '../../../../editor/src/config/OsucadSettings';
+import { DifficultyInfo } from '../../../../editor/src/editor/context/EditorContext.ts';
 
 const logger = log.create({ logId: 'ElectronEditorContext' });
 
@@ -89,5 +88,39 @@ export class StableEditorContext extends EditorContext {
 
   async save() {
     return await window.api.saveBeatmap(this.osuBeatmap.folderName, this.osuBeatmap.osuFileName, new StableBeatmapEncoder().encode(this.beatmap));
+  }
+
+  async getOtherDifficulties(): Promise<DifficultyInfo[]> {
+    const difficulties: DifficultyInfo[] = [];
+
+    const parser = new StableBeatmapParser()
+
+    for (const resource of this.resources.getAvailableResources()) {
+      if(resource.endsWith('.osu') && resource !== this.osuBeatmap.osuFileName) {
+        const data = this.getResource(resource);
+        if (!data)
+          continue;
+
+        try {
+          const text = new TextDecoder().decode(data)
+          const beatmap = await parser.parse(text, {
+            timingPoints: false,
+            hitObjects: false,
+          })
+
+          if (beatmap.metadata.difficultyName === this.beatmap.metadata.difficultyName)
+            continue;
+
+          difficulties.push({
+            difficultyName: beatmap.metadata.difficultyName,
+            load: () => parser.parse(text)
+          })
+        } catch(e) {
+          console.warn(e)
+        }
+      }
+    }
+
+    return difficulties;
   }
 }
