@@ -162,6 +162,8 @@ export class BeatmapSkin extends SkinTransformer implements ISkinSource {
   override dispose(isDisposing: boolean = true) {
     this.source.sourceChanged.removeListener(this.#skinChanged, this);
 
+    this.beatmapSkin?.dispose();
+
     super.dispose(isDisposing);
   }
 }
