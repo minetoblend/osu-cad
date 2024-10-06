@@ -9,18 +9,25 @@ export abstract class DifficultyCalculator<T extends DifficultyHitObject<any>> {
   protected constructor(protected readonly beatmap: Beatmap) {
   }
 
-  calculate() {
+  calculate(): [DifficultyAttributes, Skill<T>[]] {
     const skills = this.createSkills(this.beatmap, this.#clockRate);
 
-    if (this.beatmap.hitObjects.length === 0)
-      return this.createDifficultyAttributes(this.beatmap, skills, this.#clockRate);
+    if (this.beatmap.hitObjects.length === 0) {
+      return [
+        this.createDifficultyAttributes(this.beatmap, skills, this.#clockRate),
+        skills,
+      ];
+    }
 
     for (const hitObject of this.#getDifficultyHitObjects()) {
       for (const skill of skills)
         skill.process(hitObject);
     }
 
-    return this.createDifficultyAttributes(this.beatmap, skills, this.#clockRate);
+    return [
+      this.createDifficultyAttributes(this.beatmap, skills, this.#clockRate),
+      skills,
+    ];
   }
 
   #getDifficultyHitObjects() {

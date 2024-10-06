@@ -32,6 +32,7 @@ import { Notification } from '../notifications/Notification';
 import { NotificationOverlay } from '../notifications/NotificationOverlay';
 import { OsucadScreen } from '../OsucadScreen';
 import { BeatmapSampleStore } from './BeatmapSampleStore';
+import { EditorDifficultyManager } from './difficulty/EditorDifficultyManager.ts';
 import { EditorAction } from './EditorAction';
 import { EditorBackground } from './EditorBackground.ts';
 import { EditorBottomBar } from './EditorBottomBar';
@@ -116,6 +117,12 @@ export class Editor
     const hitSoundPlayer = new HitsoundPlayer();
     this.dependencies.provide(HitsoundPlayer, hitSoundPlayer);
     this.addInternal(hitSoundPlayer);
+
+    const difficultyManager = new EditorDifficultyManager();
+
+    this.addInternal(difficultyManager);
+
+    this.dependencies.provide(EditorDifficultyManager, difficultyManager);
 
     this.addAllInternal(
       new Container({

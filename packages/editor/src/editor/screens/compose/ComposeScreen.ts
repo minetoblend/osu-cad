@@ -1,4 +1,7 @@
-import type { ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
+import type {
+  ScreenExitEvent,
+  ScreenTransitionEvent,
+} from 'osucad-framework';
 import type { ComposeTool } from './tools/ComposeTool';
 import {
   Anchor,
@@ -21,6 +24,7 @@ import { Corner, EditorCornerPiece } from '../../EditorCornerPiece';
 import { ComposeScreenTimeline } from '../../timeline/ComposeScreenTimeline';
 import { TimelineZoomButtons } from '../../timeline/TimelineZoomButtons';
 import { EditorScreen } from '../EditorScreen';
+import { DifficultyInfo } from './DifficultyInfo.ts';
 import { EditorSelection } from './EditorSelection';
 import { HitObjectComposer } from './HitObjectComposer';
 import { SelectTool } from './tools/SelectTool';
@@ -112,6 +116,12 @@ export class ComposeScreen extends EditorScreen {
                       padding: { left: 20, right: 12, vertical: 4 },
                       child: new BeatSnapDivisorSelector(),
                     }),
+                  }),
+                  new DifficultyInfo().with({
+                    anchor: Anchor.BottomLeft,
+                    origin: Anchor.BottomLeft,
+                    x: 60,
+                    y: -8,
                   }),
                 ],
               }),
