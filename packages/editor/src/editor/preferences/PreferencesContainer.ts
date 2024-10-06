@@ -1,5 +1,6 @@
 import type { ContainerOptions, IKeyBindingHandler, KeyBindingPressEvent } from 'osucad-framework';
 import { Anchor, Axes, Bindable, Container, dependencyLoader, EasingFunction } from 'osucad-framework';
+import { OsucadGame } from '../../OsucadGame.ts';
 import { EditorAction } from '../EditorAction';
 import { MouseTrap } from '../MouseTrap';
 import { Preferences } from './Preferences';
@@ -49,21 +50,20 @@ export class PreferencesContainer
 
   @dependencyLoader()
   load() {
-    this.#preferencesContainer.add((this.#preferences = new Preferences()));
+    this.dependencies.resolve(OsucadGame).fullyLoaded.addListener(() => {
+      this.#preferencesContainer.add((this.#preferences = new Preferences()));
+      this.#preferences.x = -1;
+
+      this.preferencesVisible.addOnChangeListener(evt => this.#updateVisibility(evt.value));
+    });
+
     this.addAllInternal(
       this.#content,
       this.#closeTrap,
       this.#preferencesContainer,
     );
 
-    this.#preferences.x = -1;
-
-    this.preferencesVisible.addOnChangeListener(
-      ({ value: visible }) => {
-        this.#updateVisibility(visible);
-      },
-      { immediate: true },
-    );
+    this.#closeTrap.isActive = false;
   }
 
   #updateVisibility(visible: boolean) {
