@@ -36,6 +36,8 @@ export class SelectionOverlay extends CompositeDrawable {
       relativeSizeAxes: Axes.Both,
     }));
 
+    this.#selectionContainer.drawNode.enableRenderGroup();
+
     this.selection.selectionChanged.addListener(([hitObject, selected]) => {
       if (selected)
         this.#onSelected(hitObject);
