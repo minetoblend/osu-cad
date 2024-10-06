@@ -67,6 +67,8 @@ export class GameplayVisualizer extends VisibilityContainer {
 
     const time = this.editorClock.currentTime;
 
+    let fac = 0.05;
+
     if (hitObject) {
       let position: Vec2;
 
@@ -83,14 +85,19 @@ export class GameplayVisualizer extends VisibilityContainer {
 
         const duration = next.startTime - hitObject.endTime;
 
-        const startPosition = hitObject.stackedEndPosition;
+        const startPosition = this.#getEndPosition(hitObject);
         const endPosition = next.stackedPosition;
 
         const distance = startPosition.distance(endPosition);
 
+        fac = distance / duration * 0.025 + 0.01;
+
         const cursorDance = duration > 350 && distance < 200;
 
         const progress = clamp((time - this.#getEndTime(hitObject)) / duration, 0, 1);
+
+        if (progress > 0.9)
+          fac += 0.025;
 
         position = startPosition.lerp(endPosition, progress);
 
@@ -113,12 +120,12 @@ export class GameplayVisualizer extends VisibilityContainer {
         }
       }
 
-      if (this.#firstUpdateSinceShow) {
+      if (this.#firstUpdateSinceShow || !this.editorClock.isRunning) {
         this.cursor.position = position;
         this.#firstUpdateSinceShow = false;
       }
       else {
-        this.cursor.position = position.lerp(this.cursor.position, Math.exp(-0.05 * this.time.elapsed));
+        this.cursor.position = position.lerp(this.cursor.position, Math.exp(-fac * this.time.elapsed));
       }
     }
   }
@@ -127,12 +134,21 @@ export class GameplayVisualizer extends VisibilityContainer {
     if (hitObject instanceof Slider) {
       // slider leniency
       return Math.max(
-        hitObject.endTime - 36,
+        hitObject.endTime - 50,
         hitObject.startTime + hitObject.duration * 0.5,
       );
     }
 
     return hitObject.endTime;
+  }
+
+  #getEndPosition(hitObject: OsuHitObject) {
+    if (hitObject instanceof Slider) {
+      // slider leniency
+      return hitObject.getPositionAtTime(this.#getEndTime(hitObject));
+    }
+
+    return hitObject.endPosition;
   }
 
   #getHitObjectPositionAt(hitObject: OsuHitObject, time: number) {
