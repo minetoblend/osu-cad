@@ -1,5 +1,6 @@
 import type { AudioChannel, Drawable, IDisposable, Sample } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
+import type { HitSample } from '../beatmap/hitSounds/HitSample.ts';
 import type { IResourcesProvider } from '../io/IResourcesProvider';
 import type { IResourceStore } from './IResourceStore';
 import type { ISkin } from './ISkin';
@@ -119,8 +120,16 @@ export abstract class Skin implements IDisposable, ISkin {
     this.configuration = new StableSkinConfigurationDecoder().decode(config);
   }
 
-  getSample(channel: AudioChannel, name: string): Sample | null {
-    return this.samples?.getSample(channel, name) ?? null;
+  getSample(channel: AudioChannel, sample: string | HitSample): Sample | null {
+    if (typeof sample !== 'string') {
+      const key = sample.sampleName;
+      if (key)
+        return this.samples?.getSample(channel, key) ?? null;
+
+      return null;
+    }
+
+    return this.samples?.getSample(channel, sample) ?? null;
   }
 
   #isDisposed = false;

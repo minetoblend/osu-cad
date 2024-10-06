@@ -264,8 +264,5 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
     this.accentColor.value = this.beatmap.colors.getComboColor(this.comboIndexBindable.value);
   }
 
-  #updateState() {
-  }
-
   animationStartTime = new Bindable(0);
 }

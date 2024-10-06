@@ -31,7 +31,9 @@ import { DialogContainer } from '../modals/DialogContainer.ts';
 import { Notification } from '../notifications/Notification';
 import { NotificationOverlay } from '../notifications/NotificationOverlay';
 import { OsucadScreen } from '../OsucadScreen';
+import { ISkinSource } from '../skinning/ISkinSource.ts';
 import { BeatmapSampleStore } from './BeatmapSampleStore';
+import { BeatmapSkin } from './BeatmapSkin.ts';
 import { EditorDifficultyManager } from './difficulty/EditorDifficultyManager.ts';
 import { EditorAction } from './EditorAction';
 import { EditorBackground } from './EditorBackground.ts';
@@ -103,6 +105,14 @@ export class Editor
     this.context.beatmap.hitObjects.applyDefaultsImmediately = false;
 
     this.context.provideDependencies(this.dependencies);
+
+    const skin = new BeatmapSkin();
+
+    await this.loadComponentAsync(skin);
+
+    this.addInternal(skin);
+
+    this.dependencies.provide(ISkinSource, skin);
 
     await this.loadComponentAsync(this.sampleStore);
 

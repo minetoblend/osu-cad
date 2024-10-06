@@ -9,6 +9,7 @@ export class OsucadSettings<T> implements ConfigKey<T> {
   static readonly Version = new OsucadSettings<number>('Version');
   static readonly Skin = new OsucadSettings<string | null>('Skin');
   static readonly UseSkinHitSounds = new OsucadSettings<boolean>('UseSkinHitSounds');
+  static readonly UseBeatmapSkins = new OsucadSettings<boolean>('UseBeatmapSkins');
 
   static readonly MasterVolume = new OsucadSettings<number>('MasterVolume');
   static readonly MusicVolume = new OsucadSettings<number>('MusicVolume');
@@ -24,6 +25,7 @@ export class OsucadSettings<T> implements ConfigKey<T> {
   static readonly AnimatedSeek = new OsucadSettings<boolean>('AnimatedSeek');
   static readonly CompactTimeline = new OsucadSettings<boolean>('CompactTimeline');
   static readonly BeatmapComboColors = new OsucadSettings<boolean>('BeatmapComboColors');
+  static readonly BeatmapHitSounds = new OsucadSettings<boolean>('BeatmapHitSounds');
   static readonly NativeCursor = new OsucadSettings<boolean>('NativeCursor');
   static readonly PlayIntroSequence = new OsucadSettings<boolean>('PlayIntroSequence');
   static readonly ShowGameplayCursor = new OsucadSettings<boolean>('ShowGameplayCursor');

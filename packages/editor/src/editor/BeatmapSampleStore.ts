@@ -1,8 +1,6 @@
 import type { Sample } from 'osucad-framework';
 import type { HitSample } from '../beatmap/hitSounds/HitSample';
 import { asyncDependencyLoader, AudioManager, Component, resolved } from 'osucad-framework';
-import { SampleSet } from '../beatmap/hitSounds/SampleSet';
-import { SampleType } from '../beatmap/hitSounds/SampleType';
 import { ISkinSource } from '../skinning/ISkinSource';
 import { EditorContext } from './context/EditorContext';
 import { EditorMixer } from './EditorMixer';
@@ -69,51 +67,7 @@ export class BeatmapSampleStore extends Component {
     await Promise.all(promises);
   }
 
-  getSample(
-    sample: HitSample,
-  ): Sample | null {
-    let key = '';
-    switch (sample.sampleSet) {
-      case SampleSet.Soft:
-        key = 'soft';
-        break;
-      case SampleSet.Normal:
-        key = 'normal';
-        break;
-      case SampleSet.Drum:
-        key = 'drum';
-        break;
-      default:
-        return null;
-    }
-
-    switch (sample.sampleType) {
-      case SampleType.Normal:
-        key += '-hitnormal';
-        break;
-      case SampleType.Whistle:
-        key += '-hitwhistle';
-        break;
-      case SampleType.Finish:
-        key += '-hitfinish';
-        break;
-      case SampleType.Clap:
-        key += '-hitclap';
-        break;
-      case SampleType.SliderSlide:
-        key += '-sliderslide';
-        break;
-      case SampleType.SliderWhistle:
-        key += '-sliderwhistle';
-        break;
-    }
-
-    if (sample.index === 1) {
-      const sample = this.beatmapSamples.get(key) ?? this.skin.getSample(this.mixer.hitsounds, key);
-      if (sample)
-        return sample;
-    }
-
-    return this.beatmapSamples.get(key + sample.index) ?? this.skin.getSample(this.mixer.hitsounds, key) ?? null;
+  getSample(sample: HitSample): Sample | null {
+    return this.skin.getSample(this.mixer.hitsounds, sample);
   }
 }

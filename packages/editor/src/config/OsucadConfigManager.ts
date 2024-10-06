@@ -5,6 +5,7 @@ export class OsucadConfigManager extends ConfigManager<OsucadSettings<any>> {
   initializeDefaults() {
     this.setDefault(OsucadSettings.Skin, null);
     this.setDefault(OsucadSettings.UseSkinHitSounds, true);
+    this.setDefault(OsucadSettings.UseBeatmapSkins, true);
     this.setDefault(OsucadSettings.MasterVolume, 50);
     this.setDefault(OsucadSettings.MusicVolume, 75);
     this.setDefault(OsucadSettings.HitsoundVolume, 75);
@@ -19,6 +20,7 @@ export class OsucadConfigManager extends ConfigManager<OsucadSettings<any>> {
     this.setDefault(OsucadSettings.AnimatedSeek, true);
     this.setDefault(OsucadSettings.CompactTimeline, false);
     this.setDefault(OsucadSettings.BeatmapComboColors, true);
+    this.setDefault(OsucadSettings.BeatmapHitSounds, true);
     this.setDefault(OsucadSettings.NativeCursor, false);
     this.setDefault(OsucadSettings.PlayIntroSequence, true);
     this.setDefault(OsucadSettings.ShowGameplayCursor, false);

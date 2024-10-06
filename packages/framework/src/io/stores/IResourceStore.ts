@@ -8,4 +8,6 @@ export interface IResourceStore<T> extends IDisposable {
   getAsync: (name: string) => Promise<T | null>;
 
   getAvailableResources: () => string[];
+
+  canLoad: (name: string) => boolean;
 }

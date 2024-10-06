@@ -153,6 +153,10 @@ export class SkinManager extends Component implements ISkinSource {
   }
 
   getSample(channel: AudioChannel, name: string): Sample | null {
+    console.log(this.useSkinHitSounds.value);
+    if (!this.useSkinHitSounds.value)
+      return this.#defaultSkin.getSample(channel, name);
+
     for (const source of this.#activeSources) {
       const result = source.getSample(channel, name);
       if (result !== null)

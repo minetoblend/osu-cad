@@ -6,7 +6,7 @@ export class SkinConfig<T> {
   constructor(readonly name: string) {
   }
 
-  static ComboColors = new SkinConfig<Color[]>('ComboColors');
+  static ComboColors = new SkinConfig<readonly Color[]>('ComboColors');
 
   static SliderTrackOverride = new SkinConfig<Color | null>('SliderTrackOverride');
 

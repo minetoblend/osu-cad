@@ -1,7 +1,5 @@
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
-import { BindableBoolean, Color, dependencyLoader, resolved } from 'osucad-framework';
-import { OsucadConfigManager } from '../../config/OsucadConfigManager.ts';
-import { OsucadSettings } from '../../config/OsucadSettings.ts';
+import { Color, dependencyLoader, resolved } from 'osucad-framework';
 import { ISkinSource } from '../../skinning/ISkinSource';
 import { SkinConfig } from '../../skinning/SkinConfig.ts';
 import { Spinner } from '../hitObjects/Spinner';
@@ -54,20 +52,11 @@ export class BeatmapComboProcessor extends BeatmapProcessor {
   @resolved(ISkinSource)
   protected skin!: ISkinSource;
 
-  @resolved(OsucadConfigManager)
-  protected config!: OsucadConfigManager;
-
-  #skinComboColors: Color[] = [];
-
-  useBeatmapComboColors = new BindableBoolean(true);
+  #skinComboColors: readonly Color[] = [];
 
   @dependencyLoader()
   load() {
     this.skin.sourceChanged.addListener(this.#skinChanged, this);
-    this.config.bindWith(OsucadSettings.BeatmapComboColors, this.useBeatmapComboColors);
-
-    this.useBeatmapComboColors.valueChanged.addListener(() => this.state.invalidate());
-
     this.#skinChanged();
   }
 
@@ -77,9 +66,6 @@ export class BeatmapComboProcessor extends BeatmapProcessor {
   }
 
   protected getComboColor(comboIndex: number) {
-    if (this.useBeatmapComboColors.value && this.beatmap.colors.comboColors.length > 0)
-      return this.beatmap.colors.getComboColor(comboIndex);
-
     if (this.#skinComboColors.length > 0)
       return this.#skinComboColors[comboIndex % this.#skinComboColors.length];
 

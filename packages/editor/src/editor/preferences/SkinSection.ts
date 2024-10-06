@@ -22,6 +22,8 @@ export class SkinSection extends PreferencesPanel {
     return [
       new SkinSelect(),
       new PreferencesToggle('Use skin hitsounds', this.config.getBindable(OsucadSettings.UseSkinHitSounds)!),
+      new PreferencesToggle('Use beatmap skins', this.config.getBindable(OsucadSettings.UseBeatmapSkins)!),
+      new PreferencesToggle('Use beatmap combo colors', this.config.getBindable(OsucadSettings.BeatmapComboColors)!),
     ];
   }
 }
