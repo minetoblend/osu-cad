@@ -16,7 +16,7 @@ export class Action<T = void> {
     if (scoped) {
       const scope = getCurrentDrawablScope();
       if (scope) {
-        scope.onDispose(() => this.removeListener(fn));
+        scope.onDispose(() => this.removeListener(fn, receiver));
       }
     }
   }
