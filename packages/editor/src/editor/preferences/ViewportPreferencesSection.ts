@@ -38,6 +38,10 @@ export class ViewportPreferencesSection extends PreferencesPanel {
         'Use native cursor',
         this.config.getBindable(OsucadSettings.NativeCursor)!,
       ),
+      new PreferencesToggle(
+        'Colored slider path lines',
+        this.config.getBindable(OsucadSettings.SkinVisualizerColoredLines)!,
+      ),
     ];
   }
 }

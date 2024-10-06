@@ -28,6 +28,8 @@ export class OsucadSettings<T> implements ConfigKey<T> {
   static readonly PlayIntroSequence = new OsucadSettings<boolean>('PlayIntroSequence');
   static readonly ShowGameplayCursor = new OsucadSettings<boolean>('ShowGameplayCursor');
 
+  static readonly SkinVisualizerColoredLines = new OsucadSettings<boolean>('SkinVisualizerColoredLines');
+
   static readonly SongSelectPreventLoadOnScroll = new OsucadSettings<boolean>('SongSelectPreventLoadOnScroll');
   static readonly SongSelectParallax = new OsucadSettings<boolean>('SongSelectParallax');
   static readonly SongSelectBackgroundBlur = new OsucadSettings<boolean>('SongSelectBackgroundBlur');

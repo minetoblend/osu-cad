@@ -1,22 +1,17 @@
 import type { DragEndEvent, DragEvent, DragStartEvent, MouseDownEvent } from 'osucad-framework';
 import type { Slider } from '../../../../beatmap/hitObjects/Slider';
-import {
-  Anchor,
-  Axes,
-  Cached,
-  CompositeDrawable,
-  Container,
-  dependencyLoader,
-  PIXIGraphics,
-  Vec2,
-} from 'osucad-framework';
+import { Anchor, Axes, BindableBoolean, Cached, CompositeDrawable, Container, dependencyLoader, PIXIGraphics, resolved, Vec2 } from 'osucad-framework';
 import { PathType } from '../../../../beatmap/hitObjects/PathType';
+import { OsucadConfigManager } from '../../../../config/OsucadConfigManager.ts';
+import { OsucadSettings } from '../../../../config/OsucadSettings.ts';
 import { FastRoundedBox } from '../../../../drawables/FastRoundedBox.ts';
 
 export class SliderPathVisualizer extends CompositeDrawable {
   constructor() {
     super();
   }
+
+  protected coloredLines = new BindableBoolean(true);
 
   #slider: Slider | null = null;
 
@@ -58,11 +53,18 @@ export class SliderPathVisualizer extends CompositeDrawable {
 
   #graphics = new PIXIGraphics();
 
+  @resolved(OsucadConfigManager)
+  config!: OsucadConfigManager;
+
   @dependencyLoader()
   load() {
+    this.config.bindWith(OsucadSettings.SkinVisualizerColoredLines, this.coloredLines);
+
     this.drawNode.addChild(this.#graphics);
 
     this.addInternal(this.#handles);
+
+    this.coloredLines.addOnChangeListener(() => this.#pathCache.invalidate());
   }
 
   #pathCache = new Cached();
@@ -94,6 +96,8 @@ export class SliderPathVisualizer extends CompositeDrawable {
 
     g.moveTo(0, 0);
 
+    const coloredLines = this.coloredLines.value;
+
     for (let i = 1; i < controlPoints.length; i++) {
       const point = controlPoints[i];
 
@@ -101,8 +105,8 @@ export class SliderPathVisualizer extends CompositeDrawable {
 
       if (point.type !== null || i === controlPoints.length - 1) {
         g.stroke({
-          width: 1.5,
-          color: getColorForPathType(currentType),
+          width: 1,
+          color: coloredLines ? getColorForPathType(currentType) : 0xB6B6C3,
           cap: 'round',
           join: 'round',
         });
