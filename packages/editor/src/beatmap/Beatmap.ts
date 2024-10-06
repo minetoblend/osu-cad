@@ -21,6 +21,7 @@ export class Beatmap {
   }
 
   getMaxCombo(): number {
+    // TODO: implement this
     return 0;
   }
 }
