@@ -139,6 +139,7 @@ export function deserializeSlider(slider: SerializedSlider): Slider {
   obj.path.expectedDistance = slider.expectedDistance;
   obj.path.controlPoints = slider.controlPoints.map(deserializePathPoint);
   obj.ensureHitSoundsAreValid();
+  obj.hitSounds = slider.hitSounds.map(deserializeHitSound);
   return obj;
 }
 
