@@ -50,6 +50,8 @@ export class ComposeScreenTimeline extends Timeline implements IKeyBindingHandle
       })),
     );
 
+    this.#objectContainer.drawNode.enableRenderGroup();
+
     this.addInternal(this.#dragBox);
 
     this.hitObjects.added.addListener(this.#onHitObjectAdded, this);

@@ -5,8 +5,8 @@ import { GlobalSongPlayback } from '../GlobalSongPlayback';
 import { Notification } from '../notifications/Notification';
 import { NotificationOverlay } from '../notifications/NotificationOverlay';
 import { OsucadScreen } from '../OsucadScreen';
+import { EditorLoadingSpinner } from './EditorLoadingSpinner.ts';
 import { EditorMixer } from './EditorMixer';
-import { LoadingSpinner } from './LoadingSpinner';
 
 export class EditorLoader extends OsucadScreen {
   constructor(
@@ -33,12 +33,12 @@ export class EditorLoader extends OsucadScreen {
 
   #lowPassFilter?: LowpassFilter;
 
-  #loadingSpinner?: LoadingSpinner;
+  #loadingSpinner?: EditorLoadingSpinner;
 
   onEntering(e: ScreenTransitionEvent) {
     super.onEntering(e);
 
-    this.#loadingSpinner = new LoadingSpinner({
+    this.#loadingSpinner = new EditorLoadingSpinner({
       relativeSizeAxes: Axes.Both,
     });
 

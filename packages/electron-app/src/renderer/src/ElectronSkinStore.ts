@@ -1,4 +1,4 @@
-import { SkinProvider, SkinStore } from '@osucad/editor';
+import { LoadableSkin, SkinStore } from '@osucad/editor';
 import { IResourcesProvider } from '../../../../editor/src/io/IResourcesProvider';
 import { ISkin } from '../../../../editor/src/skinning/ISkin';
 import { StableSkin } from '../../../../editor/src/skinning/stable/StableSkin';
@@ -19,7 +19,7 @@ export class ElectronSkinStore extends SkinStore {
   }
 }
 
-class StableSkinInfo extends SkinProvider {
+class StableSkinInfo extends LoadableSkin {
   constructor(skinInfo: ElectronSkinInfo) {
     super(skinInfo.name);
 

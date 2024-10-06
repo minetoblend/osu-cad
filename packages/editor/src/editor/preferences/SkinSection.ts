@@ -1,10 +1,10 @@
 import type { Drawable } from 'osucad-framework';
-import type { SkinProvider } from '../../environment';
+import type { LoadableSkin } from '../../environment';
 import { Axes, Bindable, dependencyLoader, FillDirection, FillFlowContainer, resolved } from 'osucad-framework';
 import { OsucadConfigManager } from '../../config/OsucadConfigManager.ts';
 import { OsucadSettings } from '../../config/OsucadSettings.ts';
 import { SkinStore } from '../../environment';
-import { SkinSwitcher } from '../../SkinSwitcher.ts';
+import { SkinManager } from '../../skinning/SkinManager.ts';
 import { DropdownItem, DropdownSelect } from '../../userInterface/DropdownSelect.ts';
 import { ThemeColors } from '../ThemeColors.ts';
 import { PreferencesPanel } from './PreferencesPanel.ts';
@@ -47,9 +47,9 @@ class SkinSelect extends FillFlowContainer {
     this.direction = FillDirection.Vertical;
 
     this.children = [
-      this.#dropdown = new DropdownSelect<SkinProvider | null>({
+      this.#dropdown = new DropdownSelect<LoadableSkin | null>({
         items: [
-          new DropdownItem<SkinProvider | null>('Default skin', null),
+          new DropdownItem<LoadableSkin | null>('Default skin', null),
         ],
       }),
     ];
@@ -60,8 +60,8 @@ class SkinSelect extends FillFlowContainer {
 
     this.skins.addOnChangeListener((e) => {
       this.#dropdown.items = [
-        new DropdownItem<SkinProvider | null>('Default skin', null),
-        ...e.value.map(it => new DropdownItem<SkinProvider | null>(it.name, it)),
+        new DropdownItem<LoadableSkin | null>('Default skin', null),
+        ...e.value.map(it => new DropdownItem<LoadableSkin | null>(it.name, it)),
       ];
 
       this.#dropdown.current.value = e.value === null
@@ -71,19 +71,19 @@ class SkinSelect extends FillFlowContainer {
 
     this.#dropdown.current.addOnChangeListener((e) => {
       if (e.value)
-        this.skinSwitcher.loadSkin(e.value);
+        this.skinManager.loadSkin(e.value);
       else
-        this.skinSwitcher.activeSkin = null;
+        this.skinManager.setActiveSkin(null);
       this.activeSkinName.value = e.value?.name ?? null;
     });
   }
 
-  skins!: Bindable<SkinProvider[]>;
+  skins!: Bindable<LoadableSkin[]>;
 
   activeSkinName = new Bindable<string | null>(null);
 
-  #dropdown!: DropdownSelect<SkinProvider | null>;
+  #dropdown!: DropdownSelect<LoadableSkin | null>;
 
-  @resolved(SkinSwitcher)
-  skinSwitcher!: SkinSwitcher;
+  @resolved(SkinManager)
+  skinManager!: SkinManager;
 }

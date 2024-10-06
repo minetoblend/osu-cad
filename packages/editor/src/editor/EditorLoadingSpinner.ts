@@ -4,7 +4,7 @@ import { Anchor, Axes, CompositeDrawable, Container, dependencyLoader, DrawableS
 import { Graphics } from 'pixi.js';
 import { OsucadIcons } from '../OsucadIcons';
 
-export class LoadingSpinner extends CompositeDrawable {
+export class EditorLoadingSpinner extends CompositeDrawable {
   constructor(options: DrawableOptions) {
     super();
 

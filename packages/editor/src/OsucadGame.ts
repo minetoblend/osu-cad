@@ -20,8 +20,9 @@ import { DialogContainer } from './modals/DialogContainer';
 import { NotificationOverlay } from './notifications/NotificationOverlay';
 import { OsucadIcons } from './OsucadIcons';
 import { OsucadScreenStack } from './OsucadScreenStack';
+import { SkinLoadingOverlay } from './SkinLoadingOverlay.ts';
 import { ISkinSource } from './skinning/ISkinSource';
-import { SkinSwitcher } from './SkinSwitcher';
+import { SkinManager } from './skinning/SkinManager.ts';
 import { UIFonts } from './UIFonts';
 import { UISamples } from './UISamples';
 import { UserAvatarCache } from './UserAvatarCache';
@@ -98,12 +99,12 @@ export class OsucadGame extends Game implements IResourcesProvider {
       OsucadIcons.load(),
     ]);
 
-    const skinSwitcher = new SkinSwitcher(this.environment.skins);
+    const skinManager = new SkinManager(this.environment.skins);
 
-    this.dependencies.provide(ISkinSource, skinSwitcher);
-    this.dependencies.provide(SkinSwitcher, skinSwitcher);
+    this.dependencies.provide(ISkinSource, skinManager);
+    this.dependencies.provide(SkinManager, skinManager);
 
-    this.#innerContainer.add(
+    this.#innerContainer.addAll(
       new FpsOverlay({
         child:
           new EditorActionContainer({
@@ -135,11 +136,12 @@ export class OsucadGame extends Game implements IResourcesProvider {
 
     const beatmapSelect = new BeatmapSelect();
 
-    await Promise.all([
-      this.loadComponentAsync(skinSwitcher),
-    ]);
+    await this.loadComponentAsync(skinManager);
 
-    this.add(skinSwitcher);
+    this.addAll(
+      skinManager,
+      new SkinLoadingOverlay(),
+    );
 
     if (!isMobile.any) {
       this.add(new MainCursorContainer());
