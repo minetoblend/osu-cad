@@ -10,9 +10,10 @@ import { OsucadSettings } from '../config/OsucadSettings';
 import { LifetimeBoundaryCrossingDirection } from '../pooling/LifetimeBoundaryCrossingDirection';
 import { LifetimeBoundaryKind } from '../pooling/LifetimeBoundaryKind';
 import { LifetimeEntryManager } from '../pooling/LifetimeEntryManager';
-import { BeatmapSampleStore } from './BeatmapSampleStore';
+import { ISkinSource } from '../skinning/ISkinSource.ts';
 import { EditorContext } from './context/EditorContext';
 import { EditorClock } from './EditorClock';
+import { EditorMixer } from './EditorMixer.ts';
 import { HitObjectLifetimeEntry } from './hitobjects/HitObjectLifetimeEntry';
 
 export class HitsoundPlayer extends CompositeDrawable {
@@ -116,8 +117,11 @@ export class HitsoundPlayer extends CompositeDrawable {
     }
   }
 
-  @resolved(BeatmapSampleStore)
-  sampleStore!: BeatmapSampleStore;
+  @resolved(ISkinSource)
+  skin!: ISkinSource;
+
+  @resolved(EditorMixer)
+  mixer!: EditorMixer;
 
   @resolved(HitObjectList)
   hitObjects!: HitObjectList;
@@ -158,7 +162,7 @@ export class HitsoundPlayer extends CompositeDrawable {
 
     const isLooping = hitSample.sampleType === SampleType.SliderSlide || hitSample.sampleType === SampleType.SliderWhistle;
 
-    const sample = this.sampleStore.getSample(hitSample);
+    const sample = this.skin.getSample(this.mixer.hitsounds, hitSample);
 
     const delay = (hitSample.time - this.time.current) / this.editorClock.rate;
 

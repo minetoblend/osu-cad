@@ -32,7 +32,6 @@ import { Notification } from '../notifications/Notification';
 import { NotificationOverlay } from '../notifications/NotificationOverlay';
 import { OsucadScreen } from '../OsucadScreen';
 import { ISkinSource } from '../skinning/ISkinSource.ts';
-import { BeatmapSampleStore } from './BeatmapSampleStore';
 import { BeatmapSkin } from './BeatmapSkin.ts';
 import { EditorDifficultyManager } from './difficulty/EditorDifficultyManager.ts';
 import { EditorAction } from './EditorAction';
@@ -71,8 +70,6 @@ export class Editor
   canHandleKeyBinding(binding: PlatformAction | EditorAction): boolean {
     return binding instanceof PlatformAction || binding instanceof EditorAction;
   }
-
-  readonly sampleStore = new BeatmapSampleStore();
 
   readonly requestSelectTool = new Action();
 
@@ -113,10 +110,6 @@ export class Editor
     this.addInternal(skin);
 
     this.dependencies.provide(ISkinSource, skin);
-
-    await this.loadComponentAsync(this.sampleStore);
-
-    this.dependencies.provide(BeatmapSampleStore, this.sampleStore);
 
     this.#clock = new EditorClock(this.context.song);
     this.addInternal(this.#clock);
