@@ -4,6 +4,7 @@ import type { ControlPointInfo } from '../timing/ControlPointInfo';
 import { Action, Comparer, SortedList } from 'osucad-framework';
 import { objectId } from '../ObjectId';
 import { HitObjectProperty } from './HitObjectProperty';
+import { HitWindows } from './HitWindows.ts';
 import { hasComboInformation } from './IHasComboInformation';
 
 export abstract class HitObject {
@@ -82,8 +83,17 @@ export abstract class HitObject {
     return this.#kiai;
   }
 
+  hitWindows!: HitWindows;
+
   protected applyDefaultsToSelf(controlPointInfo: ControlPointInfo, difficulty: BeatmapDifficultyInfo) {
     this.#kiai = controlPointInfo.effectPointAt(this.startTime + HitObject.control_point_leniency).kiaiMode;
+
+    this.hitWindows ??= this.createHitWindows();
+    this.hitWindows.setDifficulty(difficulty.overallDifficulty);
+  }
+
+  protected createHitWindows() {
+    return new HitWindows();
   }
 
   protected createNestedHitObjects() {

@@ -1,14 +1,15 @@
 import type { IPatchable } from '../../editor/commands/IPatchable';
 import type { PatchEncoder } from '../../editor/commands/patchEncoder/PatchEncoder';
-import type { BeatmapDifficultyInfo } from '../BeatmapDifficultyInfo';
 import type { SerializedOsuHitObject } from '../serialization/HitObjects';
 import type { ControlPointInfo } from '../timing/ControlPointInfo';
 import type { HitCircle } from './HitCircle';
+import type { HitWindows } from './HitWindows.ts';
 import type { IHasComboInformation } from './IHasComboInformation';
 import type { Slider } from './Slider';
 import type { Spinner } from './Spinner';
 import { Action, Vec2 } from 'osucad-framework';
 import { Color } from 'pixi.js';
+import { BeatmapDifficultyInfo } from '../BeatmapDifficultyInfo';
 import { HitSample } from '../hitSounds/HitSample';
 import { HitSound } from '../hitSounds/HitSound';
 import { SampleSet } from '../hitSounds/SampleSet';
@@ -16,6 +17,7 @@ import { SampleType } from '../hitSounds/SampleType';
 import { deserializeHitSound } from '../serialization/HitSound';
 import { HitObject } from './HitObject';
 import { HitObjectProperty } from './HitObjectProperty';
+import { OsuHitWindows } from './OsuHitWindows.ts';
 
 export abstract class OsuHitObject extends HitObject implements IHasComboInformation, IPatchable<SerializedOsuHitObject> {
   readonly needsDefaultsApplied = new Action<OsuHitObject>();
@@ -224,7 +226,7 @@ export abstract class OsuHitObject extends HitObject implements IHasComboInforma
   protected applyDefaultsToSelf(controlPointInfo: ControlPointInfo, difficulty: BeatmapDifficultyInfo) {
     super.applyDefaultsToSelf(controlPointInfo, difficulty);
 
-    this.timePreempt = difficulty.difficultyRange(difficulty.approachRate, OsuHitObject.preempt_max, OsuHitObject.preempt_mid, OsuHitObject.preempt_min);
+    this.timePreempt = BeatmapDifficultyInfo.difficultyRange(difficulty.approachRate, OsuHitObject.preempt_max, OsuHitObject.preempt_mid, OsuHitObject.preempt_min);
 
     this.timeFadeIn = 400 * Math.min(1, this.timePreempt / OsuHitObject.preempt_min);
 
@@ -307,4 +309,14 @@ export abstract class OsuHitObject extends HitObject implements IHasComboInforma
   isSpinner(): this is Spinner {
     return false;
   }
+
+  protected createHitWindows(): HitWindows {
+    return new OsuHitWindows();
+  }
+
+  lazyEndPosition: Vec2 | null = null;
+
+  lazyTravelTime: number | null = null;
+
+  lazyTravelDistance = 0;
 }

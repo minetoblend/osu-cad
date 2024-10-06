@@ -136,7 +136,7 @@ export class BeatmapDifficultyInfo implements PlainBeatmapDifficultyInfo, Patcha
 
   invalidated = new Action();
 
-  difficultyRange(difficulty: number, min: number, mid: number, max: number) {
+  static difficultyRange(difficulty: number, min: number, mid: number, max: number) {
     if (difficulty > 5)
       return mid + (max - mid) * (difficulty - 5) / 5;
     else if (difficulty < 5)
@@ -148,7 +148,7 @@ export class BeatmapDifficultyInfo implements PlainBeatmapDifficultyInfo, Patcha
   calculateCircleSize(applyFudge: boolean) {
     const broken_gamefield_rounding_allowance = 1.00041;
 
-    return (1.0 - 0.7 * this.difficultyRange(this.circleSize, -1, 0, 1)) / 2 * (applyFudge ? broken_gamefield_rounding_allowance : 1);
+    return (1.0 - 0.7 * BeatmapDifficultyInfo.difficultyRange(this.circleSize, -1, 0, 1)) / 2 * (applyFudge ? broken_gamefield_rounding_allowance : 1);
   }
 
   applyPatch(patch: Partial<BeatmapDifficultyPatch>, ctx: CommandContext) {

@@ -1,6 +1,8 @@
 import { clamp } from 'osucad-framework';
 
 export class SliderEventGenerator {
+  static readonly TAIL_LENIENCY = -36;
+
   static* generate(
     startTime: number,
     spanDuration: number,

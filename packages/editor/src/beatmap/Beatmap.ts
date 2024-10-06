@@ -19,4 +19,8 @@ export class Beatmap {
     );
     this.difficulty.invalidated.addListener(() => this.hitObjects.invalidateAll());
   }
+
+  getMaxCombo(): number {
+    return 0;
+  }
 }
