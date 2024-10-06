@@ -44,6 +44,7 @@ import { EditorScreenContainer } from './EditorScreenContainer';
 import { EditorTopBar } from './EditorTopBar';
 import { OsuPlayfield } from './hitobjects/OsuPlayfield.ts';
 import { HitsoundPlayer } from './HitsoundPlayer.ts';
+import { CompareScreen } from './screens/compare/CompareScreen.ts';
 import { ComposeScreen } from './screens/compose/ComposeScreen';
 import { EditorScreenType } from './screens/EditorScreenType';
 import { HitSoundsScreen } from './screens/hitsounds/HitSoundsScreen.ts';
@@ -91,7 +92,7 @@ export class Editor
   async init() {
     await this.context.load();
 
-    const editorDependencies = new EditorDependencies(new OsuPlayfield());
+    const editorDependencies = new EditorDependencies(new OsuPlayfield(), await this.context.getOtherDifficulties());
 
     this.onDispose(() => editorDependencies.reusablePlayfield.dispose());
 
@@ -163,6 +164,9 @@ export class Editor
         break;
       case EditorScreenType.Hitsounds:
         screenToShow = new HitSoundsScreen();
+        break;
+      case EditorScreenType.Compare:
+        screenToShow = new CompareScreen();
         break;
     }
 

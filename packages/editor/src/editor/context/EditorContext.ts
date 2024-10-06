@@ -141,4 +141,23 @@ export abstract class EditorContext {
   }
 
   save?(): Promise<boolean>;
+
+  async getDifficulties(): Promise<DifficultyInfo[]> {
+    return [
+      {
+        difficultyName: this.beatmap.metadata.difficultyName,
+        load: async () => this.beatmap,
+      },
+      ...await this.getOtherDifficulties(),
+    ];
+  }
+
+  async getOtherDifficulties(): Promise<DifficultyInfo[]> {
+    return [];
+  }
+}
+
+export interface DifficultyInfo {
+  difficultyName: string;
+  load(): Promise<Beatmap>;
 }

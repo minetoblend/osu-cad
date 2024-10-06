@@ -18,9 +18,9 @@ export class BeatmapComboProcessor extends BeatmapProcessor {
   onHitObjectRemoved(hitObject: OsuHitObject) {
     super.onHitObjectRemoved(hitObject);
 
-    hitObject.newComboBindable.valueChanged.removeListener(this.state.invalidate);
-    hitObject.comboOffsetBindable.valueChanged.removeListener(this.state.invalidate);
-    hitObject.startTimeBindable.valueChanged.removeListener(this.state.invalidate);
+    hitObject.newComboBindable.valueChanged.removeListener(this.state.invalidate, this.state);
+    hitObject.comboOffsetBindable.valueChanged.removeListener(this.state.invalidate, this.state);
+    hitObject.startTimeBindable.valueChanged.removeListener(this.state.invalidate, this.state);
   }
 
   protected processBeatmap() {
@@ -84,5 +84,11 @@ export class BeatmapComboProcessor extends BeatmapProcessor {
       return this.#skinComboColors[comboIndex % this.#skinComboColors.length];
 
     return new Color(0xFFFFFF);
+  }
+
+  override dispose(isDisposing: boolean = true) {
+    super.dispose(isDisposing);
+
+    this.skin.sourceChanged.removeListener(this.#skinChanged, this);
   }
 }

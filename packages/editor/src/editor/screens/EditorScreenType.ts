@@ -3,4 +3,5 @@ export enum EditorScreenType {
   Compose,
   Timing,
   Hitsounds,
+  Compare,
 }
