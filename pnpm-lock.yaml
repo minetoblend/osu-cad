@@ -52,10 +52,10 @@ importers:
         version: 5.0.0(osu-classes@3.1.0)
       pixi-filters:
         specifier: ^6.0.4
-        version: 6.0.5(pixi.js@8.3.4)
+        version: 6.0.5(pixi.js@8.4.1)
       pixi.js:
-        specifier: 8.3.4
-        version: 8.3.4
+        specifier: 8.4.1
+        version: 8.4.1
       reflect-metadata:
         specifier: ^0.1.13
         version: 0.1.14
@@ -4998,8 +4998,8 @@ packages:
     peerDependencies:
       pixi.js: '>=8.0.0-0'
 
-  pixi.js@8.3.4:
-    resolution: {integrity: sha512-b5qdoHMQy79JjTiOOAH/fDiK9dLKGAoxfBwkHIdsK5XKNxsFuII2MBbktvR9pVaAmTDobDkMPDoIBFKYYpDeOg==}
+  pixi.js@8.4.1:
+    resolution: {integrity: sha512-3ZbEIkLYYi602UB5wuN7kPz3VsGHoJa6nxD8ustvMLRySxHAR9Z8tCAYY8ISgNplpPbaDw03B0yTD4/k9f6cAQ==}
 
   pkg-dir@4.2.0:
     resolution: {integrity: sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ==}
@@ -12585,12 +12585,12 @@ snapshots:
 
   pirates@4.0.6: {}
 
-  pixi-filters@6.0.5(pixi.js@8.3.4):
+  pixi-filters@6.0.5(pixi.js@8.4.1):
     dependencies:
       '@types/gradient-parser': 0.1.5
-      pixi.js: 8.3.4
+      pixi.js: 8.4.1
 
-  pixi.js@8.3.4:
+  pixi.js@8.4.1:
     dependencies:
       '@pixi/colord': 2.9.6
       '@types/css-font-loading-module': 0.0.12
