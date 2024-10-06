@@ -65,7 +65,6 @@ export class AudioPreferencesSection extends PreferencesPanel {
         value => `${Math.round(value)}ms`,
       ),
       new PreferencesToggle('Use Audio Streaming', this.config.getBindable(OsucadSettings.UseAudioStreaming)!),
-      new PreferencesToggle('Use Beatmap Hitsounds', this.config.getBindable(OsucadSettings.BeatmapHitSounds)!),
     ];
   }
 }
