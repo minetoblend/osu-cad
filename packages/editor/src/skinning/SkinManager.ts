@@ -4,12 +4,14 @@ import type {
   PIXITexture,
   Sample,
 } from 'osucad-framework';
+import type { HitSample } from '../beatmap/hitSounds/HitSample.ts';
 import type { LoadableSkin, SkinStore } from '../environment';
 import type { ISkin } from './ISkin.ts';
 import type { ISkinComponentLookup } from './ISkinComponentLookup.ts';
 import type { ISkinSource } from './ISkinSource.ts';
 import type { Skin } from './Skin.ts';
 import type { SkinConfig } from './SkinConfig.ts';
+
 import {
   Action,
   asyncDependencyLoader,
@@ -19,7 +21,6 @@ import {
   Component,
   resolved,
 } from 'osucad-framework';
-
 import { OsucadConfigManager } from '../config/OsucadConfigManager.ts';
 import { OsucadSettings } from '../config/OsucadSettings.ts';
 import { IResourcesProvider } from '../io/IResourcesProvider.ts';
@@ -152,13 +153,12 @@ export class SkinManager extends Component implements ISkinSource {
     return null;
   }
 
-  getSample(channel: AudioChannel, name: string): Sample | null {
-    console.log(this.useSkinHitSounds.value);
+  getSample(channel: AudioChannel, sampleInfo: string | HitSample): Sample | null {
     if (!this.useSkinHitSounds.value)
-      return this.#defaultSkin.getSample(channel, name);
+      return this.#defaultSkin.getSample(channel, sampleInfo);
 
     for (const source of this.#activeSources) {
-      const result = source.getSample(channel, name);
+      const result = source.getSample(channel, sampleInfo);
       if (result !== null)
         return result;
     }

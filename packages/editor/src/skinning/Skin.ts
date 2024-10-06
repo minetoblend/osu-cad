@@ -101,7 +101,10 @@ export abstract class Skin implements IDisposable, ISkin {
     if (textures.length === 0) {
       const texture = this.getTexture(componentName);
 
-      return new DrawableSprite({ texture });
+      if (texture)
+        return new DrawableSprite({ texture });
+
+      return null;
     }
 
     const animation = new SkinnableTextureAnimation(startAtCurrentTime);

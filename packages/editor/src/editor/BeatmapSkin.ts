@@ -2,20 +2,24 @@ import type { AudioChannel, Drawable, PIXITexture, Sample } from 'osucad-framewo
 import type { HitSample } from '../beatmap/hitSounds/HitSample.ts';
 import type { ISkin } from '../skinning/ISkin.ts';
 import type { ISkinComponentLookup } from '../skinning/ISkinComponentLookup.ts';
+import type { ISkinSource } from '../skinning/ISkinSource.ts';
 import type { SkinInfo } from '../skinning/SkinInfo.ts';
-import { Action, asyncDependencyLoader, Bindable, BindableBoolean, Component, resolved } from 'osucad-framework';
+import { Action, asyncDependencyLoader, Bindable, BindableBoolean, resolved } from 'osucad-framework';
 import { Beatmap } from '../beatmap/Beatmap.ts';
 import { OsucadConfigManager } from '../config/OsucadConfigManager.ts';
 import { OsucadSettings } from '../config/OsucadSettings.ts';
 import { IResourcesProvider } from '../io/IResourcesProvider.ts';
-import { ISkinSource } from '../skinning/ISkinSource.ts';
 import { SkinConfig } from '../skinning/SkinConfig.ts';
+import { SkinTransformer } from '../skinning/SkinTransformer.ts';
 import { StableSkin } from '../skinning/stable/StableSkin.ts';
 import { EditorContext } from './context/EditorContext.ts';
 
-export class BeatmapSkin extends Component implements ISkinSource {
-  @resolved(ISkinSource)
-  skin!: ISkinSource;
+export class BeatmapSkin extends SkinTransformer implements ISkinSource {
+  constructor(source: ISkinSource) {
+    super(source);
+  }
+
+  declare source: ISkinSource;
 
   @resolved(Beatmap)
   beatmap!: Beatmap;
@@ -43,7 +47,7 @@ export class BeatmapSkin extends Component implements ISkinSource {
 
     this.useBeatmapComboColors.valueChanged.addListener(this.#skinChanged, this);
     this.useBeatmapSkins.valueChanged.addListener(this.#skinChanged, this);
-    this.skin.sourceChanged.addListener(this.#skinChanged, this);
+    this.source.sourceChanged.addListener(this.#skinChanged, this);
 
     const skinInfo: SkinInfo = {
       name: `${this.beatmap.metadata.title} ${this.beatmap.metadata.artist}`,
@@ -71,45 +75,46 @@ export class BeatmapSkin extends Component implements ISkinSource {
 
   findProvider(lookupFunction: (skin: ISkin) => boolean): ISkin | null {
     if (!this.useBeatmapSkins.value)
-      return this.skin.findProvider(lookupFunction);
+      return this.source.findProvider(lookupFunction);
 
     return this.allSources.find(lookupFunction) ?? null;
   }
 
   get allSources(): ISkin[] {
     if (this.beatmapSkin && this.useBeatmapSkins.value) {
-      return [this.beatmapSkin, this.skin];
+      return [this.beatmapSkin, this.source];
     }
 
-    return [this.skin];
+    return [this.source];
   }
 
   get sampleSources() {
-    if (this.beatmapSkin && this.useBeatmapHitSounds) {
-      return [this.beatmapSkin, this.skin];
-    }
+    if (this.beatmapSkin && this.useBeatmapHitSounds.value)
+      return [this.beatmapSkin, this.source];
 
-    return [this.skin];
+    return [this.source];
   }
 
   getDrawableComponent(lookup: ISkinComponentLookup): Drawable | null {
-    for (const source of this.allSources) {
-      const result = source.getDrawableComponent(lookup);
-      if (result !== null)
+    if (this.useBeatmapSkins.value) {
+      const result = this.beatmapSkin?.getDrawableComponent(lookup);
+
+      if (result)
         return result;
     }
 
-    return null;
+    return super.getDrawableComponent(lookup);
   }
 
   getTexture(componentName: string): PIXITexture | null {
-    for (const source of this.allSources) {
-      const result = source.getTexture(componentName);
-      if (result !== null)
+    if (this.useBeatmapSkins.value) {
+      const result = this.beatmapSkin?.getTexture(componentName);
+
+      if (result)
         return result;
     }
 
-    return null;
+    return super.getTexture(componentName);
   }
 
   getSample(channel: AudioChannel, sample: string | HitSample): Sample | null {
@@ -121,7 +126,7 @@ export class BeatmapSkin extends Component implements ISkinSource {
       return null;
 
     if (sample.index === 0) { // If the sample index is 0 we don't want to use any custom samples
-      return this.skin.getSample(channel, sampleName);
+      return this.source.getSample(channel, sampleName);
     }
 
     return this.#getSample(channel, sampleName + sample.index) ?? this.#getSample(channel, sampleName);
@@ -141,11 +146,11 @@ export class BeatmapSkin extends Component implements ISkinSource {
   getConfig<T>(key: SkinConfig<T>): Bindable<T> | null {
     switch (key) {
       case SkinConfig.ComboColors:
-        if (this.useBeatmapComboColors)
+        if (this.useBeatmapComboColors.value)
           return new Bindable(this.beatmap.colors.comboColors) as any;
     }
 
-    for (const source of this.skin.allSources) {
+    for (const source of this.source.allSources) {
       const result = source.getConfig(key);
       if (result !== null)
         return result;
@@ -155,7 +160,7 @@ export class BeatmapSkin extends Component implements ISkinSource {
   }
 
   override dispose(isDisposing: boolean = true) {
-    this.skin.sourceChanged.removeListener(this.#skinChanged, this);
+    this.source.sourceChanged.removeListener(this.#skinChanged, this);
 
     super.dispose(isDisposing);
   }

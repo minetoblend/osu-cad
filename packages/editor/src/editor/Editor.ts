@@ -106,7 +106,7 @@ export class Editor
 
     this.context.provideDependencies(this.dependencies);
 
-    const skin = new BeatmapSkin();
+    const skin = new BeatmapSkin(this.dependencies.resolve(ISkinSource));
 
     await this.loadComponentAsync(skin);
 
