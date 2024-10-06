@@ -66,7 +66,7 @@ export class LazyStableResourceStore implements IResourceStore<ArrayBuffer> {
   }
 
   getAvailableResources(): string[] {
-    return [...this.#entries.keys()];
+    return this.#loadableResources;
   }
 
   canLoad(key: string): boolean {
