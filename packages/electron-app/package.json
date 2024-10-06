@@ -1,6 +1,6 @@
 {
   "name": "osucad",
-  "version": "1.0.69",
+  "version": "1.0.70",
   "description": "A minimal Electron application with TypeScript",
   "main": "./out/main/index.js",
   "author": "example.com",
