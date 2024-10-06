@@ -19,6 +19,13 @@ export default defineConfig({
       nodePolyfills(),
     ],
 
+    worker: {
+      format: 'es',
+      plugins: [
+        nxViteTsPaths(),
+      ]
+    },
+
     esbuild: {
       target: 'chrome113',
       format: 'esm',
