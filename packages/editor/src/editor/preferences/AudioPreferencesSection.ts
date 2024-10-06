@@ -4,7 +4,6 @@ import { OsucadConfigManager } from '../../config/OsucadConfigManager';
 import { OsucadSettings } from '../../config/OsucadSettings';
 import { OsucadSpriteText } from '../../OsucadSpriteText';
 import { PreferencesPanel } from './PreferencesPanel';
-import { PreferencesToggle } from './PreferencesToggle';
 import { VolumeSliderContainer } from './VolumeSlider';
 
 export class AudioPreferencesSection extends PreferencesPanel {
@@ -64,7 +63,6 @@ export class AudioPreferencesSection extends PreferencesPanel {
         250,
         value => `${Math.round(value)}ms`,
       ),
-      new PreferencesToggle('Use Audio Streaming', this.config.getBindable(OsucadSettings.UseAudioStreaming)!),
     ];
   }
 }
