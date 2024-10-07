@@ -2,7 +2,6 @@ import type { FontDefinition } from './FontDefinition';
 import { Cached } from '../../caching';
 import { PIXIBitmapText, PIXIContainer, PIXITextStyle, type PIXITextStyleOptions } from '../../pixi';
 import { Drawable, type DrawableOptions, Invalidation } from '../drawables/Drawable';
-import { FrameStatistics, StatisticsCounterType } from '../../statistics';
 
 export interface SpriteTextOptions extends DrawableOptions {
   text?: string;
@@ -22,12 +21,12 @@ export class SpriteText extends Drawable {
 
     if (style) {
       this.#textStyle = new PIXITextStyle(style);
-    } else {
-      this.#textStyle = new PIXITextStyle();
     }
-
-    if (font) {
-      this.#textStyle.fontFamily = font.font.fontFamily;
+    else if (font) {
+      this.#textStyle = new PIXITextStyle(font.style);
+    }
+    else {
+      this.#textStyle = new PIXITextStyle();
     }
 
     this.#textStyle.on('update', () => this.#textBacking.invalidate());
@@ -35,7 +34,7 @@ export class SpriteText extends Drawable {
     this.#textDrawNode = new PIXIBitmapText({
       resolution: 2,
       style: this.#textStyle,
-    })
+    });
 
     this.drawNode.addChild(this.#textDrawNode);
   }

@@ -1,7 +1,6 @@
 import type { PIXIRenderer } from 'osucad-framework';
 import { Action, AudioManager, dependencyLoader, Game, IRenderer, isMobile, resolved } from 'osucad-framework';
 import { RenderTarget } from 'pixi.js';
-import { BeatmapSelect } from './beatmapSelect/BeatmapSelect';
 import { OsucadConfigManager } from './config/OsucadConfigManager';
 import { EditorActionContainer } from './editor/EditorActionContainer';
 import { EditorMixer } from './editor/EditorMixer';
@@ -133,6 +132,8 @@ export class OsucadGame extends Game implements IResourcesProvider {
     const notifications = new NotificationOverlay();
     this.add(notifications);
     this.dependencies.provide(notifications);
+
+    const { BeatmapSelect } = await import('./beatmapSelect/BeatmapSelect');
 
     const beatmapSelect = new BeatmapSelect();
 

@@ -1,25 +1,14 @@
-import type { BitmapFont } from 'pixi.js';
-import { Assets } from 'pixi.js';
+import type { TextStyleOptions } from 'pixi.js';
+import { TextStyle } from 'pixi.js';
 
 export class FontDefinition {
-  constructor(
-    readonly fontUrl: string,
-    readonly textureUrl: string,
-  ) {}
-
-  get font(): BitmapFont {
-    if (!this.#font) {
-      throw new Error('Font not loaded');
-    }
-    return this.#font;
+  constructor(style: TextStyleOptions) {
+    this.style = new TextStyle(style);
   }
 
-  #font: BitmapFont | null = null;
+  readonly style: TextStyle;
 
-  async load(): Promise<void> {
-    this.#font = await Assets.load({
-      src: this.fontUrl,
-      loadParser: 'loadBitmapFont',
-    });
+  async load() {
+    await document.fonts.load(`${this.style.fontWeight} 100px ${this.style.fontFamily}`);
   }
 }
