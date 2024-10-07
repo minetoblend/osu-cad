@@ -109,12 +109,25 @@ export abstract class Skin implements IDisposable, ISkin {
 
     const animation = new SkinnableTextureAnimation(startAtCurrentTime);
     animation.loop = looping;
-    animation.defaultFrameLength = 1000 / textures.length;
+    animation.defaultFrameLength = frameLength ?? this.#getFrameLength(applyConfigFrameRate, textures);
 
     for (const t of textures)
       animation.addFrame(t);
 
     return animation;
+  }
+
+  #getFrameLength(applyConfigFrameRate: boolean, textures: Texture[]) {
+    if (applyConfigFrameRate) {
+      const iniRate = this.getConfig(SkinConfig.AnimationFramerate);
+
+      if (iniRate && iniRate?.value > 0)
+        return 1000 / iniRate.value;
+
+      return 1000 / textures.length;
+    }
+
+    return 1000 / 60;
   }
 
   configuration!: SkinConfiguration;
@@ -167,6 +180,17 @@ export abstract class Skin implements IDisposable, ISkin {
 
       case SkinConfig.AllowSliderBallTint:
         return new Bindable(this.configuration.configMap.get('AllowSliderBallTint') === '1');
+
+      case SkinConfig.AnimationFramerate:
+      {
+        const value = this.configuration.configMap.get('AnimationFramerate');
+        if (!value)
+          break;
+        const parsed = Number.parseFloat(value);
+        if (Number.isNaN(parsed))
+          break;
+        return new Bindable(parsed);
+      }
 
       case SkinConfig.HitCircleOverlap:
       {

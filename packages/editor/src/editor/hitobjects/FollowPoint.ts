@@ -1,8 +1,12 @@
-import { Anchor, dependencyLoader, PoolableDrawable } from 'osucad-framework';
+import { Anchor, BindableNumber, dependencyLoader, PoolableDrawable, provide } from 'osucad-framework';
+import { IAnimationTimeReference } from '../../skinning/IAnimationTimeReference.ts';
 import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
 import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
 
-export class FollowPoint extends PoolableDrawable {
+@provide(IAnimationTimeReference)
+export class FollowPoint extends PoolableDrawable implements IAnimationTimeReference {
+  animationStartTime = new BindableNumber(0);
+
   get removeWhenNotAlive() {
     return false;
   }

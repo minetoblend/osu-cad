@@ -81,6 +81,8 @@ export class FollowPointConnection extends PoolableDrawableWithLifetime<FollowPo
       fp.alpha = 0;
       fp.scale = new Vec2(1.5 * end.scale);
 
+      fp.animationStartTime.value = fadeInTime;
+
       {
         using _ = fp.beginAbsoluteSequence(fadeInTime);
         fp.fadeIn(end.timeFadeIn);

@@ -29,6 +29,7 @@ export class StableSkin extends Skin {
           return this.getAnimation('followpoint', {
             animatable: true,
             looping: false,
+            applyConfigFrameRate: true,
           });
 
         case OsuSkinComponents.HitCircle:

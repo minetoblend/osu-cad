@@ -1,7 +1,11 @@
-import { Bindable, TextureAnimation } from 'osucad-framework';
+import { Bindable, resolved, TextureAnimation } from 'osucad-framework';
+import { IAnimationTimeReference } from './IAnimationTimeReference.ts';
 
 export class SkinnableTextureAnimation extends TextureAnimation {
   readonly #animationStartTime = new Bindable(0);
+
+  @resolved(IAnimationTimeReference, true)
+  protected timeReference?: IAnimationTimeReference;
 
   constructor(readonly startAtCurrentTime: boolean = true) {
     super(startAtCurrentTime);
@@ -10,13 +14,18 @@ export class SkinnableTextureAnimation extends TextureAnimation {
   protected loadComplete() {
     super.loadComplete();
 
+    if (this.timeReference != null) {
+      this.clock = this.timeReference.clock!;
+      this.#animationStartTime.bindTo(this.timeReference.animationStartTime);
+    }
+
     this.#animationStartTime.addOnChangeListener(() => this.#updatePlaybackPosition(), { immediate: true });
   }
 
   #updatePlaybackPosition() {
-    // if (timeReference == null)
-    //   return;
+    if (!this.timeReference)
+      return;
 
-    // PlaybackPosition = timeReference.Clock.CurrentTime - timeReference.AnimationStartTime.Value;
+    this.playbackPosition = this.timeReference.clock!.currentTime - this.timeReference.animationStartTime.value;
   }
 }

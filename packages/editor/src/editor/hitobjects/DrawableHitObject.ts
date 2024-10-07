@@ -6,10 +6,11 @@ import { Beatmap } from '../../beatmap/Beatmap';
 import { hasComboInformation } from '../../beatmap/hitObjects/IHasComboInformation';
 import { PoolableDrawableWithLifetime } from '../../pooling/PoolableDrawableWithLifetime';
 
+import { IAnimationTimeReference } from '../../skinning/IAnimationTimeReference.ts';
 import { IPooledHitObjectProvider } from './IPooledHitObjectProvider';
 import { SyntheticHitObjectEntry } from './SyntheticHitObjectEntry';
 
-export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLifetimeEntry> {
+export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLifetimeEntry> implements IAnimationTimeReference {
   defaultsApplied = new Action<DrawableHitObject>();
 
   hitObjectApplied = new Action<DrawableHitObject>();
@@ -17,6 +18,7 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
   @dependencyLoader()
   [Symbol('load')]() {
     this.dependencies.provide(DrawableHitObject, this);
+    this.dependencies.provide(IAnimationTimeReference, this);
   }
 
   get hitObject(): HitObject | undefined {
@@ -264,5 +266,5 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
     this.accentColor.value = this.beatmap.colors.getComboColor(this.comboIndexBindable.value);
   }
 
-  animationStartTime = new Bindable(0);
+  readonly animationStartTime = new Bindable(0);
 }

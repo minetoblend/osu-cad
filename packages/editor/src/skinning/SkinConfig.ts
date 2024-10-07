@@ -15,4 +15,6 @@ export class SkinConfig<T> {
   static AllowSliderBallTint = new SkinConfig<boolean>('AllowSliderBallTint');
 
   static HitCircleOverlap = new SkinConfig<number>('HitCircleOverlap');
+
+  static AnimationFramerate = new SkinConfig<number>('AnimationFramerate');
 }
