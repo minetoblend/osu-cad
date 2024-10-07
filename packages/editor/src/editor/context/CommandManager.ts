@@ -1,14 +1,12 @@
-import type { Beatmap } from '../../beatmap/Beatmap';
 import type { EditorCommand } from '../commands/EditorCommand';
-import type { EditorContext } from './EditorContext';
+import type { EditorBeatmap } from '../EditorBeatmap.ts';
 import { Action, Bindable } from 'osucad-framework';
 import { CommandContext } from '../commands/CommandContext';
 import { CommandSource } from '../commands/CommandSource';
 
 export class CommandManager {
   constructor(
-    readonly editorContext: EditorContext,
-    readonly beatmap: Beatmap,
+    readonly beatmap: EditorBeatmap,
   ) {
   }
 

@@ -9,7 +9,7 @@ import type {
   ValueChangedEvent,
 } from 'osucad-framework';
 import type { BackgroundScreen } from '../BackgroundScreen.ts';
-import type { EditorContext } from './context/EditorContext';
+import type { BeatmapItemInfo } from '../beatmapSelect/BeatmapItemInfo.ts';
 import type { EditorScreen } from './screens/EditorScreen.ts';
 import {
   Action,
@@ -25,17 +25,24 @@ import {
   PlatformAction,
   resolved,
 } from 'osucad-framework';
+import { Beatmap } from '../beatmap/Beatmap.ts';
 import { BeatmapComboProcessor } from '../beatmap/beatmapProcessors/BeatmapComboProcessor';
 import { BeatmapStackingProcessor } from '../beatmap/beatmapProcessors/BeatmapStackingProcessor';
+import { HitObjectList } from '../beatmap/hitObjects/HitObjectList.ts';
+import { IBeatmap } from '../beatmap/IBeatmap.ts';
+import { ControlPointInfo } from '../beatmap/timing/ControlPointInfo.ts';
+import { IResourcesProvider } from '../io/IResourcesProvider.ts';
 import { DialogContainer } from '../modals/DialogContainer.ts';
 import { Notification } from '../notifications/Notification';
 import { NotificationOverlay } from '../notifications/NotificationOverlay';
 import { OsucadScreen } from '../OsucadScreen';
 import { ISkinSource } from '../skinning/ISkinSource.ts';
 import { BeatmapSkin } from './BeatmapSkin.ts';
+import { CommandManager } from './context/CommandManager.ts';
 import { EditorDifficultyManager } from './difficulty/EditorDifficultyManager.ts';
 import { EditorAction } from './EditorAction';
 import { EditorBackground } from './EditorBackground.ts';
+import { EditorBeatmap } from './EditorBeatmap.ts';
 import { EditorBottomBar } from './EditorBottomBar';
 import { EditorClock } from './EditorClock';
 import { EditorDependencies } from './EditorDependencies.ts';
@@ -55,7 +62,7 @@ import { TimingScreen } from './screens/timing/TimingScreen';
 export class Editor
   extends OsucadScreen
   implements IKeyBindingHandler<PlatformAction | EditorAction> {
-  constructor(readonly context: EditorContext) {
+  constructor(readonly beatmapInfo: BeatmapItemInfo) {
     super();
 
     this.alpha = 0;
@@ -87,11 +94,19 @@ export class Editor
   @resolved(EditorMixer)
   mixer!: EditorMixer;
 
+  editorBeatmap!: EditorBeatmap;
+
+  get beatmap() {
+    return this.editorBeatmap.beatmap;
+  }
+
   @asyncDependencyLoader()
   async init() {
-    await this.context.load();
+    this.editorBeatmap = new EditorBeatmap(this.beatmapInfo);
 
-    const editorDependencies = new EditorDependencies(new OsuPlayfield(), await this.context.getOtherDifficulties());
+    await this.editorBeatmap.load(this.dependencies.resolve(IResourcesProvider));
+
+    const editorDependencies = new EditorDependencies(new OsuPlayfield(), await this.editorBeatmap.getOtherDifficulties());
 
     this.onDispose(() => editorDependencies.reusablePlayfield.dispose());
 
@@ -99,11 +114,16 @@ export class Editor
 
     this.currentScreen.bindTo(editorDependencies.currentScreen);
 
-    this.context.beatmap.hitObjects.applyDefaultsImmediately = false;
+    this.beatmap.hitObjects.applyDefaultsImmediately = false;
 
-    this.context.provideDependencies(this.dependencies);
+    this.dependencies.provide(EditorBeatmap, this.editorBeatmap);
+    this.dependencies.provide(Beatmap, this.beatmap);
+    this.dependencies.provide(IBeatmap, this.beatmap);
+    this.dependencies.provide(HitObjectList, this.beatmap.hitObjects);
+    this.dependencies.provide(ControlPointInfo, this.beatmap.controlPoints);
+    this.dependencies.provide(CommandManager, this.editorBeatmap.commandManager);
 
-    const skin = new BeatmapSkin(this.dependencies.resolve(ISkinSource));
+    const skin = new BeatmapSkin(this.dependencies.resolve(ISkinSource), this.beatmap);
 
     await this.loadComponentAsync(skin);
 
@@ -111,7 +131,7 @@ export class Editor
 
     this.dependencies.provide(ISkinSource, skin);
 
-    this.#clock = new EditorClock(this.context.song);
+    this.#clock = new EditorClock(this.beatmap.track.value);
     this.addInternal(this.#clock);
 
     this.dependencies.provide(this.#clock);
@@ -250,7 +270,7 @@ export class Editor
   }
 
   #seekControlPoint(e: UIEvent, direction: number) {
-    const controlPointInfo = this.context.beatmap.controlPoints;
+    const controlPointInfo = this.beatmap.controlPoints;
 
     const controlPoint
       = direction < 1
@@ -285,7 +305,7 @@ export class Editor
         return true;
       case EditorAction.SeekToStart: {
         const firstObjectTime
-          = this.context.beatmap.hitObjects.first?.startTime;
+          = this.beatmap.hitObjects.first?.startTime;
 
         if (
           firstObjectTime === undefined
@@ -311,11 +331,11 @@ export class Editor
         this.#clock.start();
         return true;
       case EditorAction.SeekToEnd: {
-        if (this.context.beatmap.hitObjects.length === 0) {
+        if (this.beatmap.hitObjects.length === 0) {
           this.#clock.seek(this.#clock.trackLength);
           return true;
         }
-        const lastObjectTime = this.context.beatmap.hitObjects.last!.endTime;
+        const lastObjectTime = this.beatmap.hitObjects.last!.endTime;
         this.#clock.seek(
           this.#clock.currentTimeAccurate === lastObjectTime
             ? this.#clock.trackLength
@@ -328,16 +348,16 @@ export class Editor
     return false;
   }
 
-  get commandHandler() {
-    return this.context.commandHandler;
+  get commandManager() {
+    return this.editorBeatmap.commandManager;
   }
 
   undo() {
-    this.commandHandler.undo();
+    this.commandManager.undo();
   }
 
   redo() {
-    this.commandHandler.redo();
+    this.commandManager.redo();
   }
 
   cut() {
@@ -386,7 +406,7 @@ export class Editor
     this.#screenContainer.scale = 0.9;
     this.#screenContainer.scaleTo(1, 500, EasingFunction.OutExpo);
 
-    const hitObject = this.context.beatmap.hitObjects.first;
+    const hitObject = this.beatmap.hitObjects.first;
     if (hitObject) {
       this.#clock.seek(hitObject.startTime, false);
     }
@@ -405,7 +425,7 @@ export class Editor
       return false;
     }
 
-    if (this.commandHandler.hasUnsavedChanges && !this.#confirmedExit) {
+    if (this.commandManager.hasUnsavedChanges && !this.#confirmedExit) {
       const dialogContainer = this.findClosestParentOfType(DialogContainer)!;
       if (dialogContainer.currentDialog)
         return true;
@@ -416,7 +436,7 @@ export class Editor
 
       dialog.exitRequested.addListener(async (e) => {
         if (e.shouldSave)
-          await this.context.save?.();
+          await this.beatmap.save?.();
 
         this.#confirmedExit = true;
         this.exit();
@@ -432,7 +452,7 @@ export class Editor
   }
 
   dispose(disposing: boolean = true) {
-    this.context.dispose();
+    this.editorBeatmap.dispose();
 
     super.dispose(disposing);
   }
@@ -471,7 +491,7 @@ export class Editor
   update() {
     super.update();
 
-    this.context.beatmap.hitObjects.applyDefaultsWhereNeeded(
+    this.beatmap.hitObjects.applyDefaultsWhereNeeded(
       this.#clock.currentTime - 3000,
       this.#clock.currentTime + 3000,
       10,
@@ -479,6 +499,6 @@ export class Editor
   }
 
   createBackground(): BackgroundScreen | null {
-    return new EditorBackground(this.context.backgroundBindable);
+    return new EditorBackground(this.beatmap.backgroundTexture);
   }
 }

@@ -1,7 +1,8 @@
 import type { UserInfo } from '@osucad/common';
 import type { Texture } from 'pixi.js';
-import type { EditorContext } from '../editor/context/EditorContext';
-import { IResourcesProvider } from '../io/IResourcesProvider';
+import type { LoadedBeatmap } from '../beatmap/LoadedBeatmap.ts';
+import type { IResourcesProvider } from '../io/IResourcesProvider';
+import type { MapsetInfo } from './MapsetInfo.ts';
 
 export interface BeatmapItemInfo {
   readonly id: string;
@@ -32,5 +33,7 @@ export interface BeatmapItemInfo {
 
   readonly previewPoint: number | null;
 
-  createEditorContext: (resources: IResourcesProvider) => EditorContext;
+  load(resources: IResourcesProvider): Promise<LoadedBeatmap>;
+
+  mapset: MapsetInfo | null;
 }

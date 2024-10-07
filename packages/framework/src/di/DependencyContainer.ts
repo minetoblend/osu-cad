@@ -45,5 +45,9 @@ export interface ReadonlyDependencyContainer {
   resolve: (<T>(key: new (...args: any[]) => T) => T) & (<T>(key: InjectionToken<T>) => T);
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line ts/no-wrapper-object-types
 export interface InjectionToken<T> extends Symbol {}
+
+export function injectionToken<T>(description?: string): InjectionToken<T> {
+  return Symbol(description);
+}

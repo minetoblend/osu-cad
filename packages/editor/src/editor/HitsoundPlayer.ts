@@ -2,7 +2,15 @@ import type { SamplePlayback } from 'osucad-framework';
 import type { OsuHitObject } from '../beatmap/hitObjects/OsuHitObject';
 import type { HitSample } from '../beatmap/hitSounds/HitSample';
 import type { LifetimeEntry } from '../pooling/LifetimeEntry';
-import { Action, BindableNumber, CompositeDrawable, dependencyLoader, FramedClock, OffsetClock, resolved } from 'osucad-framework';
+import {
+  Action,
+  BindableNumber,
+  CompositeDrawable,
+  dependencyLoader,
+  FramedClock,
+  OffsetClock,
+  resolved,
+} from 'osucad-framework';
 import { HitObjectList } from '../beatmap/hitObjects/HitObjectList';
 import { SampleType } from '../beatmap/hitSounds/SampleType';
 import { OsucadConfigManager } from '../config/OsucadConfigManager';
@@ -11,7 +19,6 @@ import { LifetimeBoundaryCrossingDirection } from '../pooling/LifetimeBoundaryCr
 import { LifetimeBoundaryKind } from '../pooling/LifetimeBoundaryKind';
 import { LifetimeEntryManager } from '../pooling/LifetimeEntryManager';
 import { ISkinSource } from '../skinning/ISkinSource.ts';
-import { EditorContext } from './context/EditorContext';
 import { EditorClock } from './EditorClock';
 import { EditorMixer } from './EditorMixer.ts';
 import { HitObjectLifetimeEntry } from './hitobjects/HitObjectLifetimeEntry';
@@ -19,9 +26,6 @@ import { HitObjectLifetimeEntry } from './hitobjects/HitObjectLifetimeEntry';
 export class HitsoundPlayer extends CompositeDrawable {
   @resolved(EditorClock)
   editorClock!: EditorClock;
-
-  @resolved(EditorContext)
-  editorContext!: EditorContext;
 
   samplePlayed = new Action<HitSample>();
 

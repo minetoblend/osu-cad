@@ -1,5 +1,5 @@
 import type { Drawable, GameHost, ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
-import type { EditorContext } from './context/EditorContext';
+import type { BeatmapItemInfo } from '../beatmapSelect/BeatmapItemInfo.ts';
 import { AudioManager, Axes, EasingFunction, GAME_HOST, LowpassFilter, resolved, ScreenStack } from 'osucad-framework';
 import { GlobalSongPlayback } from '../GlobalSongPlayback';
 import { Notification } from '../notifications/Notification';
@@ -10,7 +10,7 @@ import { EditorMixer } from './EditorMixer';
 
 export class EditorLoader extends OsucadScreen {
   constructor(
-    readonly context: EditorContext,
+    readonly beatmap: BeatmapItemInfo,
     background?: Drawable,
   ) {
     super();
@@ -63,7 +63,7 @@ export class EditorLoader extends OsucadScreen {
     }
 
     import('./Editor').then(async ({ Editor }) => {
-      const editor = new Editor(this.context);
+      const editor = new Editor(this.beatmap);
 
       try {
         await this.loadComponentAsync(editor);

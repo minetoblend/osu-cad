@@ -27,7 +27,6 @@ import { OsucadSettings } from '../config/OsucadSettings';
 import { EditorLoader } from '../editor/EditorLoader';
 import { MainScrollContainer } from '../editor/MainScrollContainer';
 import { EditorEnvironment } from '../environment/EditorEnvironment';
-import { IResourcesProvider } from '../io/IResourcesProvider';
 import { UISamples } from '../UISamples';
 import { CarouselLoadQueue } from './CarouselLoadQueue';
 import { CarouselMapset } from './CarouselMapset';
@@ -225,6 +224,8 @@ export class BeatmapCarousel extends CompositeDrawable {
       const mapset = mapsets.get(beatmap.setId)!;
 
       mapset.beatmaps.push(beatmap);
+
+      beatmap.mapset = mapset;
     }
 
     this.mapsets = [...mapsets.values()].map(mapset => this.createCarouselMapset(mapset));
@@ -421,7 +422,7 @@ export class BeatmapCarousel extends CompositeDrawable {
       case Key.Enter: {
         const beatmap = this.#selectedBeatmapSet?.beatmaps.find(it => it.selected.value);
         if (beatmap) {
-          this.findClosestParentOfType(ScreenStack)?.push(new EditorLoader(beatmap.beatmapInfo.createEditorContext(this.dependencies.resolve(IResourcesProvider))));
+          this.findClosestParentOfType(ScreenStack)?.push(new EditorLoader(beatmap.beatmapInfo));
         }
 
         return true;

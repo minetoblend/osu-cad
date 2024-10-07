@@ -4,7 +4,7 @@ import type {
   ScreenExitEvent,
   ScreenTransitionEvent,
 } from 'osucad-framework';
-import type { DifficultyInfo } from '../../context/EditorContext.ts';
+import type { DifficultyInfo } from '../../EditorBeatmap.ts';
 import type { OsuPlayfield } from '../../hitobjects/OsuPlayfield.ts';
 import type { BackgroundAdjustment } from '../BackgroundAdjustment.ts';
 import {
@@ -16,13 +16,11 @@ import {
   DrawSizePreservingFillContainer,
   EasingFunction,
   FillFlowContainer,
-  resolved,
   Vec2,
 } from 'osucad-framework';
 import { OsucadSpriteText } from '../../../OsucadSpriteText.ts';
 import { DropdownItem, DropdownSelect } from '../../../userInterface/DropdownSelect.ts';
 import { Toggle } from '../../../userInterface/Toggle.ts';
-import { EditorContext } from '../../context/EditorContext.ts';
 import { EditorDependencies } from '../../EditorDependencies.ts';
 import { PlayfieldGrid } from '../../playfield/PlayfieldGrid.ts';
 import { EditorScreen } from '../EditorScreen';
@@ -31,9 +29,6 @@ import { SecondaryPlayfield } from './SecondaryPlayfield.ts';
 
 export class CompareScreen extends EditorScreen {
   protected playfield!: OsuPlayfield;
-
-  @resolved(EditorContext)
-  context!: EditorContext;
 
   splitView = new BindableBoolean(true);
 

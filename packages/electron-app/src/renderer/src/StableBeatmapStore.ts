@@ -1,9 +1,9 @@
-import { BeatmapStore, EditorContext, loadTexture, StableBeatmapParser } from '@osucad/editor';
+import { BeatmapStore, IResourcesProvider, LoadedBeatmap, loadTexture, StableBeatmapParser } from '@osucad/editor';
 import { BeatmapItemInfo } from 'packages/editor/src/beatmapSelect/BeatmapItemInfo';
 import { OsuBeatmap } from 'osu-db-parser';
 import { BeatmapSettings } from '../../../../editor/src/beatmap/BeatmapSettings';
-import { StableEditorContext } from './StableEditorContext';
-import { IResourcesProvider } from '../../../../editor/src/io/IResourcesProvider';
+import { StableLoadedBeatmap } from './StableLoadedBeatmap';
+import { MapsetInfo } from '../../../../editor/src/beatmapSelect/MapsetInfo.ts';
 
 export class StableBeatmapStore extends BeatmapStore {
   async load() {
@@ -112,7 +112,13 @@ export class StableBeatmapInfo implements BeatmapItemInfo {
     return this.#parsedSettings;
   }
 
-  createEditorContext(resources: IResourcesProvider): EditorContext {
-    return new StableEditorContext(resources, this);
+  async load(resources: IResourcesProvider): Promise<LoadedBeatmap> {
+    const beatmap = new StableLoadedBeatmap(this);
+
+    await beatmap.load(resources);
+
+    return beatmap;
   }
+
+  mapset: MapsetInfo | null = null;
 }

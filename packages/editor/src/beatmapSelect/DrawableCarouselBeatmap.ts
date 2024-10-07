@@ -7,7 +7,6 @@ import { OsucadSpriteText } from '../OsucadSpriteText';
 import { UISamples } from '../UISamples';
 import { CarouselBeatmap } from './CarouselBeatmap';
 import { DrawableCarouselItem } from './DrawableCarouselItem';
-import { IResourcesProvider } from '../io/IResourcesProvider';
 
 export class DrawableCarouselBeatmap extends DrawableCarouselItem {
   constructor(item: CarouselBeatmap) {
@@ -181,10 +180,7 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
     if (this.item.selected.value) {
       this.samples.menuhit.play();
 
-      this.findClosestParentOfType(ScreenStack)
-        ?.push(new EditorLoader(
-          this.carouselBeatmap.beatmapInfo.createEditorContext(this.dependencies.resolve(IResourcesProvider)),
-        ));
+      this.findClosestParentOfType(ScreenStack)?.push(new EditorLoader(this.carouselBeatmap.beatmapInfo));
     }
 
     return super.onClick();

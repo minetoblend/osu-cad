@@ -1,7 +1,7 @@
 import type { Color } from 'pixi.js';
-import type { Beatmap } from './Beatmap';
 import type { OsuHitObject } from './hitObjects/OsuHitObject';
 import type { HitSound } from './hitSounds/HitSound';
+import type { IBeatmap } from './IBeatmap.ts';
 import { HitType } from 'osu-classes';
 import { almostEquals, clamp } from 'osucad-framework';
 import { HitObjectUtils } from '../editor/screens/compose/HitObjectUtils';
@@ -14,7 +14,7 @@ import { ControlPointInfo } from './timing/ControlPointInfo';
 import { DifficultyPoint } from './timing/DifficultyPoint';
 
 export class StableBeatmapEncoder {
-  encode(beatmap: Beatmap): string {
+  encode(beatmap: IBeatmap): string {
     const lines = [
       'osu file format v14',
       '',
@@ -55,7 +55,7 @@ export class StableBeatmapEncoder {
     return value ? 1 : 0;
   }
 
-  * #encodeGeneral(beatmap: Beatmap) {
+  * #encodeGeneral(beatmap: IBeatmap) {
     yield `AudioFilename: ${beatmap.settings.audioFileName}`;
     yield `AudioLeadIn: ${beatmap.settings.audioLeadIn}`;
     yield `PreviewTime: ${beatmap.settings.previewTime}`;
@@ -74,7 +74,7 @@ export class StableBeatmapEncoder {
     yield `SamplesMatchPlaybackRate: ${this.#boolToInt(beatmap.settings.samplesMatchPlaybackRate)}`;
   }
 
-  * #encodeEditor(beatmap: Beatmap) {
+  * #encodeEditor(beatmap: IBeatmap) {
     console.log(beatmap.settings.editor.gridSize);
     yield `Bookmarks: ${beatmap.settings.editor.bookmarks.map(it => Math.round(it)).join(',')}`;
     yield `DistanceSpacing: ${this.#roundToPrecision(beatmap.settings.editor.distanceSpacing, 1)}`;
@@ -83,7 +83,7 @@ export class StableBeatmapEncoder {
     yield `TimelineZoom: ${this.#roundToPrecision(beatmap.settings.editor.timelineZoom, 1)}`;
   }
 
-  * #encodeMetadata(beatmap: Beatmap) {
+  * #encodeMetadata(beatmap: IBeatmap) {
     yield `Title: ${beatmap.metadata.title}`;
     yield `TitleUnicode: ${beatmap.metadata.titleUnicode}`;
     yield `Artist: ${beatmap.metadata.artist}`;
@@ -96,7 +96,7 @@ export class StableBeatmapEncoder {
     yield `BeatmapSetID: ${beatmap.metadata.osuWebSetId}`;
   }
 
-  * #encodeDifficulty(beatmap: Beatmap) {
+  * #encodeDifficulty(beatmap: IBeatmap) {
     yield `HPDrainRate: ${this.#roundToPrecision(beatmap.difficulty.hpDrainRate, 1)}`;
     yield `CircleSize: ${this.#roundToPrecision(beatmap.difficulty.circleSize, 1)}`;
     yield `OverallDifficulty: ${this.#roundToPrecision(beatmap.difficulty.overallDifficulty, 1)}`;
@@ -105,7 +105,7 @@ export class StableBeatmapEncoder {
     yield `SliderTickRate: ${this.#roundToPrecision(beatmap.difficulty.sliderTickRate, 1)}`;
   }
 
-  * #encodeEvents(beatmap: Beatmap) {
+  * #encodeEvents(beatmap: IBeatmap) {
     yield `//Background and Video events`;
     if (beatmap.settings.backgroundFilename)
       yield `0,0,"${beatmap.settings.backgroundFilename}",0,0`;
@@ -118,7 +118,7 @@ export class StableBeatmapEncoder {
     yield `//Storyboard Sound Samples`;
   }
 
-  * #encodeTimingPoints(beatmap: Beatmap) {
+  * #encodeTimingPoints(beatmap: IBeatmap) {
     if (beatmap.controlPoints.groups.length === 0)
       return;
 
@@ -206,7 +206,7 @@ export class StableBeatmapEncoder {
     return `${(hex >> 16) & 0xFF},${(hex >> 8) & 0xFF},${hex & 0xFF}`;
   }
 
-  * #encodeColours(beatmap: Beatmap) {
+  * #encodeColours(beatmap: IBeatmap) {
     for (let i = 0; i < beatmap.colors.comboColors.length; i++) {
       yield `Combo${i + 1}: ${this.#encodeColor(beatmap.colors.comboColors[i])}`;
     }
@@ -218,7 +218,7 @@ export class StableBeatmapEncoder {
       yield `SliderBorder: ${this.#encodeColor(beatmap.colors.sliderBorder)}`;
   }
 
-  * #encodeHitObjects(beatmap: Beatmap) {
+  * #encodeHitObjects(beatmap: IBeatmap) {
     for (const hitObject of beatmap.hitObjects)
       yield * this.#encodeHitObject(hitObject);
   }

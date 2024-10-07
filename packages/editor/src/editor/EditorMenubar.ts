@@ -129,7 +129,7 @@ export class EditorMenubar extends EditorMenu implements IKeyBindingHandler<Plat
   async save() {
     let result = false;
 
-    if (this.editor!.commandHandler.hasUnsavedChanges) {
+    if (this.editor!.commandManager.hasUnsavedChanges) {
       result = await this.editor!.context.save?.() ?? false;
     }
     else {
@@ -142,7 +142,7 @@ export class EditorMenubar extends EditorMenu implements IKeyBindingHandler<Plat
         undefined,
         this.theme.primary,
       ));
-      this.editor!.commandHandler.hasUnsavedChanges = false;
+      this.editor!.commandManager.hasUnsavedChanges = false;
     }
     else {
       this.notifications.add(new Notification(

@@ -1,31 +1,24 @@
 import type { AudioChannel, Drawable, PIXITexture, Sample } from 'osucad-framework';
 import type { HitSample } from '../beatmap/hitSounds/HitSample.ts';
+import type { LoadedBeatmap } from '../beatmap/LoadedBeatmap.ts';
 import type { ISkin } from '../skinning/ISkin.ts';
 import type { ISkinComponentLookup } from '../skinning/ISkinComponentLookup.ts';
 import type { ISkinSource } from '../skinning/ISkinSource.ts';
 import type { SkinInfo } from '../skinning/SkinInfo.ts';
 import { Action, asyncDependencyLoader, Bindable, BindableBoolean, resolved } from 'osucad-framework';
-import { Beatmap } from '../beatmap/Beatmap.ts';
 import { OsucadConfigManager } from '../config/OsucadConfigManager.ts';
 import { OsucadSettings } from '../config/OsucadSettings.ts';
 import { IResourcesProvider } from '../io/IResourcesProvider.ts';
 import { SkinConfig } from '../skinning/SkinConfig.ts';
 import { SkinTransformer } from '../skinning/SkinTransformer.ts';
 import { StableSkin } from '../skinning/stable/StableSkin.ts';
-import { EditorContext } from './context/EditorContext.ts';
 
 export class BeatmapSkin extends SkinTransformer implements ISkinSource {
-  constructor(source: ISkinSource) {
+  constructor(source: ISkinSource, readonly beatmap: LoadedBeatmap) {
     super(source);
   }
 
   declare source: ISkinSource;
-
-  @resolved(Beatmap)
-  beatmap!: Beatmap;
-
-  @resolved(EditorContext)
-  context!: EditorContext;
 
   @resolved(OsucadConfigManager)
   config!: OsucadConfigManager;
@@ -55,7 +48,7 @@ export class BeatmapSkin extends SkinTransformer implements ISkinSource {
     };
 
     try {
-      const skin = new StableSkin(skinInfo, this.resources, this.context.resources);
+      const skin = new StableSkin(skinInfo, this.resources, this.beatmap.resources);
 
       await skin.load();
 

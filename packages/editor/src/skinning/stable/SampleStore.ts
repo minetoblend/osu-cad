@@ -42,8 +42,6 @@ export class SampleStore {
       && (!filter || filter(filename)),
     );
 
-    console.log('Loading samples', names, this.#resources.getAvailableResources());
-
     await Promise.all(names.map(name => this.loadSample(name)));
   }
 

@@ -18,6 +18,13 @@ export class AudioManager {
     return new AudioBufferTrack(this.context, channel, buffer);
   }
 
+  async createTrackFromArrayBuffer(channel: AudioChannel, buffer: ArrayBuffer) {
+    const dest = new ArrayBuffer(buffer.byteLength);
+    new Uint8Array(dest).set(new Uint8Array(buffer));
+
+    return this.context.decodeAudioData(dest).then(audioBuffer => this.createTrack(channel, audioBuffer));
+  }
+
   createTrackFromUrl(channel: AudioChannel, url: string) {
     return fetch(url)
       .then(res => res.arrayBuffer())

@@ -1,4 +1,4 @@
-import type { DifficultyInfo } from './context/EditorContext.ts';
+import type { DifficultyInfo } from './EditorBeatmap.ts';
 import type { OsuPlayfield } from './hitobjects/OsuPlayfield.ts';
 import { Action, Bindable } from 'osucad-framework';
 import { HitSoundState } from '../beatmap/hitSounds/BindableHitSound.ts';
