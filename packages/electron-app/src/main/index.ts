@@ -4,7 +4,7 @@ import { electronApp, is } from '@electron-toolkit/utils';
 import { setupEnvironment } from './ElectronEnvironment';
 import { setupProtocol } from './protocol';
 import { loadOsuStableInfo } from './loadOsuStableInfo';
-import { checkForUpdates } from './auto-update';
+import { setupAutoUpdates } from './auto-update';
 
 app.commandLine.appendSwitch ("disable-http-cache");
 
@@ -44,7 +44,7 @@ function createWindow(): void {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
   }
 
-  checkForUpdates(mainWindow);
+  setupAutoUpdates(mainWindow);
 }
 
 // This method will be called when Electron has finished
