@@ -21,9 +21,11 @@ export class SecondaryPlayfield extends CompositeDrawable {
     dependencies.provide(Beatmap, beatmap);
 
     this.addAllInternal(
-      new BeatmapComboProcessor(),
+      this.comboProcessor = new BeatmapComboProcessor(),
       new BeatmapStackingProcessor(),
       new OsuPlayfield(),
     );
   }
+
+  comboProcessor!: BeatmapComboProcessor;
 }

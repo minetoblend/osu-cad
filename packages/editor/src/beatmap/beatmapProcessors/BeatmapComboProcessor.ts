@@ -54,6 +54,20 @@ export class BeatmapComboProcessor extends BeatmapProcessor {
 
   #skinComboColors: readonly Color[] = [];
 
+  #comboColorsOverride: Color[] | null = null;
+
+  get comboColorsOverride() {
+    return this.#comboColorsOverride;
+  }
+
+  set comboColorsOverride(value: Color[] | null) {
+    if (value === this.#comboColorsOverride)
+      return;
+
+    this.#comboColorsOverride = value;
+    this.#skinChanged();
+  }
+
   @dependencyLoader()
   load() {
     this.skin.sourceChanged.addListener(this.#skinChanged, this);
@@ -66,6 +80,9 @@ export class BeatmapComboProcessor extends BeatmapProcessor {
   }
 
   protected getComboColor(comboIndex: number) {
+    if (this.#comboColorsOverride !== null)
+      return this.#comboColorsOverride[comboIndex % this.#comboColorsOverride.length];
+
     if (this.#skinComboColors.length > 0)
       return this.#skinComboColors[comboIndex % this.#skinComboColors.length];
 

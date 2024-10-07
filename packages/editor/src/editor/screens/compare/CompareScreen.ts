@@ -7,17 +7,9 @@ import type {
 import type { DifficultyInfo } from '../../EditorBeatmap.ts';
 import type { OsuPlayfield } from '../../hitobjects/OsuPlayfield.ts';
 import type { BackgroundAdjustment } from '../BackgroundAdjustment.ts';
-import {
-  Anchor,
-  Axes,
-  BindableBoolean,
-  Container,
-  dependencyLoader,
-  DrawSizePreservingFillContainer,
-  EasingFunction,
-  FillFlowContainer,
-  Vec2,
-} from 'osucad-framework';
+import { Anchor, Axes, BindableBoolean, Container, dependencyLoader, DrawSizePreservingFillContainer, EasingFunction, FillFlowContainer, resolved, Vec2 } from 'osucad-framework';
+import { Color } from 'pixi.js';
+import { BeatmapComboProcessor } from '../../../beatmap/beatmapProcessors/BeatmapComboProcessor.ts';
 import { OsucadSpriteText } from '../../../OsucadSpriteText.ts';
 import { DropdownItem, DropdownSelect } from '../../../userInterface/DropdownSelect.ts';
 import { Toggle } from '../../../userInterface/Toggle.ts';
@@ -29,6 +21,9 @@ import { SecondaryPlayfield } from './SecondaryPlayfield.ts';
 
 export class CompareScreen extends EditorScreen {
   protected playfield!: OsuPlayfield;
+
+  @resolved(BeatmapComboProcessor)
+  comboProcessor!: BeatmapComboProcessor;
 
   splitView = new BindableBoolean(true);
 
@@ -129,8 +124,6 @@ export class CompareScreen extends EditorScreen {
 
       if (evt.value) {
         this.#rightPlayfieldContainer.add(this.#rightPlayfield = new SecondaryPlayfield(evt.value));
-        if (!this.splitView.value)
-          this.#rightPlayfield.fadeColor(0x7693E3);
       }
     }, { immediate: true });
 
@@ -140,16 +133,23 @@ export class CompareScreen extends EditorScreen {
         this.#rightContainer.resizeWidthTo(0.5, 500, EasingFunction.OutExpo);
         this.#secondGrid.fadeIn(500);
 
-        this.#leftPlayfield?.fadeColor(0xFFFFFF);
-        this.#rightPlayfield?.fadeColor(0xFFFFFF);
+        this.comboProcessor.comboColorsOverride = null;
+        this.#rightPlayfield!.comboProcessor.comboColorsOverride = null;
       }
       else {
         this.#leftContainer.resizeWidthTo(1, 500, EasingFunction.OutExpo);
         this.#rightContainer.resizeWidthTo(1, 500, EasingFunction.OutExpo);
         this.#secondGrid.fadeOut(500);
 
-        this.#leftPlayfield?.fadeColor(0xE38376);
-        this.#rightPlayfield?.fadeColor(0x7693E3);
+        this.comboProcessor.comboColorsOverride = [
+          new Color(0xD90B2D),
+          new Color(0xFF4D6A),
+        ];
+
+        this.#rightPlayfield!.comboProcessor.comboColorsOverride = [
+          new Color(0x0039B5),
+          new Color(0x457FFF),
+        ];
       }
     });
   }
@@ -193,7 +193,9 @@ export class CompareScreen extends EditorScreen {
   }
 
   onExiting(e: ScreenExitEvent): boolean {
-    this.#leftPlayfield?.fadeColor(0xFFFFFF);
+    this.comboProcessor.comboColorsOverride = null;
+    if (this.#rightPlayfield)
+      this.#rightPlayfield.comboProcessor.comboColorsOverride = null;
 
     return super.onExiting(e);
   }

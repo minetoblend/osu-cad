@@ -158,10 +158,13 @@ export class Editor
       (this.#bottomBar = new EditorBottomBar()),
     );
 
-    this.addAllInternal(
-      new BeatmapStackingProcessor(),
-      new BeatmapComboProcessor(),
-    );
+    const stackingProcessor = new BeatmapStackingProcessor();
+    const comboProcessor = new BeatmapComboProcessor();
+
+    this.dependencies.provide(BeatmapStackingProcessor, stackingProcessor);
+    this.dependencies.provide(BeatmapComboProcessor, comboProcessor);
+
+    this.addAllInternal(stackingProcessor, comboProcessor);
   }
 
   protected loadComplete() {
