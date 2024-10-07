@@ -13,6 +13,8 @@ export class ElectronSkinStore extends SkinStore {
 
     const skins = await window.api.loadSkins() ?? [];
 
+    skins.sort((a, b) => a.name.localeCompare(b.name))
+
     console.log(`Found ${skins.length} skins`);
 
     this.skins.value = skins.map(skinInfo => new StableSkinInfo(skinInfo));
