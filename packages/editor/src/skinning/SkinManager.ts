@@ -107,6 +107,10 @@ export class SkinManager extends Component implements ISkinSource {
       this.loadingSkin.value = skin;
       const loadedSkin = await skin.loadSkin(this.resources);
       if (!signal.aborted) {
+        const oldSkin = this.activeSkin.value;
+        if (oldSkin)
+          this.schedule(() => oldSkin.dispose());
+
         this.activeSkin.value = loadedSkin;
         this.loadingSkin.value = null;
         return true;
