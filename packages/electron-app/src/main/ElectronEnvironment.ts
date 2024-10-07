@@ -79,33 +79,13 @@ async function loadSkins(osuPaths: OsuStableInfo): Promise<ElectronSkinInfo[]> {
   if (!osuPaths.skinsPath)
     return [];
 
-
-  const skins: ElectronSkinInfo[] = []
-
   try {
     const dirs = await readdir(osuPaths.skinsPath);
 
-    for (const dir of dirs) {
-      let name = dir;
-
-      try {
-        const ini = await readFile(path.join(osuPaths.skinsPath, dir, 'skin.ini'), 'utf-8');
-
-        const match = ini.match(/Name:(.*)/);
-        if (match) {
-          name = match[1].trim();
-        }
-      } catch (e) {
-        // this can fail if the file isn't there
-      }
-
-      skins.push({
-        name,
-        path: `osu-stable://skins?path=${encodeURIComponent(dir)}`,
-      });
-    }
-
-    return skins;
+    return dirs.map(dirname => ({
+      name: dirname,
+      path: `osu-stable://skins?path=${encodeURIComponent(dirname)}`,
+    }));
   } catch(e) {
     console.error('Failed to load skins', e);
     return []
