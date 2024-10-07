@@ -9,6 +9,8 @@ import { Action, asyncDependencyLoader, Bindable, BindableBoolean, resolved } fr
 import { OsucadConfigManager } from '../config/OsucadConfigManager.ts';
 import { OsucadSettings } from '../config/OsucadSettings.ts';
 import { IResourcesProvider } from '../io/IResourcesProvider.ts';
+import { OsuSkinComponentLookup } from '../skinning/OsuSkinComponentLookup.ts';
+import { OsuSkinComponents } from '../skinning/OsuSkinComponents.ts';
 import { SkinConfig } from '../skinning/SkinConfig.ts';
 import { SkinTransformer } from '../skinning/SkinTransformer.ts';
 import { StableSkin } from '../skinning/stable/StableSkin.ts';
@@ -89,6 +91,17 @@ export class BeatmapSkin extends SkinTransformer implements ISkinSource {
   }
 
   getDrawableComponent(lookup: ISkinComponentLookup): Drawable | null {
+    if (lookup instanceof OsuSkinComponentLookup) {
+      switch (lookup.component) {
+        case OsuSkinComponents.SliderBall:
+        {
+          const texture = this.beatmapSkin?.getTexture('sliderb') ?? this.beatmapSkin?.getTexture('sliderb0');
+          if (!texture)
+            return this.source.getDrawableComponent(lookup);
+        }
+      }
+    }
+
     if (this.useBeatmapSkins.value) {
       const result = this.beatmapSkin?.getDrawableComponent(lookup);
 
