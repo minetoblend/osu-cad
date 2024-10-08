@@ -173,13 +173,19 @@ export abstract class Skin implements IDisposable, ISkin {
         return new Bindable(this.configuration.comboColors);
 
       case SkinConfig.SliderTrackOverride:
-        return new Bindable(this.configuration.customColors.get('SliderTrackOverride') ?? null);
+        if (this.configuration.customColors.has('SliderTrackOverride'))
+          return new Bindable(this.configuration.customColors.get('SliderTrackOverride')!);
+        break;
 
       case SkinConfig.SliderBorder:
-        return new Bindable(this.configuration.customColors.get('SliderBorder') ?? null);
+        if (this.configuration.customColors.has('SliderBorder'))
+          return new Bindable(this.configuration.customColors.get('SliderBorder')!);
+        break;
 
       case SkinConfig.AllowSliderBallTint:
-        return new Bindable(this.configuration.configMap.get('AllowSliderBallTint') === '1');
+        if (this.configuration.configMap.has('AllowSliderBallTint'))
+          return new Bindable(this.configuration.configMap.get('AllowSliderBallTint') === '1');
+        break;
 
       case SkinConfig.AnimationFramerate:
       {
@@ -196,7 +202,7 @@ export abstract class Skin implements IDisposable, ISkin {
       {
         const value = this.configuration.configMap.get('HitCircleOverlap');
         if (value === undefined)
-          return new Bindable(-2);
+          break;
 
         const parsed = Number.parseFloat(value);
         if (Number.isNaN(parsed))
