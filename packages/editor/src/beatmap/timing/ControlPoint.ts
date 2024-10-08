@@ -1,12 +1,23 @@
 import type { ControlPointGroup } from './ControlPointGroup.ts';
 import { Action, BindableNumber, Comparer } from 'osucad-framework';
 
+let nextUid = 0;
+
 export abstract class ControlPoint {
   static readonly COMPARER = new class extends Comparer<ControlPoint> {
     compare(a: ControlPoint, b: ControlPoint) {
-      return a.time - b.time;
+      const result = a.time - b.time;
+      if (result !== 0)
+        return result;
+
+      if (a.group !== null && b.group !== null)
+        return a.group.uid - b.group.uid;
+
+      return a.uid - b.uid;
     }
   }();
+
+  uid = nextUid++;
 
   group: ControlPointGroup | null = null;
 
