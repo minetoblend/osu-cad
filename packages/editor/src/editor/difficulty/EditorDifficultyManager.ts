@@ -36,4 +36,10 @@ export class EditorDifficultyManager extends Component {
 
     this.worker.postMessage(serialized);
   }
+
+  override dispose(isDisposing: boolean = true) {
+    super.dispose(isDisposing);
+
+    this.worker.terminate();
+  }
 }
