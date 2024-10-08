@@ -10,7 +10,7 @@ export abstract class ControlPoint {
       if (result !== 0)
         return result;
 
-      if (a.group !== null && b.group !== null)
+      if (a.group && b.group)
         return a.group.uid - b.group.uid;
 
       return a.uid - b.uid;
