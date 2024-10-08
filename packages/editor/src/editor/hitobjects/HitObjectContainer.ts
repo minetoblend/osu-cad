@@ -110,8 +110,12 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
     bindable.bindTo(drawable.startTimeBindable);
 
     bindable.valueChanged.addListener(() => {
-      if (this.loadState >= LoadState.Ready)
-        this.changeInternalChildDepth(drawable, this.getDrawableDepth(drawable));
+      if (this.loadState >= LoadState.Ready) {
+        if (drawable.parent)
+          drawable.parent.changeInternalChildDepth(drawable, this.getDrawableDepth(drawable));
+        else
+          drawable.depth = this.getDrawableDepth(drawable);
+      }
     });
 
     this.#startTimeMap.set(drawable, bindable);
