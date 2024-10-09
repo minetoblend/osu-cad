@@ -128,6 +128,9 @@ export class GameplayVisualizer extends VisibilityContainer {
         }
       }
 
+      if (!Number.isFinite(position.x) || !Number.isFinite(position.y))
+        return;
+
       if (this.#firstUpdateSinceShow || !this.editorClock.isRunning) {
         this.cursor.position = position;
         this.#firstUpdateSinceShow = false;
