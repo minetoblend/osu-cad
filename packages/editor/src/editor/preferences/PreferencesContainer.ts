@@ -1,8 +1,23 @@
-import type { ContainerOptions, IKeyBindingHandler, KeyBindingPressEvent } from 'osucad-framework';
-import { Anchor, Axes, Bindable, Container, dependencyLoader, EasingFunction } from 'osucad-framework';
+import type {
+  ContainerOptions,
+  Drawable,
+  IKeyBindingHandler,
+  KeyBindingPressEvent,
+  KeyDownEvent,
+  List,
+  Vec2,
+} from 'osucad-framework';
+import {
+  Anchor,
+  Axes,
+  Bindable,
+  Container,
+  dependencyLoader,
+  EasingFunction,
+  Key,
+} from 'osucad-framework';
 import { OsucadGame } from '../../OsucadGame.ts';
 import { EditorAction } from '../EditorAction';
-import { MouseTrap } from '../MouseTrap';
 import { Preferences } from './Preferences';
 
 export class PreferencesContainer
@@ -34,11 +49,27 @@ export class PreferencesContainer
     width: 400,
   });
 
-  #closeTrap = new MouseTrap({
-    action: () => this.hidePreferences(),
-  });
-
   readonly preferencesVisible = new Bindable(false);
+
+  override buildPositionalInputQueue(screenSpacePos: Vec2, queue: List<Drawable>): boolean {
+    if (!this.preferencesVisible.value)
+      return super.buildPositionalInputQueue(screenSpacePos, queue);
+
+    queue.push(this);
+    this.#preferences.buildPositionalInputQueue(screenSpacePos, queue);
+
+    return true;
+  }
+
+  override buildNonPositionalInputQueue(queue: List<Drawable>, allowBlocking?: boolean): boolean {
+    if (!this.preferencesVisible.value)
+      return super.buildNonPositionalInputQueue(queue, allowBlocking);
+
+    queue.push(this);
+    this.#preferences.buildNonPositionalInputQueue(queue, allowBlocking);
+
+    return true;
+  }
 
   showPreferences(): void {
     this.preferencesVisible.value = true;
@@ -59,17 +90,12 @@ export class PreferencesContainer
 
     this.addAllInternal(
       this.#content,
-      this.#closeTrap,
       this.#preferencesContainer,
     );
-
-    this.#closeTrap.isActive = false;
   }
 
   #updateVisibility(visible: boolean) {
     if (visible) {
-      this.#closeTrap.isActive = true;
-
       this.#preferences.moveToX(0, 400, EasingFunction.OutQuart);
 
       this.#content.moveToX(50, 400, EasingFunction.OutQuart);
@@ -79,8 +105,6 @@ export class PreferencesContainer
       this.#preferences.show();
     }
     else {
-      this.#closeTrap.isActive = false;
-
       this.#preferences.moveToX(-1, 400, EasingFunction.OutQuart);
 
       this.#content.moveToX(0, 400, EasingFunction.OutQuart);
@@ -114,6 +138,15 @@ export class PreferencesContainer
 
   override onMouseDown(): boolean {
     if (this.preferencesVisible.value) {
+      this.hidePreferences();
+      return true;
+    }
+
+    return false;
+  }
+
+  onKeyDown(e: KeyDownEvent): boolean {
+    if (e.key === Key.Escape && this.preferencesVisible.value) {
       this.hidePreferences();
       return true;
     }

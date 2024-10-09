@@ -1,3 +1,4 @@
+import type { MouseDownEvent } from 'osucad-framework';
 import {
   Axes,
   Box,
@@ -99,5 +100,9 @@ export class Preferences extends Container {
 
   override hide() {
     this.fadeOut(400);
+  }
+
+  onMouseDown(e: MouseDownEvent): boolean {
+    return true;
   }
 }
