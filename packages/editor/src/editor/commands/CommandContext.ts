@@ -1,8 +1,8 @@
-import type { EditorBeatmap } from '../EditorBeatmap.ts';
+import type { IBeatmap } from '../../beatmap/IBeatmap.ts';
 
 export class CommandContext {
   constructor(
-    readonly beatmap: EditorBeatmap,
+    readonly beatmap: IBeatmap,
     readonly isLocal = true,
   ) {
   }

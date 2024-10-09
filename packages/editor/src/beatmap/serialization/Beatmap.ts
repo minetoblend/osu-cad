@@ -6,7 +6,7 @@ import { deserializeHitObject, serializeHitObject } from './HitObjects.ts';
 
 export function serializeBeatmap(beatmap: Beatmap) {
   return {
-    hitObjects: beatmap.hitObjects.items.map(serializeHitObject),
+    hitObjects: beatmap.hitObjects.items.filter(it => !it.synthetic).map(serializeHitObject),
     controlPoints: beatmap.controlPoints.groups.items.map(serializeControlPointGroup),
     difficulty: beatmap.difficulty.asPatch(),
     settings: structuredClone(beatmap.settings), // TODO
