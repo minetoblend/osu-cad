@@ -60,8 +60,11 @@ export class EditorScreenSelect extends Container {
       new ScreenSelectButton('Compose', EditorScreenType.Compose),
       new ScreenSelectButton('Timing', EditorScreenType.Timing),
       new ScreenSelectButton('Hitsounds', EditorScreenType.Hitsounds),
-      new ScreenSelectButton('Compare', EditorScreenType.Compare),
     );
+
+    if (this.dependencies.resolve(EditorDependencies).otherDifficulties.length > 0) {
+      this.add(new ScreenSelectButton('Compare', EditorScreenType.Compare));
+    }
 
     this.updateSubTree();
   }
