@@ -130,7 +130,7 @@ export class EditorMenubar extends EditorMenu implements IKeyBindingHandler<Plat
     let result = false;
 
     if (this.editor!.commandManager.hasUnsavedChanges) {
-      result = await this.editor!.context.save?.() ?? false;
+      result = await this.editor!.beatmap.save?.() ?? false;
     }
     else {
       result = true;
