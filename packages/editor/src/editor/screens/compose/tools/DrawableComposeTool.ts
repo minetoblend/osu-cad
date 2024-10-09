@@ -178,8 +178,12 @@ export abstract class DrawableComposeTool extends CommandContainer {
 
   protected get visibleObjects(): OsuHitObject[] {
     const entries = this.playfield.hitObjectContainer.aliveEntries.keys();
+    const hitObjects = new Set([...entries].map(it => it.hitObject).filter(it => it.isVisibleAtTime(this.editorClock.currentTime)));
 
-    return [...entries].map(it => it.hitObject).filter(it => it.isVisibleAtTime(this.editorClock.currentTime)) as OsuHitObject[];
+    for (const h of this.selection)
+      hitObjects.add(h);
+
+    return [...hitObjects] as OsuHitObject[];
   }
 
   protected hoveredHitObjects(position: Vec2): OsuHitObject[] {
