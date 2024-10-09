@@ -52,6 +52,8 @@ export class Timeline extends Container {
         depth: -2,
       }),
     );
+
+    this.zoomBindable.bindTo(this.beatmap.settings.editor.timelineZoom);
   }
 
   update() {

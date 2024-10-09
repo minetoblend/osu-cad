@@ -230,7 +230,7 @@ export class StableBeatmapParser {
         beatmap.settings.editor.gridSize = Number.parseInt(value);
         break;
       case 'TimelineZoom':
-        beatmap.settings.editor.timelineZoom = Number.parseFloat(value);
+        beatmap.settings.editor.timelineZoom.value = Number.parseFloat(value);
         break;
     }
   }

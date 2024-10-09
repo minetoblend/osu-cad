@@ -1,4 +1,4 @@
-import { Bindable } from 'osucad-framework';
+import { Bindable, BindableNumber } from 'osucad-framework';
 
 export class BeatmapEditorSettings {
   bookmarks: number[] = [];
@@ -24,5 +24,8 @@ export class BeatmapEditorSettings {
     this.gridSizeBindable.value = value;
   }
 
-  timelineZoom = 1;
+  timelineZoom = Object.assign(new BindableNumber(0), {
+    minValue: 0.25,
+    maxValue: 8,
+  });
 }
