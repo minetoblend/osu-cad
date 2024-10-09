@@ -10,6 +10,7 @@ import type { ControlPointGroup } from '../../beatmap/timing/ControlPointGroup.t
 import type { LifetimeEntry } from '../../pooling/LifetimeEntry';
 import type { TimelineObject } from './TimelineObject';
 import {
+  almostEquals,
   Anchor,
   Axes,
   Bindable,
@@ -144,7 +145,8 @@ export class ComposeScreenTimeline extends Timeline implements IKeyBindingHandle
     this.#startTimeMap.set(object, startTime);
 
     startTime.valueChanged.addListener(() => {
-      this.#objectContainer.changeChildDepth(drawable, object.startTime);
+      // adding a tiny random value as a dirty hack to force pixi.js to use the same order as the actual child order
+      this.#objectContainer.changeChildDepth(drawable, object.startTime + Math.random() * 0.01);
     });
 
     this.#objectContainer.add(drawable);
@@ -233,6 +235,24 @@ export class ComposeScreenTimeline extends Timeline implements IKeyBindingHandle
     }
 
     this.#updateControlPointProperties();
+  }
+
+  updateAfterChildren() {
+    super.updateAfterChildren();
+
+    let lastPosition = Number.MIN_VALUE;
+    let stackHeight = 0;
+    for (const child of this.#objectContainer.children) {
+      if (almostEquals(child.x, lastPosition)) {
+        child.y = -(++stackHeight) * 3;
+      }
+      else {
+        stackHeight = 0;
+        child.y = 0;
+      }
+
+      lastPosition = child.x;
+    }
   }
 
   #updateControlPointProperties(animated = false, force = false) {
