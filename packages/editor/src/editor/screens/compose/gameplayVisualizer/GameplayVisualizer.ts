@@ -33,6 +33,14 @@ export class GameplayVisualizer extends VisibilityContainer {
     this.addInternal(this.cursor = new GameplayCursor());
 
     this.isVisible.addOnChangeListener(evt => evt.value ? this.show() : this.hide(), { immediate: true });
+
+    this.hitObjectList.added.addListener(this.#invalidateHitObjects, this);
+    this.hitObjectList.removed.addListener(this.#invalidateHitObjects, this);
+    this.hitObjectList.sorted.addListener(this.#invalidateHitObjects, this);
+  }
+
+  #invalidateHitObjects() {
+    this.#hitObjects = undefined;
   }
 
   override popIn() {
@@ -47,7 +55,7 @@ export class GameplayVisualizer extends VisibilityContainer {
   protected cursor!: GameplayCursor;
 
   @resolved(HitObjectList)
-  protected hitObjects!: HitObjectList;
+  protected hitObjectList!: HitObjectList;
 
   #currentHitObjectIndex = 0;
 
@@ -79,7 +87,7 @@ export class GameplayVisualizer extends VisibilityContainer {
         position = this.#getHitObjectPositionAt(hitObject, time);
       }
       else {
-        const next = this.hitObjects.get(this.#currentHitObjectIndex + 1);
+        const next = this.hitObjects[this.#currentHitObjectIndex + 1];
         if (!next)
           return;
 
@@ -172,17 +180,33 @@ export class GameplayVisualizer extends VisibilityContainer {
   @resolved(EditorClock)
   protected editorClock!: EditorClock;
 
+  #hitObjects?: OsuHitObject[];
+
+  get hitObjects() {
+    this.#hitObjects ??= this.hitObjectList.items.filter(it => !it.synthetic);
+
+    return this.#hitObjects;
+  }
+
   #updateHitObjectIndex(): OsuHitObject | null {
     let index = clamp(this.#currentHitObjectIndex, 0, this.hitObjects.length - 1);
 
-    while (index > 0 && this.editorClock.currentTime < this.hitObjects.get(index)!.startTime)
+    while (index > 0 && this.editorClock.currentTime < this.hitObjects[index].startTime)
       index--;
 
-    while (index < this.hitObjects.length - 1 && this.editorClock.currentTime > this.hitObjects.get(index + 1)!.startTime)
+    while (index < this.hitObjects.length - 1 && this.editorClock.currentTime > this.hitObjects[index + 1].startTime)
       index++;
 
     this.#currentHitObjectIndex = index;
 
-    return this.hitObjects.get(this.#currentHitObjectIndex) ?? null;
+    return this.hitObjects[this.#currentHitObjectIndex] ?? null;
+  }
+
+  override dispose(isDisposing: boolean = true) {
+    super.dispose(isDisposing);
+
+    this.hitObjectList.added.removeListener(this.#invalidateHitObjects, this);
+    this.hitObjectList.removed.removeListener(this.#invalidateHitObjects, this);
+    this.hitObjectList.sorted.removeListener(this.#invalidateHitObjects, this);
   }
 }
