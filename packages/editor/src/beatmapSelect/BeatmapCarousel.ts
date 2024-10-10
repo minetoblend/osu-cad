@@ -399,11 +399,11 @@ export class BeatmapCarousel extends CompositeDrawable {
   }
 
   onKeyDown(e: KeyDownEvent): boolean {
-    if (e.repeat)
-      return false;
-
     switch (e.key) {
       case Key.F2: {
+        if (e.repeat)
+          return false;
+
         this.selectRandomBeatmap();
         return true;
       }
@@ -420,6 +420,9 @@ export class BeatmapCarousel extends CompositeDrawable {
         this.seek(1, true);
         return true;
       case Key.Enter: {
+        if (e.repeat)
+          return false;
+
         const beatmap = this.#selectedBeatmapSet?.beatmaps.find(it => it.selected.value);
         if (beatmap) {
           this.findClosestParentOfType(ScreenStack)?.push(new EditorLoader(beatmap.beatmapInfo));
