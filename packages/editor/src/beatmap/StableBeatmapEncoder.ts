@@ -80,7 +80,7 @@ export class StableBeatmapEncoder {
     yield `DistanceSpacing: ${this.#roundToPrecision(beatmap.settings.editor.distanceSpacing, 1)}`;
     yield `BeatDivisor: ${beatmap.settings.editor.beatDivisor}`;
     yield `GridSize: ${beatmap.settings.editor.gridSize}`;
-    yield `TimelineZoom: ${this.#roundToPrecision(beatmap.settings.editor.timelineZoom, 1)}`;
+    yield `TimelineZoom: ${this.#roundToPrecision(beatmap.settings.editor.timelineZoom.value, 1)}`;
   }
 
   * #encodeMetadata(beatmap: IBeatmap) {
