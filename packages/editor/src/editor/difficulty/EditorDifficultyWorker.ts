@@ -1,9 +1,9 @@
-import { deserializeBeatmap } from '../../beatmap/serialization/Beatmap.ts';
+import { StableBeatmapParser } from '../../beatmap/StableBeatmapParser.ts';
 import { OsuDifficultyCalculator } from '../../difficulty/OsuDifficultyCalculator.ts';
 import { StrainSkill } from '../../difficulty/skills/StrainSkill.ts';
 
-globalThis.addEventListener('message', (evt) => {
-  const beatmap = deserializeBeatmap(evt.data);
+globalThis.addEventListener('message', async (evt) => {
+  const beatmap = await new StableBeatmapParser().parse(evt.data);
 
   const difficultyCalculator = new OsuDifficultyCalculator(beatmap);
 
@@ -12,9 +12,8 @@ globalThis.addEventListener('message', (evt) => {
   const strains = [];
 
   for (const skill of skills) {
-    if (skill instanceof StrainSkill) {
+    if (skill instanceof StrainSkill)
       strains.push(skill.getCurrentStrainPeaks());
-    }
   }
 
   globalThis.postMessage({ difficultyAttributes, strains });

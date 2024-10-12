@@ -80,7 +80,7 @@ export class TimelineControlPointDrawable extends CompositeDrawable {
 
       let bpm = 60_000 / timing.beatLength;
 
-      bpm = Math.round(bpm / 100) * 100;
+      bpm = Math.round(bpm * 100) / 100;
 
       this.#badgeText.text = `${bpm} bpm`;
 

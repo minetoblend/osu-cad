@@ -316,6 +316,7 @@ export class HitObjectComposer extends Container implements IKeyBindingHandler<P
       new SelectionOverlay(),
       this.#toolContainer,
       new GameplayVisualizer(),
+      // new OsuDifficultyOverlay(),
     );
   }
 

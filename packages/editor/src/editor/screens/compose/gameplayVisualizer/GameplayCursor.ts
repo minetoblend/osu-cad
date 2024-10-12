@@ -27,7 +27,7 @@ export class GameplayCursor extends CompositeDrawable {
       ? this.position.distance(this.#lastTrailPosition)
       : Number.MAX_VALUE;
 
-    if (distance > 25) {
+    if (distance > 10) {
       const trail = this.#cursorTrailPool.get(it => it.position = this.position);
 
       this.#trailContainer.add(trail);

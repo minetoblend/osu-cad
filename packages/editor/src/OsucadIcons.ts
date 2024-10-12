@@ -35,6 +35,7 @@ const iconKeys = [
   'timeline-marker',
   'caret-left',
   'cursorpath',
+  'pp',
 ] as const;
 
 export const OsucadIcons = new class OsucadIcons {

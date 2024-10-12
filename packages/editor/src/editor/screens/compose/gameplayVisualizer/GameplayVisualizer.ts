@@ -100,7 +100,12 @@ export class GameplayVisualizer extends VisibilityContainer {
 
         fac = distance / duration * 0.025 + 0.01;
 
+        const delta = endPosition.sub(startPosition);
+
+        const isMostlyHorizontal = delta.y === 0 || Math.abs(delta.x / delta.y) > 1.5;
+
         const cursorDance = duration > 350 && distance < 200;
+        const curvedPath = isMostlyHorizontal && distance >= 100 && duration > 100;
 
         const progress = clamp((time - this.#getEndTime(hitObject)) / duration, 0, 1);
 
@@ -109,7 +114,7 @@ export class GameplayVisualizer extends VisibilityContainer {
 
         position = startPosition.lerp(endPosition, progress);
 
-        if (cursorDance) {
+        if (cursorDance || curvedPath) {
           const factor
             = progress < 0.55
               ? animate(progress, 0, 0.55, 0, 1, EasingFunction.OutCubic)
@@ -124,7 +129,9 @@ export class GameplayVisualizer extends VisibilityContainer {
 
           direction = direction.lerp(new Vec2(0, -1), 0.5);
 
-          position.addInPlace(direction.scale(factor * Math.max(distance * 0.5, 60)));
+          const amount = cursorDance ? Math.max(distance * 0.5, 60) : Math.min(distance * 0.065, 30);
+
+          position.addInPlace(direction.scale(factor * amount));
         }
       }
 

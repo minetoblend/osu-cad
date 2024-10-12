@@ -7,7 +7,7 @@ export class CursorTrailPiece extends PoolableDrawable {
   load() {
     this.addInternal(
       new SkinnableDrawable(OsuSkinComponentLookup.CursorTrail).with({
-        alpha: 0.35,
+        alpha: 0.75,
       }),
     );
   }

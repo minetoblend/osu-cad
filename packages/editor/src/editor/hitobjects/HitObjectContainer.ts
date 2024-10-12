@@ -62,6 +62,7 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
       return;
 
     this.#removeDrawable(drawable);
+    this.hitObjectUsageFinished.emit(entry.hitObject);
   }
 
   #unbindStartTime(drawable: DrawableHitObject) {

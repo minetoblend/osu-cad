@@ -34,6 +34,7 @@ export class OverviewTimeline extends Container {
     this.addInternal(this.#content);
 
     this.addAll(
+      // new StrainGraph(),
       new BookmarkMarkers(),
       new TimingPointMarkers(),
       new DifficultyPointMarkers(),

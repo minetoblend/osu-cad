@@ -14,6 +14,8 @@ export class CommandManager {
 
   readonly canRedo = new Bindable(false);
 
+  readonly commandApplied = new Action<EditorCommand>();
+
   hasUnsavedChanges = false;
 
   createContext(): CommandContext {
@@ -60,6 +62,7 @@ export class CommandManager {
   }
 
   protected afterCommandApplied(command: EditorCommand) {
+    this.commandApplied.emit(command);
   }
 
   #commandVersion = 0;

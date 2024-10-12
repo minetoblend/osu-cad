@@ -319,4 +319,6 @@ export abstract class OsuHitObject extends HitObject implements IHasComboInforma
   lazyTravelTime: number | null = null;
 
   lazyTravelDistance = 0;
+
+  lazyTravelPath: { position: Vec2; time: number }[] | null = null;
 }

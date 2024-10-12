@@ -12,8 +12,8 @@ export class OsuDifficultyHitObject extends DifficultyHitObject<OsuHitObject> {
   static readonly NORMALISED_RADIUS = 50;
   static readonly MIN_DELTA_TIME = 25;
 
-  private static readonly maximum_slider_radius = Math.fround(this.NORMALISED_RADIUS * 2.4);
-  private static readonly assumed_slider_radius = Math.fround(this.NORMALISED_RADIUS * 1.8);
+  static readonly maximum_slider_radius = Math.fround(this.NORMALISED_RADIUS * 2.4);
+  static readonly assumed_slider_radius = Math.fround(this.NORMALISED_RADIUS * 1.8);
 
   readonly #lastLastObject: OsuHitObject | null;
 
@@ -199,6 +199,11 @@ export class OsuDifficultyHitObject extends DifficultyHitObject<OsuHitObject> {
 
     let currCursorPosition = slider.stackedPosition;
 
+    slider.lazyTravelPath = [{
+      position: currCursorPosition.clone(),
+      time: slider.startTime,
+    }];
+
     const scalingFactor = OsuDifficultyHitObject.NORMALISED_RADIUS / slider.radius; // lazySliderDistance is coded to be sensitive to scaling, this makes the maths easier with the thresholds being used.
 
     for (let i = 1; i < nestedObjects.length; i++) {
@@ -206,6 +211,7 @@ export class OsuDifficultyHitObject extends DifficultyHitObject<OsuHitObject> {
 
       let currMovement = Vec2.sub(currMovementObj.stackedPosition, currCursorPosition);
       let currMovementLength = scalingFactor * currMovement.length();
+      const currMovementTime = currMovementObj.startTime;
 
       // Amount of movement required so that the cursor position needs to be updated.
       let requiredMovement = OsuDifficultyHitObject.assumed_slider_radius;
@@ -236,7 +242,16 @@ export class OsuDifficultyHitObject extends DifficultyHitObject<OsuHitObject> {
 
       if (i === nestedObjects.length - 1)
         slider.lazyEndPosition = currCursorPosition;
+
+      slider.lazyTravelPath.push({
+        position: currCursorPosition.clone(),
+        time: currMovementTime,
+      });
     }
+  }
+
+  get lazyTravelPath() {
+    return this.baseObject.lazyTravelPath;
   }
 
   #getEndCursorPosition(hitObject: OsuHitObject) {
@@ -252,9 +267,13 @@ export class OsuDifficultyHitObject extends DifficultyHitObject<OsuHitObject> {
 
   readonly hitWindowGreat: number;
 
-  declare previous: (backwardsIndex: number) => OsuDifficultyHitObject | null;
+  override previous(backwardsIndex: number): OsuDifficultyHitObject | null {
+    return super.previous(backwardsIndex) as OsuDifficultyHitObject | null;
+  }
 
-  declare next: (forwardsIndex: number) => OsuDifficultyHitObject | null;
+  override next(forwardsIndex: number) {
+    return super.next(forwardsIndex) as OsuDifficultyHitObject | null;
+  }
 
   readonly strainTime: number;
 }
