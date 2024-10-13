@@ -6,6 +6,8 @@ export class ObservableSortedList<T> extends SortedList<T> {
 
   removed = new Action<T>();
 
+  sorted = new Action();
+
   override set(index: number, item: T) {
     const oldValue = this.get(index);
     if (item !== oldValue) {
@@ -75,5 +77,10 @@ export class ObservableSortedList<T> extends SortedList<T> {
 
   protected onRemoved(item: T) {
     this.removed.emit(item);
+  }
+
+  override sort() {
+    super.sort();
+    this.sorted.emit();
   }
 }
