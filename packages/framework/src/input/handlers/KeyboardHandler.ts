@@ -1,5 +1,6 @@
 import type { GameHost } from '../../platform/GameHost';
 import type { IInput } from '../stateChanges/IInput';
+import { Action } from '../../bindables';
 import { Key } from '../state/Key';
 import { ButtonInputEntry } from '../stateChanges/ButtonInput';
 import { KeyboardKeyInput } from '../stateChanges/KeyboardKeyInput';
@@ -109,6 +110,8 @@ export class KeyboardHandler extends InputHandler {
       this.#enqueueInput(KeyboardKeyInput.create(key, false));
     }
   };
+
+  onInput = new Action();
 
   #enqueueInput(input: IInput) {
     this.pendingInputs.push(input);

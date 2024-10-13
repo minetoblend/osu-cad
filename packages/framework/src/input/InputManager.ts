@@ -24,6 +24,7 @@ import { HoverEvent } from './events/HoverEvent';
 import { HoverLostEvent } from './events/HoverLostEvent';
 import { MouseMoveEvent } from './events/MouseMoveEvent';
 import { ScrollEvent } from './events/ScrollEvent';
+import { KeyboardHandler } from './handlers/KeyboardHandler.ts';
 import { KeyEventManager } from './KeyEventManager';
 import { MouseButtonEventManager } from './MouseButtonEventManager';
 import { InputState } from './state/InputState';
@@ -110,6 +111,10 @@ export abstract class InputManager extends Container implements IInputStateChang
 
     for (const handler of this.inputHandlers) {
       handler.initialize(this.host);
+
+      if (handler instanceof KeyboardHandler) {
+        handler.onInput.addListener(this.update, this);
+      }
     }
   }
 
