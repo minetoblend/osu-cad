@@ -295,10 +295,10 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
     }
 
     if (handled) {
-      console.log(`Keybinding ${JSON.stringify(pressed)} handled by ${handled.label ?? handled.constructor.name}`);
+      console.debug(`Keybinding ${JSON.stringify(pressed)} handled by ${handled.label ?? handled.constructor.name}`);
     }
     else {
-      console.log(`Keybinding ${JSON.stringify(pressed)} not handled`);
+      console.debug(`Keybinding ${JSON.stringify(pressed)} not handled`);
     }
 
     return handled ?? null;
