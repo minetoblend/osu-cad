@@ -6,11 +6,13 @@
   "private": true,
   "devDependencies": {
     "@antfu/eslint-config": "^3.6.0",
+    "@nestjs/schematics": "^10.0.1",
     "@nx/esbuild": "19.6.4",
     "@nx/eslint": "19.6.4",
     "@nx/eslint-plugin": "19.6.4",
     "@nx/jest": "19.6.4",
     "@nx/js": "19.6.4",
+    "@nx/nest": "19.6.4",
     "@nx/node": "19.6.4",
     "@nx/vite": "19.6.4",
     "@nx/web": "19.6.4",
@@ -49,6 +51,7 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^3.0.0",
+    "@fontsource/nunito-sans": "^5.1.0",
     "@types/uuid": "^9.0.7",
     "axios": "^1.6.0",
     "electron": "^31.1.0",
