@@ -15,18 +15,18 @@ import {
   MouseButton,
   resolved,
 } from 'osucad-framework';
-import { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup.ts';
-import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo.ts';
-import { DifficultyPoint } from '../../../beatmap/timing/DifficultyPoint.ts';
-import { EffectPoint } from '../../../beatmap/timing/EffectPoint.ts';
-import { SamplePoint } from '../../../beatmap/timing/SamplePoint.ts';
-import { TimingPoint } from '../../../beatmap/timing/TimingPoint.ts';
-import { CreateControlPointCommand } from '../../commands/CreateControlPointCommand.ts';
-import { UpdateControlPointCommand } from '../../commands/UpdateControlPointCommand.ts';
-import { CommandManager } from '../../context/CommandManager.ts';
-import { EditorClock } from '../../EditorClock.ts';
-import { ControlPointAdjustmentBlueprint } from './ControlPointAdjustmentBlueprint.ts';
-import { HitSoundsTimeline } from './HitSoundsTimeline.ts';
+import { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup';
+import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
+import { DifficultyPoint } from '../../../beatmap/timing/DifficultyPoint';
+import { EffectPoint } from '../../../beatmap/timing/EffectPoint';
+import { SamplePoint } from '../../../beatmap/timing/SamplePoint';
+import { TimingPoint } from '../../../beatmap/timing/TimingPoint';
+import { CreateControlPointCommand } from '../../commands/CreateControlPointCommand';
+import { UpdateControlPointCommand } from '../../commands/UpdateControlPointCommand';
+import { CommandManager } from '../../context/CommandManager';
+import { EditorClock } from '../../EditorClock';
+import { ControlPointAdjustmentBlueprint } from './ControlPointAdjustmentBlueprint';
+import { HitSoundsTimeline } from './HitSoundsTimeline';
 
 export class ControlPointStartTimeAdjustmentBlueprint extends ControlPointAdjustmentBlueprint {
   #timeline!: HitSoundsTimeline;

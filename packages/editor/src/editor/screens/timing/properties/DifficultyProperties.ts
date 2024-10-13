@@ -1,8 +1,8 @@
-import type { ControlPointGroup } from '../../../../beatmap/timing/ControlPointGroup.ts';
-import type { DifficultyPoint } from '../../../../beatmap/timing/DifficultyPoint.ts';
+import type { ControlPointGroup } from '../../../../beatmap/timing/ControlPointGroup';
+import type { DifficultyPoint } from '../../../../beatmap/timing/DifficultyPoint';
 import { Axes, BindableNumber, FillDirection, FillFlowContainer } from 'osucad-framework';
 import { ControlPointPropertiesSection } from './ControlPointPropertiesSection';
-import { LabelledTextBox } from './LabelledTextBox.ts';
+import { LabelledTextBox } from './LabelledTextBox';
 
 export class DifficultyProperties extends ControlPointPropertiesSection<DifficultyPoint> {
   constructor() {

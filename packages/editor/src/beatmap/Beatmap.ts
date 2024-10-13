@@ -1,4 +1,4 @@
-import type { IBeatmap } from './IBeatmap.ts';
+import type { IBeatmap } from './IBeatmap';
 import { BeatmapColors } from './BeatmapColors';
 import { BeatmapDifficultyInfo } from './BeatmapDifficultyInfo';
 import { BeatmapMetadata } from './BeatmapMetadata';

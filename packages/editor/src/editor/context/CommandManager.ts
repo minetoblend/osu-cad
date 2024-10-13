@@ -1,5 +1,5 @@
 import type { EditorCommand } from '../commands/EditorCommand';
-import type { EditorBeatmap } from '../EditorBeatmap.ts';
+import type { EditorBeatmap } from '../EditorBeatmap';
 import { Action, Bindable } from 'osucad-framework';
 import { CommandContext } from '../commands/CommandContext';
 import { CommandSource } from '../commands/CommandSource';

@@ -4,20 +4,20 @@ import type {
   ScreenExitEvent,
   ScreenTransitionEvent,
 } from 'osucad-framework';
-import type { DifficultyInfo } from '../../EditorBeatmap.ts';
-import type { OsuPlayfield } from '../../hitobjects/OsuPlayfield.ts';
-import type { BackgroundAdjustment } from '../BackgroundAdjustment.ts';
+import type { DifficultyInfo } from '../../EditorBeatmap';
+import type { OsuPlayfield } from '../../hitobjects/OsuPlayfield';
+import type { BackgroundAdjustment } from '../BackgroundAdjustment';
 import { Anchor, Axes, BindableBoolean, Container, dependencyLoader, DrawSizePreservingFillContainer, EasingFunction, FillFlowContainer, resolved, Vec2 } from 'osucad-framework';
 import { Color } from 'pixi.js';
-import { BeatmapComboProcessor } from '../../../beatmap/beatmapProcessors/BeatmapComboProcessor.ts';
-import { OsucadSpriteText } from '../../../OsucadSpriteText.ts';
-import { DropdownItem, DropdownSelect } from '../../../userInterface/DropdownSelect.ts';
-import { Toggle } from '../../../userInterface/Toggle.ts';
-import { EditorDependencies } from '../../EditorDependencies.ts';
-import { PlayfieldGrid } from '../../playfield/PlayfieldGrid.ts';
+import { BeatmapComboProcessor } from '../../../beatmap/beatmapProcessors/BeatmapComboProcessor';
+import { OsucadSpriteText } from '../../../OsucadSpriteText';
+import { DropdownItem, DropdownSelect } from '../../../userInterface/DropdownSelect';
+import { Toggle } from '../../../userInterface/Toggle';
+import { EditorDependencies } from '../../EditorDependencies';
+import { PlayfieldGrid } from '../../playfield/PlayfieldGrid';
 import { EditorScreen } from '../EditorScreen';
-import { EditorScreenUtils } from '../EditorScreenUtils.ts';
-import { SecondaryPlayfield } from './SecondaryPlayfield.ts';
+import { EditorScreenUtils } from '../EditorScreenUtils';
+import { SecondaryPlayfield } from './SecondaryPlayfield';
 
 export class CompareScreen extends EditorScreen {
   protected playfield!: OsuPlayfield;

@@ -1,8 +1,8 @@
 import type { UserInfo } from '@osucad/common';
 import type { Texture } from 'pixi.js';
-import type { LoadedBeatmap } from '../beatmap/LoadedBeatmap.ts';
+import type { LoadedBeatmap } from '../beatmap/LoadedBeatmap';
 import type { IResourcesProvider } from '../io/IResourcesProvider';
-import type { MapsetInfo } from './MapsetInfo.ts';
+import type { MapsetInfo } from './MapsetInfo';
 
 export interface BeatmapItemInfo {
   readonly id: string;

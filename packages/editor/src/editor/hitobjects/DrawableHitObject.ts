@@ -1,18 +1,18 @@
 import type { ReadonlyBindable } from 'osucad-framework';
 import type { HitObject } from '../../beatmap/hitObjects/HitObject';
-import type { HitObjectJudge } from './HitObjectJudge.ts';
+import type { HitObjectJudge } from './HitObjectJudge';
 import type { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
 import { Action, Bindable, dependencyLoader, resolved, Vec2 } from 'osucad-framework';
 import { Color } from 'pixi.js';
 import { Beatmap } from '../../beatmap/Beatmap';
-import { HitResult } from '../../beatmap/hitObjects/HitResult.ts';
+import { HitResult } from '../../beatmap/hitObjects/HitResult';
 
 import { hasComboInformation } from '../../beatmap/hitObjects/IHasComboInformation';
-import { JudgementResult } from '../../beatmap/hitObjects/JudgementResult.ts';
+import { JudgementResult } from '../../beatmap/hitObjects/JudgementResult';
 import { PoolableDrawableWithLifetime } from '../../pooling/PoolableDrawableWithLifetime';
-import { IAnimationTimeReference } from '../../skinning/IAnimationTimeReference.ts';
-import { ArmedState } from './ArmedState.ts';
-import { IHitObjectJudgeProvider } from './HitObjectJudge.ts';
+import { IAnimationTimeReference } from '../../skinning/IAnimationTimeReference';
+import { ArmedState } from './ArmedState';
+import { IHitObjectJudgeProvider } from './HitObjectJudge';
 import { IPooledHitObjectProvider } from './IPooledHitObjectProvider';
 import { SyntheticHitObjectEntry } from './SyntheticHitObjectEntry';
 

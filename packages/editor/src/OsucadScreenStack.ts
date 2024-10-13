@@ -1,6 +1,6 @@
 import type { IScreen } from 'osucad-framework';
 import { Axes, dependencyLoader, ScreenStack } from 'osucad-framework';
-import { BackgroundScreenStack } from './BackgroundScreenStack.ts';
+import { BackgroundScreenStack } from './BackgroundScreenStack';
 
 export class OsucadScreenStack extends ScreenStack {
   private readonly backgroundScreenStack: BackgroundScreenStack;

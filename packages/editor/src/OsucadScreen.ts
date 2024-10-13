@@ -1,7 +1,7 @@
 import type { ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
-import type { BackgroundScreen } from './BackgroundScreen.ts';
+import type { BackgroundScreen } from './BackgroundScreen';
 import { resolved, Screen } from 'osucad-framework';
-import { BackgroundScreenStack } from './BackgroundScreenStack.ts';
+import { BackgroundScreenStack } from './BackgroundScreenStack';
 
 export abstract class OsucadScreen extends Screen {
   getPath?(): string;

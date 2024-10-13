@@ -1,5 +1,5 @@
-import type { ControlPoint } from '../../../beatmap/timing/ControlPoint.ts';
-import type { ControlPointLifetimeEntry } from './ControlPointLifetimeEntry.ts';
+import type { ControlPoint } from '../../../beatmap/timing/ControlPoint';
+import type { ControlPointLifetimeEntry } from './ControlPointLifetimeEntry';
 import { CompositeDrawable } from 'osucad-framework';
 
 export class ControlPointAdjustmentBlueprint<T extends ControlPoint = ControlPoint> extends CompositeDrawable {

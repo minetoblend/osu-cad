@@ -28,9 +28,9 @@ import {
 import { Graphics, Matrix } from 'pixi.js';
 import { Ring } from '../../../../../drawables/Ring';
 import { OsucadSpriteText } from '../../../../../OsucadSpriteText';
-import { ButtonGroupSelect } from '../../../../../userInterface/ButtonGroupSelect.ts';
+import { ButtonGroupSelect } from '../../../../../userInterface/ButtonGroupSelect';
 import { DraggableDialogBox } from '../../../../../userInterface/DraggableDialogBox';
-import { OsucadButton } from '../../../../../userInterface/OsucadButton.ts';
+import { OsucadButton } from '../../../../../userInterface/OsucadButton';
 import { LabelledTextBox } from '../../../timing/properties/LabelledTextBox';
 import { HitObjectComposer } from '../../HitObjectComposer';
 import { HitObjectUtils } from '../../HitObjectUtils';

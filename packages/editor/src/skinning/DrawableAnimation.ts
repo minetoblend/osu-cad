@@ -1,5 +1,5 @@
 import { Bindable, resolved, TextureAnimation } from 'osucad-framework';
-import { IAnimationTimeReference } from './IAnimationTimeReference.ts';
+import { IAnimationTimeReference } from './IAnimationTimeReference';
 
 export class SkinnableTextureAnimation extends TextureAnimation {
   readonly #animationStartTime = new Bindable(0);

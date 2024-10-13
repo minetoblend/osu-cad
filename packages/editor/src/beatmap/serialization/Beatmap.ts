@@ -1,8 +1,8 @@
-import { CommandContext } from '../../editor/commands/CommandContext.ts';
-import { Beatmap } from '../Beatmap.ts';
-import { ControlPointGroup } from '../timing/ControlPointGroup.ts';
-import { serializeControlPointGroup } from './ControlPoints.ts';
-import { deserializeHitObject, serializeHitObject } from './HitObjects.ts';
+import { CommandContext } from '../../editor/commands/CommandContext';
+import { Beatmap } from '../Beatmap';
+import { ControlPointGroup } from '../timing/ControlPointGroup';
+import { serializeControlPointGroup } from './ControlPoints';
+import { deserializeHitObject, serializeHitObject } from './HitObjects';
 
 export function serializeBeatmap(beatmap: Beatmap) {
   return {

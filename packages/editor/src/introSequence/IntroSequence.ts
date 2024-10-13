@@ -14,8 +14,8 @@ import {
 } from 'osucad-framework';
 import { AlphaFilter } from 'pixi.js';
 import osucadText from '../assets/textures/osucad-text.png';
-import { OsucadConfigManager } from '../config/OsucadConfigManager.ts';
-import { OsucadSettings } from '../config/OsucadSettings.ts';
+import { OsucadConfigManager } from '../config/OsucadConfigManager';
+import { OsucadSettings } from '../config/OsucadSettings';
 import { ThemeColors } from '../editor/ThemeColors';
 import { OsucadIcons } from '../OsucadIcons';
 import { OsucadScreen } from '../OsucadScreen';

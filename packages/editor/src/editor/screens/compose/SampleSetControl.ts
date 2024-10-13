@@ -35,7 +35,7 @@ import { OsucadSettings } from '../../../config/OsucadSettings';
 import { OsucadIcons } from '../../../OsucadIcons';
 import { OsucadSpriteText } from '../../../OsucadSpriteText';
 import { EditorAction } from '../../EditorAction';
-import { EditorDependencies } from '../../EditorDependencies.ts';
+import { EditorDependencies } from '../../EditorDependencies';
 import { ThemeColors } from '../../ThemeColors';
 import { SampleHighlightContainer } from './SampleHighlightContainer';
 

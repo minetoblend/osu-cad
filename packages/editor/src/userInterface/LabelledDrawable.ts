@@ -8,8 +8,8 @@ import {
   Container,
   dependencyLoader,
 } from 'osucad-framework';
-import { ThemeColors } from '../editor/ThemeColors.ts';
-import { OsucadSpriteText } from '../OsucadSpriteText.ts';
+import { ThemeColors } from '../editor/ThemeColors';
+import { OsucadSpriteText } from '../OsucadSpriteText';
 
 export class LabelWidthProvider {
   public readonly bindable: Bindable<number>;

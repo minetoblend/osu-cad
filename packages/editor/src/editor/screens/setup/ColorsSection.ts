@@ -1,6 +1,6 @@
 import type { FillFlowContainer } from 'osucad-framework';
-import { ComboColorSelect } from './ComboColorSelect.ts';
-import { SetupScreenSection } from './SetupScreenSection.ts';
+import { ComboColorSelect } from './ComboColorSelect';
+import { SetupScreenSection } from './SetupScreenSection';
 
 export class ColorsSection extends SetupScreenSection {
   constructor() {

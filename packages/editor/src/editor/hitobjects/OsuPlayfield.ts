@@ -1,9 +1,9 @@
 import type { HitObject } from '../../beatmap/hitObjects/HitObject';
-import type { JudgementResult } from '../../beatmap/hitObjects/JudgementResult.ts';
+import type { JudgementResult } from '../../beatmap/hitObjects/JudgementResult';
 import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
-import type { DrawableHitObject } from './DrawableHitObject.ts';
-import type { DrawableOsuHitObject } from './DrawableOsuHitObject.ts';
-import type { IHitPolicy } from './IHitPolicy.ts';
+import type { DrawableHitObject } from './DrawableHitObject';
+import type { DrawableOsuHitObject } from './DrawableOsuHitObject';
+import type { IHitPolicy } from './IHitPolicy';
 import { Anchor, Axes, BindableBoolean, Container, dependencyLoader, resolved } from 'osucad-framework';
 import { HitCircle } from '../../beatmap/hitObjects/HitCircle';
 import { Slider } from '../../beatmap/hitObjects/Slider';
@@ -15,7 +15,7 @@ import { Spinner } from '../../beatmap/hitObjects/Spinner';
 import { OsucadConfigManager } from '../../config/OsucadConfigManager';
 import { OsucadSettings } from '../../config/OsucadSettings';
 import { DrawableHitCircle } from './DrawableHitCircle';
-import { DrawableJudgement } from './DrawableJudgement.ts';
+import { DrawableJudgement } from './DrawableJudgement';
 import { DrawableSlider } from './DrawableSlider';
 import { DrawableSliderHead } from './DrawableSliderHead';
 import { DrawableSliderRepeat } from './DrawableSliderRepeat';
@@ -25,7 +25,7 @@ import { DrawableSpinner } from './DrawableSpinner';
 import { FollowPointRenderer } from './FollowPointRenderer';
 import { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
 import { Playfield } from './Playfield';
-import { StartTimeOrderedHitPolicy } from './StartTimeOrderedHitPolicy.ts';
+import { StartTimeOrderedHitPolicy } from './StartTimeOrderedHitPolicy';
 
 export class OsuPlayfield extends Playfield {
   protected followPoints!: FollowPointRenderer;

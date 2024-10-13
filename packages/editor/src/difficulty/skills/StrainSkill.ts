@@ -1,5 +1,5 @@
-import type { DifficultyHitObject } from '../preprocessing/DifficultyHitObject.ts';
-import { Skill } from './Skill.ts';
+import type { DifficultyHitObject } from '../preprocessing/DifficultyHitObject';
+import { Skill } from './Skill';
 
 export abstract class StrainSkill<T extends DifficultyHitObject<any>> extends Skill<T> {
   protected get decayWeight() {

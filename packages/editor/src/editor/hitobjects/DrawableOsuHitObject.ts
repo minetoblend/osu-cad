@@ -1,14 +1,14 @@
-import type { JudgementResult } from '../../beatmap/hitObjects/JudgementResult.ts';
+import type { JudgementResult } from '../../beatmap/hitObjects/JudgementResult';
 import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
-import type { ClickAction } from './ClickAction.ts';
+import type { ClickAction } from './ClickAction';
 import { Bindable, dependencyLoader, Vec2 } from 'osucad-framework';
-import { HitResult } from '../../beatmap/hitObjects/HitResult.ts';
-import { HitSample } from '../../beatmap/hitSounds/HitSample.ts';
-import { SampleSet } from '../../beatmap/hitSounds/SampleSet.ts';
-import { SampleType } from '../../beatmap/hitSounds/SampleType.ts';
-import { OsuActionInputManager } from '../../gameplay/OsuActionInputManager.ts';
+import { HitResult } from '../../beatmap/hitObjects/HitResult';
+import { HitSample } from '../../beatmap/hitSounds/HitSample';
+import { SampleSet } from '../../beatmap/hitSounds/SampleSet';
+import { SampleType } from '../../beatmap/hitSounds/SampleType';
+import { OsuActionInputManager } from '../../gameplay/OsuActionInputManager';
 import { DrawableHitObject } from './DrawableHitObject';
-import { DrawableHitSound } from './DrawableHitSound.ts';
+import { DrawableHitSound } from './DrawableHitSound';
 
 export class DrawableOsuHitObject<T extends OsuHitObject = OsuHitObject> extends DrawableHitObject {
   constructor(hitObject?: T) {

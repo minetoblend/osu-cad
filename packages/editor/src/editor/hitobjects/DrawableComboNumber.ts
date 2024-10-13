@@ -8,7 +8,7 @@ import {
   resolved,
 } from 'osucad-framework';
 import { ISkinSource } from '../../skinning/ISkinSource';
-import { SkinConfig } from '../../skinning/SkinConfig.ts';
+import { SkinConfig } from '../../skinning/SkinConfig';
 import { DrawableHitObject } from './DrawableHitObject';
 
 export class DrawableComboNumber extends CompositeDrawable {

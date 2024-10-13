@@ -1,17 +1,17 @@
 import type { Constructor } from '@osucad/common';
 import type { IFrameBasedClock, NoArgsConstructor } from 'osucad-framework';
 import type { HitObject } from '../../beatmap/hitObjects/HitObject';
-import type { JudgementResult } from '../../beatmap/hitObjects/JudgementResult.ts';
+import type { JudgementResult } from '../../beatmap/hitObjects/JudgementResult';
 import type { DrawableHitObject } from './DrawableHitObject';
-import type { HitObjectJudge } from './HitObjectJudge.ts';
+import type { HitObjectJudge } from './HitObjectJudge';
 import { Action, Axes, Container, dependencyLoader, DrawablePool, Lazy, provide, resolved } from 'osucad-framework';
 import { Beatmap } from '../../beatmap/Beatmap';
 import { HitObjectContainer } from './HitObjectContainer';
 import { HitObjectEntryManager } from './HitObjectEntryManager';
-import { IHitObjectJudgeProvider } from './HitObjectJudge.ts';
+import { IHitObjectJudgeProvider } from './HitObjectJudge';
 import { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
 import { IPooledHitObjectProvider } from './IPooledHitObjectProvider';
-import { PlayfieldClock } from './PlayfieldClock.ts';
+import { PlayfieldClock } from './PlayfieldClock';
 
 @provide(IPooledHitObjectProvider)
 @provide(IHitObjectJudgeProvider)

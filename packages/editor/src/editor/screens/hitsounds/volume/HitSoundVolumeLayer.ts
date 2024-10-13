@@ -1,12 +1,12 @@
 import type { Drawable } from 'osucad-framework';
-import type { ControlPointInfo } from '../../../../beatmap/timing/ControlPointInfo.ts';
-import type { ControlPointList } from '../../../../beatmap/timing/ControlPointList.ts';
-import type { SamplePoint } from '../../../../beatmap/timing/SamplePoint.ts';
-import type { ControlPointLifetimeEntry } from '../ControlPointLifetimeEntry.ts';
+import type { ControlPointInfo } from '../../../../beatmap/timing/ControlPointInfo';
+import type { ControlPointList } from '../../../../beatmap/timing/ControlPointList';
+import type { SamplePoint } from '../../../../beatmap/timing/SamplePoint';
+import type { ControlPointLifetimeEntry } from '../ControlPointLifetimeEntry';
 import { dependencyLoader, DrawablePool } from 'osucad-framework';
-import { HitSoundControlPointBlueprintContainer } from '../HitSoundControlPointBlueprintContainer.ts';
-import { HitSoundsTimelineLayer } from '../HitSoundsTimelineLayer.ts';
-import { TimelineSamplePointBlueprint } from './TimelineSamplePointBlueprint.ts';
+import { HitSoundControlPointBlueprintContainer } from '../HitSoundControlPointBlueprintContainer';
+import { HitSoundsTimelineLayer } from '../HitSoundsTimelineLayer';
+import { TimelineSamplePointBlueprint } from './TimelineSamplePointBlueprint';
 
 export class HitSoundVolumeLayer extends HitSoundsTimelineLayer {
   constructor() {

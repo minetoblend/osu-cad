@@ -1,8 +1,8 @@
 import type { Vec2 } from '../../../../framework/src';
-import type { JudgementResult } from '../../beatmap/hitObjects/JudgementResult.ts';
-import type { HitSound } from '../../beatmap/hitSounds/HitSound.ts';
-import type { DrawableSlider } from './DrawableSlider.ts';
-import { HitResult } from '../../beatmap/hitObjects/HitResult.ts';
+import type { JudgementResult } from '../../beatmap/hitObjects/JudgementResult';
+import type { HitSound } from '../../beatmap/hitSounds/HitSound';
+import type { DrawableSlider } from './DrawableSlider';
+import { HitResult } from '../../beatmap/hitObjects/HitResult';
 import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
 import { DrawableHitCircle } from './DrawableHitCircle';
 

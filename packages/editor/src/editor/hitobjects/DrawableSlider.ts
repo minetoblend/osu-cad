@@ -1,5 +1,5 @@
 import type { Slider } from '../../beatmap/hitObjects/Slider';
-import type { ArmedState } from './ArmedState.ts';
+import type { ArmedState } from './ArmedState';
 import type { DrawableHitObject } from './DrawableHitObject';
 import {
   Anchor,
@@ -12,7 +12,7 @@ import {
   resolved,
   Vec2,
 } from 'osucad-framework';
-import { HitResult } from '../../beatmap/hitObjects/HitResult.ts';
+import { HitResult } from '../../beatmap/hitObjects/HitResult';
 import { OsucadConfigManager } from '../../config/OsucadConfigManager';
 import { OsucadSettings } from '../../config/OsucadSettings';
 import { DrawableOsuHitObject } from './DrawableOsuHitObject';
@@ -22,7 +22,7 @@ import { DrawableSliderHead } from './DrawableSliderHead';
 import { DrawableSliderRepeat } from './DrawableSliderRepeat';
 import { DrawableSliderTail } from './DrawableSliderTail';
 import { DrawableSliderTick } from './DrawableSliderTick';
-import { SliderInputManager } from './SliderInputManager.ts';
+import { SliderInputManager } from './SliderInputManager';
 
 export class DrawableSlider extends DrawableOsuHitObject<Slider> {
   constructor() {

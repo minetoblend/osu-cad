@@ -1,10 +1,10 @@
-import type { ControlPointGroup } from '../../../../beatmap/timing/ControlPointGroup.ts';
-import type { SamplePoint } from '../../../../beatmap/timing/SamplePoint.ts';
+import type { ControlPointGroup } from '../../../../beatmap/timing/ControlPointGroup';
+import type { SamplePoint } from '../../../../beatmap/timing/SamplePoint';
 import { Axes, Bindable, BindableNumber, FillDirection, FillFlowContainer, Vec2 } from 'osucad-framework';
-import { SampleSet } from '../../../../beatmap/hitSounds/SampleSet.ts';
+import { SampleSet } from '../../../../beatmap/hitSounds/SampleSet';
 import { ControlPointPropertiesSection } from './ControlPointPropertiesSection';
-import { LabelledTextBox } from './LabelledTextBox.ts';
-import { SampleSetSelect } from './SampleSetSelect.ts';
+import { LabelledTextBox } from './LabelledTextBox';
+import { SampleSetSelect } from './SampleSetSelect';
 
 export class SampleProperties extends ControlPointPropertiesSection<SamplePoint> {
   constructor() {

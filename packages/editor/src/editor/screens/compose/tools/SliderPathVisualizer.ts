@@ -2,9 +2,9 @@ import type { DragEndEvent, DragEvent, DragStartEvent, MouseDownEvent } from 'os
 import type { Slider } from '../../../../beatmap/hitObjects/Slider';
 import { Anchor, Axes, BindableBoolean, Cached, CompositeDrawable, Container, dependencyLoader, PIXIGraphics, resolved, Vec2 } from 'osucad-framework';
 import { PathType } from '../../../../beatmap/hitObjects/PathType';
-import { OsucadConfigManager } from '../../../../config/OsucadConfigManager.ts';
-import { OsucadSettings } from '../../../../config/OsucadSettings.ts';
-import { FastRoundedBox } from '../../../../drawables/FastRoundedBox.ts';
+import { OsucadConfigManager } from '../../../../config/OsucadConfigManager';
+import { OsucadSettings } from '../../../../config/OsucadSettings';
+import { FastRoundedBox } from '../../../../drawables/FastRoundedBox';
 
 export class SliderPathVisualizer extends CompositeDrawable {
   constructor() {

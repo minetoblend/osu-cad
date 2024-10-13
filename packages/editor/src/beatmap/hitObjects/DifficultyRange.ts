@@ -1,4 +1,4 @@
-import type { HitResult } from './HitResult.ts';
+import type { HitResult } from './HitResult';
 
 export class DifficultyRange {
   constructor(

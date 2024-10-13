@@ -1,5 +1,5 @@
-import type { ControlPointGroup } from '../../../../beatmap/timing/ControlPointGroup.ts';
-import type { EffectPoint } from '../../../../beatmap/timing/EffectPoint.ts';
+import type { ControlPointGroup } from '../../../../beatmap/timing/ControlPointGroup';
+import type { EffectPoint } from '../../../../beatmap/timing/EffectPoint';
 import { ControlPointPropertiesSection } from './ControlPointPropertiesSection';
 
 export class EffectProperties extends ControlPointPropertiesSection<EffectPoint> {

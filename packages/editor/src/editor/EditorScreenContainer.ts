@@ -1,9 +1,9 @@
 import type { Container, DependencyContainer } from 'osucad-framework';
-import type { OsuPlayfield } from './hitobjects/OsuPlayfield.ts';
+import type { OsuPlayfield } from './hitobjects/OsuPlayfield';
 import type { EditorScreen } from './screens/EditorScreen';
 import { Anchor, Axes, CompositeDrawable, dependencyLoader, ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
-import { EditorDependencies } from './EditorDependencies.ts';
-import { EditorScreenUtils } from './screens/EditorScreenUtils.ts';
+import { EditorDependencies } from './EditorDependencies';
+import { EditorScreenUtils } from './screens/EditorScreenUtils';
 
 export class EditorScreenContainer extends CompositeDrawable {
   constructor() {

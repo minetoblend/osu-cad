@@ -1,7 +1,7 @@
 import type { InvalidationSource, ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
 import { Action, Axes, dependencyLoader, EasingFunction, Invalidation, Screen } from 'osucad-framework';
-import { Editor } from '../Editor.ts';
-import { BackgroundAdjustment } from './BackgroundAdjustment.ts';
+import { Editor } from '../Editor';
+import { BackgroundAdjustment } from './BackgroundAdjustment';
 
 export class EditorScreen extends Screen {
   constructor() {

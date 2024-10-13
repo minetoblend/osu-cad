@@ -1,9 +1,9 @@
 import type { Bindable } from 'osucad-framework';
-import type { DifficultyAttributes } from '../../../difficulty/DifficultyAttributes.ts';
+import type { DifficultyAttributes } from '../../../difficulty/DifficultyAttributes';
 import { Axes, CompositeDrawable, dependencyLoader, EasingFunction, resolved } from 'osucad-framework';
-import { OsucadSpriteText } from '../../../OsucadSpriteText.ts';
-import { EditorDifficultyManager } from '../../difficulty/EditorDifficultyManager.ts';
-import { ThemeColors } from '../../ThemeColors.ts';
+import { OsucadSpriteText } from '../../../OsucadSpriteText';
+import { EditorDifficultyManager } from '../../difficulty/EditorDifficultyManager';
+import { ThemeColors } from '../../ThemeColors';
 
 export class DifficultyInfo extends CompositeDrawable {
   @resolved(EditorDifficultyManager)

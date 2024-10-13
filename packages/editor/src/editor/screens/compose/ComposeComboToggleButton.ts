@@ -10,7 +10,7 @@ import {
 } from 'osucad-framework';
 import { OsucadIcons } from '../../../OsucadIcons';
 import { EditorAction } from '../../EditorAction';
-import { EditorDependencies } from '../../EditorDependencies.ts';
+import { EditorDependencies } from '../../EditorDependencies';
 import { ComposeToggleButton } from './ComposeToggleButton';
 
 export class ComposeComboToggleButton extends ComposeToggleButton implements IKeyBindingHandler<EditorAction> {

@@ -8,9 +8,9 @@ import {
   resolved,
   Vec2,
 } from 'osucad-framework';
-import { SizeLimitedContainer } from '../../../drawables/SizeLimitedContainer.ts';
-import { OsucadSpriteText } from '../../../OsucadSpriteText.ts';
-import { ThemeColors } from '../../ThemeColors.ts';
+import { SizeLimitedContainer } from '../../../drawables/SizeLimitedContainer';
+import { OsucadSpriteText } from '../../../OsucadSpriteText';
+import { ThemeColors } from '../../ThemeColors';
 
 export abstract class SetupScreenSection extends Container {
   protected constructor(

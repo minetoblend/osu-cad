@@ -1,11 +1,11 @@
 import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
 import { clamp, Vec2 } from 'osucad-framework';
-import { HitResult } from '../../beatmap/hitObjects/HitResult.ts';
-import { Slider } from '../../beatmap/hitObjects/Slider.ts';
-import { SliderEventGenerator } from '../../beatmap/hitObjects/SliderEventGenerator.ts';
-import { SliderRepeat } from '../../beatmap/hitObjects/SliderRepeat.ts';
-import { SliderTick } from '../../beatmap/hitObjects/SliderTick.ts';
-import { Spinner } from '../../beatmap/hitObjects/Spinner.ts';
+import { HitResult } from '../../beatmap/hitObjects/HitResult';
+import { Slider } from '../../beatmap/hitObjects/Slider';
+import { SliderEventGenerator } from '../../beatmap/hitObjects/SliderEventGenerator';
+import { SliderRepeat } from '../../beatmap/hitObjects/SliderRepeat';
+import { SliderTick } from '../../beatmap/hitObjects/SliderTick';
+import { Spinner } from '../../beatmap/hitObjects/Spinner';
 import { DifficultyHitObject } from './DifficultyHitObject';
 
 export class OsuDifficultyHitObject extends DifficultyHitObject<OsuHitObject> {

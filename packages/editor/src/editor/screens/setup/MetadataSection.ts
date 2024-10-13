@@ -1,9 +1,9 @@
 import type { FillFlowContainer } from 'osucad-framework';
 import { resolved } from 'osucad-framework';
-import { Beatmap } from '../../../beatmap/Beatmap.ts';
-import { UpdateMetadataCommand } from '../../commands/UpdateMetadataCommand.ts';
-import { LabelledTextBox } from '../timing/properties/LabelledTextBox.ts';
-import { SetupScreenSection } from './SetupScreenSection.ts';
+import { Beatmap } from '../../../beatmap/Beatmap';
+import { UpdateMetadataCommand } from '../../commands/UpdateMetadataCommand';
+import { LabelledTextBox } from '../timing/properties/LabelledTextBox';
+import { SetupScreenSection } from './SetupScreenSection';
 
 export class MetadataSection extends SetupScreenSection {
   constructor() {

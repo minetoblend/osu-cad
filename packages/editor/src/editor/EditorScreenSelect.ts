@@ -15,7 +15,7 @@ import {
   Vec2,
 } from 'osucad-framework';
 import { OsucadSpriteText } from '../OsucadSpriteText';
-import { EditorDependencies } from './EditorDependencies.ts';
+import { EditorDependencies } from './EditorDependencies';
 import { EditorScreenType } from './screens/EditorScreenType';
 import { ThemeColors } from './ThemeColors';
 

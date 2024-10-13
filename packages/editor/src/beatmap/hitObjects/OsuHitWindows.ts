@@ -1,6 +1,6 @@
-import { DifficultyRange } from './DifficultyRange.ts';
-import { HitResult } from './HitResult.ts';
-import { HitWindows } from './HitWindows.ts';
+import { DifficultyRange } from './DifficultyRange';
+import { HitResult } from './HitResult';
+import { HitWindows } from './HitWindows';
 
 export class OsuHitWindows extends HitWindows {
   static readonly MISS_WINDOW = 400;

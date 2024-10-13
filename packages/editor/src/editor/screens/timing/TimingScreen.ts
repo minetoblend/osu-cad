@@ -3,7 +3,7 @@ import type {
   ScreenExitEvent,
   ScreenTransitionEvent,
 } from 'osucad-framework';
-import type { BackgroundAdjustment } from '../BackgroundAdjustment.ts';
+import type { BackgroundAdjustment } from '../BackgroundAdjustment';
 import {
   Anchor,
   Axes,
@@ -16,10 +16,10 @@ import {
   MaskingContainer,
   resolved,
 } from 'osucad-framework';
-import { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup.ts';
+import { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup';
 import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
-import { OsucadButton } from '../../../userInterface/OsucadButton.ts';
-import { EditorClock } from '../../EditorClock.ts';
+import { OsucadButton } from '../../../userInterface/OsucadButton';
+import { EditorClock } from '../../EditorClock';
 import { MainScrollContainer } from '../../MainScrollContainer';
 import { ThemeColors } from '../../ThemeColors';
 import { EditorScreen } from '../EditorScreen';
@@ -27,7 +27,7 @@ import { MetronomePlayer } from './MetronomePlayer';
 import { ControlPointProperties } from './properties/ControlPointProperties';
 import { TimingPointRow } from './TimingPointRow';
 import { TimingPointTable } from './TimingPointTable';
-import { TimingScreenDependencies } from './TimingScreenDependencies.ts';
+import { TimingScreenDependencies } from './TimingScreenDependencies';
 import { TimingScreenTimeline } from './TimingScreenTimeline';
 
 export class TimingScreen extends EditorScreen {

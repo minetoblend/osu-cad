@@ -1,7 +1,7 @@
-import type { Beatmap } from '../beatmap/Beatmap.ts';
-import type { DifficultyAttributes } from './DifficultyAttributes.ts';
-import type { DifficultyHitObject } from './preprocessing/DifficultyHitObject.ts';
-import type { Skill } from './skills/Skill.ts';
+import type { Beatmap } from '../beatmap/Beatmap';
+import type { DifficultyAttributes } from './DifficultyAttributes';
+import type { DifficultyHitObject } from './preprocessing/DifficultyHitObject';
+import type { Skill } from './skills/Skill';
 
 export abstract class DifficultyCalculator<T extends DifficultyHitObject<any>> {
   #clockRate = 1;

@@ -1,6 +1,6 @@
 import type { SliderRepeat } from '../../beatmap/hitObjects/SliderRepeat';
-import type { HitSound } from '../../beatmap/hitSounds/HitSound.ts';
-import type { ArmedState } from './ArmedState.ts';
+import type { HitSound } from '../../beatmap/hitSounds/HitSound';
+import type { ArmedState } from './ArmedState';
 import type { DrawableSlider } from './DrawableSlider';
 import type { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
 import { almostEquals, Anchor, Axes, Container, dependencyLoader, Vec2 } from 'osucad-framework';

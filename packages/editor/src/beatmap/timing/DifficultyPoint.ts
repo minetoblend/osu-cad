@@ -1,7 +1,7 @@
-import type { CommandContext } from '../../editor/commands/CommandContext.ts';
-import type { Patchable } from '../../editor/commands/Patchable.ts';
+import type { CommandContext } from '../../editor/commands/CommandContext';
+import type { Patchable } from '../../editor/commands/Patchable';
 import { BindableNumber } from 'osucad-framework';
-import { PatchUtils } from '../../editor/commands/PatchUtils.ts';
+import { PatchUtils } from '../../editor/commands/PatchUtils';
 import { ControlPoint } from './ControlPoint';
 
 export interface DifficultyPointPatch {

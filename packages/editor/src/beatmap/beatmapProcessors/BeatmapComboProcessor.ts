@@ -1,7 +1,7 @@
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
 import { Color, dependencyLoader, resolved } from 'osucad-framework';
 import { ISkinSource } from '../../skinning/ISkinSource';
-import { SkinConfig } from '../../skinning/SkinConfig.ts';
+import { SkinConfig } from '../../skinning/SkinConfig';
 import { Spinner } from '../hitObjects/Spinner';
 import { BeatmapProcessor } from './BeatmapProcessor';
 

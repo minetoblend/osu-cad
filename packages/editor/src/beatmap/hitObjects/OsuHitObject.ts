@@ -3,7 +3,7 @@ import type { PatchEncoder } from '../../editor/commands/patchEncoder/PatchEncod
 import type { SerializedOsuHitObject } from '../serialization/HitObjects';
 import type { ControlPointInfo } from '../timing/ControlPointInfo';
 import type { HitCircle } from './HitCircle';
-import type { HitWindows } from './HitWindows.ts';
+import type { HitWindows } from './HitWindows';
 import type { IHasComboInformation } from './IHasComboInformation';
 import type { Slider } from './Slider';
 import type { Spinner } from './Spinner';
@@ -17,7 +17,7 @@ import { SampleType } from '../hitSounds/SampleType';
 import { deserializeHitSound } from '../serialization/HitSound';
 import { HitObject } from './HitObject';
 import { HitObjectProperty } from './HitObjectProperty';
-import { OsuHitWindows } from './OsuHitWindows.ts';
+import { OsuHitWindows } from './OsuHitWindows';
 
 export abstract class OsuHitObject extends HitObject implements IHasComboInformation, IPatchable<SerializedOsuHitObject> {
   readonly needsDefaultsApplied = new Action<OsuHitObject>();

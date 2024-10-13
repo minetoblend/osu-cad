@@ -1,4 +1,4 @@
-import type { HitSoundsScreen } from './HitSoundsScreen.ts';
+import type { HitSoundsScreen } from './HitSoundsScreen';
 import { Vec2 } from 'osucad-framework';
 
 export class HitSoundsScreenLayout {

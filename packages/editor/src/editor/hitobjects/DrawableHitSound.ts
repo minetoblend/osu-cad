@@ -1,11 +1,11 @@
 import type { Sample, SamplePlayback } from 'osucad-framework';
-import type { HitSample } from '../../beatmap/hitSounds/HitSample.ts';
-import type { DrawableOsuHitObject } from './DrawableOsuHitObject.ts';
+import type { HitSample } from '../../beatmap/hitSounds/HitSample';
+import type { DrawableOsuHitObject } from './DrawableOsuHitObject';
 import { Component, dependencyLoader, resolved } from 'osucad-framework';
 
-import { ISkinSource } from '../../skinning/ISkinSource.ts';
-import { EditorMixer } from '../EditorMixer.ts';
-import { DrawableHitObject } from './DrawableHitObject.ts';
+import { ISkinSource } from '../../skinning/ISkinSource';
+import { EditorMixer } from '../EditorMixer';
+import { DrawableHitObject } from './DrawableHitObject';
 
 export class DrawableHitSound extends Component {
   constructor() {

@@ -1,8 +1,8 @@
 import type { Vec2 } from 'osucad-framework';
 import { Anchor, CompositeDrawable, Container, dependencyLoader, DrawablePool, EasingFunction } from 'osucad-framework';
-import { OsuSkinComponentLookup } from '../../../../skinning/OsuSkinComponentLookup.ts';
-import { SkinnableDrawable } from '../../../../skinning/SkinnableDrawable.ts';
-import { CursorTrailPiece } from './CursorTrailPiece.ts';
+import { OsuSkinComponentLookup } from '../../../../skinning/OsuSkinComponentLookup';
+import { SkinnableDrawable } from '../../../../skinning/SkinnableDrawable';
+import { CursorTrailPiece } from './CursorTrailPiece';
 
 export class GameplayCursor extends CompositeDrawable {
   @dependencyLoader()

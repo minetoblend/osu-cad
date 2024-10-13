@@ -9,7 +9,7 @@ import {
   EasingFunction,
   resolved,
 } from 'osucad-framework';
-import { OsucadSpriteText } from '../../../OsucadSpriteText.ts';
+import { OsucadSpriteText } from '../../../OsucadSpriteText';
 import 'pixi.js/advanced-blend-modes';
 
 export class VolumeMeter extends CompositeDrawable {

@@ -1,4 +1,4 @@
-import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject.ts';
+import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
 import {
   Axes,
   BindableBoolean,
@@ -9,14 +9,14 @@ import {
   Vec2,
   VisibilityContainer,
 } from 'osucad-framework';
-import { HitObjectList } from '../../../../beatmap/hitObjects/HitObjectList.ts';
-import { Slider } from '../../../../beatmap/hitObjects/Slider.ts';
-import { Spinner } from '../../../../beatmap/hitObjects/Spinner.ts';
-import { OsucadConfigManager } from '../../../../config/OsucadConfigManager.ts';
-import { OsucadSettings } from '../../../../config/OsucadSettings.ts';
-import { animate } from '../../../../utils/animate.ts';
-import { EditorClock } from '../../../EditorClock.ts';
-import { GameplayCursor } from './GameplayCursor.ts';
+import { HitObjectList } from '../../../../beatmap/hitObjects/HitObjectList';
+import { Slider } from '../../../../beatmap/hitObjects/Slider';
+import { Spinner } from '../../../../beatmap/hitObjects/Spinner';
+import { OsucadConfigManager } from '../../../../config/OsucadConfigManager';
+import { OsucadSettings } from '../../../../config/OsucadSettings';
+import { animate } from '../../../../utils/animate';
+import { EditorClock } from '../../../EditorClock';
+import { GameplayCursor } from './GameplayCursor';
 
 export class GameplayVisualizer extends VisibilityContainer {
   isVisible = new BindableBoolean(true);

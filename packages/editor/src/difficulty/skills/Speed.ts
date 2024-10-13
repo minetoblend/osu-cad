@@ -1,7 +1,7 @@
-import type { OsuDifficultyHitObject } from '../preprocessing/OsuDifficultyHitObject.ts';
-import { RhythmEvaluator } from '../evaluators/RhythmEvaluator.ts';
-import { SpeedEvaluator } from '../evaluators/SpeedEvaluator.ts';
-import { OsuStrainSkill } from './OsuStrainSkill.ts';
+import type { OsuDifficultyHitObject } from '../preprocessing/OsuDifficultyHitObject';
+import { RhythmEvaluator } from '../evaluators/RhythmEvaluator';
+import { SpeedEvaluator } from '../evaluators/SpeedEvaluator';
+import { OsuStrainSkill } from './OsuStrainSkill';
 
 export class Speed extends OsuStrainSkill {
   #skillMultiplier = 1.430;

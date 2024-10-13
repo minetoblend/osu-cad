@@ -6,7 +6,7 @@ import { HitCircle } from '../../../../beatmap/hitObjects/HitCircle';
 import { CreateHitObjectCommand } from '../../../commands/CreateHitObjectCommand';
 import { DeleteHitObjectCommand } from '../../../commands/DeleteHitObjectCommand';
 import { Editor } from '../../../Editor';
-import { EditorDependencies } from '../../../EditorDependencies.ts';
+import { EditorDependencies } from '../../../EditorDependencies';
 import { OsuPlayfield } from '../../../hitobjects/OsuPlayfield';
 import { SnapVisualizer } from '../snapping/SnapResult';
 import { DrawableComposeTool } from './DrawableComposeTool';

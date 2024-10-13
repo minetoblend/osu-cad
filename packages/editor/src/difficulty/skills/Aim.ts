@@ -1,6 +1,6 @@
-import type { OsuDifficultyHitObject } from '../preprocessing/OsuDifficultyHitObject.ts';
-import { AimEvaluator } from '../evaluators/AimEvaluator.ts';
-import { OsuStrainSkill } from './OsuStrainSkill.ts';
+import type { OsuDifficultyHitObject } from '../preprocessing/OsuDifficultyHitObject';
+import { AimEvaluator } from '../evaluators/AimEvaluator';
+import { OsuStrainSkill } from './OsuStrainSkill';
 
 export class Aim extends OsuStrainSkill {
   constructor(readonly withSliders = true) {

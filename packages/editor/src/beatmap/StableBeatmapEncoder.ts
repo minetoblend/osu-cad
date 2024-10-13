@@ -1,7 +1,7 @@
 import type { Color } from 'pixi.js';
 import type { OsuHitObject } from './hitObjects/OsuHitObject';
 import type { HitSound } from './hitSounds/HitSound';
-import type { IBeatmap } from './IBeatmap.ts';
+import type { IBeatmap } from './IBeatmap';
 import { HitType } from 'osu-classes';
 import { almostEquals, clamp } from 'osucad-framework';
 import { HitObjectUtils } from '../editor/screens/compose/HitObjectUtils';

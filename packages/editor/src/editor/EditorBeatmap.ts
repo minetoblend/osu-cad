@@ -1,9 +1,9 @@
-import type { IBeatmap } from '../beatmap/IBeatmap.ts';
-import type { LoadedBeatmap } from '../beatmap/LoadedBeatmap.ts';
-import type { BeatmapItemInfo } from '../beatmapSelect/BeatmapItemInfo.ts';
-import type { IResourcesProvider } from '../io/IResourcesProvider.ts';
-import { BeatmapTransformer } from '../beatmap/BeatmapTransformer.ts';
-import { CommandManager } from './context/CommandManager.ts';
+import type { IBeatmap } from '../beatmap/IBeatmap';
+import type { LoadedBeatmap } from '../beatmap/LoadedBeatmap';
+import type { BeatmapItemInfo } from '../beatmapSelect/BeatmapItemInfo';
+import type { IResourcesProvider } from '../io/IResourcesProvider';
+import { BeatmapTransformer } from '../beatmap/BeatmapTransformer';
+import { CommandManager } from './context/CommandManager';
 
 export class EditorBeatmap extends BeatmapTransformer<LoadedBeatmap> implements IBeatmap {
   constructor(readonly beatmapInfo: BeatmapItemInfo) {

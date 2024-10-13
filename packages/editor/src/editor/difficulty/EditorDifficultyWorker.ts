@@ -1,6 +1,6 @@
-import { StableBeatmapParser } from '../../beatmap/StableBeatmapParser.ts';
-import { OsuDifficultyCalculator } from '../../difficulty/OsuDifficultyCalculator.ts';
-import { StrainSkill } from '../../difficulty/skills/StrainSkill.ts';
+import { StableBeatmapParser } from '../../beatmap/StableBeatmapParser';
+import { OsuDifficultyCalculator } from '../../difficulty/OsuDifficultyCalculator';
+import { StrainSkill } from '../../difficulty/skills/StrainSkill';
 
 globalThis.addEventListener('message', async (evt) => {
   const beatmap = await new StableBeatmapParser().parse(evt.data);

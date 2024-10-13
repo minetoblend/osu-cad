@@ -1,9 +1,9 @@
 import type { Graphics } from 'pixi.js';
 import { Anchor, Axes, Bindable, dependencyLoader, resolved } from 'osucad-framework';
-import { HitObjectList } from '../../../beatmap/hitObjects/HitObjectList.ts';
+import { HitObjectList } from '../../../beatmap/hitObjects/HitObjectList';
 import { GraphicsDrawable } from '../../../drawables/GraphicsDrawable';
 import { EditorDifficultyManager } from '../../difficulty/EditorDifficultyManager';
-import { EditorClock } from '../../EditorClock.ts';
+import { EditorClock } from '../../EditorClock';
 
 export class StrainGraph extends GraphicsDrawable {
   @resolved(EditorDifficultyManager)

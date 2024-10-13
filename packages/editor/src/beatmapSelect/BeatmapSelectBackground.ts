@@ -22,11 +22,11 @@ import {
 } from 'osucad-framework';
 
 import { BlurFilter } from 'pixi.js';
-import { BackgroundScreen } from '../BackgroundScreen.ts';
+import { BackgroundScreen } from '../BackgroundScreen';
 import { OsucadConfigManager } from '../config/OsucadConfigManager';
 import { OsucadSettings } from '../config/OsucadSettings';
-import { EditorBackground } from '../editor/EditorBackground.ts';
-import { GlobalBeatmapBindable } from '../GlobalBeatmapBindable.ts';
+import { EditorBackground } from '../editor/EditorBackground';
+import { GlobalBeatmapBindable } from '../GlobalBeatmapBindable';
 
 export class BeatmapSelectBackground extends BackgroundScreen {
   constructor() {

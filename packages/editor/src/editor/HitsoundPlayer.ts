@@ -18,9 +18,9 @@ import { OsucadSettings } from '../config/OsucadSettings';
 import { LifetimeBoundaryCrossingDirection } from '../pooling/LifetimeBoundaryCrossingDirection';
 import { LifetimeBoundaryKind } from '../pooling/LifetimeBoundaryKind';
 import { LifetimeEntryManager } from '../pooling/LifetimeEntryManager';
-import { ISkinSource } from '../skinning/ISkinSource.ts';
+import { ISkinSource } from '../skinning/ISkinSource';
 import { EditorClock } from './EditorClock';
-import { EditorMixer } from './EditorMixer.ts';
+import { EditorMixer } from './EditorMixer';
 import { HitObjectLifetimeEntry } from './hitobjects/HitObjectLifetimeEntry';
 
 export class HitsoundPlayer extends CompositeDrawable {

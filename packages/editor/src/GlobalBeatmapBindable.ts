@@ -1,4 +1,4 @@
-import type { BeatmapItemInfo } from './beatmapSelect/BeatmapItemInfo.ts';
+import type { BeatmapItemInfo } from './beatmapSelect/BeatmapItemInfo';
 import { Bindable } from 'osucad-framework';
 
 export class GlobalBeatmapBindable extends Bindable<BeatmapItemInfo | null> {

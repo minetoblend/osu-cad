@@ -6,7 +6,7 @@ import type {
   HoverEvent,
   HoverLostEvent,
 } from 'osucad-framework';
-import type { EditorCommand } from '../editor/commands/EditorCommand.ts';
+import type { EditorCommand } from '../editor/commands/EditorCommand';
 import {
   Action,
   Anchor,
@@ -21,8 +21,8 @@ import {
   MouseButton,
   Vec2,
 } from 'osucad-framework';
-import { FastRoundedBox } from '../drawables/FastRoundedBox.ts';
-import { CommandManager } from '../editor/context/CommandManager.ts';
+import { FastRoundedBox } from '../drawables/FastRoundedBox';
+import { CommandManager } from '../editor/context/CommandManager';
 
 export class SliderControl extends CompositeDrawable {
   constructor() {

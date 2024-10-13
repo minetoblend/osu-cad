@@ -1,5 +1,5 @@
 import type { Vec2 } from '../../../../framework/src';
-import { HitResult } from './HitResult.ts';
+import { HitResult } from './HitResult';
 
 export class JudgementResult {
   constructor(

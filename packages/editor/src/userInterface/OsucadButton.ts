@@ -1,9 +1,9 @@
 import type { Drawable } from 'osucad-framework';
 import type { ColorSource } from 'pixi.js';
 import { Anchor, Axes, Button, Container, dependencyLoader, resolved } from 'osucad-framework';
-import { FastRoundedBox } from '../drawables/FastRoundedBox.ts';
-import { ThemeColors } from '../editor/ThemeColors.ts';
-import { OsucadSpriteText } from '../OsucadSpriteText.ts';
+import { FastRoundedBox } from '../drawables/FastRoundedBox';
+import { ThemeColors } from '../editor/ThemeColors';
+import { OsucadSpriteText } from '../OsucadSpriteText';
 
 export class OsucadButton extends Button {
   #backgroundColor: ColorSource = 0x1E1E23;

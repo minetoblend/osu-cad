@@ -1,10 +1,10 @@
-import type { DrawableHitObject } from './DrawableHitObject.ts';
-import type { DrawableOsuHitObject } from './DrawableOsuHitObject.ts';
-import type { HitObjectContainer } from './HitObjectContainer.ts';
-import type { IHitPolicy } from './IHitPolicy.ts';
-import { HitResult } from '../../beatmap/hitObjects/HitResult.ts';
-import { ClickAction } from './ClickAction.ts';
-import { DrawableHitCircle } from './DrawableHitCircle.ts';
+import type { DrawableHitObject } from './DrawableHitObject';
+import type { DrawableOsuHitObject } from './DrawableOsuHitObject';
+import type { HitObjectContainer } from './HitObjectContainer';
+import type { IHitPolicy } from './IHitPolicy';
+import { HitResult } from '../../beatmap/hitObjects/HitResult';
+import { ClickAction } from './ClickAction';
+import { DrawableHitCircle } from './DrawableHitCircle';
 
 export class StartTimeOrderedHitPolicy implements IHitPolicy {
   hitObjectContainer: HitObjectContainer | null = null;

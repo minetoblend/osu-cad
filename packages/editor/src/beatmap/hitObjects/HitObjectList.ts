@@ -1,6 +1,6 @@
 import type { Bindable } from 'osucad-framework';
 import type { Beatmap } from '../Beatmap';
-import type { ControlPoint } from '../timing/ControlPoint.ts';
+import type { ControlPoint } from '../timing/ControlPoint';
 import type { OsuHitObject } from './OsuHitObject';
 import { ObservableSortedList } from 'osucad-framework';
 import { HitObject } from './HitObject';

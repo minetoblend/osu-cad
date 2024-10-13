@@ -1,8 +1,8 @@
-import type { DifficultyAttributes } from '../../difficulty/DifficultyAttributes.ts';
+import type { DifficultyAttributes } from '../../difficulty/DifficultyAttributes';
 import { Bindable, Component, dependencyLoader, resolved } from 'osucad-framework';
-import { Beatmap } from '../../beatmap/Beatmap.ts';
-import { StableBeatmapEncoder } from '../../beatmap/StableBeatmapEncoder.ts';
-import { CommandManager } from '../context/CommandManager.ts';
+import { Beatmap } from '../../beatmap/Beatmap';
+import { StableBeatmapEncoder } from '../../beatmap/StableBeatmapEncoder';
+import { CommandManager } from '../context/CommandManager';
 import Worker from './EditorDifficultyWorker?worker';
 
 export class EditorDifficultyManager extends Component {

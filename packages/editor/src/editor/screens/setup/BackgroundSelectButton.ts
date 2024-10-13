@@ -1,5 +1,5 @@
 import { Anchor, Axes, CompositeDrawable, dependencyLoader } from 'osucad-framework';
-import { OsucadButton } from '../../../userInterface/OsucadButton.ts';
+import { OsucadButton } from '../../../userInterface/OsucadButton';
 
 export class BackgroundSelectButton extends CompositeDrawable {
   @dependencyLoader()

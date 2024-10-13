@@ -1,8 +1,8 @@
-import type { BeatmapDifficultyPatch } from '../../beatmap/BeatmapDifficultyInfo.ts';
-import type { CommandContext } from './CommandContext.ts';
-import type { CommandSource } from './CommandSource.ts';
-import { EditorCommand } from './EditorCommand.ts';
-import { PatchUtils } from './PatchUtils.ts';
+import type { BeatmapDifficultyPatch } from '../../beatmap/BeatmapDifficultyInfo';
+import type { CommandContext } from './CommandContext';
+import type { CommandSource } from './CommandSource';
+import { EditorCommand } from './EditorCommand';
+import { PatchUtils } from './PatchUtils';
 
 export class UpdateDifficultyCommand extends EditorCommand {
   constructor(readonly patch: Partial<BeatmapDifficultyPatch>) {

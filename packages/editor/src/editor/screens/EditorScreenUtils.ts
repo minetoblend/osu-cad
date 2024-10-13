@@ -1,7 +1,7 @@
 import type { Drawable } from 'osucad-framework';
-import type { OsuPlayfield } from '../hitobjects/OsuPlayfield.ts';
+import type { OsuPlayfield } from '../hitobjects/OsuPlayfield';
 import { Container, EasingFunction, Vec2 } from 'osucad-framework';
-import { EditorScreen } from './EditorScreen.ts';
+import { EditorScreen } from './EditorScreen';
 
 const key = Symbol('playfieldOwner');
 

@@ -1,9 +1,9 @@
 import type { AudioChannel, Bindable, Drawable, Sample } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
-import type { HitSample } from '../beatmap/hitSounds/HitSample.ts';
-import type { ISkin } from './ISkin.ts';
-import type { ISkinComponentLookup } from './ISkinComponentLookup.ts';
-import type { SkinConfig } from './SkinConfig.ts';
+import type { HitSample } from '../beatmap/hitSounds/HitSample';
+import type { ISkin } from './ISkin';
+import type { ISkinComponentLookup } from './ISkinComponentLookup';
+import type { SkinConfig } from './SkinConfig';
 import { Component } from 'osucad-framework';
 
 export class SkinTransformer extends Component implements ISkin {

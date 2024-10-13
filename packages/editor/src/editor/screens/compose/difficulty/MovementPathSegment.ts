@@ -1,6 +1,6 @@
 import type { Drawable, Vec2 } from 'osucad-framework';
 import { Anchor, Axes, CompositeDrawable } from 'osucad-framework';
-import { FastRoundedBox } from '../../../../drawables/FastRoundedBox.ts';
+import { FastRoundedBox } from '../../../../drawables/FastRoundedBox';
 
 export class MovementPathSegment extends CompositeDrawable {
   constructor(

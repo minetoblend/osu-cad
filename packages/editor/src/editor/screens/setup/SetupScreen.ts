@@ -3,8 +3,8 @@ import type {
   ScreenExitEvent,
   ScreenTransitionEvent,
 } from 'osucad-framework';
-import type { OsuPlayfield } from '../../hitobjects/OsuPlayfield.ts';
-import type { BackgroundAdjustment } from '../BackgroundAdjustment.ts';
+import type { OsuPlayfield } from '../../hitobjects/OsuPlayfield';
+import type { BackgroundAdjustment } from '../BackgroundAdjustment';
 import {
   Anchor,
   Axes,
@@ -14,14 +14,14 @@ import {
   DrawSizePreservingFillContainer,
   EasingFunction,
 } from 'osucad-framework';
-import { LabelWidthProvider } from '../../../userInterface/LabelledDrawable.ts';
-import { EditorDependencies } from '../../EditorDependencies.ts';
-import { PlayfieldGrid } from '../../playfield/PlayfieldGrid.ts';
+import { LabelWidthProvider } from '../../../userInterface/LabelledDrawable';
+import { EditorDependencies } from '../../EditorDependencies';
+import { PlayfieldGrid } from '../../playfield/PlayfieldGrid';
 import { EditorScreen } from '../EditorScreen';
-import { EditorScreenUtils } from '../EditorScreenUtils.ts';
-import { HitSoundsScreen } from '../hitsounds/HitSoundsScreen.ts';
-import { BackgroundSelectButton } from './BackgroundSelectButton.ts';
-import { SetupScreenContainer } from './SetupScreenContainer.ts';
+import { EditorScreenUtils } from '../EditorScreenUtils';
+import { HitSoundsScreen } from '../hitsounds/HitSoundsScreen';
+import { BackgroundSelectButton } from './BackgroundSelectButton';
+import { SetupScreenContainer } from './SetupScreenContainer';
 
 export class SetupScreen extends EditorScreen {
   constructor() {

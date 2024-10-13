@@ -1,6 +1,6 @@
 import type { AudioChannel, Drawable, IDisposable, Sample } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
-import type { HitSample } from '../beatmap/hitSounds/HitSample.ts';
+import type { HitSample } from '../beatmap/hitSounds/HitSample';
 import type { IResourcesProvider } from '../io/IResourcesProvider';
 import type { IResourceStore } from './IResourceStore';
 import type { ISkin } from './ISkin';
@@ -9,7 +9,7 @@ import type { SkinInfo } from './SkinInfo';
 import { Bindable, DrawableSprite } from 'osucad-framework';
 import { SkinnableTextureAnimation } from './DrawableAnimation';
 import { ResourceStore } from './ResourceStore';
-import { SkinConfig } from './SkinConfig.ts';
+import { SkinConfig } from './SkinConfig';
 import { SkinConfiguration } from './SkinConfiguration';
 import { SpriteComponentLookup } from './SkinnableSprite';
 import { SampleStore } from './stable/SampleStore';

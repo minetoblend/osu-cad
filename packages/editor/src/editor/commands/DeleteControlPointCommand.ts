@@ -1,7 +1,7 @@
-import type { CommandContext } from './CommandContext.ts';
-import type { CommandSource } from './CommandSource.ts';
-import { CreateControlPointCommand } from './CreateControlPointCommand.ts';
-import { EditorCommand } from './EditorCommand.ts';
+import type { CommandContext } from './CommandContext';
+import type { CommandSource } from './CommandSource';
+import { CreateControlPointCommand } from './CreateControlPointCommand';
+import { EditorCommand } from './EditorCommand';
 
 export class DeleteControlPointCommand extends EditorCommand {
   constructor(

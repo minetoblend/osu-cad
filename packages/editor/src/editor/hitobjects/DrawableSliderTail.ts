@@ -1,14 +1,14 @@
 import type { Slider } from '../../beatmap/hitObjects/Slider';
 import type { SliderTailCircle } from '../../beatmap/hitObjects/SliderTailCircle';
-import type { HitSound } from '../../beatmap/hitSounds/HitSound.ts';
-import type { DrawableSlider } from './DrawableSlider.ts';
+import type { HitSound } from '../../beatmap/hitSounds/HitSound';
+import type { DrawableSlider } from './DrawableSlider';
 import { Anchor, Axes, BindableBoolean, BindableNumber, Container, dependencyLoader, resolved } from 'osucad-framework';
 import { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
 import { OsucadConfigManager } from '../../config/OsucadConfigManager';
 import { OsucadSettings } from '../../config/OsucadSettings';
 import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
 import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
-import { ArmedState } from './ArmedState.ts';
+import { ArmedState } from './ArmedState';
 import { DrawableOsuHitObject } from './DrawableOsuHitObject';
 
 export class DrawableSliderTail extends DrawableOsuHitObject<SliderTailCircle> {

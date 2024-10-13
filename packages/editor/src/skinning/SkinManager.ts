@@ -4,13 +4,13 @@ import type {
   PIXITexture,
   Sample,
 } from 'osucad-framework';
-import type { HitSample } from '../beatmap/hitSounds/HitSample.ts';
+import type { HitSample } from '../beatmap/hitSounds/HitSample';
 import type { LoadableSkin, SkinStore } from '../environment';
-import type { ISkin } from './ISkin.ts';
-import type { ISkinComponentLookup } from './ISkinComponentLookup.ts';
-import type { ISkinSource } from './ISkinSource.ts';
-import type { Skin } from './Skin.ts';
-import type { SkinConfig } from './SkinConfig.ts';
+import type { ISkin } from './ISkin';
+import type { ISkinComponentLookup } from './ISkinComponentLookup';
+import type { ISkinSource } from './ISkinSource';
+import type { Skin } from './Skin';
+import type { SkinConfig } from './SkinConfig';
 
 import {
   Action,
@@ -21,10 +21,10 @@ import {
   Component,
   resolved,
 } from 'osucad-framework';
-import { OsucadConfigManager } from '../config/OsucadConfigManager.ts';
-import { OsucadSettings } from '../config/OsucadSettings.ts';
-import { IResourcesProvider } from '../io/IResourcesProvider.ts';
-import { createDefaultSkin } from './CreateDefaultSkin.ts';
+import { OsucadConfigManager } from '../config/OsucadConfigManager';
+import { OsucadSettings } from '../config/OsucadSettings';
+import { IResourcesProvider } from '../io/IResourcesProvider';
+import { createDefaultSkin } from './CreateDefaultSkin';
 
 export class SkinManager extends Component implements ISkinSource {
   constructor(skinStore: SkinStore) {

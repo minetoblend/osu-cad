@@ -8,7 +8,7 @@ import type {
   MouseDownEvent,
   MouseUpEvent,
 } from 'osucad-framework';
-import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup.ts';
+import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup';
 import {
   dependencyLoader,
   DrawableSprite,
@@ -16,11 +16,11 @@ import {
   MouseButton,
   resolved,
 } from 'osucad-framework';
-import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo.ts';
-import { OsucadIcons } from '../../../OsucadIcons.ts';
-import { EditorClock } from '../../EditorClock.ts';
-import { ComposeScreenTimeline } from '../../timeline/ComposeScreenTimeline.ts';
-import { Timeline } from '../../timeline/Timeline.ts';
+import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
+import { OsucadIcons } from '../../../OsucadIcons';
+import { EditorClock } from '../../EditorClock';
+import { ComposeScreenTimeline } from '../../timeline/ComposeScreenTimeline';
+import { Timeline } from '../../timeline/Timeline';
 
 export class TimelineControlPointMarker extends DrawableSprite {
   constructor(readonly controlPoint: ControlPointGroup) {

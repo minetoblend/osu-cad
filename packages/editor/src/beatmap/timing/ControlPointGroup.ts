@@ -1,5 +1,5 @@
-import type { CommandContext } from '../../editor/commands/CommandContext.ts';
-import type { Patchable } from '../../editor/commands/Patchable.ts';
+import type { CommandContext } from '../../editor/commands/CommandContext';
+import type { Patchable } from '../../editor/commands/Patchable';
 import type { DifficultyPointPatch } from './DifficultyPoint';
 import { Action } from 'osucad-framework';
 import { objectId } from '../ObjectId';

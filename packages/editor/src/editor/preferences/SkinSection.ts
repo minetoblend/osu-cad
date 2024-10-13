@@ -1,14 +1,14 @@
 import type { Drawable } from 'osucad-framework';
 import type { LoadableSkin } from '../../environment';
 import { Axes, Bindable, dependencyLoader, FillDirection, FillFlowContainer, resolved } from 'osucad-framework';
-import { OsucadConfigManager } from '../../config/OsucadConfigManager.ts';
-import { OsucadSettings } from '../../config/OsucadSettings.ts';
+import { OsucadConfigManager } from '../../config/OsucadConfigManager';
+import { OsucadSettings } from '../../config/OsucadSettings';
 import { SkinStore } from '../../environment';
-import { SkinManager } from '../../skinning/SkinManager.ts';
-import { DropdownItem, DropdownSelect } from '../../userInterface/DropdownSelect.ts';
-import { ThemeColors } from '../ThemeColors.ts';
-import { PreferencesPanel } from './PreferencesPanel.ts';
-import { PreferencesToggle } from './PreferencesToggle.ts';
+import { SkinManager } from '../../skinning/SkinManager';
+import { DropdownItem, DropdownSelect } from '../../userInterface/DropdownSelect';
+import { ThemeColors } from '../ThemeColors';
+import { PreferencesPanel } from './PreferencesPanel';
+import { PreferencesToggle } from './PreferencesToggle';
 
 export class SkinSection extends PreferencesPanel {
   getTitle(): string {

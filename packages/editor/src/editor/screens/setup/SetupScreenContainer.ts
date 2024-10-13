@@ -1,9 +1,9 @@
-import type { SetupScreenSection } from './SetupScreenSection.ts';
+import type { SetupScreenSection } from './SetupScreenSection';
 import { Axes, CompositeDrawable, dependencyLoader, Direction, FillFlowContainer, Vec2 } from 'osucad-framework';
-import { MainScrollContainer } from '../../MainScrollContainer.ts';
-import { ColorsSection } from './ColorsSection.ts';
-import { DifficultySection } from './DifficultySection.ts';
-import { MetadataSection } from './MetadataSection.ts';
+import { MainScrollContainer } from '../../MainScrollContainer';
+import { ColorsSection } from './ColorsSection';
+import { DifficultySection } from './DifficultySection';
+import { MetadataSection } from './MetadataSection';
 
 export class SetupScreenContainer extends CompositeDrawable {
   @dependencyLoader()

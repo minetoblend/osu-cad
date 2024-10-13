@@ -1,20 +1,20 @@
-import type { Beatmap } from '../beatmap/Beatmap.ts';
-import type { DifficultyAttributes } from './DifficultyAttributes.ts';
-import type { Skill } from './skills/Skill.ts';
-import { BeatmapDifficultyInfo } from '../beatmap/BeatmapDifficultyInfo.ts';
-import { HitCircle } from '../beatmap/hitObjects/HitCircle.ts';
+import type { Beatmap } from '../beatmap/Beatmap';
+import type { DifficultyAttributes } from './DifficultyAttributes';
+import type { Skill } from './skills/Skill';
+import { BeatmapDifficultyInfo } from '../beatmap/BeatmapDifficultyInfo';
+import { HitCircle } from '../beatmap/hitObjects/HitCircle';
 
-import { HitResult } from '../beatmap/hitObjects/HitResult.ts';
-import { OsuHitWindows } from '../beatmap/hitObjects/OsuHitWindows.ts';
-import { Slider } from '../beatmap/hitObjects/Slider.ts';
-import { Spinner } from '../beatmap/hitObjects/Spinner.ts';
-import { DifficultyCalculator } from './DifficultyCalculator.ts';
-import { OsuDifficultyAttributes } from './OsuDifficultyAttributes.ts';
-import { OsuPerformanceCalculator } from './OsuPerformanceCalculator.ts';
-import { OsuDifficultyHitObject } from './preprocessing/OsuDifficultyHitObject.ts';
-import { Aim } from './skills/Aim.ts';
-import { OsuStrainSkill } from './skills/OsuStrainSkill.ts';
-import { Speed } from './skills/Speed.ts';
+import { HitResult } from '../beatmap/hitObjects/HitResult';
+import { OsuHitWindows } from '../beatmap/hitObjects/OsuHitWindows';
+import { Slider } from '../beatmap/hitObjects/Slider';
+import { Spinner } from '../beatmap/hitObjects/Spinner';
+import { DifficultyCalculator } from './DifficultyCalculator';
+import { OsuDifficultyAttributes } from './OsuDifficultyAttributes';
+import { OsuPerformanceCalculator } from './OsuPerformanceCalculator';
+import { OsuDifficultyHitObject } from './preprocessing/OsuDifficultyHitObject';
+import { Aim } from './skills/Aim';
+import { OsuStrainSkill } from './skills/OsuStrainSkill';
+import { Speed } from './skills/Speed';
 
 const difficulty_multiplier = 0.0675;
 

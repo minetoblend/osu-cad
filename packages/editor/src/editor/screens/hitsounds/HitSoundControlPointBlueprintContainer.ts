@@ -1,13 +1,13 @@
 import type { Bindable } from 'osucad-framework';
-import type { ControlPoint } from '../../../beatmap/timing/ControlPoint.ts';
-import type { ControlPointList } from '../../../beatmap/timing/ControlPointList.ts';
+import type { ControlPoint } from '../../../beatmap/timing/ControlPoint';
+import type { ControlPointList } from '../../../beatmap/timing/ControlPointList';
 
-import type { PoolableDrawableWithLifetime } from '../../../pooling/PoolableDrawableWithLifetime.ts';
+import type { PoolableDrawableWithLifetime } from '../../../pooling/PoolableDrawableWithLifetime';
 import { Axes, dependencyLoader, resolved, SortedList } from 'osucad-framework';
-import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo.ts';
-import { PooledDrawableWithLifetimeContainer } from '../../../pooling/PooledDrawableWithLifetimeContainer.ts';
-import { ControlPointLifetimeEntry } from './ControlPointLifetimeEntry.ts';
-import { HitSoundsTimeline } from './HitSoundsTimeline.ts';
+import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
+import { PooledDrawableWithLifetimeContainer } from '../../../pooling/PooledDrawableWithLifetimeContainer';
+import { ControlPointLifetimeEntry } from './ControlPointLifetimeEntry';
+import { HitSoundsTimeline } from './HitSoundsTimeline';
 
 export abstract class HitSoundControlPointBlueprintContainer<T extends ControlPoint, TDrawable extends PoolableDrawableWithLifetime<ControlPointLifetimeEntry<T>>> extends PooledDrawableWithLifetimeContainer<ControlPointLifetimeEntry<T>, TDrawable> {
   #lifetimeEntries = new SortedList<ControlPointLifetimeEntry<T>>(ControlPointLifetimeEntry.COMPARER);

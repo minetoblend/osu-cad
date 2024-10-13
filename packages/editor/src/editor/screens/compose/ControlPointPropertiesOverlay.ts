@@ -1,10 +1,10 @@
 import type { Bindable, KeyDownEvent, MouseDownEvent, Vec2 } from 'osucad-framework';
-import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup.ts';
+import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup';
 import { Axes, dependencyLoader, EasingFunction, Key, VisibilityContainer } from 'osucad-framework';
 
 import { BackdropBlurFilter } from 'pixi-filters';
-import { FastRoundedBox } from '../../../drawables/FastRoundedBox.ts';
-import { ControlPointProperties } from '../timing/properties/ControlPointProperties.ts';
+import { FastRoundedBox } from '../../../drawables/FastRoundedBox';
+import { ControlPointProperties } from '../timing/properties/ControlPointProperties';
 
 export class ControlPointPropertiesOverlay extends VisibilityContainer {
   constructor(

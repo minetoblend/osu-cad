@@ -13,7 +13,7 @@ import {
 import { Additions } from '../../../beatmap/hitSounds/Additions';
 import { additionToSampleType, SampleType } from '../../../beatmap/hitSounds/SampleType';
 import { EditorAction } from '../../EditorAction';
-import { EditorDependencies } from '../../EditorDependencies.ts';
+import { EditorDependencies } from '../../EditorDependencies';
 import { HitsoundPlayer } from '../../HitsoundPlayer';
 import { ComposeToggleButton } from './ComposeToggleButton';
 import { SampleHighlightContainer } from './SampleHighlightContainer';

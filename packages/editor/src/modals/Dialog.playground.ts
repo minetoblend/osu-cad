@@ -1,8 +1,8 @@
 import type { KeyDownEvent } from '../../../framework/src';
 import { dependencyLoader, Key } from '../../../framework/src';
-import { Playground } from '../playground/Playground.ts';
-import { Dialog } from './Dialog.ts';
-import { DialogContainer } from './DialogContainer.ts';
+import { Playground } from '../playground/Playground';
+import { Dialog } from './Dialog';
+import { DialogContainer } from './DialogContainer';
 
 export class DialogPlayground extends Playground {
   @dependencyLoader()

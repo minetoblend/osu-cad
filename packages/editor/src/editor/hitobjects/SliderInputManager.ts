@@ -1,17 +1,17 @@
 import type { IFrameBasedClock, MouseMoveEvent, Vec2 } from 'osucad-framework';
-import type { DrawableSlider } from './DrawableSlider.ts';
-import type { DrawableSliderHead } from './DrawableSliderHead.ts';
+import type { DrawableSlider } from './DrawableSlider';
+import type { DrawableSliderHead } from './DrawableSliderHead';
 import { clamp, Component, resolved } from 'osucad-framework';
-import { SliderEventGenerator } from '../../beatmap/hitObjects/SliderEventGenerator.ts';
-import { SliderRepeat } from '../../beatmap/hitObjects/SliderRepeat.ts';
-import { SliderTick } from '../../beatmap/hitObjects/SliderTick.ts';
-import { OsuAction } from '../../gameplay/OsuAction.ts';
-import { DrawableOsuHitObject } from './DrawableOsuHitObject.ts';
-import { DrawableSliderBall } from './DrawableSliderBall.ts';
-import { DrawableSliderRepeat } from './DrawableSliderRepeat.ts';
-import { DrawableSliderTail } from './DrawableSliderTail.ts';
-import { DrawableSliderTick } from './DrawableSliderTick.ts';
-import { PlayfieldClock } from './PlayfieldClock.ts';
+import { SliderEventGenerator } from '../../beatmap/hitObjects/SliderEventGenerator';
+import { SliderRepeat } from '../../beatmap/hitObjects/SliderRepeat';
+import { SliderTick } from '../../beatmap/hitObjects/SliderTick';
+import { OsuAction } from '../../gameplay/OsuAction';
+import { DrawableOsuHitObject } from './DrawableOsuHitObject';
+import { DrawableSliderBall } from './DrawableSliderBall';
+import { DrawableSliderRepeat } from './DrawableSliderRepeat';
+import { DrawableSliderTail } from './DrawableSliderTail';
+import { DrawableSliderTick } from './DrawableSliderTick';
+import { PlayfieldClock } from './PlayfieldClock';
 
 export class SliderInputManager extends Component {
   override get requiresHighFrequencyMousePosition() {

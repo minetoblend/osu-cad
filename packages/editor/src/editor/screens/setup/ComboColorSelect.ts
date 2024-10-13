@@ -10,9 +10,9 @@ import {
   RoundedBox,
   Vec2,
 } from 'osucad-framework';
-import { Beatmap } from '../../../beatmap/Beatmap.ts';
-import { FastRoundedBox } from '../../../drawables/FastRoundedBox.ts';
-import { OsucadIcons } from '../../../OsucadIcons.ts';
+import { Beatmap } from '../../../beatmap/Beatmap';
+import { FastRoundedBox } from '../../../drawables/FastRoundedBox';
+import { OsucadIcons } from '../../../OsucadIcons';
 
 export class ComboColorSelect extends FillFlowContainer {
   constructor() {

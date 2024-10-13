@@ -1,17 +1,17 @@
 import type { Drawable } from 'osucad-framework';
 import type { HitCircle } from '../../beatmap/hitObjects/HitCircle';
 import { Anchor, Axes, Bindable, Container, dependencyLoader, EasingFunction, resolved } from 'osucad-framework';
-import { HitReceptor } from '../../beatmap/hitObjects/HitReceptor.ts';
-import { HitResult } from '../../beatmap/hitObjects/HitResult.ts';
+import { HitReceptor } from '../../beatmap/hitObjects/HitReceptor';
+import { HitResult } from '../../beatmap/hitObjects/HitResult';
 import { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
 import { OsucadConfigManager } from '../../config/OsucadConfigManager';
 import { OsucadSettings } from '../../config/OsucadSettings';
-import { ISkinSource } from '../../skinning/ISkinSource.ts';
+import { ISkinSource } from '../../skinning/ISkinSource';
 import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
 import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
-import { EditorMixer } from '../EditorMixer.ts';
-import { ArmedState } from './ArmedState.ts';
-import { ClickAction } from './ClickAction.ts';
+import { EditorMixer } from '../EditorMixer';
+import { ArmedState } from './ArmedState';
+import { ClickAction } from './ClickAction';
 import { DrawableOsuHitObject } from './DrawableOsuHitObject';
 
 export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle> {

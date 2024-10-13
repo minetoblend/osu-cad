@@ -3,8 +3,8 @@ import type {
   ScreenExitEvent,
   ScreenTransitionEvent,
 } from 'osucad-framework';
-import type { OsuPlayfield } from '../../hitobjects/OsuPlayfield.ts';
-import type { BackgroundAdjustment } from '../BackgroundAdjustment.ts';
+import type { OsuPlayfield } from '../../hitobjects/OsuPlayfield';
+import type { BackgroundAdjustment } from '../BackgroundAdjustment';
 import {
   Anchor,
   Axes,
@@ -17,14 +17,14 @@ import {
   resolved,
   Vec2,
 } from 'osucad-framework';
-import { EditorClock } from '../../EditorClock.ts';
-import { EditorDependencies } from '../../EditorDependencies.ts';
-import { EditorMixer } from '../../EditorMixer.ts';
-import { PlayfieldGrid } from '../../playfield/PlayfieldGrid.ts';
-import { EditorScreen } from '../EditorScreen.ts';
-import { EditorScreenUtils } from '../EditorScreenUtils.ts';
-import { HitSoundsTimeline } from './HitSoundsTimeline.ts';
-import { VolumeMeter } from './VolumeMeter.ts';
+import { EditorClock } from '../../EditorClock';
+import { EditorDependencies } from '../../EditorDependencies';
+import { EditorMixer } from '../../EditorMixer';
+import { PlayfieldGrid } from '../../playfield/PlayfieldGrid';
+import { EditorScreen } from '../EditorScreen';
+import { EditorScreenUtils } from '../EditorScreenUtils';
+import { HitSoundsTimeline } from './HitSoundsTimeline';
+import { VolumeMeter } from './VolumeMeter';
 
 export class HitSoundsScreen extends EditorScreen {
   adjustBackground(background: BackgroundAdjustment) {

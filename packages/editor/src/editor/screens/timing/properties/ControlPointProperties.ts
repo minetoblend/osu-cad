@@ -1,5 +1,5 @@
 import type { Bindable, MouseDownEvent } from 'osucad-framework';
-import type { ControlPointGroup } from '../../../../beatmap/timing/ControlPointGroup.ts';
+import type { ControlPointGroup } from '../../../../beatmap/timing/ControlPointGroup';
 import {
   Axes,
   BindableNumber,

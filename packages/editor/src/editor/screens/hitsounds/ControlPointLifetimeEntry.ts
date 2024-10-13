@@ -1,7 +1,7 @@
 import type { IComparer } from 'osucad-framework';
-import type { ControlPoint } from '../../../beatmap/timing/ControlPoint.ts';
+import type { ControlPoint } from '../../../beatmap/timing/ControlPoint';
 import { Action } from 'osucad-framework';
-import { LifetimeEntry } from '../../../pooling/LifetimeEntry.ts';
+import { LifetimeEntry } from '../../../pooling/LifetimeEntry';
 
 let uid = 0;
 

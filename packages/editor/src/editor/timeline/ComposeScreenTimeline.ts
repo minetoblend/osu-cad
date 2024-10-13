@@ -6,7 +6,7 @@ import type {
   MouseDownEvent,
 } from 'osucad-framework';
 import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
-import type { ControlPointGroup } from '../../beatmap/timing/ControlPointGroup.ts';
+import type { ControlPointGroup } from '../../beatmap/timing/ControlPointGroup';
 import type { LifetimeEntry } from '../../pooling/LifetimeEntry';
 import type { TimelineObject } from './TimelineObject';
 import {
@@ -26,11 +26,11 @@ import { HitCircle } from '../../beatmap/hitObjects/HitCircle';
 import { Slider } from '../../beatmap/hitObjects/Slider';
 import { Spinner } from '../../beatmap/hitObjects/Spinner';
 import { LifetimeEntryManager } from '../../pooling/LifetimeEntryManager';
-import { EditorAction } from '../EditorAction.ts';
+import { EditorAction } from '../EditorAction';
 import { HitObjectLifetimeEntry } from '../hitobjects/HitObjectLifetimeEntry';
-import { ControlPointPropertiesOverlay } from '../screens/compose/ControlPointPropertiesOverlay.ts';
+import { ControlPointPropertiesOverlay } from '../screens/compose/ControlPointPropertiesOverlay';
 import { EditorSelection } from '../screens/compose/EditorSelection';
-import { TimelineControlPointContainer } from '../screens/timing/TimelineControlPointContainer.ts';
+import { TimelineControlPointContainer } from '../screens/timing/TimelineControlPointContainer';
 import { Timeline } from './Timeline';
 import { TimelineHitCircle } from './TimelineHitCircle';
 import { TimelineSlider } from './TimelineSlider';

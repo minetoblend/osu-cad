@@ -1,10 +1,10 @@
-import type { JudgementResult } from '../beatmap/hitObjects/JudgementResult.ts';
-import type { DrawableHitObject } from '../editor/hitobjects/DrawableHitObject.ts';
+import type { JudgementResult } from '../beatmap/hitObjects/JudgementResult';
+import type { DrawableHitObject } from '../editor/hitobjects/DrawableHitObject';
 import { Bindable, BindableNumber, Component, dependencyLoader, resolved } from 'osucad-framework';
-import { HitResult } from '../beatmap/hitObjects/HitResult.ts';
-import { EditorMixer } from '../editor/EditorMixer.ts';
-import { OsuPlayfield } from '../editor/hitobjects/OsuPlayfield.ts';
-import { ISkinSource } from '../skinning/ISkinSource.ts';
+import { HitResult } from '../beatmap/hitObjects/HitResult';
+import { EditorMixer } from '../editor/EditorMixer';
+import { OsuPlayfield } from '../editor/hitobjects/OsuPlayfield';
+import { ISkinSource } from '../skinning/ISkinSource';
 
 export class GameplayProcessor extends Component {
   @resolved(OsuPlayfield)

@@ -1,11 +1,11 @@
-import type { SamplePoint } from '../../../../beatmap/timing/SamplePoint.ts';
-import type { ControlPointLifetimeEntry } from '../ControlPointLifetimeEntry.ts';
+import type { SamplePoint } from '../../../../beatmap/timing/SamplePoint';
+import type { ControlPointLifetimeEntry } from '../ControlPointLifetimeEntry';
 import { Anchor, Axes, Container, dependencyLoader } from 'osucad-framework';
-import { PoolableDrawableWithLifetime } from '../../../../pooling/PoolableDrawableWithLifetime.ts';
-import { ThemeColors } from '../../../ThemeColors.ts';
-import { ControlPointStartTimeAdjustmentBlueprint } from '../ControlPointStartTimeAdjustmentBlueprint.ts';
-import { HitSoundsTimeline } from '../HitSoundsTimeline.ts';
-import { VolumeAdjustmentBlueprint } from './VolumeAdjustmentBlueprint.ts';
+import { PoolableDrawableWithLifetime } from '../../../../pooling/PoolableDrawableWithLifetime';
+import { ThemeColors } from '../../../ThemeColors';
+import { ControlPointStartTimeAdjustmentBlueprint } from '../ControlPointStartTimeAdjustmentBlueprint';
+import { HitSoundsTimeline } from '../HitSoundsTimeline';
+import { VolumeAdjustmentBlueprint } from './VolumeAdjustmentBlueprint';
 
 export class TimelineSamplePointBlueprint extends PoolableDrawableWithLifetime<ControlPointLifetimeEntry<SamplePoint>> {
   constructor() {

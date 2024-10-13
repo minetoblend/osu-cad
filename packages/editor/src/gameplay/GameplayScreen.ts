@@ -4,8 +4,8 @@ import type {
   ScreenExitEvent,
   ScreenTransitionEvent,
 } from 'osucad-framework';
-import type { LoadedBeatmap } from '../beatmap/LoadedBeatmap.ts';
-import type { BeatmapItemInfo } from '../beatmapSelect/BeatmapItemInfo.ts';
+import type { LoadedBeatmap } from '../beatmap/LoadedBeatmap';
+import type { BeatmapItemInfo } from '../beatmapSelect/BeatmapItemInfo';
 import {
   Anchor,
   asyncDependencyLoader,
@@ -15,22 +15,22 @@ import {
   Key,
   resolved,
 } from 'osucad-framework';
-import { BackgroundScreen } from '../BackgroundScreen.ts';
-import { Beatmap } from '../beatmap/Beatmap.ts';
-import { BeatmapComboProcessor } from '../beatmap/beatmapProcessors/BeatmapComboProcessor.ts';
-import { BeatmapStackingProcessor } from '../beatmap/beatmapProcessors/BeatmapStackingProcessor.ts';
-import { OsuPlayfield } from '../editor/hitobjects/OsuPlayfield.ts';
-import { PlayfieldClock } from '../editor/hitobjects/PlayfieldClock.ts';
-import { IResourcesProvider } from '../io/IResourcesProvider.ts';
-import { MainCursorContainer } from '../MainCursorContainer.ts';
-import { OsucadScreen } from '../OsucadScreen.ts';
-import { AccuracyOverlay } from './AccuracyOverlay.ts';
-import { ComboOverlay } from './ComboOverlay.ts';
-import { GameplayClock } from './GameplayClock.ts';
-import { GameplayCursorContainer } from './GameplayCursorContainer.ts';
-import { GameplayProcessor } from './GameplayProcessor.ts';
-import { HitErrorBar } from './HitErrorBar.ts';
-import { OsuActionInputManager } from './OsuActionInputManager.ts';
+import { BackgroundScreen } from '../BackgroundScreen';
+import { Beatmap } from '../beatmap/Beatmap';
+import { BeatmapComboProcessor } from '../beatmap/beatmapProcessors/BeatmapComboProcessor';
+import { BeatmapStackingProcessor } from '../beatmap/beatmapProcessors/BeatmapStackingProcessor';
+import { OsuPlayfield } from '../editor/hitobjects/OsuPlayfield';
+import { PlayfieldClock } from '../editor/hitobjects/PlayfieldClock';
+import { IResourcesProvider } from '../io/IResourcesProvider';
+import { MainCursorContainer } from '../MainCursorContainer';
+import { OsucadScreen } from '../OsucadScreen';
+import { AccuracyOverlay } from './AccuracyOverlay';
+import { ComboOverlay } from './ComboOverlay';
+import { GameplayClock } from './GameplayClock';
+import { GameplayCursorContainer } from './GameplayCursorContainer';
+import { GameplayProcessor } from './GameplayProcessor';
+import { HitErrorBar } from './HitErrorBar';
+import { OsuActionInputManager } from './OsuActionInputManager';
 
 export class GameplayScreen extends OsucadScreen {
   constructor(

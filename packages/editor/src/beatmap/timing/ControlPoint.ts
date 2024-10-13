@@ -1,4 +1,4 @@
-import type { ControlPointGroup } from './ControlPointGroup.ts';
+import type { ControlPointGroup } from './ControlPointGroup';
 import { Action, BindableNumber, Comparer } from 'osucad-framework';
 
 let nextUid = 0;

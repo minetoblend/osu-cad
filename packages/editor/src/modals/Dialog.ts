@@ -16,10 +16,10 @@ import {
   Screen,
   Vec2,
 } from '../../../framework/src';
-import { SizeLimitedContainer } from '../drawables/SizeLimitedContainer.ts';
-import { ThemeColors } from '../editor/ThemeColors.ts';
-import { OsucadSpriteText } from '../OsucadSpriteText.ts';
-import { OsucadButton } from '../userInterface/OsucadButton.ts';
+import { SizeLimitedContainer } from '../drawables/SizeLimitedContainer';
+import { ThemeColors } from '../editor/ThemeColors';
+import { OsucadSpriteText } from '../OsucadSpriteText';
+import { OsucadButton } from '../userInterface/OsucadButton';
 
 export class Dialog extends Screen {
   constructor(readonly title: string) {

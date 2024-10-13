@@ -1,5 +1,7 @@
-export { IBeatmap } from './beatmap/IBeatmap.ts';
+export { Beatmap } from './beatmap/Beatmap';
+export { IBeatmap } from './beatmap/IBeatmap';
 export { LoadedBeatmap } from './beatmap/LoadedBeatmap';
+export { serializeBeatmap } from './beatmap/serialization/Beatmap';
 export * from './beatmap/StableBeatmapEncoder';
 export * from './beatmap/StableBeatmapParser';
 export * from './editor/Editor';

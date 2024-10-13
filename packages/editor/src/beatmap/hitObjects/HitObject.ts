@@ -4,7 +4,7 @@ import type { ControlPointInfo } from '../timing/ControlPointInfo';
 import { Action, Comparer, SortedList } from 'osucad-framework';
 import { objectId } from '../ObjectId';
 import { HitObjectProperty } from './HitObjectProperty';
-import { HitWindows } from './HitWindows.ts';
+import { HitWindows } from './HitWindows';
 import { hasComboInformation } from './IHasComboInformation';
 
 export abstract class HitObject {

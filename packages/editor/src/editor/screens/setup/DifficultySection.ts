@@ -1,10 +1,10 @@
 import type { FillFlowContainer } from 'osucad-framework';
 import { resolved } from 'osucad-framework';
-import { Beatmap } from '../../../beatmap/Beatmap.ts';
-import { LabelledSliderControl } from '../../../userInterface/LabelledSliderControl.ts';
-import { UpdateDifficultyCommand } from '../../commands/UpdateDifficultyCommand.ts';
-import { CommandManager } from '../../context/CommandManager.ts';
-import { SetupScreenSection } from './SetupScreenSection.ts';
+import { Beatmap } from '../../../beatmap/Beatmap';
+import { LabelledSliderControl } from '../../../userInterface/LabelledSliderControl';
+import { UpdateDifficultyCommand } from '../../commands/UpdateDifficultyCommand';
+import { CommandManager } from '../../context/CommandManager';
+import { SetupScreenSection } from './SetupScreenSection';
 
 export class DifficultySection extends SetupScreenSection {
   constructor() {

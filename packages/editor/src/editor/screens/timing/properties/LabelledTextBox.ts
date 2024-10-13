@@ -1,9 +1,9 @@
 import type { Bindable, CompositeDrawable } from 'osucad-framework';
-import type { EditorCommand } from '../../../commands/EditorCommand.ts';
+import type { EditorCommand } from '../../../commands/EditorCommand';
 import { resolved } from 'osucad-framework';
-import { LabelledDrawable } from '../../../../userInterface/LabelledDrawable.ts';
+import { LabelledDrawable } from '../../../../userInterface/LabelledDrawable';
 import { TextBox } from '../../../../userInterface/TextBox';
-import { ThemeColors } from '../../../ThemeColors.ts';
+import { ThemeColors } from '../../../ThemeColors';
 
 export class LabelledTextBox extends LabelledDrawable<TextBox> {
   constructor(label: string) {

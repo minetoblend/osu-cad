@@ -1,4 +1,4 @@
-import type { HitObject } from '../../beatmap/hitObjects/HitObject.ts';
+import type { HitObject } from '../../beatmap/hitObjects/HitObject';
 import { Bindable } from 'osucad-framework';
 import { LifetimeEntry } from '../../pooling/LifetimeEntry';
 

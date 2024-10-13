@@ -1,7 +1,7 @@
 import type { Bindable, HoverEvent, MouseDownEvent } from 'osucad-framework';
 import { Anchor, Axes, CompositeDrawable, dependencyLoader } from 'osucad-framework';
-import { OsucadSpriteText } from '../../../OsucadSpriteText.ts';
-import { Toggle, ToggleTrigger } from '../../../userInterface/Toggle.ts';
+import { OsucadSpriteText } from '../../../OsucadSpriteText';
+import { Toggle, ToggleTrigger } from '../../../userInterface/Toggle';
 
 export class HitSoundsTimelineLayerHeader extends CompositeDrawable {
   constructor(readonly title: string, expanded: Bindable<boolean>) {

@@ -21,11 +21,11 @@ import {
   resolved,
 } from 'osucad-framework';
 import { Color } from 'pixi.js';
-import { MainScrollContainer } from '../editor/MainScrollContainer.ts';
-import { ThemeColors } from '../editor/ThemeColors.ts';
-import { OsucadIcons } from '../OsucadIcons.ts';
-import { OsucadSpriteText } from '../OsucadSpriteText.ts';
-import { TextBox } from './TextBox.ts';
+import { MainScrollContainer } from '../editor/MainScrollContainer';
+import { ThemeColors } from '../editor/ThemeColors';
+import { OsucadIcons } from '../OsucadIcons';
+import { OsucadSpriteText } from '../OsucadSpriteText';
+import { TextBox } from './TextBox';
 
 export interface DropdownSelectOptions<T> extends DrawableOptions {
   items: DropdownItem<T>[];

@@ -1,7 +1,7 @@
 import type {
   DependencyContainer,
 } from 'osucad-framework';
-import type { HitSoundsTimelineLayer } from './HitSoundsTimelineLayer.ts';
+import type { HitSoundsTimelineLayer } from './HitSoundsTimelineLayer';
 import {
   Anchor,
   Axes,
@@ -14,12 +14,12 @@ import {
   FillFlowContainer,
   resolved,
 } from 'osucad-framework';
-import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo.ts';
-import { OsucadSpriteText } from '../../../OsucadSpriteText.ts';
-import { EditorClock } from '../../EditorClock.ts';
-import { ThemeColors } from '../../ThemeColors.ts';
-import { HitSoundTimelineTick } from './HitSoundsTimelineTick.ts';
-import { HitSoundVolumeLayer } from './volume/HitSoundVolumeLayer.ts';
+import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
+import { OsucadSpriteText } from '../../../OsucadSpriteText';
+import { EditorClock } from '../../EditorClock';
+import { ThemeColors } from '../../ThemeColors';
+import { HitSoundTimelineTick } from './HitSoundsTimelineTick';
+import { HitSoundVolumeLayer } from './volume/HitSoundVolumeLayer';
 
 export class HitSoundsTimeline extends CompositeDrawable {
   constructor() {

@@ -1,13 +1,13 @@
 import type { Vec2 } from 'osucad-framework';
-import type { Slider } from '../../../../beatmap/hitObjects/Slider.ts';
+import type { Slider } from '../../../../beatmap/hitObjects/Slider';
 import type { OsuDifficultyHitObject } from '../../../../difficulty/preprocessing/OsuDifficultyHitObject';
 import { Bindable, Container, dependencyLoader, resolved } from 'osucad-framework';
-import { HitObjectList } from '../../../../beatmap/hitObjects/HitObjectList.ts';
-import { Spinner } from '../../../../beatmap/hitObjects/Spinner.ts';
-import { DrawableOsuHitObject } from '../../../hitobjects/DrawableOsuHitObject.ts';
-import { DifficultyObjectDetails } from './DifficultyObjectDetails.ts';
-import { DifficultyObjectList } from './DynamicOsuDifficultyObject.ts';
-import { MovementPathSegment } from './MovementPathSegment.ts';
+import { HitObjectList } from '../../../../beatmap/hitObjects/HitObjectList';
+import { Spinner } from '../../../../beatmap/hitObjects/Spinner';
+import { DrawableOsuHitObject } from '../../../hitobjects/DrawableOsuHitObject';
+import { DifficultyObjectDetails } from './DifficultyObjectDetails';
+import { DifficultyObjectList } from './DynamicOsuDifficultyObject';
+import { MovementPathSegment } from './MovementPathSegment';
 
 export class DifficultyBlueprint extends DrawableOsuHitObject {
   constructor() {

@@ -1,14 +1,14 @@
 import type { DependencyContainer } from 'osucad-framework';
-import type { HitObject } from '../../../../beatmap/hitObjects/HitObject.ts';
+import type { HitObject } from '../../../../beatmap/hitObjects/HitObject';
 import { Axes, BindableBoolean, CompositeDrawable, dependencyLoader, resolved } from 'osucad-framework';
-import { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject.ts';
-import { CommandManager } from '../../../context/CommandManager.ts';
-import { EditorClock } from '../../../EditorClock.ts';
-import { EditorDependencies } from '../../../EditorDependencies.ts';
-import { HitObjectLifetimeEntry } from '../../../hitobjects/HitObjectLifetimeEntry.ts';
-import { Playfield } from '../../../hitobjects/Playfield.ts';
-import { DifficultyBlueprint } from './DifficultyBlueprint.ts';
-import { DifficultyObjectList } from './DynamicOsuDifficultyObject.ts';
+import { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
+import { CommandManager } from '../../../context/CommandManager';
+import { EditorClock } from '../../../EditorClock';
+import { EditorDependencies } from '../../../EditorDependencies';
+import { HitObjectLifetimeEntry } from '../../../hitobjects/HitObjectLifetimeEntry';
+import { Playfield } from '../../../hitobjects/Playfield';
+import { DifficultyBlueprint } from './DifficultyBlueprint';
+import { DifficultyObjectList } from './DynamicOsuDifficultyObject';
 
 export class OsuDifficultyOverlay extends CompositeDrawable {
   isVisible = new BindableBoolean(false);

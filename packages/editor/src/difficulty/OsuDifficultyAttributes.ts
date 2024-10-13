@@ -1,4 +1,4 @@
-import { DifficultyAttributes } from './DifficultyAttributes.ts';
+import { DifficultyAttributes } from './DifficultyAttributes';
 
 export class OsuDifficultyAttributes extends DifficultyAttributes {
   aimDifficulty: number = 0;

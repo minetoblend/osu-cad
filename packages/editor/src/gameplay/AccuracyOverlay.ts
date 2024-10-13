@@ -1,7 +1,7 @@
 import type { Bindable, SpriteText } from 'osucad-framework';
 import { Anchor, Axes, CompositeDrawable, dependencyLoader, EasingFunction, resolved } from 'osucad-framework';
-import { OsucadSpriteText } from '../OsucadSpriteText.ts';
-import { GameplayProcessor } from './GameplayProcessor.ts';
+import { OsucadSpriteText } from '../OsucadSpriteText';
+import { GameplayProcessor } from './GameplayProcessor';
 
 export class AccuracyOverlay extends CompositeDrawable {
   @resolved(GameplayProcessor)

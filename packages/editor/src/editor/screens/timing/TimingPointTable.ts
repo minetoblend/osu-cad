@@ -7,7 +7,7 @@ import { MainScrollContainer } from '../../MainScrollContainer';
 import { KiaiBadge } from './KiaiBadge';
 import { TimingPointRow } from './TimingPointRow';
 import { TimingPointTableHeader } from './TimingPointTableHeader';
-import { TimingScreenDependencies } from './TimingScreenDependencies.ts';
+import { TimingScreenDependencies } from './TimingScreenDependencies';
 
 export class TimingPointTable extends Container {
   @resolved(ControlPointInfo)

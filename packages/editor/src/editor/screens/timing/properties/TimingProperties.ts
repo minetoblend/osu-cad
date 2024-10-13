@@ -1,5 +1,5 @@
-import type { ControlPointGroup } from '../../../../beatmap/timing/ControlPointGroup.ts';
-import type { TimingPoint } from '../../../../beatmap/timing/TimingPoint.ts';
+import type { ControlPointGroup } from '../../../../beatmap/timing/ControlPointGroup';
+import type { TimingPoint } from '../../../../beatmap/timing/TimingPoint';
 import {
   Axes,
   BindableNumber,
@@ -9,7 +9,7 @@ import {
   FillFlowContainer,
 } from 'osucad-framework';
 import { AdjustmentButton } from '../../../../userInterface/AdjustmentButton';
-import { ControlPointPropertiesSection } from './ControlPointPropertiesSection.ts';
+import { ControlPointPropertiesSection } from './ControlPointPropertiesSection';
 import { LabelledTextBox } from './LabelledTextBox';
 import { Metronome } from './Metronome';
 

@@ -13,9 +13,9 @@ import {
 } from 'osucad-framework';
 import { Color, Mesh, QuadGeometry } from 'pixi.js';
 import { DrawableHitObject } from '../../editor/hitobjects/DrawableHitObject';
-import { SkinnableTextureAnimation } from '../DrawableAnimation.ts';
+import { SkinnableTextureAnimation } from '../DrawableAnimation';
 import { ISkinSource } from '../ISkinSource';
-import { SkinConfig } from '../SkinConfig.ts';
+import { SkinConfig } from '../SkinConfig';
 import { SliderBallShader } from './SliderBallShader';
 
 export class StableSliderBall extends CompositeDrawable {

@@ -1,17 +1,17 @@
-import type { DifficultyPointPatch } from '../../beatmap/timing/DifficultyPoint.ts';
-import type { EffectPointPatch } from '../../beatmap/timing/EffectPoint.ts';
-import type { SamplePointPatch } from '../../beatmap/timing/SamplePoint.ts';
-import type { TimingPointPatch } from '../../beatmap/timing/TimingPoint.ts';
-import type { CommandContext } from './CommandContext.ts';
-import type { CommandSource } from './CommandSource.ts';
+import type { DifficultyPointPatch } from '../../beatmap/timing/DifficultyPoint';
+import type { EffectPointPatch } from '../../beatmap/timing/EffectPoint';
+import type { SamplePointPatch } from '../../beatmap/timing/SamplePoint';
+import type { TimingPointPatch } from '../../beatmap/timing/TimingPoint';
+import type { CommandContext } from './CommandContext';
+import type { CommandSource } from './CommandSource';
 import { hitObjectId } from '../../../../common/src';
-import { ControlPointGroup } from '../../beatmap/timing/ControlPointGroup.ts';
-import { DifficultyPoint } from '../../beatmap/timing/DifficultyPoint.ts';
-import { EffectPoint } from '../../beatmap/timing/EffectPoint.ts';
-import { SamplePoint } from '../../beatmap/timing/SamplePoint.ts';
-import { TimingPoint } from '../../beatmap/timing/TimingPoint.ts';
-import { DeleteControlPointCommand } from './DeleteControlPointCommand.ts';
-import { EditorCommand } from './EditorCommand.ts';
+import { ControlPointGroup } from '../../beatmap/timing/ControlPointGroup';
+import { DifficultyPoint } from '../../beatmap/timing/DifficultyPoint';
+import { EffectPoint } from '../../beatmap/timing/EffectPoint';
+import { SamplePoint } from '../../beatmap/timing/SamplePoint';
+import { TimingPoint } from '../../beatmap/timing/TimingPoint';
+import { DeleteControlPointCommand } from './DeleteControlPointCommand';
+import { EditorCommand } from './EditorCommand';
 
 export interface CreateControlPointOptions {
   id?: string;

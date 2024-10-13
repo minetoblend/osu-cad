@@ -1,6 +1,6 @@
 import type { Drawable } from 'osucad-framework';
 import { Axes, BindableBoolean, Box, CompositeDrawable, Container, dependencyLoader, EasingFunction } from 'osucad-framework';
-import { HitSoundsTimelineLayerHeader } from './HitSoundsTimelineLayerHeader.ts';
+import { HitSoundsTimelineLayerHeader } from './HitSoundsTimelineLayerHeader';
 
 export abstract class HitSoundsTimelineLayer extends CompositeDrawable {
   protected constructor(readonly title: string) {

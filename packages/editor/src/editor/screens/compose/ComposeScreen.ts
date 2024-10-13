@@ -24,7 +24,7 @@ import { Corner, EditorCornerPiece } from '../../EditorCornerPiece';
 import { ComposeScreenTimeline } from '../../timeline/ComposeScreenTimeline';
 import { TimelineZoomButtons } from '../../timeline/TimelineZoomButtons';
 import { EditorScreen } from '../EditorScreen';
-import { DifficultyInfo } from './DifficultyInfo.ts';
+import { DifficultyInfo } from './DifficultyInfo';
 import { EditorSelection } from './EditorSelection';
 import { HitObjectComposer } from './HitObjectComposer';
 import { SelectTool } from './tools/SelectTool';

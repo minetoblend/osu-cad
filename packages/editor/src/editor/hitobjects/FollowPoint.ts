@@ -1,5 +1,5 @@
 import { Anchor, BindableNumber, dependencyLoader, PoolableDrawable, provide } from 'osucad-framework';
-import { IAnimationTimeReference } from '../../skinning/IAnimationTimeReference.ts';
+import { IAnimationTimeReference } from '../../skinning/IAnimationTimeReference';
 import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
 import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
 

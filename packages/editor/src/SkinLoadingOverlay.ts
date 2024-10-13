@@ -13,9 +13,9 @@ import {
   MaskingContainer,
   resolved,
 } from 'osucad-framework';
-import { LoadingSpinner } from './drawables/LoadingSpinner.ts';
-import { OsucadSpriteText } from './OsucadSpriteText.ts';
-import { SkinManager } from './skinning/SkinManager.ts';
+import { LoadingSpinner } from './drawables/LoadingSpinner';
+import { OsucadSpriteText } from './OsucadSpriteText';
+import { SkinManager } from './skinning/SkinManager';
 
 export class SkinLoadingOverlay extends CompositeDrawable {
   constructor() {

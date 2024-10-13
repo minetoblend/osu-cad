@@ -1,5 +1,5 @@
 import type { DrawableOptions } from 'osucad-framework';
-import type { PIXIContainer } from '../../../framework/src/pixi.ts';
+import type { PIXIContainer } from '../../../framework/src/pixi';
 import { Drawable, EasingFunction } from 'osucad-framework';
 import { Graphics } from 'pixi.js';
 

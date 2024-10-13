@@ -14,7 +14,7 @@ import { MainScrollContainer } from '../MainScrollContainer';
 import { ThemeColors } from '../ThemeColors';
 import { AudioPreferencesSection } from './AudioPreferencesSection';
 import { MainMenuPreferencesSection } from './MainMenuPreferencesSection';
-import { SkinSection } from './SkinSection.ts';
+import { SkinSection } from './SkinSection';
 import { ViewportPreferencesSection } from './ViewportPreferencesSection';
 
 export class Preferences extends Container {

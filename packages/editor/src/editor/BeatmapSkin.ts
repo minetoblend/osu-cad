@@ -1,19 +1,19 @@
 import type { AudioChannel, Drawable, PIXITexture, Sample } from 'osucad-framework';
-import type { HitSample } from '../beatmap/hitSounds/HitSample.ts';
-import type { LoadedBeatmap } from '../beatmap/LoadedBeatmap.ts';
-import type { ISkin } from '../skinning/ISkin.ts';
-import type { ISkinComponentLookup } from '../skinning/ISkinComponentLookup.ts';
-import type { ISkinSource } from '../skinning/ISkinSource.ts';
-import type { SkinInfo } from '../skinning/SkinInfo.ts';
+import type { HitSample } from '../beatmap/hitSounds/HitSample';
+import type { LoadedBeatmap } from '../beatmap/LoadedBeatmap';
+import type { ISkin } from '../skinning/ISkin';
+import type { ISkinComponentLookup } from '../skinning/ISkinComponentLookup';
+import type { ISkinSource } from '../skinning/ISkinSource';
+import type { SkinInfo } from '../skinning/SkinInfo';
 import { Action, asyncDependencyLoader, Bindable, BindableBoolean, resolved } from 'osucad-framework';
-import { OsucadConfigManager } from '../config/OsucadConfigManager.ts';
-import { OsucadSettings } from '../config/OsucadSettings.ts';
-import { IResourcesProvider } from '../io/IResourcesProvider.ts';
-import { OsuSkinComponentLookup } from '../skinning/OsuSkinComponentLookup.ts';
-import { OsuSkinComponents } from '../skinning/OsuSkinComponents.ts';
-import { SkinConfig } from '../skinning/SkinConfig.ts';
-import { SkinTransformer } from '../skinning/SkinTransformer.ts';
-import { StableSkin } from '../skinning/stable/StableSkin.ts';
+import { OsucadConfigManager } from '../config/OsucadConfigManager';
+import { OsucadSettings } from '../config/OsucadSettings';
+import { IResourcesProvider } from '../io/IResourcesProvider';
+import { OsuSkinComponentLookup } from '../skinning/OsuSkinComponentLookup';
+import { OsuSkinComponents } from '../skinning/OsuSkinComponents';
+import { SkinConfig } from '../skinning/SkinConfig';
+import { SkinTransformer } from '../skinning/SkinTransformer';
+import { StableSkin } from '../skinning/stable/StableSkin';
 
 export class BeatmapSkin extends SkinTransformer implements ISkinSource {
   constructor(source: ISkinSource, readonly beatmap: LoadedBeatmap) {

@@ -6,8 +6,8 @@ import type {
   HoverEvent,
   MouseDownEvent,
 } from 'osucad-framework';
-import type { SamplePoint } from '../../../../beatmap/timing/SamplePoint.ts';
-import type { ControlPointLifetimeEntry } from '../ControlPointLifetimeEntry.ts';
+import type { SamplePoint } from '../../../../beatmap/timing/SamplePoint';
+import type { ControlPointLifetimeEntry } from '../ControlPointLifetimeEntry';
 import {
   almostEquals,
   Anchor,
@@ -19,13 +19,13 @@ import {
   resolved,
   Vec2,
 } from 'osucad-framework';
-import { OsucadSpriteText } from '../../../../OsucadSpriteText.ts';
-import { UpdateControlPointCommand } from '../../../commands/UpdateControlPointCommand.ts';
-import { CommandManager } from '../../../context/CommandManager.ts';
-import { ThemeColors } from '../../../ThemeColors.ts';
-import { ControlPointAdjustmentBlueprint } from '../ControlPointAdjustmentBlueprint.ts';
-import { HitSoundControlPointBlueprintContainer } from '../HitSoundControlPointBlueprintContainer.ts';
-import { HitSoundsTimeline } from '../HitSoundsTimeline.ts';
+import { OsucadSpriteText } from '../../../../OsucadSpriteText';
+import { UpdateControlPointCommand } from '../../../commands/UpdateControlPointCommand';
+import { CommandManager } from '../../../context/CommandManager';
+import { ThemeColors } from '../../../ThemeColors';
+import { ControlPointAdjustmentBlueprint } from '../ControlPointAdjustmentBlueprint';
+import { HitSoundControlPointBlueprintContainer } from '../HitSoundControlPointBlueprintContainer';
+import { HitSoundsTimeline } from '../HitSoundsTimeline';
 
 export class VolumeAdjustmentBlueprint extends ControlPointAdjustmentBlueprint<SamplePoint> {
   #timeline!: HitSoundsTimeline;

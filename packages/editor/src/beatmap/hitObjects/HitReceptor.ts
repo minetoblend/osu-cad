@@ -3,15 +3,15 @@ import type {
   KeyBindingPressEvent,
   Vec2,
 } from 'osucad-framework';
-import type { DrawableHitCircle } from '../../editor/hitobjects/DrawableHitCircle.ts';
+import type { DrawableHitCircle } from '../../editor/hitobjects/DrawableHitCircle';
 import {
   Anchor,
   Container,
   resolved,
 } from 'osucad-framework';
-import { DrawableHitObject } from '../../editor/hitobjects/DrawableHitObject.ts';
-import { OsuAction } from '../../gameplay/OsuAction.ts';
-import { OsuHitObject } from './OsuHitObject.ts';
+import { DrawableHitObject } from '../../editor/hitobjects/DrawableHitObject';
+import { OsuAction } from '../../gameplay/OsuAction';
+import { OsuHitObject } from './OsuHitObject';
 
 export class HitReceptor extends Container implements IKeyBindingHandler<OsuAction> {
   constructor(

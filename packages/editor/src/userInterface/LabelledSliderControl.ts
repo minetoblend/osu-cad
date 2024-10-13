@@ -1,9 +1,9 @@
 import type { BindableNumber, Drawable } from 'osucad-framework';
-import type { EditorCommand } from '../editor/commands/EditorCommand.ts';
+import type { EditorCommand } from '../editor/commands/EditorCommand';
 import { Anchor, Axes, Container } from 'osucad-framework';
-import { LabelledDrawable } from './LabelledDrawable.ts';
-import { SliderControl } from './SliderControl.ts';
-import { TextBox } from './TextBox.ts';
+import { LabelledDrawable } from './LabelledDrawable';
+import { SliderControl } from './SliderControl';
+import { TextBox } from './TextBox';
 
 export class LabelledSliderControl extends LabelledDrawable {
   constructor(label: string, private readonly withTextBox: boolean = true) {

@@ -1,6 +1,6 @@
-import type { Patchable } from '../../editor/commands/Patchable.ts';
+import type { Patchable } from '../../editor/commands/Patchable';
 import { Bindable, BindableNumber } from 'osucad-framework';
-import { PatchUtils } from '../../editor/commands/PatchUtils.ts';
+import { PatchUtils } from '../../editor/commands/PatchUtils';
 import { SampleSet } from '../hitSounds/SampleSet';
 import { ControlPoint } from './ControlPoint';
 

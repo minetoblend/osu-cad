@@ -1,10 +1,10 @@
 import type { Bindable } from 'osucad-framework';
 import type { ComposeTool } from './tools/ComposeTool';
 import { Anchor, Axes, Container, dependencyLoader, FillDirection, FillFlowContainer, Key, resolved, Vec2 } from 'osucad-framework';
-import { OsucadConfigManager } from '../../../config/OsucadConfigManager.ts';
-import { OsucadSettings } from '../../../config/OsucadSettings.ts';
-import { OsucadIcons } from '../../../OsucadIcons.ts';
-import { ComposeToggleButton } from './ComposeToggleButton.ts';
+import { OsucadConfigManager } from '../../../config/OsucadConfigManager';
+import { OsucadSettings } from '../../../config/OsucadSettings';
+import { OsucadIcons } from '../../../OsucadIcons';
+import { ComposeToggleButton } from './ComposeToggleButton';
 import { ComposeToolbarButton } from './ComposeToolbarButton';
 import { ComposeToolbarToolButton } from './ComposeToolbarToolButton';
 import { SampleSetControl } from './SampleSetControl';

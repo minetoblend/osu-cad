@@ -1,6 +1,6 @@
-import { BeatmapDifficultyInfo } from '../BeatmapDifficultyInfo.ts';
-import { DifficultyRange } from './DifficultyRange.ts';
-import { HitResult } from './HitResult.ts';
+import { BeatmapDifficultyInfo } from '../BeatmapDifficultyInfo';
+import { DifficultyRange } from './DifficultyRange';
+import { HitResult } from './HitResult';
 
 export class HitWindows {
   static readonly base_ranges = [

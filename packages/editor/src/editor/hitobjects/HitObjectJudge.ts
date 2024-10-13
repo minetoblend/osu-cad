@@ -1,4 +1,4 @@
-import type { DrawableHitObject } from './DrawableHitObject.ts';
+import type { DrawableHitObject } from './DrawableHitObject';
 import { Component, injectionToken } from 'osucad-framework';
 
 export abstract class HitObjectJudge<T extends DrawableHitObject = DrawableHitObject> extends Component {

@@ -11,7 +11,7 @@ import {
 } from 'osucad-framework';
 import { OsucadConfigManager } from '../../config/OsucadConfigManager';
 import { OsucadSettings } from '../../config/OsucadSettings';
-import { ArmedState } from '../../editor/hitobjects/ArmedState.ts';
+import { ArmedState } from '../../editor/hitobjects/ArmedState';
 import { DrawableComboNumber } from '../../editor/hitobjects/DrawableComboNumber';
 import { DrawableHitObject } from '../../editor/hitobjects/DrawableHitObject';
 import { ISkinSource } from '../ISkinSource';

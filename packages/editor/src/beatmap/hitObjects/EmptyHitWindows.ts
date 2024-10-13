@@ -1,5 +1,5 @@
-import { DifficultyRange } from './DifficultyRange.ts';
-import { HitResult } from './HitResult.ts';
+import { DifficultyRange } from './DifficultyRange';
+import { HitResult } from './HitResult';
 import { HitWindows } from './HitWindows';
 
 export class EmptyHitWindows extends HitWindows {

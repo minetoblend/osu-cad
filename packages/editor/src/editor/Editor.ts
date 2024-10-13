@@ -8,11 +8,11 @@ import type {
   UIEvent,
   ValueChangedEvent,
 } from 'osucad-framework';
-import type { BackgroundScreen } from '../BackgroundScreen.ts';
-import type { BeatmapItemInfo } from '../beatmapSelect/BeatmapItemInfo.ts';
-import type { DrawableHitObject } from './hitobjects/DrawableHitObject.ts';
-import type { HitObjectJudge, IHitObjectJudgeProvider } from './hitobjects/HitObjectJudge.ts';
-import type { EditorScreen } from './screens/EditorScreen.ts';
+import type { BackgroundScreen } from '../BackgroundScreen';
+import type { BeatmapItemInfo } from '../beatmapSelect/BeatmapItemInfo';
+import type { DrawableHitObject } from './hitobjects/DrawableHitObject';
+import type { HitObjectJudge, IHitObjectJudgeProvider } from './hitobjects/HitObjectJudge';
+import type { EditorScreen } from './screens/EditorScreen';
 import {
   Action,
   Anchor,
@@ -27,40 +27,40 @@ import {
   PlatformAction,
   resolved,
 } from 'osucad-framework';
-import { Beatmap } from '../beatmap/Beatmap.ts';
+import { Beatmap } from '../beatmap/Beatmap';
 import { BeatmapComboProcessor } from '../beatmap/beatmapProcessors/BeatmapComboProcessor';
 import { BeatmapStackingProcessor } from '../beatmap/beatmapProcessors/BeatmapStackingProcessor';
-import { HitObjectList } from '../beatmap/hitObjects/HitObjectList.ts';
-import { IBeatmap } from '../beatmap/IBeatmap.ts';
-import { ControlPointInfo } from '../beatmap/timing/ControlPointInfo.ts';
-import { GameplayScreen } from '../gameplay/GameplayScreen.ts';
-import { IResourcesProvider } from '../io/IResourcesProvider.ts';
-import { DialogContainer } from '../modals/DialogContainer.ts';
+import { HitObjectList } from '../beatmap/hitObjects/HitObjectList';
+import { IBeatmap } from '../beatmap/IBeatmap';
+import { ControlPointInfo } from '../beatmap/timing/ControlPointInfo';
+import { GameplayScreen } from '../gameplay/GameplayScreen';
+import { IResourcesProvider } from '../io/IResourcesProvider';
+import { DialogContainer } from '../modals/DialogContainer';
 import { Notification } from '../notifications/Notification';
 import { NotificationOverlay } from '../notifications/NotificationOverlay';
 import { OsucadScreen } from '../OsucadScreen';
-import { ISkinSource } from '../skinning/ISkinSource.ts';
-import { BeatmapSkin } from './BeatmapSkin.ts';
-import { CommandManager } from './context/CommandManager.ts';
-import { EditorDifficultyManager } from './difficulty/EditorDifficultyManager.ts';
+import { ISkinSource } from '../skinning/ISkinSource';
+import { BeatmapSkin } from './BeatmapSkin';
+import { CommandManager } from './context/CommandManager';
+import { EditorDifficultyManager } from './difficulty/EditorDifficultyManager';
 import { EditorAction } from './EditorAction';
-import { EditorBackground } from './EditorBackground.ts';
-import { EditorBeatmap } from './EditorBeatmap.ts';
+import { EditorBackground } from './EditorBackground';
+import { EditorBeatmap } from './EditorBeatmap';
 import { EditorBottomBar } from './EditorBottomBar';
 import { EditorClock } from './EditorClock';
-import { EditorDependencies } from './EditorDependencies.ts';
-import { EditorExitDialog } from './EditorExitDialog.ts';
+import { EditorDependencies } from './EditorDependencies';
+import { EditorExitDialog } from './EditorExitDialog';
 import { EditorMixer } from './EditorMixer';
 import { EditorScreenContainer } from './EditorScreenContainer';
 import { EditorTopBar } from './EditorTopBar';
-import { EditorJudge, EditorJudgeProvider } from './hitobjects/EditorJudge.ts';
-import { OsuPlayfield } from './hitobjects/OsuPlayfield.ts';
-import { PlayfieldClock } from './hitobjects/PlayfieldClock.ts';
-import { HitsoundPlayer } from './HitsoundPlayer.ts';
-import { CompareScreen } from './screens/compare/CompareScreen.ts';
+import { EditorJudge, EditorJudgeProvider } from './hitobjects/EditorJudge';
+import { OsuPlayfield } from './hitobjects/OsuPlayfield';
+import { PlayfieldClock } from './hitobjects/PlayfieldClock';
+import { HitsoundPlayer } from './HitsoundPlayer';
+import { CompareScreen } from './screens/compare/CompareScreen';
 import { ComposeScreen } from './screens/compose/ComposeScreen';
 import { EditorScreenType } from './screens/EditorScreenType';
-import { HitSoundsScreen } from './screens/hitsounds/HitSoundsScreen.ts';
+import { HitSoundsScreen } from './screens/hitsounds/HitSoundsScreen';
 import { SetupScreen } from './screens/setup/SetupScreen';
 import { TimingScreen } from './screens/timing/TimingScreen';
 

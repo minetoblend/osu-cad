@@ -1,6 +1,6 @@
-import type { OsuDifficultyHitObject } from '../preprocessing/OsuDifficultyHitObject.ts';
+import type { OsuDifficultyHitObject } from '../preprocessing/OsuDifficultyHitObject';
 import { clamp, lerp } from 'osucad-framework';
-import { StrainSkill } from './StrainSkill.ts';
+import { StrainSkill } from './StrainSkill';
 
 export abstract class OsuStrainSkill extends StrainSkill<OsuDifficultyHitObject> {
   get reducedSectionCount() {

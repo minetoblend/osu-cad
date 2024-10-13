@@ -7,7 +7,7 @@ import type {
   KeyDownEvent,
 } from 'osucad-framework';
 import type { DoubleClickEvent } from '../../../framework/src/input/events/DoubleClickEvent';
-import type { EditorCommand } from '../editor/commands/EditorCommand.ts';
+import type { EditorCommand } from '../editor/commands/EditorCommand';
 import {
   Action,
   Anchor,
@@ -30,7 +30,7 @@ import {
 import { BitmapFontManager } from 'pixi.js';
 import { TabbableContainer } from '../../../framework/src/graphics/containers/TabbableContainer';
 import { FastRoundedBox } from '../drawables/FastRoundedBox';
-import { CommandManager } from '../editor/context/CommandManager.ts';
+import { CommandManager } from '../editor/context/CommandManager';
 import { ThemeColors } from '../editor/ThemeColors';
 import { OsucadSpriteText } from '../OsucadSpriteText';
 import { animate } from '../utils/animate';

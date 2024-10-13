@@ -1,7 +1,7 @@
 import type { FrameTimeInfo, IAdjustableClock, IFrameBasedClock, Track } from 'osucad-framework';
 import { AudioManager, BindableNumber, clamp, Component, dependencyLoader, resolved } from 'osucad-framework';
-import { OsucadConfigManager } from '../config/OsucadConfigManager.ts';
-import { OsucadSettings } from '../config/OsucadSettings.ts';
+import { OsucadConfigManager } from '../config/OsucadConfigManager';
+import { OsucadSettings } from '../config/OsucadSettings';
 
 export class GameplayClock extends Component implements IFrameBasedClock, IAdjustableClock {
   constructor(readonly track: Track) {

@@ -1,4 +1,4 @@
-import type { IBeatmap } from '../../beatmap/IBeatmap.ts';
+import type { IBeatmap } from '../../beatmap/IBeatmap';
 
 export class CommandContext {
   constructor(

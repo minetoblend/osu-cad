@@ -1,11 +1,11 @@
 import type { DependencyContainer } from 'osucad-framework';
-import type { DifficultyInfo } from '../../EditorBeatmap.ts';
+import type { DifficultyInfo } from '../../EditorBeatmap';
 import { CompositeDrawable, dependencyLoader } from 'osucad-framework';
-import { Beatmap } from '../../../beatmap/Beatmap.ts';
-import { BeatmapComboProcessor } from '../../../beatmap/beatmapProcessors/BeatmapComboProcessor.ts';
-import { BeatmapStackingProcessor } from '../../../beatmap/beatmapProcessors/BeatmapStackingProcessor.ts';
-import { EditorJudgeProvider } from '../../hitobjects/EditorJudge.ts';
-import { OsuPlayfield } from '../../hitobjects/OsuPlayfield.ts';
+import { Beatmap } from '../../../beatmap/Beatmap';
+import { BeatmapComboProcessor } from '../../../beatmap/beatmapProcessors/BeatmapComboProcessor';
+import { BeatmapStackingProcessor } from '../../../beatmap/beatmapProcessors/BeatmapStackingProcessor';
+import { EditorJudgeProvider } from '../../hitobjects/EditorJudge';
+import { OsuPlayfield } from '../../hitobjects/OsuPlayfield';
 
 export class SecondaryPlayfield extends CompositeDrawable {
   constructor(readonly difficulty: DifficultyInfo) {

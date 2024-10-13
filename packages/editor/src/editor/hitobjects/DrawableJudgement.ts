@@ -1,8 +1,8 @@
-import type { JudgementResult } from '../../beatmap/hitObjects/JudgementResult.ts';
+import type { JudgementResult } from '../../beatmap/hitObjects/JudgementResult';
 import { Anchor, CompositeDrawable, dependencyLoader, EasingFunction } from 'osucad-framework';
-import { HitResult } from '../../beatmap/hitObjects/HitResult.ts';
-import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup.ts';
-import { SkinnableDrawable } from '../../skinning/SkinnableDrawable.ts';
+import { HitResult } from '../../beatmap/hitObjects/HitResult';
+import { OsuSkinComponentLookup } from '../../skinning/OsuSkinComponentLookup';
+import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
 
 export class DrawableJudgement extends CompositeDrawable {
   constructor(readonly result: JudgementResult) {

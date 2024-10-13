@@ -1,10 +1,10 @@
 import type { AudioChannel, AudioManager, IResourceStore, Track } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
-import type { DifficultyInfo } from '../editor/EditorBeatmap.ts';
-import type { IResourcesProvider } from '../io/IResourcesProvider.ts';
-import type { IBeatmap } from './IBeatmap.ts';
+import type { DifficultyInfo } from '../editor/EditorBeatmap';
+import type { IResourcesProvider } from '../io/IResourcesProvider';
+import type { IBeatmap } from './IBeatmap';
 import { Bindable, loadTexture } from 'osucad-framework';
-import { BeatmapTransformer } from './BeatmapTransformer.ts';
+import { BeatmapTransformer } from './BeatmapTransformer';
 
 export abstract class LoadedBeatmap extends BeatmapTransformer implements IBeatmap {
   protected constructor() {

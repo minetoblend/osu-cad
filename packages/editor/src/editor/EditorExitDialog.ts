@@ -1,7 +1,7 @@
 import { Action, dependencyLoader } from 'osucad-framework';
-import { Dialog } from '../modals/Dialog.ts';
-import { OsucadSpriteText } from '../OsucadSpriteText.ts';
-import { OsucadButton } from '../userInterface/OsucadButton.ts';
+import { Dialog } from '../modals/Dialog';
+import { OsucadSpriteText } from '../OsucadSpriteText';
+import { OsucadButton } from '../userInterface/OsucadButton';
 
 export class EditorExitDialog extends Dialog {
   constructor() {

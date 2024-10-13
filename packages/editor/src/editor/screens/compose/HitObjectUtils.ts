@@ -1,7 +1,7 @@
 import type { OsuHitObject } from '../../../beatmap/hitObjects/OsuHitObject';
 import { Axes, CompositeDrawable, dependencyLoader, Rectangle, resolved, Vec2 } from 'osucad-framework';
 import { Matrix } from 'pixi.js';
-import { PathApproximator } from '../../../beatmap/hitObjects/PathApproximator.ts';
+import { PathApproximator } from '../../../beatmap/hitObjects/PathApproximator';
 import { PathPoint } from '../../../beatmap/hitObjects/PathPoint';
 import { PathType } from '../../../beatmap/hitObjects/PathType';
 import { Slider } from '../../../beatmap/hitObjects/Slider';

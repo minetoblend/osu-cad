@@ -1,6 +1,6 @@
 import { Axes, Container, dependencyLoader } from 'osucad-framework';
-import { Playground } from '../playground/Playground.ts';
-import { DropdownItem, DropdownSelect } from './DropdownSelect.ts';
+import { Playground } from '../playground/Playground';
+import { DropdownItem, DropdownSelect } from './DropdownSelect';
 
 export class DropdownSelectPlayground extends Playground {
   @dependencyLoader()

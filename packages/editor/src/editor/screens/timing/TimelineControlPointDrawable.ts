@@ -1,10 +1,10 @@
 import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup';
 import type { TimingPoint } from '../../../beatmap/timing/TimingPoint';
 import { Anchor, Axes, Box, CompositeDrawable, dependencyLoader, resolved } from 'osucad-framework';
-import { OsucadSpriteText } from '../../../OsucadSpriteText.ts';
+import { OsucadSpriteText } from '../../../OsucadSpriteText';
 import { ThemeColors } from '../../ThemeColors';
 import { Timeline } from '../../timeline/Timeline';
-import { TimelineControlPointMarker } from './TimelineControlPointMarker.ts';
+import { TimelineControlPointMarker } from './TimelineControlPointMarker';
 
 export class TimelineControlPointDrawable extends CompositeDrawable {
   constructor(readonly controlPoint: ControlPointGroup, readonly withMarker = true) {

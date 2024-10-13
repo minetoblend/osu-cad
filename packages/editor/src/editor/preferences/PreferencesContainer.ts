@@ -16,7 +16,7 @@ import {
   EasingFunction,
   Key,
 } from 'osucad-framework';
-import { OsucadGame } from '../../OsucadGame.ts';
+import { OsucadGame } from '../../OsucadGame';
 import { EditorAction } from '../EditorAction';
 import { Preferences } from './Preferences';
 

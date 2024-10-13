@@ -1,7 +1,7 @@
-import type { HitResult } from '../../beatmap/hitObjects/HitResult.ts';
-import type { ClickAction } from './ClickAction.ts';
-import type { DrawableHitObject } from './DrawableHitObject.ts';
-import type { HitObjectContainer } from './HitObjectContainer.ts';
+import type { HitResult } from '../../beatmap/hitObjects/HitResult';
+import type { ClickAction } from './ClickAction';
+import type { DrawableHitObject } from './DrawableHitObject';
+import type { HitObjectContainer } from './HitObjectContainer';
 
 export interface IHitPolicy {
   setHitObjectContainer(hitObjectContainer: HitObjectContainer): void;

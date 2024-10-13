@@ -2,14 +2,14 @@ import type { ClickEvent, DependencyContainer, MouseDownEvent } from 'osucad-fra
 import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup';
 import { Anchor, Axes, Bindable, BindableNumber, Box, Container, dependencyLoader, MouseButton, PoolableDrawable, resolved } from 'osucad-framework';
 import { SampleSet } from '../../../beatmap/hitSounds/SampleSet';
-import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo.ts';
+import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
 import { FastRoundedBox } from '../../../drawables/FastRoundedBox';
 import { OsucadSpriteText } from '../../../OsucadSpriteText';
 import { EditorClock } from '../../EditorClock';
 import { ThemeColors } from '../../ThemeColors';
 import { TimestampFormatter } from '../../TimestampFormatter';
 import { TimingPointValueBadge } from './TimingPointValueBadge';
-import { TimingScreenDependencies } from './TimingScreenDependencies.ts';
+import { TimingScreenDependencies } from './TimingScreenDependencies';
 
 export class TimingPointRow extends PoolableDrawable {
   constructor() {

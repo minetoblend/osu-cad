@@ -1,7 +1,7 @@
-import type { HitObjectList } from '../../../../beatmap/hitObjects/HitObjectList.ts';
-import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject.ts';
+import type { HitObjectList } from '../../../../beatmap/hitObjects/HitObjectList';
+import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
 import { Action } from 'osucad-framework';
-import { OsuDifficultyHitObject } from '../../../../difficulty/preprocessing/OsuDifficultyHitObject.ts';
+import { OsuDifficultyHitObject } from '../../../../difficulty/preprocessing/OsuDifficultyHitObject';
 
 export class DifficultyObjectList {
   constructor(readonly hitObjects: HitObjectList) {

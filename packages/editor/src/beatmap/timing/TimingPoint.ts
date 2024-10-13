@@ -1,6 +1,6 @@
-import type { Patchable } from '../../editor/commands/Patchable.ts';
+import type { Patchable } from '../../editor/commands/Patchable';
 import { BindableNumber } from 'osucad-framework';
-import { PatchUtils } from '../../editor/commands/PatchUtils.ts';
+import { PatchUtils } from '../../editor/commands/PatchUtils';
 import { ControlPoint } from './ControlPoint';
 
 export interface TimingPointPatch {
