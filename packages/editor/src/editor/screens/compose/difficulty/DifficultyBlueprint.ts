@@ -132,8 +132,8 @@ export class DifficultyBlueprint extends DrawableOsuHitObject {
     this.fadeIn();
   }
 
-  protected updateEndTimeTransforms() {
-    super.updateEndTimeTransforms();
+  protected updateHitStateTransforms() {
+    super.updateHitStateTransforms();
 
     this.delay(1000).fadeOut();
   }

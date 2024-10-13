@@ -1,4 +1,6 @@
 import type { SliderRepeat } from '../../beatmap/hitObjects/SliderRepeat';
+import type { HitSound } from '../../beatmap/hitSounds/HitSound.ts';
+import type { ArmedState } from './ArmedState.ts';
 import type { DrawableSlider } from './DrawableSlider';
 import type { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
 import { almostEquals, Anchor, Axes, Container, dependencyLoader, Vec2 } from 'osucad-framework';
@@ -92,10 +94,18 @@ export class DrawableSliderRepeat extends DrawableOsuHitObject<SliderRepeat> {
       .fadeIn(this.hitObject!.repeatIndex === 0 ? this.hitObject!.timeFadeIn : this.#animDuration);
   }
 
-  protected updateEndTimeTransforms() {
-    super.updateEndTimeTransforms();
+  protected updateHitStateTransforms(state: ArmedState) {
+    super.updateHitStateTransforms(state);
 
     this.fadeOut(this.#animDuration);
     this.arrow.fadeOut(300);
+  }
+
+  protected checkForResult(userTriggered: boolean, timeOffset: number) {
+    this.drawableSlider.sliderInputManager.tryJudgeNestedObject(this, timeOffset);
+  }
+
+  protected getHitSound(): HitSound {
+    return this.slider!.hitSounds[this.hitObject!.repeatIndex + 1];
   }
 }

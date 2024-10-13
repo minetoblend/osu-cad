@@ -10,6 +10,8 @@ import type {
 } from 'osucad-framework';
 import type { BackgroundScreen } from '../BackgroundScreen.ts';
 import type { BeatmapItemInfo } from '../beatmapSelect/BeatmapItemInfo.ts';
+import type { DrawableHitObject } from './hitobjects/DrawableHitObject.ts';
+import type { HitObjectJudge, IHitObjectJudgeProvider } from './hitobjects/HitObjectJudge.ts';
 import type { EditorScreen } from './screens/EditorScreen.ts';
 import {
   Action,
@@ -31,6 +33,7 @@ import { BeatmapStackingProcessor } from '../beatmap/beatmapProcessors/BeatmapSt
 import { HitObjectList } from '../beatmap/hitObjects/HitObjectList.ts';
 import { IBeatmap } from '../beatmap/IBeatmap.ts';
 import { ControlPointInfo } from '../beatmap/timing/ControlPointInfo.ts';
+import { GameplayScreen } from '../gameplay/GameplayScreen.ts';
 import { IResourcesProvider } from '../io/IResourcesProvider.ts';
 import { DialogContainer } from '../modals/DialogContainer.ts';
 import { Notification } from '../notifications/Notification';
@@ -50,7 +53,9 @@ import { EditorExitDialog } from './EditorExitDialog.ts';
 import { EditorMixer } from './EditorMixer';
 import { EditorScreenContainer } from './EditorScreenContainer';
 import { EditorTopBar } from './EditorTopBar';
+import { EditorJudge, EditorJudgeProvider } from './hitobjects/EditorJudge.ts';
 import { OsuPlayfield } from './hitobjects/OsuPlayfield.ts';
+import { PlayfieldClock } from './hitobjects/PlayfieldClock.ts';
 import { HitsoundPlayer } from './HitsoundPlayer.ts';
 import { CompareScreen } from './screens/compare/CompareScreen.ts';
 import { ComposeScreen } from './screens/compose/ComposeScreen';
@@ -61,7 +66,8 @@ import { TimingScreen } from './screens/timing/TimingScreen';
 
 export class Editor
   extends OsucadScreen
-  implements IKeyBindingHandler<PlatformAction | EditorAction> {
+  implements IKeyBindingHandler<PlatformAction | EditorAction>,
+    IHitObjectJudgeProvider {
   constructor(readonly beatmapInfo: BeatmapItemInfo) {
     super();
 
@@ -106,7 +112,15 @@ export class Editor
 
     await this.editorBeatmap.load(this.dependencies.resolve(IResourcesProvider));
 
-    const editorDependencies = new EditorDependencies(new OsuPlayfield(), await this.editorBeatmap.getOtherDifficulties());
+    const editorDependencies = new EditorDependencies(
+      new OsuPlayfield()
+        .withCustomJudgeProvider(new EditorJudgeProvider())
+        .adjust((it) => {
+          it.showJudgements = false;
+          it.suppressHitSounds = true;
+        }),
+      await this.editorBeatmap.getOtherDifficulties(),
+    );
 
     this.onDispose(() => editorDependencies.reusablePlayfield.dispose());
 
@@ -135,6 +149,7 @@ export class Editor
     this.addInternal(this.#clock);
 
     this.dependencies.provide(this.#clock);
+    this.dependencies.provide(PlayfieldClock, this.#clock);
 
     this.loadComponent(editorDependencies.reusablePlayfield);
 
@@ -257,9 +272,33 @@ export class Editor
       case Key.F4:
         this.currentScreen.value = EditorScreenType.Hitsounds;
         return true;
+
+      case Key.F5:
+        this.screenStack.push(new GameplayScreen(this.beatmapInfo));
+
+        return true;
     }
 
     return false;
+  }
+
+  onSuspending(e: ScreenTransitionEvent) {
+    super.onSuspending(e);
+
+    this.#clock.stop();
+
+    this.fadeOut(200, EasingFunction.OutQuad)
+      .scaleTo(0.8, 200, EasingFunction.OutExpo);
+
+    this.applyToBackground(it => it.fadeOut(200));
+  }
+
+  onResuming(e: ScreenTransitionEvent) {
+    super.onResuming(e);
+
+    this.fadeIn(300, EasingFunction.OutQuad).scaleTo(1, 300, EasingFunction.OutExpo);
+
+    this.applyToBackground(it => it.fadeIn(300));
   }
 
   #seek(e: UIEvent, direction: number) {
@@ -503,5 +542,9 @@ export class Editor
 
   createBackground(): BackgroundScreen | null {
     return new EditorBackground(this.beatmap.backgroundTexture);
+  }
+
+  getJudge(hitObject: DrawableHitObject): HitObjectJudge | null {
+    return new EditorJudge(hitObject);
   }
 }

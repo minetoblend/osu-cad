@@ -18,6 +18,10 @@ export abstract class PooledDrawableWithLifetimeContainer<TEntry extends Lifetim
     return false;
   }
 
+  get aliveObjects() {
+    return this.#aliveDrawableMap.values();
+  }
+
   #pastLifetimeExtension = 0;
 
   #futureLifetimeExtension = 0;

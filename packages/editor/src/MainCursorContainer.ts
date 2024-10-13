@@ -1,22 +1,23 @@
+import type {
+  Drawable,
+  MouseDownEvent,
+  MouseUpEvent,
+} from 'osucad-framework';
 import {
   BindableBoolean,
   CompositeDrawable,
   CursorContainer,
   dependencyLoader,
-  Drawable,
   DrawableSprite,
   EasingFunction,
   MouseButton,
-  MouseDownEvent,
-  MouseUpEvent,
   resolved,
   Vec2,
-  Visibility,
 } from 'osucad-framework';
-import { getIcon } from './OsucadIcons';
-import { OsucadSettings } from './config/OsucadSettings';
+import cursorTexture from './assets/icons/select.png';
 import { OsucadConfigManager } from './config/OsucadConfigManager';
-import cursorTexture from './assets/icons/select.png'
+import { OsucadSettings } from './config/OsucadSettings';
+import { getIcon } from './OsucadIcons';
 
 export class MainCursorContainer extends CursorContainer {
   createCursor(): Drawable {
@@ -26,21 +27,32 @@ export class MainCursorContainer extends CursorContainer {
   @resolved(OsucadConfigManager)
   config!: OsucadConfigManager;
 
+  isVisible = new BindableBoolean(true);
+
   useNativeCursor = new BindableBoolean(true);
 
   @dependencyLoader()
   load() {
     this.config.bindWith(OsucadSettings.NativeCursor, this.useNativeCursor);
 
-    this.useNativeCursor.addOnChangeListener(e => {
-      if (e.value) {
-        this.state.value = Visibility.Hidden;
-        document.body.style.cursor = `url('${cursorTexture}') 4 2, auto`;
-      } else {
-        this.state.value = Visibility.Visible;
-        document.body.style.cursor = 'none';
-      }
-    }, { immediate: true });
+    this.useNativeCursor.addOnChangeListener(e => this.updateCursor());
+    this.isVisible.addOnChangeListener(e => this.updateCursor());
+
+    this.updateCursor();
+  }
+
+  updateCursor() {
+    const isVisible = this.isVisible.value && !this.useNativeCursor.value;
+
+    if (isVisible)
+      this.show();
+    else
+      this.hide();
+
+    if (this.useNativeCursor.value)
+      document.body.style.cursor = `url('${cursorTexture}') 4 2, auto`;
+    else
+      document.body.style.cursor = 'none';
   }
 }
 

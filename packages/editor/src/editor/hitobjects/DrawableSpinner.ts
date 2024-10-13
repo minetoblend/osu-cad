@@ -61,8 +61,8 @@ export class DrawableSpinner extends DrawableOsuHitObject<Spinner> {
       .spinTo(curSpin + spinSpeed * spinDownTime * 0.5, spinDownTime, EasingFunction.OutQuad);
   }
 
-  protected updateEndTimeTransforms() {
-    super.updateEndTimeTransforms();
+  protected updateHitStateTransforms() {
+    super.updateHitStateTransforms();
 
     this.fadeOut(240)
       .expire();

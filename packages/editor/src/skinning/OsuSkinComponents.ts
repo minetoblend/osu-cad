@@ -12,4 +12,9 @@ export enum OsuSkinComponents {
   Cursor,
   CursorTrail,
   HitCircleSelect,
+
+  JudgementGreat,
+  JudgementOk,
+  JudgementMeh,
+  JudgementMiss,
 }

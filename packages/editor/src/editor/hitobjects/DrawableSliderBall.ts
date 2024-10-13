@@ -12,6 +12,8 @@ import { SkinnableDrawable } from '../../skinning/SkinnableDrawable';
 import { DrawableHitObject } from './DrawableHitObject';
 
 export class DrawableSliderBall extends CompositeDrawable {
+  static readonly FOLLOW_AREA = 2.4;
+
   @resolved(DrawableHitObject)
   drawableSlider!: DrawableSlider;
 

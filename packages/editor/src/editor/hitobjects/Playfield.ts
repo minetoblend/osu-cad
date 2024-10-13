@@ -1,17 +1,21 @@
 import type { Constructor } from '@osucad/common';
-import type { NoArgsConstructor } from 'osucad-framework';
+import type { IFrameBasedClock, NoArgsConstructor } from 'osucad-framework';
 import type { HitObject } from '../../beatmap/hitObjects/HitObject';
+import type { JudgementResult } from '../../beatmap/hitObjects/JudgementResult.ts';
 import type { DrawableHitObject } from './DrawableHitObject';
+import type { HitObjectJudge } from './HitObjectJudge.ts';
 import { Action, Axes, Container, dependencyLoader, DrawablePool, Lazy, provide, resolved } from 'osucad-framework';
 import { Beatmap } from '../../beatmap/Beatmap';
-import { EditorClock } from '../EditorClock.ts';
 import { HitObjectContainer } from './HitObjectContainer';
 import { HitObjectEntryManager } from './HitObjectEntryManager';
+import { IHitObjectJudgeProvider } from './HitObjectJudge.ts';
 import { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
 import { IPooledHitObjectProvider } from './IPooledHitObjectProvider';
+import { PlayfieldClock } from './PlayfieldClock.ts';
 
 @provide(IPooledHitObjectProvider)
-export class Playfield extends Container implements IPooledHitObjectProvider {
+@provide(IHitObjectJudgeProvider)
+export class Playfield extends Container implements IPooledHitObjectProvider, IHitObjectJudgeProvider {
   #hitObjectContainerLazy: Lazy<HitObjectContainer>;
 
   get hitObjectContainer() {
@@ -28,6 +32,7 @@ export class Playfield extends Container implements IPooledHitObjectProvider {
     this.#hitObjectContainerLazy = new Lazy(() => {
       const container = this.createHitObjectContainer();
 
+      container.newResult.addListener(this.#onNewResult, this);
       container.hitObjectUsageBegan.addListener(hitObject => this.hitObjectUsageBegan.emit(hitObject));
       container.hitObjectUsageFinished.addListener(hitObject => this.hitObjectUsageFinished.emit(hitObject));
 
@@ -54,6 +59,12 @@ export class Playfield extends Container implements IPooledHitObjectProvider {
     this.onHitObjectRemoved(entry.hitObject!);
   }
 
+  #onNewResult([hitObject, result]: [DrawableHitObject, JudgementResult]) {
+    this.newResult.emit([hitObject, result]);
+  }
+
+  newResult = new Action<[DrawableHitObject, JudgementResult]>();
+
   protected onHitObjectAdded(hitObject: HitObject) {}
 
   protected onHitObjectRemoved(hitObject: HitObject) {}
@@ -69,12 +80,12 @@ export class Playfield extends Container implements IPooledHitObjectProvider {
   @resolved(Beatmap)
   beatmap!: Beatmap;
 
-  @resolved(EditorClock)
-  editorClock!: EditorClock;
+  @resolved(PlayfieldClock)
+  playfieldClock!: IFrameBasedClock;
 
   @dependencyLoader()
   [Symbol('load')]() {
-    this.clock = this.editorClock;
+    this.clock = this.playfieldClock;
     this.processCustomClock = false;
   }
 
@@ -134,6 +145,8 @@ export class Playfield extends Container implements IPooledHitObjectProvider {
     return pool?.get((drawable) => {
       const dho = drawable as DrawableHitObject;
 
+      dho.suppressHitSounds = this.suppressHitSounds;
+
       if (!dho.isInitialized) {
         this.#onNewDrawableHitObject(dho);
       }
@@ -184,5 +197,22 @@ export class Playfield extends Container implements IPooledHitObjectProvider {
     }
 
     super.dispose(isDisposing);
+  }
+
+  customJudgeProvider: IHitObjectJudgeProvider | null = null;
+
+  suppressHitSounds = false;
+
+  withCustomJudgeProvider(provider: IHitObjectJudgeProvider) {
+    this.customJudgeProvider = provider;
+
+    return this;
+  }
+
+  getJudge(hitObject: DrawableHitObject): HitObjectJudge | null {
+    if (this.customJudgeProvider)
+      return this.customJudgeProvider.getJudge(hitObject);
+
+    return null;
   }
 }

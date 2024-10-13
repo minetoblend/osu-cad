@@ -1,9 +1,11 @@
 import type { HitObject } from '../../beatmap/hitObjects/HitObject';
+import type { JudgementResult } from '../../beatmap/hitObjects/JudgementResult.ts';
 import type { LifetimeEntry } from '../../pooling/LifetimeEntry';
 import type { DrawableHitObject } from './DrawableHitObject';
 import type { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
 import { Action, Axes, Bindable, LoadState, resolved } from 'osucad-framework';
 import { PooledDrawableWithLifetimeContainer } from '../../pooling/PooledDrawableWithLifetimeContainer';
+import { DrawableSpinner } from './DrawableSpinner.ts';
 import { IPooledHitObjectProvider } from './IPooledHitObjectProvider';
 
 export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitObjectLifetimeEntry, DrawableHitObject> {
@@ -70,19 +72,33 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
     this.#startTimeMap.delete(drawable);
   }
 
+  newResult = new Action<[DrawableHitObject, JudgementResult]>();
+
+  #onNewResult([drawable, result]: [DrawableHitObject, JudgementResult]) {
+    this.newResult.emit([drawable, result]);
+  }
+
   #addDrawable(drawable: DrawableHitObject) {
     this.#bindStartTime(drawable);
+
+    drawable.onNewResult.addListener(this.#onNewResult, this);
 
     drawable.depth = this.getDrawableDepth(drawable);
     this.addInternal(drawable);
   }
 
   getDrawableDepth(drawable: DrawableHitObject) {
+    if (drawable instanceof DrawableSpinner)
+      return Number.MAX_VALUE;
+
     return drawable.startTimeBindable.value;
   }
 
   #removeDrawable(drawable: DrawableHitObject) {
     this.#unbindStartTime(drawable);
+
+    drawable.onNewResult.removeListener(this.#onNewResult, this);
+
     this.removeInternal(drawable, false);
   }
 

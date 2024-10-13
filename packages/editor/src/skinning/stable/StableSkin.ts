@@ -73,6 +73,30 @@ export class StableSkin extends Skin {
 
         case OsuSkinComponents.HitCircleSelect:
           return this.getSprite('hitcircleselect');
+
+        case OsuSkinComponents.JudgementGreat:
+          return this.getAnimation('hit300', {
+            animatable: true,
+            looping: false,
+          });
+
+        case OsuSkinComponents.JudgementOk:
+          return this.getAnimation('hit100', {
+            animatable: true,
+            looping: false,
+          });
+
+        case OsuSkinComponents.JudgementMeh:
+          return this.getAnimation('hit50', {
+            animatable: true,
+            looping: false,
+          });
+
+        case OsuSkinComponents.JudgementMiss:
+          return this.getAnimation('hit0', {
+            animatable: true,
+            looping: false,
+          });
       }
     }
 
@@ -99,14 +123,17 @@ export class StableSkin extends Skin {
 
   #hitSoundRegex = /((?:soft|normal|drum)-((?:hitnormal|hitwhistle|hitfinish|hitclap|sliderslide|sliderwhistle)\d*))(?:\.wav|\.ogg|\.mp3)$/i;
 
-  #isHitSound(filename: string): boolean {
+  #shouldLoadSample(filename: string): boolean {
+    if (filename.startsWith('combobreak'))
+      return true;
+
     return this.#hitSoundRegex.test(filename);
   }
 
   async load() {
     await super.load();
     await Promise.all([
-      await this.samples?.loadAvailable(this.#isHitSound.bind(this)),
+      await this.samples?.loadAvailable(this.#shouldLoadSample.bind(this)),
       this.loadTexture('hitcircle'),
       this.loadTexture('hitcircleoverlay'),
       this.loadTexture('approachcircle'),
@@ -140,6 +167,10 @@ export class StableSkin extends Skin {
       this.loadTexture('default-7'),
       this.loadTexture('default-8'),
       this.loadTexture('default-9'),
+      this.loadAnimation('hit0', true),
+      this.loadAnimation('hit50', true),
+      this.loadAnimation('hit100', true),
+      this.loadAnimation('hit300', true),
       ...this.store.getAvailableResources().filter(it => it.endsWith('.wav')).map(it => this.store.getAsync(it)),
     ]);
   }

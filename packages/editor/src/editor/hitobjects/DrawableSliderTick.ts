@@ -45,4 +45,11 @@ export class DrawableSliderTick extends DrawableOsuHitObject<SliderTick> {
     this.fadeOut(150, EasingFunction.OutQuint);
     this.scaleTo(1.5, 150, EasingFunction.Out);
   }
+
+  protected checkForResult(userTriggered: boolean, timeOffset: number) {
+    this.drawableSlider.sliderInputManager.tryJudgeNestedObject(this, timeOffset);
+  }
+
+  protected override playSamples() {
+  }
 }

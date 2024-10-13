@@ -1,12 +1,18 @@
+import type { ReadonlyBindable } from 'osucad-framework';
 import type { HitObject } from '../../beatmap/hitObjects/HitObject';
+import type { HitObjectJudge } from './HitObjectJudge.ts';
 import type { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
-import { Action, Bindable, dependencyLoader, resolved } from 'osucad-framework';
+import { Action, Bindable, dependencyLoader, resolved, Vec2 } from 'osucad-framework';
 import { Color } from 'pixi.js';
 import { Beatmap } from '../../beatmap/Beatmap';
-import { hasComboInformation } from '../../beatmap/hitObjects/IHasComboInformation';
-import { PoolableDrawableWithLifetime } from '../../pooling/PoolableDrawableWithLifetime';
+import { HitResult } from '../../beatmap/hitObjects/HitResult.ts';
 
+import { hasComboInformation } from '../../beatmap/hitObjects/IHasComboInformation';
+import { JudgementResult } from '../../beatmap/hitObjects/JudgementResult.ts';
+import { PoolableDrawableWithLifetime } from '../../pooling/PoolableDrawableWithLifetime';
 import { IAnimationTimeReference } from '../../skinning/IAnimationTimeReference.ts';
+import { ArmedState } from './ArmedState.ts';
+import { IHitObjectJudgeProvider } from './HitObjectJudge.ts';
 import { IPooledHitObjectProvider } from './IPooledHitObjectProvider';
 import { SyntheticHitObjectEntry } from './SyntheticHitObjectEntry';
 
@@ -14,6 +20,8 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
   defaultsApplied = new Action<DrawableHitObject>();
 
   hitObjectApplied = new Action<DrawableHitObject>();
+
+  onNewResult = new Action<[DrawableHitObject, JudgementResult]>();
 
   @dependencyLoader()
   [Symbol('load')]() {
@@ -41,6 +49,38 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
 
   readonly startTimeBindable = new Bindable(0);
 
+  updateAfterChildren() {
+    super.updateAfterChildren();
+
+    this.updateResult(false);
+  }
+
+  protected updateResult(userTriggered: boolean): boolean {
+    if (this.judged)
+      return false;
+
+    if (this.judge)
+      this.judge.checkForResult(this, userTriggered, this.time.current - this.hitObject!.endTime);
+    else
+      this.checkForResult(userTriggered, this.time.current - this.hitObject!.endTime);
+
+    return this.judged;
+  }
+
+  protected applyResult(apply: (result: JudgementResult, hitObject: this) => void) {
+    const result = new JudgementResult(HitResult.None, this.time.current, this.time.current - this.hitObject!.endTime, new Vec2());
+    apply(result, this);
+
+    this.#result = result;
+
+    this.updateState(result.isHit ? ArmedState.Hit : ArmedState.Miss);
+
+    this.onNewResult.emit([this, result]);
+  }
+
+  protected checkForResult(userTriggered: boolean, timeOffset: number) {
+  }
+
   override get requiresChildrenUpdate(): boolean {
     return true;
   }
@@ -56,7 +96,12 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
   @resolved(IPooledHitObjectProvider)
   protected pooledObjectProvider!: IPooledHitObjectProvider;
 
+  @resolved(IHitObjectJudgeProvider)
+  protected judgeProvider!: IHitObjectJudgeProvider;
+
   isInitialized = false;
+
+  judge!: HitObjectJudge | null;
 
   constructor(initialHitObject?: HitObject) {
     super();
@@ -70,7 +115,7 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
 
     this.comboIndexBindable.valueChanged.addListener(() => this.updateComboColor());
 
-    this.updateState();
+    this.#updateStateFromResult();
   }
 
   applyHitObject(hitObject: HitObject) {
@@ -94,9 +139,9 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
       if (pooledDrawableNested == null)
         this.onNestedDrawableCreated.emit(drawableNested);
 
-      // drawableNested.onNewResult.addListener(this.onNewResult);
+      drawableNested.onNewResult.addListener(this.#onNewResult, this);
       // drawableNested.onRevertResult.addListener(this.onNestedRevertResult);
-      // drawableNested.applyCustomUpdateState.addListener(this.onApplyCustomUpdateState);
+      // drawableNested.applyCustomUpdateState.addListener(this.#onApplyCustomUpdateState, this);
 
       drawableNested.parentHitObject = this;
 
@@ -119,12 +164,24 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
     this.onApplied();
     this.hitObjectApplied.emit(this);
 
+    this.judge = this.judgeProvider.getJudge(this);
+    if (this.judge)
+      this.addInternal(this.judge);
+
     if (this.isLoaded) {
-      this.updateState();
+      this.#updateStateFromResult();
 
       this.updateComboColor();
     }
   }
+
+  suppressHitSounds = false;
+
+  protected playSamples() {}
+
+  #onNewResult([hitObject, result]: [DrawableHitObject, JudgementResult]) {
+    this.onNewResult.emit([hitObject, result]);
+  };
 
   protected getNestedHitObject(hitObject: HitObject): DrawableHitObject | null {
     return null;
@@ -149,6 +206,10 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
       this.comboIndexBindable.unbindFrom(this.hitObject.comboIndexBindable);
     }
 
+    for (const h of this.nestedHitObjects) {
+      h.onNewResult.removeListener(this.#onNewResult, this);
+    }
+
     this.#nestedHitObjects.length = 0;
 
     entry.nestedEntries = entry.nestedEntries.filter(nestedEntry => !(nestedEntry instanceof SyntheticHitObjectEntry));
@@ -160,6 +221,12 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
     this.onFreed();
 
     this.parentHitObject = null;
+
+    if (this.judge)
+      this.removeInternal(this.judge);
+    this.judge = null;
+
+    this.#result = null;
 
     this.#clearExistingStateTransforms();
   }
@@ -192,7 +259,43 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
     );
   }
 
-  protected updateState() {
+  #result: JudgementResult | null = null;
+
+  get result() {
+    return this.#result;
+  }
+
+  get judged() {
+    return this.result !== null;
+  }
+
+  get allJudged() {
+    return this.judged && this.nestedHitObjects.every(h => h.judged);
+  }
+
+  get isHit() {
+    return this.result?.isHit ?? false;
+  }
+
+  #updateStateFromResult() {
+    if (this.result?.isHit)
+      this.updateState(ArmedState.Hit, true);
+    else if (this.result)
+      this.updateState(ArmedState.Miss, true);
+    else
+      this.updateState(ArmedState.Idle, true);
+  }
+
+  #state = new Bindable(ArmedState.Idle);
+
+  get state() {
+    return this.#state as ReadonlyBindable<ArmedState>;
+  }
+
+  protected updateState(newState: ArmedState, force = false) {
+    if (this.state.value === newState && !force)
+      return;
+
     this.lifetimeEnd = Number.MAX_VALUE;
 
     this.#clearExistingStateTransforms();
@@ -202,18 +305,27 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
     this.animationStartTime.value = initialTransformsTime;
 
     this.absoluteSequence({ time: initialTransformsTime, recursive: true }, () => this.updateInitialTransforms());
-    this.absoluteSequence({ time: this.hitObject!.startTime, recursive: true }, () => this.updateStartTimeTransforms());
-    this.absoluteSequence({ time: this.hitObject!.endTime, recursive: true }, () => this.updateEndTimeTransforms());
+    this.absoluteSequence({ time: this.stateUpdateTime, recursive: true }, () => this.updateStartTimeTransforms());
+    this.absoluteSequence({ time: this.hitStateUpdateTime, recursive: true }, () => this.updateHitStateTransforms(newState));
+
+    this.#state.value = newState;
 
     if (this.lifetimeEnd === Number.MAX_VALUE)
       this.lifetimeEnd = Math.max(this.latestTransformEndTime, this.hitObject!.endTime);
 
     this.applyCustomUpdateState.emit(this);
 
+    if (!this.suppressHitSounds && newState === ArmedState.Hit && !force)
+      this.playSamples();
+
     this.updateComboColor();
   }
 
   applyCustomUpdateState = new Action<DrawableHitObject>();
+
+  #onApplyCustomUpdateState(drawable: DrawableHitObject) {
+    this.applyCustomUpdateState.emit(drawable);
+  }
 
   #clearExistingStateTransforms() {
     super.applyTransformsAt(Number.MIN_VALUE, true);
@@ -222,7 +334,7 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
   }
 
   refreshTransforms() {
-    this.updateState();
+    this.updateState(this.state.value, true);
   };
 
   protected updateInitialTransforms() {
@@ -232,7 +344,7 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
   protected updateStartTimeTransforms() {
   }
 
-  protected updateEndTimeTransforms() {
+  protected updateHitStateTransforms(state: ArmedState) {
   }
 
   override clearTransformsAfter() {
@@ -249,14 +361,15 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
     return this.hitObject!.startTime;
   }
 
+  get hitStateUpdateTime() {
+    return this.result?.absoluteTime ?? this.hitObject!.endTime;
+  }
+
   onKilled() {
     for (const h of this.nestedHitObjects)
       h.onKilled();
 
-    this.updateResult();
-  }
-
-  protected updateResult() {
+    this.updateResult(false);
   }
 
   @resolved(Beatmap)

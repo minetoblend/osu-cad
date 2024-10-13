@@ -12,7 +12,9 @@ export class GameplayCursor extends CompositeDrawable {
     this.addAllInternal(
       this.#cursorTrailPool,
       this.#trailContainer = new Container(),
-      new SkinnableDrawable(OsuSkinComponentLookup.Cursor),
+      new SkinnableDrawable(OsuSkinComponentLookup.Cursor).with({
+        scale: 1.2,
+      }),
     );
   }
 
@@ -33,7 +35,7 @@ export class GameplayCursor extends CompositeDrawable {
       this.#trailContainer.add(trail);
 
       trail.clearTransformsAfter(Number.MIN_VALUE);
-      trail.fadeOutFromOne(300, EasingFunction.OutQuad).expire();
+      trail.fadeOutFromOne(250, EasingFunction.OutQuad).expire();
 
       this.#lastTrailPosition = this.position;
     }

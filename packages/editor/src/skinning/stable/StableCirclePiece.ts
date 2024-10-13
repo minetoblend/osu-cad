@@ -6,10 +6,12 @@ import {
   CompositeDrawable,
   dependencyLoader,
   DrawableSprite,
+  EasingFunction,
   resolved,
 } from 'osucad-framework';
 import { OsucadConfigManager } from '../../config/OsucadConfigManager';
 import { OsucadSettings } from '../../config/OsucadSettings';
+import { ArmedState } from '../../editor/hitobjects/ArmedState.ts';
 import { DrawableComboNumber } from '../../editor/hitobjects/DrawableComboNumber';
 import { DrawableHitObject } from '../../editor/hitobjects/DrawableHitObject';
 import { ISkinSource } from '../ISkinSource';
@@ -33,7 +35,8 @@ export class StableCirclePiece extends CompositeDrawable {
   @resolved(ISkinSource)
   private skin!: ISkinSource;
 
-  #circle!: DrawableSprite;
+  #circleSprite!: DrawableSprite;
+  #overlaySprite!: DrawableSprite;
 
   @resolved(OsucadConfigManager)
   private config!: OsucadConfigManager;
@@ -45,12 +48,12 @@ export class StableCirclePiece extends CompositeDrawable {
     const circleName = this.#priorityLookup && this.skin.getTexture(this.#priorityLookup) ? this.#priorityLookup : 'hitcircle';
 
     this.addAllInternal(
-      this.#circle = new DrawableSprite({
+      this.#circleSprite = new DrawableSprite({
         texture: this.skin.getTexture(circleName),
         anchor: Anchor.Center,
         origin: Anchor.Center,
       }),
-      new DrawableSprite({
+      this.#overlaySprite = new DrawableSprite({
         texture: this.skin.getTexture(`${circleName}overlay`),
         anchor: Anchor.Center,
         origin: Anchor.Center,
@@ -59,63 +62,51 @@ export class StableCirclePiece extends CompositeDrawable {
 
     this.config.bindWith(OsucadSettings.HitAnimations, this.hitAnimationsEnabled);
 
-    if (this.hasComboNumber) {
+    if (this.hasComboNumber)
       this.addInternal(this.comboNumber = new DrawableComboNumber());
-    }
 
     if (this.drawableHitObject) {
       this.accentColor.bindTo(this.drawableHitObject.accentColor);
 
-      this.drawableHitObject.applyCustomUpdateState.addListener(this.#updateColorTransforms, this);
+      this.drawableHitObject.applyCustomUpdateState.addListener(this.#updateStateTransforms, this);
+
+      // this.accentColor.valueChanged.addListener(() => this.#updateStateTransforms(this.drawableHitObject!));
+
+      this.hitAnimationsEnabled.valueChanged.addListener(() => this.#updateStateTransforms(this.drawableHitObject!));
     }
 
-    this.accentColor.valueChanged.addListener(this.#updateColorTransforms, this);
-
-    this.hitAnimationsEnabled.valueChanged.addListener(this.#updateColorTransforms, this);
-
-    this.#updateColorTransforms();
+    this.accentColor.addOnChangeListener(() => this.#circleSprite.color = this.accentColor.value, { immediate: true });
   }
 
   comboNumber: DrawableComboNumber | null = null;
 
-  override clearTransforms() {
-  }
+  #updateStateTransforms(hitObject: DrawableHitObject) {
+    this.applyTransformsAt(Number.MIN_VALUE, true);
+    this.clearTransformsAfter(Number.MIN_VALUE, true);
 
-  override clearTransformsAfter() {
-  }
+    this.#circleSprite.alpha = 1;
+    this.#overlaySprite.alpha = 1;
 
-  override applyTransformsAt() {
-  }
+    this.absoluteSequence(hitObject.hitStateUpdateTime, () => {
+      switch (hitObject.state.value) {
+        case ArmedState.Hit:
+          this.#circleSprite.fadeOut(240);
+          this.#circleSprite.scaleTo(1.4, 240, EasingFunction.Out);
 
-  #updateColorTransforms() {
-    super.clearTransforms();
+          this.#overlaySprite.fadeOut(240);
+          this.#overlaySprite.scaleTo(1.4, 240, EasingFunction.Out);
 
-    if (!this.drawableHitObject?.hitObject)
-      return;
+          if (this.comboNumber)
+            this.comboNumber.fadeOut(50);
 
-    const hitObject = this.drawableHitObject.hitObject;
-
-    this.absoluteSequence(hitObject.startTime - hitObject.timePreempt, () => this.#updateInitialTransforms());
-    this.absoluteSequence(hitObject.startTime, () => this.#updateStartTimeTransforms());
-  }
-
-  #updateInitialTransforms() {
-    this.comboNumber?.fadeIn();
-    this.#circle.fadeColor(this.accentColor.value);
-  }
-
-  #updateStartTimeTransforms() {
-    if (this.hitAnimationsEnabled.value) {
-      this.comboNumber?.fadeOut(50);
-    }
-    else {
-      this.#circle.fadeColor(0xFFFFFF);
-    }
+          break;
+      }
+    });
   }
 
   dispose(isDisposing?: boolean) {
     super.dispose(isDisposing);
 
-    this.drawableHitObject?.applyCustomUpdateState.removeListener(this.#updateColorTransforms);
+    this.drawableHitObject?.applyCustomUpdateState.removeListener(this.#updateStateTransforms);
   }
 }

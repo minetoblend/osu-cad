@@ -91,6 +91,9 @@ export abstract class Skin implements IDisposable, ISkin {
       for (let i = 0; true; i++) {
         const texture = this.getTexture(getFrameName(i));
 
+        if (componentName === 'hit100')
+          console.log(texture, i, getFrameName(i));
+
         if (!texture)
           break;
 

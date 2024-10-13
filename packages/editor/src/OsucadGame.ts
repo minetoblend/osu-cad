@@ -103,6 +103,9 @@ export class OsucadGame extends Game implements IResourcesProvider {
     this.dependencies.provide(ISkinSource, skinManager);
     this.dependencies.provide(SkinManager, skinManager);
 
+    const cursorContainer = new MainCursorContainer();
+    this.dependencies.provide(cursorContainer);
+
     this.#innerContainer.addAll(
       new FpsOverlay({
         child:
@@ -145,7 +148,7 @@ export class OsucadGame extends Game implements IResourcesProvider {
     );
 
     if (!isMobile.any) {
-      this.add(new MainCursorContainer());
+      this.add(cursorContainer);
     }
 
     intro.nextScreenLoaded(beatmapSelect);

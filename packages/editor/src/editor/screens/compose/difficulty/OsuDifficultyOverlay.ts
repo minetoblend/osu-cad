@@ -31,7 +31,7 @@ export class OsuDifficultyOverlay extends CompositeDrawable {
 
 export class OsuDifficultyPlayfield extends Playfield {
   @resolved(EditorClock)
-  editorClock!: EditorClock;
+  playfieldClock!: EditorClock;
 
   @resolved(CommandManager)
   commandManager!: CommandManager;
@@ -40,7 +40,7 @@ export class OsuDifficultyPlayfield extends Playfield {
 
   @dependencyLoader()
   load() {
-    this.clock = this.editorClock;
+    this.clock = this.playfieldClock;
     this.processCustomClock = false;
 
     this.difficultyObjects = new DifficultyObjectList(this.beatmap.hitObjects);

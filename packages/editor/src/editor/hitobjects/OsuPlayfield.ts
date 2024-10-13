@@ -1,6 +1,10 @@
 import type { HitObject } from '../../beatmap/hitObjects/HitObject';
+import type { JudgementResult } from '../../beatmap/hitObjects/JudgementResult.ts';
 import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
-import { Anchor, Axes, BindableBoolean, dependencyLoader, resolved } from 'osucad-framework';
+import type { DrawableHitObject } from './DrawableHitObject.ts';
+import type { DrawableOsuHitObject } from './DrawableOsuHitObject.ts';
+import type { IHitPolicy } from './IHitPolicy.ts';
+import { Anchor, Axes, BindableBoolean, Container, dependencyLoader, resolved } from 'osucad-framework';
 import { HitCircle } from '../../beatmap/hitObjects/HitCircle';
 import { Slider } from '../../beatmap/hitObjects/Slider';
 import { SliderHeadCircle } from '../../beatmap/hitObjects/SliderHeadCircle';
@@ -11,6 +15,7 @@ import { Spinner } from '../../beatmap/hitObjects/Spinner';
 import { OsucadConfigManager } from '../../config/OsucadConfigManager';
 import { OsucadSettings } from '../../config/OsucadSettings';
 import { DrawableHitCircle } from './DrawableHitCircle';
+import { DrawableJudgement } from './DrawableJudgement.ts';
 import { DrawableSlider } from './DrawableSlider';
 import { DrawableSliderHead } from './DrawableSliderHead';
 import { DrawableSliderRepeat } from './DrawableSliderRepeat';
@@ -20,6 +25,7 @@ import { DrawableSpinner } from './DrawableSpinner';
 import { FollowPointRenderer } from './FollowPointRenderer';
 import { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
 import { Playfield } from './Playfield';
+import { StartTimeOrderedHitPolicy } from './StartTimeOrderedHitPolicy.ts';
 
 export class OsuPlayfield extends Playfield {
   protected followPoints!: FollowPointRenderer;
@@ -29,16 +35,23 @@ export class OsuPlayfield extends Playfield {
   @resolved(OsucadConfigManager)
   config!: OsucadConfigManager;
 
+  #judgementContainer = new Container({ relativeSizeAxes: Axes.Both });
+
   @dependencyLoader()
   load() {
     this.anchor = Anchor.Center;
     this.origin = Anchor.Center;
 
-    this.addInternal(
+    this.addAllInternal(
       this.followPoints = new FollowPointRenderer().with({
         relativeSizeAxes: Axes.Both,
       }),
+      this.#judgementContainer.with({
+        depth: -1,
+      }),
     );
+
+    this.hitPolicy ??= new StartTimeOrderedHitPolicy();
 
     this.registerPool(HitCircle, DrawableHitCircle, 10, 100);
     this.registerPool(Slider, DrawableSlider, 5, 100);
@@ -51,6 +64,19 @@ export class OsuPlayfield extends Playfield {
     this.config.bindWith(OsucadSettings.FollowPoints, this.followPointsEnabled);
 
     this.followPointsEnabled.addOnChangeListener(e => this.followPoints.alpha = e.value ? 1 : 0, { immediate: true });
+
+    this.newResult.addListener(this.#onNewResult, this);
+  }
+
+  #onNewResult([hitObject, result]: [DrawableHitObject, JudgementResult]) {
+    this.hitPolicy!.handleHit(hitObject);
+
+    if (this.showJudgements) {
+      if (hitObject.parentHitObject)
+        return;
+
+      this.#judgementContainer.add(new DrawableJudgement(result));
+    }
   }
 
   protected createLifeTimeEntry(hitObject: HitObject): HitObjectLifetimeEntry {
@@ -65,6 +91,23 @@ export class OsuPlayfield extends Playfield {
   protected onHitObjectRemoved(hitObject: HitObject) {
     super.onHitObjectRemoved(hitObject);
     this.followPoints.removeFollowPoints(hitObject as OsuHitObject);
+  }
+
+  #hitPolicy: IHitPolicy | null = null;
+
+  showJudgements = true;
+
+  get hitPolicy(): IHitPolicy | null {
+    return this.#hitPolicy;
+  }
+
+  set hitPolicy(value: IHitPolicy) {
+    this.#hitPolicy = value;
+    value.setHitObjectContainer(this.hitObjectContainer);
+  }
+
+  protected onNewDrawableHitObject(drawable: DrawableHitObject) {
+    (drawable as DrawableOsuHitObject).checkHittable = this.hitPolicy?.checkHittable ?? null;
   }
 }
 
