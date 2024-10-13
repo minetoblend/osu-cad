@@ -63,7 +63,7 @@ export class BindableNumber extends RangeConstrainedBindable<number> {
   }
 
   protected override get defaultMinValue(): number {
-    return Number.MIN_VALUE;
+    return -Number.MAX_VALUE;
   }
 
   protected override get defaultMaxValue(): number {

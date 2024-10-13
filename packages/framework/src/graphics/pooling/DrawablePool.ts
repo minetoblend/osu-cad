@@ -81,7 +81,7 @@ export class DrawablePool<T extends PoolableDrawable> extends CompositeDrawable 
     this.#countInUse++;
 
     drawable.assign();
-    drawable.lifetimeStart = Number.MIN_VALUE;
+    drawable.lifetimeStart = -Number.MAX_VALUE;
     drawable.lifetimeEnd = Number.MAX_VALUE;
 
     setupAction?.(drawable);

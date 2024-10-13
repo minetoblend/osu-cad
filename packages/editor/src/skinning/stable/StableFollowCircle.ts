@@ -43,8 +43,8 @@ export class StableFollowCircle extends CompositeDrawable {
 
     const remainingTime = Math.max(hitObject.endTime - hitObject.startTime, 0);
 
-    this.applyTransformsAt(Number.MIN_VALUE);
-    this.clearTransformsAfter(Number.MIN_VALUE);
+    this.applyTransformsAt(-Number.MAX_VALUE);
+    this.clearTransformsAfter(-Number.MAX_VALUE);
 
     this.absoluteSequence(hitObject.startTime, () => {
       this

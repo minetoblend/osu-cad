@@ -77,7 +77,7 @@ export class HitObjectList extends ObservableSortedList<OsuHitObject> {
       this.#needsDefaultsApplied.add(hitObject);
   }
 
-  applyDefaultsWhereNeeded(visibleStartTime: number = Number.MIN_VALUE, visibleEndTime = Number.MAX_VALUE, limit = Number.MAX_VALUE) {
+  applyDefaultsWhereNeeded(visibleStartTime: number = -Number.MAX_VALUE, visibleEndTime = Number.MAX_VALUE, limit = Number.MAX_VALUE) {
     let numApplied = 0;
 
     // Objects on screen should always get processed immediately

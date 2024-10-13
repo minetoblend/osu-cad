@@ -18,7 +18,7 @@ export class HitObjectLifetimeEntry extends LifetimeEntry {
     this.setInitialLifetime();
   }
 
-  #realLifetimeStart = Number.MIN_VALUE;
+  #realLifetimeStart = -Number.MAX_VALUE;
 
   #realLifetimeEnd = Number.MAX_VALUE;
 
@@ -46,7 +46,7 @@ export class HitObjectLifetimeEntry extends LifetimeEntry {
 
     this.#keepAlive = value;
     if (this.keepAlive)
-      this.setLifetime(Number.MIN_VALUE, Number.MAX_VALUE);
+      this.setLifetime(-Number.MAX_VALUE, Number.MAX_VALUE);
     else
       this.setLifetime(this.#realLifetimeStart, this.#realLifetimeEnd);
   }

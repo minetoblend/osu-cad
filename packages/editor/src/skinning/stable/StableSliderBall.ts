@@ -94,7 +94,7 @@ export class StableSliderBall extends CompositeDrawable {
   }
 
   #updateStateTransforms() {
-    this.clearTransformsAfter(Number.MIN_VALUE);
+    this.clearTransformsAfter(-Number.MAX_VALUE);
 
     const slider = this.drawableHitObject.hitObject!;
 

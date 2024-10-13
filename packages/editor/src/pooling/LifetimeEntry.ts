@@ -2,7 +2,7 @@ import { Action } from 'osucad-framework';
 import { LifetimeEntryState } from './LifetimeEntryState';
 
 export class LifetimeEntry {
-  #lifetimeStart = Number.MIN_VALUE;
+  #lifetimeStart = -Number.MAX_VALUE;
 
   #lifetimeEnd = Number.MAX_VALUE;
 

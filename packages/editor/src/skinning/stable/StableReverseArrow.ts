@@ -59,8 +59,8 @@ export class StableReverseArrow extends CompositeDrawable {
   }
 
   updateStateTransforms() {
-    this.#arrow.applyTransformsAt(Number.MIN_VALUE);
-    this.#arrow.clearTransformsAfter(Number.MIN_VALUE);
+    this.#arrow.applyTransformsAt(-Number.MAX_VALUE);
+    this.#arrow.clearTransformsAfter(-Number.MAX_VALUE);
 
     const animDuration = Math.min(300, this.drawableRepeat.hitObject!.spanDuration);
 

@@ -328,9 +328,9 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
   }
 
   #clearExistingStateTransforms() {
-    super.applyTransformsAt(Number.MIN_VALUE, true);
+    super.applyTransformsAt(-Number.MAX_VALUE, true);
 
-    super.clearTransformsAfter(Number.MIN_VALUE, true);
+    super.clearTransformsAfter(-Number.MAX_VALUE, true);
   }
 
   refreshTransforms() {

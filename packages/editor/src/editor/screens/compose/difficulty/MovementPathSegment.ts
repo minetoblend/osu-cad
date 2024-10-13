@@ -12,7 +12,7 @@ export class MovementPathSegment extends CompositeDrawable {
     super();
 
     if (startPosition.equals(endPosition)) {
-      this.lifetimeEnd = Number.MIN_VALUE;
+      this.lifetimeEnd = -Number.MAX_VALUE;
       return;
     }
 

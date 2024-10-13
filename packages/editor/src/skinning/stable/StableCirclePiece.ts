@@ -77,8 +77,8 @@ export class StableCirclePiece extends CompositeDrawable {
   comboNumber: DrawableComboNumber | null = null;
 
   #updateStateTransforms(hitObject: DrawableHitObject) {
-    this.applyTransformsAt(Number.MIN_VALUE, true);
-    this.clearTransformsAfter(Number.MIN_VALUE, true);
+    this.applyTransformsAt(-Number.MAX_VALUE, true);
+    this.clearTransformsAfter(-Number.MAX_VALUE, true);
 
     this.#circleSprite.alpha = 1;
     this.#overlaySprite.alpha = 1;

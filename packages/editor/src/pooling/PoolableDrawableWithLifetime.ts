@@ -111,7 +111,7 @@ export abstract class PoolableDrawableWithLifetime<TEntry extends LifetimeEntry>
 
     this.entry!.lifetimeChanged.removeListener(this.#setLifetimeFromEntry);
     this.#entry = null;
-    super.lifetimeStart = Number.MIN_VALUE;
+    super.lifetimeStart = -Number.MAX_VALUE;
     super.lifetimeEnd = Number.MAX_VALUE;
 
     this.#hasEntryApplied = false;

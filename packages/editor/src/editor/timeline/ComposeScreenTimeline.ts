@@ -240,7 +240,7 @@ export class ComposeScreenTimeline extends Timeline implements IKeyBindingHandle
   updateAfterChildren() {
     super.updateAfterChildren();
 
-    let lastPosition = Number.MIN_VALUE;
+    let lastPosition = -Number.MAX_VALUE;
     let stackHeight = 0;
     for (const child of this.#objectContainer.children) {
       if (almostEquals(child.x, lastPosition)) {

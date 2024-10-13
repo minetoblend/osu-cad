@@ -771,7 +771,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   }
 
   #onLifetimeChanged() {
-    this.#hasLifeTime = this.#lifeTimeStart !== Number.MIN_VALUE || this.#lifeTimeEnd !== Number.MAX_VALUE;
+    this.#hasLifeTime = this.#lifeTimeStart !== -Number.MAX_VALUE || this.#lifeTimeEnd !== Number.MAX_VALUE;
   }
 
   get lifetimeEnd() {
@@ -787,7 +787,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     this.lifetimeChanged.emit(this);
   }
 
-  #lifeTimeStart = Number.MIN_VALUE;
+  #lifeTimeStart = -Number.MAX_VALUE;
 
   #lifeTimeEnd = Number.MAX_VALUE;
 
@@ -917,7 +917,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   expire(calculateLifetimeStart = false) {
     if (this.#clock === null) {
-      this.lifetimeEnd = Number.MIN_VALUE;
+      this.lifetimeEnd = -Number.MAX_VALUE;
       return;
     }
 
@@ -931,7 +931,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
           min = t.startTime;
       }
 
-      this.lifetimeStart = min < Infinity ? min : Number.MIN_VALUE;
+      this.lifetimeStart = min < Infinity ? min : -Number.MAX_VALUE;
     }
   }
 

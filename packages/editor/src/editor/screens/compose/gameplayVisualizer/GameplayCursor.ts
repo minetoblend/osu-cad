@@ -34,7 +34,7 @@ export class GameplayCursor extends CompositeDrawable {
 
       this.#trailContainer.add(trail);
 
-      trail.clearTransformsAfter(Number.MIN_VALUE);
+      trail.clearTransformsAfter(-Number.MAX_VALUE);
       trail.fadeOutFromOne(250, EasingFunction.OutQuad).expire();
 
       this.#lastTrailPosition = this.position;

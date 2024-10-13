@@ -89,8 +89,8 @@ export class HitObjectUtils extends CompositeDrawable {
   getBounds(hitObjects: OsuHitObject[]) {
     let minX = Number.MAX_VALUE;
     let minY = Number.MAX_VALUE;
-    let maxX = Number.MIN_VALUE;
-    let maxY = Number.MIN_VALUE;
+    let maxX = -Number.MAX_VALUE;
+    let maxY = -Number.MAX_VALUE;
 
     for (const hitObject of hitObjects) {
       if (hitObject instanceof Spinner) {
@@ -241,7 +241,7 @@ export class HitObjectUtils extends CompositeDrawable {
 
     const endTime = hitObjects.reduce(
       (acc, it) => Math.max(acc, it.endTime),
-      Number.MIN_VALUE,
+      -Number.MAX_VALUE,
     );
 
     const newCombos = hitObjects.map(it => it.newCombo);

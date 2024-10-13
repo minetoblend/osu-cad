@@ -45,7 +45,7 @@ export class SliderControl extends CompositeDrawable {
     this.#current.current = value;
 
     if (value instanceof BindableNumber) {
-      if (value.minValue !== Number.MIN_VALUE)
+      if (value.minValue !== -Number.MAX_VALUE)
         this.#value.minValue = value.minValue;
       if (value.maxValue !== Number.MAX_VALUE)
         this.#value.maxValue = value.maxValue;

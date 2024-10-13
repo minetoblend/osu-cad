@@ -115,7 +115,7 @@ export abstract class Transformable implements ITransformable {
   }
 
   clearTransforms(propagateChildren: boolean = false, targetMember?: string) {
-    this.clearTransformsAfter(Number.MIN_VALUE, propagateChildren, targetMember);
+    this.clearTransformsAfter(-Number.MAX_VALUE, propagateChildren, targetMember);
   }
 
   clearTransformsAfter(time: number, propagateChildren: boolean = false, targetMember?: string) {
