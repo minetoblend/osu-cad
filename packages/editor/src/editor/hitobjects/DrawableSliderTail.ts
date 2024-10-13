@@ -67,7 +67,10 @@ export class DrawableSliderTail extends DrawableOsuHitObject<SliderTailCircle> {
 
     switch (state) {
       case ArmedState.Hit:
-        this.circlePiece.scaleTo(1.5, 240).fadeIn(240);
+        if (this.hitAnimations.value)
+          this.circlePiece.scaleTo(1.5, 240).fadeIn(240);
+        else
+          this.fadeOut(700);
         break;
       case ArmedState.Miss:
         this.fadeOut(100);

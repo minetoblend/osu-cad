@@ -146,6 +146,7 @@ export class Playfield extends Container implements IPooledHitObjectProvider, IH
       const dho = drawable as DrawableHitObject;
 
       dho.suppressHitSounds = this.suppressHitSounds;
+      dho.alwaysHit = this.hitObjectsAlwaysHit;
 
       if (!dho.isInitialized) {
         this.#onNewDrawableHitObject(dho);
@@ -202,6 +203,7 @@ export class Playfield extends Container implements IPooledHitObjectProvider, IH
   customJudgeProvider: IHitObjectJudgeProvider | null = null;
 
   suppressHitSounds = false;
+  hitObjectsAlwaysHit = false;
 
   withCustomJudgeProvider(provider: IHitObjectJudgeProvider) {
     this.customJudgeProvider = provider;

@@ -278,7 +278,7 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
   }
 
   #updateStateFromResult() {
-    if (this.result?.isHit)
+    if (this.result?.isHit || this.alwaysHit)
       this.updateState(ArmedState.Hit, true);
     else if (this.result)
       this.updateState(ArmedState.Miss, true);
@@ -361,7 +361,11 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
     return this.hitObject!.startTime;
   }
 
+  alwaysHit = false;
+
   get hitStateUpdateTime() {
+    if (this.alwaysHit)
+      return this.hitObject!.endTime;
     return this.result?.absoluteTime ?? this.hitObject!.endTime;
   }
 

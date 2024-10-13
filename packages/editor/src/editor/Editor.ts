@@ -118,6 +118,7 @@ export class Editor
         .adjust((it) => {
           it.showJudgements = false;
           it.suppressHitSounds = true;
+          it.hitObjectsAlwaysHit = true;
         }),
       await this.editorBeatmap.getOtherDifficulties(),
     );

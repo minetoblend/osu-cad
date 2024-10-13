@@ -70,12 +70,8 @@ export class StableCirclePiece extends CompositeDrawable {
 
       this.drawableHitObject.applyCustomUpdateState.addListener(this.#updateStateTransforms, this);
 
-      // this.accentColor.valueChanged.addListener(() => this.#updateStateTransforms(this.drawableHitObject!));
-
-      this.hitAnimationsEnabled.valueChanged.addListener(() => this.#updateStateTransforms(this.drawableHitObject!));
+      this.hitAnimationsEnabled.valueChanged.addListener(() => this.schedule(() => this.#updateStateTransforms(this.drawableHitObject!)));
     }
-
-    this.accentColor.addOnChangeListener(() => this.#circleSprite.color = this.accentColor.value, { immediate: true });
   }
 
   comboNumber: DrawableComboNumber | null = null;
@@ -90,18 +86,34 @@ export class StableCirclePiece extends CompositeDrawable {
     this.absoluteSequence(hitObject.hitStateUpdateTime, () => {
       switch (hitObject.state.value) {
         case ArmedState.Hit:
-          this.#circleSprite.fadeOut(240);
-          this.#circleSprite.scaleTo(1.4, 240, EasingFunction.Out);
+          if (this.hitAnimationsEnabled.value) {
+            this.#circleSprite.fadeOut(240);
+            this.#circleSprite.scaleTo(1.4, 240, EasingFunction.Out);
 
-          this.#overlaySprite.fadeOut(240);
-          this.#overlaySprite.scaleTo(1.4, 240, EasingFunction.Out);
+            this.#overlaySprite.fadeOut(240);
+            this.#overlaySprite.scaleTo(1.4, 240, EasingFunction.Out);
 
-          if (this.comboNumber)
-            this.comboNumber.fadeOut(50);
+            if (this.comboNumber)
+              this.comboNumber.fadeOut(50);
+          }
+          else {
+            this.fadeOutFromOne(700);
+          }
 
           break;
       }
     });
+  }
+
+  update() {
+    super.update();
+
+    if (this.time.current >= this.drawableHitObject!.hitStateUpdateTime) {
+      this.#circleSprite.color = 0xFFFFFF;
+    }
+    else {
+      this.#circleSprite.color = this.accentColor.value;
+    }
   }
 
   dispose(isDisposing?: boolean) {

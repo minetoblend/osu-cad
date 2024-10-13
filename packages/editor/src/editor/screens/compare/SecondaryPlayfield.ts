@@ -4,6 +4,7 @@ import { CompositeDrawable, dependencyLoader } from 'osucad-framework';
 import { Beatmap } from '../../../beatmap/Beatmap.ts';
 import { BeatmapComboProcessor } from '../../../beatmap/beatmapProcessors/BeatmapComboProcessor.ts';
 import { BeatmapStackingProcessor } from '../../../beatmap/beatmapProcessors/BeatmapStackingProcessor.ts';
+import { EditorJudgeProvider } from '../../hitobjects/EditorJudge.ts';
 import { OsuPlayfield } from '../../hitobjects/OsuPlayfield.ts';
 
 export class SecondaryPlayfield extends CompositeDrawable {
@@ -23,7 +24,13 @@ export class SecondaryPlayfield extends CompositeDrawable {
     this.addAllInternal(
       this.comboProcessor = new BeatmapComboProcessor(),
       new BeatmapStackingProcessor(),
-      new OsuPlayfield(),
+      new OsuPlayfield()
+        .withCustomJudgeProvider(new EditorJudgeProvider())
+        .adjust((it) => {
+          it.showJudgements = false;
+          it.suppressHitSounds = true;
+          it.hitObjectsAlwaysHit = true;
+        }),
     );
   }
 
