@@ -14,6 +14,7 @@ export default antfu({
       '@typescript-eslint/no-empty-function': 'off',
       'ts/no-use-before-define': 'off',
       'ts/no-this-alias': 'off',
+      'ts/method-signature-style': 'off',
     },
   },
 });
