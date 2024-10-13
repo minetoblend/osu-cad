@@ -8,7 +8,7 @@ export interface IFrameBasedClock extends IClock {
 
   get timeInfo(): FrameTimeInfo;
 
-  processFrame: () => void;
+  processFrame(): void;
 
   isFrameBasedClock: true;
 }
