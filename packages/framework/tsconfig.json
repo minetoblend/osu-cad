@@ -10,7 +10,7 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "experimentalDecorators": true,
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": false
   },
   "files": [],
   "include": [],
