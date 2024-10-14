@@ -22,6 +22,7 @@ nsisWeb:
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
   perMachine: true
+  appPackageUrl: https://osucad-releases.fra1.cdn.digitaloceanspaces.com
 mac:
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
