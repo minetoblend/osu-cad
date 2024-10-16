@@ -24,7 +24,9 @@ export class BeatmapSearchIndex {
 
   #allEntries = new Set<BeatmapItemInfo>();
 
-  #entryBuilder = new Map<string, BeatmapItemInfo[]>();
+  #entryMap: Map<string, BeatmapItemInfo[]> = new Map<string, BeatmapItemInfo[]>();
+
+  built = false;
 
   #creators = new Map<string, BeatmapItemInfo[]>();
 
@@ -39,22 +41,28 @@ export class BeatmapSearchIndex {
       if (word.length === 0)
         continue;
 
-      const entry = this.#entryBuilder.get(word);
+      const entry = this.#entryMap.get(word);
       if (entry) {
         entry.push(beatmap);
-        continue;
       }
-
-      this.#entryBuilder.set(word, [beatmap]);
+      else if (this.built) {
+        const item = { term: word, entries: [beatmap] };
+        this.#index.add(item);
+        this.#entryMap.set(word, item.entries);
+      }
+      else {
+        this.#entryMap.set(word, [beatmap]);
+      }
     }
   }
 
   build() {
-    const entries = [...this.#entryBuilder.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+    const entries = [...this.#entryMap!.entries()].sort((a, b) => a[0].localeCompare(b[0]));
 
-    for (const [word, items] of entries) {
+    for (const [word, items] of entries)
       this.#index.add({ term: word, entries: items });
-    }
+
+    this.built = true;
   }
 
   #index = new SortedList<{

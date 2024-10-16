@@ -47,7 +47,7 @@ const api: ExposedAPI = {
 
   installUpdate() {
     return electronAPI.ipcRenderer.send('installUpdate')
-  }
+  },
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to
@@ -61,8 +61,9 @@ if (process.contextIsolated) {
     console.error(error);
   }
 } else {
-  // @ts-ignore (define in dts)
   window.electron = electronAPI;
-  // @ts-ignore (define in dts)
   window.api = api;
 }
+
+
+

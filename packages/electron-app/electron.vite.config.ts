@@ -5,10 +5,19 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 export default defineConfig({
   main: {
-    plugins: [externalizeDepsPlugin()],
+    plugins: [
+      externalizeDepsPlugin({
+        include: ['typeorm', 'sqlite3'],
+      }),
+      nxViteTsPaths(),
+    ],
     worker: {
-      plugins: [externalizeDepsPlugin()],
-    }
+      format: 'es',
+      plugins: () => [
+        externalizeDepsPlugin(),
+        nxViteTsPaths(),
+      ],
+    },
   },
   preload: {
     plugins: [externalizeDepsPlugin()],
@@ -21,9 +30,9 @@ export default defineConfig({
 
     worker: {
       format: 'es',
-      plugins: [
+      plugins: () => [
         nxViteTsPaths(),
-      ]
+      ],
     },
 
     esbuild: {
@@ -44,13 +53,13 @@ export default defineConfig({
             return `assets/[name]-[hash].[ext]`;
           },
         },
-      }
+      },
     },
 
     server: {
       headers: {
         'Document-Policy': 'js-profiling',
-      }
-    }
+      },
+    },
   },
 });

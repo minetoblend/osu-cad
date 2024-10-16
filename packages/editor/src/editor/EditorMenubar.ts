@@ -1,7 +1,6 @@
 import type {
   Drawable,
   IKeyBindingHandler,
-  KeyBindingPressEvent,
   SpriteText,
 } from 'osucad-framework';
 import {
@@ -17,8 +16,6 @@ import {
   resolved,
   RoundedBox,
 } from 'osucad-framework';
-import { Notification } from '../notifications/Notification';
-import { NotificationOverlay } from '../notifications/NotificationOverlay';
 import { OsucadSpriteText } from '../OsucadSpriteText';
 import { CommandManager } from './context/CommandManager';
 import { Editor } from './Editor';
@@ -39,7 +36,7 @@ export class EditorMenubar extends EditorMenu implements IKeyBindingHandler<Plat
         items: [
           new MenuItem({
             text: 'Save',
-            action: () => this.save(),
+            action: () => this.editor?.save(),
           }),
           new MenuItem({
             text: 'Export',
@@ -123,36 +120,6 @@ export class EditorMenubar extends EditorMenu implements IKeyBindingHandler<Plat
     console.log('reverse');
   }
 
-  @resolved(NotificationOverlay)
-  notifications!: NotificationOverlay;
-
-  async save() {
-    let result = false;
-
-    if (this.editor!.commandManager.hasUnsavedChanges) {
-      result = await this.editor!.beatmap.save?.() ?? false;
-    }
-    else {
-      result = true;
-    }
-
-    if (result) {
-      this.notifications.add(new Notification(
-        'Saved beatmap',
-        undefined,
-        this.theme.primary,
-      ));
-      this.editor!.commandManager.hasUnsavedChanges = false;
-    }
-    else {
-      this.notifications.add(new Notification(
-        'Error',
-        'An unexpected error happened when saving the beatmap.',
-        0xEB345E,
-      ));
-    }
-  }
-
   override load() {
     super.load();
 
@@ -187,15 +154,6 @@ export class EditorMenubar extends EditorMenu implements IKeyBindingHandler<Plat
 
   canHandleKeyBinding(binding: PlatformAction) {
     return binding instanceof PlatformAction;
-  }
-
-  onKeyBindingPressed(e: KeyBindingPressEvent<PlatformAction>) {
-    if (e.pressed === PlatformAction.Save) {
-      this.save();
-      return true;
-    }
-
-    return false;
   }
 }
 

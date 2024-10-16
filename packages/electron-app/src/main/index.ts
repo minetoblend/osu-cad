@@ -1,15 +1,15 @@
-import { app, BrowserWindow, shell, session, ipcMain } from 'electron';
+import { app, BrowserWindow, session, shell } from 'electron';
 import { join } from 'path';
 import { electronApp, is } from '@electron-toolkit/utils';
 import { setupEnvironment } from './ElectronEnvironment';
 import { setupProtocol } from './protocol';
 import { loadOsuStableInfo } from './loadOsuStableInfo';
 import { setupAutoUpdates } from './auto-update';
+import { setupDatabase } from './database';
 
-app.commandLine.appendSwitch ("disable-http-cache");
+app.commandLine.appendSwitch('disable-http-cache');
 
-function createWindow(): void {
-  // Create the browser window.
+function createWindow() {
   const mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
@@ -45,6 +45,8 @@ function createWindow(): void {
   }
 
   setupAutoUpdates(mainWindow);
+
+  return mainWindow
 }
 
 // This method will be called when Electron has finished
@@ -52,7 +54,7 @@ function createWindow(): void {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(async () => {
   try {
-    await session.defaultSession.loadExtension(join(process.cwd(), 'pixi-devtools'))
+    await session.defaultSession.loadExtension(join(process.cwd(), 'pixi-devtools'));
   } catch (e) {
     // silently fail
   }
@@ -65,7 +67,9 @@ app.whenReady().then(async () => {
 
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.osucad');
-  createWindow();
+  const window = createWindow();
+
+  await setupDatabase(osuStableInfo, window);
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the

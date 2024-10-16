@@ -40,10 +40,8 @@ export class BeatmapSelect extends OsucadScreen {
 
   @dependencyLoader()
   load(dependencies: DependencyContainer) {
-    this.beatmapStore = this.environment.beatmaps;
-
     this.addInternal(
-      this.filter = new BeatmapSelectFilter(this.beatmapStore.beatmaps),
+      this.filter = new BeatmapSelectFilter(),
     );
 
     let dropzone: BeatmapImportDropzone;
@@ -54,7 +52,7 @@ export class BeatmapSelect extends OsucadScreen {
         anchor: Anchor.Center,
         origin: Anchor.Center,
         children: [
-          this.#carousel = new BeatmapCarousel(this.beatmapStore.beatmaps)
+          this.#carousel = new BeatmapCarousel()
             .with({
               width: 0.6,
               anchor: Anchor.CenterRight,

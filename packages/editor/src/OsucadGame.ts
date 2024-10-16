@@ -1,6 +1,7 @@
 import type { PIXIRenderer } from 'osucad-framework';
 import { Action, AudioManager, dependencyLoader, Game, IRenderer, isMobile, resolved } from 'osucad-framework';
 import { RenderTarget } from 'pixi.js';
+import { BeatmapImportScreen } from './BeatmapImportScreen';
 import { OsucadConfigManager } from './config/OsucadConfigManager';
 import { EditorActionContainer } from './editor/EditorActionContainer';
 import { EditorMixer } from './editor/EditorMixer';
@@ -151,7 +152,10 @@ export class OsucadGame extends Game implements IResourcesProvider {
       this.add(cursorContainer);
     }
 
-    intro.nextScreenLoaded(beatmapSelect);
+    if (this.environment.beatmaps.isImporting.value)
+      intro.nextScreenLoaded(new BeatmapImportScreen(beatmapSelect));
+    else
+      intro.nextScreenLoaded(beatmapSelect);
 
     this.fullyLoaded.emit();
   }

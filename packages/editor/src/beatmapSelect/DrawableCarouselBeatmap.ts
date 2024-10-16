@@ -7,6 +7,7 @@ import { OsucadSpriteText } from '../OsucadSpriteText';
 import { UISamples } from '../UISamples';
 import { CarouselBeatmap } from './CarouselBeatmap';
 import { DrawableCarouselItem } from './DrawableCarouselItem';
+import { DrawableCarouselMapset } from './DrawableCarouselMapset';
 
 export class DrawableCarouselBeatmap extends DrawableCarouselItem {
   constructor(item: CarouselBeatmap) {
@@ -15,6 +16,9 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
     let lastEditedText = '';
 
     this.alpha = 0;
+
+    // for sorting
+    this.depth = -item.beatmapInfo.starRating;
 
     if (item.beatmapInfo.lastEdited) {
       const formatted = item.beatmapInfo.lastEdited.toLocaleDateString('en-US', {
@@ -62,7 +66,7 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
               anchor: Anchor.CenterLeft,
               origin: Anchor.CenterLeft,
               children: [
-                new FastRoundedBox({
+                this.#starRatingBackground = new FastRoundedBox({
                   relativeSizeAxes: Axes.Both,
                   color: this.getDifficultyColor(),
                   cornerRadius: 4,
@@ -71,13 +75,13 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
                 new Container({
                   autoSizeAxes: Axes.Both,
                   padding: { horizontal: 4, vertical: 1 },
-                  child: new OsucadSpriteText({
-                    text: `${this.carouselBeatmap.beatmapInfo.starRating.toFixed(2)}`,
+                  child: this.#starRatingText = new OsucadSpriteText({
+                    text: this.carouselBeatmap.beatmapInfo.starRating.toFixed(2),
                   }),
                 }),
               ],
             }),
-            new OsucadSpriteText({
+            this.#difficultyName = new OsucadSpriteText({
               text: this.carouselBeatmap.beatmapInfo.difficultyName,
               anchor: Anchor.CenterLeft,
               origin: Anchor.CenterLeft,
@@ -85,12 +89,35 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
           ],
         }),
       );
+
+      this.carouselBeatmap.beatmapInfo.invalidated.addListener(this.onInvalidated, this);
     }, 50);
   }
 
   #lastEdited!: OsucadSpriteText;
 
   #hoverHighlight!: FastRoundedBox;
+
+  #difficultyName!: OsucadSpriteText;
+
+  #starRatingText!: OsucadSpriteText;
+
+  #starRatingBackground!: FastRoundedBox;
+
+  onInvalidated() {
+    const { difficultyName, starRating } = this.carouselBeatmap.beatmapInfo;
+
+    this.#difficultyName.text = difficultyName;
+    this.#starRatingText.text = starRating.toFixed(2);
+    this.#starRatingBackground.color = this.getDifficultyColor();
+
+    if (this.item.selected.value)
+      this.selected();
+
+    (this.parent as Container).changeChildDepth(this, -starRating);
+
+    this.findClosestParentOfType(DrawableCarouselMapset)?.updateBeatmapYPositions();
+  }
 
   getDifficultyColor() {
     const stops: [number, Color][] = [
@@ -201,5 +228,11 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
 
   onHoverLost(e: HoverLostEvent) {
     this.#hoverHighlight.fadeOut();
+  }
+
+  override dispose(isDisposing: boolean = true) {
+    super.dispose(isDisposing);
+
+    this.carouselBeatmap.beatmapInfo.invalidated.removeListener(this.onInvalidated, this);
   }
 }

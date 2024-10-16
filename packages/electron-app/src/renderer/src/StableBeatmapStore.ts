@@ -1,91 +1,158 @@
-import { BeatmapStore, IResourcesProvider, LoadedBeatmap, loadTexture, StableBeatmapParser } from '@osucad/editor';
+import {
+  Action, almostEquals,
+  BeatmapStore,
+  IBeatmap,
+  IResourcesProvider,
+  LoadedBeatmap,
+  loadTexture,
+  StableBeatmapEncoder,
+} from '@osucad/editor';
 import { BeatmapItemInfo } from 'packages/editor/src/beatmapSelect/BeatmapItemInfo';
-import { OsuBeatmap } from 'osu-db-parser';
-import { BeatmapSettings } from '../../../../editor/src/beatmap/BeatmapSettings';
 import { StableLoadedBeatmap } from './StableLoadedBeatmap';
 import { MapsetInfo } from '../../../../editor/src/beatmapSelect/MapsetInfo.ts';
+import { createBeatmapManagerProxy } from './BeatmapManagerProxy';
+import { IBeatmapEntity } from '../../types/IBeatmapManager';
 
 export class StableBeatmapStore extends BeatmapStore {
+
+  readonly #beatmapManager = createBeatmapManagerProxy();
+
   async load() {
     if (!window.api.stableDetected) {
       console.warn('Stable not detected, skipping beatmap load');
       return;
     }
 
-    const response = await fetch('osu-stable://beatmap-index');
-    if (response.ok) {
-      const beatmaps = await response.json() as OsuBeatmap[];
+    const entities = await this.#beatmapManager.getAll();
 
-      console.log(`Found ${beatmaps.length} beatmaps`);
+    this.#beatmapManager.onUpdated((entities) => {
+      for(const entity of entities)
+        this.#onBeatmapUpdated(entity)
+    });
 
-      this.beatmaps.value = beatmaps.map(osuBeatmap => new StableBeatmapInfo(osuBeatmap));
+    this.#beatmapManager.onDeleted((ids) => {
+      console.log('deleted', ids);
+    });
+
+    console.log(`Found ${entities.length} beatmaps`);
+
+    window.electron.ipcRenderer.on('beatmaps:importFinished', () => this.isImporting.value = false)
+
+    this.isImporting.value = await window.electron.ipcRenderer.invoke('beatmaps:isImporting')
+
+    console.log('is importing', this.isImporting.value)
+
+    const beatmaps = entities.map(osuBeatmap => new StableBeatmapInfo(osuBeatmap));
+    for (const beatmap of beatmaps)
+      this.#beatmapLookup.set(beatmap.id, beatmap)
+
+    this.beatmaps.value = beatmaps
+  }
+
+  #beatmapLookup = new Map<string, StableBeatmapInfo>()
+
+  #diffCalcTimeout?: any;
+
+  #onBeatmapUpdated(entity: IBeatmapEntity) {
+    let beatmap = this.#beatmapLookup.get(entity.id)
+    if (!beatmap) {
+      beatmap = new StableBeatmapInfo(entity)
+      this.#beatmapLookup.set(beatmap.id, beatmap)
+      this.beatmaps.value.push(beatmap)
+
+      this.added.emit(beatmap)
+    } else {
+      if (!almostEquals(entity.starRating, beatmap.starRating)) {
+        this.diffcalcActive.value = true;
+        if (this.#diffCalcTimeout)
+          clearTimeout(this.#diffCalcTimeout)
+
+        this.#diffCalcTimeout = setTimeout(() => {
+          this.diffcalcActive.value = false
+        }, 10_000)
+      }
+
+      beatmap.updateFromEntity(entity)
     }
   }
+
+  save(id: string, beatmap: IBeatmap): Promise<boolean> {
+    return this.#beatmapManager.saveBeatmap(id, new StableBeatmapEncoder().encode(beatmap))
+  }
+
 }
 
 export class StableBeatmapInfo implements BeatmapItemInfo {
-  constructor(osuBeatmap: OsuBeatmap) {
-    this.id = osuBeatmap.md5;
-    this.setId = osuBeatmap.folder_name;
-    this.authorName = osuBeatmap.creator_name;
-    this.artist = osuBeatmap.artist_name;
-    this.title = osuBeatmap.song_title;
-    this.difficultyName = osuBeatmap.difficulty;
-    this.starRating = osuBeatmap.star_rating_standard[0] ?? 0;
-    this.folderName = osuBeatmap.folder_name;
-    this.osuFileName = osuBeatmap.osu_file_name;
-    this.audioUrl = this.#relativePath(osuBeatmap.audio_file_name);
+  constructor(entity: IBeatmapEntity) {
+    this.id = entity.id;
 
-    this.previewPoint = osuBeatmap.preview_offset;
+    this.updateFromEntity(entity)
   }
 
-  readonly id: string;
+  updateFromEntity(entity: IBeatmapEntity) {
+    this.setId = entity.folderName;
+    this.authorName = entity.creatorName;
+    this.artist = entity.artist;
+    this.title = entity.title;
+    this.difficultyName = entity.difficultyName;
+    this.starRating = entity.starRating;
+    this.folderName = entity.folderName;
+    this.osuFileName = entity.osuFileName;
+    this.audioUrl = this.#relativePath(entity.audioFileName);
+    this.#backgroundFileName = entity.backgroundFileName;
 
-  readonly setId: string;
+    this.previewPoint = entity.previewTime;
 
-  readonly authorName: string;
+    this.invalidated.emit()
+  }
 
-  readonly title: string;
+  readonly invalidated = new Action()
 
-  readonly difficultyName: string;
+  id!: string;
 
-  readonly author = null;
+  setId!: string;
 
-  readonly artist: string;
+  authorName!: string;
 
-  readonly starRating: number;
+  title!: string;
 
-  readonly audioUrl: string;
+  difficultyName!: string;
 
-  readonly lastEdited: Date | null = null;
+  author = null;
 
-  readonly previewPoint: number;
+  artist!: string;
+
+  starRating!: number;
+
+  audioUrl!: string;
+
+  lastEdited!: Date | null;
+
+  previewPoint!: number;
+
+  #backgroundFileName!: string | null;
 
   #relativePath(path: string) {
     return `osu-stable://songs?path=${encodeURIComponent(this.folderName + '/' + path)}`;
   }
 
   async backgroundPath() {
-    const filename = await this.settings.then(it => it?.backgroundFilename);
-    if (filename)
-      return this.#relativePath(filename);
+    if (this.#backgroundFileName)
+      return this.#relativePath(this.#backgroundFileName);
 
     return null;
   }
 
   async loadThumbnailSmall() {
-    const filename = await this.settings.then(it => it?.backgroundFilename);
-    if (filename)
-      return loadTexture(this.#relativePath(filename));
+    if (this.#backgroundFileName)
+      return loadTexture(this.#relativePath(this.#backgroundFileName));
 
     return null;
   }
 
   async loadThumbnailLarge() {
-    const filename = await this.settings.then(it => it?.backgroundFilename);
-
-    if (filename)
-      return loadTexture(this.#relativePath(filename), undefined, {
+    if (this.#backgroundFileName)
+      return loadTexture(this.#relativePath(this.#backgroundFileName), undefined, {
         resize: {
           width: 720,
           height: 200,
@@ -96,21 +163,9 @@ export class StableBeatmapInfo implements BeatmapItemInfo {
     return null;
   }
 
-  folderName: string;
+  folderName!: string;
 
-  osuFileName: string;
-
-  #parsedSettings?: Promise<BeatmapSettings | null>;
-
-  protected get settings(): Promise<BeatmapSettings | null> {
-    this.#parsedSettings ??= fetch(`osu-stable://songs/${this.folderName}/${this.osuFileName}`)
-      .then(r => r.text())
-      .then(text => new StableBeatmapParser().parse(text, { hitObjects: false, timingPoints: false }))
-      .then(beatmap => beatmap.settings)
-      .catch(() => null);
-
-    return this.#parsedSettings;
-  }
+  osuFileName!: string;
 
   async load(resources: IResourcesProvider): Promise<LoadedBeatmap> {
     const beatmap = new StableLoadedBeatmap(this);

@@ -1,10 +1,13 @@
 import type { UserInfo } from '@osucad/common';
+import type { Action } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
 import type { LoadedBeatmap } from '../beatmap/LoadedBeatmap';
 import type { IResourcesProvider } from '../io/IResourcesProvider';
 import type { MapsetInfo } from './MapsetInfo';
 
 export interface BeatmapItemInfo {
+  readonly invalidated: Action;
+
   readonly id: string;
 
   readonly setId: string;

@@ -1,16 +1,33 @@
-import { compileHighShaderGlProgram, localUniformBitGl, roundPixelsBitGl, Shader, UniformGroup } from 'pixi.js';
+import type {
+  GlProgram,
+} from 'pixi.js';
+import {
+  compileHighShaderGlProgram,
+  localUniformBitGl,
+  roundPixelsBitGl,
+  Shader,
+  UniformGroup,
+} from 'pixi.js';
 
-const glProgram = compileHighShaderGlProgram({
-  name: 'mesh',
-  bits: [
-    localUniformBitGl,
-    roundPixelsBitGl,
-    {
-      fragment: {
-        header: /* glsl */ `
+let glProgram: GlProgram | null = null;
+
+export class SliderBallShader extends Shader {
+  constructor() {
+    const ballUniforms = new UniformGroup({
+      uAngle: { type: 'f32', value: 0 },
+    });
+
+    glProgram ??= compileHighShaderGlProgram({
+      name: 'mesh',
+      bits: [
+        localUniformBitGl,
+        roundPixelsBitGl,
+        {
+          fragment: {
+            header: /* glsl */ `
           uniform float uAngle;
         `,
-        main: /* glsl */ `
+            main: /* glsl */ `
           #define PI 3.1415926535897932384626433832795
 
           vec2 circlePos = (vUV - 0.5) * 2.0;
@@ -42,15 +59,9 @@ const glProgram = compileHighShaderGlProgram({
 
           outColor = vec4(color, 1.0) * alpha;
         `,
-      },
-    },
-  ],
-});
-
-export class SliderBallShader extends Shader {
-  constructor() {
-    const ballUniforms = new UniformGroup({
-      uAngle: { type: 'f32', value: 0 },
+          },
+        },
+      ],
     });
 
     super({

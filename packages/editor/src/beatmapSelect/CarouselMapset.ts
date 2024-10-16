@@ -24,6 +24,10 @@ export class CarouselMapset extends CarouselItem {
       beatmap.selected.addOnChangeListener((e) => {
         this.beatmapStateChanged(beatmap, e.value);
       });
+
+      beatmap.beatmapInfo.invalidated.addListener(() => {
+        this.beatmaps.sort((a, b) => a.beatmapInfo.starRating - b.beatmapInfo.starRating);
+      });
     }
   }
 

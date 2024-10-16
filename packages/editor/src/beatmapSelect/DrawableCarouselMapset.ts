@@ -86,10 +86,12 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
     this.header.addAll(
       this.#background = new MapsetBackground(this.mapset).with({ depth: 1 }),
     );
+
+    this.carouselMapset.invalidated.addListener(this.#onMapsetInvalidated, this);
   }
 
   #scheduleUpdateBeatmapYPositions() {
-    this.scheduler.addOnce(this.#updateBeatmapYPositions, this);
+    this.scheduler.addOnce(this.updateBeatmapYPositions, this);
   }
 
   protected freeAfterUse() {
@@ -104,6 +106,29 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
     this.header.remove(this.#background);
 
     this.beatmapsCreated = false;
+
+    this.carouselMapset.invalidated.removeListener(this.#onMapsetInvalidated, this);
+  }
+
+  #onMapsetInvalidated() {
+    if (this.beatmapsCreated) {
+      const children = [...this.beatmaps];
+
+      let anyAdded = false;
+
+      for (const beatmap of this.carouselMapset.beatmaps) {
+        const exists = children.some(it => it.carouselBeatmap === beatmap);
+        if (!exists) {
+          this.#beatmapContainer.add(
+            new DrawableCarouselBeatmap(beatmap),
+          );
+          anyAdded = true;
+        }
+      }
+
+      if (anyAdded)
+        this.updateBeatmapYPositions();
+    }
   }
 
   #beatmapContainer!: Container<DrawableCarouselBeatmap>;
@@ -134,7 +159,7 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
       );
     }
 
-    this.#updateBeatmapYPositions();
+    this.updateBeatmapYPositions();
   }
 
   protected deselected() {
@@ -142,7 +167,7 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
 
     this.movementContainer.moveToX(0, 500, EasingFunction.OutQuart);
 
-    this.#updateBeatmapYPositions();
+    this.updateBeatmapYPositions();
 
     this.beatmaps.forEach(it => it.fadeOut(100).expire());
     this.beatmapsCreated = false;
@@ -170,7 +195,7 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
     }
   }
 
-  #updateBeatmapYPositions() {
+  updateBeatmapYPositions() {
     let yPos = 5;
 
     const isSelected = this.item.selected.value;

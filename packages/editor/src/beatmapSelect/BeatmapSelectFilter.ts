@@ -1,19 +1,20 @@
 import type { ScheduledDelegate } from 'osucad-framework';
 import type { BeatmapItemInfo } from './BeatmapItemInfo';
-import { Bindable, Component } from 'osucad-framework';
+import { Bindable, Component, dependencyLoader, resolved } from 'osucad-framework';
 
+import { BeatmapStore } from '../environment';
 import { BeatmapSearchIndex } from './BeatmapSearchIndex';
 
 export class BeatmapSelectFilter extends Component {
-  constructor(
-    readonly beatmaps: Bindable<BeatmapItemInfo[]>,
-  ) {
-    super();
+  @resolved(BeatmapStore)
+  beatmapStore!: BeatmapStore;
 
-    for (const beatmap of beatmaps.value)
+  @dependencyLoader()
+  load() {
+    for (const beatmap of this.beatmapStore.beatmaps.value)
       this.#index.add(beatmap);
 
-    this.#index.build()
+    this.#index.build();
 
     this.searchTerm.addOnChangeListener(() => {
       if (this.#scheduledDelegate)
@@ -22,6 +23,11 @@ export class BeatmapSelectFilter extends Component {
     });
 
     this.updateFilter();
+
+    this.beatmapStore.added.addListener((beatmap) => {
+      this.#index.add(beatmap);
+      this.scheduler.addOnce(this.updateFilter, this);
+    });
   }
 
   #index = new BeatmapSearchIndex();

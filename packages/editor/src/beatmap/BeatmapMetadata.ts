@@ -136,4 +136,8 @@ export class BeatmapMetadata implements Patchable<BeatmapMetadataPatch> {
       previewTime,
     };
   }
+
+  get displayName() {
+    return `${this.artist} - ${this.title} [${this.difficultyName}]`;
+  }
 }

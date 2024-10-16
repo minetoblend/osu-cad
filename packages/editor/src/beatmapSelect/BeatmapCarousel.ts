@@ -26,8 +26,10 @@ import { OsucadConfigManager } from '../config/OsucadConfigManager';
 import { OsucadSettings } from '../config/OsucadSettings';
 import { EditorLoader } from '../editor/EditorLoader';
 import { MainScrollContainer } from '../editor/MainScrollContainer';
+import { BeatmapStore } from '../environment';
 import { EditorEnvironment } from '../environment/EditorEnvironment';
 import { UISamples } from '../UISamples';
+import { CarouselBeatmap } from './CarouselBeatmap';
 import { CarouselLoadQueue } from './CarouselLoadQueue';
 import { CarouselMapset } from './CarouselMapset';
 import { DrawableCarouselMapset } from './DrawableCarouselMapset';
@@ -43,9 +45,7 @@ enum PendingScrollOperation {
 }
 
 export class BeatmapCarousel extends CompositeDrawable {
-  constructor(
-    readonly beatmaps: Bindable<BeatmapItemInfo[]>,
-  ) {
+  constructor() {
     super();
 
     this.relativeSizeAxes = Axes.Both;
@@ -75,6 +75,13 @@ export class BeatmapCarousel extends CompositeDrawable {
   config!: OsucadConfigManager;
 
   #lastScrollPosition = 0;
+
+  @resolved(BeatmapStore)
+  beatmapStore!: BeatmapStore;
+
+  get beatmaps() {
+    return this.beatmapStore.beatmaps;
+  }
 
   update() {
     super.update();
@@ -161,12 +168,14 @@ export class BeatmapCarousel extends CompositeDrawable {
     this.addInternal(this.#mapsetPool);
 
     this.config.bindWith(OsucadSettings.SongSelectParallax, this.#parallaxEnabled);
+
+    this.beatmapStore.added.addListener(this.addBeatmap, this);
   }
 
   protected loadComplete() {
     super.loadComplete();
 
-    this.beatmaps.addOnChangeListener(e => this.beatmapsUpdated(e.value), { immediate: true });
+    this.beatmapsUpdated(this.beatmaps.value);
   }
 
   #updateItem(item: DrawableCarouselItem, parent?: DrawableCarouselItem) {
@@ -266,29 +275,33 @@ export class BeatmapCarousel extends CompositeDrawable {
   selectionChanged = new Action<BeatmapItemInfo>();
 
   createCarouselMapset(mapset: MapsetInfo) {
-    const set = new CarouselMapset(mapset);
+    const carouselMapset = new CarouselMapset(mapset);
 
-    for (const beatmap of set.beatmaps) {
+    for (const beatmap of carouselMapset.beatmaps) {
       beatmap.selected.addOnChangeListener(({ value: selected }) => {
-        if (selected) {
-          this.#selectedBeatmapSet = set;
-          this.selectionChanged.emit(beatmap.beatmapInfo);
-          this.#itemsCache.invalidate();
-
-          for (const b of this.mapsets) {
-            if (b === set)
-              continue;
-
-            b.selected.value = false;
-            this.#scrollToSelected();
-          }
-
-          this.samples.keyMovement.play();
-        }
+        this.#onSelected(carouselMapset, beatmap, selected);
       });
     }
 
-    return set;
+    return carouselMapset;
+  }
+
+  #onSelected(mapset: CarouselMapset, beatmap: CarouselBeatmap, selected: boolean) {
+    if (selected) {
+      this.#selectedBeatmapSet = mapset;
+      this.selectionChanged.emit(beatmap.beatmapInfo);
+      this.#itemsCache.invalidate();
+
+      for (const b of this.mapsets) {
+        if (b === mapset)
+          continue;
+
+        b.selected.value = false;
+        this.#scrollToSelected();
+      }
+
+      this.samples.keyMovement.play();
+    }
   }
 
   #scrollToSelected(immediate = false) {
@@ -488,6 +501,8 @@ export class BeatmapCarousel extends CompositeDrawable {
 
   selectRandomBeatmap() {
     const beatmaps = this.mapsets.flatMap(it => it.beatmaps).filter(it => it.visible.value);
+    if (beatmaps.length === 0)
+      return;
 
     beatmaps[Math.floor(Math.random() * beatmaps.length)].selected.value = true;
   }
@@ -495,12 +510,38 @@ export class BeatmapCarousel extends CompositeDrawable {
   addMapset(mapset: MapsetInfo, select = true) {
     const carouselMapset = this.createCarouselMapset(mapset);
 
-    this.mapsets.unshift(carouselMapset);
+    this.mapsets.push(carouselMapset);
+    this.mapsets.sort((a, b) => a.mapset.title.localeCompare(b.mapset.title));
+
     this.#itemsCache.invalidate();
+
     if (select) {
       if (carouselMapset.beatmaps[0]) {
         carouselMapset.beatmaps[0].selected.value = true;
       }
+    }
+  }
+
+  addBeatmap(beatmap: BeatmapItemInfo) {
+    const mapset = this.mapsets.find(it => it.mapset.id === beatmap.setId);
+
+    if (mapset) {
+      const carouselBeatmap = new CarouselBeatmap(beatmap);
+      mapset.beatmaps.push(carouselBeatmap);
+      mapset.invalidated.emit();
+      this.#itemsCache.invalidate();
+    }
+    else {
+      this.addMapset({
+        id: beatmap.setId,
+        beatmaps: [beatmap],
+        authorName: beatmap.authorName,
+        artist: beatmap.artist,
+        author: beatmap.author,
+        title: beatmap.title,
+        loadThumbnailLarge: () => beatmap.loadThumbnailLarge(),
+        loadThumbnailSmall: () => beatmap.loadThumbnailSmall(),
+      }, this.mapsets.length === 0);
     }
   }
 
@@ -524,6 +565,12 @@ export class BeatmapCarousel extends CompositeDrawable {
     }
 
     this.#mouseWasInside = mouseIsInside;
+  }
+
+  override dispose(isDisposing: boolean = true) {
+    super.dispose(isDisposing);
+
+    this.beatmapStore.added.removeListener(this.addBeatmap, this);
   }
 }
 

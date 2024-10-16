@@ -5,14 +5,21 @@ import type { BeatmapSelectFilter } from './BeatmapSelectFilter';
 import {
   Anchor,
   Axes,
+  BindableBoolean,
   Box,
   Container,
   dependencyLoader,
   EasingFunction,
+  FillFlowContainer,
   Key,
   resolved,
+  Vec2,
 } from 'osucad-framework';
+
+import { LoadingSpinner } from '../drawables/LoadingSpinner';
 import { ThemeColors } from '../editor/ThemeColors';
+import { BeatmapStore } from '../environment';
+import { OsucadSpriteText } from '../OsucadSpriteText';
 import { AlwaysFocusedTextBox } from './AlwaysFocusedTextBox';
 
 export class BeatmapSelectHeader extends Container {
@@ -35,6 +42,24 @@ export class BeatmapSelectHeader extends Container {
         color: this.colors.translucent,
         alpha: 0.9,
       }),
+      this.#diffcalcBadge = new FillFlowContainer({
+        spacing: new Vec2(10),
+        padding: 20,
+        autoSizeAxes: Axes.Both,
+        alpha: 0,
+        children: [
+          new LoadingSpinner({
+            size: 20,
+            anchor: Anchor.CenterLeft,
+            origin: Anchor.CenterLeft,
+          }),
+          new OsucadSpriteText({
+            text: 'Calculating star rating in background',
+            anchor: Anchor.CenterLeft,
+            origin: Anchor.CenterLeft,
+          }),
+        ],
+      }),
       this.#content = new Container({
         relativeSizeAxes: Axes.Both,
         anchor: Anchor.TopRight,
@@ -55,12 +80,31 @@ export class BeatmapSelectHeader extends Container {
     textBox.commitImmediately = true;
     textBox.clearOnEscape = true;
 
-    this.scheduler.addDelayed(() => {
-      console.log(this.getContainingFocusManager()!.changeFocus(textBox));
-    }, 100);
+    this.diffCalcActive.addOnChangeListener((e) => {
+      if (e.value) {
+        this.#diffcalcBadge
+          .moveToY(-20)
+          .moveToY(0, 200, EasingFunction.OutExpo)
+          .fadeInFromZero(200);
+      }
+      else {
+        this.#diffcalcBadge
+          .moveToY(-20, 200, EasingFunction.OutExpo)
+          .fadeOut(200, EasingFunction.OutQuad);
+      }
+    });
+
+    this.diffCalcActive.bindTo(this.beatmapStore.diffcalcActive);
   }
 
+  @resolved(BeatmapStore)
+  beatmapStore!: BeatmapStore;
+
+  diffCalcActive = new BindableBoolean();
+
   #content!: Container;
+
+  #diffcalcBadge!: Container;
 
   get content() {
     return this.#content;

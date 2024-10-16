@@ -1,21 +1,11 @@
 import type { ScreenExitEvent } from 'osucad-framework';
-import {
-  Anchor,
-  Axes,
-  Box,
-  Container,
-  dependencyLoader,
-  DrawableSprite,
-  EasingFunction,
-  loadTexture,
-  resolved,
-  RoundedBox,
-  Vec2,
-} from 'osucad-framework';
+import { Anchor, AudioManager, Axes, Box, Container, dependencyLoader, DrawableSprite, EasingFunction, loadTexture, resolved, RoundedBox, Vec2 } from 'osucad-framework';
 import { AlphaFilter } from 'pixi.js';
+import introDotWav from '../assets/samples/intro.wav';
 import osucadText from '../assets/textures/osucad-text.png';
 import { OsucadConfigManager } from '../config/OsucadConfigManager';
 import { OsucadSettings } from '../config/OsucadSettings';
+import { EditorMixer } from '../editor/EditorMixer';
 import { ThemeColors } from '../editor/ThemeColors';
 import { OsucadIcons } from '../OsucadIcons';
 import { OsucadScreen } from '../OsucadScreen';
@@ -27,6 +17,12 @@ export class IntroSequence extends OsucadScreen {
 
   @resolved(OsucadConfigManager)
   config!: OsucadConfigManager;
+
+  @resolved(AudioManager)
+  audioManager!: AudioManager;
+
+  @resolved(EditorMixer)
+  mixer!: EditorMixer;
 
   @dependencyLoader()
   async load() {
@@ -41,6 +37,8 @@ export class IntroSequence extends OsucadScreen {
         color: 0x000000,
       }),
     );
+
+    const sample = await this.audioManager.createSampleFromUrl(this.mixer.userInterface, introDotWav);
 
     const text = new DrawableSprite({
       texture: await loadTexture(osucadText),
@@ -97,6 +95,9 @@ export class IntroSequence extends OsucadScreen {
     }));
 
     this.addDelay(500, true);
+
+    this.scheduler.addDelayed(() => sample.play(), 510);
+    // sample.play();
 
     this.transformTo('containerAlpha', 0.75, 1000);
     slider.transformTo('snakeInProgress', 1, 1000, EasingFunction.OutCubic);

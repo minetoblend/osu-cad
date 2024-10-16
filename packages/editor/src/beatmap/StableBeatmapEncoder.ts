@@ -75,7 +75,6 @@ export class StableBeatmapEncoder {
   }
 
   * #encodeEditor(beatmap: IBeatmap) {
-    console.log(beatmap.settings.editor.gridSize);
     yield `Bookmarks: ${beatmap.settings.editor.bookmarks.map(it => Math.round(it)).join(',')}`;
     yield `DistanceSpacing: ${this.#roundToPrecision(beatmap.settings.editor.distanceSpacing, 1)}`;
     yield `BeatDivisor: ${beatmap.settings.editor.beatDivisor}`;

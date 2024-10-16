@@ -33,6 +33,7 @@ import { BeatmapStackingProcessor } from '../beatmap/beatmapProcessors/BeatmapSt
 import { HitObjectList } from '../beatmap/hitObjects/HitObjectList';
 import { IBeatmap } from '../beatmap/IBeatmap';
 import { ControlPointInfo } from '../beatmap/timing/ControlPointInfo';
+import { BeatmapStore } from '../environment';
 import { GameplayScreen } from '../gameplay/GameplayScreen';
 import { IResourcesProvider } from '../io/IResourcesProvider';
 import { DialogContainer } from '../modals/DialogContainer';
@@ -63,6 +64,7 @@ import { EditorScreenType } from './screens/EditorScreenType';
 import { HitSoundsScreen } from './screens/hitsounds/HitSoundsScreen';
 import { SetupScreen } from './screens/setup/SetupScreen';
 import { TimingScreen } from './screens/timing/TimingScreen';
+import { ThemeColors } from './ThemeColors';
 
 export class Editor
   extends OsucadScreen
@@ -331,6 +333,9 @@ export class Editor
     e: KeyBindingPressEvent<PlatformAction | EditorAction>,
   ): boolean {
     switch (e.pressed) {
+      case PlatformAction.Save:
+        this.save();
+        return true;
       case PlatformAction.Undo:
         this.undo();
         return true;
@@ -479,7 +484,7 @@ export class Editor
 
       dialog.exitRequested.addListener(async (e) => {
         if (e.shouldSave)
-          await this.beatmap.save?.();
+          await this.save();
 
         this.#confirmedExit = true;
         this.exit();
@@ -547,5 +552,34 @@ export class Editor
 
   getJudge(hitObject: DrawableHitObject): HitObjectJudge | null {
     return new EditorJudge(hitObject);
+  }
+
+  @resolved(NotificationOverlay)
+  notifications!: NotificationOverlay;
+
+  @resolved(BeatmapStore)
+  beatmapStore!: BeatmapStore;
+
+  @resolved(ThemeColors)
+  theme!: ThemeColors;
+
+  async save() {
+    const result = await this.beatmapStore.save(this.beatmapInfo.id, this.beatmap.beatmap);
+
+    if (result) {
+      this.notifications.add(new Notification(
+        'Saved beatmap',
+        undefined,
+        this.theme.primary,
+      ));
+      this.commandManager.hasUnsavedChanges = false;
+    }
+    else {
+      this.notifications.add(new Notification(
+        'Error',
+        'An unexpected error happened when saving the beatmap.',
+        0xEB345E,
+      ));
+    }
   }
 }
