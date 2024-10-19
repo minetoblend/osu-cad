@@ -116,6 +116,8 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
 
       let anyAdded = false;
 
+      const shouldRemove = new Set(children.map(it => it.carouselBeatmap));
+
       for (const beatmap of this.carouselMapset.beatmaps) {
         const exists = children.some(it => it.carouselBeatmap === beatmap);
         if (!exists) {
@@ -124,6 +126,13 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
           );
           anyAdded = true;
         }
+        shouldRemove.delete(beatmap);
+      }
+
+      for (const beatmap of shouldRemove) {
+        const drawable = children.find(it => it.carouselBeatmap === beatmap);
+        if (drawable)
+          this.#beatmapContainer.remove(drawable);
       }
 
       if (anyAdded)

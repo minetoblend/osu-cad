@@ -1,3 +1,4 @@
+import type { StableBeatmapInfo } from 'osucad/src/renderer/src/StableBeatmapStore';
 import type {
   KeyDownEvent,
 } from 'osucad-framework';
@@ -170,6 +171,7 @@ export class BeatmapCarousel extends CompositeDrawable {
     this.config.bindWith(OsucadSettings.SongSelectParallax, this.#parallaxEnabled);
 
     this.beatmapStore.added.addListener(this.addBeatmap, this);
+    this.beatmapStore.removed.addListener(this.removeBeatmap, this);
   }
 
   protected loadComplete() {
@@ -543,6 +545,14 @@ export class BeatmapCarousel extends CompositeDrawable {
         loadThumbnailSmall: () => beatmap.loadThumbnailSmall(),
       }, this.mapsets.length === 0);
     }
+  }
+
+  removeBeatmap(beatmap: StableBeatmapInfo) {
+    const mapset = this.mapsets.find(it => it.mapset.id === beatmap.setId);
+    if (!mapset)
+      return;
+
+    mapset.removeBeatmap(beatmap);
   }
 
   #scrollDelta = 0;

@@ -39,4 +39,6 @@ export interface BeatmapItemInfo {
   load(resources: IResourcesProvider): Promise<LoadedBeatmap>;
 
   mapset: MapsetInfo | null;
+
+  readonly needsDiffcalc?: boolean;
 }

@@ -1,7 +1,24 @@
-import type { HoverEvent, HoverLostEvent } from 'osucad-framework';
-import { Anchor, Axes, Container, dependencyLoader, EasingFunction, FillFlowContainer, lerp, resolved, RoundedBox, ScreenStack, Vec2 } from 'osucad-framework';
+import type {
+  Drawable,
+  HoverEvent,
+  HoverLostEvent,
+} from 'osucad-framework';
+import {
+  Anchor,
+  Axes,
+  Container,
+  dependencyLoader,
+  EasingFunction,
+  FillFlowContainer,
+  lerp,
+  resolved,
+  RoundedBox,
+  ScreenStack,
+  Vec2,
+} from 'osucad-framework';
 import { Color } from 'pixi.js';
 import { FastRoundedBox } from '../drawables/FastRoundedBox';
+import { LoadingSpinner } from '../drawables/LoadingSpinner';
 import { EditorLoader } from '../editor/EditorLoader';
 import { OsucadSpriteText } from '../OsucadSpriteText';
 import { UISamples } from '../UISamples';
@@ -72,12 +89,28 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
                   cornerRadius: 4,
                   alpha: 0.9,
                 }),
-                new Container({
+                new FillFlowContainer({
                   autoSizeAxes: Axes.Both,
                   padding: { horizontal: 4, vertical: 1 },
-                  child: this.#starRatingText = new OsucadSpriteText({
-                    text: this.carouselBeatmap.beatmapInfo.starRating.toFixed(2),
-                  }),
+                  spacing: new Vec2(4),
+                  children: [
+                    this.#diffCalcSpinner = new Container({
+                      autoSizeAxes: Axes.Both,
+                      padding: 2,
+                      anchor: Anchor.CenterLeft,
+                      origin: Anchor.CenterLeft,
+                      alpha: this.carouselBeatmap.beatmapInfo.needsDiffcalc ? 1 : 0,
+                      child: new LoadingSpinner({
+                        size: 12,
+                        color: 0xFFFFFF,
+                      }),
+                    }),
+                    this.#starRatingText = new OsucadSpriteText({
+                      text: this.carouselBeatmap.beatmapInfo.starRating.toFixed(2),
+                      anchor: Anchor.CenterLeft,
+                      origin: Anchor.CenterLeft,
+                    }),
+                  ],
                 }),
               ],
             }),
@@ -102,14 +135,17 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
 
   #starRatingText!: OsucadSpriteText;
 
+  #diffCalcSpinner!: Drawable;
+
   #starRatingBackground!: FastRoundedBox;
 
   onInvalidated() {
-    const { difficultyName, starRating } = this.carouselBeatmap.beatmapInfo;
+    const { difficultyName, starRating, needsDiffcalc } = this.carouselBeatmap.beatmapInfo;
 
     this.#difficultyName.text = difficultyName;
     this.#starRatingText.text = starRating.toFixed(2);
     this.#starRatingBackground.color = this.getDifficultyColor();
+    this.#diffCalcSpinner.alpha = needsDiffcalc ? 1 : 0;
 
     if (this.item.selected.value)
       this.selected();

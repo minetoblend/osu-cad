@@ -1,3 +1,4 @@
+import type { BeatmapItemInfo } from './BeatmapItemInfo';
 import type { MapsetInfo } from './MapsetInfo';
 import { CarouselBeatmap } from './CarouselBeatmap';
 import { CarouselItem } from './CarouselItem';
@@ -52,6 +53,15 @@ export class CarouselMapset extends CarouselItem {
       }
 
       this.selected.value = true;
+    }
+  }
+
+  removeBeatmap(beatmap: BeatmapItemInfo) {
+    const index = this.beatmaps.findIndex(it => it.beatmapInfo === beatmap);
+    if (index >= 0) {
+      this.beatmaps.splice(index, 1);
+
+      this.invalidated.emit();
     }
   }
 }
