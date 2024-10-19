@@ -8,7 +8,6 @@ import type {
 } from '../../input';
 import type { MouseButtonEventManager } from '../../input/MouseButtonEventManager';
 import type { Drawable } from '../drawables';
-import { Container } from '.';
 import { Action } from '../../bindables';
 import { Cached } from '../../caching/Cached';
 import { MouseButton } from '../../input';
@@ -20,6 +19,7 @@ import { clamp } from '../../utils/clamp';
 import { debugAssert } from '../../utils/debugAssert';
 import { Anchor, Axes, Direction, Invalidation, LayoutComputed } from '../drawables';
 import { EasingFunction } from '../transforms/EasingFunction';
+import { Container } from './Container';
 
 const distance_decay_clamping = 0.012;
 
