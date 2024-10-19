@@ -1,11 +1,16 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { IBeatmapEntity } from '../../types/IBeatmapManager';
 
 @Entity('beatmap')
 @Unique(['folderName', 'osuFileName'])
 export class BeatmapEntity implements IBeatmapEntity {
+  static METADATA_VERSION = 1;
+
   @PrimaryGeneratedColumn('uuid')
   id!: string;
+
+  @Column('int', { default: 0 })
+  metadataVersion!: number;
 
   @Column('boolean', { default: false })
   unparseable!: boolean;
@@ -68,5 +73,15 @@ export class BeatmapEntity implements IBeatmapEntity {
   lastModifiedDate!: number;
 
   @Column('boolean', { default: false })
-  diffCalcInProgress!: boolean;
+  diffcalcInProgress!: boolean;
+
+  @BeforeInsert()
+  beforeInsert() {
+    this.metadataVersion = BeatmapEntity.METADATA_VERSION;
+  }
+
+  @BeforeUpdate()
+  beforeUpdate() {
+    this.metadataVersion = BeatmapEntity.METADATA_VERSION;
+  }
 }

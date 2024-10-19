@@ -33,36 +33,38 @@ async function run() {
       await repository.update({ id: entity.id }, {
         starRating,
         needsStarRatingUpdate: false,
-        diffCalcInProgress: false,
+        diffcalcInProgress: false,
       });
 
-      port!.postMessage(['updated', entity.id]);
+      port!.postMessage(['updated', [entity.id]]);
     });
 }
 
 async function* getEntitiesToProcess(repository: Repository<BeatmapEntity>) {
   while (true) {
-    const entities = await repository.manager.transaction(async tx => {
-      const entities = await repository.find({
-        where: {
-          needsStarRatingUpdate: true,
-          unparseable: false,
-        },
-        take: 20,
-      });
 
-      await repository.update(entities.map(it => it.id), {
-        diffCalcInProgress: true,
-      });
+    const entities = await repository.find({
+      where: {
+        needsStarRatingUpdate: true,
+        unparseable: false,
+        diffcalcInProgress: false,
+      },
+      take: 20,
+    });
 
-      return entities;
+    if (entities.length === 0) {
+      await new Promise(resolve => setTimeout(resolve, 2500));
+      continue;
+    }
+
+    await repository.update(entities.map(it => it.id), {
+      diffcalcInProgress: true,
     });
 
 
     yield* entities;
 
-    if (entities.length === 0)
-      await new Promise(resolve => setTimeout(resolve, 2500));
+
   }
 }
 

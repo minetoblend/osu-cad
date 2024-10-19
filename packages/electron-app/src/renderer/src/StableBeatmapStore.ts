@@ -26,58 +26,63 @@ export class StableBeatmapStore extends BeatmapStore {
     const entities = await this.#beatmapManager.getAll();
 
     this.#beatmapManager.onUpdated((entities) => {
-      for(const entity of entities)
-        this.#onBeatmapUpdated(entity)
+      console.log(entities);
+      for (const entity of entities)
+        this.#onBeatmapUpdated(entity);
     });
 
     this.#beatmapManager.onDeleted((ids) => {
-      console.log('deleted', ids);
+      for (const id of ids) {
+        const beatmap = this.beatmaps.value.find(it => it.id === id);
+        if (beatmap)
+          this.removed.emit(beatmap);
+      }
     });
 
     console.log(`Found ${entities.length} beatmaps`);
 
-    window.electron.ipcRenderer.on('beatmaps:importFinished', () => this.isImporting.value = false)
+    window.electron.ipcRenderer.on('beatmaps:importFinished', () => this.isImporting.value = false);
 
-    this.isImporting.value = await window.electron.ipcRenderer.invoke('beatmaps:isImporting')
+    this.isImporting.value = await window.electron.ipcRenderer.invoke('beatmaps:isImporting');
 
-    console.log('is importing', this.isImporting.value)
+    console.log('is importing', this.isImporting.value);
 
     const beatmaps = entities.map(osuBeatmap => new StableBeatmapInfo(osuBeatmap));
     for (const beatmap of beatmaps)
-      this.#beatmapLookup.set(beatmap.id, beatmap)
+      this.#beatmapLookup.set(beatmap.id, beatmap);
 
-    this.beatmaps.value = beatmaps
+    this.beatmaps.value = beatmaps;
   }
 
-  #beatmapLookup = new Map<string, StableBeatmapInfo>()
+  #beatmapLookup = new Map<string, StableBeatmapInfo>();
 
   #diffCalcTimeout?: any;
 
   #onBeatmapUpdated(entity: IBeatmapEntity) {
-    let beatmap = this.#beatmapLookup.get(entity.id)
+    let beatmap = this.#beatmapLookup.get(entity.id);
     if (!beatmap) {
-      beatmap = new StableBeatmapInfo(entity)
-      this.#beatmapLookup.set(beatmap.id, beatmap)
-      this.beatmaps.value.push(beatmap)
+      beatmap = new StableBeatmapInfo(entity);
+      this.#beatmapLookup.set(beatmap.id, beatmap);
+      this.beatmaps.value.push(beatmap);
 
-      this.added.emit(beatmap)
+      this.added.emit(beatmap);
     } else {
       if (!almostEquals(entity.starRating, beatmap.starRating)) {
         this.diffcalcActive.value = true;
         if (this.#diffCalcTimeout)
-          clearTimeout(this.#diffCalcTimeout)
+          clearTimeout(this.#diffCalcTimeout);
 
         this.#diffCalcTimeout = setTimeout(() => {
-          this.diffcalcActive.value = false
-        }, 10_000)
+          this.diffcalcActive.value = false;
+        }, 10_000);
       }
 
-      beatmap.updateFromEntity(entity)
+      beatmap.updateFromEntity(entity);
     }
   }
 
   save(id: string, beatmap: IBeatmap): Promise<boolean> {
-    return this.#beatmapManager.saveBeatmap(id, new StableBeatmapEncoder().encode(beatmap))
+    return this.#beatmapManager.saveBeatmap(id, new StableBeatmapEncoder().encode(beatmap));
   }
 
 }
@@ -86,7 +91,7 @@ export class StableBeatmapInfo implements BeatmapItemInfo {
   constructor(entity: IBeatmapEntity) {
     this.id = entity.id;
 
-    this.updateFromEntity(entity)
+    this.updateFromEntity(entity);
   }
 
   updateFromEntity(entity: IBeatmapEntity) {
@@ -96,6 +101,7 @@ export class StableBeatmapInfo implements BeatmapItemInfo {
     this.title = entity.title;
     this.difficultyName = entity.difficultyName;
     this.starRating = entity.starRating;
+    this.needsDiffcalc = entity.needsStarRatingUpdate;
     this.folderName = entity.folderName;
     this.osuFileName = entity.osuFileName;
     this.audioUrl = this.#relativePath(entity.audioFileName);
@@ -103,10 +109,10 @@ export class StableBeatmapInfo implements BeatmapItemInfo {
 
     this.previewPoint = entity.previewTime;
 
-    this.invalidated.emit()
+    this.invalidated.emit();
   }
 
-  readonly invalidated = new Action()
+  readonly invalidated = new Action();
 
   id!: string;
 
@@ -129,6 +135,8 @@ export class StableBeatmapInfo implements BeatmapItemInfo {
   lastEdited!: Date | null;
 
   previewPoint!: number;
+
+  needsDiffcalc!: boolean;
 
   #backgroundFileName!: string | null;
 
