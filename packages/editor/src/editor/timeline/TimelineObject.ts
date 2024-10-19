@@ -17,6 +17,7 @@ import { Editor } from '../Editor';
 import { EditorClock } from '../EditorClock';
 import { EditorSelection } from '../screens/compose/EditorSelection';
 import { ThemeColors } from '../ThemeColors';
+import { ComposeScreenTimeline } from './ComposeScreenTimeline';
 import { Timeline } from './Timeline';
 import { TimelineElement } from './TimelineElement';
 
@@ -34,7 +35,7 @@ export abstract class TimelineObject<T extends OsuHitObject = OsuHitObject> exte
   @resolved(ThemeColors)
   protected theme!: ThemeColors;
 
-  protected timeline!: Timeline;
+  protected timeline!: ComposeScreenTimeline;
 
   @resolved(Beatmap)
   protected beatmap!: Beatmap;
@@ -69,12 +70,13 @@ export abstract class TimelineObject<T extends OsuHitObject = OsuHitObject> exte
   protected loadComplete() {
     super.loadComplete();
 
-    this.timeline = this.findClosestParentOfType(Timeline)!;
+    this.timeline = this.findClosestParentOfType(ComposeScreenTimeline)!;
     if (!this.timeline) {
       throw new Error('RhythmTimelineObject must be a child of RhythmTimeline');
     }
 
     this.timeline.zoomBindable.valueChanged.addListener(this.invalidatePosition, this);
+    this.timeline.drawSizeInvalidated.addListener(this.invalidatePosition, this);
 
     this.setup();
 
@@ -234,6 +236,7 @@ export abstract class TimelineObject<T extends OsuHitObject = OsuHitObject> exte
 
   dispose(isDisposing: boolean = true) {
     this.timeline.zoomBindable.valueChanged.removeListener(this.updatePosition);
+    this.timeline.drawSizeInvalidated.removeListener(this.invalidatePosition, this);
 
     super.dispose(isDisposing);
   }

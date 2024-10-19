@@ -2,6 +2,7 @@ import type {
   DragEvent,
   DragStartEvent,
   IKeyBindingHandler,
+  InvalidationSource,
   KeyBindingPressEvent,
   MouseDownEvent,
 } from 'osucad-framework';
@@ -10,6 +11,7 @@ import type { ControlPointGroup } from '../../beatmap/timing/ControlPointGroup';
 import type { LifetimeEntry } from '../../pooling/LifetimeEntry';
 import type { TimelineObject } from './TimelineObject';
 import {
+  Action,
   almostEquals,
   Anchor,
   Axes,
@@ -19,6 +21,7 @@ import {
   Container,
   dependencyLoader,
   EasingFunction,
+  Invalidation,
   MouseButton,
   resolved,
 } from 'osucad-framework';
@@ -290,6 +293,18 @@ export class ComposeScreenTimeline extends Timeline implements IKeyBindingHandle
   });
 
   readonly isKeyBindingHandler = true;
+
+  override onInvalidate(invalidation: Invalidation, source: InvalidationSource): boolean {
+    if (invalidation && Invalidation.DrawSize) {
+      this.drawSizeInvalidated.emit();
+
+      return super.onInvalidate(invalidation, source) || true;
+    }
+
+    return super.onInvalidate(invalidation, source);
+  }
+
+  drawSizeInvalidated = new Action();
 
   canHandleKeyBinding(action: EditorAction): boolean {
     return action instanceof EditorAction;

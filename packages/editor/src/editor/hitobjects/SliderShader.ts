@@ -64,9 +64,9 @@ export class SliderShader extends Shader implements TextureShader {
               vec4 lighten(vec4 color, float amount) {
                 amount *= 0.5;
                 return vec4(
-                  min(1.0, color.r * (1.0+ 0.5 * amount) + amount),
-                  min(1.0, color.g * (1.0+ 0.5 * amount) + amount),
-                  min(1.0, color.b * (1.0+ 0.5 * amount) + amount),
+                  min(1.0, color.r * (1.0 + 0.5 * amount) + amount),
+                  min(1.0, color.g * (1.0 + 0.5 * amount) + amount),
+                  min(1.0, color.b * (1.0 + 0.5 * amount) + amount),
                   color.a
                 );
               }
@@ -99,7 +99,7 @@ export class SliderShader extends Shader implements TextureShader {
               vec4 bodyColor = mix(innerColor, outerColor, gradientColor.b);
               color = mix(color, bodyColor, gradientColor.g);
 
-              color *= uAlpha;
+              color *= 0.7 * uAlpha;
 
               outColor = color;
             `,
@@ -139,9 +139,7 @@ export class SliderShader extends Shader implements TextureShader {
   }
 
   set comboColor(value: Color) {
-    this.resources.sliderUniforms.uniforms.uComboColor = new Float32Array(
-      value.toArray(),
-    );
+    this.resources.sliderUniforms.uniforms.uComboColor = new Float32Array(value.toArray());
   }
 
   get borderColor(): number {

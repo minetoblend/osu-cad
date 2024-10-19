@@ -215,9 +215,7 @@ export class DrawableSliderBody extends Drawable {
   }
 
   #updateColor() {
-    const color = this.sliderTrackOverride.value ?? this.accentColor.value;
-
-    this.shader.comboColor = new Color(color).setAlpha(0.65);
+    this.shader.comboColor = this.sliderTrackOverride.value ?? this.accentColor.value;
   }
 
   protected loadComplete() {

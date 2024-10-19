@@ -1,3 +1,4 @@
+import type { Properties } from '@pixi/devtools';
 import type { DrawableOptions, GameHost } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
 import { clamp, Drawable, GAME_HOST, Invalidation, LayoutMember, PIXIContainer, resolved } from 'osucad-framework';
@@ -112,5 +113,18 @@ export class FastRoundedBox extends Drawable {
       this.#sprite.width = this.drawSize.x;
       this.#sprite.height = this.drawSize.y;
     }
+  }
+
+  override get devToolProps(): Properties[] {
+    return [
+      ...super.devToolProps,
+      {
+        prop: 'cornerRadius',
+        entry: {
+          type: 'number',
+          section: 'FastRoundedBox',
+        },
+      },
+    ];
   }
 }

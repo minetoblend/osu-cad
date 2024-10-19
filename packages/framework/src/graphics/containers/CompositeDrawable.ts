@@ -2,6 +2,7 @@ import type { Scheduler } from '../../scheduling/Scheduler';
 import type { IComparer } from '../../utils/IComparer';
 import type { AbsoluteSequenceSender } from '../transforms/AbsoluteSequenceSender';
 import { Action } from '../../bindables/Action';
+import { compositeDrawableProps } from '../../devtools/compositeDrawableProps';
 import { DependencyContainer } from '../../di';
 import { type IVec2, Vec2 } from '../../math/Vec2';
 import { PIXIContainer, PIXIGraphics } from '../../pixi';
@@ -1022,9 +1023,24 @@ export class CompositeDrawable extends Drawable {
 
     return result;
   }
+
+  override get devToolProps() {
+    return compositeDrawableProps;
+  }
+
+  override getDevtoolValue(prop: string): any {
+    switch (prop) {
+      case 'internalChildrenCount':
+        return this.internalChildren.length;
+      case 'aliveInternalChildrenCount':
+        return this.aliveInternalChildren.length;
+    }
+
+    return super.getDevtoolValue(prop);
+  }
 }
 
-const enum ChildLifeStateChange {
+enum ChildLifeStateChange {
   None = 0,
   MadeAlive = 1 << 0,
   MadeDead = 1 << 1,

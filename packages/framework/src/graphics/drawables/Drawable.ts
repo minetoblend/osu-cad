@@ -24,12 +24,14 @@ import type { BLEND_MODES, ColorSource, Filter, PIXIContainer } from '../../pixi
 import type { IFrameBasedClock } from '../../timing/IFrameBasedClock';
 import type { IDisposable } from '../../types/IDisposable';
 import type { List } from '../../utils/List';
+import type { Container as DrawableContainer } from '../containers';
 import type { CompositeDrawable } from '../containers/CompositeDrawable';
 import type { TypedTransform } from '../transforms/Transform';
 import { Matrix } from 'pixi.js';
 import { Bindable } from '../../bindables';
 import { Action } from '../../bindables/Action';
 import { popDrawableScope, pushDrawableScope } from '../../bindables/lifetimeScope';
+import { drawableProps, propertyToValue, valueToProperty } from '../../devtools/drawableProps';
 import { getAsyncDependencyLoaders, getDependencyLoaders, getInjections, getProviders } from '../../di/decorators';
 import { DependencyContainer, type ReadonlyDependencyContainer } from '../../di/DependencyContainer';
 import { HandleInputCache } from '../../input/HandleInputCache';
@@ -95,7 +97,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
     this.#transformBacking.validateParent = false;
 
-    // this.label = this.constructor.name;
+    this.label = this.constructor.name;
   }
 
   with(options: DrawableOptions): this {
@@ -130,6 +132,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   get drawNode() {
     this.#drawNode ??= this.createDrawNode();
     this.#drawNode.label = this.label ?? '';
+    (this.#drawNode as any).__drawable__ = this;
     return this.#drawNode;
   }
 
@@ -1277,6 +1280,9 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
     this.invalidated.emit([this, invalidation]);
 
+    if (anyInvalidated)
+      this.#invalidationCount++;
+
     return anyInvalidated;
   }
 
@@ -1645,6 +1651,52 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   }
 
   // #endregion
+
+  get devToolProps() {
+    return drawableProps;
+  }
+
+  getDevtoolValue(prop: string): any {
+    let value = this[prop as keyof Drawable];
+
+    if (prop === 'type')
+      value = this.constructor.name;
+
+    if (propertyToValue[prop])
+      value = propertyToValue[prop](value);
+
+    return value;
+  }
+
+  setDevtoolValue(prop: string, value: any) {
+    if (prop === 'depth' && this.parent) {
+      (this.parent as DrawableContainer).changeChildDepth(this, value);
+      return;
+    }
+
+    if (prop in valueToProperty)
+      value = valueToProperty[prop](value);
+
+    ;(this as any)[prop] = value;
+  }
+
+  treeDepth = 1;
+
+  #invalidationCount = 0;
+
+  trackDevtoolsValue(state: Record<string, number>) {
+    state.drawables = (state.drawables ?? 0) + 1;
+
+    if (this.parent)
+      this.treeDepth = this.parent.treeDepth + 1;
+    else
+      this.treeDepth = 1;
+
+    state.treeDepth = Math.max(this.treeDepth, state.treeDepth ?? 0);
+
+    state.invalidations = (state.invalidations ?? 0) + this.#invalidationCount;
+    this.#invalidationCount = 0;
+  }
 }
 
 export function loadDrawable(drawable: Drawable, clock: IFrameBasedClock, dependencies: ReadonlyDependencyContainer) {

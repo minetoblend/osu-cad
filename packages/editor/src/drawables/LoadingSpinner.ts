@@ -6,7 +6,10 @@ import { Graphics } from 'pixi.js';
 export class LoadingSpinner extends Drawable {
   constructor(options: DrawableOptions = {}) {
     super();
-    this.with(options);
+    this.with({
+      color: 0x52CCA3,
+      ...options,
+    });
   }
 
   createDrawNode(): PIXIContainer {
@@ -43,7 +46,7 @@ export class LoadingSpinner extends Drawable {
     g.clear()
       .arc(drawSize.x / 2, this.drawSize.y / 2, radius, startAngle, endAngle)
       .stroke({
-        color: 0x52CCA3,
+        color: 0xFFFFFF,
         width: radius * 0.25,
         cap: 'round',
       });

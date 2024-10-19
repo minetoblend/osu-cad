@@ -99,8 +99,7 @@ export class PreferencesContainer
       this.#preferences.moveToX(0, 400, EasingFunction.OutQuart);
 
       this.#content.moveToX(50, 400, EasingFunction.OutQuart);
-      this.#content.scaleTo(0.9, 400, EasingFunction.OutQuart);
-      // this.#content.moveToY(50, 400, EasingFunction.OutQuart);
+      this.#content.scaleTo(0.95, 400, EasingFunction.OutQuart);
 
       this.#preferences.show();
     }

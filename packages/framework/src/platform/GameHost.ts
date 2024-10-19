@@ -3,7 +3,9 @@ import type { Container } from '../graphics/containers/Container';
 import type { InputHandler } from '../input';
 import type { KeyBinding } from '../input/bindings/KeyBinding';
 import type { IFrameBasedClock } from '../timing/IFrameBasedClock';
+import {} from '@pixi/devtools';
 import { AudioManager } from '../audio/AudioManager';
+import { setupDevtools } from '../devtools/setupDevtools';
 import { DependencyContainer } from '../di/DependencyContainer';
 import { FrameworkEnvironment } from '../FrameworkEnvironment';
 import { loadDrawable } from '../graphics/drawables/Drawable';
@@ -125,10 +127,7 @@ export abstract class GameHost {
 
     this.executionState = ExecutionState.Running;
 
-    // @ts-expect-error pixi devtools types not available
-    globalThis.__PIXI_STAGE__ = this.root!.drawNode;
-    // @ts-expect-error pixi devtools types not available
-    globalThis.__PIXI_RENDERER__ = this.renderer.internalRenderer;
+    setupDevtools(this.root!, this.renderer.internalRenderer);
 
     while (this.executionState === ExecutionState.Running) {
       const startTime = performance.now();

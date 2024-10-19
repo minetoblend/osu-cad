@@ -48,3 +48,10 @@ export function anchorToString(anchor: Anchor) {
       throw new Error(`Unknown anchor type: ${anchor}`);
   }
 }
+
+export function parseAnchor(anchor: string) {
+  if (anchor in Anchor)
+    return Anchor[anchor as keyof typeof Anchor];
+
+  throw new Error(`Unknown anchor ${anchor}`);
+}

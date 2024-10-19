@@ -19,3 +19,10 @@ export function axesToString(axes: Axes) {
       throw new Error(`Unknown axes type: ${axes}`);
   }
 }
+
+export function parseAxes(axes: string) {
+  if (axes in Axes)
+    return Axes[axes as keyof typeof Axes] as Axes;
+
+  throw new Error(`Unknown axes ${axes}`);
+}
