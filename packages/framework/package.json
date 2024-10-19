@@ -1,0 +1,5 @@
+{
+	"dependencies": {
+		"@pixi/devtools": "^2.0.1"
+	}
+}
