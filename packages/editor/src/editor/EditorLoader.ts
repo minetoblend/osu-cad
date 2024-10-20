@@ -22,8 +22,8 @@ export class EditorLoader extends OsucadScreen {
   @resolved(GAME_HOST)
   gameHost!: GameHost;
 
-  @resolved(GlobalSongPlayback)
-  globalSongPlayback!: GlobalSongPlayback;
+  @resolved(GlobalSongPlayback, true)
+  globalSongPlayback?: GlobalSongPlayback;
 
   @resolved(EditorMixer)
   mixer!: EditorMixer;
@@ -123,7 +123,7 @@ export class EditorLoader extends OsucadScreen {
   }
 
   disableLowpassFilter(pause = true) {
-    if (pause) {
+    if (pause && this.globalSongPlayback) {
       this.globalSongPlayback.pause(true).then(() => {
         if (this.#lowPassFilter) {
           this.mixer.music.removeFilter(this.#lowPassFilter);

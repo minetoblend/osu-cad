@@ -26,14 +26,14 @@ export abstract class LoadedBeatmap extends BeatmapTransformer implements IBeatm
 
   protected async loadBackground() {
     if (this.settings.backgroundFilename) {
-      const data = this.getResource(this.settings.backgroundFilename);
+      const data = await this.resources.getAsync(this.settings.backgroundFilename);
       if (data)
         this.backgroundTexture.value = await loadTexture(data);
     }
   }
 
   protected async loadSong(audioManager: AudioManager, channel: AudioChannel) {
-    const data = this.getResource(this.settings.audioFileName);
+    const data = await this.resources.getAsync(this.settings.audioFileName);
 
     if (!data)
       throw new Error(`Audio file not found: "${this.settings.audioFileName}"`);

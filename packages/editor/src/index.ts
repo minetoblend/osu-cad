@@ -8,4 +8,5 @@ export * from './editor/Editor';
 export * from './environment';
 export { IResourcesProvider } from './io/IResourcesProvider';
 export * from './OsucadGame';
+export { OsucadGameBase } from './OsucadGameBase';
 export * from 'osucad-framework';

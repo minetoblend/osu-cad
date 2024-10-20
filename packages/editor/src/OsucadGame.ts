@@ -77,8 +77,6 @@ export class OsucadGame extends Game implements IResourcesProvider {
 
     this.dependencies.provide(new ThemeColors());
 
-    this.add(this.#innerContainer);
-
     const mixer = new EditorMixer(this.audioManager);
     this.dependencies.provide(mixer);
     super.add(mixer);
@@ -106,6 +104,8 @@ export class OsucadGame extends Game implements IResourcesProvider {
 
     const cursorContainer = new MainCursorContainer();
     this.dependencies.provide(cursorContainer);
+
+    this.add(this.#innerContainer);
 
     this.#innerContainer.addAll(
       new FpsOverlay({
