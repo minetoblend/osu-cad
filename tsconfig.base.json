@@ -22,6 +22,7 @@
     "paths": {
       "@osucad/common": ["packages/common/src/index.ts"],
       "@osucad/editor": ["packages/editor/src/index.ts"],
+      "@osucad/editor/*": ["packages/editor/src/*"],
       "osucad-framework": ["packages/framework/src/index.ts"]
     }
   },
