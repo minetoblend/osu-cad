@@ -1,6 +1,6 @@
 import type { Graphics } from 'pixi.js';
+import { HitObjectList } from '@osucad/common';
 import { Anchor, Axes, Bindable, dependencyLoader, resolved } from 'osucad-framework';
-import { HitObjectList } from '../../../beatmap/hitObjects/HitObjectList';
 import { GraphicsDrawable } from '../../../drawables/GraphicsDrawable';
 import { EditorDifficultyManager } from '../../difficulty/EditorDifficultyManager';
 import { EditorClock } from '../../EditorClock';

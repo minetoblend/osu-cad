@@ -1,13 +1,10 @@
+import type { OsuHitObject } from '@osucad/common';
 import type { DependencyContainer, KeyDownEvent, Vec2 } from 'osucad-framework';
-import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
 import type { HitSoundState } from '../../../../beatmap/hitSounds/BindableHitSound';
+import { CreateHitObjectCommand, DeleteHitObjectCommand, HitCircle, OsuPlayfield } from '@osucad/common';
 import { almostEquals, dependencyLoader, Key, resolved } from 'osucad-framework';
-import { HitCircle } from '../../../../beatmap/hitObjects/HitCircle';
-import { CreateHitObjectCommand } from '../../../commands/CreateHitObjectCommand';
-import { DeleteHitObjectCommand } from '../../../commands/DeleteHitObjectCommand';
 import { Editor } from '../../../Editor';
 import { EditorDependencies } from '../../../EditorDependencies';
-import { OsuPlayfield } from '../../../hitobjects/OsuPlayfield';
 import { SnapVisualizer } from '../snapping/SnapResult';
 import { DrawableComposeTool } from './DrawableComposeTool';
 

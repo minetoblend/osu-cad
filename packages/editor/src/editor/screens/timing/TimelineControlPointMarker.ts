@@ -1,22 +1,7 @@
-import type {
-  ClickEvent,
-  DragEvent,
-  DragStartEvent,
-  HoverEvent,
-
-  HoverLostEvent,
-  MouseDownEvent,
-  MouseUpEvent,
-} from 'osucad-framework';
-import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup';
-import {
-  dependencyLoader,
-  DrawableSprite,
-  EasingFunction,
-  MouseButton,
-  resolved,
-} from 'osucad-framework';
-import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
+import type { ControlPointGroup } from '@osucad/common';
+import type { ClickEvent, DragEvent, DragStartEvent, HoverEvent, HoverLostEvent, MouseDownEvent, MouseUpEvent } from 'osucad-framework';
+import { ControlPointInfo } from '@osucad/common';
+import { dependencyLoader, DrawableSprite, EasingFunction, MouseButton, resolved } from 'osucad-framework';
 import { OsucadIcons } from '../../../OsucadIcons';
 import { EditorClock } from '../../EditorClock';
 import { ComposeScreenTimeline } from '../../timeline/ComposeScreenTimeline';

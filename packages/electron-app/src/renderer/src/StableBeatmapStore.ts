@@ -1,17 +1,11 @@
-import {
-  Action, almostEquals,
-  BeatmapStore,
-  IBeatmap,
-  IResourcesProvider,
-  LoadedBeatmap,
-  loadTexture,
-  StableBeatmapEncoder,
-} from '@osucad/editor';
+import { BeatmapStore, LoadedBeatmap } from '@osucad/editor';
 import { BeatmapItemInfo } from 'packages/editor/src/beatmapSelect/BeatmapItemInfo';
 import { StableLoadedBeatmap } from './StableLoadedBeatmap';
-import { MapsetInfo } from '../../../../editor/src/beatmapSelect/MapsetInfo.ts';
+import { MapsetInfo } from '@osucad/editor/beatmapSelect/MapsetInfo';
 import { createBeatmapManagerProxy } from './BeatmapManagerProxy';
 import { IBeatmapEntity } from '../../types/IBeatmapManager';
+import { almostEquals, Action, loadTexture } from 'osucad-framework';
+import { IBeatmap, IResourcesProvider, StableBeatmapEncoder } from '@osucad/common';
 
 export class StableBeatmapStore extends BeatmapStore {
 

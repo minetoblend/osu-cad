@@ -1,12 +1,7 @@
+import type { OsuHitObject, SerializedOsuHitObject } from '@osucad/common';
 import type { IKeyBindingHandler, KeyBindingPressEvent } from 'osucad-framework';
-import type { OsuHitObject } from '../beatmap/hitObjects/OsuHitObject';
-import type { SerializedOsuHitObject } from '../beatmap/serialization/HitObjects';
-import { hitObjectId } from '@osucad/common';
+import { CreateHitObjectCommand, DeleteHitObjectCommand, deserializeHitObject, HitObjectList, objectId, serializeHitObject } from '@osucad/common';
 import { CompositeDrawable, PlatformAction, resolved } from 'osucad-framework';
-import { HitObjectList } from '../beatmap/hitObjects/HitObjectList';
-import { deserializeHitObject, serializeHitObject } from '../beatmap/serialization/HitObjects';
-import { CreateHitObjectCommand } from './commands/CreateHitObjectCommand';
-import { DeleteHitObjectCommand } from './commands/DeleteHitObjectCommand';
 import { CommandManager } from './context/CommandManager';
 import { EditorClock } from './EditorClock';
 import { EditorSelection } from './screens/compose/EditorSelection';
@@ -102,7 +97,7 @@ export class HitObjectClipboard extends CompositeDrawable implements IKeyBinding
           const created: OsuHitObject[] = [];
 
           for (const h of hitObjects) {
-            h.id = hitObjectId();
+            h.id = objectId();
             const offset = h.startTime - startTime;
             h.startTime = this.editorClock.currentTime + offset;
 

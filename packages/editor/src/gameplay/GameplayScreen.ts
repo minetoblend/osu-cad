@@ -6,22 +6,11 @@ import type {
 } from 'osucad-framework';
 import type { LoadedBeatmap } from '../beatmap/LoadedBeatmap';
 import type { BeatmapItemInfo } from '../beatmapSelect/BeatmapItemInfo';
-import {
-  Anchor,
-  asyncDependencyLoader,
-  Axes,
-  Container,
-  DrawSizePreservingFillContainer,
-  Key,
-  resolved,
-} from 'osucad-framework';
+import { Beatmap, IResourcesProvider, OsuPlayfield, PlayfieldClock } from '@osucad/common';
+import { Anchor, asyncDependencyLoader, Axes, Container, DrawSizePreservingFillContainer, Key, resolved } from 'osucad-framework';
 import { BackgroundScreen } from '../BackgroundScreen';
-import { Beatmap } from '../beatmap/Beatmap';
 import { BeatmapComboProcessor } from '../beatmap/beatmapProcessors/BeatmapComboProcessor';
 import { BeatmapStackingProcessor } from '../beatmap/beatmapProcessors/BeatmapStackingProcessor';
-import { OsuPlayfield } from '../editor/hitobjects/OsuPlayfield';
-import { PlayfieldClock } from '../editor/hitobjects/PlayfieldClock';
-import { IResourcesProvider } from '../io/IResourcesProvider';
 import { MainCursorContainer } from '../MainCursorContainer';
 import { OsucadScreen } from '../OsucadScreen';
 import { AccuracyOverlay } from './AccuracyOverlay';

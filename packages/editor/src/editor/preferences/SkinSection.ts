@@ -1,10 +1,9 @@
 import type { Drawable } from 'osucad-framework';
 import type { LoadableSkin } from '../../environment';
+import { OsucadConfigManager, OsucadSettings } from '@osucad/common';
 import { Axes, Bindable, dependencyLoader, FillDirection, FillFlowContainer, resolved } from 'osucad-framework';
-import { OsucadConfigManager } from '../../config/OsucadConfigManager';
-import { OsucadSettings } from '../../config/OsucadSettings';
 import { SkinStore } from '../../environment';
-import { SkinManager } from '../../skinning/SkinManager';
+import { OsucadSkinManager } from '../../skinning/OsucadSkinManager';
 import { DropdownItem, DropdownSelect } from '../../userInterface/DropdownSelect';
 import { ThemeColors } from '../ThemeColors';
 import { PreferencesPanel } from './PreferencesPanel';
@@ -87,6 +86,6 @@ class SkinSelect extends FillFlowContainer {
 
   #dropdown!: DropdownSelect<LoadableSkin | null>;
 
-  @resolved(SkinManager)
-  skinManager!: SkinManager;
+  @resolved(OsucadSkinManager)
+  skinManager!: OsucadSkinManager;
 }

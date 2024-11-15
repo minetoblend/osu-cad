@@ -1,12 +1,12 @@
-import { DependencyContainer, provide } from '../../../framework/src';
-import { dependencyLoader, Game } from '../../../framework/src';
+import type { DependencyContainer } from 'osucad-framework';
+import { OsucadConfigManager } from '@osucad/common';
+import { dependencyLoader, Game, provide } from 'osucad-framework';
 import { Fit, ScalingContainer } from '../editor/ScalingContainer';
 import { ThemeColors } from '../editor/ThemeColors';
 import { MainCursorContainer } from '../MainCursorContainer';
 import { OsucadIcons } from '../OsucadIcons';
 import { UIFonts } from '../UIFonts';
 import { PlaygroundExplorer } from './PlaygroundExplorer';
-import { OsucadConfigManager } from '../config/OsucadConfigManager';
 
 @provide(Game)
 export class PlaygroundGame extends Game {
@@ -18,11 +18,11 @@ export class PlaygroundGame extends Game {
   async load(dependencies: DependencyContainer) {
     dependencies.provide(new ThemeColors());
 
-    const config = new OsucadConfigManager()
+    const config = new OsucadConfigManager();
 
-    config.load()
+    config.load();
 
-    dependencies.provide(OsucadConfigManager, config)
+    dependencies.provide(OsucadConfigManager, config);
 
     await Promise.all([
       UIFonts.load(),

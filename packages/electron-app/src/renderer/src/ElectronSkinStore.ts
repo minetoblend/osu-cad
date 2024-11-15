@@ -1,8 +1,6 @@
 import { LoadableSkin, SkinStore } from '@osucad/editor';
-import { IResourcesProvider } from '../../../../editor/src/io/IResourcesProvider';
-import { ISkin } from '../../../../editor/src/skinning/ISkin';
-import { StableSkin } from '../../../../editor/src/skinning/stable/StableSkin';
-import { LazyStableResourceStore } from './LazyStableResourceStore.ts';
+import { LazyStableResourceStore } from './LazyStableResourceStore';
+import { IResourcesProvider, ISkin, StableSkin } from '@osucad/common';
 
 export class ElectronSkinStore extends SkinStore {
   async load() {

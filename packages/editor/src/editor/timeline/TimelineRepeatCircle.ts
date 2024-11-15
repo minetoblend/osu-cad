@@ -1,4 +1,5 @@
-import type { Slider } from '../../beatmap/hitObjects/Slider';
+import type { Slider } from '@osucad/common';
+import { SliderSelectionType } from '@osucad/common';
 import {
   Anchor,
   Axes,
@@ -9,7 +10,6 @@ import {
   resolved,
   RoundedBox,
 } from 'osucad-framework';
-import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection';
 import { EditorSelection } from '../screens/compose/EditorSelection';
 import { SliderUtils } from '../screens/compose/tools/SliderUtils';
 

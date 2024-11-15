@@ -1,8 +1,8 @@
+import type { OsuHitObject } from '@osucad/common';
 import type { KeyDownEvent, Rectangle } from 'osucad-framework';
-import type { OsuHitObject } from '../../../../../beatmap/hitObjects/OsuHitObject';
+import { Slider } from '@osucad/common';
 import { Container, dependencyLoader, Key, Vec2 } from 'osucad-framework';
 import { Matrix } from 'pixi.js';
-import { Slider } from '../../../../../beatmap/hitObjects/Slider';
 import { HitObjectComposer } from '../../HitObjectComposer';
 import { HitObjectUtils } from '../../HitObjectUtils';
 import { ComposeToolInteraction } from './ComposeToolInteraction';

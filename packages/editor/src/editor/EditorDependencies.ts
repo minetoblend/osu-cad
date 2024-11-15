@@ -1,5 +1,5 @@
+import type { OsuPlayfield } from '@osucad/common';
 import type { DifficultyInfo } from './EditorBeatmap';
-import type { OsuPlayfield } from './hitobjects/OsuPlayfield';
 import { Action, Bindable, BindableBoolean } from 'osucad-framework';
 import { HitSoundState } from '../beatmap/hitSounds/BindableHitSound';
 import { ToggleBindable } from './screens/compose/ToggleBindable';

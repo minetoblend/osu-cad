@@ -1,5 +1,5 @@
+import type { EditorCommand } from '@osucad/common';
 import type { BindableNumber, Drawable } from 'osucad-framework';
-import type { EditorCommand } from '../editor/commands/EditorCommand';
 import { Anchor, Axes, Container } from 'osucad-framework';
 import { LabelledDrawable } from './LabelledDrawable';
 import { SliderControl } from './SliderControl';

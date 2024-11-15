@@ -1,18 +1,6 @@
-import type {
-  ContainerOptions,
-  KeyDownEvent,
-  PIXIContainer,
-} from 'osucad-framework';
-import {
-  BindableNumber,
-  Container,
-  definitelyBigger,
-  dependencyLoader,
-  Invalidation,
-  PIXIGraphics,
-  resolved,
-} from 'osucad-framework';
-import { Beatmap } from '../../beatmap/Beatmap';
+import type { ContainerOptions, KeyDownEvent, PIXIContainer } from 'osucad-framework';
+import { Beatmap } from '@osucad/common';
+import { BindableNumber, Container, definitelyBigger, dependencyLoader, Invalidation, PIXIGraphics, resolved } from 'osucad-framework';
 
 export interface PlayfieldGridOptions extends ContainerOptions {
   customGridSize?: number;

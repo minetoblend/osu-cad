@@ -1,6 +1,5 @@
+import { OsucadConfigManager, OsucadSettings } from '@osucad/common';
 import { type Drawable, resolved } from 'osucad-framework';
-import { OsucadConfigManager } from '../../config/OsucadConfigManager';
-import { OsucadSettings } from '../../config/OsucadSettings';
 import { PreferencesPanel } from './PreferencesPanel';
 import { PreferencesToggle } from './PreferencesToggle';
 

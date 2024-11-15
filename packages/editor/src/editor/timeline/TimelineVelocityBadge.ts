@@ -1,21 +1,9 @@
-import type {
-  HoverEvent,
-  MouseDownEvent,
-} from 'osucad-framework';
-import type { Slider } from '../../beatmap/hitObjects/Slider';
-import {
-  Anchor,
-  Axes,
-  CompositeDrawable,
-  Container,
-  dependencyLoader,
-  MouseButton,
-  resolved,
-} from 'osucad-framework';
-
+import type { Slider } from '@osucad/common';
+import type { HoverEvent, MouseDownEvent } from 'osucad-framework';
+import { UpdateHitObjectCommand } from '@osucad/common';
+import { Anchor, Axes, CompositeDrawable, Container, dependencyLoader, MouseButton, resolved } from 'osucad-framework';
 import { FastRoundedBox } from '../../drawables/FastRoundedBox';
 import { OsucadSpriteText } from '../../OsucadSpriteText';
-import { UpdateHitObjectCommand } from '../commands/UpdateHitObjectCommand';
 import { CommandManager } from '../context/CommandManager';
 
 export class TimelineVelocityBadge extends CompositeDrawable {

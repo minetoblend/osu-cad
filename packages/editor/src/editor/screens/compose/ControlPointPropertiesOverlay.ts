@@ -1,5 +1,5 @@
+import type { ControlPointGroup } from '@osucad/common';
 import type { Bindable, KeyDownEvent, MouseDownEvent, Vec2 } from 'osucad-framework';
-import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup';
 import { Axes, dependencyLoader, EasingFunction, Key, VisibilityContainer } from 'osucad-framework';
 
 import { BackdropBlurFilter } from 'pixi-filters';

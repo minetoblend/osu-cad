@@ -1,8 +1,7 @@
 import type { Bindable } from 'osucad-framework';
 import type { ComposeTool } from './tools/ComposeTool';
+import { OsucadConfigManager, OsucadSettings } from '@osucad/common';
 import { Anchor, Axes, Container, dependencyLoader, FillDirection, FillFlowContainer, Key, resolved, Vec2 } from 'osucad-framework';
-import { OsucadConfigManager } from '../../../config/OsucadConfigManager';
-import { OsucadSettings } from '../../../config/OsucadSettings';
 import { OsucadIcons } from '../../../OsucadIcons';
 import { ComposeToggleButton } from './ComposeToggleButton';
 import { ComposeToolbarButton } from './ComposeToolbarButton';

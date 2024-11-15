@@ -1,7 +1,5 @@
+import type { ControlPointInfo, ControlPointList, SamplePoint } from '@osucad/common';
 import type { Drawable } from 'osucad-framework';
-import type { ControlPointInfo } from '../../../../beatmap/timing/ControlPointInfo';
-import type { ControlPointList } from '../../../../beatmap/timing/ControlPointList';
-import type { SamplePoint } from '../../../../beatmap/timing/SamplePoint';
 import type { ControlPointLifetimeEntry } from '../ControlPointLifetimeEntry';
 import { dependencyLoader, DrawablePool } from 'osucad-framework';
 import { HitSoundControlPointBlueprintContainer } from '../HitSoundControlPointBlueprintContainer';

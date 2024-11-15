@@ -1,11 +1,6 @@
-import type {
-  Bindable,
-  DependencyContainer,
-  ScreenExitEvent,
-  ScreenTransitionEvent,
-} from 'osucad-framework';
+import type { OsuPlayfield } from '@osucad/common';
+import type { Bindable, DependencyContainer, ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
 import type { DifficultyInfo } from '../../EditorBeatmap';
-import type { OsuPlayfield } from '../../hitobjects/OsuPlayfield';
 import type { BackgroundAdjustment } from '../BackgroundAdjustment';
 import { Anchor, Axes, BindableBoolean, Container, dependencyLoader, DrawSizePreservingFillContainer, EasingFunction, FillFlowContainer, resolved, Vec2 } from 'osucad-framework';
 import { Color } from 'pixi.js';

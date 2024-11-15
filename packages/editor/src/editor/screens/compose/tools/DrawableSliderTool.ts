@@ -1,9 +1,6 @@
 import type { MouseDownEvent, MouseUpEvent } from 'osucad-framework';
-import type { CommandProxy } from '../../../commands/CommandProxy';
+import { PathPoint, PathType, Slider } from '@osucad/common';
 import { dependencyLoader, MouseButton, Vec2 } from 'osucad-framework';
-import { PathPoint } from '../../../../beatmap/hitObjects/PathPoint';
-import { PathType } from '../../../../beatmap/hitObjects/PathType';
-import { Slider } from '../../../../beatmap/hitObjects/Slider';
 import { DistanceSnapProvider } from './DistanceSnapProvider';
 import { DrawableHitObjectPlacementTool } from './DrawableHitObjectPlacementTool';
 import { SliderPathBuilder } from './SliderPathBuilder';
@@ -212,7 +209,7 @@ export class DrawableSliderTool extends DrawableHitObjectPlacementTool<Slider> {
     this.sliderPathVisualizer.slider = hitObject;
   }
 
-  protected onPlacementFinish(hitObject: CommandProxy<Slider>) {
+  protected onPlacementFinish(hitObject: Slider) {
     super.onPlacementFinish(hitObject);
 
     this.sliderPathVisualizer.slider = null;

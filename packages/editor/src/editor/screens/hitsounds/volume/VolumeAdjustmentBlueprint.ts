@@ -1,35 +1,15 @@
-import type {
-  DependencyContainer,
-  DragEndEvent,
-  DragEvent,
-  DragStartEvent,
-  HoverEvent,
-  MouseDownEvent,
-} from 'osucad-framework';
-import type { SamplePoint } from '../../../../beatmap/timing/SamplePoint';
+import type { SamplePoint } from '@osucad/common';
+import type { DependencyContainer, DragEndEvent, DragEvent, DragStartEvent, HoverEvent, MouseDownEvent } from 'osucad-framework';
 import type { ControlPointLifetimeEntry } from '../ControlPointLifetimeEntry';
-import {
-  almostEquals,
-  Anchor,
-  Axes,
-  Box,
-  clamp,
-  dependencyLoader,
-  MouseButton,
-  resolved,
-  Vec2,
-} from 'osucad-framework';
+import { UpdateControlPointCommand } from '@osucad/common';
+import { almostEquals, Anchor, Axes, Box, clamp, dependencyLoader, MouseButton, resolved, Vec2 } from 'osucad-framework';
 import { OsucadSpriteText } from '../../../../OsucadSpriteText';
-import { UpdateControlPointCommand } from '../../../commands/UpdateControlPointCommand';
 import { CommandManager } from '../../../context/CommandManager';
 import { ThemeColors } from '../../../ThemeColors';
 import { ControlPointAdjustmentBlueprint } from '../ControlPointAdjustmentBlueprint';
 import { HitSoundControlPointBlueprintContainer } from '../HitSoundControlPointBlueprintContainer';
-import { HitSoundsTimeline } from '../HitSoundsTimeline';
 
 export class VolumeAdjustmentBlueprint extends ControlPointAdjustmentBlueprint<SamplePoint> {
-  #timeline!: HitSoundsTimeline;
-
   #blueprintContainer!: HitSoundControlPointBlueprintContainer<any, any>;
 
   @dependencyLoader()
@@ -77,7 +57,6 @@ export class VolumeAdjustmentBlueprint extends ControlPointAdjustmentBlueprint<S
   protected loadComplete() {
     super.loadComplete();
 
-    this.#timeline = this.findClosestParentOfType(HitSoundsTimeline)!;
     this.#blueprintContainer = this.findClosestParentOfType(HitSoundControlPointBlueprintContainer as any)!;
   }
 

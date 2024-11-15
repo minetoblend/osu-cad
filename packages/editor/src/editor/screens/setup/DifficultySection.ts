@@ -1,8 +1,7 @@
 import type { FillFlowContainer } from 'osucad-framework';
+import { Beatmap, UpdateDifficultyCommand } from '@osucad/common';
 import { resolved } from 'osucad-framework';
-import { Beatmap } from '../../../beatmap/Beatmap';
 import { LabelledSliderControl } from '../../../userInterface/LabelledSliderControl';
-import { UpdateDifficultyCommand } from '../../commands/UpdateDifficultyCommand';
 import { CommandManager } from '../../context/CommandManager';
 import { SetupScreenSection } from './SetupScreenSection';
 

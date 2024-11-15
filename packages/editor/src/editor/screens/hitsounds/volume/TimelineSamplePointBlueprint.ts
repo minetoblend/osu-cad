@@ -1,7 +1,7 @@
-import type { SamplePoint } from '../../../../beatmap/timing/SamplePoint';
+import type { SamplePoint } from '@osucad/common';
 import type { ControlPointLifetimeEntry } from '../ControlPointLifetimeEntry';
+import { PoolableDrawableWithLifetime } from '@osucad/common';
 import { Anchor, Axes, Container, dependencyLoader } from 'osucad-framework';
-import { PoolableDrawableWithLifetime } from '../../../../pooling/PoolableDrawableWithLifetime';
 import { ThemeColors } from '../../../ThemeColors';
 import { ControlPointStartTimeAdjustmentBlueprint } from '../ControlPointStartTimeAdjustmentBlueprint';
 import { HitSoundsTimeline } from '../HitSoundsTimeline';

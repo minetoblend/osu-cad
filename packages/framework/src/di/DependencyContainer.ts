@@ -1,10 +1,14 @@
+import type { Drawable } from '../graphics/drawables/Drawable';
+
 export class DependencyContainer implements ReadonlyDependencyContainer {
   private readonly dependencies = new Map<any, any>();
 
   constructor(private readonly parent?: ReadonlyDependencyContainer) {}
 
+  public owner: Drawable | null = null;
+
   provide(keyOrValue: any, value?: any): void {
-    if (!value && 'constructor' in keyOrValue) {
+    if (!value && typeof keyOrValue === 'object' && 'constructor' in keyOrValue) {
       this.dependencies.set(keyOrValue.constructor, keyOrValue);
       return;
     }

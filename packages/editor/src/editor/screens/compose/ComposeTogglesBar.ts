@@ -1,15 +1,5 @@
-import {
-  Anchor,
-  Axes,
-  Container,
-  dependencyLoader,
-  FillDirection,
-  FillFlowContainer,
-  resolved,
-  Vec2,
-} from 'osucad-framework';
-import { Additions } from '../../../beatmap/hitSounds/Additions';
-
+import { Additions } from '@osucad/common';
+import { Anchor, Axes, Container, dependencyLoader, FillDirection, FillFlowContainer, resolved, Vec2 } from 'osucad-framework';
 import { FastRoundedBox } from '../../../drawables/FastRoundedBox';
 import { OsucadIcons } from '../../../OsucadIcons';
 import { EditorAction } from '../../EditorAction';

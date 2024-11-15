@@ -1,4 +1,4 @@
-import type { ControlPoint } from '../../../beatmap/timing/ControlPoint';
+import type { ControlPoint } from '@osucad/common';
 import type { ControlPointLifetimeEntry } from './ControlPointLifetimeEntry';
 import { CompositeDrawable } from 'osucad-framework';
 

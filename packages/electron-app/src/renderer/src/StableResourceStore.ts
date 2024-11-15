@@ -1,4 +1,4 @@
-import { IResourceStore } from '@osucad/editor';
+import { IResourceStore } from 'osucad-framework';
 
 export class StableResourceStore implements IResourceStore<ArrayBuffer> {
 

@@ -1,5 +1,4 @@
 import type { DrawableOptions } from 'osucad-framework';
-import { Easing } from 'osu-classes';
 import { Anchor, Axes, CompositeDrawable, Container, dependencyLoader, DrawableSprite, EasingFunction } from 'osucad-framework';
 import { Graphics } from 'pixi.js';
 import { OsucadIcons } from '../OsucadIcons';
@@ -60,7 +59,7 @@ export class EditorLoadingSpinner extends CompositeDrawable {
     function animate(time: number, offset = 0) {
       const t = (time / 1000 + offset) % 1;
 
-      return (Easing.inOutCubic(t) * 0.5 + t * 0.5) * Math.PI * 2 + Math.PI * 1.5;
+      return (EasingFunction.InOutCubic(t) * 0.5 + t * 0.5) * Math.PI * 2 + Math.PI * 1.5;
     }
 
     const startAngle = animate(this.time.current * 1.25);

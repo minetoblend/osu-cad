@@ -1,30 +1,6 @@
-import type {
-  DragEvent,
-  DragStartEvent,
-  IVec2,
-  KeyDownEvent,
-  KeyUpEvent,
-  MouseDownEvent,
-  Rectangle,
-} from 'osucad-framework';
-import type { OsuHitObject } from '../../../../../beatmap/hitObjects/OsuHitObject';
-import { Vector2 } from 'osu-classes';
-import {
-  Action,
-  Anchor,
-  Axes,
-  Bindable,
-  CompositeDrawable,
-  Container,
-  dependencyLoader,
-  EasingFunction,
-  FillDirection,
-  FillFlowContainer,
-  Key,
-  MouseButton,
-  RoundedBox,
-  Vec2,
-} from 'osucad-framework';
+import type { OsuHitObject } from '@osucad/common';
+import type { DragEvent, DragStartEvent, IVec2, KeyDownEvent, KeyUpEvent, MouseDownEvent, Rectangle } from 'osucad-framework';
+import { Action, Anchor, Axes, Bindable, CompositeDrawable, Container, dependencyLoader, EasingFunction, FillDirection, FillFlowContainer, Key, MouseButton, RoundedBox, Vec2 } from 'osucad-framework';
 import { Graphics, Matrix } from 'pixi.js';
 import { Ring } from '../../../../../drawables/Ring';
 import { OsucadSpriteText } from '../../../../../OsucadSpriteText';
@@ -86,7 +62,7 @@ export class RotateSelectionInteraction extends ComposeToolInteraction {
       new Container({
         scale: 0.5,
         relativeSizeAxes: Axes.Both,
-        size: new Vector2(2),
+        size: new Vec2(2),
         padding: 15,
         child: new RotateDialogBox(this).with({
           anchor: boxAnchor,

@@ -1,8 +1,8 @@
 import type { ContainerOptions, DropEvent, InputManager } from 'osucad-framework';
 import type { MapsetInfo } from './MapsetInfo';
+import { AudioMixer } from '@osucad/common';
 import gsap from 'gsap';
 import { Action, Anchor, Axes, Container, dependencyLoader, EasingFunction, LowpassFilter, resolved, RoundedBox } from 'osucad-framework';
-import { EditorMixer } from '../editor/EditorMixer';
 import { ThemeColors } from '../editor/ThemeColors';
 import { Notification } from '../notifications/Notification';
 import { NotificationOverlay } from '../notifications/NotificationOverlay';
@@ -155,8 +155,8 @@ class DropzoneOverlay extends Container {
   @resolved(ThemeColors)
   colors!: ThemeColors;
 
-  @resolved(EditorMixer)
-  mixer!: EditorMixer;
+  @resolved(AudioMixer)
+  mixer!: AudioMixer;
 
   @dependencyLoader()
   load() {

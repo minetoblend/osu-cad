@@ -1,5 +1,4 @@
-import type { ControlPointGroup } from '../../../../beatmap/timing/ControlPointGroup';
-import type { TimingPoint } from '../../../../beatmap/timing/TimingPoint';
+import type { ControlPointGroup, TimingPoint } from '@osucad/common';
 import {
   Axes,
   BindableNumber,

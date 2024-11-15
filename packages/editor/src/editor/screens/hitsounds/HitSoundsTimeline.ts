@@ -2,6 +2,7 @@ import type {
   DependencyContainer,
 } from 'osucad-framework';
 import type { HitSoundsTimelineLayer } from './HitSoundsTimelineLayer';
+import { ControlPointInfo } from '@osucad/common';
 import {
   Anchor,
   Axes,
@@ -14,7 +15,6 @@ import {
   FillFlowContainer,
   resolved,
 } from 'osucad-framework';
-import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
 import { OsucadSpriteText } from '../../../OsucadSpriteText';
 import { EditorClock } from '../../EditorClock';
 import { ThemeColors } from '../../ThemeColors';

@@ -1,9 +1,7 @@
-import type { Slider } from '../../../../beatmap/hitObjects/Slider';
+import type { Slider } from '@osucad/common';
+import { ISkinSource, OsuHitObject, OsuSkinComponentLookup, SkinnableDrawable } from '@osucad/common';
+
 import { Anchor, Axes, dependencyLoader, resolved } from 'osucad-framework';
-import { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
-import { ISkinSource } from '../../../../skinning/ISkinSource';
-import { OsuSkinComponentLookup } from '../../../../skinning/OsuSkinComponentLookup';
-import { SkinnableDrawable } from '../../../../skinning/SkinnableDrawable';
 import { EditorSelection } from '../EditorSelection';
 import { DrawableSelection } from './DrawableSelection';
 

@@ -1,3 +1,4 @@
+import type { ReadonlyDependencyContainer } from '../../di';
 import type { Scheduler } from '../../scheduling/Scheduler';
 import type { IComparer } from '../../utils/IComparer';
 import type { AbsoluteSequenceSender } from '../transforms/AbsoluteSequenceSender';
@@ -559,6 +560,18 @@ export class CompositeDrawable extends Drawable {
   }
 
   updateAfterChildren() {
+  }
+
+  protected createChildDependencies(parentDependencies: ReadonlyDependencyContainer): DependencyContainer {
+    return new DependencyContainer(parentDependencies);
+  }
+
+  protected override injectDependencies(dependencies: ReadonlyDependencyContainer) {
+    this.dependencies = this.createChildDependencies(dependencies);
+    if (dependencies !== this.dependencies)
+      this.dependencies.owner = this;
+
+    super.injectDependencies(dependencies);
   }
 
   updateChildrenLife(): boolean {

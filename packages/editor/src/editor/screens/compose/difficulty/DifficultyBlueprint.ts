@@ -1,10 +1,8 @@
+import type { ArmedState, Slider } from '@osucad/common';
 import type { Vec2 } from 'osucad-framework';
-import type { Slider } from '../../../../beatmap/hitObjects/Slider';
 import type { OsuDifficultyHitObject } from '../../../../difficulty/preprocessing/OsuDifficultyHitObject';
+import { DrawableOsuHitObject, HitObjectList, Spinner } from '@osucad/common';
 import { Bindable, Container, dependencyLoader, resolved } from 'osucad-framework';
-import { HitObjectList } from '../../../../beatmap/hitObjects/HitObjectList';
-import { Spinner } from '../../../../beatmap/hitObjects/Spinner';
-import { DrawableOsuHitObject } from '../../../hitobjects/DrawableOsuHitObject';
 import { DifficultyObjectDetails } from './DifficultyObjectDetails';
 import { DifficultyObjectList } from './DynamicOsuDifficultyObject';
 import { MovementPathSegment } from './MovementPathSegment';
@@ -13,8 +11,6 @@ export class DifficultyBlueprint extends DrawableOsuHitObject {
   constructor() {
     super();
   }
-
-  #difficultyHitObject: OsuDifficultyHitObject | null = null;
 
   #content!: Container;
 
@@ -132,8 +128,8 @@ export class DifficultyBlueprint extends DrawableOsuHitObject {
     this.fadeIn();
   }
 
-  protected updateHitStateTransforms() {
-    super.updateHitStateTransforms();
+  protected updateHitStateTransforms(state: ArmedState) {
+    super.updateHitStateTransforms(state);
 
     this.delay(1000).fadeOut();
   }

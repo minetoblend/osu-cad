@@ -1,9 +1,7 @@
+import type { OsuHitObject, SliderSelectionType } from '@osucad/common';
 import type { IKeyBindingHandler, KeyBindingPressEvent } from 'osucad-framework';
-import type { OsuHitObject } from '../../../beatmap/hitObjects/OsuHitObject';
-import type { SliderSelectionType } from '../../../beatmap/hitObjects/SliderSelection';
+import { HitObjectList, Slider } from '@osucad/common';
 import { Action, Component, dependencyLoader, PlatformAction, resolved } from 'osucad-framework';
-import { HitObjectList } from '../../../beatmap/hitObjects/HitObjectList';
-import { Slider } from '../../../beatmap/hitObjects/Slider';
 
 export class EditorSelection extends Component implements Iterable<OsuHitObject>, IKeyBindingHandler<PlatformAction> {
   readonly #selection = new Set<OsuHitObject>();

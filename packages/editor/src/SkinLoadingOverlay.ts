@@ -1,21 +1,9 @@
-import type {
-  Bindable,
-} from 'osucad-framework';
+import type { Bindable } from 'osucad-framework';
 import type { LoadableSkin } from './environment';
-import {
-  Anchor,
-  Axes,
-  Box,
-  CompositeDrawable,
-  Container,
-  dependencyLoader,
-  EasingFunction,
-  MaskingContainer,
-  resolved,
-} from 'osucad-framework';
+import { Anchor, Axes, Box, CompositeDrawable, Container, dependencyLoader, EasingFunction, MaskingContainer, resolved } from 'osucad-framework';
 import { LoadingSpinner } from './drawables/LoadingSpinner';
 import { OsucadSpriteText } from './OsucadSpriteText';
-import { SkinManager } from './skinning/SkinManager';
+import { OsucadSkinManager } from './skinning/OsucadSkinManager';
 
 export class SkinLoadingOverlay extends CompositeDrawable {
   constructor() {
@@ -23,8 +11,8 @@ export class SkinLoadingOverlay extends CompositeDrawable {
     this.relativeSizeAxes = Axes.Both;
   }
 
-  @resolved(SkinManager)
-  skinManager!: SkinManager;
+  @resolved(OsucadSkinManager)
+  skinManager!: OsucadSkinManager;
 
   loadingSkin!: Bindable<LoadableSkin | null>;
 

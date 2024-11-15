@@ -1,22 +1,7 @@
-import type {
-  KeyDownEvent,
-  KeyUpEvent,
-  MouseMoveEvent,
-  MouseUpEvent,
-  Vec2,
-} from 'osucad-framework';
-import type { OsuHitObject } from '../../../../../beatmap/hitObjects/OsuHitObject';
-import {
-  dependencyLoader,
-  Key,
-  MouseButton,
-  Rectangle,
-  resolved,
-  RoundedBox,
-} from 'osucad-framework';
-import { HitObjectList } from '../../../../../beatmap/hitObjects/HitObjectList';
-import { Slider } from '../../../../../beatmap/hitObjects/Slider';
-import { Spinner } from '../../../../../beatmap/hitObjects/Spinner';
+import type { OsuHitObject } from '@osucad/common';
+import type { KeyDownEvent, KeyUpEvent, MouseMoveEvent, MouseUpEvent, Vec2 } from 'osucad-framework';
+import { HitObjectList, Slider, Spinner } from '@osucad/common';
+import { dependencyLoader, Key, MouseButton, Rectangle, resolved, RoundedBox } from 'osucad-framework';
 import { EditorClock } from '../../../../EditorClock';
 import { EditorSelection } from '../../EditorSelection';
 import { ComposeToolInteraction } from './ComposeToolInteraction';

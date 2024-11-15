@@ -1,25 +1,10 @@
-import type {
-  DependencyContainer,
-  ScreenExitEvent,
-  ScreenTransitionEvent,
-} from 'osucad-framework';
-import type { OsuPlayfield } from '../../hitobjects/OsuPlayfield';
+import type { OsuPlayfield } from '@osucad/common';
+import type { DependencyContainer, ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
 import type { BackgroundAdjustment } from '../BackgroundAdjustment';
-import {
-  Anchor,
-  Axes,
-  Box,
-  Container,
-  dependencyLoader,
-  DrawSizePreservingFillContainer,
-  EasingFunction,
-  FillFlowContainer,
-  resolved,
-  Vec2,
-} from 'osucad-framework';
+import { AudioMixer } from '@osucad/common';
+import { Anchor, Axes, Box, Container, dependencyLoader, DrawSizePreservingFillContainer, EasingFunction, FillFlowContainer, resolved, Vec2 } from 'osucad-framework';
 import { EditorClock } from '../../EditorClock';
 import { EditorDependencies } from '../../EditorDependencies';
-import { EditorMixer } from '../../EditorMixer';
 import { PlayfieldGrid } from '../../playfield/PlayfieldGrid';
 import { EditorScreen } from '../EditorScreen';
 import { EditorScreenUtils } from '../EditorScreenUtils';
@@ -47,8 +32,8 @@ export class HitSoundsScreen extends EditorScreen {
   @resolved(EditorClock)
   editorClock!: EditorClock;
 
-  @resolved(EditorMixer)
-  mixer!: EditorMixer;
+  @resolved(AudioMixer)
+  mixer!: AudioMixer;
 
   get playfieldWidth() {
     return 0.35;

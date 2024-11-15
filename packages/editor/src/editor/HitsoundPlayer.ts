@@ -1,27 +1,8 @@
+import type { HitSample, LifetimeEntry, OsuHitObject } from '@osucad/common';
 import type { SamplePlayback } from 'osucad-framework';
-import type { OsuHitObject } from '../beatmap/hitObjects/OsuHitObject';
-import type { HitSample } from '../beatmap/hitSounds/HitSample';
-import type { LifetimeEntry } from '../pooling/LifetimeEntry';
-import {
-  Action,
-  BindableNumber,
-  CompositeDrawable,
-  dependencyLoader,
-  FramedClock,
-  OffsetClock,
-  resolved,
-} from 'osucad-framework';
-import { HitObjectList } from '../beatmap/hitObjects/HitObjectList';
-import { SampleType } from '../beatmap/hitSounds/SampleType';
-import { OsucadConfigManager } from '../config/OsucadConfigManager';
-import { OsucadSettings } from '../config/OsucadSettings';
-import { LifetimeBoundaryCrossingDirection } from '../pooling/LifetimeBoundaryCrossingDirection';
-import { LifetimeBoundaryKind } from '../pooling/LifetimeBoundaryKind';
-import { LifetimeEntryManager } from '../pooling/LifetimeEntryManager';
-import { ISkinSource } from '../skinning/ISkinSource';
+import { AudioMixer, HitObjectLifetimeEntry, HitObjectList, ISkinSource, LifetimeBoundaryCrossingDirection, LifetimeBoundaryKind, LifetimeEntryManager, OsucadConfigManager, OsucadSettings, SampleType } from '@osucad/common';
+import { Action, BindableNumber, CompositeDrawable, dependencyLoader, FramedClock, OffsetClock, resolved } from 'osucad-framework';
 import { EditorClock } from './EditorClock';
-import { EditorMixer } from './EditorMixer';
-import { HitObjectLifetimeEntry } from './hitobjects/HitObjectLifetimeEntry';
 
 export class HitsoundPlayer extends CompositeDrawable {
   @resolved(EditorClock)
@@ -124,8 +105,8 @@ export class HitsoundPlayer extends CompositeDrawable {
   @resolved(ISkinSource)
   skin!: ISkinSource;
 
-  @resolved(EditorMixer)
-  mixer!: EditorMixer;
+  @resolved(AudioMixer)
+  mixer!: AudioMixer;
 
   @resolved(HitObjectList)
   hitObjects!: HitObjectList;

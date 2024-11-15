@@ -1,13 +1,13 @@
+import { AudioMixer } from '@osucad/common';
 import gsap from 'gsap';
 import { AudioManager, CompositeDrawable, resolved } from 'osucad-framework';
-import { EditorMixer } from './editor/EditorMixer';
 
 export class GlobalSongPlayback extends CompositeDrawable {
   @resolved(AudioManager)
   protected audioManager!: AudioManager;
 
-  @resolved(EditorMixer)
-  protected mixer!: EditorMixer;
+  @resolved(AudioMixer)
+  protected mixer!: AudioMixer;
 
   get channel() {
     return this.mixer.music;

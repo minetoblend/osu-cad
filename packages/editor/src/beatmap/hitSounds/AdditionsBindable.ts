@@ -1,5 +1,5 @@
+import { Additions } from '@osucad/common';
 import { Bindable } from 'osucad-framework';
-import { Additions } from './Additions';
 
 export class AdditionsBindable extends Bindable<Additions> {
   override get value() {

@@ -1,7 +1,6 @@
-import type { ControlPointGroup } from '../../../../beatmap/timing/ControlPointGroup';
-import type { SamplePoint } from '../../../../beatmap/timing/SamplePoint';
+import type { ControlPointGroup, SamplePoint } from '@osucad/common';
+import { SampleSet } from '@osucad/common';
 import { Axes, Bindable, BindableNumber, FillDirection, FillFlowContainer, Vec2 } from 'osucad-framework';
-import { SampleSet } from '../../../../beatmap/hitSounds/SampleSet';
 import { ControlPointPropertiesSection } from './ControlPointPropertiesSection';
 import { LabelledTextBox } from './LabelledTextBox';
 import { SampleSetSelect } from './SampleSetSelect';

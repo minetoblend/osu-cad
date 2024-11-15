@@ -1,5 +1,5 @@
+import type { OsuPlayfield } from '@osucad/common';
 import type { Drawable } from 'osucad-framework';
-import type { OsuPlayfield } from '../hitobjects/OsuPlayfield';
 import { Container, EasingFunction, Vec2 } from 'osucad-framework';
 import { EditorScreen } from './EditorScreen';
 

@@ -1,5 +1,4 @@
-import type { ControlPointGroup } from '../../../../beatmap/timing/ControlPointGroup';
-import type { DifficultyPoint } from '../../../../beatmap/timing/DifficultyPoint';
+import type { ControlPointGroup, DifficultyPoint } from '@osucad/common';
 import { Axes, BindableNumber, FillDirection, FillFlowContainer } from 'osucad-framework';
 import { ControlPointPropertiesSection } from './ControlPointPropertiesSection';
 import { LabelledTextBox } from './LabelledTextBox';

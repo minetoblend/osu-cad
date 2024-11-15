@@ -1,11 +1,7 @@
+import type { ControlPoint, ControlPointList, PoolableDrawableWithLifetime } from '@osucad/common';
 import type { Bindable } from 'osucad-framework';
-import type { ControlPoint } from '../../../beatmap/timing/ControlPoint';
-import type { ControlPointList } from '../../../beatmap/timing/ControlPointList';
-
-import type { PoolableDrawableWithLifetime } from '../../../pooling/PoolableDrawableWithLifetime';
+import { ControlPointInfo, PooledDrawableWithLifetimeContainer } from '@osucad/common';
 import { Axes, dependencyLoader, resolved, SortedList } from 'osucad-framework';
-import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
-import { PooledDrawableWithLifetimeContainer } from '../../../pooling/PooledDrawableWithLifetimeContainer';
 import { ControlPointLifetimeEntry } from './ControlPointLifetimeEntry';
 import { HitSoundsTimeline } from './HitSoundsTimeline';
 

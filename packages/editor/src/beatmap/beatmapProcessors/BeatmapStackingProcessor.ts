@@ -1,19 +1,9 @@
-import type { HitObject } from '../hitObjects/HitObject';
-import type { OsuHitObject } from '../hitObjects/OsuHitObject';
+import type { HitObject, OsuHitObject } from '@osucad/common';
+import { HitCircle, Slider, Spinner } from '@osucad/common';
 import { Vec2 } from 'osucad-framework';
-import { HitCircle } from '../hitObjects/HitCircle';
-import { Slider } from '../hitObjects/Slider';
-import { Spinner } from '../hitObjects/Spinner';
 import { BeatmapProcessor } from './BeatmapProcessor';
 
 export class BeatmapStackingProcessor extends BeatmapProcessor {
-  #hitObjectProperties = [
-    'startTime',
-    'position',
-    'velocity',
-    'spans',
-  ];
-
   onHitObjectAdded(hitObject: OsuHitObject) {
     super.onHitObjectAdded(hitObject);
 

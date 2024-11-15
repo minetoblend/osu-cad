@@ -1,3 +1,4 @@
+import type { DependencyContainer, ReadonlyDependencyContainer } from '../../di/DependencyContainer';
 import type { ClickEvent } from '../../input/events/ClickEvent';
 import type { DoubleClickEvent } from '../../input/events/DoubleClickEvent';
 import type { DragEndEvent } from '../../input/events/DragEndEvent';
@@ -33,7 +34,6 @@ import { Action } from '../../bindables/Action';
 import { popDrawableScope, pushDrawableScope } from '../../bindables/lifetimeScope';
 import { drawableProps, propertyToValue, valueToProperty } from '../../devtools/drawableProps';
 import { getAsyncDependencyLoaders, getDependencyLoaders, getInjections, getProviders } from '../../di/decorators';
-import { DependencyContainer, type ReadonlyDependencyContainer } from '../../di/DependencyContainer';
 import { HandleInputCache } from '../../input/HandleInputCache';
 import { isFocusManager } from '../../input/IFocusManager';
 import { Quad } from '../../math/Quad';
@@ -863,12 +863,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
       this.requestsNonPositionalInputSubTree = this.requestsNonPositionalInput;
       this.requestsPositionalInputSubTree = this.requestsPositionalInput;
 
-      this.#injectDependencies(dependencies);
+      this.injectDependencies(dependencies);
       this.onLoad();
       const dependencyLoaders = getDependencyLoaders(this);
 
       for (const key of dependencyLoaders) {
-        (this as any)[key](this.dependencies);
+        (this as any)[key](dependencies);
       }
 
       const asyncDependencyLoaders = getAsyncDependencyLoaders(this);
@@ -954,8 +954,8 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   onLoadComplete = new Action<Drawable>();
 
-  #injectDependencies(dependencies: ReadonlyDependencyContainer) {
-    this.dependencies = new DependencyContainer(dependencies);
+  protected injectDependencies(dependencies: ReadonlyDependencyContainer) {
+    this.dependencies ??= dependencies as DependencyContainer;
 
     const injections = getInjections(this);
     for (const { key, type, optional } of injections) {
@@ -1442,7 +1442,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   triggerEvent(e: UIEvent): boolean {
     e.target = this;
 
-    return this[e.handler]?.(e as any) ?? this.handle(e);
+    return this[e.handler]?.(e as any) ?? this.handle(e) ?? false;
   }
 
   get requiresHighFrequencyMousePosition() {

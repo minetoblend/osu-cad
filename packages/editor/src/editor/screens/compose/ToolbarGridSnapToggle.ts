@@ -1,6 +1,6 @@
 import type { IKeyBindingHandler, KeyBindingPressEvent, KeyBindingReleaseEvent, KeyDownEvent } from 'osucad-framework';
+import { Beatmap } from '@osucad/common';
 import { Anchor, Axes, BindableNumber, ButtonTrigger, Container, dependencyLoader, Key, resolved } from 'osucad-framework';
-import { Beatmap } from '../../../beatmap/Beatmap';
 import { OsucadIcons } from '../../../OsucadIcons';
 import { OsucadSpriteText } from '../../../OsucadSpriteText';
 import { EditorAction } from '../../EditorAction';

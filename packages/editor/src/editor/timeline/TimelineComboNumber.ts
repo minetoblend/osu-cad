@@ -1,4 +1,4 @@
-import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
+import type { OsuHitObject } from '@osucad/common';
 import { Anchor, Axes, CompositeDrawable, dependencyLoader, FillMode } from 'osucad-framework';
 import { OsucadSpriteText } from '../../OsucadSpriteText';
 

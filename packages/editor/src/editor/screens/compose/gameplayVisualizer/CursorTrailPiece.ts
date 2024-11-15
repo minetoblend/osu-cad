@@ -1,6 +1,5 @@
+import { OsuSkinComponentLookup, SkinnableDrawable } from '@osucad/common';
 import { dependencyLoader, PoolableDrawable } from 'osucad-framework';
-import { OsuSkinComponentLookup } from '../../../../skinning/OsuSkinComponentLookup';
-import { SkinnableDrawable } from '../../../../skinning/SkinnableDrawable';
 
 export class CursorTrailPiece extends PoolableDrawable {
   @dependencyLoader()

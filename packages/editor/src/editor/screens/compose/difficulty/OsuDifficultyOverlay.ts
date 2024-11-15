@@ -1,12 +1,10 @@
+import type { HitObject } from '@osucad/common';
 import type { DependencyContainer } from 'osucad-framework';
-import type { HitObject } from '../../../../beatmap/hitObjects/HitObject';
+import { HitObjectLifetimeEntry, OsuHitObject, Playfield } from '@osucad/common';
 import { Axes, BindableBoolean, CompositeDrawable, dependencyLoader, resolved } from 'osucad-framework';
-import { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
 import { CommandManager } from '../../../context/CommandManager';
 import { EditorClock } from '../../../EditorClock';
 import { EditorDependencies } from '../../../EditorDependencies';
-import { HitObjectLifetimeEntry } from '../../../hitobjects/HitObjectLifetimeEntry';
-import { Playfield } from '../../../hitobjects/Playfield';
 import { DifficultyBlueprint } from './DifficultyBlueprint';
 import { DifficultyObjectList } from './DynamicOsuDifficultyObject';
 

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { parentPort, workerData } from 'worker_threads';
-import { StableBeatmapParser } from '../../../../editor/src';
+import { StableBeatmapParser } from '@osucad/common';
 import fs from 'node:fs/promises';
 import { OsuDifficultyCalculator } from '../../../../editor/src/difficulty/OsuDifficultyCalculator';
 import { PromisePool } from '@supercharge/promise-pool';

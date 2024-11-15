@@ -1,14 +1,9 @@
-import type { PathPoint } from '../../../../beatmap/hitObjects/PathPoint';
-import type { Slider } from '../../../../beatmap/hitObjects/Slider';
-import type { SliderSelection } from '../../../../beatmap/hitObjects/SliderSelection';
+import type { PathPoint, Slider, SliderSelection } from '@osucad/common';
 import type { CommandManager } from '../../../context/CommandManager';
 import type { EditorSelection } from '../EditorSelection';
 import type { DistanceSnapProvider } from './DistanceSnapProvider';
+import { DeleteHitObjectCommand, PathType, SliderSelectionType, UpdateHitObjectCommand } from '@osucad/common';
 import { Vec2 } from 'osucad-framework';
-import { PathType } from '../../../../beatmap/hitObjects/PathType';
-import { SliderSelectionType } from '../../../../beatmap/hitObjects/SliderSelection';
-import { DeleteHitObjectCommand } from '../../../commands/DeleteHitObjectCommand';
-import { UpdateHitObjectCommand } from '../../../commands/UpdateHitObjectCommand';
 
 export class SliderUtils {
   constructor(

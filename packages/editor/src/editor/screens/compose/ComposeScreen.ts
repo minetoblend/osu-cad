@@ -1,24 +1,8 @@
-import type {
-  ScreenExitEvent,
-  ScreenTransitionEvent,
-} from 'osucad-framework';
+import type { ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
 import type { ComposeTool } from './tools/ComposeTool';
-import {
-  Anchor,
-  Axes,
-  Bindable,
-  BindableBoolean,
-  Box,
-  Container,
-  dependencyLoader,
-  EasingFunction,
-  Invalidation,
-  LayoutMember,
-  resolved,
-} from 'osucad-framework';
+import { OsucadConfigManager, OsucadSettings } from '@osucad/common';
+import { Anchor, Axes, Bindable, BindableBoolean, Box, Container, dependencyLoader, EasingFunction, Invalidation, LayoutMember, resolved } from 'osucad-framework';
 import { BackdropBlurFilter } from 'pixi-filters';
-import { OsucadConfigManager } from '../../../config/OsucadConfigManager';
-import { OsucadSettings } from '../../../config/OsucadSettings';
 import { BeatSnapDivisorSelector } from '../../BeatSnapDivisorSelector';
 import { Corner, EditorCornerPiece } from '../../EditorCornerPiece';
 import { ComposeScreenTimeline } from '../../timeline/ComposeScreenTimeline';

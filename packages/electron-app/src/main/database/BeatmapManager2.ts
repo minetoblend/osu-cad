@@ -3,7 +3,7 @@ import { BeatmapEntity } from './beatmap.entity';
 import log from 'electron-log/main';
 import fs from 'node:fs';
 import { join } from 'path';
-import { StableBeatmapParser } from '@osucad/editor';
+import { StableBeatmapParser } from '@osucad/common';
 import crypto from 'node:crypto';
 import { PromisePool } from '@supercharge/promise-pool';
 import { getDataSource } from './datasource';

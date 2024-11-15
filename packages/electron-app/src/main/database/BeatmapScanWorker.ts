@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import { join, relative } from 'path';
 import { PromisePool } from '@supercharge/promise-pool';
 import { readFile } from 'node:fs/promises';
-import { StableBeatmapParser } from '../../../../editor/src';
+import { StableBeatmapParser } from '@osucad/common';
 import chokidar from 'chokidar';
 import { getHash } from './getHash';
 
@@ -155,7 +155,7 @@ async function run() {
         return;
 
       try {
-        const beatmap = await new StableBeatmapParser().parse(fileContent, {
+        const beatmap = new StableBeatmapParser().parse(fileContent, {
           timingPoints: false,
           hitObjects: false,
         });

@@ -1,5 +1,4 @@
-import type { HitObjectList } from '../../../../beatmap/hitObjects/HitObjectList';
-import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
+import type { HitObjectList, OsuHitObject } from '@osucad/common';
 import { Action } from 'osucad-framework';
 import { OsuDifficultyHitObject } from '../../../../difficulty/preprocessing/OsuDifficultyHitObject';
 

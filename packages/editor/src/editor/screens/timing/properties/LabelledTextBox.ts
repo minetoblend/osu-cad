@@ -1,5 +1,5 @@
+import type { EditorCommand } from '@osucad/common';
 import type { Bindable, CompositeDrawable } from 'osucad-framework';
-import type { EditorCommand } from '../../../commands/EditorCommand';
 import { resolved } from 'osucad-framework';
 import { LabelledDrawable } from '../../../../userInterface/LabelledDrawable';
 import { TextBox } from '../../../../userInterface/TextBox';

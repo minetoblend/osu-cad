@@ -1,30 +1,10 @@
-import type { StableBeatmapInfo } from 'osucad/src/renderer/src/StableBeatmapStore';
-import type {
-  KeyDownEvent,
-} from 'osucad-framework';
+import type { KeyDownEvent } from 'osucad-framework';
 import type { BeatmapItemInfo } from './BeatmapItemInfo';
 import type { DrawableCarouselItem } from './DrawableCarouselItem';
 import type { MapsetInfo } from './MapsetInfo';
-import { binarySearch } from '@osucad/common';
-import {
-  Action,
-  Axes,
-  Bindable,
-  clamp,
-  CompositeDrawable,
-  dependencyLoader,
-  Direction,
-  DrawablePool,
-  Invalidation,
-  Key,
-  LayoutMember,
-  lerp,
-  resolved,
-  ScreenStack,
-} from 'osucad-framework';
+import { binarySearch, OsucadConfigManager, OsucadSettings } from '@osucad/common';
+import { Action, Axes, Bindable, clamp, CompositeDrawable, dependencyLoader, Direction, DrawablePool, Invalidation, Key, LayoutMember, lerp, resolved, ScreenStack } from 'osucad-framework';
 import { BackdropBlurFilter } from 'pixi-filters';
-import { OsucadConfigManager } from '../config/OsucadConfigManager';
-import { OsucadSettings } from '../config/OsucadSettings';
 import { EditorLoader } from '../editor/EditorLoader';
 import { MainScrollContainer } from '../editor/MainScrollContainer';
 import { BeatmapStore } from '../environment';
@@ -222,7 +202,6 @@ export class BeatmapCarousel extends CompositeDrawable {
         mapsets.set(beatmap.setId, {
           title: beatmap.title,
           artist: beatmap.artist,
-          author: beatmap.author,
           authorName: beatmap.authorName,
           beatmaps: [],
           updatedAt: `${beatmap.lastEdited}`,
@@ -415,7 +394,8 @@ export class BeatmapCarousel extends CompositeDrawable {
 
   onKeyDown(e: KeyDownEvent): boolean {
     switch (e.key) {
-      case Key.F2: {
+      case Key.F2:
+      {
         if (e.repeat)
           return false;
 
@@ -434,7 +414,8 @@ export class BeatmapCarousel extends CompositeDrawable {
       case Key.ArrowRight:
         this.seek(1, true);
         return true;
-      case Key.Enter: {
+      case Key.Enter:
+      {
         if (e.repeat)
           return false;
 
@@ -539,7 +520,6 @@ export class BeatmapCarousel extends CompositeDrawable {
         beatmaps: [beatmap],
         authorName: beatmap.authorName,
         artist: beatmap.artist,
-        author: beatmap.author,
         title: beatmap.title,
         loadThumbnailLarge: () => beatmap.loadThumbnailLarge(),
         loadThumbnailSmall: () => beatmap.loadThumbnailSmall(),
@@ -547,7 +527,7 @@ export class BeatmapCarousel extends CompositeDrawable {
     }
   }
 
-  removeBeatmap(beatmap: StableBeatmapInfo) {
+  removeBeatmap(beatmap: BeatmapItemInfo) {
     const mapset = this.mapsets.find(it => it.mapset.id === beatmap.setId);
     if (!mapset)
       return;

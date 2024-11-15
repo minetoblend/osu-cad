@@ -24,6 +24,10 @@ export class SampleStore implements ISampleStore {
     this.#store.addExtension(extension);
   }
 
+  canLoad(name: string) {
+    return this.#store.canLoad(name);
+  }
+
   async load(name: string) {
     if (this.#factories.has(name))
       return;

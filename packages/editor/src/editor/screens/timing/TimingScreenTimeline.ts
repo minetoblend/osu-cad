@@ -1,7 +1,6 @@
-import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup';
+import type { ControlPointGroup } from '@osucad/common';
+import { LifetimeEntry, LifetimeEntryManager } from '@osucad/common';
 import { Axes, Container, dependencyLoader } from 'osucad-framework';
-import { LifetimeEntry } from '../../../pooling/LifetimeEntry';
-import { LifetimeEntryManager } from '../../../pooling/LifetimeEntryManager';
 import { Timeline } from '../../timeline/Timeline';
 import { TimelineControlPointDrawable } from './TimelineControlPointDrawable';
 

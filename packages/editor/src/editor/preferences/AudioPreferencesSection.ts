@@ -1,7 +1,6 @@
 import type { Drawable } from 'osucad-framework';
+import { OsucadConfigManager, OsucadSettings } from '@osucad/common';
 import { resolved } from 'osucad-framework';
-import { OsucadConfigManager } from '../../config/OsucadConfigManager';
-import { OsucadSettings } from '../../config/OsucadSettings';
 import { OsucadSpriteText } from '../../OsucadSpriteText';
 import { PreferencesPanel } from './PreferencesPanel';
 import { VolumeSliderContainer } from './VolumeSlider';

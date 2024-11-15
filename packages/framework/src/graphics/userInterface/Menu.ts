@@ -762,11 +762,11 @@ export abstract class DrawableMenuItem extends CompositeDrawable {
     return false;
   }
 
-  override onHoverLost(e: HoverLostEvent): boolean {
+  override onHoverLost(e: HoverLostEvent) {
     this.updateBackgroundColor();
     this.updateForegroundColor();
 
-    return super.onHoverLost?.(e) ?? true;
+    super.onHoverLost?.(e);
   }
 
   override onClick(): boolean {

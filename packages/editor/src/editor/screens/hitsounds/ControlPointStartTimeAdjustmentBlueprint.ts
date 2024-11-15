@@ -6,23 +6,15 @@ import type {
   HoverLostEvent,
   MouseDownEvent,
 } from 'osucad-framework';
+import { ControlPointGroup, ControlPointInfo, CreateControlPointCommand, DifficultyPoint, EffectPoint, SamplePoint, TimingPoint, UpdateControlPointCommand } from '@osucad/common';
 import {
   Anchor,
-
   Axes,
   Box,
   dependencyLoader,
   MouseButton,
   resolved,
 } from 'osucad-framework';
-import { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup';
-import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
-import { DifficultyPoint } from '../../../beatmap/timing/DifficultyPoint';
-import { EffectPoint } from '../../../beatmap/timing/EffectPoint';
-import { SamplePoint } from '../../../beatmap/timing/SamplePoint';
-import { TimingPoint } from '../../../beatmap/timing/TimingPoint';
-import { CreateControlPointCommand } from '../../commands/CreateControlPointCommand';
-import { UpdateControlPointCommand } from '../../commands/UpdateControlPointCommand';
 import { CommandManager } from '../../context/CommandManager';
 import { EditorClock } from '../../EditorClock';
 import { ControlPointAdjustmentBlueprint } from './ControlPointAdjustmentBlueprint';

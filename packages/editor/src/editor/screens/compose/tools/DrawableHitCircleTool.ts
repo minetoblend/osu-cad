@@ -1,6 +1,6 @@
 import type { MouseDownEvent, MouseMoveEvent, MouseUpEvent } from 'osucad-framework';
+import { HitCircle } from '@osucad/common';
 import { MouseButton } from 'osucad-framework';
-import { HitCircle } from '../../../../beatmap/hitObjects/HitCircle';
 import { DrawableHitObjectPlacementTool } from './DrawableHitObjectPlacementTool';
 
 export class DrawableHitCircleTool extends DrawableHitObjectPlacementTool<HitCircle> {

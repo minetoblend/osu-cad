@@ -1,26 +1,12 @@
-import type {
-  Action,
-  DependencyContainer,
-  InputManager,
-  UIEvent,
-} from 'osucad-framework';
-import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
+import type { OsuHitObject } from '@osucad/common';
+import type { Action, DependencyContainer, InputManager, UIEvent } from 'osucad-framework';
 import type { HitSoundState, HitSoundStateChangeEvent } from '../../../../beatmap/hitSounds/BindableHitSound';
 import type { ComposeToolInteraction } from './interactions/ComposeToolInteraction';
-import {
-  Axes,
-  BindableBoolean,
-  clamp,
-  Container,
-  dependencyLoader,
-  resolved,
-  Vec2,
-} from 'osucad-framework';
-import { Beatmap } from '../../../../beatmap/Beatmap';
+import { Beatmap, OsuPlayfield } from '@osucad/common';
+import { Axes, BindableBoolean, clamp, Container, dependencyLoader, resolved, Vec2 } from 'osucad-framework';
 import { CommandContainer } from '../../../CommandContainer';
 import { EditorClock } from '../../../EditorClock';
 import { EditorDependencies } from '../../../EditorDependencies';
-import { OsuPlayfield } from '../../../hitobjects/OsuPlayfield';
 import { EditorSelection } from '../EditorSelection';
 import { HitObjectComposer } from '../HitObjectComposer';
 

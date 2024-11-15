@@ -1,12 +1,12 @@
 import type { Drawable, GameHost, ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
 import type { BeatmapItemInfo } from '../beatmapSelect/BeatmapItemInfo';
+import { AudioMixer } from '@osucad/common';
 import { AudioManager, Axes, EasingFunction, GAME_HOST, LowpassFilter, resolved, ScreenStack } from 'osucad-framework';
 import { GlobalSongPlayback } from '../GlobalSongPlayback';
 import { Notification } from '../notifications/Notification';
 import { NotificationOverlay } from '../notifications/NotificationOverlay';
 import { OsucadScreen } from '../OsucadScreen';
 import { EditorLoadingSpinner } from './EditorLoadingSpinner';
-import { EditorMixer } from './EditorMixer';
 
 export class EditorLoader extends OsucadScreen {
   constructor(
@@ -25,8 +25,8 @@ export class EditorLoader extends OsucadScreen {
   @resolved(GlobalSongPlayback, true)
   globalSongPlayback?: GlobalSongPlayback;
 
-  @resolved(EditorMixer)
-  mixer!: EditorMixer;
+  @resolved(AudioMixer)
+  mixer!: AudioMixer;
 
   @resolved(AudioManager)
   audioManager!: AudioManager;

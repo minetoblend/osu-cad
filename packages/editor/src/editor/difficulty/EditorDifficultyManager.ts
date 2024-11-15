@@ -1,7 +1,7 @@
 import type { DifficultyAttributes } from '../../difficulty/DifficultyAttributes';
+import { Beatmap, StableBeatmapEncoder } from '@osucad/common';
+
 import { Bindable, Component, dependencyLoader, resolved } from 'osucad-framework';
-import { Beatmap } from '../../beatmap/Beatmap';
-import { StableBeatmapEncoder } from '../../beatmap/StableBeatmapEncoder';
 import { CommandManager } from '../context/CommandManager';
 import Worker from './EditorDifficultyWorker?worker';
 

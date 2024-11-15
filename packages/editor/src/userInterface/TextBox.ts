@@ -1,34 +1,8 @@
-import type {
-  Bindable,
-  ClickEvent,
-  Drawable,
-  IKeyBindingHandler,
-  KeyBindingPressEvent,
-  KeyDownEvent,
-} from 'osucad-framework';
+import type { EditorCommand } from '@osucad/common';
+import type { Bindable, ClickEvent, Drawable, IKeyBindingHandler, KeyBindingPressEvent, KeyDownEvent } from 'osucad-framework';
 import type { DoubleClickEvent } from '../../../framework/src/input/events/DoubleClickEvent';
-import type { EditorCommand } from '../editor/commands/EditorCommand';
-import {
-  Action,
-  Anchor,
-  Axes,
-  BindableWithCurrent,
-  Cached,
-  clamp,
-  CompositeDrawable,
-  Container,
-  dependencyLoader,
-  EasingFunction,
-  Key,
-  LoadState,
-  MouseButton,
-  PlatformAction,
-  resolved,
-  Scheduler,
-  TextInputSource,
-} from 'osucad-framework';
+import { Action, Anchor, Axes, BindableWithCurrent, Cached, clamp, CompositeDrawable, Container, dependencyLoader, EasingFunction, Key, LoadState, MouseButton, PlatformAction, resolved, Scheduler, TabbableContainer, TextInputSource } from 'osucad-framework';
 import { BitmapFontManager } from 'pixi.js';
-import { TabbableContainer } from '../../../framework/src/graphics/containers/TabbableContainer';
 import { FastRoundedBox } from '../drawables/FastRoundedBox';
 import { CommandManager } from '../editor/context/CommandManager';
 import { ThemeColors } from '../editor/ThemeColors';

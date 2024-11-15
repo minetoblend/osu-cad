@@ -1,5 +1,5 @@
+import type { ControlPointGroup } from '@osucad/common';
 import type { Bindable, MouseDownEvent } from 'osucad-framework';
-import type { ControlPointGroup } from '../../../../beatmap/timing/ControlPointGroup';
 import {
   Axes,
   BindableNumber,
@@ -13,7 +13,7 @@ import {
 import { DifficultyProperties } from './DifficultyProperties';
 import { LabelledTextBox } from './LabelledTextBox';
 import { SampleProperties } from './SampleProperties';
-import { TABBABLE_CONTAINER } from './TABBABLE_CONTAINER.ts';
+import { TABBABLE_CONTAINER } from './TABBABLE_CONTAINER';
 import { TimingProperties } from './TimingProperties';
 
 export class ControlPointProperties extends FillFlowContainer {

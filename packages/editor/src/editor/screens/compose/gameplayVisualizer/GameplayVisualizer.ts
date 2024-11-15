@@ -1,19 +1,6 @@
-import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
-import {
-  Axes,
-  BindableBoolean,
-  clamp,
-  dependencyLoader,
-  EasingFunction,
-  resolved,
-  Vec2,
-  VisibilityContainer,
-} from 'osucad-framework';
-import { HitObjectList } from '../../../../beatmap/hitObjects/HitObjectList';
-import { Slider } from '../../../../beatmap/hitObjects/Slider';
-import { Spinner } from '../../../../beatmap/hitObjects/Spinner';
-import { OsucadConfigManager } from '../../../../config/OsucadConfigManager';
-import { OsucadSettings } from '../../../../config/OsucadSettings';
+import type { OsuHitObject } from '@osucad/common';
+import { HitObjectList, OsucadConfigManager, OsucadSettings, Slider, Spinner } from '@osucad/common';
+import { Axes, BindableBoolean, clamp, dependencyLoader, EasingFunction, resolved, Vec2, VisibilityContainer } from 'osucad-framework';
 import { animate } from '../../../../utils/animate';
 import { EditorClock } from '../../../EditorClock';
 import { GameplayCursor } from './GameplayCursor';

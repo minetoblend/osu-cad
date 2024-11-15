@@ -4,6 +4,7 @@ import type {
   ScreenTransitionEvent,
 } from 'osucad-framework';
 import type { BackgroundAdjustment } from '../BackgroundAdjustment';
+import { ControlPointGroup, ControlPointInfo } from '@osucad/common';
 import {
   Anchor,
   Axes,
@@ -16,8 +17,6 @@ import {
   MaskingContainer,
   resolved,
 } from 'osucad-framework';
-import { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup';
-import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
 import { OsucadButton } from '../../../userInterface/OsucadButton';
 import { EditorClock } from '../../EditorClock';
 import { MainScrollContainer } from '../../MainScrollContainer';

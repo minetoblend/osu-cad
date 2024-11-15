@@ -1,3 +1,4 @@
+import { Beatmap } from '@osucad/common';
 import {
   Anchor,
   Axes,
@@ -10,7 +11,6 @@ import {
   RoundedBox,
   Vec2,
 } from 'osucad-framework';
-import { Beatmap } from '../../../beatmap/Beatmap';
 import { FastRoundedBox } from '../../../drawables/FastRoundedBox';
 import { OsucadIcons } from '../../../OsucadIcons';
 

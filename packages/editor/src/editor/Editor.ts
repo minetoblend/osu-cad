@@ -1,46 +1,18 @@
-import type {
-  IKeyBindingHandler,
-  KeyBindingPressEvent,
-  KeyDownEvent,
-  ScreenExitEvent,
-  ScreenTransitionEvent,
-  ScrollEvent,
-  UIEvent,
-  ValueChangedEvent,
-} from 'osucad-framework';
+import type { DrawableHitObject, HitObjectJudge, IHitObjectJudgeProvider } from '@osucad/common';
+import type { IKeyBindingHandler, KeyBindingPressEvent, KeyDownEvent, ScreenExitEvent, ScreenTransitionEvent, ScrollEvent, UIEvent, ValueChangedEvent } from 'osucad-framework';
 import type { BackgroundScreen } from '../BackgroundScreen';
 import type { BeatmapItemInfo } from '../beatmapSelect/BeatmapItemInfo';
-import type { DrawableHitObject } from './hitobjects/DrawableHitObject';
-import type { HitObjectJudge, IHitObjectJudgeProvider } from './hitobjects/HitObjectJudge';
 import type { EditorScreen } from './screens/EditorScreen';
-import {
-  Action,
-  Anchor,
-  asyncDependencyLoader,
-  AudioManager,
-  Axes,
-  Bindable,
-  clamp,
-  Container,
-  EasingFunction,
-  Key,
-  PlatformAction,
-  resolved,
-} from 'osucad-framework';
-import { Beatmap } from '../beatmap/Beatmap';
+import { AudioMixer, Beatmap, ControlPointInfo, HitObjectList, IBeatmap, IResourcesProvider, OsuPlayfield, OsuRuleset, PlayfieldClock, RulesetSkinProvidingContainer } from '@osucad/common';
+import { Action, Anchor, asyncDependencyLoader, AudioManager, Axes, Bindable, clamp, Container, EasingFunction, Key, loadDrawable, PlatformAction, resolved } from 'osucad-framework';
 import { BeatmapComboProcessor } from '../beatmap/beatmapProcessors/BeatmapComboProcessor';
 import { BeatmapStackingProcessor } from '../beatmap/beatmapProcessors/BeatmapStackingProcessor';
-import { HitObjectList } from '../beatmap/hitObjects/HitObjectList';
-import { IBeatmap } from '../beatmap/IBeatmap';
-import { ControlPointInfo } from '../beatmap/timing/ControlPointInfo';
 import { BeatmapStore } from '../environment';
 import { GameplayScreen } from '../gameplay/GameplayScreen';
-import { IResourcesProvider } from '../io/IResourcesProvider';
 import { DialogContainer } from '../modals/DialogContainer';
 import { Notification } from '../notifications/Notification';
 import { NotificationOverlay } from '../notifications/NotificationOverlay';
 import { OsucadScreen } from '../OsucadScreen';
-import { ISkinSource } from '../skinning/ISkinSource';
 import { BeatmapSkin } from './BeatmapSkin';
 import { CommandManager } from './context/CommandManager';
 import { EditorDifficultyManager } from './difficulty/EditorDifficultyManager';
@@ -51,12 +23,9 @@ import { EditorBottomBar } from './EditorBottomBar';
 import { EditorClock } from './EditorClock';
 import { EditorDependencies } from './EditorDependencies';
 import { EditorExitDialog } from './EditorExitDialog';
-import { EditorMixer } from './EditorMixer';
 import { EditorScreenContainer } from './EditorScreenContainer';
 import { EditorTopBar } from './EditorTopBar';
 import { EditorJudge, EditorJudgeProvider } from './hitobjects/EditorJudge';
-import { OsuPlayfield } from './hitobjects/OsuPlayfield';
-import { PlayfieldClock } from './hitobjects/PlayfieldClock';
 import { HitsoundPlayer } from './HitsoundPlayer';
 import { CompareScreen } from './screens/compare/CompareScreen';
 import { ComposeScreen } from './screens/compose/ComposeScreen';
@@ -99,8 +68,8 @@ export class Editor
   @resolved(AudioManager)
   audioManager!: AudioManager;
 
-  @resolved(EditorMixer)
-  mixer!: EditorMixer;
+  @resolved(AudioMixer)
+  mixer!: AudioMixer;
 
   editorBeatmap!: EditorBeatmap;
 
@@ -112,7 +81,9 @@ export class Editor
   async init() {
     this.editorBeatmap = new EditorBeatmap(this.beatmapInfo);
 
-    await this.editorBeatmap.load(this.dependencies.resolve(IResourcesProvider));
+    const resources = this.dependencies.resolve(IResourcesProvider);
+
+    await this.editorBeatmap.load(resources);
 
     const editorDependencies = new EditorDependencies(
       new OsuPlayfield()
@@ -140,21 +111,11 @@ export class Editor
     this.dependencies.provide(ControlPointInfo, this.beatmap.controlPoints);
     this.dependencies.provide(CommandManager, this.editorBeatmap.commandManager);
 
-    const skin = new BeatmapSkin(this.dependencies.resolve(ISkinSource), this.beatmap);
-
-    await this.loadComponentAsync(skin);
-
-    this.addInternal(skin);
-
-    this.dependencies.provide(ISkinSource, skin);
-
     this.#clock = new EditorClock(this.beatmap.track.value);
     this.addInternal(this.#clock);
 
     this.dependencies.provide(this.#clock);
     this.dependencies.provide(PlayfieldClock, this.#clock);
-
-    this.loadComponent(editorDependencies.reusablePlayfield);
 
     const hitSoundPlayer = new HitsoundPlayer();
     this.dependencies.provide(HitsoundPlayer, hitSoundPlayer);
@@ -170,11 +131,19 @@ export class Editor
       new Container({
         relativeSizeAxes: Axes.Both,
         padding: { top: 28 },
-        child: (this.#screenContainer = new EditorScreenContainer()),
+        child: new RulesetSkinProvidingContainer(
+          new OsuRuleset(),
+          this.beatmap,
+          new BeatmapSkin(resources, this.beatmap),
+        ).with({
+          child: (this.#screenContainer = new EditorScreenContainer()),
+        }),
       }),
       (this.#topBar = new EditorTopBar()),
       (this.#bottomBar = new EditorBottomBar()),
     );
+
+    loadDrawable(editorDependencies.reusablePlayfield, this.clock!, this.#screenContainer.dependencies);
 
     const stackingProcessor = new BeatmapStackingProcessor();
     const comboProcessor = new BeatmapComboProcessor();

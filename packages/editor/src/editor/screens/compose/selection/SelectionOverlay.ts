@@ -1,21 +1,8 @@
-import type { Constructor } from '@osucad/common';
-import type {
-  NoArgsConstructor,
-} from 'osucad-framework';
-import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
+import type { Constructor, OsuHitObject } from '@osucad/common';
+import type { NoArgsConstructor } from 'osucad-framework';
 import type { DrawableSelection } from './DrawableSelection';
-import {
-  Axes,
-  clamp,
-  CompositeDrawable,
-  Container,
-  dependencyLoader,
-  DrawablePool,
-  resolved,
-} from 'osucad-framework';
-import { HitCircle } from '../../../../beatmap/hitObjects/HitCircle';
-import { HitObjectList } from '../../../../beatmap/hitObjects/HitObjectList';
-import { Slider } from '../../../../beatmap/hitObjects/Slider';
+import { HitCircle, HitObjectList, Slider } from '@osucad/common';
+import { Axes, clamp, CompositeDrawable, Container, dependencyLoader, DrawablePool, resolved } from 'osucad-framework';
 import { EditorSelection } from '../EditorSelection';
 import { DrawableHitCircleSelection } from './DrawableHitCircleSelection';
 import { DrawableSliderSelection } from './DrawableSliderSelection';
@@ -49,9 +36,9 @@ export class SelectionOverlay extends CompositeDrawable {
     let sliderCount = 0;
 
     for (const hitObject of this.hitObjects) {
-      if (hitObject.isHitCircle())
+      if (hitObject instanceof HitCircle)
         circleCount++;
-      else if (hitObject.isSlider())
+      else if (hitObject instanceof Slider)
         sliderCount++;
     }
 

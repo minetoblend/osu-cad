@@ -1,4 +1,4 @@
-import type { IBeatmap } from '../beatmap/IBeatmap';
+import type { IBeatmap } from '@osucad/common';
 import type { BeatmapItemInfo } from '../beatmapSelect/BeatmapItemInfo';
 import { Action, Bindable, BindableBoolean } from 'osucad-framework';
 

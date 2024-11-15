@@ -1,14 +1,9 @@
-import {
-  IBeatmap,
-  IResourcesProvider,
-  IResourceStore,
-  LoadedBeatmap,
-  StableBeatmapEncoder,
-  StableBeatmapParser,
-} from '@osucad/editor';
+import { LoadedBeatmap, } from '@osucad/editor';
 import { StableBeatmapInfo } from './StableBeatmapStore';
 import { StableResourceStore } from './StableResourceStore';
-import { DifficultyInfo } from '../../../../editor/src/editor/EditorBeatmap.ts';
+import { DifficultyInfo } from '@osucad/editor/editor/EditorBeatmap';
+import { IBeatmap, IResourcesProvider, StableBeatmapEncoder, StableBeatmapParser } from '@osucad/common';
+import { IResourceStore } from 'osucad-framework';
 
 export class StableLoadedBeatmap extends LoadedBeatmap {
   constructor(readonly osuBeatmap: StableBeatmapInfo) {
@@ -32,7 +27,7 @@ export class StableLoadedBeatmap extends LoadedBeatmap {
     await super.load(resourcesProvider);
   }
 
-  protected loadSourceBeatmap(): Promise<IBeatmap> {
+  protected async loadSourceBeatmap(): Promise<IBeatmap> {
     const data = this.getResource(this.osuBeatmap.osuFileName)
 
     if (!data)
@@ -60,7 +55,7 @@ export class StableLoadedBeatmap extends LoadedBeatmap {
 
         try {
           const text = new TextDecoder().decode(data)
-          const beatmap = await parser.parse(text, {
+          const beatmap = parser.parse(text, {
             timingPoints: false,
             hitObjects: false,
           })
@@ -70,7 +65,7 @@ export class StableLoadedBeatmap extends LoadedBeatmap {
 
           difficulties.push({
             difficultyName: beatmap.metadata.difficultyName,
-            load: () => parser.parse(text)
+            load: async () => parser.parse(text)
           })
         } catch(e) {
           console.warn(e)

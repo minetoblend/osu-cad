@@ -1,13 +1,9 @@
-import type { HitObject } from '../../../../beatmap/hitObjects/HitObject';
-import type { HitObjectList } from '../../../../beatmap/hitObjects/HitObjectList';
+import type { HitObject, HitObjectList } from '@osucad/common';
 import type { EditorClock } from '../../../EditorClock';
 import type { EditorSelection } from '../EditorSelection';
 import type { IPositionSnapProvider } from './IPositionSnapProvider';
-import { PathApproximator, Vector2 } from 'osu-classes';
+import { PathApproximator, PathType, Slider, Spinner } from '@osucad/common';
 import { Vec2 } from 'osucad-framework';
-import { PathType } from '../../../../beatmap/hitObjects/PathType';
-import { Slider } from '../../../../beatmap/hitObjects/Slider';
-import { Spinner } from '../../../../beatmap/hitObjects/Spinner';
 import { PositionSnapTarget } from './SnapTarget';
 
 export class HitObjectSnapProvider implements IPositionSnapProvider {
@@ -55,14 +51,12 @@ export class HitObjectSnapProvider implements IPositionSnapProvider {
           && (!path[i + 3] || path[i + 3].type !== null)
         ) {
           const arcProperties = PathApproximator._circularArcProperties([
-            new Vector2(path[i].x, path[i].y),
-            new Vector2(path[i + 1].x, path[i + 1].y),
-            new Vector2(path[i + 2].x, path[i + 2].y),
+            new Vec2(path[i].x, path[i].y),
+            new Vec2(path[i + 1].x, path[i + 1].y),
+            new Vec2(path[i + 2].x, path[i + 2].y),
           ]);
           if (arcProperties.isValid) {
-            snapTargets.push(
-              new PositionSnapTarget(Vec2.from(arcProperties.centre).add(h.stackedPosition)),
-            );
+            snapTargets.push(new PositionSnapTarget(arcProperties.centre.add(h.stackedPosition)));
           }
         }
       }

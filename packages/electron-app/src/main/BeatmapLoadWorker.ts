@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import OsuDBParser from 'osu-db-parser';
-import { parentPort, workerData } from 'worker_threads'
+import { parentPort } from 'worker_threads'
 
 const port = parentPort
 if (!port) throw new Error('IllegalState')

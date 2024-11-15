@@ -1,19 +1,17 @@
+import type { Slider } from '@osucad/common';
 import type {
   MouseDownEvent,
   MouseUpEvent,
 } from 'osucad-framework';
-import type { Slider } from '../../beatmap/hitObjects/Slider';
+import { SliderSelectionType } from '@osucad/common';
 import {
   Axes,
-
   Container,
   dependencyLoader,
   EasingFunction,
   MouseButton,
   Vec2,
 } from 'osucad-framework';
-
-import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection';
 import { TimelineObject } from './TimelineObject';
 import { TimelineRepeatCircle } from './TimelineRepeatCircle';
 import { TimelineSliderHead } from './TimelineSliderHead';

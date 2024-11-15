@@ -1,7 +1,6 @@
-import type { IBeatmap } from '../beatmap/IBeatmap';
+import type { IBeatmap, IResourcesProvider } from '@osucad/common';
 import type { LoadedBeatmap } from '../beatmap/LoadedBeatmap';
 import type { BeatmapItemInfo } from '../beatmapSelect/BeatmapItemInfo';
-import type { IResourcesProvider } from '../io/IResourcesProvider';
 import { BeatmapTransformer } from '../beatmap/BeatmapTransformer';
 import { CommandManager } from './context/CommandManager';
 

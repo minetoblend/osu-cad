@@ -6,12 +6,8 @@ import type {
 } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
 import type { HitSoundState } from '../../../beatmap/hitSounds/BindableHitSound';
-import {
-  dependencyLoader,
-  resolved,
-} from 'osucad-framework';
-import { Additions } from '../../../beatmap/hitSounds/Additions';
-import { additionToSampleType, SampleType } from '../../../beatmap/hitSounds/SampleType';
+import { Additions, additionToSampleType, SampleType } from '@osucad/common';
+import { dependencyLoader, resolved } from 'osucad-framework';
 import { EditorAction } from '../../EditorAction';
 import { EditorDependencies } from '../../EditorDependencies';
 import { HitsoundPlayer } from '../../HitsoundPlayer';

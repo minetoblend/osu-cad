@@ -1,17 +1,6 @@
-import type {
-  ColorSource,
-  Drawable,
-} from 'osucad-framework';
-import {
-  Anchor,
-  Axes,
-  CompositeDrawable,
-  Invalidation,
-  LayoutMember,
-  resolved,
-  RoundedBox,
-} from 'osucad-framework';
-import { Beatmap } from '../../beatmap/Beatmap';
+import type { ColorSource, Drawable } from 'osucad-framework';
+import { Beatmap } from '@osucad/common';
+import { Anchor, Axes, CompositeDrawable, Invalidation, LayoutMember, resolved, RoundedBox } from 'osucad-framework';
 
 export abstract class OverviewTimelineMarkerContainer extends CompositeDrawable {
   constructor(options: { height: number; verticalPadding?: number }) {

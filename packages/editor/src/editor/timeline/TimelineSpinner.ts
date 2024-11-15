@@ -1,4 +1,4 @@
-import type { Spinner } from '../../beatmap/hitObjects/Spinner';
+import type { Spinner } from '@osucad/common';
 import { TimelineObject } from './TimelineObject';
 import { TimelineSpinnerHead } from './TimelineSpinnerHead';
 import { TimelineSpinnerTail } from './TimelineSpinnerTail';

@@ -1,6 +1,6 @@
+import type { ControlPoint, ControlPointGroup } from '@osucad/common';
 import type { CompositeDrawable } from 'osucad-framework';
-import type { ControlPoint } from '../../../../beatmap/timing/ControlPoint';
-import type { ControlPointGroup } from '../../../../beatmap/timing/ControlPointGroup';
+import { ControlPointInfo } from '@osucad/common';
 import {
   Anchor,
   Axes,
@@ -14,12 +14,11 @@ import {
   resolved,
   Vec2,
 } from 'osucad-framework';
-import { ControlPointInfo } from '../../../../beatmap/timing/ControlPointInfo';
 import { OsucadSpriteText } from '../../../../OsucadSpriteText';
 import { Toggle } from '../../../../userInterface/Toggle';
 import { EditorClock } from '../../../EditorClock';
 import { ControlPointProperties } from './ControlPointProperties';
-import { TABBABLE_CONTAINER } from './TABBABLE_CONTAINER.ts';
+import { TABBABLE_CONTAINER } from './TABBABLE_CONTAINER';
 
 export abstract class ControlPointPropertiesSection<T extends ControlPoint = never> extends Container {
   protected constructor(readonly title: string) {

@@ -1,7 +1,6 @@
 import type { KeyDownEvent, PIXIContainer, ScrollEvent } from 'osucad-framework';
+import { Beatmap, HitObjectList } from '@osucad/common';
 import { Anchor, Axes, BindableNumber, Box, Container, dependencyLoader, EasingFunction, resolved } from 'osucad-framework';
-import { Beatmap } from '../../beatmap/Beatmap';
-import { HitObjectList } from '../../beatmap/hitObjects/HitObjectList';
 import { EditorClock } from '../EditorClock';
 import { ThemeColors } from '../ThemeColors';
 import { TimelineTick } from './TimelineTick';

@@ -1,6 +1,9 @@
 {
   "name": "@osucad-nx/common",
   "version": "0.0.1",
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.lib.json --composite false"
+  },
   "dependencies": {},
   "main": "./index.js",
   "module": "./index.mjs",

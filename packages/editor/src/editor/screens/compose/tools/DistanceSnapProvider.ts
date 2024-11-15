@@ -1,6 +1,6 @@
-import type { Slider } from '../../../../beatmap/hitObjects/Slider';
+import type { Slider } from '@osucad/common';
+import { ControlPointInfo } from '@osucad/common';
 import { CompositeDrawable, resolved } from 'osucad-framework';
-import { ControlPointInfo } from '../../../../beatmap/timing/ControlPointInfo';
 import { EditorClock } from '../../../EditorClock';
 
 export class DistanceSnapProvider

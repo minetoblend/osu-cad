@@ -1,13 +1,7 @@
-import type { HitWindows } from '../beatmap/hitObjects/HitWindows';
-import type { JudgementResult } from '../beatmap/hitObjects/JudgementResult';
-import type { DrawableHitObject } from '../editor/hitobjects/DrawableHitObject';
+import type { DrawableHitObject, HitWindows, JudgementResult } from '@osucad/common';
+import { Beatmap, DrawableHitCircle, HitResult, OsuHitWindows, OsuPlayfield } from '@osucad/common';
 import { Anchor, Axes, CompositeDrawable, dependencyLoader, resolved } from 'osucad-framework';
-import { Beatmap } from '../beatmap/Beatmap';
-import { HitResult } from '../beatmap/hitObjects/HitResult';
-import { OsuHitWindows } from '../beatmap/hitObjects/OsuHitWindows';
 import { FastRoundedBox } from '../drawables/FastRoundedBox';
-import { DrawableHitCircle } from '../editor/hitobjects/DrawableHitCircle';
-import { OsuPlayfield } from '../editor/hitobjects/OsuPlayfield';
 
 export class HitErrorBar extends CompositeDrawable {
   @resolved(OsuPlayfield)

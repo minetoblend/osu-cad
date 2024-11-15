@@ -1,24 +1,8 @@
-import type {
-  HoverLostEvent,
-  Vec2,
-} from 'osucad-framework';
+import type { HoverLostEvent, Vec2 } from 'osucad-framework';
 import type { ImageSource } from 'pixi.js';
 import type { MapsetInfo } from './MapsetInfo';
-import {
-  almostEquals,
-  Anchor,
-  Axes,
-  Container,
-  dependencyLoader,
-  DrawableSprite,
-  EasingFunction,
-  FillMode,
-  lerp,
-  resolved,
-  RoundedBox,
-} from 'osucad-framework';
-import { OsucadConfigManager } from '../config/OsucadConfigManager';
-import { OsucadSettings } from '../config/OsucadSettings';
+import { OsucadConfigManager, OsucadSettings } from '@osucad/common';
+import { almostEquals, Anchor, Axes, Container, dependencyLoader, DrawableSprite, EasingFunction, FillMode, lerp, resolved, RoundedBox } from 'osucad-framework';
 import { FastRoundedBox } from '../drawables/FastRoundedBox';
 import { OsucadSpriteText } from '../OsucadSpriteText';
 import { BeatmapCarousel } from './BeatmapCarousel';

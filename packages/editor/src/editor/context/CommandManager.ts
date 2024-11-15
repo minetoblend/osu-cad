@@ -1,8 +1,7 @@
-import type { EditorCommand } from '../commands/EditorCommand';
+import type { EditorCommand } from '@osucad/common';
 import type { EditorBeatmap } from '../EditorBeatmap';
+import { CommandContext, CommandSource } from '@osucad/common';
 import { Action, Bindable } from 'osucad-framework';
-import { CommandContext } from '../commands/CommandContext';
-import { CommandSource } from '../commands/CommandSource';
 
 export class CommandManager {
   constructor(

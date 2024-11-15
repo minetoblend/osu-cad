@@ -1,7 +1,7 @@
+import type { Slider } from '@osucad/common';
 import type { MouseDownEvent } from 'osucad-framework';
-import type { Slider } from '../../beatmap/hitObjects/Slider';
+import { SliderSelectionType } from '@osucad/common';
 import { dependencyLoader, FillMode, MouseButton, resolved } from 'osucad-framework';
-import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection';
 import { EditorSelection } from '../screens/compose/EditorSelection';
 import { SliderUtils } from '../screens/compose/tools/SliderUtils';
 import { TimelineComboNumber } from './TimelineComboNumber';

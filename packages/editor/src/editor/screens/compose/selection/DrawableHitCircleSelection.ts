@@ -1,9 +1,6 @@
-import type { HitCircle } from '../../../../beatmap/hitObjects/HitCircle';
+import type { HitCircle } from '@osucad/common';
+import { ISkinSource, OsuHitObject, OsuSkinComponentLookup, SkinnableDrawable } from '@osucad/common';
 import { Anchor, Axes, dependencyLoader, resolved } from 'osucad-framework';
-import { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
-import { ISkinSource } from '../../../../skinning/ISkinSource';
-import { OsuSkinComponentLookup } from '../../../../skinning/OsuSkinComponentLookup';
-import { SkinnableDrawable } from '../../../../skinning/SkinnableDrawable';
 import { DrawableSelection } from './DrawableSelection';
 
 export class DrawableHitCircleSelection extends DrawableSelection<HitCircle> {

@@ -1,37 +1,8 @@
-import type {
-  DependencyContainer,
-  FocusLostEvent,
-  IKeyBindingHandler,
-  KeyBindingPressEvent,
-  KeyBindingReleaseEvent,
-  MouseDownEvent,
-} from 'osucad-framework';
+import type { DependencyContainer, FocusLostEvent, IKeyBindingHandler, KeyBindingPressEvent, KeyBindingReleaseEvent, MouseDownEvent } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
 import type { HitSoundState } from '../../../beatmap/hitSounds/BindableHitSound';
-import {
-  Anchor,
-  Axes,
-  Bindable,
-  BindableBoolean,
-  Box,
-  CompositeDrawable,
-  Container,
-  dependencyLoader,
-  DrawableSprite,
-  EasingFunction,
-  FillDirection,
-  FillFlowContainer,
-  MaskingContainer,
-  MouseButton,
-  resolved,
-  RoundedBox,
-  Vec2,
-} from 'osucad-framework';
-
-import { SampleSet } from '../../../beatmap/hitSounds/SampleSet';
-import { SampleType } from '../../../beatmap/hitSounds/SampleType';
-import { OsucadConfigManager } from '../../../config/OsucadConfigManager';
-import { OsucadSettings } from '../../../config/OsucadSettings';
+import { OsucadConfigManager, OsucadSettings, SampleSet, SampleType } from '@osucad/common';
+import { Anchor, Axes, Bindable, BindableBoolean, Box, CompositeDrawable, Container, dependencyLoader, DrawableSprite, EasingFunction, FillDirection, FillFlowContainer, MaskingContainer, MouseButton, resolved, RoundedBox, Vec2 } from 'osucad-framework';
 import { OsucadIcons } from '../../../OsucadIcons';
 import { OsucadSpriteText } from '../../../OsucadSpriteText';
 import { EditorAction } from '../../EditorAction';
@@ -63,10 +34,7 @@ export class SampleSetControl extends CompositeDrawable {
 
     this.hitSoundState = hitSound;
 
-    this.config.bindWith(
-      OsucadSettings.SampleSetExpanded,
-      this.alwaysExpanded,
-    );
+    this.config.bindWith(OsucadSettings.SampleSetExpanded, this.alwaysExpanded);
 
     this.sampleSet.bindTo(
       this.additions

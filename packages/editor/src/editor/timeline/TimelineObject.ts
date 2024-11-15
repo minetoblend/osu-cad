@@ -1,17 +1,8 @@
-import type {
-  DragEvent,
-  MouseDownEvent,
-  MouseUpEvent,
-  Vec2,
-} from 'osucad-framework';
+import type { OsuHitObject } from '@osucad/common';
+import type { DragEvent, MouseDownEvent, MouseUpEvent, Vec2 } from 'osucad-framework';
 import type { ColorSource } from 'pixi.js';
-import type { OsuHitObject } from '../../beatmap/hitObjects/OsuHitObject';
+import { Beatmap, DeleteHitObjectCommand, OsucadConfigManager, OsucadSettings, UpdateHitObjectCommand } from '@osucad/common';
 import { Anchor, BindableBoolean, Cached, Container, dependencyLoader, EasingFunction, Invalidation, InvalidationSource, MouseButton, resolved } from 'osucad-framework';
-import { Beatmap } from '../../beatmap/Beatmap';
-import { OsucadConfigManager } from '../../config/OsucadConfigManager';
-import { OsucadSettings } from '../../config/OsucadSettings';
-import { DeleteHitObjectCommand } from '../commands/DeleteHitObjectCommand';
-import { UpdateHitObjectCommand } from '../commands/UpdateHitObjectCommand';
 import { CommandManager } from '../context/CommandManager';
 import { Editor } from '../Editor';
 import { EditorClock } from '../EditorClock';

@@ -1,36 +1,15 @@
-import type {
-  Bindable,
-  DependencyContainer,
-  IKeyBindingHandler,
-  KeyBindingPressEvent,
-  ScreenExitEvent,
-} from 'osucad-framework';
+import type { Bindable, DependencyContainer, IKeyBindingHandler, KeyBindingPressEvent, ScreenExitEvent } from 'osucad-framework';
 import type { IPositionSnapProvider } from './snapping/IPositionSnapProvider';
 import type { SnapTarget } from './snapping/SnapTarget';
 import type { ComposeTool } from './tools/ComposeTool';
 import type { DrawableComposeTool } from './tools/DrawableComposeTool';
-import {
-  Axes,
-  BindableBoolean,
-  Container,
-  dependencyLoader,
-  DrawSizePreservingFillContainer,
-  EasingFunction,
-  PlatformAction,
-  resolved,
-  Vec2,
-} from 'osucad-framework';
-import { Beatmap } from '../../../beatmap/Beatmap';
-import { HitObjectList } from '../../../beatmap/hitObjects/HitObjectList';
-import { DeleteHitObjectCommand } from '../../commands/DeleteHitObjectCommand';
-import { UpdateHitObjectCommand } from '../../commands/UpdateHitObjectCommand';
+import { Beatmap, DeleteHitObjectCommand, HitObjectList, OsuPlayfield, Playfield, UpdateHitObjectCommand } from '@osucad/common';
+import { Axes, BindableBoolean, Container, dependencyLoader, DrawSizePreservingFillContainer, EasingFunction, PlatformAction, resolved, Vec2 } from 'osucad-framework';
 import { CommandManager } from '../../context/CommandManager';
 import { HitObjectClipboard } from '../../CopyPasteHandler';
 import { EditorAction } from '../../EditorAction';
 import { EditorClock } from '../../EditorClock';
 import { EditorDependencies } from '../../EditorDependencies';
-import { OsuPlayfield } from '../../hitobjects/OsuPlayfield';
-import { Playfield } from '../../hitobjects/Playfield';
 import { PlayfieldGrid } from '../../playfield/PlayfieldGrid';
 import { EditorScreenUtils } from '../EditorScreenUtils';
 import { HitSoundsScreen } from '../hitsounds/HitSoundsScreen';

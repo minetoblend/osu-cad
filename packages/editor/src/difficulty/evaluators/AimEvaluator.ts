@@ -1,7 +1,6 @@
 import type { OsuDifficultyHitObject } from '../preprocessing/OsuDifficultyHitObject';
+import { Slider, Spinner } from '@osucad/common';
 import { clamp } from 'osucad-framework';
-import { Slider } from '../../beatmap/hitObjects/Slider';
-import { Spinner } from '../../beatmap/hitObjects/Spinner';
 
 const wide_angle_multiplier = 1.5;
 const acute_angle_multiplier = 1.95;

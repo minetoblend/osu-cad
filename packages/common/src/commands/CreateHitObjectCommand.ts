@@ -1,71 +1,24 @@
-import { CommandHandler } from './CommandHandler';
-import type { IEditorCommand } from './IEditorCommand';
-import { CommandContext } from './CommandContext';
-import { BaseCommand } from './BaseEditorCommand';
-import { registerCommand } from './commandHandlerts';
+import type { OsuHitObject } from '../rulesets/osu/hitObjects/OsuHitObject';
+import type { SerializedOsuHitObject } from '../serialization';
+import type { CommandContext } from './CommandContext';
+import { deserializeHitObject, serializeHitObject } from '../serialization';
 import { DeleteHitObjectCommand } from './DeleteHitObjectCommand';
-import { SerializedHitObject } from '../types';
-import { HitObject, deserializeHitObject, hitObjectId } from '../osu';
+import { EditorCommand } from './EditorCommand';
 
-export interface ICreateHitObjectCommand
-  extends IEditorCommand<CreateHitObjectHandler> {
-  hitObject: SerializedHitObject;
-}
+export class CreateHitObjectCommand extends EditorCommand {
+  constructor(hitObject: OsuHitObject) {
+    super();
 
-export class CreateHitObjectCommand
-  extends BaseCommand
-  implements ICreateHitObjectCommand
-{
-  hitObject: SerializedHitObject;
+    this.hitObject = serializeHitObject(hitObject);
+  }
 
-  constructor(hitObject: SerializedHitObject | HitObject) {
-    super(CreateHitObjectHandler);
+  readonly hitObject: SerializedOsuHitObject;
 
-    if (hitObject instanceof HitObject) {
-      hitObject = hitObject.serialize();
-    }
+  apply(ctx: CommandContext) {
+    ctx.hitObjects.add(deserializeHitObject(this.hitObject));
+  }
 
-    if (!hitObject.id) {
-      hitObject.id = hitObjectId();
-    }
-
-    this.hitObject = hitObject;
+  createUndo(): EditorCommand | null {
+    return new DeleteHitObjectCommand(this.hitObject.id);
   }
 }
-
-export class CreateHitObjectHandler extends CommandHandler<
-  ICreateHitObjectCommand,
-  HitObject
-> {
-  override get command() {
-    return 'createHitObject';
-  }
-
-  override apply(
-    { hitObjects }: CommandContext,
-    command: ICreateHitObjectCommand,
-  ): HitObject {
-    const hitObject = deserializeHitObject(command.hitObject);
-
-    if (hitObjects.getById(hitObject.id)) {
-      throw new Error(`HitObject with id ${hitObject.id} already exists`);
-    }
-
-    hitObjects.add(hitObject);
-
-    return hitObject;
-  }
-
-  override createUndoCommand(
-    { hitObjects }: CommandContext,
-    command: ICreateHitObjectCommand,
-  ): IEditorCommand | null {
-    if (command.hitObject.id) {
-      return new DeleteHitObjectCommand(command.hitObject.id);
-    }
-
-    return null;
-  }
-}
-
-registerCommand(new CreateHitObjectHandler());

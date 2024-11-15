@@ -1,18 +1,6 @@
-import type {
-  KeyDownEvent,
-  KeyUpEvent,
-} from 'osucad-framework';
-import {
-  BindableNumber,
-  Component,
-  dependencyLoader,
-  Key,
-  resolved,
-} from 'osucad-framework';
-
-import { Beatmap } from '../../../beatmap/Beatmap';
-import { OsucadConfigManager } from '../../../config/OsucadConfigManager';
-import { OsucadSettings } from '../../../config/OsucadSettings';
+import type { KeyDownEvent, KeyUpEvent } from 'osucad-framework';
+import { Beatmap, OsucadConfigManager, OsucadSettings } from '@osucad/common';
+import { BindableNumber, Component, dependencyLoader, Key, resolved } from 'osucad-framework';
 import { UISamples } from '../../../UISamples';
 import { EditorClock } from '../../EditorClock';
 

@@ -1,17 +1,14 @@
+import type { HitObject, OsuHitObject } from '@osucad/common';
 import type {
   MouseMoveEvent,
   MouseUpEvent,
 } from 'osucad-framework';
-import type { HitObject } from '../../../../../beatmap/hitObjects/HitObject';
-import type { OsuHitObject } from '../../../../../beatmap/hitObjects/OsuHitObject';
+import { Slider, Spinner, UpdateHitObjectCommand } from '@osucad/common';
 import {
   dependencyLoader,
   MouseButton,
   Vec2,
 } from 'osucad-framework';
-import { Slider } from '../../../../../beatmap/hitObjects/Slider';
-import { Spinner } from '../../../../../beatmap/hitObjects/Spinner';
-import { UpdateHitObjectCommand } from '../../../../commands/UpdateHitObjectCommand';
 import { SnapVisualizer } from '../../snapping/SnapResult';
 import { ComposeToolInteraction } from './ComposeToolInteraction';
 

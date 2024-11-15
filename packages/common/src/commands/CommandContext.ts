@@ -1,13 +1,10 @@
-import { Beatmap } from '../osu';
+import type { IBeatmap } from '../beatmap/IBeatmap';
 
 export class CommandContext {
   constructor(
-    readonly beatmap: Beatmap,
-    readonly isLocal: boolean = true,
-  ) {}
-
-  get isRemote() {
-    return !this.isLocal;
+    readonly beatmap: IBeatmap,
+    readonly isLocal = true,
+  ) {
   }
 
   get hitObjects() {

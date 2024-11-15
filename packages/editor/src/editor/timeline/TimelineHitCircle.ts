@@ -1,4 +1,4 @@
-import type { HitCircle } from '../../beatmap/hitObjects/HitCircle';
+import type { HitCircle } from '@osucad/common';
 import { dependencyLoader } from 'osucad-framework';
 import { TimelineComboNumber } from './TimelineComboNumber';
 import { TimelineObject } from './TimelineObject';

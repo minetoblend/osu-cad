@@ -1,10 +1,12 @@
+import type { Slider } from '@osucad/common';
 import type {
   DragEvent,
   DragStartEvent,
   MouseDownEvent,
   MouseUpEvent,
 } from 'osucad-framework';
-import type { Slider } from '../../beatmap/hitObjects/Slider';
+import { Beatmap, SliderSelectionType, UpdateHitObjectCommand } from '@osucad/common';
+
 import {
   Anchor,
   dependencyLoader,
@@ -12,9 +14,6 @@ import {
   MouseButton,
   resolved,
 } from 'osucad-framework';
-import { Beatmap } from '../../beatmap/Beatmap';
-import { SliderSelectionType } from '../../beatmap/hitObjects/SliderSelection';
-import { UpdateHitObjectCommand } from '../commands/UpdateHitObjectCommand';
 import { CommandManager } from '../context/CommandManager';
 import { EditorClock } from '../EditorClock';
 import { EditorSelection } from '../screens/compose/EditorSelection';

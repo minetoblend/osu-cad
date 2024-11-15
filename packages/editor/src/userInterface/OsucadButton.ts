@@ -74,6 +74,10 @@ export class OsucadButton extends Button {
 
   #spriteText!: OsucadSpriteText;
 
+  get spriteText() {
+    return this.#spriteText;
+  }
+
   #text = '';
 
   get text() {

@@ -1,4 +1,4 @@
-import type { Beatmap } from '../beatmap/Beatmap';
+import type { Beatmap } from '@osucad/common';
 import type { DifficultyAttributes } from './DifficultyAttributes';
 import type { DifficultyHitObject } from './preprocessing/DifficultyHitObject';
 import type { Skill } from './skills/Skill';

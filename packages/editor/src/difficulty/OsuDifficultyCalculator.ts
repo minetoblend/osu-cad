@@ -1,13 +1,7 @@
-import type { Beatmap } from '../beatmap/Beatmap';
+import type { Beatmap } from '@osucad/common';
 import type { DifficultyAttributes } from './DifficultyAttributes';
 import type { Skill } from './skills/Skill';
-import { BeatmapDifficultyInfo } from '../beatmap/BeatmapDifficultyInfo';
-import { HitCircle } from '../beatmap/hitObjects/HitCircle';
-
-import { HitResult } from '../beatmap/hitObjects/HitResult';
-import { OsuHitWindows } from '../beatmap/hitObjects/OsuHitWindows';
-import { Slider } from '../beatmap/hitObjects/Slider';
-import { Spinner } from '../beatmap/hitObjects/Spinner';
+import { BeatmapDifficultyInfo, HitCircle, HitResult, OsuHitWindows, Slider, Spinner } from '@osucad/common';
 import { DifficultyCalculator } from './DifficultyCalculator';
 import { OsuDifficultyAttributes } from './OsuDifficultyAttributes';
 import { OsuPerformanceCalculator } from './OsuPerformanceCalculator';

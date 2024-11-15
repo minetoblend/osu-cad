@@ -1,10 +1,9 @@
 import type { PIXIRenderer } from 'osucad-framework';
+import { AudioMixer, IResourcesProvider, ISkinSource, OsucadConfigManager, SkinManager } from '@osucad/common';
 import { Action, AudioManager, dependencyLoader, Game, IRenderer, isMobile, resolved } from 'osucad-framework';
 import { RenderTarget } from 'pixi.js';
 import { BeatmapImportScreen } from './BeatmapImportScreen';
-import { OsucadConfigManager } from './config/OsucadConfigManager';
 import { EditorActionContainer } from './editor/EditorActionContainer';
-import { EditorMixer } from './editor/EditorMixer';
 import { PreferencesContainer } from './editor/preferences/PreferencesContainer';
 import { Fit, ScalingContainer } from './editor/ScalingContainer';
 import { ThemeColors } from './editor/ThemeColors';
@@ -14,15 +13,13 @@ import { FpsOverlay } from './FpsOverlay';
 import { GlobalBeatmapBindable } from './GlobalBeatmapBindable';
 import { GlobalSongPlayback } from './GlobalSongPlayback';
 import { IntroSequence } from './introSequence/IntroSequence';
-import { IResourcesProvider } from './io/IResourcesProvider';
 import { MainCursorContainer } from './MainCursorContainer';
 import { DialogContainer } from './modals/DialogContainer';
 import { NotificationOverlay } from './notifications/NotificationOverlay';
 import { OsucadIcons } from './OsucadIcons';
 import { OsucadScreenStack } from './OsucadScreenStack';
 import { SkinLoadingOverlay } from './SkinLoadingOverlay';
-import { ISkinSource } from './skinning/ISkinSource';
-import { SkinManager } from './skinning/SkinManager';
+import { OsucadSkinManager } from './skinning/OsucadSkinManager';
 import { UIFonts } from './UIFonts';
 import { UISamples } from './UISamples';
 import { UserAvatarCache } from './UserAvatarCache';
@@ -53,7 +50,7 @@ export class OsucadGame extends Game implements IResourcesProvider {
 
   config!: OsucadConfigManager;
 
-  mixer!: EditorMixer;
+  mixer!: AudioMixer;
 
   fullyLoaded = new Action();
 
@@ -77,7 +74,7 @@ export class OsucadGame extends Game implements IResourcesProvider {
 
     this.dependencies.provide(new ThemeColors());
 
-    const mixer = new EditorMixer(this.audioManager);
+    const mixer = new AudioMixer(this.audioManager);
     this.dependencies.provide(mixer);
     super.add(mixer);
 
@@ -97,7 +94,7 @@ export class OsucadGame extends Game implements IResourcesProvider {
       OsucadIcons.load(),
     ]);
 
-    const skinManager = new SkinManager(this.environment.skins);
+    const skinManager = new OsucadSkinManager(this.environment.skins);
 
     this.dependencies.provide(ISkinSource, skinManager);
     this.dependencies.provide(SkinManager, skinManager);

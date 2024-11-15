@@ -1,7 +1,6 @@
 import type { FillFlowContainer } from 'osucad-framework';
+import { Beatmap, UpdateMetadataCommand } from '@osucad/common';
 import { resolved } from 'osucad-framework';
-import { Beatmap } from '../../../beatmap/Beatmap';
-import { UpdateMetadataCommand } from '../../commands/UpdateMetadataCommand';
 import { LabelledTextBox } from '../timing/properties/LabelledTextBox';
 import { SetupScreenSection } from './SetupScreenSection';
 

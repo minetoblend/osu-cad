@@ -1,9 +1,9 @@
-import { StableBeatmapParser } from '../../beatmap/StableBeatmapParser';
+import { StableBeatmapParser } from '@osucad/common';
 import { OsuDifficultyCalculator } from '../../difficulty/OsuDifficultyCalculator';
 import { StrainSkill } from '../../difficulty/skills/StrainSkill';
 
 globalThis.addEventListener('message', async (evt) => {
-  const beatmap = await new StableBeatmapParser().parse(evt.data);
+  const beatmap = new StableBeatmapParser().parse(evt.data);
 
   const difficultyCalculator = new OsuDifficultyCalculator(beatmap);
 

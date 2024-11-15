@@ -1,10 +1,6 @@
-import type { JudgementResult } from '../beatmap/hitObjects/JudgementResult';
-import type { DrawableHitObject } from '../editor/hitobjects/DrawableHitObject';
+import type { DrawableHitObject, JudgementResult } from '@osucad/common';
+import { AudioMixer, HitResult, ISkinSource, OsuPlayfield } from '@osucad/common';
 import { Bindable, BindableNumber, Component, dependencyLoader, resolved } from 'osucad-framework';
-import { HitResult } from '../beatmap/hitObjects/HitResult';
-import { EditorMixer } from '../editor/EditorMixer';
-import { OsuPlayfield } from '../editor/hitobjects/OsuPlayfield';
-import { ISkinSource } from '../skinning/ISkinSource';
 
 export class GameplayProcessor extends Component {
   @resolved(OsuPlayfield)
@@ -22,8 +18,8 @@ export class GameplayProcessor extends Component {
 
   #lastComboBreakTime = 0;
 
-  @resolved(EditorMixer)
-  mixer!: EditorMixer;
+  @resolved(AudioMixer)
+  mixer!: AudioMixer;
 
   breakCombo() {
     if (this.time.current - this.#lastComboBreakTime >= 1000) {

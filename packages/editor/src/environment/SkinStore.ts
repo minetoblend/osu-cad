@@ -1,5 +1,4 @@
-import type { IResourcesProvider } from '../io/IResourcesProvider';
-import type { ISkin } from '../skinning/ISkin';
+import type { IResourcesProvider, Skin } from '@osucad/common';
 import { Bindable } from 'osucad-framework';
 
 export abstract class SkinStore {
@@ -10,5 +9,5 @@ export abstract class LoadableSkin {
   protected constructor(public name: string) {
   }
 
-  abstract loadSkin(resources: IResourcesProvider): Promise<ISkin>;
+  abstract loadSkin(resources: IResourcesProvider): Promise<Skin>;
 }

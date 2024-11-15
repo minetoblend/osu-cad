@@ -1,8 +1,7 @@
+import type { IBeatmap, IResourcesProvider } from '@osucad/common';
 import type { AudioChannel, AudioManager, IResourceStore, Track } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
 import type { DifficultyInfo } from '../editor/EditorBeatmap';
-import type { IResourcesProvider } from '../io/IResourcesProvider';
-import type { IBeatmap } from './IBeatmap';
 import { Bindable, loadTexture } from 'osucad-framework';
 import { BeatmapTransformer } from './BeatmapTransformer';
 

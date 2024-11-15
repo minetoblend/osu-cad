@@ -1,22 +1,11 @@
-import {
-  AudioManager,
-  type DependencyContainer,
-  dependencyLoader,
-  Game,
-  IRenderer,
-  type PIXIRenderer,
-  resolved,
-} from 'osucad-framework';
-import { OsucadConfigManager } from './config/OsucadConfigManager';
-import { EditorMixer } from './editor/EditorMixer';
+import { AudioMixer, IResourcesProvider, ISkinSource, OsucadConfigManager, SkinManager } from '@osucad/common';
+import { AudioManager, type DependencyContainer, dependencyLoader, Game, IRenderer, type PIXIRenderer, resolved } from 'osucad-framework';
 import { ThemeColors } from './editor/ThemeColors';
 import { BeatmapStore, EditorEnvironment, SkinStore } from './environment';
 import { GlobalBeatmapBindable } from './GlobalBeatmapBindable';
-import { IResourcesProvider } from './io/IResourcesProvider';
 import { MainCursorContainer } from './MainCursorContainer';
 import { OsucadIcons } from './OsucadIcons';
-import { ISkinSource } from './skinning/ISkinSource';
-import { SkinManager } from './skinning/SkinManager';
+import { OsucadSkinManager } from './skinning/OsucadSkinManager';
 import { UIFonts } from './UIFonts';
 import { UISamples } from './UISamples';
 
@@ -35,7 +24,7 @@ export class OsucadGameBase extends Game {
 
   config!: OsucadConfigManager;
 
-  mixer!: EditorMixer;
+  mixer!: AudioMixer;
 
   @dependencyLoader()
   async load(dependencies: DependencyContainer): Promise<void> {
@@ -57,7 +46,7 @@ export class OsucadGameBase extends Game {
 
     dependencies.provide(new ThemeColors());
 
-    const mixer = new EditorMixer(this.audioManager);
+    const mixer = new AudioMixer(this.audioManager);
     dependencies.provide(mixer);
     super.add(mixer);
 
@@ -75,10 +64,11 @@ export class OsucadGameBase extends Game {
       OsucadIcons.load(),
     ]);
 
-    const skinManager = new SkinManager(this.environment.skins);
+    const skinManager = new OsucadSkinManager(this.environment.skins);
 
     dependencies.provide(ISkinSource, skinManager);
     dependencies.provide(SkinManager, skinManager);
+    dependencies.provide(OsucadSkinManager, skinManager);
 
     const cursorContainer = new MainCursorContainer();
     dependencies.provide(cursorContainer);

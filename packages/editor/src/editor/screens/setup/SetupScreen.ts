@@ -1,19 +1,7 @@
-import type {
-  DependencyContainer,
-  ScreenExitEvent,
-  ScreenTransitionEvent,
-} from 'osucad-framework';
-import type { OsuPlayfield } from '../../hitobjects/OsuPlayfield';
+import type { OsuPlayfield } from '@osucad/common';
+import type { DependencyContainer, ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
 import type { BackgroundAdjustment } from '../BackgroundAdjustment';
-import {
-  Anchor,
-  Axes,
-  Box,
-  Container,
-  dependencyLoader,
-  DrawSizePreservingFillContainer,
-  EasingFunction,
-} from 'osucad-framework';
+import { Anchor, Axes, Box, Container, dependencyLoader, DrawSizePreservingFillContainer, EasingFunction } from 'osucad-framework';
 import { LabelWidthProvider } from '../../../userInterface/LabelledDrawable';
 import { EditorDependencies } from '../../EditorDependencies';
 import { PlayfieldGrid } from '../../playfield/PlayfieldGrid';

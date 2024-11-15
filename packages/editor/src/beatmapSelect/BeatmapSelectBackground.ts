@@ -1,30 +1,9 @@
-import type {
-  Bindable,
-  DependencyContainer,
-  GameHost,
-  ScreenTransitionEvent,
-  ValueChangedEvent,
-} from 'osucad-framework';
+import type { Bindable, DependencyContainer, GameHost, ScreenTransitionEvent, ValueChangedEvent } from 'osucad-framework';
 import type { BeatmapItemInfo } from './BeatmapItemInfo';
-import {
-  Anchor,
-  Axes,
-  BindableBoolean,
-  Box,
-  Container,
-  dependencyLoader,
-  DrawableSprite,
-  EasingFunction,
-  FillMode,
-  GAME_HOST,
-  loadTexture,
-  resolved,
-} from 'osucad-framework';
-
+import { OsucadConfigManager, OsucadSettings } from '@osucad/common';
+import { Anchor, Axes, BindableBoolean, Box, Container, dependencyLoader, DrawableSprite, EasingFunction, FillMode, GAME_HOST, loadTexture, resolved } from 'osucad-framework';
 import { BlurFilter } from 'pixi.js';
 import { BackgroundScreen } from '../BackgroundScreen';
-import { OsucadConfigManager } from '../config/OsucadConfigManager';
-import { OsucadSettings } from '../config/OsucadSettings';
 import { EditorBackground } from '../editor/EditorBackground';
 import { GlobalBeatmapBindable } from '../GlobalBeatmapBindable';
 

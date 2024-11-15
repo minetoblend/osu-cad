@@ -1,25 +1,7 @@
 import type { TimingPoint } from '@osucad/common';
-import type {
-  FrameTimeInfo,
-  IAdjustableClock,
-  IFrameBasedClock,
-  Track,
-} from 'osucad-framework';
-import {
-  almostEquals,
-  AudioManager,
-  Bindable,
-  BindableBoolean,
-  BindableNumber,
-  clamp,
-  Container,
-  dependencyLoader,
-  lerp,
-  resolved,
-} from 'osucad-framework';
-import { Beatmap } from '../beatmap/Beatmap';
-import { OsucadConfigManager } from '../config/OsucadConfigManager';
-import { OsucadSettings } from '../config/OsucadSettings';
+import type { FrameTimeInfo, IAdjustableClock, IFrameBasedClock, Track } from 'osucad-framework';
+import { Beatmap, OsucadConfigManager, OsucadSettings } from '@osucad/common';
+import { almostEquals, AudioManager, Bindable, BindableBoolean, BindableNumber, clamp, Container, dependencyLoader, lerp, resolved } from 'osucad-framework';
 
 export class EditorClock
   extends Container

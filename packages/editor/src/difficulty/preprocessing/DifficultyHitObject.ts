@@ -1,4 +1,4 @@
-import type { HitObject } from '../../beatmap/hitObjects/HitObject';
+import type { HitObject } from '@osucad/common';
 
 export abstract class DifficultyHitObject<T extends HitObject> {
   protected constructor(

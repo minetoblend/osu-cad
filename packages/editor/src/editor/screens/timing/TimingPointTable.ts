@@ -1,7 +1,7 @@
+import type { ControlPointGroup } from '@osucad/common';
 import type { DependencyContainer, ScrollContainer } from 'osucad-framework';
-import type { ControlPointGroup } from '../../../beatmap/timing/ControlPointGroup';
+import { ControlPointInfo } from '@osucad/common';
 import { Axes, Bindable, Box, Container, dependencyLoader, Direction, DrawablePool, lerp, resolved } from 'osucad-framework';
-import { ControlPointInfo } from '../../../beatmap/timing/ControlPointInfo';
 import { EditorClock } from '../../EditorClock';
 import { MainScrollContainer } from '../../MainScrollContainer';
 import { KiaiBadge } from './KiaiBadge';

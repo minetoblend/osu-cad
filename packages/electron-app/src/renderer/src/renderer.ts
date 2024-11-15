@@ -1,12 +1,12 @@
-import { Axes, EasingFunction, OsucadGame, WebGameHost } from '../../../../editor/src';
+import { Axes, EasingFunction, WebGameHost } from 'osucad-framework';
+import { OsucadGame } from '@osucad/editor';
 import '../assets/main.css';
 import { ElectronEnvironment } from './ElectronEnvironment';
-import { NotificationOverlay } from '../../../../editor/src/notifications/NotificationOverlay.ts';
-import { Notification } from '../../../../editor/src/notifications/Notification.ts';
-import { FastRoundedBox } from '../../../../editor/src/drawables/FastRoundedBox.ts';
+import { NotificationOverlay } from '@osucad/editor/notifications/NotificationOverlay';
+import { Notification } from '@osucad/editor/notifications/Notification';
+import { FastRoundedBox } from '@osucad/editor/drawables/FastRoundedBox';
 import { Container } from 'osucad-framework';
-import { OsucadButton } from '../../../../editor/src/userInterface/OsucadButton.ts';
-
+import { OsucadButton } from '@osucad/editor/userInterface/OsucadButton.ts';
 
 const environment = new ElectronEnvironment();
 
@@ -16,9 +16,11 @@ const host = new WebGameHost('osucad', {
   friendlyGameName: 'osucad',
 });
 
-game.fullyLoaded.addListener(() => {
+game.fullyLoaded.addListener(() =>
+{
 
-  window.api.onUpdateAvailable(() => {
+  window.api.onUpdateAvailable(() =>
+  {
     console.log('update available');
     game.dependencies.resolve(NotificationOverlay).add(new UpdateAvailableNotification());
   });
@@ -27,8 +29,10 @@ game.fullyLoaded.addListener(() => {
 
 host.run(game);
 
-class UpdateAvailableNotification extends Notification {
-  constructor() {
+class UpdateAvailableNotification extends Notification
+{
+  constructor()
+  {
     super('A new update is available');
 
     this.mainContent.add(new Container({
@@ -51,24 +55,27 @@ class UpdateAvailableNotification extends Notification {
       ],
     }));
 
-    const stop = window.api.onUpdateDownloadProgress(progress => {
+    const stop = window.api.onUpdateDownloadProgress(progress =>
+    {
       if (progress === 100)
         return;
 
-      this.progressBar.resizeWidthTo(progress / 100, 300, EasingFunction.OutExpo)
-    })
-    this.onDispose(stop)
+      this.progressBar.resizeWidthTo(progress / 100, 300, EasingFunction.OutExpo);
+    });
+    this.onDispose(stop);
 
-    window.api.onUpdateDownloadComplete(() => {
-      this.progressBar.resizeWidthTo(1, 300, EasingFunction.OutExpo)
+    window.api.onUpdateDownloadComplete(() =>
+    {
+      this.progressBar.resizeWidthTo(1, 300, EasingFunction.OutExpo);
 
-      this.mainContent.add(new OsucadButton().withText('Update and restart!').withAction(() => window.api.installUpdate()))
-    })
+      this.mainContent.add(new OsucadButton().withText('Update and restart!').withAction(() => window.api.installUpdate()));
+    });
   }
 
   progressBar!: FastRoundedBox;
 
-  override get dismissAutomatically() {
+  override get dismissAutomatically()
+  {
     return false;
   }
 }

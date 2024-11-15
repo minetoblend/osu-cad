@@ -1,8 +1,6 @@
-import type { OsuHitObject } from '../hitObjects/OsuHitObject';
+import type { OsuHitObject } from '@osucad/common';
+import { ISkinSource, SkinConfig, Spinner } from '@osucad/common';
 import { Color, dependencyLoader, resolved } from 'osucad-framework';
-import { ISkinSource } from '../../skinning/ISkinSource';
-import { SkinConfig } from '../../skinning/SkinConfig';
-import { Spinner } from '../hitObjects/Spinner';
 import { BeatmapProcessor } from './BeatmapProcessor';
 
 export class BeatmapComboProcessor extends BeatmapProcessor {

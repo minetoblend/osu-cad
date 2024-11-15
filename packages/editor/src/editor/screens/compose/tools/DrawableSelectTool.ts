@@ -1,3 +1,4 @@
+import type { HitObject, OsuHitObject } from '@osucad/common';
 import type {
   ClickEvent,
   DragStartEvent,
@@ -6,21 +7,14 @@ import type {
   MouseDownEvent,
   Vec2,
 } from 'osucad-framework';
-import type { HitObject } from '../../../../beatmap/hitObjects/HitObject';
-import type { OsuHitObject } from '../../../../beatmap/hitObjects/OsuHitObject';
 import type { HitSoundStateChangeEvent } from '../../../../beatmap/hitSounds/BindableHitSound';
+import { Additions, DeleteHitObjectCommand, SampleSet, Slider, SliderSelectionType, UpdateHitObjectCommand } from '@osucad/common';
 import {
   Anchor,
   dependencyLoader,
   MouseButton,
   RoundedBox,
 } from 'osucad-framework';
-import { Slider } from '../../../../beatmap/hitObjects/Slider';
-import { SliderSelectionType } from '../../../../beatmap/hitObjects/SliderSelection';
-import { Additions } from '../../../../beatmap/hitSounds/Additions';
-import { SampleSet } from '../../../../beatmap/hitSounds/SampleSet';
-import { DeleteHitObjectCommand } from '../../../commands/DeleteHitObjectCommand';
-import { UpdateHitObjectCommand } from '../../../commands/UpdateHitObjectCommand';
 import { EditorAction } from '../../../EditorAction';
 import { DistanceSnapProvider } from './DistanceSnapProvider';
 import { DrawableComposeTool } from './DrawableComposeTool';

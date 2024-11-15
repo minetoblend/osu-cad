@@ -1,5 +1,4 @@
-import type { ControlPointGroup } from '../../../../beatmap/timing/ControlPointGroup';
-import type { EffectPoint } from '../../../../beatmap/timing/EffectPoint';
+import type { ControlPointGroup, EffectPoint } from '@osucad/common';
 import { ControlPointPropertiesSection } from './ControlPointPropertiesSection';
 
 export class EffectProperties extends ControlPointPropertiesSection<EffectPoint> {

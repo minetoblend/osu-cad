@@ -1,12 +1,12 @@
 import { DataSource, In, Repository } from 'typeorm';
 import { BeatmapEntity } from './beatmap.entity';
 import { OsuStableInfo } from '../loadOsuStableInfo';
-import { Action, StableBeatmapParser } from '@osucad/editor';
+import { Action } from 'osucad-framework';
+import { StableBeatmapParser, Beatmap } from '@osucad/common'
 import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import { join } from 'path';
 import log from 'electron-log/main';
-import { Beatmap } from '@osucad/editor';
 import { OsuDifficultyCalculator } from '../../../../editor/src/difficulty/OsuDifficultyCalculator';
 import { IBeatmapManager } from '../../types/IBeatmapManager';
 

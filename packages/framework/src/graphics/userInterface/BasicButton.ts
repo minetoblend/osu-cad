@@ -136,12 +136,12 @@ export class BasicButton extends Button {
     return super.onHover?.(e) ?? true;
   }
 
-  override onHoverLost(e: HoverEvent): boolean {
+  override onHoverLost(e: HoverEvent) {
     if (this.enabled.value) {
       this.hover.fadeOut(this.hoverFadeDuration);
     }
 
-    return super.onHoverLost?.(e) ?? true;
+    super.onHoverLost?.(e);
   }
 
   #enabledChanged = (event: ValueChangedEvent<boolean>) => {

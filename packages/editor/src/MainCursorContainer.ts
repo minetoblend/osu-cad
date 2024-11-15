@@ -1,22 +1,7 @@
-import type {
-  Drawable,
-  MouseDownEvent,
-  MouseUpEvent,
-} from 'osucad-framework';
-import {
-  BindableBoolean,
-  CompositeDrawable,
-  CursorContainer,
-  dependencyLoader,
-  DrawableSprite,
-  EasingFunction,
-  MouseButton,
-  resolved,
-  Vec2,
-} from 'osucad-framework';
+import type { Drawable, MouseDownEvent, MouseUpEvent } from 'osucad-framework';
+import { OsucadConfigManager, OsucadSettings } from '@osucad/common';
+import { BindableBoolean, CompositeDrawable, CursorContainer, dependencyLoader, DrawableSprite, EasingFunction, MouseButton, resolved, Vec2 } from 'osucad-framework';
 import cursorTexture from './assets/icons/select.png';
-import { OsucadConfigManager } from './config/OsucadConfigManager';
-import { OsucadSettings } from './config/OsucadSettings';
 import { getIcon } from './OsucadIcons';
 
 export class MainCursorContainer extends CursorContainer {

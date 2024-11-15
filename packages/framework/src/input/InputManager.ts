@@ -24,7 +24,7 @@ import { HoverEvent } from './events/HoverEvent';
 import { HoverLostEvent } from './events/HoverLostEvent';
 import { MouseMoveEvent } from './events/MouseMoveEvent';
 import { ScrollEvent } from './events/ScrollEvent';
-import { KeyboardHandler } from './handlers/KeyboardHandler.ts';
+import { KeyboardHandler } from './handlers/KeyboardHandler';
 import { KeyEventManager } from './KeyEventManager';
 import { MouseButtonEventManager } from './MouseButtonEventManager';
 import { InputState } from './state/InputState';
@@ -46,7 +46,11 @@ const repeat_tick_rate = 70;
 const repeat_initial_delay = 250;
 
 export abstract class InputManager extends Container implements IInputStateChangeHandler, IFocusManager {
-  currentState = new InputState();
+  currentState = this.createInitialState();
+
+  protected createInitialState(): InputState {
+    return new InputState();
+  }
 
   abstract inputHandlers: ReadonlyArray<InputHandler>;
 

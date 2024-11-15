@@ -1,10 +1,13 @@
-import type { BeatmapColors } from './BeatmapColors';
-import type { BeatmapDifficultyInfo } from './BeatmapDifficultyInfo';
-import type { BeatmapMetadata } from './BeatmapMetadata';
-import type { BeatmapSettings } from './BeatmapSettings';
-import type { HitObjectList } from './hitObjects/HitObjectList';
-import type { IBeatmap } from './IBeatmap';
-import type { ControlPointInfo } from './timing/ControlPointInfo';
+import type {
+  BeatmapColors,
+  BeatmapDifficultyInfo,
+  BeatmapMetadata,
+  BeatmapSettings,
+  ControlPointInfo,
+  HitObjectList,
+  IBeatmap,
+} from '@osucad/common';
+
 import { Component } from 'osucad-framework';
 
 export abstract class BeatmapTransformer<T extends IBeatmap = IBeatmap> extends Component implements IBeatmap {

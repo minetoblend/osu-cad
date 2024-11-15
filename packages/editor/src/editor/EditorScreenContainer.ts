@@ -1,5 +1,5 @@
+import type { OsuPlayfield } from '@osucad/common';
 import type { Container, DependencyContainer } from 'osucad-framework';
-import type { OsuPlayfield } from './hitobjects/OsuPlayfield';
 import type { EditorScreen } from './screens/EditorScreen';
 import { Anchor, Axes, CompositeDrawable, dependencyLoader, ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
 import { EditorDependencies } from './EditorDependencies';
