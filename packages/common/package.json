@@ -1,5 +1,5 @@
 {
-  "name": "@osucad-nx/common",
+  "name": "@osucad/common",
   "version": "0.0.1",
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.lib.json --composite false"
