@@ -2,8 +2,9 @@ import type { Decoder } from '../decoder/Decoder';
 import type { SerialDescriptor } from '../descriptor/SerialDescriptor';
 import type { Encoder } from '../encoder/Encoder';
 import type { Serializer } from '../Serializer';
-import { nullableDescriptor, primitiveSerialDescriptor } from '../descriptor/SerialDescriptors';
+import { listSerialDescriptor, nullableDescriptor, primitiveSerialDescriptor } from '../descriptor/SerialDescriptors';
 import { PrimitiveKind } from '../descriptor/SerialKind';
+import { T } from "vitest/dist/reporters-yx5ZTtEV";
 
 export const BooleanSerializer: Serializer<boolean> = {
   descriptor: primitiveSerialDescriptor('boolean', PrimitiveKind.Boolean),
@@ -149,5 +150,32 @@ export class NullableSerializer<T> implements Serializer<T | null> {
 
   deserialize(decoder: Decoder): T | null {
     return decoder.decodeNotNullMark() ? this.serializer.deserialize(decoder) : decoder.decodeNull();
+  }
+}
+
+export class ListSerializer<T> implements Serializer<T[]> {
+  constructor(private readonly elementSerializer: Serializer<T>) {
+    this.descriptor = listSerialDescriptor(elementSerializer.descriptor);
+  }
+
+  readonly descriptor: SerialDescriptor;
+
+  deserialize(decoder: Decoder): T[] {
+    return decoder.decodeStructure(this.descriptor, (decoder) => {
+      const size = decoder.decodeCollectionSize(this.descriptor);
+      const result: T[] = [];
+      for (let i = 0; i < size; i++) {
+        result.push(decoder.decodeSerializableElement(this.descriptor, i, this.elementSerializer));
+      }
+      return result;
+    })
+  }
+
+  serialize(encoder: Encoder, value: T[]): void {
+    encoder.encodeStructure(this.descriptor, (encoder) => {
+      for (let i = 0; i < value.length; i++) {
+        encoder.encodeSerializableElement(this.descriptor, i, this.elementSerializer, value[i]);
+      }
+    })
   }
 }

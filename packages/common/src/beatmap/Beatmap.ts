@@ -13,9 +13,9 @@ export class Beatmap implements IBeatmap {
   }
 
   constructor(
+    readonly metadata = new BeatmapMetadata(),
     readonly difficulty = new BeatmapDifficultyInfo(),
     readonly settings = new BeatmapSettings(),
-    readonly metadata = new BeatmapMetadata(),
     readonly colors = new BeatmapColors(),
     readonly controlPoints = new ControlPointInfo(),
   ) {

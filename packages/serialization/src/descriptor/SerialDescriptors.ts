@@ -2,6 +2,7 @@ import type { SerialDescriptor } from './SerialDescriptor';
 import type { SerialKind } from './SerialKind';
 import { primitiveDescriptorSafe } from './Primitives';
 import { PrimitiveKind, StructureKind } from './SerialKind';
+import { ListDescriptor } from "./ListDescriptor";
 
 export function buildClassSerialDescriptor(
   serialName: string,
@@ -216,4 +217,8 @@ class NullableDescriptor implements SerialDescriptor {
   isElementOptional(index: number) {
     return this.original.isElementOptional(index);
   }
+}
+
+export function listSerialDescriptor(elementDescriptor: SerialDescriptor): SerialDescriptor {
+  return new ListDescriptor(elementDescriptor);
 }

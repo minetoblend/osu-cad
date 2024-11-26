@@ -28,13 +28,15 @@ export interface Decoder {
 
   beginStructure(descriptor: SerialDescriptor): CompositeDecoder;
 
+  decodeStructure<T>(descriptor: SerialDescriptor, fn: (decoder: CompositeDecoder) => T): T;
+
   decodeSerializableValue<T>(deserializer: DeserializationStrategy<T>): T;
 
   decodeNullableSerializableValue<T>(deserializer: DeserializationStrategy<T>): T | null;
 }
 
 export const CompositeDecoder = {
-  DONE: -1,
+  DECODE_DONE: -1,
   UNKNOWN_NAME: -3,
 };
 

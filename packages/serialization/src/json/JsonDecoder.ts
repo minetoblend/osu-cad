@@ -6,6 +6,7 @@ import { BooleanSerializer } from '../builtins/BuildinSerializers';
 import { CompositeDecoder } from '../decoder/Decoder';
 import { NamedValueDecoder } from '../decoder/TaggedDecoder';
 import { StructureKind } from '../descriptor/SerialKind';
+import { Json } from "./Json";
 
 export abstract class AbstractJsonTreeDecoder extends NamedValueDecoder {
   constructor(
@@ -35,7 +36,7 @@ export abstract class AbstractJsonTreeDecoder extends NamedValueDecoder {
   override beginStructure(descriptor: SerialDescriptor): CompositeDecoder {
     const currentObject = this.currentObject();
     if (descriptor.kind === StructureKind.LIST) {
-      // JsonTreeListDecoder
+      return new JsonListDecoder(this.json, currentObject as Array<JsonElement>, this.polymorphismDiscriminator);
     }
     // TODO: Map decoding
     return new JsonTreeDecoder(this.json, currentObject, this.polymorphismDiscriminator);
@@ -199,7 +200,7 @@ export class JsonTreeDecoder extends AbstractJsonTreeDecoder {
       }
     }
 
-    return CompositeDecoder.DONE;
+    return CompositeDecoder.DECODE_DONE;
   }
 
   private absenceIsNull(descriptor: SerialDescriptor, index: number): boolean {
@@ -231,5 +232,32 @@ export class JsonTreeDecoder extends AbstractJsonTreeDecoder {
 
   override endStructure(descriptor: SerialDescriptor) {
     // nothing
+  }
+}
+
+export class JsonListDecoder extends AbstractJsonTreeDecoder {
+  constructor(json: Json, value: Array<JsonElement>, polymorphismDiscriminator: string | null) {
+    super(json, value, polymorphismDiscriminator);
+  }
+
+  declare value: Array<JsonElement>
+
+  private length = this.value.length;
+  private currentIndex = -1;
+
+  decodeElementIndex(descriptor: SerialDescriptor): number {
+    while (this.currentIndex < this.length - 1) {
+      this.currentIndex++
+      return this.currentIndex
+    }
+    return CompositeDecoder.DECODE_DONE
+  }
+
+  protected currentElement(tag: string): JsonElement {
+    return this.value[parseInt(tag)]
+  }
+
+  override decodeCollectionSize(descriptor: SerialDescriptor): number {
+    return this.length;
   }
 }

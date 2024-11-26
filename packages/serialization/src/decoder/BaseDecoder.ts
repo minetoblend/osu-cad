@@ -73,6 +73,13 @@ export abstract class BaseDecoder implements Decoder, CompositeDecoder {
 
   abstract endStructure(descriptor: SerialDescriptor);
 
+  decodeStructure<T>(descriptor: SerialDescriptor, fn: (CompositeDecoder) => T): T {
+    const decoder = this.beginStructure(descriptor);
+    const result = fn(decoder);
+    decoder.endStructure(descriptor);
+    return result;
+  }
+
   protected decodeIfNullable<T>(deserializer: DeserializationStrategy<T>, decode: () => T): T | null {
     const isNullabilitySupported = deserializer.descriptor.isNullable;
     if (isNullabilitySupported || this.decodeNotNullMark())
