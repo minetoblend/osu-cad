@@ -1,6 +1,6 @@
 import type { Encoder } from '../encoder/Encoder';
 import type { Serializer } from '../Serializer';
-import { primitiveSerialDescriptor } from '../descriptor/SerialDescriptorImpl';
+import { primitiveSerialDescriptor } from '../descriptor/SerialDescriptors';
 import { PrimitiveKind } from '../descriptor/SerialKind';
 import { Decoder } from "../decoder/Decoder";
 import { T } from "vitest/dist/reporters-yx5ZTtEV";

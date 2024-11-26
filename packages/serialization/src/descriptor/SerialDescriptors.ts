@@ -10,7 +10,7 @@ export function buildClassSerialDescriptor(
 ) {
   const classBuilder = new ClassSerialDescriptorBuilder(serialName);
   builder(classBuilder);
-  return new SerialDescriptorImpl(
+  return new SerialDescriptors(
     serialName,
     StructureKind.CLASS,
     classBuilder.elementNames.length,
@@ -84,7 +84,7 @@ export function buildSerialDescriptor(
   console.assert(kind !== StructureKind.CLASS, 'For StructureKind.CLASS please use \'buildClassSerialDescriptor\' instead');
   const classBuilder = new ClassSerialDescriptorBuilder(serialName);
   builder(classBuilder);
-  return new SerialDescriptorImpl(
+  return new SerialDescriptors(
     serialName,
     kind,
     classBuilder.elementNames.length,
@@ -124,7 +124,7 @@ class ClassSerialDescriptorBuilder {
   };
 }
 
-export class SerialDescriptorImpl implements SerialDescriptor {
+export class SerialDescriptors implements SerialDescriptor {
   constructor(
     readonly serialName: string,
     readonly kind: SerialKind,

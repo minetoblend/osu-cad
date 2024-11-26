@@ -1,7 +1,7 @@
 import type { Encoder } from '../encoder/Encoder';
 import type { Serializer } from '../Serializer';
 import { Float32Serializer, Float64Serializer } from '../builtins/BuildinSerializers';
-import { buildClassSerialDescriptor } from '../descriptor/SerialDescriptorImpl';
+import { buildClassSerialDescriptor } from '../descriptor/SerialDescriptors';
 import { Json } from './Json';
 import { Decoder } from "../decoder/Decoder";
 import { T } from "vitest/dist/reporters-yx5ZTtEV";
