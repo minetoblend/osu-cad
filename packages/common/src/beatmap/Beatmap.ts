@@ -5,21 +5,27 @@ import { BeatmapDifficultyInfo } from './BeatmapDifficultyInfo';
 import { BeatmapMetadata } from './BeatmapMetadata';
 import { BeatmapSettings } from './BeatmapSettings';
 import { HitObjectList } from './HitObjectList';
+import { BeatmapSerializer } from "./serialization/BeatmapSerializer";
 
 export class Beatmap implements IBeatmap {
-  readonly settings = new BeatmapSettings();
-  readonly metadata = new BeatmapMetadata();
-  readonly difficulty = new BeatmapDifficultyInfo();
-  readonly colors = new BeatmapColors();
-  readonly controlPoints = new ControlPointInfo();
-  readonly hitObjects = new HitObjectList(this);
+  static get serializer() {
+    return BeatmapSerializer;
+  }
 
-  constructor() {
+  constructor(
+    readonly difficulty = new BeatmapDifficultyInfo(),
+    readonly settings = new BeatmapSettings(),
+    readonly metadata = new BeatmapMetadata(),
+    readonly colors = new BeatmapColors(),
+    readonly controlPoints = new ControlPointInfo(),
+  ) {
     this.controlPoints.anyPointChanged.addListener(controlPoint =>
       this.hitObjects.invalidateFromControlPoint(controlPoint),
     );
     this.difficulty.invalidated.addListener(() => this.hitObjects.invalidateAll());
   }
+
+  readonly hitObjects = new HitObjectList(this)
 
   getMaxCombo(): number {
     // TODO

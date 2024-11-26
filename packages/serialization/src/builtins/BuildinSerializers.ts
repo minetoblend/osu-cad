@@ -1,9 +1,9 @@
 import type { Encoder } from '../encoder/Encoder';
 import type { Serializer } from '../Serializer';
-import { primitiveSerialDescriptor } from '../descriptor/SerialDescriptors';
+import { nullableDescriptor, primitiveSerialDescriptor, serialDescriptor } from '../descriptor/SerialDescriptors';
 import { PrimitiveKind } from '../descriptor/SerialKind';
 import { Decoder } from "../decoder/Decoder";
-import { T } from "vitest/dist/reporters-yx5ZTtEV";
+import { SerialDescriptor } from "../descriptor/SerialDescriptor";
 
 export const BooleanSerializer: Serializer<boolean> = {
   descriptor: primitiveSerialDescriptor('boolean', PrimitiveKind.Boolean),
@@ -130,3 +130,24 @@ export const StringSerializer: Serializer<string> = {
     return decoder.decodeString();
   }
 };
+export class NullableSerializer<T> implements Serializer<T | null> {
+  constructor(private readonly serializer: Serializer<T>) {
+    this.descriptor = nullableDescriptor(this.serializer.descriptor);
+
+  }
+
+  readonly descriptor:SerialDescriptor;
+
+  serialize(encoder: Encoder, value: T | null): void {
+    if (value === null) {
+      encoder.encodeNull();
+    } else {
+      encoder.encodeNotNullMark()
+      this.serializer.serialize(encoder, value);
+    }
+  }
+
+  deserialize(decoder: Decoder): T | null {
+    return decoder.decodeNotNullMark() ? this.serializer.deserialize(decoder) : decoder.decodeNull();
+  }
+}

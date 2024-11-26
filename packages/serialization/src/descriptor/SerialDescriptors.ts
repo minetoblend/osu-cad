@@ -112,7 +112,7 @@ class ClassSerialDescriptorBuilder {
   element = (
     elementName: string,
     descriptor: SerialDescriptor,
-    isOptional: boolean,
+    isOptional: boolean = false,
   ) => {
     if (this.uniqueNames.has(elementName))
       throw new Error('Element name is not unique');
@@ -168,4 +168,54 @@ export class SerialDescriptors implements SerialDescriptor {
   }
 
   isNullable = false;
+}
+
+export function nullableDescriptor(
+  original: SerialDescriptor,
+): SerialDescriptor {
+  if (original.isNullable)
+    return original;
+
+  return new NullableDescriptor(original);
+}
+
+class NullableDescriptor implements SerialDescriptor {
+    constructor(
+        readonly original: SerialDescriptor,
+    ) {
+    }
+
+    get serialName() {
+        return this.original.serialName;
+    }
+
+    get kind() {
+        return this.original.kind;
+    }
+
+    get isNullable() {
+        return true;
+    }
+
+    get elementsCount() {
+        return this.original.elementsCount;
+    }
+
+    getElementName(index: number) {
+        return this.original.getElementName(index);
+    }
+
+    getElementIndex(name: string) {
+        return this.original.getElementIndex(name);
+    }
+
+    getElementDescriptor(index: number) {
+        return this.original.getElementDescriptor(index);
+    }
+
+    isElementOptional(index: number) {
+        return this.original.isElementOptional(index);
+    }
+
+
 }

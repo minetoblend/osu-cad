@@ -142,6 +142,14 @@ export abstract class AbstractJsonTreeDecoder extends NamedValueDecoder {
       throw new Error(`Expected a number, got ${value}`)
     }) as number
   }
+
+  override decodeTaggedString(tag: string): string {
+    return this.getPrimitiveValue(tag, BooleanSerializer.descriptor, value => {
+      if (typeof value === 'string') return value
+
+      throw new Error(`Expected a string, got ${value}`)
+    }) as string
+  }
 }
 
 const PRIMITIVE_TAG = 'primitive'
