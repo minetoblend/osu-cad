@@ -33,7 +33,6 @@ export abstract class JsonEncoder extends NamedValueEncoder {
   }
 
   protected override encodeTaggedNull(tag: string) {
-    super.encodeTaggedNull(tag);
     this.putElement(tag, null);
   }
 

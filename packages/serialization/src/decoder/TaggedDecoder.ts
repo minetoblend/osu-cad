@@ -162,7 +162,9 @@ export abstract class TaggedDecoder<Tag> extends BaseDecoder {
   }
 
   decodeNullableSerializableElement<T>(descriptor: SerialDescriptor, index: number, deserializer: DeserializationStrategy<T>, previousValue?: T): T | null {
-    return this.decodeIfNullable(deserializer, () => this.decodeSerializableValue(deserializer, previousValue));
+    return this.tagBlock(this.getTag(descriptor, index), () =>
+      this.decodeIfNullable(deserializer, () => this.decodeSerializableValue(deserializer, previousValue))
+    );
   }
 
   private flag = false;

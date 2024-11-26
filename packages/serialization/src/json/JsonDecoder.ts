@@ -203,7 +203,7 @@ export class JsonTreeDecoder extends AbstractJsonTreeDecoder {
   }
 
   private absenceIsNull(descriptor: SerialDescriptor, index: number): boolean {
-    this.forceNull = descriptor.isElementOptional(index) && descriptor.getElementDescriptor(index).isNullable;
+    this.forceNull = !descriptor.isElementOptional(index) && descriptor.getElementDescriptor(index).isNullable;
     return this.forceNull;
   }
 

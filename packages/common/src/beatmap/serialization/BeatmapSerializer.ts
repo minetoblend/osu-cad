@@ -8,7 +8,7 @@ export const BeatmapSerializer: Serializer<Beatmap> = {
   descriptor: buildClassSerialDescriptor('Beatmap', ({element}) => {
     element('metadata', BeatmapMetadataSerializer.descriptor);
     element('difficulty', BeatmapDifficultyInfoSerializer.descriptor);
-    element('settings', BeatmapDifficultyInfoSerializer.descriptor);
+    element('settings', BeatmapSettingsSerializer.descriptor);
   }),
   serialize(encoder: Encoder, value: Beatmap) {
     const descriptor = this.descriptor
