@@ -2,6 +2,8 @@ import type { Encoder } from '../encoder/Encoder';
 import type { Serializer } from '../Serializer';
 import { primitiveSerialDescriptor } from '../descriptor/SerialDescriptorImpl';
 import { PrimitiveKind } from '../descriptor/SerialKind';
+import { Decoder } from "../decoder/Decoder";
+import { T } from "vitest/dist/reporters-yx5ZTtEV";
 
 export const BooleanSerializer: Serializer<boolean> = {
   descriptor: primitiveSerialDescriptor('boolean', PrimitiveKind.Boolean),
@@ -9,6 +11,10 @@ export const BooleanSerializer: Serializer<boolean> = {
   serialize(encoder: Encoder, value: boolean): void {
     encoder.encodeBoolean(value);
   },
+
+  deserialize(decoder: Decoder): boolean {
+    return decoder.decodeBoolean();
+  }
 };
 
 export const Uint8Serializer: Serializer<number> = {
@@ -18,6 +24,10 @@ export const Uint8Serializer: Serializer<number> = {
     console.assert(Number.isInteger(value) && value >= 0 && value <= 255);
     encoder.encodeUint8(value);
   },
+
+  deserialize(decoder: Decoder): number {
+    return decoder.decodeInt8();
+  }
 };
 
 export const Uint16Serializer: Serializer<number> = {
@@ -27,6 +37,10 @@ export const Uint16Serializer: Serializer<number> = {
     console.assert(Number.isInteger(value) && value >= 0 && value <= 65535);
     encoder.encodeUint16(value);
   },
+
+  deserialize(decoder: Decoder): number {
+    return decoder.decodeInt16();
+  }
 };
 
 export const Uint32Serializer: Serializer<number> = {
@@ -36,6 +50,10 @@ export const Uint32Serializer: Serializer<number> = {
     console.assert(Number.isInteger(value) && value >= 0 && value <= 4294967295);
     encoder.encodeUint32(value);
   },
+
+  deserialize(decoder: Decoder): number {
+    return decoder.decodeInt32();
+  }
 };
 
 export const Int8Serializer: Serializer<number> = {
@@ -45,6 +63,10 @@ export const Int8Serializer: Serializer<number> = {
     console.assert(Number.isInteger(value) && value >= -128 && value <= 127);
     encoder.encodeInt8(value);
   },
+
+  deserialize(decoder: Decoder): number {
+    return decoder.decodeInt8();
+  }
 };
 
 export const Int16Serializer: Serializer<number> = {
@@ -54,6 +76,10 @@ export const Int16Serializer: Serializer<number> = {
     console.assert(Number.isInteger(value) && value >= -32768 && value <= 32767);
     encoder.encodeInt16(value);
   },
+
+  deserialize(decoder: Decoder): number {
+    return decoder.decodeInt16();
+  }
 };
 
 export const Int32Serializer: Serializer<number> = {
@@ -63,6 +89,10 @@ export const Int32Serializer: Serializer<number> = {
     console.assert(Number.isInteger(value) && value >= -2147483648 && value <= 2147483647);
     encoder.encodeInt32(value);
   },
+
+  deserialize(decoder: Decoder): number {
+    return decoder.decodeInt32();
+  }
 };
 
 export const Float32Serializer: Serializer<number> = {
@@ -71,6 +101,10 @@ export const Float32Serializer: Serializer<number> = {
   serialize(encoder: Encoder, value: number): void {
     encoder.encodeFloat32(value);
   },
+
+  deserialize(decoder: Decoder): number {
+    return decoder.decodeFloat32();
+  }
 };
 
 export const Float64Serializer: Serializer<number> = {
@@ -79,6 +113,10 @@ export const Float64Serializer: Serializer<number> = {
   serialize(encoder: Encoder, value: number): void {
     encoder.encodeFloat64(value);
   },
+
+  deserialize(decoder: Decoder): number {
+    return decoder.decodeFloat64();
+  }
 };
 
 export const StringSerializer: Serializer<string> = {
@@ -87,4 +125,8 @@ export const StringSerializer: Serializer<string> = {
   serialize(encoder: Encoder, value: string): void {
     encoder.encodeString(value);
   },
+
+  deserialize(decoder: Decoder): string {
+    return decoder.decodeString();
+  }
 };

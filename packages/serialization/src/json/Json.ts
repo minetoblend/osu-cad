@@ -3,6 +3,8 @@ import type { JsonElement } from './JsonElement';
 import { JsonTreeEncoder } from './JsonEncoder';
 
 export class Json {
+  ignoreUnknownKeys = false;
+
   encode<T>(
     serializer: SerializationStrategy<T>,
     value: T,

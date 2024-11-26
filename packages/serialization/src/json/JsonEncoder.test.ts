@@ -3,6 +3,9 @@ import type { Serializer } from '../Serializer';
 import { Float32Serializer, Float64Serializer } from '../builtins/BuildinSerializers';
 import { buildClassSerialDescriptor } from '../descriptor/SerialDescriptorImpl';
 import { Json } from './Json';
+import { Decoder } from "../decoder/Decoder";
+import { T } from "vitest/dist/reporters-yx5ZTtEV";
+import { JsonTreeDecoder } from "./JsonDecoder";
 
 describe('jsonEncoder', () => {
   it('should encode object', () => {
@@ -28,6 +31,16 @@ describe('jsonEncoder', () => {
           encoder.encodeFloat32Element(descriptor, 1, value.y);
         });
       },
+
+      deserialize(decoder: Decoder): Vec2 {
+        let x = 0;
+        let y = 0;
+        const nested = decoder.beginStructure(this.descriptor);
+        x = nested.decodeFloat32Element(this.descriptor, 0);
+        y = nested.decodeFloat32Element(this.descriptor, 1);
+        nested.endStructure(this.descriptor);
+        return new Vec2(x, y);
+      }
     };
 
     const json = new Json();
@@ -62,6 +75,16 @@ describe('jsonEncoder', () => {
           encoder.encodeFloat64Element(descriptor, 1, value.startTime);
         });
       },
+
+      deserialize(decoder: Decoder): HitObject {
+        let position: Vec2 | null = null;
+        let startTime = 0;
+        const nested = decoder.beginStructure(this.descriptor);
+        position = nested.decodeSerializableElement(this.descriptor, 0, Vec2Serializer);
+        startTime = nested.decodeFloat64Element(this.descriptor, 1);
+        nested.endStructure(this.descriptor);
+        return new HitObject(position, startTime);
+      }
     };
 
     expect(
@@ -71,5 +94,20 @@ describe('jsonEncoder', () => {
         position: { x: 2, y: 3 },
         startTime: 4,
       });
+
+
+
+    const decoder = new JsonTreeDecoder(json, {
+      position: { x: 2, y: 3 },
+      startTime: 10,
+    })
+
+    const decoded = HitObjectSerializer.deserialize(decoder);
+
+    expect(decoded).toBeInstanceOf(HitObject);
+    expect(decoded.position).toBeInstanceOf(Vec2);
+    expect(decoded.position.x).toBe(2);
+    expect(decoded.position.y).toBe(3);
+    expect(decoded.startTime).toBe(10);
   });
 });

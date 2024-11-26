@@ -1,7 +1,10 @@
 export type JsonElement =
-  | null
-  | boolean
-  | number
-  | string
+  | JsonPrimitive
   | Record<string, JsonElement>
   | Array<JsonElement>;
+
+export type JsonPrimitive
+  = null
+  | boolean
+  | number
+  | string;
