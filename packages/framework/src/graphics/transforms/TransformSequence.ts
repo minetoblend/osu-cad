@@ -42,8 +42,9 @@ export class TransformSequence<T extends ITransformable> {
   append(generator: (o: T) => TransformSequence<T>) {
     let child: TransformSequence<T>;
     {
-      using _ = this.#origin.beginAbsoluteSequence(this.#currentTime, false);
+      const sequence = this.#origin.beginAbsoluteSequence(this.#currentTime, false);
       child = generator(this.#origin);
+      sequence.dispose();
     }
 
     if (child!.origin !== this.#origin)
