@@ -9,7 +9,7 @@ import { NamedValueEncoder } from '../encoder/NamedValueEncoder';
 export abstract class JsonEncoder extends NamedValueEncoder {
   constructor(
     protected json: Json,
-    private readonly nodeConsumer: (node: JsonElement) => void,
+    protected readonly nodeConsumer: (node: JsonElement) => void,
   ) {
     super();
   }
