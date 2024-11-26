@@ -14,9 +14,9 @@ export const Vec2Serializer: Serializer<Vec2> = {
 
   serialize(encoder: Encoder, value: Vec2) {
     const descriptor = this.descriptor;
-    const nested = encoder.beginCollection(descriptor);
-    nested.encodeFloat32Element(descriptor, 0, value.x);
-    nested.encodeFloat32Element(descriptor, 1, value.y);
-    nested.endStructure(descriptor);
+    encoder.encodeStructure(descriptor, encoder => {
+      encoder.encodeFloat32Element(descriptor, 0, value.x);
+      encoder.encodeFloat32Element(descriptor, 1, value.y);
+    });
   },
 };

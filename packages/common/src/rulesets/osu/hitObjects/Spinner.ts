@@ -93,13 +93,13 @@ export class SpinnerSerializer extends OsuHitObjectSerializer<Spinner> {
   protected override serializeProperties(encoder: CompositeEncoder, object: Spinner) {
     super.serializeProperties(encoder, object);
 
-    encoder.encodeFloat64Element(this.descriptor, 4, object.duration);
+    encoder.encodeFloat64Element(this.descriptor, 5, object.duration);
   }
 
   protected override deserializeProperties(decoder: CompositeDecoder, object: Spinner) {
     super.deserializeProperties(decoder, object);
 
-    object.duration = decoder.decodeFloat64Element(this.descriptor, 4);
+    object.duration = decoder.decodeFloat64Element(this.descriptor, 5);
   }
 }
 

@@ -3,7 +3,12 @@ import type { IVec2, ValueChangedEvent } from 'osucad-framework';
 import type { BeatmapDifficultyInfo } from '../beatmap/BeatmapDifficultyInfo';
 import type { ControlPointInfo } from '../controlPoints/ControlPointInfo';
 import type { Constructor } from '../utils/Constructor';
-import { buildClassSerialDescriptor, Float64Serializer, SealedClassSerializer } from '@osucad/serialization';
+import {
+  buildClassSerialDescriptor,
+  ClassSerialDescriptorBuilder, Float32Serializer,
+  Float64Serializer,
+  SealedClassSerializer
+} from '@osucad/serialization';
 import { Action, Comparer, Lazy, SortedList } from 'osucad-framework';
 import { objectId } from '../utils/objectId';
 import { HitObjectProperty } from './HitObjectProperty';
@@ -130,18 +135,23 @@ export interface HitObjectChangeEvent {
 }
 
 export abstract class HitObjectSerializer<T extends HitObject> implements Serializer<T> {
-  readonly descriptor: SerialDescriptor;
+  protected constructor(serialName: string) {
+    this.#descriptor = new Lazy(() => buildClassSerialDescriptor(serialName, (builder) => {
+      this.buildDescriptor(builder)
+    }))
+  }
 
-  static defaultDescriptorFields: Partial<Record<keyof HitObject, SerialDescriptor>> = {
-    startTime: Float64Serializer.descriptor,
-  };
+  override get descriptor() {
+    return this.#descriptor.value
+  }
 
-  protected constructor(serialName: string, descriptorFields: Partial<Record<keyof T, SerialDescriptor>>) {
-    this.descriptor = buildClassSerialDescriptor(serialName, ({ element }) => {
-      const fields = { ...HitObjectSerializer.defaultDescriptorFields, ...descriptorFields };
-      for (const key in fields)
-        element(key, fields[key as keyof typeof fields]!);
-    });
+  readonly #descriptor: Lazy<SerialDescriptor>;
+
+
+  protected buildDescriptor(builder: ClassSerialDescriptorBuilder) {
+    const { element } = builder
+
+    element('startTime', Float32Serializer.descriptor)
   }
 
   deserialize(decoder: Decoder): T {

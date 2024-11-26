@@ -1,10 +1,10 @@
 import type { IVec2, ReadonlyBindable, ValueChangedEvent } from 'osucad-framework';
+import { CachedValue, Vec2 } from 'osucad-framework';
 import type { BeatmapDifficultyInfo } from '../../../beatmap/BeatmapDifficultyInfo';
 import type { IPatchable } from '../../../commands/IPatchable';
 import type { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 import type { HitSound } from '../../../hitsounds/HitSound';
 import type { SerializedSlider } from '../../../serialization/HitObjects';
-import { CachedValue, Vec2 } from 'osucad-framework';
 import { polymorphicHitObjectSerializers } from '../../../hitObjects/HitObject';
 import { HitObjectProperty } from '../../../hitObjects/HitObjectProperty';
 import { Additions } from '../../../hitsounds/Additions';
@@ -13,7 +13,7 @@ import { SampleSet } from '../../../hitsounds/SampleSet';
 import { SampleType } from '../../../hitsounds/SampleType';
 import { deserializeHitSound } from '../../../serialization/HitSound';
 import { OsuHitObject, OsuHitObjectSerializer } from './OsuHitObject';
-import { PathPoint } from './PathPoint';
+import { PathPoint, PathPointSerialDescriptor, PathPointSerializer } from './PathPoint';
 import { SliderEventGenerator } from './SliderEventGenerator';
 import { SliderHeadCircle } from './SliderHeadCircle';
 import { SliderPath } from './SliderPath';
@@ -21,6 +21,16 @@ import { SliderRepeat } from './SliderRepeat';
 import { SliderSelection } from './SliderSelection';
 import { SliderTailCircle } from './SliderTailCircle';
 import { SliderTick } from './SliderTick';
+import {
+  ClassSerialDescriptorBuilder,
+  CompositeDecoder,
+  CompositeEncoder,
+  Float32Serializer,
+  listSerialDescriptor,
+  ListSerializer,
+  NullableSerializer,
+  Uint16Serializer
+} from "@osucad/serialization";
 
 export class Slider extends OsuHitObject implements IPatchable<SerializedSlider> {
   constructor() {
@@ -233,7 +243,7 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
     let i = 1;
     while (
       distance < Math.min(this.path.expectedDistance, this.path.calculatedDistance)
-    ) {
+      ) {
       distance += step;
       while (i < path.length - 1 && this.path.calculatedPath.cumulativeDistance[i] < distance)
         i++;
@@ -474,8 +484,40 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
 export class SliderSerializer extends OsuHitObjectSerializer<Slider> {
   constructor() {
     super('Slider', {
-
+      repeatCount: Uint16Serializer.descriptor,
+      velocityOverride: new NullableSerializer(Float32Serializer).descriptor,
+      expectedDistance: Float32Serializer.descriptor,
+      controlPoints: listSerialDescriptor(new PathPointSerialDescriptor()),
+      // hitSounds: SerializedHitSound[],
     });
+  }
+
+  protected override buildDescriptor(builder: ClassSerialDescriptorBuilder) {
+    super.buildDescriptor(builder);
+    builder.element('repeatCount', Uint16Serializer.descriptor, true)
+    builder.element('velocityOverride', new NullableSerializer(Float32Serializer).descriptor, true)
+    builder.element('expectedDistance', Float32Serializer.descriptor)
+    builder.element('controlPoints', listSerialDescriptor(new PathPointSerialDescriptor()))
+  }
+
+  protected override serializeProperties(encoder: CompositeEncoder, object: Slider) {
+    super.serializeProperties(encoder, object);
+    encoder.encodeUint16Element(this.descriptor, 5, object.repeatCount)
+
+    encoder.encodeNullableSerializableElement(this.descriptor, 6, new NullableSerializer(Float32Serializer), object.velocityOverride)
+
+    encoder.encodeFloat32Element(this.descriptor, 7, object.expectedDistance)
+
+    encoder.encodeSerializableElement(this.descriptor, 8, new ListSerializer(new PathPointSerializer()), object.path.controlPoints as any)
+  }
+
+  protected override deserializeProperties(decoder: CompositeDecoder, object: Slider) {
+    super.deserializeProperties(decoder, object);
+
+    object.repeatCount = decoder.decodeUint16Element(this.descriptor, 5)
+    object.velocityOverride = decoder.decodeNullableSerializableElement(this.descriptor, 6, Float32Serializer)
+    object.expectedDistance = decoder.decodeFloat32Element(this.descriptor, 7)
+    object.controlPoints = decoder.decodeSerializableElement(this.descriptor, 8, new ListSerializer(new PathPointSerializer()))
   }
 
   protected override createInstance(): Slider {
