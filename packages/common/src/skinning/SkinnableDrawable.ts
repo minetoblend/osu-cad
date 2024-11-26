@@ -68,8 +68,6 @@ export class SkinnableDrawable extends SkinReloadableDrawable {
 
         return obj;
       }
-
-      console.log(buildObj(this));
     }
     const retrieved = skin.getDrawableComponent(this.componentLookup);
 

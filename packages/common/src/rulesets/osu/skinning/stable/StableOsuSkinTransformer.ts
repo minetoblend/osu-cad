@@ -23,7 +23,6 @@ export class StableOsuSkinTransformer extends StableSkinTransformer {
       return component;
 
     if (lookup instanceof OsuSkinComponentLookup) {
-      console.log(OsuSkinComponents[lookup.component]);
       switch (lookup.component) {
         case OsuSkinComponents.FollowPoint:
           return this.source.getAnimation('followpoint', {

@@ -1,16 +1,9 @@
-import {
-  buildClassSerialDescriptor,
-  Decoder,
-  Encoder, Float32Serializer,
-  Float64Serializer,
-  listSerialDescriptor,
-  ListSerializer,
-  Serializer, Uint8Serializer
-} from "@osucad/serialization";
-import { BeatmapEditorSettings } from "@osucad/common";
+import type { Decoder, Encoder, Serializer } from '@osucad/serialization';
+import { BeatmapEditorSettings } from '@osucad/common';
+import { buildClassSerialDescriptor, Float32Serializer, Float64Serializer, listSerialDescriptor, ListSerializer, Uint8Serializer } from '@osucad/serialization';
 
 export const BeatmapEditorSettingsSerializer: Serializer<BeatmapEditorSettings> = {
-  descriptor: buildClassSerialDescriptor('BeatmapEditorSettings', ({element}) => {
+  descriptor: buildClassSerialDescriptor('BeatmapEditorSettings', ({ element }) => {
     element('bookmarks', listSerialDescriptor(Float64Serializer.descriptor));
     element('distanceSpacing', Float32Serializer.descriptor);
     element('beatDivisor', Uint8Serializer.descriptor);
@@ -27,7 +20,7 @@ export const BeatmapEditorSettingsSerializer: Serializer<BeatmapEditorSettings> 
       settings.beatDivisor = decoder.decodeSerializableElement(this.descriptor, 2, Uint8Serializer);
       settings.gridSize = decoder.decodeSerializableElement(this.descriptor, 3, Uint8Serializer);
       settings.timelineZoom.value = decoder.decodeSerializableElement(this.descriptor, 4, Float32Serializer);
-    })
+    });
 
     return settings;
   },
@@ -40,5 +33,5 @@ export const BeatmapEditorSettingsSerializer: Serializer<BeatmapEditorSettings> 
       encoder.encodeSerializableElement(this.descriptor, 3, Uint8Serializer, value.gridSize);
       encoder.encodeSerializableElement(this.descriptor, 4, Float32Serializer, value.timelineZoom.value);
     });
-  }
-}
+  },
+};

@@ -98,7 +98,7 @@ export abstract class DrawableRuleset<TObject extends HitObject = HitObject> ext
 
   get gameplayStartTime(): number {
     if (this.hitObjects[0])
-      return this.hitObjects[0].startTime - 2000 ;
+      return this.hitObjects[0].startTime - 2000;
     return 0;
   }
 
