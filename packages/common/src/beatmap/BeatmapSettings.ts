@@ -2,7 +2,6 @@ import { BeatmapEditorSettings } from './BeatmapEditorSettings';
 
 export class BeatmapSettings {
   editor = new BeatmapEditorSettings();
-  difficultyName = '';
   osuWebId = 0;
   audioFileName = '';
   audioLeadIn = 0;
