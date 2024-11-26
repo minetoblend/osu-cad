@@ -1,3 +1,4 @@
+import type { CompositeDecoder, CompositeEncoder, SerialDescriptor } from '@osucad/serialization';
 import type { IPatchable } from '../../../commands/IPatchable';
 import type { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 import type { HitWindows } from '../../../hitObjects/HitWindows';
@@ -6,10 +7,12 @@ import type { SerializedOsuHitObject } from '../../../serialization/HitObjects';
 import type { HitCircle } from './HitCircle';
 import type { Slider } from './Slider';
 import type { Spinner } from './Spinner';
+import { BooleanSerializer, Uint8Serializer } from '@osucad/serialization';
 import { Action, Vec2 } from 'osucad-framework';
 import { Color } from 'pixi.js';
 import { BeatmapDifficultyInfo } from '../../../beatmap/BeatmapDifficultyInfo';
-import { HitObject } from '../../../hitObjects/HitObject';
+import { Vec2Serializer } from '../../../beatmap/serialization/Vec2Serializer';
+import { HitObject, HitObjectSerializer } from '../../../hitObjects/HitObject';
 import { HitObjectProperty } from '../../../hitObjects/HitObjectProperty';
 import { HitSample } from '../../../hitsounds/HitSample';
 import { HitSound } from '../../../hitsounds/HitSound';
@@ -316,4 +319,29 @@ export abstract class OsuHitObject extends HitObject implements IHasComboInforma
   lazyTravelDistance = 0;
 
   lazyTravelPath: { position: Vec2; time: number }[] | null = null;
+}
+
+export abstract class OsuHitObjectSerializer<T extends OsuHitObject> extends HitObjectSerializer<T> {
+  protected constructor(serialName: string, descriptorFields: Partial<Record<keyof T, SerialDescriptor>> = {}) {
+    super(serialName, {
+      position: Vec2Serializer.descriptor,
+      newCombo: BooleanSerializer.descriptor,
+      comboOffset: Uint8Serializer.descriptor,
+      ...descriptorFields,
+    });
+  }
+
+  protected override serializeProperties(encoder: CompositeEncoder, object: T) {
+    super.serializeProperties(encoder, object);
+    encoder.encodeSerializableElement(this.descriptor, 1, Vec2Serializer, object.position);
+    encoder.encodeBooleanElement(this.descriptor, 2, object.newCombo);
+    encoder.encodeUint8Element(this.descriptor, 3, object.comboOffset);
+  }
+
+  protected override deserializeProperties(decoder: CompositeDecoder, object: T) {
+    super.deserializeProperties(decoder, object);
+    object.position = decoder.decodeSerializableElement(this.descriptor, 1, Vec2Serializer);
+    object.newCombo = decoder.decodeBooleanElement(this.descriptor, 2);
+    object.comboOffset = decoder.decodeUint8Element(this.descriptor, 3);
+  }
 }

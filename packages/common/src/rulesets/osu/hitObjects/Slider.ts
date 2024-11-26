@@ -5,13 +5,14 @@ import type { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 import type { HitSound } from '../../../hitsounds/HitSound';
 import type { SerializedSlider } from '../../../serialization/HitObjects';
 import { CachedValue, Vec2 } from 'osucad-framework';
+import { polymorphicHitObjectSerializers } from '../../../hitObjects/HitObject';
 import { HitObjectProperty } from '../../../hitObjects/HitObjectProperty';
 import { Additions } from '../../../hitsounds/Additions';
 import { HitSample } from '../../../hitsounds/HitSample';
 import { SampleSet } from '../../../hitsounds/SampleSet';
 import { SampleType } from '../../../hitsounds/SampleType';
 import { deserializeHitSound } from '../../../serialization/HitSound';
-import { OsuHitObject } from './OsuHitObject';
+import { OsuHitObject, OsuHitObjectSerializer } from './OsuHitObject';
 import { PathPoint } from './PathPoint';
 import { SliderEventGenerator } from './SliderEventGenerator';
 import { SliderHeadCircle } from './SliderHeadCircle';
@@ -469,3 +470,17 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
     super.onStartTimeChanged(time);
   }
 }
+
+export class SliderSerializer extends OsuHitObjectSerializer<Slider> {
+  constructor() {
+    super('Slider', {
+
+    });
+  }
+
+  protected override createInstance(): Slider {
+    return new Slider();
+  }
+}
+
+polymorphicHitObjectSerializers.set(Slider, new SliderSerializer());

@@ -1,7 +1,10 @@
+import type { CompositeDecoder, CompositeEncoder, Decoder, Encoder, SerialDescriptor, Serializer } from '@osucad/serialization';
 import type { IVec2, ValueChangedEvent } from 'osucad-framework';
 import type { BeatmapDifficultyInfo } from '../beatmap/BeatmapDifficultyInfo';
 import type { ControlPointInfo } from '../controlPoints/ControlPointInfo';
-import { Action, Comparer, SortedList } from 'osucad-framework';
+import type { Constructor } from '../utils/Constructor';
+import { buildClassSerialDescriptor, Float64Serializer, SealedClassSerializer } from '@osucad/serialization';
+import { Action, Comparer, Lazy, SortedList } from 'osucad-framework';
 import { objectId } from '../utils/objectId';
 import { HitObjectProperty } from './HitObjectProperty';
 import { HitWindows } from './HitWindows';
@@ -124,4 +127,65 @@ export abstract class HitObject {
 export interface HitObjectChangeEvent {
   hitObject: HitObject;
   propertyName: string;
+}
+
+export abstract class HitObjectSerializer<T extends HitObject> implements Serializer<T> {
+  readonly descriptor: SerialDescriptor;
+
+  static defaultDescriptorFields: Partial<Record<keyof HitObject, SerialDescriptor>> = {
+    startTime: Float64Serializer.descriptor,
+  };
+
+  protected constructor(serialName: string, descriptorFields: Partial<Record<keyof T, SerialDescriptor>>) {
+    this.descriptor = buildClassSerialDescriptor(serialName, ({ element }) => {
+      const fields = { ...HitObjectSerializer.defaultDescriptorFields, ...descriptorFields };
+      for (const key in fields)
+        element(key, fields[key as keyof typeof fields]!);
+    });
+  }
+
+  deserialize(decoder: Decoder): T {
+    const object = this.createInstance();
+
+    decoder.decodeStructure(this.descriptor, (decoder) => {
+      this.deserializeProperties(decoder, object);
+    });
+
+    return object;
+  }
+
+  serialize(encoder: Encoder, value: T): void {
+    encoder.encodeStructure(this.descriptor, (encoder) => {
+      this.serializeProperties(encoder, value);
+    });
+  }
+
+  protected abstract createInstance(): T;
+
+  protected deserializeProperties(decoder: CompositeDecoder, object: T) {
+    object.startTime = decoder.decodeFloat64Element(this.descriptor, 0);
+  }
+
+  protected serializeProperties(encoder: CompositeEncoder, object: T) {
+    encoder.encodeFloat64Element(this.descriptor, 0, object.startTime);
+  }
+}
+
+export const polymorphicHitObjectSerializers = new Map<Constructor<HitObject>, Serializer<HitObject>>();
+
+export class PolymorphicHitObjectSerializer extends SealedClassSerializer<HitObject> {
+  constructor() {
+    super(
+      'HitObject',
+      HitObject,
+      [...polymorphicHitObjectSerializers.keys()],
+      [...polymorphicHitObjectSerializers.values()],
+    );
+  }
+
+  static #instance = new Lazy(() => new PolymorphicHitObjectSerializer());
+
+  static get instance() {
+    return this.#instance.value;
+  }
 }

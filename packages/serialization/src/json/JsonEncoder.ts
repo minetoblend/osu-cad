@@ -5,6 +5,7 @@ import type { Json } from './Json';
 import type { JsonElement } from './JsonElement';
 import { StructureKind } from '../descriptor/SerialKind';
 import { NamedValueEncoder } from '../encoder/NamedValueEncoder';
+import { AbstractPolymorphicSerializer } from '../PolymorphicSerializer';
 
 export abstract class JsonEncoder extends NamedValueEncoder {
   constructor(
@@ -22,10 +23,10 @@ export abstract class JsonEncoder extends NamedValueEncoder {
 
   protected abstract getCurrent(): JsonElement;
 
-  encodeNotNullMark() {
+  override encodeNotNullMark() {
   }
 
-  encodeNull() {
+  override encodeNull() {
     const tag = this.currentTagOrNull;
     if (!tag)
       return this.nodeConsumer(null);
@@ -77,19 +78,23 @@ export abstract class JsonEncoder extends NamedValueEncoder {
   }
 
   override encodeSerializableValue<T>(serializer: SerializationStrategy<T>, value: T) {
-    if (this.currentTagOrNull != null) {
-      // TODO: polymorphic discriminator
-      serializer.serialize(this, value);
+    if (this.currentTagOrNull !== null) {
+      this.encodePolymorphically(serializer, value, (discriminatorName, serialName) => {
+        this.polymorphicDiscriminator = discriminatorName;
+        this.polymorphicSerialName = serialName;
+      });
     }
     else {
       serializer.serialize(this, value);
     }
-    // TODO
   }
 
   protected override encodeTaggedValue(tag: string, value: any) {
     this.putElement(tag, value.toString());
   }
+
+  private polymorphicDiscriminator: string | null = null;
+  private polymorphicSerialName: string | null = null;
 
   override beginStructure(descriptor: SerialDescriptor): CompositeEncoder {
     const consumer
@@ -105,13 +110,34 @@ export abstract class JsonEncoder extends NamedValueEncoder {
     else
       encoder = new JsonTreeEncoder(this.json, consumer);
 
-    // TODO: polymorphic discriminator
+    const discriminator = this.polymorphicDiscriminator;
+    if (discriminator !== null) {
+      // TODO: handle Map case
+      encoder.putElement(discriminator, this.polymorphicSerialName ?? descriptor.serialName);
+    }
 
     return encoder;
   }
 
   protected override endEncode(descriptor: SerialDescriptor) {
     this.nodeConsumer(this.getCurrent());
+  }
+
+  private encodePolymorphically<T>(serializer: SerializationStrategy<T>, value: T, ifPolymorphic: (discriminatorName: string, serialName: string) => void) {
+    const needDiscriminator = serializer instanceof AbstractPolymorphicSerializer;
+    const baseClassDiscriminator = needDiscriminator ? this.json.configuration.classDiscriminator : null;
+
+    let actualSerializer: SerializationStrategy<T> = serializer;
+    if (needDiscriminator) {
+      const casted = serializer as AbstractPolymorphicSerializer<T>;
+      actualSerializer = casted.findPolymorphicSerializer(this, value);
+      // TODO: further checks
+    }
+
+    if (baseClassDiscriminator !== null)
+      ifPolymorphic(baseClassDiscriminator, actualSerializer.descriptor.serialName);
+
+    actualSerializer.serialize(this, value);
   }
 }
 

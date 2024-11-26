@@ -41,7 +41,7 @@ export const CompositeDecoder = {
 };
 
 export interface CompositeDecoder {
-  endStructure(descriptor: SerialDescriptor);
+  endStructure(descriptor: SerialDescriptor): void;
 
   decodeSequentially(): boolean;
 

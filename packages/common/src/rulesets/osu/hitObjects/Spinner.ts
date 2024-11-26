@@ -1,11 +1,14 @@
+import type { CompositeDecoder, CompositeEncoder } from '@osucad/serialization';
 import type { IPatchable } from '../../../commands/IPatchable';
 import type { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 import type { SerializedSpinner } from '../../../serialization/HitObjects';
+import { Float64Serializer } from '@osucad/serialization';
 import { Vec2 } from 'osucad-framework';
+import { polymorphicHitObjectSerializers } from '../../../hitObjects/HitObject';
 import { HitSample } from '../../../hitsounds/HitSample';
 import { SampleSet } from '../../../hitsounds/SampleSet';
 import { SampleType } from '../../../hitsounds/SampleType';
-import { OsuHitObject } from './OsuHitObject';
+import { OsuHitObject, OsuHitObjectSerializer } from './OsuHitObject';
 
 export class Spinner extends OsuHitObject implements IPatchable<SerializedSpinner> {
   #duration = 0;
@@ -75,3 +78,29 @@ export class Spinner extends OsuHitObject implements IPatchable<SerializedSpinne
     }
   }
 }
+
+export class SpinnerSerializer extends OsuHitObjectSerializer<Spinner> {
+  constructor() {
+    super('Spinner', {
+      duration: Float64Serializer.descriptor,
+    });
+  }
+
+  protected override createInstance(): Spinner {
+    return new Spinner();
+  }
+
+  protected override serializeProperties(encoder: CompositeEncoder, object: Spinner) {
+    super.serializeProperties(encoder, object);
+
+    encoder.encodeFloat64Element(this.descriptor, 4, object.duration);
+  }
+
+  protected override deserializeProperties(decoder: CompositeDecoder, object: Spinner) {
+    super.deserializeProperties(decoder, object);
+
+    object.duration = decoder.decodeFloat64Element(this.descriptor, 4);
+  }
+}
+
+polymorphicHitObjectSerializers.set(Spinner, new SpinnerSerializer());

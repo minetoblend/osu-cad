@@ -5,11 +5,11 @@ import { BeatmapDifficultyInfo } from './BeatmapDifficultyInfo';
 import { BeatmapMetadata } from './BeatmapMetadata';
 import { BeatmapSettings } from './BeatmapSettings';
 import { HitObjectList } from './HitObjectList';
-import { BeatmapSerializer } from "./serialization/BeatmapSerializer";
+import { BeatmapSerializer } from './serialization/BeatmapSerializer';
 
 export class Beatmap implements IBeatmap {
   static get serializer() {
-    return BeatmapSerializer;
+    return new BeatmapSerializer();
   }
 
   constructor(
@@ -25,7 +25,7 @@ export class Beatmap implements IBeatmap {
     this.difficulty.invalidated.addListener(() => this.hitObjects.invalidateAll());
   }
 
-  readonly hitObjects = new HitObjectList(this)
+  readonly hitObjects = new HitObjectList(this);
 
   getMaxCombo(): number {
     // TODO
