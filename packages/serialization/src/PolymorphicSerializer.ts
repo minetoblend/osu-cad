@@ -1,4 +1,5 @@
 import type { Decoder } from './decoder/Decoder';
+import { CompositeDecoder } from "./decoder/Decoder";
 import type { SerialDescriptor } from './descriptor/SerialDescriptor';
 import type { Encoder } from './encoder/Encoder';
 import type { Serializer } from './Serializer';
@@ -18,7 +19,38 @@ export abstract class AbstractPolymorphicSerializer<T> implements Serializer<T> 
   }
 
   deserialize(decoder: Decoder): T {
-    throw new Error('Not implemented');
+    let className: String | null = null
+    let value: any = null
+
+    decoder.decodeStructure(this.descriptor, decoder => {
+
+      while (true) {
+        const index = decoder.decodeElementIndex(this.descriptor)
+
+        console.log(index)
+
+        if (index === CompositeDecoder.DECODE_DONE)
+          break
+
+        if (index === 0) {
+          className = decoder.decodeStringElement(this.descriptor, index)
+          console.log(className)
+        }
+
+        else if (index === 1) {
+          console.assert(className !== null)
+          const serializer = this.findPolymorphicSerializerByName(decoder, className!)
+          value = decoder.decodeSerializableElement(this.descriptor, index, serializer)
+        }
+
+        else throw new Error(/* TODO: Descriptive error message */)
+      }
+    })
+
+    if (value !== null)
+      return value
+
+    throw new Error(/* TODO: Descriptive error message */)
   }
 
   findPolymorphicSerializer(encoder: Encoder, value: T): Serializer<T> {
@@ -29,8 +61,8 @@ export abstract class AbstractPolymorphicSerializer<T> implements Serializer<T> 
     return serializer;
   }
 
-  findPolymorphicSerializerByName(encoder: Encoder, name: string): Serializer<T> {
-    const serializer = this.findPolymorphicSerializerOrNullByName(encoder, name);
+  findPolymorphicSerializerByName(decoder: CompositeDecoder, name: string): Serializer<T> {
+    const serializer = this.findPolymorphicSerializerOrNullByName(decoder, name);
     if (!serializer)
       throw new Error(`No serializer found for ${name}`);
 
@@ -39,5 +71,5 @@ export abstract class AbstractPolymorphicSerializer<T> implements Serializer<T> 
 
   abstract findPolymorphicSerializerOrNull(encoder: Encoder, value: T): Serializer<T> | null;
 
-  abstract findPolymorphicSerializerOrNullByName(encoder: Encoder, name: string): Serializer<T> | null;
+  abstract findPolymorphicSerializerOrNullByName(decoder: CompositeDecoder, name: string): Serializer<T> | null;
 }

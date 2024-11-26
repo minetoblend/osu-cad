@@ -7,6 +7,7 @@ import { buildSerialDescriptor } from './descriptor/SerialDescriptors';
 import { PolymorphicKind, SerialKind } from './descriptor/SerialKind';
 import { AbstractPolymorphicSerializer } from './PolymorphicSerializer';
 import { Lazy } from './utils/Lazy';
+import { CompositeDecoder } from "./decoder";
 
 export class SealedClassSerializer<T extends object> extends AbstractPolymorphicSerializer<T> {
   constructor(
@@ -51,7 +52,7 @@ export class SealedClassSerializer<T extends object> extends AbstractPolymorphic
     return this.#class2Serializer.get((value as any).constructor) ?? null;
   }
 
-  override findPolymorphicSerializerOrNullByName(encoder: Encoder, name: string): Serializer<T> | null {
+  override findPolymorphicSerializerOrNullByName(decoder: CompositeDecoder, name: string): Serializer<T> | null {
     return this.#serialName2Serializer.get(name) ?? null;
   }
 }

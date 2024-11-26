@@ -94,7 +94,7 @@ export function buildSerialDescriptor(
   );
 }
 
-class ClassSerialDescriptorBuilder {
+export class ClassSerialDescriptorBuilder {
   constructor(
     readonly serialName: string,
   ) {

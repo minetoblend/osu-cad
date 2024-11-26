@@ -36,5 +36,5 @@ export abstract class StructureKind implements SerialKind {
 }
 
 export abstract class PolymorphicKind implements SerialKind {
-  static readonly SEALED = new class extends StructureKind {}();
+  static readonly SEALED = new class extends PolymorphicKind {}();
 }
