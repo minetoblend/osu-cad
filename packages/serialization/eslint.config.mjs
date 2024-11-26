@@ -14,6 +14,7 @@ export default antfu({
       '@typescript-eslint/no-empty-function': 'off',
       'ts/method-signature-style': 'off',
       'ts/no-unsafe-declaration-merging': 'off',
+      'ts/no-redeclare': 'off',
     },
   },
 });

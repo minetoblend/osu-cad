@@ -1,11 +1,10 @@
+import type { Decoder } from '../decoder/Decoder';
 import type { Encoder } from '../encoder/Encoder';
 import type { Serializer } from '../Serializer';
 import { Float32Serializer, Float64Serializer } from '../builtins/BuildinSerializers';
 import { buildClassSerialDescriptor } from '../descriptor/SerialDescriptors';
 import { Json } from './Json';
-import { Decoder } from "../decoder/Decoder";
-import { T } from "vitest/dist/reporters-yx5ZTtEV";
-import { JsonTreeDecoder } from "./JsonDecoder";
+import { JsonTreeDecoder } from './JsonDecoder';
 
 describe('jsonEncoder', () => {
   it('should encode object', () => {
@@ -40,7 +39,7 @@ describe('jsonEncoder', () => {
         y = nested.decodeFloat32Element(this.descriptor, 1);
         nested.endStructure(this.descriptor);
         return new Vec2(x, y);
-      }
+      },
     };
 
     const json = new Json();
@@ -84,7 +83,7 @@ describe('jsonEncoder', () => {
         startTime = nested.decodeFloat64Element(this.descriptor, 1);
         nested.endStructure(this.descriptor);
         return new HitObject(position, startTime);
-      }
+      },
     };
 
     expect(
@@ -95,12 +94,10 @@ describe('jsonEncoder', () => {
         startTime: 4,
       });
 
-
-
     const decoder = new JsonTreeDecoder(json, {
       position: { x: 2, y: 3 },
       startTime: 10,
-    })
+    });
 
     const decoded = HitObjectSerializer.deserialize(decoder);
 

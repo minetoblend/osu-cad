@@ -1,5 +1,5 @@
-import { SerialDescriptor } from "../descriptor/SerialDescriptor";
-import { DeserializationStrategy } from "../Serializer";
+import type { SerialDescriptor } from '../descriptor/SerialDescriptor';
+import type { DeserializationStrategy } from '../Serializer';
 
 export interface Decoder {
   decodeNotNullMark(): boolean;
@@ -36,7 +36,7 @@ export interface Decoder {
 export const CompositeDecoder = {
   DONE: -1,
   UNKNOWN_NAME: -3,
-}
+};
 
 export interface CompositeDecoder {
   endStructure(descriptor: SerialDescriptor);

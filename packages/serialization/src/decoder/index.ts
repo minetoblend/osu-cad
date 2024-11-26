@@ -1,3 +1,3 @@
-export * from './BaseDecoder'
-export * from './Decoder'
-export * from './TaggedDecoder'
+export * from './BaseDecoder';
+export * from './Decoder';
+export * from './TaggedDecoder';

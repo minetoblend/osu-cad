@@ -180,42 +180,40 @@ export function nullableDescriptor(
 }
 
 class NullableDescriptor implements SerialDescriptor {
-    constructor(
-        readonly original: SerialDescriptor,
-    ) {
-    }
+  constructor(
+    readonly original: SerialDescriptor,
+  ) {
+  }
 
-    get serialName() {
-        return this.original.serialName;
-    }
+  get serialName() {
+    return this.original.serialName;
+  }
 
-    get kind() {
-        return this.original.kind;
-    }
+  get kind() {
+    return this.original.kind;
+  }
 
-    get isNullable() {
-        return true;
-    }
+  get isNullable() {
+    return true;
+  }
 
-    get elementsCount() {
-        return this.original.elementsCount;
-    }
+  get elementsCount() {
+    return this.original.elementsCount;
+  }
 
-    getElementName(index: number) {
-        return this.original.getElementName(index);
-    }
+  getElementName(index: number) {
+    return this.original.getElementName(index);
+  }
 
-    getElementIndex(name: string) {
-        return this.original.getElementIndex(name);
-    }
+  getElementIndex(name: string) {
+    return this.original.getElementIndex(name);
+  }
 
-    getElementDescriptor(index: number) {
-        return this.original.getElementDescriptor(index);
-    }
+  getElementDescriptor(index: number) {
+    return this.original.getElementDescriptor(index);
+  }
 
-    isElementOptional(index: number) {
-        return this.original.isElementOptional(index);
-    }
-
-
+  isElementOptional(index: number) {
+    return this.original.isElementOptional(index);
+  }
 }

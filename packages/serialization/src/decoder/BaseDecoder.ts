@@ -1,6 +1,6 @@
-import { CompositeDecoder, Decoder } from "./Decoder";
-import { SerialDescriptor } from "../descriptor/SerialDescriptor";
-import { DeserializationStrategy } from "../Serializer";
+import type { SerialDescriptor } from '../descriptor/SerialDescriptor';
+import type { DeserializationStrategy } from '../Serializer';
+import type { CompositeDecoder, Decoder } from './Decoder';
 
 export abstract class BaseDecoder implements Decoder, CompositeDecoder {
   abstract beginStructure(descriptor: SerialDescriptor): CompositeDecoder;
@@ -74,11 +74,10 @@ export abstract class BaseDecoder implements Decoder, CompositeDecoder {
   abstract endStructure(descriptor: SerialDescriptor);
 
   protected decodeIfNullable<T>(deserializer: DeserializationStrategy<T>, decode: () => T): T | null {
-    const isNullabilitySupported = deserializer.descriptor.isNullable
+    const isNullabilitySupported = deserializer.descriptor.isNullable;
     if (isNullabilitySupported || this.decodeNotNullMark())
-      return decode()
+      return decode();
     else
-      return this.decodeNull()
+      return this.decodeNull();
   }
 }
-

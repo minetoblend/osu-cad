@@ -1,9 +1,9 @@
+import type { Decoder } from '../decoder/Decoder';
+import type { SerialDescriptor } from '../descriptor/SerialDescriptor';
 import type { Encoder } from '../encoder/Encoder';
 import type { Serializer } from '../Serializer';
-import { nullableDescriptor, primitiveSerialDescriptor, serialDescriptor } from '../descriptor/SerialDescriptors';
+import { nullableDescriptor, primitiveSerialDescriptor } from '../descriptor/SerialDescriptors';
 import { PrimitiveKind } from '../descriptor/SerialKind';
-import { Decoder } from "../decoder/Decoder";
-import { SerialDescriptor } from "../descriptor/SerialDescriptor";
 
 export const BooleanSerializer: Serializer<boolean> = {
   descriptor: primitiveSerialDescriptor('boolean', PrimitiveKind.Boolean),
@@ -14,7 +14,7 @@ export const BooleanSerializer: Serializer<boolean> = {
 
   deserialize(decoder: Decoder): boolean {
     return decoder.decodeBoolean();
-  }
+  },
 };
 
 export const Uint8Serializer: Serializer<number> = {
@@ -27,7 +27,7 @@ export const Uint8Serializer: Serializer<number> = {
 
   deserialize(decoder: Decoder): number {
     return decoder.decodeInt8();
-  }
+  },
 };
 
 export const Uint16Serializer: Serializer<number> = {
@@ -40,7 +40,7 @@ export const Uint16Serializer: Serializer<number> = {
 
   deserialize(decoder: Decoder): number {
     return decoder.decodeInt16();
-  }
+  },
 };
 
 export const Uint32Serializer: Serializer<number> = {
@@ -53,7 +53,7 @@ export const Uint32Serializer: Serializer<number> = {
 
   deserialize(decoder: Decoder): number {
     return decoder.decodeInt32();
-  }
+  },
 };
 
 export const Int8Serializer: Serializer<number> = {
@@ -66,7 +66,7 @@ export const Int8Serializer: Serializer<number> = {
 
   deserialize(decoder: Decoder): number {
     return decoder.decodeInt8();
-  }
+  },
 };
 
 export const Int16Serializer: Serializer<number> = {
@@ -79,7 +79,7 @@ export const Int16Serializer: Serializer<number> = {
 
   deserialize(decoder: Decoder): number {
     return decoder.decodeInt16();
-  }
+  },
 };
 
 export const Int32Serializer: Serializer<number> = {
@@ -92,7 +92,7 @@ export const Int32Serializer: Serializer<number> = {
 
   deserialize(decoder: Decoder): number {
     return decoder.decodeInt32();
-  }
+  },
 };
 
 export const Float32Serializer: Serializer<number> = {
@@ -104,7 +104,7 @@ export const Float32Serializer: Serializer<number> = {
 
   deserialize(decoder: Decoder): number {
     return decoder.decodeFloat32();
-  }
+  },
 };
 
 export const Float64Serializer: Serializer<number> = {
@@ -116,7 +116,7 @@ export const Float64Serializer: Serializer<number> = {
 
   deserialize(decoder: Decoder): number {
     return decoder.decodeFloat64();
-  }
+  },
 };
 
 export const StringSerializer: Serializer<string> = {
@@ -128,21 +128,21 @@ export const StringSerializer: Serializer<string> = {
 
   deserialize(decoder: Decoder): string {
     return decoder.decodeString();
-  }
+  },
 };
 export class NullableSerializer<T> implements Serializer<T | null> {
   constructor(private readonly serializer: Serializer<T>) {
     this.descriptor = nullableDescriptor(this.serializer.descriptor);
-
   }
 
-  readonly descriptor:SerialDescriptor;
+  readonly descriptor: SerialDescriptor;
 
   serialize(encoder: Encoder, value: T | null): void {
     if (value === null) {
       encoder.encodeNull();
-    } else {
-      encoder.encodeNotNullMark()
+    }
+    else {
+      encoder.encodeNotNullMark();
       this.serializer.serialize(encoder, value);
     }
   }
