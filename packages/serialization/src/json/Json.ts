@@ -1,7 +1,7 @@
 import type { DeserializationStrategy, SerializationStrategy } from '../Serializer';
 import type { JsonElement } from './JsonElement';
+import { JsonTreeDecoder } from './JsonDecoder';
 import { JsonTreeEncoder } from './JsonEncoder';
-import { JsonTreeDecoder } from "./JsonDecoder";
 
 export interface JsonConfiguration {
   ignoreUnknownKeys: boolean;
@@ -30,11 +30,19 @@ export class Json {
     return result;
   }
 
-   readPolymorphicJson<T>(
-    discriminator: String,
-    element: JsonElement & object,
-    deserializer: DeserializationStrategy<T>
+  decode<T>(
+    serializer: DeserializationStrategy<T>,
+    value: unknown,
   ): T {
-    return new JsonTreeDecoder(this, element, discriminator, deserializer.descriptor).decodeSerializableValue(deserializer)
+    // TODO: handle cases when we're not decoding an object
+    return new JsonTreeDecoder(this, value).decodeSerializableValue(serializer);
+  }
+
+  readPolymorphicJson<T>(
+    discriminator: string,
+    element: JsonElement & object,
+    deserializer: DeserializationStrategy<T>,
+  ): T {
+    return new JsonTreeDecoder(this, element, discriminator, deserializer.descriptor).decodeSerializableValue(deserializer);
   }
 }

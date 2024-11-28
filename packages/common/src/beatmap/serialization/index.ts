@@ -1,1 +1,1 @@
-export * from './Vec2Serializer';
+export * from './BeatmapSerializer';
