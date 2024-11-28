@@ -82,8 +82,7 @@ export class FollowPointConnection extends PoolableDrawableWithLifetime<FollowPo
 
       fp.animationStartTime.value = fadeInTime;
 
-      {
-        using _ = fp.beginAbsoluteSequence(fadeInTime);
+      fp.absoluteSequence(fadeInTime, () => {
         fp.fadeIn(end.timeFadeIn);
 
         fp.scaleTo(end.scale, end.timeFadeIn, EasingFunction.Out);
@@ -92,7 +91,7 @@ export class FollowPointConnection extends PoolableDrawableWithLifetime<FollowPo
         fp.expire();
 
         finalTransformEndTime = fp.lifetimeEnd;
-      }
+      });
 
       count++;
     }
