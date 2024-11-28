@@ -1,4 +1,5 @@
-import type { BeatmapAssetManager, EditorBeatmap, IBeatmap } from '@osucad/common';
+import type { BeatmapAssetManager, IBeatmap } from '@osucad/common';
+import { EditorBeatmap } from '@osucad/common';
 
 export class MultiplayerEditorBeatmap extends EditorBeatmap {
   constructor(
