@@ -1,4 +1,6 @@
+import type { Decoder, Encoder, Serializer } from '@osucad/serialization';
 import type { ILerp } from '../types/ILerp';
+import { Float32Serializer, listSerialDescriptor } from '@osucad/serialization';
 
 export class Vec2 implements ILerp<Vec2> {
   constructor();
@@ -8,6 +10,10 @@ export class Vec2 implements ILerp<Vec2> {
     public x: number = 0,
     public y: number = x,
   ) {
+  }
+
+  static serializer() {
+    return Vec2Serializer;
   }
 
   readonly(): Readonly<Vec2> {
@@ -224,3 +230,22 @@ export interface IVec2 {
   x: number;
   y: number;
 }
+
+export const Vec2Serializer: Serializer<Vec2> = {
+  descriptor: listSerialDescriptor(Float32Serializer.descriptor),
+  deserialize(decoder: Decoder): Vec2 {
+    return decoder.decodeStructure(this.descriptor, decoder =>
+      new Vec2(
+        decoder.decodeFloat32Element(this.descriptor, 0),
+        decoder.decodeFloat32Element(this.descriptor, 1),
+      ));
+  },
+
+  serialize(encoder: Encoder, value: Vec2) {
+    const descriptor = this.descriptor;
+    const nested = encoder.beginCollection(descriptor);
+    nested.encodeFloat32Element(descriptor, 0, value.x);
+    nested.encodeFloat32Element(descriptor, 1, value.y);
+    nested.endStructure(descriptor);
+  },
+};
