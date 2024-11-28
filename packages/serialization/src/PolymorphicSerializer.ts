@@ -1,8 +1,8 @@
 import type { Decoder } from './decoder/Decoder';
-import { CompositeDecoder } from "./decoder/Decoder";
 import type { SerialDescriptor } from './descriptor/SerialDescriptor';
 import type { Encoder } from './encoder/Encoder';
 import type { Serializer } from './Serializer';
+import { CompositeDecoder } from './decoder/Decoder';
 
 export type Constructor<T> = new(...args: any[]) => T;
 
@@ -19,38 +19,39 @@ export abstract class AbstractPolymorphicSerializer<T> implements Serializer<T> 
   }
 
   deserialize(decoder: Decoder): T {
-    let className: String | null = null
-    let value: any = null
+    let className: string | null = null;
+    let value: any = null;
 
-    decoder.decodeStructure(this.descriptor, decoder => {
-
+    decoder.decodeStructure(this.descriptor, (decoder) => {
       while (true) {
-        const index = decoder.decodeElementIndex(this.descriptor)
+        const index = decoder.decodeElementIndex(this.descriptor);
 
-        console.log(index)
+        console.log(index);
 
         if (index === CompositeDecoder.DECODE_DONE)
-          break
+          break;
 
         if (index === 0) {
-          className = decoder.decodeStringElement(this.descriptor, index)
-          console.log(className)
+          className = decoder.decodeStringElement(this.descriptor, index);
+          console.log(className);
         }
 
         else if (index === 1) {
-          console.assert(className !== null)
-          const serializer = this.findPolymorphicSerializerByName(decoder, className!)
-          value = decoder.decodeSerializableElement(this.descriptor, index, serializer)
+          console.assert(className !== null);
+          const serializer = this.findPolymorphicSerializerByName(decoder, className!);
+          value = decoder.decodeSerializableElement(this.descriptor, index, serializer);
         }
 
-        else throw new Error(/* TODO: Descriptive error message */)
+        else {
+          throw new Error(/* TODO: Descriptive error message */);
+        }
       }
-    })
+    });
 
     if (value !== null)
-      return value
+      return value;
 
-    throw new Error(/* TODO: Descriptive error message */)
+    throw new Error(/* TODO: Descriptive error message */);
   }
 
   findPolymorphicSerializer(encoder: Encoder, value: T): Serializer<T> {

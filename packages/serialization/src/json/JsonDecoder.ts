@@ -29,14 +29,14 @@ export abstract class AbstractJsonTreeDecoder extends NamedValueDecoder {
   }
 
   decodeSerializableValuePolymorphic<T>(deserializer: DeserializationStrategy<T>): T {
-    if (!(deserializer instanceof AbstractPolymorphicSerializer<any>) /* || this.json.configuration.useArrayPolymorphism */) {
+    if (!(deserializer instanceof AbstractPolymorphicSerializer) /* || this.json.configuration.useArrayPolymorphism */) {
       return deserializer.deserialize(this);
     }
 
     const discriminator = this.json.configuration.classDiscriminator;
 
     const jsonTree = this.decodeJsonElement() as object;
-    const type = jsonTree[discriminator] ?? null;
+    const type = (jsonTree as any)[discriminator] ?? null;
 
     const actualSerializer = (deserializer as AbstractPolymorphicSerializer<any>).findPolymorphicSerializerByName(this, type);
 
