@@ -2,7 +2,7 @@ import type { InitialStateServerMessage, ServerMessages } from '../protocol/Serv
 import type { ClientSocket } from './ClientSocket';
 import { BeatmapSerializer } from '@osucad/common';
 import { Json } from '@osucad/serialization';
-import { BeatmapAssetManager } from './BeatmapAssetManager';
+import { BeatmapAssetManager } from '../../../common/src/editor/BeatmapAssetManager';
 import { MultiplayerEditorBeatmap } from './MultiplayerEditorBeatmap';
 
 export class MultiplayerClient {

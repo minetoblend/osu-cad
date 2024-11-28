@@ -1,4 +1,4 @@
-import type { AssetInfo } from '../protocol/ServerMessage';
+import type { AssetInfo } from '../../../multiplayer/src/protocol/ServerMessage';
 import type { BeatmapAsset } from './BeatmapAsset';
 import { Action } from 'osucad-framework';
 

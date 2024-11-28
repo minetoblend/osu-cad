@@ -1,7 +1,9 @@
 import type { BeatmapColors, BeatmapDifficultyInfo, BeatmapMetadata, BeatmapSettings, ControlPointInfo, HitObjectList, IBeatmap } from '@osucad/common';
+import type { BeatmapAssetManager } from './BeatmapAssetManager';
 
 export abstract class EditorBeatmap implements IBeatmap {
   abstract readonly beatmap: IBeatmap;
+  abstract readonly assets: BeatmapAssetManager;
 
   get settings(): BeatmapSettings {
     return this.beatmap.settings;
