@@ -1,8 +1,8 @@
-import type { InitialStateServerMessage, ServerMessages } from '../protocol/ServerMessage';
+import type { ServerMessages } from '../protocol/ServerMessage';
 import type { ClientSocket } from './ClientSocket';
 import { BeatmapSerializer } from '@osucad/common';
 import { Json } from '@osucad/serialization';
-import { BeatmapAssetManager } from '../../../common/src/editor/BeatmapAssetManager';
+import { MultiplayerAssetManager } from './MultiplayerAssetManager';
 import { MultiplayerEditorBeatmap } from './MultiplayerEditorBeatmap';
 
 export class MultiplayerClient {
@@ -19,14 +19,10 @@ export class MultiplayerClient {
     this.#clientId = clientId;
 
     const beatmap = new Json().decode(new BeatmapSerializer(), beatmapData);
-    const assetManager = new BeatmapAssetManager();
+    const assetManager = new MultiplayerAssetManager();
     await assetManager.load(assets);
 
     this.beatmap = new MultiplayerEditorBeatmap(beatmap, assetManager);
-  }
-
-  async initialize(message: InitialStateServerMessage) {
-    this.#clientId = message.clientId;
   }
 
   #clientId: number = -1;

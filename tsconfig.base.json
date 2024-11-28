@@ -24,6 +24,7 @@
       "@osucad/editor": ["packages/editor/src/index.ts"],
       "@osucad/editor/*": ["packages/editor/src/*"],
       "@osucad/serialization": ["packages/serialization/src/index.ts"],
+      "@osucad/multiplayer": ["packages/multiplayer/src/index.ts"],
       "osucad-framework": ["packages/framework/src/index.ts"]
     }
   },
