@@ -1,6 +1,6 @@
 import type { AssetInfo } from '@osucad/multiplayer';
 import fs from 'node:fs/promises';
-import { join } from 'node:path';
+import { resolve } from 'node:path';
 import { v4 as uuid } from 'uuid';
 
 const beatmapDir = './beatmap';
@@ -21,7 +21,7 @@ export async function loadAssets() {
 export function getAssetPath(id: string): string | null {
   const path = assetMap.get(id);
   if (path)
-    return join(beatmapDir, path);
+    return resolve(beatmapDir, path);
 
   return null;
 }

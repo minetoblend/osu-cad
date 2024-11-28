@@ -1,4 +1,4 @@
-import type { CompositeDecoder, CompositeEncoder, SerialDescriptor } from '@osucad/serialization';
+import type { ClassSerialDescriptorBuilder, CompositeDecoder, CompositeEncoder } from '@osucad/serialization';
 import type { IPatchable } from '../../../commands/IPatchable';
 import type { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 import type { HitWindows } from '../../../hitObjects/HitWindows';
@@ -9,9 +9,9 @@ import type { Slider } from './Slider';
 import type { Spinner } from './Spinner';
 import {
   BooleanSerializer,
-  ClassSerialDescriptorBuilder,
-  nullableDescriptor, NullableSerializer,
-  Uint8Serializer
+  nullableDescriptor,
+  NullableSerializer,
+  Uint8Serializer,
 } from '@osucad/serialization';
 import { Action, Vec2 } from 'osucad-framework';
 import { Color } from 'pixi.js';
@@ -333,10 +333,10 @@ export abstract class OsuHitObjectSerializer<T extends OsuHitObject> extends Hit
 
   protected override buildDescriptor(builder: ClassSerialDescriptorBuilder) {
     super.buildDescriptor(builder);
-    builder.element('position', Vec2Serializer.descriptor)
-    builder.element('newCombo', nullableDescriptor(BooleanSerializer.descriptor), true)
-    builder.element('comboOffset', nullableDescriptor(Uint8Serializer.descriptor), true)
-    builder.element('hitSound', HitSoundSerializer.instance.descriptor)
+    builder.element('position', Vec2Serializer.descriptor);
+    builder.element('newCombo', nullableDescriptor(BooleanSerializer.descriptor), true);
+    builder.element('comboOffset', nullableDescriptor(Uint8Serializer.descriptor), true);
+    builder.element('hitSound', HitSoundSerializer.instance.descriptor);
   }
 
   protected override serializeProperties(encoder: CompositeEncoder, object: T) {
@@ -345,7 +345,7 @@ export abstract class OsuHitObjectSerializer<T extends OsuHitObject> extends Hit
     if (object.newCombo)
       encoder.encodeBooleanElement(this.descriptor, 2, object.newCombo);
     encoder.encodeUint8Element(this.descriptor, 3, object.comboOffset);
-    encoder.encodeSerializableElement(this.descriptor, 4, HitSoundSerializer.instance, object.hitSound,)
+    encoder.encodeSerializableElement(this.descriptor, 4, HitSoundSerializer.instance, object.hitSound);
   }
 
   protected override deserializeProperties(decoder: CompositeDecoder, object: T) {
@@ -353,6 +353,6 @@ export abstract class OsuHitObjectSerializer<T extends OsuHitObject> extends Hit
     object.position = decoder.decodeSerializableElement(this.descriptor, 1, Vec2Serializer);
     object.newCombo = decoder.decodeSerializableElement(this.descriptor, 2, new NullableSerializer(BooleanSerializer)) ?? false;
     object.comboOffset = decoder.decodeUint8Element(this.descriptor, 3) ?? 0;
-    object.hitSound = decoder.decodeSerializableElement(this.descriptor, 4, HitSoundSerializer.instance)
+    object.hitSound = decoder.decodeSerializableElement(this.descriptor, 4, HitSoundSerializer.instance);
   }
 }

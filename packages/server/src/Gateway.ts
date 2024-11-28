@@ -27,6 +27,8 @@ export class Gateway {
     const clientId = this.#nextClientId++;
     const beatmapData = new Json().encode(Beatmap.serializer, this.beatmap);
 
+    console.log(`Client ${socket.id} connected with client id ${clientId}`);
+
     socket.emit('initialData', {
       clientId,
       beatmapData,

@@ -1,5 +1,6 @@
-import type { IBeatmap, IResourceStore } from '@osucad/editor';
-import { LoadedBeatmap, StableBeatmapParser } from '@osucad/editor';
+import type { IResourceStore } from 'osucad-framework';
+import { type IBeatmap, StableBeatmapParser } from '@osucad/common';
+import { LoadedBeatmap } from '@osucad/editor';
 
 export class OnlineLoadedBeatmap extends LoadedBeatmap {
   constructor(
@@ -11,6 +12,6 @@ export class OnlineLoadedBeatmap extends LoadedBeatmap {
   protected async loadSourceBeatmap(): Promise<IBeatmap> {
     const response = await fetch('/edit/beatmap');
 
-    return await new StableBeatmapParser().parse(await response.text());
+    return new StableBeatmapParser().parse(await response.text());
   }
 }

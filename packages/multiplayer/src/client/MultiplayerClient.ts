@@ -33,17 +33,22 @@ export class MultiplayerClient {
 
   beatmap!: MultiplayerEditorBeatmap;
 
-  #nextMessage<Ev extends keyof ServerMessages>(messageType: Ev): Promise<Parameters<ServerMessages[Ev]>[0]> {
+  async #nextMessage<Ev extends keyof ServerMessages>(messageType: Ev): Promise<Parameters<ServerMessages[Ev]>[0]> {
     let off: () => void;
 
-    return new Promise<Parameters<ServerMessages[Ev]>[0]>((resolve, reject) => {
-      off = () => {
-        this.socket.off('connect_error', reject);
-        this.socket.off(messageType, resolve as any);
-      };
+    try {
+      return await new Promise<Parameters<ServerMessages[Ev]>[0]>((resolve, reject) => {
+        off = () => {
+          this.socket.off('connect_error', reject);
+          this.socket.off(messageType, resolve as any);
+        };
 
-      this.socket.once('connect_error', reject);
-      this.socket.once(messageType, resolve as any);
-    }).finally(() => off());
+        this.socket.once('connect_error', reject);
+        this.socket.once(messageType, resolve as any);
+      });
+    }
+    finally {
+      off!();
+    }
   }
 }

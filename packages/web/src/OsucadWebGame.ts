@@ -1,28 +1,23 @@
-import type { IResourcesProvider } from '@osucad/editor';
 import type { DependencyContainer } from 'osucad-framework';
-import { Axes, Box, OsucadGameBase } from '@osucad/editor';
+import { OsucadGameBase } from '@osucad/editor';
+import { MultiplayerClient } from '@osucad/multiplayer';
+import { Axes, Box } from 'osucad-framework';
+import { io } from 'socket.io-client';
 import { EditorActionContainer } from '../../editor/src/editor/EditorActionContainer';
 import { EditorLoader } from '../../editor/src/editor/EditorLoader';
 import { Fit, ScalingContainer } from '../../editor/src/editor/ScalingContainer';
 import { FpsOverlay } from '../../editor/src/FpsOverlay';
 import { NotificationOverlay } from '../../editor/src/notifications/NotificationOverlay';
 import { OsucadScreenStack } from '../../editor/src/OsucadScreenStack';
-import { ISkinSource } from '../../editor/src/skinning/ISkinSource';
-import { SkinManager } from '../../editor/src/skinning/SkinManager';
-import { OnlineBeatmapInfo } from './OnlineBeatmapInfo';
 import { OnlineEditorEnvironment } from './OnlineEditorEnvironment';
 
-export class OsucadWebGame extends OsucadGameBase implements IResourcesProvider {
+export class OsucadWebGame extends OsucadGameBase {
   constructor() {
     super(new OnlineEditorEnvironment());
   }
 
   async load(dependencies: DependencyContainer) {
     await super.load(dependencies);
-
-    this.add(new Box({
-      relativeSizeAxes: Axes.Both,
-    }));
 
     const screenStack = new OsucadScreenStack();
 
@@ -48,14 +43,18 @@ export class OsucadWebGame extends OsucadGameBase implements IResourcesProvider 
     this.add(notificationOverlay);
     dependencies.provide(NotificationOverlay, notificationOverlay);
 
-    const skinManager = new SkinManager(this.environment.skins);
-    this.dependencies.provide(ISkinSource, skinManager);
-    this.dependencies.provide(SkinManager, skinManager);
-
-    await this.loadComponentAsync(skinManager);
-
     screenStack.push(
-      new EditorLoader(new OnlineBeatmapInfo()),
+      new EditorLoader(async () => {
+        const client = new MultiplayerClient(
+          () => io('http://localhost:3000', {
+            transports: ['websocket'],
+          }),
+        );
+
+        await client.load();
+
+        return client.beatmap;
+      }),
     );
   }
 }

@@ -63,8 +63,11 @@ export abstract class EditorBeatmap extends Component implements IBeatmap {
   }
 
   protected async loadBackground() {
-    const path = this.beatmap.settings.audioFileName;
+    const path = this.beatmap.settings.backgroundFilename;
+    if (!path)
+      return;
     const asset = this.assets.getAsset(path);
+    console.log(asset);
     if (!asset)
       return;
 

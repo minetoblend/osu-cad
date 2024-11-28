@@ -1,5 +1,6 @@
 import http from 'node:http';
 import config from 'config';
+import cors from 'cors';
 import express from 'express';
 import { Server } from 'socket.io';
 import { getAssetPath, loadAssets } from './assets';
@@ -12,10 +13,12 @@ const port = config.get('deployment.port');
 // endregion
 
 const app = express();
+app.use(cors());
+
 const server = http.createServer(app);
 const io = new Server(server, {
-  transports: ['webtransport', 'websocket'],
-  perMessageDeflate: true,
+  transports: ['websocket'],
+  // perMessageDeflate: true,
 });
 
 const gateway = new Gateway(io);
@@ -36,7 +39,7 @@ async function run() {
     loadAssets(),
   ]);
 
-  app.listen(port, () => {
+  server.listen(port, () => {
     console.log(`Listening on port ${port}`);
   });
 }
