@@ -18,7 +18,7 @@ app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, {
   transports: ['websocket'],
-  // perMessageDeflate: true,
+
 });
 
 const gateway = new Gateway(io);
@@ -34,10 +34,8 @@ app.get('/assets/:id', (req, res) => {
 });
 
 async function run() {
-  await Promise.all([
-    gateway.init(),
-    loadAssets(),
-  ]);
+  await loadAssets();
+  await gateway.init();
 
   server.listen(port, () => {
     console.log(`Listening on port ${port}`);

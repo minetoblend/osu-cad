@@ -132,8 +132,8 @@ export class Editor
           child: (this.#screenContainer = new EditorScreenContainer()),
         }),
       }),
-      (this.#topBar = new EditorTopBar()),
-      (this.#bottomBar = new EditorBottomBar()),
+      (this.#topBar = this.createTopBar()),
+      (this.#bottomBar = this.createBottomBar()),
     );
 
     loadDrawable(editorDependencies.reusablePlayfield, this.clock!, this.#screenContainer.dependencies);
@@ -145,6 +145,14 @@ export class Editor
     this.dependencies.provide(BeatmapComboProcessor, comboProcessor);
 
     this.addAllInternal(stackingProcessor, comboProcessor);
+  }
+
+  protected createTopBar() {
+    return new EditorTopBar();
+  }
+
+  protected createBottomBar() {
+    return new EditorBottomBar();
   }
 
   protected loadComplete() {

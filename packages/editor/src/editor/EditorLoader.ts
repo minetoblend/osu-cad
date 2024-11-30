@@ -62,10 +62,7 @@ export class EditorLoader extends OsucadScreen {
       throw new Error('EditorLoader must be a child of a ScreenStack');
     }
 
-    import('./Editor').then(async ({ Editor }) => {
-      const beatmap = await this.beatmap();
-      const editor = new Editor(beatmap);
-
+    this.beatmap().then(beatmap => this.createEditor(beatmap)).then(async (editor) => {
       try {
         await this.loadComponentAsync(editor);
       }
@@ -95,6 +92,10 @@ export class EditorLoader extends OsucadScreen {
         this.alpha = 0;
       }, 500);
     });
+  }
+
+  protected async createEditor(beatmap: EditorBeatmap) {
+    return import('./Editor').then(({ Editor }) => new Editor(beatmap));
   }
 
   #exited = false;

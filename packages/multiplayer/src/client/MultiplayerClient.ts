@@ -2,17 +2,28 @@ import type { ServerMessages } from '../protocol/ServerMessage';
 import type { ClientSocket } from './ClientSocket';
 import { BeatmapSerializer } from '@osucad/common';
 import { Json } from '@osucad/serialization';
+import { Component } from 'osucad-framework';
+import { Chat } from './Chat';
+import { ConnectedUsers } from './ConnectedUsers';
 import { MultiplayerAssetManager } from './MultiplayerAssetManager';
 import { MultiplayerEditorBeatmap } from './MultiplayerEditorBeatmap';
 
-export class MultiplayerClient {
+export class MultiplayerClient extends Component {
   constructor(readonly socketFactory: () => ClientSocket) {
+    super();
   }
 
   socket!: ClientSocket;
 
+  connectedUsers!: ConnectedUsers;
+
+  chat!: Chat;
+
   async load() {
     this.socket = this.socketFactory();
+
+    this.connectedUsers = new ConnectedUsers(this.socket);
+    this.chat = new Chat(this.socket);
 
     const { clientId, beatmapData, assets } = await this.#nextMessage('initialData');
 
@@ -22,7 +33,7 @@ export class MultiplayerClient {
     const assetManager = new MultiplayerAssetManager();
     await assetManager.load(assets);
 
-    this.beatmap = new MultiplayerEditorBeatmap(beatmap, assetManager);
+    this.beatmap = new MultiplayerEditorBeatmap(beatmap, assetManager, this);
   }
 
   #clientId: number = -1;
@@ -50,5 +61,11 @@ export class MultiplayerClient {
     finally {
       off!();
     }
+  }
+
+  override dispose(isDisposing: boolean = true) {
+    super.dispose(isDisposing);
+
+    this.socket?.disconnect();
   }
 }

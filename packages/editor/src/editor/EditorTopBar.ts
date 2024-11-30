@@ -10,7 +10,7 @@ export class EditorTopBar extends Container {
   }
 
   @dependencyLoader()
-  init() {
+  [Symbol('load')]() {
     this.addAll(
       new Box({
         relativeSizeAxes: Axes.Both,

@@ -1,10 +1,9 @@
-import type { IBeatmap } from '@osucad/common';
-import type { ClientMessages, ServerMessages } from '@osucad/multiplayer';
-import type { Server, Socket } from 'socket.io';
+import type { Server } from 'socket.io';
+import { randomUUID } from 'node:crypto';
 import fs from 'node:fs/promises';
-import { Beatmap, StableBeatmapParser } from '@osucad/common';
-import { Json } from '@osucad/serialization';
+import { StableBeatmapParser } from '@osucad/common';
 import { getAssets } from './assets';
+import { Room } from './multiplayer/Room';
 
 const beatmapFilePath = './beatmap/Suzukaze Aoba (CV. Yuki Takada) - Rainbow Days!! (Maarvin) [Expert].osu';
 
@@ -12,27 +11,20 @@ export class Gateway {
   constructor(readonly io: Server) {
   }
 
-  beatmap!: IBeatmap;
+  room!: Room;
 
   async init() {
-    this.beatmap = new StableBeatmapParser().parse(await fs.readFile(beatmapFilePath, 'utf-8'));
-    this.io.on('connect', socket => this.accept(socket));
+    const beatmap = new StableBeatmapParser().parse(await fs.readFile(beatmapFilePath, 'utf-8'));
 
-    console.log('Gateway initialized');
-  }
+    const roomId = randomUUID();
 
-  #nextClientId = 0;
+    this.room = new Room(
+      roomId,
+      this.io.to(roomId),
+      beatmap,
+      getAssets(),
+    );
 
-  accept(socket: Socket<ClientMessages, ServerMessages>) {
-    const clientId = this.#nextClientId++;
-    const beatmapData = new Json().encode(Beatmap.serializer, this.beatmap);
-
-    console.log(`Client ${socket.id} connected with client id ${clientId}`);
-
-    socket.emit('initialData', {
-      clientId,
-      beatmapData,
-      assets: getAssets(),
-    });
+    this.io.on('connect', socket => this.room.accept(socket));
   }
 }
