@@ -11,6 +11,7 @@
     "@types/config": "^3.3.5",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
+    "@types/request": "^2.48.12",
     "typescript": "^5.5.3",
     "vite": "^5.4.8",
     "vite-node": "^2.1.6"
@@ -19,6 +20,7 @@
     "config": "^3.3.12",
     "cors": "^2.8.5",
     "express": "^4.21.1",
+    "request": "^2.88.2",
     "socket.io": "^4.8.1"
   }
 }

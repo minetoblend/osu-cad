@@ -1,4 +1,5 @@
 import type { ChatMessage } from './ChatMessage';
+import type { ClientInfo } from './types';
 
 export type ServerMessage =
   | InitialStateServerMessage;
@@ -28,9 +29,4 @@ export interface AssetInfo {
 
 export interface UserJoinedServerMessage {
   clientId: number;
-}
-
-export interface ClientInfo {
-  clientId: number;
-  presence: any;
 }

@@ -1,6 +1,7 @@
 import type { Texture } from 'pixi.js';
 import { CompositeDrawable, loadTexture } from 'osucad-framework';
 
+// noinspection t
 export class UserAvatarCache extends CompositeDrawable {
   cache = new Map<number, Promise<Texture | null>>();
 

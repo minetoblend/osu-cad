@@ -123,7 +123,7 @@ export class Editor
     this.addAllInternal(
       new Container({
         relativeSizeAxes: Axes.Both,
-        padding: { top: 28 },
+        padding: { top: 32 },
         child: new RulesetSkinProvidingContainer(
           new OsuRuleset(),
           this.beatmap,

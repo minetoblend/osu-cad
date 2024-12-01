@@ -1,4 +1,5 @@
-import type { ClientInfo, ClientSocket } from '@osucad/multiplayer';
+import type { ClientInfo } from '../protocol';
+import type { ClientSocket } from './ClientSocket';
 import { Action } from 'osucad-framework';
 
 export class ConnectedUsers {

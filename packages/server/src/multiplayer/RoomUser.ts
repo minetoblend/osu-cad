@@ -8,12 +8,19 @@ export class RoomUser {
   ) {
   }
 
+  userId = 6411631;
+  username = 'Maarvin';
+  avatarUrl = '';
+
   presence: any = {};
 
   getInfo(): ClientInfo {
     return {
+      userId: this.userId,
       clientId: this.clientId,
       presence: this.presence,
+      username: this.username,
+      avatarUrl: this.avatarUrl,
     };
   }
 }

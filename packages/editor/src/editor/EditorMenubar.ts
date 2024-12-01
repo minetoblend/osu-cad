@@ -182,7 +182,7 @@ class MenuItemContent extends Container {
   constructor() {
     super({
       autoSizeAxes: Axes.Both,
-      padding: { horizontal: 6, vertical: 2 },
+      padding: { horizontal: 8, vertical: 4 },
     });
   }
 

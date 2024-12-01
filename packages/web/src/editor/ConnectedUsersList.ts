@@ -1,5 +1,6 @@
 import type { ClientInfo } from '@osucad/multiplayer';
 import { FastRoundedBox } from '@osucad/editor/drawables/FastRoundedBox';
+import { UserAvatarCache } from '@osucad/editor/UserAvatarCache';
 import { ConnectedUsers } from '@osucad/multiplayer';
 import {
   Anchor,
@@ -11,6 +12,7 @@ import {
   FillFlowContainer,
   FillMode,
   resolved,
+  RoundedBox,
   Vec2,
 } from 'osucad-framework';
 
@@ -25,12 +27,11 @@ export class ConnectedUsersList extends CompositeDrawable {
     this.autoSizeAxes = Axes.X;
     this.relativeSizeAxes = Axes.Y;
 
-    console.log(this.connectedUsers.users);
-
     this.addInternal(this.#usersFlow = new FillFlowContainer({
       autoSizeAxes: Axes.X,
       relativeSizeAxes: Axes.Y,
       spacing: new Vec2(4),
+      padding: { right: 8 },
       children: this.connectedUsers.users.map(user =>
         new UserBadge(user),
       ),
@@ -53,14 +54,18 @@ class UserBadge extends Container {
     super({
       anchor: Anchor.CenterRight,
       origin: Anchor.CenterRight,
-      size: 20,
+      size: 24,
       fillMode: FillMode.Fit,
       child: new FastRoundedBox({
         relativeSizeAxes: Axes.Both,
-        cornerRadius: 10,
+        cornerRadius: 13,
+        alpha: 0.1,
       }),
     });
   }
+
+  @resolved(UserAvatarCache)
+  private userAvatarCache!: UserAvatarCache;
 
   @resolved(ConnectedUsers)
   protected connectedUsers!: ConnectedUsers;
@@ -70,6 +75,25 @@ class UserBadge extends Container {
     this.scaleTo(0).scaleTo(1, 300, EasingFunction.OutExpo);
 
     this.connectedUsers.userLeft.addListener(this.#onUserLeft, this);
+
+    this.userAvatarCache.getAvatar(this.client.userId)
+      .then((texture) => {
+        if (!texture)
+          return;
+
+        if (this.isDisposed) {
+          texture.destroy();
+          return;
+        }
+
+        this.onDispose(() => texture.destroy());
+
+        this.add(new RoundedBox({
+          relativeSizeAxes: Axes.Both,
+          texture,
+          cornerRadius: 100,
+        }));
+      });
   }
 
   #onUserLeft(client: ClientInfo) {

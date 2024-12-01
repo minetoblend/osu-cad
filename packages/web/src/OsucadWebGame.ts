@@ -1,5 +1,6 @@
 import type { DependencyContainer } from 'osucad-framework';
 import { OsucadGameBase } from '@osucad/editor';
+import { UserAvatarCache } from '@osucad/editor/UserAvatarCache';
 import { MultiplayerClient } from '@osucad/multiplayer';
 import { Axes, Box } from 'osucad-framework';
 import { io } from 'socket.io-client';
@@ -39,6 +40,11 @@ export class OsucadWebGame extends OsucadGameBase {
       }),
     }));
 
+    const avatarCache = new UserAvatarCache();
+
+    this.add(avatarCache);
+    this.dependencies.provide(avatarCache);
+
     const notificationOverlay = new NotificationOverlay();
     this.add(notificationOverlay);
     dependencies.provide(NotificationOverlay, notificationOverlay);
@@ -46,7 +52,7 @@ export class OsucadWebGame extends OsucadGameBase {
     screenStack.push(
       new MultiplayerEditorLoader(async () => {
         const client = new MultiplayerClient(
-          () => io('http://localhost:3000', {
+          () => io('http://localhost', {
             transports: ['websocket'],
           }),
         );
