@@ -1,5 +1,7 @@
 import type {
+  Drawable,
   KeyDownEvent,
+  List,
 } from 'osucad-framework';
 import { Chat } from '@osucad/multiplayer';
 import {
@@ -55,6 +57,14 @@ export class ChatOverlay extends Container {
       else
         this.#inputBox.hide();
     });
+  }
+
+  override buildNonPositionalInputQueue(queue: List<Drawable>, allowBlocking?: boolean): boolean {
+    if (this.active.value) {
+      queue.clear();
+    }
+
+    return super.buildNonPositionalInputQueue(queue, allowBlocking);
   }
 
   onKeyDown(e: KeyDownEvent): boolean {
