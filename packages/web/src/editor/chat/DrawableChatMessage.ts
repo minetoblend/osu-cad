@@ -55,6 +55,10 @@ export class DrawableChatMessage extends CompositeDrawable {
           color: this.colors.text,
         }),
         new OsucadSpriteText({
+          text: this.message.user.username,
+          color: this.colors.primary,
+        }),
+        new OsucadSpriteText({
           text: this.message.content,
         }),
       ],
