@@ -46,4 +46,6 @@ export class EditorAction extends KeyBindingAction {
 
   static readonly CreateInheritedControlPoint = new EditorAction('CreateInheritedControlPoint');
   static readonly CreateUninheritedControlPoint = new EditorAction('CreateUninheritedControlPoint');
+
+  static readonly ShowChat = new EditorAction('ShowChat');
 }

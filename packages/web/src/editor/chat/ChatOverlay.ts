@@ -1,8 +1,12 @@
+import type { EditorActionContainer } from '@osucad/editor/editor/EditorActionContainer';
 import type {
   Drawable,
+  IKeyBindingHandler,
+  KeyBindingPressEvent,
   KeyDownEvent,
   List,
 } from 'osucad-framework';
+import { EditorAction } from '@osucad/editor/editor/EditorAction';
 import { Chat } from '@osucad/multiplayer';
 import {
   Anchor,
@@ -19,7 +23,7 @@ import {
 import { ChatInputBox } from './ChatInputBox';
 import { ChatMessageContainer } from './ChatMessageContainer';
 
-export class ChatOverlay extends Container {
+export class ChatOverlay extends Container implements IKeyBindingHandler<EditorActionContainer> {
   constructor() {
     super();
 
@@ -67,11 +71,21 @@ export class ChatOverlay extends Container {
     return super.buildNonPositionalInputQueue(queue, allowBlocking);
   }
 
-  onKeyDown(e: KeyDownEvent): boolean {
-    if (e.key === Key.KeyT) {
-      this.active.value = true;
+  readonly isKeyBindingHandler = true;
+
+  canHandleKeyBinding(binding: EditorAction) {
+    return binding instanceof EditorAction;
+  }
+
+  onKeyBindingPressed(e: KeyBindingPressEvent<EditorActionContainer>): boolean {
+    if (e.pressed === EditorAction.ShowChat) {
+      this.active.toggle();
       return true;
     }
+    return false;
+  }
+
+  onKeyDown(e: KeyDownEvent): boolean {
     if (e.key === Key.Escape && this.active.value) {
       this.active.value = false;
       return true;
