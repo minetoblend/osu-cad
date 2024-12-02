@@ -1,9 +1,10 @@
+import type { IVec2 } from 'osucad-framework';
 import type { ClientInfo } from '../protocol';
 import type { ClientSocket } from './ClientSocket';
-import { Action } from 'osucad-framework';
+import { Action, Bindable } from 'osucad-framework';
 
 export class ConnectedUsers {
-  #users = new Map<number, ClientInfo>();
+  #users = new Map<number, ConnectedUser>();
 
   constructor(socket: ClientSocket) {
     socket.once('initialData', ({ connectedUsers }) =>
@@ -24,7 +25,7 @@ export class ConnectedUsers {
     if (this.#users.has(client.clientId))
       return;
 
-    this.#users.set(client.clientId, client);
+    this.#users.set(client.clientId, new ConnectedUser(client));
     this.userJoined.emit(client);
   }
 
@@ -33,4 +34,18 @@ export class ConnectedUsers {
       this.userLeft.emit(client);
     }
   }
+}
+
+class ConnectedUser {
+  constructor(readonly clientInfo: ClientInfo) {}
+  readonly cursorPosition = new Bindable<CursorPosition | null>(null);
+
+  get clientId() {
+    return this.clientInfo.clientId;
+  }
+}
+
+export interface CursorPosition {
+  screen: string;
+  position: IVec2;
 }
