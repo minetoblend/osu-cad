@@ -1,3 +1,5 @@
+import type { IVec2 } from 'osucad-framework';
+import type { SignalKey } from '../client';
 import type { ChatMessage } from './ChatMessage';
 import type { ClientInfo } from './types';
 
@@ -12,6 +14,10 @@ export interface ServerMessages {
   userLeft(client: ClientInfo): void;
 
   chatMessageCreated(message: ChatMessage): void;
+
+  signal(clientId: number, key: SignalKey, data: any): void;
+
+  presenceUpdated(clientId: number, key: string, data: any): void;
 }
 
 export interface InitialStateServerMessage {
@@ -29,4 +35,10 @@ export interface AssetInfo {
 
 export interface UserJoinedServerMessage {
   clientId: number;
+}
+
+export interface UpdateCursorServerMessage {
+  clientId: number;
+  screen: string | null;
+  position: IVec2 | null;
 }

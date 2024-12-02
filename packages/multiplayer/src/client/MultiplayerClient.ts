@@ -1,8 +1,9 @@
 import type { ServerMessages } from '../protocol/ServerMessage';
 import type { ClientSocket } from './ClientSocket';
+import type { SignalKey } from './SignalKey';
 import { BeatmapSerializer } from '@osucad/common';
 import { Json } from '@osucad/serialization';
-import { Component } from 'osucad-framework';
+import { Action, Component } from 'osucad-framework';
 import { Chat } from './Chat';
 import { ConnectedUsers } from './ConnectedUsers';
 import { MultiplayerAssetManager } from './MultiplayerAssetManager';
@@ -19,6 +20,12 @@ export class MultiplayerClient extends Component {
 
   chat!: Chat;
 
+  onSignal = new Action<{ clientId: number; key: SignalKey; data: any }>();
+
+  emitSignal(key: SignalKey, data: any) {
+    this.socket.emit('submitSignal', key, data);
+  }
+
   async load() {
     this.socket = this.socketFactory();
 
@@ -34,6 +41,11 @@ export class MultiplayerClient extends Component {
     await assetManager.load(assets);
 
     this.beatmap = new MultiplayerEditorBeatmap(beatmap, assetManager, this);
+
+    this.socket.on('signal', (clientId, key, data) => {
+      if (clientId !== this.clientId)
+        this.onSignal.emit({ clientId, key, data });
+    });
   }
 
   #clientId: number = -1;

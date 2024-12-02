@@ -184,9 +184,15 @@ export class Editor
         break;
     }
 
+    screenToShow = this.prepareScreen(screenToShow);
+
     if (!this.#screenContainer.showScreen(screenToShow) && screen.previousValue !== undefined) {
       this.currentScreen.value = screen.previousValue;
     }
+  }
+
+  protected prepareScreen(screen: EditorScreen) {
+    return screen;
   }
 
   onScroll(e: ScrollEvent): boolean {

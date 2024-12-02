@@ -1,5 +1,5 @@
 import type { IBeatmap } from '@osucad/common';
-import type { AssetInfo, ClientMessages, ServerMessages } from '@osucad/multiplayer';
+import type { AssetInfo, ClientMessages, ServerMessages, SignalKey } from '@osucad/multiplayer';
 import type { BroadcastOperator, Socket } from 'socket.io';
 import { Beatmap } from '@osucad/common';
 import { Json } from '@osucad/serialization';
@@ -43,6 +43,7 @@ export class Room {
     socket.on('disconnect', () => this.handleDisconnect(user));
 
     socket.on('createChatMessage', message => this.handleChat(user, message));
+    socket.on('submitSignal', (key, data) => this.handleSignal(user, key, data));
   }
 
   private handleDisconnect(user: RoomUser) {
@@ -57,5 +58,14 @@ export class Room {
       timestamp: Date.now(),
       user: user.getInfo(),
     });
+  }
+
+  private handleSignal(user: RoomUser, key: SignalKey, data: any) {
+    this.broadcast.emit('signal', user.clientId, key, data);
+  }
+
+  private handlePresence(user: RoomUser, key: string, data: any) {
+    user.presence[key] = data;
+    this.broadcast.emit('presenceUpdated', user.clientId, key, data);
   }
 }

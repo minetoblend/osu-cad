@@ -33,7 +33,7 @@ export class ConnectedUsersList extends CompositeDrawable {
       spacing: new Vec2(4),
       padding: { right: 8 },
       children: this.connectedUsers.users.map(user =>
-        new UserBadge(user),
+        new UserBadge(user.clientInfo),
       ),
     }));
 
