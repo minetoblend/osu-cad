@@ -73,7 +73,10 @@ export class OsucadGameBase extends Game {
     const cursorContainer = new MainCursorContainer();
     dependencies.provide(cursorContainer);
 
-    await this.environment.load();
+    await Promise.all([
+      this.environment.load(),
+      this.loadComponentAsync(skinManager),
+    ]);
   }
 
   onClick(): boolean {

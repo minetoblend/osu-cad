@@ -1,5 +1,4 @@
-import type { EditorCommand } from '@osucad/common';
-import type { EditorBeatmap } from '../EditorBeatmap';
+import type { EditorBeatmap, EditorCommand } from '@osucad/common';
 import { CommandContext, CommandSource } from '@osucad/common';
 import { Action, Bindable } from 'osucad-framework';
 

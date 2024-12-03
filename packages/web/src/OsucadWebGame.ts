@@ -1,28 +1,24 @@
-import type { IResourcesProvider } from '@osucad/editor';
 import type { DependencyContainer } from 'osucad-framework';
-import { Axes, Box, OsucadGameBase } from '@osucad/editor';
+import { OsucadGameBase } from '@osucad/editor';
+import { UserAvatarCache } from '@osucad/editor/UserAvatarCache';
+import { MultiplayerClient } from '@osucad/multiplayer';
+import { Axes, Box } from 'osucad-framework';
+import { io } from 'socket.io-client';
 import { EditorActionContainer } from '../../editor/src/editor/EditorActionContainer';
-import { EditorLoader } from '../../editor/src/editor/EditorLoader';
 import { Fit, ScalingContainer } from '../../editor/src/editor/ScalingContainer';
 import { FpsOverlay } from '../../editor/src/FpsOverlay';
 import { NotificationOverlay } from '../../editor/src/notifications/NotificationOverlay';
 import { OsucadScreenStack } from '../../editor/src/OsucadScreenStack';
-import { ISkinSource } from '../../editor/src/skinning/ISkinSource';
-import { SkinManager } from '../../editor/src/skinning/SkinManager';
-import { OnlineBeatmapInfo } from './OnlineBeatmapInfo';
+import { MultiplayerEditorLoader } from './editor/MultiplayerEditorLoader';
 import { OnlineEditorEnvironment } from './OnlineEditorEnvironment';
 
-export class OsucadWebGame extends OsucadGameBase implements IResourcesProvider {
+export class OsucadWebGame extends OsucadGameBase {
   constructor() {
     super(new OnlineEditorEnvironment());
   }
 
   async load(dependencies: DependencyContainer) {
     await super.load(dependencies);
-
-    this.add(new Box({
-      relativeSizeAxes: Axes.Both,
-    }));
 
     const screenStack = new OsucadScreenStack();
 
@@ -44,18 +40,27 @@ export class OsucadWebGame extends OsucadGameBase implements IResourcesProvider 
       }),
     }));
 
+    const avatarCache = new UserAvatarCache();
+
+    this.add(avatarCache);
+    this.dependencies.provide(avatarCache);
+
     const notificationOverlay = new NotificationOverlay();
     this.add(notificationOverlay);
     dependencies.provide(NotificationOverlay, notificationOverlay);
 
-    const skinManager = new SkinManager(this.environment.skins);
-    this.dependencies.provide(ISkinSource, skinManager);
-    this.dependencies.provide(SkinManager, skinManager);
-
-    await this.loadComponentAsync(skinManager);
-
     screenStack.push(
-      new EditorLoader(new OnlineBeatmapInfo()),
+      new MultiplayerEditorLoader(async () => {
+        const client = new MultiplayerClient(
+          () => io('http://localhost', {
+            transports: ['websocket'],
+          }),
+        );
+
+        await client.load();
+
+        return client.beatmap;
+      }),
     );
   }
 }

@@ -5,14 +5,14 @@ import type { JsonElement, JsonPrimitive } from './JsonElement';
 import { BooleanSerializer } from '../builtins/BuildinSerializers';
 import { CompositeDecoder } from '../decoder/Decoder';
 import { NamedValueDecoder } from '../decoder/TaggedDecoder';
-import { StructureKind } from '../descriptor/SerialKind';
-import { Json } from "./Json";
+import { PolymorphicKind, StructureKind } from '../descriptor/SerialKind';
+import { AbstractPolymorphicSerializer } from '../PolymorphicSerializer';
 
 export abstract class AbstractJsonTreeDecoder extends NamedValueDecoder {
   constructor(
     protected readonly json: Json,
     protected readonly value: JsonElement,
-    protected polymorphismDiscriminator: string | null = null,
+    protected readonly polymorphicDiscriminator: string | null = null,
   ) {
     super();
   }
@@ -25,8 +25,26 @@ export abstract class AbstractJsonTreeDecoder extends NamedValueDecoder {
   }
 
   override decodeSerializableValue<T>(deserializer: DeserializationStrategy<T>, previousValue?: T | undefined): T {
-    // TODO: polymorphic decoding
-    return super.decodeSerializableValue(deserializer, previousValue);
+    return this.decodeSerializableValuePolymorphic(deserializer);
+  }
+
+  decodeSerializableValuePolymorphic<T>(deserializer: DeserializationStrategy<T>): T {
+    if (!(deserializer instanceof AbstractPolymorphicSerializer) /* || this.json.configuration.useArrayPolymorphism */) {
+      return deserializer.deserialize(this);
+    }
+
+    const discriminator = this.json.configuration.classDiscriminator;
+
+    const jsonTree = this.decodeJsonElement() as object;
+    const type = (jsonTree as any)[discriminator] ?? null;
+
+    const actualSerializer = (deserializer as AbstractPolymorphicSerializer<any>).findPolymorphicSerializerByName(this, type);
+
+    return this.json.readPolymorphicJson(discriminator, jsonTree, actualSerializer);
+  }
+
+  decodeJsonElement() {
+    return this.currentObject();
   }
 
   protected override composeName(parentName: string, childName: string): string {
@@ -35,11 +53,11 @@ export abstract class AbstractJsonTreeDecoder extends NamedValueDecoder {
 
   override beginStructure(descriptor: SerialDescriptor): CompositeDecoder {
     const currentObject = this.currentObject();
-    if (descriptor.kind === StructureKind.LIST) {
-      return new JsonListDecoder(this.json, currentObject as Array<JsonElement>, this.polymorphismDiscriminator);
+    if (descriptor.kind === StructureKind.LIST || descriptor.kind instanceof PolymorphicKind) {
+      return new JsonListDecoder(this.json, currentObject as Array<JsonElement>, this.polymorphicDiscriminator);
     }
     // TODO: Map decoding
-    return new JsonTreeDecoder(this.json, currentObject, this.polymorphismDiscriminator);
+    return new JsonTreeDecoder(this.json, currentObject, this.polymorphicDiscriminator);
   }
 
   override endStructure(descriptor: SerialDescriptor) {
@@ -47,7 +65,8 @@ export abstract class AbstractJsonTreeDecoder extends NamedValueDecoder {
   }
 
   override decodeNotNullMark(): boolean {
-    return this.currentObject() !== null;
+    const object = this.currentObject();
+    return object !== null && object !== undefined;
   }
 
   getPrimitiveValue<T>(tag: string, descriptor: SerialDescriptor): JsonPrimitive;
@@ -188,11 +207,24 @@ export class JsonTreeDecoder extends AbstractJsonTreeDecoder {
   private position = 0;
   private forceNull = false;
 
+  constructor(
+    json: Json,
+    value: JsonElement,
+    polymorphicDiscriminator: string | null = null,
+    readonly polyDescriptor: SerialDescriptor | null = null,
+  ) {
+    super(json, value, polymorphicDiscriminator);
+  }
+
   override decodeElementIndex(descriptor: SerialDescriptor): number {
     while (this.position < descriptor.elementsCount) {
       const name = descriptor.getElementName(this.position++);
       const index = this.position - 1;
       this.forceNull = false;
+      console.log({
+        name,
+        value: this.value,
+      });
       if ((name in this.value || this.absenceIsNull(descriptor, index))
       // && (!configuration.coerceInputValues || !coerceInputValue(descriptor, index, name))
       ) {
@@ -225,7 +257,14 @@ export class JsonTreeDecoder extends AbstractJsonTreeDecoder {
   }
 
   override beginStructure(descriptor: SerialDescriptor): CompositeDecoder {
-    // TODO: handle polymorphism
+    if (descriptor === this.polyDescriptor) {
+      return new JsonTreeDecoder(
+        this.json,
+        this.currentObject(),
+        this.polymorphicDiscriminator,
+        this.polyDescriptor,
+      );
+    }
 
     return super.beginStructure(descriptor);
   }
@@ -236,25 +275,21 @@ export class JsonTreeDecoder extends AbstractJsonTreeDecoder {
 }
 
 export class JsonListDecoder extends AbstractJsonTreeDecoder {
-  constructor(json: Json, value: Array<JsonElement>, polymorphismDiscriminator: string | null) {
-    super(json, value, polymorphismDiscriminator);
-  }
+  declare value: Array<JsonElement>;
 
-  declare value: Array<JsonElement>
-
-  private length = this.value.length;
+  private readonly length = this.value.length;
   private currentIndex = -1;
 
   decodeElementIndex(descriptor: SerialDescriptor): number {
     while (this.currentIndex < this.length - 1) {
-      this.currentIndex++
-      return this.currentIndex
+      this.currentIndex++;
+      return this.currentIndex;
     }
-    return CompositeDecoder.DECODE_DONE
+    return CompositeDecoder.DECODE_DONE;
   }
 
   protected currentElement(tag: string): JsonElement {
-    return this.value[parseInt(tag)]
+    return this.value[Number.parseInt(tag)];
   }
 
   override decodeCollectionSize(descriptor: SerialDescriptor): number {

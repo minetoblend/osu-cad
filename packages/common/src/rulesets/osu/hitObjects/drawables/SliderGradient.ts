@@ -72,8 +72,8 @@ export class SliderGradient {
     const gradient = ctx.createLinearGradient(
       0,
       0,
-      FillGradient.defaultTextureSize,
-      1,
+      FillGradient.defaultTextureSize * this.x1,
+      FillGradient.defaultTextureSize * this.y1,
     );
 
     for (let i = 0; i < gradientStops.length; i++) {

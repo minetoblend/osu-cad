@@ -3,6 +3,7 @@ export * from './beatmap';
 export * from './commands';
 export * from './config';
 export * from './controlPoints';
+export * from './editor';
 export * from './gameplay';
 export * from './hitObjects';
 export * from './hitsounds';

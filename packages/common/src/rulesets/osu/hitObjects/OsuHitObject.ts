@@ -1,4 +1,4 @@
-import type { CompositeDecoder, CompositeEncoder, SerialDescriptor } from '@osucad/serialization';
+import type { ClassSerialDescriptorBuilder, CompositeDecoder, CompositeEncoder } from '@osucad/serialization';
 import type { IPatchable } from '../../../commands/IPatchable';
 import type { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 import type { HitWindows } from '../../../hitObjects/HitWindows';
@@ -7,14 +7,19 @@ import type { SerializedOsuHitObject } from '../../../serialization/HitObjects';
 import type { HitCircle } from './HitCircle';
 import type { Slider } from './Slider';
 import type { Spinner } from './Spinner';
-import { BooleanSerializer, Uint8Serializer } from '@osucad/serialization';
+import {
+  BooleanSerializer,
+  nullableDescriptor,
+  NullableSerializer,
+  Uint8Serializer,
+} from '@osucad/serialization';
 import { Action, Vec2 } from 'osucad-framework';
 import { Color } from 'pixi.js';
 import { BeatmapDifficultyInfo } from '../../../beatmap/BeatmapDifficultyInfo';
 import { HitObject, HitObjectSerializer } from '../../../hitObjects/HitObject';
 import { HitObjectProperty } from '../../../hitObjects/HitObjectProperty';
 import { HitSample } from '../../../hitsounds/HitSample';
-import { HitSound } from '../../../hitsounds/HitSound';
+import { HitSound, HitSoundSerializer } from '../../../hitsounds/HitSound';
 import { SampleSet } from '../../../hitsounds/SampleSet';
 import { SampleType } from '../../../hitsounds/SampleType';
 import { deserializeHitSound } from '../../../serialization/HitSound';
@@ -321,26 +326,32 @@ export abstract class OsuHitObject extends HitObject implements IHasComboInforma
 }
 
 export abstract class OsuHitObjectSerializer<T extends OsuHitObject> extends HitObjectSerializer<T> {
-  protected constructor(serialName: string, descriptorFields: Partial<Record<keyof T, SerialDescriptor>> = {}) {
-    super(serialName, {
-      position: Vec2.serializer().descriptor,
-      newCombo: BooleanSerializer.descriptor,
-      comboOffset: Uint8Serializer.descriptor,
-      ...descriptorFields,
-    });
+  protected constructor(serialName: string) {
+    super(serialName);
+  }
+
+  protected override buildDescriptor(builder: ClassSerialDescriptorBuilder) {
+    super.buildDescriptor(builder);
+    builder.element('position', Vec2Serializer.descriptor);
+    builder.element('newCombo', nullableDescriptor(BooleanSerializer.descriptor), true);
+    builder.element('comboOffset', nullableDescriptor(Uint8Serializer.descriptor), true);
+    builder.element('hitSound', HitSoundSerializer.instance.descriptor);
   }
 
   protected override serializeProperties(encoder: CompositeEncoder, object: T) {
     super.serializeProperties(encoder, object);
-    encoder.encodeSerializableElement(this.descriptor, 1, Vec2.serializer(), object.position);
-    encoder.encodeBooleanElement(this.descriptor, 2, object.newCombo);
+    encoder.encodeSerializableElement(this.descriptor, 1, Vec2Serializer, object.position);
+    if (object.newCombo)
+      encoder.encodeBooleanElement(this.descriptor, 2, object.newCombo);
     encoder.encodeUint8Element(this.descriptor, 3, object.comboOffset);
+    encoder.encodeSerializableElement(this.descriptor, 4, HitSoundSerializer.instance, object.hitSound);
   }
 
   protected override deserializeProperties(decoder: CompositeDecoder, object: T) {
     super.deserializeProperties(decoder, object);
-    object.position = decoder.decodeSerializableElement(this.descriptor, 1, Vec2.serializer());
-    object.newCombo = decoder.decodeBooleanElement(this.descriptor, 2);
-    object.comboOffset = decoder.decodeUint8Element(this.descriptor, 3);
+    object.position = decoder.decodeSerializableElement(this.descriptor, 1, Vec2Serializer);
+    object.newCombo = decoder.decodeSerializableElement(this.descriptor, 2, new NullableSerializer(BooleanSerializer)) ?? false;
+    object.comboOffset = decoder.decodeUint8Element(this.descriptor, 3) ?? 0;
+    object.hitSound = decoder.decodeSerializableElement(this.descriptor, 4, HitSoundSerializer.instance);
   }
 }

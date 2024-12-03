@@ -1,5 +1,5 @@
-import type { UserInfo } from '@osucad/common';
-import type { IResourcesProvider, LoadedBeatmap } from '@osucad/editor';
+import type { IResourcesProvider } from '@osucad/common';
+import type { LoadedBeatmap } from '@osucad/editor';
 import type { MapsetInfo } from 'packages/editor/src/beatmapSelect/MapsetInfo';
 import type { BeatmapItemInfo } from '../../editor/src/beatmapSelect/BeatmapItemInfo';
 import { Action } from 'osucad-framework';
@@ -10,7 +10,6 @@ export class OnlineBeatmapInfo implements BeatmapItemInfo {
   invalidated = new Action();
   id: string = '';
   setId: string = '';
-  author: UserInfo | null = null;
   authorName: string = '';
   artist: string = '';
   title: string = '';

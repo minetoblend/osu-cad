@@ -57,7 +57,7 @@ export class FpsOverlay extends Container {
     return this.#content;
   }
 
-  active = new BindableBoolean(true);
+  active = new BindableBoolean(false);
 
   #text!: OsucadSpriteText;
 

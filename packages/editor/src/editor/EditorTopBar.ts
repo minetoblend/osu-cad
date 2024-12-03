@@ -6,11 +6,11 @@ export class EditorTopBar extends Container {
   constructor() {
     super();
     this.relativeSizeAxes = Axes.X;
-    this.height = 28;
+    this.height = 32;
   }
 
   @dependencyLoader()
-  init() {
+  [Symbol('load')]() {
     this.addAll(
       new Box({
         relativeSizeAxes: Axes.Both,

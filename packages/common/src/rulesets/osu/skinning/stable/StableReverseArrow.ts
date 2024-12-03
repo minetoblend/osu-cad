@@ -56,9 +56,8 @@ export class StableReverseArrow extends CompositeDrawable {
 
     const animDuration = Math.min(300, this.drawableRepeat.hitObject!.spanDuration);
 
-    {
-      using _ = this.beginAbsoluteSequence(this.drawableRepeat.hitObject!.startTime);
+    this.absoluteSequence(this.drawableRepeat.hitObject!.startTime, () => {
       this.#arrow.scaleTo(1).scaleTo(1.4, animDuration, EasingFunction.Out);
-    }
+    });
   }
 }

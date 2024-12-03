@@ -109,6 +109,7 @@ export class DrawableOsuHitObject<T extends OsuHitObject = OsuHitObject> extends
   * getHitSamples() {
     const hitObject = this.hitObject!;
     const hitSound = this.getHitSound();
+    console.log(hitSound, this.hitObject);
 
     const samplePoint = this.beatmap.controlPoints.samplePointAt(hitObject.startTime);
 

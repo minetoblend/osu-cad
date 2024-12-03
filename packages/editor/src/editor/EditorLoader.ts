@@ -1,5 +1,5 @@
+import type { EditorBeatmap } from '@osucad/common';
 import type { Drawable, GameHost, ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
-import type { BeatmapItemInfo } from '../beatmapSelect/BeatmapItemInfo';
 import { AudioMixer } from '@osucad/common';
 import { AudioManager, Axes, EasingFunction, GAME_HOST, LowpassFilter, resolved, ScreenStack } from 'osucad-framework';
 import { GlobalSongPlayback } from '../GlobalSongPlayback';
@@ -10,7 +10,7 @@ import { EditorLoadingSpinner } from './EditorLoadingSpinner';
 
 export class EditorLoader extends OsucadScreen {
   constructor(
-    readonly beatmap: BeatmapItemInfo,
+    readonly beatmap: () => Promise<EditorBeatmap>,
     background?: Drawable,
   ) {
     super();
@@ -62,9 +62,7 @@ export class EditorLoader extends OsucadScreen {
       throw new Error('EditorLoader must be a child of a ScreenStack');
     }
 
-    import('./Editor').then(async ({ Editor }) => {
-      const editor = new Editor(this.beatmap);
-
+    this.beatmap().then(beatmap => this.createEditor(beatmap)).then(async (editor) => {
       try {
         await this.loadComponentAsync(editor);
       }
@@ -94,6 +92,10 @@ export class EditorLoader extends OsucadScreen {
         this.alpha = 0;
       }, 500);
     });
+  }
+
+  protected async createEditor(beatmap: EditorBeatmap) {
+    return import('./Editor').then(({ Editor }) => new Editor(beatmap));
   }
 
   #exited = false;

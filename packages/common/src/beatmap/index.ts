@@ -5,6 +5,6 @@ export * from './BeatmapEditorSettings';
 export * from './BeatmapMetadata';
 export * from './BeatmapSettings';
 export * from './HitObjectList';
-export * from './serialization';
 export * from './IBeatmap';
 export * from './io';
+export * from './serialization';
