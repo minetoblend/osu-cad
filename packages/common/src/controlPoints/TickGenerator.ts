@@ -1,6 +1,5 @@
 import type { SortedList } from 'osucad-framework';
 import type { TimingPoint } from './TimingPoint';
-import { ControlPointGroup } from './ControlPointGroup';
 import { TickType } from './TickType';
 
 export class TickGenerator {
@@ -13,7 +12,7 @@ export class TickGenerator {
     if (this.timingPoints.length === 0)
       return;
 
-    let index = this.timingPoints.binarySearch(new ControlPointGroup(startTime) as any);
+    let index = this.timingPoints.binarySearch({ time: startTime } as any);
     if (index < 0) {
       index = ~index;
 

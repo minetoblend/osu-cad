@@ -1,6 +1,7 @@
 import type { AssetInfo } from '@osucad/multiplayer';
 
 import { StableBeatmapParser } from '../beatmap';
+import { EffectPoint } from '../controlPoints';
 import audioFile from './audio.mp3?url';
 import { BeatmapAssetManager } from './BeatmapAssetManager';
 import { EditorBeatmap } from './EditorBeatmap';
@@ -14,6 +15,10 @@ export class DummyEditorBeatmap extends EditorBeatmap {
     super();
 
     this.beatmap.settings.audioFileName = 'audio.mp3';
+
+    this.beatmap.controlPoints.add(
+      new EffectPoint(1000, true),
+    );
   }
 
   override async load() {
@@ -43,6 +48,7 @@ AudioLeadIn: 0
 PreviewTime:38417
 Countdown: 0
 SampleSet: Soft
+
 StackLeniency: 0.5
 Mode: 0
 LetterboxInBreaks: 0

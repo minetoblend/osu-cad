@@ -1,7 +1,5 @@
 import type { ControlPoint } from './ControlPoint';
-import type { ControlPointGroupChangeEvent } from './ControlPointGroup';
 import { Action } from 'osucad-framework';
-import { ControlPointGroup } from './ControlPointGroup';
 import { ControlPointList } from './ControlPointList';
 import { DifficultyPoint } from './DifficultyPoint';
 import { EffectPoint } from './EffectPoint';
@@ -10,8 +8,6 @@ import { TickGenerator } from './TickGenerator';
 import { TimingPoint } from './TimingPoint';
 
 export class ControlPointInfo {
-  groups = new ControlPointList<ControlPointGroup>();
-
   timingPoints = new ControlPointList<TimingPoint>();
 
   difficultyPoints = new ControlPointList<DifficultyPoint>();
@@ -20,52 +16,28 @@ export class ControlPointInfo {
 
   samplePoints = new ControlPointList<SamplePoint>();
 
-  groupAdded = new Action<ControlPointGroup>();
-
-  groupRemoved = new Action<ControlPointGroup>();
-
   anyPointChanged = new Action<ControlPoint>();
 
-  #idMap = new Map<string, ControlPointGroup>();
+  #idMap = new Map<string, ControlPoint>();
 
-  constructor() {
-    this.groups.added.addListener(this.#onGroupAdded, this);
-    this.groups.removed.addListener(this.#onGroupRemoved, this);
-  }
-
-  add(controlPoint: ControlPointGroup): boolean {
-    if (this.groups.find(it => it.id === controlPoint.id))
+  add(controlPoint: ControlPoint, skipIfRedundant: boolean = false): boolean {
+    const list = this.listFor(controlPoint);
+    if (!list)
       return false;
 
-    this.groups.add(controlPoint);
+    if (skipIfRedundant) {
+      const existing = list.controlPointAt(controlPoint.time);
+      if (controlPoint.isRedundant(existing))
+        return false;
+    }
+
+    list.add(controlPoint);
+
     return true;
   }
 
-  remove(controlPoint: ControlPointGroup): boolean {
-    return this.groups.remove(controlPoint);
-  }
-
-  controlPointGroupAtTime(time: number, create: true): ControlPointGroup;
-
-  controlPointGroupAtTime(time: number, create?: false): ControlPointGroup | undefined;
-
-  controlPointGroupAtTime(time: number, create: boolean = false): ControlPointGroup | undefined {
-    const controlPoint = new ControlPointGroup();
-    controlPoint.time = time;
-
-    const index = this.groups.findIndex(it => it.time === time);
-
-    if (index >= 0) {
-      return this.groups.get(index)!;
-    }
-
-    if (create) {
-      this.add(controlPoint);
-
-      return controlPoint;
-    }
-
-    return undefined;
+  remove(controlPoint: ControlPoint): boolean {
+    return this.listFor(controlPoint)?.remove(controlPoint) ?? false;
   }
 
   snap(time: number, divisor: number, rounded: boolean = true) {
@@ -111,66 +83,6 @@ export class ControlPointInfo {
 
   readonly tickGenerator = new TickGenerator(this.timingPoints);
 
-  #onGroupAdded(group: ControlPointGroup) {
-    this.#idMap.set(group.id, group);
-
-    this.groupAdded.emit(group);
-
-    group.added.addListener(e => this.#onAddedToGroup(e));
-    group.removed.addListener(e => this.#onRemovedFromGroup(e));
-
-    for (const child of group.children) {
-      this.#onAddedToGroup({ group, controlPoint: child });
-    }
-
-    group.changed.addListener(this.#onAnyPointChanged, this);
-
-    this.#onAnyPointChanged(group);
-  }
-
-  #onAnyPointChanged(child: ControlPoint) {
-    this.anyPointChanged.emit(child);
-  }
-
-  #onGroupRemoved(group: ControlPointGroup) {
-    this.#idMap.delete(group.id);
-
-    this.groupRemoved.emit(group);
-
-    for (const child of group.children) {
-      this.#onRemovedFromGroup({ group, controlPoint: child });
-    }
-
-    group.changed.removeListener(this.#onAnyPointChanged);
-  }
-
-  #onAddedToGroup = (event: ControlPointGroupChangeEvent) => {
-    const controlPoint = event.controlPoint;
-
-    this.listFor(controlPoint)?.add(controlPoint);
-  };
-
-  #onRemovedFromGroup = (event: ControlPointGroupChangeEvent) => {
-    const controlPoint = event.controlPoint;
-
-    this.listFor(controlPoint)?.remove(controlPoint);
-  };
-
-  addToGroup(group: ControlPointGroup, controlPoint: ControlPoint, skipIfRedundant: boolean): boolean {
-    if (skipIfRedundant) {
-      const existing = this.listFor(controlPoint)?.controlPointAt(group.time);
-
-      if (controlPoint instanceof EffectPoint) {
-        this.listFor(controlPoint)?.controlPointAt(group.time);
-      }
-
-      if (existing && controlPoint.isRedundant(existing))
-        return false;
-    }
-
-    return group.add(controlPoint);
-  }
-
   listFor<T extends ControlPoint>(controlPoint: T): ControlPointList<T> | undefined {
     switch (controlPoint.constructor) {
       case TimingPoint:
@@ -181,8 +93,6 @@ export class ControlPointInfo {
         return this.effectPoints as any;
       case SamplePoint:
         return this.samplePoints as any;
-      case ControlPointGroup:
-        return undefined;
       default:
         throw new Error(`Unknown control point type: ${controlPoint.constructor.name}`);
     }

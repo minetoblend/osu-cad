@@ -1,5 +1,5 @@
-import { OsucadSpriteText } from '@osucad/common';
 import { Axes, Container, dependencyLoader, FastRoundedBox } from 'osucad-framework';
+import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
 import { OsucadColors } from '../../../OsucadColors';
 import { TimelineLayer, TimelineLayerHeader } from '../../ui/timeline/TimelineLayer';
 

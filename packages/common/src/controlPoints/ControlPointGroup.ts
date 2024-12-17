@@ -27,10 +27,10 @@ export type PatchFor<T> = T extends Patchable<infer U> ? U : never;
 export class ControlPointGroup extends ControlPoint implements Patchable<ControlPointGroupPatch> {
   id = objectId();
 
-  constructor(startTime = 0) {
-    super();
+  constructor(time: number) {
+    super(time);
 
-    this.time = startTime;
+    this.time = time;
   }
 
   override get time() {
@@ -84,8 +84,6 @@ export class ControlPointGroup extends ControlPoint implements Patchable<Control
     }
 
     this.timeBindable.copyTo(controlPoint.timeBindable);
-    // controlPoint.timeBindable.copyTo(this.timeBindable);
-    controlPoint.group = this;
 
     this.#children.add(controlPoint);
 

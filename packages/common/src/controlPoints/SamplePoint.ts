@@ -12,11 +12,12 @@ export interface SamplePointPatch {
 
 export class SamplePoint extends ControlPoint implements Patchable<SamplePointPatch> {
   constructor(
+    time: number,
     volume: number,
     sampleSet: SampleSet,
     sampleIndex: number = 0,
   ) {
-    super();
+    super(time);
 
     this.volumeBindable.value = volume;
     this.sampleSetBindable.value = sampleSet;
@@ -27,7 +28,7 @@ export class SamplePoint extends ControlPoint implements Patchable<SamplePointPa
     this.sampleIndexBindable.valueChanged.addListener(this.raiseChanged, this);
   }
 
-  static readonly default = new SamplePoint(100, SampleSet.Normal, 0);
+  static readonly default = new SamplePoint(0, 100, SampleSet.Normal, 0);
 
   volumeBindable = new BindableNumber(100).withRange(5, 100).withPrecision(1);
   sampleSetBindable = new Bindable<SampleSet>(SampleSet.Normal);
@@ -68,7 +69,7 @@ export class SamplePoint extends ControlPoint implements Patchable<SamplePointPa
   }
 
   deepClone(): SamplePoint {
-    const clone = new SamplePoint(this.volume, this.sampleSet, this.sampleIndex);
+    const clone = new SamplePoint(this.time, this.volume, this.sampleSet, this.sampleIndex);
     clone.copyFrom(this);
     return clone;
   }

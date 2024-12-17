@@ -4,16 +4,16 @@ import type { TimingPoint } from '../../../controlPoints/TimingPoint';
 import type { ControlPointLifetimeEntry } from '../../ui/timeline/ControlPointLifetimeEntry';
 import { Axes, dependencyLoader, DrawablePool } from 'osucad-framework';
 import { ControlPointBlueprintContainer } from '../../ui/timeline/ControlPointBlueprintContainer';
-import { TimingPointKeyframeBlueprint } from './TimingPointKeyframeBlueprint';
+import { TimingPointSelectionBlueprint } from './TimingPointSelectionBlueprint';
 
-export class TimingPointKeyframeContainer extends ControlPointBlueprintContainer<TimingPoint, TimingPointKeyframeBlueprint> {
+export class TimingPointBlueprintContainer extends ControlPointBlueprintContainer<TimingPoint, TimingPointSelectionBlueprint> {
   constructor() {
     super();
 
     this.relativeSizeAxes = Axes.Both;
   }
 
-  #pool = new DrawablePool(TimingPointKeyframeBlueprint, 10, 20);
+  #pool = new DrawablePool(TimingPointSelectionBlueprint, 10, 20);
 
   @dependencyLoader()
   [Symbol('load')]() {
@@ -24,7 +24,7 @@ export class TimingPointKeyframeContainer extends ControlPointBlueprintContainer
     return controlPoints.timingPoints;
   }
 
-  override getDrawable(entry: ControlPointLifetimeEntry<TimingPoint>): TimingPointKeyframeBlueprint {
+  override getDrawable(entry: ControlPointLifetimeEntry<TimingPoint>): TimingPointSelectionBlueprint {
     return this.#pool.get(drawable => drawable.entry = entry);
   }
 }

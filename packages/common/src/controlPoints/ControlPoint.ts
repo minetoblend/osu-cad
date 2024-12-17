@@ -1,4 +1,3 @@
-import type { ControlPointGroup } from './ControlPointGroup';
 import { Action, BindableNumber, Comparer } from 'osucad-framework';
 
 let nextUid = 0;
@@ -10,18 +9,15 @@ export abstract class ControlPoint {
       if (result !== 0)
         return result;
 
-      if (a.group && b.group)
-        return a.group.uid - b.group.uid;
-
       return a.uid - b.uid;
     }
   }();
 
   uid = nextUid++;
 
-  group: ControlPointGroup | null = null;
+  protected constructor(time: number) {
+    this.time = time;
 
-  protected constructor() {
     this.timeBindable.valueChanged.addListener(this.raiseChanged, this);
   }
 

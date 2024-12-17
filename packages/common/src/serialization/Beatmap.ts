@@ -22,7 +22,7 @@ export function deserializeBeatmap(data: ReturnType<typeof serializeBeatmap>): B
   beatmap.difficulty.applyPatch(data.difficulty, ctx);
 
   for (const t of data.controlPoints) {
-    const group = new ControlPointGroup();
+    const group = new ControlPointGroup(t.time);
     group.applyPatch(t, ctx);
 
     beatmap.controlPoints.add(group);

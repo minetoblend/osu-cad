@@ -3,9 +3,9 @@ import type { EffectPoint } from '../../../controlPoints/EffectPoint';
 import type { ControlPointLifetimeEntry } from '../../ui/timeline/ControlPointLifetimeEntry';
 import { dependencyLoader, DrawablePool } from 'osucad-framework';
 import { ControlPointBlueprintContainer } from '../../ui/timeline/ControlPointBlueprintContainer';
-import { KiaiBlueprint } from './KiaiBlueprint';
+import { KiaiSelectionBlueprint } from './KiaiSelectionBlueprint';
 
-export class KiaiBlueprintContainer extends ControlPointBlueprintContainer<EffectPoint, KiaiBlueprint> {
+export class KiaiBlueprintContainer extends ControlPointBlueprintContainer<EffectPoint, KiaiSelectionBlueprint> {
   constructor() {
     super();
   }
@@ -14,14 +14,14 @@ export class KiaiBlueprintContainer extends ControlPointBlueprintContainer<Effec
     return controlPoints.effectPoints;
   }
 
-  #pool = new DrawablePool(KiaiBlueprint, 10, 20);
+  #pool = new DrawablePool(KiaiSelectionBlueprint, 10, 20);
 
   @dependencyLoader()
   [Symbol('load')]() {
     this.addInternal(this.#pool);
   }
 
-  override getDrawable(entry: ControlPointLifetimeEntry<EffectPoint>): KiaiBlueprint {
+  override getDrawable(entry: ControlPointLifetimeEntry<EffectPoint>): KiaiSelectionBlueprint {
     return this.#pool.get(it => it.entry = entry);
   }
 }

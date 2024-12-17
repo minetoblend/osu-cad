@@ -238,8 +238,6 @@ export class StableBeatmapParser {
 
     const startTime = Number.parseInt(values[0]);
 
-    const group = beatmap.controlPoints.controlPointGroupAtTime(startTime, true);
-
     const volume = Number.parseInt(values[5]);
 
     let sampleSet = SampleSet.Auto;
@@ -256,25 +254,25 @@ export class StableBeatmapParser {
 
     const sampleIndex = Number.parseInt(values[4]);
 
-    beatmap.controlPoints.addToGroup(group, new SamplePoint(volume, sampleSet, sampleIndex), true);
+    beatmap.controlPoints.add(new SamplePoint(startTime, volume, sampleSet, sampleIndex), true);
 
     const effectFlags = Number.parseInt(values[7]);
 
     const kiaiMode = !!(effectFlags & EffectType.Kiai);
 
-    beatmap.controlPoints.addToGroup(group, new EffectPoint(kiaiMode), true);
+    beatmap.controlPoints.add(new EffectPoint(startTime, kiaiMode), true);
 
     if (uninherited) {
       const beatLength = Number.parseFloat(values[1]);
       const meter = Number.parseInt(values[2]);
 
-      group.add(new TimingPoint(beatLength, meter));
-      group.add(new DifficultyPoint(1));
+      beatmap.controlPoints.add(new TimingPoint(startTime, beatLength, meter));
+      beatmap.controlPoints.add(new DifficultyPoint(startTime, 1));
     }
     else {
       const sliderVelocity = -100 / Number.parseFloat(values[1]);
 
-      beatmap.controlPoints.addToGroup(group, new DifficultyPoint(sliderVelocity), true);
+      beatmap.controlPoints.add(new DifficultyPoint(startTime, sliderVelocity), true);
     }
   }
 

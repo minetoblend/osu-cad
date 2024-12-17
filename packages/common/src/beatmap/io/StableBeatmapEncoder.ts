@@ -3,8 +3,7 @@ import type { HitSound } from '../../hitsounds/HitSound';
 import type { OsuHitObject } from '../../rulesets/osu/hitObjects/OsuHitObject';
 import type { IBeatmap } from '../IBeatmap';
 import { almostEquals, clamp } from 'osucad-framework';
-import { ControlPointGroup } from '../../controlPoints/ControlPointGroup';
-import { ControlPointInfo } from '../../controlPoints/ControlPointInfo';
+import { ControlPointInfo } from '../../controlPoints';
 import { DifficultyPoint } from '../../controlPoints/DifficultyPoint';
 import { HitType } from '../../hitObjects/HitType';
 import { HitCircle } from '../../rulesets/osu/hitObjects/HitCircle';
@@ -115,13 +114,16 @@ ${this.#encodeHitObjects(beatmap)}
   }
 
   * #encodeTimingPoints(beatmap: IBeatmap) {
-    if (beatmap.controlPoints.groups.length === 0)
-      return;
-
     const controlPoints = new ControlPointInfo();
 
-    for (const group of beatmap.controlPoints.groups) {
-      controlPoints.add(group);
+    for (const group of [
+      beatmap.controlPoints.timingPoints,
+      beatmap.controlPoints.samplePoints,
+      beatmap.controlPoints.effectPoints,
+      beatmap.controlPoints.difficultyPoints,
+    ]) {
+      for (const controlPoint of group)
+        controlPoints.add(controlPoint);
     }
 
     for (let i = 0; i < beatmap.hitObjects.length; i++) {
@@ -133,10 +135,10 @@ ${this.#encodeHitObjects(beatmap)}
         const difficultyPoint = controlPoints.difficultyPointAt(hitObject.startTime);
 
         if (!almostEquals(velocity, difficultyPoint.sliderVelocity)) {
-          let group = controlPoints.groups.controlPointAt(hitObject.startTime);
+          let difficultyPoint = controlPoints.difficultyPointAt(hitObject.startTime);
 
-          if (!group || group.time !== hitObject.startTime) {
-            group = new ControlPointGroup(hitObject.startTime);
+          if (!difficultyPoint || difficultyPoint.time !== hitObject.startTime) {
+            difficultyPoint = new DifficultyPoint(hitObject.startTime);
             controlPoints.add(group);
           }
           else {

@@ -10,16 +10,17 @@ export interface TimingPointPatch {
 
 export class TimingPoint extends ControlPoint implements Patchable<TimingPointPatch> {
   constructor(
+    time: number,
     beatLength: number,
     meter: number = 4,
   ) {
-    super();
+    super(time);
 
     this.beatLengthBindable.value = beatLength;
     this.meterBindable.value = meter;
   }
 
-  static readonly default = new TimingPoint(60_000 / 120);
+  static readonly default = new TimingPoint(0, 60_000 / 120);
 
   readonly beatLengthBindable = new BindableNumber(60_000 / 120);
 
@@ -72,7 +73,7 @@ export class TimingPoint extends ControlPoint implements Patchable<TimingPointPa
   }
 
   deepClone(): TimingPoint {
-    const clone = new TimingPoint(this.beatLength, this.meter);
+    const clone = new TimingPoint(this.time, this.beatLength, this.meter);
     clone.copyFrom(this);
     return clone;
   }

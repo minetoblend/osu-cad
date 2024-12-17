@@ -4,16 +4,16 @@ import type { DifficultyPoint } from '../../../controlPoints/DifficultyPoint';
 import type { ControlPointLifetimeEntry } from '../../ui/timeline/ControlPointLifetimeEntry';
 import { Axes, dependencyLoader, DrawablePool } from 'osucad-framework';
 import { ControlPointBlueprintContainer } from '../../ui/timeline/ControlPointBlueprintContainer';
-import { SliderVelocityKeyframeBlueprint } from './SliderVelocityKeyframeBlueprint';
+import { SliderVelocitySelectionBlueprint } from './SliderVelocitySelectionBlueprint';
 
-export class SliderVelocityKeyframeContainer extends ControlPointBlueprintContainer<DifficultyPoint, SliderVelocityKeyframeBlueprint> {
+export class SliderVelocityBlueprintContainer extends ControlPointBlueprintContainer<DifficultyPoint, SliderVelocitySelectionBlueprint> {
   constructor() {
     super();
 
     this.relativeSizeAxes = Axes.Both;
   }
 
-  #pool = new DrawablePool(SliderVelocityKeyframeBlueprint, 10, 20);
+  #pool = new DrawablePool(SliderVelocitySelectionBlueprint, 10, 20);
 
   @dependencyLoader()
   [Symbol('load')]() {
@@ -24,7 +24,7 @@ export class SliderVelocityKeyframeContainer extends ControlPointBlueprintContai
     return controlPoints.difficultyPoints;
   }
 
-  override getDrawable(entry: ControlPointLifetimeEntry<DifficultyPoint>): SliderVelocityKeyframeBlueprint {
+  override getDrawable(entry: ControlPointLifetimeEntry<DifficultyPoint>): SliderVelocitySelectionBlueprint {
     return this.#pool.get(drawable => drawable.entry = entry);
   }
 }

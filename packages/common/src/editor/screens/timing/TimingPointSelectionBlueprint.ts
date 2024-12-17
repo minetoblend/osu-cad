@@ -8,7 +8,7 @@ import { EditorClock } from '../../EditorClock';
 import { Timeline } from '../../ui/timeline/Timeline';
 import { KeyframeBlueprint } from './KeyframeBlueprint';
 
-export class TimingPointKeyframeBlueprint extends KeyframeBlueprint<TimingPoint> {
+export class TimingPointSelectionBlueprint extends KeyframeBlueprint<TimingPoint> {
   constructor() {
     super();
   }
@@ -115,7 +115,7 @@ export class TimingPointKeyframeBlueprint extends KeyframeBlueprint<TimingPoint>
 }
 
 class DragHandle extends CompositeDrawable {
-  constructor(readonly blueprint: TimingPointKeyframeBlueprint) {
+  constructor(readonly blueprint: TimingPointSelectionBlueprint) {
     super();
 
     this.alpha = 0;

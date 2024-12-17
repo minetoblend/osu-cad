@@ -1,13 +1,13 @@
 import type { Graphics } from 'pixi.js';
 import type { EffectPoint } from '../../../controlPoints/EffectPoint';
+import type { ControlPointLifetimeEntry } from '../../ui/timeline/ControlPointLifetimeEntry';
 import { GraphicsDrawable } from '@osucad/editor/drawables/GraphicsDrawable';
 import { Anchor, Axes, Container, dependencyLoader, resolved } from 'osucad-framework';
 import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
 import { ControlPointBlueprint } from '../../ui/timeline/ControlPointBlueprint';
 import { Timeline } from '../../ui/timeline/Timeline';
-import { KiaiBlueprintGapPlacement } from './KiaiBlueprintGapPlacement';
 
-export class KiaiBlueprint extends ControlPointBlueprint<EffectPoint> {
+export class KiaiSelectionBlueprint extends ControlPointBlueprint<EffectPoint> {
   constructor() {
     super();
   }
@@ -22,10 +22,11 @@ export class KiaiBlueprint extends ControlPointBlueprint<EffectPoint> {
         anchor: Anchor.CenterLeft,
         origin: Anchor.CenterLeft,
         children: [
-          new TimelineLayerShape().with({
+          this.#shape = new KiaiShape().with({
             relativeSizeAxes: Axes.Both,
+            color: 0x40F589,
           }),
-          new OsucadSpriteText({
+          this.#text = new OsucadSpriteText({
             text: 'kiai',
             x: 4,
             fontSize: 12,
@@ -35,9 +36,11 @@ export class KiaiBlueprint extends ControlPointBlueprint<EffectPoint> {
           }),
         ],
       }),
-      new KiaiBlueprintGapPlacement(),
     );
   }
+
+  #shape!: KiaiShape;
+  #text!: OsucadSpriteText;
 
   @resolved(Timeline)
   protected timeline!: Timeline;
@@ -51,9 +54,25 @@ export class KiaiBlueprint extends ControlPointBlueprint<EffectPoint> {
       200_000,
     );
   }
+
+  protected override onApply(entry: ControlPointLifetimeEntry<EffectPoint>) {
+    super.onApply(entry);
+    this.updateState();
+  }
+
+  updateState() {
+    if (this.entry!.start.kiaiMode) {
+      this.#shape.show();
+      this.#text.show();
+    }
+    else {
+      this.#shape.hide();
+      this.#text.hide();
+    }
+  }
 }
 
-class TimelineLayerShape extends GraphicsDrawable {
+export class KiaiShape extends GraphicsDrawable {
   constructor() {
     super();
   }
@@ -69,12 +88,12 @@ class TimelineLayerShape extends GraphicsDrawable {
         { x: -4, y: this.drawHeight / 2 },
       ], 2)
       .fill({
-        color: 0x40F589,
+        color: 0xFFFFFF,
         alpha: 0.5,
       })
       .stroke({
         width: 1,
-        color: 0x40F589,
+        color: 0xFFFFFF,
       });
   }
 }

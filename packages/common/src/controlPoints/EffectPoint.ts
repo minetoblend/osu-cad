@@ -7,13 +7,13 @@ export interface EffectPointPatch {
 }
 
 export class EffectPoint extends ControlPoint implements Patchable<EffectPointPatch> {
-  constructor(kiaiMode: boolean = false) {
-    super();
+  constructor(time: number, kiaiMode: boolean = false) {
+    super(time);
 
     this.#kiaiMode = kiaiMode;
   }
 
-  static default = new EffectPoint();
+  static default = new EffectPoint(0);
 
   #kiaiMode: boolean;
 
@@ -40,7 +40,7 @@ export class EffectPoint extends ControlPoint implements Patchable<EffectPointPa
   }
 
   deepClone(): EffectPoint {
-    const clone = new EffectPoint();
+    const clone = new EffectPoint(this.time);
     clone.copyFrom(this);
     return clone;
   }

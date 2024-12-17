@@ -1,5 +1,4 @@
 export * from './ControlPoint';
-export * from './ControlPointFlags';
 export * from './ControlPointGroup';
 export * from './ControlPointInfo';
 export * from './ControlPointList';

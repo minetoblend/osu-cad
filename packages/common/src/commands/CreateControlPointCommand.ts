@@ -4,7 +4,6 @@ import type { SamplePointPatch } from '../controlPoints/SamplePoint';
 import type { TimingPointPatch } from '../controlPoints/TimingPoint';
 import type { CommandContext } from './CommandContext';
 import type { CommandSource } from './CommandSource';
-import { ControlPointGroup } from '../controlPoints/ControlPointGroup';
 import { DifficultyPoint } from '../controlPoints/DifficultyPoint';
 import { EffectPoint } from '../controlPoints/EffectPoint';
 import { SamplePoint } from '../controlPoints/SamplePoint';
@@ -34,11 +33,10 @@ export class CreateControlPointCommand extends EditorCommand {
   apply(ctx: CommandContext, source: CommandSource) {
     const { time, timing, sample, difficulty, effect } = this.options;
 
-    const controlPoint = new ControlPointGroup(time);
-
     if (timing) {
-      controlPoint.add(
+      ctx.controlPoints.add(
         new TimingPoint(
+          time,
           timing.beatLength,
           timing.beatLength,
         ),
@@ -46,8 +44,9 @@ export class CreateControlPointCommand extends EditorCommand {
     }
 
     if (sample) {
-      controlPoint.add(
+      ctx.controlPoints.add(
         new SamplePoint(
+          time,
           sample.volume,
           sample.sampleSet,
           sample.volume,
@@ -56,24 +55,22 @@ export class CreateControlPointCommand extends EditorCommand {
     }
 
     if (effect) {
-      controlPoint.add(
+      ctx.controlPoints.add(
         new EffectPoint(
+          time,
           effect.kiaiMode,
         ),
       );
     }
 
     if (difficulty) {
-      controlPoint.add(
+      ctx.controlPoints.add(
         new DifficultyPoint(
+          time,
           difficulty.sliderVelocity,
         ),
       );
     }
-
-    controlPoint.id = this.id;
-
-    ctx.controlPoints.add(controlPoint);
   }
 
   createUndo(ctx: CommandContext): EditorCommand | null {

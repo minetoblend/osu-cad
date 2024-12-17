@@ -10,7 +10,7 @@ import {
 import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
 import { KeyframeBlueprint } from './KeyframeBlueprint';
 
-export class SliderVelocityKeyframeBlueprint extends KeyframeBlueprint<DifficultyPoint> {
+export class SliderVelocitySelectionBlueprint extends KeyframeBlueprint<DifficultyPoint> {
   constructor() {
     super();
   }

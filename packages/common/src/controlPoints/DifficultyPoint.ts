@@ -9,8 +9,8 @@ export interface DifficultyPointPatch {
 }
 
 export class DifficultyPoint extends ControlPoint implements Patchable<DifficultyPointPatch> {
-  constructor(sliderVelocity: number = 1) {
-    super();
+  constructor(time: number, sliderVelocity: number = 1) {
+    super(time);
 
     this.sliderVelocityBindable.value = sliderVelocity;
 
@@ -40,7 +40,7 @@ export class DifficultyPoint extends ControlPoint implements Patchable<Difficult
   }
 
   deepClone(): DifficultyPoint {
-    const clone = new DifficultyPoint();
+    const clone = new DifficultyPoint(this.time);
     clone.copyFrom(this);
     return clone;
   }

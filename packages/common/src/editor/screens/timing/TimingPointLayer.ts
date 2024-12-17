@@ -4,7 +4,7 @@ import { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 import { TimingPoint } from '../../../controlPoints/TimingPoint';
 import { EditorBeatmap } from '../../EditorBeatmap';
 import { DrawableWaveform } from './DrawableWaveform';
-import { TimingPointKeyframeContainer } from './TimingPointKeyframeContainer';
+import { TimingPointBlueprintContainer } from './TimingPointBlueprintContainer';
 import { TimingScreenTimelineLayer } from './TimingScreenTimelineLayer';
 
 export class TimingPointLayer extends TimingScreenTimelineLayer {
@@ -19,7 +19,7 @@ export class TimingPointLayer extends TimingScreenTimelineLayer {
   @resolved(EditorBeatmap)
   editorBeatmap!: EditorBeatmap;
 
-  #keyframeContainer!: TimingPointKeyframeContainer;
+  #keyframeContainer!: TimingPointBlueprintContainer;
 
   #inputManager!: InputManager;
 
@@ -31,7 +31,6 @@ export class TimingPointLayer extends TimingScreenTimelineLayer {
 
   @dependencyLoader()
   [Symbol('load')]() {
-    this.add(this.#keyframeContainer = new TimingPointKeyframeContainer());
     this.add(new Box({
       relativeSizeAxes: Axes.X,
       height: 24,
@@ -39,6 +38,7 @@ export class TimingPointLayer extends TimingScreenTimelineLayer {
       anchor: Anchor.CenterLeft,
       origin: Anchor.CenterLeft,
     }));
+    this.add(this.#keyframeContainer = new TimingPointBlueprintContainer());
 
     const track = this.editorBeatmap.track.value;
 
