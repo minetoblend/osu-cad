@@ -1,5 +1,6 @@
 import type { IKeyBinding } from 'osucad-framework';
 import type { IBeatmap } from '../beatmap/IBeatmap';
+import type { HitObjectComposer } from '../editor/HitObjectComposer';
 import type { ISkin } from '../skinning/ISkin';
 import type { SkinTransformer } from '../skinning/SkinTransformer';
 import type { DrawableRuleset } from './DrawableRuleset';
@@ -15,7 +16,7 @@ export abstract class Ruleset {
 
   // TODO: abstract createDifficultyCalculator(beatmap: Beatmap): DifficultyCalculator<any>;
 
-  // TODO: createHitObjectComposer
+  abstract createHitObjectComposer(): HitObjectComposer;
 
   abstract get shortName(): string;
 

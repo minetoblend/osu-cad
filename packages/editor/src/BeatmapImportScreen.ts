@@ -13,10 +13,10 @@ import {
   resolved,
   Vec2,
 } from 'osucad-framework';
+import { OsucadScreen } from '../../common/src/screens/OsucadScreen';
 import { LoadingSpinner } from './drawables/LoadingSpinner';
 import { ThemeColors } from './editor/ThemeColors';
 import { BeatmapStore } from './environment';
-import { OsucadScreen } from './OsucadScreen';
 import { OsucadSpriteText } from './OsucadSpriteText';
 
 export class BeatmapImportScreen extends OsucadScreen {

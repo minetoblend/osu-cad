@@ -1,5 +1,5 @@
-import type { HitObject } from '@osucad/common';
 import type { HitObjectLifetimeEntry } from '../../hitObjects/drawables/HitObjectLifetimeEntry';
+import type { HitObject } from '../../hitObjects/HitObject';
 import { Action } from 'osucad-framework';
 import { SyntheticHitObjectEntry } from '../../hitObjects/drawables/SyntheticHitObjectEntry';
 

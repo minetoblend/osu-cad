@@ -1,8 +1,18 @@
 import type { DrawableHitObject, HitObjectJudge, IHitObjectJudgeProvider } from '@osucad/common';
-import type { IKeyBindingHandler, KeyBindingPressEvent, KeyDownEvent, ScreenExitEvent, ScreenTransitionEvent, ScrollEvent, UIEvent, ValueChangedEvent } from 'osucad-framework';
-import type { BackgroundScreen } from '../BackgroundScreen';
+import type {
+  IKeyBindingHandler,
+  KeyBindingAction,
+  KeyBindingPressEvent,
+  KeyDownEvent,
+  ScreenExitEvent,
+  ScreenTransitionEvent,
+  ScrollEvent,
+  UIEvent,
+  ValueChangedEvent,
+} from 'osucad-framework';
+import type { BackgroundScreen } from '../../../common/src/screens/BackgroundScreen';
 import type { EditorScreen } from './screens/EditorScreen';
-import { AudioMixer, Beatmap, ControlPointInfo, EditorBeatmap, HitObjectList, IBeatmap, IResourcesProvider, OsuPlayfield, OsuRuleset, PlayfieldClock, RulesetSkinProvidingContainer } from '@osucad/common';
+import { AudioMixer, Beatmap, ControlPointInfo, EditorBeatmap, HitObjectList, IBeatmap, IResourcesProvider, OsucadScreen, OsuPlayfield, OsuRuleset, PlayfieldClock, RulesetSkinProvidingContainer } from '@osucad/common';
 import { Action, Anchor, asyncDependencyLoader, AudioManager, Axes, Bindable, clamp, Container, EasingFunction, Key, loadDrawable, PlatformAction, resolved } from 'osucad-framework';
 import { BeatmapComboProcessor } from '../beatmap/beatmapProcessors/BeatmapComboProcessor';
 import { BeatmapStackingProcessor } from '../beatmap/beatmapProcessors/BeatmapStackingProcessor';
@@ -10,7 +20,6 @@ import { BeatmapStore } from '../environment';
 import { DialogContainer } from '../modals/DialogContainer';
 import { Notification } from '../notifications/Notification';
 import { NotificationOverlay } from '../notifications/NotificationOverlay';
-import { OsucadScreen } from '../OsucadScreen';
 import { BeatmapSkin } from './BeatmapSkin';
 import { CommandManager } from './context/CommandManager';
 import { EditorDifficultyManager } from './difficulty/EditorDifficultyManager';
@@ -23,7 +32,6 @@ import { EditorExitDialog } from './EditorExitDialog';
 import { EditorScreenContainer } from './EditorScreenContainer';
 import { EditorTopBar } from './EditorTopBar';
 import { EditorJudge, EditorJudgeProvider } from './hitobjects/EditorJudge';
-import { HitsoundPlayer } from './HitsoundPlayer';
 import { CompareScreen } from './screens/compare/CompareScreen';
 import { ComposeScreen } from './screens/compose/ComposeScreen';
 import { EditorScreenType } from './screens/EditorScreenType';
@@ -48,7 +56,7 @@ export class Editor
 
   readonly isKeyBindingHandler = true;
 
-  canHandleKeyBinding(binding: PlatformAction | EditorAction): boolean {
+  canHandleKeyBinding(binding: KeyBindingAction): boolean {
     return binding instanceof PlatformAction || binding instanceof EditorAction;
   }
 
@@ -86,7 +94,6 @@ export class Editor
           it.suppressHitSounds = true;
           it.hitObjectsAlwaysHit = true;
         }),
-      [], // TODO: await this.editorBeatmap.getOtherDifficulties(),
     );
 
     this.onDispose(() => editorDependencies.reusablePlayfield.dispose());
@@ -109,10 +116,6 @@ export class Editor
 
     this.dependencies.provide(this.#clock);
     this.dependencies.provide(PlayfieldClock, this.#clock);
-
-    const hitSoundPlayer = new HitsoundPlayer();
-    this.dependencies.provide(HitsoundPlayer, hitSoundPlayer);
-    this.addInternal(hitSoundPlayer);
 
     const difficultyManager = new EditorDifficultyManager();
 

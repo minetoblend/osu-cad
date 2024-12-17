@@ -1,29 +1,16 @@
-import type {
-  BeatmapColors,
-  BeatmapDifficultyInfo,
-  BeatmapMetadata,
-  BeatmapSettings,
-  ControlPointInfo,
-  HitObjectList,
-  IBeatmap,
-} from '@osucad/common';
-import type {
-  Track,
-} from 'osucad-framework';
+import type { Track } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
+import type { BeatmapColors } from '../beatmap/BeatmapColors';
+import type { BeatmapDifficultyInfo } from '../beatmap/BeatmapDifficultyInfo';
+import type { BeatmapMetadata } from '../beatmap/BeatmapMetadata';
+import type { BeatmapSettings } from '../beatmap/BeatmapSettings';
+import type { HitObjectList } from '../beatmap/HitObjectList';
+import type { IBeatmap } from '../beatmap/IBeatmap';
+import type { ControlPointInfo } from '../controlPoints/ControlPointInfo';
 import type { BeatmapAssetManager } from './BeatmapAssetManager';
-import {
-  AudioMixer,
-} from '@osucad/common';
-import { CommandManager } from '@osucad/editor/editor/context/CommandManager';
-import {
-  asyncDependencyLoader,
-  AudioManager,
-  Bindable,
-  Component,
-  loadTexture,
-  resolved,
-} from 'osucad-framework';
+import { asyncDependencyLoader, AudioManager, Bindable, Component, loadTexture, resolved } from 'osucad-framework';
+import { AudioMixer } from '../audio/AudioMixer';
+import { CommandManager } from './CommandManager';
 
 export abstract class EditorBeatmap extends Component implements IBeatmap {
   abstract readonly beatmap: IBeatmap;
@@ -40,7 +27,7 @@ export abstract class EditorBeatmap extends Component implements IBeatmap {
   }
 
   @asyncDependencyLoader()
-  async [Symbol('load')]() {
+  async load() {
     await Promise.all([
       this.loadTrack(),
       this.loadBackground(),
@@ -67,7 +54,6 @@ export abstract class EditorBeatmap extends Component implements IBeatmap {
     if (!path)
       return;
     const asset = this.assets.getAsset(path);
-    console.log(asset);
     if (!asset)
       return;
 

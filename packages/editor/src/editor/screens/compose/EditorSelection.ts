@@ -1,5 +1,5 @@
 import type { OsuHitObject, SliderSelectionType } from '@osucad/common';
-import type { IKeyBindingHandler, KeyBindingPressEvent } from 'osucad-framework';
+import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent } from 'osucad-framework';
 import { HitObjectList, Slider } from '@osucad/common';
 import { Action, Component, dependencyLoader, PlatformAction, resolved } from 'osucad-framework';
 
@@ -100,7 +100,7 @@ export class EditorSelection extends Component implements Iterable<OsuHitObject>
 
   readonly isKeyBindingHandler = true;
 
-  canHandleKeyBinding(binding: PlatformAction): boolean {
+  canHandleKeyBinding(binding: KeyBindingAction): boolean {
     return binding instanceof PlatformAction;
   }
 

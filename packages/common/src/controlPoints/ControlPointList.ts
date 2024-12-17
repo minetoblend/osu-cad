@@ -29,7 +29,7 @@ export class ControlPointList<T extends ControlPoint> extends ObservableSortedLi
 
     index = ~index;
 
-    if (index > 0 && this.controlPointAppliedRetroactive)
+    if (index > 0)
       index--;
 
     return this.get(index);

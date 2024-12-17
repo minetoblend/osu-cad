@@ -1,9 +1,9 @@
-import type { IKeyBindingHandler, KeyBindingPressEvent, Vec2 } from 'osucad-framework';
+import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, Vec2 } from 'osucad-framework';
 import type { DrawableHitCircle } from './DrawableHitCircle';
-import { OsuHitObject } from '@osucad/common';
 import { Anchor, Container, resolved } from 'osucad-framework';
 import { DrawableHitObject } from '../../../../hitObjects/drawables/DrawableHitObject';
 import { OsuAction } from '../../OsuAction';
+import { OsuHitObject } from '../OsuHitObject';
 
 export class HitReceptor extends Container implements IKeyBindingHandler<OsuAction> {
   constructor(
@@ -33,7 +33,7 @@ export class HitReceptor extends Container implements IKeyBindingHandler<OsuActi
 
   closestPressPosition: Vec2 | null = null;
 
-  canHandleKeyBinding(binding: OsuAction) {
+  canHandleKeyBinding(binding: KeyBindingAction) {
     return binding instanceof OsuAction;
   }
 

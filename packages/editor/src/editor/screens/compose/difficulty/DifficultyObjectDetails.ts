@@ -1,8 +1,7 @@
 import type { OsuDifficultyHitObject } from '../../../../difficulty/preprocessing/OsuDifficultyHitObject';
 import type { DifficultyBlueprint } from './DifficultyBlueprint';
-import { Axes, Bindable, Container, dependencyLoader, Vec2, VisibilityContainer } from 'osucad-framework';
+import { Axes, Bindable, Container, dependencyLoader, FastRoundedBox, Vec2, VisibilityContainer } from 'osucad-framework';
 
-import { FastRoundedBox } from '../../../../drawables/FastRoundedBox';
 import { OsucadSpriteText } from '../../../../OsucadSpriteText';
 
 export class DifficultyObjectDetails extends VisibilityContainer {

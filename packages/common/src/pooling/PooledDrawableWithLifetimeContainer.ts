@@ -115,12 +115,16 @@ export abstract class PooledDrawableWithLifetimeContainer<TEntry extends Lifetim
     console.assert(this.#aliveDrawableMap.size === 0);
   }
 
+  protected get currentTime() {
+    return this.time.current;
+  }
+
   override checkChildrenLife(): boolean {
     if (!this.isPresent)
       return false;
 
     let aliveChanged = super.checkChildrenLife();
-    if (this.#lifetimeManager.update(this.time.current - this.pastLifetimeExtension, this.time.current + this.futureLifetimeExtension))
+    if (this.#lifetimeManager.update(this.currentTime - this.pastLifetimeExtension, this.currentTime + this.futureLifetimeExtension))
       aliveChanged = true;
 
     return aliveChanged;

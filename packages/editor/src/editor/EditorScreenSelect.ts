@@ -1,4 +1,4 @@
-import type { DependencyContainer } from 'osucad-framework';
+import type { EditorScreenEntry } from '../../../common/src/editor/screens/EditorScreenManager';
 import {
   Anchor,
   Axes,
@@ -14,9 +14,8 @@ import {
   resolved,
   Vec2,
 } from 'osucad-framework';
+import { EditorScreenManager } from '../../../common/src/editor/screens/EditorScreenManager';
 import { OsucadSpriteText } from '../OsucadSpriteText';
-import { EditorDependencies } from './EditorDependencies';
-import { EditorScreenType } from './screens/EditorScreenType';
 import { ThemeColors } from './ThemeColors';
 
 export class EditorScreenSelect extends Container {
@@ -40,6 +39,9 @@ export class EditorScreenSelect extends Container {
   @resolved(ThemeColors)
   colors!: ThemeColors;
 
+  @resolved(EditorScreenManager)
+  screenManager!: EditorScreenManager;
+
   @dependencyLoader()
   load() {
     this.addAllInternal(
@@ -55,15 +57,12 @@ export class EditorScreenSelect extends Container {
       }),
     );
 
-    this.addAll(
-      new ScreenSelectButton('Setup', EditorScreenType.Setup),
-      new ScreenSelectButton('Compose', EditorScreenType.Compose),
-      new ScreenSelectButton('Timing', EditorScreenType.Timing),
-      new ScreenSelectButton('Hitsounds', EditorScreenType.Hitsounds),
-    );
-
-    if (this.dependencies.resolve(EditorDependencies).otherDifficulties.length > 0) {
-      this.add(new ScreenSelectButton('Compare', EditorScreenType.Compare));
+    for (const screenType of this.screenManager.entries) {
+      this.add(
+        new ScreenSelectButton(
+          screenType,
+        ),
+      );
     }
 
     this.updateSubTree();
@@ -79,8 +78,7 @@ export class EditorScreenSelect extends Container {
 
 class ScreenSelectButton extends Button {
   constructor(
-    readonly title: string,
-    readonly screen: EditorScreenType,
+    readonly entry: EditorScreenEntry,
   ) {
     super();
 
@@ -88,20 +86,21 @@ class ScreenSelectButton extends Button {
     this.autoSizeAxes = Axes.X;
 
     this.action = () => {
-      this.currentScreen.value = this.screen;
+      this.currentScreen.value = this.entry;
     };
   }
 
   @resolved(ThemeColors)
   colors!: ThemeColors;
 
-  currentScreen = new Bindable<EditorScreenType>(EditorScreenType.Compose);
+  currentScreen = new Bindable<EditorScreenEntry>(null!);
+
+  @resolved(EditorScreenManager)
+  screenManager!: EditorScreenManager;
 
   @dependencyLoader()
-  load(dependencies: DependencyContainer) {
-    const { currentScreen } = dependencies.resolve(EditorDependencies);
-
-    this.currentScreen.bindTo(currentScreen);
+  load() {
+    this.currentScreen.bindTo(this.screenManager.currentScreen);
 
     this.addAllInternal(
       new Container({
@@ -109,7 +108,7 @@ class ScreenSelectButton extends Button {
         relativeSizeAxes: Axes.Y,
         padding: { horizontal: 5 },
         child: this.#text = new OsucadSpriteText({
-          text: this.title,
+          text: this.entry.name,
           anchor: Anchor.CenterLeft,
           origin: Anchor.CenterLeft,
           color: this.colors.text,
@@ -122,11 +121,9 @@ class ScreenSelectButton extends Button {
   protected loadComplete() {
     super.loadComplete();
 
-    this.withScope(() => {
-      this.currentScreen.addOnChangeListener(({ value: screen }) => {
-        this.active = screen === this.screen;
-      }, { immediate: true });
-    });
+    this.currentScreen.addOnChangeListener((screen) => {
+      this.active = screen.value === this.entry;
+    }, { immediate: true });
   }
 
   #active = false;

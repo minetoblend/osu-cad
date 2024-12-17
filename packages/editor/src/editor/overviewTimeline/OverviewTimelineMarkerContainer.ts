@@ -1,5 +1,5 @@
 import type { ColorSource, Drawable } from 'osucad-framework';
-import { Beatmap } from '@osucad/common';
+import { IBeatmap } from '@osucad/common';
 import { Anchor, Axes, CompositeDrawable, Invalidation, LayoutMember, resolved, RoundedBox } from 'osucad-framework';
 
 export abstract class OverviewTimelineMarkerContainer extends CompositeDrawable {
@@ -17,8 +17,8 @@ export abstract class OverviewTimelineMarkerContainer extends CompositeDrawable 
 
   #markersValid = new LayoutMember(Invalidation.None);
 
-  @resolved(Beatmap)
-  protected readonly beatmap!: Beatmap;
+  @resolved(IBeatmap)
+  protected readonly beatmap!: IBeatmap;
 
   protected invalidateMarkers() {
     this.#markersValid.invalidate();

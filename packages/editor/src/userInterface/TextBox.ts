@@ -1,9 +1,8 @@
 import type { EditorCommand } from '@osucad/common';
 import type { Bindable, ClickEvent, Drawable, IKeyBindingHandler, KeyBindingPressEvent, KeyDownEvent } from 'osucad-framework';
 import type { DoubleClickEvent } from '../../../framework/src/input/events/DoubleClickEvent';
-import { Action, Anchor, Axes, BindableWithCurrent, Cached, clamp, CompositeDrawable, Container, dependencyLoader, EasingFunction, Key, LoadState, MouseButton, PlatformAction, resolved, Scheduler, TabbableContainer, TextInputSource } from 'osucad-framework';
+import { Action, Anchor, Axes, BindableWithCurrent, Cached, clamp, CompositeDrawable, Container, dependencyLoader, EasingFunction, FastRoundedBox, Key, LoadState, MouseButton, PlatformAction, resolved, Scheduler, TabbableContainer, TextInputSource } from 'osucad-framework';
 import { BitmapFontManager } from 'pixi.js';
-import { FastRoundedBox } from '../drawables/FastRoundedBox';
 import { CommandManager } from '../editor/context/CommandManager';
 import { ThemeColors } from '../editor/ThemeColors';
 import { OsucadSpriteText } from '../OsucadSpriteText';

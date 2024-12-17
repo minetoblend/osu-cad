@@ -1,12 +1,7 @@
 import type { Decoder, Encoder, Serializer } from '@osucad/serialization';
-import { BeatmapColors } from '@osucad/common';
-import {
-  buildClassSerialDescriptor,
-  listSerialDescriptor,
-  ListSerializer,
-  Uint32Serializer,
-} from '@osucad/serialization';
+import { buildClassSerialDescriptor, listSerialDescriptor, ListSerializer, Uint32Serializer } from '@osucad/serialization';
 import { Color } from 'pixi.js';
+import { BeatmapColors } from '../BeatmapColors';
 
 export const BeatmapColorsSerializer: Serializer<BeatmapColors> = {
   descriptor: buildClassSerialDescriptor('BeatmapColors', ({ element }) => {

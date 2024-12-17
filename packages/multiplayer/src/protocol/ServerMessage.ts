@@ -29,8 +29,8 @@ export interface InitialStateServerMessage {
 
 export interface AssetInfo {
   path: string;
-  id: string;
-  filesize: number;
+  id?: string;
+  filesize?: number;
 }
 
 export interface UserJoinedServerMessage {

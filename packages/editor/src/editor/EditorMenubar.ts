@@ -1,21 +1,5 @@
-import type {
-  Drawable,
-  IKeyBindingHandler,
-  SpriteText,
-} from 'osucad-framework';
-import {
-  Anchor,
-  Axes,
-  Color,
-  Container,
-  dependencyLoader,
-  Direction,
-  DrawableMenuItem,
-  MenuItem,
-  PlatformAction,
-  resolved,
-  RoundedBox,
-} from 'osucad-framework';
+import type { Drawable, IKeyBindingHandler, SpriteText } from 'osucad-framework';
+import { Anchor, Axes, Color, Container, dependencyLoader, Direction, DrawableMenuItem, MenuItem, PlatformAction, resolved, RoundedBox } from 'osucad-framework';
 import { OsucadSpriteText } from '../OsucadSpriteText';
 import { CommandManager } from './context/CommandManager';
 import { Editor } from './Editor';
@@ -29,6 +13,8 @@ export class EditorMenubar extends EditorMenu implements IKeyBindingHandler<Plat
     this.margin = { horizontal: 4, vertical: 2 };
 
     this.backgroundColor = new Color('black').setAlpha(0);
+
+    this.createMenuItems();
 
     this.items = [
       new MenuItem({
@@ -107,6 +93,39 @@ export class EditorMenubar extends EditorMenu implements IKeyBindingHandler<Plat
         text: 'Help',
       }),
     ];
+  }
+
+  createMenuItems() {
+    this.items = [
+      this.createFileMenu(),
+      this.createEditMenu(),
+      this.createViewMenu(),
+      this.createHelpMenu(),
+    ].filter(it => it.items.length > 0);
+  }
+
+  protected createFileMenu(): MenuItem {
+    return new MenuItem({
+      text: 'File',
+    });
+  }
+
+  protected createEditMenu(): MenuItem {
+    return new MenuItem({
+      text: 'Edit',
+    });
+  }
+
+  protected createViewMenu(): MenuItem {
+    return new MenuItem({
+      text: 'View',
+    });
+  }
+
+  protected createHelpMenu(): MenuItem {
+    return new MenuItem({
+      text: 'Help',
+    });
   }
 
   #undoItem!: MenuItem;

@@ -1,7 +1,8 @@
-import type { HitObject } from '@osucad/common';
 import type { Decoder, Encoder, Serializer } from '@osucad/serialization';
-import { Beatmap, PolymorphicHitObjectSerializer } from '@osucad/common';
+import type { HitObject } from '../../hitObjects/HitObject';
 import { buildClassSerialDescriptor, listSerialDescriptor, ListSerializer } from '@osucad/serialization';
+import { PolymorphicHitObjectSerializer } from '../../hitObjects/HitObject';
+import { Beatmap } from '../Beatmap';
 import { BeatmapColorsSerializer } from './BeatmapColorsSerializer';
 import { BeatmapDifficultyInfoSerializer } from './BeatmapDifficultySerializer';
 import { BeatmapMetadataSerializer } from './BeatmapMetadataSerializer';

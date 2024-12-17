@@ -5,9 +5,9 @@ import {
   CompositeDrawable,
   Container,
   dependencyLoader,
+  FastRoundedBox,
   resolved,
 } from 'osucad-framework';
-import { FastRoundedBox } from '../../../drawables/FastRoundedBox';
 import { OsucadSpriteText } from '../../../OsucadSpriteText';
 import { ThemeColors } from '../../ThemeColors';
 

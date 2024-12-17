@@ -11,6 +11,7 @@ import {
   Container,
   dependencyLoader,
   EasingFunction,
+  FastRoundedBox,
   FillMode,
   MouseButton,
   resolved,
@@ -18,7 +19,6 @@ import {
   Vec2,
 } from 'osucad-framework';
 
-import { FastRoundedBox } from '../drawables/FastRoundedBox';
 import { ThemeColors } from '../editor/ThemeColors';
 
 export enum ToggleTrigger {

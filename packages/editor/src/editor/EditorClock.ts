@@ -1,6 +1,6 @@
 import type { TimingPoint } from '@osucad/common';
 import type { FrameTimeInfo, IAdjustableClock, IFrameBasedClock, Track } from 'osucad-framework';
-import { Beatmap, OsucadConfigManager, OsucadSettings } from '@osucad/common';
+import { IBeatmap, OsucadConfigManager, OsucadSettings } from '@osucad/common';
 import { almostEquals, AudioManager, Bindable, BindableBoolean, BindableNumber, clamp, Container, dependencyLoader, lerp, resolved } from 'osucad-framework';
 
 export class EditorClock
@@ -39,8 +39,8 @@ export class EditorClock
     this.updateBeatProgress();
   }
 
-  @resolved(Beatmap)
-  beatmap!: Beatmap;
+  @resolved(IBeatmap)
+  beatmap!: IBeatmap;
 
   get trackLength() {
     return this.track.length;

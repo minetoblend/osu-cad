@@ -1,8 +1,7 @@
 import type { ControlPointGroup } from '@osucad/common';
 import type { ClickEvent, DependencyContainer, MouseDownEvent } from 'osucad-framework';
 import { ControlPointInfo, SampleSet } from '@osucad/common';
-import { Anchor, Axes, Bindable, BindableNumber, Box, Container, dependencyLoader, MouseButton, PoolableDrawable, resolved } from 'osucad-framework';
-import { FastRoundedBox } from '../../../drawables/FastRoundedBox';
+import { Anchor, Axes, Bindable, BindableNumber, Box, Container, dependencyLoader, FastRoundedBox, MouseButton, PoolableDrawable, resolved } from 'osucad-framework';
 import { OsucadSpriteText } from '../../../OsucadSpriteText';
 import { EditorClock } from '../../EditorClock';
 import { ThemeColors } from '../../ThemeColors';

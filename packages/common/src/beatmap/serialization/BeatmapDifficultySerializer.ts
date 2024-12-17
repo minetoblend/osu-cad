@@ -1,6 +1,6 @@
 import type { Decoder, Encoder, Serializer } from '@osucad/serialization';
-import { BeatmapDifficultyInfo } from '@osucad/common';
 import { buildClassSerialDescriptor, Float32Serializer } from '@osucad/serialization';
+import { BeatmapDifficultyInfo } from '../BeatmapDifficultyInfo';
 
 export const BeatmapDifficultyInfoSerializer: Serializer<BeatmapDifficultyInfo> = {
   descriptor: buildClassSerialDescriptor('BeatmapDifficultyInfo', ({ element }) => {

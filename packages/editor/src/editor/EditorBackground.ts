@@ -1,7 +1,7 @@
 import type { Bindable, ScreenTransitionEvent } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
 import { Anchor, Axes, Box, dependencyLoader, DrawableSprite, EasingFunction, FillMode } from 'osucad-framework';
-import { BackgroundScreen } from '../BackgroundScreen';
+import { BackgroundScreen } from '../../../common/src/screens/BackgroundScreen';
 
 export class EditorBackground extends BackgroundScreen {
   constructor(background: Bindable<Texture | null>) {

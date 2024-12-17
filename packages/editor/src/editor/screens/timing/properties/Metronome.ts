@@ -1,6 +1,5 @@
 import type { KeyDownEvent, KeyUpEvent } from 'osucad-framework';
-import { Anchor, Axes, Box, CompositeDrawable, Container, dependencyLoader, EasingFunction, FillDirection, FillFlowContainer, Key, resolved } from 'osucad-framework';
-import { FastRoundedBox } from '../../../../drawables/FastRoundedBox';
+import { Anchor, Axes, Box, CompositeDrawable, Container, dependencyLoader, EasingFunction, FastRoundedBox, FillDirection, FillFlowContainer, Key, resolved } from 'osucad-framework';
 import { EditorClock } from '../../../EditorClock';
 import { ThemeColors } from '../../../ThemeColors';
 

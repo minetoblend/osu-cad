@@ -1,6 +1,5 @@
 import type { ControlPoint } from '@osucad/common';
-import { Axes, CompositeDrawable, Container, dependencyLoader, FillFlowContainer } from 'osucad-framework';
-import { FastRoundedBox } from '../../../drawables/FastRoundedBox';
+import { Axes, CompositeDrawable, Container, dependencyLoader, FastRoundedBox, FillFlowContainer } from 'osucad-framework';
 import { OsucadSpriteText } from '../../../OsucadSpriteText';
 
 export class SampleTypeBadge extends CompositeDrawable {

@@ -83,7 +83,8 @@ export class ControlPointGroup extends ControlPoint implements Patchable<Control
       }
     }
 
-    controlPoint.timeBindable.bindTo(this.timeBindable);
+    this.timeBindable.copyTo(controlPoint.timeBindable);
+    // controlPoint.timeBindable.copyTo(this.timeBindable);
     controlPoint.group = this;
 
     this.#children.add(controlPoint);

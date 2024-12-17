@@ -1,12 +1,12 @@
 import type { Bindable, DependencyContainer, ScreenTransitionEvent } from 'osucad-framework';
-import type { BackgroundScreen } from '../BackgroundScreen';
+import type { BackgroundScreen } from '../../../common/src/screens/BackgroundScreen';
 import type { BeatmapStore } from '../environment/BeatmapStore';
 import type { BeatmapItemInfo } from './BeatmapItemInfo';
 import { Anchor, Axes, Container, dependencyLoader, EasingFunction, resolved } from 'osucad-framework';
+import { OsucadScreen } from '../../../common/src/screens/OsucadScreen';
 import { EditorEnvironment } from '../environment/EditorEnvironment';
 import { GlobalBeatmapBindable } from '../GlobalBeatmapBindable';
 import { GlobalSongPlayback } from '../GlobalSongPlayback';
-import { OsucadScreen } from '../OsucadScreen';
 import { BeatmapCarousel } from './BeatmapCarousel';
 import { BeatmapImportDropzone } from './BeatmapImportDropzone';
 import { BeatmapSelectBackground } from './BeatmapSelectBackground';

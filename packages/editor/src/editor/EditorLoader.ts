@@ -2,10 +2,10 @@ import type { EditorBeatmap } from '@osucad/common';
 import type { Drawable, GameHost, ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
 import { AudioMixer } from '@osucad/common';
 import { AudioManager, Axes, EasingFunction, GAME_HOST, LowpassFilter, resolved, ScreenStack } from 'osucad-framework';
+import { OsucadScreen } from '../../../common/src/screens/OsucadScreen';
 import { GlobalSongPlayback } from '../GlobalSongPlayback';
 import { Notification } from '../notifications/Notification';
 import { NotificationOverlay } from '../notifications/NotificationOverlay';
-import { OsucadScreen } from '../OsucadScreen';
 import { EditorLoadingSpinner } from './EditorLoadingSpinner';
 
 export class EditorLoader extends OsucadScreen {

@@ -1,7 +1,5 @@
-import type { HitSample, SampleSet, SampleType } from '@osucad/common';
-import { Anchor, Axes, CompositeDrawable, dependencyLoader, EasingFunction, resolved } from 'osucad-framework';
-import { FastRoundedBox } from '../../../drawables/FastRoundedBox';
-import { HitsoundPlayer } from '../../HitsoundPlayer';
+import type { SampleSet, SampleType } from '@osucad/common';
+import { Anchor, Axes, CompositeDrawable, FastRoundedBox } from 'osucad-framework';
 
 export class SampleHighlightContainer extends CompositeDrawable {
   constructor(
@@ -11,6 +9,8 @@ export class SampleHighlightContainer extends CompositeDrawable {
   ) {
     super();
   }
+
+  /* TODO: make this work again
 
   @resolved(HitsoundPlayer)
   private hitsoundPlayer!: HitsoundPlayer;
@@ -57,6 +57,7 @@ export class SampleHighlightContainer extends CompositeDrawable {
 
     super.dispose(isDisposing);
   }
+*/
 }
 
 class SampleHighlightSprite extends FastRoundedBox {

@@ -9,6 +9,7 @@ import {
   Container,
   dependencyLoader,
   EasingFunction,
+  FastRoundedBox,
   FillFlowContainer,
   lerp,
   resolved,
@@ -17,7 +18,6 @@ import {
   Vec2,
 } from 'osucad-framework';
 import { Color } from 'pixi.js';
-import { FastRoundedBox } from '../drawables/FastRoundedBox';
 import { LoadingSpinner } from '../drawables/LoadingSpinner';
 import { EditorLoader } from '../editor/EditorLoader';
 import { OsucadSpriteText } from '../OsucadSpriteText';

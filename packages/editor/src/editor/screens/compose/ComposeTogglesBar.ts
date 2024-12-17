@@ -1,6 +1,5 @@
 import { Additions } from '@osucad/common';
-import { Anchor, Axes, Container, dependencyLoader, FillDirection, FillFlowContainer, resolved, Vec2 } from 'osucad-framework';
-import { FastRoundedBox } from '../../../drawables/FastRoundedBox';
+import { Anchor, Axes, Container, dependencyLoader, FastRoundedBox, FillDirection, FillFlowContainer, resolved, Vec2 } from 'osucad-framework';
 import { OsucadIcons } from '../../../OsucadIcons';
 import { EditorAction } from '../../EditorAction';
 import { ThemeColors } from '../../ThemeColors';

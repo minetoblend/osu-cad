@@ -9,13 +9,13 @@ import {
   CompositeDrawable,
   Container,
   dependencyLoader,
+  FastRoundedBox,
   FillDirection,
   FillFlowContainer,
   MouseButton,
   Vec2,
 } from 'osucad-framework';
 import { BackdropBlurFilter } from 'pixi-filters';
-import { FastRoundedBox } from '../drawables/FastRoundedBox';
 import { OsucadSpriteText } from '../OsucadSpriteText';
 
 export interface DraggableDialogBoxOptions extends ContainerOptions {

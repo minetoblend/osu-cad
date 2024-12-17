@@ -1,5 +1,5 @@
 import type { PIXIRenderer } from 'osucad-framework';
-import { AudioMixer, IResourcesProvider, ISkinSource, OsucadConfigManager, SkinManager } from '@osucad/common';
+import { AudioMixer, IResourcesProvider, ISkinSource, OsucadConfigManager, OsucadScreenStack, SkinManager } from '@osucad/common';
 import { Action, AudioManager, dependencyLoader, Game, IRenderer, isMobile, resolved } from 'osucad-framework';
 import { RenderTarget } from 'pixi.js';
 import { BeatmapImportScreen } from './BeatmapImportScreen';
@@ -17,7 +17,6 @@ import { MainCursorContainer } from './MainCursorContainer';
 import { DialogContainer } from './modals/DialogContainer';
 import { NotificationOverlay } from './notifications/NotificationOverlay';
 import { OsucadIcons } from './OsucadIcons';
-import { OsucadScreenStack } from './OsucadScreenStack';
 import { SkinLoadingOverlay } from './SkinLoadingOverlay';
 import { OsucadSkinManager } from './skinning/OsucadSkinManager';
 import { UIFonts } from './UIFonts';
@@ -98,6 +97,7 @@ export class OsucadGame extends Game implements IResourcesProvider {
 
     this.dependencies.provide(ISkinSource, skinManager);
     this.dependencies.provide(SkinManager, skinManager);
+    this.dependencies.provide(OsucadSkinManager, skinManager);
 
     const cursorContainer = new MainCursorContainer();
     this.dependencies.provide(cursorContainer);

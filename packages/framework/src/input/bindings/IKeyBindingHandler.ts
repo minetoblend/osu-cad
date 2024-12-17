@@ -6,7 +6,7 @@ import type { KeyBindingAction } from '../KeyBindingAction';
 export interface IKeyBindingHandler<T extends KeyBindingAction> {
   readonly isKeyBindingHandler: true;
 
-  canHandleKeyBinding: (binding: T) => boolean;
+  canHandleKeyBinding: (binding: KeyBindingAction) => boolean;
 
   onKeyBindingPressed?: (e: KeyBindingPressEvent<T>) => boolean;
 

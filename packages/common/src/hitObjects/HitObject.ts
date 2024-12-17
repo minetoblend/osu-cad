@@ -1,14 +1,9 @@
-import type { CompositeDecoder, CompositeEncoder, Decoder, Encoder, SerialDescriptor, Serializer } from '@osucad/serialization';
+import type { ClassSerialDescriptorBuilder, CompositeDecoder, CompositeEncoder, Decoder, Encoder, SerialDescriptor, Serializer } from '@osucad/serialization';
 import type { IVec2, ValueChangedEvent } from 'osucad-framework';
 import type { BeatmapDifficultyInfo } from '../beatmap/BeatmapDifficultyInfo';
 import type { ControlPointInfo } from '../controlPoints/ControlPointInfo';
 import type { Constructor } from '../utils/Constructor';
-import {
-  buildClassSerialDescriptor,
-  ClassSerialDescriptorBuilder, Float32Serializer,
-  Float64Serializer,
-  SealedClassSerializer
-} from '@osucad/serialization';
+import { buildClassSerialDescriptor, Float32Serializer, SealedClassSerializer } from '@osucad/serialization';
 import { Action, Comparer, Lazy, SortedList } from 'osucad-framework';
 import { objectId } from '../utils/objectId';
 import { HitObjectProperty } from './HitObjectProperty';
@@ -29,6 +24,8 @@ export abstract class HitObject {
   timeFadeIn = 400;
 
   id = objectId();
+
+  synthetic = false;
 
   readonly defaultsApplied = new Action<HitObject>();
 
@@ -137,21 +134,20 @@ export interface HitObjectChangeEvent {
 export abstract class HitObjectSerializer<T extends HitObject> implements Serializer<T> {
   protected constructor(serialName: string) {
     this.#descriptor = new Lazy(() => buildClassSerialDescriptor(serialName, (builder) => {
-      this.buildDescriptor(builder)
-    }))
+      this.buildDescriptor(builder);
+    }));
   }
 
-  override get descriptor() {
-    return this.#descriptor.value
+  get descriptor() {
+    return this.#descriptor.value;
   }
 
   readonly #descriptor: Lazy<SerialDescriptor>;
 
-
   protected buildDescriptor(builder: ClassSerialDescriptorBuilder) {
-    const { element } = builder
+    const { element } = builder;
 
-    element('startTime', Float32Serializer.descriptor)
+    element('startTime', Float32Serializer.descriptor);
   }
 
   deserialize(decoder: Decoder): T {
@@ -187,6 +183,7 @@ export class PolymorphicHitObjectSerializer extends SealedClassSerializer<HitObj
   constructor() {
     super(
       'HitObject',
+      // @ts-expect-error TODO: make types work for abstract constructors here
       HitObject,
       [...polymorphicHitObjectSerializers.keys()],
       [...polymorphicHitObjectSerializers.values()],

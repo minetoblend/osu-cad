@@ -1,9 +1,8 @@
 import type { ControlPointGroup } from '@osucad/common';
 import type { Bindable, KeyDownEvent, MouseDownEvent, Vec2 } from 'osucad-framework';
-import { Axes, dependencyLoader, EasingFunction, Key, VisibilityContainer } from 'osucad-framework';
+import { Axes, dependencyLoader, EasingFunction, FastRoundedBox, Key, VisibilityContainer } from 'osucad-framework';
 
 import { BackdropBlurFilter } from 'pixi-filters';
-import { FastRoundedBox } from '../../../drawables/FastRoundedBox';
 import { ControlPointProperties } from '../timing/properties/ControlPointProperties';
 
 export class ControlPointPropertiesOverlay extends VisibilityContainer {

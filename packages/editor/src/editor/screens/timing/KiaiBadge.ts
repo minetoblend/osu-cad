@@ -1,5 +1,4 @@
-import { Anchor, Axes, CompositeDrawable, Container, dependencyLoader } from 'osucad-framework';
-import { FastRoundedBox } from '../../../drawables/FastRoundedBox';
+import { Anchor, Axes, CompositeDrawable, Container, dependencyLoader, FastRoundedBox } from 'osucad-framework';
 import { OsucadSpriteText } from '../../../OsucadSpriteText';
 
 export class KiaiBadge extends CompositeDrawable {

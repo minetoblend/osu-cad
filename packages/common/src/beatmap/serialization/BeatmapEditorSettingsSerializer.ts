@@ -1,6 +1,6 @@
 import type { Decoder, Encoder, Serializer } from '@osucad/serialization';
-import { BeatmapEditorSettings } from '@osucad/common';
 import { buildClassSerialDescriptor, Float32Serializer, Float64Serializer, listSerialDescriptor, ListSerializer, Uint8Serializer } from '@osucad/serialization';
+import { BeatmapEditorSettings } from '../BeatmapEditorSettings';
 
 export const BeatmapEditorSettingsSerializer: Serializer<BeatmapEditorSettings> = {
   descriptor: buildClassSerialDescriptor('BeatmapEditorSettings', ({ element }) => {

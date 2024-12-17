@@ -1,6 +1,7 @@
 export * from './almostBigger';
 export * from './almostEquals';
 export * from './clamp';
+export * from './ColorUtils';
 export * from './Comparer';
 export * from './definitelyBigger';
 export * from './IComparer';

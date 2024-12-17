@@ -1,16 +1,10 @@
-import type {
-  DependencyContainer,
-  IKeyBindingHandler,
-  KeyBindingPressEvent,
-  KeyBindingReleaseEvent,
-} from 'osucad-framework';
+import type { DependencyContainer, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyBindingReleaseEvent } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
 import type { HitSoundState } from '../../../beatmap/hitSounds/BindableHitSound';
 import { Additions, additionToSampleType, SampleType } from '@osucad/common';
-import { dependencyLoader, resolved } from 'osucad-framework';
+import { dependencyLoader } from 'osucad-framework';
 import { EditorAction } from '../../EditorAction';
 import { EditorDependencies } from '../../EditorDependencies';
-import { HitsoundPlayer } from '../../HitsoundPlayer';
 import { ComposeToggleButton } from './ComposeToggleButton';
 import { SampleHighlightContainer } from './SampleHighlightContainer';
 
@@ -23,9 +17,6 @@ export class AdditionToggleButton extends ComposeToggleButton
   ) {
     super(icon);
   }
-
-  @resolved(HitsoundPlayer)
-  hitsoundPlayer!: HitsoundPlayer;
 
   protected hitSoundState!: HitSoundState;
 
@@ -73,7 +64,7 @@ export class AdditionToggleButton extends ComposeToggleButton
 
   readonly isKeyBindingHandler = true;
 
-  canHandleKeyBinding(binding: EditorAction): boolean {
+  canHandleKeyBinding(binding: KeyBindingAction): boolean {
     return binding instanceof EditorAction;
   }
 

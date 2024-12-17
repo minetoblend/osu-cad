@@ -2,7 +2,6 @@ import type {
   MouseDownEvent,
   SpriteText,
 } from 'osucad-framework';
-import gsap from 'gsap';
 import {
   Anchor,
   Axes,
@@ -72,35 +71,21 @@ export class Timestamp extends CompositeDrawable {
   }
 
   override onHover(): boolean {
-    gsap.to(this.background, {
-      alpha: 0.1,
-      duration: 0.1,
-    });
+    this.background.fadeTo(0.1, 100);
     this.timestamp.color = 0xCCCCDE;
     return false;
   }
 
   override onHoverLost(): boolean {
-    gsap.to(this.background, {
-      alpha: 0,
-      duration: 0.1,
-    });
+    this.background.fadeOut(100);
     this.timestamp.color = 0xB6B6C3;
-    gsap.to(this.timestamp.scale, {
-      scaleX: 1,
-      scaleY: 1,
-      duration: 0.1,
-    });
+    this.timestamp.scaleTo(1, 100);
     return false;
   }
 
   override onMouseDown(event: MouseDownEvent): boolean {
     if (event.button === MouseButton.Left) {
-      gsap.to(this.timestamp, {
-        scaleX: 0.95,
-        scaleY: 0.95,
-        duration: 0.1,
-      });
+      this.timestamp.scaleTo(0.95, 100);
       const text = this.timestamp.text;
       navigator.clipboard.writeText(text);
       // TODO: Add toast
@@ -110,11 +95,7 @@ export class Timestamp extends CompositeDrawable {
   }
 
   override onMouseUp(): boolean {
-    gsap.to(this.timestamp, {
-      scaleX: 1,
-      scaleY: 1,
-      duration: 0.1,
-    });
+    this.timestamp.scaleTo(1, 100);
     return true;
   }
 }

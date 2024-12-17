@@ -10,13 +10,13 @@ import {
   dependencyLoader,
   DrawableSprite,
   EasingFunction,
+  FastRoundedBox,
   MouseButton,
   resolved,
   RoundedBox,
   Vec2,
   Visibility,
 } from 'osucad-framework';
-import { FastRoundedBox } from '../../../drawables/FastRoundedBox';
 import { GraphicsDrawable } from '../../../drawables/GraphicsDrawable';
 import { UISamples } from '../../../UISamples';
 import { ThemeColors } from '../../ThemeColors';

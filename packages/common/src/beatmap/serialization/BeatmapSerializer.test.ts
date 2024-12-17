@@ -1,16 +1,16 @@
-import { Beatmap } from "@osucad/common";
-import { Json } from "@osucad/serialization";
-import { BeatmapSerializer } from "./BeatmapSerializer";
-import { expect } from "vitest";
+import { Json } from '@osucad/serialization';
+import { expect } from 'vitest';
+import { Beatmap } from '../Beatmap';
+import { BeatmapSerializer } from './BeatmapSerializer';
 
-describe('BeatmapSerializer', () => {
+describe('beatmapSerializer', () => {
   it('should be tested', () => {
-    const beatmap = new Beatmap()
+    const beatmap = new Beatmap();
 
-    const encoded = new Json().encode(BeatmapSerializer, beatmap)
+    const encoded = new Json().encode(new BeatmapSerializer(), beatmap);
 
-    console.log(encoded)
+    console.log(encoded);
 
-    expect(encoded).toBe('')
-  })
-})
+    expect(encoded).toBe('');
+  });
+});

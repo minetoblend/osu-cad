@@ -71,14 +71,4 @@ export class TimingScreenTimeline extends Timeline {
   }
 }
 
-class ControlPointLifetimeEntry extends LifetimeEntry {
-  constructor(public controlPoint: ControlPointGroup) {
-    super();
-    this.updateLifetime();
-    this.controlPoint.changed.addListener(this.updateLifetime, this);
-  }
 
-  protected updateLifetime() {
-    this.lifetimeStart = this.lifetimeEnd = this.controlPoint.time;
-  }
-}

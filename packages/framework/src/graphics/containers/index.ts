@@ -8,6 +8,7 @@ export { DrawSizePreservingFillContainer } from './DrawSizePreservingFillContain
 export { FillDirection, FillFlowContainer } from './FillFlowContainer';
 export { FlowContainer } from './FlowContainer';
 export { MaskingContainer, type MaskingContainerOptions } from './MaskingContainer';
+export { ProxyContainer } from './ProxyContainer';
 export { ScrollbarContainer, ScrollContainer } from './ScrollContainer';
 export { TabbableContainer } from './TabbableContainer';
 export { Visibility, VisibilityContainer } from './VisibilityContainer';

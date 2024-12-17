@@ -160,6 +160,10 @@ export class ControlPointInfo {
     if (skipIfRedundant) {
       const existing = this.listFor(controlPoint)?.controlPointAt(group.time);
 
+      if (controlPoint instanceof EffectPoint) {
+        this.listFor(controlPoint)?.controlPointAt(group.time);
+      }
+
       if (existing && controlPoint.isRedundant(existing))
         return false;
     }

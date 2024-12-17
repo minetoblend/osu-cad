@@ -3,7 +3,7 @@ import type { BeatmapItemInfo } from './BeatmapItemInfo';
 import { OsucadConfigManager, OsucadSettings } from '@osucad/common';
 import { Anchor, Axes, BindableBoolean, Box, Container, dependencyLoader, DrawableSprite, EasingFunction, FillMode, GAME_HOST, loadTexture, resolved } from 'osucad-framework';
 import { BlurFilter } from 'pixi.js';
-import { BackgroundScreen } from '../BackgroundScreen';
+import { BackgroundScreen } from '../../../common/src/screens/BackgroundScreen';
 import { EditorBackground } from '../editor/EditorBackground';
 import { GlobalBeatmapBindable } from '../GlobalBeatmapBindable';
 

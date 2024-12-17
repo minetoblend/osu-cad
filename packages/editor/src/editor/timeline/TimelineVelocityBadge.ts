@@ -1,8 +1,7 @@
 import type { Slider } from '@osucad/common';
 import type { HoverEvent, MouseDownEvent } from 'osucad-framework';
 import { UpdateHitObjectCommand } from '@osucad/common';
-import { Anchor, Axes, CompositeDrawable, Container, dependencyLoader, MouseButton, resolved } from 'osucad-framework';
-import { FastRoundedBox } from '../../drawables/FastRoundedBox';
+import { Anchor, Axes, CompositeDrawable, Container, dependencyLoader, FastRoundedBox, MouseButton, resolved } from 'osucad-framework';
 import { OsucadSpriteText } from '../../OsucadSpriteText';
 import { CommandManager } from '../context/CommandManager';
 

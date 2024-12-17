@@ -1,8 +1,7 @@
 import type { Slider } from '@osucad/common';
 import type { DragEndEvent, DragEvent, DragStartEvent, MouseDownEvent } from 'osucad-framework';
 import { OsucadConfigManager, OsucadSettings, PathType } from '@osucad/common';
-import { Anchor, Axes, BindableBoolean, Cached, CompositeDrawable, Container, dependencyLoader, PIXIGraphics, resolved, Vec2 } from 'osucad-framework';
-import { FastRoundedBox } from '../../../../drawables/FastRoundedBox';
+import { Anchor, Axes, BindableBoolean, Cached, CompositeDrawable, Container, dependencyLoader, FastRoundedBox, PIXIGraphics, resolved, Vec2 } from 'osucad-framework';
 
 export class SliderPathVisualizer extends CompositeDrawable {
   constructor() {

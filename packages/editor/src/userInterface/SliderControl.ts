@@ -1,7 +1,6 @@
 import type { EditorCommand } from '@osucad/common';
 import type { Bindable, DragEndEvent, DragEvent, DragStartEvent, HoverEvent, HoverLostEvent } from 'osucad-framework';
-import { Action, Anchor, Axes, BindableNumber, BindableWithCurrent, clamp, CompositeDrawable, dependencyLoader, EasingFunction, lerp, MouseButton, Vec2 } from 'osucad-framework';
-import { FastRoundedBox } from '../drawables/FastRoundedBox';
+import { Action, Anchor, Axes, BindableNumber, BindableWithCurrent, clamp, CompositeDrawable, dependencyLoader, EasingFunction, FastRoundedBox, lerp, MouseButton, Vec2 } from 'osucad-framework';
 import { CommandManager } from '../editor/context/CommandManager';
 
 export class SliderControl extends CompositeDrawable {

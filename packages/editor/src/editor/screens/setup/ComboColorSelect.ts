@@ -5,13 +5,13 @@ import {
   CompositeDrawable,
   dependencyLoader,
   DrawableSprite,
+  FastRoundedBox,
   FillDirection,
   FillFlowContainer,
   resolved,
   RoundedBox,
   Vec2,
 } from 'osucad-framework';
-import { FastRoundedBox } from '../../../drawables/FastRoundedBox';
 import { OsucadIcons } from '../../../OsucadIcons';
 
 export class ComboColorSelect extends FillFlowContainer {

@@ -1,12 +1,11 @@
 import type { ScreenExitEvent } from 'osucad-framework';
-import { AudioMixer, OsucadConfigManager, OsucadSettings } from '@osucad/common';
+import { AudioMixer, OsucadConfigManager, OsucadScreen, OsucadSettings } from '@osucad/common';
 import { Anchor, AudioManager, Axes, Box, Container, dependencyLoader, DrawableSprite, EasingFunction, loadTexture, resolved, RoundedBox, Vec2 } from 'osucad-framework';
 import { AlphaFilter } from 'pixi.js';
 import introDotWav from '../assets/samples/intro.wav';
 import osucadText from '../assets/textures/osucad-text.png';
 import { ThemeColors } from '../editor/ThemeColors';
 import { OsucadIcons } from '../OsucadIcons';
-import { OsucadScreen } from '../OsucadScreen';
 import { IntroSlider } from './IntroSlider';
 
 export class IntroSequence extends OsucadScreen {

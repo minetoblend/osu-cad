@@ -1,7 +1,6 @@
 import type { Drawable } from 'osucad-framework';
 import type { ColorSource } from 'pixi.js';
-import { Anchor, Axes, Button, Container, dependencyLoader, resolved } from 'osucad-framework';
-import { FastRoundedBox } from '../drawables/FastRoundedBox';
+import { Anchor, Axes, Button, Container, dependencyLoader, FastRoundedBox, resolved } from 'osucad-framework';
 import { ThemeColors } from '../editor/ThemeColors';
 import { OsucadSpriteText } from '../OsucadSpriteText';
 

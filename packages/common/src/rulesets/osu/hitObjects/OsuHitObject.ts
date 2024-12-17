@@ -7,13 +7,8 @@ import type { SerializedOsuHitObject } from '../../../serialization/HitObjects';
 import type { HitCircle } from './HitCircle';
 import type { Slider } from './Slider';
 import type { Spinner } from './Spinner';
-import {
-  BooleanSerializer,
-  nullableDescriptor,
-  NullableSerializer,
-  Uint8Serializer,
-} from '@osucad/serialization';
-import { Action, Vec2 } from 'osucad-framework';
+import { BooleanSerializer, nullableDescriptor, NullableSerializer, Uint8Serializer } from '@osucad/serialization';
+import { Action, Vec2, Vec2Serializer } from 'osucad-framework';
 import { Color } from 'pixi.js';
 import { BeatmapDifficultyInfo } from '../../../beatmap/BeatmapDifficultyInfo';
 import { HitObject, HitObjectSerializer } from '../../../hitObjects/HitObject';
@@ -37,8 +32,6 @@ export abstract class OsuHitObject extends HitObject implements IHasComboInforma
 
     this.startTimeBindable.valueChanged.addListener(this.requestApplyDefaults, this);
   }
-
-  synthetic = false;
 
   static readonly object_radius = 64;
 

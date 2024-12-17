@@ -1,15 +1,13 @@
 import type { DependencyContainer } from 'osucad-framework';
+import { DummyEditorBeatmap, Editor } from '@osucad/common';
 import { OsucadGameBase } from '@osucad/editor';
 import { UserAvatarCache } from '@osucad/editor/UserAvatarCache';
-import { MultiplayerClient } from '@osucad/multiplayer';
 import { Axes, Box } from 'osucad-framework';
-import { io } from 'socket.io-client';
+import { OsucadScreenStack } from '../../common/src/screens/OsucadScreenStack';
 import { EditorActionContainer } from '../../editor/src/editor/EditorActionContainer';
 import { Fit, ScalingContainer } from '../../editor/src/editor/ScalingContainer';
 import { FpsOverlay } from '../../editor/src/FpsOverlay';
 import { NotificationOverlay } from '../../editor/src/notifications/NotificationOverlay';
-import { OsucadScreenStack } from '../../editor/src/OsucadScreenStack';
-import { MultiplayerEditorLoader } from './editor/MultiplayerEditorLoader';
 import { OnlineEditorEnvironment } from './OnlineEditorEnvironment';
 
 export class OsucadWebGame extends OsucadGameBase {
@@ -49,18 +47,10 @@ export class OsucadWebGame extends OsucadGameBase {
     this.add(notificationOverlay);
     dependencies.provide(NotificationOverlay, notificationOverlay);
 
-    screenStack.push(
-      new MultiplayerEditorLoader(async () => {
-        const client = new MultiplayerClient(
-          () => io('http://localhost', {
-            transports: ['websocket'],
-          }),
-        );
+    const beatmap = new DummyEditorBeatmap();
 
-        await client.load();
+    const editor = new Editor(beatmap);
 
-        return client.beatmap;
-      }),
-    );
+    screenStack.push(editor);
   }
 }

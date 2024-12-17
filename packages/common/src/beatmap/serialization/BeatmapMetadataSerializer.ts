@@ -3,12 +3,12 @@ import type {
   Encoder,
   Serializer,
 } from '@osucad/serialization';
-import { BeatmapMetadata } from '@osucad/common';
 import {
   buildClassSerialDescriptor,
   Float64Serializer,
   StringSerializer,
 } from '@osucad/serialization';
+import { BeatmapMetadata } from '../BeatmapMetadata';
 
 export const BeatmapMetadataSerializer: Serializer<BeatmapMetadata> = {
   descriptor: buildClassSerialDescriptor('BeatmapDifficultyInfo', ({ element }) => {
