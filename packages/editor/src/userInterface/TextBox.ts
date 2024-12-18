@@ -1,7 +1,7 @@
 import type { EditorCommand } from '@osucad/common';
-import type { Bindable, ClickEvent, Drawable, IKeyBindingHandler, KeyBindingPressEvent, KeyDownEvent } from 'osucad-framework';
+import type { Bindable, ClickEvent, Drawable, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyDownEvent } from 'osucad-framework';
 import type { DoubleClickEvent } from '../../../framework/src/input/events/DoubleClickEvent';
-import { Action, Anchor, Axes, BindableWithCurrent, Cached, clamp, CompositeDrawable, Container, dependencyLoader, EasingFunction, FastRoundedBox, Key, LoadState, MouseButton, PlatformAction, resolved, Scheduler, TabbableContainer, TextInputSource } from 'osucad-framework';
+import { Action, Anchor, Axes, BindableWithCurrent, Cached, clamp, CompositeDrawable, Container, dependencyLoader, EasingFunction, FastRoundedBox, Key, LoadState, MarginPadding, MouseButton, PlatformAction, resolved, Scheduler, TabbableContainer, TextInputSource } from 'osucad-framework';
 import { BitmapFontManager } from 'pixi.js';
 import { CommandManager } from '../editor/context/CommandManager';
 import { ThemeColors } from '../editor/ThemeColors';
@@ -10,15 +10,14 @@ import { animate } from '../utils/animate';
 
 export class TextBox extends TabbableContainer implements IKeyBindingHandler<PlatformAction> {
   constructor() {
-    super({
-      relativeSizeAxes: Axes.X,
-      height: 30,
-    });
+    super();
+    super.relativeSizeAxes = Axes.X;
+    super.height = 30;
   }
 
   readonly isKeyBindingHandler = true;
 
-  canHandleKeyBinding(binding: PlatformAction): boolean {
+  canHandleKeyBinding(binding: KeyBindingAction): boolean {
     return binding instanceof PlatformAction;
   }
 
@@ -112,13 +111,17 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
 
   ignoredKeys: Key[] = [];
 
+  protected get textContainerPadding() {
+    return new MarginPadding({ horizontal: 8, vertical: 7 });
+  }
+
   @dependencyLoader()
   [Symbol('load')]() {
     this.addAllInternal(
       this.createBackground(),
       this.#textContainer = new Container({
         relativeSizeAxes: Axes.Both,
-        padding: { horizontal: 8, vertical: 7 },
+        padding: this.textContainerPadding,
         masking: true,
         children: [
           this.#placeholder = this.createPlaceholder().with({
@@ -161,6 +164,24 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
     this.#placeholderText = value;
     if (this.loadState >= LoadState.Ready)
       this.#placeholder.text = value;
+  }
+
+  override get relativeSizeAxes(): Axes {
+    return super.relativeSizeAxes;
+  }
+
+  override set relativeSizeAxes(value: Axes) {
+    super.relativeSizeAxes = value;
+    this.#textContainer.relativeSizeAxes = value;
+  }
+
+  get autoSizeAxes(): Axes {
+    return super.autoSizeAxes;
+  }
+
+  override set autoSizeAxes(value: Axes) {
+    super.autoSizeAxes = value;
+    this.#textContainer.autoSizeAxes = value;
   }
 
   #caret!: Caret;
@@ -642,7 +663,7 @@ class Caret extends CompositeDrawable {
   constructor() {
     super();
 
-    this.relativeSizeAxes = Axes.Y;
+    super.relativeSizeAxes = Axes.Y;
     this.width = 2;
   }
 

@@ -1,7 +1,8 @@
 import type { ColorSource } from 'pixi.js';
 import { Anchor, Axes, Box, dependencyLoader } from 'osucad-framework';
+import { TimingScreenTimelineLayer } from '../TimingScreenTimelineLayer';
 import { SliderVelocityBlueprintContainer } from './SliderVelocityBlueprintContainer';
-import { TimingScreenTimelineLayer } from './TimingScreenTimelineLayer';
+import { TimingPointPlacementBlueprint } from './SliderVelocityPlacementBlueprint';
 
 export class SliderVelocityTimelineLayer extends TimingScreenTimelineLayer {
   constructor() {
@@ -14,13 +15,16 @@ export class SliderVelocityTimelineLayer extends TimingScreenTimelineLayer {
 
   @dependencyLoader()
   [Symbol('load')]() {
-    this.add(new Box({
-      relativeSizeAxes: Axes.X,
-      height: 24,
-      alpha: 0.02,
-      anchor: Anchor.CenterLeft,
-      origin: Anchor.CenterLeft,
-    }));
-    this.add(new SliderVelocityBlueprintContainer());
+    this.addAll(
+      new Box({
+        relativeSizeAxes: Axes.X,
+        height: 24,
+        alpha: 0.02,
+        anchor: Anchor.CenterLeft,
+        origin: Anchor.CenterLeft,
+      }),
+      new SliderVelocityBlueprintContainer(),
+      new TimingPointPlacementBlueprint(),
+    );
   }
 }

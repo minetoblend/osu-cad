@@ -147,6 +147,10 @@ export class Toggle extends CompositeDrawable {
       this.onDeactivate.emit();
   }
 
+  protected get activeColor() {
+    return this.colors.primary;
+  }
+
   #updateState() {
     if (this.value) {
       this.#scaleContainer
@@ -155,7 +159,7 @@ export class Toggle extends CompositeDrawable {
         .fadeTo(1, 200, EasingFunction.OutExpo);
       this.#movementContainer.moveToX(1, 200, EasingFunction.OutExpo);
       this.#background
-        .fadeColor(this.colors.primary, 200, EasingFunction.OutExpo)
+        .fadeColor(this.activeColor, 200, EasingFunction.OutExpo)
         .fadeTo(1, 200, EasingFunction.OutExpo);
     }
     else {

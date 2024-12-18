@@ -16,9 +16,8 @@ export class DummyEditorBeatmap extends EditorBeatmap {
 
     this.beatmap.settings.audioFileName = 'audio.mp3';
 
-    this.beatmap.controlPoints.add(
-      new EffectPoint(1000, true),
-    );
+    this.beatmap.controlPoints.add(new EffectPoint(1000, true));
+    this.beatmap.controlPoints.add(new EffectPoint(2000, false));
   }
 
   override async load() {

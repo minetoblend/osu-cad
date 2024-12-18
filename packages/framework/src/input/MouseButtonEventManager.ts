@@ -28,7 +28,7 @@ export abstract class MouseButtonEventManager extends ButtonEventManager<MouseBu
 
   draggedDrawable: Drawable | null = null;
 
-  doubleClickTime = 250;
+  doubleClickTime = 150;
 
   clickDragDistance = 10;
 

@@ -1,47 +1,23 @@
-import type {
-  ClickEvent,
-  DragEndEvent,
-  DragEvent,
-  DragStartEvent,
-  DrawableOptions,
-  HoverEvent,
-  MouseDownEvent,
-} from 'osucad-framework';
+import type { ClickEvent, DoubleClickEvent, DragEndEvent, DragEvent, DragStartEvent, DrawableOptions, HoverEvent, MouseDownEvent } from 'osucad-framework';
 import type { ControlPoint } from '../../../controlPoints/ControlPoint';
-import type { KeyframeBlueprint } from './KeyframeBlueprint';
-import {
-  Anchor,
-  Axes,
-  BindableBoolean,
-  ColorUtils,
-  CompositeDrawable,
-  Container,
-  dependencyLoader,
-  EasingFunction,
-  FastRoundedBox,
-  MouseButton,
-  resolved,
-} from 'osucad-framework';
+import type { KeyframeSelectionBlueprint } from './KeyframeSelectionBlueprint';
+import { BindableBoolean, ColorUtils, dependencyLoader, EasingFunction, MouseButton, resolved } from 'osucad-framework';
 import { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 import { TimingPoint } from '../../../controlPoints/TimingPoint';
 import { EditorClock } from '../../EditorClock';
 import { Timeline } from '../../ui/timeline/Timeline';
+import { KeyframeShape } from './KeyframeShape';
+import { TimingScreenSelectionManager } from './TimingScreenSelectionManager';
 
-export class KeyframePiece extends CompositeDrawable {
+export class KeyframePiece extends KeyframeShape {
   constructor(
-    readonly blueprint: KeyframeBlueprint<ControlPoint>,
+    readonly blueprint: KeyframeSelectionBlueprint<ControlPoint>,
     options: DrawableOptions = {},
   ) {
     super();
 
     this.with(options);
   }
-
-  #body!: FastRoundedBox;
-
-  #outline!: FastRoundedBox;
-
-  #scaleContainer!: Container;
 
   readonly selected = new BindableBoolean(false);
 
@@ -50,58 +26,47 @@ export class KeyframePiece extends CompositeDrawable {
   }
 
   @dependencyLoader()
-  load() {
-    this.addInternal(
-      this.#scaleContainer = new Container({
-        relativeSizeAxes: Axes.Both,
-        anchor: Anchor.Center,
-        origin: Anchor.Center,
-        children: [
-          this.#outline = new FastRoundedBox({
-            relativeSizeAxes: Axes.Both,
-            cornerRadius: 2,
-            anchor: Anchor.Center,
-            origin: Anchor.Center,
-            rotation: Math.PI / 4,
-            alpha: 0.5,
-          }),
-          this.#body = new FastRoundedBox({
-            relativeSizeAxes: Axes.Both,
-            scale: 0.75,
-            cornerRadius: 2,
-            anchor: Anchor.Center,
-            origin: Anchor.Center,
-            rotation: Math.PI / 4,
-          }),
-        ],
-      }),
-    );
-
+  [Symbol('load')]() {
     this.selected.valueChanged.addListener(this.#updateColor, this);
+    this.keyframeColor.valueChanged.addListener(this.#updateColor, this);
     this.#updateColor();
   }
 
   #updateColor() {
     if (this.selected.value) {
-      this.#body.color = ColorUtils.lighten(this.keyframeColor, 0.5);
-      this.#outline.color = ColorUtils.lighten(this.keyframeColor, 1);
-      this.#outline.alpha = 1;
+      this.body.color = ColorUtils.lighten(this.keyframeColor.value, 0.5);
+      this.outline.color = ColorUtils.lighten(this.keyframeColor.value, 1);
+      this.outline.alpha = 1;
     }
     else {
-      this.#body.color = this.keyframeColor;
-      this.#outline.color = this.keyframeColor;
-      this.#outline.alpha = 0.5;
+      this.body.color = this.keyframeColor.value;
+      this.outline.color = this.keyframeColor.value;
+      this.outline.alpha = 0.5;
     }
   }
 
+  @resolved(TimingScreenSelectionManager)
+  protected selectionManager!: TimingScreenSelectionManager;
+
   override onClick(e: ClickEvent): boolean {
-    this.selected.value = true;
+    if (e.controlPressed)
+      this.selectionManager.toggleSelection(this.blueprint.controlPoint!);
+    else if (!this.selected.value)
+      this.selectionManager.setSelection(this.blueprint.controlPoint!);
+    return true;
+  }
+
+  override onDoubleClick(e: DoubleClickEvent): boolean {
+    this.selectionManager.setSelection(
+      ...this.controlPointInfo.getControlPointsAtTime(this.blueprint.controlPoint!.time),
+    );
+
     return true;
   }
 
   override onMouseDown(e: MouseDownEvent): boolean {
     if (e.button === MouseButton.Right) {
-      this.blueprint.controlPoint!.group?.remove(this.blueprint.controlPoint!);
+      this.controlPointInfo.remove(this.blueprint.controlPoint!);
       return true;
     }
 
@@ -109,17 +74,18 @@ export class KeyframePiece extends CompositeDrawable {
   }
 
   override onHover(e: HoverEvent): boolean {
-    this.#scaleContainer.scaleTo(1.2, 200, EasingFunction.OutExpo);
+    this.scaleContainer.scaleTo(1.2, 200, EasingFunction.OutExpo);
     return true;
   }
 
   override onHoverLost(e: HoverEvent) {
-    this.#scaleContainer.scaleTo(1, 200, EasingFunction.OutExpo);
+    this.scaleContainer.scaleTo(1, 200, EasingFunction.OutExpo);
   }
 
   override onDragStart(e: DragStartEvent): boolean {
-    if (this.blueprint.controlPoint! instanceof TimingPoint)
-      this.#scaleContainer.hide();
+    if (!this.selected.value)
+      this.selectionManager.setSelection(this.blueprint.controlPoint!);
+
     return true;
   }
 
@@ -139,12 +105,22 @@ export class KeyframePiece extends CompositeDrawable {
       time = this.controlPointInfo.snap(time, this.editorClock.beatSnapDivisor.value);
     }
 
-    this.blueprint.controlPoint!.time = time;
+    const snapTarget = this.getContainingInputManager()?.hoveredDrawables.find(it => it !== this && it instanceof KeyframePiece && !it.selected.value) as KeyframePiece | undefined;
+    if (snapTarget)
+      time = snapTarget.blueprint.controlPoint!.time;
+
+    const delta = time - this.blueprint.controlPoint!.time;
+
+    if (delta !== 0) {
+      for (const controlPoint of this.selectionManager.selectedObjects) {
+        controlPoint.time += delta;
+      }
+    }
 
     return true;
   }
 
   override onDragEnd(e: DragEndEvent) {
-    this.#scaleContainer.show();
+    this.scaleContainer.show();
   }
 }

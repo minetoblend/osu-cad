@@ -74,11 +74,21 @@ export class ProxyContainer extends Container {
     this.invalidate(Invalidation.Transform);
   }
 
+  override updateSubTreeTransforms(): boolean {
+    this.updateDrawNodeTransform();
+
+    for (const child of this.aliveInternalChildren) {
+      child.updateSubTreeTransforms();
+    }
+    return true;
+  }
+
   override updateDrawNodeTransform() {
     if (this.source.isDisposed)
       return;
 
-    const transform = this.#matrix.copyFrom(this.parent!.drawNode.worldTransform).invert().append(this.source.drawNode.worldTransform);
+    const transform = this.#matrix.copyFrom(this.parent!.drawNode.worldTransform).invert();
+    transform.append(this.source.drawNode.worldTransform);
 
     transform.decompose(this.drawNode);
   }

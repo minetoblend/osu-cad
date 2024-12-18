@@ -1,7 +1,8 @@
 import type { ColorSource } from 'pixi.js';
 import { Anchor, Axes, Box, dependencyLoader } from 'osucad-framework';
+import { TimingScreenTimelineLayer } from '../TimingScreenTimelineLayer';
 import { KiaiBlueprintContainer } from './KiaiBlueprintContainer';
-import { TimingScreenTimelineLayer } from './TimingScreenTimelineLayer';
+import { KiaiPlacementBlueprint } from './KiaiPlacementBlueprint';
 
 export class KiaiTimelineLayer extends TimingScreenTimelineLayer {
   constructor() {
@@ -14,13 +15,16 @@ export class KiaiTimelineLayer extends TimingScreenTimelineLayer {
 
   @dependencyLoader()
   [Symbol('load')]() {
-    this.add(new Box({
-      relativeSizeAxes: Axes.X,
-      height: 24,
-      alpha: 0.02,
-      anchor: Anchor.CenterLeft,
-      origin: Anchor.CenterLeft,
-    }));
-    this.add(new KiaiBlueprintContainer());
+    this.addAll(
+      new Box({
+        relativeSizeAxes: Axes.X,
+        height: 24,
+        alpha: 0.02,
+        anchor: Anchor.CenterLeft,
+        origin: Anchor.CenterLeft,
+      }),
+      new KiaiBlueprintContainer(),
+      new KiaiPlacementBlueprint(),
+    );
   }
 }

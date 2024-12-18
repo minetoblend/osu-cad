@@ -1,9 +1,9 @@
-import type { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
-import type { ControlPointList } from '../../../controlPoints/ControlPointList';
-import type { DifficultyPoint } from '../../../controlPoints/DifficultyPoint';
-import type { ControlPointLifetimeEntry } from '../../ui/timeline/ControlPointLifetimeEntry';
+import type { ControlPointInfo } from '../../../../controlPoints/ControlPointInfo';
+import type { ControlPointList } from '../../../../controlPoints/ControlPointList';
+import type { DifficultyPoint } from '../../../../controlPoints/DifficultyPoint';
+import type { ControlPointLifetimeEntry } from '../../../ui/timeline/ControlPointLifetimeEntry';
 import { Axes, dependencyLoader, DrawablePool } from 'osucad-framework';
-import { ControlPointBlueprintContainer } from '../../ui/timeline/ControlPointBlueprintContainer';
+import { ControlPointBlueprintContainer } from '../../../ui/timeline/ControlPointBlueprintContainer';
 import { SliderVelocitySelectionBlueprint } from './SliderVelocitySelectionBlueprint';
 
 export class SliderVelocityBlueprintContainer extends ControlPointBlueprintContainer<DifficultyPoint, SliderVelocitySelectionBlueprint> {

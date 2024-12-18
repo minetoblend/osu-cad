@@ -1,5 +1,5 @@
 import type { ControlPoint } from './ControlPoint';
-import { Action } from 'osucad-framework';
+import { Action, almostEquals } from 'osucad-framework';
 import { ControlPointList } from './ControlPointList';
 import { DifficultyPoint } from './DifficultyPoint';
 import { EffectPoint } from './EffectPoint';
@@ -19,6 +19,15 @@ export class ControlPointInfo {
   anyPointChanged = new Action<ControlPoint>();
 
   #idMap = new Map<string, ControlPoint>();
+
+  get controlPointLists(): ControlPointList<any>[] {
+    return [
+      this.timingPoints,
+      this.difficultyPoints,
+      this.effectPoints,
+      this.samplePoints,
+    ];
+  }
 
   add(controlPoint: ControlPoint, skipIfRedundant: boolean = false): boolean {
     const list = this.listFor(controlPoint);
@@ -100,5 +109,9 @@ export class ControlPointInfo {
 
   getById(id: string) {
     return this.#idMap.get(id);
+  }
+
+  getControlPointsAtTime(time: number): ControlPoint[] {
+    return this.controlPointLists.flatMap(list => list.filter(it => almostEquals(it.time, time, 1)));
   }
 }

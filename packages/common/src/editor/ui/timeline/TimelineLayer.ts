@@ -5,11 +5,13 @@ import {
   CompositeDrawable,
   Container,
   dependencyLoader,
+  provide,
   ProxyContainer,
   resolved,
 } from 'osucad-framework';
 import { LayeredTimeline } from './LayeredTimeline';
 
+@provide(TimelineLayer)
 export abstract class TimelineLayer extends Container {
   protected constructor(readonly title: string) {
     super();

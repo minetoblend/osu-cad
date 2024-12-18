@@ -27,6 +27,10 @@ export class ControlPointLifetimeEntry<T extends ControlPoint = ControlPoint> ex
     this.start = start;
 
     this.lifetimeEnd = Number.MAX_VALUE;
+
+    this.#bindEvents();
+
+    this.#refreshLifetimes();
   }
 
   #end: T | null = null;

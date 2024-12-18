@@ -30,6 +30,9 @@ export class EffectPoint extends ControlPoint implements Patchable<EffectPointPa
   }
 
   isRedundant(existing?: ControlPoint | undefined): boolean {
+    if (!existing && !this.kiaiMode)
+      return true;
+
     if (!existing)
       return false;
 

@@ -1,4 +1,5 @@
 export * from './ClickEvent';
+export * from './DoubleClickEvent';
 export * from './DragEndEvent';
 export * from './DragEvent';
 export * from './DragStartEvent';
@@ -14,7 +15,6 @@ export * from './KeyBindingScrollEvent';
 export * from './KeyDownEvent';
 export * from './KeyUpEvent';
 export * from './MouseDownEvent';
-
 export * from './MouseMoveEvent';
 export * from './MouseUpEvent';
 export * from './ScrollEvent';

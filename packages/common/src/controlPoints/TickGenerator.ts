@@ -44,13 +44,15 @@ export class TickGenerator {
           ((time - timingPoint.time) / timingPoint.beatLength) * 48,
         );
 
-        const isDownBeat = Math.abs(subTicks) % (48 * 4) === 0;
+        const tickLength = 12 * timingPoint.meter;
 
-        subTicks = mod(mod(subTicks, 48) + 48, 48);
+        const isDownBeat = Math.abs(subTicks) % (tickLength * 4) === 0;
+
+        subTicks = mod(mod(subTicks, tickLength) + tickLength, tickLength);
 
         let type = TickType.Full;
 
-        if (subTicks % 48 === 0) {
+        if (subTicks % tickLength === 0) {
           type = TickType.Full;
         }
         else if (subTicks % 24 === 0) {

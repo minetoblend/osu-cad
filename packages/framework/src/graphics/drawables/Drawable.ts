@@ -83,6 +83,7 @@ export interface DrawableOptions {
   depth?: number;
   clock?: IFrameBasedClock;
   processCustomClock?: boolean;
+  alwaysPresent?: boolean;
 }
 
 export const LOAD = Symbol('load');

@@ -1,8 +1,8 @@
-import type { ControlPointInfo, ControlPointList } from 'packages/common/src/controlPoints';
-import type { EffectPoint } from '../../../controlPoints/EffectPoint';
-import type { ControlPointLifetimeEntry } from '../../ui/timeline/ControlPointLifetimeEntry';
+import type { ControlPointInfo, ControlPointList } from 'packages/common/src/controlPoints/index';
+import type { EffectPoint } from '../../../../controlPoints/EffectPoint';
+import type { ControlPointLifetimeEntry } from '../../../ui/timeline/ControlPointLifetimeEntry';
 import { dependencyLoader, DrawablePool } from 'osucad-framework';
-import { ControlPointBlueprintContainer } from '../../ui/timeline/ControlPointBlueprintContainer';
+import { ControlPointBlueprintContainer } from '../../../ui/timeline/ControlPointBlueprintContainer';
 import { KiaiSelectionBlueprint } from './KiaiSelectionBlueprint';
 
 export class KiaiBlueprintContainer extends ControlPointBlueprintContainer<EffectPoint, KiaiSelectionBlueprint> {
