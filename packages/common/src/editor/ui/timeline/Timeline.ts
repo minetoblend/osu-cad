@@ -7,12 +7,22 @@ export class Timeline extends Container {
   @resolved(EditorClock)
   editorClock!: EditorClock;
 
+  #currentTime = new BindableNumber(0);
+
+  syncWithEditorClock = true;
+
   get currentTime() {
-    return this.editorClock.currentTime;
+    if (this.syncWithEditorClock)
+      return this.editorClock.currentTime;
+
+    return this.#currentTime.value;
   }
 
   set currentTime(value: number) {
-    this.editorClock.seek(value, false);
+    if (this.syncWithEditorClock)
+      this.editorClock.seek(value, false);
+    else
+      this.#currentTime.value = value;
   }
 
   readonly zoomBindable = new BindableNumber(1);
@@ -87,7 +97,9 @@ export class Timeline extends Container {
     this.zoom = oldZoom;
 
     this.zoomTo(newZoom, 0, EasingFunction.Default);
-    this.transformTo('currentTime', this.currentTime + deltaTime, 0, EasingFunction.Default);
+
+    if (!this.syncWithEditorClock)
+      this.transformTo('currentTime', this.currentTime + deltaTime, 0, EasingFunction.Default);
   }
 
   zoomIn(factor: number = 1, time: number = this.editorClock.currentTime) {
@@ -101,10 +113,27 @@ export class Timeline extends Container {
     this.zoom = oldZoom;
 
     this.zoomTo(zoom, 0, EasingFunction.Default);
-    this.transformTo('currentTime', this.currentTime + deltaTime, 0, EasingFunction.Default);
+
+    if (!this.syncWithEditorClock)
+      this.transformTo('currentTime', this.currentTime + deltaTime, 0, EasingFunction.Default);
   }
 
   zoomTo(zoom: number, duration: number, easing: EasingFunction) {
     return this.transformTo('zoom', zoom, duration, easing);
+  }
+
+  override update() {
+    super.update();
+
+    if (this.syncWithEditorClock) {
+      this.#currentTime.value = this.editorClock.currentTime;
+    }
+    else if (this.editorClock.isRunning || this.editorClock.isSeeking) {
+      if (this.editorClock.currentTimeAccurate > this.endTime)
+        this.currentTime = this.editorClock.currentTimeAccurate + this.visibleDuration / 2.5;
+
+      if (this.editorClock.currentTimeAccurate < this.startTime)
+        this.currentTime = this.editorClock.currentTimeAccurate - this.visibleDuration / 2.5;
+    }
   }
 }

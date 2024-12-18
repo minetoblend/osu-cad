@@ -126,7 +126,7 @@ export abstract class ControlPointBlueprintContainer<T extends ControlPoint, TDr
   editorClock!: EditorClock;
 
   protected override get currentTime(): number {
-    return this.editorClock.currentTime;
+    return this.timeline.currentTime;
   }
 
   override get pastLifetimeExtension() {

@@ -34,6 +34,7 @@ export class TimingScreen extends EditorScreen {
         color: 0x17171B,
       }),
       this.#timeline = new LayeredTimeline({
+        syncWithEditorClock: false,
         timelineChildren: [
           new TimelineBoundaryOverlay(),
           new TimingScreenTickContainer().with({

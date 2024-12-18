@@ -1,5 +1,6 @@
 import { Anchor, Axes, Box, CompositeDrawable, dependencyLoader, resolved } from 'osucad-framework';
 import { OsucadColors } from '../../../OsucadColors';
+import { EditorClock } from '../../EditorClock';
 import { Timeline } from './Timeline';
 
 export class CurrentTimeOverlay extends CompositeDrawable {
@@ -24,9 +25,12 @@ export class CurrentTimeOverlay extends CompositeDrawable {
   @resolved(Timeline)
   timeline!: Timeline;
 
+  @resolved(EditorClock)
+  editorClock!: EditorClock;
+
   override update() {
     super.update();
 
-    this.#overlay.x = this.timeline.timeToPosition(this.timeline.currentTime);
+    this.#overlay.x = this.timeline.timeToPosition(this.editorClock!.currentTime);
   }
 }

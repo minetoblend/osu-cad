@@ -1,6 +1,7 @@
-import type { DependencyContainer, ReadonlyDependencyContainer, ScreenTransitionEvent, ScrollEvent } from 'osucad-framework';
-import { asyncDependencyLoader, clamp } from 'osucad-framework';
+import type { DependencyContainer, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer, ScreenTransitionEvent, ScrollEvent } from 'osucad-framework';
+import { almostEquals, asyncDependencyLoader, clamp } from 'osucad-framework';
 import { OsucadScreen } from '../../../common/src/screens/OsucadScreen';
+import { EditorAction } from '../../../editor/src/editor/EditorAction';
 import { HitObjectList } from '../beatmap/HitObjectList';
 import { IBeatmap } from '../beatmap/IBeatmap';
 import { ControlPointInfo } from '../controlPoints/ControlPointInfo';
@@ -16,7 +17,7 @@ import { EditorScreenManager } from './screens/EditorScreenManager';
 import { SetupScreen } from './screens/setup/SetupScreen';
 import { TimingScreen } from './screens/timing/TimingScreen';
 
-export class Editor extends OsucadScreen {
+export class Editor extends OsucadScreen implements IKeyBindingHandler<EditorAction> {
   constructor(readonly editorBeatmap: EditorBeatmap) {
     super();
 
@@ -108,5 +109,62 @@ export class Editor extends OsucadScreen {
       = possibleSnapValues[
         clamp(index + change, 0, possibleSnapValues.length - 1)
       ];
+  }
+
+  readonly isKeyBindingHandler = true;
+
+  canHandleKeyBinding(binding: KeyBindingAction): boolean {
+    return binding instanceof EditorAction;
+  }
+
+  onKeyBindingPressed?(e: KeyBindingPressEvent<EditorAction>): boolean {
+    switch (e.pressed) {
+      case EditorAction.Play:
+        this.togglePlayback();
+        break;
+      case EditorAction.SeekToStart:
+        this.seekToStart();
+        break;
+      case EditorAction.SeekToEnd:
+        this.seekToEnd();
+        break;
+      case EditorAction.PlayFromStart:
+        this.playFromStart();
+        break;
+      default:
+        return false;
+    }
+
+    return true;
+  }
+
+  togglePlayback() {
+    if (this.#editorClock.isRunning)
+      this.#editorClock.stop();
+    else
+      this.#editorClock.start();
+  }
+
+  seekToStart() {
+    const firstObjectTime = this.beatmap.hitObjects.first?.startTime;
+
+    if (firstObjectTime === undefined || almostEquals(this.#editorClock.currentTimeAccurate, firstObjectTime))
+      this.#editorClock.seek(0);
+    else
+      this.#editorClock.seek(firstObjectTime);
+  }
+
+  seekToEnd() {
+    const lastObjectTime = this.beatmap.hitObjects.last?.endTime;
+
+    if (lastObjectTime === undefined || almostEquals(this.#editorClock.currentTimeAccurate, lastObjectTime))
+      this.#editorClock.seek(this.#editorClock.trackLength);
+    else
+      this.#editorClock.seek(lastObjectTime);
+  }
+
+  playFromStart() {
+    this.#editorClock.seek(0);
+    this.#editorClock.start();
   }
 }

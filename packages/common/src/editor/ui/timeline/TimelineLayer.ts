@@ -38,7 +38,7 @@ export abstract class TimelineLayer extends Container {
     return this.#content;
   }
 
-  #content!: Container;
+  readonly #content!: Container;
 
   #headerContainer!: Container;
 

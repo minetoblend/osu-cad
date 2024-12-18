@@ -136,8 +136,6 @@ export class EditorClock
       this.#frameTimeInfo.current = position;
     }
 
-    this.schedule(() => this.isSeeking = false);
-
     return this.track.seek(position - this.offset);
   }
 
@@ -170,6 +168,7 @@ export class EditorClock
 
       if (almostEquals(currentTime, this.#targetTime, 3)) {
         currentTime = this.#targetTime;
+        this.#lastSeekWasAnimated = false;
       }
 
       this.#frameTimeInfo = {

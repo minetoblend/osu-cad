@@ -17,6 +17,7 @@ export interface LayeredTimelineOptions extends DrawableOptions {
   layers?: TimelineLayer[];
   headerWidth?: number;
   timelineChildren?: Drawable[];
+  syncWithEditorClock?: boolean;
 }
 
 @provide(LayeredTimeline)
@@ -24,7 +25,7 @@ export class LayeredTimeline extends CompositeDrawable {
   readonly headerWidth = new BindableNumber(100).withMinValue(0);
 
   constructor(options: LayeredTimelineOptions = {}) {
-    const { layers, timelineChildren, ...rest } = options;
+    const { layers, timelineChildren, syncWithEditorClock, ...rest } = options;
     super();
 
     this.#layersFlow = new FillFlowContainer({
@@ -39,6 +40,9 @@ export class LayeredTimeline extends CompositeDrawable {
         ...timelineChildren ?? [],
       ],
     });
+
+    if (syncWithEditorClock !== undefined)
+      this.timeline.syncWithEditorClock = syncWithEditorClock;
 
     this.with(rest);
 

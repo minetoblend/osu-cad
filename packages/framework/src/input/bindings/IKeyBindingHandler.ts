@@ -6,13 +6,13 @@ import type { KeyBindingAction } from '../KeyBindingAction';
 export interface IKeyBindingHandler<T extends KeyBindingAction> {
   readonly isKeyBindingHandler: true;
 
-  canHandleKeyBinding: (binding: KeyBindingAction) => boolean;
+  canHandleKeyBinding(binding: KeyBindingAction): boolean;
 
-  onKeyBindingPressed?: (e: KeyBindingPressEvent<T>) => boolean;
+  onKeyBindingPressed?(e: KeyBindingPressEvent<T>): boolean;
 
-  onKeyBindingReleased?: (e: KeyBindingReleaseEvent<T>) => void;
+  onKeyBindingReleased?(e: KeyBindingReleaseEvent<T>): void;
 
-  onScrollKeyBinding?: (e: KeyBindingScrollEvent<T>) => boolean;
+  onScrollKeyBinding?(e: KeyBindingScrollEvent<T>): boolean;
 }
 
 export function isKeyBindingHandler<T extends KeyBindingAction>(obj: any, binding: T): obj is IKeyBindingHandler<T> {
