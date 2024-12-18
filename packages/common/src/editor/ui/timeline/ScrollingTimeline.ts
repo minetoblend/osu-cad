@@ -42,6 +42,6 @@ export class ScrollingTimeline extends Timeline {
     super.update();
 
     super.currentTime = this.sizeToDuration(this.#scrollContainer.current);
-    this.#scrollContainer.content.width = this.durationToSize(this.editorClock.trackLength);
+    this.#scrollContainer.content.width = this.durationToSize(this.editorClock.trackLength + this.visibleDuration);
   }
 }
