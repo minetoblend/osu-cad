@@ -1,4 +1,4 @@
-import type { DragEndEvent, DragEvent, DragStartEvent, HoverEvent, HoverLostEvent, InputManager, KeyDownEvent, KeyUpEvent, MouseDownEvent } from 'osucad-framework';
+import type { DragEndEvent, DragEvent, DragStartEvent, Drawable, HoverEvent, HoverLostEvent, InputManager, KeyDownEvent, KeyUpEvent, MouseDownEvent } from 'osucad-framework';
 import type { ColorSource } from 'pixi.js';
 import type { ControlPoint } from '../../../controlPoints/ControlPoint';
 import { Anchor, Axes, CompositeDrawable, dependencyLoader, Key, MouseButton, resolved } from 'osucad-framework';
@@ -7,7 +7,7 @@ import { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 import { EditorClock } from '../../EditorClock';
 import { LayeredTimeline } from '../../ui/timeline/LayeredTimeline';
 import { Timeline } from '../../ui/timeline/Timeline';
-import { KeyframeShape } from './KeyframeShape';
+import { DiamondShape } from './DiamondShape';
 import { TimingScreenSelectionBlueprint } from './TimingScreenSelectionBlueprint';
 
 export abstract class ControlPointPlacementBlueprint<T extends ControlPoint> extends CompositeDrawable {
@@ -18,7 +18,7 @@ export abstract class ControlPointPlacementBlueprint<T extends ControlPoint> ext
 
   protected abstract get layerColor(): ColorSource;
 
-  #previewKeyframe!: KeyframeShape;
+  #previewShape!: Drawable;
 
   protected get invertShiftBehavior() {
     return false;
@@ -26,14 +26,18 @@ export abstract class ControlPointPlacementBlueprint<T extends ControlPoint> ext
 
   @dependencyLoader()
   [Symbol('load')]() {
-    this.addInternal(this.#previewKeyframe = new KeyframeShape().with({
+    this.addInternal(this.#previewShape = this.createPreviewShape());
+
+    this.#updateVisibility();
+  }
+
+  protected createPreviewShape(): Drawable {
+    return new DiamondShape().with({
       size: 12,
       anchor: Anchor.CenterLeft,
       origin: Anchor.Center,
       color: this.layerColor,
-    }));
-
-    this.#updateVisibility();
+    });
   }
 
   #inputManager!: InputManager;
@@ -65,7 +69,7 @@ export abstract class ControlPointPlacementBlueprint<T extends ControlPoint> ext
   override update() {
     super.update();
 
-    this.#previewKeyframe.x = this.timeline.timeToPosition(
+    this.#previewShape.x = this.timeline.timeToPosition(
       this.timeAtMousePosition,
     );
   }
@@ -74,9 +78,9 @@ export abstract class ControlPointPlacementBlueprint<T extends ControlPoint> ext
 
   #updateVisibility() {
     if (this.isHovered && this.#ctrlPressed && !this.isDragged)
-      this.#previewKeyframe.alpha = 0.5;
+      this.#previewShape.alpha = 0.5;
     else
-      this.#previewKeyframe.alpha = 0;
+      this.#previewShape.alpha = 0;
   }
 
   override onKeyDown(e: KeyDownEvent): boolean {
@@ -98,7 +102,9 @@ export abstract class ControlPointPlacementBlueprint<T extends ControlPoint> ext
 
   protected abstract createInstance(): T;
 
-  protected onPlacementStart(controlPoint: T) {}
+  protected onPlacementStart(controlPoint: T) {
+    this.#previewShape.hide();
+  }
 
   protected onPlacementEnd(controlPoint: T) {
     const drawable = this.findClosestParentOfType(LayeredTimeline)

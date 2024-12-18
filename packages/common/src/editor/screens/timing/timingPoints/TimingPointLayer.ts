@@ -22,8 +22,7 @@ export class TimingPointLayer extends TimingScreenTimelineLayer {
     this.height = 100;
 
     this.add(new Box({
-      relativeSizeAxes: Axes.X,
-      height: 24,
+      relativeSizeAxes: Axes.Both,
       alpha: 0.02,
       anchor: Anchor.CenterLeft,
       origin: Anchor.CenterLeft,

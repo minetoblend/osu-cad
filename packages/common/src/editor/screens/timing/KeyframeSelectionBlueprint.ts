@@ -2,8 +2,9 @@ import type { Bindable } from 'osucad-framework';
 import type { ColorSource } from 'pixi.js';
 import type { ControlPoint } from '../../../controlPoints/ControlPoint';
 import type { ControlPointLifetimeEntry } from '../../ui/timeline/ControlPointLifetimeEntry';
+import type { KeyframePiece } from './KeyframePiece';
 import { Anchor, Axes, dependencyLoader, FillDirection, FillFlowContainer, Vec2 } from 'osucad-framework';
-import { KeyframePiece } from './KeyframePiece';
+import { DiamondKeyframePieceKeyframePiece } from './DiamondKeyframePiece';
 import { TimingScreenSelectionBlueprint } from './TimingScreenSelectionBlueprint';
 
 export abstract class KeyframeSelectionBlueprint<T extends ControlPoint> extends TimingScreenSelectionBlueprint<T> {
@@ -32,8 +33,6 @@ export abstract class KeyframeSelectionBlueprint<T extends ControlPoint> extends
   onInvalidated() {
   }
 
-  #keyframePiece!: KeyframePiece;
-
   readonly badgeContainer = new FillFlowContainer({
     autoSizeAxes: Axes.Both,
     direction: FillDirection.Vertical,
@@ -46,14 +45,15 @@ export abstract class KeyframeSelectionBlueprint<T extends ControlPoint> extends
   @dependencyLoader()
   [Symbol('load')]() {
     this.addAllInternal(
-      this.#keyframePiece = new KeyframePiece(this, {
-        size: 12,
-        anchor: Anchor.CenterLeft,
-        origin: Anchor.Center,
-      }),
+      this.createKeyframePiece(),
       this.badgeContainer,
     );
+  }
 
-    this.#keyframePiece.selected.bindTo(this.selected);
+  protected createKeyframePiece(): KeyframePiece {
+    return new DiamondKeyframePieceKeyframePiece(this, {
+      anchor: Anchor.CenterLeft,
+      origin: Anchor.Center,
+    });
   }
 }

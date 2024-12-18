@@ -1,15 +1,14 @@
-import type { ClickEvent, DoubleClickEvent, DragEndEvent, DragEvent, DragStartEvent, DrawableOptions, HoverEvent, MouseDownEvent } from 'osucad-framework';
+import type { ClickEvent, DoubleClickEvent, DragEvent, DragStartEvent, DrawableOptions, MouseDownEvent } from 'osucad-framework';
 import type { ControlPoint } from '../../../controlPoints/ControlPoint';
 import type { KeyframeSelectionBlueprint } from './KeyframeSelectionBlueprint';
-import { BindableBoolean, ColorUtils, dependencyLoader, EasingFunction, MouseButton, resolved } from 'osucad-framework';
+import { BindableBoolean, CompositeDrawable, dependencyLoader, MouseButton, resolved } from 'osucad-framework';
 import { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 import { TimingPoint } from '../../../controlPoints/TimingPoint';
 import { EditorClock } from '../../EditorClock';
 import { Timeline } from '../../ui/timeline/Timeline';
-import { KeyframeShape } from './KeyframeShape';
 import { TimingScreenSelectionManager } from './TimingScreenSelectionManager';
 
-export class KeyframePiece extends KeyframeShape {
+export class KeyframePiece extends CompositeDrawable {
   constructor(
     readonly blueprint: KeyframeSelectionBlueprint<ControlPoint>,
     options: DrawableOptions = {},
@@ -27,23 +26,18 @@ export class KeyframePiece extends KeyframeShape {
 
   @dependencyLoader()
   [Symbol('load')]() {
-    this.selected.valueChanged.addListener(this.#updateColor, this);
-    this.keyframeColor.valueChanged.addListener(this.#updateColor, this);
-    this.#updateColor();
+    this.selected.bindTo(this.blueprint.selected);
   }
 
-  #updateColor() {
-    if (this.selected.value) {
-      this.body.color = ColorUtils.lighten(this.keyframeColor.value, 0.5);
-      this.outline.color = ColorUtils.lighten(this.keyframeColor.value, 1);
-      this.outline.alpha = 1;
-    }
-    else {
-      this.body.color = this.keyframeColor.value;
-      this.outline.color = this.keyframeColor.value;
-      this.outline.alpha = 0.5;
-    }
+  protected override loadComplete() {
+    super.loadComplete();
+
+    this.selected.valueChanged.addListener(this.updateColors, this);
+    this.keyframeColor.valueChanged.addListener(this.updateColors, this);
+    this.updateColors();
   }
+
+  protected updateColors() {}
 
   @resolved(TimingScreenSelectionManager)
   protected selectionManager!: TimingScreenSelectionManager;
@@ -71,15 +65,6 @@ export class KeyframePiece extends KeyframeShape {
     }
 
     return false;
-  }
-
-  override onHover(e: HoverEvent): boolean {
-    this.scaleContainer.scaleTo(1.2, 200, EasingFunction.OutExpo);
-    return true;
-  }
-
-  override onHoverLost(e: HoverEvent) {
-    this.scaleContainer.scaleTo(1, 200, EasingFunction.OutExpo);
   }
 
   override onDragStart(e: DragStartEvent): boolean {
@@ -118,9 +103,5 @@ export class KeyframePiece extends KeyframeShape {
     }
 
     return true;
-  }
-
-  override onDragEnd(e: DragEndEvent) {
-    this.scaleContainer.show();
   }
 }
