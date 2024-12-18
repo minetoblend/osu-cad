@@ -43,10 +43,11 @@ export class TimingScreen extends EditorScreen {
         ],
         layers: this.createLayers(),
       }),
-      new ProxyContainer(this.#timeline.timeline).with({
-        child: new CurrentTimeOverlay(),
-      }),
     ];
+
+    this.#timeline.overlayContainer.add(new ProxyContainer(this.#timeline.timeline).with({
+      child: new CurrentTimeOverlay(),
+    }));
   }
 
   #timeline!: LayeredTimeline;

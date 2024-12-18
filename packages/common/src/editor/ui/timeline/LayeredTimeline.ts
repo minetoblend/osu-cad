@@ -1,16 +1,7 @@
 import type { DependencyContainer, Drawable, DrawableOptions, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { TimelineLayer } from './TimelineLayer';
-import {
-  Axes,
-  BindableNumber,
-  Box,
-  CompositeDrawable,
-  Container,
-  dependencyLoader,
-  FillDirection,
-  FillFlowContainer,
-  provide,
-} from 'osucad-framework';
+import { Axes, BindableNumber, Box, CompositeDrawable, Container, dependencyLoader, FillDirection, FillFlowContainer, provide } from 'osucad-framework';
+import { ScrollingTimeline } from './ScrollingTimeline';
 import { Timeline } from './Timeline';
 
 export interface LayeredTimelineOptions extends DrawableOptions {
@@ -34,7 +25,7 @@ export class LayeredTimeline extends CompositeDrawable {
       autoSizeAxes: Axes.Y,
     });
 
-    this.timeline = new Timeline({
+    this.timeline = new ScrollingTimeline({
       relativeSizeAxes: Axes.Both,
       children: [
         ...timelineChildren ?? [],
@@ -72,6 +63,10 @@ export class LayeredTimeline extends CompositeDrawable {
     return dependencies;
   }
 
+  readonly overlayContainer = new Container({
+    relativeSizeAxes: Axes.Both,
+  });
+
   @dependencyLoader()
   [Symbol('load')]() {
     this.relativeSizeAxes = Axes.Both;
@@ -82,6 +77,7 @@ export class LayeredTimeline extends CompositeDrawable {
         child: this.timeline,
       }),
       this.#layersFlow,
+      this.overlayContainer,
       this.#headerContainer = new Container({
         relativeSizeAxes: Axes.Y,
         children: [

@@ -128,12 +128,12 @@ export class Timeline extends Container {
     if (this.syncWithEditorClock) {
       this.#currentTime.value = this.editorClock.currentTime;
     }
-    else if (this.editorClock.isRunning || this.editorClock.isSeeking) {
+    else if (this.editorClock.isRunning || this.editorClock.targetTime !== this.editorClock.currentTime) {
       if (this.editorClock.currentTimeAccurate > this.endTime)
-        this.currentTime = this.editorClock.currentTimeAccurate + this.visibleDuration / 2.5;
+        this.currentTime = this.editorClock.currentTimeAccurate + this.visibleDuration / 2.1;
 
       if (this.editorClock.currentTimeAccurate < this.startTime)
-        this.currentTime = this.editorClock.currentTimeAccurate - this.visibleDuration / 2.5;
+        this.currentTime = this.editorClock.currentTimeAccurate - this.visibleDuration / 2.1;
     }
   }
 }
