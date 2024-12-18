@@ -56,7 +56,7 @@ export class TimelineBoundaryOverlay extends CompositeDrawable {
     }
     else {
       this.#endBoundaryOverlay.alpha = 1;
-      this.#endBoundaryOverlay.x = endTimeX;
+      this.#endBoundaryOverlay.width = this.drawWidth - endTimeX;
     }
   }
 }
