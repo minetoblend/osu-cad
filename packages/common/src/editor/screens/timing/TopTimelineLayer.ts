@@ -1,9 +1,6 @@
 import type { ColorSource } from 'pixi.js';
-import { Anchor, Axes, BindableBoolean, Box, dependencyLoader, FillDirection, FillFlowContainer, resolved, Vec2 } from 'osucad-framework';
-import { Toggle } from '../../../../../editor/src/userInterface/Toggle';
-import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
+import { Anchor, Axes, Box, dependencyLoader } from 'osucad-framework';
 import { BottomTimelineTickContainer } from '../../ui/timeline/BottomTimelineTickContainer';
-import { Timeline } from '../../ui/timeline/Timeline';
 import { TimelineLayer, TimelineLayerHeader } from '../../ui/timeline/TimelineLayer';
 
 export class TopTimelineLayer extends TimelineLayer {
@@ -38,8 +35,6 @@ class TopTimelineLayerHeader extends TimelineLayerHeader {
     super('', 0xFF0000);
   }
 
-  readonly #syncTimeline = new BindableBoolean();
-
   @dependencyLoader()
   [Symbol('load')]() {
     this.padding = { vertical: -1, left: -1 };
@@ -48,34 +43,6 @@ class TopTimelineLayerHeader extends TimelineLayerHeader {
         relativeSizeAxes: Axes.Both,
         color: 0x222228,
       }),
-      new FillFlowContainer({
-        direction: FillDirection.Horizontal,
-        autoSizeAxes: Axes.Both,
-        padding: 4,
-        spacing: new Vec2(4),
-        children: [
-          new OsucadSpriteText({
-            text: 'Sync time',
-            fontSize: 12,
-            anchor: Anchor.CenterLeft,
-            origin: Anchor.CenterLeft,
-          }),
-          new Toggle({
-            bindable: this.#syncTimeline,
-          }).with({
-            scale: 0.65,
-            anchor: Anchor.CenterLeft,
-            origin: Anchor.CenterLeft,
-          }),
-        ],
-      }),
-    );
-
-    this.#syncTimeline.addOnChangeListener(enabled =>
-      this.timeline.syncWithEditorClock = enabled.value,
     );
   }
-
-  @resolved(Timeline)
-  timeline!: Timeline;
 }
