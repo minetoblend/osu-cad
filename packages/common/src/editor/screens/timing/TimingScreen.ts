@@ -1,5 +1,5 @@
 import type { ClickEvent } from 'osucad-framework';
-import { Axes, Box, dependencyLoader, provide, ProxyContainer, resolved } from 'osucad-framework';
+import { Anchor, Axes, Box, Container, dependencyLoader, FillDirection, FillFlowContainer, provide, ProxyContainer, resolved } from 'osucad-framework';
 import { EditorBeatmap } from '../../EditorBeatmap';
 import { CurrentTimeOverlay } from '../../ui/timeline/CurrentTimeOverlay';
 import { LayeredTimeline } from '../../ui/timeline/LayeredTimeline';
@@ -7,6 +7,7 @@ import { TimelineBoundaryOverlay } from '../../ui/timeline/TimelineBoundaryOverl
 import { EditorScreen } from '../EditorScreen';
 import { editorScreen } from '../metadata';
 import { KiaiTimelineLayer } from './kiai/KiaiTimelineLayer';
+import { Metronome } from './Metronome';
 import { SliderVelocityTimelineLayer } from './sliderVelocity/SliderVelocityTimelineLayer';
 import { TimingPointLayer } from './timingPoints/TimingPointLayer';
 import { TimingScreenSelectionManager } from './TimingScreenSelectionManager';
@@ -29,19 +30,45 @@ export class TimingScreen extends EditorScreen {
   load() {
     this.internalChildren = [
       this.selectionManager,
-      new Box({
+      new Container({
         relativeSizeAxes: Axes.Both,
-        color: 0x17171B,
-      }),
-      this.#timeline = new LayeredTimeline({
-        syncWithEditorClock: false,
-        timelineChildren: [
-          new TimelineBoundaryOverlay(),
-          new TimingScreenTickContainer().with({
-            alpha: 0.25,
+        padding: { right: 300 },
+        children: [
+          new Box({
+            relativeSizeAxes: Axes.Both,
+            color: 0x17171B,
+          }),
+          this.#timeline = new LayeredTimeline({
+            syncWithEditorClock: false,
+            timelineChildren: [
+              new TimelineBoundaryOverlay(),
+              new TimingScreenTickContainer().with({
+                alpha: 0.25,
+              }),
+            ],
+            layers: this.createLayers(),
           }),
         ],
-        layers: this.createLayers(),
+      }),
+      new Container({
+        width: 300,
+        relativeSizeAxes: Axes.Y,
+        anchor: Anchor.TopRight,
+        origin: Anchor.TopRight,
+        children: [
+          new Box({
+            relativeSizeAxes: Axes.Both,
+            color: 0x222228,
+          }),
+          new FillFlowContainer({
+            direction: FillDirection.Vertical,
+            relativeSizeAxes: Axes.Both,
+            padding: 20,
+            children: [
+              new Metronome(),
+            ],
+          }),
+        ],
       }),
     ];
 
