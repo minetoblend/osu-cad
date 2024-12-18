@@ -68,9 +68,14 @@ export class KiaiPlacementBlueprint extends ControlPointPlacementBlueprint<Effec
   protected override onPlacementEnd(controlPoint: EffectPoint) {
     super.onPlacementEnd(controlPoint);
 
-    if (this.#startPoint) {
-      if (almostEquals(this.#startPoint.time, controlPoint.time, 1))
-        this.schedule(() => this.controlPointInfo.remove(controlPoint));
+    const startPoint = this.#startPoint;
+
+    if (startPoint) {
+      if (almostEquals(startPoint.time, controlPoint.time, 1)) {
+        this.schedule(() => {
+          this.controlPointInfo.remove(startPoint);
+        });
+      }
 
       this.#startPoint = undefined;
     }
