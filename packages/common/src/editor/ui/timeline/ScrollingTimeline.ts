@@ -28,8 +28,14 @@ export class ScrollingTimeline extends Timeline {
     return super.currentTime;
   }
 
-  override set currentTime(value: number) {
-    this.#scrollContainer.scrollTo(this.durationToSize(value), !this.editorClock.isRunning);
+  override set currentTime(time: number) {
+    super.currentTime = time;
+    this.#scrollContainer.scrollTo(this.durationToSize(time), false);
+  }
+
+  override seek(time: number, animated: boolean = true) {
+    super.seek(time, animated);
+    this.#scrollContainer.scrollTo(this.durationToSize(time), animated);
   }
 
   override update() {

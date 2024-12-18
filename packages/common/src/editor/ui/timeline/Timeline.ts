@@ -18,11 +18,18 @@ export class Timeline extends Container {
     return this.#currentTime.value;
   }
 
-  set currentTime(value: number) {
+  set currentTime(time: number) {
     if (this.syncWithEditorClock)
-      this.editorClock.seek(value, false);
+      this.editorClock.seek(time, false);
     else
-      this.#currentTime.value = value;
+      this.#currentTime.value = time;
+  }
+
+  seek(time: number, animated = true) {
+    if (this.syncWithEditorClock)
+      this.editorClock.seek(time, animated);
+    else
+      this.transformTo('currentTime', time, 150, EasingFunction.OutCubic);
   }
 
   readonly zoomBindable = new BindableNumber(1);
@@ -99,7 +106,7 @@ export class Timeline extends Container {
     this.zoomTo(newZoom, 0, EasingFunction.Default);
 
     if (!this.syncWithEditorClock)
-      this.transformTo('currentTime', this.currentTime + deltaTime, 0, EasingFunction.Default);
+      this.currentTime += deltaTime;
   }
 
   zoomIn(factor: number = 1, time: number = this.editorClock.currentTime) {
@@ -115,7 +122,7 @@ export class Timeline extends Container {
     this.zoomTo(zoom, 0, EasingFunction.Default);
 
     if (!this.syncWithEditorClock)
-      this.transformTo('currentTime', this.currentTime + deltaTime, 0, EasingFunction.Default);
+      this.currentTime += deltaTime;
   }
 
   zoomTo(zoom: number, duration: number, easing: EasingFunction) {

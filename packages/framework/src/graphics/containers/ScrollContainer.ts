@@ -321,7 +321,7 @@ export abstract class ScrollContainer<T extends Drawable = Drawable> extends Con
   }
 
   override onScroll(e: ScrollEvent): boolean {
-    if (this.content.aliveInternalChildren.length === 0)
+    if (this.content.aliveInternalChildren.length === 0 || e.altPressed || e.controlPressed)
       return false;
 
     if (
