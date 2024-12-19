@@ -11,6 +11,7 @@ import { Timeline } from '../../ui/timeline/Timeline';
 import { DiamondShape } from './DiamondShape';
 import { TimingScreenDependencies } from './TimingScreenDependencies';
 import { TimingScreenSelectionBlueprint } from './TimingScreenSelectionBlueprint';
+import { TimingScreenSelectionManager } from './TimingScreenSelectionManager';
 import { TimingScreenTool } from './TimingScreenTool';
 
 export abstract class ControlPointPlacementBlueprint<T extends ControlPoint> extends CompositeDrawable {
@@ -119,10 +120,14 @@ export abstract class ControlPointPlacementBlueprint<T extends ControlPoint> ext
 
   #activePlacement?: T;
 
+  @resolved(TimingScreenSelectionManager)
+  protected selectionManager!: TimingScreenSelectionManager;
+
   protected abstract createInstance(): T;
 
   protected onPlacementStart(controlPoint: T) {
     this.#previewShape.hide();
+    this.selectionManager.clear();
   }
 
   protected onPlacementEnd(controlPoint: T) {

@@ -78,6 +78,10 @@ export class TimingScreenSelectionManager extends Component implements IKeyBindi
       this.deselect(controlPoint);
   }
 
+  clear() {
+    this.setSelection();
+  }
+
   override dispose(isDisposing: boolean = true) {
     super.dispose(isDisposing);
 
