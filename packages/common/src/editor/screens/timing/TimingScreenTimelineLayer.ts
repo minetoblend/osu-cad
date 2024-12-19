@@ -27,7 +27,7 @@ export class TimingScreenTimelineLayerHeader extends TimelineLayerHeader {
       new Container({
         relativeSizeAxes: Axes.Y,
         width: 6,
-        padding: { horizontal: 2, vertical: 9 },
+        padding: { horizontal: 2, vertical: 7 },
         child: new FastRoundedBox({
           relativeSizeAxes: Axes.Both,
           color: this.layerColor,

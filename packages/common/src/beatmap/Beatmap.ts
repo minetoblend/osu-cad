@@ -35,8 +35,9 @@ export class Beatmap extends StaticCrdt implements IBeatmap {
     return 0;
   }
 
-  override get childObjects(): AbstractCrdt[] {
+  override get childObjects(): readonly AbstractCrdt<any>[] {
     return [
+      this.hitObjects,
       this.controlPoints,
     ];
   }

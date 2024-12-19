@@ -42,13 +42,13 @@ export class TimelineVelocityBadge extends CompositeDrawable {
   #text!: OsucadSpriteText;
 
   setup() {
-    if (this.slider.velocityOverride === null) {
+    if (this.slider.sliderVelocityOverride === null) {
       this.hide();
     }
     else {
       this.show();
 
-      const rounded = Math.round(this.slider.velocityOverride * 100) / 100;
+      const rounded = Math.round(this.slider.sliderVelocityOverride * 100) / 100;
 
       this.#text.text = `SV ${rounded.toFixed(2)}`;
     }

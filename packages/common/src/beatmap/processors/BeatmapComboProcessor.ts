@@ -79,7 +79,7 @@ export class BeatmapComboProcessor extends BeatmapProcessor {
   }
 
   #skinChanged() {
-    this.#skinComboColors = this.skin.getConfig(SkinConfig.ComboColors)?.value ?? [];
+    this.#skinComboColors = this.skin.getConfig(SkinConfig.ComboColors) ?? [];
     this.state.invalidate();
   }
 

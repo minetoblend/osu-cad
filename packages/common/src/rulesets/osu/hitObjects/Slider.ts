@@ -1,21 +1,13 @@
-import type {
-  ClassSerialDescriptorBuilder,
-  CompositeDecoder,
-  CompositeEncoder,
-} from '@osucad/serialization';
-import type { IVec2, ReadonlyBindable, ValueChangedEvent } from 'osucad-framework';
+import type { ClassSerialDescriptorBuilder, CompositeDecoder, CompositeEncoder } from '@osucad/serialization';
+import type { Bindable, IVec2, ReadonlyBindable, ValueChangedEvent } from 'osucad-framework';
 import type { BeatmapDifficultyInfo } from '../../../beatmap/BeatmapDifficultyInfo';
 import type { IPatchable } from '../../../commands/IPatchable';
 import type { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
+import type { IHasRepeats } from '../../../hitObjects/IHasRepeats';
+import type { IHasSliderVelocity } from '../../../hitObjects/IHasSliderVelocity';
 import type { HitSound } from '../../../hitsounds/HitSound';
 import type { SerializedSlider } from '../../../serialization/HitObjects';
-import {
-  Float32Serializer,
-  listSerialDescriptor,
-  ListSerializer,
-  NullableSerializer,
-  Uint16Serializer,
-} from '@osucad/serialization';
+import { Float32Serializer, listSerialDescriptor, ListSerializer, NullableSerializer, Uint16Serializer } from '@osucad/serialization';
 import { CachedValue, Vec2 } from 'osucad-framework';
 import { polymorphicHitObjectSerializers } from '../../../hitObjects/HitObject';
 import { HitObjectProperty } from '../../../hitObjects/HitObjectProperty';
@@ -35,7 +27,7 @@ import { SliderSelection } from './SliderSelection';
 import { SliderTailCircle } from './SliderTailCircle';
 import { SliderTick } from './SliderTick';
 
-export class Slider extends OsuHitObject implements IPatchable<SerializedSlider> {
+export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepeats, IPatchable<SerializedSlider> {
   constructor() {
     super();
 
@@ -58,17 +50,23 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
 
   tailCircle: SliderTailCircle | null = null;
 
-  #repeatCount = 0;
+  readonly hasRepeats = true;
+
+  #repeatCount = this.property('repeatCount', 0);
+
+  get repeatCountBindable() {
+    return this.#repeatCount.bindable;
+  }
 
   get repeatCount() {
-    return this.#repeatCount;
+    return this.#repeatCount.value;
   }
 
   set repeatCount(value: number) {
-    if (value === this.#repeatCount)
+    if (value === this.#repeatCount.value)
       return;
 
-    this.#repeatCount = value;
+    this.#repeatCount.value = value;
 
     this.ensureHitSoundsAreValid();
     this.requestApplyDefaults();
@@ -78,35 +76,37 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
     return this.repeatCount + 1;
   }
 
-  #velocity = new HitObjectProperty(this, 'velocity', 1);
+  readonly hasSliderVelocity = true;
+
+  #sliderVelocity = this.property('velocity', 1);
 
   get velocityBindable(): ReadonlyBindable<number> {
-    return this.#velocity.bindable;
+    return this.#sliderVelocity.bindable;
   }
 
-  public get velocity() {
-    return this.#velocity.value;
+  public get sliderVelocity() {
+    return this.#sliderVelocity.value;
   }
 
-  private set velocity(value: number) {
-    this.#velocity.value = Math.max(value, 0);
+  private set sliderVelocity(value: number) {
+    this.#sliderVelocity.value = Math.max(value, 0);
   }
 
-  #velocityOverride = new HitObjectProperty<number | null>(this, 'velocityOverride', null);
+  #sliderVelocityOverride = this.property<number | null>('sliderVelocityOverride', null);
 
-  get velocityOverrideBindable(): ReadonlyBindable<number | null> {
-    return this.#velocityOverride.bindable;
+  get sliderVelocityOverrideBindable(): Bindable<number | null> {
+    return this.#sliderVelocityOverride.bindable;
   }
 
-  get velocityOverride() {
-    return this.#velocityOverride.value;
+  get sliderVelocityOverride() {
+    return this.#sliderVelocityOverride.value;
   }
 
-  set velocityOverride(value: number | null) {
-    if (value === this.velocityOverride)
+  set sliderVelocityOverride(value: number | null) {
+    if (value === this.sliderVelocityOverride)
       return;
 
-    this.#velocityOverride.value = value;
+    this.#sliderVelocityOverride.value = value;
 
     this.#computeVelocity();
   }
@@ -120,14 +120,14 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
   #controlPointVelocity = 1;
 
   #computeVelocity() {
-    if (this.velocityOverride !== null)
-      this.velocity = this.#baseVelocity * this.velocityOverride;
+    if (this.sliderVelocityOverride !== null)
+      this.sliderVelocity = this.#baseVelocity * this.sliderVelocityOverride;
     else
-      this.velocity = this.#baseVelocity * this.#controlPointVelocity;
+      this.sliderVelocity = this.#baseVelocity * this.#controlPointVelocity;
   }
 
   get spanDuration(): number {
-    return this.expectedDistance / this.velocity;
+    return this.expectedDistance / this.sliderVelocity;
   }
 
   override get duration(): number {
@@ -175,7 +175,7 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
 
     this.#computeVelocity();
 
-    const scoringDistance = this.velocity * timingPoint.beatLength;
+    const scoringDistance = this.sliderVelocity * timingPoint.beatLength;
 
     this.#tickDistance = this.generateTicks ? (scoringDistance / difficulty.sliderTickRate * this.tickDistanceMultiplier) : Infinity;
 
@@ -327,7 +327,7 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
     const sliderEvents = SliderEventGenerator.generate(
       this.startTime,
       this.spanDuration,
-      this.velocity,
+      this.sliderVelocity,
       this.tickDistance,
       this.path.expectedDistance,
       this.spanCount,
@@ -381,7 +381,7 @@ export class Slider extends OsuHitObject implements IPatchable<SerializedSlider>
     if (patch.repeatCount !== undefined)
       this.repeatCount = patch.repeatCount;
     if (patch.velocityOverride !== undefined)
-      this.velocityOverride = patch.velocityOverride;
+      this.sliderVelocityOverride = patch.velocityOverride;
     if (patch.controlPoints !== undefined)
       this.controlPoints = patch.controlPoints.map(p => new PathPoint(Vec2.from(p.position), p.type));
     if (patch.expectedDistance !== undefined)
@@ -502,7 +502,7 @@ export class SliderSerializer extends OsuHitObjectSerializer<Slider> {
     super.serializeProperties(encoder, object);
     encoder.encodeUint16Element(this.descriptor, 5, object.repeatCount);
 
-    encoder.encodeNullableSerializableElement(this.descriptor, 6, new NullableSerializer(Float32Serializer), object.velocityOverride);
+    encoder.encodeNullableSerializableElement(this.descriptor, 6, new NullableSerializer(Float32Serializer), object.sliderVelocityOverride);
 
     encoder.encodeFloat32Element(this.descriptor, 7, object.expectedDistance);
 
@@ -515,7 +515,7 @@ export class SliderSerializer extends OsuHitObjectSerializer<Slider> {
     super.deserializeProperties(decoder, object);
 
     object.repeatCount = decoder.decodeUint16Element(this.descriptor, 5);
-    object.velocityOverride = decoder.decodeNullableSerializableElement(this.descriptor, 6, Float32Serializer);
+    object.sliderVelocityOverride = decoder.decodeNullableSerializableElement(this.descriptor, 6, Float32Serializer);
     object.expectedDistance = decoder.decodeFloat32Element(this.descriptor, 7);
     object.controlPoints = decoder.decodeSerializableElement(this.descriptor, 8, new ListSerializer(new PathPointSerializer()));
     object.hitSounds = decoder.decodeSerializableElement(this.descriptor, 9, new ListSerializer(HitSoundSerializer.instance));

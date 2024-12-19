@@ -74,7 +74,7 @@ export function serializeSlider(slider: Slider): SerializedSlider {
     ...serializeBase(slider),
     type: 'slider',
     repeatCount: slider.repeatCount,
-    velocityOverride: slider.velocityOverride,
+    velocityOverride: slider.sliderVelocityOverride,
     expectedDistance: slider.expectedDistance,
     controlPoints: slider.path.controlPoints.map(serializePathPoint),
     hitSounds: slider.hitSounds.map(serializeHitSound),
@@ -135,7 +135,7 @@ export function deserializeSlider(slider: SerializedSlider): Slider {
   obj.comboOffset = slider.comboOffset;
   obj.hitSound = deserializeHitSound(slider.hitSound);
   obj.repeatCount = slider.repeatCount;
-  obj.velocityOverride = slider.velocityOverride;
+  obj.sliderVelocityOverride = slider.velocityOverride;
   obj.path.expectedDistance = slider.expectedDistance;
   obj.path.controlPoints = slider.controlPoints.map(deserializePathPoint);
   obj.ensureHitSoundsAreValid();

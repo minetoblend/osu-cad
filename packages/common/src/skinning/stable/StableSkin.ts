@@ -3,21 +3,12 @@ import type { Color, Texture } from 'pixi.js';
 import type { IHasComboInformation } from '../../hitObjects/IHasComboInformation';
 import type { IResourcesProvider } from '../../io/IResourcesProvider';
 import type { IHasComboColors } from '../IHasComboColors';
+import type { SkinConfigurationLookup } from '../SkinConfigurationLookup';
 import type { SkinInfo } from '../SkinInfo';
-import { Bindable } from 'osucad-framework';
 import { Skin } from '../Skin';
+import { SkinComboColorLookup } from '../SkinComboColorLookup';
 
 export class StableSkin extends Skin {
-  getComboColor(
-    source: IHasComboColors,
-    colorIndex: number,
-    combo: IHasComboInformation,
-  ): Bindable<Color> | null {
-    const color = source.comboColors ? source.comboColors[colorIndex % source.comboColors.length] : null;
-
-    return color ? new Bindable(color) : null;
-  }
-
   constructor(info: SkinInfo, resources: IResourcesProvider, fallbackStore?: IResourceStore<ArrayBuffer>, configurationFilename?: string) {
     super(info, resources, fallbackStore, configurationFilename);
   }
@@ -181,5 +172,20 @@ export class StableSkin extends Skin {
       texture = await this.textures?.load(componentName) ?? null;
 
     return texture;
+  }
+
+  override getConfig<T>(lookup: SkinConfigurationLookup<T>): T | null;
+
+  override getConfig<T>(lookup: SkinConfigurationLookup<any>): any | null {
+    if (lookup instanceof SkinComboColorLookup) {
+      return this.getComboColor(this.configuration, lookup.colorIndex, lookup.combo);
+    }
+
+    return super.getConfig(lookup);
+  }
+
+  getComboColor(source: IHasComboColors, colorIndex: number, combo: IHasComboInformation): Color | null {
+    const color = source.comboColors?.[colorIndex % source.comboColors.length];
+    return color ?? null;
   }
 }

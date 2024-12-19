@@ -107,10 +107,10 @@ export class SkinManager extends Component implements ISkinSource {
     this.sourceChanged.emit();
   }
 
-  getConfig<T>(key: SkinConfig<T>): Bindable<T> | null {
+  getConfig<T>(key: SkinConfig<T>): T | null {
     for (const source of this.#activeSources) {
       const result = source.getConfig(key);
-      if (result)
+      if (result !== null)
         return result;
     }
 

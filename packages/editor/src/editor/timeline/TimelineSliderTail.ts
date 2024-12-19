@@ -88,7 +88,7 @@ export class TimelineSliderTail extends TimelineElement {
       const targetDuration = endTime - this.hitObject.startTime;
 
       const velocityOverride
-        = ((this.hitObject.velocity / this.hitObject.baseVelocity)
+        = ((this.hitObject.sliderVelocity / this.hitObject.baseVelocity)
           * this.hitObject.duration)
           / targetDuration;
 

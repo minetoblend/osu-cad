@@ -99,6 +99,10 @@ export class ControlPointInfo extends AbstractCrdt<ControlPointMutation> {
     this.attachChild(controlPoint);
     this.added.emit(controlPoint);
 
+    this.anyPointChanged.emit(controlPoint);
+
+    controlPoint.changed.addListener(this.anyPointChanged.emit, this.anyPointChanged);
+
     return true;
   }
 
@@ -122,6 +126,10 @@ export class ControlPointInfo extends AbstractCrdt<ControlPointMutation> {
       controlPoint.detach();
       this.listFor(controlPoint)?.remove(controlPoint);
       this.removed.emit(controlPoint);
+
+      controlPoint.changed.removeListener(this.anyPointChanged.emit, this.anyPointChanged);
+
+      this.anyPointChanged.emit(controlPoint);
 
       return true;
     }

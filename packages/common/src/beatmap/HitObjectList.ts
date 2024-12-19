@@ -1,17 +1,15 @@
 import type { Bindable } from 'osucad-framework';
 import type { ControlPoint } from '../controlPoints/ControlPoint';
 import type { Beatmap } from './Beatmap';
-import { ObservableSortedList } from 'osucad-framework';
+import { SortedListCrdt } from '../crdt/SortedListCrdt';
 import { HitObject } from '../hitObjects/HitObject';
 
-export class HitObjectList extends ObservableSortedList<HitObject> {
+export class HitObjectList extends SortedListCrdt<HitObject> {
   applyDefaultsImmediately = true;
 
   constructor(readonly beatmap: Beatmap) {
     super(HitObject.COMPARER);
   }
-
-  #idMap = new Map<string, HitObject>();
 
   #needsDefaultsApplied = new Set<HitObject>();
 
@@ -19,8 +17,6 @@ export class HitObjectList extends ObservableSortedList<HitObject> {
 
   override onAdded(item: HitObject) {
     super.onAdded(item);
-
-    this.#idMap.set(item.id, item);
 
     item.needsDefaultsApplied.addListener(this.onApplyDefaultsRequested, this);
 
@@ -38,8 +34,6 @@ export class HitObjectList extends ObservableSortedList<HitObject> {
   override onRemoved(item: HitObject) {
     super.onRemoved(item);
 
-    this.#idMap.delete(item.id);
-
     const startTime = this.#startTimeMap.get(item);
     if (startTime) {
       startTime.unbindAll();
@@ -47,10 +41,6 @@ export class HitObjectList extends ObservableSortedList<HitObject> {
     }
 
     item.needsDefaultsApplied.removeListener(this.onApplyDefaultsRequested);
-  }
-
-  getById(id: string) {
-    return this.#idMap.get(id);
   }
 
   protected applyDefaultsToAll() {

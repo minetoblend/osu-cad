@@ -1,8 +1,15 @@
-import type { CompositeDecoder, CompositeEncoder } from '@osucad/serialization';
+import type {
+  ClassSerialDescriptorBuilder,
+  CompositeDecoder,
+  CompositeEncoder,
+} from '@osucad/serialization';
 import type { IPatchable } from '../../../commands/IPatchable';
 import type { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
+import type { IHasDuration } from '../../../hitObjects/IHasDuration';
 import type { SerializedSpinner } from '../../../serialization/HitObjects';
-import { Float64Serializer } from '@osucad/serialization';
+import {
+  Float64Serializer,
+} from '@osucad/serialization';
 import { Vec2 } from 'osucad-framework';
 import { polymorphicHitObjectSerializers } from '../../../hitObjects/HitObject';
 import { HitSample } from '../../../hitsounds/HitSample';
@@ -10,15 +17,21 @@ import { SampleSet } from '../../../hitsounds/SampleSet';
 import { SampleType } from '../../../hitsounds/SampleType';
 import { OsuHitObject, OsuHitObjectSerializer } from './OsuHitObject';
 
-export class Spinner extends OsuHitObject implements IPatchable<SerializedSpinner> {
-  #duration = 0;
+export class Spinner extends OsuHitObject implements IHasDuration, IPatchable<SerializedSpinner> {
+  readonly hasDuration = true;
+
+  #duration = this.property('duration', 0);
+
+  get durationBindable() {
+    return this.#duration.bindable;
+  }
 
   override get duration() {
-    return this.#duration;
+    return this.#duration.value;
   }
 
   override set duration(value: number) {
-    this.#duration = value;
+    this.#duration.value = value;
   }
 
   override get endTime() {
@@ -81,9 +94,12 @@ export class Spinner extends OsuHitObject implements IPatchable<SerializedSpinne
 
 export class SpinnerSerializer extends OsuHitObjectSerializer<Spinner> {
   constructor() {
-    super('Spinner', {
-      duration: Float64Serializer.descriptor,
-    });
+    super('Spinner');
+  }
+
+  protected override buildDescriptor(builder: ClassSerialDescriptorBuilder) {
+    super.buildDescriptor(builder);
+    builder.element('duration', Float64Serializer.descriptor, true);
   }
 
   protected override createInstance(): Spinner {

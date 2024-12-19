@@ -5,7 +5,7 @@ import { TimingScreenTimelineLayer } from '../TimingScreenTimelineLayer';
 
 export class HitObjectTimelineLayer extends TimingScreenTimelineLayer {
   constructor() {
-    super('HitObjects');
+    super('Hitobjects');
   }
 
   override get layerColor(): ColorSource {

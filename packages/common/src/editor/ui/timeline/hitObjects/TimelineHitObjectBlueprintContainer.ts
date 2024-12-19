@@ -1,6 +1,5 @@
-import type { Bindable } from 'osucad-framework';
 import type { HitObject } from '../../../../hitObjects/HitObject';
-import { Axes, dependencyLoader, DrawablePool, resolved } from 'osucad-framework';
+import { Axes, Bindable, dependencyLoader, DrawablePool, LoadState, resolved } from 'osucad-framework';
 import { HitObjectList } from '../../../../beatmap/HitObjectList';
 import { HitObjectLifetimeEntry } from '../../../../hitObjects/drawables/HitObjectLifetimeEntry';
 import { TimelineBlueprintContainer } from '../TimelineBlueprintContainer';
@@ -13,7 +12,7 @@ export class TimelineHitObjectBlueprintContainer extends TimelineBlueprintContai
     this.relativeSizeAxes = Axes.Both;
   }
 
-  #startTimeMap = new Map<HitObject, Bindable<number>>();
+  #startTimeMap = new Map<TimelineHitObjectBlueprint, Bindable<number>>();
   #entryMap = new Map<HitObject, HitObjectLifetimeEntry>();
 
   @resolved(HitObjectList)
@@ -34,10 +33,6 @@ export class TimelineHitObjectBlueprintContainer extends TimelineBlueprintContai
 
   addHitObject(hitObject: HitObject) {
     this.#addEntry(new HitObjectLifetimeEntry(hitObject));
-
-    const startTimeBindable = hitObject.startTimeBindable.getBoundCopy();
-    startTimeBindable.valueChanged.addListener(() => this.#onStartTimeChanged(hitObject));
-    this.#startTimeMap.set(hitObject, startTimeBindable);
   }
 
   #addEntry(entry: HitObjectLifetimeEntry) {
@@ -52,11 +47,6 @@ export class TimelineHitObjectBlueprintContainer extends TimelineBlueprintContai
 
     this.#removeEntry(entry);
 
-    const startTimeBindable = this.#startTimeMap.get(hitObject);
-    this.#startTimeMap.delete(hitObject);
-
-    startTimeBindable?.unbindAll();
-
     return true;
   }
 
@@ -65,11 +55,41 @@ export class TimelineHitObjectBlueprintContainer extends TimelineBlueprintContai
     this.removeEntry(entry);
   }
 
-  #onStartTimeChanged(hitObject: HitObject) {
-  }
-
   override getDrawable(entry: HitObjectLifetimeEntry): TimelineHitObjectBlueprint {
     return this.#pool.get(it => it.entry = entry);
+  }
+
+  protected override addDrawable(entry: HitObjectLifetimeEntry, drawable: TimelineHitObjectBlueprint) {
+    this.#bindStartTime(drawable);
+    super.addDrawable(entry, drawable);
+  }
+
+  #bindStartTime(drawable: TimelineHitObjectBlueprint) {
+    const bindable = new Bindable(0);
+    bindable.bindTo(drawable.startTimeBindable);
+    bindable.addOnChangeListener(() => {
+      if (this.loadState >= LoadState.Ready) {
+        if (drawable.parent)
+          drawable.parent.changeInternalChildDepth(drawable, this.getDrawableDepth(drawable));
+        else
+          drawable.depth = this.getDrawableDepth(drawable);
+      }
+    }, { immediate: true });
+    this.#startTimeMap.set(drawable, bindable);
+  }
+
+  getDrawableDepth(drawable: TimelineHitObjectBlueprint) {
+    return drawable.startTimeBindable.value;
+  }
+
+  protected override removeDrawable(entry: HitObjectLifetimeEntry, drawable: TimelineHitObjectBlueprint) {
+    super.removeDrawable(entry, drawable);
+    this.#unbindStartTime(drawable);
+  }
+
+  #unbindStartTime(drawable: TimelineHitObjectBlueprint) {
+    this.#startTimeMap.get(drawable)?.unbindAll();
+    this.#startTimeMap.delete(drawable);
   }
 
   override dispose(isDisposing: boolean = true) {

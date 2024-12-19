@@ -4,6 +4,7 @@ import type { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 import type { HitWindows } from '../../../hitObjects/HitWindows';
 import type { IHasComboInformation } from '../../../hitObjects/IHasComboInformation';
 import type { SerializedOsuHitObject } from '../../../serialization/HitObjects';
+import type { ISkin } from '../../../skinning';
 import type { HitCircle } from './HitCircle';
 import type { Slider } from './Slider';
 import type { Spinner } from './Spinner';
@@ -13,6 +14,7 @@ import { Color } from 'pixi.js';
 import { BeatmapDifficultyInfo } from '../../../beatmap/BeatmapDifficultyInfo';
 import { HitObject, HitObjectSerializer } from '../../../hitObjects/HitObject';
 import { HitObjectProperty } from '../../../hitObjects/HitObjectProperty';
+import { getSkinComboColor } from '../../../hitObjects/IHasComboInformation';
 import { HitSample } from '../../../hitsounds/HitSample';
 import { HitSound, HitSoundSerializer } from '../../../hitsounds/HitSound';
 import { SampleSet } from '../../../hitsounds/SampleSet';
@@ -33,7 +35,7 @@ export abstract class OsuHitObject extends HitObject implements IHasComboInforma
 
   static readonly preempt_max = 1800;
 
-  #position = new HitObjectProperty(this, 'position', new Vec2(0, 0));
+  #position = this.property('position', new Vec2(0, 0));
 
   get positionBindable() {
     return this.#position.bindable;
@@ -107,7 +109,7 @@ export abstract class OsuHitObject extends HitObject implements IHasComboInforma
 
   readonly hasComboInformation = true;
 
-  #newCombo = new HitObjectProperty(this, 'newCombo', false);
+  #newCombo = this.property('newCombo', false);
 
   get newComboBindable() {
     return this.#newCombo.bindable;
@@ -121,7 +123,7 @@ export abstract class OsuHitObject extends HitObject implements IHasComboInforma
     this.#newCombo.value = value;
   }
 
-  #comboOffset = new HitObjectProperty(this, 'comboOffset', 0);
+  #comboOffset = this.property('comboOffset', 0);
 
   get comboOffsetBindable() {
     return this.#comboOffset.bindable;
@@ -177,7 +179,7 @@ export abstract class OsuHitObject extends HitObject implements IHasComboInforma
     return this.#comboColor.value;
   }
 
-  #hitSound = new HitObjectProperty(this, 'hitSound', HitSound.Default);
+  #hitSound = this.property('hitSound', HitSound.Default);
 
   get hitSoundBindable() {
     return this.#hitSound.bindable;
@@ -295,6 +297,10 @@ export abstract class OsuHitObject extends HitObject implements IHasComboInforma
 
   protected override createHitWindows(): HitWindows {
     return new OsuHitWindows();
+  }
+
+  getComboColor(skin: ISkin): Color {
+    return getSkinComboColor(this, skin);
   }
 
   lazyEndPosition: Vec2 | null = null;

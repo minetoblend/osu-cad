@@ -146,11 +146,11 @@ export abstract class DrawableSliderShapeTool<T extends SliderShape> extends Dra
   updatePath() {
     const points = this.shape.createPathPoints();
 
-    this.hitObject.velocityOverride = null;
+    this.hitObject.sliderVelocityOverride = null;
 
     this.sliderUtils.setPath(this.hitObject, points, false);
 
-    let velocity = (this.hitObject.velocity / this.hitObject.baseVelocity);
+    let velocity = (this.hitObject.sliderVelocity / this.hitObject.baseVelocity);
 
     if (this.hitObject.path.expectedDistance > 0) {
       velocity *= this.hitObject.path.calculatedDistance / this.hitObject.path.expectedDistance;

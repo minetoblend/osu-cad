@@ -2,15 +2,15 @@ import type { ClassSerialDescriptorBuilder, CompositeDecoder, CompositeEncoder, 
 import type { IVec2, ValueChangedEvent } from 'osucad-framework';
 import type { BeatmapDifficultyInfo } from '../beatmap/BeatmapDifficultyInfo';
 import type { ControlPointInfo } from '../controlPoints/ControlPointInfo';
+import type { Property } from '../crdt/Property';
 import type { Constructor } from '../utils/Constructor';
 import { buildClassSerialDescriptor, Float32Serializer, SealedClassSerializer } from '@osucad/serialization';
 import { Action, Comparer, Lazy, SortedList } from 'osucad-framework';
-import { objectId } from '../utils/objectId';
-import { HitObjectProperty } from './HitObjectProperty';
+import { ObjectCrdt } from '../crdt/ObjectCrdt';
 import { HitWindows } from './HitWindows';
 import { hasComboInformation } from './IHasComboInformation';
 
-export abstract class HitObject {
+export abstract class HitObject extends ObjectCrdt {
   static readonly control_point_leniency = 1;
 
   static readonly COMPARER = new class extends Comparer<HitObject> {
@@ -26,6 +26,10 @@ export abstract class HitObject {
   }
 
   constructor() {
+    super();
+
+    this.#startTime = this.property('startTime', 0);
+
     this.startTimeBindable.valueChanged.addListener(this.requestApplyDefaults, this);
   }
 
@@ -33,13 +37,11 @@ export abstract class HitObject {
 
   timeFadeIn = 400;
 
-  id = objectId();
-
   synthetic = false;
 
   readonly defaultsApplied = new Action<HitObject>();
 
-  readonly #startTime = new HitObjectProperty(this, 'startTime', 0);
+  readonly #startTime: Property<number>;
 
   get startTimeBindable() {
     return this.#startTime.bindable;

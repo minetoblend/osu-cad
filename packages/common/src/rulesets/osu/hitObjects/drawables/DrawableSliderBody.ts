@@ -205,8 +205,8 @@ export class DrawableSliderBody extends Drawable {
   borderColor = new Bindable<Color | null>(null);
 
   #skinChanged() {
-    this.sliderTrackOverride.value = this.skin.getConfig(SkinConfig.SliderTrackOverride)?.value ?? null;
-    this.borderColor.value = this.skin.getConfig(SkinConfig.SliderBorder)?.value ?? null;
+    this.sliderTrackOverride.value = this.skin.getConfig(SkinConfig.SliderTrackOverride);
+    this.borderColor.value = this.skin.getConfig(SkinConfig.SliderBorder);
 
     this.#updateBorderColor();
   }

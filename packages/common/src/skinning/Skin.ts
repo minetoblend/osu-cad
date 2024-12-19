@@ -4,8 +4,9 @@ import type { HitSample } from '../hitsounds/HitSample';
 import type { IResourcesProvider } from '../io/IResourcesProvider';
 import type { ISkin } from './ISkin';
 import type { ISkinComponentLookup } from './ISkinComponentLookup';
+import type { SkinConfigurationLookup } from './SkinConfigurationLookup';
 import type { SkinInfo } from './SkinInfo';
-import { Bindable, DrawableSprite, ResourceStore } from 'osucad-framework';
+import { DrawableSprite, ResourceStore } from 'osucad-framework';
 import { SkinConfig } from './SkinConfig';
 import { SkinConfiguration } from './SkinConfiguration';
 import { SkinnableTextureAnimation } from './SkinnableTextureAnimation';
@@ -118,8 +119,8 @@ export abstract class Skin implements IDisposable, ISkin {
     if (applyConfigFrameRate) {
       const iniRate = this.getConfig(SkinConfig.AnimationFramerate);
 
-      if (iniRate && iniRate?.value > 0)
-        return 1000 / iniRate.value;
+      if (iniRate && iniRate > 0)
+        return 1000 / iniRate;
 
       return 1000 / textures.length;
     }
@@ -162,26 +163,26 @@ export abstract class Skin implements IDisposable, ISkin {
     return `${this.constructor.name} { name: ${this.name} }`;
   }
 
-  getConfig<T>(key: SkinConfig<T>): Bindable<T> | null;
+  getConfig<T>(key: SkinConfigurationLookup<T>): T | null;
 
-  getConfig<T>(key: SkinConfig<T>): any {
-    switch (key) {
+  getConfig<T>(lookup: SkinConfigurationLookup<any>): any {
+    switch (lookup) {
       case SkinConfig.ComboColors:
-        return new Bindable(this.configuration.comboColors);
+        return this.configuration.comboColors;
 
       case SkinConfig.SliderTrackOverride:
         if (this.configuration.customColors.has('SliderTrackOverride'))
-          return new Bindable(this.configuration.customColors.get('SliderTrackOverride')!);
+          return this.configuration.customColors.get('SliderTrackOverride')!;
         break;
 
       case SkinConfig.SliderBorder:
         if (this.configuration.customColors.has('SliderBorder'))
-          return new Bindable(this.configuration.customColors.get('SliderBorder')!);
+          return this.configuration.customColors.get('SliderBorder')!;
         break;
 
       case SkinConfig.AllowSliderBallTint:
         if (this.configuration.configMap.has('AllowSliderBallTint'))
-          return new Bindable(this.configuration.configMap.get('AllowSliderBallTint') === '1');
+          return this.configuration.configMap.get('AllowSliderBallTint') === '1';
         break;
 
       case SkinConfig.AnimationFramerate:
@@ -190,9 +191,9 @@ export abstract class Skin implements IDisposable, ISkin {
         if (!value)
           break;
         const parsed = Number.parseFloat(value);
-        if (Number.isNaN(parsed))
-          break;
-        return new Bindable(parsed);
+        if (Number.isFinite(parsed))
+          return parsed;
+        break;
       }
 
       case SkinConfig.HitCircleOverlap:
@@ -202,10 +203,10 @@ export abstract class Skin implements IDisposable, ISkin {
           break;
 
         const parsed = Number.parseFloat(value);
-        if (Number.isNaN(parsed))
-          return new Bindable(-2);
+        if (Number.isFinite(parsed))
+          return parsed;
 
-        return new Bindable(parsed);
+        return -2;
       }
     }
     return null;

@@ -1,0 +1,152 @@
+import type { IComparer } from 'osucad-framework';
+import { Action, SortedList } from 'osucad-framework';
+import { AbstractCrdt } from './AbstractCrdt';
+
+export type SortedListMutation<T extends AbstractCrdt<any>> =
+  {
+    op: 'add';
+    value: T;
+  }
+  | {
+    op: 'remove';
+    id: string;
+  };
+
+export class SortedListCrdt<T extends AbstractCrdt<any>> extends AbstractCrdt<SortedListMutation<T>> {
+  readonly #idMap = new Map<string, T>();
+
+  readonly #list!: SortedList<T>;
+
+  readonly added = new Action<T>();
+
+  readonly removed = new Action<T>();
+
+  readonly sorted = new Action();
+
+  constructor(readonly comparer: IComparer<T>) {
+    super();
+
+    this.#list = new SortedList(comparer);
+  }
+
+  override handle(mutation: SortedListMutation<T>): void | SortedListMutation<T> | null {
+    switch (mutation.op) {
+      case 'add':
+        if (this.#add(mutation.value)) {
+          return {
+            op: 'remove',
+            id: mutation.value.id,
+          };
+        }
+
+        return null;
+      case 'remove': {
+        const value = this.#idMap.get(mutation.id);
+        if (value) {
+          this.#remove(value);
+
+          return {
+            op: 'add',
+            value,
+          };
+        }
+      }
+    }
+
+    return null;
+  }
+
+  #add(value: T): boolean {
+    if (this.#idMap.has(value.id))
+      return false;
+
+    this.#idMap.set(value.id, value);
+    this.#list.add(value);
+
+    this.attachChild(value);
+
+    this.onAdded(value);
+
+    return true;
+  }
+
+  #remove(value: T): boolean {
+    if (this.#idMap.delete(value.id))
+      return false;
+
+    this.#list.remove(value);
+
+    value.detach();
+
+    this.onRemoved(value);
+
+    return true;
+  }
+
+  add(value: T) {
+    if (!this.#add(value))
+      return false;
+
+    this.submitMutation({
+      op: 'add',
+      value,
+    }, {
+      op: 'remove',
+      id: value.id,
+    });
+
+    return true;
+  }
+
+  remove(value: T) {
+    if (!this.#remove(value))
+      return false;
+
+    this.submitMutation({
+      op: 'remove',
+      id: value.id,
+    }, {
+      op: 'add',
+      value,
+    });
+
+    return true;
+  }
+
+  getById(id: string) {
+    return this.#idMap.get(id) ?? null;
+  }
+
+  get items() {
+    return this.#list.items;
+  }
+
+  protected onAdded(item: T) {
+    this.added.emit(item);
+  }
+
+  protected onRemoved(item: T) {
+    this.removed.emit(item);
+  }
+
+  sort() {
+    this.#list.sort();
+    this.sorted.emit();
+  }
+
+  override get childObjects(): readonly AbstractCrdt<any>[] {
+    return this.items;
+  }
+
+  [Symbol.iterator]() {
+    return this.#list[Symbol.iterator]();
+  }
+
+  get first() {
+    return this.#list.first;
+  }
+
+  get last() {
+    return this.#list.last;
+  }
+}

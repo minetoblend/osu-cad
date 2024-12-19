@@ -48,7 +48,7 @@ export abstract class AbstractCrdt<TMutation = never> {
   onTransactionCommit(transaction: Transaction) {
   }
 
-  get childObjects(): AbstractCrdt[] {
+  get childObjects(): readonly AbstractCrdt<any>[] {
     return [];
   }
 }

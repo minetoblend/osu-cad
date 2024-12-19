@@ -19,7 +19,7 @@ export class DrawableComboNumber extends CompositeDrawable {
   load() {
     this.indexInComboBindable.bindTo(this.parentHitObject!.indexInComboBindable);
 
-    this.hitCircleOverlap = this.skin.getConfig(SkinConfig.HitCircleOverlap)?.value ?? -2;
+    this.hitCircleOverlap = this.skin.getConfig(SkinConfig.HitCircleOverlap) ?? -2;
 
     this.indexInComboBindable.addOnChangeListener(e => this.comboNumber = e.value + 1, { immediate: true });
   }

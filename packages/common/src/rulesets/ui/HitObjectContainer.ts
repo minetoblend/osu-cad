@@ -67,7 +67,7 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
   }
 
   #unbindStartTime(drawable: DrawableHitObject) {
-    const bindable = this.#startTimeMap.get(drawable)?.unbindAll();
+    this.#startTimeMap.get(drawable)?.unbindAll();
     this.#startTimeMap.delete(drawable);
   }
 

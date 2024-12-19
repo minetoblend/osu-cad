@@ -130,7 +130,7 @@ ${this.#encodeHitObjects(beatmap)}
       const hitObject = beatmap.hitObjects.get(i)!;
 
       if (hitObject instanceof Slider) {
-        const velocity = hitObject.velocity / hitObject.baseVelocity;
+        const velocity = hitObject.sliderVelocity / hitObject.baseVelocity;
 
         const difficultyPoint = controlPoints.difficultyPointAt(hitObject.startTime);
 

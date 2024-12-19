@@ -12,7 +12,7 @@ export class TimingPointKeyframeShape extends GraphicsDrawable {
     const { x: width, y: height } = this.drawSize;
 
     const center = width * 0.5;
-    const stemWidth = 2;
+    const stemWidth = 1;
     const baseHeight = 2;
 
     g.clear()

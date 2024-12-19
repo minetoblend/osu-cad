@@ -51,7 +51,7 @@ export class StableSliderBall extends CompositeDrawable {
   }
 
   #skinChanged() {
-    this.allowSliderBallTint = this.skin.getConfig(SkinConfig.AllowSliderBallTint)?.value ?? false;
+    this.allowSliderBallTint = this.skin.getConfig(SkinConfig.AllowSliderBallTint) ?? false;
 
     this.#updateColors();
   }

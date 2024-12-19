@@ -1,9 +1,9 @@
 import type { Color } from 'pixi.js';
+import { SkinConfigurationLookup } from './SkinConfigurationLookup';
 
-export class SkinConfig<T> {
-  __type__!: T;
-
+export class SkinConfig<T> extends SkinConfigurationLookup<T> {
   constructor(readonly name: string) {
+    super();
   }
 
   static ComboColors = new SkinConfig<readonly Color[]>('ComboColors');
