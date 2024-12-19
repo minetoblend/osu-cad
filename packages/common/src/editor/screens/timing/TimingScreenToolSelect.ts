@@ -1,7 +1,7 @@
 import type { HoverEvent, HoverLostEvent, KeyDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
-import { OsucadColors } from '@osucad/common';
 import { Anchor, Axes, Bindable, Button, dependencyLoader, DrawableSprite, EasingFunction, FastRoundedBox, FillDirection, FillFlowContainer, FillMode, Key, Vec2 } from 'osucad-framework';
+import { OsucadColors } from '../../../OsucadColors';
 import { OsucadIcons } from '../../../OsucadIcons';
 import { TimingScreenDependencies } from './TimingScreenDependencies';
 import { TimingScreenTool } from './TimingScreenTool';

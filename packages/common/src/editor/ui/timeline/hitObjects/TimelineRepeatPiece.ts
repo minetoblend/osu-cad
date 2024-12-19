@@ -1,5 +1,5 @@
-import type { HitObject } from '@osucad/common';
 import type { Color } from 'pixi.js';
+import type { HitObject } from '../../../../hitObjects/HitObject';
 import type { TimelineHitObjectBlueprint } from './TimelineHitObjectBlueprint';
 import {
   Anchor,

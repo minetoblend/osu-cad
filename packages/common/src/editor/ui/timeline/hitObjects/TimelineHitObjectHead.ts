@@ -1,8 +1,8 @@
 import type { HoverEvent, HoverLostEvent } from 'osucad-framework';
 import type { Color } from 'pixi.js';
 import type { TimelineHitObjectBlueprint } from './TimelineHitObjectBlueprint';
-import { OsucadSpriteText } from '@osucad/common';
 import { Anchor, Axes, Bindable, ColorUtils, CompositeDrawable, dependencyLoader, FastRoundedBox, FillMode } from 'osucad-framework';
+import { OsucadSpriteText } from '../../../../drawables/OsucadSpriteText';
 
 export class TimelineHitObjectHead extends CompositeDrawable {
   constructor(readonly blueprint: TimelineHitObjectBlueprint) {

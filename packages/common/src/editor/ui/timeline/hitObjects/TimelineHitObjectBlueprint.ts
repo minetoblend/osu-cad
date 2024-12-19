@@ -1,12 +1,14 @@
 import type { DragEndEvent, DragEvent, DragStartEvent, MouseDownEvent } from 'osucad-framework';
 import type { HitObjectLifetimeEntry } from '../../../../hitObjects/drawables/HitObjectLifetimeEntry';
-import { hasComboInformation, HitObjectList, SliderRepeat } from '@osucad/common';
 import { Anchor, Axes, Bindable, BindableNumber, Container, dependencyLoader, FillMode, MouseButton, provide, resolved } from 'osucad-framework';
 import { Color } from 'pixi.js';
+import { HitObjectList } from '../../../../beatmap/HitObjectList';
 import { UpdateHandler } from '../../../../crdt/UpdateHandler';
+import { hasComboInformation } from '../../../../hitObjects/IHasComboInformation';
 import { hasDuration } from '../../../../hitObjects/IHasDuration';
 import { hasSliderVelocity } from '../../../../hitObjects/IHasSliderVelocity';
 import { PoolableDrawableWithLifetime } from '../../../../pooling/PoolableDrawableWithLifetime';
+import { SliderRepeat } from '../../../../rulesets/osu/hitObjects/SliderRepeat';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
 import { EditorClock } from '../../../EditorClock';
 import { Timeline } from '../Timeline';

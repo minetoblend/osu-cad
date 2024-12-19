@@ -1,5 +1,5 @@
-import type { HitObject } from '@osucad/common';
 import type { DragEndEvent, DragEvent, DragStartEvent } from 'osucad-framework';
+import type { HitObject } from '../../../../hitObjects/HitObject';
 import type { IHasSliderVelocity } from '../../../../hitObjects/IHasSliderVelocity';
 import type { TimelineHitObjectBlueprint } from './TimelineHitObjectBlueprint';
 import { resolved } from 'osucad-framework';
