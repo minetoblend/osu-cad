@@ -3,7 +3,7 @@ import type { ColorSource } from 'pixi.js';
 import type { VolumePoint } from '../../../../controlPoints/VolumePoint';
 import type { ControlPointLifetimeEntry } from '../../../ui/timeline/ControlPointLifetimeEntry';
 import type { KeyframePiece } from '../KeyframePiece';
-import { Anchor, Bindable, BindableNumber, dependencyLoader } from 'osucad-framework';
+import { Anchor, Bindable, BindableNumber, dependencyLoader, Vec2 } from 'osucad-framework';
 import { VolumeCurveType } from '../../../../controlPoints/VolumePoint';
 import { KeyframeSelectionBlueprint } from '../KeyframeSelectionBlueprint';
 import { CurvatureAdjustmentPiece } from './CurvatureAdjustmentPiece';
@@ -27,19 +27,21 @@ export class VolumePointSelectionBlueprint extends KeyframeSelectionBlueprint<Vo
 
   readonly curveTypeBindable = new Bindable(VolumeCurveType.Constant);
 
-  readonly curvatureBindable = new BindableNumber(0)
-    .withMinValue(-1)
-    .withMaxValue(1);
+  readonly p1Bindable = new Bindable(new Vec2());
+
+  readonly p2Bindable = new Bindable(new Vec2());
 
   #envelope!: VolumeEnvelope;
 
-  #curvatureAdjustmentPiece!: CurvatureAdjustmentPiece;
+  #p1AdjustmentPiece!: CurvatureAdjustmentPiece;
+  #p2AdjustmentPiece!: CurvatureAdjustmentPiece;
 
   @dependencyLoader()
   [Symbol('load')]() {
     this.addAllInternal(
       this.#envelope = new VolumeEnvelope(this),
-      this.#curvatureAdjustmentPiece = new CurvatureAdjustmentPiece(this),
+      this.#p1AdjustmentPiece = new CurvatureAdjustmentPiece(this, this.p1Bindable.getBoundCopy()),
+      this.#p2AdjustmentPiece = new CurvatureAdjustmentPiece(this, this.p2Bindable.getBoundCopy(), true),
     );
   }
 
@@ -50,7 +52,8 @@ export class VolumePointSelectionBlueprint extends KeyframeSelectionBlueprint<Vo
 
     this.volumeBindable.bindTo(entry.start.volumeBindable);
     this.curveTypeBindable.bindTo(entry.start.curveTypeBindable);
-    this.curvatureBindable.bindTo(entry.start.curvatureBindable);
+    this.p1Bindable.bindTo(entry.start.p1Bindable);
+    this.p2Bindable.bindTo(entry.start.p2Bindable);
 
     entry.invalidated.addListener(this.#onInvalidated, this);
 
@@ -62,7 +65,8 @@ export class VolumePointSelectionBlueprint extends KeyframeSelectionBlueprint<Vo
 
     this.volumeBindable.unbindFrom(entry.start.volumeBindable);
     this.curveTypeBindable.unbindFrom(entry.start.curveTypeBindable);
-    this.curvatureBindable.unbindFrom(entry.start.curvatureBindable);
+    this.p1Bindable.unbindFrom(entry.start.p1Bindable);
+    this.p2Bindable.unbindFrom(entry.start.p2Bindable);
 
     entry.invalidated.removeListener(this.#onInvalidated, this);
   }
@@ -83,7 +87,8 @@ export class VolumePointSelectionBlueprint extends KeyframeSelectionBlueprint<Vo
 
     this.#nextControlPoint = this.entry!.end ?? null;
     this.#envelope.invalidateGraphics();
-    this.#curvatureAdjustmentPiece.updatePosition();
+    this.#p1AdjustmentPiece.updatePosition();
+    this.#p2AdjustmentPiece.updatePosition();
   }
 
   protected override createKeyframePiece(): KeyframePiece {

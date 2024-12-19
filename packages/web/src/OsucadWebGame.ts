@@ -1,5 +1,5 @@
 import type { DependencyContainer } from 'osucad-framework';
-import { DummyEditorBeatmap, Editor } from '@osucad/common';
+import { ContextMenuContainer, DummyEditorBeatmap, Editor } from '@osucad/common';
 import { OsucadGameBase } from '@osucad/editor';
 import { UserAvatarCache } from '@osucad/editor/UserAvatarCache';
 import { Axes, Box } from 'osucad-framework';
@@ -33,7 +33,9 @@ export class OsucadWebGame extends OsucadGameBase {
       fit: Fit.Fill,
       child: new EditorActionContainer({
         child: new FpsOverlay({
-          child: screenStack,
+          child: new ContextMenuContainer({
+            child: screenStack,
+          }),
         }),
       }),
     }));

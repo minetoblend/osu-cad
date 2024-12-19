@@ -53,8 +53,8 @@ export abstract class ControlPoint extends ObjectCrdt {
     return this.time === other.time;
   }
 
-  override onPropertyChanged(property: Property<any>, oldValue: any) {
-    super.onPropertyChanged(property, oldValue);
+  override onPropertyChanged(property: Property<any>, oldValue: any, submitEvents: boolean) {
+    super.onPropertyChanged(property, oldValue, submitEvents);
     this.changed.emit(this);
   }
 }

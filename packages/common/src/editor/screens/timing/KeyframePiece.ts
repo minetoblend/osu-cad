@@ -62,19 +62,23 @@ export class KeyframePiece extends CompositeDrawable {
 
   override onMouseDown(e: MouseDownEvent): boolean {
     if (e.button === MouseButton.Right) {
-      if (this.selected.value) {
-        for (const controlPoint of [...this.selectionManager.selectedObjects])
-          this.controlPointInfo.remove(controlPoint);
-      }
-      else {
-        this.controlPointInfo.remove(this.blueprint.controlPoint!);
-      }
-
-      this.updateHandler.commit();
+      this.delete();
       return true;
     }
 
     return false;
+  }
+
+  protected delete() {
+    if (this.selected.value) {
+      for (const controlPoint of [...this.selectionManager.selectedObjects])
+        this.controlPointInfo.remove(controlPoint);
+    }
+    else {
+      this.controlPointInfo.remove(this.blueprint.controlPoint!);
+    }
+
+    this.updateHandler.commit();
   }
 
   override onDragStart(e: DragStartEvent): boolean {

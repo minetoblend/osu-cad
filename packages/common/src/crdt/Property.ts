@@ -46,9 +46,6 @@ export class Property<T> {
   #suppressEvents = false;
 
   #valueChanged(evt: ValueChangedEvent<T>) {
-    if (this.#suppressEvents)
-      return;
-
-    this.target.onPropertyChanged(this, evt.previousValue);
+    this.target.onPropertyChanged(this, evt.previousValue, !this.#suppressEvents);
   }
 }

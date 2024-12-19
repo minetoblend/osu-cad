@@ -18,4 +18,5 @@ export * from './rulesets';
 export * from './screens';
 export * from './serialization';
 export * from './skinning';
+export * from './userInterface';
 export * from './utils';

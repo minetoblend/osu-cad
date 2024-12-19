@@ -35,6 +35,6 @@ export abstract class GraphicsDrawable extends Drawable {
   override dispose(isDisposing: boolean = true) {
     super.dispose(isDisposing);
 
-    this.#graphics.destroy({ context: true });
+    this.#graphics.destroy();
   }
 }

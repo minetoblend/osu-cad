@@ -1,6 +1,6 @@
 import type { Graphics } from 'pixi.js';
 import type { VolumePointSelectionBlueprint } from './VolumePointSelectionBlueprint';
-import { almostEquals, Axes, dependencyLoader, GraphicsDrawable, resolved } from 'osucad-framework';
+import { Axes, dependencyLoader, GraphicsDrawable, resolved } from 'osucad-framework';
 import { VolumeCurveType } from '../../../../controlPoints/VolumePoint';
 import { Timeline } from '../../../ui/timeline/Timeline';
 
@@ -13,7 +13,8 @@ export class VolumeEnvelope extends GraphicsDrawable {
     blueprint.volumeBindable.valueChanged.addListener(this.invalidateGraphics, this);
     blueprint.endVolumeBindable.valueChanged.addListener(this.invalidateGraphics, this);
     blueprint.curveTypeBindable.valueChanged.addListener(this.invalidateGraphics, this);
-    blueprint.curvatureBindable.valueChanged.addListener(this.invalidateGraphics, this);
+    blueprint.p1Bindable.valueChanged.addListener(this.invalidateGraphics, this);
+    blueprint.p2Bindable.valueChanged.addListener(this.invalidateGraphics, this);
   }
 
   override updateGraphics(g: Graphics) {
@@ -22,7 +23,6 @@ export class VolumeEnvelope extends GraphicsDrawable {
     const startVolume = this.blueprint.volumeBindable.value;
     const endVolume = this.blueprint.endVolumeBindable.value;
     const curveType = this.blueprint.curveTypeBindable.value;
-    const curvature = this.blueprint.curvatureBindable.value;
 
     const backgroundAlpha = 0.15;
 
@@ -40,7 +40,7 @@ export class VolumeEnvelope extends GraphicsDrawable {
           color: this.blueprint.keyframeColor.value,
         });
     }
-    else if (almostEquals(curvature, 0)) {
+    else if (this.blueprint.controlPoint!.isLinear) {
       g.poly([
         { x: 0, y: (1 - startVolume / 100) * this.drawHeight },
         { x: this.drawWidth, y: (1 - endVolume / 100) * this.drawHeight },

@@ -2,24 +2,14 @@ import type { ClickEvent, HoverEvent, HoverLostEvent, MouseDownEvent } from '../
 import type { FocusLostEvent } from '../../input/events/FocusLostEvent';
 import type { ScrollContainer } from '../containers';
 import type { FillFlowContainerOptions } from '../containers/FillFlowContainer';
-import type {
-  Drawable,
-} from '../drawables';
+import type { Drawable } from '../drawables';
 import type { MenuItem } from './MenuItem';
 import { Color, type ColorSource } from 'pixi.js';
 import { Action } from '../../bindables';
 import { Vec2 } from '../../math';
 import { almostEquals } from '../../utils/almostEquals';
 import { CompositeDrawable, Container, FillDirection, FillFlowContainer } from '../containers';
-import {
-  Anchor,
-  Axes,
-  Direction,
-  Invalidation,
-  InvalidationSource,
-  LayoutMember,
-  LoadState,
-} from '../drawables';
+import { Anchor, Axes, Direction, Invalidation, InvalidationSource, LayoutMember, LoadState } from '../drawables';
 import { Box } from '../shapes';
 
 export abstract class Menu extends CompositeDrawable {
@@ -720,11 +710,11 @@ export abstract class DrawableMenuItem extends CompositeDrawable {
   }
 
   get contentDrawWidth() {
-    return this.content.drawSize.x;
+    return this.content.drawWidth;
   }
 
   get contentDrawHeight() {
-    return this.content.drawSize.y;
+    return this.content.drawHeight;
   }
 
   get isActionable() {

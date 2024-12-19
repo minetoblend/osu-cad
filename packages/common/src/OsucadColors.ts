@@ -4,4 +4,5 @@ export class OsucadColors {
   static readonly text = 0xB6B6C3;
   static readonly translucent = 0x222228;
   static readonly selection = 0xFFA320;
+  static readonly danger = 0xEB4034;
 }
