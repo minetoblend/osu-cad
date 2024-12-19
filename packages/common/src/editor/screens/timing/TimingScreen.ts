@@ -1,4 +1,4 @@
-import type { ClickEvent } from 'osucad-framework';
+import type { ClickEvent, DependencyContainer, ReadonlyDependencyContainer } from 'osucad-framework';
 import { Anchor, Axes, Box, Container, dependencyLoader, FillDirection, FillFlowContainer, provide, ProxyContainer, resolved } from 'osucad-framework';
 import { EditorBeatmap } from '../../EditorBeatmap';
 import { CurrentTimeOverlay } from '../../ui/timeline/CurrentTimeOverlay';
@@ -11,8 +11,10 @@ import { KiaiTimelineLayer } from './kiai/KiaiTimelineLayer';
 import { Metronome } from './Metronome';
 import { SliderVelocityTimelineLayer } from './sliderVelocity/SliderVelocityTimelineLayer';
 import { TimingPointLayer } from './timingPoints/TimingPointLayer';
+import { TimingScreenDependencies } from './TimingScreenDependencies';
 import { TimingScreenSelectionManager } from './TimingScreenSelectionManager';
 import { TimingScreenTickContainer } from './TimingScreenTickContainer';
+import { TimingScreenToolSelect } from './TimingScreenToolSelect';
 import { TopTimelineLayer } from './TopTimelineLayer';
 
 @editorScreen({
@@ -27,13 +29,21 @@ export class TimingScreen extends EditorScreen {
   @provide(TimingScreenSelectionManager)
   selectionManager = new TimingScreenSelectionManager();
 
+  protected override createChildDependencies(parentDependencies: ReadonlyDependencyContainer): DependencyContainer {
+    const dependencies = super.createChildDependencies(parentDependencies);
+
+    dependencies.provide(new TimingScreenDependencies());
+
+    return dependencies;
+  }
+
   @dependencyLoader()
   load() {
     this.internalChildren = [
       this.selectionManager,
       new Container({
         relativeSizeAxes: Axes.Both,
-        padding: { right: 300 },
+        padding: { left: 36, right: 300 },
         children: [
           new Box({
             relativeSizeAxes: Axes.Both,
@@ -48,6 +58,19 @@ export class TimingScreen extends EditorScreen {
               }),
             ],
             layers: this.createLayers(),
+          }),
+        ],
+      }),
+      new Container({
+        relativeSizeAxes: Axes.Y,
+        width: 36,
+        children: [
+          new Box({
+            relativeSizeAxes: Axes.Both,
+            color: 0x222228,
+          }),
+          new TimingScreenToolSelect().with({
+            margin: { top: 12 },
           }),
         ],
       }),

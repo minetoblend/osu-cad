@@ -1,4 +1,4 @@
-import type { DragEndEvent, DragEvent, DragStartEvent, Drawable, HoverEvent, HoverLostEvent, InputManager, KeyDownEvent, KeyUpEvent, MouseDownEvent, MouseUpEvent } from 'osucad-framework';
+import type { Bindable, DragEndEvent, DragEvent, DragStartEvent, Drawable, HoverEvent, HoverLostEvent, InputManager, KeyDownEvent, KeyUpEvent, MouseDownEvent, MouseUpEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { ColorSource } from 'pixi.js';
 import type { ControlPoint } from '../../../controlPoints/ControlPoint';
 import { Anchor, Axes, CompositeDrawable, dependencyLoader, Key, MouseButton, resolved } from 'osucad-framework';
@@ -9,7 +9,9 @@ import { EditorClock } from '../../EditorClock';
 import { LayeredTimeline } from '../../ui/timeline/LayeredTimeline';
 import { Timeline } from '../../ui/timeline/Timeline';
 import { DiamondShape } from './DiamondShape';
+import { TimingScreenDependencies } from './TimingScreenDependencies';
 import { TimingScreenSelectionBlueprint } from './TimingScreenSelectionBlueprint';
+import { TimingScreenTool } from './TimingScreenTool';
 
 export abstract class ControlPointPlacementBlueprint<T extends ControlPoint> extends CompositeDrawable {
   protected constructor() {
@@ -26,7 +28,11 @@ export abstract class ControlPointPlacementBlueprint<T extends ControlPoint> ext
   }
 
   @dependencyLoader()
-  [Symbol('load')]() {
+  [Symbol('load')](dependencies: ReadonlyDependencyContainer) {
+    const { activeTool } = dependencies.resolve(TimingScreenDependencies);
+
+    this.activeTool = activeTool.getBoundCopy();
+
     this.addInternal(this.#previewShape = this.createPreviewShape());
 
     this.#updateVisibility();
@@ -77,8 +83,14 @@ export abstract class ControlPointPlacementBlueprint<T extends ControlPoint> ext
 
   #ctrlPressed = false;
 
+  activeTool!: Bindable<TimingScreenTool>;
+
+  get isActive() {
+    return this.#ctrlPressed || this.activeTool.value === TimingScreenTool.Create;
+  }
+
   #updateVisibility() {
-    if (this.isHovered && this.#ctrlPressed && !this.isDragged)
+    if (this.isHovered && this.isActive && !this.isDragged)
       this.#previewShape.alpha = 0.5;
     else
       this.#previewShape.alpha = 0;
@@ -118,7 +130,7 @@ export abstract class ControlPointPlacementBlueprint<T extends ControlPoint> ext
   }
 
   override onMouseDown(e: MouseDownEvent): boolean {
-    if (e.button === MouseButton.Left && e.controlPressed) {
+    if (e.button === MouseButton.Left && this.isActive) {
       this.controlPointInfo.add(this.#activePlacement = this.createInstance());
       this.#activePlacement.time = this.timeAtMousePosition;
       this.onPlacementStart(this.#activePlacement);

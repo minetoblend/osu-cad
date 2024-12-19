@@ -10,12 +10,11 @@ export class TopTimelineLayer extends TimelineLayer {
 
   @dependencyLoader()
   [Symbol('load')]() {
-    this.height = 22;
+    this.height = 12;
     this.addAll(new Box({
       relativeSizeAxes: Axes.Both,
       color: 0x222228,
     }), new BottomTimelineTickContainer().with({
-      height: 0.5,
       anchor: Anchor.BottomLeft,
       origin: Anchor.BottomLeft,
     }));
