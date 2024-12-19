@@ -1,4 +1,5 @@
 import type {
+  DragEndEvent,
   DragEvent,
   DragStartEvent,
   HoverEvent,
@@ -7,6 +8,7 @@ import type {
 import type { VolumePointSelectionBlueprint } from './VolumePointSelectionBlueprint';
 import {
   Anchor,
+
   Axes,
   CompositeDrawable,
   Container,
@@ -14,8 +16,10 @@ import {
   EasingFunction,
   FastRoundedBox,
   MouseButton,
+  resolved,
 } from 'osucad-framework';
 import { VolumeCurveType } from '../../../../controlPoints/VolumePoint';
+import { UpdateHandler } from '../../../../crdt/UpdateHandler';
 
 export class CurvatureAdjustmentPiece extends CompositeDrawable {
   constructor(readonly blueprint: VolumePointSelectionBlueprint) {
@@ -99,6 +103,13 @@ export class CurvatureAdjustmentPiece extends CompositeDrawable {
       this.blueprint.curvatureBindable.value -= e.delta.y * 0.01;
 
     return true;
+  }
+
+  @resolved(UpdateHandler)
+  protected updateHandler!: UpdateHandler;
+
+  override onDragEnd(e: DragEndEvent) {
+    this.updateHandler.commit();
   }
 
   override onHover(e: HoverEvent): boolean {

@@ -2,8 +2,9 @@ import type { ClickEvent, RoundedBox } from 'osucad-framework';
 import type { ColorSource } from 'pixi.js';
 import type { VolumePointSelectionBlueprint } from './VolumePointSelectionBlueprint';
 import { OsucadSpriteText } from '@osucad/common';
-import { Anchor, Axes, ColorUtils, Container, dependencyLoader } from 'osucad-framework';
+import { Anchor, Axes, ColorUtils, Container, dependencyLoader, resolved } from 'osucad-framework';
 import { VolumeCurveType } from '../../../../controlPoints/VolumePoint';
+import { UpdateHandler } from '../../../../crdt/UpdateHandler';
 import { TimingScreenBadge } from '../TimingScreenBadge';
 
 export class CurveTypeButton extends TimingScreenBadge {
@@ -44,12 +45,17 @@ export class CurveTypeButton extends TimingScreenBadge {
 
   #text!: OsucadSpriteText;
 
+  @resolved(UpdateHandler)
+  protected updateHandler!: UpdateHandler;
+
   override onClick(e: ClickEvent): boolean {
     const curveType = this.blueprint.curveTypeBindable.value;
 
     this.blueprint.curveTypeBindable.value = curveType === VolumeCurveType.Smooth
       ? VolumeCurveType.Constant
       : VolumeCurveType.Smooth;
+
+    this.updateHandler.commit();
 
     return true;
   }
