@@ -1,10 +1,23 @@
 import type { ControlPoint } from '../../../controlPoints/ControlPoint';
-import { Action, Component } from 'osucad-framework';
+import { Action, Component, dependencyLoader, resolved } from 'osucad-framework';
+import { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 
 export class TimingScreenSelectionManager extends Component {
   #selection = new Set<ControlPoint>();
 
   selectionChanged = new Action<ControlPointSelectionEvent>();
+
+  @resolved(ControlPointInfo)
+  protected controlPointInfo!: ControlPointInfo;
+
+  @dependencyLoader()
+  [Symbol('load')]() {
+    this.controlPointInfo.removed.addListener(this.#onControlPointRemoved, this);
+  }
+
+  #onControlPointRemoved(controlPoint: ControlPoint) {
+    this.deselect(controlPoint);
+  }
 
   get selectedObjects() {
     return this.#selection.values();
@@ -62,6 +75,12 @@ export class TimingScreenSelectionManager extends Component {
       this.select(controlPoint);
     for (const controlPoint of removed)
       this.deselect(controlPoint);
+  }
+
+  override dispose(isDisposing: boolean = true) {
+    super.dispose(isDisposing);
+
+    this.controlPointInfo.removed.removeListener(this.#onControlPointRemoved, this);
   }
 }
 

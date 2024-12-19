@@ -2,6 +2,7 @@ import type { ClickEvent, Drawable, KeyDownEvent } from 'osucad-framework';
 import type { ColorSource } from 'pixi.js';
 import { Anchor, Axes, dependencyLoader, EmptyDrawable, FillDirection, FillFlowContainer, Key, MarginPadding, resolved } from 'osucad-framework';
 import { TextBox } from '../../../../../editor/src/userInterface/TextBox';
+import { UpdateHandler } from '../../../crdt/UpdateHandler';
 import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
 import { LayeredTimeline } from '../../ui/timeline/LayeredTimeline';
 import { TimingScreenBadge } from './TimingScreenBadge';
@@ -21,6 +22,9 @@ export abstract class TimingScreenInputBadge extends TimingScreenBadge {
 
   @resolved(LayeredTimeline)
   protected layeredTimeline!: LayeredTimeline;
+
+  @resolved(UpdateHandler)
+  protected updateHandler!: UpdateHandler;
 
   @dependencyLoader()
   [Symbol('load')]() {
@@ -48,7 +52,14 @@ export abstract class TimingScreenInputBadge extends TimingScreenBadge {
     }
 
     this.add(content);
+
+    this.textBox.onCommit.addListener((text) => {
+      this.onCommit(text);
+      this.updateHandler.commit();
+    });
   }
+
+  protected abstract onCommit(text: string): void;
 
   override onClick(e: ClickEvent): boolean {
     this.schedule(() => this.getContainingFocusManager()?.changeFocus(this.textBox));

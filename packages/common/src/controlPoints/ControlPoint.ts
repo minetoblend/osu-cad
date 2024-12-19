@@ -1,8 +1,10 @@
-import { Action, BindableNumber, Comparer } from 'osucad-framework';
+import type { Property } from '../crdt/Property';
+import { Action, Comparer } from 'osucad-framework';
+import { ObjectCrdt } from '../crdt/ObjectCrdt';
 
 let nextUid = 0;
 
-export abstract class ControlPoint {
+export abstract class ControlPoint extends ObjectCrdt {
   static readonly COMPARER = new class extends Comparer<ControlPoint> {
     compare(a: ControlPoint, b: ControlPoint) {
       const result = a.time - b.time;
@@ -16,25 +18,27 @@ export abstract class ControlPoint {
   uid = nextUid++;
 
   protected constructor(time: number) {
-    this.time = time;
-
-    this.timeBindable.valueChanged.addListener(this.raiseChanged, this);
+    super();
+    this.#time = this.property('time', time);
   }
 
   changed = new Action<ControlPoint>();
 
   raiseChanged() {
-    this.changed.emit(this);
   }
 
-  readonly timeBindable = new BindableNumber();
+  readonly #time: Property<number>;
+
+  get timeBindable() {
+    return this.#time.bindable;
+  }
 
   get time() {
-    return this.timeBindable.value;
+    return this.#time.value;
   }
 
   set time(value: number) {
-    this.timeBindable.value = value;
+    this.#time.value = value;
   }
 
   abstract isRedundant(existing?: ControlPoint): boolean;
@@ -47,5 +51,10 @@ export abstract class ControlPoint {
 
   equals(other: ControlPoint) {
     return this.time === other.time;
+  }
+
+  override onPropertyChanged(property: Property<any>, oldValue: any) {
+    super.onPropertyChanged(property, oldValue);
+    this.changed.emit(this);
   }
 }

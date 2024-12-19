@@ -1,6 +1,6 @@
 import type { CommandContext } from '../commands/CommandContext';
 import type { Patchable } from '../commands/Patchable';
-import { BindableNumber } from 'osucad-framework';
+import type { Property } from '../crdt/Property';
 import { PatchUtils } from '../commands/PatchUtils';
 import { ControlPoint } from './ControlPoint';
 
@@ -12,21 +12,23 @@ export class DifficultyPoint extends ControlPoint implements Patchable<Difficult
   constructor(time: number, sliderVelocity: number = 1) {
     super(time);
 
-    this.sliderVelocityBindable.value = sliderVelocity;
-
-    this.sliderVelocityBindable.valueChanged.addListener(this.raiseChanged, this);
+    this.#sliderVelocity = this.property('sliderVelocity', sliderVelocity);
   }
 
   static default = new DifficultyPoint(1);
 
-  sliderVelocityBindable = new BindableNumber(1).withRange(0.1, 10).withPrecision(0.01);
+  readonly #sliderVelocity: Property<number>;
+
+  get sliderVelocityBindable() {
+    return this.#sliderVelocity.bindable;
+  }
 
   get sliderVelocity() {
-    return this.sliderVelocityBindable.value;
+    return this.#sliderVelocity.value;
   }
 
   set sliderVelocity(value: number) {
-    this.sliderVelocityBindable.value = value;
+    this.#sliderVelocity.value = value;
   }
 
   isRedundant(existing?: ControlPoint): boolean {

@@ -1,5 +1,6 @@
 import type { Track } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
+import type { Beatmap } from '../beatmap/Beatmap';
 import type { BeatmapColors } from '../beatmap/BeatmapColors';
 import type { BeatmapDifficultyInfo } from '../beatmap/BeatmapDifficultyInfo';
 import type { BeatmapMetadata } from '../beatmap/BeatmapMetadata';
@@ -10,16 +11,19 @@ import type { ControlPointInfo } from '../controlPoints/ControlPointInfo';
 import type { BeatmapAssetManager } from './BeatmapAssetManager';
 import { asyncDependencyLoader, AudioManager, Bindable, Component, loadTexture, resolved } from 'osucad-framework';
 import { AudioMixer } from '../audio/AudioMixer';
+import { UpdateHandler } from '../crdt/UpdateHandler';
 import { CommandManager } from './CommandManager';
 
 export abstract class EditorBeatmap extends Component implements IBeatmap {
-  abstract readonly beatmap: IBeatmap;
+  abstract readonly beatmap: Beatmap;
 
   abstract readonly assets: BeatmapAssetManager;
 
   readonly track = new Bindable<Track>(null!);
 
   readonly backgroundTexture = new Bindable<Texture | null>(null);
+
+  updateHandler!: UpdateHandler;
 
   protected constructor() {
     super();
@@ -28,6 +32,8 @@ export abstract class EditorBeatmap extends Component implements IBeatmap {
 
   @asyncDependencyLoader()
   async load() {
+    this.addInternal(this.updateHandler = new UpdateHandler(this));
+
     await Promise.all([
       this.loadTrack(),
       this.loadBackground(),

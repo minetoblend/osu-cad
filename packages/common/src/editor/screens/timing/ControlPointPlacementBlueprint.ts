@@ -1,9 +1,10 @@
-import type { DragEndEvent, DragEvent, DragStartEvent, Drawable, HoverEvent, HoverLostEvent, InputManager, KeyDownEvent, KeyUpEvent, MouseDownEvent } from 'osucad-framework';
+import type { DragEndEvent, DragEvent, DragStartEvent, Drawable, HoverEvent, HoverLostEvent, InputManager, KeyDownEvent, KeyUpEvent, MouseDownEvent, MouseUpEvent } from 'osucad-framework';
 import type { ColorSource } from 'pixi.js';
 import type { ControlPoint } from '../../../controlPoints/ControlPoint';
 import { Anchor, Axes, CompositeDrawable, dependencyLoader, Key, MouseButton, resolved } from 'osucad-framework';
 import { TextBox } from '../../../../../editor/src/userInterface/TextBox';
 import { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
+import { UpdateHandler } from '../../../crdt/UpdateHandler';
 import { EditorClock } from '../../EditorClock';
 import { LayeredTimeline } from '../../ui/timeline/LayeredTimeline';
 import { Timeline } from '../../ui/timeline/Timeline';
@@ -145,11 +146,28 @@ export abstract class ControlPointPlacementBlueprint<T extends ControlPoint> ext
     controlPoint.time = this.timeAtMousePosition;
   }
 
+  @resolved(UpdateHandler)
+  updateHandler!: UpdateHandler;
+
   override onDragEnd(e: DragEndEvent) {
     if (this.#activePlacement) {
-      this.onPlacementEnd(this.#activePlacement);
+      this.endPlacement(this.#activePlacement);
     }
+
     this.#activePlacement = undefined;
+  }
+
+  override onMouseUp(e: MouseUpEvent) {
+    if (e.button === MouseButton.Left && this.#activePlacement) {
+      this.endPlacement(this.#activePlacement);
+    }
+
+    this.#activePlacement = undefined;
+  }
+
+  protected endPlacement(placement: T) {
+    this.onPlacementEnd(placement);
+    this.updateHandler.commit();
   }
 
   override onHover(e: HoverEvent): boolean {

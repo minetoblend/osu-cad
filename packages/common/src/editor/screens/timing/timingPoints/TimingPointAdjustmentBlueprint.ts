@@ -1,6 +1,7 @@
 import type { TimingPointSelectionBlueprint } from './TimingPointSelectionBlueprint';
 import { Anchor, Axes, Box, clamp, CompositeDrawable, dependencyLoader, type DragEndEvent, type DragEvent, type DragStartEvent, type Drawable, type HoverEvent, type HoverLostEvent, type InputManager, resolved } from 'osucad-framework';
 import { ControlPointInfo } from '../../../../controlPoints/ControlPointInfo';
+import { UpdateHandler } from '../../../../crdt/UpdateHandler';
 import { EditorClock } from '../../../EditorClock';
 import { Timeline } from '../../../ui/timeline/Timeline';
 import { KeyframePiece } from '../KeyframePiece';
@@ -162,10 +163,15 @@ class DragHandle extends CompositeDrawable {
     return true;
   }
 
+  @resolved(UpdateHandler)
+  readonly updateHandler!: UpdateHandler;
+
   override onDragEnd(e: DragEndEvent) {
     this.#updateState();
     if (this.parent!.isHovered)
       this.show();
+
+    this.updateHandler.commit();
   }
 
   override update() {

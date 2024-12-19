@@ -1,9 +1,10 @@
-import type { ClickEvent, DoubleClickEvent, DragEvent, DragStartEvent, DrawableOptions, MouseDownEvent } from 'osucad-framework';
+import type { ClickEvent, DoubleClickEvent, DragEndEvent, DragEvent, DragStartEvent, DrawableOptions, MouseDownEvent } from 'osucad-framework';
 import type { ControlPoint } from '../../../controlPoints/ControlPoint';
 import type { KeyframeSelectionBlueprint } from './KeyframeSelectionBlueprint';
 import { BindableBoolean, CompositeDrawable, dependencyLoader, MouseButton, resolved } from 'osucad-framework';
 import { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 import { TimingPoint } from '../../../controlPoints/TimingPoint';
+import { UpdateHandler } from '../../../crdt/UpdateHandler';
 import { EditorClock } from '../../EditorClock';
 import { Timeline } from '../../ui/timeline/Timeline';
 import { TimingScreenSelectionManager } from './TimingScreenSelectionManager';
@@ -37,7 +38,8 @@ export class KeyframePiece extends CompositeDrawable {
     this.updateColors();
   }
 
-  protected updateColors() {}
+  protected updateColors() {
+  }
 
   @resolved(TimingScreenSelectionManager)
   protected selectionManager!: TimingScreenSelectionManager;
@@ -60,7 +62,15 @@ export class KeyframePiece extends CompositeDrawable {
 
   override onMouseDown(e: MouseDownEvent): boolean {
     if (e.button === MouseButton.Right) {
-      this.controlPointInfo.remove(this.blueprint.controlPoint!);
+      if (this.selected.value) {
+        for (const controlPoint of [...this.selectionManager.selectedObjects])
+          this.controlPointInfo.remove(controlPoint);
+      }
+      else {
+        this.controlPointInfo.remove(this.blueprint.controlPoint!);
+      }
+
+      this.updateHandler.commit();
       return true;
     }
 
@@ -83,6 +93,9 @@ export class KeyframePiece extends CompositeDrawable {
   @resolved(ControlPointInfo)
   protected controlPointInfo!: ControlPointInfo;
 
+  @resolved(UpdateHandler)
+  protected updateHandler!: UpdateHandler;
+
   override onDrag(e: DragEvent): boolean {
     let time = this.timeline.screenSpacePositionToTime(e.screenSpaceMousePosition);
 
@@ -97,11 +110,14 @@ export class KeyframePiece extends CompositeDrawable {
     const delta = time - this.blueprint.controlPoint!.time;
 
     if (delta !== 0) {
-      for (const controlPoint of this.selectionManager.selectedObjects) {
+      for (const controlPoint of this.selectionManager.selectedObjects)
         controlPoint.time += delta;
-      }
     }
 
     return true;
+  }
+
+  override onDragEnd(e: DragEndEvent) {
+    this.updateHandler.commit();
   }
 }

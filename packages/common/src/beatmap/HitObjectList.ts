@@ -1,24 +1,23 @@
 import type { Bindable } from 'osucad-framework';
 import type { ControlPoint } from '../controlPoints/ControlPoint';
-import type { OsuHitObject } from '../rulesets/osu/hitObjects/OsuHitObject';
 import type { Beatmap } from './Beatmap';
 import { ObservableSortedList } from 'osucad-framework';
 import { HitObject } from '../hitObjects/HitObject';
 
-export class HitObjectList extends ObservableSortedList<OsuHitObject> {
+export class HitObjectList extends ObservableSortedList<HitObject> {
   applyDefaultsImmediately = true;
 
   constructor(readonly beatmap: Beatmap) {
     super(HitObject.COMPARER);
   }
 
-  #idMap = new Map<string, OsuHitObject>();
+  #idMap = new Map<string, HitObject>();
 
-  #needsDefaultsApplied = new Set<OsuHitObject>();
+  #needsDefaultsApplied = new Set<HitObject>();
 
-  #startTimeMap = new Map<OsuHitObject, Bindable<number>>();
+  #startTimeMap = new Map<HitObject, Bindable<number>>();
 
-  override onAdded(item: OsuHitObject) {
+  override onAdded(item: HitObject) {
     super.onAdded(item);
 
     this.#idMap.set(item.id, item);
@@ -36,7 +35,7 @@ export class HitObjectList extends ObservableSortedList<OsuHitObject> {
     this.applyDefaultsToHitObject(item);
   }
 
-  override onRemoved(item: OsuHitObject) {
+  override onRemoved(item: HitObject) {
     super.onRemoved(item);
 
     this.#idMap.delete(item.id);
@@ -60,7 +59,7 @@ export class HitObjectList extends ObservableSortedList<OsuHitObject> {
     }
   }
 
-  protected onApplyDefaultsRequested(hitObject: OsuHitObject) {
+  protected onApplyDefaultsRequested(hitObject: HitObject) {
     if (this.applyDefaultsImmediately)
       this.applyDefaultsToHitObject(hitObject);
     else
@@ -99,7 +98,7 @@ export class HitObjectList extends ObservableSortedList<OsuHitObject> {
     }
   }
 
-  protected applyDefaultsToHitObject(hitObject: OsuHitObject) {
+  protected applyDefaultsToHitObject(hitObject: HitObject) {
     hitObject.applyDefaults(this.beatmap.controlPoints, this.beatmap.difficulty);
   }
 

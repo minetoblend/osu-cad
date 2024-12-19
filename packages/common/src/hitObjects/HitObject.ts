@@ -19,6 +19,16 @@ export abstract class HitObject {
     }
   }();
 
+  readonly needsDefaultsApplied = new Action<HitObject>();
+
+  protected requestApplyDefaults() {
+    this.needsDefaultsApplied.emit(this);
+  }
+
+  constructor() {
+    this.startTimeBindable.valueChanged.addListener(this.requestApplyDefaults, this);
+  }
+
   timePreempt = 600;
 
   timeFadeIn = 400;

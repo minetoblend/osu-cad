@@ -1,4 +1,5 @@
 import type { Bindable } from 'osucad-framework';
+import type { Color } from 'pixi.js';
 
 export interface IHasComboInformation {
   readonly hasComboInformation: true;
@@ -11,7 +12,11 @@ export interface IHasComboInformation {
 
   comboIndex: number;
 
+  comboOffset: number;
+
   newCombo: boolean;
+
+  comboColor: Color;
 }
 
 export function hasComboInformation(obj: any): obj is IHasComboInformation {

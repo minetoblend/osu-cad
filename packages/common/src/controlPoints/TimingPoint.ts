@@ -1,5 +1,5 @@
 import type { Patchable } from '../commands/Patchable';
-import { BindableNumber } from 'osucad-framework';
+import type { Property } from '../crdt/Property';
 import { PatchUtils } from '../commands/PatchUtils';
 import { ControlPoint } from './ControlPoint';
 
@@ -16,20 +16,24 @@ export class TimingPoint extends ControlPoint implements Patchable<TimingPointPa
   ) {
     super(time);
 
-    this.beatLengthBindable.value = beatLength;
-    this.meterBindable.value = meter;
+    this.#beatLength = this.property('beatLength', beatLength);
+    this.#meter = this.property('meter', meter);
   }
 
   static readonly default = new TimingPoint(0, 60_000 / 120);
 
-  readonly beatLengthBindable = new BindableNumber(60_000 / 120);
+  readonly #beatLength: Property<number>;
+
+  get beatLengthBindable() {
+    return this.#beatLength.bindable;
+  }
 
   get beatLength() {
-    return this.beatLengthBindable.value;
+    return this.#beatLength.value;
   }
 
   set beatLength(value: number) {
-    this.beatLengthBindable.value = value;
+    this.#beatLength.value = value;
     this.raiseChanged();
   }
 
@@ -44,14 +48,18 @@ export class TimingPoint extends ControlPoint implements Patchable<TimingPointPa
     this.beatLength = 60_000 / value;
   }
 
-  meterBindable = new BindableNumber(4);
+  readonly #meter: Property<number>;
+
+  get meterBindable() {
+    return this.#meter.bindable;
+  }
 
   get meter() {
-    return this.meterBindable.value;
+    return this.#meter.value;
   }
 
   set meter(value: number) {
-    this.meterBindable.value = value;
+    this.#meter.value = value;
     this.raiseChanged();
   }
 

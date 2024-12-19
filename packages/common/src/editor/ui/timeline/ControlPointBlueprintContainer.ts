@@ -3,12 +3,10 @@ import type { ControlPoint } from '../../../controlPoints/ControlPoint';
 import type { ControlPointList } from '../../../controlPoints/ControlPointList';
 import { Axes, dependencyLoader, resolved, SortedList } from 'osucad-framework';
 import { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
-import { PooledDrawableWithLifetimeContainer } from '../../../pooling/PooledDrawableWithLifetimeContainer';
-import { EditorClock } from '../../EditorClock';
 import { ControlPointLifetimeEntry } from './ControlPointLifetimeEntry';
-import { Timeline } from './Timeline';
+import { TimelineBlueprintContainer } from './TimelineBlueprintContainer';
 
-export abstract class ControlPointBlueprintContainer<T extends ControlPoint, TDrawable extends Drawable> extends PooledDrawableWithLifetimeContainer<ControlPointLifetimeEntry<T>, TDrawable> {
+export abstract class ControlPointBlueprintContainer<T extends ControlPoint, TDrawable extends Drawable> extends TimelineBlueprintContainer<ControlPointLifetimeEntry<T>, TDrawable> {
   #lifetimeEntries = new SortedList<ControlPointLifetimeEntry<T>>(ControlPointLifetimeEntry.COMPARER);
 
   #startTimeMap = new Map<T, Bindable<number>>();
@@ -117,24 +115,6 @@ export abstract class ControlPointBlueprintContainer<T extends ControlPoint, TDr
         previousEntry.end = entry.start;
       }
     }
-  }
-
-  @resolved(Timeline)
-  timeline!: Timeline;
-
-  @resolved(EditorClock)
-  editorClock!: EditorClock;
-
-  protected override get currentTime(): number {
-    return this.timeline.currentTime;
-  }
-
-  override get pastLifetimeExtension() {
-    return this.timeline.visibleDuration / 2 + 200;
-  }
-
-  override get futureLifetimeExtension() {
-    return this.timeline.visibleDuration / 2 + 200;
   }
 
   override dispose(isDisposing: boolean = true) {

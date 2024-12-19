@@ -1,7 +1,9 @@
 import type { ColorSource } from 'pixi.js';
 import type { EffectPoint } from '../../../../controlPoints/EffectPoint';
-import { Anchor, Axes, Bindable, BindableBoolean, Container, dependencyLoader } from 'osucad-framework';
+import type { ControlPointLifetimeEntry } from '../../../ui/timeline/ControlPointLifetimeEntry';
+import { Anchor, Axes, Bindable, BindableBoolean, Container, dependencyLoader, resolved } from 'osucad-framework';
 import { Toggle } from '../../../../../../editor/src/userInterface/Toggle';
+import { UpdateHandler } from '../../../../crdt/UpdateHandler';
 import { KeyframeSelectionBlueprint } from '../KeyframeSelectionBlueprint';
 import { KiaiSelectionBody } from './KiaiSelectionBody';
 
@@ -47,25 +49,38 @@ export class KiaiSelectionBlueprint extends KeyframeSelectionBlueprint<EffectPoi
       else
         this.#toggle.hide();
     });
+
+    this.#toggle.changed.addListener(() => this.updateHandler.commit());
+
+    this.kiaiActive.addOnChangeListener((evt) => {
+      if (evt.value) {
+        this.#body.alpha = 0.5;
+        this.keyframeColor.value = 0x40F589;
+      }
+      else {
+        this.#body.alpha = 0;
+        this.keyframeColor.value = 0x17734B;
+      }
+    }, { immediate: true });
   }
 
   #toggle!: KiaiToggle;
 
   #body!: KiaiSelectionBody;
 
-  protected override controlPointChanged(controlPoint: EffectPoint) {
-    super.controlPointChanged(controlPoint);
+  @resolved(UpdateHandler)
+  protected updateHandler!: UpdateHandler;
 
-    this.kiaiActive.value = controlPoint.kiaiMode;
+  protected override onApply(entry: ControlPointLifetimeEntry<EffectPoint>) {
+    super.onApply(entry);
 
-    if (controlPoint.kiaiMode) {
-      this.#body.alpha = 0.5;
-      this.keyframeColor.value = 0x40F589;
-    }
-    else {
-      this.#body.alpha = 0;
-      this.keyframeColor.value = 0x17734B;
-    }
+    this.kiaiActive.bindTo(entry.start.kiaiModeBindable);
+  }
+
+  protected override onFree(entry: ControlPointLifetimeEntry<EffectPoint>) {
+    super.onFree(entry);
+
+    this.kiaiActive.unbindFrom(entry.start.kiaiModeBindable);
   }
 }
 

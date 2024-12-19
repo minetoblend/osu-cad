@@ -1,4 +1,5 @@
 import type { Patchable } from '../commands/Patchable';
+import type { Property } from '../crdt/Property';
 import { PatchUtils } from '../commands/PatchUtils';
 import { ControlPoint } from './ControlPoint';
 
@@ -10,23 +11,23 @@ export class EffectPoint extends ControlPoint implements Patchable<EffectPointPa
   constructor(time: number, kiaiMode: boolean = false) {
     super(time);
 
-    this.#kiaiMode = kiaiMode;
+    this.#kiaiMode = this.property('kiaiMode', kiaiMode);
   }
 
   static default = new EffectPoint(0);
 
-  #kiaiMode: boolean;
+  #kiaiMode: Property<boolean>;
+
+  get kiaiModeBindable() {
+    return this.#kiaiMode.bindable;
+  }
 
   get kiaiMode() {
-    return this.#kiaiMode;
+    return this.#kiaiMode.value;
   }
 
   set kiaiMode(value: boolean) {
-    if (value === this.#kiaiMode)
-      return;
-
-    this.#kiaiMode = value;
-    this.raiseChanged();
+    this.#kiaiMode.value = value;
   }
 
   isRedundant(existing?: ControlPoint | undefined): boolean {

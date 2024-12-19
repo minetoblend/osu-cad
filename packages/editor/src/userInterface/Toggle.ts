@@ -1,23 +1,5 @@
-import type {
-  Bindable,
-  MouseDownEvent,
-} from 'osucad-framework';
-import {
-  Action,
-  Anchor,
-  Axes,
-  BindableWithCurrent,
-  CompositeDrawable,
-  Container,
-  dependencyLoader,
-  EasingFunction,
-  FastRoundedBox,
-  FillMode,
-  MouseButton,
-  resolved,
-  RoundedBox,
-  Vec2,
-} from 'osucad-framework';
+import type { Bindable, MouseDownEvent } from 'osucad-framework';
+import { Action, Anchor, Axes, BindableWithCurrent, CompositeDrawable, Container, dependencyLoader, EasingFunction, FastRoundedBox, FillMode, MouseButton, resolved, RoundedBox, Vec2 } from 'osucad-framework';
 
 import { ThemeColors } from '../editor/ThemeColors';
 
@@ -145,7 +127,10 @@ export class Toggle extends CompositeDrawable {
       this.onActivate.emit();
     else
       this.onDeactivate.emit();
+    this.changed.emit(this.value);
   }
+
+  changed = new Action<boolean>();
 
   protected get activeColor() {
     return this.colors.primary;

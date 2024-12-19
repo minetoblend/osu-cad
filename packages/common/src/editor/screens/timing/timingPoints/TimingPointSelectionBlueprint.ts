@@ -17,6 +17,8 @@ export class TimingPointSelectionBlueprint extends KeyframeSelectionBlueprint<Ti
 
   override readonly keyframeColor = new Bindable<ColorSource>(0xFF265A);
 
+  readonly beatLengthBindable = new BindableNumber(100);
+
   readonly bpmBindable = new BindableNumber(120)
     .withMinValue(1)
     .withMaxValue(10000);
@@ -47,6 +49,10 @@ export class TimingPointSelectionBlueprint extends KeyframeSelectionBlueprint<Ti
       }),
     );
 
+    this.beatLengthBindable.addOnChangeListener(evt =>
+      this.bpmBindable.value = 60_000 / evt.value,
+    );
+
     this.bpmBindable.addOnChangeListener((evt) => {
       if (this.controlPoint)
         this.controlPoint.bpm = evt.value;
@@ -56,12 +62,14 @@ export class TimingPointSelectionBlueprint extends KeyframeSelectionBlueprint<Ti
   protected override onApply(entry: ControlPointLifetimeEntry<TimingPoint>) {
     super.onApply(entry);
 
+    this.beatLengthBindable.bindTo(entry.start.beatLengthBindable);
     this.meterBindable.bindTo(entry.start.meterBindable);
   }
 
   protected override onFree(entry: ControlPointLifetimeEntry<TimingPoint>) {
     super.onFree(entry);
 
+    this.beatLengthBindable.unbindFrom(entry.start.beatLengthBindable);
     this.meterBindable.unbindFrom(entry.start.meterBindable);
   }
 

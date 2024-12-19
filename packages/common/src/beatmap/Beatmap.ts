@@ -1,5 +1,7 @@
+import type { AbstractCrdt } from '../crdt/AbstractCrdt';
 import type { IBeatmap } from './IBeatmap';
 import { ControlPointInfo } from '../controlPoints/ControlPointInfo';
+import { StaticCrdt } from '../crdt/StaticCrdt';
 import { BeatmapColors } from './BeatmapColors';
 import { BeatmapDifficultyInfo } from './BeatmapDifficultyInfo';
 import { BeatmapMetadata } from './BeatmapMetadata';
@@ -7,7 +9,7 @@ import { BeatmapSettings } from './BeatmapSettings';
 import { HitObjectList } from './HitObjectList';
 import { BeatmapSerializer } from './serialization/BeatmapSerializer';
 
-export class Beatmap implements IBeatmap {
+export class Beatmap extends StaticCrdt implements IBeatmap {
   static get serializer() {
     return new BeatmapSerializer();
   }
@@ -19,6 +21,7 @@ export class Beatmap implements IBeatmap {
     readonly colors = new BeatmapColors(),
     readonly controlPoints = new ControlPointInfo(),
   ) {
+    super();
     this.controlPoints.anyPointChanged.addListener(controlPoint =>
       this.hitObjects.invalidateFromControlPoint(controlPoint),
     );
@@ -30,5 +33,11 @@ export class Beatmap implements IBeatmap {
   getMaxCombo(): number {
     // TODO
     return 0;
+  }
+
+  override get childObjects(): AbstractCrdt[] {
+    return [
+      this.controlPoints,
+    ];
   }
 }

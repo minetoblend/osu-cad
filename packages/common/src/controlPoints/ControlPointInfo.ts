@@ -1,5 +1,6 @@
 import type { ControlPoint } from './ControlPoint';
 import { Action, almostEquals } from 'osucad-framework';
+import { AbstractCrdt } from '../crdt/AbstractCrdt';
 import { ControlPointList } from './ControlPointList';
 import { DifficultyPoint } from './DifficultyPoint';
 import { EffectPoint } from './EffectPoint';
@@ -7,7 +8,11 @@ import { SamplePoint } from './SamplePoint';
 import { TickGenerator } from './TickGenerator';
 import { TimingPoint } from './TimingPoint';
 
-export class ControlPointInfo {
+export type ControlPointMutation =
+  | { op: 'add'; controlPoint: ControlPoint }
+  | { op: 'remove'; id: string };
+
+export class ControlPointInfo extends AbstractCrdt<ControlPointMutation> {
   timingPoints = new ControlPointList<TimingPoint>();
 
   difficultyPoints = new ControlPointList<DifficultyPoint>();
@@ -17,6 +22,10 @@ export class ControlPointInfo {
   samplePoints = new ControlPointList<SamplePoint>();
 
   anyPointChanged = new Action<ControlPoint>();
+
+  added = new Action<ControlPoint>();
+
+  removed = new Action<ControlPoint>();
 
   #idMap = new Map<string, ControlPoint>();
 
@@ -29,7 +38,51 @@ export class ControlPointInfo {
     ];
   }
 
+  override handle(mutation: ControlPointMutation): ControlPointMutation | null {
+    switch (mutation.op) {
+      case 'add':
+        if (this.#add(mutation.controlPoint)) {
+          return {
+            op: 'remove',
+            id: mutation.controlPoint.id,
+          };
+        }
+        break;
+      case 'remove':
+      {
+        const controlPoint = this.getById(mutation.id);
+        if (controlPoint && this.#remove(controlPoint)) {
+          return {
+            op: 'add',
+            controlPoint,
+          };
+        }
+      }
+    }
+    return null;
+  }
+
   add(controlPoint: ControlPoint, skipIfRedundant: boolean = false): boolean {
+    if (!this.#add(controlPoint, skipIfRedundant))
+      return false;
+
+    this.submitMutation({
+      op: 'add',
+      controlPoint,
+    }, {
+      op: 'remove',
+      id: controlPoint.id,
+    });
+
+    return true;
+  }
+
+  #add(controlPoint: ControlPoint, skipIfRedundant: boolean = false) {
+    if (this.#idMap.has(controlPoint.id)) {
+      console.warn('Tried to add control point that was already in the list');
+      return false;
+    }
+
     const list = this.listFor(controlPoint);
     if (!list)
       return false;
@@ -41,12 +94,39 @@ export class ControlPointInfo {
     }
 
     list.add(controlPoint);
+    this.#idMap.set(controlPoint.id, controlPoint);
+
+    this.attachChild(controlPoint);
+    this.added.emit(controlPoint);
 
     return true;
   }
 
   remove(controlPoint: ControlPoint): boolean {
-    return this.listFor(controlPoint)?.remove(controlPoint) ?? false;
+    if (!this.#remove(controlPoint))
+      return false;
+
+    this.submitMutation({
+      op: 'remove',
+      id: controlPoint.id,
+    }, {
+      op: 'add',
+      controlPoint,
+    });
+
+    return true;
+  }
+
+  #remove(controlPoint: ControlPoint) {
+    if (this.#idMap.delete(controlPoint.id)) {
+      controlPoint.detach();
+      this.listFor(controlPoint)?.remove(controlPoint);
+      this.removed.emit(controlPoint);
+
+      return true;
+    }
+
+    return false;
   }
 
   snap(time: number, divisor: number, rounded: boolean = true) {
@@ -113,5 +193,9 @@ export class ControlPointInfo {
 
   getControlPointsAtTime(time: number): ControlPoint[] {
     return this.controlPointLists.flatMap(list => list.filter(it => almostEquals(it.time, time, 1)));
+  }
+
+  override get childObjects(): AbstractCrdt[] {
+    return this.controlPointLists.flatMap(it => it.items);
   }
 }

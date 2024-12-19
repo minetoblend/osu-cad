@@ -1,7 +1,8 @@
-import type { ClickEvent, DragEvent, DragStartEvent } from 'osucad-framework';
+import type { ClickEvent, DragEndEvent, DragEvent, DragStartEvent, MouseDownEvent } from 'osucad-framework';
 import type { KiaiSelectionBlueprint } from './KiaiSelectionBlueprint';
-import { Axes, Box, resolved } from 'osucad-framework';
+import { Axes, Box, MouseButton, resolved } from 'osucad-framework';
 import { ControlPointInfo } from '../../../../controlPoints/ControlPointInfo';
+import { UpdateHandler } from '../../../../crdt/UpdateHandler';
 import { EditorClock } from '../../../EditorClock';
 import { Timeline } from '../../../ui/timeline/Timeline';
 import { TimingScreenSelectionManager } from '../TimingScreenSelectionManager';
@@ -28,10 +29,30 @@ export class KiaiSelectionBody extends Box {
   controlPointInfo!: ControlPointInfo;
 
   @resolved(EditorClock)
-  editorClock!: EditorClock;
+  protected editorClock!: EditorClock;
 
   @resolved(TimingScreenSelectionManager)
-  selectionManager!: TimingScreenSelectionManager;
+  protected selectionManager!: TimingScreenSelectionManager;
+
+  @resolved(UpdateHandler)
+  protected updateHandler!: UpdateHandler;
+
+  override onMouseDown(e: MouseDownEvent): boolean {
+    if (e.button === MouseButton.Left)
+      return true;
+
+    if (e.button === MouseButton.Right) {
+      const { start, end } = this.blueprint.entry!;
+      this.controlPointInfo.remove(start);
+      if (end)
+        this.controlPointInfo.remove(end);
+      this.updateHandler.commit();
+
+      return true;
+    }
+
+    return false;
+  }
 
   override onDragStart(e: DragStartEvent): boolean {
     this.#dragOffset = this.timeline.screenSpacePositionToTime(e.screenSpaceMousePosition) - this.controlPoint!.time;
@@ -52,6 +73,10 @@ export class KiaiSelectionBody extends Box {
       this.blueprint.entry!.end.time += delta;
 
     return true;
+  }
+
+  override onDragEnd(e: DragEndEvent) {
+    this.updateHandler.commit();
   }
 
   override onClick(e: ClickEvent): boolean {

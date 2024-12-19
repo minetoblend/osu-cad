@@ -8,7 +8,7 @@ import type { HitCircle } from './HitCircle';
 import type { Slider } from './Slider';
 import type { Spinner } from './Spinner';
 import { BooleanSerializer, nullableDescriptor, NullableSerializer, Uint8Serializer } from '@osucad/serialization';
-import { Action, Vec2, Vec2Serializer } from 'osucad-framework';
+import { Vec2, Vec2Serializer } from 'osucad-framework';
 import { Color } from 'pixi.js';
 import { BeatmapDifficultyInfo } from '../../../beatmap/BeatmapDifficultyInfo';
 import { HitObject, HitObjectSerializer } from '../../../hitObjects/HitObject';
@@ -21,18 +21,6 @@ import { deserializeHitSound } from '../../../serialization/HitSound';
 import { OsuHitWindows } from './OsuHitWindows';
 
 export abstract class OsuHitObject extends HitObject implements IHasComboInformation, IPatchable<SerializedOsuHitObject> {
-  readonly needsDefaultsApplied = new Action<OsuHitObject>();
-
-  protected requestApplyDefaults() {
-    this.needsDefaultsApplied.emit(this);
-  }
-
-  constructor() {
-    super();
-
-    this.startTimeBindable.valueChanged.addListener(this.requestApplyDefaults, this);
-  }
-
   static readonly object_radius = 64;
 
   static readonly object_dimensions = new Vec2(OsuHitObject.object_radius * 2);

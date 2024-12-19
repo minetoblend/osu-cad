@@ -28,13 +28,13 @@ export class TimingScreenNumberBadge extends TimingScreenInputBadge {
     this.current.addOnChangeListener((evt) => {
       this.textBox.text = this.format(evt.value);
     }, { immediate: true });
+  }
 
-    this.textBox.onCommit.addListener((value) => {
-      const parsed = Number.parseFloat(value);
-      if (Number.isFinite(parsed))
-        this.current.value = parsed;
-      else
-        this.textBox.text = this.format(this.current.value);
-    });
+  protected override onCommit(text: string) {
+    const parsed = Number.parseFloat(text);
+    if (Number.isFinite(parsed))
+      this.current.value = parsed;
+    else
+      this.textBox.text = this.format(this.current.value);
   }
 }

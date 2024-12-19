@@ -1,10 +1,12 @@
 import type { DependencyContainer, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer, ScreenTransitionEvent, ScrollEvent } from 'osucad-framework';
-import { almostEquals, asyncDependencyLoader, clamp } from 'osucad-framework';
+import { almostEquals, asyncDependencyLoader, clamp, PlatformAction } from 'osucad-framework';
 import { OsucadScreen } from '../../../common/src/screens/OsucadScreen';
 import { EditorAction } from '../../../editor/src/editor/EditorAction';
 import { HitObjectList } from '../beatmap/HitObjectList';
 import { IBeatmap } from '../beatmap/IBeatmap';
+import { BeatmapComboProcessor } from '../beatmap/processors/BeatmapComboProcessor';
 import { ControlPointInfo } from '../controlPoints/ControlPointInfo';
+import { UpdateHandler } from '../crdt/UpdateHandler';
 import { PlayfieldClock } from '../gameplay/PlayfieldClock';
 import { OsuRuleset } from '../rulesets';
 import { Ruleset } from '../rulesets/Ruleset';
@@ -17,7 +19,7 @@ import { EditorScreenManager } from './screens/EditorScreenManager';
 import { SetupScreen } from './screens/setup/SetupScreen';
 import { TimingScreen } from './screens/timing/TimingScreen';
 
-export class Editor extends OsucadScreen implements IKeyBindingHandler<EditorAction> {
+export class Editor extends OsucadScreen implements IKeyBindingHandler<EditorAction | PlatformAction> {
   constructor(readonly editorBeatmap: EditorBeatmap) {
     super();
 
@@ -31,12 +33,14 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<EditorAct
   @asyncDependencyLoader()
   async load() {
     await this.loadComponentAsync(this.editorBeatmap);
+    this.addInternal(this.editorBeatmap);
 
     this.#dependencies.provide(EditorBeatmap, this.editorBeatmap);
     this.#dependencies.provide(IBeatmap, this.beatmap);
     this.#dependencies.provide(CommandManager, this.editorBeatmap.commandManager);
     this.#dependencies.provide(ControlPointInfo, this.editorBeatmap.controlPoints);
     this.#dependencies.provide(HitObjectList, this.beatmap.hitObjects);
+    this.#dependencies.provide(UpdateHandler, this.editorBeatmap.updateHandler);
 
     this.#dependencies.provide(Ruleset, new OsuRuleset());
 
@@ -48,6 +52,7 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<EditorAct
     this.#dependencies.provide(EditorScreenManager, this.#screenManager);
 
     this.addInternal(new EditorLayout());
+    this.addInternal(new BeatmapComboProcessor());
   }
 
   protected registerScreens(screenManager: EditorScreenManager) {
@@ -114,10 +119,10 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<EditorAct
   readonly isKeyBindingHandler = true;
 
   canHandleKeyBinding(binding: KeyBindingAction): boolean {
-    return binding instanceof EditorAction;
+    return binding instanceof EditorAction || binding instanceof PlatformAction;
   }
 
-  onKeyBindingPressed?(e: KeyBindingPressEvent<EditorAction>): boolean {
+  onKeyBindingPressed?(e: KeyBindingPressEvent<EditorAction | PlatformAction>): boolean {
     switch (e.pressed) {
       case EditorAction.Play:
         this.togglePlayback();
@@ -131,11 +136,25 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<EditorAct
       case EditorAction.PlayFromStart:
         this.playFromStart();
         break;
+      case PlatformAction.Undo:
+        this.undo();
+        break;
+      case PlatformAction.Redo:
+        this.redo();
+        break;
       default:
         return false;
     }
 
     return true;
+  }
+
+  undo() {
+    this.editorBeatmap.updateHandler.undo();
+  }
+
+  redo() {
+    this.editorBeatmap.updateHandler.redo();
   }
 
   togglePlayback() {

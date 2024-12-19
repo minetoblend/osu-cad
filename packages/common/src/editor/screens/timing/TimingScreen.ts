@@ -6,6 +6,7 @@ import { LayeredTimeline } from '../../ui/timeline/LayeredTimeline';
 import { TimelineBoundaryOverlay } from '../../ui/timeline/TimelineBoundaryOverlay';
 import { EditorScreen } from '../EditorScreen';
 import { editorScreen } from '../metadata';
+import { HitObjectTimelineLayer } from './hitObjects/HitObjectTimelineLayer';
 import { KiaiTimelineLayer } from './kiai/KiaiTimelineLayer';
 import { Metronome } from './Metronome';
 import { SliderVelocityTimelineLayer } from './sliderVelocity/SliderVelocityTimelineLayer';
@@ -82,6 +83,7 @@ export class TimingScreen extends EditorScreen {
   protected createLayers() {
     return [
       new TopTimelineLayer(),
+      new HitObjectTimelineLayer(),
       new TimingPointLayer(),
       new SliderVelocityTimelineLayer(),
       new KiaiTimelineLayer(),
