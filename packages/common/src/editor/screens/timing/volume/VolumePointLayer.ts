@@ -1,4 +1,4 @@
-import { Anchor, Axes, Box, dependencyLoader } from 'osucad-framework';
+import { Anchor, Axes, Box, Container, dependencyLoader } from 'osucad-framework';
 import { TimingScreenTimelineLayer } from '../TimingScreenTimelineLayer';
 import { VolumePointBlueprintContainer } from './VolumePointBlueprintContainer';
 import { VolumePointPlacementBlueprint } from './VolumePointPlacementBlueprint';
@@ -11,17 +11,22 @@ export class VolumePointLayer extends TimingScreenTimelineLayer {
   @dependencyLoader()
   [Symbol('load')]() {
     this.height = 100;
-    this.padding = { vertical: 4 };
 
-    this.addAll(
-      new Box({
+    this.add(
+      new Container({
         relativeSizeAxes: Axes.Both,
-        alpha: 0.02,
-        anchor: Anchor.CenterLeft,
-        origin: Anchor.CenterLeft,
+        padding: { vertical: 4 },
+        children: [
+          new Box({
+            relativeSizeAxes: Axes.Both,
+            alpha: 0.02,
+            anchor: Anchor.CenterLeft,
+            origin: Anchor.CenterLeft,
+          }),
+          new VolumePointBlueprintContainer(),
+          new VolumePointPlacementBlueprint(),
+        ],
       }),
-      new VolumePointBlueprintContainer(),
-      new VolumePointPlacementBlueprint(),
     );
   }
 
