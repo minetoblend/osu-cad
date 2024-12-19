@@ -46,6 +46,10 @@ export class ContextMenu extends Menu {
       cornerRadius: 4,
     });
   }
+
+  protected override get openOnHover(): boolean {
+    return true;
+  }
 }
 
 export class DrawableContextMenuItem extends DrawableMenuItem {

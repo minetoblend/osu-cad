@@ -497,8 +497,12 @@ export abstract class Menu extends CompositeDrawable {
 
   #openTimeout?: ReturnType<typeof setTimeout>;
 
+  protected get openOnHover() {
+    return !this.topLevelMenu;
+  }
+
   #menuItemHovered = (item: DrawableMenuItem) => {
-    if (this.topLevelMenu && this.#submenu?.state !== MenuState.Open) {
+    if (!this.openOnHover && this.#submenu?.state !== MenuState.Open) {
       return;
     }
 
