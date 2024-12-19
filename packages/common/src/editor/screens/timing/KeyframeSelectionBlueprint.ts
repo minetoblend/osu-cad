@@ -4,7 +4,7 @@ import type { ControlPoint } from '../../../controlPoints/ControlPoint';
 import type { ControlPointLifetimeEntry } from '../../ui/timeline/ControlPointLifetimeEntry';
 import type { KeyframePiece } from './KeyframePiece';
 import { Anchor, Axes, dependencyLoader, FillDirection, FillFlowContainer, Vec2 } from 'osucad-framework';
-import { DiamondKeyframePieceKeyframePiece } from './DiamondKeyframePiece';
+import { DiamondKeyframePiece } from './DiamondKeyframePiece';
 import { TimingScreenSelectionBlueprint } from './TimingScreenSelectionBlueprint';
 
 export abstract class KeyframeSelectionBlueprint<T extends ControlPoint> extends TimingScreenSelectionBlueprint<T> {
@@ -51,7 +51,7 @@ export abstract class KeyframeSelectionBlueprint<T extends ControlPoint> extends
   }
 
   protected createKeyframePiece(): KeyframePiece {
-    return new DiamondKeyframePieceKeyframePiece(this, {
+    return new DiamondKeyframePiece(this, {
       anchor: Anchor.CenterLeft,
       origin: Anchor.Center,
     });

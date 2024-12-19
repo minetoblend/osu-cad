@@ -35,7 +35,7 @@ export abstract class ControlPointPlacementBlueprint<T extends ControlPoint> ext
 
     this.addInternal(this.#previewShape = this.createPreviewShape());
 
-    this.#updateVisibility();
+    this.activeTool.addOnChangeListener(e => this.#updateVisibility(), { immediate: true });
   }
 
   protected createPreviewShape(): Drawable {
@@ -48,6 +48,10 @@ export abstract class ControlPointPlacementBlueprint<T extends ControlPoint> ext
   }
 
   #inputManager!: InputManager;
+
+  protected get inputManager(): InputManager {
+    return this.#inputManager;
+  }
 
   @resolved(Timeline)
   timeline!: Timeline;
@@ -76,9 +80,11 @@ export abstract class ControlPointPlacementBlueprint<T extends ControlPoint> ext
   override update() {
     super.update();
 
-    this.#previewShape.x = this.timeline.timeToPosition(
-      this.timeAtMousePosition,
-    );
+    this.updatePreviewShapePosition(this.#previewShape);
+  }
+
+  protected updatePreviewShapePosition(shape: Drawable) {
+    this.#previewShape.x = this.timeline.timeToPosition(this.timeAtMousePosition);
   }
 
   #ctrlPressed = false;

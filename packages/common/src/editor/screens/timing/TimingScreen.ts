@@ -16,6 +16,7 @@ import { TimingScreenSelectionManager } from './TimingScreenSelectionManager';
 import { TimingScreenTickContainer } from './TimingScreenTickContainer';
 import { TimingScreenToolSelect } from './TimingScreenToolSelect';
 import { TopTimelineLayer } from './TopTimelineLayer';
+import { VolumePointLayer } from './volume/VolumePointLayer';
 
 @editorScreen({
   id: 'timing',
@@ -109,6 +110,7 @@ export class TimingScreen extends EditorScreen {
       new HitObjectTimelineLayer(),
       new TimingPointLayer(),
       new SliderVelocityTimelineLayer(),
+      new VolumePointLayer(),
       new KiaiTimelineLayer(),
     ];
   }

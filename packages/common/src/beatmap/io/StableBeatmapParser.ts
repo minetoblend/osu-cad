@@ -5,6 +5,7 @@ import { DifficultyPoint } from '../../controlPoints/DifficultyPoint';
 import { EffectPoint } from '../../controlPoints/EffectPoint';
 import { SamplePoint } from '../../controlPoints/SamplePoint';
 import { TimingPoint } from '../../controlPoints/TimingPoint';
+import { VolumePoint } from '../../controlPoints/VolumePoint';
 import { EffectType } from '../../hitObjects/EffectType';
 import { HitType } from '../../hitObjects/HitType';
 import { Additions } from '../../hitsounds/Additions';
@@ -255,6 +256,8 @@ export class StableBeatmapParser {
     const sampleIndex = Number.parseInt(values[4]);
 
     beatmap.controlPoints.add(new SamplePoint(startTime, volume, sampleSet, sampleIndex), true);
+
+    beatmap.controlPoints.add(new VolumePoint(startTime, volume), true);
 
     const effectFlags = Number.parseInt(values[7]);
 

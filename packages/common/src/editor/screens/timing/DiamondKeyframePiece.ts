@@ -3,7 +3,7 @@ import { Anchor, Axes, ColorUtils, dependencyLoader, EasingFunction } from 'osuc
 import { DiamondShape } from './DiamondShape';
 import { KeyframePiece } from './KeyframePiece';
 
-export class DiamondKeyframePieceKeyframePiece extends KeyframePiece {
+export class DiamondKeyframePiece extends KeyframePiece {
   diamond!: DiamondShape;
 
   @dependencyLoader()
@@ -12,7 +12,7 @@ export class DiamondKeyframePieceKeyframePiece extends KeyframePiece {
     this.width = 20;
     this.height = 20;
 
-    this.addInternal(this.diamond = new DiamondShape({
+    this.addAllInternal(this.diamond = new DiamondShape({
       relativeSizeAxes: Axes.Both,
       anchor: Anchor.Center,
       origin: Anchor.Center,

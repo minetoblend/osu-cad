@@ -4,7 +4,9 @@
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.lib.json --composite false"
   },
-  "dependencies": {},
+  "dependencies": {
+    "bezier-easing": "^2.1.0"
+  },
   "main": "./index.js",
   "module": "./index.mjs",
   "typings": "./index.d.ts",

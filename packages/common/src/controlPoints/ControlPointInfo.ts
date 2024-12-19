@@ -7,6 +7,7 @@ import { EffectPoint } from './EffectPoint';
 import { SamplePoint } from './SamplePoint';
 import { TickGenerator } from './TickGenerator';
 import { TimingPoint } from './TimingPoint';
+import { VolumePoint } from './VolumePoint';
 
 export type ControlPointMutation =
   | { op: 'add'; controlPoint: ControlPoint }
@@ -20,6 +21,8 @@ export class ControlPointInfo extends AbstractCrdt<ControlPointMutation> {
   effectPoints = new ControlPointList<EffectPoint>(false);
 
   samplePoints = new ControlPointList<SamplePoint>();
+
+  volumePoints = new ControlPointList<VolumePoint>();
 
   anyPointChanged = new Action<ControlPoint>();
 
@@ -35,6 +38,7 @@ export class ControlPointInfo extends AbstractCrdt<ControlPointMutation> {
       this.difficultyPoints,
       this.effectPoints,
       this.samplePoints,
+      this.volumePoints,
     ];
   }
 
@@ -178,6 +182,22 @@ export class ControlPointInfo extends AbstractCrdt<ControlPointMutation> {
     return this.samplePoints.controlPointAt(time) ?? SamplePoint.default;
   }
 
+  volumePointAt(time: number) {
+    return this.samplePoints.controlPointAt(time) ?? SamplePoint.default;
+  }
+
+  volumeAt(time: number) {
+    const index = this.volumePoints.controlPointIndexAt(time);
+
+    if (index === -1)
+      return VolumePoint.default.volume;
+
+    const point = this.volumePoints.get(index)!;
+    const next = this.volumePoints.get(index + 1);
+
+    return point.volumeAtTime(time, next);
+  }
+
   readonly tickGenerator = new TickGenerator(this.timingPoints);
 
   listFor<T extends ControlPoint>(controlPoint: T): ControlPointList<T> | undefined {
@@ -190,6 +210,8 @@ export class ControlPointInfo extends AbstractCrdt<ControlPointMutation> {
         return this.effectPoints as any;
       case SamplePoint:
         return this.samplePoints as any;
+      case VolumePoint:
+        return this.volumePoints as any;
       default:
         throw new Error(`Unknown control point type: ${controlPoint.constructor.name}`);
     }

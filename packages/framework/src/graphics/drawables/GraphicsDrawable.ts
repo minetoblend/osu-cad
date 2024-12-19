@@ -28,7 +28,7 @@ export abstract class GraphicsDrawable extends Drawable {
 
   abstract updateGraphics(g: Graphics): void;
 
-  protected invalidateGraphics() {
+  invalidateGraphics() {
     this.#graphicsBacking.invalidate();
   }
 
