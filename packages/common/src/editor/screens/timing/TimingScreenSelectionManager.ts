@@ -1,8 +1,9 @@
+import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent } from 'osucad-framework';
 import type { ControlPoint } from '../../../controlPoints/ControlPoint';
-import { Action, Component, dependencyLoader, resolved } from 'osucad-framework';
+import { Action, Component, dependencyLoader, PlatformAction, resolved } from 'osucad-framework';
 import { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 
-export class TimingScreenSelectionManager extends Component {
+export class TimingScreenSelectionManager extends Component implements IKeyBindingHandler<PlatformAction> {
   #selection = new Set<ControlPoint>();
 
   selectionChanged = new Action<ControlPointSelectionEvent>();
@@ -81,6 +82,28 @@ export class TimingScreenSelectionManager extends Component {
     super.dispose(isDisposing);
 
     this.controlPointInfo.removed.removeListener(this.#onControlPointRemoved, this);
+  }
+
+  readonly isKeyBindingHandler = true;
+
+  canHandleKeyBinding(action: KeyBindingAction): boolean {
+    return action instanceof PlatformAction;
+  }
+
+  onKeyBindingPressed(e: KeyBindingPressEvent<PlatformAction>): boolean {
+    switch (e.pressed) {
+      case PlatformAction.SelectAll:
+        this.selectAll();
+        return true;
+    }
+
+    return false;
+  }
+
+  selectAll() {
+    this.setSelection(
+      ...this.controlPointInfo.controlPointLists.flatMap(it => it.items),
+    );
   }
 }
 
