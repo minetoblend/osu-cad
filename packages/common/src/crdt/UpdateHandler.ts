@@ -44,8 +44,6 @@ export class UpdateHandler extends Component {
     if (transaction.isEmpty)
       return;
 
-    console.log(transaction);
-
     for (const entry of transaction.entries) {
       const target = this.objects.get(entry.targetId);
       target?.onTransactionCommit(transaction);
@@ -53,6 +51,20 @@ export class UpdateHandler extends Component {
 
     this.#redoStack.length = 0;
     this.#undoStack.push(transaction);
+    this.#currentTransaction = new Transaction();
+  }
+
+  undoCurrentTransaction() {
+    const transaction = this.currentTransaction;
+
+    if (transaction.isEmpty)
+      return;
+
+    for (const entry of transaction.entries.toReversed()) {
+      const target = this.objects.get(entry.targetId);
+      target?.handle(entry.undoMutation);
+    }
+
     this.#currentTransaction = new Transaction();
   }
 
