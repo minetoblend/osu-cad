@@ -3,6 +3,7 @@ import type { Bindable, IVec2, ReadonlyBindable, ValueChangedEvent } from 'osuca
 import type { BeatmapDifficultyInfo } from '../../../beatmap/BeatmapDifficultyInfo';
 import type { IPatchable } from '../../../commands/IPatchable';
 import type { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
+import type { AbstractCrdt } from '../../../crdt/AbstractCrdt';
 import type { IHasRepeats } from '../../../hitObjects/IHasRepeats';
 import type { IHasSliderVelocity } from '../../../hitObjects/IHasSliderVelocity';
 import type { HitSound } from '../../../hitsounds/HitSound';
@@ -481,6 +482,12 @@ export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepe
 
   protected override onStartTimeChanged(time: ValueChangedEvent<number>) {
     super.onStartTimeChanged(time);
+  }
+
+  override get childObjects(): readonly AbstractCrdt<any>[] {
+    return [
+      this.path,
+    ];
   }
 }
 

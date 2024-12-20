@@ -1,6 +1,6 @@
 import type { IKeyBinding } from 'osucad-framework';
 import type { IBeatmap } from '../beatmap/IBeatmap';
-import type { HitObjectComposer } from '../editor/HitObjectComposer';
+import type { HitObjectComposer } from '../editor/screens/compose/HitObjectComposer';
 import type { ISkin } from '../skinning/ISkin';
 import type { SkinTransformer } from '../skinning/SkinTransformer';
 import type { DrawableRuleset } from './DrawableRuleset';
@@ -11,6 +11,10 @@ export abstract class Ruleset {
   }
 
   abstract createDrawableRulesetWith(beatmap: IBeatmap): DrawableRuleset;
+
+  createDrawableEditorRulesetWith(beatmap: IBeatmap): DrawableRuleset {
+    return this.createDrawableRulesetWith(beatmap);
+  }
 
   // TODO: ScoreProcessor
 

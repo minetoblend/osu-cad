@@ -1,11 +1,13 @@
 import type { IKeyBinding } from 'osucad-framework';
 import type { IBeatmap } from '../../beatmap';
-import type { HitObjectComposer } from '../../editor/HitObjectComposer';
+import type { HitObjectComposer } from '../../editor/screens/compose/HitObjectComposer';
 import type { ISkin } from '../../skinning/ISkin';
 import type { SkinTransformer } from '../../skinning/SkinTransformer';
+import type { DrawableRuleset } from '../DrawableRuleset';
 import { InputKey, KeyBinding, KeyCombination } from 'osucad-framework';
 import { StableSkin } from '../../skinning/stable/StableSkin';
 import { Ruleset } from '../Ruleset';
+import { DrawableOsuEditorRuleset } from './DrawableOsuEditorRuleset';
 import { DrawableOsuRuleset } from './DrawableOsuRuleset';
 import { OsuHitObjectComposer } from './edit/OsuHitObjectComposer';
 import { OsuAction } from './OsuAction';
@@ -14,6 +16,10 @@ import { StableOsuSkinTransformer } from './skinning/stable/StableOsuSkinTransfo
 export class OsuRuleset extends Ruleset {
   override createDrawableRulesetWith(beatmap: IBeatmap) {
     return new DrawableOsuRuleset(this, beatmap);
+  }
+
+  override createDrawableEditorRulesetWith(beatmap: IBeatmap): DrawableRuleset {
+    return new DrawableOsuEditorRuleset(this, beatmap);
   }
 
   override get shortName(): string {

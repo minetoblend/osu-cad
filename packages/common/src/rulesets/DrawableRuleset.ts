@@ -1,4 +1,3 @@
-import type { PassThroughInputManager } from 'osucad-framework';
 import type { IBeatmap } from '../beatmap/IBeatmap';
 import type { DrawableHitObject } from '../hitObjects/drawables/DrawableHitObject';
 import type { HitObject } from '../hitObjects/HitObject';
@@ -6,7 +5,15 @@ import type { HitWindows } from '../hitObjects/HitWindows';
 import type { JudgementResult } from '../hitObjects/JudgementResult';
 import type { Ruleset } from './Ruleset';
 import type { Playfield } from './ui/Playfield';
-import { Action, Axes, CompositeDrawable, Container, dependencyLoader, Lazy } from 'osucad-framework';
+import {
+  Action,
+  Axes,
+  CompositeDrawable,
+  Container,
+  dependencyLoader,
+  Lazy,
+  type PassThroughInputManager,
+} from 'osucad-framework';
 import { HitResult } from '../hitObjects/HitResult';
 import { PlayfieldAdjustmentContainer } from './ui/PlayfieldAdjustmentContainer';
 
@@ -50,6 +57,10 @@ export abstract class DrawableRuleset<TObject extends HitObject = HitObject> ext
 
   protected override loadComplete() {
     super.loadComplete();
+
+    this.playfieldAdjustmentContainer.add(this.playfield);
+
+    this.#loadObjects();
   }
 
   @dependencyLoader()
@@ -61,9 +72,11 @@ export abstract class DrawableRuleset<TObject extends HitObject = HitObject> ext
   }
 
   #loadObjects() {
-    for (const hitObject of this.beatmap.hitObjects) {
+    for (const hitObject of this.beatmap.hitObjects)
       this.addHitObject(hitObject as unknown as TObject);
-    }
+
+    this.beatmap.hitObjects.added.addListener(this.addHitObject as any, this);
+    this.beatmap.hitObjects.removed.addListener(this.removeHitObject as any, this);
   }
 
   addHitObject(hitObject: TObject) {
@@ -114,6 +127,13 @@ export abstract class DrawableRuleset<TObject extends HitObject = HitObject> ext
     }
 
     return null;
+  }
+
+  override dispose(isDisposing: boolean = true) {
+    super.dispose(isDisposing);
+
+    this.beatmap.hitObjects.added.removeListener(this.addHitObject as any, this);
+    this.beatmap.hitObjects.removed.removeListener(this.removeHitObject as any, this);
   }
 
   // public override double GameplayStartTime => Objects.FirstOrDefault()?.StartTime - 2000 ?? 0;

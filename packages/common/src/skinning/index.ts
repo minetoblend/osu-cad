@@ -1,3 +1,4 @@
+export * from './BeatmapSkin';
 export * from './BeatmapSkinProvidingContainer';
 export * from './default';
 export * from './GameplaySkinComponentLookup';

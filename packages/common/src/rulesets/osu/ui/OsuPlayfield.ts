@@ -4,7 +4,7 @@ import type { JudgementResult } from '../../../hitObjects/JudgementResult';
 import type { IHitPolicy } from '../../ui/IHitPolicy';
 import type { DrawableOsuHitObject } from '../hitObjects/drawables/DrawableOsuHitObject';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
-import { Anchor, Axes, BindableBoolean, Container, dependencyLoader, resolved } from 'osucad-framework';
+import { Anchor, Axes, BindableBoolean, Container, dependencyLoader, provide, resolved } from 'osucad-framework';
 import { OsucadConfigManager } from '../../../config/OsucadConfigManager';
 import { OsucadSettings } from '../../../config/OsucadSettings';
 import { HitObjectLifetimeEntry } from '../../../hitObjects/drawables/HitObjectLifetimeEntry';
@@ -27,6 +27,7 @@ import { DrawableJudgement } from './DrawableJudgement';
 import { FollowPointRenderer } from './FollowPointRenderer';
 import { StartTimeOrderedHitPolicy } from './StartTimeOrderedHitPolicy';
 
+@provide(OsuPlayfield)
 export class OsuPlayfield extends Playfield {
   protected followPoints!: FollowPointRenderer;
 

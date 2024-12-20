@@ -1,37 +1,37 @@
 import type { PathPoint } from './PathPoint';
 import { Action, CachedValue, List, Vec2 } from 'osucad-framework';
+import { ObjectCrdt } from '../../../crdt/ObjectCrdt';
 import { PathApproximator } from '../../../utils/PathApproximator';
 import { CalculatedPath } from './CalculatedPath';
 import { PathRange } from './PathRange';
 import { PathType } from './PathType';
 
-export class SliderPath {
+export class SliderPath extends ObjectCrdt {
   readonly invalidated = new Action();
 
-  #expectedDistance = 0;
+  #expectedDistance = this.property('expectedDistance', 0);
 
   get expectedDistance() {
-    return this.#expectedDistance;
+    return this.#expectedDistance.value;
   }
 
   set expectedDistance(value: number) {
-    if (value === this.#expectedDistance)
+    if (value === this.#expectedDistance.value)
       return;
 
-    this.#expectedDistance = value;
+    this.#expectedDistance.value = value;
     this.#invalidateRange();
-
     this.invalidated.emit();
   }
 
-  #controlPoints: readonly PathPoint[] = [];
+  #controlPoints = this.property<readonly PathPoint[]>('controlPoints', []);
 
   get controlPoints(): ReadonlyArray<PathPoint> {
-    return this.#controlPoints;
+    return this.#controlPoints.value;
   }
 
   set controlPoints(value: readonly PathPoint[]) {
-    this.#controlPoints = value;
+    this.#controlPoints.value = value;
     this.invalidate();
   }
 

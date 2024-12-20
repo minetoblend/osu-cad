@@ -1,6 +1,5 @@
 import type { DependencyContainer, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer, ScreenTransitionEvent, ScrollEvent } from 'osucad-framework';
-import { almostEquals, asyncDependencyLoader, clamp, PlatformAction } from 'osucad-framework';
-import { OsucadScreen } from '../../../common/src/screens/OsucadScreen';
+import { almostEquals, asyncDependencyLoader, clamp, PlatformAction, provide } from 'osucad-framework';
 import { EditorAction } from '../../../editor/src/editor/EditorAction';
 import { HitObjectList } from '../beatmap/HitObjectList';
 import { IBeatmap } from '../beatmap/IBeatmap';
@@ -8,8 +7,12 @@ import { BeatmapComboProcessor } from '../beatmap/processors/BeatmapComboProcess
 import { ControlPointInfo } from '../controlPoints/ControlPointInfo';
 import { UpdateHandler } from '../crdt/UpdateHandler';
 import { PlayfieldClock } from '../gameplay/PlayfieldClock';
+import { IResourcesProvider } from '../io/IResourcesProvider';
 import { OsuRuleset } from '../rulesets';
 import { Ruleset } from '../rulesets/Ruleset';
+import { OsucadScreen } from '../screens/OsucadScreen';
+import { BeatmapSkin } from '../skinning/BeatmapSkin';
+import { RulesetSkinProvidingContainer } from '../skinning/RulesetSkinProvidingContainer';
 import { CommandManager } from './CommandManager';
 import { EditorBeatmap } from './EditorBeatmap';
 import { EditorClock } from './EditorClock';
@@ -28,10 +31,14 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<EditorAct
 
   readonly beatmap: IBeatmap;
 
+  // TODO: get the ruleset from the beatmap
+  @provide(Ruleset)
+  readonly ruleset = new OsuRuleset();
+
   #screenManager = new EditorScreenManager();
 
   @asyncDependencyLoader()
-  async load() {
+  async load(dependencies: ReadonlyDependencyContainer) {
     await this.loadComponentAsync(this.editorBeatmap);
     this.addInternal(this.editorBeatmap);
 
@@ -42,8 +49,6 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<EditorAct
     this.#dependencies.provide(HitObjectList, this.beatmap.hitObjects);
     this.#dependencies.provide(UpdateHandler, this.editorBeatmap.updateHandler);
 
-    this.#dependencies.provide(Ruleset, new OsuRuleset());
-
     this.addInternal(this.#editorClock = new EditorClock(this.editorBeatmap.track.value));
     this.#dependencies.provide(EditorClock, this.#editorClock);
     this.#dependencies.provide(PlayfieldClock, this.#editorClock);
@@ -51,7 +56,17 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<EditorAct
     this.registerScreens(this.#screenManager);
     this.#dependencies.provide(EditorScreenManager, this.#screenManager);
 
-    this.addInternal(new EditorLayout());
+    const resources = dependencies.resolve(IResourcesProvider);
+
+    this.addInternal(
+      new RulesetSkinProvidingContainer(
+        this.ruleset,
+        this.beatmap,
+        new BeatmapSkin(resources, this.editorBeatmap),
+      ).with({
+        child: new EditorLayout(),
+      }),
+    );
     this.addInternal(new BeatmapComboProcessor());
   }
 
@@ -60,7 +75,7 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<EditorAct
     screenManager.register(ComposeScreen);
     screenManager.register(TimingScreen);
 
-    screenManager.setCurrentScreen(TimingScreen);
+    screenManager.setCurrentScreen(ComposeScreen);
   }
 
   #dependencies!: DependencyContainer;

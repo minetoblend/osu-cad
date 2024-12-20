@@ -40,7 +40,7 @@ export class EditorScreenManager extends Component {
       throw new Error(`Screen ${screen.name} is not registered`);
   }
 
-  update() {
+  override update() {
     super.update();
 
     if (this.currentScreen.value === null)

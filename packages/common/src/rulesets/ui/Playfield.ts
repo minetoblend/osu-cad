@@ -5,7 +5,6 @@ import type { HitObject } from '../../hitObjects/HitObject';
 import type { JudgementResult } from '../../hitObjects/JudgementResult';
 import type { Constructor } from '../../utils/Constructor';
 import { Action, Axes, Container, dependencyLoader, DrawablePool, Lazy, provide, resolved } from 'osucad-framework';
-import { Beatmap } from '../../beatmap/Beatmap';
 import { PlayfieldClock } from '../../gameplay/PlayfieldClock';
 import { IHitObjectJudgeProvider } from '../../hitObjects/drawables/HitObjectJudge';
 import { HitObjectLifetimeEntry } from '../../hitObjects/drawables/HitObjectLifetimeEntry';
@@ -15,6 +14,7 @@ import { HitObjectContainer } from './HitObjectContainer';
 
 @provide(IPooledHitObjectProvider)
 @provide(IHitObjectJudgeProvider)
+@provide(Playfield)
 export class Playfield extends Container implements IPooledHitObjectProvider, IHitObjectJudgeProvider {
   #hitObjectContainerLazy: Lazy<HitObjectContainer>;
 
@@ -81,9 +81,6 @@ export class Playfield extends Container implements IPooledHitObjectProvider, IH
     return new HitObjectContainer();
   }
 
-  @resolved(Beatmap)
-  beatmap!: Beatmap;
-
   @resolved(PlayfieldClock)
   playfieldClock!: IFrameBasedClock;
 
@@ -98,15 +95,6 @@ export class Playfield extends Container implements IPooledHitObjectProvider, IH
 
     if (!this.hitObjectContainer.parent)
       this.addInternal(this.hitObjectContainer);
-
-    for (const h of this.beatmap.hitObjects) {
-      this.addHitObject(h);
-    }
-
-    this.withScope(() => {
-      this.beatmap.hitObjects.added.addListener(h => this.addHitObject(h));
-      this.beatmap.hitObjects.removed.addListener(h => this.removeHitObject(h));
-    });
   }
 
   addHitObject(hitObject: HitObject) {
@@ -194,14 +182,6 @@ export class Playfield extends Container implements IPooledHitObjectProvider, IH
 
   protected onNewDrawableHitObject(drawable: DrawableHitObject) {
 
-  }
-
-  override dispose(isDisposing: boolean = true) {
-    for (const hitObject of this.beatmap.hitObjects) {
-      // this.removeHitObject(hitObject);
-    }
-
-    super.dispose(isDisposing);
   }
 
   customJudgeProvider: IHitObjectJudgeProvider | null = null;

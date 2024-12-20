@@ -1,4 +1,5 @@
-import { dependencyLoader } from 'osucad-framework';
+import { dependencyLoader, resolved } from 'osucad-framework';
+import { Ruleset } from '../../../rulesets/Ruleset';
 import { EditorScreen } from '../EditorScreen';
 import { editorScreen } from '../metadata';
 
@@ -11,8 +12,13 @@ export class ComposeScreen extends EditorScreen {
     super();
   }
 
+  @resolved(Ruleset)
+  ruleset!: Ruleset;
+
   @dependencyLoader()
   [Symbol('load')]() {
-
+    this.addInternal(
+      this.ruleset.createHitObjectComposer(),
+    );
   }
 }

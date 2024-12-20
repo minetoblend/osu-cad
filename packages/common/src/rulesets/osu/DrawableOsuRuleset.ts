@@ -2,10 +2,11 @@ import type { PassThroughInputManager } from 'osucad-framework';
 import type { IBeatmap } from '../../beatmap/IBeatmap';
 import type { DrawableHitObject } from '../../hitObjects';
 import type { Ruleset } from '../Ruleset';
-import type { Playfield } from '../ui';
+import type { PlayfieldAdjustmentContainer } from '../ui/PlayfieldAdjustmentContainer';
 import type { OsuHitObject } from './hitObjects/OsuHitObject';
 import { DrawableRuleset } from '../DrawableRuleset';
 import { OsuInputManager } from './OsuInputManager';
+import { OsuPlayfieldAdjustmentContainer } from './OsuPlayfieldAdjustmentContainer';
 import { OsuPlayfield } from './ui/OsuPlayfield';
 
 export class DrawableOsuRuleset extends DrawableRuleset<OsuHitObject> {
@@ -13,7 +14,7 @@ export class DrawableOsuRuleset extends DrawableRuleset<OsuHitObject> {
     super(ruleset, beatmap);
   }
 
-  override createPlayfield(): Playfield {
+  override createPlayfield(): OsuPlayfield {
     return new OsuPlayfield();
   }
 
@@ -23,5 +24,9 @@ export class DrawableOsuRuleset extends DrawableRuleset<OsuHitObject> {
 
   override createInputManager(): PassThroughInputManager {
     return new OsuInputManager(this.ruleset);
+  }
+
+  override createPlayfieldAdjustmentContainer(): PlayfieldAdjustmentContainer {
+    return new OsuPlayfieldAdjustmentContainer();
   }
 }

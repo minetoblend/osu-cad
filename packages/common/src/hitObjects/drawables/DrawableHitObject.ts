@@ -4,7 +4,7 @@ import type { HitObjectJudge } from './HitObjectJudge';
 import type { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
 import { Action, Bindable, dependencyLoader, resolved, Vec2 } from 'osucad-framework';
 import { Color } from 'pixi.js';
-import { Beatmap } from '../../beatmap/Beatmap';
+import { IBeatmap } from '../../beatmap/IBeatmap';
 import { PoolableDrawableWithLifetime } from '../../pooling/PoolableDrawableWithLifetime';
 import { IAnimationTimeReference } from '../../skinning/IAnimationTimeReference';
 import { HitResult } from '../HitResult';
@@ -375,8 +375,8 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
     this.updateResult(false);
   }
 
-  @resolved(Beatmap)
-  protected beatmap!: Beatmap;
+  @resolved(IBeatmap)
+  protected beatmap!: IBeatmap;
 
   protected updateComboColor() {
     this.accentColor.value = this.beatmap.colors.getComboColor(this.comboIndexBindable.value);
