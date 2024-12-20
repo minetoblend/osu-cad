@@ -68,8 +68,6 @@ export class OsuSelectBox extends CompositeDrawable {
         return false;
       });
 
-    console.log(objects);
-
     return true;
   }
 

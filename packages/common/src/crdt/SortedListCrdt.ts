@@ -56,27 +56,29 @@ export class SortedListCrdt<T extends AbstractCrdt<any>> extends AbstractCrdt<So
     return null;
   }
 
-  #add(value: T): boolean {
+  #add(value: T, attach: boolean = true): boolean {
     if (this.#idMap.has(value.id))
       return false;
 
-    this.#idMap.set(value.id, value);
     this.#list.add(value);
 
-    this.attachChild(value);
+    if (attach) {
+      this.#idMap.set(value.id, value);
+      this.attachChild(value);
+    }
 
     this.onAdded(value);
 
     return true;
   }
 
-  #remove(value: T): boolean {
-    if (this.#idMap.delete(value.id))
+  #remove(value: T, detach: boolean = true): boolean {
+    this.#idMap.delete(value.id);
+    if (!this.#list.remove(value))
       return false;
 
-    this.#list.remove(value);
-
-    value.detach();
+    if (detach)
+      value.detach();
 
     this.onRemoved(value);
 
@@ -96,6 +98,14 @@ export class SortedListCrdt<T extends AbstractCrdt<any>> extends AbstractCrdt<So
     });
 
     return true;
+  }
+
+  addUntracked(value: T) {
+    return this.#add(value, false);
+  }
+
+  removeUntracked(value: T) {
+    return this.#remove(value, false);
   }
 
   remove(value: T) {
