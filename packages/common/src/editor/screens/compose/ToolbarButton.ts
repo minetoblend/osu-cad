@@ -93,7 +93,7 @@ export abstract class ToolbarButton extends CompositeDrawable {
       this.backgroundContainer.scaleTo(1, 300, EasingFunction.OutBack);
     }
 
-    if (this.active.valueChanged) {
+    if (this.active.value) {
       this.transformTo('outlineVisibility', 1, 200);
     }
     else {

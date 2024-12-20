@@ -1,12 +1,4 @@
-import type {
-  Bindable,
-
-  Drawable,
-  Key,
-  KeyDownEvent,
-  KeyUpEvent,
-  ReadonlyDependencyContainer,
-} from 'osucad-framework';
+import type { Bindable, ClickEvent, Drawable, Key, KeyDownEvent, KeyUpEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { IComposeTool } from './IComposeTool';
 import { Anchor, Axes, dependencyLoader, DrawableSprite } from 'osucad-framework';
 import { OsucadColors } from '../../../OsucadColors';
@@ -64,6 +56,7 @@ export class ComposeToolButton extends ToolbarButton {
   override onKeyDown(e: KeyDownEvent): boolean {
     if (e.key === this.keyBinding) {
       this.#keyPressed = true;
+      this.activeTool.value = this.tool;
       this.updateState();
       return true;
     }
@@ -76,5 +69,10 @@ export class ComposeToolButton extends ToolbarButton {
       this.#keyPressed = false;
       this.updateState();
     }
+  }
+
+  override onClick(e: ClickEvent): boolean {
+    this.activeTool.value = this.tool;
+    return true;
   }
 }
