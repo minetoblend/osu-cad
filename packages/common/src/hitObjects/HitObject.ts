@@ -15,7 +15,15 @@ export abstract class HitObject extends ObjectCrdt {
 
   static readonly COMPARER = new class extends Comparer<HitObject> {
     compare(a: HitObject, b: HitObject) {
-      return a.startTime - b.startTime;
+      const difference = a.startTime - b.startTime;
+
+      if (difference === 0) {
+        return (
+          (a.synthetic ? 1 : 0) - (b.synthetic ? 1 : 0)
+        );
+      }
+
+      return difference;
     }
   }();
 
