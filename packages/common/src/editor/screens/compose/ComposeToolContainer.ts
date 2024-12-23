@@ -1,14 +1,7 @@
-import type {
-  Bindable,
-  ReadonlyDependencyContainer,
-} from 'osucad-framework';
+import type { Bindable, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { DrawableComposeTool } from './DrawableComposeTool';
 import type { IComposeTool } from './IComposeTool';
-import {
-  Axes,
-  CompositeDrawable,
-  dependencyLoader,
-} from 'osucad-framework';
+import { Action, Axes, CompositeDrawable, dependencyLoader } from 'osucad-framework';
 import { HitObjectComposerDependencies } from './HitObjectComposerDependencies';
 
 export class ComposeToolContainer extends CompositeDrawable {
@@ -28,6 +21,9 @@ export class ComposeToolContainer extends CompositeDrawable {
       this.addInternal(
         this.#activeDrawableTool = tool.value.createDrawableTool(),
       );
+      this.toolActivated.emit(this.#activeDrawableTool);
     }, { immediate: true });
   }
+
+  toolActivated = new Action<DrawableComposeTool>();
 }

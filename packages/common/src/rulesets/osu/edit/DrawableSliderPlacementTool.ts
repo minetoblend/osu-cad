@@ -1,5 +1,8 @@
-import type { MouseDownEvent, MouseMoveEvent, MouseUpEvent, ReadonlyDependencyContainer } from 'osucad-framework';
-import { MouseButton, Vec2 } from 'osucad-framework';
+import type { Drawable, MouseDownEvent, MouseMoveEvent, MouseUpEvent, ReadonlyDependencyContainer } from 'osucad-framework';
+import { Toggle } from '@osucad/editor/userInterface/Toggle';
+import { Anchor, Axes, BindableBoolean, FillFlowContainer, MouseButton, Vec2 } from 'osucad-framework';
+import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
+import { OsucadColors } from '../../../OsucadColors';
 import { PathPoint } from '../hitObjects/PathPoint';
 import { PathType } from '../hitObjects/PathType';
 import { Slider } from '../hitObjects/Slider';
@@ -8,6 +11,31 @@ import { DrawableOsuHitObjectPlacementTool } from './DrawableOsuHitObjectPlaceme
 import { SliderPathVisualizer } from './SliderPathVisualizer';
 
 export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTool<Slider> {
+  readonly controlPointSnapping = new BindableBoolean(false);
+
+  override createSettings(): Drawable {
+    return new FillFlowContainer({
+      relativeSizeAxes: Axes.Both,
+      spacing: new Vec2(4),
+      children: [
+        new OsucadSpriteText({
+          text: 'Snap Controlpoints',
+          fontSize: 14,
+          anchor: Anchor.CenterLeft,
+          origin: Anchor.CenterLeft,
+          color: OsucadColors.text,
+        }),
+        new Toggle({
+          bindable: this.controlPointSnapping,
+        }).with({
+          scale: 0.65,
+          anchor: Anchor.CenterLeft,
+          origin: Anchor.CenterLeft,
+        }),
+      ],
+    });
+  }
+
   path = new SliderPathBuilder([
     new PathPoint(new Vec2(), PathType.Bezier),
     new PathPoint(new Vec2()),
@@ -89,7 +117,7 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
   beginPlacingPathPoint() {
     this.isPlacingPoint = true;
 
-    const position = this.mousePosition.sub(this.hitObject.stackedPosition);
+    const position = this.controlPointPlacementPosition;
 
     if (this.path.length > 2) {
       const pointBefore = this.path.get(-2);
@@ -138,9 +166,19 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
     return newType;
   }
 
+  get controlPointPlacementPosition() {
+    const position = this.controlPointSnapping.value
+      ? this.snappedMousePosition
+      : this.mousePosition;
+
+    console.log('snapping', this.controlPointSnapping.value);
+
+    return position.sub(this.hitObject.stackedPosition);
+  }
+
   override onMouseMove(e: MouseMoveEvent): boolean {
     if (this.isPlacing) {
-      const position = this.mousePosition.sub(this.hitObject.stackedPosition);
+      const position = this.controlPointPlacementPosition;
 
       const segmentStartType = this.path.get(this.segmentStart).type;
       const snapped = position.distance(this.path.get(-2)) < 5;

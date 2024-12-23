@@ -189,10 +189,8 @@ export class Toggle extends CompositeDrawable {
   onMouseDown(e: MouseDownEvent): boolean {
     if (e.button === MouseButton.Left && this.trigger === ToggleTrigger.MouseDown) {
       this.toggle();
-
-      return true;
     }
 
-    return false;
+    return true;
   }
 }

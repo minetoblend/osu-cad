@@ -1,5 +1,5 @@
-import type { InputManager } from 'osucad-framework';
-import { Axes, CompositeDrawable, resolved } from 'osucad-framework';
+import type { Drawable, InputManager } from 'osucad-framework';
+import { Axes, CompositeDrawable, EmptyDrawable, resolved } from 'osucad-framework';
 import { IBeatmap } from '../../../beatmap/IBeatmap';
 import { UpdateHandler } from '../../../crdt/UpdateHandler';
 import { Playfield } from '../../../rulesets/ui/Playfield';
@@ -29,6 +29,10 @@ export class DrawableComposeTool extends CompositeDrawable {
 
   @resolved(HitObjectSelectionManager)
   protected selection!: HitObjectSelectionManager;
+
+  createSettings(): Drawable {
+    return new EmptyDrawable();
+  }
 
   protected override loadComplete() {
     super.loadComplete();

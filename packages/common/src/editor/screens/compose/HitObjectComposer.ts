@@ -1,7 +1,18 @@
-import type { DependencyContainer, ReadonlyDependencyContainer } from 'osucad-framework';
+import type {
+  DependencyContainer,
+  ReadonlyDependencyContainer,
+} from 'osucad-framework';
 import type { DrawableRuleset } from '../../../rulesets/DrawableRuleset';
 import type { IComposeTool } from './IComposeTool';
-import { Axes, Bindable, CompositeDrawable, Container, dependencyLoader, resolved } from 'osucad-framework';
+import {
+  Anchor,
+  Axes,
+  Bindable,
+  CompositeDrawable,
+  Container,
+  dependencyLoader,
+  resolved,
+} from 'osucad-framework';
 import { IBeatmap } from '../../../beatmap/IBeatmap';
 import { Ruleset } from '../../../rulesets/Ruleset';
 import { ComposeToolbar } from './ComposeToolbar';
@@ -50,7 +61,18 @@ export abstract class HitObjectComposer extends CompositeDrawable {
           horizontal: ToolbarButton.SIZE + 40,
         },
         children: [
-          this.#drawableRuleset = this.ruleset.createDrawableEditorRulesetWith(this.beatmap),
+          new Container({
+            relativeSizeAxes: Axes.Both,
+            padding: { bottom: 30 },
+            child: this.#drawableRuleset = this.ruleset.createDrawableEditorRulesetWith(this.beatmap),
+          }),
+          this.settingsLayer = new Container({
+            relativeSizeAxes: Axes.X,
+            height: 24,
+            padding: { bottom: 3 },
+            anchor: Anchor.BottomLeft,
+            origin: Anchor.BottomLeft,
+          }),
         ],
       }),
       this.leftSidebar = new Container({
@@ -71,14 +93,23 @@ export abstract class HitObjectComposer extends CompositeDrawable {
       }),
     );
 
-    this.overlayLayer.add(new ComposeToolContainer());
+    this.overlayLayer.add(this.#toolContainer = new ComposeToolContainer());
+
+    this.#toolContainer.toolActivated.addListener((tool) => {
+      this.settingsLayer.clear();
+      this.settingsLayer.add(tool.createSettings());
+    });
   }
+
+  #toolContainer!: ComposeToolContainer;
 
   #drawableRuleset!: DrawableRuleset;
 
   backgroundLayer!: Container;
 
   overlayLayer!: Container;
+
+  settingsLayer!: Container;
 
   leftSidebar!: Container;
 
