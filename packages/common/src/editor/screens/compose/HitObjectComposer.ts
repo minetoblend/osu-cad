@@ -53,8 +53,8 @@ export abstract class HitObjectComposer extends CompositeDrawable {
           this.#drawableRuleset = this.ruleset.createDrawableEditorRulesetWith(this.beatmap),
         ],
       }),
-      new Container({
-        autoSizeAxes: Axes.Both,
+      this.leftSidebar = new Container({
+        relativeSizeAxes: Axes.Both,
         padding: 10,
         child: new ComposeToolbar(this.#tools),
       }),
@@ -79,6 +79,8 @@ export abstract class HitObjectComposer extends CompositeDrawable {
   backgroundLayer!: Container;
 
   overlayLayer!: Container;
+
+  leftSidebar!: Container;
 
   protected override loadComplete() {
     super.loadComplete();

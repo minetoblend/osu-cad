@@ -1,7 +1,7 @@
 import type { Vec2 } from 'osucad-framework';
 import type { IComposeTool } from '../../../editor/screens/compose/IComposeTool';
 import type { SnapResult } from './IPositionSnapProvider';
-import { dependencyLoader, provide } from 'osucad-framework';
+import { Anchor, Axes, BindableBoolean, dependencyLoader, FillDirection, FillFlowContainer, provide } from 'osucad-framework';
 import { HitObjectComposer } from '../../../editor/screens/compose/HitObjectComposer';
 import { HitCirclePlacementTool } from './HitCirclePlacementTool';
 import { IPositionSnapProvider } from './IPositionSnapProvider';
@@ -9,6 +9,7 @@ import { OsuSelectTool } from './OsuSelectTool';
 import { PlayfieldGrid } from './PlayfieldGrid';
 import { OsuSelectionBlueprintContainer } from './selection/OsuSelectionBlueprintContainer';
 import { SliderPlacementTool } from './SliderPlacementTool';
+import { GridSnapToggleButton } from './snapping/GridSnapToggleButton';
 import { HitObjectSnapProvider } from './snapping/HitObjectSnapProvider';
 
 @provide(IPositionSnapProvider)
@@ -21,11 +22,25 @@ export class OsuHitObjectComposer extends HitObjectComposer implements IPosition
     ];
   }
 
+  readonly gridSnapEnabled = new BindableBoolean(false);
+
   @dependencyLoader()
   [Symbol('load')]() {
-    this.drawableRuleset.playfield.addAll(this.#grid = new PlayfieldGrid().with({ depth: 1 }));
+    this.drawableRuleset.playfield.addAll(this.#grid = new PlayfieldGrid(this.gridSnapEnabled).with({ depth: 1 }));
     this.overlayLayer.addAll(
       this.#blueprintContainer = new OsuSelectionBlueprintContainer().with({ depth: 1 }),
+    );
+
+    this.leftSidebar.add(
+      new FillFlowContainer({
+        autoSizeAxes: Axes.Both,
+        direction: FillDirection.Vertical,
+        anchor: Anchor.BottomLeft,
+        origin: Anchor.BottomLeft,
+        children: [
+          new GridSnapToggleButton(this.gridSnapEnabled),
+        ],
+      }),
     );
 
     this.#positionSnapProviders = [

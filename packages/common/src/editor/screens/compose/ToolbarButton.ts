@@ -1,11 +1,4 @@
-import {
-  BindableBoolean,
-  type Drawable,
-  type HoverEvent,
-  type HoverLostEvent,
-  type MouseDownEvent,
-  type MouseUpEvent,
-} from 'osucad-framework';
+import { BindableBoolean, type Drawable, type HoverEvent, type HoverLostEvent, type MouseDownEvent, type MouseUpEvent } from 'osucad-framework';
 import { Anchor, Axes, CompositeDrawable, Container, dependencyLoader, EasingFunction, FastRoundedBox, MouseButton, RoundedBox, Vec2 } from 'osucad-framework';
 import { OsucadColors } from '../../../OsucadColors';
 
