@@ -1,5 +1,6 @@
 import type { AssetInfo } from '@osucad/multiplayer';
 
+import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import { StableBeatmapParser } from '../beatmap';
 import { EffectPoint } from '../controlPoints';
 import audioFile from './audio.mp3?url';
@@ -20,13 +21,14 @@ export class DummyEditorBeatmap extends EditorBeatmap {
     this.beatmap.controlPoints.add(new EffectPoint(2000, false));
   }
 
-  override async load() {
+  protected override async loadAsync(dependencies: ReadonlyDependencyContainer): Promise<void> {
     await this.assets.load([
       {
         path: 'audio.mp3',
       },
     ]);
-    await super.load();
+
+    return super.loadAsync(dependencies);
   }
 }
 

@@ -1,4 +1,10 @@
-import { Anchor, BindableNumber, dependencyLoader, PoolableDrawable, provide } from 'osucad-framework';
+import {
+  Anchor,
+  BindableNumber,
+  PoolableDrawable,
+  provide,
+  type ReadonlyDependencyContainer,
+} from 'osucad-framework';
 import { IAnimationTimeReference } from '../../../skinning/IAnimationTimeReference';
 import { SkinnableDrawable } from '../../../skinning/SkinnableDrawable';
 import { OsuSkinComponentLookup } from '../skinning/stable/OsuSkinComponentLookup';
@@ -11,8 +17,9 @@ export class FollowPoint extends PoolableDrawable implements IAnimationTimeRefer
     return false;
   }
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.origin = Anchor.Center;
 
     this.addInternal(

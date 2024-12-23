@@ -1,5 +1,5 @@
 import type { OsuHitObject } from '../../rulesets/osu/hitObjects/OsuHitObject';
-import { Color, dependencyLoader, resolved } from 'osucad-framework';
+import { Color, type ReadonlyDependencyContainer, resolved } from 'osucad-framework';
 import { hasComboInformation } from '../../hitObjects/IHasComboInformation';
 import { Spinner } from '../../rulesets/osu/hitObjects/Spinner';
 import { ISkinSource } from '../../skinning/ISkinSource';
@@ -72,8 +72,9 @@ export class BeatmapComboProcessor extends BeatmapProcessor {
     this.#skinChanged();
   }
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.skin.sourceChanged.addListener(this.#skinChanged, this);
     this.#skinChanged();
   }

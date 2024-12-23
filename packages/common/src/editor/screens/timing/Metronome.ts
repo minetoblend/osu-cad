@@ -1,11 +1,12 @@
-import type { KeyDownEvent, KeyUpEvent } from 'osucad-framework';
-import { Anchor, Axes, Box, CompositeDrawable, Container, dependencyLoader, EasingFunction, FastRoundedBox, FillDirection, FillFlowContainer, Key, resolved } from 'osucad-framework';
+import type { KeyDownEvent, KeyUpEvent, ReadonlyDependencyContainer } from 'osucad-framework';
+import { Anchor, Axes, Box, CompositeDrawable, Container, EasingFunction, FastRoundedBox, FillDirection, FillFlowContainer, Key, resolved } from 'osucad-framework';
 import { OsucadColors } from '../../../OsucadColors';
 import { EditorClock } from '../../EditorClock';
 
 export class Metronome extends CompositeDrawable {
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.updateClock(this.editorClock);
     this.processCustomClock = false;
 

@@ -1,4 +1,14 @@
-import { Anchor, Axes, Bindable, Color, CompositeDrawable, dependencyLoader, DrawableSprite, EasingFunction, resolved } from 'osucad-framework';
+import {
+  Anchor,
+  Axes,
+  Bindable,
+  Color,
+  CompositeDrawable,
+  DrawableSprite,
+  EasingFunction,
+  type ReadonlyDependencyContainer,
+  resolved,
+} from 'osucad-framework';
 import { OsucadConfigManager } from '../../../../config/OsucadConfigManager';
 import { OsucadSettings } from '../../../../config/OsucadSettings';
 import { ArmedState } from '../../../../hitObjects/drawables/ArmedState';
@@ -33,8 +43,9 @@ export class StableCirclePiece extends CompositeDrawable {
 
   hitAnimationsEnabled = new Bindable(false);
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     const circleName = this.#priorityLookup && this.skin.getTexture(this.#priorityLookup) ? this.#priorityLookup : 'hitcircle';
 
     this.addAllInternal(

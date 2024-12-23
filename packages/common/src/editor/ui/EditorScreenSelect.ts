@@ -1,5 +1,19 @@
 import type { EditorScreenEntry } from '../screens/EditorScreenManager';
-import { Anchor, Axes, Bindable, Box, Button, Container, dependencyLoader, EasingFunction, FillDirection, FillFlowContainer, LoadState, resolved, Vec2 } from 'osucad-framework';
+import {
+  Anchor,
+  Axes,
+  Bindable,
+  Box,
+  Button,
+  Container,
+  EasingFunction,
+  FillDirection,
+  FillFlowContainer,
+  LoadState,
+  type ReadonlyDependencyContainer,
+  resolved,
+  Vec2,
+} from 'osucad-framework';
 import { OsucadSpriteText } from '../../drawables/OsucadSpriteText';
 import { OsucadColors } from '../../OsucadColors';
 import { EditorScreenManager } from '../screens/EditorScreenManager';
@@ -25,8 +39,9 @@ export class EditorScreenSelect extends Container {
   @resolved(EditorScreenManager)
   screenManager!: EditorScreenManager;
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.addAllInternal(
       this.#content,
       new Container({
@@ -79,8 +94,9 @@ class ScreenSelectButton extends Button {
   @resolved(EditorScreenManager)
   screenManager!: EditorScreenManager;
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.currentScreen.bindTo(this.screenManager.currentScreen);
 
     this.addAllInternal(

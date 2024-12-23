@@ -1,5 +1,10 @@
 import type { JudgementResult } from '../../../hitObjects/JudgementResult';
-import { Anchor, CompositeDrawable, dependencyLoader, EasingFunction } from 'osucad-framework';
+import {
+  Anchor,
+  CompositeDrawable,
+  EasingFunction,
+  type ReadonlyDependencyContainer,
+} from 'osucad-framework';
 import { HitResult } from '../../../hitObjects/HitResult';
 import { SkinnableDrawable } from '../../../skinning/SkinnableDrawable';
 import { OsuSkinComponentLookup } from '../skinning/stable/OsuSkinComponentLookup';
@@ -24,8 +29,9 @@ export class DrawableJudgement extends CompositeDrawable {
     }
   }
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.position = this.result.position;
     this.origin = Anchor.Center;
 

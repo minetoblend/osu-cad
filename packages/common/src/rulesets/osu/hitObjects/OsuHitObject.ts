@@ -209,7 +209,7 @@ export abstract class OsuHitObject extends HitObject implements IHasComboInforma
   }
 
   isVisibleAtTime(time: number): boolean {
-    return time > this.startTime - this.timePreempt && time < this.endTime + 800;
+    return time > this.startTime - this.timePreempt && time < this.endTime + 700;
   }
 
   protected override applyDefaultsToSelf(controlPointInfo: ControlPointInfo, difficulty: BeatmapDifficultyInfo) {

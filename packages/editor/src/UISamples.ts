@@ -1,14 +1,14 @@
 import type { AudioChannel, AudioManager, Sample } from 'osucad-framework';
 
-import keyMovement from './assets/samples/key-movement.ogg';
+import keyMovement from './assets/samples/key-movement.wav';
 import menuhit from './assets/samples/menuhit.wav';
 import metronomehigh from './assets/samples/metronomehigh.wav';
 import metronomelow from './assets/samples/metronomelow.wav';
-import sliderDrag from './assets/samples/slider-drag.ogg';
-import toolHover from './assets/samples/tool-hover.ogg';
-import toolSelect from './assets/samples/tool-select.ogg';
-import userJoined from './assets/samples/user-joined.ogg';
-import userLeft from './assets/samples/user-left.ogg';
+import sliderDrag from './assets/samples/slider-drag.wav';
+import toolHover from './assets/samples/tool-hover.wav';
+import toolSelect from './assets/samples/tool-select.wav';
+import userJoined from './assets/samples/user-joined.wav';
+import userLeft from './assets/samples/user-left.wav';
 import whoosh from './assets/samples/whoosh.wav';
 
 export class UISamples {

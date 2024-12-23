@@ -1,3 +1,4 @@
+import type { DependencyContainer, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { JudgementResult } from '../../../../hitObjects/JudgementResult';
 import type { ClickAction } from '../../ui/ClickAction';
 import type { OsuHitObject } from '../OsuHitObject';
@@ -59,9 +60,15 @@ export class DrawableOsuHitObject<T extends OsuHitObject = OsuHitObject> extends
     return super.hitObject as T | undefined;
   }
 
+  #dependencies!: DependencyContainer;
+
+  protected override createChildDependencies(parentDependencies: ReadonlyDependencyContainer): DependencyContainer {
+    return this.#dependencies = super.createChildDependencies(parentDependencies);
+  }
+
   @dependencyLoader()
   [Symbol('load')]() {
-    this.dependencies.provide(DrawableOsuHitObject, this);
+    this.#dependencies.provide(DrawableOsuHitObject, this);
 
     this.addInternal(this.drawableHitSound);
   }

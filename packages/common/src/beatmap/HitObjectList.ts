@@ -4,7 +4,7 @@ import type { Beatmap } from './Beatmap';
 import { SortedListCrdt } from '../crdt/SortedListCrdt';
 import { HitObject } from '../hitObjects/HitObject';
 
-export class HitObjectList extends SortedListCrdt<HitObject> {
+export class HitObjectList<T extends HitObject = HitObject> extends SortedListCrdt<T> {
   applyDefaultsImmediately = true;
 
   constructor(readonly beatmap: Beatmap) {
@@ -15,7 +15,7 @@ export class HitObjectList extends SortedListCrdt<HitObject> {
 
   #startTimeMap = new Map<HitObject, Bindable<number>>();
 
-  override onAdded(item: HitObject) {
+  override onAdded(item: T) {
     super.onAdded(item);
 
     item.needsDefaultsApplied.addListener(this.onApplyDefaultsRequested, this);
@@ -31,7 +31,7 @@ export class HitObjectList extends SortedListCrdt<HitObject> {
     this.applyDefaultsToHitObject(item);
   }
 
-  override onRemoved(item: HitObject) {
+  override onRemoved(item: T) {
     super.onRemoved(item);
 
     const startTime = this.#startTimeMap.get(item);

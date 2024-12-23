@@ -1,4 +1,4 @@
-import { Axes, Container, dependencyLoader, FastRoundedBox } from 'osucad-framework';
+import { Axes, Container, FastRoundedBox, type ReadonlyDependencyContainer } from 'osucad-framework';
 import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
 import { OsucadColors } from '../../../OsucadColors';
 import { TimelineLayer, TimelineLayerHeader } from '../../ui/timeline/TimelineLayer';
@@ -16,8 +16,9 @@ export abstract class TimingScreenTimelineLayer extends TimelineLayer {
 }
 
 export class TimingScreenTimelineLayerHeader extends TimelineLayerHeader {
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.addAllInternal(
       new FastRoundedBox({
         relativeSizeAxes: Axes.Both,

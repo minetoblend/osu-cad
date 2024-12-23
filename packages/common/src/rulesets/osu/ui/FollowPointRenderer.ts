@@ -1,6 +1,6 @@
-import type { Bindable } from 'osucad-framework';
+import type { Bindable, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
-import { dependencyLoader, DrawablePool, SortedList } from 'osucad-framework';
+import { DrawablePool, SortedList } from 'osucad-framework';
 import { PooledDrawableWithLifetimeContainer } from '../../../pooling/PooledDrawableWithLifetimeContainer';
 import { FollowPoint } from './FollowPoint';
 import { FollowPointConnection } from './FollowPointConnection';
@@ -29,8 +29,9 @@ export class FollowPointRenderer extends PooledDrawableWithLifetimeContainer<Fol
 
   #startTimeMap = new Map<OsuHitObject, Bindable<any>>();
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.internalChildren = [
       this.#connectionPool = new DrawablePool(FollowPointConnection, 10, 200),
       this.#pointPool = new DrawablePool(FollowPoint, 50, 1000),

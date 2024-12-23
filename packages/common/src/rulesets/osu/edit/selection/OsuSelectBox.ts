@@ -1,17 +1,21 @@
 import type { DragEndEvent, DragEvent, DragStartEvent } from 'osucad-framework';
-import type { OsuHitObject } from '../hitObjects/OsuHitObject';
+import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { CompositeDrawable, dependencyLoader, Rectangle, resolved, RoundedBox, Vec2 } from 'osucad-framework';
-import { EditorClock } from '../../../editor/EditorClock';
-import { OsucadColors } from '../../../OsucadColors';
-import { HitCircle } from '../hitObjects/HitCircle';
-import { Slider } from '../hitObjects/Slider';
-import { OsuPlayfield } from '../ui/OsuPlayfield';
+import { EditorClock } from '../../../../editor/EditorClock';
+import { HitObjectSelectionManager } from '../../../../editor/screens/compose/HitObjectSelectionManager';
+import { OsucadColors } from '../../../../OsucadColors';
+import { HitCircle } from '../../hitObjects/HitCircle';
+import { Slider } from '../../hitObjects/Slider';
+import { OsuPlayfield } from '../../ui/OsuPlayfield';
 
 export class OsuSelectBox extends CompositeDrawable {
   #box!: RoundedBox;
 
   @resolved(OsuPlayfield)
   playfield!: OsuPlayfield;
+
+  @resolved(HitObjectSelectionManager)
+  selection!: HitObjectSelectionManager<OsuHitObject>;
 
   @dependencyLoader()
   [Symbol('load')]() {
@@ -67,6 +71,8 @@ export class OsuSelectBox extends CompositeDrawable {
           return rect.contains(hitObject.stackedPosition) || rect.contains(hitObject.stackedPosition.add(hitObject.path.endPosition));
         return false;
       });
+
+    this.selection.setSelection(...objects as OsuHitObject[]);
 
     return true;
   }

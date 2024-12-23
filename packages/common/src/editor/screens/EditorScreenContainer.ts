@@ -1,6 +1,12 @@
 import type { EditorScreen } from './EditorScreen';
 import type { EditorScreenEntry } from './EditorScreenManager';
-import { Axes, Bindable, CompositeDrawable, dependencyLoader, resolved } from 'osucad-framework';
+import {
+  Axes,
+  Bindable,
+  CompositeDrawable,
+  type ReadonlyDependencyContainer,
+  resolved,
+} from 'osucad-framework';
 import { EditorScreenManager } from './EditorScreenManager';
 
 export class EditorScreenContainer extends CompositeDrawable {
@@ -17,8 +23,9 @@ export class EditorScreenContainer extends CompositeDrawable {
 
   #currentScreenDrawable: EditorScreen | null = null;
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.currentScreen.bindTo(this.screenManager.currentScreen);
 
     this.currentScreen.addOnChangeListener((screen) => {

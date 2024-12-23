@@ -1,7 +1,7 @@
-import type { Drawable, MenuItem, SpriteText, Vec2 } from 'osucad-framework';
+import type { Drawable, MenuItem, ReadonlyDependencyContainer, SpriteText, Vec2 } from 'osucad-framework';
 import type { Graphics } from 'pixi.js';
 import type { OsucadMenuItem } from './OsucadMenuItem';
-import { Anchor, Axes, Container, dependencyLoader, Direction, DrawableMenuItem, FastRoundedBox, GraphicsDrawable, MarginPadding, Menu, ScrollbarContainer, ScrollContainer } from 'osucad-framework';
+import { Anchor, Axes, Container, Direction, DrawableMenuItem, FastRoundedBox, GraphicsDrawable, MarginPadding, Menu, ScrollbarContainer, ScrollContainer } from 'osucad-framework';
 import { OsucadSpriteText } from '../drawables/OsucadSpriteText';
 import { OsucadColors } from '../OsucadColors';
 import { ContextMenuContainer } from './ContextMenuContainer';
@@ -109,8 +109,9 @@ class ContextMenuItemContent extends Container {
     });
   }
 
-  @dependencyLoader()
-  load(): void {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.add(
       (this.#spriteText = new OsucadSpriteText({
         anchor: Anchor.CenterLeft,

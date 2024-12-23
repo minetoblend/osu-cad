@@ -1,6 +1,6 @@
-import type { DependencyContainer, Drawable, DrawableOptions, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { Drawable, DrawableOptions, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { TimelineLayer } from './TimelineLayer';
-import { Axes, BindableNumber, Box, CompositeDrawable, Container, dependencyLoader, FillDirection, FillFlowContainer, provide } from 'osucad-framework';
+import { Axes, BindableNumber, Box, CompositeDrawable, Container, DependencyContainer, dependencyLoader, FillDirection, FillFlowContainer, provide } from 'osucad-framework';
 import { ScrollingTimeline } from './ScrollingTimeline';
 import { Timeline } from './Timeline';
 
@@ -56,7 +56,7 @@ export class LayeredTimeline extends CompositeDrawable {
   }
 
   protected override createChildDependencies(parentDependencies: ReadonlyDependencyContainer): DependencyContainer {
-    const dependencies = super.createChildDependencies(parentDependencies);
+    const dependencies = new DependencyContainer(parentDependencies);
 
     dependencies.provide(Timeline, this.timeline);
 

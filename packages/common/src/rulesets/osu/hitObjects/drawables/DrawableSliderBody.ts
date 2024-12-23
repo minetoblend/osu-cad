@@ -1,6 +1,13 @@
 import type { Container } from 'pixi.js';
 import type { Slider } from '../Slider';
-import { Bindable, dependencyLoader, Drawable, PIXIContainer, resolved, Vec2 } from 'osucad-framework';
+import {
+  Bindable,
+  Drawable,
+  PIXIContainer,
+  type ReadonlyDependencyContainer,
+  resolved,
+  Vec2,
+} from 'osucad-framework';
 import { AlphaFilter, Color, CustomRenderPipe, Mesh, MeshGeometry } from 'pixi.js';
 import { DrawableHitObject } from '../../../../hitObjects/drawables/DrawableHitObject';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
@@ -193,8 +200,9 @@ export class DrawableSliderBody extends Drawable {
 
   private accentColor = new Bindable(new Color(0xFFFFFF));
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.accentColor.valueChanged.addListener(this.#updateColor, this);
     this.sliderTrackOverride.valueChanged.addListener(this.#updateColor, this);
     this.skin.sourceChanged.addListener(this.#skinChanged, this);

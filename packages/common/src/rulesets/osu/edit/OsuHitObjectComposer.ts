@@ -1,22 +1,52 @@
+import type { Vec2 } from 'osucad-framework';
 import type { IComposeTool } from '../../../editor/screens/compose/IComposeTool';
-import { dependencyLoader } from 'osucad-framework';
+import type { SnapResult } from './IPositionSnapProvider';
+import { dependencyLoader, provide } from 'osucad-framework';
 import { HitObjectComposer } from '../../../editor/screens/compose/HitObjectComposer';
-import { PlayfieldOutline } from '../PlayfieldOutline';
 import { HitCirclePlacementTool } from './HitCirclePlacementTool';
+import { IPositionSnapProvider } from './IPositionSnapProvider';
 import { OsuSelectTool } from './OsuSelectTool';
+import { PlayfieldGrid } from './PlayfieldGrid';
+import { OsuSelectionBlueprintContainer } from './selection/OsuSelectionBlueprintContainer';
+import { SliderPlacementTool } from './SliderPlacementTool';
+import { HitObjectSnapProvider } from './snapping/HitObjectSnapProvider';
 
-export class OsuHitObjectComposer extends HitObjectComposer {
+@provide(IPositionSnapProvider)
+export class OsuHitObjectComposer extends HitObjectComposer implements IPositionSnapProvider {
   protected override getTools(): IComposeTool[] {
     return [
       new OsuSelectTool(),
       new HitCirclePlacementTool(),
+      new SliderPlacementTool(),
     ];
   }
 
   @dependencyLoader()
   [Symbol('load')]() {
-    this.drawableRuleset.playfield.add(new PlayfieldOutline().with({
-      depth: 1,
-    }));
+    this.drawableRuleset.playfield.addAll(this.#grid = new PlayfieldGrid().with({ depth: 1 }));
+    this.overlayLayer.addAll(
+      this.#blueprintContainer = new OsuSelectionBlueprintContainer().with({ depth: 1 }),
+    );
+
+    this.#positionSnapProviders = [
+      new HitObjectSnapProvider(this.#blueprintContainer),
+      this.#grid,
+    ];
+  }
+
+  #grid!: PlayfieldGrid;
+
+  #blueprintContainer!: OsuSelectionBlueprintContainer;
+
+  #positionSnapProviders!: IPositionSnapProvider[];
+
+  snapPosition(position: Vec2): SnapResult | null {
+    for (const snapProvider of this.#positionSnapProviders) {
+      const result = snapProvider.snapPosition(position);
+      if (result)
+        return result;
+    }
+
+    return null;
   }
 }

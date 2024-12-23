@@ -100,12 +100,12 @@ export abstract class GameHost {
 
     this.container = container;
 
-    window.addEventListener('error', (event) => {
-      this.onUnhandledError(event.error);
-    });
-    window.addEventListener('unhandledrejection', (event) => {
-      this.onUnhandledRejection(event);
-    });
+    // window.addEventListener('error', (event) => {
+    //   this.onUnhandledError(event.error);
+    // });
+    // window.addEventListener('unhandledrejection', (event) => {
+    //   this.onUnhandledRejection(event);
+    // });
 
     this.dependencies.provide(GAME_HOST, this);
 

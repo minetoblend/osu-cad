@@ -4,7 +4,15 @@ import type { JudgementResult } from '../../../hitObjects/JudgementResult';
 import type { IHitPolicy } from '../../ui/IHitPolicy';
 import type { DrawableOsuHitObject } from '../hitObjects/drawables/DrawableOsuHitObject';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
-import { Anchor, Axes, BindableBoolean, Container, dependencyLoader, provide, resolved } from 'osucad-framework';
+import {
+  Anchor,
+  Axes,
+  BindableBoolean,
+  Container,
+  provide,
+  type ReadonlyDependencyContainer,
+  resolved,
+} from 'osucad-framework';
 import { OsucadConfigManager } from '../../../config/OsucadConfigManager';
 import { OsucadSettings } from '../../../config/OsucadSettings';
 import { HitObjectLifetimeEntry } from '../../../hitObjects/drawables/HitObjectLifetimeEntry';
@@ -38,8 +46,9 @@ export class OsuPlayfield extends Playfield {
 
   #judgementContainer = new Container({ relativeSizeAxes: Axes.Both });
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.anchor = Anchor.Center;
     this.origin = Anchor.Center;
 
@@ -112,7 +121,7 @@ export class OsuPlayfield extends Playfield {
   }
 }
 
-class OsuHitObjectLifetimeEntry extends HitObjectLifetimeEntry {
+export class OsuHitObjectLifetimeEntry extends HitObjectLifetimeEntry {
   constructor(hitObject: OsuHitObject) {
     super(hitObject);
 

@@ -18,8 +18,8 @@ export class TimingScreenToolSelect extends FillFlowContainer {
 
   activeTool!: Bindable<TimingScreenTool>;
 
-  @dependencyLoader()
-  load(dependencies: ReadonlyDependencyContainer) {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
     const { activeTool } = dependencies.resolve(TimingScreenDependencies);
 
     this.activeTool = activeTool.getBoundCopy();

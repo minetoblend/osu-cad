@@ -54,7 +54,7 @@ export class ComposeToolButton extends ToolbarButton {
   }
 
   override onKeyDown(e: KeyDownEvent): boolean {
-    if (e.key === this.keyBinding) {
+    if (e.key === this.keyBinding && !e.controlPressed && !e.shiftPressed && !e.altPressed) {
       this.#keyPressed = true;
       this.activeTool.value = this.tool;
       this.updateState();

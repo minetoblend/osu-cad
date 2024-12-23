@@ -3,7 +3,7 @@ import {
   Anchor,
   Axes,
   CompositeDrawable,
-  dependencyLoader,
+  type ReadonlyDependencyContainer,
   resolved,
 } from 'osucad-framework';
 import { DrawableHitObject } from '../../../../hitObjects/drawables/DrawableHitObject';
@@ -17,8 +17,9 @@ export class DrawableSliderBall extends CompositeDrawable {
   @resolved(DrawableHitObject)
   drawableSlider!: DrawableSlider;
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.size = OsuHitObject.object_dimensions;
     this.origin = Anchor.Center;
 

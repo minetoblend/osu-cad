@@ -2,20 +2,24 @@ import type { HitObject } from '../../../hitObjects/HitObject';
 import { Action, Component, dependencyLoader, type KeyBindingAction, type KeyBindingPressEvent, PlatformAction, resolved } from 'osucad-framework';
 import { HitObjectList } from '../../../beatmap/HitObjectList';
 
-export class HitObjectSelectionManager extends Component {
-  #selection = new Set<HitObject>();
+export class HitObjectSelectionManager<T extends HitObject = HitObject> extends Component {
+  #selection = new Set<T>();
 
-  selectionChanged = new Action<HitObjectSelectionEvent>();
+  selectionChanged = new Action<HitObjectSelectionEvent<T>>();
 
   @resolved(HitObjectList)
-  protected hitObjects!: HitObjectList;
+  protected hitObjects!: HitObjectList<T>;
 
   @dependencyLoader()
   [Symbol('load')]() {
     this.hitObjects.removed.addListener(this.#onHitObjectRemoved, this);
   }
 
-  #onHitObjectRemoved(hitObject: HitObject) {
+  get length() {
+    return this.#selection.size;
+  }
+
+  #onHitObjectRemoved(hitObject: T) {
     this.deselect(hitObject);
   }
 
@@ -23,11 +27,11 @@ export class HitObjectSelectionManager extends Component {
     return this.#selection.values();
   }
 
-  isSelected(hitObject: HitObject) {
+  isSelected(hitObject: T) {
     return this.#selection.has(hitObject);
   }
 
-  select(hitObject: HitObject) {
+  select(hitObject: T) {
     if (this.isSelected(hitObject))
       return false;
 
@@ -40,7 +44,7 @@ export class HitObjectSelectionManager extends Component {
     return true;
   }
 
-  deselect(hitObject: HitObject) {
+  deselect(hitObject: T) {
     if (!this.#selection.delete(hitObject))
       return false;
 
@@ -52,7 +56,7 @@ export class HitObjectSelectionManager extends Component {
     return true;
   }
 
-  toggleSelection(hitObject: HitObject) {
+  toggleSelection(hitObject: T) {
     if (this.isSelected(hitObject))
       this.deselect(hitObject);
     else
@@ -60,12 +64,12 @@ export class HitObjectSelectionManager extends Component {
   }
 
   clear() {
-    for (const controlPoint of this.#selection)
-      this.selectionChanged.emit({ hitObject: controlPoint, selected: false });
+    for (const hitObject of this.#selection)
+      this.selectionChanged.emit({ hitObject, selected: false });
     this.#selection.clear();
   }
 
-  setSelection(...selection: HitObject[]) {
+  setSelection(...selection: T[]) {
     const newSelection = new Set(selection);
 
     const added = newSelection.difference(this.#selection);
@@ -106,7 +110,7 @@ export class HitObjectSelectionManager extends Component {
   }
 }
 
-export interface HitObjectSelectionEvent {
-  hitObject: HitObject;
+export interface HitObjectSelectionEvent<T extends HitObject = HitObject> {
+  hitObject: T;
   selected: boolean;
 }

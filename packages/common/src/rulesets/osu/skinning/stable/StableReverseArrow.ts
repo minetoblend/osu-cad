@@ -1,7 +1,7 @@
-import type { Bindable } from 'osucad-framework';
+import type { Bindable, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Color } from 'pixi.js';
 import type { DrawableSliderRepeat } from '../../hitObjects/drawables/DrawableSliderRepeat';
-import { Anchor, Axes, CompositeDrawable, dependencyLoader, DrawableSprite, EasingFunction, resolved } from 'osucad-framework';
+import { Anchor, Axes, CompositeDrawable, DrawableSprite, EasingFunction, resolved } from 'osucad-framework';
 import { DrawableHitObject } from '../../../../hitObjects/drawables/DrawableHitObject';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
 
@@ -14,8 +14,9 @@ export class StableReverseArrow extends CompositeDrawable {
 
   #arrow!: DrawableSprite;
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.autoSizeAxes = Axes.Both;
 
     const texture = this.skin.getTexture('reversearrow');

@@ -1,5 +1,5 @@
-import type { ClickEvent, DependencyContainer, ReadonlyDependencyContainer } from 'osucad-framework';
-import { Anchor, Axes, Box, Container, dependencyLoader, FillDirection, FillFlowContainer, provide, ProxyContainer, resolved } from 'osucad-framework';
+import type { ClickEvent, ReadonlyDependencyContainer } from 'osucad-framework';
+import { Anchor, Axes, Box, Container, DependencyContainer, FillDirection, FillFlowContainer, provide, ProxyContainer, resolved } from 'osucad-framework';
 import { EditorBeatmap } from '../../EditorBeatmap';
 import { CurrentTimeOverlay } from '../../ui/timeline/CurrentTimeOverlay';
 import { LayeredTimeline } from '../../ui/timeline/LayeredTimeline';
@@ -31,15 +31,16 @@ export class TimingScreen extends EditorScreen {
   selectionManager = new TimingScreenSelectionManager();
 
   protected override createChildDependencies(parentDependencies: ReadonlyDependencyContainer): DependencyContainer {
-    const dependencies = super.createChildDependencies(parentDependencies);
+    const dependencies = new DependencyContainer(parentDependencies);
 
     dependencies.provide(new TimingScreenDependencies());
 
     return dependencies;
   }
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.internalChildren = [
       this.selectionManager,
       new Container({

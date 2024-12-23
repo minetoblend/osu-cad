@@ -1,4 +1,4 @@
-import type { Drawable, MenuItem, SpriteText } from 'osucad-framework';
+import type { Drawable, MenuItem, ReadonlyDependencyContainer, SpriteText } from 'osucad-framework';
 import {
   Anchor,
   Axes,
@@ -116,8 +116,9 @@ class DrawableEditorMenuItem extends DrawableMenuItem {
     });
   }
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.item.disabled.addOnChangeListener(
       (e) => {
         if (e.value) {
@@ -150,8 +151,9 @@ class MenuItemContent extends Container {
     });
   }
 
-  @dependencyLoader()
-  load(): void {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.add(
       this.#spriteText = new OsucadSpriteText({
         anchor: Anchor.CenterLeft,

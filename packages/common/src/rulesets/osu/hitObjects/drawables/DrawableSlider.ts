@@ -1,7 +1,17 @@
 import type { ArmedState } from '../../../../hitObjects/drawables/ArmedState';
 import type { DrawableHitObject } from '../../../../hitObjects/drawables/DrawableHitObject';
 import type { Slider } from '../Slider';
-import { Anchor, Axes, Bindable, BindableBoolean, clamp, Container, dependencyLoader, resolved, Vec2 } from 'osucad-framework';
+import {
+  Anchor,
+  Axes,
+  Bindable,
+  BindableBoolean,
+  clamp,
+  Container,
+  type ReadonlyDependencyContainer,
+  resolved,
+  Vec2,
+} from 'osucad-framework';
 import { OsucadConfigManager } from '../../../../config/OsucadConfigManager';
 import { OsucadSettings } from '../../../../config/OsucadSettings';
 import { HitResult } from '../../../../hitObjects/HitResult';
@@ -46,8 +56,9 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider> {
   @resolved(OsucadConfigManager)
   protected config!: OsucadConfigManager;
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.config.bindWith(OsucadSettings.HitAnimations, this.hitAnimationsEnabled);
 
     this.addAllInternal(

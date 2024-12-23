@@ -1,5 +1,5 @@
-import type { IScreen } from 'osucad-framework';
-import { Axes, dependencyLoader, ScreenStack } from 'osucad-framework';
+import type { DependencyContainer, IScreen, ReadonlyDependencyContainer } from 'osucad-framework';
+import { Axes, ScreenStack } from 'osucad-framework';
 import { BackgroundScreenStack } from './BackgroundScreenStack';
 
 export class OsucadScreenStack extends ScreenStack {
@@ -15,8 +15,15 @@ export class OsucadScreenStack extends ScreenStack {
     this.internalChild = this.backgroundScreenStack;
   }
 
-  @dependencyLoader()
-  load() {
-    this.dependencies.provide(BackgroundScreenStack, this.backgroundScreenStack);
+  #dependencies!: DependencyContainer;
+
+  protected override createChildDependencies(parentDependencies: ReadonlyDependencyContainer): DependencyContainer {
+    return this.#dependencies = super.createChildDependencies(parentDependencies);
+  }
+
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
+    this.#dependencies.provide(BackgroundScreenStack, this.backgroundScreenStack);
   }
 }

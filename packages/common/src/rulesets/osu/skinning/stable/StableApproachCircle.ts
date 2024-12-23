@@ -1,6 +1,6 @@
-import type { Bindable } from 'osucad-framework';
+import type { Bindable, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Color } from 'pixi.js';
-import { dependencyLoader, DrawableSprite, resolved, Vec2 } from 'osucad-framework';
+import { DrawableSprite, resolved, Vec2 } from 'osucad-framework';
 import { DrawableHitObject } from '../../../../hitObjects/drawables/DrawableHitObject';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
 
@@ -19,8 +19,9 @@ export class StableApproachCircle extends DrawableSprite {
   @resolved(DrawableHitObject)
   private drawableHitObject!: DrawableHitObject;
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     const texture = this.skin.getTexture('approachcircle');
     if (texture) {
       this.texture = texture;

@@ -1,4 +1,4 @@
-import type { DependencyContainer, ReadonlyDependencyContainer } from '../../di/DependencyContainer';
+import type { ReadonlyDependencyContainer } from '../../di/DependencyContainer';
 import type { ClickEvent } from '../../input/events/ClickEvent';
 import type { DoubleClickEvent } from '../../input/events/DoubleClickEvent';
 import type { DragEndEvent } from '../../input/events/DragEndEvent';
@@ -33,7 +33,7 @@ import { Bindable } from '../../bindables';
 import { Action } from '../../bindables/Action';
 import { popDrawableScope, pushDrawableScope } from '../../bindables/lifetimeScope';
 import { drawableProps, propertyToValue, valueToProperty } from '../../devtools/drawableProps';
-import { getAsyncDependencyLoaders, getDependencyLoaders, getInjections, getProviders } from '../../di/decorators';
+import { getAsyncDependencyLoaders, getDependencyLoaders, getInjections } from '../../di/decorators';
 import { HandleInputCache } from '../../input/HandleInputCache';
 import { isFocusManager } from '../../input/IFocusManager';
 import { Quad } from '../../math/Quad';
@@ -656,6 +656,10 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return this.#fillAspectRatio;
   }
 
+  protected get hasAsyncLoader() {
+    return false;
+  }
+
   set fillAspectRatio(value: number) {
     if (this.#fillAspectRatio === value)
       return;
@@ -828,7 +832,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return this.loadState === LoadState.Loaded;
   }
 
-  dependencies!: DependencyContainer;
+  dependencies!: ReadonlyDependencyContainer;
 
   #loadComplete() {
     if (this.loadState < LoadState.Ready)
@@ -872,13 +876,17 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
         (this as any)[key](dependencies);
       }
 
+      this.load(dependencies);
+
       const asyncDependencyLoaders = getAsyncDependencyLoaders(this);
-      if (asyncDependencyLoaders.length > 0) {
+      if (this.hasAsyncLoader || asyncDependencyLoaders.length > 0) {
         if (!isDirectAsyncContext) {
           throw new Error('Cannot load async dependencies in a non-async context');
         }
 
         await Promise.all(asyncDependencyLoaders.map(key => (this as any)[key](this.dependencies)));
+
+        await this.loadAsync(dependencies);
       }
 
       this.loadAsyncComplete();
@@ -909,6 +917,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   #customClock?: IFrameBasedClock;
 
   processCustomClock = true;
+
+  protected load(dependencies: ReadonlyDependencyContainer) {
+  }
+
+  protected async loadAsync(dependencies: ReadonlyDependencyContainer) {
+  }
 
   override get clock(): IFrameBasedClock | null {
     return this.#clock;
@@ -956,24 +970,11 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   onLoadComplete = new Action<Drawable>();
 
   protected injectDependencies(dependencies: ReadonlyDependencyContainer) {
-    this.dependencies ??= dependencies as DependencyContainer;
+    this.dependencies ??= dependencies;
 
     const injections = getInjections(this);
     for (const { key, type, optional } of injections) {
       Reflect.set(this, key, optional ? this.dependencies.resolveOptional(type) : this.dependencies.resolve(type));
-    }
-
-    const providers = getProviders(this);
-    for (const { key, type } of providers) {
-      // if no key was provided the decorator was added to the class itself
-      const value = key ? Reflect.get(this, key) : this;
-
-      if (type) {
-        this.dependencies.provide(type, value);
-      }
-      else {
-        this.dependencies.provide(value);
-      }
     }
   }
 
@@ -1372,6 +1373,10 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   toSpaceOfOtherDrawable(v: Vec2, other: Drawable): Vec2 {
     return other.toLocalSpace(this.toScreenSpace(v));
+  }
+
+  toParentSpace(v: Vec2) {
+    return this.toSpaceOfOtherDrawable(v, this.parent!);
   }
 
   rectToParentSpace(rect: Rectangle): Quad {

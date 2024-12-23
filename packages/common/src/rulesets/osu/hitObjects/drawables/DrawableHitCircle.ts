@@ -1,6 +1,6 @@
-import type { Drawable } from 'osucad-framework';
+import type { Drawable, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { HitCircle } from '../HitCircle';
-import { Anchor, Axes, Bindable, Container, dependencyLoader, EasingFunction, resolved } from 'osucad-framework';
+import { Anchor, Axes, Bindable, Container, EasingFunction, resolved } from 'osucad-framework';
 import { AudioMixer } from '../../../../audio/AudioMixer';
 import { OsucadConfigManager } from '../../../../config/OsucadConfigManager';
 import { OsucadSettings } from '../../../../config/OsucadSettings';
@@ -46,8 +46,9 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle> {
   @resolved(ISkinSource)
   skin!: ISkinSource;
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.config.bindWith(OsucadSettings.HitAnimations, this.hitAnimationsEnabled);
 
     this.origin = Anchor.Center;

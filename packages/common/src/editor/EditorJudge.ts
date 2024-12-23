@@ -1,7 +1,7 @@
 import type { DrawableHitObject, DrawableOsuHitObject, IHitObjectJudgeProvider } from '@osucad/common';
-import type { DependencyContainer } from 'osucad-framework';
+import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import { HitObjectJudge, OsucadConfigManager, OsucadSettings } from '@osucad/common';
-import { BindableNumber, dependencyLoader } from 'osucad-framework';
+import { BindableNumber } from 'osucad-framework';
 
 export class EditorJudge extends HitObjectJudge {
   constructor(hitObject: DrawableHitObject) {
@@ -12,8 +12,9 @@ export class EditorJudge extends HitObjectJudge {
 
   audioOffset = new BindableNumber();
 
-  @dependencyLoader()
-  load(dependencies: DependencyContainer) {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     const config = dependencies.resolve(OsucadConfigManager);
 
     config.bindWith(OsucadSettings.AudioOffset, this.audioOffset);

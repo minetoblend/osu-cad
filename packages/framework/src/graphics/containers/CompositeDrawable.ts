@@ -5,6 +5,7 @@ import type { AbsoluteSequenceSender } from '../transforms/AbsoluteSequenceSende
 import { Action } from '../../bindables/Action';
 import { compositeDrawableProps } from '../../devtools/compositeDrawableProps';
 import { DependencyContainer } from '../../di';
+import { getProviders } from '../../di/decorators';
 import { type IVec2, Vec2 } from '../../math/Vec2';
 import { PIXIContainer, PIXIGraphics } from '../../pixi';
 import { type IUsable, ValueInvokeOnDisposal } from '../../types/IUsable';
@@ -208,7 +209,7 @@ export class CompositeDrawable extends Drawable {
     this.#loadComponents(components, this.dependencies);
   }
 
-  #loadComponents<T extends Drawable>(components: T[], dependencies: DependencyContainer) {
+  #loadComponents<T extends Drawable>(components: T[], dependencies: ReadonlyDependencyContainer) {
     for (let i = 0; i < components.length; i++) {
       loadDrawable(components[i], this.clock!, dependencies);
     }
@@ -378,7 +379,7 @@ export class CompositeDrawable extends Drawable {
     if (this.#relativeChildSize.equals(value))
       return;
 
-    if (!isFinite(value.x) || !isFinite(value.y))
+    if (!Number.isFinite(value.x) || !Number.isFinite(value.y))
       throw new Error('relativeChildSize must be finite.');
     if (value.x === 0 || value.y === 0)
       throw new Error('relativeChildSize must be non-zero.');
@@ -566,10 +567,26 @@ export class CompositeDrawable extends Drawable {
     return new DependencyContainer(parentDependencies);
   }
 
+  override dependencies!: ReadonlyDependencyContainer;
+
   protected override injectDependencies(dependencies: ReadonlyDependencyContainer) {
-    this.dependencies = this.createChildDependencies(dependencies);
-    if (dependencies !== this.dependencies)
-      this.dependencies.owner = this;
+    const childDependencies = this.dependencies = this.createChildDependencies(dependencies);
+
+    if (childDependencies !== dependencies)
+      childDependencies.owner = this;
+
+    const providers = getProviders(this);
+    for (const { key, type } of providers) {
+      // if no key was provided the decorator was added to the class itself
+      const value = key ? Reflect.get(this, key) : this;
+
+      if (type) {
+        childDependencies.provide(type, value);
+      }
+      else {
+        childDependencies.provide(value);
+      }
+    }
 
     super.injectDependencies(dependencies);
   }

@@ -1,7 +1,7 @@
-import type { TransformSequenceProxy } from 'osucad-framework';
+import type { ReadonlyDependencyContainer, TransformSequenceProxy } from 'osucad-framework';
 import type { ArmedState } from '../../../../hitObjects/drawables/ArmedState';
 import type { Spinner } from '../Spinner';
-import { Anchor, Axes, dependencyLoader, EasingFunction } from 'osucad-framework';
+import { Anchor, Axes, EasingFunction } from 'osucad-framework';
 import { AspectContainer } from '../../../../drawables/AspectContainer';
 import { SkinnableDrawable } from '../../../../skinning/SkinnableDrawable';
 import { OsuSkinComponentLookup } from '../../skinning/stable/OsuSkinComponentLookup';
@@ -10,8 +10,9 @@ import { DrawableOsuHitObject } from './DrawableOsuHitObject';
 export class DrawableSpinner extends DrawableOsuHitObject<Spinner> {
   body!: SkinnableDrawable;
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.origin = Anchor.Center;
     this.relativeSizeAxes = Axes.Both;
 

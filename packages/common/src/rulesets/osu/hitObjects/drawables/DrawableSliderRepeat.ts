@@ -3,7 +3,14 @@ import type { HitObjectLifetimeEntry } from '../../../../hitObjects/drawables/Hi
 import type { HitSound } from '../../../../hitsounds/HitSound';
 import type { SliderRepeat } from '../SliderRepeat';
 import type { DrawableSlider } from './DrawableSlider';
-import { almostEquals, Anchor, Axes, Container, dependencyLoader, Vec2 } from 'osucad-framework';
+import {
+  almostEquals,
+  Anchor,
+  Axes,
+  Container,
+  type ReadonlyDependencyContainer,
+  Vec2,
+} from 'osucad-framework';
 import { SkinnableDrawable } from '../../../../skinning/SkinnableDrawable';
 import { OsuSkinComponentLookup } from '../../skinning/stable/OsuSkinComponentLookup';
 import { OsuHitObject } from '../OsuHitObject';
@@ -16,8 +23,9 @@ export class DrawableSliderRepeat extends DrawableOsuHitObject<SliderRepeat> {
 
   #scaleContainer!: Container;
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.origin = Anchor.Center;
     this.size = OsuHitObject.object_dimensions;
 

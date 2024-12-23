@@ -1,4 +1,11 @@
-import { Anchor, Axes, Box, CompositeDrawable, dependencyLoader, resolved } from 'osucad-framework';
+import {
+  Anchor,
+  Axes,
+  Box,
+  CompositeDrawable,
+  type ReadonlyDependencyContainer,
+  resolved,
+} from 'osucad-framework';
 import { OsucadColors } from '../../../OsucadColors';
 import { EditorClock } from '../../EditorClock';
 import { Timeline } from './Timeline';
@@ -17,8 +24,9 @@ export class CurrentTimeOverlay extends CompositeDrawable {
     origin: Anchor.TopCenter,
   });
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.addInternal(this.#overlay);
   }
 

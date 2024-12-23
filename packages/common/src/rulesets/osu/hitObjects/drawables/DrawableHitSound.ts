@@ -1,7 +1,7 @@
-import type { Sample, SamplePlayback } from 'osucad-framework';
+import type { ReadonlyDependencyContainer, Sample, SamplePlayback } from 'osucad-framework';
 import type { HitSample } from '../../../../hitsounds/HitSample';
 import type { DrawableOsuHitObject } from './DrawableOsuHitObject';
-import { Component, dependencyLoader, resolved } from 'osucad-framework';
+import { Component, resolved } from 'osucad-framework';
 import { AudioMixer } from '../../../../audio/AudioMixer';
 import { DrawableHitObject } from '../../../../hitObjects/drawables/DrawableHitObject';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
@@ -24,8 +24,9 @@ export class DrawableHitSound extends Component {
     return this.mixer.hitsounds;
   }
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.skin.sourceChanged.addListener(this.#skinChanged, this);
   }
 

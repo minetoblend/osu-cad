@@ -1,4 +1,11 @@
-import { type AudioChannel, type AudioManager, Bindable, Component, dependencyLoader, resolved } from 'osucad-framework';
+import {
+  type AudioChannel,
+  type AudioManager,
+  Bindable,
+  Component,
+  type ReadonlyDependencyContainer,
+  resolved,
+} from 'osucad-framework';
 import { OsucadConfigManager } from '../config/OsucadConfigManager';
 import { OsucadSettings } from '../config/OsucadSettings';
 
@@ -27,8 +34,9 @@ export class AudioMixer extends Component {
 
   uiVolume = new Bindable(100);
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.masterVolume.addOnChangeListener(e => this.audioManager.masterVolume = (e.value / 100) ** 2);
     this.musicVolume.addOnChangeListener(e => this.music.volume = (e.value / 100) ** 2);
     this.hitsoundVolume.addOnChangeListener(e => this.hitsounds.volume = (e.value / 100) ** 2);

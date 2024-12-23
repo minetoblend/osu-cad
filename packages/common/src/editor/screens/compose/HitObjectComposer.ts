@@ -1,6 +1,7 @@
+import type { DependencyContainer, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { DrawableRuleset } from '../../../rulesets/DrawableRuleset';
 import type { IComposeTool } from './IComposeTool';
-import { Axes, Bindable, CompositeDrawable, Container, type DependencyContainer, dependencyLoader, type ReadonlyDependencyContainer, resolved } from 'osucad-framework';
+import { Axes, Bindable, CompositeDrawable, Container, dependencyLoader, resolved } from 'osucad-framework';
 import { IBeatmap } from '../../../beatmap/IBeatmap';
 import { Ruleset } from '../../../rulesets/Ruleset';
 import { ComposeToolbar } from './ComposeToolbar';

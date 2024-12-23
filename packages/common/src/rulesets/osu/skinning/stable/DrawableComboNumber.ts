@@ -1,5 +1,12 @@
 import type { DrawableOsuHitObject } from '../../hitObjects/drawables/DrawableOsuHitObject';
-import { Anchor, Bindable, CompositeDrawable, dependencyLoader, DrawableSprite, resolved } from 'osucad-framework';
+import {
+  Anchor,
+  Bindable,
+  CompositeDrawable,
+  DrawableSprite,
+  type ReadonlyDependencyContainer,
+  resolved,
+} from 'osucad-framework';
 import { DrawableHitObject } from '../../../../hitObjects/drawables/DrawableHitObject';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
 import { SkinConfig } from '../../../../skinning/SkinConfig';
@@ -15,8 +22,9 @@ export class DrawableComboNumber extends CompositeDrawable {
 
   indexInComboBindable = new Bindable(0);
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.indexInComboBindable.bindTo(this.parentHitObject!.indexInComboBindable);
 
     this.hitCircleOverlap = this.skin.getConfig(SkinConfig.HitCircleOverlap) ?? -2;

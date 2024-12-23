@@ -2,7 +2,14 @@ import type { HitSound } from '../../../../hitsounds/HitSound';
 import type { Slider } from '../Slider';
 import type { SliderTailCircle } from '../SliderTailCircle';
 import type { DrawableSlider } from './DrawableSlider';
-import { Anchor, Axes, BindableBoolean, Container, dependencyLoader, resolved } from 'osucad-framework';
+import {
+  Anchor,
+  Axes,
+  BindableBoolean,
+  Container,
+  type ReadonlyDependencyContainer,
+  resolved,
+} from 'osucad-framework';
 import { OsucadConfigManager } from '../../../../config/OsucadConfigManager';
 import { OsucadSettings } from '../../../../config/OsucadSettings';
 import { ArmedState } from '../../../../hitObjects/drawables/ArmedState';
@@ -21,8 +28,9 @@ export class DrawableSliderTail extends DrawableOsuHitObject<SliderTailCircle> {
   @resolved(OsucadConfigManager)
   config!: OsucadConfigManager;
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.config.bindWith(OsucadSettings.HitAnimations, this.hitAnimations);
 
     this.origin = Anchor.Center;
@@ -54,14 +62,14 @@ export class DrawableSliderTail extends DrawableOsuHitObject<SliderTailCircle> {
   }
 
   protected override updateInitialTransforms() {
-    this.circlePiece
-      .fadeOut()
+    this.circlePiece.fadeOut()
       .delay((this.slider!.timePreempt ?? 0) / 3)
       .fadeIn(this.slider!.timeFadeIn);
+    // console.log(this.circlePiece.transforms);
   }
 
   protected override updateHitStateTransforms(state: ArmedState) {
-    this.delay(800).fadeOut();
+    // this.delay(800).fadeOut();
 
     switch (state) {
       case ArmedState.Hit:

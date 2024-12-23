@@ -1,5 +1,16 @@
 import type { DrawableSlider } from '../../hitObjects/drawables/DrawableSlider';
-import { Anchor, Axes, Bindable, clamp, CompositeDrawable, dependencyLoader, Drawable, DrawableSprite, PIXIContainer, resolved } from 'osucad-framework';
+import {
+  Anchor,
+  Axes,
+  Bindable,
+  clamp,
+  CompositeDrawable,
+  Drawable,
+  DrawableSprite,
+  PIXIContainer,
+  type ReadonlyDependencyContainer,
+  resolved,
+} from 'osucad-framework';
 import { Color, Mesh, QuadGeometry } from 'pixi.js';
 import { DrawableHitObject } from '../../../../hitObjects/drawables/DrawableHitObject';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
@@ -21,8 +32,9 @@ export class StableSliderBall extends CompositeDrawable {
 
   accentColor = new Bindable<Color>(new Color(0xFFFFFF));
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.relativeSizeAxes = Axes.Both;
 
     if (this.sliderb instanceof SkinnableTextureAnimation || (this.sliderb instanceof DrawableSprite && this.sliderb.texture)) {

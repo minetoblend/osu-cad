@@ -1,4 +1,4 @@
-import type { ReadonlyBindable } from 'osucad-framework';
+import type { DependencyContainer, ReadonlyBindable, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { HitObject } from '../HitObject';
 import type { HitObjectJudge } from './HitObjectJudge';
 import type { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
@@ -22,10 +22,16 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
 
   onNewResult = new Action<[DrawableHitObject, JudgementResult]>();
 
+  #dependencies!: DependencyContainer;
+
+  protected override createChildDependencies(parentDependencies: ReadonlyDependencyContainer): DependencyContainer {
+    return this.#dependencies = super.createChildDependencies(parentDependencies);
+  }
+
   @dependencyLoader()
   [Symbol('load')]() {
-    this.dependencies.provide(DrawableHitObject, this);
-    this.dependencies.provide(IAnimationTimeReference, this);
+    this.#dependencies.provide(DrawableHitObject, this);
+    this.#dependencies.provide(IAnimationTimeReference, this);
   }
 
   get hitObject(): HitObject | undefined {

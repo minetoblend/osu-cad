@@ -1,5 +1,14 @@
 import type { DrawableSpinner } from '../../hitObjects/drawables/DrawableSpinner';
-import { Anchor, Axes, CompositeDrawable, Container, dependencyLoader, DrawableSprite, resolved, Vec2 } from 'osucad-framework';
+import {
+  Anchor,
+  Axes,
+  CompositeDrawable,
+  Container,
+  DrawableSprite,
+  type ReadonlyDependencyContainer,
+  resolved,
+  Vec2,
+} from 'osucad-framework';
 import { Color } from 'pixi.js';
 import { DrawableHitObject } from '../../../../hitObjects/drawables/DrawableHitObject';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
@@ -19,8 +28,9 @@ export class StableSpinnerBody extends CompositeDrawable {
   #spinningMiddle!: DrawableSprite;
   #fixedMiddle!: DrawableSprite;
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     const glowColor = new Color('rgb(3, 151, 255)');
 
     this.anchor = Anchor.Center;

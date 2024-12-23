@@ -38,7 +38,7 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<EditorAct
   #screenManager = new EditorScreenManager();
 
   @asyncDependencyLoader()
-  async load(dependencies: ReadonlyDependencyContainer) {
+  async [Symbol('loadAsync')](dependencies: ReadonlyDependencyContainer) {
     await this.loadComponentAsync(this.editorBeatmap);
     this.addInternal(this.editorBeatmap);
 

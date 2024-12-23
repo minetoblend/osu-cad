@@ -2,9 +2,9 @@ import type { Slider } from '../../hitObjects/Slider';
 import {
   Anchor,
   CompositeDrawable,
-  dependencyLoader,
   DrawableSprite,
   EasingFunction,
+  type ReadonlyDependencyContainer,
   resolved,
 } from 'osucad-framework';
 import { DrawableHitObject } from '../../../../hitObjects/drawables/DrawableHitObject';
@@ -19,8 +19,9 @@ export class StableFollowCircle extends CompositeDrawable {
   @resolved(DrawableHitObject)
   drawableHitObject!: DrawableHitObject;
 
-  @dependencyLoader()
-  load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.addAllInternal(
       new DrawableSprite({
         texture: this.skin.getTexture('sliderfollowcircle'),
@@ -45,6 +46,11 @@ export class StableFollowCircle extends CompositeDrawable {
 
     this.applyTransformsAt(-Number.MAX_VALUE);
     this.clearTransformsAfter(-Number.MAX_VALUE);
+
+    if (hitObject.path.controlPoints.length === 0 || hitObject.expectedDistance >= 0) {
+      this.fadeOut();
+      return;
+    }
 
     this.absoluteSequence(hitObject.startTime, () => {
       this

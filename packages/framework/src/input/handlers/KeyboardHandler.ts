@@ -83,12 +83,16 @@ export class KeyboardHandler extends InputHandler {
   };
 
   #shouldPreventDefault(event: KeyboardEvent): boolean {
+    if (/^\d$/.test(event.key))
+      return true;
+
     switch (event.key) {
       case 'R':
       case 'r':
       case 'w':
       case 'W':
       case 'z':
+      case 'o':
         return event.ctrlKey || event.metaKey;
       case 'Tab':
         return true;

@@ -36,6 +36,8 @@ export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepe
       this.#updateNestedPositions();
       this.requestApplyDefaults();
     });
+
+    this.ensureHitSoundsAreValid();
   }
 
   override get position() {
@@ -249,6 +251,11 @@ export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepe
       distance < Math.min(this.path.expectedDistance, this.path.calculatedDistance)
     ) {
       distance += step;
+      distance = Math.min(
+        distance,
+        Math.min(this.path.expectedDistance, this.path.calculatedDistance),
+      );
+
       while (i < path.length - 1 && this.path.calculatedPath.cumulativeDistance[i] < distance)
         i++;
 
