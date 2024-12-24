@@ -38,4 +38,8 @@ export class UIEvent {
   get draggedFiles() {
     return this.state.draggedFiles;
   }
+
+  get touchCount() {
+    return this.state.touch.activeSources.pressedButtons.size;
+  }
 }

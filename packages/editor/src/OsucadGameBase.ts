@@ -3,6 +3,7 @@ import { AudioManager, type DependencyContainer, dependencyLoader, Game, IRender
 import { ThemeColors } from './editor/ThemeColors';
 import { BeatmapStore, EditorEnvironment, SkinStore } from './environment';
 import { GlobalBeatmapBindable } from './GlobalBeatmapBindable';
+import { LongPressOverlay } from './LongPressOverlay';
 import { MainCursorContainer } from './MainCursorContainer';
 import { OsucadIcons } from './OsucadIcons';
 import { OsucadSkinManager } from './skinning/OsucadSkinManager';
@@ -81,5 +82,13 @@ export class OsucadGameBase extends Game {
 
   onClick(): boolean {
     return true;
+  }
+
+  protected loadComplete() {
+    super.loadComplete();
+
+    super.add(new LongPressOverlay().with({
+      depth: -1,
+    }));
   }
 }

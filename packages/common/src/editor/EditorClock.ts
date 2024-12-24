@@ -86,12 +86,12 @@ export class EditorClock
   }
 
   seekBeats(direction: number, snapped = false, amount = 1) {
-    const timingPoint = this.controlPointInfo.timingPointAt(this.currentTime);
+    const timingPoint = this.controlPointInfo.timingPointAt(this.currentTimeAccurate);
 
     const beatSnapLength
       = timingPoint.beatLength / this.beatSnapDivisor.value;
 
-    let newPosition = this.currentTime + direction * amount * beatSnapLength;
+    let newPosition = this.currentTimeAccurate + direction * amount * beatSnapLength;
 
     if (almostEquals(newPosition, timingPoint.time, 1)) {
       newPosition = timingPoint.time;
@@ -154,8 +154,6 @@ export class EditorClock
         elapsed: currentTime - lastTime,
       };
 
-      this.currentTimeBindable.value = currentTime;
-
       this.#lastSeekWasAnimated = false;
     }
     else {
@@ -175,9 +173,9 @@ export class EditorClock
         current: currentTime,
         elapsed: currentTime - lastTime,
       };
-
-      this.currentTimeBindable.value = currentTime;
     }
+
+    this.currentTimeBindable.value = this.currentTime;
 
     if (this.currentTime >= this.track.length) {
       this.stop();

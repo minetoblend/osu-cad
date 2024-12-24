@@ -20,6 +20,7 @@ import { SampleType } from '../../../hitsounds/SampleType';
 import { deserializeHitSound } from '../../../serialization/HitSound';
 import { OsuHitObject, OsuHitObjectSerializer } from './OsuHitObject';
 import { PathPoint, PathPointSerialDescriptor, PathPointSerializer } from './PathPoint';
+import { PathType } from './PathType';
 import { SliderEventGenerator } from './SliderEventGenerator';
 import { SliderHeadCircle } from './SliderHeadCircle';
 import { SliderPath } from './SliderPath';
@@ -38,6 +39,11 @@ export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepe
     });
 
     this.ensureHitSoundsAreValid();
+
+    this.#repeatCount.bindable.valueChanged.addListener(() => {
+      this.ensureHitSoundsAreValid();
+      this.requestApplyDefaults();
+    });
   }
 
   override get position() {
@@ -66,13 +72,7 @@ export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepe
   }
 
   set repeatCount(value: number) {
-    if (value === this.#repeatCount.value)
-      return;
-
     this.#repeatCount.value = value;
-
-    this.ensureHitSoundsAreValid();
-    this.requestApplyDefaults();
   }
 
   get spanCount() {
@@ -157,7 +157,7 @@ export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepe
     return this.path.controlPoints;
   }
 
-  set controlPoints(value: PathPoint[]) {
+  set controlPoints(value: readonly PathPoint[]) {
     this.path.controlPoints = value;
   }
 
@@ -495,6 +495,29 @@ export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepe
     return [
       this.path,
     ];
+  }
+
+  removeControlPoint(index: number) {
+    if (index < 0 || index >= this.controlPoints.length)
+      return false;
+
+    const path = [...this.controlPoints];
+
+    if (index === 0 && path.length >= 2) {
+      const offset = path[1].position;
+      const type = path[0].type ?? PathType.Bezier;
+
+      for (let i = 0; i < path.length; i++)
+        path[i] = path[i].withPosition(path[i].position.sub(offset));
+
+      path[1] = path[1].withType(type);
+
+      this.position = this.position.add(offset);
+    }
+
+    this.controlPoints = path.toSpliced(index, 1);
+
+    return true;
   }
 }
 

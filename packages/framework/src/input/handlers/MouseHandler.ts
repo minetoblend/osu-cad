@@ -18,7 +18,6 @@ export class MouseHandler extends InputHandler {
     this.enabled.addOnChangeListener(
       (enabled) => {
         if (enabled) {
-          // eslint-disable-next-line prettier/prettier
           host.renderer.canvas.addEventListener('pointerdown', this.#handleMouseDown);
           host.renderer.canvas.addEventListener('pointerup', this.#handleMouseUp);
           host.renderer.canvas.addEventListener('pointermove', this.#handleMouseMove);
@@ -101,8 +100,8 @@ export class MouseHandler extends InputHandler {
     event.preventDefault();
 
     const rect = (event.target as HTMLCanvasElement).getBoundingClientRect();
-    let x = event.clientX - rect.left;
-    let y = event.clientY - rect.top;
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
 
     // x /= devicePixelRatio;
     // y /= devicePixelRatio;

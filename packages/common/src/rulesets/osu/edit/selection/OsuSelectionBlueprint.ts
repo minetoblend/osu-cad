@@ -8,8 +8,16 @@ import { UpdateHandler } from '../../../../crdt/UpdateHandler';
 import { HitObjectSelectionManager } from '../../../../editor/screens/compose/HitObjectSelectionManager';
 import { HitObjectBlueprint } from '../../../ui/HitObjectBlueprint';
 import { HitObjectBlueprintContainer } from '../../../ui/HitObjectBlueprintContainer';
+import { Slider } from '../../hitObjects/Slider';
 import { Spinner } from '../../hitObjects/Spinner';
 import { IPositionSnapProvider } from '../IPositionSnapProvider';
+
+enum Edges {
+  Left = 1 << 0,
+  Right = 1 << 1,
+  Top = 1 << 2,
+  Bottom = 1 << 3,
+}
 
 export class OsuSelectionBlueprint<T extends OsuHitObject = OsuHitObject> extends HitObjectBlueprint {
   constructor() {
@@ -49,13 +57,13 @@ export class OsuSelectionBlueprint<T extends OsuHitObject = OsuHitObject> extend
 
     this.selected.value = this.selection.isSelected(hitObject);
 
-    this.selection.selectionChanged.addListener(this.#selectionChanged, this);
+    this.selection.selectionChanged.addListener(this.selectionChanged, this);
 
     // this.lifetimeStart = entry.lifetimeStart;
     // this.lifetimeEnd = entry.lifetimeEnd;
   }
 
-  #selectionChanged(evt: HitObjectSelectionEvent) {
+  protected selectionChanged(evt: HitObjectSelectionEvent) {
     if (evt.hitObject === this.hitObject)
       this.selected.value = evt.selected;
   }
@@ -69,7 +77,7 @@ export class OsuSelectionBlueprint<T extends OsuHitObject = OsuHitObject> extend
     this.stackHeightBindable.unbindFrom(hitObject.stackHeightBindable);
     this.scaleBindable.unbindFrom(hitObject.scaleBindable);
 
-    this.selection.selectionChanged.removeListener(this.#selectionChanged, this);
+    this.selection.selectionChanged.removeListener(this.selectionChanged, this);
   }
 
   override receivePositionalInputAt(screenSpacePosition: Vec2): boolean {
@@ -137,14 +145,13 @@ export class OsuSelectionBlueprint<T extends OsuHitObject = OsuHitObject> extend
       .filter(it => !(it instanceof Spinner));
 
     this.#draggedObjects = draggedObjects;
-    this.#dragStartPositions = draggedObjects.map(it => it.position);
+    this.#dragStartPositions = draggedObjects.map(it => it.position.clone());
 
     return true;
   }
 
   override onDrag(e: DragEvent): boolean {
-    let delta = this.toParentSpace(e.screenSpaceMousePosition)
-      .sub(this.toParentSpace(e.screenSpaceMouseDownPosition));
+    let delta = this.parent!.toLocalSpace(e.screenSpaceMousePosition).sub(this.parent!.toLocalSpace(e.screenSpaceMouseDownPosition));
 
     const snapResult = IPositionSnapProvider.findClosestSnapResult(
       this.snapProvider,
@@ -160,7 +167,56 @@ export class OsuSelectionBlueprint<T extends OsuHitObject = OsuHitObject> extend
       hitObject.position = this.#dragStartPositions[i].add(delta);
     }
 
+    this.moveIntoBounds(this.#draggedObjects);
+
     return true;
+  }
+
+  // noinspection t
+  protected moveIntoBounds(hitObjects: OsuHitObject[]) {
+    const overflow = {
+      left: 0,
+      top: 0,
+      right: 0,
+      bottom: 0,
+    };
+
+    for (const object of hitObjects) {
+      const start = object.position;
+      let end = start;
+      if (object instanceof Slider)
+        end = end.add(object.path.endPosition);
+
+      const min = start.componentMin(end);
+      const max = start.componentMax(end);
+
+      if (min.x < 0)
+        overflow.left = Math.max(overflow.left, -min.x);
+      if (max.x > 512)
+        overflow.right = Math.max(overflow.right, max.x - 512);
+
+      if (min.y < 0)
+        overflow.top = Math.max(overflow.top, -min.y);
+      if (max.y > 384)
+        overflow.bottom = Math.max(overflow.bottom, max.y - 384);
+    }
+
+    const offset = new Vec2();
+
+    if (overflow.left && !overflow.right)
+      offset.x = overflow.left;
+    else if (overflow.right && !overflow.left)
+      offset.x = -overflow.right;
+
+    if (overflow.top && !overflow.bottom)
+      offset.y = overflow.top;
+    else if (overflow.bottom && !overflow.top)
+      offset.y = -overflow.bottom;
+
+    if (!offset.isZero) {
+      for (const object of hitObjects)
+        object.position = object.position.add(offset);
+    }
   }
 
   @resolved(UpdateHandler)

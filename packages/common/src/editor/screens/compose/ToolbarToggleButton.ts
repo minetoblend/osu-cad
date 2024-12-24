@@ -1,7 +1,7 @@
 import type { ClickEvent } from 'osucad-framework';
-import { ToolbarButton } from './ToolbarButton';
+import { EditorButton } from './EditorButton';
 
-export abstract class ToolbarToggleButton extends ToolbarButton {
+export abstract class ToolbarToggleButton extends EditorButton {
   override onClick(e: ClickEvent): boolean {
     this.active.toggle();
     return true;

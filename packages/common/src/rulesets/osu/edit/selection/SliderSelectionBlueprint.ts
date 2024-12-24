@@ -1,14 +1,21 @@
-import type { ReadonlyDependencyContainer, Vec2 } from 'osucad-framework';
+import type { ClickEvent, DoubleClickEvent, DragEndEvent, DragEvent, MouseDownEvent, ReadonlyDependencyContainer, Vec2 } from 'osucad-framework';
+import type { HitObjectSelectionEvent } from '../../../../editor/screens/compose/HitObjectSelectionManager';
 import type { HitObjectLifetimeEntry } from '../../../../hitObjects/drawables/HitObjectLifetimeEntry';
 import type { HitObject } from '../../../../hitObjects/HitObject';
+import type { PathType } from '../../hitObjects/PathType';
 import type { Slider } from '../../hitObjects/Slider';
-import { Anchor, Axes, resolved } from 'osucad-framework';
+import { Anchor, Axes, Container, isMobile, MouseButton, provide, resolved } from 'osucad-framework';
+import { UpdateHandler } from '../../../../crdt/UpdateHandler';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
 import { SkinnableDrawable } from '../../../../skinning/SkinnableDrawable';
 import { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { OsuSkinComponentLookup } from '../../skinning/stable/OsuSkinComponentLookup';
+import { getNextControlPointType } from '../getNextControlPointType';
+import { IDistanceSnapProvider } from '../IDistanceSnapProvider';
+import { SliderPathVisualizer, SliderPathVisualizerHandle } from '../SliderPathVisualizer';
 import { OsuSelectionBlueprint } from './OsuSelectionBlueprint';
 
+@provide(SliderSelectionBlueprint)
 export class SliderSelectionBlueprint extends OsuSelectionBlueprint<Slider> {
   constructor() {
     super();
@@ -20,6 +27,23 @@ export class SliderSelectionBlueprint extends OsuSelectionBlueprint<Slider> {
   headCircle!: SkinnableDrawable;
 
   tailCircle!: SkinnableDrawable;
+
+  sliderPathContainer!: Container;
+
+  override receivePositionalInputAt(screenSpacePosition: Vec2): boolean {
+    if (!this.hitObject!.isVisibleAtTime(this.time.current)) {
+      const position = this.parent!.toLocalSpace(screenSpacePosition);
+
+      const distance = Math.min(
+        position.distance(this.hitObject!.stackedPosition),
+        position.distance(this.hitObject!.stackedPosition.add(this.hitObject!.path.endPosition)),
+      );
+
+      return distance < this.hitObject!.radius;
+    }
+
+    return super.receivePositionalInputAt(screenSpacePosition);
+  }
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
@@ -37,6 +61,9 @@ export class SliderSelectionBlueprint extends OsuSelectionBlueprint<Slider> {
         relativeSizeAxes: Axes.Both,
         anchor: Anchor.Center,
         origin: Anchor.Center,
+      }),
+      this.sliderPathContainer = new Container({
+        anchor: Anchor.Center,
       }),
     );
 
@@ -74,6 +101,24 @@ export class SliderSelectionBlueprint extends OsuSelectionBlueprint<Slider> {
     this.scheduler.addOnce(this.#updatePositions, this);
   }
 
+  protected override selectionChanged(evt: HitObjectSelectionEvent) {
+    super.selectionChanged(evt);
+
+    if (evt.hitObject === this.hitObject
+      && this.selected.value
+      && this.selection.length === 1
+      && this.sliderPathContainer.children.length === 0
+    ) {
+      this.sliderPathContainer.add(
+        new SliderSelectionPathVisualizer(this.hitObject!)
+          .adjust(it => it.updatePosition = false),
+      );
+    }
+    else {
+      this.sliderPathContainer.clear();
+    }
+  }
+
   #updatePositions() {
     this.position = this.hitObject!.stackedPosition;
     this.tailCircle.position = this.hitObject!.path.endPosition;
@@ -92,5 +137,103 @@ export class SliderSelectionBlueprint extends OsuSelectionBlueprint<Slider> {
 
     this.headCircle.color = headSelected ? 0xFF0000 : 0xFFFFFF;
     this.tailCircle.color = tailSelected ? 0xFF0000 : 0xFFFFFF;
+  }
+}
+
+class SliderSelectionPathVisualizer extends SliderPathVisualizer {
+  protected override createHandle(type: PathType | null, index: number): SliderPathVisualizerHandle {
+    return new SliderSelectionPathHandle(type, index);
+  }
+}
+
+class SliderSelectionPathHandle extends SliderPathVisualizerHandle {
+  @resolved(SliderSelectionBlueprint)
+  blueprint!: SliderSelectionBlueprint;
+
+  @resolved(IDistanceSnapProvider)
+  distanceSnapProvider!: IDistanceSnapProvider;
+
+  @resolved(UpdateHandler)
+  updateHandler!: UpdateHandler;
+
+  override onMouseDown(e: MouseDownEvent): boolean {
+    if (e.button === MouseButton.Left)
+      return true;
+
+    if (e.button === MouseButton.Right) {
+      const slider = this.blueprint.hitObject!;
+
+      if (slider.controlPoints.length > 2) {
+        slider.removeControlPoint(this.index);
+        slider.expectedDistance = this.distanceSnapProvider.findSnappedDistance(slider);
+        this.updateHandler.commit();
+      }
+
+      return true;
+    }
+
+    return false;
+  }
+
+  override onDragStart(e: DragEvent): boolean {
+    return true;
+  }
+
+  override onDrag(e: DragEvent): boolean {
+    const slider = this.blueprint.hitObject;
+    if (!slider)
+      return false;
+
+    const path = [...slider.controlPoints];
+    const controlPoint = path[this.index];
+
+    const delta = e.parentSpaceDelta(this);
+
+    if (this.index === 0) {
+      const deltaInv = delta.scale(-1);
+
+      for (let i = 1; i < path.length; i++) {
+        path[i] = path[i].moveBy(deltaInv);
+      }
+      slider.moveBy(delta);
+    }
+    else {
+      path[this.index] = path[this.index].moveBy(delta);
+    }
+
+    slider.controlPoints = path;
+    slider.expectedDistance = this.distanceSnapProvider.findSnappedDistance(slider);
+
+    return true;
+  }
+
+  override onDragEnd(e: DragEndEvent) {
+    this.updateHandler.commit();
+  }
+
+  override onClick(e: ClickEvent): boolean {
+    return true;
+  }
+
+  override onDoubleClick(e: DoubleClickEvent): boolean {
+    if (isMobile.any) {
+      const slider = this.blueprint.hitObject;
+      if (!slider)
+        return false;
+
+      const path = [...slider.controlPoints];
+
+      const type = getNextControlPointType(path[this.index].type, this.index);
+
+      path[this.index] = path[this.index].withType(type);
+
+      slider.controlPoints = path;
+      slider.expectedDistance = this.distanceSnapProvider.findSnappedDistance(slider);
+      this.updateHandler.commit();
+
+      return true;
+    }
+
+    return false;
   }
 }

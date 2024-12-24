@@ -2,16 +2,18 @@ import { BindableBoolean, type Drawable, type HoverEvent, type HoverLostEvent, t
 import { Anchor, Axes, CompositeDrawable, Container, dependencyLoader, EasingFunction, FastRoundedBox, MouseButton, RoundedBox, Vec2 } from 'osucad-framework';
 import { OsucadColors } from '../../../OsucadColors';
 
-export abstract class ToolbarButton extends CompositeDrawable {
+export abstract class EditorButton extends CompositeDrawable {
   static readonly SIZE = 54;
 
   protected constructor() {
     super();
 
-    this.size = new Vec2(ToolbarButton.SIZE);
+    this.size = new Vec2(EditorButton.SIZE);
   }
 
   readonly active = new BindableBoolean();
+
+  readonly disabled = new BindableBoolean();
 
   @dependencyLoader()
   [Symbol('load')]() {
@@ -50,6 +52,7 @@ export abstract class ToolbarButton extends CompositeDrawable {
     );
 
     this.active.valueChanged.addListener(this.updateState, this);
+    this.disabled.valueChanged.addListener(this.updateState, this);
   }
 
   protected override loadComplete() {
@@ -77,6 +80,13 @@ export abstract class ToolbarButton extends CompositeDrawable {
   }
 
   protected updateState() {
+    if (this.disabled.value) {
+      this.alpha = 0.5;
+    }
+    else {
+      this.alpha = 1;
+    }
+
     if (this.armed) {
       this.scaleContainer.scaleTo(0.85, 300, EasingFunction.OutQuart);
       this.backgroundContainer.scaleTo(0.95, 300, EasingFunction.OutQuart);
@@ -87,11 +97,15 @@ export abstract class ToolbarButton extends CompositeDrawable {
     }
 
     if (this.active.value) {
-      this.transformTo('outlineVisibility', 1, 200);
+      this.transformTo('outlineVisibility', 1, this.outlineTransitionDuration);
     }
     else {
-      this.transformTo('outlineVisibility', 0, 200);
+      this.transformTo('outlineVisibility', 0, this.outlineTransitionDuration);
     }
+  }
+
+  protected get outlineTransitionDuration() {
+    return 200;
   }
 
   override onMouseDown(e: MouseDownEvent): boolean {
@@ -136,6 +150,10 @@ export abstract class ToolbarButton extends CompositeDrawable {
     this.#outline.drawNode.visible = value > 0;
 
     this.#updateOutline();
+  }
+
+  override get handlePositionalInput(): boolean {
+    return super.handlePositionalInput && !this.disabled.value;
   }
 
   #updateOutline() {

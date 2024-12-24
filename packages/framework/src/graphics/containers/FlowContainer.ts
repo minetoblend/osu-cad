@@ -119,7 +119,7 @@ export abstract class FlowContainer<T extends Drawable = Drawable> extends Conta
         const aPosition = this.#layoutChildren.get(a)!;
         const bPosition = this.#layoutChildren.get(b)!;
 
-        return aPosition - bPosition || a.childId - b.childId;
+        return aPosition - bPosition || this.compare(a, b);
       });
   }
 

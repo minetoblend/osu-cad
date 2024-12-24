@@ -1,15 +1,28 @@
-import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, Vec2 } from 'osucad-framework';
+import type { Drawable, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, Vec2 } from 'osucad-framework';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
 import { EditorAction } from '@osucad/editor/editor/EditorAction';
-import { dependencyLoader, PlatformAction } from 'osucad-framework';
+import { Direction, PlatformAction, resolved } from 'osucad-framework';
 import { DrawableComposeTool } from '../../../editor/screens/compose/DrawableComposeTool';
+import { getIcon } from '../../../OsucadIcons';
+import { PathType } from '../hitObjects/PathType';
+import { MobileControlButton } from './MobileEditorControls';
+import { OsuHitObjectComposer } from './OsuHitObjectComposer';
 
 export class DrawableOsuSelectTool extends DrawableComposeTool implements IKeyBindingHandler<PlatformAction | EditorAction> {
-  @dependencyLoader()
-  [Symbol('load')]() {
-    this.addAllInternal(
+  @resolved(() => OsuHitObjectComposer)
+  composer!: OsuHitObjectComposer;
 
-    );
+  override createMobileControls(): Drawable[] {
+    return [
+      new MobileControlButton(getIcon('size-ew'), () => {
+        this.composer.mirrorHitObjects([...this.selection.selectedObjects], Direction.Horizontal);
+        this.commit();
+      }),
+      new MobileControlButton(getIcon('size-ns'), () => {
+        this.composer.mirrorHitObjects([...this.selection.selectedObjects], Direction.Vertical);
+        this.commit();
+      }),
+    ];
   }
 
   override receivePositionalInputAt(screenSpacePosition: Vec2): boolean {
@@ -65,5 +78,36 @@ export class DrawableOsuSelectTool extends DrawableComposeTool implements IKeyBi
     }
 
     return false;
+  }
+
+  getNextControlPointType(
+    currentType: PathType | null,
+    index: number,
+  ): PathType | null {
+    let newType: PathType | null = null;
+
+    switch (currentType) {
+      case null:
+        newType = PathType.Bezier;
+        break;
+      case PathType.Bezier:
+        newType = PathType.PerfectCurve;
+        break;
+      case PathType.PerfectCurve:
+        newType = PathType.Linear;
+        break;
+      case PathType.Linear:
+        newType = PathType.Catmull;
+        break;
+      case PathType.Catmull:
+        newType = null;
+        break;
+    }
+
+    if (index === 0 && newType === null) {
+      newType = PathType.Bezier;
+    }
+
+    return newType;
   }
 }

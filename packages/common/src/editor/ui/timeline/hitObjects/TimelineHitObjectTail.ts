@@ -18,6 +18,14 @@ export class TimelineHitObjectTail extends CompositeDrawable {
 
   #hoverOverlay!: FastRoundedBox;
 
+  protected get outline() {
+    return this.#outline;
+  }
+
+  protected get body() {
+    return this.#body;
+  }
+
   protected accentColor = new Bindable<Color>(null!);
 
   @dependencyLoader()
@@ -42,6 +50,10 @@ export class TimelineHitObjectTail extends CompositeDrawable {
         alpha: 0,
       }),
     );
+  }
+
+  protected override loadComplete() {
+    super.loadComplete();
 
     this.accentColor.bindTo(this.blueprint.accentColor);
     this.accentColor.addOnChangeListener(() => this.updateColors(), { immediate: true });

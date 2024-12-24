@@ -702,7 +702,7 @@ export abstract class InputManager extends Container implements IInputStateChang
 }
 
 const touch_right_click_delay = 750;
-const touch_right_click_distance = 100;
+const touch_right_click_distance = 50;
 
 class MouseLeftButtonEventManager extends MouseButtonEventManager {
   override get enableClick(): boolean {

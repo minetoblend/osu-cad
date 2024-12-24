@@ -9,6 +9,10 @@ export class ComposeToolContainer extends CompositeDrawable {
 
   #activeDrawableTool?: DrawableComposeTool;
 
+  get activeDrawableTool() {
+    return this.#activeDrawableTool!;
+  }
+
   @dependencyLoader()
   [Symbol('load')](dependencies: ReadonlyDependencyContainer) {
     const { activeTool } = dependencies.resolve(HitObjectComposerDependencies);

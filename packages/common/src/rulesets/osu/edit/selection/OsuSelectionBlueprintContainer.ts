@@ -1,4 +1,4 @@
-import type { MouseDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { MouseDownEvent, ReadonlyDependencyContainer, Vec2 } from 'osucad-framework';
 import type { HitObjectSelectionEvent } from '../../../../editor/screens/compose/HitObjectSelectionManager';
 import type { HitObjectLifetimeEntry } from '../../../../hitObjects/drawables/HitObjectLifetimeEntry';
 import type { HitObject } from '../../../../hitObjects/HitObject';
@@ -67,6 +67,10 @@ export class OsuSelectionBlueprintContainer extends HitObjectBlueprintContainer<
 
     this.hitObjects.added.removeListener(this.addHitObject, this);
     this.hitObjects.removed.removeListener(this.removeHitObject, this);
+  }
+
+  override receivePositionalInputAt(screenSpacePosition: Vec2): boolean {
+    return true;
   }
 
   override onMouseDown(e: MouseDownEvent): boolean {

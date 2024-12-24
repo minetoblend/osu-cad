@@ -2,10 +2,10 @@ import type { Bindable, ClickEvent, Drawable, Key, KeyDownEvent, KeyUpEvent, Rea
 import type { IComposeTool } from './IComposeTool';
 import { Anchor, Axes, dependencyLoader, DrawableSprite } from 'osucad-framework';
 import { OsucadColors } from '../../../OsucadColors';
+import { EditorButton } from './EditorButton';
 import { HitObjectComposerDependencies } from './HitObjectComposerDependencies';
-import { ToolbarButton } from './ToolbarButton';
 
-export class ComposeToolButton extends ToolbarButton {
+export class ComposeToolButton extends EditorButton {
   constructor(
     readonly tool: IComposeTool,
     readonly keyBinding?: Key,

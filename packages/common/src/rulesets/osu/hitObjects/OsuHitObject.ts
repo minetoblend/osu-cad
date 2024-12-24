@@ -1,4 +1,5 @@
 import type { ClassSerialDescriptorBuilder, CompositeDecoder, CompositeEncoder } from '@osucad/serialization';
+import type { IVec2 } from 'osucad-framework';
 import type { IPatchable } from '../../../commands/IPatchable';
 import type { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 import type { HitWindows } from '../../../hitObjects/HitWindows';
@@ -47,6 +48,10 @@ export abstract class OsuHitObject extends HitObject implements IHasComboInforma
 
   set position(value: Vec2) {
     this.#position.value = value;
+  }
+
+  moveBy(delta: IVec2) {
+    this.position = this.position.add(delta);
   }
 
   get x() {

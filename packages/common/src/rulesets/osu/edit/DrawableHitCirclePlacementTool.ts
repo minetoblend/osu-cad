@@ -1,9 +1,13 @@
-import type { MouseDownEvent, MouseUpEvent } from 'osucad-framework';
+import type { MouseDownEvent, MouseUpEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import { MouseButton } from 'osucad-framework';
 import { HitCircle } from '../hitObjects/HitCircle';
 import { DrawableOsuHitObjectPlacementTool } from './DrawableOsuHitObjectPlacementTool';
 
 export class DrawableHitCirclePlacementTool extends DrawableOsuHitObjectPlacementTool<HitCircle> {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+  }
+
   protected override createHitObject(): HitCircle {
     return new HitCircle();
   }

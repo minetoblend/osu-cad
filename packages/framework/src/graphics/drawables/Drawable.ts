@@ -973,7 +973,10 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     this.dependencies ??= dependencies;
 
     const injections = getInjections(this);
-    for (const { key, type, optional } of injections) {
+    for (let { key, type, optional } of injections) {
+      if (typeof type === 'function' && type.name === '')
+        type = type();
+
       Reflect.set(this, key, optional ? this.dependencies.resolveOptional(type) : this.dependencies.resolve(type));
     }
   }
@@ -1375,7 +1378,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return other.toLocalSpace(this.toScreenSpace(v));
   }
 
-  toParentSpace(v: Vec2) {
+  toParentSpace(v: Vec2): Vec2 {
     return this.toSpaceOfOtherDrawable(v, this.parent!);
   }
 

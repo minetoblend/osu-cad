@@ -1,8 +1,8 @@
-import type { DragEndEvent, DragEvent, DragStartEvent } from 'osucad-framework';
+import type { DragEndEvent, DragEvent, DragStartEvent, MouseDownEvent, ReadonlyDependencyContainer, TouchDownEvent, TouchUpEvent } from 'osucad-framework';
 import type { HitObject } from '../../../../hitObjects/HitObject';
 import type { IHasSliderVelocity } from '../../../../hitObjects/IHasSliderVelocity';
 import type { TimelineHitObjectBlueprint } from './TimelineHitObjectBlueprint';
-import { resolved } from 'osucad-framework';
+import { Anchor, Axes, ColorUtils, EasingFunction, FastRoundedBox, MouseButton, resolved } from 'osucad-framework';
 import { UpdateHandler } from '../../../../crdt/UpdateHandler';
 import { hasRepeats } from '../../../../hitObjects/IHasRepeats';
 import { EditorClock } from '../../../EditorClock';
@@ -26,6 +26,29 @@ export class SliderVelocityAdjustmentPiece extends TimelineHitObjectTail {
 
   #dragStartRepeats = 0;
 
+  #longPressOutline!: FastRoundedBox;
+
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
+    this.addInternal(
+      this.#longPressOutline = new FastRoundedBox({
+        relativeSizeAxes: Axes.Both,
+        alpha: 0,
+        depth: 1,
+        cornerRadius: 100,
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
+      }),
+    );
+  }
+
+  protected override updateColors() {
+    super.updateColors();
+
+    this.#longPressOutline.color = ColorUtils.lighten(this.accentColor.value, 0.5);
+  }
+
   override onDragStart(e: DragStartEvent): boolean {
     this.#dragOffset = this.timeline.screenSpacePositionToTime(e.screenSpaceMousePosition) - this.hitObject.endTime;
 
@@ -39,8 +62,10 @@ export class SliderVelocityAdjustmentPiece extends TimelineHitObjectTail {
   override onDrag(e: DragEvent): boolean {
     let time = this.timeline.screenSpacePositionToTime(e.screenSpaceMousePosition) - this.#dragOffset;
 
+    const alternativeMode = e.shiftPressed || this.#dragFromLongPress;
+
     if (hasRepeats(this.hitObject)) {
-      if (!e.shiftPressed) {
+      if (!alternativeMode) {
         this.hitObject.sliderVelocityOverride = this.#dragStartVelocity;
 
         const numSpans = Math.round(
@@ -55,7 +80,7 @@ export class SliderVelocityAdjustmentPiece extends TimelineHitObjectTail {
       this.hitObject.repeatCount = this.#dragStartRepeats;
       time = this.editorClock.snap(time);
     }
-    else if (!e.shiftPressed) {
+    else if (!alternativeMode) {
       time = this.editorClock.snap(time);
     }
 
@@ -76,5 +101,35 @@ export class SliderVelocityAdjustmentPiece extends TimelineHitObjectTail {
 
   override onDragEnd(e: DragEndEvent) {
     this.updateHandler.commit();
+
+    if (this.#dragFromLongPress) {
+      this.#longPressOutline.scaleTo(1, 300, EasingFunction.OutExpo);
+      this.#longPressOutline.fadeOut(100);
+      this.#dragFromLongPress = false;
+    }
+  }
+
+  #dragFromLongPress = false;
+
+  #touchDown = false;
+
+  override onMouseDown(e: MouseDownEvent): boolean {
+    if (e.button === MouseButton.Right && this.#touchDown) {
+      this.#dragFromLongPress = true;
+      this.#longPressOutline.scaleTo(1.2, 300, EasingFunction.OutExpo);
+      this.#longPressOutline.fadeIn(100);
+      return true;
+    }
+
+    return super.onMouseDown(e);
+  }
+
+  override onTouchDown(e: TouchDownEvent): boolean {
+    this.#touchDown = true;
+    return false;
+  }
+
+  override onTouchUp(e: TouchUpEvent) {
+    this.schedule(() => this.#touchDown = false);
   }
 }

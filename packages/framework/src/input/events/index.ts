@@ -18,4 +18,7 @@ export * from './MouseDownEvent';
 export * from './MouseMoveEvent';
 export * from './MouseUpEvent';
 export * from './ScrollEvent';
+export * from './TouchDownEvent';
+export * from './TouchMoveEvent';
+export * from './TouchUpEvent';
 export * from './UIEvent';

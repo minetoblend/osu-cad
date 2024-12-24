@@ -68,6 +68,9 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<EditorAct
       }),
     );
     this.addInternal(new BeatmapComboProcessor());
+
+    if (this.beatmap.hitObjects.first)
+      this.#editorClock.seek(this.beatmap.hitObjects.first.startTime, false);
   }
 
   protected registerScreens(screenManager: EditorScreenManager) {

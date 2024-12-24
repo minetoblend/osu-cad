@@ -1,3 +1,4 @@
+import type { Property } from '../../../crdt/Property';
 import type { PathPoint } from './PathPoint';
 import { Action, CachedValue, List, Vec2 } from 'osucad-framework';
 import { ObjectCrdt } from '../../../crdt/ObjectCrdt';
@@ -32,7 +33,14 @@ export class SliderPath extends ObjectCrdt {
 
   set controlPoints(value: readonly PathPoint[]) {
     this.#controlPoints.value = value;
-    this.invalidate();
+  }
+
+  get firstControlPoint() {
+    return this.controlPoints[0];
+  }
+
+  get lastControlPoint() {
+    return this.controlPoints[this.controlPoints.length - 1];
   }
 
   invalidate() {
@@ -164,6 +172,12 @@ export class SliderPath extends ObjectCrdt {
 
   get endPosition() {
     return this.calculatedRange.endPosition;
+  }
+
+  override onPropertyChanged(property: Property<any>, oldValue: any, submitEvents: boolean) {
+    super.onPropertyChanged(property, oldValue, submitEvents);
+
+    this.invalidate();
   }
 }
 

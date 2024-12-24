@@ -1,6 +1,6 @@
 import type { Drawable, MouseDownEvent, MouseMoveEvent, MouseUpEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import { Toggle } from '@osucad/editor/userInterface/Toggle';
-import { Anchor, Axes, BindableBoolean, FillFlowContainer, MouseButton, Vec2 } from 'osucad-framework';
+import { Anchor, Axes, BindableBoolean, FillFlowContainer, MouseButton, provide, Vec2 } from 'osucad-framework';
 import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
 import { OsucadColors } from '../../../OsucadColors';
 import { PathPoint } from '../hitObjects/PathPoint';
@@ -10,6 +10,7 @@ import { SliderPathBuilder } from '../hitObjects/SliderPathBuilder';
 import { DrawableOsuHitObjectPlacementTool } from './DrawableOsuHitObjectPlacementTool';
 import { SliderPathVisualizer } from './SliderPathVisualizer';
 
+@provide(DrawableSliderPlacementTool)
 export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTool<Slider> {
   readonly controlPointSnapping = new BindableBoolean(false);
 
@@ -41,12 +42,26 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
     new PathPoint(new Vec2()),
   ]);
 
-  #sliderPathVisualizer = new SliderPathVisualizer();
+  #sliderPathVisualizer !: SliderPathVisualizer;
+
+  protected createSliderPathVisualizer() {
+    return new SliderPathVisualizer();
+  }
+
+  protected override createHitObject(): Slider {
+    return this.#sliderPathVisualizer.slider = new Slider();
+  }
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
-    this.addInternal(this.#sliderPathVisualizer);
+    this.addInternal(this.#sliderPathVisualizer = this.createSliderPathVisualizer());
+  }
+
+  protected override beginPlacement() {
+    super.beginPlacement();
+
+    this.hitObject.position = this.snappedMousePosition;
   }
 
   protected override endPlacement() {
@@ -58,17 +73,11 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
     ]);
   }
 
-  protected override createHitObject(): Slider {
-    return this.#sliderPathVisualizer.slider = new Slider();
-  }
-
   override update() {
     super.update();
 
-    if (!this.isPlacing) {
+    if (!this.isPlacing)
       this.hitObject.position = this.snappedMousePosition;
-      this.hitObject.startTime = this.editorClock.currentTime;
-    }
   }
 
   override onMouseDown(e: MouseDownEvent): boolean {
@@ -79,12 +88,10 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
         this.beginPlacingPathPoint();
     }
     else if (e.button === MouseButton.Right) {
-      if (!this.isPlacing) {
+      if (!this.isPlacing)
         this.hitObject.newCombo = !this.hitObject.newCombo;
-      }
-      else {
+      else
         this.endPlacement();
-      }
     }
 
     return true;
@@ -101,7 +108,7 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
     return false;
   }
 
-  protected isPlacingPoint = false;
+  isPlacingPoint = false;
 
   endPlacingPoint() {
     const position = this.mousePosition.sub(this.hitObject.stackedPosition);
@@ -128,42 +135,15 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
         );
 
         this.path.setType(-2, newType);
-
-        this.hitObject.controlPoints = this.path.controlPoints.slice(0, Math.max(this.path.length - 1, 2));
-        this.hitObject.expectedDistance = this.#findSnappedDistance(this.hitObject);
       }
     }
+
+    this.updatePathFromMousePosition();
   }
 
-  getNextControlPointType(
-    currentType: PathType | null,
-    index: number,
-  ): PathType | null {
-    let newType: PathType | null = null;
-
-    switch (currentType) {
-      case null:
-        newType = PathType.Bezier;
-        break;
-      case PathType.Bezier:
-        newType = PathType.PerfectCurve;
-        break;
-      case PathType.PerfectCurve:
-        newType = PathType.Linear;
-        break;
-      case PathType.Linear:
-        newType = PathType.Catmull;
-        break;
-      case PathType.Catmull:
-        newType = null;
-        break;
-    }
-
-    if (index === 0 && newType === null) {
-      newType = PathType.Bezier;
-    }
-
-    return newType;
+  updatePath(controlPoints: PathPoint[] = this.path.controlPoints) {
+    this.hitObject.controlPoints = controlPoints;
+    this.hitObject.expectedDistance = this.distanceSnapProvider.findSnappedDistance(this.hitObject);
   }
 
   get controlPointPlacementPosition() {
@@ -171,60 +151,44 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
       ? this.snappedMousePosition
       : this.mousePosition;
 
-    console.log('snapping', this.controlPointSnapping.value);
-
     return position.sub(this.hitObject.stackedPosition);
   }
 
   override onMouseMove(e: MouseMoveEvent): boolean {
-    if (this.isPlacing) {
-      const position = this.controlPointPlacementPosition;
-
-      const segmentStartType = this.path.get(this.segmentStart).type;
-      const snapped = position.distance(this.path.get(-2)) < 5;
-
-      if (!snapped)
-        this.path.set(-1, new PathPoint(position));
-
-      const segmentLength = this.segmentLength + (snapped ? -1 : 0);
-
-      switch (segmentLength) {
-        case 3:
-          if (segmentStartType === PathType.Bezier)
-            this.path.setType(this.segmentStart, PathType.PerfectCurve);
-          break;
-        case 4:
-          if (segmentStartType === PathType.PerfectCurve)
-            this.path.setType(this.segmentStart, PathType.Bezier);
-      }
-
-      this.hitObject.controlPoints
-          = snapped
-          ? this.path.controlPoints.slice(0, Math.max(this.path.length - 1, 2))
-          : this.hitObject.controlPoints = this.path.controlPoints;
-      this.hitObject.expectedDistance = this.#findSnappedDistance(this.hitObject);
-    }
+    if (this.isPlacing)
+      this.updatePathFromMousePosition();
 
     return true;
   }
 
-  #findSnappedDistance(referenceObject: Slider): number {
-    const length = referenceObject!.path.calculatedDistance;
-    const duration = Math.ceil(length / referenceObject!.sliderVelocity);
-    let time = this.controlPointInfo.snap(
-      // adding a tiny bit of length to make up for precision errors shortening the slider
-      Math.ceil(referenceObject!.startTime + duration) + 1,
-      this.editorClock.beatSnapDivisor.value,
-      false,
-    );
+  protected updatePathFromMousePosition() {
+    const position = this.controlPointPlacementPosition;
 
-    if (time > referenceObject.startTime + duration) {
-      const beatLength = this.controlPointInfo.timingPointAt(referenceObject.startTime).beatLength;
+    const segmentStartType = this.path.get(this.segmentStart).type;
+    const snapped = position.distance(this.path.get(-2)) < 5;
 
-      time -= beatLength / this.editorClock.beatSnapDivisor.value;
+    console.log(snapped);
+
+    if (!snapped)
+      this.path.set(-1, new PathPoint(position));
+
+    const segmentLength = this.segmentLength + (snapped ? -1 : 0);
+
+    switch (segmentLength) {
+      case 3:
+        if (segmentStartType === PathType.Bezier)
+          this.path.setType(this.segmentStart, PathType.PerfectCurve);
+        break;
+      case 4:
+        if (segmentStartType === PathType.PerfectCurve)
+          this.path.setType(this.segmentStart, PathType.Bezier);
     }
 
-    return Math.max(0, referenceObject!.sliderVelocity * (time - referenceObject!.startTime));
+    this.updatePath(
+      snapped
+        ? this.path.controlPoints.slice(0, Math.max(this.path.length - 1, 2))
+        : this.hitObject.controlPoints = this.path.controlPoints,
+    );
   }
 
   protected get segmentStart() {
@@ -233,6 +197,10 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
       return 0;
 
     return index;
+  }
+
+  protected get segmentType() {
+    return this.path.get(this.segmentStart).type ?? PathType.Bezier;
   }
 
   protected get segmentLength() {

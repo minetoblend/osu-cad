@@ -34,6 +34,10 @@ export class DrawableComposeTool extends CompositeDrawable {
     return new EmptyDrawable();
   }
 
+  createMobileControls(): Drawable[] {
+    return [];
+  }
+
   protected override loadComplete() {
     super.loadComplete();
 

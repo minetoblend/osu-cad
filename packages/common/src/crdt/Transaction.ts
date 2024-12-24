@@ -9,12 +9,7 @@ export class Transaction {
     this.entries.push(entry);
   }
 
-  updateEntry(entry: TransactionEntry, fn: () => void) {
-  }
-
-  cleanup() {
-
-  }
+  customUndoActions: (() => void)[] = [];
 }
 
 export class TransactionEntry<T = any> {

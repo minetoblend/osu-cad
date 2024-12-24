@@ -1,13 +1,16 @@
-import type { DragEndEvent, DragEvent, DragStartEvent, MouseDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Slider } from '../hitObjects/Slider';
-import { Anchor, Axes, BindableBoolean, Cached, CompositeDrawable, Container, FastRoundedBox, PIXIGraphics, resolved, Vec2 } from 'osucad-framework';
+import { Anchor, BindableBoolean, Cached, CompositeDrawable, Container, FastRoundedBox, isMobile, PIXIGraphics, resolved, Vec2 } from 'osucad-framework';
 import { OsucadConfigManager } from '../../../config/OsucadConfigManager';
 import { OsucadSettings } from '../../../config/OsucadSettings';
 import { PathType } from '../hitObjects/PathType';
 
 export class SliderPathVisualizer extends CompositeDrawable {
-  constructor() {
+  constructor(slider?: Slider) {
     super();
+
+    if (slider)
+      this.doWhenLoaded(() => this.slider = slider);
   }
 
   protected coloredLines = new BindableBoolean(true);
@@ -15,11 +18,6 @@ export class SliderPathVisualizer extends CompositeDrawable {
   #slider: Slider | null = null;
 
   #handles = new Container();
-
-  onHandleMouseDown?: (index: number, e: MouseDownEvent) => boolean;
-  onHandleDragStarted?: (index: number, e: DragStartEvent) => boolean;
-  onHandleDragged?: (index: number, e: DragEvent) => boolean;
-  onHandleDragEnded?: (index: number, e: DragEndEvent) => void;
 
   get slider() {
     return this.#slider;
@@ -79,8 +77,11 @@ export class SliderPathVisualizer extends CompositeDrawable {
     }
   }
 
+  updatePosition = true;
+
   #onSliderUpdate() {
-    this.position = this.#slider!.stackedPosition;
+    if (this.updatePosition)
+      this.position = this.#slider!.stackedPosition;
     this.#pathCache.invalidate();
   };
 
@@ -131,13 +132,8 @@ export class SliderPathVisualizer extends CompositeDrawable {
         | undefined;
 
       if (!handle) {
-        handle = new SliderPathVisualizerHandle(controlPoints[i].type, i);
+        handle = this.createHandle(controlPoints[i].type, i);
         this.#handles.add(handle);
-
-        handle.mouseDown = this.onHandleMouseDown;
-        handle.dragStarted = this.onHandleDragStarted;
-        handle.dragged = this.onHandleDragged;
-        handle.dragEnded = this.onHandleDragEnded;
       }
 
       handle.type = controlPoints[i].type;
@@ -154,33 +150,38 @@ export class SliderPathVisualizer extends CompositeDrawable {
 
     super.dispose(isDisposing);
   }
+
+  protected createHandle(type: PathType | null, index: number) {
+    return new SliderPathVisualizerHandle(type, index);
+  }
 }
 
-class SliderPathVisualizerHandle extends CompositeDrawable {
+export class SliderPathVisualizerHandle extends CompositeDrawable {
   constructor(
     type: PathType | null,
     readonly index: number,
   ) {
     super();
-    this.size = new Vec2(15);
+    this.size = new Vec2(isMobile.any ? 30 : 15);
     this.origin = Anchor.Center;
+
+    if (isMobile.any)
+      this.scale = 1.2;
 
     this.addAllInternal(
       (this.#shadow = new FastRoundedBox({
-        relativeSizeAxes: Axes.Both,
-        size: 0.8,
+        size: 12,
         anchor: Anchor.Center,
         origin: Anchor.Center,
-        cornerRadius: 5,
+        cornerRadius: 100,
         color: 0x000000,
         alpha: 0.1,
       })),
       (this.#handle = new FastRoundedBox({
-        relativeSizeAxes: Axes.Both,
-        size: 0.6,
+        size: 9,
         anchor: Anchor.Center,
         origin: Anchor.Center,
-        cornerRadius: 5,
+        cornerRadius: 100,
       })),
     );
 
@@ -226,28 +227,6 @@ class SliderPathVisualizerHandle extends CompositeDrawable {
     this.#shadow.scale = 1;
     this.#handle.scale = 1;
 
-    return true;
-  }
-
-  mouseDown?: (index: number, e: MouseDownEvent) => boolean;
-  dragStarted?: (index: number, e: DragStartEvent) => boolean;
-  dragged?: (index: number, e: DragEvent) => boolean;
-  dragEnded?: (index: number, e: DragEndEvent) => void;
-
-  override onMouseDown(e: MouseDownEvent): boolean {
-    return this.mouseDown?.(this.index, e) ?? false;
-  }
-
-  override onDragStart(e: DragStartEvent): boolean {
-    return this.dragStarted?.(this.index, e) ?? false;
-  }
-
-  override onDrag(e: DragEvent): boolean {
-    return this.dragged?.(this.index, e) ?? false;
-  }
-
-  override onDragEnd(e: DragEndEvent): boolean {
-    this.dragEnded?.(this.index, e);
     return true;
   }
 }

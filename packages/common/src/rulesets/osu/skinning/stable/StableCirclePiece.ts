@@ -1,4 +1,5 @@
 import {
+  almostBigger,
   Anchor,
   Axes,
   Bindable,
@@ -109,7 +110,7 @@ export class StableCirclePiece extends CompositeDrawable {
   override update() {
     super.update();
 
-    if (this.time.current >= this.drawableHitObject!.hitStateUpdateTime) {
+    if (almostBigger(this.time.current, this.drawableHitObject!.hitStateUpdateTime)) {
       this.#circleSprite.color = 0xFFFFFF;
     }
     else {

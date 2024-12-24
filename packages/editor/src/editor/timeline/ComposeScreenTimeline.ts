@@ -64,7 +64,7 @@ export class ComposeScreenTimeline extends Timeline implements IKeyBindingHandle
   #entries = new Map<OsuHitObject, TimelineLifefetimeEntry>();
 
   #onHitObjectAdded(hitObject: OsuHitObject) {
-    if (hitObject.synthetic)
+    if (hitObject.transient)
       return;
 
     const entry = new TimelineLifefetimeEntry(hitObject);

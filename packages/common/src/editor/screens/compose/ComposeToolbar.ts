@@ -2,12 +2,12 @@ import type { Key } from 'osucad-framework';
 import type { IComposeTool } from './IComposeTool';
 import { Axes, dependencyLoader, FillFlowContainer, Vec2 } from 'osucad-framework';
 import { ComposeToolButton } from './ComposeToolButton';
-import { ToolbarButton } from './ToolbarButton';
+import { EditorButton } from './EditorButton';
 
 export class ComposeToolbar extends FillFlowContainer {
   constructor(readonly tools: IComposeTool[]) {
     super({
-      width: ToolbarButton.SIZE,
+      width: EditorButton.SIZE,
       autoSizeAxes: Axes.Y,
       spacing: new Vec2(4),
     });

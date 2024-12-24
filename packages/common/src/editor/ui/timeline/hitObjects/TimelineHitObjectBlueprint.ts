@@ -1,5 +1,6 @@
 import type { DragEndEvent, DragEvent, DragStartEvent, MouseDownEvent } from 'osucad-framework';
 import type { HitObjectLifetimeEntry } from '../../../../hitObjects/drawables/HitObjectLifetimeEntry';
+import type { HitObjectSelectionEvent } from '../../../screens/compose/HitObjectSelectionManager';
 import { Anchor, Axes, Bindable, BindableNumber, Container, dependencyLoader, FillMode, MouseButton, provide, resolved } from 'osucad-framework';
 import { Color } from 'pixi.js';
 import { HitObjectList } from '../../../../beatmap/HitObjectList';
@@ -11,6 +12,7 @@ import { PoolableDrawableWithLifetime } from '../../../../pooling/PoolableDrawab
 import { SliderRepeat } from '../../../../rulesets/osu/hitObjects/SliderRepeat';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
 import { EditorClock } from '../../../EditorClock';
+import { HitObjectSelectionManager } from '../../../screens/compose/HitObjectSelectionManager';
 import { Timeline } from '../Timeline';
 import { DurationAdjustmentPiece } from './DurationAdjustmentPiece';
 import { SliderVelocityAdjustmentPiece } from './SliderVelocityAdjustmentPiece';
@@ -32,6 +34,9 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
 
   @resolved(ISkinSource)
   protected currentSkin!: ISkinSource;
+
+  @resolved(HitObjectSelectionManager, true)
+  protected selection?: HitObjectSelectionManager;
 
   protected body!: TimelineHitObjectBody;
 
@@ -64,6 +69,16 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
     this.comboIndexBindable.valueChanged.addListener(this.updateComboColor, this);
     this.currentSkin.sourceChanged.addListener(this.updateComboColor, this);
     this.updateComboColor();
+  }
+
+  protected override loadComplete() {
+    super.loadComplete();
+
+    this.selection?.selectionChanged.addListener(this.#selectionChanged, this);
+  }
+
+  #selectionChanged(evt: HitObjectSelectionEvent) {
+
   }
 
   protected override onApply(entry: HitObjectLifetimeEntry) {
@@ -135,6 +150,9 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
 
   override onMouseDown(e: MouseDownEvent): boolean {
     if (e.button === MouseButton.Right) {
+      if (this.isDragged)
+        return false;
+
       this.hitObjects.remove(this.hitObject!);
       this.updateHandler.commit();
       return true;
@@ -175,5 +193,11 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
       if (hitObject instanceof SliderRepeat)
         this.#repeatContainer.add(new TimelineRepeatPiece(this, hitObject));
     }
+  }
+
+  override dispose(isDisposing: boolean = true) {
+    super.dispose(isDisposing);
+
+    this.selection?.selectionChanged.removeListener(this.#selectionChanged, this);
   }
 }

@@ -66,7 +66,7 @@ export abstract class DrawableHitObjectPlacementTool<T extends OsuHitObject> ext
 
     circle.position = this.clampToPlayfieldBounds(this.mousePosition);
     circle.startTime = this.editorClock.currentTime;
-    circle.synthetic = true;
+    circle.transient = true;
 
     circle.startTimeBindable.addOnChangeListener(() => {
       circle.applyDefaults(this.beatmap.controlPoints, this.beatmap.difficulty);

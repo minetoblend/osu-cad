@@ -19,7 +19,7 @@ export abstract class HitObject extends ObjectCrdt {
 
       if (difference === 0) {
         return (
-          (a.synthetic ? 1 : 0) - (b.synthetic ? 1 : 0)
+          (a.transient ? 1 : 0) - (b.transient ? 1 : 0)
         );
       }
 
@@ -37,15 +37,13 @@ export abstract class HitObject extends ObjectCrdt {
     super();
 
     this.#startTime = this.property('startTime', 0);
-
-    this.startTimeBindable.valueChanged.addListener(this.requestApplyDefaults, this);
   }
 
   timePreempt = 600;
 
   timeFadeIn = 400;
 
-  synthetic = false;
+  transient = false;
 
   readonly defaultsApplied = new Action<HitObject>();
 
@@ -95,7 +93,7 @@ export abstract class HitObject extends ObjectCrdt {
     for (const h of this.nestedHitObjects)
       h.applyDefaults(controlPointInfo, difficulty);
 
-    this.startTimeBindable.valueChanged.removeListener(this.onStartTimeChanged);
+    this.startTimeBindable.valueChanged.removeListener(this.onStartTimeChanged, this);
 
     this.startTimeBindable.valueChanged.addListener(this.onStartTimeChanged, this);
 
@@ -133,6 +131,8 @@ export abstract class HitObject extends ObjectCrdt {
 
     for (const nested of this.nestedHitObjects)
       nested.startTime += offset;
+
+    this.requestApplyDefaults();
   }
 
   changed = new Action<HitObjectChangeEvent>();
