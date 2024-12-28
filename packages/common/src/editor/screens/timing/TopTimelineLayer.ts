@@ -1,6 +1,7 @@
+import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import type { ColorSource } from 'pixi.js';
 import { Anchor, Axes, Box, dependencyLoader } from 'osucad-framework';
-import { BottomTimelineTickContainer } from '../../ui/timeline/BottomTimelineTickContainer';
+import { BottomAlignedTickDisplay } from '../../ui/timeline/BottomAlignedTickDisplay';
 import { TimelineLayer, TimelineLayerHeader } from '../../ui/timeline/TimelineLayer';
 
 export class TopTimelineLayer extends TimelineLayer {
@@ -8,16 +9,20 @@ export class TopTimelineLayer extends TimelineLayer {
     super('');
   }
 
-  @dependencyLoader()
-  [Symbol('load')]() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.height = 12;
-    this.addAll(new Box({
-      relativeSizeAxes: Axes.Both,
-      color: 0x222228,
-    }), new BottomTimelineTickContainer().with({
-      anchor: Anchor.BottomLeft,
-      origin: Anchor.BottomLeft,
-    }));
+    this.addAll(
+      new Box({
+        relativeSizeAxes: Axes.Both,
+        color: 0x222228,
+      }),
+      new BottomAlignedTickDisplay().with({
+        anchor: Anchor.BottomLeft,
+        origin: Anchor.BottomLeft,
+      }),
+    );
   }
 
   override get layerColor(): ColorSource {

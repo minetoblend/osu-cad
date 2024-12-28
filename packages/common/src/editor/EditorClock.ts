@@ -4,6 +4,7 @@ import { almostEquals, AudioManager, Bindable, BindableBoolean, BindableNumber, 
 import { IBeatmap } from '../beatmap/IBeatmap';
 import { OsucadConfigManager } from '../config/OsucadConfigManager';
 import { OsucadSettings } from '../config/OsucadSettings';
+import { BindableBeatDivisor } from './BindableBeatDivisor';
 
 export class EditorClock
   extends Container
@@ -52,7 +53,7 @@ export class EditorClock
     return this.beatmap.controlPoints;
   }
 
-  beatSnapDivisor = new Bindable(4);
+  beatSnapDivisor = new BindableBeatDivisor(4);
 
   seekSnapped(position: number) {
     const timingPoint = this.controlPointInfo.timingPointAt(position);

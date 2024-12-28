@@ -1,7 +1,7 @@
-import type { DragEndEvent, DragEvent, DragStartEvent, MouseDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import { Anchor, Axes, BindableBoolean, Box, Container, isMobile, provide } from 'osucad-framework';
 import { OsucadColors } from '../../../OsucadColors';
-import { BottomTimelineTickContainer } from '../../ui/timeline/BottomTimelineTickContainer';
+import { BottomAlignedTickDisplay } from '../../ui/timeline/BottomAlignedTickDisplay';
 import { CurrentTimeOverlay } from '../../ui/timeline/CurrentTimeOverlay';
 import { Timeline } from '../../ui/timeline/Timeline';
 import { ComposeScreenTimelineHitObjectBlueprintContainer } from './ComposeScreenTimelineHitObjectBlueprintContainer';
@@ -16,18 +16,22 @@ export class ComposeScreenTimeline extends Timeline {
 
     this.relativeSizeAxes = Axes.Both;
 
-    this.addAll(
+    this.addInternal(
       new Box({
         relativeSizeAxes: Axes.Both,
         color: OsucadColors.translucent,
         alpha: 0.8,
+        depth: 1,
       }),
+    );
+
+    this.addAll(
       new Container({
         relativeSizeAxes: Axes.X,
-        height: 20,
+        height: 10,
         anchor: Anchor.BottomLeft,
         origin: Anchor.BottomLeft,
-        child: new BottomTimelineTickContainer(),
+        child: new BottomAlignedTickDisplay(),
       }),
       new Container({
         relativeSizeAxes: Axes.Both,
@@ -38,28 +42,11 @@ export class ComposeScreenTimeline extends Timeline {
           new ComposeScreenTimelineHitObjectBlueprintContainer(),
         ],
       }),
-      new CurrentTimeOverlay(),
     );
+
+    this.addInternal(new CurrentTimeOverlay());
 
     if (isMobile.any)
       this.add(new ComposeScreenTimelineMobileControls());
-  }
-
-  override onMouseDown(e: MouseDownEvent): boolean {
-    return true;
-  }
-
-  override onDragStart(e: DragStartEvent): boolean {
-    return true;
-  }
-
-  override onDrag(e: DragEvent): boolean {
-    const delta = -this.sizeToDuration(e.delta.x);
-    this.editorClock.seek(this.editorClock.currentTime + delta, false);
-    return true;
-  }
-
-  override onDragEnd(e: DragEndEvent) {
-    this.editorClock.seekSnapped(this.editorClock.currentTime);
   }
 }

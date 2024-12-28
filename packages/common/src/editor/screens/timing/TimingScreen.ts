@@ -1,9 +1,8 @@
 import type { ClickEvent, ReadonlyDependencyContainer } from 'osucad-framework';
-import { Anchor, Axes, Box, Container, DependencyContainer, FillDirection, FillFlowContainer, provide, ProxyContainer, resolved } from 'osucad-framework';
+import { Anchor, Axes, Box, Container, DependencyContainer, FillDirection, FillFlowContainer, provide, resolved } from 'osucad-framework';
 import { EditorBeatmap } from '../../EditorBeatmap';
 import { CurrentTimeOverlay } from '../../ui/timeline/CurrentTimeOverlay';
 import { LayeredTimeline } from '../../ui/timeline/LayeredTimeline';
-import { TimelineBoundaryOverlay } from '../../ui/timeline/TimelineBoundaryOverlay';
 import { EditorScreen } from '../EditorScreen';
 import { editorScreen } from '../metadata';
 import { HitObjectTimelineLayer } from './hitObjects/HitObjectTimelineLayer';
@@ -13,9 +12,7 @@ import { SliderVelocityTimelineLayer } from './sliderVelocity/SliderVelocityTime
 import { TimingPointLayer } from './timingPoints/TimingPointLayer';
 import { TimingScreenDependencies } from './TimingScreenDependencies';
 import { TimingScreenSelectionManager } from './TimingScreenSelectionManager';
-import { TimingScreenTickContainer } from './TimingScreenTickContainer';
 import { TimingScreenToolSelect } from './TimingScreenToolSelect';
-import { TopTimelineLayer } from './TopTimelineLayer';
 import { VolumePointLayer } from './volume/VolumePointLayer';
 
 @editorScreen({
@@ -52,14 +49,8 @@ export class TimingScreen extends EditorScreen {
             color: 0x17171B,
           }),
           this.#timeline = new LayeredTimeline({
-            syncWithEditorClock: false,
-            timelineChildren: [
-              new TimelineBoundaryOverlay(),
-              new TimingScreenTickContainer().with({
-                alpha: 0.25,
-              }),
-            ],
             layers: this.createLayers(),
+
           }),
         ],
       }),
@@ -98,16 +89,14 @@ export class TimingScreen extends EditorScreen {
       }),
     ];
 
-    this.#timeline.overlayContainer.add(new ProxyContainer(this.#timeline.timeline).with({
-      child: new CurrentTimeOverlay(),
-    }));
+    this.#timeline.overlayContainer.add(new CurrentTimeOverlay());
   }
 
   #timeline!: LayeredTimeline;
 
   protected createLayers() {
     return [
-      new TopTimelineLayer(),
+      // new TopTimelineLayer(),
       new HitObjectTimelineLayer(),
       new TimingPointLayer(),
       new SliderVelocityTimelineLayer(),

@@ -1,7 +1,7 @@
-import type { DragEndEvent, DragEvent, DragStartEvent, MouseDownEvent } from 'osucad-framework';
+import type { Drawable, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { HitObjectLifetimeEntry } from '../../../../hitObjects/drawables/HitObjectLifetimeEntry';
 import type { HitObjectSelectionEvent } from '../../../screens/compose/HitObjectSelectionManager';
-import { Anchor, Axes, Bindable, BindableNumber, Container, dependencyLoader, FillMode, MouseButton, provide, resolved } from 'osucad-framework';
+import { Anchor, Axes, Bindable, BindableBoolean, BindableNumber, Container, FastRoundedBox, FillMode, provide, resolved } from 'osucad-framework';
 import { Color } from 'pixi.js';
 import { HitObjectList } from '../../../../beatmap/HitObjectList';
 import { UpdateHandler } from '../../../../crdt/UpdateHandler';
@@ -11,7 +11,6 @@ import { hasSliderVelocity } from '../../../../hitObjects/IHasSliderVelocity';
 import { PoolableDrawableWithLifetime } from '../../../../pooling/PoolableDrawableWithLifetime';
 import { SliderRepeat } from '../../../../rulesets/osu/hitObjects/SliderRepeat';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
-import { EditorClock } from '../../../EditorClock';
 import { HitObjectSelectionManager } from '../../../screens/compose/HitObjectSelectionManager';
 import { Timeline } from '../Timeline';
 import { DurationAdjustmentPiece } from './DurationAdjustmentPiece';
@@ -25,12 +24,17 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
   constructor() {
     super();
 
-    this.relativeSizeAxes = Axes.Y;
+    this.relativePositionAxes = Axes.X;
+    this.relativeSizeAxes = Axes.Both;
   }
+
+  protected content!: Container;
 
   readonly accentColor = new Bindable(new Color(0xFFFFFF));
 
   readonly comboIndexBindable = new BindableNumber(0);
+
+  readonly selected = new BindableBoolean(false);
 
   @resolved(ISkinSource)
   protected currentSkin!: ISkinSource;
@@ -50,21 +54,44 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
 
   readonly indexInComboBindable = new BindableNumber(0);
 
-  @dependencyLoader()
-  [Symbol('load')]() {
-    this.addAllInternal(
-      this.body = new TimelineHitObjectBody(this),
-      this.#tailContainer = new Container({
-        relativeSizeAxes: Axes.Both,
-        fillMode: FillMode.Fit,
-        anchor: Anchor.CenterRight,
-        origin: Anchor.CenterRight,
-      }),
-      this.#repeatContainer = new Container({
-        relativeSizeAxes: Axes.Both,
-      }),
-      this.head = new TimelineHitObjectHead(this),
-    );
+  protected selectionOutline!: Drawable;
+
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
+    this.addInternal(this.content = new Container({
+      relativeSizeAxes: Axes.Both,
+      children: [
+        this.selectionOutline = new Container({
+          relativeSizeAxes: Axes.Both,
+          padding: -2,
+          child: new FastRoundedBox({
+            relativeSizeAxes: Axes.Both,
+            cornerRadius: 100,
+          }),
+        }),
+        this.body = new TimelineHitObjectBody(this),
+        this.#tailContainer = new Container({
+          relativeSizeAxes: Axes.Both,
+          fillMode: FillMode.Fit,
+          anchor: Anchor.CenterRight,
+          origin: Anchor.CenterRight,
+        }),
+        this.#repeatContainer = new Container({
+          relativeSizeAxes: Axes.Both,
+        }),
+        this.head = new TimelineHitObjectHead(this),
+      ],
+    }));
+
+    this.startTimeBindable.addOnChangeListener(time => this.x = time.value);
+
+    this.selected.addOnChangeListener((selected) => {
+      if (selected.value)
+        this.selectionOutline.show();
+      else
+        this.selectionOutline.hide();
+    }, { immediate: true });
 
     this.comboIndexBindable.valueChanged.addListener(this.updateComboColor, this);
     this.currentSkin.sourceChanged.addListener(this.updateComboColor, this);
@@ -78,7 +105,8 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
   }
 
   #selectionChanged(evt: HitObjectSelectionEvent) {
-
+    if (evt.hitObject === this.hitObject)
+      this.selected.value = evt.selected;
   }
 
   protected override onApply(entry: HitObjectLifetimeEntry) {
@@ -98,6 +126,9 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
     }
 
     entry.hitObject.defaultsApplied.addListener(this.#updateRepeats, this);
+
+    if (this.selection)
+      this.selected.value = this.selection.isSelected(entry.hitObject);
 
     this.updateComboColor();
     this.#updateRepeats();
@@ -135,11 +166,22 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
   @resolved(Timeline)
   timeline!: Timeline;
 
+  #contentPadding = 0;
+
   override update() {
     super.update();
 
-    this.x = this.timeline.timeToPosition(this.hitObject!.startTime) - this.drawHeight * 0.5;
-    this.width = this.timeline.durationToSize(this.hitObject!.duration) + this.drawHeight;
+    const duration = this.hitObject!.duration;
+
+    if (this.width !== duration)
+      this.width = duration;
+
+    const contentPadding = this.drawHeight * 0.5;
+
+    if (this.#contentPadding !== contentPadding) {
+      this.content.padding = { horizontal: -contentPadding };
+      this.#contentPadding = contentPadding;
+    }
   }
 
   @resolved(HitObjectList)
@@ -147,44 +189,6 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
 
   @resolved(UpdateHandler)
   updateHandler!: UpdateHandler;
-
-  override onMouseDown(e: MouseDownEvent): boolean {
-    if (e.button === MouseButton.Right) {
-      if (this.isDragged)
-        return false;
-
-      this.hitObjects.remove(this.hitObject!);
-      this.updateHandler.commit();
-      return true;
-    }
-
-    return false;
-  }
-
-  @resolved(EditorClock)
-  editorClock!: EditorClock;
-
-  #dragOffset = 0;
-
-  override onDragStart(e: DragStartEvent): boolean {
-    this.#dragOffset = this.timeline.screenSpacePositionToTime(e.screenSpaceMousePosition) - this.hitObject!.startTime;
-    return true;
-  }
-
-  override onDrag(e: DragEvent): boolean {
-    let time = this.timeline.screenSpacePositionToTime(e.screenSpaceMousePosition) - this.#dragOffset;
-
-    if (!e.shiftPressed)
-      time = this.editorClock.snap(time);
-
-    this.hitObject!.startTime = time;
-
-    return true;
-  }
-
-  override onDragEnd(e: DragEndEvent) {
-    this.updateHandler.commit();
-  }
 
   #updateRepeats() {
     this.#repeatContainer.clear();

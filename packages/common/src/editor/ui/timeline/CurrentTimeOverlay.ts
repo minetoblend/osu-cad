@@ -1,13 +1,5 @@
-import {
-  Anchor,
-  Axes,
-  Box,
-  CompositeDrawable,
-  type ReadonlyDependencyContainer,
-  resolved,
-} from 'osucad-framework';
+import { Anchor, Axes, Box, CompositeDrawable, type ReadonlyDependencyContainer, resolved } from 'osucad-framework';
 import { OsucadColors } from '../../../OsucadColors';
-import { EditorClock } from '../../EditorClock';
 import { Timeline } from './Timeline';
 
 export class CurrentTimeOverlay extends CompositeDrawable {
@@ -22,6 +14,7 @@ export class CurrentTimeOverlay extends CompositeDrawable {
     width: 2,
     relativeSizeAxes: Axes.Y,
     origin: Anchor.TopCenter,
+    anchor: Anchor.TopCenter,
   });
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
@@ -32,13 +25,4 @@ export class CurrentTimeOverlay extends CompositeDrawable {
 
   @resolved(Timeline)
   timeline!: Timeline;
-
-  @resolved(EditorClock)
-  editorClock!: EditorClock;
-
-  override update() {
-    super.update();
-
-    this.#overlay.x = this.timeline.timeToPosition(this.editorClock!.currentTime);
-  }
 }

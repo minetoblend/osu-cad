@@ -27,13 +27,13 @@ export class TimingPointLayer extends TimingScreenTimelineLayer {
       anchor: Anchor.CenterLeft,
       origin: Anchor.CenterLeft,
     }));
-    this.add(new TimingPointBlueprintContainer());
     this.add(new TimingPointPlacementBlueprint());
+    this.add(new TimingPointBlueprintContainer());
 
     const track = this.editorBeatmap.track.value;
 
     if (track instanceof AudioBufferTrack) {
-      this.timeline.timeline.add(new ProxyContainer(this.content).with({
+      this.timeline.add(new ProxyContainer(this.content).with({
         depth: 1,
         children: [
           new DrawableWaveform(track, {

@@ -1,4 +1,4 @@
-import type { ClickEvent, DragEndEvent, DragEvent, DragStartEvent, MouseDownEvent } from 'osucad-framework';
+import type { ClickEvent, DragEndEvent, DragEvent, DragStartEvent, HoverEvent, MouseDownEvent } from 'osucad-framework';
 import type { KiaiSelectionBlueprint } from './KiaiSelectionBlueprint';
 import { Axes, Box, MouseButton, resolved } from 'osucad-framework';
 import { ControlPointInfo } from '../../../../controlPoints/ControlPointInfo';
@@ -85,6 +85,10 @@ export class KiaiSelectionBody extends Box {
         ? [this.blueprint.entry!.start, this.blueprint.entry!.end!]
         : [this.blueprint.entry!.start],
     );
+    return true;
+  }
+
+  override onHover(e: HoverEvent): boolean {
     return true;
   }
 }

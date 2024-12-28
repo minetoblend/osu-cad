@@ -41,7 +41,6 @@ export class OsucadScrollContainer<T extends Drawable = Drawable> extends Scroll
   override onMouseUp(e: MouseUpEvent) {
     if (this.#isRightClickScrolling && e.button === MouseButton.Right) {
       this.#endRightClickScroll();
-      return true;
     }
 
     super.onMouseUp?.(e);

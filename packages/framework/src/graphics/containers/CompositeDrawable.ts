@@ -375,7 +375,7 @@ export class CompositeDrawable extends Drawable {
     return this.#relativeChildSize;
   }
 
-  protected set relativeChildSize(value: IVec2) {
+  set relativeChildSize(value: IVec2) {
     if (this.#relativeChildSize.equals(value))
       return;
 

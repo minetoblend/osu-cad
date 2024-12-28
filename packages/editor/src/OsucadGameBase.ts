@@ -1,5 +1,5 @@
 import { AudioMixer, IResourcesProvider, ISkinSource, OsucadConfigManager, SkinManager } from '@osucad/common';
-import { AudioManager, type DependencyContainer, dependencyLoader, Game, IRenderer, type PIXIRenderer, resolved } from 'osucad-framework';
+import { AudioManager, type DependencyContainer, Game, IRenderer, type PIXIRenderer, resolved } from 'osucad-framework';
 import { ThemeColors } from './editor/ThemeColors';
 import { BeatmapStore, EditorEnvironment, SkinStore } from './environment';
 import { GlobalBeatmapBindable } from './GlobalBeatmapBindable';
@@ -27,8 +27,7 @@ export class OsucadGameBase extends Game {
 
   mixer!: AudioMixer;
 
-  @dependencyLoader()
-  async load(dependencies: DependencyContainer): Promise<void> {
+  override async load(dependencies: DependencyContainer) {
     dependencies.provide(Game, this);
 
     const config = new OsucadConfigManager();

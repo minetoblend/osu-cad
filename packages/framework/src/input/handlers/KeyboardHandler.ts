@@ -83,7 +83,7 @@ export class KeyboardHandler extends InputHandler {
   };
 
   #shouldPreventDefault(event: KeyboardEvent): boolean {
-    if (/^\d$/.test(event.key))
+    if (/^\d$/.test(event.key) && event.ctrlKey)
       return true;
 
     switch (event.key) {

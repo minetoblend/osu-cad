@@ -1,13 +1,20 @@
 import type { ControlPoint } from '../../../controlPoints/ControlPoint';
 import type { ControlPointLifetimeEntry } from '../../ui/timeline/ControlPointLifetimeEntry';
 import type { ControlPointSelectionEvent } from './TimingScreenSelectionManager';
-import { BindableBoolean, provide, resolved } from 'osucad-framework';
+import { Axes, BindableBoolean, provide, resolved } from 'osucad-framework';
 import { ControlPointBlueprint } from '../../ui/timeline/ControlPointBlueprint';
 import { Timeline } from '../../ui/timeline/Timeline';
 import { TimingScreenSelectionManager } from './TimingScreenSelectionManager';
 
 @provide(TimingScreenSelectionBlueprint)
 export class TimingScreenSelectionBlueprint<T extends ControlPoint> extends ControlPointBlueprint<T> {
+  constructor() {
+    super();
+
+    this.relativePositionAxes = Axes.Both;
+    this.relativeSizeAxes = Axes.Both;
+  }
+
   @resolved(Timeline)
   protected timeline!: Timeline;
 
@@ -19,11 +26,8 @@ export class TimingScreenSelectionBlueprint<T extends ControlPoint> extends Cont
   override update() {
     super.update();
 
-    this.x = this.timeline.timeToPosition(this.entry!.start.time);
-    this.width = Math.min(
-      this.timeline.durationToSize(this.entry!.lifetimeEnd - this.entry!.lifetimeStart),
-      200_000,
-    );
+    this.x = this.entry!.start.time;
+    this.width = this.entry!.lifetimeEnd - this.entry!.lifetimeStart;
   }
 
   #onSelectionChanged(event: ControlPointSelectionEvent) {

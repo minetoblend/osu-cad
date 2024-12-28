@@ -1,20 +1,20 @@
 import type { Bindable, DragEndEvent, DragEvent, DragStartEvent, Drawable, HoverEvent, HoverLostEvent, InputManager, KeyDownEvent, KeyUpEvent, MouseDownEvent, MouseUpEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { ColorSource } from 'pixi.js';
 import type { ControlPoint } from '../../../controlPoints/ControlPoint';
-import { Anchor, Axes, CompositeDrawable, dependencyLoader, Key, MouseButton, resolved } from 'osucad-framework';
+import { Anchor, Axes, dependencyLoader, Key, MouseButton, resolved } from 'osucad-framework';
 import { TextBox } from '../../../../../editor/src/userInterface/TextBox';
 import { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 import { UpdateHandler } from '../../../crdt/UpdateHandler';
-import { EditorClock } from '../../EditorClock';
 import { LayeredTimeline } from '../../ui/timeline/LayeredTimeline';
 import { Timeline } from '../../ui/timeline/Timeline';
+import { TimelinePart } from '../../ui/timeline/TimelinePart';
 import { DiamondShape } from './DiamondShape';
 import { TimingScreenDependencies } from './TimingScreenDependencies';
 import { TimingScreenSelectionBlueprint } from './TimingScreenSelectionBlueprint';
 import { TimingScreenSelectionManager } from './TimingScreenSelectionManager';
 import { TimingScreenTool } from './TimingScreenTool';
 
-export abstract class ControlPointPlacementBlueprint<T extends ControlPoint> extends CompositeDrawable {
+export abstract class ControlPointPlacementBlueprint<T extends ControlPoint> extends TimelinePart {
   protected constructor() {
     super();
     this.relativeSizeAxes = Axes.Both;
@@ -34,7 +34,9 @@ export abstract class ControlPointPlacementBlueprint<T extends ControlPoint> ext
 
     this.activeTool = activeTool.getBoundCopy();
 
-    this.addInternal(this.#previewShape = this.createPreviewShape());
+    this.add(this.#previewShape = this.createPreviewShape().with({
+      relativePositionAxes: Axes.Both,
+    }));
 
     this.activeTool.addOnChangeListener(e => this.#updateVisibility(), { immediate: true });
   }
@@ -56,9 +58,6 @@ export abstract class ControlPointPlacementBlueprint<T extends ControlPoint> ext
 
   @resolved(Timeline)
   timeline!: Timeline;
-
-  @resolved(EditorClock)
-  editorClock!: EditorClock;
 
   @resolved(ControlPointInfo)
   controlPointInfo!: ControlPointInfo;
@@ -85,7 +84,8 @@ export abstract class ControlPointPlacementBlueprint<T extends ControlPoint> ext
   }
 
   protected updatePreviewShapePosition(shape: Drawable) {
-    this.#previewShape.x = this.timeline.timeToPosition(this.timeAtMousePosition);
+    if (Number.isFinite(this.timeAtMousePosition))
+      this.#previewShape.x = this.timeAtMousePosition;
   }
 
   #ctrlPressed = false;
@@ -93,7 +93,7 @@ export abstract class ControlPointPlacementBlueprint<T extends ControlPoint> ext
   activeTool!: Bindable<TimingScreenTool>;
 
   get isActive() {
-    return this.#ctrlPressed || this.activeTool.value === TimingScreenTool.Create;
+    return !this.#ctrlPressed && this.activeTool.value === TimingScreenTool.Create;
   }
 
   #updateVisibility() {

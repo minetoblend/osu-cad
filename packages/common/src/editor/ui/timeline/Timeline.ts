@@ -1,146 +1,139 @@
-import type { ScrollEvent, Vec2 } from 'osucad-framework';
-import { BindableNumber, Container, EasingFunction, provide, resolved } from 'osucad-framework';
+import type { MouseDownEvent, MouseUpEvent, ReadonlyDependencyContainer, ScrollEvent, Vec2 } from 'osucad-framework';
+import { Axes, clamp, EasingFunction, MouseButton, provide, resolved } from 'osucad-framework';
 import { EditorClock } from '../../EditorClock';
+import { ZoomableScrollContainer } from './ZoomableScrollContainer';
 
 @provide(Timeline)
-export class Timeline extends Container {
+export class Timeline extends ZoomableScrollContainer {
   @resolved(EditorClock)
-  editorClock!: EditorClock;
-
-  #currentTime = new BindableNumber(0);
-
-  syncWithEditorClock = true;
-
-  get currentTime() {
-    if (this.syncWithEditorClock)
-      return this.editorClock.currentTime;
-
-    return this.#currentTime.value;
-  }
-
-  set currentTime(time: number) {
-    if (this.syncWithEditorClock)
-      this.editorClock.seek(time, false);
-    else
-      this.#currentTime.value = time;
-  }
-
-  seek(time: number, animated = true) {
-    if (this.syncWithEditorClock)
-      this.editorClock.seek(time, animated);
-    else
-      this.transformTo('currentTime', time, 150, EasingFunction.OutCubic);
-  }
-
-  readonly zoomBindable = new BindableNumber(1);
-
-  get zoom() {
-    return this.zoomBindable.value;
-  }
-
-  set zoom(value: number) {
-    this.zoomBindable.value = value;
-  }
-
-  get visibleDuration() {
-    return this.zoom * 4000;
-  }
-
-  get startTime() {
-    return this.currentTime - this.visibleDuration / 2;
-  }
-
-  get endTime() {
-    return this.currentTime + this.visibleDuration / 2;
-  }
-
-  timeToPosition(time: number) {
-    return (time - this.startTime) * this.pixelsPerMs;
-  }
-
-  durationToSize(duration: number) {
-    return duration * this.pixelsPerMs;
-  }
-
-  sizeToDuration(size: number) {
-    return size / this.pixelsPerMs;
-  }
-
-  positionToTime(time: number) {
-    return time / this.pixelsPerMs + this.startTime;
-  }
-
-  screenSpacePositionToTime(position: Vec2) {
-    return this.positionToTime(this.toLocalSpace(position).x);
-  }
-
-  get pixelsPerMs() {
-    return this.drawSize.x / this.visibleDuration;
-  }
-
-  zoomSpeed = 0.3;
+  protected editorClock!: EditorClock;
 
   override onScroll(e: ScrollEvent): boolean {
-    if (e.altPressed) {
-      if (e.scrollDelta.y > 0)
-        this.zoomIn(1, this.positionToTime(e.mousePosition.x));
-      else
-        this.zoomOut(1, this.positionToTime(e.mousePosition.x));
+    if (!e.altPressed && !e.isPrecise)
+      return false;
 
-      return true;
-    }
-
-    return false;
+    return super.onScroll(e);
   }
 
-  zoomOut(factor: number = 1, time: number = this.editorClock.currentTime) {
-    const oldZoom = this.zoom;
-    const newZoom = Math.min(this.zoom * (1 + this.zoomSpeed * factor), 8);
+  #lastScrollPosition = 0;
 
-    const oldPosition = this.timeToPosition(time);
-    this.zoom = newZoom;
-    const newPosition = this.timeToPosition(time);
-    const deltaTime = this.sizeToDuration(newPosition - oldPosition);
-    this.zoom = oldZoom;
+  #lastTrackTime = 0;
 
-    this.zoomTo(newZoom, 0, EasingFunction.Default);
+  #handlingDragInput = false;
 
-    if (!this.syncWithEditorClock)
-      this.currentTime += deltaTime;
+  #trackWasPlaying = false;
+
+  #defaultTimelineZoom = 1;
+
+  #trackLengthForZoom = 0;
+
+  constructor() {
+    super();
+
+    this.relativeSizeAxes = Axes.Both;
+    this.zoomDuration = 200;
+    this.zoomEasing = EasingFunction.OutExpo;
+    this.scrollbarVisible = false;
   }
 
-  zoomIn(factor: number = 1, time: number = this.editorClock.currentTime) {
-    const oldZoom = this.zoom;
-    const zoom = Math.max(this.zoom / (1 + this.zoomSpeed * factor), 0.25);
-
-    const oldPosition = this.timeToPosition(time);
-    this.zoom = zoom;
-    const newPosition = this.timeToPosition(time);
-    const deltaTime = this.sizeToDuration(newPosition - oldPosition);
-    this.zoom = oldZoom;
-
-    this.zoomTo(zoom, 0, EasingFunction.Default);
-
-    if (!this.syncWithEditorClock)
-      this.currentTime += deltaTime;
-  }
-
-  zoomTo(zoom: number, duration: number, easing: EasingFunction) {
-    return this.transformTo('zoom', zoom, duration, easing);
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
   }
 
   override update() {
     super.update();
 
-    if (this.syncWithEditorClock) {
-      this.#currentTime.value = this.editorClock.currentTime;
-    }
-    else if (this.editorClock.isRunning || this.editorClock.targetTime !== this.editorClock.currentTime) {
-      if (this.editorClock.currentTimeAccurate > this.endTime)
-        this.currentTime = this.editorClock.currentTimeAccurate + this.visibleDuration / 2.1;
+    this.content.margin = { horizontal: this.drawWidth / 2 };
 
-      if (this.editorClock.currentTimeAccurate < this.startTime)
-        this.currentTime = this.editorClock.currentTimeAccurate - this.visibleDuration / 2.1;
+    if (this.editorClock.isRunning)
+      this.#scrollToTrackTime();
+
+    if (this.editorClock.trackLength !== this.#trackLengthForZoom) {
+      const getZoomLevelForVisibleMilliseconds = (milliseconds: number) => Math.max(1, (this.editorClock.trackLength / milliseconds));
+
+      this.#defaultTimelineZoom = getZoomLevelForVisibleMilliseconds(6000);
+
+      const minimumZoom = getZoomLevelForVisibleMilliseconds(10000);
+      const maximumZoom = getZoomLevelForVisibleMilliseconds(500);
+
+      const initialZoom = clamp(this.#defaultTimelineZoom, minimumZoom, maximumZoom);
+
+      this.setupZoom(initialZoom, minimumZoom, maximumZoom);
+
+      this.#trackLengthForZoom = this.editorClock.trackLength;
     }
+  }
+
+  override updateAfterChildren() {
+    super.updateAfterChildren();
+
+    if (this.isDragging) {
+      this.#seekTrackToCurrent();
+    }
+    else if (!this.editorClock.isRunning) {
+      if (this.current !== this.#lastScrollPosition && this.editorClock.currentTime === this.#lastTrackTime && !this.editorClock.isSeeking)
+        this.#seekTrackToCurrent();
+      else
+        this.#scrollToTrackTime();
+    }
+
+    this.#lastScrollPosition = this.current;
+    this.#lastTrackTime = this.editorClock.currentTime;
+  }
+
+  #seekTrackToCurrent() {
+    const target = this.timeAtPosition(this.current);
+    this.editorClock.seek(Math.min(this.editorClock.trackLength, target), false);
+  }
+
+  #scrollToTrackTime() {
+    if (this.editorClock.trackLength === 0)
+      return;
+
+    if (this.#handlingDragInput)
+      this.editorClock.stop();
+
+    const position = this.positionAtTime(this.editorClock.currentTime);
+    this.scrollTo(position, false);
+  }
+
+  override onMouseDown(e: MouseDownEvent): boolean {
+    if (super.onMouseDown(e))
+      this.#beginUserDrag();
+
+    return e.button === MouseButton.Left;
+  }
+
+  override onMouseUp(e: MouseUpEvent) {
+    this.#endUserDrag();
+  }
+
+  #beginUserDrag() {
+    this.#handlingDragInput = true;
+    this.#trackWasPlaying = this.editorClock.isRunning;
+    this.editorClock.stop();
+  }
+
+  #endUserDrag() {
+    this.#handlingDragInput = false;
+
+    if (this.#trackWasPlaying)
+      this.editorClock.start();
+  }
+
+  get visibleRange(): number {
+    return this.editorClock.trackLength / this.zoom;
+  }
+
+  timeAtPosition(x: number): number {
+    return x / this.content.drawWidth * this.editorClock.trackLength;
+  }
+
+  positionAtTime(time: number): number {
+    return time / this.editorClock.trackLength * this.content.drawWidth;
+  }
+
+  screenSpacePositionToTime(screenSpacePosition: Vec2): number {
+    return this.timeAtPosition(this.content.toLocalSpace(screenSpacePosition).x);
   }
 }

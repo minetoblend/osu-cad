@@ -1,14 +1,5 @@
 import type { ColorSource } from 'pixi.js';
-import {
-  Axes,
-  BindableNumber,
-  CompositeDrawable,
-  Container,
-  dependencyLoader,
-  provide,
-  ProxyContainer,
-  resolved,
-} from 'osucad-framework';
+import { Axes, BindableNumber, CompositeDrawable, Container, dependencyLoader, provide, resolved, Vec2 } from 'osucad-framework';
 import { LayeredTimeline } from './LayeredTimeline';
 
 @provide(TimelineLayer)
@@ -51,22 +42,31 @@ export abstract class TimelineLayer extends Container {
 
     this.headerWidth.bindTo(this.timeline.headerWidth);
 
-    this.timeline.headerContainer.add(
-      new ProxyContainer(this.#headerContainer).with({
-        child: this.header = this.createHeader(),
-      }),
-    );
+    this.header = this.createHeader();
+    this.loadComponent(this.header);
+
+    this.timeline.headerContainer.add(this.#headerContainer = new Container({
+      child: this.header,
+    }));
 
     this.#updateLayout();
   }
 
   #updateLayout() {
     this.#headerContainer.width = this.headerWidth.value;
-    this.#content.padding = { left: this.headerWidth.value };
   }
 
   protected createHeader() {
     return new TimelineLayerHeader(this.title, this.layerColor);
+  }
+
+  override update() {
+    super.update();
+
+    const quad = this.screenSpaceDrawQuad;
+
+    this.#headerContainer.y = this.#headerContainer.parent!.toLocalSpace(quad.topLeft).y;
+    this.#headerContainer.size = new Vec2(this.headerWidth.value, this.drawHeight);
   }
 }
 

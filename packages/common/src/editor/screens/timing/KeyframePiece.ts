@@ -63,10 +63,9 @@ export class KeyframePiece extends CompositeDrawable {
   override onMouseDown(e: MouseDownEvent): boolean {
     if (e.button === MouseButton.Right) {
       this.delete();
-      return true;
     }
 
-    return false;
+    return true;
   }
 
   protected delete() {

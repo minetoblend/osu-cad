@@ -1,5 +1,6 @@
+import type { DragEndEvent, DragEvent, DragStartEvent, Drawable, HoverEvent, HoverLostEvent, InputManager, KeyDownEvent, KeyUpEvent, MouseDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { TimingPointSelectionBlueprint } from './TimingPointSelectionBlueprint';
-import { Anchor, Axes, Box, clamp, CompositeDrawable, dependencyLoader, type DragEndEvent, type DragEvent, type DragStartEvent, type Drawable, type HoverEvent, type HoverLostEvent, type InputManager, resolved } from 'osucad-framework';
+import { Anchor, Axes, Box, clamp, CompositeDrawable, Key, resolved } from 'osucad-framework';
 import { ControlPointInfo } from '../../../../controlPoints/ControlPointInfo';
 import { UpdateHandler } from '../../../../crdt/UpdateHandler';
 import { EditorClock } from '../../../EditorClock';
@@ -9,17 +10,15 @@ import { KeyframePiece } from '../KeyframePiece';
 export class TimingPointAdjustmentBlueprint extends CompositeDrawable {
   constructor(readonly blueprint: TimingPointSelectionBlueprint) {
     super();
-
     this.relativeSizeAxes = Axes.Both;
   }
 
   #dragHandle!: DragHandle;
 
-  @dependencyLoader()
-  [Symbol('load')]() {
-    this.addInternal(
-      this.#dragHandle = new DragHandle(this.blueprint),
-    );
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
+    this.addInternal(this.#dragHandle = new DragHandle(this.blueprint));
   }
 
   protected override loadComplete() {
@@ -49,6 +48,19 @@ export class TimingPointAdjustmentBlueprint extends CompositeDrawable {
     return this.blueprint.entry;
   }
 
+  #ctrlPressed = false;
+
+  override onKeyDown(e: KeyDownEvent): boolean {
+    if (e.key === Key.ControlLeft)
+      this.#ctrlPressed = true;
+    return false;
+  }
+
+  override onKeyUp(e: KeyUpEvent) {
+    if (e.key === Key.ControlLeft)
+      this.#ctrlPressed = false;
+  }
+
   #updateDragHandle() {
     let time = this.timeline.screenSpacePositionToTime(this.#inputManager.currentState.mouse.position);
 
@@ -59,9 +71,9 @@ export class TimingPointAdjustmentBlueprint extends CompositeDrawable {
 
       if (
         this.isHovered
+        && this.#ctrlPressed
         && time > this.entry!.lifetimeStart
         && time < this.entry!.lifetimeEnd
-        && !this.#inputManager.currentState.keyboard.controlPressed
       ) {
         this.#dragHandle.show();
       }
@@ -131,9 +143,13 @@ class DragHandle extends CompositeDrawable {
   @resolved(Timeline)
   protected timeline!: Timeline;
 
-  override onDragStart(e: DragStartEvent): boolean {
-    this.#dragStartTime = this.blueprint.controlPoint!.time + this.timeline.sizeToDuration(this.x);
+  override onMouseDown(e: MouseDownEvent): boolean {
+    this.#dragStartTime = this.timeline.timeAtPosition(this.x + this.blueprint.drawPosition.x);
     this.#dragStartBeatLength = this.blueprint.controlPoint!.beatLength;
+    return true;
+  }
+
+  override onDragStart(e: DragStartEvent): boolean {
     this.#updateState();
 
     return true;
@@ -177,6 +193,6 @@ class DragHandle extends CompositeDrawable {
   override update() {
     super.update();
 
-    this.x = this.timeline.timeToPosition(this.currentTime) - this.blueprint.x;
+    this.x = this.timeline.positionAtTime(this.currentTime) - this.blueprint.drawPosition.x;
   }
 }

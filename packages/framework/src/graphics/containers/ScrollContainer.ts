@@ -1,11 +1,4 @@
-import type {
-  ClickEvent,
-  DragEndEvent,
-  DragEvent,
-  DragStartEvent,
-  MouseDownEvent,
-  ScrollEvent,
-} from '../../input';
+import type { ClickEvent, DragEndEvent, DragEvent, DragStartEvent, MouseDownEvent, ScrollEvent } from '../../input';
 import type { MouseButtonEventManager } from '../../input/MouseButtonEventManager';
 import type { Drawable } from '../drawables';
 import { Action } from '../../bindables';

@@ -1,9 +1,9 @@
 import type { Drawable } from 'osucad-framework';
-import { Anchor, Axes, Box, CompositeDrawable, dependencyLoader, resolved } from 'osucad-framework';
-import { EditorClock } from '../../EditorClock';
+import { Anchor, Axes, Box, dependencyLoader, resolved } from 'osucad-framework';
 import { Timeline } from './Timeline';
+import { TimelinePart } from './TimelinePart';
 
-export class TimelineBoundaryOverlay extends CompositeDrawable {
+export class TimelineBoundaryOverlay extends TimelinePart {
   constructor() {
     super();
 
@@ -16,47 +16,27 @@ export class TimelineBoundaryOverlay extends CompositeDrawable {
   @resolved(Timeline)
   timeline!: Timeline;
 
-  @resolved(EditorClock)
-  editorClock!: EditorClock;
-
   @dependencyLoader()
   [Symbol('load')]() {
     this.relativeSizeAxes = Axes.Both;
 
     this.addAllInternal(
       this.#startBoundaryOverlay = new Box({
-        relativeSizeAxes: Axes.Y,
+        relativePositionAxes: Axes.X,
+        relativeSizeAxes: Axes.Both,
         color: 0x000000,
+        anchor: Anchor.TopLeft,
+        origin: Anchor.TopRight,
+        width: 10000,
       }),
       this.#endBoundaryOverlay = new Box({
-        relativeSizeAxes: Axes.Y,
+        relativePositionAxes: Axes.X,
+        relativeSizeAxes: Axes.Both,
         color: 0x000000,
         anchor: Anchor.TopRight,
-        origin: Anchor.TopRight,
+        origin: Anchor.TopLeft,
+        width: 10000,
       }),
     );
-  }
-
-  override update() {
-    super.update();
-
-    const startTimeX = this.timeline.timeToPosition(0);
-    const endTimeX = this.timeline.timeToPosition(this.editorClock.trackLength);
-
-    if (startTimeX < 0) {
-      this.#startBoundaryOverlay.alpha = 0;
-    }
-    else {
-      this.#startBoundaryOverlay.alpha = 1;
-      this.#startBoundaryOverlay.width = startTimeX;
-    }
-
-    if (endTimeX > this.drawWidth) {
-      this.#endBoundaryOverlay.alpha = 0;
-    }
-    else {
-      this.#endBoundaryOverlay.alpha = 1;
-      this.#endBoundaryOverlay.width = this.drawWidth - endTimeX;
-    }
   }
 }

@@ -1,7 +1,7 @@
 import type { Drawable } from 'osucad-framework';
 import type { ColorSource } from 'pixi.js';
 import type { TimingPoint } from '../../../../controlPoints/TimingPoint';
-import { Axes } from 'osucad-framework';
+import { Anchor, Axes } from 'osucad-framework';
 import { ControlPointPlacementBlueprint } from '../ControlPointPlacementBlueprint';
 import { TimingPointKeyframeShape } from './TimingPointKeyframeShape';
 
@@ -26,6 +26,7 @@ export class TimingPointPlacementBlueprint extends ControlPointPlacementBlueprin
     return new TimingPointKeyframeShape().with({
       relativeSizeAxes: Axes.Y,
       width: 10,
+      origin: Anchor.TopCenter,
     });
   }
 }

@@ -1,17 +1,7 @@
 import type { Color } from 'pixi.js';
 import type { HitObject } from '../../../../hitObjects/HitObject';
 import type { TimelineHitObjectBlueprint } from './TimelineHitObjectBlueprint';
-import {
-  Anchor,
-  Axes,
-  Bindable,
-  ColorUtils,
-  CompositeDrawable,
-  dependencyLoader,
-  FastRoundedBox,
-  FillMode,
-  resolved,
-} from 'osucad-framework';
+import { Anchor, Axes, Bindable, ColorUtils, CompositeDrawable, dependencyLoader, FastRoundedBox, FillMode, resolved } from 'osucad-framework';
 import { Timeline } from '../Timeline';
 
 export class TimelineRepeatPiece extends CompositeDrawable {
@@ -62,10 +52,4 @@ export class TimelineRepeatPiece extends CompositeDrawable {
 
   @resolved(Timeline)
   timeline!: Timeline;
-
-  override update() {
-    super.update();
-
-    this.x = this.timeline.durationToSize(this.hitObject.startTime - this.blueprint.startTimeBindable.value);
-  }
 }

@@ -54,12 +54,12 @@ export abstract class HitObjectComposer extends CompositeDrawable {
 
                 left: EditorButton.SIZE + 40,
                 right: EditorButton.SIZE * 3 + 40,
-                top: 110,
+                top: 90,
                 bottom: 6,
               }
             : {
                 horizontal: EditorButton.SIZE + 40,
-                top: 110,
+                top: 90,
                 bottom: 6,
               },
         children: [
@@ -78,7 +78,7 @@ export abstract class HitObjectComposer extends CompositeDrawable {
       }),
       new Container({
         relativeSizeAxes: Axes.X,
-        height: 100,
+        height: 80,
         child: new ComposeScreenTimeline(),
       }),
     );

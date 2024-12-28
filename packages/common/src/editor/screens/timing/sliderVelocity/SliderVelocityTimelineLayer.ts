@@ -23,8 +23,8 @@ export class SliderVelocityTimelineLayer extends TimingScreenTimelineLayer {
         anchor: Anchor.CenterLeft,
         origin: Anchor.CenterLeft,
       }),
-      new SliderVelocityBlueprintContainer(),
       new TimingPointPlacementBlueprint(),
+      new SliderVelocityBlueprintContainer(),
     );
   }
 }

@@ -23,8 +23,8 @@ export class KiaiTimelineLayer extends TimingScreenTimelineLayer {
         anchor: Anchor.CenterLeft,
         origin: Anchor.CenterLeft,
       }),
-      new KiaiBlueprintContainer(),
       new KiaiPlacementBlueprint(),
+      new KiaiBlueprintContainer(),
     );
   }
 }

@@ -10,8 +10,6 @@ import { TimingScreenSelectionBlueprint } from './TimingScreenSelectionBlueprint
 export abstract class KeyframeSelectionBlueprint<T extends ControlPoint> extends TimingScreenSelectionBlueprint<T> {
   protected constructor() {
     super();
-
-    this.relativeSizeAxes = Axes.Y;
   }
 
   abstract readonly keyframeColor: Bindable<ColorSource>;

@@ -23,8 +23,8 @@ export class VolumePointLayer extends TimingScreenTimelineLayer {
             anchor: Anchor.CenterLeft,
             origin: Anchor.CenterLeft,
           }),
-          new VolumePointBlueprintContainer(),
           new VolumePointPlacementBlueprint(),
+          new VolumePointBlueprintContainer(),
         ],
       }),
     );

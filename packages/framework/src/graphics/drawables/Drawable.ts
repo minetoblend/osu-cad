@@ -718,6 +718,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return this.rectToParentSpace(this.layoutRectangle).AABB;
   }
 
+  get screenSpaceDrawQuad(): Quad {
+    const rect = new Rectangle(0, 0, this.drawWidth, this.drawHeight);
+
+    return Quad.fromRectangle(rect).transform(this.drawNode.worldTransform);
+  }
+
   #requiredParentSizeToFitBacking = new LayoutComputed(() => {
     const ap = this.anchorPosition;
     const rap = this.relativeAnchorPosition;
