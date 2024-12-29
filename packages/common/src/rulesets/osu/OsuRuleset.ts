@@ -12,6 +12,7 @@ import { DrawableOsuRuleset } from './DrawableOsuRuleset';
 import { OsuHitObjectComposer } from './edit/OsuHitObjectComposer';
 import { OsuAction } from './OsuAction';
 import { StableOsuSkinTransformer } from './skinning/stable/StableOsuSkinTransformer';
+import { StackingProcessor } from './StackingProcessor';
 
 export class OsuRuleset extends Ruleset {
   override createDrawableRulesetWith(beatmap: IBeatmap) {
@@ -42,5 +43,11 @@ export class OsuRuleset extends Ruleset {
       return new StableOsuSkinTransformer(skin);
 
     return null;
+  }
+
+  override postProcessBeatmap(beatmap: IBeatmap) {
+    super.postProcessBeatmap(beatmap);
+
+    new StackingProcessor().applyToBeatmap(beatmap);
   }
 }

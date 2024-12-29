@@ -22,6 +22,8 @@ export abstract class Ruleset {
 
   abstract createHitObjectComposer(): HitObjectComposer;
 
+  postProcessBeatmap(beatmap: IBeatmap) {}
+
   abstract get shortName(): string;
 
   getDefaultKeyBindings(): IKeyBinding[] {

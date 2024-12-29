@@ -1,3 +1,4 @@
+export * from './edit';
 export * from './hitObjects';
 export * from './OsuAction';
 export * from './OsuActionInputManager';
