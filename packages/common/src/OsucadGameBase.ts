@@ -1,14 +1,37 @@
-import type { Container, Drawable, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { Container, Drawable, PIXIRenderer, ReadonlyDependencyContainer } from 'osucad-framework';
+import { EditorActionContainer } from '@osucad/editor/editor/EditorActionContainer';
 import { Fit, ScalingContainer } from '@osucad/editor/editor/ScalingContainer';
 import { NotificationOverlay } from '@osucad/editor/notifications/NotificationOverlay';
-import { Axes, Box, DependencyContainer, Game } from 'osucad-framework';
+import { AudioManager, Axes, Box, DependencyContainer, Game, IRenderer, provide, resolved } from 'osucad-framework';
+import { AudioMixer } from './audio/AudioMixer';
+import { OsucadConfigManager } from './config/OsucadConfigManager';
 import { UIFonts } from './drawables/UIFonts';
+import { IResourcesProvider } from './io/IResourcesProvider';
 import { OsucadIcons } from './OsucadIcons';
 import { ContextMenuContainer } from './userInterface/ContextMenuContainer';
 
-export class OsucadGameBase extends Game {
-  protected override async load(dependencies: ReadonlyDependencyContainer): Promise<void> {
+@provide(IResourcesProvider)
+export abstract class OsucadGameBase extends Game implements IResourcesProvider {
+  @resolved(IRenderer)
+  renderer!: PIXIRenderer;
+
+  @resolved(AudioManager)
+  audioManager!: AudioManager;
+
+  mixer!: AudioMixer;
+
+  config!: OsucadConfigManager;
+
+  protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
+
+    this.mixer = new AudioMixer(this.audioManager);
+    this.#dependencies.provide(AudioMixer, this.mixer);
+
+    this.config = new OsucadConfigManager();
+    this.config.load();
+
+    this.#dependencies.provide(OsucadConfigManager, this.config);
 
     super.content.addAll(
       new Box({
@@ -22,13 +45,24 @@ export class OsucadGameBase extends Game {
           y: 768,
         },
         fit: Fit.Fill,
-        child: this.#content = new ContextMenuContainer({}),
+        child: new EditorActionContainer({
+          child: this.#content = new ContextMenuContainer({
+
+          }),
+        }),
       }),
     );
 
     this.addParallelLoad(OsucadIcons.load());
-    this.addParallelLoad(UIFonts.load());
+    this.addParallelLoad(this.#loadFonts());
   }
+
+  async #loadFonts() {
+    await UIFonts.load();
+    this.fontsLoaded();
+  }
+
+  protected fontsLoaded() {}
 
   #dependencies!: DependencyContainer;
 
