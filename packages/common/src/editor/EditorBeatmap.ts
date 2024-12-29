@@ -1,4 +1,4 @@
-import type { ReadonlyDependencyContainer, Track } from 'osucad-framework';
+import type { IResourceStore, ReadonlyDependencyContainer, Track } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
 import type { Beatmap } from '../beatmap/Beatmap';
 import type { BeatmapColors } from '../beatmap/BeatmapColors';
@@ -8,24 +8,22 @@ import type { BeatmapSettings } from '../beatmap/BeatmapSettings';
 import type { HitObjectList } from '../beatmap/HitObjectList';
 import type { IBeatmap } from '../beatmap/IBeatmap';
 import type { ControlPointInfo } from '../controlPoints/ControlPointInfo';
-import type { BeatmapAssetManager } from './BeatmapAssetManager';
 import { AudioManager, Bindable, Component, loadTexture, resolved } from 'osucad-framework';
 import { AudioMixer } from '../audio/AudioMixer';
 import { UpdateHandler } from '../crdt/UpdateHandler';
 import { CommandManager } from './CommandManager';
 
-export abstract class EditorBeatmap extends Component implements IBeatmap {
-  abstract readonly beatmap: Beatmap;
-
-  abstract readonly assets: BeatmapAssetManager;
-
+export class EditorBeatmap extends Component implements IBeatmap {
   readonly track = new Bindable<Track>(null!);
 
   readonly backgroundTexture = new Bindable<Texture | null>(null);
 
   updateHandler!: UpdateHandler;
 
-  protected constructor() {
+  constructor(
+    readonly beatmap: Beatmap,
+    readonly resourceStore: IResourceStore<ArrayBuffer>,
+  ) {
     super();
     this.commandManager = this.createCommandManager();
   }
@@ -53,22 +51,22 @@ export abstract class EditorBeatmap extends Component implements IBeatmap {
 
   protected async loadTrack() {
     const path = this.beatmap.settings.audioFileName;
-    const asset = this.assets.getAsset(path);
-    if (!asset)
+    const data = await this.resourceStore.getAsync(path);
+    if (!data)
       throw new Error(`Could not find asset "${path}" for beatmap track`);
 
-    this.track.value = await this.audioManager.createTrackFromArrayBuffer(this.mixer.music, asset.data);
+    this.track.value = await this.audioManager.createTrackFromArrayBuffer(this.mixer.music, data);
   }
 
   protected async loadBackground() {
     const path = this.beatmap.settings.backgroundFilename;
     if (!path)
       return;
-    const asset = this.assets.getAsset(path);
+    const asset = await this.resourceStore.getAsync(path);
     if (!asset)
       return;
 
-    this.backgroundTexture.value = await loadTexture(asset.data);
+    this.backgroundTexture.value = await loadTexture(asset);
   }
 
   commandManager!: CommandManager;
@@ -99,9 +97,5 @@ export abstract class EditorBeatmap extends Component implements IBeatmap {
 
   get hitObjects(): HitObjectList {
     return this.beatmap.hitObjects;
-  }
-
-  override dispose() {
-    this.assets.dispose();
   }
 }
