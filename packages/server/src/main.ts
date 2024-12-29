@@ -1,52 +1,54 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { join } from 'path';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import * as exphbs from 'express-handlebars';
-import * as expressSession from 'express-session';
-import RedisStore from 'connect-redis';
-import { createClient } from 'redis';
-import { SessionIoAdapter } from './io.adapter';
+import http from 'node:http';
+import config from 'config';
+import cors from 'cors';
+import express from 'express';
+import request from 'request';
+import { Server } from 'socket.io';
+import { getAssetPath, loadAssets } from './assets';
+import { Gateway } from './Gateway';
 
-async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+// region config
 
-  const redisHost = process.env.REDIS_HOST ?? 'redis';
-  const redisPort = parseInt(process.env.REDIS_PORT ?? '6379');
-  const redisClient = await createClient({
-    url: `redis://${redisHost}:${redisPort}`,
-  }).connect();
+const port = config.get('deployment.port');
 
-  const session = expressSession({
-    secret: process.env.SESSION_SECRET ?? 'secret',
-    resave: false,
-    saveUninitialized: false,
-    rolling: true,
-    cookie: { maxAge: 86400000 },
-    store: new RedisStore({
-      client: redisClient,
-      prefix: 'osucad:',
-    }),
+// endregion
+
+const app = express();
+app.use(cors());
+
+app.use((req, res, next) => {
+  console.log(req.originalUrl);
+  next();
+});
+
+const server = http.createServer(app);
+const io = new Server(server, {
+  transports: ['websocket'],
+});
+
+const gateway = new Gateway(io);
+
+app.get('/assets/:id', (req, res) => {
+  const path = getAssetPath(req.params.id);
+  if (!path) {
+    res.sendStatus(404);
+    return;
+  }
+
+  res.sendFile(path);
+});
+
+app.get('/api/users/:id/avatar', async (req, res) => {
+  request(`https://a.ppy.sh/${req.params.id}?1717782343.jpeg`).pipe(res);
+});
+
+async function run() {
+  await loadAssets();
+  await gateway.init();
+
+  server.listen(port, () => {
+    console.log(`Listening on port ${port}`);
   });
-
-  app.use(session);
-  app.useWebSocketAdapter(new SessionIoAdapter(app, session));
-
-  app.useStaticAssets(join(__dirname, '..', 'public'));
-  app.setBaseViewsDir(join(__dirname, '..', 'views'));
-
-  const helpers = {
-    toJson: (context) => JSON.stringify(context),
-  };
-  const hbs = exphbs.create({
-    defaultLayout: false,
-    helpers,
-  });
-
-  app.engine('hbs', hbs.engine);
-  app.setViewEngine('hbs');
-
-  await app.listen(3000);
 }
 
-bootstrap();
+run().then();

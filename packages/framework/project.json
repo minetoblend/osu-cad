@@ -1,0 +1,23 @@
+{
+  "name": "framework",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/framework/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:swc",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/packages/framework",
+        "main": "packages/framework/src/index.ts",
+        "tsConfig": "packages/framework/tsconfig.lib.json",
+        "assets": [
+          "packages/framework/*.md"
+        ]
+      }
+    }
+  }
+}

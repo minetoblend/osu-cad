@@ -1,0 +1,32 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false,
+    "importHelpers": true,
+    "target": "ESNext",
+    "module": "esnext",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": false,
+    "allowImportingTsExtensions": false,
+    "baseUrl": ".",
+    "paths": {
+      "@osucad/common": ["packages/common/src/index.ts"],
+      "@osucad/editor": ["packages/editor/src/index.ts"],
+      "@osucad/editor/*": ["packages/editor/src/*"],
+      "@osucad/serialization": ["packages/serialization/src/index.ts"],
+      "@osucad/multiplayer": ["packages/multiplayer/src/index.ts"],
+      "osucad-framework": ["packages/framework/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

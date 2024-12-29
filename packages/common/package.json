@@ -1,49 +1,14 @@
 {
   "name": "@osucad/common",
-  "private": true,
-  "version": "1.0.0",
-  "description": "",
-  "type": "module",
-  "main": "dist/lib.cjs",
-  "types": "dist/lib.d.ts",
-  "typings": "dist/lib.d.ts",
+  "version": "0.0.1",
   "scripts": {
-    "build": "tsc --noEmit && rollup -c",
-    "dev": "rollup -c -w",
-    "lint": "eslint \"src/**/*.ts\"",
-    "lint:fix": "eslint --fix \"src/**/*.ts\""
-  },
-  "exports": {
-    ".": {
-      "import": "./dist/lib.esm.js",
-      "require": "./dist/lib.cjs"
-    },
-    "./package.json": "./package.json"
-  },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@types/msgpack": "^0.0.34",
-    "@types/pako": "^2.0.3",
-    "@types/uuid": "^9.0.7",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
-    "esbuild": "^0.17.14",
-    "eslint": "^8.42.0",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-prettier": "^5.0.0",
-    "rollup": "^3.20.2",
-    "rollup-plugin-dts": "^6.1.0",
-    "rollup-plugin-esbuild": "^5.0.0",
-    "typescript": "^5.4.2"
+    "typecheck": "tsc --noEmit -p tsconfig.lib.json --composite false"
   },
   "dependencies": {
-    "@vueuse/core": "^10.7.0",
-    "@ygoe/msgpack": "^1.0.3",
-    "osu-classes": "^3.0.1",
-    "pako": "^2.1.0",
-    "uuid": "^9.0.1",
-    "variant": "^2.1.0",
-    "vue": "^3.3.4"
-  }
+    "bezier-easing": "^2.1.0"
+  },
+  "main": "./index.js",
+  "module": "./index.mjs",
+  "typings": "./index.d.ts",
+  "private": true
 }
