@@ -143,7 +143,7 @@ class BlueprintContainer extends PooledDrawableWithLifetimeContainer<HitObjectLi
   override getDrawable(entry: HitObjectLifetimeEntry): HitObjectBlueprint {
     const drawable = this.pooledObjectProvider?.getPooledDrawableRepresentation(entry.hitObject);
     if (!drawable)
-      throw new Error('No drawable found for hit object');
+      throw new Error(`No drawable found for hitobject ${entry.hitObject.constructor.name}`);
 
     return drawable;
   }
