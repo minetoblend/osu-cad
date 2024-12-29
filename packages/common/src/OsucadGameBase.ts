@@ -29,7 +29,6 @@ export abstract class OsucadGameBase extends Game implements IResourcesProvider 
     this.#dependencies.provide(AudioMixer, this.mixer);
 
     this.config = new OsucadConfigManager();
-    this.config.load();
 
     this.#dependencies.provide(OsucadConfigManager, this.config);
 
@@ -52,6 +51,10 @@ export abstract class OsucadGameBase extends Game implements IResourcesProvider 
         }),
       }),
     );
+
+    const notificationOverlay = new NotificationOverlay();
+    super.content.add(notificationOverlay);
+    this.#dependencies.provide(NotificationOverlay, notificationOverlay);
 
     this.addParallelLoad(OsucadIcons.load());
     this.addParallelLoad(this.#loadFonts());
@@ -80,10 +83,6 @@ export abstract class OsucadGameBase extends Game implements IResourcesProvider 
     await super.loadAsync(dependencies);
 
     await Promise.all(this.#parallelLoadPromises);
-
-    const notificationOverlay = new NotificationOverlay();
-    this.add(notificationOverlay);
-    this.#dependencies.provide(NotificationOverlay, notificationOverlay);
   }
 
   readonly #parallelLoadPromises: Promise<any>[] = [];
