@@ -104,9 +104,6 @@ export class DrawableOsuHitObject<T extends OsuHitObject = OsuHitObject> extends
     return this.hitObject!.timePreempt;
   }
 
-  protected override updateComboColor() {
-  }
-
   drawableHitSound = new DrawableHitSound();
 
   protected getHitSound() {
