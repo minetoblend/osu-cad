@@ -7,6 +7,7 @@ import { Color } from 'pixi.js';
 import { IBeatmap } from '../../beatmap/IBeatmap';
 import { PoolableDrawableWithLifetime } from '../../pooling/PoolableDrawableWithLifetime';
 import { IAnimationTimeReference } from '../../skinning/IAnimationTimeReference';
+import { ISkinSource } from '../../skinning/ISkinSource';
 import { HitResult } from '../HitResult';
 import { hasComboInformation } from '../IHasComboInformation';
 import { JudgementResult } from '../JudgementResult';
@@ -198,6 +199,9 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
     this.#skinChanged();
   }
 
+  @resolved(ISkinSource)
+  protected currentSkin!: ISkinSource;
+
   #skinChanged() {
     this.updateComboColor();
   }
@@ -385,7 +389,11 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
   protected beatmap!: IBeatmap;
 
   protected updateComboColor() {
-    this.accentColor.value = this.beatmap.colors.getComboColor(this.comboIndexBindable.value);
+    console.log(this.hitObject, !hasComboInformation(this.hitObject));
+    if (!hasComboInformation(this.hitObject))
+      return;
+
+    this.accentColor.value = this.hitObject.getComboColor(this.currentSkin);
   }
 
   readonly animationStartTime = new Bindable(0);

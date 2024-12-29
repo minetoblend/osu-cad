@@ -24,7 +24,7 @@ export interface IHasComboInformation {
 }
 
 export function hasComboInformation(obj: any): obj is IHasComboInformation {
-  return obj.hasComboInformation === true;
+  return obj?.hasComboInformation === true;
 }
 
 const white = new Color(0xFFFFFF);
