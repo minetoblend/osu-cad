@@ -15,7 +15,7 @@ export abstract class OsucadScreen extends Screen {
 
   #ownedBackground: BackgroundScreen | null = null;
 
-  onEntering(e: ScreenTransitionEvent) {
+  override onEntering(e: ScreenTransitionEvent) {
     super.onEntering(e);
 
     if (this.backgroundStack) {
@@ -26,7 +26,7 @@ export abstract class OsucadScreen extends Screen {
     }
   }
 
-  onExiting(e: ScreenExitEvent): boolean {
+  override onExiting(e: ScreenExitEvent): boolean {
     if (super.onExiting(e))
       return true;
 
