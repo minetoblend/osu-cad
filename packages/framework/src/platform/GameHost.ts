@@ -8,7 +8,7 @@ import { AudioManager } from '../audio/AudioManager';
 import { setupDevtools } from '../devtools/setupDevtools';
 import { DependencyContainer } from '../di/DependencyContainer';
 import { FrameworkEnvironment } from '../FrameworkEnvironment';
-import { loadDrawable } from '../graphics/drawables/Drawable';
+import { loadDrawableFromAsync } from '../graphics/drawables/Drawable';
 import { GAME_HOST } from '../injectionTokens';
 import { autoDetectPlatformActions } from '../input/autoDetectPlatformActions';
 import { KeyboardHandler } from '../input/handlers/KeyboardHandler';
@@ -121,7 +121,7 @@ export abstract class GameHost {
     this.dependencies.provide(this.audioManager);
     this.dependencies.provide(TextInputSource, this.createTextInput());
 
-    this.#bootstrapSceneGraph(game);
+    await this.#bootstrapSceneGraph(game);
 
     container.appendChild(this.renderer.canvas);
 
@@ -175,7 +175,7 @@ export abstract class GameHost {
 
   #initializeInputHandlers() {}
 
-  #bootstrapSceneGraph(game: Game) {
+  async #bootstrapSceneGraph(game: Game) {
     // TODO: add root containers for input handling & safe area insets
     const root = new UserInputManager();
 
@@ -190,7 +190,7 @@ export abstract class GameHost {
 
     game.host = this;
 
-    loadDrawable(root, (this.clock = new FramedClock()), this.dependencies);
+    await loadDrawableFromAsync(root, (this.clock = new FramedClock()), this.dependencies, true);
 
     this.root = root;
   }
