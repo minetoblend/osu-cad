@@ -1,10 +1,18 @@
-import type { Drawable } from 'osucad-framework';
+import type { CompositeDrawableOptions, Drawable } from 'osucad-framework';
 import type { ColorSource } from 'pixi.js';
-import { Anchor, Axes, Button, Container, dependencyLoader, FastRoundedBox, resolved } from 'osucad-framework';
-import { ThemeColors } from '../editor/ThemeColors';
+import { OsucadColors } from '@osucad/common';
+import { Anchor, Axes, Button, Container, dependencyLoader, FastRoundedBox } from 'osucad-framework';
 import { OsucadSpriteText } from '../OsucadSpriteText';
 
 export class OsucadButton extends Button {
+  constructor(options: CompositeDrawableOptions = {}) {
+    super();
+
+    this.autoSizeAxes = Axes.Both;
+
+    this.with(options);
+  }
+
   #backgroundColor: ColorSource = 0x1E1E23;
 
   #backgroundHoverColor: ColorSource = 0x2E2E33;
@@ -55,8 +63,6 @@ export class OsucadButton extends Button {
 
   @dependencyLoader()
   load() {
-    this.autoSizeAxes = Axes.Both;
-
     this.addAllInternal(
       this.#background = this.createBackground(),
       this.#content = new Container({
@@ -127,13 +133,10 @@ export class OsucadButton extends Button {
     return this;
   }
 
-  @resolved(ThemeColors)
-  protected colors!: ThemeColors;
-
   primary() {
     this.schedule(() => {
-      this.backgroundColor = this.colors.primary;
-      this.backgroundHoverColor = this.colors.primaryHighlight;
+      this.backgroundColor = OsucadColors.primary;
+      this.backgroundHoverColor = OsucadColors.primaryHighlight;
       this.updateBackground();
     });
 
