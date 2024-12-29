@@ -389,7 +389,6 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
   protected beatmap!: IBeatmap;
 
   protected updateComboColor() {
-    console.log(this.hitObject, !hasComboInformation(this.hitObject));
     if (!hasComboInformation(this.hitObject))
       return;
 
