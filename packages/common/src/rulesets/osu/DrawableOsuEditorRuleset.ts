@@ -14,6 +14,7 @@ export class DrawableOsuEditorRuleset extends DrawableOsuRuleset {
       it.customJudgeProvider = new EditorJudgeProvider();
       it.showJudgements = false;
       it.hitObjectsAlwaysHit = true;
+      it.suppressHitSounds = true;
     });
   }
 }
