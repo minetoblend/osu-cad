@@ -64,7 +64,7 @@ export class DrawSizePreservingFillContainer<T extends Drawable = Drawable> exte
   }
 }
 
-export const enum DrawSizePreservationStrategy {
+export enum DrawSizePreservationStrategy {
   Minimum,
   Maximum,
   Average,
