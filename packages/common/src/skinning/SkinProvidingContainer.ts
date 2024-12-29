@@ -1,11 +1,12 @@
-import type { AudioChannel, Bindable, Drawable, ReadonlyDependencyContainer, Sample } from 'osucad-framework';
+import type { AudioChannel, Drawable, ReadonlyDependencyContainer, Sample } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
 import type { HitSample } from '../hitsounds/HitSample';
 import type { ISkin } from './ISkin';
 import type { ISkinComponentLookup } from './ISkinComponentLookup';
-import type { SkinConfig } from './SkinConfig';
+import type { SkinConfigurationLookup } from './SkinConfigurationLookup';
 import { Action, Axes, Container, DependencyContainer, dependencyLoader } from 'osucad-framework';
 import { ISkinSource } from './ISkinSource';
+import { SkinComboColorLookup } from './SkinComboColorLookup';
 
 export class SkinProvidingContainer extends Container implements ISkinSource {
   readonly sourceChanged = new Action();
@@ -129,11 +130,9 @@ export class SkinProvidingContainer extends Container implements ISkinSource {
     return this.parentSource?.getSample(channel, sampleInfo) ?? null;
   }
 
-  getConfig<T>(key: SkinConfig<T>): Bindable<T> | null {
-    // TODO: colors
-
+  getConfig<T>(lookup: SkinConfigurationLookup<T>): T | null {
     for (const { wrapped } of this.#skinSources) {
-      const sourceConfig = wrapped.getConfig(key);
+      const sourceConfig = wrapped.getConfig(lookup);
       if (sourceConfig != null)
         return sourceConfig;
     }
@@ -141,7 +140,7 @@ export class SkinProvidingContainer extends Container implements ISkinSource {
     if (!this.allowFallingBackToParent)
       return null;
 
-    return this.parentSource?.getConfig(key) ?? null;
+    return this.parentSource?.getConfig(lookup) ?? null;
   }
 
   protected setSources(sources: ISkin[]) {
@@ -212,8 +211,13 @@ class DisableableSkinSource implements ISkin {
     return null;
   }
 
-  getConfig<T>(key: SkinConfig<T>): Bindable<T> | null {
-    // TODO: ComboColors
+  getConfig<T>(key: SkinConfigurationLookup<T>): T | null {
+    if (key instanceof SkinComboColorLookup) {
+      if (this.provider.allowColorLookup)
+        return this.skin.getConfig(key) as any;
+
+      return null;
+    }
 
     if (this.provider.allowConfigurationLookup)
       return this.skin.getConfig(key);

@@ -1,6 +1,6 @@
-import type { BeatmapSkin } from '../../../editor/src/editor/BeatmapSkin';
 import type { IBeatmap } from '../beatmap/IBeatmap';
 import type { Ruleset } from '../rulesets/Ruleset';
+import type { BeatmapSkin } from './BeatmapSkin';
 import type { ISkin } from './ISkin';
 import { Axes, Container, dependencyLoader, resolved } from 'osucad-framework';
 import { BeatmapSkinProvidingContainer } from './BeatmapSkinProvidingContainer';
