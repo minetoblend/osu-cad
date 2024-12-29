@@ -1,8 +1,9 @@
+import type { IHasComboColors } from '../skinning/IHasComboColors';
 import { Color } from 'pixi.js';
 
 const white = new Color(0xFFFFFF);
 
-export class BeatmapColors {
+export class BeatmapColors implements IHasComboColors {
   #comboColors: Color[] = [];
 
   get comboColors(): ReadonlyArray<Color> {

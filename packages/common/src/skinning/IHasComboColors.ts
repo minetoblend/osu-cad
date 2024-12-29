@@ -1,5 +1,5 @@
 import type { Color } from 'pixi.js';
 
 export interface IHasComboColors {
-  readonly comboColors: Color[] | null;
+  readonly comboColors: ReadonlyArray<Color> | null;
 }
