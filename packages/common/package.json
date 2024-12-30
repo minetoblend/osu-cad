@@ -5,7 +5,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.lib.json --composite false"
   },
   "dependencies": {
-    "bezier-easing": "^2.1.0"
+    "bezier-easing": "^2.1.0",
+    "unzipit": "^1.4.3"
   },
   "main": "./index.js",
   "module": "./index.mjs",
