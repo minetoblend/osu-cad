@@ -890,9 +890,10 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
           throw new Error('Cannot load async dependencies in a non-async context');
         }
 
-        await Promise.all(asyncDependencyLoaders.map(key => (this as any)[key](this.dependencies)));
-
-        await this.loadAsync(dependencies);
+        await Promise.all([
+          this.loadAsync(dependencies),
+          ...asyncDependencyLoaders.map(key => (this as any)[key](this.dependencies)),
+        ]);
       }
 
       this.loadAsyncComplete();
@@ -904,6 +905,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     }
   }
 
+  #isLoadingFromAsync = false;
+
+  protected get isLoadingFromAsync() {
+    return this.#isLoadingFromAsync;
+  }
+
   async [LOAD_FROM_ASYNC](
     clock: IFrameBasedClock,
     dependencies: ReadonlyDependencyContainer,
@@ -912,8 +919,11 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     if (this.isDisposed) {
       return false;
     }
+    this.#isLoadingFromAsync = true;
 
     await this[LOAD](clock, dependencies, isDirectAsyncContext);
+
+    this.#isLoadingFromAsync = false;
 
     return true;
   }

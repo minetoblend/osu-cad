@@ -14,15 +14,7 @@ import { List } from '../../utils/List';
 import { SortedList } from '../../utils/SortedList';
 import { Anchor } from '../drawables';
 import { Axes } from '../drawables/Axes';
-import {
-  Drawable,
-  type DrawableOptions,
-  Invalidation,
-  InvalidationSource,
-  loadDrawable,
-  loadDrawableFromAsync,
-  LoadState,
-} from '../drawables/Drawable';
+import { Drawable, type DrawableOptions, Invalidation, InvalidationSource, loadDrawable, loadDrawableFromAsync, LoadState } from '../drawables/Drawable';
 import { LayoutMember } from '../drawables/LayoutMember';
 import { MarginPadding, type MarginPaddingOptions } from '../drawables/MarginPadding';
 import { EasingFunction } from '../transforms/EasingFunction';
@@ -185,12 +177,26 @@ export class CompositeDrawable extends Drawable {
 
   childDepthChanged = new Action<Drawable>();
 
+  readonly #childrenLoadPromises: Promise<any>[] = [];
+
   #loadChild(child: Drawable) {
     if (this.isDisposed)
       return;
-
-    loadDrawable(child, this.clock!, this.dependencies);
+    if (this.isLoadingFromAsync)
+      this.#childrenLoadPromises.push(loadDrawableFromAsync(child, this.clock!, this.dependencies, true));
+    else
+      loadDrawable(child, this.clock!, this.dependencies);
     child.parent = this;
+  }
+
+  protected override get hasAsyncLoader(): boolean {
+    return this.#childrenLoadPromises.length > 0;
+  }
+
+  protected override async loadAsync(dependencies: ReadonlyDependencyContainer): Promise<void> {
+    await super.loadAsync(dependencies);
+
+    await Promise.all(this.#childrenLoadPromises);
   }
 
   protected loadComponent<T extends Drawable>(component: T) {
