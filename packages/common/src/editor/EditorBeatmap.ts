@@ -8,12 +8,13 @@ import type { BeatmapSettings } from '../beatmap/BeatmapSettings';
 import type { HitObjectList } from '../beatmap/HitObjectList';
 import type { IBeatmap } from '../beatmap/IBeatmap';
 import type { ControlPointInfo } from '../controlPoints/ControlPointInfo';
+import type { HitObject } from '../hitObjects/HitObject';
 import { AudioManager, Bindable, Component, loadTexture, resolved } from 'osucad-framework';
 import { AudioMixer } from '../audio/AudioMixer';
 import { UpdateHandler } from '../crdt/UpdateHandler';
 import { CommandManager } from './CommandManager';
 
-export class EditorBeatmap extends Component implements IBeatmap {
+export class EditorBeatmap<T extends HitObject = HitObject> extends Component implements IBeatmap<T> {
   readonly track = new Bindable<Track>(null!);
 
   readonly backgroundTexture = new Bindable<Texture | null>(null);
@@ -21,7 +22,7 @@ export class EditorBeatmap extends Component implements IBeatmap {
   updateHandler!: UpdateHandler;
 
   constructor(
-    readonly beatmap: Beatmap,
+    readonly beatmap: Beatmap<T>,
     readonly resourceStore: IResourceStore<ArrayBuffer>,
   ) {
     super();
@@ -95,7 +96,7 @@ export class EditorBeatmap extends Component implements IBeatmap {
     return this.beatmap.controlPoints;
   }
 
-  get hitObjects(): HitObjectList {
+  get hitObjects(): HitObjectList<T> {
     return this.beatmap.hitObjects;
   }
 }

@@ -1,4 +1,5 @@
 import type { Drawable } from '../graphics/drawables/Drawable';
+import { Bindable } from '../bindables/Bindable';
 
 export class DependencyContainer implements ReadonlyDependencyContainer {
   private readonly dependencies = new Map<any, any>();
@@ -20,7 +21,12 @@ export class DependencyContainer implements ReadonlyDependencyContainer {
   resolveOptional<T>(key: InjectionToken<T>): T;
   resolveOptional<T>(key: any): T | undefined {
     if (this.dependencies.has(key)) {
-      return this.dependencies.get(key);
+      const value = this.dependencies.get(key);
+
+      if (value instanceof Bindable)
+        return value.getBoundCopy() as any;
+
+      return value;
     }
 
     return this.parent?.resolveOptional<T>(key);

@@ -1,6 +1,6 @@
-import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ScrollEvent } from 'osucad-framework';
+import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyDownEvent, ScrollEvent, UIEvent } from 'osucad-framework';
 import { EditorAction } from '@osucad/editor/editor/EditorAction';
-import { almostEquals, Axes, clamp, CompositeDrawable, PlatformAction, resolved } from 'osucad-framework';
+import { almostEquals, Axes, clamp, CompositeDrawable, Key, PlatformAction, resolved } from 'osucad-framework';
 import { IBeatmap } from '../beatmap/IBeatmap';
 import { EditorClock } from './EditorClock';
 
@@ -45,6 +45,25 @@ export class EditorNavigation extends CompositeDrawable implements IKeyBindingHa
     }
 
     return true;
+  }
+
+  override onKeyDown(e: KeyDownEvent): boolean {
+    switch (e.key) {
+      case Key.ArrowLeft:
+        this.#seek(e, -1);
+        return true;
+      case Key.ArrowRight:
+        this.#seek(e, 1);
+        return true;
+      case Key.ArrowUp:
+        this.#seekControlPoint(e, 1);
+        return true;
+      case Key.ArrowDown:
+        this.#seekControlPoint(e, -1);
+        return true;
+    }
+
+    return false;
   }
 
   togglePlayback() {
@@ -114,5 +133,30 @@ export class EditorNavigation extends CompositeDrawable implements IKeyBindingHa
       = possibleSnapValues[
         clamp(index + change, 0, possibleSnapValues.length - 1)
       ];
+  }
+
+  #seek(e: UIEvent, direction: number) {
+    const amount = e.controlPressed ? 4 : 1;
+
+    this.editorClock.seekBeats(
+      direction,
+      !this.editorClock.isRunning,
+      amount * (this.editorClock.isRunning ? 2.5 : 1),
+    );
+  }
+
+  #seekControlPoint(e: UIEvent, direction: number) {
+    const controlPointInfo = this.beatmap.controlPoints;
+
+    const controlPoint
+      = direction < 1
+        ? [...controlPointInfo.timingPoints].reverse().find(cp => cp.time < this.editorClock.currentTimeAccurate)
+        : controlPointInfo.timingPoints.find(
+          cp => cp.time > this.editorClock.currentTimeAccurate,
+        );
+
+    if (controlPoint) {
+      this.editorClock.seek(controlPoint.time);
+    }
   }
 }

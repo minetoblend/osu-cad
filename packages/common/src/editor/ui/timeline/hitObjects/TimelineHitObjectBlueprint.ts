@@ -8,6 +8,7 @@ import { UpdateHandler } from '../../../../crdt/UpdateHandler';
 import { hasComboInformation } from '../../../../hitObjects/IHasComboInformation';
 import { hasDuration } from '../../../../hitObjects/IHasDuration';
 import { hasSliderVelocity } from '../../../../hitObjects/IHasSliderVelocity';
+import { OsucadColors } from '../../../../OsucadColors';
 import { PoolableDrawableWithLifetime } from '../../../../pooling/PoolableDrawableWithLifetime';
 import { SliderRepeat } from '../../../../rulesets/osu/hitObjects/SliderRepeat';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
@@ -68,6 +69,7 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
           child: new FastRoundedBox({
             relativeSizeAxes: Axes.Both,
             cornerRadius: 100,
+            color: OsucadColors.selection,
           }),
         }),
         this.body = new TimelineHitObjectBody(this),

@@ -104,8 +104,11 @@ export class SliderSelectionBlueprint extends OsuSelectionBlueprint<Slider> {
   protected override selectionChanged(evt: HitObjectSelectionEvent) {
     super.selectionChanged(evt);
 
-    if (evt.hitObject === this.hitObject
-      && this.selected.value
+    this.scheduler.addOnce(this.#updateSliderPathVisibility, this);
+  }
+
+  #updateSliderPathVisibility() {
+    if (this.selected.value
       && this.selection.length === 1
       && this.sliderPathContainer.children.length === 0
     ) {
@@ -150,13 +153,16 @@ class SliderSelectionPathHandle extends SliderPathVisualizerHandle {
   @resolved(SliderSelectionBlueprint)
   blueprint!: SliderSelectionBlueprint;
 
-  @resolved(IDistanceSnapProvider)
-  distanceSnapProvider!: IDistanceSnapProvider;
+  @resolved(IDistanceSnapProvider, true)
+  distanceSnapProvider?: IDistanceSnapProvider;
 
   @resolved(UpdateHandler)
   updateHandler!: UpdateHandler;
 
   override onMouseDown(e: MouseDownEvent): boolean {
+    if (this.blueprint.readonly)
+      return false;
+
     if (e.button === MouseButton.Left)
       return true;
 
@@ -165,7 +171,8 @@ class SliderSelectionPathHandle extends SliderPathVisualizerHandle {
 
       if (slider.controlPoints.length > 2) {
         slider.removeControlPoint(this.index);
-        slider.expectedDistance = this.distanceSnapProvider.findSnappedDistance(slider);
+        if (this.distanceSnapProvider)
+          slider.expectedDistance = this.distanceSnapProvider.findSnappedDistance(slider);
         this.updateHandler.commit();
       }
 
@@ -176,7 +183,7 @@ class SliderSelectionPathHandle extends SliderPathVisualizerHandle {
   }
 
   override onDragStart(e: DragEvent): boolean {
-    return true;
+    return !this.blueprint.readonly;
   }
 
   override onDrag(e: DragEvent): boolean {
@@ -202,7 +209,8 @@ class SliderSelectionPathHandle extends SliderPathVisualizerHandle {
     }
 
     slider.controlPoints = path;
-    slider.expectedDistance = this.distanceSnapProvider.findSnappedDistance(slider);
+    if (this.distanceSnapProvider)
+      slider.expectedDistance = this.distanceSnapProvider.findSnappedDistance(slider);
 
     return true;
   }
@@ -216,6 +224,9 @@ class SliderSelectionPathHandle extends SliderPathVisualizerHandle {
   }
 
   override onDoubleClick(e: DoubleClickEvent): boolean {
+    if (this.blueprint.readonly)
+      return false;
+
     if (isMobile.any) {
       const slider = this.blueprint.hitObject;
       if (!slider)
@@ -228,7 +239,8 @@ class SliderSelectionPathHandle extends SliderPathVisualizerHandle {
       path[this.index] = path[this.index].withType(type);
 
       slider.controlPoints = path;
-      slider.expectedDistance = this.distanceSnapProvider.findSnappedDistance(slider);
+      if (this.distanceSnapProvider)
+        slider.expectedDistance = this.distanceSnapProvider.findSnappedDistance(slider);
       this.updateHandler.commit();
 
       return true;

@@ -1,4 +1,4 @@
-import type { ReadonlyDependencyContainer } from 'osucad-framework';
+import type { DrawableOptions, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { ColorSource } from 'pixi.js';
 import { almostEquals, Axes, Cached, resolved, Vec2 } from 'osucad-framework';
 import { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
@@ -11,10 +11,13 @@ import { TimelinePart } from './TimelinePart';
 const TICK_WIDTH = 2;
 
 export class TimelineTickDisplay extends TimelinePart<PointVisualization> {
-  constructor() {
+  constructor(options: DrawableOptions = {}) {
     super();
 
-    this.relativeSizeAxes = Axes.Both;
+    this.with({
+      relativeSizeAxes: Axes.Both,
+      ...options,
+    });
   }
 
   readonly beatDivisor = new BindableBeatDivisor();

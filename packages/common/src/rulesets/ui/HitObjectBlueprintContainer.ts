@@ -88,7 +88,7 @@ export class HitObjectBlueprintContainer<TDrawable extends HitObjectBlueprint> e
     this.addInternal(pool);
   }
 
-  getPooledDrawableRepresentation(hitObject: HitObject): HitObjectBlueprint | undefined {
+  getPooledDrawableRepresentation(hitObject: HitObject): TDrawable | undefined {
     const pool = this.#prepareHitObjectBlueprintPool(hitObject);
 
     return pool?.get((drawable) => {

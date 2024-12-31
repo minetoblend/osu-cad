@@ -47,7 +47,7 @@ export class SkinManager extends Component implements ISkinSource {
   protected async loadDefaultSkin(): Promise<Skin> {
     const skin = new DefaultSkin(this.resources);
     await skin.load();
-    console.log('load default skin');
+    console.log('loaded default skin');
     return skin;
   }
 

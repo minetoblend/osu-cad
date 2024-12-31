@@ -1,6 +1,5 @@
-import { Anchor, Axes, Box, CompositeDrawable, type ReadonlyDependencyContainer, resolved } from 'osucad-framework';
+import { Anchor, Axes, Box, CompositeDrawable, type ReadonlyDependencyContainer } from 'osucad-framework';
 import { OsucadColors } from '../../../OsucadColors';
-import { Timeline } from './Timeline';
 
 export class CurrentTimeOverlay extends CompositeDrawable {
   constructor() {
@@ -22,7 +21,4 @@ export class CurrentTimeOverlay extends CompositeDrawable {
 
     this.addInternal(this.#overlay);
   }
-
-  @resolved(Timeline)
-  timeline!: Timeline;
 }

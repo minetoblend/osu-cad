@@ -46,7 +46,7 @@ export class TimelineHitObjectHead extends CompositeDrawable {
       }),
       this.#comboNumber = new OsucadSpriteText({
         text: '1',
-        fontSize: 14,
+        fontSize: 17,
         anchor: Anchor.Center,
         origin: Anchor.Center,
       }),

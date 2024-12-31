@@ -1,10 +1,4 @@
-import {
-  Anchor,
-  Axes,
-  Container,
-  dependencyLoader,
-  MarginPadding,
-} from 'osucad-framework';
+import { Anchor, Axes, Container, dependencyLoader, MarginPadding } from 'osucad-framework';
 import { BackdropBlurFilter } from 'pixi-filters';
 import { Corner, EditorCornerPiece } from './EditorCornerPiece';
 import { OverviewTimeline } from './overviewTimeline/OverviewTimeline';

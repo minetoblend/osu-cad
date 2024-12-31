@@ -7,7 +7,7 @@ import { HitObject } from '../hitObjects/HitObject';
 export class HitObjectList<T extends HitObject = HitObject> extends SortedListCrdt<T> {
   applyDefaultsImmediately = true;
 
-  constructor(readonly beatmap: Beatmap) {
+  constructor(readonly beatmap: Beatmap<T>) {
     super(HitObject.COMPARER);
   }
 

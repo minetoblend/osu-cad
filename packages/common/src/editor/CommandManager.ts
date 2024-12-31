@@ -5,7 +5,7 @@ import { CommandContext, CommandSource } from '../commands';
 
 export class CommandManager {
   constructor(
-    readonly beatmap: EditorBeatmap,
+    readonly beatmap: EditorBeatmap<any>,
   ) {
   }
 

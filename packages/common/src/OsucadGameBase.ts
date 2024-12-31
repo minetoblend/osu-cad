@@ -79,6 +79,10 @@ export abstract class OsucadGameBase extends Game implements IResourcesProvider 
     return this.#content;
   }
 
+  protected override get hasAsyncLoader(): boolean {
+    return true;
+  }
+
   protected override async loadAsync(dependencies: ReadonlyDependencyContainer): Promise<void> {
     await super.loadAsync(dependencies);
 

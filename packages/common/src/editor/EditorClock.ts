@@ -1,6 +1,6 @@
 import type { FrameTimeInfo, IAdjustableClock, IFrameBasedClock, Track } from 'osucad-framework';
 import type { TimingPoint } from '../controlPoints/TimingPoint';
-import { almostEquals, AudioManager, Bindable, BindableBoolean, BindableNumber, clamp, Container, dependencyLoader, lerp, resolved } from 'osucad-framework';
+import { Action, almostEquals, AudioManager, Bindable, BindableBoolean, BindableNumber, clamp, Container, dependencyLoader, lerp, resolved } from 'osucad-framework';
 import { IBeatmap } from '../beatmap/IBeatmap';
 import { OsucadConfigManager } from '../config/OsucadConfigManager';
 import { OsucadSettings } from '../config/OsucadSettings';
@@ -14,6 +14,10 @@ export class EditorClock
   }
 
   animatedSeek = new BindableBoolean(true);
+
+  started = new Action();
+
+  stopped = new Action();
 
   @resolved(OsucadConfigManager)
   config!: OsucadConfigManager;
@@ -216,11 +220,13 @@ export class EditorClock
 
   start() {
     this.track.start();
+    this.started.emit();
   }
 
   stop() {
     this.track.stop();
     this.#targetTime = this.currentTimeAccurate;
+    this.stopped.emit();
   }
 
   get framesPerSecond(): number {

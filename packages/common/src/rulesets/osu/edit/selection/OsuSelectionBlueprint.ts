@@ -25,6 +25,8 @@ export class OsuSelectionBlueprint<T extends OsuHitObject = OsuHitObject> extend
     this.alwaysPresent = true;
   }
 
+  readonly = false;
+
   override get hitObject() {
     return super.hitObject as T | undefined;
   }
@@ -126,8 +128,8 @@ export class OsuSelectionBlueprint<T extends OsuHitObject = OsuHitObject> extend
     this.schedule(() => this.#didSelect = false);
   }
 
-  @resolved(IPositionSnapProvider)
-  protected snapProvider!: IPositionSnapProvider;
+  @resolved(IPositionSnapProvider, true)
+  protected snapProvider?: IPositionSnapProvider;
 
   #draggedObjects: OsuHitObject[] = [];
   #dragStartTime: number = 0;
@@ -135,6 +137,9 @@ export class OsuSelectionBlueprint<T extends OsuHitObject = OsuHitObject> extend
   #dragStartPositions: Vec2[] = [];
 
   override onDragStart(e: DragStartEvent): boolean {
+    if (this.readonly)
+      return false;
+
     if (!this.selected.value)
       this.selection.setSelection(this.hitObject!);
 
@@ -153,13 +158,15 @@ export class OsuSelectionBlueprint<T extends OsuHitObject = OsuHitObject> extend
   override onDrag(e: DragEvent): boolean {
     let delta = this.parent!.toLocalSpace(e.screenSpaceMousePosition).sub(this.parent!.toLocalSpace(e.screenSpaceMouseDownPosition));
 
-    const snapResult = IPositionSnapProvider.findClosestSnapResult(
-      this.snapProvider,
-      this.#ownDragStartPositions.map(it => it.add(delta)),
-    );
+    if (this.snapProvider) {
+      const snapResult = IPositionSnapProvider.findClosestSnapResult(
+        this.snapProvider,
+        this.#ownDragStartPositions.map(it => it.add(delta)),
+      );
 
-    if (snapResult)
-      delta = delta.add(snapResult.snapOffset);
+      if (snapResult)
+        delta = delta.add(snapResult.snapOffset);
+    }
 
     for (let i = 0; i < this.#draggedObjects.length; i++) {
       const hitObject = this.#draggedObjects[i];

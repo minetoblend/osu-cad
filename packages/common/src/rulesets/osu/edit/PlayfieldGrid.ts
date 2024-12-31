@@ -8,17 +8,18 @@ import { SnapResult } from './IPositionSnapProvider';
 
 export class PlayfieldGrid extends CompositeDrawable implements IKeyBindingHandler<EditorAction>, IPositionSnapProvider {
   constructor(
-    gridSnapEnabled: Bindable<boolean>,
+    gridSnapEnabled?: Bindable<boolean>,
   ) {
     super();
 
     this.size = new Vec2(512, 384);
-    this.gridSnapEnabled.bindTo(gridSnapEnabled);
+    if (gridSnapEnabled)
+      this.gridSnapEnabled.bindTo(gridSnapEnabled);
   }
 
   readonly gridSnapEnabled = new BindableBoolean(false);
 
-  readonly gridSizeBindable = new BindableNumber(32);
+  readonly gridSizeBindable = new BindableNumber(64);
 
   readonly graphics = new Graphics();
 
@@ -65,10 +66,14 @@ export class PlayfieldGrid extends CompositeDrawable implements IKeyBindingHandl
 
     g.beginPath();
     for (let i = size; i <= 512 - size; i += size) {
+      if (i === 256)
+        continue;
       g.moveTo(i, 0).lineTo(i, 384);
     }
 
     for (let i = size; i <= 384 - size; i += size) {
+      if (i === 192)
+        continue;
       g.moveTo(0, i).lineTo(512, i);
     }
 
@@ -77,6 +82,16 @@ export class PlayfieldGrid extends CompositeDrawable implements IKeyBindingHandl
       alpha: 0.25,
       width: 1 / this.#pixelSize,
     });
+
+    g.moveTo(256, 0)
+      .lineTo(256, 384)
+      .moveTo(0, 192)
+      .lineTo(512, 192)
+      .stroke({
+        color: 0xFFFFFF,
+        alpha: 0.25,
+        width: 2 / this.#pixelSize,
+      });
   }
 
   readonly isKeyBindingHandler = true;

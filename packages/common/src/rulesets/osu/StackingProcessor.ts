@@ -8,7 +8,6 @@ import { Spinner } from './hitObjects/Spinner';
 
 export class StackingProcessor {
   applyToBeatmap(beatmap: IBeatmap) {
-    console.log(beatmap);
     this.#calculateStacking(
       beatmap.hitObjects.items as OsuHitObject[],
       beatmap.settings.stackLeniency,

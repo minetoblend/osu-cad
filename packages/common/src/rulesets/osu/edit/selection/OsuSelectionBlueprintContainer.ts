@@ -2,8 +2,8 @@ import type { MouseDownEvent, ReadonlyDependencyContainer, Vec2 } from 'osucad-f
 import type { HitObjectSelectionEvent } from '../../../../editor/screens/compose/HitObjectSelectionManager';
 import type { HitObjectLifetimeEntry } from '../../../../hitObjects/drawables/HitObjectLifetimeEntry';
 import type { HitObject } from '../../../../hitObjects/HitObject';
-import type { HitObjectBlueprint } from '../../../ui/HitObjectBlueprint';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
+import type { OsuSelectionBlueprint } from './OsuSelectionBlueprint';
 import { MouseButton, resolved } from 'osucad-framework';
 import { HitObjectList } from '../../../../beatmap/HitObjectList';
 import { EditorClock } from '../../../../editor/EditorClock';
@@ -16,12 +16,23 @@ import { HitCircleSelectionBlueprint } from './HitCircleSelectionBlueprint';
 import { OsuSelectBox } from './OsuSelectBox';
 import { SliderSelectionBlueprint } from './SliderSelectionBlueprint';
 
-export class OsuSelectionBlueprintContainer extends HitObjectBlueprintContainer<HitObjectBlueprint> {
+export class OsuSelectionBlueprintContainer extends HitObjectBlueprintContainer<OsuSelectionBlueprint> {
   @resolved(EditorClock)
   editorClock!: EditorClock;
 
   @resolved(HitObjectSelectionManager)
   selection!: HitObjectSelectionManager;
+
+  readonly = false;
+
+  override getPooledDrawableRepresentation(hitObject: HitObject): OsuSelectionBlueprint | undefined {
+    const drawable = super.getPooledDrawableRepresentation(hitObject);
+
+    if (drawable)
+      drawable.readonly = this.readonly;
+
+    return drawable;
+  }
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);

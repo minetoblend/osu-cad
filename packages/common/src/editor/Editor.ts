@@ -58,6 +58,8 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
 
     const resources = dependencies.resolve(IResourcesProvider);
 
+    this.ruleset.postProcessBeatmap(this.beatmap);
+
     this.addAllInternal(
       new EditorNavigation(),
       new RulesetSkinProvidingContainer(

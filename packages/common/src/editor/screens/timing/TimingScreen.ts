@@ -40,6 +40,7 @@ export class TimingScreen extends EditorScreen {
 
     this.internalChildren = [
       this.selectionManager,
+
       new Container({
         relativeSizeAxes: Axes.Both,
         padding: { left: 36, right: 300 },

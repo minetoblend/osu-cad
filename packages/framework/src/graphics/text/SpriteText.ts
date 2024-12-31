@@ -59,6 +59,10 @@ export class SpriteText extends Drawable {
     this.#textBacking.invalidate();
   }
 
+  protected get textDrawNode() {
+    return this.#textDrawNode;
+  }
+
   #text: string = '';
 
   get text() {
@@ -80,9 +84,13 @@ export class SpriteText extends Drawable {
 
     if (!this.#textBacking.isValid) {
       this.#textDrawNode.text = this.#text;
-      this.width = this.#textDrawNode.width;
-      this.height = this.#textDrawNode.height;
+      this.updateSize(this.#textDrawNode.width, this.#textDrawNode.height);
       this.#textBacking.validate();
     }
+  }
+
+  protected updateSize(width: number, height: number) {
+    this.width = width;
+    this.height = height;
   }
 }

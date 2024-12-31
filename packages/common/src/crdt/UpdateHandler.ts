@@ -5,7 +5,7 @@ import { Transaction, TransactionEntry } from './Transaction';
 
 export class UpdateHandler extends Component {
   constructor(
-    readonly editorBeatmap: EditorBeatmap,
+    readonly editorBeatmap: EditorBeatmap<any>,
   ) {
     super();
   }

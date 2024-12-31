@@ -1,4 +1,5 @@
 import type { AbstractCrdt } from '../crdt/AbstractCrdt';
+import type { HitObject } from '../hitObjects/HitObject';
 import type { IBeatmap } from './IBeatmap';
 import { ControlPointInfo } from '../controlPoints/ControlPointInfo';
 import { StaticCrdt } from '../crdt/StaticCrdt';
@@ -9,7 +10,7 @@ import { BeatmapSettings } from './BeatmapSettings';
 import { HitObjectList } from './HitObjectList';
 import { BeatmapSerializer } from './serialization/BeatmapSerializer';
 
-export class Beatmap extends StaticCrdt implements IBeatmap {
+export class Beatmap<T extends HitObject = HitObject> extends StaticCrdt implements IBeatmap<T> {
   static get serializer() {
     return new BeatmapSerializer();
   }
@@ -28,7 +29,7 @@ export class Beatmap extends StaticCrdt implements IBeatmap {
     this.difficulty.invalidated.addListener(() => this.hitObjects.invalidateAll());
   }
 
-  readonly hitObjects = new HitObjectList(this);
+  readonly hitObjects = new HitObjectList<T>(this);
 
   getMaxCombo(): number {
     // TODO

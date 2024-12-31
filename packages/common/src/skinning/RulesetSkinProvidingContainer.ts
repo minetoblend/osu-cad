@@ -4,6 +4,7 @@ import type { BeatmapSkin } from './BeatmapSkin';
 import type { ISkin } from './ISkin';
 import { Axes, Container, dependencyLoader, resolved } from 'osucad-framework';
 import { BeatmapSkinProvidingContainer } from './BeatmapSkinProvidingContainer';
+import { Skin } from './Skin';
 import { SkinManager } from './SkinManager';
 import { SkinProvidingContainer } from './SkinProvidingContainer';
 
@@ -55,5 +56,18 @@ export class RulesetSkinProvidingContainer extends SkinProvidingContainer {
 
   protected override refreshSources() {
     super.refreshSources();
+
+    const sources: ISkin[] = [];
+
+    for (const source of this.parentSource!.allSources) {
+      if (source instanceof Skin)
+        sources.push(this.getRulesetTransformedSkin(source)!);
+      else
+        sources.push(source);
+    }
+
+    console.log(this.parentSource);
+
+    this.setSources(sources);
   }
 }

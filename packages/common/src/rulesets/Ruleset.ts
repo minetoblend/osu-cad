@@ -3,6 +3,7 @@ import type { IBeatmap } from '../beatmap/IBeatmap';
 import type { HitObjectComposer } from '../editor/screens/compose/HitObjectComposer';
 import type { ISkin } from '../skinning/ISkin';
 import type { SkinTransformer } from '../skinning/SkinTransformer';
+import type { BeatmapVerifier } from '../verifier/BeatmapVerifier';
 import type { DrawableRuleset } from './DrawableRuleset';
 
 export abstract class Ruleset {
@@ -28,6 +29,10 @@ export abstract class Ruleset {
 
   getDefaultKeyBindings(): IKeyBinding[] {
     return [];
+  }
+
+  createBeatmapVerifier(): BeatmapVerifier | null {
+    return null;
   }
 
   // createEditorSetupSections

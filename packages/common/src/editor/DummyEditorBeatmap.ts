@@ -1,19 +1,15 @@
-import type { AssetInfo } from '@osucad/multiplayer';
-
-import type { ReadonlyDependencyContainer } from 'osucad-framework';
+import type { IResourceStore, ReadonlyDependencyContainer } from 'osucad-framework';
 import { StableBeatmapParser } from '../beatmap';
 import { EffectPoint } from '../controlPoints';
-import audioFile from './audio.mp3?url';
-import { BeatmapAssetManager } from './BeatmapAssetManager';
+import audioUrl from './audio.mp3?url';
 import { EditorBeatmap } from './EditorBeatmap';
 
 export class DummyEditorBeatmap extends EditorBeatmap {
-  // eslint-disable-next-line ts/no-use-before-define
-  override beatmap = new StableBeatmapParser().parse(beatmapText);
-  override assets = new DummyBeatmapAssetManager();
-
   constructor() {
-    super();
+    super(
+      new StableBeatmapParser().parse(beatmapText),
+      new DummyResourceStore(),
+    );
 
     this.beatmap.settings.audioFileName = 'audio.mp3';
 
@@ -22,21 +18,42 @@ export class DummyEditorBeatmap extends EditorBeatmap {
   }
 
   protected override async loadAsync(dependencies: ReadonlyDependencyContainer): Promise<void> {
-    await this.assets.load([
-      {
-        path: 'audio.mp3',
-      },
-    ]);
+    await (this.resourceStore as DummyResourceStore).load();
 
     return super.loadAsync(dependencies);
   }
 }
 
-class DummyBeatmapAssetManager extends BeatmapAssetManager {
-  protected override async loadAsset(asset: AssetInfo): Promise<ArrayBuffer | null> {
-    if (asset.path === 'audio.mp3')
-      return fetch(audioFile).then(res => res.arrayBuffer()).catch(() => null);
+class DummyResourceStore implements IResourceStore<ArrayBuffer> {
+  #audio!: ArrayBuffer;
+
+  async load() {
+    this.#audio = await fetch(audioUrl).then(it => it.arrayBuffer());
+  }
+
+  has(name: string): boolean {
+    return name === 'audio.mp3';
+  }
+
+  get(name: string): ArrayBuffer | null {
+    if (name === 'audio.mp3')
+      return this.#audio;
     return null;
+  }
+
+  getAsync(name: string): Promise<ArrayBuffer | null> {
+    return Promise.resolve(this.get(name));
+  }
+
+  getAvailableResources(): string[] {
+    return ['audio.mp3'];
+  }
+
+  canLoad(name: string): boolean {
+    return this.has(name);
+  }
+
+  dispose(): void {
   }
 }
 

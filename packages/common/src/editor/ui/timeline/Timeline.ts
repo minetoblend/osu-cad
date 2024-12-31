@@ -1,4 +1,11 @@
-import type { MouseDownEvent, MouseUpEvent, ReadonlyDependencyContainer, ScrollEvent, Vec2 } from 'osucad-framework';
+import type {
+  ContainerOptions,
+  MouseDownEvent,
+  MouseUpEvent,
+  ReadonlyDependencyContainer,
+  ScrollEvent,
+  Vec2,
+} from 'osucad-framework';
 import { Axes, clamp, EasingFunction, MouseButton, provide, resolved } from 'osucad-framework';
 import { EditorClock } from '../../EditorClock';
 import { ZoomableScrollContainer } from './ZoomableScrollContainer';
@@ -27,8 +34,10 @@ export class Timeline extends ZoomableScrollContainer {
 
   #trackLengthForZoom = 0;
 
-  constructor() {
+  constructor(options: ContainerOptions = {}) {
     super();
+
+    this.with(options);
 
     this.relativeSizeAxes = Axes.Both;
     this.zoomDuration = 200;

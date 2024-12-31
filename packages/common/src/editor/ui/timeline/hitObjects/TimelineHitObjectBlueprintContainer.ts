@@ -1,3 +1,4 @@
+import type { Drawable, DrawableOptions, List, Vec2 } from 'osucad-framework';
 import type { HitObject } from '../../../../hitObjects/HitObject';
 import { Axes, Bindable, dependencyLoader, DrawablePool, LoadState, resolved } from 'osucad-framework';
 import { HitObjectList } from '../../../../beatmap/HitObjectList';
@@ -5,12 +6,21 @@ import { HitObjectLifetimeEntry } from '../../../../hitObjects/drawables/HitObje
 import { TimelineBlueprintContainer } from '../TimelineBlueprintContainer';
 import { TimelineHitObjectBlueprint } from './TimelineHitObjectBlueprint';
 
+export interface TimelineHitObjectBlueprintContainerOptions extends DrawableOptions {
+  readonly?: boolean;
+}
+
 export class TimelineHitObjectBlueprintContainer extends TimelineBlueprintContainer<HitObjectLifetimeEntry, TimelineHitObjectBlueprint> {
-  constructor() {
+  constructor(options: TimelineHitObjectBlueprintContainerOptions = {}) {
     super();
 
-    this.relativeSizeAxes = Axes.Both;
+    this.with({
+      relativeSizeAxes: Axes.Both,
+      ...options,
+    });
   }
+
+  readonly = false;
 
   #startTimeMap = new Map<TimelineHitObjectBlueprint, Bindable<number>>();
   #entryMap = new Map<HitObject, HitObjectLifetimeEntry>();
@@ -97,5 +107,19 @@ export class TimelineHitObjectBlueprintContainer extends TimelineBlueprintContai
 
     this.hitObjects.added.removeListener(this.addHitObject, this);
     this.hitObjects.removed.removeListener(this.removeHitObject, this);
+  }
+
+  override buildPositionalInputQueue(screenSpacePos: Vec2, queue: List<Drawable>): boolean {
+    if (this.readonly)
+      return false;
+
+    return super.buildPositionalInputQueue(screenSpacePos, queue);
+  }
+
+  override buildNonPositionalInputQueue(queue: List<Drawable>, allowBlocking?: boolean): boolean {
+    if (this.readonly)
+      return false;
+
+    return super.buildNonPositionalInputQueue(queue, allowBlocking);
   }
 }
