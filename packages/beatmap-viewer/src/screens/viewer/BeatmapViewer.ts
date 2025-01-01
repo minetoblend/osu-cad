@@ -1,6 +1,7 @@
 import type { Beatmap, EditorScreenManager } from '@osucad/common';
+import type { KeyDownEvent } from 'osucad-framework';
 import { Editor, EditorBeatmap } from '@osucad/common';
-import { MenuItem } from 'osucad-framework';
+import { Key, MenuItem } from 'osucad-framework';
 import { ViewportScreen } from './screens/viewport/ViewportScreen';
 
 export class BeatmapViewer extends Editor {
@@ -50,5 +51,14 @@ export class BeatmapViewer extends Editor {
 
     this.exit();
     this.screenStack.push(new BeatmapViewer(editorBeatmap));
+  }
+
+  onKeyDown(e: KeyDownEvent): boolean {
+    if (e.key === Key.Escape) {
+      this.exit();
+      return true;
+    }
+
+    return false;
   }
 }
