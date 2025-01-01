@@ -66,8 +66,6 @@ export class RulesetSkinProvidingContainer extends SkinProvidingContainer {
         sources.push(source);
     }
 
-    console.log(this.parentSource);
-
     this.setSources(sources);
   }
 }
