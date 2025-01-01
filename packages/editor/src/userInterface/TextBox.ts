@@ -60,6 +60,13 @@ export class TextBox extends TabbableContainer implements IKeyBindingHandler<Pla
       case PlatformAction.SelectAll:
         this.selectAll();
         return true;
+      case PlatformAction.Copy:
+        this.schedule(() => {
+          navigator.clipboard
+            .writeText(this.text.slice(this.cursor.rangeLeft, this.cursor.rangeRight))
+            .then();
+        });
+        return true;
     }
 
     return false;

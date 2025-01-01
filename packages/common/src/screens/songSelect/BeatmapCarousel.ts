@@ -40,6 +40,8 @@ export class BeatmapCarousel extends CompositeDrawable {
 
   bleedBottom = 0;
 
+  scrollOffset = 0;
+
   #scroll!: CarouselScrollContainer;
 
   mapsets: CarouselMapset[] = [];
@@ -267,7 +269,7 @@ export class BeatmapCarousel extends CompositeDrawable {
     for (const set of this.mapsets) {
       if (!set.visible.value) {
         if (set.selected.value) {
-          this.#scrollTarget = currentY + CarouselMapset.HEIGHT - this.#visibleHalfHeight + this.bleedTop;
+          this.#scrollTarget = currentY + CarouselMapset.HEIGHT - this.#visibleHalfHeight + this.bleedTop + this.scrollOffset + this.scrollOffset;
         }
 
         continue;
@@ -277,7 +279,7 @@ export class BeatmapCarousel extends CompositeDrawable {
       set.carouselYPosition = currentY;
 
       if (set.selected.value) {
-        this.#scrollTarget = set.carouselYPosition + CarouselMapset.HEIGHT - this.#visibleHalfHeight + this.bleedTop;
+        this.#scrollTarget = set.carouselYPosition + CarouselMapset.HEIGHT - this.#visibleHalfHeight + this.bleedTop + this.scrollOffset;
 
         for (const b of set.beatmaps) {
           if (!b.visible.value)

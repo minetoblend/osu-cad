@@ -1,21 +1,17 @@
-import type { Beatmap, CarouselBeatmapInfo, CarouselBeatmapSetInfo } from '@osucad/common';
-import type { Drawable, ReadonlyDependencyContainer, ScreenTransitionEvent } from 'osucad-framework';
+import type { BackgroundScreen, Beatmap, CarouselBeatmapInfo, CarouselBeatmapSetInfo } from '@osucad/common';
+import type { Drawable, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { BeatmapSetResponse, BeatmapSetResponseBeatmap } from '../../mirrors/BeatmapSetResponse';
 import { BeatmapCarousel, EditorBeatmap, OsucadScreen } from '@osucad/common';
 import { SizeLimitedContainer } from '@osucad/editor/drawables/SizeLimitedContainer';
-import { Anchor, Axes, Bindable, Box, Container, FillDirection, FillFlowContainer, loadTexture, Vec2 } from 'osucad-framework';
+import { Anchor, Axes, Bindable, Container, FillDirection, FillFlowContainer, loadTexture, Vec2 } from 'osucad-framework';
 import { CatboyMirror } from '../../mirrors/CatboyMirror';
 import { LoadingScreen } from '../LoadingScreen';
+import { HomeScreenBackground } from './HomeScreenBackground';
 import { SearchHero } from './SearchHero';
 
 export class HomeScreen extends OsucadScreen {
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
-
-    this.addInternal(this.#background = new Box({
-      relativeSizeAxes: Axes.Both,
-      color: 0x121216,
-    }));
 
     this.addInternal(new Container({
       relativeSizeAxes: Axes.Both,
@@ -23,7 +19,10 @@ export class HomeScreen extends OsucadScreen {
       padding: { top: 100 },
       anchor: Anchor.TopRight,
       origin: Anchor.TopRight,
-      child: new BeatmapCarousel(this.beatmaps),
+      child: new BeatmapCarousel(this.beatmaps).adjust((it) => {
+        it.scrollOffset = 100;
+        it.selectionChanged.addListener(beatmap => this.selectedBeatmap.value = beatmap);
+      }),
     }));
 
     this.addInternal(
@@ -43,13 +42,6 @@ export class HomeScreen extends OsucadScreen {
             children: [
               this.#hero = new SearchHero()
                 .adjust(it => it.search.addListener(this.search, this)),
-              // this.#resultContainer = new FillFlowContainer({
-              //   autoSizeAxes: Axes.Both,
-              //   maximumSize: new Vec2(800, Number.MAX_VALUE),
-              //   spacing: new Vec2(10),
-              //   anchor: Anchor.TopCenter,
-              //   origin: Anchor.TopCenter,
-              // }),
             ],
           }),
         ],
@@ -57,22 +49,17 @@ export class HomeScreen extends OsucadScreen {
     );
   }
 
-  readonly beatmaps = new Bindable<CarouselBeatmapSetInfo[]>([]);
+  selectedBeatmap = new Bindable<CarouselBeatmapInfo | null>(null);
 
-  override onEntering(e: ScreenTransitionEvent) {
-    super.onEntering(e);
-
-    this.#background
-      .fadeOut()
-      .delay(500)
-      .fadeIn(500);
+  createBackground(): BackgroundScreen | null {
+    return new HomeScreenBackground(this.selectedBeatmap.getBoundCopy());
   }
+
+  readonly beatmaps = new Bindable<CarouselBeatmapSetInfo[]>([]);
 
   #background!: Drawable;
 
   #hero!: SearchHero;
-
-  #resultContainer!: Container;
 
   async search(term: string) {
     term = term.trim();
@@ -90,47 +77,51 @@ export class HomeScreen extends OsucadScreen {
   protected createMapsetInfo(mapset: BeatmapSetResponse): CarouselBeatmapSetInfo {
     const { artist, title, creator, id, beatmaps } = mapset;
 
-    return {
+    const carouselMapsetInfo: CarouselBeatmapSetInfo = {
       id: id.toString(),
       artist,
       title,
       authorName: creator,
-      beatmaps:
-        mapset.beatmaps.map<CarouselBeatmapInfo>((beatmap) => {
-          const { id, version, difficulty_rating } = beatmap;
-
-          return {
-            id: id.toString(),
-            artist,
-            title,
-            audioUrl: '',
-            authorName: creator,
-            difficultyName: version,
-            backgroundPath: async () => null,
-            lastEdited: null,
-            loadThumbnailLarge: async () => null,
-            loadThumbnailSmall: async () => null,
-            mapset: null,
-            previewPoint: null,
-            setId: mapset.id.toString(),
-            starRating: difficulty_rating,
-            select: async () => {
-              this.openEditor(mapset, beatmap);
-            },
-          };
-        }),
+      beatmaps: [],
       loadThumbnailLarge: async () => {
         const url = mapset.covers['slimcover@2x']
           .replace('https://assets.ppy.sh/', 'http://localhost:8081/');
 
-        console.log(url);
-
         return loadTexture(url);
       },
       loadThumbnailSmall: async () => {
-        return null;
+        const url = mapset.covers['cover@2x']
+          .replace('https://assets.ppy.sh/', 'http://localhost:8081/');
+
+        return loadTexture(url);
       },
     };
+
+    carouselMapsetInfo.beatmaps = mapset.beatmaps.map<CarouselBeatmapInfo>((beatmap) => {
+      const { id, version, difficulty_rating } = beatmap;
+
+      return {
+        id: id.toString(),
+        artist,
+        title,
+        audioUrl: '',
+        authorName: creator,
+        difficultyName: version,
+        backgroundPath: async () => null,
+        lastEdited: null,
+        loadThumbnailLarge: async () => carouselMapsetInfo.loadThumbnailLarge(),
+        loadThumbnailSmall: async () => carouselMapsetInfo.loadThumbnailSmall(),
+        mapset: carouselMapsetInfo,
+        previewPoint: null,
+        setId: mapset.id.toString(),
+        starRating: difficulty_rating,
+        select: async () => {
+          this.openEditor(mapset, beatmap);
+        },
+      };
+    });
+
+    return carouselMapsetInfo;
   }
 
   async openEditor(mapset: BeatmapSetResponse, beatmap: BeatmapSetResponseBeatmap) {

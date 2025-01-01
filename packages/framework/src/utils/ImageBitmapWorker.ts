@@ -19,7 +19,7 @@ async function getImageData(src: string | ArrayBuffer) {
     return new Blob([src]);
 
   const response = await fetch(src, {
-    cache: 'no-cache',
+    // cache: 'no-cache',
   });
 
   if (!response.ok) {
@@ -30,7 +30,7 @@ async function getImageData(src: string | ArrayBuffer) {
 }
 
 async function loadImageBitmap(src: string | ArrayBuffer, alphaMode?: string, options?: LoadImageBitmapOptions) {
-  const imageBlob = await getImageData(src)
+  const imageBlob = await getImageData(src);
 
   const imageBitmap = alphaMode === 'premultiplied-alpha'
     ? createImageBitmap(imageBlob, { premultiplyAlpha: 'none' })
@@ -69,7 +69,8 @@ async function resizeImageBitmap(imageBitmap: ImageBitmap, width: number, height
     const y = (height - h) / 2;
 
     ctx.drawImage(imageBitmap, x, y, w, h);
-  } else if (scaleMode === 'fill') {
+  }
+  else if (scaleMode === 'fill') {
     const ratio = Math.min(imageBitmap.width / width, imageBitmap.height / height);
 
     if (ratio <= 1) {
@@ -83,7 +84,8 @@ async function resizeImageBitmap(imageBitmap: ImageBitmap, width: number, height
     const y = (height - h) / 2;
 
     ctx.drawImage(imageBitmap, x, y, w, h);
-  } else {
+  }
+  else {
     ctx.drawImage(imageBitmap, 0, 0, width, height);
   }
 
@@ -105,7 +107,8 @@ globalThis.onmessage = async (event: MessageEvent<MessageData>) => {
       id: event.data.id,
       // @ts-expect-error - we are in a web worker and typescript is not smart enough to figure that out
     }, [imageBitmap]);
-  } catch (e) {
+  }
+  catch (e) {
     globalThis.postMessage({
       error: e,
       uuid: event.data.uuid,

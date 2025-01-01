@@ -279,7 +279,7 @@ class MapsetBackground extends Container {
 
     this.carouselLoadQueue.add({
       load: async () => {
-        const texture = await this.mapset.loadThumbnailLarge();
+        const texture = await this.mapset.loadThumbnailSmall();
         if (!texture)
           return;
 

@@ -31,6 +31,7 @@ export class SearchHero extends FillFlowContainer {
           child: this.#logo = new HomeScreenIntroSequence().with({
             anchor: Anchor.Center,
             origin: Anchor.Center,
+            scale: 0.75,
           }),
         }),
       }),
@@ -82,6 +83,7 @@ export class SearchHero extends FillFlowContainer {
     this.#logoContainer.resizeHeightTo(60, 500, EasingFunction.OutExpo);
     this.#logoContainer.resizeWidthTo(0.2, 200, EasingFunction.OutExpo);
     this.#textBoxContainer.resizeWidthTo(0.8);
+    this.#logo.scaleTo(1, 500, EasingFunction.OutExpo);
   }
 
   protected loadComplete() {
