@@ -1,7 +1,8 @@
 import type { DependencyContainer, ReadonlyDependencyContainer } from 'osucad-framework';
-import { DummyEditorBeatmap, ISkinSource, OsucadGameBase, OsucadScreenStack, OsuRuleset, RulesetStore, SkinManager } from '@osucad/common';
+import { ISkinSource, OsucadGameBase, OsucadScreenStack, OsuRuleset, RulesetStore, SkinManager } from '@osucad/common';
+import { UISamples } from '@osucad/editor/UISamples';
 import { RenderTarget } from 'pixi.js';
-import { BeatmapViewer } from './screens/viewer/BeatmapViewer';
+import { HomeScreen } from './screens/home/HomeScreen';
 
 RenderTarget.defaultOptions.depth = true;
 RenderTarget.defaultOptions.stencil = true;
@@ -41,13 +42,32 @@ export class BeatmapViewerGame extends OsucadGameBase {
   protected override async loadAsync(dependencies: ReadonlyDependencyContainer): Promise<void> {
     await super.loadAsync(dependencies);
 
-    await this.loadComponentAsync(this.#skinManager);
+    const samples = new UISamples(this.audioManager, this.mixer.userInterface);
+
+    this.#dependencies.provide(samples);
+
+    await Promise.all([
+      samples.load(),
+      this.loadComponentAsync(this.#skinManager),
+    ]);
     this.add(this.#skinManager);
   }
 
   protected loadComplete() {
     super.loadComplete();
 
-    this.#screenStack.push(new BeatmapViewer(new DummyEditorBeatmap()));
+    // new CatboyMirror().loadBeatmapSet(1687126).then((mapset) => {
+    //   console.log(mapset);
+    //
+    //   const editorBeatmap = new EditorBeatmap(
+    //     mapset.beatmaps[2],
+    //     mapset.fileStore,
+    //     mapset,
+    //   );
+    //
+    //   this.#screenStack.push(new BeatmapViewer(editorBeatmap));
+    // });
+
+    this.#screenStack.push(new HomeScreen());
   }
 }

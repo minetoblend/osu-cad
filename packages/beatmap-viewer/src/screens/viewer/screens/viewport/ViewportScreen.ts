@@ -32,7 +32,7 @@ export class ViewportScreen extends EditorScreen {
         padding: { top: timelineHeight },
         child: new Container({
           relativeSizeAxes: Axes.Both,
-          padding: 40,
+          padding: 20,
           child: this.#drawableRuleset = this.ruleset.createDrawableEditorRulesetWith(this.beatmap),
         }),
       }),
