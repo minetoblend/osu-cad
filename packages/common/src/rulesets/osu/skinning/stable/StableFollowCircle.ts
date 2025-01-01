@@ -47,7 +47,7 @@ export class StableFollowCircle extends CompositeDrawable {
     this.applyTransformsAt(-Number.MAX_VALUE);
     this.clearTransformsAfter(-Number.MAX_VALUE);
 
-    if (hitObject.path.controlPoints.length === 0 || hitObject.expectedDistance >= 0) {
+    if (hitObject.path.controlPoints.length === 0 || hitObject.expectedDistance <= 0) {
       this.fadeOut();
       return;
     }
@@ -69,6 +69,10 @@ export class StableFollowCircle extends CompositeDrawable {
     this.absoluteSequence(hitObject.endTime, () => {
       this.scaleTo(1.6, 200, EasingFunction.Out).fadeOut(200, EasingFunction.In);
     });
+  }
+
+  override update() {
+    super.update();
   }
 
   override dispose(isDisposing: boolean = true) {
