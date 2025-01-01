@@ -5,5 +5,6 @@ export * from './Editor';
 export * from './EditorBeatmap';
 export * from './EditorClock';
 export * from './EditorNavigation';
+export * from './HitsoundPlayer';
 export * from './screens';
 export * from './ui';
