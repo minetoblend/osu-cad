@@ -42,6 +42,9 @@ export class EditorScreenSelect extends Container {
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
+    if (this.screenManager.entries.length < 2)
+      return;
+
     this.addAllInternal(
       this.#content,
       new Container({
@@ -55,9 +58,8 @@ export class EditorScreenSelect extends Container {
       }),
     );
 
-    for (const screenType of this.screenManager.entries) {
+    for (const screenType of this.screenManager.entries)
       this.add(new ScreenSelectButton(screenType));
-    }
 
     this.updateSubTree();
   }
