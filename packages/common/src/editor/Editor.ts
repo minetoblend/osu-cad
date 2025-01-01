@@ -1,4 +1,5 @@
 import type { DependencyContainer, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, MenuItem, ReadonlyDependencyContainer, ScreenTransitionEvent } from 'osucad-framework';
+import type { BackgroundScreen } from '../screens/BackgroundScreen';
 import { asyncDependencyLoader, PlatformAction, provide } from 'osucad-framework';
 import { HitObjectList } from '../beatmap/HitObjectList';
 import { IBeatmap } from '../beatmap/IBeatmap';
@@ -12,6 +13,7 @@ import { OsucadScreen } from '../screens/OsucadScreen';
 import { BeatmapSkin } from '../skinning/BeatmapSkin';
 import { RulesetSkinProvidingContainer } from '../skinning/RulesetSkinProvidingContainer';
 import { CommandManager } from './CommandManager';
+import { EditorBackground } from './EditorBackground';
 import { EditorBeatmap } from './EditorBeatmap';
 import { EditorClock } from './EditorClock';
 import { EditorLayout } from './EditorLayout';
@@ -135,6 +137,10 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
 
   createMenuItems(): MenuItem[] {
     return [];
+  }
+
+  override createBackground(): BackgroundScreen | null {
+    return new EditorBackground(this.editorBeatmap);
   }
 
   override update() {

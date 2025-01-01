@@ -11,10 +11,12 @@ import { HitObjectSelectionManager } from '../../../../editor/screens/compose/Hi
 import { HitObjectBlueprintContainer } from '../../../ui/HitObjectBlueprintContainer';
 import { HitCircle } from '../../hitObjects/HitCircle';
 import { Slider } from '../../hitObjects/Slider';
+import { Spinner } from '../../hitObjects/Spinner';
 import { OsuHitObjectLifetimeEntry } from '../../ui/OsuPlayfield';
 import { HitCircleSelectionBlueprint } from './HitCircleSelectionBlueprint';
 import { OsuSelectBox } from './OsuSelectBox';
 import { SliderSelectionBlueprint } from './SliderSelectionBlueprint';
+import { SpinnerSelectionBlueprint } from './SpinnerSelectionBlueprint';
 
 export class OsuSelectionBlueprintContainer extends HitObjectBlueprintContainer<OsuSelectionBlueprint> {
   @resolved(EditorClock)
@@ -42,6 +44,7 @@ export class OsuSelectionBlueprintContainer extends HitObjectBlueprintContainer<
 
     this.registerPool(HitCircle, HitCircleSelectionBlueprint, 20, 40);
     this.registerPool(Slider, SliderSelectionBlueprint, 20, 40);
+    this.registerPool(Spinner, SpinnerSelectionBlueprint, 2, 10);
 
     this.addInternal(new OsuSelectBox());
   }

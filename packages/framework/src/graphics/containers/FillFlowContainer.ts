@@ -12,7 +12,7 @@ import { FlowContainer } from './FlowContainer';
 export interface FillFlowContainerOptions<T extends Drawable = Drawable> extends ContainerOptions<T> {
   direction?: FillDirection;
   spacing?: IVec2;
-  maxSize?: IVec2;
+  maximumSize?: IVec2;
   layoutDuration?: number;
   layoutEasing?: EasingFunction;
 }

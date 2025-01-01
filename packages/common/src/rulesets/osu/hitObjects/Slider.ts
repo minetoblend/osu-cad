@@ -168,7 +168,7 @@ export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepe
   protected override applyDefaultsToSelf(controlPointInfo: ControlPointInfo, difficulty: BeatmapDifficultyInfo) {
     super.applyDefaultsToSelf(controlPointInfo, difficulty);
 
-    const timingPoint = controlPointInfo.timingPointAt(this.startTime);
+    const timingPoint = controlPointInfo.timingPointAt(this.startTime + 1);
 
     this.#baseVelocity = Slider.base_scoring_distance * difficulty.sliderMultiplier / timingPoint.beatLength;
 

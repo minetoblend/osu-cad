@@ -2,8 +2,8 @@ import type { Beatmap } from '../Beatmap';
 import type { FileStore } from '../io/FileStore';
 import type { IFile } from '../io/IFile';
 
-export abstract class WorkingBeatmapSet {
-  protected constructor(
+export class WorkingBeatmapSet {
+  constructor(
     readonly beatmaps: ReadonlyArray<Beatmap>,
     readonly fileStore: FileStore,
   ) {

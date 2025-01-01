@@ -4,4 +4,5 @@ export * from './EditorScreen';
 export * from './EditorScreenContainer';
 export * from './EditorScreenManager';
 export * from './metadata';
+export * from './timing';
 export * from './verify';

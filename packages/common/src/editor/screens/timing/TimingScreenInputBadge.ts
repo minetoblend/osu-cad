@@ -1,9 +1,9 @@
 import type { ClickEvent, Drawable, KeyDownEvent } from 'osucad-framework';
 import type { ColorSource } from 'pixi.js';
 import { Anchor, Axes, dependencyLoader, EmptyDrawable, FillDirection, FillFlowContainer, Key, MarginPadding, resolved } from 'osucad-framework';
-import { TextBox } from '../../../../../editor/src/userInterface/TextBox';
 import { UpdateHandler } from '../../../crdt/UpdateHandler';
 import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
+import { TextBox } from '../../../userInterface/TextBox';
 import { LayeredTimeline } from '../../ui/timeline/LayeredTimeline';
 import { TimingScreenBadge } from './TimingScreenBadge';
 
@@ -57,6 +57,8 @@ export abstract class TimingScreenInputBadge extends TimingScreenBadge {
       this.onCommit(text);
       this.updateHandler.commit();
     });
+
+    content.childBecameAlive.addListener(console.log);
   }
 
   protected abstract onCommit(text: string): void;
@@ -70,6 +72,8 @@ export abstract class TimingScreenInputBadge extends TimingScreenBadge {
 class TimingScreenInputBadgeTextBox extends TextBox {
   constructor() {
     super();
+
+    this.alwaysPresent = true;
   }
 
   @dependencyLoader()
@@ -83,6 +87,14 @@ class TimingScreenInputBadgeTextBox extends TextBox {
     return new OsucadSpriteText({
       fontSize: 12,
     });
+  }
+
+  override get text(): string {
+    return super.text;
+  }
+
+  override set text(value: string) {
+    super.text = value;
   }
 
   protected override createBackground(): Drawable {

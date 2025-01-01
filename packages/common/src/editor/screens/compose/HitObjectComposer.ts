@@ -68,7 +68,6 @@ export abstract class HitObjectComposer extends CompositeDrawable {
         children: [
           new Container({
             relativeSizeAxes: Axes.Both,
-            padding: { bottom: 30 },
             child: this.#drawableRuleset = this.ruleset.createDrawableEditorRulesetWith(this.beatmap),
           }),
           this.settingsContainer = new HitObjectComposerSettingsContainer(),
