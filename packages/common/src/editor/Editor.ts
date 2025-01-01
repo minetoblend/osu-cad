@@ -1,5 +1,5 @@
 import type { DependencyContainer, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer, ScreenTransitionEvent } from 'osucad-framework';
-import { asyncDependencyLoader, PlatformAction, provide } from 'osucad-framework';
+import { asyncDependencyLoader, PlatformAction } from 'osucad-framework';
 import { HitObjectList } from '../beatmap/HitObjectList';
 import { IBeatmap } from '../beatmap/IBeatmap';
 import { BeatmapComboProcessor } from '../beatmap/processors/BeatmapComboProcessor';
@@ -7,7 +7,6 @@ import { ControlPointInfo } from '../controlPoints/ControlPointInfo';
 import { UpdateHandler } from '../crdt/UpdateHandler';
 import { PlayfieldClock } from '../gameplay/PlayfieldClock';
 import { IResourcesProvider } from '../io/IResourcesProvider';
-import { OsuRuleset } from '../rulesets';
 import { Ruleset } from '../rulesets/Ruleset';
 import { OsucadScreen } from '../screens/OsucadScreen';
 import { BeatmapSkin } from '../skinning/BeatmapSkin';
@@ -31,15 +30,21 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
 
   readonly beatmap: IBeatmap;
 
-  // TODO: get the ruleset from the beatmap
-  @provide(Ruleset)
-  readonly ruleset = new OsuRuleset();
-
   #screenManager = new EditorScreenManager();
 
   @asyncDependencyLoader()
   async [Symbol('loadAsync')](dependencies: ReadonlyDependencyContainer) {
     await this.loadComponentAsync(this.editorBeatmap);
+
+    const ruleset = this.editorBeatmap.ruleset;
+    if (!ruleset) {
+      // TODO: display message
+      this.exit();
+      return;
+    }
+
+    this.#dependencies.provide(Ruleset, ruleset);
+
     this.addInternal(this.editorBeatmap);
 
     this.#dependencies.provide(EditorBeatmap, this.editorBeatmap);
@@ -58,14 +63,14 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
 
     const resources = dependencies.resolve(IResourcesProvider);
 
-    this.ruleset.postProcessBeatmap(this.beatmap);
+    ruleset.postProcessBeatmap(this.beatmap);
 
     this.addAllInternal(
       new EditorNavigation(),
       new RulesetSkinProvidingContainer(
-        this.ruleset,
+        ruleset,
         this.beatmap,
-        new BeatmapSkin(resources, this.editorBeatmap, this.editorBeatmap.resourceStore),
+        new BeatmapSkin(resources, this.editorBeatmap, this.editorBeatmap.fileStore),
       ).with({
         child: new EditorLayout(),
       }),
