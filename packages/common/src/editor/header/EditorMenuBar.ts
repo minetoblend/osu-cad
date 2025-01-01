@@ -3,6 +3,7 @@ import { Anchor, Axes, Color, Container, dependencyLoader, Direction, DrawableMe
 import { OsucadSpriteText } from '../../drawables/OsucadSpriteText';
 import { OsucadColors } from '../../OsucadColors';
 import { CommandManager } from '../CommandManager';
+import { Editor } from '../Editor';
 import { EditorMenu } from './EditorMenu';
 
 export class EditorMenubar extends EditorMenu implements IKeyBindingHandler<PlatformAction> {
@@ -20,13 +21,11 @@ export class EditorMenubar extends EditorMenu implements IKeyBindingHandler<Plat
     this.createMenuItems();
   }
 
+  @resolved(() => Editor)
+  editor!: Editor;
+
   createMenuItems() {
-    this.items = [
-      this.createFileMenu(),
-      this.createEditMenu(),
-      this.createViewMenu(),
-      this.createHelpMenu(),
-    ].filter(it => it.items.length > 0);
+    this.items = this.editor.createMenuItems();
   }
 
   protected createFileMenu(): MenuItem {

@@ -1,5 +1,5 @@
-import type { DependencyContainer, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer, ScreenTransitionEvent } from 'osucad-framework';
-import { asyncDependencyLoader, PlatformAction } from 'osucad-framework';
+import type { DependencyContainer, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, MenuItem, ReadonlyDependencyContainer, ScreenTransitionEvent } from 'osucad-framework';
+import { asyncDependencyLoader, PlatformAction, provide } from 'osucad-framework';
 import { HitObjectList } from '../beatmap/HitObjectList';
 import { IBeatmap } from '../beatmap/IBeatmap';
 import { BeatmapComboProcessor } from '../beatmap/processors/BeatmapComboProcessor';
@@ -21,6 +21,7 @@ import { EditorScreenManager } from './screens/EditorScreenManager';
 import { SetupScreen } from './screens/setup/SetupScreen';
 import { TimingScreen } from './screens/timing/TimingScreen';
 
+@provide(Editor)
 export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformAction> {
   constructor(readonly editorBeatmap: EditorBeatmap) {
     super();
@@ -130,6 +131,10 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
 
   redo() {
     this.editorBeatmap.updateHandler.redo();
+  }
+
+  createMenuItems(): MenuItem[] {
+    return [];
   }
 
   override update() {

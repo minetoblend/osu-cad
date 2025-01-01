@@ -1,11 +1,10 @@
-import type { IBeatmap } from '../IBeatmap';
-import type { FileStore } from './FileStore';
-import type { IFile } from './IFile';
-import type { IFileStore } from './IFileStore';
+import type { Beatmap } from '../Beatmap';
+import type { FileStore } from '../io/FileStore';
+import type { IFile } from '../io/IFile';
 
-export abstract class WorkingBeatmapSet implements IFileStore {
+export abstract class WorkingBeatmapSet {
   protected constructor(
-    readonly beatmaps: ReadonlyArray<IBeatmap>,
+    readonly beatmaps: ReadonlyArray<Beatmap>,
     readonly fileStore: FileStore,
   ) {
   }
