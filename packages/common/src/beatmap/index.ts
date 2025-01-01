@@ -8,3 +8,4 @@ export * from './HitObjectList';
 export * from './IBeatmap';
 export * from './io';
 export * from './serialization';
+export * from './workingBeatmap';
