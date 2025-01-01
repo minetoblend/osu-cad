@@ -58,4 +58,9 @@ export class HitObjectLifetimeEntry extends LifetimeEntry {
   protected setInitialLifetime() {
     this.lifetimeStart = this.hitObject.startTime - this.initialLifetimeOffset;
   };
+
+  dispose() {
+    this.hitObject.defaultsApplied.removeListener(this.setInitialLifetime, this);
+    this.#startTimeBindable.unbindAll();
+  }
 }
