@@ -1,8 +1,11 @@
-import type { IBeatmap, IResourcesProvider, SkinInfo } from '@osucad/common';
 import type { IResourceStore } from 'osucad-framework';
+import type { IBeatmap } from '../beatmap/IBeatmap';
+import type { IResourcesProvider } from '../io/IResourcesProvider';
 import type { SkinConfigurationLookup } from './SkinConfigurationLookup';
-import { SkinConfiguration, StableSkin } from '@osucad/common';
+import type { SkinInfo } from './SkinInfo';
 import { SkinComboColorLookup } from './SkinComboColorLookup';
+import { SkinConfiguration } from './SkinConfiguration';
+import { StableSkin } from './stable/StableSkin';
 
 export class BeatmapSkin extends StableSkin {
   constructor(resources: IResourcesProvider, readonly beatmap: IBeatmap, resourceStore?: IResourceStore<ArrayBuffer>) {
