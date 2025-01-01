@@ -1,5 +1,5 @@
 import type { DependencyContainer, ReadonlyDependencyContainer } from 'osucad-framework';
-import { DummyEditorBeatmap, ISkinSource, OsucadGameBase, OsucadScreenStack, SkinManager } from '@osucad/common';
+import { DummyEditorBeatmap, ISkinSource, OsucadGameBase, OsucadScreenStack, OsuRuleset, RulesetStore, SkinManager } from '@osucad/common';
 import { RenderTarget } from 'pixi.js';
 import { BeatmapViewer } from './screens/viewer/BeatmapViewer';
 
@@ -30,6 +30,12 @@ export class BeatmapViewerGame extends OsucadGameBase {
 
     this.#dependencies.provide(SkinManager, this.#skinManager);
     this.#dependencies.provide(ISkinSource, this.#skinManager);
+
+    const rulesetStore = new RulesetStore();
+
+    rulesetStore.register(new OsuRuleset(), 0);
+
+    this.#dependencies.provide(RulesetStore, rulesetStore);
   }
 
   protected override async loadAsync(dependencies: ReadonlyDependencyContainer): Promise<void> {
