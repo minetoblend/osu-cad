@@ -1,9 +1,9 @@
 import type { BackgroundScreen, Beatmap, CarouselBeatmapInfo, CarouselBeatmapSetInfo } from '@osucad/common';
-import type { Drawable, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { Drawable, ReadonlyDependencyContainer, ScreenTransitionEvent } from 'osucad-framework';
 import type { BeatmapSetResponse, BeatmapSetResponseBeatmap } from '../../mirrors/BeatmapSetResponse';
 import { BeatmapCarousel, EditorBeatmap, OsucadScreen } from '@osucad/common';
 import { SizeLimitedContainer } from '@osucad/editor/drawables/SizeLimitedContainer';
-import { Anchor, Axes, Bindable, Container, FillDirection, FillFlowContainer, loadTexture, Vec2 } from 'osucad-framework';
+import { Anchor, Axes, Bindable, Container, EasingFunction, FillDirection, FillFlowContainer, loadTexture, Vec2 } from 'osucad-framework';
 import { CatboyMirror } from '../../mirrors/CatboyMirror';
 import { LoadingScreen } from '../LoadingScreen';
 import { HomeScreenBackground } from './HomeScreenBackground';
@@ -67,6 +67,9 @@ export class HomeScreen extends OsucadScreen {
     if (!term.length)
       return;
 
+    if (!term.includes('"'))
+      term = `"${term}"`;
+
     const results = await new CatboyMirror().search(term);
 
     this.beatmaps.value = results.map(mapset => this.createMapsetInfo(mapset));
@@ -84,13 +87,13 @@ export class HomeScreen extends OsucadScreen {
       authorName: creator,
       beatmaps: [],
       loadThumbnailLarge: async () => {
-        const url = mapset.covers['slimcover@2x']
+        const url = mapset.covers['card@2x']
           .replace('https://assets.ppy.sh/', 'http://localhost:8081/');
 
         return loadTexture(url);
       },
       loadThumbnailSmall: async () => {
-        const url = mapset.covers['cover@2x']
+        const url = mapset.covers['slimcover@2x']
           .replace('https://assets.ppy.sh/', 'http://localhost:8081/');
 
         return loadTexture(url);
@@ -131,5 +134,27 @@ export class HomeScreen extends OsucadScreen {
 
       return new EditorBeatmap(difficulty, workingBeatmapSet.fileStore, workingBeatmapSet);
     }));
+  }
+
+  onSuspending(e: ScreenTransitionEvent) {
+    super.onSuspending(e);
+
+    this.applyToBackground((it) => {
+      (it as HomeScreenBackground)
+        .fadeTo(0.75, 500)
+        .resizeHeightTo(0.4, 700, EasingFunction.OutExpo)
+        .transformTo('blurStrength', 0, 300);
+    });
+  }
+
+  onResuming(e: ScreenTransitionEvent) {
+    super.onResuming(e);
+
+    this.applyToBackground(it =>
+      (it as HomeScreenBackground)
+        .resizeHeightTo(1)
+        .fadeInFromZero(300)
+        .transformTo('blurStrength', 15),
+    );
   }
 }
