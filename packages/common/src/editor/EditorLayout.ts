@@ -1,4 +1,4 @@
-import { Axes, CompositeDrawable, dependencyLoader, Invalidation, LayoutMember } from 'osucad-framework';
+import { Axes, CompositeDrawable, dependencyLoader, EasingFunction, Invalidation, LayoutMember } from 'osucad-framework';
 import { EditorBottomBar } from './bottomBar/EditorBottomBar';
 import { EditorHeader } from './header/EditorHeader';
 import { EditorScreenContainer } from './screens/EditorScreenContainer';
@@ -40,5 +40,23 @@ export class EditorLayout extends CompositeDrawable {
 
       this.#drawSizeBacking.validate();
     }
+  }
+
+  override show() {
+    this.#bottomBar
+      .moveToY(100)
+      .moveToY(0, 300, EasingFunction.OutExpo);
+
+    this.#header
+      .moveToY(-50)
+      .moveToY(0, 300, EasingFunction.OutExpo);
+  }
+
+  override hide() {
+    this.#bottomBar
+      .moveToY(100, 200, EasingFunction.OutExpo);
+
+    this.#header
+      .moveToY(-50, 200, EasingFunction.OutExpo);
   }
 }

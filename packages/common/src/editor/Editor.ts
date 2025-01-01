@@ -1,6 +1,6 @@
-import type { DependencyContainer, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, MenuItem, ReadonlyDependencyContainer, ScreenTransitionEvent } from 'osucad-framework';
+import type { DependencyContainer, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, MenuItem, ReadonlyDependencyContainer, ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
 import type { BackgroundScreen } from '../screens/BackgroundScreen';
-import { asyncDependencyLoader, PlatformAction, provide } from 'osucad-framework';
+import { asyncDependencyLoader, EasingFunction, PlatformAction, provide } from 'osucad-framework';
 import { HitObjectList } from '../beatmap/HitObjectList';
 import { IBeatmap } from '../beatmap/IBeatmap';
 import { BeatmapComboProcessor } from '../beatmap/processors/BeatmapComboProcessor';
@@ -75,7 +75,7 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
         this.beatmap,
         new BeatmapSkin(resources, this.editorBeatmap, this.editorBeatmap.fileStore),
       ).with({
-        child: new EditorLayout(),
+        child: this.#layout = new EditorLayout(),
       }),
     );
     this.addInternal(new BeatmapComboProcessor());
@@ -104,9 +104,20 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
     super.onEntering(e);
 
     this.fadeInFromZero(300);
+
+    this.#layout.show();
+  }
+
+  override onExiting(e: ScreenExitEvent): boolean {
+    this.#layout.hide();
+    this.fadeOut(200, EasingFunction.OutQuad).expire();
+
+    return super.onExiting(e);
   }
 
   readonly isKeyBindingHandler = true;
+
+  #layout!: EditorLayout;
 
   canHandleKeyBinding(binding: KeyBindingAction): boolean {
     return binding instanceof PlatformAction;
