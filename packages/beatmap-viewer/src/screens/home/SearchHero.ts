@@ -24,7 +24,7 @@ export class SearchHero extends FillFlowContainer {
     this.addAll(
       this.#logoContainer = new Container({
         relativeSizeAxes: Axes.X,
-        height: 300,
+        height: 400,
         child: new DrawSizePreservingFillContainer({
           targetDrawSize: new Vec2(573, 192),
           relativeSizeAxes: Axes.Both,
