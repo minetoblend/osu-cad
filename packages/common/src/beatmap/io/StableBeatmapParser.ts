@@ -275,6 +275,12 @@ export class StableBeatmapParser {
     else {
       const sliderVelocity = -100 / Number.parseFloat(values[1]);
 
+      const existing = beatmap.controlPoints
+        .difficultyPoints
+        .controlPointAtTimeExact(startTime);
+      if (existing)
+        beatmap.controlPoints.remove(existing);
+
       beatmap.controlPoints.add(new DifficultyPoint(startTime, sliderVelocity), true);
     }
   }
