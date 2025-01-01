@@ -160,6 +160,7 @@ export class EditorClock
       };
 
       this.#lastSeekWasAnimated = false;
+      this.isSeeking = false;
     }
     else {
       const lastTime = this.currentTime;
@@ -172,6 +173,7 @@ export class EditorClock
       if (almostEquals(currentTime, this.#targetTime, 3)) {
         currentTime = this.#targetTime;
         this.#lastSeekWasAnimated = false;
+        this.isSeeking = false;
       }
 
       this.#frameTimeInfo = {
