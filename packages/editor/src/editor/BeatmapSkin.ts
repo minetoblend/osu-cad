@@ -8,7 +8,7 @@ export class BeatmapSkin extends StableSkin {
       creator: beatmap.metadata.creator,
     };
 
-    super(skinInfo, resources);
+    super(skinInfo, resources, beatmap.fileStore);
 
     this.configuration = new SkinConfiguration();
   }
