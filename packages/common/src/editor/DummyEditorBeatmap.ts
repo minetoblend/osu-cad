@@ -1,5 +1,7 @@
-import type { IResourceStore, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import { StableBeatmapParser } from '../beatmap';
+import { SimpleFile } from '../beatmap/io/SimpleFile';
+import { StaticFileStore } from '../beatmap/io/StaticFileStore';
 import { EffectPoint } from '../controlPoints';
 import audioUrl from './audio.mp3?url';
 import { EditorBeatmap } from './EditorBeatmap';
@@ -8,7 +10,9 @@ export class DummyEditorBeatmap extends EditorBeatmap {
   constructor() {
     super(
       new StableBeatmapParser().parse(beatmapText),
-      new DummyResourceStore(),
+      new StaticFileStore([
+        new SimpleFile('audio.mp3', () => fetch(audioUrl).then(res => res.arrayBuffer())),
+      ]),
     );
 
     this.beatmap.settings.audioFileName = 'audio.mp3';
@@ -18,42 +22,7 @@ export class DummyEditorBeatmap extends EditorBeatmap {
   }
 
   protected override async loadAsync(dependencies: ReadonlyDependencyContainer): Promise<void> {
-    await (this.resourceStore as DummyResourceStore).load();
-
     return super.loadAsync(dependencies);
-  }
-}
-
-class DummyResourceStore implements IResourceStore<ArrayBuffer> {
-  #audio!: ArrayBuffer;
-
-  async load() {
-    this.#audio = await fetch(audioUrl).then(it => it.arrayBuffer());
-  }
-
-  has(name: string): boolean {
-    return name === 'audio.mp3';
-  }
-
-  get(name: string): ArrayBuffer | null {
-    if (name === 'audio.mp3')
-      return this.#audio;
-    return null;
-  }
-
-  getAsync(name: string): Promise<ArrayBuffer | null> {
-    return Promise.resolve(this.get(name));
-  }
-
-  getAvailableResources(): string[] {
-    return ['audio.mp3'];
-  }
-
-  canLoad(name: string): boolean {
-    return this.has(name);
-  }
-
-  dispose(): void {
   }
 }
 
