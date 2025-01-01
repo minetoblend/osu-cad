@@ -5,6 +5,7 @@ import { Anchor, Axes, Bindable, CompositeDrawable, Container, dependencyLoader,
 import { IBeatmap } from '../../../beatmap/IBeatmap';
 import { MobileEditorControls } from '../../../rulesets/osu/edit/MobileEditorControls';
 import { Ruleset } from '../../../rulesets/Ruleset';
+import { HitsoundPlayer } from '../../HitsoundPlayer';
 import { ComposeScreenTimeline } from './ComposeScreenTimeline';
 import { ComposeToolbar } from './ComposeToolbar';
 import { ComposeToolContainer } from './ComposeToolContainer';
@@ -37,6 +38,8 @@ export abstract class HitObjectComposer extends CompositeDrawable {
     const selectionManager = new HitObjectSelectionManager();
 
     this.addInternal(selectionManager);
+
+    this.addInternal(new HitsoundPlayer());
 
     this.#dependencies.provide(selectionManager);
 
