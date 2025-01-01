@@ -1,15 +1,9 @@
-import type {
-  ClassSerialDescriptorBuilder,
-  CompositeDecoder,
-  CompositeEncoder,
-} from '@osucad/serialization';
+import type { ClassSerialDescriptorBuilder, CompositeDecoder, CompositeEncoder } from '@osucad/serialization';
 import type { IPatchable } from '../../../commands/IPatchable';
 import type { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 import type { IHasDuration } from '../../../hitObjects/IHasDuration';
 import type { SerializedSpinner } from '../../../serialization/HitObjects';
-import {
-  Float64Serializer,
-} from '@osucad/serialization';
+import { Float64Serializer } from '@osucad/serialization';
 import { Vec2 } from 'osucad-framework';
 import { polymorphicHitObjectSerializers } from '../../../hitObjects/HitObject';
 import { HitSample } from '../../../hitsounds/HitSample';

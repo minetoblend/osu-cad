@@ -248,12 +248,14 @@ export abstract class OsuHitObject extends HitObject implements IHasComboInforma
     if (sampleSet === SampleSet.Auto)
       sampleSet = samplePoint.sampleSet;
 
+    const volume = controlPointInfo.volumeAt(this.startTime);
+
     this.addHitSample(
       new HitSample(
         this.startTime,
         sampleSet,
         SampleType.Normal,
-        samplePoint.volume,
+        volume,
         samplePoint.sampleIndex,
       ),
     );

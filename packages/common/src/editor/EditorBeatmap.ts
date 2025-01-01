@@ -1,4 +1,4 @@
-import type { IResourceStore, ReadonlyDependencyContainer, Track } from 'osucad-framework';
+import type { ReadonlyDependencyContainer, Track } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
 import type { Beatmap } from '../beatmap/Beatmap';
 import type { BeatmapColors } from '../beatmap/BeatmapColors';
@@ -7,11 +7,14 @@ import type { BeatmapMetadata } from '../beatmap/BeatmapMetadata';
 import type { BeatmapSettings } from '../beatmap/BeatmapSettings';
 import type { HitObjectList } from '../beatmap/HitObjectList';
 import type { IBeatmap } from '../beatmap/IBeatmap';
+import type { IFileStore } from '../beatmap/io/IFileStore';
+import type { WorkingBeatmapSet } from '../beatmap/workingBeatmap/WorkingBeatmapSet';
 import type { ControlPointInfo } from '../controlPoints/ControlPointInfo';
 import type { HitObject } from '../hitObjects/HitObject';
 import { AudioManager, Bindable, Component, loadTexture, resolved } from 'osucad-framework';
 import { AudioMixer } from '../audio/AudioMixer';
 import { UpdateHandler } from '../crdt/UpdateHandler';
+import { RulesetStore } from '../rulesets/RulesetStore';
 import { CommandManager } from './CommandManager';
 
 export class EditorBeatmap<T extends HitObject = HitObject> extends Component implements IBeatmap<T> {
@@ -23,10 +26,18 @@ export class EditorBeatmap<T extends HitObject = HitObject> extends Component im
 
   constructor(
     readonly beatmap: Beatmap<T>,
-    readonly resourceStore: IResourceStore<ArrayBuffer>,
+    readonly fileStore: IFileStore,
+    readonly beatmapSet?: WorkingBeatmapSet,
   ) {
     super();
     this.commandManager = this.createCommandManager();
+  }
+
+  @resolved(RulesetStore)
+  protected rulesetStore!: RulesetStore;
+
+  get ruleset() {
+    return this.rulesetStore.getRuleset(this.settings.mode);
   }
 
   protected override get hasAsyncLoader(): boolean {
@@ -52,7 +63,7 @@ export class EditorBeatmap<T extends HitObject = HitObject> extends Component im
 
   protected async loadTrack() {
     const path = this.beatmap.settings.audioFileName;
-    const data = await this.resourceStore.getAsync(path);
+    const data = await this.fileStore.getFile(path)?.getData();
     if (!data)
       throw new Error(`Could not find asset "${path}" for beatmap track`);
 
@@ -63,7 +74,7 @@ export class EditorBeatmap<T extends HitObject = HitObject> extends Component im
     const path = this.beatmap.settings.backgroundFilename;
     if (!path)
       return;
-    const asset = await this.resourceStore.getAsync(path);
+    const asset = await this.fileStore.getFile(path)?.getData();
     if (!asset)
       return;
 

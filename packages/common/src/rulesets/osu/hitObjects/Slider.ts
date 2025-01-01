@@ -408,11 +408,13 @@ export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepe
     if (sampleSet === SampleSet.Auto)
       sampleSet = samplePoint.sampleSet;
 
+    const volume = controlPointInfo.volumeAt(this.startTime);
+
     this.addHitSample(new HitSample(
       this.startTime,
       sampleSet,
       SampleType.SliderSlide,
-      samplePoint.volume,
+      volume,
       samplePoint.sampleIndex,
       this.duration,
     ));
@@ -426,7 +428,7 @@ export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepe
         this.startTime,
         additionSampleSet,
         SampleType.SliderWhistle,
-        samplePoint.volume,
+        volume,
         samplePoint.sampleIndex,
         this.duration,
       ));
@@ -438,6 +440,8 @@ export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepe
 
       const samplePoint = controlPointInfo.samplePointAt(Math.ceil(time));
 
+      const volume = controlPointInfo.volumeAt(Math.ceil(time));
+
       let sampleSet = hitSound.sampleSet;
       if (sampleSet === SampleSet.Auto)
         sampleSet = samplePoint.sampleSet;
@@ -447,7 +451,7 @@ export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepe
           time,
           sampleSet,
           SampleType.Normal,
-          samplePoint.volume,
+          volume,
           samplePoint.sampleIndex,
         ),
       );
@@ -462,7 +466,7 @@ export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepe
             time,
             additionSampleSet,
             sampleType,
-            samplePoint.volume,
+            volume,
             samplePoint.sampleIndex,
           ),
         );
