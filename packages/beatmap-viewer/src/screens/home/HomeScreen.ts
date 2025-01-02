@@ -1,9 +1,15 @@
-import type { BackgroundScreen, Beatmap, CarouselBeatmapInfo, CarouselBeatmapSetInfo } from '@osucad/common';
+import type {
+  BackgroundScreen,
+  Beatmap,
+  CarouselBeatmapInfo,
+  CarouselBeatmapSetInfo,
+  WorkingBeatmapSet,
+} from '@osucad/common';
 import type { Drawable, ReadonlyDependencyContainer, ScreenTransitionEvent } from 'osucad-framework';
 import type { BeatmapSetResponse, BeatmapSetResponseBeatmap } from '../../mirrors/BeatmapSetResponse';
 import { BeatmapCarousel, EditorBeatmap, OsucadScreen } from '@osucad/common';
 import { SizeLimitedContainer } from '@osucad/editor/drawables/SizeLimitedContainer';
-import { Anchor, Axes, Bindable, Container, EasingFunction, FillDirection, FillFlowContainer, loadTexture, Vec2 } from 'osucad-framework';
+import { Anchor, Axes, Bindable, Container, FillDirection, FillFlowContainer, loadTexture, Vec2 } from 'osucad-framework';
 import { CatboyMirror } from '../../mirrors/CatboyMirror';
 import { LoadingScreen } from '../LoadingScreen';
 import { HomeScreenBackground } from './HomeScreenBackground';
@@ -41,7 +47,10 @@ export class HomeScreen extends OsucadScreen {
             spacing: new Vec2(50),
             children: [
               this.#hero = new SearchHero()
-                .adjust(it => it.search.addListener(this.search, this)),
+                .adjust((it) => {
+                  it.searchResults.addListener(this.updateResults, this);
+                  it.openBeatmap.addListener(({ beatmapSet, id }) => this.openBeatmap(beatmapSet, id));
+                }),
             ],
           }),
         ],
@@ -61,17 +70,7 @@ export class HomeScreen extends OsucadScreen {
 
   #hero!: SearchHero;
 
-  async search(term: string) {
-    term = term.trim();
-
-    if (!term.length)
-      return;
-
-    if (!term.includes('"'))
-      term = `"${term}"`;
-
-    const results = await new CatboyMirror().search(term);
-
+  updateResults(results: BeatmapSetResponse[]) {
     this.beatmaps.value = results.map(mapset => this.createMapsetInfo(mapset));
 
     this.#hero.minimize();
@@ -88,13 +87,13 @@ export class HomeScreen extends OsucadScreen {
       beatmaps: [],
       loadThumbnailLarge: async () => {
         const url = mapset.covers['card@2x']
-          .replace('https://assets.ppy.sh/', 'http://localhost:8081/');
+          .replace('https://assets.ppy.sh/', '/');
 
         return loadTexture(url);
       },
       loadThumbnailSmall: async () => {
-        const url = mapset.covers['slimcover@2x']
-          .replace('https://assets.ppy.sh/', 'http://localhost:8081/');
+        const url = mapset.covers.slimcover
+          .replace('https://assets.ppy.sh/', '/');
 
         return loadTexture(url);
       },
@@ -118,9 +117,7 @@ export class HomeScreen extends OsucadScreen {
         previewPoint: null,
         setId: mapset.id.toString(),
         starRating: difficulty_rating,
-        select: async () => {
-          this.openEditor(mapset, beatmap);
-        },
+        select: async () => this.openEditor(mapset, beatmap),
       };
     });
 
@@ -136,25 +133,23 @@ export class HomeScreen extends OsucadScreen {
     }));
   }
 
+  async openBeatmap(workingBeatmapSet: WorkingBeatmapSet, id: number) {
+    this.screenStack.push(new LoadingScreen(async () => {
+      const difficulty: Beatmap = workingBeatmapSet.beatmaps.find(it => it.metadata.osuWebId === id)!;
+
+      return new EditorBeatmap(difficulty, workingBeatmapSet.fileStore, workingBeatmapSet);
+    }));
+  }
+
   onSuspending(e: ScreenTransitionEvent) {
     super.onSuspending(e);
 
-    this.applyToBackground((it) => {
-      (it as HomeScreenBackground)
-        .fadeTo(0.75, 500)
-        .resizeHeightTo(0.4, 700, EasingFunction.OutExpo)
-        .transformTo('blurStrength', 0, 300);
-    });
+    this.applyToBackground(it => (it as HomeScreenBackground).enableLetterbox());
   }
 
   onResuming(e: ScreenTransitionEvent) {
     super.onResuming(e);
 
-    this.applyToBackground(it =>
-      (it as HomeScreenBackground)
-        .resizeHeightTo(1)
-        .fadeInFromZero(300)
-        .transformTo('blurStrength', 15),
-    );
+    this.applyToBackground(it => (it as HomeScreenBackground).disableLetterbox());
   }
 }

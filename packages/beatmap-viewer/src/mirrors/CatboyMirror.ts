@@ -43,7 +43,7 @@ export class CatboyMirror extends BeatmapMirror {
   }
 
   lookupBeatmap(id: number): Promise<BeatmapResponse> {
-    return fetch(`${this.baseUrl}/api/v2/${id}`).then(res => res.json());
+    return fetch(`${this.baseUrl}/api/v2/b/${id}`).then(res => res.json());
   }
 
   async search(term: string, rankedOnly = false): Promise<BeatmapSetResponse[]> {

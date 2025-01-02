@@ -1,7 +1,7 @@
 import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyDownEvent, ScrollEvent, UIEvent } from 'osucad-framework';
-import { EditorAction } from '@osucad/editor/editor/EditorAction';
 import { almostEquals, Axes, clamp, CompositeDrawable, Key, PlatformAction, resolved } from 'osucad-framework';
 import { IBeatmap } from '../beatmap/IBeatmap';
+import { EditorAction } from './EditorAction';
 import { EditorClock } from './EditorClock';
 
 export class EditorNavigation extends CompositeDrawable implements IKeyBindingHandler<EditorAction | PlatformAction> {

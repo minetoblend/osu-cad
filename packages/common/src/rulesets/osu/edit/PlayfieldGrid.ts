@@ -1,9 +1,9 @@
 import type { Bindable, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { IPositionSnapProvider } from './IPositionSnapProvider';
-import { EditorAction } from '@osucad/editor/editor/EditorAction';
 import { almostBigger, BindableBoolean, BindableNumber, Cached, CompositeDrawable, definitelyBigger, resolved, Vec2 } from 'osucad-framework';
 import { Graphics } from 'pixi.js';
 import { IBeatmap } from '../../../beatmap/IBeatmap';
+import { EditorAction } from '../../../editor/EditorAction';
 import { SnapResult } from './IPositionSnapProvider';
 
 export class PlayfieldGrid extends CompositeDrawable implements IKeyBindingHandler<EditorAction>, IPositionSnapProvider {

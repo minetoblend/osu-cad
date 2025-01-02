@@ -1,25 +1,43 @@
 import type { CarouselBeatmapInfo } from '@osucad/common';
-import type { Bindable, Container, ReadonlyDependencyContainer } from 'osucad-framework';
+import type {
+  Bindable,
+  ReadonlyDependencyContainer,
+} from 'osucad-framework';
 import { BackgroundScreen } from '@osucad/common';
-import { Anchor, Axes, Box, DrawableSprite, FillMode, MaskingContainer } from 'osucad-framework';
+import {
+  Anchor,
+  Axes,
+  Box,
+  Container,
+  DrawableSprite,
+  EasingFunction,
+  FillMode,
+  MaskingContainer,
+} from 'osucad-framework';
 import { BlurFilter } from 'pixi.js';
 
 export class HomeScreenBackground extends BackgroundScreen {
   constructor(readonly beatmap: Bindable<CarouselBeatmapInfo | null>) {
     super();
 
-    this.anchor = Anchor.Center;
-    this.origin = Anchor.Center;
-
-    this.addInternal(new Box({
+    this.addInternal(this.background = new Box({
       relativeSizeAxes: Axes.Both,
       color: 0x121216,
     }));
 
-    this.addInternal(this.#content = new MaskingContainer({
+    this.addInternal(this.#letterboxContainer = new MaskingContainer({
       relativeSizeAxes: Axes.Both,
+      anchor: Anchor.Center,
+      origin: Anchor.Center,
+      child: this.#content = new Container({
+        relativeSizeAxes: Axes.Both,
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
+      }),
     }));
   }
+
+  readonly background: Box;
 
   #blurFilter = new BlurFilter({
     strength: 15,
@@ -36,7 +54,9 @@ export class HomeScreenBackground extends BackgroundScreen {
     this.#blurFilter.strength = value;
   }
 
-  #content!: Container;
+  readonly #content!: Container;
+
+  readonly #letterboxContainer!: Container;
 
   protected load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
@@ -76,5 +96,31 @@ export class HomeScreenBackground extends BackgroundScreen {
     this.#currentBackground.onDispose(() => texture?.destroy(true));
 
     this.#currentBackground.fadeOut().fadeTo(0.2, 100);
+  }
+
+  enableLetterbox() {
+    this.transformTo('blurStrength', 0, 300);
+
+    this
+      .#letterboxContainer
+      .fadeTo(0.75, 500)
+      .resizeHeightTo(0.4, 700, EasingFunction.OutExpo);
+
+    this
+      .background
+      .fadeColor(0x000000, 200);
+  }
+
+  disableLetterbox() {
+    this.transformTo('blurStrength', 15);
+
+    this
+      .#letterboxContainer
+      .resizeHeightTo(1)
+      .fadeInFromZero(300);
+
+    this
+      .background
+      .fadeColor(0x121216);
   }
 }

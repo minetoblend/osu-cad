@@ -31,4 +31,8 @@ export class HomeScreenTextBox extends TextBox {
       fontSize: 20,
     });
   }
+
+  get requestsFocus(): boolean {
+    return true;
+  }
 }

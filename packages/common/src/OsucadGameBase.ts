@@ -1,11 +1,11 @@
 import type { Container, Drawable, PIXIRenderer, ReadonlyDependencyContainer } from 'osucad-framework';
-import { EditorActionContainer } from '@osucad/editor/editor/EditorActionContainer';
 import { Fit, ScalingContainer } from '@osucad/editor/editor/ScalingContainer';
 import { NotificationOverlay } from '@osucad/editor/notifications/NotificationOverlay';
 import { AudioManager, Axes, Box, DependencyContainer, Game, IRenderer, provide, resolved } from 'osucad-framework';
 import { AudioMixer } from './audio/AudioMixer';
 import { OsucadConfigManager } from './config/OsucadConfigManager';
 import { UIFonts } from './drawables/UIFonts';
+import { EditorActionContainer } from './editor/EditorActionContainer';
 import { IResourcesProvider } from './io/IResourcesProvider';
 import { OsucadIcons } from './OsucadIcons';
 import { ContextMenuContainer } from './userInterface/ContextMenuContainer';
@@ -45,9 +45,7 @@ export abstract class OsucadGameBase extends Game implements IResourcesProvider 
         },
         fit: Fit.Fill,
         child: new EditorActionContainer({
-          child: this.#content = new ContextMenuContainer({
-
-          }),
+          child: this.#content = new ContextMenuContainer({}),
         }),
       }),
     );

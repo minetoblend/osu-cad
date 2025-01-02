@@ -1,7 +1,19 @@
-import type { TextBox } from '@osucad/common';
+import type { TextBox, WorkingBeatmapSet } from '@osucad/common';
 import type { ReadonlyDependencyContainer } from 'osucad-framework';
+import type { BeatmapSetResponse } from '../../mirrors/BeatmapSetResponse';
 import { OsucadButton } from '@osucad/editor/userInterface/OsucadButton';
-import { Action, Anchor, Axes, Container, DrawSizePreservingFillContainer, EasingFunction, FillDirection, FillFlowContainer, Vec2 } from 'osucad-framework';
+import {
+  Action,
+  Anchor,
+  Axes,
+  Container,
+  DrawSizePreservingFillContainer,
+  EasingFunction,
+  FillDirection,
+  FillFlowContainer,
+  Vec2,
+} from 'osucad-framework';
+import { CatboyMirror } from '../../mirrors/CatboyMirror';
 import { HomeScreenIntroSequence } from './HomeScreenIntroSequence';
 import { HomeScreenTextBox } from './HomeScreenTextBox';
 
@@ -44,7 +56,7 @@ export class SearchHero extends FillFlowContainer {
             autoSizeAxes: Axes.Y,
             padding: { right: 100 },
             child: this.#searchBox = new HomeScreenTextBox().adjust(it =>
-              it.onCommit.addListener(text => this.search.emit(text)),
+              it.onCommit.addListener(text => this.search(text)),
             ),
             anchor: Anchor.CenterLeft,
             origin: Anchor.CenterLeft,
@@ -55,7 +67,7 @@ export class SearchHero extends FillFlowContainer {
             autoSizeAxes: Axes.None,
             width: 94,
             height: 40,
-          }).withText('Search').withAction(() => this.search.emit(this.#searchBox.text)),
+          }).withText('Search').withAction(() => this.search(this.#searchBox.text)),
         ],
       }),
     );
@@ -95,5 +107,61 @@ export class SearchHero extends FillFlowContainer {
       .fadeIn(500);
   }
 
-  search = new Action<string>();
+  #searching = false;
+
+  get searching() {
+    return this.#searching;
+  }
+
+  set searching(value) {
+    this.#searching = value;
+  }
+
+  async search(term: string) {
+    if (this.searching)
+      return;
+
+    try {
+      this.searching = true;
+
+      term = term.trim();
+
+      if (!term.length)
+        return;
+
+      if (/^\d+$/.test(term)) {
+        const id = Number.parseInt(term);
+
+        const { beatmapset_id } = await new CatboyMirror().lookupBeatmap(id);
+
+        const beatmapSet = await new CatboyMirror().loadBeatmapSet(beatmapset_id);
+
+        this.openBeatmap.emit({ beatmapSet, id });
+        return;
+      }
+
+      const match = term.match(/^https:\/\/osu\.ppy\.sh\/beatmapsets\/(\d+)#osu\/(\d+$)/);
+
+      if (match) {
+        const [_, mapsetId, beatmapId] = match;
+
+        const beatmapSet = await new CatboyMirror().loadBeatmapSet(Number.parseInt(mapsetId));
+
+        this.openBeatmap.emit({ beatmapSet, id: Number.parseInt(beatmapId) });
+        return;
+      }
+
+      if (!term.includes('"'))
+        term = `"${term}"`;
+
+      this.searchResults.emit(await new CatboyMirror().search(term));
+    }
+    finally {
+      this.searching = false;
+    }
+  }
+
+  searchResults = new Action<BeatmapSetResponse[]>();
+
+  openBeatmap = new Action<{ beatmapSet: WorkingBeatmapSet; id: number }>();
 }
