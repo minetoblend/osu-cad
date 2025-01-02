@@ -1,6 +1,6 @@
 import type { Beatmap, EditorScreenManager } from '@osucad/common';
 import type { KeyDownEvent } from 'osucad-framework';
-import { Editor, EditorBeatmap } from '@osucad/common';
+import { Editor, EditorBeatmap, PreferencesContainer } from '@osucad/common';
 import { Key, MenuItem } from 'osucad-framework';
 import { ViewportScreen } from './screens/viewport/ViewportScreen';
 
@@ -15,6 +15,10 @@ export class BeatmapViewer extends Editor {
     const fileMenu = new MenuItem({
       text: 'File',
       items: [
+        new MenuItem({
+          text: 'Preferences',
+          action: () => this.findClosestParentOfType(PreferencesContainer)!.preferencesVisible.value = true,
+        }),
         new MenuItem({
           text: 'Exit',
           action: () => this.exit(),
