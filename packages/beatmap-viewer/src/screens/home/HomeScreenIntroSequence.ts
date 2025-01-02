@@ -76,7 +76,7 @@ export class HomeScreenIntroSequence extends Container {
     slider.transformTo('snakeInProgress', 1, 1000, EasingFunction.OutCubic);
 
     {
-      using _ = this.beginDelayedSequence(1000, true);
+      const sequence = this.beginDelayedSequence(1000, true);
       this.transformTo('containerAlpha', 1);
 
       this.#slideContainer.moveToX(-129, 1000, EasingFunction.OutExpo);
@@ -94,6 +94,8 @@ export class HomeScreenIntroSequence extends Container {
         .fadeInFromZero(500)
         .moveToX(25)
         .moveToX(75, 1000, EasingFunction.OutExpo);
+
+      sequence.dispose();
     }
 
     cursor
@@ -103,7 +105,7 @@ export class HomeScreenIntroSequence extends Container {
       .moveToY(35, 2500, EasingFunction.OutQuart);
 
     {
-      using _ = this.beginDelayedSequence(900, true);
+      const sequence = this.beginDelayedSequence(900, true);
 
       cursor
         .moveToX(-22, 100, EasingFunction.InQuad)
@@ -111,6 +113,8 @@ export class HomeScreenIntroSequence extends Container {
         .then()
         .moveToX(-18, 1000, EasingFunction.OutExpo)
         .moveToY(19, 1000, EasingFunction.OutExpo);
+
+      sequence.dispose();
     }
 
     this.#movementContainer.moveToY(100)
