@@ -8,6 +8,7 @@ import { UIFonts } from './drawables/UIFonts';
 import { EditorActionContainer } from './editor/EditorActionContainer';
 import { IResourcesProvider } from './io/IResourcesProvider';
 import { OsucadIcons } from './OsucadIcons';
+import { PreferencesContainer } from './overlays/preferences/PreferencesContainer';
 import { ContextMenuContainer } from './userInterface/ContextMenuContainer';
 
 @provide(IResourcesProvider)
@@ -25,14 +26,16 @@ export abstract class OsucadGameBase extends Game implements IResourcesProvider 
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
-    this.mixer = new AudioMixer(this.audioManager);
-    this.#dependencies.provide(AudioMixer, this.mixer);
-
     this.config = new OsucadConfigManager();
 
     this.#dependencies.provide(OsucadConfigManager, this.config);
 
+    this.mixer = new AudioMixer(this.audioManager);
+
+    this.#dependencies.provide(AudioMixer, this.mixer);
+
     super.content.addAll(
+      this.mixer,
       new Box({
         relativeSizeAxes: Axes.Both,
         color: 0x000000,
@@ -45,7 +48,9 @@ export abstract class OsucadGameBase extends Game implements IResourcesProvider 
         },
         fit: Fit.Fill,
         child: new EditorActionContainer({
-          child: this.#content = new ContextMenuContainer({}),
+          child: new ContextMenuContainer({
+            child: this.#content = new PreferencesContainer(),
+          }),
         }),
       }),
     );
@@ -56,6 +61,8 @@ export abstract class OsucadGameBase extends Game implements IResourcesProvider 
 
     this.addParallelLoad(OsucadIcons.load());
     this.addParallelLoad(this.#loadFonts());
+
+    this.#dependencies.provide(AudioMixer, this.mixer);
   }
 
   async #loadFonts() {

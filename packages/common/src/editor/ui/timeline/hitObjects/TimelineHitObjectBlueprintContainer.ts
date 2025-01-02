@@ -10,6 +10,22 @@ export interface TimelineHitObjectBlueprintContainerOptions extends DrawableOpti
   readonly?: boolean;
 }
 
+class TimelineHitObjectLifetimeEntry extends HitObjectLifetimeEntry {
+  constructor(hitObject: HitObject) {
+    super(hitObject);
+  }
+
+  override get initialLifetimeOffset(): number {
+    return 2000;
+  }
+
+  protected override setInitialLifetime() {
+    super.setInitialLifetime();
+
+    this.lifetimeEnd = this.hitObject.endTime + 2000;
+  }
+}
+
 export class TimelineHitObjectBlueprintContainer extends TimelineBlueprintContainer<HitObjectLifetimeEntry, TimelineHitObjectBlueprint> {
   constructor(options: TimelineHitObjectBlueprintContainerOptions = {}) {
     super();
@@ -42,7 +58,7 @@ export class TimelineHitObjectBlueprintContainer extends TimelineBlueprintContai
   }
 
   addHitObject(hitObject: HitObject) {
-    this.#addEntry(new HitObjectLifetimeEntry(hitObject));
+    this.#addEntry(new TimelineHitObjectLifetimeEntry(hitObject));
   }
 
   #addEntry(entry: HitObjectLifetimeEntry) {
