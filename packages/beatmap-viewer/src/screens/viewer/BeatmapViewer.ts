@@ -1,10 +1,17 @@
 import type { Beatmap, EditorScreenManager } from '@osucad/common';
-import type { KeyDownEvent } from 'osucad-framework';
+import type { KeyDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { BeatmapViewerGame } from '../../BeatmapViewerGame';
 import { Editor, EditorBeatmap, PreferencesContainer } from '@osucad/common';
 import { Key, MenuItem } from 'osucad-framework';
 import { ViewportScreen } from './screens/viewport/ViewportScreen';
 
 export class BeatmapViewer extends Editor {
+  protected override async loadAsync(dependencies: ReadonlyDependencyContainer): Promise<void> {
+    await (this.game as BeatmapViewerGame).skinManagerLoaded;
+
+    return super.loadAsync(dependencies);
+  }
+
   protected registerScreens(screenManager: EditorScreenManager) {
     screenManager.register(ViewportScreen);
 

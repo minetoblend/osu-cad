@@ -22,6 +22,12 @@ export class BeatmapViewerGame extends OsucadGameBase {
 
   #skinManager!: SkinManager;
 
+  #skinManagerLoaded!: Promise<SkinManager>;
+
+  get skinManagerLoaded() {
+    return this.#skinManagerLoaded;
+  }
+
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
@@ -31,6 +37,8 @@ export class BeatmapViewerGame extends OsucadGameBase {
 
     this.#dependencies.provide(SkinManager, this.#skinManager);
     this.#dependencies.provide(ISkinSource, this.#skinManager);
+
+    this.#skinManagerLoaded = this.loadComponentAsync(this.#skinManager);
 
     const rulesetStore = new RulesetStore();
 
@@ -48,7 +56,6 @@ export class BeatmapViewerGame extends OsucadGameBase {
 
     await Promise.all([
       samples.load(),
-      this.loadComponentAsync(this.#skinManager),
     ]);
     this.add(this.#skinManager);
   }
