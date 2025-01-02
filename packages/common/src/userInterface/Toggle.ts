@@ -78,6 +78,8 @@ export class Toggle extends CompositeDrawable {
         blendMode: 'add',
       }),
     );
+
+    this.current.valueChanged.addListener(this.#updateState, this);
   }
 
   protected override loadComplete() {
