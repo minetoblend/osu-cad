@@ -475,20 +475,6 @@ export class BeatmapCarousel extends CompositeDrawable {
 
     return scrollSpeed > 1;
   }
-
-  #mouseWasInside = false;
-
-  override updateAfterChildren() {
-    super.updateAfterChildren();
-
-    const mouseIsInside = this.contains(this.getContainingInputManager()!.currentState.mouse.position);
-
-    if (!mouseIsInside && this.#mouseWasInside) {
-      this.#scrollToSelected();
-    }
-
-    this.#mouseWasInside = mouseIsInside;
-  }
 }
 
 class CarouselScrollContainer extends OsucadScrollContainer<DrawableCarouselMapset> {
