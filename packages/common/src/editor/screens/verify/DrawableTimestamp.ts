@@ -19,13 +19,6 @@ export class DrawableTimestamp extends CompositeDrawable {
 
     this.autoSizeAxes = Axes.Both;
 
-    let text = TimestampFormatter.formatTimestamp(this.timestamp);
-
-    const hitObjects = this.hitObjects.filter(it => hasComboInformation(it)) as IHasComboInformation[];
-
-    if (hitObjects.length > 0)
-      text += ` (${hitObjects.map(it => it.indexInCombo + 1).join(', ')})`;
-
     this.internalChildren = [
       new FastRoundedBox({
         color: 0x343440,
@@ -36,15 +29,35 @@ export class DrawableTimestamp extends CompositeDrawable {
         autoSizeAxes: Axes.Both,
         padding: { horizontal: 4, vertical: 2 },
         child: this.#text = new OsucadSpriteText({
-          text,
+          text: this.#getText(),
           color: OsucadColors.primary,
           fontSize: 12,
         }),
       }),
     ];
+
+    for (const hitObject of this.hitObjects) {
+      if (hasComboInformation(hitObject))
+        hitObject.indexInComboBindable.valueChanged.addListener(this.#updateText, this);
+    }
   }
 
   #text!: SpriteText;
+
+  #updateText() {
+    this.#text.text = this.#getText();
+  }
+
+  #getText() {
+    let text = TimestampFormatter.formatTimestamp(this.timestamp);
+
+    const hitObjects = this.hitObjects.filter(it => hasComboInformation(it)) as IHasComboInformation[];
+
+    if (hitObjects.length > 0)
+      text += ` (${hitObjects.map(it => it.indexInCombo + 1).join(', ')})`;
+
+    return text;
+  }
 
   override onHover(e: HoverEvent): boolean {
     this.#text.color = OsucadColors.primaryHighlight;
@@ -68,5 +81,14 @@ export class DrawableTimestamp extends CompositeDrawable {
     }
 
     return true;
+  }
+
+  override dispose(isDisposing: boolean = true) {
+    super.dispose(isDisposing);
+
+    for (const hitObject of this.hitObjects) {
+      if (hasComboInformation(hitObject))
+        hitObject.indexInComboBindable.valueChanged.removeListener(this.#updateText, this);
+    }
   }
 }
