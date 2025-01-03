@@ -1,19 +1,11 @@
+import type { HitObjectSelectionEvent } from '../../../../editor/screens/compose/HitObjectSelectionManager';
 import type { ArmedState } from '../../../../hitObjects/drawables/ArmedState';
 import type { DrawableHitObject } from '../../../../hitObjects/drawables/DrawableHitObject';
 import type { Slider } from '../Slider';
-import {
-  Anchor,
-  Axes,
-  Bindable,
-  BindableBoolean,
-  clamp,
-  Container,
-  type ReadonlyDependencyContainer,
-  resolved,
-  Vec2,
-} from 'osucad-framework';
+import { Anchor, Axes, Bindable, BindableBoolean, clamp, Container, type ReadonlyDependencyContainer, resolved, Vec2 } from 'osucad-framework';
 import { OsucadConfigManager } from '../../../../config/OsucadConfigManager';
 import { OsucadSettings } from '../../../../config/OsucadSettings';
+import { HitObjectSelectionManager } from '../../../../editor/screens/compose/HitObjectSelectionManager';
 import { HitResult } from '../../../../hitObjects/HitResult';
 import { DrawableOsuHitObject } from './DrawableOsuHitObject';
 import { DrawableSliderBall } from './DrawableSliderBall';
@@ -56,6 +48,9 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider> {
   @resolved(OsucadConfigManager)
   protected config!: OsucadConfigManager;
 
+  @resolved(HitObjectSelectionManager, true)
+  selection?: HitObjectSelectionManager;
+
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
@@ -82,12 +77,24 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider> {
     super.onApplied();
 
     this.body.hitObject = this.hitObject!;
+
+    if (this.selection) {
+      this.selection.selectionChanged.addListener(this.#selectionChanged, this);
+      this.body.selected = this.selection.isSelected(this.hitObject!);
+    }
   }
 
   protected override onFreed() {
     super.onFreed();
 
     this.body.hitObject = undefined;
+
+    this.selection?.selectionChanged.removeListener(this.#selectionChanged, this);
+  }
+
+  #selectionChanged(event: HitObjectSelectionEvent) {
+    if (this.hitObject === event.hitObject)
+      this.body.selected = event.selected;
   }
 
   protected override updateInitialTransforms() {

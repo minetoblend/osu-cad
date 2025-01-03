@@ -30,7 +30,7 @@ export class VerifyScreen extends EditorScreen {
   @resolved(EditorBeatmap)
   editorBeatmap!: EditorBeatmap;
 
-  @provide()
+  @provide(HitObjectSelectionManager)
   readonly selectionManager = new HitObjectSelectionManager();
 
   protected override get applySafeAreaPadding(): boolean {
