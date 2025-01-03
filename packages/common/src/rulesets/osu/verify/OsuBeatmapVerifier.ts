@@ -12,6 +12,7 @@ import { CheckInvisibleSlider } from './compose/CheckInvisibleSlider';
 import { CheckNinjaSpinner } from './compose/CheckNinjaSpinner';
 import { CheckObscuredReverse } from './compose/CheckObscuredReverse';
 import { CheckMuted } from './hitsounds/CheckMuted';
+import { CheckDefaultColors } from './settings/CheckDefaultColors';
 
 export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
   override get beatmapChecks(): BeatmapCheck<OsuHitObject>[] {
@@ -26,6 +27,7 @@ export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
       new CheckDrainTime(),
       new CheckInvisibleSlider(),
       new CheckMuted(),
+      new CheckDefaultColors(),
     ];
   }
 
