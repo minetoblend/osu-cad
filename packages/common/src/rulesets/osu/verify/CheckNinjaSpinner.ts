@@ -39,7 +39,7 @@ export class NinjaSpinnerIssue extends Issue {
 }
 
 export class CheckNinjaSpinner extends BeatmapCheck<OsuHitObject> {
-  override * check(beatmap: IBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
+  override * getIssues(beatmap: IBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     for (const spinner of beatmap.hitObjects.ofType(Spinner)) {
       const od = beatmap.difficulty.overallDifficulty;
 

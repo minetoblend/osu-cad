@@ -8,7 +8,7 @@ export abstract class BeatmapVerifier<T extends HitObject = HitObject> {
 
   * getIssues(beatmap: EditorBeatmap<T>): Generator<Issue, void, undefined> {
     for (const check of this.checks) {
-      yield * check.check(beatmap);
+      yield * check.getIssues(beatmap);
     }
   }
 }

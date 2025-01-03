@@ -60,7 +60,7 @@ const LEFT_LIMIT = -67;
 const RIGHT_LIMIT = 579;
 
 export class CheckOffscreen extends BeatmapCheck<OsuHitObject> {
-  override * check(beatmap: IBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
+  override * getIssues(beatmap: IBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     for (const hitObject of beatmap.hitObjects) {
       const objectType = hitObject instanceof HitCircle ? 'Circle' : 'Slider head';
 

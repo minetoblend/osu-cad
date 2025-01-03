@@ -8,7 +8,7 @@ import { Slider } from '../hitObjects/Slider';
 import { Spinner } from '../hitObjects/Spinner';
 
 export class CheckAbnormalSpacing extends BeatmapCheck<OsuHitObject> {
-  override* check(beatmap: IBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
+  override* getIssues(beatmap: IBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     const observedDistances: ObservedDistance[] = [];
 
     const ratioProblemThreshold = 15.0;
