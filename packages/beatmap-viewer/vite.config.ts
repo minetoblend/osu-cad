@@ -3,6 +3,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [
+    // @ts-expect-error this works
     nxViteTsPaths(),
   ],
   esbuild: {
@@ -10,6 +11,7 @@ export default defineConfig({
   },
   worker: {
     format: 'es',
+    // @ts-expect-error this works
     plugins: () => [nxViteTsPaths()],
   },
   build: {
