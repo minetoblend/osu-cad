@@ -21,3 +21,19 @@ export function maxOf(array: ReadonlyArray<number>) {
 export function maxBy<T>(array: ReadonlyArray<T>, fn: (item: T, index: number, array: ReadonlyArray<T>) => number) {
   return maxOf(array.map(fn));
 }
+
+export function sumOf(array: ReadonlyArray<number>) {
+  return array.reduce((a, b) => a + b, 0);
+}
+
+export function sumBy<T>(array: ReadonlyArray<T>, fn: (item: T, index: number, array: ReadonlyArray<T>) => number) {
+  return sumOf(array.map(fn));
+}
+
+export function avgOf(array: ReadonlyArray<number>) {
+  return sumOf(array) / array.length;
+}
+
+export function avgBy<T>(array: ReadonlyArray<T>, fn: (item: T, index: number, array: ReadonlyArray<T>) => number) {
+  return sumOf(array.map(fn)) / array.length;
+}

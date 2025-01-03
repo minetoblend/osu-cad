@@ -1,18 +1,14 @@
 import type { EditorBeatmap } from '../editor/EditorBeatmap';
+import type { HitObject } from '../hitObjects/HitObject';
 import type { BeatmapCheck } from './BeatmapCheck';
 import type { Issue } from './Issue';
 
-export abstract class BeatmapVerifier {
-  abstract get checks(): BeatmapCheck[];
+export abstract class BeatmapVerifier<T extends HitObject = HitObject> {
+  abstract get checks(): BeatmapCheck<T>[];
 
-  * getIssues(beatmap: EditorBeatmap): Generator<Issue, void, undefined> {
+  * getIssues(beatmap: EditorBeatmap<T>): Generator<Issue, void, undefined> {
     for (const check of this.checks) {
-      const result = check.check(beatmap);
-
-      if (Array.isArray(result))
-        yield * result;
-      else if (result)
-        yield result;
+      yield * check.check(beatmap);
     }
   }
 }
