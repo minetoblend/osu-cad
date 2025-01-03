@@ -6,6 +6,7 @@ import { CheckAbnormalNodes } from './compose/CheckAbnormalNodes';
 import { CheckAbnormalSpacing } from './compose/CheckAbnormalSpacing';
 import { CheckAmbiguity } from './compose/CheckAmbiguity';
 import { CheckBurai } from './compose/CheckBurai';
+import { CheckConcurrent } from './compose/CheckConcurrent';
 import { CheckNinjaSpinner } from './compose/CheckNinjaSpinner';
 import { CheckObscuredReverse } from './compose/CheckObscuredReverse';
 
@@ -18,6 +19,7 @@ export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
       new CheckBurai(),
       new CheckAmbiguity(),
       new CheckAbnormalNodes(),
+      new CheckConcurrent(),
     ];
   }
 
