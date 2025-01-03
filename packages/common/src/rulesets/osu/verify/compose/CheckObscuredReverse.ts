@@ -49,6 +49,9 @@ export class ObscuredReverseIssue extends Issue {
 export class CheckObscuredReverse extends BeatmapCheck<OsuHitObject> {
   override * getIssues(beatmap: IBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     for (const slider of beatmap.hitObjects.ofType(Slider)) {
+      if (slider.repeatCount <= 0)
+        continue;
+
       const closeThreshold = slider.radius / 1.75;
       const tooCloseThreshold = slider.radius / 3;
 
