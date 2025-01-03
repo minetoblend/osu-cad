@@ -1,12 +1,14 @@
 import type { IKeyBinding } from 'osucad-framework';
-import type { IBeatmap } from '../../beatmap';
+import type { Beatmap, IBeatmap } from '../../beatmap';
 import type { HitObjectComposer } from '../../editor/screens/compose/HitObjectComposer';
 import type { ISkin } from '../../skinning/ISkin';
 import type { SkinTransformer } from '../../skinning/SkinTransformer';
+import type { DifficultyCalculator } from '../difficulty/DifficultyCalculator';
 import type { DrawableRuleset } from '../DrawableRuleset';
 import { InputKey, KeyBinding, KeyCombination } from 'osucad-framework';
 import { StableSkin } from '../../skinning/stable/StableSkin';
 import { Ruleset } from '../Ruleset';
+import { OsuDifficultyCalculator } from './difficulty/OsuDifficultyCalculator';
 import { DrawableOsuEditorRuleset } from './DrawableOsuEditorRuleset';
 import { DrawableOsuRuleset } from './DrawableOsuRuleset';
 import { OsuHitObjectComposer } from './edit/OsuHitObjectComposer';
@@ -49,5 +51,9 @@ export class OsuRuleset extends Ruleset {
     super.postProcessBeatmap(beatmap);
 
     new StackingProcessor().applyToBeatmap(beatmap);
+  }
+
+  override createDifficultyCalculator(beatmap: Beatmap): DifficultyCalculator<any> {
+    return new OsuDifficultyCalculator(beatmap);
   }
 }

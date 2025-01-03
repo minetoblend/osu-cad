@@ -1,9 +1,11 @@
 import type { IKeyBinding } from 'osucad-framework';
+import type { Beatmap } from '../beatmap/Beatmap';
 import type { IBeatmap } from '../beatmap/IBeatmap';
 import type { HitObjectComposer } from '../editor/screens/compose/HitObjectComposer';
 import type { ISkin } from '../skinning/ISkin';
 import type { SkinTransformer } from '../skinning/SkinTransformer';
 import type { BeatmapVerifier } from '../verifier/BeatmapVerifier';
+import type { DifficultyCalculator } from './difficulty/DifficultyCalculator';
 import type { DrawableRuleset } from './DrawableRuleset';
 
 export abstract class Ruleset {
@@ -19,7 +21,7 @@ export abstract class Ruleset {
 
   // TODO: ScoreProcessor
 
-  // TODO: abstract createDifficultyCalculator(beatmap: Beatmap): DifficultyCalculator<any>;
+  abstract createDifficultyCalculator(beatmap: Beatmap): DifficultyCalculator<any>;
 
   abstract createHitObjectComposer(): HitObjectComposer;
 
