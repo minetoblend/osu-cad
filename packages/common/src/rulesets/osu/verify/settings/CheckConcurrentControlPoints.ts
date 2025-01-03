@@ -51,6 +51,7 @@ export class CheckConcurrentControlPoints extends BeatmapCheck<OsuHitObject> {
         yield this.createIssue({
           level: 'problem',
           message: `Concurrent ${current.controlPointName}s.`,
+          beatmap,
           timestamp: current.time,
           cause: `Two ${current.controlPointName}s of the same type exist at the same point in time.`,
         });

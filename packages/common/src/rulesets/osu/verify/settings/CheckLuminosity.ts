@@ -71,6 +71,7 @@ export class CheckLuminosity extends BeatmapCheck<OsuHitObject> {
           level: 'problem',
           message: 'Slider border is way too dark.',
           cause: 'Same as the first check, except applies on the slider border instead.',
+          beatmap,
         });
       }
       else if (luminosity < luminosityMinWarning) {
@@ -78,6 +79,7 @@ export class CheckLuminosity extends BeatmapCheck<OsuHitObject> {
           level: 'problem',
           message: 'Slider border is really dark.',
           cause: 'Same as the first check, except applies on the slider border instead.',
+          beatmap,
         });
       }
 
@@ -105,6 +107,7 @@ export class CheckLuminosity extends BeatmapCheck<OsuHitObject> {
             level: 'problem',
             message: `Combo color ${displayedColorIndex} is way to dark.`,
             cause: 'The HSP luminosity value of a combo colour is lower than 30. These values are visible in the overview section as tooltips for each colour if you want to check them manually.',
+            beatmap,
           });
         }
 
@@ -113,6 +116,7 @@ export class CheckLuminosity extends BeatmapCheck<OsuHitObject> {
             level: 'warning',
             message: `Combo color ${displayedColorIndex} is really dark.`,
             cause: 'Same as the first check, but lower than 43 instead.',
+            beatmap,
           });
         }
 
@@ -122,6 +126,7 @@ export class CheckLuminosity extends BeatmapCheck<OsuHitObject> {
               level: 'warning',
               message: `Combo color ${displayedColorIndex} is really bright in kiai sections. see ${TimestampFormatter.formatTimestamp(comboColorTime[j])}`,
               cause: 'Same as the first check, but lower than 43 instead.',
+              beatmap,
             });
           }
         }

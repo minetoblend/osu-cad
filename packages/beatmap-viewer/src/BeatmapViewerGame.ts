@@ -40,11 +40,7 @@ export class BeatmapViewerGame extends OsucadGameBase {
 
     this.#skinManagerLoaded = this.loadComponentAsync(this.#skinManager);
 
-    const rulesetStore = new RulesetStore();
-
-    rulesetStore.register(new OsuRuleset(), 0);
-
-    this.#dependencies.provide(RulesetStore, rulesetStore);
+    RulesetStore.register(new OsuRuleset(), 0);
   }
 
   protected override async loadAsync(dependencies: ReadonlyDependencyContainer): Promise<void> {

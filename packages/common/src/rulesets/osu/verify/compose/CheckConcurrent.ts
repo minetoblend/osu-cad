@@ -51,6 +51,7 @@ export class CheckConcurrent extends BeatmapCheck<OsuHitObject> {
           yield this.createIssue({
             level: 'problem',
             message: 'Concurrent',
+            beatmap,
             timestamp: [hitObject, next],
             cause: 'A hit object starts before another hit object has ended.',
           });
@@ -59,6 +60,7 @@ export class CheckConcurrent extends BeatmapCheck<OsuHitObject> {
           yield this.createIssue({
             level: 'problem',
             message: `within ${Math.ceil(msApart)}ms of one another`,
+            beatmap,
             timestamp: [hitObject, next],
             cause: 'A hit object starts before another hit object has ended.',
           });

@@ -88,6 +88,7 @@ export class CheckBurai extends BeatmapCheck<OsuHitObject> {
         yield this.createIssue({
           level: 'warning',
           message: 'Burai',
+          beatmap,
           timestamp: slider,
         });
       }
@@ -96,6 +97,7 @@ export class CheckBurai extends BeatmapCheck<OsuHitObject> {
         yield this.createIssue({
           level: 'warning',
           message: 'Potentially Burai',
+          beatmap,
           timestamp: slider,
         });
       }

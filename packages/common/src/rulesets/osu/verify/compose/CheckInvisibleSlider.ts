@@ -42,6 +42,7 @@ export class CheckInvisibleSlider extends BeatmapCheck<OsuHitObject> {
         yield this.createIssue({
           level: 'problem',
           message: 'Slider has no control points',
+          beatmap,
           timestamp: slider,
         });
       }
@@ -49,6 +50,7 @@ export class CheckInvisibleSlider extends BeatmapCheck<OsuHitObject> {
         yield this.createIssue({
           level: 'problem',
           message: 'Slider has negative pixel length',
+          beatmap,
           timestamp: slider,
         });
       }

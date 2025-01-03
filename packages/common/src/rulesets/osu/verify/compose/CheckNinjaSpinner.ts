@@ -45,6 +45,7 @@ export class CheckNinjaSpinner extends BeatmapCheck<OsuHitObject> {
         yield this.createIssue({
           level: 'problem',
           message: 'Spinner is too short, auto cannot achieve 1000 points on this.',
+          beatmap,
           timestamp: spinner,
         });
       }
@@ -53,6 +54,7 @@ export class CheckNinjaSpinner extends BeatmapCheck<OsuHitObject> {
         yield this.createIssue({
           level: 'warning',
           message: 'Spinner may be too short, ensure auto can achieve 1000 points on this.',
+          beatmap,
           timestamp: spinner,
         });
       }

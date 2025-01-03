@@ -41,6 +41,7 @@ export class CheckAbnormalNodes extends BeatmapCheck<OsuHitObject> {
         yield this.createIssue({
           level: 'warning',
           message: `Slider contains ${slider.controlPoints.length} nodes`,
+          beatmap,
           timestamp: slider,
           cause: 'A slider contains more nodes than 10 times the square root of its length in pixels.',
         });

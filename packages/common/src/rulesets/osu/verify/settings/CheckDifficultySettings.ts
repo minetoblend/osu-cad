@@ -1,3 +1,4 @@
+import type { IBeatmap } from '../../../../beatmap/IBeatmap';
 import type { CheckMetadata } from '../../../../verifier/BeatmapCheck';
 import type { Issue } from '../../../../verifier/Issue';
 import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
@@ -43,18 +44,19 @@ export class CheckDifficultySettings extends BeatmapCheck<OsuHitObject> {
   }
 
   override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
-    yield * this.getIssue(beatmap.difficulty.hpDrainRate, 'Hp Drain Rate');
-    yield * this.getIssue(beatmap.difficulty.circleSize, 'Circle Size');
-    yield * this.getIssue(beatmap.difficulty.approachRate, 'Approach Rate');
-    yield * this.getIssue(beatmap.difficulty.overallDifficulty, 'Overall Difficulty');
+    yield * this.getIssue(beatmap, beatmap.difficulty.hpDrainRate, 'Hp Drain Rate');
+    yield * this.getIssue(beatmap, beatmap.difficulty.circleSize, 'Circle Size');
+    yield * this.getIssue(beatmap, beatmap.difficulty.approachRate, 'Approach Rate');
+    yield * this.getIssue(beatmap, beatmap.difficulty.overallDifficulty, 'Overall Difficulty');
   }
 
-  * getIssue(setting: number, name: string, minSetting = 0, maxSetting = 10) {
+  * getIssue(beatmap: IBeatmap<OsuHitObject>, setting: number, name: string, minSetting = 0, maxSetting = 10) {
     if (setting < minSetting || setting > maxSetting) {
       yield this.createIssue({
         level: 'warning',
         message: `${Math.round(setting * 10000) / 10000} ${name}, although rounding is capped to ${minSetting} to ${maxSetting} in game.`,
         cause: `A difficulty setting is less than ${minSetting} or greater than ${maxSetting}.`,
+        beatmap,
       });
     }
 
@@ -63,6 +65,7 @@ export class CheckDifficultySettings extends BeatmapCheck<OsuHitObject> {
         level: 'problem',
         message: `${Math.round(setting * 10000) / 10000} ${name} has more than one decimal place. `,
         cause: 'A difficulty setting has more than 1 decimal place.',
+        beatmap,
       });
     }
   }

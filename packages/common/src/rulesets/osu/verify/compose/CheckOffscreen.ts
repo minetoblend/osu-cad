@@ -69,6 +69,7 @@ export class CheckOffscreen extends BeatmapCheck<OsuHitObject> {
         yield this.createIssue({
           level: 'problem',
           timestamp: hitObject,
+          beatmap,
           message: `${objectType} is offscreen.`,
         });
       }
@@ -83,6 +84,7 @@ export class CheckOffscreen extends BeatmapCheck<OsuHitObject> {
           yield this.createIssue({
             level: 'problem',
             timestamp: hitObject,
+            beatmap,
             message: `${objectType} is offscreen.`,
           });
         }
@@ -90,6 +92,7 @@ export class CheckOffscreen extends BeatmapCheck<OsuHitObject> {
           yield this.createIssue({
             level: 'warning',
             timestamp: hitObject,
+            beatmap,
             message: `${objectType} would be offscreen, but the game prevents it.`,
           });
         }
@@ -102,6 +105,7 @@ export class CheckOffscreen extends BeatmapCheck<OsuHitObject> {
         yield this.createIssue({
           level: 'problem',
           timestamp: hitObject,
+          beatmap,
           message: `Slider tail is offscreen.`,
         });
       }
@@ -113,6 +117,7 @@ export class CheckOffscreen extends BeatmapCheck<OsuHitObject> {
           yield this.createIssue({
             level: 'problem',
             message: 'Slider body is offscreen',
+            beatmap,
             timestamp: hitObject,
           });
 

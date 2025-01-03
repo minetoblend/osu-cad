@@ -61,6 +61,7 @@ export class CheckAmbiguity extends BeatmapCheck<OsuHitObject> {
         yield this.createIssue({
           level: 'warning',
           message: '',
+          beatmap,
           timestamp: slider,
         });
       }
@@ -92,6 +93,7 @@ export class CheckAmbiguity extends BeatmapCheck<OsuHitObject> {
           yield this.createIssue({
             level: 'warning',
             message: `Head and red anchor overlap is possibly ambigious.`,
+            beatmap,
             timestamp: slider,
           });
 
@@ -102,6 +104,7 @@ export class CheckAmbiguity extends BeatmapCheck<OsuHitObject> {
           yield this.createIssue({
             level: 'warning',
             message: `Tail and red anchor overlap is possibly ambigious.`,
+            beatmap,
             timestamp: slider,
           });
 

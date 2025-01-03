@@ -46,6 +46,7 @@ export class CheckTickRate extends BeatmapCheck<OsuHitObject> {
         cause: trimIndent(`
           The slider tick rate setting of a beatmap is using an incorrect or otherwise extremely uncommon divisor." + "<note>Common tick rates include any full integer as well as 1/2, 4/3, and 3/2. Excludes precision errors.</note>
         `),
+        beatmap,
       });
     }
   }

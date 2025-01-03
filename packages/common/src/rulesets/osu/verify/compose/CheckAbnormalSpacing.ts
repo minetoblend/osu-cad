@@ -110,6 +110,7 @@ export class CheckAbnormalSpacing extends BeatmapCheck<OsuHitObject> {
         yield this.createIssue({
           level: 'problem',
           message: [`Space/time ratio is ${ratio} times the expected, see e.g. `, ...comparisonTimestamps],
+          beatmap,
           timestamp: [hitObject, next],
           cause: trimIndent(`
             The space/time ratio between two objects is absurdly large in comparison to other objects with the same snapping prior.
@@ -123,12 +124,14 @@ export class CheckAbnormalSpacing extends BeatmapCheck<OsuHitObject> {
         yield this.createIssue({
           level: 'warning',
           message: [`Space/time ratio is ${ratio} times the expected, see e.g. `, ...comparisonTimestamps],
+          beatmap,
           timestamp: [hitObject, next],
         });
       }
       else {
         yield this.createIssue({
           level: 'minor',
+          beatmap,
           message: [`Space/time ratio is ${ratio} times the expected, see e.g. `, ...comparisonTimestamps],
           timestamp: [hitObject, next],
         });

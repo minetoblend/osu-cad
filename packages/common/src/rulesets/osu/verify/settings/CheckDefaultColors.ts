@@ -46,6 +46,7 @@ export class CheckDefaultColors extends BeatmapCheck<any> {
       yield this.createIssue({
         level: 'problem',
         message: 'Default combo colours without preferred skin.',
+        beatmap,
       });
     }
   }

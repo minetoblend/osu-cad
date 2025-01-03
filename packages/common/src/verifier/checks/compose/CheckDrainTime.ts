@@ -41,6 +41,7 @@ export class CheckDrainTime extends BeatmapCheck<any> {
 
     yield this.createIssue({
       level: 'problem',
+      beatmap,
       message: `Less than 30 seconds of drain time, currently ${TimestampFormatter.formatTimestamp(drainTime)}.`,
       cause: 'The time from the first object to the end of the last object, subtracting any time between two objects ' + 'where a break exists, is in total less than 30 seconds.',
     });

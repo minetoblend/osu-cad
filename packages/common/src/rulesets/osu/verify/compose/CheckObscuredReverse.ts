@@ -84,6 +84,7 @@ export class CheckObscuredReverse extends BeatmapCheck<OsuHitObject> {
         yield this.createIssue({
           level: 'info',
           message: `Reverse arrow ${isSerious ? '' : 'potentially'} obscured`,
+          beatmap,
           timestamp: [...selectedObjects].sort((a, b) => a.startTime - b.startTime),
           cause: 'An object before a reverse arrow ends over where it appears close in time.',
         });

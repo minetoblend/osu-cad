@@ -3,6 +3,7 @@ import type { HitObject } from '../hitObjects/HitObject';
 import type { IBeatmap } from './IBeatmap';
 import { ControlPointInfo } from '../controlPoints/ControlPointInfo';
 import { StaticCrdt } from '../crdt/StaticCrdt';
+import { RulesetStore } from '../rulesets/RulesetStore';
 import { BeatmapColors } from './BeatmapColors';
 import { BeatmapDifficultyInfo } from './BeatmapDifficultyInfo';
 import { BeatmapMetadata } from './BeatmapMetadata';
@@ -41,5 +42,9 @@ export class Beatmap<T extends HitObject = HitObject> extends StaticCrdt impleme
       this.hitObjects,
       this.controlPoints,
     ];
+  }
+
+  get ruleset() {
+    return RulesetStore.getRuleset(this.settings.mode);
   }
 }

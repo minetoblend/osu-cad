@@ -14,7 +14,6 @@ import type { HitObject } from '../hitObjects/HitObject';
 import { AudioManager, Bindable, Component, loadTexture, resolved } from 'osucad-framework';
 import { AudioMixer } from '../audio/AudioMixer';
 import { UpdateHandler } from '../crdt/UpdateHandler';
-import { RulesetStore } from '../rulesets/RulesetStore';
 import { CommandManager } from './CommandManager';
 
 export class EditorBeatmap<T extends HitObject = HitObject> extends Component implements IBeatmap<T> {
@@ -33,11 +32,8 @@ export class EditorBeatmap<T extends HitObject = HitObject> extends Component im
     this.commandManager = this.createCommandManager();
   }
 
-  @resolved(RulesetStore)
-  protected rulesetStore!: RulesetStore;
-
   get ruleset() {
-    return this.rulesetStore.getRuleset(this.settings.mode);
+    return this.beatmap.ruleset;
   }
 
   protected override get hasAsyncLoader(): boolean {

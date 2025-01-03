@@ -1,3 +1,4 @@
+import type { IBeatmap } from '../../../../beatmap/IBeatmap';
 import type { HitObject } from '../../../../hitObjects/HitObject';
 import type { CheckMetadata } from '../../../../verifier/BeatmapCheck';
 import type { Issue } from '../../../../verifier/Issue';
@@ -48,7 +49,7 @@ export class CheckMuted extends BeatmapCheck<OsuHitObject> {
       const volume = beatmap.controlPoints.volumeAt(hitObject.startTime + 1);
 
       if (!(hitObject instanceof Slider)) {
-        yield * this.getIssue(hitObject, null, volume, true);
+        yield * this.getIssue(hitObject, beatmap, null, volume, true);
         continue;
       }
 
@@ -56,18 +57,18 @@ export class CheckMuted extends BeatmapCheck<OsuHitObject> {
         const volume = beatmap.controlPoints.volumeAt(nested.startTime + 1);
 
         if (nested instanceof SliderHeadCircle)
-          yield * this.getIssue(hitObject, nested, volume, true);
+          yield * this.getIssue(hitObject, beatmap, nested, volume, true);
         if (nested instanceof SliderTailCircle)
-          yield * this.getIssue(hitObject, nested, volume, false);
+          yield * this.getIssue(hitObject, beatmap, nested, volume, false);
         if (nested instanceof SliderRepeat)
-          yield * this.getIssue(hitObject, nested, volume, true);
+          yield * this.getIssue(hitObject, beatmap, nested, volume, true);
         else if (nested instanceof SliderTick)
-          yield * this.getIssue(hitObject, nested, volume, false);
+          yield * this.getIssue(hitObject, beatmap, nested, volume, false);
       }
     }
   }
 
-  * getIssue(hitObject: OsuHitObject, nested: HitObject | null, volume: number, isActive: boolean = false) {
+  * getIssue(hitObject: OsuHitObject, beatmap: IBeatmap<OsuHitObject>, nested: HitObject | null, volume: number, isActive: boolean = false) {
     volume = Math.max(5, volume);
 
     if (volume > 20)
@@ -84,6 +85,7 @@ export class CheckMuted extends BeatmapCheck<OsuHitObject> {
           yield this.createIssue({
             level: 'warning',
             timestamp,
+            beatmap,
             message: `${Math.round(volume)}% volume ${partName}, this may be hard to hear over the song.`,
             cause: 'An active hit object is at 10% or lower volume.',
           });
@@ -93,6 +95,7 @@ export class CheckMuted extends BeatmapCheck<OsuHitObject> {
             level: 'minor',
             timestamp,
             message: `${Math.round(volume)}% volume ${partName}, this may be hard to hear over the song.`,
+            beatmap,
             cause: 'An active hit object is at 20% or lower volume.',
           });
         }
@@ -104,6 +107,7 @@ export class CheckMuted extends BeatmapCheck<OsuHitObject> {
             level: 'minor',
             timestamp,
             message: `${Math.round(volume)}% volume ${partName}, ensure there is no distinct sound here in the song.`,
+            beatmap,
             cause: 'A slider reverse is at 10% or lower volume.',
           });
         }
@@ -114,6 +118,7 @@ export class CheckMuted extends BeatmapCheck<OsuHitObject> {
         level: 'minor',
         timestamp,
         message: `${Math.round(volume)}% volume ${partName}, ensure there is no distinct sound here in the song.`,
+        beatmap,
         cause: 'A passive hit object is at 10% or lower volume.',
       });
     }
