@@ -58,7 +58,7 @@ export class CheckBurai extends BeatmapCheck<OsuHitObject> {
 
       const path = slider.path.calculatedRange.path;
 
-      for (let i = 0; i < path.length; i++) {
+      for (let i = 1; i < path.length; i++) {
         let passedMargin = false;
 
         for (let j = i + 1; j < path.length; j++) {
