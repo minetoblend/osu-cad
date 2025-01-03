@@ -1,4 +1,4 @@
-import type { BeatmapCheck } from 'packages/common/src/verifier/BeatmapCheck';
+import type { BeatmapCheck } from '../../../verifier/BeatmapCheck';
 import type { BeatmapSetCheck } from '../../../verifier/BeatmapSetCheck';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
 import { BeatmapVerifier } from '../../../verifier/BeatmapVerifier';
@@ -11,6 +11,7 @@ import { CheckConcurrent } from './compose/CheckConcurrent';
 import { CheckInvisibleSlider } from './compose/CheckInvisibleSlider';
 import { CheckNinjaSpinner } from './compose/CheckNinjaSpinner';
 import { CheckObscuredReverse } from './compose/CheckObscuredReverse';
+import { CheckMuted } from './hitsounds/CheckMuted';
 
 export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
   override get beatmapChecks(): BeatmapCheck<OsuHitObject>[] {
@@ -24,6 +25,7 @@ export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
       new CheckConcurrent(),
       new CheckDrainTime(),
       new CheckInvisibleSlider(),
+      new CheckMuted(),
     ];
   }
 
