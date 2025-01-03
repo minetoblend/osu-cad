@@ -6,7 +6,7 @@ import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
 import { Issue } from '../../../../verifier/Issue';
 import { Slider } from '../../hitObjects/Slider';
 
-// Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/AllModes/Compose/CheckAbnormalNodes.cs
+// Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/AllModes/Compose/CheckInvisibleSlider.cs
 export class InvisibleSliderIssue extends Issue {
   constructor(options: IssueOptions) {
     super(options);
