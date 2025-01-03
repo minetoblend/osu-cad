@@ -30,6 +30,10 @@ export class SortedListCrdt<T extends AbstractCrdt<any>> extends AbstractCrdt<So
     this.#list = new SortedList(comparer);
   }
 
+  get length() {
+    return this.#list.length;
+  }
+
   override handle(mutation: SortedListMutation<T>): void | SortedListMutation<T> | null {
     switch (mutation.op) {
       case 'add':
