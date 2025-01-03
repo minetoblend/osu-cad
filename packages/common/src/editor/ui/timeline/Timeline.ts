@@ -49,6 +49,10 @@ export class Timeline extends ZoomableScrollContainer {
     super.load(dependencies);
   }
 
+  override adjustZoomRelatively(change: number, focusPoint?: number) {
+    super.adjustZoomRelatively(change);
+  }
+
   override update() {
     super.update();
 
