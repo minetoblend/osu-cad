@@ -4,8 +4,10 @@ import type { BeatmapVerifier } from '../../../verifier/BeatmapVerifier';
 import { Anchor, Axes, Box, Container, Direction, FillFlowContainer, resolved, Vec2 } from 'osucad-framework';
 import { OsucadScrollContainer } from '../../../drawables/OsucadScrollContainer';
 import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
+import { IResourcesProvider } from '../../../io/IResourcesProvider';
 import { OsucadColors } from '../../../OsucadColors';
 import { Ruleset } from '../../../rulesets/Ruleset';
+import { BeatmapSkin } from '../../../skinning/BeatmapSkin';
 import { EditorBeatmap } from '../../EditorBeatmap';
 import { DrawableIssue } from './DrawableIssue';
 import { DrawableIssueGroup } from './DrawableIssueGroup';
@@ -57,7 +59,9 @@ export class IssueList extends Container {
   #issueGroups = new Map<BeatmapCheck<any>, DrawableIssueGroup>();
 
   async createIssues(verifier: BeatmapVerifier) {
-    for await (const issue of verifier.getIssues(this.beatmap, this.beatmap.fileStore)) {
+    const beatmaps = this.beatmap.beatmapSet?.beatmaps ?? [this.beatmap.beatmap];
+
+    for await (const issue of verifier.getIssues(beatmaps, this.beatmap.fileStore, new BeatmapSkin(this.dependencies.resolve(IResourcesProvider), this.beatmap))) {
       let group = this.#issueGroups.get(issue.check);
       if (!group) {
         this.add(group = new DrawableIssueGroup(issue.check));

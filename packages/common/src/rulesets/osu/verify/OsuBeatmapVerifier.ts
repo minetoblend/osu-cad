@@ -1,4 +1,5 @@
 import type { BeatmapCheck } from '../../../verifier/BeatmapCheck';
+import type { BeatmapSetCheck } from '../../../verifier/BeatmapSetCheck';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
 import { BeatmapVerifier } from '../../../verifier/BeatmapVerifier';
 import { CheckDrainTime } from '../../../verifier/checks/compose/CheckDrainTime';
@@ -36,5 +37,9 @@ export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
       new CheckTickRate(),
       new CheckConcurrentControlPoints(),
     ];
+  }
+
+  override get beatmapSetChecks(): BeatmapSetCheck[] {
+    return [];
   }
 }

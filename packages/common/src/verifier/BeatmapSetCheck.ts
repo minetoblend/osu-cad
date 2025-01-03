@@ -1,6 +1,6 @@
-import type { WorkingBeatmapSet } from '../beatmap/workingBeatmap/WorkingBeatmapSet';
 import type { Issue } from './Issue';
+import type { VerifierBeatmapSet } from './VerifierBeatmapSet';
 
 export abstract class BeatmapSetCheck {
-  abstract getIssues(mapset: WorkingBeatmapSet): AsyncGenerator<Promise<Issue>, void, undefined>;
+  abstract getIssues(mapset: VerifierBeatmapSet): AsyncGenerator<Promise<Issue>, void, undefined>;
 }
