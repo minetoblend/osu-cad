@@ -55,7 +55,7 @@ export class CheckOffscreen extends BeatmapCheck<OsuHitObject> {
     };
   }
 
-  override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
+  override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     for (const hitObject of beatmap.hitObjects) {
       const objectType = hitObject instanceof HitCircle ? 'Circle' : 'Slider head';
 

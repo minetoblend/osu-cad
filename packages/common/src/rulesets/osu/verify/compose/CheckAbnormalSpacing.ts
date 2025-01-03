@@ -40,7 +40,7 @@ export class CheckAbnormalSpacing extends BeatmapCheck<OsuHitObject> {
     };
   }
 
-  override* getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
+  override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     const observedDistances: ObservedDistance[] = [];
 
     const ratioProblemThreshold = 15.0;

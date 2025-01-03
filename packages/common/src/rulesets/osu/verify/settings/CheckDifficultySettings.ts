@@ -43,7 +43,7 @@ export class CheckDifficultySettings extends BeatmapCheck<OsuHitObject> {
     };
   }
 
-  override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
+  override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     yield * this.getIssue(beatmap, beatmap.difficulty.hpDrainRate, 'Hp Drain Rate');
     yield * this.getIssue(beatmap, beatmap.difficulty.circleSize, 'Circle Size');
     yield * this.getIssue(beatmap, beatmap.difficulty.approachRate, 'Approach Rate');

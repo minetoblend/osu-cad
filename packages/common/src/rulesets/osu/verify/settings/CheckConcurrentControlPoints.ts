@@ -42,7 +42,7 @@ export class CheckConcurrentControlPoints extends BeatmapCheck<OsuHitObject> {
     };
   }
 
-  override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
+  override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     for (const list of beatmap.controlPoints.controlPointLists) {
       for (const [current, next] of zipWithNext(list.items as ControlPoint[])) {
         if (!almostEquals(current.time, next.time))

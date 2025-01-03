@@ -57,7 +57,7 @@ export class CheckLuminosity extends BeatmapCheck<OsuHitObject> {
     };
   }
 
-  override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
+  override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     const luminosityMinRankable = 30;
     const luminosityMinWarning = 43;
     const luminosityMax = 250;

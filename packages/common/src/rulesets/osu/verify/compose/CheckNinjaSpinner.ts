@@ -33,7 +33,7 @@ export class CheckNinjaSpinner extends BeatmapCheck<OsuHitObject> {
     };
   }
 
-  override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
+  override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     for (const spinner of beatmap.hitObjects.ofType(Spinner)) {
       const od = beatmap.difficulty.overallDifficulty;
 

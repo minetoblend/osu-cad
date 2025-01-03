@@ -35,7 +35,7 @@ export class CheckTickRate extends BeatmapCheck<OsuHitObject> {
     };
   }
 
-  override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
+  override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     const tickRate = beatmap.difficulty.sliderTickRate;
 
     const approxTickRate = Math.round(tickRate * 1000) / 1000;

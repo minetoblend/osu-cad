@@ -36,7 +36,7 @@ export class CheckInvisibleSlider extends BeatmapCheck<OsuHitObject> {
     };
   }
 
-  override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
+  override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     for (const slider of beatmap.hitObjects.ofType(Slider)) {
       if (slider.controlPoints.length === 0) {
         yield this.createIssue({

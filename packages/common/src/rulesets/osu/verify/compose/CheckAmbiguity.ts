@@ -52,7 +52,7 @@ export class CheckAmbiguity extends BeatmapCheck<OsuHitObject> {
     };
   }
 
-  override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
+  override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     for (const slider of beatmap.hitObjects.ofType(Slider)) {
       const tailPosition = slider.getPositionAtTime(slider.startTime + slider.spanDuration);
       const curveEdgesDistance = tailPosition.distance(slider.stackedPosition);

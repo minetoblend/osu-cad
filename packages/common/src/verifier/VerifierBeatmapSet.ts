@@ -1,10 +1,10 @@
-import type { WorkingBeatmapSet } from '../beatmap/workingBeatmap/WorkingBeatmapSet';
-import type { BeatmapVerifier } from './BeatmapVerifier';
+import type { IBeatmap } from '../beatmap/IBeatmap';
+import type { FileStore } from '../beatmap/io/FileStore';
 
 export class VerifierBeatmapSet {
   constructor(
-    readonly beatmapSet: WorkingBeatmapSet,
-    readonly verifier: BeatmapVerifier,
+    readonly beatmaps: IBeatmap,
+    readonly fileStore: FileStore,
   ) {
   }
 }

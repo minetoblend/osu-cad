@@ -51,13 +51,13 @@ export class IssueList extends Container {
     const verifier = this.ruleset.createBeatmapVerifier();
 
     if (verifier)
-      this.createIssues(verifier);
+      this.createIssues(verifier).then();
   }
 
   #issueGroups = new Map<BeatmapCheck<any>, DrawableIssueGroup>();
 
-  createIssues(verifier: BeatmapVerifier) {
-    for (const issue of verifier.getIssues(this.beatmap)) {
+  async createIssues(verifier: BeatmapVerifier) {
+    for await (const issue of verifier.getIssues(this.beatmap, this.beatmap.fileStore)) {
       let group = this.#issueGroups.get(issue.check);
       if (!group) {
         this.add(group = new DrawableIssueGroup(issue.check));

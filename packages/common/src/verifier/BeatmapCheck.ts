@@ -13,7 +13,7 @@ export interface CheckMetadata {
 export abstract class BeatmapCheck<T extends HitObject = HitObject> {
   abstract get metadata(): CheckMetadata;
 
-  abstract getIssues(beatmap: VerifierBeatmap<T>): Generator<Issue, void, undefined>;
+  abstract getIssues(beatmap: VerifierBeatmap<T>): AsyncGenerator<Issue, void, undefined>;
 
   protected createIssue(options: IssueOptions): Issue {
     return new Issue(this, options);

@@ -41,7 +41,7 @@ export class CheckMuted extends BeatmapCheck<OsuHitObject> {
     };
   }
 
-  override* getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
+  override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     for (const hitObject of beatmap.hitObjects) {
       if (!(hitObject instanceof HitCircle || hitObject instanceof Slider))
         continue;

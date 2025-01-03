@@ -33,7 +33,7 @@ export class CheckDrainTime extends BeatmapCheck<any> {
     };
   }
 
-  override * getIssues(beatmap: VerifierBeatmap<any>): Generator<Issue, void, undefined> {
+  override async * getIssues(beatmap: VerifierBeatmap<any>): AsyncGenerator<Issue, void, undefined> {
     const drainTime = getDrainTime(beatmap);
 
     if (drainTime >= 30 * 1000)
