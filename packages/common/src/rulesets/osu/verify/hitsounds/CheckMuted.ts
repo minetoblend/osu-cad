@@ -1,6 +1,6 @@
-import type { IBeatmap } from '../../../../beatmap/IBeatmap';
 import type { HitObject } from '../../../../hitObjects/HitObject';
 import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { almostEquals } from 'osucad-framework';
 import { trimIndent } from '../../../../utils/stringUtils';
@@ -46,7 +46,7 @@ export class MutedIssue extends Issue {
 }
 
 export class CheckMuted extends BeatmapCheck<OsuHitObject> {
-  override* getIssues(beatmap: IBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
+  override* getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     for (const hitObject of beatmap.hitObjects) {
       if (!(hitObject instanceof HitCircle || hitObject instanceof Slider))
         continue;

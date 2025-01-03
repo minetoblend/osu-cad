@@ -1,5 +1,5 @@
-import type { IBeatmap } from '../../../../beatmap/IBeatmap';
 import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
 import { Issue } from '../../../../verifier/Issue';
@@ -45,7 +45,7 @@ export class DefaultColorsIssue extends Issue {
 }
 
 export class CheckDefaultColors extends BeatmapCheck<any> {
-  override * getIssues(beatmap: IBeatmap<any>): Generator<Issue, void, undefined> {
+  override * getIssues(beatmap: VerifierBeatmap<any>): Generator<Issue, void, undefined> {
     const noSkinPreference = beatmap.settings.skinPreference === '' || beatmap.settings.skinPreference === 'Default';
     if (noSkinPreference && beatmap.colors.comboColors.length === 0) {
       yield new DefaultColorsIssue({

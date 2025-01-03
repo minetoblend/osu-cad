@@ -1,5 +1,5 @@
-import type { IBeatmap } from '../../../../beatmap/IBeatmap';
 import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
@@ -45,7 +45,7 @@ export class ConcurrentIssue extends Issue {
 }
 
 export class CheckConcurrent extends BeatmapCheck<OsuHitObject> {
-  override * getIssues(beatmap: IBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
+  override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     for (let i = 0; i < beatmap.hitObjects.items.length - 1; i++) {
       for (let j = i + 1; j < beatmap.hitObjects.items.length; j++) {
         const hitObject = beatmap.hitObjects.items[i];

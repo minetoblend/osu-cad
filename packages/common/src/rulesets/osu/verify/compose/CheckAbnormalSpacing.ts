@@ -1,6 +1,6 @@
-import type { IBeatmap } from '../../../../beatmap/IBeatmap';
 import type { HitObject } from '../../../../hitObjects/HitObject';
 import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { avgBy, maxBy, zipWithNext } from '../../../../utils/arrayUtils';
 import { trimIndent } from '../../../../utils/stringUtils';
@@ -45,7 +45,7 @@ export class AbnormalSpacingIssue extends Issue {
 }
 
 export class CheckAbnormalSpacing extends BeatmapCheck<OsuHitObject> {
-  override* getIssues(beatmap: IBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
+  override* getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     const observedDistances: ObservedDistance[] = [];
 
     const ratioProblemThreshold = 15.0;

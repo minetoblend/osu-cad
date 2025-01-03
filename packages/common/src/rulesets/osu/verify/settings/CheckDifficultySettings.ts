@@ -1,5 +1,5 @@
-import type { IBeatmap } from '../../../../beatmap/IBeatmap';
 import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { almostEquals } from 'osucad-framework';
 import { trimIndent } from '../../../../utils/stringUtils';
@@ -50,7 +50,7 @@ export class DifficultySettingsIssue extends Issue {
 }
 
 export class CheckDifficultySettings extends BeatmapCheck<OsuHitObject> {
-  override * getIssues(beatmap: IBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
+  override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     yield * this.getIssue(beatmap.difficulty.hpDrainRate, 'Hp Drain Rate');
     yield * this.getIssue(beatmap.difficulty.circleSize, 'Circle Size');
     yield * this.getIssue(beatmap.difficulty.approachRate, 'Approach Rate');

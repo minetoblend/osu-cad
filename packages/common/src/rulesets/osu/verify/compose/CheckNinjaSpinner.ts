@@ -1,5 +1,5 @@
-import type { IBeatmap } from '../../../../beatmap/IBeatmap';
 import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
@@ -39,7 +39,7 @@ export class NinjaSpinnerIssue extends Issue {
 }
 
 export class CheckNinjaSpinner extends BeatmapCheck<OsuHitObject> {
-  override * getIssues(beatmap: IBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
+  override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     for (const spinner of beatmap.hitObjects.ofType(Spinner)) {
       const od = beatmap.difficulty.overallDifficulty;
 

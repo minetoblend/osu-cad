@@ -1,6 +1,6 @@
-import type { IBeatmap } from '../../../../beatmap/IBeatmap';
 import type { HitObject } from '../../../../hitObjects/HitObject';
 import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
@@ -47,7 +47,7 @@ export class ObscuredReverseIssue extends Issue {
 }
 
 export class CheckObscuredReverse extends BeatmapCheck<OsuHitObject> {
-  override * getIssues(beatmap: IBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
+  override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     for (const slider of beatmap.hitObjects.ofType(Slider)) {
       if (slider.repeatCount <= 0)
         continue;

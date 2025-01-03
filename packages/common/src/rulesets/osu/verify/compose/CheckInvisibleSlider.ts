@@ -1,5 +1,5 @@
-import type { IBeatmap } from '../../../../beatmap/IBeatmap';
 import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
@@ -42,7 +42,7 @@ export class InvisibleSliderIssue extends Issue {
 }
 
 export class CheckInvisibleSlider extends BeatmapCheck<OsuHitObject> {
-  override * getIssues(beatmap: IBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
+  override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     for (const slider of beatmap.hitObjects.ofType(Slider)) {
       if (slider.controlPoints.length === 0) {
         yield new InvisibleSliderIssue({

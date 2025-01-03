@@ -1,6 +1,6 @@
 import type { Vec2 } from 'osucad-framework';
-import type { IBeatmap } from '../../../../beatmap/IBeatmap';
 import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
@@ -58,7 +58,7 @@ export class AmbiguityIssue extends Issue {
 }
 
 export class CheckAmbiguity extends BeatmapCheck<OsuHitObject> {
-  override * getIssues(beatmap: IBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
+  override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     for (const slider of beatmap.hitObjects.ofType(Slider)) {
       const tailPosition = slider.getPositionAtTime(slider.startTime + slider.spanDuration);
       const curveEdgesDistance = tailPosition.distance(slider.stackedPosition);

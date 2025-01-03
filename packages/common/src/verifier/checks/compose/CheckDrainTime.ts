@@ -1,5 +1,5 @@
-import type { IBeatmap } from 'packages/common/src/beatmap/index';
 import type { IssueMetadata, IssueOptions } from '../../Issue';
+import type { VerifierBeatmap } from '../../VerifierBeatmap';
 import { trimIndent } from '../../../utils/stringUtils';
 import { BeatmapCheck } from '../../BeatmapCheck';
 import { Issue } from '../../Issue';
@@ -38,7 +38,7 @@ export class DrainTimeIssue extends Issue {
 }
 
 export class CheckDrainTime extends BeatmapCheck<any> {
-  override * getIssues(beatmap: IBeatmap<any>): Generator<Issue, void, undefined> {
+  override * getIssues(beatmap: VerifierBeatmap<any>): Generator<Issue, void, undefined> {
     const drainTime = getDrainTime(beatmap);
 
     if (drainTime >= 30 * 1000)
@@ -52,7 +52,7 @@ export class CheckDrainTime extends BeatmapCheck<any> {
   }
 }
 
-function getDrainTime(beatmap: IBeatmap) {
+function getDrainTime(beatmap: VerifierBeatmap) {
   // TODO: breaks
 
   if (beatmap.hitObjects.items.length === 0)
