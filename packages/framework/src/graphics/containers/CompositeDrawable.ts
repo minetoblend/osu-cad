@@ -22,6 +22,8 @@ import { EasingFunction } from '../transforms/EasingFunction';
 export interface CompositeDrawableOptions extends DrawableOptions {
   padding?: MarginPaddingOptions;
   autoSizeAxes?: Axes;
+  autoSizeDuration?: number;
+  autoSizeEasing?: EasingFunction;
   masking?: boolean;
 }
 

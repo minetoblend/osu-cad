@@ -35,7 +35,6 @@ export class EditorLayout extends CompositeDrawable {
     if (!this.#drawSizeBacking.isValid) {
       this.#screenContainer.padding = {
         top: this.#header.drawHeight,
-        bottom: this.#bottomBar.drawHeight,
       };
 
       this.#drawSizeBacking.validate();

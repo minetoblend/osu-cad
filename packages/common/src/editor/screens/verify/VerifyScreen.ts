@@ -28,6 +28,10 @@ export class VerifyScreen extends EditorScreen {
   @provide()
   readonly selectionManager = new HitObjectSelectionManager();
 
+  protected override get applySafeAreaPadding(): boolean {
+    return false;
+  }
+
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 

@@ -1,3 +1,4 @@
+import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import { Axes, CompositeDrawable } from 'osucad-framework';
 
 export class EditorScreen extends CompositeDrawable {
@@ -12,6 +13,17 @@ export class EditorScreen extends CompositeDrawable {
 
   onExiting() {
     this.fadeOut(200);
+  }
+
+  protected get applySafeAreaPadding() {
+    return true;
+  }
+
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
+    if (this.applySafeAreaPadding)
+      this.padding = { ...this.padding, bottom: 48 };
   }
 
   override get handlePositionalInput(): boolean {

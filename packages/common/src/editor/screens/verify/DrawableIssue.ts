@@ -2,6 +2,7 @@ import type { Container, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Issue } from '../../../verifier/Issue';
 import { Anchor, Axes, CompositeDrawable, FillFlowContainer, Vec2 } from 'osucad-framework';
 import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
+import { TextBlock } from '../../../drawables/TextBlock';
 import { OsucadColors } from '../../../OsucadColors';
 import { arrayify } from '../../../utils/arrayUtils';
 import { DrawableTimestamp } from './DrawableTimestamp';
@@ -50,15 +51,15 @@ export class DrawableIssue extends CompositeDrawable {
           color: OsucadColors.text,
           anchor: Anchor.CenterLeft,
           origin: Anchor.CenterLeft,
+          fontSize: 13,
         }));
       }
     }
     else {
-      messageLine.add(new OsucadSpriteText({
+      messageLine.add(new TextBlock({
         text: this.issue.message,
         color: OsucadColors.text,
-        anchor: Anchor.CenterLeft,
-        origin: Anchor.CenterLeft,
+        fontSize: 13,
       }));
     }
   }
