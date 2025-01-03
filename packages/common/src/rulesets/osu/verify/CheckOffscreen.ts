@@ -59,7 +59,7 @@ const UPPER_LIMIT = -60;
 const LEFT_LIMIT = -67;
 const RIGHT_LIMIT = 579;
 
-export class OffScreenCheck extends BeatmapCheck<OsuHitObject> {
+export class CheckOffscreen extends BeatmapCheck<OsuHitObject> {
   override * check(beatmap: EditorBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     for (const hitObject of beatmap.hitObjects) {
       const objectType = hitObject instanceof HitCircle ? 'Circle' : 'Slider head';

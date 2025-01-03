@@ -7,7 +7,7 @@ import { BeatmapCheck } from '../../../verifier/BeatmapCheck';
 import { Slider } from '../hitObjects/Slider';
 import { Spinner } from '../hitObjects/Spinner';
 
-export class AbnormalSpacingCheck extends BeatmapCheck<OsuHitObject> {
+export class CheckAbnormalSpacing extends BeatmapCheck<OsuHitObject> {
   override* check(beatmap: EditorBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     const observedDistances: ObservedDistance[] = [];
 

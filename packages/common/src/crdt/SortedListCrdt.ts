@@ -1,4 +1,5 @@
 import type { IComparer } from 'osucad-framework';
+import type { Constructor } from '../utils/Constructor';
 import { Action, SortedList } from 'osucad-framework';
 import { AbstractCrdt } from './AbstractCrdt';
 
@@ -158,5 +159,13 @@ export class SortedListCrdt<T extends AbstractCrdt<any>> extends AbstractCrdt<So
 
   get last() {
     return this.#list.last;
+  }
+
+  filter(predicate: (value: T, index: number, array: readonly T[]) => boolean) {
+    return this.items.filter(predicate);
+  }
+
+  ofType<U extends T>(type: Constructor<U>): U[] {
+    return this.items.filter(it => it instanceof type) as U[];
   }
 }
