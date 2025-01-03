@@ -1,8 +1,10 @@
 import type { ClickEvent, Drawable, HoverEvent, MouseDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { BeatmapCheck } from '../../../verifier/BeatmapCheck';
 import type { BeatmapVerifier } from '../../../verifier/BeatmapVerifier';
-import { Axes, Box, Container, Direction, FillFlowContainer, resolved, Vec2 } from 'osucad-framework';
+import { Anchor, Axes, Box, Container, Direction, FillFlowContainer, resolved, Vec2 } from 'osucad-framework';
 import { OsucadScrollContainer } from '../../../drawables/OsucadScrollContainer';
+import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
+import { OsucadColors } from '../../../OsucadColors';
 import { Ruleset } from '../../../rulesets/Ruleset';
 import { EditorBeatmap } from '../../EditorBeatmap';
 import { DrawableIssue } from './DrawableIssue';
@@ -63,6 +65,20 @@ export class IssueList extends Container {
       }
 
       group.add(new DrawableIssue(issue));
+    }
+
+    if (this.#issueGroups.size === 0) {
+      this.add(new Container({
+        relativeSizeAxes: Axes.X,
+        autoSizeAxes: Axes.Y,
+        padding: { vertical: 25 },
+        child: new OsucadSpriteText({
+          text: 'No issues found.',
+          anchor: Anchor.TopCenter,
+          origin: Anchor.TopCenter,
+          color: OsucadColors.text,
+        }),
+      }));
     }
   }
 

@@ -427,6 +427,8 @@ export abstract class Menu extends CompositeDrawable {
     }
   }
 
+  #firstResize = true;
+
   protected updateSize(newSize: Vec2) {
     this.size = newSize;
   }

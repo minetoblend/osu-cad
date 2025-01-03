@@ -32,18 +32,19 @@ export class TouchHandler extends InputHandler {
   #getTouches(event: TouchEvent, touchList: TouchList = event.touches): Touch[] {
     const rect = (event.target as HTMLCanvasElement).getBoundingClientRect();
 
-    return Array.from(touchList).map((touch) => {
-      const x = touch.clientX - rect.left;
-      const y = touch.clientY - rect.top;
+    return Array.from(touchList)
+      .map((touch) => {
+        const x = touch.clientX - rect.left;
+        const y = touch.clientY - rect.top;
 
-      let touchId = this.#touchIdentifiers.get(touch.identifier);
+        let touchId = this.#touchIdentifiers.get(touch.identifier);
 
-      if (touchId === undefined) {
-        this.#touchIdentifiers.set(touch.identifier, touchId = TouchSource.Touch1 + this.#touchIdentifiers.size);
-      }
+        if (touchId === undefined) {
+          this.#touchIdentifiers.set(touch.identifier, touchId = TouchSource.Touch1 + this.#touchIdentifiers.size);
+        }
 
-      return new Touch(touchId, new Vec2(x, y));
-    });
+        return new Touch(touchId, new Vec2(x, y));
+      });
   }
 
   #touchIdentifiers = new Map<number, number>();

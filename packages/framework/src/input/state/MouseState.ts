@@ -11,6 +11,8 @@ export class MouseState {
 
   scroll = new Vec2();
 
+  pressure = 1;
+
   isPressed(button: MouseButton) {
     return this.buttons.isPressed(button);
   }

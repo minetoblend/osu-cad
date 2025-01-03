@@ -1,4 +1,4 @@
-import type { ClickEvent, DoubleClickEvent, DragEndEvent, DragEvent, MouseDownEvent, ReadonlyDependencyContainer, Vec2 } from 'osucad-framework';
+import type { ClickEvent, DoubleClickEvent, DragEndEvent, DragEvent, HoverEvent, HoverLostEvent, MouseDownEvent, ReadonlyDependencyContainer, Vec2 } from 'osucad-framework';
 import type { HitObjectSelectionEvent } from '../../../../editor/screens/compose/HitObjectSelectionManager';
 import type { HitObjectLifetimeEntry } from '../../../../hitObjects/drawables/HitObjectLifetimeEntry';
 import type { HitObject } from '../../../../hitObjects/HitObject';
@@ -51,7 +51,7 @@ export class SliderSelectionBlueprint extends OsuSelectionBlueprint<Slider> {
     this.origin = Anchor.Center;
     this.size = OsuHitObject.object_dimensions;
 
-    this.addAllInternal(
+    this.content.addAll(
       this.tailCircle = new SkinnableDrawable(OsuSkinComponentLookup.HitCircleSelect).with({
         relativeSizeAxes: Axes.Both,
         anchor: Anchor.Center,
@@ -62,6 +62,9 @@ export class SliderSelectionBlueprint extends OsuSelectionBlueprint<Slider> {
         anchor: Anchor.Center,
         origin: Anchor.Center,
       }),
+    );
+
+    this.addInternal(
       this.sliderPathContainer = new Container({
         anchor: Anchor.Center,
       }),
@@ -107,15 +110,26 @@ export class SliderSelectionBlueprint extends OsuSelectionBlueprint<Slider> {
     this.scheduler.addOnce(this.#updateSliderPathVisibility, this);
   }
 
+  override onHover(e: HoverEvent): boolean {
+    this.#updateSliderPathVisibility();
+    return true;
+  }
+
+  override onHoverLost(e: HoverLostEvent) {
+    this.#updateSliderPathVisibility();
+  }
+
   #updateSliderPathVisibility() {
-    if (this.selected.value
-      && this.selection.length === 1
-      && this.sliderPathContainer.children.length === 0
-    ) {
-      this.sliderPathContainer.add(
-        new SliderSelectionPathVisualizer(this.hitObject!)
-          .adjust(it => it.updatePosition = false),
-      );
+    const isOnlySelectedObject = this.selected.value && this.selection.length === 1;
+    const isHoveredWithNoSelection = this.isHovered && this.selection.length === 0;
+
+    if (isOnlySelectedObject || isHoveredWithNoSelection) {
+      if (this.sliderPathContainer.children.length === 0) {
+        this.sliderPathContainer.add(
+          new SliderSelectionPathVisualizer(this.hitObject!)
+            .adjust(it => it.updatePosition = false),
+        );
+      }
     }
     else {
       this.sliderPathContainer.clear();
@@ -246,6 +260,11 @@ class SliderSelectionPathHandle extends SliderPathVisualizerHandle {
       return true;
     }
 
+    return false;
+  }
+
+  override onHover(): boolean {
+    super.onHover();
     return false;
   }
 }

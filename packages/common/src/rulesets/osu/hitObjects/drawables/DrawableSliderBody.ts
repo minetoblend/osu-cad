@@ -195,10 +195,10 @@ export class DrawableSliderBody extends Drawable {
 
   snakeInProgress = 0;
 
-  @resolved(DrawableHitObject)
-  private drawableHitObject!: DrawableHitObject;
+  @resolved(DrawableHitObject, true)
+  private drawableHitObject?: DrawableHitObject;
 
-  private accentColor = new Bindable(new Color(0xFFFFFF));
+  readonly accentColor = new Bindable(new Color(0xFFFFFF));
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
@@ -206,6 +206,7 @@ export class DrawableSliderBody extends Drawable {
     this.accentColor.valueChanged.addListener(this.#updateColor, this);
     this.sliderTrackOverride.valueChanged.addListener(this.#updateColor, this);
     this.skin.sourceChanged.addListener(this.#skinChanged, this);
+    this.#updateColor();
   }
 
   sliderTrackOverride = new Bindable<Color | null>(null);
@@ -226,7 +227,8 @@ export class DrawableSliderBody extends Drawable {
   protected override loadComplete() {
     super.loadComplete();
 
-    this.accentColor.bindTo(this.drawableHitObject.accentColor);
+    if (this.drawableHitObject)
+      this.accentColor.bindTo(this.drawableHitObject.accentColor);
 
     this.#skinChanged();
   }

@@ -2,7 +2,7 @@ import type { ClickEvent, DragEndEvent, DragEvent, DragStartEvent, MouseDownEven
 import type { HitObjectSelectionEvent } from '../../../../editor/screens/compose/HitObjectSelectionManager';
 import type { HitObjectLifetimeEntry } from '../../../../hitObjects/drawables/HitObjectLifetimeEntry';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
-import { Bindable, BindableBoolean, BindableNumber, MouseButton, resolved, Vec2 } from 'osucad-framework';
+import { Axes, Bindable, BindableBoolean, BindableNumber, Container, MouseButton, resolved, Vec2 } from 'osucad-framework';
 import { HitObjectList } from '../../../../beatmap/HitObjectList';
 import { UpdateHandler } from '../../../../crdt/UpdateHandler';
 import { HitObjectSelectionManager } from '../../../../editor/screens/compose/HitObjectSelectionManager';
@@ -23,6 +23,9 @@ export class OsuSelectionBlueprint<T extends OsuHitObject = OsuHitObject> extend
   constructor() {
     super();
     this.alwaysPresent = true;
+    this.content = new Container({
+      relativeSizeAxes: Axes.Both,
+    });
   }
 
   readonly = false;
@@ -39,11 +42,15 @@ export class OsuSelectionBlueprint<T extends OsuHitObject = OsuHitObject> extend
   readonly scaleBindable = new BindableNumber(1);
   readonly selected = new BindableBoolean();
 
+  readonly content: Container;
+
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
+    this.addInternal(this.content);
+
     this.selected.addOnChangeListener(
-      selected => this.alpha = selected.value ? 1 : 0,
+      selected => this.content.alpha = selected.value ? 1 : 0,
       { immediate: true },
     );
   }

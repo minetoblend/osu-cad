@@ -37,7 +37,20 @@ export function minOf(array: ReadonlyArray<number>) {
 }
 
 export function minBy<T>(array: ReadonlyArray<T>, fn: (item: T, index: number, array: ReadonlyArray<T>) => number) {
-  return minOf(array.map(fn));
+  if (array.length === 0)
+    throw new Error('Cannot compute max of emtpy array');
+
+  let min = array[0];
+  let minValue = fn(array[0], 0, array);
+
+  for (let i = 1; i < array.length; i++) {
+    const value = fn(array[i], i, array);
+    if (value < minValue)
+      min = array[i];
+    minValue = value;
+  }
+
+  return min;
 }
 
 export function sumOf(array: ReadonlyArray<number>) {

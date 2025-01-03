@@ -1,24 +1,9 @@
-import type { Drawable, MenuItem, ReadonlyDependencyContainer, SpriteText } from 'osucad-framework';
-import {
-  Anchor,
-  Axes,
-  Color,
-  Container,
-  dependencyLoader,
-  Direction,
-  DrawableMenuItem,
-  EasingFunction,
-  FastRoundedBox,
-  MarginPadding,
-  Menu,
-  RoundedBox,
-  ScrollbarContainer,
-  ScrollContainer,
-  Vec2,
-} from 'osucad-framework';
-import { Graphics } from 'pixi.js';
-import { OsucadSpriteText } from '../../drawables/OsucadSpriteText';
+import type { Drawable, DrawableMenuItem, MenuItem } from 'osucad-framework';
+import { Axes, Color, dependencyLoader, Direction, EasingFunction, FastRoundedBox, Menu, ScrollbarContainer, ScrollContainer, Vec2 } from 'osucad-framework';
 import { OsucadColors } from '../../OsucadColors';
+import { ToggleMenuItem } from '../../userInterface/ToggleMenuItem';
+import { DrawableEditorMenuItem } from './DrawableEditorMenuItem';
+import { DrawableToggleMenuItem } from './DrawableToggleMenuItem';
 
 export class EditorMenu extends Menu {
   @dependencyLoader()
@@ -41,6 +26,9 @@ export class EditorMenu extends Menu {
   }
 
   protected createDrawableMenuItem(item: MenuItem): DrawableMenuItem {
+    if (item instanceof ToggleMenuItem)
+      return new DrawableToggleMenuItem(item);
+
     return new DrawableEditorMenuItem(item);
   }
 
@@ -94,101 +82,5 @@ export class EditorMenu extends Menu {
     }
 
     this.fadeOut(200);
-  }
-}
-
-class DrawableEditorMenuItem extends DrawableMenuItem {
-  constructor(item: MenuItem) {
-    super(item);
-    this.backgroundColor = 'transparent';
-    this.backgroundColorHover = 'rgba(255, 255, 255, 0.1)';
-  }
-
-  createContent(): Drawable {
-    return new MenuItemContent(this.item);
-  }
-
-  override createBackground(): Drawable {
-    return new RoundedBox({
-      color: 'transparent',
-      cornerRadius: 4,
-      relativeSizeAxes: Axes.Both,
-    });
-  }
-
-  protected override load(dependencies: ReadonlyDependencyContainer) {
-    super.load(dependencies);
-
-    this.item.disabled.addOnChangeListener(
-      (e) => {
-        if (e.value) {
-          this.foreground.alpha = 0.5;
-        }
-        else {
-          this.foreground.alpha = 1;
-        }
-      },
-      { immediate: true },
-    );
-  }
-}
-
-class MenuItemContent extends Container {
-  constructor(readonly item: MenuItem) {
-    let padding = MarginPadding.from({ horizontal: 8, vertical: 4 });
-
-    if (item.items.length > 0) {
-      padding = new MarginPadding({
-        vertical: 4,
-        left: 8,
-        right: 32,
-      });
-    }
-
-    super({
-      autoSizeAxes: Axes.Both,
-      padding,
-    });
-  }
-
-  protected override load(dependencies: ReadonlyDependencyContainer) {
-    super.load(dependencies);
-
-    this.add(
-      this.#spriteText = new OsucadSpriteText({
-        anchor: Anchor.CenterLeft,
-        origin: Anchor.CenterLeft,
-        text: this.#text,
-        fontSize: 14,
-      }),
-    );
-
-    if (this.item.items.length > 0) {
-      const child = new Container({
-        anchor: Anchor.CenterRight,
-        origin: Anchor.CenterRight,
-        x: 20,
-        alpha: 0.5,
-      });
-      this.add(child);
-
-      const g = child.drawNode.addChild(new Graphics());
-
-      g.roundPoly(0, 0, 4, 3, 1, Math.PI * 0.5).fill(0xFFFFFF);
-    }
-  }
-
-  #text: string = '';
-
-  #spriteText?: SpriteText;
-
-  get text() {
-    return this.#text;
-  }
-
-  set text(value: string) {
-    this.#text = value;
-    if (this.#spriteText)
-      this.#spriteText.text = value;
   }
 }

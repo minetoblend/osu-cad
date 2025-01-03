@@ -16,7 +16,7 @@ export class HitCircleSelectionBlueprint extends OsuSelectionBlueprint<HitCircle
     this.size = OsuHitObject.object_dimensions;
     this.origin = Anchor.Center;
 
-    this.addInternal(
+    this.content.add(
       new SkinnableDrawable(OsuSkinComponentLookup.HitCircleSelect).with({
         relativeSizeAxes: Axes.Both,
       }),

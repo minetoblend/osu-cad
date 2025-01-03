@@ -70,7 +70,7 @@ export class EditorMenubar extends EditorMenu implements IKeyBindingHandler<Plat
   }
 }
 
-class DrawableEditorMenubarItem extends DrawableMenuItem {
+export class DrawableEditorMenubarItem extends DrawableMenuItem {
   constructor(item: MenuItem) {
     super(item);
     this.backgroundColor = 'transparent';

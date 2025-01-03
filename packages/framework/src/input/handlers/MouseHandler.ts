@@ -7,6 +7,7 @@ import { FileDropInput } from '../stateChanges/FileDropInput';
 import { MouseButtonInput } from '../stateChanges/MouseButtonInput';
 import { MousePositionAbsoluteInput } from '../stateChanges/MousePositionAbsoluteInput';
 import { MouseScrollRelativeInput } from '../stateChanges/MouseScrollRelativeInput';
+import { PressureInput } from '../stateChanges/PressureInput';
 import { InputHandler } from './InputHandler';
 
 export class MouseHandler extends InputHandler {
@@ -75,6 +76,7 @@ export class MouseHandler extends InputHandler {
     if (button === null)
       return;
 
+    this.#enqueueInput(new PressureInput(event.pressure));
     this.#enqueueInput(MouseButtonInput.create(button, true));
   };
 
@@ -91,12 +93,13 @@ export class MouseHandler extends InputHandler {
     if (button === null)
       return;
 
+    this.#enqueueInput(new PressureInput(event.pressure));
     this.#enqueueInput(MouseButtonInput.create(button, false));
   };
 
   #handleMouseLeave = (event: MouseEvent) => {};
 
-  #handleMouseMove = (event: MouseEvent | PointerEvent) => {
+  #handleMouseMove = (event: PointerEvent) => {
     event.preventDefault();
 
     const rect = (event.target as HTMLCanvasElement).getBoundingClientRect();
@@ -112,6 +115,7 @@ export class MouseHandler extends InputHandler {
       this.pendingInputs.splice(index, 1);
     }
 
+    this.#enqueueInput(new PressureInput(event.pressure));
     this.#enqueueInput(new MousePositionAbsoluteInput(new Vec2(x, y)));
   };
 

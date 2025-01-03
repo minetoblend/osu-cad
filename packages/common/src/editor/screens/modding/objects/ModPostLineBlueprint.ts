@@ -1,6 +1,8 @@
 import type { Bindable, DragEvent, DragStartEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { ModPostLine } from './ModPostLine';
 import { Anchor, Axes, Box, CompositeDrawable, Container, FastRoundedBox, Vec2 } from 'osucad-framework';
+import { OsucadSpriteText } from '../../../../drawables/OsucadSpriteText';
+import { OsucadColors } from '../../../../OsucadColors';
 import { ModPostBlueprint } from './ModPostBlueprint';
 
 export class ModPostLineBlueprint extends ModPostBlueprint<ModPostLine> {
@@ -10,16 +12,51 @@ export class ModPostLineBlueprint extends ModPostBlueprint<ModPostLine> {
 
   #line!: FastRoundedBox;
 
+  #selectionOutline!: FastRoundedBox;
+
+  #distanceText!: OsucadSpriteText;
+
+  #selectionHitBox!: Container;
+
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
     this.addAllInternal(
-      this.#line = new FastRoundedBox({
+      this.#selectionHitBox = new Container({
         width: 0,
-        height: 2,
-        cornerRadius: 1,
+        height: 10,
         anchor: Anchor.CenterLeft,
         origin: Anchor.CenterLeft,
+        children: [
+          new Container({
+            relativeSizeAxes: Axes.Both,
+            padding: { horizontal: -1 },
+            child: this.#selectionOutline = new FastRoundedBox({
+              relativeSizeAxes: Axes.X,
+              height: 4,
+              cornerRadius: 1,
+              anchor: Anchor.CenterLeft,
+              origin: Anchor.CenterLeft,
+              color: OsucadColors.selection,
+              alpha: 0,
+            }),
+          }),
+          this.#line = new FastRoundedBox({
+            relativeSizeAxes: Axes.X,
+            height: 2,
+            cornerRadius: 1,
+            anchor: Anchor.CenterLeft,
+            origin: Anchor.CenterLeft,
+          }),
+          this.#distanceText = new OsucadSpriteText({
+            text: '0px',
+            anchor: Anchor.BottomCenter,
+            origin: Anchor.BottomCenter,
+            y: -6,
+            fontSize: 14,
+            alpha: 0,
+          }),
+        ],
       }),
       this.#handles = new Container({
         alpha: 0,
@@ -39,29 +76,38 @@ export class ModPostLineBlueprint extends ModPostBlueprint<ModPostLine> {
   #handles!: Container;
 
   #updateLine() {
-    const { startPosition, endPosition } = this.object;
+    let { startPosition, endPosition } = this.object;
+
+    if (endPosition.x < startPosition.x) {
+      const tmp = startPosition;
+      startPosition = endPosition;
+      endPosition = tmp;
+    }
 
     this.#line.color = this.object.color;
 
-    this.#line.position = startPosition;
-    this.#line.width = startPosition.distance(endPosition);
-    this.#line.rotation = endPosition.sub(startPosition).angle();
+    this.#distanceText.text = `${Math.round(startPosition.distance(endPosition))}px`;
+    this.#selectionHitBox.position = startPosition;
+    this.#selectionHitBox.width = startPosition.distance(endPosition);
+    this.#selectionHitBox.rotation = endPosition.sub(startPosition).angle();
   }
 
   protected override onSelected() {
     super.onSelected();
 
     this.#handles.show();
+    this.#selectionOutline.show();
   }
 
   protected override onDeselected() {
     super.onDeselected();
 
     this.#handles.hide();
+    this.#selectionOutline.hide();
   }
 
   override receivePositionalInputAt(screenSpacePosition: Vec2): boolean {
-    return this.#line.receivePositionalInputAt(screenSpacePosition);
+    return this.#selectionHitBox.receivePositionalInputAt(screenSpacePosition);
   }
 
   override dispose(isDisposing: boolean = true) {

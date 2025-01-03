@@ -2,19 +2,27 @@ import type { Drawable, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { IComposeTool } from '../compose';
 import { Axes, Bindable, Container, provide } from 'osucad-framework';
 import { Color } from 'pixi.js';
+import { OsuSelectionBlueprintContainer } from '../../../rulesets/osu/edit/selection/OsuSelectionBlueprintContainer';
 import { HitObjectComposer } from '../compose/HitObjectComposer';
 import { IssueList } from './IssueList';
+import { ModdingScreenSnappingProvider } from './ModdingScreenSnappingProvider';
 import { ModPost } from './objects/ModPost';
 import { ModPostBlueprintContainer } from './objects/ModPostBlueprintContainer';
+import { SnapSettings } from './SnapSettings';
 import { LineTool } from './tools/LineTool';
 import { ModdingSelectTool } from './tools/ModdingSelectTool';
 import { PenTool } from './tools/PenTool';
-import { TextTool } from './tools/TextTool';
 
 @provide(ModdingComposer)
 export class ModdingComposer extends HitObjectComposer {
   @provide(ModPost)
   modPost = new ModPost();
+
+  @provide()
+  snapSettings = new SnapSettings();
+
+  @provide()
+  snapping = new ModdingScreenSnappingProvider();
 
   readonly activeColor = new Bindable(new Color(0xFFFFFF));
 
@@ -23,7 +31,6 @@ export class ModdingComposer extends HitObjectComposer {
       new ModdingSelectTool(),
       new PenTool(),
       new LineTool(),
-      new TextTool(),
     ];
   }
 
@@ -48,8 +55,16 @@ export class ModdingComposer extends HitObjectComposer {
     super.load(dependencies);
 
     this.timeline.blueprintContainer.readonly = true;
-    this.drawableRuleset.playfield.add(new ModPostBlueprintContainer().with({
-      depth: -Number.MAX_VALUE,
+    this.drawableRuleset.playfield.addAll(
+      new ModPostBlueprintContainer().with({
+        depth: -Number.MAX_VALUE,
+      }),
+      this.snapping.with({ depth: -Number.MAX_VALUE }),
+    );
+
+    this.overlayLayer.add(new OsuSelectionBlueprintContainer().adjust((it) => {
+      it.readonly = true;
+      it.depth = 1;
     }));
   }
 

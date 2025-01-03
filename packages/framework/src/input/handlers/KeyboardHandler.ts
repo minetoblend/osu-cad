@@ -86,6 +86,9 @@ export class KeyboardHandler extends InputHandler {
     if (/^\d$/.test(event.key) && event.ctrlKey)
       return true;
 
+    if (event.key.startsWith('Arrow') && event.ctrlKey)
+      return true;
+
     switch (event.key) {
       case 'R':
       case 'r':

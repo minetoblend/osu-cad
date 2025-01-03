@@ -42,4 +42,8 @@ export class UIEvent {
   get touchCount() {
     return this.state.touch.activeSources.pressedButtons.size;
   }
+
+  get pressure() {
+    return this.state.mouse.pressure;
+  }
 }
