@@ -1,4 +1,4 @@
-import type { EditorBeatmap } from 'packages/common/src/editor';
+import type { IBeatmap } from '../../../beatmap/IBeatmap';
 import type { HitObject } from '../../../hitObjects/HitObject';
 import type { Issue } from '../../../verifier/Issue';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
@@ -8,7 +8,7 @@ import { Slider } from '../hitObjects/Slider';
 import { Spinner } from '../hitObjects/Spinner';
 
 export class CheckAbnormalSpacing extends BeatmapCheck<OsuHitObject> {
-  override* check(beatmap: EditorBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
+  override* check(beatmap: IBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     const observedDistances: ObservedDistance[] = [];
 
     const ratioProblemThreshold = 15.0;

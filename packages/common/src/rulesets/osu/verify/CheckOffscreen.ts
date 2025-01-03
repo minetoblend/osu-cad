@@ -1,5 +1,5 @@
 import type { Vec2 } from 'osucad-framework';
-import type { EditorBeatmap } from 'packages/common/src/editor';
+import type { IBeatmap } from '../../../beatmap/IBeatmap';
 import type { IssueMetadata, IssueOptions } from '../../../verifier/Issue';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
 import { trimIndent } from '../../../utils/stringUtils';
@@ -60,7 +60,7 @@ const LEFT_LIMIT = -67;
 const RIGHT_LIMIT = 579;
 
 export class CheckOffscreen extends BeatmapCheck<OsuHitObject> {
-  override * check(beatmap: EditorBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
+  override * check(beatmap: IBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     for (const hitObject of beatmap.hitObjects) {
       const objectType = hitObject instanceof HitCircle ? 'Circle' : 'Slider head';
 

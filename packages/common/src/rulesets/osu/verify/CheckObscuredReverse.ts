@@ -1,5 +1,5 @@
-import type { EditorBeatmap } from 'packages/common/src/editor';
 import type { IssueMetadata, IssueOptions } from 'packages/common/src/verifier/Issue';
+import type { IBeatmap } from '../../../beatmap/IBeatmap';
 import type { HitObject } from '../../../hitObjects/HitObject';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
 import { Issue } from 'packages/common/src/verifier/Issue';
@@ -47,7 +47,7 @@ export class ObscuredReverseIssue extends Issue {
 }
 
 export class CheckObscuredReverse extends BeatmapCheck<OsuHitObject> {
-  override * check(beatmap: EditorBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
+  override * check(beatmap: IBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     for (const slider of beatmap.hitObjects.ofType(Slider)) {
       const closeThreshold = slider.radius / 1.75;
       const tooCloseThreshold = slider.radius / 3;
