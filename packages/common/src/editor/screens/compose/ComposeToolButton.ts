@@ -39,6 +39,8 @@ export class ComposeToolButton extends EditorButton {
   protected override updateState() {
     super.updateState();
 
+    console.log(this.#keyPressed, this.armed, this.tool.title);
+
     if (this.active.value) {
       this.#icon.color = this.isHovered ? OsucadColors.primaryHighlight : OsucadColors.primary;
     }
@@ -50,10 +52,13 @@ export class ComposeToolButton extends EditorButton {
   #keyPressed = false;
 
   protected override get armed(): boolean {
-    return super.armed || this.#keyPressed;
+    return this.#keyPressed || super.armed;
   }
 
   override onKeyDown(e: KeyDownEvent): boolean {
+    if (e.repeat)
+      return false;
+
     if (e.key === this.keyBinding && !e.controlPressed && !e.shiftPressed && !e.altPressed) {
       this.#keyPressed = true;
       this.activeTool.value = this.tool;

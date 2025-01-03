@@ -50,6 +50,9 @@ export class SliderVelocityAdjustmentPiece extends TimelineHitObjectTail {
   }
 
   override onDragStart(e: DragStartEvent): boolean {
+    if (this.blueprint.readonly)
+      return false;
+
     this.#dragOffset = this.timeline.screenSpacePositionToTime(e.screenSpaceMousePosition) - this.hitObject.endTime;
 
     this.#dragStartVelocity = this.hitObject.sliderVelocityOverride;

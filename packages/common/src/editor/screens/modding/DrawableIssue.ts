@@ -1,6 +1,6 @@
 import type { Container, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Issue } from '../../../verifier/Issue';
-import { Anchor, Axes, CompositeDrawable, DrawableSprite, FillFlowContainer, Vec2 } from 'osucad-framework';
+import { Anchor, Axes, CompositeDrawable, Drawable, DrawableSprite, FillFlowContainer, Vec2 } from 'osucad-framework';
 import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
 import { OsucadColors } from '../../../OsucadColors';
 import { getIcon } from '../../../OsucadIcons';
@@ -55,6 +55,12 @@ export class DrawableIssue extends CompositeDrawable {
     if (this.issue.timestamp) {
       if (typeof this.issue.timestamp === 'number') {
         messageLine.add(new DrawableTimestamp(this.issue.timestamp).with({
+          anchor: Anchor.CenterLeft,
+          origin: Anchor.CenterLeft,
+        }));
+      }
+      else if (this.issue.timestamp instanceof Drawable) {
+        messageLine.add(this.issue.timestamp.with({
           anchor: Anchor.CenterLeft,
           origin: Anchor.CenterLeft,
         }));

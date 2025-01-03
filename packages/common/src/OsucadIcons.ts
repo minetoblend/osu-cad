@@ -40,6 +40,8 @@ const iconKeys = [
   'issue-minor',
   'issue-warning',
   'issue-problem',
+  'tool-text',
+  'tool-line',
 ] as const;
 
 export const OsucadIcons = new class OsucadIcons {

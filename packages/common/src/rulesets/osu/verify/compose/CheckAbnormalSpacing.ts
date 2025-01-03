@@ -3,7 +3,7 @@ import type { CheckMetadata } from '../../../../verifier/BeatmapCheck';
 import type { Issue } from '../../../../verifier/Issue';
 import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
-import { DrawableTimestamp } from '../../../../editor/screens/verify/DrawableTimestamp';
+import { DrawableTimestamp } from '../../../../editor/screens/modding/DrawableTimestamp';
 import { avgBy, maxBy, zipWithNext } from '../../../../utils/arrayUtils';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';

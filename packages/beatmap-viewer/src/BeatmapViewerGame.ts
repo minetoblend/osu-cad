@@ -1,8 +1,8 @@
 import type { DependencyContainer, ReadonlyDependencyContainer } from 'osucad-framework';
-import { ISkinSource, OsucadGameBase, OsucadScreenStack, OsuRuleset, RulesetStore, SkinManager } from '@osucad/common';
+import { DummyEditorBeatmap, ISkinSource, OsucadGameBase, OsucadScreenStack, OsuRuleset, RulesetStore, SkinManager } from '@osucad/common';
 import { UISamples } from '@osucad/editor/UISamples';
 import { RenderTarget } from 'pixi.js';
-import { HomeScreen } from './screens/home/HomeScreen';
+import { BeatmapViewer } from './screens/viewer/BeatmapViewer';
 
 RenderTarget.defaultOptions.depth = true;
 RenderTarget.defaultOptions.stencil = true;
@@ -63,18 +63,7 @@ export class BeatmapViewerGame extends OsucadGameBase {
   protected loadComplete() {
     super.loadComplete();
 
-    // new CatboyMirror().loadBeatmapSet(1687126).then((mapset) => {
-    //   console.log(mapset);
-    //
-    //   const editorBeatmap = new EditorBeatmap(
-    //     mapset.beatmaps[2],
-    //     mapset.fileStore,
-    //     mapset,
-    //   );
-    //
-    //   this.#screenStack.push(new BeatmapViewer(editorBeatmap));
-    // });
-
-    this.#screenStack.push(new HomeScreen());
+    // this.#screenStack.push(new HomeScreen());
+    this.#screenStack.push(new BeatmapViewer(new DummyEditorBeatmap()));
   }
 }

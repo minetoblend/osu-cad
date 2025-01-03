@@ -1,4 +1,4 @@
-import type { Drawable, DrawableOptions, List, Vec2 } from 'osucad-framework';
+import type { Drawable, DrawableOptions, List } from 'osucad-framework';
 import type { HitObject } from '../../../../hitObjects/HitObject';
 import { Axes, Bindable, dependencyLoader, DrawablePool, LoadState, resolved } from 'osucad-framework';
 import { HitObjectList } from '../../../../beatmap/HitObjectList';
@@ -82,7 +82,10 @@ export class TimelineHitObjectBlueprintContainer extends TimelineBlueprintContai
   }
 
   override getDrawable(entry: HitObjectLifetimeEntry): TimelineHitObjectBlueprint {
-    return this.#pool.get(it => it.entry = entry);
+    return this.#pool.get((it) => {
+      it.entry = entry;
+      it.readonly = this.readonly;
+    });
   }
 
   protected override addDrawable(entry: HitObjectLifetimeEntry, drawable: TimelineHitObjectBlueprint) {
@@ -123,13 +126,6 @@ export class TimelineHitObjectBlueprintContainer extends TimelineBlueprintContai
 
     this.hitObjects.added.removeListener(this.addHitObject, this);
     this.hitObjects.removed.removeListener(this.removeHitObject, this);
-  }
-
-  override buildPositionalInputQueue(screenSpacePos: Vec2, queue: List<Drawable>): boolean {
-    if (this.readonly)
-      return false;
-
-    return super.buildPositionalInputQueue(screenSpacePos, queue);
   }
 
   override buildNonPositionalInputQueue(queue: List<Drawable>, allowBlocking?: boolean): boolean {

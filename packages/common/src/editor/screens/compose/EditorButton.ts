@@ -96,12 +96,7 @@ export abstract class EditorButton extends CompositeDrawable {
       this.backgroundContainer.scaleTo(1, 300, EasingFunction.OutBack);
     }
 
-    if (this.active.value) {
-      this.transformTo('outlineVisibility', 1, this.outlineTransitionDuration);
-    }
-    else {
-      this.transformTo('outlineVisibility', 0, this.outlineTransitionDuration);
-    }
+    this.transformTo('outlineVisibility', this.active.value ? 1 : 0, this.outlineTransitionDuration);
   }
 
   protected get outlineTransitionDuration() {

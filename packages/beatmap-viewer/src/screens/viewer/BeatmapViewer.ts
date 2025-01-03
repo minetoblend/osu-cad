@@ -1,7 +1,7 @@
 import type { Beatmap, EditorScreenManager } from '@osucad/common';
 import type { KeyDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { BeatmapViewerGame } from '../../BeatmapViewerGame';
-import { Editor, EditorBeatmap, PreferencesContainer, VerifyScreen } from '@osucad/common';
+import { Editor, EditorBeatmap, ModdingScreen, PreferencesContainer } from '@osucad/common';
 import { Key, MenuItem } from 'osucad-framework';
 import { ViewportScreen } from './screens/viewport/ViewportScreen';
 
@@ -14,9 +14,9 @@ export class BeatmapViewer extends Editor {
 
   protected registerScreens(screenManager: EditorScreenManager) {
     screenManager.register(ViewportScreen);
-    screenManager.register(VerifyScreen);
+    screenManager.register(ModdingScreen);
 
-    screenManager.setCurrentScreen(VerifyScreen);
+    screenManager.setCurrentScreen(ModdingScreen);
   }
 
   createMenuItems(): MenuItem[] {

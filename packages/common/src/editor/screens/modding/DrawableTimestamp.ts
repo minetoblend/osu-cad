@@ -10,7 +10,10 @@ import { TimestampFormatter } from '../../TimestampFormatter';
 import { HitObjectSelectionManager } from '../compose/HitObjectSelectionManager';
 
 export class DrawableTimestamp extends CompositeDrawable {
-  constructor(readonly timestamp: number, readonly hitObjects: HitObject[] = []) {
+  constructor(
+    readonly timestamp: number,
+    readonly hitObjects: HitObject[] = [],
+  ) {
     super();
   }
 

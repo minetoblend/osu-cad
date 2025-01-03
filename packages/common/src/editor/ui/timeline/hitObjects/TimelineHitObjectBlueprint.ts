@@ -29,6 +29,8 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
     this.relativeSizeAxes = Axes.Both;
   }
 
+  readonly = false;
+
   protected content!: Container;
 
   readonly accentColor = new Bindable(new Color(0xFFFFFF));

@@ -59,7 +59,9 @@ export class TimelineHitObjectBody extends CompositeDrawable {
 
     if (e.button === MouseButton.Left) {
       this.attemptSelectionFromMouse(e);
-      return true;
+
+      // in readonly mode we don't want to handle it so the drag action can be used to scroll in the timeline
+      return !this.blueprint.readonly;
     }
 
     return false;
@@ -87,7 +89,7 @@ export class TimelineHitObjectBody extends CompositeDrawable {
   #dragStartTimes: number[] = [];
 
   override onDragStart(e: DragStartEvent): boolean {
-    if (!this.selection)
+    if (!this.selection || this.blueprint.readonly)
       return false;
 
     this.#ownDragStartTime = this.hitObject!.startTime;

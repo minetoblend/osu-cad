@@ -25,6 +25,9 @@ export class DurationAdjustmentPiece extends TimelineHitObjectTail {
   #dragOffset = 0;
 
   override onDragStart(e: DragStartEvent): boolean {
+    if (this.blueprint.readonly)
+      return false;
+
     this.#dragOffset = this.timeline.screenSpacePositionToTime(e.screenSpaceMousePosition) - this.hitObject.startTime;
     return true;
   }

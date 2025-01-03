@@ -1,4 +1,5 @@
 import type { ReadonlyDependencyContainer } from 'osucad-framework';
+import type { TimelineHitObjectBlueprintContainer } from '../../ui/timeline/hitObjects/TimelineHitObjectBlueprintContainer';
 import { Anchor, Axes, BindableBoolean, Box, Container, isMobile, provide } from 'osucad-framework';
 import { OsucadColors } from '../../../OsucadColors';
 import { BottomAlignedTickDisplay } from '../../ui/timeline/BottomAlignedTickDisplay';
@@ -39,7 +40,7 @@ export class ComposeScreenTimeline extends Timeline {
         anchor: Anchor.CenterLeft,
         origin: Anchor.CenterLeft,
         children: [
-          new ComposeScreenTimelineHitObjectBlueprintContainer(),
+          this.blueprintContainer = new ComposeScreenTimelineHitObjectBlueprintContainer(),
         ],
       }),
     );
@@ -49,4 +50,6 @@ export class ComposeScreenTimeline extends Timeline {
     if (isMobile.any)
       this.add(new ComposeScreenTimelineMobileControls());
   }
+
+  blueprintContainer!: TimelineHitObjectBlueprintContainer;
 }
