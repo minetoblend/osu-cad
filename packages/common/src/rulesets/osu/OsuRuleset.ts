@@ -1,6 +1,5 @@
 import type { IKeyBinding } from 'osucad-framework';
 import type { Beatmap, IBeatmap } from '../../beatmap';
-import type { EditorBeatmap } from '../../editor/EditorBeatmap';
 import type { HitObjectComposer } from '../../editor/screens/compose/HitObjectComposer';
 import type { ISkin } from '../../skinning/ISkin';
 import type { SkinTransformer } from '../../skinning/SkinTransformer';
@@ -59,7 +58,7 @@ export class OsuRuleset extends Ruleset {
     return new OsuDifficultyCalculator(beatmap);
   }
 
-  override createBeatmapVerifier(beatmap: EditorBeatmap): OsuBeatmapVerifier {
-    return new OsuBeatmapVerifier(beatmap);
+  override createBeatmapVerifier(): OsuBeatmapVerifier {
+    return new OsuBeatmapVerifier();
   }
 }

@@ -10,7 +10,7 @@ import type { BeatmapVerifier } from './BeatmapVerifier';
 export class VerifierBeatmap<T extends HitObject = HitObject> implements IBeatmap<T> {
   constructor(
     readonly beatmap: IBeatmap<T>,
-    readonly verifier: BeatmapVerifier,
+    readonly verifier: BeatmapVerifier<T>,
   ) {
   }
 

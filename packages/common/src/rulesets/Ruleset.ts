@@ -1,7 +1,6 @@
 import type { IKeyBinding } from 'osucad-framework';
 import type { Beatmap } from '../beatmap/Beatmap';
 import type { IBeatmap } from '../beatmap/IBeatmap';
-import type { EditorBeatmap } from '../editor/EditorBeatmap';
 import type { HitObjectComposer } from '../editor/screens/compose/HitObjectComposer';
 import type { ISkin } from '../skinning/ISkin';
 import type { SkinTransformer } from '../skinning/SkinTransformer';
@@ -34,7 +33,7 @@ export abstract class Ruleset {
     return [];
   }
 
-  createBeatmapVerifier(beatmap: EditorBeatmap): BeatmapVerifier<any> | null {
+  createBeatmapVerifier(): BeatmapVerifier<any> | null {
     return null;
   }
 
