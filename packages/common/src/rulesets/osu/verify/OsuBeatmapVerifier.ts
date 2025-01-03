@@ -2,6 +2,7 @@ import type { BeatmapCheck } from 'packages/common/src/verifier/BeatmapCheck';
 import type { BeatmapSetCheck } from '../../../verifier/BeatmapSetCheck';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
 import { BeatmapVerifier } from '../../../verifier/BeatmapVerifier';
+import { CheckAbnormalNodes } from './compose/CheckAbnormalNodes';
 import { CheckAbnormalSpacing } from './compose/CheckAbnormalSpacing';
 import { CheckAmbiguity } from './compose/CheckAmbiguity';
 import { CheckBurai } from './compose/CheckBurai';
@@ -16,6 +17,7 @@ export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
       new CheckNinjaSpinner(),
       new CheckBurai(),
       new CheckAmbiguity(),
+      new CheckAbnormalNodes(),
     ];
   }
 
