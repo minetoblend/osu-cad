@@ -1,20 +1,16 @@
 import type { HitObject } from '../../../../hitObjects/HitObject';
-import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { CheckMetadata } from '../../../../verifier/BeatmapCheck';
+import type { Issue } from '../../../../verifier/Issue';
 import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
-import { Issue } from '../../../../verifier/Issue';
 import { Slider } from '../../hitObjects/Slider';
 import { Spinner } from '../../hitObjects/Spinner';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/Standard/Compose/CheckObscuredReverse.cs
-export class ObscuredReverseIssue extends Issue {
-  constructor(options: IssueOptions) {
-    super(options);
-  }
-
-  override get metadata(): IssueMetadata {
+export class CheckObscuredReverse extends BeatmapCheck<OsuHitObject> {
+  override get metadata(): CheckMetadata {
     return {
       category: 'Compose',
       message: 'Obscured reverse arrows.',
@@ -44,9 +40,7 @@ export class ObscuredReverseIssue extends Issue {
       ],
     };
   }
-}
 
-export class CheckObscuredReverse extends BeatmapCheck<OsuHitObject> {
   override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     for (const slider of beatmap.hitObjects.ofType(Slider)) {
       if (slider.repeatCount <= 0)
@@ -87,7 +81,7 @@ export class CheckObscuredReverse extends BeatmapCheck<OsuHitObject> {
       }
 
       if (selectedObjects.size > 0) {
-        yield new ObscuredReverseIssue({
+        yield this.createIssue({
           level: 'info',
           message: `Reverse arrow ${isSerious ? '' : 'potentially'} obscured`,
           timestamp: [...selectedObjects].sort((a, b) => a.startTime - b.startTime),

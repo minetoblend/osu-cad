@@ -1,15 +1,11 @@
-import type { IssueMetadata, IssueOptions } from '../../Issue';
+import type { CheckMetadata } from '../../BeatmapCheck';
+import type { Issue } from '../../Issue';
 import type { VerifierBeatmap } from '../../VerifierBeatmap';
 import { trimIndent } from '../../../utils/stringUtils';
 import { BeatmapCheck } from '../../BeatmapCheck';
-import { Issue } from '../../Issue';
 
-export class DrainTimeIssue extends Issue {
-  constructor(options: IssueOptions) {
-    super(options);
-  }
-
-  override get metadata(): IssueMetadata {
+export class CheckDrainTime extends BeatmapCheck<any> {
+  override get metadata(): CheckMetadata {
     return {
       category: 'Compose',
       message: 'Too short drain time',
@@ -35,16 +31,14 @@ export class DrainTimeIssue extends Issue {
       ],
     };
   }
-}
 
-export class CheckDrainTime extends BeatmapCheck<any> {
   override * getIssues(beatmap: VerifierBeatmap<any>): Generator<Issue, void, undefined> {
     const drainTime = getDrainTime(beatmap);
 
     if (drainTime >= 30 * 1000)
       return;
 
-    yield new DrainTimeIssue({
+    yield this.createIssue({
       level: 'problem',
       message: `Less than 30 seconds of drain time, currently ${Math.round(drainTime)}.`,
       cause: 'The time from the first object to the end of the last object, subtracting any time between two objects ' + 'where a break exists, is in total less than 30 seconds.',

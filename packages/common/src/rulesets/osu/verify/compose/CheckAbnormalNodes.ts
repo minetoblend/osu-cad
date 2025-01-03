@@ -1,18 +1,14 @@
-import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { CheckMetadata } from '../../../../verifier/BeatmapCheck';
+import type { Issue } from '../../../../verifier/Issue';
 import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
-import { Issue } from '../../../../verifier/Issue';
 import { Slider } from '../../hitObjects/Slider';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/AllModes/Compose/CheckAbnormalNodes.cs
-export class AbnormalNodesIssue extends Issue {
-  constructor(options: IssueOptions) {
-    super(options);
-  }
-
-  override get metadata(): IssueMetadata {
+export class CheckAbnormalNodes extends BeatmapCheck<OsuHitObject> {
+  override get metadata(): CheckMetadata {
     return {
       category: 'Compose',
       message: 'Abnormal amount of slider nodes.',
@@ -38,13 +34,11 @@ export class AbnormalNodesIssue extends Issue {
       ],
     };
   }
-}
 
-export class CheckAbnormalNodes extends BeatmapCheck<OsuHitObject> {
   override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     for (const slider of beatmap.hitObjects.ofType(Slider)) {
       if (slider.controlPoints.length > 10 * Math.sqrt(slider.path.expectedDistance)) {
-        yield new AbnormalNodesIssue({
+        yield this.createIssue({
           level: 'warning',
           message: `Slider contains ${slider.controlPoints.length} nodes`,
           timestamp: slider,

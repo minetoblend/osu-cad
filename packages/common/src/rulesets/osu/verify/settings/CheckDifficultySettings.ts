@@ -1,19 +1,13 @@
-import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { CheckMetadata } from '../../../../verifier/BeatmapCheck';
+import type { Issue } from '../../../../verifier/Issue';
 import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { almostEquals } from 'osucad-framework';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
-import { Issue } from '../../../../verifier/Issue';
 
-;
-
-export class DifficultySettingsIssue extends Issue {
-  constructor(options: IssueOptions) {
-    super(options);
-  }
-
-  override get metadata(): IssueMetadata {
+export class CheckDifficultySettings extends BeatmapCheck<OsuHitObject> {
+  override get metadata(): CheckMetadata {
     return {
       category: 'Settings',
       message: 'Abnormal difficulty settings.',
@@ -47,9 +41,7 @@ export class DifficultySettingsIssue extends Issue {
       ],
     };
   }
-}
 
-export class CheckDifficultySettings extends BeatmapCheck<OsuHitObject> {
   override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     yield * this.getIssue(beatmap.difficulty.hpDrainRate, 'Hp Drain Rate');
     yield * this.getIssue(beatmap.difficulty.circleSize, 'Circle Size');
@@ -59,7 +51,7 @@ export class CheckDifficultySettings extends BeatmapCheck<OsuHitObject> {
 
   * getIssue(setting: number, name: string, minSetting = 0, maxSetting = 10) {
     if (setting < minSetting || setting > maxSetting) {
-      yield new DifficultySettingsIssue({
+      yield this.createIssue({
         level: 'warning',
         message: `${Math.round(setting * 10000) / 10000} ${name}, although rounding is capped to ${minSetting} to ${maxSetting} in game.`,
         cause: `A difficulty setting is less than ${minSetting} or greater than ${maxSetting}.`,
@@ -67,7 +59,7 @@ export class CheckDifficultySettings extends BeatmapCheck<OsuHitObject> {
     }
 
     if (!almostEquals(setting, Math.round(setting * 10) / 10, 10e-6)) {
-      yield new DifficultySettingsIssue({
+      yield this.createIssue({
         level: 'problem',
         message: `${Math.round(setting * 10000) / 10000} ${name} has more than one decimal place. `,
         cause: 'A difficulty setting has more than 1 decimal place.',

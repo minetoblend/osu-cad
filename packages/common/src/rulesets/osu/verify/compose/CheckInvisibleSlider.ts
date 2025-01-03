@@ -1,18 +1,14 @@
-import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { CheckMetadata } from '../../../../verifier/BeatmapCheck';
+import type { Issue } from '../../../../verifier/Issue';
 import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
-import { Issue } from '../../../../verifier/Issue';
 import { Slider } from '../../hitObjects/Slider';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/AllModes/Compose/CheckInvisibleSlider.cs
-export class InvisibleSliderIssue extends Issue {
-  constructor(options: IssueOptions) {
-    super(options);
-  }
-
-  override get metadata(): IssueMetadata {
+export class CheckInvisibleSlider extends BeatmapCheck<OsuHitObject> {
+  override get metadata(): CheckMetadata {
     return {
       category: 'Compose',
       message: 'Invisible sliders.',
@@ -39,20 +35,18 @@ export class InvisibleSliderIssue extends Issue {
       ],
     };
   }
-}
 
-export class CheckInvisibleSlider extends BeatmapCheck<OsuHitObject> {
   override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     for (const slider of beatmap.hitObjects.ofType(Slider)) {
       if (slider.controlPoints.length === 0) {
-        yield new InvisibleSliderIssue({
+        yield this.createIssue({
           level: 'problem',
           message: 'Slider has no control points',
           timestamp: slider,
         });
       }
       else if (slider.path.expectedDistance < 0) {
-        yield new InvisibleSliderIssue({
+        yield this.createIssue({
           level: 'problem',
           message: 'Slider has negative pixel length',
           timestamp: slider,

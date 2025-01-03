@@ -1,21 +1,17 @@
 import type { Vec2 } from 'osucad-framework';
-import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { CheckMetadata } from '../../../../verifier/BeatmapCheck';
+import type { Issue } from '../../../../verifier/Issue';
 import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
-import { Issue } from '../../../../verifier/Issue';
 import { PathType } from '../../hitObjects/PathType';
 import { Slider } from '../../hitObjects/Slider';
 import { SliderTick } from '../../hitObjects/SliderTick';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/Standard/Compose/CheckAmbiguity.cs
-export class AmbiguityIssue extends Issue {
-  constructor(options: IssueOptions) {
-    super(options);
-  }
-
-  override get metadata(): IssueMetadata {
+export class CheckAmbiguity extends BeatmapCheck<OsuHitObject> {
+  override get metadata(): CheckMetadata {
     return {
       category: 'Compose',
       message: 'Ambiguous slider intersection',
@@ -55,16 +51,14 @@ export class AmbiguityIssue extends Issue {
       ],
     };
   }
-}
 
-export class CheckAmbiguity extends BeatmapCheck<OsuHitObject> {
   override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     for (const slider of beatmap.hitObjects.ofType(Slider)) {
       const tailPosition = slider.getPositionAtTime(slider.startTime + slider.spanDuration);
       const curveEdgesDistance = tailPosition.distance(slider.stackedPosition);
 
       if (curveEdgesDistance <= 5 && couldSliderBreak(slider)) {
-        yield new AmbiguityIssue({
+        yield this.createIssue({
           level: 'warning',
           message: '',
           timestamp: slider,
@@ -95,7 +89,7 @@ export class CheckAmbiguity extends BeatmapCheck<OsuHitObject> {
           tailAnchorDistance = anchorPosition.distance(slider.path.endPosition);
 
         if (headAnchorDistance !== undefined && headAnchorDistance <= 5) {
-          yield new AmbiguityIssue({
+          yield this.createIssue({
             level: 'warning',
             message: `Head and red anchor overlap is possibly ambigious.`,
             timestamp: slider,
@@ -105,7 +99,7 @@ export class CheckAmbiguity extends BeatmapCheck<OsuHitObject> {
         }
 
         if (tailAnchorDistance !== undefined && tailAnchorDistance <= 5) {
-          yield new AmbiguityIssue({
+          yield this.createIssue({
             level: 'warning',
             message: `Tail and red anchor overlap is possibly ambigious.`,
             timestamp: slider,

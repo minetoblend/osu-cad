@@ -1,20 +1,17 @@
-import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { CheckMetadata } from '../../../../verifier/BeatmapCheck';
+import type { Issue } from '../../../../verifier/Issue';
 import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { ColorUtils } from 'osucad-framework';
 import { TimestampFormatter } from '../../../../editor/TimestampFormatter';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
-import { Issue } from '../../../../verifier/Issue';
 import { Spinner } from '../../hitObjects/Spinner';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/AllModes/Settings/CheckLuminosity.cs
-export class LuminosityIssue extends Issue {
-  constructor(options: IssueOptions) {
-    super(options);
-  }
 
-  override get metadata(): IssueMetadata {
+export class CheckLuminosity extends BeatmapCheck<OsuHitObject> {
+  override get metadata(): CheckMetadata {
     return {
       category: 'Settings',
       message: 'Too dark or bright combo colours or slider borders.',
@@ -59,9 +56,7 @@ export class LuminosityIssue extends Issue {
       ],
     };
   }
-}
 
-export class CheckLuminosity extends BeatmapCheck<OsuHitObject> {
   override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     const luminosityMinRankable = 30;
     const luminosityMinWarning = 43;
@@ -72,14 +67,14 @@ export class CheckLuminosity extends BeatmapCheck<OsuHitObject> {
       const luminosity = ColorUtils.getLuminosity(color);
 
       if (luminosity < luminosityMinRankable) {
-        yield new LuminosityIssue({
+        yield this.createIssue({
           level: 'problem',
           message: 'Slider border is way too dark.',
           cause: 'Same as the first check, except applies on the slider border instead.',
         });
       }
       else if (luminosity < luminosityMinWarning) {
-        yield new LuminosityIssue({
+        yield this.createIssue({
           level: 'problem',
           message: 'Slider border is really dark.',
           cause: 'Same as the first check, except applies on the slider border instead.',
@@ -106,7 +101,7 @@ export class CheckLuminosity extends BeatmapCheck<OsuHitObject> {
         const displayedColorIndex = asDisplayedComboColorIndex(beatmap, i);
 
         if (luminosity < luminosityMinRankable) {
-          yield new LuminosityIssue({
+          yield this.createIssue({
             level: 'problem',
             message: `Combo color ${displayedColorIndex} is way to dark.`,
             cause: 'The HSP luminosity value of a combo colour is lower than 30. These values are visible in the overview section as tooltips for each colour if you want to check them manually.',
@@ -114,7 +109,7 @@ export class CheckLuminosity extends BeatmapCheck<OsuHitObject> {
         }
 
         else if (luminosity < luminosityMinWarning) {
-          yield new LuminosityIssue({
+          yield this.createIssue({
             level: 'warning',
             message: `Combo color ${displayedColorIndex} is really dark.`,
             cause: 'Same as the first check, but lower than 43 instead.',
@@ -123,7 +118,7 @@ export class CheckLuminosity extends BeatmapCheck<OsuHitObject> {
 
         for (let j = 0; j < comboColorsInKiai.length; ++j) {
           if (luminosity > luminosityMax && comboColorsInKiai[j] === i) {
-            yield new LuminosityIssue({
+            yield this.createIssue({
               level: 'warning',
               message: `Combo color ${displayedColorIndex} is really bright in kiai sections. see ${TimestampFormatter.formatTimestamp(comboColorTime[j])}`,
               cause: 'Same as the first check, but lower than 43 instead.',

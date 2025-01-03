@@ -1,4 +1,5 @@
 import type { HitObject } from '../hitObjects/HitObject';
+import type { CheckMetadata } from './BeatmapCheck';
 
 export type IssueLevel =
   | 'info'
@@ -15,15 +16,8 @@ export interface IssueOptions {
   timestamp?: number | HitObject | HitObject[];
 }
 
-export interface IssueMetadata {
-  readonly category: string;
-  readonly message: string;
-  readonly author: string;
-  readonly documentation?: { title: string; description: string }[];
-}
-
-export abstract class Issue {
-  protected constructor(options: IssueOptions) {
+export class Issue {
+  constructor(readonly metadata: CheckMetadata, options: IssueOptions) {
     const { level, message, cause } = options;
 
     this.level = level;
@@ -31,7 +25,6 @@ export abstract class Issue {
     this.cause = cause;
   }
 
-  abstract get metadata(): IssueMetadata;
   readonly level: IssueLevel;
   readonly message: string;
   readonly cause?: string;

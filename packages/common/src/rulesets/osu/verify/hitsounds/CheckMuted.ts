@@ -1,11 +1,11 @@
 import type { HitObject } from '../../../../hitObjects/HitObject';
-import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { CheckMetadata } from '../../../../verifier/BeatmapCheck';
+import type { Issue } from '../../../../verifier/Issue';
 import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { almostEquals } from 'osucad-framework';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
-import { Issue } from '../../../../verifier/Issue';
 import { HitCircle } from '../../hitObjects/HitCircle';
 import { Slider } from '../../hitObjects/Slider';
 import { SliderHeadCircle } from '../../hitObjects/SliderHeadCircle';
@@ -14,12 +14,8 @@ import { SliderTailCircle } from '../../hitObjects/SliderTailCircle';
 import { SliderTick } from '../../hitObjects/SliderTick';
 
 // Ported from https:// github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/AllModes/HitSounds/CheckMuted.cs
-export class MutedIssue extends Issue {
-  constructor(options: IssueOptions) {
-    super(options);
-  }
-
-  override get metadata(): IssueMetadata {
+export class CheckMuted extends BeatmapCheck<OsuHitObject> {
+  override get metadata(): CheckMetadata {
     return {
       category: 'Hit Sounds',
       message: 'Low volume hit sounding.',
@@ -43,9 +39,7 @@ export class MutedIssue extends Issue {
       ],
     };
   }
-}
 
-export class CheckMuted extends BeatmapCheck<OsuHitObject> {
   override* getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     for (const hitObject of beatmap.hitObjects) {
       if (!(hitObject instanceof HitCircle || hitObject instanceof Slider))
@@ -87,7 +81,7 @@ export class CheckMuted extends BeatmapCheck<OsuHitObject> {
     if (isActive) {
       if (isHead) {
         if (volume <= 10) {
-          yield new MutedIssue({
+          yield this.createIssue({
             level: 'warning',
             timestamp,
             message: `${Math.round(volume)}% volume ${partName}, this may be hard to hear over the song.`,
@@ -95,7 +89,7 @@ export class CheckMuted extends BeatmapCheck<OsuHitObject> {
           });
         }
         else {
-          yield new MutedIssue({
+          yield this.createIssue({
             level: 'minor',
             timestamp,
             message: `${Math.round(volume)}% volume ${partName}, this may be hard to hear over the song.`,
@@ -106,7 +100,7 @@ export class CheckMuted extends BeatmapCheck<OsuHitObject> {
       else {
         // Must be a slider reverse, mappers rarely map these to nothing.
         if (volume <= 10) {
-          yield new MutedIssue({
+          yield this.createIssue({
             level: 'minor',
             timestamp,
             message: `${Math.round(volume)}% volume ${partName}, ensure there is no distinct sound here in the song.`,
@@ -116,7 +110,7 @@ export class CheckMuted extends BeatmapCheck<OsuHitObject> {
       }
     }
     else if (volume <= 10) {
-      yield new MutedIssue({
+      yield this.createIssue({
         level: 'minor',
         timestamp,
         message: `${Math.round(volume)}% volume ${partName}, ensure there is no distinct sound here in the song.`,

@@ -1,20 +1,22 @@
 import type { Vec2 } from 'osucad-framework';
-import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { CheckMetadata } from '../../../../verifier/BeatmapCheck';
+import type { Issue } from '../../../../verifier/Issue';
 import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
-import { Issue } from '../../../../verifier/Issue';
 import { HitCircle } from '../../hitObjects/HitCircle';
 import { Slider } from '../../hitObjects/Slider';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/Standard/Compose/CheckOffscreen.cs
-export class OffScreenIssue extends Issue {
-  constructor(options: IssueOptions) {
-    super(options);
-  }
 
-  override get metadata(): IssueMetadata {
+const LOWER_LIMIT = 428;
+const UPPER_LIMIT = -60;
+const LEFT_LIMIT = -67;
+const RIGHT_LIMIT = 579;
+
+export class CheckOffscreen extends BeatmapCheck<OsuHitObject> {
+  override get metadata(): CheckMetadata {
     return {
       category: 'Compose',
       message: 'Offscreen hit objects',
@@ -52,14 +54,7 @@ export class OffScreenIssue extends Issue {
       ],
     };
   }
-}
 
-const LOWER_LIMIT = 428;
-const UPPER_LIMIT = -60;
-const LEFT_LIMIT = -67;
-const RIGHT_LIMIT = 579;
-
-export class CheckOffscreen extends BeatmapCheck<OsuHitObject> {
   override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     for (const hitObject of beatmap.hitObjects) {
       const objectType = hitObject instanceof HitCircle ? 'Circle' : 'Slider head';
@@ -71,7 +66,7 @@ export class CheckOffscreen extends BeatmapCheck<OsuHitObject> {
       const stackOffset = hitObject.stackOffset;
 
       if (hitObject.stackedPosition.y + circleRadius > LOWER_LIMIT) {
-        yield new OffScreenIssue({
+        yield this.createIssue({
           level: 'problem',
           timestamp: hitObject,
           message: `${objectType} is offscreen.`,
@@ -85,14 +80,14 @@ export class CheckOffscreen extends BeatmapCheck<OsuHitObject> {
         const goesOffscreenRight = stackableObject.stackedPosition.y + circleRadius > RIGHT_LIMIT && stackableObject.stackHeight < 0;
 
         if (goesOffscreenTopOrLeft || goesOffscreenRight) {
-          yield new OffScreenIssue({
+          yield this.createIssue({
             level: 'problem',
             timestamp: hitObject,
             message: `${objectType} is offscreen.`,
           });
         }
         else {
-          yield new OffScreenIssue({
+          yield this.createIssue({
             level: 'warning',
             timestamp: hitObject,
             message: `${objectType} would be offscreen, but the game prevents it.`,
@@ -104,7 +99,7 @@ export class CheckOffscreen extends BeatmapCheck<OsuHitObject> {
         return;
 
       if (this.getOffscreenBy(hitObject.radius, hitObject.endPosition) > 0) {
-        yield new OffScreenIssue({
+        yield this.createIssue({
           level: 'problem',
           timestamp: hitObject,
           message: `Slider tail is offscreen.`,
@@ -115,7 +110,7 @@ export class CheckOffscreen extends BeatmapCheck<OsuHitObject> {
           if (this.getOffscreenBy(hitObject.radius, pathPosition.add(hitObject.stackedPosition)) <= 0)
             continue;
 
-          yield new OffScreenIssue({
+          yield this.createIssue({
             level: 'problem',
             message: 'Slider body is offscreen',
             timestamp: hitObject,

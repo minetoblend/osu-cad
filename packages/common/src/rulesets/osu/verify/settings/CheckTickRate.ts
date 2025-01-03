@@ -1,18 +1,14 @@
-import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { CheckMetadata } from '../../../../verifier/BeatmapCheck';
+import type { Issue } from '../../../../verifier/Issue';
 import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { almostEquals } from 'osucad-framework';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
-import { Issue } from '../../../../verifier/Issue';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/AllModes/Settings/CheckTickRate.cs
-export class TickRateIssue extends Issue {
-  constructor(options: IssueOptions) {
-    super(options);
-  }
-
-  override get metadata(): IssueMetadata {
+export class CheckTickRate extends BeatmapCheck<OsuHitObject> {
+  override get metadata(): CheckMetadata {
     return {
       category: 'Settings',
       message: 'Slider tick rates not aligning with any common beat snap divisor.',
@@ -38,15 +34,13 @@ export class TickRateIssue extends Issue {
       ],
     };
   }
-}
 
-export class CheckTickRate extends BeatmapCheck<OsuHitObject> {
   override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     const tickRate = beatmap.difficulty.sliderTickRate;
 
     const approxTickRate = Math.round(tickRate * 1000) / 1000;
     if (tickRate - Math.floor(tickRate) !== 0 && !almostEquals(approxTickRate, 0.5) && !almostEquals(approxTickRate, 1.333) && !almostEquals(approxTickRate, 1.5)) {
-      yield new TickRateIssue({
+      yield this.createIssue({
         level: 'problem',
         message: `${approxTickRate} Tick Rate`,
         cause: trimIndent(`

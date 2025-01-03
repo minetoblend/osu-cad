@@ -1,18 +1,14 @@
-import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { CheckMetadata } from '../../../../verifier/BeatmapCheck';
+import type { Issue } from '../../../../verifier/Issue';
 import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
-import { Issue } from '../../../../verifier/Issue';
 import { Spinner } from '../../hitObjects/Spinner';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/Standard/Compose/CheckNinjaSpinner.cs
-export class NinjaSpinnerIssue extends Issue {
-  constructor(options: IssueOptions) {
-    super(options);
-  }
-
-  override get metadata(): IssueMetadata {
+export class CheckNinjaSpinner extends BeatmapCheck<OsuHitObject> {
+  override get metadata(): CheckMetadata {
     return {
       category: 'Compose',
       message: 'Too short spinner.',
@@ -36,9 +32,7 @@ export class NinjaSpinnerIssue extends Issue {
       ],
     };
   }
-}
 
-export class CheckNinjaSpinner extends BeatmapCheck<OsuHitObject> {
   override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     for (const spinner of beatmap.hitObjects.ofType(Spinner)) {
       const od = beatmap.difficulty.overallDifficulty;
@@ -48,7 +42,7 @@ export class CheckNinjaSpinner extends BeatmapCheck<OsuHitObject> {
       const problemThreshold = 450 + (od < 5 ? (5 - od) * -17 : (od - 5) * 17); // anything above this only works sometimes
 
       if (spinner.duration < problemThreshold) {
-        yield new NinjaSpinnerIssue({
+        yield this.createIssue({
           level: 'problem',
           message: 'Spinner is too short, auto cannot achieve 1000 points on this.',
           timestamp: spinner,
@@ -56,7 +50,7 @@ export class CheckNinjaSpinner extends BeatmapCheck<OsuHitObject> {
       }
 
       else if (spinner.duration < warningThreshold) {
-        yield new NinjaSpinnerIssue({
+        yield this.createIssue({
           level: 'warning',
           message: 'Spinner may be too short, ensure auto can achieve 1000 points on this.',
           timestamp: spinner,

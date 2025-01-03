@@ -1,17 +1,13 @@
-import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { CheckMetadata } from '../../../../verifier/BeatmapCheck';
+import type { Issue } from '../../../../verifier/Issue';
 import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
-import { Issue } from '../../../../verifier/Issue';
 import { Spinner } from '../../hitObjects/Spinner';
 
-export class ConcurrentIssue extends Issue {
-  constructor(options: IssueOptions) {
-    super(options);
-  }
-
-  override get metadata(): IssueMetadata {
+export class CheckConcurrent extends BeatmapCheck<OsuHitObject> {
+  override get metadata(): CheckMetadata {
     return {
       category: 'Compose',
       message: 'Concurrent hit objects.',
@@ -42,9 +38,7 @@ export class ConcurrentIssue extends Issue {
       ],
     };
   }
-}
 
-export class CheckConcurrent extends BeatmapCheck<OsuHitObject> {
   override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     for (let i = 0; i < beatmap.hitObjects.items.length - 1; i++) {
       for (let j = i + 1; j < beatmap.hitObjects.items.length; j++) {
@@ -54,7 +48,7 @@ export class CheckConcurrent extends BeatmapCheck<OsuHitObject> {
         const msApart = next.startTime - hitObject.endTime;
 
         if (msApart <= 0) {
-          yield new ConcurrentIssue({
+          yield this.createIssue({
             level: 'problem',
             message: 'Concurrent',
             timestamp: [hitObject, next],
@@ -62,7 +56,7 @@ export class CheckConcurrent extends BeatmapCheck<OsuHitObject> {
           });
         }
         else if (msApart <= 10 && !(hitObject instanceof Spinner)) {
-          yield new ConcurrentIssue({
+          yield this.createIssue({
             level: 'problem',
             message: `within ${Math.ceil(msApart)}ms of one another`,
             timestamp: [hitObject, next],

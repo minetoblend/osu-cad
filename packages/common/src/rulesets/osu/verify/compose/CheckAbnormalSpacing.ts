@@ -1,22 +1,18 @@
 import type { HitObject } from '../../../../hitObjects/HitObject';
-import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { CheckMetadata } from '../../../../verifier/BeatmapCheck';
+import type { Issue } from '../../../../verifier/Issue';
 import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { avgBy, maxBy, zipWithNext } from '../../../../utils/arrayUtils';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
 import { HitObjectTimestamp } from '../../../../verifier/HitObjectTimestamp';
-import { Issue } from '../../../../verifier/Issue';
 import { Slider } from '../../hitObjects/Slider';
 import { Spinner } from '../../hitObjects/Spinner';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/Standard/Compose/CheckAbnormalSpacing.cs
-export class AbnormalSpacingIssue extends Issue {
-  constructor(options: IssueOptions) {
-    super(options);
-  }
-
-  override get metadata(): IssueMetadata {
+export class CheckAbnormalSpacing extends BeatmapCheck<OsuHitObject> {
+  override get metadata(): CheckMetadata {
     return {
       category: 'Compose',
       message: 'Abnormally large spacing.',
@@ -42,9 +38,7 @@ export class AbnormalSpacingIssue extends Issue {
       ],
     };
   }
-}
 
-export class CheckAbnormalSpacing extends BeatmapCheck<OsuHitObject> {
   override* getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     const observedDistances: ObservedDistance[] = [];
 
@@ -109,7 +103,7 @@ export class CheckAbnormalSpacing extends BeatmapCheck<OsuHitObject> {
       const comparisonTimestamps = sameSnappedDistances.filter(obvDist => new HitObjectTimestamp([obvDist.hitObject, obvDist.nextHitObject])).slice(-3).join(', ');
 
       if (actualExpectedRatio > ratioProblemThreshold) {
-        yield new AbnormalSpacingIssue({
+        yield this.createIssue({
           level: 'problem',
           message: `Space/time ratio is ${ratio} times the expected, see e.g. ${comparisonTimestamps}.`,
           timestamp: hitObject,
@@ -122,14 +116,14 @@ export class CheckAbnormalSpacing extends BeatmapCheck<OsuHitObject> {
         });
       }
       else if (actualExpectedRatio > ratioWarningThreshold) {
-        yield new AbnormalSpacingIssue({
+        yield this.createIssue({
           level: 'warning',
           message: `Space/time ratio is ${ratio} times the expected, see e.g. ${comparisonTimestamps}.`,
           timestamp: hitObject,
         });
       }
       else {
-        yield new AbnormalSpacingIssue({
+        yield this.createIssue({
           level: 'minor',
           message: `Space/time ratio is ${ratio} times the expected, see e.g. ${comparisonTimestamps}.`,
           timestamp: hitObject,

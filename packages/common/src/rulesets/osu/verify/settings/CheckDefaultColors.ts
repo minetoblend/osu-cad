@@ -1,16 +1,13 @@
-import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { CheckMetadata } from '../../../../verifier/BeatmapCheck';
+import type { Issue } from '../../../../verifier/Issue';
 import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
-import { Issue } from '../../../../verifier/Issue';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/AllModes/Settings/CheckDefaultColours.cs
-export class DefaultColorsIssue extends Issue {
-  constructor(options: IssueOptions) {
-    super(options);
-  }
 
-  override get metadata(): IssueMetadata {
+export class CheckDefaultColors extends BeatmapCheck<any> {
+  override get metadata(): CheckMetadata {
     return {
       category: 'Settings',
       message: 'Default combo colours without forced skin',
@@ -42,13 +39,11 @@ export class DefaultColorsIssue extends Issue {
       ],
     };
   }
-}
 
-export class CheckDefaultColors extends BeatmapCheck<any> {
   override * getIssues(beatmap: VerifierBeatmap<any>): Generator<Issue, void, undefined> {
     const noSkinPreference = beatmap.settings.skinPreference === '' || beatmap.settings.skinPreference === 'Default';
     if (noSkinPreference && beatmap.colors.comboColors.length === 0) {
-      yield new DefaultColorsIssue({
+      yield this.createIssue({
         level: 'problem',
         message: 'Default combo colours without preferred skin.',
       });

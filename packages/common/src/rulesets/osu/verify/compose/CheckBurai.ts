@@ -1,17 +1,13 @@
-import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { CheckMetadata } from '../../../../verifier/BeatmapCheck';
+import type { Issue } from '../../../../verifier/Issue';
 import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
-import { Issue } from '../../../../verifier/Issue';
 import { Slider } from '../../hitObjects/Slider';
 
-export class BuraiIssue extends Issue {
-  constructor(options: IssueOptions) {
-    super(options);
-  }
-
-  override get metadata(): IssueMetadata {
+export class CheckBurai extends BeatmapCheck<OsuHitObject> {
+  override get metadata(): CheckMetadata {
     return {
       category: 'Compose',
       message: 'Burai slider.',
@@ -53,9 +49,7 @@ export class BuraiIssue extends Issue {
       ],
     };
   }
-}
 
-export class CheckBurai extends BeatmapCheck<OsuHitObject> {
   override * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): Generator<Issue, void, undefined> {
     for (const slider of beatmap.hitObjects.ofType(Slider)) {
       const maxDistance = 3;
@@ -91,7 +85,7 @@ export class CheckBurai extends BeatmapCheck<OsuHitObject> {
         continue;
 
       if (totalBuraiScore > 5) {
-        yield new BuraiIssue({
+        yield this.createIssue({
           level: 'warning',
           message: 'Burai',
           timestamp: slider,
@@ -99,7 +93,7 @@ export class CheckBurai extends BeatmapCheck<OsuHitObject> {
       }
 
       else if (totalBuraiScore > 2) {
-        yield new BuraiIssue({
+        yield this.createIssue({
           level: 'warning',
           message: 'Potentially Burai',
           timestamp: slider,
