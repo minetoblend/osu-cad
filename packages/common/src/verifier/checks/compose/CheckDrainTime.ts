@@ -1,6 +1,7 @@
 import type { CheckMetadata } from '../../BeatmapCheck';
 import type { Issue } from '../../Issue';
 import type { VerifierBeatmap } from '../../VerifierBeatmap';
+import { TimestampFormatter } from '../../../editor/TimestampFormatter';
 import { trimIndent } from '../../../utils/stringUtils';
 import { BeatmapCheck } from '../../BeatmapCheck';
 
@@ -40,7 +41,7 @@ export class CheckDrainTime extends BeatmapCheck<any> {
 
     yield this.createIssue({
       level: 'problem',
-      message: `Less than 30 seconds of drain time, currently ${Math.round(drainTime)}.`,
+      message: `Less than 30 seconds of drain time, currently ${TimestampFormatter.formatTimestamp(drainTime)}.`,
       cause: 'The time from the first object to the end of the last object, subtracting any time between two objects ' + 'where a break exists, is in total less than 30 seconds.',
     });
   }

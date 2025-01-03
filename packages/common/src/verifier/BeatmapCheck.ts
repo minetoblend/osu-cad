@@ -16,6 +16,6 @@ export abstract class BeatmapCheck<T extends HitObject = HitObject> {
   abstract getIssues(beatmap: VerifierBeatmap<T>): Generator<Issue, void, undefined>;
 
   protected createIssue(options: IssueOptions): Issue {
-    return new Issue(this.metadata, options);
+    return new Issue(this, options);
   }
 }

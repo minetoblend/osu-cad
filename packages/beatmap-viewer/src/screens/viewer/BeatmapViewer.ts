@@ -1,7 +1,7 @@
 import type { Beatmap, EditorScreenManager } from '@osucad/common';
 import type { KeyDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { BeatmapViewerGame } from '../../BeatmapViewerGame';
-import { Editor, EditorBeatmap, PreferencesContainer } from '@osucad/common';
+import { Editor, EditorBeatmap, PreferencesContainer, VerifyScreen } from '@osucad/common';
 import { Key, MenuItem } from 'osucad-framework';
 import { ViewportScreen } from './screens/viewport/ViewportScreen';
 
@@ -14,8 +14,9 @@ export class BeatmapViewer extends Editor {
 
   protected registerScreens(screenManager: EditorScreenManager) {
     screenManager.register(ViewportScreen);
+    screenManager.register(VerifyScreen);
 
-    screenManager.setCurrentScreen(ViewportScreen);
+    screenManager.setCurrentScreen(VerifyScreen);
   }
 
   createMenuItems(): MenuItem[] {
@@ -67,6 +68,14 @@ export class BeatmapViewer extends Editor {
   onKeyDown(e: KeyDownEvent): boolean {
     if (e.key === Key.Escape) {
       this.exit();
+      return true;
+    }
+
+    if (e.key === Key.Enter) {
+      console.log(
+        'Issues',
+        ...this.editorBeatmap.ruleset?.createBeatmapVerifier()?.getIssues(this.editorBeatmap) ?? [],
+      );
       return true;
     }
 

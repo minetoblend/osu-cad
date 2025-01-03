@@ -1,5 +1,5 @@
 import type { ReadonlyDependencyContainer } from 'osucad-framework';
-import { Anchor, Axes, Box, Container, Direction, FillFlowContainer, provide, resolved, Vec2 } from 'osucad-framework';
+import { Anchor, Axes, Box, Container, Direction, provide, resolved } from 'osucad-framework';
 import { IBeatmap } from '../../../beatmap/IBeatmap';
 import { OsucadScrollContainer } from '../../../drawables/OsucadScrollContainer';
 import { OsuSelectionBlueprintContainer } from '../../../rulesets/osu/edit/selection/OsuSelectionBlueprintContainer';
@@ -9,6 +9,7 @@ import { EditorPlayfieldContainer } from '../../EditorPlayfieldContainer';
 import { HitObjectSelectionManager } from '../compose/HitObjectSelectionManager';
 import { EditorScreen } from '../EditorScreen';
 import { editorScreen } from '../metadata';
+import { IssueList } from './IssueList';
 
 @editorScreen({
   id: 'verify',
@@ -57,15 +58,7 @@ export class VerifyScreen extends EditorScreen {
           }),
           new OsucadScrollContainer(Direction.Vertical).with({
             relativeSizeAxes: Axes.Both,
-            child: new FillFlowContainer({
-              relativeSizeAxes: Axes.X,
-              autoSizeAxes: Axes.Y,
-              padding: 20,
-              spacing: new Vec2(6),
-              children: [
-                ...this.ruleset.createBeatmapVerifier()?.getIssues(this.editorBeatmap) ?? [],
-              ],
-            }),
+            child: new IssueList(),
           }),
         ],
       }),

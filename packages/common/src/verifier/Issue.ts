@@ -1,5 +1,5 @@
 import type { HitObject } from '../hitObjects/HitObject';
-import type { CheckMetadata } from './BeatmapCheck';
+import type { BeatmapCheck } from './BeatmapCheck';
 
 export type IssueLevel =
   | 'info'
@@ -17,15 +17,17 @@ export interface IssueOptions {
 }
 
 export class Issue {
-  constructor(readonly metadata: CheckMetadata, options: IssueOptions) {
-    const { level, message, cause } = options;
+  constructor(readonly check: BeatmapCheck<any>, options: IssueOptions) {
+    const { level, message, cause, timestamp } = options;
 
     this.level = level;
     this.message = message;
     this.cause = cause;
+    this.timestamp = timestamp;
   }
 
   readonly level: IssueLevel;
   readonly message: string;
   readonly cause?: string;
+  readonly timestamp?: number | HitObject | HitObject[];
 }

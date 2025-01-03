@@ -55,3 +55,7 @@ export function avgOf(array: ReadonlyArray<number>) {
 export function avgBy<T>(array: ReadonlyArray<T>, fn: (item: T, index: number, array: ReadonlyArray<T>) => number) {
   return sumOf(array.map(fn)) / array.length;
 }
+
+export function arrayify<T>(itemOrArray: T | T[]): T[] {
+  return Array.isArray(itemOrArray) ? itemOrArray : [itemOrArray];
+}
