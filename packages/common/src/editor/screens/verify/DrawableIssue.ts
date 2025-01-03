@@ -1,15 +1,28 @@
 import type { Container, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Issue } from '../../../verifier/Issue';
-import { Anchor, Axes, CompositeDrawable, FillFlowContainer, Vec2 } from 'osucad-framework';
+import { Anchor, Axes, CompositeDrawable, DrawableSprite, FillFlowContainer, Vec2 } from 'osucad-framework';
 import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
-import { TextBlock } from '../../../drawables/TextBlock';
 import { OsucadColors } from '../../../OsucadColors';
+import { getIcon } from '../../../OsucadIcons';
 import { arrayify } from '../../../utils/arrayUtils';
 import { DrawableTimestamp } from './DrawableTimestamp';
 
 export class DrawableIssue extends CompositeDrawable {
   constructor(readonly issue: Issue) {
     super();
+  }
+
+  getIcon() {
+    switch (this.issue.level) {
+      case 'minor':
+        return getIcon('issue-minor');
+      case 'warning':
+        return getIcon('issue-warning');
+      case 'problem':
+        return getIcon('issue-problem');
+      default:
+        return null;
+    }
   }
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
@@ -28,6 +41,17 @@ export class DrawableIssue extends CompositeDrawable {
       }),
     ];
 
+    const icon = this.getIcon();
+    console.log(icon);
+    if (icon) {
+      messageLine.add(new DrawableSprite({
+        size: new Vec2(24),
+        texture: icon,
+        anchor: Anchor.CenterLeft,
+        origin: Anchor.CenterLeft,
+      }));
+    }
+
     if (this.issue.timestamp) {
       if (typeof this.issue.timestamp === 'number') {
         messageLine.add(new DrawableTimestamp(this.issue.timestamp).with({
@@ -44,21 +68,14 @@ export class DrawableIssue extends CompositeDrawable {
           }),
         );
       }
-
-      for (const word of this.issue.message.split(' ')) {
-        messageLine.add(new OsucadSpriteText({
-          text: word,
-          color: OsucadColors.text,
-          anchor: Anchor.CenterLeft,
-          origin: Anchor.CenterLeft,
-          fontSize: 13,
-        }));
-      }
     }
-    else {
-      messageLine.add(new TextBlock({
-        text: this.issue.message,
+
+    for (const word of this.issue.message.split(' ')) {
+      messageLine.add(new OsucadSpriteText({
+        text: word,
         color: OsucadColors.text,
+        anchor: Anchor.CenterLeft,
+        origin: Anchor.CenterLeft,
         fontSize: 13,
       }));
     }

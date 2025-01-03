@@ -36,6 +36,10 @@ const iconKeys = [
   'caret-left',
   'cursorpath',
   'pp',
+  'issue-check',
+  'issue-minor',
+  'issue-warning',
+  'issue-problem',
 ] as const;
 
 export const OsucadIcons = new class OsucadIcons {

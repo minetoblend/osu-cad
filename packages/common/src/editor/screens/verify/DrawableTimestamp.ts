@@ -38,7 +38,7 @@ export class DrawableTimestamp extends CompositeDrawable {
         child: this.#text = new OsucadSpriteText({
           text,
           color: OsucadColors.primary,
-          fontSize: 13,
+          fontSize: 12,
         }),
       }),
     ];

@@ -61,11 +61,18 @@ export class DrawableIssueGroup extends FillFlowContainer {
     this.expanded.valueChanged.addListener((expanded) => {
       if (expanded.value) {
         this.#content.bypassAutoSizeAxes = Axes.None;
+        this.#content.fadeIn(200);
       }
       else {
         this.content.bypassAutoSizeAxes = Axes.Y;
+        this.#content.fadeOut(200);
       }
     });
+  }
+
+  override onClick(e: ClickEvent): boolean {
+    this.expanded.value = !this.expanded.value;
+    return true;
   }
 }
 
@@ -92,11 +99,6 @@ class ExpandButton extends CompositeDrawable {
     expanded.valueChanged.addListener((expanded) => {
       icon.rotateTo(expanded.value ? -Math.PI * 0.5 : Math.PI * 0.5, 200, EasingFunction.OutExpo);
     });
-  }
-
-  override onClick(e: ClickEvent): boolean {
-    this.expanded.value = !this.expanded.value;
-    return true;
   }
 
   override onHover(e: HoverEvent): boolean {
