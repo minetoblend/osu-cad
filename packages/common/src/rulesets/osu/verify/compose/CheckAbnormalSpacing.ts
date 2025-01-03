@@ -1,14 +1,14 @@
-import type { IBeatmap } from '../../../beatmap/IBeatmap';
-import type { HitObject } from '../../../hitObjects/HitObject';
-import type { IssueMetadata, IssueOptions } from '../../../verifier/Issue';
-import type { OsuHitObject } from '../hitObjects/OsuHitObject';
-import { avgBy, maxBy, zipWithNext } from '../../../utils/arrayUtils';
-import { trimIndent } from '../../../utils/stringUtils';
-import { BeatmapCheck } from '../../../verifier/BeatmapCheck';
-import { HitObjectTimestamp } from '../../../verifier/HitObjectTimestamp';
-import { Issue } from '../../../verifier/Issue';
-import { Slider } from '../hitObjects/Slider';
-import { Spinner } from '../hitObjects/Spinner';
+import type { IBeatmap } from '../../../../beatmap/IBeatmap';
+import type { HitObject } from '../../../../hitObjects/HitObject';
+import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
+import { avgBy, maxBy, zipWithNext } from '../../../../utils/arrayUtils';
+import { trimIndent } from '../../../../utils/stringUtils';
+import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
+import { HitObjectTimestamp } from '../../../../verifier/HitObjectTimestamp';
+import { Issue } from '../../../../verifier/Issue';
+import { Slider } from '../../hitObjects/Slider';
+import { Spinner } from '../../hitObjects/Spinner';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/Standard/Compose/CheckAbnormalSpacing.cs
 export class AbnormalSpacingIssue extends Issue {

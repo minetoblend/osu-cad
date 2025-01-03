@@ -1,10 +1,10 @@
-import type { IBeatmap } from '../../../beatmap/IBeatmap';
-import type { IssueMetadata, IssueOptions } from '../../../verifier/Issue';
-import type { OsuHitObject } from '../hitObjects/OsuHitObject';
-import { trimIndent } from '../../../utils/stringUtils';
-import { BeatmapCheck } from '../../../verifier/BeatmapCheck';
-import { Issue } from '../../../verifier/Issue';
-import { Slider } from '../hitObjects/Slider';
+import type { IBeatmap } from '../../../../beatmap/IBeatmap';
+import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
+import { trimIndent } from '../../../../utils/stringUtils';
+import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
+import { Issue } from '../../../../verifier/Issue';
+import { Slider } from '../../hitObjects/Slider';
 
 export class BuraiIssue extends Issue {
   constructor(options: IssueOptions) {

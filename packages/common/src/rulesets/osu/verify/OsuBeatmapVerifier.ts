@@ -1,14 +1,15 @@
 import type { BeatmapCheck } from 'packages/common/src/verifier/BeatmapCheck';
+import type { BeatmapSetCheck } from '../../../verifier/BeatmapSetCheck';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
 import { BeatmapVerifier } from '../../../verifier/BeatmapVerifier';
-import { CheckAbnormalSpacing } from './CheckAbnormalSpacing';
-import { CheckAmbiguity } from './CheckAmbiguity';
-import { CheckBurai } from './CheckBurai';
-import { CheckNinjaSpinner } from './CheckNinjaSpinner';
-import { CheckObscuredReverse } from './CheckObscuredReverse';
+import { CheckAbnormalSpacing } from './compose/CheckAbnormalSpacing';
+import { CheckAmbiguity } from './compose/CheckAmbiguity';
+import { CheckBurai } from './compose/CheckBurai';
+import { CheckNinjaSpinner } from './compose/CheckNinjaSpinner';
+import { CheckObscuredReverse } from './compose/CheckObscuredReverse';
 
 export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
-  override get checks(): BeatmapCheck<OsuHitObject>[] {
+  override get beatmapChecks(): BeatmapCheck<OsuHitObject>[] {
     return [
       new CheckAbnormalSpacing(),
       new CheckObscuredReverse(),
@@ -16,5 +17,9 @@ export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
       new CheckBurai(),
       new CheckAmbiguity(),
     ];
+  }
+
+  override get beatmapSetChecks(): BeatmapSetCheck[] {
+    return [];
   }
 }

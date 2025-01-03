@@ -1,10 +1,10 @@
-import type { IBeatmap } from 'packages/common/src/beatmap';
-import type { IssueMetadata, IssueOptions } from 'packages/common/src/verifier/Issue';
-import type { OsuHitObject } from '../hitObjects/OsuHitObject';
-import { Issue } from 'packages/common/src/verifier/Issue';
-import { trimIndent } from '../../../utils/stringUtils';
-import { BeatmapCheck } from '../../../verifier/BeatmapCheck';
-import { Spinner } from '../hitObjects/Spinner';
+import type { IBeatmap } from 'packages/common/src/beatmap/index';
+import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
+import { trimIndent } from '../../../../utils/stringUtils';
+import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
+import { Issue } from '../../../../verifier/Issue';
+import { Spinner } from '../../hitObjects/Spinner';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/Standard/Compose/CheckNinjaSpinner.cs
 export class NinjaSpinnerIssue extends Issue {

@@ -1,13 +1,13 @@
 import type { Vec2 } from 'osucad-framework';
-import type { IBeatmap } from 'packages/common/src/beatmap';
-import type { IssueMetadata, IssueOptions } from '../../../verifier/Issue';
-import type { OsuHitObject } from '../hitObjects/OsuHitObject';
-import { trimIndent } from '../../../utils/stringUtils';
-import { BeatmapCheck } from '../../../verifier/BeatmapCheck';
-import { Issue } from '../../../verifier/Issue';
-import { PathType } from '../hitObjects/PathType';
-import { Slider } from '../hitObjects/Slider';
-import { SliderTick } from '../hitObjects/SliderTick';
+import type { IBeatmap } from 'packages/common/src/beatmap/index';
+import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
+import { trimIndent } from '../../../../utils/stringUtils';
+import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
+import { Issue } from '../../../../verifier/Issue';
+import { PathType } from '../../hitObjects/PathType';
+import { Slider } from '../../hitObjects/Slider';
+import { SliderTick } from '../../hitObjects/SliderTick';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/Standard/Compose/CheckAmbiguity.cs
 export class AmbiguityIssue extends Issue {

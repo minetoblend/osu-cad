@@ -1,12 +1,12 @@
 import type { Vec2 } from 'osucad-framework';
-import type { IBeatmap } from '../../../beatmap/IBeatmap';
-import type { IssueMetadata, IssueOptions } from '../../../verifier/Issue';
-import type { OsuHitObject } from '../hitObjects/OsuHitObject';
-import { trimIndent } from '../../../utils/stringUtils';
-import { BeatmapCheck } from '../../../verifier/BeatmapCheck';
-import { Issue } from '../../../verifier/Issue';
-import { HitCircle } from '../hitObjects/HitCircle';
-import { Slider } from '../hitObjects/Slider';
+import type { IBeatmap } from '../../../../beatmap/IBeatmap';
+import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
+import { trimIndent } from '../../../../utils/stringUtils';
+import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
+import { Issue } from '../../../../verifier/Issue';
+import { HitCircle } from '../../hitObjects/HitCircle';
+import { Slider } from '../../hitObjects/Slider';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/Standard/Compose/CheckOffscreen.cs
 export class OffScreenIssue extends Issue {

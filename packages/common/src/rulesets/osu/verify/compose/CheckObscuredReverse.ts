@@ -1,12 +1,12 @@
-import type { IssueMetadata, IssueOptions } from 'packages/common/src/verifier/Issue';
-import type { IBeatmap } from '../../../beatmap/IBeatmap';
-import type { HitObject } from '../../../hitObjects/HitObject';
-import type { OsuHitObject } from '../hitObjects/OsuHitObject';
-import { Issue } from 'packages/common/src/verifier/Issue';
-import { trimIndent } from '../../../utils/stringUtils';
-import { BeatmapCheck } from '../../../verifier/BeatmapCheck';
-import { Slider } from '../hitObjects/Slider';
-import { Spinner } from '../hitObjects/Spinner';
+import type { IBeatmap } from '../../../../beatmap/IBeatmap';
+import type { HitObject } from '../../../../hitObjects/HitObject';
+import type { IssueMetadata, IssueOptions } from '../../../../verifier/Issue';
+import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
+import { trimIndent } from '../../../../utils/stringUtils';
+import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
+import { Issue } from '../../../../verifier/Issue';
+import { Slider } from '../../hitObjects/Slider';
+import { Spinner } from '../../hitObjects/Spinner';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/Standard/Compose/CheckObscuredReverse.cs
 export class ObscuredReverseIssue extends Issue {
