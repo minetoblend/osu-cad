@@ -1,5 +1,4 @@
 import type { BeatmapCheck } from '../../../verifier/BeatmapCheck';
-import type { BeatmapSetCheck } from '../../../verifier/BeatmapSetCheck';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
 import { BeatmapVerifier } from '../../../verifier/BeatmapVerifier';
 import { CheckDrainTime } from '../../../verifier/checks/compose/CheckDrainTime';
@@ -14,6 +13,7 @@ import { CheckObscuredReverse } from './compose/CheckObscuredReverse';
 import { CheckMuted } from './hitsounds/CheckMuted';
 import { CheckDefaultColors } from './settings/CheckDefaultColors';
 import { CheckDifficultySettings } from './settings/CheckDifficultySettings';
+import { CheckLuminosity } from './settings/CheckLuminosity';
 
 export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
   override get beatmapChecks(): BeatmapCheck<OsuHitObject>[] {
@@ -30,10 +30,7 @@ export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
       new CheckMuted(),
       new CheckDefaultColors(),
       new CheckDifficultySettings(),
+      new CheckLuminosity(),
     ];
-  }
-
-  override get beatmapSetChecks(): BeatmapSetCheck[] {
-    return [];
   }
 }

@@ -46,4 +46,10 @@ export class ColorUtils {
       color.alpha,
     ]);
   }
+
+  static getLuminosity(color: ColorSource) {
+    color = new Color(color);
+
+    return Math.sqrt(color.red * color.red * 0.299 + color.green * color.green * 0.587 + color.blue * color.blue * 0.114);
+  }
 }
