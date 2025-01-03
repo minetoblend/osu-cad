@@ -14,6 +14,7 @@ import { CheckMuted } from './hitsounds/CheckMuted';
 import { CheckDefaultColors } from './settings/CheckDefaultColors';
 import { CheckDifficultySettings } from './settings/CheckDifficultySettings';
 import { CheckLuminosity } from './settings/CheckLuminosity';
+import { CheckTickRate } from './settings/CheckTickRate';
 
 export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
   override get beatmapChecks(): BeatmapCheck<OsuHitObject>[] {
@@ -31,6 +32,7 @@ export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
       new CheckDefaultColors(),
       new CheckDifficultySettings(),
       new CheckLuminosity(),
+      new CheckTickRate(),
     ];
   }
 }
