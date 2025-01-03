@@ -8,6 +8,7 @@ import { CheckAbnormalSpacing } from './compose/CheckAbnormalSpacing';
 import { CheckAmbiguity } from './compose/CheckAmbiguity';
 import { CheckBurai } from './compose/CheckBurai';
 import { CheckConcurrent } from './compose/CheckConcurrent';
+import { CheckInvisibleSlider } from './compose/CheckInvisibleSlider';
 import { CheckNinjaSpinner } from './compose/CheckNinjaSpinner';
 import { CheckObscuredReverse } from './compose/CheckObscuredReverse';
 
@@ -22,6 +23,7 @@ export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
       new CheckAbnormalNodes(),
       new CheckConcurrent(),
       new CheckDrainTime(),
+      new CheckInvisibleSlider(),
     ];
   }
 

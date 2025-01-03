@@ -33,7 +33,7 @@ export abstract class Ruleset {
     return [];
   }
 
-  createBeatmapVerifier(): BeatmapVerifier | null {
+  createBeatmapVerifier(): BeatmapVerifier<any> | null {
     return null;
   }
 

@@ -15,6 +15,7 @@ import { OsuHitObjectComposer } from './edit/OsuHitObjectComposer';
 import { OsuAction } from './OsuAction';
 import { StableOsuSkinTransformer } from './skinning/stable/StableOsuSkinTransformer';
 import { StackingProcessor } from './StackingProcessor';
+import { OsuBeatmapVerifier } from './verify/OsuBeatmapVerifier';
 
 export class OsuRuleset extends Ruleset {
   override createDrawableRulesetWith(beatmap: IBeatmap) {
@@ -55,5 +56,9 @@ export class OsuRuleset extends Ruleset {
 
   override createDifficultyCalculator(beatmap: Beatmap): DifficultyCalculator<any> {
     return new OsuDifficultyCalculator(beatmap);
+  }
+
+  override createBeatmapVerifier(): OsuBeatmapVerifier {
+    return new OsuBeatmapVerifier();
   }
 }
