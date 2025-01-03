@@ -22,6 +22,8 @@ export abstract class ControlPoint extends ObjectCrdt {
     this.#time = this.property('time', time);
   }
 
+  abstract get controlPointName(): string;
+
   changed = new Action<ControlPoint>();
 
   raiseChanged() {

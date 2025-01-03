@@ -22,6 +22,24 @@ export function maxBy<T>(array: ReadonlyArray<T>, fn: (item: T, index: number, a
   return maxOf(array.map(fn));
 }
 
+export function minOf(array: ReadonlyArray<number>) {
+  if (array.length === 0)
+    throw new Error('Cannot compute max of emtpy array');
+
+  let min = array[0];
+
+  for (let i = 1; i < array.length; i++) {
+    if (array[i] < min)
+      min = array[i];
+  }
+
+  return min;
+}
+
+export function minBy<T>(array: ReadonlyArray<T>, fn: (item: T, index: number, array: ReadonlyArray<T>) => number) {
+  return minOf(array.map(fn));
+}
+
 export function sumOf(array: ReadonlyArray<number>) {
   return array.reduce((a, b) => a + b, 0);
 }

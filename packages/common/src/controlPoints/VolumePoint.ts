@@ -14,6 +14,10 @@ export class VolumePoint extends ControlPoint {
     this.volume = volume;
   }
 
+  override get controlPointName(): string {
+    return 'Volume Point';
+  }
+
   static default = new VolumePoint(0, 100);
 
   #volume = this.property('volume', 100);

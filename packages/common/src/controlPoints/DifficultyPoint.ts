@@ -17,6 +17,10 @@ export class DifficultyPoint extends ControlPoint implements Patchable<Difficult
 
   static default = new DifficultyPoint(1);
 
+  override get controlPointName(): string {
+    return 'Difficulty Point';
+  }
+
   readonly #sliderVelocity: Property<number>;
 
   get sliderVelocityBindable() {

@@ -11,6 +11,7 @@ import { CheckInvisibleSlider } from './compose/CheckInvisibleSlider';
 import { CheckNinjaSpinner } from './compose/CheckNinjaSpinner';
 import { CheckObscuredReverse } from './compose/CheckObscuredReverse';
 import { CheckMuted } from './hitsounds/CheckMuted';
+import { CheckConcurrentControlPoints } from './settings/CheckConcurrentControlPoints';
 import { CheckDefaultColors } from './settings/CheckDefaultColors';
 import { CheckDifficultySettings } from './settings/CheckDifficultySettings';
 import { CheckLuminosity } from './settings/CheckLuminosity';
@@ -33,6 +34,7 @@ export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
       new CheckDifficultySettings(),
       new CheckLuminosity(),
       new CheckTickRate(),
+      new CheckConcurrentControlPoints(),
     ];
   }
 }

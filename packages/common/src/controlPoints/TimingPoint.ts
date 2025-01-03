@@ -22,6 +22,10 @@ export class TimingPoint extends ControlPoint implements Patchable<TimingPointPa
 
   static readonly default = new TimingPoint(0, 60_000 / 120);
 
+  override get controlPointName(): string {
+    return 'Timing Point';
+  }
+
   readonly #beatLength: Property<number>;
 
   get beatLengthBindable() {

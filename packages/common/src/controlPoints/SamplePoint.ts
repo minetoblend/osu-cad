@@ -28,6 +28,10 @@ export class SamplePoint extends ControlPoint implements Patchable<SamplePointPa
     this.sampleIndexBindable.valueChanged.addListener(this.raiseChanged, this);
   }
 
+  override get controlPointName(): string {
+    return 'Sample Point';
+  }
+
   static readonly default = new SamplePoint(0, 100, SampleSet.Normal, 0);
 
   volumeBindable = new BindableNumber(100).withRange(5, 100).withPrecision(1);

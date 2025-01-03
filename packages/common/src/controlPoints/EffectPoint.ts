@@ -16,6 +16,10 @@ export class EffectPoint extends ControlPoint implements Patchable<EffectPointPa
 
   static default = new EffectPoint(0);
 
+  override get controlPointName(): string {
+    return 'Effect Point';
+  }
+
   #kiaiMode: Property<boolean>;
 
   get kiaiModeBindable() {
