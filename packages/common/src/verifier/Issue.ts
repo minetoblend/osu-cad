@@ -1,3 +1,4 @@
+import type { Drawable } from 'osucad-framework';
 import type { HitObject } from '../hitObjects/HitObject';
 import type { BeatmapCheck } from './BeatmapCheck';
 
@@ -9,9 +10,11 @@ export type IssueLevel =
   | 'warning'
   | 'problem';
 
+export type IssueMessagePart = string | Drawable;
+
 export interface IssueOptions {
   level: IssueLevel;
-  message: string;
+  message: string | IssueMessagePart[];
   cause?: string;
   timestamp?: number | HitObject | HitObject[];
 }
@@ -27,7 +30,7 @@ export class Issue {
   }
 
   readonly level: IssueLevel;
-  readonly message: string;
+  readonly message: string | IssueMessagePart[];
   readonly cause?: string;
   readonly timestamp?: number | HitObject | HitObject[];
 }

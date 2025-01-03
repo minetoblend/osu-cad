@@ -70,14 +70,24 @@ export class DrawableIssue extends CompositeDrawable {
       }
     }
 
-    for (const word of this.issue.message.split(' ')) {
-      messageLine.add(new OsucadSpriteText({
-        text: word,
-        color: OsucadColors.text,
-        anchor: Anchor.CenterLeft,
-        origin: Anchor.CenterLeft,
-        fontSize: 13,
-      }));
+    for (const part of arrayify(this.issue.message)) {
+      if (typeof part === 'string') {
+        for (const word of part.split(' ')) {
+          messageLine.add(new OsucadSpriteText({
+            text: word,
+            color: OsucadColors.text,
+            anchor: Anchor.CenterLeft,
+            origin: Anchor.CenterLeft,
+            fontSize: 13,
+          }));
+        }
+      }
+      else {
+        messageLine.add(part.with({
+          anchor: Anchor.CenterLeft,
+          origin: Anchor.CenterLeft,
+        }));
+      }
     }
   }
 }

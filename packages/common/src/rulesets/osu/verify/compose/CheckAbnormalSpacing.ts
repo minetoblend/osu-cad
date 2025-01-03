@@ -3,6 +3,7 @@ import type { CheckMetadata } from '../../../../verifier/BeatmapCheck';
 import type { Issue } from '../../../../verifier/Issue';
 import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
+import { DrawableTimestamp } from '../../../../editor/screens/verify/DrawableTimestamp';
 import { avgBy, maxBy, zipWithNext } from '../../../../utils/arrayUtils';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
@@ -100,13 +101,16 @@ export class CheckAbnormalSpacing extends BeatmapCheck<OsuHitObject> {
 
       const ratio = Math.round(actualExpectedRatio * 10) / 10;
 
-      const comparisonTimestamps = sameSnappedDistances.filter(obvDist => new HitObjectTimestamp([obvDist.hitObject, obvDist.nextHitObject])).slice(-3).join(', ');
+      const comparisonTimestamps = sameSnappedDistances
+        .filter(obvDist => new HitObjectTimestamp([obvDist.hitObject, obvDist.nextHitObject]))
+        .slice(-3)
+        .map(it => new DrawableTimestamp(it.hitObject.startTime, [it.hitObject, it.nextHitObject]));
 
       if (actualExpectedRatio > ratioProblemThreshold) {
         yield this.createIssue({
           level: 'problem',
-          message: `Space/time ratio is ${ratio} times the expected, see e.g. ${comparisonTimestamps}.`,
-          timestamp: hitObject,
+          message: [`Space/time ratio is ${ratio} times the expected, see e.g. `, ...comparisonTimestamps],
+          timestamp: [hitObject, next],
           cause: trimIndent(`
             The space/time ratio between two objects is absurdly large in comparison to other objects with the same snapping prior.
             <note>
@@ -118,15 +122,15 @@ export class CheckAbnormalSpacing extends BeatmapCheck<OsuHitObject> {
       else if (actualExpectedRatio > ratioWarningThreshold) {
         yield this.createIssue({
           level: 'warning',
-          message: `Space/time ratio is ${ratio} times the expected, see e.g. ${comparisonTimestamps}.`,
-          timestamp: hitObject,
+          message: [`Space/time ratio is ${ratio} times the expected, see e.g. `, ...comparisonTimestamps],
+          timestamp: [hitObject, next],
         });
       }
       else {
         yield this.createIssue({
           level: 'minor',
-          message: `Space/time ratio is ${ratio} times the expected, see e.g. ${comparisonTimestamps}.`,
-          timestamp: hitObject,
+          message: [`Space/time ratio is ${ratio} times the expected, see e.g. `, ...comparisonTimestamps],
+          timestamp: [hitObject, next],
         });
       }
     }
