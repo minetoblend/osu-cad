@@ -1,8 +1,9 @@
 import type { Drawable } from 'osucad-framework';
-import type { IBeatmap } from '../beatmap/IBeatmap';
 import type { DrawableTimestamp } from '../editor/screens/modding/DrawableTimestamp';
 import type { HitObject } from '../hitObjects/HitObject';
-import type { BeatmapCheck } from './BeatmapCheck';
+import type { Check } from './Check';
+import type { VerifierBeatmap } from './VerifierBeatmap';
+import { Comparer } from 'osucad-framework';
 
 export type IssueLevel =
   | 'info'
@@ -17,13 +18,13 @@ export type IssueMessagePart = string | Drawable;
 export interface IssueOptions {
   level: IssueLevel;
   message: string | IssueMessagePart[];
-  beatmap: IBeatmap<any>;
+  beatmap?: VerifierBeatmap<any>;
   cause?: string;
   timestamp?: number | HitObject | HitObject[] | DrawableTimestamp;
 }
 
 export class Issue {
-  constructor(readonly check: BeatmapCheck<any>, options: IssueOptions) {
+  constructor(readonly check: Check, options: IssueOptions) {
     const { level, message, cause, timestamp, beatmap } = options;
 
     this.level = level;
@@ -37,5 +38,28 @@ export class Issue {
   readonly message: string | IssueMessagePart[];
   readonly cause?: string;
   readonly timestamp?: number | HitObject | HitObject[] | DrawableTimestamp;
-  readonly beatmap?: IBeatmap;
+  readonly beatmap?: VerifierBeatmap;
 }
+
+export const IssueLevelComparer = new class extends Comparer<IssueLevel> {
+  override compare(a: IssueLevel, b: IssueLevel): number {
+    return this.getScore(a) - this.getScore(b);
+  }
+
+  getScore(level: IssueLevel) {
+    switch (level) {
+      case 'check':
+        return 0;
+      case 'minor':
+        return 1;
+      case 'warning':
+        return 2;
+      case 'problem':
+        return 3;
+      case 'error':
+        return 4;
+      default:
+        return -1;
+    }
+  }
+}();

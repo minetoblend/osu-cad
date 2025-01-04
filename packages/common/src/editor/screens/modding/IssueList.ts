@@ -1,7 +1,9 @@
 import type { ClickEvent, Drawable, HoverEvent, MouseDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
-import type { BeatmapCheck } from '../../../verifier/BeatmapCheck';
+import type { Beatmap } from '../../../beatmap/Beatmap';
+import type { IBeatmap } from '../../../beatmap/IBeatmap';
 import type { BeatmapVerifier } from '../../../verifier/BeatmapVerifier';
-import { Anchor, Axes, Box, Container, Direction, FillFlowContainer, resolved, Vec2 } from 'osucad-framework';
+import type { IssueSectionContent } from './IssueSectionContent';
+import { Anchor, Axes, Bindable, Box, Container, Direction, FillFlowContainer, resolved, Vec2 } from 'osucad-framework';
 import { OsucadScrollContainer } from '../../../drawables/OsucadScrollContainer';
 import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
 import { IResourcesProvider } from '../../../io/IResourcesProvider';
@@ -9,8 +11,7 @@ import { OsucadColors } from '../../../OsucadColors';
 import { Ruleset } from '../../../rulesets/Ruleset';
 import { BeatmapSkin } from '../../../skinning/BeatmapSkin';
 import { EditorBeatmap } from '../../EditorBeatmap';
-import { DrawableIssue } from './DrawableIssue';
-import { DrawableIssueGroup } from './DrawableIssueGroup';
+import { IssueSection } from './IssueSection';
 
 export class IssueList extends Container {
   @resolved(Ruleset)
@@ -42,10 +43,21 @@ export class IssueList extends Container {
           autoSizeAxes: Axes.Y,
           padding: 20,
           spacing: new Vec2(10),
+          children: [
+            this.#headers = new FillFlowContainer({
+              relativeSizeAxes: Axes.X,
+              autoSizeAxes: Axes.Y,
+              spacing: new Vec2(4),
+            }),
+          ],
         }),
       }),
     );
   }
+
+  #headers!: Container;
+
+  #currentSectionContent!: IssueSectionContent;
 
   protected override loadComplete() {
     super.loadComplete();
@@ -54,24 +66,32 @@ export class IssueList extends Container {
 
     if (verifier)
       this.createIssues(verifier).then();
+
+    this.activeBeatmap.addOnChangeListener((beatmap) => {
+      this.#currentSectionContent.expire();
+      this.add(this.#currentSectionContent = this.#beatmapIssues.get(beatmap.value)!.createContent());
+    });
   }
 
-  #issueGroups = new Map<BeatmapCheck<any>, DrawableIssueGroup>();
+  #beatmapIssues = new Map<IBeatmap | null, IssueSection>();
+
+  @resolved(IResourcesProvider)
+  resoucesProvider!: IResourcesProvider;
 
   async createIssues(verifier: BeatmapVerifier) {
     const beatmaps = this.beatmap.beatmapSet?.beatmaps ?? [this.beatmap.beatmap];
 
-    for await (const issue of verifier.getIssues(beatmaps, this.beatmap.fileStore, new BeatmapSkin(this.dependencies.resolve(IResourcesProvider), this.beatmap))) {
-      let group = this.#issueGroups.get(issue.check);
-      if (!group) {
-        this.add(group = new DrawableIssueGroup(issue.check));
-        this.#issueGroups.set(issue.check, group);
-      }
+    this.setupSections(beatmaps);
 
-      group.add(new DrawableIssue(issue));
+    const issues = verifier.getIssues(beatmaps, this.beatmap.fileStore, new BeatmapSkin(this.resoucesProvider, this.beatmap), this.resoucesProvider);
+
+    for await (const issue of issues) {
+      const section = this.#beatmapIssues.get(issue.beatmap?.beatmap ?? null)!;
+
+      section.addIssue(issue);
     }
 
-    if (this.#issueGroups.size === 0) {
+    if (this.#beatmapIssues.size === 0) {
       this.add(new Container({
         relativeSizeAxes: Axes.X,
         autoSizeAxes: Axes.Y,
@@ -83,6 +103,22 @@ export class IssueList extends Container {
           color: OsucadColors.text,
         }),
       }));
+    }
+  }
+
+  readonly activeBeatmap = new Bindable<Beatmap | null>(null);
+
+  private setupSections(beatmaps: ReadonlyArray<Beatmap>) {
+    const general = new IssueSection(null, this.activeBeatmap.getBoundCopy());
+    this.#headers.add(general);
+    this.#beatmapIssues.set(null, general);
+
+    this.#currentSectionContent = general.createContent();
+
+    for (const beatmap of beatmaps) {
+      const section = new IssueSection(beatmap, this.activeBeatmap.getBoundCopy());
+      this.#headers.add(section);
+      this.#beatmapIssues.set(beatmap, section);
     }
   }
 

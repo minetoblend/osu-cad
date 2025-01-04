@@ -40,6 +40,7 @@ const iconKeys = [
   'issue-minor',
   'issue-warning',
   'issue-problem',
+  'issue-info',
   'tool-text',
   'tool-line',
 ] as const;

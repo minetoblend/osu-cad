@@ -4,7 +4,7 @@ import type { Issue } from '../../../../verifier/Issue';
 import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { DrawableTimestamp } from '../../../../editor/screens/modding/DrawableTimestamp';
-import { avgBy, maxBy, zipWithNext } from '../../../../utils/arrayUtils';
+import { avgBy, maxOf, zipWithNext } from '../../../../utils/arrayUtils';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
 import { HitObjectTimestamp } from '../../../../verifier/HitObjectTimestamp';
@@ -76,7 +76,7 @@ export class CheckAbnormalSpacing extends BeatmapCheck<OsuHitObject> {
         nextHitObject: next,
       });
 
-      if (sameSnappedDistances.length === 0 || distance / deltaTime < maxBy(sameSnappedDistances, obvDist => obvDist.distance / obvDist.deltaTime * decay(hitObject, obvDist)))
+      if (sameSnappedDistances.length === 0 || distance / deltaTime < maxOf(sameSnappedDistances.map(obvDist => obvDist.distance / obvDist.deltaTime * decay(hitObject, obvDist))))
         continue;
 
       if (distance <= hitObject.radius * 4)

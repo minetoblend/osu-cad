@@ -19,7 +19,21 @@ export function maxOf(array: ReadonlyArray<number>) {
 }
 
 export function maxBy<T>(array: ReadonlyArray<T>, fn: (item: T, index: number, array: ReadonlyArray<T>) => number) {
-  return maxOf(array.map(fn));
+  if (array.length === 0)
+    throw new Error('Cannot compute max of emtpy array');
+
+  let max = array[0];
+  let maxValue = fn(array[0], 0, array);
+
+  for (let i = 1; i < array.length; i++) {
+    const value = fn(array[i], i, array);
+    if (value > maxValue) {
+      max = array[i];
+      maxValue = value;
+    }
+  }
+
+  return max;
 }
 
 export function minOf(array: ReadonlyArray<number>) {

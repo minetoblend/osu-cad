@@ -1,12 +1,12 @@
 import type { Bindable, ClickEvent, Container, Drawable, HoverEvent, HoverLostEvent } from 'osucad-framework';
-import type { BeatmapCheck } from '../../../verifier/BeatmapCheck';
+import type { Check } from '../../../verifier/Check';
 import { Anchor, Axes, BindableBoolean, CompositeDrawable, DrawableSprite, EasingFunction, FillDirection, FillFlowContainer, MaskingContainer, Vec2 } from 'osucad-framework';
 import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
 import { OsucadColors } from '../../../OsucadColors';
 import { getIcon } from '../../../OsucadIcons';
 
 export class DrawableIssueGroup extends FillFlowContainer {
-  constructor(readonly check: BeatmapCheck<any>) {
+  constructor(readonly check: Check) {
     super();
 
     this.relativeSizeAxes = Axes.X;

@@ -1,7 +1,7 @@
 import type { HitObject } from '../hitObjects/HitObject';
-import type { IssueOptions } from './Issue';
+import type { Issue } from './Issue';
 import type { VerifierBeatmap } from './VerifierBeatmap';
-import { Issue } from './Issue';
+import { Check } from './Check';
 
 export interface CheckMetadata {
   readonly category: string;
@@ -10,12 +10,6 @@ export interface CheckMetadata {
   readonly documentation?: { title: string; description: string }[];
 }
 
-export abstract class BeatmapCheck<T extends HitObject = HitObject> {
-  abstract get metadata(): CheckMetadata;
-
+export abstract class BeatmapCheck<T extends HitObject = HitObject> extends Check {
   abstract getIssues(beatmap: VerifierBeatmap<T>): AsyncGenerator<Issue, void, undefined>;
-
-  protected createIssue(options: IssueOptions): Issue {
-    return new Issue(this, options);
-  }
 }
