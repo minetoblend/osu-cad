@@ -817,7 +817,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   isAlive = false;
 
-  get shouldBeAlive() {
+  get shouldBeAlive(): boolean {
     if (!this.#hasLifeTime)
       return true;
 
