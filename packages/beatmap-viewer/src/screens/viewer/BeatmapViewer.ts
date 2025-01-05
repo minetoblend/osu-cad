@@ -2,7 +2,8 @@ import type { Beatmap, EditorScreenManager } from '@osucad/common';
 import type { KeyDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { BeatmapViewerGame } from '../../BeatmapViewerGame';
 import { Editor, EditorBeatmap, ModdingScreen, PreferencesContainer } from '@osucad/common';
-import { Key, MenuItem } from 'osucad-framework';
+import { Key, MenuItem, resolved } from 'osucad-framework';
+import { Router } from '../Router';
 import { ViewportScreen } from './screens/viewport/ViewportScreen';
 
 export class BeatmapViewer extends Editor {
@@ -18,6 +19,9 @@ export class BeatmapViewer extends Editor {
 
     screenManager.setCurrentScreen(ModdingScreen);
   }
+
+  @resolved(() => Router)
+  router!: Router;
 
   createMenuItems(): MenuItem[] {
     const fileMenu = new MenuItem({
@@ -38,12 +42,14 @@ export class BeatmapViewer extends Editor {
       fileMenu.items = [
         new MenuItem({
           text: 'Open difficulty',
-          items: this.editorBeatmap.beatmapSet.beatmaps.map(beatmap =>
-            new MenuItem({
-              text: beatmap.metadata.difficultyName,
-              action: () => this.switchDifficulty(beatmap),
-            }),
-          ),
+          items: this.editorBeatmap.beatmapSet.beatmaps
+            .map(beatmap =>
+              new MenuItem({
+                text: beatmap.metadata.difficultyName,
+                disabled: this.beatmap === beatmap,
+                action: () => this.switchDifficulty(beatmap),
+              }),
+            ),
         }),
         ...fileMenu.items,
       ];
@@ -54,15 +60,18 @@ export class BeatmapViewer extends Editor {
     ];
   }
 
+  nextBeatmap?: BeatmapViewer;
+
   switchDifficulty(beatmap: Beatmap) {
-    const editorBeatmap = new EditorBeatmap(
-      beatmap,
-      this.editorBeatmap.fileStore,
-      this.editorBeatmap.beatmapSet,
+    this.nextBeatmap = new BeatmapViewer(
+      new EditorBeatmap(
+        beatmap,
+        this.editorBeatmap.fileStore,
+        this.editorBeatmap.beatmapSet,
+      ),
     );
 
-    this.exit();
-    this.screenStack.push(new BeatmapViewer(editorBeatmap));
+    this.loadComponentAsync(this.nextBeatmap).finally(() => this.exit());
   }
 
   onKeyDown(e: KeyDownEvent): boolean {
@@ -71,14 +80,10 @@ export class BeatmapViewer extends Editor {
       return true;
     }
 
-    if (e.key === Key.Enter) {
-      console.log(
-        'Issues',
-        ...this.editorBeatmap.ruleset?.createBeatmapVerifier()?.getIssues(this.editorBeatmap) ?? [],
-      );
-      return true;
-    }
-
     return false;
+  }
+
+  exit() {
+    this.router.goBack();
   }
 }

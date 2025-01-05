@@ -1,3 +1,4 @@
+import type { ScreenExitEvent } from 'osucad-framework';
 import type { EditorBeatmap } from './EditorBeatmap';
 import { Anchor, Axes, DrawableSprite, FillMode, loadTexture } from 'osucad-framework';
 import { BackgroundScreen } from '../screens/BackgroundScreen';
@@ -30,5 +31,11 @@ export class EditorBackground extends BackgroundScreen {
       this.addInternal(sprite);
       sprite.fadeTo(0).fadeTo(0.75, 500);
     });
+  }
+
+  override onExiting(e: ScreenExitEvent): boolean {
+    this.fadeOut(100);
+
+    return false;
   }
 }

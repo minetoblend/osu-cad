@@ -42,7 +42,6 @@ export class DrawableIssue extends CompositeDrawable {
     ];
 
     const icon = this.getIcon();
-    console.log(icon);
     if (icon) {
       messageLine.add(new DrawableSprite({
         size: new Vec2(24),

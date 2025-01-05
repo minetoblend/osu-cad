@@ -1,17 +1,15 @@
 import type {
   BackgroundScreen,
-  Beatmap,
   CarouselBeatmapInfo,
   CarouselBeatmapSetInfo,
   WorkingBeatmapSet,
 } from '@osucad/common';
 import type { Drawable, ReadonlyDependencyContainer, ScreenTransitionEvent } from 'osucad-framework';
 import type { BeatmapSetResponse, BeatmapSetResponseBeatmap } from '../../mirrors/BeatmapSetResponse';
-import { BeatmapCarousel, EditorBeatmap, OsucadScreen } from '@osucad/common';
+import { BeatmapCarousel, OsucadScreen } from '@osucad/common';
 import { SizeLimitedContainer } from '@osucad/editor/drawables/SizeLimitedContainer';
-import { Anchor, Axes, Bindable, Container, FillDirection, FillFlowContainer, loadTexture, Vec2 } from 'osucad-framework';
-import { CatboyMirror } from '../../mirrors/CatboyMirror';
-import { LoadingScreen } from '../LoadingScreen';
+import { Anchor, Axes, Bindable, Container, FillDirection, FillFlowContainer, loadTexture, resolved, Vec2 } from 'osucad-framework';
+import { Router } from '../Router';
 import { HomeScreenBackground } from './HomeScreenBackground';
 import { SearchHero } from './SearchHero';
 
@@ -124,21 +122,21 @@ export class HomeScreen extends OsucadScreen {
     return carouselMapsetInfo;
   }
 
-  async openEditor(mapset: BeatmapSetResponse, beatmap: BeatmapSetResponseBeatmap) {
-    this.screenStack.push(new LoadingScreen(async () => {
-      const workingBeatmapSet = await new CatboyMirror().loadBeatmapSet(mapset.id);
-      const difficulty: Beatmap = workingBeatmapSet.beatmaps.find(it => it.metadata.osuWebId === beatmap.id)!;
+  @resolved(() => Router)
+  router!: Router;
 
-      return new EditorBeatmap(difficulty, workingBeatmapSet.fileStore, workingBeatmapSet);
-    }));
+  async openEditor(mapset: BeatmapSetResponse, beatmap: BeatmapSetResponseBeatmap) {
+    this.router.presentBeatmap({
+      beatmapSet: mapset.id,
+      beatmap: beatmap.id,
+    });
   }
 
   async openBeatmap(workingBeatmapSet: WorkingBeatmapSet, id: number) {
-    this.screenStack.push(new LoadingScreen(async () => {
-      const difficulty: Beatmap = workingBeatmapSet.beatmaps.find(it => it.metadata.osuWebId === id)!;
-
-      return new EditorBeatmap(difficulty, workingBeatmapSet.fileStore, workingBeatmapSet);
-    }));
+    this.router.presentBeatmap({
+      beatmapSet: workingBeatmapSet,
+      beatmap: id,
+    });
   }
 
   onSuspending(e: ScreenTransitionEvent) {

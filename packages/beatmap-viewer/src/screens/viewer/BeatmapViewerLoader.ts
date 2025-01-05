@@ -3,8 +3,9 @@ import type { ScreenTransitionEvent } from 'osucad-framework';
 import { OsucadScreen } from '@osucad/common';
 import { EditorLoadingSpinner } from '@osucad/editor/editor/EditorLoadingSpinner';
 import { Axes } from 'osucad-framework';
+import { BeatmapViewer } from './BeatmapViewer';
 
-export class LoadingScreen extends OsucadScreen {
+export class BeatmapViewerLoader extends OsucadScreen {
   constructor(
     readonly loadBeatmap: () => Promise<EditorBeatmap>,
   ) {
@@ -23,7 +24,7 @@ export class LoadingScreen extends OsucadScreen {
     this.addInternal(this.#loadingSpinner);
 
     this.loadBeatmap().then(async (beatmap) => {
-      const { BeatmapViewer } = await import('../screens/viewer/BeatmapViewer');
+      const { BeatmapViewer } = await import('./BeatmapViewer');
 
       this.screenStack.push(new BeatmapViewer(beatmap));
     });
@@ -32,6 +33,11 @@ export class LoadingScreen extends OsucadScreen {
   onResuming(e: ScreenTransitionEvent) {
     super.onResuming(e);
 
-    this.exit();
+    if (e.source && e.source instanceof BeatmapViewer && e.source.nextBeatmap) {
+      this.screenStack.push(e.source.nextBeatmap);
+      return;
+    }
+
+    this.schedule(() => this.exit());
   }
 }

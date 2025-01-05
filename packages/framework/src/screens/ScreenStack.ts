@@ -152,7 +152,7 @@ export class ScreenStack extends CompositeDrawable {
       throw new Error('Screen is not current, use Screen.MakeCurrent instead.');
     }
 
-    this.#exitFrom(null);
+    return !this.#exitFrom(null);
   }
 
   makeCurrent(target: IScreen) {
@@ -211,6 +211,10 @@ export class ScreenStack extends CompositeDrawable {
     if (index === -1)
       return null;
     return this.#stack[index + 1] ?? null;
+  }
+
+  get allScreens(): ReadonlyArray<IScreen> {
+    return [...this.#stack];
   }
 
   #exitFrom(

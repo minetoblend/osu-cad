@@ -32,6 +32,10 @@ export class EditorBeatmap<T extends HitObject = HitObject> extends Component im
     this.commandManager = this.createCommandManager();
   }
 
+  static fromBeatmapSet<T extends HitObject>(beatmap: Beatmap<T>, beatmapSet: WorkingBeatmapSet) {
+    return new EditorBeatmap(beatmap, beatmapSet.fileStore, beatmapSet);
+  }
+
   get ruleset() {
     return this.beatmap.ruleset;
   }

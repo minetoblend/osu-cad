@@ -1,8 +1,9 @@
+import type { OsucadScreenStack } from '@osucad/common';
 import type { DependencyContainer, ReadonlyDependencyContainer } from 'osucad-framework';
-import { ISkinSource, OsucadGameBase, OsucadScreenStack, OsuRuleset, RulesetStore, SkinManager } from '@osucad/common';
+import { ISkinSource, OsucadGameBase, OsuRuleset, RulesetStore, SkinManager } from '@osucad/common';
 import { UISamples } from '@osucad/editor/UISamples';
 import { RenderTarget } from 'pixi.js';
-import { HomeScreen } from './screens/home/HomeScreen';
+import { Router } from './screens/Router';
 
 RenderTarget.defaultOptions.depth = true;
 RenderTarget.defaultOptions.stencil = true;
@@ -12,7 +13,7 @@ export class BeatmapViewerGame extends OsucadGameBase {
     super();
   }
 
-  #screenStack!: OsucadScreenStack;
+  #router!: OsucadScreenStack;
 
   #dependencies!: DependencyContainer;
 
@@ -31,7 +32,7 @@ export class BeatmapViewerGame extends OsucadGameBase {
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
-    this.add(this.#screenStack = new OsucadScreenStack());
+    this.add(this.#router = new Router());
 
     this.#skinManager = new SkinManager();
 
@@ -54,12 +55,5 @@ export class BeatmapViewerGame extends OsucadGameBase {
       samples.load(),
     ]);
     this.add(this.#skinManager);
-  }
-
-  protected loadComplete() {
-    super.loadComplete();
-
-    this.#screenStack.push(new HomeScreen());
-    // this.#screenStack.push(new BeatmapViewer(new DummyEditorBeatmap()));
   }
 }

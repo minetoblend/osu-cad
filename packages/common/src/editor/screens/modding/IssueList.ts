@@ -86,10 +86,21 @@ export class IssueList extends Container {
     const skin = new BeatmapSkin(this.resoucesProvider, this.beatmap, this.beatmap.fileStore);
     const issues = verifier.getIssues(beatmaps, this.beatmap.fileStore, skin, this.resoucesProvider);
 
+    let startTime = performance.now();
+
     for await (const issue of issues) {
       const section = this.#beatmapIssues.get(issue.beatmap?.beatmap ?? null)!;
 
       section.addIssue(issue);
+
+      const now = performance.now();
+      const timePassed = now - startTime;
+
+      if (timePassed > 10) {
+        startTime = now;
+        console.log('waiting for another frame');
+        await new Promise(resolve => requestAnimationFrame(resolve));
+      }
     }
 
     if (this.#beatmapIssues.size === 0) {
