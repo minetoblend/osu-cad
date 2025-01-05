@@ -51,7 +51,10 @@ export class SkinSampleStore {
     if (!data)
       return null;
 
-    const sample = await this.#audioManager.context.decodeAudioData(data)
+    const clone = new ArrayBuffer(data.byteLength);
+    new Uint8Array(clone).set(new Uint8Array(data));
+
+    const sample = await this.#audioManager.context.decodeAudioData(clone)
       .catch((e) => {
         console.warn(`Failed to load sample "${name}"`, e);
         return null;
