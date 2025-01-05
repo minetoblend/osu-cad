@@ -42,9 +42,9 @@ export abstract class HitObjectComposer extends CompositeDrawable {
   [Symbol('load')]() {
     this.relativeSizeAxes = Axes.Both;
 
-    const selectionManager = new HitObjectSelectionManager();
-
-    this.addInternal(selectionManager);
+    let selectionManager = this.dependencies.resolveOptional(HitObjectSelectionManager);
+    if (!selectionManager)
+      this.addInternal(selectionManager = new HitObjectSelectionManager());
 
     this.addInternal(new HitsoundPlayer());
 

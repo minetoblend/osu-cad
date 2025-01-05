@@ -7,6 +7,7 @@ import { ModdingConfigManager } from '../../../config/ModdingConfigManager';
 import { Ruleset } from '../../../rulesets/Ruleset';
 import { EditorBeatmap } from '../../EditorBeatmap';
 import { ModelBackedEditorBeatmapProvidingContainer } from '../../ModelBackedEditorBeatmapProvidingContainer';
+import { HitObjectSelectionManager } from '../compose/HitObjectSelectionManager';
 import { EditorScreen } from '../EditorScreen';
 import { editorScreen } from '../metadata';
 import { IssueList } from './IssueList';
@@ -36,6 +37,9 @@ export class ModdingScreen extends EditorScreen {
   readonly activeBeatmap = new Bindable<Beatmap | null>(null);
 
   activeEditorBeatmap!: Bindable<EditorBeatmap>;
+
+  @provide(HitObjectSelectionManager)
+  readonly selection = new HitObjectSelectionManager();
 
   protected override loadComplete() {
     super.loadComplete();
