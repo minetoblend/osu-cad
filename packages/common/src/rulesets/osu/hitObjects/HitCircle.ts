@@ -20,7 +20,7 @@ export class HitCircle extends OsuHitObject implements IPatchable<SerializedHitC
 
 export class HitCircleSerializer extends OsuHitObjectSerializer<HitCircle> {
   constructor() {
-    super('HitCircle', {});
+    super('HitCircle');
   }
 
   protected override createInstance(): HitCircle {
