@@ -2,6 +2,8 @@ import type { Bindable, ClickEvent, HoverEvent, HoverLostEvent, ReadonlyDependen
 import type { Beatmap } from '../../../beatmap/Beatmap';
 import type { Issue } from '../../../verifier/Issue';
 import { Action, Anchor, Axes, BindableBoolean, CompositeDrawable, DrawableSprite, FastRoundedBox, FillDirection, FillFlowContainer } from 'osucad-framework';
+import { ModdingConfigManager } from '../../../config/ModdingConfigManager';
+import { ModdingSettings } from '../../../config/ModdingSettings';
 import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
 import { OsucadColors } from '../../../OsucadColors';
 import { getIcon } from '../../../OsucadIcons';
@@ -28,11 +30,20 @@ export class IssueSection extends CompositeDrawable {
   addIssue(issue: Issue) {
     this.#issues.push(issue);
     this.issueAdded.emit(issue);
+    this.#updateIcon();
+  }
+
+  showMinorIssues = new BindableBoolean();
+
+  #updateIcon() {
     this.#icon.texture = this.#getIcon();
   }
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
+
+    const config = dependencies.resolve(ModdingConfigManager);
+    config.bindWith(ModdingSettings.ShowMinorIssues, this.showMinorIssues);
 
     this.autoSizeAxes = Axes.Both;
     this.addAllInternal(
@@ -47,13 +58,14 @@ export class IssueSection extends CompositeDrawable {
         direction: FillDirection.Horizontal,
         children: [
           this.#icon = new DrawableSprite({
-            size: 32,
+            size: 24,
             texture: getIcon('issue-check'),
             anchor: Anchor.CenterLeft,
             origin: Anchor.CenterLeft,
           }),
           new OsucadSpriteText({
             text: this.beatmap?.metadata?.difficultyName ?? 'General',
+            fontSize: 14,
             anchor: Anchor.CenterLeft,
             origin: Anchor.CenterLeft,
             color: OsucadColors.text,
@@ -67,6 +79,8 @@ export class IssueSection extends CompositeDrawable {
       beatmap => this.active.value = beatmap.value === this.beatmap,
       { immediate: true },
     );
+
+    this.showMinorIssues.addOnChangeListener(() => this.#updateIcon());
   }
 
   #background!: FastRoundedBox;
@@ -99,7 +113,15 @@ export class IssueSection extends CompositeDrawable {
   }
 
   #getIcon() {
-    const maxLevel = maxBy(this.#issues.map(it => it.level), IssueLevelComparer.getScore);
+    let issues = this.#issues;
+
+    if (!this.showMinorIssues.value)
+      issues = issues.filter(it => it.level !== 'minor');
+
+    if (issues.length === 0)
+      return getIcon('issue-check');
+
+    const maxLevel = maxBy(issues.map(it => it.level), IssueLevelComparer.getScore);
     switch (maxLevel) {
       case 'check':
         return getIcon('issue-check');

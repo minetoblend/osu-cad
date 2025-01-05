@@ -74,6 +74,14 @@ export class DrawableIssueGroup extends FillFlowContainer {
     this.expanded.value = !this.expanded.value;
     return true;
   }
+
+  override get removeWhenNotAlive(): boolean {
+    return false;
+  }
+
+  override get shouldBeAlive(): boolean {
+    return super.shouldBeAlive && this.#content.children.some(it => it.shouldBeAlive);
+  }
 }
 
 class ExpandButton extends CompositeDrawable {

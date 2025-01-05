@@ -47,7 +47,9 @@ export class ModdingComposer extends HitObjectComposer {
     super.load(dependencies);
 
     // overriding the global navigation because we might be on a different beatmap
-    this.addInternal(new EditorNavigation());
+    this.addInternal(new EditorNavigation().with({
+      depth: 1,
+    }));
 
     this.timeline.blueprintContainer.readonly = true;
     this.drawableRuleset.playfield.addAll(

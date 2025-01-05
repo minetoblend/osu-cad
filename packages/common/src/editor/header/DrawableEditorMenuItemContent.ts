@@ -4,12 +4,12 @@ import { OsucadSpriteText } from '../../drawables/OsucadSpriteText';
 
 export class DrawableEditorMenuItemContent extends Container {
   constructor(readonly item: MenuItem) {
-    let padding = MarginPadding.from({ horizontal: 8, vertical: 4 });
+    let padding = MarginPadding.from({ horizontal: 10, vertical: 6 });
 
     if (item.items.length > 0) {
       padding = new MarginPadding({
         vertical: 4,
-        left: 8,
+        left: 10,
         right: 32,
       });
     }

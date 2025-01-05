@@ -1,9 +1,28 @@
-import type { Bindable, ClickEvent, Drawable, HoverEvent, MouseDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
+import type {
+  Bindable,
+  ClickEvent,
+  Drawable,
+  HoverEvent,
+  MouseDownEvent,
+  ReadonlyDependencyContainer,
+} from 'osucad-framework';
 import type { Beatmap } from '../../../beatmap/Beatmap';
 import type { IBeatmap } from '../../../beatmap/IBeatmap';
 import type { BeatmapVerifier } from '../../../verifier/BeatmapVerifier';
 import type { IssueSectionContent } from './IssueSectionContent';
-import { Anchor, Axes, Box, Container, Direction, FillFlowContainer, resolved, Vec2 } from 'osucad-framework';
+import {
+  Anchor,
+  Axes,
+  BindableBoolean,
+  Box,
+  Container,
+  Direction,
+  FillFlowContainer,
+  resolved,
+  Vec2,
+} from 'osucad-framework';
+import { ModdingConfigManager } from '../../../config/ModdingConfigManager';
+import { ModdingSettings } from '../../../config/ModdingSettings';
 import { OsucadScrollContainer } from '../../../drawables/OsucadScrollContainer';
 import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
 import { IResourcesProvider } from '../../../io/IResourcesProvider';
@@ -11,6 +30,7 @@ import { OsucadColors } from '../../../OsucadColors';
 import { Ruleset } from '../../../rulesets/Ruleset';
 import { BeatmapSkin } from '../../../skinning/BeatmapSkin';
 import { EditorBeatmap } from '../../EditorBeatmap';
+import { IssueListMenu } from './IssueListMenu';
 import { IssueSection } from './IssueSection';
 
 export class IssueList extends Container {
@@ -33,6 +53,10 @@ export class IssueList extends Container {
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
+    const config = dependencies.resolve(ModdingConfigManager);
+
+    config.bindWith(ModdingSettings.ShowMinorIssues, this.showMinorIssues);
+
     this.relativeSizeAxes = Axes.Both;
 
     this.addAllInternal(
@@ -42,22 +66,32 @@ export class IssueList extends Container {
       }),
       new OsucadScrollContainer(Direction.Vertical).with({
         relativeSizeAxes: Axes.Both,
-        child: this.#content = new FillFlowContainer({
-          relativeSizeAxes: Axes.X,
-          autoSizeAxes: Axes.Y,
-          padding: 20,
-          spacing: new Vec2(10),
-          children: [
-            this.#headers = new FillFlowContainer({
-              relativeSizeAxes: Axes.X,
-              autoSizeAxes: Axes.Y,
-              spacing: new Vec2(4),
-            }),
-          ],
-        }),
+        children: [
+          this.#content = new FillFlowContainer({
+            relativeSizeAxes: Axes.X,
+            autoSizeAxes: Axes.Y,
+            padding: { horizontal: 20, top: 50, bottom: 20 },
+            spacing: new Vec2(10),
+            children: [
+              this.#headers = new FillFlowContainer({
+                relativeSizeAxes: Axes.X,
+                autoSizeAxes: Axes.Y,
+                spacing: new Vec2(4),
+              }),
+            ],
+          }),
+          new Container({
+            relativeSizeAxes: Axes.X,
+            autoSizeAxes: Axes.Y,
+            padding: { horizontal: 20, top: 10 },
+            child: new IssueListMenu(this),
+          }),
+        ],
       }),
     );
   }
+
+  readonly showMinorIssues = new BindableBoolean();
 
   #headers!: Container;
 

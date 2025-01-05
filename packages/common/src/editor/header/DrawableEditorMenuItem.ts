@@ -1,4 +1,5 @@
-import { Axes, type Drawable, DrawableMenuItem, type MenuItem, type ReadonlyDependencyContainer, RoundedBox } from 'osucad-framework';
+import type { Drawable, MenuItem, ReadonlyDependencyContainer } from 'osucad-framework';
+import { Axes, DrawableMenuItem, RoundedBox } from 'osucad-framework';
 
 import { DrawableEditorMenuItemContent } from './DrawableEditorMenuItemContent';
 
@@ -9,8 +10,12 @@ export class DrawableEditorMenuItem extends DrawableMenuItem {
     this.backgroundColorHover = 'rgba(255, 255, 255, 0.1)';
   }
 
+  protected menuItemContent?: DrawableEditorMenuItemContent;
+
   createContent(): Drawable {
-    return new DrawableEditorMenuItemContent(this.item);
+    this.menuItemContent ??= new DrawableEditorMenuItemContent(this.item);
+
+    return this.menuItemContent;
   }
 
   override createBackground(): Drawable {
@@ -39,5 +44,15 @@ export class DrawableEditorMenuItem extends DrawableMenuItem {
       },
       { immediate: true },
     );
+  }
+
+  override dispose(isDisposing: boolean = true) {
+    super.dispose(isDisposing);
+
+    this.menuItemContent?.dispose();
+  }
+
+  override get disposeOnDeathRemoval(): boolean {
+    return false;
   }
 }

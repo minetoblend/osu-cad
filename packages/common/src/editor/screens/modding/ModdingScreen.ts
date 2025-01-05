@@ -1,8 +1,9 @@
 import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Beatmap } from '../../../beatmap/Beatmap';
 import type { BackgroundAdjustment } from '../../BackgroundAdjustment';
-import { Anchor, Axes, Bindable, Container, resolved } from 'osucad-framework';
+import { Anchor, Axes, Bindable, Container, provide, resolved } from 'osucad-framework';
 import { IBeatmap } from '../../../beatmap/IBeatmap';
+import { ModdingConfigManager } from '../../../config/ModdingConfigManager';
 import { Ruleset } from '../../../rulesets/Ruleset';
 import { EditorBeatmap } from '../../EditorBeatmap';
 import { ModelBackedEditorBeatmapProvidingContainer } from '../../ModelBackedEditorBeatmapProvidingContainer';
@@ -29,7 +30,10 @@ export class ModdingScreen extends EditorScreen {
     return false;
   }
 
-  activeBeatmap = new Bindable<Beatmap | null>(null);
+  @provide(ModdingConfigManager)
+  readonly config = new ModdingConfigManager();
+
+  readonly activeBeatmap = new Bindable<Beatmap | null>(null);
 
   activeEditorBeatmap!: Bindable<EditorBeatmap>;
 

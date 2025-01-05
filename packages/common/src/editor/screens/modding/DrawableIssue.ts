@@ -1,6 +1,8 @@
 import type { Container, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Issue } from '../../../verifier/Issue';
-import { Anchor, Axes, CompositeDrawable, Drawable, DrawableSprite, FillFlowContainer, Vec2 } from 'osucad-framework';
+import { Anchor, Axes, BindableBoolean, CompositeDrawable, Drawable, DrawableSprite, FillFlowContainer, Vec2 } from 'osucad-framework';
+import { ModdingConfigManager } from '../../../config/ModdingConfigManager';
+import { ModdingSettings } from '../../../config/ModdingSettings';
 import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
 import { OsucadColors } from '../../../OsucadColors';
 import { getIcon } from '../../../OsucadIcons';
@@ -10,6 +12,10 @@ import { DrawableTimestamp } from './DrawableTimestamp';
 export class DrawableIssue extends CompositeDrawable {
   constructor(readonly issue: Issue) {
     super();
+  }
+
+  override get removeWhenNotAlive(): boolean {
+    return false;
   }
 
   getIcon() {
@@ -25,8 +31,20 @@ export class DrawableIssue extends CompositeDrawable {
     }
   }
 
+  readonly showMinorIssues = new BindableBoolean(true);
+
+  override get shouldBeAlive(): boolean {
+    if (!this.showMinorIssues.value && this.issue.level === 'minor')
+      return false;
+
+    return super.shouldBeAlive;
+  }
+
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
+
+    const config = dependencies.resolve(ModdingConfigManager);
+    config.bindWith(ModdingSettings.ShowMinorIssues, this.showMinorIssues);
 
     this.relativeSizeAxes = Axes.X;
     this.autoSizeAxes = Axes.Y;
