@@ -13,7 +13,7 @@ export class ToggleMenuItem extends OsucadMenuItem {
       action: () => this.active.value = !this.active.value,
     });
 
-    this.active = options.active.getBoundCopy();
+    this.active = options.active;
   }
 
   readonly active: Bindable<boolean>;
