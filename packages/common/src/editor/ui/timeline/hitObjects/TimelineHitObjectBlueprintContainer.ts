@@ -1,7 +1,7 @@
 import type { Drawable, DrawableOptions, List } from 'osucad-framework';
 import type { HitObject } from '../../../../hitObjects/HitObject';
 import { Axes, Bindable, dependencyLoader, DrawablePool, LoadState, resolved } from 'osucad-framework';
-import { HitObjectList } from '../../../../beatmap/HitObjectList';
+import { IBeatmap } from '../../../../beatmap/IBeatmap';
 import { HitObjectLifetimeEntry } from '../../../../hitObjects/drawables/HitObjectLifetimeEntry';
 import { TimelineBlueprintContainer } from '../TimelineBlueprintContainer';
 import { TimelineHitObjectBlueprint } from './TimelineHitObjectBlueprint';
@@ -41,8 +41,8 @@ export class TimelineHitObjectBlueprintContainer extends TimelineBlueprintContai
   #startTimeMap = new Map<TimelineHitObjectBlueprint, Bindable<number>>();
   #entryMap = new Map<HitObject, HitObjectLifetimeEntry>();
 
-  @resolved(HitObjectList)
-  hitObjects!: HitObjectList;
+  @resolved(IBeatmap)
+  beatmap!: IBeatmap;
 
   readonly #pool = new DrawablePool(TimelineHitObjectBlueprint, 20, 40);
 
@@ -50,11 +50,11 @@ export class TimelineHitObjectBlueprintContainer extends TimelineBlueprintContai
   [Symbol('load')]() {
     this.addInternal(this.#pool);
 
-    for (const hitObject of this.hitObjects)
+    for (const hitObject of this.beatmap.hitObjects)
       this.addHitObject(hitObject);
 
-    this.hitObjects.added.addListener(this.addHitObject, this);
-    this.hitObjects.removed.addListener(this.removeHitObject, this);
+    this.beatmap.hitObjects.added.addListener(this.addHitObject, this);
+    this.beatmap.hitObjects.removed.addListener(this.removeHitObject, this);
   }
 
   addHitObject(hitObject: HitObject) {
@@ -124,8 +124,8 @@ export class TimelineHitObjectBlueprintContainer extends TimelineBlueprintContai
   override dispose(isDisposing: boolean = true) {
     super.dispose(isDisposing);
 
-    this.hitObjects.added.removeListener(this.addHitObject, this);
-    this.hitObjects.removed.removeListener(this.removeHitObject, this);
+    this.beatmap.hitObjects.added.removeListener(this.addHitObject, this);
+    this.beatmap.hitObjects.removed.removeListener(this.removeHitObject, this);
   }
 
   override buildNonPositionalInputQueue(queue: List<Drawable>, allowBlocking?: boolean): boolean {
