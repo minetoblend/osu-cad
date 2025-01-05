@@ -39,8 +39,6 @@ export class ComposeToolButton extends EditorButton {
   protected override updateState() {
     super.updateState();
 
-    console.log(this.#keyPressed, this.armed, this.tool.title);
-
     if (this.active.value) {
       this.#icon.color = this.isHovered ? OsucadColors.primaryHighlight : OsucadColors.primary;
     }
