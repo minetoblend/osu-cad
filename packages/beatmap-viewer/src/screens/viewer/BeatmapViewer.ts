@@ -17,7 +17,7 @@ export class BeatmapViewer extends Editor {
     screenManager.register(ViewportScreen);
     screenManager.register(ModdingScreen);
 
-    screenManager.setCurrentScreen(ModdingScreen);
+    screenManager.setCurrentScreen(ViewportScreen);
   }
 
   @resolved(() => Router)
