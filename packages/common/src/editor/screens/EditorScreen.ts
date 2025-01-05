@@ -1,5 +1,7 @@
 import type { ReadonlyDependencyContainer } from 'osucad-framework';
-import { Axes, CompositeDrawable } from 'osucad-framework';
+import { Axes, CompositeDrawable, EasingFunction, resolved } from 'osucad-framework';
+import { BackgroundAdjustment } from '../BackgroundAdjustment';
+import { Editor } from '../Editor';
 
 export class EditorScreen extends CompositeDrawable {
   constructor() {
@@ -7,8 +9,21 @@ export class EditorScreen extends CompositeDrawable {
     this.relativeSizeAxes = Axes.Both;
   }
 
+  @resolved(() => Editor)
+  protected editor!: Editor;
+
   onEntering() {
     this.fadeInFromZero(200);
+
+    this.editor.applyToBackground((background) => {
+      const adjustment = new BackgroundAdjustment();
+      this.adjustBackground(adjustment);
+
+      background.moveTo(adjustment.position, adjustment.moveDuration, EasingFunction.OutExpo);
+      background.resizeTo(adjustment.size, adjustment.resizeDuration, EasingFunction.OutExpo);
+      background.scaleTo(adjustment.scale, adjustment.scaleDuration, EasingFunction.OutExpo);
+      background.fadeTo(adjustment.alpha, adjustment.fadeDuration, EasingFunction.OutQuad);
+    });
   }
 
   onExiting() {
@@ -38,5 +53,8 @@ export class EditorScreen extends CompositeDrawable {
       return false;
 
     return super.handleNonPositionalInput;
+  }
+
+  protected adjustBackground(background: BackgroundAdjustment) {
   }
 }

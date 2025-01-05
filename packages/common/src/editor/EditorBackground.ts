@@ -8,6 +8,11 @@ export class EditorBackground extends BackgroundScreen {
     readonly editorBeatmap: EditorBeatmap,
   ) {
     super();
+
+    this.relativeSizeAxes = Axes.Both;
+    this.relativePositionAxes = Axes.Both;
+    this.anchor = Anchor.Center;
+    this.origin = Anchor.Center;
   }
 
   protected override loadComplete() {

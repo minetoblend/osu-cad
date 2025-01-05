@@ -1,9 +1,9 @@
-import type { ClickEvent, Drawable, HoverEvent, MouseDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { Bindable, ClickEvent, Drawable, HoverEvent, MouseDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Beatmap } from '../../../beatmap/Beatmap';
 import type { IBeatmap } from '../../../beatmap/IBeatmap';
 import type { BeatmapVerifier } from '../../../verifier/BeatmapVerifier';
 import type { IssueSectionContent } from './IssueSectionContent';
-import { Anchor, Axes, Bindable, Box, Container, Direction, FillFlowContainer, resolved, Vec2 } from 'osucad-framework';
+import { Anchor, Axes, Box, Container, Direction, FillFlowContainer, resolved, Vec2 } from 'osucad-framework';
 import { OsucadScrollContainer } from '../../../drawables/OsucadScrollContainer';
 import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
 import { IResourcesProvider } from '../../../io/IResourcesProvider';
@@ -21,6 +21,10 @@ export class IssueList extends Container {
   beatmap!: EditorBeatmap;
 
   #content!: Container;
+
+  constructor(readonly activeBeatmap: Bindable<Beatmap | null>) {
+    super();
+  }
 
   override get content(): Container<Drawable> {
     return this.#content;
@@ -117,8 +121,6 @@ export class IssueList extends Container {
       }));
     }
   }
-
-  readonly activeBeatmap = new Bindable<Beatmap | null>(null);
 
   private setupSections(beatmaps: ReadonlyArray<Beatmap>) {
     const general = new IssueSection(null, this.activeBeatmap.getBoundCopy());

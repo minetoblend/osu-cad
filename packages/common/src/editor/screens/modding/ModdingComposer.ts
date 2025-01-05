@@ -3,8 +3,8 @@ import type { IComposeTool } from '../compose';
 import { Axes, Bindable, Container, provide } from 'osucad-framework';
 import { Color } from 'pixi.js';
 import { OsuSelectionBlueprintContainer } from '../../../rulesets/osu/edit/selection/OsuSelectionBlueprintContainer';
+import { EditorNavigation } from '../../EditorNavigation';
 import { HitObjectComposer } from '../compose/HitObjectComposer';
-import { IssueList } from './IssueList';
 import { ModdingScreenSnappingProvider } from './ModdingScreenSnappingProvider';
 import { ModPost } from './objects/ModPost';
 import { ModPostBlueprintContainer } from './objects/ModPostBlueprintContainer';
@@ -34,14 +34,6 @@ export class ModdingComposer extends HitObjectComposer {
     ];
   }
 
-  protected override createRightSidebar(): Drawable {
-    return new Container({
-      relativeSizeAxes: Axes.Both,
-      width: 0.3,
-      child: new IssueList(),
-    });
-  }
-
   #settingsContainer!: Container;
 
   protected override createTopBar(): Drawable {
@@ -53,6 +45,9 @@ export class ModdingComposer extends HitObjectComposer {
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
+
+    // overriding the global navigation because we might be on a different beatmap
+    this.addInternal(new EditorNavigation());
 
     this.timeline.blueprintContainer.readonly = true;
     this.drawableRuleset.playfield.addAll(
