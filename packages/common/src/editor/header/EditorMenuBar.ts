@@ -75,7 +75,6 @@ export class DrawableEditorMenubarItem extends DrawableMenuItem {
     super(item);
     this.backgroundColor = 'transparent';
     this.backgroundColorHover = 'rgba(255, 255, 255, 0.1)';
-    this.padding = { horizontal: 2 };
   }
 
   createContent(): Drawable {

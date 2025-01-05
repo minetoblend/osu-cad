@@ -14,12 +14,13 @@ export class DrawableLineTool extends DrawableModdingTool {
     return new FillFlowContainer({
       direction: FillDirection.Horizontal,
       relativeSizeAxes: Axes.Both,
+      padding: { vertical: 8 },
       children: [
+        new ModdingColorPicker(),
         new ModdingToolMenu([new ToggleMenuItem({
           text: 'Snapping',
           active: new Bindable(false),
         })]),
-        new ModdingColorPicker(),
       ],
     });
   }

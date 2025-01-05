@@ -1,5 +1,5 @@
 import type { DrawableMenuItem, ReadonlyDependencyContainer, Vec2 } from 'osucad-framework';
-import { Anchor, Direction, MenuItem, resolved } from 'osucad-framework';
+import { Direction, MenuItem, resolved } from 'osucad-framework';
 import { OsucadColors } from '../../../../OsucadColors';
 import { ToggleMenuItem } from '../../../../userInterface/ToggleMenuItem';
 import { EditorMenu } from '../../../header/EditorMenu';
@@ -9,9 +9,6 @@ import { SnapSettings } from '../SnapSettings';
 export class ModdingToolMenu extends EditorMenu {
   constructor(items: MenuItem[]) {
     super(Direction.Horizontal, true);
-
-    this.anchor = Anchor.CenterLeft;
-    this.origin = Anchor.CenterLeft;
 
     this.backgroundColor = OsucadColors.translucent;
   }
