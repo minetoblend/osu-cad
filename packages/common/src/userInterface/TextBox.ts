@@ -1,4 +1,4 @@
-import type { Bindable, ClickEvent, DoubleClickEvent, Drawable, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyDownEvent } from 'osucad-framework';
+import type { Bindable, ClickEvent, DoubleClickEvent, Drawable, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import { Action, Anchor, Axes, BindableWithCurrent, Cached, clamp, CompositeDrawable, Container, dependencyLoader, EasingFunction, FastRoundedBox, Key, LoadState, MarginPadding, MouseButton, PlatformAction, resolved, Scheduler, TabbableContainer, TextInputSource } from 'osucad-framework';
 import { BitmapFontManager } from 'pixi.js';
 import { OsucadSpriteText } from '../drawables/OsucadSpriteText';
@@ -640,8 +640,9 @@ class Caret extends CompositeDrawable {
 
   #caret!: FastRoundedBox;
 
-  @dependencyLoader()
-  override load() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.addInternal(this.#caret = new FastRoundedBox({
       relativeSizeAxes: Axes.Both,
       color: OsucadColors.text,
@@ -677,12 +678,10 @@ class Caret extends CompositeDrawable {
     if (!this.isRange) {
       const time = (this.time.current % this.flashDuration) / this.flashDuration;
 
-      if (time < this.flashInRatio) {
+      if (time < this.flashInRatio)
         this.#caret.alpha = animate(time, 0, this.flashInRatio, 0.75, 1);
-      }
-      else {
+      else
         this.#caret.alpha = animate(time, this.flashInRatio, 1, 1, 0.5);
-      }
     }
     else {
       this.#caret.alpha = 0.4;
