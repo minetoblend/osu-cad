@@ -4,7 +4,7 @@ import type { HitObject } from '../hitObjects/HitObject';
 import type { IResourcesProvider } from '../io/IResourcesProvider';
 import type { BeatmapSkin } from '../skinning/BeatmapSkin';
 import type { BeatmapCheck } from './BeatmapCheck';
-import type { BeatmapSetCheck } from './BeatmapSetCheck';
+import type { GeneralCheck } from './GeneralCheck';
 import type { Issue } from './Issue';
 import { VerifierBeatmap } from './VerifierBeatmap';
 import { VerifierBeatmapSet } from './VerifierBeatmapSet';
@@ -12,7 +12,7 @@ import { VerifierBeatmapSet } from './VerifierBeatmapSet';
 export abstract class BeatmapVerifier<T extends HitObject = HitObject> {
   abstract get beatmapChecks(): BeatmapCheck<T>[];
 
-  abstract get beatmapSetChecks(): BeatmapSetCheck[];
+  abstract get generalChecks(): GeneralCheck[];
 
   async * getIssues(
     beatmaps: readonly IBeatmap<any>[],
@@ -30,7 +30,7 @@ export abstract class BeatmapVerifier<T extends HitObject = HitObject> {
 
     const beatmapSet = new VerifierBeatmapSet(beatmaps, fileStore, skin, resources);
 
-    for (const check of this.beatmapSetChecks)
+    for (const check of this.generalChecks)
       yield * check.getIssues(beatmapSet);
   }
 }

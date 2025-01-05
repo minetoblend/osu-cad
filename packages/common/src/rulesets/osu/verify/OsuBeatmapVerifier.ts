@@ -1,7 +1,8 @@
 import type { BeatmapCheck } from '../../../verifier/BeatmapCheck';
-import type { BeatmapSetCheck } from '../../../verifier/BeatmapSetCheck';
+import type { GeneralCheck } from '../../../verifier/GeneralCheck';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
 import { BeatmapVerifier } from '../../../verifier/BeatmapVerifier';
+import { CheckHitSoundDelay } from '../../../verifier/checks/audio/CheckHitSoundDelay';
 import { CheckDrainTime } from '../../../verifier/checks/compose/CheckDrainTime';
 import { CheckAbnormalNodes } from './compose/CheckAbnormalNodes';
 import { CheckAbnormalSpacing } from './compose/CheckAbnormalSpacing';
@@ -39,7 +40,9 @@ export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
     ];
   }
 
-  override get beatmapSetChecks(): BeatmapSetCheck[] {
-    return [];
+  override get generalChecks(): GeneralCheck[] {
+    return [
+      new CheckHitSoundDelay(),
+    ];
   }
 }

@@ -83,7 +83,8 @@ export class IssueList extends Container {
 
     this.setupSections(beatmaps);
 
-    const issues = verifier.getIssues(beatmaps, this.beatmap.fileStore, new BeatmapSkin(this.resoucesProvider, this.beatmap), this.resoucesProvider);
+    const skin = new BeatmapSkin(this.resoucesProvider, this.beatmap, this.beatmap.fileStore);
+    const issues = verifier.getIssues(beatmaps, this.beatmap.fileStore, skin, this.resoucesProvider);
 
     for await (const issue of issues) {
       const section = this.#beatmapIssues.get(issue.beatmap?.beatmap ?? null)!;
