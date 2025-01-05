@@ -20,7 +20,7 @@ export class VerifierBeatmapSet {
   }
 
   getAllUsedHitSoundSamples() {
-    const allSamples = new Set<Sample>();
+    const allSamples = new Set<string | null>();
     const samples: {
       sample: Sample;
       sampleInfo: HitSample;
@@ -36,7 +36,8 @@ export class VerifierBeatmapSet {
 
         for (const sampleInfo of hitObject.hitSamples) {
           const sample = this.skin.getSample(channel, sampleInfo);
-          if (sample && allSamples.add(sample)) {
+          if (sample && !allSamples.has(sampleInfo.sampleName)) {
+            allSamples.add(sampleInfo.sampleName);
             samples.push({
               sampleInfo,
               sample,

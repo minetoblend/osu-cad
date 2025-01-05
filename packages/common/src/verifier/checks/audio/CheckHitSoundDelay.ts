@@ -80,16 +80,16 @@ export class CheckHitSoundDelay extends GeneralCheck {
         yield this.createIssue({
           level: 'warning',
           message: [
-            `"${sampleInfo.sampleName}" has a delay of ~${pureDelay.toFixed(2)} ms, of which ${delay.toFixed(2)} ms is complete silence. (Active at e.g. ${TimestampFormatter.formatTimestamp(sampleInfo.time)} in ${beatmap.metadata.difficultyName}.)`,
+            `"${sampleInfo.sampleName}" has a delay of ~${delay.toFixed(2)} ms, of which ${pureDelay.toFixed(2)} ms is complete silence. (Active at e.g. ${TimestampFormatter.formatTimestamp(sampleInfo.time)} in ${beatmap.metadata.difficultyName}.)`,
             new IssueSample(sample),
           ],
         });
       }
       else if (delay + pureDelay >= 1) {
         yield this.createIssue({
-          level: 'warning',
+          level: 'minor',
           message: [
-            `"${sampleInfo.sampleName}" has a delay of ${pureDelay} ms, of which ${delay.toFixed(2)} ms are pure silence.`,
+            `"${sampleInfo.sampleName}" has a delay of ${delay.toFixed()} ms, of which ${pureDelay.toFixed(2)} ms are pure silence.`,
             new IssueSample(sample),
           ],
         });
