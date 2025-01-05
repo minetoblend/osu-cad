@@ -1,3 +1,4 @@
+import type { IInput } from '../stateChanges/IInput';
 import type { MouseButton } from './MouseButton';
 import { Vec2 } from '../../math';
 import { ButtonStates } from './ButtonStates';
@@ -12,6 +13,8 @@ export class MouseState {
   scroll = new Vec2();
 
   pressure = 1;
+
+  lastSource?: IInput;
 
   isPressed(button: MouseButton) {
     return this.buttons.isPressed(button);

@@ -1,3 +1,4 @@
+import type { ReadonlyDependencyContainer } from '../di/DependencyContainer';
 import type { Drawable } from '../graphics/drawables/Drawable';
 import type { Vec2 } from '../math';
 import type { MouseMoveEvent } from './events/MouseMoveEvent';
@@ -7,26 +8,24 @@ import { Axes } from '../graphics/drawables/Axes';
 import { PIXIGraphics } from '../pixi';
 
 export class CursorContainer extends VisibilityContainer {
-  activeCursor: Drawable;
-
   constructor() {
     super();
-    // Depth = float.MinValue;
+    this.depth = -Number.MAX_VALUE;
     this.relativeSizeAxes = Axes.Both;
 
     this.state.value = Visibility.Visible;
-
-    this.activeCursor = this.createCursor();
   }
 
   createCursor(): Drawable {
     return new Cursor();
   }
 
-  override onLoad() {
-    super.onLoad();
+  protected activeCursor!: Drawable;
 
-    this.add(this.activeCursor);
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
+    this.add(this.activeCursor = this.createCursor());
   }
 
   override popIn() {

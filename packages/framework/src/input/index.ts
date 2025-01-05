@@ -14,5 +14,7 @@ export { InputKey } from './state/InputKey';
 export { Key } from './state/Key';
 export { MouseButton } from './state/MouseButton';
 
+export { type ISourcedFromTouch, isSourcedFromTouch } from './stateChanges/ISourcedFromTouch';
 export { TextInputSource } from './TextInputSource';
+
 export { UserInputManager } from './UserInputManager';

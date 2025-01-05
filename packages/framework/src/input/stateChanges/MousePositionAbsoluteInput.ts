@@ -15,6 +15,7 @@ export class MousePositionAbsoluteInput implements IInput {
       mouse.isPositionValid = true;
       mouse.position = this.position;
       handler.handleInputStateChange(new MousePositionChangeEvent(state, this, lastPosition));
+      mouse.lastSource = this;
     }
   }
 }

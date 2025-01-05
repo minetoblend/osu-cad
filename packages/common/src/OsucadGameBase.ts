@@ -6,6 +6,7 @@ import { AudioMixer } from './audio/AudioMixer';
 import { OsucadConfigManager } from './config/OsucadConfigManager';
 import { UIFonts } from './drawables/UIFonts';
 import { EditorActionContainer } from './editor/EditorActionContainer';
+import { GlobalCursorDisplay } from './graphics/cursor/GlobalCursorDisplay';
 import { IResourcesProvider } from './io/IResourcesProvider';
 import { OsucadIcons } from './OsucadIcons';
 import { PreferencesContainer } from './overlays/preferences/PreferencesContainer';
@@ -92,6 +93,8 @@ export abstract class OsucadGameBase extends Game implements IResourcesProvider 
     await super.loadAsync(dependencies);
 
     await Promise.all(this.#parallelLoadPromises);
+
+    super.content.add(new GlobalCursorDisplay());
   }
 
   readonly #parallelLoadPromises: Promise<any>[] = [];
