@@ -255,7 +255,15 @@ export class StableBeatmapParser {
 
     const sampleIndex = Number.parseInt(values[4]);
 
+    const samplePoint = beatmap.controlPoints.samplePoints.controlPointAtTimeExact(startTime);
+    if (samplePoint)
+      beatmap.controlPoints.remove(samplePoint);
+
     beatmap.controlPoints.add(new SamplePoint(startTime, volume, sampleSet, sampleIndex), true);
+
+    const volumePoint = beatmap.controlPoints.volumePoints.controlPointAtTimeExact(startTime);
+    if (volumePoint)
+      beatmap.controlPoints.remove(volumePoint);
 
     beatmap.controlPoints.add(new VolumePoint(startTime, volume), true);
 
