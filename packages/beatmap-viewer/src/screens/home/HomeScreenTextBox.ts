@@ -1,5 +1,5 @@
 import { OsucadColors, OsucadSpriteText, TextBox } from '@osucad/common';
-import { MarginPadding } from 'osucad-framework';
+import { isMobile, MarginPadding } from 'osucad-framework';
 import { Color } from 'pixi.js';
 
 export class HomeScreenTextBox extends TextBox {
@@ -33,6 +33,6 @@ export class HomeScreenTextBox extends TextBox {
   }
 
   get requestsFocus(): boolean {
-    return true;
+    return !isMobile.any;
   }
 }
