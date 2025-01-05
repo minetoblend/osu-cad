@@ -42,7 +42,6 @@ export class IssueSample extends MaskingContainer {
   #shiftDown = false;
 
   #updatePreviewLine() {
-    console.log(this.#shiftDown, this.isHovered);
     if (this.#shiftDown && this.isHovered) {
       this.#previewLine.alpha = 1;
     }
