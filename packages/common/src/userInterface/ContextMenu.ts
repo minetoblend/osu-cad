@@ -105,24 +105,25 @@ class ContextMenuItemContent extends Container {
   constructor(readonly item: OsucadMenuItem) {
     super({
       autoSizeAxes: Axes.Both,
-      padding: { horizontal: 6, vertical: 3 },
+      padding: { horizontal: 10, vertical: 5 },
     });
   }
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
-    this.add(
-      (this.#spriteText = new OsucadSpriteText({
+    this.addAll(
+      this.#spriteText = new OsucadSpriteText({
         anchor: Anchor.CenterLeft,
         origin: Anchor.CenterLeft,
         text: this.#text,
-        fontSize: 12,
+        fontSize: 13,
         color:
         this.item.type === 'destructive'
           ? OsucadColors.danger
           : OsucadColors.text,
-      })),
+      }),
+      new Container({ width: 60 }),
     );
   }
 

@@ -8,7 +8,7 @@ export class DrawableEditorMenuItemContent extends Container {
 
     if (item.items.length > 0) {
       padding = new MarginPadding({
-        vertical: 4,
+        vertical: 6,
         left: 10,
         right: 32,
       });
