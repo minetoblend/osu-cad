@@ -121,7 +121,7 @@ export abstract class ZoomableScrollContainer extends OsucadScrollContainer {
     this.onZoomChanged();
   }
 
-  #transformZoomTo(newZoom: number, focusPoint: number, duration: number, easing: EasingFunction) {
+  #transformZoomTo(newZoom: number, focusPoint: number, duration: number = 0, easing: EasingFunction) {
     this.addTransform(
       this.populateTransform(new TransformZoom(focusPoint, this.#zoomedContent.drawWidth, this.current), newZoom, duration, easing),
     );

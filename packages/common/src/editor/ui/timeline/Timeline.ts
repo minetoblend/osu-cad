@@ -1,11 +1,4 @@
-import type {
-  ContainerOptions,
-  MouseDownEvent,
-  MouseUpEvent,
-  ReadonlyDependencyContainer,
-  ScrollEvent,
-  Vec2,
-} from 'osucad-framework';
+import type { ContainerOptions, MouseDownEvent, MouseUpEvent, ReadonlyDependencyContainer, ScrollEvent, Vec2 } from 'osucad-framework';
 import { Axes, clamp, EasingFunction, MouseButton, provide, resolved } from 'osucad-framework';
 import { EditorClock } from '../../EditorClock';
 import { ZoomableScrollContainer } from './ZoomableScrollContainer';
@@ -84,10 +77,12 @@ export class Timeline extends ZoomableScrollContainer {
       this.#seekTrackToCurrent();
     }
     else if (!this.editorClock.isRunning) {
-      if (this.current !== this.#lastScrollPosition && this.editorClock.currentTime === this.#lastTrackTime && !this.editorClock.isSeeking)
+      if (this.current !== this.#lastScrollPosition && this.editorClock.currentTime === this.#lastTrackTime && !this.editorClock.isSeeking) {
         this.#seekTrackToCurrent();
-      else
+      }
+      else if (!this.transforms.some(it => it.targetMember === 'currentZoom')) {
         this.#scrollToTrackTime();
+      }
     }
 
     this.#lastScrollPosition = this.current;
