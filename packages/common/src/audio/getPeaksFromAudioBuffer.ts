@@ -1,4 +1,4 @@
-export function getAmplitudesFromAudioBuffer(
+export function getPeaksFromAudioBuffer(
   buffer: AudioBuffer,
   sampleDurationMs: number,
 ): number[][] {
@@ -16,11 +16,10 @@ export function getAmplitudesFromAudioBuffer(
 
       for (let j = i; j < i + samplesPerStep; j++) {
         if (j > channelData.length)
-          j++;
+          break;
 
-        const value = Math.abs(channelData[j]);
-        if (value > amplitude)
-          amplitude = value;
+        if (Math.abs(channelData[j]) > amplitude)
+          amplitude = channelData[j];
       }
 
       amplitudes.push(amplitude);
@@ -30,19 +29,4 @@ export function getAmplitudesFromAudioBuffer(
   }
 
   return channelAmplitudes;
-}
-
-export function mergeAmplitudes(channelAmplitudes: number[][]) {
-  const amplitudes: number[] = [];
-
-  for (let i = 0; i < channelAmplitudes[0].length; i++) {
-    let value = 0;
-
-    for (let j = 0; j < channelAmplitudes.length; j++)
-      value += channelAmplitudes[j][i];
-
-    amplitudes.push(value / channelAmplitudes.length);
-  }
-
-  return amplitudes;
 }
