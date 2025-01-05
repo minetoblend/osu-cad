@@ -68,12 +68,16 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
 
     ruleset.postProcessBeatmap(this.beatmap);
 
+    const beatmapSkin = new BeatmapSkin(resources, this.editorBeatmap, this.editorBeatmap.fileStore);
+
+    await beatmapSkin.load();
+
     this.addAllInternal(
       new EditorNavigation(),
       new RulesetSkinProvidingContainer(
         ruleset,
         this.beatmap,
-        new BeatmapSkin(resources, this.editorBeatmap, this.editorBeatmap.fileStore),
+        beatmapSkin,
       ).with({
         child: this.#layout = new EditorLayout(),
       }),

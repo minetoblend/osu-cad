@@ -1,4 +1,5 @@
-import type { IResourceStore } from 'osucad-framework';
+import type { AudioChannel, IResourceStore, Sample } from 'osucad-framework';
+import type { HitSample } from '../../hitsounds/HitSample';
 import type { IResourcesProvider } from '../../io/IResourcesProvider';
 import type { SkinInfo } from '../SkinInfo';
 import { StableSkin } from '../stable/StableSkin';
@@ -11,6 +12,19 @@ export class DefaultSkin extends StableSkin {
     };
 
     super(info, resourceProvider, new DefaultSkinResourceStore());
+  }
+
+  override getSample(channel: AudioChannel, sample: string | HitSample): Sample | null {
+    if (typeof sample !== 'string') {
+      const name = sample.sampleName;
+      if (name) {
+        const sample = this.samples?.getSample(channel, name);
+        if (sample)
+          return sample;
+      }
+    }
+
+    return super.getSample(channel, sample);
   }
 }
 

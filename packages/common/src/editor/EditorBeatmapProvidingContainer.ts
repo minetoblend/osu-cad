@@ -3,7 +3,9 @@ import { Axes, Container, DependencyContainer } from 'osucad-framework';
 import { IBeatmap } from '../beatmap/IBeatmap';
 import { IResourcesProvider } from '../io/IResourcesProvider';
 import { BeatmapSkin } from '../skinning/BeatmapSkin';
+import { ISkinSource } from '../skinning/ISkinSource';
 import { RulesetSkinProvidingContainer } from '../skinning/RulesetSkinProvidingContainer';
+import { SkinManager } from '../skinning/SkinManager';
 import { EditorBeatmap } from './EditorBeatmap';
 
 export class EditorBeatmapProvidingContainer extends Container {
@@ -53,11 +55,17 @@ export class EditorBeatmapProvidingContainer extends Container {
 
     const resources = this.dependencies.resolve(IResourcesProvider);
 
+    const beatmapSkin = new BeatmapSkin(resources, this.editorBeatmap, this.editorBeatmap.fileStore);
+
+    await beatmapSkin.load();
+
+    this.#dependencies.provide(ISkinSource, dependencies.resolve(SkinManager));
+
     this.addInternal(
       new RulesetSkinProvidingContainer(
         ruleset,
         this.editorBeatmap.beatmap,
-        new BeatmapSkin(resources, this.editorBeatmap, this.editorBeatmap.fileStore),
+        beatmapSkin,
       ).with({
         child: this.#content,
       }),

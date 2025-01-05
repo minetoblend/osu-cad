@@ -12,7 +12,7 @@ import { StableSkin } from './stable/StableSkin';
 export class BeatmapSkinProvidingContainer extends SkinProvidingContainer {
   #beatmapSkins!: Bindable<boolean>;
   #beatmapColors!: Bindable<boolean>;
-  #beatmapHitsounds!: Bindable<boolean>;
+  #beatmapHitSounds!: Bindable<boolean>;
 
   override get allowConfigurationLookup(): boolean {
     return this.#beatmapSkins.value;
@@ -27,7 +27,7 @@ export class BeatmapSkinProvidingContainer extends SkinProvidingContainer {
   }
 
   override allowSampleLookup(sampleInfo: string | HitSample): boolean {
-    return this.#beatmapHitsounds.value;
+    return this.#beatmapHitSounds.value;
   }
 
   readonly #skin: ISkin;
@@ -48,11 +48,11 @@ export class BeatmapSkinProvidingContainer extends SkinProvidingContainer {
 
     this.#beatmapSkins = configManager.getBindable(OsucadSettings.UseBeatmapSkins)!;
     this.#beatmapColors = configManager.getBindable(OsucadSettings.BeatmapComboColors)!;
-    this.#beatmapHitsounds = configManager.getBindable(OsucadSettings.BeatmapHitSounds)!;
+    this.#beatmapHitSounds = configManager.getBindable(OsucadSettings.BeatmapHitSounds)!;
 
     this.#beatmapSkins.valueChanged.addListener(this.triggerSourceChanged, this);
     this.#beatmapColors.valueChanged.addListener(this.triggerSourceChanged, this);
-    this.#beatmapHitsounds.valueChanged.addListener(this.triggerSourceChanged, this);
+    this.#beatmapHitSounds.valueChanged.addListener(this.triggerSourceChanged, this);
 
     this.#currentSkin = skins.currentSkin.getBoundCopy();
     this.#currentSkin.addOnChangeListener(() => {
@@ -63,5 +63,13 @@ export class BeatmapSkinProvidingContainer extends SkinProvidingContainer {
       else
         this.setSources([this.#skin]);
     }, { immediate: true });
+  }
+
+  override dispose(isDisposing: boolean = true) {
+    super.dispose(isDisposing);
+
+    this.#beatmapSkins.unbindAll();
+    this.#beatmapColors.unbindAll();
+    this.#beatmapHitSounds.unbindAll();
   }
 }

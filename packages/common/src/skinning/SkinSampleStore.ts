@@ -51,10 +51,10 @@ export class SkinSampleStore {
     if (!data)
       return null;
 
-    const clone = new ArrayBuffer(data.byteLength);
-    new Uint8Array(clone).set(new Uint8Array(data));
+    const cloned = new ArrayBuffer(data.byteLength);
+    new Uint8Array(cloned).set(new Uint8Array(data));
 
-    const sample = await this.#audioManager.context.decodeAudioData(clone)
+    const sample = await this.#audioManager.context.decodeAudioData(cloned)
       .catch((e) => {
         console.warn(`Failed to load sample "${name}"`, e);
         return null;
@@ -77,6 +77,9 @@ export class SkinSampleStore {
 
       if (buffer) {
         sample = this.#audioManager.createSample(channel, buffer);
+
+        sample.name = name;
+
         this.#samples.set(name, sample);
       }
     }
