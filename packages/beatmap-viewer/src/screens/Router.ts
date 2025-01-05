@@ -69,8 +69,6 @@ export class Router extends OsucadScreenStack {
   updateFromPath() {
     const path = window.location.pathname;
 
-    console.log(path, this.#currentPath);
-
     if (this.#currentPath === path)
       return;
 
@@ -80,8 +78,6 @@ export class Router extends OsucadScreenStack {
 
     if (!this.exitToHome())
       return;
-
-    console.log(route);
 
     switch (route.type) {
       case 'home':
