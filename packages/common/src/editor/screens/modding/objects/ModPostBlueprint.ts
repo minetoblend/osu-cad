@@ -47,7 +47,7 @@ export abstract class ModPostBlueprint<T extends ModPostObject = any> extends Co
         ?.showMenu([
           ...this.createContextMenuItems(),
           new OsucadMenuItem({
-            text: 'delete',
+            text: 'Delete',
             type: 'destructive',
             action: () => this.modPost.remove(this.object),
           }),
