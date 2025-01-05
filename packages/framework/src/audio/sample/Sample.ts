@@ -16,6 +16,8 @@ export class Sample {
     readonly buffer: AudioBuffer,
   ) {}
 
+  name?: string;
+
   get length() {
     return this.buffer.duration * 1000;
   }
