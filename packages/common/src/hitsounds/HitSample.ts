@@ -67,4 +67,12 @@ export class HitSample {
 
     return key;
   }
+
+  get indexedSampleName() {
+    const sampleName = this.sampleName;
+    if (!sampleName || this.index === 0)
+      return null;
+
+    return `${sampleName}${this.index}`;
+  }
 }
