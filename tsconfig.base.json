@@ -18,6 +18,7 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": false,
     "allowImportingTsExtensions": false,
+    "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
       "@osucad/common": ["packages/common/src/index.ts"],
