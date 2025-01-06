@@ -6,12 +6,13 @@
     header_up Host {upstream_hostport}
   }
 
+  root * /srv
+
   @notProxy {
       not {
           path /beatmaps/*
       }
       file {
-          root * /srv
           try_files {path} /index.html
           file_server
       }
