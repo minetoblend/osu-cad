@@ -4,6 +4,7 @@ import type { Issue } from '../../Issue';
 import type { VerifierBeatmapSet } from '../../VerifierBeatmapSet';
 import { trimIndent } from '../../../utils/stringUtils';
 import { GeneralCheck } from '../../GeneralCheck';
+import { IssueTemplate } from '../../template/IssueTemplate';
 
 const collabChars = /[,&|/]/g;
 const possessorRegex = /(.+)(?:'s|(s)')/gi;
@@ -31,6 +32,10 @@ export class CheckGuestTags extends GeneralCheck {
     };
   }
 
+  override templates = {
+    warning: new IssueTemplate('warning', '"{0}" is possessive but "{1}" isn\'t in the tags, ignore if not a user.', 'guest\'s diff', 'guest').withCause('A difficulty name is prefixed by text containing an apostrophe (\') before or after ' + 'the character "s", which is not in the tags.'),
+  };
+
   override async * getIssues(mapset: VerifierBeatmapSet): AsyncGenerator<Issue, void, undefined> {
     for (const beatmap of mapset.beatmaps) {
       for (const possessor of this.getAllPossessors(beatmap.metadata.difficultyName)) {
@@ -40,11 +45,8 @@ export class CheckGuestTags extends GeneralCheck {
         if (this.isCoveredByTags(possessor, beatmap) || beatmap.metadata.creator.toLowerCase() === possessor.toLowerCase())
           continue;
 
-        yield this.createIssue({
-          level: 'warning',
-          message: `"${beatmap.metadata.difficultyName}" is possessive but "${possessor.toLowerCase().replaceAll(' ', '_')}" isn't in the tags, ignore if not a user.`,
-          cause: 'A difficulty name is prefixed by text containing an apostrophe (\') before or after the character "s", which is not in the tags.',
-        });
+        yield this.createIssue(this.templates.warning, null, beatmap.metadata.difficultyName, possessor.toLowerCase().replaceAll(' ', '_'))
+        ;
       }
     }
   }

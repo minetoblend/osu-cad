@@ -5,6 +5,7 @@ import type { VerifierBeatmapSet } from '../../VerifierBeatmapSet';
 import { IRenderer, loadTexture, MenuItem, resolved } from 'osucad-framework';
 import { Sprite } from 'pixi.js';
 import { GeneralCheck } from '../../GeneralCheck';
+import { IssueTemplate } from '../../template/IssueTemplate';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/AllModes/General/Resources/CheckBgResolution.cs
 export class CheckBgResolution extends GeneralCheck {
@@ -16,7 +17,16 @@ export class CheckBgResolution extends GeneralCheck {
     };
   }
 
-  override async * getIssues(mapset: VerifierBeatmapSet): AsyncGenerator<Issue, void, undefined> {
+  override templates = {
+    tooHigh: new IssueTemplate('problem', '"{0}" greater than 2560 x 1440 ({1} x {2})', 'file name')
+      .withCause('A background file has a width exceeding 2560 pixels or a height exceeding 1440 pixels.'),
+    veryLow: new IssueTemplate('warning', '"{0}" lower than 1024 x 640 ({1} x {2})', 'file name', 'width', 'height')
+      .withCause('A background file has a width lower than 1024 pixels or a height lower than 640 pixels.'),
+    fileSize: new IssueTemplate('problem', '"{0}" has a file size exceeding 2.5 MB ({1} MB)', 'file name', 'file size')
+      .withCause('A background file has a file size greater than 2.5 MB.'),
+  };
+
+  override async* getIssues(mapset: VerifierBeatmapSet): AsyncGenerator<Issue, void, undefined> {
     const bgFilenames = new Set<string>();
     for (const beatmap of mapset.beatmaps) {
       const filename = beatmap.settings.backgroundFilename?.trim() ?? '';
@@ -40,11 +50,8 @@ export class CheckBgResolution extends GeneralCheck {
       const texture = await loadTexture(data);
 
       if (megaBytes > 2.5) {
-        issues.push(this.createIssue({
-          level: 'problem',
-          message: `"${filename}" has a size exceeding 2.5MB (${megaBytes.toFixed(1)}MB)`,
-          cause: 'A background file has a file size greater than 2.5 MB.',
-          actions: texture
+        issues.push(this.createIssue(this.templates.fileSize, null, filename, megaBytes).withActions(
+          ...(texture
             ? [
                 new MenuItem({
                   text: 'Generate compressed background',
@@ -54,8 +61,8 @@ export class CheckBgResolution extends GeneralCheck {
                   },
                 }),
               ]
-            : [],
-        }));
+            : []),
+        ));
       }
 
       if (!texture)
@@ -66,25 +73,17 @@ export class CheckBgResolution extends GeneralCheck {
       if (width > 2560 || height > 1440) {
         const ratio = Math.min(2560 / texture.width, 1440 / texture.height);
 
-        issues.push(this.createIssue({
-          level: 'problem',
-          message: `"${filename}" greater than 2560 x 1440 (${texture.width} x ${texture.height})`,
-          cause: 'A background file has a width exceeding 2560 pixels or a height exceeding 1440 pixels.',
-          actions: [
+        issues.push(this.createIssue(this.templates.tooHigh, null, filename, texture.width, texture.height)
+          .withActions(
             new MenuItem({
               text: 'Download resized image',
               action: () => this.createResizedImage(filename, file, ratio),
             }),
-          ],
-        }));
+          ));
       }
 
       if (texture.width < 1024 || texture.height < 640) {
-        issues.push(this.createIssue({
-          level: 'problem',
-          message: `"${filename}" smaller than than 1024 x 640 (${texture.width} x ${texture.height})`,
-          cause: 'A background file has a width lower than 1024 pixels or a height lower than 640 pixels.',
-        }));
+        issues.push(this.createIssue(this.templates.veryLow, null, filename, texture.width, texture.height));
       }
 
       texture.destroy(true);

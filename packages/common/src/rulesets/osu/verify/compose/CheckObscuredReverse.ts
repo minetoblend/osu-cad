@@ -5,6 +5,7 @@ import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
+import { IssueTemplate } from '../../../../verifier/template/IssueTemplate';
 import { Slider } from '../../hitObjects/Slider';
 import { Spinner } from '../../hitObjects/Spinner';
 
@@ -40,6 +41,10 @@ export class CheckObscuredReverse extends BeatmapCheck<OsuHitObject> {
       ],
     };
   }
+
+  override templates = {
+    obscured: new IssueTemplate('warning', '{0:timestamp} Reverse arrow {1} obscured.', 'timestamp - ', '(potentially)').withCause('An object before a reverse arrow ends over where it appears close in time.'),
+  };
 
   override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     for (const slider of beatmap.hitObjects.ofType(Slider)) {
@@ -81,13 +86,7 @@ export class CheckObscuredReverse extends BeatmapCheck<OsuHitObject> {
       }
 
       if (selectedObjects.size > 0) {
-        yield this.createIssue({
-          level: 'info',
-          message: `Reverse arrow ${isSerious ? '' : 'potentially'} obscured`,
-          beatmap,
-          timestamp: [...selectedObjects].sort((a, b) => a.startTime - b.startTime),
-          cause: 'An object before a reverse arrow ends over where it appears close in time.',
-        });
+        yield this.createIssue(this.templates.obscured, beatmap, selectedObjects, isSerious ? '' : 'potentially ');
       }
     }
   }

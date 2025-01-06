@@ -8,6 +8,7 @@ import { avgBy, maxOf, zipWithNext } from '../../../../utils/arrayUtils';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
 import { HitObjectTimestamp } from '../../../../verifier/HitObjectTimestamp';
+import { IssueTemplate } from '../../../../verifier/template/IssueTemplate';
 import { Slider } from '../../hitObjects/Slider';
 import { Spinner } from '../../hitObjects/Spinner';
 
@@ -39,6 +40,17 @@ export class CheckAbnormalSpacing extends BeatmapCheck<OsuHitObject> {
       ],
     };
   }
+
+  override templates = {
+    problem: new IssueTemplate('problem', '{0:timestamp} Space/time ratio is {1} times the expected, see e.g. {2}.', 'timestamp - ', 'times', 'example objects').withCause(trimIndent(`
+      The space/time ratio between two objects is absurdly large in comparison to other objects with the same snapping prior.
+      <note>
+        Accounts for slider leniency by assuming that the gap is a circle's diameter smaller.
+      </note>
+    `)),
+    warning: new IssueTemplate('warning', '{0:timestamp} Space/time ratio is {1} times the expected, see e.g. {2}.', 'timestamp - ', 'times', 'example objects').withCause('Same as the first check, but with slightly less absurd, yet often still extreme, differences.'),
+    minor: new IssueTemplate('minor', '{0:timestamp} Space/time ratio is {1} times the expected, see e.g. {2}.', 'timestamp - ', 'times', 'example objects').withCause('Same as the first check, but with more common differences.'),
+  };
 
   override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     const observedDistances: ObservedDistance[] = [];
@@ -107,34 +119,13 @@ export class CheckAbnormalSpacing extends BeatmapCheck<OsuHitObject> {
         .map(it => new DrawableTimestamp(it.hitObject.startTime, [it.hitObject, it.nextHitObject]));
 
       if (actualExpectedRatio > ratioProblemThreshold) {
-        yield this.createIssue({
-          level: 'problem',
-          message: [`Space/time ratio is ${ratio} times the expected, see e.g. `, ...comparisonTimestamps],
-          beatmap,
-          timestamp: [hitObject, next],
-          cause: trimIndent(`
-            The space/time ratio between two objects is absurdly large in comparison to other objects with the same snapping prior.
-            <note>
-                Accounts for slider leniency by assuming that the gap is a circle's diameter smaller.
-            </note>
-          `),
-        });
+        yield this.createIssue(this.templates.problem, beatmap, [hitObject, next], ratio, ...comparisonTimestamps);
       }
       else if (actualExpectedRatio > ratioWarningThreshold) {
-        yield this.createIssue({
-          level: 'warning',
-          message: [`Space/time ratio is ${ratio} times the expected, see e.g. `, ...comparisonTimestamps],
-          beatmap,
-          timestamp: [hitObject, next],
-        });
+        yield this.createIssue(this.templates.warning, beatmap, [hitObject, next], ratio, ...comparisonTimestamps);
       }
       else {
-        yield this.createIssue({
-          level: 'minor',
-          beatmap,
-          message: [`Space/time ratio is ${ratio} times the expected, see e.g. `, ...comparisonTimestamps],
-          timestamp: [hitObject, next],
-        });
+        yield this.createIssue(this.templates.minor, beatmap, [hitObject, next], ratio, ...comparisonTimestamps);
       }
     }
   }

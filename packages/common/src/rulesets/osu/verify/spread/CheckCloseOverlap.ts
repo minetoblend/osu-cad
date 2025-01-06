@@ -4,6 +4,7 @@ import type { VerifierBeatmapSet } from '../../../../verifier/VerifierBeatmapSet
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { zipWithNext } from '../../../../utils/arrayUtils';
 import { GeneralCheck } from '../../../../verifier/GeneralCheck';
+import { IssueTemplate } from '../../../../verifier/template/IssueTemplate';
 import { DifficultyType } from '../../../../verifier/VerifierBeatmap';
 import { HitCircle } from '../../hitObjects/HitCircle';
 import { Spinner } from '../../hitObjects/Spinner';
@@ -18,6 +19,11 @@ export class CheckCloseOverlap extends GeneralCheck {
       author: 'Naxess',
     };
   }
+
+  override templates = {
+    problem: new IssueTemplate('problem', '{0:timestamp} {1} ms apart, should either be overlapped or at least {2} ms apart.', 'timestamp - ', 'gap', 'threshold').withCause('Two objects with a time gap less than 125 ms (240 bpm 1/2) are not overlapping.'),
+    warning: new IssueTemplate('warning', '{0} {1} ms apart.', 'timestamp - ', 'gap').withCause('Two objects with a time gap less than 167 ms (180 bpm 1/2) are not overlapping.'),
+  };
 
   override async* getIssues(mapset: VerifierBeatmapSet): AsyncGenerator<Issue, void, undefined> {
     const problemThreshold = 125; // Shortest acceptable gap is 1/2 in 240 BPM, 125 ms.
@@ -52,25 +58,10 @@ export class CheckCloseOverlap extends GeneralCheck {
         if (distance < radius * 2)
           continue;
 
-        if (next.startTime - hitObject.startTime < problemThreshold) {
-          yield this.createIssue({
-            level: 'problem',
-            message: `${Math.round(next.startTime - hitObject.startTime)} ms apart, should either be overlapped or at least ${problemThreshold} ms apart.`,
-            beatmap,
-            timestamp: [hitObject, next],
-            cause: 'Two objects with a time gap less than 125 ms (240 bpm 1/2) are not overlapping.',
-          });
-        }
-
-        else {
-          yield this.createIssue({
-            level: 'warning',
-            message: `${Math.round(next.startTime - hitObject.startTime)} ms apart.`,
-            beatmap,
-            timestamp: [hitObject, next],
-            cause: 'Two objects with a time gap less than 167 ms (180 bpm 1/2) are not overlapping.',
-          });
-        }
+        if (next.startTime - hitObject.startTime < problemThreshold)
+          yield this.createIssue(this.templates.problem, beatmap, [hitObject, next], Math.round(next.startTime - hitObject.startTime), problemThreshold);
+        else
+          yield this.createIssue(this.templates.warning, beatmap, [hitObject, next], Math.round(next.startTime - hitObject.startTime));
       }
     }
   }

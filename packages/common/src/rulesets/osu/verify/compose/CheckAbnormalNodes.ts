@@ -4,6 +4,7 @@ import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
+import { IssueTemplate } from '../../../../verifier/template/IssueTemplate';
 import { Slider } from '../../hitObjects/Slider';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/AllModes/Compose/CheckAbnormalNodes.cs
@@ -35,17 +36,15 @@ export class CheckAbnormalNodes extends BeatmapCheck<OsuHitObject> {
     };
   }
 
+  override templates = {
+    abnormal: new IssueTemplate('warning', '{0} Slider contains {1} nodes.', 'timestamp - ', 'amount').withCause('A slider contains more nodes than 10 times the square root of its length in pixels.'),
+
+  };
+
   override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     for (const slider of beatmap.hitObjects.ofType(Slider)) {
-      if (slider.controlPoints.length > 10 * Math.sqrt(slider.path.expectedDistance)) {
-        yield this.createIssue({
-          level: 'warning',
-          message: `Slider contains ${slider.controlPoints.length} nodes`,
-          beatmap,
-          timestamp: slider,
-          cause: 'A slider contains more nodes than 10 times the square root of its length in pixels.',
-        });
-      }
+      if (slider.controlPoints.length > 10 * Math.sqrt(slider.path.expectedDistance))
+        yield this.createIssue(this.templates.abnormal, beatmap, slider, slider.controlPoints.length);
     }
   }
 }

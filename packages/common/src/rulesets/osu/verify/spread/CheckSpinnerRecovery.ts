@@ -3,6 +3,7 @@ import type { Issue } from '../../../../verifier/Issue';
 import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
+import { IssueTemplate } from '../../../../verifier/template/IssueTemplate';
 import { Spinner } from '../../hitObjects/Spinner';
 
 const expectedMultiplier = 4 / 3;
@@ -16,6 +17,13 @@ export class CheckSpinnerRecovery extends BeatmapCheck<OsuHitObject> {
       author: 'Naxess',
     };
   }
+
+  override templates = {
+    'Problem Length': new IssueTemplate('problem', '{0} Spinner length is too short ({1} ms, expected {2}).', 'timestamp - ', 'duration', 'duration').withCause('A spinner is shorter than 4, 3 or 2 beats for Easy, Normal and Hard respectively, assuming 240 bpm.'),
+    'Warning Length': new IssueTemplate('warning', '{0} Spinner length is probably too short ({1} ms, expected {2}).', 'timestamp - ', 'duration', 'duration').withCause('Same as the first check, except 20% more lenient, implying that 200 bpm is assumed instead.'),
+    'Problem Recovery': new IssueTemplate('problem', '{0} Spinner recovery time is too short ({1} ms, expected {2}).', 'timestamp - ', 'duration', 'duration').withCause('The time after a spinner ends to the next object is shorter than 4, 3 or 2 beats for Easy, Normal and Hard respectively, ' + 'assuming 240 bpm, where both the non-scaled and bpm-scaled thresholds must be exceeded.'),
+    'Warning Recovery': new IssueTemplate('warning', '{0} Spinner recovery time is probably too short ({1} ms, expected {2}).', 'timestamp - ', 'duration', 'duration').withCause('Same as the other recovery check, except 20% more lenient, implying that 200 bpm is assumed instead.'),
+  };
 
   override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     for (let i = 0; i < beatmap.hitObjects.length; i++) {
@@ -42,25 +50,10 @@ export class CheckSpinnerRecovery extends BeatmapCheck<OsuHitObject> {
       const problemThreshold = spinnerTimeExpected[diffIndex];
       const warningThreshold = spinnerTimeExpected[diffIndex] * 1.2; // same thing but 200 bpm instead
 
-      if (spinnerTime < problemThreshold) {
-        yield this.createIssue({
-          level: 'problem',
-          message: `Spinner length is too short (${Math.round(spinnerTime)} ms, expected ${Math.round(expectedLength)}).`,
-          beatmap,
-          timestamp: spinner,
-          cause: 'A spinner is shorter than 4, 3 or 2 beats for Easy, Normal and Hard respectively, assuming 240 bpm.',
-        });
-      }
-
-      else if (spinnerTime < warningThreshold) {
-        yield this.createIssue({
-          level: 'warning',
-          message: `Spinner length is probably too short (${Math.round(spinnerTime)} ms, expected ${Math.round(expectedLength)}).`,
-          beatmap,
-          timestamp: spinner,
-          cause: 'Same as the first check, except 20% more lenient, implying that 200 bpm is assumed instead.',
-        });
-      }
+      if (spinnerTime < problemThreshold)
+        yield this.createIssue(this.templates['Problem Length'], beatmap, spinner, Math.round(spinnerTime), Math.round(expectedLength));
+      else if (spinnerTime < warningThreshold)
+        yield this.createIssue(this.templates['Warning Length'], beatmap, spinner, Math.round(spinnerTime), Math.round(expectedLength));
     }
   }
 
@@ -77,33 +70,23 @@ export class CheckSpinnerRecovery extends BeatmapCheck<OsuHitObject> {
 
     const recoveryTimeExpected = [1000, 500, 250];
 
-    for (let diffIndex = 0; diffIndex < recoveryTimeExpected.length; ++diffIndex) {
-      const expectedScaledMultiplier = bpmScaling < 1 ? bpmScaling : 1;
+    const diffIndex = beatmap.getDifficulty(true);
 
-      const expectedRecovery = Math.ceil(recoveryTimeExpected[diffIndex] * expectedScaledMultiplier * expectedMultiplier);
+    if (diffIndex === null)
+      return;
 
-      const problemThreshold = recoveryTimeExpected[diffIndex];
-      const warningThreshold = recoveryTimeExpected[diffIndex] * 1.2;
+    const expectedScaledMultiplier = bpmScaling < 1 ? bpmScaling : 1;
 
-      if (recoveryTimeScaled < problemThreshold && recoveryTime < problemThreshold) {
-        yield this.createIssue({
-          level: 'problem',
-          beatmap,
-          timestamp: [spinner, nextObject],
-          message: `Spinner recovery time is too short (${Math.round(recoveryTime)} ms, expected ${expectedRecovery}).`,
-          cause: 'The time after a spinner ends to the next object is shorter than 4, 3 or 2 beats for Easy, Normal and Hard respectively, ' + 'assuming 240 bpm, where both the non-scaled and bpm-scaled thresholds must be exceeded.',
-        });
-      }
-      else if (recoveryTimeScaled < problemThreshold && recoveryTime < warningThreshold) {
-        yield this.createIssue({
-          level: 'warning',
-          beatmap,
-          timestamp: [spinner, nextObject],
-          message: `Spinner recovery time is probably too short (${Math.round(recoveryTime)} ms, expected ${expectedRecovery}).`,
-          cause: 'Same as the other recovery check, except 20% more lenient, implying that 200 bpm is assumed instead.',
-        });
-      }
-    }
+    const expectedRecovery = Math.ceil(recoveryTimeExpected[diffIndex] * expectedScaledMultiplier * expectedMultiplier);
+
+    const problemThreshold = recoveryTimeExpected[diffIndex];
+    const warningThreshold = recoveryTimeExpected[diffIndex] * 1.2;
+
+    if (recoveryTimeScaled < problemThreshold && recoveryTime < problemThreshold)
+      yield this.createIssue(this.templates['Problem Recovery'], beatmap, spinner, Math.round(recoveryTime), expectedRecovery);
+
+    else if (recoveryTimeScaled < problemThreshold && recoveryTime < warningThreshold)
+      yield this.createIssue(this.templates['Warning Recovery'], beatmap, spinner, Math.round(recoveryTime), expectedRecovery);
   }
 
   getScaledTiming(bpm: number) {

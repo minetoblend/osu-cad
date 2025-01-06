@@ -1,9 +1,9 @@
 import type { CheckMetadata } from '../../BeatmapCheck';
 import type { Issue } from '../../Issue';
 import type { VerifierBeatmap } from '../../VerifierBeatmap';
-import { TimestampFormatter } from '../../../editor/TimestampFormatter';
 import { trimIndent } from '../../../utils/stringUtils';
 import { BeatmapCheck } from '../../BeatmapCheck';
+import { IssueTemplate } from '../../template/IssueTemplate';
 
 export class CheckDrainTime extends BeatmapCheck<any> {
   override get metadata(): CheckMetadata {
@@ -33,18 +33,17 @@ export class CheckDrainTime extends BeatmapCheck<any> {
     };
   }
 
+  override templates = {
+    problem: new IssueTemplate('problem', 'Less than 30 seconds of drain time, currently {0:timestamp}.', 'drain time').withCause('The time from the first object to the end of the last object, subtracting any time between two objects ' + 'where a break exists, is in total less than 30 seconds.'),
+  };
+
   override async * getIssues(beatmap: VerifierBeatmap<any>): AsyncGenerator<Issue, void, undefined> {
     const drainTime = getDrainTime(beatmap);
 
     if (drainTime >= 30 * 1000)
       return;
 
-    yield this.createIssue({
-      level: 'problem',
-      beatmap,
-      message: `Less than 30 seconds of drain time, currently ${TimestampFormatter.formatTimestamp(drainTime)}.`,
-      cause: 'The time from the first object to the end of the last object, subtracting any time between two objects ' + 'where a break exists, is in total less than 30 seconds.',
-    });
+    yield this.createIssue(this.templates.problem, null, drainTime);
   }
 }
 

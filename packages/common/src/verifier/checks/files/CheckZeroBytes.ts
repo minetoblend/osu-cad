@@ -3,6 +3,7 @@ import type { Issue } from '../../Issue';
 import type { VerifierBeatmapSet } from '../../VerifierBeatmapSet';
 import { trimIndent } from '../../../utils/stringUtils';
 import { GeneralCheck } from '../../GeneralCheck';
+import { IssueTemplate } from '../../template/IssueTemplate';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/AllModes/General/Files/CheckZeroBytes.cs
 export class CheckZeroBytes extends GeneralCheck {
@@ -33,15 +34,15 @@ export class CheckZeroBytes extends GeneralCheck {
     };
   }
 
+  override templates = {
+    zeroByte: new IssueTemplate('problem', '"{0}"', 'path').withCause('A file in the song folder contains no data; consists of 0 bytes.'),
+  };
+
   override async* getIssues(mapset: VerifierBeatmapSet): AsyncGenerator<Issue, void, undefined> {
     for (const file of mapset.fileStore.files) {
       const data = await file.getData();
       if (data.byteLength === 0) {
-        yield this.createIssue({
-          level: 'problem',
-          message: `"${file.name}"`,
-          cause: 'A file in the song folder contains no data; consists of 0 bytes.',
-        });
+        yield this.createIssue(this.templates.zeroByte, null, file.name);
       }
     }
   }

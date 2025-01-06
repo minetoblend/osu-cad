@@ -1,4 +1,3 @@
-import type { IBeatmap } from '../../../../beatmap/IBeatmap';
 import type { HitObject } from '../../../../hitObjects/HitObject';
 import type { CheckMetadata } from '../../../../verifier/BeatmapCheck';
 import type { Issue } from '../../../../verifier/Issue';
@@ -7,6 +6,7 @@ import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { almostEquals } from 'osucad-framework';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
+import { IssueTemplate } from '../../../../verifier/template/IssueTemplate';
 import { HitCircle } from '../../hitObjects/HitCircle';
 import { Slider } from '../../hitObjects/Slider';
 import { SliderHeadCircle } from '../../hitObjects/SliderHeadCircle';
@@ -41,6 +41,13 @@ export class CheckMuted extends BeatmapCheck<OsuHitObject> {
     };
   }
 
+  override templates = {
+    'Warning Volume': new IssueTemplate('warning', '{0:timestamp} {1}% volume {2}, this may be hard to hear over the song.', 'timestamp - ', 'percent', 'active hit object').withCause('An active hit object is at 10% or lower volume.'),
+    'Minor Volume': new IssueTemplate('minor', '{0:timestamp} {1}% volume {2}, this may be hard to hear over the song.', 'timestamp - ', 'percent', 'active hit object').withCause('An active hit object is at 20% or lower volume.'),
+    'Passive Reverse': new IssueTemplate('warning', '{0:timestamp} {1}% volume {2}, ensure there is no distinct sound here in the song.', 'timestamp - ', 'percent', 'reverse').withCause('A slider reverse is at 10% or lower volume.'),
+    'Passive': new IssueTemplate('minor', '{0:timestamp} {1}% volume {2}, ensure there is no distinct sound here in the song.', 'timestamp - ', 'percent', 'tick/tail').withCause('A passive hit object is at 10% or lower volume.'),
+  };
+
   override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     for (const hitObject of beatmap.hitObjects) {
       if (!(hitObject instanceof HitCircle || hitObject instanceof Slider))
@@ -68,7 +75,7 @@ export class CheckMuted extends BeatmapCheck<OsuHitObject> {
     }
   }
 
-  * getIssue(hitObject: OsuHitObject, beatmap: IBeatmap<OsuHitObject>, nested: HitObject | null, volume: number, isActive: boolean = false) {
+  * getIssue(hitObject: OsuHitObject, beatmap: VerifierBeatmap<OsuHitObject>, nested: HitObject | null, volume: number, isActive: boolean = false) {
     volume = Math.max(5, volume);
 
     if (volume > 20)
@@ -81,46 +88,19 @@ export class CheckMuted extends BeatmapCheck<OsuHitObject> {
 
     if (isActive) {
       if (isHead) {
-        if (volume <= 10) {
-          yield this.createIssue({
-            level: 'warning',
-            timestamp,
-            beatmap,
-            message: `${Math.round(volume)}% volume ${partName}, this may be hard to hear over the song.`,
-            cause: 'An active hit object is at 10% or lower volume.',
-          });
-        }
-        else {
-          yield this.createIssue({
-            level: 'minor',
-            timestamp,
-            message: `${Math.round(volume)}% volume ${partName}, this may be hard to hear over the song.`,
-            beatmap,
-            cause: 'An active hit object is at 20% or lower volume.',
-          });
-        }
+        if (volume <= 10)
+          yield this.createIssue(this.templates['Warning Volume'], beatmap, timestamp, Math.round(volume), partName);
+        else
+          yield this.createIssue(this.templates['Minor Volume'], beatmap, timestamp, Math.round(volume), partName);
       }
       else {
         // Must be a slider reverse, mappers rarely map these to nothing.
-        if (volume <= 10) {
-          yield this.createIssue({
-            level: 'minor',
-            timestamp,
-            message: `${Math.round(volume)}% volume ${partName}, ensure there is no distinct sound here in the song.`,
-            beatmap,
-            cause: 'A slider reverse is at 10% or lower volume.',
-          });
-        }
+        if (volume <= 10)
+          yield this.createIssue(this.templates['Passive Reverse'], beatmap, timestamp, Math.round(volume), partName);
       }
     }
     else if (volume <= 10) {
-      yield this.createIssue({
-        level: 'minor',
-        timestamp,
-        message: `${Math.round(volume)}% volume ${partName}, ensure there is no distinct sound here in the song.`,
-        beatmap,
-        cause: 'A passive hit object is at 10% or lower volume.',
-      });
+      yield this.createIssue(this.templates.Passive, beatmap, timestamp, Math.round(volume), partName);
     }
   }
 }

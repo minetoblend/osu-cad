@@ -3,6 +3,7 @@ import type { Issue } from '../../../../verifier/Issue';
 import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
+import { IssueTemplate } from '../../../../verifier/template/IssueTemplate';
 import { DifficultyType } from '../../../../verifier/VerifierBeatmap';
 import { Slider } from '../../hitObjects/Slider';
 
@@ -19,17 +20,16 @@ export class CheckShortSliders extends BeatmapCheck<OsuHitObject> {
     };
   }
 
+  override templates = {
+    tooShort: new IssueTemplate('warning', '{0:timestamp} {1} ms, expected at least {2}.', 'timestamp - ', 'duration', 'threshold').withCause('A slider in an Easy difficulty is less than 125 ms (240 bpm 1/2).'),
+  };
+
   override async* getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     const timeThreshold = 125;
 
     for (const slider of beatmap.hitObjects.ofType(Slider)) {
       if (slider.duration < timeThreshold) {
-        yield this.createIssue({
-          level: 'warning',
-          message: `${slider.duration.toFixed(0)} ms, expected at least ${timeThreshold}.`,
-          timestamp: slider,
-          cause: 'A slider in an Easy difficulty is less than 125 ms (240 bpm 1/2).',
-        });
+        yield this.createIssue(this.templates.tooShort, beatmap, slider, Math.round(slider.duration), timeThreshold);
       }
     }
   }

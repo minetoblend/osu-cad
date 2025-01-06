@@ -2,9 +2,9 @@ import type { CheckMetadata } from '../../../../verifier/BeatmapCheck';
 import type { Issue } from '../../../../verifier/Issue';
 import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
-import { DrawableTimestamp } from '../../../../editor/screens/modding/DrawableTimestamp';
 import { sumBy, zipWithNext } from '../../../../utils/arrayUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
+import { IssueTemplate } from '../../../../verifier/template/IssueTemplate';
 import { DifficultyType } from '../../../../verifier/VerifierBeatmap';
 import { Spinner } from '../../hitObjects/Spinner';
 
@@ -21,6 +21,11 @@ export class CheckSpaceVariation extends BeatmapCheck<OsuHitObject> {
       ],
     };
   }
+
+  override templates = {
+    distance: new IssueTemplate('warning', '{0} Distance is {1} px, expected {2}, see {3:timestamp}.', 'timestamp - ', 'distance', 'distance', 'example objects').withCause('The distance between two hit objects noticeably contradicts a recent use of time distance balance between another ' + 'two hit objects using a similar time gap.'),
+    ratio: new IssueTemplate('warning', '{0} Distance/time ratio is {1}, expected {2}.', 'timestamp - ', 'ratio', 'ratio').withCause('The distance/time ratio between the previous hit objects greatly contradicts a following use of distance/time ratio.'),
+  };
 
   override async* getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     let deltaTime: number;
@@ -79,15 +84,7 @@ export class CheckSpaceVariation extends BeatmapCheck<OsuHitObject> {
             const prevObject = observedDistances[index].hitObject;
             const prevNextObject = observedDistances[index].nextObject;
 
-            yield this.createIssue({
-              level: 'warning',
-              message: [
-                `Distance is ${Math.round(distance)} px, expected ${Math.round(distanceExpected)}, see `,
-                new DrawableTimestamp(prevObject.startTime, [prevObject, prevNextObject]),
-              ],
-              beatmap,
-              timestamp: [hitObject, nextObject],
-            });
+            yield this.createIssue(this.templates.distance, beatmap, [hitObject, nextObject], Math.round(distance), Math.round(distanceExpected), [prevObject, prevNextObject]);
 
             observedIssue = {
               deltaTime,
@@ -112,13 +109,7 @@ export class CheckSpaceVariation extends BeatmapCheck<OsuHitObject> {
           const ratio = (distance / deltaTime).toFixed(2);
           const ratioExpected = avrRatio.toFixed(2);
 
-          yield this.createIssue({
-            level: 'warning',
-            message: `Distance/time ratio is ${ratio}, expected ${ratioExpected}.`,
-            beatmap,
-            timestamp: [hitObject, nextObject],
-            cause: 'The distance/time ratio between the previous hit objects greatly contradicts a following use of distance/time ratio.',
-          });
+          yield this.createIssue(this.templates.ratio, beatmap, [hitObject, nextObject], ratio, ratioExpected);
         }
         else {
           observedDistances.push({ deltaTime, distance, hitObject, nextObject });

@@ -5,10 +5,10 @@ import type { VerifierBeatmapSet } from '../../VerifierBeatmapSet';
 import toWav from 'audiobuffer-to-wav';
 import { Axes, Box, MenuItem } from 'osucad-framework';
 import { getAmplitudesFromAudioBuffer, mergeAmplitudes } from '../../../audio/getAmplitudesFromAudioBuffer';
-import { TimestampFormatter } from '../../../editor/TimestampFormatter';
 import { maxOf } from '../../../utils/arrayUtils';
 import { trimIndent } from '../../../utils/stringUtils';
 import { GeneralCheck } from '../../GeneralCheck';
+import { IssueTemplate } from '../../template/IssueTemplate';
 import { IssueSample } from './IssueSample';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/AllModes/General/Audio/CheckHitSoundDelay.cs
@@ -33,6 +33,12 @@ export class CheckHitSoundDelay extends GeneralCheck {
       ],
     };
   }
+
+  override templates = {
+    pureDelay: new IssueTemplate('problem', '"{0}" has a {1:##} ms period of complete silence at the start. {3}', 'path', 'pure delay', 'waveform').withCause('A hit sound file used on an active hit object has a definite delay (complete silence) of at least 5 ms.'),
+    delay: new IssueTemplate('warning', '"{0}" has a delay of ~{2:##} ms, of which {1:##} ms is complete silence. (Active at e.g. {3} in {4}.) {5}', 'path', 'pure delay', 'delay', 'timestamp', 'difficulty', 'waveform').withCause('A hit sound file used on an active hit object has very low volume for ~5 ms or more.'),
+    minorDelay: new IssueTemplate('minor', '"{0}" has a delay of ~{2:##} ms, of which {1:##} ms is complete silence. {2}', 'path', 'pure delay', 'delay', 'waveform').withCause('Same as the regular delay, except anything between 1 to 5 ms.'),
+  };
 
   override async * getIssues(mapset: VerifierBeatmapSet): AsyncGenerator<Issue, void, undefined> {
     for (const { sample, sampleInfo, beatmap } of mapset.getAllUsedHitSoundSamples()) {
@@ -70,69 +76,54 @@ export class CheckHitSoundDelay extends GeneralCheck {
       }
 
       if (pureDelay >= 5) {
-        yield this.createIssue({
-          level: 'problem',
-          message: [
-            `"${sampleInfo.sampleName}" has a ${pureDelay.toFixed(2)} ms period of complete silence at the start.`,
-            new IssueSample(sample).adjust(it => it.add(
-              new Box({
-                relativeSizeAxes: Axes.Both,
-                color: 0xFF4B60,
-                width: pureDelay / sample.length,
-                depth: 1,
-                alpha: 0.5,
-              }),
-            )),
-          ],
-          cause: 'A hit sound file used on an active hit object has a definite delay (complete silence) of at least 5 ms.',
-          actions: [
+        const issueSample = new IssueSample(sample).adjust(it => it.add(
+          new Box({
+            relativeSizeAxes: Axes.Both,
+            color: 0xFF4B60,
+            width: pureDelay / sample.length,
+            depth: 1,
+            alpha: 0.5,
+          }),
+        ));
+
+        yield this.createIssue(this.templates.pureDelay, null, sampleInfo.sampleName, pureDelay, issueSample)
+          .withActions(
             new MenuItem({
               text: 'Trim complete silence',
               action: () => this.createTrimmedSample(`${sampleInfo.indexedSampleName}.wav`, sample, pureDelay),
             }),
-          ],
-        });
+          );
       }
       else if (delay + pureDelay >= 5) {
-        yield this.createIssue({
-          level: 'warning',
-          message: [
-            `"${sampleInfo.sampleName}" has a delay of ~${delay.toFixed(2)} ms, of which ${pureDelay.toFixed(2)} ms is complete silence. (Active at e.g. ${TimestampFormatter.formatTimestamp(sampleInfo.time)} in ${beatmap.metadata.difficultyName}.)`,
-            new IssueSample(sample).adjust(it => it.addAll(
-              new Box({
-                relativeSizeAxes: Axes.Both,
-                relativePositionAxes: Axes.X,
-                color: 0xFF4B60,
-                x: pureDelay / sample.length,
-                width: delay / sample.length,
-                depth: 1,
-                alpha: 0.25,
-              }),
-              new Box({
-                relativeSizeAxes: Axes.Both,
-                color: 0xFF4B60,
-                width: pureDelay / sample.length,
-                depth: 1,
-                alpha: 0.5,
-              }),
-            )),
-          ],
-          actions: [
+        const issueSample = new IssueSample(sample).adjust(it => it.addAll(
+          new Box({
+            relativeSizeAxes: Axes.Both,
+            relativePositionAxes: Axes.X,
+            color: 0xFF4B60,
+            x: pureDelay / sample.length,
+            width: delay / sample.length,
+            depth: 1,
+            alpha: 0.25,
+          }),
+          new Box({
+            relativeSizeAxes: Axes.Both,
+            color: 0xFF4B60,
+            width: pureDelay / sample.length,
+            depth: 1,
+            alpha: 0.5,
+          }),
+        ));
+
+        yield this.createIssue(this.templates.delay, null, sampleInfo.sampleName, delay, pureDelay, sampleInfo.time, beatmap, issueSample)
+          .withActions(
             new MenuItem({
               text: 'Trim complete silence',
               action: () => this.createTrimmedSample(`${sampleInfo.indexedSampleName}.wav`, sample, delay),
             }),
-          ],
-        });
+          );
       }
       else if (delay + pureDelay >= 1) {
-        yield this.createIssue({
-          level: 'minor',
-          message: [
-            `"${sampleInfo.sampleName}" has a delay of ${delay.toFixed()} ms, of which ${pureDelay.toFixed(2)} ms are pure silence.`,
-            new IssueSample(sample),
-          ],
-        });
+        yield this.createIssue(this.templates.minorDelay, null, sampleInfo.sampleName, delay, pureDelay, new IssueSample(sample));
       }
     }
   }

@@ -5,6 +5,7 @@ import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
+import { IssueTemplate } from '../../../../verifier/template/IssueTemplate';
 import { PathType } from '../../hitObjects/PathType';
 import { Slider } from '../../hitObjects/Slider';
 import { SliderTick } from '../../hitObjects/SliderTick';
@@ -52,19 +53,18 @@ export class CheckAmbiguity extends BeatmapCheck<OsuHitObject> {
     };
   }
 
+  override templates = {
+    warning: new IssueTemplate('warning', '{0} Slider edges are almost perfectly overlapping.', 'timestamp - ').withCause('The edges of a slider curve are 5 px or less apart, and a slider tick is 2 circle radii from the head.'),
+    anchor: new IssueTemplate('warning', '{0} {1} and red anchor overlap is possibly ambigious.', 'timestamp - ', 'Head/tail').withCause('The head or tail of a slider is a distance of 10 px or less to a red node, having been more than 30 px away ' + 'at a point in time between the two.'),
+  };
+
   override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     for (const slider of beatmap.hitObjects.ofType(Slider)) {
       const tailPosition = slider.getPositionAtTime(slider.startTime + slider.spanDuration);
       const curveEdgesDistance = tailPosition.distance(slider.stackedPosition);
 
-      if (curveEdgesDistance <= 5 && couldSliderBreak(slider)) {
-        yield this.createIssue({
-          level: 'warning',
-          message: '',
-          beatmap,
-          timestamp: slider,
-        });
-      }
+      if (curveEdgesDistance <= 5 && couldSliderBreak(slider))
+        yield this.createIssue(this.templates.warning, beatmap, slider);
 
       const anchorPositions = getAnchorPositions(slider);
 
@@ -90,23 +90,13 @@ export class CheckAmbiguity extends BeatmapCheck<OsuHitObject> {
           tailAnchorDistance = anchorPosition.distance(slider.path.endPosition);
 
         if (headAnchorDistance !== undefined && headAnchorDistance <= 5) {
-          yield this.createIssue({
-            level: 'warning',
-            message: `Head and red anchor overlap is possibly ambigious.`,
-            beatmap,
-            timestamp: slider,
-          });
+          yield this.createIssue(this.templates.anchor, beatmap, slider);
 
           break;
         }
 
         if (tailAnchorDistance !== undefined && tailAnchorDistance <= 5) {
-          yield this.createIssue({
-            level: 'warning',
-            message: `Tail and red anchor overlap is possibly ambigious.`,
-            beatmap,
-            timestamp: slider,
-          });
+          yield this.createIssue(this.templates.anchor, beatmap, slider);
 
           break;
         }

@@ -5,6 +5,7 @@ import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { almostEquals } from 'osucad-framework';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
+import { IssueTemplate } from '../../../../verifier/template/IssueTemplate';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/AllModes/Settings/CheckTickRate.cs
 export class CheckTickRate extends BeatmapCheck<OsuHitObject> {
@@ -35,19 +36,15 @@ export class CheckTickRate extends BeatmapCheck<OsuHitObject> {
     };
   }
 
+  override templates = {
+    tickRate: new IssueTemplate('problem', '{0} {1}.', 'setting', 'value').withCause('The slider tick rate setting of a beatmap is using an incorrect or otherwise extremely uncommon divisor.' + '<note>Common tick rates include any full integer as well as 1/2, 4/3, and 3/2. Excludes precision errors.</note>'),
+  };
+
   override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     const tickRate = beatmap.difficulty.sliderTickRate;
 
     const approxTickRate = Math.round(tickRate * 1000) / 1000;
-    if (tickRate - Math.floor(tickRate) !== 0 && !almostEquals(approxTickRate, 0.5) && !almostEquals(approxTickRate, 1.333) && !almostEquals(approxTickRate, 1.5)) {
-      yield this.createIssue({
-        level: 'problem',
-        message: `${approxTickRate} Tick Rate`,
-        cause: trimIndent(`
-          The slider tick rate setting of a beatmap is using an incorrect or otherwise extremely uncommon divisor." + "<note>Common tick rates include any full integer as well as 1/2, 4/3, and 3/2. Excludes precision errors.</note>
-        `),
-        beatmap,
-      });
-    }
+    if (tickRate - Math.floor(tickRate) !== 0 && !almostEquals(approxTickRate, 0.5) && !almostEquals(approxTickRate, 1.333) && !almostEquals(approxTickRate, 1.5))
+      yield this.createIssue(this.templates.tickRate, beatmap, approxTickRate, 'slider tick rate');
   }
 }

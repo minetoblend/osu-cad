@@ -3,9 +3,9 @@ import type { Issue } from '../../../../verifier/Issue';
 import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { ColorUtils } from 'osucad-framework';
-import { TimestampFormatter } from '../../../../editor/TimestampFormatter';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
+import { IssueTemplate } from '../../../../verifier/template/IssueTemplate';
 import { Spinner } from '../../hitObjects/Spinner';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/AllModes/Settings/CheckLuminosity.cs
@@ -57,6 +57,14 @@ export class CheckLuminosity extends BeatmapCheck<OsuHitObject> {
     };
   }
 
+  override templates = {
+    'Problem Combo': new IssueTemplate('problem', 'Combo colour {0} is way too dark.', 'number').withCause('The HSP luminosity value of a combo colour is lower than 30. These ' + 'values are visible in the overview section as tooltips for each colour ' + 'if you want to check them manually.'),
+    'Warning Combo': new IssueTemplate('warning', 'Combo colour {0} is really dark.', 'number').withCause('Same as the first check, but lower than 43 instead.'),
+    'Problem Border': new IssueTemplate('problem', 'Slider border is way too dark.').withCause('Same as the first check, except applies on the slider border instead.'),
+    'Warning Border': new IssueTemplate('warning', 'Slider border is really dark.').withCause('Same as the second check, except applies on the slider border instead.'),
+    'Bright': new IssueTemplate('warning', 'Combo colour {0} is really bright in kiai sections, see {1:timestamp}.', 'number', 'example object').withCause('Same as the first check, but higher than 250 and requires that at least one hit object with the combo is in a kiai section.'),
+  };
+
   override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     const luminosityMinRankable = 30;
     const luminosityMinWarning = 43;
@@ -66,22 +74,10 @@ export class CheckLuminosity extends BeatmapCheck<OsuHitObject> {
       const color = beatmap.colors.sliderBorder!;
       const luminosity = ColorUtils.getLuminosity(color);
 
-      if (luminosity < luminosityMinRankable) {
-        yield this.createIssue({
-          level: 'problem',
-          message: 'Slider border is way too dark.',
-          cause: 'Same as the first check, except applies on the slider border instead.',
-          beatmap,
-        });
-      }
-      else if (luminosity < luminosityMinWarning) {
-        yield this.createIssue({
-          level: 'problem',
-          message: 'Slider border is really dark.',
-          cause: 'Same as the first check, except applies on the slider border instead.',
-          beatmap,
-        });
-      }
+      if (luminosity < luminosityMinRankable)
+        yield this.createIssue(this.templates['Problem Border'], beatmap);
+      else if (luminosity < luminosityMinWarning)
+        yield this.createIssue(this.templates['Warning Border'], beatmap);
 
       const comboColorsInKiai: number[] = [];
       const comboColorTime: number[] = [];
@@ -102,33 +98,15 @@ export class CheckLuminosity extends BeatmapCheck<OsuHitObject> {
 
         const displayedColorIndex = asDisplayedComboColorIndex(beatmap, i);
 
-        if (luminosity < luminosityMinRankable) {
-          yield this.createIssue({
-            level: 'problem',
-            message: `Combo color ${displayedColorIndex} is way to dark.`,
-            cause: 'The HSP luminosity value of a combo colour is lower than 30. These values are visible in the overview section as tooltips for each colour if you want to check them manually.',
-            beatmap,
-          });
-        }
+        if (luminosity < luminosityMinRankable)
+          yield this.createIssue(this.templates['Problem Combo'], beatmap, displayedColorIndex);
 
-        else if (luminosity < luminosityMinWarning) {
-          yield this.createIssue({
-            level: 'warning',
-            message: `Combo color ${displayedColorIndex} is really dark.`,
-            cause: 'Same as the first check, but lower than 43 instead.',
-            beatmap,
-          });
-        }
+        else if (luminosity < luminosityMinWarning)
+          yield this.createIssue(this.templates['Warning Combo'], beatmap, displayedColorIndex);
 
         for (let j = 0; j < comboColorsInKiai.length; ++j) {
-          if (luminosity > luminosityMax && comboColorsInKiai[j] === i) {
-            yield this.createIssue({
-              level: 'warning',
-              message: `Combo color ${displayedColorIndex} is really bright in kiai sections. see ${TimestampFormatter.formatTimestamp(comboColorTime[j])}`,
-              cause: 'Same as the first check, but lower than 43 instead.',
-              beatmap,
-            });
-          }
+          if (luminosity > luminosityMax && comboColorsInKiai[j] === i)
+            yield this.createIssue(this.templates.Bright, beatmap, displayedColorIndex, comboColorTime[j]);
         }
       }
     }

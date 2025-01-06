@@ -4,6 +4,7 @@ import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
+import { IssueTemplate } from '../../../../verifier/template/IssueTemplate';
 import { Spinner } from '../../hitObjects/Spinner';
 
 export class CheckConcurrent extends BeatmapCheck<OsuHitObject> {
@@ -39,6 +40,11 @@ export class CheckConcurrent extends BeatmapCheck<OsuHitObject> {
     };
   }
 
+  override templates = {
+    concurrent: new IssueTemplate('problem', '{0:timestamp} Concurrent.', 'timestamp - ', 'hit objects').withCause('A hit object starts before another hit object has ended. For mania this also ' + 'requires that the objects are in the same column.'),
+    almostConcurrent: new IssueTemplate('problem', '{0:timestamp} Within {1} ms of one another.', 'timestamp - ', 'gap').withCause('Two hit objects are less than 10 ms apart from one another. For mania this also ' + 'requires that the objects are in the same column.'),
+  };
+
   override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     for (let i = 0; i < beatmap.hitObjects.items.length - 1; i++) {
       for (let j = i + 1; j < beatmap.hitObjects.items.length; j++) {
@@ -48,22 +54,10 @@ export class CheckConcurrent extends BeatmapCheck<OsuHitObject> {
         const msApart = next.startTime - hitObject.endTime;
 
         if (msApart <= 0) {
-          yield this.createIssue({
-            level: 'problem',
-            message: 'Concurrent',
-            beatmap,
-            timestamp: [hitObject, next],
-            cause: 'A hit object starts before another hit object has ended.',
-          });
+          yield this.createIssue(this.templates.concurrent, beatmap, [hitObject, next]);
         }
         else if (msApart <= 10 && !(hitObject instanceof Spinner)) {
-          yield this.createIssue({
-            level: 'problem',
-            message: `within ${Math.ceil(msApart)}ms of one another`,
-            beatmap,
-            timestamp: [hitObject, next],
-            cause: 'A hit object starts before another hit object has ended.',
-          });
+          yield this.createIssue(this.templates.almostConcurrent, beatmap, [hitObject, next], Math.ceil(msApart));
         }
         else {
           // Hit objects are sorted by time, meaning if the next one is > 10 ms away, any remaining will be too.

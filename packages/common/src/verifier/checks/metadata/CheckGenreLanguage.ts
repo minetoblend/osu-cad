@@ -3,6 +3,7 @@ import type { Issue } from '../../Issue';
 import type { VerifierBeatmapSet } from '../../VerifierBeatmapSet';
 import { trimIndent } from '../../../utils/stringUtils';
 import { GeneralCheck } from '../../GeneralCheck';
+import { IssueTemplate } from '../../template/IssueTemplate';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/AllModes/General/Metadata/CheckGenreLanguage.cs
 export class CheckGenreLanguage extends GeneralCheck {
@@ -88,6 +89,11 @@ export class CheckGenreLanguage extends GeneralCheck {
     ['Bengali'],
   ];
 
+  override templates = {
+    genre: new IssueTemplate('warning', 'Missing genre tag ("rock", "pop", "electronic", etc), ignore if none fit.').withCause(`None of the following tags were found (case insensitive):${this.toCause(this.genreTagCombinations)}`),
+    language: new IssueTemplate('warning', 'Missing language tag ("english", "japanese", "instrumental", etc), ignore if none fit.').withCause(`None of the following tags were found (case insensitive):${this.toCause(this.languageTagCombinations)}`),
+  };
+
   override async * getIssues(mapset: VerifierBeatmapSet): AsyncGenerator<Issue, void, undefined> {
     const refBeatmap = mapset.beatmaps[0];
     if (!refBeatmap)
@@ -100,19 +106,11 @@ export class CheckGenreLanguage extends GeneralCheck {
     }
 
     if (!hasAnyCombination(this.genreTagCombinations, tags)) {
-      yield this.createIssue({
-        level: 'warning',
-        message: 'Missing genre tag ("rock", "pop", "electronic", etc), ignore if none fit',
-        cause: `None of the following tags were found (case insensitive): ${this.toCause(this.genreTagCombinations)}`,
-      });
+      yield this.createIssue(this.templates.genre, null);
     }
 
     if (!hasAnyCombination(this.languageTagCombinations, tags)) {
-      yield this.createIssue({
-        level: 'warning',
-        message: 'Missing language tag ("english", "japanese", "instrumental", etc), ignore if none fit',
-        cause: `None of the following tags were found (case insensitive): ${this.toCause(this.languageTagCombinations)}`,
-      });
+      yield this.createIssue(this.templates.language, null);
     }
   }
 

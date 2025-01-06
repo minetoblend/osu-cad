@@ -4,6 +4,7 @@ import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
+import { IssueTemplate } from '../../../../verifier/template/IssueTemplate';
 import { Spinner } from '../../hitObjects/Spinner';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/Standard/Compose/CheckNinjaSpinner.cs
@@ -33,6 +34,11 @@ export class CheckNinjaSpinner extends BeatmapCheck<OsuHitObject> {
     };
   }
 
+  override templates = {
+    problem: new IssueTemplate('problem', '{0:timestamp} Spinner is too short, auto cannot achieve 1000 points on this.', 'timestamp - ').withCause('A spinner is predicted to, based on the OD and BPM, not be able to achieve 1000 points on this, and by a ' + 'margin to account for any inconsistencies.'),
+    warning: new IssueTemplate('warning', '{0:timestamp} Spinner may be too short, ensure auto can achieve 1000 points on this.', 'timestamp - ').withCause('Same as the other check, but without the margin, meaning the threshold is lower.'),
+  };
+
   override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     for (const spinner of beatmap.hitObjects.ofType(Spinner)) {
       const od = beatmap.difficulty.overallDifficulty;
@@ -42,21 +48,11 @@ export class CheckNinjaSpinner extends BeatmapCheck<OsuHitObject> {
       const problemThreshold = 450 + (od < 5 ? (5 - od) * -17 : (od - 5) * 17); // anything above this only works sometimes
 
       if (spinner.duration < problemThreshold) {
-        yield this.createIssue({
-          level: 'problem',
-          message: 'Spinner is too short, auto cannot achieve 1000 points on this.',
-          beatmap,
-          timestamp: spinner,
-        });
+        yield this.createIssue(this.templates.problem, beatmap, spinner);
       }
 
       else if (spinner.duration < warningThreshold) {
-        yield this.createIssue({
-          level: 'warning',
-          message: 'Spinner may be too short, ensure auto can achieve 1000 points on this.',
-          beatmap,
-          timestamp: spinner,
-        });
+        yield this.createIssue(this.templates.warning, beatmap, spinner);
       }
     }
   }

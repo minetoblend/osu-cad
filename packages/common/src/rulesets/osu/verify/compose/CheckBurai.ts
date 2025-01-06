@@ -4,6 +4,7 @@ import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
+import { IssueTemplate } from '../../../../verifier/template/IssueTemplate';
 import { Slider } from '../../hitObjects/Slider';
 
 export class CheckBurai extends BeatmapCheck<OsuHitObject> {
@@ -50,6 +51,11 @@ export class CheckBurai extends BeatmapCheck<OsuHitObject> {
     };
   }
 
+  override templates = {
+    definitely: new IssueTemplate('warning', '{0} Burai.', 'timestamp - ').withCause('The burai score of a slider shape, based on the distance and delta angle between intersecting parts of ' + 'the curve, is very high.'),
+    potentially: new IssueTemplate('warning', '{0} Potentially burai.', 'timestamp - ').withCause('Same as the other check, but with a lower score threshold.'),
+  };
+
   override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     for (const slider of beatmap.hitObjects.ofType(Slider)) {
       const maxDistance = 3;
@@ -84,23 +90,11 @@ export class CheckBurai extends BeatmapCheck<OsuHitObject> {
       if (totalBuraiScore <= 0)
         continue;
 
-      if (totalBuraiScore > 5) {
-        yield this.createIssue({
-          level: 'warning',
-          message: 'Burai',
-          beatmap,
-          timestamp: slider,
-        });
-      }
+      if (totalBuraiScore > 5)
+        yield this.createIssue(this.templates.definitely, beatmap, slider);
 
-      else if (totalBuraiScore > 2) {
-        yield this.createIssue({
-          level: 'warning',
-          message: 'Potentially Burai',
-          beatmap,
-          timestamp: slider,
-        });
-      }
+      else if (totalBuraiScore > 2)
+        yield this.createIssue(this.templates.potentially, beatmap, slider);
     }
   }
 }

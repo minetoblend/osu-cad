@@ -4,6 +4,7 @@ import type { Issue } from '../../Issue';
 import type { VerifierBeatmapSet } from '../../VerifierBeatmapSet';
 import { trimIndent } from '../../../utils/stringUtils';
 import { GeneralCheck } from '../../GeneralCheck';
+import { IssueTemplate } from '../../template/IssueTemplate';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/AllModes/General/Metadata/CheckInconsistentMetadata.cs
 export class CheckInconsistenMetadata extends GeneralCheck {
@@ -34,6 +35,11 @@ export class CheckInconsistenMetadata extends GeneralCheck {
       ],
     };
   }
+
+  override templates = {
+    tags: new IssueTemplate('problem', 'Inconsistent tags between {0} and {1}, difference being "{2}".', 'difficulty', 'difficulty', 'difference').withCause('A tag is present in one difficulty but missing in another.' + '<note>Does not care which order the tags are written in or about duplicate tags, ' + 'simply that the tags themselves are consistent.</note>'),
+    otherField: new IssueTemplate('problem', 'Inconsistent {0} fields between {1} and {2}; "{3}" and "{4}" respectively.', 'field', 'difficulty', 'difficulty', 'field', 'field').withCause('A metadata field is not consistent between all difficulties.'),
+  };
 
   override async * getIssues(mapset: VerifierBeatmapSet): AsyncGenerator<Issue, void, undefined> {
     const refBeatmap = mapset.beatmaps[0];
@@ -66,11 +72,7 @@ export class CheckInconsistenMetadata extends GeneralCheck {
       const difference = [...differenceTags].join(' ');
 
       if (difference !== '') {
-        yield this.createIssue({
-          level: 'problem',
-          message: `Inconsistent tags between "${refVersion}" and "${beatmap.metadata.difficultyName}", difference being "${difference}".`,
-          cause: 'A tag is present in one difficulty but missing in another. <note>Does not care which order the tags are written in or about duplicate tags, simply that the tags themselves are consistent.</note>',
-        });
+        yield this.createIssue(this.templates.tags, null, beatmap.metadata.difficultyName, refVersion, difference);
       }
     }
   }
@@ -81,11 +83,7 @@ export class CheckInconsistenMetadata extends GeneralCheck {
     const otherField = metadataField(otherBeatmap);
 
     if ((field ?? '') !== (otherField ?? '')) {
-      yield this.createIssue({
-        level: 'problem',
-        message: `Inconsitent ${fieldName} fields between "${beatmap.metadata.difficultyName}" and "${beatmap.metadata.difficultyName}", "${field}" and "${otherField}" respectively.`,
-        cause: 'A metadata field is not consistent between all difficulties.',
-      });
+      yield this.createIssue(this.templates.otherField, null, fieldName, beatmap.metadata.difficultyName, otherBeatmap.metadata.difficultyName, field, otherField);
     }
   }
 }

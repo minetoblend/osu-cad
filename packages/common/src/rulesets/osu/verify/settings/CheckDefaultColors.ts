@@ -3,6 +3,7 @@ import type { Issue } from '../../../../verifier/Issue';
 import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
+import { IssueTemplate } from '../../../../verifier/template/IssueTemplate';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/AllModes/Settings/CheckDefaultColours.cs
 
@@ -40,14 +41,14 @@ export class CheckDefaultColors extends BeatmapCheck<any> {
     };
   }
 
+  override templates = {
+    default: new IssueTemplate('problem', 'Default combo colours without preferred skin.').withCause('A beatmap has no custom combo colours and does not have any preferred skin.'),
+  };
+
   override async * getIssues(beatmap: VerifierBeatmap<any>): AsyncGenerator<Issue, void, undefined> {
     const noSkinPreference = beatmap.settings.skinPreference === '' || beatmap.settings.skinPreference === 'Default';
     if (noSkinPreference && beatmap.colors.comboColors.length === 0) {
-      yield this.createIssue({
-        level: 'problem',
-        message: 'Default combo colours without preferred skin.',
-        beatmap,
-      });
+      yield this.createIssue(this.templates.default, beatmap);
     }
   }
 }

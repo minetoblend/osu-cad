@@ -7,6 +7,7 @@ import { almostEquals } from 'osucad-framework';
 import { zipWithNext } from '../../../../utils/arrayUtils';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
+import { IssueTemplate } from '../../../../verifier/template/IssueTemplate';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/AllModes/Timing/CheckConcurrentLines.cs
 export class CheckConcurrentControlPoints extends BeatmapCheck<OsuHitObject> {
@@ -42,19 +43,17 @@ export class CheckConcurrentControlPoints extends BeatmapCheck<OsuHitObject> {
     };
   }
 
+  override templates = {
+    cuncurrent: new IssueTemplate('problem', '{0:timestamp} Concurrent {1}s.', 'timestamp - ', 'timing').withCause('Two control points of the same type exist at the same point in time.'),
+  };
+
   override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     for (const list of beatmap.controlPoints.controlPointLists) {
       for (const [current, next] of zipWithNext(list.items as ControlPoint[])) {
         if (!almostEquals(current.time, next.time))
           continue;
 
-        yield this.createIssue({
-          level: 'problem',
-          message: `Concurrent ${current.controlPointName}s.`,
-          beatmap,
-          timestamp: current.time,
-          cause: `Two ${current.controlPointName}s of the same type exist at the same point in time.`,
-        });
+        yield this.createIssue(this.templates.cuncurrent, beatmap, current.time, current.controlPointName);
       }
     }
   }

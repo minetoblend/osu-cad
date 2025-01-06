@@ -5,6 +5,7 @@ import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { trimIndent } from '../../../../utils/stringUtils';
 import { BeatmapCheck } from '../../../../verifier/BeatmapCheck';
+import { IssueTemplate } from '../../../../verifier/template/IssueTemplate';
 import { HitCircle } from '../../hitObjects/HitCircle';
 import { Slider } from '../../hitObjects/Slider';
 
@@ -55,6 +56,12 @@ export class CheckOffscreen extends BeatmapCheck<OsuHitObject> {
     };
   }
 
+  override templates = {
+    offscreen: new IssueTemplate('problem', '{0:timestamp} {1} is offscreen.', 'timestamp - ', 'object').withCause('The border of a hit object is partially off the screen in 4:3 aspect ratios.'),
+    prevented: new IssueTemplate('warning', '{0:timestamp} {1} would be offscreen, but the game prevents it.', 'timestamp - ', 'object').withCause('The .osu code implies the hit object is in a place where it would be off the 512x512 playfield area, but the game has ' + 'moved it back inside the screen automatically.'),
+    bezierMargin: new IssueTemplate('warning', '{0} Slider body is possibly offscreen, ensure the entire white border is visible on a 4:3 aspect ratio.', 'timestamp - ').withCause('The slider body of a bezier slider is approximated to be 1 osu!pixel away from being offscreen at some point on its curve.'),
+  };
+
   override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     for (const hitObject of beatmap.hitObjects) {
       const objectType = hitObject instanceof HitCircle ? 'Circle' : 'Slider head';
@@ -66,12 +73,7 @@ export class CheckOffscreen extends BeatmapCheck<OsuHitObject> {
       const stackOffset = hitObject.stackOffset;
 
       if (hitObject.stackedPosition.y + circleRadius > LOWER_LIMIT) {
-        yield this.createIssue({
-          level: 'problem',
-          timestamp: hitObject,
-          beatmap,
-          message: `${objectType} is offscreen.`,
-        });
+        yield this.createIssue(this.templates.offscreen, beatmap, hitObject, objectType);
       }
       else if (this.getOffscreenBy(hitObject.radius, hitObject.stackedPosition) > 0) {
         const stackableObject = hitObject;
@@ -81,20 +83,10 @@ export class CheckOffscreen extends BeatmapCheck<OsuHitObject> {
         const goesOffscreenRight = stackableObject.stackedPosition.y + circleRadius > RIGHT_LIMIT && stackableObject.stackHeight < 0;
 
         if (goesOffscreenTopOrLeft || goesOffscreenRight) {
-          yield this.createIssue({
-            level: 'problem',
-            timestamp: hitObject,
-            beatmap,
-            message: `${objectType} is offscreen.`,
-          });
+          yield this.createIssue(this.templates.offscreen, beatmap, hitObject, objectType);
         }
         else {
-          yield this.createIssue({
-            level: 'warning',
-            timestamp: hitObject,
-            beatmap,
-            message: `${objectType} would be offscreen, but the game prevents it.`,
-          });
+          yield this.createIssue(this.templates.prevented, beatmap, hitObject, objectType);
         }
       }
 
@@ -102,24 +94,14 @@ export class CheckOffscreen extends BeatmapCheck<OsuHitObject> {
         return;
 
       if (this.getOffscreenBy(hitObject.radius, hitObject.endPosition) > 0) {
-        yield this.createIssue({
-          level: 'problem',
-          timestamp: hitObject,
-          beatmap,
-          message: `Slider tail is offscreen.`,
-        });
+        yield this.createIssue(this.templates.offscreen, beatmap, hitObject, 'Slider tail');
       }
       else {
         for (const pathPosition of hitObject.path.calculatedRange.path) {
           if (this.getOffscreenBy(hitObject.radius, pathPosition.add(hitObject.stackedPosition)) <= 0)
             continue;
 
-          yield this.createIssue({
-            level: 'problem',
-            message: 'Slider body is offscreen',
-            beatmap,
-            timestamp: hitObject,
-          });
+          yield this.createIssue(this.templates.offscreen, beatmap, hitObject, 'Slider body');
 
           break;
         }

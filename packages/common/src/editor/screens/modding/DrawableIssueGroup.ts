@@ -41,7 +41,7 @@ export class DrawableIssueGroup extends FillFlowContainer {
           relativeSizeAxes: Axes.X,
           autoSizeAxes: Axes.Y,
           spacing: new Vec2(5),
-          padding: { left: 15 },
+          padding: 0,
         }),
       }),
     ];

@@ -1,22 +1,8 @@
-import type {
-  ReadonlyDependencyContainer,
-} from 'osucad-framework';
+import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Issue } from '../../../verifier/Issue';
-import {
-  Anchor,
-  Axes,
-  BindableBoolean,
-  Container,
-  Drawable,
-  DrawableSprite,
-  FillDirection,
-  FillFlowContainer,
-  Vec2,
-} from 'osucad-framework';
+import { Anchor, Axes, BindableBoolean, Container, Drawable, DrawableSprite, FillDirection, FillFlowContainer, Vec2 } from 'osucad-framework';
 import { ModdingConfigManager } from '../../../config/ModdingConfigManager';
 import { ModdingSettings } from '../../../config/ModdingSettings';
-import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
-import { OsucadColors } from '../../../OsucadColors';
 import { getIcon } from '../../../OsucadIcons';
 import { arrayify } from '../../../utils/arrayUtils';
 import { DrawableTimestamp } from './DrawableTimestamp';
@@ -66,23 +52,26 @@ export class DrawableIssue extends FillFlowContainer {
 
     let messageLine: Container;
 
+    const icon = this.getIcon();
+
     this.children = [
-      messageLine = new FillFlowContainer({
+      new Container({
         relativeSizeAxes: Axes.X,
         autoSizeAxes: Axes.Y,
-        spacing: new Vec2(3),
+        children: [
+          new DrawableSprite({
+            size: new Vec2(24),
+            texture: icon,
+          }),
+          messageLine = new FillFlowContainer({
+            relativeSizeAxes: Axes.X,
+            autoSizeAxes: Axes.Y,
+            spacing: new Vec2(3),
+            padding: { left: 32, vertical: 1 },
+          }),
+        ],
       }),
     ];
-
-    const icon = this.getIcon();
-    if (icon) {
-      messageLine.add(new DrawableSprite({
-        size: new Vec2(24),
-        texture: icon,
-        anchor: Anchor.CenterLeft,
-        origin: Anchor.CenterLeft,
-      }));
-    }
 
     if (this.issue.timestamp) {
       if (typeof this.issue.timestamp === 'number') {
@@ -108,24 +97,11 @@ export class DrawableIssue extends FillFlowContainer {
       }
     }
 
-    for (const part of arrayify(this.issue.message)) {
-      if (typeof part === 'string') {
-        for (const word of part.split(' ')) {
-          messageLine.add(new OsucadSpriteText({
-            text: word,
-            color: OsucadColors.text,
-            anchor: Anchor.CenterLeft,
-            origin: Anchor.CenterLeft,
-            fontSize: 13,
-          }));
-        }
-      }
-      else {
-        messageLine.add(part.with({
-          anchor: Anchor.CenterLeft,
-          origin: Anchor.CenterLeft,
-        }));
-      }
+    for (const part of this.issue.message) {
+      messageLine.add(part.with({
+        anchor: Anchor.CenterLeft,
+        origin: Anchor.CenterLeft,
+      }));
     }
 
     if (this.issue.actions.length > 0) {

@@ -3,6 +3,7 @@ import type { CheckMetadata } from '../../BeatmapCheck';
 import type { Issue } from '../../Issue';
 import type { VerifierBeatmapSet } from '../../VerifierBeatmapSet';
 import { GeneralCheck } from '../../GeneralCheck';
+import { IssueTemplate } from '../../template/IssueTemplate';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/AllModes/General/Metadata/CheckMarkerFormat.cs
 export class CheckMarkerFormat extends GeneralCheck {
@@ -13,6 +14,10 @@ export class CheckMarkerFormat extends GeneralCheck {
       author: 'Naxess',
     };
   }
+
+  override templates = {
+    wrongFormat: new IssueTemplate('problem', 'Incorrect formatting of "{0}" marker in {1} {2} field, "{3}".', 'marker', 'Romanized/unicode', 'artist/title', 'field').withCause('The artist or title field of a difficulty includes an incorrect format of "CV:", "vs." or "feat.".'),
+  };
 
   override async* getIssues(mapset: VerifierBeatmapSet): AsyncGenerator<Issue, void, undefined> {
     const refBeatmap = mapset.beatmaps[0];
@@ -34,37 +39,17 @@ export class CheckMarkerFormat extends GeneralCheck {
   * getFormattingIssues(metadata: BeatmapMetadata, marker: Marker) {
     const cause = 'The artist or title field of a difficulty includes an incorrect format of "CV:", "vs." or "feat.".';
 
-    if (marker.isSimilarButNotExact(metadata.artist)) {
-      yield this.createIssue({
-        level: 'problem',
-        message: `Incorrect formatting of "${marker.name}" marker in Romanized artist field, "${metadata.artist}".`,
-        cause,
-      });
-    }
+    if (marker.isSimilarButNotExact(metadata.artist))
+      yield this.createIssue(this.templates.wrongFormat, null, marker.name, 'Romanized', 'artist', metadata.artist);
 
-    if (metadata.artistUnicode.length > 0 && marker.isSimilarButNotExact(metadata.artistUnicode)) {
-      yield this.createIssue({
-        level: 'problem',
-        message: `Incorrect formatting of "${marker.name}" marker in Unicode artist field, "${metadata.artistUnicode}".`,
-        cause,
-      });
-    }
+    if (metadata.artistUnicode.length > 0 && marker.isSimilarButNotExact(metadata.artistUnicode))
+      yield this.createIssue(this.templates.wrongFormat, null, marker.name, 'Unicode', 'artist', metadata.artistUnicode);
 
-    if (marker.isSimilarButNotExact(metadata.title)) {
-      yield this.createIssue({
-        level: 'problem',
-        message: `Incorrect formatting of "${marker.name}" marker in Romanized title field, "${metadata.title}".`,
-        cause,
-      });
-    }
+    if (marker.isSimilarButNotExact(metadata.title))
+      yield this.createIssue(this.templates.wrongFormat, null, marker.name, 'Romanized', 'title', metadata.title);
 
-    if (metadata.titleUnicode.length > 0 && marker.isSimilarButNotExact(metadata.titleUnicode)) {
-      yield this.createIssue({
-        level: 'problem',
-        message: `Incorrect formatting of "${marker.name}" marker in Unicode title field, "${metadata.titleUnicode}".`,
-        cause,
-      });
-    }
+    if (metadata.titleUnicode.length > 0 && marker.isSimilarButNotExact(metadata.titleUnicode))
+      yield this.createIssue(this.templates.wrongFormat, null, marker.name, 'Unicode', 'title', metadata.titleUnicode);
   }
 }
 
