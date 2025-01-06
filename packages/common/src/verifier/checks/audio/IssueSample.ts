@@ -17,7 +17,7 @@ export class IssueSample extends MaskingContainer {
     this.cornerRadius = 4;
     this.margin = { vertical: 4 };
 
-    this.children = [
+    this.addAll(
       this.#background = new Box({
         relativeSizeAxes: Axes.Both,
         alpha: 0.1,
@@ -36,7 +36,7 @@ export class IssueSample extends MaskingContainer {
         origin: Anchor.TopCenter,
         alpha: 0,
       }),
-    ];
+    );
   }
 
   #shiftDown = false;
@@ -97,15 +97,19 @@ export class IssueSample extends MaskingContainer {
     });
 
     const line = new Box({
-      relativeSizeAxes: Axes.Y,
+      relativeSizeAxes: Axes.Both,
       relativePositionAxes: Axes.X,
-      width: 1,
-      origin: Anchor.TopCenter,
+      width: 0,
       x: startTime / this.sample.length,
+      alpha: (1 - startTime / this.sample.length) * 0.65,
     });
 
     this.add(line);
 
-    line.moveToX(1, this.sample.length - startTime).expire();
+    const duration = this.sample.length - startTime;
+
+    line.resizeWidthTo(1 - startTime / this.sample.length, duration)
+      .fadeOut(duration)
+      .expire();
   }
 }

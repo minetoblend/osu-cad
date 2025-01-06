@@ -1,26 +1,9 @@
-import type {
-  Bindable,
-  ClickEvent,
-  Drawable,
-  HoverEvent,
-  MouseDownEvent,
-  ReadonlyDependencyContainer,
-} from 'osucad-framework';
+import type { Bindable, ClickEvent, Drawable, HoverEvent, MouseDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Beatmap } from '../../../beatmap/Beatmap';
 import type { IBeatmap } from '../../../beatmap/IBeatmap';
 import type { BeatmapVerifier } from '../../../verifier/BeatmapVerifier';
 import type { IssueSectionContent } from './IssueSectionContent';
-import {
-  Anchor,
-  Axes,
-  BindableBoolean,
-  Box,
-  Container,
-  Direction,
-  FillFlowContainer,
-  resolved,
-  Vec2,
-} from 'osucad-framework';
+import { Anchor, Axes, BindableBoolean, Box, Container, Direction, FillFlowContainer, resolved, Vec2 } from 'osucad-framework';
 import { ModdingConfigManager } from '../../../config/ModdingConfigManager';
 import { ModdingSettings } from '../../../config/ModdingSettings';
 import { OsucadScrollContainer } from '../../../drawables/OsucadScrollContainer';
@@ -136,10 +119,9 @@ export class IssueList extends Container {
       const now = performance.now();
       const timePassed = now - startTime;
 
-      if (timePassed > 10) {
+      if (timePassed > 5) {
         startTime = now;
-        console.log('waiting for another frame');
-        await new Promise(resolve => requestAnimationFrame(resolve));
+        await new Promise<void>(resolve => this.schedule(resolve));
       }
     }
 
