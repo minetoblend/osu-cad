@@ -86,7 +86,7 @@ export class CheckObscuredReverse extends BeatmapCheck<OsuHitObject> {
       }
 
       if (selectedObjects.size > 0) {
-        yield this.createIssue(this.templates.obscured, beatmap, selectedObjects, isSerious ? '' : 'potentially ');
+        yield this.createIssue(this.templates.obscured, beatmap, [...selectedObjects], isSerious ? '' : 'potentially ');
       }
     }
   }

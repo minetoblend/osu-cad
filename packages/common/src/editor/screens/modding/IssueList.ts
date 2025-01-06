@@ -3,9 +3,10 @@ import type { Beatmap } from '../../../beatmap/Beatmap';
 import type { IBeatmap } from '../../../beatmap/IBeatmap';
 import type { BeatmapVerifier } from '../../../verifier/BeatmapVerifier';
 import type { IssueSectionContent } from './IssueSectionContent';
-import { Anchor, Axes, BindableBoolean, Box, Container, Direction, FillFlowContainer, resolved, Vec2 } from 'osucad-framework';
+import { Anchor, Axes, BindableBoolean, Box, Container, Direction, EasingFunction, FillFlowContainer, resolved, Vec2 } from 'osucad-framework';
 import { ModdingConfigManager } from '../../../config/ModdingConfigManager';
 import { ModdingSettings } from '../../../config/ModdingSettings';
+import { LoadingSpinner } from '../../../drawables/LoadingSpinner';
 import { OsucadScrollContainer } from '../../../drawables/OsucadScrollContainer';
 import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
 import { IResourcesProvider } from '../../../io/IResourcesProvider';
@@ -88,7 +89,20 @@ export class IssueList extends Container {
 
     if (verifier) {
       this.loadComponent(verifier);
-      this.createIssues(verifier).then();
+
+      const spinner = new LoadingSpinner({
+        size: 30,
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
+        depth: -1,
+      });
+      this.addInternal(spinner);
+
+      spinner.scaleTo(0.5)
+        .scaleTo(1, 300, EasingFunction.OutExpo)
+        .fadeInFromZero(200);
+
+      this.createIssues(verifier).finally(() => spinner.scaleTo(0.5, 300, EasingFunction.OutExpo).fadeOut(200).expire());
     }
 
     this.activeBeatmap.addOnChangeListener((beatmap) => {

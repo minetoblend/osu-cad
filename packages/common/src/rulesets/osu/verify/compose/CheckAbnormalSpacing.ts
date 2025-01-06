@@ -42,14 +42,14 @@ export class CheckAbnormalSpacing extends BeatmapCheck<OsuHitObject> {
   }
 
   override templates = {
-    problem: new IssueTemplate('problem', '{0:timestamp} Space/time ratio is {1} times the expected, see e.g. {2}.', 'timestamp - ', 'times', 'example objects').withCause(trimIndent(`
+    problem: new IssueTemplate('problem', '{0:timestamp} Space/time ratio is {1} times the expected, see e.g. {2} {3} {4}.', 'timestamp - ', 'times', 'example objects').withCause(trimIndent(`
       The space/time ratio between two objects is absurdly large in comparison to other objects with the same snapping prior.
       <note>
         Accounts for slider leniency by assuming that the gap is a circle's diameter smaller.
       </note>
     `)),
-    warning: new IssueTemplate('warning', '{0:timestamp} Space/time ratio is {1} times the expected, see e.g. {2}.', 'timestamp - ', 'times', 'example objects').withCause('Same as the first check, but with slightly less absurd, yet often still extreme, differences.'),
-    minor: new IssueTemplate('minor', '{0:timestamp} Space/time ratio is {1} times the expected, see e.g. {2}.', 'timestamp - ', 'times', 'example objects').withCause('Same as the first check, but with more common differences.'),
+    warning: new IssueTemplate('warning', '{0:timestamp} Space/time ratio is {1} times the expected, see e.g. {2} {3} {4}.', 'timestamp - ', 'times', 'example objects').withCause('Same as the first check, but with slightly less absurd, yet often still extreme, differences.'),
+    minor: new IssueTemplate('minor', '{0:timestamp} Space/time ratio is {1} times the expected, see e.g. {2} {3} {4}.', 'timestamp - ', 'times', 'example objects').withCause('Same as the first check, but with more common differences.'),
   };
 
   override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {

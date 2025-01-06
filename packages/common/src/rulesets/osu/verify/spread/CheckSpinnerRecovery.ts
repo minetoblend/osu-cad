@@ -44,17 +44,19 @@ export class CheckSpinnerRecovery extends BeatmapCheck<OsuHitObject> {
     const spinnerTime = spinner.duration;
     const spinnerTimeExpected = [1000, 750, 500]; // 4, 3 and 2 beats respectively, 240 bpm
 
-    for (let diffIndex = 0; diffIndex < spinnerTimeExpected.length; ++diffIndex) {
-      const expectedLength = Math.ceil(spinnerTimeExpected[diffIndex] * expectedMultiplier);
+    const diffIndex = beatmap.getDifficulty(true);
+    if (diffIndex === null)
+      return;
 
-      const problemThreshold = spinnerTimeExpected[diffIndex];
-      const warningThreshold = spinnerTimeExpected[diffIndex] * 1.2; // same thing but 200 bpm instead
+    const expectedLength = Math.ceil(spinnerTimeExpected[diffIndex] * expectedMultiplier);
 
-      if (spinnerTime < problemThreshold)
-        yield this.createIssue(this.templates['Problem Length'], beatmap, spinner, Math.round(spinnerTime), Math.round(expectedLength));
-      else if (spinnerTime < warningThreshold)
-        yield this.createIssue(this.templates['Warning Length'], beatmap, spinner, Math.round(spinnerTime), Math.round(expectedLength));
-    }
+    const problemThreshold = spinnerTimeExpected[diffIndex];
+    const warningThreshold = spinnerTimeExpected[diffIndex] * 1.2; // same thing but 200 bpm instead
+
+    if (spinnerTime < problemThreshold)
+      yield this.createIssue(this.templates['Problem Length'], beatmap, spinner, Math.round(spinnerTime), Math.round(expectedLength));
+    else if (spinnerTime < warningThreshold)
+      yield this.createIssue(this.templates['Warning Length'], beatmap, spinner, Math.round(spinnerTime), Math.round(expectedLength));
   }
 
   * getRecoveryIssues(beatmap: VerifierBeatmap<OsuHitObject>, spinner: Spinner, nextObject: OsuHitObject) {

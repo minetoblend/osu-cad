@@ -25,19 +25,32 @@ export class IssueFormat {
   }
 
   * format(args: any[]): Generator<Drawable, void, undefined> {
-    if (this.tokens.every(token => typeof token === 'string')) {
-      console.log(this.tokens);
+    const parts = this.getParts(args);
+
+    if (parts.every(part => typeof part === 'string')) {
       yield new TextBlock({
         text: this.tokens.join(''),
         fontSize: 13,
         color: OsucadColors.text,
       });
-      return;
     }
+
+    for (const part of this.getParts(args)) {
+      if (part instanceof Drawable)
+        yield part;
+      else
+        yield * this.#createWords(part);
+    }
+  }
+
+  getParts(args: any[]) {
+    const parts: (string | Drawable)[] = [];
+
+    let currentString = '';
 
     for (const token of this.tokens) {
       if (typeof token === 'string') {
-        yield * this.#createWords(token);
+        currentString += token;
       }
       else {
         const { index, format } = token;
@@ -48,12 +61,23 @@ export class IssueFormat {
 
         value ??= '';
 
-        if (value instanceof Drawable)
-          yield value;
-        else
-          yield * this.#createWords(`${value}`);
+        if (value instanceof Drawable) {
+          if (currentString.length > 0) {
+            parts.push(currentString);
+            currentString = '';
+          }
+          parts.push(value);
+        }
+        else {
+          currentString += `${value}`;
+        }
       }
     }
+
+    if (currentString.length > 0)
+      parts.push(currentString);
+
+    return parts;
   }
 
   static parse(format: string) {
@@ -99,9 +123,6 @@ export class IssueFormat {
 
     if (startIndex < format.length)
       tokens.push(format.slice(startIndex, format.length));
-
-    if (tokens.length === 0)
-      console.log(format);
 
     return new IssueFormat(tokens);
   }

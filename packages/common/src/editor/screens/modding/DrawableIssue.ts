@@ -66,7 +66,7 @@ export class DrawableIssue extends FillFlowContainer {
           messageLine = new FillFlowContainer({
             relativeSizeAxes: Axes.X,
             autoSizeAxes: Axes.Y,
-            spacing: new Vec2(3),
+            spacing: new Vec2(3, 4),
             padding: { left: 32, vertical: 1 },
           }),
         ],
