@@ -1,6 +1,18 @@
-import type { Container, ReadonlyDependencyContainer } from 'osucad-framework';
+import type {
+  ReadonlyDependencyContainer,
+} from 'osucad-framework';
 import type { Issue } from '../../../verifier/Issue';
-import { Anchor, Axes, BindableBoolean, CompositeDrawable, Drawable, DrawableSprite, FillFlowContainer, Vec2 } from 'osucad-framework';
+import {
+  Anchor,
+  Axes,
+  BindableBoolean,
+  Container,
+  Drawable,
+  DrawableSprite,
+  FillDirection,
+  FillFlowContainer,
+  Vec2,
+} from 'osucad-framework';
 import { ModdingConfigManager } from '../../../config/ModdingConfigManager';
 import { ModdingSettings } from '../../../config/ModdingSettings';
 import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
@@ -8,10 +20,16 @@ import { OsucadColors } from '../../../OsucadColors';
 import { getIcon } from '../../../OsucadIcons';
 import { arrayify } from '../../../utils/arrayUtils';
 import { DrawableTimestamp } from './DrawableTimestamp';
+import { IssueMenu } from './IssueMenu';
 
-export class DrawableIssue extends CompositeDrawable {
+export class DrawableIssue extends FillFlowContainer {
   constructor(readonly issue: Issue) {
-    super();
+    super({
+      direction: FillDirection.Vertical,
+      relativeSizeAxes: Axes.X,
+      autoSizeAxes: Axes.Y,
+      spacing: new Vec2(4),
+    });
   }
 
   override get removeWhenNotAlive(): boolean {
@@ -46,12 +64,9 @@ export class DrawableIssue extends CompositeDrawable {
     const config = dependencies.resolve(ModdingConfigManager);
     config.bindWith(ModdingSettings.ShowMinorIssues, this.showMinorIssues);
 
-    this.relativeSizeAxes = Axes.X;
-    this.autoSizeAxes = Axes.Y;
-
     let messageLine: Container;
 
-    this.internalChildren = [
+    this.children = [
       messageLine = new FillFlowContainer({
         relativeSizeAxes: Axes.X,
         autoSizeAxes: Axes.Y,
@@ -111,6 +126,17 @@ export class DrawableIssue extends CompositeDrawable {
           origin: Anchor.CenterLeft,
         }));
       }
+    }
+
+    if (this.issue.actions.length > 0) {
+      this.add(new Container({
+        relativeSizeAxes: Axes.X,
+        autoSizeAxes: Axes.Y,
+        child: new IssueMenu(this.issue.actions).with({
+          anchor: Anchor.TopRight,
+          origin: Anchor.TopRight,
+        }),
+      }));
     }
   }
 }

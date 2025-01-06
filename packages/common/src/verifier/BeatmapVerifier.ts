@@ -6,10 +6,11 @@ import type { BeatmapSkin } from '../skinning/BeatmapSkin';
 import type { BeatmapCheck } from './BeatmapCheck';
 import type { GeneralCheck } from './GeneralCheck';
 import type { Issue } from './Issue';
+import { Component } from 'osucad-framework';
 import { VerifierBeatmap } from './VerifierBeatmap';
 import { VerifierBeatmapSet } from './VerifierBeatmapSet';
 
-export abstract class BeatmapVerifier<T extends HitObject = HitObject> {
+export abstract class BeatmapVerifier<T extends HitObject = HitObject> extends Component {
   abstract get beatmapChecks(): BeatmapCheck<T>[];
 
   abstract get generalChecks(): GeneralCheck[];
@@ -22,15 +23,19 @@ export abstract class BeatmapVerifier<T extends HitObject = HitObject> {
   ): AsyncGenerator<Issue, void, undefined> {
     for (const beatmap of beatmaps) {
       const verifierBeatmap = new VerifierBeatmap(beatmap, fileStore);
-      for (const check of this.beatmapChecks)
+      for (const check of this.beatmapChecks) {
+        this.loadComponent(check);
         yield * check.getIssues(verifierBeatmap);
+      }
     }
 
     await skin.load();
 
     const beatmapSet = new VerifierBeatmapSet(beatmaps, fileStore, skin, resources);
 
-    for (const check of this.generalChecks)
+    for (const check of this.generalChecks) {
+      this.loadComponent(check);
       yield * check.getIssues(beatmapSet);
+    }
   }
 }

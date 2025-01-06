@@ -102,8 +102,10 @@ export class IssueList extends Container {
 
     const verifier = this.ruleset.createBeatmapVerifier();
 
-    if (verifier)
+    if (verifier) {
+      this.loadComponent(verifier);
       this.createIssues(verifier).then();
+    }
 
     this.activeBeatmap.addOnChangeListener((beatmap) => {
       this.#currentSectionContent.expire();

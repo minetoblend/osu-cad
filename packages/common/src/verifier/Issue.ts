@@ -1,4 +1,4 @@
-import type { Drawable } from 'osucad-framework';
+import type { Drawable, MenuItem } from 'osucad-framework';
 import type { DrawableTimestamp } from '../editor/screens/modding/DrawableTimestamp';
 import type { HitObject } from '../hitObjects/HitObject';
 import type { Check } from './Check';
@@ -21,17 +21,19 @@ export interface IssueOptions {
   beatmap?: VerifierBeatmap<any>;
   cause?: string;
   timestamp?: number | HitObject | HitObject[] | DrawableTimestamp;
+  actions?: MenuItem[];
 }
 
 export class Issue {
   constructor(readonly check: Check, options: IssueOptions) {
-    const { level, message, cause, timestamp, beatmap } = options;
+    const { level, message, cause, timestamp, beatmap, actions } = options;
 
     this.level = level;
     this.message = message;
     this.cause = cause;
     this.timestamp = timestamp;
     this.beatmap = beatmap;
+    this.actions = actions ?? [];
   }
 
   readonly level: IssueLevel;
@@ -39,6 +41,7 @@ export class Issue {
   readonly cause?: string;
   readonly timestamp?: number | HitObject | HitObject[] | DrawableTimestamp;
   readonly beatmap?: VerifierBeatmap;
+  readonly actions: MenuItem[];
 }
 
 export const IssueLevelComparer = new class extends Comparer<IssueLevel> {

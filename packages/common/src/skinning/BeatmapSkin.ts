@@ -1,6 +1,5 @@
-import type { AudioChannel, IResourceStore, Sample } from 'osucad-framework';
+import type { IResourceStore } from 'osucad-framework';
 import type { IBeatmap } from '../beatmap/IBeatmap';
-import type { HitSample } from '../hitsounds/HitSample';
 import type { IResourcesProvider } from '../io/IResourcesProvider';
 import type { SkinConfigurationLookup } from './SkinConfigurationLookup';
 import type { SkinInfo } from './SkinInfo';
@@ -26,10 +25,5 @@ export class BeatmapSkin extends StableSkin {
     }
 
     return super.getConfig(lookup);
-  }
-
-  override getSample(channel: AudioChannel, sample: string | HitSample): Sample | null {
-    console.trace(sample);
-    return super.getSample(channel, sample);
   }
 }
