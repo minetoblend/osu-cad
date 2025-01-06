@@ -231,7 +231,11 @@ export class ControlPointInfo extends AbstractCrdt<ControlPointMutation> {
     return this.controlPointLists.flatMap(list => list.filter(it => almostEquals(it.time, time, 1)));
   }
 
-  override get childObjects(): AbstractCrdt[] {
+  override get childObjects(): AbstractCrdt<any>[] {
+    return this.allControlPoints;
+  }
+
+  get allControlPoints(): ControlPoint[] {
     return this.controlPointLists.flatMap(it => it.items);
   }
 }
