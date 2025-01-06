@@ -35,6 +35,7 @@ export class TextureStore {
 
     const texture = await loadTexture(data, {
       resolution,
+      autoGenerateMipmaps: true,
     });
 
     if (!texture)
