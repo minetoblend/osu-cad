@@ -23,6 +23,11 @@ export abstract class BeatmapVerifier<T extends HitObject = HitObject> extends C
     for (const beatmap of beatmaps) {
       for (const check of this.beatmapChecks) {
         this.loadComponent(check);
+
+        const supportedDifficulties = check.metadata.difficulties;
+        if (supportedDifficulties && !supportedDifficulties.includes(beatmap.getDifficulty(true)!))
+          continue;
+
         yield * check.getIssues(beatmap);
       }
     }

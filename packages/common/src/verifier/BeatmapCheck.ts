@@ -1,6 +1,6 @@
 import type { HitObject } from '../hitObjects/HitObject';
 import type { Issue } from './Issue';
-import type { VerifierBeatmap } from './VerifierBeatmap';
+import type { DifficultyType, VerifierBeatmap } from './VerifierBeatmap';
 import { Check } from './Check';
 
 export interface CheckMetadata {
@@ -8,6 +8,7 @@ export interface CheckMetadata {
   readonly message: string;
   readonly author: string;
   readonly documentation?: { title: string; description: string }[];
+  readonly difficulties?: DifficultyType[];
 }
 
 export abstract class BeatmapCheck<T extends HitObject = HitObject> extends Check {

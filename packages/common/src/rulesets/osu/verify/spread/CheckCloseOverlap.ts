@@ -13,7 +13,7 @@ import { OsuRuleset } from '../../OsuRuleset';
 export class CheckCloseOverlap extends GeneralCheck {
   override get metadata(): CheckMetadata {
     return {
-      category: 'spread',
+      category: 'Spread',
       message: 'Objects too close in time not overlapping.',
       author: 'Naxess',
     };

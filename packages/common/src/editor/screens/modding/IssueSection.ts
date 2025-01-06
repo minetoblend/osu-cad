@@ -46,6 +46,14 @@ export class IssueSection extends CompositeDrawable {
     const config = dependencies.resolve(ModdingConfigManager);
     config.bindWith(ModdingSettings.ShowMinorIssues, this.showMinorIssues);
 
+    let sectionName = 'General';
+
+    if (this.beatmap) {
+      sectionName = this.beatmap.metadata.difficultyName;
+      if (this.beatmap.starRating !== null)
+        sectionName += ` (${this.beatmap.starRating.toFixed(2)}*)`;
+    }
+
     this.autoSizeAxes = Axes.Both;
     this.addAllInternal(
       this.#background = new FastRoundedBox({
@@ -65,7 +73,7 @@ export class IssueSection extends CompositeDrawable {
             origin: Anchor.CenterLeft,
           }),
           new OsucadSpriteText({
-            text: this.beatmap?.metadata?.difficultyName ?? 'General',
+            text: sectionName,
             fontSize: 14,
             anchor: Anchor.CenterLeft,
             origin: Anchor.CenterLeft,
