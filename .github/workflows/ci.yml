@@ -21,7 +21,7 @@ jobs:
         id: meta-client
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/osucad-beatmap-viewer
+          images: ghcr.io/minetoblend/osucad-beatmap-viewer
           tags: |
             type=ref,event=branch
             type=ref,event=tag
