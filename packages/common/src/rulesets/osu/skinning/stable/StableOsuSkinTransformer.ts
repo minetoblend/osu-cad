@@ -11,6 +11,7 @@ import { StableReverseArrow } from './StableReverseArrow';
 import { StableSkinTransformer } from './StableSkinTransformer';
 import { StableSliderBall } from './StableSliderBall';
 import { StableSpinnerBody } from './StableSpinnerBody';
+import { StableTimelineCircle } from './StableTimelineCircle';
 
 export class StableOsuSkinTransformer extends StableSkinTransformer {
   constructor(source: StableSkin) {
@@ -72,6 +73,9 @@ export class StableOsuSkinTransformer extends StableSkinTransformer {
 
         case OsuSkinComponents.HitCircleSelect:
           return this.source.getSprite('hitcircleselect');
+
+        case OsuSkinComponents.TimelineCircle:
+          return new StableTimelineCircle();
 
         case OsuSkinComponents.JudgementGreat:
           return this.source.getAnimation('hit300', {

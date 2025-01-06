@@ -1,19 +1,31 @@
-import type { Drawable, ReadonlyDependencyContainer } from 'osucad-framework';
+import type {
+  ReadonlyDependencyContainer,
+} from 'osucad-framework';
 import type { HitObjectLifetimeEntry } from '../../../../hitObjects/drawables/HitObjectLifetimeEntry';
 import type { HitObjectSelectionEvent } from '../../../screens/compose/HitObjectSelectionManager';
-import { Anchor, Axes, Bindable, BindableBoolean, BindableNumber, Container, FastRoundedBox, FillMode, provide, resolved } from 'osucad-framework';
+import {
+  Anchor,
+  Axes,
+  Bindable,
+  BindableBoolean,
+  BindableNumber,
+  Container,
+  FillMode,
+  provide,
+  resolved,
+} from 'osucad-framework';
 import { Color } from 'pixi.js';
 import { HitObjectList } from '../../../../beatmap/HitObjectList';
 import { UpdateHandler } from '../../../../crdt/UpdateHandler';
 import { hasComboInformation } from '../../../../hitObjects/IHasComboInformation';
 import { hasDuration } from '../../../../hitObjects/IHasDuration';
 import { hasSliderVelocity } from '../../../../hitObjects/IHasSliderVelocity';
-import { OsucadColors } from '../../../../OsucadColors';
 import { PoolableDrawableWithLifetime } from '../../../../pooling/PoolableDrawableWithLifetime';
 import { SliderRepeat } from '../../../../rulesets/osu/hitObjects/SliderRepeat';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
 import { HitObjectSelectionManager } from '../../../screens/compose/HitObjectSelectionManager';
 import { Timeline } from '../Timeline';
+import { TimelinePart } from '../TimelinePart';
 import { DurationAdjustmentPiece } from './DurationAdjustmentPiece';
 import { SliderVelocityAdjustmentPiece } from './SliderVelocityAdjustmentPiece';
 import { TimelineHitObjectBody } from './TimelineHitObjectBody';
@@ -57,7 +69,7 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
 
   readonly indexInComboBindable = new BindableNumber(0);
 
-  protected selectionOutline!: Drawable;
+  // protected selectionOutline!: Drawable;
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
@@ -65,15 +77,6 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
     this.addInternal(this.content = new Container({
       relativeSizeAxes: Axes.Both,
       children: [
-        this.selectionOutline = new Container({
-          relativeSizeAxes: Axes.Both,
-          padding: -2,
-          child: new FastRoundedBox({
-            relativeSizeAxes: Axes.Both,
-            cornerRadius: 100,
-            color: OsucadColors.selection,
-          }),
-        }),
         this.body = new TimelineHitObjectBody(this),
         this.#tailContainer = new Container({
           relativeSizeAxes: Axes.Both,
@@ -81,7 +84,7 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
           anchor: Anchor.CenterRight,
           origin: Anchor.CenterRight,
         }),
-        this.#repeatContainer = new Container({
+        this.#repeatContainer = new TimelinePart().with({
           relativeSizeAxes: Axes.Both,
         }),
         this.head = new TimelineHitObjectHead(this),
@@ -90,12 +93,12 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
 
     this.startTimeBindable.addOnChangeListener(time => this.x = time.value);
 
-    this.selected.addOnChangeListener((selected) => {
-      if (selected.value)
-        this.selectionOutline.show();
-      else
-        this.selectionOutline.hide();
-    }, { immediate: true });
+    // this.selected.addOnChangeListener((selected) => {
+    //   if (selected.value)
+    //     this.selectionOutline.show();
+    //   else
+    //     this.selectionOutline.hide();
+    // }, { immediate: true });
 
     this.comboIndexBindable.valueChanged.addListener(this.updateComboColor, this);
     this.currentSkin.sourceChanged.addListener(this.updateComboColor, this);

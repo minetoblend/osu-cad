@@ -25,7 +25,8 @@ export class DrawableComboNumber extends CompositeDrawable {
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
-    this.indexInComboBindable.bindTo(this.parentHitObject!.indexInComboBindable);
+    if (this.parentHitObject)
+      this.indexInComboBindable.bindTo(this.parentHitObject.indexInComboBindable);
 
     this.hitCircleOverlap = this.skin.getConfig(SkinConfig.HitCircleOverlap) ?? -2;
 

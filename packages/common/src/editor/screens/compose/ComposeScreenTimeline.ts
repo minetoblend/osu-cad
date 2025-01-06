@@ -28,21 +28,22 @@ export class ComposeScreenTimeline extends Timeline {
 
     this.addAll(
       new Container({
-        relativeSizeAxes: Axes.X,
-        height: 10,
-        anchor: Anchor.BottomLeft,
-        origin: Anchor.BottomLeft,
-        child: new BottomAlignedTickDisplay(),
-      }),
-      new Container({
         relativeSizeAxes: Axes.Both,
-        height: 0.5,
+        height: 0.65,
         anchor: Anchor.CenterLeft,
         origin: Anchor.CenterLeft,
         children: [
           this.blueprintContainer = new ComposeScreenTimelineHitObjectBlueprintContainer(),
         ],
       }),
+      new Container({
+        relativeSizeAxes: Axes.X,
+        height: 10,
+        anchor: Anchor.BottomLeft,
+        origin: Anchor.BottomLeft,
+        child: new BottomAlignedTickDisplay(),
+      }),
+
     );
 
     this.addInternal(new CurrentTimeOverlay());

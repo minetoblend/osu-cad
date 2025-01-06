@@ -27,6 +27,10 @@ export class EditorScreenContainer extends CompositeDrawable {
     super.load(dependencies);
 
     this.currentScreen.bindTo(this.screenManager.currentScreen);
+  }
+
+  protected override loadComplete() {
+    super.loadComplete();
 
     this.currentScreen.addOnChangeListener((screen) => {
       if (this.#currentScreenDrawable) {

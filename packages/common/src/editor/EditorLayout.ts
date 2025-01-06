@@ -1,4 +1,13 @@
-import { Axes, CompositeDrawable, dependencyLoader, EasingFunction, Invalidation, LayoutMember } from 'osucad-framework';
+import type {
+  ReadonlyDependencyContainer,
+} from 'osucad-framework';
+import {
+  Axes,
+  CompositeDrawable,
+  EasingFunction,
+  Invalidation,
+  LayoutMember,
+} from 'osucad-framework';
 import { EditorBottomBar } from './bottomBar/EditorBottomBar';
 import { EditorHeader } from './header/EditorHeader';
 import { EditorScreenContainer } from './screens/EditorScreenContainer';
@@ -10,8 +19,9 @@ export class EditorLayout extends CompositeDrawable {
     this.addLayout(this.#drawSizeBacking);
   }
 
-  @dependencyLoader()
-  [Symbol('load')]() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.relativeSizeAxes = Axes.Both;
 
     this.internalChildren = [

@@ -2,7 +2,7 @@ import type { DragEndEvent, DragEvent, DragStartEvent, MouseDownEvent, ReadonlyD
 import type { Color } from 'pixi.js';
 import type { HitObject } from '../../../../hitObjects/HitObject';
 import type { TimelineHitObjectBlueprint } from './TimelineHitObjectBlueprint';
-import { Axes, Bindable, ColorUtils, CompositeDrawable, FastRoundedBox, MouseButton, resolved } from 'osucad-framework';
+import { Axes, Bindable, CompositeDrawable, FastRoundedBox, MouseButton, resolved } from 'osucad-framework';
 import { HitObjectList } from '../../../../beatmap/HitObjectList';
 import { UpdateHandler } from '../../../../crdt/UpdateHandler';
 import { EditorClock } from '../../../EditorClock';
@@ -30,6 +30,7 @@ export class TimelineHitObjectBody extends CompositeDrawable {
       this.#body = new FastRoundedBox({
         relativeSizeAxes: Axes.Both,
         cornerRadius: 100,
+        alpha: 0.75,
       }),
     );
 
@@ -38,7 +39,7 @@ export class TimelineHitObjectBody extends CompositeDrawable {
   }
 
   protected updateColors() {
-    this.#body.color = ColorUtils.darken(this.accentColor.value, 0.25);
+    this.#body.color = this.accentColor.value;
   }
 
   @resolved(HitObjectList)

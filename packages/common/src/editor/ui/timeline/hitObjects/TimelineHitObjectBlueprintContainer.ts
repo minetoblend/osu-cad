@@ -3,6 +3,7 @@ import type { HitObject } from '../../../../hitObjects/HitObject';
 import { Axes, Bindable, dependencyLoader, DrawablePool, LoadState, resolved } from 'osucad-framework';
 import { IBeatmap } from '../../../../beatmap/IBeatmap';
 import { HitObjectLifetimeEntry } from '../../../../hitObjects/drawables/HitObjectLifetimeEntry';
+import { zipWithNext } from '../../../../utils/arrayUtils';
 import { TimelineBlueprintContainer } from '../TimelineBlueprintContainer';
 import { TimelineHitObjectBlueprint } from './TimelineHitObjectBlueprint';
 
@@ -58,6 +59,8 @@ export class TimelineHitObjectBlueprintContainer extends TimelineBlueprintContai
   }
 
   addHitObject(hitObject: HitObject) {
+    if (hitObject.transient)
+      return;
     this.#addEntry(new TimelineHitObjectLifetimeEntry(hitObject));
   }
 
@@ -133,5 +136,20 @@ export class TimelineHitObjectBlueprintContainer extends TimelineBlueprintContai
       return false;
 
     return super.buildNonPositionalInputQueue(queue, allowBlocking);
+  }
+
+  override updateAfterChildren() {
+    super.updateAfterChildren();
+
+    let stackHeight = 0;
+
+    for (const [current, last] of zipWithNext(this.blueprintContainer.content.aliveInternalChildren as TimelineHitObjectBlueprint[])) {
+      if (current.hitObject!.startTime < last.hitObject!.endTime)
+        stackHeight++;
+      else
+        stackHeight = 0;
+
+      current.y = -stackHeight * 8;
+    }
   }
 }

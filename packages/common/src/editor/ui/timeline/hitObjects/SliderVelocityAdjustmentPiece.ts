@@ -1,4 +1,5 @@
 import type { DragEndEvent, DragEvent, DragStartEvent, MouseDownEvent, ReadonlyDependencyContainer, TouchDownEvent, TouchUpEvent } from 'osucad-framework';
+import type { Color } from 'pixi.js';
 import type { HitObject } from '../../../../hitObjects/HitObject';
 import type { IHasSliderVelocity } from '../../../../hitObjects/IHasSliderVelocity';
 import type { TimelineHitObjectBlueprint } from './TimelineHitObjectBlueprint';
@@ -43,10 +44,10 @@ export class SliderVelocityAdjustmentPiece extends TimelineHitObjectTail {
     );
   }
 
-  protected override updateColors() {
-    super.updateColors();
+  protected override updateColor(color: Color) {
+    super.updateColor(color);
 
-    this.#longPressOutline.color = ColorUtils.lighten(this.accentColor.value, 0.5);
+    this.#longPressOutline.color = ColorUtils.lighten(this.accentColor.value, 0.25);
   }
 
   override onDragStart(e: DragStartEvent): boolean {
@@ -120,7 +121,7 @@ export class SliderVelocityAdjustmentPiece extends TimelineHitObjectTail {
     if (e.button === MouseButton.Right && this.#touchDown) {
       this.#dragFromLongPress = true;
       this.#longPressOutline.scaleTo(1.2, 300, EasingFunction.OutExpo);
-      this.#longPressOutline.fadeIn(100);
+      this.#longPressOutline.fadeTo(0.5, 100);
       return true;
     }
 

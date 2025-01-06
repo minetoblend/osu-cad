@@ -17,4 +17,6 @@ export enum OsuSkinComponents {
   JudgementOk,
   JudgementMeh,
   JudgementMiss,
+
+  TimelineCircle,
 }

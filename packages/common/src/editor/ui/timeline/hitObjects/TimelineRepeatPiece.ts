@@ -1,55 +1,35 @@
-import type { Color } from 'pixi.js';
-import type { HitObject } from '../../../../hitObjects/HitObject';
+import type { ReadonlyDependencyContainer } from 'osucad-framework';
+import type { SliderRepeat } from '../../../../rulesets/osu/hitObjects/SliderRepeat';
 import type { TimelineHitObjectBlueprint } from './TimelineHitObjectBlueprint';
-import { Anchor, Axes, Bindable, ColorUtils, CompositeDrawable, dependencyLoader, FastRoundedBox, FillMode, resolved } from 'osucad-framework';
+import { Anchor, Axes, DrawableSprite, resolved } from 'osucad-framework';
 import { Timeline } from '../Timeline';
+import { TimelineHitObjectCircle } from './TimelineHitObjectCircle';
 
-export class TimelineRepeatPiece extends CompositeDrawable {
-  constructor(
-    readonly blueprint: TimelineHitObjectBlueprint,
-    readonly hitObject: HitObject,
-  ) {
-    super();
-  }
-
-  #outline!: FastRoundedBox;
-
-  #body!: FastRoundedBox;
-
-  @dependencyLoader()
-  [Symbol('load')]() {
-    this.relativeSizeAxes = Axes.Both;
-    this.fillMode = FillMode.Fit;
-
-    this.addAllInternal(
-      this.#outline = new FastRoundedBox({
-        relativeSizeAxes: Axes.Both,
-        cornerRadius: 100,
-        anchor: Anchor.Center,
-        origin: Anchor.Center,
-        scale: 0.65,
-      }),
-
-      this.#body = new FastRoundedBox({
-        relativeSizeAxes: Axes.Both,
-        cornerRadius: 100,
-        scale: 0.5,
-        anchor: Anchor.Center,
-        origin: Anchor.Center,
-      }),
-    );
-
-    this.accentColor.bindTo(this.blueprint.accentColor);
-    this.accentColor.addOnChangeListener(() => this.updateColors(), { immediate: true });
-  }
-
-  protected accentColor = new Bindable<Color>(null!);
-
-  protected updateColors() {
-    this.#outline.color = ColorUtils.darken(this.accentColor.value, 0.25);
-    this.#body.color = this.accentColor.value;
+export class TimelineRepeatPiece extends TimelineHitObjectCircle {
+  constructor(blueprint: TimelineHitObjectBlueprint, readonly repeat: SliderRepeat) {
+    super(blueprint);
   }
 
   @resolved(Timeline)
   timeline!: Timeline;
+
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
+    this.relativePositionAxes = Axes.X;
+
+    this.addInternal(new DrawableSprite({
+      texture: this.skin.getTexture('reversearrow'),
+      size: 0.75,
+      relativeSizeAxes: Axes.Both,
+      scale: 60 / 64,
+      anchor: Anchor.Center,
+      origin: Anchor.Center,
+    }));
+
+    const slider = this.blueprint.hitObject!;
+
+    if (slider.duration !== 0)
+      this.x = this.repeat.startTime - slider.startTime;
+  }
 }

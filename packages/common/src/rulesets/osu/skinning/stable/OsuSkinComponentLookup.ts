@@ -15,6 +15,7 @@ export class OsuSkinComponentLookup extends GameplaySkinComponentLookup<OsuSkinC
   static Cursor = new OsuSkinComponentLookup(OsuSkinComponents.Cursor);
   static CursorTrail = new OsuSkinComponentLookup(OsuSkinComponents.CursorTrail);
   static HitCircleSelect = new OsuSkinComponentLookup(OsuSkinComponents.HitCircleSelect);
+  static TimelineCircle = new OsuSkinComponentLookup(OsuSkinComponents.TimelineCircle);
 
   static JudgementGreat = new OsuSkinComponentLookup(OsuSkinComponents.JudgementGreat);
   static JudgementOk = new OsuSkinComponentLookup(OsuSkinComponents.JudgementOk);
