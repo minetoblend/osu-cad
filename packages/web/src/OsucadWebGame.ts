@@ -1,7 +1,6 @@
 import type { DependencyContainer } from 'osucad-framework';
-import { ContextMenuContainer, DummyEditorBeatmap, Editor } from '@osucad/common';
+import { ContextMenuContainer, DummyEditorBeatmap, Editor, OsuRuleset, RulesetStore } from '@osucad/common';
 import { OsucadGameBase } from '@osucad/editor';
-import { UserAvatarCache } from '@osucad/editor/UserAvatarCache';
 import { Axes, Box } from 'osucad-framework';
 import { OsucadScreenStack } from '../../common/src/screens/OsucadScreenStack';
 import { EditorActionContainer } from '../../editor/src/editor/EditorActionContainer';
@@ -17,6 +16,8 @@ export class OsucadWebGame extends OsucadGameBase {
 
   async load(dependencies: DependencyContainer) {
     await super.load(dependencies);
+
+    RulesetStore.register(new OsuRuleset(), 0);
 
     const screenStack = new OsucadScreenStack();
 
@@ -39,11 +40,6 @@ export class OsucadWebGame extends OsucadGameBase {
         }),
       }),
     }));
-
-    const avatarCache = new UserAvatarCache();
-
-    this.add(avatarCache);
-    this.dependencies.provide(avatarCache);
 
     const notificationOverlay = new NotificationOverlay();
     this.add(notificationOverlay);
