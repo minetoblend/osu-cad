@@ -37,15 +37,27 @@ export class CheckBgResolution extends GeneralCheck {
 
       const megaBytes = data.byteLength / 1024 ** 2;
 
+      const texture = await loadTexture(data);
+
       if (megaBytes > 2.5) {
         issues.push(this.createIssue({
           level: 'problem',
           message: `"${filename}" has a size exceeding 2.5MB (${megaBytes.toFixed(1)}MB)`,
           cause: 'A background file has a file size greater than 2.5 MB.',
+          actions: texture
+            ? [
+                new MenuItem({
+                  text: 'Generate compressed background',
+                  action: () => {
+                    const ratio = Math.min(2560 / texture.width, 1440 / texture.height);
+                    this.createResizedImage(filename, file, Math.min(ratio, 1));
+                  },
+                }),
+              ]
+            : [],
         }));
       }
 
-      const texture = await loadTexture(data);
       if (!texture)
         return;
 
