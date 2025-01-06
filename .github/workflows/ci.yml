@@ -49,10 +49,9 @@ jobs:
       - name: Build and push docker image
         uses: docker/build-push-action@v5
         with:
-          file: packages/beatmap-viewer/Dockerfile
-          context: packages/beatmap-viewer/
+          file: ./packages/beatmap-viewer/Dockerfile
+          context: ./packages/beatmap-viewer/
           platforms: linux/amd64,linux/arm64
-          target: beatmap-viewer
           tags: ${{ steps.meta-client.outputs.tags }}
           labels: ${{ steps.meta-client.outputs.labels }}
           cache-from: type=gha
