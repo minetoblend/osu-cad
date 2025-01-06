@@ -1,5 +1,6 @@
 import { WebGameHost } from 'osucad-framework';
 import { BeatmapViewerGame } from './BeatmapViewerGame';
+import './sentry';
 
 const host = new WebGameHost('osucad', { friendlyGameName: 'osucad' });
 
