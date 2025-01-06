@@ -1,5 +1,5 @@
 import type { ContainerOptions, MenuItem, MouseDownEvent, UIEvent } from 'osucad-framework';
-import { Axes, Container, Drawable, provide, Vec2 } from 'osucad-framework';
+import { Anchor, Axes, Container, Drawable, provide, Vec2 } from 'osucad-framework';
 import { ContextMenu } from './ContextMenu';
 
 @provide()
@@ -47,6 +47,12 @@ export class ContextMenuContainer extends Container {
     this.#activeMenu = menu;
 
     menu.animateOpen();
+
+    this.scheduler.addDelayed(() => {
+      if (this.toLocalSpace(menu.toScreenSpace(new Vec2(0, menu.drawHeight))).y > this.height) {
+        menu.origin = Anchor.BottomLeft;
+      }
+    }, 50);
   }
 
   #activeMenu?: ContextMenu;

@@ -1,7 +1,7 @@
 import type { Drawable, MenuItem, ReadonlyDependencyContainer, SpriteText, Vec2 } from 'osucad-framework';
 import type { Graphics } from 'pixi.js';
 import type { OsucadMenuItem } from './OsucadMenuItem';
-import { Anchor, Axes, Container, Direction, DrawableMenuItem, EasingFunction, FastRoundedBox, GraphicsDrawable, MarginPadding, Menu, ScrollbarContainer, ScrollContainer } from 'osucad-framework';
+import { Anchor, Axes, Container, Direction, DrawableMenuItem, FastRoundedBox, GraphicsDrawable, MarginPadding, Menu, ScrollbarContainer, ScrollContainer } from 'osucad-framework';
 import { OsucadSpriteText } from '../drawables/OsucadSpriteText';
 import { OsucadColors } from '../OsucadColors';
 import { ContextMenuContainer } from './ContextMenuContainer';
@@ -20,8 +20,8 @@ export class ContextMenu extends Menu {
   }
 
   protected override updateSize(newSize: Vec2) {
-    this.width = newSize.x;
-    this.resizeTo(newSize, 300, EasingFunction.OutExpo);
+    this.size = newSize;
+    // this.resizeTo(newSize, 300, EasingFunction.OutExpo);
   }
 
   protected override createScrollContainer(direction: Direction): ScrollContainer {

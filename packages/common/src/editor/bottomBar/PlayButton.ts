@@ -1,7 +1,8 @@
 import type { HoverEvent, HoverLostEvent, MouseDownEvent, MouseUpEvent, ReadonlyDependencyContainer } from 'osucad-framework';
-import { Anchor, Axes, CompositeDrawable, DrawableSprite, MouseButton, resolved, Vec2 } from 'osucad-framework';
+import { Anchor, Axes, CompositeDrawable, DrawableSprite, MenuItem, MouseButton, resolved, Vec2 } from 'osucad-framework';
 import { OsucadColors } from '../../OsucadColors';
 import { getIcon } from '../../OsucadIcons';
+import { ContextMenuContainer } from '../../userInterface/ContextMenuContainer';
 import { EditorClock } from '../EditorClock';
 
 export class PlayButton extends CompositeDrawable {
@@ -52,6 +53,37 @@ export class PlayButton extends CompositeDrawable {
 
       this.#icon.scaleTo(0.9);
 
+      return true;
+    }
+
+    if (e.button === MouseButton.Right) {
+      this.dependencies.resolve(ContextMenuContainer)
+        .showMenu([
+          new MenuItem({
+            text: 'Playback rate',
+            disabled: true,
+          }),
+          new MenuItem({
+            text: '150%',
+            action: () => this.editorClock.rate = 1.5,
+          }),
+          new MenuItem({
+            text: '100%',
+            action: () => this.editorClock.rate = 1,
+          }),
+          new MenuItem({
+            text: '75%',
+            action: () => this.editorClock.rate = 0.75,
+          }),
+          new MenuItem({
+            text: '50%',
+            action: () => this.editorClock.rate = 0.5,
+          }),
+          new MenuItem({
+            text: '25%',
+            action: () => this.editorClock.rate = 0.25,
+          }),
+        ], e);
       return true;
     }
 
