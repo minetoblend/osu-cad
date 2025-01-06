@@ -5,6 +5,7 @@ import { BeatmapVerifier } from '../../../verifier/BeatmapVerifier';
 import { CheckHitSoundDelay } from '../../../verifier/checks/audio/CheckHitSoundDelay';
 import { CheckDrainTime } from '../../../verifier/checks/compose/CheckDrainTime';
 import { CheckZeroBytes } from '../../../verifier/checks/files/CheckZeroBytes';
+import { CheckGenreLanguage } from '../../../verifier/checks/metadata/CheckGenreLanguage';
 import { CheckGuestTags } from '../../../verifier/checks/metadata/CheckGuestTags';
 import { CheckAbnormalNodes } from './compose/CheckAbnormalNodes';
 import { CheckAbnormalSpacing } from './compose/CheckAbnormalSpacing';
@@ -47,6 +48,7 @@ export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
       new CheckHitSoundDelay(),
       new CheckZeroBytes(),
       new CheckGuestTags(),
+      new CheckGenreLanguage(),
     ];
   }
 }
