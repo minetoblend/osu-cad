@@ -6,17 +6,15 @@
     header_up Host {upstream_hostport}
   }
 
-  root * /srv
-
   @notProxy {
       not {
           path /beatmaps/*
       }
-      file {
-          try_files {path} /index.html
-          file_server
-      }
   }
 
-  rewrite @notProxy {http.matchers.file.relative}
+  handle @notProxy {
+    root * /srv
+    try_files {path} /index.html
+    file_server
+  }
 }
