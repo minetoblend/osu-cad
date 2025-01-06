@@ -6,7 +6,10 @@ import type { BeatmapSettings } from '../beatmap/BeatmapSettings';
 import type { IBeatmap } from '../beatmap/IBeatmap';
 import type { FileStore } from '../beatmap/io/FileStore';
 import type { ControlPointInfo } from '../controlPoints/ControlPointInfo';
+import type { TimingPoint } from '../controlPoints/TimingPoint';
 import type { HitObject } from '../hitObjects/HitObject';
+import { almostEquals } from 'osucad-framework';
+import { minBy } from '../utils/arrayUtils';
 
 export enum DifficultyType {
   Easy,
@@ -120,5 +123,50 @@ export class VerifierBeatmap<T extends HitObject = HitObject> implements IBeatma
 
   get hitObjects() {
     return this.beatmap.hitObjects;
+  }
+
+  getPracticalUnsnap(time: number, divisor?: number, timingPoint?: TimingPoint): number {
+    timingPoint ??= this.controlPoints.timingPointAt(time);
+
+    if (divisor !== undefined) {
+      return time - Math.round(time - this.getTheoreticalUnsnap(time, divisor, timingPoint));
+    }
+
+    const practicalUnsnaps
+      = [
+        this.getPracticalUnsnap(time, 16, timingPoint),
+        this.getPracticalUnsnap(time, 12, timingPoint),
+        this.getPracticalUnsnap(time, 9, timingPoint),
+        this.getPracticalUnsnap(time, 7, timingPoint),
+        this.getPracticalUnsnap(time, 5, timingPoint),
+      ];
+
+    // Assume the closest possible snapping & retain signed values.
+    const minUnsnap = minBy(practicalUnsnaps, Math.abs);
+
+    return practicalUnsnaps.find(unsnap => almostEquals(Math.abs(unsnap), minUnsnap))!;
+  }
+
+  getTheoreticalUnsnap(time: number, divisor: number, timingPoint?: TimingPoint) {
+    timingPoint ??= this.controlPoints.timingPointAt(time);
+
+    const beatOffset = this.getOffsetIntoBeat(time);
+    const currentFraction = beatOffset / timingPoint.beatLength;
+
+    const desiredFraction = Math.round(currentFraction * divisor) / divisor;
+    const differenceFraction = currentFraction - desiredFraction;
+
+    return differenceFraction * timingPoint.beatLength;
+  }
+
+  getOffsetIntoBeat(time: number) {
+    const timingPoint = this.controlPoints.timingPointAt(time);
+
+    // gets how many miliseconds into a beat we are
+    const msOffset = time - timingPoint.time;
+    const division = msOffset / timingPoint.beatLength;
+    const fraction = division - Math.floor(division);
+
+    return fraction * timingPoint.beatLength;
   }
 }

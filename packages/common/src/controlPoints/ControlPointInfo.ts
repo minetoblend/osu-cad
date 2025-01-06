@@ -166,6 +166,12 @@ export class ControlPointInfo extends AbstractCrdt<ControlPointMutation> {
     return this.timingPoints.controlPointAt(time) ?? TimingPoint.default;
   }
 
+  nextTimingPointAfter(time: number) {
+    const index = this.timingPoints.controlPointIndexAt(time);
+
+    return this.timingPoints.get(index + 1) ?? null;
+  }
+
   difficultyPointAt(time: number) {
     const difficultyPoint = this.difficultyPoints.controlPointAt(time);
     if (!difficultyPoint || difficultyPoint.time > time)

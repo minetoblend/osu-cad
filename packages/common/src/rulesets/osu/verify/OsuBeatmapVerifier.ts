@@ -11,6 +11,7 @@ import { CheckInconsistenMetadata } from '../../../verifier/checks/metadata/Chec
 import { CheckMarkerFormat } from '../../../verifier/checks/metadata/CheckMarkerFormat';
 import { CheckBgPresence } from '../../../verifier/checks/resources/CheckBgPresence';
 import { CheckBgResolution } from '../../../verifier/checks/resources/CheckBgResolution';
+import { CheckBeforeLine } from '../../../verifier/checks/timing/CheckBeforeLine';
 import { CheckAbnormalNodes } from './compose/CheckAbnormalNodes';
 import { CheckAbnormalSpacing } from './compose/CheckAbnormalSpacing';
 import { CheckAmbiguity } from './compose/CheckAmbiguity';
@@ -53,6 +54,7 @@ export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
       new CheckShortSliders(),
       new CheckSpaceVariation(),
       new CheckSpinnerRecovery(),
+      new CheckBeforeLine(),
     ];
   }
 
