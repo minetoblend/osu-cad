@@ -145,7 +145,10 @@ export class IssueSection extends CompositeDrawable {
     }
   }
 
+  #content?: IssueSectionContent;
+
   createContent() {
-    return new IssueSectionContent(this);
+    this.#content ??= new IssueSectionContent(this);
+    return this.#content!;
   }
 }

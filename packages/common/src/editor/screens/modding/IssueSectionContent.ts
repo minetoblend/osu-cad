@@ -16,6 +16,10 @@ export class IssueSectionContent extends FillFlowContainer {
     });
   }
 
+  override get disposeOnDeathRemoval(): boolean {
+    return false;
+  }
+
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 

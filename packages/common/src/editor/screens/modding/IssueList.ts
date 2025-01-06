@@ -106,7 +106,7 @@ export class IssueList extends Container {
     }
 
     this.activeBeatmap.addOnChangeListener((beatmap) => {
-      this.#currentSectionContent.expire();
+      this.remove(this.#currentSectionContent, false);
       this.add(this.#currentSectionContent = this.#beatmapIssues.get(beatmap.value)!.createContent());
     });
   }
