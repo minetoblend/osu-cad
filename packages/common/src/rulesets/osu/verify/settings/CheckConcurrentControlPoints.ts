@@ -1,7 +1,7 @@
-import type { Issue } from 'packages/common/src/verifier/Issue';
-import type { VerifierBeatmap } from 'packages/common/src/verifier/VerifierBeatmap';
 import type { ControlPoint } from '../../../../controlPoints/ControlPoint';
 import type { CheckMetadata } from '../../../../verifier/BeatmapCheck';
+import type { Issue } from '../../../../verifier/Issue';
+import type { VerifierBeatmap } from '../../../../verifier/VerifierBeatmap';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { almostEquals } from 'osucad-framework';
 import { zipWithNext } from '../../../../utils/arrayUtils';
