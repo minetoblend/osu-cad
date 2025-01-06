@@ -69,7 +69,9 @@ export class HomeScreen extends OsucadScreen {
   #hero!: SearchHero;
 
   updateResults(results: BeatmapSetResponse[]) {
-    this.beatmaps.value = results.map(mapset => this.createMapsetInfo(mapset));
+    this.beatmaps.value = results
+      .map(mapset => this.createMapsetInfo(mapset))
+      .filter(it => it.beatmaps.length > 0);
 
     this.#hero.minimize();
   }
@@ -97,27 +99,29 @@ export class HomeScreen extends OsucadScreen {
       },
     };
 
-    carouselMapsetInfo.beatmaps = mapset.beatmaps.map<CarouselBeatmapInfo>((beatmap) => {
-      const { id, version, difficulty_rating } = beatmap;
+    carouselMapsetInfo.beatmaps = mapset.beatmaps
+      .filter(it => it.mode_int === 0)
+      .map<CarouselBeatmapInfo>((beatmap) => {
+        const { id, version, difficulty_rating } = beatmap;
 
-      return {
-        id: id.toString(),
-        artist,
-        title,
-        audioUrl: '',
-        authorName: creator,
-        difficultyName: version,
-        backgroundPath: async () => null,
-        lastEdited: null,
-        loadThumbnailLarge: async () => carouselMapsetInfo.loadThumbnailLarge(),
-        loadThumbnailSmall: async () => carouselMapsetInfo.loadThumbnailSmall(),
-        mapset: carouselMapsetInfo,
-        previewPoint: null,
-        setId: mapset.id.toString(),
-        starRating: difficulty_rating,
-        select: async () => this.openEditor(mapset, beatmap),
-      };
-    });
+        return {
+          id: id.toString(),
+          artist,
+          title,
+          audioUrl: '',
+          authorName: creator,
+          difficultyName: version,
+          backgroundPath: async () => null,
+          lastEdited: null,
+          loadThumbnailLarge: async () => carouselMapsetInfo.loadThumbnailLarge(),
+          loadThumbnailSmall: async () => carouselMapsetInfo.loadThumbnailSmall(),
+          mapset: carouselMapsetInfo,
+          previewPoint: null,
+          setId: mapset.id.toString(),
+          starRating: difficulty_rating,
+          select: async () => this.openEditor(mapset, beatmap),
+        };
+      });
 
     return carouselMapsetInfo;
   }
