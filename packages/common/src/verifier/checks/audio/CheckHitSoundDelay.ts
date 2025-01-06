@@ -82,7 +82,7 @@ export class CheckHitSoundDelay extends GeneralCheck {
                 depth: 1,
                 alpha: 0.5,
               }),
-            )).doWhenLoaded(() => console.log(pureDelay / sample.length)),
+            )),
           ],
           cause: 'A hit sound file used on an active hit object has a definite delay (complete silence) of at least 5 ms.',
           actions: [
@@ -115,7 +115,7 @@ export class CheckHitSoundDelay extends GeneralCheck {
                 depth: 1,
                 alpha: 0.5,
               }),
-            )).doWhenLoaded(() => console.log(delay / sample.length)),
+            )),
           ],
           actions: [
             new MenuItem({
@@ -141,8 +141,6 @@ export class CheckHitSoundDelay extends GeneralCheck {
     const buffer = sample.buffer;
 
     const newBuffer = new AudioContext().createBuffer(buffer.numberOfChannels, buffer.length - Math.floor(trimStart / 1000 * buffer.sampleRate), buffer.sampleRate);
-
-    console.log(newBuffer.length, buffer.length);
 
     const offset = buffer.length - newBuffer.length;
 

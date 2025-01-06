@@ -26,7 +26,6 @@ export class DrawablePenTool extends DrawableModdingTool {
     if (this.#drawing) {
       this.#drawing.path.push(new StrokePoint(e.mousePosition, e.pressure * 3));
       this.#drawing.updatePath();
-      console.log(this.#drawing.path.length);
     }
     return true;
   }

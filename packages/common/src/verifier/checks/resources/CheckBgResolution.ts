@@ -122,7 +122,6 @@ export class CheckBgResolution extends GeneralCheck {
     const link = document.createElement('a');
 
     filename = `${filename.split('.').slice(0, -1).join('.')}.jpg`;
-    console.log(filename);
 
     link.download = filename;
     link.href = canvas.toDataURL!('image/jpeg', 0.9);
