@@ -7,6 +7,7 @@ import { CheckDrainTime } from '../../../verifier/checks/compose/CheckDrainTime'
 import { CheckZeroBytes } from '../../../verifier/checks/files/CheckZeroBytes';
 import { CheckGenreLanguage } from '../../../verifier/checks/metadata/CheckGenreLanguage';
 import { CheckGuestTags } from '../../../verifier/checks/metadata/CheckGuestTags';
+import { CheckInconsistenMetadata } from '../../../verifier/checks/metadata/CheckInconsistenMetadata';
 import { CheckAbnormalNodes } from './compose/CheckAbnormalNodes';
 import { CheckAbnormalSpacing } from './compose/CheckAbnormalSpacing';
 import { CheckAmbiguity } from './compose/CheckAmbiguity';
@@ -49,6 +50,7 @@ export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
       new CheckZeroBytes(),
       new CheckGuestTags(),
       new CheckGenreLanguage(),
+      new CheckInconsistenMetadata(),
     ];
   }
 }
