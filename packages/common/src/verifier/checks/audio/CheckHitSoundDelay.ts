@@ -1,6 +1,9 @@
+import type { Sample } from 'osucad-framework';
 import type { CheckMetadata } from '../../BeatmapCheck';
 import type { Issue } from '../../Issue';
 import type { VerifierBeatmapSet } from '../../VerifierBeatmapSet';
+import toWav from 'audiobuffer-to-wav';
+import { Axes, Box, MenuItem } from 'osucad-framework';
 import { getAmplitudesFromAudioBuffer, mergeAmplitudes } from '../../../audio/getAmplitudesFromAudioBuffer';
 import { TimestampFormatter } from '../../../editor/TimestampFormatter';
 import { maxOf } from '../../../utils/arrayUtils';
@@ -71,9 +74,23 @@ export class CheckHitSoundDelay extends GeneralCheck {
           level: 'problem',
           message: [
             `"${sampleInfo.sampleName}" has a ${pureDelay.toFixed(2)} ms period of complete silence at the start.`,
-            new IssueSample(sample),
+            new IssueSample(sample).adjust(it => it.add(
+              new Box({
+                relativeSizeAxes: Axes.Both,
+                color: 0xFF4B60,
+                width: pureDelay / sample.length,
+                depth: 1,
+                alpha: 0.5,
+              }),
+            )).doWhenLoaded(() => console.log(pureDelay / sample.length)),
           ],
           cause: 'A hit sound file used on an active hit object has a definite delay (complete silence) of at least 5 ms.',
+          actions: [
+            new MenuItem({
+              text: 'Trim complete silence',
+              action: () => this.createTrimmedSample(`${sampleInfo.indexedSampleName}.wav`, sample, pureDelay),
+            }),
+          ],
         });
       }
       else if (delay + pureDelay >= 5) {
@@ -81,7 +98,30 @@ export class CheckHitSoundDelay extends GeneralCheck {
           level: 'warning',
           message: [
             `"${sampleInfo.sampleName}" has a delay of ~${delay.toFixed(2)} ms, of which ${pureDelay.toFixed(2)} ms is complete silence. (Active at e.g. ${TimestampFormatter.formatTimestamp(sampleInfo.time)} in ${beatmap.metadata.difficultyName}.)`,
-            new IssueSample(sample),
+            new IssueSample(sample).adjust(it => it.addAll(
+              new Box({
+                relativeSizeAxes: Axes.Both,
+                relativePositionAxes: Axes.X,
+                color: 0xFF4B60,
+                x: pureDelay / sample.length,
+                width: delay / sample.length,
+                depth: 1,
+                alpha: 0.25,
+              }),
+              new Box({
+                relativeSizeAxes: Axes.Both,
+                color: 0xFF4B60,
+                width: pureDelay / sample.length,
+                depth: 1,
+                alpha: 0.5,
+              }),
+            )).doWhenLoaded(() => console.log(delay / sample.length)),
+          ],
+          actions: [
+            new MenuItem({
+              text: 'Trim complete silence',
+              action: () => this.createTrimmedSample(`${sampleInfo.indexedSampleName}.wav`, sample, delay),
+            }),
           ],
         });
       }
@@ -95,5 +135,36 @@ export class CheckHitSoundDelay extends GeneralCheck {
         });
       }
     }
+  }
+
+  createTrimmedSample(filename: string, sample: Sample, trimStart: number) {
+    const buffer = sample.buffer;
+
+    const newBuffer = new AudioContext().createBuffer(buffer.numberOfChannels, buffer.length - Math.floor(trimStart / 1000 * buffer.sampleRate), buffer.sampleRate);
+
+    console.log(newBuffer.length, buffer.length);
+
+    const offset = buffer.length - newBuffer.length;
+
+    for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
+      const data = buffer.getChannelData(channel);
+      newBuffer.copyToChannel(data.slice(offset, newBuffer.length), channel);
+    }
+
+    const wav = toWav(newBuffer);
+
+    const link = document.createElement('a');
+
+    const blob = new Blob([wav], { type: 'audio/wav' });
+
+    const url = URL.createObjectURL(blob);
+
+    link.download = filename;
+    link.href = url;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
   }
 }
