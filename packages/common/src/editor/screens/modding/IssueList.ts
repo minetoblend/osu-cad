@@ -119,6 +119,10 @@ export class IssueList extends Container {
       }
     }
 
+    beatmaps.sort((a, b) =>
+      ((a.starRating ?? Number.MAX_VALUE) - (b.starRating ?? Number.MAX_VALUE)),
+    );
+
     this.setupSections(beatmaps);
 
     const skin = new BeatmapSkin(this.resoucesProvider, this.beatmap, this.beatmap.fileStore);
@@ -128,7 +132,6 @@ export class IssueList extends Container {
 
     for await (const issue of issues) {
       const section = this.#beatmapIssues.get(issue.beatmap?.beatmap ?? null)!;
-
       section.addIssue(issue);
 
       const now = performance.now();
@@ -165,7 +168,7 @@ export class IssueList extends Container {
     for (const beatmap of beatmaps) {
       const section = new IssueSection(beatmap, this.activeBeatmap.getBoundCopy());
       this.#headers.add(section);
-      this.#beatmapIssues.set(beatmap, section);
+      this.#beatmapIssues.set(beatmap.beatmap, section);
     }
   }
 

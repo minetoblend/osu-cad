@@ -25,6 +25,7 @@ import { CheckDefaultColors } from './settings/CheckDefaultColors';
 import { CheckDifficultySettings } from './settings/CheckDifficultySettings';
 import { CheckLuminosity } from './settings/CheckLuminosity';
 import { CheckTickRate } from './settings/CheckTickRate';
+import { CheckCloseOverlap } from './spread/CheckCloseOverlap';
 
 export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
   override get beatmapChecks(): BeatmapCheck<OsuHitObject>[] {
@@ -57,6 +58,7 @@ export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
       new CheckMarkerFormat(),
       new CheckBgPresence(),
       new CheckBgResolution(),
+      new CheckCloseOverlap(),
     ];
   }
 }

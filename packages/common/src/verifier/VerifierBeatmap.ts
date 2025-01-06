@@ -32,6 +32,10 @@ export class VerifierBeatmap<T extends HitObject = HitObject> implements IBeatma
     return this.#starRating as number | null;
   }
 
+  get ruleset() {
+    return this.beatmap.ruleset;
+  }
+
   getDifficulty(considerName = false) {
     let difficulty: DifficultyType | null = null;
 
