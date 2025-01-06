@@ -84,6 +84,6 @@ export class CheckGuestTags extends GeneralCheck {
       // If e.g. "Naxess' Insane", group 1 is "Naxes" and group 2 is the remaining "s".
       possessor += match[2];
 
-    return possessor.trim();
+    return possessor?.trim() ?? null;
   }
 }
