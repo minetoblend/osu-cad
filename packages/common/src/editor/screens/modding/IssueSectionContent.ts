@@ -1,8 +1,11 @@
-import type { ReadonlyDependencyContainer } from 'osucad-framework';
+import type { Container, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Check } from '../../../verifier/Check';
 import type { Issue } from '../../../verifier/Issue';
 import type { IssueSection } from './IssueSection';
-import { Axes, FillDirection, FillFlowContainer, Vec2 } from 'osucad-framework';
+import { Anchor, Axes, DrawableSprite, FillDirection, FillFlowContainer, Vec2 } from 'osucad-framework';
+import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
+import { OsucadColors } from '../../../OsucadColors';
+import { getIcon } from '../../../OsucadIcons';
 import { DrawableIssue } from './DrawableIssue';
 import { DrawableIssueGroup } from './DrawableIssueGroup';
 
@@ -20,8 +23,35 @@ export class IssueSectionContent extends FillFlowContainer {
     return false;
   }
 
+  #noIssuesContainer!: Container;
+
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
+
+    this.add(this.#noIssuesContainer = new FillFlowContainer({
+      autoSizeAxes: Axes.Both,
+      direction: FillDirection.Horizontal,
+      spacing: new Vec2(4),
+      anchor: Anchor.TopCenter,
+      origin: Anchor.TopCenter,
+      padding: { vertical: 20 },
+      children: [
+        new DrawableSprite({
+          size: 32,
+          texture: getIcon('issue-check'),
+          anchor: Anchor.CenterLeft,
+          origin: Anchor.CenterLeft,
+        }),
+        new OsucadSpriteText({
+          text: 'No issues found',
+          fontSize: 18,
+          color: OsucadColors.text,
+          anchor: Anchor.CenterLeft,
+          origin: Anchor.CenterLeft,
+        }),
+      ],
+      alpha: 0,
+    }));
 
     for (const issue of this.section.issues)
       this.addIssue(issue);
@@ -45,5 +75,16 @@ export class IssueSectionContent extends FillFlowContainer {
     super.dispose(isDisposing);
 
     this.section.issueAdded.removeListener(this.addIssue, this);
+  }
+
+  override updateAfterChildren() {
+    super.updateAfterChildren();
+
+    if (this.aliveInternalChildren.every(it => !(it instanceof DrawableIssueGroup))) {
+      this.#noIssuesContainer.show();
+    }
+    else {
+      this.#noIssuesContainer.hide();
+    }
   }
 }
