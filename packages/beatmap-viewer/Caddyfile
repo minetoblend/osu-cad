@@ -1,4 +1,4 @@
-:80 {
+:8081 {
   reverse_proxy /beatmaps/* https://assets.ppy.sh {
     header_up Host {upstream_hostport}
   }
@@ -6,9 +6,16 @@
     header_up Host {upstream_hostport}
   }
 
-  handle {
-    root * /srv
-    try_files {path} /index.html
-    file_server
+  @notProxy {
+      not {
+          path /beatmaps/*
+      }
+      file {
+          root * /srv
+          try_files {path} /index.html
+          file_server
+      }
   }
+
+  rewrite @notProxy {http.matchers.file.relative}
 }
