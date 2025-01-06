@@ -63,26 +63,11 @@ export class PlayButton extends CompositeDrawable {
             text: 'Playback rate',
             disabled: true,
           }),
-          new MenuItem({
-            text: '150%',
-            action: () => this.editorClock.rate = 1.5,
-          }),
-          new MenuItem({
-            text: '100%',
-            action: () => this.editorClock.rate = 1,
-          }),
-          new MenuItem({
-            text: '75%',
-            action: () => this.editorClock.rate = 0.75,
-          }),
-          new MenuItem({
-            text: '50%',
-            action: () => this.editorClock.rate = 0.5,
-          }),
-          new MenuItem({
-            text: '25%',
-            action: () => this.editorClock.rate = 0.25,
-          }),
+          ...[1.5, 1.25, 1, 0.75, 0.5, 0.25].map(speed =>
+            new MenuItem({
+              text: `${speed * 100}%`,
+              action: () => this.editorClock.rate = speed,
+            })),
         ], e);
       return true;
     }
