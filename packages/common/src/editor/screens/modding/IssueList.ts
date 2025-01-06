@@ -161,7 +161,7 @@ export class IssueList extends Container {
     this.#headers.add(general);
     this.#beatmapIssues.set(null, general);
 
-    this.#currentSectionContent = general.createContent();
+    this.add(this.#currentSectionContent = general.createContent());
 
     for (const beatmap of beatmaps) {
       const section = new IssueSection(beatmap, this.activeBeatmap.getBoundCopy());
