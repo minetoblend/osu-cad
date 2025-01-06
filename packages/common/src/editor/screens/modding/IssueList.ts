@@ -12,6 +12,7 @@ import { IResourcesProvider } from '../../../io/IResourcesProvider';
 import { OsucadColors } from '../../../OsucadColors';
 import { Ruleset } from '../../../rulesets/Ruleset';
 import { BeatmapSkin } from '../../../skinning/BeatmapSkin';
+import { VerifierBeatmap } from '../../../verifier/VerifierBeatmap';
 import { EditorBeatmap } from '../../EditorBeatmap';
 import { IssueListMenu } from './IssueListMenu';
 import { IssueSection } from './IssueSection';
@@ -102,14 +103,28 @@ export class IssueList extends Container {
   resoucesProvider!: IResourcesProvider;
 
   async createIssues(verifier: BeatmapVerifier) {
-    const beatmaps = this.beatmap.beatmapSet?.beatmaps ?? [this.beatmap.beatmap];
+    const beatmaps = [...this.beatmap.beatmapSet?.beatmaps ?? [this.beatmap.beatmap]]
+      .map(beatmap => new VerifierBeatmap(beatmap, this.beatmap.fileStore));
+
+    let startTime = performance.now();
+    for (const beatmap of beatmaps) {
+      beatmap.calculateStarRating();
+
+      const now = performance.now();
+      const timePassed = now - startTime;
+
+      if (timePassed > 5) {
+        startTime = now;
+        await new Promise<void>(resolve => this.schedule(resolve));
+      }
+    }
 
     this.setupSections(beatmaps);
 
     const skin = new BeatmapSkin(this.resoucesProvider, this.beatmap, this.beatmap.fileStore);
     const issues = verifier.getIssues(beatmaps, this.beatmap.fileStore, skin, this.resoucesProvider);
 
-    let startTime = performance.now();
+    startTime = performance.now();
 
     for await (const issue of issues) {
       const section = this.#beatmapIssues.get(issue.beatmap?.beatmap ?? null)!;
@@ -140,7 +155,7 @@ export class IssueList extends Container {
     }
   }
 
-  private setupSections(beatmaps: ReadonlyArray<Beatmap>) {
+  private setupSections(beatmaps: ReadonlyArray<VerifierBeatmap>) {
     const general = new IssueSection(null, this.activeBeatmap.getBoundCopy());
     this.#headers.add(general);
     this.#beatmapIssues.set(null, general);

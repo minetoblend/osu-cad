@@ -1,4 +1,3 @@
-import type { IBeatmap } from '../beatmap/IBeatmap';
 import type { FileStore } from '../beatmap/io/FileStore';
 import type { HitObject } from '../hitObjects/HitObject';
 import type { IResourcesProvider } from '../io/IResourcesProvider';
@@ -6,8 +5,8 @@ import type { BeatmapSkin } from '../skinning/BeatmapSkin';
 import type { BeatmapCheck } from './BeatmapCheck';
 import type { GeneralCheck } from './GeneralCheck';
 import type { Issue } from './Issue';
+import type { VerifierBeatmap } from './VerifierBeatmap';
 import { Component } from 'osucad-framework';
-import { VerifierBeatmap } from './VerifierBeatmap';
 import { VerifierBeatmapSet } from './VerifierBeatmapSet';
 
 export abstract class BeatmapVerifier<T extends HitObject = HitObject> extends Component {
@@ -16,16 +15,15 @@ export abstract class BeatmapVerifier<T extends HitObject = HitObject> extends C
   abstract get generalChecks(): GeneralCheck[];
 
   async * getIssues(
-    beatmaps: readonly IBeatmap<any>[],
+    beatmaps: readonly VerifierBeatmap<any>[],
     fileStore: FileStore,
     skin: BeatmapSkin,
     resources: IResourcesProvider,
   ): AsyncGenerator<Issue, void, undefined> {
     for (const beatmap of beatmaps) {
-      const verifierBeatmap = new VerifierBeatmap(beatmap, fileStore);
       for (const check of this.beatmapChecks) {
         this.loadComponent(check);
-        yield * check.getIssues(verifierBeatmap);
+        yield * check.getIssues(beatmap);
       }
     }
 

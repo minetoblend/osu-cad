@@ -1,3 +1,4 @@
+import type { Beatmap } from '../beatmap/Beatmap';
 import type { BeatmapColors } from '../beatmap/BeatmapColors';
 import type { BeatmapDifficultyInfo } from '../beatmap/BeatmapDifficultyInfo';
 import type { BeatmapMetadata } from '../beatmap/BeatmapMetadata';
@@ -9,9 +10,30 @@ import type { HitObject } from '../hitObjects/HitObject';
 
 export class VerifierBeatmap<T extends HitObject = HitObject> implements IBeatmap<T> {
   constructor(
-    readonly beatmap: IBeatmap<T>,
+    readonly beatmap: Beatmap<T>,
     readonly files: FileStore,
   ) {
+
+  }
+
+  #starRating?: number | null;
+
+  get starRating(): number | null {
+    this.calculateStarRating();
+    return this.#starRating as number | null;
+  }
+
+  calculateStarRating() {
+    if (this.#starRating === undefined) {
+      const difficultyCalculator = this.beatmap.ruleset?.createDifficultyCalculator(this.beatmap as Beatmap<any>);
+      if (difficultyCalculator) {
+        const [{ starRating }] = difficultyCalculator.calculate();
+        this.#starRating = starRating;
+      }
+      else {
+        this.#starRating = null;
+      }
+    }
   }
 
   get settings(): BeatmapSettings {

@@ -1,6 +1,7 @@
 import type { Bindable, ClickEvent, HoverEvent, HoverLostEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Beatmap } from '../../../beatmap/Beatmap';
 import type { Issue } from '../../../verifier/Issue';
+import type { VerifierBeatmap } from '../../../verifier/VerifierBeatmap';
 import { Action, Anchor, Axes, BindableBoolean, CompositeDrawable, DrawableSprite, FastRoundedBox, FillDirection, FillFlowContainer } from 'osucad-framework';
 import { ModdingConfigManager } from '../../../config/ModdingConfigManager';
 import { ModdingSettings } from '../../../config/ModdingSettings';
@@ -13,7 +14,7 @@ import { IssueSectionContent } from './IssueSectionContent';
 
 export class IssueSection extends CompositeDrawable {
   constructor(
-    readonly beatmap: Beatmap | null,
+    readonly beatmap: VerifierBeatmap | null,
     readonly activeBeatmap: Bindable<Beatmap | null>,
   ) {
     super();
@@ -108,7 +109,7 @@ export class IssueSection extends CompositeDrawable {
   }
 
   override onClick(e: ClickEvent): boolean {
-    this.activeBeatmap.value = this.beatmap;
+    this.activeBeatmap.value = this.beatmap?.beatmap ?? null;
     return true;
   }
 

@@ -4,11 +4,12 @@ import type { FileStore } from '../beatmap/io/FileStore';
 import type { HitSample } from '../hitsounds/HitSample';
 import type { IResourcesProvider } from '../io/IResourcesProvider';
 import type { BeatmapSkin } from '../skinning/BeatmapSkin';
+import type { VerifierBeatmap } from './VerifierBeatmap';
 import { OsuHitObject } from '../rulesets/osu/hitObjects/OsuHitObject';
 
 export class VerifierBeatmapSet {
   constructor(
-    readonly beatmaps: readonly IBeatmap<any>[],
+    readonly beatmaps: readonly VerifierBeatmap<any>[],
     readonly fileStore: FileStore,
     readonly skin: BeatmapSkin,
     readonly resourcesProvider: IResourcesProvider,
