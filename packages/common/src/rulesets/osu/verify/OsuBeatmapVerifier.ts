@@ -27,6 +27,7 @@ import { CheckLuminosity } from './settings/CheckLuminosity';
 import { CheckTickRate } from './settings/CheckTickRate';
 import { CheckCloseOverlap } from './spread/CheckCloseOverlap';
 import { CheckMultipleReverse } from './spread/CheckMultipleReverse';
+import { CheckShortSliders } from './spread/CheckShortSliders';
 
 export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
   override get beatmapChecks(): BeatmapCheck<OsuHitObject>[] {
@@ -47,6 +48,7 @@ export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
       new CheckTickRate(),
       new CheckConcurrentControlPoints(),
       new CheckMultipleReverse(),
+      new CheckShortSliders(),
     ];
   }
 
