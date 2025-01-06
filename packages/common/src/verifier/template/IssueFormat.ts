@@ -29,10 +29,11 @@ export class IssueFormat {
 
     if (parts.every(part => typeof part === 'string')) {
       yield new TextBlock({
-        text: this.tokens.join(''),
+        text: parts.join(''),
         fontSize: 13,
         color: OsucadColors.text,
       });
+      return;
     }
 
     for (const part of this.getParts(args)) {
@@ -69,7 +70,7 @@ export class IssueFormat {
           parts.push(value);
         }
         else {
-          currentString += `${value}`;
+          currentString += value;
         }
       }
     }
