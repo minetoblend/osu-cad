@@ -29,6 +29,7 @@ import { CheckCloseOverlap } from './spread/CheckCloseOverlap';
 import { CheckMultipleReverse } from './spread/CheckMultipleReverse';
 import { CheckShortSliders } from './spread/CheckShortSliders';
 import { CheckSpaceVariation } from './spread/CheckSpaceVariation';
+import { CheckSpinnerRecovery } from './spread/CheckSpinnerRecovery';
 
 export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
   override get beatmapChecks(): BeatmapCheck<OsuHitObject>[] {
@@ -51,6 +52,7 @@ export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
       new CheckMultipleReverse(),
       new CheckShortSliders(),
       new CheckSpaceVariation(),
+      new CheckSpinnerRecovery(),
     ];
   }
 
