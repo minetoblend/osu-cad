@@ -8,6 +8,7 @@ import type { DrawableRuleset } from '../DrawableRuleset';
 import { InputKey, KeyBinding, KeyCombination } from 'osucad-framework';
 import { StableSkin } from '../../skinning/stable/StableSkin';
 import { Ruleset } from '../Ruleset';
+import { ComboProcessor } from './ComboProcessor';
 import { OsuDifficultyCalculator } from './difficulty/OsuDifficultyCalculator';
 import { DrawableOsuEditorRuleset } from './DrawableOsuEditorRuleset';
 import { DrawableOsuRuleset } from './DrawableOsuRuleset';
@@ -52,6 +53,7 @@ export class OsuRuleset extends Ruleset {
     super.postProcessBeatmap(beatmap);
 
     new StackingProcessor().applyToBeatmap(beatmap);
+    new ComboProcessor().applyToBeatmap(beatmap);
   }
 
   override createDifficultyCalculator(beatmap: Beatmap): DifficultyCalculator<any> {
