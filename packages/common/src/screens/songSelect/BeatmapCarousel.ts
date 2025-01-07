@@ -119,7 +119,7 @@ export class BeatmapCarousel extends CompositeDrawable {
       this.#updateItem(item);
 
       item.parallax = this.#parallaxEnabled.value
-        ? (this.#scroll.current - item.y) / this.drawSize.y
+        ? (this.#scroll.current - item.y) / this.drawHeight - 0.5
         : 0;
 
       for (const beatmap of item.beatmaps) {
