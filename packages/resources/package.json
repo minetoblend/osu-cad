@@ -6,7 +6,6 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@assetpack/core": "^1.2.3"
   },
   "type": "module",
   "main": "./index.js",
@@ -14,5 +13,6 @@
   "typings": "./index.d.ts",
   "private": true,
   "devDependencies": {
+    "@assetpack/core": "^1.2.3"
   }
 }
