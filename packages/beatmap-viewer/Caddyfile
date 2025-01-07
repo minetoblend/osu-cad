@@ -15,6 +15,7 @@
   handle @notProxy {
     root * /srv
     try_files {path} /index.html
+    Cache-Control "public, max-age=604800, must-revalidate"
     file_server
   }
 }
