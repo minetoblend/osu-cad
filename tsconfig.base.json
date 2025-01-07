@@ -17,6 +17,7 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": false,
+    "resolveJsonModule": true,
     "allowImportingTsExtensions": false,
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
