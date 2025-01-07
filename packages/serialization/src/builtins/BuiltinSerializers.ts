@@ -4,7 +4,6 @@ import type { Encoder } from '../encoder/Encoder';
 import type { Serializer } from '../Serializer';
 import { listSerialDescriptor, nullableDescriptor, primitiveSerialDescriptor } from '../descriptor/SerialDescriptors';
 import { PrimitiveKind } from '../descriptor/SerialKind';
-import { T } from "vitest/dist/reporters-yx5ZTtEV";
 
 export const BooleanSerializer: Serializer<boolean> = {
   descriptor: primitiveSerialDescriptor('boolean', PrimitiveKind.Boolean),
@@ -168,7 +167,7 @@ export class ListSerializer<T> implements Serializer<T[]> {
         result.push(decoder.decodeSerializableElement(this.descriptor, i, this.elementSerializer));
       }
       return result;
-    })
+    });
   }
 
   serialize(encoder: Encoder, value: T[]): void {
@@ -176,6 +175,6 @@ export class ListSerializer<T> implements Serializer<T[]> {
       for (let i = 0; i < value.length; i++) {
         encoder.encodeSerializableElement(this.descriptor, i, this.elementSerializer, value[i]);
       }
-    })
+    });
   }
 }

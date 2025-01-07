@@ -1,13 +1,13 @@
+import type { CompositeDecoder } from './decoder';
 import type { SerialDescriptor } from './descriptor/SerialDescriptor';
 import type { Encoder } from './encoder/Encoder';
 import type { Constructor } from './PolymorphicSerializer';
 import type { Serializer } from './Serializer';
-import { StringSerializer } from './builtins/BuildinSerializers';
+import { StringSerializer } from './builtins/BuiltinSerializers';
 import { buildSerialDescriptor } from './descriptor/SerialDescriptors';
 import { PolymorphicKind, SerialKind } from './descriptor/SerialKind';
 import { AbstractPolymorphicSerializer } from './PolymorphicSerializer';
 import { Lazy } from './utils/Lazy';
-import { CompositeDecoder } from "./decoder";
 
 export class SealedClassSerializer<T extends object> extends AbstractPolymorphicSerializer<T> {
   constructor(

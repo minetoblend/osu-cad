@@ -1,7 +1,7 @@
 import type { Decoder } from '../decoder/Decoder';
 import type { Encoder } from '../encoder/Encoder';
 import type { Serializer } from '../Serializer';
-import { Float32Serializer, Float64Serializer } from '../builtins/BuildinSerializers';
+import { Float32Serializer, Float64Serializer } from '../builtins/BuiltinSerializers';
 import { buildClassSerialDescriptor } from '../descriptor/SerialDescriptors';
 import { Json } from './Json';
 import { JsonTreeDecoder } from './JsonDecoder';

@@ -1,1 +1,1 @@
-export * from './BuildinSerializers';
+export * from './BuiltinSerializers';
