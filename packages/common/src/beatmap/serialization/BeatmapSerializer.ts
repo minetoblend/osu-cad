@@ -42,7 +42,8 @@ export class BeatmapSerializer implements Serializer<Beatmap> {
 
       const hitObjects = decoder.decodeSerializableElement(descriptor, 4, new ListSerializer(PolymorphicHitObjectSerializer.instance));
 
-      beatmap.hitObjects.addRange(hitObjects as any);
+      for (const hitObject of hitObjects)
+        beatmap.hitObjects.add(hitObject);
 
       return beatmap;
     });

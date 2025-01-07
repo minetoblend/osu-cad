@@ -1,6 +1,6 @@
 import { LazyTexture } from "./LazyTexture";
 
-import texture from './assets/defaultSkin.webp'
+import texture from './assets/textures/defaultSkin.webp'
 import { Spritesheet } from "pixi.js";
 
 import spriteSheetMeta from './assets/textures/defaultSkin.webp.json'

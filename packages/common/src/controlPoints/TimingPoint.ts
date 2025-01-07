@@ -1,14 +1,7 @@
-import type { Patchable } from '../commands/Patchable';
 import type { Property } from '../crdt/Property';
-import { PatchUtils } from '../commands/PatchUtils';
 import { ControlPoint } from './ControlPoint';
 
-export interface TimingPointPatch {
-  beatLength: number;
-  meter: number;
-}
-
-export class TimingPoint extends ControlPoint implements Patchable<TimingPointPatch> {
+export class TimingPoint extends ControlPoint {
   constructor(
     time: number,
     beatLength: number,
@@ -88,16 +81,5 @@ export class TimingPoint extends ControlPoint implements Patchable<TimingPointPa
     const clone = new TimingPoint(this.time, this.beatLength, this.meter);
     clone.copyFrom(this);
     return clone;
-  }
-
-  applyPatch(patch: Partial<TimingPointPatch>) {
-    PatchUtils.applyPatch(patch, this);
-  }
-
-  asPatch(): TimingPointPatch {
-    return {
-      beatLength: this.beatLength,
-      meter: this.meter,
-    };
   }
 }

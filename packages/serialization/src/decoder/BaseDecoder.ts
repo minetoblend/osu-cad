@@ -71,9 +71,9 @@ export abstract class BaseDecoder implements Decoder, CompositeDecoder {
 
   abstract decodeUint8Element(descriptor: SerialDescriptor, index: number): number;
 
-  abstract endStructure(descriptor: SerialDescriptor);
+  abstract endStructure(descriptor: SerialDescriptor): void;
 
-  decodeStructure<T>(descriptor: SerialDescriptor, fn: (CompositeDecoder) => T): T {
+  decodeStructure<T>(descriptor: SerialDescriptor, fn: (decoder: CompositeDecoder) => T): T {
     const decoder = this.beginStructure(descriptor);
     const result = fn(decoder);
     decoder.endStructure(descriptor);

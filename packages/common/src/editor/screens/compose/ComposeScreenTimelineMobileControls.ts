@@ -1,6 +1,6 @@
 import type { ReadonlyDependencyContainer } from 'osucad-framework';
-import { Toggle } from '@osucad/editor/userInterface/Toggle';
 import { Axes, Box, CompositeDrawable, resolved } from 'osucad-framework';
+import { Toggle } from '../../../userInterface/Toggle';
 import { ComposeScreenTimeline } from './ComposeScreenTimeline';
 
 export class ComposeScreenTimelineMobileControls extends CompositeDrawable {

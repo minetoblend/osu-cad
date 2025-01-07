@@ -1,10 +1,8 @@
 import type { ClassSerialDescriptorBuilder, CompositeDecoder, CompositeEncoder } from '@osucad/serialization';
 import type { IVec2 } from 'osucad-framework';
-import type { IPatchable } from '../../../commands/IPatchable';
 import type { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 import type { HitWindows } from '../../../hitObjects/HitWindows';
 import type { IHasComboInformation } from '../../../hitObjects/IHasComboInformation';
-import type { SerializedOsuHitObject } from '../../../serialization/HitObjects';
 import type { ISkin } from '../../../skinning';
 import type { HitCircle } from './HitCircle';
 import type { Slider } from './Slider';
@@ -20,10 +18,9 @@ import { HitSample } from '../../../hitsounds/HitSample';
 import { HitSound, HitSoundSerializer } from '../../../hitsounds/HitSound';
 import { SampleSet } from '../../../hitsounds/SampleSet';
 import { SampleType } from '../../../hitsounds/SampleType';
-import { deserializeHitSound } from '../../../serialization/HitSound';
 import { OsuHitWindows } from './OsuHitWindows';
 
-export abstract class OsuHitObject extends HitObject implements IHasComboInformation, IPatchable<SerializedOsuHitObject> {
+export abstract class OsuHitObject extends HitObject implements IHasComboInformation {
   static readonly object_radius = 64;
 
   static readonly object_dimensions = new Vec2(OsuHitObject.object_radius * 2);
@@ -275,19 +272,6 @@ export abstract class OsuHitObject extends HitObject implements IHasComboInforma
         ),
       );
     }
-  }
-
-  applyPatch(patch: Partial<SerializedOsuHitObject>) {
-    if (patch.startTime !== undefined)
-      this.startTime = patch.startTime;
-    if (patch.position !== undefined)
-      this.position = Vec2.from(patch.position);
-    if (patch.comboOffset !== undefined)
-      this.comboOffset = patch.comboOffset;
-    if (patch.newCombo !== undefined)
-      this.newCombo = patch.newCombo;
-    if (patch.hitSound)
-      this.hitSound = deserializeHitSound(patch.hitSound);
   }
 
   isHitCircle(): this is HitCircle {

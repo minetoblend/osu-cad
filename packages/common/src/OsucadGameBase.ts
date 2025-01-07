@@ -1,10 +1,9 @@
 import type { Container, Drawable, PIXIRenderer, ReadonlyDependencyContainer } from 'osucad-framework';
-import { Fit, ScalingContainer } from '@osucad/editor/editor/ScalingContainer';
-import { NotificationOverlay } from '@osucad/editor/notifications/NotificationOverlay';
 import { OsucadIcons } from '@osucad/resources';
 import { AudioManager, Axes, Box, DependencyContainer, Game, IRenderer, provide, resolved } from 'osucad-framework';
 import { AudioMixer } from './audio/AudioMixer';
 import { OsucadConfigManager } from './config/OsucadConfigManager';
+import { Fit, ScalingContainer } from './drawables/ScalingContainer';
 import { UIFonts } from './drawables/UIFonts';
 import { EditorActionContainer } from './editor/EditorActionContainer';
 import { GlobalCursorDisplay } from './graphics/cursor/GlobalCursorDisplay';
@@ -55,10 +54,6 @@ export abstract class OsucadGameBase extends Game implements IResourcesProvider 
         }),
       }),
     );
-
-    const notificationOverlay = new NotificationOverlay();
-    super.content.add(notificationOverlay);
-    this.#dependencies.provide(NotificationOverlay, notificationOverlay);
 
     this.addParallelLoad(OsucadIcons.load());
     this.addParallelLoad(this.#loadFonts());

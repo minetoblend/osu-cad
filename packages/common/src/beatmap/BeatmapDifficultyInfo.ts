@@ -1,18 +1,6 @@
-import type { CommandContext } from '../commands/CommandContext';
-import type { Patchable } from '../commands/Patchable';
 import { Action, Bindable, BindableNumber } from 'osucad-framework';
-import { PatchUtils } from '../commands/PatchUtils';
 
-export interface BeatmapDifficultyPatch {
-  hpDrainRate: number;
-  circleSize: number;
-  approachRate: number;
-  overallDifficulty: number;
-  sliderMultiplier: number;
-  sliderTickRate: number;
-}
-
-export class BeatmapDifficultyInfo implements PlainBeatmapDifficultyInfo, Patchable<BeatmapDifficultyPatch> {
+export class BeatmapDifficultyInfo implements PlainBeatmapDifficultyInfo {
   constructor() {
     for (const key in this) {
       const value = this[key];
@@ -149,14 +137,6 @@ export class BeatmapDifficultyInfo implements PlainBeatmapDifficultyInfo, Patcha
     const broken_gamefield_rounding_allowance = 1.00041;
 
     return (1.0 - 0.7 * BeatmapDifficultyInfo.difficultyRange(this.circleSize, -1, 0, 1)) / 2 * (applyFudge ? broken_gamefield_rounding_allowance : 1);
-  }
-
-  applyPatch(patch: Partial<BeatmapDifficultyPatch>, ctx: CommandContext) {
-    PatchUtils.applyPatch(patch, this);
-  }
-
-  asPatch(): BeatmapDifficultyPatch {
-    return this.toPlain();
   }
 }
 

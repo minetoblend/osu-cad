@@ -190,9 +190,9 @@ export abstract class TaggedEncoder<Tag> extends BaseEncoder implements Encoder,
   }
 
   protected popTag(): Tag {
-    if (this.tagStack.length === 0) {
+    if (this.tagStack.length === 0)
       throw new Error('No tag to pop');
-    }
-    return this.tagStack.pop();
+
+    return this.tagStack.pop()!;
   }
 }

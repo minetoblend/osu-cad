@@ -12,7 +12,6 @@ import { Ruleset } from '../rulesets/Ruleset';
 import { OsucadScreen } from '../screens/OsucadScreen';
 import { BeatmapSkin } from '../skinning/BeatmapSkin';
 import { RulesetSkinProvidingContainer } from '../skinning/RulesetSkinProvidingContainer';
-import { CommandManager } from './CommandManager';
 import { EditorBackground } from './EditorBackground';
 import { EditorBeatmap } from './EditorBeatmap';
 import { EditorClock } from './EditorClock';
@@ -52,7 +51,6 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
 
     this.#dependencies.provide(EditorBeatmap, this.editorBeatmap);
     this.#dependencies.provide(IBeatmap, this.beatmap);
-    this.#dependencies.provide(CommandManager, this.editorBeatmap.commandManager);
     this.#dependencies.provide(ControlPointInfo, this.editorBeatmap.controlPoints);
     this.#dependencies.provide(HitObjectList, this.beatmap.hitObjects);
     this.#dependencies.provide(UpdateHandler, this.editorBeatmap.updateHandler);

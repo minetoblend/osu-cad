@@ -2,9 +2,9 @@ import type { Bindable, DragEndEvent, DragEvent, DragStartEvent, Drawable, Hover
 import type { ColorSource } from 'pixi.js';
 import type { ControlPoint } from '../../../controlPoints/ControlPoint';
 import { Anchor, Axes, dependencyLoader, Key, MouseButton, resolved } from 'osucad-framework';
-import { TextBox } from '../../../../../editor/src/userInterface/TextBox';
 import { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 import { UpdateHandler } from '../../../crdt/UpdateHandler';
+import { TextBox } from '../../../userInterface/TextBox';
 import { LayeredTimeline } from '../../ui/timeline/LayeredTimeline';
 import { Timeline } from '../../ui/timeline/Timeline';
 import { TimelinePart } from '../../ui/timeline/TimelinePart';

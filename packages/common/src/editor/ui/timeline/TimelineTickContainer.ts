@@ -68,7 +68,7 @@ export class TimelineTickContainer extends CompositeDrawable {
     for (let i = 0; i < ticks.length; i++) {
       const tick = this.#tickContainer.children[i];
       const tickInfo = ticks[i];
-      tick.x = this.timeline.timeToPosition(tickInfo.time);
+      tick.x = this.timeline.positionAtTime(tickInfo.time);
 
       this.updateTick(tick, tickInfo);
     }

@@ -1,8 +1,6 @@
 import type { ClassSerialDescriptorBuilder, CompositeDecoder, CompositeEncoder } from '@osucad/serialization';
-import type { IPatchable } from '../../../commands/IPatchable';
 import type { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 import type { IHasDuration } from '../../../hitObjects/IHasDuration';
-import type { SerializedSpinner } from '../../../serialization/HitObjects';
 import { Float64Serializer } from '@osucad/serialization';
 import { Vec2 } from 'osucad-framework';
 import { polymorphicHitObjectSerializers } from '../../../hitObjects/HitObject';
@@ -11,7 +9,7 @@ import { SampleSet } from '../../../hitsounds/SampleSet';
 import { SampleType } from '../../../hitsounds/SampleType';
 import { OsuHitObject, OsuHitObjectSerializer } from './OsuHitObject';
 
-export class Spinner extends OsuHitObject implements IHasDuration, IPatchable<SerializedSpinner> {
+export class Spinner extends OsuHitObject implements IHasDuration {
   readonly hasDuration = true;
 
   #duration = this.property('duration', 0);
@@ -38,13 +36,6 @@ export class Spinner extends OsuHitObject implements IHasDuration, IPatchable<Se
 
   override get stackOffset() {
     return Vec2.zero();
-  }
-
-  override applyPatch(patch: Partial<SerializedSpinner>) {
-    super.applyPatch(patch);
-
-    if (patch.duration !== undefined)
-      this.duration = patch.duration;
   }
 
   override isSpinner(): this is Spinner {

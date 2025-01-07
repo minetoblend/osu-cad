@@ -2,7 +2,6 @@ import type { Drawable, IKeyBindingHandler, KeyBindingAction, SpriteText, Vec2 }
 import { Anchor, Axes, Color, Container, dependencyLoader, Direction, DrawableMenuItem, FastRoundedBox, MenuItem, PlatformAction, resolved } from 'osucad-framework';
 import { OsucadSpriteText } from '../../drawables/OsucadSpriteText';
 import { OsucadColors } from '../../OsucadColors';
-import { CommandManager } from '../CommandManager';
 import { Editor } from '../Editor';
 import { EditorMenu } from './EditorMenu';
 
@@ -55,9 +54,6 @@ export class EditorMenubar extends EditorMenu implements IKeyBindingHandler<Plat
   protected override updateSize(newSize: Vec2) {
     this.size = newSize;
   }
-
-  @resolved(CommandManager)
-  commandHandler!: CommandManager;
 
   protected override createDrawableMenuItem(item: MenuItem): DrawableMenuItem {
     return new DrawableEditorMenubarItem(item);

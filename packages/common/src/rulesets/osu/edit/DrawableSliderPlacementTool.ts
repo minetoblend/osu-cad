@@ -1,8 +1,8 @@
 import type { Drawable, MouseDownEvent, MouseMoveEvent, MouseUpEvent, ReadonlyDependencyContainer } from 'osucad-framework';
-import { Toggle } from '@osucad/editor/userInterface/Toggle';
 import { Anchor, Axes, BindableBoolean, FillFlowContainer, MouseButton, provide, Vec2 } from 'osucad-framework';
 import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
 import { OsucadColors } from '../../../OsucadColors';
+import { Toggle } from '../../../userInterface/Toggle';
 import { PathPoint } from '../hitObjects/PathPoint';
 import { PathType } from '../hitObjects/PathType';
 import { Slider } from '../hitObjects/Slider';

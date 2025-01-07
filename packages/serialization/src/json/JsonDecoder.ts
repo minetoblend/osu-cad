@@ -2,7 +2,7 @@ import type { SerialDescriptor } from '../descriptor/SerialDescriptor';
 import type { DeserializationStrategy } from '../Serializer';
 import type { Json } from './Json';
 import type { JsonElement, JsonPrimitive } from './JsonElement';
-import { BooleanSerializer } from '../builtins/BuildinSerializers';
+import { BooleanSerializer } from '../builtins/BuiltinSerializers';
 import { CompositeDecoder } from '../decoder/Decoder';
 import { NamedValueDecoder } from '../decoder/TaggedDecoder';
 import { PolymorphicKind, StructureKind } from '../descriptor/SerialKind';
@@ -40,7 +40,7 @@ export abstract class AbstractJsonTreeDecoder extends NamedValueDecoder {
 
     const actualSerializer = (deserializer as AbstractPolymorphicSerializer<any>).findPolymorphicSerializerByName(this, type);
 
-    return this.json.readPolymorphicJson(discriminator, jsonTree, actualSerializer);
+    return this.json.readPolymorphicJson(discriminator, jsonTree as any, actualSerializer);
   }
 
   decodeJsonElement() {
@@ -225,7 +225,7 @@ export class JsonTreeDecoder extends AbstractJsonTreeDecoder {
         name,
         value: this.value,
       });
-      if ((name in this.value || this.absenceIsNull(descriptor, index))
+      if ((name in (this.value as any) || this.absenceIsNull(descriptor, index))
       // && (!configuration.coerceInputValues || !coerceInputValue(descriptor, index, name))
       ) {
         return index;
@@ -253,7 +253,7 @@ export class JsonTreeDecoder extends AbstractJsonTreeDecoder {
   }
 
   protected override currentElement(tag: string): JsonElement {
-    return this.value[tag];
+    return (this.value as any)[tag];
   }
 
   override beginStructure(descriptor: SerialDescriptor): CompositeDecoder {
@@ -281,11 +281,7 @@ export class JsonListDecoder extends AbstractJsonTreeDecoder {
   private currentIndex = -1;
 
   decodeElementIndex(descriptor: SerialDescriptor): number {
-    while (this.currentIndex < this.length - 1) {
-      this.currentIndex++;
-      return this.currentIndex;
-    }
-    return CompositeDecoder.DECODE_DONE;
+    return this.currentIndex++;
   }
 
   protected currentElement(tag: string): JsonElement {

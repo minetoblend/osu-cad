@@ -1,7 +1,7 @@
 export type JsonElement =
   | JsonPrimitive
-  | Record<string, JsonElement>
-  | Array<JsonElement>;
+  | { [key: string]: JsonElement }
+  | JsonElement[];
 
 export type JsonPrimitive
   = null

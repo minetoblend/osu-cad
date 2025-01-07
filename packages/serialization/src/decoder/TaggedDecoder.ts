@@ -62,7 +62,7 @@ export abstract class TaggedDecoder<Tag> extends BaseDecoder {
     const tag = this.currentTagOrNull;
     if (!tag)
       return false;
-    return this.decodeTaggedNotNullMark();
+    return this.decodeTaggedNotNullMark(tag);
   }
 
   override decodeNull(): null {
@@ -163,8 +163,7 @@ export abstract class TaggedDecoder<Tag> extends BaseDecoder {
 
   decodeNullableSerializableElement<T>(descriptor: SerialDescriptor, index: number, deserializer: DeserializationStrategy<T>, previousValue?: T): T | null {
     return this.tagBlock(this.getTag(descriptor, index), () =>
-      this.decodeIfNullable(deserializer, () => this.decodeSerializableValue(deserializer, previousValue))
-    );
+      this.decodeIfNullable(deserializer, () => this.decodeSerializableValue(deserializer, previousValue)));
   }
 
   private flag = false;

@@ -137,6 +137,14 @@ export class Timeline extends ZoomableScrollContainer {
     return x / this.content.drawWidth * this.editorClock.trackLength;
   }
 
+  get startTime() {
+    return this.timeAtPosition(this.current);
+  }
+
+  get endTime() {
+    return this.timeAtPosition(this.current + this.drawWidth);
+  }
+
   positionAtTime(time: number): number {
     return time / this.editorClock.trackLength * this.content.drawWidth;
   }

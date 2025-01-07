@@ -5,7 +5,7 @@ import { DrawableModdingSelectTool } from './DrawableModdingSelectTool';
 
 export class ModdingSelectTool implements IComposeTool {
   readonly title = 'Select';
-  readonly icon = getIcon('select@2x');
+  readonly icon = getIcon('select');
   createDrawableTool(): DrawableComposeTool {
     return new DrawableModdingSelectTool();
   }

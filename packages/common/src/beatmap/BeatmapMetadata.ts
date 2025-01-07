@@ -1,20 +1,6 @@
-import type { CommandContext } from '../commands/CommandContext';
-import type { Patchable } from '../commands/Patchable';
 import { Bindable } from 'osucad-framework';
-import { PatchUtils } from '../commands/PatchUtils';
 
-export interface BeatmapMetadataPatch {
-  artist: string;
-  artistUnicode: string;
-  title: string;
-  titleUnicode: string;
-  source: string;
-  creator: string;
-  difficultyName: string;
-  previewTime: number;
-}
-
-export class BeatmapMetadata implements Patchable<BeatmapMetadataPatch> {
+export class BeatmapMetadata {
   artistBindable = new Bindable('');
 
   get artist() {
@@ -108,34 +94,6 @@ export class BeatmapMetadata implements Patchable<BeatmapMetadataPatch> {
   osuWebId = 0;
 
   osuWebSetId = 0;
-
-  applyPatch(patch: Partial<BeatmapMetadataPatch>, ctx: CommandContext) {
-    PatchUtils.applyPatch(patch, this);
-  }
-
-  asPatch(): BeatmapMetadataPatch {
-    const {
-      artist,
-      artistUnicode,
-      title,
-      titleUnicode,
-      source,
-      creator,
-      difficultyName,
-      previewTime,
-    } = this;
-
-    return {
-      artist,
-      artistUnicode,
-      title,
-      titleUnicode,
-      source,
-      creator,
-      difficultyName,
-      previewTime,
-    };
-  }
 
   get displayName() {
     return `${this.artist} - ${this.title} [${this.difficultyName}]`;

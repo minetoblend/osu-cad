@@ -9,41 +9,41 @@ export abstract class BaseEncoder implements Encoder, CompositeEncoder {
 
   abstract beginStructure(descriptor: SerialDescriptor): CompositeEncoder;
 
-  encodeStructure(descriptor: SerialDescriptor, fn: (CompositeEncoder) => void) {
+  encodeStructure(descriptor: SerialDescriptor, fn: (encoder: CompositeEncoder) => void) {
     const composite = this.beginStructure(descriptor);
     fn(composite);
     composite.endStructure(descriptor);
   }
 
-  abstract encodeBoolean(value: boolean);
+  abstract encodeBoolean(value: boolean): void;
 
-  abstract encodeBooleanElement(descriptor: SerialDescriptor, index: number, value: boolean);
+  abstract encodeBooleanElement(descriptor: SerialDescriptor, index: number, value: boolean): void;
 
-  abstract encodeFloat32(value: number);
+  abstract encodeFloat32(value: number): void;
 
-  abstract encodeFloat32Element(descriptor: SerialDescriptor, index: number, value: number);
+  abstract encodeFloat32Element(descriptor: SerialDescriptor, index: number, value: number): void;
 
-  abstract encodeFloat64(value: number);
+  abstract encodeFloat64(value: number): void;
 
-  abstract encodeFloat64Element(descriptor: SerialDescriptor, index: number, value: number);
+  abstract encodeFloat64Element(descriptor: SerialDescriptor, index: number, value: number): void;
 
-  abstract encodeInt16(value: number);
+  abstract encodeInt16(value: number): void;
 
-  abstract encodeInt16Element(descriptor: SerialDescriptor, index: number, value: number);
+  abstract encodeInt16Element(descriptor: SerialDescriptor, index: number, value: number): void;
 
-  abstract encodeInt32(value: number);
+  abstract encodeInt32(value: number): void;
 
-  abstract encodeInt32Element(descriptor: SerialDescriptor, index: number, value: number);
+  abstract encodeInt32Element(descriptor: SerialDescriptor, index: number, value: number): void;
 
-  abstract encodeInt8(value: number);
+  abstract encodeInt8(value: number): void;
 
-  abstract encodeInt8Element(descriptor: SerialDescriptor, index: number, value: number);
+  abstract encodeInt8Element(descriptor: SerialDescriptor, index: number, value: number): void;
 
-  abstract encodeNotNullMark();
+  abstract encodeNotNullMark(): void;
 
-  abstract encodeNull();
+  abstract encodeNull(): void;
 
-  abstract encodeNullableSerializableElement<T>(descriptor: SerialDescriptor, index: number, serializer: SerializationStrategy<T>, value: T | null);
+  abstract encodeNullableSerializableElement<T>(descriptor: SerialDescriptor, index: number, serializer: SerializationStrategy<T>, value: T | null): void;
 
   encodeSerializableValue<T>(serializer: SerializationStrategy<T>, value: T) {
     serializer.serialize(this, value);
@@ -58,23 +58,23 @@ export abstract class BaseEncoder implements Encoder, CompositeEncoder {
     }
   }
 
-  abstract encodeSerializableElement<T>(descriptor: SerialDescriptor, index: number, serializer: SerializationStrategy<T>, value: T);
+  abstract encodeSerializableElement<T>(descriptor: SerialDescriptor, index: number, serializer: SerializationStrategy<T>, value: T): void;
 
-  abstract encodeString(value: string);
+  abstract encodeString(value: string): void;
 
-  abstract encodeStringElement(descriptor: SerialDescriptor, index: number, value: string);
+  abstract encodeStringElement(descriptor: SerialDescriptor, index: number, value: string): void;
 
-  abstract encodeUint16(value: number);
+  abstract encodeUint16(value: number): void;
 
-  abstract encodeUint16Element(descriptor: SerialDescriptor, index: number, value: number);
+  abstract encodeUint16Element(descriptor: SerialDescriptor, index: number, value: number): void;
 
-  abstract encodeUint32(value: number);
+  abstract encodeUint32(value: number): void;
 
-  abstract encodeUint32Element(descriptor: SerialDescriptor, index: number, value: number);
+  abstract encodeUint32Element(descriptor: SerialDescriptor, index: number, value: number): void;
 
-  abstract encodeUint8(value: number);
+  abstract encodeUint8(value: number): void;
 
-  abstract encodeUint8Element(descriptor: SerialDescriptor, index: number, value: number);
+  abstract encodeUint8Element(descriptor: SerialDescriptor, index: number, value: number): void;
 
-  abstract endStructure(descriptor: SerialDescriptor);
+  abstract endStructure(descriptor: SerialDescriptor): void;
 }

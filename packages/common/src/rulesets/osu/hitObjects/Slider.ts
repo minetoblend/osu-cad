@@ -1,13 +1,12 @@
 import type { ClassSerialDescriptorBuilder, CompositeDecoder, CompositeEncoder } from '@osucad/serialization';
 import type { Bindable, IVec2, ReadonlyBindable, ValueChangedEvent } from 'osucad-framework';
 import type { BeatmapDifficultyInfo } from '../../../beatmap/BeatmapDifficultyInfo';
-import type { IPatchable } from '../../../commands/IPatchable';
 import type { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 import type { AbstractCrdt } from '../../../crdt/AbstractCrdt';
 import type { IHasRepeats } from '../../../hitObjects/IHasRepeats';
 import type { IHasSliderVelocity } from '../../../hitObjects/IHasSliderVelocity';
 import type { HitSound } from '../../../hitsounds/HitSound';
-import type { SerializedSlider } from '../../../serialization/HitObjects';
+import type { PathPoint } from './PathPoint';
 import { Float32Serializer, listSerialDescriptor, ListSerializer, NullableSerializer, Uint16Serializer } from '@osucad/serialization';
 import { CachedValue, Vec2 } from 'osucad-framework';
 import { polymorphicHitObjectSerializers } from '../../../hitObjects/HitObject';
@@ -17,9 +16,8 @@ import { HitSample } from '../../../hitsounds/HitSample';
 import { HitSoundSerializer } from '../../../hitsounds/HitSound';
 import { SampleSet } from '../../../hitsounds/SampleSet';
 import { SampleType } from '../../../hitsounds/SampleType';
-import { deserializeHitSound } from '../../../serialization/HitSound';
 import { OsuHitObject, OsuHitObjectSerializer } from './OsuHitObject';
-import { PathPoint, PathPointSerialDescriptor, PathPointSerializer } from './PathPoint';
+import { PathPointSerialDescriptor, PathPointSerializer } from './PathPoint';
 import { PathType } from './PathType';
 import { SliderEventGenerator } from './SliderEventGenerator';
 import { SliderHeadCircle } from './SliderHeadCircle';
@@ -29,7 +27,7 @@ import { SliderSelection } from './SliderSelection';
 import { SliderTailCircle } from './SliderTailCircle';
 import { SliderTick } from './SliderTick';
 
-export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepeats, IPatchable<SerializedSlider> {
+export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepeats {
   constructor() {
     super();
 
@@ -381,21 +379,6 @@ export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepe
           }));
       }
     }
-  }
-
-  override applyPatch(patch: Partial<SerializedSlider>) {
-    super.applyPatch(patch);
-
-    if (patch.repeatCount !== undefined)
-      this.repeatCount = patch.repeatCount;
-    if (patch.velocityOverride !== undefined)
-      this.sliderVelocityOverride = patch.velocityOverride;
-    if (patch.controlPoints !== undefined)
-      this.controlPoints = patch.controlPoints.map(p => new PathPoint(Vec2.from(p.position), p.type));
-    if (patch.expectedDistance !== undefined)
-      this.expectedDistance = patch.expectedDistance;
-    if (patch.hitSounds !== undefined)
-      this.hitSounds = patch.hitSounds.map(deserializeHitSound);
   }
 
   override isSlider(): this is Slider {

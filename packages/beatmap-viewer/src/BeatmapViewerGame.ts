@@ -1,7 +1,6 @@
 import type { OsucadScreenStack } from '@osucad/common';
 import type { DependencyContainer, ReadonlyDependencyContainer } from 'osucad-framework';
-import { ISkinSource, OsucadGameBase, OsuRuleset, RulesetStore, SkinManager } from '@osucad/common';
-import { UISamples } from '@osucad/editor/UISamples';
+import { ISkinSource, OsucadGameBase, OsuRuleset, RulesetStore, SkinManager, UISamples } from '@osucad/common';
 import { RenderTarget } from 'pixi.js';
 import { Router } from './screens/Router';
 

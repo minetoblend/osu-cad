@@ -171,8 +171,8 @@ class DrawableWaveformChunk extends Drawable {
   override update() {
     super.update();
 
-    this.x = this.timeline.timeToPosition(this.startTime - 35);
-    this.width = this.timeline.durationToSize(this.endTime - this.startTime);
+    this.x = this.timeline.positionAtTime(this.startTime - 35);
+    this.width = this.timeline.positionAtTime(this.endTime - this.startTime);
 
     if (!this.#drawSizeBacking.isValid) {
       this.#graphics.scale.set(

@@ -1,18 +1,9 @@
+import type { Decoder, Encoder, SerialDescriptor, Serializer, SerialKind } from '@osucad/serialization';
 import type { IVec2 } from 'osucad-framework';
-import { Vec2 } from 'osucad-framework';
 import type { Matrix } from 'pixi.js';
+import { Float32Serializer, nullableDescriptor, StringSerializer, StructureKind } from '@osucad/serialization';
+import { Vec2 } from 'osucad-framework';
 import { PathType } from './PathType';
-import {
-  Decoder,
-  Encoder,
-  Float32Serializer,
-  nullableDescriptor,
-  SerialDescriptor,
-  Serializer,
-  SerialKind, StringSerializer,
-  StructureKind,
-  Uint8Serializer
-} from "@osucad/serialization";
 
 export interface IPathPoint {
   position: IVec2;
@@ -76,18 +67,18 @@ export class PathPointSerialDescriptor implements SerialDescriptor {
   readonly serialName: string = 'PathPoint';
 
   getElementDescriptor(index: number): SerialDescriptor {
-    if (index >= 0 && index < 2)
-      return Float32Serializer.descriptor;
-    if (index == 0)
-      return nullableDescriptor(StringSerializer.descriptor)
+    if (index === 0)
+      return nullableDescriptor(StringSerializer.descriptor);
+
+    return Float32Serializer.descriptor;
   }
 
   getElementIndex(name: string): number {
-    return Number.parseInt(name)
+    return Number.parseInt(name);
   }
 
   getElementName(index: number): string {
-    return index.toString()
+    return index.toString();
   }
 
   isElementOptional(index: number): boolean {
@@ -99,21 +90,21 @@ export class PathPointSerializer implements Serializer<PathPoint> {
   readonly descriptor: SerialDescriptor = new PathPointSerialDescriptor();
 
   deserialize(decoder: Decoder): PathPoint {
-    return decoder.decodeStructure(this.descriptor, decoder => {
-      const x = decoder.decodeFloat32Element(this.descriptor, 0)
-      const y = decoder.decodeFloat32Element(this.descriptor, 1)
-      const type = decoder.decodeNullableSerializableElement(this.descriptor, 2, StringSerializer)
+    return decoder.decodeStructure(this.descriptor, (decoder) => {
+      const x = decoder.decodeFloat32Element(this.descriptor, 0);
+      const y = decoder.decodeFloat32Element(this.descriptor, 1);
+      const type = decoder.decodeNullableSerializableElement(this.descriptor, 2, StringSerializer);
 
-      return new PathPoint(new Vec2(x, y), type !== null ? PathType[type] : null)
-    })
+      return new PathPoint(new Vec2(x, y), type !== null ? (PathType[type as any] as unknown as PathType) : null);
+    });
   }
 
   serialize(encoder: Encoder, value: PathPoint): void {
-    encoder.encodeStructure(this.descriptor, encoder => {
+    encoder.encodeStructure(this.descriptor, (encoder) => {
       encoder.encodeFloat32Element(this.descriptor, 0, value.x);
       encoder.encodeFloat32Element(this.descriptor, 1, value.y);
       if (value.type !== null)
         encoder.encodeNullableSerializableElement(this.descriptor, 2, StringSerializer, PathType[value.type]);
-    })
+    });
   }
 }

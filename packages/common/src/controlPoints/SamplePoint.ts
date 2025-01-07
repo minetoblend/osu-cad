@@ -1,16 +1,8 @@
-import type { Patchable } from '../commands/Patchable';
 import { Bindable, BindableNumber } from 'osucad-framework';
-import { PatchUtils } from '../commands/PatchUtils';
 import { SampleSet } from '../hitsounds/SampleSet';
 import { ControlPoint } from './ControlPoint';
 
-export interface SamplePointPatch {
-  volume: number;
-  sampleSet: SampleSet;
-  sampleIndex: number;
-}
-
-export class SamplePoint extends ControlPoint implements Patchable<SamplePointPatch> {
+export class SamplePoint extends ControlPoint {
   constructor(
     time: number,
     volume: number,
@@ -76,17 +68,5 @@ export class SamplePoint extends ControlPoint implements Patchable<SamplePointPa
     const clone = new SamplePoint(this.time, this.volume, this.sampleSet, this.sampleIndex);
     clone.copyFrom(this);
     return clone;
-  }
-
-  applyPatch(patch: Partial<SamplePointPatch>) {
-    PatchUtils.applyPatch(patch, this);
-  }
-
-  asPatch(): SamplePointPatch {
-    return {
-      volume: this.volume,
-      sampleIndex: this.sampleIndex,
-      sampleSet: this.sampleIndex,
-    };
   }
 }

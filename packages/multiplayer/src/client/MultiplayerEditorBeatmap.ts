@@ -1,13 +1,14 @@
-import type { BeatmapAssetManager, IBeatmap } from '@osucad/common';
+import type { Beatmap, HitObject, IFileStore, WorkingBeatmapSet } from '@osucad/common';
 import type { MultiplayerClient } from './MultiplayerClient';
 import { EditorBeatmap } from '@osucad/common';
 
-export class MultiplayerEditorBeatmap extends EditorBeatmap {
+export class MultiplayerEditorBeatmap<T extends HitObject = HitObject> extends EditorBeatmap<T> {
   constructor(
-    override readonly beatmap: IBeatmap,
-    override readonly assets: BeatmapAssetManager,
     readonly client: MultiplayerClient,
+    beatmap: Beatmap<T>,
+    fileStore: IFileStore,
+    beatmapSet?: WorkingBeatmapSet,
   ) {
-    super();
+    super(beatmap, fileStore, beatmapSet);
   }
 }

@@ -1,4 +1,3 @@
-// @ts-expect-error looks like someone fucked up the types
 import BezierEasing from 'bezier-easing';
 import { almostEquals, clamp, lerp, Vec2 } from 'osucad-framework';
 import { ControlPoint } from './ControlPoint';

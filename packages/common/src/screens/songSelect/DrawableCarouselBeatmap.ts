@@ -3,7 +3,6 @@ import type {
   HoverLostEvent,
   ReadonlyDependencyContainer,
 } from 'osucad-framework';
-import { UISamples } from '@osucad/editor/UISamples';
 import {
   Anchor,
   Axes,
@@ -18,6 +17,7 @@ import {
 } from 'osucad-framework';
 import { Color } from 'pixi.js';
 import { OsucadSpriteText } from '../../drawables/OsucadSpriteText';
+import { UISamples } from '../../UISamples';
 import { CarouselBeatmap } from './CarouselBeatmap';
 import { DrawableCarouselItem } from './DrawableCarouselItem';
 

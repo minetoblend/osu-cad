@@ -1,7 +1,7 @@
 import type { DrawableOptions } from 'osucad-framework';
+import { OsucadTextures } from '@osucad/resources';
 import { Anchor, Axes, CompositeDrawable, Container, dependencyLoader, DrawableSprite, EasingFunction } from 'osucad-framework';
 import { Graphics } from 'pixi.js';
-import { OsucadIcons } from '../OsucadIcons';
 
 export class EditorLoadingSpinner extends CompositeDrawable {
   constructor(options: DrawableOptions) {
@@ -28,17 +28,17 @@ export class EditorLoadingSpinner extends CompositeDrawable {
     this.transformTo('radius', radius, 1000, EasingFunction.OutExpo);
     this.#graphicsContainer.fadeInFromZero(600);
 
-    this.#logo = new DrawableSprite({
-      texture: OsucadIcons.get('logo-text'),
-      scale: 0.5,
-      anchor: Anchor.Center,
-      origin: Anchor.Center,
+    OsucadTextures.logoText.load().then((texture) => {
+      this.#logo = new DrawableSprite({
+        texture,
+        scale: 0.5,
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
+      });
+      this.addInternal(this.#logo);
+      this.#logo.fadeInFromZero(500);
+      this.#logo.moveToY(200).moveToY(50, 700, EasingFunction.OutExpo);
     });
-
-    this.addInternal(this.#logo);
-
-    this.#logo.fadeInFromZero(500);
-    this.#logo.moveToY(200).moveToY(50, 700, EasingFunction.OutExpo);
   }
 
   updateDrawNodeTransform() {

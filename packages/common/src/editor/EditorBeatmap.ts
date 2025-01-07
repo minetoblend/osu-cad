@@ -14,7 +14,6 @@ import type { HitObject } from '../hitObjects/HitObject';
 import { AudioManager, Bindable, Component, loadTexture, resolved } from 'osucad-framework';
 import { AudioMixer } from '../audio/AudioMixer';
 import { UpdateHandler } from '../crdt/UpdateHandler';
-import { CommandManager } from './CommandManager';
 
 export class EditorBeatmap<T extends HitObject = HitObject> extends Component implements IBeatmap<T> {
   readonly track = new Bindable<Track>(null!);
@@ -29,7 +28,6 @@ export class EditorBeatmap<T extends HitObject = HitObject> extends Component im
     readonly beatmapSet?: WorkingBeatmapSet,
   ) {
     super();
-    this.commandManager = this.createCommandManager();
   }
 
   static fromBeatmapSet<T extends HitObject>(beatmap: Beatmap<T>, beatmapSet: WorkingBeatmapSet) {
@@ -79,12 +77,6 @@ export class EditorBeatmap<T extends HitObject = HitObject> extends Component im
       return;
 
     this.backgroundTexture.value = await loadTexture(asset);
-  }
-
-  commandManager!: CommandManager;
-
-  protected createCommandManager() {
-    return new CommandManager(this);
   }
 
   get settings(): BeatmapSettings {

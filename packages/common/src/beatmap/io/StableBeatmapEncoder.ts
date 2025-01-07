@@ -2,9 +2,7 @@ import type { Color } from 'pixi.js';
 import type { HitSound } from '../../hitsounds/HitSound';
 import type { OsuHitObject } from '../../rulesets/osu/hitObjects/OsuHitObject';
 import type { IBeatmap } from '../IBeatmap';
-import { almostEquals, clamp } from 'osucad-framework';
 import { ControlPointInfo } from '../../controlPoints';
-import { DifficultyPoint } from '../../controlPoints/DifficultyPoint';
 import { HitType } from '../../hitObjects/HitType';
 import { HitCircle } from '../../rulesets/osu/hitObjects/HitCircle';
 import { PathType } from '../../rulesets/osu/hitObjects/PathType';
@@ -116,6 +114,8 @@ ${this.#encodeHitObjects(beatmap)}
   * #encodeTimingPoints(beatmap: IBeatmap) {
     const controlPoints = new ControlPointInfo();
 
+    /*
+    TODO: Fix this
     for (const group of [
       beatmap.controlPoints.timingPoints,
       beatmap.controlPoints.samplePoints,
@@ -196,6 +196,7 @@ ${this.#encodeHitObjects(beatmap)}
         ];
       }
     }
+    */
   }
 
   #encodeColor(color: Color) {
@@ -218,7 +219,7 @@ ${this.#encodeHitObjects(beatmap)}
 
   * #encodeHitObjects(beatmap: IBeatmap) {
     for (const hitObject of beatmap.hitObjects)
-      yield * this.#encodeHitObject(hitObject);
+      yield * this.#encodeHitObject(hitObject as OsuHitObject);
   }
 
   * #encodeHitObject(hitObject: OsuHitObject) {

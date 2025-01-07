@@ -1,13 +1,11 @@
-import type { Patchable } from '../commands/Patchable';
 import type { Property } from '../crdt/Property';
-import { PatchUtils } from '../commands/PatchUtils';
 import { ControlPoint } from './ControlPoint';
 
 export interface EffectPointPatch {
   kiaiMode?: boolean;
 }
 
-export class EffectPoint extends ControlPoint implements Patchable<EffectPointPatch> {
+export class EffectPoint extends ControlPoint {
   constructor(time: number, kiaiMode: boolean = false) {
     super(time);
 
@@ -57,10 +55,6 @@ export class EffectPoint extends ControlPoint implements Patchable<EffectPointPa
     super.copyFrom(other);
 
     this.kiaiMode = other.kiaiMode;
-  }
-
-  applyPatch(patch: Partial<EffectPointPatch>) {
-    PatchUtils.applyPatch(patch, this);
   }
 
   asPatch(): EffectPointPatch {

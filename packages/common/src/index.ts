@@ -1,6 +1,5 @@
 export * from './audio';
 export * from './beatmap';
-export * from './commands';
 export * from './config';
 export * from './controlPoints';
 export * from './drawables';
@@ -18,5 +17,6 @@ export * from './rulesets';
 export * from './screens';
 export * from './serialization';
 export * from './skinning';
+export * from './UISamples';
 export * from './userInterface';
 export * from './utils';

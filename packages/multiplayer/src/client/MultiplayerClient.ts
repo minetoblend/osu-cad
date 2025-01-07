@@ -1,12 +1,14 @@
+import type { HitObject } from '@osucad/common';
+import type { JsonElement } from '@osucad/serialization';
+import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import type { ServerMessages } from '../protocol/ServerMessage';
 import type { ClientSocket } from './ClientSocket';
 import type { SignalKey } from './SignalKey';
-import { BeatmapSerializer } from '@osucad/common';
+import { BeatmapSerializer, StaticFileStore } from '@osucad/common';
 import { Json } from '@osucad/serialization';
 import { Action, Component } from 'osucad-framework';
 import { Chat } from './Chat';
 import { ConnectedUsers } from './ConnectedUsers';
-import { MultiplayerAssetManager } from './MultiplayerAssetManager';
 import { MultiplayerEditorBeatmap } from './MultiplayerEditorBeatmap';
 
 export class MultiplayerClient extends Component {
@@ -26,7 +28,13 @@ export class MultiplayerClient extends Component {
     this.socket.emit('submitSignal', key, data);
   }
 
-  async load() {
+  protected override get hasAsyncLoader(): boolean {
+    return true;
+  }
+
+  protected override async loadAsync(dependencies: ReadonlyDependencyContainer): Promise<void> {
+    await super.loadAsync(dependencies);
+
     this.socket = this.socketFactory();
 
     this.connectedUsers = new ConnectedUsers(this.socket);
@@ -36,11 +44,9 @@ export class MultiplayerClient extends Component {
 
     this.#clientId = clientId;
 
-    const beatmap = new Json().decode(new BeatmapSerializer(), beatmapData);
-    const assetManager = new MultiplayerAssetManager();
-    await assetManager.load(assets);
+    const beatmap = new Json().decode(new BeatmapSerializer(), beatmapData as JsonElement);
 
-    this.beatmap = new MultiplayerEditorBeatmap(beatmap, assetManager, this);
+    this.beatmap = new MultiplayerEditorBeatmap<HitObject>(this, beatmap, new StaticFileStore([]));
 
     this.socket.on('signal', (clientId, key, data) => {
       if (clientId !== this.clientId)

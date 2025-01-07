@@ -2,8 +2,8 @@ import type { ColorSource } from 'pixi.js';
 import type { EffectPoint } from '../../../../controlPoints/EffectPoint';
 import type { ControlPointLifetimeEntry } from '../../../ui/timeline/ControlPointLifetimeEntry';
 import { Anchor, Axes, Bindable, BindableBoolean, Container, dependencyLoader, resolved } from 'osucad-framework';
-import { Toggle } from '../../../../../../editor/src/userInterface/Toggle';
 import { UpdateHandler } from '../../../../crdt/UpdateHandler';
+import { Toggle } from '../../../../userInterface/Toggle';
 import { KeyframeSelectionBlueprint } from '../KeyframeSelectionBlueprint';
 import { KiaiSelectionBody } from './KiaiSelectionBody';
 

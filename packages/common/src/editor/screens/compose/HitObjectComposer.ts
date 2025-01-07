@@ -145,15 +145,15 @@ export abstract class HitObjectComposer extends CompositeDrawable {
 
   #toolContainer!: ComposeToolContainer;
 
-  protected createRightSidebar(): Drawable {
-    return new EmptyDrawable();
+  protected createRightSidebar(): Container {
+    return new Container();
   }
 
   protected createTopBar(): Drawable {
     return new EmptyDrawable();
   }
 
-  protected createLeftSidebar(): Drawable {
+  protected createLeftSidebar(): Container {
     return new Container({
       relativeSizeAxes: Axes.Y,
       autoSizeAxes: Axes.X,
@@ -176,9 +176,9 @@ export abstract class HitObjectComposer extends CompositeDrawable {
 
   settingsContainer!: Container;
 
-  leftSidebar!: Drawable;
+  leftSidebar!: Container;
 
-  rightSidebar!: Drawable;
+  rightSidebar!: Container;
 
   topBar!: Container;
 

@@ -1,14 +1,7 @@
-import type { CommandContext } from '../commands/CommandContext';
-import type { Patchable } from '../commands/Patchable';
 import type { Property } from '../crdt/Property';
-import { PatchUtils } from '../commands/PatchUtils';
 import { ControlPoint } from './ControlPoint';
 
-export interface DifficultyPointPatch {
-  sliderVelocity: number;
-}
-
-export class DifficultyPoint extends ControlPoint implements Patchable<DifficultyPointPatch> {
+export class DifficultyPoint extends ControlPoint {
   constructor(time: number, sliderVelocity: number = 1) {
     super(time);
 
@@ -55,15 +48,5 @@ export class DifficultyPoint extends ControlPoint implements Patchable<Difficult
     super.copyFrom(other);
 
     this.sliderVelocity = other.sliderVelocity;
-  }
-
-  applyPatch(patch: Partial<DifficultyPointPatch>, ctx: CommandContext) {
-    PatchUtils.applyPatch(patch, this);
-  }
-
-  asPatch(): DifficultyPointPatch {
-    return {
-      sliderVelocity: this.sliderVelocity,
-    };
   }
 }

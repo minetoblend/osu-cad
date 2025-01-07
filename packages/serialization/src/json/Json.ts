@@ -24,7 +24,7 @@ export class Json {
     serializer: SerializationStrategy<T>,
     value: T,
   ) {
-    let result: JsonElement;
+    let result: JsonElement = null;
     new JsonTreeEncoder(this, node => result = node)
       .encodeSerializableValue(serializer, value);
     return result;
@@ -32,7 +32,7 @@ export class Json {
 
   decode<T>(
     serializer: DeserializationStrategy<T>,
-    value: unknown,
+    value: JsonElement,
   ): T {
     // TODO: handle cases when we're not decoding an object
     return new JsonTreeDecoder(this, value).decodeSerializableValue(serializer);
