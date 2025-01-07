@@ -1,14 +1,13 @@
 import type { Bindable, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Color } from 'pixi.js';
-import { DrawableSprite, resolved, Vec2 } from 'osucad-framework';
+import { Anchor, Axes, CompositeDrawable, DrawableSprite, resolved } from 'osucad-framework';
 import { DrawableHitObject } from '../../../../hitObjects/drawables/DrawableHitObject';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
 
-export class StableApproachCircle extends DrawableSprite {
+export class StableApproachCircle extends CompositeDrawable {
   constructor() {
-    super({
-      // relativeSizeAxes: Axes.Both,
-    });
+    super();
+    this.relativeSizeAxes = Axes.Both;
   }
 
   @resolved(ISkinSource)
@@ -24,8 +23,11 @@ export class StableApproachCircle extends DrawableSprite {
 
     const texture = this.skin.getTexture('approachcircle');
     if (texture) {
-      this.texture = texture;
-      this.size = new Vec2(texture.width, texture.height);
+      this.addInternal(new DrawableSprite({
+        texture,
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
+      }));
     }
   }
 
