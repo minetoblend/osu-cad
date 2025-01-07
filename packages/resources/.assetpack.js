@@ -32,7 +32,6 @@ export default {
       font: {
         texturePadding: 5,
         outputType: "json",
-        fieldType: 'psdf'
       }
     }),
     texturePacker({
