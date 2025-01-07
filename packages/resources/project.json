@@ -1,0 +1,23 @@
+{
+  "name": "resources",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/resources/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/packages/beatmap-viewer",
+        "main": "packages/beatmap-viewer/src/index.ts",
+        "tsConfig": "packages/beatmap-viewer/tsconfig.lib.json",
+        "assets": [
+          "packages/beatmap-viewer/*.md"
+        ]
+      }
+    }
+  }
+}

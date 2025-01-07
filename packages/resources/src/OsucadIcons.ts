@@ -1,10 +1,10 @@
 import { loadTexture } from "osucad-framework";
 import { Spritesheet, Texture } from 'pixi.js'
 
-import textureUrl from './assets/icons.webp'
-import manifest from './assets/icons.webp.json'
+import textureUrl from './assets/textures/icons.webp'
+import manifest from './assets/textures/icons.webp.json'
 
-export type IconName = keyof typeof manifest.frames
+export type IconName = string & keyof typeof manifest.frames
 
 export class OsucadIcons {
   static #spritesheet: Spritesheet | undefined = undefined

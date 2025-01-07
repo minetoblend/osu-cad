@@ -1,9 +1,9 @@
 import { LazyTexture } from "./LazyTexture";
 
 import texture from './assets/defaultSkin.webp'
-import { Spritesheet, SpritesheetData } from "pixi.js";
+import { Spritesheet } from "pixi.js";
 
-import spriteSheetMeta from './assets/defaultSkin.webp.json'
+import spriteSheetMeta from './assets/textures/defaultSkin.webp.json'
 
 export class DefaultSkinResources {
   static readonly #texture = new LazyTexture(texture, { autoGenerateMipmaps: true })

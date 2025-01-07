@@ -8,6 +8,7 @@
     "build": {
       "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
+      "dependsOn": ["resources:prebuild"],
       "options": {
         "outputPath": "dist/packages/common",
         "main": "packages/common/src/index.ts",

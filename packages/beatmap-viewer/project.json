@@ -1,0 +1,20 @@
+{
+  "name": "beatmap-viewer",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/beatmap-viewer/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "dependsOn": ["resources:prebuild"],
+      "options": {
+        "outputPath": "dist/packages/beatmap-viewer",
+        "main": "packages/beatmap-viewer/src/index.ts",
+        "tsConfig": "packages/beatmap-viewer/tsconfig.app.json",
+        "assets": ["packages/beatmap-viewer/*.md"]
+      }
+    }
+  }
+}

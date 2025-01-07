@@ -1,6 +1,7 @@
 import {texturePacker, texturePackerCompress} from "@assetpack/core/texture-packer";
 import {compress} from "@assetpack/core/image";
 import {msdfFont} from "@assetpack/core/webfont";
+import {ffmpeg} from "@assetpack/core/ffmpeg";
 
 const compressionOptions = {
   jpg: false,
@@ -17,6 +18,16 @@ export default {
   output: './src/assets',
   cache: false,
   pipes: [
+    ffmpeg({
+      inputs: ['.mp3', '.ogg', '.wav'],
+      outputs: [
+        {
+          formats: ['.wav'],
+          recompress: false,
+          options: {}
+        }
+      ]
+    }),
     msdfFont({
       font: {
         texturePadding: 5,
