@@ -1,7 +1,7 @@
 import type { ClientInfo } from '@osucad/multiplayer';
 import type { InputManager, IVec2, MouseMoveEvent, Vec2 } from 'osucad-framework';
-import { getIcon } from '@osucad/editor/OsucadIcons';
 import { ConnectedUsers, MultiplayerClient, SignalKey } from '@osucad/multiplayer';
+import { getIcon } from '@osucad/resources';
 import { Axes, BindableBoolean, CompositeDrawable, dependencyLoader, DrawableSprite, resolved } from 'osucad-framework';
 
 export class MultiplayerCursorContainer extends CompositeDrawable {

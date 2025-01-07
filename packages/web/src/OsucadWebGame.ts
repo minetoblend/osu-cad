@@ -1,54 +1,29 @@
-import type { DependencyContainer } from 'osucad-framework';
-import { ContextMenuContainer, DummyEditorBeatmap, Editor, OsuRuleset, RulesetStore } from '@osucad/common';
-import { OsucadGameBase } from '@osucad/editor';
-import { Axes, Box } from 'osucad-framework';
-import { OsucadScreenStack } from '../../common/src/screens/OsucadScreenStack';
-import { EditorActionContainer } from '../../editor/src/editor/EditorActionContainer';
-import { Fit, ScalingContainer } from '../../editor/src/editor/ScalingContainer';
-import { FpsOverlay } from '../../editor/src/FpsOverlay';
-import { NotificationOverlay } from '../../editor/src/notifications/NotificationOverlay';
-import { OnlineEditorEnvironment } from './OnlineEditorEnvironment';
+import type { ReadonlyDependencyContainer } from 'osucad-framework';
+import { DummyEditorBeatmap, Editor, ISkinSource, OsucadGameBase, OsucadScreenStack, OsuRuleset, RulesetStore, SkinManager } from '@osucad/common';
+import { provide } from 'osucad-framework';
 
 export class OsucadWebGame extends OsucadGameBase {
-  constructor() {
-    super(new OnlineEditorEnvironment());
-  }
+  @provide(SkinManager)
+  @provide(ISkinSource)
+  readonly skinManager = new SkinManager();
 
-  async load(dependencies: DependencyContainer) {
-    await super.load(dependencies);
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
 
     RulesetStore.register(new OsuRuleset(), 0);
 
-    const screenStack = new OsucadScreenStack();
+    this.addParallelLoad(this.loadComponentAsync(this.skinManager));
 
-    this.add(new Box({
-      relativeSizeAxes: Axes.Both,
-      color: 0x000000,
-    }));
+    this.add(this.#screenStack = new OsucadScreenStack());
+  }
 
-    this.add(new ScalingContainer({
-      desiredSize: {
-        x: 960,
-        y: 768,
-      },
-      fit: Fit.Fill,
-      child: new EditorActionContainer({
-        child: new FpsOverlay({
-          child: new ContextMenuContainer({
-            child: screenStack,
-          }),
-        }),
-      }),
-    }));
+  #screenStack!: OsucadScreenStack;
 
-    const notificationOverlay = new NotificationOverlay();
-    this.add(notificationOverlay);
-    dependencies.provide(NotificationOverlay, notificationOverlay);
+  protected loadComplete() {
+    super.loadComplete();
 
     const beatmap = new DummyEditorBeatmap();
 
-    const editor = new Editor(beatmap);
-
-    screenStack.push(editor);
+    this.#screenStack.push(new Editor(beatmap));
   }
 }
