@@ -312,7 +312,7 @@ importers:
         version: 1.6.0(@types/node@20.16.5)(@vitest/ui@1.6.0)(jsdom@22.1.0)(terser@5.32.0)
 
   packages/resources:
-    dependencies:
+    devDependencies:
       '@assetpack/core':
         specifier: ^1.2.3
         version: 1.2.3
