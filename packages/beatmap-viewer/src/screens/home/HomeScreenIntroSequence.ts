@@ -18,7 +18,7 @@ export class HomeScreenIntroSequence extends Container {
   @dependencyLoader()
   async load() {
     const text = new DrawableSprite({
-      texture: await OsucadTextures.logoText.load(),
+      texture: await OsucadTextures.osucadText.load(),
       anchor: Anchor.Center,
       origin: Anchor.Center,
       scale: 0.5,
