@@ -1,8 +1,8 @@
 import type { SerialDescriptor } from './SerialDescriptor';
 import type { SerialKind } from './SerialKind';
+import { ListDescriptor } from './ListDescriptor';
 import { primitiveDescriptorSafe } from './Primitives';
 import { PrimitiveKind, StructureKind } from './SerialKind';
-import { ListDescriptor } from "./ListDescriptor";
 
 export function buildClassSerialDescriptor(
   serialName: string,

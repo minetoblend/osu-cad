@@ -26,14 +26,11 @@ export abstract class AbstractPolymorphicSerializer<T> implements Serializer<T> 
       while (true) {
         const index = decoder.decodeElementIndex(this.descriptor);
 
-        console.log(index);
-
         if (index === CompositeDecoder.DECODE_DONE)
           break;
 
         if (index === 0) {
           className = decoder.decodeStringElement(this.descriptor, index);
-          console.log(className);
         }
 
         else if (index === 1) {
@@ -43,7 +40,7 @@ export abstract class AbstractPolymorphicSerializer<T> implements Serializer<T> 
         }
 
         else {
-          throw new Error(/* TODO: Descriptive error message */);
+          throw new Error('Unexpected structure');
         }
       }
     });
@@ -51,7 +48,7 @@ export abstract class AbstractPolymorphicSerializer<T> implements Serializer<T> 
     if (value !== null)
       return value;
 
-    throw new Error(/* TODO: Descriptive error message */);
+    throw new Error('Could not decode value');
   }
 
   findPolymorphicSerializer(encoder: Encoder, value: T): Serializer<T> {

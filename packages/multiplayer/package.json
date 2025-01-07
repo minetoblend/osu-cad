@@ -6,7 +6,8 @@
   "module": "./index.mjs",
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.lib.json --composite false",
-    "lint": "eslint . --fix"
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix"
   },
   "dependencies": {
     "socket.io-client": "^4.8.1",

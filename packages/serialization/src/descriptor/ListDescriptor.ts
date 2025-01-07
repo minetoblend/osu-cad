@@ -1,4 +1,5 @@
-import { SerialDescriptor, SerialKind, StructureKind } from "@osucad/serialization";
+import type { SerialDescriptor } from '@osucad/serialization';
+import { StructureKind } from '@osucad/serialization';
 
 export class ListDescriptor implements SerialDescriptor {
   constructor(
@@ -29,7 +30,8 @@ export class ListDescriptor implements SerialDescriptor {
 
   getElementIndex(name: string): number {
     const index = Number.parseInt(name);
-    if (!Number.isNaN(index)) return index;
+    if (!Number.isNaN(index))
+      return index;
 
     throw new Error(`${name} is not a valid list index`);
   }
