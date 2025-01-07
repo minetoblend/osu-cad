@@ -875,7 +875,6 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
       this.requestsPositionalInputSubTree = this.requestsPositionalInput;
 
       this.injectDependencies(dependencies);
-      this.onLoad();
       const dependencyLoaders = getDependencyLoaders(this);
 
       for (const key of dependencyLoaders) {
@@ -883,6 +882,8 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
       }
 
       this.load(dependencies);
+
+      this.onLoad();
 
       const asyncDependencyLoaders = getAsyncDependencyLoaders(this);
       if (this.hasAsyncLoader || asyncDependencyLoaders.length > 0) {
