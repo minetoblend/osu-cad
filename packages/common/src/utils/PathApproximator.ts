@@ -391,9 +391,9 @@ export class PathApproximator {
    * piecewise-linear approximation of the bezier curve with the same amount of points as there are control points.
    * @param controlPoints The control points describing the bezier curve to be approximated.
    * @param output The points representing the resulting piecewise-linear approximation.
-   * @param count The number of control points in the original list.
    * @param subdivisionBuffer1 The first buffer containing the current subdivision state.
    * @param subdivisionBuffer2 The second buffer containing the current subdivision state.
+   * @param count The number of control points in the original list.
    */
   private static _bezierApproximate(
     controlPoints: Vec2[],

@@ -9,6 +9,7 @@ import { EditorBeatmap } from './EditorBeatmap';
 export class DummyEditorBeatmap extends EditorBeatmap {
   constructor() {
     super(
+      // eslint-disable-next-line ts/no-use-before-define
       new StableBeatmapParser().parse(beatmapText),
       new StaticFileStore([
         new SimpleFile('audio.mp3', () => fetch(audioUrl).then(res => res.arrayBuffer())),
