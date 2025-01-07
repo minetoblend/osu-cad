@@ -1,9 +1,9 @@
 import type { Drawable, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, Vec2 } from 'osucad-framework';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
+import { getIcon } from '@osucad/resources';
 import { Direction, PlatformAction, resolved } from 'osucad-framework';
 import { EditorAction } from '../../../editor/EditorAction';
 import { DrawableComposeTool } from '../../../editor/screens/compose/DrawableComposeTool';
-import { getIcon } from '../../../OsucadIcons';
 import { PathType } from '../hitObjects/PathType';
 import { MobileControlButton } from './MobileEditorControls';
 import { OsuHitObjectComposer } from './OsuHitObjectComposer';

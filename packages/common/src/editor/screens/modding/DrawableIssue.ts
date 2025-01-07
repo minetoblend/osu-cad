@@ -1,9 +1,9 @@
 import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Issue } from '../../../verifier/Issue';
+import { getIcon } from '@osucad/resources';
 import { Anchor, Axes, BindableBoolean, Container, Drawable, DrawableSprite, FillDirection, FillFlowContainer, Vec2 } from 'osucad-framework';
 import { ModdingConfigManager } from '../../../config/ModdingConfigManager';
 import { ModdingSettings } from '../../../config/ModdingSettings';
-import { getIcon } from '../../../OsucadIcons';
 import { arrayify } from '../../../utils/arrayUtils';
 import { DrawableTimestamp } from './DrawableTimestamp';
 import { IssueMenu } from './IssueMenu';

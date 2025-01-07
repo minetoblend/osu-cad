@@ -1,6 +1,7 @@
 import type { Container, Drawable, PIXIRenderer, ReadonlyDependencyContainer } from 'osucad-framework';
 import { Fit, ScalingContainer } from '@osucad/editor/editor/ScalingContainer';
 import { NotificationOverlay } from '@osucad/editor/notifications/NotificationOverlay';
+import { OsucadIcons } from '@osucad/resources';
 import { AudioManager, Axes, Box, DependencyContainer, Game, IRenderer, provide, resolved } from 'osucad-framework';
 import { AudioMixer } from './audio/AudioMixer';
 import { OsucadConfigManager } from './config/OsucadConfigManager';
@@ -8,7 +9,6 @@ import { UIFonts } from './drawables/UIFonts';
 import { EditorActionContainer } from './editor/EditorActionContainer';
 import { GlobalCursorDisplay } from './graphics/cursor/GlobalCursorDisplay';
 import { IResourcesProvider } from './io/IResourcesProvider';
-import { OsucadIcons } from './OsucadIcons';
 import { PreferencesContainer } from './overlays/preferences/PreferencesContainer';
 import { ContextMenuContainer } from './userInterface/ContextMenuContainer';
 

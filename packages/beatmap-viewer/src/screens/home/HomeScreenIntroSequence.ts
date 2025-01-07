@@ -1,7 +1,8 @@
-import { OsucadColors, OsucadIcons } from '@osucad/common';
-import { Action, Anchor, Container, dependencyLoader, DrawableSprite, EasingFunction, loadTexture, RoundedBox, Vec2 } from 'osucad-framework';
+import { OsucadColors } from '@osucad/common';
+import { getIcon, OsucadTextures } from '@osucad/resources';
+import { Action, Anchor, Container, dependencyLoader, DrawableSprite, EasingFunction, RoundedBox, Vec2 } from 'osucad-framework';
 import { AlphaFilter } from 'pixi.js';
-import osucadText from '../../assets/textures/osucad-text.png';
+
 import { IntroSlider } from './IntroSlider';
 
 export class HomeScreenIntroSequence extends Container {
@@ -17,7 +18,7 @@ export class HomeScreenIntroSequence extends Container {
   @dependencyLoader()
   async load() {
     const text = new DrawableSprite({
-      texture: await loadTexture(osucadText),
+      texture: await OsucadTextures.logoText.load(),
       anchor: Anchor.Center,
       origin: Anchor.Center,
       scale: 0.5,
@@ -45,7 +46,7 @@ export class HomeScreenIntroSequence extends Container {
     });
 
     const cursor = new DrawableSprite({
-      texture: OsucadIcons.get('select@2x'),
+      texture: getIcon('select'),
       anchor: Anchor.Center,
       origin: Anchor.Center,
       scale: 0.9,

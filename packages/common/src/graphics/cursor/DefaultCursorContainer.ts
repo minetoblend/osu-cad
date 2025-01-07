@@ -1,6 +1,6 @@
 import type { Drawable, MouseDownEvent, MouseUpEvent } from 'osucad-framework';
+import { getIcon } from '@osucad/resources';
 import { CompositeDrawable, CursorContainer, DrawableSprite, EasingFunction, MouseButton, Vec2 } from 'osucad-framework';
-import { getIcon } from '../../OsucadIcons';
 
 export class DefaultCursorContainer extends CursorContainer {
   override createCursor(): Drawable {
@@ -11,6 +11,8 @@ export class DefaultCursorContainer extends CursorContainer {
 export class DefaultCursor extends CompositeDrawable {
   constructor() {
     super();
+
+    this.scale = 0.5;
 
     this.addAllInternal(
       this.#shadow = new DrawableSprite({

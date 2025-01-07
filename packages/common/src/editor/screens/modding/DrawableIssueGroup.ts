@@ -1,9 +1,9 @@
 import type { Bindable, ClickEvent, Container, Drawable, HoverEvent, HoverLostEvent } from 'osucad-framework';
 import type { Check } from '../../../verifier/Check';
+import { getIcon } from '@osucad/resources';
 import { Anchor, Axes, BindableBoolean, CompositeDrawable, DrawableSprite, EasingFunction, FillDirection, FillFlowContainer, MaskingContainer, Vec2 } from 'osucad-framework';
 import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
 import { OsucadColors } from '../../../OsucadColors';
-import { getIcon } from '../../../OsucadIcons';
 
 export class DrawableIssueGroup extends FillFlowContainer {
   constructor(readonly check: Check) {

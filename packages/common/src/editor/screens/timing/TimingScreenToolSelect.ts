@@ -1,8 +1,8 @@
 import type { HoverEvent, HoverLostEvent, KeyDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
+import { getIcon } from '@osucad/resources';
 import { Anchor, Axes, Bindable, Button, dependencyLoader, DrawableSprite, EasingFunction, FastRoundedBox, FillDirection, FillFlowContainer, FillMode, Key, Vec2 } from 'osucad-framework';
 import { OsucadColors } from '../../../OsucadColors';
-import { OsucadIcons } from '../../../OsucadIcons';
 import { TimingScreenDependencies } from './TimingScreenDependencies';
 import { TimingScreenTool } from './TimingScreenTool';
 
@@ -25,8 +25,8 @@ export class TimingScreenToolSelect extends FillFlowContainer {
     this.activeTool = activeTool.getBoundCopy();
 
     this.addAll(
-      new TimingScreenToolSelectButton(TimingScreenTool.Select, OsucadIcons.get('select@2x')),
-      new TimingScreenToolSelectButton(TimingScreenTool.Create, OsucadIcons.get('pen')),
+      new TimingScreenToolSelectButton(TimingScreenTool.Select, getIcon('select')),
+      new TimingScreenToolSelectButton(TimingScreenTool.Create, getIcon('pen')),
     );
   }
 

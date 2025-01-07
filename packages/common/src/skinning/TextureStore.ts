@@ -1,5 +1,5 @@
 import type { IResourceStore } from 'osucad-framework';
-import type { Texture, TextureSource } from 'pixi.js';
+import type { Spritesheet, Texture, TextureSource } from 'pixi.js';
 import { loadTexture, ResourceStore } from 'osucad-framework';
 import { ImageSource } from 'pixi.js';
 
@@ -18,15 +18,37 @@ export class TextureStore {
     }
   }
 
+  readonly #spriteSheets: Spritesheet[] = [];
+
+  addSpritesheet(spritesheet: Spritesheet) {
+    this.#spriteSheets.push(spritesheet);
+  }
+
+  #getFromSpritesheet(name: string) {
+    for (const spritesheet of this.#spriteSheets) {
+      if (spritesheet.textures[name]) {
+        const texture = spritesheet.textures[name];
+
+        texture.label ??= name;
+
+        this.#textures.set(name, texture);
+
+        return texture;
+      }
+    }
+    return null;
+  }
+
   #textures = new Map<string, Texture | null>();
 
   canLoad(name: string) {
-    return this.#store.canLoad(name);
+    return this.#store.canLoad(name) || !!this.#getFromSpritesheet(name);
   }
 
   async load(name: string, resolution = 1) {
-    if (this.#textures.has(name))
-      return this.#textures.get(name)!;
+    const existing = this.get(name, resolution);
+    if (existing)
+      return existing;
 
     const data = await this.#store.getAsync(name);
 
@@ -47,9 +69,12 @@ export class TextureStore {
   }
 
   get(name: string, resolution: number = 1): Texture | null {
-    if (this.#textures.has(name)) {
+    if (this.#textures.has(name))
       return this.#textures.get(name)!;
-    }
+
+    const fromSpriteSheet = this.#getFromSpritesheet(name);
+    if (fromSpriteSheet)
+      return fromSpriteSheet;
 
     return null;
   }

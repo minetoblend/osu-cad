@@ -23,7 +23,12 @@ export class DrawableSprite extends Drawable {
         && options.height === undefined
         && (options.relativeSizeAxes ?? Axes.None) === Axes.None
       ) {
-        this.size = new Vec2(options.texture.width, options.texture.height);
+        const size = new Vec2(options.texture.width, options.texture.height);
+
+        if (options.texture.label?.endsWith('@2x') && options.texture.source.resolution !== 2)
+          size.scaleInPlace(options.texture.source.resolution / 2);
+
+        this.size = size;
         this.resizeToTexture = true;
       }
     }

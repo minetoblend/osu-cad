@@ -1,1 +1,1 @@
-export { getIcon, OsucadIcons } from '@osucad/common';
+export { getIcon, OsucadIcons } from '@osucad/resources';

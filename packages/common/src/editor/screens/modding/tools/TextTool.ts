@@ -1,6 +1,6 @@
 import type { DrawableComposeTool } from '../../compose/DrawableComposeTool';
 import type { IComposeTool } from '../../compose/IComposeTool';
-import { getIcon } from '../../../../OsucadIcons';
+import { getIcon } from '@osucad/resources';
 import { DrawableTextTool } from './DrawableTextTool';
 
 export class TextTool implements IComposeTool {

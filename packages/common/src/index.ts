@@ -11,7 +11,6 @@ export * from './hitsounds';
 export * from './io';
 export * from './OsucadColors';
 export * from './OsucadGameBase';
-export * from './OsucadIcons';
 export * from './overlays';
 export * from './pooling';
 export * from './rulesets';

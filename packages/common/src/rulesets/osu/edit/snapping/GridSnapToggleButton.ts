@@ -1,8 +1,8 @@
 import type { Bindable, Drawable } from 'osucad-framework';
+import { getIcon } from '@osucad/resources';
 import { Anchor, Axes, DrawableSprite } from 'osucad-framework';
 import { ToolbarToggleButton } from '../../../../editor/screens/compose/ToolbarToggleButton';
 import { OsucadColors } from '../../../../OsucadColors';
-import { getIcon } from '../../../../OsucadIcons';
 
 export class GridSnapToggleButton extends ToolbarToggleButton {
   constructor(bindable: Bindable<boolean>) {
@@ -15,7 +15,7 @@ export class GridSnapToggleButton extends ToolbarToggleButton {
 
   protected override createContent(): Drawable {
     return this.#icon = new DrawableSprite({
-      texture: getIcon('grid@2x'),
+      texture: getIcon('grid'),
       relativeSizeAxes: Axes.Both,
       size: 0.65,
       anchor: Anchor.Center,

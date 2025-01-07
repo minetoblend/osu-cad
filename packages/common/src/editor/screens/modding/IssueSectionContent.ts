@@ -2,10 +2,10 @@ import type { Container, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Check } from '../../../verifier/Check';
 import type { Issue } from '../../../verifier/Issue';
 import type { IssueSection } from './IssueSection';
+import { getIcon } from '@osucad/resources';
 import { Anchor, Axes, DrawableSprite, FillDirection, FillFlowContainer, Vec2 } from 'osucad-framework';
 import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
 import { OsucadColors } from '../../../OsucadColors';
-import { getIcon } from '../../../OsucadIcons';
 import { DrawableIssue } from './DrawableIssue';
 import { DrawableIssueGroup } from './DrawableIssueGroup';
 

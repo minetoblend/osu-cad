@@ -2,12 +2,12 @@ import type { Bindable, ClickEvent, HoverEvent, HoverLostEvent, ReadonlyDependen
 import type { Beatmap } from '../../../beatmap/Beatmap';
 import type { Issue } from '../../../verifier/Issue';
 import type { VerifierBeatmap } from '../../../verifier/VerifierBeatmap';
+import { getIcon } from '@osucad/resources';
 import { Action, Anchor, Axes, BindableBoolean, CompositeDrawable, DrawableSprite, FastRoundedBox, FillDirection, FillFlowContainer } from 'osucad-framework';
 import { ModdingConfigManager } from '../../../config/ModdingConfigManager';
 import { ModdingSettings } from '../../../config/ModdingSettings';
 import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
 import { OsucadColors } from '../../../OsucadColors';
-import { getIcon } from '../../../OsucadIcons';
 import { maxBy } from '../../../utils/arrayUtils';
 import { IssueLevelComparer } from '../../../verifier/Issue';
 import { IssueSectionContent } from './IssueSectionContent';

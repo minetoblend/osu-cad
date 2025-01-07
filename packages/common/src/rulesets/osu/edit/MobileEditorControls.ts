@@ -1,11 +1,11 @@
 import type { ClickEvent, Drawable, MouseDownEvent, MouseUpEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
+import { getIcon } from '@osucad/resources';
 import { Anchor, Axes, BindableBoolean, CompositeDrawable, DrawableSprite, resolved, Vec2 } from 'osucad-framework';
 import { UpdateHandler } from '../../../crdt/UpdateHandler';
 import { ReverseFillFlowContainer } from '../../../drawables/ReverseFillFlowContainer';
 import { EditorButton } from '../../../editor/screens/compose/EditorButton';
 import { OsucadColors } from '../../../OsucadColors';
-import { getIcon } from '../../../OsucadIcons';
 
 export class MobileEditorControls extends CompositeDrawable {
   constructor(readonly additionalControls: Drawable[] = []) {

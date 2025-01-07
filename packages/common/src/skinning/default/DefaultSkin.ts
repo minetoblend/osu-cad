@@ -2,6 +2,7 @@ import type { AudioChannel, IResourceStore, Sample } from 'osucad-framework';
 import type { HitSample } from '../../hitsounds/HitSample';
 import type { IResourcesProvider } from '../../io/IResourcesProvider';
 import type { SkinInfo } from '../SkinInfo';
+import { DefaultSkinResources } from '@osucad/resources';
 import { StableSkin } from '../stable/StableSkin';
 
 export class DefaultSkin extends StableSkin {
@@ -12,6 +13,13 @@ export class DefaultSkin extends StableSkin {
     };
 
     super(info, resourceProvider, new DefaultSkinResourceStore());
+  }
+
+  override async load(): Promise<void> {
+    if (this.textures)
+      this.textures.addSpritesheet(await DefaultSkinResources.getSpriteSheet());
+
+    await super.load();
   }
 
   override getSample(channel: AudioChannel, sample: string | HitSample): Sample | null {

@@ -1,7 +1,7 @@
 import type { HoverEvent, HoverLostEvent, MouseDownEvent, MouseUpEvent, ReadonlyDependencyContainer } from 'osucad-framework';
+import { getIcon } from '@osucad/resources';
 import { Anchor, Axes, CompositeDrawable, DrawableSprite, MenuItem, MouseButton, resolved, Vec2 } from 'osucad-framework';
 import { OsucadColors } from '../../OsucadColors';
-import { getIcon } from '../../OsucadIcons';
 import { ContextMenuContainer } from '../../userInterface/ContextMenuContainer';
 import { EditorClock } from '../EditorClock';
 

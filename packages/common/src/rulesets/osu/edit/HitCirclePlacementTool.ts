@@ -1,6 +1,6 @@
 import type { DrawableComposeTool } from 'packages/common/src/editor/screens/compose/DrawableComposeTool';
 import type { IComposeTool } from '../../../editor/screens/compose/IComposeTool';
-import { getIcon } from '../../../OsucadIcons';
+import { getIcon } from '@osucad/resources';
 import { DrawableHitCirclePlacementTool } from './DrawableHitCirclePlacementTool';
 
 export class HitCirclePlacementTool implements IComposeTool {
