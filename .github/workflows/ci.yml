@@ -20,7 +20,7 @@ jobs:
 
 
       - run: pnpm install
-      - run: pnpm exec nx run beatmap-viewer:build
+      - run: pnpm exec nx run beatmap-viewer:build --verbose
 
       - name: Docker Client Meta
         id: meta-client
