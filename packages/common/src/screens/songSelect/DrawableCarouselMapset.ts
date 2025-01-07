@@ -351,7 +351,7 @@ class MapsetBackground extends Container {
   }
 
   get parallaxMultiplier() {
-    return 50;
+    return 35;
   }
 
   override onHover(): boolean {
