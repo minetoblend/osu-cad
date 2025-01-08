@@ -8,4 +8,6 @@ export * from './HitResult';
 export * from './HitType';
 export * from './HitWindows';
 export * from './IHasComboInformation';
+export * from './IHasXPosition';
+export * from './IHasYPosition';
 export * from './JudgementResult';

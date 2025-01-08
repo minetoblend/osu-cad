@@ -3,6 +3,7 @@ import { Axes, CompositeDrawable, EmptyDrawable, resolved } from 'osucad-framewo
 import { IBeatmap } from '../../../beatmap/IBeatmap';
 import { UpdateHandler } from '../../../crdt/UpdateHandler';
 import { Playfield } from '../../../rulesets/ui/Playfield';
+import { EditorBeatmap } from '../../EditorBeatmap';
 import { EditorClock } from '../../EditorClock';
 import { HitObjectSelectionManager } from './HitObjectSelectionManager';
 
@@ -17,6 +18,9 @@ export class DrawableComposeTool extends CompositeDrawable {
 
   @resolved(IBeatmap)
   protected beatmap!: IBeatmap;
+
+  @resolved(EditorBeatmap)
+  protected editorBeatmap!: EditorBeatmap;
 
   @resolved(UpdateHandler)
   protected updateHandler!: UpdateHandler;

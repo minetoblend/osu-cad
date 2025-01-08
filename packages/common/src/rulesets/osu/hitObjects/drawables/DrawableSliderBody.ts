@@ -1,19 +1,11 @@
 import type { Container } from 'pixi.js';
 import type { Slider } from '../Slider';
-import {
-  Bindable,
-  Drawable,
-  PIXIContainer,
-  type ReadonlyDependencyContainer,
-  resolved,
-  Vec2,
-} from 'osucad-framework';
+import { Bindable, Drawable, PIXIContainer, type ReadonlyDependencyContainer, resolved, Vec2 } from 'osucad-framework';
 import { AlphaFilter, Color, CustomRenderPipe, Mesh, MeshGeometry } from 'pixi.js';
 import { DrawableHitObject } from '../../../../hitObjects/drawables/DrawableHitObject';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
 import { SkinConfig } from '../../../../skinning/SkinConfig';
 import { animate } from '../../../../utils/animate';
-import { SliderSelectionType } from '../SliderSelection';
 import { GeometryBuilder } from './GeometryBuilder';
 import { SliderPathGeometry } from './SliderPathGeometry';
 import { SliderShader } from './SliderShader';
@@ -88,16 +80,12 @@ export class DrawableSliderBody extends Drawable {
 
     if (hitObject) {
       hitObject.path.invalidated.addListener(this.#invalidatePath, this);
-      hitObject.subSelection.changed.addListener(this.#updateSelection, this);
       this.#pathIsInvalid = true;
     }
     if (this.#hitObject) {
       this.#hitObject.path.invalidated.removeListener(this.#invalidatePath);
-      this.#hitObject.subSelection.changed.removeListener(this.#updateSelection);
     }
     this.#hitObject = hitObject;
-
-    this.#updateSelection();
   }
 
   get hitObject() {
@@ -233,31 +221,22 @@ export class DrawableSliderBody extends Drawable {
     this.#skinChanged();
   }
 
-  #selected = false;
+  #borderColorOverride: Color | null = null;
 
-  get selected() {
-    return this.#selected;
+  get borderColorOverride() {
+    return this.#borderColorOverride;
   }
 
-  set selected(value: boolean) {
-    if (this.#selected === value)
+  set borderColorOverride(value: Color | null) {
+    if (value === this.#borderColorOverride)
       return;
 
-    this.#selected = value;
-
+    this.#borderColorOverride = value;
     this.#updateBorderColor();
   }
 
   #updateBorderColor() {
-    this.shader.borderColor = this.selected ? 0xFF0000 : this.borderColor.value?.toNumber() ?? 0xFFFFFF;
-  }
-
-  #updateSelection() {
-    if (!this.hitObject) {
-      this.selected = false;
-      return;
-    }
-    this.selected = this.hitObject!.subSelection.type === SliderSelectionType.Body;
+    this.shader.borderColor = this.#borderColorOverride?.toNumber() ?? this.borderColor.value?.toNumber() ?? 0xFFFFFF;
   }
 
   override get alpha() {

@@ -39,7 +39,7 @@ export abstract class DrawableRuleset<TObject extends HitObject = HitObject> ext
   public readonly beatmap: IBeatmap;
 
   get hitObjects(): ReadonlyArray<HitObject> {
-    return this.beatmap.hitObjects.items;
+    return this.beatmap.hitObjects;
   }
 
   protected keyBindingInputManager: PassThroughInputManager;
@@ -74,9 +74,6 @@ export abstract class DrawableRuleset<TObject extends HitObject = HitObject> ext
   #loadObjects() {
     for (const hitObject of this.beatmap.hitObjects)
       this.addHitObject(hitObject as unknown as TObject);
-
-    this.beatmap.hitObjects.added.addListener(this.addHitObject as any, this);
-    this.beatmap.hitObjects.removed.addListener(this.removeHitObject as any, this);
   }
 
   addHitObject(hitObject: TObject) {
@@ -127,13 +124,6 @@ export abstract class DrawableRuleset<TObject extends HitObject = HitObject> ext
     }
 
     return null;
-  }
-
-  override dispose(isDisposing: boolean = true) {
-    super.dispose(isDisposing);
-
-    this.beatmap.hitObjects.added.removeListener(this.addHitObject as any, this);
-    this.beatmap.hitObjects.removed.removeListener(this.removeHitObject as any, this);
   }
 
   // public override double GameplayStartTime => Objects.FirstOrDefault()?.StartTime - 2000 ?? 0;

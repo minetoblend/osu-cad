@@ -29,7 +29,7 @@ export class CheckBgResolution extends GeneralCheck {
   override async* getIssues(mapset: VerifierBeatmapSet): AsyncGenerator<Issue, void, undefined> {
     const bgFilenames = new Set<string>();
     for (const beatmap of mapset.beatmaps) {
-      const filename = beatmap.settings.backgroundFilename?.trim() ?? '';
+      const filename = beatmap.metadata.backgroundFile?.trim() ?? '';
       if (filename.length === 0)
         continue;
 

@@ -1,5 +1,6 @@
 export * from './Beatmap';
 export * from './BeatmapColors';
+export * from './BeatmapConverter';
 export * from './BeatmapDifficultyInfo';
 export * from './BeatmapEditorSettings';
 export * from './BeatmapMetadata';

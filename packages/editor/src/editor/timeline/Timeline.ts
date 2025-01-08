@@ -1,5 +1,5 @@
 import type { KeyDownEvent, PIXIContainer, ScrollEvent } from 'osucad-framework';
-import { Beatmap, HitObjectList } from '@osucad/common';
+import { Beatmap } from '@osucad/common';
 import { Anchor, Axes, BindableNumber, Box, Container, dependencyLoader, EasingFunction, resolved } from 'osucad-framework';
 import { EditorClock } from '../EditorClock';
 import { ThemeColors } from '../ThemeColors';
@@ -52,7 +52,7 @@ export class Timeline extends Container {
       }),
     );
 
-    this.zoomBindable.bindTo(this.beatmap.settings.editor.timelineZoom);
+    this.zoomBindable.bindTo(this.beatmap.beatmapInfo.timelineZoomBindable);
   }
 
   update() {
@@ -157,9 +157,6 @@ export class Timeline extends Container {
   zoomTo(zoom: number, duration: number, easing: EasingFunction) {
     return this.transformTo('zoom', zoom, duration, easing);
   }
-
-  @resolved(HitObjectList)
-  hitObjects!: HitObjectList;
 
   onKeyDown(e: KeyDownEvent): boolean {
     if (!e.controlPressed && e.shiftPressed && e.key.startsWith('Digit')) {

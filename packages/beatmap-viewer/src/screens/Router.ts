@@ -130,9 +130,7 @@ export class Router extends OsucadScreenStack {
       mapset = await mirror.loadBeatmapSet(options.beatmapSet);
     }
 
-    const { osuWebId, osuWebSetId } = mapset.beatmaps[0].metadata;
-
-    const beatmap = mapset.beatmaps.find(it => it.metadata.osuWebId === options.beatmap);
+    const beatmap = mapset.beatmaps.find(it => it.beatmapInfo.onlineId === options.beatmap);
     if (!beatmap)
       throw new Error('Beatmap not found in mapset');
 
@@ -162,8 +160,8 @@ export class Router extends OsucadScreenStack {
       this.#pushPath('/');
     }
     else if (screen instanceof BeatmapViewer) {
-      const { osuWebId, osuWebSetId } = screen.beatmap.metadata;
-      this.#pushPath(`/b/${osuWebSetId}/${osuWebId}`);
+      const { onlineId, onlineBeatmapSetId } = screen.beatmap.beatmapInfo;
+      this.#pushPath(`/b/${onlineBeatmapSetId}/${onlineId}`);
     }
   }
 

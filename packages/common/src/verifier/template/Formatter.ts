@@ -70,7 +70,7 @@ export const beatmap = createFormatter((value) => {
 
     // TODO: return drawable
 
-    return beatmap.metadata.difficultyName;
+    return beatmap.beatmapInfo.difficultyName;
   }
 
   return value;

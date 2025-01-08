@@ -30,8 +30,8 @@ export class CatboyMirror extends BeatmapMirror {
 
           beatmaps.push(new StableBeatmapParser().parse(text));
         }
-        catch {
-          console.warn('Failed to load beatmap', filename);
+        catch (e) {
+          console.error('Failed to load beatmap', filename, e);
         }
       }
     }

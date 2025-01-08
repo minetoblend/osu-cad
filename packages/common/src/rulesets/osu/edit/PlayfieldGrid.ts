@@ -34,7 +34,7 @@ export class PlayfieldGrid extends CompositeDrawable implements IKeyBindingHandl
     super.load(dependencies);
 
     if (this.beatmap)
-      this.gridSizeBindable.bindTo(this.beatmap.settings.editor.gridSizeBindable);
+      this.gridSizeBindable.bindTo(this.beatmap.beatmapInfo.gridSizeBindable);
 
     this.drawNode.addChild(this.graphics);
 

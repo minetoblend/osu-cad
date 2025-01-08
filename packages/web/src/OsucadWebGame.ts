@@ -10,7 +10,8 @@ export class OsucadWebGame extends OsucadGameBase {
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
-    RulesetStore.register(new OsuRuleset(), 0);
+    RulesetStore.register(OsuRuleset.rulesetInfo);
+    // RulesetStore.register(new ManiaRuleset());
 
     this.addParallelLoad(this.loadComponentAsync(this.skinManager));
 
@@ -22,7 +23,7 @@ export class OsucadWebGame extends OsucadGameBase {
   protected loadComplete() {
     super.loadComplete();
 
-    const beatmap = new DummyEditorBeatmap();
+    const beatmap = new DummyEditorBeatmap(this);
 
     this.#screenStack.push(new Editor(beatmap));
   }

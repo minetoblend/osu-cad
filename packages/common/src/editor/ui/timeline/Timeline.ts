@@ -1,4 +1,4 @@
-import type { ContainerOptions, MouseDownEvent, MouseUpEvent, ReadonlyDependencyContainer, ScrollEvent, Vec2 } from 'osucad-framework';
+import type { ContainerOptions, MouseDownEvent, MouseUpEvent, ScrollEvent, Vec2 } from 'osucad-framework';
 import { Axes, clamp, EasingFunction, MouseButton, provide, resolved } from 'osucad-framework';
 import { EditorClock } from '../../EditorClock';
 import { ZoomableScrollContainer } from './ZoomableScrollContainer';
@@ -36,10 +36,6 @@ export class Timeline extends ZoomableScrollContainer {
     this.zoomDuration = 200;
     this.zoomEasing = EasingFunction.OutExpo;
     this.scrollbarVisible = false;
-  }
-
-  protected override load(dependencies: ReadonlyDependencyContainer) {
-    super.load(dependencies);
   }
 
   override adjustZoomRelatively(change: number, focusPoint?: number) {

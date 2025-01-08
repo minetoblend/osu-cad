@@ -1,21 +1,8 @@
-import type {
-  ReadonlyDependencyContainer,
-} from 'osucad-framework';
+import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import type { HitObjectLifetimeEntry } from '../../../../hitObjects/drawables/HitObjectLifetimeEntry';
 import type { HitObjectSelectionEvent } from '../../../screens/compose/HitObjectSelectionManager';
-import {
-  Anchor,
-  Axes,
-  Bindable,
-  BindableBoolean,
-  BindableNumber,
-  Container,
-  FillMode,
-  provide,
-  resolved,
-} from 'osucad-framework';
+import { Anchor, Axes, Bindable, BindableBoolean, BindableNumber, Container, FillMode, provide, resolved } from 'osucad-framework';
 import { Color } from 'pixi.js';
-import { HitObjectList } from '../../../../beatmap/HitObjectList';
 import { UpdateHandler } from '../../../../crdt/UpdateHandler';
 import { hasComboInformation } from '../../../../hitObjects/IHasComboInformation';
 import { hasDuration } from '../../../../hitObjects/IHasDuration';
@@ -190,9 +177,6 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
       this.#contentPadding = contentPadding;
     }
   }
-
-  @resolved(HitObjectList)
-  hitObjects!: HitObjectList;
 
   @resolved(UpdateHandler)
   updateHandler!: UpdateHandler;

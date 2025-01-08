@@ -1,101 +1,143 @@
-import { Bindable } from 'osucad-framework';
+import { ObjectCrdt } from '../crdt/ObjectCrdt';
 
-export class BeatmapMetadata {
-  artistBindable = new Bindable('');
+export class BeatmapMetadata extends ObjectCrdt {
+  readonly #artist = this.property('artist', '');
+
+  get artistBindable() {
+    return this.#artist.bindable;
+  }
 
   get artist() {
-    return this.artistBindable.value;
+    return this.#artist.value;
   }
 
   set artist(value) {
-    this.artistBindable.value = value;
+    this.#artist.value = value;
   }
 
-  artistUnicodeBindable = new Bindable('');
+  readonly #artistUnicode = this.property('artistUnicode', '');
+
+  get artistUnicodeBindable() {
+    return this.#artistUnicode.bindable;
+  }
 
   get artistUnicode() {
-    return this.artistUnicodeBindable.value;
+    return this.#artistUnicode.value;
   }
 
   set artistUnicode(value) {
-    this.artistUnicodeBindable.value = value;
+    this.#artistUnicode.value = value;
   }
 
-  titleBindable = new Bindable('');
+  readonly #title = this.property('title', '');
+
+  get titleBindable() {
+    return this.#title.bindable;
+  }
 
   get title() {
-    return this.titleBindable.value;
+    return this.#title.value;
   }
 
   set title(value) {
-    this.titleBindable.value = value;
+    this.#title.value = value;
   }
 
-  titleUnicodeBindable = new Bindable('');
+  readonly #titleUnicode = this.property('titleUnicode', '');
+
+  get titleUnicodeBindable() {
+    return this.#titleUnicode.bindable;
+  }
 
   get titleUnicode() {
-    return this.titleUnicodeBindable.value;
+    return this.#titleUnicode.value;
   }
 
   set titleUnicode(value) {
-    this.titleUnicodeBindable.value = value;
+    this.#titleUnicode.value = value;
   }
 
-  sourceBindable = new Bindable('');
+  readonly #source = this.property('source', '');
+
+  get sourceBindable() {
+    return this.#source.bindable;
+  }
 
   get source() {
-    return this.sourceBindable.value;
+    return this.#source.value;
   }
 
   set source(value) {
-    this.sourceBindable.value = value;
+    this.#source.value = value;
   }
 
-  tagsBindable = new Bindable('');
+  readonly #tags = this.property('tags', '');
+
+  get tagsBindable() {
+    return this.#tags.bindable;
+  }
 
   get tags() {
-    return this.tagsBindable.value;
+    return this.#tags.value;
   }
 
   set tags(value) {
-    this.tagsBindable.value = value;
+    this.#tags.value = value;
   }
 
-  previewTimeBindable = new Bindable(0);
+  readonly #previewTime = this.property('previewTime', -1);
+
+  get previewTimeBindable() {
+    return this.#previewTime.bindable;
+  }
 
   get previewTime() {
-    return this.previewTimeBindable.value;
+    return this.#previewTime.value;
   }
 
   set previewTime(value) {
-    this.previewTimeBindable.value = value;
+    this.#previewTime.value = value;
   }
 
-  creatorBindable = new Bindable('');
+  readonly #creator = this.property('creator', '');
+
+  get creatorBindable() {
+    return this.#creator.bindable;
+  }
 
   get creator() {
-    return this.creatorBindable.value;
+    return this.#creator.value;
   }
 
   set creator(value) {
-    this.creatorBindable.value = value;
+    this.#creator.value = value;
   }
 
-  difficultyNameBindable = new Bindable('');
+  readonly #audioFile = this.property('audioFile', '');
 
-  get difficultyName() {
-    return this.difficultyNameBindable.value;
+  get audioFileBindable() {
+    return this.#audioFile.bindable;
   }
 
-  set difficultyName(value) {
-    this.difficultyNameBindable.value = value;
+  get audioFile() {
+    return this.#audioFile.value;
   }
 
-  osuWebId = 0;
+  set audioFile(value) {
+    this.#audioFile.value = value;
+  }
 
-  osuWebSetId = 0;
+  readonly #backgroundFile = this.property<string | null>('backgroundFile', null);
 
-  get displayName() {
-    return `${this.artist} - ${this.title} [${this.difficultyName}]`;
+  get backgroundFileBindable() {
+    return this.#backgroundFile.bindable;
+  }
+
+  get backgroundFile() {
+    return this.#backgroundFile.value;
+  }
+
+  set backgroundFile(value) {
+    this.#backgroundFile.value = value;
   }
 }

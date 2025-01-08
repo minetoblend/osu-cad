@@ -8,6 +8,7 @@ import type { DrawableRuleset } from '../DrawableRuleset';
 import { InputKey, KeyBinding, KeyCombination } from 'osucad-framework';
 import { StableSkin } from '../../skinning/stable/StableSkin';
 import { Ruleset } from '../Ruleset';
+import { RulesetInfo } from '../RulesetInfo';
 import { ComboProcessor } from './ComboProcessor';
 import { OsuDifficultyCalculator } from './difficulty/OsuDifficultyCalculator';
 import { DrawableOsuEditorRuleset } from './DrawableOsuEditorRuleset';
@@ -19,6 +20,12 @@ import { StackingProcessor } from './StackingProcessor';
 import { OsuBeatmapVerifier } from './verify/OsuBeatmapVerifier';
 
 export class OsuRuleset extends Ruleset {
+  static rulesetInfo = new RulesetInfo('osu', 'osu', OsuRuleset);
+
+  override get legacyId(): number | null {
+    return 0;
+  }
+
   override createDrawableRulesetWith(beatmap: IBeatmap) {
     return new DrawableOsuRuleset(this, beatmap);
   }

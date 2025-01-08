@@ -40,20 +40,20 @@ export class CheckInconsistentTimingPoints extends GeneralCheck {
         const other = beatmap.controlPoints.timingPoints.find(it => Math.round(it.time) === Math.round(timingPoint.time));
 
         if (!other) {
-          yield this.createIssue(this.templates.Missing, beatmap, timingPoint.time, refBeatmap.metadata.difficultyName);
+          yield this.createIssue(this.templates.Missing, beatmap, timingPoint.time, refBeatmap.beatmapInfo.difficultyName);
 
           return;
         }
         else {
           if (other.meter !== timingPoint.meter)
-            yield this.createIssue(this.templates['Inconsistent Meter'], beatmap, timingPoint.time, refBeatmap.metadata.difficultyName);
+            yield this.createIssue(this.templates['Inconsistent Meter'], beatmap, timingPoint.time, refBeatmap.beatmapInfo.difficultyName);
           if (other.beatLength !== timingPoint.beatLength)
-            yield this.createIssue(this.templates['Inconsistent BPM'], beatmap, timingPoint.time, refBeatmap.metadata.difficultyName);
+            yield this.createIssue(this.templates['Inconsistent BPM'], beatmap, timingPoint.time, refBeatmap.beatmapInfo.difficultyName);
 
           const respectiveLineExact = beatmap.controlPoints.timingPoints.find(other => almostEquals(other.time, timingPoint.time));
 
           if (respectiveLineExact === null)
-            yield this.createIssue(this.templates['Missing Minor'], beatmap, timingPoint.time, refBeatmap.metadata.difficultyName);
+            yield this.createIssue(this.templates['Missing Minor'], beatmap, timingPoint.time, refBeatmap.beatmapInfo.difficultyName);
         }
       }
 
@@ -62,7 +62,7 @@ export class CheckInconsistentTimingPoints extends GeneralCheck {
         const other = refBeatmap.controlPoints.timingPoints.find(it => Math.round(it.time) === Math.round(timingPoint.time));
 
         if (!other) {
-          yield this.createIssue(this.templates.Missing, refBeatmap, timingPoint.time, beatmap.metadata.difficultyName);
+          yield this.createIssue(this.templates.Missing, refBeatmap, timingPoint.time, beatmap.beatmapInfo.difficultyName);
 
           return;
         }
@@ -70,7 +70,7 @@ export class CheckInconsistentTimingPoints extends GeneralCheck {
           const respectiveLineExact = refBeatmap.controlPoints.timingPoints.find(other => almostEquals(other.time, timingPoint.time));
 
           if (respectiveLineExact === null)
-            yield this.createIssue(this.templates['Missing Minor'], refBeatmap, timingPoint.time, beatmap.metadata.difficultyName);
+            yield this.createIssue(this.templates['Missing Minor'], refBeatmap, timingPoint.time, beatmap.beatmapInfo.difficultyName);
         }
       }
     }

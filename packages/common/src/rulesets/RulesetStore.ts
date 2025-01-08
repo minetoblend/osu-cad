@@ -1,14 +1,20 @@
-import type { Ruleset } from './Ruleset';
+import type { RulesetInfo } from './RulesetInfo';
 
 export class RulesetStore {
-  static readonly #legacyRulesets = new Map<number, Ruleset>();
+  static readonly #legacyRulesets = new Map<number, RulesetInfo>();
 
-  static register(ruleset: Ruleset, legacyId?: number) {
-    if (legacyId !== undefined)
-      this.#legacyRulesets.set(legacyId, ruleset);
+  static readonly #rulesets = new Map<string, RulesetInfo>();
+
+  static register(rulesetInfo: RulesetInfo) {
+    const ruleset = rulesetInfo.createInstance();
+
+    this.#rulesets.set(ruleset.shortName, rulesetInfo);
+    if (ruleset.legacyId !== null) {
+      this.#legacyRulesets.set(ruleset.legacyId, rulesetInfo);
+    }
   }
 
-  static getRuleset(legacyId: number) {
+  static getByLegacyId(legacyId: number) {
     return this.#legacyRulesets.get(legacyId) ?? null;
   }
 }

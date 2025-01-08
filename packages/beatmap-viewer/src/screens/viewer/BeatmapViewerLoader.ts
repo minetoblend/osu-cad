@@ -26,7 +26,16 @@ export class BeatmapViewerLoader extends OsucadScreen {
     this.loadBeatmap().then(async (beatmap) => {
       const { BeatmapViewer } = await import('./BeatmapViewer');
 
-      this.screenStack.push(new BeatmapViewer(beatmap));
+      const viewer = new BeatmapViewer(beatmap);
+
+      try {
+        await this.loadComponentAsync(viewer);
+      }
+      catch (e) {
+        console.error(e);
+      }
+
+      this.screenStack.push(viewer);
     });
   }
 

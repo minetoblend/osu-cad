@@ -6,9 +6,9 @@ export class Property<T> {
   constructor(
     readonly target: ObjectCrdt,
     readonly name: string,
-    initialValue: T,
+    initialValue: T | Bindable<T>,
   ) {
-    this.bindable = new Bindable(initialValue);
+    this.bindable = initialValue instanceof Bindable ? initialValue : new Bindable(initialValue);
     this.bindable.valueChanged.addListener(this.#valueChanged, this);
   }
 

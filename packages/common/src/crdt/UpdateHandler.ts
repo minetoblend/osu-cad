@@ -32,7 +32,7 @@ export class UpdateHandler extends Component {
 
   protected override loadComplete() {
     super.loadComplete();
-    this.attach(this.editorBeatmap.beatmap);
+    this.attach(this.editorBeatmap);
   }
 
   readonly #undoStack: Transaction[] = [];

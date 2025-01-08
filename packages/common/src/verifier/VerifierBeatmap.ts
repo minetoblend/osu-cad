@@ -1,8 +1,8 @@
 import type { Beatmap } from '../beatmap/Beatmap';
 import type { BeatmapColors } from '../beatmap/BeatmapColors';
 import type { BeatmapDifficultyInfo } from '../beatmap/BeatmapDifficultyInfo';
+import type { BeatmapInfo } from '../beatmap/BeatmapInfo';
 import type { BeatmapMetadata } from '../beatmap/BeatmapMetadata';
-import type { BeatmapSettings } from '../beatmap/BeatmapSettings';
 import type { IBeatmap } from '../beatmap/IBeatmap';
 import type { FileStore } from '../beatmap/io/FileStore';
 import type { ControlPointInfo } from '../controlPoints/ControlPointInfo';
@@ -73,7 +73,7 @@ export class VerifierBeatmap<T extends HitObject = HitObject> implements IBeatma
   ];
 
   getDifficultyFromName() {
-    const name = this.metadata.difficultyName.toLowerCase();
+    const name = this.beatmapInfo.difficultyName.toLowerCase();
 
     const pairs = this.#nameDiffPairs.toReversed();
 
@@ -101,8 +101,8 @@ export class VerifierBeatmap<T extends HitObject = HitObject> implements IBeatma
     }
   }
 
-  get settings(): BeatmapSettings {
-    return this.beatmap.settings;
+  get beatmapInfo(): BeatmapInfo {
+    return this.beatmap.beatmapInfo;
   }
 
   get metadata(): BeatmapMetadata {
@@ -168,5 +168,9 @@ export class VerifierBeatmap<T extends HitObject = HitObject> implements IBeatma
     const fraction = division - Math.floor(division);
 
     return fraction * timingPoint.beatLength;
+  }
+
+  clone(): IBeatmap<T> {
+    return this;
   }
 }

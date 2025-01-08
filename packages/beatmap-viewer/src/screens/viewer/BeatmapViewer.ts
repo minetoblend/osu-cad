@@ -45,7 +45,7 @@ export class BeatmapViewer extends Editor {
           items: this.editorBeatmap.beatmapSet.beatmaps
             .map(beatmap =>
               new MenuItem({
-                text: beatmap.metadata.difficultyName,
+                text: beatmap.beatmapInfo.difficultyName,
                 disabled: this.beatmap === beatmap,
                 action: () => this.switchDifficulty(beatmap),
               }),

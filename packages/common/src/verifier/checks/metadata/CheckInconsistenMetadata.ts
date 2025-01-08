@@ -43,11 +43,11 @@ export class CheckInconsistenMetadata extends GeneralCheck {
 
   override async * getIssues(mapset: VerifierBeatmapSet): AsyncGenerator<Issue, void, undefined> {
     const refBeatmap = mapset.beatmaps[0];
-    const refVersion = refBeatmap.metadata.difficultyName;
+    const refVersion = refBeatmap.beatmapInfo.difficultyName;
     const refSettings = refBeatmap.metadata;
 
     for (const beatmap of mapset.beatmaps) {
-      const curVersion = beatmap.metadata.difficultyName;
+      const curVersion = beatmap.beatmapInfo.difficultyName;
 
       yield * this.getInconsistency('artist', beatmap, refBeatmap, otherBeatmap => otherBeatmap.metadata.artist);
 
@@ -72,7 +72,7 @@ export class CheckInconsistenMetadata extends GeneralCheck {
       const difference = [...differenceTags].join(' ');
 
       if (difference !== '') {
-        yield this.createIssue(this.templates.tags, null, beatmap.metadata.difficultyName, refVersion, difference);
+        yield this.createIssue(this.templates.tags, null, beatmap.beatmapInfo.difficultyName, refVersion, difference);
       }
     }
   }
@@ -83,7 +83,7 @@ export class CheckInconsistenMetadata extends GeneralCheck {
     const otherField = metadataField(otherBeatmap);
 
     if ((field ?? '') !== (otherField ?? '')) {
-      yield this.createIssue(this.templates.otherField, null, fieldName, beatmap.metadata.difficultyName, otherBeatmap.metadata.difficultyName, field, otherField);
+      yield this.createIssue(this.templates.otherField, null, fieldName, beatmap.beatmapInfo.difficultyName, otherBeatmap.beatmapInfo.difficultyName, field, otherField);
     }
   }
 }

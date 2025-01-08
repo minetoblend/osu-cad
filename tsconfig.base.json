@@ -24,6 +24,7 @@
     "paths": {
       "@osucad/common": ["packages/common/src/index.ts"],
       "@osucad/resources": ["packages/resources/src/index.ts"],
+      "@osucad/ruleset-mania": ["packages/ruleset-mania/src/index.ts"],
       "@osucad/editor": ["packages/editor/src/index.ts"],
       "@osucad/editor/*": ["packages/editor/src/*"],
       "@osucad/serialization": ["packages/serialization/src/index.ts"],

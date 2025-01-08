@@ -317,6 +317,22 @@ importers:
         specifier: ^1.2.3
         version: 1.2.3
 
+  packages/ruleset-mania:
+    dependencies:
+      audiobuffer-to-wav:
+        specifier: ^1.0.0
+        version: 1.0.0
+      bezier-easing:
+        specifier: ^2.1.0
+        version: 2.1.0
+      unzipit:
+        specifier: ^1.4.3
+        version: 1.4.3
+    devDependencies:
+      '@types/audiobuffer-to-wav':
+        specifier: ^1.0.4
+        version: 1.0.4
+
   packages/serialization:
     dependencies:
       websocket-stream:

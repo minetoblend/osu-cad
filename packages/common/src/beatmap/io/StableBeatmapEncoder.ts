@@ -50,30 +50,30 @@ ${this.#encodeHitObjects(beatmap)}
   }
 
   * #encodeGeneral(beatmap: IBeatmap) {
-    yield `AudioFilename: ${beatmap.settings.audioFileName}`;
-    yield `AudioLeadIn: ${beatmap.settings.audioLeadIn}`;
-    yield `PreviewTime: ${beatmap.settings.previewTime}`;
-    yield `Countdown: ${beatmap.settings.countdown}`;
-    yield `SampleSet: ${beatmap.settings.sampleSet}`; // TODO: Convert to parsed sampleset
-    yield `StackLeniency: ${this.#roundToPrecision(beatmap.settings.stackLeniency, 1)}`;
+    yield `AudioFilename: ${beatmap.metadata.audioFile}`;
+    yield `AudioLeadIn: ${beatmap.beatmapInfo.audioLeadIn}`;
+    yield `PreviewTime: ${beatmap.metadata.previewTime}`;
+    yield `Countdown: ${beatmap.beatmapInfo.countdownType}`;
+    // TODO yield `SampleSet: ${beatmap.beatmapInfo.sampleSet}`;
+    yield `StackLeniency: ${this.#roundToPrecision(beatmap.beatmapInfo.stackLeniency, 1)}`;
     yield `Mode: 0`;
-    yield `LetterboxInBreaks: ${this.#boolToInt(beatmap.settings.letterboxInBreaks)}`;
-    yield `UseSkinSprites: ${this.#boolToInt(beatmap.settings.useSkinSprites)}`;
+    yield `LetterboxInBreaks: ${this.#boolToInt(beatmap.beatmapInfo.letterboxInBreaks)}`;
+    yield `UseSkinSprites: ${this.#boolToInt(beatmap.beatmapInfo.useSkinSprites)}`;
     yield `OverlayPosition: NoChange`;
-    yield `SkinPreference: ${beatmap.settings.skinPreference}`;
-    yield `EpilepsyWarning: ${this.#boolToInt(beatmap.settings.epilepsyWarning)}`;
-    yield `CountdownOffset: ${beatmap.settings.countdownOffset}`;
-    yield `SpecialStyle: ${this.#boolToInt(beatmap.settings.specialStyle)}`;
-    yield `WidescreenStoryboard: ${this.#boolToInt(beatmap.settings.widescreenStoryboard)}`;
-    yield `SamplesMatchPlaybackRate: ${this.#boolToInt(beatmap.settings.samplesMatchPlaybackRate)}`;
+    yield `SkinPreference: ${beatmap.beatmapInfo.skinPreference}`;
+    yield `EpilepsyWarning: ${this.#boolToInt(beatmap.beatmapInfo.epilepsyWarning)}`;
+    yield `CountdownOffset: ${beatmap.beatmapInfo.countdownOffset}`;
+    yield `SpecialStyle: ${this.#boolToInt(beatmap.beatmapInfo.specialStyle)}`;
+    yield `WidescreenStoryboard: ${this.#boolToInt(beatmap.beatmapInfo.widescreenStoryboard)}`;
+    yield `SamplesMatchPlaybackRate: ${this.#boolToInt(beatmap.beatmapInfo.samplesMatchingPlaybackRate)}`;
   }
 
   * #encodeEditor(beatmap: IBeatmap) {
-    yield `Bookmarks: ${beatmap.settings.editor.bookmarks.map(it => Math.round(it)).join(',')}`;
-    yield `DistanceSpacing: ${this.#roundToPrecision(beatmap.settings.editor.distanceSpacing, 1)}`;
-    yield `BeatDivisor: ${beatmap.settings.editor.beatDivisor}`;
-    yield `GridSize: ${beatmap.settings.editor.gridSize}`;
-    yield `TimelineZoom: ${this.#roundToPrecision(beatmap.settings.editor.timelineZoom.value, 1)}`;
+    yield `Bookmarks: ${beatmap.beatmapInfo.bookmarks.map(it => Math.round(it)).join(',')}`;
+    yield `DistanceSpacing: ${this.#roundToPrecision(beatmap.beatmapInfo.distanceSpacing, 1)}`;
+    yield `BeatDivisor: ${beatmap.beatmapInfo.beatDivisor}`;
+    yield `GridSize: ${beatmap.beatmapInfo.gridSize}`;
+    yield `TimelineZoom: ${this.#roundToPrecision(beatmap.beatmapInfo.timelineZoom, 1)}`;
   }
 
   * #encodeMetadata(beatmap: IBeatmap) {
@@ -82,11 +82,12 @@ ${this.#encodeHitObjects(beatmap)}
     yield `Artist: ${beatmap.metadata.artist}`;
     yield `ArtistUnicode: ${beatmap.metadata.artistUnicode}`;
     yield `Creator: ${beatmap.metadata.creator}`;
-    yield `Version: ${beatmap.metadata.difficultyName}`;
+    yield `Version: ${beatmap.beatmapInfo.difficultyName}`;
     yield `Source: ${beatmap.metadata.source}`;
     yield `Tags: ${beatmap.metadata.tags}`;
-    yield `BeatmapID: ${beatmap.metadata.osuWebId}`;
-    yield `BeatmapSetID: ${beatmap.metadata.osuWebSetId}`;
+    yield `BeatmapID: ${beatmap.beatmapInfo.onlineId}`;
+    // TODO
+    // yield `BeatmapSetID: ${beatmap.metadata.osuWebSetId}`;
   }
 
   * #encodeDifficulty(beatmap: IBeatmap) {
@@ -100,8 +101,8 @@ ${this.#encodeHitObjects(beatmap)}
 
   * #encodeEvents(beatmap: IBeatmap) {
     yield `//Background and Video events`;
-    if (beatmap.settings.backgroundFilename)
-      yield `0,0,"${beatmap.settings.backgroundFilename}",0,0`;
+    if (beatmap.metadata.backgroundFile)
+      yield `0,0,"${beatmap.metadata.backgroundFile}",0,0`;
     yield `//Break Periods`;
     yield `//Storyboard Layer 0 (Background)`;
     yield `//Storyboard Layer 1 (Fail)`;

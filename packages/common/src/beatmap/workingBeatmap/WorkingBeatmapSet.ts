@@ -23,10 +23,10 @@ export class WorkingBeatmapSet {
 
   getBackgroundImageFile(): IFile | null {
     for (const beatmap of this.beatmaps) {
-      if (!beatmap.settings.backgroundFilename?.trim()?.length)
+      if (!beatmap.metadata.backgroundFile?.trim()?.length)
         continue;
 
-      const file = this.getFile(beatmap.settings.backgroundFilename);
+      const file = this.getFile(beatmap.metadata.backgroundFile);
       if (file)
         return file;
     }
@@ -36,7 +36,7 @@ export class WorkingBeatmapSet {
 
   getAudioFile(): IFile | null {
     for (const beatmap of this.beatmaps) {
-      const file = this.getFile(beatmap.settings.audioFileName);
+      const file = this.getFile(beatmap.metadata.audioFile);
       if (file)
         return file;
     }

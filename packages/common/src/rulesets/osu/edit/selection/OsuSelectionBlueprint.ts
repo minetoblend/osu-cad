@@ -3,8 +3,8 @@ import type { HitObjectSelectionEvent } from '../../../../editor/screens/compose
 import type { HitObjectLifetimeEntry } from '../../../../hitObjects/drawables/HitObjectLifetimeEntry';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { Axes, Bindable, BindableBoolean, BindableNumber, Container, MouseButton, resolved, Vec2 } from 'osucad-framework';
-import { HitObjectList } from '../../../../beatmap/HitObjectList';
 import { UpdateHandler } from '../../../../crdt/UpdateHandler';
+import { EditorBeatmap } from '../../../../editor/EditorBeatmap';
 import { HitObjectSelectionManager } from '../../../../editor/screens/compose/HitObjectSelectionManager';
 import { HitObjectBlueprint } from '../../../ui/HitObjectBlueprint';
 import { HitObjectBlueprintContainer } from '../../../ui/HitObjectBlueprintContainer';
@@ -115,10 +115,10 @@ export class OsuSelectionBlueprint<T extends OsuHitObject = OsuHitObject> extend
     if (e.button === MouseButton.Right) {
       if (this.selected.value) {
         for (const h of this.selection.selectedObjects)
-          this.hitObjects.remove(h);
+          this.editorBeatmap.remove(h);
       }
       else {
-        this.hitObjects.remove(this.hitObject!);
+        this.editorBeatmap.remove(this.hitObject!);
       }
 
       this.updateHandler.commit();
@@ -128,8 +128,8 @@ export class OsuSelectionBlueprint<T extends OsuHitObject = OsuHitObject> extend
     return false;
   }
 
-  @resolved(HitObjectList)
-  protected hitObjects!: HitObjectList;
+  @resolved(EditorBeatmap)
+  protected editorBeatmap!: EditorBeatmap;
 
   override onMouseUp(e: MouseUpEvent) {
     this.schedule(() => this.#didSelect = false);

@@ -139,7 +139,7 @@ export class IssueList extends Container {
 
     this.setupSections(beatmaps);
 
-    const skin = new BeatmapSkin(this.resoucesProvider, this.beatmap, this.beatmap.fileStore);
+    const skin = new BeatmapSkin(this.resoucesProvider, this.beatmap.beatmap, this.beatmap.fileStore);
     const issues = verifier.getIssues(beatmaps, this.beatmap.fileStore, skin, this.resoucesProvider);
 
     startTime = performance.now();

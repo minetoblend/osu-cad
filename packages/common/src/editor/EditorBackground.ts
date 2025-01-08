@@ -18,7 +18,7 @@ export class EditorBackground extends BackgroundScreen {
   protected override loadComplete() {
     super.loadComplete();
 
-    const filename = this.editorBeatmap.settings.backgroundFilename?.trim();
+    const filename = this.editorBeatmap.metadata.backgroundFile?.trim();
     if (!filename)
       return;
 

@@ -1,10 +1,10 @@
 import type { HitObject } from '../../hitObjects/HitObject';
 import { Cached, Component, resolved } from 'osucad-framework';
-import { IBeatmap } from '../IBeatmap';
+import { EditorBeatmap } from '../../editor/EditorBeatmap';
 
 export abstract class BeatmapProcessor extends Component {
-  @resolved(IBeatmap)
-  protected beatmap!: IBeatmap;
+  @resolved(EditorBeatmap)
+  protected beatmap!: EditorBeatmap;
 
   protected get hitObjects() {
     return this.beatmap.hitObjects;
@@ -15,8 +15,8 @@ export abstract class BeatmapProcessor extends Component {
   protected override loadComplete() {
     super.loadComplete();
 
-    this.hitObjects.added.addListener(h => this.onHitObjectAdded(h));
-    this.hitObjects.removed.addListener(h => this.onHitObjectRemoved(h));
+    this.beatmap.hitObjectAdded.addListener(h => this.onHitObjectAdded(h));
+    this.beatmap.hitObjectRemoved.addListener(h => this.onHitObjectRemoved(h));
 
     for (const h of this.hitObjects) {
       this.onHitObjectAdded(h);

@@ -46,7 +46,7 @@ export class CheckDefaultColors extends BeatmapCheck<any> {
   };
 
   override async * getIssues(beatmap: VerifierBeatmap<any>): AsyncGenerator<Issue, void, undefined> {
-    const noSkinPreference = beatmap.settings.skinPreference === '' || beatmap.settings.skinPreference === 'Default';
+    const noSkinPreference = beatmap.beatmapInfo.skinPreference === '' || beatmap.beatmapInfo.skinPreference === 'Default';
     if (noSkinPreference && beatmap.colors.comboColors.length === 0) {
       yield this.createIssue(this.templates.default, beatmap);
     }

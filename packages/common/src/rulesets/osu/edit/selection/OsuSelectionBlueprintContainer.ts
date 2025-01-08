@@ -5,7 +5,7 @@ import type { HitObject } from '../../../../hitObjects/HitObject';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import type { OsuSelectionBlueprint } from './OsuSelectionBlueprint';
 import { MouseButton, resolved } from 'osucad-framework';
-import { IBeatmap } from '../../../../beatmap/IBeatmap';
+import { EditorBeatmap } from '../../../../editor/EditorBeatmap';
 import { EditorClock } from '../../../../editor/EditorClock';
 import { HitObjectSelectionManager } from '../../../../editor/screens/compose/HitObjectSelectionManager';
 import { HitObjectBlueprintContainer } from '../../../ui/HitObjectBlueprintContainer';
@@ -49,8 +49,8 @@ export class OsuSelectionBlueprintContainer extends HitObjectBlueprintContainer<
     this.addInternal(new OsuSelectBox());
   }
 
-  @resolved(IBeatmap)
-  beatmap!: IBeatmap;
+  @resolved(EditorBeatmap)
+  beatmap!: EditorBeatmap;
 
   protected override loadComplete() {
     super.loadComplete();
@@ -58,8 +58,8 @@ export class OsuSelectionBlueprintContainer extends HitObjectBlueprintContainer<
     for (const h of this.beatmap.hitObjects)
       this.addHitObject(h);
 
-    this.beatmap.hitObjects.added.addListener(this.addHitObject, this);
-    this.beatmap.hitObjects.removed.addListener(this.removeHitObject, this);
+    this.beatmap.hitObjectAdded.addListener(this.addHitObject, this);
+    this.beatmap.hitObjectRemoved.addListener(this.removeHitObject, this);
 
     this.selection.selectionChanged.addListener(this.#selectionChanged, this);
   }
@@ -79,8 +79,8 @@ export class OsuSelectionBlueprintContainer extends HitObjectBlueprintContainer<
   override dispose(isDisposing: boolean = true) {
     super.dispose(isDisposing);
 
-    this.beatmap.hitObjects.added.removeListener(this.addHitObject, this);
-    this.beatmap.hitObjects.removed.removeListener(this.removeHitObject, this);
+    this.beatmap.hitObjectAdded.removeListener(this.addHitObject, this);
+    this.beatmap.hitObjectRemoved.removeListener(this.removeHitObject, this);
   }
 
   override receivePositionalInputAt(screenSpacePosition: Vec2): boolean {

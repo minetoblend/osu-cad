@@ -1,7 +1,6 @@
 import type { DependencyContainer, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, MenuItem, ReadonlyDependencyContainer, ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
 import type { BackgroundScreen } from '../screens/BackgroundScreen';
-import { asyncDependencyLoader, EasingFunction, PlatformAction, provide } from 'osucad-framework';
-import { HitObjectList } from '../beatmap/HitObjectList';
+import { EasingFunction, PlatformAction, provide } from 'osucad-framework';
 import { IBeatmap } from '../beatmap/IBeatmap';
 import { BeatmapComboProcessor } from '../beatmap/processors/BeatmapComboProcessor';
 import { ControlPointInfo } from '../controlPoints/ControlPointInfo';
@@ -34,25 +33,30 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
 
   #screenManager = new EditorScreenManager();
 
-  @asyncDependencyLoader()
-  async [Symbol('loadAsync')](dependencies: ReadonlyDependencyContainer) {
-    await this.loadComponentAsync(this.editorBeatmap);
+  protected override get hasAsyncLoader(): boolean {
+    return true;
+  }
 
-    const ruleset = this.editorBeatmap.ruleset;
-    if (!ruleset) {
+  protected override async loadAsync(dependencies: ReadonlyDependencyContainer): Promise<void> {
+    await super.loadAsync(dependencies);
+
+    console.log('load editor async');
+
+    await this.editorBeatmap.load();
+
+    if (!this.editorBeatmap.beatmapInfo.ruleset) {
       // TODO: display message
       this.exit();
       return;
     }
 
-    this.#dependencies.provide(Ruleset, ruleset);
+    const ruleset = this.editorBeatmap.beatmapInfo.ruleset.createInstance();
 
-    this.addInternal(this.editorBeatmap);
+    this.#dependencies.provide(Ruleset, ruleset);
 
     this.#dependencies.provide(EditorBeatmap, this.editorBeatmap);
     this.#dependencies.provide(IBeatmap, this.beatmap);
     this.#dependencies.provide(ControlPointInfo, this.editorBeatmap.controlPoints);
-    this.#dependencies.provide(HitObjectList, this.beatmap.hitObjects);
     this.#dependencies.provide(UpdateHandler, this.editorBeatmap.updateHandler);
 
     this.addInternal(this.#editorClock = new EditorClock(this.editorBeatmap.track.value));
@@ -64,9 +68,12 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
 
     const resources = dependencies.resolve(IResourcesProvider);
 
+    for (const h of this.beatmap.hitObjects)
+      h.applyDefaults(this.beatmap.controlPoints, this.beatmap.difficulty);
+
     ruleset.postProcessBeatmap(this.beatmap);
 
-    const beatmapSkin = new BeatmapSkin(resources, this.editorBeatmap, this.editorBeatmap.fileStore);
+    const beatmapSkin = new BeatmapSkin(resources, this.editorBeatmap.beatmap, this.editorBeatmap.fileStore);
 
     await beatmapSkin.load();
 
@@ -82,8 +89,10 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
     );
     this.addInternal(new BeatmapComboProcessor());
 
-    if (this.beatmap.hitObjects.first)
-      this.#editorClock.seek(this.beatmap.hitObjects.first.startTime, false);
+    if (this.beatmap.hitObjects.length > 0)
+      this.#editorClock.seek(this.beatmap.hitObjects[0].startTime, false);
+
+    console.log('load editor async complete');
   }
 
   protected registerScreens(screenManager: EditorScreenManager) {
@@ -154,15 +163,5 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
 
   override createBackground(): BackgroundScreen | null {
     return new EditorBackground(this.editorBeatmap);
-  }
-
-  override update() {
-    super.update();
-
-    this.beatmap.hitObjects.applyDefaultsWhereNeeded(
-      this.#editorClock.currentTime - 3000,
-      this.#editorClock.currentTime + 3000,
-      10,
-    );
   }
 }

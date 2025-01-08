@@ -1,4 +1,4 @@
-import type { ReadonlyDependencyContainer } from 'osucad-framework';
+import type { IResourcesProvider } from '../io/IResourcesProvider';
 import { StableBeatmapParser } from '../beatmap';
 import { SimpleFile } from '../beatmap/io/SimpleFile';
 import { StaticFileStore } from '../beatmap/io/StaticFileStore';
@@ -7,8 +7,9 @@ import audioUrl from './audio.mp3?url';
 import { EditorBeatmap } from './EditorBeatmap';
 
 export class DummyEditorBeatmap extends EditorBeatmap {
-  constructor() {
+  constructor(resourcesProvider: IResourcesProvider) {
     super(
+      resourcesProvider,
       // eslint-disable-next-line ts/no-use-before-define
       new StableBeatmapParser().parse(beatmapText),
       new StaticFileStore([
@@ -16,14 +17,10 @@ export class DummyEditorBeatmap extends EditorBeatmap {
       ]),
     );
 
-    this.beatmap.settings.audioFileName = 'audio.mp3';
+    this.beatmap.metadata.audioFile = 'audio.mp3';
 
     this.beatmap.controlPoints.add(new EffectPoint(1000, true));
     this.beatmap.controlPoints.add(new EffectPoint(2000, false));
-  }
-
-  protected override async loadAsync(dependencies: ReadonlyDependencyContainer): Promise<void> {
-    return super.loadAsync(dependencies);
   }
 }
 

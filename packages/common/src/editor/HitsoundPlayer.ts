@@ -56,8 +56,8 @@ export class HitsoundPlayer extends Component {
     for (const hitObject of this.beatmap.hitObjects)
       this.addHitObject(hitObject);
 
-    this.beatmap.hitObjects.added.addListener(this.addHitObject, this);
-    this.beatmap.hitObjects.removed.addListener(this.removeHitObject, this);
+    this.beatmap.hitObjectAdded.addListener(this.addHitObject, this);
+    this.beatmap.hitObjectRemoved.addListener(this.removeHitObject, this);
   }
 
   #onEntryBecameAlive(entry: LifetimeEntry) {
@@ -200,6 +200,9 @@ export class HitsoundPlayer extends Component {
         sample.stop();
       }
     }
+
+    this.beatmap.hitObjectAdded.removeListener(this.addHitObject, this);
+    this.beatmap.hitObjectRemoved.removeListener(this.removeHitObject, this);
 
     super.dispose(isDisposing);
   }

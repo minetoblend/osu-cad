@@ -3,6 +3,7 @@ import type { IVec2 } from 'osucad-framework';
 import type { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 import type { HitWindows } from '../../../hitObjects/HitWindows';
 import type { IHasComboInformation } from '../../../hitObjects/IHasComboInformation';
+import type { IHasXPosition } from '../../../hitObjects/IHasXPosition';
 import type { ISkin } from '../../../skinning';
 import type { HitCircle } from './HitCircle';
 import type { Slider } from './Slider';
@@ -20,7 +21,7 @@ import { SampleSet } from '../../../hitsounds/SampleSet';
 import { SampleType } from '../../../hitsounds/SampleType';
 import { OsuHitWindows } from './OsuHitWindows';
 
-export abstract class OsuHitObject extends HitObject implements IHasComboInformation {
+export abstract class OsuHitObject extends HitObject implements IHasComboInformation, IHasXPosition {
   static readonly object_radius = 64;
 
   static readonly object_dimensions = new Vec2(OsuHitObject.object_radius * 2);

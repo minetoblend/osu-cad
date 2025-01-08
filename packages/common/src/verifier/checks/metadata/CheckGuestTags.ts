@@ -38,14 +38,14 @@ export class CheckGuestTags extends GeneralCheck {
 
   override async * getIssues(mapset: VerifierBeatmapSet): AsyncGenerator<Issue, void, undefined> {
     for (const beatmap of mapset.beatmaps) {
-      for (const possessor of this.getAllPossessors(beatmap.metadata.difficultyName)) {
+      for (const possessor of this.getAllPossessors(beatmap.beatmapInfo.difficultyName)) {
         if (possessor === null)
           continue;
 
         if (this.isCoveredByTags(possessor, beatmap) || beatmap.metadata.creator.toLowerCase() === possessor.toLowerCase())
           continue;
 
-        yield this.createIssue(this.templates.warning, null, beatmap.metadata.difficultyName, possessor.toLowerCase().replaceAll(' ', '_'))
+        yield this.createIssue(this.templates.warning, null, beatmap.beatmapInfo.difficultyName, possessor.toLowerCase().replaceAll(' ', '_'))
         ;
       }
     }

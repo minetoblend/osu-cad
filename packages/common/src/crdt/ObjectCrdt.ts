@@ -1,3 +1,4 @@
+import type { Bindable } from 'osucad-framework';
 import { AbstractCrdt } from './AbstractCrdt';
 import { Property } from './Property';
 
@@ -12,7 +13,7 @@ export abstract class ObjectCrdt extends AbstractCrdt<ObjectMutation> {
     super();
   }
 
-  protected property<T>(name: string, initialValue: T) {
+  protected property<T>(name: string, initialValue: T | Bindable<T>) {
     const property = new Property(this, name, initialValue);
     this.#properties.set(name, property);
     return property;

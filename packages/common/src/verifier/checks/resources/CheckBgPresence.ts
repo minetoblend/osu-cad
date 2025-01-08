@@ -25,7 +25,7 @@ export class CheckBgPresence extends GeneralCheck {
     const beatmaps: IBeatmap[] = [];
 
     for (const beatmap of mapset.beatmaps) {
-      const filename = beatmap.settings.backgroundFilename?.trim() ?? '';
+      const filename = beatmap.metadata.backgroundFile?.trim() ?? '';
       if (filename.length === 0) {
         beatmaps.push(beatmap);
       }

@@ -39,7 +39,7 @@ export abstract class DrawableHitObjectPlacementTool<T extends HitObject> extend
     this.updateStartTime();
 
     if (this.showPreviewObject) {
-      this.hitObjects.addUntracked(this.hitObject);
+      this.editorBeatmap.addUntracked(this.hitObject);
 
       this.updatePlayfield();
     }
@@ -84,21 +84,21 @@ export abstract class DrawableHitObjectPlacementTool<T extends HitObject> extend
 
     this.isPlacing = true;
 
-    this.hitObjects.removeUntracked(this.hitObject);
+    this.editorBeatmap.removeUntracked(this.hitObject);
 
     this.hitObject.transient = false;
 
     if (this.removeHitObjectsAtCurrentTime) {
-      const hitObjectsAtTime = this.hitObjects.items
+      const hitObjectsAtTime = this.hitObjects
         .filter(it => almostEquals(it.startTime, this.hitObject.startTime));
 
       for (const h of hitObjectsAtTime)
-        this.hitObjects.remove(h);
+        this.editorBeatmap.remove(h);
     }
 
     this.hitObject.startTime = this.editorClock.snap(this.editorClock.currentTime);
 
-    this.hitObjects.add(this.hitObject);
+    this.editorBeatmap.add(this.hitObject);
 
     this.updatePlayfield();
 
@@ -127,7 +127,7 @@ export abstract class DrawableHitObjectPlacementTool<T extends HitObject> extend
     super.dispose(isDisposing);
 
     if (!this.isPlacing)
-      this.hitObjects.removeUntracked(this.hitObject);
+      this.editorBeatmap.removeUntracked(this.hitObject);
     else
       this.commit();
 

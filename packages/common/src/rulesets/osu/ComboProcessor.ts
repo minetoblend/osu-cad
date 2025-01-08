@@ -15,7 +15,7 @@ export class ComboProcessor {
       if (hitObject instanceof Spinner) {
         forceNewCombo = true;
       }
-      else if ((hitObject.newCombo && hitObject !== beatmap.hitObjects.first) || forceNewCombo) {
+      else if ((hitObject.newCombo && hitObject !== beatmap.hitObjects[0]) || forceNewCombo) {
         comboIndex += 1 + hitObject.comboOffset;
         indexInCombo = 0;
 

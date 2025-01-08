@@ -1,17 +1,16 @@
 import type { ControlPointInfo } from '../controlPoints/ControlPointInfo';
+import type { HitObject } from '../hitObjects/HitObject';
 import type { BeatmapColors } from './BeatmapColors';
 import type { BeatmapDifficultyInfo } from './BeatmapDifficultyInfo';
 import type { BeatmapMetadata } from './BeatmapMetadata';
-import type { BeatmapSettings } from './BeatmapSettings';
-import type { HitObjectList } from './HitObjectList';
 import type { IBeatmap } from './IBeatmap';
 import { Component } from 'osucad-framework';
 
 export abstract class BeatmapTransformer<T extends IBeatmap = IBeatmap> extends Component implements IBeatmap {
   abstract readonly beatmap: T;
 
-  get settings(): BeatmapSettings {
-    return this.beatmap.settings;
+  get beatmapInfo() {
+    return this.beatmap.beatmapInfo;
   }
 
   get metadata(): BeatmapMetadata {
@@ -30,7 +29,11 @@ export abstract class BeatmapTransformer<T extends IBeatmap = IBeatmap> extends 
     return this.beatmap.controlPoints;
   }
 
-  get hitObjects(): HitObjectList {
+  get hitObjects(): HitObject[] {
     return this.beatmap.hitObjects;
+  }
+
+  clone(): IBeatmap<HitObject> {
+    throw new Error('BeatmapTransformer cannot be cloned');
   }
 }

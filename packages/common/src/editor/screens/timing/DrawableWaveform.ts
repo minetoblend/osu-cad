@@ -1,15 +1,6 @@
 import type { AudioBufferTrack, DrawableOptions } from 'osucad-framework';
 import type { PointData } from 'pixi.js';
-import {
-  Axes,
-  CompositeDrawable,
-  Drawable,
-  Invalidation,
-  LayoutMember,
-  PIXIContainer,
-  PIXIGraphics,
-  resolved,
-} from 'osucad-framework';
+import { Axes, CompositeDrawable, Drawable, Invalidation, LayoutMember, PIXIContainer, PIXIGraphics, resolved } from 'osucad-framework';
 import { Timeline } from '../../ui/timeline/Timeline';
 
 export class DrawableWaveform extends CompositeDrawable {

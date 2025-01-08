@@ -1,128 +1,119 @@
-import { Action, Bindable, BindableNumber } from 'osucad-framework';
+import type { IDeepCloneable } from '../utils/IDeepCloneable';
+import { BindableNumber } from 'osucad-framework';
+import { ObjectCrdt } from '../crdt/ObjectCrdt';
 
-export class BeatmapDifficultyInfo implements PlainBeatmapDifficultyInfo {
+export class BeatmapDifficultyInfo extends ObjectCrdt implements IDeepCloneable<BeatmapDifficultyInfo> {
   constructor() {
-    for (const key in this) {
-      const value = this[key];
-      if (value instanceof Bindable)
-        value.addOnChangeListener(() => this.invalidated.emit());
-    }
+    super();
   }
 
-  hpDrainRateBindable = Object.assign(new BindableNumber(5), {
+  readonly #hpDrainRate = this.property('hpDrainRate', Object.assign(new BindableNumber(5), {
     minValue: 0,
     maxValue: 10,
     precision: 0.1,
-  });
+  }));
+
+  get hpDrainRateBindable() {
+    return this.#hpDrainRate.bindable;
+  }
 
   get hpDrainRate() {
-    return this.hpDrainRateBindable.value;
+    return this.#hpDrainRate.value;
   }
 
   set hpDrainRate(value) {
-    this.hpDrainRateBindable.value = value;
+    this.#hpDrainRate.value = value;
   }
 
-  circleSizeBindable = Object.assign(new BindableNumber(5), {
+  readonly #circleSize = this.property('circleSize', Object.assign(new BindableNumber(5), {
     minValue: 0,
     maxValue: 10,
     precision: 0.1,
-  });
+  }));
+
+  get circleSizeBindable() {
+    return this.#circleSize.bindable;
+  }
 
   get circleSize() {
-    return this.circleSizeBindable.value;
+    return this.#circleSize.value;
   }
 
   set circleSize(value) {
-    this.circleSizeBindable.value = value;
+    this.#circleSize.value = value;
   }
 
-  approachRateBindable = Object.assign(new BindableNumber(5), {
+  readonly #approachRate = this.property('approachRate', Object.assign(new BindableNumber(5), {
     minValue: 0,
     maxValue: 10,
     precision: 0.1,
-  });
+  }));
+
+  get approachRateBindable() {
+    return this.#approachRate.bindable;
+  }
 
   get approachRate() {
-    return this.approachRateBindable.value;
+    return this.#approachRate.value;
   }
 
   set approachRate(value) {
-    this.approachRateBindable.value = value;
+    this.#approachRate.value = value;
   }
 
-  overallDifficultyBindable = Object.assign(new BindableNumber(5), {
+  readonly #overallDifficulty = this.property('overallDifficulty', Object.assign(new BindableNumber(5), {
     minValue: 0,
     maxValue: 10,
     precision: 0.1,
-  });
+  }));
+
+  get overallDifficultyBindable() {
+    return this.#overallDifficulty.bindable;
+  }
 
   get overallDifficulty() {
-    return this.overallDifficultyBindable.value;
+    return this.#overallDifficulty.value;
   }
 
   set overallDifficulty(value) {
-    this.overallDifficultyBindable.value = value;
+    this.#overallDifficulty.value = value;
   }
 
-  sliderMultiplierBindable = Object.assign(new BindableNumber(1.4), {
+  readonly #sliderMultiplier = this.property('sliderMultiplier', Object.assign(new BindableNumber(1.4), {
     minValue: 0.4,
     maxValue: 3.6,
     precision: 0.1,
-  });
+  }));
+
+  get sliderMultiplierBindable() {
+    return this.#sliderMultiplier.bindable;
+  }
 
   get sliderMultiplier() {
-    return this.sliderMultiplierBindable.value;
+    return this.#sliderMultiplier.value;
   }
 
   set sliderMultiplier(value) {
-    this.sliderMultiplierBindable.value = value;
+    this.#sliderMultiplier.value = value;
   }
 
-  sliderTickRateBindable = Object.assign(new BindableNumber(1.4), {
+  readonly #sliderTickRate = this.property('sliderTickRate', Object.assign(new BindableNumber(1.4), {
     minValue: 1,
     maxValue: 4,
     precision: 1,
-  });
+  }));
+
+  get sliderTickRateBindable() {
+    return this.#sliderTickRate.bindable;
+  }
 
   get sliderTickRate() {
-    return this.sliderTickRateBindable.value;
+    return this.#sliderTickRate.value;
   }
 
   set sliderTickRate(value) {
-    this.sliderTickRateBindable.value = value;
+    this.#sliderTickRate.value = value;
   }
-
-  assignFrom(data: PlainBeatmapDifficultyInfo) {
-    this.hpDrainRate = data.hpDrainRate;
-    this.circleSize = data.circleSize;
-    this.approachRate = data.approachRate;
-    this.overallDifficulty = data.overallDifficulty;
-    this.sliderMultiplier = data.sliderMultiplier;
-    this.sliderTickRate = data.sliderTickRate;
-  }
-
-  toPlain(): PlainBeatmapDifficultyInfo {
-    const {
-      hpDrainRate,
-      circleSize,
-      approachRate,
-      overallDifficulty,
-      sliderMultiplier,
-      sliderTickRate,
-    } = this;
-
-    return {
-      hpDrainRate,
-      circleSize,
-      approachRate,
-      overallDifficulty,
-      sliderMultiplier,
-      sliderTickRate,
-    };
-  }
-
-  invalidated = new Action();
 
   static difficultyRange(difficulty: number, min: number, mid: number, max: number) {
     if (difficulty > 5)
@@ -138,13 +129,24 @@ export class BeatmapDifficultyInfo implements PlainBeatmapDifficultyInfo {
 
     return (1.0 - 0.7 * BeatmapDifficultyInfo.difficultyRange(this.circleSize, -1, 0, 1)) / 2 * (applyFudge ? broken_gamefield_rounding_allowance : 1);
   }
-}
 
-export interface PlainBeatmapDifficultyInfo {
-  hpDrainRate: number;
-  circleSize: number;
-  approachRate: number;
-  overallDifficulty: number;
-  sliderMultiplier: number;
-  sliderTickRate: number;
+  deepClone(): BeatmapDifficultyInfo {
+    const {
+      hpDrainRate,
+      circleSize,
+      approachRate,
+      overallDifficulty,
+      sliderMultiplier,
+      sliderTickRate,
+    } = this;
+
+    return Object.assign(new BeatmapDifficultyInfo(), {
+      hpDrainRate,
+      circleSize,
+      approachRate,
+      overallDifficulty,
+      sliderMultiplier,
+      sliderTickRate,
+    });
+  }
 }

@@ -1,0 +1,20 @@
+{
+  "name": "mania",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/ruleset-mania/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "dependsOn": ["resources:prebuild"],
+      "options": {
+        "outputPath": "dist/packages/ruleset-mania",
+        "main": "packages/ruleset-mania/src/index.ts",
+        "tsConfig": "packages/ruleset-mania/tsconfig.lib.json",
+        "assets": ["packages/ruleset-mania/*.md"]
+      }
+    }
+  }
+}

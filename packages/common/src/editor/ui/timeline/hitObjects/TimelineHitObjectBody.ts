@@ -3,8 +3,8 @@ import type { Color } from 'pixi.js';
 import type { HitObject } from '../../../../hitObjects/HitObject';
 import type { TimelineHitObjectBlueprint } from './TimelineHitObjectBlueprint';
 import { Axes, Bindable, CompositeDrawable, FastRoundedBox, MouseButton, resolved } from 'osucad-framework';
-import { HitObjectList } from '../../../../beatmap/HitObjectList';
 import { UpdateHandler } from '../../../../crdt/UpdateHandler';
+import { EditorBeatmap } from '../../../EditorBeatmap';
 import { EditorClock } from '../../../EditorClock';
 import { HitObjectSelectionManager } from '../../../screens/compose/HitObjectSelectionManager';
 import { Timeline } from '../Timeline';
@@ -42,8 +42,8 @@ export class TimelineHitObjectBody extends CompositeDrawable {
     this.#body.color = this.accentColor.value;
   }
 
-  @resolved(HitObjectList)
-  hitObjects!: HitObjectList;
+  @resolved(EditorBeatmap)
+  editorBeatmap!: EditorBeatmap;
 
   @resolved(UpdateHandler)
   updateHandler!: UpdateHandler;
@@ -53,7 +53,7 @@ export class TimelineHitObjectBody extends CompositeDrawable {
       if (this.isDragged)
         return false;
 
-      this.hitObjects.remove(this.hitObject!);
+      this.editorBeatmap.remove(this.hitObject!);
       this.updateHandler.commit();
       return true;
     }

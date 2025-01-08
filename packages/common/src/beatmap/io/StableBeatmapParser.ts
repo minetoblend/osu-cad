@@ -17,6 +17,8 @@ import { PathType } from '../../rulesets/osu/hitObjects/PathType';
 import { Slider } from '../../rulesets/osu/hitObjects/Slider';
 import { SliderPathBuilder } from '../../rulesets/osu/hitObjects/SliderPathBuilder';
 import { Spinner } from '../../rulesets/osu/hitObjects/Spinner';
+import { RulesetInfo } from '../../rulesets/RulesetInfo';
+import { RulesetStore } from '../../rulesets/RulesetStore';
 import { Beatmap } from '../Beatmap';
 
 enum BeatmapSection {
@@ -130,7 +132,7 @@ export class StableBeatmapParser {
         beatmap.metadata.creator = value;
         break;
       case 'Version':
-        beatmap.metadata.difficultyName = value;
+        beatmap.beatmapInfo.difficultyName = value;
         break;
       case 'Source':
         beatmap.metadata.source = value;
@@ -139,10 +141,10 @@ export class StableBeatmapParser {
         beatmap.metadata.tags = value;
         break;
       case 'BeatmapID':
-        beatmap.metadata.osuWebId = Number.parseInt(value);
+        beatmap.beatmapInfo.onlineId = Number.parseInt(value);
         break;
       case 'BeatmapSetID':
-        beatmap.metadata.osuWebSetId = Number.parseInt(value);
+        beatmap.beatmapInfo.onlineBeatmapSetId = Number.parseInt(value);
         break;
     }
   }
@@ -152,58 +154,60 @@ export class StableBeatmapParser {
 
     switch (key) {
       case 'AudioFilename':
-        beatmap.settings.audioFileName = value;
+        beatmap.metadata.audioFile = value;
         break;
       case 'AudioLeadIn':
-        beatmap.settings.audioLeadIn = Number.parseInt(value);
+        beatmap.beatmapInfo.audioLeadIn = Number.parseInt(value);
         break;
       case 'AudioHash':
-        beatmap.settings.audioHash = value;
+        // TODO
+        // beatmap.beatmapInfo.audioHash = value;
         break;
       case 'PreviewTime':
-        beatmap.settings.previewTime = Number.parseInt(value);
+        beatmap.metadata.previewTime = Number.parseInt(value);
         break;
       case 'Countdown':
-        beatmap.settings.countdown = Number.parseInt(value);
+        beatmap.beatmapInfo.countdownType = Number.parseInt(value);
         break;
       case 'SampleSet':
-        beatmap.settings.sampleSet = value;
+        // TODO
+        // beatmap.beatmapInfo.sampleSet = value;
         break;
       case 'StackLeniency':
-        beatmap.settings.stackLeniency = Number.parseFloat(value);
+        beatmap.beatmapInfo.stackLeniency = Number.parseFloat(value);
         break;
       case 'Mode':
-        beatmap.settings.mode = Number.parseInt(value);
+        beatmap.beatmapInfo.ruleset = RulesetStore.getByLegacyId(Number.parseInt(value)) ?? new RulesetInfo();
         break;
       case 'LetterboxInBreaks':
-        beatmap.settings.letterboxInBreaks = value === '1';
+        beatmap.beatmapInfo.letterboxInBreaks = value === '1';
         break;
       case 'UseSkinSprites':
-        beatmap.settings.useSkinSprites = value === '1';
+        beatmap.beatmapInfo.useSkinSprites = value === '1';
         break;
       case 'AlwaysShowPlayfield':
-        beatmap.settings.alwaysShowPlayfield = value === '1';
+        beatmap.beatmapInfo.alwaysShowPlayfield = value === '1';
         break;
       case 'OverlayPosition':
-        beatmap.settings.overlayPosition = value;
+        beatmap.beatmapInfo.overlayPosition = value;
         break;
       case 'SkinPreference':
-        beatmap.settings.skinPreference = value;
+        beatmap.beatmapInfo.skinPreference = value;
         break;
       case 'EpilepsyWarning':
-        beatmap.settings.epilepsyWarning = value === '1';
+        beatmap.beatmapInfo.epilepsyWarning = value === '1';
         break;
       case 'CountdownOffset':
-        beatmap.settings.countdownOffset = Number.parseInt(value);
+        beatmap.beatmapInfo.countdownOffset = Number.parseInt(value);
         break;
       case 'SpecialStyle':
-        beatmap.settings.specialStyle = value === '1';
+        beatmap.beatmapInfo.specialStyle = value === '1';
         break;
       case 'WidescreenStoryboard':
-        beatmap.settings.widescreenStoryboard = value === '1';
+        beatmap.beatmapInfo.widescreenStoryboard = value === '1';
         break;
       case 'SamplesMatchPlaybackRate':
-        beatmap.settings.samplesMatchPlaybackRate = value === '1';
+        beatmap.beatmapInfo.samplesMatchingPlaybackRate = value === '1';
         break;
     }
   }
@@ -213,19 +217,19 @@ export class StableBeatmapParser {
 
     switch (key) {
       case 'Bookmarks':
-        beatmap.settings.editor.bookmarks = value.split(',').map(it => Number.parseInt(it));
+        beatmap.beatmapInfo.bookmarks = value.split(',').map(it => Number.parseInt(it));
         break;
       case 'DistanceSpacing':
-        beatmap.settings.editor.distanceSpacing = Number.parseFloat(value);
+        beatmap.beatmapInfo.distanceSpacing = Number.parseFloat(value);
         break;
       case 'BeatDivisor':
-        beatmap.settings.editor.beatDivisor = Number.parseInt(value);
+        beatmap.beatmapInfo.beatDivisor = Number.parseInt(value);
         break;
       case 'GridSize':
-        beatmap.settings.editor.gridSize = Number.parseInt(value);
+        beatmap.beatmapInfo.gridSize = Number.parseInt(value);
         break;
       case 'TimelineZoom':
-        beatmap.settings.editor.timelineZoom.value = Number.parseFloat(value);
+        beatmap.beatmapInfo.timelineZoom = Number.parseFloat(value);
         break;
     }
   }
@@ -413,7 +417,7 @@ export class StableBeatmapParser {
     if (!hitObject)
       return;
 
-    beatmap.hitObjects.add(hitObject);
+    beatmap.hitObjects.push(hitObject);
   }
 
   #parseDifficulty(beatmap: Beatmap, line: string) {
@@ -455,7 +459,7 @@ export class StableBeatmapParser {
     if (line.startsWith('0,0,')) {
       const filename = line.split(',')[2];
 
-      beatmap.settings.backgroundFilename = filename.slice(1, -1);
+      beatmap.metadata.backgroundFile = filename.slice(1, -1);
     }
   }
 }

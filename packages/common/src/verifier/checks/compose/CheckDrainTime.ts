@@ -50,8 +50,8 @@ export class CheckDrainTime extends BeatmapCheck<any> {
 function getDrainTime(beatmap: VerifierBeatmap) {
   // TODO: breaks
 
-  if (beatmap.hitObjects.items.length === 0)
+  if (beatmap.hitObjects.length === 0)
     return 0;
 
-  return beatmap.hitObjects.last!.endTime - beatmap.hitObjects.first!.startTime;
+  return beatmap.hitObjects[beatmap.hitObjects.length - 1].endTime - beatmap.hitObjects[0].startTime;
 }
