@@ -2,7 +2,7 @@ import type { DrawableHitObject, IBeatmap, Playfield, PlayfieldAdjustmentContain
 import type { PassThroughInputManager, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { ManiaBeatmap } from '../beatmaps/ManiaBeatmap';
 import type { ManiaHitObject } from '../objects/ManiaHitObject';
-import { BarLineGenerator, DrawableScrollingRuleset, EffectPoint, ISkinSource, ScrollingDirection, ScrollVisualisationMethod } from '@osucad/common';
+import { BarLineGenerator, DrawableScrollingRuleset, EffectPoint, ISkinSource, ScrollingDirection } from '@osucad/common';
 import { BarLine } from '../objects/BarLine';
 import { PlayfieldType } from '../PlayfieldType';
 import { ManiaInputManager } from './ManiaInputManager';
@@ -58,7 +58,6 @@ export class DrawableManiaRuleset extends DrawableScrollingRuleset<ManiaHitObjec
     // TODO: use config for this
     this.direction.value = ScrollingDirection.Down;
     this.timeRange.value = 11485 / 20;
-    this.visualisationMethod = ScrollVisualisationMethod.Constant;
   }
 
   #onSkinChanged() {
