@@ -3,6 +3,13 @@ import { EmptyHitWindows } from '@osucad/common';
 import { ManiaHitObject } from './ManiaHitObject';
 
 export class BarLine extends ManiaHitObject implements IBarLine {
+  constructor(startTime: number = 0, major: boolean = false) {
+    super();
+
+    this.startTime = startTime;
+    this.major = major;
+  }
+
   readonly #major = this.property('major', false);
 
   get majorBindable() {

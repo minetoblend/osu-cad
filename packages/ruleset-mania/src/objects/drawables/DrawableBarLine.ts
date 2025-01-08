@@ -1,6 +1,6 @@
 import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import type { BarLine } from '../BarLine';
-import { ArmedState, SkinnableDrawable } from '@osucad/common';
+import { SkinnableDrawable } from '@osucad/common';
 import { Anchor, Axes, BindableBoolean } from 'osucad-framework';
 import { DefaultBarLine } from '../../skinning/default/DefaultBarLine';
 import { ManiaSkinComponentLookup } from '../../skinning/ManiaSkinComponentLookup';
@@ -44,9 +44,5 @@ export class DrawableBarLine extends DrawableManiaHitObject<BarLine> {
 
   override update() {
     super.update();
-  }
-
-  protected override updateHitStateTransforms(state: ArmedState) {
-    super.updateHitStateTransforms(ArmedState.Idle);
   }
 }

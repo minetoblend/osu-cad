@@ -25,7 +25,7 @@ export class DrawableManiaRuleset extends DrawableScrollingRuleset<ManiaHitObjec
 
     this.barLines = new BarLineGenerator(
       beatmap,
-      (startTime, major) => Object.assign(new BarLine(), { startTime, major }),
+      (startTime, major) => new BarLine(startTime, major),
     ).barLines;
 
     this.timeRange.minValue = 1;

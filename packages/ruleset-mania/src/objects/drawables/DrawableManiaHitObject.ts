@@ -38,7 +38,7 @@ export abstract class DrawableManiaHitObject<TObject extends ManiaHitObject = Ma
   protected override loadComplete() {
     super.loadComplete();
 
-    this.direction.bindValueChanged(this.onDirectionChanged, true);
+    this.direction.bindValueChanged(this.onDirectionChanged, this, true);
   }
 
   protected onDirectionChanged(e: ValueChangedEvent<ScrollingDirection>) {
