@@ -80,7 +80,7 @@ export class CheckOffscreen extends BeatmapCheck<OsuHitObject> {
 
         const goesOffscreenTopOrLeft = (stackableObject.stackedPosition.y - circleRadius < UPPER_LIMIT || stackableObject.stackedPosition.x - circleRadius < LEFT_LIMIT) && stackableObject.stackHeight > 0;
 
-        const goesOffscreenRight = stackableObject.stackedPosition.y + circleRadius > RIGHT_LIMIT && stackableObject.stackHeight < 0;
+        const goesOffscreenRight = stackableObject.stackedPosition.x + circleRadius > RIGHT_LIMIT && stackableObject.stackHeight < 0;
 
         if (goesOffscreenTopOrLeft || goesOffscreenRight) {
           yield this.createIssue(this.templates.offscreen, beatmap, hitObject, objectType);
