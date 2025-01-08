@@ -14,7 +14,7 @@ export class ScrollingHitObjectContainer extends HitObjectContainer {
   private algorithm = new Bindable<IScrollAlgorithm>(new ConstantScrollAlgorithm());
 
   get scrollingAxis(): Direction {
-    return (this.direction.value === ScrollingDirection.Up || this.direction.value === ScrollingDirection.Down) ? Direction.Vertical : Direction.Horizontal;
+    return (this.direction.value === ScrollingDirection.Left || this.direction.value === ScrollingDirection.Right) ? Direction.Horizontal : Direction.Vertical;
   }
 
   get axisInverted(): boolean {
