@@ -115,10 +115,10 @@ export class OsuSelectionBlueprint<T extends OsuHitObject = OsuHitObject> extend
     if (e.button === MouseButton.Right) {
       if (this.selected.value) {
         for (const h of this.selection.selectedObjects)
-          this.editorBeatmap.remove(h);
+          this.editorBeatmap.hitObjects.remove(h);
       }
       else {
-        this.editorBeatmap.remove(this.hitObject!);
+        this.editorBeatmap.hitObjects.remove(this.hitObject!);
       }
 
       this.updateHandler.commit();

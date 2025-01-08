@@ -29,6 +29,10 @@ export class TimingPointLayer extends TimingScreenTimelineLayer {
     }));
     this.add(new TimingPointPlacementBlueprint());
     this.add(new TimingPointBlueprintContainer());
+  }
+
+  protected override loadComplete() {
+    super.loadComplete();
 
     const track = this.editorBeatmap.track.value;
 

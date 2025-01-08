@@ -58,8 +58,8 @@ export class OsuSelectionBlueprintContainer extends HitObjectBlueprintContainer<
     for (const h of this.beatmap.hitObjects)
       this.addHitObject(h);
 
-    this.beatmap.hitObjectAdded.addListener(this.addHitObject, this);
-    this.beatmap.hitObjectRemoved.addListener(this.removeHitObject, this);
+    this.beatmap.hitObjects.added.addListener(this.addHitObject, this);
+    this.beatmap.hitObjects.removed.addListener(this.removeHitObject, this);
 
     this.selection.selectionChanged.addListener(this.#selectionChanged, this);
   }
@@ -79,8 +79,8 @@ export class OsuSelectionBlueprintContainer extends HitObjectBlueprintContainer<
   override dispose(isDisposing: boolean = true) {
     super.dispose(isDisposing);
 
-    this.beatmap.hitObjectAdded.removeListener(this.addHitObject, this);
-    this.beatmap.hitObjectRemoved.removeListener(this.removeHitObject, this);
+    this.beatmap.hitObjects.added.removeListener(this.addHitObject, this);
+    this.beatmap.hitObjects.removed.removeListener(this.removeHitObject, this);
   }
 
   override receivePositionalInputAt(screenSpacePosition: Vec2): boolean {

@@ -417,7 +417,7 @@ export class StableBeatmapParser {
     if (!hitObject)
       return;
 
-    beatmap.hitObjects.push(hitObject);
+    beatmap.hitObjects.add(hitObject);
   }
 
   #parseDifficulty(beatmap: Beatmap, line: string) {

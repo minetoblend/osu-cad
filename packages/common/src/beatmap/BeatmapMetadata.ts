@@ -1,6 +1,10 @@
 import { ObjectCrdt } from '../crdt/ObjectCrdt';
 
 export class BeatmapMetadata extends ObjectCrdt {
+  constructor() {
+    super();
+  }
+
   readonly #artist = this.property('artist', '');
 
   get artistBindable() {

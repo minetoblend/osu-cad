@@ -28,7 +28,7 @@ export class CheckMultipleReverse extends BeatmapCheck<OsuHitObject> {
 
     const difficulty = beatmap.getDifficulty(true);
 
-    for (const slider of beatmap.hitObjects.ofType(Slider)) {
+    for (const slider of beatmap.hitObjectsOfType(Slider)) {
       if (slider.spanCount <= 2)
         continue;
 

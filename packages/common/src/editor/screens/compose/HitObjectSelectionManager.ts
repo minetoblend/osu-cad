@@ -1,5 +1,5 @@
 import type { HitObject } from '../../../hitObjects/HitObject';
-import { Action, Component, dependencyLoader, type KeyBindingAction, type KeyBindingPressEvent, PlatformAction, resolved } from 'osucad-framework';
+import { Action, Component, type KeyBindingAction, type KeyBindingPressEvent, PlatformAction, resolved } from 'osucad-framework';
 import { EditorBeatmap } from '../../EditorBeatmap';
 
 export class HitObjectSelectionManager<T extends HitObject = HitObject> extends Component {
@@ -10,9 +10,10 @@ export class HitObjectSelectionManager<T extends HitObject = HitObject> extends 
   @resolved(EditorBeatmap)
   protected beatmap!: EditorBeatmap<T>;
 
-  @dependencyLoader()
-  [Symbol('load')]() {
-    this.beatmap.hitObjectRemoved.addListener(this.#onHitObjectRemoved, this);
+  protected override loadComplete() {
+    super.loadComplete();
+
+    this.beatmap.hitObjects.removed.addListener(this.#onHitObjectRemoved, this);
   }
 
   get length() {
@@ -84,7 +85,7 @@ export class HitObjectSelectionManager<T extends HitObject = HitObject> extends 
   override dispose(isDisposing: boolean = true) {
     super.dispose(isDisposing);
 
-    this.beatmap.hitObjectRemoved.removeListener(this.#onHitObjectRemoved, this);
+    this.beatmap.hitObjects.removed.removeListener(this.#onHitObjectRemoved, this);
   }
 
   readonly isKeyBindingHandler = true;

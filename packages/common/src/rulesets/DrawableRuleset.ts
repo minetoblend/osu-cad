@@ -39,7 +39,7 @@ export abstract class DrawableRuleset<TObject extends HitObject = HitObject> ext
   public readonly beatmap: IBeatmap;
 
   get hitObjects(): ReadonlyArray<HitObject> {
-    return this.beatmap.hitObjects;
+    return this.beatmap.hitObjects.items;
   }
 
   protected keyBindingInputManager: PassThroughInputManager;

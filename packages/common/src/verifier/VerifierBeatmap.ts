@@ -8,6 +8,8 @@ import type { FileStore } from '../beatmap/io/FileStore';
 import type { ControlPointInfo } from '../controlPoints/ControlPointInfo';
 import type { TimingPoint } from '../controlPoints/TimingPoint';
 import type { HitObject } from '../hitObjects/HitObject';
+import type { Ruleset } from '../rulesets/Ruleset';
+import type { Constructor } from '../utils/Constructor';
 import { almostEquals } from 'osucad-framework';
 import { minBy } from '../utils/arrayUtils';
 
@@ -25,7 +27,6 @@ export class VerifierBeatmap<T extends HitObject = HitObject> implements IBeatma
     readonly beatmap: Beatmap<T>,
     readonly files: FileStore,
   ) {
-
   }
 
   #starRating?: number | null;
@@ -35,8 +36,13 @@ export class VerifierBeatmap<T extends HitObject = HitObject> implements IBeatma
     return this.#starRating as number | null;
   }
 
+  #ruleset: Ruleset | null = null;
+
   get ruleset() {
-    return this.beatmap.ruleset;
+    if (this.beatmapInfo.ruleset.available)
+      return this.beatmapInfo.ruleset.createInstance();
+
+    return null;
   }
 
   getDifficulty(considerName = false) {
@@ -90,7 +96,7 @@ export class VerifierBeatmap<T extends HitObject = HitObject> implements IBeatma
 
   calculateStarRating() {
     if (this.#starRating === undefined) {
-      const difficultyCalculator = this.beatmap.ruleset?.createDifficultyCalculator(this.beatmap as Beatmap<any>);
+      const difficultyCalculator = this.ruleset?.createDifficultyCalculator(this.beatmap as Beatmap<any>);
       if (difficultyCalculator) {
         const [{ starRating }] = difficultyCalculator.calculate();
         this.#starRating = starRating;
@@ -123,6 +129,10 @@ export class VerifierBeatmap<T extends HitObject = HitObject> implements IBeatma
 
   get hitObjects() {
     return this.beatmap.hitObjects;
+  }
+
+  hitObjectsOfType<TObject extends T>(type: Constructor<TObject>) {
+    return this.beatmap.hitObjects.filter(it => it instanceof type) as TObject[];
   }
 
   getPracticalUnsnap(time: number, divisor?: number, timingPoint?: TimingPoint): number {

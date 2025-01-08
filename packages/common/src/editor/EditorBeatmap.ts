@@ -1,20 +1,19 @@
-import type { Track } from 'osucad-framework';
+import type { ReadonlyDependencyContainer, Track } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
 import type { Beatmap } from '../beatmap/Beatmap';
 import type { BeatmapColors } from '../beatmap/BeatmapColors';
 import type { BeatmapDifficultyInfo } from '../beatmap/BeatmapDifficultyInfo';
 import type { BeatmapMetadata } from '../beatmap/BeatmapMetadata';
+import type { HitObjectList } from '../beatmap/HitObjectList';
 import type { IFileStore } from '../beatmap/io/IFileStore';
 import type { WorkingBeatmapSet } from '../beatmap/workingBeatmap/WorkingBeatmapSet';
 import type { ControlPointInfo } from '../controlPoints/ControlPointInfo';
 import type { HitObject } from '../hitObjects/HitObject';
-import type { IResourcesProvider } from '../io/IResourcesProvider';
-import { Action, Bindable, loadTexture } from 'osucad-framework';
-import { AbstractCrdt } from '../crdt/AbstractCrdt';
+import { Bindable, Component, loadTexture } from 'osucad-framework';
 import { UpdateHandler } from '../crdt/UpdateHandler';
-import { binarySearch } from '../utils/binarySearch';
+import { IResourcesProvider } from '../io/IResourcesProvider';
 
-export class EditorBeatmap<T extends HitObject = HitObject> extends AbstractCrdt<EditorBeatmapCommand> {
+export class EditorBeatmap<T extends HitObject = HitObject> extends Component {
   readonly track = new Bindable<Track>(null!);
 
   readonly backgroundTexture = new Bindable<Texture | null>(null);
@@ -22,7 +21,6 @@ export class EditorBeatmap<T extends HitObject = HitObject> extends AbstractCrdt
   updateHandler!: UpdateHandler;
 
   constructor(
-    readonly resourcesProvider: IResourcesProvider,
     readonly beatmap: Beatmap<T>,
     readonly fileStore: IFileStore,
     readonly beatmapSet?: WorkingBeatmapSet,
@@ -30,30 +28,75 @@ export class EditorBeatmap<T extends HitObject = HitObject> extends AbstractCrdt
     super();
   }
 
-  static fromBeatmapSet<T extends HitObject>(resources: IResourcesProvider, beatmap: Beatmap<T>, beatmapSet: WorkingBeatmapSet) {
-    return new EditorBeatmap(resources, beatmap, beatmapSet.fileStore, beatmapSet);
+  static fromBeatmapSet<T extends HitObject>(beatmap: Beatmap<T>, beatmapSet: WorkingBeatmapSet) {
+    return new EditorBeatmap(beatmap, beatmapSet.fileStore, beatmapSet);
   }
 
   get beatmapInfo() {
     return this.beatmap.beatmapInfo;
   }
 
-  async load(): Promise<void> {
+  protected override get hasAsyncLoader(): boolean {
+    return true;
+  }
+
+  protected override async loadAsync(dependencies: ReadonlyDependencyContainer): Promise<void> {
+    await super.loadAsync(dependencies);
+
     this.updateHandler = new UpdateHandler(this);
 
     await Promise.all([
-      this.loadTrack(),
+      this.loadTrack(dependencies.resolve(IResourcesProvider)),
       this.loadBackground(),
     ]);
   }
 
-  protected async loadTrack() {
+  protected override loadComplete() {
+    super.loadComplete();
+
+    this.hitObjects.applyDefaultsRequested.addListener(this.onApplyDefaultsRequested, this);
+  }
+
+  #updatedHitObjects = new Set<HitObject>();
+
+  protected onApplyDefaultsRequested(hitObject: HitObject) {
+    this.#updatedHitObjects.add(hitObject);
+  }
+
+  invalidateAllHitObjects() {
+    for (const hitObject of this.hitObjects)
+      this.#updatedHitObjects.add(hitObject);
+  }
+
+  applyDefaultsWhereNeeded(visibleStartTime: number = -Number.MAX_VALUE, visibleEndTime = Number.MAX_VALUE, limit = Number.MAX_VALUE) {
+    let numApplied = 0;
+
+    // Objects on screen should always get processed immediately
+    for (const h of [...this.#updatedHitObjects]) {
+      if (h.endTime > visibleStartTime && h.startTime < visibleEndTime) {
+        this.beatmap.applyDefaultsTo(h);
+        this.#updatedHitObjects.delete(h);
+        numApplied++;
+      }
+    }
+
+    for (const h of [...this.#updatedHitObjects]) {
+      this.beatmap.applyDefaultsTo(h);
+      this.#updatedHitObjects.delete(h);
+      numApplied++;
+
+      if (numApplied > limit)
+        break;
+    }
+  }
+
+  protected async loadTrack(resources: IResourcesProvider) {
     const path = this.beatmap.beatmapInfo.metadata.audioFile;
     const data = await this.fileStore.getFile(path)?.getData();
     if (!data)
       throw new Error(`Could not find asset "${path}" for beatmap track`);
 
-    this.track.value = await this.resourcesProvider.audioManager.createTrackFromArrayBuffer(this.resourcesProvider.mixer.music, data);
+    this.track.value = await resources.audioManager.createTrackFromArrayBuffer(resources.mixer.music, data);
   }
 
   protected async loadBackground() {
@@ -83,96 +126,14 @@ export class EditorBeatmap<T extends HitObject = HitObject> extends AbstractCrdt
     return this.beatmap.controlPoints;
   }
 
-  get hitObjects(): T[] {
+  get hitObjects(): HitObjectList<T> {
     return this.beatmap.hitObjects;
   }
 
-  readonly hitObjectAdded = new Action<T>();
+  override dispose(isDisposing: boolean = true) {
+    super.dispose(isDisposing);
 
-  readonly hitObjectRemoved = new Action<T>();
-
-  readonly #idMap = new Map<string, HitObject>();
-
-  add(hitObject: T) {
-    if (!this.#add(hitObject))
-      return false;
-
-    this.submitMutation(
-      { type: 'add', hitObject },
-      { type: 'remove', id: hitObject.id },
-    );
-    return true;
-  }
-
-  addUntracked(hitObject: T) {
-    return this.#add(hitObject);
-  }
-
-  removeUntracked(hitObject: T) {
-    return this.#remove(hitObject);
-  }
-
-  #add(hitObject: T) {
-    if (this.#idMap.has(hitObject.id))
-      return false;
-
-    const { index } = binarySearch(hitObject.startTime, this.hitObjects, h => h.startTime);
-
-    this.hitObjects.splice(index, 0, hitObject);
-
-    hitObject.applyDefaults(this.controlPoints, this.difficulty);
-
-    this.hitObjectAdded.emit(hitObject);
-
-    return true;
-  }
-
-  remove(hitObject: T) {
-    if (!this.#remove(hitObject))
-      return false;
-
-    this.submitMutation(
-      { type: 'remove', id: hitObject.id },
-      { type: 'add', hitObject },
-    );
-
-    return true;
-  }
-
-  #remove(hitObject: T) {
-    if (!this.#idMap.delete(hitObject.id))
-      return false;
-
-    const index = this.hitObjects.indexOf(hitObject);
-    if (index < 0)
-      return false;
-
-    this.hitObjects.splice(index);
-    this.hitObjectRemoved.emit(hitObject);
-    return true;
-  }
-
-  override handle(mutation: EditorBeatmapCommand): void | EditorBeatmapCommand | null {
-    switch (mutation.type) {
-      case 'add':
-        if (this.#add(mutation.hitObject as T))
-          return { type: 'remove', id: mutation.hitObject.id };
-        break;
-      case 'remove':
-      {
-        const hitObject = this.#idMap.get(mutation.id);
-        if (hitObject) {
-          this.#add(hitObject as T);
-          return { type: 'add', hitObject };
-        }
-      }
-    }
-
-    return null;
-  }
-
-  override get childObjects(): readonly AbstractCrdt<any>[] {
-    return [this.beatmap];
+    this.hitObjects.applyDefaultsRequested.addListener(this.onApplyDefaultsRequested, this);
   }
 }
 

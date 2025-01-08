@@ -4,6 +4,7 @@ import type { BeatmapColors } from './BeatmapColors';
 import type { BeatmapDifficultyInfo } from './BeatmapDifficultyInfo';
 import type { BeatmapInfo } from './BeatmapInfo';
 import type { BeatmapMetadata } from './BeatmapMetadata';
+import type { HitObjectList } from './HitObjectList';
 import { injectionToken } from 'osucad-framework';
 
 export interface IBeatmap<T extends HitObject = HitObject> {
@@ -12,7 +13,7 @@ export interface IBeatmap<T extends HitObject = HitObject> {
   difficulty: BeatmapDifficultyInfo;
   colors: BeatmapColors;
   controlPoints: ControlPointInfo;
-  hitObjects: T[];
+  hitObjects: HitObjectList<T>;
   clone(): IBeatmap<T>;
 }
 

@@ -40,7 +40,7 @@ export class CheckNinjaSpinner extends BeatmapCheck<OsuHitObject> {
   };
 
   override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
-    for (const spinner of beatmap.hitObjects.ofType(Spinner)) {
+    for (const spinner of beatmap.hitObjectsOfType(Spinner)) {
       const od = beatmap.difficulty.overallDifficulty;
 
       const warningThreshold = 500 + (od < 5 ? (5 - od) * -21.8 : (od - 5) * 20); // anything above this works fine

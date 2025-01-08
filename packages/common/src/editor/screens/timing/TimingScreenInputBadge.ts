@@ -57,8 +57,6 @@ export abstract class TimingScreenInputBadge extends TimingScreenBadge {
       this.onCommit(text);
       this.updateHandler.commit();
     });
-
-    content.childBecameAlive.addListener(console.log);
   }
 
   protected abstract onCommit(text: string): void;

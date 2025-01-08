@@ -27,7 +27,7 @@ export class CheckShortSliders extends BeatmapCheck<OsuHitObject> {
   override async* getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
     const timeThreshold = 125;
 
-    for (const slider of beatmap.hitObjects.ofType(Slider)) {
+    for (const slider of beatmap.hitObjectsOfType(Slider)) {
       if (slider.duration < timeThreshold) {
         yield this.createIssue(this.templates.tooShort, beatmap, slider, Math.round(slider.duration), timeThreshold);
       }

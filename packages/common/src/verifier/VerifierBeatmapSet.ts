@@ -17,7 +17,7 @@ export class VerifierBeatmapSet {
   }
 
   getAudioPath() {
-    return this.beatmaps.find(it => it.settings.audioFileName.length > 0)?.settings.audioFileName ?? null;
+    return this.beatmaps.find(it => it.metadata.audioFile.length > 0)?.metadata.audioFile ?? null;
   }
 
   getAllUsedHitSoundSamples() {

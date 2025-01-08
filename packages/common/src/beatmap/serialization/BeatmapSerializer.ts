@@ -22,9 +22,9 @@ export class BeatmapSerializer implements Serializer<Beatmap> {
     encoder.encodeStructure(descriptor, (encoder) => {
       encoder.encodeSerializableElement(descriptor, 0, BeatmapMetadataSerializer, value.metadata);
       encoder.encodeSerializableElement(descriptor, 1, BeatmapDifficultyInfoSerializer, value.difficulty);
-      encoder.encodeSerializableElement(descriptor, 2, BeatmapSettingsSerializer, value.settings);
+      // encoder.encodeSerializableElement(descriptor, 2, BeatmapSettingsSerializer, value.settings);
       encoder.encodeSerializableElement(descriptor, 3, BeatmapColorsSerializer, value.colors);
-      encoder.encodeSerializableElement(descriptor, 4, new ListSerializer(PolymorphicHitObjectSerializer.instance), value.hitObjects.items as unknown as HitObject[]);
+      encoder.encodeSerializableElement(descriptor, 4, new ListSerializer(PolymorphicHitObjectSerializer.instance), value.hitObjects as unknown as HitObject[]);
     });
   }
 
@@ -33,17 +33,18 @@ export class BeatmapSerializer implements Serializer<Beatmap> {
 
     return decoder.decodeStructure(descriptor, (decoder) => {
       const beatmap = new Beatmap(
-        decoder.decodeSerializableElement(descriptor, 0, BeatmapMetadataSerializer),
-        decoder.decodeSerializableElement(descriptor, 1, BeatmapDifficultyInfoSerializer),
-        decoder.decodeSerializableElement(descriptor, 2, BeatmapSettingsSerializer),
-        decoder.decodeSerializableElement(descriptor, 3, BeatmapColorsSerializer),
+        // TODO
+        // decoder.decodeSerializableElement(descriptor, 0, BeatmapMetadataSerializer),
+        // decoder.decodeSerializableElement(descriptor, 1, BeatmapDifficultyInfoSerializer),
+        // decoder.decodeSerializableElement(descriptor, 2, BeatmapSettingsSerializer),
+        // decoder.decodeSerializableElement(descriptor, 3, BeatmapColorsSerializer),
 
       );
 
       const hitObjects = decoder.decodeSerializableElement(descriptor, 4, new ListSerializer(PolymorphicHitObjectSerializer.instance));
 
       for (const hitObject of hitObjects)
-        beatmap.hitObjects.push(hitObject);
+        beatmap.hitObjects.add(hitObject);
 
       return beatmap;
     });

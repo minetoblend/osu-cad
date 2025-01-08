@@ -53,5 +53,5 @@ function getDrainTime(beatmap: VerifierBeatmap) {
   if (beatmap.hitObjects.length === 0)
     return 0;
 
-  return beatmap.hitObjects[beatmap.hitObjects.length - 1].endTime - beatmap.hitObjects[0].startTime;
+  return beatmap.hitObjects.last!.endTime - beatmap.hitObjects.first!.startTime;
 }

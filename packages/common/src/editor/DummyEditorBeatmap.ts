@@ -1,4 +1,3 @@
-import type { IResourcesProvider } from '../io/IResourcesProvider';
 import { StableBeatmapParser } from '../beatmap';
 import { SimpleFile } from '../beatmap/io/SimpleFile';
 import { StaticFileStore } from '../beatmap/io/StaticFileStore';
@@ -7,9 +6,8 @@ import audioUrl from './audio.mp3?url';
 import { EditorBeatmap } from './EditorBeatmap';
 
 export class DummyEditorBeatmap extends EditorBeatmap {
-  constructor(resourcesProvider: IResourcesProvider) {
+  constructor() {
     super(
-      resourcesProvider,
       // eslint-disable-next-line ts/no-use-before-define
       new StableBeatmapParser().parse(beatmapText),
       new StaticFileStore([

@@ -19,7 +19,6 @@ export const BeatmapMetadataSerializer: Serializer<BeatmapMetadata> = {
     element('source', StringSerializer.descriptor);
     element('tags', StringSerializer.descriptor);
     element('creator', StringSerializer.descriptor);
-    element('difficultyName', StringSerializer.descriptor);
     element('previewTime', Float64Serializer.descriptor);
   }),
   serialize(encoder: Encoder, value: BeatmapMetadata) {
@@ -32,7 +31,6 @@ export const BeatmapMetadataSerializer: Serializer<BeatmapMetadata> = {
       encoder.encodeStringElement(descriptor, 4, value.source);
       encoder.encodeStringElement(descriptor, 5, value.tags);
       encoder.encodeStringElement(descriptor, 6, value.creator);
-      encoder.encodeStringElement(descriptor, 7, value.difficultyName);
       encoder.encodeFloat64Element(descriptor, 8, value.previewTime);
     });
   },
@@ -49,7 +47,6 @@ export const BeatmapMetadataSerializer: Serializer<BeatmapMetadata> = {
       metadata.source = decoder.decodeStringElement(descriptor, 4);
       metadata.tags = decoder.decodeStringElement(descriptor, 5);
       metadata.creator = decoder.decodeStringElement(descriptor, 6);
-      metadata.difficultyName = decoder.decodeStringElement(descriptor, 7);
       metadata.previewTime = decoder.decodeFloat64Element(descriptor, 8);
 
       return metadata;

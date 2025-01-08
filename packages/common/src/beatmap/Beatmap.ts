@@ -5,6 +5,7 @@ import { ControlPointInfo } from '../controlPoints/ControlPointInfo';
 import { StaticCrdt } from '../crdt/StaticCrdt';
 import { BeatmapColors } from './BeatmapColors';
 import { BeatmapInfo } from './BeatmapInfo';
+import { HitObjectList } from './HitObjectList';
 import { BeatmapSerializer } from './serialization/BeatmapSerializer';
 
 export class Beatmap<T extends HitObject = HitObject> extends StaticCrdt implements IBeatmap<T> {
@@ -16,10 +17,11 @@ export class Beatmap<T extends HitObject = HitObject> extends StaticCrdt impleme
     readonly beatmapInfo: BeatmapInfo = new BeatmapInfo(),
     readonly colors = new BeatmapColors(),
     readonly controlPoints = new ControlPointInfo(),
-    readonly hitObjects: T[] = [],
   ) {
     super();
   }
+
+  readonly hitObjects = new HitObjectList<T>(this);
 
   get metadata() {
     return this.beatmapInfo.metadata;
@@ -44,7 +46,11 @@ export class Beatmap<T extends HitObject = HitObject> extends StaticCrdt impleme
 
   preProcess() {
     for (const h of this.hitObjects)
-      h.applyDefaults(this.controlPoints, this.difficulty);
+      this.applyDefaultsTo(h);
+  }
+
+  applyDefaultsTo(hitObject: HitObject) {
+    hitObject.applyDefaults(this.controlPoints, this.difficulty);
   }
 
   override get childObjects(): readonly AbstractCrdt<any>[] {

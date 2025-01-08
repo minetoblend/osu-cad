@@ -3,6 +3,7 @@ import type { HitObject } from '../hitObjects/HitObject';
 import type { BeatmapColors } from './BeatmapColors';
 import type { BeatmapDifficultyInfo } from './BeatmapDifficultyInfo';
 import type { BeatmapMetadata } from './BeatmapMetadata';
+import type { HitObjectList } from './HitObjectList';
 import type { IBeatmap } from './IBeatmap';
 import { Component } from 'osucad-framework';
 
@@ -29,7 +30,7 @@ export abstract class BeatmapTransformer<T extends IBeatmap = IBeatmap> extends 
     return this.beatmap.controlPoints;
   }
 
-  get hitObjects(): HitObject[] {
+  get hitObjects(): HitObjectList {
     return this.beatmap.hitObjects;
   }
 

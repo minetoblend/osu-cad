@@ -15,12 +15,11 @@ export abstract class BeatmapProcessor extends Component {
   protected override loadComplete() {
     super.loadComplete();
 
-    this.beatmap.hitObjectAdded.addListener(h => this.onHitObjectAdded(h));
-    this.beatmap.hitObjectRemoved.addListener(h => this.onHitObjectRemoved(h));
+    this.beatmap.hitObjects.added.addListener(h => this.onHitObjectAdded(h));
+    this.beatmap.hitObjects.removed.addListener(h => this.onHitObjectRemoved(h));
 
-    for (const h of this.hitObjects) {
+    for (const h of this.hitObjects)
       this.onHitObjectAdded(h);
-    }
 
     this.processBeatmap();
     this.state.validate();

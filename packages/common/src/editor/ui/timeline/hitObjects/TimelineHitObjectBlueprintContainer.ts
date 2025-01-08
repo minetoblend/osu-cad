@@ -54,8 +54,8 @@ export class TimelineHitObjectBlueprintContainer extends TimelineBlueprintContai
     for (const hitObject of this.beatmap.hitObjects)
       this.addHitObject(hitObject);
 
-    this.beatmap.hitObjectAdded.addListener(this.addHitObject, this);
-    this.beatmap.hitObjectRemoved.addListener(this.removeHitObject, this);
+    this.beatmap.hitObjects.added.addListener(this.addHitObject, this);
+    this.beatmap.hitObjects.removed.addListener(this.removeHitObject, this);
   }
 
   addHitObject(hitObject: HitObject) {
@@ -127,8 +127,8 @@ export class TimelineHitObjectBlueprintContainer extends TimelineBlueprintContai
   override dispose(isDisposing: boolean = true) {
     super.dispose(isDisposing);
 
-    this.beatmap.hitObjectAdded.removeListener(this.addHitObject, this);
-    this.beatmap.hitObjectRemoved.removeListener(this.removeHitObject, this);
+    this.beatmap.hitObjects.added.removeListener(this.addHitObject, this);
+    this.beatmap.hitObjects.removed.removeListener(this.removeHitObject, this);
   }
 
   override buildNonPositionalInputQueue(queue: List<Drawable>, allowBlocking?: boolean): boolean {

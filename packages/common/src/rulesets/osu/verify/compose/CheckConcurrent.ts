@@ -46,8 +46,8 @@ export class CheckConcurrent extends BeatmapCheck<OsuHitObject> {
   };
 
   override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
-    for (let i = 0; i < beatmap.hitObjects.items.length - 1; i++) {
-      for (let j = i + 1; j < beatmap.hitObjects.items.length; j++) {
+    for (let i = 0; i < beatmap.hitObjects.length - 1; i++) {
+      for (let j = i + 1; j < beatmap.hitObjects.length; j++) {
         const hitObject = beatmap.hitObjects.items[i];
         const next = beatmap.hitObjects.items[j];
 

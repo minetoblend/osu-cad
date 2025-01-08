@@ -134,11 +134,11 @@ export class Timeline extends ZoomableScrollContainer {
   }
 
   get startTime() {
-    return this.timeAtPosition(this.current);
+    return this.timeAtPosition(this.current - this.drawWidth / 2);
   }
 
   get endTime() {
-    return this.timeAtPosition(this.current + this.drawWidth);
+    return this.timeAtPosition(this.current + this.drawWidth / 2);
   }
 
   positionAtTime(time: number): number {

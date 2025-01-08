@@ -47,7 +47,7 @@ export class CheckObscuredReverse extends BeatmapCheck<OsuHitObject> {
   };
 
   override async * getIssues(beatmap: VerifierBeatmap<OsuHitObject>): AsyncGenerator<Issue, void, undefined> {
-    for (const slider of beatmap.hitObjects.ofType(Slider)) {
+    for (const slider of beatmap.hitObjectsOfType(Slider)) {
       if (slider.repeatCount <= 0)
         continue;
 

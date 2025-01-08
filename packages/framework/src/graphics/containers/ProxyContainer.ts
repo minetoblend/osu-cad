@@ -5,10 +5,7 @@ import type {
   MarginPaddingOptions,
   ReadonlyDependencyContainer,
 } from 'osucad-framework';
-import {
-  Container,
-  Invalidation,
-} from 'osucad-framework';
+import { Container, DependencyContainer, Invalidation } from 'osucad-framework';
 import { Matrix } from 'pixi.js';
 
 export class ProxyContainer extends Container {
@@ -62,8 +59,8 @@ export class ProxyContainer extends Container {
     return this.source.childOffset;
   }
 
-  protected override injectDependencies(dependencies: ReadonlyDependencyContainer) {
-    super.injectDependencies(this.source.dependencies);
+  protected override createChildDependencies(parentDependencies: ReadonlyDependencyContainer): DependencyContainer {
+    return new DependencyContainer(this.source.dependencies);
   }
 
   #matrix = new Matrix();

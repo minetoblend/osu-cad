@@ -24,7 +24,9 @@ export abstract class BeatmapConverter<T extends HitObject> {
     beatmap.beatmapInfo = original.beatmapInfo;
     beatmap.colors = original.colors;
     beatmap.controlPoints = original.controlPoints;
-    beatmap.hitObjects = [...this.#convertHitObjects(original.hitObjects, original)].toSorted((a, b) => a.startTime - b.startTime);
+    beatmap.hitObjects.addAll(
+      [...this.#convertHitObjects(original.hitObjects.items, original)].toSorted((a, b) => a.startTime - b.startTime),
+    );
 
     return beatmap;
   }

@@ -74,7 +74,7 @@ export class EditorNavigation extends CompositeDrawable implements IKeyBindingHa
   }
 
   seekToStart() {
-    const firstObjectTime = this.beatmap.hitObjects[0]?.startTime;
+    const firstObjectTime = this.beatmap.hitObjects.first?.startTime;
 
     if (firstObjectTime === undefined || almostEquals(this.editorClock.currentTimeAccurate, firstObjectTime))
       this.editorClock.seek(0);
@@ -83,7 +83,7 @@ export class EditorNavigation extends CompositeDrawable implements IKeyBindingHa
   }
 
   seekToEnd() {
-    const lastObjectTime = this.beatmap.hitObjects[this.beatmap.hitObjects.length - 1]?.endTime;
+    const lastObjectTime = this.beatmap.hitObjects.last?.endTime;
 
     if (lastObjectTime === undefined || almostEquals(this.editorClock.currentTimeAccurate, lastObjectTime))
       this.editorClock.seek(this.editorClock.trackLength);

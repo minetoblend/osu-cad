@@ -53,7 +53,7 @@ export class TimelineHitObjectBody extends CompositeDrawable {
       if (this.isDragged)
         return false;
 
-      this.editorBeatmap.remove(this.hitObject!);
+      this.editorBeatmap.hitObjects.remove(this.hitObject!);
       this.updateHandler.commit();
       return true;
     }

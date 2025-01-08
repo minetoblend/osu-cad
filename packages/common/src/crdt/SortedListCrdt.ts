@@ -105,6 +105,11 @@ export class SortedListCrdt<T extends AbstractCrdt<any>> extends AbstractCrdt<So
     return true;
   }
 
+  addAll(values: T[]) {
+    for (const value of values)
+      this.add(value);
+  }
+
   addUntracked(value: T) {
     return this.#add(value, false);
   }

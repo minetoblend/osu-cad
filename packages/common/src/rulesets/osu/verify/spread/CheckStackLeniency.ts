@@ -42,8 +42,8 @@ export class CheckStackLeniency extends BeatmapCheck<OsuHitObject> {
 
     for (let i = 0; i < hitObjectCount - 1; i++) {
       for (let j = i + 1; j < hitObjectCount; j++) {
-        const hitObject = beatmap.hitObjects.items[i];
-        const otherHitObject = beatmap.hitObjects.items[j];
+        const hitObject = beatmap.hitObjects[i];
+        const otherHitObject = beatmap.hitObjects[j];
 
         if (hitObject instanceof Spinner || otherHitObject instanceof Spinner)
           break;

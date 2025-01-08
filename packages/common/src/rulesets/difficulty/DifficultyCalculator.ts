@@ -12,7 +12,7 @@ export abstract class DifficultyCalculator<T extends DifficultyHitObject<any>> {
   calculate(): [DifficultyAttributes, Skill<T>[]] {
     const skills = this.createSkills(this.beatmap, this.#clockRate);
 
-    if (this.beatmap.hitObjects.items.length === 0) {
+    if (this.beatmap.hitObjects.length === 0) {
       return [
         this.createDifficultyAttributes(this.beatmap, skills, this.#clockRate),
         skills,

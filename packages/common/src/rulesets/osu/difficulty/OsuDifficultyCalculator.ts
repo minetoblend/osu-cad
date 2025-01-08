@@ -84,10 +84,10 @@ export class OsuDifficultyCalculator extends DifficultyCalculator<OsuDifficultyH
     // The first jump is formed by the first two hitobjects of the map.
     // If the map has less than two OsuHitObjects, the enumerator will not return anything.
     for (let i = 1; i < beatmap.hitObjects.length; i++) {
-      const lastLast = i > 1 ? beatmap.hitObjects[i - 2]! : null;
+      const lastLast = i > 1 ? beatmap.hitObjects.items[i - 2]! : null;
       objects.push(new OsuDifficultyHitObject(
-        beatmap.hitObjects[i] as OsuHitObject,
-        beatmap.hitObjects[i - 1] as OsuHitObject,
+        beatmap.hitObjects.items[i] as OsuHitObject,
+        beatmap.hitObjects.items[i - 1] as OsuHitObject,
         lastLast as OsuHitObject | null,
         clockRate,
         objects,

@@ -40,9 +40,7 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
   protected override async loadAsync(dependencies: ReadonlyDependencyContainer): Promise<void> {
     await super.loadAsync(dependencies);
 
-    console.log('load editor async');
-
-    await this.editorBeatmap.load();
+    await this.loadComponentAsync(this.editorBeatmap);
 
     if (!this.editorBeatmap.beatmapInfo.ruleset) {
       // TODO: display message
@@ -90,9 +88,7 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
     this.addInternal(new BeatmapComboProcessor());
 
     if (this.beatmap.hitObjects.length > 0)
-      this.#editorClock.seek(this.beatmap.hitObjects[0].startTime, false);
-
-    console.log('load editor async complete');
+      this.#editorClock.seek(this.beatmap.hitObjects.first!.startTime, false);
   }
 
   protected registerScreens(screenManager: EditorScreenManager) {
