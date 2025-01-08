@@ -6,7 +6,7 @@ export interface EffectPointPatch {
 }
 
 export class EffectPoint extends ControlPoint {
-  constructor(time: number, kiaiMode: boolean = false) {
+  constructor(time: number = 0, kiaiMode: boolean = false) {
     super(time);
 
     this.#kiaiMode = this.property('kiaiMode', kiaiMode);
@@ -18,7 +18,7 @@ export class EffectPoint extends ControlPoint {
     return 'Effect Point';
   }
 
-  #kiaiMode: Property<boolean>;
+  readonly #kiaiMode: Property<boolean>;
 
   get kiaiModeBindable() {
     return this.#kiaiMode.bindable;
@@ -30,6 +30,20 @@ export class EffectPoint extends ControlPoint {
 
   set kiaiMode(value: boolean) {
     this.#kiaiMode.value = value;
+  }
+
+  readonly #scrollSpeed = this.property('scrollSpeed', 1);
+
+  get scrollSpeedBindable() {
+    return this.#scrollSpeed.bindable;
+  }
+
+  get scrollSpeed() {
+    return this.#scrollSpeed.value;
+  }
+
+  set scrollSpeed(value: number) {
+    this.#scrollSpeed.value = value;
   }
 
   isRedundant(existing?: ControlPoint | undefined): boolean {

@@ -7,6 +7,7 @@ import type { Constructor } from '../utils/Constructor';
 import { buildClassSerialDescriptor, Float32Serializer, SealedClassSerializer } from '@osucad/serialization';
 import { Action, Comparer, Lazy, SortedList } from 'osucad-framework';
 import { ObjectCrdt } from '../crdt/ObjectCrdt';
+import { HitResult } from './HitResult';
 import { HitWindows } from './HitWindows';
 import { hasComboInformation } from './IHasComboInformation';
 
@@ -144,6 +145,10 @@ export abstract class HitObject extends ObjectCrdt {
   }
 
   isSelected = false;
+
+  get maximumJudgementOffset() {
+    return this.hitWindows?.windowFor(HitResult.Miss) ?? 0;
+  };
 }
 
 export interface HitObjectChangeEvent {

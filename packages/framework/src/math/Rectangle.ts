@@ -60,4 +60,17 @@ export class Rectangle {
   equals(rect: Rectangle) {
     return this.x === rect.x && this.y === rect.y && this.width === rect.width && this.height === rect.height;
   }
+
+  inflate(amount: number) {
+    this.x -= amount;
+    this.y -= amount;
+    this.width += amount * 2;
+    this.height += amount * 2;
+
+    return this;
+  }
+
+  inflated(amount: number) {
+    return new Rectangle(this.x - amount, this.y - amount, this.width + amount * 2, this.height + amount * 2);
+  }
 }

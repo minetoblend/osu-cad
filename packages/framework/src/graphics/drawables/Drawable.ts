@@ -47,6 +47,7 @@ import { almostEquals } from '../../utils/almostEquals';
 import { debugAssert } from '../../utils/debugAssert';
 import { EasingFunction } from '../transforms/EasingFunction';
 import { Transformable } from '../transforms/Transformable';
+import { TransformBindable } from '../transforms/TransformBindable';
 import { TransformCustom } from '../transforms/TransformCustom';
 import { TransformSequence, type TransformSequenceProxy } from '../transforms/TransformSequence';
 import { Anchor } from './Anchor';
@@ -1635,6 +1636,20 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     this.addTransform(transform);
 
     return result.asProxy();
+  }
+
+  transformBindableTo<TValue>(
+    targetBindable: Bindable<TValue>,
+    newValue: TValue,
+    duration: number,
+    easing: EasingFunction = EasingFunction.Default,
+  ) {
+    return this.populateTransform<TValue>(
+      new TransformBindable(targetBindable),
+      newValue,
+      duration,
+      easing,
+    );
   }
 
   protected makeTransform<TValue>(

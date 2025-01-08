@@ -3,8 +3,8 @@ import { ControlPoint } from './ControlPoint';
 
 export class TimingPoint extends ControlPoint {
   constructor(
-    time: number,
-    beatLength: number,
+    time: number = 0,
+    beatLength: number = TimingPoint.DEFAULT_BEAT_LENGTH,
     meter: number = 4,
   ) {
     super(time);
@@ -13,7 +13,9 @@ export class TimingPoint extends ControlPoint {
     this.#meter = this.property('meter', meter);
   }
 
-  static readonly default = new TimingPoint(0, 60_000 / 120);
+  static readonly DEFAULT_BEAT_LENGTH = 60_000 / 120;
+
+  static readonly default = new TimingPoint(0, TimingPoint.DEFAULT_BEAT_LENGTH);
 
   override get controlPointName(): string {
     return 'Timing Point';

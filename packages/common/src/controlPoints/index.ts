@@ -3,6 +3,7 @@ export * from './ControlPointInfo';
 export * from './ControlPointList';
 export * from './DifficultyPoint';
 export * from './EffectPoint';
+export * from './IControlPoint';
 export * from './SamplePoint';
 export * from './TickGenerator';
 export * from './TickType';

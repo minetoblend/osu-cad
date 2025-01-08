@@ -1,10 +1,11 @@
 import type { Property } from '../crdt/Property';
+import type { IControlPoint } from './IControlPoint';
 import { Action, Comparer } from 'osucad-framework';
 import { ObjectCrdt } from '../crdt/ObjectCrdt';
 
 let nextUid = 0;
 
-export abstract class ControlPoint extends ObjectCrdt {
+export abstract class ControlPoint extends ObjectCrdt implements IControlPoint {
   static readonly COMPARER = new class extends Comparer<ControlPoint> {
     compare(a: ControlPoint, b: ControlPoint) {
       const result = a.time - b.time;

@@ -22,7 +22,7 @@ export class SortedList<T> {
     return this.#addInternal(item);
   }
 
-  addRange(items: T[]) {
+  addRange(items: readonly T[]) {
     for (const item of items) {
       this.add(item);
     }
