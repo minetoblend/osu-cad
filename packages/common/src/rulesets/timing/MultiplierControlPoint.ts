@@ -10,7 +10,7 @@ export class MultiplierControlPoint {
   };
 
   get multiplier() {
-    return this.velocity * this.effectPoint.scrollSpeed / this.timingPoint.beatLength;
+    return this.velocity * this.effectPoint.scrollSpeed * this.baseBeatLength / this.timingPoint.beatLength;
   }
 
   time: number;
