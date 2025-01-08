@@ -1,24 +1,29 @@
-import type { OsuHitObject } from '../../rulesets/osu/hitObjects/OsuHitObject';
+import type { HitObject } from '../../hitObjects/HitObject';
 import { Color, type ReadonlyDependencyContainer, resolved } from 'osucad-framework';
 import { hasComboInformation } from '../../hitObjects/IHasComboInformation';
+import { OsuHitObject } from '../../rulesets/osu/hitObjects/OsuHitObject';
 import { Spinner } from '../../rulesets/osu/hitObjects/Spinner';
 import { ISkinSource } from '../../skinning/ISkinSource';
 import { SkinConfig } from '../../skinning/SkinConfig';
 import { BeatmapProcessor } from './BeatmapProcessor';
 
 export class BeatmapComboProcessor extends BeatmapProcessor {
-  override onHitObjectAdded(hitObject: OsuHitObject) {
+  override onHitObjectAdded(hitObject: HitObject) {
     super.onHitObjectAdded(hitObject);
-    hitObject.newComboBindable.valueChanged.addListener(this.state.invalidate, this.state);
-    hitObject.comboOffsetBindable.valueChanged.addListener(this.state.invalidate, this.state);
+    if (hitObject instanceof OsuHitObject) {
+      hitObject.newComboBindable.valueChanged.addListener(this.state.invalidate, this.state);
+      hitObject.comboOffsetBindable.valueChanged.addListener(this.state.invalidate, this.state);
+    }
     hitObject.startTimeBindable.valueChanged.addListener(this.state.invalidate, this.state);
   }
 
-  override onHitObjectRemoved(hitObject: OsuHitObject) {
+  override onHitObjectRemoved(hitObject: HitObject) {
     super.onHitObjectRemoved(hitObject);
 
-    hitObject.newComboBindable.valueChanged.removeListener(this.state.invalidate, this.state);
-    hitObject.comboOffsetBindable.valueChanged.removeListener(this.state.invalidate, this.state);
+    if (hitObject instanceof OsuHitObject) {
+      hitObject.newComboBindable.valueChanged.removeListener(this.state.invalidate, this.state);
+      hitObject.comboOffsetBindable.valueChanged.removeListener(this.state.invalidate, this.state);
+    }
     hitObject.startTimeBindable.valueChanged.removeListener(this.state.invalidate, this.state);
   }
 

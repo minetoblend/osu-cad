@@ -1,8 +1,8 @@
-import type { HitWindows } from '@osucad/common';
+import type { HitWindows, IBarLine } from '@osucad/common';
 import { EmptyHitWindows } from '@osucad/common';
 import { ManiaHitObject } from './ManiaHitObject';
 
-export class BarLine extends ManiaHitObject {
+export class BarLine extends ManiaHitObject implements IBarLine {
   readonly #major = this.property('major', false);
 
   get majorBindable() {

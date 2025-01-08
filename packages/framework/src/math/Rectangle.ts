@@ -61,11 +61,14 @@ export class Rectangle {
     return this.x === rect.x && this.y === rect.y && this.width === rect.width && this.height === rect.height;
   }
 
-  inflate(amount: number) {
-    this.x -= amount;
-    this.y -= amount;
-    this.width += amount * 2;
-    this.height += amount * 2;
+  inflate(amount: number | Vec2) {
+    if (typeof amount === 'number')
+      amount = new Vec2(amount, amount);
+
+    this.x -= amount.x;
+    this.y -= amount.y;
+    this.width += amount.x * 2;
+    this.height += amount.y * 2;
 
     return this;
   }

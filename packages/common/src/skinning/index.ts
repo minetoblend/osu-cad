@@ -11,6 +11,7 @@ export * from './RulesetSkinProvidingContainer';
 export * from './Skin';
 export * from './SkinConfig';
 export * from './SkinConfiguration';
+export * from './SkinConfigurationLookup';
 export * from './SkinInfo';
 export * from './SkinManager';
 export * from './SkinnableDrawable';

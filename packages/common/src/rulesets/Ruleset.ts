@@ -8,6 +8,7 @@ import type { SkinTransformer } from '../skinning/SkinTransformer';
 import type { BeatmapVerifier } from '../verifier/BeatmapVerifier';
 import type { DifficultyCalculator } from './difficulty/DifficultyCalculator';
 import type { DrawableRuleset } from './DrawableRuleset';
+import { RulesetInfo } from './RulesetInfo';
 
 export abstract class Ruleset {
   get legacyId(): number | null {
@@ -44,6 +45,10 @@ export abstract class Ruleset {
 
   createBeatmapVerifier(): BeatmapVerifier<any> | null {
     return null;
+  }
+
+  get rulesetInfo(): RulesetInfo {
+    return new RulesetInfo(this.shortName, this.shortName, this.constructor as any);
   }
 
   // createEditorSetupSections

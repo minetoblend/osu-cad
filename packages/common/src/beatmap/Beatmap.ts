@@ -14,9 +14,9 @@ export class Beatmap<T extends HitObject = HitObject> extends StaticCrdt impleme
   }
 
   constructor(
-    readonly beatmapInfo: BeatmapInfo = new BeatmapInfo(),
-    readonly colors = new BeatmapColors(),
-    readonly controlPoints = new ControlPointInfo(),
+    public beatmapInfo: BeatmapInfo = new BeatmapInfo(),
+    public colors = new BeatmapColors(),
+    public controlPoints = new ControlPointInfo(),
   ) {
     super();
   }

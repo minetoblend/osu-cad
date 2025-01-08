@@ -3,4 +3,6 @@ export enum ScrollingDirection {
   Down,
   Left,
   Right,
+
+  Default = Up,
 }

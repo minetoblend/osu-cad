@@ -7,6 +7,7 @@ export { Container, type ContainerOptions } from './Container';
 export { DrawSizePreservingFillContainer } from './DrawSizePreservingFillContainer';
 export { FillDirection, FillFlowContainer } from './FillFlowContainer';
 export { FlowContainer } from './FlowContainer';
+export { Dimension, type DimensionEntry, GridContainer, GridSizeMode } from './GridContainer';
 export { MaskingContainer, type MaskingContainerOptions } from './MaskingContainer';
 export { ProxyContainer } from './ProxyContainer';
 export { ScrollbarContainer, ScrollContainer } from './ScrollContainer';

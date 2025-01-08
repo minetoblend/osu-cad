@@ -51,7 +51,7 @@ export abstract class DrawableScrollingRuleset<T extends HitObject> extends Draw
 
   readonly #scrollingInfo: LocalScrollingInfo;
 
-  constructor(ruleset: Ruleset, beatmap: IBeatmap) {
+  constructor(ruleset: Ruleset, beatmap: IBeatmap<T>) {
     super(ruleset, beatmap);
 
     this.#scrollingInfo = new LocalScrollingInfo();

@@ -1,5 +1,5 @@
 import type { Drawable, KeyBindingAction, KeyBindingContainer, SimultaneousBindingMode } from 'osucad-framework';
-import type { Ruleset } from '../Ruleset';
+import type { RulesetInfo } from '../RulesetInfo';
 import { Axes, Container, PassThroughInputManager } from 'osucad-framework';
 import { RulesetKeyBindingContainer } from './RulesetKeyBindingContainer';
 
@@ -16,17 +16,17 @@ export class RulesetInputManager<T extends KeyBindingAction> extends PassThrough
     return this.#content;
   }
 
-  constructor(ruleset: Ruleset, unique: SimultaneousBindingMode) {
+  constructor(ruleset: RulesetInfo, variant: number, unique: SimultaneousBindingMode) {
     super();
 
     this.internalChild = this.keyBindingContainer
-      = this.createKeyBindingContainer(ruleset, unique)
+      = this.createKeyBindingContainer(ruleset, variant, unique)
         .with({
           child: this.#content = new Container({ relativeSizeAxes: Axes.Both }),
         });
   }
 
-  createKeyBindingContainer(ruleset: Ruleset, unique: SimultaneousBindingMode): KeyBindingContainer<T> {
-    return new RulesetKeyBindingContainer(ruleset, unique);
+  createKeyBindingContainer(ruleset: RulesetInfo, variant: number, unique: SimultaneousBindingMode): KeyBindingContainer<T> {
+    return new RulesetKeyBindingContainer(ruleset, variant, unique);
   }
 }

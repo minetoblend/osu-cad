@@ -73,6 +73,7 @@ export interface DrawableOptions {
   tint?: ColorSource;
   relativeSizeAxes?: Axes;
   relativePositionAxes?: Axes;
+  bypassAutoSizeAxes?: Axes;
   anchor?: Anchor;
   origin?: Anchor;
   margin?: MarginPadding | MarginPaddingOptions;
@@ -705,6 +706,11 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   get drawHeight() {
     return this.drawSize.y;
+  }
+
+  get drawRectangle() {
+    const s = this.drawSize;
+    return new Rectangle(0, 0, s.x, s.y);
   }
 
   get layoutSize(): Vec2 {

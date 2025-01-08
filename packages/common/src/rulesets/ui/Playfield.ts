@@ -23,8 +23,25 @@ export class Playfield extends Container implements IPooledHitObjectProvider, IH
   }
 
   get allHitObjects() {
-    return this.hitObjectContainer.objects;
+    let objects = this.hitObjectContainer.objects;
+
+    if (this.isNested) {
+      objects = [
+        ...objects,
+        ...this.#nestedPlayfields.flatMap(p => p.hitObjectContainer.objects),
+      ];
+    }
+
+    return objects;
   }
+
+  readonly #nestedPlayfields: Playfield[] = [];
+
+  get nestedPlayfields(): readonly Playfield[] {
+    return this.#nestedPlayfields;
+  }
+
+  isNested = false;
 
   #entryManager = new HitObjectEntryManager();
 
@@ -104,11 +121,28 @@ export class Playfield extends Container implements IPooledHitObjectProvider, IH
 
   removeHitObject(hitObject: HitObject): boolean {
     const entry = this.#entryManager.get(hitObject);
-    if (!entry)
-      return false;
+    if (entry) {
+      this.#entryManager.remove(entry);
+      return true;
+    }
 
-    this.#entryManager.remove(entry);
-    return true;
+    return this.#nestedPlayfields.some(p => p.removeHitObject(hitObject));
+  }
+
+  addDrawableHitObject(h: DrawableHitObject) {
+    if (!h.isInitialized)
+      this.#onNewDrawableHitObject(h);
+
+    this.hitObjectContainer.add(h);
+    this.onHitObjectAdded(h.hitObject!);
+  }
+
+  removeDrawableHitObject(h: DrawableHitObject) {
+    if (!this.hitObjectContainer.remove(h))
+      return false;
+    this.onHitObjectRemoved(h.hitObject!);
+
+    return false;
   }
 
   protected createLifeTimeEntry(hitObject: HitObject) {
@@ -184,6 +218,16 @@ export class Playfield extends Container implements IPooledHitObjectProvider, IH
 
   }
 
+  addNested(otherPlayfield: Playfield) {
+    otherPlayfield.isNested = true;
+
+    otherPlayfield.newResult.addListener(r => this.newResult.emit(r));
+    otherPlayfield.hitObjectUsageBegan.addListener(h => this.hitObjectUsageBegan.emit(h));
+    otherPlayfield.hitObjectUsageFinished.addListener(h => this.hitObjectUsageFinished.emit(h));
+
+    this.#nestedPlayfields.push(otherPlayfield);
+  }
+
   customJudgeProvider: IHitObjectJudgeProvider | null = null;
 
   suppressHitSounds = false;
@@ -200,5 +244,27 @@ export class Playfield extends Container implements IPooledHitObjectProvider, IH
       return this.customJudgeProvider.getJudge(hitObject);
 
     return null;
+  }
+
+  get pastLifetimeExtension() {
+    return this.hitObjectContainer.pastLifetimeExtension;
+  }
+
+  set pastLifetimeExtension(value: number) {
+    this.hitObjectContainer.pastLifetimeExtension = value;
+
+    for (const playfield of this.#nestedPlayfields)
+      playfield.pastLifetimeExtension = value;
+  }
+
+  get futureLifetimeExtension() {
+    return this.hitObjectContainer.futureLifetimeExtension;
+  }
+
+  set futureLifetimeExtension(value: number) {
+    this.hitObjectContainer.futureLifetimeExtension = value;
+
+    for (const playfield of this.#nestedPlayfields)
+      playfield.futureLifetimeExtension = value;
   }
 }

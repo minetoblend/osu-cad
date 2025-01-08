@@ -1,14 +1,9 @@
-import type { Ruleset } from '@osucad/common';
 import type { ManiaHitObject } from '../objects/ManiaHitObject';
 import type { StageDefinition } from './StageDefinition';
 import { Beatmap, sumBy } from '@osucad/common';
 import { ManiaRuleset } from '../ManiaRuleset';
 
 export class ManiaBeatmap extends Beatmap<ManiaHitObject> {
-  override get ruleset(): Ruleset | null {
-    return new ManiaRuleset();
-  }
-
   stages: StageDefinition[] = [];
 
   get totalColumns() {
@@ -19,6 +14,7 @@ export class ManiaBeatmap extends Beatmap<ManiaHitObject> {
     super();
 
     this.stages.push(defaultStage);
+    this.beatmapInfo.ruleset = new ManiaRuleset().rulesetInfo;
   }
 
   getStageForColumnIndex(column: number) {

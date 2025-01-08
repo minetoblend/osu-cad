@@ -17,7 +17,7 @@ import {
 import { HitResult } from '../hitObjects/HitResult';
 import { PlayfieldAdjustmentContainer } from './ui/PlayfieldAdjustmentContainer';
 
-export abstract class DrawableRuleset<TObject extends HitObject = HitObject> extends CompositeDrawable {
+export abstract class DrawableRuleset<TObject extends HitObject = any> extends CompositeDrawable {
   readonly newResult = new Action<JudgementResult>();
 
   readonly #playfield: Lazy<Playfield>;
@@ -36,7 +36,11 @@ export abstract class DrawableRuleset<TObject extends HitObject = HitObject> ext
     return this.#playfieldAdjustmentContainer;
   }
 
-  public readonly beatmap: IBeatmap;
+  readonly #beatmap: IBeatmap<TObject>;
+
+  get beatmap(): IBeatmap<TObject> {
+    return this.#beatmap;
+  }
 
   get hitObjects(): ReadonlyArray<HitObject> {
     return this.beatmap.hitObjects.items;
@@ -44,9 +48,9 @@ export abstract class DrawableRuleset<TObject extends HitObject = HitObject> ext
 
   protected keyBindingInputManager: PassThroughInputManager;
 
-  protected constructor(readonly ruleset: Ruleset, beatmap: IBeatmap) {
+  protected constructor(readonly ruleset: Ruleset, beatmap: IBeatmap<TObject>) {
     super();
-    this.beatmap = beatmap;
+    this.#beatmap = beatmap;
     this.relativeSizeAxes = Axes.Both;
     this.keyBindingInputManager = this.createInputManager();
 

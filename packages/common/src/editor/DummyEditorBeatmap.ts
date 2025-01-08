@@ -1,3 +1,4 @@
+import type { Beatmap } from '../beatmap';
 import { StableBeatmapParser } from '../beatmap';
 import { SimpleFile } from '../beatmap/io/SimpleFile';
 import { StaticFileStore } from '../beatmap/io/StaticFileStore';
@@ -6,10 +7,10 @@ import audioUrl from './audio.mp3?url';
 import { EditorBeatmap } from './EditorBeatmap';
 
 export class DummyEditorBeatmap extends EditorBeatmap {
-  constructor() {
+  constructor(beatmap?: Beatmap) {
     super(
       // eslint-disable-next-line ts/no-use-before-define
-      new StableBeatmapParser().parse(beatmapText),
+      beatmap ?? new StableBeatmapParser().parse(beatmapText),
       new StaticFileStore([
         new SimpleFile('audio.mp3', () => fetch(audioUrl).then(res => res.arrayBuffer())),
       ]),

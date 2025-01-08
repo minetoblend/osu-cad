@@ -1,6 +1,5 @@
 import type { Bindable } from '../../bindables/Bindable';
 import type { ITransformable } from './ITransformable';
-import { objectId } from '@osucad/common';
 import { Interpolation } from './Interpolation';
 import { TypedTransform } from './Transform';
 
@@ -8,7 +7,7 @@ export class TransformBindable<TValue, T extends ITransformable> extends TypedTr
   constructor(readonly targetBindable: Bindable<TValue>) {
     super();
 
-    this.targetMember = objectId();
+    this.targetMember = Math.random().toString();
   }
 
   override readonly targetMember: string;

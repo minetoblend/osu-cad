@@ -11,6 +11,7 @@ export class TimingPoint extends ControlPoint {
 
     this.#beatLength = this.property('beatLength', beatLength);
     this.#meter = this.property('meter', meter);
+    this.#omitFirstBarLine = this.property('omitFirstBarLine', false);
   }
 
   static readonly DEFAULT_BEAT_LENGTH = 60_000 / 120;
@@ -59,6 +60,21 @@ export class TimingPoint extends ControlPoint {
 
   set meter(value: number) {
     this.#meter.value = value;
+    this.raiseChanged();
+  }
+
+  readonly #omitFirstBarLine: Property<boolean>;
+
+  get#omitFirstBarLineBindable() {
+    return this.#omitFirstBarLine.bindable;
+  }
+
+  get omitFirstBarLine() {
+    return this.#omitFirstBarLine.value;
+  }
+
+  set omitFirstBarLine(value: boolean) {
+    this.#omitFirstBarLine.value = value;
     this.raiseChanged();
   }
 

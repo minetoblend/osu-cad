@@ -50,7 +50,7 @@ export class DependencyContainer implements ReadonlyDependencyContainer {
 }
 
 export interface ReadonlyDependencyContainer {
-  resolveOptional: <T>(key: new (...args: any[]) => T) => T;
+  resolveOptional: (<T>(key: new (...args: any[]) => T) => T | undefined) & (<T>(key: InjectionToken<T>) => T | undefined);
 
   resolve: (<T>(key: new (...args: any[]) => T) => T) & (<T>(key: InjectionToken<T>) => T);
 }
