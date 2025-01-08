@@ -21,6 +21,7 @@ import { CheckConcurrent } from './compose/CheckConcurrent';
 import { CheckInvisibleSlider } from './compose/CheckInvisibleSlider';
 import { CheckNinjaSpinner } from './compose/CheckNinjaSpinner';
 import { CheckObscuredReverse } from './compose/CheckObscuredReverse';
+import { CheckOffscreen } from './compose/CheckOffscreen';
 import { CheckMuted } from './hitsounds/CheckMuted';
 import { CheckConcurrentControlPoints } from './settings/CheckConcurrentControlPoints';
 import { CheckDefaultColors } from './settings/CheckDefaultColors';
@@ -56,6 +57,7 @@ export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
       new CheckSpaceVariation(),
       new CheckSpinnerRecovery(),
       new CheckBeforeLine(),
+      new CheckOffscreen(),
     ];
   }
 
