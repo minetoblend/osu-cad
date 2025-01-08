@@ -4,6 +4,7 @@ import type { HitObject } from '../../../hitObjects/HitObject';
 import type { Ruleset } from '../../Ruleset';
 import type { IScrollAlgorithm } from './algorithms/IScrollAlgorithm';
 import { Bindable, BindableNumber, EasingFunction, provide, SortedList } from 'osucad-framework';
+import { Beatmap } from '../../../beatmap/Beatmap';
 import { ControlPoint } from '../../../controlPoints/ControlPoint';
 import { EffectPoint } from '../../../controlPoints/EffectPoint';
 import { TimingPoint } from '../../../controlPoints/TimingPoint';
@@ -65,15 +66,14 @@ export abstract class DrawableScrollingRuleset<T extends HitObject> extends Draw
     this.#updateScrollAlgorithm();
 
     const lastObjectTime = this.beatmap.hitObjects.last?.endTime ?? 0;
-    const baseBeatLength = TimingPoint.DEFAULT_BEAT_LENGTH;
+    let baseBeatLength = TimingPoint.DEFAULT_BEAT_LENGTH;
 
     if (this.relativeScaleBeatLengths) {
-      // TODO
-      // baseBeatLength = Beatmap.GetMostCommonBeatLength();
-      //
-      // // The slider multiplier is post-multiplied to determine the final velocity, but for relative scale beat lengths
-      // // the multiplier should not affect the effective timing point (the longest in the beatmap), so it is factored out here
-      // baseBeatLength /= Beatmap.Difficulty.SliderMultiplier;
+      baseBeatLength = Beatmap.getMostCommonBeatLength(this.beatmap);
+
+      // The slider multiplier is post-multiplied to determine the final velocity, but for relative scale beat lengths
+      // the multiplier should not affect the effective timing point (the longest in the beatmap), so it is factored out here
+      baseBeatLength /= this.beatmap.difficulty.sliderMultiplier;
     }
 
     let lastTimingPoint = new TimingPoint();
@@ -123,6 +123,7 @@ export abstract class DrawableScrollingRuleset<T extends HitObject> extends Draw
 
       this.controlPoints.add(point);
     }
+    console.log(this.controlPoints);
   }
 
   protected override loadComplete() {
