@@ -51,7 +51,7 @@ export class ManiaAction extends KeyBindingAction {
   ];
 
   static getFromKey(key: number): ManiaAction {
-    return ManiaAction.#keyActions[key];
+    return ManiaAction.#keyActions[key - 1];
   }
 }
 

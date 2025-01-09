@@ -1,19 +1,12 @@
+import type { PassThroughInputManager, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { IBeatmap } from '../beatmap/IBeatmap';
 import type { DrawableHitObject } from '../hitObjects/drawables/DrawableHitObject';
 import type { HitObject } from '../hitObjects/HitObject';
 import type { HitWindows } from '../hitObjects/HitWindows';
-import type { JudgementResult } from '../hitObjects/JudgementResult';
+import type { JudgementResult } from './judgements/JudgementResult';
 import type { Ruleset } from './Ruleset';
 import type { Playfield } from './ui/Playfield';
-import {
-  Action,
-  Axes,
-  CompositeDrawable,
-  Container,
-  dependencyLoader,
-  Lazy,
-  type PassThroughInputManager,
-} from 'osucad-framework';
+import { Action, Axes, CompositeDrawable, Container, Lazy } from 'osucad-framework';
 import { HitResult } from '../hitObjects/HitResult';
 import { PlayfieldAdjustmentContainer } from './ui/PlayfieldAdjustmentContainer';
 
@@ -67,11 +60,17 @@ export abstract class DrawableRuleset<TObject extends HitObject = any> extends C
     this.#loadObjects();
   }
 
-  @dependencyLoader()
-  [Symbol('load')]() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.internalChildren = [
-      this.#playfieldAdjustmentContainer = this.createPlayfieldAdjustmentContainer(),
-      this.overlays,
+      this.keyBindingInputManager
+        .with({
+          children: [
+            this.#playfieldAdjustmentContainer = this.createPlayfieldAdjustmentContainer(),
+            this.overlays,
+          ],
+        }),
     ];
   }
 

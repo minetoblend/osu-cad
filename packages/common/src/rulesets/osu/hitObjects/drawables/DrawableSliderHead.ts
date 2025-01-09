@@ -1,6 +1,6 @@
 import type { Vec2 } from 'osucad-framework';
-import type { JudgementResult } from '../../../../hitObjects/JudgementResult';
 import type { HitSound } from '../../../../hitsounds/HitSound';
+import type { JudgementResult } from '../../../judgements/JudgementResult';
 import type { DrawableSlider } from './DrawableSlider';
 import { HitResult } from '../../../../hitObjects/HitResult';
 import { OsuSkinComponentLookup } from '../../skinning/stable/OsuSkinComponentLookup';

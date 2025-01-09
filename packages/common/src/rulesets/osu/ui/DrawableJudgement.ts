@@ -1,4 +1,4 @@
-import type { JudgementResult } from '../../../hitObjects/JudgementResult';
+import type { JudgementResult } from '../../judgements/JudgementResult';
 import {
   Anchor,
   CompositeDrawable,

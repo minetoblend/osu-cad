@@ -1,5 +1,5 @@
 import type { DependencyContainer, ReadonlyDependencyContainer } from 'osucad-framework';
-import type { JudgementResult } from '../../../../hitObjects/JudgementResult';
+import type { JudgementResult } from '../../../judgements/JudgementResult';
 import type { ClickAction } from '../../ui/ClickAction';
 import type { OsuHitObject } from '../OsuHitObject';
 import { Bindable, dependencyLoader, Vec2 } from 'osucad-framework';

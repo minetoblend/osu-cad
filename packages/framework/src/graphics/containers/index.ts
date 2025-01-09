@@ -10,6 +10,7 @@ export { FlowContainer } from './FlowContainer';
 export { Dimension, type DimensionEntry, GridContainer, GridSizeMode } from './GridContainer';
 export { MaskingContainer, type MaskingContainerOptions } from './MaskingContainer';
 export { ProxyContainer } from './ProxyContainer';
+export { ProxyDrawable } from './ProxyDrawable';
 export { ScrollbarContainer, ScrollContainer } from './ScrollContainer';
 export { TabbableContainer } from './TabbableContainer';
 export { Visibility, VisibilityContainer } from './VisibilityContainer';

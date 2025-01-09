@@ -26,6 +26,19 @@ export class ColorUtils {
     ]));
   }
 
+  static darkenSimple(color: ColorSource, amount: number) {
+    color = new Color(color);
+
+    amount = 1 / (1 + amount);
+
+    return new Color([
+      color.red * amount,
+      color.green * amount,
+      color.blue * amount,
+      color.alpha,
+    ]);
+  }
+
   static redistribute(color: Color) {
     const m = Math.max(color.red, color.green, color.blue);
     if (m <= 1)

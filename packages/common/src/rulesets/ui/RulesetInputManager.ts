@@ -20,10 +20,11 @@ export class RulesetInputManager<T extends KeyBindingAction> extends PassThrough
     super();
 
     this.internalChild = this.keyBindingContainer
-      = this.createKeyBindingContainer(ruleset, variant, unique)
-        .with({
-          child: this.#content = new Container({ relativeSizeAxes: Axes.Both }),
-        });
+      = this.createKeyBindingContainer(ruleset, variant, unique).with({
+        child: this.#content = new Container({
+          relativeSizeAxes: Axes.Both,
+        }),
+      });
   }
 
   createKeyBindingContainer(ruleset: RulesetInfo, variant: number, unique: SimultaneousBindingMode): KeyBindingContainer<T> {

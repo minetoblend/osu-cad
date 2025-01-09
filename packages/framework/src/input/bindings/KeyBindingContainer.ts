@@ -112,8 +112,6 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
     return true;
   }
 
-  // private readonly HashSet<InputKey> pressedInputKeys = new HashSet<InputKey>();
-
   #pressedInputKeys = new Set<InputKey>();
 
   override handle(e: UIEvent): boolean {
@@ -351,7 +349,7 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
   protected propagateReleased(drawables: Drawable[] | List<Drawable>, state: InputState, released: T) {
     if (
       this.#simultaneousMode === SimultaneousBindingMode.All
-      || (this.#pressedActions.includes(released) && this.#pressedBindings.every(b => b.getAction() === released))
+      || (this.#pressedActions.includes(released) && this.#pressedBindings.every(b => b.getAction() !== released))
     ) {
       const releaseEvent = new KeyBindingReleaseEvent<T>(state, released);
 

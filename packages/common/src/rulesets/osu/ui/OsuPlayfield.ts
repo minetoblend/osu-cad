@@ -1,6 +1,6 @@
 import type { DrawableHitObject } from '../../../hitObjects/drawables/DrawableHitObject';
 import type { HitObject } from '../../../hitObjects/HitObject';
-import type { JudgementResult } from '../../../hitObjects/JudgementResult';
+import type { JudgementResult } from '../../judgements/JudgementResult';
 import type { IHitPolicy } from '../../ui/IHitPolicy';
 import type { DrawableOsuHitObject } from '../hitObjects/drawables/DrawableOsuHitObject';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';

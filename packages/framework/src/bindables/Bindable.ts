@@ -80,6 +80,11 @@ export class Bindable<T> implements ReadonlyBindable<T> {
   }
 
   bindValueChanged(listener: BindableListener<ValueChangedEvent<T>>, receiver?: any, runOnceImmediately?: boolean) {
+    if (typeof receiver === 'boolean' && runOnceImmediately === undefined) {
+      runOnceImmediately = receiver;
+      receiver = undefined;
+    }
+
     this.valueChanged.addListener(listener, receiver);
     if (runOnceImmediately)
       listener.call(receiver, { value: this.value, previousValue: this.value });

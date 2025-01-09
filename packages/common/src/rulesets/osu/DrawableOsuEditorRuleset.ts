@@ -1,12 +1,13 @@
 import type { IBeatmap } from '../../beatmap/IBeatmap';
 import type { Ruleset } from '../Ruleset';
+import type { OsuHitObject } from './hitObjects/OsuHitObject';
 import type { OsuPlayfield } from './ui/OsuPlayfield';
 import { EditorJudgeProvider } from '../../editor/EditorJudge';
 import { DrawableOsuRuleset } from './DrawableOsuRuleset';
 import { PlayfieldGrid } from './edit/PlayfieldGrid';
 
 export class DrawableOsuEditorRuleset extends DrawableOsuRuleset {
-  constructor(ruleset: Ruleset, beatmap: IBeatmap) {
+  constructor(ruleset: Ruleset, beatmap: IBeatmap<OsuHitObject>) {
     super(ruleset, beatmap);
   }
 

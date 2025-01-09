@@ -2,15 +2,17 @@ import type { DrawableHitObject, HitObject } from '@osucad/common';
 import type { Drawable, ReadonlyDependencyContainer, Vec2 } from 'osucad-framework';
 import type { ManiaHitObject } from '../objects/ManiaHitObject';
 import { ISkinSource, ScrollingPlayfield, SkinnableDrawable } from '@osucad/common';
-import { Anchor, Axes, Container, MaskingContainer, provide } from 'osucad-framework';
+import { Anchor, Axes, Container, MaskingContainer, provide, ProxyDrawable } from 'osucad-framework';
 import { StageDefinition } from '../beatmaps/StageDefinition';
 import { BarLine } from '../objects/BarLine';
 import { DrawableBarLine } from '../objects/drawables/DrawableBarLine';
+import { LegacyManiaSkinConfigurationLookups } from '../skinning/LegacyManiaSkinConfigurationLookups';
 import { ManiaSkinComponentLookup } from '../skinning/ManiaSkinComponentLookup';
 import { ManiaSkinComponents } from '../skinning/ManiaSkinComponents';
+import { ManiaSkinConfigurationLookup } from '../skinning/ManiaSkinConfigurationLookup';
 import { Column } from './Column';
 import { ColumnFlow } from './ColumnFlow';
-import { DefaultStageBackground } from './DefaultStageBackground';
+import { DefaultStageBackground } from './components/DefaultStageBackground';
 import { HitObjectArea } from './HitObjectArea';
 import { ManiaAction } from './ManiaAction';
 
@@ -96,6 +98,7 @@ export class Stage extends ScrollingPlayfield {
           topLevelContainer = new Container({
             relativeSizeAxes: Axes.Both,
           }),
+
         ],
       }),
     ];
@@ -111,8 +114,9 @@ export class Stage extends ScrollingPlayfield {
         c.action.value = action;
       });
 
-      // topLevelContainer.add(new ProxyContainer(column.topLevelContainer));
-      // columnBackgrounds.add(column.BackgroundContainer.CreateProxy());
+      topLevelContainer.add(new ProxyDrawable(column.topLevelContainer));
+      columnBackgrounds.add(new ProxyDrawable(column.backgroundContainer));
+
       this.#columnFlow.setContentForColumn(i, column);
       this.addNested(column);
     }
@@ -129,11 +133,17 @@ export class Stage extends ScrollingPlayfield {
     this.#currentSkin.sourceChanged.addListener(this.#onSkinChanged, this);
     this.#onSkinChanged();
 
-    this.registerPool(BarLine, DrawableBarLine, 50, 200);
+    this.registerPool(BarLine, (() => DrawableBarLine)(), 50, 200);
   }
 
   #onSkinChanged() {
-    // TODO: update padding
+    const paddingTop = this.#currentSkin.getConfig(new ManiaSkinConfigurationLookup<number>(LegacyManiaSkinConfigurationLookups.StagePaddingTop)) ?? 0;
+    const paddingBottom = this.#currentSkin.getConfig(new ManiaSkinConfigurationLookup<number>(LegacyManiaSkinConfigurationLookups.StagePaddingBottom)) ?? 0;
+
+    this.padding = {
+      top: paddingTop,
+      bottom: paddingBottom,
+    };
   }
 
   override addHitObject(hitObject: HitObject) {

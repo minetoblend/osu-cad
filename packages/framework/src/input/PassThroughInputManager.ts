@@ -6,11 +6,14 @@ import type { InputManager } from './InputManager';
 import type { InputState } from './state/InputState';
 import type { MouseButton } from './state/MouseButton';
 import { CustomInputManager } from './CustomInputManager';
+import { KeyDownEvent } from './events/KeyDownEvent';
+import { KeyUpEvent } from './events/KeyUpEvent';
 import { MouseDownEvent } from './events/MouseDownEvent';
 import { MouseMoveEvent } from './events/MouseMoveEvent';
 import { MouseUpEvent } from './events/MouseUpEvent';
 import { ButtonStates } from './state/ButtonStates';
 import { ButtonInputEntry } from './stateChanges/ButtonInput';
+import { KeyboardKeyInput } from './stateChanges/KeyboardKeyInput';
 import { MouseButtonInput } from './stateChanges/MouseButtonInput';
 import { MousePositionAbsoluteInput } from './stateChanges/MousePositionAbsoluteInput';
 
@@ -38,6 +41,18 @@ export class PassThroughInputManager extends CustomInputManager {
     return super.handleHoverEvents;
   }
 
+  override buildNonPositionalInputQueue(queue: List<Drawable>, allowBlocking: boolean = true): boolean {
+    if (!this.propagateNonPositionalInputSubTree)
+      return false;
+
+    if (!allowBlocking)
+      return super.buildNonPositionalInputQueue(queue, allowBlocking);
+    else
+      queue.push(this);
+
+    return false;
+  }
+
   override buildPositionalInputQueue(screenSpacePos: Vec2, queue: List<Drawable>) {
     if (!this.propagatePositionalInputSubTree)
       return false;
@@ -49,9 +64,8 @@ export class PassThroughInputManager extends CustomInputManager {
   override getPendingInputs() {
     const pendingInputs = super.getPendingInputs();
 
-    if (this.useParentInput) {
+    if (this.useParentInput)
       pendingInputs.length = 0;
-    }
 
     return pendingInputs;
   }
@@ -81,7 +95,18 @@ export class PassThroughInputManager extends CustomInputManager {
       }
       // TODO: ScrollEvent
       // TODO: TouchEvent
-      // TODO: KeyboardEvent
+      case KeyDownEvent: {
+        const e = event as KeyDownEvent;
+        if (e.repeat)
+          return false;
+        KeyboardKeyInput.create(e.key, true).apply(this.currentState, this);
+        break;
+      }
+      case KeyUpEvent: {
+        const e = event as KeyUpEvent;
+        KeyboardKeyInput.create(e.key, false).apply(this.currentState, this);
+        break;
+      }
     }
 
     return false;

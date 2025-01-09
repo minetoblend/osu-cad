@@ -22,7 +22,8 @@ export class EditorJudge extends HitObjectJudge {
   }
 
   checkForResult(hitObject: DrawableHitObject, userTriggered: boolean, timeOffset: number) {
-    (hitObject as DrawableOsuHitObject).hitForcefully(-(this.audioOffset.value + this.hitSoundOffset.value));
+    if (this.time.current > hitObject.hitObject!.endTime)
+      (hitObject as DrawableOsuHitObject).hitForcefully(-(this.audioOffset.value + this.hitSoundOffset.value));
   }
 }
 

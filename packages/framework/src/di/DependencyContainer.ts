@@ -42,7 +42,11 @@ export class DependencyContainer implements ReadonlyDependencyContainer {
         key = key.name;
       }
 
-      throw new Error(`Could not resolve dependency for key: ${key}`);
+      let keyString = key;
+      if (typeof key === 'symbol')
+        keyString = key.description;
+
+      throw new Error(`Could not resolve dependency for key: ${keyString}`);
     }
 
     return value;

@@ -845,7 +845,11 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return this.loadState === LoadState.Loaded;
   }
 
-  dependencies!: ReadonlyDependencyContainer;
+  #dependencies!: ReadonlyDependencyContainer;
+
+  get dependencies() {
+    return this.#dependencies;
+  }
 
   #loadComplete() {
     if (this.loadState < LoadState.Ready)
@@ -994,7 +998,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   onLoadComplete = new Action<Drawable>();
 
   protected injectDependencies(dependencies: ReadonlyDependencyContainer) {
-    this.dependencies ??= dependencies;
+    this.#dependencies ??= dependencies;
 
     const injections = getInjections(this);
     for (let { key, type, optional } of injections) {

@@ -1,3 +1,4 @@
+export * from '../rulesets/judgements/JudgementResult';
 export * from './DifficultyRange';
 export * from './drawables';
 export * from './EffectType';
@@ -10,4 +11,3 @@ export * from './HitWindows';
 export * from './IHasComboInformation';
 export * from './IHasXPosition';
 export * from './IHasYPosition';
-export * from './JudgementResult';

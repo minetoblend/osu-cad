@@ -1,19 +1,33 @@
+import type { DrawableHitObject, JudgementResult } from '@osucad/common';
 import type { GameHost, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { DrawableManiaHitObject } from '../objects/drawables/DrawableManiaHitObject';
-import { type DrawableHitObject, ISkinSource, type JudgementResult, ScrollingPlayfield, SkinnableDrawable } from '@osucad/common';
+import { ISkinSource, ScrollingPlayfield, SkinnableDrawable } from '@osucad/common';
 import { Axes, Bindable, Container, GAME_HOST, provide, resolved, Vec2 } from 'osucad-framework';
 import { Color } from 'pixi.js';
+import { DrawableHoldNote } from '../objects/drawables/DrawableHoldNote';
+import { DrawableHoldNoteBody } from '../objects/drawables/DrawableHoldNoteBody';
+import { DrawableHoldNoteHead } from '../objects/drawables/DrawableHoldNoteHead';
+import { DrawableHoldNoteTail } from '../objects/drawables/DrawableHoldNoteTail';
+import { DrawableNote } from '../objects/drawables/DrawableNote';
+import { HeadNote } from '../objects/HeadNote';
+import { HoldNote } from '../objects/HoldNote';
+import { HoldNoteBody } from '../objects/HoldNoteBody';
+import { Note } from '../objects/Note';
+import { TailNote } from '../objects/TailNote';
 import { LegacyManiaSkinConfigurationLookups } from '../skinning/LegacyManiaSkinConfigurationLookups';
 import { ManiaSkinComponentLookup } from '../skinning/ManiaSkinComponentLookup';
 import { ManiaSkinComponents } from '../skinning/ManiaSkinComponents';
 import { ManiaSkinConfigurationLookup } from '../skinning/ManiaSkinConfigurationLookup';
-import { ColumnHitObjectArea } from './ColumnHitObjectArea';
-import { DefaultColumnBackground } from './DefaultColumnBackground';
-import { DefaultKeyArea } from './DefaultKeyArea';
+import { ColumnHitObjectArea } from './components/ColumnHitObjectArea';
+import { DefaultColumnBackground } from './components/DefaultColumnBackground';
+import { DefaultKeyArea } from './components/DefaultKeyArea';
+import { IColumn } from './IColumn';
 import { BindableManiaAction, ManiaAction } from './ManiaAction';
 import { OrderedHitPolicy } from './OrderedHitPolicy';
 import { Stage } from './Stage';
 
+@provide(Column)
+@provide(IColumn)
 export class Column extends ScrollingPlayfield implements IKeyBindingHandler<ManiaAction> {
   static readonly COLUMN_WIDTH = 80;
   static readonly SPECIAL_COLUMN_WIDTH = 70;
@@ -46,7 +60,7 @@ export class Column extends ScrollingPlayfield implements IKeyBindingHandler<Man
     this.relativeSizeAxes = Axes.Y;
     this.width = Column.COLUMN_WIDTH;
 
-    this.#hitPolicy = new OrderedHitPolicy();
+    this.#hitPolicy = new OrderedHitPolicy(this.hitObjectContainer);
     this.hitObjectArea = new ColumnHitObjectArea(this.hitObjectContainer, { relativeSizeAxes: Axes.Both });
   }
 
@@ -56,15 +70,16 @@ export class Column extends ScrollingPlayfield implements IKeyBindingHandler<Man
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
-    let keyArea: SkinnableDrawable;
-
     this.skin.sourceChanged.addListener(this.#onSourceChanged, this);
     this.#onSourceChanged();
 
     this.internalChildren = [
+
       this.hitObjectArea,
-      keyArea = new SkinnableDrawable(new ManiaSkinComponentLookup(ManiaSkinComponents.KeyArea), () => new DefaultKeyArea()).with({
+      new SkinnableDrawable(new ManiaSkinComponentLookup(ManiaSkinComponents.KeyArea), () => new DefaultKeyArea()).with({
         relativeSizeAxes: Axes.Both,
+        clock: this.host.clock,
+        processCustomClock: false,
       }),
       this.backgroundContainer,
       this.topLevelContainer,
@@ -72,22 +87,24 @@ export class Column extends ScrollingPlayfield implements IKeyBindingHandler<Man
 
     const background = new SkinnableDrawable(new ManiaSkinComponentLookup(ManiaSkinComponents.ColumnBackground), () => new DefaultColumnBackground()).with({
       relativeSizeAxes: Axes.Both,
+      clock: this.host.clock,
+      processCustomClock: false,
     });
 
-    background.clock = this.host.clock;
-    background.processCustomClock = false;
-
-    keyArea.clock = this.host.clock;
-    keyArea.processCustomClock = false;
-
     this.backgroundContainer.add(background);
+
+    this.registerPool(Note, DrawableNote, 50, 200);
+    this.registerPool(HoldNote, DrawableHoldNote, 50, 200);
+    this.registerPool(TailNote, DrawableHoldNoteTail, 50, 200);
+    this.registerPool(HeadNote, DrawableHoldNoteHead, 50, 200);
+    this.registerPool(HoldNoteBody, DrawableHoldNoteBody, 50, 200);
   }
 
   @resolved(GAME_HOST)
   host!: GameHost;
 
   #onSourceChanged() {
-    this.accentColor.value = this.skin.getConfig(new ManiaSkinConfigurationLookup(LegacyManiaSkinConfigurationLookups.ColumnBackgroundColour, this.index)) ?? new Color(0x000000);
+    this.accentColor.value = this.skin.getConfig(new ManiaSkinConfigurationLookup(LegacyManiaSkinConfigurationLookups.ColumnBackgroundColor, this.index)) ?? new Color(0x000000);
   }
 
   protected override loadComplete() {

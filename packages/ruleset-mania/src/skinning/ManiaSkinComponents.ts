@@ -4,6 +4,7 @@ export enum ManiaSkinComponents {
   KeyArea,
   Note,
   HoldNoteHead,
+  HoldNoteTail,
   HoldNoteBody,
   HitExplosion,
   StageBackground,

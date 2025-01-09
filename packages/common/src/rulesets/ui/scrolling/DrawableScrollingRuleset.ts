@@ -123,7 +123,6 @@ export abstract class DrawableScrollingRuleset<T extends HitObject> extends Draw
 
       this.controlPoints.add(point);
     }
-    console.log(this.controlPoints);
   }
 
   protected override loadComplete() {

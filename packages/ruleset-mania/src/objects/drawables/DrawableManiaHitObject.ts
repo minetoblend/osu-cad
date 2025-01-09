@@ -1,7 +1,7 @@
 import type { ReadonlyDependencyContainer, ValueChangedEvent } from 'osucad-framework';
 import type { ManiaHitObject } from '../ManiaHitObject';
-import { ArmedState, DrawableHitObject, HitResult, IScrollingInfo, ScrollingDirection } from '@osucad/common';
-import { Anchor, Bindable, EasingFunction, resolved } from 'osucad-framework';
+import { ArmedState, DrawableHitObject, IScrollingInfo, ScrollingDirection } from '@osucad/common';
+import { Anchor, Axes, Bindable, EasingFunction, resolved } from 'osucad-framework';
 import { BindableManiaAction, ManiaAction } from '../../ui/ManiaAction';
 import { ManiaPlayfield } from '../../ui/ManiaPlayfield';
 
@@ -13,7 +13,7 @@ export abstract class DrawableManiaHitObject<TObject extends ManiaHitObject = Ma
   @resolved(() => ManiaPlayfield, true)
   protected playfield?: ManiaPlayfield;
 
-  checkHittable?: (hitObject: DrawableHitObject, time: number, result: HitResult) => boolean;
+  checkHittable?: (hitObject: DrawableHitObject, time: number) => boolean;
 
   override get hitObject(): TObject {
     return super.hitObject as TObject;
@@ -21,6 +21,8 @@ export abstract class DrawableManiaHitObject<TObject extends ManiaHitObject = Ma
 
   protected constructor(hitObject?: TObject) {
     super(hitObject);
+
+    this.relativeSizeAxes = Axes.X;
   }
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
@@ -57,7 +59,6 @@ export abstract class DrawableManiaHitObject<TObject extends ManiaHitObject = Ma
   }
 
   missForcefully() {
-    // TODO Add ApplyMinResult()
-    this.applyResult(r => r.type = HitResult.Miss);
+    this.applyMinResult();
   }
 }

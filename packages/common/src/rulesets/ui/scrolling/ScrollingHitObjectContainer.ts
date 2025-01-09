@@ -122,8 +122,8 @@ export class ScrollingHitObjectContainer extends HitObjectContainer {
     this.#layoutCache.validate();
   }
 
-  override updateAfterChildren() {
-    super.updateAfterChildren();
+  override updateAfterChildrenLife() {
+    super.updateAfterChildrenLife();
 
     for (const [entry, obj] of this.aliveEntries) {
       this.#updatePosition(obj, this.time.current);

@@ -60,7 +60,7 @@ export class ColumnFlow<TContent extends Drawable> extends CompositeDrawable {
   }
 
   setContentForColumn(columnIndex: number, content: TContent) {
-    this.#columns.children[columnIndex].child = content;
+    this.content[columnIndex] = this.#columns.children[columnIndex].child = content;
   }
 
   override dispose(isDisposing: boolean = true) {

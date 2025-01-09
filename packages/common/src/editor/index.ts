@@ -4,6 +4,7 @@ export * from './DummyEditorBeatmap';
 export * from './Editor';
 export * from './EditorBeatmap';
 export * from './EditorClock';
+export * from './EditorJudge';
 export * from './EditorNavigation';
 export * from './HitsoundPlayer';
 export * from './screens';

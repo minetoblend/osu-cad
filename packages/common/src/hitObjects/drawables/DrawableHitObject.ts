@@ -1,16 +1,17 @@
 import type { DependencyContainer, ReadonlyBindable, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { Judgement } from '../../rulesets/judgements/Judgement';
 import type { HitObject } from '../HitObject';
+import type { HitResult } from '../HitResult';
 import type { HitObjectJudge } from './HitObjectJudge';
 import type { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
-import { Action, Bindable, dependencyLoader, resolved, Vec2 } from 'osucad-framework';
+import { Action, Bindable, dependencyLoader, resolved } from 'osucad-framework';
 import { Color } from 'pixi.js';
 import { IBeatmap } from '../../beatmap/IBeatmap';
 import { PoolableDrawableWithLifetime } from '../../pooling/PoolableDrawableWithLifetime';
+import { JudgementResult } from '../../rulesets/judgements/JudgementResult';
 import { IAnimationTimeReference } from '../../skinning/IAnimationTimeReference';
 import { ISkinSource } from '../../skinning/ISkinSource';
-import { HitResult } from '../HitResult';
 import { hasComboInformation } from '../IHasComboInformation';
-import { JudgementResult } from '../JudgementResult';
 import { ArmedState } from './ArmedState';
 import { IHitObjectJudgeProvider } from './HitObjectJudge';
 import { IPooledHitObjectProvider } from './IPooledHitObjectProvider';
@@ -62,6 +63,9 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
   }
 
   protected updateResult(userTriggered: boolean): boolean {
+    if (this.time.elapsed < 0)
+      return false;
+
     if (this.judged)
       return false;
 
@@ -73,18 +77,45 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
     return this.judged;
   }
 
-  protected applyResult(apply: (result: JudgementResult, hitObject: this) => void) {
-    const result = new JudgementResult(HitResult.None, this.time.current, this.time.current - this.hitObject!.endTime, new Vec2());
-    apply(result, this);
+  applyMaxResult() {
+    this.applyResult((r, _) => r.type = r.judgement.maxResult);
+  }
 
-    this.#result = result;
+  applyMinResult() {
+    this.applyResult((r, _) => r.type = r.judgement.minResult);
+  }
 
-    this.updateState(result.isHit ? ArmedState.Hit : ArmedState.Miss);
+  applyResultType(type: HitResult) {
+    this.applyResult((result, state) => result.type = state, type);
+  }
 
-    this.onNewResult.emit([this, result]);
+  protected applyResult<T>(apply: (result: JudgementResult, state: T) => void, state: T): void;
+
+  protected applyResult(apply: (result: JudgementResult, state: this) => void): void;
+
+  protected applyResult<T>(apply: (result: JudgementResult, state: any) => void, state?: T) {
+    apply(this.result!, state ?? this);
+
+    if (!this.result!.hasResult)
+      throw new Error('Judgement result applied but judgment type not updated');
+
+    this.result!.rawTime = this.time.current;
+
+    if (this.result!.hasResult)
+      this.updateState(this.result!.isHit ? ArmedState.Hit : ArmedState.Miss);
+
+    this.onNewResult.emit([this, this.result!]);
   }
 
   protected checkForResult(userTriggered: boolean, timeOffset: number) {
+  }
+
+  protected createResult(judgement: Judgement) {
+    return new JudgementResult(this.hitObject!, judgement);
+  }
+
+  #ensureEntryHasResult() {
+    this.entry!.result ??= this.createResult(this.hitObject!.judgement);
   }
 
   override get requiresChildrenUpdate(): boolean {
@@ -112,8 +143,10 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
   constructor(initialHitObject?: HitObject) {
     super();
 
-    if (initialHitObject)
+    if (initialHitObject) {
       this.entry = new SyntheticHitObjectEntry(initialHitObject);
+      this.#ensureEntryHasResult();
+    }
   }
 
   protected override loadComplete() {
@@ -133,6 +166,8 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
 
     if (entry instanceof SyntheticHitObjectEntry)
       this.lifetimeStart = this.hitObject!.startTime - this.initialLifetimeOffset;
+
+    this.#ensureEntryHasResult();
 
     for (const h of this.hitObject!.nestedHitObjects) {
       const pooledDrawableNested = this.getNestedHitObject(h)
@@ -235,8 +270,6 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
       this.removeInternal(this.judge);
     this.judge = null;
 
-    this.#result = null;
-
     this.#clearExistingStateTransforms();
   }
 
@@ -268,22 +301,20 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
     );
   }
 
-  #result: JudgementResult | null = null;
-
   get result() {
-    return this.#result;
-  }
-
-  get judged() {
-    return this.result !== null;
-  }
-
-  get allJudged() {
-    return this.judged && this.nestedHitObjects.every(h => h.judged);
+    return this.entry?.result;
   }
 
   get isHit() {
     return this.result?.isHit ?? false;
+  }
+
+  get judged() {
+    return this.entry?.judged ?? false;
+  }
+
+  get allJudged() {
+    return this.judged && this.nestedHitObjects.every(h => h.judged);
   }
 
   #updateStateFromResult() {

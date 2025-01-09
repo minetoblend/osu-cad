@@ -575,10 +575,14 @@ export class CompositeDrawable extends Drawable {
     return new DependencyContainer(parentDependencies);
   }
 
-  override dependencies!: ReadonlyDependencyContainer;
+  #dependencies!: ReadonlyDependencyContainer;
+
+  override get dependencies(): ReadonlyDependencyContainer {
+    return this.#dependencies;
+  }
 
   protected override injectDependencies(dependencies: ReadonlyDependencyContainer) {
-    const childDependencies = this.dependencies = this.createChildDependencies(dependencies);
+    const childDependencies = this.#dependencies = this.createChildDependencies(dependencies);
 
     if (childDependencies !== dependencies)
       childDependencies.owner = this;

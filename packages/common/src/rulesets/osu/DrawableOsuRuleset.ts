@@ -10,7 +10,7 @@ import { OsuPlayfieldAdjustmentContainer } from './OsuPlayfieldAdjustmentContain
 import { OsuPlayfield } from './ui/OsuPlayfield';
 
 export class DrawableOsuRuleset extends DrawableRuleset<OsuHitObject> {
-  constructor(ruleset: Ruleset, beatmap: IBeatmap) {
+  constructor(ruleset: Ruleset, beatmap: IBeatmap<OsuHitObject>) {
     super(ruleset, beatmap);
   }
 
@@ -23,7 +23,7 @@ export class DrawableOsuRuleset extends DrawableRuleset<OsuHitObject> {
   }
 
   override createInputManager(): PassThroughInputManager {
-    return new OsuInputManager(this.ruleset);
+    return new OsuInputManager(this.ruleset.rulesetInfo);
   }
 
   override createPlayfieldAdjustmentContainer(): PlayfieldAdjustmentContainer {

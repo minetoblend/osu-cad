@@ -1,10 +1,4 @@
-import type {
-  CompositeDrawable,
-  Drawable,
-  MarginPadding,
-  MarginPaddingOptions,
-  ReadonlyDependencyContainer,
-} from 'osucad-framework';
+import type { CompositeDrawable, Drawable, MarginPadding, MarginPaddingOptions, ReadonlyDependencyContainer } from 'osucad-framework';
 import { Container, DependencyContainer, Invalidation } from 'osucad-framework';
 import { Matrix } from 'pixi.js';
 

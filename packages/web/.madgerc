@@ -1,0 +1,13 @@
+{
+  "fontSize": "10px",
+  "graphVizOptions": {
+    "G": {
+      "rankdir": "LR"
+    }
+  },
+  "detectiveOptions": {
+    "ts": {
+      "skipTypeImports": true
+    }
+  }
+}

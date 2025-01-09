@@ -7,6 +7,10 @@ export class RulesetKeyBindingContainer<T extends KeyBindingAction> extends KeyB
     super(unique);
   }
 
+  override get handleRepeats(): boolean {
+    return false;
+  }
+
   override get defaultKeyBindings(): IKeyBinding[] {
     return this.ruleset.createInstance().getDefaultKeyBindings();
   }

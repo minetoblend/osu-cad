@@ -1,14 +1,14 @@
-import type { DrawableHitObject, HitObjectContainer, HitResult } from '@osucad/common';
+import type { DrawableHitObject, HitObjectContainer } from '@osucad/common';
 import type { DrawableManiaHitObject } from '../objects/drawables/DrawableManiaHitObject';
 
 export class OrderedHitPolicy {
-  #hitObjectContainer!: HitObjectContainer;
+  readonly #hitObjectContainer: HitObjectContainer;
 
-  setHitObjectContainer(hitObjectContainer: HitObjectContainer) {
+  constructor(hitObjectContainer: HitObjectContainer) {
     this.#hitObjectContainer = hitObjectContainer;
   }
 
-  isHittable = (hitObject: DrawableHitObject, time: number, result: HitResult): boolean => {
+  isHittable = (hitObject: DrawableHitObject, time: number): boolean => {
     const objects = [...this.#hitObjectContainer.aliveObjects];
     const index = objects.indexOf(hitObject);
     if (index === -1 || index === objects.length - 1)

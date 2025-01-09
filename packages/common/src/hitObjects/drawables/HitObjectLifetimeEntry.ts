@@ -1,3 +1,4 @@
+import type { JudgementResult } from '../../rulesets/judgements/JudgementResult';
 import type { HitObject } from '../HitObject';
 import { Bindable } from 'osucad-framework';
 import { LifetimeEntry } from '../../pooling/LifetimeEntry';
@@ -21,6 +22,24 @@ export class HitObjectLifetimeEntry extends LifetimeEntry {
   #realLifetimeStart = -Number.MAX_VALUE;
 
   #realLifetimeEnd = Number.MAX_VALUE;
+
+  result: JudgementResult | null = null;
+
+  get judged() {
+    return this.result?.hasResult ?? false;
+  }
+
+  get allJudged() {
+    if (!this.judged)
+      return false;
+
+    for (const entry of this.nestedEntries) {
+      if (!entry.allJudged)
+        return false;
+    }
+
+    return true;
+  }
 
   protected override setLifetimeStart(start: number) {
     this.#realLifetimeStart = start;

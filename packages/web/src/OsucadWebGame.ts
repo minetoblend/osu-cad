@@ -1,6 +1,6 @@
 import type { ReadonlyDependencyContainer } from 'osucad-framework';
-import { DummyEditorBeatmap, Editor, ISkinSource, OsucadGameBase, OsucadScreenStack, OsuRuleset, RulesetStore, SkinManager } from '@osucad/common';
-import { ManiaBeatmap, ManiaRuleset, Note, StageDefinition } from '@osucad/ruleset-mania';
+import { DummyEditorBeatmap, Editor, ISkinSource, OsucadGameBase, OsucadScreenStack, OsuRuleset, RulesetStore, SkinManager, Slider } from '@osucad/common';
+import { HoldNote, ManiaBeatmap, ManiaRuleset, Note, StageDefinition } from '@osucad/ruleset-mania';
 import { provide } from 'osucad-framework';
 
 export class OsucadWebGame extends OsucadGameBase {
@@ -32,7 +32,19 @@ export class OsucadWebGame extends OsucadGameBase {
     beatmap.controlPoints = otherBeatmap.controlPoints;
 
     beatmap.hitObjects.addAll(
-      otherBeatmap.hitObjects.items.map(it => Object.assign(new Note(), { startTime: it.startTime })),
+      otherBeatmap.hitObjects.items.map((it) => {
+        let note = new Note();
+
+        if (it instanceof Slider) {
+          note = new HoldNote();
+          (note as HoldNote).duration = it.duration;
+        }
+
+        note.startTime = it.startTime;
+        note.column = Math.floor(Math.random() * 4);
+
+        return note;
+      }),
     );
 
     const editorBeatmap = new DummyEditorBeatmap(beatmap as any);

@@ -25,7 +25,7 @@ export enum LegacyManiaSkinConfigurationLookups {
   ExplosionScale,
   ColumnLineColour,
   JudgementLineColour,
-  ColumnBackgroundColour,
+  ColumnBackgroundColor,
   ColumnLightColour,
   ComboBreakColour,
   MinimumColumnWidth,

@@ -16,6 +16,8 @@
   "typings": "./index.d.ts",
   "private": true,
   "devDependencies": {
-    "@types/audiobuffer-to-wav": "^1.0.4"
+    "@types/audiobuffer-to-wav": "^1.0.4",
+    "dependency-cruiser": "^16.9.0",
+    "vite-plugin-circular-dependency": "^0.5.0"
   }
 }
