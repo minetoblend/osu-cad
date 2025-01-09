@@ -1,11 +1,15 @@
 import type { Drawable, KeyBindingAction, KeyBindingContainer, SimultaneousBindingMode } from 'osucad-framework';
 import type { RulesetInfo } from '../RulesetInfo';
-import { Axes, Container, PassThroughInputManager } from 'osucad-framework';
+import { Axes, Container, PassThroughInputManager, resolved } from 'osucad-framework';
+import { Editor } from '../../editor/Editor';
 import { RulesetKeyBindingContainer } from './RulesetKeyBindingContainer';
 
 export class RulesetInputManager<T extends KeyBindingAction> extends PassThroughInputManager {
+  @resolved(Editor, true)
+  private editor?: Editor;
+
   override get allowRightClickFromLongTouch(): boolean {
-    return false;
+    return !!this.editor;
   }
 
   readonly keyBindingContainer: KeyBindingContainer<T>;
