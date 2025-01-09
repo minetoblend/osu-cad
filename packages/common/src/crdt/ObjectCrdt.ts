@@ -38,12 +38,23 @@ export abstract class ObjectCrdt extends AbstractCrdt<ObjectMutation> {
   }
 
   onPropertyChanged(property: Property<any>, oldValue: any, submitEvents: boolean) {
-    if (submitEvents) {
+    if (submitEvents && this.isAttached) {
+      const existing = this.currentTransaction?.getEntry(this.id);
+
+      let undoMutation = {
+        [property.name]: oldValue,
+      };
+
+      if (existing) {
+        undoMutation = {
+          ...undoMutation,
+          ...existing.undoMutation,
+        };
+      }
+
       this.submitMutation({
         [property.name]: property.value,
-      }, {
-        [property.name]: oldValue,
-      });
+      }, undoMutation, this.id);
     }
   }
 }

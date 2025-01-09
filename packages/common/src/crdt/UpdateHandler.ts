@@ -40,14 +40,14 @@ export class UpdateHandler extends Component {
 
   protected onMutationSubmitted(targetId: string, mutation: any) {}
 
-  submit(targetId: string, mutation: any, undoMutation?: any) {
+  submit(targetId: string, mutation: any, undoMutation?: any, key?: string) {
     this.onMutationSubmitted(targetId, mutation);
 
     this.commandApplied.emit();
 
     if (undoMutation) {
       const entry = new TransactionEntry(targetId, undoMutation);
-      this.currentTransaction.addEntry(entry);
+      this.currentTransaction.addEntry(entry, key);
 
       return entry;
     }

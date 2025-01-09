@@ -13,8 +13,8 @@ export abstract class AbstractCrdt<TMutation = never> {
 
   abstract handle(mutation: TMutation): TMutation | null | void;
 
-  protected submitMutation(mutation: TMutation, undoMutation?: TMutation): TransactionEntry<TMutation> | undefined {
-    return this.#updateHandler?.submit(this.id, mutation, undoMutation);
+  protected submitMutation(mutation: TMutation, undoMutation?: TMutation, key?: string): TransactionEntry<TMutation> | undefined {
+    return this.#updateHandler?.submit(this.id, mutation, undoMutation, key);
   }
 
   get isAttached() {
