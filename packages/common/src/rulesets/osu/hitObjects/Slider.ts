@@ -36,6 +36,8 @@ export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepe
       this.requestApplyDefaults();
     });
 
+    this.positionBindable.bindValueChanged(() => this.#endPositionCache.invalidate());
+
     this.ensureHitSoundsAreValid();
 
     this.#repeatCount.bindable.valueChanged.addListener(() => {
@@ -50,7 +52,6 @@ export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepe
 
   override set position(value) {
     super.position = value;
-    this.#updateNestedPositions();
   }
 
   headCircle: SliderHeadCircle | null = null;
