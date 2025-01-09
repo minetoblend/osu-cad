@@ -59,10 +59,8 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
 
     this.sliderPath.setPath(controlPoints);
 
-    this.updateSliderPath();
+    this.updateSliderPath(true);
   }
-
-  protected didCyclePathType = false;
 
   override onMouseDown(e: MouseDownEvent): boolean {
     if (e.button === MouseButton.Right) {
@@ -72,6 +70,8 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
     }
 
     if (e.button === MouseButton.Left) {
+      this.#mouseDown = true;
+
       if (!this.isPlacing) {
         this.beginPlacement();
         this.placementMode = SliderPlacementMode.PlacingObject;
@@ -80,7 +80,9 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
       }
 
       if (this.currentPosition.distance(this.sliderPath.last) <= this.mergeThreshold)
-        return this.didCyclePathType = this.tryCyclePathTypeFromMouse();
+        this.tryCyclePathTypeFromMouse();
+
+      return true;
     }
 
     return false;
@@ -102,6 +104,8 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
     if (e.button !== MouseButton.Left)
       return;
 
+    this.#mouseDown = false;
+
     if (this.placementMode === SliderPlacementMode.PlacingObject) {
       this.placementMode = SliderPlacementMode.PlacingPath;
       return;
@@ -113,8 +117,13 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
     this.beginPlacingNewPoint();
   }
 
+  #mouseDown = false;
+
   override onMouseMove(e: MouseMoveEvent): boolean {
     if (!this.isPlacing)
+      return false;
+
+    if (!this.#mouseDown && this.lastInputWasTouch)
       return false;
 
     switch (this.placementMode) {
@@ -159,7 +168,7 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
     }
   }
 
-  protected updateSliderPath() {
+  protected updateSliderPath(preventMerge = false) {
     const controlPoints = [...this.sliderPath.controlPoints];
 
     if (this.currentPosition.distance(this.sliderPath.last) <= this.mergeThreshold) {
@@ -167,7 +176,7 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
 
       this.updatePathTypeFromSegmentLength(controlPoints);
 
-      if (lastPoint.type === null)
+      if (!preventMerge && lastPoint.type === null)
         controlPoints[controlPoints.length - 1] = lastPoint.withType(PathType.Bezier);
     }
     else {
