@@ -79,6 +79,9 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
         return true;
       }
 
+      if (this.lastInputWasTouch)
+        this.setControlPointPosition(this.snappedMousePosition);
+
       if (this.currentPosition.distance(this.sliderPath.last) <= this.mergeThreshold)
         this.tryCyclePathTypeFromMouse();
 
