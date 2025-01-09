@@ -1,5 +1,4 @@
 import type { DependencyContainer, ReadonlyDependencyContainer } from 'osucad-framework';
-import type { JudgementResult } from '../../../judgements/JudgementResult';
 import type { ClickAction } from '../../ui/ClickAction';
 import type { OsuHitObject } from '../OsuHitObject';
 import { Bindable, dependencyLoader, Vec2 } from 'osucad-framework';
@@ -39,21 +38,13 @@ export class DrawableOsuHitObject<T extends OsuHitObject = OsuHitObject> extends
       r.type = HitResult.Great;
       if (timeOffset !== undefined) {
         r.timeOffset = timeOffset;
-        r.absoluteTime = h.hitObject!.endTime + timeOffset;
+        r.rawTime = h.hitObject!.endTime + timeOffset;
       }
     });
   }
 
   missForcefully() {
     this.applyResult(r => r.type = HitResult.Miss);
-  }
-
-  protected override applyResult(apply: (result: JudgementResult, hitObject: this) => void, position?: Vec2) {
-    super.applyResult((result, hitObject) => {
-      apply(result, hitObject);
-
-      result.position = position ?? this.hitObject!.stackedEndPosition.clone();
-    });
   }
 
   override get hitObject() {
