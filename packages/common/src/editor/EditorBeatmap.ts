@@ -55,6 +55,16 @@ export class EditorBeatmap<T extends HitObject = HitObject> extends Component {
     super.loadComplete();
 
     this.hitObjects.applyDefaultsRequested.addListener(this.onApplyDefaultsRequested, this);
+
+    this.hitObjects.added.addListener(this.onHitObjectAdded, this);
+  }
+
+  protected onHitObjectAdded(hitObject: HitObject) {
+    this.applyDefaultsTo(hitObject);
+  }
+
+  protected applyDefaultsTo(hitObject: HitObject) {
+    hitObject.applyDefaults(this.controlPoints, this.difficulty);
   }
 
   #updatedHitObjects = new Set<HitObject>();
@@ -134,6 +144,8 @@ export class EditorBeatmap<T extends HitObject = HitObject> extends Component {
     super.dispose(isDisposing);
 
     this.hitObjects.applyDefaultsRequested.addListener(this.onApplyDefaultsRequested, this);
+
+    this.hitObjects.added.removeListener(this.onHitObjectAdded, this);
   }
 }
 
