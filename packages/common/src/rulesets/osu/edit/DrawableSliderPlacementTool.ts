@@ -83,7 +83,7 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
         this.setControlPointPosition(this.snappedMousePosition);
 
       if (this.currentPosition.distance(this.sliderPath.last) <= this.mergeThreshold)
-        this.tryCyclePathTypeFromMouse();
+        this.preventPlacingNewPoint = this.tryCyclePathTypeFromMouse();
 
       return true;
     }
@@ -91,11 +91,13 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
     return false;
   }
 
+  protected preventPlacingNewPoint = false;
+
   protected tryCyclePathTypeFromMouse(): boolean {
     if (this.currentPosition.distance(this.sliderPath.last) > this.mergeThreshold)
       return false;
 
-    const newType = this.getNextControlPointType(this.sliderPath.last.type, this.sliderPath.lastIndex);
+    const newType = this.getNextPathType(this.sliderPath.last.type, this.sliderPath.lastIndex);
 
     this.sliderPath.setType(-1, newType);
     this.updateSliderPath();
@@ -114,8 +116,10 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
       return;
     }
 
-    if (this.tryCyclePathTypeFromMouse())
+    if (this.preventPlacingNewPoint) {
+      this.preventPlacingNewPoint = false;
       return;
+    }
 
     this.beginPlacingNewPoint();
   }

@@ -43,7 +43,7 @@ export abstract class DrawableOsuHitObjectPlacementTool<T extends OsuHitObject> 
   @resolved(IDistanceSnapProvider)
   distanceSnapProvider!: IDistanceSnapProvider;
 
-  getNextControlPointType(
+  getNextPathType(
     currentType: PathType | null,
     index: number,
   ): PathType | null {
@@ -63,6 +63,9 @@ export abstract class DrawableOsuHitObjectPlacementTool<T extends OsuHitObject> 
         newType = PathType.Catmull;
         break;
       case PathType.Catmull:
+        newType = PathType.BSpline;
+        break;
+      case PathType.BSpline:
         newType = null;
         break;
     }

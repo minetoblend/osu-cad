@@ -3,4 +3,5 @@ export enum PathType {
   PerfectCurve = 1,
   Catmull = 2,
   Bezier = 3,
+  BSpline = 4,
 }

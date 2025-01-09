@@ -104,6 +104,9 @@ export class SliderPath extends ObjectCrdt {
         case PathType.Linear:
           calculatedSegment = segmentPoints;
           break;
+        case PathType.BSpline:
+          calculatedSegment = PathApproximator.approximateBSpline(segmentPoints, 3);
+          break;
         // @ts-expect-error we want to fall back to bezier if the segment does not have 3 points
         case PathType.PerfectCurve:
           if (segmentPoints.length === 3) {

@@ -241,6 +241,8 @@ function getColorForPathType(type: PathType | null) {
       return 0x0000FF;
     case PathType.Linear:
       return 0xFFFF00;
+    case PathType.BSpline:
+      return 0x00FFFF;
     default:
       return 0xCCCCCC;
   }
