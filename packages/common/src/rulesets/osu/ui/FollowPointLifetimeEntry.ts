@@ -58,12 +58,12 @@ export class FollowPointLifetimeEntry extends LifetimeEntry {
 
     console.assert(this.end !== null);
 
-    this.start.defaultsApplied.removeListener(this.#onDefaultsApplied);
-    this.start.positionBindable.removeOnChangeListener(this.#onPositionChanged);
+    this.start.defaultsApplied.removeListener(this.#onDefaultsApplied, this);
+    this.start.positionBindable.valueChanged.removeListener(this.#onPositionChanged, this);
 
-    this.end!.defaultsApplied.removeListener(this.#onEndDefaultsApplied);
-    this.end!.positionBindable.valueChanged.removeListener(this.#onEndPositionChanged);
-    this.end!.newComboBindable.valueChanged.removeListener(this.#onEndDefaultsApplied);
+    this.end!.defaultsApplied.removeListener(this.#onEndDefaultsApplied, this);
+    this.end!.positionBindable.valueChanged.removeListener(this.#onEndPositionChanged, this);
+    this.end!.newComboBindable.valueChanged.removeListener(this.#onEndDefaultsApplied, this);
 
     this.#wasBound = false;
   }

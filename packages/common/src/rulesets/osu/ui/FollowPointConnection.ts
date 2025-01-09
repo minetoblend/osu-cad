@@ -24,7 +24,7 @@ export class FollowPointConnection extends PoolableDrawableWithLifetime<FollowPo
   protected override onFree(entry: FollowPointLifetimeEntry) {
     super.onFree(entry);
 
-    entry.invalidated.removeListener(this.#scheduleRefresh);
+    entry.invalidated.removeListener(this.#scheduleRefresh, this);
 
     this.clearInternal(false);
   }
