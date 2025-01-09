@@ -22,9 +22,8 @@ export class HitObjectSnapProvider implements IPositionSnapProvider {
     let activeHitObject: HitObject | null = null;
 
     const drawableTool = this.toolContainer.activeDrawableTool;
-    if (drawableTool instanceof DrawableHitObjectPlacementTool) {
+    if (drawableTool instanceof DrawableHitObjectPlacementTool)
       activeHitObject = drawableTool.hitObject;
-    }
 
     for (const blueprint of blueprints) {
       if (blueprint.selected.value)

@@ -27,11 +27,11 @@ export class OsuRuleset extends Ruleset {
   }
 
   override createDrawableRulesetWith(beatmap: IBeatmap) {
-    return new DrawableOsuRuleset(this, beatmap);
+    return new DrawableOsuRuleset(this, beatmap as IBeatmap<any>);
   }
 
   override createDrawableEditorRulesetWith(beatmap: IBeatmap): DrawableRuleset {
-    return new DrawableOsuEditorRuleset(this, beatmap);
+    return new DrawableOsuEditorRuleset(this, beatmap as IBeatmap<any>);
   }
 
   override get shortName(): string {

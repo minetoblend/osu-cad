@@ -6,7 +6,6 @@ import { Ruleset } from '@osucad/common';
 import { InputKey, KeyBinding } from 'osucad-framework';
 import { ManiaHitObjectComposer } from './edit/ManiaHitObjectComposer';
 
-import { ManiaHitObjectParser } from './ManiaHitObjectParser';
 import { ArgonManiaSkinTransformer } from './skinning/argon/ArgonManiaSkinTransformer';
 import { DrawableManiaEditorRuleset } from './ui/DrawableManiaEditorRuleset';
 import { DrawableManiaRuleset } from './ui/DrawableManiaRuleset';
@@ -19,10 +18,6 @@ export class ManiaRuleset extends Ruleset {
 
   override get legacyId(): number | null {
     return 3;
-  }
-
-  override createStableHitObjectParser(beatmap: Beatmap<any>): ManiaHitObjectParser {
-    return new ManiaHitObjectParser(beatmap);
   }
 
   override createDrawableRulesetWith(beatmap: IBeatmap): DrawableRuleset {

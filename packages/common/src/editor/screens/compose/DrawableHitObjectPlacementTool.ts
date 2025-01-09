@@ -13,7 +13,7 @@ export abstract class DrawableHitObjectPlacementTool<T extends HitObject> extend
 
   #hitObject!: T;
 
-  protected get hitObject() {
+  get hitObject() {
     return this.#hitObject;
   }
 

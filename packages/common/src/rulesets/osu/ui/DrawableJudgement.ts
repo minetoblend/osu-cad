@@ -32,7 +32,7 @@ export class DrawableJudgement extends CompositeDrawable {
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
-    this.position = this.result.position;
+    // TODO: this.position = this.result.position;
     this.origin = Anchor.Center;
 
     const componentLookup = this.componentLookup;
@@ -70,8 +70,9 @@ export class DrawableJudgement extends CompositeDrawable {
     else {
       this.scaleTo(1.6).scaleTo(1, 100, EasingFunction.In);
 
-      this.moveTo(this.result.position.add({ x: 0, y: -5 }));
-      this.moveTo(this.result.position.add({ x: 0, y: 80 }), fade_out_delay + fade_out_length, EasingFunction.In);
+      // TODO
+      // this.moveTo(this.result.position.add({ x: 0, y: -5 }));
+      // this.moveTo(this.result.position.add({ x: 0, y: 80 }), fade_out_delay + fade_out_length, EasingFunction.In);
     }
 
     this.expire();
