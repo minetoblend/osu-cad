@@ -1,12 +1,14 @@
+import type { Vec2 } from '../../math/Vec2';
 import type { Touch } from '../handlers/Touch';
 import type { InputState } from '../state/InputState';
-import { UIEvent } from './UIEvent';
+import { TouchEvent } from './TouchEvent';
 
-export class TouchDownEvent extends UIEvent {
+export class TouchDownEvent extends TouchEvent {
   constructor(
     state: InputState,
-    readonly touch: Touch,
+    touch: Touch,
+    screenSpaceTouchDownPosition: Vec2 | null = null,
   ) {
-    super(state, 'onTouchDown');
+    super(state, 'onTouchDown', touch, screenSpaceTouchDownPosition);
   }
 }

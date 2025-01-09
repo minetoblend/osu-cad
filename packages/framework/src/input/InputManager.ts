@@ -622,12 +622,10 @@ export abstract class InputManager extends Container implements IInputStateChang
     }
 
     if (e.isActive !== null) {
-      if (e.isActive === true) {
+      if (e.isActive)
         this.#mouseMappedTouchesDown.add(e.touch.source);
-      }
-      else {
+      else
         this.#mouseMappedTouchesDown.delete(e.touch.source);
-      }
 
       this.#updateTouchMouseLeft(e);
     }

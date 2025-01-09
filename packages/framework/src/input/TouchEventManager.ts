@@ -26,7 +26,7 @@ export class TouchEventManager extends ButtonEventManager<TouchSource> {
   #handleTouchMove(state: InputState, position: Vec2, lastPosition: Vec2) {
     this.propagateButtonEvent(
       this.buttonDownInputQueue!.filter(it => it.isRootedAt(this.inputManager)),
-      new TouchMoveEvent(state, this.button, position, lastPosition),
+      new TouchMoveEvent(state, new Touch(this.button, position), this.touchDownPosition, lastPosition),
     );
   }
 

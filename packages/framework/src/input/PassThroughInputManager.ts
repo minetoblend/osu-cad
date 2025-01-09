@@ -9,13 +9,21 @@ import { CustomInputManager } from './CustomInputManager';
 import { KeyDownEvent } from './events/KeyDownEvent';
 import { KeyUpEvent } from './events/KeyUpEvent';
 import { MouseDownEvent } from './events/MouseDownEvent';
+import { MouseEvent } from './events/MouseEvent';
 import { MouseMoveEvent } from './events/MouseMoveEvent';
 import { MouseUpEvent } from './events/MouseUpEvent';
+import { ScrollEvent } from './events/ScrollEvent';
+import { TouchDownEvent } from './events/TouchDownEvent';
+import { TouchMoveEvent } from './events/TouchMoveEvent';
+import { TouchUpEvent } from './events/TouchUpEvent';
 import { ButtonStates } from './state/ButtonStates';
 import { ButtonInputEntry } from './stateChanges/ButtonInput';
+import { isSourcedFromTouch } from './stateChanges/ISourcedFromTouch';
 import { KeyboardKeyInput } from './stateChanges/KeyboardKeyInput';
 import { MouseButtonInput } from './stateChanges/MouseButtonInput';
 import { MousePositionAbsoluteInput } from './stateChanges/MousePositionAbsoluteInput';
+import { MouseScrollRelativeInput } from './stateChanges/MouseScrollRelativeInput';
+import { TouchInput } from './stateChanges/TouchInput';
 
 export class PassThroughInputManager extends CustomInputManager {
   get useParentInput(): boolean {
@@ -74,6 +82,9 @@ export class PassThroughInputManager extends CustomInputManager {
     if (!this.useParentInput)
       return false;
 
+    if (event instanceof MouseEvent && isSourcedFromTouch(event.state.mouse.lastSource))
+      return false;
+
     switch (event.constructor) {
       case MouseMoveEvent: {
         const e = event as MouseMoveEvent;
@@ -93,8 +104,21 @@ export class PassThroughInputManager extends CustomInputManager {
           MouseButtonInput.create(e.button, false).apply(this.currentState, this);
         break;
       }
-      // TODO: ScrollEvent
-      // TODO: TouchEvent
+
+      case ScrollEvent: {
+        const e = event as ScrollEvent;
+        new MouseScrollRelativeInput(e.scrollDelta, e.isPrecise).apply(this.currentState, this);
+        break;
+      }
+
+      case TouchDownEvent:
+      case TouchUpEvent:
+      case TouchMoveEvent: {
+        const e = event as TouchDownEvent;
+        new TouchInput([e.screenSpaceTouch], e.isActive(e.screenSpaceTouch)).apply(this.currentState, this);
+        break;
+      }
+
       case KeyDownEvent: {
         const e = event as KeyDownEvent;
         if (e.repeat)

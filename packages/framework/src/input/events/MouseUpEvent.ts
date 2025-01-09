@@ -1,9 +1,9 @@
 import type { Vec2 } from '../../math';
 import type { InputState } from '../state/InputState';
 import type { MouseButton } from '../state/MouseButton';
-import { UIEvent } from './UIEvent';
+import { MouseEvent } from './MouseEvent';
 
-export class MouseUpEvent extends UIEvent {
+export class MouseUpEvent extends MouseEvent {
   constructor(
     state: InputState,
     readonly button: MouseButton,
