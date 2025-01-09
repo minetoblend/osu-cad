@@ -11,7 +11,11 @@ export abstract class DrawableHitObjectPlacementTool<T extends HitObject> extend
 
   readonly autoAdvance = new BindableBoolean();
 
-  hitObject!: T;
+  #hitObject!: T;
+
+  protected get hitObject() {
+    return this.#hitObject;
+  }
 
   protected finishPlacingButton?: SimpleEditorTextButton;
 
@@ -32,7 +36,7 @@ export abstract class DrawableHitObjectPlacementTool<T extends HitObject> extend
   }
 
   protected createPreviewObject() {
-    this.hitObject = this.createHitObject();
+    this.#hitObject = this.createHitObject();
 
     this.hitObject.transient = true;
 
@@ -69,20 +73,21 @@ export abstract class DrawableHitObjectPlacementTool<T extends HitObject> extend
 
     this.selection.clear();
 
-    this.hitObject = this.createHitObject();
-    this.hitObject.transient = true;
-
     this.createPreviewObject();
 
     this.editorClock.currentTimeBindable.valueChanged.addListener(this.updateStartTime, this);
   }
 
-  protected isPlacing = false;
+  #isPlacing = false;
+
+  protected get isPlacing() {
+    return this.#isPlacing;
+  }
 
   protected beginPlacement() {
     this.selection.clear();
 
-    this.isPlacing = true;
+    this.#isPlacing = true;
 
     this.hitObjects.removeUntracked(this.hitObject);
 
@@ -107,7 +112,7 @@ export abstract class DrawableHitObjectPlacementTool<T extends HitObject> extend
   }
 
   protected endPlacement() {
-    this.isPlacing = false;
+    this.#isPlacing = false;
 
     if (this.autoAdvance.value) {
       const endTime = this.hitObject.endTime;

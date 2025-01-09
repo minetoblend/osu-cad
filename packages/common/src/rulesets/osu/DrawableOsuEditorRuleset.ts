@@ -1,3 +1,4 @@
+import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import type { IBeatmap } from '../../beatmap/IBeatmap';
 import type { Ruleset } from '../Ruleset';
 import type { OsuHitObject } from './hitObjects/OsuHitObject';
@@ -21,5 +22,19 @@ export class DrawableOsuEditorRuleset extends DrawableOsuRuleset {
         depth: 1,
       }));
     });
+  }
+
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
+    this.beatmap.hitObjects.added.addListener(this.addHitObject, this);
+    this.beatmap.hitObjects.removed.addListener(this.removeHitObject, this);
+  }
+
+  override dispose(isDisposing: boolean = true) {
+    super.dispose(isDisposing);
+
+    this.beatmap.hitObjects.added.removeListener(this.addHitObject, this);
+    this.beatmap.hitObjects.removed.removeListener(this.removeHitObject, this);
   }
 }

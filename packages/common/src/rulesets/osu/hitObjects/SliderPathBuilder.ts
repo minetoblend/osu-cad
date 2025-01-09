@@ -12,8 +12,24 @@ export class SliderPathBuilder {
     return this.controlPoints.length;
   }
 
+  get lastIndex() {
+    return this.length - 1;
+  }
+
+  get first() {
+    return this.controlPoints[0];
+  }
+
+  get last() {
+    return this.controlPoints[this.length - 1];
+  }
+
   get(index: number): PathPoint {
     return this.controlPoints[this.toIndex(index)];
+  }
+
+  typeAt(index: number): PathType | null {
+    return this.get(index).type;
   }
 
   set(index: number, point: PathPoint): this {

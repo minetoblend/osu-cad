@@ -17,15 +17,19 @@ export abstract class DrawableOsuHitObjectPlacementTool<T extends OsuHitObject> 
   }
 
   get snappedMousePosition() {
-    let position = this.mousePosition;
+    return this.snapPosition(this.mousePosition);
+  }
 
-    const snapResult = this.snapProvider.snapPosition(this.mousePosition);
+  protected snapPosition(position: Vec2, clampToBounds: boolean = true) {
+    const snapResult = this.snapProvider.snapPosition(position);
 
-    if (snapResult) {
+    if (snapResult)
       position = snapResult.position;
-    }
 
-    return this.clampToBounds(position);
+    if (clampToBounds)
+      position = this.clampToBounds(position);
+
+    return position;
   }
 
   override receivePositionalInputAt(screenSpacePosition: Vec2): boolean {

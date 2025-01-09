@@ -507,6 +507,25 @@ export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepe
 
     return true;
   }
+
+  snapLength(controlPointInfo: ControlPointInfo, beatDivisor: number) {
+    const length = this.path.calculatedDistance;
+    const duration = Math.ceil(length / this.sliderVelocity);
+    let time = controlPointInfo.snap(
+      // adding a tiny bit of length to make up for precision errors shortening the slider
+      Math.ceil(this.startTime + duration) + 1,
+      beatDivisor,
+      false,
+    );
+
+    if (time > this.startTime + duration) {
+      const beatLength = controlPointInfo.timingPointAt(this.startTime).beatLength;
+
+      time -= beatLength / beatDivisor;
+    }
+
+    this.expectedDistance = Math.max(0, this.sliderVelocity * (time - this.startTime));
+  }
 }
 
 export class SliderSerializer extends OsuHitObjectSerializer<Slider> {
