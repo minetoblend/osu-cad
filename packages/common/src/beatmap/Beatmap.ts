@@ -58,6 +58,7 @@ export class Beatmap<T extends HitObject = HitObject> extends StaticCrdt impleme
   override get childObjects(): readonly AbstractCrdt<any>[] {
     return [
       this.controlPoints,
+      this.hitObjects,
     ];
   }
 

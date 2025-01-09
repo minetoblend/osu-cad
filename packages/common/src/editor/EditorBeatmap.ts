@@ -43,7 +43,7 @@ export class EditorBeatmap<T extends HitObject = HitObject> extends Component {
   protected override async loadAsync(dependencies: ReadonlyDependencyContainer): Promise<void> {
     await super.loadAsync(dependencies);
 
-    this.updateHandler = new UpdateHandler(this);
+    this.addInternal(this.updateHandler = new UpdateHandler(this));
 
     await Promise.all([
       this.loadTrack(dependencies.resolve(IResourcesProvider)),
