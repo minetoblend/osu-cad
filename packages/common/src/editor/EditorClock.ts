@@ -285,7 +285,7 @@ export class EditorClock
     super.dispose(disposing);
   }
 
-  snap(time: number) {
-    return this.beatmap.controlPoints.snap(time, this.beatSnapDivisor.value);
+  snap(time: number, rounded = true) {
+    return this.beatmap.controlPoints.snap(time, this.beatSnapDivisor.value, rounded);
   }
 }
