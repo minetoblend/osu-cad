@@ -1,4 +1,4 @@
-import type { Bindable, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { Bindable, IKeyBindingHandler, KeyBindingAction, KeyDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { IPositionSnapProvider } from './IPositionSnapProvider';
 import { almostBigger, BindableBoolean, BindableNumber, Cached, CompositeDrawable, definitelyBigger, resolved, Vec2 } from 'osucad-framework';
 import { Graphics } from 'pixi.js';
@@ -98,15 +98,6 @@ export class PlayfieldGrid extends CompositeDrawable implements IKeyBindingHandl
 
   canHandleKeyBinding(binding: KeyBindingAction): boolean {
     return binding instanceof EditorAction;
-  }
-
-  onKeyBindingPressed(e: KeyBindingPressEvent<EditorAction>): boolean {
-    switch (e.pressed) {
-      case EditorAction.ToggleGridSnap:
-        this.gridSnapEnabled.toggle();
-        return true;
-    }
-    return false;
   }
 
   snapPosition(position: Vec2): SnapResult | null {
