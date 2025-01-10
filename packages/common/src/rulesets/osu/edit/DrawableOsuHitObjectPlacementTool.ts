@@ -2,8 +2,11 @@ import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
 import { clamp, resolved, Vec2 } from 'osucad-framework';
 import { DrawableHitObjectPlacementTool } from '../../../editor/screens/compose/DrawableHitObjectPlacementTool';
+import { HitSound } from '../../../hitsounds/HitSound';
+import { SampleSet } from '../../../hitsounds/SampleSet';
 import { TernaryState } from '../../../utils/TernaryState';
 import { PathType } from '../hitObjects/PathType';
+import { GlobalHitSoundState } from './GlobalHitSoundState';
 import { GlobalNewComboBindable } from './GlobalNewComboBindable';
 import { IDistanceSnapProvider } from './IDistanceSnapProvider';
 import { IPositionSnapProvider } from './IPositionSnapProvider';
@@ -24,10 +27,18 @@ export abstract class DrawableOsuHitObjectPlacementTool<T extends OsuHitObject> 
     this.newCombo.bindValueChanged(newCombo => this.hitObject.newCombo = newCombo.value === TernaryState.Active);
   }
 
+  @resolved(GlobalHitSoundState)
+  protected hitSounds!: GlobalHitSoundState;
+
   protected override applyDefaults(hitObject: T) {
     super.applyDefaults(hitObject);
 
     hitObject.position = this.snappedMousePosition;
+    hitObject.hitSound = new HitSound(
+      this.hitSounds.sampleSet.value ?? SampleSet.Auto,
+      this.hitSounds.additionsSampleSet.value ?? SampleSet.Auto,
+      this.hitSounds.additions,
+    );
   }
 
   clampToBounds(position: Vec2) {
