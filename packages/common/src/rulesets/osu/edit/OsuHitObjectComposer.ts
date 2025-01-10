@@ -1,7 +1,8 @@
+import type { Container, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { IComposeTool } from '../../../editor/screens/compose/IComposeTool';
 import type { HitObject } from '../../../hitObjects/HitObject';
 import type { SnapResult } from './IPositionSnapProvider';
-import { Anchor, Axes, BindableBoolean, dependencyLoader, Direction, FillDirection, FillFlowContainer, provide, resolved, Vec2 } from 'osucad-framework';
+import { Anchor, Axes, BindableBoolean, Direction, FillDirection, FillFlowContainer, provide, resolved, Vec2 } from 'osucad-framework';
 import { Matrix } from 'pixi.js';
 import { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 import { EditorClock } from '../../../editor/EditorClock';
@@ -9,9 +10,11 @@ import { HitObjectComposer } from '../../../editor/screens/compose/HitObjectComp
 import { HitCircle } from '../hitObjects/HitCircle';
 import { Slider } from '../hitObjects/Slider';
 import { DrawableOsuSelectTool } from './DrawableOsuSelectTool';
+import { GlobalNewComboBindable } from './GlobalNewComboBindable';
 import { HitCirclePlacementTool } from './HitCirclePlacementTool';
 import { IDistanceSnapProvider } from './IDistanceSnapProvider';
 import { IPositionSnapProvider } from './IPositionSnapProvider';
+import { NewComboToggleButton } from './NewComboToggleButton';
 import { OsuSelectTool } from './OsuSelectTool';
 import { PlayfieldGrid } from './PlayfieldGrid';
 import { OsuSelectionBlueprintContainer } from './selection/OsuSelectionBlueprintContainer';
@@ -33,8 +36,12 @@ export class OsuHitObjectComposer extends HitObjectComposer implements IPosition
 
   readonly gridSnapEnabled = new BindableBoolean(false);
 
-  @dependencyLoader()
-  [Symbol('load')]() {
+  @provide()
+  readonly newCombo = new GlobalNewComboBindable();
+
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.drawableRuleset.playfield.addAll(this.#grid = new PlayfieldGrid(this.gridSnapEnabled).with({ depth: 1 }));
     this.overlayLayer.addAll(
       this.#blueprintContainer = new OsuSelectionBlueprintContainer().with({ depth: 1 }),
@@ -70,6 +77,18 @@ export class OsuHitObjectComposer extends HitObjectComposer implements IPosition
   #blueprintContainer!: OsuSelectionBlueprintContainer;
 
   #positionSnapProviders!: IPositionSnapProvider[];
+
+  protected override createRightSidebar(): Container {
+    return new FillFlowContainer({
+      relativeSizeAxes: Axes.Y,
+      autoSizeAxes: Axes.X,
+      padding: 10,
+      spacing: new Vec2(4),
+      children: [
+        new NewComboToggleButton(),
+      ],
+    });
+  }
 
   snapPosition(position: Vec2): SnapResult | null {
     for (const snapProvider of this.#positionSnapProviders) {

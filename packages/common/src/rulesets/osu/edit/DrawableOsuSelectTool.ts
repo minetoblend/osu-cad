@@ -1,16 +1,65 @@
-import type { Drawable, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, Vec2 } from 'osucad-framework';
-import type { OsuHitObject } from '../hitObjects/OsuHitObject';
+import type { Drawable, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer, Vec2 } from 'osucad-framework';
 import { getIcon } from '@osucad/resources';
 import { Direction, PlatformAction, resolved } from 'osucad-framework';
 import { EditorAction } from '../../../editor/EditorAction';
 import { DrawableComposeTool } from '../../../editor/screens/compose/DrawableComposeTool';
-import { PathType } from '../hitObjects/PathType';
+import { hasComboInformation } from '../../../hitObjects/IHasComboInformation';
+import { TernaryState } from '../../../utils/TernaryState';
+import { GlobalNewComboBindable } from './GlobalNewComboBindable';
 import { MobileControlButton } from './MobileEditorControls';
 import { OsuHitObjectComposer } from './OsuHitObjectComposer';
 
 export class DrawableOsuSelectTool extends DrawableComposeTool implements IKeyBindingHandler<PlatformAction | EditorAction> {
   @resolved(() => OsuHitObjectComposer)
   composer!: OsuHitObjectComposer;
+
+  @resolved(GlobalNewComboBindable)
+  newCombo!: GlobalNewComboBindable;
+
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
+    this.newCombo.bindValueChanged(this.#applyNewCombo, this);
+  }
+
+  #applyNewCombo() {
+    console.log(TernaryState[this.newCombo.value]);
+
+    if (this.newCombo.value === TernaryState.Indeterminate)
+      return;
+
+    for (const object of this.selection.selectedObjects) {
+      if (hasComboInformation(object))
+        object.newCombo = this.newCombo.value === TernaryState.Active;
+    }
+
+    this.commit();
+  }
+
+  #updateNewComboFromSelection() {
+    let newCombo: TernaryState | null = null;
+
+    for (const hitObject of this.selection.selectedObjects) {
+      if (!hasComboInformation(hitObject))
+        continue;
+
+      const state = hitObject.newCombo ? TernaryState.Active : TernaryState.Inactive;
+
+      if (newCombo === null)
+        newCombo = state;
+      else if (state !== newCombo)
+        newCombo = TernaryState.Indeterminate;
+    }
+
+    if (newCombo !== null)
+      this.newCombo.value = newCombo;
+  }
+
+  override update() {
+    super.update();
+
+    this.#updateNewComboFromSelection();
+  }
 
   override createMobileControls(): Drawable[] {
     return [
@@ -27,35 +76,6 @@ export class DrawableOsuSelectTool extends DrawableComposeTool implements IKeyBi
 
   override receivePositionalInputAt(screenSpacePosition: Vec2): boolean {
     return true;
-  }
-
-  hoveredHitObjects(position: Vec2) {
-    return this.playfield.allHitObjects
-      .map(it => it.hitObject!)
-      .filter(it => (it as OsuHitObject).contains(position)) as OsuHitObject[];
-  }
-
-  getSelectionCandidate(hitObjects: OsuHitObject[]) {
-    const selected = hitObjects.find(it => this.selection.isSelected(it));
-    if (selected)
-      return selected;
-
-    let min = Infinity;
-    let candidate: OsuHitObject | null = null;
-
-    for (const hitObject of hitObjects) {
-      const distance = Math.min(
-        Math.abs(hitObject.startTime - this.editorClock.currentTime),
-        Math.abs(hitObject.endTime - this.editorClock.currentTime),
-      );
-
-      if (distance < min) {
-        min = distance;
-        candidate = hitObject;
-      }
-    }
-
-    return candidate;
   }
 
   readonly isKeyBindingHandler = true;
@@ -78,36 +98,5 @@ export class DrawableOsuSelectTool extends DrawableComposeTool implements IKeyBi
     }
 
     return false;
-  }
-
-  getNextControlPointType(
-    currentType: PathType | null,
-    index: number,
-  ): PathType | null {
-    let newType: PathType | null = null;
-
-    switch (currentType) {
-      case null:
-        newType = PathType.Bezier;
-        break;
-      case PathType.Bezier:
-        newType = PathType.PerfectCurve;
-        break;
-      case PathType.PerfectCurve:
-        newType = PathType.Linear;
-        break;
-      case PathType.Linear:
-        newType = PathType.Catmull;
-        break;
-      case PathType.Catmull:
-        newType = null;
-        break;
-    }
-
-    if (index === 0 && newType === null) {
-      newType = PathType.Bezier;
-    }
-
-    return newType;
   }
 }

@@ -1,7 +1,7 @@
 import type { DependencyContainer, Drawable, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { DrawableRuleset } from '../../../rulesets/DrawableRuleset';
 import type { IComposeTool } from './IComposeTool';
-import { Anchor, Axes, Bindable, CompositeDrawable, Container, dependencyLoader, EmptyDrawable, Invalidation, isMobile, LayoutMember, resolved } from 'osucad-framework';
+import { Anchor, Axes, Bindable, CompositeDrawable, Container, EmptyDrawable, Invalidation, isMobile, LayoutMember, resolved } from 'osucad-framework';
 import { IBeatmap } from '../../../beatmap/IBeatmap';
 import { MobileEditorControls } from '../../../rulesets/osu/edit/MobileEditorControls';
 import { Ruleset } from '../../../rulesets/Ruleset';
@@ -39,8 +39,9 @@ export abstract class HitObjectComposer extends CompositeDrawable {
   @resolved(IBeatmap)
   protected beatmap!: IBeatmap;
 
-  @dependencyLoader()
-  [Symbol('load')]() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.relativeSizeAxes = Axes.Both;
 
     let selectionManager = this.dependencies.resolveOptional(HitObjectSelectionManager);

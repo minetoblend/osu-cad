@@ -1,13 +1,28 @@
+import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
 import { clamp, resolved, Vec2 } from 'osucad-framework';
 import { DrawableHitObjectPlacementTool } from '../../../editor/screens/compose/DrawableHitObjectPlacementTool';
+import { TernaryState } from '../../../utils/TernaryState';
 import { PathType } from '../hitObjects/PathType';
+import { GlobalNewComboBindable } from './GlobalNewComboBindable';
 import { IDistanceSnapProvider } from './IDistanceSnapProvider';
 import { IPositionSnapProvider } from './IPositionSnapProvider';
 
 export abstract class DrawableOsuHitObjectPlacementTool<T extends OsuHitObject> extends DrawableHitObjectPlacementTool<T> {
   @resolved(IPositionSnapProvider)
-  snapProvider!: IPositionSnapProvider;
+  protected snapProvider!: IPositionSnapProvider;
+
+  @resolved(GlobalNewComboBindable)
+  protected newCombo!: GlobalNewComboBindable;
+
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
+    if (this.newCombo.value === TernaryState.Indeterminate)
+      this.newCombo.value = TernaryState.Active;
+
+    this.newCombo.bindValueChanged(newCombo => this.hitObject.newCombo = newCombo.value === TernaryState.Active);
+  }
 
   protected override applyDefaults(hitObject: T) {
     super.applyDefaults(hitObject);
@@ -48,6 +63,12 @@ export abstract class DrawableOsuHitObjectPlacementTool<T extends OsuHitObject> 
 
   @resolved(IDistanceSnapProvider)
   distanceSnapProvider!: IDistanceSnapProvider;
+
+  protected override endPlacement() {
+    super.endPlacement();
+
+    this.newCombo.value = TernaryState.Inactive;
+  }
 
   getNextPathType(
     currentType: PathType | null,

@@ -1,6 +1,6 @@
-import type { Key } from 'osucad-framework';
+import type { Key, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { IComposeTool } from './IComposeTool';
-import { Axes, dependencyLoader, FillFlowContainer, Vec2 } from 'osucad-framework';
+import { Axes, FillFlowContainer, Vec2 } from 'osucad-framework';
 import { ComposeToolButton } from './ComposeToolButton';
 import { EditorButton } from './EditorButton';
 
@@ -13,8 +13,9 @@ export class ComposeToolbar extends FillFlowContainer {
     });
   }
 
-  @dependencyLoader()
-  [Symbol('load')]() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     for (let i = 0; i < this.tools.length; i++) {
       const tool = this.tools[i];
 
