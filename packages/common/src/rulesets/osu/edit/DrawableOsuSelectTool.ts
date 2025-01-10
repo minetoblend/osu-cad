@@ -32,7 +32,7 @@ export class DrawableOsuSelectTool extends DrawableComposeTool implements IKeyBi
   hoveredHitObjects(position: Vec2) {
     return this.playfield.allHitObjects
       .map(it => it.hitObject!)
-      .filter(it => it.contains(position)) as OsuHitObject[];
+      .filter(it => (it as OsuHitObject).contains(position)) as OsuHitObject[];
   }
 
   getSelectionCandidate(hitObjects: OsuHitObject[]) {
