@@ -1,12 +1,6 @@
+import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import type { DrawableOsuHitObject } from '../../hitObjects/drawables/DrawableOsuHitObject';
-import {
-  Anchor,
-  Bindable,
-  CompositeDrawable,
-  DrawableSprite,
-  type ReadonlyDependencyContainer,
-  resolved,
-} from 'osucad-framework';
+import { Anchor, Bindable, CompositeDrawable, DrawableSprite, resolved } from 'osucad-framework';
 import { DrawableHitObject } from '../../../../hitObjects/drawables/DrawableHitObject';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
 import { SkinConfig } from '../../../../skinning/SkinConfig';
@@ -53,9 +47,7 @@ export class DrawableComboNumber extends CompositeDrawable {
   private skin!: ISkinSource;
 
   generateObjects() {
-    while (this.internalChildren.length > 0) {
-      this.removeInternal(this.internalChildren[0]);
-    }
+    this.clearInternal();
 
     const digits: DrawableSprite[] = [];
     let number = this.#comboNumber;
@@ -72,9 +64,8 @@ export class DrawableComboNumber extends CompositeDrawable {
         }),
       );
     }
-    this.addAllInternal(...digits);
 
-    // -2
+    this.addAllInternal(...digits);
 
     let totalWidth = digits.reduce((acc, digit) => acc + digit.drawWidth, 0);
 
