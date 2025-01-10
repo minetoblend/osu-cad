@@ -27,6 +27,9 @@ export class DrawableHitCirclePlacementTool extends DrawableOsuHitObjectPlacemen
     if (e.button === MouseButton.Left)
       this.beginPlacement();
 
+    if (e.button === MouseButton.Right)
+      this.hitObject.newCombo = !this.hitObject.newCombo;
+
     return true;
   }
 

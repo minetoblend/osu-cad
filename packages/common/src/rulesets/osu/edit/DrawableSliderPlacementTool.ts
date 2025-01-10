@@ -81,7 +81,10 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
 
   override onMouseDown(e: MouseDownEvent): boolean {
     if (e.button === MouseButton.Right) {
-      this.endPlacement();
+      if (this.isPlacing)
+        this.endPlacement();
+      else
+        this.hitObject.newCombo = !this.hitObject.newCombo;
 
       return true;
     }
