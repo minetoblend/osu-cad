@@ -131,7 +131,7 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
       }
 
       if (this.lastInputWasTouch)
-        this.setControlPointPosition(this.snappedMousePosition);
+        this.setControlPointPosition(this.playfieldMousePosition);
 
       if (this.currentPosition.distance(this.sliderPath.last) <= this.mergeThreshold)
         this.preventPlacingNewPoint = this.tryCyclePathTypeFromMouse();
@@ -192,7 +192,7 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
         break;
 
       case SliderPlacementMode.PlacingPath:
-        this.setControlPointPosition(this.snappedMousePosition);
+        this.setControlPointPosition(this.playfieldMousePosition);
         break;
     }
 
