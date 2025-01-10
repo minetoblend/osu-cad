@@ -280,10 +280,14 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
   }
 
   #onDefaultsApplied = () => {
+    this.scheduler.addOnce(this.#applyDefaults, this);
+  };
+
+  #applyDefaults() {
     this.apply(this.entry!);
 
     this.defaultsApplied.emit(this);
-  };
+  }
 
   protected addNestedHitObject(hitObject: DrawableHitObject) {
   }
