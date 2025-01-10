@@ -2,7 +2,6 @@ import type { Drawable, DrawableOptions, List } from 'osucad-framework';
 import type { HitObject } from '../../../../hitObjects/HitObject';
 import { Axes, Bindable, dependencyLoader, DrawablePool, LoadState, resolved } from 'osucad-framework';
 import { HitObjectLifetimeEntry } from '../../../../hitObjects/drawables/HitObjectLifetimeEntry';
-import { zipWithNext } from '../../../../utils/arrayUtils';
 import { EditorBeatmap } from '../../../EditorBeatmap';
 import { TimelineBlueprintContainer } from '../TimelineBlueprintContainer';
 import { TimelineHitObjectBlueprint } from './TimelineHitObjectBlueprint';
@@ -143,8 +142,11 @@ export class TimelineHitObjectBlueprintContainer extends TimelineBlueprintContai
 
     let stackHeight = 0;
 
-    for (const [current, last] of zipWithNext(this.blueprintContainer.content.aliveInternalChildren as TimelineHitObjectBlueprint[])) {
-      if (current.hitObject!.startTime < last.hitObject!.endTime)
+    for (let i = 0; i < this.blueprintContainer.content.aliveInternalChildren.length; i++) {
+      const current = this.blueprintContainer.content.aliveInternalChildren[i] as TimelineHitObjectBlueprint;
+      const last = this.blueprintContainer.content.aliveInternalChildren[i + 1] as TimelineHitObjectBlueprint | undefined;
+
+      if (last && current.hitObject!.startTime < last.hitObject!.endTime)
         stackHeight++;
       else
         stackHeight = 0;
