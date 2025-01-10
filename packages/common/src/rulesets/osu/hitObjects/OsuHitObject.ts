@@ -211,6 +211,10 @@ export abstract class OsuHitObject extends HitObject implements IHasComboInforma
     this.#hitSamples.push(...sample);
   }
 
+  contains(position: IVec2): boolean {
+    return false;
+  }
+
   isVisibleAtTime(time: number): boolean {
     return time > this.startTime - this.timePreempt && time < this.endTime + 700;
   }

@@ -46,7 +46,7 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
-    this.addInternal(this.sliderPathVisualizer);
+    this.playfieldOverlay.add(this.sliderPathVisualizer);
 
     this.cycleCurveType.activated.addListener(this.#cycleCurveType, this);
   }
@@ -215,6 +215,6 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
 
   override onHover(e: HoverEvent): boolean {
     // Block hover events so nothing gets passed to the selection blueprints
-    return true;
+    return false;
   }
 }

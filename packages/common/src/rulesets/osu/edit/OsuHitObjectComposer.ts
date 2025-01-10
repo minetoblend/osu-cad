@@ -8,6 +8,7 @@ import { EditorClock } from '../../../editor/EditorClock';
 import { HitObjectComposer } from '../../../editor/screens/compose/HitObjectComposer';
 import { HitCircle } from '../hitObjects/HitCircle';
 import { Slider } from '../hitObjects/Slider';
+import { DrawableOsuSelectTool } from './DrawableOsuSelectTool';
 import { HitCirclePlacementTool } from './HitCirclePlacementTool';
 import { IDistanceSnapProvider } from './IDistanceSnapProvider';
 import { IPositionSnapProvider } from './IPositionSnapProvider';
@@ -58,6 +59,10 @@ export class OsuHitObjectComposer extends HitObjectComposer implements IPosition
       ),
       this.#grid,
     ];
+
+    this.toolContainer.toolActivated.addListener(tool =>
+      this.#blueprintContainer.alpha = (tool instanceof DrawableOsuSelectTool) ? 1 : 0,
+    );
   }
 
   #grid!: PlayfieldGrid;

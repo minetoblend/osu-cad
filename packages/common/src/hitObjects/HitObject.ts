@@ -1,5 +1,5 @@
 import type { ClassSerialDescriptorBuilder, CompositeDecoder, CompositeEncoder, Decoder, Encoder, SerialDescriptor, Serializer } from '@osucad/serialization';
-import type { IVec2, ValueChangedEvent } from 'osucad-framework';
+import type { ValueChangedEvent } from 'osucad-framework';
 import type { BeatmapDifficultyInfo } from '../beatmap/BeatmapDifficultyInfo';
 import type { ControlPointInfo } from '../controlPoints/ControlPointInfo';
 import type { Property } from '../crdt/Property';
@@ -140,10 +140,6 @@ export abstract class HitObject extends ObjectCrdt {
   changed = new Action<HitObjectChangeEvent>();
 
   abstract isVisibleAtTime(time: number): boolean;
-
-  contains(position: IVec2): boolean {
-    return false;
-  }
 
   isSelected = false;
 

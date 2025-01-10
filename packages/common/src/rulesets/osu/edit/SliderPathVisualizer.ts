@@ -143,9 +143,9 @@ export class SliderPathVisualizer extends CompositeDrawable {
 
   override dispose(isDisposing?: boolean) {
     if (this.#slider) {
-      this.#slider.path.invalidated.removeListener(this.#onSliderUpdate);
-      this.#slider.positionBindable.valueChanged.removeListener(this.#onSliderUpdate);
-      this.#slider.stackHeightBindable.valueChanged.removeListener(this.#onSliderUpdate);
+      this.#slider.path.invalidated.removeListener(this.#onSliderUpdate, this);
+      this.#slider.positionBindable.valueChanged.removeListener(this.#onSliderUpdate, this);
+      this.#slider.stackHeightBindable.valueChanged.removeListener(this.#onSliderUpdate, this);
     }
 
     super.dispose(isDisposing);

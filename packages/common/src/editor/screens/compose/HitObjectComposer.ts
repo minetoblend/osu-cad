@@ -134,6 +134,10 @@ export abstract class HitObjectComposer extends CompositeDrawable {
     );
 
     this.playfieldContainer.add(this.#toolContainer = new ComposeToolContainer());
+
+    const toolOverlayContainer = new Container({ relativeSizeAxes: Axes.Both });
+    this.overlayLayer.add(toolOverlayContainer);
+
     this.addInternal(
       new Container({
         relativeSizeAxes: Axes.X,
@@ -141,6 +145,9 @@ export abstract class HitObjectComposer extends CompositeDrawable {
       }),
     );
     this.#toolContainer.toolActivated.addListener((tool) => {
+      toolOverlayContainer.clear();
+      toolOverlayContainer.add(tool.playfieldOverlay);
+
       if (this.#mobileControlsContainer) {
         this.#mobileControlsContainer.clear();
         this.#mobileControlsContainer.child = new MobileEditorControls(tool.createMobileControls());

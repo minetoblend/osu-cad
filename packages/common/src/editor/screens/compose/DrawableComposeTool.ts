@@ -1,6 +1,6 @@
 import type { Drawable, InputManager, Vec2 } from 'osucad-framework';
 import type { ToolModifier } from './ToolModifier';
-import { Axes, CompositeDrawable, EmptyDrawable, isSourcedFromTouch, resolved } from 'osucad-framework';
+import { Axes, CompositeDrawable, Container, EmptyDrawable, isSourcedFromTouch, resolved } from 'osucad-framework';
 import { IBeatmap } from '../../../beatmap/IBeatmap';
 import { UpdateHandler } from '../../../crdt/UpdateHandler';
 import { Playfield } from '../../../rulesets/ui/Playfield';
@@ -34,6 +34,10 @@ export class DrawableComposeTool extends CompositeDrawable {
 
   @resolved(HitObjectSelectionManager)
   protected selection!: HitObjectSelectionManager;
+
+  readonly playfieldOverlay = new Container({
+    relativeSizeAxes: Axes.Both,
+  });
 
   get modifiers(): ToolModifier[] {
     return [];

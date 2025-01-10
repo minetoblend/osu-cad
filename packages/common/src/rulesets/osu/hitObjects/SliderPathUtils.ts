@@ -2,7 +2,7 @@ import type { PathPoint } from './PathPoint';
 import { PathType } from './PathType';
 
 export class SliderPathUtils {
-  static getSegments(path: PathPoint[]): SliderPathSegment[] {
+  static getSegments(path: readonly PathPoint[]): SliderPathSegment[] {
     const segments: SliderPathSegment[] = [];
 
     let segmentStart = 0;
