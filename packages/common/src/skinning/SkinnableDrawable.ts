@@ -1,9 +1,8 @@
-import type { CompositeDrawable, Drawable } from 'osucad-framework';
+import type { Drawable } from 'osucad-framework';
 import type { ISkinComponentLookup } from './ISkinComponentLookup';
 import type { ISkinSource } from './ISkinSource';
 import { Anchor, Axes, Cached, EmptyDrawable, FillMode, Vec2 } from 'osucad-framework';
 
-import { OsuSkinComponentLookup } from '../rulesets/osu/skinning/stable/OsuSkinComponentLookup';
 import { SkinReloadableDrawable } from './SkinReloadableDrawable';
 
 enum ConfineMode {
@@ -56,19 +55,6 @@ export class SkinnableDrawable extends SkinReloadableDrawable {
   }
 
   protected override skinChanged(skin: ISkinSource) {
-    if (this.componentLookup === OsuSkinComponentLookup.HitCircle) {
-      function buildObj(drawable: CompositeDrawable) {
-        const obj = {
-          drawable,
-          dependencies: drawable.dependencies,
-        } as any;
-
-        if (drawable.parent)
-          obj.parent = buildObj(drawable.parent);
-
-        return obj;
-      }
-    }
     const retrieved = skin.getDrawableComponent(this.componentLookup);
 
     if (!retrieved) {
@@ -87,10 +73,7 @@ export class SkinnableDrawable extends SkinReloadableDrawable {
       this.drawable.origin = Anchor.Center;
     }
 
-    if (this.internalChildren.length > 0)
-      this.removeInternal(this.internalChild, true);
-
-    this.addInternal(this.drawable);
+    this.internalChild = this.drawable;
   }
 
   override update() {
