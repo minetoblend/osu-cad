@@ -23,7 +23,7 @@ export abstract class Game extends Container {
   }
 
   override addInternal<T extends Drawable>(child: T): T {
-    throw new Error(`Cannot call addInternal on ${this.name}, use add() instead`);
+    throw new Error(`Cannot call addInternal on ${this.typeName}, use add() instead`);
   }
 
   readonly #content: Container;

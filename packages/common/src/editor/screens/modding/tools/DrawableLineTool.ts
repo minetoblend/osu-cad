@@ -80,7 +80,7 @@ export class DrawableLineTool extends DrawableModdingTool {
   }
 
   get snappedMousePosition() {
-    return this.snapResult?.position ?? this.mousePosition;
+    return this.snapResult?.position ?? this.playfieldMousePosition;
   }
 
   snapResult: SnapResult | null = null;
@@ -90,6 +90,6 @@ export class DrawableLineTool extends DrawableModdingTool {
   override update() {
     super.update();
 
-    this.snapResult = this.snapping.getSnappedPosition(this.mousePosition, this.showVisualizer);
+    this.snapResult = this.snapping.getSnappedPosition(this.playfieldMousePosition, this.showVisualizer);
   }
 }

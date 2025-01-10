@@ -1,5 +1,6 @@
 import type { HoverEvent, MouseDownEvent, MouseMoveEvent, MouseUpEvent, ReadonlyDependencyContainer } from 'osucad-framework';
-import { MouseButton, provide, Vec2 } from 'osucad-framework';
+import { InputKey, MouseButton, provide, Vec2 } from 'osucad-framework';
+import { ModifierType, ToolModifier } from '../../../editor/screens/compose/ToolModifier';
 import { PathPoint } from '../hitObjects/PathPoint';
 import { PathType } from '../hitObjects/PathType';
 import { Slider } from '../hitObjects/Slider';
@@ -15,8 +16,6 @@ export enum SliderPlacementMode {
 
 @provide(DrawableSliderPlacementTool)
 export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTool<Slider> {
-  protected readonly sliderPathVisualizer = new SliderPathVisualizer();
-
   protected override createHitObject(): Slider {
     return new Slider();
   }
@@ -26,6 +25,16 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
   protected currentPosition = new Vec2();
 
   protected placementMode = SliderPlacementMode.PlacingObject;
+
+  protected readonly sliderPathVisualizer = new SliderPathVisualizer();
+
+  protected readonly cycleCurveType = new ToolModifier(InputKey.Tab, 'Cycle curve type', ModifierType.Action);
+
+  override get modifiers(): ToolModifier[] {
+    return [
+      this.cycleCurveType,
+    ];
+  }
 
   protected get mergeThreshold() {
     if (this.lastInputWasTouch)
@@ -38,6 +47,14 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
     super.load(dependencies);
 
     this.addInternal(this.sliderPathVisualizer);
+
+    this.cycleCurveType.activated.addListener(this.#cycleCurveType, this);
+  }
+
+  #cycleCurveType() {
+    const { segmentStart, segmentType } = SliderPathUtils.getLastSegment(this.sliderPath.controlPoints);
+
+    this.sliderPath.setType(segmentStart, this.getNextPathType(segmentType, segmentStart));
   }
 
   protected override beginPlacement() {
@@ -150,7 +167,7 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
     super.update();
 
     if (!this.isPlacing)
-      this.hitObject.position = this.snapPosition(this.mousePosition);
+      this.hitObject.position = this.snapPosition(this.playfieldMousePosition);
   }
 
   protected setControlPointPosition(position: Vec2) {

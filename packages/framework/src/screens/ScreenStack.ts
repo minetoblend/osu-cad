@@ -52,7 +52,7 @@ export class ScreenStack extends CompositeDrawable {
     }
 
     if (newScreen.removeWhenNotAlive) {
-      throw new Error(`Screen will be removed on push: ${newScreen.name}`);
+      throw new Error(`Screen will be removed on push: ${newScreen.typeName}`);
     }
 
     if (source !== null && source !== this.currentScreen) {
@@ -160,7 +160,7 @@ export class ScreenStack extends CompositeDrawable {
       return;
 
     if (!this.#stack.includes(target))
-      throw new Error(`Screen not in stack: ${target.name}`);
+      throw new Error(`Screen not in stack: ${target.typeName}`);
 
     // while a parent still exists and exiting is not blocked, continue to iterate upwards.
     let exitCandidate: IScreen | null = null;

@@ -31,7 +31,7 @@ export abstract class Screen extends CompositeDrawable implements IScreen {
 
     if (this.parent !== null && !(this.parent instanceof ScreenStack)) {
       throw new Error(
-        `Screens must always be added to a ScreenStack (attempted to add ${this.name} to ${this.parent.name})`,
+        `Screens must always be added to a ScreenStack (attempted to add ${this.typeName} to ${this.parent.typeName})`,
       );
     }
   }

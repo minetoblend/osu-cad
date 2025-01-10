@@ -432,7 +432,7 @@ export abstract class InputManager extends Container implements IInputStateChang
   #buildPositionalInputQueue(screenSpacePos: Vec2): List<Drawable> {
     this.#positionalInputQueue.clear();
 
-    if (this.name === 'UserInputManager') {
+    if (this.typeName === 'UserInputManager') {
       FrameStatistics.increment(StatisticsCounterType.PositionalIQ);
     }
 
@@ -445,7 +445,7 @@ export abstract class InputManager extends Container implements IInputStateChang
       }
     }
 
-    if (this.name === 'UserInputManager') {
+    if (this.typeName === 'UserInputManager') {
       FrameStatistics.inputQueue = performance.now() - start;
     }
 
@@ -457,7 +457,7 @@ export abstract class InputManager extends Container implements IInputStateChang
   #buildNonPositionalInputQueue(): List<Drawable> {
     this.#inputQueue.clear();
 
-    if (this.name === 'UserInputManager') {
+    if (this.typeName === 'UserInputManager') {
       FrameStatistics.increment(StatisticsCounterType.InputQueue);
     }
 

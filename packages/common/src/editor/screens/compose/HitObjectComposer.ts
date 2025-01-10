@@ -5,6 +5,7 @@ import { Anchor, Axes, Bindable, CompositeDrawable, Container, dependencyLoader,
 import { IBeatmap } from '../../../beatmap/IBeatmap';
 import { MobileEditorControls } from '../../../rulesets/osu/edit/MobileEditorControls';
 import { Ruleset } from '../../../rulesets/Ruleset';
+import { Playfield } from '../../../rulesets/ui/Playfield';
 import { HitsoundPlayer } from '../../HitsoundPlayer';
 import { ComposeScreenTimeline } from './ComposeScreenTimeline';
 import { ComposeToolbar } from './ComposeToolbar';
@@ -61,7 +62,6 @@ export abstract class HitObjectComposer extends CompositeDrawable {
         padding: {
           horizontal: 40,
           top: 90,
-          bottom: 6,
         },
         children: [
           new Container({
@@ -93,6 +93,8 @@ export abstract class HitObjectComposer extends CompositeDrawable {
         child: this.timeline = new ComposeScreenTimeline(),
       }),
     );
+
+    this.#dependencies.provide(Playfield, this.#drawableRuleset.playfield);
 
     this.leftSidebar.invalidated.addListener(([_, invalidation]) => {
       if (invalidation & Invalidation.DrawSize)
@@ -131,8 +133,13 @@ export abstract class HitObjectComposer extends CompositeDrawable {
       }),
     );
 
-    this.overlayLayer.add(this.#toolContainer = new ComposeToolContainer());
-
+    this.playfieldContainer.add(this.#toolContainer = new ComposeToolContainer());
+    this.addInternal(
+      new Container({
+        relativeSizeAxes: Axes.X,
+        autoSizeAxes: Axes.Y,
+      }),
+    );
     this.#toolContainer.toolActivated.addListener((tool) => {
       if (this.#mobileControlsContainer) {
         this.#mobileControlsContainer.clear();
@@ -198,7 +205,7 @@ export abstract class HitObjectComposer extends CompositeDrawable {
         left: this.leftSidebar.drawWidth + 40,
         right: this.rightSidebar.drawWidth + 40,
         top: this.topBar.drawHeight + 90,
-        bottom: 54,
+        bottom: 24,
       };
 
       this.topBar.padding = {

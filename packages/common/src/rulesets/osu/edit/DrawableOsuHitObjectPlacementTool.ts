@@ -9,6 +9,12 @@ export abstract class DrawableOsuHitObjectPlacementTool<T extends OsuHitObject> 
   @resolved(IPositionSnapProvider)
   snapProvider!: IPositionSnapProvider;
 
+  protected override applyDefaults(hitObject: T) {
+    super.applyDefaults(hitObject);
+
+    hitObject.position = this.snappedMousePosition;
+  }
+
   clampToBounds(position: Vec2) {
     return new Vec2(
       clamp(position.x, 0, 512),
@@ -17,7 +23,7 @@ export abstract class DrawableOsuHitObjectPlacementTool<T extends OsuHitObject> 
   }
 
   get snappedMousePosition() {
-    return this.snapPosition(this.mousePosition);
+    return this.snapPosition(this.playfieldMousePosition);
   }
 
   protected snapPosition(position: Vec2, clampToBounds: boolean = true) {

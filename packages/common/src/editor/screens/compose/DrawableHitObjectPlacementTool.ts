@@ -9,6 +9,10 @@ import { SimpleEditorTextButton } from './SimpleEditorTextButton';
 export abstract class DrawableHitObjectPlacementTool<T extends HitObject> extends DrawableComposeTool {
   protected abstract createHitObject(): T;
 
+  protected applyDefaults(hitObject: T) {
+    this.setStartTime();
+  }
+
   readonly autoAdvance = new BindableBoolean();
 
   #hitObject!: T;
@@ -38,9 +42,11 @@ export abstract class DrawableHitObjectPlacementTool<T extends HitObject> extend
   protected createPreviewObject() {
     this.#hitObject = this.createHitObject();
 
+    this.applyDefaults(this.#hitObject);
+
     this.hitObject.transient = true;
 
-    this.updateStartTime();
+    this.setStartTime();
 
     if (this.showPreviewObject) {
       this.editorBeatmap.hitObjects.addUntracked(this.hitObject);
@@ -56,7 +62,7 @@ export abstract class DrawableHitObjectPlacementTool<T extends HitObject> extend
       this.playfield.updateSubTree();
   }
 
-  protected updateStartTime() {
+  protected setStartTime() {
     if (!this.isPlacing)
       this.hitObject.startTime = this.editorClock.currentTime;
   }
@@ -75,7 +81,7 @@ export abstract class DrawableHitObjectPlacementTool<T extends HitObject> extend
 
     this.createPreviewObject();
 
-    this.editorClock.currentTimeBindable.valueChanged.addListener(this.updateStartTime, this);
+    this.editorClock.currentTimeBindable.valueChanged.addListener(this.setStartTime, this);
   }
 
   #isPlacing = false;
@@ -136,7 +142,7 @@ export abstract class DrawableHitObjectPlacementTool<T extends HitObject> extend
     else
       this.commit();
 
-    this.editorClock.currentTimeBindable.valueChanged.removeListener(this.updateStartTime, this);
+    this.editorClock.currentTimeBindable.valueChanged.removeListener(this.setStartTime, this);
   }
 }
 

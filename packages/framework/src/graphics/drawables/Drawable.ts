@@ -1,3 +1,4 @@
+import type { Bindable } from '../../bindables';
 import type { ReadonlyDependencyContainer } from '../../di/DependencyContainer';
 import type { ClickEvent } from '../../input/events/ClickEvent';
 import type { DoubleClickEvent } from '../../input/events/DoubleClickEvent';
@@ -29,7 +30,6 @@ import type { Container as DrawableContainer } from '../containers';
 import type { CompositeDrawable } from '../containers/CompositeDrawable';
 import type { TypedTransform } from '../transforms/Transform';
 import { Matrix } from 'pixi.js';
-import { Bindable } from '../../bindables';
 import { Action } from '../../bindables/Action';
 import { popDrawableScope, pushDrawableScope } from '../../bindables/lifetimeScope';
 import { drawableProps, propertyToValue, valueToProperty } from '../../devtools/drawableProps';
@@ -118,7 +118,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   label?: string;
 
-  get name() {
+  get typeName() {
     return this.constructor.name;
   }
 
@@ -1026,7 +1026,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
     for (const key in this) {
       const value = this[key];
-      if (value && typeof value === 'object' && value instanceof Bindable) {
+      if (value && typeof value === 'object' && 'unbindAll' in value && typeof value.unbindAll === 'function') {
         value.unbindAll();
       }
     }

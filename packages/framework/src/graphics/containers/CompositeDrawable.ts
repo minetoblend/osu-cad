@@ -170,7 +170,7 @@ export class CompositeDrawable extends Drawable {
 
     if (index >= 0 && this.#internalChildren.get(index)!.childId !== drawable.childId) {
       throw new Error(
-        `A non-matching Drawable was returned. Please ensure ${this.name}'s compare function override implements a stable sort algorithm.`,
+        `A non-matching Drawable was returned. Please ensure ${this.typeName}'s compare function override implements a stable sort algorithm.`,
       );
     }
 

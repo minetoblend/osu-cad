@@ -9,7 +9,11 @@ export class DrawableHitCirclePlacementTool extends DrawableOsuHitObjectPlacemen
   }
 
   protected override createHitObject(): HitCircle {
-    return new HitCircle();
+    const circle = new HitCircle();
+
+    circle.position = this.snappedMousePosition;
+
+    return circle;
   }
 
   override update() {

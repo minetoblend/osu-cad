@@ -1,4 +1,5 @@
-import type { Drawable, InputManager } from 'osucad-framework';
+import type { Drawable, InputManager, Vec2 } from 'osucad-framework';
+import type { ToolModifier } from './ToolModifier';
 import { Axes, CompositeDrawable, EmptyDrawable, isSourcedFromTouch, resolved } from 'osucad-framework';
 import { IBeatmap } from '../../../beatmap/IBeatmap';
 import { UpdateHandler } from '../../../crdt/UpdateHandler';
@@ -34,6 +35,18 @@ export class DrawableComposeTool extends CompositeDrawable {
   @resolved(HitObjectSelectionManager)
   protected selection!: HitObjectSelectionManager;
 
+  get modifiers(): ToolModifier[] {
+    return [];
+  }
+
+  screenSpaceToPlayfieldPosition(screenSpacePosition: Vec2) {
+    return this.playfield.toLocalSpace(screenSpacePosition);
+  }
+
+  playfieldToScreenSpacePosition(position: Vec2) {
+    return this.playfield.toScreenSpace(position);
+  }
+
   protected get beatDivisor() {
     return this.editorClock.beatSnapDivisor.value;
   }
@@ -56,8 +69,8 @@ export class DrawableComposeTool extends CompositeDrawable {
     this.inputManager = this.getContainingInputManager()!;
   }
 
-  protected get mousePosition() {
-    return this.toLocalSpace(this.inputManager.currentState.mouse.position);
+  protected get playfieldMousePosition() {
+    return this.screenSpaceToPlayfieldPosition(this.inputManager.currentState.mouse.position);
   }
 
   protected get hitObjects() {
