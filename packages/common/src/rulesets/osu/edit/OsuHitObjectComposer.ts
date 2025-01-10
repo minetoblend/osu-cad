@@ -1,15 +1,19 @@
-import type { Container, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import type { IComposeTool } from '../../../editor/screens/compose/IComposeTool';
 import type { HitObject } from '../../../hitObjects/HitObject';
 import type { SnapResult } from './IPositionSnapProvider';
-import { Anchor, Axes, BindableBoolean, Direction, FillDirection, FillFlowContainer, provide, resolved, Vec2 } from 'osucad-framework';
+import { Anchor, Axes, BindableBoolean, Container, Direction, FastRoundedBox, FillDirection, FillFlowContainer, provide, resolved, Vec2 } from 'osucad-framework';
 import { Matrix } from 'pixi.js';
 import { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 import { EditorClock } from '../../../editor/EditorClock';
 import { HitObjectComposer } from '../../../editor/screens/compose/HitObjectComposer';
+import { Additions } from '../../../hitsounds/Additions';
+import { OsucadColors } from '../../../OsucadColors';
 import { HitCircle } from '../hitObjects/HitCircle';
 import { Slider } from '../hitObjects/Slider';
+import { AdditionToggleButton } from './AdditionToggleButton';
 import { DrawableOsuSelectTool } from './DrawableOsuSelectTool';
+import { GlobalHitSoundState } from './GlobalHitSoundState';
 import { GlobalNewComboBindable } from './GlobalNewComboBindable';
 import { HitCirclePlacementTool } from './HitCirclePlacementTool';
 import { IDistanceSnapProvider } from './IDistanceSnapProvider';
@@ -38,6 +42,9 @@ export class OsuHitObjectComposer extends HitObjectComposer implements IPosition
 
   @provide()
   readonly newCombo = new GlobalNewComboBindable();
+
+  @provide()
+  readonly hitSoundState = new GlobalHitSoundState();
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
@@ -80,12 +87,28 @@ export class OsuHitObjectComposer extends HitObjectComposer implements IPosition
 
   protected override createRightSidebar(): Container {
     return new FillFlowContainer({
+      direction: FillDirection.Vertical,
       relativeSizeAxes: Axes.Y,
       autoSizeAxes: Axes.X,
       padding: 10,
       spacing: new Vec2(4),
       children: [
         new NewComboToggleButton(),
+        new Container({
+          relativeSizeAxes: Axes.X,
+          autoSizeAxes: Axes.Y,
+          padding: { vertical: 4, horizontal: 6 },
+          child: new FastRoundedBox({
+            relativeSizeAxes: Axes.X,
+            height: 2,
+            cornerRadius: 1,
+            color: OsucadColors.translucent,
+            alpha: 0.4,
+          }),
+        }),
+        new AdditionToggleButton(Additions.Whistle, this.hitSoundState.whistle),
+        new AdditionToggleButton(Additions.Finish, this.hitSoundState.finish),
+        new AdditionToggleButton(Additions.Clap, this.hitSoundState.clap),
       ],
     });
   }
