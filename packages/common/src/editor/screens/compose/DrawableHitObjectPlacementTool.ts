@@ -63,8 +63,10 @@ export abstract class DrawableHitObjectPlacementTool<T extends HitObject> extend
   }
 
   protected setStartTime() {
-    if (!this.isPlacing)
+    if (!this.isPlacing) {
       this.hitObject.startTime = this.editorClock.currentTime;
+      this.editorBeatmap.beatmap.applyDefaultsTo(this.hitObject);
+    }
   }
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
@@ -115,9 +117,14 @@ export abstract class DrawableHitObjectPlacementTool<T extends HitObject> extend
 
     if (this.finishPlacingButton)
       this.finishPlacingButton.disabled.value = false;
+
+    this.updateModifiers();
   }
 
   protected endPlacement() {
+    if (!this.isPlacing)
+      return;
+
     this.#isPlacing = false;
 
     if (this.autoAdvance.value) {
@@ -132,6 +139,8 @@ export abstract class DrawableHitObjectPlacementTool<T extends HitObject> extend
 
     if (this.finishPlacingButton)
       this.finishPlacingButton.disabled.value = true;
+
+    this.updateModifiers();
   }
 
   override dispose(isDisposing: boolean = true) {

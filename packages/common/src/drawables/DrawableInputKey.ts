@@ -2,6 +2,7 @@ import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
 import { getIcon } from '@osucad/resources';
 import { Anchor, Axes, CompositeDrawable, DrawableSprite, EmptyDrawable, InputKey } from 'osucad-framework';
+import { OsucadColors } from '../OsucadColors';
 import { OsucadSpriteText } from './OsucadSpriteText';
 
 export class DrawableInputKey extends CompositeDrawable {
@@ -56,9 +57,10 @@ export class DrawableInputKey extends CompositeDrawable {
   protected createTextContent(text: string) {
     return new OsucadSpriteText({
       text,
-      fontSize: 14,
+      fontSize: 10,
       anchor: Anchor.Center,
       origin: Anchor.Center,
+      color: OsucadColors.text,
     });
   }
 }

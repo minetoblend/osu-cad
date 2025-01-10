@@ -92,6 +92,15 @@ export abstract class HitObjectComposer extends CompositeDrawable {
         height: 80,
         child: this.timeline = new ComposeScreenTimeline(),
       }),
+      this.modifierContainer = new Container({
+        relativeSizeAxes: Axes.X,
+        autoSizeAxes: Axes.Y,
+        anchor: Anchor.BottomLeft,
+        origin: Anchor.BottomLeft,
+        y: 18,
+        padding: { horizontal: 155 },
+        children: [],
+      }),
     );
 
     this.#dependencies.provide(Playfield, this.#drawableRuleset.playfield);
@@ -138,6 +147,8 @@ export abstract class HitObjectComposer extends CompositeDrawable {
     const toolOverlayContainer = new Container({ relativeSizeAxes: Axes.Both });
     this.overlayLayer.add(toolOverlayContainer);
 
+    this.modifierContainer.add(this.#toolContainer.modifierContainer);
+
     this.addInternal(
       new Container({
         relativeSizeAxes: Axes.X,
@@ -154,6 +165,8 @@ export abstract class HitObjectComposer extends CompositeDrawable {
       }
     });
   }
+
+  modifierContainer!: Container;
 
   playfieldContainer!: Container;
 

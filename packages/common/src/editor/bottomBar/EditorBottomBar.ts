@@ -53,6 +53,7 @@ export class EditorBottomBar extends CompositeDrawable {
           }),
         ],
       }),
+
       new Container({
         relativeSizeAxes: Axes.Both,
         anchor: Anchor.BottomLeft,

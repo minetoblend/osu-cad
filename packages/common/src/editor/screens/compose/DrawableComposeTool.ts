@@ -1,6 +1,6 @@
 import type { Drawable, InputManager, Vec2 } from 'osucad-framework';
 import type { ToolModifier } from './ToolModifier';
-import { Axes, CompositeDrawable, Container, EmptyDrawable, isSourcedFromTouch, resolved } from 'osucad-framework';
+import { Action, Axes, CompositeDrawable, Container, EmptyDrawable, isSourcedFromTouch, resolved } from 'osucad-framework';
 import { IBeatmap } from '../../../beatmap/IBeatmap';
 import { UpdateHandler } from '../../../crdt/UpdateHandler';
 import { Playfield } from '../../../rulesets/ui/Playfield';
@@ -39,8 +39,14 @@ export class DrawableComposeTool extends CompositeDrawable {
     relativeSizeAxes: Axes.Both,
   });
 
-  get modifiers(): ToolModifier[] {
+  modifiersChanged = new Action();
+
+  getModifiers(): ToolModifier[] {
     return [];
+  }
+
+  protected updateModifiers() {
+    this.modifiersChanged.emit();
   }
 
   screenSpaceToPlayfieldPosition(screenSpacePosition: Vec2) {

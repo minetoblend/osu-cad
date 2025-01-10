@@ -27,8 +27,8 @@ export class ComposeToolContainer extends CompositeDrawable {
   readonly modifierContainer = new FillFlowContainer<DrawableToolModifier>({
     direction: FillDirection.Horizontal,
     autoSizeAxes: Axes.Both,
-    spacing: new Vec2(5),
-    padding: { vertical: 4, horizontal: 20 },
+    spacing: new Vec2(10),
+    padding: { vertical: 4 },
     anchor: Anchor.BottomLeft,
     origin: Anchor.BottomLeft,
   });
@@ -54,9 +54,14 @@ export class ComposeToolContainer extends CompositeDrawable {
   #onToolActivated(tool: DrawableComposeTool) {
     this.toolActivated.emit(tool);
 
-    this.modifierContainer.clear();
-    this.modifierContainer.addAll(
-      ...tool.modifiers.map(it => new DrawableToolModifier(it)),
-    );
+    this.#updateModifiers(tool);
+
+    tool.modifiersChanged.addListener(() => this.#updateModifiers(tool));
+  }
+
+  #updateModifiers(tool: DrawableComposeTool) {
+    this.modifierContainer.children = [
+      ...tool.getModifiers().map(it => new DrawableToolModifier(it)),
+    ];
   }
 }

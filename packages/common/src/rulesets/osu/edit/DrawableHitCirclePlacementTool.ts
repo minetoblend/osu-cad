@@ -9,18 +9,13 @@ export class DrawableHitCirclePlacementTool extends DrawableOsuHitObjectPlacemen
   }
 
   protected override createHitObject(): HitCircle {
-    const circle = new HitCircle();
-
-    circle.position = this.snappedMousePosition;
-
-    return circle;
+    return new HitCircle();
   }
 
   override update() {
     super.update();
 
     this.hitObject.position = this.snappedMousePosition;
-    this.hitObject.startTime = this.editorClock.currentTime;
   }
 
   override onMouseDown(e: MouseDownEvent): boolean {

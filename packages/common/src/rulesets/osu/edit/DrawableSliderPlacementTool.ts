@@ -28,11 +28,31 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
 
   protected readonly sliderPathVisualizer = new SliderPathVisualizer();
 
-  protected readonly cycleCurveType = new ToolModifier(InputKey.Tab, 'Cycle curve type', ModifierType.Action);
+  protected readonly beginPlacementModifier = new ToolModifier(InputKey.MouseLeftButton, 'Begin placement', ModifierType.Action);
+  protected readonly endPlacementModifier = new ToolModifier(InputKey.MouseRightButton, 'End placement', ModifierType.Action);
+  protected readonly cycleCurveTypeModifier = new ToolModifier(InputKey.Tab, 'Cycle curve type', ModifierType.Action);
+  protected readonly toggleNewComboModifier = new ToolModifier(InputKey.MouseRightButton, 'Toggle new combo', ModifierType.Action);
+  protected readonly beginSegmentModifier = new ToolModifier(InputKey.Control, 'Begin new segment', ModifierType.Temporary);
 
-  override get modifiers(): ToolModifier[] {
+  override getModifiers(): ToolModifier[] {
+    if (this.isPlacing) {
+      const modifiers: ToolModifier[] = [];
+
+      modifiers.push(this.endPlacementModifier);
+
+      if (this.placementMode === SliderPlacementMode.PlacingPath) {
+        modifiers.push(
+          this.beginSegmentModifier,
+          this.cycleCurveTypeModifier,
+        );
+      }
+
+      return modifiers;
+    }
+
     return [
-      this.cycleCurveType,
+      this.beginPlacementModifier,
+      this.toggleNewComboModifier,
     ];
   }
 
@@ -48,13 +68,17 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
 
     this.playfieldOverlay.add(this.sliderPathVisualizer);
 
-    this.cycleCurveType.activated.addListener(this.#cycleCurveType, this);
+    this.cycleCurveTypeModifier.activated.addListener(this.#cycleCurveType, this);
   }
 
   #cycleCurveType() {
+    if (!this.isPlacing)
+      return;
+
     const { segmentStart, segmentType } = SliderPathUtils.getLastSegment(this.sliderPath.controlPoints);
 
-    this.sliderPath.setType(segmentStart, this.getNextPathType(segmentType, segmentStart));
+    this.sliderPath.setType(segmentStart, this.getNextPathType(segmentType, 0));
+    this.updateSliderPath();
   }
 
   protected override beginPlacement() {
@@ -69,12 +93,19 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
     this.hitObject.position = this.snappedMousePosition;
   }
 
+  protected override endPlacement() {
+    super.endPlacement();
+  }
+
   protected beginPlacingNewPoint() {
     const controlPoints = [...this.sliderPath.controlPoints, new PathPoint(this.currentPosition)];
 
     this.updatePathTypeFromSegmentLength(controlPoints);
 
     this.sliderPath.setPath(controlPoints);
+
+    if (this.beginSegmentModifier.isActive.value)
+      this.sliderPath.setType(-1, PathType.Bezier);
 
     this.updateSliderPath(true);
   }
@@ -133,6 +164,8 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
 
     if (this.placementMode === SliderPlacementMode.PlacingObject) {
       this.placementMode = SliderPlacementMode.PlacingPath;
+      this.updateModifiers();
+
       return;
     }
 

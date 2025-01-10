@@ -21,6 +21,14 @@ export class ToolModifier {
 
   readonly disabled = new BindableBoolean();
 
+  disable() {
+    this.disabled.value = true;
+  }
+
+  enable() {
+    this.disabled.value = false;
+  }
+
   unbindAll() {
     this.isActive.unbindAll();
     this.disabled.unbindAll();
