@@ -147,6 +147,12 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
     return true;
   }
 
+  override update() {
+    super.update();
+
+    this.editorBeatmap.applyDefaultsWhereNeeded(this.#editorClock.currentTime - 2000, this.#editorClock.currentTime + 2000);
+  }
+
   undo() {
     this.editorBeatmap.updateHandler.undo();
   }
