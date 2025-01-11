@@ -6,6 +6,7 @@ import { Anchor, Axes, DrawableSprite, EmptyDrawable } from 'osucad-framework';
 import { EditorAction } from '../../../editor/EditorAction';
 import { Additions } from '../../../hitsounds/Additions';
 import { OsucadColors } from '../../../OsucadColors';
+import { HitSampleHighlightContainer } from './HitSampleHighlightContainer';
 import { TernaryStateToggleButton } from './TernaryStateToggleButton';
 
 export class AdditionToggleButton extends TernaryStateToggleButton implements IKeyBindingHandler<EditorAction> {
@@ -20,6 +21,12 @@ export class AdditionToggleButton extends TernaryStateToggleButton implements IK
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
+
+    this.addInternal(new HitSampleHighlightContainer(
+      sample => !!((sample.addition ?? Additions.None) & this.addition),
+    ).with({
+      depth: 1,
+    }));
   }
 
   #icon!: DrawableSprite;

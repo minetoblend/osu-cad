@@ -48,7 +48,9 @@ export abstract class HitObjectComposer extends CompositeDrawable {
     if (!selectionManager)
       this.addInternal(selectionManager = new HitObjectSelectionManager());
 
-    this.addInternal(new HitsoundPlayer());
+    const hitsoundPlayer = new HitsoundPlayer();
+    this.addInternal(hitsoundPlayer);
+    this.#dependencies.provide(hitsoundPlayer);
 
     this.#dependencies.provide(selectionManager);
 
