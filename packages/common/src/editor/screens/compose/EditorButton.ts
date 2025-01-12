@@ -105,10 +105,12 @@ export abstract class EditorButton extends CompositeDrawable {
 
   protected updateState() {
     if (this.disabled.value) {
-      this.alpha = 0.5;
+      this.backgroundContainer.alpha = 0.5;
+      this.#content.alpha = 0.5;
     }
     else {
-      this.alpha = 1;
+      this.backgroundContainer.alpha = 1;
+      this.#content.alpha = 1;
     }
 
     if (this.armed) {
