@@ -1,6 +1,6 @@
 import type { Bindable, IKeyBindingHandler, KeyBindingAction, KeyDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { IPositionSnapProvider } from './IPositionSnapProvider';
-import { almostBigger, BindableBoolean, BindableNumber, Cached, CompositeDrawable, definitelyBigger, resolved, Vec2 } from 'osucad-framework';
+import { almostBigger, BindableBoolean, BindableNumber, Cached, CompositeDrawable, definitelyBigger, Key, resolved, Vec2 } from 'osucad-framework';
 import { Graphics } from 'pixi.js';
 import { IBeatmap } from '../../../beatmap/IBeatmap';
 import { EditorAction } from '../../../editor/EditorAction';
@@ -130,6 +130,11 @@ export class PlayfieldGrid extends CompositeDrawable implements IKeyBindingHandl
   #gridSizePresets = [4, 8, 16, 32, 64];
 
   override onKeyDown(e: KeyDownEvent): boolean {
+    if (e.key === Key.Digit0 && e.controlPressed) {
+      this.gridSizeBindable.value = 0;
+      return true;
+    }
+
     if (e.key.startsWith('Digit') && e.controlPressed) {
       const index = Number.parseInt(e.key[5]) - 1;
       if (index >= 0 && index < this.#gridSizePresets.length) {
