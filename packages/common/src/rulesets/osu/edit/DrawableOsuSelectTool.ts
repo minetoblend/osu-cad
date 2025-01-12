@@ -152,6 +152,14 @@ export class DrawableOsuSelectTool extends DrawableComposeTool implements IKeyBi
       case EditorAction.ConvertToStream:
         this.convertToStream();
         return true;
+      case EditorAction.FlipHorizontal:
+        this.composer.mirrorHitObjects([...this.selection.selectedObjects], Direction.Horizontal);
+        this.commit();
+        return true;
+      case EditorAction.FlipVertical:
+        this.composer.mirrorHitObjects([...this.selection.selectedObjects], Direction.Vertical);
+        this.commit();
+        return true;
     }
 
     return false;
