@@ -4,13 +4,17 @@ import { Action } from '../../bindables';
 import { Key } from '../state/Key';
 import { ButtonInputEntry } from '../stateChanges/ButtonInput';
 import { KeyboardKeyInput } from '../stateChanges/KeyboardKeyInput';
+import { TextInputSource } from '../TextInputSource';
 import { InputHandler } from './InputHandler';
 
 export class KeyboardHandler extends InputHandler {
+  #textInputSource!: TextInputSource;
+
   override initialize(host: GameHost): boolean {
-    if (!super.initialize(host)) {
+    if (!super.initialize(host))
       return false;
-    }
+
+    this.#textInputSource = host.dependencies.resolve(TextInputSource);
 
     this.enabled.addOnChangeListener(
       (enabled) => {
@@ -83,25 +87,11 @@ export class KeyboardHandler extends InputHandler {
   };
 
   #shouldPreventDefault(event: KeyboardEvent): boolean {
-    if (/^\d$/.test(event.key) && event.ctrlKey)
-      return true;
+    // We generally don't want to prevent the default behavior if there is active text input
+    if (this.#textInputSource.isActive)
+      return false;
 
-    if (event.key.startsWith('Arrow') && event.ctrlKey)
-      return true;
-
-    switch (event.key) {
-      case 'R':
-      case 'r':
-      case 'w':
-      case 'W':
-      case 'z':
-      case 'o':
-        return event.ctrlKey || event.metaKey;
-      case 'Tab':
-        return true;
-    }
-
-    return false;
+    return true;
   }
 
   #handleKeyUp = (event: KeyboardEvent) => {
