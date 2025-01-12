@@ -40,7 +40,7 @@ export class GridSizeButton extends EditorButton {
           relativeSizeAxes: Axes.Both,
           padding: { horizontal: 4, vertical: 2 },
           child: new OsucadSpriteText({
-            text: `${this.gridSize.toString()}px`,
+            text: this.gridSize > 0 ? `${this.gridSize.toString()}px` : 'No grid',
             anchor: Anchor.BottomRight,
             origin: Anchor.BottomRight,
             fontSize: 8,
