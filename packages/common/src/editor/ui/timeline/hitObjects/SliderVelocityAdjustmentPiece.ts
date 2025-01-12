@@ -125,7 +125,7 @@ export class SliderVelocityAdjustmentPiece extends TimelineHitObjectTail {
       return true;
     }
 
-    return false;
+    return super.onMouseDown(e);
   }
 
   override onTouchDown(e: TouchDownEvent): boolean {

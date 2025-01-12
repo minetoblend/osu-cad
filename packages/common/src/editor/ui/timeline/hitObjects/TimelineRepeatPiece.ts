@@ -1,8 +1,9 @@
-import type { ReadonlyDependencyContainer } from 'osucad-framework';
+import type { MouseDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { IHasRepeats } from '../../../../hitObjects/IHasRepeats';
 import type { SliderRepeat } from '../../../../rulesets/osu/hitObjects/SliderRepeat';
 import type { TimelineHitObjectBlueprint } from './TimelineHitObjectBlueprint';
-import { Anchor, Axes, DrawableSprite, resolved } from 'osucad-framework';
+import { Anchor, Axes, DrawableSprite, MouseButton, resolved } from 'osucad-framework';
+import { Slider } from '../../../../rulesets/osu/hitObjects/Slider';
 import { Timeline } from '../Timeline';
 import { TimelineHitObjectCircle } from './TimelineHitObjectCircle';
 
@@ -33,5 +34,19 @@ export class TimelineRepeatPiece extends TimelineHitObjectCircle {
     const slider = this.blueprint.hitObject! as unknown as IHasRepeats;
 
     this.x = ((this.repeat.repeatIndex + 1) / (slider.repeatCount + 1));
+  }
+
+  override onMouseDown(e: MouseDownEvent): boolean {
+    if (!this.selected.value)
+      return false;
+
+    if (e.button === MouseButton.Left && !e.controlPressed) {
+      if (this.selection && this.blueprint.hitObject instanceof Slider) {
+        this.selection.setSelectionType(this.blueprint.hitObject, this.repeat.repeatIndex + 1);
+        this.blueprint.preventSelection = true;
+      }
+    }
+
+    return false;
   }
 }

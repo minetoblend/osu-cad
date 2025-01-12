@@ -124,11 +124,13 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
       for (const repeat of this.#repeatContainer.children) {
         const isTail = repeat.repeat.repeatIndex % 2 === 0;
 
-        const isActive = isTail ? tailActive : headActive;
+        const isActive = (repeat.repeat.repeatIndex + 1 === type) || (isTail ? type === 'tail' : type === 'head');
         repeat.selectionOverlay.color = isActive ? 0xFF0000 : 0xFFFFFF;
       }
     }
   }
+
+  preventSelection = false;
 
   protected override onApply(entry: HitObjectLifetimeEntry) {
     super.onApply(entry);

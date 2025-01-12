@@ -2,7 +2,9 @@ import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Color } from 'pixi.js';
 import type { TimelineHitObjectBlueprint } from './TimelineHitObjectBlueprint';
 import { Anchor, Axes, Bindable, BindableBoolean, CompositeDrawable, DrawableSprite, resolved } from 'osucad-framework';
+import { OsuSelectionManager } from '../../../../rulesets/osu/edit/OsuSelectionManager';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
+import { HitObjectSelectionManager } from '../../../screens/compose/HitObjectSelectionManager';
 
 export class TimelineHitObjectCircle extends CompositeDrawable {
   constructor(readonly blueprint: TimelineHitObjectBlueprint) {
@@ -18,6 +20,8 @@ export class TimelineHitObjectCircle extends CompositeDrawable {
   overlay!: DrawableSprite;
 
   selectionOverlay!: DrawableSprite;
+
+  selection?: OsuSelectionManager;
 
   @resolved(ISkinSource)
   protected skin!: ISkinSource;
@@ -57,6 +61,10 @@ export class TimelineHitObjectCircle extends CompositeDrawable {
 
     this.accentColor.bindTo(this.blueprint.accentColor);
     this.selected.bindTo(this.blueprint.selected);
+
+    const selectionManager = dependencies.resolveOptional(HitObjectSelectionManager);
+    if (selectionManager instanceof OsuSelectionManager)
+      this.selection = selectionManager;
   }
 
   protected override loadComplete() {

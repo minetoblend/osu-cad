@@ -4,6 +4,8 @@ import type { HitObject } from '../../../../hitObjects/HitObject';
 import type { TimelineHitObjectBlueprint } from './TimelineHitObjectBlueprint';
 import { Axes, Bindable, CompositeDrawable, FastRoundedBox, MouseButton, resolved } from 'osucad-framework';
 import { UpdateHandler } from '../../../../crdt/UpdateHandler';
+import { OsuSelectionManager } from '../../../../rulesets/osu/edit/OsuSelectionManager';
+import { Slider } from '../../../../rulesets/osu/hitObjects/Slider';
 import { EditorBeatmap } from '../../../EditorBeatmap';
 import { EditorClock } from '../../../EditorClock';
 import { HitObjectSelectionManager } from '../../../screens/compose/HitObjectSelectionManager';
@@ -72,10 +74,18 @@ export class TimelineHitObjectBody extends CompositeDrawable {
   selection?: HitObjectSelectionManager;
 
   protected attemptSelectionFromMouse(e: MouseDownEvent) {
-    if (e.controlPressed)
+    if (e.controlPressed) {
       this.selection?.toggleSelection(this.hitObject!);
-    else if (!this.blueprint.selected.value)
+    }
+    else if (!this.blueprint.selected.value) {
       this.selection?.setSelection(this.hitObject!);
+    }
+    else if (this.hitObject instanceof Slider && this.selection instanceof OsuSelectionManager) {
+      if (!this.blueprint.preventSelection)
+        this.selection.setSelectionType(this.hitObject, 'body');
+    }
+
+    this.blueprint.preventSelection = false;
   }
 
   @resolved(EditorClock)
