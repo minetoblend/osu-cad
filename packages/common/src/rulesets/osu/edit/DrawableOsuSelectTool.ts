@@ -1,16 +1,19 @@
 import type { Drawable, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer, Vec2 } from 'osucad-framework';
-import type { HitSound } from '../../../hitsounds/HitSound';
+import type { IHitSound } from '../../../hitsounds/IHitSound';
+import type { OsuSelectionManager, SliderSelectionType } from './OsuSelectionManager';
 import { getIcon } from '@osucad/resources';
 import { Bindable, Direction, PlatformAction, resolved } from 'osucad-framework';
 import { EditorAction } from '../../../editor/EditorAction';
 import { DrawableComposeTool } from '../../../editor/screens/compose/DrawableComposeTool';
 import { hasComboInformation } from '../../../hitObjects/IHasComboInformation';
 import { Additions } from '../../../hitsounds/Additions';
+import { HitSound } from '../../../hitsounds/HitSound';
 import { TernaryState } from '../../../utils/TernaryState';
 import { OsuHitObject } from '../hitObjects/OsuHitObject';
 import { Slider } from '../hitObjects/Slider';
 import { GlobalHitSoundState } from './GlobalHitSoundState';
 import { GlobalNewComboBindable } from './GlobalNewComboBindable';
+import { HitSoundStateBuilder } from './HitSoundStateBuilder';
 import { MobileControlButton } from './MobileEditorControls';
 import { OsuHitObjectComposer } from './OsuHitObjectComposer';
 
@@ -41,14 +44,27 @@ export class DrawableOsuSelectTool extends DrawableComposeTool implements IKeyBi
 
     this.newCombo.bindValueChanged(this.#applyNewCombo, this);
 
-    this.whistleAddition.bindValueChanged(this.#applyHitSoundsToSelection, this);
-    this.finishAddition.bindValueChanged(this.#applyHitSoundsToSelection, this);
-    this.clapAddition.bindValueChanged(this.#applyHitSoundsToSelection, this);
+    this.whistleAddition.bindValueChanged(evt => this.#applyHitSoundsToSelection((it) => {
+      if (evt.value === TernaryState.Active)
+        it.additions |= Additions.Whistle;
+      else if (evt.value === TernaryState.Inactive)
+        it.additions &= ~Additions.Whistle;
+    }));
+    this.finishAddition.bindValueChanged(evt => this.#applyHitSoundsToSelection((it) => {
+      if (evt.value === TernaryState.Active)
+        it.additions |= Additions.Finish;
+      else if (evt.value === TernaryState.Inactive)
+        it.additions &= ~Additions.Finish;
+    }));
+    this.clapAddition.bindValueChanged(evt => this.#applyHitSoundsToSelection((it) => {
+      if (evt.value === TernaryState.Active)
+        it.additions |= Additions.Clap;
+      else if (evt.value === TernaryState.Inactive)
+        it.additions &= ~Additions.Clap;
+    }));
   }
 
   #applyNewCombo() {
-    console.log(TernaryState[this.newCombo.value]);
-
     if (this.newCombo.value === TernaryState.Indeterminate)
       return;
 
@@ -107,6 +123,9 @@ export class DrawableOsuSelectTool extends DrawableComposeTool implements IKeyBi
   }
 
   #updateNewComboFromSelection() {
+    if (this.selection.length === 0)
+      return;
+
     let newCombo: TernaryState | null = null;
 
     for (const hitObject of this.selection.selectedObjects) {
@@ -125,73 +144,106 @@ export class DrawableOsuSelectTool extends DrawableComposeTool implements IKeyBi
       this.newCombo.value = newCombo;
   }
 
-  #applyHitSoundsToSelection() {
-    const updateAdditions = (addition: Additions, current: Additions) => {
-      const bindable = this.hitSounds.getBindableForAddition(addition);
-      if (bindable.value === TernaryState.Active)
-        current |= addition;
-      else if (bindable.value === TernaryState.Inactive)
-        current &= ~addition;
+  #getSelectedEdges(slider: Slider, selectionType: SliderSelectionType): number[] {
+    if (selectionType === 'body')
+      return [];
 
-      return current;
+    if (typeof selectionType === 'number')
+      return [selectionType];
+
+    const edges: number[] = [];
+
+    if (selectionType === 'default') {
+      for (let i = 0; i <= slider.spanCount; i++)
+        edges.push(i);
+      return edges;
+    }
+
+    switch (selectionType) {
+      case 'head':
+        for (let i = 0; i <= slider.spanCount; i += 2)
+          edges.push(i);
+        break;
+      case 'tail':
+        for (let i = 1; i <= slider.spanCount; i += 2)
+          edges.push(i);
+        break;
+    }
+
+    return edges;
+  }
+
+  #applyHitSoundsToSelection(updateFn: (hitSound: IHitSound) => void) {
+    const updateHitSound = (hitSound: HitSound) => {
+      const result: IHitSound = {
+        sampleSet: hitSound.sampleSet,
+        additionSampleSet: hitSound.additionSampleSet,
+        additions: hitSound.additions,
+      };
+
+      updateFn(result);
+
+      return new HitSound(result.sampleSet, result.additionSampleSet, result.additions);
     };
 
     for (const hitObject of this.selection.selectedObjects) {
       if (!(hitObject instanceof OsuHitObject))
         continue;
 
-      let additions = hitObject.hitSound.additions;
+      if (hitObject instanceof Slider) {
+        const selectionType = (this.selection as unknown as OsuSelectionManager).getSelectionType(hitObject);
 
-      additions = updateAdditions(Additions.Finish, additions);
-      additions = updateAdditions(Additions.Whistle, additions);
-      additions = updateAdditions(Additions.Clap, additions);
+        hitObject.ensureHitSoundsAreValid();
 
-      if (additions !== hitObject.hitSound.additions)
-        hitObject.hitSound = hitObject.hitSound.withAdditions(additions);
+        if (selectionType === 'body' || selectionType === 'default')
+          hitObject.hitSound = updateHitSound(hitObject.hitSound);
+
+        const edges = this.#getSelectedEdges(hitObject, selectionType);
+
+        if (edges.length > 0) {
+          const hitSounds = [...hitObject.hitSounds];
+          for (const edge of edges)
+            hitSounds[edge] = updateHitSound(hitSounds[edge]);
+
+          hitObject.hitSounds = hitSounds;
+        }
+      }
     }
   }
 
   #updateHitSoundsFromSelection() {
-    let combinedAdditions: Additions | null = null;
-    let mixedAdditions = Additions.None;
+    if (this.selection.length === 0)
+      return;
 
-    for (const additions of this.#collectHitSounds(hs => hs.additions)) {
-      if (combinedAdditions === null) {
-        combinedAdditions = additions;
-        continue;
-      }
+    const hitSounds = new HitSoundStateBuilder();
 
-      mixedAdditions = mixedAdditions | (combinedAdditions ^ additions);
-      combinedAdditions = combinedAdditions & additions;
-    }
-
-    if (combinedAdditions != null) {
-      const updateAddition = (addition: Additions) => {
-        const bindable = this.hitSounds.getBindableForAddition(addition);
-
-        if (mixedAdditions & addition)
-          bindable.value = TernaryState.Indeterminate;
-        else
-          bindable.value = (combinedAdditions & addition) ? TernaryState.Active : TernaryState.Inactive;
-      };
-
-      updateAddition(Additions.Whistle);
-      updateAddition(Additions.Finish);
-      updateAddition(Additions.Clap);
-    }
-  }
-
-  * #collectHitSounds<T>(fn: (hitSound: HitSound) => T) {
     for (const hitObject of this.selection.selectedObjects) {
       if (!(hitObject instanceof OsuHitObject))
         continue;
 
-      yield fn(hitObject.hitSound);
-
       if (hitObject instanceof Slider) {
-        for (const hitSound of hitObject.hitSounds)
-          yield fn(hitSound);
+        const selectionType = (this.selection as unknown as OsuSelectionManager).getSelectionType(hitObject);
+
+        hitObject.ensureHitSoundsAreValid();
+
+        if (selectionType === 'body' || selectionType === 'default')
+          hitSounds.add(hitObject.hitSound);
+
+        const edges = this.#getSelectedEdges(hitObject, selectionType);
+
+        for (const edge of edges)
+          hitSounds.add(hitObject.hitSounds[edge]);
+      }
+      else {
+        hitSounds.add(hitObject.hitSound);
       }
     }
+
+    this.hitSounds.whistle.value = hitSounds.getAdditionTernary(Additions.Whistle);
+    this.hitSounds.finish.value = hitSounds.getAdditionTernary(Additions.Finish);
+    this.hitSounds.clap.value = hitSounds.getAdditionTernary(Additions.Clap);
+
+    this.hitSounds.sampleSet.value = hitSounds.sampleSet;
+    this.hitSounds.additionsSampleSet.value = hitSounds.additionSampleSet;
   }
 }
