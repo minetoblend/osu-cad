@@ -65,9 +65,11 @@ export class HitObjectSelectionManager<T extends HitObject = HitObject> extends 
   }
 
   clear() {
-    for (const hitObject of this.#selection)
-      this.selectionChanged.emit({ hitObject, selected: false });
+    const selection = [...this.#selection];
     this.#selection.clear();
+
+    for (const hitObject of selection)
+      this.selectionChanged.emit({ hitObject, selected: false });
   }
 
   setSelection(...selection: T[]) {

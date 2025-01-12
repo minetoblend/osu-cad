@@ -62,8 +62,8 @@ export class TimelineHitObjectCircle extends CompositeDrawable {
   protected override loadComplete() {
     super.loadComplete();
 
-    this.accentColor.addOnChangeListener(color => this.updateColor(color.value), { immediate: true });
-    this.selected.addOnChangeListener(selected => this.selectionOverlay.alpha = selected.value ? 1 : 0, { immediate: true });
+    this.accentColor.bindValueChanged(color => this.updateColor(color.value), true);
+    this.selected.bindValueChanged(selected => this.selectionOverlay.alpha = selected.value ? 1 : 0, true);
   }
 
   protected updateColor(color: Color) {

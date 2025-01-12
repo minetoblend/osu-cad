@@ -102,7 +102,7 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
   }
 
   #updateSelection() {
-    this.selected.value = !!this.selection?.isSelected(this.hitObject!);
+    this.selected.value = !!this.hitObject && !!this.selection?.isSelected(this.hitObject);
 
     // TODO: move this to ruleset or solve this in a non-ruleset specific way
     if (this.selection && this.selection instanceof OsuSelectionManager && this.hitObject instanceof Slider) {
@@ -153,7 +153,6 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
 
     this.updateComboColor();
     this.#defaultsApplied();
-    this.#updateSelection();
   }
 
   protected override onFree(entry: HitObjectLifetimeEntry) {
@@ -210,8 +209,6 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
   updateHandler!: UpdateHandler;
 
   #defaultsApplied() {
-    this.tail?.updateSelection();
-
     this.#repeatContainer.clear();
 
     for (const hitObject of this.hitObject!.nestedHitObjects) {
@@ -221,6 +218,8 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
         }));
       }
     }
+
+    this.#updateSelection();
   }
 
   override dispose(isDisposing: boolean = true) {
