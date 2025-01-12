@@ -15,7 +15,7 @@ export class HitSoundStateBuilder {
   additionSampleSet: SampleSet | null = null;
 
   add(hitSound: HitSound) {
-    if (this.#count === 0) {
+    if (this.#count++ === 0) {
       this.additions = hitSound.additions;
       this.sampleSet = hitSound.sampleSet;
       this.additionSampleSet = hitSound.additionSampleSet;
