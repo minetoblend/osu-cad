@@ -1,15 +1,39 @@
-import { BindableBoolean, type Drawable, type HoverEvent, type HoverLostEvent, type MouseDownEvent, type MouseUpEvent } from 'osucad-framework';
-import { Anchor, Axes, CompositeDrawable, Container, dependencyLoader, EasingFunction, FastRoundedBox, MouseButton, RoundedBox, Vec2 } from 'osucad-framework';
+import type { Drawable, FocusLostEvent, HoverEvent, HoverLostEvent, MouseDownEvent, MouseUpEvent, ScheduledDelegate } from 'osucad-framework';
+import { getIcon } from '@osucad/resources';
+import { Anchor, Axes, BindableBoolean, CompositeDrawable, Container, dependencyLoader, DrawableSprite, EasingFunction, FastRoundedBox, MouseButton, RoundedBox, Vec2, Visibility } from 'osucad-framework';
 import { OsucadColors } from '../../../OsucadColors';
+import { EditorButtonSubmenu } from './EditorButtonSubmenu';
 
 export abstract class EditorButton extends CompositeDrawable {
   static readonly SIZE = 54;
 
-  protected constructor() {
+  protected constructor(
+    childButtons?: EditorButton[],
+  ) {
     super();
 
     this.size = new Vec2(EditorButton.SIZE);
+
+    if (childButtons && childButtons.length) {
+      this.doWhenLoaded(() => {
+        this.addInternal(this.#submenu = new EditorButtonSubmenu(childButtons).with({
+          depth: 1,
+        }));
+        this.backgroundContainer.add(
+          new DrawableSprite({
+            texture: getIcon('submenu-caret'),
+            size: 10,
+            position: new Vec2(-4),
+            color: OsucadColors.text,
+            anchor: Anchor.BottomRight,
+            origin: Anchor.BottomRight,
+          }),
+        );
+      });
+    }
   }
+
+  #submenu?: EditorButtonSubmenu;
 
   readonly active = new BindableBoolean();
 
@@ -103,20 +127,36 @@ export abstract class EditorButton extends CompositeDrawable {
     return 200;
   }
 
+  override get acceptsFocus(): boolean {
+    return true;
+  }
+
+  #longPressDelegate?: ScheduledDelegate;
+
   override onMouseDown(e: MouseDownEvent): boolean {
     if (e.button === MouseButton.Left) {
       this.#buttonPressed = true;
       this.updateState();
-      return true;
+
+      this.#longPressDelegate?.cancel();
+      this.#longPressDelegate = this.scheduler.addDelayed(() => this.showSubmenu(), 400);
     }
 
-    return false;
+    if (e.button === MouseButton.Right) {
+      if (this.#submenu?.state.value === Visibility.Hidden)
+        this.showSubmenu();
+      else
+        this.#submenu?.hide();
+    }
+
+    return true;
   }
 
   override onMouseUp(e: MouseUpEvent) {
     if (e.button === MouseButton.Left) {
       this.#buttonPressed = false;
       this.updateState();
+      this.#longPressDelegate?.cancel();
     }
   }
 
@@ -147,8 +187,8 @@ export abstract class EditorButton extends CompositeDrawable {
     this.#updateOutline();
   }
 
-  override get handlePositionalInput(): boolean {
-    return super.handlePositionalInput && !this.disabled.value;
+  override get requestsPositionalInput(): boolean {
+    return super.requestsPositionalInput && !this.disabled.value;
   }
 
   #updateOutline() {
@@ -171,5 +211,14 @@ export abstract class EditorButton extends CompositeDrawable {
         },
       ];
     }
+  }
+
+  showSubmenu() {
+    this.getContainingFocusManager()?.changeFocus(this);
+    this.#submenu?.show();
+  }
+
+  override onFocusLost(e: FocusLostEvent) {
+    this.#submenu?.hide();
   }
 }

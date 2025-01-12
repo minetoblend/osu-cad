@@ -4,10 +4,18 @@ import { Anchor, Axes, DrawableSprite } from 'osucad-framework';
 import { EditorAction } from '../../../../editor/EditorAction';
 import { ToolbarToggleButton } from '../../../../editor/screens/compose/ToolbarToggleButton';
 import { OsucadColors } from '../../../../OsucadColors';
+import { GridSizeButton } from './GridSizeButton';
 
 export class GridSnapToggleButton extends ToolbarToggleButton implements IKeyBindingHandler<EditorAction> {
   constructor(bindable: Bindable<boolean>) {
-    super();
+    super([
+      new GridSizeButton(0),
+      new GridSizeButton(4),
+      new GridSizeButton(8),
+      new GridSizeButton(16),
+      new GridSizeButton(32),
+      new GridSizeButton(64),
+    ]);
 
     this.active.bindTo(bindable);
   }

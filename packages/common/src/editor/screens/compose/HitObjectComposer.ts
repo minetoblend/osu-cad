@@ -12,7 +12,6 @@ import { ComposeScreenTimeline } from './ComposeScreenTimeline';
 import { ComposeToolbar } from './ComposeToolbar';
 import { ComposeToolContainer } from './ComposeToolContainer';
 import { HitObjectComposerDependencies } from './HitObjectComposerDependencies';
-import { HitObjectComposerSettingsContainer } from './HitObjectComposerSettingsContainer';
 import { HitObjectSelectionManager } from './HitObjectSelectionManager';
 
 export abstract class HitObjectComposer extends CompositeDrawable {
@@ -77,7 +76,6 @@ export abstract class HitObjectComposer extends CompositeDrawable {
               relativeSizeAxes: Axes.Both,
               child: this.#drawableRuleset = this.ruleset.createDrawableEditorRulesetWith(this.beatmap),
             }),
-            this.settingsContainer = new HitObjectComposerSettingsContainer(),
           ],
         }),
         south: this.modifierContainer = new Container({
@@ -177,8 +175,6 @@ export abstract class HitObjectComposer extends CompositeDrawable {
   backgroundLayer!: Container;
 
   overlayLayer!: Container;
-
-  settingsContainer!: Container;
 
   leftSidebar!: Container;
 
