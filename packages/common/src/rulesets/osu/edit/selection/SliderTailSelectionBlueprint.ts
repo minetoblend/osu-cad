@@ -39,6 +39,8 @@ export class SliderTailSelectionBlueprint extends CompositeDrawable {
 
     this.selection.setSelectionType(this.blueprint.hitObject!, 'tail');
 
-    return true;
+    this.blueprint.preventSelection = true;
+
+    return false;
   }
 }

@@ -96,13 +96,17 @@ export class SliderSelectionBlueprint extends OsuSelectionBlueprint<Slider> {
     this.scheduler.addOnce(this.#updatePositions, this);
   }
 
+  preventSelection = false;
+
   override onMouseDown(e: MouseDownEvent): boolean {
     if (e.button === MouseButton.Left) {
-      if (this.selected.value) {
+      if (this.selected.value && !this.preventSelection) {
         this.selection.setSelectionType(this.hitObject!, 'body');
 
         return true;
       }
+
+      this.preventSelection = false;
     }
 
     return super.onMouseDown(e);

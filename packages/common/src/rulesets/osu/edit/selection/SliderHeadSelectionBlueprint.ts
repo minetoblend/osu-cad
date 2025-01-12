@@ -39,6 +39,8 @@ export class SliderHeadSelectionBlueprint extends CompositeDrawable {
 
     this.selection.setSelectionType(this.blueprint.hitObject!, 'head');
 
-    return true;
+    this.blueprint.preventSelection = true;
+
+    return false;
   }
 }
