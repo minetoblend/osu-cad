@@ -222,6 +222,7 @@ export class DrawableOsuSelectTool extends DrawableComposeTool implements IKeyBi
         hitObject.hitSound = updateHitSound(hitObject.hitSound);
       }
     }
+    this.commit();
   }
 
   #updateHitSoundsFromSelection(force = false) {

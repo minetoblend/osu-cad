@@ -10,7 +10,6 @@ import type { PathPoint } from './PathPoint';
 import { Float32Serializer, listSerialDescriptor, ListSerializer, NullableSerializer, Uint16Serializer } from '@osucad/serialization';
 import { CachedValue, Vec2 } from 'osucad-framework';
 import { polymorphicHitObjectSerializers } from '../../../hitObjects/HitObject';
-import { HitObjectProperty } from '../../../hitObjects/HitObjectProperty';
 import { Additions } from '../../../hitsounds/Additions';
 import { HitSample } from '../../../hitsounds/HitSample';
 import { HitSoundSerializer } from '../../../hitsounds/HitSound';
@@ -307,7 +306,7 @@ export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepe
       this.tailCircle.position = this.endPosition;
   }
 
-  #hitSounds = new HitObjectProperty<readonly HitSound[]>(this, 'hitSounds', []);
+  #hitSounds = this.property<readonly HitSound[]>('hitSounds', []);
 
   get hitSoundsBindable() {
     return this.#hitSounds.bindable;
