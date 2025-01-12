@@ -25,16 +25,34 @@ export class Rectangle {
     return this.x;
   }
 
+  set left(value) {
+    this.width -= value - this.x;
+    this.x = value;
+  }
+
   get right(): number {
     return this.x + this.width;
+  }
+
+  set right(value) {
+    this.width = value - this.x;
   }
 
   get top(): number {
     return this.y;
   }
 
+  set top(value) {
+    this.height -= value - this.y;
+    this.y = value;
+  }
+
   get bottom(): number {
     return this.y + this.height;
+  }
+
+  set bottom(value) {
+    this.height = value - this.y;
   }
 
   get topLeft(): Vec2 {

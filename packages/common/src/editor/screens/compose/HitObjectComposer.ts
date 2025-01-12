@@ -1,8 +1,9 @@
 import type { DependencyContainer, Drawable, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { DrawableRuleset } from '../../../rulesets/DrawableRuleset';
 import type { IComposeTool } from './IComposeTool';
-import { Anchor, Axes, Bindable, CompositeDrawable, Container, EmptyDrawable, Invalidation, isMobile, LayoutMember, resolved } from 'osucad-framework';
+import { Anchor, Axes, Bindable, CompositeDrawable, Container, isMobile, resolved } from 'osucad-framework';
 import { IBeatmap } from '../../../beatmap/IBeatmap';
+import { BorderLayout } from '../../../drawables/BorderLayout';
 import { MobileEditorControls } from '../../../rulesets/osu/edit/MobileEditorControls';
 import { Ruleset } from '../../../rulesets/Ruleset';
 import { Playfield } from '../../../rulesets/ui/Playfield';
@@ -17,8 +18,6 @@ import { HitObjectSelectionManager } from './HitObjectSelectionManager';
 export abstract class HitObjectComposer extends CompositeDrawable {
   constructor() {
     super();
-
-    this.addLayout(this.#layoutBacking);
   }
 
   #tools!: IComposeTool[];
@@ -39,6 +38,10 @@ export abstract class HitObjectComposer extends CompositeDrawable {
   @resolved(IBeatmap)
   protected beatmap!: IBeatmap;
 
+  protected createSelectionManager(): HitObjectSelectionManager<any> {
+    return new HitObjectSelectionManager();
+  }
+
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
@@ -46,80 +49,47 @@ export abstract class HitObjectComposer extends CompositeDrawable {
 
     let selectionManager = this.dependencies.resolveOptional(HitObjectSelectionManager);
     if (!selectionManager)
-      this.addInternal(selectionManager = new HitObjectSelectionManager());
+      this.addInternal(selectionManager = this.createSelectionManager());
 
     const hitsoundPlayer = new HitsoundPlayer();
     this.addInternal(hitsoundPlayer);
     this.#dependencies.provide(hitsoundPlayer);
 
-    this.#dependencies.provide(selectionManager);
+    this.#dependencies.provide(HitObjectSelectionManager, selectionManager);
 
     this.#dependencies.provide(new HitObjectComposerDependencies(
       this.#tools = this.getTools(),
       this.activeTool = new Bindable(this.#tools[0]),
     ));
 
-    this.addAllInternal(
-      this.playfieldContainer = new Container({
-        relativeSizeAxes: Axes.Both,
-        padding: {
-          horizontal: 40,
-          top: 90,
-        },
-        children: [
-          new Container({
-            relativeSizeAxes: Axes.Both,
-            child: this.#drawableRuleset = this.ruleset.createDrawableEditorRulesetWith(this.beatmap),
-          }),
-          this.settingsContainer = new HitObjectComposerSettingsContainer(),
-        ],
-      }),
-      new Container({
-        relativeSizeAxes: Axes.Both,
-        padding: { top: 80 },
-        children: [
-          this.leftSidebar = this.createLeftSidebar(),
-          this.rightSidebar = this.createRightSidebar().with({
-            anchor: Anchor.TopRight,
-            origin: Anchor.TopRight,
-          }),
-          this.topBar = new Container({
-            relativeSizeAxes: Axes.X,
-            autoSizeAxes: Axes.Y,
-            child: this.createTopBar(),
-          }),
-        ],
-      }),
-      new Container({
-        relativeSizeAxes: Axes.X,
-        height: 80,
-        child: this.timeline = new ComposeScreenTimeline(),
-      }),
-      this.modifierContainer = new Container({
-        relativeSizeAxes: Axes.X,
-        autoSizeAxes: Axes.Y,
-        anchor: Anchor.BottomLeft,
-        origin: Anchor.BottomLeft,
-        y: 18,
-        padding: { horizontal: 155 },
-        children: [],
+    this.addInternal(
+      new BorderLayout({
+        north: this.createTopBar(),
+        west: this.leftSidebar = this.createLeftSidebar(),
+        east: this.rightSidebar = this.createRightSidebar(),
+        center: this.playfieldContainer = new Container({
+          relativeSizeAxes: Axes.Both,
+          padding: {
+            top: 10,
+          },
+          children: [
+            new Container({
+              relativeSizeAxes: Axes.Both,
+              child: this.#drawableRuleset = this.ruleset.createDrawableEditorRulesetWith(this.beatmap),
+            }),
+            this.settingsContainer = new HitObjectComposerSettingsContainer(),
+          ],
+        }),
+        south: this.modifierContainer = new Container({
+          relativeSizeAxes: Axes.X,
+          height: 18,
+          padding: { horizontal: 155 },
+          children: [],
+        }),
       }),
     );
 
     this.#dependencies.provide(Playfield, this.#drawableRuleset.playfield);
-
-    this.leftSidebar.invalidated.addListener(([_, invalidation]) => {
-      if (invalidation & Invalidation.DrawSize)
-        this.#layoutBacking.invalidate();
-    });
-    this.rightSidebar.invalidated.addListener(([_, invalidation]) => {
-      if (invalidation & Invalidation.DrawSize)
-        this.#layoutBacking.invalidate();
-    });
-    this.topBar.invalidated.addListener(([_, invalidation]) => {
-      if (invalidation & Invalidation.DrawSize)
-        this.#layoutBacking.invalidate();
-    });
 
     if (isMobile.any) {
       this.addInternal(
@@ -180,7 +150,11 @@ export abstract class HitObjectComposer extends CompositeDrawable {
   }
 
   protected createTopBar(): Drawable {
-    return new EmptyDrawable();
+    return new Container({
+      relativeSizeAxes: Axes.X,
+      height: 80,
+      child: new ComposeScreenTimeline(),
+    });
   }
 
   protected createLeftSidebar(): Container {
@@ -217,25 +191,4 @@ export abstract class HitObjectComposer extends CompositeDrawable {
   }
 
   protected abstract getTools(): IComposeTool[];
-
-  #layoutBacking = new LayoutMember(Invalidation.DrawSize);
-
-  override update() {
-    super.update();
-
-    if (!this.#layoutBacking.isValid) {
-      this.playfieldContainer.padding = {
-        left: this.leftSidebar.drawWidth + 40,
-        right: this.rightSidebar.drawWidth + 40,
-        top: this.topBar.drawHeight + 90,
-        bottom: 24,
-      };
-
-      this.topBar.padding = {
-        left: this.leftSidebar.drawWidth,
-        right: this.rightSidebar.drawWidth,
-      };
-      this.#layoutBacking.validate();
-    }
-  }
 }

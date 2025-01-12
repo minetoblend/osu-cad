@@ -1,7 +1,7 @@
 import type { Bindable, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { DrawableComposeTool } from './DrawableComposeTool';
 import type { IComposeTool } from './IComposeTool';
-import { Action, Anchor, Axes, CompositeDrawable, Container, FillDirection, FillFlowContainer, Vec2 } from 'osucad-framework';
+import { Action, Axes, CompositeDrawable, Container, FillDirection, FillFlowContainer, Vec2 } from 'osucad-framework';
 import { DrawableToolModifier } from './DrawableToolModifier';
 import { HitObjectComposerDependencies } from './HitObjectComposerDependencies';
 
@@ -29,8 +29,6 @@ export class ComposeToolContainer extends CompositeDrawable {
     autoSizeAxes: Axes.Both,
     spacing: new Vec2(10),
     padding: { vertical: 4 },
-    anchor: Anchor.BottomLeft,
-    origin: Anchor.BottomLeft,
   });
 
   readonly #toolContainer = new Container({
