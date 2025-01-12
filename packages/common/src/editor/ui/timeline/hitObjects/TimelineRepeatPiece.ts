@@ -1,4 +1,5 @@
 import type { ReadonlyDependencyContainer } from 'osucad-framework';
+import type { IHasRepeats } from '../../../../hitObjects/IHasRepeats';
 import type { SliderRepeat } from '../../../../rulesets/osu/hitObjects/SliderRepeat';
 import type { TimelineHitObjectBlueprint } from './TimelineHitObjectBlueprint';
 import { Anchor, Axes, DrawableSprite, resolved } from 'osucad-framework';
@@ -17,6 +18,8 @@ export class TimelineRepeatPiece extends TimelineHitObjectCircle {
     super.load(dependencies);
 
     this.relativePositionAxes = Axes.X;
+    this.origin = Anchor.Center;
+    this.anchor = Anchor.CenterLeft;
 
     this.addInternal(new DrawableSprite({
       texture: this.skin.getTexture('reversearrow'),
@@ -27,9 +30,8 @@ export class TimelineRepeatPiece extends TimelineHitObjectCircle {
       origin: Anchor.Center,
     }));
 
-    const slider = this.blueprint.hitObject!;
+    const slider = this.blueprint.hitObject! as unknown as IHasRepeats;
 
-    if (slider.duration !== 0)
-      this.x = this.repeat.startTime - slider.startTime;
+    this.x = ((this.repeat.repeatIndex + 1) / (slider.repeatCount + 1));
   }
 }

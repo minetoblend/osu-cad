@@ -1,18 +1,20 @@
 import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import type { HitObjectLifetimeEntry } from '../../../../hitObjects/drawables/HitObjectLifetimeEntry';
 import type { HitObjectSelectionEvent } from '../../../screens/compose/HitObjectSelectionManager';
-import { Anchor, Axes, Bindable, BindableBoolean, BindableNumber, Container, FillMode, provide, resolved } from 'osucad-framework';
+import type { TimelineHitObjectTail } from './TimelineHitObjectTail';
+import { Axes, Bindable, BindableBoolean, BindableNumber, Container, provide, resolved } from 'osucad-framework';
 import { Color } from 'pixi.js';
 import { UpdateHandler } from '../../../../crdt/UpdateHandler';
 import { hasComboInformation } from '../../../../hitObjects/IHasComboInformation';
 import { hasDuration } from '../../../../hitObjects/IHasDuration';
 import { hasSliderVelocity } from '../../../../hitObjects/IHasSliderVelocity';
 import { PoolableDrawableWithLifetime } from '../../../../pooling/PoolableDrawableWithLifetime';
+import { OsuSelectionManager } from '../../../../rulesets/osu/edit/OsuSelectionManager';
+import { Slider } from '../../../../rulesets/osu/hitObjects/Slider';
 import { SliderRepeat } from '../../../../rulesets/osu/hitObjects/SliderRepeat';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
 import { HitObjectSelectionManager } from '../../../screens/compose/HitObjectSelectionManager';
 import { Timeline } from '../Timeline';
-import { TimelinePart } from '../TimelinePart';
 import { DurationAdjustmentPiece } from './DurationAdjustmentPiece';
 import { SliderVelocityAdjustmentPiece } from './SliderVelocityAdjustmentPiece';
 import { TimelineHitObjectBody } from './TimelineHitObjectBody';
@@ -46,9 +48,13 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
 
   protected body!: TimelineHitObjectBody;
 
+  protected bodyContainer!: Container;
+
   protected head!: TimelineHitObjectHead;
 
-  #repeatContainer!: Container;
+  protected tail: TimelineHitObjectTail | null = null;
+
+  #repeatContainer!: Container<TimelineRepeatPiece>;
 
   #tailContainer!: Container;
 
@@ -61,31 +67,23 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
-    this.addInternal(this.content = new Container({
-      relativeSizeAxes: Axes.Both,
-      children: [
-        this.body = new TimelineHitObjectBody(this),
-        this.#tailContainer = new Container({
-          relativeSizeAxes: Axes.Both,
-          fillMode: FillMode.Fit,
-          anchor: Anchor.CenterRight,
-          origin: Anchor.CenterRight,
-        }),
-        this.#repeatContainer = new TimelinePart().with({
-          relativeSizeAxes: Axes.Both,
-        }),
-        this.head = new TimelineHitObjectHead(this),
-      ],
-    }));
+    this.addAllInternal(
+      this.bodyContainer = new Container({
+        relativeSizeAxes: Axes.Both,
+        children: [
+          this.body = new TimelineHitObjectBody(this),
+        ],
+      }),
+      this.#tailContainer = new Container({
+        relativeSizeAxes: Axes.Both,
+      }),
+      this.#repeatContainer = new Container<TimelineRepeatPiece>({
+        relativeSizeAxes: Axes.Both,
+      }),
+      this.head = new TimelineHitObjectHead(this),
+    );
 
-    this.startTimeBindable.addOnChangeListener(time => this.x = time.value);
-
-    // this.selected.addOnChangeListener((selected) => {
-    //   if (selected.value)
-    //     this.selectionOutline.show();
-    //   else
-    //     this.selectionOutline.hide();
-    // }, { immediate: true });
+    this.startTimeBindable.bindValueChanged(time => this.x = time.value);
 
     this.comboIndexBindable.valueChanged.addListener(this.updateComboColor, this);
     this.currentSkin.sourceChanged.addListener(this.updateComboColor, this);
@@ -100,7 +98,36 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
 
   #selectionChanged(evt: HitObjectSelectionEvent) {
     if (evt.hitObject === this.hitObject)
-      this.selected.value = evt.selected;
+      this.#updateSelection();
+  }
+
+  #updateSelection() {
+    this.selected.value = !!this.selection?.isSelected(this.hitObject!);
+
+    // TODO: move this to ruleset or solve this in a non-ruleset specific way
+    if (this.selection && this.selection instanceof OsuSelectionManager && this.hitObject instanceof Slider) {
+      const slider = this.hitObject as Slider;
+
+      const type = this.selection.getSelectionType(slider);
+
+      const headActive = type === 'head' || type === 0;
+      this.head.selectionOverlay.color = headActive ? 0xFF0000 : 0xFFFFFF;
+
+      const tailActive
+        = type === slider.spanCount
+        || (slider.spanCount % 2 === 0 && type === 'head')
+        || (slider.spanCount % 2 === 1 && type === 'tail');
+
+      if (this.tail)
+        this.tail.selectionOverlay.color = tailActive ? 0xFF0000 : 0xFFFFFF;
+
+      for (const repeat of this.#repeatContainer.children) {
+        const isTail = repeat.repeat.repeatIndex % 2 === 0;
+
+        const isActive = isTail ? tailActive : headActive;
+        repeat.selectionOverlay.color = isActive ? 0xFF0000 : 0xFFFFFF;
+      }
+    }
   }
 
   protected override onApply(entry: HitObjectLifetimeEntry) {
@@ -112,20 +139,21 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
       this.indexInComboBindable.bindTo(entry.hitObject.indexInComboBindable);
     }
 
-    if (hasDuration(entry.hitObject)) {
-      this.#tailContainer.add(new DurationAdjustmentPiece(this, entry.hitObject));
-    }
-    else if (hasSliderVelocity(entry.hitObject)) {
-      this.#tailContainer.add(new SliderVelocityAdjustmentPiece(this, entry.hitObject));
-    }
+    if (hasDuration(entry.hitObject))
+      this.#tailContainer.add(this.tail = new DurationAdjustmentPiece(this, entry.hitObject));
+    else if (hasSliderVelocity(entry.hitObject))
+      this.#tailContainer.add(this.tail = new SliderVelocityAdjustmentPiece(this, entry.hitObject));
+    else
+      this.tail = null;
 
-    entry.hitObject.defaultsApplied.addListener(this.#updateRepeats, this);
+    entry.hitObject.defaultsApplied.addListener(this.#defaultsApplied, this);
 
     if (this.selection)
       this.selected.value = this.selection.isSelected(entry.hitObject);
 
     this.updateComboColor();
-    this.#updateRepeats();
+    this.#defaultsApplied();
+    this.#updateSelection();
   }
 
   protected override onFree(entry: HitObjectLifetimeEntry) {
@@ -137,7 +165,7 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
       this.indexInComboBindable.unbindFrom(entry.hitObject.indexInComboBindable);
     }
 
-    entry.hitObject.defaultsApplied.removeListener(this.#updateRepeats, this);
+    entry.hitObject.defaultsApplied.removeListener(this.#defaultsApplied, this);
 
     this.#tailContainer.clear();
   }
@@ -173,7 +201,7 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
     const contentPadding = this.drawHeight * 0.5;
 
     if (this.#contentPadding !== contentPadding) {
-      this.content.padding = { horizontal: -contentPadding };
+      this.bodyContainer.padding = { horizontal: -contentPadding };
       this.#contentPadding = contentPadding;
     }
   }
@@ -181,12 +209,17 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
   @resolved(UpdateHandler)
   updateHandler!: UpdateHandler;
 
-  #updateRepeats() {
+  #defaultsApplied() {
+    this.tail?.updateSelection();
+
     this.#repeatContainer.clear();
 
     for (const hitObject of this.hitObject!.nestedHitObjects) {
-      if (hitObject instanceof SliderRepeat)
-        this.#repeatContainer.add(new TimelineRepeatPiece(this, hitObject));
+      if (hitObject instanceof SliderRepeat) {
+        this.#repeatContainer.add(new TimelineRepeatPiece(this, hitObject).with({
+          depth: hitObject.startTime,
+        }));
+      }
     }
   }
 

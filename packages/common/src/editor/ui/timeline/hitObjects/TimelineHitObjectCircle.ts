@@ -1,22 +1,23 @@
 import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Color } from 'pixi.js';
 import type { TimelineHitObjectBlueprint } from './TimelineHitObjectBlueprint';
-import { Anchor, Axes, Bindable, BindableBoolean, CompositeDrawable, DrawableSprite, FillMode, resolved } from 'osucad-framework';
+import { Anchor, Axes, Bindable, BindableBoolean, CompositeDrawable, DrawableSprite, resolved } from 'osucad-framework';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
 
 export class TimelineHitObjectCircle extends CompositeDrawable {
   constructor(readonly blueprint: TimelineHitObjectBlueprint) {
     super();
 
-    this.relativeSizeAxes = Axes.Both;
-    this.fillMode = FillMode.Fit;
+    this.relativeSizeAxes = Axes.Y;
+    this.anchor = Anchor.CenterLeft;
+    this.origin = Anchor.Center;
   }
 
-  protected circle!: DrawableSprite;
+  circle!: DrawableSprite;
 
-  protected overlay!: DrawableSprite;
+  overlay!: DrawableSprite;
 
-  protected selectionOverlay!: DrawableSprite;
+  selectionOverlay!: DrawableSprite;
 
   @resolved(ISkinSource)
   protected skin!: ISkinSource;
@@ -67,5 +68,12 @@ export class TimelineHitObjectCircle extends CompositeDrawable {
 
   protected updateColor(color: Color) {
     this.circle.color = color;
+  }
+
+  override update() {
+    super.update();
+
+    // noinspection JSSuspiciousNameCombination
+    this.width = this.drawHeight;
   }
 }

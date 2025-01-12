@@ -106,6 +106,9 @@ export class SliderSelectionBlueprint extends OsuSelectionBlueprint<Slider> {
         return true;
       }
 
+      if (this.preventSelection)
+        this.preventClickBehavior = true;
+
       this.preventSelection = false;
     }
 

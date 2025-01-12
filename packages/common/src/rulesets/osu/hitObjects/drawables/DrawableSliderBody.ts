@@ -91,6 +91,8 @@ export class DrawableSliderBody extends Drawable {
       this.#hitObject.path.invalidated.removeListener(this.#invalidatePath);
     }
     this.#hitObject = hitObject;
+
+    this.#updateSelection();
   }
 
   get hitObject() {
@@ -237,6 +239,16 @@ export class DrawableSliderBody extends Drawable {
   #selectionChanged(event: HitObjectSelectionEvent) {
     if (event.hitObject !== this.hitObject || !this.hitObject)
       return;
+
+    this.#updateSelection();
+  }
+
+  #updateSelection() {
+    if (!this.hitObject || !this.selection?.isSelected(this.hitObject)) {
+      this.#bodySelected = false;
+      this.#updateBorderColor();
+      return;
+    }
 
     const type = this.selection?.getSelectionType(this.hitObject);
 

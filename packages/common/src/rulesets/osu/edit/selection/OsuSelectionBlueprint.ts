@@ -96,7 +96,7 @@ export class OsuSelectionBlueprint<T extends OsuHitObject = OsuHitObject> extend
     );
   }
 
-  #didSelect = false;
+  protected preventClickBehavior = false;
 
   override onMouseDown(e: MouseDownEvent): boolean {
     if (e.button === MouseButton.Left) {
@@ -107,7 +107,7 @@ export class OsuSelectionBlueprint<T extends OsuHitObject = OsuHitObject> extend
 
       if (!this.selected.value) {
         this.selection.setSelection(this.hitObject!);
-        this.#didSelect = true;
+        this.preventClickBehavior = true;
       }
 
       return true;
@@ -133,7 +133,7 @@ export class OsuSelectionBlueprint<T extends OsuHitObject = OsuHitObject> extend
   protected editorBeatmap!: EditorBeatmap;
 
   override onMouseUp(e: MouseUpEvent) {
-    this.schedule(() => this.#didSelect = false);
+    this.schedule(() => this.preventClickBehavior = false);
   }
 
   @resolved(IPositionSnapProvider, true)
@@ -245,7 +245,7 @@ export class OsuSelectionBlueprint<T extends OsuHitObject = OsuHitObject> extend
   protected selectionContainer!: HitObjectBlueprintContainer<OsuSelectionBlueprint>;
 
   override onClick(e: ClickEvent): boolean {
-    if (this.#didSelect)
+    if (this.preventClickBehavior)
       return false;
 
     if (this.selected.value && this.selection.length === 1) {
