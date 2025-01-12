@@ -48,6 +48,9 @@ export class EditorNavigation extends CompositeDrawable implements IKeyBindingHa
   }
 
   override onKeyDown(e: KeyDownEvent): boolean {
+    if (e.controlPressed || e.metaPressed || e.altPressed || e.shiftPressed)
+      return false;
+
     switch (e.key) {
       case Key.ArrowLeft:
         this.#seek(e, -1);

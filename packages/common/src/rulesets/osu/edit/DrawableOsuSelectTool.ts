@@ -1,8 +1,9 @@
-import type { Drawable, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer, Vec2 } from 'osucad-framework';
+import type { Drawable, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { IHitSound } from '../../../hitsounds/IHitSound';
 import type { OsuSelectionManager, SliderSelectionType } from './OsuSelectionManager';
 import { getIcon } from '@osucad/resources';
-import { Bindable, Direction, PlatformAction, resolved } from 'osucad-framework';
+import { Bindable, Direction, PlatformAction, resolved, Vec2 } from 'osucad-framework';
+import { Matrix } from 'pixi.js';
 import { EditorAction } from '../../../editor/EditorAction';
 import { DrawableComposeTool } from '../../../editor/screens/compose/DrawableComposeTool';
 import { hasComboInformation } from '../../../hitObjects/IHasComboInformation';
@@ -118,19 +119,108 @@ export class DrawableOsuSelectTool extends DrawableComposeTool implements IKeyBi
   }
 
   onKeyBindingPressed(e: KeyBindingPressEvent<PlatformAction | EditorAction>): boolean {
-    if (e.repeat)
-      return false;
-
     switch (e.pressed) {
       case PlatformAction.Delete:
       case PlatformAction.DeleteBackwardChar:
+        if (e.repeat)
+          return false;
+
         for (const hitObject of [...this.selection.selectedObjects])
           this.hitObjects.remove(hitObject);
         this.commit();
         return true;
+
+      case EditorAction.NudgeUp:
+        this.moveSelection(new Vec2(0, -1));
+        return true;
+      case EditorAction.NudgeDown:
+        this.moveSelection(new Vec2(0, 1));
+        return true;
+      case EditorAction.NudgeLeft:
+        this.moveSelection(new Vec2(-1, 0));
+        return true;
+      case EditorAction.NudgeRight:
+        this.moveSelection(new Vec2(1, 0));
+        return true;
+      case EditorAction.RotateCW:
+        this.rotateSelection(Math.PI / 2);
+        return true;
+      case EditorAction.RotateCCW:
+        this.rotateSelection(-Math.PI / 2);
+        return true;
     }
 
     return false;
+  }
+
+  rotateSelection(angle: number) {
+    for (const hitObject of this.selection.selectedObjects) {
+      this.composer.transformHitObject(
+        hitObject as OsuHitObject,
+        new Matrix()
+          .translate(-256, -192)
+          .rotate(angle)
+          .translate(256, 192),
+      );
+    }
+    this.commit();
+  }
+
+  moveSelection(delta: Vec2) {
+    const hitObjects = [...this.selection.selectedObjects] as OsuHitObject[];
+
+    for (const hitObject of hitObjects)
+      hitObject.moveBy(delta);
+
+    this.moveIntoBounds(hitObjects);
+
+    this.commit();
+  }
+
+  protected moveIntoBounds(hitObjects: OsuHitObject[]) {
+    const overflow = {
+      left: 0,
+      top: 0,
+      right: 0,
+      bottom: 0,
+    };
+
+    for (const object of hitObjects) {
+      const start = object.position;
+      let end = start;
+      if (object instanceof Slider)
+        end = end.add(object.path.endPosition);
+
+      const min = start.componentMin(end);
+      const max = start.componentMax(end);
+
+      if (min.x < 0)
+        overflow.left = Math.max(overflow.left, -min.x);
+      if (max.x > 512)
+        overflow.right = Math.max(overflow.right, max.x - 512);
+
+      if (min.y < 0)
+        overflow.top = Math.max(overflow.top, -min.y);
+      if (max.y > 384)
+        overflow.bottom = Math.max(overflow.bottom, max.y - 384);
+    }
+
+    const offset = new Vec2();
+
+    if (overflow.left && !overflow.right)
+      offset.x = overflow.left;
+    else if (overflow.right && !overflow.left)
+      offset.x = -overflow.right;
+
+    if (overflow.top && !overflow.bottom)
+      offset.y = overflow.top;
+    else if (overflow.bottom && !overflow.top)
+      offset.y = -overflow.bottom;
+
+    if (!offset.isZero) {
+      for (const object of hitObjects)
+        object.position = object.position.add(offset);
+    }
   }
 
   #updateNewComboFromSelection(force = false) {

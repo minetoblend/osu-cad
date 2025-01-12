@@ -9,7 +9,7 @@ export class EditorActionContainer extends KeyBindingContainer<EditorAction> {
   }
 
   override get defaultKeyBindings(): IKeyBinding[] {
-    return [
+    const keyBindings = [
       new KeyBinding(KeyCombination.from(InputKey.Space), EditorAction.Play),
       new KeyBinding(KeyCombination.from(InputKey.C), EditorAction.Play),
       new KeyBinding(KeyCombination.from(InputKey.Control, InputKey.H), EditorAction.FlipHorizontal),
@@ -36,7 +36,6 @@ export class EditorActionContainer extends KeyBindingContainer<EditorAction> {
       new KeyBinding(KeyCombination.from(InputKey.Control, InputKey.Down), EditorAction.NudgeDown),
       new KeyBinding(KeyCombination.from(InputKey.Control, InputKey.Left), EditorAction.NudgeLeft),
       new KeyBinding(KeyCombination.from(InputKey.Control, InputKey.Right), EditorAction.NudgeRight),
-      new KeyBinding(KeyCombination.from(InputKey.Control, InputKey.Left), EditorAction.NudgeLeft),
       new KeyBinding(KeyCombination.from(InputKey.Z), EditorAction.SeekToStart),
       new KeyBinding(KeyCombination.from(InputKey.V), EditorAction.SeekToEnd),
       new KeyBinding(KeyCombination.from(InputKey.X), EditorAction.PlayFromStart),
@@ -48,5 +47,16 @@ export class EditorActionContainer extends KeyBindingContainer<EditorAction> {
       new KeyBinding(KeyCombination.from(InputKey.Control, InputKey.P), EditorAction.CreateUninheritedControlPoint),
       new KeyBinding(KeyCombination.from(InputKey.Control, InputKey.T), EditorAction.ShowChat),
     ];
+
+    if (navigator.userAgent.includes('Mac')) {
+      keyBindings.push(
+        new KeyBinding(KeyCombination.from(InputKey.Meta, InputKey.Up), EditorAction.NudgeUp),
+        new KeyBinding(KeyCombination.from(InputKey.Meta, InputKey.Down), EditorAction.NudgeDown),
+        new KeyBinding(KeyCombination.from(InputKey.Meta, InputKey.Left), EditorAction.NudgeLeft),
+        new KeyBinding(KeyCombination.from(InputKey.Meta, InputKey.Right), EditorAction.NudgeRight),
+      );
+    }
+
+    return keyBindings;
   }
 }
