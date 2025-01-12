@@ -46,6 +46,7 @@ export class EditorActionContainer extends KeyBindingContainer<EditorAction> {
       new KeyBinding(KeyCombination.from(InputKey.Control, InputKey.Shift, InputKey.P), EditorAction.CreateInheritedControlPoint),
       new KeyBinding(KeyCombination.from(InputKey.Control, InputKey.P), EditorAction.CreateUninheritedControlPoint),
       new KeyBinding(KeyCombination.from(InputKey.Control, InputKey.T), EditorAction.ShowChat),
+      new KeyBinding(KeyCombination.from(InputKey.Control, InputKey.Shift, InputKey.F), EditorAction.ConvertToStream),
     ];
 
     if (navigator.userAgent.includes('Mac')) {

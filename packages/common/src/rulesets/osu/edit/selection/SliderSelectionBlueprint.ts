@@ -6,6 +6,8 @@ import type { PathType } from '../../hitObjects/PathType';
 import type { Slider } from '../../hitObjects/Slider';
 import { Anchor, Container, isMobile, MouseButton, provide, resolved } from 'osucad-framework';
 import { UpdateHandler } from '../../../../crdt/UpdateHandler';
+import { EditorBeatmap } from '../../../../editor/EditorBeatmap';
+import { EditorClock } from '../../../../editor/EditorClock';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
 import { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { getNextControlPointType } from '../getNextControlPointType';
@@ -187,6 +189,12 @@ class SliderSelectionPathHandle extends SliderPathVisualizerHandle {
   @resolved(UpdateHandler)
   updateHandler!: UpdateHandler;
 
+  @resolved(EditorBeatmap)
+  editorBeatmap!: EditorBeatmap;
+
+  @resolved(EditorClock)
+  editorClock!: EditorClock;
+
   override onMouseDown(e: MouseDownEvent): boolean {
     if (this.blueprint.readonly)
       return false;
@@ -200,7 +208,7 @@ class SliderSelectionPathHandle extends SliderPathVisualizerHandle {
       if (slider.controlPoints.length > 2) {
         slider.removeControlPoint(this.index);
         if (this.distanceSnapProvider)
-          slider.expectedDistance = this.distanceSnapProvider.findSnappedDistance(slider);
+          slider.snapLength(this.editorBeatmap.controlPoints, this.editorClock.beatSnapDivisor.value);
         this.updateHandler.commit();
       }
 

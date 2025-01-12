@@ -43,6 +43,7 @@ export class EditorAction extends KeyBindingAction {
   static readonly SeekToEnd = new EditorAction('SeekToEnd');
   static readonly PlayFromStart = new EditorAction('PlayFromStart');
   static readonly ShowPreferences = new EditorAction('ShowPreferences');
+  static readonly ConvertToStream = new EditorAction('ConvertToStream');
 
   static readonly CreateInheritedControlPoint = new EditorAction('CreateInheritedControlPoint');
   static readonly CreateUninheritedControlPoint = new EditorAction('CreateUninheritedControlPoint');
