@@ -19,6 +19,7 @@ import { HitCirclePlacementTool } from './HitCirclePlacementTool';
 import { IDistanceSnapProvider } from './IDistanceSnapProvider';
 import { IPositionSnapProvider } from './IPositionSnapProvider';
 import { NewComboToggleButton } from './NewComboToggleButton';
+import { OsuSelectionManager } from './OsuSelectionManager';
 import { OsuSelectTool } from './OsuSelectTool';
 import { PlayfieldGrid } from './PlayfieldGrid';
 import { OsuSelectionBlueprintContainer } from './selection/OsuSelectionBlueprintContainer';
@@ -121,6 +122,10 @@ export class OsuHitObjectComposer extends HitObjectComposer implements IPosition
     }
 
     return null;
+  }
+
+  protected override createSelectionManager() {
+    return new OsuSelectionManager();
   }
 
   @resolved(ControlPointInfo)

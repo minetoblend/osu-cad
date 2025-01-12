@@ -4,16 +4,16 @@ import type { HitObjectLifetimeEntry } from '../../../../hitObjects/drawables/Hi
 import type { HitObject } from '../../../../hitObjects/HitObject';
 import type { PathType } from '../../hitObjects/PathType';
 import type { Slider } from '../../hitObjects/Slider';
-import { Anchor, Axes, Container, isMobile, MouseButton, provide, resolved } from 'osucad-framework';
+import { Anchor, Container, isMobile, MouseButton, provide, resolved } from 'osucad-framework';
 import { UpdateHandler } from '../../../../crdt/UpdateHandler';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
-import { SkinnableDrawable } from '../../../../skinning/SkinnableDrawable';
 import { OsuHitObject } from '../../hitObjects/OsuHitObject';
-import { OsuSkinComponentLookup } from '../../skinning/stable/OsuSkinComponentLookup';
 import { getNextControlPointType } from '../getNextControlPointType';
 import { IDistanceSnapProvider } from '../IDistanceSnapProvider';
 import { SliderPathVisualizer, SliderPathVisualizerHandle } from '../SliderPathVisualizer';
 import { OsuSelectionBlueprint } from './OsuSelectionBlueprint';
+import { SliderHeadSelectionBlueprint } from './SliderHeadSelectionBlueprint';
+import { SliderTailSelectionBlueprint } from './SliderTailSelectionBlueprint';
 
 @provide(SliderSelectionBlueprint)
 export class SliderSelectionBlueprint extends OsuSelectionBlueprint<Slider> {
@@ -24,9 +24,9 @@ export class SliderSelectionBlueprint extends OsuSelectionBlueprint<Slider> {
   @resolved(ISkinSource)
   protected skin!: ISkinSource;
 
-  headCircle!: SkinnableDrawable;
+  headCircle!: SliderHeadSelectionBlueprint;
 
-  tailCircle!: SkinnableDrawable;
+  tailCircle!: SliderTailSelectionBlueprint;
 
   sliderPathContainer!: Container;
 
@@ -52,16 +52,8 @@ export class SliderSelectionBlueprint extends OsuSelectionBlueprint<Slider> {
     this.size = OsuHitObject.object_dimensions;
 
     this.content.addAll(
-      this.tailCircle = new SkinnableDrawable(OsuSkinComponentLookup.HitCircleSelect).with({
-        relativeSizeAxes: Axes.Both,
-        anchor: Anchor.Center,
-        origin: Anchor.Center,
-      }),
-      this.headCircle = new SkinnableDrawable(OsuSkinComponentLookup.HitCircleSelect).with({
-        relativeSizeAxes: Axes.Both,
-        anchor: Anchor.Center,
-        origin: Anchor.Center,
-      }),
+      this.tailCircle = new SliderTailSelectionBlueprint(this),
+      this.headCircle = new SliderHeadSelectionBlueprint(this),
     );
 
     this.addInternal(
@@ -104,10 +96,23 @@ export class SliderSelectionBlueprint extends OsuSelectionBlueprint<Slider> {
     this.scheduler.addOnce(this.#updatePositions, this);
   }
 
+  override onMouseDown(e: MouseDownEvent): boolean {
+    if (e.button === MouseButton.Left) {
+      if (this.selected.value) {
+        this.selection.setSelectionType(this.hitObject!, 'body');
+
+        return true;
+      }
+    }
+
+    return super.onMouseDown(e);
+  }
+
   protected override selectionChanged(evt: HitObjectSelectionEvent) {
     super.selectionChanged(evt);
 
     this.scheduler.addOnce(this.#updateSliderPathVisibility, this);
+    this.scheduler.addOnce(this.#updateEdgeSelection, this);
   }
 
   override onHover(e: HoverEvent): boolean {
@@ -149,8 +154,10 @@ export class SliderSelectionBlueprint extends OsuSelectionBlueprint<Slider> {
   }
 
   #updateEdgeSelection() {
-    const headSelected = this.hitObject!.subSelection.anyHeadSelected;
-    const tailSelected = this.hitObject!.subSelection.anyTailSelected;
+    const selection = this.selection.getSelectionType(this.hitObject!);
+
+    const headSelected = selection === 'head' || (typeof selection === 'number' && selection % 2 === 0);
+    const tailSelected = selection === 'tail' || (typeof selection === 'number' && selection % 2 === 1);
 
     this.headCircle.color = headSelected ? 0xFF0000 : 0xFFFFFF;
     this.tailCircle.color = tailSelected ? 0xFF0000 : 0xFFFFFF;

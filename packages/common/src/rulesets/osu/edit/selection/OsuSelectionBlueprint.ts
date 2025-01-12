@@ -2,6 +2,7 @@ import type { ClickEvent, DragEndEvent, DragEvent, DragStartEvent, MouseDownEven
 import type { HitObjectSelectionEvent } from '../../../../editor/screens/compose/HitObjectSelectionManager';
 import type { HitObjectLifetimeEntry } from '../../../../hitObjects/drawables/HitObjectLifetimeEntry';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
+import type { OsuSelectionManager } from '../OsuSelectionManager';
 import { Axes, Bindable, BindableBoolean, BindableNumber, Container, MouseButton, resolved, Vec2 } from 'osucad-framework';
 import { UpdateHandler } from '../../../../crdt/UpdateHandler';
 import { EditorBeatmap } from '../../../../editor/EditorBeatmap';
@@ -35,7 +36,7 @@ export class OsuSelectionBlueprint<T extends OsuHitObject = OsuHitObject> extend
   }
 
   @resolved(HitObjectSelectionManager)
-  protected selection!: HitObjectSelectionManager<OsuHitObject>;
+  protected selection!: OsuSelectionManager;
 
   readonly positionBindable = new Bindable(new Vec2());
   readonly stackHeightBindable = new BindableNumber();

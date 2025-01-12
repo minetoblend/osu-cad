@@ -1,11 +1,14 @@
 import type { Container } from 'pixi.js';
+import type { HitObjectSelectionEvent } from '../../../../editor/screens/compose/HitObjectSelectionManager';
 import type { Slider } from '../Slider';
 import { Bindable, Drawable, PIXIContainer, type ReadonlyDependencyContainer, resolved, Vec2 } from 'osucad-framework';
 import { AlphaFilter, Color, CustomRenderPipe, Mesh, MeshGeometry } from 'pixi.js';
+import { HitObjectSelectionManager } from '../../../../editor/screens/compose/HitObjectSelectionManager';
 import { DrawableHitObject } from '../../../../hitObjects/drawables/DrawableHitObject';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
 import { SkinConfig } from '../../../../skinning/SkinConfig';
 import { animate } from '../../../../utils/animate';
+import { OsuSelectionManager } from '../../edit/OsuSelectionManager';
 import { GeometryBuilder } from './GeometryBuilder';
 import { SliderPathGeometry } from './SliderPathGeometry';
 import { SliderShader } from './SliderShader';
@@ -73,6 +76,8 @@ export class DrawableSliderBody extends Drawable {
   snakeOutEnabled = true;
 
   #hitObject?: Slider;
+
+  selection?: OsuSelectionManager;
 
   set hitObject(hitObject) {
     if (hitObject === this.#hitObject)
@@ -176,6 +181,8 @@ export class DrawableSliderBody extends Drawable {
   override dispose(isDisposing: boolean = true) {
     this.skin.sourceChanged.removeListener(this.#skinChanged, this);
 
+    this.selection?.selectionChanged.addListener(this.#selectionChanged, this);
+
     super.dispose(isDisposing);
   }
 
@@ -190,6 +197,10 @@ export class DrawableSliderBody extends Drawable {
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
+
+    const selection = dependencies.resolveOptional(HitObjectSelectionManager);
+    if (selection instanceof OsuSelectionManager)
+      this.selection = selection;
 
     this.accentColor.valueChanged.addListener(this.#updateColor, this);
     this.sliderTrackOverride.valueChanged.addListener(this.#updateColor, this);
@@ -218,8 +229,22 @@ export class DrawableSliderBody extends Drawable {
     if (this.drawableHitObject)
       this.accentColor.bindTo(this.drawableHitObject.accentColor);
 
+    this.selection?.selectionChanged.addListener(this.#selectionChanged, this);
+
     this.#skinChanged();
   }
+
+  #selectionChanged(event: HitObjectSelectionEvent) {
+    if (event.hitObject !== this.hitObject || !this.hitObject)
+      return;
+
+    const type = this.selection?.getSelectionType(this.hitObject);
+
+    this.#bodySelected = type === 'body';
+    this.#updateBorderColor();
+  }
+
+  #bodySelected = false;
 
   #borderColorOverride: Color | null = null;
 
@@ -236,7 +261,10 @@ export class DrawableSliderBody extends Drawable {
   }
 
   #updateBorderColor() {
-    this.shader.borderColor = this.#borderColorOverride?.toNumber() ?? this.borderColor.value?.toNumber() ?? 0xFFFFFF;
+    if (this.#bodySelected)
+      this.shader.borderColor = 0xFF0000;
+    else
+      this.shader.borderColor = this.#borderColorOverride?.toNumber() ?? this.borderColor.value?.toNumber() ?? 0xFFFFFF;
   }
 
   override get alpha() {
