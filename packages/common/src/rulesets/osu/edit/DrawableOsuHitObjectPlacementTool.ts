@@ -5,7 +5,6 @@ import { DrawableHitObjectPlacementTool } from '../../../editor/screens/compose/
 import { HitSound } from '../../../hitsounds/HitSound';
 import { SampleSet } from '../../../hitsounds/SampleSet';
 import { TernaryState } from '../../../utils/TernaryState';
-import { PathType } from '../hitObjects/PathType';
 import { GlobalHitSoundState } from './GlobalHitSoundState';
 import { GlobalNewComboBindable } from './GlobalNewComboBindable';
 import { IDistanceSnapProvider } from './IDistanceSnapProvider';
@@ -80,39 +79,5 @@ export abstract class DrawableOsuHitObjectPlacementTool<T extends OsuHitObject> 
     super.endPlacement();
 
     this.newCombo.value = TernaryState.Inactive;
-  }
-
-  getNextPathType(
-    currentType: PathType | null,
-    index: number,
-  ): PathType | null {
-    let newType: PathType | null = null;
-
-    switch (currentType) {
-      case null:
-        newType = PathType.Bezier;
-        break;
-      case PathType.Bezier:
-        newType = PathType.PerfectCurve;
-        break;
-      case PathType.PerfectCurve:
-        newType = PathType.Linear;
-        break;
-      case PathType.Linear:
-        newType = PathType.Catmull;
-        break;
-      case PathType.Catmull:
-        newType = PathType.BSpline;
-        break;
-      case PathType.BSpline:
-        newType = null;
-        break;
-    }
-
-    if (index === 0 && newType === null) {
-      newType = PathType.Bezier;
-    }
-
-    return newType;
   }
 }

@@ -1,5 +1,5 @@
 import type { ReadonlyDependencyContainer } from 'osucad-framework';
-import { CompositeDrawable, resolved, Vec2 } from 'osucad-framework';
+import { CompositeDrawable, Line, resolved, Vec2 } from 'osucad-framework';
 
 import { Color, Graphics } from 'pixi.js';
 import { DrawableSliderBody } from '../../../rulesets/osu/hitObjects/drawables/DrawableSliderBody';
@@ -253,20 +253,4 @@ export interface SnapResult {
   endPosition?: Vec2;
   distance: number;
   visualize?: (g: Graphics) => void;
-}
-
-class Line {
-  constructor(readonly start: Vec2, readonly end: Vec2) {
-  }
-
-  closestPoint(position: Vec2) {
-    if (this.start.equals(this.end))
-      return this.start;
-
-    const dir = this.end.sub(this.start).normalize();
-
-    const v = position.sub(this.start);
-    const d = v.dot(dir);
-    return this.start.add(dir.scale(d));
-  }
 }

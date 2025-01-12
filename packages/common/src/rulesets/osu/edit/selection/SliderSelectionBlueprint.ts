@@ -10,6 +10,8 @@ import { EditorBeatmap } from '../../../../editor/EditorBeatmap';
 import { EditorClock } from '../../../../editor/EditorClock';
 import { ISkinSource } from '../../../../skinning/ISkinSource';
 import { OsuHitObject } from '../../hitObjects/OsuHitObject';
+import { PathPoint } from '../../hitObjects/PathPoint';
+import { SliderPathUtils } from '../../hitObjects/SliderPathUtils';
 import { getNextControlPointType } from '../getNextControlPointType';
 import { IDistanceSnapProvider } from '../IDistanceSnapProvider';
 import { SliderPathVisualizer, SliderPathVisualizerHandle } from '../SliderPathVisualizer';
@@ -101,7 +103,26 @@ export class SliderSelectionBlueprint extends OsuSelectionBlueprint<Slider> {
   preventSelection = false;
 
   override onMouseDown(e: MouseDownEvent): boolean {
+    this.#controlPointInsertionIndex = -1;
+
     if (e.button === MouseButton.Left) {
+      if (e.controlPressed) {
+        const { position } = SliderPathUtils.getInsertionPoint(this.hitObject!, this.parent!.toLocalSpace(e.screenSpaceMouseDownPosition!));
+        if (!position)
+          return false;
+
+        this.#controlPointInsertionIndex = position.index;
+        const point = new PathPoint(position.position);
+
+        const controlPoints = [...this.hitObject!.controlPoints];
+
+        controlPoints.splice(this.#controlPointInsertionIndex, 0, point);
+
+        this.hitObject!.controlPoints = controlPoints;
+
+        return true;
+      }
+
       if (this.selected.value && !this.preventSelection) {
         this.selection.setSelectionType(this.hitObject!, 'body');
 
@@ -171,6 +192,23 @@ export class SliderSelectionBlueprint extends OsuSelectionBlueprint<Slider> {
     this.headCircle.color = headSelected ? 0xFF0000 : 0xFFFFFF;
     this.tailCircle.color = tailSelected ? 0xFF0000 : 0xFFFFFF;
   }
+
+  #controlPointInsertionIndex = -1;
+
+  override onDrag(e: DragEvent): boolean {
+    if (this.#controlPointInsertionIndex !== -1) {
+      const position = this.parent!.toLocalSpace(e.screenSpaceMousePosition).sub(this.hitObject!.stackedPosition);
+      const controlPoints = [...this.hitObject!.controlPoints];
+
+      controlPoints[this.#controlPointInsertionIndex] = controlPoints[this.#controlPointInsertionIndex].withPosition(position);
+
+      this.hitObject!.controlPoints = controlPoints;
+
+      return true;
+    }
+
+    return super.onDrag(e);
+  }
 }
 
 class SliderSelectionPathVisualizer extends SliderPathVisualizer {
@@ -199,8 +237,19 @@ class SliderSelectionPathHandle extends SliderPathVisualizerHandle {
     if (this.blueprint.readonly)
       return false;
 
-    if (e.button === MouseButton.Left)
+    if (e.button === MouseButton.Left) {
+      if (e.controlPressed) {
+        const controlPoints = [...this.blueprint.hitObject!.controlPoints];
+
+        const type = SliderPathUtils.getNextPathType(controlPoints[this.index].type, this.index);
+
+        controlPoints[this.index] = controlPoints[this.index].withType(type);
+
+        this.blueprint.hitObject!.controlPoints = controlPoints;
+      }
+
       return true;
+    }
 
     if (e.button === MouseButton.Right) {
       const slider = this.blueprint.hitObject!;
@@ -246,7 +295,7 @@ class SliderSelectionPathHandle extends SliderPathVisualizerHandle {
 
     slider.controlPoints = path;
     if (this.distanceSnapProvider)
-      slider.expectedDistance = this.distanceSnapProvider.findSnappedDistance(slider);
+      slider.snapLength(this.editorBeatmap.controlPoints, this.editorClock.beatSnapDivisor.value);
 
     return true;
   }

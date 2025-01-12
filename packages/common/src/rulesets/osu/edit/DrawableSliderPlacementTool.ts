@@ -77,7 +77,7 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
 
     const { segmentStart, segmentType } = SliderPathUtils.getLastSegment(this.sliderPath.controlPoints);
 
-    this.sliderPath.setType(segmentStart, this.getNextPathType(segmentType, 0));
+    this.sliderPath.setType(segmentStart, SliderPathUtils.getNextPathType(segmentType, 0));
     this.updateSliderPath();
   }
 
@@ -148,7 +148,7 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
     if (this.currentPosition.distance(this.sliderPath.last) > this.mergeThreshold)
       return false;
 
-    const newType = this.getNextPathType(this.sliderPath.last.type, this.sliderPath.lastIndex);
+    const newType = SliderPathUtils.getNextPathType(this.sliderPath.last.type, this.sliderPath.lastIndex);
 
     this.sliderPath.setType(-1, newType);
     this.updateSliderPath();
