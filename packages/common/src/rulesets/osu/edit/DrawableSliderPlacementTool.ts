@@ -115,7 +115,7 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
       if (this.isPlacing)
         this.endPlacement();
       else
-        this.hitObject.newCombo = !this.hitObject.newCombo;
+        this.newCombo.toggle();
 
       return true;
     }

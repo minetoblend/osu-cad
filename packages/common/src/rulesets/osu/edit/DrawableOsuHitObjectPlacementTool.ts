@@ -22,7 +22,7 @@ export abstract class DrawableOsuHitObjectPlacementTool<T extends OsuHitObject> 
     super.load(dependencies);
 
     if (this.newCombo.value === TernaryState.Indeterminate)
-      this.newCombo.value = TernaryState.Active;
+      this.newCombo.value = TernaryState.Inactive;
 
     this.newCombo.bindValueChanged(newCombo => this.hitObject.newCombo = newCombo.value === TernaryState.Active);
   }
@@ -34,6 +34,7 @@ export abstract class DrawableOsuHitObjectPlacementTool<T extends OsuHitObject> 
     super.applyDefaults(hitObject);
 
     hitObject.position = this.snappedMousePosition;
+    hitObject.newCombo = this.newCombo.value === TernaryState.Active;
     hitObject.hitSound = new HitSound(
       this.hitSounds.sampleSet.value ?? SampleSet.Auto,
       this.hitSounds.additionsSampleSet.value ?? SampleSet.Auto,
