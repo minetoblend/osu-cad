@@ -62,6 +62,17 @@ export class DrawableOsuSelectTool extends DrawableComposeTool implements IKeyBi
       else if (evt.value === TernaryState.Inactive)
         it.additions &= ~Additions.Clap;
     }));
+
+    this.selection.selectionChanged.addListener(this.#selectionChanged, this);
+  }
+
+  #selectionChanged() {
+    this.scheduler.addOnce(this.#updateFromSelectionChange, this);
+  }
+
+  #updateFromSelectionChange() {
+    this.#updateNewComboFromSelection(true);
+    this.#updateHitSoundsFromSelection(true);
   }
 
   #applyNewCombo() {
@@ -122,8 +133,8 @@ export class DrawableOsuSelectTool extends DrawableComposeTool implements IKeyBi
     return false;
   }
 
-  #updateNewComboFromSelection() {
-    if (this.selection.length === 0)
+  #updateNewComboFromSelection(force = false) {
+    if (this.selection.length === 0 && !force)
       return;
 
     let newCombo: TernaryState | null = null;
@@ -140,8 +151,7 @@ export class DrawableOsuSelectTool extends DrawableComposeTool implements IKeyBi
         newCombo = TernaryState.Indeterminate;
     }
 
-    if (newCombo !== null)
-      this.newCombo.value = newCombo;
+    this.newCombo.value = newCombo ?? TernaryState.Inactive;
   }
 
   #getSelectedEdges(slider: Slider, selectionType: SliderSelectionType): number[] {
@@ -211,8 +221,8 @@ export class DrawableOsuSelectTool extends DrawableComposeTool implements IKeyBi
     }
   }
 
-  #updateHitSoundsFromSelection() {
-    if (this.selection.length === 0)
+  #updateHitSoundsFromSelection(force = false) {
+    if (this.selection.length === 0 && !force)
       return;
 
     const hitSounds = new HitSoundStateBuilder();
@@ -245,5 +255,11 @@ export class DrawableOsuSelectTool extends DrawableComposeTool implements IKeyBi
 
     this.hitSounds.sampleSet.value = hitSounds.sampleSet;
     this.hitSounds.additionsSampleSet.value = hitSounds.additionSampleSet;
+  }
+
+  override dispose(isDisposing: boolean = true) {
+    super.dispose(isDisposing);
+
+    this.selection.selectionChanged.removeListener(this.#selectionChanged, this);
   }
 }
