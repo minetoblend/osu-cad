@@ -1,5 +1,6 @@
-import type { DrawableHitObject, HitObjectContainer, IHitPolicy } from '@osucad/common';
+import type { DrawableHitObject, HitObjectContainer } from '@osucad/common';
 import type { DrawableOsuHitObject } from '../hitObjects/drawables/DrawableOsuHitObject';
+import type { IHitPolicy } from './IHitPolicy';
 import { HitResult } from '@osucad/common';
 import { DrawableHitCircle } from '../hitObjects/drawables/DrawableHitCircle';
 import { ClickAction } from './ClickAction';

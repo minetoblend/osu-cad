@@ -1,4 +1,4 @@
-import type { Beatmap, BeatmapConverter, BeatmapProcessor, DifficultyCalculator, DrawableRuleset, HitObjectComposer, IBeatmap, ISkin, SkinTransformer, TimelineHitObjectBlueprintContainer } from '@osucad/common';
+import type { Beatmap, BeatmapConverter, BeatmapProcessor, DifficultyCalculator, DrawableRuleset, EditorRuleset, HitObjectComposer, IBeatmap, ISkin, SkinTransformer } from '@osucad/common';
 import type { IKeyBinding } from 'osucad-framework';
 import { Ruleset, RulesetInfo, StableSkin } from '@osucad/common';
 import { InputKey, KeyBinding, KeyCombination } from 'osucad-framework';
@@ -9,8 +9,8 @@ import { DrawableOsuEditorRuleset } from './DrawableOsuEditorRuleset';
 import { DrawableOsuRuleset } from './DrawableOsuRuleset';
 import { BeatmapComboProcessor } from './edit/BeatmapComboProcessor';
 import { OsuHitObjectComposer } from './edit/OsuHitObjectComposer';
-import { OsuTimelineHitObjectBlueprintContainer } from './edit/timeline/OsuTimelineHitObjectBlueprintContainer';
 import { OsuAction } from './OsuAction';
+import { OsuEditorRuleset } from './OsuEditorRuleset';
 import { StableOsuSkinTransformer } from './skinning/stable/StableOsuSkinTransformer';
 import { StackingProcessor } from './StackingProcessor';
 import { OsuBeatmapVerifier } from './verify/OsuBeatmapVerifier';
@@ -20,6 +20,10 @@ export class OsuRuleset extends Ruleset {
 
   override get legacyId(): number | null {
     return 0;
+  }
+
+  override createEditorRuleset(): EditorRuleset {
+    return new OsuEditorRuleset(this);
   }
 
   override createDrawableRulesetWith(beatmap: IBeatmap) {
@@ -75,9 +79,5 @@ export class OsuRuleset extends Ruleset {
     return [
       new BeatmapComboProcessor(),
     ];
-  }
-
-  override createTimelineHitObjectContainer(): TimelineHitObjectBlueprintContainer | null {
-    return new OsuTimelineHitObjectBlueprintContainer();
   }
 }

@@ -1,6 +1,7 @@
-import type { DrawableHitObject, HitObject, IHitPolicy, JudgementResult } from '@osucad/common';
+import type { DrawableHitObject, HitObject, JudgementResult } from '@osucad/common';
 import type { DrawableOsuHitObject } from '../hitObjects/drawables/DrawableOsuHitObject';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
+import type { IHitPolicy } from './IHitPolicy';
 import { HitObjectLifetimeEntry, OsucadConfigManager, OsucadSettings, Playfield } from '@osucad/common';
 import { Anchor, Axes, BindableBoolean, Container, provide, type ReadonlyDependencyContainer, resolved } from 'osucad-framework';
 import { DrawableHitCircle } from '../hitObjects/drawables/DrawableHitCircle';

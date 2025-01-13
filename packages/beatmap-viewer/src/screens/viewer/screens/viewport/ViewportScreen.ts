@@ -57,7 +57,7 @@ export class ViewportScreen extends EditorScreen {
                 anchor: Anchor.CenterLeft,
                 origin: Anchor.CenterLeft,
                 child:
-                this.ruleset.createTimelineHitObjectContainer() ?? new EmptyDrawable(),
+                  this.ruleset.createEditorRuleset()?.createTimelineHitObjectContainer() ?? new EmptyDrawable(),
               }),
             ],
           }),

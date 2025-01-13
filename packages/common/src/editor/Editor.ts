@@ -6,6 +6,7 @@ import { ControlPointInfo } from '../controlPoints/ControlPointInfo';
 import { UpdateHandler } from '../crdt/UpdateHandler';
 import { PlayfieldClock } from '../gameplay/PlayfieldClock';
 import { IResourcesProvider } from '../io/IResourcesProvider';
+import { EditorRuleset } from '../rulesets/EditorRuleset';
 import { Ruleset } from '../rulesets/Ruleset';
 import { OsucadScreen } from '../screens/OsucadScreen';
 import { BeatmapSkin } from '../skinning/BeatmapSkin';
@@ -53,6 +54,7 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
     const ruleset = this.editorBeatmap.beatmapInfo.ruleset.createInstance();
 
     this.#dependencies.provide(Ruleset, ruleset);
+    this.#dependencies.provide(EditorRuleset, ruleset.createEditorRuleset());
 
     this.#dependencies.provide(EditorBeatmap, this.editorBeatmap);
     this.#dependencies.provide(IBeatmap, this.beatmap);

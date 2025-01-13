@@ -1,3 +1,3 @@
-export * from './IProvideCursor';
-export * from './GlobalCursorDisplay';
 export * from './DefaultCursorContainer';
+export * from './GlobalCursorDisplay';
+export * from './IProvideCursor';

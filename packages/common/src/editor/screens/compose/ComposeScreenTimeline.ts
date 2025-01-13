@@ -2,7 +2,7 @@ import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import type { TimelineHitObjectBlueprintContainer } from '../../ui/timeline/hitObjects/TimelineHitObjectBlueprintContainer';
 import { Anchor, Axes, BindableBoolean, Box, Container, isMobile, provide, resolved } from 'osucad-framework';
 import { OsucadColors } from '../../../OsucadColors';
-import { Ruleset } from '../../../rulesets/Ruleset';
+import { EditorRuleset } from '../../../rulesets/EditorRuleset';
 import { BottomAlignedTickDisplay } from '../../ui/timeline/BottomAlignedTickDisplay';
 import { CurrentTimeOverlay } from '../../ui/timeline/CurrentTimeOverlay';
 import { Timeline } from '../../ui/timeline/Timeline';
@@ -12,8 +12,8 @@ import { ComposeScreenTimelineMobileControls } from './ComposeScreenTimelineMobi
 export class ComposeScreenTimeline extends Timeline {
   readonly interactionEnabled = new BindableBoolean(true);
 
-  @resolved(Ruleset)
-  ruleset!: Ruleset;
+  @resolved(EditorRuleset)
+  editorRuleset!: EditorRuleset;
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
@@ -35,11 +35,7 @@ export class ComposeScreenTimeline extends Timeline {
         height: 0.65,
         anchor: Anchor.CenterLeft,
         origin: Anchor.CenterLeft,
-        children: this.ruleset.createTimelineHitObjectContainer()
-          ? [
-              this.blueprintContainer = this.ruleset.createTimelineHitObjectContainer()!,
-            ]
-          : [],
+        child: this.blueprintContainer = this.editorRuleset.createTimelineHitObjectContainer(),
       }),
       new Container({
         relativeSizeAxes: Axes.X,
@@ -57,5 +53,5 @@ export class ComposeScreenTimeline extends Timeline {
       this.add(new ComposeScreenTimelineMobileControls());
   }
 
-  blueprintContainer?: TimelineHitObjectBlueprintContainer;
+  blueprintContainer!: TimelineHitObjectBlueprintContainer;
 }

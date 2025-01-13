@@ -1,6 +1,5 @@
 export * from './ComposeScreen';
 export * from './ComposeScreenTimeline';
-export * from './ComposeScreenTimelineHitObjectBlueprintContainer';
 export * from './ComposeScreenTimelineMobileControls';
 export * from './ComposeToolbar';
 export * from './ComposeToolButton';

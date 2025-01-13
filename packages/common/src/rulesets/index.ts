@@ -1,5 +1,6 @@
 export * from './difficulty';
 export * from './DrawableRuleset';
+export * from './EditorRuleset';
 export * from './judgements';
 export * from './objects';
 export * from './pooling';

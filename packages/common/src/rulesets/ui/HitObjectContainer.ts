@@ -1,8 +1,8 @@
 import type { DrawableHitObject } from '../../hitObjects/drawables/DrawableHitObject';
 import type { HitObjectLifetimeEntry } from '../../hitObjects/drawables/HitObjectLifetimeEntry';
 import type { HitObject } from '../../hitObjects/HitObject';
-import type { JudgementResult } from '../../hitObjects/index';
 import type { LifetimeEntry } from '../../pooling/LifetimeEntry';
+import type { JudgementResult } from '../judgements/JudgementResult';
 import { Action, Axes, Bindable, LoadState, resolved } from 'osucad-framework';
 import { IPooledHitObjectProvider } from '../../hitObjects/drawables/IPooledHitObjectProvider';
 import { PooledDrawableWithLifetimeContainer } from '../../pooling/PooledDrawableWithLifetimeContainer';

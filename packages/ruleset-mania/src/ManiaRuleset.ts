@@ -1,11 +1,12 @@
-import type { Beatmap, DrawableRuleset, HitObjectComposer, IBeatmap, ISkin, SkinTransformer } from '@osucad/common';
+import type { Beatmap, BeatmapConverter, DrawableRuleset, EditorRuleset, HitObjectComposer, IBeatmap, ISkin, SkinTransformer } from '@osucad/common';
 import type { IKeyBinding } from 'osucad-framework';
 import type { DifficultyCalculator } from 'packages/common/src/rulesets/difficulty/DifficultyCalculator';
 import type { ManiaBeatmap } from './beatmaps/ManiaBeatmap';
 import { Ruleset } from '@osucad/common';
 import { InputKey, KeyBinding } from 'osucad-framework';
 import { ManiaHitObjectComposer } from './edit/ManiaHitObjectComposer';
-
+import { ManiaBeatmapConverter } from './ManiaBeatmapConverter';
+import { ManiaEditorRuleset } from './ManiaEditorRuleset';
 import { ArgonManiaSkinTransformer } from './skinning/argon/ArgonManiaSkinTransformer';
 import { DrawableManiaEditorRuleset } from './ui/DrawableManiaEditorRuleset';
 import { DrawableManiaRuleset } from './ui/DrawableManiaRuleset';
@@ -47,5 +48,13 @@ export class ManiaRuleset extends Ruleset {
 
   override createSkinTransformer(skin: ISkin, beatmap: IBeatmap): SkinTransformer {
     return new ArgonManiaSkinTransformer(skin, beatmap);
+  }
+
+  override createBeatmapConverter(beatmap: IBeatmap): BeatmapConverter<any> {
+    return new ManiaBeatmapConverter(beatmap, this);
+  }
+
+  override createEditorRuleset(): EditorRuleset {
+    return new ManiaEditorRuleset(this);
   }
 }

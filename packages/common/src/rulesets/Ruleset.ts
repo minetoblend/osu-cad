@@ -5,12 +5,12 @@ import type { IBeatmap } from '../beatmap/IBeatmap';
 import type { StableHitObjectParser } from '../beatmap/io/StableHitObjectParser';
 import type { BeatmapProcessor } from '../beatmap/processors/BeatmapProcessor';
 import type { HitObjectComposer } from '../editor/screens/compose/HitObjectComposer';
-import type { TimelineHitObjectBlueprintContainer } from '../editor/ui/timeline/hitObjects/TimelineHitObjectBlueprintContainer';
 import type { ISkin } from '../skinning/ISkin';
 import type { SkinTransformer } from '../skinning/SkinTransformer';
 import type { BeatmapVerifier } from '../verifier/BeatmapVerifier';
 import type { DifficultyCalculator } from './difficulty/DifficultyCalculator';
 import type { DrawableRuleset } from './DrawableRuleset';
+import type { EditorRuleset } from './EditorRuleset';
 import { RulesetInfo } from './RulesetInfo';
 
 export abstract class Ruleset {
@@ -26,9 +26,7 @@ export abstract class Ruleset {
 
   abstract createBeatmapConverter(beatmap: IBeatmap): BeatmapConverter<any>;
 
-  createTimelineHitObjectContainer(): TimelineHitObjectBlueprintContainer | null {
-    return null;
-  }
+  abstract createEditorRuleset(): EditorRuleset;
 
   createEditorBeatmapProcessors(): BeatmapProcessor[] {
     return [];
