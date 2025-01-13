@@ -86,10 +86,25 @@ export class ComposeToolContainer extends CompositeDrawable {
 
   protected readonly operatorExpanded = new BindableBoolean(false);
 
+  readonly #rememberedPropertyCache = new Map<any, any[]>();
+
   beginOperator(operator: Operator, alreadyApplied = false) {
     this.#endOperator();
 
     operator.init();
+
+    if (this.#rememberedPropertyCache.has(operator.constructor)) {
+      const values = this.#rememberedPropertyCache.get(operator.constructor)!;
+      const properties = operator.properties;
+
+      for (let i = 0; i < properties.length; i++) {
+        if (values.length === 0)
+          break;
+
+        if (properties[i].remember)
+          properties[i].value = values.shift();
+      }
+    }
 
     this.#activeOperator = operator;
     this.#operatorContainer.add(
@@ -140,6 +155,17 @@ export class ComposeToolContainer extends CompositeDrawable {
       operator.apply({
         beatmap: this.editorBeatmap,
       });
+
+      const properties = operator.properties;
+
+      const rememberedValues: any[] = [];
+      for (let i = 0; i < properties.length; i++) {
+        if (properties[i].remember)
+          rememberedValues.push(properties[i].value);
+      }
+
+      if (rememberedValues.length > 0)
+        this.#rememberedPropertyCache.set(operator.constructor, rememberedValues);
 
       this.#lastRunHadChanges = this.updateHandler.commit();
     }

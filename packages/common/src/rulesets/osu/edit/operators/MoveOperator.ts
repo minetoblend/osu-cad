@@ -23,6 +23,7 @@ export class MoveOperator extends Operator<OsuHitObject> {
   readonly clampToBounds = new CheckboxOperatorProperty({
     title: 'Clamp to bounds',
     defaultValue: true,
+    remember: true,
   });
 
   override apply(): void {
