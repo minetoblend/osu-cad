@@ -1,8 +1,21 @@
-# osucad
+<p align="center">
+  <a href="https://osucad.com">
+    <img width="200" src="./packages/resources/resources-raw/textures/logo-text.png">
+  </a>
+</p>
 
-<img align="left" width="200" src="./packages/resources/resources-raw/textures/logo-text.png">
+<p align="center">
+  <a href="https://ko-fi.com/maarvin"><img src="https://img.shields.io/badge/Kofi-F16061.svg?logo=ko-fi&logoColor=white" alt="Kofi"></a>
+  <a href="https://github.com/minetoblend/osu-cad/actions/workflows/ci.yml"><img src="https://github.com/minetoblend/osu-cad/actions/workflows/ci.yml/badge.svg?branch=master" alt="build status"></a>
+  <a href="https://discord.gg/JYFTaYDSC6"><img src="https://img.shields.io/badge/chat-discord-blue?style=flat&logo=discord" alt="discord chat"></a>
+  <a href="https://github.com/minetoblend/osu-cad" target="__blank"><img alt="GitHub stars" src="https://img.shields.io/github/stars/minetoblend/osu-cad?style=social"></a>
+</p>
 
-osucad is a third party beatmap editor for [osu](https://osu.ppy.sh).
+<p align="center">
+a third party beatmap editor for [osu](https://osu.ppy.sh).
+</p>
+
+## Project status
 
 The project is still under active development, however the [online beatmap viewer](https://viewer.osucad.com) can already be used.
 
@@ -42,6 +55,6 @@ The osu ruleset is currently part of the common package, however it will eventua
 
 The desktop client package is currently broken, until the migration to the common package is complete.
 
-## Support me [![Kofi](https://img.shields.io/badge/Kofi-F16061.svg?logo=ko-fi&logoColor=white)](https://ko-fi.com/maarvin)
+## Support this project
 
-If you like this project, please consider supporting me on [Kofi](https://ko-fi.com/maarvin).
+If you like this project, please consider supporting it on [Kofi](https://ko-fi.com/maarvin).
