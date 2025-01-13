@@ -9,6 +9,8 @@ import { PlayfieldGrid } from './edit/PlayfieldGrid';
 export class DrawableOsuEditorRuleset extends DrawableOsuRuleset {
   constructor(ruleset: Ruleset, beatmap: IBeatmap<OsuHitObject>) {
     super(ruleset, beatmap);
+
+    this.preventInputManager = true;
   }
 
   override createPlayfield(): OsuPlayfield {

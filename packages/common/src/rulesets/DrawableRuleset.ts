@@ -41,6 +41,8 @@ export abstract class DrawableRuleset<TObject extends HitObject = any> extends C
 
   protected keyBindingInputManager: PassThroughInputManager;
 
+  preventInputManager = false;
+
   protected constructor(readonly ruleset: Ruleset, beatmap: IBeatmap<TObject>) {
     super();
     this.#beatmap = beatmap;
@@ -63,15 +65,20 @@ export abstract class DrawableRuleset<TObject extends HitObject = any> extends C
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
-    this.internalChildren = [
-      this.keyBindingInputManager
-        .with({
-          children: [
-            this.#playfieldAdjustmentContainer = this.createPlayfieldAdjustmentContainer(),
-            this.overlays,
-          ],
-        }),
-    ];
+    this.internalChildren = this.preventInputManager
+      ? [
+          this.#playfieldAdjustmentContainer = this.createPlayfieldAdjustmentContainer(),
+          this.overlays,
+        ]
+      : [
+          this.keyBindingInputManager
+            .with({
+              children: [
+                this.#playfieldAdjustmentContainer = this.createPlayfieldAdjustmentContainer(),
+                this.overlays,
+              ],
+            }),
+        ];
   }
 
   #loadObjects() {
