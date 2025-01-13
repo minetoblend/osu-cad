@@ -412,10 +412,6 @@ export class CompositeDrawable extends Drawable {
     super.relativeSizeAxes = value;
   }
 
-  override get boundingBox(): Rectangle {
-    return super.boundingBox;
-  }
-
   override onInvalidate(invalidation: Invalidation, source: InvalidationSource): boolean {
     let anyInvalidated = super.onInvalidate(invalidation, source);
 
