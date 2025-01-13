@@ -2,6 +2,7 @@ import type { ClickEvent, HoverEvent, MouseDownEvent, MouseUpEvent, ReadonlyDepe
 import type { Operator } from './Operator';
 import { getIcon } from '@osucad/resources';
 import { Anchor, Axes, BindableBoolean, CompositeDrawable, Container, DrawableSprite, EasingFunction, FastRoundedBox, FillDirection, FillFlowContainer, provide, resolved, TabbableContainer, Vec2 } from 'osucad-framework';
+import { BackdropBlurFilter } from 'pixi-filters';
 import { OsucadSpriteText } from '../../../../drawables/OsucadSpriteText';
 import { OsucadColors } from '../../../../OsucadColors';
 import { HitObjectComposer } from '../HitObjectComposer';
@@ -15,6 +16,15 @@ export class OperatorBox extends CompositeDrawable {
 
     this.anchor = Anchor.BottomLeft;
     this.origin = Anchor.BottomLeft;
+
+    const filter = new BackdropBlurFilter({
+      strength: 10,
+      antialias: 'inherit',
+      resolution: devicePixelRatio,
+    });
+    filter.padding = 15;
+
+    this.filters = [filter];
 
     this.internalChildren = [
       new FastRoundedBox({
