@@ -24,7 +24,9 @@ export class DrawablePenTool extends DrawableModdingTool {
 
   override onMouseMove(e: MouseMoveEvent): boolean {
     if (this.#drawing) {
-      this.#drawing.path.push(new StrokePoint(e.mousePosition, e.pressure * 3));
+      const pressure = e.pressure || 1;
+
+      this.#drawing.path.push(new StrokePoint(this.playfieldMousePosition, pressure * 3));
       this.#drawing.updatePath();
     }
     return true;
