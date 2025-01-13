@@ -66,8 +66,8 @@ export class SliderSelectionBlueprint extends OsuSelectionBlueprint<Slider> {
       }),
     );
 
-    this.positionBindable.addOnChangeListener(() => this.updatePosition());
-    this.stackHeightBindable.addOnChangeListener(() => this.updatePosition());
+    this.positionBindable.addOnChangeListener(() => this.#updatePositions());
+    this.stackHeightBindable.addOnChangeListener(() => this.#updatePositions());
     this.scaleBindable.addOnChangeListener((scale) => {
       this.headCircle.scale = scale.value;
       this.tailCircle.scale = scale.value;
@@ -94,10 +94,6 @@ export class SliderSelectionBlueprint extends OsuSelectionBlueprint<Slider> {
     super.onDefaultsApplied(hitObject);
 
     this.updatePosition();
-  }
-
-  protected updatePosition() {
-    this.scheduler.addOnce(this.#updatePositions, this);
   }
 
   preventSelection = false;
@@ -169,6 +165,10 @@ export class SliderSelectionBlueprint extends OsuSelectionBlueprint<Slider> {
     else {
       this.sliderPathContainer.clear();
     }
+  }
+
+  updatePosition() {
+    this.scheduler.addOnce(this.#updatePositions, this);
   }
 
   #updatePositions() {

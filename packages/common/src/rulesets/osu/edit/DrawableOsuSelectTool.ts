@@ -17,6 +17,7 @@ import { GlobalNewComboBindable } from './GlobalNewComboBindable';
 import { HitSoundStateBuilder } from './HitSoundStateBuilder';
 import { MobileControlButton } from './MobileEditorControls';
 import { ConvertToStreamOperator } from './operators/ConvertToStreamOperator';
+import { MoveInteraction } from './operators/MoveInteraction';
 import { RotateInteraction } from './operators/RotateInteraction';
 import { RotateOperator } from './operators/RotateOperator';
 import { OsuHitObjectComposer } from './OsuHitObjectComposer';
@@ -151,13 +152,19 @@ export class DrawableOsuSelectTool extends DrawableComposeTool implements IKeyBi
       case EditorAction.RotateCCW:
         this.rotateSelection(-90);
         return true;
-      case EditorAction.Rotate:
-        this.playfieldOverlay.add(
-          new RotateInteraction(
-            [...this.selection.selectedObjects].filter(it => !(it instanceof Spinner)) as OsuHitObject[],
-          ),
-        );
+      case EditorAction.Move: {
+        const objects = this.selectedNonSpinnerObjects;
+        if (objects.length > 0)
+          this.playfieldOverlay.add(new MoveInteraction(objects));
         return true;
+      }
+      case EditorAction.Rotate: {
+        const objects = this.selectedNonSpinnerObjects;
+        if (objects.length > 0)
+          this.playfieldOverlay.add(new RotateInteraction(objects));
+        return true;
+      }
+
       case EditorAction.ConvertToStream:
         this.convertToStream();
         return true;
@@ -172,6 +179,10 @@ export class DrawableOsuSelectTool extends DrawableComposeTool implements IKeyBi
     }
 
     return false;
+  }
+
+  get selectedNonSpinnerObjects(): OsuHitObject[] {
+    return [...this.selection.selectedObjects].filter(it => !(it instanceof Spinner)) as OsuHitObject[];
   }
 
   rotateSelection(angle: number) {
