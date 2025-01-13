@@ -26,8 +26,8 @@ export class DrawableWaveform extends CompositeDrawable {
     startTime = Math.max(startTime, 0);
     endTime = Math.min(endTime, buffer.duration * 1000);
 
-    const sampleDuration = 1;
-    const stepSize = 4;
+    const sampleDuration = 2;
+    const stepSize = 10;
 
     const samplesPerPoint = Math.floor(buffer.sampleRate * sampleDuration * 0.001);
 
