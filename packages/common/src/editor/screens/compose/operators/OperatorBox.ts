@@ -1,9 +1,10 @@
 import type { ClickEvent, HoverEvent, MouseDownEvent, MouseUpEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Operator } from './Operator';
 import { getIcon } from '@osucad/resources';
-import { Anchor, Axes, BindableBoolean, CompositeDrawable, Container, DrawableSprite, EasingFunction, FastRoundedBox, FillDirection, FillFlowContainer, provide, TabbableContainer, Vec2 } from 'osucad-framework';
+import { Anchor, Axes, BindableBoolean, CompositeDrawable, Container, DrawableSprite, EasingFunction, FastRoundedBox, FillDirection, FillFlowContainer, provide, resolved, TabbableContainer, Vec2 } from 'osucad-framework';
 import { OsucadSpriteText } from '../../../../drawables/OsucadSpriteText';
 import { OsucadColors } from '../../../../OsucadColors';
+import { HitObjectComposer } from '../HitObjectComposer';
 
 @provide(OperatorBox)
 export class OperatorBox extends CompositeDrawable {
@@ -26,10 +27,10 @@ export class OperatorBox extends CompositeDrawable {
         direction: FillDirection.Vertical,
         autoSizeAxes: Axes.Both,
         padding: 6,
-        spacing: new Vec2(4),
         masking: true,
         autoSizeEasing: EasingFunction.OutExpo,
         children: [
+          new Container({ width: 100 }),
           new OperatorTitle(operator.title, this.expanded),
           this.#content = new FillFlowContainer({
             direction: FillDirection.Vertical,
@@ -56,6 +57,9 @@ export class OperatorBox extends CompositeDrawable {
       ...properties.map(property => property.createDrawableRepresentation()),
     );
   }
+
+  @resolved(HitObjectComposer)
+  composer!: HitObjectComposer;
 
   protected override loadComplete() {
     super.loadComplete();
