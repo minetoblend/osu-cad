@@ -7,6 +7,7 @@ import { Matrix } from 'pixi.js';
 import { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 import { EditorClock } from '../../../editor/EditorClock';
 import { HitObjectComposer } from '../../../editor/screens/compose/HitObjectComposer';
+import { OperatorBox } from '../../../editor/screens/compose/operators/OperatorBox';
 import { Additions } from '../../../hitsounds/Additions';
 import { OsucadColors } from '../../../OsucadColors';
 import { HitCircle } from '../hitObjects/HitCircle';
@@ -19,6 +20,7 @@ import { HitCirclePlacementTool } from './HitCirclePlacementTool';
 import { IDistanceSnapProvider } from './IDistanceSnapProvider';
 import { IPositionSnapProvider } from './IPositionSnapProvider';
 import { NewComboToggleButton } from './NewComboToggleButton';
+import { MoveOperator } from './operators/MoveOperator';
 import { OsuSelectionManager } from './OsuSelectionManager';
 import { OsuSelectTool } from './OsuSelectTool';
 import { PlayfieldGrid } from './PlayfieldGrid';
@@ -162,5 +164,15 @@ export class OsuHitObjectComposer extends HitObjectComposer implements IPosition
 
     for (const hitObject of hitObjects)
       this.transformHitObject(hitObject, matrix);
+  }
+
+  protected override loadComplete() {
+    super.loadComplete();
+
+    this.playfieldContainer.add(
+      new OperatorBox(
+        new MoveOperator(),
+      ),
+    );
   }
 }

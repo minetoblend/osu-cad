@@ -88,7 +88,14 @@ export class KeyboardHandler extends InputHandler {
 
   #shouldPreventDefault(event: KeyboardEvent): boolean {
     // We generally don't want to prevent the default behavior if there is active text input
-    if (this.#textInputSource.isActive)
+    if (this.#textInputSource.isActive) {
+      if (event.key === Key.Tab)
+        return true;
+
+      return false;
+    }
+
+    if (event.key === 'I' && event.shiftKey && (event.ctrlKey || event.metaKey))
       return false;
 
     return true;

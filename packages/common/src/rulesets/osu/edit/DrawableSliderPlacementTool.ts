@@ -29,7 +29,7 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
   protected readonly sliderPathVisualizer = new SliderPathVisualizer();
 
   protected readonly beginPlacementModifier = new ToolModifier(InputKey.MouseLeftButton, 'Begin placement', ModifierType.Action);
-  protected readonly endPlacementModifier = new ToolModifier(InputKey.MouseRightButton, 'End placement', ModifierType.Action);
+  protected readonly endPlacementModifier = new ToolModifier(InputKey.MouseRightButton, 'Confirm', ModifierType.Action);
   protected readonly cycleCurveTypeModifier = new ToolModifier(InputKey.Tab, 'Cycle curve type', ModifierType.Action);
   protected readonly toggleNewComboModifier = new ToolModifier(InputKey.MouseRightButton, 'Toggle new combo', ModifierType.Action);
   protected readonly beginSegmentModifier = new ToolModifier(InputKey.Control, 'Begin new segment', ModifierType.Temporary);

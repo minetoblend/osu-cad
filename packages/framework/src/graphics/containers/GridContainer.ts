@@ -15,6 +15,8 @@ const sumOf = (values: number[]) => values.reduce((a, b) => a + b, 0);
 
 export interface GridContainerOptions extends CompositeDrawableOptions {
   content?: GridContainerContent;
+  rowDimensions?: readonly Dimension[];
+  columnDimensions?: readonly Dimension[];
 }
 
 export class GridContainer extends CompositeDrawable {
