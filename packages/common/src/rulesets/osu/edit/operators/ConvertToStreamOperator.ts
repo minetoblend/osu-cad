@@ -4,6 +4,7 @@ import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import type { Slider } from '../../hitObjects/Slider';
 import { BindableNumber, resolved } from 'osucad-framework';
 import { EditorClock } from '../../../../editor/EditorClock';
+import { HitObjectSelectionManager } from '../../../../editor/screens/compose/HitObjectSelectionManager';
 import { Operator } from '../../../../editor/screens/compose/operators/Operator';
 import { FloatOperatorProperty } from '../../../../editor/screens/compose/operators/properties/FloatOperatorProperty';
 import { HitCircle } from '../../hitObjects/HitCircle';
@@ -36,6 +37,9 @@ export class ConvertToStreamOperator extends Operator<OsuHitObject> {
   @resolved(EditorClock)
   editorClock!: EditorClock;
 
+  @resolved(HitObjectSelectionManager)
+  selection!: HitObjectSelectionManager;
+
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
@@ -67,6 +71,7 @@ export class ConvertToStreamOperator extends Operator<OsuHitObject> {
         circle.newCombo = this.slider.newCombo;
 
       beatmap.hitObjects.add(circle);
+      this.selection.select(circle);
     }
 
     beatmap.hitObjects.remove(this.slider);
