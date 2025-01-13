@@ -4,9 +4,9 @@ import { AudioManager, Axes, Box, DependencyContainer, Game, IRenderer, provide,
 import { RenderTarget } from 'pixi.js';
 import { AudioMixer } from './audio/AudioMixer';
 import { OsucadConfigManager } from './config/OsucadConfigManager';
+import { SafeAreaContainer } from './drawables/SafeAreaContainer';
 import { Fit, ScalingContainer } from './drawables/ScalingContainer';
 import { UIFonts } from './drawables/UIFonts';
-
 import { VirtualKeyboardSafeAreaContainer } from './drawables/VirtualKeyboardSafeAreaContainer';
 import { EditorActionContainer } from './editor/EditorActionContainer';
 import { GlobalCursorDisplay } from './graphics/cursor/GlobalCursorDisplay';
@@ -52,17 +52,19 @@ export abstract class OsucadGameBase extends Game implements IResourcesProvider 
         color: 0x000000,
         depth: 1,
       }),
-      new ScalingContainer({
-        desiredSize: {
-          x: 960,
-          y: 768,
-        },
-        fit: Fit.Fill,
-        child: new PerformanceOverlay({
-          child: new EditorActionContainer({
-            child: new VirtualKeyboardSafeAreaContainer({
-              child: new ContextMenuContainer({
-                child: this.#content = new PreferencesContainer(),
+      new SafeAreaContainer({
+        child: new ScalingContainer({
+          desiredSize: {
+            x: 960,
+            y: 768,
+          },
+          fit: Fit.Fill,
+          child: new PerformanceOverlay({
+            child: new EditorActionContainer({
+              child: new VirtualKeyboardSafeAreaContainer({
+                child: new ContextMenuContainer({
+                  child: this.#content = new PreferencesContainer(),
+                }),
               }),
             }),
           }),

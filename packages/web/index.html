@@ -6,10 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>osucad</title>
     <style>
-      body {
+      html, body {
         margin: 0;
         padding: 0;
         overflow: hidden;
+        overscroll-behavior-x: none;
+      }
+
+      :root {
+        --sat: env(safe-area-inset-top);
+        --sar: env(safe-area-inset-right);
+        --sab: env(safe-area-inset-bottom);
+        --sal: env(safe-area-inset-left);
       }
     </style>
   </head>
