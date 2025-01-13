@@ -36,12 +36,12 @@ export class ComposeScreen extends EditorScreen {
   override createTopBarContent(): Drawable {
     return new Container({
       relativeSizeAxes: Axes.X,
-      height: 80,
+      height: 75,
       children: [
         new Box({
           relativeSizeAxes: Axes.Both,
           color: OsucadColors.translucent,
-          alpha: 0.8,
+          alpha: 0.5,
         }),
         this.#composer.topBar,
       ],

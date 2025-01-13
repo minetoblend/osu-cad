@@ -48,11 +48,8 @@ export class IssueSection extends CompositeDrawable {
 
     let sectionName = 'General';
 
-    if (this.beatmap) {
+    if (this.beatmap)
       sectionName = this.beatmap.beatmapInfo.difficultyName;
-      if (this.beatmap.starRating !== null)
-        sectionName += ` (${this.beatmap.starRating.toFixed(2)}*)`;
-    }
 
     this.autoSizeAxes = Axes.Both;
     this.addAllInternal(

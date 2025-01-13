@@ -83,7 +83,7 @@ export class ModdingScreen extends EditorScreen {
     this.addAllInternal(
       this.#mainContent = new Container({
         relativeSizeAxes: Axes.Both,
-        width: 0.7,
+        width: 0.55,
         child: this.#playfieldContainer = new ModelBackedEditorBeatmapProvidingContainer(
           this.activeEditorBeatmap,
           () => new ModdingComposer()
@@ -107,8 +107,8 @@ export class ModdingScreen extends EditorScreen {
         relativePositionAxes: Axes.Both,
         anchor: Anchor.TopRight,
         origin: Anchor.TopRight,
-        skew: new Vec2(-0.075, 0),
-        width: 0.25,
+        skew: new Vec2(-0.05, 0),
+        width: 0.35,
         children: [
           new Box({
             relativeSizeAxes: Axes.Both,
@@ -141,12 +141,12 @@ export class ModdingScreen extends EditorScreen {
   override createTopBarContent(): Drawable {
     return new Container({
       relativeSizeAxes: Axes.X,
-      height: 80,
+      height: 75,
       children: [
         new Box({
           relativeSizeAxes: Axes.Both,
           color: OsucadColors.translucent,
-          alpha: 0.8,
+          alpha: 0.5,
         }),
         this.#timelineContainer = new Container({
           relativeSizeAxes: Axes.Both,
@@ -179,7 +179,7 @@ export class ModdingScreen extends EditorScreen {
   protected override adjustBackground(background: BackgroundAdjustment) {
     super.adjustBackground(background);
 
-    background.scale = 1.1;
+    background.scale = 1.25;
     background.moveDuration = 300;
     background.resizeDuration = 300;
   }
