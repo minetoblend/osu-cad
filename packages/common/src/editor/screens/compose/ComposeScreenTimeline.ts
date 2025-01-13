@@ -29,7 +29,7 @@ export class ComposeScreenTimeline extends Timeline {
       }),
     );
 
-    this.addAll(
+    this.addRange([
       new Container({
         relativeSizeAxes: Axes.Both,
         height: 0.65,
@@ -44,8 +44,7 @@ export class ComposeScreenTimeline extends Timeline {
         origin: Anchor.BottomLeft,
         child: new BottomAlignedTickDisplay(),
       }),
-
-    );
+    ]);
 
     this.addInternal(new CurrentTimeOverlay());
 

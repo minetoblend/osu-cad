@@ -77,14 +77,17 @@ export abstract class GameHost {
 
     this.clock.processFrame();
 
+    let startTime = FrameStatistics.updateSubTree.start();
     this.root.updateSubTree();
+    FrameStatistics.updateSubTree.stop(startTime);
+
+    startTime = FrameStatistics.updateSubTreeTransforms.start();
     this.root.updateSubTreeTransforms();
+    FrameStatistics.updateSubTreeTransforms.stop(startTime);
   }
 
   protected render() {
-    const startTime = performance.now();
-    this.renderer.render(this.root!);
-    FrameStatistics.drawTime = performance.now() - startTime;
+    FrameStatistics.draw.measure(() => this.renderer.render(this.root!));
   }
 
   async takeScreenshot(): Promise<Blob> {
@@ -133,7 +136,7 @@ export abstract class GameHost {
       const startTime = performance.now();
       this.update();
       this.render();
-      FrameStatistics.frameTime = performance.now() - startTime;
+      FrameStatistics.frame.stop(startTime);
       await new Promise(resolve => requestAnimationFrame(resolve));
     }
 

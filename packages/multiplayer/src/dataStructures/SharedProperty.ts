@@ -48,4 +48,10 @@ export class SharedProperty<T> {
   #valueChanged(evt: ValueChangedEvent<T>) {
     this.target.onPropertyChanged(this, evt.previousValue, !this.#suppressEvents);
   }
+
+  pendingVersion?: number;
+
+  get hasPendingChanges() {
+    return this.pendingVersion !== undefined;
+  }
 }

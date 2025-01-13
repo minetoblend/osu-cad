@@ -44,7 +44,6 @@ export class ModelBackedEditorBeatmapProvidingContainer extends CompositeDrawabl
   async #presentNewBeatmap(beatmap: EditorBeatmap) {
     const container = new EditorBeatmapProvidingContainer(beatmap, {
       children: [...arrayify(this.createContent(beatmap))],
-      alpha: 0,
       anchor: Anchor.Center,
       origin: Anchor.Center,
     });
@@ -73,12 +72,6 @@ export class ModelBackedEditorBeatmapProvidingContainer extends CompositeDrawabl
 
     this.addInternal(this.#current = container);
     this.updateSubTree();
-
-    container.doWhenLoaded(it =>
-      it.fadeIn(200)
-        .scaleTo(1.1)
-        .scaleTo(1, 300, EasingFunction.OutExpo),
-    );
 
     this.#spinner.fadeOut(200);
 

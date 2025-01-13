@@ -26,7 +26,7 @@ export class BorderLayout extends CompositeDrawable {
 
     this.addLayout(this.#layoutBacking);
 
-    this.addAllInternal(
+    this.internalChildren = [
       this.#center = new Container({
         relativeSizeAxes: Axes.Both,
         child: center,
@@ -55,7 +55,7 @@ export class BorderLayout extends CompositeDrawable {
         anchor: Anchor.BottomLeft,
         origin: Anchor.BottomLeft,
       }),
-    );
+    ];
 
     this.with(rest);
 
@@ -73,6 +73,7 @@ export class BorderLayout extends CompositeDrawable {
 
   set center(value) {
     this.#center.child = value;
+    this.changeInternalChildDepth(this.#center, value.depth);
   }
 
   get north() {
@@ -81,6 +82,7 @@ export class BorderLayout extends CompositeDrawable {
 
   set north(value) {
     this.#north.child = value;
+    this.changeInternalChildDepth(this.#north, value.depth);
   }
 
   get south() {
@@ -89,6 +91,7 @@ export class BorderLayout extends CompositeDrawable {
 
   set south(value) {
     this.#north.child = value;
+    this.changeInternalChildDepth(this.#south, value.depth);
   }
 
   get east() {
@@ -97,6 +100,7 @@ export class BorderLayout extends CompositeDrawable {
 
   set east(value) {
     this.#east.child = value;
+    this.changeInternalChildDepth(this.#east, value.depth);
   }
 
   get west() {
@@ -105,6 +109,7 @@ export class BorderLayout extends CompositeDrawable {
 
   set west(value) {
     this.#west.child = value;
+    this.changeInternalChildDepth(this.#west, value.depth);
   }
 
   readonly #center: Container;

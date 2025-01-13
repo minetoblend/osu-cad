@@ -1,6 +1,7 @@
-import type { ScreenExitEvent } from 'osucad-framework';
+import type { Bindable, ScreenExitEvent } from 'osucad-framework';
+import type { Texture } from 'pixi.js';
 import type { EditorBeatmap } from './EditorBeatmap';
-import { Anchor, Axes, DrawableSprite, FillMode, loadTexture } from 'osucad-framework';
+import { Anchor, Axes, DrawableSprite, FillMode } from 'osucad-framework';
 import { BackgroundScreen } from '../screens/BackgroundScreen';
 
 export class EditorBackground extends BackgroundScreen {
@@ -15,6 +16,10 @@ export class EditorBackground extends BackgroundScreen {
     this.origin = Anchor.Center;
   }
 
+  texture!: Bindable<Texture | null>;
+
+  #currentBackground?: DrawableSprite;
+
   protected override loadComplete() {
     super.loadComplete();
 
@@ -22,11 +27,16 @@ export class EditorBackground extends BackgroundScreen {
     if (!filename)
       return;
 
-    this.editorBeatmap.fileStore.getFile(filename)?.getData().then(data => loadTexture(data)).then((texture) => {
+    this.texture = this.editorBeatmap.backgroundTexture.getBoundCopy();
+
+    this.texture.bindValueChanged((texture) => {
+      this.#currentBackground?.fadeOut(500).expire();
+
       if (!texture)
         return;
-      const sprite = new DrawableSprite({
-        texture,
+
+      const sprite = this.#currentBackground = new DrawableSprite({
+        texture: texture.value,
         relativeSizeAxes: Axes.Both,
         fillMode: FillMode.Fill,
         anchor: Anchor.Center,
@@ -35,7 +45,7 @@ export class EditorBackground extends BackgroundScreen {
 
       this.addInternal(sprite);
       sprite.fadeTo(0).fadeTo(0.75, 500);
-    });
+    }, true);
   }
 
   override onExiting(e: ScreenExitEvent): boolean {

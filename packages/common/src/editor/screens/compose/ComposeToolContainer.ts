@@ -3,7 +3,7 @@ import type { DrawableComposeTool } from './DrawableComposeTool';
 import type { IComposeTool } from './IComposeTool';
 import type { Operator } from './operators/Operator';
 import { UpdateHandler } from '@osucad/multiplayer';
-import { Action, Axes, BindableBoolean, CompositeDrawable, Container, FillDirection, FillFlowContainer, resolved, Vec2 } from 'osucad-framework';
+import { Action, Anchor, Axes, BindableBoolean, CompositeDrawable, Container, FillDirection, FillFlowContainer, resolved, Vec2 } from 'osucad-framework';
 import { EditorBeatmap } from '../../EditorBeatmap';
 import { EditorClock } from '../../EditorClock';
 import { DrawableToolModifier } from './DrawableToolModifier';
@@ -37,6 +37,8 @@ export class ComposeToolContainer extends CompositeDrawable {
     autoSizeAxes: Axes.Both,
     spacing: new Vec2(10),
     padding: { vertical: 4 },
+    anchor: Anchor.CenterLeft,
+    origin: Anchor.CenterLeft,
   });
 
   readonly #toolContainer = new Container({

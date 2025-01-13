@@ -1,53 +1,165 @@
-import type {
-  ReadonlyDependencyContainer,
-} from 'osucad-framework';
-import {
-  Axes,
-  CompositeDrawable,
-  EasingFunction,
-  Invalidation,
-  LayoutMember,
-} from 'osucad-framework';
+import type { EditorScreen } from './screens/EditorScreen';
+import type { EditorCornerContent } from './ui/EditorCornerContent';
+import { Anchor, Axes, BetterBackdropBlurFilter, Bindable, CompositeDrawable, Container, EasingFunction, Invalidation, LayoutMember, Vec2 } from 'osucad-framework';
 import { EditorBottomBar } from './bottomBar/EditorBottomBar';
-import { EditorHeader } from './header/EditorHeader';
+import { EditorSafeArea } from './EditorSafeArea';
+import { EditorMenuBar } from './header/EditorMenuBar';
 import { EditorScreenContainer } from './screens/EditorScreenContainer';
+import { Corner } from './ui/Corner';
+import { EditorCornerPiece } from './ui/EditorCornerPiece';
+import { EditorScreenSelect } from './ui/EditorScreenSelect';
 
 export class EditorLayout extends CompositeDrawable {
   constructor() {
     super();
 
     this.addLayout(this.#drawSizeBacking);
-  }
-
-  protected override load(dependencies: ReadonlyDependencyContainer) {
-    super.load(dependencies);
 
     this.relativeSizeAxes = Axes.Both;
+
+    const filter = new BetterBackdropBlurFilter({
+      strength: 15,
+      quality: 3,
+      antialias: 'inherit',
+      resolution: devicePixelRatio,
+    });
 
     this.internalChildren = [
       this.#screenContainer = new EditorScreenContainer(),
       this.#bottomBar = new EditorBottomBar(),
-      this.#header = new EditorHeader(),
+      this.#topBar = new Container({
+        relativeSizeAxes: Axes.X,
+        autoSizeAxes: Axes.Y,
+      }),
+      new Container({
+        relativeSizeAxes: Axes.X,
+        autoSizeAxes: Axes.Y,
+        filters: [filter],
+        children: [
+          this.#topLeftCornerPiece = new EditorCornerPiece({
+            corner: Corner.TopLeft,
+            autoSizeAxes: Axes.X,
+            height: 95,
+            autoSizeDuration: 300,
+            autoSizeEasing: EasingFunction.OutExpo,
+            children: [
+              new Container({ width: 200 }),
+              new Container({
+                autoSizeAxes: Axes.X,
+                height: 25,
+                padding: { right: 20 },
+                child: new EditorMenuBar(),
+                depth: -1,
+              }),
+              this.#topLeftContent = new Container({
+                autoSizeAxes: Axes.X,
+                relativeSizeAxes: Axes.Y,
+                padding: { right: 25, top: 25 },
+              }),
+            ],
+          }),
+          this.#topRightCornerPiece = new EditorCornerPiece({
+            corner: Corner.TopRight,
+            height: 95,
+            autoSizeAxes: Axes.X,
+            anchor: Anchor.TopRight,
+            origin: Anchor.TopRight,
+            autoSizeDuration: 300,
+            autoSizeEasing: EasingFunction.OutExpo,
+            children: [
+              new Container({ width: 100 }),
+              new Container({
+                autoSizeAxes: Axes.X,
+                height: 25,
+                padding: { left: 20 },
+                child: new EditorScreenSelect(),
+              }),
+              this.#topRightContent = new Container({
+                autoSizeAxes: Axes.X,
+                relativeSizeAxes: Axes.Y,
+                anchor: Anchor.TopRight,
+                origin: Anchor.TopRight,
+                padding: { left: 25, top: 25 },
+              }),
+            ],
+          }),
+        ],
+      }),
     ];
   }
 
   readonly #drawSizeBacking = new LayoutMember(Invalidation.DrawSize);
 
-  #header!: EditorHeader;
+  readonly #bottomBar: EditorBottomBar;
 
-  #bottomBar!: EditorBottomBar;
+  readonly #screenContainer: EditorScreenContainer;
 
-  #screenContainer!: EditorScreenContainer;
+  readonly #topLeftContent: Container<EditorCornerContent>;
+
+  readonly #topRightContent: Container<EditorCornerContent>;
+
+  readonly #topBar: Container;
+
+  readonly #topLeftCornerPiece: EditorCornerPiece;
+
+  readonly #topRightCornerPiece: EditorCornerPiece;
+
+  #activeScreen?: EditorScreen;
+
+  protected override loadComplete() {
+    super.loadComplete();
+
+    this.#screenContainer.screenChanged.addListener((screen) => {
+      this.#activeScreen?.safeAreaPadding.unbindAll();
+
+      this.#activeScreen = screen;
+
+      screen.safeAreaPadding.bindTo(this.safeArea);
+
+      this.#topBar.child = screen.topBarContent;
+
+      const topLeftPrevious = this.#topLeftContent.children[this.#topLeftContent.children.length - 1];
+
+      topLeftPrevious?.onExiting(screen.topLeftCornerContent);
+      topLeftPrevious?.expire();
+
+      const topRightPrevious = this.#topRightContent.children[this.#topRightContent.children.length - 1];
+
+      topRightPrevious?.onExiting(screen.topRightCornerContent);
+      topRightPrevious?.expire();
+
+      this.#topLeftContent.add(
+        screen.topLeftCornerContent.doWhenLoaded(it => it.onEntering(topLeftPrevious)),
+      );
+      this.#topRightContent.add(
+        screen.topRightCornerContent.doWhenLoaded(it => it.onEntering(topRightPrevious)),
+      );
+    });
+  }
+
+  #topBarHeight = 0;
+
+  readonly safeArea = new Bindable(EditorSafeArea.default);
 
   override update() {
     super.update();
 
-    if (!this.#drawSizeBacking.isValid) {
-      this.#screenContainer.padding = {
-        top: this.#header.drawHeight,
-      };
+    const topBarHeight = this.#topBar.drawHeight;
 
-      this.#drawSizeBacking.validate();
+    const safeAreas = new EditorSafeArea({
+      totalSize: this.drawSize,
+      topInner: this.#topBar.drawHeight,
+      bottomInner: 30,
+      topLeft: this.#topLeftCornerPiece.drawSize,
+      topRight: this.#topRightCornerPiece.drawSize,
+      bottomLeft: new Vec2(140, 48),
+      bottomRight: new Vec2(140, 48),
+    });
+
+    if (topBarHeight !== this.#topBarHeight || !safeAreas.equals(this.safeArea.value)) {
+      this.#topBarHeight = topBarHeight;
+
+      this.safeArea.value = safeAreas;
     }
   }
 
@@ -55,17 +167,10 @@ export class EditorLayout extends CompositeDrawable {
     this.#bottomBar
       .moveToY(100)
       .moveToY(0, 300, EasingFunction.OutExpo);
-
-    this.#header
-      .moveToY(-50)
-      .moveToY(0, 300, EasingFunction.OutExpo);
   }
 
   override hide() {
     this.#bottomBar
       .moveToY(100, 200, EasingFunction.OutExpo);
-
-    this.#header
-      .moveToY(-50, 200, EasingFunction.OutExpo);
   }
 }

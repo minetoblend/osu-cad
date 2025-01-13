@@ -9,6 +9,7 @@ import { UIFonts } from './drawables/UIFonts';
 import { EditorActionContainer } from './editor/EditorActionContainer';
 import { GlobalCursorDisplay } from './graphics/cursor/GlobalCursorDisplay';
 import { IResourcesProvider } from './io/IResourcesProvider';
+import { PerformanceOverlay } from './overlays/PerformanceOverlay';
 import { PreferencesContainer } from './overlays/preferences/PreferencesContainer';
 import { ContextMenuContainer } from './userInterface/ContextMenuContainer';
 
@@ -55,9 +56,11 @@ export abstract class OsucadGameBase extends Game implements IResourcesProvider 
           y: 768,
         },
         fit: Fit.Fill,
-        child: new EditorActionContainer({
-          child: new ContextMenuContainer({
-            child: this.#content = new PreferencesContainer(),
+        child: new PerformanceOverlay({
+          child: new EditorActionContainer({
+            child: new ContextMenuContainer({
+              child: this.#content = new PreferencesContainer(),
+            }),
           }),
         }),
       }),

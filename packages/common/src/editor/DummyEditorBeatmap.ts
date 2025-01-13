@@ -1,9 +1,11 @@
 import type { Beatmap } from '../beatmap';
+import { loadTexture } from 'osucad-framework';
 import { StableBeatmapParser } from '../beatmap';
 import { SimpleFile } from '../beatmap/io/SimpleFile';
 import { StaticFileStore } from '../beatmap/io/StaticFileStore';
 import { EffectPoint } from '../controlPoints';
 import audioUrl from './audio.mp3?url';
+import dummyBackground from './dummy-background.jpeg';
 import { EditorBeatmap } from './EditorBeatmap';
 
 export class DummyEditorBeatmap extends EditorBeatmap {
@@ -25,6 +27,10 @@ export class DummyEditorBeatmap extends EditorBeatmap {
 
     this.beatmap.controlPoints.add(new EffectPoint(1000, true));
     this.beatmap.controlPoints.add(new EffectPoint(2000, false));
+  }
+
+  protected override async loadBackground(): Promise<void> {
+    this.backgroundTexture.value = await loadTexture(dummyBackground);
   }
 }
 

@@ -1,9 +1,13 @@
 import type { Bindable } from 'osucad-framework';
+import { MutationSource } from './MutationSource';
 import { SharedProperty } from './SharedProperty';
 import { SharedStructure } from './SharedStructure';
 
 interface ObjectMutation {
-  [key: string]: any;
+  version?: number;
+  data: {
+    [key: string]: any;
+  };
 }
 
 export abstract class SharedObject extends SharedStructure<ObjectMutation> {
@@ -19,16 +23,33 @@ export abstract class SharedObject extends SharedStructure<ObjectMutation> {
     return property;
   }
 
-  handle(command: ObjectMutation): ObjectMutation | null {
-    const undoMutation: ObjectMutation = {};
-    for (const key in command) {
+  #version = 0;
+
+  handle(command: ObjectMutation, source: MutationSource): ObjectMutation | null {
+    const undoMutation: ObjectMutation = {
+      data: {},
+    };
+
+    if (source === MutationSource.Local)
+      this.#version++;
+
+    for (const key in command.data) {
       const property = this.#properties.get(key);
       if (!property)
         continue;
 
-      undoMutation[key] = property.value;
+      undoMutation.data[key] = property.value;
 
-      property.parse(command[key]);
+      let shouldApply = true;
+
+      if ((source === MutationSource.Remote || source === MutationSource.Ack) && property.hasPendingChanges)
+        shouldApply = false;
+
+      if (shouldApply)
+        property.parse(command.data[key]);
+
+      if (source === MutationSource.Local)
+        property.pendingVersion = this.#version;
     }
 
     if (Object.keys(undoMutation).length === 0)
@@ -42,8 +63,12 @@ export abstract class SharedObject extends SharedStructure<ObjectMutation> {
       const existing = this.currentTransaction?.getEntry(this.id);
 
       let undoMutation = {
-        [property.name]: oldValue,
+        data: {
+          [property.name]: oldValue,
+        },
       };
+
+      property.pendingVersion = ++this.#version;
 
       if (existing) {
         undoMutation = {
@@ -53,7 +78,10 @@ export abstract class SharedObject extends SharedStructure<ObjectMutation> {
       }
 
       this.submitMutation({
-        [property.name]: property.value,
+        version: this.#version,
+        data: {
+          [property.name]: property.value,
+        },
       }, undoMutation, this.id);
     }
   }

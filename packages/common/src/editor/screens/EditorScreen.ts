@@ -1,9 +1,13 @@
-import type { ReadonlyDependencyContainer } from 'osucad-framework';
-import { Axes, CompositeDrawable, EasingFunction, resolved } from 'osucad-framework';
+import type { Drawable } from 'osucad-framework';
+import { Axes, Bindable, Container, EasingFunction, EmptyDrawable, resolved } from 'osucad-framework';
 import { BackgroundAdjustment } from '../BackgroundAdjustment';
 import { Editor } from '../Editor';
+import { EditorSafeArea } from '../EditorSafeArea';
+import { Corner } from '../ui/Corner';
+import { EditorCornerContent } from '../ui/EditorCornerContent';
+import { PrimaryActionContainer } from '../ui/PrimaryActionContainer';
 
-export class EditorScreen extends CompositeDrawable {
+export class EditorScreen extends Container {
   constructor() {
     super();
     this.relativeSizeAxes = Axes.Both;
@@ -12,8 +16,36 @@ export class EditorScreen extends CompositeDrawable {
   @resolved(() => Editor)
   protected editor!: Editor;
 
+  readonly safeAreaPadding = new Bindable(EditorSafeArea.default);
+
+  readonly #content = new Container({
+    relativeSizeAxes: Axes.Both,
+  });
+
+  override get content(): Container<Drawable> {
+    return this.#content;
+  }
+
+  topBarContent!: Drawable;
+
+  createTopBarContent(): Drawable {
+    return new EmptyDrawable();
+  }
+
+  topLeftCornerContent!: EditorCornerContent;
+
+  createTopLeftCornerContent(): EditorCornerContent {
+    return new PrimaryActionContainer();
+  }
+
+  topRightCornerContent!: EditorCornerContent;
+
+  createTopRightCornerContent(): EditorCornerContent {
+    return new EditorCornerContent(Corner.TopRight);
+  }
+
   onEntering() {
-    this.fadeInFromZero(200);
+    this.enterTransition();
 
     this.editor.applyToBackground((background) => {
       const adjustment = new BackgroundAdjustment();
@@ -26,19 +58,39 @@ export class EditorScreen extends CompositeDrawable {
     });
   }
 
+  protected enterTransition() {
+    this.fadeInFromZero(200);
+  }
+
   onExiting() {
+    this.exitTransition();
+  }
+
+  protected exitTransition() {
     this.fadeOut(200);
   }
 
-  protected get applySafeAreaPadding() {
-    return true;
+  protected override loadComplete() {
+    super.loadComplete();
+
+    this.topBarContent = this.createTopBarContent();
+    this.topLeftCornerContent = this.createTopLeftCornerContent();
+    this.topRightCornerContent = this.createTopRightCornerContent();
+
+    this.loadComponents([
+      this.topBarContent,
+      this.topLeftCornerContent,
+      this.topRightCornerContent,
+    ]);
+
+    this.safeAreaPadding.bindValueChanged(safeArea => this.applySafeAreaPadding(safeArea.value), true);
   }
 
-  protected override load(dependencies: ReadonlyDependencyContainer) {
-    super.load(dependencies);
-
-    if (this.applySafeAreaPadding)
-      this.padding = { ...this.padding, bottom: 48 };
+  protected applySafeAreaPadding(safeArea: EditorSafeArea) {
+    this.padding = {
+      top: safeArea.top,
+      bottom: safeArea.bottom,
+    };
   }
 
   override get handlePositionalInput(): boolean {

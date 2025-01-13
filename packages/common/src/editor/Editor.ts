@@ -1,7 +1,7 @@
-import type { DependencyContainer, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, MenuItem, ReadonlyDependencyContainer, ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
+import type { DependencyContainer, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer, ScreenExitEvent, ScreenTransitionEvent } from 'osucad-framework';
 import type { BackgroundScreen } from '../screens/BackgroundScreen';
 import { UpdateHandler } from '@osucad/multiplayer';
-import { EasingFunction, PlatformAction, provide } from 'osucad-framework';
+import { EasingFunction, MenuItem, PlatformAction, provide } from 'osucad-framework';
 import { IBeatmap } from '../beatmap/IBeatmap';
 import { ControlPointInfo } from '../controlPoints/ControlPointInfo';
 import { PlayfieldClock } from '../gameplay/PlayfieldClock';
@@ -167,7 +167,17 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
   }
 
   createMenuItems(): MenuItem[] {
-    return [];
+    return [
+      new MenuItem({
+        text: 'File',
+        items: [
+          new MenuItem({
+            text: 'Exit',
+            action: () => this.exit(),
+          }),
+        ],
+      }),
+    ];
   }
 
   override createBackground(): BackgroundScreen | null {

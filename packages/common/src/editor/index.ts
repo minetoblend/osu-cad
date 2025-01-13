@@ -6,5 +6,6 @@ export * from './EditorAction';
 export * from './EditorBeatmap';
 export * from './EditorClock';
 export * from './EditorNavigation';
+export * from './EditorSafeArea';
 export * from './screens';
 export * from './ui';

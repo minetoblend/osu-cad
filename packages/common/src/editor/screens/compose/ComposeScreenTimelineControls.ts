@@ -1,0 +1,27 @@
+import { Anchor, Axes, Container } from 'osucad-framework';
+import { Corner } from '../../ui/Corner';
+import { EditorCornerContent } from '../../ui/EditorCornerContent';
+import { BeatSnapSelector } from './ui/BeatSnapSelector';
+
+export class ComposeScreenTimelineControls extends EditorCornerContent {
+  constructor() {
+    super(Corner.TopRight);
+
+    this.content.autoSizeAxes = Axes.None;
+    this.content.width = 220;
+
+    this.addRange([
+      new Container({
+        relativeSizeAxes: Axes.Y,
+        width: 150,
+        padding: {
+          top: 20,
+          right: 15,
+        },
+        anchor: Anchor.TopLeft,
+        origin: Anchor.TopLeft,
+        child: new BeatSnapSelector(),
+      }),
+    ]);
+  }
+}

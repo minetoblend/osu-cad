@@ -1,3 +1,4 @@
+import type { Bindable } from 'osucad-framework';
 import { BindableNumber, Vec2 } from 'osucad-framework';
 import { OsucadColors } from '../OsucadColors';
 
@@ -7,6 +8,10 @@ export class BindableBeatDivisor extends BindableNumber {
   }
 
   static readonly PREDEFINED_DIVISORS = [1, 2, 3, 4, 6, 8, 12, 16];
+
+  override createInstance(): Bindable<number> {
+    return new BindableBeatDivisor();
+  }
 
   static getDivisorForBeatIndex(index: number, beatDivisor: number, validDivisors: number[] = this.PREDEFINED_DIVISORS): number {
     const beat = index % beatDivisor;

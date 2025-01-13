@@ -1,6 +1,6 @@
 import { Anchor, Axes, Box, CompositeDrawable } from 'osucad-framework';
 import { EditorScreenSelect } from '../ui/EditorScreenSelect';
-import { EditorMenubar } from './EditorMenuBar';
+import { EditorMenuBar } from './EditorMenuBar';
 
 export class EditorHeader extends CompositeDrawable {
   constructor() {
@@ -14,7 +14,7 @@ export class EditorHeader extends CompositeDrawable {
         relativeSizeAxes: Axes.Both,
         color: 0x222228,
       }),
-      new EditorMenubar(),
+      new EditorMenuBar(),
       new EditorScreenSelect().with({
         autoSizeAxes: Axes.X,
         relativeSizeAxes: Axes.Y,

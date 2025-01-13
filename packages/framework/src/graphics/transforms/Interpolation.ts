@@ -2,6 +2,7 @@ import type { ILerp } from '../../types';
 import type { EasingFunction } from './EasingFunction';
 import { Color } from 'pixi.js';
 import { lerp } from '../../math';
+import { MarginPadding } from '../drawables/MarginPadding';
 
 export class Interpolation {
   static valueAt<T>(
@@ -22,15 +23,22 @@ export class Interpolation {
   }
 
   private static lerp<T>(startValue: T, endValue: T, t: number): T {
-    if (typeof startValue === 'number') {
+    if (typeof startValue === 'number')
       return lerp(startValue, endValue as number, t) as T;
-    }
-    if (startValue && typeof startValue === 'object' && 'lerp' in startValue) {
-      return (startValue as ILerp<T>).lerp(endValue, t);
-    }
 
-    if (startValue instanceof Color) {
+    if (startValue && typeof startValue === 'object' && 'lerp' in startValue)
+      return (startValue as ILerp<T>).lerp(endValue, t);
+
+    if (startValue instanceof Color)
       return this.interpolateColor(startValue, endValue as Color, t) as T;
+
+    if (startValue instanceof MarginPadding && endValue instanceof MarginPadding) {
+      return new MarginPadding({
+        top: lerp(startValue.top, endValue.top, t),
+        bottom: lerp(startValue.bottom, endValue.bottom, t),
+        left: lerp(startValue.left, endValue.left, t),
+        right: lerp(startValue.right, endValue.right, t),
+      }) as T;
     }
 
     throw new Error('Unsupported interpolation type');

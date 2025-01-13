@@ -1550,8 +1550,8 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return true;
   }
 
-  doWhenLoaded(fn: (drawable: this) => void): this {
-    if (this.loadState >= LoadState.Ready)
+  doWhenLoaded(fn: (drawable: this) => void, fullyLoaded = false): this {
+    if (this.loadState >= (fullyLoaded ? LoadState.Loaded : LoadState.Ready))
       fn(this);
     else
       this.onLoadComplete.addListener(fn as any);

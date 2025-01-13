@@ -1066,6 +1066,10 @@ export class CompositeDrawable extends Drawable {
     return result;
   }
 
+  transformPadding(newPadding: MarginPadding | MarginPaddingOptions, duration: number = 0, easing: EasingFunction = EasingFunction.Default) {
+    return this.transformTo('padding', MarginPadding.from(newPadding), duration, easing);
+  }
+
   override get devToolProps() {
     return compositeDrawableProps;
   }

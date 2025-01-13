@@ -1,8 +1,9 @@
 import type { DependencyContainer, Drawable, List, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { DrawableRuleset } from '../../../rulesets/DrawableRuleset';
+import type { EditorSafeArea } from '../../EditorSafeArea';
 import type { IComposeTool } from './IComposeTool';
 import type { Operator } from './operators/Operator';
-import { Axes, Bindable, CompositeDrawable, Container, provide, resolved } from 'osucad-framework';
+import { Anchor, Axes, Bindable, CompositeDrawable, Container, provide, resolved } from 'osucad-framework';
 import { IBeatmap } from '../../../beatmap/IBeatmap';
 import { BorderLayout } from '../../../drawables/BorderLayout';
 import { Ruleset } from '../../../rulesets/Ruleset';
@@ -60,15 +61,21 @@ export abstract class HitObjectComposer extends CompositeDrawable {
     ));
 
     this.addInternal(
-      new BorderLayout({
-        north: this.createTopBar(),
-        west: this.leftSidebar = this.createLeftSidebar(),
-        east: this.rightSidebar = this.createRightSidebar(),
+      this.borderLayout = new BorderLayout({
+        west: this.leftSidebar = new Container({
+          relativeSizeAxes: Axes.Y,
+          autoSizeAxes: Axes.X,
+          child: this.createLeftSidebar(),
+        }),
+        east: this.rightSidebar = new Container({
+          relativeSizeAxes: Axes.Y,
+          autoSizeAxes: Axes.X,
+          child: this.createRightSidebar(),
+        }),
         center: this.createMainContent(),
         south: this.modifierContainer = new Container({
           relativeSizeAxes: Axes.X,
-          height: 18,
-          padding: { horizontal: 155 },
+          height: 22,
           children: [],
         }),
       }),
@@ -76,7 +83,7 @@ export abstract class HitObjectComposer extends CompositeDrawable {
 
     this.#dependencies.provide(Playfield, this.#drawableRuleset.playfield);
 
-    this.drawableRuleset.playfield.addAll(
+    this.drawableRuleset.playfield.addRange([
       this.backgroundLayer = new Container({
         relativeSizeAxes: Axes.Both,
         depth: 1,
@@ -85,7 +92,7 @@ export abstract class HitObjectComposer extends CompositeDrawable {
         relativeSizeAxes: Axes.Both,
         depth: -1,
       }),
-    );
+    ]);
 
     this.playfieldContainer.add(this.#toolContainer = new ComposeToolContainer());
 
@@ -104,14 +111,36 @@ export abstract class HitObjectComposer extends CompositeDrawable {
       toolOverlayContainer.clear();
       toolOverlayContainer.add(tool.playfieldOverlay);
     });
+
+    this.topBar = this.createTopBar();
+
+    this.loadComponents([
+      this.topBar,
+    ]);
+  }
+
+  protected override loadComplete() {
+    super.loadComplete();
+  }
+
+  applySafeAreaPadding(padding: EditorSafeArea) {
+    const { top, bottom, bottomInner, bottomLeft, bottomRight } = padding;
+
+    this.leftSidebar.padding = { bottom: bottom - bottomInner };
+    this.rightSidebar.padding = { bottom: bottom - bottomInner };
+    this.borderLayout.padding = { top, bottom: bottomInner + 5 };
+
+    this.modifierContainer.padding = {
+      left: bottomLeft.x + 15,
+      right: bottomRight.x + 15,
+    };
   }
 
   protected createMainContent(): Drawable {
     return this.playfieldContainer = new Container({
       relativeSizeAxes: Axes.Both,
-      padding: {
-        top: 10,
-      },
+      anchor: Anchor.Center,
+      origin: Anchor.Center,
       children: [
         new Container({
           relativeSizeAxes: Axes.Both,
@@ -127,6 +156,8 @@ export abstract class HitObjectComposer extends CompositeDrawable {
 
   #toolContainer!: ComposeToolContainer;
 
+  protected borderLayout!: BorderLayout;
+
   protected createRightSidebar(): Container {
     return new Container();
   }
@@ -134,7 +165,7 @@ export abstract class HitObjectComposer extends CompositeDrawable {
   protected createTopBar(): Drawable {
     return new Container({
       relativeSizeAxes: Axes.X,
-      height: 80,
+      height: 75,
       child: this.timeline = new ComposeScreenTimeline(),
     });
   }
@@ -164,7 +195,7 @@ export abstract class HitObjectComposer extends CompositeDrawable {
 
   rightSidebar!: Container;
 
-  topBar!: Container;
+  topBar!: Drawable;
 
   beginOperator(operator: Operator, alreadyApplied = false) {
     this.#toolContainer.beginOperator(operator, alreadyApplied);

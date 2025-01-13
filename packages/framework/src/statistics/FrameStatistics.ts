@@ -1,10 +1,15 @@
 import { StatisticsCounterType } from './StatisticsCounterType';
+import { Timer } from './Timer';
 
 export class FrameStatistics {
-  private static COUNTERS = new Array<number>(StatisticsCounterType.Length);
+  private static COUNTERS = Array.from({ length: StatisticsCounterType.Length }, () => 0);
 
   static clear() {
     this.COUNTERS.fill(0);
+    this.draw.clear();
+    this.positionalInputQueue.clear();
+    this.nonPositionalInputQueue.clear();
+    this.frame.clear();
   }
 
   static increment(counterType: StatisticsCounterType) {
@@ -19,9 +24,15 @@ export class FrameStatistics {
     return this.COUNTERS as Readonly<number[]>;
   }
 
-  static drawTime = 0;
+  static readonly positionalInputQueue = new Timer();
 
-  static inputQueue = 0;
+  static readonly nonPositionalInputQueue = new Timer();
 
-  static frameTime = 0;
+  static readonly draw = new Timer();
+
+  static readonly updateSubTree = new Timer();
+
+  static readonly updateSubTreeTransforms = new Timer();
+
+  static readonly frame = new Timer();
 }

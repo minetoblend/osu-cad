@@ -1,11 +1,12 @@
-import type { HitObject, IComposeTool } from '@osucad/common';
+import type { EditorSafeArea, HitObject, IComposeTool } from '@osucad/common';
 import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import type { SnapResult } from './IPositionSnapProvider';
 import { Additions, ControlPointInfo, EditorClock, HitObjectComposer, OsucadColors } from '@osucad/common';
-import { Anchor, Axes, BindableBoolean, Container, Direction, FastRoundedBox, FillDirection, FillFlowContainer, provide, resolved, Vec2 } from 'osucad-framework';
+import { Anchor, Axes, BindableBoolean, Container, Direction, EasingFunction, FastRoundedBox, FillDirection, FillFlowContainer, provide, resolved, Vec2 } from 'osucad-framework';
 import { Matrix } from 'pixi.js';
 import { HitCircle } from '../hitObjects/HitCircle';
 import { Slider } from '../hitObjects/Slider';
+import { OsuPlayfield } from '../ui/OsuPlayfield';
 import { AdditionToggleButton } from './AdditionToggleButton';
 import { DrawableOsuSelectTool } from './DrawableOsuSelectTool';
 import { GlobalHitSoundState } from './GlobalHitSoundState';
@@ -52,7 +53,7 @@ export class OsuHitObjectComposer extends HitObjectComposer implements IPosition
     this.addInternal(this.hitSoundPlayer);
 
     this.drawableRuleset.playfield.addAll(this.#grid = new PlayfieldGrid(this.gridSnapEnabled).with({ depth: 1 }));
-    this.overlayLayer.addAll(
+    this.overlayLayer.add(
       this.#blueprintContainer = new OsuSelectionBlueprintContainer().with({ depth: 1 }),
     );
 
@@ -62,6 +63,7 @@ export class OsuHitObjectComposer extends HitObjectComposer implements IPosition
         direction: FillDirection.Vertical,
         anchor: Anchor.BottomLeft,
         origin: Anchor.BottomLeft,
+        padding: { horizontal: 10 },
         children: [
           new GridSnapToggleButton(this.gridSnapEnabled),
         ],
@@ -104,8 +106,8 @@ export class OsuHitObjectComposer extends HitObjectComposer implements IPosition
             relativeSizeAxes: Axes.X,
             height: 2,
             cornerRadius: 1,
-            color: OsucadColors.translucent,
-            alpha: 0.4,
+            color: OsucadColors.text,
+            alpha: 0.3,
           }),
         }),
         new AdditionToggleButton(Additions.Whistle, this.hitSoundState.whistle),
@@ -134,6 +136,23 @@ export class OsuHitObjectComposer extends HitObjectComposer implements IPosition
 
   @resolved(EditorClock)
   editorClock!: EditorClock;
+
+  override applySafeAreaPadding(padding: EditorSafeArea) {
+    super.applySafeAreaPadding(padding);
+
+    const { totalSize, top, topInner, bottomInner, topLeft, topRight } = padding;
+
+    const remainingHeight = this.parent!.drawHeight - (topInner + bottomInner);
+
+    const requiredWidth = (remainingHeight - top + 10) * OsuPlayfield.DIMENSIONS.x / OsuPlayfield.DIMENSIONS.y + 40;
+
+    const maxCornerWidth = (totalSize.x - requiredWidth) / 2;
+
+    if (Math.max(topLeft.x, topRight.x) > maxCornerWidth)
+      this.playfieldContainer.transformPadding({ top: 10 }, 500, EasingFunction.OutExpo);
+    else
+      this.playfieldContainer.transformPadding({ top: topInner - top + 10 }, 500, EasingFunction.OutExpo);
+  }
 
   transformHitObject(hitObject: HitObject, transform: Matrix) {
     if (!(hitObject instanceof HitCircle || hitObject instanceof Slider))

@@ -1,7 +1,7 @@
 export class OsucadColors {
   static readonly primary = 0x52CCA3;
   static readonly primaryHighlight = 0x65E6BA;
-  static readonly text = 0xB6B6C3;
+  static readonly text = 0xCBCBD6;
   static readonly translucent = 0x222228;
   static readonly selection = 0xFFA320;
   static readonly danger = 0xEB4034;

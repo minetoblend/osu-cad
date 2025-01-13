@@ -1,7 +1,9 @@
-import type { ReadonlyDependencyContainer } from 'osucad-framework';
+import type { Drawable, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Beatmap } from '../../../beatmap/Beatmap';
 import type { BackgroundAdjustment } from '../../BackgroundAdjustment';
-import { Anchor, Axes, Bindable, Container, provide, resolved } from 'osucad-framework';
+import type { EditorSafeArea } from '../../EditorSafeArea';
+import type { EditorCornerContent } from '../../ui/EditorCornerContent';
+import { Anchor, Axes, BetterBackdropBlurFilter, Bindable, Box, Container, EasingFunction, provide, resolved } from 'osucad-framework';
 import { IBeatmap } from '../../../beatmap/IBeatmap';
 import { ModdingConfigManager } from '../../../config/ModdingConfigManager';
 import { Ruleset } from '../../../rulesets/Ruleset';
@@ -12,6 +14,7 @@ import { EditorScreen } from '../EditorScreen';
 import { editorScreen } from '../metadata';
 import { IssueList } from './IssueList';
 import { ModdingComposer } from './ModdingComposer';
+import { ModdingScreenSettings } from './ModdingScreenSettings';
 
 @editorScreen({
   id: 'modding',
@@ -27,8 +30,9 @@ export class ModdingScreen extends EditorScreen {
   @resolved(EditorBeatmap)
   editorBeatmap!: EditorBeatmap;
 
-  protected override get applySafeAreaPadding(): boolean {
-    return false;
+  protected override applySafeAreaPadding(safeArea: EditorSafeArea) {
+    this.#issueListContainer.padding = { top: safeArea.topRight.y };
+    this.#mainContent.padding = { top: safeArea.topLeft.y, bottom: safeArea.bottomLeft.y };
   }
 
   @provide(ModdingConfigManager)
@@ -64,35 +68,100 @@ export class ModdingScreen extends EditorScreen {
 
   #editorBeatmapCache = new Map<Beatmap, EditorBeatmap>();
 
+  #mainContent!: Container;
+
+  #playfieldContainer!: Drawable;
+
+  #timelineContainer!: Container;
+
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
     this.activeEditorBeatmap = new Bindable<EditorBeatmap>(this.editorBeatmap);
 
     this.addAllInternal(
-      new Container({
+      this.#timelineContainer = new Container({
+        relativeSizeAxes: Axes.Both,
+        width: 0.9,
+        height: 80,
+      }),
+      this.#mainContent = new Container({
         relativeSizeAxes: Axes.Both,
         width: 0.7,
-        child: new ModelBackedEditorBeatmapProvidingContainer(
+        child: this.#playfieldContainer = new ModelBackedEditorBeatmapProvidingContainer(
           this.activeEditorBeatmap,
-          () => new ModdingComposer(),
-        ),
+          () => new ModdingComposer()
+            .with({
+              anchor: Anchor.Center,
+              origin: Anchor.Center,
+            })
+            .doWhenLoaded((it) => {
+              it.fadeInFromZero(200);
+              it.playfieldContainer.scaleTo(1.05).scaleTo(1, 300, EasingFunction.OutExpo);
+              this.#timelineContainer.child = it.topBar;
+              it.topBar.fadeInFromZero(100);
+            }),
+        ).with({
+          anchor: Anchor.Center,
+          origin: Anchor.Center,
+        }),
       }),
-      new Container({
+      this.#rightContainer = new Container({
         relativeSizeAxes: Axes.Both,
+        relativePositionAxes: Axes.Both,
         anchor: Anchor.TopRight,
         origin: Anchor.TopRight,
         width: 0.3,
-        child: new IssueList(this.activeBeatmap.getBoundCopy()),
+        children: [
+          new Box({
+            relativeSizeAxes: Axes.Both,
+            color: 0x17171B,
+            alpha: 0.8,
+            filters: [
+              new BetterBackdropBlurFilter({
+                strength: 20,
+                quality: 3,
+              }),
+            ],
+          }),
+          new Box({
+            relativeSizeAxes: Axes.Y,
+            width: 1,
+            color: 0xB9C6DD,
+            alpha: 0.2,
+          }),
+          this.#issueListContainer = new Container({
+            relativeSizeAxes: Axes.Both,
+            child: new IssueList(this.activeBeatmap.getBoundCopy()),
+          }),
+        ],
       }),
     );
+  }
+
+  #rightContainer!: Container;
+
+  #issueListContainer!: Container;
+
+  protected override enterTransition() {
+    this.#rightContainer.moveToX(0.3).moveToX(0, 300, EasingFunction.OutExpo);
+  }
+
+  protected override exitTransition() {
+    super.exitTransition();
+
+    this.#playfieldContainer.fadeOut(100);
+    this.#rightContainer.moveToX(0.3, 300, EasingFunction.OutExpo);
+  }
+
+  override createTopRightCornerContent(): EditorCornerContent {
+    return new ModdingScreenSettings();
   }
 
   protected override adjustBackground(background: BackgroundAdjustment) {
     super.adjustBackground(background);
 
-    background.x = -0.15;
-    background.width = 0.7;
+    background.scale = 1.1;
     background.moveDuration = 300;
     background.resizeDuration = 300;
   }

@@ -5,7 +5,7 @@ import { OsucadColors } from '../../OsucadColors';
 import { Editor } from '../Editor';
 import { EditorMenu } from './EditorMenu';
 
-export class EditorMenubar extends EditorMenu implements IKeyBindingHandler<PlatformAction> {
+export class EditorMenuBar extends EditorMenu implements IKeyBindingHandler<PlatformAction> {
   constructor() {
     super(Direction.Horizontal, true);
 

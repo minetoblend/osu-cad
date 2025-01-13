@@ -432,54 +432,47 @@ export abstract class InputManager extends Container implements IInputStateChang
   #buildPositionalInputQueue(screenSpacePos: Vec2): List<Drawable> {
     this.#positionalInputQueue.clear();
 
-    if (this.typeName === 'UserInputManager') {
-      FrameStatistics.increment(StatisticsCounterType.PositionalIQ);
-    }
+    FrameStatistics.increment(StatisticsCounterType.PositionalIQ);
 
-    const children = this.internalChildren;
-    const start = performance.now();
+    return FrameStatistics.positionalInputQueue.measure(() => {
+      const children = this.internalChildren;
 
-    for (let i = 0; i < children.length; i++) {
-      if (this.shouldBeConsideredForInput(children[i])) {
-        children[i].buildPositionalInputQueue(screenSpacePos, this.#positionalInputQueue);
+      for (let i = 0; i < children.length; i++) {
+        if (this.shouldBeConsideredForInput(children[i]))
+          children[i].buildPositionalInputQueue(screenSpacePos, this.#positionalInputQueue);
       }
-    }
 
-    if (this.typeName === 'UserInputManager') {
-      FrameStatistics.inputQueue = performance.now() - start;
-    }
+      this.#positionalInputQueue.reverse();
 
-    this.#positionalInputQueue.reverse();
-
-    return this.#positionalInputQueue;
+      return this.#positionalInputQueue;
+    });
   }
 
   #buildNonPositionalInputQueue(): List<Drawable> {
     this.#inputQueue.clear();
 
-    if (this.typeName === 'UserInputManager') {
-      FrameStatistics.increment(StatisticsCounterType.InputQueue);
-    }
+    FrameStatistics.increment(StatisticsCounterType.InputQueue);
 
-    const children = this.aliveInternalChildren;
+    return FrameStatistics.nonPositionalInputQueue.measure(() => {
+      const children = this.aliveInternalChildren;
 
-    for (let i = 0; i < children.length; i++) {
-      if (this.shouldBeConsideredForInput(children[i])) {
-        children[i].buildNonPositionalInputQueue(this.#inputQueue);
+      for (let i = 0; i < children.length; i++) {
+        if (this.shouldBeConsideredForInput(children[i]))
+          children[i].buildNonPositionalInputQueue(this.#inputQueue);
       }
-    }
 
-    if (!this.#unfocusIfNoLongerValid()) {
-      const index = this.#inputQueue.indexOf(this.focusedDrawable!);
-      if (index !== -1 && index !== this.#inputQueue.length - 1) {
-        this.#inputQueue.splice(index, 1);
-        this.#inputQueue.push(this.focusedDrawable!);
+      if (!this.#unfocusIfNoLongerValid()) {
+        const index = this.#inputQueue.indexOf(this.focusedDrawable!);
+        if (index !== -1 && index !== this.#inputQueue.length - 1) {
+          this.#inputQueue.splice(index, 1);
+          this.#inputQueue.push(this.focusedDrawable!);
+        }
       }
-    }
 
-    this.#inputQueue.reverse();
+      this.#inputQueue.reverse();
 
-    return this.#inputQueue;
+      return this.#inputQueue;
+    });
   }
 
   override buildPositionalInputQueue(screenSpacePos: Vec2, queue: List<Drawable>): boolean {

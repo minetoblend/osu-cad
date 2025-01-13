@@ -1,13 +1,7 @@
 import type { ContainerOptions } from 'osucad-framework';
 import { OsucadColors } from '@osucad/common';
 import { Axes, Container, Invalidation, LayoutMember, PIXIGraphics, Vec2 } from 'osucad-framework';
-
-export enum Corner {
-  TopLeft,
-  TopRight,
-  BottomLeft,
-  BottomRight,
-}
+import { Corner } from './Corner';
 
 export interface EditorCornerPieceOptions extends ContainerOptions {
   corner: Corner;
@@ -33,6 +27,25 @@ export class EditorCornerPiece extends Container {
   });
 
   #corner: Corner = Corner.TopLeft;
+
+  override get autoSizeAxes(): Axes {
+    return super.autoSizeAxes;
+  }
+
+  override set autoSizeAxes(value: Axes) {
+    super.autoSizeAxes = value;
+    this.#content.relativeSizeAxes &= ~value;
+    this.#content.autoSizeAxes = value;
+  }
+
+  override get relativeSizeAxes(): Axes {
+    return super.relativeSizeAxes;
+  }
+
+  override set relativeSizeAxes(value: Axes) {
+    super.relativeSizeAxes = value;
+    this.#content.relativeSizeAxes = value;
+  }
 
   get corner() {
     return this.#corner;
@@ -85,13 +98,16 @@ export class EditorCornerPiece extends Container {
   #generateShape(g: PIXIGraphics) {
     g.clear();
     g.moveTo(0, 0);
-    g.lineTo(this.drawSize.x, 0);
 
-    const inset = this.drawSize.y * 0.25;
+    const { drawWidth, drawHeight } = this;
 
-    const c = new Vec2(this.drawSize.x - inset, this.drawSize.y);
-    const a = new Vec2(this.drawSize.x, 0);
-    const b = new Vec2(0, this.drawSize.y);
+    g.lineTo(drawWidth, 0);
+
+    const inset = drawHeight * 0.25;
+
+    const c = new Vec2(drawWidth - inset, drawHeight);
+    const a = new Vec2(drawWidth, 0);
+    const b = new Vec2(0, drawHeight);
 
     const extent = 6;
 
@@ -118,15 +134,15 @@ export class EditorCornerPiece extends Container {
         g.scale.set(1, 1);
         break;
       case Corner.TopRight:
-        g.pivot.set(this.drawSize.x, 0);
+        g.pivot.set(this.drawWidth, 0);
         g.scale.set(-1, 1);
         break;
       case Corner.BottomLeft:
-        g.pivot.set(0, this.drawSize.y);
+        g.pivot.set(0, this.drawHeight);
         g.scale.set(1, -1);
         break;
       case Corner.BottomRight:
-        g.pivot.set(this.drawSize.x, this.drawSize.y);
+        g.pivot.set(this.drawWidth, this.drawHeight);
         g.scale.set(-1, -1);
         break;
     }

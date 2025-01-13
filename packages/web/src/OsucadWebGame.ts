@@ -1,5 +1,5 @@
-import type { ReadonlyDependencyContainer } from 'osucad-framework';
-import { DummyEditorBeatmap, Editor, ISkinSource, OsucadGameBase, OsucadScreenStack, RulesetStore, SkinManager } from '@osucad/common';
+import type { DependencyContainer, ReadonlyDependencyContainer } from 'osucad-framework';
+import { DummyEditorBeatmap, Editor, ISkinSource, OsucadGameBase, OsucadScreenStack, RulesetStore, SkinManager, UISamples } from '@osucad/common';
 import { ManiaRuleset } from '@osucad/ruleset-mania';
 import { OsuRuleset } from '@osucad/ruleset-osu';
 import { provide } from 'osucad-framework';
@@ -9,10 +9,20 @@ export class OsucadWebGame extends OsucadGameBase {
   @provide(ISkinSource)
   readonly skinManager = new SkinManager();
 
+  #dependencies!: DependencyContainer;
+
+  protected override createChildDependencies(parentDependencies: ReadonlyDependencyContainer): DependencyContainer {
+    return this.#dependencies = super.createChildDependencies(parentDependencies);
+  }
+
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
     this.addParallelLoad(this.loadComponentAsync(this.skinManager));
+
+    const samples = new UISamples(this.audioManager, this.mixer.userInterface);
+    this.#dependencies.provide(UISamples, samples);
+    this.addParallelLoad(samples.load());
 
     RulesetStore.register(new OsuRuleset().rulesetInfo);
     RulesetStore.register(new ManiaRuleset().rulesetInfo);

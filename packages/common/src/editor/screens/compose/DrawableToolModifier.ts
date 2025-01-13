@@ -40,7 +40,6 @@ export class DrawableToolModifier extends FillFlowContainer {
         fontSize: 12,
         anchor: Anchor.CenterLeft,
         origin: Anchor.CenterLeft,
-        alpha: 0.5,
       }),
     ];
   }
@@ -148,12 +147,12 @@ export class DrawableToolModifier extends FillFlowContainer {
 
     if (this.isActive.value) {
       this.#background.fadeTo(1);
-      this.#hint.fadeTo(1).fadeColor(OsucadColors.primaryHighlight);
+      this.#hint.fadeColor(OsucadColors.primaryHighlight);
       this.#shortcutHint.fadeTo(1).fadeColor(OsucadColors.primaryHighlight);
     }
     else {
       this.#background.fadeTo(0.5);
-      this.#hint.fadeTo(0.5).fadeColor(OsucadColors.text);
+      this.#hint.fadeColor(OsucadColors.text);
       this.#shortcutHint.fadeColor(0xFFFFFF);
     }
   }

@@ -46,20 +46,27 @@ export class Container<T extends Drawable = Drawable> extends CompositeDrawable 
     return this.content.children;
   }
 
-  set children(value: T[]) {
+  set children(value: Iterable<T>) {
     this.clear();
     this.addAll(...value);
   }
 
   add<U extends T>(child: U): U | undefined {
-    if (this.content === this) {
+    if (this.content === this)
       return this.addInternal(child);
-    }
-    else {
+    else
       return this.content.add(child);
-    }
   }
 
+  addRange(children: Iterable<T>) {
+    for (const child of children)
+      this.add(child);
+  }
+
+  /**
+   * @deprecated use `addRange` instead
+   * @param children
+   */
   addAll(...children: T[]): this {
     for (const child of children) {
       this.add(child);

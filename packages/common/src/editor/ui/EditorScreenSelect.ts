@@ -1,19 +1,5 @@
 import type { EditorScreenEntry } from '../screens/EditorScreenManager';
-import {
-  Anchor,
-  Axes,
-  Bindable,
-  Box,
-  Button,
-  Container,
-  EasingFunction,
-  FillDirection,
-  FillFlowContainer,
-  LoadState,
-  type ReadonlyDependencyContainer,
-  resolved,
-  Vec2,
-} from 'osucad-framework';
+import { Anchor, Axes, Bindable, Box, Button, Container, EasingFunction, FillDirection, FillFlowContainer, LoadState, type ReadonlyDependencyContainer, resolved, Vec2 } from 'osucad-framework';
 import { OsucadSpriteText } from '../../drawables/OsucadSpriteText';
 import { OsucadColors } from '../../OsucadColors';
 import { EditorScreenManager } from '../screens/EditorScreenManager';
@@ -21,6 +7,9 @@ import { EditorScreenManager } from '../screens/EditorScreenManager';
 export class EditorScreenSelect extends Container {
   constructor() {
     super();
+
+    this.relativeSizeAxes = Axes.Y;
+    this.autoSizeAxes = Axes.X;
   }
 
   #underline!: Box;
@@ -29,7 +18,7 @@ export class EditorScreenSelect extends Container {
     direction: FillDirection.Horizontal,
     relativeSizeAxes: Axes.Y,
     autoSizeAxes: Axes.X,
-    spacing: new Vec2(5),
+    spacing: new Vec2(2),
   });
 
   override get content() {
@@ -89,6 +78,19 @@ class ScreenSelectButton extends Button {
     this.action = () => {
       this.currentScreen.value = this.entry;
     };
+
+    this.child = new Container({
+      autoSizeAxes: Axes.X,
+      relativeSizeAxes: Axes.Y,
+      padding: { horizontal: 5 },
+      child: this.#text = new OsucadSpriteText({
+        text: this.entry.name,
+        anchor: Anchor.CenterLeft,
+        origin: Anchor.CenterLeft,
+        color: OsucadColors.text,
+        fontSize: 14,
+      }),
+    });
   }
 
   currentScreen = new Bindable<EditorScreenEntry>(null!);
@@ -100,21 +102,6 @@ class ScreenSelectButton extends Button {
     super.load(dependencies);
 
     this.currentScreen.bindTo(this.screenManager.currentScreen);
-
-    this.addAllInternal(
-      new Container({
-        autoSizeAxes: Axes.X,
-        relativeSizeAxes: Axes.Y,
-        padding: { horizontal: 5 },
-        child: this.#text = new OsucadSpriteText({
-          text: this.entry.name,
-          anchor: Anchor.CenterLeft,
-          origin: Anchor.CenterLeft,
-          color: OsucadColors.text,
-          fontSize: 16,
-        }),
-      }),
-    );
   }
 
   protected override loadComplete() {

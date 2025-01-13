@@ -3,7 +3,7 @@ import type { DrawableOsuHitObject } from '../hitObjects/drawables/DrawableOsuHi
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
 import type { IHitPolicy } from './IHitPolicy';
 import { HitObjectLifetimeEntry, OsucadConfigManager, OsucadSettings, Playfield } from '@osucad/common';
-import { Anchor, Axes, BindableBoolean, Container, provide, type ReadonlyDependencyContainer, resolved } from 'osucad-framework';
+import { Anchor, Axes, BindableBoolean, Container, provide, type ReadonlyDependencyContainer, resolved, Vec2 } from 'osucad-framework';
 import { DrawableHitCircle } from '../hitObjects/drawables/DrawableHitCircle';
 import { DrawableSlider } from '../hitObjects/drawables/DrawableSlider';
 import { DrawableSliderHead } from '../hitObjects/drawables/DrawableSliderHead';
@@ -24,6 +24,8 @@ import { StartTimeOrderedHitPolicy } from './StartTimeOrderedHitPolicy';
 
 @provide(OsuPlayfield)
 export class OsuPlayfield extends Playfield {
+  static readonly DIMENSIONS = new Vec2(512, 384);
+
   protected followPoints!: FollowPointRenderer;
 
   followPointsEnabled = new BindableBoolean(true);

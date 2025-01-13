@@ -1,17 +1,8 @@
-import type {
-  ReadonlyDependencyContainer,
-} from 'osucad-framework';
+import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import { OsucadColors } from '@osucad/common';
-import {
-  Anchor,
-  Axes,
-  Box,
-  CompositeDrawable,
-  Container,
-  FillFlowContainer,
-} from 'osucad-framework';
-import { BackdropBlurFilter } from 'pixi-filters';
-import { Corner, EditorCornerPiece } from '../ui/EditorCornerPiece';
+import { Anchor, Axes, BetterBackdropBlurFilter, Box, CompositeDrawable, Container, FillFlowContainer } from 'osucad-framework';
+import { Corner } from '../ui/Corner';
+import { EditorCornerPiece } from '../ui/EditorCornerPiece';
 import { CurrentTimeDisplay } from './CurrentTimeDisplay';
 import { OverviewTimeline } from './OverviewTimeline';
 import { PlayButton } from './PlayButton';
@@ -25,14 +16,10 @@ export class EditorBottomBar extends CompositeDrawable {
     this.anchor = Anchor.BottomLeft;
     this.origin = Anchor.BottomLeft;
 
-    const filter = new BackdropBlurFilter({
+    const filter = new BetterBackdropBlurFilter({
       strength: 15,
       quality: 2,
-      antialias: 'inherit',
-      resolution: devicePixelRatio,
     });
-    filter.padding = 30;
-    filter.repeatEdgePixels = false;
 
     this.addAllInternal(
       new Container({

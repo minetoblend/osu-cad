@@ -1,5 +1,4 @@
 import type { DrawableMenuItem, ReadonlyDependencyContainer } from 'osucad-framework';
-import type { IssueList } from './IssueList';
 import { Direction, MenuItem } from 'osucad-framework';
 import { BackdropBlurFilter } from 'pixi-filters';
 import { ModdingConfigManager } from '../../../config/ModdingConfigManager';
@@ -10,7 +9,7 @@ import { EditorMenu } from '../../header/EditorMenu';
 import { DrawableEditorMenubarItem } from '../../header/EditorMenuBar';
 
 export class IssueListMenu extends EditorMenu {
-  constructor(readonly issueList: IssueList) {
+  constructor() {
     super(Direction.Horizontal, true);
 
     this.backgroundColor = OsucadColors.translucent;
