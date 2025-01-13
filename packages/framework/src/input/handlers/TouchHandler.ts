@@ -56,6 +56,7 @@ export class TouchHandler extends InputHandler {
       return;
 
     this.#enqueueTouch(new TouchInput(touches, true));
+    this.flush.emit();
   };
 
   #handleTouchEnd = (event: TouchEvent) => {
@@ -70,6 +71,7 @@ export class TouchHandler extends InputHandler {
       return;
 
     this.#enqueueTouch(new TouchInput(touches, false));
+    this.flush.emit();
   };
 
   #enqueueTouch(touch: TouchInput): void {

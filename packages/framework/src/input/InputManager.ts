@@ -116,9 +116,10 @@ export abstract class InputManager extends Container implements IInputStateChang
     for (const handler of this.inputHandlers) {
       handler.initialize(this.host);
 
-      if (handler instanceof KeyboardHandler) {
+      handler.flush.addListener(this.update, this);
+
+      if (handler instanceof KeyboardHandler)
         handler.onInput.addListener(this.update, this);
-      }
     }
   }
 

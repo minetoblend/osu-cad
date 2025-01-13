@@ -1,6 +1,7 @@
 import type { GameHost } from '../../platform/GameHost';
 import type { IDisposable } from '../../types/IDisposable';
 import type { IInput } from '../stateChanges/IInput';
+import { Action } from '../../bindables/Action';
 import { Bindable } from '../../bindables/Bindable';
 
 export abstract class InputHandler implements IDisposable {
@@ -33,4 +34,6 @@ export abstract class InputHandler implements IDisposable {
     inputs.push(...this.pendingInputs);
     this.pendingInputs.length = 0;
   }
+
+  readonly flush = new Action();
 }

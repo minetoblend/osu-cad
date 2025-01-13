@@ -10,7 +10,7 @@ export class TextInputSource {
 
     this.#inputElement.onblur = () => {
       if (this.isActive)
-        this.#inputElement.focus();
+        this.#inputElement.focus({ preventScroll: true });
     };
 
     this.#inputElement.oninput = () => {

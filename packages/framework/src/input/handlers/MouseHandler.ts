@@ -78,6 +78,7 @@ export class MouseHandler extends InputHandler {
 
     this.#enqueueInput(new PressureInput(event.pressure));
     this.#enqueueInput(MouseButtonInput.create(button, true));
+    this.flush.emit();
   };
 
   #handleMouseUp = (event: PointerEvent) => {
@@ -95,6 +96,7 @@ export class MouseHandler extends InputHandler {
 
     this.#enqueueInput(new PressureInput(event.pressure));
     this.#enqueueInput(MouseButtonInput.create(button, false));
+    this.flush.emit();
   };
 
   #handleMouseLeave = (event: MouseEvent) => {};
