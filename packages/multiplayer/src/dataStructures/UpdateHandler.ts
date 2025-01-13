@@ -1,5 +1,6 @@
 import type { SharedStructure } from './SharedStructure';
 import { Action, BindableBoolean, Component } from 'osucad-framework';
+import { MutationSource } from './MutationSource';
 import { Transaction, TransactionEntry } from './Transaction';
 
 export class UpdateHandler extends Component {
@@ -87,7 +88,7 @@ export class UpdateHandler extends Component {
 
     for (const entry of transaction.entries.toReversed()) {
       const target = this.objects.get(entry.targetId);
-      target?.handle(entry.undoMutation);
+      target?.handle(entry.undoMutation, MutationSource.Offline);
     }
 
     this.#currentTransaction = new Transaction();
@@ -112,7 +113,7 @@ export class UpdateHandler extends Component {
 
     for (const entry of transaction.entries.toReversed()) {
       const target = this.objects.get(entry.targetId);
-      const redoMutation = target?.handle(entry.undoMutation);
+      const redoMutation = target?.handle(entry.undoMutation, MutationSource.Offline);
       if (redoMutation)
         redoTransaction.addEntry(new TransactionEntry(entry.targetId, redoMutation));
     }
@@ -142,7 +143,7 @@ export class UpdateHandler extends Component {
 
     for (const entry of transaction.entries.toReversed()) {
       const target = this.objects.get(entry.targetId);
-      const redoMutation = target?.handle(entry.undoMutation);
+      const redoMutation = target?.handle(entry.undoMutation, MutationSource.Offline);
       if (redoMutation)
         undoTransaction.addEntry(new TransactionEntry(entry.targetId, redoMutation));
     }

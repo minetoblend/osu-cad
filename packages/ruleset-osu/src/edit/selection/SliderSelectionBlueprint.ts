@@ -73,7 +73,7 @@ export class SliderSelectionBlueprint extends OsuSelectionBlueprint<Slider> {
 
     const hitObject = entry.hitObject as Slider;
 
-    hitObject.path.invalidated.addListener(this.updatePosition, this);
+    hitObject.path.invalidated.addListener(this.#updatePositions, this);
   }
 
   protected override onFree(entry: HitObjectLifetimeEntry) {
@@ -81,7 +81,7 @@ export class SliderSelectionBlueprint extends OsuSelectionBlueprint<Slider> {
 
     const hitObject = entry.hitObject as Slider;
 
-    hitObject.path.invalidated.addListener(this.updatePosition, this);
+    hitObject.path.invalidated.addListener(this.#updatePositions, this);
   }
 
   protected override onDefaultsApplied(hitObject: HitObject) {

@@ -174,6 +174,7 @@ export class SliderPath extends SharedObject {
   }
 
   get endPosition() {
+    this.#ensureValid();
     return this.calculatedRange.endPosition;
   }
 
