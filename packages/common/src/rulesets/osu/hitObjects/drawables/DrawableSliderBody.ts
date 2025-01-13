@@ -150,9 +150,8 @@ export class DrawableSliderBody extends Drawable {
       1,
     );
 
-    if (!this.snakeInEnabled) {
+    if (!this.snakeInEnabled)
       snakeInProgress = 1.0;
-    }
 
     this.shader.snakeInProgress = snakeInProgress;
 
@@ -181,7 +180,6 @@ export class DrawableSliderBody extends Drawable {
       );
     }
 
-    this.snakeInProgress = snakeInProgress;
     this.#pathIsInvalid = false;
   }
 
@@ -194,8 +192,6 @@ export class DrawableSliderBody extends Drawable {
   }
 
   #pathIsInvalid = true;
-
-  snakeInProgress = 0;
 
   @resolved(DrawableHitObject, true)
   private drawableHitObject?: DrawableHitObject;
