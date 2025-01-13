@@ -11,8 +11,7 @@ export class ModdingScreenSettings extends EditorCornerContent {
   constructor() {
     super(Corner.TopRight);
 
-    this.content.autoSizeAxes = Axes.None;
-    this.content.width = 230;
+    this.relativeSizeAxes = Axes.Both;
   }
 
   readonly showMinorIssues = new BindableBoolean();
@@ -29,7 +28,7 @@ export class ModdingScreenSettings extends EditorCornerContent {
         direction: FillDirection.Vertical,
         relativeSizeAxes: Axes.X,
         autoSizeAxes: Axes.Y,
-        padding: 12,
+        padding: { vertical: 12 },
         anchor: Anchor.BottomLeft,
         origin: Anchor.BottomLeft,
         children: [

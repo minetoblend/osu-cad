@@ -38,6 +38,7 @@ export class EditorScreenSelect extends Container {
       this.#content,
       new Container({
         relativeSizeAxes: Axes.Y,
+        bypassAutoSizeAxes: Axes.Both,
         child: this.#underline = new Box({
           width: 1,
           height: 2,

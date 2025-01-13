@@ -61,25 +61,24 @@ export class EditorLayout extends CompositeDrawable {
           this.#topRightCornerPiece = new EditorCornerPiece({
             corner: Corner.TopRight,
             height: 95,
-            autoSizeAxes: Axes.X,
+            width: 240,
             anchor: Anchor.TopRight,
             origin: Anchor.TopRight,
             autoSizeDuration: 300,
             autoSizeEasing: EasingFunction.OutExpo,
             children: [
-              new Container({ width: 100 }),
+              // new Container({ width: 200 }),
               new Container({
                 autoSizeAxes: Axes.X,
                 height: 25,
                 padding: { left: 20 },
+                anchor: Anchor.TopCenter,
+                origin: Anchor.TopCenter,
                 child: new EditorScreenSelect(),
               }),
               this.#topRightContent = new Container({
-                autoSizeAxes: Axes.X,
-                relativeSizeAxes: Axes.Y,
-                anchor: Anchor.TopRight,
-                origin: Anchor.TopRight,
-                padding: { left: 25, top: 25 },
+                relativeSizeAxes: Axes.Both,
+                padding: { left: 40, top: 25, bottom: 5 },
               }),
             ],
           }),
@@ -125,8 +124,8 @@ export class EditorLayout extends CompositeDrawable {
 
       const topRightPrevious = this.#topRightContent.children[this.#topRightContent.children.length - 1];
 
-      topRightPrevious?.onExiting(screen.topRightCornerContent);
-      topRightPrevious?.expire();
+      topRightPrevious?.onExiting?.(screen.topRightCornerContent);
+      // topRightPrevious?.expire();
 
       this.#topLeftContent.add(
         screen.topLeftCornerContent.doWhenLoaded(it => it.onEntering(topLeftPrevious)),

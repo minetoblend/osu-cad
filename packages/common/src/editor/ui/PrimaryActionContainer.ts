@@ -9,9 +9,6 @@ export class PrimaryActionContainer extends EditorCornerContent {
   constructor() {
     super(Corner.TopLeft);
 
-    this.autoSizeAxes = Axes.X;
-    this.relativeSizeAxes = Axes.Y;
-
     this.padding = { horizontal: 6, vertical: 8 };
 
     this.child = new FillFlowContainer({

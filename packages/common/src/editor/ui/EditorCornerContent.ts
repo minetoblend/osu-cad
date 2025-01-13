@@ -1,5 +1,5 @@
-import type { Drawable, Vec2 } from 'osucad-framework';
-import { Anchor, Axes, Container, EasingFunction } from 'osucad-framework';
+import type { Drawable } from 'osucad-framework';
+import { Axes, Container, EasingFunction } from 'osucad-framework';
 import { Corner } from './Corner';
 
 export class EditorCornerContent extends Container {
@@ -7,22 +7,22 @@ export class EditorCornerContent extends Container {
     super();
 
     this.relativeSizeAxes = Axes.Y;
-    this.autoSizeAxes = Axes.X;
     this.masking = true;
 
-    this.internalChild = this.#content = new Container({
-      relativeSizeAxes: Axes.Y,
-      autoSizeAxes: Axes.X,
-    });
-
-    if (corner === Corner.TopRight || corner === Corner.BottomRight)
-      this.anchor = this.origin = Anchor.TopRight;
+    this.internalChild = this.#content = new Container({});
   }
 
   readonly #content: Container;
 
   override get content(): Container<Drawable> {
     return this.#content;
+  }
+
+  protected override loadComplete() {
+    super.loadComplete();
+
+    this.content.autoSizeAxes = this.autoSizeAxes;
+    this.content.relativeSizeAxes = this.relativeSizeAxes;
   }
 
   onEntering(previous: EditorCornerContent | null) {
@@ -41,9 +41,6 @@ export class EditorCornerContent extends Container {
     this.#content.moveToX(direction * 50, 300, EasingFunction.OutExpo);
 
     this.bypassAutoSizeAxes = Axes.Both;
-  }
-
-  override get size(): Vec2 {
-    return this.#content.size;
+    this.#content.bypassAutoSizeAxes = Axes.Both;
   }
 }

@@ -735,9 +735,15 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     const ap = this.anchorPosition;
     const rap = this.relativeAnchorPosition;
 
-    const ratio1 = new Vec2(rap.x <= 0 ? 0 : 1 / rap.x, rap.y <= 0 ? 0 : 1 / rap.y);
+    const ratio1 = new Vec2(
+      rap.x <= 0 ? 0 : 1 / rap.x,
+      rap.y <= 0 ? 0 : 1 / rap.y,
+    );
 
-    const ratio2 = new Vec2(rap.x >= 1 ? 0 : 1 / (1 - rap.x), rap.y >= 1 ? 0 : 1 / (1 - rap.y));
+    const ratio2 = new Vec2(
+      rap.x >= 1 ? 0 : 1 / (1 - rap.x),
+      rap.y >= 1 ? 0 : 1 / (1 - rap.y),
+    );
 
     const bbox = this.boundingBox;
 
@@ -1411,6 +1417,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   }
 
   rectToParentSpace(rect: Rectangle): Quad {
+    this.updateDrawNodeTransform();
     return Quad.fromRectangle(rect).transform(this.localTransform);
   }
 
