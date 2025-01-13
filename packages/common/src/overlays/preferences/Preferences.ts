@@ -1,6 +1,5 @@
 import type { ClickEvent, MouseDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
-import { Axes, Box, Container, Direction, FillDirection, FillFlowContainer } from 'osucad-framework';
-import { BackdropBlurFilter } from 'pixi-filters';
+import { Axes, BetterBackdropBlurFilter, Box, Container, Direction, FillDirection, FillFlowContainer } from 'osucad-framework';
 import { OsucadScrollContainer } from '../../drawables/OsucadScrollContainer';
 import { OsucadColors } from '../../OsucadColors';
 import { AudioPreferencesSection } from './AudioPreferencesSection';
@@ -19,11 +18,10 @@ export class Preferences extends Container {
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
-    const filter = new BackdropBlurFilter({
+    const filter = new BetterBackdropBlurFilter({
       strength: 24,
-      quality: 4,
+      quality: 3,
     });
-    filter.padding = 20;
 
     this.addAllInternal(
       new Box({
