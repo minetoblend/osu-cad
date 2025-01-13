@@ -1,3 +1,4 @@
+export * from './animate';
 export * from './arrayUtils';
 export * from './binarySearch';
 export * from './Constructor';
@@ -6,3 +7,4 @@ export * from './objectId';
 export * from './PathApproximator';
 export * from './pathToBezier';
 export * from './stringUtils';
+export * from './TernaryState';

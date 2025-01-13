@@ -9,5 +9,8 @@ export * from './HitResult';
 export * from './HitType';
 export * from './HitWindows';
 export * from './IHasComboInformation';
+export * from './IHasDuration';
+export * from './IHasRepeats';
+export * from './IHasSliderVelocity';
 export * from './IHasXPosition';
 export * from './IHasYPosition';

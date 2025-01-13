@@ -339,6 +339,28 @@ importers:
         specifier: ^0.5.0
         version: 0.5.0(rollup@4.21.3)
 
+  packages/ruleset-osu:
+    dependencies:
+      audiobuffer-to-wav:
+        specifier: ^1.0.0
+        version: 1.0.0
+      bezier-easing:
+        specifier: ^2.1.0
+        version: 2.1.0
+      unzipit:
+        specifier: ^1.4.3
+        version: 1.4.3
+    devDependencies:
+      '@types/audiobuffer-to-wav':
+        specifier: ^1.0.4
+        version: 1.0.4
+      dependency-cruiser:
+        specifier: ^16.9.0
+        version: 16.9.0
+      vite-plugin-circular-dependency:
+        specifier: ^0.5.0
+        version: 0.5.0(rollup@4.21.3)
+
   packages/serialization:
     dependencies:
       websocket-stream:

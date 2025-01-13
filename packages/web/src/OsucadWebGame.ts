@@ -1,6 +1,7 @@
 import type { ReadonlyDependencyContainer } from 'osucad-framework';
-import { DummyEditorBeatmap, Editor, ISkinSource, OsucadGameBase, OsucadScreenStack, OsuRuleset, RulesetStore, SkinManager } from '@osucad/common';
+import { DummyEditorBeatmap, Editor, ISkinSource, OsucadGameBase, OsucadScreenStack, RulesetStore, SkinManager } from '@osucad/common';
 import { ManiaRuleset } from '@osucad/ruleset-mania';
+import { OsuRuleset } from '@osucad/ruleset-osu';
 import { provide } from 'osucad-framework';
 
 export class OsucadWebGame extends OsucadGameBase {

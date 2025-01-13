@@ -1,3 +1,4 @@
+export * from './difficulty';
 export * from './DrawableRuleset';
 export * from './judgements';
 export * from './objects';

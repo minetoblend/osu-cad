@@ -1,3 +1,5 @@
+export * from './HitObjectBlueprint';
+export * from './HitObjectBlueprintContainer';
 export * from './HitObjectContainer';
 export * from './IHitPolicy';
 export * from './Playfield';

@@ -14,5 +14,7 @@ export * from './HitObjectComposerDependencies';
 export * from './HitObjectComposerSettingsContainer';
 export * from './HitObjectSelectionManager';
 export * from './IComposeTool';
+export * from './operators';
 export * from './SimpleEditorTextButton';
 export * from './ToolbarToggleButton';
+export * from './ToolModifier';
