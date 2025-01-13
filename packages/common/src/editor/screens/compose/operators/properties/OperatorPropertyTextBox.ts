@@ -20,7 +20,7 @@ export class OperatorPropertyTextBox extends TextBox {
   protected override createBackground(): Drawable {
     return this.noBackground
       ? new EmptyDrawable()
-      : new RoundedBox({
+      : this.#background = new RoundedBox({
         relativeSizeAxes: Axes.Both,
         color: OsucadColors.text,
         fillAlpha: 0.2,
@@ -32,6 +32,8 @@ export class OperatorPropertyTextBox extends TextBox {
         },
       });
   }
+
+  #background?: RoundedBox;
 
   protected override get textContainerPadding(): MarginPadding {
     return new MarginPadding({ horizontal: 8, vertical: 4 });
@@ -66,6 +68,26 @@ export class OperatorPropertyTextBox extends TextBox {
 
     this.selectAll();
 
+    if (this.#background) {
+      this.#background.outline = {
+        width: 2,
+        color: OsucadColors.primary,
+        alpha: 0.75,
+      };
+    }
+
     return true;
+  }
+
+  override onFocusLost() {
+    super.onFocusLost();
+
+    if (this.#background) {
+      this.#background.outline = {
+        width: 1,
+        color: 0x000000,
+        alpha: 0.1,
+      };
+    }
   }
 }

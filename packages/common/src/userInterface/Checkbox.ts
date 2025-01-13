@@ -1,13 +1,13 @@
-import type { Bindable, ClickEvent, DrawableOptions } from 'osucad-framework';
+import type { Bindable, ClickEvent, DrawableOptions, FocusEvent, FocusLostEvent, KeyDownEvent } from 'osucad-framework';
 import type { Graphics } from 'pixi.js';
-import { Axes, BindableWithCurrent, CompositeDrawable, Container, GraphicsDrawable, RoundedBox, Vec2 } from 'osucad-framework';
+import { Axes, BindableWithCurrent, Container, GraphicsDrawable, Key, RoundedBox, TabbableContainer, Vec2 } from 'osucad-framework';
 import { OsucadColors } from '../OsucadColors';
 
 export interface CheckboxOptions extends DrawableOptions {
   current?: Bindable<boolean>;
 }
 
-export class Checkbox extends CompositeDrawable {
+export class Checkbox extends TabbableContainer {
   constructor(options: CheckboxOptions = {}) {
     super();
 
@@ -16,7 +16,7 @@ export class Checkbox extends CompositeDrawable {
     this.with(options);
 
     this.internalChildren = [
-      new RoundedBox({
+      this.#background = new RoundedBox({
         relativeSizeAxes: Axes.Both,
         fillAlpha: 0.2,
         cornerRadius: 4,
@@ -36,6 +36,8 @@ export class Checkbox extends CompositeDrawable {
       }),
     ];
   }
+
+  #background!: RoundedBox;
 
   #check!: Check;
 
@@ -63,6 +65,38 @@ export class Checkbox extends CompositeDrawable {
   override onClick(e: ClickEvent): boolean {
     this.current.value = !this.current.value;
     return true;
+  }
+
+  override get acceptsFocus(): boolean {
+    return true;
+  }
+
+  override onFocus(e: FocusEvent) {
+    this.#background.outline = {
+      width: 2,
+      color: OsucadColors.primary,
+      alpha: 0.75,
+    };
+  }
+
+  override onFocusLost(e: FocusLostEvent) {
+    this.#background.outline = {
+      width: 1,
+      color: 0x000000,
+      alpha: 0.2,
+    };
+  }
+
+  override onKeyDown(e: KeyDownEvent): boolean {
+    if (!this.hasFocus)
+      return false;
+
+    if (e.key === Key.Space) {
+      this.current.value = !this.current.value;
+      return true;
+    }
+
+    return super.onKeyDown(e);
   }
 }
 
