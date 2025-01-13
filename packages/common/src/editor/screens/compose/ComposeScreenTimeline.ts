@@ -1,6 +1,7 @@
 import type { AudioBufferTrack, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { TimelineHitObjectBlueprintContainer } from '../../ui/timeline/hitObjects/TimelineHitObjectBlueprintContainer';
 import { Anchor, Axes, BindableBoolean, Container, provide, resolved } from 'osucad-framework';
+import { isMobile } from 'pixi.js';
 import { EditorRuleset } from '../../../rulesets/EditorRuleset';
 import { BottomAlignedTickDisplay } from '../../ui/timeline/BottomAlignedTickDisplay';
 import { CurrentTimeOverlay } from '../../ui/timeline/CurrentTimeOverlay';
@@ -14,6 +15,13 @@ export class ComposeScreenTimeline extends Timeline {
   @resolved(EditorRuleset)
   editorRuleset!: EditorRuleset;
 
+  static get HEIGHT() {
+    if (isMobile.any)
+      return 85;
+
+    return 75;
+  }
+
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
@@ -23,7 +31,7 @@ export class ComposeScreenTimeline extends Timeline {
       new DrawableWaveform((this.editorClock.track as AudioBufferTrack)),
       new Container({
         relativeSizeAxes: Axes.Both,
-        height: 0.65,
+        height: isMobile.any ? 0.55 : 0.65,
         anchor: Anchor.CenterLeft,
         origin: Anchor.CenterLeft,
         child: this.blueprintContainer = this.editorRuleset.createTimelineHitObjectContainer(),

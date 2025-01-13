@@ -10,6 +10,7 @@ import { OsucadColors } from '../../../OsucadColors';
 import { Ruleset } from '../../../rulesets/Ruleset';
 import { EditorBeatmap } from '../../EditorBeatmap';
 import { ModelBackedEditorBeatmapProvidingContainer } from '../../ModelBackedEditorBeatmapProvidingContainer';
+import { ComposeScreenTimeline } from '../compose/ComposeScreenTimeline';
 import { HitObjectSelectionManager } from '../compose/HitObjectSelectionManager';
 import { EditorScreen } from '../EditorScreen';
 import { editorScreen } from '../metadata';
@@ -141,7 +142,7 @@ export class ModdingScreen extends EditorScreen {
   override createTopBarContent(): Drawable {
     return new Container({
       relativeSizeAxes: Axes.X,
-      height: 75,
+      height: ComposeScreenTimeline.HEIGHT,
       children: [
         new Box({
           relativeSizeAxes: Axes.Both,

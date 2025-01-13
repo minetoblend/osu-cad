@@ -7,6 +7,7 @@ import { OsucadColors } from '../../../OsucadColors';
 import { Ruleset } from '../../../rulesets/Ruleset';
 import { EditorScreen } from '../EditorScreen';
 import { editorScreen } from '../metadata';
+import { ComposeScreenTimeline } from './ComposeScreenTimeline';
 import { ComposeScreenTimelineControls } from './ComposeScreenTimelineControls';
 
 @editorScreen({
@@ -36,7 +37,7 @@ export class ComposeScreen extends EditorScreen {
   override createTopBarContent(): Drawable {
     return new Container({
       relativeSizeAxes: Axes.X,
-      height: 75,
+      height: ComposeScreenTimeline.HEIGHT,
       children: [
         new Box({
           relativeSizeAxes: Axes.Both,

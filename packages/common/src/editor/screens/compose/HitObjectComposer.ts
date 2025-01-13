@@ -165,7 +165,7 @@ export abstract class HitObjectComposer extends CompositeDrawable {
   protected createTopBar(): Drawable {
     return new Container({
       relativeSizeAxes: Axes.X,
-      height: 75,
+      height: ComposeScreenTimeline.HEIGHT,
       child: this.timeline = new ComposeScreenTimeline(),
     });
   }
