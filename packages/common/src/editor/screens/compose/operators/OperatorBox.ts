@@ -128,6 +128,7 @@ class OperatorTitle extends FillFlowContainer {
       direction: FillDirection.Horizontal,
       autoSizeAxes: Axes.Both,
       spacing: new Vec2(4),
+      padding: { right: 12 },
     });
 
     this.expanded = expanded.getBoundCopy();
