@@ -5,6 +5,7 @@ import type { Operator } from './operators/Operator';
 import { Action, Axes, BindableBoolean, CompositeDrawable, Container, FillDirection, FillFlowContainer, resolved, Vec2 } from 'osucad-framework';
 import { UpdateHandler } from '../../../crdt/UpdateHandler';
 import { EditorBeatmap } from '../../EditorBeatmap';
+import { EditorClock } from '../../EditorClock';
 import { DrawableToolModifier } from './DrawableToolModifier';
 import { HitObjectComposerDependencies } from './HitObjectComposerDependencies';
 import { OperatorBox } from './operators/OperatorBox';
@@ -120,6 +121,10 @@ export class ComposeToolContainer extends CompositeDrawable {
       this.#applyOperator(operator);
   }
 
+  get activeOperator() {
+    return this.#activeOperator ?? null;
+  }
+
   #endOperator() {
     if (this.#activeOperator)
       this.#activeOperator.invalidated.removeListener(this.#operatorInvalidated, this);
@@ -138,6 +143,9 @@ export class ComposeToolContainer extends CompositeDrawable {
   @resolved(EditorBeatmap)
   editorBeatmap!: EditorBeatmap;
 
+  @resolved(EditorClock)
+  editorClock!: EditorClock;
+
   #lastRunHadChanges = false;
 
   #operatorIsRunning = false;
@@ -154,6 +162,7 @@ export class ComposeToolContainer extends CompositeDrawable {
 
       operator.apply({
         beatmap: this.editorBeatmap,
+        clock: this.editorClock,
       });
 
       const properties = operator.properties;

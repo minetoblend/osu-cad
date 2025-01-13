@@ -1,5 +1,5 @@
 import type { Drawable, ReadonlyDependencyContainer } from 'osucad-framework';
-import { EmptyDrawable, MarginPadding, resolved } from 'osucad-framework';
+import { Axes, EmptyDrawable, MarginPadding, resolved, RoundedBox } from 'osucad-framework';
 import { OsucadSpriteText } from '../../../../../drawables/OsucadSpriteText';
 import { OsucadColors } from '../../../../../OsucadColors';
 import { TextBox } from '../../../../../userInterface/TextBox';
@@ -18,7 +18,19 @@ export class OperatorPropertyTextBox extends TextBox {
   noBackground: boolean = false;
 
   protected override createBackground(): Drawable {
-    return this.noBackground ? new EmptyDrawable() : super.createBackground();
+    return this.noBackground
+      ? new EmptyDrawable()
+      : new RoundedBox({
+        relativeSizeAxes: Axes.Both,
+        color: OsucadColors.text,
+        fillAlpha: 0.2,
+        cornerRadius: 4,
+        outline: {
+          width: 1,
+          color: 0x000000,
+          alpha: 0.1,
+        },
+      });
   }
 
   protected override get textContainerPadding(): MarginPadding {

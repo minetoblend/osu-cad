@@ -10,7 +10,7 @@ export abstract class DrawableOperatorProperty<T> extends GridContainer {
       relativeSizeAxes: Axes.X,
       autoSizeAxes: Axes.Y,
       columnDimensions: [
-        new Dimension(GridSizeMode.Absolute, 100),
+        new Dimension(GridSizeMode.Absolute, 110),
         new Dimension(),
       ],
     });

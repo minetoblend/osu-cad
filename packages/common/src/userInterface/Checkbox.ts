@@ -28,7 +28,7 @@ export class Checkbox extends CompositeDrawable {
       }),
       new Container({
         relativeSizeAxes: Axes.Both,
-        padding: 3,
+        padding: 4,
         child: this.#check = new Check().with({
           relativeSizeAxes: Axes.Both,
           color: OsucadColors.primary,

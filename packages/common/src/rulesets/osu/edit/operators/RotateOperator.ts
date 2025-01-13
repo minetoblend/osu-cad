@@ -1,0 +1,37 @@
+import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
+import { Vec2 } from 'osucad-framework';
+import { Matrix } from 'pixi.js';
+import { CheckboxOperatorProperty } from '../../../../editor/screens/compose/operators/properties/CheckboxOperatorProperty';
+import { FloatOperatorProperty } from '../../../../editor/screens/compose/operators/properties/FloatOperatorProperty';
+import { TransformOperator } from './TransformOperator';
+
+export class RotateOperator extends TransformOperator {
+  constructor(hitObjects: OsuHitObject[], angle: number = 0) {
+    super({
+      title: 'Rotate',
+    }, hitObjects);
+    this.angle.value = angle;
+  }
+
+  readonly angle = new FloatOperatorProperty({
+    title: 'Angle',
+    defaultValue: 0,
+    precision: 0,
+  });
+
+  readonly selectionCenter = new CheckboxOperatorProperty({
+    title: 'Selection Center',
+    defaultValue: false,
+  });
+
+  protected override getMatrix(): Matrix {
+    const center = this.selectionCenter.value
+      ? this.center
+      : new Vec2(256, 192);
+
+    return new Matrix()
+      .translate(-center.x, -center.y)
+      .rotate(this.angle.value / 180 * Math.PI)
+      .translate(center.x, center.y);
+  }
+}

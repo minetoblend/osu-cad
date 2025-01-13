@@ -3,7 +3,6 @@ import type { IHitSound } from '../../../hitsounds/IHitSound';
 import type { OsuSelectionManager, SliderSelectionType } from './OsuSelectionManager';
 import { getIcon } from '@osucad/resources';
 import { Bindable, Direction, PlatformAction, resolved, Vec2 } from 'osucad-framework';
-import { Matrix } from 'pixi.js';
 import { EditorAction } from '../../../editor/EditorAction';
 import { DrawableComposeTool } from '../../../editor/screens/compose/DrawableComposeTool';
 import { hasComboInformation } from '../../../hitObjects/IHasComboInformation';
@@ -13,10 +12,12 @@ import { TernaryState } from '../../../utils/TernaryState';
 import { HitCircle } from '../hitObjects/HitCircle';
 import { OsuHitObject } from '../hitObjects/OsuHitObject';
 import { Slider } from '../hitObjects/Slider';
+import { Spinner } from '../hitObjects/Spinner';
 import { GlobalHitSoundState } from './GlobalHitSoundState';
 import { GlobalNewComboBindable } from './GlobalNewComboBindable';
 import { HitSoundStateBuilder } from './HitSoundStateBuilder';
 import { MobileControlButton } from './MobileEditorControls';
+import { RotateOperator } from './operators/RotateOperator';
 import { OsuHitObjectComposer } from './OsuHitObjectComposer';
 
 export class DrawableOsuSelectTool extends DrawableComposeTool implements IKeyBindingHandler<PlatformAction | EditorAction> {
@@ -144,10 +145,10 @@ export class DrawableOsuSelectTool extends DrawableComposeTool implements IKeyBi
         this.moveSelection(new Vec2(1, 0));
         return true;
       case EditorAction.RotateCW:
-        this.rotateSelection(Math.PI / 2);
+        this.rotateSelection(90);
         return true;
       case EditorAction.RotateCCW:
-        this.rotateSelection(-Math.PI / 2);
+        this.rotateSelection(-90);
         return true;
       case EditorAction.ConvertToStream:
         this.convertToStream();
@@ -166,16 +167,29 @@ export class DrawableOsuSelectTool extends DrawableComposeTool implements IKeyBi
   }
 
   rotateSelection(angle: number) {
-    for (const hitObject of this.selection.selectedObjects) {
-      this.composer.transformHitObject(
-        hitObject as OsuHitObject,
-        new Matrix()
-          .translate(-256, -192)
-          .rotate(angle)
-          .translate(256, 192),
-      );
+    const selection = [...this.selection.selectedObjects]
+      .filter(it => !(it instanceof Spinner)) as OsuHitObject[];
+
+    const operator = this.composer.activeOperator;
+
+    if (operator instanceof RotateOperator) {
+      if (operator.hitObjects.every((it, index) => it === selection[index])) {
+        angle = operator.angle.value + angle;
+
+        while (angle >= 360)
+          angle -= 360;
+
+        while (angle <= -360)
+          angle += 360;
+
+        operator.angle.value = angle;
+        return;
+      }
     }
-    this.commit();
+
+    this.composer.beginOperator(
+      new RotateOperator(selection, angle),
+    );
   }
 
   moveSelection(delta: Vec2) {

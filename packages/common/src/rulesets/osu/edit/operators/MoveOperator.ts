@@ -21,20 +21,22 @@ export class MoveOperator extends Operator<OsuHitObject> {
   });
 
   readonly clampToBounds = new CheckboxOperatorProperty({
-    title: 'Clamp to bounds',
+    title: 'Clamp to playfield',
     defaultValue: true,
     remember: true,
   });
 
   override apply(): void {
-    for (const hitObject of this.hitObjects)
-      hitObject.moveBy(this.delta.value);
+    let delta = this.delta.value;
 
     if (this.clampToBounds.value)
-      this.moveIntoBounds(this.hitObjects);
+      delta = this.moveIntoBounds(this.hitObjects, delta);
+
+    for (const hitObject of this.hitObjects)
+      hitObject.moveBy(delta);
   }
 
-  protected moveIntoBounds(hitObjects: OsuHitObject[]) {
+  protected moveIntoBounds(hitObjects: OsuHitObject[], delta: Vec2): Vec2 {
     const overflow = {
       left: 0,
       top: 0,
@@ -43,7 +45,7 @@ export class MoveOperator extends Operator<OsuHitObject> {
     };
 
     for (const object of hitObjects) {
-      const start = object.position;
+      const start = object.position.add(delta);
       let end = start;
       if (object instanceof Slider)
         end = end.add(object.path.endPosition);
@@ -74,9 +76,6 @@ export class MoveOperator extends Operator<OsuHitObject> {
     else if (overflow.bottom && !overflow.top)
       offset.y = -overflow.bottom;
 
-    if (!offset.isZero) {
-      for (const object of hitObjects)
-        object.position = object.position.add(offset);
-    }
+    return delta.add(offset);
   }
 }

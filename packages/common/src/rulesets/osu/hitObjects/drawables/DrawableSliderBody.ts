@@ -101,6 +101,7 @@ export class DrawableSliderBody extends Drawable {
 
   #invalidatePath() {
     this.#pathIsInvalid = true;
+    this.#updatePath();
   }
 
   get path() {
@@ -128,6 +129,10 @@ export class DrawableSliderBody extends Drawable {
   override update() {
     super.update();
 
+    this.#updatePath();
+  }
+
+  #updatePath() {
     if (!this.hitObject)
       return;
 
