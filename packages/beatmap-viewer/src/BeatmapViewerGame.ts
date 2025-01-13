@@ -1,6 +1,7 @@
 import type { DependencyContainer, ReadonlyDependencyContainer } from 'osucad-framework';
-import { ISkinSource, OsucadGameBase, OsuRuleset, RulesetStore, SkinManager, UISamples } from '@osucad/common';
+import { ISkinSource, OsucadGameBase, RulesetStore, SkinManager, UISamples } from '@osucad/common';
 import { ManiaRuleset } from '@osucad/ruleset-mania';
+import { OsuRuleset } from '@osucad/ruleset-osu';
 import { RenderTarget } from 'pixi.js';
 import { Router } from './screens/Router';
 
@@ -38,7 +39,7 @@ export class BeatmapViewerGame extends OsucadGameBase {
 
     this.#skinManagerLoaded = this.loadComponentAsync(this.#skinManager);
 
-    RulesetStore.register(OsuRuleset.rulesetInfo);
+    RulesetStore.register(new OsuRuleset().rulesetInfo);
     RulesetStore.register(new ManiaRuleset().rulesetInfo);
   }
 
