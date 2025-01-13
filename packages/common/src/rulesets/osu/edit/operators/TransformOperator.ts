@@ -2,7 +2,8 @@ import type { Matrix } from 'pixi.js';
 import type { OperatorOptions } from '../../../../editor/screens/compose/operators/Operator';
 import type { OperatorContext } from '../../../../editor/screens/compose/operators/OperatorContext';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
-import { Vec2 } from 'osucad-framework';
+import { resolved, Vec2 } from 'osucad-framework';
+import { EditorClock } from '../../../../editor/EditorClock';
 import { Operator } from '../../../../editor/screens/compose/operators/Operator';
 import { HitCircle } from '../../hitObjects/HitCircle';
 import { Slider } from '../../hitObjects/Slider';
@@ -50,6 +51,9 @@ export abstract class TransformOperator extends Operator<OsuHitObject> {
     return true;
   }
 
+  @resolved(EditorClock)
+  protected editorClock!: EditorClock;
+
   #transform(hitObject: OsuHitObject, transform: Matrix, context: OperatorContext<OsuHitObject>) {
     if (!(hitObject instanceof HitCircle || hitObject instanceof Slider))
       return;
@@ -65,7 +69,7 @@ export abstract class TransformOperator extends Operator<OsuHitObject> {
       hitObject.controlPoints = hitObject.path.controlPoints.map(p => p.transformBy(pointTransform));
 
       if (this.recalculateSliderLength)
-        hitObject.snapLength(context.beatmap.controlPoints, context.clock.beatSnapDivisor.value);
+        hitObject.snapLength(context.beatmap.controlPoints, this.editorClock.beatSnapDivisor.value);
     }
   }
 

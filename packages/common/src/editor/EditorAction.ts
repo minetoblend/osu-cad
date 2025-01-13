@@ -6,6 +6,7 @@ export class EditorAction extends KeyBindingAction {
   }
 
   static readonly Play = new EditorAction('Play');
+  static readonly Move = new EditorAction('Move');
   static readonly FlipHorizontal = new EditorAction('FlipHorizontal');
   static readonly FlipVertical = new EditorAction('FlipVertical');
   static readonly Rotate = new EditorAction('Rotate');

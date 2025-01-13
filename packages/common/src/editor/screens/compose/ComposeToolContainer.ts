@@ -92,7 +92,7 @@ export class ComposeToolContainer extends CompositeDrawable {
   beginOperator(operator: Operator, alreadyApplied = false) {
     this.#endOperator();
 
-    operator.init();
+    this.loadComponent(operator);
 
     if (this.#rememberedPropertyCache.has(operator.constructor)) {
       const values = this.#rememberedPropertyCache.get(operator.constructor)!;
@@ -111,14 +111,14 @@ export class ComposeToolContainer extends CompositeDrawable {
     this.#operatorContainer.add(
       this.#activeOperatorBox = new OperatorBox(operator),
     );
-    if (operator.expandByDefault)
+    if (operator.prominent)
       this.#activeOperatorBox!.expanded.value = true;
     else
       this.#activeOperatorBox!.expanded.bindTo(this.operatorExpanded);
 
     this.#lastRunHadChanges = alreadyApplied;
 
-    operator.invalidated.addListener(this.#operatorInvalidated, this);
+    operator.propertyChanged.addListener(this.#operatorInvalidated, this);
 
     if (!alreadyApplied)
       this.#applyOperator(operator);
@@ -147,7 +147,7 @@ export class ComposeToolContainer extends CompositeDrawable {
 
   #endOperator() {
     if (this.#activeOperator) {
-      this.#activeOperator.invalidated.removeListener(this.#operatorInvalidated, this);
+      this.#activeOperator.propertyChanged.removeListener(this.#operatorInvalidated, this);
       this.#activeOperator.ended.emit();
     }
 

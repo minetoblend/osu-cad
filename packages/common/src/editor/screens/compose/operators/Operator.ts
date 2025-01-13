@@ -1,27 +1,31 @@
+import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import type { HitObject } from '../../../../hitObjects/HitObject';
 import type { OperatorContext } from './OperatorContext';
-import { Action } from 'osucad-framework';
+import { Action, Component } from 'osucad-framework';
 import { OperatorProperty } from './properties/OperatorProperty';
 
 export interface OperatorOptions {
   readonly title: string;
 }
 
-export abstract class Operator<TObject extends HitObject = any> {
+export abstract class Operator<TObject extends HitObject = any> extends Component {
   protected constructor(options: OperatorOptions) {
+    super();
     const { title } = options;
     this.title = title;
   }
 
-  readonly invalidated = new Action<Operator>();
+  readonly propertyChanged = new Action<Operator>();
 
   readonly ended = new Action();
 
-  expandByDefault = false;
+  prominent = false;
 
-  init() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     for (const property of this.properties)
-      property.bindable.bindValueChanged(() => this.invalidated.emit(this));
+      property.bindable.bindValueChanged(() => this.propertyChanged.emit(this));
   }
 
   readonly title: string;

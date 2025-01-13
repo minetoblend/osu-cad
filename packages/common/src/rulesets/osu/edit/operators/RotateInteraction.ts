@@ -10,7 +10,7 @@ export class RotateInteraction extends CompositeDrawable {
     super();
 
     this.operator = new RotateOperator(this.hitObjects);
-    this.operator.expandByDefault = true;
+    this.operator.prominent = true;
   }
 
   readonly operator: RotateOperator;

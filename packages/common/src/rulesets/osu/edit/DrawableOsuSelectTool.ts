@@ -9,7 +9,6 @@ import { hasComboInformation } from '../../../hitObjects/IHasComboInformation';
 import { Additions } from '../../../hitsounds/Additions';
 import { HitSound } from '../../../hitsounds/HitSound';
 import { TernaryState } from '../../../utils/TernaryState';
-import { HitCircle } from '../hitObjects/HitCircle';
 import { OsuHitObject } from '../hitObjects/OsuHitObject';
 import { Slider } from '../hitObjects/Slider';
 import { Spinner } from '../hitObjects/Spinner';
@@ -17,6 +16,7 @@ import { GlobalHitSoundState } from './GlobalHitSoundState';
 import { GlobalNewComboBindable } from './GlobalNewComboBindable';
 import { HitSoundStateBuilder } from './HitSoundStateBuilder';
 import { MobileControlButton } from './MobileEditorControls';
+import { ConvertToStreamOperator } from './operators/ConvertToStreamOperator';
 import { RotateInteraction } from './operators/RotateInteraction';
 import { RotateOperator } from './operators/RotateOperator';
 import { OsuHitObjectComposer } from './OsuHitObjectComposer';
@@ -214,29 +214,11 @@ export class DrawableOsuSelectTool extends DrawableComposeTool implements IKeyBi
   protected convertToStream() {
     const [slider] = [...this.selection.selectedObjects];
     if (slider && slider instanceof Slider) {
-      const timingPoint = this.controlPointInfo.timingPointAt(slider.startTime);
-
       if (slider.spanDuration <= 0)
         return;
 
-      // Adding 1ms to account for floating point errors
-      for (let time = slider.startTime; time <= slider.startTime + slider.spanDuration + 1; time += timingPoint.beatLength / this.editorClock.beatSnapDivisor.value) {
-        const circle = new HitCircle();
-
-        circle.startTime = time;
-        circle.position = slider.getPositionAtTime(time);
-        circle.hitSound = slider.hitSounds[0] ?? slider.hitSound;
-
-        if (time === slider.startTime)
-          circle.newCombo = slider.newCombo;
-
-        this.hitObjects.add(circle);
-      }
-
-      this.hitObjects.remove(slider);
+      this.composer.beginOperator(new ConvertToStreamOperator(slider));
     }
-
-    this.commit();
   }
 
   protected moveIntoBounds(hitObjects: OsuHitObject[]) {

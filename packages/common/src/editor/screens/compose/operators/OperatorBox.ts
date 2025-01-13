@@ -64,7 +64,7 @@ export class OperatorBox extends CompositeDrawable {
       this.#content.bypassAutoSizeAxes = expanded.value ? Axes.None : Axes.Both;
     }, true);
 
-    if (this.expanded.value && this.operator.expandByDefault) {
+    if (this.expanded.value && this.operator.prominent) {
       this.parent!.scheduler.add(() => {
         const focusTarget = this.findChildrenOfType(TabbableContainer);
         if (focusTarget.length > 0)
