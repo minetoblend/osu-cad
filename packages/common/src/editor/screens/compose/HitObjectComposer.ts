@@ -1,4 +1,4 @@
-import type { DependencyContainer, Drawable, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { DependencyContainer, Drawable, List, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { DrawableRuleset } from '../../../rulesets/DrawableRuleset';
 import type { IComposeTool } from './IComposeTool';
 import type { Operator } from './operators/Operator';
@@ -202,6 +202,10 @@ export abstract class HitObjectComposer extends CompositeDrawable {
 
   protected get drawableRuleset() {
     return this.#drawableRuleset;
+  }
+
+  override buildNonPositionalInputQueue(queue: List<Drawable>, allowBlocking?: boolean): boolean {
+    return super.buildNonPositionalInputQueue(queue, false);
   }
 
   protected abstract getTools(): IComposeTool[];
