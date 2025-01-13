@@ -68,20 +68,29 @@ export class MoveInteraction extends CompositeDrawable {
   }
 
   override onKeyDown(e: KeyDownEvent): boolean {
-    if (e.key === Key.KeyX) {
-      this.constrainedAxes = this.constrainedAxes === Axes.Y ? Axes.None : Axes.Y;
+    switch (e.key) {
+      case Key.Enter:
+        this.composer.completeOperator(this.operator);
+        return true;
 
-      this.updatePosition();
-      return true;
+      case Key.Escape:
+        this.composer.cancelOperator(this.operator);
+        return true;
+
+      case Key.KeyX:
+        this.constrainedAxes = this.constrainedAxes === Axes.Y ? Axes.None : Axes.Y;
+
+        this.updatePosition();
+        return true;
+
+      case Key.KeyY:
+        this.constrainedAxes = this.constrainedAxes === Axes.X ? Axes.None : Axes.X;
+
+        this.updatePosition();
+        return true;
+
+      default:
+        return false;
     }
-
-    if (e.key === Key.KeyY) {
-      this.constrainedAxes = this.constrainedAxes === Axes.X ? Axes.None : Axes.X;
-
-      this.updatePosition();
-      return true;
-    }
-
-    return false;
   }
 }
