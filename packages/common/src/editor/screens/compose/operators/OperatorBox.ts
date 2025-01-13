@@ -1,11 +1,12 @@
 import type { ClickEvent, HoverEvent, MouseDownEvent, MouseUpEvent, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { HitObjectComposer } from '../HitObjectComposer';
 import type { Operator } from './Operator';
 import { getIcon } from '@osucad/resources';
 import { Anchor, Axes, BindableBoolean, CompositeDrawable, Container, DrawableSprite, EasingFunction, FastRoundedBox, FillDirection, FillFlowContainer, provide, resolved, TabbableContainer, Vec2 } from 'osucad-framework';
 import { BackdropBlurFilter } from 'pixi-filters';
 import { OsucadSpriteText } from '../../../../drawables/OsucadSpriteText';
 import { OsucadColors } from '../../../../OsucadColors';
-import { HitObjectComposer } from '../HitObjectComposer';
+import { IHitObjectComposer } from '../IHitObjectComposer';
 
 @provide(OperatorBox)
 export class OperatorBox extends CompositeDrawable {
@@ -68,7 +69,7 @@ export class OperatorBox extends CompositeDrawable {
     );
   }
 
-  @resolved(HitObjectComposer)
+  @resolved(IHitObjectComposer)
   composer!: HitObjectComposer;
 
   protected override loadComplete() {

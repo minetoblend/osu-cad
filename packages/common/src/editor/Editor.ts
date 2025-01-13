@@ -18,6 +18,7 @@ import { EditorLayout } from './EditorLayout';
 import { EditorNavigation } from './EditorNavigation';
 import { ComposeScreen } from './screens/compose/ComposeScreen';
 import { EditorScreenManager } from './screens/EditorScreenManager';
+import { ModdingScreen } from './screens/modding/ModdingScreen';
 import { SetupScreen } from './screens/setup/SetupScreen';
 import { TimingScreen } from './screens/timing/TimingScreen';
 
@@ -97,6 +98,7 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
     screenManager.register(SetupScreen);
     screenManager.register(ComposeScreen);
     screenManager.register(TimingScreen);
+    screenManager.register(ModdingScreen);
 
     screenManager.setCurrentScreen(ComposeScreen);
   }

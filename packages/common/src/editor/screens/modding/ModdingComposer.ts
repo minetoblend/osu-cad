@@ -36,10 +36,20 @@ export class ModdingComposer extends HitObjectComposer {
 
   #settingsContainer!: Container;
 
-  protected override createTopBar(): Drawable {
-    return this.#settingsContainer = new Container({
-      relativeSizeAxes: Axes.X,
-      height: 54,
+  protected override createMainContent(): Drawable {
+    return new Container({
+      relativeSizeAxes: Axes.Both,
+      children: [
+        new Container({
+          relativeSizeAxes: Axes.Both,
+          padding: { top: 54 },
+          child: super.createMainContent(),
+        }),
+        this.#settingsContainer = new Container({
+          relativeSizeAxes: Axes.X,
+          height: 54,
+        }),
+      ],
     });
   }
 

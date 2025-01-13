@@ -14,8 +14,10 @@ import { ComposeToolbar } from './ComposeToolbar';
 import { ComposeToolContainer } from './ComposeToolContainer';
 import { HitObjectComposerDependencies } from './HitObjectComposerDependencies';
 import { HitObjectSelectionManager } from './HitObjectSelectionManager';
+import { IHitObjectComposer } from './IHitObjectComposer';
 
 @provide(HitObjectComposer)
+@provide(IHitObjectComposer)
 export abstract class HitObjectComposer extends CompositeDrawable {
   constructor() {
     super();
@@ -68,18 +70,7 @@ export abstract class HitObjectComposer extends CompositeDrawable {
         north: this.createTopBar(),
         west: this.leftSidebar = this.createLeftSidebar(),
         east: this.rightSidebar = this.createRightSidebar(),
-        center: this.playfieldContainer = new Container({
-          relativeSizeAxes: Axes.Both,
-          padding: {
-            top: 10,
-          },
-          children: [
-            new Container({
-              relativeSizeAxes: Axes.Both,
-              child: this.#drawableRuleset = this.ruleset.createDrawableEditorRulesetWith(this.beatmap),
-            }),
-          ],
-        }),
+        center: this.createMainContent(),
         south: this.modifierContainer = new Container({
           relativeSizeAxes: Axes.X,
           height: 18,
@@ -139,6 +130,21 @@ export abstract class HitObjectComposer extends CompositeDrawable {
     });
   }
 
+  protected createMainContent(): Drawable {
+    return this.playfieldContainer = new Container({
+      relativeSizeAxes: Axes.Both,
+      padding: {
+        top: 10,
+      },
+      children: [
+        new Container({
+          relativeSizeAxes: Axes.Both,
+          child: this.#drawableRuleset = this.ruleset.createDrawableEditorRulesetWith(this.beatmap),
+        }),
+      ],
+    });
+  }
+
   modifierContainer!: Container;
 
   playfieldContainer!: Container;
@@ -153,7 +159,7 @@ export abstract class HitObjectComposer extends CompositeDrawable {
     return new Container({
       relativeSizeAxes: Axes.X,
       height: 80,
-      child: new ComposeScreenTimeline(),
+      child: this.timeline = new ComposeScreenTimeline(),
     });
   }
 
