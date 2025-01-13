@@ -1,10 +1,10 @@
 import type { ClickEvent, DoubleClickEvent, DragEndEvent, DragEvent, DragStartEvent, DrawableOptions, MouseDownEvent } from 'osucad-framework';
 import type { ControlPoint } from '../../../controlPoints/ControlPoint';
 import type { KeyframeSelectionBlueprint } from './KeyframeSelectionBlueprint';
+import { UpdateHandler } from '@osucad/multiplayer';
 import { BindableBoolean, CompositeDrawable, dependencyLoader, MouseButton, resolved } from 'osucad-framework';
 import { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
 import { TimingPoint } from '../../../controlPoints/TimingPoint';
-import { UpdateHandler } from '../../../crdt/UpdateHandler';
 import { EditorClock } from '../../EditorClock';
 import { Timeline } from '../../ui/timeline/Timeline';
 import { TimingScreenSelectionManager } from './TimingScreenSelectionManager';

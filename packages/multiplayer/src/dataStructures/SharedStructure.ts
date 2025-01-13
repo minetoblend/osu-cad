@@ -1,8 +1,8 @@
 import type { Transaction, TransactionEntry } from './Transaction';
 import type { UpdateHandler } from './UpdateHandler';
-import { objectId } from '../utils/objectId';
+import { objectId } from '../../../common/src/utils/objectId';
 
-export abstract class AbstractCrdt<TMutation = never> {
+export abstract class SharedStructure<TMutation = never> {
   id = objectId();
 
   #updateHandler: UpdateHandler | null = null;
@@ -41,14 +41,14 @@ export abstract class AbstractCrdt<TMutation = never> {
     updateHandler?.detach(this);
   }
 
-  protected attachChild(child: AbstractCrdt<any>) {
+  protected attachChild(child: SharedStructure<any>) {
     this.#updateHandler?.attach(child);
   }
 
   onTransactionCommit(transaction: Transaction) {
   }
 
-  get childObjects(): readonly AbstractCrdt<any>[] {
+  get childObjects(): readonly SharedStructure<any>[] {
     return [];
   }
 }

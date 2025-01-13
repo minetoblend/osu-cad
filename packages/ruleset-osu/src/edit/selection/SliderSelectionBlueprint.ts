@@ -1,7 +1,8 @@
 import type { HitObject, HitObjectLifetimeEntry, HitObjectSelectionEvent, PathType } from '@osucad/common';
 import type { ClickEvent, DoubleClickEvent, DragEndEvent, DragEvent, HoverEvent, HoverLostEvent, MouseDownEvent, ReadonlyDependencyContainer, Vec2 } from 'osucad-framework';
 import type { Slider } from '../../hitObjects/Slider';
-import { EditorBeatmap, EditorClock, ISkinSource, PathPoint, UpdateHandler } from '@osucad/common';
+import { EditorBeatmap, EditorClock, ISkinSource, PathPoint } from '@osucad/common';
+import { UpdateHandler } from '@osucad/multiplayer';
 import { Anchor, Container, isMobile, MouseButton, provide, resolved } from 'osucad-framework';
 import { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { SliderPathUtils } from '../../hitObjects/SliderPathUtils';

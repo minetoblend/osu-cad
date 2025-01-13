@@ -1,4 +1,4 @@
-import type { Property } from '../crdt/Property';
+import type { SharedProperty } from '@osucad/multiplayer';
 import { ControlPoint } from './ControlPoint';
 
 export class TimingPoint extends ControlPoint {
@@ -22,7 +22,7 @@ export class TimingPoint extends ControlPoint {
     return 'Timing Point';
   }
 
-  readonly #beatLength: Property<number>;
+  readonly #beatLength: SharedProperty<number>;
 
   get beatLengthBindable() {
     return this.#beatLength.bindable;
@@ -48,7 +48,7 @@ export class TimingPoint extends ControlPoint {
     this.beatLength = 60_000 / value;
   }
 
-  readonly #meter: Property<number>;
+  readonly #meter: SharedProperty<number>;
 
   get meterBindable() {
     return this.#meter.bindable;
@@ -63,7 +63,7 @@ export class TimingPoint extends ControlPoint {
     this.raiseChanged();
   }
 
-  readonly #omitFirstBarLine: Property<boolean>;
+  readonly #omitFirstBarLine: SharedProperty<boolean>;
 
   get#omitFirstBarLineBindable() {
     return this.#omitFirstBarLine.bindable;

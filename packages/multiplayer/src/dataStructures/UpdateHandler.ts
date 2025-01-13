@@ -1,11 +1,10 @@
-import type { EditorBeatmap } from '../editor/EditorBeatmap';
-import type { AbstractCrdt } from './AbstractCrdt';
+import type { SharedStructure } from './SharedStructure';
 import { Action, BindableBoolean, Component } from 'osucad-framework';
 import { Transaction, TransactionEntry } from './Transaction';
 
 export class UpdateHandler extends Component {
   constructor(
-    readonly editorBeatmap: EditorBeatmap<any>,
+    readonly root: SharedStructure,
   ) {
     super();
   }
@@ -32,7 +31,7 @@ export class UpdateHandler extends Component {
 
   protected override loadComplete() {
     super.loadComplete();
-    this.attach(this.editorBeatmap.beatmap);
+    this.attach(this.root);
   }
 
   readonly #undoStack: Transaction[] = [];
@@ -160,9 +159,9 @@ export class UpdateHandler extends Component {
     return true;
   }
 
-  readonly objects = new Map<string, AbstractCrdt<any>>();
+  readonly objects = new Map<string, SharedStructure<any>>();
 
-  attach(object: AbstractCrdt<any>) {
+  attach(object: SharedStructure<any>) {
     if (this.objects.has(object.id))
       return;
 
@@ -170,7 +169,7 @@ export class UpdateHandler extends Component {
     object.attach(this);
   }
 
-  detach(object: AbstractCrdt<any>) {
+  detach(object: SharedStructure<any>) {
     this.objects.delete(object.id);
     object.detach();
   }

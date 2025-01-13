@@ -2,9 +2,9 @@ import type { ClickEvent, RoundedBox } from 'osucad-framework';
 import type { ColorSource } from 'pixi.js';
 import type { VolumePointSelectionBlueprint } from './VolumePointSelectionBlueprint';
 import { OsucadSpriteText } from '@osucad/common';
+import { UpdateHandler } from '@osucad/multiplayer';
 import { Anchor, Axes, ColorUtils, Container, dependencyLoader, resolved } from 'osucad-framework';
 import { VolumeCurveType } from '../../../../controlPoints/VolumePoint';
-import { UpdateHandler } from '../../../../crdt/UpdateHandler';
 import { TimingScreenBadge } from '../TimingScreenBadge';
 
 export class CurveTypeButton extends TimingScreenBadge {

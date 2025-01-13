@@ -1,7 +1,7 @@
 import type { ClickEvent, Drawable, KeyDownEvent } from 'osucad-framework';
 import type { ColorSource } from 'pixi.js';
+import { UpdateHandler } from '@osucad/multiplayer';
 import { Anchor, Axes, dependencyLoader, EmptyDrawable, FillDirection, FillFlowContainer, Key, MarginPadding, resolved } from 'osucad-framework';
-import { UpdateHandler } from '../../../crdt/UpdateHandler';
 import { OsucadSpriteText } from '../../../drawables/OsucadSpriteText';
 import { TextBox } from '../../../userInterface/TextBox';
 import { LayeredTimeline } from '../../ui/timeline/LayeredTimeline';

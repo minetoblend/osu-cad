@@ -1,7 +1,7 @@
 import type { HitObjectLifetimeEntry } from '../../../../hitObjects/drawables/HitObjectLifetimeEntry';
+import { UpdateHandler } from '@osucad/multiplayer';
 import { Axes, Bindable, BindableBoolean, BindableNumber, provide, resolved } from 'osucad-framework';
 import { Color } from 'pixi.js';
-import { UpdateHandler } from '../../../../crdt/UpdateHandler';
 import { hasComboInformation } from '../../../../hitObjects/IHasComboInformation';
 import { PoolableDrawableWithLifetime } from '../../../../pooling/PoolableDrawableWithLifetime';
 import { ISkinSource } from '../../../../skinning/ISkinSource';

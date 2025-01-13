@@ -1,20 +1,20 @@
 import type { Bindable } from 'osucad-framework';
-import { AbstractCrdt } from './AbstractCrdt';
-import { Property } from './Property';
+import { SharedProperty } from './SharedProperty';
+import { SharedStructure } from './SharedStructure';
 
 interface ObjectMutation {
   [key: string]: any;
 }
 
-export abstract class ObjectCrdt extends AbstractCrdt<ObjectMutation> {
-  #properties = new Map<string, Property<any>>();
+export abstract class SharedObject extends SharedStructure<ObjectMutation> {
+  #properties = new Map<string, SharedProperty<any>>();
 
   protected constructor() {
     super();
   }
 
   protected property<T>(name: string, initialValue: T | Bindable<T>) {
-    const property = new Property(this, name, initialValue);
+    const property = new SharedProperty(this, name, initialValue);
     this.#properties.set(name, property);
     return property;
   }
@@ -37,7 +37,7 @@ export abstract class ObjectCrdt extends AbstractCrdt<ObjectMutation> {
     return undoMutation;
   }
 
-  onPropertyChanged(property: Property<any>, oldValue: any, submitEvents: boolean) {
+  onPropertyChanged(property: SharedProperty<any>, oldValue: any, submitEvents: boolean) {
     if (submitEvents && this.isAttached) {
       const existing = this.currentTransaction?.getEntry(this.id);
 

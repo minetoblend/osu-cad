@@ -1,9 +1,9 @@
 import type { IComparer } from 'osucad-framework';
-import type { Constructor } from '../utils/Constructor';
+import type { Constructor } from '../../../common/src/utils/Constructor';
 import { Action, SortedList } from 'osucad-framework';
-import { AbstractCrdt } from './AbstractCrdt';
+import { SharedStructure } from './SharedStructure';
 
-export type SortedListMutation<T extends AbstractCrdt<any>> =
+export type SortedListMutation<T extends SharedStructure<any>> =
   {
     op: 'add';
     value: T;
@@ -13,7 +13,7 @@ export type SortedListMutation<T extends AbstractCrdt<any>> =
     id: string;
   };
 
-export class SortedListCrdt<T extends AbstractCrdt<any>> extends AbstractCrdt<SortedListMutation<T>> {
+export class SharedSortedList<T extends SharedStructure<any>> extends SharedStructure<SortedListMutation<T>> {
   readonly #idMap = new Map<string, T>();
 
   readonly #list!: SortedList<T>;
@@ -154,7 +154,7 @@ export class SortedListCrdt<T extends AbstractCrdt<any>> extends AbstractCrdt<So
     this.sorted.emit();
   }
 
-  override get childObjects(): readonly AbstractCrdt<any>[] {
+  override get childObjects(): readonly SharedStructure<any>[] {
     return this.items;
   }
 

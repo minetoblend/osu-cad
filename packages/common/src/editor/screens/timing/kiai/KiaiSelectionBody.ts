@@ -1,8 +1,8 @@
 import type { ClickEvent, DragEndEvent, DragEvent, DragStartEvent, HoverEvent, MouseDownEvent } from 'osucad-framework';
 import type { KiaiSelectionBlueprint } from './KiaiSelectionBlueprint';
+import { UpdateHandler } from '@osucad/multiplayer';
 import { Axes, Box, MouseButton, resolved } from 'osucad-framework';
 import { ControlPointInfo } from '../../../../controlPoints/ControlPointInfo';
-import { UpdateHandler } from '../../../../crdt/UpdateHandler';
 import { EditorClock } from '../../../EditorClock';
 import { Timeline } from '../../../ui/timeline/Timeline';
 import { TimingScreenSelectionManager } from '../TimingScreenSelectionManager';

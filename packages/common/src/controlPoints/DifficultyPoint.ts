@@ -1,4 +1,4 @@
-import type { Property } from '../crdt/Property';
+import type { SharedProperty } from '@osucad/multiplayer';
 import { ControlPoint } from './ControlPoint';
 
 export class DifficultyPoint extends ControlPoint {
@@ -14,7 +14,7 @@ export class DifficultyPoint extends ControlPoint {
     return 'Difficulty Point';
   }
 
-  readonly #sliderVelocity: Property<number>;
+  readonly #sliderVelocity: SharedProperty<number>;
 
   get sliderVelocityBindable() {
     return this.#sliderVelocity.bindable;

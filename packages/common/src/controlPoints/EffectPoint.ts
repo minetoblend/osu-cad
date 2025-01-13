@@ -1,4 +1,4 @@
-import type { Property } from '../crdt/Property';
+import type { SharedProperty } from '@osucad/multiplayer';
 import { ControlPoint } from './ControlPoint';
 
 export interface EffectPointPatch {
@@ -18,7 +18,7 @@ export class EffectPoint extends ControlPoint {
     return 'Effect Point';
   }
 
-  readonly #kiaiMode: Property<boolean>;
+  readonly #kiaiMode: SharedProperty<boolean>;
 
   get kiaiModeBindable() {
     return this.#kiaiMode.bindable;

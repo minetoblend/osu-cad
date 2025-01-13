@@ -1,8 +1,8 @@
 import type { DrawableOptions, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { ColorSource } from 'pixi.js';
+import { UpdateHandler } from '@osucad/multiplayer';
 import { almostEquals, Axes, Cached, resolved, Vec2 } from 'osucad-framework';
 import { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
-import { UpdateHandler } from '../../../crdt/UpdateHandler';
 import { BindableBeatDivisor } from '../../BindableBeatDivisor';
 import { PointVisualization } from './PointVisualization';
 import { Timeline } from './Timeline';

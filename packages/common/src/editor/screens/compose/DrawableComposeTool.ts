@@ -1,8 +1,8 @@
 import type { Drawable, InputManager, Vec2 } from 'osucad-framework';
 import type { ToolModifier } from './ToolModifier';
+import { UpdateHandler } from '@osucad/multiplayer';
 import { Action, Axes, CompositeDrawable, Container, EmptyDrawable, isSourcedFromTouch, resolved } from 'osucad-framework';
 import { IBeatmap } from '../../../beatmap/IBeatmap';
-import { UpdateHandler } from '../../../crdt/UpdateHandler';
 import { Playfield } from '../../../rulesets/ui/Playfield';
 import { EditorBeatmap } from '../../EditorBeatmap';
 import { EditorClock } from '../../EditorClock';

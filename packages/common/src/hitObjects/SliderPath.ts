@@ -1,13 +1,13 @@
-import type { Property } from '../crdt/Property';
+import type { SharedProperty } from '@osucad/multiplayer';
 import type { PathPoint } from './PathPoint';
+import { SharedObject } from '@osucad/multiplayer';
 import { Action, CachedValue, List, Vec2 } from 'osucad-framework';
-import { ObjectCrdt } from '../crdt/ObjectCrdt';
 import { PathApproximator } from '../utils/PathApproximator';
 import { CalculatedPath } from './CalculatedPath';
 import { PathRange } from './PathRange';
 import { PathType } from './PathType';
 
-export class SliderPath extends ObjectCrdt {
+export class SliderPath extends SharedObject {
   readonly invalidated = new Action();
 
   #expectedDistance = this.property('expectedDistance', 0);
@@ -177,7 +177,7 @@ export class SliderPath extends ObjectCrdt {
     return this.calculatedRange.endPosition;
   }
 
-  override onPropertyChanged(property: Property<any>, oldValue: any, submitEvents: boolean) {
+  override onPropertyChanged(property: SharedProperty<any>, oldValue: any, submitEvents: boolean) {
     super.onPropertyChanged(property, oldValue, submitEvents);
 
     this.invalidate();

@@ -1,9 +1,9 @@
 import type { Bindable, DragEndEvent, DragEvent, DragStartEvent, Drawable, HoverEvent, HoverLostEvent, InputManager, KeyDownEvent, KeyUpEvent, MouseDownEvent, MouseUpEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { ColorSource } from 'pixi.js';
 import type { ControlPoint } from '../../../controlPoints/ControlPoint';
+import { UpdateHandler } from '@osucad/multiplayer';
 import { Anchor, Axes, dependencyLoader, Key, MouseButton, resolved } from 'osucad-framework';
 import { ControlPointInfo } from '../../../controlPoints/ControlPointInfo';
-import { UpdateHandler } from '../../../crdt/UpdateHandler';
 import { TextBox } from '../../../userInterface/TextBox';
 import { LayeredTimeline } from '../../ui/timeline/LayeredTimeline';
 import { Timeline } from '../../ui/timeline/Timeline';

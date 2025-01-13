@@ -1,10 +1,10 @@
-import type { AbstractCrdt } from '../crdt/AbstractCrdt';
-import { ObjectCrdt } from '../crdt/ObjectCrdt';
+import type { SharedStructure } from '@osucad/multiplayer';
+import { SharedObject } from '@osucad/multiplayer';
 import { RulesetInfo } from '../rulesets/RulesetInfo';
 import { BeatmapDifficultyInfo } from './BeatmapDifficultyInfo';
 import { BeatmapMetadata } from './BeatmapMetadata';
 
-export class BeatmapInfo extends ObjectCrdt {
+export class BeatmapInfo extends SharedObject {
   readonly #difficultyName = this.property('difficultyName', '');
 
   get difficultyNameBindable() {
@@ -281,7 +281,7 @@ export class BeatmapInfo extends ObjectCrdt {
 
   path?: string;
 
-  override get childObjects(): readonly AbstractCrdt<any>[] {
+  override get childObjects(): readonly SharedStructure<any>[] {
     return [
       // this.difficulty,
       // this.metadata

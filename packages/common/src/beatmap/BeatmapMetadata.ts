@@ -1,6 +1,6 @@
-import { ObjectCrdt } from '../crdt/ObjectCrdt';
+import { SharedObject } from '@osucad/multiplayer';
 
-export class BeatmapMetadata extends ObjectCrdt {
+export class BeatmapMetadata extends SharedObject {
   constructor() {
     super();
   }

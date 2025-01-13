@@ -1,7 +1,8 @@
 import type { HitObject, IHasDuration } from '@osucad/common';
 import type { DragEndEvent, DragEvent, DragStartEvent } from 'osucad-framework';
 import type { OsuTimelineHitObjectBlueprint } from './OsuTimelineHitObjectBlueprint';
-import { EditorClock, Timeline, UpdateHandler } from '@osucad/common';
+import { EditorClock, Timeline } from '@osucad/common';
+import { UpdateHandler } from '@osucad/multiplayer';
 import { resolved } from 'osucad-framework';
 import { TimelineHitObjectTail } from './TimelineHitObjectTail';
 

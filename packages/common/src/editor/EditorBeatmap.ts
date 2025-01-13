@@ -9,8 +9,8 @@ import type { IFileStore } from '../beatmap/io/IFileStore';
 import type { WorkingBeatmapSet } from '../beatmap/workingBeatmap/WorkingBeatmapSet';
 import type { ControlPointInfo } from '../controlPoints/ControlPointInfo';
 import type { HitObject } from '../hitObjects/HitObject';
+import { UpdateHandler } from '@osucad/multiplayer';
 import { Bindable, Component, loadTexture } from 'osucad-framework';
-import { UpdateHandler } from '../crdt/UpdateHandler';
 import { IResourcesProvider } from '../io/IResourcesProvider';
 
 export class EditorBeatmap<T extends HitObject = HitObject> extends Component {
@@ -43,7 +43,7 @@ export class EditorBeatmap<T extends HitObject = HitObject> extends Component {
   protected override async loadAsync(dependencies: ReadonlyDependencyContainer): Promise<void> {
     await super.loadAsync(dependencies);
 
-    this.addInternal(this.updateHandler = new UpdateHandler(this));
+    this.addInternal(this.updateHandler = new UpdateHandler(this.beatmap));
 
     await Promise.all([
       this.loadTrack(dependencies.resolve(IResourcesProvider)),

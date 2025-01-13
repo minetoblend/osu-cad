@@ -1,18 +1,18 @@
+import type { SharedProperty } from '@osucad/multiplayer';
 import type { ClassSerialDescriptorBuilder, CompositeDecoder, CompositeEncoder, Decoder, Encoder, SerialDescriptor, Serializer } from '@osucad/serialization';
 import type { ValueChangedEvent } from 'osucad-framework';
 import type { BeatmapDifficultyInfo } from '../beatmap/BeatmapDifficultyInfo';
 import type { ControlPointInfo } from '../controlPoints/ControlPointInfo';
-import type { Property } from '../crdt/Property';
 import type { Constructor } from '../utils/Constructor';
+import { SharedObject } from '@osucad/multiplayer';
 import { buildClassSerialDescriptor, Float32Serializer, SealedClassSerializer } from '@osucad/serialization';
 import { Action, Comparer, Lazy, SortedList } from 'osucad-framework';
-import { ObjectCrdt } from '../crdt/ObjectCrdt';
 import { Judgement } from '../rulesets/judgements/Judgement';
 import { HitResult } from './HitResult';
 import { HitWindows } from './HitWindows';
 import { hasComboInformation } from './IHasComboInformation';
 
-export abstract class HitObject extends ObjectCrdt {
+export abstract class HitObject extends SharedObject {
   static readonly control_point_leniency = 1;
 
   static readonly COMPARER = new class extends Comparer<HitObject> {
@@ -49,7 +49,7 @@ export abstract class HitObject extends ObjectCrdt {
 
   readonly defaultsApplied = new Action<HitObject>();
 
-  readonly #startTime: Property<number>;
+  readonly #startTime: SharedProperty<number>;
 
   get startTimeBindable() {
     return this.#startTime.bindable;

@@ -1,10 +1,10 @@
 import type { ValueChangedEvent } from 'osucad-framework';
-import type { ObjectCrdt } from './ObjectCrdt';
+import type { SharedObject } from './SharedObject';
 import { Bindable } from 'osucad-framework';
 
-export class Property<T> {
+export class SharedProperty<T> {
   constructor(
-    readonly target: ObjectCrdt,
+    readonly target: SharedObject,
     readonly name: string,
     initialValue: T | Bindable<T>,
   ) {

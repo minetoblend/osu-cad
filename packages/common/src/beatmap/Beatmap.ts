@@ -1,16 +1,16 @@
-import type { AbstractCrdt } from '../crdt/AbstractCrdt';
+import type { SharedStructure } from '@osucad/multiplayer';
 import type { HitObject } from '../hitObjects/HitObject';
 import type { IBeatmap } from './IBeatmap';
+import { SharedStaticObject } from '@osucad/multiplayer';
 import { ControlPointInfo } from '../controlPoints/ControlPointInfo';
 import { TimingPoint } from '../controlPoints/TimingPoint';
-import { StaticCrdt } from '../crdt/StaticCrdt';
 import { maxBy } from '../utils/arrayUtils';
 import { BeatmapColors } from './BeatmapColors';
 import { BeatmapInfo } from './BeatmapInfo';
 import { HitObjectList } from './HitObjectList';
 import { BeatmapSerializer } from './serialization/BeatmapSerializer';
 
-export class Beatmap<T extends HitObject = HitObject> extends StaticCrdt implements IBeatmap<T> {
+export class Beatmap<T extends HitObject = HitObject> extends SharedStaticObject implements IBeatmap<T> {
   static get serializer() {
     return new BeatmapSerializer();
   }
@@ -55,7 +55,7 @@ export class Beatmap<T extends HitObject = HitObject> extends StaticCrdt impleme
     hitObject.applyDefaults(this.controlPoints, this.difficulty);
   }
 
-  override get childObjects(): readonly AbstractCrdt<any>[] {
+  override get childObjects(): readonly SharedStructure<any>[] {
     return [
       this.controlPoints,
       this.hitObjects,

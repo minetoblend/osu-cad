@@ -1,8 +1,8 @@
 import type { Bindable, DragEndEvent, DragEvent, DragStartEvent, HoverEvent, MouseDownEvent } from 'osucad-framework';
 import type { VolumePointSelectionBlueprint } from './VolumePointSelectionBlueprint';
+import { UpdateHandler } from '@osucad/multiplayer';
 import { Anchor, Axes, Box, clamp, CompositeDrawable, Container, dependencyLoader, EasingFunction, FastRoundedBox, Invalidation, LayoutMember, MouseButton, resolved, Vec2 } from 'osucad-framework';
 import { VolumeCurveType } from '../../../../controlPoints/VolumePoint';
-import { UpdateHandler } from '../../../../crdt/UpdateHandler';
 
 export class CurvatureAdjustmentPiece extends CompositeDrawable {
   constructor(

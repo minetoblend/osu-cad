@@ -2,7 +2,6 @@ export * from './audio';
 export * from './beatmap';
 export * from './config';
 export * from './controlPoints';
-export * from './crdt';
 export * from './drawables';
 export * from './editor';
 export * from './gameplay';

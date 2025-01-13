@@ -1,6 +1,6 @@
 import type { ControlPoint } from './ControlPoint';
+import { SharedStructure } from '@osucad/multiplayer';
 import { Action, almostEquals } from 'osucad-framework';
-import { AbstractCrdt } from '../crdt/AbstractCrdt';
 import { ControlPointList } from './ControlPointList';
 import { DifficultyPoint } from './DifficultyPoint';
 import { EffectPoint } from './EffectPoint';
@@ -13,7 +13,7 @@ export type ControlPointMutation =
   | { op: 'add'; controlPoint: ControlPoint }
   | { op: 'remove'; id: string };
 
-export class ControlPointInfo extends AbstractCrdt<ControlPointMutation> {
+export class ControlPointInfo extends SharedStructure<ControlPointMutation> {
   timingPoints = new ControlPointList<TimingPoint>();
 
   difficultyPoints = new ControlPointList<DifficultyPoint>();
@@ -231,7 +231,7 @@ export class ControlPointInfo extends AbstractCrdt<ControlPointMutation> {
     return this.controlPointLists.flatMap(list => list.filter(it => almostEquals(it.time, time, 1)));
   }
 
-  override get childObjects(): AbstractCrdt<any>[] {
+  override get childObjects(): SharedStructure<any>[] {
     return this.allControlPoints;
   }
 

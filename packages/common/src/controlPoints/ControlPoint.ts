@@ -1,11 +1,11 @@
-import type { Property } from '../crdt/Property';
+import type { SharedProperty } from '@osucad/multiplayer';
 import type { IControlPoint } from './IControlPoint';
+import { SharedObject } from '@osucad/multiplayer';
 import { Action, Comparer } from 'osucad-framework';
-import { ObjectCrdt } from '../crdt/ObjectCrdt';
 
 let nextUid = 0;
 
-export abstract class ControlPoint extends ObjectCrdt implements IControlPoint {
+export abstract class ControlPoint extends SharedObject implements IControlPoint {
   static readonly COMPARER = new class extends Comparer<ControlPoint> {
     compare(a: ControlPoint, b: ControlPoint) {
       const result = a.time - b.time;
@@ -30,7 +30,7 @@ export abstract class ControlPoint extends ObjectCrdt implements IControlPoint {
   raiseChanged() {
   }
 
-  readonly #time: Property<number>;
+  readonly #time: SharedProperty<number>;
 
   get timeBindable() {
     return this.#time.bindable;
@@ -56,7 +56,7 @@ export abstract class ControlPoint extends ObjectCrdt implements IControlPoint {
     return this.time === other.time;
   }
 
-  override onPropertyChanged(property: Property<any>, oldValue: any, submitEvents: boolean) {
+  override onPropertyChanged(property: SharedProperty<any>, oldValue: any, submitEvents: boolean) {
     super.onPropertyChanged(property, oldValue, submitEvents);
     this.changed.emit(this);
   }

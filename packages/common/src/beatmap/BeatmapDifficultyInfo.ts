@@ -1,8 +1,8 @@
 import type { IDeepCloneable } from '../utils/IDeepCloneable';
+import { SharedObject } from '@osucad/multiplayer';
 import { BindableNumber } from 'osucad-framework';
-import { ObjectCrdt } from '../crdt/ObjectCrdt';
 
-export class BeatmapDifficultyInfo extends ObjectCrdt implements IDeepCloneable<BeatmapDifficultyInfo> {
+export class BeatmapDifficultyInfo extends SharedObject implements IDeepCloneable<BeatmapDifficultyInfo> {
   constructor() {
     super();
   }

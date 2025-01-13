@@ -1,4 +1,5 @@
-import type { AbstractCrdt, BeatmapDifficultyInfo, ControlPointInfo, HitSound, IHasRepeats, IHasSliderVelocity, PathPoint } from '@osucad/common';
+import type { BeatmapDifficultyInfo, ControlPointInfo, HitSound, IHasRepeats, IHasSliderVelocity, PathPoint } from '@osucad/common';
+import type { SharedStructure } from '@osucad/multiplayer';
 import type { ClassSerialDescriptorBuilder, CompositeDecoder, CompositeEncoder } from '@osucad/serialization';
 import type { Bindable, IVec2, ReadonlyBindable, ValueChangedEvent } from 'osucad-framework';
 import { Additions, HitSample, HitSoundSerializer, PathPointSerialDescriptor, PathPointSerializer, PathType, polymorphicHitObjectSerializers, SampleSet, SampleType, SliderPath } from '@osucad/common';
@@ -457,7 +458,7 @@ export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepe
     super.onStartTimeChanged(time);
   }
 
-  override get childObjects(): readonly AbstractCrdt<any>[] {
+  override get childObjects(): readonly SharedStructure<any>[] {
     return [
       this.path,
     ];

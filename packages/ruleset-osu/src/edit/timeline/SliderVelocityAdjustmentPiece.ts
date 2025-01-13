@@ -2,7 +2,8 @@ import type { HitObject, IHasSliderVelocity } from '@osucad/common';
 import type { DragEndEvent, DragEvent, DragStartEvent, MouseDownEvent, ReadonlyDependencyContainer, TouchDownEvent, TouchUpEvent } from 'osucad-framework';
 import type { Color } from 'pixi.js';
 import type { OsuTimelineHitObjectBlueprint } from './OsuTimelineHitObjectBlueprint';
-import { EditorClock, hasRepeats, Timeline, UpdateHandler } from '@osucad/common';
+import { EditorClock, hasRepeats, Timeline } from '@osucad/common';
+import { UpdateHandler } from '@osucad/multiplayer';
 import { Anchor, Axes, ColorUtils, EasingFunction, FastRoundedBox, MouseButton, resolved } from 'osucad-framework';
 import { TimelineHitObjectTail } from './TimelineHitObjectTail';
 

@@ -1,10 +1,10 @@
 import type { Bindable } from 'osucad-framework';
 import type { Beatmap } from './Beatmap';
+import { SharedSortedList } from '@osucad/multiplayer';
 import { Action } from 'osucad-framework';
-import { SortedListCrdt } from '../crdt/SortedListCrdt';
 import { HitObject } from '../hitObjects/HitObject';
 
-export class HitObjectList<T extends HitObject = HitObject> extends SortedListCrdt<T> {
+export class HitObjectList<T extends HitObject = HitObject> extends SharedSortedList<T> {
   constructor(readonly beatmap: Beatmap<T>) {
     super(HitObject.COMPARER);
   }

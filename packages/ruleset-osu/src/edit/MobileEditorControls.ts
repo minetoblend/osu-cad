@@ -1,6 +1,7 @@
 import type { ClickEvent, Drawable, MouseDownEvent, MouseUpEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Texture } from 'pixi.js';
-import { EditorButton, OsucadColors, ReverseFillFlowContainer, UpdateHandler } from '@osucad/common';
+import { EditorButton, OsucadColors, ReverseFillFlowContainer } from '@osucad/common';
+import { UpdateHandler } from '@osucad/multiplayer';
 import { getIcon } from '@osucad/resources';
 import { Anchor, Axes, BindableBoolean, CompositeDrawable, DrawableSprite, resolved, Vec2 } from 'osucad-framework';
 

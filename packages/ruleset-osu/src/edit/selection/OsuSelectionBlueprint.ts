@@ -2,7 +2,8 @@ import type { HitObjectLifetimeEntry, HitObjectSelectionEvent } from '@osucad/co
 import type { ClickEvent, DragEvent, DragStartEvent, MouseDownEvent, MouseUpEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import type { OsuSelectionManager } from '../OsuSelectionManager';
-import { EditorBeatmap, HitObjectBlueprint, HitObjectBlueprintContainer, HitObjectComposer, HitObjectSelectionManager, UpdateHandler } from '@osucad/common';
+import { EditorBeatmap, HitObjectBlueprint, HitObjectBlueprintContainer, HitObjectComposer, HitObjectSelectionManager } from '@osucad/common';
+import { UpdateHandler } from '@osucad/multiplayer';
 import { Axes, Bindable, BindableBoolean, BindableNumber, Container, MouseButton, resolved, Vec2 } from 'osucad-framework';
 import { Spinner } from '../../hitObjects/Spinner';
 import { IPositionSnapProvider } from '../IPositionSnapProvider';
