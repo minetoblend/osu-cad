@@ -1,7 +1,8 @@
 # osucad [![Kofi](https://img.shields.io/badge/Kofi-F16061.svg?logo=ko-fi&logoColor=white)](https://ko-fi.com/maarvin)
 
-
 osucad is a web based osu beatmap editor.
+
+The project is still under active development, however the [online beatmap viewer](https://viewer.osucad.com) is already accessible.
 
 ## Setup
 
@@ -14,40 +15,24 @@ nx run [package]:serve
 ```
 
 ## Project structure
-#### [/packages/common](./packages/common)
-Contains the core logic for the editor & gameplay.
-Also contains the osu ruleset, which will eventually be moved
-into its own package.
 
-#### [/packages/framework](./packages/framework)
-Contains the game engine running the entire project. 
-It is a typescript port of osu-framework, using pixi.js for rendering.
+```tree
+packages           
+├── beatmap-viewer      # An online beatmap viewer
+├── common              # Core logic for the editor & osu ruleset
+├── editor              # Legacy editor package, mostly moved to common package by now
+├── electron-app        # Osucad desktop client
+├── framework           # Game engine that powers the project, a typescript port of osu-framework
+├── multiplayer         # Logic for keeping everything in sync during multiplayer
+├── resources           # Sprites & samples for the editor
+├── ruleset-mania       # Mania ruleset
+├── serialization       # Typescript port of kotlinx-serialization
+├── server              # Server that hosts the multiplayer logic
+└── web                 # Osucad web client
+```
 
-#### [/packages/editor](./packages/editor)
-Legacy editor package, mainly kept around for reference.
-Most of it's content have been moved into the common package by now.
+Most things can be found in the [common](./packages/common) package.
+The editor package is currently being moved into the common package, with plans to completely remove it once that is completed.
+The osu ruleset is currently part of the common package, however it will eventually get its own package.
 
-#### [/packages/beatmap-viewer](./packages/beatmap-viewer)
-A small application that allows viewing beatmaps fetched from a beatmap mirror.
-Hosted under https://viewer.osucad.com
-
-#### [/packages/electron-app](./packages/electron-app)
-Contains the desktop client, currently broken until migration from editor to common package is complete.
-
-#### [/packages/multiplayer](./packages/multiplayer)
-Contains logic required for multiplayer editing.
-
-#### [/packages/resources](./packages/resources)
-Contains sprites & samples used for the editor.
-
-#### [/packages/ruleset-mania](./packages/ruleset-mania)
-Contains the mania ruleset.
-
-#### [/packages/serialization](./packages/serialization)
-A typescript port of kotlinx-serialization.
-
-#### [/packages/server](./packages/server)
-Server that hosts multiplayer sessions.
-
-#### [/packages/web](./packages/web)
-Web version of the editor.
+The desktop client package is currently broken, until the migration to the common package is complete.
