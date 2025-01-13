@@ -4,7 +4,7 @@ import { Anchor, Drawable } from 'osucad-framework';
 import { OsucadSpriteText } from '../../drawables/OsucadSpriteText';
 import { TextBlock } from '../../drawables/TextBlock';
 import { OsucadColors } from '../../OsucadColors';
-import { defaultFormatter, fixedPrecision, maxPrecision, timestamp } from './Formatter';
+import { beatmap, defaultFormatter, fixedPrecision, maxPrecision, timestamp } from './Formatter';
 
 const placeholderRegex = /\{(?<index>\d+)(?::(?<format>[#\w.]+))?\}/g;
 
@@ -112,7 +112,7 @@ export class IssueFormat {
         else if (placeholderFormat === 'timestamp')
           formatter = timestamp();
         else if (placeholderFormat === 'beatmap')
-          formatter = timestamp();
+          formatter = beatmap;
       }
 
       tokens.push({
