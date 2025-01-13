@@ -32,7 +32,7 @@ export class ModdingScreen extends EditorScreen {
   editorBeatmap!: EditorBeatmap;
 
   protected override applySafeAreaPadding(safeArea: EditorSafeArea) {
-    this.#issueListContainer.padding = { top: safeArea.topRight.y, bottom: safeArea.bottom + 4 };
+    this.#issueListContainer.padding = { top: safeArea.topRight.y + 4, bottom: safeArea.bottom + 4 };
     this.#mainContent.padding = { top: safeArea.topLeft.y, bottom: safeArea.bottomLeft.y };
   }
 
@@ -141,7 +141,6 @@ export class ModdingScreen extends EditorScreen {
   override createTopBarContent(): Drawable {
     return new Container({
       relativeSizeAxes: Axes.X,
-      width: 0.9,
       height: 80,
       children: [
         new Box({

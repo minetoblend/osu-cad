@@ -58,6 +58,9 @@ export class DrawableIssueGroup extends FillFlowContainer {
   protected override loadComplete() {
     super.loadComplete();
 
+    this.finishTransforms(true);
+
+    this.fadeInFromZero(150);
     this.expanded.valueChanged.addListener((expanded) => {
       if (expanded.value) {
         this.#content.bypassAutoSizeAxes = Axes.None;
