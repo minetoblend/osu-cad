@@ -1,10 +1,11 @@
-import type { ReadonlyDependencyContainer } from 'osucad-framework';
+import type { AudioBufferTrack, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { TimelineHitObjectBlueprintContainer } from '../../ui/timeline/hitObjects/TimelineHitObjectBlueprintContainer';
 import { Anchor, Axes, BindableBoolean, Container, provide, resolved } from 'osucad-framework';
 import { EditorRuleset } from '../../../rulesets/EditorRuleset';
 import { BottomAlignedTickDisplay } from '../../ui/timeline/BottomAlignedTickDisplay';
 import { CurrentTimeOverlay } from '../../ui/timeline/CurrentTimeOverlay';
 import { Timeline } from '../../ui/timeline/Timeline';
+import { DrawableWaveform } from '../timing/DrawableWaveform';
 
 @provide(ComposeScreenTimeline)
 export class ComposeScreenTimeline extends Timeline {
@@ -19,6 +20,7 @@ export class ComposeScreenTimeline extends Timeline {
     this.relativeSizeAxes = Axes.Both;
 
     this.addRange([
+      new DrawableWaveform((this.editorClock.track as AudioBufferTrack)),
       new Container({
         relativeSizeAxes: Axes.Both,
         height: 0.65,
