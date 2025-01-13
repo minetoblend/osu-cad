@@ -7,7 +7,8 @@ export class ComposeScreenTimelineControls extends EditorCornerContent {
   constructor() {
     super(Corner.TopRight);
 
-    this.relativeSizeAxes = Axes.Both;
+    this.relativeSizeAxes = Axes.Y;
+    this.width = 200;
 
     this.addRange([
       new Container({

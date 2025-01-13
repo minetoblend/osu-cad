@@ -44,7 +44,7 @@ export class EditorScreen extends Container {
     return new EditorCornerContent(Corner.TopRight);
   }
 
-  onEntering() {
+  onEntering(previous?: EditorScreen) {
     this.enterTransition();
 
     this.editor.applyToBackground((background) => {

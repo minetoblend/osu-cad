@@ -1,5 +1,6 @@
 import type { HitObject, IBeatmap, Ruleset } from '@osucad/common';
 import { BeatmapConverter, ConvertCircle, ConvertHitObject, ConvertSlider, ConvertSpinner } from '@osucad/common';
+import { Vec2 } from 'osucad-framework';
 import { HitCircle } from '../hitObjects/HitCircle';
 import { OsuHitObject } from '../hitObjects/OsuHitObject';
 import { Slider } from '../hitObjects/Slider';
@@ -47,6 +48,7 @@ export class OsuBeatmapConverter extends BeatmapConverter<OsuHitObject> {
     if (hitObject instanceof ConvertSpinner) {
       const spinner = new Spinner();
 
+      spinner.position = new Vec2(256, 192);
       spinner.startTime = hitObject.startTime;
       spinner.duration = hitObject.duration;
       spinner.newCombo = true;

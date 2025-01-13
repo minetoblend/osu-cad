@@ -2,7 +2,8 @@ import type { Drawable, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { EditorSafeArea } from '../../EditorSafeArea';
 import type { EditorCornerContent } from '../../ui/EditorCornerContent';
 import type { HitObjectComposer } from './HitObjectComposer';
-import { resolved } from 'osucad-framework';
+import { Axes, Box, Container, resolved } from 'osucad-framework';
+import { OsucadColors } from '../../../OsucadColors';
 import { Ruleset } from '../../../rulesets/Ruleset';
 import { EditorScreen } from '../EditorScreen';
 import { editorScreen } from '../metadata';
@@ -33,7 +34,18 @@ export class ComposeScreen extends EditorScreen {
   }
 
   override createTopBarContent(): Drawable {
-    return this.#composer.topBar;
+    return new Container({
+      relativeSizeAxes: Axes.X,
+      height: 80,
+      children: [
+        new Box({
+          relativeSizeAxes: Axes.Both,
+          color: OsucadColors.translucent,
+          alpha: 0.8,
+        }),
+        this.#composer.topBar,
+      ],
+    });
   }
 
   override createTopRightCornerContent(): EditorCornerContent {

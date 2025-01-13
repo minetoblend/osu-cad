@@ -46,11 +46,12 @@ export class IssueList extends Container {
     this.addAllInternal(
       new OsucadScrollContainer(Direction.Vertical).with({
         relativeSizeAxes: Axes.Both,
+        masking: false,
         children: [
           this.#content = new FillFlowContainer({
             relativeSizeAxes: Axes.X,
             autoSizeAxes: Axes.Y,
-            padding: 20,
+            padding: { horizontal: 30, vertical: 20 },
             spacing: new Vec2(10),
             children: [
               this.#headers = new FillFlowContainer({

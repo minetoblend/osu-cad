@@ -29,9 +29,11 @@ export class EditorScreenContainer extends CompositeDrawable {
     super.loadComplete();
 
     this.currentScreen.addOnChangeListener((screen) => {
-      if (this.#currentScreenDrawable) {
-        this.#currentScreenDrawable.onExiting();
-        this.#currentScreenDrawable.expire();
+      const previous = this.#currentScreenDrawable;
+
+      if (previous) {
+        previous.onExiting();
+        previous.expire();
       }
 
       // eslint-disable-next-line new-cap

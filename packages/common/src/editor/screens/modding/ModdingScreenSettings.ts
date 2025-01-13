@@ -11,7 +11,8 @@ export class ModdingScreenSettings extends EditorCornerContent {
   constructor() {
     super(Corner.TopRight);
 
-    this.relativeSizeAxes = Axes.Both;
+    this.relativeSizeAxes = Axes.Y;
+    this.width = 200;
   }
 
   readonly showMinorIssues = new BindableBoolean();

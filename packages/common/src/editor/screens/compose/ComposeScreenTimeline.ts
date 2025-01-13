@@ -1,7 +1,6 @@
 import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import type { TimelineHitObjectBlueprintContainer } from '../../ui/timeline/hitObjects/TimelineHitObjectBlueprintContainer';
-import { Anchor, Axes, BindableBoolean, Box, Container, isMobile, provide, resolved } from 'osucad-framework';
-import { OsucadColors } from '../../../OsucadColors';
+import { Anchor, Axes, BindableBoolean, Container, isMobile, provide, resolved } from 'osucad-framework';
 import { EditorRuleset } from '../../../rulesets/EditorRuleset';
 import { BottomAlignedTickDisplay } from '../../ui/timeline/BottomAlignedTickDisplay';
 import { CurrentTimeOverlay } from '../../ui/timeline/CurrentTimeOverlay';
@@ -19,15 +18,6 @@ export class ComposeScreenTimeline extends Timeline {
     super.load(dependencies);
 
     this.relativeSizeAxes = Axes.Both;
-
-    this.addInternal(
-      new Box({
-        relativeSizeAxes: Axes.Both,
-        color: OsucadColors.translucent,
-        alpha: 0.8,
-        depth: 1,
-      }),
-    );
 
     this.addRange([
       new Container({

@@ -64,20 +64,20 @@ export class EditorLayout extends CompositeDrawable {
             width: 240,
             anchor: Anchor.TopRight,
             origin: Anchor.TopRight,
-            autoSizeDuration: 300,
-            autoSizeEasing: EasingFunction.OutExpo,
             children: [
-              // new Container({ width: 200 }),
               new Container({
                 autoSizeAxes: Axes.X,
                 height: 25,
-                padding: { left: 20 },
-                anchor: Anchor.TopCenter,
-                origin: Anchor.TopCenter,
-                child: new EditorScreenSelect(),
+                padding: { horizontal: 20 },
+                anchor: Anchor.TopRight,
+                origin: Anchor.TopRight,
+                child: this.#screenSelect = new EditorScreenSelect(),
               }),
               this.#topRightContent = new Container({
-                relativeSizeAxes: Axes.Both,
+                relativeSizeAxes: Axes.Y,
+                autoSizeAxes: Axes.X,
+                anchor: Anchor.TopRight,
+                origin: Anchor.TopRight,
                 padding: { left: 40, top: 25, bottom: 5 },
               }),
             ],
@@ -102,6 +102,8 @@ export class EditorLayout extends CompositeDrawable {
   readonly #topLeftCornerPiece: EditorCornerPiece;
 
   readonly #topRightCornerPiece: EditorCornerPiece;
+
+  readonly #screenSelect: EditorScreenSelect;
 
   #activeScreen?: EditorScreen;
 
@@ -131,7 +133,18 @@ export class EditorLayout extends CompositeDrawable {
         screen.topLeftCornerContent.doWhenLoaded(it => it.onEntering(topLeftPrevious)),
       );
       this.#topRightContent.add(
-        screen.topRightCornerContent.doWhenLoaded(it => it.onEntering(topRightPrevious)),
+        screen.topRightCornerContent.doWhenLoaded((it) => {
+          it.onEntering(topRightPrevious);
+          this.schedule(() => {
+            this.#topRightCornerPiece.updateSubTree();
+            const width = Math.max(
+              180,
+              this.#topRightContent.layoutSize.x,
+              this.#screenSelect.layoutSize.x + 40,
+            );
+            this.#topRightCornerPiece.resizeWidthTo(width, 300, EasingFunction.OutExpo);
+          });
+        }),
       );
     });
   }

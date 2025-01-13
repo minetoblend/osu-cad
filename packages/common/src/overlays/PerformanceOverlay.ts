@@ -114,6 +114,7 @@ export class PerformanceOverlay extends Container {
         `Draw: ${FrameStatistics.draw.total.toFixed(1)}ms`,
         `Update: ${updateTime.toFixed(1)}ms`,
         `Input: ${FrameStatistics.positionalInputQueue.total.toFixed(1)}ms`,
+        `Invalidations: ${FrameStatistics.counters[StatisticsCounterType.Invalidations]}`,
         `Total: ${FrameStatistics.frame.total.toFixed(1)}ms`,
         `TransformUpdates: ${FrameStatistics.counters[StatisticsCounterType.DrawNodeTransforms]}`,
       ].join('\n');

@@ -3,9 +3,10 @@ import type { Beatmap } from '../../../beatmap/Beatmap';
 import type { BackgroundAdjustment } from '../../BackgroundAdjustment';
 import type { EditorSafeArea } from '../../EditorSafeArea';
 import type { EditorCornerContent } from '../../ui/EditorCornerContent';
-import { Anchor, Axes, BetterBackdropBlurFilter, Bindable, Box, Container, EasingFunction, provide, resolved } from 'osucad-framework';
+import { Anchor, Axes, BetterBackdropBlurFilter, Bindable, Box, Container, EasingFunction, provide, resolved, Vec2 } from 'osucad-framework';
 import { IBeatmap } from '../../../beatmap/IBeatmap';
 import { ModdingConfigManager } from '../../../config/ModdingConfigManager';
+import { OsucadColors } from '../../../OsucadColors';
 import { Ruleset } from '../../../rulesets/Ruleset';
 import { EditorBeatmap } from '../../EditorBeatmap';
 import { ModelBackedEditorBeatmapProvidingContainer } from '../../ModelBackedEditorBeatmapProvidingContainer';
@@ -31,7 +32,7 @@ export class ModdingScreen extends EditorScreen {
   editorBeatmap!: EditorBeatmap;
 
   protected override applySafeAreaPadding(safeArea: EditorSafeArea) {
-    this.#issueListContainer.padding = { top: safeArea.topRight.y };
+    this.#issueListContainer.padding = { top: safeArea.topRight.y, bottom: safeArea.bottom + 4 };
     this.#mainContent.padding = { top: safeArea.topLeft.y, bottom: safeArea.bottomLeft.y };
   }
 
@@ -80,11 +81,6 @@ export class ModdingScreen extends EditorScreen {
     this.activeEditorBeatmap = new Bindable<EditorBeatmap>(this.editorBeatmap);
 
     this.addAllInternal(
-      this.#timelineContainer = new Container({
-        relativeSizeAxes: Axes.Both,
-        width: 0.9,
-        height: 80,
-      }),
       this.#mainContent = new Container({
         relativeSizeAxes: Axes.Both,
         width: 0.7,
@@ -111,10 +107,12 @@ export class ModdingScreen extends EditorScreen {
         relativePositionAxes: Axes.Both,
         anchor: Anchor.TopRight,
         origin: Anchor.TopRight,
-        width: 0.3,
+        skew: new Vec2(-0.075, 0),
+        width: 0.25,
         children: [
           new Box({
             relativeSizeAxes: Axes.Both,
+            width: 2,
             color: 0x17171B,
             alpha: 0.8,
             filters: [
@@ -132,11 +130,30 @@ export class ModdingScreen extends EditorScreen {
           }),
           this.#issueListContainer = new Container({
             relativeSizeAxes: Axes.Both,
+            relativePositionAxes: Axes.Y,
             child: new IssueList(this.activeBeatmap.getBoundCopy()),
           }),
         ],
       }),
     );
+  }
+
+  override createTopBarContent(): Drawable {
+    return new Container({
+      relativeSizeAxes: Axes.X,
+      width: 0.9,
+      height: 80,
+      children: [
+        new Box({
+          relativeSizeAxes: Axes.Both,
+          color: OsucadColors.translucent,
+          alpha: 0.8,
+        }),
+        this.#timelineContainer = new Container({
+          relativeSizeAxes: Axes.Both,
+        }),
+      ],
+    });
   }
 
   #rightContainer!: Container;
@@ -145,6 +162,7 @@ export class ModdingScreen extends EditorScreen {
 
   protected override enterTransition() {
     this.#rightContainer.moveToX(0.3).moveToX(0, 300, EasingFunction.OutExpo);
+    this.#issueListContainer.moveToY(0.5).moveToY(0, 400, EasingFunction.OutExpo);
   }
 
   protected override exitTransition() {
@@ -152,6 +170,7 @@ export class ModdingScreen extends EditorScreen {
 
     this.#playfieldContainer.fadeOut(100);
     this.#rightContainer.moveToX(0.3, 300, EasingFunction.OutExpo);
+    this.#issueListContainer.moveToY(0.5, 400, EasingFunction.OutExpo);
   }
 
   override createTopRightCornerContent(): EditorCornerContent {
