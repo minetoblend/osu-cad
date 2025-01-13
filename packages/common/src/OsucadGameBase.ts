@@ -6,6 +6,8 @@ import { AudioMixer } from './audio/AudioMixer';
 import { OsucadConfigManager } from './config/OsucadConfigManager';
 import { Fit, ScalingContainer } from './drawables/ScalingContainer';
 import { UIFonts } from './drawables/UIFonts';
+
+import { VirtualKeyboardSafeAreaContainer } from './drawables/VirtualKeyboardSafeAreaContainer';
 import { EditorActionContainer } from './editor/EditorActionContainer';
 import { GlobalCursorDisplay } from './graphics/cursor/GlobalCursorDisplay';
 import { IResourcesProvider } from './io/IResourcesProvider';
@@ -58,8 +60,10 @@ export abstract class OsucadGameBase extends Game implements IResourcesProvider 
         fit: Fit.Fill,
         child: new PerformanceOverlay({
           child: new EditorActionContainer({
-            child: new ContextMenuContainer({
-              child: this.#content = new PreferencesContainer(),
+            child: new VirtualKeyboardSafeAreaContainer({
+              child: new ContextMenuContainer({
+                child: this.#content = new PreferencesContainer(),
+              }),
             }),
           }),
         }),
