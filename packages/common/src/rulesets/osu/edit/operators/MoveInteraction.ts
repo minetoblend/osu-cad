@@ -61,7 +61,7 @@ export class MoveInteraction extends CompositeDrawable {
 
   override onMouseDown(e: MouseDownEvent): boolean {
     if (e.button === MouseButton.Left) {
-      this.composer.completeOperator(this.operator);
+      this.expire();
       return true;
     }
     return false;
