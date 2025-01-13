@@ -1,7 +1,7 @@
 import { Vec2 } from 'osucad-framework';
 import { Matrix } from 'pixi.js';
-import { PathPoint } from '../rulesets/osu/hitObjects/PathPoint';
-import { PathType } from '../rulesets/osu/hitObjects/PathType';
+import { PathPoint } from '../hitObjects/PathPoint';
+import { PathType } from '../hitObjects/PathType';
 import { PathApproximator } from './PathApproximator';
 
 export function pathToBezier(path: PathPoint[]) {

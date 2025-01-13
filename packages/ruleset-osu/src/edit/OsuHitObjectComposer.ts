@@ -3,7 +3,6 @@ import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import type { SnapResult } from './IPositionSnapProvider';
 import { Additions, ControlPointInfo, EditorClock, HitObjectComposer, OsucadColors } from '@osucad/common';
 import { Anchor, Axes, BindableBoolean, Container, Direction, FastRoundedBox, FillDirection, FillFlowContainer, provide, resolved, Vec2 } from 'osucad-framework';
-
 import { Matrix } from 'pixi.js';
 import { HitCircle } from '../hitObjects/HitCircle';
 import { Slider } from '../hitObjects/Slider';
@@ -12,6 +11,7 @@ import { DrawableOsuSelectTool } from './DrawableOsuSelectTool';
 import { GlobalHitSoundState } from './GlobalHitSoundState';
 import { GlobalNewComboBindable } from './GlobalNewComboBindable';
 import { HitCirclePlacementTool } from './HitCirclePlacementTool';
+import { HitSoundPlayer } from './HitSoundPlayer';
 import { IDistanceSnapProvider } from './IDistanceSnapProvider';
 import { IPositionSnapProvider } from './IPositionSnapProvider';
 import { NewComboToggleButton } from './NewComboToggleButton';
@@ -43,8 +43,13 @@ export class OsuHitObjectComposer extends HitObjectComposer implements IPosition
   @provide()
   readonly hitSoundState = new GlobalHitSoundState();
 
+  @provide()
+  protected readonly hitSoundPlayer = new HitSoundPlayer();
+
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
+
+    this.addInternal(this.hitSoundPlayer);
 
     this.drawableRuleset.playfield.addAll(this.#grid = new PlayfieldGrid(this.gridSnapEnabled).with({ depth: 1 }));
     this.overlayLayer.addAll(

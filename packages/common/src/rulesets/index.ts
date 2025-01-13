@@ -2,7 +2,6 @@ export * from './difficulty';
 export * from './DrawableRuleset';
 export * from './judgements';
 export * from './objects';
-export * from './osu';
 export * from './pooling';
 export * from './Ruleset';
 export * from './RulesetInfo';

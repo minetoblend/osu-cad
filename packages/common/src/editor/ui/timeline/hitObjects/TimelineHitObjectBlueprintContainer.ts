@@ -1,10 +1,10 @@
-import type { Drawable, DrawableOptions, List } from 'osucad-framework';
+import type { Drawable, DrawableOptions, List, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { HitObject } from '../../../../hitObjects/HitObject';
-import { Axes, Bindable, dependencyLoader, DrawablePool, LoadState, resolved } from 'osucad-framework';
+import type { TimelineHitObjectBlueprint } from './TimelineHitObjectBlueprint';
+import { Axes, Bindable, LoadState, resolved } from 'osucad-framework';
 import { HitObjectLifetimeEntry } from '../../../../hitObjects/drawables/HitObjectLifetimeEntry';
 import { EditorBeatmap } from '../../../EditorBeatmap';
 import { TimelineBlueprintContainer } from '../TimelineBlueprintContainer';
-import { TimelineHitObjectBlueprint } from './TimelineHitObjectBlueprint';
 
 export interface TimelineHitObjectBlueprintContainerOptions extends DrawableOptions {
   readonly?: boolean;
@@ -26,7 +26,7 @@ class TimelineHitObjectLifetimeEntry extends HitObjectLifetimeEntry {
   }
 }
 
-export class TimelineHitObjectBlueprintContainer extends TimelineBlueprintContainer<HitObjectLifetimeEntry, TimelineHitObjectBlueprint> {
+export abstract class TimelineHitObjectBlueprintContainer extends TimelineBlueprintContainer<HitObjectLifetimeEntry, TimelineHitObjectBlueprint> {
   constructor(options: TimelineHitObjectBlueprintContainerOptions = {}) {
     super();
 
@@ -44,11 +44,8 @@ export class TimelineHitObjectBlueprintContainer extends TimelineBlueprintContai
   @resolved(EditorBeatmap)
   beatmap!: EditorBeatmap;
 
-  readonly #pool = new DrawablePool(TimelineHitObjectBlueprint, 20, 40);
-
-  @dependencyLoader()
-  [Symbol('load')]() {
-    this.addInternal(this.#pool);
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
 
     for (const hitObject of this.beatmap.hitObjects)
       this.addHitObject(hitObject);
@@ -81,13 +78,6 @@ export class TimelineHitObjectBlueprintContainer extends TimelineBlueprintContai
   #removeEntry(entry: HitObjectLifetimeEntry) {
     this.#entryMap.delete(entry.hitObject);
     this.removeEntry(entry);
-  }
-
-  override getDrawable(entry: HitObjectLifetimeEntry): TimelineHitObjectBlueprint {
-    return this.#pool.get((it) => {
-      it.entry = entry;
-      it.readonly = this.readonly;
-    });
   }
 
   protected override addDrawable(entry: HitObjectLifetimeEntry, drawable: TimelineHitObjectBlueprint) {

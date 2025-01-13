@@ -1,7 +1,7 @@
 import type { DrawableRuleset } from '@osucad/common';
 import type { ReadonlyDependencyContainer } from 'osucad-framework';
-import { BottomAlignedTickDisplay, CurrentTimeOverlay, editorScreen, EditorScreen, HitObjectSelectionManager, HitsoundPlayer, IBeatmap, OsucadColors, OsuSelectionBlueprintContainer, PlayfieldGrid, Ruleset, Timeline, TimelineHitObjectBlueprintContainer } from '@osucad/common';
-import { Anchor, Axes, Box, Container, provide, resolved } from 'osucad-framework';
+import { BottomAlignedTickDisplay, CurrentTimeOverlay, editorScreen, EditorScreen, HitObjectSelectionManager, IBeatmap, OsucadColors, Ruleset, Timeline } from '@osucad/common';
+import { Anchor, Axes, Box, Container, EmptyDrawable, provide, resolved } from 'osucad-framework';
 
 const timelineHeight = 80;
 
@@ -26,7 +26,6 @@ export class ViewportScreen extends EditorScreen {
 
     this.addAllInternal(
       this.selectionManager,
-      new HitsoundPlayer(),
       new Container({
         relativeSizeAxes: Axes.Both,
         padding: { top: timelineHeight },
@@ -57,9 +56,8 @@ export class ViewportScreen extends EditorScreen {
                 height: 0.65,
                 anchor: Anchor.CenterLeft,
                 origin: Anchor.CenterLeft,
-                child: new TimelineHitObjectBlueprintContainer({
-                  readonly: true,
-                }),
+                child:
+                this.ruleset.createTimelineHitObjectContainer() ?? new EmptyDrawable(),
               }),
             ],
           }),
@@ -69,11 +67,11 @@ export class ViewportScreen extends EditorScreen {
     );
 
     this.#drawableRuleset.playfield.addAll(
-      new PlayfieldGrid(),
-      new OsuSelectionBlueprintContainer().adjust((it) => {
-        it.readonly = true;
-        it.depth = -1;
-      }),
+      // new PlayfieldGrid(),
+      // new OsuSelectionBlueprintContainer().adjust((it) => {
+      //   it.readonly = true;
+      //   it.depth = -1;
+      // }),
     );
   }
 }

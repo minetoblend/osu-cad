@@ -1,23 +1,9 @@
-import type {
-  TextureShader,
-} from 'pixi.js';
-import {
-  Color,
-  compileHighShaderGl,
-  fragmentGlTemplate,
-  globalUniformsBitGl,
-  GlProgram,
-  localUniformBitGl,
-  roundPixelsBitGl,
-  Shader,
-  Texture,
-  UniformGroup,
-  vertexGlTemplate,
-} from 'pixi.js';
-import { SliderGradient } from './SliderGradient';
+import type { TextureShader } from 'pixi.js';
+import { LinearGradient } from '@osucad/common';
+import { Color, compileHighShaderGl, fragmentGlTemplate, globalUniformsBitGl, GlProgram, localUniformBitGl, roundPixelsBitGl, Shader, Texture, UniformGroup, vertexGlTemplate } from 'pixi.js';
 
 let glProgram: GlProgram | null = null;
-let gradient: SliderGradient | null = null;
+let gradient: LinearGradient | null = null;
 
 export class SliderShader extends Shader implements TextureShader {
   texture = Texture.EMPTY;
@@ -29,7 +15,7 @@ export class SliderShader extends Shader implements TextureShader {
     );
 
     if (!gradient) {
-      gradient = new SliderGradient(0, 0, 1, 0)
+      gradient = new LinearGradient(0, 0, 1, 0)
         .addColorStop(0.0, 0x000000, 0.0)
         .addColorStop(0.19, 0x000000, 0.125)
         .addColorStop(0.21, 0xFF0000)

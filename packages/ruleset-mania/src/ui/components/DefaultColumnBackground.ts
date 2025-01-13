@@ -1,5 +1,5 @@
 import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyBindingReleaseEvent, ReadonlyDependencyContainer, ValueChangedEvent } from 'osucad-framework';
-import { IScrollingInfo, ScrollingDirection, SliderGradient } from '@osucad/common';
+import { IScrollingInfo, LinearGradient, ScrollingDirection } from '@osucad/common';
 import { Anchor, Axes, Bindable, Box, ColorUtils, CompositeDrawable, DrawableSprite, EasingFunction, resolved } from 'osucad-framework';
 import { Color } from 'pixi.js';
 import { Column } from '../Column';
@@ -56,7 +56,7 @@ export class DefaultColumnBackground extends CompositeDrawable implements IKeyBi
   }
 
   #onDirectionChanged(direction: ValueChangedEvent<ScrollingDirection>) {
-    const gradient = new SliderGradient(0, 0, 0, 1);
+    const gradient = new LinearGradient(0, 0, 0, 1);
 
     if (direction.value === ScrollingDirection.Up) {
       this.#backgroundOverlay.anchor = this.#backgroundOverlay.origin = Anchor.TopLeft;

@@ -1,11 +1,8 @@
 import type { ClickEvent, DragEndEvent, DragEvent, DragStartEvent, Drawable, HoverEvent, MouseDownEvent, MouseMoveEvent } from 'osucad-framework';
-import type { SnapResult } from '../ModdingScreenSnappingProvider';
-import { Axes, Bindable, FillDirection, FillFlowContainer, MouseButton, Vec2 } from 'osucad-framework';
-import { ToggleMenuItem } from '../../../../userInterface/ToggleMenuItem';
+import { Axes, FillDirection, FillFlowContainer, MouseButton, Vec2 } from 'osucad-framework';
 import { ModPostLine } from '../objects/ModPostLine';
 import { DrawableModdingTool } from './DrawableModdingTool';
 import { ModdingColorPicker } from './ModdingColorPicker';
-import { ModdingToolMenu } from './ModdingToolMenu';
 
 export class DrawableLineTool extends DrawableModdingTool {
   #currentObject = new ModPostLine();
@@ -17,10 +14,6 @@ export class DrawableLineTool extends DrawableModdingTool {
       padding: { vertical: 8 },
       children: [
         new ModdingColorPicker(),
-        new ModdingToolMenu([new ToggleMenuItem({
-          text: 'Snapping',
-          active: new Bindable(false),
-        })]),
       ],
     });
   }
@@ -31,8 +24,6 @@ export class DrawableLineTool extends DrawableModdingTool {
       this.#currentObject.startPosition = new Vec2();
       this.#currentObject.endPosition = new Vec2();
       this.#currentObject.color = this.composer.activeColor.value;
-
-      this.clickEndPosition = this.snapResult?.endPosition ?? null;
 
       this.modPost.add(this.#currentObject);
 
@@ -80,16 +71,8 @@ export class DrawableLineTool extends DrawableModdingTool {
   }
 
   get snappedMousePosition() {
-    return this.snapResult?.position ?? this.playfieldMousePosition;
+    return this.playfieldMousePosition;
   }
-
-  snapResult: SnapResult | null = null;
 
   showVisualizer = true;
-
-  override update() {
-    super.update();
-
-    this.snapResult = this.snapping.getSnappedPosition(this.playfieldMousePosition, this.showVisualizer);
-  }
 }

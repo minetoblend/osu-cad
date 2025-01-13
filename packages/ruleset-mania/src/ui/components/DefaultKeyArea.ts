@@ -1,6 +1,6 @@
 import type { Drawable, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyBindingReleaseEvent, ReadonlyDependencyContainer, ValueChangedEvent } from 'osucad-framework';
 import type { Color } from 'pixi.js';
-import { IScrollingInfo, ScrollingDirection, SliderGradient } from '@osucad/common';
+import { IScrollingInfo, LinearGradient, ScrollingDirection } from '@osucad/common';
 import { Anchor, Axes, Bindable, CompositeDrawable, Container, DrawableSprite, EasingFunction, FastRoundedBox, resolved, RoundedBox } from 'osucad-framework';
 import { BlurFilter } from 'pixi.js';
 import { Column } from '../Column';
@@ -80,7 +80,7 @@ export class DefaultKeyArea extends CompositeDrawable implements IKeyBindingHand
   }
 
   #onDirectionChanged(direction: ValueChangedEvent<ScrollingDirection>) {
-    const gradient = new SliderGradient(0, 0, 0, 1);
+    const gradient = new LinearGradient(0, 0, 0, 1);
 
     if (direction.value === ScrollingDirection.Up) {
       this.#keyIcon.anchor = this.#keyIconOutline.anchor = Anchor.BottomCenter;

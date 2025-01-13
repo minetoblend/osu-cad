@@ -1,8 +1,11 @@
 import type { IKeyBinding } from 'osucad-framework';
 import type { Beatmap } from '../beatmap/Beatmap';
+import type { BeatmapConverter } from '../beatmap/BeatmapConverter';
 import type { IBeatmap } from '../beatmap/IBeatmap';
 import type { StableHitObjectParser } from '../beatmap/io/StableHitObjectParser';
+import type { BeatmapProcessor } from '../beatmap/processors/BeatmapProcessor';
 import type { HitObjectComposer } from '../editor/screens/compose/HitObjectComposer';
+import type { TimelineHitObjectBlueprintContainer } from '../editor/ui/timeline/hitObjects/TimelineHitObjectBlueprintContainer';
 import type { ISkin } from '../skinning/ISkin';
 import type { SkinTransformer } from '../skinning/SkinTransformer';
 import type { BeatmapVerifier } from '../verifier/BeatmapVerifier';
@@ -20,6 +23,16 @@ export abstract class Ruleset {
   }
 
   abstract createDrawableRulesetWith(beatmap: IBeatmap): DrawableRuleset;
+
+  abstract createBeatmapConverter(beatmap: IBeatmap): BeatmapConverter<any>;
+
+  createTimelineHitObjectContainer(): TimelineHitObjectBlueprintContainer | null {
+    return null;
+  }
+
+  createEditorBeatmapProcessors(): BeatmapProcessor[] {
+    return [];
+  }
 
   createStableHitObjectParser(beatmap: Beatmap<any>): StableHitObjectParser<any> | null {
     return null;

@@ -2,10 +2,8 @@ import type { Drawable, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { IComposeTool } from '../compose';
 import { Axes, Bindable, Container, provide } from 'osucad-framework';
 import { Color } from 'pixi.js';
-import { OsuSelectionBlueprintContainer } from '../../../rulesets/osu/edit/selection/OsuSelectionBlueprintContainer';
 import { EditorNavigation } from '../../EditorNavigation';
 import { HitObjectComposer } from '../compose/HitObjectComposer';
-import { ModdingScreenSnappingProvider } from './ModdingScreenSnappingProvider';
 import { ModPost } from './objects/ModPost';
 import { ModPostBlueprintContainer } from './objects/ModPostBlueprintContainer';
 import { SnapSettings } from './SnapSettings';
@@ -20,9 +18,6 @@ export class ModdingComposer extends HitObjectComposer {
 
   @provide()
   snapSettings = new SnapSettings();
-
-  @provide()
-  snapping = new ModdingScreenSnappingProvider();
 
   readonly activeColor = new Bindable(new Color(0xFFFFFF));
 
@@ -61,18 +56,13 @@ export class ModdingComposer extends HitObjectComposer {
       depth: 1,
     }));
 
-    this.timeline.blueprintContainer.readonly = true;
+    if (this.timeline.blueprintContainer)
+      this.timeline.blueprintContainer.readonly = true;
     this.drawableRuleset.playfield.addAll(
       new ModPostBlueprintContainer().with({
         depth: -Number.MAX_VALUE,
       }),
-      this.snapping.with({ depth: -Number.MAX_VALUE }),
     );
-
-    this.overlayLayer.add(new OsuSelectionBlueprintContainer().adjust((it) => {
-      it.readonly = true;
-      it.depth = 1;
-    }));
   }
 
   protected override loadComplete() {

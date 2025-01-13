@@ -11,7 +11,6 @@ export * from './DrawableSliderTick';
 export * from './DrawableSpinner';
 export * from './GeometryBuilder';
 export * from './HitReceptor';
-export * from './SliderGradient';
 export * from './SliderInputManager';
 export * from './SliderPathGeometry';
 export * from './SliderShader';

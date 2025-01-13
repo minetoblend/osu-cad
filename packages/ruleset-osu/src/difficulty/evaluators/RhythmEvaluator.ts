@@ -1,5 +1,6 @@
-import { Slider, Spinner } from '@osucad/common';
 import { almostEquals, clamp } from 'osucad-framework';
+import { Slider } from '../../hitObjects/Slider';
+import { Spinner } from '../../hitObjects/Spinner';
 import { OsuDifficultyHitObject } from '../preprocessing/OsuDifficultyHitObject';
 
 const history_time_max = 5 * 1000; // 5 seconds

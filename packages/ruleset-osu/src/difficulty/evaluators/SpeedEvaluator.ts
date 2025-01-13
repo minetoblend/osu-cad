@@ -1,6 +1,6 @@
 import type { OsuDifficultyHitObject } from '../preprocessing/OsuDifficultyHitObject';
-import { Spinner } from '@osucad/common';
 import { clamp } from 'osucad-framework';
+import { Spinner } from '../../hitObjects/Spinner';
 
 const single_spacing_threshold = 125; // 1.25 circles distance between centers
 const min_speed_bonus = 75; // ~200BPM

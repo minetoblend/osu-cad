@@ -2,13 +2,11 @@ import type { DependencyContainer, Drawable, List, ReadonlyDependencyContainer }
 import type { DrawableRuleset } from '../../../rulesets/DrawableRuleset';
 import type { IComposeTool } from './IComposeTool';
 import type { Operator } from './operators/Operator';
-import { Anchor, Axes, Bindable, CompositeDrawable, Container, isMobile, provide, resolved } from 'osucad-framework';
+import { Axes, Bindable, CompositeDrawable, Container, provide, resolved } from 'osucad-framework';
 import { IBeatmap } from '../../../beatmap/IBeatmap';
 import { BorderLayout } from '../../../drawables/BorderLayout';
-import { MobileEditorControls } from '../../../rulesets/osu/edit/MobileEditorControls';
 import { Ruleset } from '../../../rulesets/Ruleset';
 import { Playfield } from '../../../rulesets/ui/Playfield';
-import { HitsoundPlayer } from '../../HitsoundPlayer';
 import { ComposeScreenTimeline } from './ComposeScreenTimeline';
 import { ComposeToolbar } from './ComposeToolbar';
 import { ComposeToolContainer } from './ComposeToolContainer';
@@ -54,10 +52,6 @@ export abstract class HitObjectComposer extends CompositeDrawable {
     if (!selectionManager)
       this.addInternal(selectionManager = this.createSelectionManager());
 
-    const hitsoundPlayer = new HitsoundPlayer();
-    this.addInternal(hitsoundPlayer);
-    this.#dependencies.provide(hitsoundPlayer);
-
     this.#dependencies.provide(HitObjectSelectionManager, selectionManager);
 
     this.#dependencies.provide(new HitObjectComposerDependencies(
@@ -81,19 +75,6 @@ export abstract class HitObjectComposer extends CompositeDrawable {
     );
 
     this.#dependencies.provide(Playfield, this.#drawableRuleset.playfield);
-
-    if (isMobile.any) {
-      this.addInternal(
-        this.#mobileControlsContainer = new Container({
-          padding: 10,
-          autoSizeAxes: Axes.Y,
-          width: 240,
-          anchor: Anchor.BottomRight,
-          origin: Anchor.BottomRight,
-          child: new MobileEditorControls(),
-        }),
-      );
-    }
 
     this.drawableRuleset.playfield.addAll(
       this.backgroundLayer = new Container({
@@ -122,11 +103,6 @@ export abstract class HitObjectComposer extends CompositeDrawable {
     this.#toolContainer.toolActivated.addListener((tool) => {
       toolOverlayContainer.clear();
       toolOverlayContainer.add(tool.playfieldOverlay);
-
-      if (this.#mobileControlsContainer) {
-        this.#mobileControlsContainer.clear();
-        this.#mobileControlsContainer.child = new MobileEditorControls(tool.createMobileControls());
-      }
     });
   }
 

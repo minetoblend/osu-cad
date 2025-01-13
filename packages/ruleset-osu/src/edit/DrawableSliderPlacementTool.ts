@@ -1,10 +1,7 @@
 import type { HoverEvent, MouseDownEvent, MouseMoveEvent, MouseUpEvent, ReadonlyDependencyContainer } from 'osucad-framework';
-import { ModifierType, ToolModifier } from '@osucad/common';
+import { ModifierType, PathPoint, PathType, SliderPathBuilder, ToolModifier } from '@osucad/common';
 import { InputKey, MouseButton, provide, Vec2 } from 'osucad-framework';
-import { PathPoint } from '../hitObjects/PathPoint';
-import { PathType } from '../hitObjects/PathType';
 import { Slider } from '../hitObjects/Slider';
-import { SliderPathBuilder } from '../hitObjects/SliderPathBuilder';
 import { SliderPathUtils } from '../hitObjects/SliderPathUtils';
 import { DrawableOsuHitObjectPlacementTool } from './DrawableOsuHitObjectPlacementTool';
 import { SliderPathVisualizer } from './SliderPathVisualizer';

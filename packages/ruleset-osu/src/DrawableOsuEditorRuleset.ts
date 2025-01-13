@@ -2,8 +2,8 @@ import type { IBeatmap, Ruleset } from '@osucad/common';
 import type { ReadonlyDependencyContainer } from 'osucad-framework';
 import type { OsuHitObject } from './hitObjects/OsuHitObject';
 import type { OsuPlayfield } from './ui/OsuPlayfield';
-import { EditorJudgeProvider } from '@osucad/common';
 import { DrawableOsuRuleset } from './DrawableOsuRuleset';
+import { EditorJudgeProvider } from './edit/EditorJudge';
 import { PlayfieldGrid } from './edit/PlayfieldGrid';
 
 export class DrawableOsuEditorRuleset extends DrawableOsuRuleset {

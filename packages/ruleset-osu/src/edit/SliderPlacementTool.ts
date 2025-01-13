@@ -1,5 +1,4 @@
-import type { IComposeTool } from '@osucad/common';
-import type { DrawableComposeTool } from 'packages/common/src/editor/screens/compose/DrawableComposeTool';
+import type { DrawableComposeTool, IComposeTool } from '@osucad/common';
 import { getIcon } from '@osucad/resources';
 import { DrawableSliderPlacementTool } from './DrawableSliderPlacementTool';
 

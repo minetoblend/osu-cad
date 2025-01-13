@@ -2,7 +2,6 @@ import type { DependencyContainer, IKeyBindingHandler, KeyBindingAction, KeyBind
 import type { BackgroundScreen } from '../screens/BackgroundScreen';
 import { EasingFunction, PlatformAction, provide } from 'osucad-framework';
 import { IBeatmap } from '../beatmap/IBeatmap';
-import { BeatmapComboProcessor } from '../beatmap/processors/BeatmapComboProcessor';
 import { ControlPointInfo } from '../controlPoints/ControlPointInfo';
 import { UpdateHandler } from '../crdt/UpdateHandler';
 import { PlayfieldClock } from '../gameplay/PlayfieldClock';
@@ -88,7 +87,9 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
         child: this.#layout = new EditorLayout(),
       }),
     );
-    this.addInternal(new BeatmapComboProcessor());
+
+    for (const processor of ruleset.createEditorBeatmapProcessors())
+      this.addInternal(processor);
 
     if (this.beatmap.hitObjects.length > 0)
       this.#editorClock.seek(this.beatmap.hitObjects.first!.startTime, false);

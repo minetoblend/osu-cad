@@ -1,17 +1,12 @@
-import type { AbstractCrdt, BeatmapDifficultyInfo, ControlPointInfo, HitSound, IHasRepeats, IHasSliderVelocity } from '@osucad/common';
+import type { AbstractCrdt, BeatmapDifficultyInfo, ControlPointInfo, HitSound, IHasRepeats, IHasSliderVelocity, PathPoint } from '@osucad/common';
 import type { ClassSerialDescriptorBuilder, CompositeDecoder, CompositeEncoder } from '@osucad/serialization';
 import type { Bindable, IVec2, ReadonlyBindable, ValueChangedEvent } from 'osucad-framework';
-
-import type { PathPoint } from './PathPoint';
-import { Additions, HitSample, HitSoundSerializer, polymorphicHitObjectSerializers, SampleSet, SampleType } from '@osucad/common';
+import { Additions, HitSample, HitSoundSerializer, PathPointSerialDescriptor, PathPointSerializer, PathType, polymorphicHitObjectSerializers, SampleSet, SampleType, SliderPath } from '@osucad/common';
 import { Float32Serializer, listSerialDescriptor, ListSerializer, NullableSerializer, Uint16Serializer } from '@osucad/serialization';
 import { CachedValue, Vec2 } from 'osucad-framework';
 import { OsuHitObject, OsuHitObjectSerializer } from './OsuHitObject';
-import { PathPointSerialDescriptor, PathPointSerializer } from './PathPoint';
-import { PathType } from './PathType';
 import { SliderEventGenerator } from './SliderEventGenerator';
 import { SliderHeadCircle } from './SliderHeadCircle';
-import { SliderPath } from './SliderPath';
 import { SliderRepeat } from './SliderRepeat';
 import { SliderTailCircle } from './SliderTailCircle';
 import { SliderTick } from './SliderTick';

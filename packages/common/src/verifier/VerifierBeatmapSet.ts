@@ -5,7 +5,6 @@ import type { HitSample } from '../hitsounds/HitSample';
 import type { IResourcesProvider } from '../io/IResourcesProvider';
 import type { BeatmapSkin } from '../skinning/BeatmapSkin';
 import type { VerifierBeatmap } from './VerifierBeatmap';
-import { OsuHitObject } from '../rulesets/osu/hitObjects/OsuHitObject';
 
 export class VerifierBeatmapSet {
   constructor(
@@ -32,10 +31,11 @@ export class VerifierBeatmapSet {
 
     for (const beatmap of this.beatmaps) {
       for (const hitObject of beatmap.hitObjects) {
-        if (!(hitObject instanceof OsuHitObject))
+        if (!('hitSamples' in hitObject))
           continue;
 
-        for (const sampleInfo of hitObject.hitSamples) {
+        // TODO: move this to ruleset
+        for (const sampleInfo of hitObject.hitSamples as HitSample[]) {
           const sample = this.skin.getSample(channel, sampleInfo);
           if (sample && !allSamples.has(sampleInfo.sampleName)) {
             allSamples.add(sampleInfo.sampleName);

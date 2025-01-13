@@ -1,4 +1,4 @@
-import type { Beatmap } from '@osucad/common';
+import type { Beatmap, IBeatmap } from '@osucad/common';
 import type { BeatmapSetResponse } from './BeatmapSetResponse';
 import { ResourceStoreBackedFileStore, StableBeatmapParser, WorkingBeatmapSet, ZipArchiveResourceStore } from '@osucad/common';
 import { BeatmapMirror } from './BeatmapMirror';
@@ -28,7 +28,12 @@ export class CatboyMirror extends BeatmapMirror {
         try {
           const text = new TextDecoder().decode(data);
 
-          beatmaps.push(new StableBeatmapParser().parse(text));
+          const parsed = new StableBeatmapParser().parse(text);
+          if (parsed.beatmapInfo.ruleset.available) {
+            const beatmap = parsed.beatmapInfo.ruleset.createInstance().createBeatmapConverter(parsed as unknown as IBeatmap);
+
+            beatmaps.push(beatmap.convert() as Beatmap<any>);
+          }
         }
         catch (e) {
           console.error('Failed to load beatmap', filename, e);

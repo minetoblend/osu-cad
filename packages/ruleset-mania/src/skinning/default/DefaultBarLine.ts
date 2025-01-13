@@ -1,9 +1,9 @@
 import type { Bindable, Drawable, ReadonlyDependencyContainer, ValueChangedEvent } from 'osucad-framework';
 import type { DrawableBarLine } from '../../objects/drawables/DrawableBarLine';
-import { DrawableHitObject, SliderGradient } from '@osucad/common';
+import { DrawableHitObject, LinearGradient } from '@osucad/common';
 import { Anchor, Axes, Box, CompositeDrawable, DrawableSprite, resolved, Vec2 } from 'osucad-framework';
 
-const gradient = new SliderGradient(0, 0, 1, 0);
+const gradient = new LinearGradient(0, 0, 1, 0);
 gradient.addColorStop(0, 0xFFFFFF, 0);
 gradient.addColorStop(1, 0xFFFFFF, 1);
 gradient.buildLinearGradient();

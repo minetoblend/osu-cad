@@ -1,7 +1,6 @@
 import { resolved } from 'osucad-framework';
 import { DrawableComposeTool } from '../../compose/DrawableComposeTool';
 import { ModdingComposer } from '../ModdingComposer';
-import { ModdingScreenSnappingProvider } from '../ModdingScreenSnappingProvider';
 import { ModPost } from '../objects/ModPost';
 
 export class DrawableModdingTool extends DrawableComposeTool {
@@ -10,7 +9,4 @@ export class DrawableModdingTool extends DrawableComposeTool {
 
   @resolved(() => ModdingComposer)
   protected composer!: ModdingComposer;
-
-  @resolved(ModdingScreenSnappingProvider)
-  protected snapping!: ModdingScreenSnappingProvider;
 }

@@ -1,12 +1,15 @@
-import type { Beatmap, DifficultyCalculator, DrawableRuleset, HitObjectComposer, IBeatmap, ISkin, SkinTransformer } from '@osucad/common';
+import type { Beatmap, BeatmapConverter, BeatmapProcessor, DifficultyCalculator, DrawableRuleset, HitObjectComposer, IBeatmap, ISkin, SkinTransformer, TimelineHitObjectBlueprintContainer } from '@osucad/common';
 import type { IKeyBinding } from 'osucad-framework';
 import { Ruleset, RulesetInfo, StableSkin } from '@osucad/common';
 import { InputKey, KeyBinding, KeyCombination } from 'osucad-framework';
+import { OsuBeatmapConverter } from './beatmaps/OsuBeatmapConverter';
 import { ComboProcessor } from './ComboProcessor';
 import { OsuDifficultyCalculator } from './difficulty/OsuDifficultyCalculator';
 import { DrawableOsuEditorRuleset } from './DrawableOsuEditorRuleset';
 import { DrawableOsuRuleset } from './DrawableOsuRuleset';
+import { BeatmapComboProcessor } from './edit/BeatmapComboProcessor';
 import { OsuHitObjectComposer } from './edit/OsuHitObjectComposer';
+import { OsuTimelineHitObjectBlueprintContainer } from './edit/timeline/OsuTimelineHitObjectBlueprintContainer';
 import { OsuAction } from './OsuAction';
 import { StableOsuSkinTransformer } from './skinning/stable/StableOsuSkinTransformer';
 import { StackingProcessor } from './StackingProcessor';
@@ -56,11 +59,25 @@ export class OsuRuleset extends Ruleset {
     new ComboProcessor().applyToBeatmap(beatmap);
   }
 
+  override createBeatmapConverter(beatmap: IBeatmap): BeatmapConverter<any> {
+    return new OsuBeatmapConverter(beatmap, this);
+  }
+
   override createDifficultyCalculator(beatmap: Beatmap): DifficultyCalculator<any> {
     return new OsuDifficultyCalculator(beatmap);
   }
 
   override createBeatmapVerifier(): OsuBeatmapVerifier {
     return new OsuBeatmapVerifier();
+  }
+
+  override createEditorBeatmapProcessors(): BeatmapProcessor[] {
+    return [
+      new BeatmapComboProcessor(),
+    ];
+  }
+
+  override createTimelineHitObjectContainer(): TimelineHitObjectBlueprintContainer | null {
+    return new OsuTimelineHitObjectBlueprintContainer();
   }
 }

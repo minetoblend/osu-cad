@@ -1,6 +1,6 @@
 import type { HitSample } from '@osucad/common';
-import { HitsoundPlayer } from '@osucad/common';
 import { Anchor, Axes, CompositeDrawable, EasingFunction, FastRoundedBox, resolved } from 'osucad-framework';
+import { HitSoundPlayer } from './HitSoundPlayer';
 
 export class HitSampleHighlightContainer extends CompositeDrawable {
   constructor(
@@ -11,8 +11,8 @@ export class HitSampleHighlightContainer extends CompositeDrawable {
     this.relativeSizeAxes = Axes.Both;
   }
 
-  @resolved(HitsoundPlayer, true)
-  hitSoundPlayer?: HitsoundPlayer;
+  @resolved(HitSoundPlayer, true)
+  hitSoundPlayer?: HitSoundPlayer;
 
   protected override loadComplete() {
     super.loadComplete();

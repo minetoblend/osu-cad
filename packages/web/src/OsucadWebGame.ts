@@ -12,10 +12,10 @@ export class OsucadWebGame extends OsucadGameBase {
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
-    RulesetStore.register(OsuRuleset.rulesetInfo);
-    RulesetStore.register(new ManiaRuleset().rulesetInfo);
-
     this.addParallelLoad(this.loadComponentAsync(this.skinManager));
+
+    RulesetStore.register(new OsuRuleset().rulesetInfo);
+    RulesetStore.register(new ManiaRuleset().rulesetInfo);
 
     this.add(this.#screenStack = new OsucadScreenStack());
   }

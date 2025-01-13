@@ -1,6 +1,6 @@
 import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyBindingReleaseEvent, ReadonlyDependencyContainer, ValueChangedEvent } from 'osucad-framework';
 import type { Column } from '../../ui/Column';
-import { IScrollingInfo, ScrollingDirection, SliderGradient } from '@osucad/common';
+import { IScrollingInfo, LinearGradient, ScrollingDirection } from '@osucad/common';
 import { Anchor, Axes, Bindable, Box, ColorUtils, DrawableSprite, EasingFunction, MaskingContainer, resolved } from 'osucad-framework';
 import { Color } from 'pixi.js';
 import { IColumn } from '../../ui/IColumn';
@@ -59,7 +59,7 @@ export class ArgonColumnBackground extends MaskingContainer implements IKeyBindi
   }
 
   #onDirectionChanged(direction: ValueChangedEvent<ScrollingDirection>) {
-    const gradient = new SliderGradient(0, 0, 0, 1);
+    const gradient = new LinearGradient(0, 0, 0, 1);
 
     if (direction.value === ScrollingDirection.Up) {
       this.#backgroundOverlay.anchor = this.#backgroundOverlay.origin = Anchor.TopLeft;

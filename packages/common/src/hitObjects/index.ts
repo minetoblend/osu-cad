@@ -1,4 +1,4 @@
-export * from '../rulesets/judgements/JudgementResult';
+export * from './conversion';
 export * from './DifficultyRange';
 export * from './drawables';
 export * from './EffectType';
@@ -14,3 +14,8 @@ export * from './IHasRepeats';
 export * from './IHasSliderVelocity';
 export * from './IHasXPosition';
 export * from './IHasYPosition';
+export * from './PathPoint';
+export * from './PathRange';
+export * from './PathType';
+export * from './SliderPath';
+export * from './SliderPathBuilder';

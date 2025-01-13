@@ -1,6 +1,6 @@
 import type { BeatmapCheck, GeneralCheck } from '@osucad/common';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
-import { BeatmapVerifier, CheckBeforeLine, CheckBgPresence, CheckBgResolution, CheckDrainTime, CheckGenreLanguage, CheckGuestTags, CheckHitSoundDelay, CheckInconsistenMetadata, CheckInconsistentTimingPoints, CheckMarkerFormat, CheckZeroBytes } from '@osucad/common';
+import { BeatmapVerifier, CheckBgPresence, CheckBgResolution, CheckDrainTime, CheckGenreLanguage, CheckGuestTags, CheckHitSoundDelay, CheckInconsistenMetadata, CheckInconsistentTimingPoints, CheckMarkerFormat, CheckZeroBytes } from '@osucad/common';
 import { CheckAbnormalNodes } from './compose/CheckAbnormalNodes';
 import { CheckAbnormalSpacing } from './compose/CheckAbnormalSpacing';
 import { CheckAmbiguity } from './compose/CheckAmbiguity';
@@ -21,6 +21,7 @@ import { CheckMultipleReverse } from './spread/CheckMultipleReverse';
 import { CheckShortSliders } from './spread/CheckShortSliders';
 import { CheckSpaceVariation } from './spread/CheckSpaceVariation';
 import { CheckSpinnerRecovery } from './spread/CheckSpinnerRecovery';
+import { CheckBeforeLine } from './timing/CheckBeforeLine';
 
 export class OsuBeatmapVerifier extends BeatmapVerifier<OsuHitObject> {
   override get beatmapChecks(): BeatmapCheck<OsuHitObject>[] {

@@ -1,11 +1,9 @@
-import type { HitObject, HitObjectLifetimeEntry, HitObjectSelectionEvent } from '@osucad/common';
+import type { HitObject, HitObjectLifetimeEntry, HitObjectSelectionEvent, PathType } from '@osucad/common';
 import type { ClickEvent, DoubleClickEvent, DragEndEvent, DragEvent, HoverEvent, HoverLostEvent, MouseDownEvent, ReadonlyDependencyContainer, Vec2 } from 'osucad-framework';
-import type { PathType } from '../../hitObjects/PathType';
 import type { Slider } from '../../hitObjects/Slider';
-import { EditorBeatmap, EditorClock, ISkinSource, UpdateHandler } from '@osucad/common';
+import { EditorBeatmap, EditorClock, ISkinSource, PathPoint, UpdateHandler } from '@osucad/common';
 import { Anchor, Container, isMobile, MouseButton, provide, resolved } from 'osucad-framework';
 import { OsuHitObject } from '../../hitObjects/OsuHitObject';
-import { PathPoint } from '../../hitObjects/PathPoint';
 import { SliderPathUtils } from '../../hitObjects/SliderPathUtils';
 import { getNextControlPointType } from '../getNextControlPointType';
 import { IDistanceSnapProvider } from '../IDistanceSnapProvider';

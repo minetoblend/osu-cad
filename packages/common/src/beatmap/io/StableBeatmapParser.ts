@@ -1,4 +1,4 @@
-import type { OsuHitObject } from '../../rulesets/osu/hitObjects/OsuHitObject';
+import type { ConvertHitObject } from '../../hitObjects/conversion/ConvertHitObject';
 import { Vec2 } from 'osucad-framework';
 import { Color } from 'pixi.js';
 import { DifficultyPoint } from '../../controlPoints/DifficultyPoint';
@@ -6,20 +6,20 @@ import { EffectPoint } from '../../controlPoints/EffectPoint';
 import { SamplePoint } from '../../controlPoints/SamplePoint';
 import { TimingPoint } from '../../controlPoints/TimingPoint';
 import { VolumePoint } from '../../controlPoints/VolumePoint';
+import { ConvertCircle } from '../../hitObjects/conversion/ConvertCircle';
+import { ConvertSlider } from '../../hitObjects/conversion/ConvertSlider';
+import { ConvertSpinner } from '../../hitObjects/conversion/ConvertSpinner';
 import { EffectType } from '../../hitObjects/EffectType';
 import { HitType } from '../../hitObjects/HitType';
+import { PathPoint } from '../../hitObjects/PathPoint';
+import { PathType } from '../../hitObjects/PathType';
+import { SliderPathBuilder } from '../../hitObjects/SliderPathBuilder';
 import { Additions } from '../../hitsounds/Additions';
 import { HitSound } from '../../hitsounds/HitSound';
 import { SampleSet } from '../../hitsounds/SampleSet';
-import { HitCircle } from '../../rulesets/osu/hitObjects/HitCircle';
-import { PathPoint } from '../../rulesets/osu/hitObjects/PathPoint';
-import { PathType } from '../../rulesets/osu/hitObjects/PathType';
-import { Slider } from '../../rulesets/osu/hitObjects/Slider';
-import { SliderPathBuilder } from '../../rulesets/osu/hitObjects/SliderPathBuilder';
-import { Spinner } from '../../rulesets/osu/hitObjects/Spinner';
 import { RulesetInfo } from '../../rulesets/RulesetInfo';
 import { RulesetStore } from '../../rulesets/RulesetStore';
-import { Beatmap } from '../Beatmap';
+import { ConversionBeatmap } from '../ConversionBeatmap';
 
 enum BeatmapSection {
   General = 'General',
@@ -38,7 +38,7 @@ export interface ParseBeatmapOptions {
 }
 
 export class StableBeatmapParser {
-  parse(fileContent: string, options: ParseBeatmapOptions = {}): Beatmap {
+  parse(fileContent: string, options: ParseBeatmapOptions = {}): ConversionBeatmap {
     const lines = fileContent.split('\n').map(it => it.trim());
 
     let currentSection: BeatmapSection | null = null;
@@ -52,7 +52,7 @@ export class StableBeatmapParser {
       throw new Error('Invalid beatmap file. Could not find version header.');
     }
 
-    const beatmap = new Beatmap();
+    const beatmap = new ConversionBeatmap();
 
     for (const line of lines) {
       const newSection = this.#tryParseSectionHeader(line);
@@ -79,7 +79,7 @@ export class StableBeatmapParser {
     return null;
   }
 
-  #parseLine(beatmap: Beatmap, section: BeatmapSection, line: string, options: ParseBeatmapOptions) {
+  #parseLine(beatmap: ConversionBeatmap, section: BeatmapSection, line: string, options: ParseBeatmapOptions) {
     switch (section) {
       case BeatmapSection.General:
         this.#parseGeneral(beatmap, line);
@@ -112,7 +112,7 @@ export class StableBeatmapParser {
     }
   }
 
-  #parseMetadata(beatmap: Beatmap, line: string) {
+  #parseMetadata(beatmap: ConversionBeatmap, line: string) {
     const [key, value] = line.split(':').map(it => it.trim());
 
     switch (key) {
@@ -149,7 +149,7 @@ export class StableBeatmapParser {
     }
   }
 
-  #parseGeneral(beatmap: Beatmap, line: string) {
+  #parseGeneral(beatmap: ConversionBeatmap, line: string) {
     const [key, value] = line.split(':').map(it => it.trim());
 
     switch (key) {
@@ -212,7 +212,7 @@ export class StableBeatmapParser {
     }
   }
 
-  #parseEditor(beatmap: Beatmap, line: string) {
+  #parseEditor(beatmap: ConversionBeatmap, line: string) {
     const [key, value] = line.split(':').map(it => it.trim());
 
     switch (key) {
@@ -234,7 +234,7 @@ export class StableBeatmapParser {
     }
   }
 
-  #parseTimingPoints(beatmap: Beatmap, line: string) {
+  #parseTimingPoints(beatmap: ConversionBeatmap, line: string) {
     const values = line.split(',');
     if (values.length <= 1)
       return;
@@ -297,7 +297,7 @@ export class StableBeatmapParser {
     }
   }
 
-  #parseHitObject(beatmap: Beatmap, line: string) {
+  #parseHitObject(beatmap: ConversionBeatmap, line: string) {
     const values = line.split(',');
 
     const x = Number.parseInt(values[0]);
@@ -308,7 +308,7 @@ export class StableBeatmapParser {
 
     const comboOffset = (type & HitType.ComboOffset) >> 4;
 
-    let hitObject: OsuHitObject | undefined;
+    let hitObject: ConvertHitObject | undefined;
 
     function parseHitSound(index: number) {
       const samples = (values[index] ?? '0:0:0:0:').split(':');
@@ -320,7 +320,7 @@ export class StableBeatmapParser {
     }
 
     if (type & HitType.Normal) {
-      const circle = hitObject = new HitCircle();
+      const circle = hitObject = new ConvertCircle();
       circle.position = new Vec2(x, y);
       circle.startTime = startTime;
       circle.newCombo = newCombo;
@@ -328,7 +328,7 @@ export class StableBeatmapParser {
       circle.hitSound = parseHitSound(5);
     }
     else if (type & HitType.Slider) {
-      const slider = hitObject = new Slider();
+      const slider = hitObject = new ConvertSlider();
       slider.position = new Vec2(x, y);
       slider.startTime = startTime;
       slider.newCombo = newCombo;
@@ -379,14 +379,14 @@ export class StableBeatmapParser {
 
       const hitSound = slider.hitSound = parseHitSound(10);
 
-      const edgeSounds = values[8]?.split('|').map(it => Number.parseInt(it) >> 1) ?? Array.from({ length: slider.spanCount + 1 }, () => hitSound.additions);
+      const edgeSounds = values[8]?.split('|').map(it => Number.parseInt(it) >> 1) ?? Array.from({ length: slider.repeatCount + 2 }, () => hitSound.additions);
       const edgeSets = values[9]?.split('|').map((it) => {
         const [normalSet, additionSet] = it.split(':');
         return {
           normalSet: Number.parseInt(normalSet),
           additionSet: Number.parseInt(additionSet),
         };
-      }) ?? Array.from({ length: slider.spanCount + 1 }, () => ({
+      }) ?? Array.from({ length: slider.repeatCount + 2 }, () => ({
         normalSet: hitSound.sampleSet,
         additionSet: hitSound.additionSampleSet,
       }));
@@ -401,11 +401,9 @@ export class StableBeatmapParser {
       }
 
       slider.hitSounds = hitSounds;
-
-      slider.ensureHitSoundsAreValid();
     }
     else if (type & HitType.Spinner) {
-      const spinner = hitObject = new Spinner();
+      const spinner = hitObject = new ConvertSpinner();
       spinner.startTime = startTime;
       spinner.duration = Number.parseFloat(values[5]) - startTime;
       spinner.newCombo = newCombo;
@@ -420,7 +418,7 @@ export class StableBeatmapParser {
     beatmap.hitObjects.add(hitObject);
   }
 
-  #parseDifficulty(beatmap: Beatmap, line: string) {
+  #parseDifficulty(beatmap: ConversionBeatmap, line: string) {
     const [key, value] = line.split(':').map(it => it.trim());
 
     switch (key) {
@@ -445,7 +443,7 @@ export class StableBeatmapParser {
     }
   }
 
-  #parseColors(beatmap: Beatmap, line: string) {
+  #parseColors(beatmap: ConversionBeatmap, line: string) {
     const [key, value] = line.split(':').map(it => it.trim());
 
     if (key.startsWith('Combo')) {
@@ -455,7 +453,7 @@ export class StableBeatmapParser {
     }
   }
 
-  #parseEvents(beatmap: Beatmap, line: string) {
+  #parseEvents(beatmap: ConversionBeatmap, line: string) {
     if (line.startsWith('0,0,')) {
       const filename = line.split(',')[2];
 
