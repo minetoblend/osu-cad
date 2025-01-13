@@ -1,6 +1,7 @@
-import type { Container, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { ClickEvent, HoverEvent, MouseDownEvent, MouseUpEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Operator } from './Operator';
-import { Anchor, Axes, CompositeDrawable, FastRoundedBox, FillDirection, FillFlowContainer, provide, Vec2 } from 'osucad-framework';
+import { getIcon } from '@osucad/resources';
+import { Anchor, Axes, BindableBoolean, CompositeDrawable, Container, DrawableSprite, EasingFunction, FastRoundedBox, FillDirection, FillFlowContainer, provide, Vec2 } from 'osucad-framework';
 import { OsucadSpriteText } from '../../../../drawables/OsucadSpriteText';
 import { OsucadColors } from '../../../../OsucadColors';
 
@@ -13,36 +14,37 @@ export class OperatorBox extends CompositeDrawable {
 
     this.anchor = Anchor.BottomLeft;
     this.origin = Anchor.BottomLeft;
-    this.x = 100;
 
     this.internalChildren = [
       new FastRoundedBox({
         relativeSizeAxes: Axes.Both,
         color: OsucadColors.translucent,
-        alpha: 0.8,
+        alpha: 0.95,
+        cornerRadius: 4,
       }),
-      new FillFlowContainer({
+      this.#autoSizeContainer = new FillFlowContainer({
         direction: FillDirection.Vertical,
         autoSizeAxes: Axes.Y,
-        width: 180,
-        padding: 10,
+        width: 200,
+        padding: 6,
         spacing: new Vec2(4),
+        masking: true,
+        autoSizeEasing: EasingFunction.OutExpo,
         children: [
-          new OsucadSpriteText({
-            text: operator.title,
-            color: OsucadColors.text,
-            fontSize: 12,
-          }),
+          new OperatorTitle(operator.title, this.expanded),
           this.#content = new FillFlowContainer({
             direction: FillDirection.Vertical,
             margin: { top: 10 },
             relativeSizeAxes: Axes.X,
             autoSizeAxes: Axes.Y,
+            spacing: new Vec2(4),
           }),
         ],
       }),
     ];
   }
+
+  readonly expanded = new BindableBoolean();
 
   #content!: Container;
 
@@ -54,5 +56,103 @@ export class OperatorBox extends CompositeDrawable {
     this.#content.addAll(
       ...properties.map(property => property.createDrawableRepresentation()),
     );
+  }
+
+  protected override loadComplete() {
+    super.loadComplete();
+
+    this.expanded.bindValueChanged((expanded) => {
+      this.#content.bypassAutoSizeAxes = expanded.value ? Axes.None : Axes.Y;
+    }, true);
+  }
+
+  #firstUpdate = true;
+
+  override updateAfterChildren() {
+    super.updateAfterChildren();
+
+    if (this.#firstUpdate) {
+      this.#firstUpdate = false;
+      this.#autoSizeContainer.updateSubTree();
+      this.finishTransforms(true);
+      this.#autoSizeContainer.schedule(() => {
+        this.#autoSizeContainer.autoSizeDuration = 150;
+      });
+    }
+  }
+
+  #autoSizeContainer: Container;
+
+  override onMouseDown(e: MouseDownEvent): boolean {
+    return true;
+  }
+
+  override onMouseUp(e: MouseUpEvent) {
+    return true;
+  }
+
+  override onHover(e: HoverEvent): boolean {
+    return true;
+  }
+
+  override onClick(e: ClickEvent): boolean {
+    return true;
+  }
+}
+
+class OperatorTitle extends FillFlowContainer {
+  constructor(readonly title: string, expanded: BindableBoolean) {
+    super({
+      direction: FillDirection.Horizontal,
+      relativeSizeAxes: Axes.X,
+      autoSizeAxes: Axes.Y,
+      spacing: new Vec2(4),
+    });
+
+    this.expanded = expanded.getBoundCopy();
+
+    this.children = [
+      new Container({
+        size: 12,
+        anchor: Anchor.CenterLeft,
+        origin: Anchor.CenterLeft,
+        child: this.#icon = new DrawableSprite({
+          texture: getIcon('caret-left'),
+          relativeSizeAxes: Axes.Both,
+          anchor: Anchor.Center,
+          origin: Anchor.Center,
+          color: OsucadColors.text,
+          rotation: Math.PI,
+        }),
+      }),
+      new OsucadSpriteText({
+        text: title,
+        color: OsucadColors.text,
+        fontSize: 12,
+        anchor: Anchor.CenterLeft,
+        origin: Anchor.CenterLeft,
+      }),
+    ];
+  }
+
+  #icon!: DrawableSprite;
+
+  protected readonly expanded: BindableBoolean;
+
+  protected override loadComplete() {
+    super.loadComplete();
+
+    this.expanded.bindValueChanged((expanded) => {
+      this.#icon.rotateTo(
+        expanded.value ? Math.PI * 1.5 : Math.PI,
+        150,
+        EasingFunction.OutExpo,
+      );
+    }, true);
+  }
+
+  override onClick(e: ClickEvent): boolean {
+    this.expanded.toggle();
+    return true;
   }
 }

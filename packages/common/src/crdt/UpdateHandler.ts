@@ -54,11 +54,11 @@ export class UpdateHandler extends Component {
     return undefined;
   }
 
-  commit() {
+  commit(): boolean {
     const transaction = this.currentTransaction;
 
     if (transaction.isEmpty)
-      return;
+      return false;
 
     for (const entry of transaction.entries) {
       const target = this.objects.get(entry.targetId);
@@ -70,6 +70,8 @@ export class UpdateHandler extends Component {
     this.#currentTransaction = new Transaction();
 
     this.#updateBindables();
+
+    return true;
   }
 
   addUndoAction(action: () => void) {

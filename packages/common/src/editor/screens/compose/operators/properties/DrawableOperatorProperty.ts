@@ -10,7 +10,7 @@ export abstract class DrawableOperatorProperty<T> extends GridContainer {
       relativeSizeAxes: Axes.X,
       autoSizeAxes: Axes.Y,
       columnDimensions: [
-        new Dimension(GridSizeMode.Absolute, 60),
+        new Dimension(GridSizeMode.Absolute, 100),
         new Dimension(),
       ],
     });
@@ -41,7 +41,7 @@ export abstract class DrawableOperatorProperty<T> extends GridContainer {
             autoSizeAxes: Axes.Both,
             anchor: Anchor.CenterRight,
             origin: Anchor.CenterRight,
-            padding: { right: 4 },
+            padding: { right: 6 },
             child: new OsucadSpriteText({
               text: labels[i],
               fontSize: 12,

@@ -1,7 +1,8 @@
 import type { DependencyContainer, Drawable, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { DrawableRuleset } from '../../../rulesets/DrawableRuleset';
 import type { IComposeTool } from './IComposeTool';
-import { Anchor, Axes, Bindable, CompositeDrawable, Container, isMobile, resolved } from 'osucad-framework';
+import type { Operator } from './operators/Operator';
+import { Anchor, Axes, Bindable, CompositeDrawable, Container, isMobile, provide, resolved } from 'osucad-framework';
 import { IBeatmap } from '../../../beatmap/IBeatmap';
 import { BorderLayout } from '../../../drawables/BorderLayout';
 import { MobileEditorControls } from '../../../rulesets/osu/edit/MobileEditorControls';
@@ -14,6 +15,7 @@ import { ComposeToolContainer } from './ComposeToolContainer';
 import { HitObjectComposerDependencies } from './HitObjectComposerDependencies';
 import { HitObjectSelectionManager } from './HitObjectSelectionManager';
 
+@provide(HitObjectComposer)
 export abstract class HitObjectComposer extends CompositeDrawable {
   constructor() {
     super();
@@ -181,6 +183,10 @@ export abstract class HitObjectComposer extends CompositeDrawable {
   rightSidebar!: Container;
 
   topBar!: Container;
+
+  beginOperator(operator: Operator, alreadyApplied = false) {
+    this.#toolContainer.beginOperator(operator, alreadyApplied);
+  }
 
   protected get drawableRuleset() {
     return this.#drawableRuleset;

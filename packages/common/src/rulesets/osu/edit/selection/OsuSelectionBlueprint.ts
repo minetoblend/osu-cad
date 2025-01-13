@@ -1,4 +1,4 @@
-import type { ClickEvent, DragEndEvent, DragEvent, DragStartEvent, MouseDownEvent, MouseUpEvent, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { ClickEvent, DragEvent, DragStartEvent, MouseDownEvent, MouseUpEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { HitObjectSelectionEvent } from '../../../../editor/screens/compose/HitObjectSelectionManager';
 import type { HitObjectLifetimeEntry } from '../../../../hitObjects/drawables/HitObjectLifetimeEntry';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
@@ -6,12 +6,13 @@ import type { OsuSelectionManager } from '../OsuSelectionManager';
 import { Axes, Bindable, BindableBoolean, BindableNumber, Container, MouseButton, resolved, Vec2 } from 'osucad-framework';
 import { UpdateHandler } from '../../../../crdt/UpdateHandler';
 import { EditorBeatmap } from '../../../../editor/EditorBeatmap';
+import { HitObjectComposer } from '../../../../editor/screens/compose/HitObjectComposer';
 import { HitObjectSelectionManager } from '../../../../editor/screens/compose/HitObjectSelectionManager';
 import { HitObjectBlueprint } from '../../../ui/HitObjectBlueprint';
 import { HitObjectBlueprintContainer } from '../../../ui/HitObjectBlueprintContainer';
-import { Slider } from '../../hitObjects/Slider';
 import { Spinner } from '../../hitObjects/Spinner';
 import { IPositionSnapProvider } from '../IPositionSnapProvider';
+import { MoveOperator } from '../operators/MoveOperator';
 
 enum Edges {
   Left = 1 << 0,
@@ -144,6 +145,8 @@ export class OsuSelectionBlueprint<T extends OsuHitObject = OsuHitObject> extend
   #ownDragStartPositions: Vec2[] = [];
   #dragStartPositions: Vec2[] = [];
 
+  #moveOperation?: MoveOperator;
+
   override onDragStart(e: DragStartEvent): boolean {
     if (this.readonly)
       return false;
@@ -160,10 +163,16 @@ export class OsuSelectionBlueprint<T extends OsuHitObject = OsuHitObject> extend
     this.#draggedObjects = draggedObjects;
     this.#dragStartPositions = draggedObjects.map(it => it.position.clone());
 
+    this.#moveOperation = new MoveOperator(this.#draggedObjects);
+    this.composer.beginOperator(this.#moveOperation);
+
     return true;
   }
 
   override onDrag(e: DragEvent): boolean {
+    if (!this.#moveOperation)
+      return false;
+
     let delta = this.parent!.toLocalSpace(e.screenSpaceMousePosition).sub(this.parent!.toLocalSpace(e.screenSpaceMouseDownPosition));
 
     if (this.snapProvider) {
@@ -176,70 +185,16 @@ export class OsuSelectionBlueprint<T extends OsuHitObject = OsuHitObject> extend
         delta = delta.add(snapResult.snapOffset);
     }
 
-    for (let i = 0; i < this.#draggedObjects.length; i++) {
-      const hitObject = this.#draggedObjects[i];
-
-      hitObject.position = this.#dragStartPositions[i].add(delta);
-    }
-
-    this.moveIntoBounds(this.#draggedObjects);
+    this.#moveOperation.delta.value = delta;
 
     return true;
-  }
-
-  // noinspection t
-  protected moveIntoBounds(hitObjects: OsuHitObject[]) {
-    const overflow = {
-      left: 0,
-      top: 0,
-      right: 0,
-      bottom: 0,
-    };
-
-    for (const object of hitObjects) {
-      const start = object.position;
-      let end = start;
-      if (object instanceof Slider)
-        end = end.add(object.path.endPosition);
-
-      const min = start.componentMin(end);
-      const max = start.componentMax(end);
-
-      if (min.x < 0)
-        overflow.left = Math.max(overflow.left, -min.x);
-      if (max.x > 512)
-        overflow.right = Math.max(overflow.right, max.x - 512);
-
-      if (min.y < 0)
-        overflow.top = Math.max(overflow.top, -min.y);
-      if (max.y > 384)
-        overflow.bottom = Math.max(overflow.bottom, max.y - 384);
-    }
-
-    const offset = new Vec2();
-
-    if (overflow.left && !overflow.right)
-      offset.x = overflow.left;
-    else if (overflow.right && !overflow.left)
-      offset.x = -overflow.right;
-
-    if (overflow.top && !overflow.bottom)
-      offset.y = overflow.top;
-    else if (overflow.bottom && !overflow.top)
-      offset.y = -overflow.bottom;
-
-    if (!offset.isZero) {
-      for (const object of hitObjects)
-        object.position = object.position.add(offset);
-    }
   }
 
   @resolved(UpdateHandler)
   protected updateHandler!: UpdateHandler;
 
-  override onDragEnd(e: DragEndEvent) {
-    this.updateHandler.commit();
-  }
+  @resolved(HitObjectComposer)
+  composer!: HitObjectComposer;
 
   @resolved(HitObjectBlueprintContainer)
   protected selectionContainer!: HitObjectBlueprintContainer<OsuSelectionBlueprint>;

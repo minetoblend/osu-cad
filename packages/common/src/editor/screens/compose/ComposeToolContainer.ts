@@ -1,9 +1,13 @@
 import type { Bindable, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { DrawableComposeTool } from './DrawableComposeTool';
 import type { IComposeTool } from './IComposeTool';
-import { Action, Axes, CompositeDrawable, Container, FillDirection, FillFlowContainer, Vec2 } from 'osucad-framework';
+import type { Operator } from './operators/Operator';
+import { Action, Axes, BindableBoolean, CompositeDrawable, Container, FillDirection, FillFlowContainer, resolved, Vec2 } from 'osucad-framework';
+import { UpdateHandler } from '../../../crdt/UpdateHandler';
+import { EditorBeatmap } from '../../EditorBeatmap';
 import { DrawableToolModifier } from './DrawableToolModifier';
 import { HitObjectComposerDependencies } from './HitObjectComposerDependencies';
+import { OperatorBox } from './operators/OperatorBox';
 
 export class ComposeToolContainer extends CompositeDrawable {
   readonly toolActivated = new Action<DrawableComposeTool>();
@@ -21,7 +25,10 @@ export class ComposeToolContainer extends CompositeDrawable {
 
     this.relativeSizeAxes = Axes.Both;
 
-    this.addAllInternal(this.#toolContainer);
+    this.internalChildren = [
+      this.#toolContainer,
+      this.#operatorContainer,
+    ];
   }
 
   readonly modifierContainer = new FillFlowContainer<DrawableToolModifier>({
@@ -49,6 +56,12 @@ export class ComposeToolContainer extends CompositeDrawable {
     }, true);
   }
 
+  protected override loadComplete() {
+    super.loadComplete();
+
+    this.updateHandler.commandApplied.addListener(this.#commandApplied, this);
+  }
+
   #onToolActivated(tool: DrawableComposeTool) {
     this.toolActivated.emit(tool);
 
@@ -61,5 +74,90 @@ export class ComposeToolContainer extends CompositeDrawable {
     this.modifierContainer.children = [
       ...tool.getModifiers().map(it => new DrawableToolModifier(it)),
     ];
+  }
+
+  #activeOperator?: Operator;
+
+  #activeOperatorBox?: OperatorBox;
+
+  #operatorContainer = new Container({
+    relativeSizeAxes: Axes.Both,
+  });
+
+  protected readonly operatorExpanded = new BindableBoolean(false);
+
+  beginOperator(operator: Operator, alreadyApplied = false) {
+    this.#endOperator();
+
+    operator.init();
+
+    this.#activeOperator = operator;
+    this.#operatorContainer.add(
+      this.#activeOperatorBox = new OperatorBox(operator),
+    );
+    this.#activeOperatorBox!.expanded.bindTo(this.operatorExpanded);
+
+    this.#lastRunHadChanges = alreadyApplied;
+
+    operator.invalidated.addListener(this.#operatorInvalidated, this);
+
+    if (!alreadyApplied)
+      this.#applyOperator(operator);
+  }
+
+  #endOperator() {
+    if (this.#activeOperator)
+      this.#activeOperator.invalidated.removeListener(this.#operatorInvalidated, this);
+
+    this.#activeOperator = undefined;
+    this.#activeOperatorBox?.expire();
+  }
+
+  #operatorInvalidated(operator: Operator) {
+    this.scheduler.addOnce(this.#applyOperator, this);
+  }
+
+  @resolved(UpdateHandler)
+  updateHandler!: UpdateHandler;
+
+  @resolved(EditorBeatmap)
+  editorBeatmap!: EditorBeatmap;
+
+  #lastRunHadChanges = false;
+
+  #operatorIsRunning = false;
+
+  #applyOperator(operator = this.#activeOperator) {
+    if (!operator)
+      return;
+
+    try {
+      this.#operatorIsRunning = true;
+
+      if (this.#lastRunHadChanges)
+        this.updateHandler.undo();
+
+      operator.apply({
+        beatmap: this.editorBeatmap,
+      });
+
+      this.#lastRunHadChanges = this.updateHandler.commit();
+    }
+    finally {
+      this.#operatorIsRunning = false;
+    }
+  }
+
+  #commandApplied() {
+    if (this.#operatorIsRunning)
+      return;
+
+    this.#endOperator();
+  }
+
+  override dispose(isDisposing: boolean = true) {
+    super.dispose(isDisposing);
+
+    this.updateHandler.commandApplied.removeListener(this.#commandApplied, this);
   }
 }

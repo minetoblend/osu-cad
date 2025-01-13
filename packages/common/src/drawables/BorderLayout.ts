@@ -58,6 +58,13 @@ export class BorderLayout extends CompositeDrawable {
     );
 
     this.with(rest);
+
+    for (const child of this.internalChildren) {
+      child.invalidated.addListener(([_, invalidation]) => {
+        if (invalidation && Invalidation.DrawSize)
+          this.#layoutBacking.invalidate();
+      });
+    }
   }
 
   get center() {
