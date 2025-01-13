@@ -48,17 +48,17 @@ export class ComposeToolContainer extends CompositeDrawable {
 
     const { activeTool } = dependencies.resolve(HitObjectComposerDependencies);
     this.activeTool = activeTool.getBoundCopy();
+  }
 
-    activeTool.bindValueChanged((tool) => {
+  protected override loadComplete() {
+    super.loadComplete();
+
+    this.activeTool.bindValueChanged((tool) => {
       this.#activeDrawableTool?.expire();
 
       this.#toolContainer.add(this.#activeDrawableTool = tool.value.createDrawableTool());
       this.#onToolActivated(this.#activeDrawableTool);
     }, true);
-  }
-
-  protected override loadComplete() {
-    super.loadComplete();
 
     this.updateHandler.commandApplied.addListener(this.#commandApplied, this);
   }
@@ -111,7 +111,10 @@ export class ComposeToolContainer extends CompositeDrawable {
     this.#operatorContainer.add(
       this.#activeOperatorBox = new OperatorBox(operator),
     );
-    this.#activeOperatorBox!.expanded.bindTo(this.operatorExpanded);
+    if (operator.expandByDefault)
+      this.#activeOperatorBox!.expanded.value = true;
+    else
+      this.#activeOperatorBox!.expanded.bindTo(this.operatorExpanded);
 
     this.#lastRunHadChanges = alreadyApplied;
 
@@ -125,9 +128,28 @@ export class ComposeToolContainer extends CompositeDrawable {
     return this.#activeOperator ?? null;
   }
 
+  completeOperator(operator: Operator) {
+    if (this.activeOperator !== operator)
+      return;
+
+    this.#endOperator();
+  }
+
+  cancelOperator(operator: Operator) {
+    if (this.#activeOperator !== operator)
+      return;
+
+    if (this.#lastRunHadChanges)
+      this.updateHandler.undo();
+
+    this.#endOperator();
+  }
+
   #endOperator() {
-    if (this.#activeOperator)
+    if (this.#activeOperator) {
       this.#activeOperator.invalidated.removeListener(this.#operatorInvalidated, this);
+      this.#activeOperator.ended.emit();
+    }
 
     this.#activeOperator = undefined;
     this.#activeOperatorBox?.expire();

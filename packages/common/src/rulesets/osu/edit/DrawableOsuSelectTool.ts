@@ -17,6 +17,7 @@ import { GlobalHitSoundState } from './GlobalHitSoundState';
 import { GlobalNewComboBindable } from './GlobalNewComboBindable';
 import { HitSoundStateBuilder } from './HitSoundStateBuilder';
 import { MobileControlButton } from './MobileEditorControls';
+import { RotateInteraction } from './operators/RotateInteraction';
 import { RotateOperator } from './operators/RotateOperator';
 import { OsuHitObjectComposer } from './OsuHitObjectComposer';
 
@@ -149,6 +150,13 @@ export class DrawableOsuSelectTool extends DrawableComposeTool implements IKeyBi
         return true;
       case EditorAction.RotateCCW:
         this.rotateSelection(-90);
+        return true;
+      case EditorAction.Rotate:
+        this.playfieldOverlay.add(
+          new RotateInteraction(
+            [...this.selection.selectedObjects].filter(it => !(it instanceof Spinner)) as OsuHitObject[],
+          ),
+        );
         return true;
       case EditorAction.ConvertToStream:
         this.convertToStream();

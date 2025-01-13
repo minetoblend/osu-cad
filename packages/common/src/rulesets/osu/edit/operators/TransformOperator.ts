@@ -46,6 +46,10 @@ export abstract class TransformOperator extends Operator<OsuHitObject> {
       this.#transform(hitObject, transform, context);
   }
 
+  protected get recalculateSliderLength() {
+    return true;
+  }
+
   #transform(hitObject: OsuHitObject, transform: Matrix, context: OperatorContext<OsuHitObject>) {
     if (!(hitObject instanceof HitCircle || hitObject instanceof Slider))
       return;
@@ -59,7 +63,9 @@ export abstract class TransformOperator extends Operator<OsuHitObject> {
         .translate(-transform.tx, -transform.ty);
 
       hitObject.controlPoints = hitObject.path.controlPoints.map(p => p.transformBy(pointTransform));
-      hitObject.snapLength(context.beatmap.controlPoints, context.clock.beatSnapDivisor.value);
+
+      if (this.recalculateSliderLength)
+        hitObject.snapLength(context.beatmap.controlPoints, context.clock.beatSnapDivisor.value);
     }
   }
 

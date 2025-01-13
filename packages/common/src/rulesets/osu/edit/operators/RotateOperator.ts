@@ -22,6 +22,7 @@ export class RotateOperator extends TransformOperator {
   readonly selectionCenter = new CheckboxOperatorProperty({
     title: 'Selection Center',
     defaultValue: false,
+    remember: true,
   });
 
   protected override getMatrix(): Matrix {
@@ -33,5 +34,9 @@ export class RotateOperator extends TransformOperator {
       .translate(-center.x, -center.y)
       .rotate(this.angle.value / 180 * Math.PI)
       .translate(center.x, center.y);
+  }
+
+  protected override get recalculateSliderLength(): boolean {
+    return false;
   }
 }

@@ -15,6 +15,10 @@ export abstract class Operator<TObject extends HitObject = any> {
 
   readonly invalidated = new Action<Operator>();
 
+  readonly ended = new Action();
+
+  expandByDefault = false;
+
   init() {
     for (const property of this.properties)
       property.bindable.bindValueChanged(() => this.invalidated.emit(this));

@@ -1,7 +1,7 @@
 import type { ClickEvent, HoverEvent, MouseDownEvent, MouseUpEvent, ReadonlyDependencyContainer } from 'osucad-framework';
 import type { Operator } from './Operator';
 import { getIcon } from '@osucad/resources';
-import { Anchor, Axes, BindableBoolean, CompositeDrawable, Container, DrawableSprite, EasingFunction, FastRoundedBox, FillDirection, FillFlowContainer, provide, Vec2 } from 'osucad-framework';
+import { Anchor, Axes, BindableBoolean, CompositeDrawable, Container, DrawableSprite, EasingFunction, FastRoundedBox, FillDirection, FillFlowContainer, provide, TabbableContainer, Vec2 } from 'osucad-framework';
 import { OsucadSpriteText } from '../../../../drawables/OsucadSpriteText';
 import { OsucadColors } from '../../../../OsucadColors';
 
@@ -24,8 +24,7 @@ export class OperatorBox extends CompositeDrawable {
       }),
       this.#autoSizeContainer = new FillFlowContainer({
         direction: FillDirection.Vertical,
-        autoSizeAxes: Axes.Y,
-        width: 200,
+        autoSizeAxes: Axes.Both,
         padding: 6,
         spacing: new Vec2(4),
         masking: true,
@@ -34,8 +33,8 @@ export class OperatorBox extends CompositeDrawable {
           new OperatorTitle(operator.title, this.expanded),
           this.#content = new FillFlowContainer({
             direction: FillDirection.Vertical,
+            width: 200,
             margin: { top: 10 },
-            relativeSizeAxes: Axes.X,
             autoSizeAxes: Axes.Y,
             spacing: new Vec2(4),
           }),
@@ -62,8 +61,17 @@ export class OperatorBox extends CompositeDrawable {
     super.loadComplete();
 
     this.expanded.bindValueChanged((expanded) => {
-      this.#content.bypassAutoSizeAxes = expanded.value ? Axes.None : Axes.Y;
+      this.#content.bypassAutoSizeAxes = expanded.value ? Axes.None : Axes.Both;
     }, true);
+
+    if (this.expanded.value && this.operator.expandByDefault) {
+      this.parent!.scheduler.add(() => {
+        const focusTarget = this.findChildrenOfType(TabbableContainer);
+        if (focusTarget.length > 0)
+          this.getContainingFocusManager()?.changeFocus(focusTarget[0]);
+      },
+      );
+    }
   }
 
   #firstUpdate = true;
@@ -104,8 +112,7 @@ class OperatorTitle extends FillFlowContainer {
   constructor(readonly title: string, expanded: BindableBoolean) {
     super({
       direction: FillDirection.Horizontal,
-      relativeSizeAxes: Axes.X,
-      autoSizeAxes: Axes.Y,
+      autoSizeAxes: Axes.Both,
       spacing: new Vec2(4),
     });
 

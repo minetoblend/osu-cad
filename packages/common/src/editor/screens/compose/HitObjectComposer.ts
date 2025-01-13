@@ -192,6 +192,14 @@ export abstract class HitObjectComposer extends CompositeDrawable {
     return this.#toolContainer.activeOperator;
   }
 
+  completeOperator(operator: Operator) {
+    this.#toolContainer.completeOperator(operator);
+  }
+
+  cancelOperator(operator: Operator) {
+    this.#toolContainer.cancelOperator(operator);
+  }
+
   protected get drawableRuleset() {
     return this.#drawableRuleset;
   }
