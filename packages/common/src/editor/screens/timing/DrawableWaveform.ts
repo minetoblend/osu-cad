@@ -64,15 +64,20 @@ export class DrawableWaveform extends CompositeDrawable {
   override update() {
     super.update();
 
-    const chunkDuration = 1000;
+    if (this.timeline.content.drawWidth === 0)
+      return;
+
+    const chunkDuration = 5000;
 
     const firstChunkStartTime = Math.max(Math.floor(this.timeline.startTime / chunkDuration) * chunkDuration, 0);
     const lastChunkEndTime = Math.min(Math.ceil(this.timeline.endTime / chunkDuration) * chunkDuration, this.track.length);
 
+    if (!Number.isFinite(firstChunkStartTime) || !Number.isFinite(lastChunkEndTime))
+      return;
+
     if (this.#chunks.length === 0) {
-      for (let i = firstChunkStartTime; i < lastChunkEndTime; i += chunkDuration) {
+      for (let i = firstChunkStartTime; i < lastChunkEndTime; i += chunkDuration)
         this.#addChunk(this.#createWaveformChunk(i, i + chunkDuration));
-      }
     }
     else {
       const firstChunk = this.#chunks[0];
