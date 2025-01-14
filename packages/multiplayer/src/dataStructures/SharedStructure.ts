@@ -1,4 +1,4 @@
-import type { MutationSource } from './MutationSource';
+import type { MutationContext } from './MutationContext';
 import type { Transaction, TransactionEntry } from './Transaction';
 import type { UpdateHandler } from './UpdateHandler';
 import { objectId } from '../../../common/src/utils/objectId';
@@ -12,7 +12,7 @@ export abstract class SharedStructure<TMutation = never> {
     return this.#updateHandler?.currentTransaction ?? null;
   }
 
-  abstract handle(mutation: TMutation, source: MutationSource): TMutation | null | void;
+  abstract handle(mutation: TMutation, ctx: MutationContext): TMutation | null | void;
 
   ack(mutation: TMutation) {}
 

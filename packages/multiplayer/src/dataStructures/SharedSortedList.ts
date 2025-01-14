@@ -1,5 +1,6 @@
 import type { IComparer } from 'osucad-framework';
 import type { Constructor } from '../../../common/src/utils/Constructor';
+import type { MutationContext } from './MutationContext';
 import { Action, SortedList } from 'osucad-framework';
 import { SharedStructure } from './SharedStructure';
 
@@ -34,7 +35,8 @@ export class SharedSortedList<T extends SharedStructure<any>> extends SharedStru
     return this.#list.length;
   }
 
-  override handle(mutation: SortedListMutation<T>): void | SortedListMutation<T> | null {
+  override handle(mutation: SortedListMutation<T>, ctx: MutationContext): void | SortedListMutation<T> | null {
+    // TODO: handle id conflicts
     switch (mutation.op) {
       case 'add':
         if (this.#add(mutation.value)) {

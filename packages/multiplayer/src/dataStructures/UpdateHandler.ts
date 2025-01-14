@@ -40,6 +40,8 @@ export class UpdateHandler extends Component {
 
   protected onMutationSubmitted(targetId: string, mutation: any) {}
 
+  #version = 0;
+
   submit(targetId: string, mutation: any, undoMutation?: any, key?: string) {
     this.onMutationSubmitted(targetId, mutation);
 
@@ -88,7 +90,11 @@ export class UpdateHandler extends Component {
 
     for (const entry of transaction.entries.toReversed()) {
       const target = this.objects.get(entry.targetId);
-      target?.handle(entry.undoMutation, MutationSource.Offline);
+      target?.handle(entry.undoMutation, {
+        source: MutationSource.Local,
+        own: true,
+        version: ++this.#version,
+      });
     }
 
     this.#currentTransaction = new Transaction();
@@ -113,7 +119,11 @@ export class UpdateHandler extends Component {
 
     for (const entry of transaction.entries.toReversed()) {
       const target = this.objects.get(entry.targetId);
-      const redoMutation = target?.handle(entry.undoMutation, MutationSource.Offline);
+      const redoMutation = target?.handle(entry.undoMutation, {
+        source: MutationSource.Local,
+        own: true,
+        version: ++this.#version,
+      });
       if (redoMutation)
         redoTransaction.addEntry(new TransactionEntry(entry.targetId, redoMutation));
     }
@@ -143,7 +153,11 @@ export class UpdateHandler extends Component {
 
     for (const entry of transaction.entries.toReversed()) {
       const target = this.objects.get(entry.targetId);
-      const redoMutation = target?.handle(entry.undoMutation, MutationSource.Offline);
+      const redoMutation = target?.handle(entry.undoMutation, {
+        source: MutationSource.Local,
+        own: true,
+        version: ++this.#version,
+      });
       if (redoMutation)
         undoTransaction.addEntry(new TransactionEntry(entry.targetId, redoMutation));
     }
