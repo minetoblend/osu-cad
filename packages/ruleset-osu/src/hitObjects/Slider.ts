@@ -497,7 +497,8 @@ export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepe
       false,
     );
 
-    if (time > this.startTime + duration) {
+    // Adding more tiny values to prevent precision errors. maybe I'll catch all the edge cases one day
+    if (time > this.startTime + duration + 1) {
       const beatLength = controlPointInfo.timingPointAt(this.startTime).beatLength;
 
       time -= beatLength / beatDivisor;
