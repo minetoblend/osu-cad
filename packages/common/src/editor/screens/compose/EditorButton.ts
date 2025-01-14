@@ -1,6 +1,6 @@
 import type { Drawable, FocusLostEvent, HoverEvent, HoverLostEvent, MouseDownEvent, MouseUpEvent, ScheduledDelegate } from 'osucad-framework';
 import { getIcon } from '@osucad/resources';
-import { Anchor, Axes, BindableBoolean, CompositeDrawable, Container, dependencyLoader, DrawableSprite, EasingFunction, FastRoundedBox, MouseButton, RoundedBox, Vec2, Visibility } from 'osucad-framework';
+import { Anchor, Axes, BindableBoolean, CompositeDrawable, Container, dependencyLoader, DrawableSprite, EasingFunction, FastRoundedBox, isSourcedFromTouch, MouseButton, RoundedBox, Vec2, Visibility } from 'osucad-framework';
 import { OsucadColors } from '../../../OsucadColors';
 import { EditorButtonSubmenu } from './EditorButtonSubmenu';
 
@@ -147,7 +147,7 @@ export abstract class EditorButton extends CompositeDrawable {
     if (e.button === MouseButton.Right) {
       if (this.#submenu?.state.value === Visibility.Hidden)
         this.showSubmenu();
-      else
+      else if (!isSourcedFromTouch(e.state.mouse.lastSource))
         this.#submenu?.hide();
     }
 
