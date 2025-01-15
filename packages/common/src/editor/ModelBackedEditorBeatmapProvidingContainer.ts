@@ -64,7 +64,6 @@ export class ModelBackedEditorBeatmapProvidingContainer extends CompositeDrawabl
 
     await Promise.all([
       await this.loadComponentAsync(container),
-      new Promise(resolve => setTimeout(resolve, 250)),
     ]);
 
     if (id !== this.#updateId)
