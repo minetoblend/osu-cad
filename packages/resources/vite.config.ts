@@ -23,6 +23,7 @@ export default defineConfig({
     lib: {
       entry: './src/index.ts',
       name: 'osucad-resources',
+      fileName: 'index',
       formats: ['es']
     },
     rollupOptions: {
