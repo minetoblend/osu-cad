@@ -97,8 +97,10 @@ export abstract class SharedObject extends SharedStructure<ObjectMutation, Objec
       data: {},
     };
 
-    for (const property of this.#properties.values())
-      summary.data[property.name] = property.createSummary();
+    for (const property of this.#properties.values()) {
+      if (!property.bindable.isDefault)
+        summary.data[property.name] = property.createSummary();
+    }
 
     return summary;
   }
@@ -107,10 +109,8 @@ export abstract class SharedObject extends SharedStructure<ObjectMutation, Objec
     this.id = summary.id;
 
     for (const property of this.#properties.values()) {
-      if (!(property.name in summary.data)) {
-        console.warn(`Missing property "${property.name}" in summary.`, summary, this);
+      if (!(property.name in summary.data))
         continue;
-      }
 
       const value = summary.data[property.name];
 
