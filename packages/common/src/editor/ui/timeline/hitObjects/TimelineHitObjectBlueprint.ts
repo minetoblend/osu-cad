@@ -41,6 +41,7 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
   protected override loadComplete() {
     super.loadComplete();
 
+    this.comboIndexBindable.bindValueChanged(this.updateComboColor, this);
     this.startTimeBindable.bindValueChanged(time => this.x = time.value, true);
   }
 
