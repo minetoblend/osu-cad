@@ -214,6 +214,9 @@ importers:
       '@osucad/framework':
         specifier: workspace:*
         version: link:../framework
+      '@osucad/multiplayer':
+        specifier: workspace:*
+        version: link:../multiplayer
       '@osucad/resources':
         specifier: workspace:*
         version: link:../resources
@@ -338,6 +341,18 @@ importers:
 
   packages/ruleset-mania:
     dependencies:
+      '@osucad/core':
+        specifier: workspace:*
+        version: link:../core
+      '@osucad/framework':
+        specifier: workspace:*
+        version: link:../framework
+      '@osucad/multiplayer':
+        specifier: workspace:*
+        version: link:../multiplayer
+      '@osucad/resources':
+        specifier: workspace:*
+        version: link:../resources
       audiobuffer-to-wav:
         specifier: ^1.0.0
         version: 1.0.0
@@ -360,6 +375,18 @@ importers:
 
   packages/ruleset-osu:
     dependencies:
+      '@osucad/core':
+        specifier: workspace:*
+        version: link:../core
+      '@osucad/framework':
+        specifier: workspace:*
+        version: link:../framework
+      '@osucad/multiplayer':
+        specifier: workspace:*
+        version: link:../multiplayer
+      '@osucad/resources':
+        specifier: workspace:*
+        version: link:../resources
       audiobuffer-to-wav:
         specifier: ^1.0.0
         version: 1.0.0
@@ -373,12 +400,6 @@ importers:
       '@types/audiobuffer-to-wav':
         specifier: ^1.0.4
         version: 1.0.4
-      dependency-cruiser:
-        specifier: ^16.9.0
-        version: 16.9.0
-      vite-plugin-circular-dependency:
-        specifier: ^0.5.0
-        version: 0.5.0(rollup@4.21.3)
 
   packages/serialization:
     dependencies:
