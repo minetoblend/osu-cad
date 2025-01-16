@@ -1,7 +1,7 @@
-import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, Vec2 } from 'osucad-framework';
+import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, Vec2 } from '@osucad/framework';
 import type { DrawableHitCircle } from './DrawableHitCircle';
-import { DrawableHitObject } from '@osucad/common';
-import { Anchor, Container, resolved } from 'osucad-framework';
+import { DrawableHitObject } from '@osucad/core';
+import { Anchor, Container, resolved } from '@osucad/framework';
 import { OsuAction } from '../../OsuAction';
 import { OsuHitObject } from '../OsuHitObject';
 

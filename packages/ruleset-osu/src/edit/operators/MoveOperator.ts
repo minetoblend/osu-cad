@@ -1,6 +1,6 @@
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
-import { CheckboxOperatorProperty, Operator, Vec2OperatorProperty } from '@osucad/common';
-import { Vec2 } from 'osucad-framework';
+import { CheckboxOperatorProperty, Operator, Vec2OperatorProperty } from '@osucad/core';
+import { Vec2 } from '@osucad/framework';
 import { Slider } from '../../hitObjects/Slider';
 
 export class MoveOperator extends Operator<OsuHitObject> {

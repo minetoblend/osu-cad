@@ -1,6 +1,6 @@
-import { OsucadColors } from '@osucad/common';
+import { OsucadColors } from '@osucad/core';
+import { Action, Anchor, Container, dependencyLoader, DrawableSprite, EasingFunction, RoundedBox, Vec2 } from '@osucad/framework';
 import { getIcon, OsucadTextures } from '@osucad/resources';
-import { Action, Anchor, Container, dependencyLoader, DrawableSprite, EasingFunction, RoundedBox, Vec2 } from 'osucad-framework';
 import { AlphaFilter } from 'pixi.js';
 
 import { IntroSlider } from './IntroSlider';

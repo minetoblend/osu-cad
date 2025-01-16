@@ -1,8 +1,8 @@
-import type { DrawablePool } from 'osucad-framework';
+import type { DrawablePool } from '@osucad/framework';
 import type { FollowPoint } from './FollowPoint';
 import type { FollowPointLifetimeEntry } from './FollowPointLifetimeEntry';
-import { PoolableDrawableWithLifetime } from '@osucad/common';
-import { EasingFunction, Vec2 } from 'osucad-framework';
+import { PoolableDrawableWithLifetime } from '@osucad/core';
+import { EasingFunction, Vec2 } from '@osucad/framework';
 import { OsuHitObject } from '../hitObjects/OsuHitObject';
 
 export class FollowPointConnection extends PoolableDrawableWithLifetime<FollowPointLifetimeEntry> {

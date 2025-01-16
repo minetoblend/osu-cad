@@ -1,9 +1,9 @@
-import type { DrawableHitObject, HitObject, JudgementResult } from '@osucad/common';
+import type { DrawableHitObject, HitObject, JudgementResult } from '@osucad/core';
 import type { DrawableOsuHitObject } from '../hitObjects/drawables/DrawableOsuHitObject';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
 import type { IHitPolicy } from './IHitPolicy';
-import { HitObjectLifetimeEntry, OsucadConfigManager, OsucadSettings, Playfield } from '@osucad/common';
-import { Anchor, Axes, BindableBoolean, Container, provide, type ReadonlyDependencyContainer, resolved, Vec2 } from 'osucad-framework';
+import { HitObjectLifetimeEntry, OsucadConfigManager, OsucadSettings, Playfield } from '@osucad/core';
+import { Anchor, Axes, BindableBoolean, Container, provide, type ReadonlyDependencyContainer, resolved, Vec2 } from '@osucad/framework';
 import { DrawableHitCircle } from '../hitObjects/drawables/DrawableHitCircle';
 import { DrawableSlider } from '../hitObjects/drawables/DrawableSlider';
 import { DrawableSliderHead } from '../hitObjects/drawables/DrawableSliderHead';

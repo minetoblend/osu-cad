@@ -6,14 +6,16 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nx/js:swc",
+      "executor": "@nx/vite:build",
       "outputs": [
         "{options.outputPath}"
       ],
       "options": {
-        "outputPath": "dist/packages/framework",
+        "outputPath": "packages/framework/dist",
         "main": "packages/framework/src/index.ts",
+        "configFile": "packages/framework/vite.config.ts",
         "tsConfig": "packages/framework/tsconfig.lib.json",
+        "generatePackageJson": true,
         "assets": [
           "packages/framework/*.md"
         ]

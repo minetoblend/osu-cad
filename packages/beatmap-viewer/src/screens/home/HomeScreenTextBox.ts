@@ -1,5 +1,5 @@
-import { OsucadColors, OsucadSpriteText, TextBox } from '@osucad/common';
-import { isMobile, MarginPadding } from 'osucad-framework';
+import { OsucadColors, OsucadSpriteText, TextBox } from '@osucad/core';
+import { isMobile, MarginPadding } from '@osucad/framework';
 import { Color } from 'pixi.js';
 
 export class HomeScreenTextBox extends TextBox {

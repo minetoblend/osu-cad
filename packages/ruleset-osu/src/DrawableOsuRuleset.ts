@@ -1,7 +1,7 @@
-import type { DrawableHitObject, IBeatmap, PlayfieldAdjustmentContainer, Ruleset } from '@osucad/common';
-import type { PassThroughInputManager } from 'osucad-framework';
+import type { DrawableHitObject, IBeatmap, PlayfieldAdjustmentContainer, Ruleset } from '@osucad/core';
+import type { PassThroughInputManager } from '@osucad/framework';
 import type { OsuHitObject } from './hitObjects/OsuHitObject';
-import { DrawableRuleset } from '@osucad/common';
+import { DrawableRuleset } from '@osucad/core';
 import { OsuInputManager } from './OsuInputManager';
 import { OsuPlayfieldAdjustmentContainer } from './OsuPlayfieldAdjustmentContainer';
 import { OsuPlayfield } from './ui/OsuPlayfield';

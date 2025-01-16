@@ -1,6 +1,6 @@
-import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyBindingReleaseEvent, ReadonlyDependencyContainer, ValueChangedEvent } from 'osucad-framework';
-import { IScrollingInfo, LinearGradient, ScrollingDirection } from '@osucad/common';
-import { Anchor, Axes, Bindable, Box, ColorUtils, CompositeDrawable, DrawableSprite, EasingFunction, resolved } from 'osucad-framework';
+import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyBindingReleaseEvent, ReadonlyDependencyContainer, ValueChangedEvent } from '@osucad/framework';
+import { IScrollingInfo, LinearGradient, ScrollingDirection } from '@osucad/core';
+import { Anchor, Axes, Bindable, Box, ColorUtils, CompositeDrawable, DrawableSprite, EasingFunction, resolved } from '@osucad/framework';
 import { Color } from 'pixi.js';
 import { Column } from '../Column';
 import { ManiaAction } from '../ManiaAction';

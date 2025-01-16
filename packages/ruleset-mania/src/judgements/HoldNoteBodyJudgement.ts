@@ -1,4 +1,4 @@
-import { HitResult } from '@osucad/common';
+import { HitResult } from '@osucad/core';
 import { ManiaJudgement } from './ManiaJudgement';
 
 export class HoldNoteBodyJudgement extends ManiaJudgement {

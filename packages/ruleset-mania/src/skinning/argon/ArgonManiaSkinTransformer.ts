@@ -1,8 +1,8 @@
-import type { IBeatmap, ISkin, ISkinComponentLookup, SkinConfig } from '@osucad/common';
-import type { Drawable } from 'osucad-framework';
+import type { IBeatmap, ISkin, ISkinComponentLookup, SkinConfig } from '@osucad/core';
+import type { Drawable } from '@osucad/framework';
 import type { ManiaBeatmap } from '../../beatmaps/ManiaBeatmap';
 import type { StageDefinition } from '../../beatmaps/StageDefinition';
-import { SkinTransformer } from '@osucad/common';
+import { SkinTransformer } from '@osucad/core';
 import { Color } from 'pixi.js';
 import { LegacyManiaSkinConfigurationLookups } from '../LegacyManiaSkinConfigurationLookups';
 import { ManiaSkinComponentLookup } from '../ManiaSkinComponentLookup';

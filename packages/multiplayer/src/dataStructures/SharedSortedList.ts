@@ -1,9 +1,8 @@
-import type { IComparer } from 'osucad-framework';
-import type { Constructor } from '../../../common/src/utils/Constructor';
+import type { IComparer } from '@osucad/framework';
 import type { ISummary } from './ISummary';
 import type { MutationContext } from './MutationContext';
 import type { ObjectSummary } from './SharedObject';
-import { Action, SortedList } from 'osucad-framework';
+import { Action, SortedList } from '@osucad/framework';
 import { SharedStructure } from './SharedStructure';
 
 export type SortedListMutation =
@@ -185,7 +184,7 @@ export abstract class SharedSortedList<T extends SharedStructure<any>> extends S
     return this.items.filter(predicate);
   }
 
-  ofType<U extends T>(type: Constructor<U>): U[] {
+  ofType<U extends T>(type: new (...args: any) => U): U[] {
     return this.items.filter(it => it instanceof type) as U[];
   }
 

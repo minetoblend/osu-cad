@@ -1,6 +1,6 @@
-import type { JudgementResult } from '@osucad/common';
-import { HitResult, SkinnableDrawable } from '@osucad/common';
-import { Anchor, CompositeDrawable, EasingFunction, type ReadonlyDependencyContainer } from 'osucad-framework';
+import type { JudgementResult } from '@osucad/core';
+import { HitResult, SkinnableDrawable } from '@osucad/core';
+import { Anchor, CompositeDrawable, EasingFunction, type ReadonlyDependencyContainer } from '@osucad/framework';
 import { OsuSkinComponentLookup } from '../skinning/stable/OsuSkinComponentLookup';
 
 export class DrawableJudgement extends CompositeDrawable {

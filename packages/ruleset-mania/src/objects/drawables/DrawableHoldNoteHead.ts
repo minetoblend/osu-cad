@@ -1,8 +1,8 @@
-import type { ArmedState } from '@osucad/common';
-import type { KeyBindingPressEvent, KeyBindingReleaseEvent } from 'osucad-framework';
+import type { ArmedState } from '@osucad/core';
+import type { KeyBindingPressEvent, KeyBindingReleaseEvent } from '@osucad/framework';
 import type { ManiaAction } from '../../ui/ManiaAction';
 import type { HeadNote } from '../HeadNote';
-import { Anchor } from 'osucad-framework';
+import { Anchor } from '@osucad/framework';
 import { ManiaSkinComponents } from '../../skinning/ManiaSkinComponents';
 import { DrawableNote } from './DrawableNote';
 

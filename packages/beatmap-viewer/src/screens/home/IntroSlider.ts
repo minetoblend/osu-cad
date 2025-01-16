@@ -1,5 +1,5 @@
 import type { Graphics } from 'pixi.js';
-import { Anchor, dependencyLoader, GraphicsDrawable, lerp, Vec2 } from 'osucad-framework';
+import { Anchor, dependencyLoader, GraphicsDrawable, lerp, Vec2 } from '@osucad/framework';
 
 export class IntroSlider extends GraphicsDrawable {
   constructor() {

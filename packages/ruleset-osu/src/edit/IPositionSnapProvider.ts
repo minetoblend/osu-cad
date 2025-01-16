@@ -1,4 +1,4 @@
-import type { Vec2 } from 'osucad-framework';
+import type { Vec2 } from '@osucad/framework';
 
 export interface IPositionSnapProvider {
   snapPosition(position: Vec2): SnapResult | null;

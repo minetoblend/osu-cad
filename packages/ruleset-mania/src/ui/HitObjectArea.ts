@@ -1,7 +1,7 @@
-import type { HitObjectContainer, ISkinSource } from '@osucad/common';
-import type { DrawableOptions, ReadonlyDependencyContainer } from 'osucad-framework';
-import { IScrollingInfo, ScrollingDirection, SkinReloadableDrawable } from '@osucad/common';
-import { Axes, Bindable, Container } from 'osucad-framework';
+import type { HitObjectContainer, ISkinSource } from '@osucad/core';
+import type { DrawableOptions, ReadonlyDependencyContainer } from '@osucad/framework';
+import { IScrollingInfo, ScrollingDirection, SkinReloadableDrawable } from '@osucad/core';
+import { Axes, Bindable, Container } from '@osucad/framework';
 import { LegacyManiaSkinConfigurationLookups } from '../skinning/LegacyManiaSkinConfigurationLookups';
 import { ManiaSkinConfigurationLookup } from '../skinning/ManiaSkinConfigurationLookup';
 import { Stage } from './Stage';

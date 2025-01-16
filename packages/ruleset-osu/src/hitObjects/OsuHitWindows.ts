@@ -1,4 +1,4 @@
-import { DifficultyRange, HitResult, HitWindows } from '@osucad/common';
+import { DifficultyRange, HitResult, HitWindows } from '@osucad/core';
 
 export class OsuHitWindows extends HitWindows {
   static readonly MISS_WINDOW = 400;

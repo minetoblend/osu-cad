@@ -5,13 +5,22 @@
     "prebuild": "assetpack",
     "build": "vite build"
   },
-  "dependencies": {
-  },
   "type": "module",
-  "main": "./index.js",
-  "module": "./index.mjs",
-  "typings": "./index.d.ts",
-  "private": true,
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "files": [
+    "*"
+  ],
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js"
+    }
+  },
+  "dependencies": {
+    "@osucad/framework": "workspace:*"
+  },
   "devDependencies": {
     "@assetpack/core": "^1.2.3"
   }

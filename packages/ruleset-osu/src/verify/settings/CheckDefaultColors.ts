@@ -1,7 +1,7 @@
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/AllModes/Settings/CheckDefaultColours.cs
 
-import type { CheckMetadata, Issue, VerifierBeatmap } from '@osucad/common';
-import { BeatmapCheck, IssueTemplate, trimIndent } from '@osucad/common';
+import type { CheckMetadata, Issue, VerifierBeatmap } from '@osucad/core';
+import { BeatmapCheck, IssueTemplate, trimIndent } from '@osucad/core';
 
 export class CheckDefaultColors extends BeatmapCheck<any> {
   override get metadata(): CheckMetadata {

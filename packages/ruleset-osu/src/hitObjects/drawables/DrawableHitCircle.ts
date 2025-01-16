@@ -1,7 +1,7 @@
-import type { Drawable, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { Drawable, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { HitCircle } from '../HitCircle';
-import { ArmedState, AudioMixer, HitResult, ISkinSource, OsucadConfigManager, OsucadSettings, SkinnableDrawable } from '@osucad/common';
-import { Anchor, Axes, Bindable, Container, EasingFunction, resolved } from 'osucad-framework';
+import { ArmedState, AudioMixer, HitResult, ISkinSource, OsucadConfigManager, OsucadSettings, SkinnableDrawable } from '@osucad/core';
+import { Anchor, Axes, Bindable, Container, EasingFunction, resolved } from '@osucad/framework';
 import { OsuSkinComponentLookup } from '../../skinning/stable/OsuSkinComponentLookup';
 import { ClickAction } from '../../ui/ClickAction';
 import { OsuHitObject } from '../OsuHitObject';

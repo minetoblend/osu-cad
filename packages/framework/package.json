@@ -1,5 +1,25 @@
 {
-	"dependencies": {
-		"@pixi/devtools": "^2.0.1"
-	}
+  "name": "@osucad/framework",
+  "version": "0.0.1",
+  "scripts": {
+    "build": "vite build",
+    "typecheck": "tsc --noEmit -p tsconfig.lib.json --composite false",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "pixi.js": "^8.4.1",
+    "@pixi/devtools": "^2.0.1",
+    "pixi-filters": "^6.0.4"
+  }
 }

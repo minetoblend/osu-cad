@@ -1,5 +1,5 @@
-import type { Bindable } from 'osucad-framework';
-import { injectionToken, KeyBindingAction } from 'osucad-framework';
+import type { Bindable } from '@osucad/framework';
+import { injectionToken, KeyBindingAction } from '@osucad/framework';
 
 export class ManiaAction extends KeyBindingAction {
   private constructor(readonly key: number) {

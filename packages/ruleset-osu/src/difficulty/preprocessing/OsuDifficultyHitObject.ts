@@ -1,6 +1,6 @@
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
-import { DifficultyHitObject, HitResult } from '@osucad/common';
-import { clamp, Vec2 } from 'osucad-framework';
+import { DifficultyHitObject, HitResult } from '@osucad/core';
+import { clamp, Vec2 } from '@osucad/framework';
 import { Slider } from '../../hitObjects/Slider';
 import { SliderEventGenerator } from '../../hitObjects/SliderEventGenerator';
 import { SliderRepeat } from '../../hitObjects/SliderRepeat';

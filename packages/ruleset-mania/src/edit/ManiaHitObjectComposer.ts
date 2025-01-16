@@ -1,5 +1,5 @@
-import type { IComposeTool } from '@osucad/common';
-import { HitObjectComposer } from '@osucad/common';
+import type { IComposeTool } from '@osucad/core';
+import { HitObjectComposer } from '@osucad/core';
 import { ManiaSelectTool } from './ManiaSelectTool';
 
 export class ManiaHitObjectComposer extends HitObjectComposer {

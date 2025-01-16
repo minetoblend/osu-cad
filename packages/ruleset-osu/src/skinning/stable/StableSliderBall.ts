@@ -1,6 +1,6 @@
 import type { DrawableSlider } from '../../hitObjects/drawables/DrawableSlider';
-import { DrawableHitObject, ISkinSource, SkinConfig, SkinnableTextureAnimation } from '@osucad/common';
-import { Anchor, Axes, Bindable, clamp, CompositeDrawable, Drawable, DrawableSprite, PIXIContainer, type ReadonlyDependencyContainer, resolved } from 'osucad-framework';
+import { DrawableHitObject, ISkinSource, SkinConfig, SkinnableTextureAnimation } from '@osucad/core';
+import { Anchor, Axes, Bindable, clamp, CompositeDrawable, Drawable, DrawableSprite, PIXIContainer, type ReadonlyDependencyContainer, resolved } from '@osucad/framework';
 import { Color, Mesh, QuadGeometry } from 'pixi.js';
 import { SliderBallShader } from './SliderBallShader';
 

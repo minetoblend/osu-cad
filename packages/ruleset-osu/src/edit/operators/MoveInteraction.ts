@@ -1,7 +1,7 @@
-import type { InputManager, KeyDownEvent, MouseDownEvent, MouseMoveEvent } from 'osucad-framework';
+import type { InputManager, KeyDownEvent, MouseDownEvent, MouseMoveEvent } from '@osucad/framework';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
-import { HitObjectComposer } from '@osucad/common';
-import { Axes, CompositeDrawable, Key, MouseButton, resolved, Vec2 } from 'osucad-framework';
+import { HitObjectComposer } from '@osucad/core';
+import { Axes, CompositeDrawable, Key, MouseButton, resolved, Vec2 } from '@osucad/framework';
 import { MoveOperator } from './MoveOperator';
 
 export class MoveInteraction extends CompositeDrawable {

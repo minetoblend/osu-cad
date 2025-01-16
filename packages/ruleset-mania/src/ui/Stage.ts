@@ -1,8 +1,8 @@
-import type { DrawableHitObject, HitObject } from '@osucad/common';
-import type { Drawable, ReadonlyDependencyContainer, Vec2 } from 'osucad-framework';
+import type { DrawableHitObject, HitObject } from '@osucad/core';
+import type { Drawable, ReadonlyDependencyContainer, Vec2 } from '@osucad/framework';
 import type { ManiaHitObject } from '../objects/ManiaHitObject';
-import { ISkinSource, ScrollingPlayfield, SkinnableDrawable } from '@osucad/common';
-import { Anchor, Axes, Container, MaskingContainer, provide, ProxyDrawable } from 'osucad-framework';
+import { ISkinSource, ScrollingPlayfield, SkinnableDrawable } from '@osucad/core';
+import { Anchor, Axes, Container, MaskingContainer, provide, ProxyDrawable } from '@osucad/framework';
 import { StageDefinition } from '../beatmaps/StageDefinition';
 import { BarLine } from '../objects/BarLine';
 import { DrawableBarLine } from '../objects/drawables/DrawableBarLine';

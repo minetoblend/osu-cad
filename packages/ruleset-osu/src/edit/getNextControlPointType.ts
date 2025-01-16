@@ -1,4 +1,4 @@
-import { PathType } from '@osucad/common';
+import { PathType } from '@osucad/core';
 
 export function getNextControlPointType(
   currentType: PathType | null,

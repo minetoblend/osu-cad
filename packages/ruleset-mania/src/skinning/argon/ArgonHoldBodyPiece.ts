@@ -1,8 +1,8 @@
-import type { Drawable, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { Drawable, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { DrawableHoldNote } from '../../objects/drawables/DrawableHoldNote';
 import type { IHoldNoteBody } from '../default/IHoldNoteBody';
-import { DrawableHitObject } from '@osucad/common';
-import { Axes, Bindable, Box, ColorUtils, MaskingContainer, resolved } from 'osucad-framework';
+import { DrawableHitObject } from '@osucad/core';
+import { Axes, Bindable, Box, ColorUtils, MaskingContainer, resolved } from '@osucad/framework';
 import { Color } from 'pixi.js';
 import { ArgonHoldNoteHittingLayer } from './ArgonHoldNoteHittingLayer';
 import { ArgonNotePiece } from './ArgonNotePiece';

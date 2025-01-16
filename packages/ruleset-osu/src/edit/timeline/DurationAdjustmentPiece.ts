@@ -1,9 +1,9 @@
-import type { HitObject, IHasDuration } from '@osucad/common';
-import type { DragEndEvent, DragEvent, DragStartEvent } from 'osucad-framework';
+import type { HitObject, IHasDuration } from '@osucad/core';
+import type { DragEndEvent, DragEvent, DragStartEvent } from '@osucad/framework';
 import type { OsuTimelineHitObjectBlueprint } from './OsuTimelineHitObjectBlueprint';
-import { EditorClock, Timeline } from '@osucad/common';
+import { EditorClock, Timeline } from '@osucad/core';
+import { resolved } from '@osucad/framework';
 import { UpdateHandler } from '@osucad/multiplayer';
-import { resolved } from 'osucad-framework';
 import { TimelineHitObjectTail } from './TimelineHitObjectTail';
 
 export class DurationAdjustmentPiece extends TimelineHitObjectTail {

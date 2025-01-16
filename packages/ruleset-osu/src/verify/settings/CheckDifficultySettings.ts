@@ -1,7 +1,7 @@
-import type { CheckMetadata, Issue, VerifierBeatmap } from '@osucad/common';
+import type { CheckMetadata, Issue, VerifierBeatmap } from '@osucad/core';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
-import { BeatmapCheck, IssueTemplate, trimIndent } from '@osucad/common';
-import { almostEquals } from 'osucad-framework';
+import { BeatmapCheck, IssueTemplate, trimIndent } from '@osucad/core';
+import { almostEquals } from '@osucad/framework';
 
 export class CheckDifficultySettings extends BeatmapCheck<OsuHitObject> {
   override get metadata(): CheckMetadata {

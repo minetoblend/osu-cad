@@ -1,10 +1,10 @@
-import type { DrawableHitObject, HitObject } from '@osucad/common';
-import type { Vec2 } from 'osucad-framework';
+import type { DrawableHitObject, HitObject } from '@osucad/core';
+import type { Vec2 } from '@osucad/framework';
 import type { StageDefinition } from '../beatmaps/StageDefinition';
 import type { ManiaHitObject } from '../objects/ManiaHitObject';
 import type { Column } from './Column';
-import { ScrollingPlayfield } from '@osucad/common';
-import { Axes, GridContainer, provide } from 'osucad-framework';
+import { ScrollingPlayfield } from '@osucad/core';
+import { Axes, GridContainer, provide } from '@osucad/framework';
 import { BarLine } from '../objects/BarLine';
 import { ManiaAction } from './ManiaAction';
 import { Stage } from './Stage';

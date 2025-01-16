@@ -1,6 +1,6 @@
 import type { ManiaHitObject } from '../objects/ManiaHitObject';
 import type { StageDefinition } from './StageDefinition';
-import { Beatmap, sumBy } from '@osucad/common';
+import { Beatmap, sumBy } from '@osucad/core';
 import { ManiaRuleset } from '../ManiaRuleset';
 
 export class ManiaBeatmap extends Beatmap<ManiaHitObject> {

@@ -1,6 +1,6 @@
-import type { CheckMetadata, Issue, VerifierBeatmapSet } from '@osucad/common';
+import type { CheckMetadata, Issue, VerifierBeatmapSet } from '@osucad/core';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
-import { DifficultyType, GeneralCheck, IssueTemplate, zipWithNext } from '@osucad/common';
+import { DifficultyType, GeneralCheck, IssueTemplate, zipWithNext } from '@osucad/core';
 import { HitCircle } from '../../hitObjects/HitCircle';
 import { Spinner } from '../../hitObjects/Spinner';
 import { OsuRuleset } from '../../OsuRuleset';

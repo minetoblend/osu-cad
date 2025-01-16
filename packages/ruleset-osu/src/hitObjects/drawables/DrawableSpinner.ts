@@ -1,8 +1,8 @@
-import type { ArmedState } from '@osucad/common';
-import type { ReadonlyDependencyContainer, TransformSequenceProxy } from 'osucad-framework';
+import type { ArmedState } from '@osucad/core';
+import type { ReadonlyDependencyContainer, TransformSequenceProxy } from '@osucad/framework';
 import type { Spinner } from '../Spinner';
-import { AspectContainer, SkinnableDrawable } from '@osucad/common';
-import { Anchor, Axes, EasingFunction } from 'osucad-framework';
+import { AspectContainer, SkinnableDrawable } from '@osucad/core';
+import { Anchor, Axes, EasingFunction } from '@osucad/framework';
 import { OsuSkinComponentLookup } from '../../skinning/stable/OsuSkinComponentLookup';
 import { DrawableOsuHitObject } from './DrawableOsuHitObject';
 

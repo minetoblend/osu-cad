@@ -1,4 +1,4 @@
-import { Judgement } from '@osucad/common';
+import { Judgement } from '@osucad/core';
 
 export class ManiaJudgement extends Judgement {
 

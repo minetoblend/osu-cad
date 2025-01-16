@@ -1,4 +1,4 @@
-import { Axes, Box, CompositeDrawable } from 'osucad-framework';
+import { Axes, Box, CompositeDrawable } from '@osucad/framework';
 
 export class DefaultStageBackground extends CompositeDrawable {
   constructor() {

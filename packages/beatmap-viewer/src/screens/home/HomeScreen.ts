@@ -1,8 +1,8 @@
-import type { BackgroundScreen, CarouselBeatmapInfo, CarouselBeatmapSetInfo, WorkingBeatmapSet } from '@osucad/common';
-import type { Drawable, ReadonlyDependencyContainer, ScreenTransitionEvent } from 'osucad-framework';
+import type { BackgroundScreen, CarouselBeatmapInfo, CarouselBeatmapSetInfo, WorkingBeatmapSet } from '@osucad/core';
+import type { Drawable, ReadonlyDependencyContainer, ScreenTransitionEvent } from '@osucad/framework';
 import type { BeatmapSetResponse, BeatmapSetResponseBeatmap } from '../../mirrors/BeatmapSetResponse';
-import { BeatmapCarousel, OsucadScreen, SizeLimitedContainer } from '@osucad/common';
-import { Anchor, Axes, Bindable, Container, FillDirection, FillFlowContainer, loadTexture, resolved, Vec2 } from 'osucad-framework';
+import { BeatmapCarousel, OsucadScreen, SizeLimitedContainer } from '@osucad/core';
+import { Anchor, Axes, Bindable, Container, FillDirection, FillFlowContainer, loadTexture, resolved, Vec2 } from '@osucad/framework';
 import { Router } from '../Router';
 import { HomeScreenBackground } from './HomeScreenBackground';
 import { SearchHero } from './SearchHero';

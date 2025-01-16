@@ -1,6 +1,6 @@
-import type { ValueChangedEvent } from 'osucad-framework';
-import { HitObject } from '@osucad/common';
-import { BindableNumber } from 'osucad-framework';
+import type { ValueChangedEvent } from '@osucad/framework';
+import { HitObject } from '@osucad/core';
+import { BindableNumber } from '@osucad/framework';
 
 export class ManiaHitObject extends HitObject {
   constructor() {

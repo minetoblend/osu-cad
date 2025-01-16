@@ -1,5 +1,5 @@
-import type { HitSample } from '@osucad/common';
-import { Anchor, Axes, CompositeDrawable, EasingFunction, FastRoundedBox, resolved } from 'osucad-framework';
+import type { HitSample } from '@osucad/core';
+import { Anchor, Axes, CompositeDrawable, EasingFunction, FastRoundedBox, resolved } from '@osucad/framework';
 import { HitSoundPlayer } from './HitSoundPlayer';
 
 export class HitSampleHighlightContainer extends CompositeDrawable {

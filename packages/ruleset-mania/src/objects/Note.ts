@@ -1,4 +1,4 @@
-import type { Judgement } from '@osucad/common';
+import type { Judgement } from '@osucad/core';
 import { ManiaJudgement } from '../judgements/ManiaJudgement';
 import { ManiaHitObject } from './ManiaHitObject';
 

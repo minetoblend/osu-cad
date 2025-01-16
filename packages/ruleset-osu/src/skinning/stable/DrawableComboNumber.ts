@@ -1,7 +1,7 @@
-import type { ReadonlyDependencyContainer } from 'osucad-framework';
+import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import type { DrawableOsuHitObject } from '../../hitObjects/drawables/DrawableOsuHitObject';
-import { DrawableHitObject, ISkinSource, SkinConfig } from '@osucad/common';
-import { Anchor, Bindable, CompositeDrawable, DrawableSprite, resolved } from 'osucad-framework';
+import { DrawableHitObject, ISkinSource, SkinConfig } from '@osucad/core';
+import { Anchor, Bindable, CompositeDrawable, DrawableSprite, resolved } from '@osucad/framework';
 
 export class DrawableComboNumber extends CompositeDrawable {
   constructor() {

@@ -1,5 +1,5 @@
-import type { DependencyContainer, ReadonlyDependencyContainer } from 'osucad-framework';
-import { ISkinSource, OsucadGameBase, RulesetStore, SkinManager, UISamples } from '@osucad/common';
+import type { DependencyContainer, ReadonlyDependencyContainer } from '@osucad/framework';
+import { ISkinSource, OsucadGameBase, RulesetStore, SkinManager, UISamples } from '@osucad/core';
 import { ManiaRuleset } from '@osucad/ruleset-mania';
 import { OsuRuleset } from '@osucad/ruleset-osu';
 import { RenderTarget } from 'pixi.js';

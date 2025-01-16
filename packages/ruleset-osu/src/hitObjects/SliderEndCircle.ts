@@ -1,4 +1,4 @@
-import type { BeatmapDifficultyInfo, ControlPointInfo } from '@osucad/common';
+import type { BeatmapDifficultyInfo, ControlPointInfo } from '@osucad/core';
 import type { Slider } from './Slider';
 import { HitCircle } from './HitCircle';
 

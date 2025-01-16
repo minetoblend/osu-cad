@@ -1,4 +1,4 @@
-import { Axes, Bindable, Box, EasingFunction } from 'osucad-framework';
+import { Axes, Bindable, Box, EasingFunction } from '@osucad/framework';
 import { Color } from 'pixi.js';
 
 export class ArgonHoldNoteHittingLayer extends Box {

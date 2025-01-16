@@ -1,6 +1,6 @@
 import type { DrawableSpinner } from '../../hitObjects/drawables/DrawableSpinner';
-import { DrawableHitObject, ISkinSource } from '@osucad/common';
-import { Anchor, Axes, CompositeDrawable, Container, DrawableSprite, type ReadonlyDependencyContainer, resolved, Vec2 } from 'osucad-framework';
+import { DrawableHitObject, ISkinSource } from '@osucad/core';
+import { Anchor, Axes, CompositeDrawable, Container, DrawableSprite, type ReadonlyDependencyContainer, resolved, Vec2 } from '@osucad/framework';
 import { Color } from 'pixi.js';
 
 export class StableSpinnerBody extends CompositeDrawable {

@@ -1,6 +1,6 @@
-import type { MouseDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { MouseDownEvent, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { OsuTimelineHitObjectBlueprint } from './OsuTimelineHitObjectBlueprint';
-import { MouseButton } from 'osucad-framework';
+import { MouseButton } from '@osucad/framework';
 import { Slider } from '../../hitObjects/Slider';
 import { DrawableComboNumber } from '../../skinning/stable/DrawableComboNumber';
 import { TimelineHitObjectCircle } from './TimelineHitObjectCircle';

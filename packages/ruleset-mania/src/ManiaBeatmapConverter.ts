@@ -1,5 +1,5 @@
-import type { HitObject, IBeatmap, Ruleset } from '@osucad/common';
-import { BeatmapConverter, hasXPosition } from '@osucad/common';
+import type { HitObject, IBeatmap, Ruleset } from '@osucad/core';
+import { BeatmapConverter, hasXPosition } from '@osucad/core';
 import { ManiaBeatmap } from './beatmaps/ManiaBeatmap';
 import { StageDefinition } from './beatmaps/StageDefinition';
 import { ManiaHitObject } from './objects/ManiaHitObject';

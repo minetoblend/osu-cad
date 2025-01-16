@@ -1,8 +1,8 @@
-import type { HitObjectLifetimeEntry, HitObjectSelectionEvent } from '@osucad/common';
-import type { ReadonlyDependencyContainer } from 'osucad-framework';
+import type { HitObjectLifetimeEntry, HitObjectSelectionEvent } from '@osucad/core';
+import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import type { TimelineHitObjectTail } from './TimelineHitObjectTail';
-import { TimelineHitObjectBlueprint } from '@osucad/common';
-import { Axes, Container, provide } from 'osucad-framework';
+import { TimelineHitObjectBlueprint } from '@osucad/core';
+import { Axes, Container, provide } from '@osucad/framework';
 import { Slider } from '../../hitObjects/Slider';
 import { SliderRepeat } from '../../hitObjects/SliderRepeat';
 import { Spinner } from '../../hitObjects/Spinner';

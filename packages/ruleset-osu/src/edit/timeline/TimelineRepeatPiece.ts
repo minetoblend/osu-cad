@@ -1,10 +1,10 @@
-import type { IHasRepeats } from '@osucad/common';
+import type { IHasRepeats } from '@osucad/core';
 
-import type { MouseDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { MouseDownEvent, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { SliderRepeat } from '../../hitObjects/SliderRepeat';
 import type { OsuTimelineHitObjectBlueprint } from './OsuTimelineHitObjectBlueprint';
-import { Timeline } from '@osucad/common';
-import { Anchor, Axes, DrawableSprite, MouseButton, resolved } from 'osucad-framework';
+import { Timeline } from '@osucad/core';
+import { Anchor, Axes, DrawableSprite, MouseButton, resolved } from '@osucad/framework';
 import { Slider } from '../../hitObjects/Slider';
 import { TimelineHitObjectCircle } from './TimelineHitObjectCircle';
 

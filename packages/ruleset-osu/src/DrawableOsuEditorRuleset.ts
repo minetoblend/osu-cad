@@ -1,5 +1,5 @@
-import type { IBeatmap, Ruleset } from '@osucad/common';
-import type { ReadonlyDependencyContainer } from 'osucad-framework';
+import type { IBeatmap, Ruleset } from '@osucad/core';
+import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import type { OsuHitObject } from './hitObjects/OsuHitObject';
 import type { OsuPlayfield } from './ui/OsuPlayfield';
 import { DrawableOsuRuleset } from './DrawableOsuRuleset';

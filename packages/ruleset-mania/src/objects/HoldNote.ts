@@ -1,6 +1,6 @@
-import type { HitWindows } from '@osucad/common';
-import type { ValueChangedEvent } from 'osucad-framework';
-import { EmptyHitWindows } from '@osucad/common';
+import type { HitWindows } from '@osucad/core';
+import type { ValueChangedEvent } from '@osucad/framework';
+import { EmptyHitWindows } from '@osucad/core';
 import { HeadNote } from './HeadNote';
 import { HoldNoteBody } from './HoldNoteBody';
 import { ManiaHitObject } from './ManiaHitObject';

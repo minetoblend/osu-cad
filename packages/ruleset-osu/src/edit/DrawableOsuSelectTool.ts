@@ -1,9 +1,9 @@
-import type { IHitSound } from '@osucad/common';
-import type { Drawable, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { IHitSound } from '@osucad/core';
+import type { Drawable, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { OsuSelectionManager, SliderSelectionType } from './OsuSelectionManager';
-import { Additions, DrawableComposeTool, EditorAction, hasComboInformation, HitSound, TernaryState } from '@osucad/common';
+import { Additions, DrawableComposeTool, EditorAction, hasComboInformation, HitSound, TernaryState } from '@osucad/core';
+import { Bindable, Direction, PlatformAction, resolved, Vec2 } from '@osucad/framework';
 import { getIcon } from '@osucad/resources';
-import { Bindable, Direction, PlatformAction, resolved, Vec2 } from 'osucad-framework';
 import { OsuHitObject } from '../hitObjects/OsuHitObject';
 import { Slider } from '../hitObjects/Slider';
 import { Spinner } from '../hitObjects/Spinner';

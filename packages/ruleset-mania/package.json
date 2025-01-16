@@ -6,15 +6,26 @@
     "lint": "eslint src",
     "lint:fix": "eslint src --fix"
   },
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["*"],
   "dependencies": {
     "audiobuffer-to-wav": "^1.0.0",
     "bezier-easing": "^2.1.0",
-    "unzipit": "^1.4.3"
+    "unzipit": "^1.4.3",
+    "@osucad/framework": "workspace:*",
+    "@osucad/core": "workspace:*",
+    "@osucad/resources": "workspace:*",
+    "@osucad/multiplayer": "workspace:*"
   },
-  "main": "./index.js",
-  "module": "./index.mjs",
-  "typings": "./index.d.ts",
-  "private": true,
   "devDependencies": {
     "@types/audiobuffer-to-wav": "^1.0.4",
     "dependency-cruiser": "^16.9.0",

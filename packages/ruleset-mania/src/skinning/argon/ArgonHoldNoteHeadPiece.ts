@@ -1,5 +1,5 @@
-import type { Drawable } from 'osucad-framework';
-import { Anchor, FastRoundedBox } from 'osucad-framework';
+import type { Drawable } from '@osucad/framework';
+import { Anchor, FastRoundedBox } from '@osucad/framework';
 import { ArgonNotePiece } from './ArgonNotePiece';
 
 export class ArgonHoldNoteHeadPiece extends ArgonNotePiece {

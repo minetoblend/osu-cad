@@ -1,7 +1,7 @@
-import type { KeyBindingPressEvent, KeyBindingReleaseEvent } from 'osucad-framework';
+import type { KeyBindingPressEvent, KeyBindingReleaseEvent } from '@osucad/framework';
 import type { ManiaAction } from '../../ui/ManiaAction';
 import type { TailNote } from '../TailNote';
-import { Anchor } from 'osucad-framework';
+import { Anchor } from '@osucad/framework';
 import { ManiaSkinComponents } from '../../skinning/ManiaSkinComponents';
 import { DrawableNote } from './DrawableNote';
 

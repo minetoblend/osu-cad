@@ -1,8 +1,8 @@
-import type { DrawableHitObject, IBeatmap, Playfield, PlayfieldAdjustmentContainer, Ruleset } from '@osucad/common';
-import type { PassThroughInputManager, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { DrawableHitObject, IBeatmap, Playfield, PlayfieldAdjustmentContainer, Ruleset } from '@osucad/core';
+import type { PassThroughInputManager, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { ManiaBeatmap } from '../beatmaps/ManiaBeatmap';
 import type { ManiaHitObject } from '../objects/ManiaHitObject';
-import { BarLineGenerator, DrawableScrollingRuleset, EffectPoint, ISkinSource, ScrollingDirection } from '@osucad/common';
+import { BarLineGenerator, DrawableScrollingRuleset, EffectPoint, ISkinSource, ScrollingDirection } from '@osucad/core';
 import { BarLine } from '../objects/BarLine';
 import { PlayfieldType } from '../PlayfieldType';
 import { ManiaInputManager } from './ManiaInputManager';

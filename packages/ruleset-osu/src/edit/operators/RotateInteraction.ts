@@ -1,7 +1,7 @@
-import type { KeyDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { KeyDownEvent, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
-import { HitObjectComposer, RotateGizmo } from '@osucad/common';
-import { Axes, CompositeDrawable, Key, resolved, Vec2 } from 'osucad-framework';
+import { HitObjectComposer, RotateGizmo } from '@osucad/core';
+import { Axes, CompositeDrawable, Key, resolved, Vec2 } from '@osucad/framework';
 import { RotateOperator } from './RotateOperator';
 
 export class RotateInteraction extends CompositeDrawable {

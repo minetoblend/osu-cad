@@ -1,7 +1,7 @@
-import type { Drawable, ReadonlyDependencyContainer, ValueChangedEvent } from 'osucad-framework';
-import { DrawableHitObject, IScrollingInfo, LinearGradient, ScrollingDirection } from '@osucad/common';
+import type { Drawable, ReadonlyDependencyContainer, ValueChangedEvent } from '@osucad/framework';
+import { DrawableHitObject, IScrollingInfo, LinearGradient, ScrollingDirection } from '@osucad/core';
+import { Anchor, Axes, Bindable, Box, DrawableSprite, FastRoundedBox, MaskingContainer, resolved, Vec2 } from '@osucad/framework';
 import { getIcon } from '@osucad/resources';
-import { Anchor, Axes, Bindable, Box, DrawableSprite, FastRoundedBox, MaskingContainer, resolved, Vec2 } from 'osucad-framework';
 import { Color } from 'pixi.js';
 
 const gradient = new LinearGradient(0, 0, 0, 1);

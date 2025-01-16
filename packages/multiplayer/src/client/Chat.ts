@@ -1,6 +1,6 @@
 import type { ClientSocket } from '@osucad/multiplayer';
 import type { ChatMessage } from '../protocol/ChatMessage';
-import { Action } from 'osucad-framework';
+import { Action } from '@osucad/framework';
 
 export class Chat {
   constructor(protected readonly socket: ClientSocket) {

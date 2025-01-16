@@ -1,7 +1,7 @@
-import type { Drawable, IKeyBindingHandler, ITransformable, KeyBindingAction, KeyBindingPressEvent, KeyBindingReleaseEvent, ReadonlyDependencyContainer, ValueChangedEvent } from 'osucad-framework';
+import type { Drawable, IKeyBindingHandler, ITransformable, KeyBindingAction, KeyBindingPressEvent, KeyBindingReleaseEvent, ReadonlyDependencyContainer, ValueChangedEvent } from '@osucad/framework';
 import type { Column } from '../../ui/Column';
-import { IScrollingInfo, ScrollingDirection } from '@osucad/common';
-import { Anchor, Axes, Bindable, ColorUtils, CompositeDrawable, Container, EasingFunction, FastRoundedBox, Interpolation, ProxyDrawable, resolved, RoundedBox, TypedTransform, Vec2 } from 'osucad-framework';
+import { IScrollingInfo, ScrollingDirection } from '@osucad/core';
+import { Anchor, Axes, Bindable, ColorUtils, CompositeDrawable, Container, EasingFunction, FastRoundedBox, Interpolation, ProxyDrawable, resolved, RoundedBox, TypedTransform, Vec2 } from '@osucad/framework';
 import { Color } from 'pixi.js';
 import { BetterGlowFilter } from '../../graphics/BetterGlowFilter';
 import { IColumn } from '../../ui/IColumn';

@@ -1,9 +1,9 @@
-import type { TernaryState } from '@osucad/common';
-import type { Bindable, ClickEvent, Drawable, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyBindingReleaseEvent, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { TernaryState } from '@osucad/core';
+import type { Bindable, ClickEvent, Drawable, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyBindingReleaseEvent, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { Texture } from 'pixi.js';
-import { Additions, EditorAction, OsucadColors } from '@osucad/common';
+import { Additions, EditorAction, OsucadColors } from '@osucad/core';
+import { Anchor, Axes, DrawableSprite, EmptyDrawable } from '@osucad/framework';
 import { getIcon } from '@osucad/resources';
-import { Anchor, Axes, DrawableSprite, EmptyDrawable } from 'osucad-framework';
 import { HitSampleHighlightContainer } from './HitSampleHighlightContainer';
 import { TernaryStateToggleButton } from './TernaryStateToggleButton';
 

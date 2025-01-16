@@ -1,7 +1,7 @@
-import type { ReadonlyDependencyContainer } from 'osucad-framework';
+import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import type { Slider } from '../hitObjects/Slider';
-import { OsucadConfigManager, OsucadSettings, PathType } from '@osucad/common';
-import { Anchor, BindableBoolean, Cached, CompositeDrawable, Container, FastRoundedBox, isMobile, PIXIGraphics, resolved, Vec2 } from 'osucad-framework';
+import { OsucadConfigManager, OsucadSettings, PathType } from '@osucad/core';
+import { Anchor, BindableBoolean, Cached, CompositeDrawable, Container, FastRoundedBox, isMobile, PIXIGraphics, resolved, Vec2 } from '@osucad/framework';
 
 export class SliderPathVisualizer extends CompositeDrawable {
   constructor(slider?: Slider) {

@@ -1,4 +1,4 @@
-import { Vec2 } from 'osucad-framework';
+import { Vec2 } from '@osucad/framework';
 
 export class GeometryBuilder {
   readonly vertices: Float32Array;

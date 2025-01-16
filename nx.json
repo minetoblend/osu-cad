@@ -14,6 +14,18 @@
     ],
     "sharedGlobals": ["{workspaceRoot}/.github/workflows/ci.yml"]
   },
+  "release": {
+    "projects": [
+      "packages/framework",
+      "packages/resources"
+    ],
+    "version": {
+      "generatorOptions": {
+        "packageRoot": "dist/packages/{projectName}",
+        "currentVersionResolver": "registry"
+      }
+    }
+  },
   "plugins": [
     {
       "plugin": "@nx/eslint/plugin",

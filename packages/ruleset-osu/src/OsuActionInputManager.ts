@@ -1,5 +1,5 @@
-import type { IKeyBinding } from 'osucad-framework';
-import { InputKey, KeyBinding, KeyBindingContainer, KeyCombination, SimultaneousBindingMode } from 'osucad-framework';
+import type { IKeyBinding } from '@osucad/framework';
+import { InputKey, KeyBinding, KeyBindingContainer, KeyCombination, SimultaneousBindingMode } from '@osucad/framework';
 import { OsuAction } from './OsuAction';
 
 export class OsuActionInputManager extends KeyBindingContainer<OsuAction> {

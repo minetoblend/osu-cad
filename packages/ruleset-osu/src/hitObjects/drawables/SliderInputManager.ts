@@ -1,8 +1,8 @@
-import type { IFrameBasedClock, MouseMoveEvent, Vec2 } from 'osucad-framework';
+import type { IFrameBasedClock, MouseMoveEvent, Vec2 } from '@osucad/framework';
 import type { DrawableSlider } from './DrawableSlider';
 import type { DrawableSliderHead } from './DrawableSliderHead';
-import { PlayfieldClock } from '@osucad/common';
-import { clamp, Component, resolved } from 'osucad-framework';
+import { PlayfieldClock } from '@osucad/core';
+import { clamp, Component, resolved } from '@osucad/framework';
 import { OsuAction } from '../../OsuAction';
 import { SliderEventGenerator } from '../SliderEventGenerator';
 import { SliderRepeat } from '../SliderRepeat';

@@ -1,9 +1,9 @@
-import type { HitObject, HitObjectLifetimeEntry, HitObjectSelectionEvent } from '@osucad/common';
-import type { MouseDownEvent, ReadonlyDependencyContainer, Vec2 } from 'osucad-framework';
+import type { HitObject, HitObjectLifetimeEntry, HitObjectSelectionEvent } from '@osucad/core';
+import type { MouseDownEvent, ReadonlyDependencyContainer, Vec2 } from '@osucad/framework';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import type { OsuSelectionBlueprint } from './OsuSelectionBlueprint';
-import { EditorBeatmap, EditorClock, HitObjectBlueprintContainer, HitObjectSelectionManager } from '@osucad/common';
-import { MouseButton, resolved } from 'osucad-framework';
+import { EditorBeatmap, EditorClock, HitObjectBlueprintContainer, HitObjectSelectionManager } from '@osucad/core';
+import { MouseButton, resolved } from '@osucad/framework';
 import { HitCircle } from '../../hitObjects/HitCircle';
 import { Slider } from '../../hitObjects/Slider';
 import { Spinner } from '../../hitObjects/Spinner';

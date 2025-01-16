@@ -1,6 +1,6 @@
-import type { IScreen, ReadonlyDependencyContainer } from 'osucad-framework';
-import { EditorBeatmap, OsucadScreenStack, WorkingBeatmapSet } from '@osucad/common';
-import { provide } from 'osucad-framework';
+import type { IScreen, ReadonlyDependencyContainer } from '@osucad/framework';
+import { EditorBeatmap, OsucadScreenStack, WorkingBeatmapSet } from '@osucad/core';
+import { provide } from '@osucad/framework';
 import { CatboyMirror } from '../mirrors/CatboyMirror';
 import { HomeScreen } from './home/HomeScreen';
 import { BeatmapViewer } from './viewer/BeatmapViewer';

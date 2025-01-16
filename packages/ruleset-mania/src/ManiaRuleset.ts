@@ -1,9 +1,8 @@
-import type { Beatmap, BeatmapConverter, DrawableRuleset, EditorRuleset, HitObject, HitObjectComposer, IBeatmap, ISkin, NoArgsConstructor, SkinTransformer } from '@osucad/common';
-import type { IKeyBinding } from 'osucad-framework';
-import type { DifficultyCalculator } from 'packages/common/src/rulesets/difficulty/DifficultyCalculator';
+import type { Beatmap, BeatmapConverter, DifficultyCalculator, DrawableRuleset, EditorRuleset, HitObject, HitObjectComposer, IBeatmap, ISkin, NoArgsConstructor, SkinTransformer } from '@osucad/core';
+import type { IKeyBinding } from '@osucad/framework';
 import type { ManiaBeatmap } from './beatmaps/ManiaBeatmap';
-import { Ruleset } from '@osucad/common';
-import { InputKey, KeyBinding } from 'osucad-framework';
+import { Ruleset } from '@osucad/core';
+import { InputKey, KeyBinding } from '@osucad/framework';
 import { ManiaHitObjectComposer } from './edit/ManiaHitObjectComposer';
 import { ManiaBeatmapConverter } from './ManiaBeatmapConverter';
 import { ManiaEditorRuleset } from './ManiaEditorRuleset';

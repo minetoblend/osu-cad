@@ -1,8 +1,8 @@
-import type { HitSample } from '@osucad/common';
-import type { ReadonlyDependencyContainer, Sample, SamplePlayback } from 'osucad-framework';
+import type { HitSample } from '@osucad/core';
+import type { ReadonlyDependencyContainer, Sample, SamplePlayback } from '@osucad/framework';
 import type { DrawableOsuHitObject } from './DrawableOsuHitObject';
-import { AudioMixer, DrawableHitObject, ISkinSource } from '@osucad/common';
-import { Component, resolved } from 'osucad-framework';
+import { AudioMixer, DrawableHitObject, ISkinSource } from '@osucad/core';
+import { Component, resolved } from '@osucad/framework';
 
 export class DrawableHitSound extends Component {
   constructor() {

@@ -1,5 +1,5 @@
-import type { HitWindows, Judgement } from '@osucad/common';
-import { EmptyHitWindows } from '@osucad/common';
+import type { HitWindows, Judgement } from '@osucad/core';
+import { EmptyHitWindows } from '@osucad/core';
 import { HoldNoteBodyJudgement } from '../judgements/HoldNoteBodyJudgement';
 import { ManiaHitObject } from './ManiaHitObject';
 

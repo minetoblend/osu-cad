@@ -1,5 +1,5 @@
 import type { SharedStructure } from './SharedStructure';
-import { Action, BindableBoolean, Component } from 'osucad-framework';
+import { Action, BindableBoolean, Component } from '@osucad/framework';
 import { MutationSource } from './MutationSource';
 import { Transaction, TransactionEntry } from './Transaction';
 

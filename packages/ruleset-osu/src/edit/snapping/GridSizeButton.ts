@@ -1,7 +1,7 @@
-import type { ClickEvent, Drawable, ReadonlyDependencyContainer } from 'osucad-framework';
-import { EditorBeatmap, EditorButton, OsucadColors, OsucadSpriteText } from '@osucad/common';
+import type { ClickEvent, Drawable, ReadonlyDependencyContainer } from '@osucad/framework';
+import { EditorBeatmap, EditorButton, OsucadColors, OsucadSpriteText } from '@osucad/core';
+import { Anchor, Axes, Bindable, Container, DrawableSprite, resolved } from '@osucad/framework';
 import { getIcon } from '@osucad/resources';
-import { Anchor, Axes, Bindable, Container, DrawableSprite, resolved } from 'osucad-framework';
 
 export class GridSizeButton extends EditorButton {
   constructor(readonly gridSize: number) {

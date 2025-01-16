@@ -11,11 +11,13 @@
         "{options.outputPath}"
       ],
       "options": {
-        "outputPath": "dist/packages/beatmap-viewer",
-        "main": "packages/beatmap-viewer/src/index.ts",
-        "tsConfig": "packages/beatmap-viewer/tsconfig.lib.json",
+        "cwd": "packages/resources",
+        "outputPath": "dist/packages/resources",
+        "main": "packages/resources/src/index.ts",
+        "config": "packages/resources/vite.config.ts",
+        "tsConfig": "packages/resources/tsconfig.lib.json",
         "assets": [
-          "packages/beatmap-viewer/*.md"
+          "packages/resources/*.md"
         ]
       }
     }

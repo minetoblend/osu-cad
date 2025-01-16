@@ -22,15 +22,15 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
-      "@osucad/common": ["packages/common/src/index.ts"],
+      "@osucad/core": ["packages/core/src/index.ts"],
+      "@osucad/editor": ["packages/editor/src/index.ts"],
+      "@osucad/editor/*": ["packages/editor/src/*"],
+      "@osucad/multiplayer": ["packages/multiplayer/src/index.ts"],
       "@osucad/resources": ["packages/resources/src/index.ts"],
       "@osucad/ruleset-mania": ["packages/ruleset-mania/src/index.ts"],
       "@osucad/ruleset-osu": ["packages/ruleset-osu/src/index.ts"],
-      "@osucad/editor": ["packages/editor/src/index.ts"],
-      "@osucad/editor/*": ["packages/editor/src/*"],
       "@osucad/serialization": ["packages/serialization/src/index.ts"],
-      "@osucad/multiplayer": ["packages/multiplayer/src/index.ts"],
-      "osucad-framework": ["packages/framework/src/index.ts"]
+      "@osucad/framework": ["packages/framework/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -1,6 +1,6 @@
 import type { Slider } from '../../hitObjects/Slider';
-import { DrawableHitObject, ISkinSource } from '@osucad/common';
-import { Anchor, CompositeDrawable, DrawableSprite, EasingFunction, type ReadonlyDependencyContainer, resolved } from 'osucad-framework';
+import { DrawableHitObject, ISkinSource } from '@osucad/core';
+import { Anchor, CompositeDrawable, DrawableSprite, EasingFunction, type ReadonlyDependencyContainer, resolved } from '@osucad/framework';
 import { SliderRepeat } from '../../hitObjects/SliderRepeat';
 import { SliderTick } from '../../hitObjects/SliderTick';
 

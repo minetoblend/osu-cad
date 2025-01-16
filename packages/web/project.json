@@ -1,0 +1,20 @@
+{
+  "name": "web",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/web/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "dependsOn": ["resources:prebuild"],
+      "options": {
+        "outputPath": "dist/packages/web",
+        "main": "packages/web/src/index.ts",
+        "tsConfig": "packages/web/tsconfig.lib.json",
+        "assets": ["packages/web/*.md"]
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
-import type { CheckMetadata, Issue, VerifierBeatmap } from '@osucad/common';
+import type { CheckMetadata, Issue, VerifierBeatmap } from '@osucad/core';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
-import { BeatmapCheck, IssueTemplate } from '@osucad/common';
+import { BeatmapCheck, IssueTemplate } from '@osucad/core';
 import { Spinner } from '../../hitObjects/Spinner';
 
 const expectedMultiplier = 4 / 3;

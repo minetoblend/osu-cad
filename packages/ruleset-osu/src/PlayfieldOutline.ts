@@ -1,4 +1,4 @@
-import { Axes, CompositeDrawable, RoundedBox } from 'osucad-framework';
+import { Axes, CompositeDrawable, RoundedBox } from '@osucad/framework';
 
 export class PlayfieldOutline extends CompositeDrawable {
   constructor() {

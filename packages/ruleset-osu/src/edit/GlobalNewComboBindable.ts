@@ -1,5 +1,5 @@
-import { TernaryState } from '@osucad/common';
-import { Bindable } from 'osucad-framework';
+import { TernaryState } from '@osucad/core';
+import { Bindable } from '@osucad/framework';
 
 export class GlobalNewComboBindable extends Bindable<TernaryState> {
   constructor() {

@@ -1,8 +1,8 @@
-import type { HitSound } from '@osucad/common';
+import type { HitSound } from '@osucad/core';
 import type { Slider } from '../Slider';
 import type { SliderTailCircle } from '../SliderTailCircle';
 import type { DrawableSlider } from './DrawableSlider';
-import { ArmedState, OsucadConfigManager, OsucadSettings, SkinnableDrawable } from '@osucad/common';
+import { ArmedState, OsucadConfigManager, OsucadSettings, SkinnableDrawable } from '@osucad/core';
 import {
   Anchor,
   Axes,
@@ -10,7 +10,7 @@ import {
   Container,
   type ReadonlyDependencyContainer,
   resolved,
-} from 'osucad-framework';
+} from '@osucad/framework';
 import { OsuSkinComponentLookup } from '../../skinning/stable/OsuSkinComponentLookup';
 import { OsuHitObject } from '../OsuHitObject';
 import { DrawableOsuHitObject } from './DrawableOsuHitObject';

@@ -1,5 +1,5 @@
-import type { MouseDownEvent, MouseUpEvent, ReadonlyDependencyContainer } from 'osucad-framework';
-import { MouseButton } from 'osucad-framework';
+import type { MouseDownEvent, MouseUpEvent, ReadonlyDependencyContainer } from '@osucad/framework';
+import { MouseButton } from '@osucad/framework';
 import { HitCircle } from '../hitObjects/HitCircle';
 import { DrawableOsuHitObjectPlacementTool } from './DrawableOsuHitObjectPlacementTool';
 

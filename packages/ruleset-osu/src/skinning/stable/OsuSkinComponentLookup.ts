@@ -1,4 +1,4 @@
-import { GameplaySkinComponentLookup } from '@osucad/common';
+import { GameplaySkinComponentLookup } from '@osucad/core';
 import { OsuSkinComponents } from './OsuSkinComponents';
 
 export class OsuSkinComponentLookup extends GameplaySkinComponentLookup<OsuSkinComponents> {

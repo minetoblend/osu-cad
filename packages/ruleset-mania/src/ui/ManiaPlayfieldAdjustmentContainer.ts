@@ -1,5 +1,5 @@
-import { PlayfieldAdjustmentContainer } from '@osucad/common';
-import { Anchor } from 'osucad-framework';
+import { PlayfieldAdjustmentContainer } from '@osucad/core';
+import { Anchor } from '@osucad/framework';
 
 export class ManiaPlayfieldAdjustmentContainer extends PlayfieldAdjustmentContainer {
   constructor() {

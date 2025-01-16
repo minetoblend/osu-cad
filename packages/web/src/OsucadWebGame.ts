@@ -1,8 +1,8 @@
-import type { DependencyContainer, ReadonlyDependencyContainer } from 'osucad-framework';
-import { DummyEditorBeatmap, Editor, ISkinSource, OsucadGameBase, OsucadScreenStack, RulesetStore, SkinManager, UISamples } from '@osucad/common';
+import type { DependencyContainer, ReadonlyDependencyContainer } from '@osucad/framework';
+import { DummyEditorBeatmap, Editor, ISkinSource, OsucadGameBase, OsucadScreenStack, RulesetStore, SkinManager, UISamples } from '@osucad/core';
+import { provide } from '@osucad/framework';
 import { ManiaRuleset } from '@osucad/ruleset-mania';
 import { OsuRuleset } from '@osucad/ruleset-osu';
-import { provide } from 'osucad-framework';
 
 export class OsucadWebGame extends OsucadGameBase {
   @provide(SkinManager)

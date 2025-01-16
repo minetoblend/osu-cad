@@ -1,4 +1,4 @@
-import type { Bindable } from 'osucad-framework';
+import type { Bindable } from '@osucad/framework';
 import type { ISerializer } from './ISerializer';
 import type { ISummary } from './ISummary';
 import type { MutationContext } from './MutationContext';

@@ -1,6 +1,6 @@
 import type { HitCircle } from '../../hitObjects/HitCircle';
-import { SkinnableDrawable } from '@osucad/common';
-import { Anchor, Axes, type ReadonlyDependencyContainer } from 'osucad-framework';
+import { SkinnableDrawable } from '@osucad/core';
+import { Anchor, Axes, type ReadonlyDependencyContainer } from '@osucad/framework';
 import { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { OsuSkinComponentLookup } from '../../skinning/stable/OsuSkinComponentLookup';
 import { OsuSelectionBlueprint } from './OsuSelectionBlueprint';

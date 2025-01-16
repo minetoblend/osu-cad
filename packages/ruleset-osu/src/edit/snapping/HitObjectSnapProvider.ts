@@ -1,9 +1,9 @@
-import type { ComposeToolContainer, HitObject } from '@osucad/common';
-import type { Vec2 } from 'osucad-framework';
+import type { ComposeToolContainer, HitObject } from '@osucad/core';
+import type { Vec2 } from '@osucad/framework';
 import type { IPositionSnapProvider } from '../IPositionSnapProvider';
 import type { OsuSelectionBlueprint } from '../selection/OsuSelectionBlueprint';
 import type { OsuSelectionBlueprintContainer } from '../selection/OsuSelectionBlueprintContainer';
-import { DrawableHitObjectPlacementTool } from '@osucad/common';
+import { DrawableHitObjectPlacementTool } from '@osucad/core';
 import { SnapResult } from '../IPositionSnapProvider';
 
 export class HitObjectSnapProvider implements IPositionSnapProvider {

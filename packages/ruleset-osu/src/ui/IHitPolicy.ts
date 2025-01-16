@@ -1,4 +1,4 @@
-import type { DrawableHitObject, HitObjectContainer, HitResult } from '@osucad/common';
+import type { DrawableHitObject, HitObjectContainer, HitResult } from '@osucad/core';
 import type { ClickAction } from './ClickAction';
 
 export interface IHitPolicy {

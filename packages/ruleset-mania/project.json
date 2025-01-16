@@ -1,5 +1,5 @@
 {
-  "name": "mania",
+  "name": "ruleset-mania",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/ruleset-mania/src",
   "projectType": "library",

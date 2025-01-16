@@ -1,4 +1,4 @@
-import { almostEquals, clamp } from 'osucad-framework';
+import { almostEquals, clamp } from '@osucad/framework';
 import { Slider } from '../../hitObjects/Slider';
 import { Spinner } from '../../hitObjects/Spinner';
 import { OsuDifficultyHitObject } from '../preprocessing/OsuDifficultyHitObject';

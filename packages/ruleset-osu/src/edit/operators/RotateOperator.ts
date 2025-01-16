@@ -1,6 +1,6 @@
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
-import { CheckboxOperatorProperty, FloatOperatorProperty } from '@osucad/common';
-import { Vec2 } from 'osucad-framework';
+import { CheckboxOperatorProperty, FloatOperatorProperty } from '@osucad/core';
+import { Vec2 } from '@osucad/framework';
 import { Matrix } from 'pixi.js';
 import { TransformOperator } from './TransformOperator';
 

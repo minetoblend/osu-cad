@@ -1,6 +1,6 @@
-import type { CheckMetadata, Issue, VerifierBeatmap } from '@osucad/common';
+import type { CheckMetadata, Issue, VerifierBeatmap } from '@osucad/core';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
-import { BeatmapCheck, DifficultyType, IssueTemplate, sumBy, zipWithNext } from '@osucad/common';
+import { BeatmapCheck, DifficultyType, IssueTemplate, sumBy, zipWithNext } from '@osucad/core';
 import { Spinner } from '../../hitObjects/Spinner';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/Standard/Spread/CheckSpaceVariation.cs

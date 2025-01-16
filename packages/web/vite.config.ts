@@ -6,7 +6,8 @@ export default defineConfig({
     nxViteTsPaths(),
   ],
   esbuild: {
-    target: 'chrome113',
+    target: 'esnext',
+    minifyIdentifiers: false,
   },
   worker: {
     format: 'es',
@@ -17,6 +18,7 @@ export default defineConfig({
     emptyOutDir: true,
     reportCompressedSize: true,
     target: 'esnext',
+    minify: true,
   },
   server: {
     proxy: {

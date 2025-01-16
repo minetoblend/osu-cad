@@ -1,6 +1,11 @@
-import type { CompositeDrawable, Drawable, MarginPadding, MarginPaddingOptions, ReadonlyDependencyContainer } from 'osucad-framework';
-import { Container, DependencyContainer, Invalidation } from 'osucad-framework';
+import type { ReadonlyDependencyContainer } from '../../di/DependencyContainer';
+import type { Drawable } from '../drawables/Drawable';
+import type { MarginPadding, MarginPaddingOptions } from '../drawables/MarginPadding';
+import type { CompositeDrawable } from './CompositeDrawable';
 import { Matrix } from 'pixi.js';
+import { DependencyContainer } from '../../di/DependencyContainer';
+import { Invalidation } from '../drawables/Drawable';
+import { Container } from './Container';
 
 export class ProxyContainer extends Container {
   constructor(readonly source: CompositeDrawable) {

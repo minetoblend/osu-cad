@@ -1,4 +1,4 @@
-import type { WorkingBeatmapSet } from '@osucad/common';
+import type { WorkingBeatmapSet } from '@osucad/core';
 
 export abstract class BeatmapMirror {
   constructor(readonly name: string) {
@@ -6,4 +6,3 @@ export abstract class BeatmapMirror {
 
   abstract loadBeatmapSet(id: number): Promise<WorkingBeatmapSet>;
 }
-

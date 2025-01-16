@@ -1,4 +1,4 @@
-import { WebGameHost } from 'osucad-framework';
+import { WebGameHost } from '@osucad/framework';
 import { BeatmapViewerGame } from './BeatmapViewerGame';
 import './sentry';
 

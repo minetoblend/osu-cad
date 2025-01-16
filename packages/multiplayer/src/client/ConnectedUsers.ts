@@ -1,7 +1,7 @@
-import type { IVec2 } from 'osucad-framework';
+import type { IVec2 } from '@osucad/framework';
 import type { ClientInfo } from '../protocol';
 import type { ClientSocket } from './ClientSocket';
-import { Action, Bindable } from 'osucad-framework';
+import { Action, Bindable } from '@osucad/framework';
 
 export class ConnectedUsers {
   #users = new Map<number, ConnectedUser>();

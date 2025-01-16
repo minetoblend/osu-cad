@@ -1,7 +1,7 @@
-import type { ReadonlyDependencyContainer } from 'osucad-framework';
+import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import type { BeatmapSetResponse } from '../../mirrors/BeatmapSetResponse';
-import { OsucadColors, OsucadSpriteText } from '@osucad/common';
-import { Axes, Container, FastRoundedBox, MaskingContainer } from 'osucad-framework';
+import { OsucadColors, OsucadSpriteText } from '@osucad/core';
+import { Axes, Container, FastRoundedBox, MaskingContainer } from '@osucad/framework';
 
 export class ResultCard extends MaskingContainer {
   constructor(

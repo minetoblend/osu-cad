@@ -1,7 +1,7 @@
-import type { DrawableRuleset } from '@osucad/common';
-import type { Drawable, ReadonlyDependencyContainer } from 'osucad-framework';
-import { BottomAlignedTickDisplay, CurrentTimeOverlay, editorScreen, EditorScreen, HitObjectSelectionManager, IBeatmap, OsucadColors, Ruleset, Timeline } from '@osucad/common';
-import { Anchor, Axes, Box, Container, EmptyDrawable, provide, resolved } from 'osucad-framework';
+import type { DrawableRuleset } from '@osucad/core';
+import type { Drawable, ReadonlyDependencyContainer } from '@osucad/framework';
+import { BottomAlignedTickDisplay, CurrentTimeOverlay, editorScreen, EditorScreen, HitObjectSelectionManager, IBeatmap, OsucadColors, Ruleset, Timeline } from '@osucad/core';
+import { Anchor, Axes, Box, Container, EmptyDrawable, provide, resolved } from '@osucad/framework';
 
 const timelineHeight = 80;
 

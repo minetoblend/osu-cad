@@ -1,7 +1,7 @@
-import type { PathPoint } from '@osucad/common';
+import type { PathPoint } from '@osucad/core';
 import type { Slider } from './Slider';
-import { PathType } from '@osucad/common';
-import { Vec2 } from 'osucad-framework';
+import { PathType } from '@osucad/core';
+import { Vec2 } from '@osucad/framework';
 
 export class SliderPathUtils {
   static getSegments(path: readonly PathPoint[]): SliderPathSegment[] {

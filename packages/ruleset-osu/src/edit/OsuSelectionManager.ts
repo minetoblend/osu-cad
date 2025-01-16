@@ -1,5 +1,5 @@
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
-import { HitObjectSelectionManager } from '@osucad/common';
+import { HitObjectSelectionManager } from '@osucad/core';
 import { Slider } from '../hitObjects/Slider';
 
 export class OsuSelectionManager extends HitObjectSelectionManager<OsuHitObject> {

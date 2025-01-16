@@ -1,7 +1,7 @@
-import type { ReadonlyDependencyContainer } from 'osucad-framework';
+import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import type { BarLine } from '../BarLine';
-import { SkinnableDrawable } from '@osucad/common';
-import { Anchor, Axes, BindableBoolean } from 'osucad-framework';
+import { SkinnableDrawable } from '@osucad/core';
+import { Anchor, Axes, BindableBoolean } from '@osucad/framework';
 import { DefaultBarLine } from '../../skinning/default/DefaultBarLine';
 import { ManiaSkinComponentLookup } from '../../skinning/ManiaSkinComponentLookup';
 import { ManiaSkinComponents } from '../../skinning/ManiaSkinComponents';

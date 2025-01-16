@@ -1,5 +1,5 @@
-import type { CheckMetadata, Issue, VerifierBeatmap } from '@osucad/common';
-import { BeatmapCheck, IssueTemplate } from '@osucad/common';
+import type { CheckMetadata, Issue, VerifierBeatmap } from '@osucad/core';
+import { BeatmapCheck, IssueTemplate } from '@osucad/core';
 import { HitCircle } from '../../hitObjects/HitCircle';
 import { Slider } from '../../hitObjects/Slider';
 

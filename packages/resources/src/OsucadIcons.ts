@@ -1,4 +1,4 @@
-import { loadTexture } from "osucad-framework";
+import { loadTexture } from "@osucad/framework";
 import { Spritesheet, Texture } from 'pixi.js'
 
 import textureUrl from './assets/textures/icons.webp'

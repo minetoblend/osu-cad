@@ -1,7 +1,7 @@
-import type { CheckMetadata, Issue, VerifierBeatmap } from '@osucad/common';
-import type { Vec2 } from 'osucad-framework';
+import type { CheckMetadata, Issue, VerifierBeatmap } from '@osucad/core';
+import type { Vec2 } from '@osucad/framework';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
-import { BeatmapCheck, IssueTemplate, PathType, trimIndent } from '@osucad/common';
+import { BeatmapCheck, IssueTemplate, PathType, trimIndent } from '@osucad/core';
 import { Slider } from '../../hitObjects/Slider';
 import { SliderTick } from '../../hitObjects/SliderTick';
 

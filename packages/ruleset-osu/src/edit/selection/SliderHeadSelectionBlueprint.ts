@@ -1,8 +1,8 @@
-import type { MouseDownEvent } from 'osucad-framework';
+import type { MouseDownEvent } from '@osucad/framework';
 import type { OsuSelectionManager } from '../OsuSelectionManager';
 import type { SliderSelectionBlueprint } from './SliderSelectionBlueprint';
-import { HitObjectSelectionManager, SkinnableDrawable } from '@osucad/common';
-import { Anchor, Axes, CompositeDrawable, MouseButton, resolved } from 'osucad-framework';
+import { HitObjectSelectionManager, SkinnableDrawable } from '@osucad/core';
+import { Anchor, Axes, CompositeDrawable, MouseButton, resolved } from '@osucad/framework';
 import { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { OsuSkinComponentLookup } from '../../skinning/stable/OsuSkinComponentLookup';
 

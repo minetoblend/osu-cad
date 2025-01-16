@@ -1,6 +1,6 @@
-import type { Beatmap, IBeatmap } from '@osucad/common';
+import type { Beatmap, IBeatmap } from '@osucad/core';
 import type { BeatmapSetResponse } from './BeatmapSetResponse';
-import { ResourceStoreBackedFileStore, StableBeatmapParser, WorkingBeatmapSet, ZipArchiveResourceStore } from '@osucad/common';
+import { ResourceStoreBackedFileStore, StableBeatmapParser, WorkingBeatmapSet, ZipArchiveResourceStore } from '@osucad/core';
 import { BeatmapMirror } from './BeatmapMirror';
 
 export class CatboyMirror extends BeatmapMirror {

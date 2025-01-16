@@ -1,6 +1,6 @@
-import type { ReadonlyDependencyContainer, ValueChangedEvent } from 'osucad-framework';
-import { IScrollingInfo, ScrollingDirection } from '@osucad/common';
-import { Anchor, Axes, Bindable, CompositeDrawable, FastRoundedBox } from 'osucad-framework';
+import type { ReadonlyDependencyContainer, ValueChangedEvent } from '@osucad/framework';
+import { IScrollingInfo, ScrollingDirection } from '@osucad/core';
+import { Anchor, Axes, Bindable, CompositeDrawable, FastRoundedBox } from '@osucad/framework';
 import { ArgonNotePiece } from './ArgonNotePiece';
 
 export class ArgonHitTarget extends CompositeDrawable {

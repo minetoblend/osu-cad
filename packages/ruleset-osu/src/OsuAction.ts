@@ -1,4 +1,4 @@
-import { KeyBindingAction } from 'osucad-framework';
+import { KeyBindingAction } from '@osucad/framework';
 
 export class OsuAction extends KeyBindingAction {
   constructor(readonly name: string) {

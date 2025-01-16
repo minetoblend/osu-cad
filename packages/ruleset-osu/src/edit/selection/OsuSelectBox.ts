@@ -1,7 +1,7 @@
-import type { DragEndEvent, DragEvent, DragStartEvent } from 'osucad-framework';
+import type { DragEndEvent, DragEvent, DragStartEvent } from '@osucad/framework';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
-import { EditorClock, HitObjectSelectionManager, OsucadColors } from '@osucad/common';
-import { CompositeDrawable, dependencyLoader, Rectangle, resolved, RoundedBox, Vec2 } from 'osucad-framework';
+import { EditorClock, HitObjectSelectionManager, OsucadColors } from '@osucad/core';
+import { CompositeDrawable, dependencyLoader, Rectangle, resolved, RoundedBox, Vec2 } from '@osucad/framework';
 import { HitCircle } from '../../hitObjects/HitCircle';
 import { Slider } from '../../hitObjects/Slider';
 import { OsuPlayfield } from '../../ui/OsuPlayfield';

@@ -1,5 +1,5 @@
-import type { IVec2 } from 'osucad-framework';
-import { polymorphicHitObjectSerializers } from '@osucad/common';
+import type { IVec2 } from '@osucad/framework';
+import { polymorphicHitObjectSerializers } from '@osucad/core';
 import { OsuHitObject, OsuHitObjectSerializer } from './OsuHitObject';
 
 export class HitCircle extends OsuHitObject {

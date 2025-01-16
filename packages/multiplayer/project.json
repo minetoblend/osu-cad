@@ -1,7 +1,7 @@
 {
   "name": "multiplayer",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/common/src",
+  "sourceRoot": "packages/multiplayer/src",
   "projectType": "library",
   "tags": [],
   "targets": {
@@ -9,10 +9,10 @@
       "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/packages/common",
-        "main": "packages/common/src/index.ts",
-        "tsConfig": "packages/common/tsconfig.lib.json",
-        "assets": ["packages/common/*.md"]
+        "outputPath": "dist/packages/multiplayer",
+        "main": "packages/multiplayer/src/index.ts",
+        "tsConfig": "packages/multiplayer/tsconfig.lib.json",
+        "assets": ["packages/multiplayer/*.md"]
       }
     }
   }

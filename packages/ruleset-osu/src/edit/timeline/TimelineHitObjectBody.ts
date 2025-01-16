@@ -1,10 +1,10 @@
-import type { HitObject } from '@osucad/common';
-import type { DragEndEvent, DragEvent, DragStartEvent, MouseDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { HitObject } from '@osucad/core';
+import type { DragEndEvent, DragEvent, DragStartEvent, MouseDownEvent, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { Color } from 'pixi.js';
 import type { OsuTimelineHitObjectBlueprint } from './OsuTimelineHitObjectBlueprint';
-import { EditorBeatmap, EditorClock, HitObjectSelectionManager, Timeline } from '@osucad/common';
+import { EditorBeatmap, EditorClock, HitObjectSelectionManager, Timeline } from '@osucad/core';
+import { Axes, Bindable, CompositeDrawable, FastRoundedBox, MouseButton, resolved } from '@osucad/framework';
 import { UpdateHandler } from '@osucad/multiplayer';
-import { Axes, Bindable, CompositeDrawable, FastRoundedBox, MouseButton, resolved } from 'osucad-framework';
 import { Slider } from '../../hitObjects/Slider';
 import { OsuSelectionManager } from '../OsuSelectionManager';
 

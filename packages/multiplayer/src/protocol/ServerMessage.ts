@@ -1,4 +1,4 @@
-import type { IVec2 } from 'osucad-framework';
+import type { IVec2 } from '@osucad/framework';
 import type { SignalKey } from '../client';
 import type { ChatMessage } from './ChatMessage';
 import type { ClientInfo } from './types';

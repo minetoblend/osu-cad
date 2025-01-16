@@ -1,5 +1,5 @@
-import type { IBeatmap } from '@osucad/common';
-import { hasComboInformation } from '@osucad/common';
+import type { IBeatmap } from '@osucad/core';
+import { hasComboInformation } from '@osucad/core';
 import { Spinner } from './hitObjects/Spinner';
 
 export class ComboProcessor {

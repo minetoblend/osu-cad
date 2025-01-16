@@ -1,5 +1,5 @@
 import type { OsuTimelineHitObjectBlueprint } from './OsuTimelineHitObjectBlueprint';
-import { Anchor, MouseButton, type MouseDownEvent } from 'osucad-framework';
+import { Anchor, MouseButton, type MouseDownEvent } from '@osucad/framework';
 import { Slider } from '../../hitObjects/Slider';
 import { TimelineHitObjectCircle } from './TimelineHitObjectCircle';
 

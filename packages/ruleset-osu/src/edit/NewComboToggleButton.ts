@@ -1,7 +1,7 @@
-import type { ClickEvent, Drawable, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyBindingReleaseEvent, ReadonlyDependencyContainer } from 'osucad-framework';
-import { EditorAction, OsucadColors } from '@osucad/common';
+import type { ClickEvent, Drawable, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyBindingReleaseEvent, ReadonlyDependencyContainer } from '@osucad/framework';
+import { EditorAction, OsucadColors } from '@osucad/core';
+import { Anchor, Axes, DrawableSprite, resolved } from '@osucad/framework';
 import { getIcon } from '@osucad/resources';
-import { Anchor, Axes, DrawableSprite, resolved } from 'osucad-framework';
 import { GlobalNewComboBindable } from './GlobalNewComboBindable';
 import { TernaryStateToggleButton } from './TernaryStateToggleButton';
 

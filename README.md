@@ -37,8 +37,8 @@ nx run <package-name>:serve
 ```tree
 packages           
 ├── beatmap-viewer      # An online beatmap viewer
-├── common              # Core logic for the editor & osu ruleset
-├── editor              # Legacy editor package, mostly moved to common package by now
+├── core              # Core logic for the editor & osu ruleset
+├── editor              # Legacy editor package, mostly moved to core package by now
 ├── electron-app        # Osucad desktop client
 ├── framework           # Game engine that powers the project, a typescript port of osu-framework
 ├── multiplayer         # Logic for keeping everything in sync during multiplayer
@@ -49,11 +49,11 @@ packages
 └── web                 # Osucad web client
 ```
 
-Most things can be found in the [common](./packages/common) package.
-The editor package is currently being moved into the common package, with plans to completely remove it once that is completed.
-The osu ruleset is currently part of the common package, however it will eventually get its own package.
+Most things can be found in the [core](./packages/core) package.
+The editor package is currently being moved into the core package, with plans to completely remove it once that is completed.
+The osu ruleset is currently part of the core package, however it will eventually get its own package.
 
-The desktop client package is currently broken, until the migration to the common package is complete.
+The desktop client package is currently broken, until the migration to the core package is complete.
 
 ## Support this project
 

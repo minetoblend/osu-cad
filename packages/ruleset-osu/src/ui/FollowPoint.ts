@@ -1,11 +1,11 @@
-import { IAnimationTimeReference, SkinnableDrawable } from '@osucad/common';
+import { IAnimationTimeReference, SkinnableDrawable } from '@osucad/core';
 import {
   Anchor,
   BindableNumber,
   PoolableDrawable,
   provide,
   type ReadonlyDependencyContainer,
-} from 'osucad-framework';
+} from '@osucad/framework';
 import { OsuSkinComponentLookup } from '../skinning/stable/OsuSkinComponentLookup';
 
 @provide(IAnimationTimeReference)

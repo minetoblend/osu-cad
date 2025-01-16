@@ -1,18 +1,8 @@
-import type { TextBox, WorkingBeatmapSet } from '@osucad/common';
-import type { ReadonlyDependencyContainer } from 'osucad-framework';
+import type { TextBox, WorkingBeatmapSet } from '@osucad/core';
+import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import type { BeatmapSetResponse } from '../../mirrors/BeatmapSetResponse';
-import { OsucadButton } from '@osucad/editor/userInterface/OsucadButton';
-import {
-  Action,
-  Anchor,
-  Axes,
-  Container,
-  DrawSizePreservingFillContainer,
-  EasingFunction,
-  FillDirection,
-  FillFlowContainer,
-  Vec2,
-} from 'osucad-framework';
+import { OsucadButton } from '@osucad/core';
+import { Action, Anchor, Axes, Container, DrawSizePreservingFillContainer, EasingFunction, FillDirection, FillFlowContainer, Vec2 } from '@osucad/framework';
 import { CatboyMirror } from '../../mirrors/CatboyMirror';
 import { HomeScreenIntroSequence } from './HomeScreenIntroSequence';
 import { HomeScreenTextBox } from './HomeScreenTextBox';

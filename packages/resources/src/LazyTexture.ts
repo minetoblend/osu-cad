@@ -1,4 +1,4 @@
-import { loadTexture } from "osucad-framework";
+import { loadTexture } from "@osucad/framework";
 import { Texture, TextureSourceOptions } from "pixi.js";
 
 export class LazyTexture {

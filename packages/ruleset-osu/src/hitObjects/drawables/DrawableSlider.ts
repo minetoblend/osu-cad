@@ -1,7 +1,7 @@
-import type { ArmedState, DrawableHitObject } from '@osucad/common';
+import type { ArmedState, DrawableHitObject } from '@osucad/core';
 import type { Slider } from '../Slider';
-import { HitResult, OsucadConfigManager, OsucadSettings } from '@osucad/common';
-import { Anchor, Axes, Bindable, BindableBoolean, clamp, Container, type ReadonlyDependencyContainer, resolved, Vec2 } from 'osucad-framework';
+import { HitResult, OsucadConfigManager, OsucadSettings } from '@osucad/core';
+import { Anchor, Axes, Bindable, BindableBoolean, clamp, Container, type ReadonlyDependencyContainer, resolved, Vec2 } from '@osucad/framework';
 import { DrawableOsuHitObject } from './DrawableOsuHitObject';
 import { DrawableSliderBall } from './DrawableSliderBall';
 import { DrawableSliderBody } from './DrawableSliderBody';

@@ -1,4 +1,4 @@
-import { Axes, CompositeDrawable } from 'osucad-framework';
+import { Axes, CompositeDrawable } from '@osucad/framework';
 
 export class ArgonStageBackground extends CompositeDrawable {
   constructor() {

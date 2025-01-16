@@ -1,4 +1,4 @@
-import type { HitSound } from '@osucad/common';
+import type { HitSound } from '@osucad/core';
 import type { DrawableSlider } from './DrawableSlider';
 import { OsuSkinComponentLookup } from '../../skinning/stable/OsuSkinComponentLookup';
 import { DrawableHitCircle } from './DrawableHitCircle';

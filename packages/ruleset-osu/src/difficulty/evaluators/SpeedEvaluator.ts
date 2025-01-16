@@ -1,5 +1,5 @@
 import type { OsuDifficultyHitObject } from '../preprocessing/OsuDifficultyHitObject';
-import { clamp } from 'osucad-framework';
+import { clamp } from '@osucad/framework';
 import { Spinner } from '../../hitObjects/Spinner';
 
 const single_spacing_threshold = 125; // 1.25 circles distance between centers

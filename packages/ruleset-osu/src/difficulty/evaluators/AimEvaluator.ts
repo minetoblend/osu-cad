@@ -1,5 +1,5 @@
 import type { OsuDifficultyHitObject } from '../preprocessing/OsuDifficultyHitObject';
-import { clamp } from 'osucad-framework';
+import { clamp } from '@osucad/framework';
 import { Slider } from '../../hitObjects/Slider';
 import { Spinner } from '../../hitObjects/Spinner';
 

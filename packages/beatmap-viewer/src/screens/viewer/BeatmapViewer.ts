@@ -1,8 +1,8 @@
-import type { Beatmap, EditorScreenManager } from '@osucad/common';
-import type { KeyDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { Beatmap, EditorScreenManager } from '@osucad/core';
+import type { KeyDownEvent, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { BeatmapViewerGame } from '../../BeatmapViewerGame';
-import { ComposeScreen, Editor, EditorBeatmap, ModdingScreen, PreferencesContainer } from '@osucad/common';
-import { Key, MenuItem, resolved } from 'osucad-framework';
+import { ComposeScreen, Editor, EditorBeatmap, ModdingScreen, PreferencesContainer } from '@osucad/core';
+import { Key, MenuItem, resolved } from '@osucad/framework';
 import { Router } from '../Router';
 
 export class BeatmapViewer extends Editor {

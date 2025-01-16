@@ -6,6 +6,7 @@
   "private": true,
   "devDependencies": {
     "@antfu/eslint-config": "^3.6.0",
+    "@laynezh/vite-plugin-lib-assets": "^1.0.0",
     "@nestjs/schematics": "^10.0.1",
     "@nx/esbuild": "19.6.4",
     "@nx/eslint": "19.6.4",
@@ -62,7 +63,7 @@
     "is-electron": "^2.2.2",
     "osu-db-parser": "^1.0.37",
     "pixi-filters": "^6.0.4",
-    "pixi.js": "8.4.1",
+    "pixi.js": "^8.4.1",
     "reflect-metadata": "^0.1.13",
     "regedit": "^5.1.3",
     "tslib": "^2.3.0",

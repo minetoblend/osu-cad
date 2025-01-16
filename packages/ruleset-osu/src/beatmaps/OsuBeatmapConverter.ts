@@ -1,6 +1,6 @@
-import type { HitObject, IBeatmap, Ruleset } from '@osucad/common';
-import { BeatmapConverter, ConvertCircle, ConvertHitObject, ConvertSlider, ConvertSpinner } from '@osucad/common';
-import { Vec2 } from 'osucad-framework';
+import type { HitObject, IBeatmap, Ruleset } from '@osucad/core';
+import { BeatmapConverter, ConvertCircle, ConvertHitObject, ConvertSlider, ConvertSpinner } from '@osucad/core';
+import { Vec2 } from '@osucad/framework';
 import { HitCircle } from '../hitObjects/HitCircle';
 import { OsuHitObject } from '../hitObjects/OsuHitObject';
 import { Slider } from '../hitObjects/Slider';

@@ -1,4 +1,4 @@
-import type { DrawableComposeTool, IComposeTool } from '@osucad/common';
+import type { DrawableComposeTool, IComposeTool } from '@osucad/core';
 import { getIcon } from '@osucad/resources';
 import { DrawableOsuSelectTool } from './DrawableOsuSelectTool';
 

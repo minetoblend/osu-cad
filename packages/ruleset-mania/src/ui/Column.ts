@@ -1,8 +1,8 @@
-import type { DrawableHitObject, JudgementResult } from '@osucad/common';
-import type { GameHost, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { DrawableHitObject, JudgementResult } from '@osucad/core';
+import type { GameHost, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { DrawableManiaHitObject } from '../objects/drawables/DrawableManiaHitObject';
-import { ISkinSource, ScrollingPlayfield, SkinnableDrawable } from '@osucad/common';
-import { Axes, Bindable, Container, GAME_HOST, provide, resolved, Vec2 } from 'osucad-framework';
+import { ISkinSource, ScrollingPlayfield, SkinnableDrawable } from '@osucad/core';
+import { Axes, Bindable, Container, GAME_HOST, provide, resolved, Vec2 } from '@osucad/framework';
 import { Color } from 'pixi.js';
 import { DrawableHoldNote } from '../objects/drawables/DrawableHoldNote';
 import { DrawableHoldNoteBody } from '../objects/drawables/DrawableHoldNoteBody';

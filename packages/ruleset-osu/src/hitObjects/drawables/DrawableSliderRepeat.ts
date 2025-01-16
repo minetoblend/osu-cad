@@ -1,8 +1,8 @@
-import type { ArmedState, HitObjectLifetimeEntry, HitSound } from '@osucad/common';
+import type { ArmedState, HitObjectLifetimeEntry, HitSound } from '@osucad/core';
 import type { SliderRepeat } from '../SliderRepeat';
 import type { DrawableSlider } from './DrawableSlider';
-import { SkinnableDrawable } from '@osucad/common';
-import { almostEquals, Anchor, Axes, Container, type ReadonlyDependencyContainer, Vec2 } from 'osucad-framework';
+import { SkinnableDrawable } from '@osucad/core';
+import { almostEquals, Anchor, Axes, Container, type ReadonlyDependencyContainer, Vec2 } from '@osucad/framework';
 import { OsuSkinComponentLookup } from '../../skinning/stable/OsuSkinComponentLookup';
 import { OsuHitObject } from '../OsuHitObject';
 import { DrawableOsuHitObject } from './DrawableOsuHitObject';

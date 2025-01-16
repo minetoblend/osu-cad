@@ -1,4 +1,4 @@
-import type { Playfield } from '@osucad/common';
+import type { Playfield } from '@osucad/core';
 import { DrawableManiaRuleset } from './DrawableManiaRuleset';
 
 export class DrawableManiaEditorRuleset extends DrawableManiaRuleset {

@@ -1,5 +1,5 @@
 import type { TextureShader } from 'pixi.js';
-import { LinearGradient } from '@osucad/common';
+import { LinearGradient } from '@osucad/core';
 import { Color, compileHighShaderGl, fragmentGlTemplate, globalUniformsBitGl, GlProgram, localUniformBitGl, roundPixelsBitGl, Shader, Texture, UniformGroup, vertexGlTemplate } from 'pixi.js';
 
 let glProgram: GlProgram | null = null;

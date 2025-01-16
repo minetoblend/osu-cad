@@ -1,6 +1,6 @@
 import type { DrawableSlider } from './DrawableSlider';
-import { DrawableHitObject, SkinnableDrawable } from '@osucad/common';
-import { Anchor, Axes, CompositeDrawable, type ReadonlyDependencyContainer, resolved } from 'osucad-framework';
+import { DrawableHitObject, SkinnableDrawable } from '@osucad/core';
+import { Anchor, Axes, CompositeDrawable, type ReadonlyDependencyContainer, resolved } from '@osucad/framework';
 import { OsuSkinComponentLookup } from '../../skinning/stable/OsuSkinComponentLookup';
 import { OsuHitObject } from '../OsuHitObject';
 

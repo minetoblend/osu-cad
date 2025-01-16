@@ -1,7 +1,7 @@
-import type { ReadonlyDependencyContainer } from 'osucad-framework';
+import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
-import { DrawableHitObjectPlacementTool, HitSound, SampleSet, TernaryState } from '@osucad/common';
-import { clamp, resolved, Vec2 } from 'osucad-framework';
+import { DrawableHitObjectPlacementTool, HitSound, SampleSet, TernaryState } from '@osucad/core';
+import { clamp, resolved, Vec2 } from '@osucad/framework';
 import { GlobalHitSoundState } from './GlobalHitSoundState';
 import { GlobalNewComboBindable } from './GlobalNewComboBindable';
 import { IDistanceSnapProvider } from './IDistanceSnapProvider';

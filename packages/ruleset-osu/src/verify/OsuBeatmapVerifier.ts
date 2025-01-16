@@ -1,6 +1,6 @@
-import type { BeatmapCheck, GeneralCheck } from '@osucad/common';
+import type { BeatmapCheck, GeneralCheck } from '@osucad/core';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
-import { BeatmapVerifier, CheckBgPresence, CheckBgResolution, CheckDrainTime, CheckGenreLanguage, CheckGuestTags, CheckHitSoundDelay, CheckInconsistenMetadata, CheckInconsistentTimingPoints, CheckMarkerFormat, CheckZeroBytes } from '@osucad/common';
+import { BeatmapVerifier, CheckBgPresence, CheckBgResolution, CheckDrainTime, CheckGenreLanguage, CheckGuestTags, CheckHitSoundDelay, CheckInconsistenMetadata, CheckInconsistentTimingPoints, CheckMarkerFormat, CheckZeroBytes } from '@osucad/core';
 import { CheckAbnormalNodes } from './compose/CheckAbnormalNodes';
 import { CheckAbnormalSpacing } from './compose/CheckAbnormalSpacing';
 import { CheckAmbiguity } from './compose/CheckAmbiguity';

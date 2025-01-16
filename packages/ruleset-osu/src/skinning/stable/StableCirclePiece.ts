@@ -1,5 +1,5 @@
-import { ArmedState, DrawableHitObject, ISkinSource, OsucadConfigManager, OsucadSettings } from '@osucad/common';
-import { almostBigger, Anchor, Axes, Bindable, Color, CompositeDrawable, DrawableSprite, EasingFunction, type ReadonlyDependencyContainer, resolved } from 'osucad-framework';
+import { ArmedState, DrawableHitObject, ISkinSource, OsucadConfigManager, OsucadSettings } from '@osucad/core';
+import { almostBigger, Anchor, Axes, Bindable, Color, CompositeDrawable, DrawableSprite, EasingFunction, type ReadonlyDependencyContainer, resolved } from '@osucad/framework';
 import { DrawableComboNumber } from './DrawableComboNumber';
 
 export class StableCirclePiece extends CompositeDrawable {

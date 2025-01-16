@@ -1,3 +1,3 @@
-import { DrawableComposeTool } from '@osucad/common';
+import { DrawableComposeTool } from '@osucad/core';
 
 export class DrawableManiaSelectTool extends DrawableComposeTool {}

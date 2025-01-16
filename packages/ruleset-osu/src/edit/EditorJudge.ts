@@ -1,8 +1,8 @@
-import type { DrawableHitObject, IHitObjectJudgeProvider } from '@osucad/common';
-import type { ReadonlyDependencyContainer } from 'osucad-framework';
+import type { DrawableHitObject, IHitObjectJudgeProvider } from '@osucad/core';
+import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import type { DrawableOsuHitObject } from '../hitObjects/drawables/DrawableOsuHitObject';
-import { HitObjectJudge, OsucadConfigManager, OsucadSettings } from '@osucad/common';
-import { BindableNumber } from 'osucad-framework';
+import { HitObjectJudge, OsucadConfigManager, OsucadSettings } from '@osucad/core';
+import { BindableNumber } from '@osucad/framework';
 
 export class EditorJudge extends HitObjectJudge {
   constructor(hitObject: DrawableHitObject) {

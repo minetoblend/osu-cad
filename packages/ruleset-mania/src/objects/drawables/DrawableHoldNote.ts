@@ -1,9 +1,9 @@
-import type { DrawableHitObject, HitObject, HitObjectLifetimeEntry } from '@osucad/common';
-import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyBindingReleaseEvent, ReadonlyDependencyContainer, ValueChangedEvent } from 'osucad-framework';
+import type { DrawableHitObject, HitObject, HitObjectLifetimeEntry } from '@osucad/core';
+import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyBindingReleaseEvent, ReadonlyDependencyContainer, ValueChangedEvent } from '@osucad/framework';
 import type { IHoldNoteBody } from '../../skinning/default/IHoldNoteBody';
 import type { HoldNote } from '../HoldNote';
-import { HitResult, ScrollingDirection, SkinnableDrawable } from '@osucad/common';
-import { Anchor, Axes, BindableBoolean, Container, ProxyDrawable, Vec2 } from 'osucad-framework';
+import { HitResult, ScrollingDirection, SkinnableDrawable } from '@osucad/core';
+import { Anchor, Axes, BindableBoolean, Container, ProxyDrawable, Vec2 } from '@osucad/framework';
 import { DefaultBodyPiece } from '../../skinning/default/DefaultBodyPiece';
 import { ManiaSkinComponentLookup } from '../../skinning/ManiaSkinComponentLookup';
 import { ManiaSkinComponents } from '../../skinning/ManiaSkinComponents';

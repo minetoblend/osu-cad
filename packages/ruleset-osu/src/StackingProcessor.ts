@@ -1,6 +1,6 @@
-import type { HitObject, IBeatmap } from '@osucad/common';
+import type { HitObject, IBeatmap } from '@osucad/core';
 import type { OsuHitObject } from './hitObjects/OsuHitObject';
-import { Vec2 } from 'osucad-framework';
+import { Vec2 } from '@osucad/framework';
 import { HitCircle } from './hitObjects/HitCircle';
 import { Slider } from './hitObjects/Slider';
 import { Spinner } from './hitObjects/Spinner';

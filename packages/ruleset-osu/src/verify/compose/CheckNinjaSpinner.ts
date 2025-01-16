@@ -1,6 +1,6 @@
-import type { CheckMetadata, Issue, VerifierBeatmap } from '@osucad/common';
+import type { CheckMetadata, Issue, VerifierBeatmap } from '@osucad/core';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
-import { BeatmapCheck, IssueTemplate, trimIndent } from '@osucad/common';
+import { BeatmapCheck, IssueTemplate, trimIndent } from '@osucad/core';
 import { Spinner } from '../../hitObjects/Spinner';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/Standard/Compose/CheckNinjaSpinner.cs

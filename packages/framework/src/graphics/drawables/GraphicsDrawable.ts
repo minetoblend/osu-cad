@@ -1,6 +1,7 @@
-import type { PIXIContainer } from 'osucad-framework';
-import { Drawable, Invalidation, LayoutMember } from 'osucad-framework';
+import type { PIXIContainer } from '../../pixi';
 import { Graphics } from 'pixi.js';
+import { Drawable, Invalidation } from './Drawable';
+import { LayoutMember } from './LayoutMember';
 
 export abstract class GraphicsDrawable extends Drawable {
   protected constructor() {

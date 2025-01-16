@@ -1,6 +1,6 @@
-import type { SampleSet } from '@osucad/common';
-import { Additions, TernaryState } from '@osucad/common';
-import { Bindable } from 'osucad-framework';
+import type { SampleSet } from '@osucad/core';
+import { Additions, TernaryState } from '@osucad/core';
+import { Bindable } from '@osucad/framework';
 
 export class GlobalHitSoundState {
   readonly whistle = new Bindable(TernaryState.Inactive);

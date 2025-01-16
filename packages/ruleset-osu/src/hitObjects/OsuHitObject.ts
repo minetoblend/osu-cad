@@ -1,12 +1,12 @@
-import type { ControlPointInfo, HitWindows, IHasComboInformation, IHasXPosition, ISkin } from '@osucad/common';
+import type { ControlPointInfo, HitWindows, IHasComboInformation, IHasXPosition, ISkin } from '@osucad/core';
+import type { IVec2 } from '@osucad/framework';
 import type { ClassSerialDescriptorBuilder, CompositeDecoder, CompositeEncoder } from '@osucad/serialization';
-import type { IVec2 } from 'osucad-framework';
 import type { HitCircle } from './HitCircle';
 import type { Slider } from './Slider';
 import type { Spinner } from './Spinner';
-import { BeatmapDifficultyInfo, getSkinComboColor, HitObject, HitObjectProperty, HitObjectSerializer, HitSample, HitSound, hitsoundSerializer, HitSoundSerializer, SampleSet, SampleType, vec2Serializer } from '@osucad/common';
+import { BeatmapDifficultyInfo, getSkinComboColor, HitObject, HitObjectProperty, HitObjectSerializer, HitSample, HitSound, hitsoundSerializer, HitSoundSerializer, SampleSet, SampleType, vec2Serializer } from '@osucad/core';
+import { Vec2, Vec2Serializer } from '@osucad/framework';
 import { BooleanSerializer, nullableDescriptor, NullableSerializer, Uint8Serializer } from '@osucad/serialization';
-import { Vec2, Vec2Serializer } from 'osucad-framework';
 
 import { Color } from 'pixi.js';
 import { OsuHitWindows } from './OsuHitWindows';

@@ -1,9 +1,9 @@
-import type { CarouselBeatmapInfo } from '@osucad/common';
+import type { CarouselBeatmapInfo } from '@osucad/core';
 import type {
   Bindable,
   ReadonlyDependencyContainer,
-} from 'osucad-framework';
-import { BackgroundScreen } from '@osucad/common';
+} from '@osucad/framework';
+import { BackgroundScreen } from '@osucad/core';
 import {
   Anchor,
   Axes,
@@ -13,7 +13,7 @@ import {
   EasingFunction,
   FillMode,
   MaskingContainer,
-} from 'osucad-framework';
+} from '@osucad/framework';
 import { BlurFilter } from 'pixi.js';
 
 export class HomeScreenBackground extends BackgroundScreen {

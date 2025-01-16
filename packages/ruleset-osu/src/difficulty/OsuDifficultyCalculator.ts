@@ -1,6 +1,6 @@
-import type { Beatmap, DifficultyAttributes, Skill } from '@osucad/common';
+import type { Beatmap, DifficultyAttributes, Skill } from '@osucad/core';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
-import { BeatmapDifficultyInfo, DifficultyCalculator, HitResult } from '@osucad/common';
+import { BeatmapDifficultyInfo, DifficultyCalculator, HitResult } from '@osucad/core';
 import { HitCircle } from '../hitObjects/HitCircle';
 import { OsuHitWindows } from '../hitObjects/OsuHitWindows';
 import { Slider } from '../hitObjects/Slider';

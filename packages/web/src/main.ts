@@ -1,4 +1,4 @@
-import { WebGameHost } from 'osucad-framework';
+import { WebGameHost } from '@osucad/framework';
 import { OsucadWebGame } from './OsucadWebGame';
 
 const host = new WebGameHost('osucad', { friendlyGameName: 'osucad' });

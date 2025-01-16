@@ -1,7 +1,7 @@
-import type { Bindable, Drawable, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyBindingReleaseEvent } from 'osucad-framework';
-import { EditorAction, OsucadColors, ToolbarToggleButton } from '@osucad/common';
+import type { Bindable, Drawable, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyBindingReleaseEvent } from '@osucad/framework';
+import { EditorAction, OsucadColors, ToolbarToggleButton } from '@osucad/core';
+import { Anchor, Axes, DrawableSprite } from '@osucad/framework';
 import { getIcon } from '@osucad/resources';
-import { Anchor, Axes, DrawableSprite } from 'osucad-framework';
 import { GridSizeButton } from './GridSizeButton';
 
 export class GridSnapToggleButton extends ToolbarToggleButton implements IKeyBindingHandler<EditorAction> {

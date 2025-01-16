@@ -1,5 +1,5 @@
-import type { ISkinComponentLookup, StableSkin } from '@osucad/common';
-import type { Drawable } from 'osucad-framework';
+import type { ISkinComponentLookup, StableSkin } from '@osucad/core';
+import type { Drawable } from '@osucad/framework';
 import { OsuSkinComponentLookup } from './OsuSkinComponentLookup';
 import { OsuSkinComponents } from './OsuSkinComponents';
 import { StableApproachCircle } from './StableApproachCircle';

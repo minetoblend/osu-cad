@@ -1,8 +1,8 @@
-import type { EditorSafeArea, HitObject, IComposeTool } from '@osucad/common';
-import type { ReadonlyDependencyContainer } from 'osucad-framework';
+import type { EditorSafeArea, HitObject, IComposeTool } from '@osucad/core';
+import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import type { SnapResult } from './IPositionSnapProvider';
-import { Additions, ControlPointInfo, EditorClock, HitObjectComposer, OsucadColors } from '@osucad/common';
-import { Anchor, Axes, BindableBoolean, Container, Direction, EasingFunction, FastRoundedBox, FillDirection, FillFlowContainer, provide, resolved, Vec2 } from 'osucad-framework';
+import { Additions, ControlPointInfo, EditorClock, HitObjectComposer, OsucadColors } from '@osucad/core';
+import { Anchor, Axes, BindableBoolean, Container, Direction, EasingFunction, FastRoundedBox, FillDirection, FillFlowContainer, provide, resolved, Vec2 } from '@osucad/framework';
 import { Matrix } from 'pixi.js';
 import { HitCircle } from '../hitObjects/HitCircle';
 import { Slider } from '../hitObjects/Slider';

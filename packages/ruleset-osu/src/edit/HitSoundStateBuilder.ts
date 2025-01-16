@@ -1,5 +1,5 @@
-import type { HitSound, SampleSet } from '@osucad/common';
-import { Additions, TernaryState } from '@osucad/common';
+import type { HitSound, SampleSet } from '@osucad/core';
+import { Additions, TernaryState } from '@osucad/core';
 
 export class HitSoundStateBuilder {
   #count = 0;

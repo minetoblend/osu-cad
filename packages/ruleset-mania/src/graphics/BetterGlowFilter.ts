@@ -1,5 +1,5 @@
 import type { ColorSource, FilterSystem, RenderSurface } from 'pixi.js';
-import { BlurFilter } from 'osucad-framework';
+import { BlurFilter } from '@osucad/framework';
 import { Color, Filter, GlProgram, Texture, TexturePool } from 'pixi.js';
 import { vertex } from 'pixi-filters';
 import fragment from './glow-blend.frag?raw';

@@ -1,7 +1,7 @@
-import type { ReadonlyDependencyContainer, ValueChangedEvent } from 'osucad-framework';
+import type { ReadonlyDependencyContainer, ValueChangedEvent } from '@osucad/framework';
 import type { ManiaHitObject } from '../ManiaHitObject';
-import { ArmedState, DrawableHitObject, IScrollingInfo, ScrollingDirection } from '@osucad/common';
-import { Anchor, Axes, Bindable, EasingFunction, resolved } from 'osucad-framework';
+import { ArmedState, DrawableHitObject, IScrollingInfo, ScrollingDirection } from '@osucad/core';
+import { Anchor, Axes, Bindable, EasingFunction, resolved } from '@osucad/framework';
 import { BindableManiaAction, ManiaAction } from '../../ui/ManiaAction';
 import { ManiaPlayfield } from '../../ui/ManiaPlayfield';
 

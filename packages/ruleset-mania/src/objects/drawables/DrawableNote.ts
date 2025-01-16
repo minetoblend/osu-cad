@@ -1,7 +1,7 @@
-import type { Drawable, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer, ValueChangedEvent } from 'osucad-framework';
+import type { Drawable, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer, ValueChangedEvent } from '@osucad/framework';
 import type { Note } from '../Note';
-import { HitResult, ScrollingDirection, SkinnableDrawable } from '@osucad/common';
-import { Anchor, Axes } from 'osucad-framework';
+import { HitResult, ScrollingDirection, SkinnableDrawable } from '@osucad/core';
+import { Anchor, Axes } from '@osucad/framework';
 import { DefaultNotePiece } from '../../skinning/default/DefaultNotePiece';
 import { ManiaSkinComponentLookup } from '../../skinning/ManiaSkinComponentLookup';
 import { ManiaSkinComponents } from '../../skinning/ManiaSkinComponents';

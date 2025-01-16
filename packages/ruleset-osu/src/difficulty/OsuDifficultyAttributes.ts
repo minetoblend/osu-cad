@@ -1,4 +1,4 @@
-import { DifficultyAttributes } from '@osucad/common';
+import { DifficultyAttributes } from '@osucad/core';
 
 export class OsuDifficultyAttributes extends DifficultyAttributes {
   aimDifficulty: number = 0;

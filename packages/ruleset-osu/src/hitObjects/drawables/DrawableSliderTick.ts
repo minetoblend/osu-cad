@@ -1,8 +1,8 @@
-import type { HitObjectLifetimeEntry } from '@osucad/common';
+import type { HitObjectLifetimeEntry } from '@osucad/core';
 import type { SliderTick } from '../SliderTick';
 import type { DrawableSlider } from './DrawableSlider';
-import { SkinnableDrawable } from '@osucad/common';
-import { Anchor, EasingFunction, type ReadonlyDependencyContainer } from 'osucad-framework';
+import { SkinnableDrawable } from '@osucad/core';
+import { Anchor, EasingFunction, type ReadonlyDependencyContainer } from '@osucad/framework';
 import { OsuSkinComponentLookup } from '../../skinning/stable/OsuSkinComponentLookup';
 import { OsuHitObject } from '../OsuHitObject';
 import { DrawableOsuHitObject } from './DrawableOsuHitObject';

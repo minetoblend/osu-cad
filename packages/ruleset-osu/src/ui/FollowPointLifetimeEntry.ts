@@ -1,6 +1,6 @@
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
-import { LifetimeEntry } from '@osucad/common';
-import { Action } from 'osucad-framework';
+import { LifetimeEntry } from '@osucad/core';
+import { Action } from '@osucad/framework';
 import { Spinner } from '../hitObjects/Spinner';
 import { FollowPointConnection } from './FollowPointConnection';
 

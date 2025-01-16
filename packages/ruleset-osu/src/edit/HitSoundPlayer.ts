@@ -1,7 +1,7 @@
-import type { EditorClock, HitObject, HitSample, LifetimeEntry } from '@osucad/common';
-import type { ReadonlyDependencyContainer, SamplePlayback } from 'osucad-framework';
-import { AudioMixer, EditorBeatmap, HitObjectLifetimeEntry, ISkinSource, LifetimeBoundaryCrossingDirection, LifetimeBoundaryKind, LifetimeEntryManager, OsucadConfigManager, OsucadSettings, PlayfieldClock, SampleType } from '@osucad/common';
-import { Action, BindableNumber, Component, FramedClock, OffsetClock, resolved } from 'osucad-framework';
+import type { EditorClock, HitObject, HitSample, LifetimeEntry } from '@osucad/core';
+import type { ReadonlyDependencyContainer, SamplePlayback } from '@osucad/framework';
+import { AudioMixer, EditorBeatmap, HitObjectLifetimeEntry, ISkinSource, LifetimeBoundaryCrossingDirection, LifetimeBoundaryKind, LifetimeEntryManager, OsucadConfigManager, OsucadSettings, PlayfieldClock, SampleType } from '@osucad/core';
+import { Action, BindableNumber, Component, FramedClock, OffsetClock, resolved } from '@osucad/framework';
 import { OsuHitObject } from '../hitObjects/OsuHitObject';
 
 export class HitSoundPlayer extends Component {

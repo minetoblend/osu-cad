@@ -1,7 +1,7 @@
-import type { Bindable, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { Bindable, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { OsuHitObject } from '../hitObjects/OsuHitObject';
-import { PooledDrawableWithLifetimeContainer } from '@osucad/common';
-import { DrawablePool, SortedList } from 'osucad-framework';
+import { PooledDrawableWithLifetimeContainer } from '@osucad/core';
+import { DrawablePool, SortedList } from '@osucad/framework';
 import { FollowPoint } from './FollowPoint';
 import { FollowPointConnection } from './FollowPointConnection';
 import { FollowPointLifetimeEntry } from './FollowPointLifetimeEntry';

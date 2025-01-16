@@ -1,8 +1,8 @@
-import type { HitObjectSelectionEvent } from '@osucad/common';
+import type { HitObjectSelectionEvent } from '@osucad/core';
 import type { Container } from 'pixi.js';
 import type { Slider } from '../Slider';
-import { animate, DrawableHitObject, HitObjectSelectionManager, ISkinSource, SkinConfig } from '@osucad/common';
-import { Bindable, Drawable, PIXIContainer, type ReadonlyDependencyContainer, resolved, Vec2 } from 'osucad-framework';
+import { animate, DrawableHitObject, HitObjectSelectionManager, ISkinSource, SkinConfig } from '@osucad/core';
+import { Bindable, Drawable, PIXIContainer, type ReadonlyDependencyContainer, resolved, Vec2 } from '@osucad/framework';
 
 import { AlphaFilter, Color, CustomRenderPipe, Mesh, MeshGeometry } from 'pixi.js';
 import { OsuSelectionManager } from '../../edit/OsuSelectionManager';

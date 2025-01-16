@@ -1,6 +1,6 @@
-import type { CheckMetadata, HitObject, Issue, VerifierBeatmap } from '@osucad/common';
+import type { CheckMetadata, HitObject, Issue, VerifierBeatmap } from '@osucad/core';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
-import { avgBy, BeatmapCheck, DrawableTimestamp, HitObjectTimestamp, IssueTemplate, maxOf, trimIndent, zipWithNext } from '@osucad/common';
+import { avgBy, BeatmapCheck, DrawableTimestamp, HitObjectTimestamp, IssueTemplate, maxOf, trimIndent, zipWithNext } from '@osucad/core';
 import { Slider } from '../../hitObjects/Slider';
 import { Spinner } from '../../hitObjects/Spinner';
 

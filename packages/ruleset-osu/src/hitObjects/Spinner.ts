@@ -1,8 +1,8 @@
-import type { ControlPointInfo, IHasDuration } from '@osucad/common';
+import type { ControlPointInfo, IHasDuration } from '@osucad/core';
 import type { ClassSerialDescriptorBuilder, CompositeDecoder, CompositeEncoder } from '@osucad/serialization';
-import { HitSample, polymorphicHitObjectSerializers, SampleSet, SampleType } from '@osucad/common';
+import { HitSample, polymorphicHitObjectSerializers, SampleSet, SampleType } from '@osucad/core';
+import { Vec2 } from '@osucad/framework';
 import { Float64Serializer } from '@osucad/serialization';
-import { Vec2 } from 'osucad-framework';
 import { OsuHitObject, OsuHitObjectSerializer } from './OsuHitObject';
 
 export class Spinner extends OsuHitObject implements IHasDuration {

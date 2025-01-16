@@ -1,7 +1,7 @@
-import type { Bindable, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { Bindable, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { Color } from 'pixi.js';
-import { DrawableHitObject, ISkinSource } from '@osucad/common';
-import { Anchor, Axes, CompositeDrawable, DrawableSprite, resolved } from 'osucad-framework';
+import { DrawableHitObject, ISkinSource } from '@osucad/core';
+import { Anchor, Axes, CompositeDrawable, DrawableSprite, resolved } from '@osucad/framework';
 
 export class StableApproachCircle extends CompositeDrawable {
   constructor() {

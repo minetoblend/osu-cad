@@ -1,9 +1,9 @@
-import type { OperatorContext } from '@osucad/common';
-import type { ReadonlyDependencyContainer } from 'osucad-framework';
+import type { OperatorContext } from '@osucad/core';
+import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import type { Slider } from '../../hitObjects/Slider';
-import { EditorClock, FloatOperatorProperty, HitObjectSelectionManager, Operator } from '@osucad/common';
-import { BindableNumber, resolved } from 'osucad-framework';
+import { EditorClock, FloatOperatorProperty, HitObjectSelectionManager, Operator } from '@osucad/core';
+import { BindableNumber, resolved } from '@osucad/framework';
 import { HitCircle } from '../../hitObjects/HitCircle';
 
 export class ConvertToStreamOperator extends Operator<OsuHitObject> {

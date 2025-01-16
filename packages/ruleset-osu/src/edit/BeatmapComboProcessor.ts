@@ -1,5 +1,5 @@
-import type { HitObject } from '@osucad/common';
-import { BeatmapProcessor, hasComboInformation } from '@osucad/common';
+import type { HitObject } from '@osucad/core';
+import { BeatmapProcessor, hasComboInformation } from '@osucad/core';
 import { OsuHitObject } from '../hitObjects/OsuHitObject';
 import { Spinner } from '../hitObjects/Spinner';
 

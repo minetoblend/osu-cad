@@ -1,5 +1,5 @@
-import type { StableSkin } from '@osucad/common';
-import { SkinTransformer } from '@osucad/common';
+import type { StableSkin } from '@osucad/core';
+import { SkinTransformer } from '@osucad/core';
 
 export abstract class StableSkinTransformer extends SkinTransformer {
   protected constructor(source: StableSkin) {

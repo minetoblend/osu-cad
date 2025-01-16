@@ -1,4 +1,4 @@
-import type { Vec2 } from 'osucad-framework';
+import type { Vec2 } from '@osucad/framework';
 import { MeshGeometry } from 'pixi.js';
 import { GeometryBuilder } from './GeometryBuilder';
 

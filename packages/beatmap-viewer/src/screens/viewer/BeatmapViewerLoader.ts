@@ -1,9 +1,9 @@
-import type { EditorBeatmap } from '@osucad/common';
-import type { ScreenTransitionEvent } from 'osucad-framework';
-import { OsucadScreen } from '@osucad/common';
-import { EditorLoadingSpinner } from '@osucad/editor/editor/EditorLoadingSpinner';
-import { Axes } from 'osucad-framework';
+import type { EditorBeatmap } from '@osucad/core';
+import type { ScreenTransitionEvent } from '@osucad/framework';
+import { OsucadScreen } from '@osucad/core';
+import { Axes } from '@osucad/framework';
 import { BeatmapViewer } from './BeatmapViewer';
+import { EditorLoadingSpinner } from './EditorLoadingSpinner';
 
 export class BeatmapViewerLoader extends OsucadScreen {
   constructor(

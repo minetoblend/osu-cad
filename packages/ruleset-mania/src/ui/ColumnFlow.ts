@@ -1,7 +1,7 @@
-import type { Drawable, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { Drawable, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { StageDefinition } from '../beatmaps/StageDefinition';
-import { ISkinSource } from '@osucad/common';
-import { Axes, CompositeDrawable, Container, FillDirection, FillFlowContainer, MarginPadding } from 'osucad-framework';
+import { ISkinSource } from '@osucad/core';
+import { Axes, CompositeDrawable, Container, FillDirection, FillFlowContainer, MarginPadding } from '@osucad/framework';
 import { LegacyManiaSkinConfigurationLookups } from '../skinning/LegacyManiaSkinConfigurationLookups';
 import { ManiaSkinConfigurationLookup } from '../skinning/ManiaSkinConfigurationLookup';
 import { Column } from './Column';

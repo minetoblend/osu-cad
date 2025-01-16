@@ -1,5 +1,5 @@
-import type { HitWindows, IBarLine } from '@osucad/common';
-import { EmptyHitWindows } from '@osucad/common';
+import type { HitWindows, IBarLine } from '@osucad/core';
+import { EmptyHitWindows } from '@osucad/core';
 import { ManiaHitObject } from './ManiaHitObject';
 
 export class BarLine extends ManiaHitObject implements IBarLine {

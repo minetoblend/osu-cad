@@ -1,7 +1,7 @@
-import type { Beatmap, BeatmapConverter, BeatmapProcessor, DifficultyCalculator, DrawableRuleset, EditorRuleset, HitObject, HitObjectComposer, IBeatmap, ISkin, NoArgsConstructor, SkinTransformer } from '@osucad/common';
-import type { IKeyBinding } from 'osucad-framework';
-import { Ruleset, StableSkin } from '@osucad/common';
-import { InputKey, KeyBinding, KeyCombination } from 'osucad-framework';
+import type { Beatmap, BeatmapConverter, BeatmapProcessor, DifficultyCalculator, DrawableRuleset, EditorRuleset, HitObject, HitObjectComposer, IBeatmap, ISkin, NoArgsConstructor, SkinTransformer } from '@osucad/core';
+import type { IKeyBinding } from '@osucad/framework';
+import { Ruleset, StableSkin } from '@osucad/core';
+import { InputKey, KeyBinding, KeyCombination } from '@osucad/framework';
 import { OsuBeatmapConverter } from './beatmaps/OsuBeatmapConverter';
 import { ComboProcessor } from './ComboProcessor';
 import { OsuDifficultyCalculator } from './difficulty/OsuDifficultyCalculator';

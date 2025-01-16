@@ -1,3 +1,3 @@
-import { HitWindows } from '@osucad/common';
+import { HitWindows } from '@osucad/core';
 
 export class ManiaHitWindows extends HitWindows {}

@@ -1,7 +1,7 @@
-import type { Bindable, IKeyBindingHandler, KeyBindingAction, KeyDownEvent, ReadonlyDependencyContainer } from 'osucad-framework';
+import type { Bindable, IKeyBindingHandler, KeyBindingAction, KeyDownEvent, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { IPositionSnapProvider } from './IPositionSnapProvider';
-import { EditorAction, IBeatmap } from '@osucad/common';
-import { almostBigger, BindableBoolean, BindableNumber, Cached, CompositeDrawable, definitelyBigger, Key, resolved, Vec2 } from 'osucad-framework';
+import { EditorAction, IBeatmap } from '@osucad/core';
+import { almostBigger, BindableBoolean, BindableNumber, Cached, CompositeDrawable, definitelyBigger, Key, resolved, Vec2 } from '@osucad/framework';
 import { Graphics } from 'pixi.js';
 import { SnapResult } from './IPositionSnapProvider';
 

@@ -1,6 +1,6 @@
-import type { ClickEvent } from 'osucad-framework';
-import { EditorButton, TernaryState } from '@osucad/common';
-import { Bindable } from 'osucad-framework';
+import type { ClickEvent } from '@osucad/framework';
+import { EditorButton, TernaryState } from '@osucad/core';
+import { Bindable } from '@osucad/framework';
 
 export abstract class TernaryStateToggleButton extends EditorButton {
   readonly ternaryState = new Bindable(TernaryState.Inactive);

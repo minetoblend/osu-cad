@@ -1,4 +1,4 @@
-import type { DrawableHitObject, HitObjectContainer } from '@osucad/common';
+import type { DrawableHitObject, HitObjectContainer } from '@osucad/core';
 import type { DrawableManiaHitObject } from '../objects/drawables/DrawableManiaHitObject';
 
 export class OrderedHitPolicy {

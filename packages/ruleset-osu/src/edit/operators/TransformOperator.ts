@@ -1,8 +1,8 @@
-import type { OperatorContext, OperatorOptions } from '@osucad/common';
+import type { OperatorContext, OperatorOptions } from '@osucad/core';
 import type { Matrix } from 'pixi.js';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
-import { EditorClock, Operator } from '@osucad/common';
-import { resolved, Vec2 } from 'osucad-framework';
+import { EditorClock, Operator } from '@osucad/core';
+import { resolved, Vec2 } from '@osucad/framework';
 import { HitCircle } from '../../hitObjects/HitCircle';
 import { Slider } from '../../hitObjects/Slider';
 import { Spinner } from '../../hitObjects/Spinner';

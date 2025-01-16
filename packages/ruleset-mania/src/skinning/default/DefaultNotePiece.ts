@@ -1,6 +1,6 @@
-import type { ReadonlyDependencyContainer, ValueChangedEvent } from 'osucad-framework';
-import { DrawableHitObject, IScrollingInfo, ScrollingDirection } from '@osucad/common';
-import { Anchor, Axes, Bindable, Box, ColorUtils, MaskingContainer } from 'osucad-framework';
+import type { ReadonlyDependencyContainer, ValueChangedEvent } from '@osucad/framework';
+import { DrawableHitObject, IScrollingInfo, ScrollingDirection } from '@osucad/core';
+import { Anchor, Axes, Bindable, Box, ColorUtils, MaskingContainer } from '@osucad/framework';
 import { Color } from 'pixi.js';
 
 export class DefaultNotePiece extends MaskingContainer {

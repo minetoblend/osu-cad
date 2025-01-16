@@ -1,8 +1,8 @@
-import type { ReadonlyDependencyContainer } from 'osucad-framework';
+import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import type { Color } from 'pixi.js';
 import type { OsuTimelineHitObjectBlueprint } from './OsuTimelineHitObjectBlueprint';
-import { HitObjectSelectionManager, ISkinSource } from '@osucad/common';
-import { Anchor, Axes, Bindable, BindableBoolean, CompositeDrawable, DrawableSprite, resolved } from 'osucad-framework';
+import { HitObjectSelectionManager, ISkinSource } from '@osucad/core';
+import { Anchor, Axes, Bindable, BindableBoolean, CompositeDrawable, DrawableSprite, resolved } from '@osucad/framework';
 import { OsuSelectionManager } from '../OsuSelectionManager';
 
 export class TimelineHitObjectCircle extends CompositeDrawable {

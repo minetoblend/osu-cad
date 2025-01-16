@@ -1,7 +1,7 @@
-import type { CheckMetadata, ControlPoint, Issue, VerifierBeatmap } from '@osucad/common';
+import type { CheckMetadata, ControlPoint, Issue, VerifierBeatmap } from '@osucad/core';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
-import { BeatmapCheck, IssueTemplate, trimIndent, zipWithNext } from '@osucad/common';
-import { almostEquals } from 'osucad-framework';
+import { BeatmapCheck, IssueTemplate, trimIndent, zipWithNext } from '@osucad/core';
+import { almostEquals } from '@osucad/framework';
 
 // Ported from https://github.com/Naxesss/MapsetVerifier/blob/main/src/Checks/AllModes/Timing/CheckConcurrentLines.cs
 export class CheckConcurrentControlPoints extends BeatmapCheck<OsuHitObject> {
