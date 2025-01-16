@@ -1,7 +1,7 @@
 {
   "name": "serialization",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/common/src",
+  "sourceRoot": "packages/serialization/src",
   "projectType": "library",
   "tags": [],
   "targets": {
@@ -9,10 +9,10 @@
       "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/packages/common",
-        "main": "packages/common/src/index.ts",
-        "tsConfig": "packages/common/tsconfig.lib.json",
-        "assets": ["packages/common/*.md"]
+        "outputPath": "dist/packages/serialization",
+        "main": "packages/serialization/src/index.ts",
+        "tsConfig": "packages/serialization/tsconfig.lib.json",
+        "assets": ["packages/serialization/*.md"]
       }
     }
   }
