@@ -26,7 +26,7 @@
     "version": {
       "generatorOptions": {
         "packageRoot": "dist/packages/{projectName}",
-        "currentVersionResolver": "registry"
+        "currentVersionResolver": "git-tag"
       }
     }
   },
