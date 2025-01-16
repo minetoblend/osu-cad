@@ -105,4 +105,18 @@ export class Beatmap<T extends HitObject = HitObject> extends SharedStaticObject
   clone(): Beatmap<T> {
     return Object.assign(new Beatmap(), this);
   }
+
+  override createSummary() {
+    return {
+      beatmapInfo: this.beatmapInfo.createSummary(),
+      hitObjects: this.hitObjects.createSummary(),
+      controlPoints: this.controlPoints.createSummary(),
+    };
+  }
+
+  override initializeFromSummary(summary: any): void {
+    this.beatmapInfo.initializeFromSummary(summary.beatmapInfo);
+    this.hitObjects.initializeFromSummary(summary.hitObjects);
+    this.controlPoints.initializeFromSummary(summary.controlPoints);
+  }
 }

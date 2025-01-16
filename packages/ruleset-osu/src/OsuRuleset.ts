@@ -1,6 +1,6 @@
-import type { Beatmap, BeatmapConverter, BeatmapProcessor, DifficultyCalculator, DrawableRuleset, EditorRuleset, HitObjectComposer, IBeatmap, ISkin, SkinTransformer } from '@osucad/common';
+import type { Beatmap, BeatmapConverter, BeatmapProcessor, DifficultyCalculator, DrawableRuleset, EditorRuleset, HitObject, HitObjectComposer, IBeatmap, ISkin, NoArgsConstructor, SkinTransformer } from '@osucad/common';
 import type { IKeyBinding } from 'osucad-framework';
-import { Ruleset, RulesetInfo, StableSkin } from '@osucad/common';
+import { Ruleset, StableSkin } from '@osucad/common';
 import { InputKey, KeyBinding, KeyCombination } from 'osucad-framework';
 import { OsuBeatmapConverter } from './beatmaps/OsuBeatmapConverter';
 import { ComboProcessor } from './ComboProcessor';
@@ -9,6 +9,9 @@ import { DrawableOsuEditorRuleset } from './DrawableOsuEditorRuleset';
 import { DrawableOsuRuleset } from './DrawableOsuRuleset';
 import { BeatmapComboProcessor } from './edit/BeatmapComboProcessor';
 import { OsuHitObjectComposer } from './edit/OsuHitObjectComposer';
+import { HitCircle } from './hitObjects/HitCircle';
+import { Slider } from './hitObjects/Slider';
+import { Spinner } from './hitObjects/Spinner';
 import { OsuAction } from './OsuAction';
 import { OsuEditorRuleset } from './OsuEditorRuleset';
 import { StableOsuSkinTransformer } from './skinning/stable/StableOsuSkinTransformer';
@@ -16,8 +19,6 @@ import { StackingProcessor } from './StackingProcessor';
 import { OsuBeatmapVerifier } from './verify/OsuBeatmapVerifier';
 
 export class OsuRuleset extends Ruleset {
-  static rulesetInfo = new RulesetInfo('osu', 'osu', OsuRuleset);
-
   override get legacyId(): number | null {
     return 0;
   }
@@ -79,5 +80,9 @@ export class OsuRuleset extends Ruleset {
     return [
       new BeatmapComboProcessor(),
     ];
+  }
+
+  override getHitObjectClasses(): Record<string, NoArgsConstructor<HitObject>> {
+    return { HitCircle, Slider, Spinner };
   }
 }

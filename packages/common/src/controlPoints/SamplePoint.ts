@@ -4,9 +4,9 @@ import { ControlPoint } from './ControlPoint';
 
 export class SamplePoint extends ControlPoint {
   constructor(
-    time: number,
-    volume: number,
-    sampleSet: SampleSet,
+    time: number = 0,
+    volume: number = 100,
+    sampleSet: SampleSet = SampleSet.Auto,
     sampleIndex: number = 0,
   ) {
     super(time);

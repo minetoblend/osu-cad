@@ -1,20 +1,26 @@
 import type { IComparer } from 'osucad-framework';
 import type { Constructor } from '../../../common/src/utils/Constructor';
+import type { ISummary } from './ISummary';
 import type { MutationContext } from './MutationContext';
+import type { ObjectSummary } from './SharedObject';
 import { Action, SortedList } from 'osucad-framework';
 import { SharedStructure } from './SharedStructure';
 
-export type SortedListMutation<T extends SharedStructure<any>> =
+export type SortedListMutation =
   {
     op: 'add';
-    value: T;
+    value: ObjectSummary;
   }
   | {
     op: 'remove';
     id: string;
   };
 
-export class SharedSortedList<T extends SharedStructure<any>> extends SharedStructure<SortedListMutation<T>> {
+export interface SortedListSummary extends ISummary {
+  items: any[];
+}
+
+export abstract class SharedSortedList<T extends SharedStructure<any>> extends SharedStructure<SortedListMutation, SortedListSummary> {
   readonly #idMap = new Map<string, T>();
 
   readonly #list!: SortedList<T>;
@@ -25,7 +31,7 @@ export class SharedSortedList<T extends SharedStructure<any>> extends SharedStru
 
   readonly sorted = new Action();
 
-  constructor(readonly comparer: IComparer<T>) {
+  protected constructor(readonly comparer: IComparer<T>) {
     super();
 
     this.#list = new SortedList(comparer);
@@ -35,11 +41,13 @@ export class SharedSortedList<T extends SharedStructure<any>> extends SharedStru
     return this.#list.length;
   }
 
-  override handle(mutation: SortedListMutation<T>, ctx: MutationContext): void | SortedListMutation<T> | null {
+  override handle(mutation: SortedListMutation, ctx: MutationContext): void | SortedListMutation | null {
     // TODO: handle id conflicts
     switch (mutation.op) {
-      case 'add':
-        if (this.#add(mutation.value)) {
+      case 'add': {
+        const value = this.createChildFromSummary(mutation.value);
+
+        if (this.#add(value)) {
           return {
             op: 'remove',
             id: mutation.value.id,
@@ -47,6 +55,7 @@ export class SharedSortedList<T extends SharedStructure<any>> extends SharedStru
         }
 
         return null;
+      }
       case 'remove': {
         const value = this.#idMap.get(mutation.id);
         if (value) {
@@ -54,7 +63,7 @@ export class SharedSortedList<T extends SharedStructure<any>> extends SharedStru
 
           return {
             op: 'add',
-            value,
+            value: this.createChildSummary(value),
           };
         }
       }
@@ -98,7 +107,7 @@ export class SharedSortedList<T extends SharedStructure<any>> extends SharedStru
 
     this.submitMutation({
       op: 'add',
-      value,
+      value: this.createChildSummary(value),
     }, {
       op: 'remove',
       id: value.id,
@@ -129,7 +138,7 @@ export class SharedSortedList<T extends SharedStructure<any>> extends SharedStru
       id: value.id,
     }, {
       op: 'add',
-      value,
+      value: this.createChildSummary(value),
     });
 
     return true;
@@ -179,4 +188,24 @@ export class SharedSortedList<T extends SharedStructure<any>> extends SharedStru
   ofType<U extends T>(type: Constructor<U>): U[] {
     return this.items.filter(it => it instanceof type) as U[];
   }
+
+  override createSummary(): SortedListSummary {
+    return {
+      id: this.id,
+      items: this.items.map(child => this.createChildSummary(child)),
+    };
+  }
+
+  protected createChildSummary(child: T) {
+    return child.createSummary();
+  }
+
+  override initializeFromSummary(summary: SortedListSummary) {
+    this.id = summary.id;
+    for (const item of summary.items) {
+      this.add(this.createChildSummary(item));
+    }
+  }
+
+  protected abstract createChildFromSummary(summary: any): T;
 }

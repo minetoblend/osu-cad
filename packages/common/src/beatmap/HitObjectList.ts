@@ -3,6 +3,7 @@ import type { Beatmap } from './Beatmap';
 import { SharedSortedList } from '@osucad/multiplayer';
 import { Action } from 'osucad-framework';
 import { HitObject } from '../hitObjects/HitObject';
+import { RulesetStore } from '../rulesets/RulesetStore';
 
 export class HitObjectList<T extends HitObject = HitObject> extends SharedSortedList<T> {
   constructor(readonly beatmap: Beatmap<T>) {
@@ -55,5 +56,24 @@ export class HitObjectList<T extends HitObject = HitObject> extends SharedSorted
 
   protected applyDefaultsToHitObject(hitObject: HitObject) {
     hitObject.applyDefaults(this.beatmap.controlPoints, this.beatmap.difficulty);
+  }
+
+  protected override createChildSummary(child: T): any {
+    return {
+      type: (child.constructor as any).__typeName__,
+      data: super.createChildSummary(child),
+    };
+  }
+
+  protected override createChildFromSummary(summary: any): T {
+    const ctor = RulesetStore.HIT_OBJECT_CLASSES[summary.type];
+    if (!ctor)
+      throw new Error(`HitObject type ${summary.type} not found`);
+
+    // eslint-disable-next-line new-cap
+    const hitObject = new ctor();
+    hitObject.initializeFromSummary(summary.data);
+
+    return hitObject as T;
   }
 }

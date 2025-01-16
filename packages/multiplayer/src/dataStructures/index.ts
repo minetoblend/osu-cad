@@ -1,3 +1,5 @@
+export * from './ISerializer';
+export * from './ISummary';
 export * from './SharedObject';
 export * from './SharedProperty';
 export * from './SharedSortedList';

@@ -1,9 +1,10 @@
+import type { ISummary } from './ISummary';
 import type { MutationContext } from './MutationContext';
 import type { Transaction, TransactionEntry } from './Transaction';
 import type { UpdateHandler } from './UpdateHandler';
 import { objectId } from '../../../common/src/utils/objectId';
 
-export abstract class SharedStructure<TMutation = never> {
+export abstract class SharedStructure<TMutation = never, TSummary extends ISummary = any> {
   id = objectId();
 
   #updateHandler: UpdateHandler | null = null;
@@ -14,7 +15,8 @@ export abstract class SharedStructure<TMutation = never> {
 
   abstract handle(mutation: TMutation, ctx: MutationContext): TMutation | null | void;
 
-  ack(mutation: TMutation) {}
+  ack(mutation: TMutation) {
+  }
 
   protected submitMutation(mutation: TMutation, undoMutation?: TMutation, key?: string): TransactionEntry<TMutation> | undefined {
     return this.#updateHandler?.submit(this.id, mutation, undoMutation, key);
@@ -54,4 +56,8 @@ export abstract class SharedStructure<TMutation = never> {
   get childObjects(): readonly SharedStructure<any>[] {
     return [];
   }
+
+  abstract createSummary(): TSummary;
+
+  abstract initializeFromSummary(summary: TSummary): void;
 }

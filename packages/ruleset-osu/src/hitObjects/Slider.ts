@@ -1,8 +1,8 @@
 import type { BeatmapDifficultyInfo, ControlPointInfo, HitSound, IHasRepeats, IHasSliderVelocity, PathPoint } from '@osucad/common';
-import type { SharedStructure } from '@osucad/multiplayer';
+import type { ObjectSummary, SharedStructure } from '@osucad/multiplayer';
 import type { ClassSerialDescriptorBuilder, CompositeDecoder, CompositeEncoder } from '@osucad/serialization';
 import type { Bindable, IVec2, ReadonlyBindable, ValueChangedEvent } from 'osucad-framework';
-import { Additions, HitSample, HitSoundSerializer, PathPointSerialDescriptor, PathPointSerializer, PathType, polymorphicHitObjectSerializers, SampleSet, SampleType, SliderPath } from '@osucad/common';
+import { Additions, arraySerializer, HitSample, hitsoundSerializer, HitSoundSerializer, PathPointSerialDescriptor, PathPointSerializer, PathType, polymorphicHitObjectSerializers, SampleSet, SampleType, SliderPath } from '@osucad/common';
 import { Float32Serializer, listSerialDescriptor, ListSerializer, NullableSerializer, Uint16Serializer } from '@osucad/serialization';
 import { CachedValue, Vec2 } from 'osucad-framework';
 import { OsuHitObject, OsuHitObjectSerializer } from './OsuHitObject';
@@ -288,7 +288,7 @@ export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepe
       this.tailCircle.position = this.endPosition;
   }
 
-  #hitSounds = this.property<readonly HitSound[]>('hitSounds', []);
+  #hitSounds = this.property<readonly HitSound[]>('hitSounds', [], arraySerializer(hitsoundSerializer));
 
   get hitSoundsBindable() {
     return this.#hitSounds.bindable;
@@ -505,6 +505,26 @@ export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepe
     }
 
     this.expectedDistance = Math.max(0, this.sliderVelocity * (time - this.startTime));
+  }
+
+  override createSummary(): ObjectSummary {
+    const { id, data } = super.createSummary();
+
+    return {
+      id,
+      data: {
+        ...data,
+        path: this.path.createSummary(),
+      },
+    };
+  }
+
+  override initializeFromSummary(summary: ObjectSummary) {
+    const { id, data } = summary;
+    const { path, ...rest } = data;
+    super.initializeFromSummary({ id, data: rest });
+
+    this.path.initializeFromSummary(path);
   }
 }
 

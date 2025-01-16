@@ -1,4 +1,6 @@
 import type { Bindable } from 'osucad-framework';
+import type { ISerializer } from './ISerializer';
+import type { ISummary } from './ISummary';
 import type { MutationContext } from './MutationContext';
 import { MutationSource } from './MutationSource';
 import { SharedProperty } from './SharedProperty';
@@ -8,15 +10,21 @@ interface ObjectMutation {
   [key: string]: any;
 }
 
-export abstract class SharedObject extends SharedStructure<ObjectMutation> {
+export interface ObjectSummary extends ISummary {
+  data: {
+    [key: string]: any;
+  };
+}
+
+export abstract class SharedObject extends SharedStructure<ObjectMutation, ObjectSummary> {
   #properties = new Map<string, SharedProperty<any>>();
 
   protected constructor() {
     super();
   }
 
-  protected property<T>(name: string, initialValue: T | Bindable<T>) {
-    const property = new SharedProperty(this, name, initialValue);
+  protected property<T>(name: string, initialValue: T | Bindable<T>, serializer?: ISerializer<T, any>) {
+    const property = new SharedProperty(this, name, initialValue, serializer);
     this.#properties.set(name, property);
     return property;
   }
@@ -31,7 +39,7 @@ export abstract class SharedObject extends SharedStructure<ObjectMutation> {
       if (!property)
         continue;
 
-      undoMutation[key] = property.value;
+      undoMutation[key] = property.createSummary();
 
       if (this.#handleProperty(property, ctx))
         property.parse(command[key]);
@@ -78,8 +86,35 @@ export abstract class SharedObject extends SharedStructure<ObjectMutation> {
       }
 
       this.submitMutation({
-        [property.name]: property.value,
+        [property.name]: property.createSummary(),
       }, undoMutation, this.id);
+    }
+  }
+
+  override createSummary(): ObjectSummary {
+    const summary: ObjectSummary = {
+      id: this.id,
+      data: {},
+    };
+
+    for (const property of this.#properties.values())
+      summary.data[property.name] = property.createSummary();
+
+    return summary;
+  }
+
+  override initializeFromSummary(summary: ObjectSummary) {
+    this.id = summary.id;
+
+    for (const property of this.#properties.values()) {
+      if (!(property.name in summary.data)) {
+        console.warn(`Missing property "${property.name}" in summary.`, summary, this);
+        continue;
+      }
+
+      const value = summary.data[property.name];
+
+      property.parse(value);
     }
   }
 }

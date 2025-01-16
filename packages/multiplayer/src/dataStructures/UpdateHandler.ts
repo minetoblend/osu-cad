@@ -22,7 +22,7 @@ export class UpdateHandler extends Component {
 
   readonly afterRedo = new Action();
 
-  readonly commandApplied = new Action();
+  readonly commandApplied = new Action<any>();
 
   #currentTransaction = new Transaction();
 
@@ -45,7 +45,9 @@ export class UpdateHandler extends Component {
   submit(targetId: string, mutation: any, undoMutation?: any, key?: string) {
     this.onMutationSubmitted(targetId, mutation);
 
-    this.commandApplied.emit();
+    console.log(mutation, undoMutation);
+
+    this.commandApplied.emit(mutation);
 
     if (undoMutation) {
       const entry = new TransactionEntry(targetId, undoMutation);
@@ -124,11 +126,11 @@ export class UpdateHandler extends Component {
         own: true,
         version: ++this.#version,
       });
+      this.commandApplied.emit(entry.undoMutation);
+
       if (redoMutation)
         redoTransaction.addEntry(new TransactionEntry(entry.targetId, redoMutation));
     }
-
-    this.commandApplied.emit();
 
     transaction.customUndoActions.forEach(action => action());
 
@@ -158,11 +160,11 @@ export class UpdateHandler extends Component {
         own: true,
         version: ++this.#version,
       });
+      this.commandApplied.emit(entry.undoMutation);
+
       if (redoMutation)
         undoTransaction.addEntry(new TransactionEntry(entry.targetId, redoMutation));
     }
-
-    this.commandApplied.emit();
 
     if (!undoTransaction.isEmpty)
       this.#undoStack.push(undoTransaction);

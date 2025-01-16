@@ -1,3 +1,4 @@
+import type { ISummary, ObjectSummary } from '@osucad/multiplayer';
 import type { ControlPoint } from './ControlPoint';
 import { SharedStructure } from '@osucad/multiplayer';
 import { Action, almostEquals } from 'osucad-framework';
@@ -10,10 +11,20 @@ import { TimingPoint } from './TimingPoint';
 import { VolumePoint } from './VolumePoint';
 
 export type ControlPointMutation =
-  | { op: 'add'; controlPoint: ControlPoint }
+  | { op: 'add'; controlPoint: {
+    type: string;
+    data: ObjectSummary;
+  }; }
   | { op: 'remove'; id: string };
 
-export class ControlPointInfo extends SharedStructure<ControlPointMutation> {
+export interface ControlPointInfoSummary extends ISummary {
+  timingPoints: ObjectSummary[];
+  samplePoints: ObjectSummary[];
+  difficultyPoints: ObjectSummary[];
+  volumePoints: ObjectSummary[];
+}
+
+export class ControlPointInfo extends SharedStructure<ControlPointMutation, ControlPointInfoSummary> {
   timingPoints = new ControlPointList<TimingPoint>();
 
   difficultyPoints = new ControlPointList<DifficultyPoint>();
@@ -44,13 +55,34 @@ export class ControlPointInfo extends SharedStructure<ControlPointMutation> {
 
   override handle(mutation: ControlPointMutation): ControlPointMutation | null {
     switch (mutation.op) {
-      case 'add':
-        if (this.#add(mutation.controlPoint)) {
+      case 'add': {
+        let controlPoint: ControlPoint;
+        switch (mutation.controlPoint.type) {
+          case 'DifficultyPoint':
+            controlPoint = new DifficultyPoint();
+            break;
+          case 'EffectPoint':
+            controlPoint = new EffectPoint();
+            break;
+          case 'SamplePoint':
+            controlPoint = new SamplePoint();
+            break;
+          case 'VolumePoint':
+            controlPoint = new VolumePoint();
+            break;
+          default:
+            throw new Error(`Unknown control point type: ${mutation.controlPoint.type}`);
+        }
+
+        controlPoint.initializeFromSummary(mutation.controlPoint.data);
+
+        if (this.#add(controlPoint)) {
           return {
             op: 'remove',
-            id: mutation.controlPoint.id,
+            id: controlPoint.id,
           };
         }
+      }
         break;
       case 'remove':
       {
@@ -58,7 +90,10 @@ export class ControlPointInfo extends SharedStructure<ControlPointMutation> {
         if (controlPoint && this.#remove(controlPoint)) {
           return {
             op: 'add',
-            controlPoint,
+            controlPoint: {
+              type: this.getTypeName(controlPoint),
+              data: controlPoint.createSummary(),
+            },
           };
         }
       }
@@ -72,7 +107,10 @@ export class ControlPointInfo extends SharedStructure<ControlPointMutation> {
 
     this.submitMutation({
       op: 'add',
-      controlPoint,
+      controlPoint: {
+        type: this.getTypeName(controlPoint),
+        data: controlPoint.createSummary(),
+      },
     }, {
       op: 'remove',
       id: controlPoint.id,
@@ -110,6 +148,21 @@ export class ControlPointInfo extends SharedStructure<ControlPointMutation> {
     return true;
   }
 
+  protected getTypeName(controlPoint: ControlPoint) {
+    switch (controlPoint.constructor) {
+      case DifficultyPoint:
+        return 'DifficultyPoint';
+      case EffectPoint:
+        return 'EffectPoint';
+      case SamplePoint:
+        return 'SamplePoint';
+      case VolumePoint:
+        return 'VolumePoint';
+      default:
+        return 'ControlPoint';
+    }
+  }
+
   remove(controlPoint: ControlPoint): boolean {
     if (!this.#remove(controlPoint))
       return false;
@@ -119,7 +172,10 @@ export class ControlPointInfo extends SharedStructure<ControlPointMutation> {
       id: controlPoint.id,
     }, {
       op: 'add',
-      controlPoint,
+      controlPoint: {
+        type: this.getTypeName(controlPoint),
+        data: controlPoint.createSummary(),
+      },
     });
 
     return true;
@@ -237,5 +293,43 @@ export class ControlPointInfo extends SharedStructure<ControlPointMutation> {
 
   get allControlPoints(): ControlPoint[] {
     return this.controlPointLists.flatMap(it => it.items);
+  }
+
+  override createSummary(): ControlPointInfoSummary {
+    return {
+      id: this.id,
+      timingPoints: this.timingPoints.items.map(it => it.createSummary()),
+      samplePoints: this.samplePoints.items.map(it => it.createSummary()),
+      difficultyPoints: this.difficultyPoints.items.map(it => it.createSummary()),
+      volumePoints: this.volumePoints.items.map(it => it.createSummary()),
+    };
+  }
+
+  override initializeFromSummary(summary: ControlPointInfoSummary): void {
+    this.id = summary.id;
+
+    summary.timingPoints.forEach((summary) => {
+      const timingPoint = new TimingPoint();
+      timingPoint.initializeFromSummary(summary);
+      this.add(timingPoint);
+    });
+
+    summary.samplePoints.forEach((summary) => {
+      const samplePoint = new SamplePoint();
+      samplePoint.initializeFromSummary(summary);
+      this.add(samplePoint);
+    });
+
+    summary.difficultyPoints.forEach((summary) => {
+      const difficultyPoint = new DifficultyPoint();
+      difficultyPoint.initializeFromSummary(summary);
+      this.add(difficultyPoint);
+    });
+
+    summary.volumePoints.forEach((summary) => {
+      const volumePoint = new VolumePoint();
+      volumePoint.initializeFromSummary(summary);
+      this.add(volumePoint);
+    });
   }
 }

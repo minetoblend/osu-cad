@@ -4,7 +4,7 @@ import type { IVec2 } from 'osucad-framework';
 import type { HitCircle } from './HitCircle';
 import type { Slider } from './Slider';
 import type { Spinner } from './Spinner';
-import { BeatmapDifficultyInfo, getSkinComboColor, HitObject, HitObjectProperty, HitObjectSerializer, HitSample, HitSound, HitSoundSerializer, SampleSet, SampleType } from '@osucad/common';
+import { BeatmapDifficultyInfo, getSkinComboColor, HitObject, HitObjectProperty, HitObjectSerializer, HitSample, HitSound, hitsoundSerializer, HitSoundSerializer, SampleSet, SampleType, vec2Serializer } from '@osucad/common';
 import { BooleanSerializer, nullableDescriptor, NullableSerializer, Uint8Serializer } from '@osucad/serialization';
 import { Vec2, Vec2Serializer } from 'osucad-framework';
 
@@ -24,7 +24,7 @@ export abstract class OsuHitObject extends HitObject implements IHasComboInforma
 
   static readonly preempt_max = 1800;
 
-  #position = this.property('position', new Vec2(0, 0));
+  #position = this.property('position', new Vec2(0, 0), vec2Serializer);
 
   get positionBindable() {
     return this.#position.bindable;
@@ -172,7 +172,7 @@ export abstract class OsuHitObject extends HitObject implements IHasComboInforma
     return this.#comboColor.value;
   }
 
-  #hitSound = this.property('hitSound', HitSound.Default);
+  #hitSound = this.property('hitSound', HitSound.Default, hitsoundSerializer);
 
   get hitSoundBindable() {
     return this.#hitSound.bindable;

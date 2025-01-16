@@ -2,7 +2,7 @@ import type { SharedProperty } from '@osucad/multiplayer';
 import { ControlPoint } from './ControlPoint';
 
 export class DifficultyPoint extends ControlPoint {
-  constructor(time: number, sliderVelocity: number = 1) {
+  constructor(time: number = 0, sliderVelocity: number = 1) {
     super(time);
 
     this.#sliderVelocity = this.property('sliderVelocity', sliderVelocity);

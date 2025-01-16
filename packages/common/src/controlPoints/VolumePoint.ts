@@ -8,7 +8,7 @@ export enum VolumeCurveType {
 }
 
 export class VolumePoint extends ControlPoint {
-  constructor(time: number, volume: number = 100) {
+  constructor(time: number = 0, volume: number = 100) {
     super(time);
     this.volume = volume;
   }

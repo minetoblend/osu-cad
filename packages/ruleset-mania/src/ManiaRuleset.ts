@@ -1,4 +1,4 @@
-import type { Beatmap, BeatmapConverter, DrawableRuleset, EditorRuleset, HitObjectComposer, IBeatmap, ISkin, SkinTransformer } from '@osucad/common';
+import type { Beatmap, BeatmapConverter, DrawableRuleset, EditorRuleset, HitObject, HitObjectComposer, IBeatmap, ISkin, NoArgsConstructor, SkinTransformer } from '@osucad/common';
 import type { IKeyBinding } from 'osucad-framework';
 import type { DifficultyCalculator } from 'packages/common/src/rulesets/difficulty/DifficultyCalculator';
 import type { ManiaBeatmap } from './beatmaps/ManiaBeatmap';
@@ -7,6 +7,8 @@ import { InputKey, KeyBinding } from 'osucad-framework';
 import { ManiaHitObjectComposer } from './edit/ManiaHitObjectComposer';
 import { ManiaBeatmapConverter } from './ManiaBeatmapConverter';
 import { ManiaEditorRuleset } from './ManiaEditorRuleset';
+import { HoldNote } from './objects/HoldNote';
+import { Note } from './objects/Note';
 import { ArgonManiaSkinTransformer } from './skinning/argon/ArgonManiaSkinTransformer';
 import { DrawableManiaEditorRuleset } from './ui/DrawableManiaEditorRuleset';
 import { DrawableManiaRuleset } from './ui/DrawableManiaRuleset';
@@ -56,5 +58,12 @@ export class ManiaRuleset extends Ruleset {
 
   override createEditorRuleset(): EditorRuleset {
     return new ManiaEditorRuleset(this);
+  }
+
+  override getHitObjectClasses(): Record<string, NoArgsConstructor<HitObject>> {
+    return {
+      Note,
+      HoldNote,
+    };
   }
 }
