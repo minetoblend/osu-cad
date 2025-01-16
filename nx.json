@@ -17,7 +17,11 @@
   "release": {
     "projects": [
       "packages/framework",
-      "packages/resources"
+      "packages/resources",
+      "packages/core",
+      "packages/ruleset-osu",
+      "packages/ruleset-mania",
+      "packages/multiplayer"
     ],
     "version": {
       "generatorOptions": {
