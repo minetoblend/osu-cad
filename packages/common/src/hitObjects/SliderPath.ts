@@ -2,8 +2,10 @@ import type { SharedProperty } from '@osucad/multiplayer';
 import type { PathPoint } from './PathPoint';
 import { SharedObject } from '@osucad/multiplayer';
 import { Action, CachedValue, List, Vec2 } from 'osucad-framework';
+import { arraySerializer } from '../utils/arraySerializer';
 import { PathApproximator } from '../utils/PathApproximator';
 import { CalculatedPath } from './CalculatedPath';
+import { pathPointSerializer } from './pathPointSerializer';
 import { PathRange } from './PathRange';
 import { PathType } from './PathType';
 
@@ -25,7 +27,7 @@ export class SliderPath extends SharedObject {
     this.invalidated.emit();
   }
 
-  #controlPoints = this.property<readonly PathPoint[]>('controlPoints', []);
+  #controlPoints = this.property<readonly PathPoint[]>('controlPoints', [], arraySerializer(pathPointSerializer));
 
   get controlPoints(): ReadonlyArray<PathPoint> {
     return this.#controlPoints.value;
