@@ -45,8 +45,6 @@ export class UpdateHandler extends Component {
   submit(targetId: string, mutation: any, undoMutation?: any, key?: string) {
     this.onMutationSubmitted(targetId, mutation);
 
-    console.log(mutation, undoMutation);
-
     this.commandApplied.emit(mutation);
 
     if (undoMutation) {
