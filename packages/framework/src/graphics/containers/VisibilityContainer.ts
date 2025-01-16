@@ -55,7 +55,7 @@ export abstract class VisibilityContainer extends Container {
   };
 }
 
-export const enum Visibility {
+export enum Visibility {
   Hidden = 0,
   Visible = 1,
 }

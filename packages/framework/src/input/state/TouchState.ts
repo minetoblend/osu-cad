@@ -27,14 +27,14 @@ export class TouchState {
       return { deactivated: [], activated: [] };
     }
 
-    const pressedTouches = new Array<Touch>(pressedCount);
+    const pressedTouches = Array.from<Touch>({ length: pressedCount });
 
     for (let i = 0; i < pressedCount; i++) {
       const s = diff.pressed[i];
       pressedTouches[i] = new Touch(s, this.touchPositions[s]);
     }
 
-    const releasedTouches = new Array<Touch>(releasedCount);
+    const releasedTouches = Array.from<Touch>({ length: releasedCount });
 
     for (let i = 0; i < releasedCount; i++) {
       const s = diff.released[i];

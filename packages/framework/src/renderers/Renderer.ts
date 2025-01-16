@@ -90,4 +90,5 @@ export class Renderer {
 
 export type IRenderer = PIXIRenderer;
 
+// eslint-disable-next-line ts/no-redeclare
 export const IRenderer: InjectionToken<PIXIRenderer> = Symbol('IRenderer');

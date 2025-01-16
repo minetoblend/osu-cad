@@ -1,4 +1,4 @@
-import { Vec2 } from '../math';
+import type { Vec2 } from '../math';
 import { Mat3 } from '../math/Mat3';
 
 export class DrawInfo {
@@ -35,7 +35,6 @@ export class DrawInfo {
       this.matrixInverse.translateFromRight(-translation.x, -translation.y);
     }
 
-
     if (rotation !== 0) {
       this.localMatrix.rotateFromLeft(rotation);
       this.matrix.rotateFromLeft(rotation);
@@ -52,8 +51,10 @@ export class DrawInfo {
       let x = scale.x;
       let y = scale.y;
 
-      if (x === 0) x = 1e-3;
-      if (y === 0) y = 1e-3;
+      if (x === 0)
+        x = 1e-3;
+      if (y === 0)
+        y = 1e-3;
 
       this.localMatrix.scaleFromLeft(x, y);
       this.matrix.scaleFromLeft(x, y);
@@ -65,14 +66,10 @@ export class DrawInfo {
       this.matrix.translateFromLeft(-origin.x, -origin.y);
       this.matrixInverse.translateFromRight(origin.x, origin.y);
     }
-
-    return;
   }
 
   setFrom(other: DrawInfo) {
     this.matrix.copyFrom(other.matrix);
     this.matrixInverse.copyFrom(other.matrixInverse);
   }
-
-
 }

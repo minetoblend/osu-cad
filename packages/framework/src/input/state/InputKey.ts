@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-duplicate-enum-values */
+/* eslint-disable ts/no-duplicate-enum-values */
 export enum InputKey {
   None = 0,
   Shift = 1,

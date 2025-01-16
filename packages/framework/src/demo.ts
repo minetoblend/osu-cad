@@ -1,5 +1,5 @@
-import { CursorContainer, MouseDownEvent } from '.';
-import { Axes, Box, Container, Game, WebGameHost } from '.';
+import type { MouseDownEvent } from '.';
+import { Axes, Box, Container, CursorContainer, Game, WebGameHost } from '.';
 
 import './style.css';
 
@@ -9,7 +9,7 @@ class DemoGame extends Game {
   constructor() {
     super();
 
-    this.scale = 2
+    this.scale = 2;
 
     this.add(
       Container.create({
@@ -35,8 +35,8 @@ class DemoGame extends Game {
     );
 
     this.add(
-      new CursorContainer()
-    )
+      new CursorContainer(),
+    );
   }
 }
 

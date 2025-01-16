@@ -227,7 +227,7 @@ export abstract class GameHost {
   }
 }
 
-export const enum ExecutionState {
+export enum ExecutionState {
   Idle = 0,
   Stopped = 1,
   Running = 2,

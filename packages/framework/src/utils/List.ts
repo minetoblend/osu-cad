@@ -6,7 +6,7 @@ export class List<T> implements Iterable<T> {
   readonly #initialCapacity: number;
 
   constructor(capacity: number) {
-    this.#items = new Array(capacity);
+    this.#items = Array.from({ length: capacity });
     this.#initialCapacity = capacity;
   }
 

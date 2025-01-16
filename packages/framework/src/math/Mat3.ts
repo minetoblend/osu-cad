@@ -1,13 +1,20 @@
-import { Vec2 } from './Vec2';
+/* eslint-disable style/max-statements-per-line */
+import type { Matrix } from 'pixi.js';
+import type { Quad } from './Quad';
 import { almostEquals } from '../utils';
-import { Quad } from './Quad';
-import { Matrix } from 'pixi.js';
+import { Vec2 } from './Vec2';
 
 export class Mat3 {
   constructor(
-    public m00 = 1, public m01 = 0, public m02 = 0,
-    public m10 = 0, public m11 = 1, public m12 = 0,
-    public m20 = 0, public m21 = 0, public m22 = 1,
+    public m00 = 1,
+    public m01 = 0,
+    public m02 = 0,
+    public m10 = 0,
+    public m11 = 1,
+    public m12 = 0,
+    public m20 = 0,
+    public m21 = 0,
+    public m22 = 1,
   ) {
   }
 
@@ -87,7 +94,7 @@ export class Mat3 {
   shearFromLeft(x: number, y: number) {
     const xy = x * y;
 
-    //const col0 = this.col0 + this.col1 * y + this.col0 * x * y;
+    // const col0 = this.col0 + this.col1 * y + this.col0 * x * y;
     const m00 = this.m00 + this.m01 * y + this.m00 * xy;
     const m10 = this.m10 + this.m11 * y + this.m10 * xy;
     const m20 = this.m20 + this.m21 * y + this.m20 * xy;
@@ -118,9 +125,9 @@ export class Mat3 {
   }
 
   fastInvert() {
-    const a00 = this.m00, a01 = this.m01, a02 = this.m02;
-    const a10 = this.m10, a11 = this.m11, a12 = this.m12;
-    const a20 = this.m20, a21 = this.m21, a22 = this.m22;
+    const a00 = this.m00; const a01 = this.m01; const a02 = this.m02;
+    const a10 = this.m10; const a11 = this.m11; const a12 = this.m12;
+    const a20 = this.m20; const a21 = this.m21; const a22 = this.m22;
 
     const b01 = a22 * a11 - a12 * a21;
     const b11 = -a22 * a10 + a12 * a20;

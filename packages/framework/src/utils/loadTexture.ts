@@ -4,7 +4,7 @@ import { WorkerManager } from './WorkerManager';
 
 export async function loadTexture(src: string | ArrayBuffer, options: TextureSourceOptions = {}, opts2: LoadImageBitmapOptions = {}): Promise<Texture | null> {
   try {
-    if (typeof  src === 'string')
+    if (typeof src === 'string')
       src = path.toAbsolute(src);
 
     const imageBitmap = await WorkerManager.loadImageBitmap(src, undefined, opts2);
