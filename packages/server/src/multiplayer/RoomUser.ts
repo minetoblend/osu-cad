@@ -19,6 +19,7 @@ export class RoomUser {
       isRunning: false,
       rate: 1,
     },
+    cursor: null,
   };
 
   getInfo(): ClientInfo {

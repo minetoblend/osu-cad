@@ -1,8 +1,10 @@
 import type { DependencyContainer, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { UserClockInfo } from '@osucad/multiplayer';
 import type { MultiplayerEditorBeatmap } from './MultiplayerEditorBeatmap';
+import { Game, provide } from '@osucad/framework';
 import { Editor } from '../Editor';
 import { MultiplayerClient } from './MultiplayerClient';
+import { MultiplayerCursorOverlay } from './MultiplayerCursorOverlay';
 
 export class MultiplayerEditor extends Editor {
   constructor(editorBeatmap: MultiplayerEditorBeatmap) {
@@ -15,6 +17,9 @@ export class MultiplayerEditor extends Editor {
     return this.#dependencies = super.createChildDependencies(parentDependencies);
   }
 
+  @provide(MultiplayerCursorOverlay)
+  readonly cursorOverlay = new MultiplayerCursorOverlay();
+
   override editorBeatmap!: MultiplayerEditorBeatmap;
 
   protected override async loadAsync(dependencies: ReadonlyDependencyContainer): Promise<void> {
@@ -22,7 +27,16 @@ export class MultiplayerEditor extends Editor {
 
     this.#dependencies.provide(MultiplayerClient, this.editorBeatmap.client);
 
-    return await super.loadAsync(dependencies);
+    await super.loadAsync(dependencies);
+
+    this.loadComponent(this.cursorOverlay);
+
+    // @ts-expect-error protected constuctor
+    const game = dependencies.resolve(Game);
+
+    game.add(this.cursorOverlay);
+
+    this.onDispose(() => game.remove(this.cursorOverlay));
   }
 
   protected override loadComplete() {

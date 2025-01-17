@@ -54,6 +54,7 @@ export class LayeredTimeline extends Container {
             this.#layersFlow,
           ],
         }),
+        ...(timelineChildren ?? []),
       ],
     });
 

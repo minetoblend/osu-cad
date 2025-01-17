@@ -1,6 +1,8 @@
 import type { ClickEvent, ReadonlyDependencyContainer } from '@osucad/framework';
 import { Anchor, Axes, Box, Container, DependencyContainer, FillDirection, FillFlowContainer, provide, resolved } from '@osucad/framework';
+import { HoverBlockingContainer } from '../../../drawables/HoverBlockingContainer';
 import { EditorBeatmap } from '../../EditorBeatmap';
+import { MultiplayerCursorArea } from '../../multiplayer/MultiplayerCursorArea';
 import { CurrentTimeOverlay } from '../../ui/timeline/CurrentTimeOverlay';
 import { LayeredTimeline } from '../../ui/timeline/LayeredTimeline';
 import { EditorScreen } from '../EditorScreen';
@@ -9,6 +11,7 @@ import { HitObjectTimelineLayer } from './hitObjects/HitObjectTimelineLayer';
 import { KiaiTimelineLayer } from './kiai/KiaiTimelineLayer';
 import { Metronome } from './Metronome';
 import { SliderVelocityTimelineLayer } from './sliderVelocity/SliderVelocityTimelineLayer';
+import { TimelineCursorArea } from './TimelineCursorArea';
 import { TimingPointLayer } from './timingPoints/TimingPointLayer';
 import { TimingScreenDependencies } from './TimingScreenDependencies';
 import { TimingScreenSelectionManager } from './TimingScreenSelectionManager';
@@ -51,7 +54,9 @@ export class TimingScreen extends EditorScreen {
           }),
           this.#timeline = new LayeredTimeline({
             layers: this.createLayers(),
-
+            timelineChildren: [
+              new TimelineCursorArea('timing-timeline'),
+            ],
           }),
         ],
       }),
@@ -66,9 +71,10 @@ export class TimingScreen extends EditorScreen {
           new TimingScreenToolSelect().with({
             margin: { top: 12 },
           }),
+          new MultiplayerCursorArea('timing-toolbar'),
         ],
       }),
-      new Container({
+      new HoverBlockingContainer({
         width: 300,
         relativeSizeAxes: Axes.Y,
         anchor: Anchor.TopRight,
@@ -86,11 +92,16 @@ export class TimingScreen extends EditorScreen {
               new Metronome(),
             ],
           }),
+          new MultiplayerCursorArea('timing-inspector'),
         ],
       }),
     ];
 
     this.#timeline.overlayContainer.add(new CurrentTimeOverlay());
+
+    this.#timeline.headerContainer.add(new MultiplayerCursorArea('timing-layer-headers').with({
+      depth: -Number.MAX_VALUE,
+    }));
   }
 
   #timeline!: LayeredTimeline;

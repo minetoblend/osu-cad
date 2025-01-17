@@ -7,6 +7,7 @@ import { BottomAlignedTickDisplay } from '../../ui/timeline/BottomAlignedTickDis
 import { CurrentTimeOverlay } from '../../ui/timeline/CurrentTimeOverlay';
 import { Timeline } from '../../ui/timeline/Timeline';
 import { DrawableWaveform } from '../timing/DrawableWaveform';
+import { TimelineCursorArea } from '../timing/TimelineCursorArea';
 
 @provide(ComposeScreenTimeline)
 export class ComposeScreenTimeline extends Timeline {
@@ -43,9 +44,12 @@ export class ComposeScreenTimeline extends Timeline {
         origin: Anchor.BottomLeft,
         child: new BottomAlignedTickDisplay(),
       }),
+      new TimelineCursorArea('compose-timeline', false),
     ]);
 
-    this.addInternal(new CurrentTimeOverlay());
+    this.addAllInternal(
+      new CurrentTimeOverlay(),
+    );
   }
 
   blueprintContainer!: TimelineHitObjectBlueprintContainer;

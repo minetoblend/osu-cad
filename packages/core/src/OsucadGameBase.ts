@@ -13,6 +13,7 @@ import { GlobalCursorDisplay } from './graphics/cursor/GlobalCursorDisplay';
 import { IResourcesProvider } from './io/IResourcesProvider';
 import { PerformanceOverlay } from './overlays/PerformanceOverlay';
 import { PreferencesContainer } from './overlays/preferences/PreferencesContainer';
+import { ColorProvider } from './userInterface/ColorProvider';
 import { ContextMenuContainer } from './userInterface/ContextMenuContainer';
 
 @provide(IResourcesProvider)
@@ -33,6 +34,9 @@ export abstract class OsucadGameBase extends Game implements IResourcesProvider 
   mixer!: AudioMixer;
 
   config!: OsucadConfigManager;
+
+  @provide(ColorProvider)
+  colors = new ColorProvider();
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
@@ -106,7 +110,7 @@ export abstract class OsucadGameBase extends Game implements IResourcesProvider 
 
     await Promise.all(this.#parallelLoadPromises);
 
-    super.content.add(new GlobalCursorDisplay());
+    this.add(new GlobalCursorDisplay());
   }
 
   readonly #parallelLoadPromises: Promise<any>[] = [];
