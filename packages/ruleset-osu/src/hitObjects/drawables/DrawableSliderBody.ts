@@ -114,7 +114,7 @@ export class DrawableSliderBody extends Drawable {
 
   #alphaFilter = new AlphaFilter({
     alpha: 1,
-    resolution: devicePixelRatio,
+    resolution: 'inherit',
   });
 
   readonly #body = new PIXIContainer({
