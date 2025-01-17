@@ -60,6 +60,8 @@ export class EditorBeatmap<T extends HitObject = HitObject> extends Component {
 
     this.hitObjects.applyDefaultsRequested.addListener(this.onApplyDefaultsRequested, this);
 
+    this.controlPoints.anyPointChanged.addListener(this.invalidateAllHitObjects, this);
+
     this.hitObjects.added.addListener(this.onHitObjectAdded, this);
   }
 
