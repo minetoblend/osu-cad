@@ -55,7 +55,10 @@ export class MultiplayerCursorOverlay extends CompositeDrawable {
     this.#inputManager = this.getContainingInputManager()!;
 
     for (const user of this.client.users.users)
-      this.addInternal(new MultiplayerCursor(user, this));
+      this.addCursor(user);
+
+    this.client.users.userJoined.addListener(this.addCursor, this);
+    this.client.users.userLeft.addListener(this.removeCursor, this);
 
     this.scheduler.addDelayed(() => {
       if (!this.#positionDidChange)
@@ -64,6 +67,22 @@ export class MultiplayerCursorOverlay extends CompositeDrawable {
       this.client.socket.emit('updatePresence', 'cursor', this.#currentPosition);
       this.#positionDidChange = false;
     }, 50, true);
+  }
+
+  readonly #cursors = new Map<ConnectedUser, MultiplayerCursor>();
+
+  protected addCursor(user: ConnectedUser) {
+    let cursor: MultiplayerCursor;
+    this.addInternal(cursor = new MultiplayerCursor(user, this));
+    this.#cursors.set(user, cursor);
+  }
+
+  protected removeCursor(user: ConnectedUser) {
+    const cursor = this.#cursors.get(user);
+    if (cursor) {
+      this.#cursors.delete(user);
+      cursor.expire();
+    }
   }
 
   override update() {
@@ -110,6 +129,13 @@ export class MultiplayerCursorOverlay extends CompositeDrawable {
       this.#currentPosition = position;
       this.#positionDidChange = true;
     }
+  }
+
+  override dispose(isDisposing: boolean = true) {
+    super.dispose(isDisposing);
+
+    this.client.users.userJoined.removeListener(this.addCursor, this);
+    this.client.users.userLeft.removeListener(this.removeCursor, this);
   }
 }
 
@@ -210,5 +236,11 @@ class MultiplayerCursor extends CompositeDrawable {
     super.update();
 
     this.position = Vec2.lerp(this.#targetPosition, this.position, Math.exp(-0.03 * this.time.elapsed));
+  }
+
+  override dispose(isDisposing: boolean = true) {
+    super.dispose(isDisposing);
+
+    this.#currentProxy?.expire();
   }
 }
