@@ -17,8 +17,8 @@ export class ComposeScreenTimeline extends Timeline {
   editorRuleset!: EditorRuleset;
 
   static get HEIGHT() {
-    if (isMobile.any)
-      return 85;
+    if (isMobile.phone)
+      return 60;
 
     return 75;
   }
@@ -28,11 +28,13 @@ export class ComposeScreenTimeline extends Timeline {
 
     this.relativeSizeAxes = Axes.Both;
 
+    if (!isMobile.phone)
+      this.add(new DrawableWaveform((this.editorClock.track as AudioBufferTrack)));
+
     this.addRange([
-      new DrawableWaveform((this.editorClock.track as AudioBufferTrack)),
       new Container({
         relativeSizeAxes: Axes.Both,
-        height: isMobile.any ? 0.55 : 0.65,
+        height: isMobile.phone ? 0.7 : 0.65,
         anchor: Anchor.CenterLeft,
         origin: Anchor.CenterLeft,
         child: this.blueprintContainer = this.editorRuleset.createTimelineHitObjectContainer(),
