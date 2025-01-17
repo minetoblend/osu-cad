@@ -40,7 +40,7 @@ export abstract class OsucadGameBase extends Game implements IResourcesProvider 
 
   protected getTargetDrawSize() {
     if (isMobile.phone)
-      return new Vec2(540, 400);
+      return new Vec2(540, 440);
 
     if (isMobile.any)
       return new Vec2(640, 640);
