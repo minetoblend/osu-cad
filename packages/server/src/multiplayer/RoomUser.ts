@@ -5,6 +5,7 @@ export class RoomUser {
   constructor(
     readonly clientId: number,
     readonly socket: Socket<ClientMessages, ServerMessages>,
+    readonly color: number,
   ) {
   }
 
@@ -27,6 +28,7 @@ export class RoomUser {
       presence: this.presence,
       username: this.username,
       avatarUrl: this.avatarUrl,
+      color: this.color,
     };
   }
 }

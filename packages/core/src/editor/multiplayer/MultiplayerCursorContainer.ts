@@ -117,6 +117,8 @@ class MultiplayerCursor extends DefaultCursor {
 
     this.alpha = 0;
 
+    this.color = this.user.clientInfo.color;
+
     this.addInternal(this.#username = new OsucadSpriteText({
       text: this.user.clientInfo.username,
       y: getIcon('select').height,
@@ -173,7 +175,7 @@ class MultiplayerCursor extends DefaultCursor {
 
     const cursorDistance = this.sprite.toLocalSpace(this.#inputManager.currentState.mouse.position).distance(this.sprite.drawSize.scale(0.5));
 
-    const textAlpha = animate(cursorDistance, 50, 200, 1, 0);
+    const textAlpha = animate(cursorDistance, 120, 350, 1, 0);
 
     this.#username.alpha = lerp(textAlpha, this.#username.alpha, Math.exp(-0.03 * this.time.elapsed));
   }

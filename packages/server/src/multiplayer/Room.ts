@@ -23,14 +23,34 @@ export class Room {
 
   private readonly users = new Map<number, RoomUser>();
 
+  private readonly colors = [
+    0xFF4B60,
+    0xFFA14B,
+    0xF5DD42,
+    0x90F542,
+    0x42F5A4,
+    0x2FD1ED,
+    0x3455F7,
+    0xA635FC,
+    0xE329AB,
+  ];
+
   accept(socket: Socket<ClientMessages, ServerMessages>) {
     const clientId = nextClientId();
 
     socket.join(this.id);
 
+    let color = this.colors[0];
+    for (let i = 0; i < this.colors.length; i++) {
+      color = this.colors[i];
+      if ([...this.users.values()].every(it => it.color !== color))
+        break;
+    }
+
     const user = new RoomUser(
       clientId,
       socket,
+      color,
     );
 
     socket.emit('initialData', {

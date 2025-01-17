@@ -7,6 +7,7 @@ export interface UserInfo {
 export interface ClientInfo extends UserInfo {
   clientId: number;
   presence: any;
+  color: number;
 }
 
 export interface UserPresence {
