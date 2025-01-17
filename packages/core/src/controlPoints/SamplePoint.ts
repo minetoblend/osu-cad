@@ -1,4 +1,4 @@
-import { Bindable, BindableNumber } from '@osucad/framework';
+import { BindableNumber } from '@osucad/framework';
 import { SampleSet } from '../hitsounds/SampleSet';
 import { ControlPoint } from './ControlPoint';
 
@@ -26,9 +26,23 @@ export class SamplePoint extends ControlPoint {
 
   static readonly default = new SamplePoint(0, 100, SampleSet.Normal, 0);
 
-  volumeBindable = new BindableNumber(100).withRange(5, 100).withPrecision(1);
-  sampleSetBindable = new Bindable<SampleSet>(SampleSet.Normal);
-  sampleIndexBindable = new BindableNumber(0).withMinValue(0).withPrecision(1);
+  #volume = this.property('volume', new BindableNumber(100).withRange(5, 100).withPrecision(1));
+
+  #sampleSet = this.property('sampleSet', SampleSet.Normal);
+
+  #sampleIndex = this.property('sampleSet', new BindableNumber(0).withMinValue(0).withPrecision(1));
+
+  get volumeBindable() {
+    return this.#volume.bindable;
+  }
+
+  get sampleSetBindable() {
+    return this.#sampleSet.bindable;
+  }
+
+  get sampleIndexBindable() {
+    return this.#sampleIndex.bindable;
+  }
 
   get volume() {
     return this.volumeBindable.value;
