@@ -1,16 +1,27 @@
 import type { IVec2 } from '@osucad/framework';
-import type { ClientInfo } from '../protocol';
-import type { ClientSocket } from './ClientSocket';
+import type { ClientInfo } from '@osucad/multiplayer';
+import type { MultiplayerClient } from './MultiplayerClient';
 import { Action, Bindable } from '@osucad/framework';
+import { SignalKey } from '@osucad/multiplayer';
 
 export class ConnectedUsers {
   #users = new Map<number, ConnectedUser>();
 
-  constructor(socket: ClientSocket) {
+  constructor(readonly client: MultiplayerClient) {
+    const { socket } = client;
+
     socket.once('initialData', ({ connectedUsers }) =>
       connectedUsers.forEach(it => this.#onUserJoined(it)));
     socket.on('userJoined', client => this.#onUserJoined(client));
     socket.on('userLeft', client => this.#onUserLeft(client));
+
+    socket.on('signal', (clientId, key, data) => {
+      if (key === SignalKey.Cursor && clientId !== this.client.clientId) {
+        const user = this.#users.get(clientId);
+        if (user)
+          user.cursorPosition.value = data;
+      }
+    });
   }
 
   readonly userJoined = new Action<ClientInfo>();

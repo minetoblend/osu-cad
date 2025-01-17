@@ -1,9 +1,8 @@
-import type { ClientMessages, IMutation, InitialStateServerMessage, MutationContext, MutationsSubmittedMessage, ServerMessages } from '@osucad/multiplayer';
-import type { Socket } from 'socket.io-client';
+import type { ClientSocket, IMutation, InitialStateServerMessage, MutationContext, MutationsSubmittedMessage } from '@osucad/multiplayer';
 import type { Beatmap } from '../../beatmap/Beatmap';
 import type { FileStore } from '../../beatmap/io/FileStore';
 import { Component } from '@osucad/framework';
-import { MutationSource, UpdateHandler } from '@osucad/multiplayer';
+import { ConnectedUsers, MutationSource, UpdateHandler } from '@osucad/multiplayer';
 import { io } from 'socket.io-client';
 import { SimpleFile } from '../../beatmap/io/SimpleFile';
 import { StaticFileStore } from '../../beatmap/io/StaticFileStore';
@@ -12,17 +11,21 @@ import { RulesetStore } from '../../rulesets/RulesetStore';
 export class MultiplayerClient extends Component {
   constructor(url: string) {
     super();
-    this.ws = io(url, {
+    this.socket = io(url, {
       autoConnect: false,
       transports: ['websocket'],
     });
 
-    this.ws.on('mutationsSubmitted', msg => this.mutationSubmitted(msg));
+    this.socket.on('mutationsSubmitted', msg => this.mutationSubmitted(msg));
+
+    this.users = new ConnectedUsers(this.socket);
   }
 
-  updateHandler!: UpdateHandler;
+  readonly socket: ClientSocket;
 
-  readonly ws: Socket<ServerMessages, ClientMessages>;
+  readonly users: ConnectedUsers;
+
+  updateHandler!: UpdateHandler;
 
   clientId!: number;
 
@@ -37,11 +40,11 @@ export class MultiplayerClient extends Component {
   }
 
   async connect() {
-    this.ws.connect();
+    this.socket.connect();
 
     const initialState = await new Promise<InitialStateServerMessage>((resolve, reject) => {
-      this.ws.once('connect_error', reject);
-      this.ws.once('initialData', resolve);
+      this.socket.once('connect_error', reject);
+      this.socket.once('initialData', resolve);
     });
 
     this.clientId = initialState.clientId;
@@ -91,7 +94,7 @@ export class MultiplayerClient extends Component {
     if (this.bufferedMutations.length === 0)
       return;
 
-    this.ws.emit('submitMutations', {
+    this.socket.emit('submitMutations', {
       version: this.updateHandler.version++,
       mutations: this.bufferedMutations,
     });
