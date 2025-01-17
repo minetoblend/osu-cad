@@ -1,13 +1,33 @@
+import type { ISerializer } from '@osucad/multiplayer';
 import type { IHasComboColors } from '../skinning/IHasComboColors';
+import { SharedObject } from '@osucad/multiplayer';
 import { Color } from 'pixi.js';
+import { arraySerializer } from '../utils/arraySerializer';
 
 const white = new Color(0xFFFFFF);
 
-export class BeatmapColors implements IHasComboColors {
-  #comboColors: Color[] = [];
+const colorSerializer: ISerializer<Color | null, number | null> = {
+  serialize(value: Color | null): number | null {
+    return value?.toNumber() ?? null;
+  },
+  deserialize(plain: number | null): Color | null {
+    return plain !== null ? new Color(plain) : null;
+  },
+};
+
+export class BeatmapColors extends SharedObject implements IHasComboColors {
+  constructor() {
+    super();
+  }
+
+  readonly #comboColors = this.property<readonly Color[]>('comboColors', [], arraySerializer(colorSerializer) as unknown as ISerializer<Color[], any>);
 
   get comboColors(): ReadonlyArray<Color> {
-    return this.#comboColors;
+    return this.#comboColors.value;
+  }
+
+  set comboColors(value) {
+    this.#comboColors.value = value;
   }
 
   getComboColor(index: number): Color {
@@ -15,10 +35,10 @@ export class BeatmapColors implements IHasComboColors {
   }
 
   addComboColor(color: Color) {
-    this.#comboColors.push(color);
+    this.comboColors = [...this.comboColors, color];
   }
 
-  sliderTrackOverride: Color | null = null;
+  #sliderTrackOverride = this.property<Color | null>('sliderTrackOverride', null, colorSerializer);
 
-  sliderBorder: Color | null = null;
+  #sliderBorder = this.property<Color | null>('sliderBorder', null, colorSerializer);
 }

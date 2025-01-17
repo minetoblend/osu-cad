@@ -60,6 +60,7 @@ export class Beatmap<T extends HitObject = HitObject> extends SharedStaticObject
       this.beatmapInfo,
       this.controlPoints,
       this.hitObjects,
+      this.colors,
     ];
   }
 
@@ -112,6 +113,7 @@ export class Beatmap<T extends HitObject = HitObject> extends SharedStaticObject
       beatmapInfo: this.beatmapInfo.createSummary(),
       hitObjects: this.hitObjects.createSummary(),
       controlPoints: this.controlPoints.createSummary(),
+      colors: this.colors.createSummary(),
     };
   }
 
@@ -119,5 +121,6 @@ export class Beatmap<T extends HitObject = HitObject> extends SharedStaticObject
     this.beatmapInfo.initializeFromSummary(summary.beatmapInfo);
     this.controlPoints.initializeFromSummary(summary.controlPoints);
     this.hitObjects.initializeFromSummary(summary.hitObjects);
+    this.colors.initializeFromSummary(summary.colors);
   }
 }
