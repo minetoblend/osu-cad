@@ -1,11 +1,10 @@
-import type { SharedProperty } from '@osucad/multiplayer';
 import { ControlPoint } from './ControlPoint';
 
 export class DifficultyPoint extends ControlPoint {
   constructor(time: number = 0, sliderVelocity: number = 1) {
     super(time);
 
-    this.#sliderVelocity = this.property('sliderVelocity', sliderVelocity);
+    this.sliderVelocity = sliderVelocity;
   }
 
   static default = new DifficultyPoint(1);
@@ -14,7 +13,7 @@ export class DifficultyPoint extends ControlPoint {
     return 'Difficulty Point';
   }
 
-  readonly #sliderVelocity: SharedProperty<number>;
+  readonly #sliderVelocity = this.property('sliderVelocity', 1);
 
   get sliderVelocityBindable() {
     return this.#sliderVelocity.bindable;

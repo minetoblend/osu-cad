@@ -1,6 +1,7 @@
 import type { IVec2 } from '@osucad/framework';
 import type { SignalKey } from '../client';
 import type { ChatMessage } from './ChatMessage';
+import type { IMutation } from './IMutation';
 import type { ClientInfo } from './types';
 
 export type ServerMessage =
@@ -18,11 +19,16 @@ export interface ServerMessages {
   signal(clientId: number, key: SignalKey, data: any): void;
 
   presenceUpdated(clientId: number, key: string, data: any): void;
+
+  mutationsSubmitted(message: MutationsSubmittedMessage): void;
 }
 
 export interface InitialStateServerMessage {
   clientId: number;
-  beatmapData: unknown;
+  beatmap: {
+    ruleset: string;
+    data: unknown;
+  };
   assets: AssetInfo[];
   connectedUsers: ClientInfo[];
 }
@@ -41,4 +47,10 @@ export interface UpdateCursorServerMessage {
   clientId: number;
   screen: string | null;
   position: IVec2 | null;
+}
+
+export interface MutationsSubmittedMessage {
+  version: number;
+  clientId: number;
+  mutations: IMutation[];
 }

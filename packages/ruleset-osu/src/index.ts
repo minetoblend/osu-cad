@@ -1,3 +1,4 @@
+export * from './beatmaps';
 export * from './edit';
 export * from './hitObjects';
 export * from './OsuAction';

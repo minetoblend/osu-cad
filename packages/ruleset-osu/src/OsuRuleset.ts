@@ -2,6 +2,7 @@ import type { Beatmap, BeatmapConverter, BeatmapProcessor, DifficultyCalculator,
 import type { IKeyBinding } from '@osucad/framework';
 import { Ruleset, StableSkin } from '@osucad/core';
 import { InputKey, KeyBinding, KeyCombination } from '@osucad/framework';
+import { OsuBeatmap } from './beatmaps/OsuBeatmap';
 import { OsuBeatmapConverter } from './beatmaps/OsuBeatmapConverter';
 import { ComboProcessor } from './ComboProcessor';
 import { OsuDifficultyCalculator } from './difficulty/OsuDifficultyCalculator';
@@ -21,6 +22,10 @@ import { OsuBeatmapVerifier } from './verify/OsuBeatmapVerifier';
 export class OsuRuleset extends Ruleset {
   override get legacyId(): number | null {
     return 0;
+  }
+
+  override createBeatmap(): Beatmap<any> {
+    return new OsuBeatmap();
   }
 
   override createEditorRuleset(): EditorRuleset {

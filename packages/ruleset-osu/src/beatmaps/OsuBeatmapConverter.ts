@@ -5,10 +5,15 @@ import { HitCircle } from '../hitObjects/HitCircle';
 import { OsuHitObject } from '../hitObjects/OsuHitObject';
 import { Slider } from '../hitObjects/Slider';
 import { Spinner } from '../hitObjects/Spinner';
+import { OsuBeatmap } from './OsuBeatmap';
 
 export class OsuBeatmapConverter extends BeatmapConverter<OsuHitObject> {
   constructor(beatmap: IBeatmap, ruleset: Ruleset) {
     super(beatmap, ruleset);
+  }
+
+  protected override createBeatmap(): IBeatmap<OsuHitObject> {
+    return new OsuBeatmap();
   }
 
   override canConvert(): boolean {

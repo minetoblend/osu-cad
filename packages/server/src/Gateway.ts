@@ -1,7 +1,9 @@
+import type { OsuBeatmap } from '@osucad/ruleset-osu';
 import type { Server } from 'socket.io';
 import { randomUUID } from 'node:crypto';
 import fs from 'node:fs/promises';
-import { StableBeatmapParser } from '@osucad/common';
+import { RulesetStore, StableBeatmapParser } from '@osucad/core';
+import { OsuRuleset } from '@osucad/ruleset-osu';
 import { getAssets } from './assets';
 import { Room } from './multiplayer/Room';
 
@@ -14,7 +16,11 @@ export class Gateway {
   room!: Room;
 
   async init() {
-    const beatmap = new StableBeatmapParser().parse(await fs.readFile(beatmapFilePath, 'utf-8'));
+    RulesetStore.register(new OsuRuleset().rulesetInfo);
+
+    const conversionBeatmap = new StableBeatmapParser().parse(await fs.readFile(beatmapFilePath, 'utf-8'));
+
+    const beatmap = new OsuRuleset().createBeatmapConverter(conversionBeatmap as any).convert() as OsuBeatmap;
 
     const roomId = randomUUID();
 

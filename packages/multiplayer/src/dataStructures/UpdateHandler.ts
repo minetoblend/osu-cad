@@ -1,3 +1,5 @@
+import type { IMutation } from '../protocol/IMutation';
+import type { MutationContext } from './MutationContext';
 import type { SharedStructure } from './SharedStructure';
 import { Action, BindableBoolean, Component } from '@osucad/framework';
 import { MutationSource } from './MutationSource';
@@ -22,7 +24,7 @@ export class UpdateHandler extends Component {
 
   readonly afterRedo = new Action();
 
-  readonly commandApplied = new Action<any>();
+  readonly commandApplied = new Action<IMutation>();
 
   #currentTransaction = new Transaction();
 
@@ -40,20 +42,30 @@ export class UpdateHandler extends Component {
 
   protected onMutationSubmitted(targetId: string, mutation: any) {}
 
-  #version = 0;
+  version = 0;
 
-  submit(targetId: string, mutation: any, undoMutation?: any, key?: string) {
-    this.onMutationSubmitted(targetId, mutation);
+  submit(target: string, mutation: any, undoMutation?: any, key?: string) {
+    this.onMutationSubmitted(target, mutation);
 
-    this.commandApplied.emit(mutation);
+    this.commandApplied.emit({ target, data: mutation });
 
     if (undoMutation) {
-      const entry = new TransactionEntry(targetId, undoMutation);
+      const entry = new TransactionEntry(target, undoMutation);
       this.currentTransaction.addEntry(entry, key);
 
       return entry;
     }
     return undefined;
+  }
+
+  apply(mutation: IMutation, ctx: MutationContext): boolean {
+    const target = this.objects.get(mutation.target);
+    if (!target)
+      return false;
+
+    target.handle(mutation.data, ctx);
+
+    return true;
   }
 
   commit(): boolean {
@@ -92,8 +104,7 @@ export class UpdateHandler extends Component {
       const target = this.objects.get(entry.targetId);
       target?.handle(entry.undoMutation, {
         source: MutationSource.Local,
-        own: true,
-        version: ++this.#version,
+        version: this.version,
       });
     }
 
@@ -121,10 +132,9 @@ export class UpdateHandler extends Component {
       const target = this.objects.get(entry.targetId);
       const redoMutation = target?.handle(entry.undoMutation, {
         source: MutationSource.Local,
-        own: true,
-        version: ++this.#version,
+        version: this.version,
       });
-      this.commandApplied.emit(entry.undoMutation);
+      this.commandApplied.emit({ target: entry.targetId, data: entry.undoMutation });
 
       if (redoMutation)
         redoTransaction.addEntry(new TransactionEntry(entry.targetId, redoMutation));
@@ -155,10 +165,9 @@ export class UpdateHandler extends Component {
       const target = this.objects.get(entry.targetId);
       const redoMutation = target?.handle(entry.undoMutation, {
         source: MutationSource.Local,
-        own: true,
-        version: ++this.#version,
+        version: this.version,
       });
-      this.commandApplied.emit(entry.undoMutation);
+      this.commandApplied.emit({ target: entry.targetId, data: entry.undoMutation });
 
       if (redoMutation)
         undoTransaction.addEntry(new TransactionEntry(entry.targetId, redoMutation));

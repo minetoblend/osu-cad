@@ -57,6 +57,7 @@ export class Beatmap<T extends HitObject = HitObject> extends SharedStaticObject
 
   override get childObjects(): readonly SharedStructure<any>[] {
     return [
+      this.beatmapInfo,
       this.controlPoints,
       this.hitObjects,
     ];
@@ -116,7 +117,7 @@ export class Beatmap<T extends HitObject = HitObject> extends SharedStaticObject
 
   override initializeFromSummary(summary: any): void {
     this.beatmapInfo.initializeFromSummary(summary.beatmapInfo);
-    this.hitObjects.initializeFromSummary(summary.hitObjects);
     this.controlPoints.initializeFromSummary(summary.controlPoints);
+    this.hitObjects.initializeFromSummary(summary.hitObjects);
   }
 }

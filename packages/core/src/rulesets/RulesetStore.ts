@@ -29,4 +29,8 @@ export class RulesetStore {
   static getByLegacyId(legacyId: number) {
     return this.#legacyRulesets.get(legacyId) ?? null;
   }
+
+  static getByShortName(shortName: string) {
+    return this.#rulesets.get(shortName);
+  }
 }

@@ -1,4 +1,4 @@
-import type { SharedProperty } from '@osucad/multiplayer';
+import type { ObjectSummary, SharedProperty } from '@osucad/multiplayer';
 import type { IControlPoint } from './IControlPoint';
 import { Action, Comparer } from '@osucad/framework';
 import { SharedObject } from '@osucad/multiplayer';
@@ -20,7 +20,8 @@ export abstract class ControlPoint extends SharedObject implements IControlPoint
 
   protected constructor(time: number) {
     super();
-    this.#time = this.property('time', time);
+
+    this.time = time;
   }
 
   abstract get controlPointName(): string;
@@ -30,7 +31,7 @@ export abstract class ControlPoint extends SharedObject implements IControlPoint
   raiseChanged() {
   }
 
-  readonly #time: SharedProperty<number>;
+  readonly #time = this.property('time', 0);
 
   get timeBindable() {
     return this.#time.bindable;
@@ -59,5 +60,9 @@ export abstract class ControlPoint extends SharedObject implements IControlPoint
   override onPropertyChanged(property: SharedProperty<any>, oldValue: any, submitEvents: boolean) {
     super.onPropertyChanged(property, oldValue, submitEvents);
     this.changed.emit(this);
+  }
+
+  override initializeFromSummary(summary: ObjectSummary) {
+    super.initializeFromSummary(summary);
   }
 }

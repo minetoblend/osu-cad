@@ -202,7 +202,7 @@ export abstract class SharedSortedList<T extends SharedStructure<any>> extends S
   override initializeFromSummary(summary: SortedListSummary) {
     this.id = summary.id;
     for (const item of summary.items) {
-      this.add(this.createChildSummary(item));
+      this.add(this.createChildFromSummary(item));
     }
   }
 

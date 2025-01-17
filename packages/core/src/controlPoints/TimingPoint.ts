@@ -1,4 +1,3 @@
-import type { SharedProperty } from '@osucad/multiplayer';
 import { ControlPoint } from './ControlPoint';
 
 export class TimingPoint extends ControlPoint {
@@ -9,9 +8,8 @@ export class TimingPoint extends ControlPoint {
   ) {
     super(time);
 
-    this.#beatLength = this.property('beatLength', beatLength);
-    this.#meter = this.property('meter', meter);
-    this.#omitFirstBarLine = this.property('omitFirstBarLine', false);
+    this.beatLength = beatLength;
+    this.meter = meter;
   }
 
   static readonly DEFAULT_BEAT_LENGTH = 60_000 / 120;
@@ -22,7 +20,7 @@ export class TimingPoint extends ControlPoint {
     return 'Timing Point';
   }
 
-  readonly #beatLength: SharedProperty<number>;
+  readonly #beatLength = this.property('beatLength', TimingPoint.DEFAULT_BEAT_LENGTH);
 
   get beatLengthBindable() {
     return this.#beatLength.bindable;
@@ -48,7 +46,7 @@ export class TimingPoint extends ControlPoint {
     this.beatLength = 60_000 / value;
   }
 
-  readonly #meter: SharedProperty<number>;
+  readonly #meter = this.property('meter', 4);
 
   get meterBindable() {
     return this.#meter.bindable;
@@ -63,7 +61,7 @@ export class TimingPoint extends ControlPoint {
     this.raiseChanged();
   }
 
-  readonly #omitFirstBarLine: SharedProperty<boolean>;
+  readonly #omitFirstBarLine = this.property('omitFirstBarLine', false);
 
   get#omitFirstBarLineBindable() {
     return this.#omitFirstBarLine.bindable;

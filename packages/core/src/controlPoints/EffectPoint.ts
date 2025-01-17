@@ -1,4 +1,3 @@
-import type { SharedProperty } from '@osucad/multiplayer';
 import { ControlPoint } from './ControlPoint';
 
 export interface EffectPointPatch {
@@ -9,7 +8,7 @@ export class EffectPoint extends ControlPoint {
   constructor(time: number = 0, kiaiMode: boolean = false) {
     super(time);
 
-    this.#kiaiMode = this.property('kiaiMode', kiaiMode);
+    this.kiaiMode = kiaiMode;
   }
 
   static default = new EffectPoint(0);
@@ -18,7 +17,7 @@ export class EffectPoint extends ControlPoint {
     return 'Effect Point';
   }
 
-  readonly #kiaiMode: SharedProperty<boolean>;
+  readonly #kiaiMode = this.property('kiaiMode', false);
 
   get kiaiModeBindable() {
     return this.#kiaiMode.bindable;

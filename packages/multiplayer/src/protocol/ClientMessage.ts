@@ -1,5 +1,5 @@
-import type { IVec2 } from '@osucad/framework';
 import type { SignalKey } from '../client';
+import type { IMutation } from './IMutation';
 
 export type ClientMessage =
   | never;
@@ -8,9 +8,10 @@ export interface ClientMessages {
   createChatMessage(content: string): void;
   submitSignal(key: SignalKey, data: any): void;
   updatePresence(key: string, data: any): void;
+  submitMutations(message: SubmitMutationsMessage): void;
 }
 
-export interface UpdateCursorClientMessage {
-  screen: string | null;
-  position: IVec2 | null;
+export interface SubmitMutationsMessage {
+  version: number;
+  mutations: IMutation[];
 }

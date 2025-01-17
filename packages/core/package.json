@@ -18,12 +18,13 @@
     }
   },
   "dependencies": {
+    "@osucad/framework": "workspace:*",
+    "@osucad/multiplayer": "workspace:*",
+    "@osucad/resources": "workspace:*",
     "audiobuffer-to-wav": "^1.0.0",
     "bezier-easing": "^2.1.0",
-    "unzipit": "^1.4.3",
-    "@osucad/framework": "workspace:*",
-    "@osucad/resources": "workspace:*",
-    "@osucad/multiplayer": "workspace:*"
+    "socket.io-client": "^4.8.1",
+    "unzipit": "^1.4.3"
   },
   "devDependencies": {
     "@types/audiobuffer-to-wav": "^1.0.4"

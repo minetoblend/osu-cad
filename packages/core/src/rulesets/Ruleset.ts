@@ -1,5 +1,4 @@
 import type { IKeyBinding, NoArgsConstructor } from '@osucad/framework';
-import type { Beatmap } from '../beatmap/Beatmap';
 import type { BeatmapConverter } from '../beatmap/BeatmapConverter';
 import type { IBeatmap } from '../beatmap/IBeatmap';
 import type { StableHitObjectParser } from '../beatmap/io/StableHitObjectParser';
@@ -12,6 +11,7 @@ import type { BeatmapVerifier } from '../verifier/BeatmapVerifier';
 import type { DifficultyCalculator } from './difficulty/DifficultyCalculator';
 import type { DrawableRuleset } from './DrawableRuleset';
 import type { EditorRuleset } from './EditorRuleset';
+import { Beatmap } from '../beatmap/Beatmap';
 import { RulesetInfo } from './RulesetInfo';
 
 export abstract class Ruleset {
@@ -21,6 +21,10 @@ export abstract class Ruleset {
 
   createSkinTransformer(skin: ISkin, beatmap: IBeatmap): SkinTransformer | null {
     return null;
+  }
+
+  createBeatmap(): Beatmap<any> {
+    return new Beatmap();
   }
 
   abstract getHitObjectClasses(): Record<string, NoArgsConstructor<HitObject>>;

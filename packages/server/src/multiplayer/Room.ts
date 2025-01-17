@@ -1,7 +1,7 @@
-import type { IBeatmap } from '@osucad/common';
-import type { AssetInfo, ClientMessages, ServerMessages, SignalKey } from '@osucad/multiplayer';
+import type { Beatmap } from '@osucad/core';
+import type { AssetInfo, ClientMessages, MutationContext, ServerMessages, SignalKey, SubmitMutationsMessage } from '@osucad/multiplayer';
 import type { BroadcastOperator, Socket } from 'socket.io';
-import { Beatmap } from '@osucad/common';
+import { MutationSource, UpdateHandler } from '@osucad/multiplayer';
 import { Json } from '@osucad/serialization';
 import { nextClientId } from './clientId';
 import { RoomUser } from './RoomUser';
@@ -10,10 +10,14 @@ export class Room {
   constructor(
     private readonly id: string,
     private readonly broadcast: BroadcastOperator<ServerMessages, ClientMessages>,
-    private readonly beatmap: IBeatmap,
+    private readonly beatmap: Beatmap<any>,
     private readonly assets: AssetInfo[],
   ) {
+    this.updateHandler = new UpdateHandler(beatmap);
+    this.updateHandler.attach(beatmap);
   }
+
+  private readonly updateHandler: UpdateHandler;
 
   private readonly json = new Json();
 
@@ -31,7 +35,10 @@ export class Room {
 
     socket.emit('initialData', {
       clientId,
-      beatmapData: this.json.encode(Beatmap.serializer, this.beatmap),
+      beatmap: {
+        ruleset: this.beatmap.beatmapInfo.ruleset.shortName,
+        data: this.beatmap.createSummary(),
+      },
       assets: this.assets,
       connectedUsers: [...this.users.values()].map(it => it.getInfo()),
     });
@@ -44,6 +51,7 @@ export class Room {
 
     socket.on('createChatMessage', message => this.handleChat(user, message));
     socket.on('submitSignal', (key, data) => this.handleSignal(user, key, data));
+    socket.on('submitMutations', message => this.handleSubmitMutations(user, message));
   }
 
   private handleDisconnect(user: RoomUser) {
@@ -67,5 +75,22 @@ export class Room {
   private handlePresence(user: RoomUser, key: string, data: any) {
     user.presence[key] = data;
     this.broadcast.emit('presenceUpdated', user.clientId, key, data);
+  }
+
+  private handleSubmitMutations(user: RoomUser, message: SubmitMutationsMessage) {
+    const ctx: MutationContext = {
+      // pretending that all mutations are local on server side so it doesn't try to do any conflict resolution
+      source: MutationSource.Local,
+      version: message.version,
+    };
+
+    for (const mutation of message.mutations)
+      this.updateHandler.apply(mutation, ctx);
+
+    this.broadcast.emit('mutationsSubmitted', {
+      version: message.version,
+      clientId: user.clientId,
+      mutations: message.mutations,
+    });
   }
 }

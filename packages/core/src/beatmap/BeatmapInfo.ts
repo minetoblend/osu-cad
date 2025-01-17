@@ -281,10 +281,24 @@ export class BeatmapInfo extends SharedObject {
 
   path?: string;
 
+  override createSummary() {
+    return {
+      ...super.createSummary(),
+      difficulty: this.difficulty.createSummary(),
+      metadata: this.metadata.createSummary(),
+    };
+  }
+
+  override initializeFromSummary(summary: any) {
+    super.initializeFromSummary(summary);
+    this.difficulty.initializeFromSummary(summary.difficulty);
+    this.metadata.initializeFromSummary(summary.metadata);
+  }
+
   override get childObjects(): readonly SharedStructure<any>[] {
     return [
-      // this.difficulty,
-      // this.metadata
+      this.difficulty,
+      this.metadata,
     ];
   }
 }

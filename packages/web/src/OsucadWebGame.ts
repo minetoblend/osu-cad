@@ -1,5 +1,5 @@
 import type { DependencyContainer, ReadonlyDependencyContainer } from '@osucad/framework';
-import { DummyEditorBeatmap, Editor, ISkinSource, OsucadGameBase, OsucadScreenStack, RulesetStore, SkinManager, UISamples } from '@osucad/core';
+import { ISkinSource, MultiplayerClient, MultiplayerEditor, MultiplayerEditorBeatmap, OsucadGameBase, OsucadScreenStack, RulesetStore, SkinManager, UISamples } from '@osucad/core';
 import { provide } from '@osucad/framework';
 import { ManiaRuleset } from '@osucad/ruleset-mania';
 import { OsuRuleset } from '@osucad/ruleset-osu';
@@ -35,6 +35,14 @@ export class OsucadWebGame extends OsucadGameBase {
   protected loadComplete() {
     super.loadComplete();
 
-    this.#screenStack.push(new Editor(new DummyEditorBeatmap()));
+    this.loadEditor().then();
+  }
+
+  async loadEditor() {
+    const client = new MultiplayerClient('http://localhost:3000');
+
+    await client.connect();
+
+    this.#screenStack.push(new MultiplayerEditor(new MultiplayerEditorBeatmap(client)));
   }
 }

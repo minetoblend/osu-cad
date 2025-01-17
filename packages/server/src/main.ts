@@ -14,7 +14,9 @@ const port = config.get('deployment.port');
 // endregion
 
 const app = express();
-app.use(cors());
+app.use(cors({
+
+}));
 
 app.use((req, res, next) => {
   console.log(req.originalUrl);
@@ -24,6 +26,9 @@ app.use((req, res, next) => {
 const server = http.createServer(app);
 const io = new Server(server, {
   transports: ['websocket'],
+  cors: {
+    origin: true,
+  },
 });
 
 const gateway = new Gateway(io);

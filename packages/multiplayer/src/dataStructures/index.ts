@@ -1,5 +1,7 @@
 export * from './ISerializer';
 export * from './ISummary';
+export * from './MutationContext';
+export * from './MutationSource';
 export * from './SharedObject';
 export * from './SharedProperty';
 export * from './SharedSortedList';

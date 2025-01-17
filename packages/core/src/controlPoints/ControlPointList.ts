@@ -22,6 +22,9 @@ export class ControlPointList<T extends ControlPoint> extends ObservableSortedLi
   }
 
   controlPointIndexAt(time: number): number {
+    if (this.length === 0)
+      return -1;
+
     let index = this.binarySearch({ time } as unknown as T);
 
     if (index >= 0)
