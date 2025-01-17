@@ -54,6 +54,8 @@ export class TimelineTickDisplay extends TimelinePart<PointVisualization> {
     this.beatDivisor.bindTo(this.editorClock.beatSnapDivisor);
 
     this.updateHandler.commandApplied.addListener(this.#invalidateTicks, this);
+
+    this.controlPoints.anyPointChanged.addListener(this.#invalidateTicks, this);
   }
 
   override update() {
@@ -172,6 +174,8 @@ export class TimelineTickDisplay extends TimelinePart<PointVisualization> {
     super.dispose(isDisposing);
 
     this.updateHandler.commandApplied.removeListener(this.#invalidateTicks, this);
+
+    this.controlPoints.anyPointChanged.removeListener(this.#invalidateTicks, this);
   }
 }
 
