@@ -1,5 +1,5 @@
 import type { Container, Drawable, PIXIRenderer, ReadonlyDependencyContainer } from '@osucad/framework';
-import { AudioManager, Axes, Box, DependencyContainer, Game, IRenderer, provide, resolved } from '@osucad/framework';
+import { AudioManager, Axes, Box, DependencyContainer, Game, IRenderer, isMobile, provide, resolved, Vec2 } from '@osucad/framework';
 import { OsucadIcons } from '@osucad/resources';
 import { RenderTarget } from 'pixi.js';
 import { AudioMixer } from './audio/AudioMixer';
@@ -38,6 +38,16 @@ export abstract class OsucadGameBase extends Game implements IResourcesProvider 
   @provide(ColorProvider)
   colors = new ColorProvider();
 
+  protected getTargetDrawSize() {
+    if (isMobile.phone)
+      return new Vec2(540, 400);
+
+    if (isMobile.any)
+      return new Vec2(640, 640);
+
+    return new Vec2(960, 768);
+  }
+
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
@@ -58,10 +68,7 @@ export abstract class OsucadGameBase extends Game implements IResourcesProvider 
       }),
       new SafeAreaContainer({
         child: new ScalingContainer({
-          desiredSize: {
-            x: 960,
-            y: 768,
-          },
+          desiredSize: this.getTargetDrawSize(),
           fit: Fit.Fill,
           child: new PerformanceOverlay({
             child: new EditorActionContainer({

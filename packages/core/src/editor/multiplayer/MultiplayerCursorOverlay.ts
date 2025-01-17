@@ -2,8 +2,8 @@ import type { InputManager, ReadonlyDependencyContainer } from '@osucad/framewor
 import type { CursorPosition } from '@osucad/multiplayer';
 import type { ConnectedUser } from './ConnectedUsers';
 import type { MultiplayerCursorArea } from './MultiplayerCursorArea';
-import { Anchor, Axes, CompositeDrawable, Container, DrawableSprite, MouseButton, ProxyDrawable, resolved, Vec2 } from '@osucad/framework';
-import { getIcon } from '@osucad/resources';
+import { Axes, BindableBoolean, CompositeDrawable, Container, MouseButton, ProxyDrawable, resolved, Vec2 } from '@osucad/framework';
+import { DefaultCursor } from '../../graphics/cursor/DefaultCursorContainer';
 import { MultiplayerClient } from './MultiplayerClient';
 
 export class MultiplayerCursorOverlay extends CompositeDrawable {
@@ -120,19 +120,14 @@ class MultiplayerCursor extends CompositeDrawable {
   ) {
     super();
 
-    this.addInternal(new Container({
-      scale: 0.5,
-      children: [
-        new DrawableSprite({
-          texture: getIcon('select'),
-          anchor: Anchor.TopLeft,
-          x: -5,
-          y: -4,
-          color: this.user.clientInfo.color,
-        }),
-      ],
+    this.addInternal(this.#cursor = new DefaultCursor().with({
+      color: user.clientInfo.color,
     }));
   }
+
+  readonly #cursor: DefaultCursor;
+
+  buttonPressed = new BindableBoolean();
 
   protected override loadComplete() {
     super.loadComplete();
@@ -143,12 +138,21 @@ class MultiplayerCursor extends CompositeDrawable {
       if (key === 'cursor')
         this.updatePosition();
     });
+
+    this.buttonPressed.bindValueChanged((e) => {
+      if (e.value)
+        this.#cursor.animateMouseDown();
+      else
+        this.#cursor.animateMouseUp();
+    }, true);
   }
 
   #targetPosition = new Vec2();
 
   updatePosition() {
     const { cursor } = this.user.presence;
+
+    this.buttonPressed.value = cursor?.pressed ?? false;
 
     if (!cursor) {
       this.fadeOut();

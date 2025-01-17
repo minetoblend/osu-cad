@@ -49,7 +49,7 @@ export class DefaultCursor extends CompositeDrawable {
     this.animateMouseUp();
   }
 
-  protected animateMouseDown() {
+  animateMouseDown() {
     this.#sprite.scaleTo(0.8, 1000, EasingFunction.OutQuart);
     this.#sprite.moveTo(new Vec2(-5, -4), 1000, EasingFunction.OutQuart);
 
@@ -57,7 +57,7 @@ export class DefaultCursor extends CompositeDrawable {
     this.#shadow.moveTo(new Vec2(-5, -2), 1000, EasingFunction.OutQuart);
   }
 
-  protected animateMouseUp() {
+  animateMouseUp() {
     this.#sprite.scaleTo(1, 200, EasingFunction.OutBack);
     this.#sprite.moveTo(new Vec2(-4, -3), 200, EasingFunction.OutBack);
 
