@@ -54,7 +54,7 @@ export class PlayfieldGrid extends CompositeDrawable implements IKeyBindingHandl
 
     g.rect(0, 0, 512, 384).stroke({
       color: 0xFFFFFF,
-      alpha: 0.5,
+      alpha: 0.25,
       width: 2 / this.#pixelSize,
     });
 
@@ -78,7 +78,7 @@ export class PlayfieldGrid extends CompositeDrawable implements IKeyBindingHandl
 
     g.stroke({
       color: 0xFFFFFF,
-      alpha: 0.25,
+      alpha: 0.125,
       width: 1 / this.#pixelSize,
     });
 
@@ -88,7 +88,7 @@ export class PlayfieldGrid extends CompositeDrawable implements IKeyBindingHandl
       .lineTo(512, 192)
       .stroke({
         color: 0xFFFFFF,
-        alpha: 0.25,
+        alpha: 0.15,
         width: 2 / this.#pixelSize,
       });
   }
