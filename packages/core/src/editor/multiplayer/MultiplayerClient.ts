@@ -2,11 +2,12 @@ import type { ClientSocket, IMutation, InitialStateServerMessage, MutationContex
 import type { Beatmap } from '../../beatmap/Beatmap';
 import type { FileStore } from '../../beatmap/io/FileStore';
 import { Component } from '@osucad/framework';
-import { ConnectedUsers, MutationSource, UpdateHandler } from '@osucad/multiplayer';
+import { MutationSource, UpdateHandler } from '@osucad/multiplayer';
 import { io } from 'socket.io-client';
 import { SimpleFile } from '../../beatmap/io/SimpleFile';
 import { StaticFileStore } from '../../beatmap/io/StaticFileStore';
 import { RulesetStore } from '../../rulesets/RulesetStore';
+import { ConnectedUsers } from './ConnectedUsers';
 
 export class MultiplayerClient extends Component {
   constructor(url: string) {
@@ -18,7 +19,7 @@ export class MultiplayerClient extends Component {
 
     this.socket.on('mutationsSubmitted', msg => this.mutationSubmitted(msg));
 
-    this.users = new ConnectedUsers(this.socket);
+    this.users = new ConnectedUsers(this);
   }
 
   readonly socket: ClientSocket;
