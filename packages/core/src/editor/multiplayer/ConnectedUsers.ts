@@ -1,5 +1,5 @@
 import type { IVec2 } from '@osucad/framework';
-import type { ClientInfo } from '@osucad/multiplayer';
+import type { ClientInfo, UserPresence } from '@osucad/multiplayer';
 import type { MultiplayerClient } from './MultiplayerClient';
 import { Action, Bindable } from '@osucad/framework';
 import { SignalKey } from '@osucad/multiplayer';
@@ -22,11 +22,23 @@ export class ConnectedUsers {
           user.cursorPosition.value = data;
       }
     });
+
+    socket.on('presenceUpdated', (clientId, key, data) => {
+      if (clientId === this.client.clientId)
+        return;
+
+      const user = this.#users.get(clientId);
+      if (!user)
+        return;
+
+      user.presence[key] = data;
+      user.presenceUpdated.emit(key);
+    });
   }
 
-  readonly userJoined = new Action<ClientInfo>();
+  readonly userJoined = new Action<ConnectedUser>();
 
-  readonly userLeft = new Action<ClientInfo>();
+  readonly userLeft = new Action<ConnectedUser>();
 
   get users() {
     return [...this.#users.values()];
@@ -36,27 +48,58 @@ export class ConnectedUsers {
     if (this.#users.has(client.clientId))
       return;
 
-    this.#users.set(client.clientId, new ConnectedUser(client));
-    this.userJoined.emit(client);
+    const user = new ConnectedUser(client);
+
+    this.#users.set(client.clientId, user);
+    this.userJoined.emit(user);
   }
 
   #onUserLeft(client: ClientInfo) {
-    if (this.#users.delete(client.clientId)) {
-      this.userLeft.emit(client);
+    const user = this.#users.get(client.clientId);
+    if (user) {
+      this.#users.delete(client.clientId);
+      this.userLeft.emit(user);
     }
+  }
+
+  #ownCursor: CursorPosition | null = null;
+
+  setOwnCursor(cursor: CursorPosition | null) {
+    this.#ownCursor = cursor;
+    this.client.socket.emit('submitSignal', SignalKey.Cursor, cursor);
+  }
+
+  get ownCursor() {
+    return this.#ownCursor;
+  }
+
+  updatePresence<Key extends keyof UserPresence>(key: Key, value: UserPresence[Key]) {
+    this.client.socket.emit('updatePresence', key, value);
   }
 }
 
-class ConnectedUser {
-  constructor(readonly clientInfo: ClientInfo) {}
+export class ConnectedUser {
+  constructor(readonly clientInfo: ClientInfo) {
+    this.presence = clientInfo.presence;
+  }
+
   readonly cursorPosition = new Bindable<CursorPosition | null>(null);
 
   get clientId() {
     return this.clientInfo.clientId;
+  }
+
+  readonly presence: UserPresence;
+
+  readonly presenceUpdated = new Action<string>();
+
+  get clock() {
+    return this.presence.clock;
   }
 }
 
 export interface CursorPosition {
   screen: string;
   position: IVec2;
+  pressed: boolean;
 }

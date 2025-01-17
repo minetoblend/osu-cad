@@ -34,19 +34,30 @@ export class DefaultCursor extends CompositeDrawable {
 
   #sprite!: DrawableSprite;
 
-  override onMouseDown(e: MouseDownEvent): boolean {
-    if (e.button === MouseButton.Left) {
-      this.#sprite.scaleTo(0.8, 1000, EasingFunction.OutQuart);
-      this.#sprite.moveTo(new Vec2(-5, -4), 1000, EasingFunction.OutQuart);
+  protected get sprite() {
+    return this.#sprite;
+  }
 
-      this.#shadow.scaleTo(0.8, 1000, EasingFunction.OutQuart);
-      this.#shadow.moveTo(new Vec2(-5, -2), 1000, EasingFunction.OutQuart);
-    }
+  override onMouseDown(e: MouseDownEvent): boolean {
+    if (e.button === MouseButton.Left)
+      this.animateMouseDown();
 
     return false;
   }
 
   override onMouseUp(e: MouseUpEvent) {
+    this.animateMouseUp();
+  }
+
+  protected animateMouseDown() {
+    this.#sprite.scaleTo(0.8, 1000, EasingFunction.OutQuart);
+    this.#sprite.moveTo(new Vec2(-5, -4), 1000, EasingFunction.OutQuart);
+
+    this.#shadow.scaleTo(0.8, 1000, EasingFunction.OutQuart);
+    this.#shadow.moveTo(new Vec2(-5, -2), 1000, EasingFunction.OutQuart);
+  }
+
+  protected animateMouseUp() {
     this.#sprite.scaleTo(1, 200, EasingFunction.OutBack);
     this.#sprite.moveTo(new Vec2(-4, -3), 200, EasingFunction.OutBack);
 

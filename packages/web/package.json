@@ -11,7 +11,12 @@
   "devDependencies": {
     "typescript": "^5.5.3",
     "vite": "^5.4.8",
-    "vite-plugin-circular-dependency": "^0.5.0"
+    "vite-plugin-circular-dependency": "^0.5.0",
+    "@osucad/core": "workspace:*",
+    "@osucad/multiplayer": "workspace:*",
+    "@osucad/framework": "workspace:*",
+    "@osucad/ruleset-osu": "workspace:*",
+    "@osucad/ruleset-mania": "workspace:*"
   },
   "dependencies": {
     "socket.io-client": "^4.8.1"

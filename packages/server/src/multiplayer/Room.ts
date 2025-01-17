@@ -1,5 +1,5 @@
 import type { Beatmap } from '@osucad/core';
-import type { AssetInfo, ClientMessages, MutationContext, ServerMessages, SignalKey, SubmitMutationsMessage } from '@osucad/multiplayer';
+import type { AssetInfo, ClientMessages, MutationContext, ServerMessages, SignalKey, SubmitMutationsMessage, UserPresence } from '@osucad/multiplayer';
 import type { BroadcastOperator, Socket } from 'socket.io';
 import { MutationSource, UpdateHandler } from '@osucad/multiplayer';
 import { Json } from '@osucad/serialization';
@@ -52,6 +52,7 @@ export class Room {
     socket.on('createChatMessage', message => this.handleChat(user, message));
     socket.on('submitSignal', (key, data) => this.handleSignal(user, key, data));
     socket.on('submitMutations', message => this.handleSubmitMutations(user, message));
+    socket.on('updatePresence', (key, data) => this.handlePresence(user, key, data));
   }
 
   private handleDisconnect(user: RoomUser) {
@@ -72,7 +73,7 @@ export class Room {
     this.broadcast.emit('signal', user.clientId, key, data);
   }
 
-  private handlePresence(user: RoomUser, key: string, data: any) {
+  private handlePresence<Key extends keyof UserPresence>(user: RoomUser, key: Key, data: UserPresence[Key]) {
     user.presence[key] = data;
     this.broadcast.emit('presenceUpdated', user.clientId, key, data);
   }

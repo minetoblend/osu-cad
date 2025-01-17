@@ -2,21 +2,14 @@
   "extends": "../../tsconfig.base.json",
   "files": [],
   "compilerOptions": {
-    "target": "ESNext",
-    "useDefineForClassFields": false,
     "module": "ESNext",
-    "lib": ["ESNext", "DOM", "WebWorker"],
-    "moduleResolution": "Bundler",
-
-    "resolveJsonModule": true,
-    "esModuleInterop": false,
-    "noEmit": true,
-    "moduleDetection": "force",
+    "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "skipLibCheck": true,
-    "types": ["vite/client"]
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "allowImportingTsExtensions": false
   },
-  "include": ["src"],
+  "include": [],
   "references": [
     {
       "path": "./tsconfig.app.json"

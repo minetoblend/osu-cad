@@ -32,14 +32,14 @@ export class OsucadWebGame extends OsucadGameBase {
 
   #screenStack!: OsucadScreenStack;
 
-  protected loadComplete() {
+  protected override loadComplete() {
     super.loadComplete();
 
     this.loadEditor().then();
   }
 
   async loadEditor() {
-    const client = new MultiplayerClient('http://localhost:3000');
+    const client = new MultiplayerClient('/');
 
     await client.connect();
 

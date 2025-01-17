@@ -33,7 +33,7 @@ const io = new Server(server, {
 
 const gateway = new Gateway(io);
 
-app.get('/assets/:id', (req, res) => {
+app.get('/edit/assets/:id', (req, res) => {
   const path = getAssetPath(req.params.id);
   if (!path) {
     res.sendStatus(404);

@@ -3,7 +3,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [
-    nxViteTsPaths(),
+    nxViteTsPaths() as any,
   ],
   esbuild: {
     target: 'esnext',
@@ -11,7 +11,7 @@ export default defineConfig({
   },
   worker: {
     format: 'es',
-    plugins: () => [nxViteTsPaths()],
+    plugins: () => [nxViteTsPaths() as any],
   },
   build: {
     outDir: '../../dist/packages/web',

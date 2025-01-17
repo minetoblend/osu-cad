@@ -2,7 +2,7 @@ import type { IVec2 } from '@osucad/framework';
 import type { SignalKey } from '../client';
 import type { ChatMessage } from './ChatMessage';
 import type { IMutation } from './IMutation';
-import type { ClientInfo } from './types';
+import type { ClientInfo, UserPresence } from './types';
 
 export type ServerMessage =
   | InitialStateServerMessage;
@@ -18,7 +18,7 @@ export interface ServerMessages {
 
   signal(clientId: number, key: SignalKey, data: any): void;
 
-  presenceUpdated(clientId: number, key: string, data: any): void;
+  presenceUpdated<Key extends keyof UserPresence>(clientId: number, key: Key, value: UserPresence[Key]): void;
 
   mutationsSubmitted(message: MutationsSubmittedMessage): void;
 }

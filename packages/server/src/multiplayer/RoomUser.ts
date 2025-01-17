@@ -1,4 +1,4 @@
-import type { ClientInfo, ClientMessages, ServerMessages } from '@osucad/multiplayer';
+import type { ClientInfo, ClientMessages, ServerMessages, UserPresence } from '@osucad/multiplayer';
 import type { Socket } from 'socket.io';
 
 export class RoomUser {
@@ -12,7 +12,13 @@ export class RoomUser {
   username = 'Maarvin';
   avatarUrl = '';
 
-  presence: any = {};
+  presence: UserPresence = {
+    clock: {
+      currentTime: 0,
+      isRunning: false,
+      rate: 1,
+    },
+  };
 
   getInfo(): ClientInfo {
     return {

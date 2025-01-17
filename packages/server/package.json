@@ -1,10 +1,10 @@
 {
-  "name": "@osucad/server",
+  "name": "server",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite-node --watch src/main.ts",
+    "dev": "vite-node src/main.ts",
     "build": "vite-node build src/main.ts"
   },
   "devDependencies": {

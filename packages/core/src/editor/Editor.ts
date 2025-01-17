@@ -61,9 +61,9 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
     this.#dependencies.provide(ControlPointInfo, this.editorBeatmap.controlPoints);
     this.#dependencies.provide(UpdateHandler, this.editorBeatmap.updateHandler);
 
-    this.addInternal(this.#editorClock = new EditorClock(this.editorBeatmap.track.value));
-    this.#dependencies.provide(EditorClock, this.#editorClock);
-    this.#dependencies.provide(PlayfieldClock, this.#editorClock);
+    this.addInternal(this.editorClock = new EditorClock(this.editorBeatmap.track.value));
+    this.#dependencies.provide(EditorClock, this.editorClock);
+    this.#dependencies.provide(PlayfieldClock, this.editorClock);
 
     this.registerScreens(this.#screenManager);
     this.#dependencies.provide(EditorScreenManager, this.#screenManager);
@@ -94,7 +94,7 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
       this.addInternal(processor);
 
     if (this.beatmap.hitObjects.length > 0)
-      this.#editorClock.seek(this.beatmap.hitObjects.first!.startTime, false);
+      this.editorClock.seek(this.beatmap.hitObjects.first!.startTime, false);
   }
 
   protected registerScreens(screenManager: EditorScreenManager) {
@@ -108,7 +108,7 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
 
   #dependencies!: DependencyContainer;
 
-  #editorClock!: EditorClock;
+  protected editorClock!: EditorClock;
 
   protected override createChildDependencies(parentDependencies: ReadonlyDependencyContainer): DependencyContainer {
     return this.#dependencies = super.createChildDependencies(parentDependencies);
@@ -155,7 +155,7 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
   override update() {
     super.update();
 
-    this.editorBeatmap.applyDefaultsWhereNeeded(this.#editorClock.currentTime - 2000, this.#editorClock.currentTime + 2000);
+    this.editorBeatmap.applyDefaultsWhereNeeded(this.editorClock.currentTime - 2000, this.editorClock.currentTime + 2000);
   }
 
   undo() {

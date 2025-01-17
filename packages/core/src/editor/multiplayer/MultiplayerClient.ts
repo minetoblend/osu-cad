@@ -65,7 +65,7 @@ export class MultiplayerClient extends Component {
 
     const assets = initialState.assets.map(it => new SimpleFile(
       it.path,
-      () => fetch(`http://localhost:3000/assets/${it.id}`).then(it => it.arrayBuffer()),
+      () => fetch(`/edit/assets/${it.id}`).then(it => it.arrayBuffer()),
     ));
 
     this.fileStore = new StaticFileStore(assets);

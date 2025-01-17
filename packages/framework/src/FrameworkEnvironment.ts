@@ -2,13 +2,14 @@ import { isMobile } from './pixi';
 
 export class FrameworkEnvironment {
   get antialiasPreferred() {
-    if (devicePixelRatio >= 2) {
+    if (devicePixelRatio >= 2)
       return false;
-    }
 
-    if (isMobile.any) {
+    if (isMobile.any)
       return false;
-    }
+
+    if (navigator.userAgent.includes('Mac'))
+      return false;
 
     return true;
   }

@@ -5,6 +5,7 @@ import type { HitObjectComposer } from './HitObjectComposer';
 import { Axes, Box, Container, resolved } from '@osucad/framework';
 import { OsucadColors } from '../../../OsucadColors';
 import { Ruleset } from '../../../rulesets/Ruleset';
+import { MultiplayerCursorContainer } from '../../multiplayer/MultiplayerCursorContainer';
 import { EditorScreen } from '../EditorScreen';
 import { editorScreen } from '../metadata';
 import { ComposeScreenTimeline } from './ComposeScreenTimeline';
@@ -28,6 +29,10 @@ export class ComposeScreen extends EditorScreen {
     super.load(dependencies);
 
     this.addInternal(this.#composer = this.ruleset.createHitObjectComposer());
+
+    this.#composer.playfieldContainer.add(
+      new MultiplayerCursorContainer('compose'),
+    );
   }
 
   protected override applySafeAreaPadding(safeArea: EditorSafeArea) {
