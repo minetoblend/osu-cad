@@ -1,5 +1,7 @@
 import type { SharedStructure } from '@osucad/multiplayer';
+import { BindableNumber } from '@osucad/framework';
 import { SharedObject } from '@osucad/multiplayer';
+import { BindableBeatDivisor } from '../editor/BindableBeatDivisor';
 import { RulesetInfo } from '../rulesets/RulesetInfo';
 import { BeatmapDifficultyInfo } from './BeatmapDifficultyInfo';
 import { BeatmapMetadata } from './BeatmapMetadata';
@@ -149,32 +151,24 @@ export class BeatmapInfo extends SharedObject {
     this.#distanceSpacing.value = value;
   }
 
-  readonly #beatDivisor = this.property('beatDivisor', 4);
-
-  get beatDivisorBindable() {
-    return this.#beatDivisor.bindable;
-  }
+  readonly beatDivisorBindable = new BindableBeatDivisor(4);
 
   get beatDivisor() {
-    return this.#beatDivisor.value;
+    return this.beatDivisorBindable.value;
   }
 
   set beatDivisor(value) {
-    this.#beatDivisor.value = value;
+    this.beatDivisorBindable.value = value;
   }
 
-  readonly #gridSize = this.property('gridSize', 0);
-
-  get gridSizeBindable() {
-    return this.#gridSize.bindable;
-  }
+  readonly gridSizeBindable = new BindableNumber(0);
 
   get gridSize() {
-    return this.#gridSize.value;
+    return this.gridSizeBindable.value;
   }
 
   set gridSize(value) {
-    this.#gridSize.value = value;
+    this.gridSizeBindable.value = value;
   }
 
   readonly #timelineZoom = this.property('timelineZoom', 1);

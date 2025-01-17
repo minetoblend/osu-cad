@@ -5,6 +5,10 @@ import { OsucadColors } from '../OsucadColors';
 export class BindableBeatDivisor extends BindableNumber {
   constructor(value: number = 1) {
     super(value);
+
+    this.minValue = 1;
+    this.maxValue = 16;
+    this.precision = 1;
   }
 
   static readonly PREDEFINED_DIVISORS = [1, 2, 3, 4, 6, 8, 12, 16];
