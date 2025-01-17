@@ -104,6 +104,9 @@ export class MouseHandler extends InputHandler {
   #handleMouseMove = (event: PointerEvent) => {
     event.preventDefault();
 
+    if (event.pointerType === 'touch')
+      return;
+
     const rect = (event.target as HTMLCanvasElement).getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;

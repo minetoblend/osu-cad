@@ -51,12 +51,13 @@ export class TouchHandler extends InputHandler {
   #handleTouchStart = (event: TouchEvent) => {
     event.preventDefault();
 
-    const touches = this.#getTouches(event, event.changedTouches);
+    const touches = this.#getTouches(event, event.touches);
     if (touches.length === 0)
       return;
 
     this.#enqueueTouch(new TouchInput(touches, true));
-    this.flush.emit();
+    if (event.type === 'touchstart')
+      this.flush.emit();
   };
 
   #handleTouchEnd = (event: TouchEvent) => {

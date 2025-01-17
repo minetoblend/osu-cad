@@ -2,7 +2,6 @@ import type { Drawable } from '../graphics/drawables/Drawable';
 import type { GameHost } from '../platform/GameHost';
 import type { UIEvent } from './events/UIEvent';
 import type { InputHandler } from './handlers/InputHandler';
-import type { TouchSource } from './handlers/Touch';
 import type { IFocusManager } from './IFocusManager';
 import type { InputStateChangeEvent } from './stateChanges/events/InputStateChangeEvent';
 import type { IInput } from './stateChanges/IInput';
@@ -25,6 +24,7 @@ import { HoverLostEvent } from './events/HoverLostEvent';
 import { MouseMoveEvent } from './events/MouseMoveEvent';
 import { ScrollEvent } from './events/ScrollEvent';
 import { KeyboardHandler } from './handlers/KeyboardHandler';
+import { TouchSource } from './handlers/Touch';
 import { KeyEventManager } from './KeyEventManager';
 import { MouseButtonEventManager } from './MouseButtonEventManager';
 import { InputState } from './state/InputState';
@@ -609,6 +609,9 @@ export abstract class InputManager extends Container implements IInputStateChang
 
   protected handleMouseTouchStateChange(e: TouchStateChangeEvent): boolean {
     if (!this.mapMouseToLatestTouch)
+      return false;
+
+    if (e.touch.source !== TouchSource.Touch1)
       return false;
 
     if (e.isActive === true || e.lastPosition !== null) {
