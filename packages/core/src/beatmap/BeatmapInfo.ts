@@ -161,7 +161,7 @@ export class BeatmapInfo extends SharedObject {
     this.beatDivisorBindable.value = value;
   }
 
-  readonly gridSizeBindable = new BindableNumber(0);
+  readonly gridSizeBindable = new BindableNumber(16);
 
   get gridSize() {
     return this.gridSizeBindable.value;
