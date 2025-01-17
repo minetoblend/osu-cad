@@ -38,7 +38,15 @@ export class BeatmapColors extends SharedObject implements IHasComboColors {
     this.comboColors = [...this.comboColors, color];
   }
 
-  #sliderTrackOverride = this.property<Color | null>('sliderTrackOverride', null, colorSerializer);
+  readonly #sliderTrackOverride = this.property<Color | null>('sliderTrackOverride', null, colorSerializer);
 
-  #sliderBorder = this.property<Color | null>('sliderBorder', null, colorSerializer);
+  get sliderTrackOverride() {
+    return this.#sliderTrackOverride.value;
+  }
+
+  readonly #sliderBorder = this.property<Color | null>('sliderBorder', null, colorSerializer);
+
+  get sliderBorder() {
+    return this.#sliderBorder.value;
+  }
 }
