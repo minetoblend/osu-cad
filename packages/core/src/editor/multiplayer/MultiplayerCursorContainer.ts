@@ -1,7 +1,7 @@
 import type { Bindable, InputManager, MouseDownEvent, MouseMoveEvent, MouseUpEvent, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { MouseEvent } from '../../../../framework/src/input/events/MouseEvent';
 import type { ConnectedUser, CursorPosition } from './ConnectedUsers';
-import { Axes, BindableBoolean, CompositeDrawable, lerp, MouseButton, resolved } from '@osucad/framework';
+import { Axes, BindableBoolean, CompositeDrawable, EasingFunction, lerp, MouseButton, resolved, Vec2 } from '@osucad/framework';
 import { getIcon } from '@osucad/resources';
 import { OsucadSpriteText } from '../../drawables/OsucadSpriteText';
 import { DefaultCursor } from '../../graphics/cursor/DefaultCursorContainer';
@@ -32,6 +32,8 @@ export class MultiplayerCursorContainer extends CompositeDrawable {
 
     this.client.users.userJoined.addListener(this.addCursor, this);
     this.client.users.userLeft.addListener(this.removeCursor, this);
+
+    this.scheduler.addDelayed(() => this.flush(), 50, true);
   }
 
   addCursor(user: ConnectedUser) {
@@ -64,12 +66,22 @@ export class MultiplayerCursorContainer extends CompositeDrawable {
     this.updateMousePosition(e);
   }
 
+  #cursorUpdate?: CursorPosition;
+
   updateMousePosition(e: MouseEvent) {
-    this.client?.users.setOwnCursor({
+    this.#cursorUpdate = {
       position: e.mousePosition,
       screen: this.key,
       pressed: e.state.mouse.isPressed(MouseButton.Left),
-    });
+    };
+  }
+
+  flush() {
+    if (!this.#cursorUpdate)
+      return;
+
+    this.client?.users.setOwnCursor(this.#cursorUpdate);
+    this.#cursorUpdate = undefined;
   }
 
   override dispose(isDisposing: boolean = true) {
@@ -142,7 +154,7 @@ class MultiplayerCursor extends DefaultCursor {
     }
 
     this.visible = true;
-    this.position = cursor.position;
+    this.moveTo(Vec2.from(cursor.position), 100, EasingFunction.OutQuad);
   }
 
   @resolved(EditorClock)
