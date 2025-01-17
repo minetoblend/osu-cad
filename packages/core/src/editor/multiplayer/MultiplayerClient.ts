@@ -77,8 +77,6 @@ export class MultiplayerClient extends Component {
         : MutationSource.Remote,
     };
 
-    console.log(msg.mutations);
-
     for (const mutation of msg.mutations)
       this.updateHandler.apply(mutation, ctx);
   }
