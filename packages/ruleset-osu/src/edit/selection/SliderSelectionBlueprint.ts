@@ -81,7 +81,7 @@ export class SliderSelectionBlueprint extends OsuSelectionBlueprint<Slider> {
 
     const hitObject = entry.hitObject as Slider;
 
-    hitObject.path.invalidated.addListener(this.#updatePositions, this);
+    hitObject.path.invalidated.removeListener(this.#updatePositions, this);
   }
 
   protected override onDefaultsApplied(hitObject: HitObject) {
@@ -166,6 +166,8 @@ export class SliderSelectionBlueprint extends OsuSelectionBlueprint<Slider> {
   }
 
   #updatePositions() {
+    if (!this.hitObject)
+      return;
     this.position = this.hitObject!.stackedPosition;
     this.tailCircle.position = this.hitObject!.path.endPosition;
   }
