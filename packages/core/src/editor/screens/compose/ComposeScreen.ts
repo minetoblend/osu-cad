@@ -28,11 +28,10 @@ export class ComposeScreen extends EditorScreen {
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
-    this.addInternal(this.#composer = this.ruleset.createHitObjectComposer());
-
-    this.#composer.playfieldContainer.add(
-      new MultiplayerCursorContainer('compose'),
-    );
+    this.addRange([
+      this.#composer = this.ruleset.createHitObjectComposer(),
+      new MultiplayerCursorContainer('compose', this.#composer.overlayLayer),
+    ]);
   }
 
   protected override applySafeAreaPadding(safeArea: EditorSafeArea) {

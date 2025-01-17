@@ -18,14 +18,6 @@ export class EditorScreen extends Container {
 
   readonly safeAreaPadding = new Bindable(EditorSafeArea.default);
 
-  readonly #content = new Container({
-    relativeSizeAxes: Axes.Both,
-  });
-
-  override get content(): Container<Drawable> {
-    return this.#content;
-  }
-
   topBarContent!: Drawable;
 
   createTopBarContent(): Drawable {

@@ -1,5 +1,4 @@
-import type { Bindable, InputManager, MouseDownEvent, MouseMoveEvent, MouseUpEvent, ReadonlyDependencyContainer } from '@osucad/framework';
-import type { MouseEvent } from '../../../../framework/src/input/events/MouseEvent';
+import type { Bindable, Drawable, InputManager, MouseDownEvent, MouseMoveEvent, MouseUpEvent, ReadonlyDependencyContainer, UIEvent } from '@osucad/framework';
 import type { ConnectedUser, CursorPosition } from './ConnectedUsers';
 import { Axes, BindableBoolean, CompositeDrawable, EasingFunction, lerp, MouseButton, resolved, Vec2 } from '@osucad/framework';
 import { getIcon } from '@osucad/resources';
@@ -10,7 +9,7 @@ import { EditorClock } from '../EditorClock';
 import { MultiplayerClient } from './MultiplayerClient';
 
 export class MultiplayerCursorContainer extends CompositeDrawable {
-  constructor(readonly key: string) {
+  constructor(readonly key: string, readonly referenceContainer?: Drawable) {
     super();
 
     this.relativeSizeAxes = Axes.Both;
@@ -23,7 +22,6 @@ export class MultiplayerCursorContainer extends CompositeDrawable {
 
   protected override loadComplete() {
     super.loadComplete();
-
     if (!this.client)
       return;
 
@@ -33,11 +31,11 @@ export class MultiplayerCursorContainer extends CompositeDrawable {
     this.client.users.userJoined.addListener(this.addCursor, this);
     this.client.users.userLeft.addListener(this.removeCursor, this);
 
-    this.scheduler.addDelayed(() => this.flush(), 50, true);
+    this.scheduler.addDelayed(() => this.flush(), 25, true);
   }
 
   addCursor(user: ConnectedUser) {
-    const cursor = new MultiplayerCursor(this.key, user);
+    const cursor = new MultiplayerCursor(this.key, user, this.referenceContainer ?? this);
     this.#cursors.set(user.clientId, cursor);
     this.addInternal(cursor);
   }
@@ -68,9 +66,11 @@ export class MultiplayerCursorContainer extends CompositeDrawable {
 
   #cursorUpdate?: CursorPosition;
 
-  updateMousePosition(e: MouseEvent) {
+  updateMousePosition(e: UIEvent) {
+    const position = (this.referenceContainer ?? this).toLocalSpace(e.screenSpaceMousePosition);
+
     this.#cursorUpdate = {
-      position: e.mousePosition,
+      position: new Vec2(Math.round(position.x), Math.round(position.y)),
       screen: this.key,
       pressed: e.state.mouse.isPressed(MouseButton.Left),
     };
@@ -98,7 +98,11 @@ export class MultiplayerCursorContainer extends CompositeDrawable {
 }
 
 class MultiplayerCursor extends DefaultCursor {
-  constructor(readonly screen: string, readonly user: ConnectedUser) {
+  constructor(
+    readonly screen: string,
+    readonly user: ConnectedUser,
+    readonly referenceContainer: Drawable,
+  ) {
     super();
 
     this.alwaysPresent = true;
@@ -156,7 +160,10 @@ class MultiplayerCursor extends DefaultCursor {
     }
 
     this.visible = true;
-    this.moveTo(Vec2.from(cursor.position), 100, EasingFunction.OutQuad);
+
+    const position = this.parent!.toLocalSpace(this.referenceContainer.toScreenSpace(Vec2.from(cursor.position)));
+
+    this.moveTo(position, 50, EasingFunction.OutQuad);
   }
 
   @resolved(EditorClock)
