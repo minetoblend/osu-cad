@@ -1,11 +1,9 @@
 import type { BeatmapDifficultyInfo, ControlPointInfo, HitSound, IHasRepeats, IHasSliderVelocity, PathPoint } from '@osucad/core';
 import type { Bindable, IVec2, ReadonlyBindable, ValueChangedEvent } from '@osucad/framework';
 import type { ObjectSummary, SharedStructure } from '@osucad/multiplayer';
-import type { ClassSerialDescriptorBuilder, CompositeDecoder, CompositeEncoder } from '@osucad/serialization';
-import { Additions, arraySerializer, HitSample, hitsoundSerializer, HitSoundSerializer, PathPointSerialDescriptor, PathPointSerializer, PathType, polymorphicHitObjectSerializers, SampleSet, SampleType, SliderPath } from '@osucad/core';
+import { Additions, arraySerializer, HitSample, hitsoundSerializer, PathType, SampleSet, SampleType, SliderPath } from '@osucad/core';
 import { CachedValue, Vec2 } from '@osucad/framework';
-import { Float32Serializer, listSerialDescriptor, ListSerializer, NullableSerializer, Uint16Serializer } from '@osucad/serialization';
-import { OsuHitObject, OsuHitObjectSerializer } from './OsuHitObject';
+import { OsuHitObject } from './OsuHitObject';
 import { SliderEventGenerator } from './SliderEventGenerator';
 import { SliderHeadCircle } from './SliderHeadCircle';
 import { SliderRepeat } from './SliderRepeat';
@@ -527,47 +525,3 @@ export class Slider extends OsuHitObject implements IHasSliderVelocity, IHasRepe
     this.path.initializeFromSummary(path);
   }
 }
-
-export class SliderSerializer extends OsuHitObjectSerializer<Slider> {
-  constructor() {
-    super('Slider');
-  }
-
-  protected override buildDescriptor(builder: ClassSerialDescriptorBuilder) {
-    super.buildDescriptor(builder);
-    builder.element('repeatCount', Uint16Serializer.descriptor, true);
-    builder.element('velocityOverride', new NullableSerializer(Float32Serializer).descriptor, true);
-    builder.element('expectedDistance', Float32Serializer.descriptor);
-    builder.element('controlPoints', listSerialDescriptor(new PathPointSerialDescriptor()));
-    builder.element('hitSounds  ', listSerialDescriptor(HitSoundSerializer.instance.descriptor));
-  }
-
-  protected override serializeProperties(encoder: CompositeEncoder, object: Slider) {
-    super.serializeProperties(encoder, object);
-    encoder.encodeUint16Element(this.descriptor, 5, object.repeatCount);
-
-    encoder.encodeNullableSerializableElement(this.descriptor, 6, new NullableSerializer(Float32Serializer), object.sliderVelocityOverride);
-
-    encoder.encodeFloat32Element(this.descriptor, 7, object.expectedDistance);
-
-    encoder.encodeSerializableElement(this.descriptor, 8, new ListSerializer(new PathPointSerializer()), object.path.controlPoints as any);
-
-    encoder.encodeSerializableElement(this.descriptor, 9, new ListSerializer(HitSoundSerializer.instance), object.hitSounds);
-  }
-
-  protected override deserializeProperties(decoder: CompositeDecoder, object: Slider) {
-    super.deserializeProperties(decoder, object);
-
-    object.repeatCount = decoder.decodeUint16Element(this.descriptor, 5);
-    object.sliderVelocityOverride = decoder.decodeNullableSerializableElement(this.descriptor, 6, Float32Serializer);
-    object.expectedDistance = decoder.decodeFloat32Element(this.descriptor, 7);
-    object.controlPoints = decoder.decodeSerializableElement(this.descriptor, 8, new ListSerializer(new PathPointSerializer()));
-    object.hitSounds = decoder.decodeSerializableElement(this.descriptor, 9, new ListSerializer(HitSoundSerializer.instance));
-  }
-
-  protected override createInstance(): Slider {
-    return new Slider();
-  }
-}
-
-polymorphicHitObjectSerializers.set(Slider, new SliderSerializer());

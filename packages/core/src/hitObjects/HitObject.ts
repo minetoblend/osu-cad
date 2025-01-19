@@ -1,12 +1,10 @@
 import type { ValueChangedEvent } from '@osucad/framework';
 import type { SharedProperty } from '@osucad/multiplayer';
-import type { ClassSerialDescriptorBuilder, CompositeDecoder, CompositeEncoder, Decoder, Encoder, SerialDescriptor, Serializer } from '@osucad/serialization';
 import type { BeatmapDifficultyInfo } from '../beatmap/BeatmapDifficultyInfo';
 import type { ControlPointInfo } from '../controlPoints/ControlPointInfo';
-import type { Constructor } from '../utils/Constructor';
-import { Action, Comparer, Lazy, SortedList } from '@osucad/framework';
+import { Action, Comparer, SortedList } from '@osucad/framework';
 import { SharedObject } from '@osucad/multiplayer';
-import { buildClassSerialDescriptor, Float32Serializer, SealedClassSerializer } from '@osucad/serialization';
+
 import { Judgement } from '../rulesets/judgements/Judgement';
 import { HitResult } from './HitResult';
 import { HitWindows } from './HitWindows';
@@ -162,70 +160,4 @@ export abstract class HitObject extends SharedObject {
 export interface HitObjectChangeEvent {
   hitObject: HitObject;
   propertyName: string;
-}
-
-export abstract class HitObjectSerializer<T extends HitObject> implements Serializer<T> {
-  protected constructor(serialName: string) {
-    this.#descriptor = new Lazy(() => buildClassSerialDescriptor(serialName, (builder) => {
-      this.buildDescriptor(builder);
-    }));
-  }
-
-  get descriptor() {
-    return this.#descriptor.value;
-  }
-
-  readonly #descriptor: Lazy<SerialDescriptor>;
-
-  protected buildDescriptor(builder: ClassSerialDescriptorBuilder) {
-    const { element } = builder;
-
-    element('startTime', Float32Serializer.descriptor);
-  }
-
-  deserialize(decoder: Decoder): T {
-    const object = this.createInstance();
-
-    decoder.decodeStructure(this.descriptor, (decoder) => {
-      this.deserializeProperties(decoder, object);
-    });
-
-    return object;
-  }
-
-  serialize(encoder: Encoder, value: T): void {
-    encoder.encodeStructure(this.descriptor, (encoder) => {
-      this.serializeProperties(encoder, value);
-    });
-  }
-
-  protected abstract createInstance(): T;
-
-  protected deserializeProperties(decoder: CompositeDecoder, object: T) {
-    object.startTime = decoder.decodeFloat64Element(this.descriptor, 0);
-  }
-
-  protected serializeProperties(encoder: CompositeEncoder, object: T) {
-    encoder.encodeFloat64Element(this.descriptor, 0, object.startTime);
-  }
-}
-
-export const polymorphicHitObjectSerializers = new Map<Constructor<HitObject>, Serializer<HitObject>>();
-
-export class PolymorphicHitObjectSerializer extends SealedClassSerializer<HitObject> {
-  constructor() {
-    super(
-      'HitObject',
-      // @ts-expect-error TODO: make types work for abstract constructors here
-      HitObject,
-      [...polymorphicHitObjectSerializers.keys()],
-      [...polymorphicHitObjectSerializers.values()],
-    );
-  }
-
-  static #instance = new Lazy(() => new PolymorphicHitObjectSerializer());
-
-  static get instance() {
-    return this.#instance.value;
-  }
 }

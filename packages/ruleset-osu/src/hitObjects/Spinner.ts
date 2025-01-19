@@ -1,9 +1,7 @@
 import type { ControlPointInfo, IHasDuration } from '@osucad/core';
-import type { ClassSerialDescriptorBuilder, CompositeDecoder, CompositeEncoder } from '@osucad/serialization';
-import { HitSample, polymorphicHitObjectSerializers, SampleSet, SampleType } from '@osucad/core';
+import { HitSample, SampleSet, SampleType } from '@osucad/core';
 import { Vec2 } from '@osucad/framework';
-import { Float64Serializer } from '@osucad/serialization';
-import { OsuHitObject, OsuHitObjectSerializer } from './OsuHitObject';
+import { OsuHitObject } from './OsuHitObject';
 
 export class Spinner extends OsuHitObject implements IHasDuration {
   readonly hasDuration = true;
@@ -72,32 +70,3 @@ export class Spinner extends OsuHitObject implements IHasDuration {
     }
   }
 }
-
-export class SpinnerSerializer extends OsuHitObjectSerializer<Spinner> {
-  constructor() {
-    super('Spinner');
-  }
-
-  protected override buildDescriptor(builder: ClassSerialDescriptorBuilder) {
-    super.buildDescriptor(builder);
-    builder.element('duration', Float64Serializer.descriptor, true);
-  }
-
-  protected override createInstance(): Spinner {
-    return new Spinner();
-  }
-
-  protected override serializeProperties(encoder: CompositeEncoder, object: Spinner) {
-    super.serializeProperties(encoder, object);
-
-    encoder.encodeFloat64Element(this.descriptor, 5, object.duration);
-  }
-
-  protected override deserializeProperties(decoder: CompositeDecoder, object: Spinner) {
-    super.deserializeProperties(decoder, object);
-
-    object.duration = decoder.decodeFloat64Element(this.descriptor, 5);
-  }
-}
-
-polymorphicHitObjectSerializers.set(Spinner, new SpinnerSerializer());

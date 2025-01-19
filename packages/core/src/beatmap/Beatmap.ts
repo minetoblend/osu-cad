@@ -8,13 +8,8 @@ import { maxBy } from '../utils/arrayUtils';
 import { BeatmapColors } from './BeatmapColors';
 import { BeatmapInfo } from './BeatmapInfo';
 import { HitObjectList } from './HitObjectList';
-import { BeatmapSerializer } from './serialization/BeatmapSerializer';
 
 export class Beatmap<T extends HitObject = HitObject> extends SharedStaticObject implements IBeatmap<T> {
-  static get serializer() {
-    return new BeatmapSerializer();
-  }
-
   constructor(
     public beatmapInfo: BeatmapInfo = new BeatmapInfo(),
     public colors = new BeatmapColors(),
