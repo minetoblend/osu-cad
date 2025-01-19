@@ -112,8 +112,19 @@ export class StableBeatmapParser {
     }
   }
 
+  #parseKeyValue(line: string): [string, string] | [] {
+    const index = line.indexOf(':');
+    if (index === -1)
+      return [];
+
+    return [line.slice(0, index).trim(), line.slice(index + 1).trim()];
+  }
+
   #parseMetadata(beatmap: ConversionBeatmap, line: string) {
-    const [key, value] = line.split(':').map(it => it.trim());
+    const [key, value] = this.#parseKeyValue(line);
+
+    if (!key || !value)
+      return;
 
     switch (key) {
       case 'Title':
@@ -150,7 +161,10 @@ export class StableBeatmapParser {
   }
 
   #parseGeneral(beatmap: ConversionBeatmap, line: string) {
-    const [key, value] = line.split(':').map(it => it.trim());
+    const [key, value] = this.#parseKeyValue(line);
+
+    if (!key || !value)
+      return;
 
     switch (key) {
       case 'AudioFilename':
@@ -213,7 +227,10 @@ export class StableBeatmapParser {
   }
 
   #parseEditor(beatmap: ConversionBeatmap, line: string) {
-    const [key, value] = line.split(':').map(it => it.trim());
+    const [key, value] = this.#parseKeyValue(line);
+
+    if (!key || !value)
+      return;
 
     switch (key) {
       case 'Bookmarks':
@@ -419,7 +436,10 @@ export class StableBeatmapParser {
   }
 
   #parseDifficulty(beatmap: ConversionBeatmap, line: string) {
-    const [key, value] = line.split(':').map(it => it.trim());
+    const [key, value] = this.#parseKeyValue(line);
+
+    if (!key || !value)
+      return;
 
     switch (key) {
       case 'HPDrainRate':
@@ -444,7 +464,10 @@ export class StableBeatmapParser {
   }
 
   #parseColors(beatmap: ConversionBeatmap, line: string) {
-    const [key, value] = line.split(':').map(it => it.trim());
+    const [key, value] = this.#parseKeyValue(line);
+
+    if (!key || !value)
+      return;
 
     if (key.startsWith('Combo')) {
       const [r, g, b] = value.split(',').map(it => Number.parseInt(it));
