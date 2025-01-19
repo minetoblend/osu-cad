@@ -1,6 +1,6 @@
 {
   "name": "@osucad/serialization",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "private": true,
   "main": "./index.js",
   "module": "./index.mjs",

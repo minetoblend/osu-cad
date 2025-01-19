@@ -11,11 +11,10 @@
         "{options.outputPath}"
       ],
       "options": {
-        "outputPath": "packages/framework/dist",
+        "outputPath": "dist/packages/framework",
         "main": "packages/framework/src/index.ts",
         "configFile": "packages/framework/vite.config.ts",
         "tsConfig": "packages/framework/tsconfig.lib.json",
-        "generatePackageJson": true,
         "assets": [
           "packages/framework/*.md"
         ]

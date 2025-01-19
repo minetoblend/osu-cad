@@ -1,6 +1,6 @@
 {
   "name": "@osucad/ruleset-osu",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "scripts": {
     "build": "vite build",
     "typecheck": "tsc --noEmit -p tsconfig.lib.json --composite false",

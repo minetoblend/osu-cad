@@ -22,13 +22,7 @@
       "packages/ruleset-osu",
       "packages/ruleset-mania",
       "packages/multiplayer"
-    ],
-    "version": {
-      "generatorOptions": {
-        "packageRoot": "dist/packages/{projectName}",
-        "currentVersionResolver": "disk"
-      }
-    }
+    ]
   },
   "plugins": [
     {
