@@ -1,12 +1,13 @@
 import type { HitObjectLifetimeEntry, HitObjectSelectionEvent } from '@osucad/core';
-import type { ClickEvent, DragEvent, DragStartEvent, MouseDownEvent, MouseUpEvent, ReadonlyDependencyContainer } from '@osucad/framework';
+import type { ClickEvent, DragEvent, DragStartEvent, MouseDownEvent, MouseUpEvent, ReadonlyDependencyContainer, UIEvent } from '@osucad/framework';
 import type { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import type { OsuSelectionManager } from '../OsuSelectionManager';
-import { EditorBeatmap, HitObjectBlueprint, HitObjectBlueprintContainer, HitObjectComposer, HitObjectSelectionManager } from '@osucad/core';
-import { Axes, Bindable, BindableBoolean, BindableNumber, Container, MouseButton, resolved, Vec2 } from '@osucad/framework';
+import { ContextMenuContainer, EditorBeatmap, HitObjectBlueprint, HitObjectBlueprintContainer, HitObjectComposer, HitObjectSelectionManager, OsucadMenuItem } from '@osucad/core';
+import { Axes, Bindable, BindableBoolean, BindableNumber, Container, isSourcedFromTouch, MouseButton, resolved, Vec2 } from '@osucad/framework';
 import { UpdateHandler } from '@osucad/multiplayer';
 import { Spinner } from '../../hitObjects/Spinner';
 import { IPositionSnapProvider } from '../IPositionSnapProvider';
+import { DeleteOperator } from '../operators/DeleteOperator';
 import { MoveOperator } from '../operators/MoveOperator';
 
 enum Edges {
@@ -110,19 +111,33 @@ export class OsuSelectionBlueprint<T extends OsuHitObject = OsuHitObject> extend
     }
 
     if (e.button === MouseButton.Right) {
-      if (this.selected.value) {
-        for (const h of this.selection.selectedObjects)
-          this.editorBeatmap.hitObjects.remove(h);
-      }
-      else {
-        this.editorBeatmap.hitObjects.remove(this.hitObject!);
+      if (e.shiftPressed || isSourcedFromTouch(e.state.mouse.lastSource)) {
+        this.showContextMenu(e);
+        return true;
       }
 
-      this.updateHandler.commit();
+      if (this.selected.value)
+        this.composer.beginOperator(new DeleteOperator([...this.selection.selectedObjects]));
+      else
+        this.composer.beginOperator(new DeleteOperator([this.hitObject!]));
+
       return true;
     }
 
     return false;
+  }
+
+  @resolved(ContextMenuContainer)
+  contextMenuContainer!: ContextMenuContainer;
+
+  protected showContextMenu(e: UIEvent) {
+    this.contextMenuContainer.showMenu([
+      new OsucadMenuItem({
+        text: 'Delete',
+        type: 'destructive',
+        action: () => this.composer.beginOperator(new DeleteOperator([...this.selection.selectedObjects])),
+      }),
+    ], e);
   }
 
   @resolved(EditorBeatmap)
