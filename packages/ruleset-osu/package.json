@@ -8,13 +8,13 @@
     "lint:fix": "eslint src --fix"
   },
   "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "typings": "./dist/index.d.ts",
+  "main": "./index.js",
+  "module": "./index.js",
+  "typings": "./index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "types": "./index.d.ts",
+      "import": "./index.js"
     }
   },
   "files": ["*"],
