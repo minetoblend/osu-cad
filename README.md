@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-a third party beatmap editor for [osu](https://osu.ppy.sh).
+a third party beatmap editor for [osu](https://osu.ppy.sh) with multiplayer support.
 </p>
 
 ## Project status
