@@ -66,7 +66,7 @@ export class MultiplayerCursorOverlay extends CompositeDrawable {
 
       this.client.socket.emit('updatePresence', 'cursor', this.#currentPosition);
       this.#positionDidChange = false;
-    }, 50, true);
+    }, 25, true);
   }
 
   readonly #cursors = new Map<ConnectedUser, MultiplayerCursor>();
@@ -235,7 +235,7 @@ class MultiplayerCursor extends CompositeDrawable {
   override update() {
     super.update();
 
-    this.position = Vec2.lerp(this.#targetPosition, this.position, Math.exp(-0.03 * this.time.elapsed));
+    this.position = Vec2.lerp(this.#targetPosition, this.position, Math.exp(-0.05 * this.time.elapsed));
   }
 
   override dispose(isDisposing: boolean = true) {
