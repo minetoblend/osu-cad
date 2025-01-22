@@ -98,11 +98,7 @@ export class Room {
 
     const sequencedMessage = this.orderingService.appendOps(user.clientId, message);
 
-    console.log(performance.now() - start);
-
     this.broadcast.emit('mutationsSubmitted', sequencedMessage);
-
-    console.log(performance.now() - start);
 
     if (this.orderingService.mutationCount > 1000)
       this.requestSummary().then();
