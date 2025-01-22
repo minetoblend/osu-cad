@@ -39,7 +39,11 @@ export class OsucadWebGame extends OsucadGameBase {
   }
 
   async loadEditor() {
-    const client = new MultiplayerClient('/');
+    const client = new MultiplayerClient(
+      window.location.search.endsWith('?second-server')
+        ? 'http://localhost:3001'
+        : 'http://localhost:3000',
+    );
 
     await client.connect();
 

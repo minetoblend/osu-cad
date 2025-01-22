@@ -11,7 +11,7 @@ import { BoxedBeatmap } from './BoxedBeatmap';
 import { ConnectedUsers } from './ConnectedUsers';
 
 export class MultiplayerClient extends Component {
-  constructor(url: string) {
+  constructor(readonly url: string) {
     super();
     this.socket = io(url, {
       autoConnect: false,
@@ -79,7 +79,7 @@ export class MultiplayerClient extends Component {
 
     const assets = initialState.assets.map(it => new SimpleFile(
       it.path,
-      () => fetch(`/api/assets/${it.id}`).then(it => it.arrayBuffer()),
+      () => fetch(`${this.url}/api/assets/${it.id}`).then(it => it.arrayBuffer()),
     ));
 
     this.fileStore = new StaticFileStore(assets);
