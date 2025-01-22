@@ -81,6 +81,7 @@ export class OrderingService {
 
     this.redis.set(this.#summaryKey, JSON.stringify(summaryMessage));
     this.redis.xtrim(this.#streamKey, 'MINID', sequenceNumber);
+    this.redis.set(this.#mutationCountKey, 0);
   }
 
   async getMessagesSinceLastSummary() {
