@@ -22,9 +22,7 @@ export class AdditionToggleButton extends TernaryStateToggleButton implements IK
 
     this.addInternal(new HitSampleHighlightContainer(
       sample => !!((sample.addition ?? Additions.None) & this.addition),
-    ).with({
-      depth: 1,
-    }));
+    ));
   }
 
   #icon!: DrawableSprite;
