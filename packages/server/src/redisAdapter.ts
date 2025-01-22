@@ -40,7 +40,6 @@ export function redisAdapter(redis: Redis, streamName: string = 'osucad') {
 
       if (response) {
         for (const entry of response[0].messages) {
-          console.debug('reading entry %s', entry.id);
           const message = entry.message;
 
           if (message.nsp) {
