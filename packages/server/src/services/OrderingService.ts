@@ -1,65 +1,101 @@
 import type { MutationsSubmittedMessage, SubmitMutationsMessage } from '@osucad/multiplayer';
+import type Redis from 'ioredis';
+
+export interface SummaryMessage {
+  clientId: number;
+  sequenceNumber: string;
+  summary: any;
+}
 
 export class OrderingService {
-  constructor(initialSummary: any) {
-    this.#latestSummary = {
+  constructor(
+    readonly redis: Redis,
+    readonly id: string,
+    initialSummary: any,
+  ) {
+    this.initialSummary = {
       clientId: -1,
-      sequenceNumber: 0,
+      sequenceNumber: '-',
       summary: initialSummary,
     };
   }
 
-  #latestSummary: {
-    clientId: number;
-    sequenceNumber: number;
-    summary: any;
-  };
-
-  #ops: MutationsSubmittedMessage[] = [];
-
-  #sequenceNumber = 0;
-
-  get sequenceNumber() {
-    return this.#sequenceNumber;
+  get #prefix() {
+    return `osucad:edit:${this.id}`;
   }
 
-  appendOps(clientId: number, message: SubmitMutationsMessage) {
-    const sequencedMessage: MutationsSubmittedMessage = {
+  get #streamKey() {
+    return `${this.#prefix}:ops`;
+  }
+
+  get #summaryKey() {
+    return `${this.#prefix}:summary`;
+  }
+
+  get #mutationCountKey() {
+    return `${this.#prefix}:mutationCount`;
+  }
+
+  get #sequenceKey() {
+    return `${this.#prefix}:seq`;
+  }
+
+  async init() {
+    const didCreateSummary = await this.redis.set(this.#summaryKey, JSON.stringify(this.initialSummary), 'NX');
+
+    if (didCreateSummary === 'OK')
+      console.log('created a new summary');
+  }
+
+  initialSummary: SummaryMessage;
+
+  async appendOps(clientId: number, message: SubmitMutationsMessage) {
+    const sequencedMessage: Omit<MutationsSubmittedMessage, 'sequenceNumber'> = {
       mutations: message.mutations,
       clientId,
       version: message.version,
-      sequenceNumber: ++this.#sequenceNumber,
     };
 
-    this.#ops.push(sequencedMessage);
+    const sequenceNumber = await this.redis.xadd(this.#streamKey, '*', 'message', JSON.stringify(sequencedMessage));
 
-    this.#mutationCount += message.mutations.length;
+    if (!sequenceNumber)
+      throw new Error('Failed to append to stream');
 
-    return sequencedMessage;
+    const mutationCount = await this.redis.incrby(this.#mutationCountKey, message.mutations.length);
+
+    return {
+      mutationCount,
+      sequencedMessage: {
+        ...sequencedMessage,
+        sequenceNumber,
+      },
+    };
   }
 
-  appendSummary(clientId: number, sequenceNumber: number, summary: any) {
-    this.#ops = this.#ops.filter(op => op.sequenceNumber > sequenceNumber);
-
-    this.#mutationCount = 0;
-
-    for (const op of this.#ops)
-      this.#mutationCount += op.mutations.length;
-
-    return this.#latestSummary = {
+  async appendSummary(clientId: number, sequenceNumber: string, summary: any) {
+    const summaryMessage: SummaryMessage = {
       clientId,
       summary,
-      sequenceNumber: ++this.#sequenceNumber,
+      sequenceNumber,
     };
+
+    this.redis.set(this.#summaryKey, JSON.stringify(summaryMessage));
+    this.redis.xtrim(this.#streamKey, 'MINID', sequenceNumber);
   }
 
-  getMessagesSinceLastSummary() {
-    return { summary: this.#latestSummary, ops: [...this.#ops] };
-  }
+  async getMessagesSinceLastSummary() {
+    const summaryString = await this.redis.get(this.#summaryKey);
 
-  #mutationCount = 0;
+    if (!summaryString)
+      throw new Error('Could not find summary string');
 
-  get mutationCount() {
-    return this.#mutationCount;
+    const summary = JSON.parse(summaryString);
+    const opsSinceLastSummary = await this.redis.xrange(this.#streamKey, '-', '+');
+
+    const ops = opsSinceLastSummary.map(([id, fields]) =>
+      JSON.parse(fields[1]),
+    );
+
+    return { summary, ops };
   }
 }

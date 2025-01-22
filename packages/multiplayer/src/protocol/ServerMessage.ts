@@ -25,7 +25,7 @@ export interface ServerMessages {
 }
 
 export type SummaryResponse =
-  | { summary: any; sequenceNumber: number }
+  | { summary: any; sequenceNumber: string }
   | { error: 'has-pending-ops' };
 
 export interface InitialStateServerMessage {
@@ -33,7 +33,7 @@ export interface InitialStateServerMessage {
   document: {
     summary: any;
     ops: MutationsSubmittedMessage[];
-    sequenceNumber: number;
+    sequenceNumber: string;
   };
   assets: AssetInfo[];
   connectedUsers: ClientInfo[];
@@ -59,5 +59,5 @@ export interface MutationsSubmittedMessage {
   version: number;
   clientId: number;
   mutations: string[];
-  sequenceNumber: number;
+  sequenceNumber: string;
 }

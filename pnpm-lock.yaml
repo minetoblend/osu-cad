@@ -419,6 +419,9 @@ importers:
 
   packages/server:
     dependencies:
+      '@msgpack/msgpack':
+        specifier: 3.0.0-beta2
+        version: 3.0.0-beta2
       config:
         specifier: ^3.3.12
         version: 3.3.12
@@ -437,6 +440,9 @@ importers:
       socket.io:
         specifier: ^4.8.1
         version: 4.8.1
+      socket.io-adapter:
+        specifier: ^2.5.5
+        version: 2.5.5
     devDependencies:
       '@types/config':
         specifier: ^3.3.5
@@ -2074,6 +2080,10 @@ packages:
 
   '@microsoft/tsdoc@0.14.2':
     resolution: {integrity: sha512-9b8mPpKrfeGRuhFH5iO1iwCLeIIsV6+H1sRfxbkoGXIyQE2BTsPd9zqSqQJ+pv5sJ/hT5M1zvOFL02MnEezFug==}
+
+  '@msgpack/msgpack@3.0.0-beta2':
+    resolution: {integrity: sha512-y+l1PNV0XDyY8sM3YtuMLK5vE3/hkfId+Do8pLo/OPxfxuFAUwcGz3oiiUuV46/aBpwTzZ+mRWVMtlSKbradhw==}
+    engines: {node: '>= 14'}
 
   '@napi-rs/wasm-runtime@0.1.2':
     resolution: {integrity: sha512-8JuczewTFIZ/XIjHQ+YlQUydHvlKx2hkcxtuGwh+t/t5zWyZct6YG4+xjHcq8xyc/e7FmFwf42Zj2YgICwmlvA==}
@@ -10522,6 +10532,8 @@ snapshots:
       resolve: 1.19.0
 
   '@microsoft/tsdoc@0.14.2': {}
+
+  '@msgpack/msgpack@3.0.0-beta2': {}
 
   '@napi-rs/wasm-runtime@0.1.2':
     dependencies:

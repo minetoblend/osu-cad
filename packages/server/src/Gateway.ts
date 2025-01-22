@@ -1,4 +1,5 @@
 import type { OsuBeatmap } from '@osucad/ruleset-osu';
+import type Redis from 'ioredis';
 import type { Server } from 'socket.io';
 import { randomUUID } from 'node:crypto';
 import fs from 'node:fs/promises';
@@ -16,7 +17,7 @@ export class Gateway {
 
   room!: Room;
 
-  async init() {
+  async init(redis: Redis) {
     RulesetStore.register(new OsuRuleset().rulesetInfo);
 
     const ruleset = new OsuRuleset();
@@ -27,7 +28,9 @@ export class Gateway {
 
     const roomId = randomUUID();
 
-    const orderingService = new OrderingService(new BoxedBeatmap(beatmap).createSummary());
+    const orderingService = new OrderingService(redis, 'edit:1:ops', new BoxedBeatmap(beatmap).createSummary());
+
+    await orderingService.init();
 
     const broadcast = this.io.to(roomId);
 

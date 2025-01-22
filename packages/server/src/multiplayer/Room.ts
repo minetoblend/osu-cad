@@ -27,7 +27,7 @@ export class Room {
     0xE329AB,
   ];
 
-  accept(socket: Socket<ClientMessages, ServerMessages>) {
+  async accept(socket: Socket<ClientMessages, ServerMessages>) {
     const clientId = nextClientId();
 
     socket.join(this.id);
@@ -45,14 +45,14 @@ export class Room {
       color,
     );
 
-    const { summary, ops } = this.orderingService.getMessagesSinceLastSummary();
+    const { summary, ops } = await this.orderingService.getMessagesSinceLastSummary();
 
     socket.emit('initialData', {
       clientId,
       document: {
         summary: summary.summary,
         ops,
-        sequenceNumber: this.orderingService.sequenceNumber,
+        sequenceNumber: summary.sequenceNumber,
       },
       assets: this.assets,
       connectedUsers: [...this.users.values()].map(it => it.getInfo()),
@@ -93,14 +93,12 @@ export class Room {
     this.broadcast.emit('presenceUpdated', user.clientId, key, data);
   }
 
-  private handleSubmitMutations(user: RoomUser, message: SubmitMutationsMessage) {
-    const start = performance.now();
-
-    const sequencedMessage = this.orderingService.appendOps(user.clientId, message);
+  private async handleSubmitMutations(user: RoomUser, message: SubmitMutationsMessage) {
+    const { sequencedMessage, mutationCount } = await this.orderingService.appendOps(user.clientId, message);
 
     this.broadcast.emit('mutationsSubmitted', sequencedMessage);
 
-    if (this.orderingService.mutationCount > 1000)
+    if (mutationCount > 1000)
       this.requestSummary().then();
   }
 

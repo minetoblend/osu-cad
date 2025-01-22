@@ -235,7 +235,7 @@ class MultiplayerCursor extends CompositeDrawable {
   override update() {
     super.update();
 
-    this.position = Vec2.lerp(this.#targetPosition, this.position, Math.exp(-0.05 * this.time.elapsed));
+    this.position = Vec2.lerp(this.#targetPosition, this.position, Math.exp(-0.1 * this.time.elapsed));
   }
 
   override dispose(isDisposing: boolean = true) {
