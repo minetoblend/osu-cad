@@ -4,6 +4,7 @@ import cors from 'cors';
 import express from 'express';
 import request from 'request';
 import { Server } from 'socket.io';
+import msgpackParser from 'socket.io-msgpack-parser';
 import { getAssetPath, loadAssets } from './assets';
 import { Gateway } from './Gateway';
 
@@ -26,9 +27,7 @@ app.use((req, res, next) => {
 const server = http.createServer(app);
 const io = new Server(server, {
   transports: ['websocket'],
-  cors: {
-    origin: true,
-  },
+  parser: msgpackParser,
 });
 
 const gateway = new Gateway(io);

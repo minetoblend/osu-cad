@@ -33,10 +33,19 @@ export class OrderingService {
 
     this.#ops.push(sequencedMessage);
 
+    this.#mutationCount += message.mutations.length;
+
     return sequencedMessage;
   }
 
-  appendSummary(clientId: number, summary: any) {
+  appendSummary(clientId: number, sequenceNumber: number, summary: any) {
+    this.#ops = this.#ops.filter(op => op.sequenceNumber > sequenceNumber);
+
+    this.#mutationCount = 0;
+
+    for (const op of this.#ops)
+      this.#mutationCount += op.mutations.length;
+
     return this.#latestSummary = {
       clientId,
       summary,
@@ -48,7 +57,9 @@ export class OrderingService {
     return { summary: this.#latestSummary, ops: [...this.#ops] };
   }
 
-  get opCount() {
-    return this.#ops.length;
+  #mutationCount = 0;
+
+  get mutationCount() {
+    return this.#mutationCount;
   }
 }

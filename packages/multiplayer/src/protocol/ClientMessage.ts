@@ -1,9 +1,5 @@
 import type { SignalKey } from '../client';
-import type { IMutation } from './IMutation';
 import type { UserPresence } from './types';
-
-export type ClientMessage =
-  | never;
 
 export interface ClientMessages {
   createChatMessage(content: string): void;
@@ -14,5 +10,5 @@ export interface ClientMessages {
 
 export interface SubmitMutationsMessage {
   version: number;
-  mutations: IMutation[];
+  mutations: string[];
 }

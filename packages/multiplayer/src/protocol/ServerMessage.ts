@@ -1,7 +1,6 @@
 import type { IVec2 } from '@osucad/framework';
 import type { SignalKey } from '../client';
 import type { ChatMessage } from './ChatMessage';
-import type { IMutation } from './IMutation';
 import type { ClientInfo, UserPresence } from './types';
 
 export type ServerMessage =
@@ -21,13 +20,20 @@ export interface ServerMessages {
   presenceUpdated<Key extends keyof UserPresence>(clientId: number, key: Key, value: UserPresence[Key]): void;
 
   mutationsSubmitted(message: MutationsSubmittedMessage): void;
+
+  requestSummary(callback: (response: SummaryResponse) => void): void;
 }
+
+export type SummaryResponse =
+  | { summary: any; sequenceNumber: number }
+  | { error: 'has-pending-ops' };
 
 export interface InitialStateServerMessage {
   clientId: number;
   document: {
     summary: any;
     ops: MutationsSubmittedMessage[];
+    sequenceNumber: number;
   };
   assets: AssetInfo[];
   connectedUsers: ClientInfo[];
@@ -52,6 +58,6 @@ export interface UpdateCursorServerMessage {
 export interface MutationsSubmittedMessage {
   version: number;
   clientId: number;
-  mutations: IMutation[];
+  mutations: string[];
   sequenceNumber: number;
 }

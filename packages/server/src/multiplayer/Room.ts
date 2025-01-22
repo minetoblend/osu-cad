@@ -1,7 +1,6 @@
 import type { AssetInfo, ClientMessages, ServerMessages, SignalKey, SubmitMutationsMessage, UserPresence } from '@osucad/multiplayer';
 import type { BroadcastOperator, Socket } from 'socket.io';
 import type { OrderingService } from '../services/OrderingService';
-import { Json } from '@osucad/serialization';
 import { nextClientId } from './clientId';
 import { RoomUser } from './RoomUser';
 
@@ -13,8 +12,6 @@ export class Room {
     private readonly assets: AssetInfo[],
   ) {
   }
-
-  private readonly json = new Json();
 
   private readonly users = new Map<number, RoomUser>();
 
@@ -55,6 +52,7 @@ export class Room {
       document: {
         summary: summary.summary,
         ops,
+        sequenceNumber: this.orderingService.sequenceNumber,
       },
       assets: this.assets,
       connectedUsers: [...this.users.values()].map(it => it.getInfo()),
@@ -96,8 +94,49 @@ export class Room {
   }
 
   private handleSubmitMutations(user: RoomUser, message: SubmitMutationsMessage) {
+    const start = performance.now();
+
     const sequencedMessage = this.orderingService.appendOps(user.clientId, message);
 
+    console.log(performance.now() - start);
+
     this.broadcast.emit('mutationsSubmitted', sequencedMessage);
+
+    console.log(performance.now() - start);
+
+    if (this.orderingService.mutationCount > 1000)
+      this.requestSummary().then();
+  }
+
+  private isRequestingSummary = false;
+
+  private async requestSummary() {
+    if (this.isRequestingSummary)
+      return;
+
+    this.isRequestingSummary = true;
+    try {
+      const users = [...this.users.values()];
+
+      const user = users[Math.floor(Math.random() * users.length)];
+
+      console.log(`Requesting summary from client ${user.clientId} (${user.username})`);
+
+      const response = await user.socket.emitWithAck('requestSummary');
+
+      if ('summary' in response) {
+        this.orderingService.appendSummary(user.clientId, response.sequenceNumber, response.summary);
+        return;
+      }
+
+      if ('error' in response) {
+        console.log(`Client ${user.clientId} could not generate summary with reason "${response.error}"`);
+      }
+    }
+    finally {
+      this.isRequestingSummary = false;
+    }
+
+    this.requestSummary().then();
   }
 }

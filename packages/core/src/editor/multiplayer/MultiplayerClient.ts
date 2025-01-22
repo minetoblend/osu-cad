@@ -1,9 +1,10 @@
-import type { ClientSocket, IMutation, InitialStateServerMessage, MutationContext, MutationsSubmittedMessage } from '@osucad/multiplayer';
+import type { ClientSocket, IMutation, InitialStateServerMessage, MutationContext, MutationsSubmittedMessage, SummaryResponse } from '@osucad/multiplayer';
 import type { Beatmap } from '../../beatmap/Beatmap';
 import type { FileStore } from '../../beatmap/io/FileStore';
 import { Component } from '@osucad/framework';
 import { MutationSource, UpdateHandler } from '@osucad/multiplayer';
 import { io } from 'socket.io-client';
+import msgPackParser from 'socket.io-msgpack-parser';
 import { SimpleFile } from '../../beatmap/io/SimpleFile';
 import { StaticFileStore } from '../../beatmap/io/StaticFileStore';
 import { BoxedBeatmap } from './BoxedBeatmap';
@@ -15,9 +16,11 @@ export class MultiplayerClient extends Component {
     this.socket = io(url, {
       autoConnect: false,
       transports: ['websocket'],
+      parser: msgPackParser,
     });
 
     this.socket.on('mutationsSubmitted', msg => this.mutationSubmitted(msg));
+    this.socket.on('requestSummary', cb => cb(this.createSummaryResponse()));
 
     this.users = new ConnectedUsers(this);
   }
@@ -54,6 +57,8 @@ export class MultiplayerClient extends Component {
 
     beatmap.initializeFromSummary(initialState.document.summary);
 
+    this.#latestSequenceNumber = initialState.document.sequenceNumber;
+
     if (!beatmap.beatmap)
       throw new Error('Beatmap failed to initialize');
 
@@ -69,7 +74,7 @@ export class MultiplayerClient extends Component {
       };
 
       for (const mutation of op.mutations)
-        this.updateHandler.apply(mutation, ctx);
+        this.updateHandler.apply(JSON.parse(mutation), ctx);
     }
 
     const assets = initialState.assets.map(it => new SimpleFile(
@@ -83,31 +88,51 @@ export class MultiplayerClient extends Component {
   }
 
   private mutationSubmitted(msg: MutationsSubmittedMessage) {
+    const isAck = msg.clientId === this.clientId;
+
     const ctx: MutationContext = {
       version: msg.version,
-      source: msg.clientId === this.clientId
+      source: isAck
         ? MutationSource.Ack
         : MutationSource.Remote,
     };
 
+    if (isAck)
+      this.#latestAckVersion = msg.version;
+
+    this.#latestSequenceNumber = msg.sequenceNumber;
+
     for (const mutation of msg.mutations)
-      this.updateHandler.apply(mutation, ctx);
+      this.updateHandler.apply(JSON.parse(mutation), ctx);
   }
 
-  bufferedMutations: IMutation[] = [];
+  #latestAckVersion = 0;
+  #latestSequenceNumber = -1;
+
+  buffer: string[] = [];
 
   onLocalMutation(mutation: IMutation) {
-    this.bufferedMutations.push(mutation);
+    this.buffer.push(JSON.stringify(mutation));
   }
 
   flush() {
-    if (this.bufferedMutations.length === 0)
+    if (this.buffer.length === 0)
       return;
 
     this.socket.emit('submitMutations', {
       version: this.updateHandler.version++,
-      mutations: this.bufferedMutations,
+      mutations: this.buffer,
     });
-    this.bufferedMutations = [];
+    this.buffer = [];
+  }
+
+  createSummaryResponse(): SummaryResponse {
+    if (this.#latestAckVersion !== this.updateHandler.version - 1)
+      return { error: 'has-pending-ops' };
+
+    return {
+      summary: new BoxedBeatmap(this.beatmap).createSummary(),
+      sequenceNumber: this.#latestSequenceNumber,
+    };
   }
 }
