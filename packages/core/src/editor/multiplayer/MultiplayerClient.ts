@@ -107,7 +107,7 @@ export class MultiplayerClient extends Component {
   }
 
   #latestAckVersion = 0;
-  #latestSequenceNumber = -1;
+  #latestSequenceNumber = '';
 
   buffer: string[] = [];
 
