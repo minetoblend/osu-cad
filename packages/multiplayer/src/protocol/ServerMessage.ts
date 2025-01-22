@@ -25,9 +25,9 @@ export interface ServerMessages {
 
 export interface InitialStateServerMessage {
   clientId: number;
-  beatmap: {
-    ruleset: string;
-    data: unknown;
+  document: {
+    summary: any;
+    ops: MutationsSubmittedMessage[];
   };
   assets: AssetInfo[];
   connectedUsers: ClientInfo[];
@@ -53,4 +53,5 @@ export interface MutationsSubmittedMessage {
   version: number;
   clientId: number;
   mutations: IMutation[];
+  sequenceNumber: number;
 }

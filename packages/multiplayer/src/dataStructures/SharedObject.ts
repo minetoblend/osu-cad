@@ -30,9 +30,7 @@ export abstract class SharedObject extends SharedStructure<ObjectMutation, Objec
   }
 
   handle(command: ObjectMutation, ctx: MutationContext): ObjectMutation | null {
-    const undoMutation: ObjectMutation = {
-      data: {},
-    };
+    const undoMutation: ObjectMutation = {};
 
     for (const key in command) {
       const property = this.#properties.get(key);

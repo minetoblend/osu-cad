@@ -6,7 +6,7 @@ import { MutationSource, UpdateHandler } from '@osucad/multiplayer';
 import { io } from 'socket.io-client';
 import { SimpleFile } from '../../beatmap/io/SimpleFile';
 import { StaticFileStore } from '../../beatmap/io/StaticFileStore';
-import { RulesetStore } from '../../rulesets/RulesetStore';
+import { BoxedBeatmap } from './BoxedBeatmap';
 import { ConnectedUsers } from './ConnectedUsers';
 
 export class MultiplayerClient extends Component {
@@ -50,18 +50,27 @@ export class MultiplayerClient extends Component {
 
     this.clientId = initialState.clientId;
 
-    const rulesetInfo = RulesetStore.getByShortName(initialState.beatmap.ruleset);
-    if (!rulesetInfo || !rulesetInfo.available)
-      throw new Error(`Ruleset "${initialState.beatmap.ruleset}" not available`);
+    const beatmap = new BoxedBeatmap();
 
-    const ruleset = rulesetInfo.createInstance();
+    beatmap.initializeFromSummary(initialState.document.summary);
 
-    this.beatmap = ruleset.createBeatmap();
-    this.beatmap.beatmapInfo.ruleset = rulesetInfo;
-    this.beatmap.initializeFromSummary(initialState.beatmap.data);
+    if (!beatmap.beatmap)
+      throw new Error('Beatmap failed to initialize');
+
+    this.beatmap = beatmap.beatmap;
 
     this.updateHandler = new UpdateHandler(this.beatmap);
     this.updateHandler.attach(this.beatmap);
+
+    for (const op of initialState.document.ops) {
+      const ctx: MutationContext = {
+        source: MutationSource.Remote,
+        version: op.version,
+      };
+
+      for (const mutation of op.mutations)
+        this.updateHandler.apply(mutation, ctx);
+    }
 
     const assets = initialState.assets.map(it => new SimpleFile(
       it.path,
