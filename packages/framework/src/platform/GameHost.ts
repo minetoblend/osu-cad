@@ -5,6 +5,7 @@ import type { KeyBinding } from '../input/bindings/KeyBinding';
 import type { IFrameBasedClock } from '../timing/IFrameBasedClock';
 import {} from '@pixi/devtools';
 import { AudioManager } from '../audio/AudioManager';
+import { Action } from '../bindables/Action';
 import { setupDevtools } from '../devtools/setupDevtools';
 import { DependencyContainer } from '../di/DependencyContainer';
 import { FrameworkEnvironment } from '../FrameworkEnvironment';
@@ -63,6 +64,8 @@ export abstract class GameHost {
 
   abstract getWindowSize(): Vec2;
 
+  readonly afterRender = new Action();
+
   update() {
     FrameStatistics.clear();
 
@@ -88,6 +91,7 @@ export abstract class GameHost {
 
   protected render() {
     FrameStatistics.draw.measure(() => this.renderer.render(this.root!));
+    this.afterRender.emit();
   }
 
   async takeScreenshot(): Promise<Blob> {

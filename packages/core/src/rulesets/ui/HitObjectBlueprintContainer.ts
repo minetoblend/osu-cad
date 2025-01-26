@@ -1,11 +1,12 @@
-import type { NoArgsConstructor } from '@osucad/framework';
+import type { Drawable, NoArgsConstructor, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { HitObject } from '../../hitObjects/HitObject';
 import type { Constructor } from '../../utils/Constructor';
 import type { HitObjectBlueprint } from './HitObjectBlueprint';
-import { Action, Axes, Bindable, Container, DrawablePool, injectionToken, LoadState, provide, resolved } from '@osucad/framework';
+import { Action, Axes, Bindable, Container, DrawablePool, injectionToken, LoadState, provide, ProxyDrawable, resolved } from '@osucad/framework';
 import { HitObjectLifetimeEntry } from '../../hitObjects/drawables/HitObjectLifetimeEntry';
 import { PooledDrawableWithLifetimeContainer } from '../../pooling/PooledDrawableWithLifetimeContainer';
 import { HitObjectEntryManager } from '../pooling/HitObjectEntryManager';
+import { Playfield } from './Playfield';
 
 export interface HitObjectBlueprintProvider {
   getPooledDrawableRepresentation(hitObject: HitObject): HitObjectBlueprint | undefined;
@@ -52,7 +53,7 @@ export class HitObjectBlueprintContainer<TDrawable extends HitObjectBlueprint> e
 
   readonly #pools = new Map<NoArgsConstructor<HitObject>, DrawablePool<TDrawable>>();
 
-  #blueprintContainer = new BlueprintContainer();
+  #blueprintContainer!: BlueprintContainer;
 
   addHitObject(hitObject: HitObject) {
     const entry = this.createLifeTimeEntry(hitObject);
@@ -71,7 +72,7 @@ export class HitObjectBlueprintContainer<TDrawable extends HitObjectBlueprint> e
   protected override loadComplete() {
     super.loadComplete();
 
-    this.addInternal(this.#blueprintContainer);
+    this.addInternal(this.#blueprintContainer = new BlueprintContainer(this.attachToPlayfield));
   }
 
   protected registerPool(
@@ -122,13 +123,29 @@ export class HitObjectBlueprintContainer<TDrawable extends HitObjectBlueprint> e
   protected createLifeTimeEntry(hitObject: HitObject) {
     return new HitObjectLifetimeEntry(hitObject);
   }
+
+  protected get attachToPlayfield() {
+    return false;
+  }
 }
 
 class BlueprintContainer extends PooledDrawableWithLifetimeContainer<HitObjectLifetimeEntry, HitObjectBlueprint> {
-  constructor() {
+  constructor(public attachToPlayfield: boolean) {
     super();
 
     this.relativeSizeAxes = Axes.Both;
+  }
+
+  @resolved(Playfield, true)
+  playfield!: Playfield;
+
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
+    if (this.attachToPlayfield && !this.playfield) {
+      console.warn('attachToPlayfield is true but no playfield present, using default behavior as fallback.');
+      this.attachToPlayfield = false;
+    }
   }
 
   @resolved(HitObjectBlueprintProvider)
@@ -165,37 +182,71 @@ class BlueprintContainer extends PooledDrawableWithLifetimeContainer<HitObjectLi
     this.#startTimeMap.delete(drawable);
   }
 
+  readonly #proxyMap = new Map<HitObjectBlueprint, ProxyDrawable>();
+
   #addDrawable(drawable: HitObjectBlueprint) {
     this.#bindStartTime(drawable);
 
     drawable.depth = this.getDrawableDepth(drawable);
     this.addInternal(drawable);
+
+    if (this.attachToPlayfield) {
+      const proxy = new ProxyDrawable(drawable).with({
+        depth: drawable.depth,
+      });
+      this.playfield.hitObjectContainer.addCustom(proxy);
+      this.#proxyMap.set(drawable, proxy);
+    }
   }
 
   getDrawableDepth(drawable: HitObjectBlueprint) {
-    return drawable.startTimeBindable.value;
+    return drawable.startTimeBindable.value - 0.001;
   }
 
   #removeDrawable(drawable: HitObjectBlueprint) {
     this.#unbindStartTime(drawable);
 
     this.removeInternal(drawable, false);
+
+    if (this.attachToPlayfield) {
+      const proxy = this.#proxyMap.get(drawable);
+      if (!proxy)
+        return;
+
+      this.playfield.hitObjectContainer.removeCustom(proxy, true);
+      this.#proxyMap.delete(drawable);
+    }
   }
 
   #bindStartTime(drawable: HitObjectBlueprint) {
     const bindable = new Bindable(0);
     bindable.bindTo(drawable.startTimeBindable);
 
-    bindable.valueChanged.addListener(() => {
+    bindable.bindValueChanged(() => {
       if (this.loadState >= LoadState.Ready) {
-        if (drawable.parent)
-          drawable.parent.changeInternalChildDepth(drawable, this.getDrawableDepth(drawable));
-        else
-          drawable.depth = this.getDrawableDepth(drawable);
+        const depth = this.getDrawableDepth(drawable);
+        this.#changeDepth(drawable, depth);
+
+        if (this.attachToPlayfield) {
+          const proxy = this.#proxyMap.get(drawable);
+
+          if (proxy)
+            this.#changeDepth(proxy, depth);
+        }
       }
-    });
+    }, true);
 
     this.#startTimeMap.set(drawable, bindable);
+  }
+
+  #changeDepth(drawable: Drawable, depth: number) {
+    if (drawable.depth === depth)
+      return;
+
+    if (drawable.parent)
+      drawable.parent.changeInternalChildDepth(drawable, depth);
+    else
+      drawable.depth = depth;
   }
 
   override dispose(isDisposing: boolean = true) {

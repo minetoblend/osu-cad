@@ -67,6 +67,10 @@ export class OsuSelectionBlueprintContainer extends HitObjectBlueprintContainer<
     entry.keepAlive = evt.selected;
   }
 
+  protected override get attachToPlayfield(): boolean {
+    return true;
+  }
+
   protected override createLifeTimeEntry(hitObject: HitObject): HitObjectLifetimeEntry {
     return new OsuHitObjectLifetimeEntry(hitObject as OsuHitObject);
   }

@@ -1,3 +1,4 @@
+import type { Drawable } from '@osucad/framework';
 import type { DrawableHitObject } from '../../hitObjects/drawables/DrawableHitObject';
 import type { HitObjectLifetimeEntry } from '../../hitObjects/drawables/HitObjectLifetimeEntry';
 import type { HitObject } from '../../hitObjects/HitObject';
@@ -107,6 +108,14 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
     this.addEntry(hitObject.entry);
   }
 
+  addCustom(drawable: Drawable) {
+    this.addInternal(drawable);
+  }
+
+  removeCustom(drawable: Drawable, disposeImmediately: boolean = true) {
+    this.removeInternal(drawable, disposeImmediately);
+  }
+
   remove(hitObject: DrawableHitObject) {
     if (!hitObject.entry)
       return false;
@@ -122,14 +131,14 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
     const bindable = new Bindable(0);
     bindable.bindTo(drawable.startTimeBindable);
 
-    bindable.valueChanged.addListener(() => {
+    bindable.bindValueChanged(() => {
       if (this.loadState >= LoadState.Ready) {
         if (drawable.parent)
           drawable.parent.changeInternalChildDepth(drawable, this.getDrawableDepth(drawable));
         else
           drawable.depth = this.getDrawableDepth(drawable);
       }
-    });
+    }, true);
 
     this.#startTimeMap.set(drawable, bindable);
   }
