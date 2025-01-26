@@ -10,6 +10,8 @@ export class FrameStatistics {
     this.positionalInputQueue.clear();
     this.nonPositionalInputQueue.clear();
     this.frame.clear();
+    this.updateSubTree.clear();
+    this.updateSubTreeTransforms.clear();
   }
 
   static increment(counterType: StatisticsCounterType) {

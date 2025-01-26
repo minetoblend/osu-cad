@@ -14,13 +14,13 @@ export class Timer {
   }
 
   measure<T>(fn: () => T): T {
-    const start = this.start();
+    const start = performance.now();
 
     try {
       return fn();
     }
     finally {
-      this.stop(start);
+      this.total += performance.now() - start;
     }
   }
 }

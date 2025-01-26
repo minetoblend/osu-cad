@@ -1,5 +1,5 @@
-import type { ContainerOptions, KeyDownEvent, PIXIGraphics } from '@osucad/framework';
-import { Anchor, Axes, BindableBoolean, Container, FillDirection, FillFlowContainer, FrameStatistics, GraphicsDrawable, Key, StatisticsCounterType } from '@osucad/framework';
+import type { ContainerOptions, GameHost, KeyDownEvent, PIXIGraphics } from '@osucad/framework';
+import { Anchor, Axes, BindableBoolean, Container, FillDirection, FillFlowContainer, FrameStatistics, GAME_HOST, GraphicsDrawable, Key, resolved, StatisticsCounterType } from '@osucad/framework';
 import { OsucadSpriteText } from '../drawables/OsucadSpriteText';
 
 export class PerformanceOverlay extends Container {
@@ -69,8 +69,9 @@ export class PerformanceOverlay extends Container {
 
   protected override loadComplete() {
     super.loadComplete();
-
     this.active.addOnChangeListener(e => this.#overlay.alpha = e.value ? 1 : 0, { immediate: true });
+
+    this.host.afterRender.addListener(this.updateValues, this);
   }
 
   override updateAfterChildren() {
@@ -95,9 +96,10 @@ export class PerformanceOverlay extends Container {
     super.updateAfterChildren();
   }
 
-  override updateSubTreeTransforms(): boolean {
-    const result = super.updateSubTreeTransforms();
+  @resolved(GAME_HOST)
+  host!: GameHost;
 
+  updateValues() {
     const now = performance.now();
 
     const updateTime = now - this.#updateTime;
@@ -113,14 +115,13 @@ export class PerformanceOverlay extends Container {
         `FPS: ${fps.toFixed(1)}`,
         `Draw: ${FrameStatistics.draw.total.toFixed(1)}ms`,
         `Update: ${updateTime.toFixed(1)}ms`,
-        `Input: ${FrameStatistics.positionalInputQueue.total.toFixed(1)}ms`,
+        `Input (Mouse): ${FrameStatistics.positionalInputQueue.total.toFixed(1)}ms`,
+        `Input (Keyboard): ${FrameStatistics.nonPositionalInputQueue.total.toFixed(1)}ms`,
         `Invalidations: ${FrameStatistics.counters[StatisticsCounterType.Invalidations]}`,
         `Total: ${FrameStatistics.frame.total.toFixed(1)}ms`,
         `TransformUpdates: ${FrameStatistics.counters[StatisticsCounterType.DrawNodeTransforms]}`,
       ].join('\n');
     }
-
-    return result;
   }
 
   #frameGraph!: FrameGraph;
