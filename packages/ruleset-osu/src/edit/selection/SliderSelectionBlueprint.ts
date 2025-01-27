@@ -1,5 +1,5 @@
 import type { HitObject, HitObjectLifetimeEntry, HitObjectSelectionEvent, PathType } from '@osucad/core';
-import type { ClickEvent, DoubleClickEvent, DragEndEvent, DragEvent, HoverEvent, HoverLostEvent, MouseDownEvent, ReadonlyDependencyContainer, Vec2 } from '@osucad/framework';
+import type { ClickEvent, DoubleClickEvent, DragEndEvent, DragEvent, DragStartEvent, HoverEvent, HoverLostEvent, MouseDownEvent, ReadonlyDependencyContainer, Vec2 } from '@osucad/framework';
 import type { Slider } from '../../hitObjects/Slider';
 import { EditorBeatmap, EditorClock, ISkinSource, PathPoint } from '@osucad/core';
 import { Anchor, Container, isMobile, MouseButton, provide, resolved } from '@osucad/framework';
@@ -263,7 +263,7 @@ class SliderSelectionPathHandle extends SliderPathVisualizerHandle {
     return false;
   }
 
-  override onDragStart(e: DragEvent): boolean {
+  override onDragStart(e: DragStartEvent): boolean {
     return !this.blueprint.readonly;
   }
 
