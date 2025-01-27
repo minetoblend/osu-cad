@@ -2,6 +2,7 @@
 **/node_modules
 packages/client/android
 packages/client/ios
-packages/server/files
+packages/server-multiplayer/files
+packages/server-api/files
 
 
