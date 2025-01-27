@@ -1572,6 +1572,10 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return new TransformSequence(this).delay(duration).asProxy();
   }
 
+  delayUntilTransformsFinished() {
+    return this.delay(Math.max(0, this.latestTransformEndTime - this.time.current));
+  }
+
   fadeTo(alpha: number, duration = 0, easing: EasingFunction = EasingFunction.Default) {
     return this.transformTo('alpha', alpha, duration, easing);
   }

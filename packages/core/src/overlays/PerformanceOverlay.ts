@@ -1,4 +1,5 @@
 import type { ContainerOptions, GameHost, KeyDownEvent, PIXIGraphics } from '@osucad/framework';
+import type { ColorSource } from 'pixi.js';
 import { Anchor, Axes, BindableBoolean, Container, FillDirection, FillFlowContainer, FrameStatistics, GAME_HOST, GraphicsDrawable, Key, resolved, StatisticsCounterType } from '@osucad/framework';
 import { OsucadSpriteText } from '../drawables/OsucadSpriteText';
 
@@ -74,30 +75,10 @@ export class PerformanceOverlay extends Container {
     this.host.afterRender.addListener(this.updateValues, this);
   }
 
-  override updateAfterChildren() {
-    const now = performance.now();
-
-    if (!this.active.value)
-      return;
-
-    const frameTime = now - this.#lastUpdateTime;
-
-    this.#lastFrameTimes.push(frameTime);
-
-    const bufferSize = 400;
-
-    if (this.#lastFrameTimes.length > bufferSize)
-      this.#lastFrameTimes.shift();
-
-    this.#frameGraph.frameTimes = this.#lastFrameTimes;
-
-    this.#lastUpdateTime = now;
-
-    super.updateAfterChildren();
-  }
-
   @resolved(GAME_HOST)
   host!: GameHost;
+
+  #lastFrameTime = 0;
 
   updateValues() {
     const now = performance.now();
@@ -105,6 +86,12 @@ export class PerformanceOverlay extends Container {
     const updateTime = now - this.#updateTime;
 
     const fpsFrameTimes = this.#lastFrameTimes.slice(Math.max(0, this.#lastFrameTimes.length - 20));
+
+    this.#lastFrameTimes.push(now - this.#lastFrameTime);
+    if (this.#lastFrameTimes.length > 100)
+      this.#lastFrameTimes.shift();
+
+    this.#lastFrameTime = now;
 
     const averageFrameTime = fpsFrameTimes.reduce((a, b) => a + b, 0) / fpsFrameTimes.length;
 
@@ -122,6 +109,13 @@ export class PerformanceOverlay extends Container {
         `TransformUpdates: ${FrameStatistics.counters[StatisticsCounterType.DrawNodeTransforms]}`,
       ].join('\n');
     }
+
+    this.#frameGraph.append({
+      draw: FrameStatistics.draw.total,
+      update: FrameStatistics.updateSubTree.total,
+      transforms: FrameStatistics.updateSubTreeTransforms.total,
+      total: FrameStatistics.frame.total,
+    });
   }
 
   #frameGraph!: FrameGraph;
@@ -143,50 +137,58 @@ class FrameGraph extends GraphicsDrawable {
     super();
   }
 
-  #frameTimes: number[] = [];
+  frameTimes: { draw: number; transforms: number; update: number; total: number }[] = [];
 
-  get frameTimes() {
-    return this.#frameTimes;
-  }
-
-  set frameTimes(value) {
-    this.#frameTimes = value;
+  append(
+    frame: { draw: number; transforms: number; update: number; total: number },
+  ) {
+    this.frameTimes.push(frame);
+    if (this.frameTimes.length > 100)
+      this.frameTimes.shift();
     this.invalidateGraphics();
   }
 
   updateGraphics(g: PIXIGraphics): void {
     g.clear();
 
-    if (this.#frameTimes.length <= 1)
+    if (this.frameTimes.length <= 1)
       return;
 
     const width = this.drawSize.x;
     const height = this.drawSize.y;
 
-    const max = Math.max(...this.#frameTimes, 10);
+    const max = Math.max(...this.frameTimes.map(it => it.total), 10);
     const min = 0;
 
-    const scale = height / (max - min);
+    const scaleY = height / (max - min);
 
-    g.moveTo(0, height);
+    const offsets = Array.from({ length: this.frameTimes.length }, () => 0);
 
-    for (let i = 1; i < this.#frameTimes.length; i++) {
-      const x = i * (width / this.#frameTimes.length);
-      const y = (this.#frameTimes[i] - min) * scale;
+    const scaleX = width / this.frameTimes.length;
 
-      g.lineTo(x, height - y);
-    }
+    const drawGraph = (values: number[], color: ColorSource) => {
+      g.beginPath();
 
-    g.lineTo(width, height);
-    g.lineTo(0, height);
+      g.moveTo(0, height - (offsets[0] - min) * scaleY);
+      for (let i = 1; i < values.length; i++)
+        g.lineTo(i * scaleX, height - (offsets[i] - min) * scaleY);
 
-    g.fill({
-      color: 0xFFFFFF,
-      alpha: 0.5,
-    });
+      for (let i = values.length - 1; i >= 0; i--) {
+        g.lineTo(i * scaleX, height - (values[i] + offsets[i] - min) * scaleY);
+        offsets[i] += values[i];
+      }
+
+      g.closePath();
+      g.fill({ color, alpha: 0.5 });
+    };
+
+    drawGraph(this.frameTimes.map(it => it.update), 0xFFFF00);
+    drawGraph(this.frameTimes.map(it => it.transforms), 0x00FFFF);
+    drawGraph(this.frameTimes.map(it => it.draw), 0xFF0000);
+    drawGraph(this.frameTimes.map(it => it.total - (it.draw + it.update + it.transforms)), 0xFFFFFF);
 
     for (const i of [5, 10, 20, 50, 100]) {
-      const y = height - i * scale;
+      const y = height - i * scaleY;
       if (y < 0)
         continue;
 

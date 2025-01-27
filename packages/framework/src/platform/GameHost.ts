@@ -91,7 +91,6 @@ export abstract class GameHost {
 
   protected render() {
     FrameStatistics.draw.measure(() => this.renderer.render(this.root!));
-    this.afterRender.emit();
   }
 
   async takeScreenshot(): Promise<Blob> {
@@ -141,6 +140,7 @@ export abstract class GameHost {
       this.update();
       this.render();
       FrameStatistics.frame.stop(startTime);
+      this.afterRender.emit();
       await new Promise(resolve => requestAnimationFrame(resolve));
     }
 

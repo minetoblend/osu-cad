@@ -169,7 +169,7 @@ export class ModdingScreen extends EditorScreen {
     super.exitTransition();
 
     this.#playfieldContainer.fadeOut(100);
-    this.#rightContainer.moveToX(0.3, 300, EasingFunction.OutExpo);
+    this.#rightContainer.moveToX(0.45, 500, EasingFunction.OutExpo);
     this.#issueListContainer.moveToY(0.5, 400, EasingFunction.OutExpo);
   }
 

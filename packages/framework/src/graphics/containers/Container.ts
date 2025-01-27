@@ -83,6 +83,11 @@ export class Container<T extends Drawable = Drawable> extends CompositeDrawable 
     }
   }
 
+  removeRange(children: T[], disposeImmediately: boolean = true) {
+    for (const child of children)
+      this.remove(child, disposeImmediately);
+  }
+
   clear(disposeImmediately: boolean = true) {
     // TODO: Add more efficient clear method
     while (this.children.length > 0) {

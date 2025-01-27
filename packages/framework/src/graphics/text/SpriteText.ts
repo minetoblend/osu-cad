@@ -1,4 +1,5 @@
 import type { FontDefinition } from './FontDefinition';
+import { BitmapFontManager } from 'pixi.js';
 import { Cached } from '../../caching';
 import { PIXIBitmapText, PIXIContainer, PIXITextStyle, type PIXITextStyleOptions } from '../../pixi';
 import { Drawable, type DrawableOptions, Invalidation } from '../drawables/Drawable';
@@ -84,7 +85,10 @@ export class SpriteText extends Drawable {
 
     if (!this.#textBacking.isValid) {
       this.#textDrawNode.text = this.#text;
-      this.updateSize(this.#textDrawNode.width, this.#textDrawNode.height);
+
+      const { width, height, scale } = BitmapFontManager.getLayout(this.text, this.#textDrawNode.style, false);
+      this.updateSize(width * scale, height * scale);
+
       this.#textBacking.validate();
     }
   }

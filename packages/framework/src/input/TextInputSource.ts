@@ -47,5 +47,10 @@ export class TextInputSource {
     this.#inputElement.blur();
   }
 
+  ensureActivated() {
+    // TODO do this properly
+    this.activate();
+  }
+
   onTextInput = new Action<string>();
 }

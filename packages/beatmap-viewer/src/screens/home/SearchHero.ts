@@ -1,4 +1,4 @@
-import type { TextBox, WorkingBeatmapSet } from '@osucad/core';
+import type { WorkingBeatmapSet } from '@osucad/core';
 import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import type { BeatmapSetResponse } from '../../mirrors/BeatmapSetResponse';
 import { OsucadButton } from '@osucad/core';
@@ -46,7 +46,7 @@ export class SearchHero extends FillFlowContainer {
             autoSizeAxes: Axes.Y,
             padding: { right: 100 },
             child: this.#searchBox = new HomeScreenTextBox().adjust(it =>
-              it.onCommit.addListener(text => this.search(text)),
+              it.onCommit.addListener(() => this.search(it.text)),
             ),
             anchor: Anchor.CenterLeft,
             origin: Anchor.CenterLeft,
@@ -71,7 +71,7 @@ export class SearchHero extends FillFlowContainer {
 
   #textBoxContainer !: Container;
 
-  #searchBox!: TextBox;
+  #searchBox!: HomeScreenTextBox;
 
   minimize() {
     if (this.#minimized)
