@@ -12,8 +12,6 @@ export class Toolbar extends CompositeDrawable {
     this.relativeSizeAxes = Axes.X;
     this.height = Toolbar.HEIGHT;
 
-    this.padding = { horizontal: 4, vertical: 2 };
-
     this.internalChildren = [
       new Box({
         color: OsucadColors.translucent,
@@ -22,6 +20,7 @@ export class Toolbar extends CompositeDrawable {
       new FillFlowContainer({
         relativeSizeAxes: Axes.Y,
         autoSizeAxes: Axes.X,
+        padding: { horizontal: 4, vertical: 2 },
         children: [
           new ToolbarSettingsButton(),
         ],
@@ -31,6 +30,7 @@ export class Toolbar extends CompositeDrawable {
         autoSizeAxes: Axes.X,
         anchor: Anchor.TopRight,
         origin: Anchor.TopRight,
+        padding: { horizontal: 4, vertical: 2 },
         children: [
           new UserInfoOverlay(),
         ],
