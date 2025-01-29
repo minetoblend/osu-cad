@@ -5,6 +5,7 @@ import { Bindable, Component } from '@osucad/framework';
 import { APIState } from './APIState';
 
 const MSG_LOGGED_IN = 'logged_in';
+const MSG_LOGGED_OUT = 'logged_out';
 
 export class APIProvider extends Component {
   readonly #state = new Bindable<APIState>(APIState.Offline);
@@ -44,6 +45,8 @@ export class APIProvider extends Component {
   #onMessage(evt: MessageEvent) {
     if (evt.data === MSG_LOGGED_IN)
       this.#loadUser();
+    else if (evt.data === MSG_LOGGED_OUT)
+      this.#state.value = APIState.Offline;
   }
 
   async #loadUser(isFirstLoad = false) {
@@ -72,6 +75,7 @@ export class APIProvider extends Component {
       if (res.ok)
         this.#state.value = APIState.Offline;
     });
+    APIProvider.#broadcastChannel.postMessage(MSG_LOGGED_OUT);
   }
 }
 
