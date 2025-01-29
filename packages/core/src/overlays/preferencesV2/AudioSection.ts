@@ -21,6 +21,8 @@ export class AudioSection extends PreferencesSection {
     config.bindWith(OsucadSettings.MusicVolume, this.musicVolume);
     config.bindWith(OsucadSettings.HitsoundVolume, this.hitsoundVolume);
     config.bindWith(OsucadSettings.UIVolume, this.uiVolume);
+    config.bindWith(OsucadSettings.AudioOffset, this.audioOffset);
+    config.bindWith(OsucadSettings.HitSoundOffset, this.hitsoundOffset);
 
     this.addRange([
       new OsucadSpriteText({
@@ -32,6 +34,16 @@ export class AudioSection extends PreferencesSection {
       new VolumeSlider(this.musicVolume, 'Music'),
       new VolumeSlider(this.hitsoundVolume, 'Hitsounds'),
       new VolumeSlider(this.uiVolume, 'User Interface'),
+      new OsucadSpriteText({
+        text: 'Offset',
+        fontSize: 16,
+        alpha: 0.5,
+        margin: { top: 10 },
+      }),
+      new LabelledSlider(this.audioOffset, 'Audio Offset')
+        .withStepSize(5),
+      new LabelledSlider(this.hitsoundOffset, 'Hitsound Offset')
+        .withStepSize(5),
     ]);
   }
 
@@ -53,6 +65,16 @@ export class AudioSection extends PreferencesSection {
   readonly uiVolume = new BindableNumber(100)
     .withMinValue(0)
     .withMaxValue(100)
+    .withPrecision(1);
+
+  readonly audioOffset = new BindableNumber(0)
+    .withMinValue(-250)
+    .withMaxValue(250)
+    .withPrecision(1);
+
+  readonly hitsoundOffset = new BindableNumber(0)
+    .withMinValue(-250)
+    .withMaxValue(250)
     .withPrecision(1);
 }
 

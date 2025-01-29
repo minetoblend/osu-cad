@@ -21,7 +21,7 @@ export abstract class LabelledDrawable<T extends Drawable> extends CompositeDraw
           new Dimension(GridSizeMode.AutoSize),
         ],
         columnDimensions: [
-          new Dimension(GridSizeMode.Absolute, 100),
+          new Dimension(GridSizeMode.Absolute, 110),
           new Dimension(),
         ],
         content: [[
