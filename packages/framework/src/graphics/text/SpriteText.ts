@@ -33,7 +33,6 @@ export class SpriteText extends Drawable {
     this.#textStyle.on('update', () => this.#textBacking.invalidate());
 
     this.#textDrawNode = new PIXIBitmapText({
-      resolution: 2,
       style: this.#textStyle,
     });
 
