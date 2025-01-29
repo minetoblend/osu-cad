@@ -8,7 +8,7 @@ const gradient = new LinearGradient(0, 0, 0, 1);
 gradient.addColorStop(0, 0x000000, 0);
 gradient.addColorStop(1, 0x000000, 1);
 gradient.buildLinearGradient();
-gradient.texture.source.style.wrapMode = 'clamp-to-edge';
+gradient.texture.source.style.addressMode = 'clamp-to-edge';
 
 export class ArgonNotePiece extends MaskingContainer {
   static readonly NOTE_HEIGHT = 43;
