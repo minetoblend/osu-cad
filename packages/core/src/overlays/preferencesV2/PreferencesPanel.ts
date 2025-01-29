@@ -5,6 +5,7 @@ import { OsucadScrollContainer } from '../../drawables/OsucadScrollContainer';
 import { AudioSection } from './AudioSection';
 import { ITabbableContentContainer } from './ITabbableContentContainer';
 import { PreferencesOverview } from './PreferencesOverview';
+import { SkinningSection } from './SkinningSection';
 import { ViewportSection } from './ViewportSection';
 
 @provide(ITabbableContentContainer)
@@ -83,6 +84,7 @@ export class PreferencesPanel extends Container<PreferencesSection> {
     const sections = [
       new AudioSection(),
       new ViewportSection(),
+      new SkinningSection(),
     ];
 
     for (const section of sections)
