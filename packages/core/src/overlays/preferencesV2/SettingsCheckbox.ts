@@ -1,4 +1,4 @@
-import type { Bindable } from '@osucad/framework';
+import type { Bindable, ClickEvent } from '@osucad/framework';
 import { Anchor, Axes, BindableBoolean, CompositeDrawable } from '@osucad/framework';
 import { OsucadSpriteText } from '../../drawables/OsucadSpriteText';
 import { Checkbox } from '../../userInterface/Checkbox';
@@ -30,4 +30,9 @@ export class SettingsCheckbox extends CompositeDrawable {
   }
 
   value = new BindableBoolean();
+
+  override onClick(e: ClickEvent): boolean {
+    this.value.toggle();
+    return true;
+  }
 }
