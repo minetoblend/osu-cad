@@ -8,7 +8,6 @@ export class LoginButton extends CompositeDrawable {
 
     this.autoSizeAxes = Axes.X;
     this.relativeSizeAxes = Axes.Y;
-    this.padding = { vertical: 2 };
 
     this.internalChildren = [
       this.#background = new FastRoundedBox({

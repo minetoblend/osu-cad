@@ -1,17 +1,7 @@
+import type { OsucadScreen } from '@osucad/core';
 import type { DependencyContainer, ReadonlyDependencyContainer } from '@osucad/framework';
-import {
-  APIProvider,
-  ISkinSource,
-  MultiplayerClient,
-  MultiplayerEditor,
-  MultiplayerEditorBeatmap,
-  OsucadGameBase,
-  OsucadScreenStack,
-  RulesetStore,
-  SkinManager,
-  UISamples,
-} from '@osucad/core';
-import { provide } from '@osucad/framework';
+import { APIProvider, IEndpointConfiguration, ISkinSource, MultiplayerClient, MultiplayerEditor, MultiplayerEditorBeatmap, OsucadGameBase, OsucadScreenStack, PreferencesOverlay, RulesetStore, SkinManager, UISamples } from '@osucad/core';
+import { Axes, Container, lerp, provide } from '@osucad/framework';
 import { ManiaRuleset } from '@osucad/ruleset-mania';
 import { OsuRuleset } from '@osucad/ruleset-osu';
 import { Toolbar } from './overlays/Toolbar';
@@ -31,6 +21,14 @@ export class OsucadWebGame extends OsucadGameBase {
   @provide(APIProvider)
   readonly api = new APIProvider();
 
+  @provide(IEndpointConfiguration)
+  endpoint: IEndpointConfiguration = {
+    apiV1Endpoint: import.meta.env.VITE_API_BASE_URL,
+  };
+
+  @provide(PreferencesOverlay)
+  readonly preferences = new PreferencesOverlay();
+
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
@@ -45,18 +43,44 @@ export class OsucadWebGame extends OsucadGameBase {
 
     this.addRange([
       this.api,
-      this.#screenStack = new OsucadScreenStack(),
+      this.screenOffsetContainer = new Container({
+        relativeSizeAxes: Axes.Both,
+        children: [
+          this.#screenStack = new OsucadScreenStack(),
+        ],
+      }),
+      this.#overlayOffsetContainer = new Container({
+        relativeSizeAxes: Axes.Both,
+      }),
     ]);
   }
 
+  screenOffsetContainer!: Container;
+
   #screenStack!: OsucadScreenStack;
+
+  #overlayOffsetContainer!: Container;
 
   protected override loadComplete() {
     super.loadComplete();
 
-    this.add(
-      this.toolbar = new Toolbar(),
-    );
+    this.#screenStack.screenPushed.addListener((evt) => {
+      if ((evt.newScreen as OsucadScreen).hideOverlaysOnEnter)
+        this.toolbar.hide();
+      else
+        this.toolbar.show();
+    });
+
+    this.#screenStack.screenExited.addListener((evt) => {
+      if ((evt.newScreen as OsucadScreen).hideOverlaysOnEnter)
+        this.toolbar.hide();
+      else
+        this.toolbar.show();
+    });
+
+    this.#overlayOffsetContainer.add(this.preferences);
+
+    this.add(this.toolbar = new Toolbar());
 
     this.#screenStack.push(new LandingScreen());
   }
@@ -75,10 +99,16 @@ export class OsucadWebGame extends OsucadGameBase {
 
   toolbar!: Toolbar;
 
-  override update() {
-    super.update();
+  override updateAfterChildren() {
+    super.updateAfterChildren();
 
-    this.#screenStack.height = this.content.drawHeight - this.toolbar.drawHeight - this.toolbar.y;
-    this.#screenStack.y = this.toolbar.y + this.toolbar.drawHeight;
+    const toolbarOffset = this.toolbar.y + this.toolbar.drawHeight;
+
+    this.screenOffsetContainer.padding = { top: toolbarOffset };
+    this.#overlayOffsetContainer.padding = { top: toolbarOffset };
+
+    const targetOffset = this.preferences.panelOffset * 0.5;
+
+    this.screenOffsetContainer.x = lerp(targetOffset, this.screenOffsetContainer.x, Math.exp(-0.01 * this.time.elapsed));
   }
 }

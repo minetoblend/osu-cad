@@ -1,8 +1,9 @@
 import type {
-  HoverEvent,
+  ClickEvent,
   MouseDownEvent,
   MouseUpEvent,
 } from '@osucad/framework';
+import { PreferencesOverlay } from '@osucad/core';
 import {
   Anchor,
   Axes,
@@ -11,6 +12,7 @@ import {
   DrawableSprite,
   EasingFunction,
   MouseButton,
+  resolved,
 } from '@osucad/framework';
 import { getIcon } from '@osucad/resources';
 import { ToolbarButton } from './ToolbarButton';
@@ -38,15 +40,6 @@ export class ToolbarSettingsButton extends ToolbarButton {
 
   readonly #icon!: DrawableSprite;
 
-  override onHover(e: HoverEvent): boolean {
-    this.#icon.rotateTo(0)
-      .rotateTo(Math.PI, 1000, EasingFunction.OutExpo)
-      .then()
-      .rotateTo(0);
-
-    return super.onHover(e);
-  }
-
   override onMouseDown(e: MouseDownEvent): boolean {
     if (e.button === MouseButton.Left) {
       this.#icon.scaleTo(0.85, 400, EasingFunction.OutExpo);
@@ -57,5 +50,18 @@ export class ToolbarSettingsButton extends ToolbarButton {
 
   override onMouseUp(e: MouseUpEvent) {
     this.#icon.scaleTo(1, 300, EasingFunction.OutBack);
+  }
+
+  @resolved(PreferencesOverlay)
+  preferences!: PreferencesOverlay;
+
+  override onClick(e: ClickEvent): boolean {
+    this.preferences.toggleVisibility();
+
+    this.#icon.rotateTo(0)
+      .rotateTo(Math.PI, 1000, EasingFunction.OutExpo)
+      .then()
+      .rotateTo(0);
+    return true;
   }
 }

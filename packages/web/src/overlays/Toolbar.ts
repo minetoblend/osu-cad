@@ -1,5 +1,5 @@
 import { OsucadColors } from '@osucad/core';
-import { Anchor, Axes, Box, CompositeDrawable, EasingFunction, FillFlowContainer } from '@osucad/framework';
+import { Anchor, Axes, Box, CompositeDrawable, EasingFunction, FillFlowContainer, Vec2 } from '@osucad/framework';
 import { ToolbarSettingsButton } from './ToolbarSettingsButton';
 import { UserInfoOverlay } from './UserInfoOverlay';
 
@@ -20,10 +20,8 @@ export class Toolbar extends CompositeDrawable {
       new FillFlowContainer({
         relativeSizeAxes: Axes.Y,
         autoSizeAxes: Axes.X,
-        padding: { horizontal: 4, vertical: 2 },
-        children: [
-          new ToolbarSettingsButton(),
-        ],
+        padding: 4,
+        children: [],
       }),
       new FillFlowContainer({
         relativeSizeAxes: Axes.Y,
@@ -31,8 +29,10 @@ export class Toolbar extends CompositeDrawable {
         anchor: Anchor.TopRight,
         origin: Anchor.TopRight,
         padding: { horizontal: 4, vertical: 2 },
+        spacing: new Vec2(4),
         children: [
           new UserInfoOverlay(),
+          new ToolbarSettingsButton(),
         ],
       }),
     ];

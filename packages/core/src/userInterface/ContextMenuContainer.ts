@@ -4,7 +4,7 @@ import { ContextMenu } from './ContextMenu';
 
 @provide()
 export class ContextMenuContainer extends Container {
-  constructor(options: ContainerOptions) {
+  constructor(options: ContainerOptions = {}) {
     super({
       relativeSizeAxes: Axes.Both,
     });

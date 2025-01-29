@@ -1,0 +1,63 @@
+import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent } from '@osucad/framework';
+import { Axes, Box, EasingFunction, VisibilityContainer } from '@osucad/framework';
+import { EditorAction } from '../../editor/EditorAction';
+import { PreferencesPanel } from './PreferencesPanel';
+
+export class PreferencesOverlay extends VisibilityContainer implements IKeyBindingHandler<EditorAction> {
+  readonly #backdrop: Box;
+
+  readonly #preferencesPanel: PreferencesPanel;
+
+  constructor() {
+    super();
+    this.relativeSizeAxes = Axes.Both;
+    this.alwaysPresent = true;
+
+    this.children = [
+      this.#backdrop = new Box({
+        relativeSizeAxes: Axes.Both,
+        color: 'black',
+        alpha: 0.5,
+      }),
+      this.#preferencesPanel = new PreferencesPanel().with({
+        relativePositionAxes: Axes.X,
+      }),
+    ];
+
+    this.hide();
+  }
+
+  get panelOffset() {
+    return Math.max(0, this.#preferencesPanel.drawPosition.x + this.#preferencesPanel.drawWidth);
+  }
+
+  override popIn() {
+    this.#backdrop.fadeTo(0.5, 400);
+    this.#preferencesPanel.moveToX(0, 400, EasingFunction.OutExpo);
+  }
+
+  override popOut() {
+    this.#backdrop.fadeOut(400);
+    this.#preferencesPanel.moveToX(-1, 650, EasingFunction.OutExpo);
+  }
+
+  readonly isKeyBindingHandler = true;
+
+  canHandleKeyBinding(binding: KeyBindingAction): boolean {
+    return binding instanceof EditorAction;
+  }
+
+  override get propagateNonPositionalInputSubTree(): boolean {
+    return true;
+  }
+
+  onKeyBindingPressed(e: KeyBindingPressEvent<EditorAction>): boolean {
+    switch (e.pressed) {
+      case EditorAction.ShowPreferences:
+        this.toggleVisibility();
+        return true;
+    }
+
+    return false;
+  }
+}
