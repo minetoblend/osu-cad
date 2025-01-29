@@ -1,5 +1,5 @@
 import type { ReadonlyDependencyContainer } from '@osucad/framework';
-import { BindableNumber } from '@osucad/framework';
+import { Anchor, Axes, BindableNumber, Dimension, GridContainer, GridSizeMode } from '@osucad/framework';
 import { getIcon } from '@osucad/resources';
 import { OsucadConfigManager } from '../../config/OsucadConfigManager';
 import { OsucadSettings } from '../../config/OsucadSettings';
@@ -28,14 +28,10 @@ export class AudioSection extends PreferencesSection {
         fontSize: 16,
         alpha: 0.5,
       }),
-      new LabelledSlider(this.masterVolume, 'Master')
-        .withStepSize(10),
-      new LabelledSlider(this.musicVolume, 'Music')
-        .withStepSize(10),
-      new LabelledSlider(this.hitsoundVolume, 'Hitsounds')
-        .withStepSize(10),
-      new LabelledSlider(this.uiVolume, 'User Interface')
-        .withStepSize(10),
+      new VolumeSlider(this.masterVolume, 'Master'),
+      new VolumeSlider(this.musicVolume, 'Music'),
+      new VolumeSlider(this.hitsoundVolume, 'Hitsounds'),
+      new VolumeSlider(this.uiVolume, 'User Interface'),
     ]);
   }
 
@@ -58,4 +54,49 @@ export class AudioSection extends PreferencesSection {
     .withMinValue(0)
     .withMaxValue(100)
     .withPrecision(1);
+}
+
+class VolumeSlider extends GridContainer {
+  constructor(value: BindableNumber, label: string) {
+    let labelSpriteText: OsucadSpriteText;
+
+    super({
+      relativeSizeAxes: Axes.X,
+      autoSizeAxes: Axes.Y,
+      rowDimensions: [
+        new Dimension(GridSizeMode.AutoSize),
+      ],
+      columnDimensions: [
+        new Dimension(),
+        new Dimension(GridSizeMode.Absolute, 30),
+      ],
+      content: [[
+        new LabelledSlider(value, label)
+          .withStepSize(10),
+        labelSpriteText = new OsucadSpriteText({
+          text: '%',
+          fontSize: 14,
+          anchor: Anchor.CenterRight,
+          origin: Anchor.CenterRight,
+          alpha: 0.5,
+        }),
+      ]],
+    });
+
+    this.#label = labelSpriteText;
+
+    this.value = value.getBoundCopy();
+  }
+
+  #label!: OsucadSpriteText;
+
+  value: BindableNumber;
+
+  protected override loadComplete() {
+    super.loadComplete();
+
+    this.value.bindValueChanged((e) => {
+      this.#label.text = `${e.value.toFixed(0)} %`;
+    }, true);
+  }
 }
