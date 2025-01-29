@@ -1,8 +1,9 @@
 import type { ReadonlyBindable } from '@osucad/framework';
 import type { APIUser } from './APIUser';
-import { Bindable, Component } from '@osucad/framework';
+import { Bindable, Component, resolved } from '@osucad/framework';
 
 import { APIState } from './APIState';
+import { IEndpointConfiguration } from './IEndpointConfiguration';
 
 const MSG_LOGGED_IN = 'logged_in';
 const MSG_LOGGED_OUT = 'logged_out';
@@ -10,7 +11,12 @@ const MSG_LOGGED_OUT = 'logged_out';
 export class APIProvider extends Component {
   readonly #state = new Bindable<APIState>(APIState.Offline);
 
-  readonly baseUrl = import.meta.env.VITE_API_BASE_URL;
+  @resolved(IEndpointConfiguration)
+  endpoints!: IEndpointConfiguration;
+
+  get apiEndpoint() {
+    return this.endpoints.apiV1Endpoint;
+  }
 
   get state(): ReadonlyBindable<APIState> {
     return this.#state;
@@ -23,9 +29,9 @@ export class APIProvider extends Component {
   }
 
   login() {
-    const loginUrl = `${this.baseUrl}/auth/osu/login`;
+    const loginUrl = `${this.apiEndpoint}/auth/osu/login?redirectUrl=${encodeURIComponent(`${window.origin}/login-callback`)}`;
 
-    const handle = window.open(loginUrl, 'name', 'popup=true,menubar=false,width=500,height=600');
+    const handle = window.open(`/login?url=${encodeURIComponent(loginUrl)}`, 'name', 'popup=true,menubar=false,width=500,height=600');
   }
 
   static #broadcastChannel = new BroadcastChannel('osucad_APIProvider');
@@ -53,10 +59,16 @@ export class APIProvider extends Component {
     try {
       this.#state.value = APIState.Connecting;
       await Promise.all([
-        fetch('http://localhost:3001/users/me', {
+        fetch(`${this.apiEndpoint}/users/me`, {
           credentials: 'include',
+          priority: 'high',
         })
-          .then(res => res.json())
+          .then((res) => {
+            if (!res.ok)
+              throw new Error(`Request failed with status ${res.status}`);
+
+            return res.json();
+          })
           .then(user => this.#localUser.value = user),
         new Promise<void>(resolve => setTimeout(resolve, isFirstLoad ? 0 : 300)),
       ]);
@@ -69,7 +81,7 @@ export class APIProvider extends Component {
   }
 
   logout() {
-    fetch(`${this.baseUrl}/auth/logout`, {
+    fetch(`${this.apiEndpoint}/auth/logout`, {
       credentials: 'include',
     }).then((res) => {
       if (res.ok)
