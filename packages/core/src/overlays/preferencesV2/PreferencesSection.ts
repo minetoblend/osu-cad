@@ -12,6 +12,7 @@ export abstract class PreferencesSection extends Container {
 
     this.relativeSizeAxes = Axes.X;
     this.autoSizeAxes = Axes.Y;
+    this.margin = { bottom: 10 };
 
     this.internalChild = new FillFlowContainer({
       direction: FillDirection.Vertical,

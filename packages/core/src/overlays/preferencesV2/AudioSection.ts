@@ -29,7 +29,7 @@ export class AudioSection extends PreferencesSection {
       new OsucadSpriteText({
         text: 'Volume',
         fontSize: 16,
-        alpha: 0.5,
+        alpha: 0.75,
       }),
       new SettingsSlider('Master', this.masterVolume, e => `${e.toFixed(0)}%`),
       new SettingsSlider('Music', this.musicVolume, e => `${e.toFixed(0)}%`),
@@ -38,7 +38,7 @@ export class AudioSection extends PreferencesSection {
       new OsucadSpriteText({
         text: 'Offset',
         fontSize: 16,
-        alpha: 0.5,
+        alpha: 0.75,
         margin: { top: 10 },
       }),
       new SettingsSlider('Audio Offset', this.audioOffset, e => `${e.toFixed(0)}ms`),

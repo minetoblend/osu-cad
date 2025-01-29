@@ -1,6 +1,6 @@
-import type { Bindable, ClickEvent } from '@osucad/framework';
+import type { Bindable, Box, ClickEvent } from '@osucad/framework';
 import type { PreferencesSection } from './PreferencesSection';
-import { Anchor, Axes, Box, CompositeDrawable, DrawableSprite, FillDirection, FillFlowContainer, FillMode, ScrollContainer, Vec2 } from '@osucad/framework';
+import { Anchor, Axes, CompositeDrawable, DrawableSprite, FillDirection, FillFlowContainer, FillMode, ScrollContainer, Vec2 } from '@osucad/framework';
 import { OsucadColors } from '../../OsucadColors';
 
 export class PreferencesOverview extends CompositeDrawable {
@@ -11,10 +11,6 @@ export class PreferencesOverview extends CompositeDrawable {
     this.relativeSizeAxes = Axes.Y;
 
     this.internalChildren = [
-      new Box({
-        relativeSizeAxes: Axes.Both,
-        alpha: 0.02,
-      }),
       this.#content = new FillFlowContainer({
         direction: FillDirection.Vertical,
         relativeSizeAxes: Axes.Both,
@@ -40,10 +36,6 @@ class PreferencesSectionButton extends CompositeDrawable {
     this.size = new Vec2(40, 40);
 
     this.internalChildren = [
-      this.#background = new Box({
-        relativeSizeAxes: Axes.Both,
-        alpha: 0,
-      }),
       this.#icon = new DrawableSprite({
         texture: section.icon,
         relativeSizeAxes: Axes.Both,
@@ -68,18 +60,22 @@ class PreferencesSectionButton extends CompositeDrawable {
 
     this.activeSection.bindValueChanged((section) => {
       if (this.section === section.value) {
-        this.#icon.fadeColor(OsucadColors.primaryHighlight);
-        this.#background.fadeTo(0.25, 200);
+        this.#icon.fadeColor('white')
+          .fadeColor(OsucadColors.primaryHighlight, 200);
       }
       else {
-        this.#icon.fadeColor(OsucadColors.text);
-        this.#background.fadeTo(0, 200);
+        this.#icon.fadeColor(0xAAAAAA);
       }
     }, true);
   }
 
   override onClick(e: ClickEvent): boolean {
-    this.section.findClosestParentOfType(ScrollContainer)?.scrollIntoView(this.section);
+    const scrollContainer = this.section.findClosestParentOfType(ScrollContainer);
+
+    if (scrollContainer) {
+      const position = scrollContainer.getChildPosInContent(this.section);
+      scrollContainer.scrollTo(position);
+    }
     return true;
   }
 }

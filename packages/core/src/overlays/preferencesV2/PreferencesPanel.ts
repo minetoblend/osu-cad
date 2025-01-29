@@ -3,9 +3,9 @@ import type { PreferencesSection } from './PreferencesSection';
 import { Anchor, Axes, BetterBackdropBlurFilter, Bindable, Box, Container, Dimension, FillFlowContainer, GridContainer, GridSizeMode, provide, Vec2 } from '@osucad/framework';
 import { OsucadScrollContainer } from '../../drawables/OsucadScrollContainer';
 import { AudioSection } from './AudioSection';
-import { GraphicsSection } from './GraphicsSection';
 import { ITabbableContentContainer } from './ITabbableContentContainer';
 import { PreferencesOverview } from './PreferencesOverview';
+import { ViewportSection } from './ViewportSection';
 
 @provide(ITabbableContentContainer)
 export class PreferencesPanel extends Container<PreferencesSection> {
@@ -50,7 +50,7 @@ export class PreferencesPanel extends Container<PreferencesSection> {
       new GridContainer({
         relativeSizeAxes: Axes.Both,
         rowDimensions: [
-          new Dimension(),
+          new Dimension(GridSizeMode.Distributed),
         ],
         columnDimensions: [
           new Dimension(GridSizeMode.AutoSize),
@@ -59,6 +59,7 @@ export class PreferencesPanel extends Container<PreferencesSection> {
         content: [
           [
             this.#overview = new PreferencesOverview(this.activeSection),
+
             this.#scroll = new OsucadScrollContainer().with({
               relativeSizeAxes: Axes.Both,
               children: [
@@ -81,7 +82,7 @@ export class PreferencesPanel extends Container<PreferencesSection> {
 
     const sections = [
       new AudioSection(),
-      new GraphicsSection(),
+      new ViewportSection(),
     ];
 
     for (const section of sections)
@@ -100,12 +101,12 @@ export class PreferencesPanel extends Container<PreferencesSection> {
       const section = this.#content.children[i];
 
       const position = section.drawPosition.y - this.#scroll.target;
-      if (position < this.drawHeight * 0.5 || i === 0) {
+      if (position < this.drawHeight * 0.25 || i === 0) {
         this.activeSection.value = section;
         break;
       }
     }
 
-    this.#scroll.padding = { bottom: this.drawHeight * 0.5 };
+    this.#scroll.content.padding = { bottom: this.drawHeight };
   }
 }

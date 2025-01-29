@@ -1,7 +1,8 @@
-import type { Bindable, ClickEvent, DrawableOptions, FocusEvent, FocusLostEvent, KeyDownEvent } from '@osucad/framework';
+import type { Bindable, ClickEvent, DrawableOptions, FocusEvent, FocusLostEvent, KeyDownEvent, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { Graphics } from 'pixi.js';
 import { Axes, BindableWithCurrent, Container, GraphicsDrawable, Key, RoundedBox, TabbableContainer, Vec2 } from '@osucad/framework';
 import { OsucadColors } from '../OsucadColors';
+import { ITabbableContentContainer } from '../overlays/preferencesV2/ITabbableContentContainer';
 
 export interface CheckboxOptions extends DrawableOptions {
   current?: Bindable<boolean>;
@@ -11,7 +12,7 @@ export class Checkbox extends TabbableContainer {
   constructor(options: CheckboxOptions = {}) {
     super();
 
-    this.size = new Vec2(18);
+    this.size = new Vec2(20);
 
     this.with(options);
 
@@ -20,11 +21,6 @@ export class Checkbox extends TabbableContainer {
         relativeSizeAxes: Axes.Both,
         fillAlpha: 0.2,
         cornerRadius: 4,
-        outline: {
-          width: 1,
-          color: 0x000000,
-          alpha: 0.2,
-        },
       }),
       new Container({
         relativeSizeAxes: Axes.Both,
@@ -51,6 +47,14 @@ export class Checkbox extends TabbableContainer {
     this.#current.current = value;
   }
 
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
+    const tabbableContentContainer = dependencies.resolveOptional(ITabbableContentContainer);
+    if (tabbableContentContainer)
+      this.tabbableContentContainer ??= tabbableContentContainer;
+  }
+
   protected override loadComplete() {
     super.loadComplete();
 
@@ -71,20 +75,33 @@ export class Checkbox extends TabbableContainer {
     return true;
   }
 
+  #outlineVisibility = 0;
+
+  get outlineVisibility() {
+    return this.#outlineVisibility;
+  }
+
+  set outlineVisibility(value) {
+    this.#outlineVisibility = value;
+
+    if (value <= 0) {
+      this.#background.outline = undefined;
+    }
+    else {
+      this.#background.outline = {
+        width: value * 2,
+        color: OsucadColors.primary,
+        alpha: value * 0.5,
+      };
+    }
+  }
+
   override onFocus(e: FocusEvent) {
-    this.#background.outline = {
-      width: 2,
-      color: OsucadColors.primary,
-      alpha: 0.75,
-    };
+    this.transformTo('outlineVisibility', 1, 200);
   }
 
   override onFocusLost(e: FocusLostEvent) {
-    this.#background.outline = {
-      width: 1,
-      color: 0x000000,
-      alpha: 0.2,
-    };
+    this.transformTo('outlineVisibility', 0, 200);
   }
 
   override onKeyDown(e: KeyDownEvent): boolean {
