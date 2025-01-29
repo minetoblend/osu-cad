@@ -10,16 +10,17 @@ export class SliderBar extends TabbableContainer {
 
     this.height = 24;
     this.relativeSizeAxes = Axes.X;
+
     this.padding = { horizontal: 10 };
 
     this.internalChildren = [
       this.track = new Container({
         relativeSizeAxes: Axes.X,
         height: 4,
-        padding: { left: 14 },
         anchor: Anchor.CenterRight,
         origin: Anchor.CenterRight,
         alpha: 0.1,
+        padding: { left: 14, right: -10 },
         child: new FastRoundedBox({
           relativeSizeAxes: Axes.X,
           height: 4,
@@ -32,7 +33,7 @@ export class SliderBar extends TabbableContainer {
       this.activeTrack = new Container({
         relativeSizeAxes: Axes.X,
         height: 4,
-        padding: { right: 14 },
+        padding: { right: 14, left: -10 },
         anchor: Anchor.CenterLeft,
         origin: Anchor.CenterLeft,
         alpha: 0.4,

@@ -68,7 +68,7 @@ class VolumeSlider extends GridContainer {
       ],
       columnDimensions: [
         new Dimension(),
-        new Dimension(GridSizeMode.Absolute, 30),
+        new Dimension(GridSizeMode.Absolute, 45),
       ],
       content: [[
         new LabelledSlider(value, label)
