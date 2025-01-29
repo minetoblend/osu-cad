@@ -49,7 +49,7 @@ export abstract class RangeConstrainedBindable<T> extends Bindable<T> {
   protected abstract get defaultMaxValue(): T;
 
   get hasDefinedRange() {
-    return (
+    return !(
       this.comparer.equals(this.#minValue, this.defaultMinValue)
       || this.comparer.equals(this.#maxValue, this.defaultMaxValue)
     );

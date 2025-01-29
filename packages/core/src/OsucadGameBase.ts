@@ -12,7 +12,6 @@ import { EditorActionContainer } from './editor/EditorActionContainer';
 import { GlobalCursorDisplay } from './graphics/cursor/GlobalCursorDisplay';
 import { IResourcesProvider } from './io/IResourcesProvider';
 import { PerformanceOverlay } from './overlays/PerformanceOverlay';
-import { PreferencesContainer } from './overlays/preferences/PreferencesContainer';
 import { ColorProvider } from './userInterface/ColorProvider';
 import { ContextMenuContainer } from './userInterface/ContextMenuContainer';
 
@@ -60,7 +59,7 @@ export abstract class OsucadGameBase extends Game implements IResourcesProvider 
 
     this.#dependencies.provide(AudioMixer, this.mixer);
 
-    super.content.addAll(
+    super.content.addRange([
       this.mixer,
       new Box({
         relativeSizeAxes: Axes.Both,
@@ -74,15 +73,13 @@ export abstract class OsucadGameBase extends Game implements IResourcesProvider 
           child: new PerformanceOverlay({
             child: new EditorActionContainer({
               child: new VirtualKeyboardSafeAreaContainer({
-                child: new ContextMenuContainer({
-                  child: this.#content = new PreferencesContainer(),
-                }),
+                child: this.#content = new ContextMenuContainer(),
               }),
             }),
           }),
         }),
       }),
-    );
+    ]);
 
     this.addParallelLoad(OsucadIcons.load());
     this.addParallelLoad(this.#loadFonts());

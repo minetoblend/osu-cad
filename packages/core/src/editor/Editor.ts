@@ -30,6 +30,10 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
     this.beatmap = editorBeatmap.beatmap;
   }
 
+  override get hideOverlaysOnEnter(): boolean {
+    return true;
+  }
+
   readonly beatmap: IBeatmap;
 
   #screenManager = new EditorScreenManager();

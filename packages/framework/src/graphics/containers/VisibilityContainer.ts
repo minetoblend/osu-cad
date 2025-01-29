@@ -10,10 +10,8 @@ export abstract class VisibilityContainer extends Container {
   }
 
   override loadComplete() {
-    this.withScope(() => {
-      this.state.addOnChangeListener(this.updateState, {
-        immediate: this.state.value === Visibility.Visible || !this.#didInitialHide,
-      });
+    this.state.addOnChangeListener(this.updateState, {
+      immediate: this.state.value === Visibility.Visible || !this.#didInitialHide,
     });
 
     super.loadComplete();

@@ -15,6 +15,7 @@ export * from './KeyBindingScrollEvent';
 export * from './KeyDownEvent';
 export * from './KeyUpEvent';
 export * from './MouseDownEvent';
+export * from './MouseEvent';
 export * from './MouseMoveEvent';
 export * from './MouseUpEvent';
 export * from './ScrollEvent';

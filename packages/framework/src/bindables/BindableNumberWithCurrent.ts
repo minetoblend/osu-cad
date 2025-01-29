@@ -8,7 +8,7 @@ export class BindableNumberWithCurrent extends BindableNumber {
 
   #currentBound?: Bindable<number>;
 
-  get current() {
+  get current(): BindableNumber {
     return this;
   }
 

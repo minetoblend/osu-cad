@@ -1,5 +1,6 @@
 import type { FontDefinition, SpriteTextOptions } from '@osucad/framework';
 import { SpriteText } from '@osucad/framework';
+import { OsucadColors } from '../OsucadColors';
 import { UIFonts } from './UIFonts';
 
 export type OsucadSpriteTextOptions = Omit<
@@ -12,7 +13,7 @@ export type OsucadSpriteTextOptions = Omit<
 
 export class OsucadSpriteText extends SpriteText {
   constructor(options: OsucadSpriteTextOptions = {}) {
-    const { fontWeight = 400, fontSize = 16, ...rest } = options;
+    const { fontWeight = 400, fontSize = 16, color = OsucadColors.text, ...rest } = options;
 
     let font: FontDefinition;
 
@@ -33,6 +34,7 @@ export class OsucadSpriteText extends SpriteText {
 
     super({
       ...rest,
+      color,
       font,
       style: {
         fill: 0xFFFFFF,
