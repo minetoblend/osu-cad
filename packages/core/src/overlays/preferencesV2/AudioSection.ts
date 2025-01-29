@@ -6,6 +6,7 @@ import { OsucadSettings } from '../../config/OsucadSettings';
 import { OsucadSpriteText } from '../../drawables/OsucadSpriteText';
 import { LabelledSlider } from './LabelledSlider';
 import { PreferencesSection } from './PreferencesSection';
+import { SettingsSlider } from './SettingsSlider';
 
 export class AudioSection extends PreferencesSection {
   constructor() {
@@ -30,20 +31,18 @@ export class AudioSection extends PreferencesSection {
         fontSize: 16,
         alpha: 0.5,
       }),
-      new VolumeSlider(this.masterVolume, 'Master'),
-      new VolumeSlider(this.musicVolume, 'Music'),
-      new VolumeSlider(this.hitsoundVolume, 'Hitsounds'),
-      new VolumeSlider(this.uiVolume, 'User Interface'),
+      new SettingsSlider('Master', this.masterVolume, e => `${e.toFixed(0)}%`),
+      new SettingsSlider('Music', this.musicVolume, e => `${e.toFixed(0)}%`),
+      new SettingsSlider('Hitsounds', this.hitsoundVolume, e => `${e.toFixed(0)}%`),
+      new SettingsSlider('User Interface', this.uiVolume, e => `${e.toFixed(0)}%`),
       new OsucadSpriteText({
         text: 'Offset',
         fontSize: 16,
         alpha: 0.5,
         margin: { top: 10 },
       }),
-      new LabelledSlider(this.audioOffset, 'Audio Offset')
-        .withStepSize(5),
-      new LabelledSlider(this.hitsoundOffset, 'Hitsound Offset')
-        .withStepSize(5),
+      new SettingsSlider('Audio Offset', this.audioOffset, e => `${e.toFixed(0)}ms`),
+      new SettingsSlider('Hitsound Offset', this.hitsoundOffset, e => `${e.toFixed(0)}ms`),
     ]);
   }
 
@@ -78,8 +77,8 @@ export class AudioSection extends PreferencesSection {
     .withPrecision(1);
 }
 
-class VolumeSlider extends GridContainer {
-  constructor(value: BindableNumber, label: string) {
+class SettingsSliderWithSuffix extends GridContainer {
+  constructor(value: BindableNumber, label: string, readonly format: (value: number) => string) {
     let labelSpriteText: OsucadSpriteText;
 
     super({
@@ -90,11 +89,10 @@ class VolumeSlider extends GridContainer {
       ],
       columnDimensions: [
         new Dimension(),
-        new Dimension(GridSizeMode.Absolute, 45),
+        new Dimension(GridSizeMode.Absolute, 55),
       ],
       content: [[
-        new LabelledSlider(value, label)
-          .withStepSize(10),
+        new LabelledSlider(value, label),
         labelSpriteText = new OsucadSpriteText({
           text: '%',
           fontSize: 14,
@@ -118,7 +116,7 @@ class VolumeSlider extends GridContainer {
     super.loadComplete();
 
     this.value.bindValueChanged((e) => {
-      this.#label.text = `${e.value.toFixed(0)} %`;
+      this.#label.text = this.format(e.value);
     }, true);
   }
 }

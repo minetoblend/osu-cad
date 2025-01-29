@@ -8,7 +8,7 @@ export class SliderBar extends TabbableContainer {
   constructor(value?: BindableNumber) {
     super();
 
-    this.height = 24;
+    this.height = 20;
     this.relativeSizeAxes = Axes.X;
 
     this.padding = { horizontal: 10 };
