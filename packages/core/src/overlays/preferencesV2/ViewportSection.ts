@@ -8,7 +8,7 @@ import { SettingsCheckbox } from './SettingsCheckbox';
 
 export class ViewportSection extends PreferencesSection {
   constructor() {
-    super('Graphics', getIcon('display'));
+    super('Viewport', getIcon('display'));
   }
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
