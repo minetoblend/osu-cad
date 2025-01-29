@@ -284,4 +284,6 @@ export interface ReadonlyBindable<T> {
   removeOnChangeListener: (listener: BindableListener<ValueChangedEvent<T>>) => boolean;
 
   getBoundCopy: () => ReadonlyBindable<T>;
+
+  bindValueChanged(listener: BindableListener<ValueChangedEvent<T>>, receiver?: any, runOnceImmediately?: boolean): void;
 }

@@ -7,7 +7,16 @@ export function authRoutes() {
     router.get('/osu/login', passport.authenticate(osuOauth));
 
     router.get('/osu/callback', passport.authenticate(osuOauth, { failureRedirect: '/' }), (req, res) => {
-      res.send('Hello, world!');
+      if (req.headers.referer)
+        res.redirect(`${req.headers.referer}login-callback`);
+      else
+        res.redirect('/');
+    });
+
+    router.get('/logout', (req, res) => {
+      req.session.destroy(() => {
+        res.sendStatus(200);
+      });
     });
   });
 }

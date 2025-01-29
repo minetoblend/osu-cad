@@ -40,4 +40,8 @@ export abstract class OsucadScreen extends Screen {
     if (this.#ownedBackground)
       callback(this.#ownedBackground);
   }
+
+  get hideOverlaysOnEnter() {
+    return false;
+  }
 }

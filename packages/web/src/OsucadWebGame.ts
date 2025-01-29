@@ -1,8 +1,21 @@
 import type { DependencyContainer, ReadonlyDependencyContainer } from '@osucad/framework';
-import { ISkinSource, MultiplayerClient, MultiplayerEditor, MultiplayerEditorBeatmap, OsucadGameBase, OsucadScreenStack, RulesetStore, SkinManager, UISamples } from '@osucad/core';
+import {
+  APIProvider,
+  ISkinSource,
+  MultiplayerClient,
+  MultiplayerEditor,
+  MultiplayerEditorBeatmap,
+  OsucadGameBase,
+  OsucadScreenStack,
+  RulesetStore,
+  SkinManager,
+  UISamples,
+} from '@osucad/core';
 import { provide } from '@osucad/framework';
 import { ManiaRuleset } from '@osucad/ruleset-mania';
 import { OsuRuleset } from '@osucad/ruleset-osu';
+import { Toolbar } from './overlays/Toolbar';
+import { LandingScreen } from './screens/landing/LandingScreen';
 
 export class OsucadWebGame extends OsucadGameBase {
   @provide(SkinManager)
@@ -14,6 +27,9 @@ export class OsucadWebGame extends OsucadGameBase {
   protected override createChildDependencies(parentDependencies: ReadonlyDependencyContainer): DependencyContainer {
     return this.#dependencies = super.createChildDependencies(parentDependencies);
   }
+
+  @provide(APIProvider)
+  readonly api = new APIProvider();
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
@@ -27,7 +43,10 @@ export class OsucadWebGame extends OsucadGameBase {
     RulesetStore.register(new OsuRuleset().rulesetInfo);
     RulesetStore.register(new ManiaRuleset().rulesetInfo);
 
-    this.add(this.#screenStack = new OsucadScreenStack());
+    this.addRange([
+      this.api,
+      this.#screenStack = new OsucadScreenStack(),
+    ]);
   }
 
   #screenStack!: OsucadScreenStack;
@@ -35,7 +54,11 @@ export class OsucadWebGame extends OsucadGameBase {
   protected override loadComplete() {
     super.loadComplete();
 
-    this.loadEditor().then();
+    this.add(
+      this.toolbar = new Toolbar(),
+    );
+
+    this.#screenStack.push(new LandingScreen());
   }
 
   async loadEditor() {
@@ -48,5 +71,14 @@ export class OsucadWebGame extends OsucadGameBase {
     await client.connect();
 
     this.#screenStack.push(new MultiplayerEditor(new MultiplayerEditorBeatmap(client)));
+  }
+
+  toolbar!: Toolbar;
+
+  override update() {
+    super.update();
+
+    this.#screenStack.height = this.content.drawHeight - this.toolbar.drawHeight - this.toolbar.y;
+    this.#screenStack.y = this.toolbar.y + this.toolbar.drawHeight;
   }
 }

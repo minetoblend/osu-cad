@@ -9,6 +9,7 @@ export * from './graphics';
 export * from './hitObjects';
 export * from './hitsounds';
 export * from './io';
+export * from './online';
 export * from './OsucadColors';
 export * from './OsucadGameBase';
 export * from './overlays';
