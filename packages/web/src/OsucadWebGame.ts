@@ -49,6 +49,9 @@ export class OsucadWebGame extends OsucadGameBase {
           this.#screenStack = new OsucadScreenStack(),
         ],
       }),
+      this.#toolbarContainer = new Container({
+        relativeSizeAxes: Axes.Both,
+      }),
       this.#overlayOffsetContainer = new Container({
         relativeSizeAxes: Axes.Both,
       }),
@@ -58,6 +61,8 @@ export class OsucadWebGame extends OsucadGameBase {
   screenOffsetContainer!: Container;
 
   #screenStack!: OsucadScreenStack;
+
+  #toolbarContainer!: Container;
 
   #overlayOffsetContainer!: Container;
 
@@ -80,7 +85,7 @@ export class OsucadWebGame extends OsucadGameBase {
 
     this.#overlayOffsetContainer.add(this.preferences);
 
-    this.add(this.toolbar = new Toolbar());
+    this.#toolbarContainer.add(this.toolbar = new Toolbar());
 
     this.#screenStack.push(new LandingScreen());
   }
@@ -105,7 +110,6 @@ export class OsucadWebGame extends OsucadGameBase {
     const toolbarOffset = this.toolbar.y + this.toolbar.drawHeight;
 
     this.screenOffsetContainer.padding = { top: toolbarOffset };
-    this.#overlayOffsetContainer.padding = { top: toolbarOffset };
 
     const targetOffset = this.preferences.panelOffset * 0.5;
 
