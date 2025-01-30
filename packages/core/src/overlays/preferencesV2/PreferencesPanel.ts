@@ -103,7 +103,7 @@ export class PreferencesPanel extends Container<PreferencesSection> {
       const section = this.#content.children[i];
 
       const position = section.drawPosition.y - this.#scroll.target;
-      if (position < this.drawHeight * 0.25 || i === 0) {
+      if (position < this.drawHeight * 0.1 || i === 0) {
         this.activeSection.value = section;
         break;
       }
