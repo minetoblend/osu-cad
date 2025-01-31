@@ -2,13 +2,12 @@ import type { IVec2 } from '@osucad/framework';
 
 export interface UserInfo {
   username: string;
-  avatarUrl: string;
   userId: number;
 }
 
-export interface ClientInfo extends UserInfo {
+export interface ClientInfo {
   clientId: number;
-  presence: any;
+  user: UserInfo;
   color: number;
 }
 
@@ -27,4 +26,28 @@ export interface CursorPosition {
   screen: string;
   position: IVec2;
   pressed: boolean;
+}
+
+export interface SummaryWithOps {
+  summary: SummaryMessage;
+  ops: SequencedOpsMessage[];
+}
+
+export interface SummaryMessage {
+  clientId: number;
+  sequenceNumber: string;
+  summary: string;
+  assets: AssetInfo[];
+}
+
+export interface SequencedOpsMessage {
+  clientId: number;
+  sequenceNumber: string;
+  version: number;
+  ops: string[];
+}
+
+export interface AssetInfo {
+  path: string;
+  id: string;
 }

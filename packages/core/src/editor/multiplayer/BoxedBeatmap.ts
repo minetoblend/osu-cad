@@ -1,4 +1,4 @@
-import type { ISummary, MutationContext } from '@osucad/multiplayer';
+import type { AssetInfo, ISummary, MutationContext } from '@osucad/multiplayer';
 import type { Beatmap } from '../../beatmap/Beatmap';
 import { SharedStructure } from '@osucad/multiplayer';
 import { RulesetStore } from '../../rulesets/RulesetStore';
@@ -6,11 +6,13 @@ import { RulesetStore } from '../../rulesets/RulesetStore';
 export interface BoxedBeatmapSummary extends ISummary {
   ruleset: string;
   beatmap: any;
+  assets: AssetInfo[];
 }
 
 export class BoxedBeatmap extends SharedStructure<never, BoxedBeatmapSummary> {
   constructor(
     public beatmap?: Beatmap<any>,
+    public assets?: AssetInfo[],
   ) {
     super();
   }
@@ -27,6 +29,7 @@ export class BoxedBeatmap extends SharedStructure<never, BoxedBeatmapSummary> {
       id: this.id,
       ruleset: this.rulesetId,
       beatmap: this.beatmap!.createSummary(),
+      assets: this.assets!,
     };
   }
 
@@ -40,5 +43,10 @@ export class BoxedBeatmap extends SharedStructure<never, BoxedBeatmapSummary> {
 
     beatmap.beatmapInfo.ruleset = rulesetInfo;
     beatmap.initializeFromSummary(summary.beatmap);
+    this.assets = summary.assets;
+  }
+
+  override get childObjects(): readonly SharedStructure<any>[] {
+    return [this.beatmap!];
   }
 }

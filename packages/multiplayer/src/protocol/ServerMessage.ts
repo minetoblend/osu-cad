@@ -1,63 +1,29 @@
-import type { IVec2 } from '@osucad/framework';
-import type { SignalKey } from '../client';
-import type { ChatMessage } from './ChatMessage';
-import type { ClientInfo, UserPresence } from './types';
+import type { ClientInfo, SequencedOpsMessage, SummaryWithOps } from './types';
 
 export type ServerMessage =
-  | InitialStateServerMessage;
-
-export interface ServerMessages {
-  initialData(message: InitialStateServerMessage): void;
-
-  userJoined(client: ClientInfo): void;
-
-  userLeft(client: ClientInfo): void;
-
-  chatMessageCreated(message: ChatMessage): void;
-
-  signal(clientId: number, key: SignalKey, data: any): void;
-
-  presenceUpdated<Key extends keyof UserPresence>(clientId: number, key: Key, value: UserPresence[Key]): void;
-
-  mutationsSubmitted(message: MutationsSubmittedMessage): void;
-
-  requestSummary(callback: (response: SummaryResponse) => void): void;
-}
-
-export type SummaryResponse =
-  | { summary: any; sequenceNumber: string }
-  | { error: 'has-pending-ops' };
+  | InitialStateServerMessage
+  | UserJoinedServerMessage
+  | UserLeftServerMessage
+  | OpsSubmittedServerMessage;
 
 export interface InitialStateServerMessage {
+  type: 'initial_state';
   clientId: number;
-  document: {
-    summary: any;
-    ops: MutationsSubmittedMessage[];
-    sequenceNumber: string;
-  };
-  assets: AssetInfo[];
+  document: SummaryWithOps;
   connectedUsers: ClientInfo[];
 }
 
-export interface AssetInfo {
-  path: string;
-  id?: string;
-  filesize?: number;
-}
-
 export interface UserJoinedServerMessage {
-  clientId: number;
+  type: 'user_joined';
+  client: ClientInfo;
 }
 
-export interface UpdateCursorServerMessage {
-  clientId: number;
-  screen: string | null;
-  position: IVec2 | null;
+export interface UserLeftServerMessage {
+  type: 'user_left';
+  client: ClientInfo;
 }
 
-export interface MutationsSubmittedMessage {
-  version: number;
-  clientId: number;
-  mutations: string[];
-  sequenceNumber: string;
+export interface OpsSubmittedServerMessage {
+  type: 'ops_submitted';
+  ops: SequencedOpsMessage[];
 }

@@ -1,3 +1,2 @@
-export * from './Chat';
-export * from './ClientSocket';
+export * from './AbstractMultiplayerClient';
 export * from './SignalKey';

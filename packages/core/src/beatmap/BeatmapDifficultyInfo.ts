@@ -97,7 +97,7 @@ export class BeatmapDifficultyInfo extends SharedObject implements IDeepCloneabl
     this.#sliderMultiplier.value = value;
   }
 
-  readonly #sliderTickRate = this.property('sliderTickRate', Object.assign(new BindableNumber(1.4), {
+  readonly #sliderTickRate = this.property('sliderTickRate', Object.assign(new BindableNumber(1), {
     minValue: 1,
     maxValue: 4,
     precision: 1,

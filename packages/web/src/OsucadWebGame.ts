@@ -1,6 +1,6 @@
 import type { OsucadScreen } from '@osucad/core';
 import type { DependencyContainer, ReadonlyDependencyContainer } from '@osucad/framework';
-import { APIProvider, IEndpointConfiguration, ISkinSource, MultiplayerClient, MultiplayerEditor, MultiplayerEditorBeatmap, OsucadGameBase, OsucadScreenStack, PreferencesOverlay, RulesetStore, SkinManager, UISamples } from '@osucad/core';
+import { APIProvider, IEndpointConfiguration, ISkinSource, OsucadGameBase, OsucadScreenStack, PreferencesOverlay, RulesetStore, SkinManager, UISamples } from '@osucad/core';
 import { Axes, Container, lerp, provide } from '@osucad/framework';
 import { ManiaRuleset } from '@osucad/ruleset-mania';
 import { OsuRuleset } from '@osucad/ruleset-osu';
@@ -88,18 +88,6 @@ export class OsucadWebGame extends OsucadGameBase {
     this.#toolbarContainer.add(this.toolbar = new Toolbar());
 
     this.#screenStack.push(new LandingScreen());
-  }
-
-  async loadEditor() {
-    const client = new MultiplayerClient(
-      window.location.search.endsWith('?second-server')
-        ? 'http://localhost:3001'
-        : 'http://localhost:3000',
-    );
-
-    await client.connect();
-
-    this.#screenStack.push(new MultiplayerEditor(new MultiplayerEditorBeatmap(client)));
   }
 
   toolbar!: Toolbar;

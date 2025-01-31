@@ -4,7 +4,7 @@ import type { ConnectedUser } from './ConnectedUsers';
 import type { MultiplayerCursorArea } from './MultiplayerCursorArea';
 import { Axes, BindableBoolean, CompositeDrawable, Container, MouseButton, ProxyDrawable, resolved, Vec2 } from '@osucad/framework';
 import { DefaultCursor } from '../../graphics/cursor/DefaultCursorContainer';
-import { MultiplayerClient } from './MultiplayerClient';
+import { OsucadMultiplayerClient } from './OsucadMultiplayerClient';
 
 export class MultiplayerCursorOverlay extends CompositeDrawable {
   constructor() {
@@ -40,8 +40,8 @@ export class MultiplayerCursorOverlay extends CompositeDrawable {
     relativeSizeAxes: Axes.Both,
   });
 
-  @resolved(MultiplayerClient)
-  client!: MultiplayerClient;
+  @resolved(OsucadMultiplayerClient)
+  client!: OsucadMultiplayerClient;
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
@@ -64,7 +64,7 @@ export class MultiplayerCursorOverlay extends CompositeDrawable {
       if (!this.#positionDidChange)
         return;
 
-      this.client.socket.emit('updatePresence', 'cursor', this.#currentPosition);
+      this.client.users.updatePresence('cursor', this.#currentPosition);
       this.#positionDidChange = false;
     }, 25, true);
   }

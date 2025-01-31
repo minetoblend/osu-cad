@@ -1,7 +1,8 @@
 import type { ReadonlyBindable } from '@osucad/framework';
 import type { APIUser } from './APIUser';
-import { Bindable, Component, resolved } from '@osucad/framework';
+import type { APIRequest } from './requests/APIRequest';
 
+import { Bindable, Component, resolved } from '@osucad/framework';
 import { APIState } from './APIState';
 import { IEndpointConfiguration } from './IEndpointConfiguration';
 
@@ -88,6 +89,12 @@ export class APIProvider extends Component {
         this.#state.value = APIState.Offline;
     });
     APIProvider.#broadcastChannel.postMessage(MSG_LOGGED_OUT);
+  }
+
+  execute<T>(request: APIRequest<T>): Promise<T> {
+    request.baseUrl = this.apiEndpoint;
+
+    return request.execute();
   }
 }
 

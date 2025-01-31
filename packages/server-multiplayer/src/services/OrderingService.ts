@@ -9,9 +9,9 @@ export interface SummaryMessage {
 
 export class OrderingService {
   constructor(
-    readonly redis: Redis,
-    readonly id: string,
-    initialSummary: any,
+      readonly redis: Redis,
+      readonly id: string,
+      initialSummary: any,
   ) {
     this.initialSummary = {
       clientId: -1,
@@ -94,7 +94,7 @@ export class OrderingService {
     const opsSinceLastSummary = await this.redis.xrange(this.#streamKey, '-', '+');
 
     const ops = opsSinceLastSummary.map(([id, fields]) =>
-      JSON.parse(fields[1]),
+        JSON.parse(fields[1]),
     );
 
     return { summary, ops };

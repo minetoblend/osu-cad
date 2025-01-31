@@ -1,7 +1,7 @@
 import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import type { ConnectedUser } from './ConnectedUsers';
 import { Axes, CompositeDrawable, FillDirection, FillFlowContainer, resolved } from '@osucad/framework';
-import { MultiplayerClient } from './MultiplayerClient';
+import { OsucadMultiplayerClient } from './OsucadMultiplayerClient';
 
 export class ConnectedUserList extends FillFlowContainer {
   constructor() {
@@ -11,8 +11,8 @@ export class ConnectedUserList extends FillFlowContainer {
     this.relativeSizeAxes = Axes.Both;
   }
 
-  @resolved(MultiplayerClient)
-  client!: MultiplayerClient;
+  @resolved(OsucadMultiplayerClient)
+  client!: OsucadMultiplayerClient;
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);

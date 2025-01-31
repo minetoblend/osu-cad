@@ -3,8 +3,8 @@ import type { UserClockInfo } from '@osucad/multiplayer';
 import type { MultiplayerEditorBeatmap } from './MultiplayerEditorBeatmap';
 import { Game, provide } from '@osucad/framework';
 import { Editor } from '../Editor';
-import { MultiplayerClient } from './MultiplayerClient';
 import { MultiplayerCursorOverlay } from './MultiplayerCursorOverlay';
+import { OsucadMultiplayerClient } from './OsucadMultiplayerClient';
 
 export class MultiplayerEditor extends Editor {
   constructor(editorBeatmap: MultiplayerEditorBeatmap) {
@@ -25,7 +25,7 @@ export class MultiplayerEditor extends Editor {
   protected override async loadAsync(dependencies: ReadonlyDependencyContainer): Promise<void> {
     this.addInternal(this.editorBeatmap.client);
 
-    this.#dependencies.provide(MultiplayerClient, this.editorBeatmap.client);
+    this.#dependencies.provide(OsucadMultiplayerClient, this.editorBeatmap.client);
 
     await super.loadAsync(dependencies);
 

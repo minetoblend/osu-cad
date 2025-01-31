@@ -1,12 +1,12 @@
 import type { UpdateHandler } from '@osucad/multiplayer';
-import type { MultiplayerClient } from './MultiplayerClient';
+import type { OsucadMultiplayerClient } from './OsucadMultiplayerClient';
 import { EditorBeatmap } from '../EditorBeatmap';
 
 export class MultiplayerEditorBeatmap extends EditorBeatmap {
   constructor(
-    readonly client: MultiplayerClient,
+    readonly client: OsucadMultiplayerClient,
   ) {
-    super(client.beatmap, client.fileStore);
+    super(client.document.beatmap!, client.fileStore);
   }
 
   protected override createUpdateHandler(): UpdateHandler {
