@@ -9,10 +9,18 @@ export abstract class VisibilityContainer extends Container {
     return this.state.value === Visibility.Hidden;
   }
 
+  protected override loadAsyncComplete() {
+    super.loadAsyncComplete();
+
+    if (this.startHidden) {
+      this.popOut();
+      this.finishTransforms(true);
+      this.#didInitialHide = true;
+    }
+  }
+
   override loadComplete() {
-    this.state.addOnChangeListener(this.updateState, {
-      immediate: this.state.value === Visibility.Visible || !this.#didInitialHide,
-    });
+    this.state.bindValueChanged(this.updateState, this.state.value === Visibility.Hidden && !this.#didInitialHide);
 
     super.loadComplete();
   }
