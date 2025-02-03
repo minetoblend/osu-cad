@@ -4,7 +4,8 @@ export type ServerMessage =
   | InitialStateServerMessage
   | UserJoinedServerMessage
   | UserLeftServerMessage
-  | OpsSubmittedServerMessage;
+  | OpsSubmittedServerMessage
+  | PresenceUpdatedServerMessage;
 
 export interface InitialStateServerMessage {
   type: 'initial_state';
@@ -26,4 +27,11 @@ export interface UserLeftServerMessage {
 export interface OpsSubmittedServerMessage {
   type: 'ops_submitted';
   ops: SequencedOpsMessage[];
+}
+
+export interface PresenceUpdatedServerMessage {
+  type: 'presence_updated';
+  clientId: number;
+  key: string;
+  value: any;
 }
