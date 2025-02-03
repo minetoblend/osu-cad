@@ -1,7 +1,7 @@
 import type { OsucadScreen } from '@osucad/core';
 import type { DependencyContainer, ReadonlyDependencyContainer } from '@osucad/framework';
 import { APIProvider, IEndpointConfiguration, ISkinSource, OsucadGameBase, OsucadScreenStack, PreferencesOverlay, RulesetStore, SkinManager, UISamples } from '@osucad/core';
-import { Axes, Container, lerp, provide } from '@osucad/framework';
+import { Axes, Container, provide } from '@osucad/framework';
 import { ManiaRuleset } from '@osucad/ruleset-mania';
 import { OsuRuleset } from '@osucad/ruleset-osu';
 import { Toolbar } from './overlays/Toolbar';
@@ -99,8 +99,6 @@ export class OsucadWebGame extends OsucadGameBase {
 
     this.screenOffsetContainer.padding = { top: toolbarOffset };
 
-    const targetOffset = this.preferences.panelOffset * 0.5;
-
-    this.screenOffsetContainer.x = lerp(targetOffset, this.screenOffsetContainer.x, Math.exp(-0.01 * this.time.elapsed));
+    this.screenOffsetContainer.x = this.preferences.panelOffset * 0.5;
   }
 }
