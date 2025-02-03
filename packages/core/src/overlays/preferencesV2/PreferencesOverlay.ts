@@ -19,9 +19,7 @@ export class PreferencesOverlay extends VisibilityContainer implements IKeyBindi
         color: 'black',
         alpha: 0.5,
       }),
-      this.#preferencesPanel = new PreferencesPanel().with({
-        relativePositionAxes: Axes.X,
-      }),
+      this.#preferencesPanel = new PreferencesPanel(),
     ];
 
     this.hide();
@@ -38,7 +36,7 @@ export class PreferencesOverlay extends VisibilityContainer implements IKeyBindi
 
   override popOut() {
     this.#backdrop.fadeOut(400);
-    this.#preferencesPanel.moveToX(-1, 650, EasingFunction.OutExpo);
+    this.#preferencesPanel.moveToX(-400, 650, EasingFunction.OutExpo);
   }
 
   readonly isKeyBindingHandler = true;
