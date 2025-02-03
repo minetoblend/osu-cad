@@ -1,4 +1,4 @@
-import type { AudioBufferTrack, ReadonlyDependencyContainer } from '@osucad/framework';
+import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import type { TimelineHitObjectBlueprintContainer } from '../../ui/timeline/hitObjects/TimelineHitObjectBlueprintContainer';
 import { Anchor, Axes, BindableBoolean, Container, provide, resolved } from '@osucad/framework';
 import { isMobile } from 'pixi.js';
@@ -6,7 +6,6 @@ import { EditorRuleset } from '../../../rulesets/EditorRuleset';
 import { BottomAlignedTickDisplay } from '../../ui/timeline/BottomAlignedTickDisplay';
 import { CurrentTimeOverlay } from '../../ui/timeline/CurrentTimeOverlay';
 import { Timeline } from '../../ui/timeline/Timeline';
-import { DrawableWaveform } from '../timing/DrawableWaveform';
 import { TimelineCursorArea } from '../timing/TimelineCursorArea';
 
 @provide(ComposeScreenTimeline)
@@ -28,8 +27,10 @@ export class ComposeScreenTimeline extends Timeline {
 
     this.relativeSizeAxes = Axes.Both;
 
-    if (!isMobile.phone)
-      this.add(new DrawableWaveform((this.editorClock.track as AudioBufferTrack)));
+    // if (!isMobile.phone)
+    //   this.add(new DrawableWaveform((this.editorClock.track as AudioBufferTrack)));
+
+    this.masking = false;
 
     this.addRange([
       new Container({
@@ -46,7 +47,11 @@ export class ComposeScreenTimeline extends Timeline {
         origin: Anchor.BottomLeft,
         child: new BottomAlignedTickDisplay(),
       }),
-      new TimelineCursorArea('compose-timeline', false),
+      new Container({
+        relativeSizeAxes: Axes.Both,
+        padding: { horizontal: -400 },
+        child: new TimelineCursorArea('compose-timeline', true),
+      }),
     ]);
 
     this.addAllInternal(
