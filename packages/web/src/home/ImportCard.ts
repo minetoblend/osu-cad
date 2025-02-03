@@ -1,9 +1,12 @@
-import type { HoverEvent, HoverLostEvent } from '@osucad/framework';
-import { OsucadColors, OsucadSpriteText } from '@osucad/core';
-import { Anchor, Axes, BetterBackdropBlurFilter, CompositeDrawable, FillDirection, FillFlowContainer, RoundedBox, Vec2 } from '@osucad/framework';
+import type { APIBeatmapSet } from '@osucad/core';
+import type { ClickEvent, HoverEvent, HoverLostEvent } from '@osucad/framework';
+import { APIProvider, OsucadColors, OsucadSpriteText } from '@osucad/core';
+import { Anchor, Axes, BetterBackdropBlurFilter, CompositeDrawable, FillDirection, FillFlowContainer, resolved, RoundedBox, Vec2 } from '@osucad/framework';
 
 export class ImportCard extends CompositeDrawable {
-  constructor() {
+  constructor(
+    readonly onImport: (beatmapSet: APIBeatmapSet) => void,
+  ) {
     super();
 
     this.relativeSizeAxes = Axes.X;
@@ -64,5 +67,44 @@ export class ImportCard extends CompositeDrawable {
 
   override onHoverLost(e: HoverLostEvent) {
     this.#background.transformTo('fillAlpha', 0.5, 100);
+  }
+
+  override onClick(e: ClickEvent): boolean {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.osz';
+    input.multiple = false;
+    input.click();
+
+    input.addEventListener('input', () => {
+      const file = input.files?.item(0);
+      if (!file || !file.name.endsWith('.osz'))
+        return;
+
+      this.#uploadOszFile(file);
+    });
+
+    return true;
+  }
+
+  @resolved(APIProvider)
+  api!: APIProvider;
+
+  async #uploadOszFile(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch(`${this.api.apiEndpoint}/beatmapsets/import/osz`, {
+      method: 'POST',
+      body: formData,
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      // TODO: display error
+      return;
+    }
+
+    this.onImport(await response.json());
   }
 }
