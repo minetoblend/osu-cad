@@ -3,6 +3,6 @@ import { APIRequest } from './APIRequest';
 
 export class GetBeatmapSetsRequest extends APIRequest<APIBeatmapSet[]> {
   constructor() {
-    super('/beatmapsets/');
+    super('/beatmapsets/', 'GET', true);
   }
 }
