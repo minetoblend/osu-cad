@@ -1,7 +1,7 @@
 import type { Renderer } from 'pixi.js';
 import type { ReadonlyDependencyContainer } from '../../di/DependencyContainer';
 import type { PIXIContainer } from '../../pixi';
-import { RenderContainer } from 'pixi.js';
+import { RenderContainer, RenderLayer } from 'pixi.js';
 import { Drawable } from '../drawables/Drawable';
 
 export class ProxyDrawable extends Drawable {
@@ -9,17 +9,30 @@ export class ProxyDrawable extends Drawable {
     super();
   }
 
+  #renderLayer = new RenderLayer();
+
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
+    this.#renderLayer.attach(this.source.drawNode);
+
     this.source.onDispose(() => {
-      this.drawNode.renderable = false;
+      this.#renderLayer.detachAll();
       this.expire();
     });
   }
 
   override createDrawNode(): PIXIContainer {
-    return new ProxyDrawNode(this.source.drawNode!);
+    return this.#renderLayer as any;
+  }
+
+  override updateDrawNodeTransform() {
+  }
+
+  override dispose(isDisposing: boolean = true) {
+    super.dispose(isDisposing);
+
+    this.#renderLayer.detachAll();
   }
 }
 
