@@ -1,7 +1,7 @@
 import type { MutationContext } from '../dataStructures/MutationContext';
 import type { SharedStructure } from '../dataStructures/SharedStructure';
 import type { IMutation } from '../protocol/IMutation';
-import type { InitialStateServerMessage, OpsSubmittedServerMessage, ServerMessage, UserJoinedServerMessage, UserLeftServerMessage } from '../protocol/ServerMessage';
+import type { InitialStateServerMessage, OpsSubmittedServerMessage, PresenceUpdatedServerMessage, ServerMessage, UserJoinedServerMessage, UserLeftServerMessage } from '../protocol/ServerMessage';
 import type { SummaryMessage } from '../protocol/types';
 import { Action, Component } from '@osucad/framework';
 import { MutationSource } from '../dataStructures/MutationSource';
@@ -48,6 +48,8 @@ export abstract class AbstractMultiplayerClient<T extends SharedStructure> exten
 
     this.#document = await this.initializeFromSummary(initialState.document.summary);
 
+    this.handleInitialState(initialState);
+
     this.#latestSequenceNumber = initialState.document.summary.sequenceNumber;
 
     this.updateHandler = new UpdateHandler(this.document);
@@ -85,7 +87,7 @@ export abstract class AbstractMultiplayerClient<T extends SharedStructure> exten
   #handleMessage(message: ServerMessage) {
     switch (message.type) {
       case 'initial_state':
-        this.handleInitialState(message);
+        // already handled in connect() method
         return;
       case 'ops_submitted':
         this.handleOpsSubmitted(message);
@@ -95,6 +97,9 @@ export abstract class AbstractMultiplayerClient<T extends SharedStructure> exten
         return;
       case 'user_left':
         this.handleUserLeft(message);
+        return;
+      case 'presence_updated':
+        this.handlePresenceUpdated(message);
     }
   }
 
@@ -124,6 +129,8 @@ export abstract class AbstractMultiplayerClient<T extends SharedStructure> exten
   protected handleUserJoined(msg: UserJoinedServerMessage) {}
 
   protected handleUserLeft(msg: UserLeftServerMessage) {}
+
+  protected handlePresenceUpdated(msg: PresenceUpdatedServerMessage) {}
 
   #flush() {
     if (this.#buffer.length === 0)

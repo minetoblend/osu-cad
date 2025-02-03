@@ -1,5 +1,5 @@
 import type { ReadonlyDependencyContainer } from '@osucad/framework';
-import type { ConnectedUser } from './ConnectedUsers';
+import type { ConnectedUser } from './UserManager';
 import { Axes, CompositeDrawable, FillDirection, FillFlowContainer, resolved } from '@osucad/framework';
 import { OsucadMultiplayerClient } from './OsucadMultiplayerClient';
 

@@ -1,7 +1,7 @@
 import type { InputManager, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { CursorPosition } from '@osucad/multiplayer';
-import type { ConnectedUser } from './ConnectedUsers';
 import type { MultiplayerCursorArea } from './MultiplayerCursorArea';
+import type { ConnectedUser } from './UserManager';
 import { Axes, BindableBoolean, CompositeDrawable, Container, MouseButton, ProxyDrawable, resolved, Vec2 } from '@osucad/framework';
 import { DefaultCursor } from '../../graphics/cursor/DefaultCursorContainer';
 import { OsucadMultiplayerClient } from './OsucadMultiplayerClient';
@@ -29,8 +29,6 @@ export class MultiplayerCursorOverlay extends CompositeDrawable {
   }
 
   #currentPosition: CursorPosition | null = null;
-
-  #cursorProxy!: ProxyDrawable;
 
   #positionDidChange = true;
 

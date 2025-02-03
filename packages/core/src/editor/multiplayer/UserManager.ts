@@ -3,7 +3,7 @@ import type { ClientInfo, UserPresence } from '@osucad/multiplayer';
 import type { OsucadMultiplayerClient } from './OsucadMultiplayerClient';
 import { Action, Bindable } from '@osucad/framework';
 
-export class ConnectedUsers {
+export class UserManager {
   #users = new Map<number, ConnectedUser>();
 
   constructor(readonly client: OsucadMultiplayerClient) {
@@ -36,8 +36,16 @@ export class ConnectedUsers {
   }
 
   updatePresence<Key extends keyof UserPresence>(key: Key, value: UserPresence[Key]) {
-    // TODO
-    // this.client.socket.emit('updatePresence', key, value);
+    this.client.socket.send({ type: 'update_presence', key, value });
+  }
+
+  onPresenceUpdated(clientid: number, key: string, value: any) {
+    const client = this.#users.get(clientid);
+    if (!client)
+      return;
+
+    Reflect.set(client.presence, key, value);
+    client.presenceUpdated.emit(key);
   }
 }
 
