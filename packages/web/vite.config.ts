@@ -22,12 +22,12 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': {
+      '/api/v1': {
         target: 'http://localhost:3001',
         changeOrigin: true,
       },
-      '/socket.io': {
-        target: 'http://localhost:3000',
+      '/api/multiplayer': {
+        target: 'http://localhost:3002',
         ws: true,
         changeOrigin: true,
       },
