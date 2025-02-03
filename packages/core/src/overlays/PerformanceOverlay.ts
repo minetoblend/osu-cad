@@ -149,6 +149,7 @@ class FrameGraph extends GraphicsDrawable {
   }
 
   updateGraphics(g: PIXIGraphics): void {
+    return; // TODO: figure out more performant way of doing this
     g.clear();
 
     if (this.frameTimes.length <= 1)
