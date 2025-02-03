@@ -32,6 +32,6 @@ export class LandingScreen extends OsucadScreen {
         if (this.screenStack.currentScreen === this)
           this.screenStack.push(new HomeScreen());
       }
-    });
+    }, true);
   }
 }
