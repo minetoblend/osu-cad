@@ -1,0 +1,27 @@
+{
+  "name": "@osucad/server-document-storage",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite-node src/main.ts"
+  },
+  "dependencies": {
+    "@types/compression": "^1.7.5",
+    "compression": "^1.7.5",
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
+    "isomorphic-git": "^1.27.1",
+    "json-stringify-safe": "^5.0.1",
+    "morgan": "^1.10.0",
+    "nconf": "^0.12.1",
+    "vite": "^6.1.0",
+    "vite-node": "^2.1.6"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/json-stringify-safe": "^5.0.3",
+    "@types/morgan": "^1.9.9",
+    "@types/nconf": "^0.10.7"
+  }
+}
