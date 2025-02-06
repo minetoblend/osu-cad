@@ -24,6 +24,7 @@ export function create(
 
   app.use(cors());
   app.use(routes.blobs);
+  app.use(routes.trees);
 
   app.get('/', (req, res) => {
     res.status(200).send('osucad document storage. Find out more at https://github.com/minetoblend/osu-cad/tree/master/server/document-storage');
