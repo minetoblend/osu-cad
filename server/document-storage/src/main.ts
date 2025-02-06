@@ -1,14 +1,14 @@
 import { join } from 'node:path';
-import config from 'nconf';
+import nconf from 'nconf';
 import { create as createApp } from './app';
 
-config.argv()
+nconf.argv()
   .env()
   .file({ file: join(import.meta.dirname, '../config.json') });
 
-const app = createApp(config);
+const app = createApp(nconf);
 
-const port = config.get('server:port');
+const port = nconf.get('server:port');
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
