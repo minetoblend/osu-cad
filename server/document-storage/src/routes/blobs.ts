@@ -2,7 +2,7 @@ import type { Provider } from 'nconf';
 import * as fs from 'node:fs';
 import { Router } from 'express';
 import git from 'isomorphic-git';
-import { handleResponse } from './utils';
+import { getGitDir, handleResponse } from './utils';
 
 export interface ICreateBlobParams {
   content: string;
@@ -26,7 +26,7 @@ async function createBlob(
 
   const sha = await git.writeBlob({
     fs,
-    dir: config.get('storage'),
+    dir: getGitDir(config),
     blob: buffer,
   });
 
@@ -41,7 +41,7 @@ async function getBlob(
 ): Promise<IBlob> {
   const gitObj = await git.readBlob({
     fs,
-    dir: config.get('storage'),
+    dir: getGitDir(config),
     oid: sha,
   });
 

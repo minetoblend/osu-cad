@@ -1,4 +1,5 @@
 import type { Response } from 'express';
+import type { Provider } from 'nconf';
 
 export function handleResponse<T>(
   resultP: Promise<T>,
@@ -19,4 +20,8 @@ export function handleResponse<T>(
       response.status(400).json(error);
     },
   );
+}
+
+export function getGitDir(config: Provider) {
+  return config.get('storage');
 }
