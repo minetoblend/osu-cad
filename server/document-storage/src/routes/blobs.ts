@@ -56,19 +56,19 @@ async function getBlob(
 export function create(config: Provider) {
   const router = Router();
 
-  router.post('/document/:documentId/blobs', (request, response) => {
+  router.post('/storage/:documentId/blobs', (request, response) => {
     const blobP = createBlob(config, request.body);
 
     handleResponse(blobP, response, false, 201);
   });
 
-  router.get('/document/:documentId/blobs/:sha', (request, response) => {
+  router.get('/storage/:documentId/blobs/:sha', (request, response) => {
     const blobP = getBlob(config, request.params.sha);
 
     handleResponse(blobP, response, true);
   });
 
-  router.get('/document/:documentId/blobs/:sha/raw', (request, response) => {
+  router.get('/storage/:documentId/blobs/:sha/raw', (request, response) => {
     const blobP = getBlob(config, request.params.sha);
 
     blobP.then((blob) => {
