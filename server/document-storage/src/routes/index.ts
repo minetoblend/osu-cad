@@ -1,9 +1,9 @@
 import type { Router } from 'express';
 import type { Provider } from 'nconf';
 import type { GitService } from '../services/GitService';
-import * as blobs from './blobs';
-import * as commits from './commits';
-import * as trees from './trees';
+import * as blobs from './git/blobs';
+import * as commits from './git/commits';
+import * as trees from './git/trees';
 
 export interface IRoutes {
   blobs: Router;

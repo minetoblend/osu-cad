@@ -2,7 +2,7 @@ import type { Provider } from 'nconf';
 import fs from 'node:fs';
 import { Router } from 'express';
 import git from 'isomorphic-git';
-import { getGitDir, handleResponse } from './utils';
+import { getGitDir, handleResponse } from '../utils';
 
 async function getTree(
   config: Provider,
