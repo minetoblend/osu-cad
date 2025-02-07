@@ -11,6 +11,7 @@ export interface IDocumentStorage {
   createDocument(
     documentId: string,
     summary: ISummaryTree,
+    sequenceNumber: number,
   ): Promise<IDocument>;
 }
 

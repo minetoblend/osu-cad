@@ -731,6 +731,52 @@ importers:
         specifier: ^0.10.7
         version: 0.10.7
 
+  server/server-common:
+    dependencies:
+      '@types/compression':
+        specifier: ^1.7.5
+        version: 1.7.5
+      compression:
+        specifier: ^1.7.5
+        version: 1.7.5
+      cors:
+        specifier: ^2.8.5
+        version: 2.8.5
+      express:
+        specifier: ^4.21.1
+        version: 4.21.1
+      json-stringify-safe:
+        specifier: ^5.0.1
+        version: 5.0.1
+      morgan:
+        specifier: ^1.10.0
+        version: 1.10.0
+      nconf:
+        specifier: ^0.12.1
+        version: 0.12.1
+      vite:
+        specifier: ^6.1.0
+        version: 6.1.0(@types/node@20.16.5)(terser@5.32.0)(yaml@2.5.1)
+      vite-node:
+        specifier: ^2.1.6
+        version: 2.1.8(@types/node@20.16.5)(terser@5.32.0)
+    devDependencies:
+      '@types/cors':
+        specifier: ^2.8.17
+        version: 2.8.17
+      '@types/express':
+        specifier: ^5.0.0
+        version: 5.0.0
+      '@types/json-stringify-safe':
+        specifier: ^5.0.3
+        version: 5.0.3
+      '@types/morgan':
+        specifier: ^1.9.9
+        version: 1.9.9
+      '@types/nconf':
+        specifier: ^0.10.7
+        version: 0.10.7
+
 packages:
 
   7zip-bin@5.2.0:

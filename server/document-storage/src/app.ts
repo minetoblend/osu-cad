@@ -1,15 +1,18 @@
+import type { IDocumentStorage } from '@osucad/multiplayer';
 import type { NextFunction, Request, Response } from 'express';
 import type { Provider } from 'nconf';
+import type { GitService } from './services/GitService';
 import compression from 'compression';
 import cors from 'cors';
 import express from 'express';
 import safeStringify from 'json-stringify-safe';
 import morgan from 'morgan';
 import { create as createRoutes } from './routes';
-import { GitService } from './services/GitService';
 
 export function create(
   config: Provider,
+  documentStorage: IDocumentStorage,
+  git: GitService,
 ) {
   const requestSize = config.get('server:jsonSize');
 
@@ -21,14 +24,13 @@ export function create(
   app.use(morgan(config.get('logger:morganFormat')));
   app.use(express.json({ limit: requestSize }));
 
-  const summaryService = new GitService(config);
-
-  const routes = createRoutes(config, summaryService);
+  const routes = createRoutes(config, documentStorage, git);
 
   app.use(cors());
-  app.use(routes.blobs);
-  app.use(routes.trees);
-  app.use(routes.commits);
+  app.use(routes.storage);
+  app.use(routes.git.blobs);
+  app.use(routes.git.trees);
+  app.use(routes.git.commits);
 
   app.get('/', (req, res) => {
     res.status(200).send('osucad document storage. Find out more at https://github.com/minetoblend/osu-cad/tree/master/server/document-storage');
