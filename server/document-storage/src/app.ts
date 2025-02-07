@@ -6,6 +6,7 @@ import express from 'express';
 import safeStringify from 'json-stringify-safe';
 import morgan from 'morgan';
 import { create as createRoutes } from './routes';
+import { GitService } from './services/GitService';
 
 export function create(
   config: Provider,
@@ -20,7 +21,9 @@ export function create(
   app.use(morgan(config.get('logger:morganFormat')));
   app.use(express.json({ limit: requestSize }));
 
-  const routes = createRoutes(config);
+  const summaryService = new GitService(config);
+
+  const routes = createRoutes(config, summaryService);
 
   app.use(cors());
   app.use(routes.blobs);

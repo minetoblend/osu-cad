@@ -1,81 +1,32 @@
-import type { Provider } from 'nconf';
-import * as fs from 'node:fs';
+import type { GitService } from '../services/GitService';
 import { Router } from 'express';
-import git from 'isomorphic-git';
-import { getGitDir, handleResponse } from './utils';
+import { handleResponse } from './utils';
 
-export interface ICreateBlobParams {
-  content: string;
-  encoding: 'utf-8' | 'base64';
-}
-
-export interface IBlob {
-  sha: string;
-  size: number;
-  content: string;
-  encoding: 'utf-8' | 'base64';
-}
-
-async function createBlob(
-  config: Provider,
-  body: ICreateBlobParams,
+export function create(
+  summaryService: GitService,
 ) {
-  console.log(body);
-
-  const buffer = Buffer.from(body.content, body.encoding);
-
-  const sha = await git.writeBlob({
-    fs,
-    dir: getGitDir(config),
-    blob: buffer,
-  });
-
-  return {
-    sha,
-  };
-}
-
-async function getBlob(
-  config: Provider,
-  sha: string,
-): Promise<IBlob> {
-  const gitObj = await git.readBlob({
-    fs,
-    dir: getGitDir(config),
-    oid: sha,
-  });
-
-  return {
-    sha,
-    size: gitObj.blob.length,
-    content: Buffer.from(gitObj.blob).toString('base64'),
-    encoding: 'base64',
-  };
-}
-
-export function create(config: Provider) {
   const router = Router();
 
   router.post('/storage/:documentId/git/blobs', (request, response) => {
-    const blobP = createBlob(config, request.body);
+    const blobP = summaryService.createBlob(request.body);
 
     handleResponse(blobP, response, false, 201);
   });
 
   router.get('/storage/:documentId/git/blobs/:sha', (request, response) => {
-    const blobP = getBlob(config, request.params.sha);
+    const blobP = summaryService.getBlob(request.params.sha);
 
     handleResponse(blobP, response, true);
   });
 
   router.get('/storage/:documentId/git/blobs/:sha/raw', (request, response) => {
-    const blobP = getBlob(config, request.params.sha);
+    const blobP = summaryService.getBlobRaw(request.params.sha);
 
     blobP.then((blob) => {
       response.setHeader('Cache-Control', 'public, max-age=31536000');
       response
         .status(200)
-        .write(Buffer.from(blob.content, 'base64'), () => response.end());
+        .write(blob, () => response.end());
     }, (error) => {
       response.status(400).json(error);
     });
