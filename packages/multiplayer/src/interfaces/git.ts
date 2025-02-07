@@ -13,3 +13,18 @@ export interface ICreateBlobParams {
 export interface ICreateBlobResponse {
   sha: string;
 }
+
+export interface ICommit {
+  sha: string;
+  message: string;
+  author: IAuthor;
+  committer: IAuthor;
+  tree: { sha: string };
+  parents: { sha: string }[];
+}
+
+export interface IAuthor {
+  name: string;
+  email: string;
+  date: string;
+}
