@@ -1,11 +1,17 @@
-export interface ICreateSummaryParams {
+type SummaryObject = ISummaryTree | ISummaryBlob | ISummaryHandle;
 
+export interface ISummaryTree {
+  type: 'tree';
+  tree: { [key: string]: SummaryObject };
 }
 
-export interface ISummary {}
+export interface ISummaryBlob {
+  type: 'blob';
+  contents: string;
+  encoding: 'base64' | 'utf-8';
+}
 
-export interface ISummaryTree {}
-
-export interface ISummaryBlob {}
-
-export interface ISummaryHandle {}
+export interface ISummaryHandle {
+  type: 'handle';
+  ref: string;
+}
