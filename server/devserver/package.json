@@ -1,5 +1,5 @@
 {
-  "name": "@osucad/server-document-storage",
+  "name": "@osucad/devserver",
   "private": true,
   "type": "module",
   "scripts": {
