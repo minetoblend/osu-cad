@@ -88,7 +88,7 @@ export function create(
 ) {
   const router = Router();
 
-  router.post('/storage/:documentId/trees', (request, response) => {
+  router.post('/storage/:documentId/git/trees', (request, response) => {
     const treeP = createTree(
       config,
       request.body,
@@ -97,7 +97,7 @@ export function create(
     handleResponse(treeP, response);
   });
 
-  router.get('/storage/:documentId/trees/:sha', (request, response) => {
+  router.get('/storage/:documentId/git/trees/:sha', (request, response) => {
     const treeP = getTree(
       config,
       request.params.sha,
