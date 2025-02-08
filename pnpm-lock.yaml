@@ -682,7 +682,7 @@ importers:
         specifier: ^0.5.0
         version: 0.5.0(rollup@4.34.4)
 
-  server/document-storage:
+  server/devserver:
     dependencies:
       '@types/compression':
         specifier: ^1.7.5
