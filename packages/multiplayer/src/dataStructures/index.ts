@@ -1,3 +1,4 @@
+export * from '../runtime/UpdateHandler';
 export * from './ISerializer';
 export * from './ISummary';
 export * from './MutationContext';
@@ -8,4 +9,3 @@ export * from './SharedSortedList';
 export * from './SharedStaticObject';
 export * from './SharedStructure';
 export * from './Transaction';
-export * from './UpdateHandler';

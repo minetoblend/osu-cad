@@ -5,7 +5,7 @@ import type { InitialStateServerMessage, OpsSubmittedServerMessage, PresenceUpda
 import type { SummaryMessage } from '../protocol/types';
 import { Action, Component } from '@osucad/framework';
 import { MutationSource } from '../dataStructures/MutationSource';
-import { UpdateHandler } from '../dataStructures/UpdateHandler';
+import { UpdateHandler } from '../runtime/UpdateHandler';
 import { ClientSocket } from './Socket';
 
 export abstract class AbstractMultiplayerClient<T extends SharedStructure> extends Component {

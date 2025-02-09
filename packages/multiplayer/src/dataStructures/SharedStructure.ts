@@ -1,7 +1,7 @@
+import type { UpdateHandler } from '../runtime/UpdateHandler';
 import type { ISummary } from './ISummary';
 import type { MutationContext } from './MutationContext';
 import type { Transaction, TransactionEntry } from './Transaction';
-import type { UpdateHandler } from './UpdateHandler';
 import { objectId } from '../utils/objectId';
 
 export abstract class SharedStructure<TMutation = never, TSummary extends ISummary = any> {

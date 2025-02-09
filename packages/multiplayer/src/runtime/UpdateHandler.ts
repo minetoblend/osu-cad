@@ -1,9 +1,9 @@
+import type { MutationContext } from '../dataStructures/MutationContext';
+import type { SharedStructure } from '../dataStructures/SharedStructure';
 import type { IMutation } from '../protocol/IMutation';
-import type { MutationContext } from './MutationContext';
-import type { SharedStructure } from './SharedStructure';
 import { Action, BindableBoolean, Component } from '@osucad/framework';
-import { MutationSource } from './MutationSource';
-import { Transaction, TransactionEntry } from './Transaction';
+import { MutationSource } from '../dataStructures/MutationSource';
+import { Transaction, TransactionEntry } from '../dataStructures/Transaction';
 
 export class UpdateHandler extends Component {
   constructor(
