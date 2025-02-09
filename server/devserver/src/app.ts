@@ -33,7 +33,7 @@ export function create(
   app.use(routes.git.commits);
 
   app.get('/', (req, res) => {
-    res.status(200).send('osucad document storage. Find out more at https://github.com/minetoblend/osu-cad/tree/master/server/document-storage');
+    res.status(200).send('osucad devserver. Find out more at https://github.com/minetoblend/osu-cad/tree/master/server/devserver');
   });
 
   app.use((req, res, next) => {
