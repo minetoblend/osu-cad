@@ -1,9 +1,9 @@
 import type { IComparer } from '@osucad/framework';
-import type { ISummary } from './ISummary';
-import type { MutationContext } from './MutationContext';
-import type { ObjectSummary } from './SharedObject';
+import type { ISummary } from '../ISummary';
+import type { MutationContext } from '../MutationContext';
+import type { ObjectSummary } from '../object/SharedObject';
 import { Action, SortedList } from '@osucad/framework';
-import { SharedStructure } from './SharedStructure';
+import { SharedStructure } from '../SharedStructure';
 
 export type SortedListMutation =
   {

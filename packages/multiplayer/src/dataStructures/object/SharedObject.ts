@@ -1,10 +1,10 @@
 import type { Bindable } from '@osucad/framework';
-import type { ISerializer } from './ISerializer';
-import type { ISummary } from './ISummary';
-import type { MutationContext } from './MutationContext';
-import { MutationSource } from './MutationSource';
+import type { ISerializer } from '../ISerializer';
+import type { ISummary } from '../ISummary';
+import type { MutationContext } from '../MutationContext';
+import { MutationSource } from '../MutationSource';
+import { SharedStructure } from '../SharedStructure';
 import { SharedProperty } from './SharedProperty';
-import { SharedStructure } from './SharedStructure';
 
 interface ObjectMutation {
   [key: string]: any;

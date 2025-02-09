@@ -1,5 +1,5 @@
 import type { ValueChangedEvent } from '@osucad/framework';
-import type { ISerializer } from './ISerializer';
+import type { ISerializer } from '../ISerializer';
 import type { SharedObject } from './SharedObject';
 import { Bindable } from '@osucad/framework';
 
