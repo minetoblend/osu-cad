@@ -1,4 +1,4 @@
-import type { SharedStructure } from '../dataStructures/SharedStructure';
+import type { SharedStructure } from '../dds/SharedStructure';
 import type { IMutation } from '../protocol/IMutation';
 import type { InitialStateServerMessage, OpsSubmittedServerMessage, PresenceUpdatedServerMessage, ServerMessage, UserJoinedServerMessage, UserLeftServerMessage } from '../protocol/ServerMessage';
 import type { SummaryMessage } from '../protocol/types';

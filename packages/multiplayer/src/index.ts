@@ -1,4 +1,4 @@
 export * from './client';
-export * from './dataStructures';
+export * from './dds';
 export * from './interfaces';
 export * from './protocol';
