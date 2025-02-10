@@ -2,7 +2,7 @@ import type { SharedStructure } from '../dds/SharedStructure';
 import type { IOpMessage, ISequencedDocumentMessage } from '../interfaces/messages';
 import type { IMutation } from '../protocol/IMutation';
 import { Action, BindableBoolean, Component } from '@osucad/framework';
-import { Transaction, TransactionEntry } from '../dds/Transaction';
+import { Transaction, TransactionEntry } from './Transaction';
 
 export class UpdateHandler extends Component {
   constructor(
