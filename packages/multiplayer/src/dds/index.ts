@@ -2,8 +2,6 @@ export * from '../runtime/Transaction';
 export * from '../runtime/UpdateHandler';
 export * from './ISerializer';
 export * from './ISummary';
-export * from './MutationContext';
-export * from './MutationSource';
 export * from './object';
 export * from './SharedStaticObject';
 export * from './SharedStructure';
