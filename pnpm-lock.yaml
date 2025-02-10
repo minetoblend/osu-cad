@@ -321,15 +321,9 @@ importers:
 
   packages/multiplayer:
     dependencies:
-      eventemitter3:
-        specifier: ^5.0.1
-        version: 5.0.1
       socket.io-client:
         specifier: ^4.8.1
         version: 4.8.1
-      typed-emitter:
-        specifier: ^2.1.0
-        version: 2.1.0
       websocket-stream:
         specifier: ^5.5.2
         version: 5.5.2
@@ -8752,9 +8746,6 @@ packages:
   type-is@1.6.18:
     resolution: {integrity: sha512-TkRKr9sUTxEH8MdfuCSP7VizJyzRNMjj2J2do2Jr3Kym598JVdEksuzPQCnlFPW4ky9Q+iA+ma9BGm06XQBy8g==}
     engines: {node: '>= 0.6'}
-
-  typed-emitter@2.1.0:
-    resolution: {integrity: sha512-g/KzbYKbH5C2vPkaXGu8DJlHrGKHLsM25Zg9WuC9pMGfuvT+X25tZQWo5fK1BjBm8+UrVE9LDCvaY0CQk+fXDA==}
 
   typedarray-to-buffer@3.1.5:
     resolution: {integrity: sha512-zdu8XMNEDepKKR+XYOXAVPtWui0ly0NtohUscw+UmaHiAWT8hrV1rr//H6V+0DvJ3OQ19S979M0laLfX8rm82Q==}
@@ -19592,10 +19583,6 @@ snapshots:
     dependencies:
       media-typer: 0.3.0
       mime-types: 2.1.35
-
-  typed-emitter@2.1.0:
-    optionalDependencies:
-      rxjs: 7.8.1
 
   typedarray-to-buffer@3.1.5:
     dependencies:
