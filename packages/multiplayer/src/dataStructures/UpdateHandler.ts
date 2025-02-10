@@ -1,8 +1,7 @@
+import type { IOpMessage, ISequencedDocumentMessage } from '../interfaces/messages';
 import type { IMutation } from '../protocol/IMutation';
-import type { MutationContext } from './MutationContext';
 import type { SharedStructure } from './SharedStructure';
 import { Action, BindableBoolean, Component } from '@osucad/framework';
-import { MutationSource } from './MutationSource';
 import { Transaction, TransactionEntry } from './Transaction';
 
 export class UpdateHandler extends Component {
@@ -58,12 +57,17 @@ export class UpdateHandler extends Component {
     return undefined;
   }
 
-  apply(mutation: IMutation, ctx: MutationContext): boolean {
-    const target = this.objects.get(mutation.target);
+  process(message: ISequencedDocumentMessage, local: boolean): boolean {
+    const op = message.contents as IOpMessage;
+
+    const target = this.objects.get(op.path);
     if (!target)
       return false;
 
-    target.handle(mutation.data, ctx);
+    target.process({
+      ...message,
+      contents: op.contents,
+    }, local);
 
     return true;
   }
@@ -88,10 +92,6 @@ export class UpdateHandler extends Component {
     return true;
   }
 
-  addUndoAction(action: () => void) {
-    this.currentTransaction.customUndoActions.push(action);
-  }
-
   undoCurrentTransaction() {
     const transaction = this.currentTransaction;
 
@@ -102,10 +102,7 @@ export class UpdateHandler extends Component {
 
     for (const entry of transaction.entries.toReversed()) {
       const target = this.objects.get(entry.targetId);
-      target?.handle(entry.undoMutation, {
-        source: MutationSource.Local,
-        version: this.version,
-      });
+      target?.replayOp(entry.undoMutation);
     }
 
     this.#currentTransaction = new Transaction();
@@ -126,24 +123,17 @@ export class UpdateHandler extends Component {
 
     this.beforeUndo.emit();
 
-    const redoTransaction = new Transaction();
+    const redoTransaction = this.currentTransaction;
 
     for (const entry of transaction.entries.toReversed()) {
       const target = this.objects.get(entry.targetId);
-      const redoMutation = target?.handle(entry.undoMutation, {
-        source: MutationSource.Local,
-        version: this.version,
-      });
-      this.commandApplied.emit({ target: entry.targetId, data: entry.undoMutation });
-
-      if (redoMutation)
-        redoTransaction.addEntry(new TransactionEntry(entry.targetId, redoMutation));
+      target?.replayOp(entry.undoMutation);
     }
 
-    transaction.customUndoActions.forEach(action => action());
-
-    if (!redoTransaction.isEmpty)
+    if (!redoTransaction.isEmpty) {
       this.#redoStack.push(redoTransaction);
+      this.#currentTransaction = new Transaction();
+    }
 
     this.#updateBindables();
 
@@ -159,22 +149,17 @@ export class UpdateHandler extends Component {
 
     this.beforeRedo.emit();
 
-    const undoTransaction = new Transaction();
+    const undoTransaction = this.currentTransaction;
 
     for (const entry of transaction.entries.toReversed()) {
       const target = this.objects.get(entry.targetId);
-      const redoMutation = target?.handle(entry.undoMutation, {
-        source: MutationSource.Local,
-        version: this.version,
-      });
-      this.commandApplied.emit({ target: entry.targetId, data: entry.undoMutation });
-
-      if (redoMutation)
-        undoTransaction.addEntry(new TransactionEntry(entry.targetId, redoMutation));
+      target?.replayOp(entry.undoMutation);
     }
 
-    if (!undoTransaction.isEmpty)
+    if (!undoTransaction.isEmpty) {
       this.#undoStack.push(undoTransaction);
+      this.#currentTransaction = new Transaction();
+    }
 
     this.#updateBindables();
 

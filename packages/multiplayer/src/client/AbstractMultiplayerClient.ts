@@ -1,10 +1,8 @@
-import type { MutationContext } from '../dataStructures/MutationContext';
 import type { SharedStructure } from '../dataStructures/SharedStructure';
 import type { IMutation } from '../protocol/IMutation';
 import type { InitialStateServerMessage, OpsSubmittedServerMessage, PresenceUpdatedServerMessage, ServerMessage, UserJoinedServerMessage, UserLeftServerMessage } from '../protocol/ServerMessage';
 import type { SummaryMessage } from '../protocol/types';
 import { Action, Component } from '@osucad/framework';
-import { MutationSource } from '../dataStructures/MutationSource';
 import { UpdateHandler } from '../dataStructures/UpdateHandler';
 import { ClientSocket } from './Socket';
 
@@ -56,13 +54,8 @@ export abstract class AbstractMultiplayerClient<T extends SharedStructure> exten
     this.updateHandler.attach(this.document);
 
     for (const message of initialState.document.ops) {
-      const ctx: MutationContext = {
-        source: MutationSource.Remote,
-        version: message.version,
-      };
-
       for (const op of message.ops)
-        this.updateHandler.apply(JSON.parse(op), ctx);
+        this.updateHandler.process(JSON.parse(op), true);
     }
 
     this.updateHandler.commandApplied.addListener(mutation => this.onLocalMutation(mutation));
@@ -73,8 +66,6 @@ export abstract class AbstractMultiplayerClient<T extends SharedStructure> exten
   updateHandler!: UpdateHandler;
 
   #latestSequenceNumber!: string;
-
-  #latestAckVersion = 0;
 
   readonly messageReceived = new Action<ServerMessage>();
 
@@ -105,22 +96,12 @@ export abstract class AbstractMultiplayerClient<T extends SharedStructure> exten
 
   protected handleOpsSubmitted(msg: OpsSubmittedServerMessage) {
     for (const op of msg.ops) {
-      const isAck = op.clientId === this.clientId;
-
-      const ctx: MutationContext = {
-        version: op.version,
-        source: isAck
-          ? MutationSource.Ack
-          : MutationSource.Remote,
-      };
-
-      if (isAck)
-        this.#latestAckVersion = op.version;
+      const local = op.clientId === this.clientId;
 
       this.#latestSequenceNumber = op.sequenceNumber;
 
       for (const mutation of op.ops)
-        this.updateHandler.apply(JSON.parse(mutation), ctx);
+        this.updateHandler.process(JSON.parse(mutation), local);
     }
   }
 

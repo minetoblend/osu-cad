@@ -4,3 +4,8 @@ export interface ISequencedDocumentMessage {
   readonly type: string;
   readonly contents: unknown;
 }
+
+export interface IOpMessage {
+  path: string;
+  contents: unknown;
+}
