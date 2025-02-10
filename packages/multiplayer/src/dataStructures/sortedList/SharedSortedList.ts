@@ -68,6 +68,25 @@ export abstract class SharedSortedList<T extends SharedStructure<any>> extends S
     }
   }
 
+  override replayOp(contents: unknown) {
+    const op = contents as SortedListMessage;
+
+    switch (op.type) {
+      case 'add': {
+        const item = this.createChildFromSummary(op.summary);
+
+        this.add(item);
+        break;
+      }
+      case 'remove': {
+        const item = this.getById(op.id);
+        if (item)
+          this.remove(item);
+        break;
+      }
+    }
+  }
+
   #add(value: T, attach: boolean = true): boolean {
     if (this.#idMap.has(value.id))
       return false;
