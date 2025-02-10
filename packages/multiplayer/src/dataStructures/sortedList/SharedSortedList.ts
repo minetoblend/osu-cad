@@ -1,25 +1,29 @@
 import type { IComparer } from '@osucad/framework';
+import type { ISequencedDocumentMessage } from '../../interfaces/messages';
 import type { ISummary } from '../ISummary';
-import type { MutationContext } from '../MutationContext';
 import type { ObjectSummary } from '../object/SharedObject';
 import { Action, SortedList } from '@osucad/framework';
 import { SharedStructure } from '../SharedStructure';
 
-export type SortedListMutation =
-  {
-    op: 'add';
-    value: ObjectSummary;
-  }
-  | {
-    op: 'remove';
-    id: string;
-  };
+export type SortedListMessage =
+  | ISortedListAddMessage
+  | ISortedListRemoveMessage;
+
+export interface ISortedListAddMessage {
+  type: 'add';
+  summary: ObjectSummary;
+}
+
+export interface ISortedListRemoveMessage {
+  type: 'remove';
+  id: string;
+}
 
 export interface SortedListSummary extends ISummary {
   items: any[];
 }
 
-export abstract class SharedSortedList<T extends SharedStructure<any>> extends SharedStructure<SortedListMutation, SortedListSummary> {
+export abstract class SharedSortedList<T extends SharedStructure<any>> extends SharedStructure<SortedListMessage, SortedListSummary> {
   readonly #idMap = new Map<string, T>();
 
   readonly #list!: SortedList<T>;
@@ -40,35 +44,28 @@ export abstract class SharedSortedList<T extends SharedStructure<any>> extends S
     return this.#list.length;
   }
 
-  override handle(mutation: SortedListMutation, ctx: MutationContext): void | SortedListMutation | null {
-    // TODO: handle id conflicts
-    switch (mutation.op) {
+  override process(message: ISequencedDocumentMessage, local: boolean) {
+    if (local)
+      return;
+
+    const op = message.contents as SortedListMessage;
+
+    switch (op.type) {
       case 'add': {
-        const value = this.createChildFromSummary(mutation.value);
+        const item = this.createChildFromSummary(op.summary);
 
-        if (this.#add(value)) {
-          return {
-            op: 'remove',
-            id: mutation.value.id,
-          };
-        }
-
-        return null;
+        this.#add(item);
+        break;
       }
       case 'remove': {
-        const value = this.#idMap.get(mutation.id);
-        if (value) {
-          this.#remove(value);
+        const item = this.getById(op.id);
+        if (!item)
+          return;
 
-          return {
-            op: 'add',
-            value: this.createChildSummary(value),
-          };
-        }
+        this.#remove(item);
+        break;
       }
     }
-
-    return null;
   }
 
   #add(value: T, attach: boolean = true): boolean {
@@ -100,17 +97,24 @@ export abstract class SharedSortedList<T extends SharedStructure<any>> extends S
     return true;
   }
 
-  add(value: T) {
-    if (!this.#add(value))
+  add(item: T) {
+    if (!this.#add(item))
       return false;
 
-    this.submitMutation({
-      op: 'add',
-      value: this.createChildSummary(value),
-    }, {
-      op: 'remove',
-      id: value.id,
-    });
+    if (!this.isAttached)
+      return true;
+
+    const op: ISortedListAddMessage = {
+      type: 'add',
+      summary: this.createChildSummary(item),
+    };
+
+    const undoOp: ISortedListRemoveMessage = {
+      type: 'remove',
+      id: item.id,
+    };
+
+    this.submitMutation(op, undoOp);
 
     return true;
   }
@@ -128,17 +132,24 @@ export abstract class SharedSortedList<T extends SharedStructure<any>> extends S
     return this.#remove(value, false);
   }
 
-  remove(value: T) {
-    if (!this.#remove(value))
+  remove(item: T) {
+    if (!this.#remove(item))
       return false;
 
-    this.submitMutation({
-      op: 'remove',
-      id: value.id,
-    }, {
-      op: 'add',
-      value: this.createChildSummary(value),
-    });
+    if (!this.isAttached)
+      return true;
+
+    const op: ISortedListRemoveMessage = {
+      type: 'remove',
+      id: item.id,
+    };
+
+    const undoOp: ISortedListAddMessage = {
+      type: 'add',
+      summary: this.createChildSummary(item),
+    };
+
+    this.submitMutation(op, undoOp);
 
     return true;
   }

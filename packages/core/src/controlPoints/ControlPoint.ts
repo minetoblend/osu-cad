@@ -57,8 +57,8 @@ export abstract class ControlPoint extends SharedObject implements IControlPoint
     return this.time === other.time;
   }
 
-  override onPropertyChanged(property: SharedProperty<any>, oldValue: any, submitEvents: boolean) {
-    super.onPropertyChanged(property, oldValue, submitEvents);
+  override submitPropertyChanged(property: SharedProperty<any>, oldValue: any, submitEvents: boolean) {
+    super.submitPropertyChanged(property, oldValue, submitEvents);
     this.changed.emit(this);
   }
 

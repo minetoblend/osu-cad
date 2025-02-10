@@ -1,5 +1,5 @@
+import type { ISequencedDocumentMessage } from '../interfaces/messages';
 import type { ISummary } from './ISummary';
-import type { MutationContext } from './MutationContext';
 import type { Transaction, TransactionEntry } from './Transaction';
 import type { UpdateHandler } from './UpdateHandler';
 import { objectId } from '../utils/objectId';
@@ -13,10 +13,9 @@ export abstract class SharedStructure<TMutation = never, TSummary extends ISumma
     return this.#updateHandler?.currentTransaction ?? null;
   }
 
-  abstract handle(mutation: TMutation, ctx: MutationContext): TMutation | null | void;
+  abstract process(message: ISequencedDocumentMessage, local: boolean): void;
 
-  ack(mutation: TMutation) {
-  }
+  abstract replayOp(contents: unknown): void;
 
   protected submitMutation(mutation: TMutation, undoMutation?: TMutation, key?: string): TransactionEntry<TMutation> | undefined {
     return this.#updateHandler?.submit(this.id, mutation, undoMutation, key);

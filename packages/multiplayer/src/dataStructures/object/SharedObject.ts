@@ -1,12 +1,12 @@
 import type { Bindable } from '@osucad/framework';
+import type { ISequencedDocumentMessage } from '../../interfaces/messages';
 import type { ISerializer } from '../ISerializer';
 import type { ISummary } from '../ISummary';
-import type { MutationContext } from '../MutationContext';
-import { MutationSource } from '../MutationSource';
+import { Action } from '@osucad/framework';
 import { SharedStructure } from '../SharedStructure';
 import { SharedProperty } from './SharedProperty';
 
-interface ObjectMutation {
+interface IObjectSetMessage {
   [key: string]: any;
 }
 
@@ -16,7 +16,9 @@ export interface ObjectSummary extends ISummary {
   };
 }
 
-export abstract class SharedObject extends SharedStructure<ObjectMutation, ObjectSummary> {
+export abstract class SharedObject extends SharedStructure<IObjectSetMessage, ObjectSummary> {
+  readonly changed = new Action();
+
   #properties = new Map<string, SharedProperty<any>>();
 
   protected constructor() {
@@ -29,64 +31,61 @@ export abstract class SharedObject extends SharedStructure<ObjectMutation, Objec
     return property;
   }
 
-  handle(command: ObjectMutation, ctx: MutationContext): ObjectMutation | null {
-    const undoMutation: ObjectMutation = {};
-
-    for (const key in command) {
+  override process(message: ISequencedDocumentMessage, local: boolean) {
+    const op = message.contents as IObjectSetMessage;
+    for (const key in op) {
       const property = this.#properties.get(key);
       if (!property)
         continue;
 
-      undoMutation[key] = property.createSummary();
+      let pendingVersion = property.pendingVersion;
+      if (pendingVersion !== undefined) {
+        if (local) {
+          pendingVersion--;
 
-      if (this.#handleProperty(property, ctx))
-        property.parse(command[key]);
-    }
+          if (pendingVersion === 0)
+            property.pendingVersion = undefined;
+          else
+            property.pendingVersion = pendingVersion;
+        }
 
-    if (Object.keys(undoMutation).length === 0)
-      return null;
-
-    return undoMutation;
-  }
-
-  #handleProperty(property: SharedProperty<any>, ctx: MutationContext): boolean {
-    // If we have a change mode locally the property gets marked as pending. It will remain
-    // in this state until the server has acknowledged the latest mutation
-    // If a property is pending, all remote changes are discarded, since they reached the server
-    // before the last mutation originating from this client.
-
-    switch (ctx.source) {
-      case MutationSource.Local:
-        property.pendingVersion = ctx.version;
-        return true;
-
-      case MutationSource.Ack:
-        if (property.pendingVersion === ctx.version)
-          property.pendingVersion = undefined;
-        return false;
-
-      case MutationSource.Remote:
-        return !property.hasPendingChanges;
-    }
-  }
-
-  onPropertyChanged(property: SharedProperty<any>, oldValue: any, submitEvents: boolean) {
-    if (submitEvents && this.isAttached) {
-      const existing = this.currentTransaction?.getEntry(this.id);
-
-      let undoMutation = { [property.name]: oldValue };
-
-      if (existing) {
-        undoMutation = {
-          ...undoMutation,
-          ...existing.undoMutation,
-        };
+        return;
       }
 
-      this.submitMutation({
-        [property.name]: property.createSummary(),
-      }, undoMutation, this.id);
+      property.parse(op[key], false);
     }
+  }
+
+  override replayOp(contents: unknown) {
+    const op = contents as IObjectSetMessage;
+
+    for (const key in op) {
+      const property = this.#properties.get(key);
+      if (!property)
+        continue;
+
+      property.parse(contents);
+    }
+  }
+
+  submitPropertyChanged(property: SharedProperty<any>, oldValue: any) {
+    if (!this.isAttached)
+      return;
+
+    const existing = this.currentTransaction?.getEntry(this.id);
+
+    let undoMutation = { [property.name]: oldValue };
+
+    if (existing) {
+      undoMutation = {
+        ...undoMutation,
+        ...existing.undoMutation,
+      };
+    }
+
+    this.submitMutation({
+      [property.name]: property.createSummary(),
+    }, undoMutation, this.id);
   }
 
   override createSummary(): ObjectSummary {

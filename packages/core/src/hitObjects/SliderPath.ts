@@ -1,4 +1,3 @@
-import type { SharedProperty } from '@osucad/multiplayer';
 import type { PathPoint } from './PathPoint';
 import { Action, CachedValue, List, Vec2 } from '@osucad/framework';
 import { SharedObject } from '@osucad/multiplayer';
@@ -10,6 +9,12 @@ import { PathRange } from './PathRange';
 import { PathType } from './PathType';
 
 export class SliderPath extends SharedObject {
+  constructor() {
+    super();
+
+    this.changed.addListener(this.invalidate, this);
+  }
+
   readonly invalidated = new Action();
 
   #expectedDistance = this.property('expectedDistance', 0);
@@ -178,12 +183,6 @@ export class SliderPath extends SharedObject {
   get endPosition() {
     this.#ensureValid();
     return this.calculatedRange.endPosition;
-  }
-
-  override onPropertyChanged(property: SharedProperty<any>, oldValue: any, submitEvents: boolean) {
-    super.onPropertyChanged(property, oldValue, submitEvents);
-
-    this.invalidate();
   }
 }
 
