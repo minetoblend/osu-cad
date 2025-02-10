@@ -1,5 +1,6 @@
 import type { HitObject } from './HitObject';
 import { Bindable } from '@osucad/framework';
+import { SharedObjectChangeEvent } from '@osucad/multiplayer';
 
 export class HitObjectProperty<T> {
   constructor(
@@ -40,6 +41,6 @@ export class HitObjectProperty<T> {
     else
       this.#backingValue = value;
 
-    this.owner.changed.emit({ hitObject: this.owner, propertyName: this.propertyName });
+    this.owner.changed.emit(new SharedObjectChangeEvent(this.owner, this.propertyName));
   }
 }

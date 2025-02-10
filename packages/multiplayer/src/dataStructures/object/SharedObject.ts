@@ -2,6 +2,7 @@ import type { Bindable } from '@osucad/framework';
 import type { ISequencedDocumentMessage } from '../../interfaces/messages';
 import type { ISerializer } from '../ISerializer';
 import type { ISummary } from '../ISummary';
+import type { SharedObjectChangeEvent } from './SharedObjectChangeEvent';
 import { Action } from '@osucad/framework';
 import { SharedStructure } from '../SharedStructure';
 import { SharedProperty } from './SharedProperty';
@@ -17,7 +18,7 @@ export interface ObjectSummary extends ISummary {
 }
 
 export abstract class SharedObject extends SharedStructure<IObjectSetMessage, ObjectSummary> {
-  readonly changed = new Action();
+  readonly changed = new Action<SharedObjectChangeEvent>();
 
   #properties = new Map<string, SharedProperty<any>>();
 

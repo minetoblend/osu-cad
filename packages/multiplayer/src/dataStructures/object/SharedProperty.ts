@@ -2,6 +2,7 @@ import type { ValueChangedEvent } from '@osucad/framework';
 import type { ISerializer } from '../ISerializer';
 import type { SharedObject } from './SharedObject';
 import { Bindable } from '@osucad/framework';
+import { SharedObjectChangeEvent } from './SharedObjectChangeEvent';
 
 export class SharedProperty<T> {
   constructor(
@@ -58,7 +59,7 @@ export class SharedProperty<T> {
     if (!this.#suppressEvents)
       this.target.submitPropertyChanged(this, previousValue);
 
-    this.target.changed.emit();
+    this.target.changed.emit(new SharedObjectChangeEvent(this.target, this.name));
   }
 
   pendingVersion?: number;
