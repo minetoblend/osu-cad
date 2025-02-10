@@ -731,6 +731,15 @@ importers:
         specifier: ^0.10.7
         version: 0.10.7
 
+  server/message-processor:
+    devDependencies:
+      vite:
+        specifier: ^6.1.0
+        version: 6.1.0(@types/node@20.16.5)(terser@5.32.0)(yaml@2.5.1)
+      vite-node:
+        specifier: ^2.1.6
+        version: 2.1.8(@types/node@20.16.5)(terser@5.32.0)
+
   server/server-common:
     dependencies:
       '@types/compression':

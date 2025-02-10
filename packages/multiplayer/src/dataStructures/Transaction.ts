@@ -21,8 +21,6 @@ export class Transaction {
       this.#entryMap.set(key, entry);
     }
   }
-
-  customUndoActions: (() => void)[] = [];
 }
 
 export class TransactionEntry<T = any> {

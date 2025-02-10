@@ -1,4 +1,4 @@
-import type { AssetInfo, ISummary, MutationContext } from '@osucad/multiplayer';
+import type { AssetInfo, ISequencedDocumentMessage, ISummary } from '@osucad/multiplayer';
 import type { Beatmap } from '../../beatmap/Beatmap';
 import { SharedStructure } from '@osucad/multiplayer';
 import { RulesetStore } from '../../rulesets/RulesetStore';
@@ -17,7 +17,10 @@ export class BoxedBeatmap extends SharedStructure<never, BoxedBeatmapSummary> {
     super();
   }
 
-  override handle(mutation: never, ctx: MutationContext): void | null {
+  override process(message: ISequencedDocumentMessage, local: boolean) {
+  }
+
+  override replayOp(contents: unknown) {
   }
 
   get rulesetId() {

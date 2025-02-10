@@ -1,7 +1,8 @@
 import type { ValueChangedEvent } from '@osucad/framework';
-import type { ISerializer } from './ISerializer';
+import type { ISerializer } from '../ISerializer';
 import type { SharedObject } from './SharedObject';
 import { Bindable } from '@osucad/framework';
+import { SharedObjectChangeEvent } from './SharedObjectChangeEvent';
 
 export class SharedProperty<T> {
   constructor(
@@ -24,27 +25,27 @@ export class SharedProperty<T> {
     this.bindable.value = value;
   }
 
-  parse(value: any) {
+  parse(value: any, local = true) {
     if (this.serializer)
       value = this.serializer.deserialize(value);
 
-    this.setValue(value, true);
+    this.setValue(value, local);
   }
 
-  setValue(value: T, suppressEvents = false) {
-    if (suppressEvents) {
-      const previousSuppressEvents = this.#suppressEvents;
-      this.#suppressEvents = true;
-
-      try {
-        this.bindable.value = value;
-      }
-      finally {
-        this.#suppressEvents = previousSuppressEvents;
-      }
-    }
-    else {
+  setValue(value: T, local = false) {
+    if (local) {
       this.bindable.value = value;
+      return;
+    }
+
+    const previousSuppressEvents = this.#suppressEvents;
+    this.#suppressEvents = true;
+
+    try {
+      this.bindable.value = value;
+    }
+    finally {
+      this.#suppressEvents = previousSuppressEvents;
     }
   }
 
@@ -55,7 +56,10 @@ export class SharedProperty<T> {
     if (this.serializer)
       previousValue = this.serializer.serialize(previousValue);
 
-    this.target.onPropertyChanged(this, previousValue, !this.#suppressEvents);
+    if (!this.#suppressEvents)
+      this.target.submitPropertyChanged(this, previousValue);
+
+    this.target.changed.emit(new SharedObjectChangeEvent(this.target, this.name));
   }
 
   pendingVersion?: number;

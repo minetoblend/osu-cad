@@ -135,8 +135,6 @@ export abstract class HitObject extends SharedObject {
     this.requestApplyDefaults();
   }
 
-  changed = new Action<HitObjectChangeEvent>();
-
   abstract isVisibleAtTime(time: number): boolean;
 
   isSelected = false;

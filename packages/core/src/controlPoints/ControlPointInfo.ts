@@ -1,4 +1,4 @@
-import type { ISummary, ObjectSummary } from '@osucad/multiplayer';
+import type { ISequencedDocumentMessage, ISummary, ObjectSummary, SharedObjectChangeEvent } from '@osucad/multiplayer';
 import type { ControlPoint } from './ControlPoint';
 import { Action, almostEquals } from '@osucad/framework';
 import { SharedStructure } from '@osucad/multiplayer';
@@ -10,12 +10,23 @@ import { TickGenerator } from './TickGenerator';
 import { TimingPoint } from './TimingPoint';
 import { VolumePoint } from './VolumePoint';
 
-export type ControlPointMutation =
-  | { op: 'add'; controlPoint: {
+export type ControlPointListMessage =
+  | IControlPointAddMessage
+  | IControlPointRemoveMessage;
+
+export interface IControlPointAddMessage {
+  type: 'add';
+  // TODO: encode type as part of summary
+  controlPoint: {
     type: string;
-    data: ObjectSummary;
-  }; }
-  | { op: 'remove'; id: string };
+    summary: ObjectSummary;
+  };
+}
+
+export interface IControlPointRemoveMessage {
+  type: 'remove';
+  id: string;
+}
 
 export interface ControlPointInfoSummary extends ISummary {
   timingPoints: ObjectSummary[];
@@ -24,7 +35,7 @@ export interface ControlPointInfoSummary extends ISummary {
   volumePoints: ObjectSummary[];
 }
 
-export class ControlPointInfo extends SharedStructure<ControlPointMutation, ControlPointInfoSummary> {
+export class ControlPointInfo extends SharedStructure<ControlPointListMessage, ControlPointInfoSummary> {
   timingPoints = new ControlPointList<TimingPoint>();
 
   difficultyPoints = new ControlPointList<DifficultyPoint>();
@@ -53,68 +64,91 @@ export class ControlPointInfo extends SharedStructure<ControlPointMutation, Cont
     ];
   }
 
-  override handle(mutation: ControlPointMutation): ControlPointMutation | null {
-    switch (mutation.op) {
-      case 'add': {
-        let controlPoint: ControlPoint;
-        switch (mutation.controlPoint.type) {
-          case 'DifficultyPoint':
-            controlPoint = new DifficultyPoint();
-            break;
-          case 'EffectPoint':
-            controlPoint = new EffectPoint();
-            break;
-          case 'SamplePoint':
-            controlPoint = new SamplePoint();
-            break;
-          case 'VolumePoint':
-            controlPoint = new VolumePoint();
-            break;
-          default:
-            throw new Error(`Unknown control point type: ${mutation.controlPoint.type}`);
-        }
+  override process(message: ISequencedDocumentMessage, local: boolean) {
+    if (local)
+      return;
 
-        controlPoint.initializeFromSummary(mutation.controlPoint.data);
+    const op = message.contents as ControlPointListMessage;
 
-        if (this.#add(controlPoint)) {
-          return {
-            op: 'remove',
-            id: controlPoint.id,
-          };
+    switch (op.type) {
+      case 'add':
+        {
+          const controlPoint = this.#createControlPointFromOp(op);
+          this.#add(controlPoint);
         }
-      }
         break;
+
       case 'remove':
       {
-        const controlPoint = this.getById(mutation.id);
-        if (controlPoint && this.#remove(controlPoint)) {
-          return {
-            op: 'add',
-            controlPoint: {
-              type: this.getTypeName(controlPoint),
-              data: controlPoint.createSummary(),
-            },
-          };
-        }
+        const controlPoint = this.getById(op.id);
+        if (controlPoint)
+          this.#remove(controlPoint);
       }
     }
-    return null;
+  }
+
+  #createControlPointFromOp(op: IControlPointAddMessage) {
+    let controlPoint: ControlPoint;
+    switch (op.controlPoint.type) {
+      case 'DifficultyPoint':
+        controlPoint = new DifficultyPoint();
+        break;
+      case 'EffectPoint':
+        controlPoint = new EffectPoint();
+        break;
+      case 'SamplePoint':
+        controlPoint = new SamplePoint();
+        break;
+      case 'VolumePoint':
+        controlPoint = new VolumePoint();
+        break;
+      default:
+        throw new Error(`Unknown control point type: ${op.controlPoint.type}`);
+    }
+
+    controlPoint.initializeFromSummary(op.controlPoint.summary);
+
+    return controlPoint;
+  }
+
+  override replayOp(contents: unknown) {
+    const op = contents as ControlPointListMessage;
+    switch (op.type) {
+      case 'add': {
+        const controlPoint = this.#createControlPointFromOp(op);
+        this.add(controlPoint);
+        break;
+      }
+      case 'remove': {
+        const controlPoint = this.getById(op.id);
+        if (controlPoint)
+          this.remove(controlPoint);
+        break;
+      }
+    }
   }
 
   add(controlPoint: ControlPoint, skipIfRedundant: boolean = false): boolean {
     if (!this.#add(controlPoint, skipIfRedundant))
       return false;
 
-    this.submitMutation({
-      op: 'add',
+    if (!this.isAttached)
+      return true;
+
+    const op: IControlPointAddMessage = {
+      type: 'add',
       controlPoint: {
         type: this.getTypeName(controlPoint),
-        data: controlPoint.createSummary(),
+        summary: controlPoint.createSummary(),
       },
-    }, {
-      op: 'remove',
+    };
+
+    const undoOp: IControlPointRemoveMessage = {
+      type: 'remove',
       id: controlPoint.id,
-    });
+    };
+
+    this.submitMutation(op, undoOp);
 
     return true;
   }
@@ -143,9 +177,13 @@ export class ControlPointInfo extends SharedStructure<ControlPointMutation, Cont
 
     this.anyPointChanged.emit(controlPoint);
 
-    controlPoint.changed.addListener(this.anyPointChanged.emit, this.anyPointChanged);
+    controlPoint.changed.addListener(this.#onControlPointChanged, this);
 
     return true;
+  }
+
+  #onControlPointChanged(event: SharedObjectChangeEvent) {
+    this.anyPointChanged.emit(event.object as ControlPoint);
   }
 
   protected getTypeName(controlPoint: ControlPoint) {
@@ -167,16 +205,23 @@ export class ControlPointInfo extends SharedStructure<ControlPointMutation, Cont
     if (!this.#remove(controlPoint))
       return false;
 
-    this.submitMutation({
-      op: 'remove',
+    if (!this.isAttached)
+      return true;
+
+    const op: IControlPointRemoveMessage = {
+      type: 'remove',
       id: controlPoint.id,
-    }, {
-      op: 'add',
+    };
+
+    const undoOp: IControlPointAddMessage = {
+      type: 'add',
       controlPoint: {
         type: this.getTypeName(controlPoint),
-        data: controlPoint.createSummary(),
+        summary: controlPoint.createSummary(),
       },
-    });
+    };
+
+    this.submitMutation(op, undoOp);
 
     return true;
   }
@@ -187,7 +232,7 @@ export class ControlPointInfo extends SharedStructure<ControlPointMutation, Cont
       this.listFor(controlPoint)?.remove(controlPoint);
       this.removed.emit(controlPoint);
 
-      controlPoint.changed.removeListener(this.anyPointChanged.emit, this.anyPointChanged);
+      controlPoint.changed.removeListener(this.#onControlPointChanged, this);
 
       this.anyPointChanged.emit(controlPoint);
 
