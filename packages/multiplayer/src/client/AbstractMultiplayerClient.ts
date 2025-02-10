@@ -3,7 +3,7 @@ import type { IMutation } from '../protocol/IMutation';
 import type { InitialStateServerMessage, OpsSubmittedServerMessage, PresenceUpdatedServerMessage, ServerMessage, UserJoinedServerMessage, UserLeftServerMessage } from '../protocol/ServerMessage';
 import type { SummaryMessage } from '../protocol/types';
 import { Action, Component } from '@osucad/framework';
-import { UpdateHandler } from '../dataStructures/UpdateHandler';
+import { UpdateHandler } from '../runtime/UpdateHandler';
 import { ClientSocket } from './Socket';
 
 export abstract class AbstractMultiplayerClient<T extends SharedStructure> extends Component {

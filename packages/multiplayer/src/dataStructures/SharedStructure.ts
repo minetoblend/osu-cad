@@ -1,4 +1,5 @@
 import type { ISequencedDocumentMessage } from '../interfaces/messages';
+import type { UpdateHandler } from '../runtime/UpdateHandler';
 import type { ISummary } from './ISummary';
 import type { Transaction, TransactionEntry } from './Transaction';
 import { objectId } from '../utils/objectId';

@@ -3,3 +3,7 @@ export enum MessageType {
   ClientLeave = 'leave',
   Operation = 'op',
 }
+
+export interface IConnectMessage {
+  documentId: string;
+}

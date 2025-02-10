@@ -1,8 +1,8 @@
+import type { SharedStructure } from '../dataStructures/SharedStructure';
 import type { IOpMessage, ISequencedDocumentMessage } from '../interfaces/messages';
 import type { IMutation } from '../protocol/IMutation';
-import type { SharedStructure } from './SharedStructure';
 import { Action, BindableBoolean, Component } from '@osucad/framework';
-import { Transaction, TransactionEntry } from './Transaction';
+import { Transaction, TransactionEntry } from '../dataStructures/Transaction';
 
 export class UpdateHandler extends Component {
   constructor(
