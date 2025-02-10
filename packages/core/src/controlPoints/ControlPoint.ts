@@ -1,6 +1,6 @@
-import type { ObjectSummary, SharedProperty } from '@osucad/multiplayer';
+import type { ObjectSummary } from '@osucad/multiplayer';
 import type { IControlPoint } from './IControlPoint';
-import { Action, Comparer } from '@osucad/framework';
+import { Comparer } from '@osucad/framework';
 import { SharedObject } from '@osucad/multiplayer';
 
 let nextUid = 0;
@@ -25,8 +25,6 @@ export abstract class ControlPoint extends SharedObject implements IControlPoint
   }
 
   abstract get controlPointName(): string;
-
-  changed = new Action<ControlPoint>();
 
   raiseChanged() {
   }
@@ -55,11 +53,6 @@ export abstract class ControlPoint extends SharedObject implements IControlPoint
 
   equals(other: ControlPoint) {
     return this.time === other.time;
-  }
-
-  override submitPropertyChanged(property: SharedProperty<any>, oldValue: any, submitEvents: boolean) {
-    super.submitPropertyChanged(property, oldValue, submitEvents);
-    this.changed.emit(this);
   }
 
   override initializeFromSummary(summary: ObjectSummary) {

@@ -1,4 +1,4 @@
-import type { ISequencedDocumentMessage, ISummary, ObjectSummary } from '@osucad/multiplayer';
+import type { ISequencedDocumentMessage, ISummary, ObjectSummary, SharedObjectChangeEvent } from '@osucad/multiplayer';
 import type { ControlPoint } from './ControlPoint';
 import { Action, almostEquals } from '@osucad/framework';
 import { SharedStructure } from '@osucad/multiplayer';
@@ -177,9 +177,13 @@ export class ControlPointInfo extends SharedStructure<ControlPointListMessage, C
 
     this.anyPointChanged.emit(controlPoint);
 
-    controlPoint.changed.addListener(this.anyPointChanged.emit, this.anyPointChanged);
+    controlPoint.changed.addListener(this.#onControlPointChanged, this);
 
     return true;
+  }
+
+  #onControlPointChanged(event: SharedObjectChangeEvent) {
+    this.anyPointChanged.emit(event.object as ControlPoint);
   }
 
   protected getTypeName(controlPoint: ControlPoint) {
@@ -228,7 +232,7 @@ export class ControlPointInfo extends SharedStructure<ControlPointListMessage, C
       this.listFor(controlPoint)?.remove(controlPoint);
       this.removed.emit(controlPoint);
 
-      controlPoint.changed.removeListener(this.anyPointChanged.emit, this.anyPointChanged);
+      controlPoint.changed.removeListener(this.#onControlPointChanged, this);
 
       this.anyPointChanged.emit(controlPoint);
 
