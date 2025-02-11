@@ -1,15 +1,15 @@
 import { join } from 'node:path';
 import { runService } from '@osucad-server/common';
 import nconf from 'nconf';
-import { ResourceFactory } from './resourceFactory';
-import { RunnerFactory } from './runnerFactory';
+import { DevServerResourceFactory } from './devServerResourceFactory';
+import { DevServerRunnerFactory } from './devServerRunnerFactory';
 
 nconf.argv()
   .env()
   .file({ file: join(import.meta.dirname, '../config.json') });
 
 runService(
-  new ResourceFactory(),
-  new RunnerFactory(),
+  new DevServerResourceFactory(),
+  new DevServerRunnerFactory(),
   nconf,
 );

@@ -4,7 +4,7 @@ import { Resources } from './resources';
 import { GitService } from './services/GitService';
 import { InMemoryDocumentStorage } from './services/InMemoryDocumentStorage';
 
-export class ResourceFactory implements IResourcesFactory<Resources> {
+export class DevServerResourceFactory implements IResourcesFactory<Resources> {
   async create(config: Provider): Promise<Resources> {
     const git = new GitService(config);
     const storage = new InMemoryDocumentStorage();
