@@ -1,14 +1,14 @@
 import type { IResourcesFactory } from '@osucad-server/common';
 import type { Provider } from 'nconf';
-import { Resources } from './resources';
+import { DevServerResources } from './DevServerResources';
 import { GitService } from './services/GitService';
 import { InMemoryDocumentStorage } from './services/InMemoryDocumentStorage';
 
-export class DevServerResourceFactory implements IResourcesFactory<Resources> {
-  async create(config: Provider): Promise<Resources> {
+export class DevServerResourceFactory implements IResourcesFactory<DevServerResources> {
+  async create(config: Provider): Promise<DevServerResources> {
     const git = new GitService(config);
     const storage = new InMemoryDocumentStorage();
 
-    return new Resources(config, git, storage);
+    return new DevServerResources(config, git, storage);
   }
 }

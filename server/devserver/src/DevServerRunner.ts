@@ -5,7 +5,7 @@ import type { GitService } from './services/GitService';
 import { Deferred, type IRunner } from '@osucad-server/common';
 import * as app from './app';
 
-export class Runner implements IRunner {
+export class DevServerRunner implements IRunner {
   constructor(
     private readonly config: Provider,
     private readonly port: number | string,
