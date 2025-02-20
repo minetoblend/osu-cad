@@ -129,8 +129,4 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle> {
   protected updatePosition() {
     this.position = this.hitObject!.stackedPosition;
   }
-
-  override update() {
-    super.update();
-  }
 }

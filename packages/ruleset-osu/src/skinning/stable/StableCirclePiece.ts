@@ -1,5 +1,6 @@
+import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import { ArmedState, DrawableHitObject, ISkinSource, OsucadConfigManager, OsucadSettings } from '@osucad/core';
-import { almostBigger, Anchor, Axes, Bindable, Color, CompositeDrawable, DrawableSprite, EasingFunction, type ReadonlyDependencyContainer, resolved } from '@osucad/framework';
+import { almostBigger, Anchor, Axes, Bindable, Color, CompositeDrawable, DrawableSprite, EasingFunction, resolved } from '@osucad/framework';
 import { DrawableComboNumber } from './DrawableComboNumber';
 
 export class StableCirclePiece extends CompositeDrawable {
@@ -51,13 +52,19 @@ export class StableCirclePiece extends CompositeDrawable {
 
     if (this.hasComboNumber)
       this.addInternal(this.comboNumber = new DrawableComboNumber());
+  }
+
+  protected override loadComplete() {
+    super.loadComplete();
 
     if (this.drawableHitObject) {
       this.accentColor.bindTo(this.drawableHitObject.accentColor);
 
       this.drawableHitObject.applyCustomUpdateState.addListener(this.#updateStateTransforms, this);
 
-      this.hitAnimationsEnabled.valueChanged.addListener(() => this.schedule(() => this.#updateStateTransforms(this.drawableHitObject!)));
+      this.hitAnimationsEnabled.bindValueChanged(() => this.schedule(() => this.#updateStateTransforms(this.drawableHitObject!)));
+
+      this.#updateStateTransforms(this.drawableHitObject!);
     }
   }
 
@@ -67,10 +74,7 @@ export class StableCirclePiece extends CompositeDrawable {
     this.applyTransformsAt(-Number.MAX_VALUE, true);
     this.clearTransformsAfter(-Number.MAX_VALUE, true);
 
-    this.#circleSprite.alpha = 1;
-    this.#overlaySprite.alpha = 1;
-
-    this.absoluteSequence(hitObject.hitStateUpdateTime, () => {
+    this.absoluteSequence({ time: hitObject.hitStateUpdateTime, recursive: true }, () => {
       switch (hitObject.state.value) {
         case ArmedState.Hit:
           if (this.hitAnimationsEnabled.value) {
@@ -106,6 +110,13 @@ export class StableCirclePiece extends CompositeDrawable {
   override dispose(isDisposing?: boolean) {
     super.dispose(isDisposing);
 
-    this.drawableHitObject?.applyCustomUpdateState.removeListener(this.#updateStateTransforms);
+    this.drawableHitObject?.applyCustomUpdateState.removeListener(this.#updateStateTransforms, this);
+  }
+
+  protected override updateTransforms() {
+    if (this.drawableHitObject!.hitObject!.startTime === 3518)
+      debugger;
+
+    super.updateTransforms();
   }
 }
