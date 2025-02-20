@@ -9,6 +9,6 @@ export class ViewportScreen extends ComposeScreen {
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
-    this.composer.leftSidebar.hide();
+    this.composer.toolbar.hide();
   }
 }

@@ -175,9 +175,11 @@ export abstract class HitObjectComposer extends CompositeDrawable {
       relativeSizeAxes: Axes.Y,
       autoSizeAxes: Axes.X,
       padding: 10,
-      child: new ComposeToolbar(this.#tools),
+      child: this.toolbar = new ComposeToolbar(this.#tools),
     });
   }
+
+  toolbar!: ComposeToolbar;
 
   protected get toolContainer() {
     return this.#toolContainer;
