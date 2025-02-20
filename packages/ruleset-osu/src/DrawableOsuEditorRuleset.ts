@@ -2,8 +2,10 @@ import type { IBeatmap, Ruleset } from '@osucad/core';
 import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import type { OsuHitObject } from './hitObjects/OsuHitObject';
 import type { OsuPlayfield } from './ui/OsuPlayfield';
+import { resolved } from '@osucad/framework';
 import { DrawableOsuRuleset } from './DrawableOsuRuleset';
 import { EditorJudgeProvider } from './edit/EditorJudge';
+import { HitSoundPlayer } from './edit/HitSoundPlayer';
 import { PlayfieldGrid } from './edit/PlayfieldGrid';
 
 export class DrawableOsuEditorRuleset extends DrawableOsuRuleset {
@@ -25,8 +27,14 @@ export class DrawableOsuEditorRuleset extends DrawableOsuRuleset {
     });
   }
 
+  @resolved(HitSoundPlayer, true)
+  hitSoundPlayer?: HitSoundPlayer;
+
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
+
+    if (!this.hitSoundPlayer)
+      this.addInternal(this.hitSoundPlayer = new HitSoundPlayer());
 
     this.beatmap.hitObjects.added.addListener(this.addHitObject, this);
     this.beatmap.hitObjects.removed.addListener(this.removeHitObject, this);
