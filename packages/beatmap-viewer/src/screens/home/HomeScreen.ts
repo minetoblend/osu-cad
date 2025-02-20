@@ -111,7 +111,7 @@ export class HomeScreen extends OsucadScreen {
   }
 
   protected createMapsetInfo(mapset: BeatmapSetResponse): CarouselBeatmapSetInfo {
-    const { artist, title, creator, id, preview_url } = mapset;
+    const { artist, title, creator, id } = mapset;
 
     const carouselMapsetInfo: CarouselBeatmapSetInfo = {
       id: id.toString(),
