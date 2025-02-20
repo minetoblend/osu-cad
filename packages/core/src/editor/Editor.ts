@@ -1,4 +1,4 @@
-import type { DependencyContainer, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer, ScreenExitEvent, ScreenTransitionEvent } from '@osucad/framework';
+import type { DependencyContainer, Drawable, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer, ScreenExitEvent, ScreenTransitionEvent } from '@osucad/framework';
 import type { BackgroundScreen } from '../screens/BackgroundScreen';
 import { EasingFunction, MenuItem, PlatformAction, provide } from '@osucad/framework';
 import { UpdateHandler } from '@osucad/multiplayer';
@@ -47,6 +47,8 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
 
     await this.loadComponentAsync(this.editorBeatmap);
 
+    console.log(this.beatmap);
+
     if (!this.editorBeatmap.beatmapInfo.ruleset) {
       // TODO: display message
       this.exit();
@@ -90,7 +92,7 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
         this.beatmap,
         beatmapSkin,
       ).with({
-        child: this.#layout = new EditorLayout(),
+        child: this.#layout = this.createLayout(),
       }),
     );
 
@@ -99,6 +101,10 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
 
     if (this.beatmap.hitObjects.length > 0)
       this.editorClock.seek(this.beatmap.hitObjects.first!.startTime, false);
+  }
+
+  protected createLayout(): Drawable {
+    return new EditorLayout();
   }
 
   protected registerScreens(screenManager: EditorScreenManager) {
@@ -135,7 +141,7 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
 
   readonly isKeyBindingHandler = true;
 
-  #layout!: EditorLayout;
+  #layout!: Drawable;
 
   canHandleKeyBinding(binding: KeyBindingAction): boolean {
     return binding instanceof PlatformAction;

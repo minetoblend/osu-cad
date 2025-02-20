@@ -37,4 +37,8 @@ export class DrawablePenTool extends DrawableModdingTool {
       this.#drawing = null;
     }
   }
+
+  override receivePositionalInputAt(screenSpacePosition: Vec2): boolean {
+    return true;
+  }
 }

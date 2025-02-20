@@ -44,11 +44,11 @@ export class EditorSafeArea {
   });
 
   get top() {
-    return Math.max(this.topLeft.y, this.topRight.y);
+    return Math.max(this.topLeft.y, this.topRight.y, this.topInner);
   }
 
   get bottom() {
-    return Math.max(this.bottomLeft.y, this.bottomRight.y);
+    return Math.max(this.bottomLeft.y, this.bottomRight.y, this.bottomInner);
   }
 
   equals(other: EditorSafeArea) {

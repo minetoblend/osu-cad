@@ -1,5 +1,6 @@
 export * from './ComposeScreen';
 export * from './ComposeScreenTimeline';
+export * from './ComposeScreenTimelineControls';
 export * from './ComposeScreenTimelineMobileControls';
 export * from './ComposeToolbar';
 export * from './ComposeToolButton';

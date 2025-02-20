@@ -117,7 +117,7 @@ export class IssueList extends Container {
       const now = performance.now();
       const timePassed = now - startTime;
 
-      if (timePassed > 5) {
+      if (timePassed > 1) {
         startTime = now;
         await new Promise<void>(resolve => this.schedule(resolve));
       }
@@ -141,7 +141,7 @@ export class IssueList extends Container {
       const now = performance.now();
       const timePassed = now - startTime;
 
-      if (timePassed > 5) {
+      if (timePassed > 1) {
         startTime = now;
         await new Promise<void>(resolve => this.schedule(resolve));
       }

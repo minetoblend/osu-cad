@@ -13,10 +13,10 @@ export class ComposeScreenTimelineControls extends EditorCornerContent {
     this.addRange([
       new Container({
         relativeSizeAxes: Axes.Y,
-        width: 150,
+        width: 180,
         padding: {
           top: 20,
-          right: 15,
+          left: 20,
         },
         anchor: Anchor.TopLeft,
         origin: Anchor.TopLeft,

@@ -23,6 +23,10 @@ export class ComposeScreen extends EditorScreen {
   @resolved(Ruleset)
   ruleset!: Ruleset;
 
+  protected get composer() {
+    return this.#composer;
+  }
+
   #composer!: HitObjectComposer;
 
   protected override load(dependencies: ReadonlyDependencyContainer) {

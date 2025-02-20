@@ -33,8 +33,8 @@ export class ModdingScreen extends EditorScreen {
   editorBeatmap!: EditorBeatmap;
 
   protected override applySafeAreaPadding(safeArea: EditorSafeArea) {
-    this.#issueListContainer.padding = { top: safeArea.topRight.y + 4, bottom: safeArea.bottom + 4 };
-    this.#mainContent.padding = { top: safeArea.topLeft.y, bottom: safeArea.bottomLeft.y };
+    this.#issueListContainer.padding = { top: Math.max(safeArea.topRight.y, safeArea.top) + 4, bottom: safeArea.bottom + 4 };
+    this.#mainContent.padding = { top: Math.max(safeArea.topLeft.y, safeArea.top), bottom: safeArea.bottomLeft.y };
   }
 
   @provide(ModdingConfigManager)
