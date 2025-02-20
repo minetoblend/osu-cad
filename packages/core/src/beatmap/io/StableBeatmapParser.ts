@@ -7,6 +7,7 @@ import { SamplePoint } from '../../controlPoints/SamplePoint';
 import { TimingPoint } from '../../controlPoints/TimingPoint';
 import { VolumePoint } from '../../controlPoints/VolumePoint';
 import { ConvertCircle } from '../../hitObjects/conversion/ConvertCircle';
+import { ConvertHoldNote } from '../../hitObjects/conversion/ConvertHoldNote';
 import { ConvertSlider } from '../../hitObjects/conversion/ConvertSlider';
 import { ConvertSpinner } from '../../hitObjects/conversion/ConvertSpinner';
 import { EffectType } from '../../hitObjects/EffectType';
@@ -427,6 +428,12 @@ export class StableBeatmapParser {
       spinner.position = new Vec2(x, y);
 
       spinner.hitSound = parseHitSound(6);
+    }
+    else if (type & HitType.Hold) {
+      const note = hitObject = new ConvertHoldNote();
+      note.startTime = startTime;
+      note.endTime = Number.parseFloat(values[5]);
+      note.position = new Vec2(x, y);
     }
 
     if (!hitObject)
