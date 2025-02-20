@@ -1,7 +1,7 @@
 import type { Beatmap, EditorScreenManager } from '@osucad/core';
 import type { Drawable, KeyDownEvent, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { BeatmapViewerGame } from '../../BeatmapViewerGame';
-import { Editor, EditorBeatmap, ModdingScreen, PreferencesContainer } from '@osucad/core';
+import { Editor, EditorBeatmap, ModdingScreen, PreferencesOverlay } from '@osucad/core';
 import { Key, MenuItem, resolved } from '@osucad/framework';
 import { Router } from '../Router';
 import { BeatmapViewerLayout } from './BeatmapViewerLayout';
@@ -34,13 +34,16 @@ export class BeatmapViewer extends Editor {
   @resolved(() => Router)
   router!: Router;
 
+  @resolved(PreferencesOverlay)
+  preferences!: PreferencesOverlay;
+
   createMenuItems(): MenuItem[] {
     const fileMenu = new MenuItem({
       text: 'File',
       items: [
         new MenuItem({
           text: 'Preferences',
-          action: () => this.findClosestParentOfType(PreferencesContainer)!.preferencesVisible.value = true,
+          action: () => this.preferences.toggleVisibility(),
         }),
         new MenuItem({
           text: 'Exit',
