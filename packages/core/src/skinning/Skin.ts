@@ -136,10 +136,16 @@ export abstract class Skin implements IDisposable, ISkin {
 
   getSample(channel: AudioChannel, sample: string | HitSample): Sample | null {
     if (typeof sample !== 'string') {
-      const { indexedSampleName } = sample;
+      const { indexedSampleName, sampleName } = sample;
 
       if (indexedSampleName) {
         const sample = this.samples?.getSample(channel, indexedSampleName);
+        if (sample)
+          return sample;
+      }
+
+      if (sampleName && sample.index === 1) {
+        const sample = this.samples?.getSample(channel, sampleName);
         if (sample)
           return sample;
       }
