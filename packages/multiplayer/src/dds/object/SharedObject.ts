@@ -65,7 +65,7 @@ export abstract class SharedObject extends SharedStructure<IObjectSetMessage, Ob
       if (!property)
         continue;
 
-      property.parse(contents);
+      property.parse(op[key]);
     }
   }
 
