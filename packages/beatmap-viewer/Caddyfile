@@ -2,6 +2,9 @@
   reverse_proxy /beatmaps/* https://assets.ppy.sh {
     header_up Host {upstream_hostport}
   }
+  reverse_proxy /preview/* https://b.ppy.sh {
+    header_up Host {upstream_hostport}
+  }
   reverse_proxy /ordr/* https://apis.issou.best {
     header_up Host {upstream_hostport}
   }

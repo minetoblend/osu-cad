@@ -30,6 +30,11 @@ export default defineConfig({
         ws: true,
         changeOrigin: true,
       },
+      '/preview': {
+        target: 'https://b.ppy.sh',
+        changeOrigin: true,
+
+      },
     },
   },
 });
