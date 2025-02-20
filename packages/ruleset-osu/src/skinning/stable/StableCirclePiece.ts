@@ -112,11 +112,4 @@ export class StableCirclePiece extends CompositeDrawable {
 
     this.drawableHitObject?.applyCustomUpdateState.removeListener(this.#updateStateTransforms, this);
   }
-
-  protected override updateTransforms() {
-    if (this.drawableHitObject!.hitObject!.startTime === 3518)
-      debugger;
-
-    super.updateTransforms();
-  }
 }
