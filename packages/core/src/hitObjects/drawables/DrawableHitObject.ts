@@ -34,6 +34,8 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
   [Symbol('load')]() {
     this.#dependencies.provide(DrawableHitObject, this);
     this.#dependencies.provide(IAnimationTimeReference, this);
+
+    this.currentSkin.sourceChanged.addListener(this.#skinSourceChanged, this);
   }
 
   get hitObject(): HitObject | undefined {
@@ -211,7 +213,6 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
 
     if (this.isLoaded) {
       this.#updateStateFromResult();
-
       this.updateComboColor();
     }
   }
@@ -237,8 +238,15 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
   @resolved(ISkinSource)
   protected currentSkin!: ISkinSource;
 
+  #skinSourceChanged() {
+    this.scheduler.addOnce(this.#skinChanged, this);
+  }
+
   #skinChanged() {
     this.updateComboColor();
+
+    if (this.isLoaded)
+      this.updateState(this.state.value, true);
   }
 
   protected override onFree(entry: HitObjectLifetimeEntry) {
@@ -431,4 +439,10 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
   }
 
   readonly animationStartTime = new Bindable(0);
+
+  override dispose(isDisposing: boolean = true) {
+    super.dispose(isDisposing);
+
+    this.currentSkin.sourceChanged.removeListener(this.#skinSourceChanged, this);
+  }
 }
