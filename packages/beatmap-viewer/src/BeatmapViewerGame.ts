@@ -1,5 +1,6 @@
 import type { DependencyContainer, ReadonlyDependencyContainer } from '@osucad/framework';
-import { ISkinSource, OsucadGameBase, RulesetStore, SkinManager, UISamples } from '@osucad/core';
+import { ISkinSource, OsucadGameBase, PreferencesOverlay, RulesetStore, SkinManager, UISamples } from '@osucad/core';
+import { Axes, Container, provide } from '@osucad/framework';
 import { ManiaRuleset } from '@osucad/ruleset-mania';
 import { OsuRuleset } from '@osucad/ruleset-osu';
 import { RenderTarget } from 'pixi.js';
@@ -23,6 +24,9 @@ export class BeatmapViewerGame extends OsucadGameBase {
 
   #skinManagerLoaded!: Promise<SkinManager>;
 
+  @provide(PreferencesOverlay)
+  readonly preferences = new PreferencesOverlay();
+
   get skinManagerLoaded() {
     return this.#skinManagerLoaded;
   }
@@ -30,7 +34,15 @@ export class BeatmapViewerGame extends OsucadGameBase {
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
-    this.add(new Router());
+    this.addRange([
+      this.#screenOffsetContainer = new Container({
+        relativeSizeAxes: Axes.Both,
+        child: new Router(),
+      }),
+      this.#overlayOffsetContainer = new Container({
+        relativeSizeAxes: Axes.Both,
+      }),
+    ]);
 
     this.#skinManager = new SkinManager();
 
@@ -43,6 +55,10 @@ export class BeatmapViewerGame extends OsucadGameBase {
     RulesetStore.register(new ManiaRuleset().rulesetInfo);
   }
 
+  #overlayOffsetContainer!: Container;
+
+  #screenOffsetContainer!: Container;
+
   protected override async loadAsync(dependencies: ReadonlyDependencyContainer): Promise<void> {
     await super.loadAsync(dependencies);
 
@@ -54,5 +70,17 @@ export class BeatmapViewerGame extends OsucadGameBase {
       samples.load(),
     ]);
     this.add(this.#skinManager);
+  }
+
+  protected loadComplete() {
+    super.loadComplete();
+
+    this.#overlayOffsetContainer.add(this.preferences);
+  }
+
+  override updateAfterChildren() {
+    super.updateAfterChildren();
+
+    this.#screenOffsetContainer.x = this.preferences.panelOffset * 0.5;
   }
 }

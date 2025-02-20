@@ -1,4 +1,4 @@
-import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent } from '@osucad/framework';
+import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, MouseDownEvent } from '@osucad/framework';
 import { Axes, Box, EasingFunction, VisibilityContainer } from '@osucad/framework';
 import { EditorAction } from '../../editor/EditorAction';
 import { PreferencesPanel } from './PreferencesPanel';
@@ -30,12 +30,12 @@ export class PreferencesOverlay extends VisibilityContainer implements IKeyBindi
   }
 
   override popIn() {
-    this.#backdrop.fadeTo(0.5, 400);
+    this.#backdrop.fadeTo(0.5, 300, EasingFunction.OutQuad);
     this.#preferencesPanel.moveToX(0, 400, EasingFunction.OutExpo);
   }
 
   override popOut() {
-    this.#backdrop.fadeOut(400);
+    this.#backdrop.fadeOut(300, EasingFunction.OutQuad);
     this.#preferencesPanel.moveToX(-400, 650, EasingFunction.OutExpo);
   }
 
@@ -57,5 +57,10 @@ export class PreferencesOverlay extends VisibilityContainer implements IKeyBindi
     }
 
     return false;
+  }
+
+  override onMouseDown(e: MouseDownEvent): boolean {
+    this.hide();
+    return true;
   }
 }

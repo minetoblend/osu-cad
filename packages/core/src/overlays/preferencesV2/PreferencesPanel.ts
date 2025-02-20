@@ -1,4 +1,4 @@
-import type { ReadonlyDependencyContainer } from '@osucad/framework';
+import type { MouseDownEvent, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { PreferencesSection } from './PreferencesSection';
 import { Anchor, Axes, BetterBackdropBlurFilter, Bindable, Box, Container, Dimension, FillFlowContainer, GridContainer, GridSizeMode, provide, Vec2 } from '@osucad/framework';
 import { OsucadScrollContainer } from '../../drawables/OsucadScrollContainer';
@@ -39,7 +39,7 @@ export class PreferencesPanel extends Container<PreferencesSection> {
       new Box({
         relativeSizeAxes: Axes.Both,
         color: 0x0A0A0A,
-        alpha: 0.9,
+        alpha: 0.6,
       }),
       new Box({
         width: 0.5,
@@ -110,5 +110,9 @@ export class PreferencesPanel extends Container<PreferencesSection> {
     }
 
     this.#scroll.content.padding = { bottom: this.drawHeight };
+  }
+
+  override onMouseDown(e: MouseDownEvent): boolean {
+    return true;
   }
 }
