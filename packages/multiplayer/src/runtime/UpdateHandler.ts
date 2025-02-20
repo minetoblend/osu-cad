@@ -43,7 +43,32 @@ export class UpdateHandler extends Component {
 
   version = 0;
 
+  #isReversingLatestOperation = false;
+
+  readonly = false;
+
+  #enforceReadonly(target: string, mutation: any, undoMutation?: any) {
+    if (!this.readonly || !undoMutation)
+      return false;
+
+    if (this.#isReversingLatestOperation)
+      return true;
+
+    try {
+      this.#isReversingLatestOperation = true;
+      this.objects.get(target)!.replayOp(undoMutation);
+    }
+    finally {
+      this.#isReversingLatestOperation = false;
+    }
+
+    return true;
+  }
+
   submit(target: string, mutation: any, undoMutation?: any, key?: string) {
+    if (this.#enforceReadonly(target, mutation, undoMutation))
+      return;
+
     this.onMutationSubmitted(target, mutation);
 
     this.commandApplied.emit({ target, data: mutation });

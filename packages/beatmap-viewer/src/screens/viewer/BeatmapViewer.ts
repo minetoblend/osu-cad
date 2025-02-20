@@ -14,6 +14,12 @@ export class BeatmapViewer extends Editor {
     return super.loadAsync(dependencies);
   }
 
+  protected loadComplete() {
+    super.loadComplete();
+
+    this.editorBeatmap.updateHandler.readonly = true;
+  }
+
   protected registerScreens(screenManager: EditorScreenManager) {
     screenManager.register(ViewportScreen);
     screenManager.register(ModdingScreen);
