@@ -1,4 +1,4 @@
-import type { Drawable, MouseDownEvent, MouseMoveEvent, MouseUpEvent } from '@osucad/framework';
+import type { Drawable, MouseDownEvent, MouseMoveEvent, MouseUpEvent, Vec2 } from '@osucad/framework';
 import { MouseButton } from '@osucad/framework';
 import { StrokePoint } from '../../../../drawables/BrushStrokeGeometry';
 import { ModPostDrawing } from '../objects/ModPostDrawing';
