@@ -982,17 +982,15 @@ export class CompositeDrawable extends Drawable {
 
   override clearTransformsAfter(time: number, propagateChildren: boolean = false, targetMember?: string) {
     super.clearTransformsAfter(time, propagateChildren, targetMember);
-    if (this.autoSizeAxes !== 0 && this.autoSizeDuration > 0) {
+    if (this.autoSizeAxes !== 0 && this.autoSizeDuration > 0)
       this.#childrenSizeDependencies.invalidate();
-    }
 
     if (!propagateChildren) {
       return;
     }
 
-    for (const child of this.#internalChildren) {
+    for (const child of this.#internalChildren)
       child.clearTransformsAfter(time, true, targetMember);
-    }
   }
 
   override addDelay(duration: number, propagateChildren: boolean = false) {
