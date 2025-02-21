@@ -31,7 +31,7 @@ export default defineConfig({
         changeOrigin: true,
       },
       '/preview': {
-        target: 'https://b.ppy.sh',
+        target: 'https://catboy.best',
         changeOrigin: true,
       },
       '/beatmaps': {

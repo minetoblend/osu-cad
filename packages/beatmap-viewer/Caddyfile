@@ -2,7 +2,7 @@
   reverse_proxy /beatmaps/* https://assets.ppy.sh {
     header_up Host {upstream_hostport}
   }
-  reverse_proxy /preview/* https://b.ppy.sh {
+  reverse_proxy /preview/* https://catboy.best {
     header_up Host {upstream_hostport}
   }
   reverse_proxy /ordr/* https://apis.issou.best {
