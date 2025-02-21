@@ -4,3 +4,4 @@ export * from './OsucadScrollContainer';
 export * from './OsucadSpriteText';
 export * from './ReverseFillFlowContainer';
 export * from './SizeLimitedContainer';
+export * from './TooltipContainer';

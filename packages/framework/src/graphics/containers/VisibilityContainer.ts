@@ -19,7 +19,7 @@ export abstract class VisibilityContainer extends Container {
     }
   }
 
-  override loadComplete() {
+  protected override loadComplete() {
     this.state.bindValueChanged(this.updateState, this.state.value === Visibility.Hidden && !this.#didInitialHide);
 
     super.loadComplete();

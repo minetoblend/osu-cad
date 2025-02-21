@@ -6,6 +6,7 @@ import { AudioMixer } from './audio/AudioMixer';
 import { OsucadConfigManager } from './config/OsucadConfigManager';
 import { SafeAreaContainer } from './drawables/SafeAreaContainer';
 import { Fit, ScalingContainer } from './drawables/ScalingContainer';
+import { TooltipContainer } from './drawables/TooltipContainer';
 import { UIFonts } from './drawables/UIFonts';
 import { VirtualKeyboardSafeAreaContainer } from './drawables/VirtualKeyboardSafeAreaContainer';
 import { EditorActionContainer } from './editor/EditorActionContainer';
@@ -71,9 +72,11 @@ export abstract class OsucadGameBase extends Game implements IResourcesProvider 
           desiredSize: this.getTargetDrawSize(),
           fit: Fit.Fill,
           child: new PerformanceOverlay({
-            child: new EditorActionContainer({
-              child: new VirtualKeyboardSafeAreaContainer({
-                child: this.#content = new ContextMenuContainer(),
+            child: new TooltipContainer({
+              child: new EditorActionContainer({
+                child: new VirtualKeyboardSafeAreaContainer({
+                  child: this.#content = new ContextMenuContainer(),
+                }),
               }),
             }),
           }),
