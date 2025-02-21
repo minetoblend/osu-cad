@@ -52,7 +52,8 @@ export class PreferencesOverlay extends VisibilityContainer implements IKeyBindi
   onKeyBindingPressed(e: KeyBindingPressEvent<EditorAction>): boolean {
     switch (e.pressed) {
       case EditorAction.ShowPreferences:
-        this.toggleVisibility();
+        if (!e.repeat)
+          this.toggleVisibility();
         return true;
     }
 
