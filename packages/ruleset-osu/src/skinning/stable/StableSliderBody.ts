@@ -52,7 +52,7 @@ class LegacyDrawableSliderPath extends DrawableSliderPath {
 /// Interpolates between two sRGB <see cref="Colour4"/>s directly in sRGB space.
 /// </summary>
 function interpolateNonLinear(time: number, startColor: Color, endColor: Color, startTime: number, endTime: number, easing: EasingFunction = EasingFunction.Default) {
-  if (startColor == endColor)
+  if (startColor.toNumber() === endColor.toNumber())
     return startColor;
 
   const current = time - startTime;
