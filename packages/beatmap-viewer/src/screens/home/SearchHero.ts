@@ -86,6 +86,8 @@ export class SearchHero extends FillFlowContainer {
     this.#logoContainer.resizeWidthTo(0.2, 200, EasingFunction.OutExpo);
     this.#textBoxContainer.resizeWidthTo(0.8);
     this.#logo.scaleTo(1, 500, EasingFunction.OutExpo);
+
+    this.#searchBox.handleLeftRightArrows = false;
   }
 
   protected loadComplete() {

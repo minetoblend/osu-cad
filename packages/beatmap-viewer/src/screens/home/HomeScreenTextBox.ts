@@ -12,6 +12,16 @@ export class HomeScreenTextBox extends OsucadTextBox {
     this.releaseFocusOnCommit = false;
   }
 
+  #handleLeftRightArrows = true;
+
+  override get handleLeftRightArrows(): boolean {
+    return this.#handleLeftRightArrows;
+  }
+
+  override set handleLeftRightArrows(value) {
+    this.#handleLeftRightArrows = value;
+  }
+
   protected override loadComplete() {
     super.loadComplete();
 
