@@ -1665,12 +1665,19 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     duration: number,
     easing: EasingFunction = EasingFunction.Default,
   ) {
-    return this.populateTransform<TValue>(
+    const result = new TransformSequence(this);
+
+    const transform = this.populateTransform<TValue>(
       new TransformBindable(targetBindable),
       newValue,
       duration,
       easing,
     );
+
+    result.add(transform);
+    this.addTransform(transform);
+
+    return result.asProxy();
   }
 
   protected makeTransform<TValue>(
