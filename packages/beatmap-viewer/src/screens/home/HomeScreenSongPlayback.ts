@@ -6,6 +6,14 @@ export class HomeScreenSongPlayback extends Component {
 
   audioEl = document.createElement('audio');
 
+  constructor() {
+    super();
+
+    this.audioEl.onerror = () => {
+      // playback is expected to fail here and there and would just be spamming sentry otherwise
+    };
+  }
+
   #paused = false;
 
   #source!: MediaElementAudioSourceNode;

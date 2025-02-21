@@ -53,8 +53,6 @@ export class HomeScreen extends OsucadScreen {
 
   selectedBeatmap = new Bindable<CarouselBeatmapInfo | null>(null);
 
-  audioEl = document.createElement('audio');
-
   @resolved(AudioManager)
   audioManager!: AudioManager;
 
