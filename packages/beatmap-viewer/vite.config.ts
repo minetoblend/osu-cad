@@ -33,7 +33,10 @@ export default defineConfig({
       '/preview': {
         target: 'https://b.ppy.sh',
         changeOrigin: true,
-
+      },
+      '/beatmaps': {
+        target: 'https://assets.ppy.sh',
+        changeOrigin: true,
       },
     },
   },
