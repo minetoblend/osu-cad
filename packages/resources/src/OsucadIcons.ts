@@ -14,7 +14,9 @@ export class OsucadIcons {
   }
 
   static async load() {
-    const texture = await loadTexture(textureUrl)
+    const texture = await loadTexture(textureUrl, {
+      autoGenerateMipmaps: true
+    })
     if (!texture)
       throw new Error('Could not load icons texture')
 

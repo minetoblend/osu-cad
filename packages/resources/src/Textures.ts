@@ -5,5 +5,7 @@ import { LazyTexture } from "./LazyTexture";
 
 export class OsucadTextures {
   static logoText = new LazyTexture(logoText)
-  static osucadText = new LazyTexture(osucadText)
+  static osucadText = new LazyTexture(osucadText, {
+    autoGenerateMipmaps: true
+  })
 }
