@@ -78,7 +78,7 @@ export class EditorBottomBar extends CompositeDrawable {
                 }),
                 new Container({
                   relativeSizeAxes: Axes.Both,
-                  padding: { left: 10, right: 34 },
+                  padding: { left: 10 },
                   children: [
                     new PlaybackRateControl().with({
                       anchor: Anchor.CenterLeft,

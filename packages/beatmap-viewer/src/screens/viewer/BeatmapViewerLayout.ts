@@ -50,13 +50,10 @@ export class BeatmapViewerLayout extends CompositeDrawable {
 
           this.#topRightCornerPiece = new EditorCornerPiece({
             corner: Corner.TopRight,
-
             height: 95,
             width: 240,
-            autoSizeDuration: 300,
             anchor: Anchor.TopRight,
             origin: Anchor.TopRight,
-            autoSizeEasing: EasingFunction.OutExpo,
             children: [
               new Container({
                 autoSizeAxes: Axes.X,

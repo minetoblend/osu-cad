@@ -44,7 +44,6 @@ export class EditorCornerPiece extends Container {
 
   override set relativeSizeAxes(value: Axes) {
     super.relativeSizeAxes = value;
-    this.#content.relativeSizeAxes = value;
   }
 
   get corner() {
@@ -158,14 +157,5 @@ export class EditorCornerPiece extends Container {
 
   override onHoverLost(): boolean {
     return true;
-  }
-
-  override get width() {
-    return super.width;
-  }
-
-  override set width(value) {
-    super.width = value;
-    this.content.width = value;
   }
 }
