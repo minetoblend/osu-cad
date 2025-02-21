@@ -92,6 +92,9 @@ export class KeyboardHandler extends InputHandler {
       if (event.key === Key.Tab)
         return true;
 
+      if (event.key === 'o' && event.ctrlKey)
+        return true;
+
       return false;
     }
 
