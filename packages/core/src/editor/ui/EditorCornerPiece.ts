@@ -159,4 +159,13 @@ export class EditorCornerPiece extends Container {
   override onHoverLost(): boolean {
     return true;
   }
+
+  override get width() {
+    return super.width;
+  }
+
+  override set width(value) {
+    super.width = value;
+    this.content.width = value;
+  }
 }
