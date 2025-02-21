@@ -1,9 +1,10 @@
+import type { IHasTooltip } from '@osucad/core';
 import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import { EditorClock, OsucadSpriteText } from '@osucad/core';
 import { Anchor, Axes, BindableNumber, CompositeDrawable, Container, resolved } from '@osucad/framework';
 import { SliderBar } from '../../overlays/preferencesV2/SliderBar';
 
-export class PlaybackRateControl extends CompositeDrawable {
+export class PlaybackRateControl extends CompositeDrawable implements IHasTooltip {
   constructor() {
     super();
 
@@ -56,5 +57,13 @@ export class PlaybackRateControl extends CompositeDrawable {
 
     if (this.editorClock.rate !== this.playbackRate.value)
       this.playbackRate.value = this.editorClock.rate;
+  }
+
+  override get requestsPositionalInput(): boolean {
+    return true;
+  }
+
+  get tooltipText() {
+    return `Playback rate: ${this.playbackRate.value.toFixed(2)}x`;
   }
 }

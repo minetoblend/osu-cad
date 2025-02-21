@@ -1,10 +1,11 @@
+import type { IHasTooltip } from '@osucad/core';
 import type { Bindable, Drawable, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyBindingReleaseEvent } from '@osucad/framework';
 import { EditorAction, OsucadColors, ToolbarToggleButton } from '@osucad/core';
 import { Anchor, Axes, DrawableSprite } from '@osucad/framework';
 import { getIcon } from '@osucad/resources';
 import { GridSizeButton } from './GridSizeButton';
 
-export class GridSnapToggleButton extends ToolbarToggleButton implements IKeyBindingHandler<EditorAction> {
+export class GridSnapToggleButton extends ToolbarToggleButton implements IKeyBindingHandler<EditorAction>, IHasTooltip {
   constructor(bindable: Bindable<boolean>) {
     super([
       new GridSizeButton(0),
@@ -73,4 +74,9 @@ export class GridSnapToggleButton extends ToolbarToggleButton implements IKeyBin
         this.updateState();
     }
   }
+
+  readonly tooltipText = [
+    'Click: Toggle grid snap',
+    'Right click: Select grid size',
+  ].join('\n');
 }
