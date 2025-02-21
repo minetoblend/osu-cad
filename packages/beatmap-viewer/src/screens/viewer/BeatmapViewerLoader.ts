@@ -1,7 +1,8 @@
 import type { EditorBeatmap } from '@osucad/core';
-import type { ScreenTransitionEvent } from '@osucad/framework';
-import { OsucadScreen } from '@osucad/core';
-import { Axes } from '@osucad/framework';
+import type { ScreenExitEvent, ScreenTransitionEvent } from '@osucad/framework';
+import { AudioMixer, OsucadScreen } from '@osucad/core';
+import { AudioManager, Axes, LowpassFilter, resolved } from '@osucad/framework';
+import { HomeScreenSongPlayback } from '../home/HomeScreenSongPlayback';
 import { BeatmapViewer } from './BeatmapViewer';
 import { EditorLoadingSpinner } from './EditorLoadingSpinner';
 
@@ -12,10 +13,30 @@ export class BeatmapViewerLoader extends OsucadScreen {
     super();
   }
 
+  readonly #lowPassFilter = new LowpassFilter({
+    frequency: 20000,
+  });
+
   #loadingSpinner!: EditorLoadingSpinner;
+
+  @resolved(AudioManager)
+  audioManager!: AudioManager;
+
+  @resolved(AudioMixer)
+  mixer!: AudioMixer;
+
+  @resolved(HomeScreenSongPlayback, true)
+  songPlayback?: HomeScreenSongPlayback;
 
   override onEntering(e: ScreenTransitionEvent) {
     super.onEntering(e);
+
+    this.mixer.music.addFilter(this.#lowPassFilter);
+
+    this.#lowPassFilter.frequency!.exponentialRampToValueAtTime(
+      300,
+      this.audioManager.context.currentTime + 0.25,
+    );
 
     this.#loadingSpinner = new EditorLoadingSpinner({
       relativeSizeAxes: Axes.Both,
@@ -39,6 +60,14 @@ export class BeatmapViewerLoader extends OsucadScreen {
     });
   }
 
+  onSuspending(e: ScreenTransitionEvent) {
+    super.onSuspending(e);
+
+    this.songPlayback?.pause();
+
+    this.mixer.music.removeFilter(this.#lowPassFilter);
+  }
+
   onResuming(e: ScreenTransitionEvent) {
     super.onResuming(e);
 
@@ -48,5 +77,14 @@ export class BeatmapViewerLoader extends OsucadScreen {
     }
 
     this.schedule(() => this.exit());
+  }
+
+  override onExiting(e: ScreenExitEvent): boolean {
+    if (super.onExiting(e))
+      return true;
+
+    this.songPlayback?.resume();
+
+    return false;
   }
 }

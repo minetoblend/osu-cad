@@ -2,9 +2,10 @@ import type { BackgroundScreen, CarouselBeatmapInfo, CarouselBeatmapSetInfo, Wor
 import type { Drawable, ReadonlyDependencyContainer, ScreenTransitionEvent } from '@osucad/framework';
 import type { BeatmapSetResponse, BeatmapSetResponseBeatmap } from '../../mirrors/BeatmapSetResponse';
 import { AudioMixer, BeatmapCarousel, OsucadScreen, SizeLimitedContainer } from '@osucad/core';
-import { Anchor, AudioManager, Axes, Bindable, Container, FillDirection, FillFlowContainer, loadTexture, resolved, Vec2 } from '@osucad/framework';
+import { Anchor, AudioManager, Axes, Bindable, Container, FillDirection, FillFlowContainer, loadTexture, provide, resolved, Vec2 } from '@osucad/framework';
 import { Router } from '../Router';
 import { HomeScreenBackground } from './HomeScreenBackground';
+import { HomeScreenSongPlayback } from './HomeScreenSongPlayback';
 import { SearchHero } from './SearchHero';
 
 export class HomeScreen extends OsucadScreen {
@@ -60,36 +61,17 @@ export class HomeScreen extends OsucadScreen {
   @resolved(AudioMixer)
   mixer!: AudioMixer;
 
-  #source!: MediaElementAudioSourceNode;
-
-  audioUrl = new Bindable<string | null>(null);
+  @provide()
+  songPlayback = new HomeScreenSongPlayback();
 
   protected loadComplete() {
     super.loadComplete();
 
+    this.addInternal(this.songPlayback);
+
     this.selectedBeatmap.bindValueChanged((beatmap) => {
-      this.audioUrl.value = beatmap.value?.audioUrl ?? null;
+      this.songPlayback.audioUrl.value = beatmap.value?.audioUrl ?? null;
     }, true);
-
-    this.audioUrl.bindValueChanged((url) => {
-      if (url.value) {
-        this.audioEl.src = url.value;
-      }
-      else {
-        this.audioEl.src = '';
-      }
-    }, true);
-
-    this.audioEl.autoplay = true;
-
-    const source = this.#source = this.audioManager.context.createMediaElementSource(this.audioEl);
-    source.connect(this.mixer.music.input);
-  }
-
-  override dispose(isDisposing: boolean = true) {
-    super.dispose(isDisposing);
-
-    this.#source?.disconnect();
   }
 
   createBackground(): BackgroundScreen | null {
@@ -142,7 +124,7 @@ export class HomeScreen extends OsucadScreen {
           id: id.toString(),
           artist,
           title,
-          audioUrl: `/preview/${mapset.id}.mp3`,
+          audioUrl: `/preview/audio/${mapset.id}?set=1&full=1`,
           authorName: creator,
           difficultyName: version,
           backgroundPath: async () => null,
@@ -180,15 +162,11 @@ export class HomeScreen extends OsucadScreen {
   onSuspending(e: ScreenTransitionEvent) {
     super.onSuspending(e);
 
-    this.audioEl.pause();
-
     this.applyToBackground(it => (it as HomeScreenBackground).enableLetterbox());
   }
 
   onResuming(e: ScreenTransitionEvent) {
     super.onResuming(e);
-
-    this.audioEl.play();
 
     this.applyToBackground(it => (it as HomeScreenBackground).disableLetterbox());
   }
