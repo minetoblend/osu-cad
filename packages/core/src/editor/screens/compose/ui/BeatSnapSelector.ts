@@ -1,9 +1,9 @@
-import type { DragEvent, DragStartEvent, DrawableOptions, HoverEvent, HoverLostEvent, ReadonlyDependencyContainer, SpriteText } from '@osucad/framework';
+import type { DrawableOptions, ReadonlyDependencyContainer, SpriteText } from '@osucad/framework';
 import type { BindableBeatDivisor } from '../../../BindableBeatDivisor';
-import { Anchor, Axes, clamp, CompositeDrawable, Container, EasingFunction, FillDirection, FillFlowContainer, MouseButton, resolved, RoundedBox, Vec2 } from '@osucad/framework';
+import { Anchor, Axes, CompositeDrawable, Container, FillDirection, FillFlowContainer, resolved, Vec2 } from '@osucad/framework';
 import { OsucadSpriteText } from '../../../../drawables/OsucadSpriteText';
 import { OsucadColors } from '../../../../OsucadColors';
-import { UISamples } from '../../../../UISamples';
+import { SliderBar } from '../../../../overlays/preferencesV2/SliderBar';
 import { EditorClock } from '../../../EditorClock';
 
 export class BeatSnapSelector extends CompositeDrawable {
@@ -64,110 +64,19 @@ export class BeatSnapSelector extends CompositeDrawable {
   }
 }
 
-class BeatSnapSlider extends CompositeDrawable {
+class BeatSnapSlider extends SliderBar {
   constructor(options: DrawableOptions = {}) {
     super();
-
-    this.with(options);
-
-    this.internalChildren = [
-      new RoundedBox({
-        relativeSizeAxes: Axes.X,
-        height: 2,
-        color: OsucadColors.text,
-        alpha: 0.5,
-        cornerRadius: 2,
-        anchor: Anchor.CenterLeft,
-        origin: Anchor.CenterLeft,
-      }),
-      this.#activeTrack = new RoundedBox({
-        relativeSizeAxes: Axes.X,
-        height: 2,
-        color: 'white',
-        width: 0,
-        cornerRadius: 2,
-        anchor: Anchor.CenterLeft,
-        origin: Anchor.CenterLeft,
-      }),
-      this.#thumb = new RoundedBox({
-        size: new Vec2(12, 8),
-        color: 'white',
-        cornerRadius: 5,
-        anchor: Anchor.CenterLeft,
-        origin: Anchor.Center,
-        relativePositionAxes: Axes.X,
-      }),
-    ];
   }
 
-  #activeTrack!: RoundedBox;
-
-  #thumb!: RoundedBox;
-
   beatSnapDivisor!: BindableBeatDivisor;
+
+  @resolved(EditorClock)
+  editorClock!: EditorClock;
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
-    this.beatSnapDivisor = this.editorClock.beatSnapDivisor.getBoundCopy();
-  }
-
-  protected override loadComplete() {
-    super.loadComplete();
-
-    this.beatSnapDivisor.bindValueChanged(() => this.#updateThumbAndTrack(), true);
-  }
-
-  override onHover(e: HoverEvent): boolean {
-    this.#thumb.scaleTo(1.2, 200, EasingFunction.OutExpo);
-
-    return true;
-  }
-
-  override onHoverLost(e: HoverLostEvent) {
-    this.#thumb.scaleTo(1, 200, EasingFunction.OutExpo);
-  }
-
-  override onDragStart(e: DragStartEvent): boolean {
-    return e.button === MouseButton.Left;
-  }
-
-  @resolved(() => EditorClock)
-  editorClock!: EditorClock;
-
-  @resolved(() => UISamples)
-  samples!: UISamples;
-
-  #lastDrag = 0;
-  #lastDragX = 0;
-
-  #dragSampleDelay = 50;
-
-  override onDrag(e: DragEvent): boolean {
-    const relative = e.mousePosition.x / this.drawSize.x;
-
-    this.editorClock.beatSnapDivisor.value = clamp(Math.floor(relative * 16) + 1, 1, 16);
-
-    if (
-      this.time.current - this.#lastDrag > this.#dragSampleDelay
-      && Math.abs(this.#lastDragX - e.mousePosition.x) > 3
-    ) {
-      const pitch = 0.75 + relative * 0.35;
-
-      this.samples.sliderDrag.play({
-        rate: pitch,
-      });
-      this.#lastDrag = this.time.current;
-      this.#lastDragX = e.mousePosition.x;
-    }
-
-    return true;
-  }
-
-  #updateThumbAndTrack() {
-    const x = (this.editorClock.beatSnapDivisor.value - 1) / 15;
-
-    this.#thumb.moveToX(x, 200, EasingFunction.OutExpo);
-    this.#activeTrack.resizeWidthTo(x, 200, EasingFunction.OutExpo);
+    this.beatSnapDivisor = this.currentNumber = this.editorClock.beatSnapDivisor.getBoundCopy();
   }
 }
