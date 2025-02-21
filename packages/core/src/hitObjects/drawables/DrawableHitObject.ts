@@ -184,7 +184,7 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
 
       drawableNested.onNewResult.addListener(this.#onNewResult, this);
       // drawableNested.onRevertResult.addListener(this.onNestedRevertResult);
-      // drawableNested.applyCustomUpdateState.addListener(this.#onApplyCustomUpdateState, this);
+      drawableNested.applyCustomUpdateState.addListener(this.#onApplyCustomUpdateState, this);
 
       drawableNested.parentHitObject = this;
 

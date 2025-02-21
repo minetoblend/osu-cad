@@ -10,6 +10,7 @@ export class OsuSkinComponentLookup extends GameplaySkinComponentLookup<OsuSkinC
   static SliderFollowCircle = new OsuSkinComponentLookup(OsuSkinComponents.SliderFollowCircle);
   static ReverseArrow = new OsuSkinComponentLookup(OsuSkinComponents.ReverseArrow);
   static SliderBall = new OsuSkinComponentLookup(OsuSkinComponents.SliderBall);
+  static SliderBody = new OsuSkinComponentLookup(OsuSkinComponents.SliderBody);
   static FollowPoint = new OsuSkinComponentLookup(OsuSkinComponents.FollowPoint);
   static SpinnerBody = new OsuSkinComponentLookup(OsuSkinComponents.SpinnerBody);
   static Cursor = new OsuSkinComponentLookup(OsuSkinComponents.Cursor);

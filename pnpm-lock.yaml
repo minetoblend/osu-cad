@@ -46,10 +46,10 @@ importers:
         version: 1.0.37
       pixi-filters:
         specifier: ^6.0.4
-        version: 6.0.5(pixi.js@8.7.2)
+        version: 6.0.5(pixi.js@8.8.0)
       pixi.js:
-        specifier: ^8.7.2
-        version: 8.7.2
+        specifier: ^8.8.0
+        version: 8.8.0
       reflect-metadata:
         specifier: ^0.1.13
         version: 0.1.14
@@ -311,13 +311,13 @@ importers:
     dependencies:
       '@pixi/devtools':
         specifier: ^2.0.1
-        version: 2.0.1(pixi.js@8.7.2)
+        version: 2.0.1(pixi.js@8.8.0)
       pixi-filters:
         specifier: ^6.0.4
-        version: 6.0.5(pixi.js@8.7.2)
+        version: 6.0.5(pixi.js@8.8.0)
       pixi.js:
-        specifier: ^8.7.2
-        version: 8.7.2
+        specifier: ^8.8.0
+        version: 8.8.0
 
   packages/multiplayer:
     dependencies:
@@ -7699,8 +7699,8 @@ packages:
     peerDependencies:
       pixi.js: '>=8.0.0-0'
 
-  pixi.js@8.7.2:
-    resolution: {integrity: sha512-56bFa4uUAbK7MFhwaMb2oCU1GkeXLoKO4FJlwW78pdMBj1+L1FDquGmQxMDGp4uhg8gXa91KxCxHwjQBPGfgVw==}
+  pixi.js@8.8.0:
+    resolution: {integrity: sha512-0xW8tKa+uF28mi1SwvnNscMpYJSQrqLN7jJs6Ore37FZoXmIRzQNrGA6drpHDVTuEmoqJlSiGLCk5cUgz3ODgQ==}
 
   pkg-dir@4.2.0:
     resolution: {integrity: sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ==}
@@ -12352,9 +12352,9 @@ snapshots:
 
   '@pixi/colord@2.9.6': {}
 
-  '@pixi/devtools@2.0.1(pixi.js@8.7.2)':
+  '@pixi/devtools@2.0.1(pixi.js@8.8.0)':
     dependencies:
-      pixi.js: 8.7.2
+      pixi.js: 8.8.0
 
   '@pixi/runner@7.4.2': {}
 
@@ -18356,12 +18356,12 @@ snapshots:
     dependencies:
       pngjs: 3.4.0
 
-  pixi-filters@6.0.5(pixi.js@8.7.2):
+  pixi-filters@6.0.5(pixi.js@8.8.0):
     dependencies:
       '@types/gradient-parser': 0.1.5
-      pixi.js: 8.7.2
+      pixi.js: 8.8.0
 
-  pixi.js@8.7.2:
+  pixi.js@8.8.0:
     dependencies:
       '@pixi/colord': 2.9.6
       '@types/css-font-loading-module': 0.0.12

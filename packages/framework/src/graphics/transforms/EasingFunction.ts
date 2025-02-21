@@ -6,6 +6,7 @@ const elastic_const = (2 * Math.PI) / 0.3;
 const elastic_const2 = 0.3 / 4;
 
 const elastic_offset_full = 2 ** -11;
+const elastic_offset_half = 2 ** -10 * Math.sin((0.5 - elastic_const2) * elastic_const);
 
 const back_const = 1.70158;
 const back_const2 = back_const * 1.525;
@@ -96,6 +97,12 @@ export namespace EasingFunction {
     + elastic_offset_full * (1 - time);
   export const OutElastic: EasingFunction = time =>
     2 ** (-10 * time) * Math.sin((time - elastic_const2) * elastic_const) + 1 - elastic_offset_full * time;
+
+  export const OutElasticHalf: EasingFunction = time =>
+    2 ** (-10 * time) * Math.sin((0.5 * time - elastic_const2) * elastic_const) + 1 - elastic_offset_half * time;
+
+  // case Easing.OutElasticHalf:
+  //   return Math.Pow(2, -10 * time) * Math.Sin((.5 * time - elastic_const2) * elastic_const) + 1 - elastic_offset_half * time;
 
   export const InBack: EasingFunction = time => time * time * ((back_const + 1) * time - back_const);
   export const OutBack: EasingFunction = time => --time * time * ((back_const + 1) * time + back_const) + 1;

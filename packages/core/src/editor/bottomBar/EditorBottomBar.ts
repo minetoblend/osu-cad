@@ -33,6 +33,7 @@ export class EditorBottomBar extends CompositeDrawable {
           new Box({
             relativeSizeAxes: Axes.Both,
             color: OsucadColors.translucent,
+            alpha: 0.5,
           }),
           new Container({
             relativeSizeAxes: Axes.Both,

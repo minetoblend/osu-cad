@@ -1,75 +1,50 @@
-import type { Slider } from '../../hitObjects/Slider';
-import { DrawableHitObject, ISkinSource } from '@osucad/core';
-import { Anchor, CompositeDrawable, DrawableSprite, EasingFunction, type ReadonlyDependencyContainer, resolved } from '@osucad/framework';
-import { SliderRepeat } from '../../hitObjects/SliderRepeat';
-import { SliderTick } from '../../hitObjects/SliderTick';
+import type { Drawable } from '@osucad/framework';
+import { ISkinSource } from '@osucad/core';
+import { Anchor, Axes, EasingFunction, resolved } from '@osucad/framework';
+import { FollowCircle } from '../FollowCircle';
 
-export class StableFollowCircle extends CompositeDrawable {
+export class StableFollowCircle extends FollowCircle {
+  constructor(animationContent: Drawable) {
+    super();
+
+    animationContent.scale = animationContent.scale.scale(0.5);
+    animationContent.anchor = Anchor.Center;
+    animationContent.origin = Anchor.Center;
+
+    this.relativeSizeAxes = Axes.Both;
+    this.internalChild = animationContent;
+  }
+
   @resolved(ISkinSource)
   skin!: ISkinSource;
 
-  @resolved(DrawableHitObject)
-  drawableHitObject!: DrawableHitObject;
+  protected override onSliderPress() {
+    const remainingTime = Math.max(0, this.parentObject!.hitStateUpdateTime - this.time.current);
 
-  protected override load(dependencies: ReadonlyDependencyContainer) {
-    super.load(dependencies);
-
-    this.addAllInternal(
-      new DrawableSprite({
-        texture: this.skin.getTexture('sliderfollowcircle'),
-        anchor: Anchor.Center,
-        origin: Anchor.Center,
-        scale: 0.5,
-      }),
-    );
+    // Note that the scale adjust here is 2 instead of DrawableSliderBall.FOLLOW_AREA to match legacy behaviour.
+    // This means the actual tracking area for gameplay purposes is larger than the sprite (but skins may be accounting for this).
+    this.scaleTo(1)
+      .scaleTo(2, Math.min(180, remainingTime), EasingFunction.Out)
+      .fadeTo(0)
+      .fadeTo(1, Math.min(60, remainingTime));
   }
 
-  protected override loadComplete() {
-    super.loadComplete();
-
-    this.drawableHitObject.applyCustomUpdateState.addListener(this.#applyCustomState, this);
-    this.#applyCustomState(this.drawableHitObject);
+  protected override onSliderRelease() {
+    this.onSliderEnd();
   }
 
-  #applyCustomState(parentObject: DrawableHitObject) {
-    const hitObject = parentObject!.hitObject as Slider;
-
-    const remainingTime = Math.max(hitObject.endTime - hitObject.startTime, 0);
-
-    this.applyTransformsAt(-Number.MAX_VALUE);
-    this.clearTransformsAfter(-Number.MAX_VALUE);
-
-    if (hitObject.path.controlPoints.length === 0 || hitObject.expectedDistance <= 0) {
-      this.fadeOut();
-      return;
-    }
-
-    this.absoluteSequence(hitObject.startTime, () => {
-      this
-        .scaleTo(1)
-        .scaleTo(2, Math.min(180, remainingTime), EasingFunction.Out);
-
-      this.fadeInFromZero(Math.min(60, remainingTime));
-    });
-
-    for (const nested of hitObject.nestedHitObjects) {
-      if (nested instanceof SliderTick || nested instanceof SliderRepeat) {
-        this.absoluteSequence(nested.startTime, () => this.scaleTo(2.2).scaleTo(2, 200));
-      }
-    }
-
-    this.absoluteSequence(hitObject.endTime, () => {
-      this.scaleTo(1.6, 200, EasingFunction.Out).fadeOut(200, EasingFunction.In);
-    });
+  protected override onSliderEnd() {
+    this.scaleTo(1.6, 200, EasingFunction.Out)
+      .fadeOut(200, EasingFunction.In);
   }
 
-  override update() {
-    super.update();
+  protected override onSliderTick() {
+    if (this.scale.x >= 2)
+      this.scaleTo(2.2).scaleTo(2, 200);
   }
 
-  override dispose(isDisposing: boolean = true) {
-    this.drawableHitObject.applyCustomUpdateState.removeListener(this.#applyCustomState, this);
-
-    super.dispose(isDisposing);
+  protected override onSliderBreak() {
+    this.scaleTo(4, 100)
+      .fadeTo(0, 100);
   }
 }

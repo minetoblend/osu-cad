@@ -1,0 +1,110 @@
+import type { ReadonlyDependencyContainer, Vec2 } from '@osucad/framework';
+import type { PIXIContainer } from '../../pixi';
+import { Cached, Drawable, Line } from '@osucad/framework';
+
+import { AlphaFilter, Mesh, RenderTarget } from 'pixi.js';
+import { PathGeometry } from './PathGeometry';
+import { PathGeometryBuilder } from './PathGeometryBuilder';
+import { PathShader } from './PathShader';
+
+RenderTarget.defaultOptions.depth = true;
+RenderTarget.defaultOptions.stencil = true;
+
+export class Path extends Drawable {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
+    this.#mesh.state.depthTest = true;
+  }
+
+  #vertices: readonly Vec2[] = [];
+
+  get vertices() {
+    return this.#vertices;
+  }
+
+  set vertices(value) {
+    this.#vertices = value;
+    this.#segmentsCache.invalidate();
+  }
+
+  readonly #segmentsBacking: Line[] = [];
+  readonly #segmentsCache = new Cached();
+
+  get #segments() {
+    return this.#segmentsCache.isValid ? this.#segmentsBacking : this.#generateSegments();
+  }
+
+  #generateSegments(): Line[] {
+    this.#segmentsBacking.length = Math.max(0, this.vertices.length - 1);
+
+    if (this.#vertices.length > 1) {
+      for (let i = 0; i < this.#vertices.length - 1; ++i)
+        this.#segmentsBacking[i] = new Line(this.#vertices[i], this.#vertices[i + 1]);
+    }
+
+    const { positions, texCoords, indices } = new PathGeometryBuilder(
+      this.pathRadius,
+      this.#segmentsBacking,
+    ).build();
+
+    this.#geometry.positions = new Float32Array(positions);
+    this.#geometry.texCoords = new Float32Array(texCoords);
+    this.#geometry.indices = new Uint32Array(indices);
+
+    this.#segmentsCache.validate();
+    return this.#segmentsBacking;
+  }
+
+  get texture() {
+    return this.#pathShader.texture;
+  }
+
+  set texture(value) {
+    if (this.texture === value)
+      return;
+
+    this.#pathShader.texture = value;
+  }
+
+  #pathRadius = 10;
+
+  get pathRadius() {
+    return this.#pathRadius;
+  }
+
+  set pathRadius(value) {
+    if (this.#pathRadius === value)
+      return;
+    this.#pathRadius = value;
+
+    this.#segmentsCache.invalidate();
+  }
+
+  readonly #geometry = new PathGeometry();
+
+  readonly #pathShader = new PathShader();
+
+  readonly #alphaFilter = new AlphaFilter();
+
+  readonly #mesh = new Mesh({
+    geometry: this.#geometry,
+    shader: this.#pathShader,
+    blendMode: 'none',
+    filters: this.#alphaFilter,
+  });
+
+  protected override createDrawNode(): PIXIContainer {
+    return this.#mesh;
+  }
+
+  override updateSubTreeTransforms(): boolean {
+    if (!super.updateSubTreeTransforms())
+      return false;
+
+    if (!this.#segmentsCache.isValid)
+      this.#generateSegments();
+
+    return true;
+  }
+}

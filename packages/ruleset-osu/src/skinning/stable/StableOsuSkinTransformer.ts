@@ -8,6 +8,7 @@ import { StableFollowCircle } from './StableFollowCircle';
 import { StableReverseArrow } from './StableReverseArrow';
 import { StableSkinTransformer } from './StableSkinTransformer';
 import { StableSliderBall } from './StableSliderBall';
+import { StableSliderBody } from './StableSliderBody';
 import { StableSpinnerBody } from './StableSpinnerBody';
 
 export class StableOsuSkinTransformer extends StableSkinTransformer {
@@ -44,8 +45,17 @@ export class StableOsuSkinTransformer extends StableSkinTransformer {
         case OsuSkinComponents.SliderScorePoint:
           return this.source.getSprite('sliderscorepoint');
 
-        case OsuSkinComponents.SliderFollowCircle:
-          return new StableFollowCircle();
+        case OsuSkinComponents.SliderFollowCircle: {
+          const followCircleContent = this.source.getAnimation('sliderfollowcircle', {
+            animatable: true,
+            looping: true,
+            applyConfigFrameRate: true,
+          });
+
+          if (followCircleContent)
+            return new StableFollowCircle(followCircleContent);
+          break;
+        }
 
         case OsuSkinComponents.ReverseArrow:
           return new StableReverseArrow();
@@ -58,6 +68,9 @@ export class StableOsuSkinTransformer extends StableSkinTransformer {
               animationSeparator: '',
             }),
           );
+
+        case OsuSkinComponents.SliderBody:
+          return new StableSliderBody();
 
         case OsuSkinComponents.SpinnerBody:
           return new StableSpinnerBody();

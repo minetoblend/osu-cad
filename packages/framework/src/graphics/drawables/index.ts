@@ -9,3 +9,8 @@ export { GraphicsDrawable } from './GraphicsDrawable';
 export { LayoutComputed } from './LayoutComputed';
 export { LayoutMember } from './LayoutMember';
 export { MarginPadding, type MarginPaddingOptions } from './MarginPadding';
+export * from './Path';
+export * from './PathGeometry';
+export * from './PathGeometryBuilder';
+export * from './PathShader';
+export * from './SmoothPath';

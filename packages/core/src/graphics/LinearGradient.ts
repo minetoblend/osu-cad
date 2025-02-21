@@ -49,7 +49,7 @@ export class LinearGradient {
 
   // TODO move to the system!
   public buildLinearGradient(): void {
-    const defaultSize = FillGradient.defaultTextureSize;
+    const defaultSize = FillGradient.defaultLinearOptions.textureSize!;
 
     const { gradientStops } = this;
 
@@ -63,8 +63,8 @@ export class LinearGradient {
     const gradient = ctx.createLinearGradient(
       0,
       0,
-      FillGradient.defaultTextureSize * this.x1,
-      FillGradient.defaultTextureSize * this.y1,
+      FillGradient.defaultLinearOptions.textureSize! * this.x1,
+      FillGradient.defaultLinearOptions.textureSize! * this.y1,
     );
 
     for (let i = 0; i < gradientStops.length; i++) {

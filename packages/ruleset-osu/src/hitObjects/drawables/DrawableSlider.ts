@@ -1,14 +1,16 @@
 import type { ArmedState, DrawableHitObject } from '@osucad/core';
 import type { Slider } from '../Slider';
-import { HitResult, OsucadConfigManager, OsucadSettings } from '@osucad/core';
+import { ConfineMode, HitResult, OsucadConfigManager, OsucadSettings, SkinnableDrawable } from '@osucad/core';
 import { Anchor, Axes, Bindable, BindableBoolean, clamp, Container, type ReadonlyDependencyContainer, resolved, Vec2 } from '@osucad/framework';
+import { DefaultSliderBody } from '../../skinning/default/DefaultSliderBody';
+import { OsuSkinComponentLookup } from '../../skinning/stable/OsuSkinComponentLookup';
 import { DrawableOsuHitObject } from './DrawableOsuHitObject';
 import { DrawableSliderBall } from './DrawableSliderBall';
-import { DrawableSliderBody } from './DrawableSliderBody';
 import { DrawableSliderHead } from './DrawableSliderHead';
 import { DrawableSliderRepeat } from './DrawableSliderRepeat';
 import { DrawableSliderTail } from './DrawableSliderTail';
 import { DrawableSliderTick } from './DrawableSliderTick';
+import { PlaySliderBody } from './PlaySliderBody';
 import { SliderInputManager } from './SliderInputManager';
 
 export class DrawableSlider extends DrawableOsuHitObject<Slider> {
@@ -27,7 +29,13 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider> {
 
   readonly sliderInputManager: SliderInputManager;
 
-  body!: DrawableSliderBody;
+  body!: SkinnableDrawable;
+
+  get sliderBody(): PlaySliderBody | null {
+    if (this.body.drawable instanceof PlaySliderBody)
+      return this.body.drawable;
+    return null;
+  }
 
   readonly ball: DrawableSliderBall;
 
@@ -52,9 +60,7 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider> {
 
     this.addAllInternal(
       this.sliderInputManager,
-      this.body = new DrawableSliderBody().with({
-        alpha: 0,
-      }),
+      this.body = new SkinnableDrawable(OsuSkinComponentLookup.SliderBody, () => new DefaultSliderBody(), ConfineMode.NoScaling),
       this.#tailContainer = new Container({ relativeSizeAxes: Axes.Both }),
       this.#tickContainer = new Container({ relativeSizeAxes: Axes.Both }),
       this.#repeatContainer = new Container({ relativeSizeAxes: Axes.Both }),
@@ -65,21 +71,14 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider> {
     this.positionBindable.addOnChangeListener(() => this.position = this.hitObject!.stackedPosition);
     this.stackHeightBindable.addOnChangeListener(() => this.position = this.hitObject!.stackedPosition);
     this.scaleBindable.addOnChangeListener(scale => this.ball.scale = scale.value);
-
-    this.snakingInSliders.bindValueChanged(enabled => this.body.snakeInEnabled = enabled.value, true);
-    this.snakingOutSliders.bindValueChanged(enabled => this.body.snakeOutEnabled = enabled.value, true);
   }
 
   protected override onApplied() {
     super.onApplied();
-
-    this.body.hitObject = this.hitObject!;
   }
 
   protected override onFreed() {
     super.onFreed();
-
-    this.body.hitObject = undefined;
   }
 
   protected override updateInitialTransforms() {
@@ -140,7 +139,10 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider> {
   override update() {
     super.update();
 
-    this.tracking.value = this.sliderInputManager.tracking;
+    this.tracking.value
+      = this.alwaysHit
+        ? this.time.current > this.hitObject!.startTime && this.time.current < this.hitObject!.endTime
+        : this.sliderInputManager.tracking;
   }
 
   override updateAfterChildren() {
@@ -149,6 +151,7 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider> {
     const completionProgress = clamp((this.time.current - this.hitObject!.startTime) / this.hitObject!.duration, 0, 1);
 
     this.ball.updateProgress(completionProgress);
+    this.sliderBody?.updateProgress(this.headCircle.isHit || this.alwaysHit ? completionProgress : 0);
 
     const start = new Vec2();
     const end = this.hitObject!.path.endPosition;
@@ -156,6 +159,12 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider> {
     for (const h of this.#repeatContainer.children as DrawableSliderRepeat[]) {
       h.updatePosition(start, end);
     }
+  }
+
+  override onKilled() {
+    super.onKilled();
+
+    this.sliderBody?.recyclePath();
   }
 
   protected override checkForResult(userTriggered: boolean, timeOffset: number) {

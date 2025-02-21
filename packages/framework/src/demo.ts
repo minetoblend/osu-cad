@@ -1,6 +1,8 @@
-import type { MouseDownEvent } from '.';
-import { Axes, Box, Container, CursorContainer, Game, WebGameHost } from '.';
+import type { ColorSource } from 'pixi.js';
+import type { ReadonlyDependencyContainer } from './di/DependencyContainer';
 
+import { Game, Vec2, WebGameHost } from '.';
+import { SmoothPath } from './graphics/drawables/SmoothPath';
 import './style.css';
 
 const host = new WebGameHost('demo');
@@ -8,62 +10,31 @@ const host = new WebGameHost('demo');
 class DemoGame extends Game {
   constructor() {
     super();
+  }
 
-    this.scale = 2;
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
+    const vertices = [
+      new Vec2(100, 100),
+      new Vec2(400, 200),
+      new Vec2(500, 200),
+    ];
 
     this.add(
-      Container.create({
-        autoSizeAxes: Axes.Both,
-        scale: 2,
-        children: [
-          new Box().with({
-            relativeSizeAxes: Axes.Both,
-            tint: 0xFF0000,
-          }),
-          Container.create({
-            autoSizeAxes: Axes.Both,
-            padding: 25,
-            children: [
-              new MyBox().with({
-                width: 100,
-                height: 100,
-              }),
-            ],
-          }),
-        ],
+      new DemoPath().adjust((p) => {
+        p.vertices = vertices;
+        p.pathRadius = 20;
+
+        addEventListener('pointerdown', () => p.pathRadius = 100);
       }),
-    );
-
-    this.add(
-      new CursorContainer(),
     );
   }
 }
 
-class MyBox extends Box {
-  override onHover() {
-    this.width = 120;
-    return true;
-  }
-
-  override onHoverLost() {
-    this.width = 100;
-    return true;
-  }
-
-  override onMouseDown(e: MouseDownEvent): boolean {
-    console.log('onMouseDown', this.label);
-    return true;
-  }
-
-  override onMouseUp(e: MouseDownEvent): boolean {
-    console.log('onMouseUp', this.label);
-    return true;
-  }
-
-  override onClick(e: MouseDownEvent): boolean {
-    console.log('onClick', this.label);
-    return true;
+class DemoPath extends SmoothPath {
+  override colorAt(position: number): ColorSource {
+    return position < 0.5 ? 0xFF0000 : 0xFFFFFF;
   }
 }
 

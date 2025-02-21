@@ -4,6 +4,7 @@ export * from './config';
 export * from './controlPoints';
 export * from './drawables';
 export * from './editor';
+export * from './filters';
 export * from './gameplay';
 export * from './graphics';
 export * from './hitObjects';

@@ -5,7 +5,7 @@ import { Anchor, Axes, Cached, EmptyDrawable, FillMode, Vec2 } from '@osucad/fra
 
 import { SkinReloadableDrawable } from './SkinReloadableDrawable';
 
-enum ConfineMode {
+export enum ConfineMode {
   NoScaling,
   ScaleToFit,
 }

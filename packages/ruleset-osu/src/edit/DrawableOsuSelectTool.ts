@@ -184,6 +184,9 @@ export class DrawableOsuSelectTool extends DrawableComposeTool implements IKeyBi
     const selection = [...this.selection.selectedObjects]
       .filter(it => !(it instanceof Spinner)) as OsuHitObject[];
 
+    if (selection.length === 0)
+      return;
+
     const operator = this.composer.activeOperator;
 
     if (operator instanceof RotateOperator) {
