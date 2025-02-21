@@ -1,4 +1,6 @@
+import type { KeyDownEvent } from '@osucad/framework';
 import { OsucadColors, OsucadSpriteText, OsucadTextBox } from '@osucad/core';
+import { Key } from '@osucad/framework';
 import { Color } from 'pixi.js';
 
 export class HomeScreenTextBox extends OsucadTextBox {
@@ -45,6 +47,18 @@ export class HomeScreenTextBox extends OsucadTextBox {
   }
 
   get requestsFocus(): boolean {
+    return true;
+  }
+
+  override onKeyDown(e: KeyDownEvent): boolean {
+    if (!super.onKeyDown(e))
+      return false;
+
+    if ((e.key === Key.Enter || e.key === Key.NumpadEnter) && !e.repeat) {
+      // SearchHero will block the enter key for us if the text has changed
+      return false;
+    }
+
     return true;
   }
 }

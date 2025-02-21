@@ -1,8 +1,8 @@
 import type { WorkingBeatmapSet } from '@osucad/core';
-import type { ReadonlyDependencyContainer } from '@osucad/framework';
+import type { KeyDownEvent, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { BeatmapSetResponse } from '../../mirrors/BeatmapSetResponse';
 import { OsucadButton } from '@osucad/core';
-import { Action, Anchor, Axes, Container, DrawSizePreservingFillContainer, EasingFunction, FillDirection, FillFlowContainer, Vec2 } from '@osucad/framework';
+import { Action, Anchor, Axes, Container, DrawSizePreservingFillContainer, EasingFunction, FillDirection, FillFlowContainer, Key, Vec2 } from '@osucad/framework';
 import { CatboyMirror } from '../../mirrors/CatboyMirror';
 import { HomeScreenIntroSequence } from './HomeScreenIntroSequence';
 import { HomeScreenTextBox } from './HomeScreenTextBox';
@@ -46,7 +46,12 @@ export class SearchHero extends FillFlowContainer {
             autoSizeAxes: Axes.Y,
             padding: { right: 100 },
             child: this.#searchBox = new HomeScreenTextBox().adjust(it =>
-              it.onCommit.addListener(() => this.search(it.text)),
+              it.onCommit.addListener((evt) => {
+                if (evt.isNew) {
+                  this.search(it.text);
+                  this.#blockNextEnterKey = true;
+                }
+              }),
             ),
             anchor: Anchor.CenterLeft,
             origin: Anchor.CenterLeft,
@@ -153,7 +158,23 @@ export class SearchHero extends FillFlowContainer {
     }
   }
 
+  #blockNextEnterKey = false;
+
   searchResults = new Action<BeatmapSetResponse[]>();
 
   openBeatmap = new Action<{ beatmapSet: WorkingBeatmapSet; id: number }>();
+
+  onKeyDown(e: KeyDownEvent): boolean {
+    switch (e.key) {
+      case Key.NumpadEnter:
+      case Key.Enter:
+        if (this.#blockNextEnterKey) {
+          this.#blockNextEnterKey = false;
+          return true;
+        }
+        break;
+    }
+
+    return false;
+  }
 }
