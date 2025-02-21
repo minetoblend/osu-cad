@@ -62,7 +62,6 @@ export class DrawableSliderTail extends DrawableOsuHitObject<SliderTailCircle> {
     this.circlePiece.fadeOut()
       .delay((this.slider!.timePreempt ?? 0) / 3)
       .fadeIn(this.slider!.timeFadeIn);
-    // console.log(this.circlePiece.transforms);
   }
 
   protected override updateHitStateTransforms(state: ArmedState) {

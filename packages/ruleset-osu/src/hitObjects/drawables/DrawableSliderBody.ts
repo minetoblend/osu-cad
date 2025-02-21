@@ -13,8 +13,10 @@ import { SliderShader } from './SliderShader';
 let endCapGeometry: MeshGeometry | null = null;
 
 // little workaround for a pixi bug
-(CustomRenderPipe.prototype as any).updateRenderable = () => {};
-(CustomRenderPipe.prototype as any).destroyRenderable = () => {};
+(CustomRenderPipe.prototype as any).updateRenderable = () => {
+};
+(CustomRenderPipe.prototype as any).destroyRenderable = () => {
+};
 
 export class DrawableSliderBody extends Drawable {
   constructor() {
@@ -147,12 +149,35 @@ export class DrawableSliderBody extends Drawable {
       1,
     );
 
+    const snakeOutStartTime = this.hitObject.startTime + (this.hitObject.repeatCount * this.hitObject.spanDuration);
+
+    let snakeOutProgress = animate(
+      this.time.current,
+      snakeOutStartTime,
+      snakeOutStartTime + this.hitObject.spanDuration,
+      0,
+      1,
+    );
+
     if (!this.snakeInEnabled)
       snakeInProgress = 1.0;
 
-    this.shader.snakeInProgress = snakeInProgress;
+    if (!this.snakeOutEnabled)
+      snakeOutProgress = 0;
 
-    const startPos = Vec2.zero();
+    const snakeOutIsSnakeIn = this.hitObject.repeatCount % 2 === 1;
+
+    if (this.time.current >= snakeOutStartTime && snakeOutIsSnakeIn) {
+      snakeInProgress = 1 - snakeOutProgress;
+      snakeOutProgress = 0;
+    }
+
+    this.shader.snakeInProgress = snakeInProgress;
+    this.shader.snakeOutProgress = snakeOutProgress;
+
+    const startPos = this.hitObject.path.getPositionAt(
+      snakeOutProgress,
+    );
 
     const endPos = this.hitObject.path.getPositionAt(
       snakeInProgress,

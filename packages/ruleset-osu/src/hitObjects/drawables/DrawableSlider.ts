@@ -47,6 +47,8 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider> {
     super.load(dependencies);
 
     this.config.bindWith(OsucadSettings.HitAnimations, this.hitAnimationsEnabled);
+    this.config.bindWith(OsucadSettings.SnakingInSliders, this.snakingInSliders);
+    this.config.bindWith(OsucadSettings.SnakingOutSliders, this.snakingOutSliders);
 
     this.addAllInternal(
       this.sliderInputManager,
@@ -63,6 +65,9 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider> {
     this.positionBindable.addOnChangeListener(() => this.position = this.hitObject!.stackedPosition);
     this.stackHeightBindable.addOnChangeListener(() => this.position = this.hitObject!.stackedPosition);
     this.scaleBindable.addOnChangeListener(scale => this.ball.scale = scale.value);
+
+    this.snakingInSliders.bindValueChanged(enabled => this.body.snakeInEnabled = enabled.value, true);
+    this.snakingOutSliders.bindValueChanged(enabled => this.body.snakeOutEnabled = enabled.value, true);
   }
 
   protected override onApplied() {
@@ -88,7 +93,9 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider> {
     this.ball.scaleTo(this.hitObject!.scale);
   }
 
-  hitAnimationsEnabled = new Bindable(false);
+  readonly hitAnimationsEnabled = new Bindable(false);
+  readonly snakingInSliders = new Bindable(false);
+  readonly snakingOutSliders = new Bindable(false);
 
   protected override updateHitStateTransforms(state: ArmedState) {
     super.updateHitStateTransforms(state);

@@ -16,6 +16,8 @@ export class OsucadConfigManager extends ConfigManager<OsucadSettings<any>> {
 
     this.setDefault(OsucadSettings.HitAnimations, false);
     this.setDefault(OsucadSettings.FollowPoints, true);
+    this.setDefault(OsucadSettings.SnakingInSliders, true);
+    this.setDefault(OsucadSettings.SnakingOutSliders, true);
     this.setDefault(OsucadSettings.SampleSetExpanded, false);
     this.setDefault(OsucadSettings.AnimatedSeek, true);
     this.setDefault(OsucadSettings.CompactTimeline, false);

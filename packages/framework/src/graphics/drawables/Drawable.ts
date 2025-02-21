@@ -128,7 +128,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   // #region drawNode
 
-  abstract createDrawNode(): PIXIContainer;
+  protected abstract createDrawNode(): PIXIContainer;
 
   #drawNode?: PIXIContainer;
 

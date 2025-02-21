@@ -1,11 +1,23 @@
-import type { HitSound } from '@osucad/core';
+import type { ArmedState, HitSound } from '@osucad/core';
+import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import type { DrawableSlider } from './DrawableSlider';
+import { OsucadConfigManager, OsucadSettings } from '@osucad/core';
+import { BindableBoolean } from '@osucad/framework';
 import { OsuSkinComponentLookup } from '../../skinning/stable/OsuSkinComponentLookup';
 import { DrawableHitCircle } from './DrawableHitCircle';
 
 export class DrawableSliderHead extends DrawableHitCircle {
   constructor() {
     super();
+  }
+
+  snakeOutSliders = new BindableBoolean();
+
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
+    const config = dependencies.resolve(OsucadConfigManager);
+    config.bindWith(OsucadSettings.SnakingOutSliders, this.snakeOutSliders);
   }
 
   override get circlePieceComponent() {
@@ -25,5 +37,12 @@ export class DrawableSliderHead extends DrawableHitCircle {
   protected override checkForResult(userTriggered: boolean, timeOffset: number) {
     super.checkForResult(userTriggered, timeOffset);
     this.drawableSlider.sliderInputManager.postProcessHeadJudgement(this);
+  }
+
+  protected override updateHitStateTransforms(state: ArmedState) {
+    super.updateHitStateTransforms(state);
+
+    if (this.snakeOutSliders.value)
+      this.absoluteSequence(this.hitObject!.startTime, () => this.fadeOutFromOne());
   }
 }

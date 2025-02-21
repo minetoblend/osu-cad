@@ -22,6 +22,8 @@ export class OsucadSettings<T> implements ConfigKey<T> {
   static readonly Antialiasing = new OsucadSettings<boolean>('Antialiasing');
 
   static readonly HitAnimations = new OsucadSettings<boolean>('HitAnimations');
+  static readonly SnakingInSliders = new OsucadSettings<boolean>('SnakingInSliders');
+  static readonly SnakingOutSliders = new OsucadSettings<boolean>('SnakingOutSliders');
   static readonly FollowPoints = new OsucadSettings<boolean>('FollowPoints');
   static readonly SampleSetExpanded = new OsucadSettings<boolean>('SampleSetExpanded');
   static readonly AnimatedSeek = new OsucadSettings<boolean>('AnimatedSeek');
