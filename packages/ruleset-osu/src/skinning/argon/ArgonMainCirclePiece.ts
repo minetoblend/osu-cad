@@ -67,7 +67,7 @@ export class ArgonMainCirclePiece extends CompositeDrawable {
         origin: Anchor.Center,
       }),
       this.number = new OsucadSpriteText({
-        fontSize: 52,
+        fontSize: 44,
         y: -1,
         anchor: Anchor.Center,
         origin: Anchor.Center,
