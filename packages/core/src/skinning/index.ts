@@ -1,3 +1,4 @@
+export * from './argon';
 export * from './BeatmapSkin';
 export * from './BeatmapSkinProvidingContainer';
 export * from './default';

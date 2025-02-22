@@ -1,5 +1,6 @@
 import type { ISkinComponentLookup, StableSkin } from '@osucad/core';
 import type { Drawable } from '@osucad/framework';
+import { Lazy } from '@osucad/framework';
 import { OsuSkinComponentLookup } from './OsuSkinComponentLookup';
 import { OsuSkinComponents } from './OsuSkinComponents';
 import { StableApproachCircle } from './StableApproachCircle';
@@ -16,6 +17,8 @@ export class StableOsuSkinTransformer extends StableSkinTransformer {
     super(source);
   }
 
+  readonly hasHitcircle = new Lazy(() => this.getTexture('hitcircle') !== null);
+
   override getDrawableComponent(lookup: ISkinComponentLookup): Drawable | null {
     const component = super.getDrawableComponent(lookup);
     if (component)
@@ -31,16 +34,28 @@ export class StableOsuSkinTransformer extends StableSkinTransformer {
           });
 
         case OsuSkinComponents.HitCircle:
-          return new StableCirclePiece();
+          if (this.hasHitcircle.value)
+            return new StableCirclePiece();
+
+          return null;
 
         case OsuSkinComponents.ApproachCircle:
-          return new StableApproachCircle();
+          if (this.getTexture('approachcircle') !== null)
+            return new StableApproachCircle();
+
+          return null;
 
         case OsuSkinComponents.SliderHeadHitCircle:
-          return new StableCirclePiece('sliderstartcircle');
+          if (this.hasHitcircle.value)
+            return new StableCirclePiece('sliderstartcircle');
+
+          return null;
 
         case OsuSkinComponents.SliderTailHitCircle:
-          return new StableCirclePiece('sliderendcircle', false);
+          if (this.hasHitcircle.value)
+            return new StableCirclePiece('sliderendcircle', false);
+
+          return null;
 
         case OsuSkinComponents.SliderScorePoint:
           return this.source.getSprite('sliderscorepoint');
@@ -54,23 +69,34 @@ export class StableOsuSkinTransformer extends StableSkinTransformer {
 
           if (followCircleContent)
             return new StableFollowCircle(followCircleContent);
-          break;
+
+          return null;
         }
 
         case OsuSkinComponents.ReverseArrow:
-          return new StableReverseArrow();
+          if (this.hasHitcircle.value)
+            return new StableReverseArrow();
+
+          return null;
 
         case OsuSkinComponents.SliderBall:
-          return new StableSliderBall(
-            this.source.getAnimation('sliderb', {
-              animatable: true,
-              looping: true,
-              animationSeparator: '',
-            }),
-          );
+          if (this.hasHitcircle.value) {
+            return new StableSliderBall(
+              this.source.getAnimation('sliderb', {
+                animatable: true,
+                looping: true,
+                animationSeparator: '',
+              }),
+            );
+          }
+
+          return null;
 
         case OsuSkinComponents.SliderBody:
-          return new StableSliderBody();
+          if (this.hasHitcircle.value)
+            return new StableSliderBody();
+
+          return null;
 
         case OsuSkinComponents.SpinnerBody:
           return new StableSpinnerBody();

@@ -64,8 +64,6 @@ export class ArgonFollowCircle extends FollowCircle {
 
     this.scaleTo(1, duration, EasingFunction.OutQuint)
       .fadeOut(duration / 2, EasingFunction.OutQuint);
-
-    console.log('sliderEnd');
   }
 
   protected override onSliderTick(): void {
