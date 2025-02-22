@@ -1,7 +1,9 @@
-import type { ArmedState, DrawableHitObject } from '@osucad/core';
+import type { ArmedState, DrawableHitObject, HitObjectSelectionEvent } from '@osucad/core';
+import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import type { Slider } from '../Slider';
-import { ConfineMode, HitResult, OsucadConfigManager, OsucadSettings, SkinnableDrawable } from '@osucad/core';
-import { Anchor, Axes, Bindable, BindableBoolean, clamp, Container, type ReadonlyDependencyContainer, resolved, Vec2 } from '@osucad/framework';
+import { ConfineMode, HitObjectSelectionManager, HitResult, OsucadConfigManager, OsucadSettings, SkinnableDrawable } from '@osucad/core';
+import { Anchor, Axes, Bindable, BindableBoolean, clamp, Container, resolved, Vec2 } from '@osucad/framework';
+import { OsuSelectionManager } from '../../edit/OsuSelectionManager';
 import { DefaultSliderBody } from '../../skinning/default/DefaultSliderBody';
 import { OsuSkinComponentLookup } from '../../skinning/stable/OsuSkinComponentLookup';
 import { DrawableOsuHitObject } from './DrawableOsuHitObject';
@@ -10,7 +12,7 @@ import { DrawableSliderHead } from './DrawableSliderHead';
 import { DrawableSliderRepeat } from './DrawableSliderRepeat';
 import { DrawableSliderTail } from './DrawableSliderTail';
 import { DrawableSliderTick } from './DrawableSliderTick';
-import { PlaySliderBody } from './PlaySliderBody';
+import { PlaySliderBody, SelectionType } from './PlaySliderBody';
 import { SliderInputManager } from './SliderInputManager';
 
 export class DrawableSlider extends DrawableOsuHitObject<Slider> {
@@ -71,14 +73,31 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider> {
     this.positionBindable.addOnChangeListener(() => this.position = this.hitObject!.stackedPosition);
     this.stackHeightBindable.addOnChangeListener(() => this.position = this.hitObject!.stackedPosition);
     this.scaleBindable.addOnChangeListener(scale => this.ball.scale = scale.value);
+
+    const selection = dependencies.resolveOptional(HitObjectSelectionManager);
+    if (selection instanceof OsuSelectionManager)
+      this.selection = selection;
+  }
+
+  protected selection?: OsuSelectionManager;
+
+  protected override loadComplete() {
+    super.loadComplete();
+
+    this.selection?.selectionChanged?.addListener(this.#selectionChanged, this);
   }
 
   protected override onApplied() {
     super.onApplied();
+
+    this.pathVersion.value = Number.MAX_VALUE;
+    this.pathVersion.bindTo(this.hitObject!.path.version);
   }
 
   protected override onFreed() {
     super.onFreed();
+
+    this.pathVersion.unbindFrom(this.hitObject!.path.version);
   }
 
   protected override updateInitialTransforms() {
@@ -161,6 +180,8 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider> {
     }
   }
 
+  readonly pathVersion = new Bindable(0);
+
   override onKilled() {
     super.onKilled();
 
@@ -190,5 +211,23 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider> {
   }
 
   protected override playSamples() {
+  }
+
+  #selectionChanged(event: HitObjectSelectionEvent) {
+    if (event.hitObject !== this.hitObject || !this.hitObject)
+      return;
+
+    if (this.sliderBody) {
+      if (event.selected)
+        this.sliderBody.selected.value = this.selection!.getSelectionType(this.hitObject!) === 'body' ? SelectionType.Body : SelectionType.HitObject;
+      else
+        this.sliderBody.selected.value = SelectionType.None;
+    }
+  }
+
+  override dispose(isDisposing: boolean = true) {
+    super.dispose(isDisposing);
+
+    this.selection?.selectionChanged.removeListener(this.#selectionChanged, this);
   }
 }

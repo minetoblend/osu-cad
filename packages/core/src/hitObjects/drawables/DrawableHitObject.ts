@@ -260,6 +260,7 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
 
     for (const h of this.nestedHitObjects) {
       h.onNewResult.removeListener(this.#onNewResult, this);
+      h.applyCustomUpdateState.removeListener(this.#onApplyCustomUpdateState, this);
     }
 
     this.#nestedHitObjects.length = 0;

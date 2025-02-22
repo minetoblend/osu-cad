@@ -1,5 +1,5 @@
 import type { PathPoint } from './PathPoint';
-import { Action, CachedValue, List, Vec2 } from '@osucad/framework';
+import { Action, Bindable, CachedValue, List, Vec2 } from '@osucad/framework';
 import { SharedObject } from '@osucad/multiplayer';
 import { arraySerializer } from '../utils/arraySerializer';
 import { PathApproximator } from '../utils/PathApproximator';
@@ -14,6 +14,8 @@ export class SliderPath extends SharedObject {
 
     this.changed.addListener(this.invalidate, this);
   }
+
+  readonly version = new Bindable(0);
 
   readonly invalidated = new Action();
 
@@ -55,6 +57,7 @@ export class SliderPath extends SharedObject {
       this.#calculatedPath.invalidate();
       this.#calculatedRange.invalidate();
     }
+    this.version.value++;
     this.invalidated.emit();
   }
 

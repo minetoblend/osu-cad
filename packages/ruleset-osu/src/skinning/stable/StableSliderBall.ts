@@ -74,16 +74,16 @@ export class StableSliderBall extends CompositeDrawable {
     super.loadComplete();
 
     this.drawableHitObject.applyCustomUpdateState.addListener(this.#updateStateTransforms, this);
-    this.#updateStateTransforms();
+    this.#updateStateTransforms(this.drawableHitObject);
 
     this.accentColor.bindTo(this.drawableHitObject.accentColor);
     this.#updateColors();
   }
 
-  #updateStateTransforms() {
+  #updateStateTransforms(drawableObject: DrawableHitObject) {
     this.clearTransformsAfter(-Number.MAX_VALUE);
 
-    const slider = this.drawableHitObject.hitObject!;
+    const slider = drawableObject.hitObject!;
 
     this.absoluteSequence(slider.startTime, () => this.fadeIn());
     this.absoluteSequence(slider.endTime, () => this.fadeOut());
