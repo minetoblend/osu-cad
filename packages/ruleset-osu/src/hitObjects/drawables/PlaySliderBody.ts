@@ -1,7 +1,7 @@
 import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import type { DrawableSlider } from '@osucad/ruleset-osu';
 import type { Color } from 'pixi.js';
-import { DrawableHitObject, HitObjectSelectionManager, ISkinSource, OsucadConfigManager, OsucadSettings, SkinConfig } from '@osucad/core';
+import { DrawableHitObject, ISkinSource, OsucadConfigManager, OsucadSettings, SkinConfig } from '@osucad/core';
 import { Bindable } from '@osucad/framework';
 import { OsuHitObject } from '@osucad/ruleset-osu';
 import { SnakingSliderBody } from './SnakingSliderBody';
@@ -38,8 +38,6 @@ export class PlaySliderBody extends SnakingSliderBody {
 
     config.bindWith(OsucadSettings.SnakingOutSliders, this.snakingOut);
     config.bindWith(OsucadSettings.SnakingInSliders, this.snakingIn);
-
-    const selection = dependencies.resolveOptional(HitObjectSelectionManager);
   }
 
   protected getBodyAccentColor(skin: ISkinSource, hitObjectAccentColour: Color) {
@@ -52,5 +50,6 @@ export class PlaySliderBody extends SnakingSliderBody {
     this.selected.bindValueChanged(selected => this.selectionChanged(selected.value), true);
   }
 
-  protected selectionChanged(selection: SelectionType) {}
+  protected selectionChanged(selection: SelectionType) {
+  }
 }

@@ -92,11 +92,17 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider> {
 
     this.pathVersion.value = Number.MAX_VALUE;
     this.pathVersion.bindTo(this.hitObject!.path.version);
+
+    if (this.sliderBody && this.selection?.isSelected(this.hitObject!)) {
+      this.sliderBody.selected.value = this.selection!.getSelectionType(this.hitObject!) === 'body' ? SelectionType.Body : SelectionType.HitObject;
+    }
   }
 
   protected override onFreed() {
     super.onFreed();
 
+    if (this.sliderBody)
+      this.sliderBody.selected.value = SelectionType.None;
     this.pathVersion.unbindFrom(this.hitObject!.path.version);
   }
 

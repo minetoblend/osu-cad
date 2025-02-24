@@ -4,7 +4,7 @@ import { ColorUtils, EasingFunction } from '@osucad/framework';
 import { Color } from 'pixi.js';
 
 import { DrawableSliderPath } from '../../hitObjects/drawables/DrawableSliderPath';
-import { PlaySliderBody } from '../../hitObjects/drawables/PlaySliderBody';
+import { PlaySliderBody, SelectionType } from '../../hitObjects/drawables/PlaySliderBody';
 
 export class StableSliderBody extends PlaySliderBody {
   constructor() {
@@ -17,6 +17,22 @@ export class StableSliderBody extends PlaySliderBody {
 
   protected override getBodyAccentColor(skin: ISkinSource, hitObjectAccentColour: Color): Color {
     return new Color(super.getBodyAccentColor(skin, hitObjectAccentColour)).setAlpha(0.7);
+  }
+
+  protected override selectionChanged(selection: SelectionType) {
+    super.selectionChanged(selection);
+
+    switch (selection) {
+      case SelectionType.None:
+        this.borderColor = new Color(0xFFFFFF);
+        break;
+      case SelectionType.Body:
+        this.borderColor = new Color(0xFF0000);
+        break;
+      case SelectionType.HitObject:
+        this.borderColor = new Color(0x307CFF);
+        break;
+    }
   }
 }
 
