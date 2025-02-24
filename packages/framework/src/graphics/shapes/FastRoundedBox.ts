@@ -58,7 +58,8 @@ export class FastRoundedBox extends Drawable {
   #sprite: NineSliceSprite | null = null;
 
   #updateTexture() {
-    const radius = clamp(Math.round(this.#cornerRadius), 0, 99);
+    let radius = clamp(Math.round(this.#cornerRadius), 0, 99);
+    radius = Math.min(radius, Math.ceil(Math.min(this.drawSize.x / 2, this.drawSize.y)));
 
     if (!FastRoundedBox.textures[radius]) {
       const size = 2 * radius + 10;
