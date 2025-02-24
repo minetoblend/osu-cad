@@ -113,10 +113,13 @@ export class FastRoundedBox extends Drawable {
       this.#textureBacking.validate();
     }
 
-    if (this.#sprite) {
-      this.#sprite.width = this.drawSize.x;
-      this.#sprite.height = this.drawSize.y;
-    }
+    const sprite = this.#sprite! as any; // need to access some private properties to make things a tiny bit faster
+
+    const drawSize = this.drawSize;
+
+    sprite._width = drawSize.x;
+    sprite._height = drawSize.y;
+    sprite.onViewUpdate();
   }
 
   override get devToolProps(): Properties[] {
