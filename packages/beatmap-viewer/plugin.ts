@@ -4,10 +4,6 @@ import * as acorn from 'acorn';
 import { walk } from 'estree-walker';
 import MagicString from 'magic-string';
 
-function toHex(buffer: Uint8Array) {
-  return Array.prototype.map.call(buffer, x => (`00${x.toString(16)}`).slice(-2)).join('');
-}
-
 export function privatePropertyOptimizer(keepNames = false): Plugin {
   const mangledNames = new Set<string>();
 
