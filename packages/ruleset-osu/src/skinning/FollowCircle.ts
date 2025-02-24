@@ -20,7 +20,7 @@ export abstract class FollowCircle extends CompositeDrawable {
     super.load(dependencies);
 
     (this.parentObject as DrawableSlider)?.tracking.bindValueChanged((tracking) => {
-      if (this.parentObject!.judged)
+      if (this.parentObject!.judged && !this.parentObject?.alwaysHit)
         return;
 
       this.absoluteSequence({
