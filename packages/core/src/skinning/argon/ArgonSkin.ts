@@ -22,9 +22,7 @@ export class ArgonSkin extends Skin {
       this.textures.addSpritesheet(await ArgonSkinResources.getSpriteSheet());
 
     await Promise.all(
-      Object.keys(ArgonSkinResources.samples).map((key) => {
-        this.samples?.loadSample(key);
-      }),
+      Object.keys(ArgonSkinResources.samples).map(key => this.samples?.loadSample(key)),
     );
   }
 
