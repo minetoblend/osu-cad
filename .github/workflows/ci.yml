@@ -15,7 +15,7 @@ jobs:
           node-version: '20'
           cache: 'pnpm'
       - run: pnpm install
-      - run: pnpm exec nx run-many --verbose -t lint
+      - run: pnpm exec nx run-many -t lint
   build:
     runs-on: ubuntu-latest
     steps:
