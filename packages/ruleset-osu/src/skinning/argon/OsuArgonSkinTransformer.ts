@@ -6,6 +6,7 @@ import { OsuSkinComponentLookup, OsuSkinComponents } from '@osucad/ruleset-osu';
 import { DefaultApproachCircle } from '../default/DefaultApproachCircle';
 import { ArgonFollowCircle } from './ArgonFollowCircle';
 import { ArgonMainCirclePiece } from './ArgonMainCirclePiece';
+import { ArgonReverseArrow } from './ArgonReverseArrow';
 import { ArgonSliderBall } from './ArgonSliderBall';
 import { ArgonSliderBody } from './ArgonSliderBody';
 
@@ -37,6 +38,9 @@ export class OsuArgonSkinTransformer extends SkinTransformer {
 
         case OsuSkinComponents.SliderFollowCircle:
           return new ArgonFollowCircle();
+
+        case OsuSkinComponents.ReverseArrow:
+          return new ArgonReverseArrow();
       }
     }
 
