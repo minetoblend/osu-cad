@@ -1,10 +1,12 @@
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import { defineConfig } from 'vite';
+import { privatePropertyOptimizer } from './plugin';
 
 export default defineConfig({
   plugins: [
     // @ts-expect-error this works
     nxViteTsPaths(),
+    privatePropertyOptimizer(),
   ],
   esbuild: {
     target: 'chrome113',
@@ -18,6 +20,7 @@ export default defineConfig({
     emptyOutDir: true,
     reportCompressedSize: true,
     target: 'esnext',
+    minify: false,
   },
   server: {
     proxy: {

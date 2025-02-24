@@ -53,7 +53,6 @@ import { TransformSequence, type TransformSequenceProxy } from '../transforms/Tr
 import { Anchor } from './Anchor';
 import { Axes } from './Axes';
 import { FillMode } from './FillMode';
-import { InvalidationState } from './InvalidationState';
 import { LayoutComputed } from './LayoutComputed';
 import { LayoutMember } from './LayoutMember';
 import { MarginPadding, type MarginPaddingOptions } from './MarginPadding';
@@ -101,6 +100,10 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     this.#transformBacking.validateParent = false;
 
     this.label = this.constructor.name;
+
+    const injections = getInjections(this);
+    for (const { key } of injections)
+      Reflect.set(this, key, null);
   }
 
   with(options: DrawableOptions): this {
@@ -198,6 +201,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     this.#y = value.y;
 
     this.invalidate(Invalidation.Transform);
+    this.updateDrawNodeTransform();
   }
 
   #width = 0;
@@ -292,12 +296,10 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
     this.#scale.x = value;
 
-    if (this.isPresent !== wasPresent) {
+    if (this.isPresent !== wasPresent)
       this.invalidate(Invalidation.Transform | Invalidation.Presence);
-    }
-    else {
+    else
       this.invalidate(Invalidation.Transform);
-    }
   }
 
   get scaleY() {
@@ -337,7 +339,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     debugAssert(Number.isFinite(value), 'rotation must be finite');
 
     this.#rotation = value;
-    this.invalidate(Invalidation.Transform);
+    this.drawNode.rotation = value;
   }
 
   // endregion
@@ -352,7 +354,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
       return;
 
     this.#skew = Vec2.from(value);
-    this.invalidate(Invalidation.Transform);
+    this.drawNode._skew.copyFrom(value);
   }
 
   #skew: Vec2 = Vec2.zero();
@@ -417,7 +419,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   }
 
   get isPresent() {
-    return this.#alpha > 0.0001 || this.#alwaysPresent;
+    return this.#alwaysPresent || this.#alpha > 0.0001;
   }
 
   #alwaysPresent = false;
@@ -950,7 +952,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   #customClock?: IFrameBasedClock;
 
-  processCustomClock = true;
+  processCustomClock = false;
 
   protected load(dependencies: ReadonlyDependencyContainer) {
   }
@@ -1193,19 +1195,17 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   }
 
   updateSubTree(): boolean {
-    if (this.isDisposed) {
-      throw new Error('Cannot update disposed drawable');
-    }
+    // if (this.isDisposed)
+    //   throw new Error('Cannot update disposed drawable');
 
     if (this.processCustomClock)
-      this.#customClock?.processFrame();
+      this.#customClock!.processFrame();
 
     if (this.loadState < LoadState.Ready)
       return false;
 
-    if (this.loadState === LoadState.Ready) {
+    if (this.loadState === LoadState.Ready)
       this.#loadComplete();
-    }
 
     this.updateTransforms();
 
@@ -1215,7 +1215,6 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     if (this.#scheduler !== null) {
       const amountScheduledTasks = this.#scheduler.update();
       FrameStatistics.add(StatisticsCounterType.ScheduleInvk, amountScheduledTasks);
-      this.#scheduler.update();
     }
 
     this.update();
@@ -1239,45 +1238,41 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   update() {
   }
 
-  #transformBacking = new LayoutMember(
-    Invalidation.Transform | Invalidation.DrawSize | Invalidation.Presence,
-  );
+  readonly #transformBacking = new LayoutMember(Invalidation.Transform | Invalidation.DrawSize | Invalidation.Presence);
 
   updateDrawNodeTransform() {
-    const drawPosition = this.drawPosition;
-    const anchorPosition = this.anchorPosition;
+    const {
+      drawNode,
+      drawPosition,
+      anchorPosition,
+      drawScale,
+      originPosition,
+    } = this;
 
     let x = drawPosition.x + anchorPosition.x;
     let y = drawPosition.y + anchorPosition.y;
 
     if (this.#parent) {
-      x += this.#parent.padding.left;
-      y += this.#parent.padding.top;
+      const padding = this.#parent.padding;
+
+      x += padding.left;
+      y += padding.top;
     }
 
-    this.drawNode.position.set(x, y);
-    this.drawNode.pivot.copyFrom(this.originPosition);
-    this.drawNode.scale.copyFrom(this.drawScale);
-    this.drawNode.skew.copyFrom(this.skew);
-    this.drawNode.rotation = this.rotation;
+    drawNode._position._x = x;
+    drawNode._position._y = y;
+    drawNode.pivot._x = originPosition.x;
+    drawNode.pivot._y = originPosition.y;
+    drawNode._scale._x = drawScale.x;
+    drawNode._scale._y = drawScale.y;
 
-    // if (!this.drawNode.boundsArea) {
-    //   this.drawNode.boundsArea = new PIXIRectangle(-this.margin.left, -this.margin.top, this.drawSize.x, this.drawSize.y);
-    // }
-    // else {
-    //   this.drawNode.boundsArea.x = -this.margin.left;
-    //   this.drawNode.boundsArea.y = -this.margin.top;
-    //   this.drawNode.boundsArea.width = this.drawSize.x;
-    //   this.drawNode.boundsArea.height = this.drawSize.y;
-    // }
+    drawNode._onUpdate();
   }
 
   updateDrawNodeColor() {
     this.drawNode.alpha = this.alpha * this.#color.alpha;
     this.drawNode.tint = this.tint;
   }
-
-  #invalidationState = new InvalidationState(Invalidation.All);
 
   #layoutMembers: LayoutMember[] = [];
 
@@ -1295,16 +1290,18 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
       this.parent?.invalidate(invalidation, InvalidationSource.Child);
     }
 
-    if (!this.#invalidationState.invalidate(invalidation, source)) {
+    if (!this.#invalidate(invalidation, source)) {
       return false;
     }
 
     let anyInvalidated = false;
 
-    for (const layout of this.#layoutMembers) {
-      if (!(source & layout.source)) {
+    const layoutMembers = this.#layoutMembers;
+    for (let i = 0, len = layoutMembers.length; i < len; i++) {
+      const layout = layoutMembers[i];
+
+      if (!(source & layout.source))
         continue;
-      }
 
       if (layout.invalidation & invalidation) {
         if (layout.isValid) {
@@ -1360,7 +1357,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   }
 
   validateSuperTree(invalidation: Invalidation) {
-    if (this.#invalidationState.validate(invalidation) && this.#parent !== null)
+    if (this.#validate(invalidation) && this.#parent !== null)
       this.#parent.validateSuperTree(invalidation);
   }
 
@@ -1767,6 +1764,61 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     state.invalidations = (state.invalidations ?? 0) + this.#invalidationCount;
     this.#invalidationCount = 0;
   }
+
+  // region InvalidationState
+
+  #selfInvalidation = Invalidation.All;
+  #parentInvalidation = Invalidation.All;
+  #childInvalidation = Invalidation.All;
+
+  #invalidate(flags: Invalidation, source: InvalidationSource): boolean {
+    switch (source) {
+      case InvalidationSource.Self:
+        return this.#invalidateSelf(flags);
+      case InvalidationSource.Parent:
+        return this.#invalidateParent(flags);
+      case InvalidationSource.Child:
+        return this.#invalidateChild(flags);
+      default:
+        throw new Error(`Invalid InvalidationSource: ${source}`);
+    }
+  }
+
+  #invalidateSelf(flags: Invalidation): boolean {
+    const combined = this.#selfInvalidation | (flags & Invalidation.Layout);
+    const result = (this.#selfInvalidation & flags) !== flags;
+    this.#selfInvalidation = combined;
+    return result;
+  }
+
+  #invalidateParent(flags: Invalidation): boolean {
+    const combined = this.#parentInvalidation | (flags & Invalidation.Layout);
+    const result = (this.#parentInvalidation & flags) !== flags;
+    this.#parentInvalidation = combined;
+    return result;
+  }
+
+  #invalidateChild(flags: Invalidation): boolean {
+    const result = (this.#childInvalidation & flags) !== flags;
+    this.#childInvalidation |= flags & Invalidation.Layout;
+    return result;
+  }
+
+  #validate(flags: Invalidation) {
+    const anyValidated = ((this.#selfInvalidation | this.#parentInvalidation | this.#childInvalidation) & flags) !== flags;
+
+    flags = ~flags;
+
+    this.#selfInvalidation &= flags;
+
+    this.#parentInvalidation &= flags;
+
+    this.#childInvalidation &= flags;
+
+    return anyValidated;
+  }
+
+  // endregion
 }
 
 export function loadDrawable(drawable: Drawable, clock: IFrameBasedClock, dependencies: ReadonlyDependencyContainer) {

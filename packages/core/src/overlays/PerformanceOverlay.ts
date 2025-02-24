@@ -80,6 +80,8 @@ export class PerformanceOverlay extends Container {
 
   #lastFrameTime = 0;
 
+  total = new MovingAverage(100);
+
   updateValues() {
     const now = performance.now();
 
@@ -97,6 +99,8 @@ export class PerformanceOverlay extends Container {
 
     const fps = 1000 / averageFrameTime;
 
+    this.total.add(FrameStatistics.frame.total);
+
     if (now - this.#lastTextUpdate > 100) {
       this.#text.text = [
         `FPS: ${fps.toFixed(1)}`,
@@ -105,7 +109,7 @@ export class PerformanceOverlay extends Container {
         `Input (Mouse): ${FrameStatistics.positionalInputQueue.total.toFixed(1)}ms`,
         `Input (Keyboard): ${FrameStatistics.nonPositionalInputQueue.total.toFixed(1)}ms`,
         `Invalidations: ${FrameStatistics.counters[StatisticsCounterType.Invalidations]}`,
-        `Total: ${FrameStatistics.frame.total.toFixed(1)}ms`,
+        `Total: ${this.total.getAverage().toFixed(1)}ms`,
         `TransformUpdates: ${FrameStatistics.counters[StatisticsCounterType.DrawNodeTransforms]}`,
       ].join('\n');
     }
@@ -204,5 +208,25 @@ class FrameGraph extends GraphicsDrawable {
     });
 
     g.roundRect(0, 0, width, height, 2).stroke(0xFFFFFF);
+  }
+}
+
+class MovingAverage {
+  constructor(readonly windowSize: number) {
+  }
+
+  readonly values: number[] = [];
+
+  add(value: number) {
+    this.values.push(value);
+    if (this.values.length > this.windowSize)
+      this.values.shift();
+  }
+
+  getAverage() {
+    if (this.values.length === 0)
+      return 0;
+
+    return this.values.reduce((a, b) => a + b, 0) / this.values.length;
   }
 }

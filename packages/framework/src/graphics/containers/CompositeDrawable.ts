@@ -291,20 +291,20 @@ export class CompositeDrawable extends Drawable {
   #loadingComponents: WeakSet<Drawable> | null = null;
 
   override onLoad() {
-    for (const child of this.#internalChildren) {
-      this.#loadChild(child);
-    }
+    const children = this.#internalChildren.items;
+    for (let i = 0, len = children.length; i < len; i++)
+      this.#loadChild(children[i]);
   }
 
   protected addAllInternal(...children: Drawable[]): this {
-    for (const child of children) {
-      this.addInternal(child);
-    }
+    for (let i = 0, len = children.length; i < len; i++)
+      this.addInternal(children[i]);
+
     return this;
   }
 
   protected removeInternal(drawable: Drawable, disposeImmediately: boolean = true): boolean {
-    const index = this.#internalChildren.indexOf(drawable);
+    const index = this.#internalChildren.items.indexOf(drawable);
 
     if (index < 0) {
       if (disposeImmediately)
@@ -315,7 +315,7 @@ export class CompositeDrawable extends Drawable {
     this.#internalChildren.removeAt(index);
 
     if (drawable.isAlive) {
-      const aliveIndex = this.#aliveInternalChildren.indexOf(drawable);
+      const aliveIndex = this.#aliveInternalChildren.items.indexOf(drawable);
       debugAssert(aliveIndex >= 0, 'Drawable is alive but not in aliveInternalChildren');
       this.#aliveInternalChildren.removeAt(aliveIndex);
 
@@ -340,7 +340,10 @@ export class CompositeDrawable extends Drawable {
       return;
     }
 
-    for (const internalChild of this.#internalChildren) {
+    const children = this.#internalChildren.items;
+    for (let i = 0, len = children.length; i < len; i++) {
+      const internalChild = children[i];
+
       if (internalChild.isAlive) {
         this.childDied.emit(internalChild);
       }
@@ -394,7 +397,11 @@ export class CompositeDrawable extends Drawable {
 
     this.#relativeChildSize = Vec2.from(value);
 
-    for (const c of this.#internalChildren) c.invalidate(c.invalidationFromParentSize);
+    const children = this.#internalChildren.items;
+    for (let i = 0, len = children.length; i < len; i++) {
+      const child = children[i];
+      child.invalidate(child.invalidationFromParentSize);
+    }
   }
 
   get relativeToAbsoluteFactor() {
@@ -427,7 +434,9 @@ export class CompositeDrawable extends Drawable {
       targetChildren = this.#internalChildren.items;
     }
 
-    for (const c of targetChildren) {
+    for (let i = 0, len = targetChildren.length; i < len; i++) {
+      const c = targetChildren[i];
+
       let childInvalidation = invalidation;
 
       // Other geometry things like rotation, shearing, etc don't affect child properties.
@@ -469,7 +478,11 @@ export class CompositeDrawable extends Drawable {
 
     this.#padding = padding;
 
-    for (const c of this.#internalChildren) c.invalidate(c.invalidationFromParentSize | Invalidation.Transform);
+    const children = this.#internalChildren.items;
+    for (let i = 0, len = children.length; i < len; i++) {
+      const c = children[i];
+      c.invalidate(c.invalidationFromParentSize | Invalidation.Transform);
+    }
   }
 
   get childOffset(): Vec2 {
@@ -539,9 +552,9 @@ export class CompositeDrawable extends Drawable {
 
     this.updateAfterChildrenLife();
 
-    for (const child of this.#aliveInternalChildren.items) {
-      child.updateSubTree();
-    }
+    const children = this.#aliveInternalChildren.items;
+    for (let i = 0, len = children.length; i < len; i++)
+      children[i].updateSubTree();
 
     this.updateAfterChildren();
 
@@ -554,9 +567,10 @@ export class CompositeDrawable extends Drawable {
     if (!super.updateSubTreeTransforms())
       return false;
 
-    for (const child of this.#aliveInternalChildren.items) {
-      child.updateSubTreeTransforms();
-    }
+    const children = this.#aliveInternalChildren.items;
+    for (let i = 0, len = children.length; i < len; i++)
+      children[i].updateSubTreeTransforms();
+
     return true;
   }
 
@@ -614,18 +628,19 @@ export class CompositeDrawable extends Drawable {
   }
 
   checkChildrenLife(): boolean {
-    let anyAliveChanged = false;
+    let anyAliveChanged = 0;
 
-    for (let i = 0; i < this.#internalChildren.length; i++) {
-      const state = this.#checkChildLife(this.#internalChildren.items[i]);
+    const children = this.#internalChildren.items;
+    for (let i = 0; i < children.length; i++) {
+      const state = this.#checkChildLife(children[i]);
 
-      anyAliveChanged ||= !!(state & ChildLifeStateChange.MadeAliveOrDead);
+      anyAliveChanged |= state & ChildLifeStateChange.MadeAliveOrDead;
 
       if (state & ChildLifeStateChange.Removed)
         i--;
     }
 
-    return anyAliveChanged;
+    return !!anyAliveChanged;
   }
 
   #checkChildLife(child: Drawable): ChildLifeStateChange {
@@ -663,9 +678,9 @@ export class CompositeDrawable extends Drawable {
     if (!this.receivePositionalInputAtSubTree(screenSpacePos))
       return false;
 
-    for (const child of this.#aliveInternalChildren.items) {
-      child.buildPositionalInputQueue(screenSpacePos, queue);
-    }
+    const children = this.#aliveInternalChildren.items;
+    for (let i = 0, len = children.length; i < len; i++)
+      children[i].buildPositionalInputQueue(screenSpacePos, queue);
 
     return true;
   }
@@ -677,7 +692,10 @@ export class CompositeDrawable extends Drawable {
     if (!this.receivePositionalInputAtSubTreeLocal(localPos))
       return false;
 
-    for (const child of this.#aliveInternalChildren.items) {
+    const children = this.#aliveInternalChildren.items;
+    for (let i = 0, len = children.length; i < len; i++) {
+      const child = children[i];
+
       child.drawNode.updateLocalTransform();
 
       const local = child.drawNode.localTransform.applyInverse(localPos, this._tempVec2);
@@ -708,7 +726,8 @@ export class CompositeDrawable extends Drawable {
 
     const children = this.aliveInternalChildren;
 
-    for (const child of children) {
+    for (let i = 0, len = children.length; i < len; i++) {
+      const child = children[i];
       if (child.loadState === LoadState.Loaded)
         child.buildNonPositionalInputQueue(queue, allowBlocking);
     }
@@ -825,16 +844,19 @@ export class CompositeDrawable extends Drawable {
     // this.padding = 0;
     // this.margin = 0;
 
-    for (const c of this.#aliveInternalChildren.items) {
-      if (!c.isPresent)
+    const children = this.#aliveInternalChildren.items;
+    for (let i = 0, len = children.length; i < len; i++) {
+      const child = children[i];
+
+      if (!child.isPresent)
         continue;
 
-      const cBound = c.requiredParentSizeToFit;
+      const cBound = child.requiredParentSizeToFit;
 
-      if (!(c.bypassAutoSizeAxes & Axes.X))
+      if (!(child.bypassAutoSizeAxes & Axes.X))
         maxBoundSize.x = Math.max(maxBoundSize.x, cBound.x - this.padding.left);
 
-      if (!(c.bypassAutoSizeAxes & Axes.Y))
+      if (!(child.bypassAutoSizeAxes & Axes.Y))
         maxBoundSize.y = Math.max(maxBoundSize.y, cBound.y - this.padding.top);
     }
 
@@ -946,14 +968,14 @@ export class CompositeDrawable extends Drawable {
 
   override dispose(isDisposing: boolean = true) {
     this.#disposalAbortController?.abort();
-    for (const child of this.#internalChildren.items) {
+    const children = this.#internalChildren.items;
+
+    for (let i = 0, len = children.length; i < len; i++) {
+      const child = children[i];
       child.childId = 0;
       child.parent = null;
       child.dispose(isDisposing);
     }
-
-    this.#internalChildren.clear();
-    this.#aliveInternalChildren.clear();
 
     super.dispose(isDisposing);
   }
@@ -964,9 +986,9 @@ export class CompositeDrawable extends Drawable {
       return;
     }
 
-    for (const child of this.#internalChildren) {
-      child.applyTransformsAt(time, true);
-    }
+    const children = this.#internalChildren.items;
+    for (let i = 0, len = children.length; i < len; i++)
+      children[i].applyTransformsAt(time, true);
   }
 
   override finishTransforms(propagateChildren: boolean = false, targetMember?: string) {
@@ -975,9 +997,9 @@ export class CompositeDrawable extends Drawable {
       return;
     }
 
-    for (const child of this.#internalChildren) {
-      child.finishTransforms(true);
-    }
+    const children = this.#internalChildren.items;
+    for (let i = 0, len = children.length; i < len; i++)
+      children[i].finishTransforms(true);
   }
 
   override clearTransformsAfter(time: number, propagateChildren: boolean = false, targetMember?: string) {
@@ -989,8 +1011,11 @@ export class CompositeDrawable extends Drawable {
       return;
     }
 
-    for (const child of this.#internalChildren)
+    const children = this.#internalChildren.items;
+    for (let i = 0, len = children.length; i < len; i++) {
+      const child = children[i];
       child.clearTransformsAfter(time, true, targetMember);
+    }
   }
 
   override addDelay(duration: number, propagateChildren: boolean = false) {
@@ -1003,7 +1028,9 @@ export class CompositeDrawable extends Drawable {
       return;
     }
 
-    for (const child of this.#internalChildren) {
+    const children = this.#internalChildren.items;
+    for (let i = 0, len = children.length; i < len; i++) {
+      const child = children[i];
       child.addDelay(duration, true);
     }
   }
@@ -1016,8 +1043,9 @@ export class CompositeDrawable extends Drawable {
     const absoluteSequenceActions = new List<AbsoluteSequenceSender>(this.#internalChildren.length + 1);
 
     super.collectAbsoluteSequenceActionsFromSubTree(newTransformStartTime, absoluteSequenceActions);
-    for (const c of this.#internalChildren)
-      c.collectAbsoluteSequenceActionsFromSubTree(newTransformStartTime, absoluteSequenceActions);
+    const children = this.#internalChildren.items;
+    for (let i = 0, len = children.length; i < len; i++)
+      children[i].collectAbsoluteSequenceActionsFromSubTree(newTransformStartTime, absoluteSequenceActions);
 
     return new ValueInvokeOnDisposal(() => {
       for (const a of absoluteSequenceActions) {
@@ -1035,9 +1063,10 @@ export class CompositeDrawable extends Drawable {
       return;
 
     super.removeCompletedTransforms = value;
-    for (const child of this.#internalChildren.items) {
-      child.removeCompletedTransforms = value;
-    }
+
+    const children = this.#internalChildren.items;
+    for (let i = 0, len = children.length; i < len; i++)
+      children[i].removeCompletedTransforms = value;
   }
 
   override collectAbsoluteSequenceActionsFromSubTree(
@@ -1046,14 +1075,18 @@ export class CompositeDrawable extends Drawable {
   ) {
     super.collectAbsoluteSequenceActionsFromSubTree(newTransformStartTime, actions);
 
-    for (const child of this.#internalChildren)
-      child.collectAbsoluteSequenceActionsFromSubTree(newTransformStartTime, actions);
+    const children = this.#internalChildren.items;
+    for (let i = 0, len = children.length; i < len; i++)
+      children[i].collectAbsoluteSequenceActionsFromSubTree(newTransformStartTime, actions);
   }
 
   findChildrenOfType<T extends Drawable>(type: abstract new (...args: any[]) => T): T[] {
     const result: T[] = [];
 
-    for (const child of this.#internalChildren.items) {
+    const children = this.#internalChildren.items;
+    for (let i = 0, len = children.length; i < len; i++) {
+      const child = children[i];
+
       if (child instanceof type)
         result.push(child);
 

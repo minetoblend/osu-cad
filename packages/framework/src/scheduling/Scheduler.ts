@@ -37,9 +37,9 @@ export class Scheduler {
     if (this.#clock === null) {
       // This is the first time we will get a valid time, so assume this is the
       // reference point everything scheduled so far starts from.
-      for (const s of this.#timedTasks) {
-        s.executionTime += newClock.currentTime;
-      }
+      const tasks = this.#timedTasks;
+      for (let i = 0, len = tasks.length; i < len; i++)
+        tasks[i].executionTime += newClock.currentTime;
     }
 
     this.#clock = newClock;
@@ -76,7 +76,10 @@ export class Scheduler {
     if (this.#timedTasks.length !== 0) {
       const currentTimeLocal = this.#currentTime;
 
-      for (const sd of this.#timedTasks) {
+      const tasks = this.#timedTasks;
+
+      for (let i = 0, len = tasks.length; i < len; i++) {
+        const sd = tasks[i];
         if (sd.executionTime <= currentTimeLocal) {
           this.#tasksToRemove.push(sd);
 
@@ -102,16 +105,16 @@ export class Scheduler {
         }
       }
 
-      for (const t of this.#tasksToRemove) {
+      const removeTasks = this.#tasksToRemove;
+      for (let i = 0, len = removeTasks.length; i < len; i++) {
+        const t = removeTasks[i];
         const index = this.#timedTasks.indexOf(t);
         this.#timedTasks.splice(index, 1);
       }
 
       this.#tasksToRemove.length = 0;
 
-      for (const t of this.#tasksToSchedule) {
-        this.#timedTasks.push(t);
-      }
+      this.#timedTasks.push(...this.#tasksToSchedule);
 
       this.#tasksToSchedule.length = 0;
     }
@@ -119,8 +122,9 @@ export class Scheduler {
 
   #queuePerUpdateTasks() {
     if (this.#perUpdateTasks.length > 0) {
-      for (let i = 0; i < this.#perUpdateTasks.length; i++) {
-        const task = this.#perUpdateTasks[i];
+      const tasks = this.#perUpdateTasks;
+      for (let i = 0; i < tasks.length; i++) {
+        const task = tasks[i];
 
         task.setNextExecution(null);
 
