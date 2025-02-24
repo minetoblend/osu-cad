@@ -1,0 +1,176 @@
+{
+  "frames": {
+    "spinner-glow": {
+      "frame": {
+        "x": 4,
+        "y": 4,
+        "w": 1,
+        "h": 107
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 1,
+        "h": 107
+      },
+      "sourceSize": {
+        "w": 1,
+        "h": 107
+      }
+    },
+    "ring-glow": {
+      "frame": {
+        "x": 9,
+        "y": 4,
+        "w": 328,
+        "h": 328
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 328,
+        "h": 328
+      },
+      "sourceSize": {
+        "w": 328,
+        "h": 328
+      }
+    },
+    "repeat-edge-piece": {
+      "frame": {
+        "x": 4,
+        "y": 336,
+        "w": 129,
+        "h": 200
+      },
+      "rotated": true,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 129,
+        "h": 200
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 200
+      }
+    },
+    "number": {
+      "frame": {
+        "x": 208,
+        "y": 336,
+        "w": 138,
+        "h": 129
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 138,
+        "h": 129
+      },
+      "sourceSize": {
+        "w": 138,
+        "h": 129
+      }
+    },
+    "disc": {
+      "frame": {
+        "x": 4,
+        "y": 469,
+        "w": 236,
+        "h": 236
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 236,
+        "h": 236
+      },
+      "sourceSize": {
+        "w": 236,
+        "h": 236
+      }
+    },
+    "cursor-smoke": {
+      "frame": {
+        "x": 350,
+        "y": 4,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "blinds-panel": {
+      "frame": {
+        "x": 418,
+        "y": 4,
+        "w": 1310,
+        "h": 2048
+      },
+      "rotated": true,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 1310,
+        "h": 2048
+      },
+      "sourceSize": {
+        "w": 1310,
+        "h": 2048
+      }
+    },
+    "approachcircle": {
+      "frame": {
+        "x": 4,
+        "y": 709,
+        "w": 252,
+        "h": 256
+      },
+      "rotated": true,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 252,
+        "h": 256
+      },
+      "sourceSize": {
+        "w": 252,
+        "h": 256
+      }
+    }
+  },
+  "meta": {
+    "app": "http://github.com/pixijs/assetpack",
+    "version": "1.0",
+    "image": "argon.webp",
+    "format": "RGBA8888",
+    "size": {
+      "w": 2470,
+      "h": 1318
+    },
+    "scale": 1,
+    "related_multi_packs": []
+  }
+}
