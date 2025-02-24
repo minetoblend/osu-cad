@@ -1,5 +1,5 @@
 import type { ColorSource } from 'pixi.js';
-import { Color, DOMAdapter, FillGradient, ImageSource, Matrix, Texture } from 'pixi.js';
+import { Color, DOMAdapter, ImageSource, Matrix, Texture } from 'pixi.js';
 
 export type GradientType = 'linear' | 'radial';
 
@@ -49,7 +49,7 @@ export class LinearGradient {
 
   // TODO move to the system!
   public buildLinearGradient(): void {
-    const defaultSize = FillGradient.defaultLinearOptions.textureSize!;
+    const defaultSize = LinearGradient.defaultTextureSize;
 
     const { gradientStops } = this;
 
@@ -63,8 +63,8 @@ export class LinearGradient {
     const gradient = ctx.createLinearGradient(
       0,
       0,
-      FillGradient.defaultLinearOptions.textureSize! * this.x1,
-      FillGradient.defaultLinearOptions.textureSize! * this.y1,
+      defaultSize * this.x1,
+      defaultSize * this.y1,
     );
 
     for (let i = 0; i < gradientStops.length; i++) {
