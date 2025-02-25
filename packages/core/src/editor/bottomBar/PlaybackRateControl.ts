@@ -63,7 +63,5 @@ export class PlaybackRateControl extends CompositeDrawable implements IHasToolti
     return true;
   }
 
-  get tooltipText() {
-    return `Playback rate: ${this.playbackRate.value.toFixed(2)}x`;
-  }
+  readonly tooltipText = 'Playback rate';
 }
