@@ -19,6 +19,7 @@ export class PerformanceOverlay extends Container {
         autoSizeAxes: Axes.Both,
         anchor: Anchor.BottomRight,
         origin: Anchor.BottomRight,
+        y: -50,
         children: [
           this.#frameGraph = new FrameGraph().with({
             anchor: Anchor.TopRight,
