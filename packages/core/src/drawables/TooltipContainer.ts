@@ -10,7 +10,7 @@ export function hasTooltip(object: any): object is { tooltipText: string } {
   return !!object && 'tooltipText' in object && typeof object.tooltipText === 'string' && object.tooltipText.length > 0;
 }
 
-const hover_time = 300;
+const hover_time = 650;
 
 @provide(TooltipContainer)
 export class TooltipContainer extends Container {
