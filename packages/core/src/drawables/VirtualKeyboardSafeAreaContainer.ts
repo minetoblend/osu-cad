@@ -31,7 +31,7 @@ export class VirtualKeyboardSafeAreaContainer extends Container {
 
     let targetOffset = 0;
 
-    if (window.visualViewport.height !== window.innerHeight && this.textInput.isActive) {
+    if (Math.round(window.visualViewport.height) !== Math.round(window.innerHeight) && this.textInput.isActive) {
       const focusedDrawable = this.getContainingFocusManager()?.focusedDrawable;
       if (focusedDrawable) {
         const targetBottom = this.#content.toLocalSpace(focusedDrawable.screenSpaceDrawQuad.AABB.bottomLeft).y;
