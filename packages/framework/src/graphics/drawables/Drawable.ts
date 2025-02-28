@@ -354,7 +354,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
       return;
 
     this.#skew = Vec2.from(value);
-    this.drawNode._skew.copyFrom(value);
+    this.drawNode.skew.copyFrom(value);
   }
 
   #skew: Vec2 = Vec2.zero();
