@@ -29,6 +29,7 @@ export class HitSoundPlayer extends Component {
     this.#offsetClock = new OffsetClock(this.editorClock, -(this.audioOffset.value + this.hitSoundOffset.value));
 
     this.clock = new FramedClock(this.#offsetClock);
+    this.processCustomClock = true;
 
     this.audioOffset.addOnChangeListener(() => this.#offsetClock.offset = -(this.audioOffset.value + this.hitSoundOffset.value));
     this.hitSoundOffset.addOnChangeListener(() => this.#offsetClock.offset = -(this.audioOffset.value + this.hitSoundOffset.value));
