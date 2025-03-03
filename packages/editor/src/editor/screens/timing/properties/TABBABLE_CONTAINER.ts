@@ -1,1 +1,0 @@
-export const TABBABLE_CONTAINER = Symbol('TABABLE_CONTAINER');
