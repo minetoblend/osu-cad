@@ -1,36 +1,51 @@
+import type { AudioChannel, Drawable, PIXITexture, ReadonlyDependencyContainer, Sample } from '@osucad/framework';
 import type { HitSample } from '../hitsounds/HitSample';
 import type { ISkin } from './ISkin';
 import type { ISkinComponentLookup } from './ISkinComponentLookup';
 import type { ISkinSource } from './ISkinSource';
 import type { Skin } from './Skin';
 import type { SkinConfig } from './SkinConfig';
-import { Action, asyncDependencyLoader, type AudioChannel, Bindable, Component, type Drawable, type PIXITexture, resolved, type Sample } from '@osucad/framework';
+import { LazyLoaded } from '@osucad/editor/utils/LazyLoaded';
+import { Action, Bindable, Component, resolved } from '@osucad/framework';
 import { OsucadConfigManager } from '../config/OsucadConfigManager';
+import { OsucadSettings } from '../config/OsucadSettings';
 import { IResourcesProvider } from '../io/IResourcesProvider';
+import { ArgonSkin } from './argon/ArgonSkin';
 import { DefaultSkin } from './default/DefaultSkin';
 
 export class SkinManager extends Component implements ISkinSource {
   @resolved(IResourcesProvider)
   resources!: IResourcesProvider;
 
-  #defaultSkin!: Skin;
+  #defaultClassicSkin!: Skin;
 
-  get defaultSkin(): Skin {
-    return this.#defaultSkin;
+  get defaultClassicSkin(): Skin {
+    return this.#defaultClassicSkin;
   }
 
   readonly currentSkin = new Bindable<Skin>(null!);
 
-  setActiveSkin(skin: Skin | null) {
-    this.currentSkin.value = skin ?? this.defaultSkin;
+  setActiveSkin(skin: Skin) {
+    this.currentSkin.value = skin;
   }
 
   @resolved(OsucadConfigManager)
   protected config!: OsucadConfigManager;
 
-  @asyncDependencyLoader()
-  async [Symbol('load')]() {
-    await this.#loadDefaultSkin();
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
+    this.activeSkinName = this.config.getBindable(OsucadSettings.Skin)!;
+  }
+
+  protected override get hasAsyncLoader(): boolean {
+    return true;
+  }
+
+  protected override async loadAsync(dependencies: ReadonlyDependencyContainer): Promise<void> {
+    await super.loadAsync(dependencies);
+
+    await this.#loadBaseSkins();
   }
 
   protected override loadAsyncComplete() {
@@ -40,20 +55,54 @@ export class SkinManager extends Component implements ISkinSource {
     this.#skinChanged();
   }
 
-  async #loadDefaultSkin() {
-    this.#defaultSkin = await this.loadDefaultSkin();
+  async #loadBaseSkins() {
+    await Promise.all([
+      this.#loadCurrentSkin(),
+      this.#baseSkins.stable.load(),
+    ]);
   }
 
-  protected async loadDefaultSkin(): Promise<Skin> {
-    const skin = new DefaultSkin(this.resources);
-    await skin.load();
-    console.log('loaded default skin');
-    return skin;
+  #baseSkins = {
+    stable: new LazyLoaded(async () => {
+      const skin = new DefaultSkin(this.resources);
+      await skin.load();
+      return skin;
+    }),
+    argon: new LazyLoaded(async () => {
+      const skin = new ArgonSkin(this.resources);
+      await skin.load();
+      return skin;
+    }),
+  };
+
+  #loadId = 0;
+
+  async #loadCurrentSkin() {
+    let skinPromise: Promise<Skin>;
+
+    const id = ++this.#loadId;
+
+    switch (this.activeSkinName.value) {
+      case 'argon':
+        skinPromise = this.#baseSkins.argon.load();
+        break;
+      default:
+        skinPromise = this.#baseSkins.stable.load();
+        break;
+    }
+
+    const skin = await skinPromise;
+    console.log(skin);
+
+    if (id === this.#loadId)
+      this.setActiveSkin(skin);
   }
 
   #activeSources: ISkin[] = [];
 
   sourceChanged = new Action();
+
+  activeSkinName !: Bindable<string>;
 
   findProvider(lookupFunction: (skin: ISkin) => boolean): ISkin | null {
     for (const source of this.#activeSources) {
@@ -99,10 +148,7 @@ export class SkinManager extends Component implements ISkinSource {
   }
 
   #skinChanged() {
-    if (this.currentSkin.value === this.defaultSkin)
-      this.#activeSources = [this.currentSkin.value, this.defaultSkin];
-    else
-      this.#activeSources = [this.defaultSkin];
+    this.#activeSources = [this.currentSkin.value];
 
     this.sourceChanged.emit();
   }
