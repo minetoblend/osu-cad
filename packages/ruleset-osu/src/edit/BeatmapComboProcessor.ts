@@ -31,7 +31,7 @@ export class BeatmapComboProcessor extends BeatmapProcessor {
   }
 
   #calculateCombos() {
-    let comboIndex = 0;
+    let comboIndex = 1;
     let indexInCombo = 0;
 
     let forceNewCombo = false;

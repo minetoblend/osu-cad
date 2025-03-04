@@ -41,7 +41,7 @@ export class RulesetSkinProvidingContainer extends SkinProvidingContainer {
   [Symbol('load')]() {
     this.internalChild = new BeatmapSkinProvidingContainer(
       this.getRulesetTransformedSkin(this.#beatmapSkin)!,
-      this.getRulesetTransformedSkin(this.skinManager.defaultSkin),
+      this.getRulesetTransformedSkin(this.skinManager.defaultClassicSkin),
     ).with({
       child: this.#content,
     });

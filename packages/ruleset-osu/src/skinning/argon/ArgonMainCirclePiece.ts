@@ -1,9 +1,10 @@
 import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import type { DrawableOsuHitObject } from '@osucad/ruleset-osu';
-import { ArmedState, BetterGlowFilter, DrawableHitObject, OsucadSpriteText } from '@osucad/core';
+import { ArmedState, BetterGlowFilter, DrawableHitObject } from '@osucad/core';
 import { Anchor, Bindable, BindableBoolean, ColorUtils, CompositeDrawable, EasingFunction, FastRoundedBox, resolved, Vec2 } from '@osucad/framework';
 import { Color } from 'pixi.js';
 import { OsuHitObject } from '../../hitObjects/OsuHitObject';
+import { DefaultComboNumber } from '../default/DefaultComboNumber';
 import { RingPiece } from '../default/RingPiece';
 
 export class ArgonMainCirclePiece extends CompositeDrawable {
@@ -22,7 +23,7 @@ export class ArgonMainCirclePiece extends CompositeDrawable {
   private readonly innerFill: Circle;
 
   private readonly border: RingPiece;
-  private readonly number: OsucadSpriteText;
+  private readonly number: DefaultComboNumber;
 
   private readonly accentColor = new Bindable<Color>(null!);
   private readonly indexInCurrentCombo = new Bindable<number>(0);
@@ -66,13 +67,7 @@ export class ArgonMainCirclePiece extends CompositeDrawable {
         anchor: Anchor.Center,
         origin: Anchor.Center,
       }),
-      this.number = new OsucadSpriteText({
-        fontSize: 44,
-        y: -1,
-        anchor: Anchor.Center,
-        origin: Anchor.Center,
-        text: '1',
-      }),
+      this.number = new DefaultComboNumber(),
       this.flash = new FlashPiece(),
       this.border = new RingPiece(ArgonMainCirclePiece.BORDER_THICKNESS),
     ];
@@ -89,8 +84,6 @@ export class ArgonMainCirclePiece extends CompositeDrawable {
 
   protected override loadComplete() {
     super.loadComplete();
-
-    this.indexInCurrentCombo.bindValueChanged(index => this.number.text = (index.value + 1).toString(), true);
 
     this.accentColor.bindValueChanged((color) => {
       this.outerGradient.clearTransforms(false, 'color');

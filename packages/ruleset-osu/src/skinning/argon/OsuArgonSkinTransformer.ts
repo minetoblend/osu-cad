@@ -1,6 +1,6 @@
 import type { ISkin, ISkinComponentLookup } from '@osucad/core';
 import type { Drawable } from '@osucad/framework';
-import { SkinTransformer } from '@osucad/core';
+import { SkinConfig, SkinTransformer } from '@osucad/core';
 import { EmptyDrawable } from '@osucad/framework';
 import { OsuSkinComponentLookup, OsuSkinComponents } from '@osucad/ruleset-osu';
 import { DefaultApproachCircle } from '../default/DefaultApproachCircle';
@@ -49,5 +49,14 @@ export class OsuArgonSkinTransformer extends SkinTransformer {
     }
 
     return super.getDrawableComponent(lookup);
+  }
+
+  override getConfig<T>(key: SkinConfig<T>): T | null;
+
+  override getConfig<T>(key: SkinConfig<T>): any {
+    if (key === SkinConfig.HitCircleOverlap)
+      return 16;
+
+    return super.getConfig(key);
   }
 }
