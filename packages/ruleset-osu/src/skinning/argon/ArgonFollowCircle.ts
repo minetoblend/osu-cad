@@ -23,7 +23,7 @@ export class ArgonFollowCircle extends FollowCircle {
       relativeSizeAxes: Axes.Both,
       masking: true,
       borderThickness: 4,
-      // blendMode: 'add',
+      blendMode: 'add',
       child: this.#circleFill = new Box({
         relativeSizeAxes: Axes.Both,
         alpha: 0.3,

@@ -1,5 +1,4 @@
 import type { IVec2 } from '../../math';
-import type { PIXISprite } from '../../pixi';
 import { Texture } from 'pixi.js';
 import { Vec2 } from '../../math';
 import { PIXIContainer } from '../../pixi';
@@ -18,8 +17,6 @@ export class DrawableSprite extends Drawable {
     super();
 
     this.addLayout(this.#inflationAmountBacking);
-
-    this.#sprite = new SpriteDrawNode(this);
 
     this.with(options);
 
@@ -41,7 +38,7 @@ export class DrawableSprite extends Drawable {
     }
   }
 
-  readonly #sprite: PIXISprite;
+  readonly #sprite = new SpriteDrawNode(this);
 
   resizeToTexture = false;
 

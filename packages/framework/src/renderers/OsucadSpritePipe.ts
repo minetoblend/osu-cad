@@ -94,8 +94,6 @@ export class OsucadSpritePipe implements RenderPipe<SpriteDrawNode> {
     inflationAmountX /= drawSize.x * textureRect.width;
     inflationAmountY /= drawSize.y * textureRect.height;
 
-    // textureRect.pad(inflationAmountX, inflationAmountY);
-
     batchableSprite.blendRange.x = inflationAmountX;
     batchableSprite.blendRange.y = inflationAmountY;
   }
@@ -114,17 +112,34 @@ export class OsucadSpritePipe implements RenderPipe<SpriteDrawNode> {
     batchableSprite.bounds = sprite.bounds;
     batchableSprite.roundPixels = (this._renderer._roundPixels | sprite._roundPixels) as 0 | 1;
 
-    const textureRect = sprite._texture.frame;
+    const frame = sprite._texture.frame;
+
+    let inflationAmountX = 0;
+    let inflationAmountY = 0;
+
+    const { drawSize, edgeSmoothness } = sprite.source;
+
+    if (!edgeSmoothness.isZero) {
+      const { a, b, c, d } = sprite.relativeGroupTransform;
+      const scaleX = Math.sqrt((a * a) + (b * b));
+      const scaleY = Math.sqrt((c * c) + (d * d));
+
+      inflationAmountX = edgeSmoothness.x / scaleX;
+      inflationAmountY = edgeSmoothness.y / scaleY;
+    }
 
     batchableSprite.textureRect = new Rectangle(
-      textureRect.x / sprite._texture._source.pixelWidth,
-      textureRect.y / sprite._texture._source.pixelHeight,
-      textureRect.right / sprite._texture._source.pixelWidth,
-      textureRect.bottom / sprite._texture._source.pixelHeight,
+      frame.x / sprite._texture._source.width,
+      frame.y / sprite._texture._source.height,
+      frame.width / sprite._texture._source.width,
+      frame.height / sprite._texture._source.height,
     );
 
-    batchableSprite.blendRange.x = 1 / sprite._texture.width;
-    batchableSprite.blendRange.y = 1 / sprite._texture.height;
+    inflationAmountX /= drawSize.x * batchableSprite.textureRect.width;
+    inflationAmountY /= drawSize.y * batchableSprite.textureRect.height;
+
+    batchableSprite.blendRange.x = inflationAmountX;
+    batchableSprite.blendRange.y = inflationAmountY;
 
     this._gpuSpriteHash[sprite.uid] = batchableSprite;
 

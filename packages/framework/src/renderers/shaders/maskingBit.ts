@@ -9,13 +9,13 @@ export const maskingBitGl: HighShaderBit = {
       in vec4 aTextureRect;
 
       out vec2 vMaskingPosition;
-      out vec4 vTextureRect;
+      out vec4 vTexRect;
       out vec2 vBlendRange;
             `,
     main: `
       vMaskingPosition = (uToMaskingSpace * vec3(aPosition, 1.0)).xy;
       vBlendRange = aBlendRange;
-      vTextureRect = aTextureRect;
+      vTexRect = aTextureRect;
       `,
   },
   fragment: {
@@ -25,9 +25,10 @@ export const maskingBitGl: HighShaderBit = {
       uniform vec4 uMaskingRect;
       uniform lowp float uBorderThickness;
       uniform lowp vec4 uBorderColorAlpha;
+      uniform lowp float uMaskingBlendRange;
 
       in vec2 vMaskingPosition;
-      in vec4 vTextureRect;
+      in vec4 vTexRect;
       in vec2 vBlendRange;
 
       highp float distanceFromRoundedRect(highp vec2 offset, highp float radius) {
@@ -42,11 +43,11 @@ export const maskingBitGl: HighShaderBit = {
 
         highp float maxDist = max(distanceFromShrunkRect.x, distanceFromShrunkRect.y);
 
-        float cornerExponent = 2.0;
-
-        if (maxDist <= 0.0)
+        if (maxDist <= 0.0) {
           return maxDist;
-        else {
+        } else {
+          float cornerExponent = 2.0;
+
           distanceFromShrunkRect = max(vec2(0.0), distanceFromShrunkRect);
           return pow(pow(distanceFromShrunkRect.x, cornerExponent) + pow(distanceFromShrunkRect.y, cornerExponent), 1.0 / cornerExponent);
         }
@@ -66,13 +67,13 @@ export const maskingBitGl: HighShaderBit = {
       }
 
       float distanceFromDrawingRect(vec2 texCoord) {
-        highp vec2 topLeftOffset = vTextureRect.xy - texCoord;
+        highp vec2 topLeftOffset = vTexRect.xy - texCoord;
         topLeftOffset = vec2(
           vBlendRange.x > 0.0 ? topLeftOffset.x / vBlendRange.x : 1.0,
           vBlendRange.y > 0.0 ? topLeftOffset.y / vBlendRange.y : 1.0
         );
 
-        highp vec2 bottomRightOffset = texCoord - vTextureRect.zw;
+        highp vec2 bottomRightOffset = texCoord - vTexRect.zw;
         bottomRightOffset = vec2(
           vBlendRange.x > 0.0 ? bottomRightOffset.x / vBlendRange.x : 1.0,
           vBlendRange.y > 0.0 ? bottomRightOffset.y / vBlendRange.y : 1.0
@@ -84,23 +85,17 @@ export const maskingBitGl: HighShaderBit = {
       }
 
       lowp vec4 getRoundedColor(vec4 texel) {
-        if (uIsMasking == 0)
+        if (uIsMasking == 0 && vBlendRange == vec2(0.0))
           return texel * vColor;
 
         highp float dist = distanceFromRoundedRect(vec2(0.0), uCornerRadius);
         lowp float alphaFactor = 1.0;
 
-        float maskingBlendRange = 1.0;
+        dist /= uMaskingBlendRange;
 
-        // vec2 uvs = (vUV - vTextureRect.xy) / (vTextureRect.zw - vTextureRect.xy);
-        //
-        // return vec4(uvs, 0.0, 1.0);
+        float radiusCorrection = uCornerRadius <= 0.0 ? uMaskingBlendRange : max(0.0, uMaskingBlendRange - uCornerRadius);
 
-        dist /= maskingBlendRange;
-
-        float radiusCorrection = uCornerRadius <= 0.0 ? maskingBlendRange : max(0.0, maskingBlendRange - uCornerRadius);
-
-        float fadeStart = (uCornerRadius + radiusCorrection) / maskingBlendRange;
+        float fadeStart = (uCornerRadius + radiusCorrection) / uMaskingBlendRange;
 
         alphaFactor *= min(fadeStart - dist, 1.0);
 
@@ -110,22 +105,20 @@ export const maskingBitGl: HighShaderBit = {
         if (alphaFactor <= 0.0)
           return vec4(0.0);
 
-//      alphaFactor = pow(alphaFactor, g_AlphaExponent);
+        //TODO: alphaFactor = pow(alphaFactor, g_AlphaExponent);
 
         highp float borderStart = 1.0 + fadeStart - uBorderThickness;
         lowp float colorWeight = min(borderStart - dist, 1.0);
 
-        // return vec4(vec3(colorWeight), 1.0);
-
         lowp vec4 contentColor = vColor * texel;
 
         if (colorWeight == 1.0)
-            return contentColor * alphaFactor;
+          return contentColor * alphaFactor;
 
         lowp vec4 borderColor = uBorderColorAlpha * alphaFactor;
 
         if (colorWeight <= 0.0)
-            return borderColor * alphaFactor;
+          return borderColor;
 
         contentColor *= alphaFactor;
 

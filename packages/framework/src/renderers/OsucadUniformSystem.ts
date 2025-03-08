@@ -14,7 +14,7 @@ export type GlobalUniformGroup = UniformGroup<{
   uMaskingRect: { value: Float32Array; type: 'vec4<f32>' };
   uBorderThickness: { value: number; type: 'f32' };
   uBorderColorAlpha: { value: Float32Array; type: 'vec4<f32>' };
-  uMaskingBlendRange: { value: number[]; type: 'vec2<f32>' };
+  uMaskingBlendRange: { value: number; type: 'f32' };
 }>;
 
 export interface GlobalUniformOptions {
@@ -30,7 +30,7 @@ export interface GlobalUniformOptions {
   isMasking?: boolean;
   borderThickness?: number;
   borderColor?: number;
-  maskingBlendRange?: PointData;
+  maskingBlendRange?: number;
 }
 
 export interface GlobalUniformData {
@@ -46,7 +46,7 @@ export interface GlobalUniformData {
   isMasking: boolean;
   borderThickness: number;
   borderColor: number;
-  maskingBlendRange: PointData;
+  maskingBlendRange: number;
 }
 
 export interface GlobalUniformRenderer {
@@ -135,7 +135,7 @@ export class OsucadUniformSystem implements System {
           isMasking: false,
           borderThickness: 0,
           borderColor: 0,
-          maskingBlendRange: new Point(1),
+          maskingBlendRange: 1,
         };
 
     const globalUniformData: GlobalUniformData = {
@@ -179,8 +179,8 @@ export class OsucadUniformSystem implements System {
     uniforms.uMaskingRect[3] = globalUniformData.maskingRect.height;
 
     uniforms.uIsMasking = globalUniformData.isMasking ? 1 : 0;
-
     uniforms.uBorderThickness = globalUniformData.borderThickness;
+    uniforms.uMaskingBlendRange = globalUniformData.maskingBlendRange;
 
     color32BitToUniform(
       globalUniformData.worldColor,
@@ -254,7 +254,7 @@ export class OsucadUniformSystem implements System {
       uIsMasking: { value: 0, type: 'i32' },
       uBorderThickness: { value: 0, type: 'f32' },
       uBorderColorAlpha: { value: new Float32Array(4), type: 'vec4<f32>' },
-      uMaskingBlendRange: { value: [1, 1], type: 'vec2<f32>' },
+      uMaskingBlendRange: { value: 1, type: 'f32' },
     }, {
       isStatic: true,
     });

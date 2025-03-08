@@ -13,6 +13,7 @@ import {
   ExtensionType,
   Rectangle,
 } from 'pixi.js';
+import { MatrixUtils } from '../utils/MatrixUtils';
 
 export interface MaskingInstruction extends Instruction {
   renderPipeId: 'masking';
@@ -48,7 +49,7 @@ export class MaskingSystem implements System {
 
     const maskingRect = maskingInfo.drawable.drawSize;
 
-    const matrix = maskingInfo.matrix.copyFrom(instruction.container!.relativeGroupTransform);
+    const matrix = maskingInfo.matrix.copyFrom(instruction.container!.relativeGroupTransform).invert();
 
     const color
       = maskingInfo.borderColor
@@ -57,13 +58,22 @@ export class MaskingSystem implements System {
 
     const bgr = color.toBgrNumber();
 
+    const scale = MatrixUtils.extractScale(
+      maskingInfo.drawable.drawNode.relativeGroupTransform.clone().invert(),
+    );
+
+    const maskingSmoothness = 1; // TODO
+
+    const maskingBlendRange = maskingSmoothness * (scale.x + scale.y) / 2;
+
     uniformSystem.push({
       isMasking: true,
       cornerRadius: maskingInfo.cornerRadius,
-      toMaskingSpace: matrix.invert(),
+      toMaskingSpace: matrix,
       maskingRect: new Rectangle(0, 0, maskingRect.x, maskingRect.y),
-      borderThickness: maskingInfo.borderThickness,
+      borderThickness: maskingInfo.borderThickness / maskingBlendRange,
       borderColor: bgr + (((color.alpha * 255) | 0) << 24),
+      maskingBlendRange,
     });
   }
 
