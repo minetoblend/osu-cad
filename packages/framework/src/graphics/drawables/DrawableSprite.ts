@@ -1,10 +1,13 @@
+import type { IVec2 } from '../../math';
 import type { PIXISprite } from '../../pixi';
 import { Texture } from 'pixi.js';
 import { Vec2 } from '../../math';
 import { PIXIContainer } from '../../pixi';
-import { OsucadSprite } from '../../renderers/OsucadSprite';
+import { MatrixUtils } from '../../utils/MatrixUtils';
 import { Axes } from './Axes';
 import { Drawable, type DrawableOptions, Invalidation } from './Drawable';
+import { LayoutComputed } from './LayoutComputed';
+import { SpriteDrawNode } from './SpriteDrawNode';
 
 export interface DrawableSpriteOptions extends DrawableOptions {
   texture?: Texture | null;
@@ -14,7 +17,9 @@ export class DrawableSprite extends Drawable {
   constructor(options: DrawableSpriteOptions = {}) {
     super();
 
-    this.#sprite = new OsucadSprite();
+    this.addLayout(this.#inflationAmountBacking);
+
+    this.#sprite = new SpriteDrawNode(this);
 
     this.with(options);
 
@@ -71,5 +76,34 @@ export class DrawableSprite extends Drawable {
     const drawSize = this.drawSize;
 
     this.#sprite.setSize(drawSize.x, drawSize.y);
+  }
+
+  #edgeSmoothness = new Vec2(0);
+
+  get edgeSmoothness(): Vec2 {
+    return this.#edgeSmoothness;
+  }
+
+  set edgeSmoothness(value: number | IVec2) {
+    value = typeof value === 'number' ? new Vec2(value) : Vec2.from(value);
+    if (this.#edgeSmoothness.equals(value))
+      return;
+
+    this.invalidate(Invalidation.Transform);
+  }
+
+  get inflationAmount() {
+    return this.#inflationAmountBacking.value;
+  }
+
+  #inflationAmountBacking = new LayoutComputed(() => this.#computeInflationAmount(), Invalidation.Transform);
+
+  #computeInflationAmount() {
+    if (this.#edgeSmoothness.isZero)
+      return Vec2.zero();
+
+    const scale = MatrixUtils.extractScale(this.drawNode.relativeGroupTransform);
+
+    return this.#edgeSmoothness.div(scale);
   }
 }

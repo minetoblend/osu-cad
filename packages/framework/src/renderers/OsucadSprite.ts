@@ -5,7 +5,7 @@ export class OsucadSprite extends Sprite {
   override readonly renderPipeId = 'osucad-sprite';
 
   protected override updateBounds() {
-    updateQuadBounds(this._bounds, this._anchor, this._texture, 0, 0);
+    updateQuadBounds(this._bounds, this._anchor, this._texture, 0.1, 0.1);
   }
 }
 

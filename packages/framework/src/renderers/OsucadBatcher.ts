@@ -93,8 +93,8 @@ export class OsucadBatcher extends Batcher {
 
     const textureRect = element.textureRect;
 
-    const trx2 = textureRect.right;
-    const try2 = textureRect.bottom;
+    const trx2 = textureRect.x + textureRect.width;
+    const try2 = textureRect.y + textureRect.height;
 
     const w0 = bounds.maxX;
     const w1 = bounds.minX;

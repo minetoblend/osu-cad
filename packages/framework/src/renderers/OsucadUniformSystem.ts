@@ -1,22 +1,5 @@
-import type {
-  GlRenderTargetSystem,
-  GpuRenderTargetSystem,
-  PointData,
-  Renderer,
-  System,
-  UboSystem,
-  WebGPURenderer,
-} from 'pixi.js';
-import {
-  BindGroup,
-  color32BitToUniform,
-  ExtensionType,
-  Matrix,
-  Point,
-  Rectangle,
-  RendererType,
-  UniformGroup,
-} from 'pixi.js';
+import type { GlRenderTargetSystem, GpuRenderTargetSystem, PointData, Renderer, System, UboSystem, WebGPURenderer } from 'pixi.js';
+import { BindGroup, color32BitToUniform, ExtensionType, Matrix, Point, Rectangle, RendererType, UniformGroup } from 'pixi.js';
 
 export type GlobalUniformGroup = UniformGroup<{
   uProjectionMatrix: { value: Matrix; type: 'mat3x3<f32>' };
@@ -31,6 +14,7 @@ export type GlobalUniformGroup = UniformGroup<{
   uMaskingRect: { value: Float32Array; type: 'vec4<f32>' };
   uBorderThickness: { value: number; type: 'f32' };
   uBorderColorAlpha: { value: Float32Array; type: 'vec4<f32>' };
+  uMaskingBlendRange: { value: number[]; type: 'vec2<f32>' };
 }>;
 
 export interface GlobalUniformOptions {
@@ -46,6 +30,7 @@ export interface GlobalUniformOptions {
   isMasking?: boolean;
   borderThickness?: number;
   borderColor?: number;
+  maskingBlendRange?: PointData;
 }
 
 export interface GlobalUniformData {
@@ -61,6 +46,7 @@ export interface GlobalUniformData {
   isMasking: boolean;
   borderThickness: number;
   borderColor: number;
+  maskingBlendRange: PointData;
 }
 
 export interface GlobalUniformRenderer {
@@ -132,6 +118,7 @@ export class OsucadUniformSystem implements System {
                 isMasking,
                 borderThickness,
                 borderColor,
+                maskingBlendRange,
   }: GlobalUniformOptions) {
     const renderTarget = this._renderer.renderTarget.renderTarget;
 
@@ -148,6 +135,7 @@ export class OsucadUniformSystem implements System {
           isMasking: false,
           borderThickness: 0,
           borderColor: 0,
+          maskingBlendRange: new Point(1),
         };
 
     const globalUniformData: GlobalUniformData = {
@@ -163,6 +151,7 @@ export class OsucadUniformSystem implements System {
       isMasking: isMasking ?? currentGlobalUniformData.isMasking,
       borderThickness: borderThickness ?? currentGlobalUniformData.borderThickness,
       borderColor: borderColor ?? currentGlobalUniformData.borderColor,
+      maskingBlendRange: maskingBlendRange ?? currentGlobalUniformData.maskingBlendRange,
     };
 
     const uniformGroup = this._uniformsPool.pop() || this._createUniforms();
@@ -265,6 +254,7 @@ export class OsucadUniformSystem implements System {
       uIsMasking: { value: 0, type: 'i32' },
       uBorderThickness: { value: 0, type: 'f32' },
       uBorderColorAlpha: { value: new Float32Array(4), type: 'vec4<f32>' },
+      uMaskingBlendRange: { value: [1, 1], type: 'vec2<f32>' },
     }, {
       isStatic: true,
     });
