@@ -1,4 +1,6 @@
-import { PIXIContainer, PIXISprite, PIXITexture } from '../../pixi';
+import type { PIXISprite } from '../../pixi';
+import { PIXIContainer, PIXITexture } from '../../pixi';
+import { OsucadSprite } from '../../renderers/OsucadSprite';
 import { Drawable, type DrawableOptions } from '../drawables/Drawable';
 
 export class Box extends Drawable {
@@ -12,7 +14,7 @@ export class Box extends Drawable {
   override createDrawNode(): PIXIContainer {
     return new PIXIContainer({
       children: [
-        (this.#sprite = new PIXISprite({
+        (this.#sprite = new OsucadSprite({
           texture: PIXITexture.WHITE,
         })),
       ],

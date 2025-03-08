@@ -1,6 +1,7 @@
 import type { BindableNumber, ClickEvent, DragEvent, DragStartEvent, FocusEvent, FocusLostEvent, HoverEvent, HoverLostEvent, KeyDownEvent, MouseDownEvent, MouseEvent, MouseUpEvent, ReadonlyDependencyContainer } from '@osucad/framework';
-import { Anchor, Axes, BindableNumberWithCurrent, CompositeDrawable, Container, EasingFunction, FastRoundedBox, Key, MouseButton, TabbableContainer, Vec2 } from '@osucad/framework';
+import { Anchor, Axes, BindableNumberWithCurrent, Box, CompositeDrawable, Container, EasingFunction, FastRoundedBox, Key, MouseButton, TabbableContainer, Vec2 } from '@osucad/framework';
 
+import { CircularContainer } from '../../../../framework/src/graphics/containers/CircularContainer';
 import { OsucadColors } from '../../OsucadColors';
 import { ITabbableContentContainer } from './ITabbableContentContainer';
 
@@ -155,11 +156,13 @@ export class SliderBar extends TabbableContainer {
   override onFocus(e: FocusEvent) {
     this.activeTrack.fadeTo(1, 200);
     this.track.fadeTo(0.2, 200);
+    this.thumb.showFocusRing();
   }
 
   override onFocusLost(e: FocusLostEvent) {
     this.activeTrack.fadeTo(0.4, 200, EasingFunction.OutCubic);
     this.track.fadeTo(0.1, 200);
+    this.thumb.hideFocusRing();
   }
 
   override onClick(e: ClickEvent): boolean {
@@ -196,21 +199,27 @@ class Thumb extends CompositeDrawable {
       this.focusRing = new Container({
         relativeSizeAxes: Axes.Both,
         alpha: 0,
-        child: new FastRoundedBox({
+        child: new CircularContainer({
           relativeSizeAxes: Axes.Both,
-          cornerRadius: 10,
-          color: OsucadColors.primary,
+          masking: true,
+          child: new Box({
+            relativeSizeAxes: Axes.Both,
+            color: OsucadColors.primary,
+          }),
         }),
       }),
-      this.background = new FastRoundedBox({
+      new CircularContainer({
         relativeSizeAxes: Axes.Both,
-        cornerRadius: 8,
-        color: OsucadColors.primary,
+        masking: true,
+        child: this.background = new Box({
+          relativeSizeAxes: Axes.Both,
+          color: OsucadColors.primary,
+        }),
       }),
     ];
   }
 
-  readonly background: FastRoundedBox;
+  readonly background: Box;
   readonly focusRing: Container;
 
   override onHover(e: HoverEvent): boolean {

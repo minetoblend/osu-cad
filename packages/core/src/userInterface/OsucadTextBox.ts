@@ -46,7 +46,7 @@ export class OsucadTextBox extends BasicTextBox {
 
     this.add(this.#focusLine = new Box({
       relativeSizeAxes: Axes.X,
-      size: new Vec2(0, 1.5),
+      size: new Vec2(1, 1.5),
       anchor: Anchor.BottomCenter,
       origin: Anchor.BottomCenter,
       color: this.accentColor,

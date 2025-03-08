@@ -1,20 +1,32 @@
+import type { ColorSource } from 'pixi.js';
 import type { ReadonlyDependencyContainer } from '../../di';
+import type { PIXIGraphics } from '../../pixi';
 import type { Scheduler } from '../../scheduling/Scheduler';
 import type { IComparer } from '../../utils/IComparer';
 import type { AbsoluteSequenceSender } from '../transforms/AbsoluteSequenceSender';
+import { Color } from 'pixi.js';
 import { Action } from '../../bindables/Action';
 import { compositeDrawableProps } from '../../devtools/compositeDrawableProps';
 import { DependencyContainer } from '../../di';
 import { getProviders } from '../../di/decorators';
 import { type IVec2, Vec2 } from '../../math/Vec2';
-import { PIXIContainer, PIXIGraphics } from '../../pixi';
+import { PIXIContainer } from '../../pixi';
+import { MaskingEffect } from '../../renderers/MaskingEffect';
 import { type IUsable, ValueInvokeOnDisposal } from '../../types/IUsable';
 import { debugAssert } from '../../utils/debugAssert';
 import { List } from '../../utils/List';
 import { SortedList } from '../../utils/SortedList';
 import { Anchor } from '../drawables';
 import { Axes } from '../drawables/Axes';
-import { Drawable, type DrawableOptions, Invalidation, InvalidationSource, loadDrawable, loadDrawableFromAsync, LoadState } from '../drawables/Drawable';
+import {
+  Drawable,
+  type DrawableOptions,
+  Invalidation,
+  InvalidationSource,
+  loadDrawable,
+  loadDrawableFromAsync,
+  LoadState,
+} from '../drawables/Drawable';
 import { LayoutMember } from '../drawables/LayoutMember';
 import { MarginPadding, type MarginPaddingOptions } from '../drawables/MarginPadding';
 import { EasingFunction } from '../transforms/EasingFunction';
@@ -25,6 +37,9 @@ export interface CompositeDrawableOptions extends DrawableOptions {
   autoSizeDuration?: number;
   autoSizeEasing?: EasingFunction;
   masking?: boolean;
+  cornerRadius?: number;
+  borderThickness?: number;
+  borderColor?: ColorSource;
 }
 
 export class ChildComparer implements IComparer<Drawable> {
@@ -50,6 +65,57 @@ export class CompositeDrawable extends Drawable {
 
   override createDrawNode(): PIXIContainer {
     return new PIXIContainer();
+  }
+
+  #maskingEffect?: MaskingEffect;
+
+  #cornerRadius = 0;
+
+  get cornerRadius() {
+    return this.#cornerRadius;
+  }
+
+  set cornerRadius(value) {
+    if (value < 0)
+      value = 0;
+
+    if (this.#cornerRadius === value)
+      return;
+
+    this.#cornerRadius = value;
+    if (this.#maskingEffect)
+      this.#maskingEffect.cornerRadius = value;
+  }
+
+  #borderThickness = 0;
+
+  get borderThickness() {
+    return this.#borderThickness;
+  }
+
+  set borderThickness(value) {
+    this.#borderThickness = value;
+    if (!this.#maskingEffect)
+      throw new Error('Cannot set borderThickness without enabling masking');
+
+    this.#maskingEffect.borderThickness = value;
+  }
+
+  #borderColor = new Color('transparent');
+
+  get borderColor(): Color {
+    return this.#borderColor;
+  }
+
+  set borderColor(value: ColorSource) {
+    const color = Color.shared.setValue(value);
+
+    if (!this.#maskingEffect)
+      throw new Error('Cannot set borderRadius without enabling masking');
+
+    this.#borderColor.setValue(value);
+
+    this.#maskingEffect.borderColor = this.#borderColor;
   }
 
   readonly childBecameAlive = new Action<Drawable>();
@@ -939,26 +1005,18 @@ export class CompositeDrawable extends Drawable {
       return;
 
     this.#masking = value;
-    this.#updateMasking();
+
+    if (value && !this.#maskingEffect) {
+      this.drawNode.addEffect(this.#maskingEffect = new MaskingEffect(this));
+    }
+    else if (!value && this.#maskingEffect) {
+      this.drawNode.removeEffect(this.#maskingEffect);
+      this.#maskingEffect = undefined;
+    }
   }
 
   #masking = false;
   #maskingContainer: PIXIGraphics | null = null;
-
-  #updateMasking() {
-    if (this.#masking && !this.#maskingContainer) {
-      this.#maskingContainer = new PIXIGraphics().rect(0, 0, 1, 1).fill({ color: 0xFFFFFF });
-
-      this.drawNode.addChild(this.#maskingContainer);
-      this.drawNode.mask = this.#maskingContainer;
-    }
-    else if (!this.#masking && this.#maskingContainer) {
-      this.drawNode.removeChild(this.#maskingContainer)?.destroy();
-      this.drawNode.mask = null;
-
-      this.#maskingContainer = null;
-    }
-  }
 
   override updateDrawNodeTransform(): void {
     super.updateDrawNodeTransform();

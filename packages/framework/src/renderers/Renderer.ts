@@ -2,7 +2,13 @@ import type { InjectionToken } from '../di';
 import type { FrameworkEnvironment } from '../FrameworkEnvironment';
 import type { Drawable } from '../graphics/drawables/Drawable';
 import type { PIXIRenderer } from '../pixi';
+import { extensions, GlobalUniformSystem } from 'pixi.js';
 import { type IVec2, Vec2 } from '../math';
+import { MaskingPipe } from './MaskingPipe';
+import { MaskingSystem } from './MaskingSystem';
+import { OsucadBatcher } from './OsucadBatcher';
+import { OsucadSpritePipe } from './OsucadSpritePipe';
+import { OsucadUniformSystem } from './OsucadUniformSystem';
 
 export interface RendererOptions {
   size: IVec2;
@@ -12,6 +18,15 @@ export interface RendererOptions {
 
 export class Renderer {
   async init(options: RendererOptions) {
+    extensions.remove(GlobalUniformSystem);
+    extensions.add(
+      OsucadBatcher,
+      OsucadSpritePipe,
+      MaskingPipe,
+      MaskingSystem,
+      OsucadUniformSystem,
+    );
+
     const { autoDetectRenderer } = await import('pixi.js');
     const { size, environment } = options;
 
@@ -23,7 +38,7 @@ export class Renderer {
 
     const context = canvas.getContext('webgl2', {
       alpha: false,
-      antialias: environment.antialiasPreferred ?? true,
+      antialias: false,
       depth: true,
       powerPreference: 'high-performance',
       desynchronized: true,
@@ -35,7 +50,7 @@ export class Renderer {
       canvas,
       context,
       preference: 'webgl', // environment.webGpuSupported ? rendererPreference : "webgl",
-      antialias: options.environment?.antialiasPreferred ?? true,
+      antialias: false,
       resolution: devicePixelRatio,
       width: this.#size.x,
       height: this.#size.y,

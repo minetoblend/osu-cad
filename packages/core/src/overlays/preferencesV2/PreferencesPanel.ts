@@ -1,6 +1,6 @@
 import type { MouseDownEvent, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { PreferencesSection } from './PreferencesSection';
-import { Anchor, Axes, BetterBackdropBlurFilter, Bindable, Box, Container, Dimension, FillFlowContainer, GridContainer, GridSizeMode, provide, Vec2 } from '@osucad/framework';
+import { Axes, BetterBackdropBlurFilter, Bindable, Box, Container, Dimension, FillFlowContainer, GridContainer, GridSizeMode, provide, Vec2 } from '@osucad/framework';
 import { OsucadScrollContainer } from '../../drawables/OsucadScrollContainer';
 import { AudioSection } from './AudioSection';
 import { ITabbableContentContainer } from './ITabbableContentContainer';
@@ -38,15 +38,8 @@ export class PreferencesPanel extends Container<PreferencesSection> {
     this.internalChildren = [
       new Box({
         relativeSizeAxes: Axes.Both,
-        color: 0x0A0A0A,
+        color: 0x222228,
         alpha: 0.6,
-      }),
-      new Box({
-        width: 0.5,
-        relativeSizeAxes: Axes.Y,
-        alpha: 0.05,
-        anchor: Anchor.TopRight,
-        origin: Anchor.TopRight,
       }),
       new GridContainer({
         relativeSizeAxes: Axes.Both,

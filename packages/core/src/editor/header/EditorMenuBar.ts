@@ -1,5 +1,5 @@
 import type { Drawable, IKeyBindingHandler, KeyBindingAction, SpriteText, Vec2 } from '@osucad/framework';
-import { Anchor, Axes, Color, Container, dependencyLoader, Direction, DrawableMenuItem, FastRoundedBox, MenuItem, PlatformAction, resolved } from '@osucad/framework';
+import { Anchor, Axes, Box, Color, Container, dependencyLoader, Direction, DrawableMenuItem, MenuItem, PlatformAction, resolved } from '@osucad/framework';
 import { OsucadSpriteText } from '../../drawables/OsucadSpriteText';
 import { OsucadColors } from '../../OsucadColors';
 import { Editor } from '../Editor';
@@ -71,6 +71,9 @@ export class DrawableEditorMenubarItem extends DrawableMenuItem {
     super(item);
     this.backgroundColor = 'transparent';
     this.backgroundColorHover = 'rgba(255, 255, 255, 0.1)';
+
+    this.masking = true;
+    this.cornerRadius = 4;
   }
 
   createContent(): Drawable {
@@ -78,9 +81,8 @@ export class DrawableEditorMenubarItem extends DrawableMenuItem {
   }
 
   override createBackground(): Drawable {
-    return new FastRoundedBox({
+    return new Box({
       color: 'transparent',
-      cornerRadius: 4,
       relativeSizeAxes: Axes.Both,
     });
   }

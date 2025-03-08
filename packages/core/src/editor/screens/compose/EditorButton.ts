@@ -1,5 +1,5 @@
-import type { Drawable, FocusLostEvent, HoverEvent, HoverLostEvent, MouseDownEvent, MouseUpEvent, ScheduledDelegate } from '@osucad/framework';
-import { Anchor, Axes, BindableBoolean, CompositeDrawable, Container, dependencyLoader, DrawableSprite, EasingFunction, FastRoundedBox, isSourcedFromTouch, MouseButton, RoundedBox, Vec2, Visibility } from '@osucad/framework';
+import type { Drawable, FocusLostEvent, HoverEvent, HoverLostEvent, MouseDownEvent, MouseUpEvent, ReadonlyDependencyContainer, ScheduledDelegate } from '@osucad/framework';
+import { Anchor, Axes, BindableBoolean, Box, CompositeDrawable, Container, DrawableSprite, EasingFunction, isSourcedFromTouch, MouseButton, RoundedBox, Vec2, Visibility } from '@osucad/framework';
 import { getIcon } from '@osucad/resources';
 import { OsucadColors } from '../../../OsucadColors';
 import { EditorButtonSubmenu } from './EditorButtonSubmenu';
@@ -39,17 +39,20 @@ export abstract class EditorButton extends CompositeDrawable {
 
   readonly disabled = new BindableBoolean();
 
-  @dependencyLoader()
-  [Symbol('load')]() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
+    this.masking = true;
+    this.cornerRadius = 8;
+
     this.addAllInternal(
       this.backgroundContainer = new Container({
         relativeSizeAxes: Axes.Both,
         anchor: Anchor.Center,
         origin: Anchor.Center,
         children: [
-          this.#background = new FastRoundedBox({
+          this.#background = new Box({
             relativeSizeAxes: Axes.Both,
-            cornerRadius: 8,
             color: OsucadColors.translucent,
             alpha: 0.8,
             anchor: Anchor.Center,
@@ -61,6 +64,7 @@ export abstract class EditorButton extends CompositeDrawable {
             fillAlpha: 0,
             anchor: Anchor.Center,
             origin: Anchor.Center,
+            alpha: 0,
           }),
         ],
       }),
@@ -74,6 +78,8 @@ export abstract class EditorButton extends CompositeDrawable {
         child: this.createContent(),
       }),
     );
+
+    this.#outline.drawNode.renderable = false;
 
     this.active.valueChanged.addListener(this.updateState, this);
     this.disabled.valueChanged.addListener(this.updateState, this);
@@ -89,7 +95,7 @@ export abstract class EditorButton extends CompositeDrawable {
 
   protected scaleContainer!: Container;
 
-  #background!: FastRoundedBox;
+  #background!: Box;
 
   #outline!: RoundedBox;
 

@@ -1,7 +1,7 @@
-import type { ReadonlyDependencyContainer } from '@osucad/framework';
+import type { DrawableOptions, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { DrawableOsuHitObject } from '@osucad/ruleset-osu';
 import { ArmedState, BetterGlowFilter, DrawableHitObject } from '@osucad/core';
-import { Anchor, Bindable, BindableBoolean, ColorUtils, CompositeDrawable, EasingFunction, FastRoundedBox, resolved, Vec2 } from '@osucad/framework';
+import { Anchor, Axes, Bindable, BindableBoolean, Box, CircularContainer, ColorUtils, CompositeDrawable, EasingFunction, resolved, Vec2 } from '@osucad/framework';
 import { Color } from 'pixi.js';
 import { OsuHitObject } from '../../hitObjects/OsuHitObject';
 import { DefaultComboNumber } from '../default/DefaultComboNumber';
@@ -171,11 +171,15 @@ export class ArgonMainCirclePiece extends CompositeDrawable {
   }
 }
 
-class Circle extends FastRoundedBox {
-  override update() {
-    this.cornerRadius = Math.min(this.drawWidth, this.drawHeight) / 2;
+class Circle extends CircularContainer {
+  constructor(options: DrawableOptions = {}) {
+    super();
 
-    super.update();
+    this.masking = true;
+
+    this.internalChild = new Box({ relativeSizeAxes: Axes.Both });
+
+    this.with(options);
   }
 }
 

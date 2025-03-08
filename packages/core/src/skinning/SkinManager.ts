@@ -84,6 +84,7 @@ export class SkinManager extends Component implements ISkinSource {
 
     switch (this.activeSkinName.value) {
       case 'argon':
+      case null:
         skinPromise = this.#baseSkins.argon.load();
         break;
       default:

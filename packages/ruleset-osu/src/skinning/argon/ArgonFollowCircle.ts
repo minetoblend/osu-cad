@@ -1,5 +1,5 @@
-import type { ReadonlyDependencyContainer } from '@osucad/framework';
-import { almostEquals, Axes, Bindable, EasingFunction, RoundedBox } from '@osucad/framework';
+import type { Container, ReadonlyDependencyContainer } from '@osucad/framework';
+import { almostEquals, Axes, Bindable, Box, CircularContainer, EasingFunction, RoundedBox } from '@osucad/framework';
 import { DrawableSliderBall } from '@osucad/ruleset-osu';
 import { Color } from 'pixi.js';
 import { FollowCircle } from '../FollowCircle';
@@ -8,7 +8,7 @@ export class ArgonFollowCircle extends FollowCircle {
   constructor() {
     super();
 
-    this.internalChild = this.#circle = new RoundedBox({
+    this.#circle = new RoundedBox({
       relativeSizeAxes: Axes.Both,
       blendMode: 'add',
       fillAlpha: 0.3,
@@ -18,9 +18,22 @@ export class ArgonFollowCircle extends FollowCircle {
         color: 0xFFFFFF,
       },
     });
+
+    this.internalChild = this.#circleContainer = new CircularContainer({
+      relativeSizeAxes: Axes.Both,
+      masking: true,
+      borderThickness: 4,
+      blendMode: 'add',
+      child: this.#circleFill = new Box({
+        relativeSizeAxes: Axes.Both,
+        alpha: 0.3,
+      }),
+    });
   }
 
   #circle: RoundedBox;
+  #circleContainer: Container;
+  #circleFill: Box;
 
   private readonly accentColor = new Bindable(new Color(0xFFFFFF));
 
@@ -35,6 +48,9 @@ export class ArgonFollowCircle extends FollowCircle {
     super.loadComplete();
 
     this.accentColor.bindValueChanged((color) => {
+      this.#circleFill.color = color.value;
+      this.#circleContainer.borderColor = color.value;
+
       this.#circle.outline = {
         color: color.value.toNumber(),
         width: 4,

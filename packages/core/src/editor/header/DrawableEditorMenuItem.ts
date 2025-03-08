@@ -1,5 +1,5 @@
 import type { Drawable, MenuItem, ReadonlyDependencyContainer } from '@osucad/framework';
-import { Axes, DrawableMenuItem, RoundedBox } from '@osucad/framework';
+import { Axes, Box, DrawableMenuItem } from '@osucad/framework';
 
 import { DrawableEditorMenuItemContent } from './DrawableEditorMenuItemContent';
 
@@ -19,9 +19,8 @@ export class DrawableEditorMenuItem extends DrawableMenuItem {
   }
 
   override createBackground(): Drawable {
-    return new RoundedBox({
+    return new Box({
       color: 'transparent',
-      cornerRadius: 4,
       relativeSizeAxes: Axes.Both,
     });
   }

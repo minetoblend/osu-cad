@@ -1,20 +1,5 @@
-import type {
-  HoverEvent,
-  HoverLostEvent,
-  ReadonlyDependencyContainer,
-} from '@osucad/framework';
-import {
-  Anchor,
-  Axes,
-  Container,
-  EasingFunction,
-  FastRoundedBox,
-  FillFlowContainer,
-  lerp,
-  resolved,
-  RoundedBox,
-  Vec2,
-} from '@osucad/framework';
+import type { HoverEvent, HoverLostEvent, ReadonlyDependencyContainer } from '@osucad/framework';
+import { Anchor, Axes, Box, Container, EasingFunction, FillFlowContainer, lerp, resolved, Vec2 } from '@osucad/framework';
 import { Color } from 'pixi.js';
 import { OsucadSpriteText } from '../../drawables/OsucadSpriteText';
 import { UISamples } from '../../UISamples';
@@ -30,7 +15,7 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
     this.alpha = 0;
 
     // for sorting
-    this.depth = -item.beatmapInfo.starRating;
+    this.depth = -item.beatmapInfo.starRating; ;
 
     if (item.beatmapInfo.lastEdited) {
       const formatted = item.beatmapInfo.lastEdited.toLocaleDateString('en-US', {
@@ -44,20 +29,21 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
       lastEditedText = `Last edited ${formatted}`;
     }
 
-    this.header.addAll(
-      this.#background = new RoundedBox({
+    this.header.masking = true;
+    this.header.cornerRadius = 10;
+
+    this.header.addRange([
+      this.#background = new Box({
         relativeSizeAxes: Axes.Both,
-        fillColor: 0x282832,
-        cornerRadius: 10,
+        color: 0x282832,
         alpha: 0.9,
       }),
-      this.#hoverHighlight = new FastRoundedBox({
+      this.#hoverHighlight = new Box({
         relativeSizeAxes: Axes.Both,
-        cornerRadius: 10,
         alpha: 0,
         depth: -1000,
       }),
-    );
+    ]);
 
     this.scheduler.addDelayed(() => {
       this.header.addAll(
@@ -78,11 +64,15 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
               anchor: Anchor.CenterLeft,
               origin: Anchor.CenterLeft,
               children: [
-                this.#starRatingBackground = new FastRoundedBox({
+                new Container({
                   relativeSizeAxes: Axes.Both,
-                  color: this.getDifficultyColor(),
+                  masking: true,
                   cornerRadius: 4,
-                  alpha: 0.9,
+                  child: this.#starRatingBackground = new Box({
+                    relativeSizeAxes: Axes.Both,
+                    color: this.getDifficultyColor(),
+                    alpha: 0.9,
+                  }),
                 }),
                 new FillFlowContainer({
                   autoSizeAxes: Axes.Both,
@@ -111,13 +101,13 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
 
   #lastEdited!: OsucadSpriteText;
 
-  #hoverHighlight!: FastRoundedBox;
+  #hoverHighlight!: Box;
 
   #difficultyName!: OsucadSpriteText;
 
   #starRatingText!: OsucadSpriteText;
 
-  #starRatingBackground!: FastRoundedBox;
+  #starRatingBackground!: Box;
 
   getDifficultyColor() {
     const stops: [number, Color][] = [
@@ -170,17 +160,13 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
     this.header.height = CarouselBeatmap.HEIGHT;
   }
 
-  #background!: RoundedBox;
+  #background!: Box;
 
   override selected() {
     super.selected();
 
-    this.#background.outlines = [{
-      width: 2,
-      color: this.getDifficultyColor(),
-      alpha: 1,
-      alignment: 0,
-    }];
+    this.header.borderThickness = 5;
+    this.header.borderColor = this.getDifficultyColor();
 
     this.movementContainer.moveToX(
       -50,
@@ -194,7 +180,7 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
   override deselected() {
     super.deselected();
 
-    this.#background.outlines = [];
+    this.header.borderThickness = 0;
 
     this.movementContainer.moveToX(0, 500, EasingFunction.OutExpo);
 

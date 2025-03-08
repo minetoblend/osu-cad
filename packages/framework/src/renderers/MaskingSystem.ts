@@ -1,0 +1,75 @@
+import type {
+  Container,
+  Instruction,
+  Renderable,
+  Renderer,
+  System,
+} from 'pixi.js';
+import type { MaskingEffect } from './MaskingEffect';
+import type { MaskingAction } from './MaskingPipe';
+import type { OsucadUniformSystem } from './OsucadUniformSystem';
+import {
+  Color,
+  ExtensionType,
+  Rectangle,
+} from 'pixi.js';
+
+export interface MaskingInstruction extends Instruction {
+  renderPipeId: 'masking';
+  action: MaskingAction;
+  container?: Container;
+  renderables?: Renderable[];
+  maskingEffect: MaskingEffect;
+}
+
+export class MaskingSystem implements System {
+  public static extension = {
+    type: [
+      ExtensionType.WebGLSystem,
+      ExtensionType.WebGPUSystem,
+    ],
+    name: 'masking',
+  } as const;
+
+  constructor(renderer: Renderer) {
+    this.renderer = renderer;
+  }
+
+  readonly renderer: Renderer;
+
+  public destroy?: () => void;
+
+  push(instruction: MaskingInstruction) {
+    const renderer = this.renderer;
+
+    const maskingInfo = instruction.maskingEffect;
+
+    const uniformSystem = renderer.globalUniforms as unknown as OsucadUniformSystem;
+
+    const maskingRect = maskingInfo.drawable.drawSize;
+
+    const matrix = maskingInfo.matrix.copyFrom(instruction.container!.relativeGroupTransform);
+
+    const color
+      = maskingInfo.borderColor
+        ? Color.shared.setValue(maskingInfo.borderColor).setAlpha(maskingInfo.borderColor.alpha * instruction.container!.groupAlpha)
+        : Color.shared.setValue('transparent');
+
+    const bgr = color.toBgrNumber();
+
+    uniformSystem.push({
+      isMasking: true,
+      cornerRadius: maskingInfo.cornerRadius,
+      toMaskingSpace: matrix.invert(),
+      maskingRect: new Rectangle(0, 0, maskingRect.x, maskingRect.y),
+      borderThickness: maskingInfo.borderThickness,
+      borderColor: bgr + (((color.alpha * 255) | 0) << 24),
+    });
+  }
+
+  pop() {
+    const renderer = this.renderer;
+
+    renderer.globalUniforms.pop();
+  }
+}

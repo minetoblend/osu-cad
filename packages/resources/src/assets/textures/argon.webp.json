@@ -47,7 +47,7 @@
         "w": 129,
         "h": 200
       },
-      "rotated": true,
+      "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
         "x": 0,
@@ -62,7 +62,7 @@
     },
     "number": {
       "frame": {
-        "x": 208,
+        "x": 137,
         "y": 336,
         "w": 138,
         "h": 129
@@ -80,10 +80,30 @@
         "h": 129
       }
     },
+    "hitcircleselect@2x": {
+      "frame": {
+        "x": 341,
+        "y": 4,
+        "w": 256,
+        "h": 256
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 256,
+        "h": 256
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      }
+    },
     "hitcircle": {
       "frame": {
-        "x": 4,
-        "y": 469,
+        "x": 341,
+        "y": 264,
         "w": 236,
         "h": 236
       },
@@ -102,8 +122,8 @@
     },
     "disc": {
       "frame": {
-        "x": 244,
-        "y": 469,
+        "x": 4,
+        "y": 540,
         "w": 236,
         "h": 236
       },
@@ -122,12 +142,12 @@
     },
     "default-9": {
       "frame": {
-        "x": 484,
-        "y": 4,
+        "x": 279,
+        "y": 336,
         "w": 28,
         "h": 34
       },
-      "rotated": true,
+      "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
         "x": 12,
@@ -142,12 +162,12 @@
     },
     "default-8": {
       "frame": {
-        "x": 350,
-        "y": 4,
+        "x": 279,
+        "y": 374,
         "w": 29,
         "h": 36
       },
-      "rotated": true,
+      "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
         "x": 11,
@@ -162,12 +182,12 @@
     },
     "default-7": {
       "frame": {
-        "x": 390,
-        "y": 4,
+        "x": 137,
+        "y": 469,
         "w": 26,
         "h": 36
       },
-      "rotated": true,
+      "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
         "x": 13,
@@ -182,12 +202,12 @@
     },
     "default-6": {
       "frame": {
-        "x": 430,
-        "y": 4,
+        "x": 279,
+        "y": 414,
         "w": 30,
         "h": 36
       },
-      "rotated": true,
+      "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
         "x": 11,
@@ -202,8 +222,8 @@
     },
     "default-5": {
       "frame": {
-        "x": 390,
-        "y": 34,
+        "x": 167,
+        "y": 469,
         "w": 27,
         "h": 37
       },
@@ -222,8 +242,8 @@
     },
     "default-4": {
       "frame": {
-        "x": 350,
-        "y": 37,
+        "x": 279,
+        "y": 454,
         "w": 31,
         "h": 38
       },
@@ -242,12 +262,12 @@
     },
     "default-3": {
       "frame": {
-        "x": 522,
-        "y": 4,
+        "x": 198,
+        "y": 496,
         "w": 27,
         "h": 38
       },
-      "rotated": true,
+      "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
         "x": 13,
@@ -262,12 +282,12 @@
     },
     "default-2": {
       "frame": {
-        "x": 564,
-        "y": 4,
+        "x": 244,
+        "y": 469,
         "w": 28,
         "h": 37
       },
-      "rotated": true,
+      "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
         "x": 12,
@@ -282,12 +302,12 @@
     },
     "default-1": {
       "frame": {
-        "x": 522,
-        "y": 35,
+        "x": 314,
+        "y": 336,
         "w": 20,
         "h": 38
       },
-      "rotated": true,
+      "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
         "x": 14,
@@ -302,12 +322,12 @@
     },
     "default-0": {
       "frame": {
-        "x": 484,
-        "y": 36,
+        "x": 276,
+        "y": 496,
         "w": 31,
         "h": 34
       },
-      "rotated": true,
+      "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
         "x": 10,
@@ -322,8 +342,8 @@
     },
     "cursor-smoke": {
       "frame": {
-        "x": 605,
-        "y": 4,
+        "x": 244,
+        "y": 534,
         "w": 64,
         "h": 64
       },
@@ -342,12 +362,12 @@
     },
     "approachcircle": {
       "frame": {
-        "x": 341,
-        "y": 79,
+        "x": 312,
+        "y": 504,
         "w": 252,
         "h": 256
       },
-      "rotated": true,
+      "rotated": false,
       "trimmed": false,
       "spriteSourceSize": {
         "x": 0,
@@ -367,8 +387,8 @@
     "image": "argon.webp",
     "format": "RGBA8888",
     "size": {
-      "w": 673,
-      "h": 709
+      "w": 601,
+      "h": 780
     },
     "scale": 1,
     "related_multi_packs": []

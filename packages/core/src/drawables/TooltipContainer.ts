@@ -1,6 +1,6 @@
 import type { ContainerOptions, Drawable, InputManager } from '@osucad/framework';
 import { OsucadColors, OsucadSpriteText } from '@osucad/core';
-import { Axes, clamp, Container, FastRoundedBox, provide, VisibilityContainer } from '@osucad/framework';
+import { Axes, Box, clamp, Container, provide, VisibilityContainer } from '@osucad/framework';
 
 export interface IHasTooltip {
   readonly tooltipText: string | null;
@@ -85,11 +85,12 @@ class DrawableTooltip extends VisibilityContainer {
     this.hide();
 
     this.autoSizeAxes = Axes.Both;
+    this.masking = true;
+    this.cornerRadius = 4;
 
     this.internalChildren = [
-      new FastRoundedBox({
+      new Box({
         relativeSizeAxes: Axes.Both,
-        cornerRadius: 4,
         color: OsucadColors.translucent,
         alpha: 0.8,
       }),

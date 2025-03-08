@@ -1,6 +1,6 @@
 import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import { DrawableHitObject } from '@osucad/core';
-import { Anchor, Axes, Bindable, ColorUtils, CompositeDrawable, Container, DrawableSprite, EasingFunction, FastRoundedBox, resolved, Vec2 } from '@osucad/framework';
+import { Anchor, Axes, Bindable, Box, CircularContainer, ColorUtils, CompositeDrawable, Container, DrawableSprite, EasingFunction, resolved, Vec2 } from '@osucad/framework';
 
 import { getIcon } from '@osucad/resources';
 import { DrawableSlider } from '@osucad/ruleset-osu';
@@ -10,7 +10,7 @@ import { ArgonMainCirclePiece } from './ArgonMainCirclePiece';
 const defaultIconScale = new Vec2(0.6, 0.8);
 
 export class ArgonSliderBall extends CompositeDrawable {
-  readonly #fill: FastRoundedBox;
+  readonly #fill: Box;
   readonly #icon: DrawableSprite;
 
   private readonly accentColor = new Bindable(new Color('white'));
@@ -24,20 +24,24 @@ export class ArgonSliderBall extends CompositeDrawable {
     this.size = new Vec2(ArgonMainCirclePiece.OUTER_GRADIENT_SIZE);
 
     this.internalChildren = [
-      new FastRoundedBox({
+      new CircularContainer({
         relativeSizeAxes: Axes.Both,
-        cornerRadius: 100,
         anchor: Anchor.Center,
         origin: Anchor.Center,
+        masking: true,
+        child: new Box({ relativeSizeAxes: Axes.Both }),
       }),
       new Container({
         relativeSizeAxes: Axes.Both,
         padding: ArgonMainCirclePiece.GRADIENT_THICKNESS,
-        child: this.#fill = new FastRoundedBox({
+        child: new CircularContainer({
           relativeSizeAxes: Axes.Both,
-          cornerRadius: 100,
-          anchor: Anchor.Center,
-          origin: Anchor.Center,
+          masking: true,
+          child: this.#fill = new Box({
+            relativeSizeAxes: Axes.Both,
+            anchor: Anchor.Center,
+            origin: Anchor.Center,
+          }),
         }),
       }),
       this.#icon = new DrawableSprite({

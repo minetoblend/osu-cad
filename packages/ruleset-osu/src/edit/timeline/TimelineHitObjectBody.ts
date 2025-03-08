@@ -3,18 +3,19 @@ import type { DragEndEvent, DragEvent, DragStartEvent, MouseDownEvent, ReadonlyD
 import type { Color } from 'pixi.js';
 import type { OsuTimelineHitObjectBlueprint } from './OsuTimelineHitObjectBlueprint';
 import { EditorBeatmap, EditorClock, HitObjectSelectionManager, Timeline } from '@osucad/core';
-import { Axes, Bindable, CompositeDrawable, FastRoundedBox, MouseButton, resolved } from '@osucad/framework';
+import { Axes, Bindable, Box, CircularContainer, MouseButton, resolved } from '@osucad/framework';
 import { UpdateHandler } from '@osucad/multiplayer';
 import { Slider } from '../../hitObjects/Slider';
 import { OsuSelectionManager } from '../OsuSelectionManager';
 
-export class TimelineHitObjectBody extends CompositeDrawable {
+export class TimelineHitObjectBody extends CircularContainer {
   constructor(readonly blueprint: OsuTimelineHitObjectBlueprint) {
     super();
     this.relativeSizeAxes = Axes.Both;
+    this.masking = true;
   }
 
-  #body!: FastRoundedBox;
+  #body!: Box;
 
   protected accentColor = new Bindable<Color>(null!);
 
@@ -26,9 +27,8 @@ export class TimelineHitObjectBody extends CompositeDrawable {
     super.load(dependencies);
 
     this.addInternal(
-      this.#body = new FastRoundedBox({
+      this.#body = new Box({
         relativeSizeAxes: Axes.Both,
-        cornerRadius: 100,
         alpha: 0.75,
       }),
     );

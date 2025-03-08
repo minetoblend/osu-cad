@@ -12,6 +12,7 @@ import type { KeyUpEvent } from '../../input/events/KeyUpEvent';
 import type { MouseDownEvent } from '../../input/events/MouseDownEvent';
 import type { MouseUpEvent } from '../../input/events/MouseUpEvent';
 import type { KeyBindingAction } from '../../input/KeyBindingAction';
+import type { MaskingContainer } from '../containers/MaskingContainer';
 import type { Drawable } from '../drawables/Drawable';
 import type { Caret } from './Caret';
 import { Action } from '../../bindables/Action';
@@ -26,7 +27,6 @@ import { Scheduler } from '../../scheduling/Scheduler';
 import { clamp } from '../../utils/clamp';
 import { Container } from '../containers/Container';
 import { FillDirection, FillFlowContainer } from '../containers/FillFlowContainer';
-import { MaskingContainer } from '../containers/MaskingContainer';
 import { TabbableContainer } from '../containers/TabbableContainer';
 import { Anchor } from '../drawables/Anchor';
 import { Axes } from '../drawables/Axes';
@@ -104,11 +104,11 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     return this.#content;
   }
 
-  get cornerRadius() {
+  override get cornerRadius() {
     return this.#content.cornerRadius;
   }
 
-  set cornerRadius(value) {
+  override set cornerRadius(value) {
     this.#content.cornerRadius = value;
   }
 
@@ -118,7 +118,8 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     this.relativeSizeAxes = Axes.X;
     this.height = 30;
 
-    this.internalChild = this.#content = new MaskingContainer({
+    this.internalChild = this.#content = new Container({
+      masking: true,
       relativeSizeAxes: Axes.Both,
       children: [
         this.textContainer = new Container({

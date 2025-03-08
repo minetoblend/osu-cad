@@ -1,6 +1,7 @@
 import type { Bindable, ClickEvent, DrawableOptions, FocusEvent, FocusLostEvent, KeyDownEvent, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { Graphics } from 'pixi.js';
-import { Axes, BindableWithCurrent, Container, GraphicsDrawable, Key, RoundedBox, TabbableContainer, Vec2 } from '@osucad/framework';
+import { Anchor, Axes, BindableWithCurrent, Box, Container, GraphicsDrawable, Key, TabbableContainer, Vec2 } from '@osucad/framework';
+import { Color } from 'pixi.js';
 import { OsucadColors } from '../OsucadColors';
 import { ITabbableContentContainer } from '../overlays/preferencesV2/ITabbableContentContainer';
 
@@ -17,25 +18,46 @@ export class Checkbox extends TabbableContainer {
     this.with(options);
 
     this.internalChildren = [
-      this.#background = new RoundedBox({
+      this.#outline = new Container({
         relativeSizeAxes: Axes.Both,
-        fillAlpha: 0.2,
-        cornerRadius: 4,
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
+        masking: true,
+        cornerRadius: 6,
+        scale: 1,
+        child: new Box({
+          relativeSizeAxes: Axes.Both,
+          alpha: 0,
+          alwaysPresent: true,
+        }),
       }),
       new Container({
         relativeSizeAxes: Axes.Both,
-        padding: 4,
-        child: this.#check = new Check().with({
-          relativeSizeAxes: Axes.Both,
-          color: OsucadColors.primary,
-        }),
+        masking: true,
+        cornerRadius: 4,
+        children: [
+          this.#background = new Box({
+            relativeSizeAxes: Axes.Both,
+            alpha: 0.2,
+          }),
+          new Container({
+            relativeSizeAxes: Axes.Both,
+            padding: 4,
+            child: this.#check = new Check().with({
+              relativeSizeAxes: Axes.Both,
+              color: OsucadColors.primary,
+            }),
+          }),
+        ],
       }),
     ];
   }
 
-  #background!: RoundedBox;
+  readonly #outline: Container;
 
-  #check!: Check;
+  readonly #background: Box;
+
+  readonly #check: Check;
 
   #current = new BindableWithCurrent(false);
 
@@ -75,33 +97,18 @@ export class Checkbox extends TabbableContainer {
     return true;
   }
 
-  #outlineVisibility = 0;
-
-  get outlineVisibility() {
-    return this.#outlineVisibility;
-  }
-
-  set outlineVisibility(value) {
-    this.#outlineVisibility = value;
-
-    if (value <= 0) {
-      this.#background.outline = undefined;
-    }
-    else {
-      this.#background.outline = {
-        width: value * 2,
-        color: OsucadColors.primary,
-        alpha: value * 0.5,
-      };
-    }
-  }
-
   override onFocus(e: FocusEvent) {
-    this.transformTo('outlineVisibility', 1, 200);
+    this.#outline
+      .scaleTo(1.35, 200)
+      .transformTo('borderThickness', 2.7, 200)
+      .transformTo('borderColor', new Color(OsucadColors.primary).setAlpha(0.5), 200);
   }
 
   override onFocusLost(e: FocusLostEvent) {
-    this.transformTo('outlineVisibility', 0, 200);
+    this.#outline
+      .scaleTo(1, 200)
+      .transformTo('borderThickness', 0, 200)
+      .transformTo('borderColor', new Color(OsucadColors.primary).setAlpha(0), 200);
   }
 
   override onKeyDown(e: KeyDownEvent): boolean {

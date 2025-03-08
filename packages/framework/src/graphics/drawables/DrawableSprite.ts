@@ -1,6 +1,8 @@
+import type { PIXISprite } from '../../pixi';
 import { Texture } from 'pixi.js';
 import { Vec2 } from '../../math';
-import { PIXIContainer, PIXISprite } from '../../pixi';
+import { PIXIContainer } from '../../pixi';
+import { OsucadSprite } from '../../renderers/OsucadSprite';
 import { Axes } from './Axes';
 import { Drawable, type DrawableOptions, Invalidation } from './Drawable';
 
@@ -12,7 +14,7 @@ export class DrawableSprite extends Drawable {
   constructor(options: DrawableSpriteOptions = {}) {
     super();
 
-    this.#sprite = new PIXISprite();
+    this.#sprite = new OsucadSprite();
 
     this.with(options);
 

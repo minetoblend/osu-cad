@@ -3,7 +3,7 @@ import { ISkinSource, OsucadGameBase, PreferencesOverlay, RulesetStore, SkinMana
 import { Axes, Container, provide } from '@osucad/framework';
 import { ManiaRuleset } from '@osucad/ruleset-mania';
 import { OsuRuleset } from '@osucad/ruleset-osu';
-import { RenderTarget } from 'pixi.js';
+import { DynamicBitmapFont, RenderTarget } from 'pixi.js';
 import { Router } from './screens/Router';
 
 export class BeatmapViewerGame extends OsucadGameBase {
@@ -12,6 +12,7 @@ export class BeatmapViewerGame extends OsucadGameBase {
 
     RenderTarget.defaultOptions.depth = true;
     RenderTarget.defaultOptions.stencil = true;
+    DynamicBitmapFont.defaultOptions.mipmap = false;
   }
 
   #dependencies!: DependencyContainer;

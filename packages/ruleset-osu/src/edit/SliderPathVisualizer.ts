@@ -1,7 +1,7 @@
-import type { ReadonlyDependencyContainer } from '@osucad/framework';
+import type { FastRoundedBox, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { Slider } from '../hitObjects/Slider';
 import { OsucadConfigManager, OsucadSettings, PathType } from '@osucad/core';
-import { Anchor, BindableBoolean, Cached, CompositeDrawable, Container, FastRoundedBox, isMobile, PIXIGraphics, resolved, Vec2 } from '@osucad/framework';
+import { Anchor, Axes, BindableBoolean, Box, Cached, CircularContainer, CompositeDrawable, Container, isMobile, PIXIGraphics, resolved, Vec2 } from '@osucad/framework';
 
 export class SliderPathVisualizer extends CompositeDrawable {
   constructor(slider?: Slider) {
@@ -15,6 +15,7 @@ export class SliderPathVisualizer extends CompositeDrawable {
 
   #slider: Slider | null = null;
 
+  #lines = new Container();
   #handles = new Container();
 
   get slider() {
@@ -59,7 +60,10 @@ export class SliderPathVisualizer extends CompositeDrawable {
 
     this.drawNode.addChild(this.#graphics);
 
-    this.addInternal(this.#handles);
+    this.addAllInternal(
+      this.#lines,
+      this.#handles,
+    );
 
     this.coloredLines.addOnChangeListener(() => this.#pathCache.invalidate());
   }
@@ -84,38 +88,38 @@ export class SliderPathVisualizer extends CompositeDrawable {
   };
 
   #updatePath(slider: Slider) {
-    const g = this.#graphics;
-    g.clear();
+    this.#lines.clear();
 
     const controlPoints = slider.path.controlPoints;
     if (controlPoints.length === 0)
       return;
 
-    let currentType = controlPoints[0].type!;
+    const currentType = controlPoints[0].type!;
     console.assert(
       currentType !== null,
       'First control point\'s type cannot be null',
     );
 
-    g.moveTo(0, 0);
-
     const coloredLines = this.coloredLines.value;
 
     for (let i = 1; i < controlPoints.length; i++) {
-      const point = controlPoints[i];
+      const last = controlPoints[i - 1];
+      const current = controlPoints[i];
 
-      g.lineTo(point.x, point.y);
+      const delta = current.position.sub(last);
+      const angle = delta.angle();
 
-      if (point.type !== null || i === controlPoints.length - 1) {
-        g.stroke({
-          width: 1,
-          color: coloredLines ? getColorForPathType(currentType) : 0xB6B6C3,
-          cap: 'round',
-          join: 'round',
-        });
+      const line = new Box({
+        position: last.position,
+        height: 1,
+        width: delta.length(),
+        rotation: angle,
+        anchor: Anchor.CenterLeft,
+        origin: Anchor.CenterLeft,
+        color: coloredLines ? getColorForPathType(currentType) : 0xB6B6C3,
+      });
 
-        currentType = point.type!;
-      }
+      this.#lines.add(line);
     }
 
     while (this.#handles.children.length > controlPoints.length) {
@@ -167,20 +171,22 @@ export class SliderPathVisualizerHandle extends CompositeDrawable {
       this.scale = 1.2;
 
     this.addAllInternal(
-      (this.#shadow = new FastRoundedBox({
+      this.#shadow = new CircularContainer({
         size: 12,
         anchor: Anchor.Center,
         origin: Anchor.Center,
-        cornerRadius: 100,
         color: 0x000000,
         alpha: 0.1,
-      })),
-      (this.#handle = new FastRoundedBox({
+        masking: true,
+        child: new Box({ relativeSizeAxes: Axes.Both }),
+      }),
+      this.#handle = new CircularContainer({
         size: 9,
         anchor: Anchor.Center,
         origin: Anchor.Center,
-        cornerRadius: 100,
-      })),
+        masking: true,
+        child: new Box({ relativeSizeAxes: Axes.Both }),
+      }),
     );
 
     this.type = type;

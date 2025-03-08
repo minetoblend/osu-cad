@@ -1,5 +1,6 @@
 export { BasicScrollContainer } from './BasicScrollContainer';
 export { BlurContainer, type BlurContainerOptions } from './BlurContainer';
+export * from './CircularContainer';
 export { ButtonTrigger, ClickableContainer } from './ClickableContainer';
 export { Component } from './Component';
 export { CompositeDrawable, type CompositeDrawableOptions } from './CompositeDrawable';

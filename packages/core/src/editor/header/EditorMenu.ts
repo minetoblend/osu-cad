@@ -1,23 +1,25 @@
-import type { Drawable, DrawableMenuItem, MenuItem } from '@osucad/framework';
-import { Axes, Color, dependencyLoader, Direction, EasingFunction, FastRoundedBox, Menu, ScrollbarContainer, ScrollContainer, Vec2 } from '@osucad/framework';
+import type { Drawable, DrawableMenuItem, MenuItem, ReadonlyDependencyContainer } from '@osucad/framework';
+import { Axes, Box, Color, Direction, EasingFunction, Menu, ScrollbarContainer, ScrollContainer, Vec2 } from '@osucad/framework';
 import { OsucadColors } from '../../OsucadColors';
 import { ToggleMenuItem } from '../../userInterface/ToggleMenuItem';
 import { DrawableEditorMenuItem } from './DrawableEditorMenuItem';
 import { DrawableToggleMenuItem } from './DrawableToggleMenuItem';
 
 export class EditorMenu extends Menu {
-  @dependencyLoader()
-  [Symbol('load')]() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     if (this.topLevelMenu)
       return;
 
-    this.backgroundColor = new Color(OsucadColors.translucent).setAlpha(0.85);
+    this.maskingContainer.cornerRadius = 4;
+
+    this.backgroundColor = new Color(OsucadColors.translucent);
   }
 
   protected override createBackground(): Drawable {
-    return new FastRoundedBox({
+    return new Box({
       relativeSizeAxes: Axes.Both,
-      cornerRadius: 4,
     });
   }
 
