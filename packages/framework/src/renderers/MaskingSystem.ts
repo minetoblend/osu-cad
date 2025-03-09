@@ -8,7 +8,6 @@ import type {
 import type { MaskingEffect } from './MaskingEffect';
 import type { MaskingAction } from './MaskingPipe';
 import type { OsucadUniformSystem } from './OsucadUniformSystem';
-import { clamp } from '@osucad/framework';
 
 import { Color, ExtensionType, Rectangle } from 'pixi.js';
 import { MatrixUtils } from '../utils/MatrixUtils';
@@ -20,12 +19,6 @@ export interface MaskingInstruction extends Instruction {
   renderables?: Renderable[];
   maskingEffect: MaskingEffect;
 }
-
-let multiplier = 1;
-
-addEventListener('wheel', (evt) => {
-  multiplier = clamp(multiplier + Math.sign(evt.deltaY) * 0.1);
-});
 
 export class MaskingSystem implements System {
   public static extension = {
@@ -70,7 +63,7 @@ export class MaskingSystem implements System {
 
     uniformSystem.push({
       isMasking: true,
-      cornerRadius: maskingInfo.cornerRadius * multiplier,
+      cornerRadius: 0,
       toMaskingSpace: matrix,
       maskingRect: new Rectangle(0, 0, maskingRect.x, maskingRect.y),
       borderThickness: maskingInfo.borderThickness / maskingBlendRange,
