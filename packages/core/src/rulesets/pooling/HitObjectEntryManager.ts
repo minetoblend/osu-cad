@@ -47,6 +47,8 @@ export class HitObjectEntryManager {
     if (parent) {
       const parentEntry = this.#entryMap.get(parent);
       parentEntry?.nestedEntries.splice(parentEntry.nestedEntries.indexOf(entry), 1);
+
+      this.#parentMap.delete(entry);
     }
 
     for (const child of entry.nestedEntries)
