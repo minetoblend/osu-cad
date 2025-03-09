@@ -47,7 +47,7 @@ export class DrawableSliderHead extends DrawableHitCircle {
       this.absoluteSequence(this.hitObject!.startTime, () => this.fadeOutFromOne());
 
     const slider = this.parentHitObject!.hitObject as Slider;
-    if (slider.path.expectedDistance > 0) {
+    if (slider.path.expectedDistance > 0 && slider.path.calculatedRange.path[1]) {
       const angle = slider.path.calculatedRange.path[1].angle();
       this.circlePiece.rotation = angle;
       this.approachCircle.rotation = angle;
