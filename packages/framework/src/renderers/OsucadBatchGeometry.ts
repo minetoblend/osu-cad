@@ -1,11 +1,10 @@
-import {BufferUsage, Geometry, Buffer} from "pixi.js";
+import { Buffer, BufferUsage, Geometry } from 'pixi.js';
 
 const placeHolderBufferData = new Float32Array(1);
 const placeHolderIndexData = new Uint32Array(1);
 
 export class OsucadBatchGeometry extends Geometry {
-  constructor()
-  {
+  constructor() {
     const vertexSize = 12;
 
     const attributeBuffer = new Buffer({
@@ -59,11 +58,11 @@ export class OsucadBatchGeometry extends Geometry {
         aBlendRange: {
           buffer: attributeBuffer,
           format: 'float32x2',
-          stride: stride,
-          offset: 10 * 4
+          stride,
+          offset: 10 * 4,
         },
       },
-      indexBuffer
+      indexBuffer,
     });
   }
 }

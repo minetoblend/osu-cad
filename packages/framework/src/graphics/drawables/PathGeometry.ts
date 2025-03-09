@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/no-new-buffer */
 import { Buffer, BufferUsage, Geometry } from 'pixi.js';
 
 export class PathGeometry extends Geometry {

@@ -15,6 +15,7 @@ export default antfu({
       'ts/no-use-before-define': 'off',
       'ts/no-this-alias': 'off',
       'ts/method-signature-style': 'off',
+      'unicorn/no-new-buffer': 'off',
     },
   },
 });
