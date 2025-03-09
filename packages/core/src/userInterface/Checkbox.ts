@@ -23,7 +23,7 @@ export class Checkbox extends TabbableContainer {
         anchor: Anchor.Center,
         origin: Anchor.Center,
         masking: true,
-        cornerRadius: 6,
+        cornerRadius: 5,
         scale: 1,
         child: new Box({
           relativeSizeAxes: Axes.Both,
@@ -99,16 +99,16 @@ export class Checkbox extends TabbableContainer {
 
   override onFocus(e: FocusEvent) {
     this.#outline
-      .scaleTo(1.35, 200)
-      .transformTo('borderThickness', 2.7, 200)
-      .transformTo('borderColor', new Color(OsucadColors.primary).setAlpha(0.5), 200);
+      .scaleTo(1.2, 100)
+      .transformTo('borderThickness', 2.5, 100)
+      .transformTo('borderColor', new Color(OsucadColors.primary).setAlpha(0.5), 100);
   }
 
   override onFocusLost(e: FocusLostEvent) {
     this.#outline
-      .scaleTo(1, 200)
-      .transformTo('borderThickness', 0, 200)
-      .transformTo('borderColor', new Color(OsucadColors.primary).setAlpha(0), 200);
+      .scaleTo(1, 100)
+      .transformTo('borderThickness', 0, 100)
+      .transformTo('borderColor', new Color(OsucadColors.primary).setAlpha(0), 100);
   }
 
   override onKeyDown(e: KeyDownEvent): boolean {

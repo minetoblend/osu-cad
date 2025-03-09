@@ -10,15 +10,13 @@ export class SpriteDrawNode extends Sprite {
   override renderPipeId = 'osucad-sprite';
 
   protected override updateBounds() {
-    updateQuadBounds(this._bounds, this._texture, 0, 0);
+    updateQuadBounds(this._bounds, this._texture);
   }
 }
 
 export function updateQuadBounds(
   bounds: BoundsData,
   texture: Texture,
-  paddingX: number,
-  paddingY: number,
 ) {
   const { width, height } = texture.orig;
   const trim = texture.trim;
@@ -27,18 +25,18 @@ export function updateQuadBounds(
     const sourceWidth = trim.width;
     const sourceHeight = trim.height;
 
-    bounds.minX = (trim.x) - paddingX;
-    bounds.maxX = bounds.minX + sourceWidth + paddingX * 2;
+    bounds.minX = trim.x;
+    bounds.maxX = bounds.minX + sourceWidth;
 
-    bounds.minY = (trim.y) - paddingY;
-    bounds.maxY = bounds.minY + sourceHeight + paddingY * 2;
+    bounds.minY = trim.y;
+    bounds.maxY = bounds.minY + sourceHeight;
   }
 
   else {
-    bounds.minX = -paddingX;
-    bounds.maxX = bounds.minX + width + paddingX * 2;
+    bounds.minX = 0;
+    bounds.maxX = bounds.minX + width;
 
-    bounds.minY = -paddingY;
-    bounds.maxY = bounds.minY + height + paddingY * 2;
+    bounds.minY = 0;
+    bounds.maxY = bounds.minY + height;
   }
 }

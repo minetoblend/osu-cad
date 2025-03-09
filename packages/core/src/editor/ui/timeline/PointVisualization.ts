@@ -13,6 +13,8 @@ export class PointVisualization extends Box {
 
       anchor: Anchor.CenterLeft,
       origin: Anchor.Center,
+
+      edgeSmoothness: 0.5,
     });
   }
 }

@@ -75,24 +75,26 @@ export class OsucadSpritePipe implements RenderPipe<SpriteDrawNode> {
 
     const { drawSize, edgeSmoothness } = sprite.source;
 
-    if (!edgeSmoothness.isZero) {
-      const { a, b, c, d } = sprite.relativeGroupTransform;
+    const textureRect = batchableSprite.textureRect;
+
+    const textureSource = sprite._texture._source;
+
+    textureRect.x = frame.x / textureSource.width;
+    textureRect.y = frame.y / textureSource.height;
+    textureRect.width = frame.width / textureSource.width;
+    textureRect.height = frame.height / textureSource.height;
+
+    if (edgeSmoothness.x !== 0 || edgeSmoothness.y !== 0) {
+      const { a, b, c, d } = sprite.parent.groupTransform;
       const scaleX = Math.sqrt((a * a) + (b * b));
       const scaleY = Math.sqrt((c * c) + (d * d));
 
       inflationAmountX = edgeSmoothness.x / scaleX;
       inflationAmountY = edgeSmoothness.y / scaleY;
+
+      inflationAmountX *= textureRect.width / drawSize.x;
+      inflationAmountY *= textureRect.height / drawSize.y;
     }
-
-    const textureRect = batchableSprite.textureRect;
-
-    textureRect.x = frame.x / sprite._texture._source.width;
-    textureRect.y = frame.y / sprite._texture._source.height;
-    textureRect.width = frame.width / sprite._texture._source.width;
-    textureRect.height = frame.height / sprite._texture._source.height;
-
-    inflationAmountX /= drawSize.x * textureRect.width;
-    inflationAmountY /= drawSize.y * textureRect.height;
 
     batchableSprite.blendRange.x = inflationAmountX;
     batchableSprite.blendRange.y = inflationAmountY;
@@ -120,7 +122,7 @@ export class OsucadSpritePipe implements RenderPipe<SpriteDrawNode> {
     const { drawSize, edgeSmoothness } = sprite.source;
 
     if (!edgeSmoothness.isZero) {
-      const { a, b, c, d } = sprite.relativeGroupTransform;
+      const { a, b, c, d } = sprite.groupTransform;
       const scaleX = Math.sqrt((a * a) + (b * b));
       const scaleY = Math.sqrt((c * c) + (d * d));
 

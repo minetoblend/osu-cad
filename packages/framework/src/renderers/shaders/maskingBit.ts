@@ -100,7 +100,7 @@ export const maskingBitGl: HighShaderBit = {
         alphaFactor *= min(fadeStart - dist, 1.0);
 
         if (vBlendRange.x > 0.0 || vBlendRange.y > 0.0)
-          alphaFactor *= clamp(distanceFromDrawingRect(vUV), 0.0, 1.0);
+          alphaFactor *= clamp(0.0 - distanceFromDrawingRect(vUV), 0.0, 1.0);
 
         if (alphaFactor <= 0.0)
           return vec4(0.0);

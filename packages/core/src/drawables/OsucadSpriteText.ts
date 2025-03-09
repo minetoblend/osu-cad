@@ -39,6 +39,8 @@ export class OsucadSpriteText extends SpriteText {
       style: {
         fill: 0xFFFFFF,
         fontSize,
+        fontFamily: font.style.fontFamily,
+        fontWeight: font.style.fontWeight,
       },
     });
   }

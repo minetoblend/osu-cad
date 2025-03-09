@@ -33,7 +33,7 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
     this.header.cornerRadius = 10;
 
     this.header.addRange([
-      this.#background = new Box({
+      new Box({
         relativeSizeAxes: Axes.Both,
         color: 0x282832,
         alpha: 0.9,
@@ -160,12 +160,10 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
     this.header.height = CarouselBeatmap.HEIGHT;
   }
 
-  #background!: Box;
-
   override selected() {
     super.selected();
 
-    this.header.borderThickness = 5;
+    this.header.borderThickness = 3;
     this.header.borderColor = this.getDifficultyColor();
 
     this.movementContainer.moveToX(

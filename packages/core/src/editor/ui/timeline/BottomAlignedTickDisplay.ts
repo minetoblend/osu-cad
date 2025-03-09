@@ -13,7 +13,7 @@ export class BottomAlignedTickDisplay extends TimelineTickDisplay {
 
   protected override getSize(divisor: number, indexInBar: number): Vec2 {
     return super.getSize(divisor, indexInBar).mul({
-      x: 0.5,
+      x: 0.75,
       y: 1,
     });
   }

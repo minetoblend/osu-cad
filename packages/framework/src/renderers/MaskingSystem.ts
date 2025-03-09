@@ -8,11 +8,8 @@ import type {
 import type { MaskingEffect } from './MaskingEffect';
 import type { MaskingAction } from './MaskingPipe';
 import type { OsucadUniformSystem } from './OsucadUniformSystem';
-import {
-  Color,
-  ExtensionType,
-  Rectangle,
-} from 'pixi.js';
+
+import { Color, ExtensionType, Rectangle } from 'pixi.js';
 import { MatrixUtils } from '../utils/MatrixUtils';
 
 export interface MaskingInstruction extends Instruction {
@@ -58,13 +55,11 @@ export class MaskingSystem implements System {
 
     const bgr = color.toBgrNumber();
 
-    const scale = MatrixUtils.extractScale(
-      maskingInfo.drawable.drawNode.relativeGroupTransform.clone().invert(),
-    );
+    const scale = MatrixUtils.extractScale(maskingInfo.drawable.drawNode.groupTransform);
 
     const maskingSmoothness = 1; // TODO
 
-    const maskingBlendRange = maskingSmoothness * (scale.x + scale.y) / 2;
+    const maskingBlendRange = maskingSmoothness * (1 / scale.x + 1 / scale.y) / 2;
 
     uniformSystem.push({
       isMasking: true,
