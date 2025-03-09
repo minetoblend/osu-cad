@@ -2,7 +2,7 @@ import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import type { Color } from 'pixi.js';
 import type { OsuTimelineHitObjectBlueprint } from './OsuTimelineHitObjectBlueprint';
 import { HitObjectSelectionManager, ISkinSource } from '@osucad/core';
-import { Anchor, Axes, Bindable, BindableBoolean, CompositeDrawable, DrawableSprite, resolved } from '@osucad/framework';
+import { Anchor, Axes, Bindable, BindableBoolean, Box, CompositeDrawable, Container, DrawableSprite, resolved } from '@osucad/framework';
 import { OsuSelectionManager } from '../OsuSelectionManager';
 
 export class TimelineHitObjectCircle extends CompositeDrawable {
@@ -37,7 +37,7 @@ export class TimelineHitObjectCircle extends CompositeDrawable {
     this.addAllInternal(
       this.circle = new DrawableSprite({
         relativeSizeAxes: Axes.Both,
-        texture: this.skin.getTexture('hitcircle'),
+        // texture: this.skin.getTexture('hitcircle'),
         anchor: Anchor.Center,
         origin: Anchor.Center,
         scale: scaleCorrection,
@@ -55,6 +55,48 @@ export class TimelineHitObjectCircle extends CompositeDrawable {
         anchor: Anchor.Center,
         origin: Anchor.Center,
         scale: scaleCorrection,
+      }),
+      new Container({
+        relativeSizeAxes: Axes.Both,
+        masking: true,
+        borderThickness: 3,
+        borderColor: 0,
+        alpha: 0.8,
+        scale: 0.9,
+        child: new Box({
+          relativeSizeAxes: Axes.Both,
+          alpha: 0,
+          alwaysPresent: true,
+        }),
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
+      }),
+      new Container({
+        relativeSizeAxes: Axes.Both,
+        masking: true,
+        borderThickness: 3,
+        borderColor: 'white',
+        child: new Box({
+          relativeSizeAxes: Axes.Both,
+          alpha: 0,
+          alwaysPresent: true,
+        }),
+      }),
+      new Box({
+        relativeSizeAxes: Axes.Both,
+        color: 0,
+        alpha: 0.4,
+        size: 0.7,
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
+      }),
+      new Box({
+        relativeSizeAxes: Axes.Both,
+        color: 0,
+        alpha: 0.5,
+        size: 0.5,
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
       }),
     );
 

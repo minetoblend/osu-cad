@@ -97,7 +97,7 @@ export class ArgonSliderBall extends CompositeDrawable {
 
     const appliedRotation = this.parent!.rotation;
 
-    this.#fill.rotation = -appliedRotation;
+    // this.#fill.rotation = -appliedRotation;
   }
 
   override dispose(isDisposing: boolean = true) {

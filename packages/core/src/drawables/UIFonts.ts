@@ -7,8 +7,13 @@ import '@fontsource/nunito-sans/700.css';
 
 export class UIFonts {
   static nunitoSans400 = new FontDefinition({
-    fontFamily: 'Nunito Sans',
+    fontFamily: 'Minecraftia',
     fontWeight: '400',
+  });
+
+  static minecraftia = new FontDefinition({
+    fontFamily: 'Minecraftia',
+    fontWeight: 'normal',
   });
 
   static nunitoSans500 = new FontDefinition({
@@ -32,6 +37,7 @@ export class UIFonts {
       this.nunitoSans500.load(),
       this.nunitoSans600.load(),
       this.nunitoSans700.load(),
+      this.minecraftia.load(),
     ]);
   }
 }

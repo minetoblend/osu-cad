@@ -6,7 +6,7 @@ import { DrawableHitCirclePlacementTool } from './DrawableHitCirclePlacementTool
 export class HitCirclePlacementTool implements IComposeTool {
   readonly title = 'Hitcircle';
 
-  readonly icon = getIcon('circle');
+  readonly icon = getIcon('circle-mc');
 
   createDrawableTool(): DrawableComposeTool {
     return new DrawableHitCirclePlacementTool();

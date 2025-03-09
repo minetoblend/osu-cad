@@ -189,7 +189,7 @@ export class DrawableSliderPlacementTool extends DrawableOsuHitObjectPlacementTo
         break;
 
       case SliderPlacementMode.PlacingPath:
-        this.setControlPointPosition(this.playfieldMousePosition);
+        this.setControlPointPosition(this.snappedMousePosition);
         break;
     }
 

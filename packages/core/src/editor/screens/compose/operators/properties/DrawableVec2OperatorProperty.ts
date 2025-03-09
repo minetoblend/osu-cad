@@ -1,7 +1,7 @@
 import type { Drawable, Vec2 } from '@osucad/framework';
 import type { TextBox } from '../../../../../userInterface/TextBox';
 import type { Vec2OperatorProperty } from './Vec2OperatorProperty';
-import { Anchor, Axes, Box, Container, RoundedBox } from '@osucad/framework';
+import { Anchor, Axes, Box, Container } from '@osucad/framework';
 import { OsucadColors } from '../../../../../OsucadColors';
 import { DrawableOperatorProperty } from './DrawableOperatorProperty';
 import { OperatorPropertyTextBox } from './OperatorPropertyTextBox';
@@ -28,7 +28,7 @@ export class DrawableVec2OperatorProperty extends DrawableOperatorProperty<Vec2>
         relativeSizeAxes: Axes.X,
         autoSizeAxes: Axes.Y,
         children: [
-          new RoundedBox({
+          new Box({
             relativeSizeAxes: Axes.Both,
             height: 2,
             color: OsucadColors.text,

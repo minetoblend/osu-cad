@@ -1,5 +1,6 @@
 import type { ArmedState, HitSound } from '@osucad/core';
 import type { ReadonlyDependencyContainer } from '@osucad/framework';
+import type { Slider } from '../Slider';
 import type { DrawableSlider } from './DrawableSlider';
 import { OsucadConfigManager, OsucadSettings } from '@osucad/core';
 import { BindableBoolean } from '@osucad/framework';
@@ -44,5 +45,12 @@ export class DrawableSliderHead extends DrawableHitCircle {
 
     if (this.snakeOutSliders.value)
       this.absoluteSequence(this.hitObject!.startTime, () => this.fadeOutFromOne());
+
+    const slider = this.parentHitObject!.hitObject as Slider;
+    if (slider.path.expectedDistance > 0) {
+      const angle = slider.path.calculatedRange.path[1].angle();
+      this.circlePiece.rotation = angle;
+      this.approachCircle.rotation = angle;
+    }
   }
 }

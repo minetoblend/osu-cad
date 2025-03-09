@@ -4,6 +4,7 @@ import type { Texture } from 'pixi.js';
 import { Additions, EditorAction, OsucadColors } from '@osucad/core';
 import { Anchor, Axes, DrawableSprite, EmptyDrawable } from '@osucad/framework';
 import { getIcon } from '@osucad/resources';
+import { PixelateFilter } from 'pixi-filters';
 import { HitSampleHighlightContainer } from './HitSampleHighlightContainer';
 import { TernaryStateToggleButton } from './TernaryStateToggleButton';
 
@@ -51,6 +52,7 @@ export class AdditionToggleButton extends TernaryStateToggleButton implements IK
       anchor: Anchor.Center,
       origin: Anchor.Center,
       color: OsucadColors.text,
+      filters: [new PixelateFilter(3)],
     });
   }
 

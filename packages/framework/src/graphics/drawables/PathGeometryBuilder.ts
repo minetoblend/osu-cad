@@ -44,14 +44,14 @@ export class PathGeometryBuilder {
         const flippedLeft = new Line(currSegmentRight.endPoint, currSegmentRight.startPoint);
         const flippedRight = new Line(currSegmentLeft.endPoint, currSegmentLeft.startPoint);
 
-        this.#addSegmentCaps(Math.PI, currSegmentLeft, currSegmentRight, flippedLeft, flippedRight);
+        this.#addSegmentCaps(Math.PI, currSegmentLeft, currSegmentRight, flippedLeft, flippedRight, true);
       }
 
       if (i === segments.length - 1) {
         const flippedLeft = new Line(currSegmentRight.endPoint, currSegmentRight.startPoint);
         const flippedRight = new Line(currSegmentLeft.endPoint, currSegmentLeft.startPoint);
 
-        this.#addSegmentCaps(Math.PI, flippedLeft, flippedRight, currSegmentLeft, currSegmentRight);
+        this.#addSegmentCaps(Math.PI, flippedLeft, flippedRight, currSegmentLeft, currSegmentRight, true);
       }
 
       prevSegmentLeft = currSegmentLeft;
@@ -117,6 +117,7 @@ export class PathGeometryBuilder {
     segmentRight: Line,
     prevSegmentLeft: Line,
     prevSegmentRight: Line,
+    isEnd = false,
   ) {
     if (Math.abs(thetaDiff) > Math.PI)
       thetaDiff = -Math.sign(thetaDiff) * 2 * Math.PI + thetaDiff;
@@ -131,11 +132,28 @@ export class PathGeometryBuilder {
 
     const start = thetaDiff > 0 ? new Line(prevSegmentLeft.endPoint, prevSegmentRight.endPoint) : new Line(prevSegmentRight.endPoint, prevSegmentLeft.endPoint);
     const theta0 = start.theta;
-    const thetaStep = Math.sign(thetaDiff) * Math.PI / max_res;
-    const stepCount = Math.ceil(thetaDiff / thetaStep);
+    const stepCount = isEnd ? 3 : (Math.abs(thetaDiff) <= Math.PI * 0.5 ? 2 : 3);
+    const thetaStep = thetaDiff / stepCount;// Math.sign(thetaDiff) * Math.PI / max_res;
 
     for (let i = 1; i <= stepCount; i++) {
-      const next = i < stepCount ? origin.add(pointOnCircle(theta0 + i * thetaStep).scaleInPlace(this.radius)) : end;
+      let radius = this.radius;
+
+      let theta = i * thetaStep;
+
+      if (isEnd && i === 1)
+        theta = Math.sign(thetaDiff) * Math.PI * 0.25;
+      if (isEnd && i === 2)
+        theta = Math.sign(thetaDiff) * Math.PI * 0.75;
+
+      if (i < stepCount) {
+        let angle = theta;
+        if (!isEnd && i === 2)
+          angle = thetaDiff - angle;
+
+        radius /= Math.abs(Math.cos(angle));
+      }
+
+      const next = i < stepCount ? origin.add(pointOnCircle(theta0 + theta).scaleInPlace(radius)) : end;
 
       this.addTriangle(
         origin.x,

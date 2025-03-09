@@ -158,7 +158,7 @@ export class TimelineTickDisplay extends TimelinePart<PointVisualization> {
 
   protected getSize(divisor: number, indexInBar: number) {
     return indexInBar === 0
-      ? new Vec2(1.3, 1)
+      ? new Vec2(2.0, 1)
       : BindableBeatDivisor.getSize(divisor);
   }
 

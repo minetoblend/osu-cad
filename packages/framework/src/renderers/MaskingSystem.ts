@@ -8,11 +8,9 @@ import type {
 import type { MaskingEffect } from './MaskingEffect';
 import type { MaskingAction } from './MaskingPipe';
 import type { OsucadUniformSystem } from './OsucadUniformSystem';
-import {
-  Color,
-  ExtensionType,
-  Rectangle,
-} from 'pixi.js';
+import { clamp } from '@osucad/framework';
+
+import { Color, ExtensionType, Rectangle } from 'pixi.js';
 import { MatrixUtils } from '../utils/MatrixUtils';
 
 export interface MaskingInstruction extends Instruction {
@@ -22,6 +20,12 @@ export interface MaskingInstruction extends Instruction {
   renderables?: Renderable[];
   maskingEffect: MaskingEffect;
 }
+
+let multiplier = 1;
+
+addEventListener('wheel', (evt) => {
+  multiplier = clamp(multiplier + Math.sign(evt.deltaY) * 0.1);
+});
 
 export class MaskingSystem implements System {
   public static extension = {
@@ -58,17 +62,15 @@ export class MaskingSystem implements System {
 
     const bgr = color.toBgrNumber();
 
-    const scale = MatrixUtils.extractScale(
-      maskingInfo.drawable.drawNode.relativeGroupTransform.clone().invert(),
-    );
+    const scale = MatrixUtils.extractScale(maskingInfo.drawable.drawNode.groupTransform);
 
     const maskingSmoothness = 1; // TODO
 
-    const maskingBlendRange = maskingSmoothness * (scale.x + scale.y) / 2;
+    const maskingBlendRange = maskingSmoothness * (1 / scale.x + 1 / scale.y) / 2;
 
     uniformSystem.push({
       isMasking: true,
-      cornerRadius: maskingInfo.cornerRadius,
+      cornerRadius: maskingInfo.cornerRadius * multiplier,
       toMaskingSpace: matrix,
       maskingRect: new Rectangle(0, 0, maskingRect.x, maskingRect.y),
       borderThickness: maskingInfo.borderThickness / maskingBlendRange,

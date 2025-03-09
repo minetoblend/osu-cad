@@ -3,6 +3,7 @@ import type { Bindable, Drawable, IKeyBindingHandler, KeyBindingAction, KeyBindi
 import { EditorAction, OsucadColors, ToolbarToggleButton } from '@osucad/core';
 import { Anchor, Axes, DrawableSprite } from '@osucad/framework';
 import { getIcon } from '@osucad/resources';
+import { PixelateFilter } from 'pixi-filters';
 import { GridSizeButton } from './GridSizeButton';
 
 export class GridSnapToggleButton extends ToolbarToggleButton implements IKeyBindingHandler<EditorAction>, IHasTooltip {
@@ -29,6 +30,7 @@ export class GridSnapToggleButton extends ToolbarToggleButton implements IKeyBin
       anchor: Anchor.Center,
       origin: Anchor.Center,
       color: OsucadColors.text,
+      filters: [new PixelateFilter(3)],
     });
   }
 

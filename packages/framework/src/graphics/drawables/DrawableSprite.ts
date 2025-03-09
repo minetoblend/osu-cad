@@ -10,6 +10,7 @@ import { SpriteDrawNode } from './SpriteDrawNode';
 
 export interface DrawableSpriteOptions extends DrawableOptions {
   texture?: Texture | null;
+  edgeSmoothness?: number;
 }
 
 export class DrawableSprite extends Drawable {
@@ -75,7 +76,7 @@ export class DrawableSprite extends Drawable {
     this.#sprite.setSize(drawSize.x, drawSize.y);
   }
 
-  #edgeSmoothness = new Vec2(0);
+  #edgeSmoothness = new Vec2(1);
 
   get edgeSmoothness(): Vec2 {
     return this.#edgeSmoothness;
@@ -85,6 +86,8 @@ export class DrawableSprite extends Drawable {
     value = typeof value === 'number' ? new Vec2(value) : Vec2.from(value);
     if (this.#edgeSmoothness.equals(value))
       return;
+
+    this.#edgeSmoothness = value as Vec2;
 
     this.invalidate(Invalidation.Transform);
   }

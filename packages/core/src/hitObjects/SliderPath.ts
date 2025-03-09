@@ -1,5 +1,5 @@
 import type { PathPoint } from './PathPoint';
-import { Action, Bindable, CachedValue, List, Vec2 } from '@osucad/framework';
+import { Action, almostEquals, Bindable, CachedValue, List, Vec2 } from '@osucad/framework';
 import { SharedObject } from '@osucad/multiplayer';
 import { arraySerializer } from '../utils/arraySerializer';
 import { PathApproximator } from '../utils/PathApproximator';
@@ -133,7 +133,7 @@ export class SliderPath extends SharedObject {
         const last = points.last!;
         const distance = last.distance(p);
 
-        if (distance === 0)
+        if (almostEquals(distance, 0))
           continue;
 
         points.push(p);

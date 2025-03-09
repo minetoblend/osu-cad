@@ -111,13 +111,15 @@ export class SliderPathVisualizer extends CompositeDrawable {
 
       const line = new Box({
         position: last.position,
-        height: 1,
+        height: 1.5,
         width: delta.length(),
         rotation: angle,
         anchor: Anchor.CenterLeft,
         origin: Anchor.CenterLeft,
         color: coloredLines ? getColorForPathType(currentType) : 0xB6B6C3,
       });
+
+      line.edgeSmoothness = 1;
 
       this.#lines.add(line);
     }

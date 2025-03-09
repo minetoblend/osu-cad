@@ -6,7 +6,7 @@ import { DrawableSelectTool } from './DrawableSelectTool';
 
 export class SelectTool extends ComposeTool {
   get icon(): Texture {
-    return getIcon('select');
+    return getIcon('diamond-sword');
   }
 
   isSameTool(tool: ComposeTool): boolean {

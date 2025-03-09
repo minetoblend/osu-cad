@@ -147,7 +147,7 @@ export class OsucadUniformSystem implements System {
       bindGroup: null!,
       cornerRadius: cornerRadius ?? currentGlobalUniformData.cornerRadius,
       toMaskingSpace: toMaskingSpace ?? currentGlobalUniformData.toMaskingSpace,
-      maskingRect: maskingRect ?? currentGlobalUniformData.maskingRect,
+      maskingRect: maskingRect ?? new Rectangle(0, 0, renderTarget.width, renderTarget.height),
       isMasking: isMasking ?? currentGlobalUniformData.isMasking,
       borderThickness: borderThickness ?? currentGlobalUniformData.borderThickness,
       borderColor: borderColor ?? currentGlobalUniformData.borderColor,

@@ -40,6 +40,7 @@ export default {
         nameStyle: "relative",
         removeFileExtension: true,
         allowRotation: false,
+        resolution: 1,
       },
       resolutionOptions: {
         template: "@%%x",

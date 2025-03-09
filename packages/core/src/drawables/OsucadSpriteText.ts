@@ -32,6 +32,8 @@ export class OsucadSpriteText extends SpriteText {
         break;
     }
 
+    font = UIFonts.minecraftia;
+
     super({
       ...rest,
       color,
@@ -39,6 +41,7 @@ export class OsucadSpriteText extends SpriteText {
       style: {
         fill: 0xFFFFFF,
         fontSize,
+        fontFamily: font.style.fontFamily,
       },
     });
   }

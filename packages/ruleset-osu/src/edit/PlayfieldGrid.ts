@@ -115,7 +115,7 @@ export class PlayfieldGrid extends CompositeDrawable implements IKeyBindingHandl
     if (!super.updateSubTreeTransforms())
       return false;
 
-    const pixelSize = this.drawNode.worldTransform.a;
+    const pixelSize = this.drawNode.groupTransform.a * devicePixelRatio;
 
     if (pixelSize === this.#pixelSize)
       return true;

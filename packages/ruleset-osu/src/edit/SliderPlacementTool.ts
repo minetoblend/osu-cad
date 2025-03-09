@@ -5,7 +5,7 @@ import { DrawableSliderPlacementTool } from './DrawableSliderPlacementTool';
 export class SliderPlacementTool implements IComposeTool {
   readonly title = 'Slider';
 
-  readonly icon = getIcon('slider');
+  readonly icon = getIcon('slider-mc');
 
   createDrawableTool(): DrawableComposeTool {
     return new DrawableSliderPlacementTool();

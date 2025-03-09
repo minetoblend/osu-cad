@@ -164,6 +164,13 @@ export class ArgonMainCirclePiece extends CompositeDrawable {
     });
   }
 
+  override update() {
+    super.update();
+
+    const parent = this.findClosestParent(it => it.rotation !== 0);
+    this.number.rotation = -(parent?.rotation ?? 0);
+  }
+
   override dispose(isDisposing: boolean = true) {
     super.dispose(isDisposing);
 

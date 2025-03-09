@@ -12,18 +12,24 @@ export class DefaultCursor extends CompositeDrawable {
   constructor() {
     super();
 
-    this.scale = 0.5;
+    this.scale = 0.35;
+
+    const texture = getIcon('diamond-sword');
+    texture.source.magFilter = 'nearest';
+    texture.source.minFilter = 'nearest';
+    texture.source.mipmapFilter = 'nearest';
+    texture.source.update();
 
     this.addAllInternal(
       this.#shadow = new DrawableSprite({
-        texture: getIcon('select'),
+        texture,
         x: -4,
         y: -1,
         color: 0x000000,
         alpha: 0.2,
       }),
       this.#sprite = new DrawableSprite({
-        texture: getIcon('select'),
+        texture,
         x: -5,
         y: -4,
       }),

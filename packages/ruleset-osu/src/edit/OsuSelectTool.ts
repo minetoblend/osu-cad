@@ -4,7 +4,7 @@ import { DrawableOsuSelectTool } from './DrawableOsuSelectTool';
 
 export class OsuSelectTool implements IComposeTool {
   readonly title = 'Select';
-  readonly icon = getIcon('select');
+  readonly icon = getIcon('select-mc');
 
   createDrawableTool(): DrawableComposeTool {
     return new DrawableOsuSelectTool();
