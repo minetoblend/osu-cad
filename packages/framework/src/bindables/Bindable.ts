@@ -1,4 +1,4 @@
-import { WeakList } from '../utils';
+import IterableWeakSet from '../utils/IterableWeakSet';
 import { Action } from './Action';
 
 export type BindableListener<T> = (value: T) => void;
@@ -200,13 +200,13 @@ export class Bindable<T> implements ReadonlyBindable<T> {
     return true;
   }
 
-  protected bindings?: WeakList<Bindable<T>>;
+  protected bindings?: IterableWeakSet<Bindable<T>>;
 
   bindTo(bindable: Bindable<T>) {
     bindable.copyTo(this);
 
-    this.#addWeakReference(bindable.weakReference);
-    bindable.#addWeakReference(this.weakReference);
+    this.#addWeakReference(bindable);
+    bindable.#addWeakReference(this);
   }
 
   copyTo(bindable: Bindable<T>) {
@@ -215,13 +215,13 @@ export class Bindable<T> implements ReadonlyBindable<T> {
     bindable.setDisabled(this.disabled, true);
   }
 
-  #addWeakReference(weakReference: WeakRef<Bindable<T>>) {
-    this.bindings ??= new WeakList();
+  #addWeakReference(weakReference: Bindable<T>) {
+    this.bindings ??= new IterableWeakSet();
     this.bindings.add(weakReference);
   }
 
   #removeWeakReference(bindable: Bindable<T>) {
-    return this.bindings?.remove(bindable) ?? false;
+    return this.bindings?.delete(bindable) ?? false;
   }
 
   protected equals(a: T, b: T): boolean {

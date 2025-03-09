@@ -10,4 +10,3 @@ export * from './List';
 export * from './loadTexture';
 export * from './ObservableSortedList';
 export * from './SortedList';
-export * from './WeakList';
