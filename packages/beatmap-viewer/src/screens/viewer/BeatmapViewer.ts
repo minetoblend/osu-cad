@@ -1,8 +1,9 @@
 import type { Beatmap, EditorScreenManager } from '@osucad/core';
 import type { Drawable, KeyDownEvent, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { BeatmapViewerGame } from '../../BeatmapViewerGame';
-import { ComposeScreen, Editor, EditorBeatmap, ModdingScreen, PreferencesOverlay } from '@osucad/core';
+import { Editor, EditorBeatmap, ModdingScreen, PreferencesOverlay } from '@osucad/core';
 import { Key, MenuItem, resolved } from '@osucad/framework';
+import { ViewportScreen } from 'packages/beatmap-viewer/src/screens/viewer/screens/viewport/ViewportScreen';
 import { Router } from '../Router';
 import { BeatmapViewerLayout } from './BeatmapViewerLayout';
 
@@ -16,14 +17,14 @@ export class BeatmapViewer extends Editor {
   protected loadComplete() {
     super.loadComplete();
 
-    // this.editorBeatmap.updateHandler.readonly = true;
+    this.editorBeatmap.updateHandler.readonly = true;
   }
 
   protected registerScreens(screenManager: EditorScreenManager) {
-    screenManager.register(ComposeScreen);
+    screenManager.register(ViewportScreen);
     screenManager.register(ModdingScreen);
 
-    screenManager.setCurrentScreen(ComposeScreen);
+    screenManager.setCurrentScreen(ViewportScreen);
   }
 
   protected createLayout(): Drawable {
