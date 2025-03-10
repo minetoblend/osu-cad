@@ -36,6 +36,9 @@ export class SpriteText extends Drawable {
       style: this.#textStyle,
     });
 
+    // @ts-expect-error readonly property
+    this.#textDrawNode.renderPipeId = 'spriteText';
+
     this.drawNode.addChild(this.#textDrawNode);
   }
 
