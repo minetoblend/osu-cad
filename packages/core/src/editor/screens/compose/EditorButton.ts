@@ -1,5 +1,5 @@
 import type { Drawable, FocusLostEvent, HoverEvent, HoverLostEvent, MouseDownEvent, MouseUpEvent, ReadonlyDependencyContainer, ScheduledDelegate } from '@osucad/framework';
-import { Anchor, Axes, BindableBoolean, Box, CompositeDrawable, Container, DrawableSprite, EasingFunction, isSourcedFromTouch, MouseButton, RoundedBox, Vec2, Visibility } from '@osucad/framework';
+import { Anchor, Axes, BindableBoolean, Box, CompositeDrawable, Container, DrawableSprite, EasingFunction, isSourcedFromTouch, MouseButton, Vec2, Visibility } from '@osucad/framework';
 import { getIcon } from '@osucad/resources';
 import { OsucadColors } from '../../../OsucadColors';
 import { EditorButtonSubmenu } from './EditorButtonSubmenu';
@@ -42,14 +42,13 @@ export abstract class EditorButton extends CompositeDrawable {
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
-    this.masking = true;
-    this.cornerRadius = 8;
-
     this.addAllInternal(
       this.backgroundContainer = new Container({
         relativeSizeAxes: Axes.Both,
         anchor: Anchor.Center,
         origin: Anchor.Center,
+        masking: true,
+        cornerRadius: 8,
         children: [
           this.#background = new Box({
             relativeSizeAxes: Axes.Both,
@@ -58,13 +57,21 @@ export abstract class EditorButton extends CompositeDrawable {
             anchor: Anchor.Center,
             origin: Anchor.Center,
           }),
-          this.#outline = new RoundedBox({
+          this.#outlineContainer = new Container({
             relativeSizeAxes: Axes.Both,
-            cornerRadius: 8,
-            fillAlpha: 0,
-            anchor: Anchor.Center,
-            origin: Anchor.Center,
-            alpha: 0,
+            child: this.#outline = new Container({
+              relativeSizeAxes: Axes.Both,
+              anchor: Anchor.Center,
+              origin: Anchor.Center,
+              masking: true,
+              cornerRadius: 10,
+              borderColor: OsucadColors.primary,
+              child: new Box({
+                relativeSizeAxes: Axes.Both,
+                alpha: 0,
+                alwaysPresent: true,
+              }),
+            }),
           }),
         ],
       }),
@@ -78,8 +85,6 @@ export abstract class EditorButton extends CompositeDrawable {
         child: this.createContent(),
       }),
     );
-
-    this.#outline.drawNode.renderable = false;
 
     this.active.valueChanged.addListener(this.updateState, this);
     this.disabled.valueChanged.addListener(this.updateState, this);
@@ -97,7 +102,9 @@ export abstract class EditorButton extends CompositeDrawable {
 
   #background!: Box;
 
-  #outline!: RoundedBox;
+  #outline!: Container;
+
+  #outlineContainer!: Container;
 
   #content!: Container;
 
@@ -128,11 +135,18 @@ export abstract class EditorButton extends CompositeDrawable {
       this.backgroundContainer.scaleTo(1, 300, EasingFunction.OutBack);
     }
 
-    this.transformTo('outlineVisibility', this.active.value ? 1 : 0, this.outlineTransitionDuration);
+    if (this.active.value) {
+      this.#outlineContainer.transformPadding(-2, this.outlineTransitionDuration);
+      this.#outline.transformTo('borderThickness', 2.5, this.outlineTransitionDuration);
+    }
+    else {
+      this.#outlineContainer.transformPadding(0, this.outlineTransitionDuration);
+      this.#outline.transformTo('borderThickness', 0, this.outlineTransitionDuration);
+    }
   }
 
   protected get outlineTransitionDuration() {
-    return 200;
+    return 120;
   }
 
   override get acceptsFocus(): boolean {
@@ -177,48 +191,8 @@ export abstract class EditorButton extends CompositeDrawable {
     this.updateState();
   }
 
-  #outlineVisibility = 0;
-
-  get outlineVisibility() {
-    return this.#outlineVisibility;
-  }
-
-  set outlineVisibility(value: number) {
-    if (value === this.#outlineVisibility)
-      return;
-
-    this.#outlineVisibility = value;
-    this.#outline.alpha = value;
-
-    this.#outline.drawNode.visible = value > 0;
-
-    this.#updateOutline();
-  }
-
   override get requestsPositionalInput(): boolean {
     return super.requestsPositionalInput && !this.disabled.value;
-  }
-
-  #updateOutline() {
-    if (this.outlineVisibility === 0) {
-      this.#outline.outlines = [];
-    }
-    else {
-      this.#outline.outlines = [
-        {
-          color: 0xC0BFBD,
-          width: 1.5 * this.outlineVisibility,
-          alpha: 0.25 * this.outlineVisibility,
-          alignment: 1,
-        },
-        {
-          color: 0x32D2AC,
-          width: 1.5 * this.outlineVisibility,
-          alpha: this.outlineVisibility,
-          alignment: 0,
-        },
-      ];
-    }
   }
 
   showSubmenu() {
