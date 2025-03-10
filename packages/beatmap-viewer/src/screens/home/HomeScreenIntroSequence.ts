@@ -1,5 +1,5 @@
 import { OsucadColors } from '@osucad/core';
-import { Action, Anchor, Container, dependencyLoader, DrawableSprite, EasingFunction, RoundedBox, Vec2 } from '@osucad/framework';
+import { Action, Anchor, Container, DrawableSprite, EasingFunction, RoundedBox, Vec2 } from '@osucad/framework';
 import { getIcon, OsucadTextures } from '@osucad/resources';
 import { AlphaFilter } from 'pixi.js';
 
@@ -15,7 +15,6 @@ export class HomeScreenIntroSequence extends Container {
     this.height = 192;
   }
 
-  @dependencyLoader()
   async load() {
     const text = new DrawableSprite({
       texture: await OsucadTextures.osucadText.load(),
