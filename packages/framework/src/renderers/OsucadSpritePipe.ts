@@ -1,6 +1,6 @@
 import type { Container, InstructionSet, PoolItem, Renderer, RenderPipe } from 'pixi.js';
 import type { SpriteDrawNode } from '../graphics/drawables/SpriteDrawNode';
-import { BigPool, ExtensionType, Rectangle } from 'pixi.js';
+import { BigPool, ExtensionType } from 'pixi.js';
 import { OsucadBatchableSprite } from './OsucadBatchableSprite';
 
 export class OsucadSpritePipe implements RenderPipe<SpriteDrawNode> {
@@ -67,37 +67,6 @@ export class OsucadSpritePipe implements RenderPipe<SpriteDrawNode> {
   private _updateBatchableSprite(sprite: SpriteDrawNode, batchableSprite: OsucadBatchableSprite) {
     batchableSprite.bounds = sprite.bounds;
     batchableSprite.texture = sprite._texture;
-
-    const frame = sprite._texture.frame;
-
-    let inflationAmountX = 0;
-    let inflationAmountY = 0;
-
-    const { drawSize, edgeSmoothness } = sprite.source;
-
-    const textureRect = batchableSprite.textureRect;
-
-    const textureSource = sprite._texture._source;
-
-    textureRect.x = frame.x / textureSource.width;
-    textureRect.y = frame.y / textureSource.height;
-    textureRect.width = frame.width / textureSource.width;
-    textureRect.height = frame.height / textureSource.height;
-
-    if (edgeSmoothness.x !== 0 || edgeSmoothness.y !== 0) {
-      const { a, b, c, d } = sprite.parent.groupTransform;
-      const scaleX = Math.sqrt((a * a) + (b * b));
-      const scaleY = Math.sqrt((c * c) + (d * d));
-
-      inflationAmountX = edgeSmoothness.x / scaleX;
-      inflationAmountY = edgeSmoothness.y / scaleY;
-
-      inflationAmountX *= textureRect.width / drawSize.x;
-      inflationAmountY *= textureRect.height / drawSize.y;
-    }
-
-    batchableSprite.blendRange.x = inflationAmountX;
-    batchableSprite.blendRange.y = inflationAmountY;
   }
 
   private _getGpuSprite(sprite: SpriteDrawNode): OsucadBatchableSprite {
@@ -113,35 +82,6 @@ export class OsucadSpritePipe implements RenderPipe<SpriteDrawNode> {
     batchableSprite.texture = sprite._texture;
     batchableSprite.bounds = sprite.bounds;
     batchableSprite.roundPixels = (this._renderer._roundPixels | sprite._roundPixels) as 0 | 1;
-
-    const frame = sprite._texture.frame;
-
-    let inflationAmountX = 0;
-    let inflationAmountY = 0;
-
-    const { drawSize, edgeSmoothness } = sprite.source;
-
-    if (!edgeSmoothness.isZero) {
-      const { a, b, c, d } = sprite.groupTransform;
-      const scaleX = Math.sqrt((a * a) + (b * b));
-      const scaleY = Math.sqrt((c * c) + (d * d));
-
-      inflationAmountX = edgeSmoothness.x / scaleX;
-      inflationAmountY = edgeSmoothness.y / scaleY;
-    }
-
-    batchableSprite.textureRect = new Rectangle(
-      frame.x / sprite._texture._source.width,
-      frame.y / sprite._texture._source.height,
-      frame.width / sprite._texture._source.width,
-      frame.height / sprite._texture._source.height,
-    );
-
-    inflationAmountX /= drawSize.x * batchableSprite.textureRect.width;
-    inflationAmountY /= drawSize.y * batchableSprite.textureRect.height;
-
-    batchableSprite.blendRange.x = inflationAmountX;
-    batchableSprite.blendRange.y = inflationAmountY;
 
     this._gpuSpriteHash[sprite.uid] = batchableSprite;
 

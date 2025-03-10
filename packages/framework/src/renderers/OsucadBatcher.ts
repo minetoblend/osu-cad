@@ -11,8 +11,8 @@ import {
   ExtensionType,
 } from 'pixi.js';
 
-import { BatchShader } from './BatchShader';
 import { OsucadBatchGeometry } from './OsucadBatchGeometry';
+import { BatchShader } from './shaders/BatchShader';
 
 let shader: Shader = null!;
 
@@ -38,7 +38,7 @@ export class OsucadBatcher extends Batcher {
   override geometry: Geometry = new OsucadBatchGeometry();
   override shader: Shader = shader ?? (shader = new BatchShader(this.maxTextures));
 
-  protected override vertexSize: number = 12;
+  protected override vertexSize: number = 6;
 
   override packAttributes(element: OsucadBatchableMeshElement, float32View: Float32Array, uint32View: Uint32Array, index: number, textureId: number): void {
     const textureIdAndRound = (textureId << 16) | (element.roundPixels & 0xFFFF);
@@ -90,19 +90,12 @@ export class OsucadBatcher extends Batcher {
 
     const bounds = element.bounds;
 
-    const textureRect = element.textureRect;
-
-    const trx2 = textureRect.x + textureRect.width;
-    const try2 = textureRect.y + textureRect.height;
-
     const w0 = bounds.maxX;
     const w1 = bounds.minX;
     const h0 = bounds.maxY;
     const h1 = bounds.minY;
 
     const uvs = texture.uvs;
-
-    const blendRange = element.blendRange;
 
     // _ _ _ _
     // a b g r
@@ -119,66 +112,34 @@ export class OsucadBatcher extends Batcher {
     uint32View[index + 4] = argb;
     uint32View[index + 5] = textureIdAndRound;
 
-    float32View[index + 6] = textureRect.x;
-    float32View[index + 7] = textureRect.y;
-    float32View[index + 8] = trx2;
-    float32View[index + 9] = try2;
+    // xy
+    float32View[index + 6] = (a * w0) + (c * h1) + tx;
+    float32View[index + 7] = (d * h1) + (b * w0) + ty;
 
-    float32View[index + 10] = blendRange.x;
-    float32View[index + 11] = blendRange.y;
+    float32View[index + 8] = uvs.x1;
+    float32View[index + 9] = uvs.y1;
+
+    uint32View[index + 10] = argb;
+    uint32View[index + 11] = textureIdAndRound;
 
     // xy
-    float32View[index + 12] = (a * w0) + (c * h1) + tx;
-    float32View[index + 13] = (d * h1) + (b * w0) + ty;
+    float32View[index + 12] = (a * w0) + (c * h0) + tx;
+    float32View[index + 13] = (d * h0) + (b * w0) + ty;
 
-    float32View[index + 14] = uvs.x1;
-    float32View[index + 15] = uvs.y1;
+    float32View[index + 14] = uvs.x2;
+    float32View[index + 15] = uvs.y2;
 
     uint32View[index + 16] = argb;
     uint32View[index + 17] = textureIdAndRound;
 
-    float32View[index + 18] = textureRect.x;
-    float32View[index + 19] = textureRect.y;
-    float32View[index + 20] = trx2;
-    float32View[index + 21] = try2;
-
-    float32View[index + 22] = blendRange.x;
-    float32View[index + 23] = blendRange.y;
-
     // xy
-    float32View[index + 24] = (a * w0) + (c * h0) + tx;
-    float32View[index + 25] = (d * h0) + (b * w0) + ty;
+    float32View[index + 18] = (a * w1) + (c * h0) + tx;
+    float32View[index + 19] = (d * h0) + (b * w1) + ty;
 
-    float32View[index + 26] = uvs.x2;
-    float32View[index + 27] = uvs.y2;
+    float32View[index + 20] = uvs.x3;
+    float32View[index + 21] = uvs.y3;
 
-    uint32View[index + 28] = argb;
-    uint32View[index + 29] = textureIdAndRound;
-
-    float32View[index + 30] = textureRect.x;
-    float32View[index + 31] = textureRect.y;
-    float32View[index + 32] = trx2;
-    float32View[index + 33] = try2;
-
-    float32View[index + 34] = blendRange.x;
-    float32View[index + 35] = blendRange.y;
-
-    // xy
-    float32View[index + 36] = (a * w1) + (c * h0) + tx;
-    float32View[index + 37] = (d * h0) + (b * w1) + ty;
-
-    float32View[index + 38] = uvs.x3;
-    float32View[index + 39] = uvs.y3;
-
-    uint32View[index + 40] = argb;
-    uint32View[index + 41] = textureIdAndRound;
-
-    float32View[index + 42] = textureRect.x;
-    float32View[index + 43] = textureRect.y;
-    float32View[index + 44] = trx2;
-    float32View[index + 45] = try2;
-
-    float32View[index + 46] = blendRange.x;
-    float32View[index + 47] = blendRange.y;
+    uint32View[index + 22] = argb;
+    uint32View[index + 23] = textureIdAndRound;
   }
 }

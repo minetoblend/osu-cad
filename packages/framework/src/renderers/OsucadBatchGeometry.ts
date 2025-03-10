@@ -5,7 +5,7 @@ const placeHolderIndexData = new Uint32Array(1);
 
 export class OsucadBatchGeometry extends Geometry {
   constructor() {
-    const vertexSize = 12;
+    const vertexSize = 6;
 
     const attributeBuffer = new Buffer({
       data: placeHolderBufferData,
@@ -48,18 +48,6 @@ export class OsucadBatchGeometry extends Geometry {
           format: 'uint16x2',
           stride,
           offset: 5 * 4,
-        },
-        aTextureRect: {
-          buffer: attributeBuffer,
-          format: 'float32x4',
-          stride,
-          offset: 6 * 4,
-        },
-        aBlendRange: {
-          buffer: attributeBuffer,
-          format: 'float32x2',
-          stride,
-          offset: 10 * 4,
         },
       },
       indexBuffer,

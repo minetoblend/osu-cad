@@ -5,18 +5,15 @@ export const maskingBitGl: HighShaderBit = {
   vertex: {
     header: `
       uniform mat3 uToMaskingSpace;
-      in vec2 aBlendRange;
-      in vec4 aTextureRect;
 
       out vec2 vMaskingPosition;
-      out vec4 vTexRect;
-      out vec2 vBlendRange;
             `,
     main: `
-      vMaskingPosition = (uToMaskingSpace * vec3(aPosition, 1.0)).xy;
-      vBlendRange = aBlendRange;
-      vTexRect = aTextureRect;
+      mat3 toMaskingSpace = uToMaskingSpace;
       `,
+    end: `
+      vMaskingPosition = (toMaskingSpace * vec3(aPosition, 1.0)).xy;
+    `,
   },
   fragment: {
     header: `
@@ -28,8 +25,6 @@ export const maskingBitGl: HighShaderBit = {
       uniform lowp float uMaskingBlendRange;
 
       in vec2 vMaskingPosition;
-      in vec4 vTexRect;
-      in vec2 vBlendRange;
 
       highp float distanceFromRoundedRect(highp vec2 offset, highp float radius) {
         highp vec2 maskingPosition = vMaskingPosition + offset;
@@ -66,26 +61,8 @@ export const maskingBitGl: HighShaderBit = {
           );
       }
 
-      float distanceFromDrawingRect(vec2 texCoord) {
-        highp vec2 topLeftOffset = vTexRect.xy - texCoord;
-        topLeftOffset = vec2(
-          vBlendRange.x > 0.0 ? topLeftOffset.x / vBlendRange.x : 1.0,
-          vBlendRange.y > 0.0 ? topLeftOffset.y / vBlendRange.y : 1.0
-        );
-
-        highp vec2 bottomRightOffset = texCoord - vTexRect.zw;
-        bottomRightOffset = vec2(
-          vBlendRange.x > 0.0 ? bottomRightOffset.x / vBlendRange.x : 1.0,
-          vBlendRange.y > 0.0 ? bottomRightOffset.y / vBlendRange.y : 1.0
-        );
-
-        highp vec2 xyDistance = max(topLeftOffset, bottomRightOffset);
-
-        return max(xyDistance.x, xyDistance.y);
-      }
-
       lowp vec4 getRoundedColor(vec4 texel) {
-        if (uIsMasking == 0 && vBlendRange == vec2(0.0))
+        if (uIsMasking == 0)
           return texel * vColor;
 
         highp float dist = distanceFromRoundedRect(vec2(0.0), uCornerRadius);
@@ -98,9 +75,6 @@ export const maskingBitGl: HighShaderBit = {
         float fadeStart = (uCornerRadius + radiusCorrection) / uMaskingBlendRange;
 
         alphaFactor *= min(fadeStart - dist, 1.0);
-
-        if (vBlendRange.x > 0.0 || vBlendRange.y > 0.0)
-          alphaFactor *= clamp(0.0 - distanceFromDrawingRect(vUV), 0.0, 1.0);
 
         if (alphaFactor <= 0.0)
           return vec4(0.0);

@@ -3,6 +3,7 @@ import type { FrameworkEnvironment } from '../FrameworkEnvironment';
 import type { Drawable } from '../graphics/drawables/Drawable';
 import type { PIXIRenderer } from '../pixi';
 import { extensions, GlobalUniformSystem } from 'pixi.js';
+import { SpriteTextPipe } from '../graphics/text/SpriteTextPipe';
 import { type IVec2, Vec2 } from '../math';
 import { MaskingPipe } from './MaskingPipe';
 import { MaskingSystem } from './MaskingSystem';
@@ -25,6 +26,7 @@ export class Renderer {
       MaskingPipe,
       MaskingSystem,
       OsucadUniformSystem,
+      SpriteTextPipe,
     );
 
     const { autoDetectRenderer } = await import('pixi.js');
@@ -38,7 +40,7 @@ export class Renderer {
 
     const context = canvas.getContext('webgl2', {
       alpha: false,
-      antialias: false,
+      antialias: environment.antialiasPreferred,
       depth: true,
       powerPreference: 'high-performance',
       desynchronized: true,
@@ -46,11 +48,14 @@ export class Renderer {
       stencil: true,
     });
 
+    if (!context)
+      throw new Error('Webgl not supported');
+
     this.#internalRenderer = await autoDetectRenderer({
       canvas,
       context,
       preference: 'webgl', // environment.webGpuSupported ? rendererPreference : "webgl",
-      antialias: false,
+      antialias: environment.antialiasPreferred,
       resolution: devicePixelRatio,
       width: this.#size.x,
       height: this.#size.y,
