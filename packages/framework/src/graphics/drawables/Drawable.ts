@@ -138,7 +138,6 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   get drawNode() {
     this.#drawNode ??= this.createDrawNode();
     this.#drawNode.label = this.label ?? '';
-    (this.#drawNode as any).__drawable__ = this;
     return this.#drawNode;
   }
 
