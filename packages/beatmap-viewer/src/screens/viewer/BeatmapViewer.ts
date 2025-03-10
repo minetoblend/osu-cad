@@ -3,9 +3,9 @@ import type { Drawable, KeyDownEvent, ReadonlyDependencyContainer } from '@osuca
 import type { BeatmapViewerGame } from '../../BeatmapViewerGame';
 import { Editor, EditorBeatmap, ModdingScreen, PreferencesOverlay } from '@osucad/core';
 import { Key, MenuItem, resolved } from '@osucad/framework';
-import { ViewportScreen } from 'packages/beatmap-viewer/src/screens/viewer/screens/viewport/ViewportScreen';
 import { Router } from '../Router';
 import { BeatmapViewerLayout } from './BeatmapViewerLayout';
+import { ViewportScreen } from './screens/viewport/ViewportScreen';
 
 export class BeatmapViewer extends Editor {
   protected override async loadAsync(dependencies: ReadonlyDependencyContainer): Promise<void> {
