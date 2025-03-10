@@ -1,5 +1,5 @@
 import { OsucadColors } from '@osucad/core';
-import { Action, Anchor, Container, DrawableSprite, EasingFunction, RoundedBox, Vec2 } from '@osucad/framework';
+import { Action, Anchor, Container, DrawableSprite, EasingFunction, isMobile, RoundedBox, Vec2 } from '@osucad/framework';
 import { getIcon, OsucadTextures } from '@osucad/resources';
 import { AlphaFilter } from 'pixi.js';
 
@@ -140,7 +140,7 @@ export class HomeScreenIntroSequence extends Container {
 
   readonly #alphaFilter = new AlphaFilter({
     alpha: 0,
-    antialias: 'inherit',
+    antialias: !isMobile.any,
     resolution: devicePixelRatio,
   });
 
