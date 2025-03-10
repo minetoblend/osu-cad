@@ -59,8 +59,11 @@ class IterableWeakSet<T extends WeakKey> {
   }
 
   *values() {
-    for (const ref of this.refSet.values())
-      yield ref.deref();
+    for (const ref of this.refSet.values()) {
+      const value = ref.deref();
+      if (value !== undefined)
+        yield value;
+    }
   }
 }
 
