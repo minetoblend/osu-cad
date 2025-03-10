@@ -76,7 +76,7 @@ export class DrawableSprite extends Drawable {
     this.#sprite.setSize(drawSize.x, drawSize.y);
   }
 
-  #edgeSmoothness = new Vec2(1);
+  #edgeSmoothness = new Vec2(0);
 
   get edgeSmoothness(): Vec2 {
     return this.#edgeSmoothness;
