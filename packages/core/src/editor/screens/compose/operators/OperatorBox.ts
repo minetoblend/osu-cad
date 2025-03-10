@@ -49,6 +49,7 @@ export class OperatorBox extends CompositeDrawable {
             margin: { top: 10 },
             autoSizeAxes: Axes.Y,
             spacing: new Vec2(4),
+            alwaysPresent: true,
           }),
         ],
       }),
@@ -64,8 +65,8 @@ export class OperatorBox extends CompositeDrawable {
 
     const properties = this.operator.properties;
 
-    this.#content.addAll(
-      ...properties.map(property => property.createDrawableRepresentation()),
+    this.#content.addRange(
+      properties.map(property => property.createDrawableRepresentation()),
     );
   }
 
@@ -77,6 +78,10 @@ export class OperatorBox extends CompositeDrawable {
 
     this.expanded.bindValueChanged((expanded) => {
       this.#content.bypassAutoSizeAxes = expanded.value ? Axes.None : Axes.Both;
+      if (expanded.value)
+        this.#content.fadeInFromZero(100);
+      else
+        this.#content.fadeOut(10);
     }, true);
 
     if (this.expanded.value && this.operator.prominent) {
