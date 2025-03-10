@@ -1,6 +1,6 @@
 import type { EditorScreen } from './screens/EditorScreen';
 import type { EditorCornerContent } from './ui/EditorCornerContent';
-import { Anchor, Axes, BetterBackdropBlurFilter, Bindable, CompositeDrawable, Container, EasingFunction, Invalidation, LayoutMember, Vec2 } from '@osucad/framework';
+import { Anchor, Axes, Bindable, CompositeDrawable, Container, EasingFunction, Invalidation, LayoutMember, Vec2 } from '@osucad/framework';
 import { EditorBottomBar } from './bottomBar/EditorBottomBar';
 import { EditorSafeArea } from './EditorSafeArea';
 import { EditorMenuBar } from './header/EditorMenuBar';
@@ -17,13 +17,6 @@ export class EditorLayout extends CompositeDrawable {
 
     this.relativeSizeAxes = Axes.Both;
 
-    const filter = new BetterBackdropBlurFilter({
-      strength: 15,
-      quality: 3,
-      antialias: 'inherit',
-      resolution: devicePixelRatio,
-    });
-
     this.internalChildren = [
       this.#screenContainer = new EditorScreenContainer(),
       this.#bottomBar = new EditorBottomBar(),
@@ -34,7 +27,6 @@ export class EditorLayout extends CompositeDrawable {
       new Container({
         relativeSizeAxes: Axes.X,
         autoSizeAxes: Axes.Y,
-        filters: [filter],
         children: [
           this.#topLeftCornerPiece = new EditorCornerPiece({
             corner: Corner.TopLeft,

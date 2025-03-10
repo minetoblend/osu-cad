@@ -1,6 +1,6 @@
 import type { EditorCornerContent, EditorScreen } from '@osucad/core';
 import { Corner, EditorBottomBar, EditorCornerPiece, EditorMenuBar, EditorSafeArea, EditorScreenContainer, EditorScreenSelect } from '@osucad/core';
-import { Anchor, Axes, BetterBackdropBlurFilter, Bindable, CompositeDrawable, Container, EasingFunction, Invalidation, LayoutMember, Vec2 } from '@osucad/framework';
+import { Anchor, Axes, Bindable, CompositeDrawable, Container, EasingFunction, Invalidation, LayoutMember, Vec2 } from '@osucad/framework';
 
 export class BeatmapViewerLayout extends CompositeDrawable {
   constructor() {
@@ -9,14 +9,6 @@ export class BeatmapViewerLayout extends CompositeDrawable {
     this.addLayout(this.#drawSizeBacking);
 
     this.relativeSizeAxes = Axes.Both;
-
-    const filter = new BetterBackdropBlurFilter({
-      strength: 15,
-      quality: 3,
-      antialias: 'inherit',
-      resolution: devicePixelRatio,
-    });
-    filter.padding = 30;
 
     this.addAllInternal(
       this.#screenContainer = new EditorScreenContainer(),
@@ -28,7 +20,6 @@ export class BeatmapViewerLayout extends CompositeDrawable {
       new Container({
         relativeSizeAxes: Axes.X,
         autoSizeAxes: Axes.Y,
-        filters: [filter],
         children: [
           new EditorCornerPiece({
             corner: Corner.TopLeft,

@@ -1,5 +1,5 @@
 import type { ContainerOptions } from '@osucad/framework';
-import { Axes, Container, Invalidation, LayoutMember, PIXIGraphics, Vec2 } from '@osucad/framework';
+import { Axes, BetterBackdropBlurFilter, Container, Invalidation, LayoutMember, PIXIGraphics, Vec2 } from '@osucad/framework';
 import { OsucadColors } from '../../OsucadColors';
 import { Corner } from './Corner';
 
@@ -16,6 +16,17 @@ export class EditorCornerPiece extends Container {
     this.addInternal(this.#content);
 
     this.with(options);
+
+    const filter = new BetterBackdropBlurFilter({
+      strength: 10,
+      quality: 2,
+      antialias: 'inherit',
+      resolution: devicePixelRatio,
+      clipToViewport: true,
+      padding: 15,
+    });
+
+    this.#background.filters = [filter];
   }
 
   #background = new PIXIGraphics();

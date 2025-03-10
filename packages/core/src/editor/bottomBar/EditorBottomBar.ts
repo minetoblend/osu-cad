@@ -1,5 +1,5 @@
 import type { ReadonlyDependencyContainer } from '@osucad/framework';
-import { Anchor, Axes, BetterBackdropBlurFilter, Box, CompositeDrawable, Container, Dimension, GridContainer, GridSizeMode } from '@osucad/framework';
+import { Anchor, Axes, Box, CompositeDrawable, Container, Dimension, GridContainer, GridSizeMode } from '@osucad/framework';
 import { OsucadColors } from '../../OsucadColors';
 import { Corner } from '../ui/Corner';
 import { EditorCornerPiece } from '../ui/EditorCornerPiece';
@@ -16,11 +16,6 @@ export class EditorBottomBar extends CompositeDrawable {
     this.height = 48;
     this.anchor = Anchor.BottomLeft;
     this.origin = Anchor.BottomLeft;
-
-    const filter = new BetterBackdropBlurFilter({
-      strength: 15,
-      quality: 2,
-    });
 
     this.addAllInternal(
       new Container({
@@ -47,7 +42,6 @@ export class EditorBottomBar extends CompositeDrawable {
         relativeSizeAxes: Axes.Both,
         anchor: Anchor.BottomLeft,
         origin: Anchor.BottomLeft,
-        filters: [filter],
         children: [
           new EditorCornerPiece({
             corner: Corner.BottomLeft,
