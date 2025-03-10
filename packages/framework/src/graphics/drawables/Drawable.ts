@@ -1396,12 +1396,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return this.containsLocal(localPosition);
   }
 
-  toLocalSpace(screenSpacePosition: Vec2, target: Vec2 = new Vec2(), skipUpdate?: boolean): Vec2 {
-    return this.drawNode.toLocal(screenSpacePosition, undefined, target, skipUpdate);
+  toLocalSpace(screenSpacePosition: Vec2, target: Vec2 = new Vec2()): Vec2 {
+    return this.drawNode.relativeGroupTransform.applyInverse(screenSpacePosition, target);
   }
 
-  toScreenSpace(localSpacePosition: Vec2, target: Vec2 = new Vec2(), skipUpdate?: boolean): Vec2 {
-    return this.drawNode.toGlobal(localSpacePosition, target, skipUpdate);
+  toScreenSpace(localSpacePosition: Vec2, target: Vec2 = new Vec2()): Vec2 {
+    return this.drawNode.relativeGroupTransform.apply(localSpacePosition, target);
   }
 
   toSpaceOfOtherDrawable(v: Vec2, other: Drawable): Vec2 {
@@ -1418,7 +1418,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   }
 
   contains(screenSpacePosition: Vec2): boolean {
-    const pos = this.toLocalSpace(screenSpacePosition, this._tempVec2, true);
+    const pos = this.toLocalSpace(screenSpacePosition, this._tempVec2);
 
     return this.containsLocal(pos);
   }
