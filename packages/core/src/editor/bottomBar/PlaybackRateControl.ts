@@ -1,8 +1,9 @@
-import type { IHasTooltip } from '@osucad/core';
 import type { ReadonlyDependencyContainer } from '@osucad/framework';
-import { EditorClock, OsucadSpriteText } from '@osucad/core';
+import type { IHasTooltip } from '../../drawables/TooltipContainer';
 import { Anchor, Axes, BindableNumber, CompositeDrawable, Container, resolved } from '@osucad/framework';
+import { OsucadSpriteText } from '../../drawables/OsucadSpriteText';
 import { SliderBar } from '../../overlays/preferencesV2/SliderBar';
+import { EditorClock } from '../EditorClock';
 
 export class PlaybackRateControl extends CompositeDrawable implements IHasTooltip {
   constructor() {

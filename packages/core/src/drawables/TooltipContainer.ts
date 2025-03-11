@@ -1,6 +1,7 @@
 import type { ContainerOptions, Drawable, InputManager } from '@osucad/framework';
-import { OsucadColors, OsucadSpriteText } from '@osucad/core';
 import { Axes, Box, clamp, Container, provide, VisibilityContainer } from '@osucad/framework';
+import { OsucadColors } from '../OsucadColors';
+import { OsucadSpriteText } from './OsucadSpriteText';
 
 export interface IHasTooltip {
   readonly tooltipText: string | null;

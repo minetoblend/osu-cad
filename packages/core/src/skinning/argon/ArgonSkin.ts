@@ -1,6 +1,7 @@
 import type { IResourceStore, PIXITexture } from '@osucad/framework';
-import { type IResourcesProvider, Skin } from '@osucad/core';
+import type { IResourcesProvider } from '../../io/IResourcesProvider';
 import { ArgonSkinResources } from '@osucad/resources';
+import { Skin } from '../Skin';
 
 export class ArgonSkin extends Skin {
   constructor(resources: IResourcesProvider, configurationFilename?: string) {
