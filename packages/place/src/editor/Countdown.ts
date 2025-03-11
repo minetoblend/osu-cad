@@ -20,7 +20,7 @@ export class Countdown extends CompositeDrawable {
         origin: Anchor.Center,
         alpha: 0.6,
         color: 0x222228,
-        size: 1.1,
+        size: 1.15,
         child: new Box({
           relativeSizeAxes: Axes.Both,
         }),
@@ -53,7 +53,7 @@ export class Countdown extends CompositeDrawable {
               this.#ringFill = new Container({
                 relativeSizeAxes: Axes.Both,
                 masking: true,
-                cornerRadius: 6,
+                cornerRadius: 4,
                 anchor: Anchor.Center,
                 origin: Anchor.Center,
                 color: 0x222228,
