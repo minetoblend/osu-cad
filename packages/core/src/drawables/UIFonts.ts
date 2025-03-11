@@ -1,28 +1,28 @@
 import { FontDefinition } from '@osucad/framework';
 
-import '@fontsource/nunito-sans/400.css';
-import '@fontsource/nunito-sans/500.css';
-import '@fontsource/nunito-sans/600.css';
-import '@fontsource/nunito-sans/700.css';
+import './fonts/nunito-sans-400.css';
+import './fonts/nunito-sans-500.css';
+import './fonts/nunito-sans-600.css';
+import './fonts/nunito-sans-700.css';
 
 export class UIFonts {
   static nunitoSans400 = new FontDefinition({
-    fontFamily: 'Nunito Sans',
+    fontFamily: 'Nunito Sans Regular',
     fontWeight: '400',
   });
 
   static nunitoSans500 = new FontDefinition({
-    fontFamily: 'Nunito Sans',
+    fontFamily: 'Nunito Sans Medium',
     fontWeight: '500',
   });
 
   static nunitoSans600 = new FontDefinition({
-    fontFamily: 'Nunito Sans',
+    fontFamily: 'Nunito Sans Semibold',
     fontWeight: '600',
   });
 
   static nunitoSans700 = new FontDefinition({
-    fontFamily: 'Nunito Sans',
+    fontFamily: 'Nunito Sans Bold',
     fontWeight: '700',
   });
 
