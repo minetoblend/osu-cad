@@ -1,8 +1,8 @@
 import type { Container } from '@osucad/framework';
-import { OsucadColors, OsucadSpriteText } from '@osucad/core';
-import { Anchor, Axes, Box, CompositeDrawable, FillDirection, FillFlowContainer } from '@osucad/framework';
+import { OsucadColors, OsucadSpriteText, TextBlock } from '@osucad/core';
+import { Anchor, Axes, Box, EasingFunction, FillDirection, FillFlowContainer, Vec2, VisibilityContainer } from '@osucad/framework';
 
-export class TutorialDialog extends CompositeDrawable {
+export class TutorialDialog extends VisibilityContainer {
   constructor() {
     super();
 
@@ -10,8 +10,8 @@ export class TutorialDialog extends CompositeDrawable {
     this.masking = true;
     this.cornerRadius = 8;
 
-    this.width = 600;
-    this.height = 500;
+    this.width = 500;
+    this.height = 350;
 
     this.internalChildren = [
       new Box({
@@ -23,37 +23,42 @@ export class TutorialDialog extends CompositeDrawable {
         relativeSizeAxes: Axes.Both,
         direction: FillDirection.Vertical,
         padding: 15,
+        spacing: new Vec2(10),
         children: [
           new OsucadSpriteText({
-            text: 'Welcome to osucad place',
-            fontSize: 20,
+            text: 'How this works',
+            fontSize: 16,
+          }),
+          new TextBlock({
+            text: `Every 5 minutes you can place a new object.`,
+            fontSize: 12,
           }),
         ],
       }),
     ];
-    // this.hide();
+    this.hide();
   }
 
   #content!: Container;
 
-  // popIn(): void {
-  //   this
-  //     .fadeInFromZero(400, EasingFunction.OutQuad)
-  //     .moveToY(100)
-  //     .moveToY(0, 650, EasingFunction.OutExpo);
-  //
-  //   this.#content
-  //     .fadeInFromZero(400, EasingFunction.OutQuad)
-  //     .moveToY(100)
-  //     .moveToY(0, 650, EasingFunction.OutExpo);
-  // }
-  //
-  // popOut(): void {
-  // }
-  //
-  // protected override loadComplete() {
-  //   super.loadComplete();
-  //
-  //   this.show();
-  // }
+  popIn(): void {
+    this
+      .fadeInFromZero(400, EasingFunction.OutQuad)
+      .moveToY(100)
+      .moveToY(0, 650, EasingFunction.OutExpo);
+
+    this.#content
+      .fadeInFromZero(400, EasingFunction.OutQuad)
+      .moveToY(100)
+      .moveToY(0, 650, EasingFunction.OutExpo);
+  }
+
+  popOut(): void {
+  }
+
+  protected override loadComplete() {
+    super.loadComplete();
+
+    this.show();
+  }
 }

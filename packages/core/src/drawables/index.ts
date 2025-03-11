@@ -5,4 +5,5 @@ export * from './OsucadSpriteText';
 export * from './ReverseFillFlowContainer';
 export * from './Ring';
 export * from './SizeLimitedContainer';
+export * from './TextBlock';
 export * from './TooltipContainer';

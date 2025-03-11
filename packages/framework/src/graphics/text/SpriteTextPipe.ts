@@ -1,6 +1,5 @@
 import type { BitmapText, Container, InstructionSet, PoolItem, Renderable, Renderer, RenderPipe } from 'pixi.js';
 import { BigPool, BitmapFontManager, Cache, ExtensionType, getBitmapTextLayout, getMaxTexturesPerBatch, Graphics, SdfShader } from 'pixi.js';
-// import { BitmapFontManager } from '../graphics/text/BitmapFontManager';
 import { TextShader } from './TextShader';
 
 export class SpriteTextPipe implements RenderPipe<BitmapText> {
