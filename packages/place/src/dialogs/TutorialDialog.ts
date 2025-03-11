@@ -1,6 +1,6 @@
 import type { Container } from '@osucad/framework';
 import { OsucadColors, OsucadSpriteText } from '@osucad/core';
-import { Anchor, Axes, BetterBackdropBlurFilter, Box, CompositeDrawable, FillDirection, FillFlowContainer } from '@osucad/framework';
+import { Anchor, Axes, Box, CompositeDrawable, FillDirection, FillFlowContainer } from '@osucad/framework';
 
 export class TutorialDialog extends CompositeDrawable {
   constructor() {
@@ -17,15 +17,7 @@ export class TutorialDialog extends CompositeDrawable {
       new Box({
         relativeSizeAxes: Axes.Both,
         color: OsucadColors.translucent,
-        alpha: 0.8,
-        filters: [
-          new BetterBackdropBlurFilter({
-            strength: 15,
-            quality: 3,
-            resolution: 2,
-            antialias: 'inherit',
-          }),
-        ],
+        alpha: 0.95,
       }),
       this.#content = new FillFlowContainer({
         relativeSizeAxes: Axes.Both,
