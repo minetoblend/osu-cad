@@ -1,8 +1,11 @@
-import type { ReadonlyDependencyContainer, Vec2 } from '@osucad/framework';
-import type { PIXIContainer } from '../../pixi';
-import { Cached, Drawable, Line } from '@osucad/framework';
+import type { ReadonlyDependencyContainer } from '../../di/DependencyContainer';
 
+import type { Vec2 } from '../../math/Vec2';
+import type { PIXIContainer } from '../../pixi';
 import { AlphaFilter, Mesh, RenderTarget } from 'pixi.js';
+import { Cached } from '../../caching/Cached';
+import { Line } from '../../math/Line';
+import { Drawable } from './Drawable';
 import { PathGeometry } from './PathGeometry';
 import { PathGeometryBuilder } from './PathGeometryBuilder';
 import { PathShader } from './PathShader';
