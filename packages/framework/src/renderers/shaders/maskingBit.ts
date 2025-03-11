@@ -12,7 +12,7 @@ export const maskingBitGl: HighShaderBit = {
       mat3 toMaskingSpace = uToMaskingSpace;
       `,
     end: `
-      vMaskingPosition = (toMaskingSpace * vec3(aPosition, 1.0)).xy;
+      vMaskingPosition = (worldTransformMatrix * toMaskingSpace * vec3(aPosition, 1.0)).xy;
     `,
   },
   fragment: {

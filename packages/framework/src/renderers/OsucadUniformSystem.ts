@@ -173,6 +173,9 @@ export class OsucadUniformSystem implements System {
 
     uniforms.uToMaskingSpace.copyFrom(globalUniformData.toMaskingSpace);
 
+    uniforms.uToMaskingSpace.tx += globalUniformData.offset.x;
+    uniforms.uToMaskingSpace.ty += globalUniformData.offset.y;
+
     uniforms.uMaskingRect[0] = globalUniformData.maskingRect.x;
     uniforms.uMaskingRect[1] = globalUniformData.maskingRect.y;
     uniforms.uMaskingRect[2] = globalUniformData.maskingRect.width;

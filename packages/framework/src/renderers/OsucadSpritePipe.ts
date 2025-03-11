@@ -65,7 +65,7 @@ export class OsucadSpritePipe implements RenderPipe<SpriteDrawNode> {
   }
 
   private _updateBatchableSprite(sprite: SpriteDrawNode, batchableSprite: OsucadBatchableSprite) {
-    batchableSprite.bounds = sprite.bounds;
+    batchableSprite.bounds = sprite.visualBounds;
     batchableSprite.texture = sprite._texture;
   }
 
@@ -80,7 +80,7 @@ export class OsucadSpritePipe implements RenderPipe<SpriteDrawNode> {
 
     batchableSprite.transform = sprite.groupTransform;
     batchableSprite.texture = sprite._texture;
-    batchableSprite.bounds = sprite.bounds;
+    batchableSprite.bounds = sprite.visualBounds;
     batchableSprite.roundPixels = (this._renderer._roundPixels | sprite._roundPixels) as 0 | 1;
 
     this._gpuSpriteHash[sprite.uid] = batchableSprite;
