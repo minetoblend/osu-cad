@@ -12,7 +12,7 @@ export class Countdown extends CompositeDrawable {
     this.size = new Vec2(64);
 
     this.internalChildren = [
-      this.#ringFill2 = new Container({
+      this.#middlePiece = new Container({
         relativeSizeAxes: Axes.Both,
         masking: true,
         cornerRadius: 4,
@@ -26,7 +26,7 @@ export class Countdown extends CompositeDrawable {
         }),
       }),
 
-      this.#ringFill3 = new Container({
+      this.#outerPiece = new Container({
         relativeSizeAxes: Axes.Both,
         masking: true,
         cornerRadius: 4,
@@ -45,7 +45,7 @@ export class Countdown extends CompositeDrawable {
         origin: Anchor.Center,
         children: [
 
-          this.#innerRing = new Container({
+          this.#innerPiece = new Container({
             relativeSizeAxes: Axes.Both,
             anchor: Anchor.Center,
             origin: Anchor.Center,
@@ -101,26 +101,44 @@ export class Countdown extends CompositeDrawable {
   }
 
   endTime = 0;
+  totalDuration = 0;
+
   #ring: CircularContainer;
-  #innerRing: Container;
+  #innerPiece: Container;
   #ringFill: Container;
-  #ringFill2: Container;
-  #ringFill3: Container;
+  #middlePiece: Container;
+  #outerPiece: Container;
   #remainingSeconds = 0;
   #spriteText: OsucadSpriteText;
   #arc: CountdownProgressBar;
 
-  protected loadComplete() {
-    super.loadComplete();
+  start(endTime: number, totalDuration: number = endTime - this.time.current) {
+    this.endTime = endTime;
+    this.totalDuration = Math.max(Math.ceil(totalDuration / 1000), 1);
 
-    this.endTime = this.time.current + 16_000;
-    this.#updateProgress(this.time.current + 1000);
+    const rotations = [
+      this.#innerPiece.rotation,
+      this.#middlePiece.rotation,
+      this.#outerPiece.rotation,
+    ].map(rot => (rot + Math.PI) % Math.PI - Math.PI);
+
+    this.#updateProgress(this.time.current - 1000);
     this.finishTransforms(true);
+
+    this.#innerPiece.rotation = Math.floor(this.#innerPiece.rotation / (Math.PI * 2)) * Math.PI * 2 + (rotations[0]);
+    this.#middlePiece.rotation = Math.ceil(this.#middlePiece.rotation / (Math.PI * 2)) * Math.PI * 2 + (rotations[1]);
+    this.#outerPiece.rotation = Math.floor(this.#outerPiece.rotation / (Math.PI * 2)) * Math.PI * 2 + (rotations[2]);
+
     this.#updateProgress();
   }
 
   update() {
     super.update();
+
+    if (this.time.elapsed > 1000) {
+      this.#updateProgress(this.time.current - 1000);
+      this.finishTransforms(true);
+    }
 
     this.#updateProgress();
   }
@@ -141,16 +159,16 @@ export class Countdown extends CompositeDrawable {
 
         this.#spriteText.text = '0:00';
 
-        this.#innerRing.rotateTo(Math.PI * 0.25, 2000, EasingFunction.OutElasticHalf);
-        this.#ringFill2.rotateTo(Math.PI * 0.25, 2200, EasingFunction.OutElastic);
-        this.#ringFill3.rotateTo(Math.PI * 0.25, 2400, EasingFunction.OutElastic);
+        this.#innerPiece.rotateTo(Math.PI * 0.25, 2000, EasingFunction.OutElasticHalf);
+        this.#middlePiece.rotateTo(Math.PI * 0.25, 2200, EasingFunction.OutElastic);
+        this.#outerPiece.rotateTo(Math.PI * 0.25, 2400, EasingFunction.OutElastic);
 
         return;
       }
 
-      this.#innerRing.rotateTo((remainingSeconds + 1) * -0.5, 2000, EasingFunction.OutQuart);
-      this.#ringFill2.rotateTo((remainingSeconds + 2) * 0.4, 2000, EasingFunction.OutQuart);
-      this.#ringFill3.rotateTo((remainingSeconds + 3) * -0.25, 2000, EasingFunction.OutQuart);
+      this.#innerPiece.rotateTo((remainingSeconds + 1) * -0.5, 2000, EasingFunction.OutQuart);
+      this.#middlePiece.rotateTo((remainingSeconds + 2) * 0.4, 2000, EasingFunction.OutQuart);
+      this.#outerPiece.rotateTo((remainingSeconds + 3) * -0.25, 2000, EasingFunction.OutQuart);
 
       const minutes = Math.floor(remainingSeconds / 60);
       const seconds = Math.floor(remainingSeconds % 60);
@@ -160,12 +178,12 @@ export class Countdown extends CompositeDrawable {
         seconds >= 10 ? seconds : `0${seconds}`,
       ].join(':');
 
-      this.#ringFill2
+      this.#middlePiece
         .scaleTo(1.02, 100, EasingFunction.OutExpo)
         .then()
         .scaleTo(1, 900, EasingFunction.OutElastic);
 
-      this.#ringFill3
+      this.#outerPiece
         .scaleTo(1.02, 100, EasingFunction.OutExpo)
         .then()
         .scaleTo(1, 900, EasingFunction.OutElastic);
@@ -175,7 +193,7 @@ export class Countdown extends CompositeDrawable {
         .fadeColor(0x222228, 900);
 
       this.#arc
-        .transformTo('progress', remainingSeconds / 20, 300, EasingFunction.OutExpo);
+        .transformTo('progress', remainingSeconds / this.totalDuration, 300, EasingFunction.OutExpo);
     }
   }
 }
