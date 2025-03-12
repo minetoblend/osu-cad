@@ -1,4 +1,5 @@
 export * from './AspectContainer';
+export * from './BorderLayout';
 export * from './LoadingSpinner';
 export * from './OsucadScrollContainer';
 export * from './OsucadSpriteText';

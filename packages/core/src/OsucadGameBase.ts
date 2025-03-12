@@ -118,7 +118,7 @@ export abstract class OsucadGameBase extends Game implements IResourcesProvider 
 
     await Promise.all(this.#parallelLoadPromises);
 
-    this.add(new GlobalCursorDisplay().with({
+    super.content.add(new GlobalCursorDisplay().with({
       depth: -Number.MAX_VALUE,
     }));
   }

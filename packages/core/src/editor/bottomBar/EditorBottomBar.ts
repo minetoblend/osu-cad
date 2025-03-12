@@ -23,7 +23,7 @@ export class EditorBottomBar extends CompositeDrawable {
         height: 30,
         anchor: Anchor.BottomLeft,
         origin: Anchor.BottomLeft,
-        padding: { horizontal: 110 },
+        padding: { left: 110, right: 170 },
         children: [
           new Box({
             relativeSizeAxes: Axes.Both,

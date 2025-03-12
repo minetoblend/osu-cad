@@ -1,6 +1,8 @@
 import type { ReadonlyDependencyContainer } from '@osucad/framework';
-import { ISkinSource, OsucadGameBase, OsucadScreenStack, PreferencesOverlay, SkinManager } from '@osucad/core';
+import { ISkinSource, OsucadGameBase, OsucadScreenStack, PreferencesOverlay, RulesetStore, SkinManager } from '@osucad/core';
 import { Axes, Container, provide } from '@osucad/framework';
+import { OsuRuleset } from '@osucad/ruleset-osu';
+import { PlaceClient } from './editor/PlaceClient';
 import { PlaceEditor } from './editor/PlaceEditor';
 
 export class PlaceGame extends OsucadGameBase {
@@ -19,6 +21,8 @@ export class PlaceGame extends OsucadGameBase {
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
+
+    RulesetStore.register(new OsuRuleset().rulesetInfo);
 
     this.addRange([
       this.#screenOffsetContainer = new Container({
@@ -43,7 +47,8 @@ export class PlaceGame extends OsucadGameBase {
 
     this.#overlayOffsetContainer.add(this.preferences);
 
-    this.screenStack.push(new PlaceEditor());
+    const client = new PlaceClient();
+    client.load().then(() => this.screenStack.push(new PlaceEditor(client.beatmap)));
   }
 
   override updateAfterChildren() {

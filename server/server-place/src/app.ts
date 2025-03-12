@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import type { Provider } from 'nconf';
+import type { BeatmapService } from './services/BeatmapService';
 import compression from 'compression';
 import cors from 'cors';
 import express from 'express';
@@ -9,6 +10,7 @@ import { create as createRoutes } from './routes';
 
 export function create(
   config: Provider,
+  beatmapService: BeatmapService,
 ) {
   const requestSize = config.get('server:jsonSize');
 
@@ -20,9 +22,11 @@ export function create(
   app.use(morgan(config.get('logger:morganFormat')));
   app.use(express.json({ limit: requestSize }));
 
-  const routes = createRoutes(config);
+  const routes = createRoutes(config, beatmapService);
 
   app.use(cors());
+
+  app.use(routes.beatmap);
 
   app.get('/', (req, res) => {
     res.status(200).send('osucad place. Find out more at https://github.com/minetoblend/osu-cad/tree/master/server/place-server');

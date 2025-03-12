@@ -21,6 +21,7 @@ export class PlaceServerRunner implements IRunner {
 
     const server = app.create(
       this.config,
+      this.beatmapService,
     );
     server.set('port', this.port);
 

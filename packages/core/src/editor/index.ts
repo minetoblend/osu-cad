@@ -4,6 +4,7 @@ export * from './bottomBar';
 export * from './DummyEditorBeatmap';
 export * from './Editor';
 export * from './EditorAction';
+export * from './EditorBackground';
 export * from './EditorBeatmap';
 export * from './EditorClock';
 export * from './EditorLayout';

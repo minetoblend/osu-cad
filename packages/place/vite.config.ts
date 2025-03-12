@@ -33,14 +33,6 @@ export default defineConfig({
         ws: true,
         changeOrigin: true,
       },
-      '/preview': {
-        target: 'https://catboy.best',
-        changeOrigin: true,
-      },
-      '/beatmaps': {
-        target: 'https://assets.ppy.sh',
-        changeOrigin: true,
-      },
     },
   },
 });

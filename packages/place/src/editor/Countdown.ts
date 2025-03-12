@@ -1,15 +1,18 @@
 import type { DrawableOptions } from '@osucad/framework';
 import type { Graphics } from 'pixi.js';
 import { OsucadColors, OsucadSpriteText } from '@osucad/core';
-import { Anchor, Axes, Box, CircularContainer, CompositeDrawable, Container, EasingFunction, GraphicsDrawable, Vec2 } from '@osucad/framework';
+import { Action, Anchor, Axes, Box, CircularContainer, CompositeDrawable, Container, EasingFunction, GraphicsDrawable, Vec2 } from '@osucad/framework';
 import { Color, Texture } from 'pixi.js';
 import { CountdownShader } from './CountdownShader';
 
 export class Countdown extends CompositeDrawable {
+  readonly finished = new Action();
+
   constructor() {
     super();
 
-    this.size = new Vec2(64);
+    this.size = new Vec2(96);
+    this.padding = 16;
 
     this.internalChildren = [
       this.#middlePiece = new Container({
@@ -163,6 +166,8 @@ export class Countdown extends CompositeDrawable {
         this.#middlePiece.rotateTo(Math.PI * 0.25, 2200, EasingFunction.OutElastic);
         this.#outerPiece.rotateTo(Math.PI * 0.25, 2400, EasingFunction.OutElastic);
 
+        this.finished.emit();
+
         return;
       }
 
@@ -173,10 +178,12 @@ export class Countdown extends CompositeDrawable {
       const minutes = Math.floor(remainingSeconds / 60);
       const seconds = Math.floor(remainingSeconds % 60);
 
-      this.#spriteText.text = [
-        minutes,
-        seconds >= 10 ? seconds : `0${seconds}`,
-      ].join(':');
+      this.scheduler.addDelayed(() => {
+        this.#spriteText.text = [
+          minutes,
+          seconds >= 10 ? seconds : `0${seconds}`,
+        ].join(':');
+      }, 20);
 
       this.#middlePiece
         .scaleTo(1.02, 100, EasingFunction.OutExpo)

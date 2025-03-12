@@ -29,11 +29,15 @@ export class ComposeScreen extends EditorScreen {
 
   #composer!: HitObjectComposer;
 
+  protected createHitObjectComposer(): HitObjectComposer {
+    return this.ruleset.createHitObjectComposer();
+  }
+
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
     this.addRange([
-      this.#composer = this.ruleset.createHitObjectComposer(),
+      this.#composer = this.createHitObjectComposer(),
     ]);
 
     this.#composer.overlayLayer.add(
