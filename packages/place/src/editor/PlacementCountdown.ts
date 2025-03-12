@@ -8,7 +8,6 @@ export class PlacementCountdown extends VisibilityContainer {
 
     this.anchor = Anchor.BottomCenter;
     this.origin = Anchor.BottomCenter;
-    this.padding = 20;
 
     this.alwaysPresent = true;
 

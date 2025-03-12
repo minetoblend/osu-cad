@@ -9,6 +9,4 @@ export class PlaceSelectTool implements IComposeTool {
   createDrawableTool(): DrawableComposeTool {
     return new DrawablePlaceSelectTool();
   }
-
-  children?: IComposeTool[] | undefined;
 }

@@ -1,15 +1,11 @@
 import type { IHitSound } from '@osucad/core';
 import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { OsuSelectionManager, SliderSelectionType } from '@osucad/ruleset-osu';
-import { Additions, DrawableComposeTool, EditorAction, hasComboInformation, HitObjectComposer, HitSound, TernaryState } from '@osucad/core';
-
+import { Additions, DrawableComposeTool, EditorAction, hasComboInformation, HitSound, TernaryState } from '@osucad/core';
 import { Bindable, PlatformAction, resolved, Vec2 } from '@osucad/framework';
-import { GlobalHitSoundState, GlobalNewComboBindable, HitSoundStateBuilder, OsuHitObject, RotateOperator, Slider, Spinner } from '@osucad/ruleset-osu';
+import { GlobalHitSoundState, GlobalNewComboBindable, HitSoundStateBuilder, OsuHitObject, Slider, Spinner } from '@osucad/ruleset-osu';
 
 export class DrawablePlaceSelectTool extends DrawableComposeTool implements IKeyBindingHandler<PlatformAction | EditorAction> {
-  @resolved(() => HitObjectComposer)
-  composer!: HitObjectComposer;
-
   @resolved(GlobalNewComboBindable)
   newCombo!: GlobalNewComboBindable;
 
@@ -99,35 +95,6 @@ export class DrawablePlaceSelectTool extends DrawableComposeTool implements IKey
 
   get selectedNonSpinnerObjects(): OsuHitObject[] {
     return [...this.selection.selectedObjects].filter(it => !(it instanceof Spinner)) as OsuHitObject[];
-  }
-
-  rotateSelection(angle: number) {
-    const selection = [...this.selection.selectedObjects]
-      .filter(it => !(it instanceof Spinner)) as OsuHitObject[];
-
-    if (selection.length === 0)
-      return;
-
-    const operator = this.composer.activeOperator;
-
-    if (operator instanceof RotateOperator) {
-      if (operator.hitObjects.every((it, index) => it === selection[index])) {
-        angle = operator.angle.value + angle;
-
-        while (angle >= 360)
-          angle -= 360;
-
-        while (angle <= -360)
-          angle += 360;
-
-        operator.angle.value = angle;
-        return;
-      }
-    }
-
-    this.composer.beginOperator(
-      new RotateOperator(selection, angle),
-    );
   }
 
   moveSelection(delta: Vec2) {
