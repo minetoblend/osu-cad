@@ -1,6 +1,7 @@
 import { OsucadColors, OsucadSpriteText } from '@osucad/core';
-import { Anchor, Axes, FillFlowContainer, Vec2 } from '@osucad/framework';
+import { Anchor, Axes, FillFlowContainer, resolved, Vec2 } from '@osucad/framework';
 import { Countdown } from './Countdown';
+import { PlaceClient } from './PlaceClient';
 
 export class PlacementCountdown extends FillFlowContainer {
   constructor() {
@@ -27,5 +28,19 @@ export class PlacementCountdown extends FillFlowContainer {
     ];
   }
 
+  @resolved(PlaceClient)
+  client!: PlaceClient;
+
   countdown!: Countdown;
+
+  protected loadComplete() {
+    super.loadComplete();
+
+    this.client.countdownEndTime.bindValueChanged((evt) => {
+      if (!evt.value)
+        return;
+
+      this.countdown.start(evt.value.endTime, evt.value.totalTime);
+    }, true);
+  }
 }

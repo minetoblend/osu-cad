@@ -13,7 +13,7 @@ export class PlaceScreen extends EditorScreen {
 
     this.internalChildren = [
       new PlaceComposer(),
-      new PlacementCountdown().doWhenLoaded(it => it.countdown.start(this.time.current + 30_000)),
+      new PlacementCountdown(),
     ];
   }
 }

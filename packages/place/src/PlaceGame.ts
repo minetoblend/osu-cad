@@ -48,7 +48,7 @@ export class PlaceGame extends OsucadGameBase {
     this.#overlayOffsetContainer.add(this.preferences);
 
     const client = new PlaceClient();
-    client.load().then(() => this.screenStack.push(new PlaceEditor(client.beatmap)));
+    this.loadComponentAsync(client).then(() => this.screenStack.push(new PlaceEditor(client.beatmap)));
   }
 
   override updateAfterChildren() {

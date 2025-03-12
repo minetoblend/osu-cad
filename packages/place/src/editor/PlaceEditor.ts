@@ -2,12 +2,13 @@ import type { EditorScreenManager } from '@osucad/core';
 import type { Drawable, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { PlaceBeatmap } from './PlaceBeatmap';
 import { Editor } from '@osucad/core';
+import { provide } from '@osucad/framework';
+import { PlaceClient } from './PlaceClient';
 import { PlaceEditorLayout } from './PlaceEditorLayout';
 import { PlaceScreen } from './PlaceScreen';
 
 export class PlaceEditor extends Editor {
   constructor(
-
     beatmap: PlaceBeatmap,
   ) {
     super(beatmap);
@@ -15,6 +16,7 @@ export class PlaceEditor extends Editor {
 
   override editorBeatmap!: PlaceBeatmap;
 
+  @provide(PlaceClient)
   get client() {
     return this.editorBeatmap.client;
   }
@@ -31,6 +33,8 @@ export class PlaceEditor extends Editor {
 
   protected load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
+
+    this.addInternal(this.client);
 
     this.scheduler.addDelayed(() => this.storeCurrentTime(), 1000, true);
   }
