@@ -1,10 +1,13 @@
-import type { Container } from '@osucad/framework';
 import { OsucadColors, OsucadSpriteText, TextBlock } from '@osucad/core';
-import { Anchor, Axes, Box, EasingFunction, FillDirection, FillFlowContainer, Vec2, VisibilityContainer } from '@osucad/framework';
+import { Anchor, Axes, Box, Container, EasingFunction, FillDirection, FillFlowContainer, resolved, Vec2, VisibilityContainer } from '@osucad/framework';
+import { LoginButton } from '../editor/LoginButton';
+import { PlaceClient } from '../editor/PlaceClient';
 
 export class TutorialDialog extends VisibilityContainer {
   constructor() {
     super();
+
+    this.hide();
 
     this.anchor = this.origin = Anchor.Center;
     this.masking = true;
@@ -19,25 +22,37 @@ export class TutorialDialog extends VisibilityContainer {
         color: OsucadColors.translucent,
         alpha: 0.95,
       }),
-      this.#content = new FillFlowContainer({
+      new Container({
         relativeSizeAxes: Axes.Both,
-        direction: FillDirection.Vertical,
         padding: 15,
-        spacing: new Vec2(10),
         children: [
-          new OsucadSpriteText({
-            text: 'How this works',
-            fontSize: 16,
+          this.#content = new FillFlowContainer({
+            relativeSizeAxes: Axes.Both,
+            direction: FillDirection.Vertical,
+            spacing: new Vec2(10),
+            children: [
+              new OsucadSpriteText({
+                text: 'How this works',
+                fontSize: 16,
+                color: OsucadColors.primary,
+              }),
+              new TextBlock({
+                text: `Each user can place an object every 5 minutes.`,
+                fontSize: 12,
+              }),
+            ],
           }),
-          new TextBlock({
-            text: `Every 5 minutes you can place a new object.`,
-            fontSize: 12,
+          new LoginButton().with({
+            anchor: Anchor.BottomCenter,
+            origin: Anchor.BottomCenter,
           }),
         ],
       }),
     ];
-    this.hide();
   }
+
+  @resolved(PlaceClient)
+  client!: PlaceClient;
 
   #content!: Container;
 
@@ -54,11 +69,12 @@ export class TutorialDialog extends VisibilityContainer {
   }
 
   popOut(): void {
-  }
+    this
+      .fadeOut(400, EasingFunction.OutQuad)
+      .moveToY(100, 300, EasingFunction.OutExpo);
 
-  protected override loadComplete() {
-    super.loadComplete();
-
-    this.show();
+    this.#content
+      .fadeOut(400, EasingFunction.OutQuad)
+      .moveToY(100, 300, EasingFunction.OutExpo);
   }
 }

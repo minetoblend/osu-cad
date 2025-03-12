@@ -1,63 +1,64 @@
 import type { Beatmap } from '@osucad/core';
-import type { IMutation, IOpMessage } from '@osucad/multiplayer';
 import type { Provider } from 'nconf';
-import { readdir, readFile } from 'node:fs/promises';
+import type { DataSource } from 'typeorm';
 
+import { readdir, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { BoxedBeatmap, RulesetStore, StableBeatmapParser } from '@osucad/core';
-import { UpdateHandler } from '@osucad/multiplayer';
 import { OsuRuleset } from '@osucad/ruleset-osu';
+import { BeatmapSnapshot } from '../entities/BeatmapSnapshot';
 
 export class BeatmapService {
-  static async create(config: Provider): Promise<BeatmapService> {
-    const directory = config.get('storage') as string;
+  constructor(
+    readonly db: DataSource,
+  ) {
+  }
 
+  readonly repository = this.db.getRepository(BeatmapSnapshot);
+
+  beatmap!: BoxedBeatmap;
+
+  async init(config: Provider) {
     RulesetStore.register(new OsuRuleset().rulesetInfo);
 
-    const beatmapPath = resolve(directory, await readdir(directory).then(files => files.find(it => it.endsWith('.osu'))!));
+    const [snapshot] = await this.repository.find({ order: { id: 'desc' }, take: 1 });
 
-    console.log('Loading beatmap');
+    if (!snapshot) {
+      const directory = config.get('storage') as string;
+      const beatmapPath = resolve(directory, await readdir(directory).then(files => files.find(it => it.endsWith('.osu'))!));
 
-    const content = await readFile(beatmapPath, 'utf-8');
+      console.log('Initializing beatmap');
 
-    const beatmap = new StableBeatmapParser().parse(content);
+      const content = await readFile(beatmapPath, 'utf-8');
 
-    const osuBeatmap = new OsuRuleset().createBeatmapConverter(beatmap as any).convert();
+      const beatmap = new StableBeatmapParser().parse(content);
 
-    const { metadata, difficultyName } = osuBeatmap.beatmapInfo;
+      const osuBeatmap = new OsuRuleset().createBeatmapConverter(beatmap as any).convert();
 
-    console.log(`Loaded beatmap ${metadata.artist} - ${metadata.title} [${difficultyName}]`);
+      const { metadata, difficultyName } = osuBeatmap.beatmapInfo;
 
-    const assets = await readdir(directory).then(files => files.map(filename => ({
-      id: filename,
-      path: filename,
-    })));
+      console.log(`Loaded beatmap ${metadata.artist} - ${metadata.title} [${difficultyName}]`);
 
-    return new BeatmapService(new BoxedBeatmap(osuBeatmap as Beatmap, assets));
-  }
+      const assets = await readdir(directory).then(files => files.map(filename => ({
+        id: filename,
+        path: filename,
+      })));
 
-  constructor(
-    readonly beatmap: BoxedBeatmap,
-  ) {
-    this.updateHandler.attach(this.beatmap);
+      this.beatmap = new BoxedBeatmap(osuBeatmap as Beatmap, assets);
 
-    this.updateHandler.commandApplied.addListener(this.commandApplied, this);
-  }
+      await this.repository.insert({
+        data: JSON.stringify(this.beatmap.createSummary()),
+        timestamp: Date.now(),
+      });
+    }
+    else {
+      console.log('Resuming from latest beatmap snapshot');
+      this.beatmap = new BoxedBeatmap();
+      this.beatmap.initializeFromSummary(JSON.parse(snapshot.data));
 
-  sequenceNumber = 0;
+      const { metadata, difficultyName } = this.beatmap.beatmap!.beatmapInfo;
 
-  readonly updateHandler = new UpdateHandler(this.beatmap);
-
-  commandApplied(command: IMutation) {
-    console.log('command applied', command);
-  }
-
-  handle(command: IOpMessage) {
-    this.updateHandler.process({
-      type: 'op',
-      clientId: 0,
-      contents: command,
-      sequenceNumber: 0,
-    }, true);
+      console.log(`Loaded beatmap ${metadata.artist} - ${metadata.title} [${difficultyName}]`);
+    }
   }
 }

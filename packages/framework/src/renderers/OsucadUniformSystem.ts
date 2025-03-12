@@ -10,6 +10,7 @@ export type GlobalUniformGroup = UniformGroup<{
   // masking
   uIsMasking: { value: number; type: 'i32' };
   uCornerRadius: { value: number; type: 'f32' };
+  uCornerExponent: { value: number; type: 'f32' };
   uToMaskingSpace: { value: Matrix; type: 'mat3x3<f32>' };
   uMaskingRect: { value: Float32Array; type: 'vec4<f32>' };
   uBorderThickness: { value: number; type: 'f32' };
@@ -25,6 +26,7 @@ export interface GlobalUniformOptions {
   offset?: PointData;
 
   cornerRadius?: number;
+  cornerExponent?: number;
   toMaskingSpace?: Matrix;
   maskingRect?: Rectangle;
   isMasking?: boolean;
@@ -41,6 +43,7 @@ export interface GlobalUniformData {
   offset: PointData;
   bindGroup: BindGroup;
   cornerRadius: number;
+  cornerExponent: number;
   toMaskingSpace: Matrix;
   maskingRect: Rectangle;
   isMasking: boolean;
@@ -113,6 +116,7 @@ export class OsucadUniformSystem implements System {
                 worldColor,
                 offset,
                 cornerRadius,
+                cornerExponent,
                 toMaskingSpace,
                 maskingRect,
                 isMasking,
@@ -130,6 +134,7 @@ export class OsucadUniformSystem implements System {
           worldColor: 0xFFFFFFFF,
           offset: new Point(),
           cornerRadius: 0,
+          cornerExponent: 2.0,
           toMaskingSpace: new Matrix(),
           maskingRect: new Rectangle(),
           isMasking: false,
@@ -146,6 +151,7 @@ export class OsucadUniformSystem implements System {
       offset: offset || currentGlobalUniformData.offset,
       bindGroup: null!,
       cornerRadius: cornerRadius ?? currentGlobalUniformData.cornerRadius,
+      cornerExponent: cornerExponent ?? 2.0,
       toMaskingSpace: toMaskingSpace ?? currentGlobalUniformData.toMaskingSpace,
       maskingRect: maskingRect ?? new Rectangle(0, 0, renderTarget.width, renderTarget.height),
       isMasking: isMasking ?? currentGlobalUniformData.isMasking,
@@ -170,6 +176,7 @@ export class OsucadUniformSystem implements System {
     uniforms.uWorldTransformMatrix.ty -= globalUniformData.offset.y;
 
     uniforms.uCornerRadius = globalUniformData.cornerRadius;
+    uniforms.uCornerExponent = globalUniformData.cornerExponent;
 
     uniforms.uToMaskingSpace.copyFrom(globalUniformData.toMaskingSpace);
 
@@ -252,6 +259,7 @@ export class OsucadUniformSystem implements System {
       uWorldColorAlpha: { value: new Float32Array(4), type: 'vec4<f32>' },
       uResolution: { value: [0, 0], type: 'vec2<f32>' },
       uCornerRadius: { value: 0, type: 'f32' },
+      uCornerExponent: { value: 2.0, type: 'f32' },
       uToMaskingSpace: { value: new Matrix(), type: 'mat3x3<f32>' },
       uMaskingRect: { value: new Float32Array(4), type: 'vec4<f32>' },
       uIsMasking: { value: 0, type: 'i32' },

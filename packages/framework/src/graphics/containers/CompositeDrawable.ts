@@ -38,6 +38,7 @@ export interface CompositeDrawableOptions extends DrawableOptions {
   autoSizeEasing?: EasingFunction;
   masking?: boolean;
   cornerRadius?: number;
+  cornerExponent?: number;
   borderThickness?: number;
   borderColor?: ColorSource;
 }
@@ -85,6 +86,24 @@ export class CompositeDrawable extends Drawable {
     this.#cornerRadius = value;
     if (this.#maskingEffect)
       this.#maskingEffect.cornerRadius = value;
+  }
+
+  #cornerExponent = 0;
+
+  get cornerExponent() {
+    return this.#cornerExponent;
+  }
+
+  set cornerExponent(value) {
+    if (value < 0)
+      value = 0;
+
+    if (this.#cornerExponent === value)
+      return;
+
+    this.#cornerExponent = value;
+    if (this.#maskingEffect)
+      this.#maskingEffect.cornerExponent = value;
   }
 
   #borderThickness = 0;

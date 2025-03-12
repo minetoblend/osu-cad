@@ -1,18 +1,18 @@
 import type { DrawableOptions } from '@osucad/framework';
 import type { Graphics } from 'pixi.js';
 import { OsucadColors, OsucadSpriteText } from '@osucad/core';
-import { Action, Anchor, Axes, Box, CircularContainer, CompositeDrawable, Container, EasingFunction, GraphicsDrawable, Vec2 } from '@osucad/framework';
+import { Anchor, Axes, BindableBoolean, Box, CircularContainer, CompositeDrawable, Container, EasingFunction, GraphicsDrawable, Vec2 } from '@osucad/framework';
 import { Color, Texture } from 'pixi.js';
 import { CountdownShader } from './CountdownShader';
 
 export class Countdown extends CompositeDrawable {
-  readonly finished = new Action();
-
   constructor() {
     super();
 
     this.size = new Vec2(96);
     this.padding = 16;
+
+    this.alwaysPresent = true;
 
     this.internalChildren = [
       this.#middlePiece = new Container({
@@ -24,6 +24,7 @@ export class Countdown extends CompositeDrawable {
         alpha: 0.6,
         color: 0x222228,
         size: 1.15,
+        rotation: Math.PI * 0.25,
         child: new Box({
           relativeSizeAxes: Axes.Both,
         }),
@@ -38,6 +39,7 @@ export class Countdown extends CompositeDrawable {
         color: 0x222228,
         alpha: 0.4,
         size: 1.3,
+        rotation: Math.PI * 0.25,
         child: new Box({
           relativeSizeAxes: Axes.Both,
         }),
@@ -52,6 +54,7 @@ export class Countdown extends CompositeDrawable {
             relativeSizeAxes: Axes.Both,
             anchor: Anchor.Center,
             origin: Anchor.Center,
+            rotation: Math.PI * 0.25,
             children: [
               this.#ringFill = new Container({
                 relativeSizeAxes: Axes.Both,
@@ -92,7 +95,7 @@ export class Countdown extends CompositeDrawable {
           }),
 
           this.#spriteText = new OsucadSpriteText({
-            text: '1:00',
+            text: '0:00',
             anchor: Anchor.Center,
             origin: Anchor.Center,
             fontWeight: 700,
@@ -111,9 +114,11 @@ export class Countdown extends CompositeDrawable {
   #ringFill: Container;
   #middlePiece: Container;
   #outerPiece: Container;
-  #remainingSeconds = 0;
+  #remainingSeconds?: number;
   #spriteText: OsucadSpriteText;
   #arc: CountdownProgressBar;
+
+  readonly isRunning = new BindableBoolean();
 
   start(endTime: number, totalDuration: number = endTime - this.time.current) {
     this.endTime = endTime;
@@ -133,6 +138,8 @@ export class Countdown extends CompositeDrawable {
     this.#outerPiece.rotation = Math.floor(this.#outerPiece.rotation / (Math.PI * 2)) * Math.PI * 2 + (rotations[2]);
 
     this.#updateProgress();
+
+    this.isRunning.value = true;
   }
 
   update() {
@@ -166,7 +173,7 @@ export class Countdown extends CompositeDrawable {
         this.#middlePiece.rotateTo(Math.PI * 0.25, 2200, EasingFunction.OutElastic);
         this.#outerPiece.rotateTo(Math.PI * 0.25, 2400, EasingFunction.OutElastic);
 
-        this.finished.emit();
+        this.schedule(() => this.isRunning.value = false);
 
         return;
       }

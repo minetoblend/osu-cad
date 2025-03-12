@@ -7,6 +7,7 @@ export class MaskingEffect implements Effect {
   public priority = 1;
 
   public cornerRadius: number = 0;
+  public cornerExponent: number = 2.0;
   public borderThickness: number = 0;
   public borderColor?: Color;
 

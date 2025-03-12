@@ -1,29 +1,21 @@
-import { OsucadColors, OsucadSpriteText } from '@osucad/core';
-import { Anchor, Axes, FillFlowContainer, resolved, Vec2 } from '@osucad/framework';
+import { Anchor, EasingFunction, resolved, VisibilityContainer } from '@osucad/framework';
 import { Countdown } from './Countdown';
 import { PlaceClient } from './PlaceClient';
 
-export class PlacementCountdown extends FillFlowContainer {
+export class PlacementCountdown extends VisibilityContainer {
   constructor() {
-    super({
-      autoSizeAxes: Axes.Both,
-      spacing: new Vec2(10),
-      anchor: Anchor.BottomRight,
-      origin: Anchor.BottomRight,
-      padding: 20,
-    });
+    super();
 
-    this.children = [
-      new OsucadSpriteText({
-        text: 'You can place the next object in ',
-        color: OsucadColors.text,
-        fontWeight: 600,
-        anchor: Anchor.CenterLeft,
-        origin: Anchor.CenterLeft,
-      }),
+    this.anchor = Anchor.BottomCenter;
+    this.origin = Anchor.BottomCenter;
+    this.padding = 20;
+
+    this.alwaysPresent = true;
+
+    this.internalChildren = [
       this.countdown = new Countdown().with({
-        anchor: Anchor.CenterLeft,
-        origin: Anchor.CenterLeft,
+        anchor: Anchor.BottomCenter,
+        origin: Anchor.BottomCenter,
       }),
     ];
   }
@@ -42,5 +34,28 @@ export class PlacementCountdown extends FillFlowContainer {
 
       this.countdown.start(evt.value.endTime, evt.value.totalTime);
     }, true);
+
+    this.countdown.isRunning.bindValueChanged((running) => {
+      if (running.value) {
+        this.show();
+      }
+      else {
+        this.hide();
+      }
+    }, true);
+  }
+
+  popIn() {
+    this.clearTransforms();
+    this.moveToY(0, 700, EasingFunction.OutElasticHalf)
+      .fadeIn(200);
+  }
+
+  popOut() {
+    this.clearTransforms();
+    this
+      .delay(2000)
+      .moveToY(100, 700, EasingFunction.InQuad)
+      .fadeOut(500);
   }
 }

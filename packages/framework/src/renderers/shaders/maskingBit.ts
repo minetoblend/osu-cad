@@ -23,6 +23,7 @@ export const maskingBitGl: HighShaderBit = {
       uniform lowp float uBorderThickness;
       uniform lowp vec4 uBorderColorAlpha;
       uniform lowp float uMaskingBlendRange;
+      uniform lowp float uCornerExponent;
 
       in vec2 vMaskingPosition;
 
@@ -41,10 +42,9 @@ export const maskingBitGl: HighShaderBit = {
         if (maxDist <= 0.0) {
           return maxDist;
         } else {
-          float cornerExponent = 2.0;
 
           distanceFromShrunkRect = max(vec2(0.0), distanceFromShrunkRect);
-          return pow(pow(distanceFromShrunkRect.x, cornerExponent) + pow(distanceFromShrunkRect.y, cornerExponent), 1.0 / cornerExponent);
+          return pow(pow(distanceFromShrunkRect.x, uCornerExponent) + pow(distanceFromShrunkRect.y, uCornerExponent), 1.0 / uCornerExponent);
         }
       }
 

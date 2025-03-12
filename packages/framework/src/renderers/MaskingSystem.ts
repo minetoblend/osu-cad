@@ -64,6 +64,7 @@ export class MaskingSystem implements System {
     uniformSystem.push({
       isMasking: true,
       cornerRadius: maskingInfo.cornerRadius,
+      cornerExponent: maskingInfo.cornerExponent,
       toMaskingSpace: matrix,
       maskingRect: new Rectangle(0, 0, maskingRect.x, maskingRect.y),
       borderThickness: maskingInfo.borderThickness / maskingBlendRange,

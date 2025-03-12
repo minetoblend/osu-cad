@@ -1,6 +1,6 @@
 import type { Provider } from 'nconf';
 import type { Server } from 'node:http';
-import type { BeatmapService } from 'server/server-place/src/services/BeatmapService';
+import type { PlaceServerResources } from './PlaceServerResources';
 import { Deferred, type IRunner } from '@osucad-server/common';
 import * as app from './app';
 
@@ -8,7 +8,7 @@ export class PlaceServerRunner implements IRunner {
   constructor(
     private readonly config: Provider,
     private readonly port: number | string,
-    private readonly beatmapService: BeatmapService,
+    private readonly resources: PlaceServerResources,
   ) {
   }
 
@@ -19,10 +19,7 @@ export class PlaceServerRunner implements IRunner {
   async start() {
     this.runningDeferred = new Deferred<void>();
 
-    const server = app.create(
-      this.config,
-      this.beatmapService,
-    );
+    const server = app.create(this.config, this.resources);
     server.set('port', this.port);
 
     this.server = server.listen(this.port);

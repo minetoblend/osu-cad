@@ -1,16 +1,19 @@
 import type { NextFunction, Request, Response } from 'express';
 import type { Provider } from 'nconf';
-import type { BeatmapService } from './services/BeatmapService';
+import type { PlaceServerResources } from './PlaceServerResources';
 import compression from 'compression';
 import cors from 'cors';
 import express from 'express';
+import session from 'express-session';
 import safeStringify from 'json-stringify-safe';
 import morgan from 'morgan';
+import passport from 'passport';
+import { setupPassport } from './passport';
 import { create as createRoutes } from './routes';
 
 export function create(
   config: Provider,
-  beatmapService: BeatmapService,
+  resources: PlaceServerResources,
 ) {
   const requestSize = config.get('server:jsonSize');
 
@@ -22,10 +25,21 @@ export function create(
   app.use(morgan(config.get('logger:morganFormat')));
   app.use(express.json({ limit: requestSize }));
 
-  const routes = createRoutes(config, beatmapService);
-
   app.use(cors());
 
+  app.use(session({
+    secret: 'foo bar',
+  }));
+
+  setupPassport(config, resources.userService);
+
+  app.use(passport.initialize());
+  app.use(passport.session());
+
+  const routes = createRoutes(config, resources);
+
+  app.use(routes.auth);
+  app.use(routes.users);
   app.use(routes.beatmap);
   app.use(routes.place);
 

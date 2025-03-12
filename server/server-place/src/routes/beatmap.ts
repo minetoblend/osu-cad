@@ -1,14 +1,13 @@
 import type { Provider } from 'nconf';
-import type { BeatmapService } from '../services/BeatmapService';
+import type { PlaceServerResources } from '../PlaceServerResources';
 import express, { Router } from 'express';
 
-export function create(config: Provider, beatmapService: BeatmapService) {
+export function create(config: Provider, { beatmapService }: PlaceServerResources) {
   const router = Router();
 
   router.get('/api/beatmap', (req, res) => {
     res.json({
       summary: beatmapService.beatmap.createSummary(),
-      version: beatmapService.sequenceNumber,
     });
   });
 

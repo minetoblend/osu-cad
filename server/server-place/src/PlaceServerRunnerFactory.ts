@@ -9,7 +9,7 @@ export class PlaceServerRunnerFactory implements IRunnerFactory<PlaceServerResou
     return new PlaceServerRunner(
       resources.config,
       port,
-      resources.beatmapService,
+      resources,
     );
   }
 }

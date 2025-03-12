@@ -825,6 +825,12 @@ importers:
       '@types/compression':
         specifier: ^1.7.5
         version: 1.7.5
+      '@types/express-sse':
+        specifier: ^0.5.1
+        version: 0.5.1
+      better-sqlite3:
+        specifier: ^11.3.0
+        version: 11.3.0
       compression:
         specifier: ^1.7.5
         version: 1.7.5
@@ -834,6 +840,12 @@ importers:
       express:
         specifier: ^4.21.1
         version: 4.21.1
+      express-session:
+        specifier: ^1.18.1
+        version: 1.18.1
+      express-sse:
+        specifier: ^0.5.3
+        version: 0.5.3
       isomorphic-git:
         specifier: ^1.27.1
         version: 1.27.1
@@ -846,6 +858,15 @@ importers:
       nconf:
         specifier: ^0.12.1
         version: 0.12.1
+      passport:
+        specifier: ^0.7.0
+        version: 0.7.0
+      passport-oauth2:
+        specifier: ^1.8.0
+        version: 1.8.0
+      typeorm:
+        specifier: ^0.3.20
+        version: 0.3.20(better-sqlite3@11.3.0)(ioredis@5.4.2)(sqlite3@5.1.7)(ts-node@10.9.1(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@20.16.5)(typescript@5.7.3))
       vite:
         specifier: ^6.1.0
         version: 6.1.0(@types/node@20.16.5)(terser@5.32.0)(tsx@4.19.3)(yaml@2.5.1)
@@ -859,6 +880,9 @@ importers:
       '@types/express':
         specifier: ^5.0.0
         version: 5.0.0
+      '@types/express-session':
+        specifier: ^1.18.1
+        version: 1.18.1
       '@types/json-stringify-safe':
         specifier: ^5.0.3
         version: 5.0.3
@@ -868,6 +892,12 @@ importers:
       '@types/nconf':
         specifier: ^0.10.7
         version: 0.10.7
+      '@types/passport':
+        specifier: ^1.0.17
+        version: 1.0.17
+      '@types/passport-oauth2':
+        specifier: ^1.4.17
+        version: 1.4.17
 
 packages:
 
@@ -3659,6 +3689,9 @@ packages:
   '@types/express-session@1.18.1':
     resolution: {integrity: sha512-S6TkD/lljxDlQ2u/4A70luD8/ZxZcrU5pQwI1rVXCiaVIywoFgbA+PIUNDjPhQpPdK0dGleLtYc/y7XWBfclBg==}
 
+  '@types/express-sse@0.5.1':
+    resolution: {integrity: sha512-qSu714X2mMfdwqco3IVn0R/58GP5y2y5JpKvxMTPRt3C/oWLgrtZj1+dBGbn5gjC4ypaArN604HYBmbJhEHBvw==}
+
   '@types/express@5.0.0':
     resolution: {integrity: sha512-DvZriSMehGHL1ZNLzi6MidnsDhUZM/x2pRdDIKdwbUNqqwHxMlRdkxtn6/EPKyqKpHqTl/4nRZsRNLpZxZRpPQ==}
 
@@ -5682,6 +5715,9 @@ packages:
   express-session@1.18.1:
     resolution: {integrity: sha512-a5mtTqEaZvBCL9A9aqkrtfz+3SMDhOVUnjafjo+s7A9Txkq+SVX2DLvSp1Zrv4uCXa3lMSK3viWnh9Gg07PBUA==}
     engines: {node: '>= 0.8.0'}
+
+  express-sse@0.5.3:
+    resolution: {integrity: sha512-DJF0nofFGq0IXJLGq95hfrryP3ZprVAVpyZUnmAk6QhHnm7zCzsHBNFP0i4FKFo2XjOf+JiYUKjT7jQhIeljpg==}
 
   express@4.21.1:
     resolution: {integrity: sha512-YSFlK1Ee0/GC8QaO91tHcDxJiE/X4FbpAyQWkxAvG6AXCuR65YzK8ua6D9hvi/TzUfZMpc+BwuM1IPw8fmQBiQ==}
@@ -13047,6 +13083,10 @@ snapshots:
     dependencies:
       '@types/express': 5.0.0
 
+  '@types/express-sse@0.5.1':
+    dependencies:
+      '@types/express': 5.0.0
+
   '@types/express@5.0.0':
     dependencies:
       '@types/body-parser': 1.19.5
@@ -15819,6 +15859,8 @@ snapshots:
       uid-safe: 2.1.5
     transitivePeerDependencies:
       - supports-color
+
+  express-sse@0.5.3: {}
 
   express@4.21.1:
     dependencies:

@@ -1,7 +1,7 @@
 import type { Beatmap } from '@osucad/core';
 import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import { BoxedBeatmap, SimpleFile, StaticFileStore } from '@osucad/core';
-import { Bindable, Component } from '@osucad/framework';
+import { Bindable, BindableBoolean, Component } from '@osucad/framework';
 import { PlaceBeatmap } from './PlaceBeatmap';
 
 export class PlaceClient extends Component {
@@ -13,12 +13,26 @@ export class PlaceClient extends Component {
     await Promise.all([
       this.loadBeatmap(),
       this.loadPlacementState(),
+      this.loadUser(),
+      this.initEventSource(),
       super.loadAsync(dependencies),
     ]);
   }
 
+  protected loadComplete() {
+    super.loadComplete();
+
+    this.scheduler.addDelayed(() => this.loadPlacementState(), 10_000, true);
+  }
+
+  update() {
+    super.update();
+
+    this.canPlace.value = !!this.countdownEndTime.value && this.time.current > this.countdownEndTime.value.endTime;
+  }
+
   async loadBeatmap() {
-    const { summary, version } = await fetch('/api/beatmap').then(res => res.json());
+    const { summary } = await fetch('/api/beatmap').then(res => res.json());
 
     const beatmap = new BoxedBeatmap();
     beatmap.initializeFromSummary(summary);
@@ -36,18 +50,62 @@ export class PlaceClient extends Component {
   }
 
   async loadPlacementState() {
-    const { timeRemaining, totalCountdown } = await fetch('/api/place').then(res => res.json());
+    const res = await fetch('/api/place/countdown').then(res => res.ok ? res.json() : null);
 
-    this.countdownEndTime.value = {
-      endTime: this.time.current + timeRemaining,
-      totalTime: totalCountdown,
-    };
+    if (res) {
+      const { timeRemaining, totalCountdown } = res;
+
+      const endTime = this.time.current + timeRemaining;
+
+      if (this.countdownEndTime.value && Math.abs(this.countdownEndTime.value.endTime - endTime) < 2000) {
+        return;
+      }
+
+      this.countdownEndTime.value = {
+        endTime,
+        totalTime: totalCountdown,
+      };
+    }
+    else {
+      this.countdownEndTime.value = null;
+    }
   }
+
+  async initEventSource() {
+    const eventSource = new EventSource('/api/place/events');
+    eventSource.addEventListener('place', e => this.onObjectPlaced(JSON.parse(e.data)));
+
+    eventSource.onmessage = console.log;
+    eventSource.onerror = console.error;
+    eventSource.onopen = console.log;
+  }
+
+  async loadUser() {
+    this.user.value = await fetch('/api/users/me').then(res => res.ok ? res.json() : null);
+  }
+
+  get isLoggedIn() {
+    return !!this.user.value;
+  }
+
+  readonly user = new Bindable<{ id: number; username: string } | null>(null);
 
   readonly countdownEndTime = new Bindable<{
     endTime: number;
     totalTime: number;
   } | null>(null);
 
+  readonly canPlace = new BindableBoolean();
+
   beatmap!: PlaceBeatmap;
+
+  login() {
+    window.open('/api/auth/osu/login', '_self');
+  }
+
+  onObjectPlaced(evt: { user: number }) {
+    console.log(evt, this.user.value?.id);
+    if (evt.user === this.user.value?.id)
+      this.loadPlacementState();
+  }
 }
