@@ -38,6 +38,7 @@ export class PlaybackRateControl extends CompositeDrawable implements IHasToolti
       this.#spriteText = new OsucadSpriteText({
         text: '1x',
         fontSize: 13,
+        fontWeight: 600,
         anchor: Anchor.CenterRight,
         origin: Anchor.CenterRight,
       }),
