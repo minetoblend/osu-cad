@@ -1,184 +1,145 @@
-import type { Drawable, ReadonlyDependencyContainer, ScrollEvent, SpriteText } from '@osucad/framework';
-import { BorderLayout, OsucadButton, OsucadColors, OsucadScrollContainer, OsucadSpriteText, OsucadTextBox } from '@osucad/core';
-import { Anchor, Axes, Box, CompositeDrawable, Container, Dimension, FillDirection, FillFlowContainer, GridContainer, GridSizeMode, resolved, Scheduler, Vec2 } from '@osucad/framework';
-import { PlaceClient } from '../PlaceClient';
-import { DrawableChatMessage } from './DrawableChatMessage';
+import type { ClickEvent, HoverEvent, HoverLostEvent, ReadonlyDependencyContainer } from '@osucad/framework';
+import { OsucadColors, OsucadSpriteText } from '@osucad/core';
+import { Anchor, Axes, BindableBoolean, Box, CompositeDrawable, Container, DrawableSprite, EasingFunction, FillDirection, FillFlowContainer, Vec2 } from '@osucad/framework';
+import { getIcon } from '@osucad/resources';
+import { Chat } from './Chat';
 
 export class ChatWindow extends CompositeDrawable {
   constructor() {
     super();
 
-    this.width = 250;
+    this.autoSizeAxes = Axes.X;
     this.relativeSizeAxes = Axes.Y;
+    this.autoSizeDuration = 400;
+    this.autoSizeEasing = EasingFunction.OutExpo;
+
+    this.internalChildren = [
+      this.#chat = new Chat(),
+      new ChatToggleButton(this.expanded),
+    ];
+  }
+
+  readonly #chat: Chat;
+
+  readonly expanded = new BindableBoolean(false);
+
+  protected load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+  }
+
+  protected loadComplete() {
+    super.loadComplete();
+
+    this.expanded.bindValueChanged((expanded) => {
+      if (expanded.value)
+        this.popIn();
+      else
+        this.popOut();
+    }, true);
+  }
+
+  popIn() {
+    this.#chat.bypassAutoSizeAxes = Axes.X;
+  }
+
+  popOut() {
+    this.#chat.bypassAutoSizeAxes = Axes.None;
+  }
+}
+
+class ChatToggleButton extends CompositeDrawable {
+  constructor(expanded: BindableBoolean) {
+    super();
+
+    this.autoSizeAxes = Axes.Both;
+    this.anchor = Anchor.BottomLeft;
+    this.origin = Anchor.BottomCenter;
+    this.bypassAutoSizeAxes = Axes.Both;
+    this.rotation = -Math.PI / 2;
+    this.masking = true;
+    this.cornerRadius = 4;
+    this.x = 4;
+    this.y = -100;
 
     this.internalChildren = [
       new Box({
         relativeSizeAxes: Axes.Both,
         color: OsucadColors.translucent,
       }),
-      new BorderLayout({
-        center: this.#scroll = new OsucadScrollContainer().with({
-          relativeSizeAxes: Axes.Both,
-          children: [
-            this.#messageFlow = new FillFlowContainer({
-              direction: FillDirection.Vertical,
-              relativeSizeAxes: Axes.X,
-              autoSizeAxes: Axes.Y,
-              padding: { left: 8, right: 10, vertical: 10 },
-              spacing: new Vec2(10),
-            }),
-          ],
-        }),
-        south: new Container({
-          relativeSizeAxes: Axes.X,
-          autoSizeAxes: Axes.Y,
-          children: [
-            new Box({
-              relativeSizeAxes: Axes.Both,
-              color: OsucadColors.translucent,
-            }),
-            new Container({
-              relativeSizeAxes: Axes.X,
-              autoSizeAxes: Axes.Y,
-              child: new GridContainer({
-                relativeSizeAxes: Axes.X,
-                autoSizeAxes: Axes.Y,
-                padding: 4,
-                rowDimensions: [new Dimension(GridSizeMode.AutoSize)],
-                columnDimensions: [new Dimension(), new Dimension(GridSizeMode.AutoSize)],
-                content: [[
-                  this.#textBox = new ChatTextBox().adjust(it => it.onCommit.addListener(this.send, this)),
-                  new SendButton().withAction(() => this.send()),
-                ]],
+      new FillFlowContainer({
+        direction: FillDirection.Horizontal,
+        autoSizeAxes: Axes.Both,
+        padding: { horizontal: 10, bottom: 6, top: 2 },
+        spacing: new Vec2(2),
+        children: [
+          new OsucadSpriteText({
+            text: 'chat',
+            anchor: Anchor.CenterLeft,
+            origin: Anchor.CenterLeft,
+            fontSize: 14,
+          }),
+          new Container({
+            size: 12,
+            anchor: Anchor.CenterLeft,
+            origin: Anchor.CenterLeft,
+            children: [
+              this.#toggleIcon = new DrawableSprite({
+                texture: getIcon('caret-left'),
+                size: 12,
+                anchor: Anchor.Center,
+                origin: Anchor.Center,
+                rotation: -Math.PI / 2,
+                color: OsucadColors.text,
+                y: 1,
               }),
-            }),
-          ],
+            ],
+          }),
+        ],
+      }),
+      this.#hoverHighlight = new Container({
+        relativeSizeAxes: Axes.Both,
+        padding: { bottom: 4 },
+        alpha: 0,
+        child: new Box({
+          relativeSizeAxes: Axes.Both,
         }),
       }),
     ];
+
+    this.state = expanded.getBoundCopy();
   }
 
-  #textBox!: ChatTextBox;
+  readonly state: BindableBoolean;
 
-  #scroll!: OsucadScrollContainer;
-
-  #messageFlow!: FillFlowContainer<DrawableChatMessage>;
-
-  @resolved(PlaceClient)
-  client!: PlaceClient;
-
-  async send() {
-    const text = this.#textBox.text.trim();
-    if (text.length === 0)
-      return;
-
-    this.#textBox.text = '';
-
-    await this.client.chat.sendMessage(text);
-  }
-
-  onScroll(e: ScrollEvent): boolean {
-    return true;
-  }
-
-  readonly schedulerAfterChildren = new Scheduler();
+  readonly #toggleIcon: DrawableSprite;
+  readonly #hoverHighlight: Container;
 
   protected loadComplete() {
     super.loadComplete();
 
-    this.#scroll.scrollContent.anchor = Anchor.BottomLeft;
-    this.#scroll.scrollContent.origin = Anchor.BottomLeft;
-
-    this.client.chat.chatMessageAdded.addListener((message) => {
-      const scrolledToEnd = this.#scroll.isScrolledToEnd(5);
-
-      const drawable = new DrawableChatMessage(message);
-      drawable.y = 100;
-
-      this.#messageFlow.add(drawable);
-      if (scrolledToEnd || true) {
-        drawable.doWhenLoaded(() => {
-          if (this.#scroll.availableContent < this.#scroll.displayableContent) {
-            this.#scroll.scrollToEnd(false);
-            this.#scroll.scrollBy(-drawable.height, false);
-          }
-
-          this.schedulerAfterChildren.add(() => {
-            this.#scroll.scrollToEnd();
-          });
-        }, true);
-      }
-    });
-
-    // this.#scroll.scrollContent.autoSizeAxes = Axes.None;
+    this.state.bindValueChanged((expanded) => {
+      this.#toggleIcon.rotateTo(
+        Math.PI / 2 * (expanded.value ? 1 : -1),
+        500,
+        EasingFunction.OutElasticHalf,
+      );
+    }, true);
   }
 
-  update() {
-    super.update();
+  onClick(e: ClickEvent): boolean {
+    this.state.toggle();
+
+    return true;
   }
 
-  updateAfterChildren() {
-    super.updateAfterChildren();
+  onHover(e: HoverEvent): boolean {
+    this.#hoverHighlight.fadeTo(0.2).fadeTo(0.1, 400);
 
-    this.schedulerAfterChildren.update();
-
-    const scrollPosition = Math.max((this.#scroll.drawHeight - this.#messageFlow.drawHeight), 0) - this.#scroll.current;
-
-    for (const child of this.#messageFlow.children) {
-      const { drawPosition, drawHeight } = child;
-
-      const y = drawPosition.y + scrollPosition;
-
-      child.scrolledIntoView = y + drawHeight > -50 && y < this.#scroll.drawHeight + 50;
-    }
-  }
-}
-
-class SendButton extends OsucadButton {
-  constructor() {
-    super();
-
-    this.text = 'Send';
+    return true;
   }
 
-  protected createText(): OsucadSpriteText {
-    return new OsucadSpriteText({
-      text: this.text,
-      fontSize: 12,
-      fontWeight: 600,
-    });
-  }
-}
-
-class ChatTextBox extends OsucadTextBox {
-  protected override load(dependencies: ReadonlyDependencyContainer) {
-    super.load(dependencies);
-
-    this.placeholderText = 'Type to chat';
-    this.commitOnFocusLost = false;
-    this.releaseFocusOnCommit = false;
-  }
-
-  get fontSize(): number {
-    return 12;
-  }
-
-  protected override getDrawableCharacter(c: string): Drawable {
-    return new OsucadSpriteText({
-      text: c,
-      fontSize: this.fontSize,
-      fontWeight: 600,
-    });
-  }
-
-  protected createPlaceholder(): SpriteText {
-    return new OsucadSpriteText({
-      fontSize: this.fontSize,
-      alpha: 0.5,
-    });
-  }
-
-  protected canAddCharacter(character: string): boolean {
-    return super.canAddCharacter(character) && this.text.length < 128;
+  onHoverLost(e: HoverLostEvent) {
+    this.#hoverHighlight.clearTransforms();
+    this.#hoverHighlight.fadeOut(200);
   }
 }
