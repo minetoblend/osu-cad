@@ -96,12 +96,6 @@ export class SpriteTextPipe implements RenderPipe<BitmapText> {
   private _updateContext(bitmapText: BitmapText, proxyGraphics: Graphics) {
     const { context } = proxyGraphics;
 
-    const { a, b, c, d } = bitmapText.groupTransform;
-
-    const dx = Math.sqrt((a * a) + (b * b));
-    const dy = Math.sqrt((c * c) + (d * d));
-    const worldScale = (Math.abs(dx) + Math.abs(dy)) / 2;
-
     const bitmapFont = BitmapFontManager.getFont(bitmapText.text, bitmapText._style);
 
     context.clear();
