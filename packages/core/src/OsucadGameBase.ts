@@ -1,7 +1,6 @@
 import type { Container, Drawable, PIXIRenderer, ReadonlyDependencyContainer } from '@osucad/framework';
 import { AudioManager, Axes, Box, DependencyContainer, Game, IRenderer, isMobile, provide, resolved, Vec2 } from '@osucad/framework';
 import { OsucadIcons } from '@osucad/resources';
-import { Filter, RenderTarget } from 'pixi.js';
 import { AudioMixer } from './audio/AudioMixer';
 import { OsucadConfigManager } from './config/OsucadConfigManager';
 import { SafeAreaContainer } from './drawables/SafeAreaContainer';
@@ -20,10 +19,6 @@ import { ContextMenuContainer } from './userInterface/ContextMenuContainer';
 export abstract class OsucadGameBase extends Game implements IResourcesProvider {
   constructor() {
     super();
-
-    RenderTarget.defaultOptions.depth = true;
-    RenderTarget.defaultOptions.stencil = true;
-    Filter.defaultOptions.resolution = 'inherit';
   }
 
   @resolved(IRenderer)

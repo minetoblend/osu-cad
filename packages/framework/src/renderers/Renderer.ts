@@ -2,7 +2,7 @@ import type { InjectionToken } from '../di';
 import type { FrameworkEnvironment } from '../FrameworkEnvironment';
 import type { Drawable } from '../graphics/drawables/Drawable';
 import type { PIXIRenderer } from '../pixi';
-import { extensions, GlobalUniformSystem } from 'pixi.js';
+import { extensions, Filter, GlobalUniformSystem, RenderTarget } from 'pixi.js';
 import { SpriteTextPipe } from '../graphics/text/SpriteTextPipe';
 import { type IVec2, Vec2 } from '../math';
 import { MaskingPipe } from './MaskingPipe';
@@ -19,6 +19,10 @@ export interface RendererOptions {
 
 export class Renderer {
   async init(options: RendererOptions) {
+    RenderTarget.defaultOptions.depth = true;
+    RenderTarget.defaultOptions.stencil = true;
+    Filter.defaultOptions.resolution = 'inherit';
+
     extensions.remove(GlobalUniformSystem);
     extensions.add(
       OsucadBatcher,
