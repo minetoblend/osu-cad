@@ -120,16 +120,16 @@ export class ChatWindow extends CompositeDrawable {
   updateAfterChildren() {
     super.updateAfterChildren();
 
-    // this.#scroll.scrollContent.height = Math.max(this.#messageFlow.drawHeight, this.#scroll.drawHeight);
-
     this.schedulerAfterChildren.update();
+
+    const scrollPosition = Math.max((this.#scroll.drawHeight - this.#messageFlow.drawHeight), 0) - this.#scroll.current;
 
     for (const child of this.#messageFlow.children) {
       const { drawPosition, drawHeight } = child;
 
-      const y = drawPosition.y + this.#messageFlow.drawPosition.y;
+      const y = drawPosition.y + scrollPosition;
 
-      child.scrolledIntoView = y + 50 > this.#scroll.current && y + drawHeight - 50 < this.#scroll.current + this.#scroll.drawHeight;
+      child.scrolledIntoView = y + drawHeight > -50 && y < this.#scroll.drawHeight + 50;
     }
   }
 }
