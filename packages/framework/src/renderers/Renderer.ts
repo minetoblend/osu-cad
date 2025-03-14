@@ -25,6 +25,7 @@ export class Renderer {
     Filter.defaultOptions.antialias = 'inherit';
     console.log(RenderTarget.defaultOptions);
     DynamicBitmapFont.defaultOptions.textureSize = 1024;
+    DynamicBitmapFont.defaultOptions.padding = 6;
 
     extensions.remove(GlobalUniformSystem);
     extensions.add(
