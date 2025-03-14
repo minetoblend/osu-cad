@@ -7,7 +7,6 @@ import { Container } from '../containers/Container';
 import { Anchor } from '../drawables/Anchor';
 import { Axes } from '../drawables/Axes';
 import { Box } from '../shapes/Box';
-import { FastRoundedBox } from '../shapes/FastRoundedBox';
 import { EasingFunction } from '../transforms/EasingFunction';
 import { Caret } from './Caret';
 import { TextBox } from './TextBox';
@@ -125,12 +124,11 @@ class BasicCaret extends Caret {
 
     this.color = 'transparent';
 
-    this.internalChild = new FastRoundedBox({
+    this.internalChild = new Box({
       anchor: Anchor.CenterLeft,
       origin: Anchor.CenterLeft,
       relativeSizeAxes: Axes.Both,
       height: 0.9,
-      cornerRadius: 1,
     });
   }
 
