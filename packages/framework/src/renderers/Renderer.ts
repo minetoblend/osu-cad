@@ -21,7 +21,7 @@ export class Renderer {
   async init(options: RendererOptions) {
     RenderTarget.defaultOptions.depth = true;
     RenderTarget.defaultOptions.stencil = true;
-    Filter.defaultOptions.resolution = 'inherit';
+    Filter.defaultOptions.resolution = devicePixelRatio;
 
     extensions.remove(GlobalUniformSystem);
     extensions.add(
