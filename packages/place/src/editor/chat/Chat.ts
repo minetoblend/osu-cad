@@ -1,6 +1,6 @@
 import type { Drawable, ReadonlyDependencyContainer, ScrollEvent, SpriteText } from '@osucad/framework';
 import { BorderLayout, OsucadButton, OsucadColors, OsucadScrollContainer, OsucadSpriteText, OsucadTextBox } from '@osucad/core';
-import { Anchor, Axes, Box, CompositeDrawable, Container, Dimension, FillDirection, FillFlowContainer, GridContainer, GridSizeMode, resolved, Scheduler, Vec2 } from '@osucad/framework';
+import { Anchor, Axes, Box, CompositeDrawable, Container, Dimension, FillDirection, FillFlowContainer, GridContainer, GridSizeMode, resolved, Scheduler } from '@osucad/framework';
 import { PlaceClient } from '../PlaceClient';
 import { DrawableChatMessage } from './DrawableChatMessage';
 
@@ -25,7 +25,6 @@ export class Chat extends CompositeDrawable {
               relativeSizeAxes: Axes.X,
               autoSizeAxes: Axes.Y,
               padding: { left: 8, right: 10, vertical: 10 },
-              spacing: new Vec2(10),
             }),
           ],
         }),
@@ -92,7 +91,7 @@ export class Chat extends CompositeDrawable {
     this.client.chat.chatMessageAdded.addListener((message) => {
       const scrolledToEnd = this.#scroll.isScrolledToEnd(5);
 
-      const drawable = new DrawableChatMessage(message);
+      const drawable = new DrawableChatMessage(message, this.#messageFlow.children[this.#messageFlow.children.length - 1]);
       drawable.y = 100;
 
       this.#messageFlow.add(drawable);
@@ -161,7 +160,7 @@ class ChatTextBox extends OsucadTextBox {
     return 12;
   }
 
-  protected override getDrawableCharacter(c: string): Drawable {
+  protected override getFallingChar(c: string): Drawable {
     return new OsucadSpriteText({
       text: c,
       fontSize: this.fontSize,

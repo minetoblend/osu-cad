@@ -4,9 +4,13 @@ import { Anchor, Axes, BindableBoolean, Box, CompositeDrawable, Container, Drawa
 import { getIcon } from '@osucad/resources';
 import { Chat } from './Chat';
 
+const storageKey = 'chat-expanded';
+
 export class ChatWindow extends CompositeDrawable {
   constructor() {
     super();
+
+    this.expanded.value = localStorage.getItem(storageKey) === 'true';
 
     this.autoSizeAxes = Axes.X;
     this.relativeSizeAxes = Axes.Y;
@@ -35,15 +39,19 @@ export class ChatWindow extends CompositeDrawable {
         this.popIn();
       else
         this.popOut();
+
+      localStorage.setItem(storageKey, expanded.value.toString());
     }, true);
+
+    this.parent!.schedule(() => this.finishTransforms(true));
   }
 
   popIn() {
-    this.#chat.bypassAutoSizeAxes = Axes.X;
+    this.#chat.bypassAutoSizeAxes = Axes.None;
   }
 
   popOut() {
-    this.#chat.bypassAutoSizeAxes = Axes.None;
+    this.#chat.bypassAutoSizeAxes = Axes.X;
   }
 }
 
@@ -119,7 +127,7 @@ class ChatToggleButton extends CompositeDrawable {
 
     this.state.bindValueChanged((expanded) => {
       this.#toggleIcon.rotateTo(
-        Math.PI / 2 * (expanded.value ? 1 : -1),
+        Math.PI / 2 * (expanded.value ? -1 : 1),
         500,
         EasingFunction.OutElasticHalf,
       );
