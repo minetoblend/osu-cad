@@ -6,5 +6,6 @@
   "logger": {
     "morganFormat": "dev"
   },
-  "storage": ".storage/"
+  "storage": ".storage/",
+  "placementCooldown": 300
 }
