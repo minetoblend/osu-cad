@@ -182,6 +182,14 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
 
     switch (e.pressed) {
       // TODO: copy/paste
+      case PlatformAction.Copy:
+        navigator.clipboard.writeText(this.selectedText);
+        return true;
+      case PlatformAction.Cut:
+        navigator.clipboard.writeText(this.selectedText);
+        this.#removeSelection();
+        return true;
+
       case PlatformAction.SelectAll:
         this.selectAll();
         this.#onTextSelectionChanged(TextSelectionType.All, lastSelectionBounds);
