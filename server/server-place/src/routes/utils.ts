@@ -1,5 +1,5 @@
 import type { Response } from 'express';
-import type { Provider } from 'nconf';
+import type { User } from '../entities/User';
 
 export function handleResponse<T>(
   resultP: Promise<T>,
@@ -22,6 +22,8 @@ export function handleResponse<T>(
   );
 }
 
-export function getGitDir(config: Provider) {
-  return config.get('storage');
+export function serializeUser(user: User) {
+  const { id, username } = user;
+
+  return { id, username };
 }

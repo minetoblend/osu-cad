@@ -1,14 +1,12 @@
+import type SSE from 'express-sse';
 import type { Provider } from 'nconf';
 import type { User } from '../entities/User';
 import type { PlaceServerResources } from '../PlaceServerResources';
 import { Router } from 'express';
-import SSE from 'express-sse';
 import { requiresAuth } from '../middleware/auth';
 
-export function create(config: Provider, { beatmapService, userService }: PlaceServerResources) {
+export function create(config: Provider, sse: SSE, { beatmapService, userService }: PlaceServerResources) {
   const router = Router();
-
-  const sse = new SSE();
 
   const placementCooldown = config.get('placementCooldown') * 1000;
 

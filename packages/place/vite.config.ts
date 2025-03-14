@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [
     // @ts-expect-error this works
     nxViteTsPaths(),
-    privatePropertyOptimizer(),
+    privatePropertyOptimizer(true),
   ],
   esbuild: {
     target: 'chrome113',

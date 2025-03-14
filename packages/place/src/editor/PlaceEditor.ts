@@ -1,9 +1,10 @@
 import type { EditorScreenManager } from '@osucad/core';
 import type { Drawable, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { PlaceBeatmap } from './PlaceBeatmap';
-import { Editor } from '@osucad/core';
+import { BorderLayout, Editor } from '@osucad/core';
 import { provide } from '@osucad/framework';
 import { TutorialDialog } from '../dialogs/TutorialDialog';
+import { ChatWindow } from './chat/ChatWindow';
 import { PlaceClient } from './PlaceClient';
 import { PlaceEditorLayout } from './PlaceEditorLayout';
 import { PlaceScreen } from './PlaceScreen';
@@ -31,7 +32,10 @@ export class PlaceEditor extends Editor {
   }
 
   protected createLayout(): Drawable {
-    return new PlaceEditorLayout();
+    return new BorderLayout({
+      center: new PlaceEditorLayout(),
+      east: new ChatWindow(),
+    });
   }
 
   protected load(dependencies: ReadonlyDependencyContainer) {

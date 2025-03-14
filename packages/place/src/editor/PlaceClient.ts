@@ -2,6 +2,7 @@ import type { Beatmap } from '@osucad/core';
 import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import { BoxedBeatmap, SimpleFile, StaticFileStore } from '@osucad/core';
 import { Bindable, BindableBoolean, Component } from '@osucad/framework';
+import { ChatManager } from './chat/ChatManager';
 import { PlaceBeatmap } from './PlaceBeatmap';
 
 export class PlaceClient extends Component {
@@ -71,13 +72,15 @@ export class PlaceClient extends Component {
     }
   }
 
-  async initEventSource() {
-    const eventSource = new EventSource('/api/place/events');
-    eventSource.addEventListener('place', e => this.onObjectPlaced(JSON.parse(e.data)));
+  eventSource!: EventSource;
 
-    eventSource.onmessage = console.log;
-    eventSource.onerror = console.error;
-    eventSource.onopen = console.log;
+  chat!: ChatManager;
+
+  async initEventSource() {
+    this.eventSource = new EventSource('/api/place/events');
+    this.eventSource.addEventListener('place', e => this.onObjectPlaced(JSON.parse(e.data)));
+
+    this.chat = new ChatManager(this);
   }
 
   async loadUser() {
@@ -107,5 +110,11 @@ export class PlaceClient extends Component {
     console.log(evt, this.user.value?.id);
     if (evt.user === this.user.value?.id)
       this.loadPlacementState();
+  }
+
+  override dispose(isDisposing: boolean = true) {
+    super.dispose(isDisposing);
+
+    this.eventSource.close();
   }
 }

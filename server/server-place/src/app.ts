@@ -42,6 +42,8 @@ export function create(
   app.use(routes.users);
   app.use(routes.beatmap);
   app.use(routes.place);
+  app.use(routes.chat);
+  app.use('/api/events', routes.sse.init);
 
   app.get('/', (req, res) => {
     res.status(200).send('osucad place. Find out more at https://github.com/minetoblend/osu-cad/tree/master/server/place-server');
