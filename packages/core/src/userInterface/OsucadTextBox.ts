@@ -3,6 +3,7 @@ import type { ColorSource } from 'pixi.js';
 import { Anchor, Axes, BasicTextBox, Box, EasingFunction, RoundedBox, Vec2 } from '@osucad/framework';
 import { Color } from 'pixi.js';
 import { OsucadSpriteText } from '../drawables/OsucadSpriteText';
+import { OsucadColors } from '../OsucadColors';
 
 export class OsucadTextBox extends BasicTextBox {
   #focusLine!: Box;
@@ -17,6 +18,10 @@ export class OsucadTextBox extends BasicTextBox {
     this.#accentColor = new Color(color);
     if (this.isLoaded)
       this.#focusLine.color = this.#accentColor;
+  }
+
+  protected override get selectionColor(): Color {
+    return new Color(OsucadColors.primary);
   }
 
   protected override get leftRightPadding(): number {
