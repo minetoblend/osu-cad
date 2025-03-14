@@ -3,8 +3,7 @@ import type { CarouselBeatmap } from './CarouselBeatmap';
 import type { CarouselBeatmapInfo } from './CarouselBeatmapInfo';
 import type { CarouselBeatmapSetInfo } from './CarouselBeatmapSetInfo';
 import type { DrawableCarouselItem } from './DrawableCarouselItem';
-import { Action, Axes, Bindable, clamp, CompositeDrawable, Direction, DrawablePool, Invalidation, Key, LayoutMember, lerp, provide, resolved } from '@osucad/framework';
-import { BackdropBlurFilter } from 'pixi-filters';
+import { Action, Axes, BetterBackdropBlurFilter, Bindable, clamp, CompositeDrawable, Direction, DrawablePool, Invalidation, Key, LayoutMember, lerp, provide, resolved } from '@osucad/framework';
 import { OsucadConfigManager } from '../../config/OsucadConfigManager';
 import { OsucadSettings } from '../../config/OsucadSettings';
 import { OsucadScrollContainer } from '../../drawables/OsucadScrollContainer';
@@ -486,7 +485,7 @@ class CarouselScrollContainer extends OsucadScrollContainer<DrawableCarouselMaps
 
     this.rightClickScroll = true;
 
-    const filter = new BackdropBlurFilter({
+    const filter = new BetterBackdropBlurFilter({
       strength: 15,
       antialias: 'inherit',
       quality: 3,
