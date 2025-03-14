@@ -29,6 +29,7 @@ export class DrawableCarouselMapset extends DrawableCarouselItem {
         children: [
           this.title = new OsucadSpriteText({
             fontSize: 18,
+            fontWeight: 600,
           }),
           this.artist = new OsucadSpriteText({
             fontSize: 16,

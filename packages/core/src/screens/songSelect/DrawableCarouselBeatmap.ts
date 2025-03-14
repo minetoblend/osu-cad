@@ -15,7 +15,7 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
     this.alpha = 0;
 
     // for sorting
-    this.depth = -item.beatmapInfo.starRating; ;
+    this.depth = -item.beatmapInfo.starRating;
 
     if (item.beatmapInfo.lastEdited) {
       const formatted = item.beatmapInfo.lastEdited.toLocaleDateString('en-US', {
@@ -81,6 +81,7 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
                   children: [
                     this.#starRatingText = new OsucadSpriteText({
                       text: this.carouselBeatmap.beatmapInfo.starRating.toFixed(2),
+                      fontWeight: 500,
                       anchor: Anchor.CenterLeft,
                       origin: Anchor.CenterLeft,
                     }),
@@ -90,6 +91,7 @@ export class DrawableCarouselBeatmap extends DrawableCarouselItem {
             }),
             this.#difficultyName = new OsucadSpriteText({
               text: this.carouselBeatmap.beatmapInfo.difficultyName,
+              fontWeight: 500,
               anchor: Anchor.CenterLeft,
               origin: Anchor.CenterLeft,
             }),

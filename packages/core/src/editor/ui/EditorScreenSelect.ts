@@ -90,6 +90,7 @@ class ScreenSelectButton extends Button {
         origin: Anchor.CenterLeft,
         color: OsucadColors.text,
         fontSize: 14,
+        fontWeight: 600,
       }),
     });
   }

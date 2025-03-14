@@ -25,6 +25,7 @@ export abstract class PreferencesSection extends Container {
           text: title,
           fontSize: 20,
           color: OsucadColors.text,
+          fontWeight: 600,
         }),
         this.#content = new FillFlowContainer({
           direction: FillDirection.Vertical,
