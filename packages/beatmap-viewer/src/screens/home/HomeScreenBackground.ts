@@ -7,6 +7,7 @@ import { BackgroundScreen } from '@osucad/core';
 import {
   Anchor,
   Axes,
+  BetterBlurFilter,
   Box,
   Container,
   DrawableSprite,
@@ -14,7 +15,6 @@ import {
   FillMode,
   MaskingContainer,
 } from '@osucad/framework';
-import { BlurFilter } from 'pixi.js';
 
 export class HomeScreenBackground extends BackgroundScreen {
   constructor(readonly beatmap: Bindable<CarouselBeatmapInfo | null>) {
@@ -39,7 +39,7 @@ export class HomeScreenBackground extends BackgroundScreen {
 
   readonly background: Box;
 
-  #blurFilter = new BlurFilter({
+  #blurFilter = new BetterBlurFilter({
     strength: 15,
     quality: 3,
     antialias: 'inherit',
