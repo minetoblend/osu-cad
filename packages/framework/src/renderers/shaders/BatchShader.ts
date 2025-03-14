@@ -3,7 +3,7 @@ import {
   colorBitGl,
   compileHighShaderGlProgram,
   compileHighShaderGpuProgram,
-  generateTextureBatchBitGl,
+  generateTextureBatchBit,
   getBatchSamplersUniformGroup,
   roundPixelsBit,
   roundPixelsBitGl,
@@ -18,7 +18,7 @@ export class BatchShader extends Shader {
       name: 'batch',
       bits: [
         colorBitGl,
-        generateTextureBatchBitGl(maxTextures),
+        generateTextureLodBatchBitGl(maxTextures, -1.0),
         roundPixelsBitGl,
         maskingBitGl,
       ],
@@ -28,7 +28,7 @@ export class BatchShader extends Shader {
       name: 'batch',
       bits: [
         colorBit,
-        generateTextureLodBatchBitGl(maxTextures, -1.0),
+        generateTextureBatchBit(maxTextures),
         roundPixelsBit,
       ],
     });
