@@ -2,7 +2,7 @@ import type { InjectionToken } from '../di';
 import type { FrameworkEnvironment } from '../FrameworkEnvironment';
 import type { Drawable } from '../graphics/drawables/Drawable';
 import type { PIXIRenderer } from '../pixi';
-import { extensions, Filter, GlobalUniformSystem, RenderTarget } from 'pixi.js';
+import { DynamicBitmapFont, extensions, Filter, GlobalUniformSystem, RenderTarget } from 'pixi.js';
 import { SpriteTextPipe } from '../graphics/text/SpriteTextPipe';
 import { type IVec2, Vec2 } from '../math';
 import { MaskingPipe } from './MaskingPipe';
@@ -22,6 +22,9 @@ export class Renderer {
     RenderTarget.defaultOptions.depth = true;
     RenderTarget.defaultOptions.stencil = true;
     Filter.defaultOptions.resolution = devicePixelRatio;
+    Filter.defaultOptions.antialias = 'inherit';
+    console.log(RenderTarget.defaultOptions);
+    DynamicBitmapFont.defaultOptions.textureSize = 1024;
 
     extensions.remove(GlobalUniformSystem);
     extensions.add(
