@@ -159,7 +159,7 @@ class BasicCaret extends Caret {
       this.moveTo(new Vec2(position.x - this.caretWidth / 2, position.y), 60, EasingFunction.Out);
       this.resizeWidthTo(this.caretWidth, caret_move_time, EasingFunction.Out);
       this.fadeColor(0xFFFFFF, 200, EasingFunction.Out);
-
+      this.fadeTo(1, 200, EasingFunction.Out);
       // TODO: loop
     }
 
