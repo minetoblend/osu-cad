@@ -47,7 +47,7 @@ export class UserService {
     const placementCooldown = this.config.get('placementCooldown') * 1000;
 
     return user.lastObjectPlaced !== null
-      ? Math.max(0, (user.lastObjectPlaced + placementCooldown) - Date.now())
+      ? (user.lastObjectPlaced + placementCooldown) - Date.now()
       : 0;
   }
 }
