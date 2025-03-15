@@ -121,6 +121,9 @@ export class Countdown extends CompositeDrawable {
   readonly isRunning = new BindableBoolean();
 
   start(endTime: number, totalDuration: number = endTime - this.time.current) {
+    if (endTime <= this.time.current)
+      return;
+
     this.endTime = endTime;
     this.totalDuration = Math.max(Math.ceil(totalDuration / 1000), 1);
 
