@@ -65,7 +65,6 @@ export abstract class DrawableHitObjectPlacementTool<T extends HitObject> extend
   protected setStartTime() {
     if (!this.isPlacing) {
       this.hitObject.startTime = this.editorClock.currentTime;
-      this.editorBeatmap.beatmap.applyDefaultsTo(this.hitObject);
     }
   }
 
