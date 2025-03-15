@@ -2,7 +2,6 @@ import type { DependencyContainer, ReadonlyBindable, ReadonlyDependencyContainer
 import type { Judgement } from '../../rulesets/judgements/Judgement';
 import type { HitObject } from '../HitObject';
 import type { HitResult } from '../HitResult';
-import type { HitObjectJudge } from './HitObjectJudge';
 import type { HitObjectLifetimeEntry } from './HitObjectLifetimeEntry';
 import { Action, Bindable, dependencyLoader, resolved } from '@osucad/framework';
 import { Color } from 'pixi.js';
@@ -71,10 +70,7 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
     if (this.judged)
       return false;
 
-    if (this.judge)
-      this.judge.checkForResult(this, userTriggered, this.time.current - this.hitObject!.endTime);
-    else
-      this.checkForResult(userTriggered, this.time.current - this.hitObject!.endTime);
+    this.checkForResult(userTriggered, this.time.current - this.hitObject!.endTime);
 
     return this.judged;
   }
@@ -96,6 +92,9 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
   protected applyResult(apply: (result: JudgementResult, state: this) => void): void;
 
   protected applyResult<T>(apply: (result: JudgementResult, state: any) => void, state?: T) {
+    if (this.alwaysHit)
+      return;
+
     apply(this.result!, state ?? this);
 
     if (!this.result!.hasResult)
@@ -139,8 +138,6 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
   protected judgeProvider!: IHitObjectJudgeProvider;
 
   isInitialized = false;
-
-  judge!: HitObjectJudge | null;
 
   constructor(initialHitObject?: HitObject) {
     super();
@@ -207,10 +204,6 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
     this.onApplied();
     this.hitObjectApplied.emit(this);
 
-    this.judge = this.judgeProvider.getJudge(this);
-    if (this.judge)
-      this.addInternal(this.judge);
-
     if (this.isLoaded) {
       this.#updateStateFromResult();
       this.updateComboColor();
@@ -274,10 +267,6 @@ export class DrawableHitObject extends PoolableDrawableWithLifetime<HitObjectLif
     this.onFreed();
 
     this.parentHitObject = null;
-
-    if (this.judge)
-      this.removeInternal(this.judge);
-    this.judge = null;
 
     this.#clearExistingStateTransforms();
   }

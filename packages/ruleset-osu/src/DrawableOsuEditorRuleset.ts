@@ -4,7 +4,6 @@ import type { OsuHitObject } from './hitObjects/OsuHitObject';
 import type { OsuPlayfield } from './ui/OsuPlayfield';
 import { resolved } from '@osucad/framework';
 import { DrawableOsuRuleset } from './DrawableOsuRuleset';
-import { EditorJudgeProvider } from './edit/EditorJudge';
 import { HitSoundPlayer } from './edit/HitSoundPlayer';
 import { PlayfieldGrid } from './edit/PlayfieldGrid';
 
@@ -17,7 +16,6 @@ export class DrawableOsuEditorRuleset extends DrawableOsuRuleset {
 
   override createPlayfield(): OsuPlayfield {
     return super.createPlayfield().adjust((it) => {
-      it.customJudgeProvider = new EditorJudgeProvider();
       it.showJudgements = false;
       it.hitObjectsAlwaysHit = true;
       it.suppressHitSounds = true;
@@ -45,5 +43,13 @@ export class DrawableOsuEditorRuleset extends DrawableOsuRuleset {
 
     this.beatmap.hitObjects.added.removeListener(this.addHitObject, this);
     this.beatmap.hitObjects.removed.removeListener(this.removeHitObject, this);
+  }
+
+  override get propagatePositionalInputSubTree(): boolean {
+    return false;
+  }
+
+  override get propagateNonPositionalInputSubTree(): boolean {
+    return false;
   }
 }
