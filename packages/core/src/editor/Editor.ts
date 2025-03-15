@@ -168,6 +168,14 @@ export class Editor extends OsucadScreen implements IKeyBindingHandler<PlatformA
     this.editorBeatmap.applyDefaultsWhereNeeded(this.editorClock.currentTime - 2000, this.editorClock.currentTime + 2000);
   }
 
+  override updateAfterChildren() {
+    super.updateAfterChildren();
+
+    // this *really* shouldn't happen after children updates however a bunch of stuff breaks unless I do this so where we are...
+    this.editorClock.processFrame();
+    this.editorClock.updateBeatProgress();
+  }
+
   undo() {
     this.editorBeatmap.updateHandler.undo();
   }

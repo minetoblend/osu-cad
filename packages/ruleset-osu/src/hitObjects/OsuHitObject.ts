@@ -33,6 +33,9 @@ export abstract class OsuHitObject extends HitObject implements IHasComboInforma
   }
 
   set position(value: Vec2) {
+    if (this.#position.value.equals(value))
+      return;
+
     this.#position.value = value;
   }
 

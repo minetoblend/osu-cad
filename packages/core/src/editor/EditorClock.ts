@@ -1,6 +1,6 @@
-import type { FrameTimeInfo, IAdjustableClock, IFrameBasedClock, Track } from '@osucad/framework';
+import type { FrameTimeInfo, IAdjustableClock, IFrameBasedClock, ReadonlyDependencyContainer, Track } from '@osucad/framework';
 import type { TimingPoint } from '../controlPoints/TimingPoint';
-import { Action, almostEquals, AudioManager, Bindable, BindableBoolean, BindableNumber, clamp, Container, dependencyLoader, lerp, resolved } from '@osucad/framework';
+import { Action, almostEquals, AudioManager, Bindable, BindableBoolean, BindableNumber, clamp, Container, lerp, resolved } from '@osucad/framework';
 import { IBeatmap } from '../beatmap/IBeatmap';
 import { OsucadConfigManager } from '../config/OsucadConfigManager';
 import { OsucadSettings } from '../config/OsucadSettings';
@@ -22,8 +22,9 @@ export class EditorClock
   @resolved(OsucadConfigManager)
   config!: OsucadConfigManager;
 
-  @dependencyLoader()
-  init() {
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
     this.config.bindWith(OsucadSettings.AnimatedSeek, this.animatedSeek);
     this.config.bindWith(OsucadSettings.AudioOffset, this.offsetBindable);
   }
@@ -38,13 +39,6 @@ export class EditorClock
   }
 
   readonly isFrameBasedClock = true;
-
-  override update(): void {
-    super.update();
-
-    this.processFrame();
-    this.updateBeatProgress();
-  }
 
   @resolved(IBeatmap)
   beatmap!: IBeatmap;
