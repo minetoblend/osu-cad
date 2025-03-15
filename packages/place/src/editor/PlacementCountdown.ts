@@ -31,7 +31,8 @@ export class PlacementCountdown extends VisibilityContainer {
       if (!evt.value)
         return;
 
-      this.countdown.start(evt.value.endTime, evt.value.totalTime);
+      if (evt.value.endTime > this.time.current)
+        this.countdown.start(evt.value.endTime, evt.value.totalTime);
     }, true);
 
     this.countdown.isRunning.bindValueChanged((running) => {
