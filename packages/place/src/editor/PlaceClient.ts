@@ -23,7 +23,8 @@ export class PlaceClient extends Component {
   protected loadComplete() {
     super.loadComplete();
 
-    this.scheduler.addDelayed(() => this.loadPlacementState(), 10_000, true);
+    const delegate = this.scheduler.addDelayed(() => this.loadPlacementState(), 10_000, true);
+    delegate.performRepeatCatchUpExecutions = false;
   }
 
   update() {

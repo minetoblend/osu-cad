@@ -8,9 +8,7 @@ export class ScheduledDelegate {
     public receiver?: any,
   ) {}
 
-  get performRepeatCatchUpExecutions() {
-    return true;
-  }
+  performRepeatCatchUpExecutions = true;
 
   public get completed() {
     return this.state === RunState.Complete;
