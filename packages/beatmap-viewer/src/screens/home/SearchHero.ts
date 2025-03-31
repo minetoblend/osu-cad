@@ -149,7 +149,7 @@ export class SearchHero extends FillFlowContainer {
       }
 
       if (!term.includes('"'))
-        term = `"${term}"`;
+        term = term.split(' ').map(word => `"${word}"`).join(' ');
 
       this.searchResults.emit(await new CatboyMirror().search(term));
     }
