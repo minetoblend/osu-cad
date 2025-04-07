@@ -39,4 +39,5 @@ export class OsucadSettings<T> implements ConfigKey<T> {
   static readonly SongSelectPreventLoadOnScroll = new OsucadSettings<boolean>('SongSelectPreventLoadOnScroll');
   static readonly SongSelectParallax = new OsucadSettings<boolean>('SongSelectParallax');
   static readonly SongSelectBackgroundBlur = new OsucadSettings<boolean>('SongSelectBackgroundBlur');
+  static readonly BackgroundDim = new OsucadSettings<number>('BackgroundDim');
 }

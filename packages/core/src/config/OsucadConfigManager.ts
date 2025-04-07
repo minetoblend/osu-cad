@@ -31,6 +31,7 @@ export class OsucadConfigManager extends ConfigManager<OsucadSettings<any>> {
     this.setDefault(OsucadSettings.SongSelectParallax, true);
     this.setDefault(OsucadSettings.SongSelectPreventLoadOnScroll, false);
     this.setDefault(OsucadSettings.SongSelectBackgroundBlur, true);
+    this.setDefault(OsucadSettings.BackgroundDim, 0.25);
   }
 
   constructor() {
