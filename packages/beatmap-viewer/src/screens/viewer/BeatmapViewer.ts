@@ -3,6 +3,7 @@ import type { Drawable, KeyDownEvent, ReadonlyDependencyContainer } from '@osuca
 import type { BeatmapViewerGame } from '../../BeatmapViewerGame';
 import { Editor, EditorBeatmap, ModdingScreen, PreferencesOverlay } from '@osucad/core';
 import { Key, MenuItem, resolved } from '@osucad/framework';
+import posthog from 'posthog-js';
 import { Router } from '../Router';
 import { BeatmapViewerLayout } from './BeatmapViewerLayout';
 import { ViewportScreen } from './screens/viewport/ViewportScreen';
@@ -18,6 +19,13 @@ export class BeatmapViewer extends Editor {
     super.loadComplete();
 
     this.editorBeatmap.updateHandler.readonly = true;
+
+    const { artist, title } = this.beatmap.metadata;
+
+    posthog.capture('editor.view_beatmap', {
+      beatmap: `${artist} ${title}`,
+      difficultyName: this.beatmap.beatmapInfo.difficultyName,
+    });
   }
 
   protected registerScreens(screenManager: EditorScreenManager) {
@@ -25,6 +33,12 @@ export class BeatmapViewer extends Editor {
     screenManager.register(ModdingScreen);
 
     screenManager.setCurrentScreen(ViewportScreen);
+
+    screenManager.currentScreen.bindValueChanged((screen) => {
+      posthog.capture('editor.change_editor_screen', {
+        type: screen.value.name,
+      });
+    });
   }
 
   protected createLayout(): Drawable {

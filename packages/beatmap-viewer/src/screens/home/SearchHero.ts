@@ -3,6 +3,7 @@ import type { KeyDownEvent, ReadonlyDependencyContainer } from '@osucad/framewor
 import type { BeatmapSetResponse } from '../../mirrors/BeatmapSetResponse';
 import { OsucadButton } from '@osucad/core';
 import { Action, Anchor, Axes, Container, DrawSizePreservingFillContainer, EasingFunction, FillDirection, FillFlowContainer, Key, Vec2 } from '@osucad/framework';
+import posthog from 'posthog-js';
 import { CatboyMirror } from '../../mirrors/CatboyMirror';
 import { HomeScreenIntroSequence } from './HomeScreenIntroSequence';
 import { HomeScreenTextBox } from './HomeScreenTextBox';
@@ -117,6 +118,8 @@ export class SearchHero extends FillFlowContainer {
   async search(term: string) {
     if (this.searching)
       return;
+
+    posthog.capture('search', { term });
 
     try {
       this.searching = true;
