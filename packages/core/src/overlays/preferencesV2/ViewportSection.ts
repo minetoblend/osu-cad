@@ -47,5 +47,5 @@ export class ViewportSection extends PreferencesSection {
   readonly backgroundDim = new BindableNumber()
     .withMinValue(0)
     .withMaxValue(1)
-    .withPrecision(0.25);
+    .withPrecision(0.1);
 }
