@@ -26,13 +26,15 @@ export class ViewportSection extends PreferencesSection {
     config.bindWith(OsucadSettings.BackgroundDim, this.backgroundDim);
 
     this.addRange([
+      new SettingsSlider('Background dim', this.backgroundDim, format => `${Math.round(format * 100)}%`).with({
+        margin: { bottom: 10 },
+      }),
       new SettingsCheckbox('Hit animations', this.hitAnimations),
       new SettingsCheckbox('Follow points', this.followPoints),
       new SettingsCheckbox('Snaking in sliders', this.snakingInSliders),
       new SettingsCheckbox('Snaking out sliders', this.snakingOutSliders),
       new SettingsCheckbox('Animated seek', this.animatedSeek),
       new SettingsCheckbox('Native cursor', this.nativeCursor),
-      new SettingsSlider('Background dim', this.backgroundDim, format => `${Math.round(format * 100)}%`),
     ]);
   }
 
@@ -45,5 +47,5 @@ export class ViewportSection extends PreferencesSection {
   readonly backgroundDim = new BindableNumber()
     .withMinValue(0)
     .withMaxValue(1)
-    .withPrecision(0.1);
+    .withPrecision(0.25);
 }
