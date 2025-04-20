@@ -1,6 +1,6 @@
 import type { Beatmap, BeatmapConverter, BeatmapProcessor, DifficultyCalculator, DrawableRuleset, EditorRuleset, HitObject, HitObjectComposer, IBeatmap, ISkin, NoArgsConstructor, SkinTransformer } from '@osucad/core';
 import type { IKeyBinding } from '@osucad/framework';
-import { Ruleset, StableSkin } from '@osucad/core';
+import { ArgonSkin, Ruleset, StableSkin } from '@osucad/core';
 import { InputKey, KeyBinding, KeyCombination } from '@osucad/framework';
 import { OsuBeatmap } from './beatmaps/OsuBeatmap';
 import { OsuBeatmapConverter } from './beatmaps/OsuBeatmapConverter';
@@ -15,6 +15,7 @@ import { Slider } from './hitObjects/Slider';
 import { Spinner } from './hitObjects/Spinner';
 import { OsuAction } from './OsuAction';
 import { OsuEditorRuleset } from './OsuEditorRuleset';
+import { OsuArgonSkinTransformer } from './skinning/argon/OsuArgonSkinTransformer';
 import { StableOsuSkinTransformer } from './skinning/stable/StableOsuSkinTransformer';
 import { StackingProcessor } from './StackingProcessor';
 import { OsuBeatmapVerifier } from './verify/OsuBeatmapVerifier';
@@ -59,8 +60,8 @@ export class OsuRuleset extends Ruleset {
     if (skin instanceof StableSkin)
       return new StableOsuSkinTransformer(skin);
 
-    // if (skin instanceof ArgonSkin)
-    //   return new OsuArgonSkinTransformer(skin);
+    if (skin instanceof ArgonSkin)
+      return new OsuArgonSkinTransformer(skin);
 
     return null;
   }

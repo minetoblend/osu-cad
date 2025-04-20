@@ -55,6 +55,12 @@ export class SkinManager extends Component implements ISkinSource {
     this.#skinChanged();
   }
 
+  protected override loadComplete() {
+    super.loadComplete();
+
+    this.activeSkinName.bindValueChanged(() => this.#loadCurrentSkin());
+  }
+
   async #loadBaseSkins() {
     await Promise.all([
       this.#loadCurrentSkin(),
