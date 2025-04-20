@@ -67,7 +67,8 @@ export class MouseHandler extends InputHandler {
     if (event.pointerType !== 'mouse')
       return;
 
-    event.preventDefault();
+    if (event.button !== 0)
+      event.preventDefault();
 
     this.#host.renderer.canvas.setPointerCapture(event.pointerId);
 
