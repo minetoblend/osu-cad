@@ -82,7 +82,7 @@ export class IssueSection extends CompositeDrawable {
 
     this.active.valueChanged.addListener(this.#updateBackground, this);
     this.activeBeatmap.addOnChangeListener(
-      beatmap => this.active.value = beatmap.value === this.beatmap,
+      beatmap => this.active.value = beatmap.value === (this.beatmap?.beatmap ?? null),
       { immediate: true },
     );
 
