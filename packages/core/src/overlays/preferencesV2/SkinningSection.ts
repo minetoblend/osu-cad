@@ -24,6 +24,9 @@ export class SkinningSection extends PreferencesSection {
     config.bindWith(OsucadSettings.BeatmapHitSounds, this.beatmapHitsounds);
     config.bindWith(OsucadSettings.BeatmapComboColors, this.beatmapComboColors);
 
+    if (this.skin.value !== 'argon')
+      this.skin.value = 'stable';
+
     this.addRange([
       new GridContainer({
         relativeSizeAxes: Axes.X,
