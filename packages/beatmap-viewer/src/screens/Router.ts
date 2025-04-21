@@ -9,11 +9,12 @@ import { BeatmapViewerLoader } from './viewer/BeatmapViewerLoader';
 export interface ShowBeatmapOptions {
   beatmapSet?: WorkingBeatmapSet | number;
   beatmap: number;
+  embed?: boolean;
 }
 
 export type Route =
   | { type: 'home' }
-  | { type: 'beatmap'; beatmap: number; beatmapSet: number };
+  | { type: 'beatmap'; beatmap: number; beatmapSet: number; embed?: boolean };
 
 @provide(Router)
 export class Router extends OsucadScreenStack {
@@ -46,18 +47,32 @@ export class Router extends OsucadScreenStack {
       this.exit(this.currentScreen);
   }
 
-  parsePath(path: string): Route {
+  parseBeatmapPath(path: string): Route {
     const beatmapRegex = /^\/b\/(\d+)\/(\d+)$/;
+    const embedRegex = /^\/embed\/(\d+)\/(\d+)$/;
 
-    const match = path.match(beatmapRegex);
+    const beatmapMatch = path.match(beatmapRegex);
 
-    if (match) {
-      const [_, beatmapSetId, beatmapId] = match;
+    if (beatmapMatch) {
+      const [_, beatmapSetId, beatmapId] = beatmapMatch;
 
       return {
         type: 'beatmap',
         beatmapSet: Number.parseInt(beatmapSetId),
         beatmap: Number.parseInt(beatmapId),
+      };
+    }
+
+    const embedMatch = path.match(embedRegex);
+
+    if (embedMatch) {
+      const [_, beatmapSetId, beatmapId] = embedMatch;
+
+      return {
+        type: 'beatmap',
+        beatmapSet: Number.parseInt(beatmapSetId),
+        beatmap: Number.parseInt(beatmapId),
+        embed: true,
       };
     }
 
@@ -74,7 +89,7 @@ export class Router extends OsucadScreenStack {
 
     this.#currentPath = path;
 
-    const route = this.parsePath(path);
+    const route = this.parseBeatmapPath(path);
 
     if (!this.exitToHome())
       return;
@@ -111,7 +126,7 @@ export class Router extends OsucadScreenStack {
   presentBeatmap(options: ShowBeatmapOptions) {
     this.exitToHome();
 
-    this.push(new BeatmapViewerLoader(() => this.loadEditorBeatmap(options)));
+    this.push(new BeatmapViewerLoader(() => this.loadEditorBeatmap(options), options.embed));
   }
 
   async loadEditorBeatmap(options: ShowBeatmapOptions) {
@@ -161,7 +176,12 @@ export class Router extends OsucadScreenStack {
     }
     else if (screen instanceof BeatmapViewer) {
       const { onlineId, onlineBeatmapSetId } = screen.beatmap.beatmapInfo;
-      this.#pushPath(`/b/${onlineBeatmapSetId}/${onlineId}`);
+
+      const path = screen.isEmbed
+        ? `/embed/${onlineBeatmapSetId}/${onlineId}`
+        : `/b/${onlineBeatmapSetId}/${onlineId}`;
+
+      this.#pushPath(path);
     }
   }
 

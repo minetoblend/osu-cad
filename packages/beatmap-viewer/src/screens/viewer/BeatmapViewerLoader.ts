@@ -9,6 +9,7 @@ import { EditorLoadingSpinner } from './EditorLoadingSpinner';
 export class BeatmapViewerLoader extends OsucadScreen {
   constructor(
     readonly loadBeatmap: () => Promise<EditorBeatmap>,
+    private readonly isEmbed = false,
   ) {
     super();
   }
@@ -47,7 +48,7 @@ export class BeatmapViewerLoader extends OsucadScreen {
     this.loadBeatmap().then(async (beatmap) => {
       const { BeatmapViewer } = await import('./BeatmapViewer');
 
-      const viewer = new BeatmapViewer(beatmap);
+      const viewer = new BeatmapViewer(beatmap, this.isEmbed);
 
       try {
         await this.loadComponentAsync(viewer);
