@@ -140,7 +140,7 @@ export class SearchHero extends FillFlowContainer {
         return;
       }
 
-      const match = term.match(/^https:\/\/osu\.ppy\.sh\/beatmapsets\/(\d+)#osu\/(\d+$)/);
+      const match = term.match(/^https:\/\/osu\.ppy\.sh\/beatmapsets\/(\d+)#\w+\/(\d+$)/);
 
       if (match) {
         const [_, mapsetId, beatmapId] = match;
