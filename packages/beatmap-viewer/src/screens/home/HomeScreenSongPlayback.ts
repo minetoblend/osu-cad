@@ -45,7 +45,12 @@ export class HomeScreenSongPlayback extends Component {
   resume() {
     this.#paused = false;
     this.audioEl.autoplay = true;
-    this.audioEl.play();
+    try {
+      this.audioEl.play().catch();
+    }
+    catch (e) {
+      // noop
+    }
   }
 
   pause() {
