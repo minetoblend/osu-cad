@@ -86,6 +86,8 @@ export class BeatmapViewerLoader extends OsucadScreen {
 
     this.songPlayback?.resume();
 
+    this.mixer.music.removeFilter(this.#lowPassFilter);
+
     return false;
   }
 }
