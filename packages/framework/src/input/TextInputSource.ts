@@ -8,15 +8,26 @@ export class TextInputSource {
 
     document.body.appendChild(this.#inputElement);
 
-    this.#inputElement.onblur = () => {
+    this.#inputElement.addEventListener('blur', () => {
       if (this.isActive)
-        this.#inputElement.focus({ preventScroll: true });
-    };
+        this.#focusElement();
+    });
 
-    this.#inputElement.oninput = () => {
+    this.#inputElement.addEventListener('input', () => {
       this.onTextInput.emit(this.#inputElement.value);
       this.#inputElement.value = '';
-    };
+    });
+  }
+
+  #focusElement() {
+    this.#inputElement.focus({ preventScroll: true });
+
+    if (document.activeElement !== this.#inputElement) {
+      requestAnimationFrame(() => {
+        if (this.isActive)
+          this.#focusElement();
+      });
+    }
   }
 
   #isActive = false;
@@ -35,7 +46,7 @@ export class TextInputSource {
 
     this.#inputElement.value = '';
 
-    this.#inputElement.focus({ preventScroll: true });
+    this.#focusElement();
   }
 
   deactivate() {
