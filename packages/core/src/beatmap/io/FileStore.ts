@@ -6,7 +6,9 @@ export abstract class FileStore implements IFileStore, IResourceStore<ArrayBuffe
   abstract readonly files: ReadonlyArray<IFile>;
 
   getFile(filename: string): IFile | null {
-    return this.files.find(it => it.name === filename) ?? null;
+    filename = filename.toLowerCase();
+
+    return this.files.find(it => it.name.toLowerCase() === filename) ?? null;
   }
 
   has(name: string): boolean {

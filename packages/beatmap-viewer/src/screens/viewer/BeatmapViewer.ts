@@ -1,5 +1,5 @@
 import type { Beatmap, EditorScreenManager } from '@osucad/core';
-import type { Drawable, KeyDownEvent, ReadonlyDependencyContainer } from '@osucad/framework';
+import type { Drawable, KeyDownEvent, ReadonlyDependencyContainer, ScreenExitEvent } from '@osucad/framework';
 import type { BeatmapViewerGame } from '../../BeatmapViewerGame';
 import { Editor, EditorBeatmap, ModdingScreen, PreferencesOverlay } from '@osucad/core';
 import { Key, MenuItem, resolved } from '@osucad/framework';
@@ -9,6 +9,13 @@ import { BeatmapViewerLayout } from './BeatmapViewerLayout';
 import { ViewportScreen } from './screens/viewport/ViewportScreen';
 
 export class BeatmapViewer extends Editor {
+  constructor(
+    editorBeatmap: EditorBeatmap,
+    readonly isEmbed: boolean = false,
+  ) {
+    super(editorBeatmap);
+  }
+
   protected override async loadAsync(dependencies: ReadonlyDependencyContainer): Promise<void> {
     await (this.game as BeatmapViewerGame).skinManagerLoaded;
 
@@ -51,6 +58,13 @@ export class BeatmapViewer extends Editor {
   @resolved(PreferencesOverlay)
   preferences!: PreferencesOverlay;
 
+  public override onExiting(e: ScreenExitEvent): boolean {
+    if (this.isEmbed)
+      return true;
+
+    return super.onExiting(e);
+  }
+
   createMenuItems(): MenuItem[] {
     const fileMenu = new MenuItem({
       text: 'File',
@@ -59,10 +73,16 @@ export class BeatmapViewer extends Editor {
           text: 'Preferences',
           action: () => this.preferences.toggleVisibility(),
         }),
-        new MenuItem({
-          text: 'Exit',
-          action: () => this.exit(),
-        }),
+        ...(
+          this.isEmbed
+            ? []
+            : [
+                new MenuItem({
+                  text: 'Exit',
+                  action: () => this.exit(),
+                }),
+              ]
+        ),
       ],
     });
 
@@ -112,6 +132,9 @@ export class BeatmapViewer extends Editor {
   }
 
   exit() {
+    if (this.isEmbed)
+      return;
+
     this.router.goBack();
   }
 }
