@@ -13,6 +13,9 @@
       not {
           path /beatmaps/*
       }
+      not {
+                path /preview/*
+      }
   }
 
   handle @notProxy {
