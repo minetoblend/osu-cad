@@ -45,7 +45,7 @@ export default {
         template: "@%%x",
         resolutions: { default: 1 },
         fixedResolution: "default",
-        maximumTextureSize: 8096,
+        maximumTextureSize: 4096,
       },
     }),
     compress(compressionOptions),

@@ -16,8 +16,12 @@ export class DefaultSkin extends StableSkin {
   }
 
   override async load(): Promise<void> {
-    if (this.textures)
-      this.textures.addSpritesheet(await DefaultSkinResources.getSpriteSheet());
+    if (this.textures) {
+      const spriteSheets = await DefaultSkinResources.getSpriteSheets();
+
+      for (const s of spriteSheets)
+        this.textures.addSpritesheet(s);
+    }
 
     await super.load();
   }

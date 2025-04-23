@@ -1,9 +1,11 @@
 import { LazyTexture } from "./LazyTexture";
 
-import texture from './assets/textures/defaultSkin.webp'
+import texture0 from './assets/textures/defaultSkin-0.webp'
+import texture1 from './assets/textures/defaultSkin-1.webp'
 import { Spritesheet } from "pixi.js";
 
-import spriteSheetMeta from './assets/textures/defaultSkin.webp.json'
+import spriteSheetMeta0 from './assets/textures/defaultSkin-0.webp.json'
+import spriteSheetMeta1 from './assets/textures/defaultSkin-1.webp.json'
 
 import combobreak from './assets/samples/defaultSkin/combobreak.wav'
 import drumHitClap from './assets/samples/defaultSkin/drum-hitclap.wav'
@@ -31,23 +33,25 @@ import spinnerBonus from './assets/samples/defaultSkin/spinnerbonus.wav'
 import spinnerSpin from './assets/samples/defaultSkin/spinnerspin.wav'
 
 export class DefaultSkinResources {
-  static readonly #texture = new LazyTexture(texture, { autoGenerateMipmaps: true })
+  static readonly #texture0 = new LazyTexture(texture0, { autoGenerateMipmaps: true })
+  static readonly #texture1 = new LazyTexture(texture1, { autoGenerateMipmaps: true })
 
   static #loadP?: Promise<any>;
 
-  static #spriteSheet?: Spritesheet;
+  static #spriteSheets?: Spritesheet[];
 
   static async #load() {
-    const spriteSheet = this.#spriteSheet! = new Spritesheet((await this.#texture.load())!, spriteSheetMeta)
-    await spriteSheet.parse()
-    return spriteSheet
+    const spriteSheets = this.#spriteSheets = [
+      new Spritesheet((await this.#texture0.load())!, spriteSheetMeta0),
+      new Spritesheet((await this.#texture1.load())!, spriteSheetMeta1 as any)
+    ]
+    await Promise.all(spriteSheets.map(it => it.parse()))
+    return spriteSheets
   }
 
-  static async getSpriteSheet() {
+  static async getSpriteSheets() {
     this.#loadP ??= this.#load()
-    await this.#loadP
-
-    return this.#spriteSheet!
+    return this.#loadP
   }
 
   static readonly samples = {
