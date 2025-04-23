@@ -21,7 +21,7 @@
     "@pixi/devtools": "^2.0.1",
     "diff": "^7.0.0",
     "pixi-filters": "^6.0.4",
-    "pixi.js": "^8.8.0"
+    "pixi.js": "^8.9.1"
   },
   "devDependencies": {
     "@types/diff": "^7.0.2"
