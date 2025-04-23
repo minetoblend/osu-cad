@@ -11,7 +11,7 @@ export class PlatformActionContainer extends KeyBindingContainer<PlatformAction>
   protected host!: GameHost;
 
   constructor() {
-    super(SimultaneousBindingMode.None, KeyCombinationMatchingMode.Modifiers);
+    super(SimultaneousBindingMode.None, KeyCombinationMatchingMode.Any);
   }
 
   override get defaultKeyBindings(): IKeyBinding[] {

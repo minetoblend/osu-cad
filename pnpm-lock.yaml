@@ -324,12 +324,19 @@ importers:
       '@pixi/devtools':
         specifier: ^2.0.1
         version: 2.0.1(pixi.js@8.8.0)
+      diff:
+        specifier: ^7.0.0
+        version: 7.0.0
       pixi-filters:
         specifier: ^6.0.4
         version: 6.0.5(pixi.js@8.8.0)
       pixi.js:
         specifier: ^8.8.0
         version: 8.8.0
+    devDependencies:
+      '@types/diff':
+        specifier: ^7.0.2
+        version: 7.0.2
 
   packages/multiplayer:
     dependencies:
@@ -3674,6 +3681,9 @@ packages:
   '@types/debug@4.1.12':
     resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
 
+  '@types/diff@7.0.2':
+    resolution: {integrity: sha512-JSWRMozjFKsGlEjiiKajUjIJVKuKdE3oVy2DNtK+fUo8q82nhFZ2CPQwicAIkXrofahDXrWJ7mjelvZphMS98Q==}
+
   '@types/earcut@2.1.4':
     resolution: {integrity: sha512-qp3m9PPz4gULB9MhjGID7wpo3gJ4bTGXm7ltNDsmOvsPduTeHp8wSW9YckBj3mljeOh4F0m2z/0JKAALRKbmLQ==}
 
@@ -5193,6 +5203,10 @@ packages:
 
   diff@4.0.2:
     resolution: {integrity: sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==}
+    engines: {node: '>=0.3.1'}
+
+  diff@7.0.0:
+    resolution: {integrity: sha512-PJWHUb1RFevKCwaFA9RlG5tCd+FO5iRh9A8HEtkmBH2Li03iJriB6m6JIN4rGz3K3JLawI7/veA1xzRKP6ISBw==}
     engines: {node: '>=0.3.1'}
 
   diffie-hellman@5.0.3:
@@ -13088,6 +13102,8 @@ snapshots:
     dependencies:
       '@types/ms': 0.7.34
 
+  '@types/diff@7.0.2': {}
+
   '@types/earcut@2.1.4': {}
 
   '@types/eslint-scope@3.7.7':
@@ -15036,6 +15052,8 @@ snapshots:
   diff3@0.0.3: {}
 
   diff@4.0.2: {}
+
+  diff@7.0.0: {}
 
   diffie-hellman@5.0.3:
     dependencies:

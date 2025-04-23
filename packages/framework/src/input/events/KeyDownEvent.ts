@@ -10,4 +10,8 @@ export class KeyDownEvent extends UIEvent {
   ) {
     super(state, 'onKeyDown');
   }
+
+  override toString(): string {
+    return `${super.toString()} (${this.key})`;
+  }
 }

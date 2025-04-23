@@ -12,6 +12,7 @@ import type { KeyUpEvent } from '../../input/events/KeyUpEvent';
 import type { MouseDownEvent } from '../../input/events/MouseDownEvent';
 import type { MouseUpEvent } from '../../input/events/MouseUpEvent';
 import type { KeyBindingAction } from '../../input/KeyBindingAction';
+import type { TextRemovedEvent } from '../../input/TextInputSource';
 import type { MaskingContainer } from '../containers/MaskingContainer';
 import type { Drawable } from '../drawables/Drawable';
 import type { Caret } from './Caret';
@@ -183,11 +184,11 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     switch (e.pressed) {
       // TODO: copy/paste
       case PlatformAction.Copy:
-        navigator.clipboard.writeText(this.selectedText);
+        // navigator.clipboard.writeText(this.selectedText);
         return true;
       case PlatformAction.Cut:
-        navigator.clipboard.writeText(this.selectedText);
-        this.#removeSelection();
+        // navigator.clipboard.writeText(this.selectedText);
+        // this.#removeSelection();
         return true;
 
       case PlatformAction.SelectAll:
@@ -354,6 +355,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
   }
 
   protected deleteBy(amount: number) {
+    return;
     if (this.#selectionLength === 0)
       this.#selectionEnd = clamp(this.#selectionStart + amount, 0, this.#text.length);
 
@@ -424,6 +426,10 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
 
       this.#updateCursorAndLayout();
       this.#cursorAndLayout.validate();
+
+      if (this.#textInputBound) {
+        this.textInput.setTextAndSelection(this.text, this.#selectionLeft, this.#selectionRight);
+      }
     }
   }
 
@@ -807,6 +813,11 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
       case Key.Backspace:
       case Key.Delete:
         return false;
+
+      case Key.KeyA:
+        if (e.controlPressed)
+          return false;
+        return true;
     }
 
     this.#textInputScheduler.update();
@@ -999,6 +1010,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     }
 
     this.textInput.onTextInput.addListener(this.#handleTextInput, this);
+    this.textInput.onTextRemoved.addListener(this.#handleTextRemoved, this);
 
     this.#textInputBound = true;
   }
@@ -1015,6 +1027,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
         this.textInput.deactivate();
 
       this.textInput.onTextInput.removeListener(this.#handleTextInput, this);
+      this.textInput.onTextRemoved.removeListener(this.#handleTextRemoved, this);
     }
 
     // in case keys are held and we lose focus, we should no longer block key events
@@ -1032,6 +1045,14 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
       // needed in case a text event happens without an associated button press (and release).
       // this could be the case for software keyboards, for instance.
       this.scheduler.addOnce(this.#revertBlockingStateIfRequired, this);
+    });
+  }
+
+  #handleTextRemoved(evt: TextRemovedEvent) {
+    this.#textInputScheduler.add(() => {
+      this.#selectionStart = evt.start;
+      this.#selectionEnd = evt.start + evt.length;
+      this.#removeSelection();
     });
   }
 

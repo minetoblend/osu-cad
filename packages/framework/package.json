@@ -18,8 +18,12 @@
     }
   },
   "dependencies": {
-    "pixi.js": "^8.8.0",
     "@pixi/devtools": "^2.0.1",
-    "pixi-filters": "^6.0.4"
+    "diff": "^7.0.0",
+    "pixi-filters": "^6.0.4",
+    "pixi.js": "^8.8.0"
+  },
+  "devDependencies": {
+    "@types/diff": "^7.0.2"
   }
 }

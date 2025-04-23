@@ -62,7 +62,7 @@ export abstract class ButtonEventManager<TButton> {
       }
     }
 
-    console.debug('Event ', e.constructor.name, ' handled by ', handledBy?.label ?? handledBy?.constructor.name ?? null);
+    console.debug('Event ', e.toString(), ' handled by ', handledBy?.label ?? handledBy?.constructor.name ?? null);
 
     return handledBy;
   }

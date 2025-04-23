@@ -46,4 +46,8 @@ export class UIEvent {
   get pressure() {
     return this.state.mouse.pressure;
   }
+
+  toString() {
+    return this.constructor.name;
+  }
 }
