@@ -1,34 +1,37 @@
-import type { MouseDownEvent, ReadonlyDependencyContainer } from '@osucad/framework';
+import type { Bindable, MouseDownEvent, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { OsuTimelineHitObjectBlueprint } from './OsuTimelineHitObjectBlueprint';
-import { MouseButton } from '@osucad/framework';
+import { IComboNumberReference, SkinnableDrawable } from '@osucad/core';
+import { Anchor, MouseButton, provide } from '@osucad/framework';
+import { DrawableComboNumber, OsuSkinComponentLookup } from '@osucad/ruleset-osu';
 import { Slider } from '../../hitObjects/Slider';
-import { DrawableComboNumber } from '../../skinning/stable/DrawableComboNumber';
 import { TimelineHitObjectCircle } from './TimelineHitObjectCircle';
 
-export class TimelineHitObjectHead extends TimelineHitObjectCircle {
+@provide(IComboNumberReference)
+export class TimelineHitObjectHead extends TimelineHitObjectCircle implements IComboNumberReference {
   constructor(blueprint: OsuTimelineHitObjectBlueprint) {
     super(blueprint);
   }
 
-  #comboNumber!: DrawableComboNumber;
+  #comboNumber!: SkinnableDrawable;
+
+  indexInComboBindable!: Bindable<number>;
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
+    this.indexInComboBindable = this.blueprint.indexInComboBindable.getBoundCopy();
+
     this.addAllInternal(
-      this.#comboNumber = new DrawableComboNumber(),
+      this.#comboNumber = new SkinnableDrawable(OsuSkinComponentLookup.ComboNumber, () => new DrawableComboNumber()).with({
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
+      }),
     );
-
-    this.blueprint.indexInComboBindable.addOnChangeListener(() => this.#updateComboNumber(), { immediate: true });
-  }
-
-  #updateComboNumber() {
-    this.#comboNumber.comboNumber = this.blueprint.indexInComboBindable.value + 1;
   }
 
   override update() {
     super.update();
 
-    this.#comboNumber.scale = (this.drawHeight / 140);
+    this.#comboNumber.scale = (this.drawHeight / 100);
   }
 
   override onMouseDown(e: MouseDownEvent): boolean {

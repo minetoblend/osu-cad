@@ -1,12 +1,13 @@
 import type { DependencyContainer, ReadonlyDependencyContainer } from '@osucad/framework';
 import type { ClickAction } from '../../ui/ClickAction';
 import type { OsuHitObject } from '../OsuHitObject';
-import { DrawableHitObject, HitResult, HitSample, SampleSet, SampleType } from '@osucad/core';
-import { Bindable, dependencyLoader, Vec2 } from '@osucad/framework';
+import { DrawableHitObject, HitResult, HitSample, IComboNumberReference, SampleSet, SampleType } from '@osucad/core';
+import { Bindable, dependencyLoader, provide, Vec2 } from '@osucad/framework';
 import { OsuActionInputManager } from '../../OsuActionInputManager';
 import { DrawableHitSound } from './DrawableHitSound';
 
-export class DrawableOsuHitObject<T extends OsuHitObject = OsuHitObject> extends DrawableHitObject {
+@provide(IComboNumberReference)
+export class DrawableOsuHitObject<T extends OsuHitObject = OsuHitObject> extends DrawableHitObject implements IComboNumberReference {
   constructor(hitObject?: T) {
     super(hitObject);
   }

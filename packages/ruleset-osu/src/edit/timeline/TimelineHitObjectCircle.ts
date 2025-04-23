@@ -1,8 +1,8 @@
 import type { ReadonlyDependencyContainer } from '@osucad/framework';
 import type { Color } from 'pixi.js';
 import type { OsuTimelineHitObjectBlueprint } from './OsuTimelineHitObjectBlueprint';
-import { HitObjectSelectionManager, ISkinSource } from '@osucad/core';
-import { Anchor, Axes, Bindable, BindableBoolean, CompositeDrawable, DrawableSprite, resolved } from '@osucad/framework';
+import { HitObjectSelectionManager, ISkinSource, SkinnableSprite } from '@osucad/core';
+import { Anchor, Axes, Bindable, BindableBoolean, CompositeDrawable, resolved } from '@osucad/framework';
 import { OsuSelectionManager } from '../OsuSelectionManager';
 
 export class TimelineHitObjectCircle extends CompositeDrawable {
@@ -14,11 +14,11 @@ export class TimelineHitObjectCircle extends CompositeDrawable {
     this.origin = Anchor.Center;
   }
 
-  circle!: DrawableSprite;
+  circle!: SkinnableSprite;
 
-  overlay!: DrawableSprite;
+  overlay!: SkinnableSprite;
 
-  selectionOverlay!: DrawableSprite;
+  selectionOverlay!: SkinnableSprite;
 
   selection?: OsuSelectionManager;
 
@@ -35,23 +35,20 @@ export class TimelineHitObjectCircle extends CompositeDrawable {
     const scaleCorrection = 64 / 60;
 
     this.addAllInternal(
-      this.circle = new DrawableSprite({
+      this.circle = new SkinnableSprite('hitcircle', {
         relativeSizeAxes: Axes.Both,
-        texture: this.skin.getTexture('hitcircle'),
         anchor: Anchor.Center,
         origin: Anchor.Center,
         scale: scaleCorrection,
       }),
-      this.overlay = new DrawableSprite({
+      this.overlay = new SkinnableSprite('hitcircleoverlay', {
         relativeSizeAxes: Axes.Both,
-        texture: this.skin.getTexture('hitcircleoverlay'),
         anchor: Anchor.Center,
         origin: Anchor.Center,
         scale: scaleCorrection,
       }),
-      this.selectionOverlay = new DrawableSprite({
+      this.selectionOverlay = new SkinnableSprite('hitcircleselect', {
         relativeSizeAxes: Axes.Both,
-        texture: this.skin.getTexture('hitcircleselect'),
         anchor: Anchor.Center,
         origin: Anchor.Center,
         scale: scaleCorrection,

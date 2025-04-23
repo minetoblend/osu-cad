@@ -1,5 +1,5 @@
-import type { DependencyContainer, ScheduledDelegate } from '@osucad/framework';
-import { Action, dependencyLoader, PoolableDrawable } from '@osucad/framework';
+import type { ReadonlyDependencyContainer, ScheduledDelegate } from '@osucad/framework';
+import { Action, PoolableDrawable } from '@osucad/framework';
 import { ISkinSource } from './ISkinSource';
 
 export class SkinReloadableDrawable extends PoolableDrawable {
@@ -9,8 +9,9 @@ export class SkinReloadableDrawable extends PoolableDrawable {
 
   onSkinChanged = new Action();
 
-  @dependencyLoader()
-  [Symbol('load')](dependencies: DependencyContainer) {
+  protected override load(dependencies: ReadonlyDependencyContainer): void {
+    super.load(dependencies);
+
     this.currentSkin = dependencies.resolve(ISkinSource);
     this.currentSkin.sourceChanged.addListener(this.#onChange, this);
   }

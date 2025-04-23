@@ -13,6 +13,7 @@ export enum OsuSkinComponents {
   CursorTrail,
   HitCircleSelect,
   SliderBody,
+  ComboNumber,
 
   JudgementGreat,
   JudgementOk,

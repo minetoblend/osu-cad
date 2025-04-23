@@ -43,6 +43,8 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
 
     this.comboIndexBindable.bindValueChanged(this.updateComboColor, this);
     this.startTimeBindable.bindValueChanged(time => this.x = time.value, true);
+
+    this.currentSkin.sourceChanged.addListener(this.#skinChanged, this);
   }
 
   protected override onApply(entry: HitObjectLifetimeEntry) {
@@ -58,6 +60,10 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
       this.selected.value = this.selection.isSelected(entry.hitObject);
 
     this.updateComboColor();
+  }
+
+  #skinChanged() {
+    this.scheduler.addOnce(this.updateComboColor, this);
   }
 
   protected override onFree(entry: HitObjectLifetimeEntry) {
@@ -95,5 +101,11 @@ export class TimelineHitObjectBlueprint extends PoolableDrawableWithLifetime<Hit
 
     if (this.width !== duration)
       this.width = duration;
+  }
+
+  public override dispose(isDisposing: boolean = true): void {
+    super.dispose(isDisposing);
+
+    this.currentSkin.sourceChanged.removeListener(this.#skinChanged, this);
   }
 }
