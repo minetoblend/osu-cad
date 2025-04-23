@@ -2,7 +2,7 @@ import type { InjectionToken } from '../di';
 import type { FrameworkEnvironment } from '../FrameworkEnvironment';
 import type { Drawable } from '../graphics/drawables/Drawable';
 import type { PIXIRenderer } from '../pixi';
-import { DynamicBitmapFont, extensions, Filter, GlobalUniformSystem, RenderTarget } from 'pixi.js';
+import { Batcher, DynamicBitmapFont, extensions, Filter, getMaxTexturesPerBatch, GlobalUniformSystem, isMobile, RenderTarget } from 'pixi.js';
 import { SpriteTextPipe } from '../graphics/text/SpriteTextPipe';
 import { type IVec2, Vec2 } from '../math';
 import { MaskingPipe } from './MaskingPipe';
@@ -19,11 +19,13 @@ export interface RendererOptions {
 
 export class Renderer {
   async init(options: RendererOptions) {
+    if (isMobile.any)
+      Batcher.defaultOptions.maxTextures = Math.min(16, getMaxTexturesPerBatch());
+
     RenderTarget.defaultOptions.depth = true;
     RenderTarget.defaultOptions.stencil = true;
     Filter.defaultOptions.resolution = devicePixelRatio;
     Filter.defaultOptions.antialias = 'inherit';
-    console.log(RenderTarget.defaultOptions);
     DynamicBitmapFont.defaultOptions.textureSize = 1024;
     DynamicBitmapFont.defaultOptions.padding = 6;
 
