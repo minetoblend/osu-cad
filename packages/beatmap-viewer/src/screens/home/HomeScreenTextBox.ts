@@ -1,7 +1,7 @@
 import type { KeyDownEvent } from '@osucad/framework';
 import { OsucadColors, OsucadSpriteText, OsucadTextBox } from '@osucad/core';
 import { Key } from '@osucad/framework';
-import { Color } from 'pixi.js';
+import { Color, isMobile } from 'pixi.js';
 
 export class HomeScreenTextBox extends OsucadTextBox {
   constructor() {
@@ -47,6 +47,9 @@ export class HomeScreenTextBox extends OsucadTextBox {
   }
 
   get requestsFocus(): boolean {
+    if (isMobile.any)
+      return super.requestsFocus;
+
     return true;
   }
 
