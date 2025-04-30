@@ -26,13 +26,25 @@ export class HitSoundPlayer extends Component {
     this.config.bindWith(OsucadSettings.AudioOffset, this.audioOffset);
     this.config.bindWith(OsucadSettings.HitSoundOffset, this.hitSoundOffset);
 
-    this.#offsetClock = new OffsetClock(this.editorClock, -(this.audioOffset.value + this.hitSoundOffset.value));
+    const editorClock = this.editorClock;
+
+    this.#offsetClock = new OffsetClock({
+      get currentTime() {
+        return editorClock.currentTimeAccurate;
+      },
+      get rate() {
+        return editorClock.rate;
+      },
+      get isRunning() {
+        return editorClock.isRunning;
+      },
+    }, -(this.audioOffset.value + this.hitSoundOffset.value) + 100);
 
     this.clock = new FramedClock(this.#offsetClock);
     this.processCustomClock = true;
 
-    this.audioOffset.addOnChangeListener(() => this.#offsetClock.offset = -(this.audioOffset.value + this.hitSoundOffset.value));
-    this.hitSoundOffset.addOnChangeListener(() => this.#offsetClock.offset = -(this.audioOffset.value + this.hitSoundOffset.value));
+    this.audioOffset.addOnChangeListener(() => this.#offsetClock.offset = -(this.audioOffset.value + this.hitSoundOffset.value) + 100);
+    this.hitSoundOffset.addOnChangeListener(() => this.#offsetClock.offset = -(this.audioOffset.value + this.hitSoundOffset.value) + 100);
 
     this.#lifetimeManager.entryBecameAlive.addListener(this.#onEntryBecameAlive, this);
     this.#lifetimeManager.entryBecameDead.addListener(this.#onEntryBecameDead, this);
@@ -150,7 +162,7 @@ export class HitSoundPlayer extends Component {
 
     const sample = this.skin.getSample(this.mixer.hitsounds, hitSample);
 
-    const delay = (hitSample.time - this.time.current) / this.editorClock.rate;
+    const delay = (hitSample.time - this.#offsetClock.currentTime) / this.editorClock.rate + 100;
 
     if (sample) {
       const playback = sample.play({
