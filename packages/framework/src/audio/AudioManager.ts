@@ -5,7 +5,7 @@ import { AudioElementTrack } from './track/AudioElementTrack';
 
 export class AudioManager {
   constructor() {
-    this.context = new AudioContext();
+    this.context = new AudioContext({ latencyHint: 'interactive' });
     this.#setupContextAutostart();
 
     this.#gain = this.context.createGain();
