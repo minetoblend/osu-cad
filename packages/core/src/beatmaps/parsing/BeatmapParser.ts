@@ -63,8 +63,8 @@ export class BeatmapParser
 
     const getRulesetParser = async (): Promise<RulesetBeatmapParser> =>
     {
-      return await nn(
-          getRuleset().createBeatmapParser?.(),
+      return nn(
+          await getRuleset().createBeatmapParser?.(),
           `Parsing not supported for "${getRuleset().title}" ruleset`,
       );
     };
