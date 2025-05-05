@@ -4,6 +4,7 @@ import { Vec2 } from "@osucad/framework";
 import { HitCircle } from "../hitObjects/HitCircle";
 import { PathPoint, PathType } from "../hitObjects/PathPoint";
 import { Slider } from "../hitObjects/Slider";
+import { Spinner } from "../hitObjects/Spinner";
 
 export class OsuBeatmapParser implements RulesetBeatmapParser
 {
@@ -41,6 +42,19 @@ export class OsuBeatmapParser implements RulesetBeatmapParser
         controlPoints: parseControlPoints(Vec2.from({ x, y }), values[5]),
         repeatCount: Number.parseInt(values[6]) - 1,
         expectedDistance: Number.parseFloat(values[7]),
+      });
+    }
+
+    if (type & HitType.Spinner)
+    {
+      const duration = Number.parseFloat(values[5]) - startTime;
+
+      return new Spinner({
+        startTime,
+        position: { x, y }, // TODO: is this actually needed?
+        newCombo,
+        comboOffset,
+        duration,
       });
     }
 

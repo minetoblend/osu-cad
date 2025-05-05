@@ -7,4 +7,5 @@ export enum OsuSkinComponents
   SliderBall = "SliderBall",
   SliderFollowCircle = "SliderFollowCircle",
   FollowPoint = "FollowPoint",
+  SpinnerBody = "SpinnerBody",
 }

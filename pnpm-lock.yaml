@@ -156,18 +156,6 @@ importers:
         specifier: ^0.3.1
         version: 0.3.1(vite@6.3.4)(webpack@5.99.7)
 
-  packages/reactivity:
-    dependencies:
-      '@osucad/framework':
-        specifier: workspace:^
-        version: link:../framework
-      '@vue/reactivity':
-        specifier: ^3.5.13
-        version: 3.5.13
-      pixi.js:
-        specifier: ^8.9.2
-        version: 8.9.2
-
   packages/ruleset-osu:
     dependencies:
       '@osucad/core':
