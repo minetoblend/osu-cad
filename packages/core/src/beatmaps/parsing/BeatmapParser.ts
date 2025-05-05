@@ -43,7 +43,7 @@ export class BeatmapParser
   async parse(content: string | string[])
   {
     const lines = typeof content === "string"
-        ? content.split("\n")
+        ? content.split(/\r?\n/)
         : content;
 
     const fileVersion = parseVersionHeader(lines.shift() ?? "");
