@@ -114,9 +114,19 @@ importers:
       '@osucad/framework':
         specifier: workspace:^
         version: link:../framework
+      async:
+        specifier: ^3.2.6
+        version: 3.2.6
+      mpg123-decoder:
+        specifier: ^1.0.1
+        version: 1.0.1
       pixi.js:
         specifier: ^8.9.2
         version: 8.9.2
+    devDependencies:
+      '@types/async':
+        specifier: ^3.2.24
+        version: 3.2.24
 
   packages/framework:
     dependencies:
@@ -1564,6 +1574,10 @@ packages:
     dev: true
     optional: true
 
+  /@eshaz/web-worker@1.2.2:
+    resolution: {integrity: sha512-WxXiHFmD9u/owrzempiDlBB1ZYqiLnm9s6aPc8AlFQalq2tKmqdmMr9GXOupDgzXtqnBipj8Un0gkIm7Sjf8mw==}
+    dev: false
+
   /@eslint-community/eslint-utils@4.7.0(eslint@9.26.0):
     resolution: {integrity: sha512-dyybb3AcajC7uha6CvhdVRJqaKyn7w2YKqKyAN37NKYgZT36w+iRb0Dymmc5qEJ549c/S31cMMSFd75bteCpCw==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
@@ -2542,6 +2556,10 @@ packages:
     resolution: {integrity: sha512-ebDJ9b0e702Yr7pWgB0jzm+CX4Srzz8RcXtLJDJB+BSccqMa36uyH/zUsSYao5+BD1ytv3k3rPYCq4mAE1hsXA==}
     dev: true
 
+  /@types/async@3.2.24:
+    resolution: {integrity: sha512-8iHVLHsCCOBKjCF2KwFe0p9Z3rfM9mL+sSP8btyR5vTjJRAqpBYD28/ZLgXPf0pjG1VxOvtCV/BgXkQbpSe8Hw==}
+    dev: true
+
   /@types/css-font-loading-module@0.0.12:
     resolution: {integrity: sha512-x2tZZYkSxXqWvTDgveSynfjq/T2HyiZHXb00j/+gy19yp70PHCizM48XFdjBCWH7eHBD0R5i/pw9yMBP/BH5uA==}
     dev: false
@@ -3074,6 +3092,13 @@ packages:
     resolution: {integrity: sha512-/hnE/qP5ZoGpol0a5mDi45bOd7t3tjYJBjsgCsivow7D48cJeV5l05RD82lPqi7gRiphZM37rnhW1l6ZoCNNnQ==}
     dev: true
 
+  /@wasm-audio-decoders/common@9.0.6:
+    resolution: {integrity: sha512-E9n3jvsiO0a7+ZNKOJZB6Y2akKbU1dj+6Cena8aZgkgZE27pfhMwgJlt0qw2CpKBZn9nOC3HmJu6jmq/cbuNfQ==}
+    dependencies:
+      '@eshaz/web-worker': 1.2.2
+      simple-yenc: 1.0.4
+    dev: false
+
   /@webassemblyjs/ast@1.14.1:
     resolution: {integrity: sha512-nuBEDgQfm1ccRp/8bCQrx1frohyufl4JlbMMZ4P1wpeOfDhF6FQkxZJ1b/e+PLwr6X1Nhw6OLme5usuBWYBvuQ==}
     dependencies:
@@ -3435,7 +3460,6 @@ packages:
 
   /async@3.2.6:
     resolution: {integrity: sha512-htCUDlxyyCLMgaM3xXg0C0LW2xqfuQ6p05pCEIsXuyQ+a1koYKTuBMzRNwmybfLgvJDMd0r1LTn4+E0Ti6C2AA==}
-    dev: true
 
   /asynckit@0.4.0:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
@@ -5807,6 +5831,12 @@ packages:
       ufo: 1.6.1
     dev: true
 
+  /mpg123-decoder@1.0.1:
+    resolution: {integrity: sha512-6WPXPjEHVWm5KOYWNh9kyqLXEF6mxaSf+MoVSAPqmTN7TY1BcM2C/GDbYo9930h2TLLzUmRgfylFEpyv820CFA==}
+    dependencies:
+      '@wasm-audio-decoders/common': 9.0.6
+    dev: false
+
   /mrmime@2.0.1:
     resolution: {integrity: sha512-Y3wQdFg2Va6etvQ5I82yUhGdsKrcYox6p7FfL1LbK2J4V01F9TGlepTIhnK24t7koZibmg82KGglhA1XK5IsLQ==}
     engines: {node: '>=10'}
@@ -6799,6 +6829,10 @@ packages:
     resolution: {integrity: sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==}
     engines: {node: '>=14'}
     dev: true
+
+  /simple-yenc@1.0.4:
+    resolution: {integrity: sha512-5gvxpSd79e9a3V4QDYUqnqxeD4HGlhCakVpb6gMnDD7lexJggSBJRBO5h52y/iJrdXRilX9UCuDaIJhSWm5OWw==}
+    dev: false
 
   /sirv@3.0.1:
     resolution: {integrity: sha512-FoqMu0NCGBLCcAkS1qA+XJIQTR6/JHfQXl+uGteNCQ76T91DMUjPa9xfmeqMY3z80nLSg9yQmNjK0Px6RWsH/A==}

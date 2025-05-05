@@ -19,7 +19,12 @@
     "!**/*.tsbuildinfo"
   ],
   "dependencies": {
-    "pixi.js": "^8.9.2",
-    "@osucad/framework": "workspace:^"
+    "@osucad/framework": "workspace:^",
+    "async": "^3.2.6",
+    "mpg123-decoder": "^1.0.1",
+    "pixi.js": "^8.9.2"
+  },
+  "devDependencies": {
+    "@types/async": "^3.2.24"
   }
 }
