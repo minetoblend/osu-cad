@@ -25,8 +25,6 @@ export class Mp3Decoder
 
       const audioData = await decoder.decode(new Uint8Array(data));
 
-      console.log(audioData);
-
       await decoder.reset();
       return audioData;
     }
