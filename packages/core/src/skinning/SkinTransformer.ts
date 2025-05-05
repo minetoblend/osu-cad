@@ -1,7 +1,9 @@
-import type { Bindable, Drawable } from "@osucad/framework";
+import type { Bindable, Drawable, Sample } from "@osucad/framework";
 import { DrawableSprite } from "@osucad/framework";
 import type { Color, Texture } from "pixi.js";
+import type { ISampleInfo } from "../audio/ISampleInfo";
 import type { ISkin, SkinComponentLookup } from "./ISkin";
+import type { Skin } from "./Skin";
 import type { SkinConfigurationLookup, SkinConfigurationValue } from "./SkinConfiguration";
 import { SkinnableTextureAnimation } from "./SkinnableTextureAnimation";
 
@@ -23,13 +25,18 @@ export interface AnimationOptions
 
 export abstract class SkinTransformer implements ISkin
 {
-  protected constructor(protected readonly source: ISkin)
+  protected constructor(protected readonly source: Skin)
   {
   }
 
   getTexture(componentName: string): Texture | null
   {
     return this.source.getTexture(componentName);
+  }
+
+  public getSample(sampleInfo: ISampleInfo): Sample | null
+  {
+    return this.source.getSample(sampleInfo);
   }
 
   getConfigValue<T extends SkinConfigurationLookup>(lookup: T): SkinConfigurationValue<T> | null

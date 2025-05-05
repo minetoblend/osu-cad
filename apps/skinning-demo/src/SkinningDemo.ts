@@ -1,23 +1,34 @@
 import "@osucad/ruleset-osu/init";
+import { IResourcesProvider } from "@osucad/core";
+import { AudioMixer } from "@osucad/core";
 import { BeatmapParser, Skin, SkinProvidingContainer } from "@osucad/core";
 
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
-import { Game, ZipArchiveFileSystem } from "@osucad/framework";
+import { AudioManager } from "@osucad/framework";
+import { Game, provide, resolved, ZipArchiveFileSystem } from "@osucad/framework";
 import { Color } from "pixi.js";
 import oskFile from "./skin.osk?url";
 import { SkinVisualization } from "./SkinVisualization";
 import osufile from "./test.osu?raw";
 
-export class SkinningDemo extends Game
+@provide(IResourcesProvider)
+export class SkinningDemo extends Game implements IResourcesProvider
 {
   constructor()
   {
     super();
   }
 
+  @resolved(AudioManager)
+  audioManager!: AudioManager;
+
+  audioMixer!: AudioMixer;
+
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
+
+    this.audioMixer = new AudioMixer(this.audioManager);
 
     void this.setupSkinVisualizer();
   }
@@ -30,7 +41,7 @@ export class SkinningDemo extends Game
 
     const beatmap = await new BeatmapParser().parse(osufile);
 
-    const skin = new Skin(files);
+    const skin = new Skin(files, this);
 
     skin.config.set("sliderTrackOverride", new Color("black"));
     skin.config.set("sliderBorder", new Color("rgb(50,50,50)"));

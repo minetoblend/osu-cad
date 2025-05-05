@@ -1,6 +1,7 @@
-import type { Bindable, Drawable } from "@osucad/framework";
+import type { Bindable, Drawable, Sample } from "@osucad/framework";
 import { injectionToken } from "@osucad/framework";
 import type { Color, Texture } from "pixi.js";
+import type { ISampleInfo } from "../audio/ISampleInfo";
 import type { SkinConfigurationLookup, SkinConfigurationValue } from "./SkinConfiguration";
 
 export type SkinComponentLookup = string;
@@ -8,6 +9,8 @@ export type SkinComponentLookup = string;
 export interface ISkin
 {
   getTexture(componentName: string): Texture | null
+
+  getSample(sampleInfo: ISampleInfo): Sample | nulls
 
   getDrawableComponent(lookup: SkinComponentLookup): Drawable | null
 

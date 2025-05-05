@@ -1,9 +1,12 @@
-import type { Bindable, Drawable, IFileSystem } from "@osucad/framework";
+import type { Bindable, Drawable, IFileSystem, Sample } from "@osucad/framework";
 import type { Texture } from "pixi.js";
 import { Color } from "pixi.js";
+import type { ISampleInfo } from "../audio/ISampleInfo";
+import type { IResourcesProvider } from "../io/IResourcesProvider";
 import type { ISkin, SkinComponentLookup } from "./ISkin";
 import type { SkinConfigurationLookup, SkinConfigurationValue } from "./SkinConfiguration";
 import { SkinConfiguration } from "./SkinConfiguration";
+import { SkinSampleStore } from "./SkinSampleStore";
 import { SkinTextureStore } from "./SkinTextureStore";
 
 export class Skin implements ISkin
@@ -12,14 +15,33 @@ export class Skin implements ISkin
 
   readonly textures: SkinTextureStore;
 
-  constructor(readonly files: IFileSystem)
+  readonly samples: SkinSampleStore;
+
+  constructor(readonly files: IFileSystem, resourcesProvider: IResourcesProvider)
   {
     this.textures = new SkinTextureStore(files);
+    this.samples = new SkinSampleStore(
+        files,
+        resourcesProvider.audioManager,
+        resourcesProvider.audioMixer.hitSounds,
+    );
   }
 
   getTexture(lookup: string): Texture | null
   {
     return this.textures.get(lookup) ?? null;
+  }
+
+  getSample(sampleInfo: ISampleInfo): Sample | null
+  {
+    for (const lookup of sampleInfo.lookupNames)
+    {
+      const sample = this.samples.get(lookup);
+      if (sample)
+        return sample;
+    }
+
+    return null;
   }
 
   public getDrawableComponent(lookup: SkinComponentLookup): Drawable | null
@@ -41,7 +63,7 @@ export class Skin implements ISkin
   {
     if (this.config.comboColors.length)
       return this.config.comboColors;
-    return  [new Color("white")];
+    return [new Color("white")];
   }
 
   getComboColor(comboIndex: number)

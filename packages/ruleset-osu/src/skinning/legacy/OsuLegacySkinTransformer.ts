@@ -15,8 +15,6 @@ export class OsuLegacySkinTransformer extends SkinTransformer
     super(source);
   }
 
-  override source!: Skin;
-
   public static async create(source: Skin)
   {
     const skin = new OsuLegacySkinTransformer(source);
@@ -89,7 +87,10 @@ export class OsuLegacySkinTransformer extends SkinTransformer
         entries.push(`${prefix}-${i}`);
     }
 
-    await this.loadTextures(entries);
+    await Promise.all([
+      this.loadTextures(entries),
+      this.source.samples.loadAll(),
+    ]);
   }
 
   public override getDrawableComponent(lookup: SkinComponentLookup): Drawable | null

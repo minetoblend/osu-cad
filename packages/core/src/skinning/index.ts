@@ -9,3 +9,4 @@ export * from "./IComboNumberReference";
 export * from "./SkinProvidingContainer";
 export * from "./IAnimationTimeReference";
 export * from "./SkinnableTextureAnimation";
+export * from "./SkinSampleStore";
