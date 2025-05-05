@@ -1,5 +1,4 @@
 import type { AudioChannel, AudioManager, IFileSystem, Sample } from "@osucad/framework";
-import { Mp3Decoder } from "./Mp3Decoder";
 
 export class SkinSampleStore
 {
@@ -96,54 +95,9 @@ export class SkinSampleStore
     }
     catch
     {
-      if (entry.path.endsWith(".mp3") || entry.path.endsWith(".wav"))
-      {
-        const buffer = await decodeFallback(data);
-
-        if (buffer)
-          return buffer;
-
-      }
-
       console.warn(`Failed to decode sample for "${entry.path}"`);
 
       return null;
     }
-  }
-}
-
-let decoder: Mp3Decoder | undefined;
-
-async function decodeFallback(data: ArrayBuffer): Promise<AudioBuffer | null>
-{
-  try
-  {
-    decoder ??= new Mp3Decoder();
-
-    const audioData = await decoder.decode(data);
-
-    if (audioData.errors.length || audioData.channelData.length === 0)
-      return null;
-
-    const audioBuffer = new AudioBuffer({
-      numberOfChannels: audioData.channelData.length,
-      sampleRate: Math.max(audioData.sampleRate, 76800),
-      length: Math.max(audioData.samplesDecoded, 1),
-    });
-
-    if (audioData.samplesDecoded === 0)
-      return audioBuffer;
-
-    for (let i = 0; i < audioData.channelData.length; i++)
-    {
-      audioBuffer.copyToChannel(audioData.channelData[i], i);
-    }
-
-    return audioBuffer;
-  }
-  catch (e)
-  {
-    console.error(e);
-    return null;
   }
 }

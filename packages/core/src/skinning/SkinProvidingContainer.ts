@@ -1,5 +1,5 @@
-import type { ContainerOptions, Drawable, ReadonlyDependencyContainer, Sample, ValueChangedEvent } from "@osucad/framework";
-import { Action, Axes, Bindable, Container, provide } from "@osucad/framework";
+import type { ContainerOptions, Drawable, ReadonlyDependencyContainer, Sample } from "@osucad/framework";
+import { Action, Axes, computed, Container, provide, ref, watch, withEffectScope } from "@osucad/framework";
 import type { Texture } from "pixi.js";
 import { Color } from "pixi.js";
 import type { ISampleInfo } from "../audio/ISampleInfo";
@@ -25,7 +25,21 @@ export class SkinProvidingContainer extends Container implements ISkinSource
     });
   }
 
-  private readonly activeSkin = new Bindable<ISkin | null>(null);
+  private readonly activeSkin = ref<ISkin | null>(null);
+
+  #allSources = computed(() =>
+  {
+    const sources: ISkin[] = [];
+
+    if (this.skin)
+      sources.push(this.skin);
+
+    if (this.#parentSource)
+      sources.push(this.#parentSource);
+
+    return sources;
+  });
+
 
   get skin()
   {
@@ -46,26 +60,21 @@ export class SkinProvidingContainer extends Container implements ISkinSource
     this.#parentSource = dependencies.resolveOptional(ISkinSource);
   }
 
+  @withEffectScope()
   protected override loadComplete()
   {
     super.loadComplete();
 
-    this.activeSkin.bindValueChanged(this.#skinChanged, this);
+    watch(this.activeSkin, () => this.#skinChanged());
+
+    setInterval(() => this.#skinChanged(), 1000);
   }
 
   readonly sourceChanged = new Action();
 
   protected get allSources()
   {
-    const sources: ISkin[] = [];
-
-    if (this.skin)
-      sources.push(this.skin);
-
-    if (this.#parentSource)
-      sources.push(this.#parentSource);
-
-    return sources;
+    return this.#allSources.value;
   }
 
   getTexture(componentName: string): Texture | null
@@ -104,48 +113,16 @@ export class SkinProvidingContainer extends Container implements ISkinSource
     return null;
   }
 
-  getConfigValue<T extends SkinConfigurationLookup>(lookup: T): SkinConfigurationValue<T> | null
+  getConfig<T extends SkinConfigurationLookup>(lookup: T): SkinConfigurationValue<T> | null
   {
     for (const source of this.allSources)
     {
-      const value = source.getConfigValue(lookup);
+      const value = source.getConfig(lookup);
       if (value)
         return value;
     }
 
     return null;
-  }
-
-  readonly #bindables = new Map<string, Bindable<any>>();
-  readonly #sourceBindables = new Map<string, Bindable<any>>();
-
-  getConfigBindable<T extends SkinConfigurationLookup>(lookup: T): Bindable<SkinConfigurationValue<T> | null>
-  {
-    const cached = this.#bindables.get(lookup);
-    if (cached)
-      return cached.getBoundCopy();
-
-    const bindable = this.#getConfigBindable(lookup);
-    const newBindable = bindable.getBoundCopy();
-
-    this.#sourceBindables.set(lookup, bindable);
-    this.#bindables.set(lookup, newBindable);
-
-    return newBindable.getBoundCopy();
-  }
-
-  #getConfigBindable<T extends SkinConfigurationLookup>(lookup: T): Bindable<SkinConfigurationValue<T> | null>
-  {
-    for (const source of this.allSources)
-    {
-      const bindable = source.getConfigBindable(lookup);
-      if (bindable)
-      {
-        return bindable;
-      }
-    }
-
-    return new Bindable(null) as any;
   }
 
   getComboColor(comboIndex: number): Color
@@ -160,24 +137,8 @@ export class SkinProvidingContainer extends Container implements ISkinSource
     return new Color(0xffffff);
   }
 
-  #skinChanged(evt: ValueChangedEvent<ISkin | null>)
+  #skinChanged()
   {
-    for (const [lookup, bindable] of this.#bindables)
-    {
-      const sourceBindable = this.#sourceBindables.get(lookup);
-
-      if (sourceBindable)
-      {
-        bindable.unbindFrom(sourceBindable);
-        this.#sourceBindables.delete(lookup);
-      }
-
-      const newSourceBindable = this.#getConfigBindable(lookup as any);
-
-      bindable.bindTo(newSourceBindable);
-      this.#sourceBindables.set(lookup, newSourceBindable);
-    }
-
     this.sourceChanged.emit();
   }
 }

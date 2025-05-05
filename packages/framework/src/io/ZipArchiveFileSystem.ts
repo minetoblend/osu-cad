@@ -20,6 +20,7 @@ export class ZipArchiveFileSystem extends EventEmitter<FileSystemEvents> impleme
 
     setOptions({
       workerURL: new URL("unzipit/dist/unzipit-worker.js", import.meta.url).href,
+      numWorkers: 4,
     });
 
     const { entries } = await unzip(buffer);

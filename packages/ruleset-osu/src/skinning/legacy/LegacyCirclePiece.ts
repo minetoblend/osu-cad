@@ -1,7 +1,9 @@
 import { DrawableHitObject, ISkinSource } from "@osucad/core";
-import type { Bindable, ReadonlyDependencyContainer } from "@osucad/framework";
+import type { ReadonlyDependencyContainer } from "@osucad/framework";
 import { Anchor, Axes, CompositeDrawable, DrawableSprite, EasingFunction, resolved } from "@osucad/framework";
 import { LegacyComboNumber } from "./LegacyComboNumber";
+import type { ComputedRef } from "@osucad/framework";
+import { computed, watch, withEffectScope } from "@osucad/framework";
 
 export class LegacyCirclePiece extends CompositeDrawable
 {
@@ -22,8 +24,9 @@ export class LegacyCirclePiece extends CompositeDrawable
   private overlaySprite!: DrawableSprite;
   private comboNumber?: LegacyComboNumber;
 
-  private hitCircleOverlayAboveNumber!: Bindable<boolean | null>;
+  private hitCircleOverlayAboveNumber!: ComputedRef<boolean>;
 
+  @withEffectScope()
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
@@ -42,10 +45,11 @@ export class LegacyCirclePiece extends CompositeDrawable
       this.comboNumber = new LegacyComboNumber(),
     ];
 
-    this.hitCircleOverlayAboveNumber = this.skin.getConfigBindable("hitCircleOverlayAboveNumber");
+    this.hitCircleOverlayAboveNumber = computed(() => this.skin.getConfig("hitCircleOverlayAboveNumber") ?? true);
   }
 
 
+  @withEffectScope()
   protected override loadComplete()
   {
     super.loadComplete();
@@ -53,9 +57,9 @@ export class LegacyCirclePiece extends CompositeDrawable
     this.hitObject.applyCustomUpdateState.addListener(this.applyCustomState, this);
     this.applyCustomState();
 
-    this.hitCircleOverlayAboveNumber.bindValueChanged(
-        e => this.changeInternalChildDepth(this.overlaySprite, (e.value ?? true) ? -Number.MAX_VALUE : 0),
-        true,
+    watch(this.hitCircleOverlayAboveNumber,
+        value => this.changeInternalChildDepth(this.overlaySprite, value ? -Number.MAX_VALUE : 0),
+        { immediate: true },
     );
   }
 

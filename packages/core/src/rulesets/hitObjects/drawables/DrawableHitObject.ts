@@ -76,7 +76,7 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
     this.onApplied();
 
     this.updateComboColor();
-    this.updateState(ArmedState.Idle);
+    this.updateState(ArmedState.Idle, true);
   }
 
   protected override onFree(entry: HitObjectLifetimeEntry)
@@ -98,9 +98,9 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
   {
   }
 
-  protected updateState(state: ArmedState)
+  protected updateState(state: ArmedState, force = false)
   {
-    if (state === this.state)
+    if (state === this.state && !force)
       return;
 
     this.#state.value = state;

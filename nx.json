@@ -32,8 +32,7 @@
           "watchDepsName": "watch-deps"
         }
       },
-      "exclude": [
-      ]
+      "exclude": []
     },
     {
       "plugin": "@nx/eslint/plugin",
@@ -57,8 +56,7 @@
     },
     {
       "plugin": "@nx/js/typescript",
-      "include": [
-      ],
+      "include": [],
       "options": {
         "typecheck": {
           "targetName": "typecheck"

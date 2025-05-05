@@ -75,9 +75,9 @@ export class OsuLegacySkinTransformer extends SkinTransformer
       },
     ];
 
-    const hitCirclePrefix = this.source.getConfigValue("hitCirclePrefix") ?? "default";
-    const scorePrefix = this.source.getConfigValue("scorePrefix") ?? "score";
-    const comboPrefix = this.source.getConfigValue("comboPrefix") ?? "score";
+    const hitCirclePrefix = this.source.getConfig("hitCirclePrefix") ?? "default";
+    const scorePrefix = this.source.getConfig("scorePrefix") ?? "score";
+    const comboPrefix = this.source.getConfig("comboPrefix") ?? "score";
 
     const prefixes = new Set([hitCirclePrefix, scorePrefix, comboPrefix]);
 

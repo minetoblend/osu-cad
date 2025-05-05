@@ -4,6 +4,9 @@ import { Bindable, resolved } from "@osucad/framework";
 import { Color } from "pixi.js";
 import { OsuHitObject } from "../OsuHitObject";
 import { SnakingSliderBody } from "./SnakingSliderBody";
+import { computed, watch, withEffectScope } from "@osucad/framework";
+
+const WHITE = new Color(0xffffff);
 
 export class PlaySliderBody extends SnakingSliderBody
 {
@@ -14,9 +17,10 @@ export class PlaySliderBody extends SnakingSliderBody
   @resolved(ISkinSource)
   protected skin!: ISkinSource;
 
-  borderColorBindable!: Bindable<Color | null>;
-  sliderTrackOverrideBindable!: Bindable<Color | null>;
+  protected readonly sliderBorder = computed(() => this.skin.getConfig("sliderBorder"));
+  protected readonly sliderTrackOverride = computed(() => this.skin.getConfig("sliderTrackOverride"));
 
+  @withEffectScope()
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
@@ -27,17 +31,14 @@ export class PlaySliderBody extends SnakingSliderBody
     this.pathVersion.bindTo(this.drawableSlider.pathVersion);
     this.pathVersion.bindValueChanged(() => this.scheduler.addOnce(this.refresh, this));
 
-    this.sliderTrackOverrideBindable = this.skin.getConfigBindable("sliderTrackOverride");
-    this.sliderTrackOverrideBindable.bindValueChanged(this.updateAccentColor, this);
-
     this.accentColorBindable = this.drawableSlider.accentColor.getBoundCopy();
     this.accentColorBindable.bindValueChanged(this.updateAccentColor, this, true);
 
     this.scaleBindable = this.drawableSlider.scaleBindable.getBoundCopy();
     this.scaleBindable.bindValueChanged(scale => this.pathRadius = OsuHitObject.OBJECT_RADIUS * scale.value, true);
 
-    this.borderColorBindable = this.skin.getConfigBindable("sliderBorder");
-    this.borderColorBindable.bindValueChanged(() => this.borderColor = this.getSliderBorder(), true);
+    watch(this.sliderTrackOverride, () => this.updateAccentColor());
+    watch(this.sliderBorder, () => this.borderColor = this.getSliderBorder());
   }
 
   protected updateAccentColor()
@@ -47,11 +48,11 @@ export class PlaySliderBody extends SnakingSliderBody
 
   protected getBodyAccentColor(color: Color)
   {
-    return this.skin.getConfigValue("sliderTrackOverride") ?? color;
+    return this.sliderTrackOverride.value ?? color;
   }
 
   protected getSliderBorder()
   {
-    return this.borderColorBindable.value ?? new Color(0xffffff);
+    return this.sliderBorder.value ?? WHITE;
   }
 }

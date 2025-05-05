@@ -1,4 +1,4 @@
-import type { Bindable, Drawable, Sample } from "@osucad/framework";
+import type { Drawable, Sample } from "@osucad/framework";
 import { DrawableSprite } from "@osucad/framework";
 import type { Color, Texture } from "pixi.js";
 import type { ISampleInfo } from "../audio/ISampleInfo";
@@ -39,14 +39,9 @@ export abstract class SkinTransformer implements ISkin
     return this.source.getSample(sampleInfo);
   }
 
-  getConfigValue<T extends SkinConfigurationLookup>(lookup: T): SkinConfigurationValue<T> | null
+  getConfig<T extends SkinConfigurationLookup>(lookup: T): SkinConfigurationValue<T> | null
   {
-    return this.source.getConfigValue(lookup);
-  }
-
-  getConfigBindable<T extends SkinConfigurationLookup>(lookup: T): Bindable<SkinConfigurationValue<T> | null>
-  {
-    return this.source.getConfigBindable(lookup);
+    return this.source.getConfig(lookup);
   }
 
   protected async loadTextures(textures: LoadTextureEntry[])
@@ -153,7 +148,7 @@ export abstract class SkinTransformer implements ISkin
   {
     if (applyConfigFrameRate)
     {
-      const iniRate = this.getConfigValue("animationFramerate");
+      const iniRate = this.getConfig("animationFramerate");
 
       if (iniRate && iniRate > 0)
         return 1000 / iniRate;

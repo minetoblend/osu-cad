@@ -1,6 +1,7 @@
 import { DrawableHitObject, ISkinSource, SkinnableTextureAnimation } from "@osucad/core";
 import type { Drawable, ReadonlyDependencyContainer } from "@osucad/framework";
 import { Anchor, Axes, Bindable, CompositeDrawable, DrawableSprite, resolved } from "@osucad/framework";
+import { computed, watch, withEffectScope } from "@osucad/framework";
 import { Color } from "pixi.js";
 
 export class LegacySliderBall extends CompositeDrawable
@@ -16,11 +17,11 @@ export class LegacySliderBall extends CompositeDrawable
   @resolved(DrawableHitObject)
   drawableHitObject!: DrawableHitObject;
 
-  allowSliderBallTint!: Bindable<boolean | null>;
-
-  sliderBall!: Drawable;
+  #sliderBall!: Drawable;
 
   #specular!: Drawable;
+
+  readonly #allowSliderBallTint = computed(() => this.skin.getConfig("allowSliderBallTint"));
 
   readonly accentColor = new Bindable<Color>(new Color(0xFFFFFF));
 
@@ -29,13 +30,10 @@ export class LegacySliderBall extends CompositeDrawable
     super.load(dependencies);
 
     this.relativeSizeAxes = Axes.Both;
-
-    this.allowSliderBallTint = this.skin.getConfigBindable("allowSliderBallTint");
-
     if (this.sliderb instanceof SkinnableTextureAnimation || (this.sliderb instanceof DrawableSprite && this.sliderb.texture))
     {
       this.internalChildren = [
-        this.sliderBall = this.sliderb.with({
+        this.#sliderBall = this.sliderb.with({
           anchor: Anchor.Center,
           origin: Anchor.Center,
         }),
@@ -50,11 +48,13 @@ export class LegacySliderBall extends CompositeDrawable
     }
   }
 
+  @withEffectScope()
   protected override loadComplete()
   {
     super.loadComplete();
 
-    this.allowSliderBallTint.bindValueChanged(this.#updateColors, this);
+    watch(this.#allowSliderBallTint, () => this.#updateColors());
+
     this.accentColor.valueChanged.addListener(this.#updateColors, this, true);
 
     this.drawableHitObject.applyCustomUpdateState.addListener(this.#updateStateTransforms, this);
@@ -62,7 +62,7 @@ export class LegacySliderBall extends CompositeDrawable
 
   #updateColors()
   {
-    this.sliderBall.color = this.allowSliderBallTint.value ? this.drawableHitObject.accentColor.value : 0xFFFFFF;
+    this.#sliderBall.color = this.#allowSliderBallTint.value ? this.drawableHitObject.accentColor.value : 0xFFFFFF;
   }
 
   #updateStateTransforms(drawableObject: DrawableHitObject)

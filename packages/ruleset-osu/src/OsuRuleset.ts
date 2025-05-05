@@ -20,7 +20,9 @@ export class OsuRuleset implements Ruleset
 
   public async createSkinTransformer(skin: Skin): Promise<SkinTransformer | null>
   {
-    const { OsuLegacySkinTransformer } = await import("./skinning/legacy/OsuLegacySkinTransformer");
+    const module = await import("./skinning/legacy/OsuLegacySkinTransformer");
+
+    const { OsuLegacySkinTransformer } = module;
     return await OsuLegacySkinTransformer.create(skin);
   }
 

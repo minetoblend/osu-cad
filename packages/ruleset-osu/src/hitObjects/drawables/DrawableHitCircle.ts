@@ -1,3 +1,4 @@
+import type { ArmedState } from "@osucad/core";
 import { HitSampleInfo, SkinnableDrawable } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
 import { Anchor, Axes } from "@osucad/framework";
@@ -51,9 +52,9 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
     this.approachCircle.scaleTo(4).scaleTo(1, this.hitObject.timePreempt);
   }
 
-  protected override updateHitStateTransforms()
+  protected override updateHitStateTransforms(state: ArmedState)
   {
-    super.updateHitStateTransforms();
+    super.updateHitStateTransforms(state);
 
     this.circlePiece.fadeOut(700);
     this.approachCircle.fadeOut();

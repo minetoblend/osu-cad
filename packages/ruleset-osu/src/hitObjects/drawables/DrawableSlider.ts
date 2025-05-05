@@ -1,3 +1,4 @@
+import type { ArmedState } from "@osucad/core";
 import { SkinnableDrawable, SyntheticHitObjectEntry } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
 import { Anchor, Axes, Bindable, clamp, provide } from "@osucad/framework";
@@ -98,9 +99,9 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
     this.ball.fadeIn();
   }
 
-  protected override updateHitStateTransforms()
+  protected override updateHitStateTransforms(state: ArmedState)
   {
-    super.updateHitStateTransforms();
+    super.updateHitStateTransforms(state);
 
     this.fadeOut(240);
     this.expire();

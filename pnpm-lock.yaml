@@ -130,6 +130,9 @@ importers:
 
   packages/framework:
     dependencies:
+      '@vue/reactivity':
+        specifier: ^3.5.13
+        version: 3.5.13
       diff:
         specifier: ^7.0.0
         version: 7.0.0
@@ -152,6 +155,18 @@ importers:
       vite-plugin-conditional-compiler:
         specifier: ^0.3.1
         version: 0.3.1(vite@6.3.4)(webpack@5.99.7)
+
+  packages/reactivity:
+    dependencies:
+      '@osucad/framework':
+        specifier: workspace:^
+        version: link:../framework
+      '@vue/reactivity':
+        specifier: ^3.5.13
+        version: 3.5.13
+      pixi.js:
+        specifier: ^8.9.2
+        version: 8.9.2
 
   packages/ruleset-osu:
     dependencies:
@@ -3088,9 +3103,14 @@ packages:
       typescript: 5.7.3
     dev: true
 
+  /@vue/reactivity@3.5.13:
+    resolution: {integrity: sha512-NaCwtw8o48B9I6L1zl2p41OHo/2Z4wqYGGIK1Khu5T7yxrn+ATOixn/Udn2m+6kZKB/J7cuT9DbWWhRxqixACg==}
+    dependencies:
+      '@vue/shared': 3.5.13
+    dev: false
+
   /@vue/shared@3.5.13:
     resolution: {integrity: sha512-/hnE/qP5ZoGpol0a5mDi45bOd7t3tjYJBjsgCsivow7D48cJeV5l05RD82lPqi7gRiphZM37rnhW1l6ZoCNNnQ==}
-    dev: true
 
   /@wasm-audio-decoders/common@9.0.6:
     resolution: {integrity: sha512-E9n3jvsiO0a7+ZNKOJZB6Y2akKbU1dj+6Cena8aZgkgZE27pfhMwgJlt0qw2CpKBZn9nOC3HmJu6jmq/cbuNfQ==}

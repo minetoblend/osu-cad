@@ -19,6 +19,7 @@
     "!**/*.tsbuildinfo"
   ],
   "dependencies": {
+    "@vue/reactivity": "^3.5.13",
     "diff": "^7.0.0",
     "pixi-filters": "^6.1.2",
     "pixi.js": "^8.9.2",

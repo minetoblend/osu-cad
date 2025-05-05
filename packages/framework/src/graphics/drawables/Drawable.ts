@@ -89,6 +89,11 @@ export interface DrawableOptions
 export const LOAD = Symbol("load");
 export const LOAD_FROM_ASYNC = Symbol("loadFromAsync");
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type,@typescript-eslint/no-empty-interface
+export interface Drawable extends OsucadMixins.Drawable
+{
+}
+
 export abstract class Drawable extends Transformable implements IDisposable, IInputReceiver
 {
   constructor()

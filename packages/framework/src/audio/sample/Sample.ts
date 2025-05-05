@@ -66,10 +66,13 @@ export class Sample
       playback.onEnded.emit(playback);
     };
 
-    source.start(
-      options.delay ? this.context.currentTime + options.delay / 1000 : undefined,
-      options.offset ? options.offset / 1000 : undefined,
-    );
+    if (this.context.state === "running")
+    {
+      source.start(
+          options.delay ? this.context.currentTime + options.delay / 1000 : undefined,
+          options.offset ? options.offset / 1000 : undefined,
+      );
+    }
 
     return playback;
   }

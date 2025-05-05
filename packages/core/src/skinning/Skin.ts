@@ -1,4 +1,4 @@
-import type { Bindable, Drawable, IFileSystem, Sample } from "@osucad/framework";
+import type { Drawable, IFileSystem, Sample } from "@osucad/framework";
 import type { Texture } from "pixi.js";
 import { Color } from "pixi.js";
 import type { ISampleInfo } from "../audio/ISampleInfo";
@@ -49,14 +49,9 @@ export class Skin implements ISkin
     return null;
   }
 
-  getConfigValue<T extends SkinConfigurationLookup>(lookup: T): SkinConfigurationValue<T> | null
+  getConfig<T extends SkinConfigurationLookup>(lookup: T): SkinConfigurationValue<T> | null
   {
     return this.config.get(lookup);
-  }
-
-  getConfigBindable<T extends SkinConfigurationLookup>(lookup: T): Bindable<SkinConfigurationValue<T> | null>
-  {
-    return this.config.getBindable(lookup);
   }
 
   get comboColors()

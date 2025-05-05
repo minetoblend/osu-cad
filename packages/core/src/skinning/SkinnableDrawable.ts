@@ -17,7 +17,7 @@ export class SkinnableDrawable extends CompositeDrawable
   {
     super.loadAsyncComplete();
 
-    this.skin.sourceChanged.addListener(this.#skinChanged);
+    this.skin.sourceChanged.addListener(this.#skinChanged, this);
     this.updateContent();
   }
 
@@ -43,5 +43,12 @@ export class SkinnableDrawable extends CompositeDrawable
 
     this.drawable.anchor = Anchor.Center;
     this.drawable.origin = Anchor.Center;
+  }
+
+  override dispose(isDisposing?: boolean)
+  {
+    super.dispose(isDisposing);
+
+    this.skin.sourceChanged.removeListener(this.#skinChanged, this);
   }
 }

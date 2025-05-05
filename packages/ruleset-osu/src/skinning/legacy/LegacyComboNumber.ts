@@ -1,6 +1,7 @@
 import { IComboNumberReference, ISkinSource } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
 import { Anchor, Bindable, CompositeDrawable, DrawableSprite, resolved } from "@osucad/framework";
+import { computed, watch, withEffectScope } from "@osucad/framework";
 
 export class LegacyComboNumber extends CompositeDrawable
 {
@@ -15,6 +16,10 @@ export class LegacyComboNumber extends CompositeDrawable
 
   indexInComboBindable = new Bindable(0);
 
+  hitCircleOverlap = computed(() => this.skin.getConfig("hitCircleOverlap") ?? -2);
+  prefix = computed(() => this.skin.getConfig("hitCirclePrefix") ?? "default");
+
+  @withEffectScope()
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
@@ -22,14 +27,10 @@ export class LegacyComboNumber extends CompositeDrawable
     if (this.referenceObject)
       this.indexInComboBindable.bindTo(this.referenceObject.indexInComboBindable);
 
-    this.hitCircleOverlap = this.skin.getConfigValue("hitCircleOverlap") ?? -2;
-
-    this.prefix = this.skin.getConfigValue("hitCirclePrefix") ?? "default";
+    watch([this.hitCircleOverlap, this.prefix], () => this.generateObjects());
 
     this.indexInComboBindable.addOnChangeListener(e => this.comboNumber = e.value + 1, { immediate: true });
   }
-
-  prefix = "default";
 
   #comboNumber = 1;
 
@@ -46,8 +47,6 @@ export class LegacyComboNumber extends CompositeDrawable
 
   @resolved(IComboNumberReference, true)
   referenceObject?: IComboNumberReference;
-
-  hitCircleOverlap = 0;
 
   @resolved(ISkinSource)
   private skin!: ISkinSource;
@@ -66,7 +65,7 @@ export class LegacyComboNumber extends CompositeDrawable
 
       digits.unshift(
           new DrawableSprite({
-            texture: this.skin.getTexture(`${this.prefix}-${currentDigit}`),
+            texture: this.skin.getTexture(`${this.prefix.value}-${currentDigit}`),
             origin: Anchor.Center,
             anchor: Anchor.Center,
           }),
@@ -77,7 +76,7 @@ export class LegacyComboNumber extends CompositeDrawable
 
     let totalWidth = digits.reduce((acc, digit) => acc + digit.drawWidth, 0);
 
-    totalWidth -= (digits.length - 1) * this.hitCircleOverlap;
+    totalWidth -= (digits.length - 1) * this.hitCircleOverlap.value;
 
     let currentX = -totalWidth / 2;
 
@@ -85,7 +84,7 @@ export class LegacyComboNumber extends CompositeDrawable
     {
       child.x = currentX + child.drawWidth / 2;
 
-      currentX += child.drawWidth - this.hitCircleOverlap;
+      currentX += child.drawWidth - this.hitCircleOverlap.value;
     }
   }
 

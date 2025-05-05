@@ -25,11 +25,9 @@ export default defineConfig(() => ({
     emptyOutDir: true,
     reportCompressedSize: true,
     target: "esnext",
-    minify: false,
-    modulePreload: false,
-    commonjsOptions: {},
-    rollupOptions: {
-
+    minify: true,
+    commonjsOptions: {
+      transformMixedEsModules: true,
     },
   },
 }));
