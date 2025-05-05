@@ -1,4 +1,4 @@
-import { SkinnableDrawable } from "@osucad/core";
+import { HitSampleInfo, SkinnableDrawable } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
 import { Anchor, Axes } from "@osucad/framework";
 import { OsuSkinComponents } from "../../skinning/OsuSkinComponents";
@@ -74,5 +74,20 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
   protected get componentLookup(): OsuSkinComponents
   {
     return OsuSkinComponents.CirclePiece;
+  }
+
+  public override update()
+  {
+    super.update();
+
+    if (this.time.current < this.hitStateUpdateTime && this.time.current + this.time.elapsed > this.hitStateUpdateTime)
+    {
+      const sample = this.skin.getSample(
+          new HitSampleInfo(HitSampleInfo.HIT_NORMAL, HitSampleInfo.BANK_SOFT),
+      );
+
+      if (sample)
+        sample.play();
+    }
   }
 }
