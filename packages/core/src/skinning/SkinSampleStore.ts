@@ -14,7 +14,11 @@ export class SkinSampleStore
 
   get(name: string)
   {
-    const buffer = this._audioBuffers.get(name);
+    const entry = this._getEntry(name);
+    if (!entry)
+      return null;
+
+    const buffer = this._audioBuffers.get(entry.path);
     if (!buffer)
       return null;
 
@@ -87,7 +91,7 @@ export class SkinSampleStore
       .then(buffer =>
       {
         if (buffer)
-          this._audioBuffers.set(name, buffer);
+          this._audioBuffers.set(entry.path, buffer);
 
         return buffer;
       });

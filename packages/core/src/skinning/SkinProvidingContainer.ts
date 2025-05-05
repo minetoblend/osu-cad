@@ -1,7 +1,8 @@
-import type { ContainerOptions, Drawable, ReadonlyDependencyContainer, ValueChangedEvent } from "@osucad/framework";
+import type { ContainerOptions, Drawable, ReadonlyDependencyContainer, Sample, ValueChangedEvent } from "@osucad/framework";
 import { Action, Axes, Bindable, Container, provide } from "@osucad/framework";
 import type { Texture } from "pixi.js";
 import { Color } from "pixi.js";
+import type { ISampleInfo } from "../audio/ISampleInfo";
 import type { ISkin, SkinComponentLookup } from "./ISkin";
 import { ISkinSource } from "./ISkinSource";
 import type { SkinConfigurationLookup, SkinConfigurationValue } from "./SkinConfiguration";
@@ -74,6 +75,18 @@ export class SkinProvidingContainer extends Container implements ISkinSource
       const texture = source.getTexture(componentName);
       if (texture)
         return texture;
+    }
+
+    return null;
+  }
+
+  getSample(sampleInfo: ISampleInfo): Sample | null
+  {
+    for (const source of this.allSources)
+    {
+      const sample = source.getSample(sampleInfo);
+      if (sample)
+        return sample;
     }
 
     return null;

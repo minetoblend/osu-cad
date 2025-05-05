@@ -10,7 +10,7 @@ export interface ISkin
 {
   getTexture(componentName: string): Texture | null
 
-  getSample(sampleInfo: ISampleInfo): Sample | nulls
+  getSample(sampleInfo: ISampleInfo): Sample | null
 
   getDrawableComponent(lookup: SkinComponentLookup): Drawable | null
 
