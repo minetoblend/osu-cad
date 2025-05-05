@@ -1,5 +1,6 @@
-import { LoadTextureEntry, Skin, SkinComponentLookup, SkinTransformer } from "@osucad/core";
-import { Drawable } from "@osucad/framework";
+import type { LoadTextureEntry, Skin, SkinComponentLookup } from "@osucad/core";
+import { SkinTransformer } from "@osucad/core";
+import type { Drawable } from "@osucad/framework";
 import { OsuSkinComponents } from "../OsuSkinComponents";
 import { LegacyApproachCircle } from "./LegacyApproachCircle";
 import { LegacyCirclePiece } from "./LegacyCirclePiece";

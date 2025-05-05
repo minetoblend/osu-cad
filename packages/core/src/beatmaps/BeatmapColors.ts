@@ -1,5 +1,6 @@
 import { Bindable } from "@osucad/framework";
-import { Color, ColorSource } from "pixi.js";
+import type { ColorSource } from "pixi.js";
+import { Color } from "pixi.js";
 
 export class BeatmapColors 
 {

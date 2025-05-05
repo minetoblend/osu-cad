@@ -1,4 +1,5 @@
-import { Beatmap, HitObject, HitType, RulesetBeatmapParser } from "@osucad/core";
+import type { Beatmap, HitObject, RulesetBeatmapParser } from "@osucad/core";
+import { HitType } from "@osucad/core";
 import { Vec2 } from "@osucad/framework";
 import { HitCircle } from "../hitObjects/HitCircle";
 import { PathPoint, PathType } from "../hitObjects/PathPoint";

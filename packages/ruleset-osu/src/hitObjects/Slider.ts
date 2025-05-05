@@ -1,8 +1,10 @@
-import { BeatmapDifficultyInfo, safeAssign } from "@osucad/core";
+import type { BeatmapDifficultyInfo } from "@osucad/core";
+import { safeAssign } from "@osucad/core";
 import { BindableNumber, Vec2 } from "@osucad/framework";
 import { HitCircle } from "./HitCircle";
-import { OsuHitObject, OsuHitObjectOptions } from "./OsuHitObject";
-import { PathPoint } from "./PathPoint";
+import type { OsuHitObjectOptions } from "./OsuHitObject";
+import { OsuHitObject } from "./OsuHitObject";
+import type { PathPoint } from "./PathPoint";
 import { SliderPath } from "./SliderPath";
 
 export interface SliderOptions extends OsuHitObjectOptions 

@@ -1,7 +1,8 @@
-import { Bindable, Drawable, DrawableSprite } from "@osucad/framework";
-import { Color, Texture } from "pixi.js";
-import { ISkin, SkinComponentLookup } from "./ISkin";
-import { SkinConfigurationLookup, SkinConfigurationValue } from "./SkinConfiguration";
+import type { Bindable, Drawable } from "@osucad/framework";
+import { DrawableSprite } from "@osucad/framework";
+import type { Color, Texture } from "pixi.js";
+import type { ISkin, SkinComponentLookup } from "./ISkin";
+import type { SkinConfigurationLookup, SkinConfigurationValue } from "./SkinConfiguration";
 import { SkinnableTextureAnimation } from "./SkinnableTextureAnimation";
 
 export type LoadTextureEntry =

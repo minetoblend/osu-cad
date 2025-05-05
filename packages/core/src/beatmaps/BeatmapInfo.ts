@@ -1,4 +1,4 @@
-import { Ruleset } from "../rulesets/Ruleset";
+import type { Ruleset } from "../rulesets/Ruleset";
 import { BeatmapDifficultyInfo } from "./BeatmapDifficultyInfo";
 import { BeatmapMetadata } from "./BeatmapMetadata";
 

@@ -1,9 +1,10 @@
-import { Action, Axes, Bindable, Drawable, LoadState, resolved } from "@osucad/framework";
-import { LifetimeEntry } from "../../pooling/LifetimeEntry";
+import type { Drawable } from "@osucad/framework";
+import { Action, Axes, Bindable, LoadState, resolved } from "@osucad/framework";
+import type { LifetimeEntry } from "../../pooling/LifetimeEntry";
 import { PooledDrawableWithLifetimeContainer } from "../../pooling/PooledDrawableWithLifetimeContainer";
-import { DrawableHitObject } from "../hitObjects/drawables/DrawableHitObject";
-import { HitObjectLifetimeEntry } from "../hitObjects/drawables/HitObjectLifetimeEntry";
-import { HitObject } from "../hitObjects/HitObject";
+import type { DrawableHitObject } from "../hitObjects/drawables/DrawableHitObject";
+import type { HitObjectLifetimeEntry } from "../hitObjects/drawables/HitObjectLifetimeEntry";
+import type { HitObject } from "../hitObjects/HitObject";
 import { IPooledHitObjectProvider } from "./IPooledHitObjectProvider";
 
 export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitObjectLifetimeEntry, DrawableHitObject> 

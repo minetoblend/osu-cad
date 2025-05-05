@@ -1,6 +1,7 @@
-import { Bindable, Drawable, injectionToken } from "@osucad/framework";
-import { Color, Texture } from "pixi.js";
-import { SkinConfigurationLookup, SkinConfigurationValue } from "./SkinConfiguration";
+import type { Bindable, Drawable } from "@osucad/framework";
+import { injectionToken } from "@osucad/framework";
+import type { Color, Texture } from "pixi.js";
+import type { SkinConfigurationLookup, SkinConfigurationValue } from "./SkinConfiguration";
 
 export type SkinComponentLookup = string;
 

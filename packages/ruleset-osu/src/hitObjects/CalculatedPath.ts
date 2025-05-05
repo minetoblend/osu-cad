@@ -1,4 +1,5 @@
-import { clamp, IVec2, Vec2 } from "@osucad/framework";
+import type { IVec2 } from "@osucad/framework";
+import { clamp, Vec2 } from "@osucad/framework";
 
 export class CalculatedPath
 {

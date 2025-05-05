@@ -1,5 +1,6 @@
 import { DrawableHitObject, ISkinSource, SkinnableTextureAnimation } from "@osucad/core";
-import { Anchor, Axes, Bindable, CompositeDrawable, Drawable, DrawableSprite, ReadonlyDependencyContainer, resolved } from "@osucad/framework";
+import type { Drawable, ReadonlyDependencyContainer } from "@osucad/framework";
+import { Anchor, Axes, Bindable, CompositeDrawable, DrawableSprite, resolved } from "@osucad/framework";
 import { Color } from "pixi.js";
 
 export class LegacySliderBall extends CompositeDrawable 

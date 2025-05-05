@@ -1,4 +1,5 @@
-import { Bindable, IFrameBasedClock, injectionToken } from "@osucad/framework";
+import type { Bindable, IFrameBasedClock } from "@osucad/framework";
+import { injectionToken } from "@osucad/framework";
 
 export interface IAnimationTimeReference 
 {

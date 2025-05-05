@@ -1,9 +1,9 @@
 import { Action, Bindable, provide } from "@osucad/framework";
 import { Color } from "pixi.js";
 import { PoolableDrawableWithLifetime } from "../../../pooling/PoolableDrawableWithLifetime";
-import { IAnimationTimeReference } from "../../../skinning/IAnimationTimeReference";
-import { HitObject } from "../HitObject";
-import { HitObjectLifetimeEntry } from "./HitObjectLifetimeEntry";
+import type { IAnimationTimeReference } from "../../../skinning/IAnimationTimeReference";
+import type { HitObject } from "../HitObject";
+import type { HitObjectLifetimeEntry } from "./HitObjectLifetimeEntry";
 import { SyntheticHitObjectEntry } from "./SyntheticHitObjectEntry";
 
 @provide(DrawableHitObject)

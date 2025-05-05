@@ -1,6 +1,6 @@
 import { injectionToken } from "@osucad/framework";
-import { DrawableHitObject } from "../hitObjects/drawables/DrawableHitObject";
-import { HitObject } from "../hitObjects/HitObject";
+import type { DrawableHitObject } from "../hitObjects/drawables/DrawableHitObject";
+import type { HitObject } from "../hitObjects/HitObject";
 
 export interface IPooledHitObjectProvider 
 {

@@ -1,7 +1,8 @@
-import { Axes, Container, ReadonlyDependencyContainer } from "@osucad/framework";
-import { HitObject } from "../hitObjects/HitObject";
-import { Playfield } from "./Playfield";
-import { PlayfieldAdjustmentContainer } from "./PlayfieldAdjustmentContainer";
+import type { ReadonlyDependencyContainer } from "@osucad/framework";
+import { Axes, Container } from "@osucad/framework";
+import type { HitObject } from "../hitObjects/HitObject";
+import type { Playfield } from "./Playfield";
+import type { PlayfieldAdjustmentContainer } from "./PlayfieldAdjustmentContainer";
 
 export abstract class DrawableRuleset extends Container 
 {

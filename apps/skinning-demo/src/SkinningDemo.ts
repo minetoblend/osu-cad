@@ -1,7 +1,8 @@
 import "@osucad/ruleset-osu/init";
 import { BeatmapParser, Skin, SkinProvidingContainer } from "@osucad/core";
 
-import { Game, ReadonlyDependencyContainer, ZipArchiveFileSystem } from "@osucad/framework";
+import type { ReadonlyDependencyContainer } from "@osucad/framework";
+import { Game, ZipArchiveFileSystem } from "@osucad/framework";
 import { Color } from "pixi.js";
 import oskFile from "./skin.osk?url";
 import { SkinVisualization } from "./SkinVisualization";

@@ -1,5 +1,6 @@
 import { PlayfieldAdjustmentContainer } from "@osucad/core";
-import { Anchor, Container, Drawable, DrawSizePreservingFillContainer } from "@osucad/framework";
+import type { Drawable } from "@osucad/framework";
+import { Anchor, Container, DrawSizePreservingFillContainer } from "@osucad/framework";
 
 export class OsuPlayfieldAdjustmentContainer extends PlayfieldAdjustmentContainer 
 {

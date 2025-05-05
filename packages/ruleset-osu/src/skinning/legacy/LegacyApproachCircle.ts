@@ -1,5 +1,6 @@
 import { ISkinSource } from "@osucad/core";
-import { Anchor, Axes, CompositeDrawable, DrawableSprite, ReadonlyDependencyContainer, resolved } from "@osucad/framework";
+import type { ReadonlyDependencyContainer } from "@osucad/framework";
+import { Anchor, Axes, CompositeDrawable, DrawableSprite, resolved } from "@osucad/framework";
 
 export class LegacyApproachCircle extends CompositeDrawable 
 {

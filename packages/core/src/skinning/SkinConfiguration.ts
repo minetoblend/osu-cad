@@ -1,5 +1,5 @@
 import { Bindable } from "@osucad/framework";
-import { Color } from "pixi.js";
+import type { Color } from "pixi.js";
 
 export interface SkinConfigurationFields 
 {

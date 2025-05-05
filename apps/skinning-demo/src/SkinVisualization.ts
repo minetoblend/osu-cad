@@ -1,5 +1,7 @@
-import { Beatmap, PlayfieldClock } from "@osucad/core";
-import { Axes, CompositeDrawable, FramedClock, provide, ReadonlyDependencyContainer, StopwatchClock } from "@osucad/framework";
+import type { Beatmap } from "@osucad/core";
+import { PlayfieldClock } from "@osucad/core";
+import type { ReadonlyDependencyContainer, StopwatchClock } from "@osucad/framework";
+import { Axes, CompositeDrawable, FramedClock, provide } from "@osucad/framework";
 
 export class SkinVisualization extends CompositeDrawable 
 {

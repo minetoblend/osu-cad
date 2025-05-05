@@ -1,5 +1,6 @@
 import { ColorUtils, EasingFunction } from "@osucad/framework";
-import { Color, ColorSource } from "pixi.js";
+import type { ColorSource } from "pixi.js";
+import { Color } from "pixi.js";
 import { DrawableSliderPath } from "../../hitObjects/drawables/DrawableSliderPath";
 import { PlaySliderBody } from "../../hitObjects/drawables/PlaySliderBody";
 

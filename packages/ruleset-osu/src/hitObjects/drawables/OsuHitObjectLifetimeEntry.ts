@@ -1,5 +1,5 @@
 import { HitObjectLifetimeEntry } from "@osucad/core";
-import { OsuHitObject } from "../OsuHitObject";
+import type { OsuHitObject } from "../OsuHitObject";
 
 export class OsuHitObjectLifetimeEntry extends HitObjectLifetimeEntry 
 {

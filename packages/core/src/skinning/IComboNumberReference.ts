@@ -1,4 +1,5 @@
-import { Bindable, injectionToken } from "@osucad/framework";
+import type { Bindable } from "@osucad/framework";
+import { injectionToken } from "@osucad/framework";
 
 export interface IComboNumberReference 
 {

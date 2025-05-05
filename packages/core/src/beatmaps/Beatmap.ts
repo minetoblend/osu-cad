@@ -1,4 +1,4 @@
-import { HitObject } from "../rulesets/hitObjects/HitObject";
+import type { HitObject } from "../rulesets/hitObjects/HitObject";
 import { BeatmapColors } from "./BeatmapColors";
 import { BeatmapInfo } from "./BeatmapInfo";
 

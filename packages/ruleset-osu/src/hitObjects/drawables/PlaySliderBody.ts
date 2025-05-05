@@ -1,5 +1,6 @@
 import { ISkinSource } from "@osucad/core";
-import { Bindable, ReadonlyDependencyContainer, resolved } from "@osucad/framework";
+import type { ReadonlyDependencyContainer } from "@osucad/framework";
+import { Bindable, resolved } from "@osucad/framework";
 import { Color } from "pixi.js";
 import { OsuHitObject } from "../OsuHitObject";
 import { SnakingSliderBody } from "./SnakingSliderBody";

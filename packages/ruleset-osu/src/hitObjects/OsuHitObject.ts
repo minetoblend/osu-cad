@@ -1,5 +1,6 @@
 import { BeatmapDifficultyInfo, HitObject, safeAssign } from "@osucad/core";
-import { Bindable, BindableBoolean, BindableNumber, IVec2, Vec2 } from "@osucad/framework";
+import type { IVec2 } from "@osucad/framework";
+import { Bindable, BindableBoolean, BindableNumber, Vec2 } from "@osucad/framework";
 
 export interface OsuHitObjectOptions 
 {

@@ -1,6 +1,6 @@
 import { EventEmitter } from "pixi.js";
 import type { ZipEntry } from "unzipit";
-import { FileEvents, FileSystemEvents, IFile, IFileSystem } from "./IFileSystem";
+import type { FileEvents, FileSystemEvents, IFile, IFileSystem } from "./IFileSystem";
 import { SimpleFileSystem } from "./SimpleFileSystem";
 
 export class ZipArchiveFileSystem extends EventEmitter<FileSystemEvents> implements IFileSystem 

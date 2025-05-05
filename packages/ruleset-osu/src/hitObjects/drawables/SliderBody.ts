@@ -1,5 +1,7 @@
-import { CompositeDrawable, Path, Vec2 } from "@osucad/framework";
-import { Color, ColorSource } from "pixi.js";
+import type { Path } from "@osucad/framework";
+import { CompositeDrawable, Vec2 } from "@osucad/framework";
+import type { ColorSource } from "pixi.js";
+import { Color } from "pixi.js";
 import { DrawableSliderPath } from "./DrawableSliderPath";
 
 export class SliderBody extends CompositeDrawable 

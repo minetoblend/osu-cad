@@ -1,11 +1,12 @@
-import { HitObject, HitObjectLifetimeEntry, Playfield } from "@osucad/core";
-import { ReadonlyDependencyContainer } from "@osucad/framework";
+import type { HitObject, HitObjectLifetimeEntry } from "@osucad/core";
+import { Playfield } from "@osucad/core";
+import type { ReadonlyDependencyContainer } from "@osucad/framework";
 import { DrawableHitCircle } from "../hitObjects/drawables/DrawableHitCircle";
 import { DrawableSlider } from "../hitObjects/drawables/DrawableSlider";
 import { FollowPointRenderer } from "../hitObjects/drawables/FollowPointRenderer";
 import { OsuHitObjectLifetimeEntry } from "../hitObjects/drawables/OsuHitObjectLifetimeEntry";
 import { HitCircle } from "../hitObjects/HitCircle";
-import { OsuHitObject } from "../hitObjects/OsuHitObject";
+import type { OsuHitObject } from "../hitObjects/OsuHitObject";
 import { Slider } from "../hitObjects/Slider";
 
 export class OsuPlayfield extends Playfield 

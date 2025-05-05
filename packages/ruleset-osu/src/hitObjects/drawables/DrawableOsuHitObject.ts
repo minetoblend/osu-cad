@@ -1,6 +1,6 @@
 import { DrawableHitObject, IComboNumberReference, ISkinSource } from "@osucad/core";
 import { Bindable, provide, resolved, Vec2 } from "@osucad/framework";
-import { OsuHitObject } from "../OsuHitObject";
+import type { OsuHitObject } from "../OsuHitObject";
 
 @provide(IComboNumberReference)
 export abstract class DrawableOsuHitObject<out T extends OsuHitObject = OsuHitObject>

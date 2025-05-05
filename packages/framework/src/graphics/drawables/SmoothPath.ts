@@ -1,7 +1,7 @@
 import type { ColorSource } from "pixi.js";
 import { BufferImageSource, Color, Texture } from "pixi.js";
 import { Cached } from "../../caching/Cached";
-import { ReadonlyDependencyContainer } from "../../di/DependencyContainer";
+import type { ReadonlyDependencyContainer } from "../../di/DependencyContainer";
 import { Path } from "./Path";
 
 export class SmoothPath extends Path 

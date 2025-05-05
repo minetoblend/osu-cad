@@ -1,4 +1,4 @@
-import { Beatmap } from "../beatmaps/Beatmap";
+import type { Beatmap } from "../beatmaps/Beatmap";
 
 export interface BeatmapPostProcessor 
 {

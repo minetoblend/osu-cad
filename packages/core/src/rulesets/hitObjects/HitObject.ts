@@ -1,5 +1,5 @@
 import { Bindable } from "@osucad/framework";
-import { BeatmapDifficultyInfo } from "../../beatmaps/BeatmapDifficultyInfo";
+import type { BeatmapDifficultyInfo } from "../../beatmaps/BeatmapDifficultyInfo";
 
 export class HitObject 
 {

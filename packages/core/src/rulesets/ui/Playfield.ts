@@ -1,7 +1,8 @@
-import { Action, Axes, CompositeDrawable, DrawablePool, IFrameBasedClock, Lazy, NoArgsConstructor, provide, ReadonlyDependencyContainer, resolved } from "@osucad/framework";
-import { DrawableHitObject } from "../hitObjects/drawables/DrawableHitObject";
+import type { IFrameBasedClock, NoArgsConstructor, ReadonlyDependencyContainer } from "@osucad/framework";
+import { Action, Axes, CompositeDrawable, DrawablePool, Lazy, provide, resolved } from "@osucad/framework";
+import type { DrawableHitObject } from "../hitObjects/drawables/DrawableHitObject";
 import { HitObjectLifetimeEntry } from "../hitObjects/drawables/HitObjectLifetimeEntry";
-import { HitObject } from "../hitObjects/HitObject";
+import type { HitObject } from "../hitObjects/HitObject";
 import { HitObjectContainer } from "./HitObjectContainer";
 import { IPooledHitObjectProvider } from "./IPooledHitObjectProvider";
 import { PlayfieldClock } from "./PlayfieldClock";

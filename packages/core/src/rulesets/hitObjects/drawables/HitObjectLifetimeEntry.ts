@@ -1,6 +1,6 @@
 import { Bindable } from "@osucad/framework";
 import { LifetimeEntry } from "../../../pooling/LifetimeEntry";
-import { HitObject } from "../HitObject";
+import type { HitObject } from "../HitObject";
 
 export class HitObjectLifetimeEntry extends LifetimeEntry 
 {

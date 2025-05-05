@@ -63,6 +63,9 @@ export default defineConfig([
       "@typescript-eslint/no-unsafe-declaration-merging": "off",
       "@typescript-eslint/no-namespace": "off",
       "@typescript-eslint/no-this-alias": "off",
+      "@typescript-eslint/consistent-type-imports": ["error", {
+        disallowTypeAnnotations: false,
+      }],
       "ts/no-redeclare": "off",
       "eol-last": ["error", "always"],
       "no-tabs": ["error"],

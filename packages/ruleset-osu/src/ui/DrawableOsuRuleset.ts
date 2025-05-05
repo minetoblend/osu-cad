@@ -1,4 +1,5 @@
-import { DrawableRuleset, Playfield } from "@osucad/core";
+import type { Playfield } from "@osucad/core";
+import { DrawableRuleset } from "@osucad/core";
 
 import { OsuPlayfield } from "./OsuPlayfield";
 import { OsuPlayfieldAdjustmentContainer } from "./OsuPlayfieldAdjustmentContainer";

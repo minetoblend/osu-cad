@@ -1,8 +1,10 @@
-import { Action, Axes, Bindable, Container, ContainerOptions, Drawable, provide, ReadonlyDependencyContainer, ValueChangedEvent } from "@osucad/framework";
-import { Color, Texture } from "pixi.js";
-import { ISkin, SkinComponentLookup } from "./ISkin";
+import type { ContainerOptions, Drawable, ReadonlyDependencyContainer, ValueChangedEvent } from "@osucad/framework";
+import { Action, Axes, Bindable, Container, provide } from "@osucad/framework";
+import type { Texture } from "pixi.js";
+import { Color } from "pixi.js";
+import type { ISkin, SkinComponentLookup } from "./ISkin";
 import { ISkinSource } from "./ISkinSource";
-import { SkinConfigurationLookup, SkinConfigurationValue } from "./SkinConfiguration";
+import type { SkinConfigurationLookup, SkinConfigurationValue } from "./SkinConfiguration";
 
 export interface SkinProvidingContainerOptions extends ContainerOptions 
 {

@@ -1,5 +1,6 @@
-import { IFile, IFileSystem, IVec2, loadTexture } from "@osucad/framework";
-import { Texture } from "pixi.js";
+import type { IFile, IFileSystem, IVec2 } from "@osucad/framework";
+import { loadTexture } from "@osucad/framework";
+import type { Texture } from "pixi.js";
 
 export interface LoadTextureOptions 
 {

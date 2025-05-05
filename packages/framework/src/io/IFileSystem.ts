@@ -1,4 +1,4 @@
-import { EventEmitter } from "pixi.js";
+import type { EventEmitter } from "pixi.js";
 
 export interface FileSystemEvents 
 {

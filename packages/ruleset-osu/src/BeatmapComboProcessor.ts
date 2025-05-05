@@ -1,5 +1,5 @@
-import { Beatmap, BeatmapPostProcessor } from "@osucad/core";
-import { OsuHitObject } from "./hitObjects/OsuHitObject";
+import type { Beatmap, BeatmapPostProcessor } from "@osucad/core";
+import type { OsuHitObject } from "./hitObjects/OsuHitObject";
 
 export class BeatmapComboProcessor implements BeatmapPostProcessor 
 {

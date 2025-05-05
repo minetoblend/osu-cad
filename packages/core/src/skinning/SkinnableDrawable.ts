@@ -1,5 +1,6 @@
-import { Anchor, CompositeDrawable, Drawable, EmptyDrawable, resolved } from "@osucad/framework";
-import { SkinComponentLookup } from "./ISkin";
+import type { Drawable } from "@osucad/framework";
+import { Anchor, CompositeDrawable, EmptyDrawable, resolved } from "@osucad/framework";
+import type { SkinComponentLookup } from "./ISkin";
 import { ISkinSource } from "./ISkinSource";
 
 export class SkinnableDrawable extends CompositeDrawable 

@@ -1,4 +1,4 @@
-import { Ruleset } from "./Ruleset";
+import type { Ruleset } from "./Ruleset";
 
 export class RulesetStore 
 {

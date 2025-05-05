@@ -1,4 +1,5 @@
-import { Bindable, clamp, resolved, Vec2 } from "@osucad/framework";
+import type { Vec2 } from "@osucad/framework";
+import { Bindable, clamp, resolved } from "@osucad/framework";
 import { DrawableSlider } from "./DrawableSlider";
 import { SliderBody } from "./SliderBody";
 

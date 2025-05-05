@@ -1,7 +1,7 @@
-import { Beatmap, BeatmapPostProcessor } from "@osucad/core";
+import type { Beatmap, BeatmapPostProcessor } from "@osucad/core";
 import { Vec2 } from "@osucad/framework";
 import { HitCircle, Slider } from "./hitObjects";
-import { OsuHitObject } from "./hitObjects/OsuHitObject";
+import type { OsuHitObject } from "./hitObjects/OsuHitObject";
 import { Spinner } from "./hitObjects/Spinner";
 
 export class BeatmapStackingProcessor implements BeatmapPostProcessor 

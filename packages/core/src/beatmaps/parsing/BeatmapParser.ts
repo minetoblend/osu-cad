@@ -1,6 +1,7 @@
 import { Color } from "pixi.js";
-import { HitObject } from "../../rulesets/hitObjects/HitObject";
-import { rulesets, RulesetStore } from "../../rulesets/RulesetStore";
+import type { HitObject } from "../../rulesets/hitObjects/HitObject";
+import type { RulesetStore } from "../../rulesets/RulesetStore";
+import { rulesets } from "../../rulesets/RulesetStore";
 import { nn } from "../../utils/nn";
 import { Beatmap } from "../Beatmap";
 

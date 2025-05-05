@@ -1,7 +1,8 @@
-import { DrawableHitObject } from "@osucad/core";
-import { Anchor, Axes, CompositeDrawable, Drawable, EasingFunction, resolved } from "@osucad/framework";
+import type { DrawableHitObject } from "@osucad/core";
+import type { Drawable } from "@osucad/framework";
+import { Anchor, Axes, CompositeDrawable, EasingFunction, resolved } from "@osucad/framework";
 import { DrawableSlider } from "../../hitObjects/drawables/DrawableSlider";
-import { Slider } from "../../hitObjects/Slider";
+import type { Slider } from "../../hitObjects/Slider";
 
 export class LegacyFollowCircle extends CompositeDrawable 
 {

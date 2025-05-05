@@ -1,7 +1,9 @@
-import { Bindable, Drawable, IFileSystem } from "@osucad/framework";
-import { Color, Texture } from "pixi.js";
-import { ISkin, SkinComponentLookup } from "./ISkin";
-import { SkinConfiguration, SkinConfigurationLookup, SkinConfigurationValue } from "./SkinConfiguration";
+import type { Bindable, Drawable, IFileSystem } from "@osucad/framework";
+import type { Texture } from "pixi.js";
+import { Color } from "pixi.js";
+import type { ISkin, SkinComponentLookup } from "./ISkin";
+import type { SkinConfigurationLookup, SkinConfigurationValue } from "./SkinConfiguration";
+import { SkinConfiguration } from "./SkinConfiguration";
 import { SkinTextureStore } from "./SkinTextureStore";
 
 export class Skin implements ISkin 

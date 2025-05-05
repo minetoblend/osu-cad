@@ -1,4 +1,4 @@
-import { Beatmap, BeatmapPostProcessor } from "@osucad/core";
+import type { Beatmap, BeatmapPostProcessor } from "@osucad/core";
 import { BeatmapComboProcessor } from "./BeatmapComboProcessor";
 import { BeatmapStackingProcessor } from "./BeatmapStackingProcessor";
 

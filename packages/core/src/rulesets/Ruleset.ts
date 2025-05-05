@@ -1,9 +1,9 @@
-import { Skin } from "src/skinning/Skin";
-import { RulesetBeatmapParser } from "../beatmaps/parsing/BeatmapParser";
-import { SkinTransformer } from "../skinning/SkinTransformer";
-import { Awaitable } from "../utils";
-import { BeatmapPostProcessor } from "./BeatmapPostProcessor";
-import { DrawableRuleset } from "./ui/DrawableRuleset";
+import type { Skin } from "src/skinning/Skin";
+import type { RulesetBeatmapParser } from "../beatmaps/parsing/BeatmapParser";
+import type { SkinTransformer } from "../skinning/SkinTransformer";
+import type { Awaitable } from "../utils";
+import type { BeatmapPostProcessor } from "./BeatmapPostProcessor";
+import type { DrawableRuleset } from "./ui/DrawableRuleset";
 
 export interface Ruleset extends OsucadMixins.Ruleset 
 {

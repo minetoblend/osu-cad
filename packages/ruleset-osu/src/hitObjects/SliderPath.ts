@@ -1,7 +1,8 @@
 import { PathApproximator } from "@osucad/core";
 import { Bindable, CachedValue, Vec2 } from "@osucad/framework";
 import { CalculatedPath } from "./CalculatedPath";
-import { PathPoint, PathType } from "./PathPoint";
+import type { PathPoint } from "./PathPoint";
+import { PathType } from "./PathPoint";
 
 export interface PathSegment 
 {

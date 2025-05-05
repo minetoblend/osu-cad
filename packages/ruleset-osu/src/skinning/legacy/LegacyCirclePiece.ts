@@ -1,5 +1,6 @@
 import { DrawableHitObject, ISkinSource } from "@osucad/core";
-import { Anchor, Axes, Bindable, CompositeDrawable, DrawableSprite, EasingFunction, ReadonlyDependencyContainer, resolved } from "@osucad/framework";
+import type { Bindable, ReadonlyDependencyContainer } from "@osucad/framework";
+import { Anchor, Axes, CompositeDrawable, DrawableSprite, EasingFunction, resolved } from "@osucad/framework";
 import { LegacyComboNumber } from "./LegacyComboNumber";
 
 export class LegacyCirclePiece extends CompositeDrawable 

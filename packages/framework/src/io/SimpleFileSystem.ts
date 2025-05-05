@@ -1,5 +1,5 @@
 import { EventEmitter } from "pixi.js";
-import { FileEvents, FileSystemEvents, IWritableFile, IWritableFileSystem } from "./IFileSystem";
+import type { FileEvents, FileSystemEvents, IWritableFile, IWritableFileSystem } from "./IFileSystem";
 
 export interface SimpleFileSystemOptions 
 {
