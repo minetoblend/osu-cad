@@ -8,7 +8,7 @@ import { Container } from "../containers";
 import { Axes } from "../drawables";
 import { CustomisableSizeCompositeDrawable } from "./CustomisableSizeCompositeDrawable";
 
-export abstract class AnimationClockComposite extends CustomisableSizeCompositeDrawable implements IAnimation 
+export abstract class AnimationClockComposite extends CustomisableSizeCompositeDrawable implements IAnimation
 {
   readonly #startAtCurrentTime: boolean;
 
@@ -16,20 +16,20 @@ export abstract class AnimationClockComposite extends CustomisableSizeCompositeD
 
   readonly #manualClock = new ManualClock();
 
-  protected constructor(startAtCurrentTime: boolean = true) 
+  protected constructor(startAtCurrentTime: boolean = true)
   {
     super();
 
     this.#startAtCurrentTime = startAtCurrentTime;
   }
 
-  get finishedPlaying(): boolean 
+  get finishedPlaying(): boolean
   {
     return !this.loop && this.playbackPosition > this.duration;
   }
 
   @dependencyLoader()
-  [Symbol("load")]() 
+  [Symbol("load")]()
   {
     super.addInternal(
         new Container({
@@ -40,30 +40,30 @@ export abstract class AnimationClockComposite extends CustomisableSizeCompositeD
     );
   }
 
-  override get clock(): IFrameBasedClock | null 
+  override get clock(): IFrameBasedClock | null
   {
     return super.clock;
   }
 
-  override set clock(value: IFrameBasedClock) 
+  override set clock(value: IFrameBasedClock)
   {
     super.clock = value;
     this.#consumeClockTime();
   }
 
-  protected override loadComplete() 
+  protected override loadComplete()
   {
     super.loadComplete();
 
     const elapsed = this.#consumeClockTime();
 
-    if (!this.#startAtCurrentTime && !this.#hasSeeked) 
+    if (!this.#startAtCurrentTime && !this.#hasSeeked)
     {
       this.#manualClock.currentTime += elapsed;
     }
   }
 
-  protected override addInternal<T extends Drawable>(drawable: T): undefined | T 
+  protected override addInternal<T extends Drawable>(drawable: T): undefined | T
   {
     throw new Error("Use createContent instead.");
   }
@@ -72,18 +72,18 @@ export abstract class AnimationClockComposite extends CustomisableSizeCompositeD
 
   #lastConsumedTime = 0;
 
-  override update() 
+  override update()
   {
     super.update();
 
     const consumedTime = this.#consumeClockTime();
-    if (this.isPlaying) 
+    if (this.isPlaying)
     {
       this.#manualClock.currentTime += consumedTime;
     }
   }
 
-  get playbackPosition() 
+  get playbackPosition()
   {
     let current = this.#manualClock.currentTime;
 
@@ -93,13 +93,13 @@ export abstract class AnimationClockComposite extends CustomisableSizeCompositeD
     return clamp(current, 0, this.duration);
   }
 
-  set playbackPosition(value: number) 
+  set playbackPosition(value: number)
   {
     this.#hasSeeked = true;
 
     this.#manualClock.currentTime = value;
 
-    if (this.isLoaded) 
+    if (this.isLoaded)
     {
       this.#consumeClockTime();
     }
@@ -107,12 +107,12 @@ export abstract class AnimationClockComposite extends CustomisableSizeCompositeD
 
   #duration = 0;
 
-  get duration() 
+  get duration()
   {
     return this.#duration;
   }
 
-  protected set duration(value: number) 
+  protected set duration(value: number)
   {
     this.#duration = value;
   }
@@ -121,12 +121,12 @@ export abstract class AnimationClockComposite extends CustomisableSizeCompositeD
 
   loop = false;
 
-  seek(time: number) 
+  seek(time: number)
   {
     this.playbackPosition = time;
   }
 
-  #consumeClockTime() 
+  #consumeClockTime()
   {
     const elapsed = this.time.current - this.#lastConsumedTime;
     this.#lastConsumedTime = this.time.current;

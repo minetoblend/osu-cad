@@ -2,9 +2,9 @@ import { IComboNumberReference, ISkinSource } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
 import { Anchor, Bindable, CompositeDrawable, DrawableSprite, resolved } from "@osucad/framework";
 
-export class LegacyComboNumber extends CompositeDrawable 
+export class LegacyComboNumber extends CompositeDrawable
 {
-  constructor() 
+  constructor()
   {
     super();
 
@@ -15,7 +15,7 @@ export class LegacyComboNumber extends CompositeDrawable
 
   indexInComboBindable = new Bindable(0);
 
-  protected override load(dependencies: ReadonlyDependencyContainer) 
+  protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
 
@@ -33,12 +33,12 @@ export class LegacyComboNumber extends CompositeDrawable
 
   #comboNumber = 1;
 
-  get comboNumber() 
+  get comboNumber()
   {
     return this.#comboNumber;
   }
 
-  set comboNumber(value: number) 
+  set comboNumber(value: number)
   {
     this.#comboNumber = value;
     this.generateObjects();
@@ -52,14 +52,14 @@ export class LegacyComboNumber extends CompositeDrawable
   @resolved(ISkinSource)
   private skin!: ISkinSource;
 
-  generateObjects() 
+  generateObjects()
   {
     this.clearInternal();
 
     const digits: DrawableSprite[] = [];
     let number = this.#comboNumber;
 
-    while (number > 0) 
+    while (number > 0)
     {
       const currentDigit = number % 10;
       number = Math.floor(number / 10);
@@ -81,7 +81,7 @@ export class LegacyComboNumber extends CompositeDrawable
 
     let currentX = -totalWidth / 2;
 
-    for (const child of digits) 
+    for (const child of digits)
     {
       child.x = currentX + child.drawWidth / 2;
 
@@ -89,7 +89,7 @@ export class LegacyComboNumber extends CompositeDrawable
     }
   }
 
-  override dispose(isDisposing: boolean = true) 
+  override dispose(isDisposing: boolean = true)
   {
     this.indexInComboBindable.unbindAll();
 

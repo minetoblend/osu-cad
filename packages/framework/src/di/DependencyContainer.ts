@@ -1,19 +1,19 @@
 import { Bindable } from "../bindables/Bindable";
 import type { Drawable } from "../graphics/drawables/Drawable";
 
-export class DependencyContainer implements ReadonlyDependencyContainer 
+export class DependencyContainer implements ReadonlyDependencyContainer
 {
   private readonly dependencies = new Map<any, any>();
 
-  constructor(private readonly parent?: ReadonlyDependencyContainer) 
+  constructor(private readonly parent?: ReadonlyDependencyContainer)
   {
   }
 
   public owner: Drawable | null = null;
 
-  provide(keyOrValue: any, value?: any): void 
+  provide(keyOrValue: any, value?: any): void
   {
-    if (!value && typeof keyOrValue === "object" && "constructor" in keyOrValue) 
+    if (!value && typeof keyOrValue === "object" && "constructor" in keyOrValue)
     {
       this.dependencies.set(keyOrValue.constructor, keyOrValue);
       return;
@@ -24,9 +24,9 @@ export class DependencyContainer implements ReadonlyDependencyContainer
 
   resolveOptional<T>(key: new (...args: any[]) => T): T;
   resolveOptional<T>(key: InjectionToken<T>): T;
-  resolveOptional<T>(key: any): T | undefined 
+  resolveOptional<T>(key: any): T | undefined
   {
-    if (this.dependencies.has(key)) 
+    if (this.dependencies.has(key))
     {
       const value = this.dependencies.get(key);
 
@@ -41,13 +41,13 @@ export class DependencyContainer implements ReadonlyDependencyContainer
 
   resolve<T>(key: new (...args: any[]) => T): T;
   resolve<T>(key: InjectionToken<T>): T;
-  resolve<T>(key: any): T 
+  resolve<T>(key: any): T
   {
     const value = this.resolveOptional<T>(key);
 
-    if (value === undefined) 
+    if (value === undefined)
     {
-      if (typeof key === "object" && "name" in key) 
+      if (typeof key === "object" && "name" in key)
       {
         key = key.name;
       }
@@ -63,7 +63,7 @@ export class DependencyContainer implements ReadonlyDependencyContainer
   }
 }
 
-export interface ReadonlyDependencyContainer 
+export interface ReadonlyDependencyContainer
 {
   resolveOptional: (<T>(key: new (...args: any[]) => T) => T | undefined) & (<T>(key: InjectionToken<T>) => T | undefined);
 
@@ -74,7 +74,7 @@ declare const typeKey: unique symbol;
 
 export type InjectionToken<T> = symbol & { [typeKey]?: T };
 
-export function injectionToken<T>(description?: string): InjectionToken<T> 
+export function injectionToken<T>(description?: string): InjectionToken<T>
 {
   return Symbol(description);
 }

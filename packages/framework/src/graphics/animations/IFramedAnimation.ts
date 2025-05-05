@@ -1,6 +1,6 @@
 import type { IAnimation } from "./IAnimation";
 
-export interface IFramedAnimation extends IAnimation 
+export interface IFramedAnimation extends IAnimation
 {
   get frameCount(): number;
 

@@ -6,15 +6,15 @@ import type { ISkin, SkinComponentLookup } from "./ISkin";
 import { ISkinSource } from "./ISkinSource";
 import type { SkinConfigurationLookup, SkinConfigurationValue } from "./SkinConfiguration";
 
-export interface SkinProvidingContainerOptions extends ContainerOptions 
+export interface SkinProvidingContainerOptions extends ContainerOptions
 {
   skin?: ISkin
 }
 
 @provide(ISkinSource)
-export class SkinProvidingContainer extends Container implements ISkinSource 
+export class SkinProvidingContainer extends Container implements ISkinSource
 {
-  constructor(options: SkinProvidingContainerOptions = {}) 
+  constructor(options: SkinProvidingContainerOptions = {})
   {
     super();
 
@@ -26,26 +26,26 @@ export class SkinProvidingContainer extends Container implements ISkinSource
 
   private readonly activeSkin = new Bindable<ISkin | null>(null);
 
-  get skin() 
+  get skin()
   {
     return this.activeSkin.value;
   }
 
-  set skin(value) 
+  set skin(value)
   {
     this.activeSkin.value = value;
   }
 
   #parentSource?: ISkinSource;
 
-  protected override load(dependencies: ReadonlyDependencyContainer) 
+  protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
 
     this.#parentSource = dependencies.resolveOptional(ISkinSource);
   }
 
-  protected override loadComplete() 
+  protected override loadComplete()
   {
     super.loadComplete();
 
@@ -54,7 +54,7 @@ export class SkinProvidingContainer extends Container implements ISkinSource
 
   readonly sourceChanged = new Action();
 
-  protected get allSources() 
+  protected get allSources()
   {
     const sources: ISkin[] = [];
 
@@ -67,9 +67,9 @@ export class SkinProvidingContainer extends Container implements ISkinSource
     return sources;
   }
 
-  getTexture(componentName: string): Texture | null 
+  getTexture(componentName: string): Texture | null
   {
-    for (const source of this.allSources) 
+    for (const source of this.allSources)
     {
       const texture = source.getTexture(componentName);
       if (texture)
@@ -79,9 +79,9 @@ export class SkinProvidingContainer extends Container implements ISkinSource
     return null;
   }
 
-  getDrawableComponent(lookup: SkinComponentLookup): Drawable | null 
+  getDrawableComponent(lookup: SkinComponentLookup): Drawable | null
   {
-    for (const source of this.allSources) 
+    for (const source of this.allSources)
     {
       const drawable = source.getDrawableComponent(lookup);
       if (drawable)
@@ -91,9 +91,9 @@ export class SkinProvidingContainer extends Container implements ISkinSource
     return null;
   }
 
-  getConfigValue<T extends SkinConfigurationLookup>(lookup: T): SkinConfigurationValue<T> | null 
+  getConfigValue<T extends SkinConfigurationLookup>(lookup: T): SkinConfigurationValue<T> | null
   {
-    for (const source of this.allSources) 
+    for (const source of this.allSources)
     {
       const value = source.getConfigValue(lookup);
       if (value)
@@ -106,7 +106,7 @@ export class SkinProvidingContainer extends Container implements ISkinSource
   readonly #bindables = new Map<string, Bindable<any>>();
   readonly #sourceBindables = new Map<string, Bindable<any>>();
 
-  getConfigBindable<T extends SkinConfigurationLookup>(lookup: T): Bindable<SkinConfigurationValue<T> | null> 
+  getConfigBindable<T extends SkinConfigurationLookup>(lookup: T): Bindable<SkinConfigurationValue<T> | null>
   {
     const cached = this.#bindables.get(lookup);
     if (cached)
@@ -121,12 +121,12 @@ export class SkinProvidingContainer extends Container implements ISkinSource
     return newBindable.getBoundCopy();
   }
 
-  #getConfigBindable<T extends SkinConfigurationLookup>(lookup: T): Bindable<SkinConfigurationValue<T> | null> 
+  #getConfigBindable<T extends SkinConfigurationLookup>(lookup: T): Bindable<SkinConfigurationValue<T> | null>
   {
-    for (const source of this.allSources) 
+    for (const source of this.allSources)
     {
       const bindable = source.getConfigBindable(lookup);
-      if (bindable) 
+      if (bindable)
       {
         return bindable;
       }
@@ -135,9 +135,9 @@ export class SkinProvidingContainer extends Container implements ISkinSource
     return new Bindable(null) as any;
   }
 
-  getComboColor(comboIndex: number): Color 
+  getComboColor(comboIndex: number): Color
   {
-    for (const source of this.allSources) 
+    for (const source of this.allSources)
     {
       const value = source.getComboColor(comboIndex);
       if (value)
@@ -147,13 +147,13 @@ export class SkinProvidingContainer extends Container implements ISkinSource
     return new Color(0xffffff);
   }
 
-  #skinChanged(evt: ValueChangedEvent<ISkin | null>) 
+  #skinChanged(evt: ValueChangedEvent<ISkin | null>)
   {
-    for (const [lookup, bindable] of this.#bindables) 
+    for (const [lookup, bindable] of this.#bindables)
     {
       const sourceBindable = this.#sourceBindables.get(lookup);
 
-      if (sourceBindable) 
+      if (sourceBindable)
       {
         bindable.unbindFrom(sourceBindable);
         this.#sourceBindables.delete(lookup);

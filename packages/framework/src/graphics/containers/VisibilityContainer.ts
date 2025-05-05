@@ -1,21 +1,21 @@
 import { Bindable, type ValueChangedEvent } from "../../bindables/Bindable";
 import { Container } from "./Container";
 
-export abstract class VisibilityContainer extends Container 
+export abstract class VisibilityContainer extends Container
 {
   readonly state = new Bindable<Visibility>(Visibility.Hidden);
   #didInitialHide = false;
 
-  protected get startHidden() 
+  protected get startHidden()
   {
     return this.state.value === Visibility.Hidden;
   }
 
-  protected override loadAsyncComplete() 
+  protected override loadAsyncComplete()
   {
     super.loadAsyncComplete();
 
-    if (this.startHidden) 
+    if (this.startHidden)
     {
       this.popOut();
       this.finishTransforms(true);
@@ -23,34 +23,34 @@ export abstract class VisibilityContainer extends Container
     }
   }
 
-  protected override loadComplete() 
+  protected override loadComplete()
   {
     this.state.bindValueChanged(this.updateState, this.state.value === Visibility.Hidden && !this.#didInitialHide);
 
     super.loadComplete();
   }
 
-  override show() 
+  override show()
   {
     this.state.value = Visibility.Visible;
   }
 
-  override hide() 
+  override hide()
   {
     this.state.value = Visibility.Hidden;
   }
 
-  toggleVisibility() 
+  toggleVisibility()
   {
     this.state.value = this.state.value === Visibility.Visible ? Visibility.Hidden : Visibility.Visible;
   }
 
-  override get propagateNonPositionalInputSubTree() 
+  override get propagateNonPositionalInputSubTree()
   {
     return this.state.value === Visibility.Visible;
   }
 
-  override get propagatePositionalInputSubTree() 
+  override get propagatePositionalInputSubTree()
   {
     return this.state.value === Visibility.Visible;
   }
@@ -59,9 +59,9 @@ export abstract class VisibilityContainer extends Container
 
   abstract popOut(): void;
 
-  updateState = (event: ValueChangedEvent<Visibility>) => 
+  updateState = (event: ValueChangedEvent<Visibility>) =>
   {
-    switch (event.value) 
+    switch (event.value)
     {
     case Visibility.Visible:
       this.popIn();
@@ -73,7 +73,7 @@ export abstract class VisibilityContainer extends Container
   };
 }
 
-export enum Visibility 
+export enum Visibility
 {
   Hidden = 0,
   Visible = 1,

@@ -1,4 +1,4 @@
-export enum Axes 
+export enum Axes
 {
   X = 1,
   Y = 2,
@@ -6,9 +6,9 @@ export enum Axes
   Both = X | Y,
 }
 
-export function axesToString(axes: Axes) 
+export function axesToString(axes: Axes)
 {
-  switch (axes) 
+  switch (axes)
   {
   case Axes.None:
     return "None";
@@ -23,7 +23,7 @@ export function axesToString(axes: Axes)
   }
 }
 
-export function parseAxes(axes: string) 
+export function parseAxes(axes: string)
 {
   if (axes in Axes)
     return Axes[axes as keyof typeof Axes] as Axes;

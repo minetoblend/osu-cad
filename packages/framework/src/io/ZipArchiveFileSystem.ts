@@ -3,9 +3,9 @@ import type { ZipEntry } from "unzipit";
 import type { FileEvents, FileSystemEvents, IFile, IFileSystem } from "./IFileSystem";
 import { SimpleFileSystem } from "./SimpleFileSystem";
 
-export class ZipArchiveFileSystem extends EventEmitter<FileSystemEvents> implements IFileSystem 
+export class ZipArchiveFileSystem extends EventEmitter<FileSystemEvents> implements IFileSystem
 {
-  static async create(buffer: ArrayBuffer | Blob) 
+  static async create(buffer: ArrayBuffer | Blob)
   {
     const { unzip } = await import("unzipit");
 
@@ -14,7 +14,7 @@ export class ZipArchiveFileSystem extends EventEmitter<FileSystemEvents> impleme
     return new ZipArchiveFileSystem(entries);
   }
 
-  static async createMutable(buffer: ArrayBuffer | Blob): Promise<SimpleFileSystem> 
+  static async createMutable(buffer: ArrayBuffer | Blob): Promise<SimpleFileSystem>
   {
     const { unzip, setOptions } = await import("unzipit");
 
@@ -27,7 +27,7 @@ export class ZipArchiveFileSystem extends EventEmitter<FileSystemEvents> impleme
 
     const loadP: Promise<unknown>[] = [];
 
-    for (const key in entries) 
+    for (const key in entries)
     {
       loadP.push(
           entries[key].arrayBuffer()
@@ -42,7 +42,7 @@ export class ZipArchiveFileSystem extends EventEmitter<FileSystemEvents> impleme
 
   private readonly _entries = new Map<string, ZipArchiveFile>();
 
-  private constructor(entries: Record<string, ZipEntry>) 
+  private constructor(entries: Record<string, ZipEntry>)
   {
     super();
 
@@ -50,34 +50,34 @@ export class ZipArchiveFileSystem extends EventEmitter<FileSystemEvents> impleme
       this._entries.set(key, new ZipArchiveFile(entries[key]));
   }
 
-  public entries(): IFile[] 
+  public entries(): IFile[]
   {
     return [...this._entries.values()];
   }
 
-  get(path: string): IFile | undefined 
+  get(path: string): IFile | undefined
   {
     return this._entries.get(path);
   }
 }
 
-export class ZipArchiveFile extends EventEmitter<FileEvents> implements IFile 
+export class ZipArchiveFile extends EventEmitter<FileEvents> implements IFile
 {
   constructor(
     private readonly entry: ZipEntry,
-  ) 
+  )
   {
     super();
   }
 
   private _dataP?: Promise<ArrayBuffer>;
 
-  get path() 
+  get path()
   {
     return this.entry.name;
   }
 
-  read(): Promise<ArrayBuffer> 
+  read(): Promise<ArrayBuffer>
   {
     this._dataP ??= this.entry.arrayBuffer();
     return this._dataP;

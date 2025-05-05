@@ -9,9 +9,9 @@ import { PlayfieldClock } from "./PlayfieldClock";
 
 @provide(IPooledHitObjectProvider)
 @provide(Playfield)
-export abstract class Playfield extends CompositeDrawable implements IPooledHitObjectProvider 
+export abstract class Playfield extends CompositeDrawable implements IPooledHitObjectProvider
 {
-  constructor() 
+  constructor()
   {
     super();
 
@@ -22,7 +22,7 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
 
   readonly hitObjectUsageFinished = new Action<HitObject>();
 
-  readonly #hitObjectContainer = new Lazy(() => 
+  readonly #hitObjectContainer = new Lazy(() =>
   {
     const container = this.createHitObjectContainer();
 
@@ -32,7 +32,7 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
     return container;
   });
 
-  get hitObjectContainer() 
+  get hitObjectContainer()
   {
     return this.#hitObjectContainer.value;
   }
@@ -40,7 +40,7 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
   @resolved(PlayfieldClock)
   protected playfieldClock!: IFrameBasedClock;
 
-  protected override load(dependencies: ReadonlyDependencyContainer) 
+  protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
 
@@ -48,7 +48,7 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
     this.processCustomClock = false;
   }
 
-  protected override loadComplete() 
+  protected override loadComplete()
   {
     super.loadComplete();
 
@@ -56,14 +56,14 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
       this.addInternal(this.hitObjectContainer);
   }
 
-  protected createHitObjectContainer(): HitObjectContainer 
+  protected createHitObjectContainer(): HitObjectContainer
   {
     return new HitObjectContainer();
   }
 
   readonly #lifetimeEntries = new Map<HitObject, HitObjectLifetimeEntry>();
 
-  addHitObject(hitObject: HitObject) 
+  addHitObject(hitObject: HitObject)
   {
     const entry = this.createLifetimeEntry(hitObject);
     this.#lifetimeEntries.set(hitObject, entry);
@@ -71,7 +71,7 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
     this.onHitObjectAdded(hitObject);
   }
 
-  removeHitObject(hitObject: HitObject) 
+  removeHitObject(hitObject: HitObject)
   {
     const entry = this.#lifetimeEntries.get(hitObject);
     if (!entry)
@@ -81,7 +81,7 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
     this.onHitObjectRemoved(hitObject);
   }
 
-  protected createLifetimeEntry(hitObject: HitObject) 
+  protected createLifetimeEntry(hitObject: HitObject)
   {
     return new HitObjectLifetimeEntry(hitObject);
   }
@@ -93,28 +93,28 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
     drawableClass: NoArgsConstructor<DrawableHitObject>,
     initialSize: number,
     maximumSize?: number,
-  ) 
+  )
   {
     this.#registerPool(hitObjectClass, new DrawablePool(drawableClass, initialSize, maximumSize));
   }
 
-  #registerPool(hitObjectClass: abstract new (...args: any[]) => HitObject, pool: DrawablePool<DrawableHitObject>) 
+  #registerPool(hitObjectClass: abstract new (...args: any[]) => HitObject, pool: DrawablePool<DrawableHitObject>)
   {
     this.#pools.set(hitObjectClass, pool);
     this.addInternal(pool);
   }
 
-  getPooledDrawableRepresentation(hitObject: HitObject): DrawableHitObject | undefined 
+  getPooledDrawableRepresentation(hitObject: HitObject): DrawableHitObject | undefined
   {
     const pool = this.#prepareDrawableHitObjectPool(hitObject);
 
-    return pool?.get((drawable) => 
+    return pool?.get((drawable) =>
     {
       const dho = drawable as DrawableHitObject;
 
 
       let entry = this.#lifetimeEntries.get(hitObject);
-      if (!entry) 
+      if (!entry)
       {
         entry = this.createLifetimeEntry(hitObject);
       }
@@ -123,14 +123,14 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
     });
   }
 
-  #prepareDrawableHitObjectPool(hitObject: HitObject) 
+  #prepareDrawableHitObjectPool(hitObject: HitObject)
   {
     const lookupType = hitObject.constructor as abstract new (...args: any[]) => HitObject;
 
     let pool = this.#pools.get(lookupType);
-    if (!pool) 
+    if (!pool)
     {
-      for (const [t, p] of this.#pools) 
+      for (const [t, p] of this.#pools)
       {
         if (!(hitObject instanceof t))
           continue;
@@ -143,9 +143,9 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
     return pool;
   }
 
-  protected onHitObjectAdded(hitObject: HitObject) 
+  protected onHitObjectAdded(hitObject: HitObject)
   {}
 
-  protected onHitObjectRemoved(hitObject: HitObject) 
+  protected onHitObjectRemoved(hitObject: HitObject)
   {}
 }

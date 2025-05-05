@@ -25,14 +25,14 @@ import { MousePositionAbsoluteInput } from "./stateChanges/MousePositionAbsolute
 import { MouseScrollRelativeInput } from "./stateChanges/MouseScrollRelativeInput";
 import { TouchInput } from "./stateChanges/TouchInput";
 
-export class PassThroughInputManager extends CustomInputManager 
+export class PassThroughInputManager extends CustomInputManager
 {
-  get useParentInput(): boolean 
+  get useParentInput(): boolean
   {
     return this.#useParentInput;
   }
 
-  set useParentInput(value: boolean) 
+  set useParentInput(value: boolean)
   {
     if (this.#useParentInput === value)
       return;
@@ -45,7 +45,7 @@ export class PassThroughInputManager extends CustomInputManager
 
   #useParentInput: boolean = true;
 
-  override get handleHoverEvents(): boolean 
+  override get handleHoverEvents(): boolean
   {
     if (this.useParentInput && this.#parentInputManager?.handleHoverEvents)
       return true;
@@ -53,7 +53,7 @@ export class PassThroughInputManager extends CustomInputManager
     return super.handleHoverEvents;
   }
 
-  override buildNonPositionalInputQueue(queue: List<Drawable>, allowBlocking: boolean = true): boolean 
+  override buildNonPositionalInputQueue(queue: List<Drawable>, allowBlocking: boolean = true): boolean
   {
     if (!this.propagateNonPositionalInputSubTree)
       return false;
@@ -66,7 +66,7 @@ export class PassThroughInputManager extends CustomInputManager
     return false;
   }
 
-  override buildPositionalInputQueue(screenSpacePos: Vec2, queue: List<Drawable>) 
+  override buildPositionalInputQueue(screenSpacePos: Vec2, queue: List<Drawable>)
   {
     if (!this.propagatePositionalInputSubTree)
       return false;
@@ -75,7 +75,7 @@ export class PassThroughInputManager extends CustomInputManager
     return false;
   }
 
-  override getPendingInputs() 
+  override getPendingInputs()
   {
     const pendingInputs = super.getPendingInputs();
 
@@ -85,7 +85,7 @@ export class PassThroughInputManager extends CustomInputManager
     return pendingInputs;
   }
 
-  override handle(event: UIEvent): boolean 
+  override handle(event: UIEvent): boolean
   {
     if (!this.useParentInput)
       return false;
@@ -93,7 +93,7 @@ export class PassThroughInputManager extends CustomInputManager
     if (event instanceof MouseEvent && isSourcedFromTouch(event.state.mouse.lastSource))
       return false;
 
-    switch (event.constructor) 
+    switch (event.constructor)
     {
     case MouseMoveEvent: {
       const e = event as MouseMoveEvent;
@@ -147,24 +147,24 @@ export class PassThroughInputManager extends CustomInputManager
 
   #parentInputManager: InputManager | null = null;
 
-  override loadComplete() 
+  override loadComplete()
   {
     super.loadComplete();
 
     this.sync();
   }
 
-  override update() 
+  override update()
   {
     super.update();
 
-    if (this.useParentInput) 
+    if (this.useParentInput)
     {
       this.sync(true);
     }
   }
 
-  sync(useCachedParentInputManager = false) 
+  sync(useCachedParentInputManager = false)
   {
     if (!this.useParentInput)
       return;
@@ -175,12 +175,12 @@ export class PassThroughInputManager extends CustomInputManager
     this.syncInputState(this.#parentInputManager?.currentState);
   }
 
-  protected syncInputState(state?: InputState) 
+  protected syncInputState(state?: InputState)
   {
     const mouseDiff = (state?.mouse?.buttons ?? new ButtonStates<MouseButton>()).enumerateDifference(
         this.currentState.mouse.buttons,
     );
-    if (mouseDiff.released.length > 0) 
+    if (mouseDiff.released.length > 0)
     {
       new MouseButtonInput(mouseDiff.released.map(button => new ButtonInputEntry<MouseButton>(button, false))).apply(
           this.currentState,
@@ -191,7 +191,7 @@ export class PassThroughInputManager extends CustomInputManager
     // TODO: Add the remaining events
   }
 
-  override get requiresHighFrequencyMousePosition() 
+  override get requiresHighFrequencyMousePosition()
   {
     return true;
   }

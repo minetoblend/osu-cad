@@ -1,7 +1,7 @@
 import { Bindable } from "@osucad/framework";
 import type { Color } from "pixi.js";
 
-export interface SkinConfigurationFields 
+export interface SkinConfigurationFields
 {
   version: string
   animationFramerate: number
@@ -31,38 +31,38 @@ export interface SkinConfigurationFields
 export type SkinConfigurationLookup = keyof SkinConfigurationFields;
 export type SkinConfigurationValue<K extends SkinConfigurationLookup> = SkinConfigurationFields[K];
 
-export class SkinConfiguration 
+export class SkinConfiguration
 {
   comboColors: Color[] = [];
 
   private readonly _configValues = new Map<string, Bindable<any>>();
 
-  public get<K extends SkinConfigurationLookup>(lookup: K): SkinConfigurationValue<K> | null 
+  public get<K extends SkinConfigurationLookup>(lookup: K): SkinConfigurationValue<K> | null
   {
     return this._configValues.get(lookup)?.value ?? null;
   }
 
-  public set<K extends SkinConfigurationLookup>(lookup: K, value: SkinConfigurationValue<K> | null) 
+  public set<K extends SkinConfigurationLookup>(lookup: K, value: SkinConfigurationValue<K> | null)
   {
     this.getOriginalBindable(lookup).value = value;
   }
 
-  public getBindable<K extends SkinConfigurationLookup>(lookup: K): Bindable<SkinConfigurationValue<K> | null> 
+  public getBindable<K extends SkinConfigurationLookup>(lookup: K): Bindable<SkinConfigurationValue<K> | null>
   {
     return this.getOriginalBindable(lookup).getBoundCopy();
   }
 
-  private getOriginalBindable<K extends SkinConfigurationLookup>(lookup: K): Bindable<SkinConfigurationValue<K> | null> 
+  private getOriginalBindable<K extends SkinConfigurationLookup>(lookup: K): Bindable<SkinConfigurationValue<K> | null>
   {
     let bindable = this._configValues.get(lookup);
-    if (!bindable) 
+    if (!bindable)
     {
       this._configValues.set(lookup, bindable = new Bindable(null));
     }
     return bindable;
   }
 
-  dispose() 
+  dispose()
   {
     for (const [, bindable] of this._configValues)
       bindable.unbindAll();

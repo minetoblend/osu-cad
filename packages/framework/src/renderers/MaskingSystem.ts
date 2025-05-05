@@ -12,7 +12,7 @@ import type { OsucadUniformSystem } from "./OsucadUniformSystem";
 import { Color, ExtensionType, Rectangle } from "pixi.js";
 import { MatrixUtils } from "../utils/MatrixUtils";
 
-export interface MaskingInstruction extends Instruction 
+export interface MaskingInstruction extends Instruction
 {
   renderPipeId: "masking";
   action: MaskingAction;
@@ -21,7 +21,7 @@ export interface MaskingInstruction extends Instruction
   maskingEffect: MaskingEffect;
 }
 
-export class MaskingSystem implements System 
+export class MaskingSystem implements System
 {
   public static extension = {
     type: [
@@ -31,7 +31,7 @@ export class MaskingSystem implements System
     name: "masking",
   } as const;
 
-  constructor(renderer: Renderer) 
+  constructor(renderer: Renderer)
   {
     this.renderer = renderer;
   }
@@ -40,7 +40,7 @@ export class MaskingSystem implements System
 
   public destroy?: () => void;
 
-  push(instruction: MaskingInstruction) 
+  push(instruction: MaskingInstruction)
   {
     const renderer = this.renderer;
 
@@ -77,7 +77,7 @@ export class MaskingSystem implements System
     });
   }
 
-  pop() 
+  pop()
   {
     const renderer = this.renderer;
 

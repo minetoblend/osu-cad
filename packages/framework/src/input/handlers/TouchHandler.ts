@@ -4,25 +4,25 @@ import { TouchInput } from "../stateChanges/TouchInput";
 import { InputHandler } from "./InputHandler";
 import { Touch, TouchSource } from "./Touch";
 
-export class TouchHandler extends InputHandler 
+export class TouchHandler extends InputHandler
 {
-  override initialize(host: GameHost): boolean 
+  override initialize(host: GameHost): boolean
   {
-    if (!super.initialize(host)) 
+    if (!super.initialize(host))
     {
       return false;
     }
 
     this.enabled.addOnChangeListener(
-        (enabled) => 
+        (enabled) =>
         {
-          if (enabled) 
+          if (enabled)
           {
             host.renderer.canvas.addEventListener("touchstart", this.#handleTouchStart);
             host.renderer.canvas.addEventListener("touchend", this.#handleTouchEnd);
             host.renderer.canvas.addEventListener("touchmove", this.#handleTouchStart);
           }
-          else 
+          else
           {
             host.renderer.canvas.removeEventListener("touchstart", this.#handleTouchStart);
             host.renderer.canvas.removeEventListener("touchend", this.#handleTouchEnd);
@@ -35,19 +35,19 @@ export class TouchHandler extends InputHandler
     return true;
   }
 
-  #getTouches(event: TouchEvent, touchList: TouchList = event.touches): Touch[] 
+  #getTouches(event: TouchEvent, touchList: TouchList = event.touches): Touch[]
   {
     const rect = (event.target as HTMLCanvasElement).getBoundingClientRect();
 
     return Array.from(touchList)
-      .map((touch) => 
+      .map((touch) =>
       {
         const x = touch.clientX - rect.left;
         const y = touch.clientY - rect.top;
 
         let touchId = this.#touchIdentifiers.get(touch.identifier);
 
-        if (touchId === undefined) 
+        if (touchId === undefined)
         {
           this.#touchIdentifiers.set(touch.identifier, touchId = TouchSource.Touch1 + this.#touchIdentifiers.size);
         }
@@ -57,7 +57,7 @@ export class TouchHandler extends InputHandler
   }
 
   #touchIdentifiers = new Map<number, number>();
-  #handleTouchStart = (event: TouchEvent) => 
+  #handleTouchStart = (event: TouchEvent) =>
   {
     event.preventDefault();
 
@@ -70,7 +70,7 @@ export class TouchHandler extends InputHandler
       this.flush.emit();
   };
 
-  #handleTouchEnd = (event: TouchEvent) => 
+  #handleTouchEnd = (event: TouchEvent) =>
   {
     event.preventDefault();
 
@@ -86,7 +86,7 @@ export class TouchHandler extends InputHandler
     this.flush.emit();
   };
 
-  #enqueueTouch(touch: TouchInput): void 
+  #enqueueTouch(touch: TouchInput): void
   {
     this.pendingInputs.push(touch);
   }

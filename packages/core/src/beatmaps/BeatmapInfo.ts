@@ -2,7 +2,7 @@ import type { Ruleset } from "../rulesets/Ruleset";
 import { BeatmapDifficultyInfo } from "./BeatmapDifficultyInfo";
 import { BeatmapMetadata } from "./BeatmapMetadata";
 
-export class BeatmapInfo 
+export class BeatmapInfo
 {
   public metadata = new BeatmapMetadata();
   public difficulty = new BeatmapDifficultyInfo();

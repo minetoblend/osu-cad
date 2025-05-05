@@ -4,16 +4,16 @@ import { Anchor, BindableNumber, PoolableDrawable, provide } from "@osucad/frame
 import { OsuSkinComponents } from "../../skinning/OsuSkinComponents";
 
 @provide(IAnimationTimeReference)
-export class FollowPoint extends PoolableDrawable implements IAnimationTimeReference 
+export class FollowPoint extends PoolableDrawable implements IAnimationTimeReference
 {
   animationStartTime = new BindableNumber(0);
 
-  override get removeWhenNotAlive() 
+  override get removeWhenNotAlive()
   {
     return false;
   }
 
-  protected override load(dependencies: ReadonlyDependencyContainer) 
+  protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
 

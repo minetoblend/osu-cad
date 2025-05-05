@@ -4,12 +4,12 @@ import { Anchor, Axes, CompositeDrawable, EasingFunction, resolved } from "@osuc
 import { DrawableSlider } from "../../hitObjects/drawables/DrawableSlider";
 import type { Slider } from "../../hitObjects/Slider";
 
-export class LegacyFollowCircle extends CompositeDrawable 
+export class LegacyFollowCircle extends CompositeDrawable
 {
   @resolved(() => DrawableSlider)
   parentObject!: DrawableSlider;
 
-  constructor(animationContent: Drawable) 
+  constructor(animationContent: Drawable)
   {
     super();
 
@@ -21,7 +21,7 @@ export class LegacyFollowCircle extends CompositeDrawable
     this.internalChild = animationContent;
   }
 
-  protected override loadComplete() 
+  protected override loadComplete()
   {
     super.loadComplete();
 
@@ -30,7 +30,7 @@ export class LegacyFollowCircle extends CompositeDrawable
     this.applyCustomStateTransforms(this.parentObject);
   }
 
-  protected applyCustomStateTransforms(drawableObject: DrawableHitObject) 
+  protected applyCustomStateTransforms(drawableObject: DrawableHitObject)
   {
     this.applyTransformsAt(-Number.MAX_VALUE, true);
     this.clearTransformsAfter(-Number.MAX_VALUE, true);
@@ -39,13 +39,13 @@ export class LegacyFollowCircle extends CompositeDrawable
 
     const remainingTime = slider.duration;
 
-    if (slider.path.controlPoints.length === 0 || slider.path.expectedDistance <= 0) 
+    if (slider.path.controlPoints.length === 0 || slider.path.expectedDistance <= 0)
     {
       this.fadeOut();
       return;
     }
 
-    this.absoluteSequence({ time: slider.startTime, recursive: true }, () => 
+    this.absoluteSequence({ time: slider.startTime, recursive: true }, () =>
     {
       this.scaleTo(1)
         .scaleTo(2, Math.min(180, remainingTime), EasingFunction.Out);
@@ -53,14 +53,14 @@ export class LegacyFollowCircle extends CompositeDrawable
       this.fadeInFromZero(Math.min(60, remainingTime));
     });
 
-    this.absoluteSequence(slider.endTime, () => 
+    this.absoluteSequence(slider.endTime, () =>
     {
       this.scaleTo(1.6, 200, EasingFunction.Out)
         .fadeOut(200, EasingFunction.In);
     });
   }
 
-  public override dispose(isDisposing: boolean = true) 
+  public override dispose(isDisposing: boolean = true)
   {
     super.dispose(isDisposing);
 

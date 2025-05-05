@@ -3,9 +3,9 @@ import { Buffer, BufferUsage, Geometry } from "pixi.js";
 const placeHolderBufferData = new Float32Array(1);
 const placeHolderIndexData = new Uint32Array(1);
 
-export class OsucadBatchGeometry extends Geometry 
+export class OsucadBatchGeometry extends Geometry
 {
-  constructor() 
+  constructor()
   {
     const vertexSize = 6;
 

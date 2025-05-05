@@ -18,66 +18,66 @@ export type MarginPaddingOptionsVertical =
   }
   | { vertical: number };
 
-export class MarginPadding implements ILerp<MarginPadding> 
+export class MarginPadding implements ILerp<MarginPadding>
 {
   readonly left: number;
   readonly right: number;
   readonly top: number;
   readonly bottom: number;
 
-  constructor(options?: MarginPaddingOptions) 
+  constructor(options?: MarginPaddingOptions)
   {
-    if (typeof options === "number") 
+    if (typeof options === "number")
     {
       this.left = this.right = this.top = this.bottom = options;
     }
-    else if (options) 
+    else if (options)
     {
-      if ("horizontal" in options) 
+      if ("horizontal" in options)
       {
         this.left = this.right = options.horizontal;
       }
-      else 
+      else
       {
         this.left = options.left ?? 0;
         this.right = options.right ?? 0;
       }
 
-      if ("vertical" in options) 
+      if ("vertical" in options)
       {
         this.top = this.bottom = options.vertical;
       }
-      else 
+      else
       {
         this.top = options.top ?? 0;
         this.bottom = options.bottom ?? 0;
       }
     }
-    else 
+    else
     {
       this.left = this.right = this.top = this.bottom = 0;
     }
   }
 
-  get totalHorizontal() 
+  get totalHorizontal()
   {
     return this.left + this.right;
   }
 
-  get totalVertical() 
+  get totalVertical()
   {
     return this.top + this.bottom;
   }
 
   #total: Vec2 | null = null;
 
-  get total(): Vec2 
+  get total(): Vec2
   {
     this.#total ??= new Vec2(this.totalHorizontal, this.totalVertical);
     return this.#total;
   }
 
-  lerp(target: MarginPadding, t: number): MarginPadding 
+  lerp(target: MarginPadding, t: number): MarginPadding
   {
     return new MarginPadding({
       left: lerp(this.left, target.left, t),
@@ -87,7 +87,7 @@ export class MarginPadding implements ILerp<MarginPadding>
     });
   }
 
-  clone(): MarginPadding 
+  clone(): MarginPadding
   {
     return new MarginPadding({
       left: this.left,
@@ -97,26 +97,26 @@ export class MarginPadding implements ILerp<MarginPadding>
     });
   }
 
-  equals(other: MarginPadding): boolean 
+  equals(other: MarginPadding): boolean
   {
     return (
       this.left === other.left && this.right === other.right && this.top === other.top && this.bottom === other.bottom
     );
   }
 
-  isZero(): boolean 
+  isZero(): boolean
   {
     return this.left === 0 && this.right === 0 && this.top === 0 && this.bottom === 0;
   }
 
-  toString(): string 
+  toString(): string
   {
     return `MarginPadding(${this.left}, ${this.right}, ${this.top}, ${this.bottom})`;
   }
 
-  static from(options?: MarginPadding | MarginPaddingOptions): MarginPadding 
+  static from(options?: MarginPadding | MarginPaddingOptions): MarginPadding
   {
-    if (options instanceof MarginPadding) 
+    if (options instanceof MarginPadding)
     {
       return options;
     }

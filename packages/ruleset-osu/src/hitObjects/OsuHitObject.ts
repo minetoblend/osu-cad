@@ -2,7 +2,7 @@ import { BeatmapDifficultyInfo, HitObject, safeAssign } from "@osucad/core";
 import type { IVec2 } from "@osucad/framework";
 import { Bindable, BindableBoolean, BindableNumber, Vec2 } from "@osucad/framework";
 
-export interface OsuHitObjectOptions 
+export interface OsuHitObjectOptions
 {
   startTime?: number
   position?: IVec2
@@ -12,7 +12,7 @@ export interface OsuHitObjectOptions
   comboOffset?: number
 }
 
-export abstract class OsuHitObject extends HitObject 
+export abstract class OsuHitObject extends HitObject
 {
   static readonly OBJECT_RADIUS = 64;
 
@@ -26,7 +26,7 @@ export abstract class OsuHitObject extends HitObject
 
   static readonly PREEMPT_MAX = 1800;
 
-  protected constructor(options: OsuHitObjectOptions = {}) 
+  protected constructor(options: OsuHitObjectOptions = {})
   {
     super();
 
@@ -40,32 +40,32 @@ export abstract class OsuHitObject extends HitObject
   //#region position
   readonly positionBindable = new Bindable(Vec2.zero());
 
-  get position(): Vec2 
+  get position(): Vec2
   {
     return this.positionBindable.value;
   }
 
-  set position(value: IVec2) 
+  set position(value: IVec2)
   {
     this.positionBindable.value = Vec2.from(value);
   }
 
-  get x() 
+  get x()
   {
     return this.position.x;
   }
 
-  set x(value: number) 
+  set x(value: number)
   {
     this.position = this.position.withX(value);
   }
 
-  get y() 
+  get y()
   {
     return this.position.y;
   }
 
-  set y(value: number) 
+  set y(value: number)
   {
     this.position = this.position.withY(value);
   }
@@ -75,12 +75,12 @@ export abstract class OsuHitObject extends HitObject
   //#region combo
   readonly newComboBindable = new BindableBoolean();
 
-  get newCombo() 
+  get newCombo()
   {
     return this.newComboBindable.value;
   }
 
-  set newCombo(value) 
+  set newCombo(value)
   {
     this.newComboBindable.value = value;
   }
@@ -88,36 +88,36 @@ export abstract class OsuHitObject extends HitObject
   readonly comboOffsetBindable = new BindableNumber(0)
     .withMinValue(0);
 
-  get comboOffset() 
+  get comboOffset()
   {
     return this.comboOffsetBindable.value;
   }
 
-  set comboOffset(value) 
+  set comboOffset(value)
   {
     this.comboOffsetBindable.value = value;
   }
 
   readonly comboIndexBindable = new Bindable(0);
 
-  get comboIndex() 
+  get comboIndex()
   {
     return this.comboIndexBindable.value;
   }
 
-  set comboIndex(value) 
+  set comboIndex(value)
   {
     this.comboIndexBindable.value = value;
   }
 
   readonly indexInComboBindable = new Bindable(0);
 
-  get indexInCombo() 
+  get indexInCombo()
   {
     return this.indexInComboBindable.value;
   }
 
-  set indexInCombo(value) 
+  set indexInCombo(value)
   {
     this.indexInComboBindable.value = value;
   }
@@ -126,17 +126,17 @@ export abstract class OsuHitObject extends HitObject
 
   readonly scaleBindable = new Bindable(1);
 
-  get scale() 
+  get scale()
   {
     return this.scaleBindable.value;
   }
 
-  protected set scale(value) 
+  protected set scale(value)
   {
     this.scaleBindable.value = value;
   }
 
-  public override applyDefaults(difficulty: BeatmapDifficultyInfo) 
+  public override applyDefaults(difficulty: BeatmapDifficultyInfo)
   {
     super.applyDefaults(difficulty);
 
@@ -150,33 +150,33 @@ export abstract class OsuHitObject extends HitObject
   // #region stacking
   readonly stackHeightBindable = new Bindable(0);
 
-  get stackHeight() 
+  get stackHeight()
   {
     return this.stackHeightBindable.value;
   }
 
-  set stackHeight(value) 
+  set stackHeight(value)
   {
     this.stackHeightBindable.value = value;
   }
 
-  get stackOffset() 
+  get stackOffset()
   {
     return new Vec2(this.stackHeight * this.scale * -6.4);
   }
 
-  get stackedPosition() 
+  get stackedPosition()
   {
     return this.position.add(this.stackOffset);
   }
 
-  get endPosition() 
+  get endPosition()
   {
     // TODO
     return this.position;
   }
 
-  get stackedEndPosition() 
+  get stackedEndPosition()
   {
     return this.endPosition.add(this.stackOffset);
   }

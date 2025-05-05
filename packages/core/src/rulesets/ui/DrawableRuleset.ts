@@ -4,16 +4,16 @@ import type { HitObject } from "../hitObjects/HitObject";
 import type { Playfield } from "./Playfield";
 import type { PlayfieldAdjustmentContainer } from "./PlayfieldAdjustmentContainer";
 
-export abstract class DrawableRuleset extends Container 
+export abstract class DrawableRuleset extends Container
 {
-  protected constructor() 
+  protected constructor()
   {
     super({
       relativeSizeAxes: Axes.Both,
     });
   }
 
-  protected override load(dependencies: ReadonlyDependencyContainer) 
+  protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
 
@@ -32,12 +32,12 @@ export abstract class DrawableRuleset extends Container
 
   protected abstract createPlayfield(): Playfield;
 
-  addHitObject(hitObject: HitObject) 
+  addHitObject(hitObject: HitObject)
   {
     this.playfield.addHitObject(hitObject);
   }
 
-  removeHitObject(hitObject: HitObject) 
+  removeHitObject(hitObject: HitObject)
   {
     this.playfield.removeHitObject(hitObject);
   }

@@ -4,9 +4,9 @@ import { Axes } from "../../graphics/drawables/Axes";
 import { loadDrawable } from "../../graphics/drawables/Drawable";
 import { FramedClock } from "../../timing/FramedClock";
 
-describe("composite drawable layout", () => 
+describe("composite drawable layout", () =>
 {
-  it("correctly calculates child offset", () => 
+  it("correctly calculates child offset", () =>
   {
     const parent = Container.create({
       width: 100,
@@ -21,7 +21,7 @@ describe("composite drawable layout", () =>
     expect(parent.childOffset).toEqual({ x: 20, y: 30 });
   });
 
-  it("correctly calculates child size", () => 
+  it("correctly calculates child size", () =>
   {
     const parent = Container.create({
       width: 100,
@@ -36,7 +36,7 @@ describe("composite drawable layout", () =>
     expect(parent.childSize).toEqual({ x: 180, y: 60 });
   });
 
-  it("correctly positions children", () => 
+  it("correctly positions children", () =>
   {
     let child: Container;
     const parent = Container.create({
@@ -64,7 +64,7 @@ describe("composite drawable layout", () =>
     expect(child.drawNodePosition).toEqual({ x: 20, y: 30 });
   });
 
-  it("automatically updates children on invalidation", () => 
+  it("automatically updates children on invalidation", () =>
   {
     let child: Container;
 

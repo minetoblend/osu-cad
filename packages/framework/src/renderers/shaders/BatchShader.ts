@@ -12,9 +12,9 @@ import {
 import { generateTextureLodBatchBitGl } from "./generateTextureBatchBit";
 import { maskingBitGl } from "./maskingBit";
 
-export class BatchShader extends Shader 
+export class BatchShader extends Shader
 {
-  constructor(maxTextures: number) 
+  constructor(maxTextures: number)
   {
     const glProgram = compileHighShaderGlProgram({
       name: "batch",

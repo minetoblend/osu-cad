@@ -3,16 +3,16 @@ import { Cached } from "../../caching";
 import { Drawable, type DrawableOptions, Invalidation } from "../drawables/Drawable";
 import type { FontDefinition } from "./FontDefinition";
 
-export interface SpriteTextOptions extends DrawableOptions 
+export interface SpriteTextOptions extends DrawableOptions
 {
   text?: string;
   style?: TextStyle | TextStyleOptions;
   font?: FontDefinition;
 }
 
-export class SpriteText extends Drawable 
+export class SpriteText extends Drawable
 {
-  constructor(options: SpriteTextOptions = {}) 
+  constructor(options: SpriteTextOptions = {})
   {
     const { text, font, style, ...rest } = options;
 
@@ -22,15 +22,15 @@ export class SpriteText extends Drawable
 
     this.text = text ?? "";
 
-    if (style) 
+    if (style)
     {
       this.#textStyle = new TextStyle(style);
     }
-    else if (font) 
+    else if (font)
     {
       this.#textStyle = new TextStyle(font.style);
     }
-    else 
+    else
     {
       this.#textStyle = new TextStyle();
     }
@@ -49,7 +49,7 @@ export class SpriteText extends Drawable
 
   readonly #textDrawNode: BitmapText;
 
-  createDrawNode(): Container 
+  createDrawNode(): Container
   {
     return new Container();
   }
@@ -58,31 +58,31 @@ export class SpriteText extends Drawable
 
   #textStyle: TextStyle;
 
-  get style() 
+  get style()
   {
     return this.#textStyle;
   }
 
-  set style(value: TextStyle) 
+  set style(value: TextStyle)
   {
     this.#textStyle = value;
     this.#textDrawNode.style = value;
     this.#textBacking.invalidate();
   }
 
-  protected get textDrawNode() 
+  protected get textDrawNode()
   {
     return this.#textDrawNode;
   }
 
   #text: string = "";
 
-  get text() 
+  get text()
   {
     return this.#text;
   }
 
-  set text(value: string) 
+  set text(value: string)
   {
     if (value === this.#text)
       return;
@@ -93,11 +93,11 @@ export class SpriteText extends Drawable
     this.invalidate(Invalidation.DrawSize);
   }
 
-  override update() 
+  override update()
   {
     super.update();
 
-    if (!this.#textBacking.isValid) 
+    if (!this.#textBacking.isValid)
     {
       this.#textDrawNode.text = this.#text;
 
@@ -108,7 +108,7 @@ export class SpriteText extends Drawable
     }
   }
 
-  protected updateSize(width: number, height: number) 
+  protected updateSize(width: number, height: number)
   {
     this.width = width;
     this.height = height;

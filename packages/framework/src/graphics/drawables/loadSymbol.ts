@@ -1,4 +1,4 @@
-export function loadSymbol() 
+export function loadSymbol()
 {
   return Symbol("load");
 }

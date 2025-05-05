@@ -2,13 +2,13 @@ import type { IDisposable } from "../types";
 import type { AudioChannel } from "./AudioChannel";
 import type { AudioManager } from "./AudioManager";
 
-export abstract class AudioFilter implements IDisposable 
+export abstract class AudioFilter implements IDisposable
 {
   abstract createNode(manager: AudioManager): AudioNode;
 
   channel: AudioChannel | null = null;
 
-  connect(channel: AudioChannel, destination: AudioNode) 
+  connect(channel: AudioChannel, destination: AudioNode)
   {
     this.#node ??= this.createNode(channel.manager);
 
@@ -18,12 +18,12 @@ export abstract class AudioFilter implements IDisposable
 
   #node!: AudioNode;
 
-  get input(): AudioNode 
+  get input(): AudioNode
   {
     return this.#node;
   }
 
-  dispose(): void 
+  dispose(): void
   {
     this.#node?.disconnect();
   }

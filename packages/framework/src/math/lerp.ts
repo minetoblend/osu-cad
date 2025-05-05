@@ -1,11 +1,11 @@
 import { Color, type ColorSource } from "pixi.js";
 
-export function lerp(a: number, b: number, t: number): number 
+export function lerp(a: number, b: number, t: number): number
 {
   return a + (b - a) * t;
 }
 
-export function lerpColor(a: ColorSource, b: ColorSource, t: number): Color 
+export function lerpColor(a: ColorSource, b: ColorSource, t: number): Color
 {
   const colorA = new Color(a);
   const colorB = new Color(b);

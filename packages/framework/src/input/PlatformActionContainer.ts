@@ -6,22 +6,22 @@ import { GAME_HOST } from "../injectionTokens";
 import { KeyBindingContainer, SimultaneousBindingMode } from "./bindings/KeyBindingContainer";
 import { KeyCombinationMatchingMode } from "./bindings/KeyCombination";
 
-export class PlatformActionContainer extends KeyBindingContainer<PlatformAction> 
+export class PlatformActionContainer extends KeyBindingContainer<PlatformAction>
 {
   @resolved(GAME_HOST)
   protected host!: GameHost;
 
-  constructor() 
+  constructor()
   {
     super(SimultaneousBindingMode.None, KeyCombinationMatchingMode.Any);
   }
 
-  override get defaultKeyBindings(): IKeyBinding[] 
+  override get defaultKeyBindings(): IKeyBinding[]
   {
     return this.host.platformKeyBindings;
   }
 
-  protected override get prioritised(): boolean 
+  protected override get prioritised(): boolean
   {
     return true;
   }

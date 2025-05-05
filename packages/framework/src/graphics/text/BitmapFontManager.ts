@@ -12,7 +12,7 @@ let fontCount = 0;
  * But don't worry, if a character is requested that hasn't been generated yet, it will be created on the fly.
  * @memberof text
  */
-export interface BitmapFontInstallOptions 
+export interface BitmapFontInstallOptions
 {
   /** the name of the font, this will be the name you use in the fontFamily of text style to access this font */
   name?: string;
@@ -59,7 +59,7 @@ export interface BitmapFontInstallOptions
  *
  * const title = new BitmapText({ text: 'This is the title', style: { fontFamily: 'TitleFont' }});
  */
-class BitmapFontManagerClass 
+class BitmapFontManagerClass
 {
   /**
    * This character set includes all the letters in the alphabet (both lower- and upper- case).
@@ -103,7 +103,7 @@ class BitmapFontManagerClass
    * @param text - The text to get the font for
    * @param style - The style to use
    */
-  public getFont(text: string, style: TextStyle, worldScale: number = 1): BitmapFont 
+  public getFont(text: string, style: TextStyle, worldScale: number = 1): BitmapFont
   {
     let fontFamilyKey = `${style.fontFamily as string}-bitmap`;
     let overrideFill = true;
@@ -113,12 +113,12 @@ class BitmapFontManagerClass
     const useAlternativeSize = ((Math.log2(size) % 1)) > 0.5;
 
     // assuming there is no texture we can use a tint!
-    if (style._fill.fill && !style._stroke) 
+    if (style._fill.fill && !style._stroke)
     {
       fontFamilyKey += style._fill.fill.styleKey;
       overrideFill = false;
     }
-    else if (style._stroke || style.dropShadow) 
+    else if (style._stroke || style.dropShadow)
     {
       // if there is a stoke, we need to use the style key as this the font generated cannot be tinted
       // due to the fact the font has at least two colors.
@@ -140,7 +140,7 @@ class BitmapFontManagerClass
     console.log(style.fontSize);
 
     // first get us the the right font...
-    if (!Cache.has(fontFamilyKey)) 
+    if (!Cache.has(fontFamilyKey))
     {
       const fnt = new DynamicBitmapFont({
         style,
@@ -152,12 +152,12 @@ class BitmapFontManagerClass
       fontCount++;
 
       // warn users if they have created too many dynamic fonts
-      if (fontCount > 50) 
+      if (fontCount > 50)
       {
         warn("BitmapText", `You have dynamically created ${fontCount} bitmap fonts, this can be inefficient. Try pre installing your font styles using \`BitmapFont.install({name:"style1", style})\``);
       }
 
-      fnt.once("destroy", () => 
+      fnt.once("destroy", () =>
       {
         fontCount--;
         Cache.remove(fontFamilyKey);
@@ -182,7 +182,7 @@ class BitmapFontManagerClass
    * @param style - The style to use
    * @param trimEnd - Whether to ignore whitespaces at the end of each line
    */
-  public getLayout(text: string, style: TextStyle, trimEnd: boolean = true): BitmapTextLayoutData 
+  public getLayout(text: string, style: TextStyle, trimEnd: boolean = true): BitmapTextLayoutData
   {
     const bitmapFont = this.getFont(text, style);
 
@@ -199,7 +199,7 @@ class BitmapFontManagerClass
     text: string,
     style: TextStyle,
     trimEnd: boolean = true,
-  ): { width: number; height: number; scale: number; offsetY: number } 
+  ): { width: number; height: number; scale: number; offsetY: number }
   {
     return this.getLayout(text, style, trimEnd);
   }
@@ -224,11 +224,11 @@ class BitmapFontManagerClass
   /** @deprecated since 7.0.0 */
   public install(name: string, style?: TextStyle | TextStyleOptions, options?: BitmapFontInstallOptions): BitmapFont;
 
-  public install(...args: [string | BitmapFontInstallOptions, (TextStyle | TextStyleOptions)?, BitmapFontInstallOptions?]): BitmapFont 
+  public install(...args: [string | BitmapFontInstallOptions, (TextStyle | TextStyleOptions)?, BitmapFontInstallOptions?]): BitmapFont
   {
     let options = args[0] as BitmapFontInstallOptions;
 
-    if (typeof options === "string") 
+    if (typeof options === "string")
     {
       options = {
         name: options,
@@ -247,7 +247,7 @@ class BitmapFontManagerClass
 
     const name = options?.name;
 
-    if (!name) 
+    if (!name)
     {
       throw new Error("[BitmapFontManager] Property `name` is required.");
     }
@@ -282,12 +282,12 @@ class BitmapFontManagerClass
    * Uninstalls a bitmap font from the cache.
    * @param {string} name - The name of the bitmap font to uninstall.
    */
-  public uninstall(name: string) 
+  public uninstall(name: string)
   {
     const cacheKey = `${name}-bitmap`;
     const font = Cache.get<BitmapFont>(cacheKey);
 
-    if (font) 
+    if (font)
     {
       font.destroy();
     }

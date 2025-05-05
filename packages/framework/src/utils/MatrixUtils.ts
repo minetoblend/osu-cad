@@ -1,9 +1,9 @@
 import type { Matrix } from "pixi.js";
 import { Vec2 } from "../math/Vec2";
 
-export class MatrixUtils 
+export class MatrixUtils
 {
-  static extractScale(matrix: Matrix): Vec2 
+  static extractScale(matrix: Matrix): Vec2
   {
     const { a, b, c, d } = matrix;
 

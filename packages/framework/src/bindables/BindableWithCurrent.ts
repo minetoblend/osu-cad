@@ -1,22 +1,22 @@
 import { Bindable } from "./Bindable";
 
-export class BindableWithCurrent<T> extends Bindable<T> 
+export class BindableWithCurrent<T> extends Bindable<T>
 {
-  constructor(defaultValue: T) 
+  constructor(defaultValue: T)
   {
     super(defaultValue);
   }
 
   #currentBound?: Bindable<T>;
 
-  get current() 
+  get current()
   {
     return this;
   }
 
-  set current(value: Bindable<T>) 
+  set current(value: Bindable<T>)
   {
-    if (this.#currentBound) 
+    if (this.#currentBound)
     {
       this.unbindFrom(this.#currentBound);
     }
@@ -24,9 +24,9 @@ export class BindableWithCurrent<T> extends Bindable<T>
     this.bindTo((this.#currentBound = value));
   }
 
-  unbindFromCurrent() 
+  unbindFromCurrent()
   {
-    if (this.#currentBound) 
+    if (this.#currentBound)
     {
       this.unbindFrom(this.#currentBound);
       this.#currentBound = undefined;

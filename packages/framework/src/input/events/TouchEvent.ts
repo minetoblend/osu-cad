@@ -4,9 +4,9 @@ import type { IInputReceiver } from "../IInputReceiver";
 import type { InputState } from "../state/InputState";
 import { UIEvent } from "./UIEvent";
 
-export class TouchEvent extends UIEvent 
+export class TouchEvent extends UIEvent
 {
-  constructor(state: InputState, handler: keyof IInputReceiver, touch: Touch, screenSpaceTouchDownPosition: Vec2 | null = null) 
+  constructor(state: InputState, handler: keyof IInputReceiver, touch: Touch, screenSpaceTouchDownPosition: Vec2 | null = null)
   {
     super(state, handler);
 
@@ -18,7 +18,7 @@ export class TouchEvent extends UIEvent
 
   readonly screenSpaceTouchDownPosition: Vec2 | null;
 
-  isActive(touch: Touch) 
+  isActive(touch: Touch)
   {
     return this.state.touch.isActive(touch.source);
   }

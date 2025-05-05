@@ -1,15 +1,15 @@
 import type { Vec2 } from "../../math";
 
-export class Touch 
+export class Touch
 {
   constructor(
     readonly source: TouchSource,
     readonly position: Vec2,
-  ) 
+  )
   {}
 }
 
-export enum TouchSource 
+export enum TouchSource
 {
   Touch1 = 0,
   Touch2 = 1,

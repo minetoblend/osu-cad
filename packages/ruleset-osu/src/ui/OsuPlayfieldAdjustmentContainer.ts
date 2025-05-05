@@ -2,9 +2,9 @@ import { PlayfieldAdjustmentContainer } from "@osucad/core";
 import type { Drawable } from "@osucad/framework";
 import { Anchor, Container, DrawSizePreservingFillContainer } from "@osucad/framework";
 
-export class OsuPlayfieldAdjustmentContainer extends PlayfieldAdjustmentContainer 
+export class OsuPlayfieldAdjustmentContainer extends PlayfieldAdjustmentContainer
 {
-  constructor() 
+  constructor()
   {
     super();
 
@@ -28,7 +28,7 @@ export class OsuPlayfieldAdjustmentContainer extends PlayfieldAdjustmentContaine
 
   readonly _content: Container;
 
-  override get content(): Container<Drawable> 
+  override get content(): Container<Drawable>
   {
     return this._content;
   }

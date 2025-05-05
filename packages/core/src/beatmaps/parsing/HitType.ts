@@ -1,4 +1,4 @@
-export enum HitType 
+export enum HitType
 {
   Normal = 1,
   Slider = 2,

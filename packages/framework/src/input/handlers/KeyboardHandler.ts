@@ -7,11 +7,11 @@ import { KeyboardKeyInput } from "../stateChanges/KeyboardKeyInput";
 import { TextInputSource } from "../TextInputSource";
 import { InputHandler } from "./InputHandler";
 
-export class KeyboardHandler extends InputHandler 
+export class KeyboardHandler extends InputHandler
 {
   #textInputSource!: TextInputSource;
 
-  override initialize(host: GameHost): boolean 
+  override initialize(host: GameHost): boolean
   {
     if (!super.initialize(host))
       return false;
@@ -19,15 +19,15 @@ export class KeyboardHandler extends InputHandler
     this.#textInputSource = host.dependencies.resolve(TextInputSource);
 
     this.enabled.addOnChangeListener(
-        (enabled) => 
+        (enabled) =>
         {
-          if (enabled) 
+          if (enabled)
           {
             window.addEventListener("keydown", this.#handleKeyDown);
             window.addEventListener("keyup", this.#handleKeyUp);
             window.addEventListener("blur", this.#handleBlur);
           }
-          else 
+          else
           {
             window.removeEventListener("keydown", this.#handleKeyDown);
             window.removeEventListener("keyup", this.#handleKeyUp);
@@ -40,11 +40,11 @@ export class KeyboardHandler extends InputHandler
     return true;
   }
 
-  #getKey(event: KeyboardEvent): Key | null 
+  #getKey(event: KeyboardEvent): Key | null
   {
     const key = Key[event.code as keyof typeof Key];
 
-    if (key === undefined) 
+    if (key === undefined)
     {
       return null;
     }
@@ -58,7 +58,7 @@ export class KeyboardHandler extends InputHandler
 
   #isMac = navigator.userAgent.includes("Mac");
 
-  #handleKeyDown = (event: KeyboardEvent) => 
+  #handleKeyDown = (event: KeyboardEvent) =>
   {
     if (this.#shouldPreventDefault(event))
       event.preventDefault();
@@ -68,18 +68,18 @@ export class KeyboardHandler extends InputHandler
 
     const key = this.#getKey(event);
 
-    if (key === Key.MetaLeft) 
+    if (key === Key.MetaLeft)
     {
       this.#superPressed = true;
     }
 
-    if (key !== null) 
+    if (key !== null)
     {
       this.#pressedKeys.add(key);
       this.#enqueueInput(KeyboardKeyInput.create(key, true));
 
       // On Mac OS we don't receive key up events while super key is pressed, so we need to simulate them
-      if (this.#isMac && this.#superPressed && key !== Key.MetaLeft) 
+      if (this.#isMac && this.#superPressed && key !== Key.MetaLeft)
       {
         if (
           key === Key.ShiftLeft
@@ -88,7 +88,7 @@ export class KeyboardHandler extends InputHandler
           || key === Key.ControlRight
           || key === Key.AltLeft
           || key === Key.AltRight
-        ) 
+        )
         {
           return;
         }
@@ -98,10 +98,10 @@ export class KeyboardHandler extends InputHandler
     }
   };
 
-  #shouldPreventDefault(event: KeyboardEvent): boolean 
+  #shouldPreventDefault(event: KeyboardEvent): boolean
   {
     // We generally don't want to prevent the default behavior if there is active text input
-    if (this.#textInputSource.isActive) 
+    if (this.#textInputSource.isActive)
     {
       if (event.key === Key.Tab)
         return true;
@@ -118,18 +118,18 @@ export class KeyboardHandler extends InputHandler
     return true;
   }
 
-  #handleKeyUp = (event: KeyboardEvent) => 
+  #handleKeyUp = (event: KeyboardEvent) =>
   {
     event.preventDefault();
 
     const key = this.#getKey(event);
 
-    if (key === Key.MetaLeft) 
+    if (key === Key.MetaLeft)
     {
       this.#superPressed = false;
     }
 
-    if (key !== null) 
+    if (key !== null)
     {
       this.#pressedKeys.delete(key);
       this.#enqueueInput(KeyboardKeyInput.create(key, false));
@@ -138,12 +138,12 @@ export class KeyboardHandler extends InputHandler
 
   onInput = new Action();
 
-  #enqueueInput(input: IInput) 
+  #enqueueInput(input: IInput)
   {
     this.pendingInputs.push(input);
   }
 
-  #handleBlur = () => 
+  #handleBlur = () =>
   {
     const pressedKeys = [...this.#pressedKeys];
     this.#enqueueInput(new KeyboardKeyInput(pressedKeys.map(key => new ButtonInputEntry(key, false))));

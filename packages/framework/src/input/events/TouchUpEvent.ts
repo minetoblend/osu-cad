@@ -3,13 +3,13 @@ import type { Touch } from "../handlers/Touch";
 import type { InputState } from "../state/InputState";
 import { TouchEvent } from "./TouchEvent";
 
-export class TouchUpEvent extends TouchEvent 
+export class TouchUpEvent extends TouchEvent
 {
   constructor(
     state: InputState,
     touch: Touch,
     screenSpaceTouchDownPosition: Vec2 | null,
-  ) 
+  )
   {
     super(state, "onTouchUp", touch, screenSpaceTouchDownPosition);
   }

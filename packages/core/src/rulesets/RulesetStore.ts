@@ -1,12 +1,12 @@
 import type { Ruleset } from "./Ruleset";
 
-export class RulesetStore 
+export class RulesetStore
 {
   private readonly _rulesets: Ruleset[] = [];
 
-  register(ruleset: Ruleset) 
+  register(ruleset: Ruleset)
   {
-    if (this.get({ id: ruleset.id })) 
+    if (this.get({ id: ruleset.id }))
     {
       console.warn(`A ruleset with id ${ruleset.id} has already been registered.`);
       return false;
@@ -16,7 +16,7 @@ export class RulesetStore
     return true;
   }
 
-  get(lookup: RulesetLookup): Ruleset | undefined 
+  get(lookup: RulesetLookup): Ruleset | undefined
   {
     if ("id" in lookup)
       return this._rulesets.find(it => it.id === lookup.id);

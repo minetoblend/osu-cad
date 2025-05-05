@@ -4,26 +4,26 @@ import { LifetimeBoundaryCrossingDirection } from "./LifetimeBoundaryCrossingDir
 import { LifetimeBoundaryKind } from "./LifetimeBoundaryKind";
 import { LifetimeEntryState } from "./LifetimeEntryState";
 
-export class LifetimeEntryManager 
+export class LifetimeEntryManager
 {
   #newEntries = new List<LifetimeEntry>(0);
 
   #activeEntries = new List<LifetimeEntry>(0);
 
-  get activeEntries() 
+  get activeEntries()
   {
     return this.#activeEntries;
   }
 
   #futureEntries = new SortedList({
-    compare(a: LifetimeEntry, b: LifetimeEntry) 
+    compare(a: LifetimeEntry, b: LifetimeEntry)
     {
       return a.lifetimeStart - b.lifetimeStart;
     },
   });
 
   #pastEntries = new SortedList({
-    compare(a: LifetimeEntry, b: LifetimeEntry) 
+    compare(a: LifetimeEntry, b: LifetimeEntry)
     {
       return a.lifetimeEnd - b.lifetimeEnd;
     },
@@ -39,7 +39,7 @@ export class LifetimeEntryManager
 
   readonly entryCrossedBoundary = new Action<[LifetimeEntry, LifetimeBoundaryKind, LifetimeBoundaryCrossingDirection]>();
 
-  addEntry(entry: LifetimeEntry) 
+  addEntry(entry: LifetimeEntry)
   {
     entry.requestLifetimeUpdate.addListener(this.#requestLifetimeUpdate);
     entry.childId = ++this.#currentChildId;
@@ -48,12 +48,12 @@ export class LifetimeEntryManager
     this.#newEntries.push(entry);
   }
 
-  removeEntry(entry: LifetimeEntry) 
+  removeEntry(entry: LifetimeEntry)
   {
     entry.requestLifetimeUpdate.removeListener(this.#requestLifetimeUpdate);
 
     let removed = false;
-    switch (entry.state) 
+    switch (entry.state)
     {
     case LifetimeEntryState.New:
       removed = this.#newEntries.remove(entry);
@@ -85,24 +85,24 @@ export class LifetimeEntryManager
     return true;
   }
 
-  clearEntries() 
+  clearEntries()
   {
-    for (const entry of this.#newEntries) 
+    for (const entry of this.#newEntries)
     {
       entry.requestLifetimeUpdate.removeListener(this.#requestLifetimeUpdate);
       entry.childId = 0;
     }
-    for (const entry of this.#activeEntries) 
+    for (const entry of this.#activeEntries)
     {
       entry.requestLifetimeUpdate.removeListener(this.#requestLifetimeUpdate);
       entry.childId = 0;
     }
-    for (const entry of this.#futureEntries) 
+    for (const entry of this.#futureEntries)
     {
       entry.requestLifetimeUpdate.removeListener(this.#requestLifetimeUpdate);
       entry.childId = 0;
     }
-    for (const entry of this.#pastEntries) 
+    for (const entry of this.#pastEntries)
     {
       entry.requestLifetimeUpdate.removeListener(this.#requestLifetimeUpdate);
       entry.childId = 0;
@@ -114,20 +114,20 @@ export class LifetimeEntryManager
     this.#pastEntries.clear();
   }
 
-  #requestLifetimeUpdate = (entry: LifetimeEntry) => 
+  #requestLifetimeUpdate = (entry: LifetimeEntry) =>
   {
     const futureOrPastSet = this.#futureOrPastEntries(entry.state);
 
-    if (futureOrPastSet?.remove(entry)) 
+    if (futureOrPastSet?.remove(entry))
     {
       // Enqueue the entry to be processed in the next Update().
       this.#newEntries.push(entry);
     }
   };
 
-  #futureOrPastEntries(state: LifetimeEntryState): SortedList<LifetimeEntry> | null 
+  #futureOrPastEntries(state: LifetimeEntryState): SortedList<LifetimeEntry> | null
   {
-    switch (state) 
+    switch (state)
     {
     case LifetimeEntryState.Future:
       return this.#futureEntries;
@@ -140,20 +140,20 @@ export class LifetimeEntryManager
     }
   }
 
-  update(startTime: number, endTime: number = startTime): boolean 
+  update(startTime: number, endTime: number = startTime): boolean
   {
     endTime = Math.max(endTime, startTime);
 
     let aliveEntriesChanged = false;
 
-    for (const entry of this.#newEntries) 
+    for (const entry of this.#newEntries)
     {
       if (this.#updateChildEntry(entry, startTime, endTime, true, true))
         aliveEntriesChanged = true;
     }
     this.#newEntries.clear();
 
-    while (this.#futureEntries.length > 0) 
+    while (this.#futureEntries.length > 0)
     {
       const entry = this.#futureEntries.first!;
       console.assert(entry.state === LifetimeEntryState.Future, `Expected entry to be in the future set, but was in state ${entry.state}.`);
@@ -166,7 +166,7 @@ export class LifetimeEntryManager
         aliveEntriesChanged = true;
     }
 
-    while (this.#pastEntries.length > 0) 
+    while (this.#pastEntries.length > 0)
     {
       const entry = this.#pastEntries.last!;
       console.assert(entry.state === LifetimeEntryState.Past, `Expected entry to be in the past set, but was in state ${entry.state}.`);
@@ -179,7 +179,7 @@ export class LifetimeEntryManager
         aliveEntriesChanged = true;
     }
 
-    for (const entry of this.#activeEntries) 
+    for (const entry of this.#activeEntries)
     {
       if (this.#updateChildEntry(entry, startTime, endTime, false, false))
         aliveEntriesChanged = true;
@@ -187,7 +187,7 @@ export class LifetimeEntryManager
 
     this.#activeEntries.removeAll(e => e.state !== LifetimeEntryState.Current);
 
-    while (this.#eventQueue.length !== 0) 
+    while (this.#eventQueue.length !== 0)
     {
       const entry = this.#eventQueue.shift()!;
       this.entryCrossedBoundary.emit(entry);
@@ -202,14 +202,14 @@ export class LifetimeEntryManager
     endTime: number,
     isNewEntry: boolean,
     mutateActiveEntries: boolean,
-  ) 
+  )
   {
     const oldState = entry.state;
 
     const newState = this.#getState(entry, startTime, endTime);
     console.assert(newState !== LifetimeEntryState.New);
 
-    if (newState === oldState) 
+    if (newState === oldState)
     {
       // If the state hasn't changed, then there's two possibilities:
       // 1. The entry was in the past/future sets and a lifetime change was requested. The entry needs to be added back to the past/future sets.
@@ -225,7 +225,7 @@ export class LifetimeEntryManager
 
     let aliveEntriesChanged = false;
 
-    if (newState === LifetimeEntryState.Current) 
+    if (newState === LifetimeEntryState.Current)
     {
       if (mutateActiveEntries)
         this.#activeEntries.push(entry);
@@ -233,7 +233,7 @@ export class LifetimeEntryManager
       this.entryBecameAlive.emit(entry);
       aliveEntriesChanged = true;
     }
-    else if (oldState === LifetimeEntryState.Current) 
+    else if (oldState === LifetimeEntryState.Current)
     {
       if (mutateActiveEntries)
         this.#activeEntries.remove(entry);
@@ -250,7 +250,7 @@ export class LifetimeEntryManager
     return aliveEntriesChanged;
   }
 
-  #getState(entry: LifetimeEntry, startTime: number, endTime: number): LifetimeEntryState 
+  #getState(entry: LifetimeEntry, startTime: number, endTime: number): LifetimeEntryState
   {
     if (endTime < entry.lifetimeStart)
       return LifetimeEntryState.Future;
@@ -261,9 +261,9 @@ export class LifetimeEntryManager
     return LifetimeEntryState.Current;
   }
 
-  #enqueueEvents(entry: LifetimeEntry, oldState: LifetimeEntryState, newState: LifetimeEntryState) 
+  #enqueueEvents(entry: LifetimeEntry, oldState: LifetimeEntryState, newState: LifetimeEntryState)
   {
-    switch (oldState) 
+    switch (oldState)
     {
     case LifetimeEntryState.Future:
       this.#eventQueue.push([entry, LifetimeBoundaryKind.Start, LifetimeBoundaryCrossingDirection.Forward]);

@@ -5,21 +5,21 @@ import type { InputManager } from "./InputManager";
 import type { InputState } from "./state/InputState";
 import { ButtonStateChangeKind } from "./stateChanges/events/ButtonStateChangeKind";
 
-export abstract class ButtonEventManager<TButton> 
+export abstract class ButtonEventManager<TButton>
 {
-  handleButtonStateChange(state: InputState, kind: ButtonStateChangeKind) 
+  handleButtonStateChange(state: InputState, kind: ButtonStateChangeKind)
   {
-    if (kind === ButtonStateChangeKind.Pressed) 
+    if (kind === ButtonStateChangeKind.Pressed)
     {
       this.#handleButtonDown(state);
     }
-    else 
+    else
     {
       this.#handleButtonUp(state);
     }
   }
 
-  constructor(public button: TButton) 
+  constructor(public button: TButton)
   {}
 
   inputManager!: InputManager;
@@ -27,12 +27,12 @@ export abstract class ButtonEventManager<TButton>
 
   buttonDownInputQueue: Drawable[] | null = null;
 
-  #handleButtonDown(state: InputState): boolean 
+  #handleButtonDown(state: InputState): boolean
   {
     const inputQueue = this.getInputQueue();
     const handledBy = this.handleButtonDown(state, inputQueue);
 
-    if (handledBy !== null) 
+    if (handledBy !== null)
     {
       // only drawables up to the one that handled mouse down should handle mouse up, so remove all subsequent drawables from the queue (for future use).
       const count = inputQueue.indexOf(handledBy) + 1;
@@ -46,7 +46,7 @@ export abstract class ButtonEventManager<TButton>
 
   abstract handleButtonDown(state: InputState, targets: List<Drawable>): Drawable | null;
 
-  #handleButtonUp(state: InputState) 
+  #handleButtonUp(state: InputState)
   {
     if (this.buttonDownInputQueue === null)
       return;
@@ -60,13 +60,13 @@ export abstract class ButtonEventManager<TButton>
 
   abstract handleButtonUp(state: InputState, targets: Drawable[]): void;
 
-  protected propagateButtonEvent(drawables: Iterable<Drawable>, e: UIEvent): Drawable | null 
+  protected propagateButtonEvent(drawables: Iterable<Drawable>, e: UIEvent): Drawable | null
   {
     let handledBy: Drawable | null = null;
 
-    for (const target of drawables) 
+    for (const target of drawables)
     {
-      if (target.triggerEvent(e)) 
+      if (target.triggerEvent(e))
       {
         handledBy = target;
         break;

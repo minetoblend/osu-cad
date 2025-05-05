@@ -1,4 +1,4 @@
-export enum OsuSkinComponents 
+export enum OsuSkinComponents
 {
   CirclePiece = "CirclePiece",
   SliderHead = "SliderHead",

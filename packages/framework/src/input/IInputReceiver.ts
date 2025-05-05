@@ -18,7 +18,7 @@ import type { TouchDownEvent } from "./events/TouchDownEvent";
 import type { TouchMoveEvent } from "./events/TouchMoveEvent";
 import type { TouchUpEvent } from "./events/TouchUpEvent";
 
-export interface IInputReceiver 
+export interface IInputReceiver
 {
   onMouseMove?: (e: MouseMoveEvent) => boolean;
   onHover?: (e: HoverEvent) => boolean;

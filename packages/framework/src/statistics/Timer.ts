@@ -1,31 +1,31 @@
-export class Timer 
+export class Timer
 {
   total = 0;
 
-  start() 
+  start()
   {
     return performance.now();
   }
 
-  stop(start: number) 
+  stop(start: number)
   {
     this.total += performance.now() - start;
   }
 
-  clear() 
+  clear()
   {
     this.total = 0;
   }
 
-  measure<T>(fn: () => T): T 
+  measure<T>(fn: () => T): T
   {
     const start = performance.now();
 
-    try 
+    try
     {
       return fn();
     }
-    finally 
+    finally
     {
       this.total += performance.now() - start;
     }

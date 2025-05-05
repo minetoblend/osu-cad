@@ -4,9 +4,9 @@ import { Axes } from "../../graphics/drawables/Axes";
 import { loadDrawable } from "../../graphics/drawables/Drawable";
 import { FramedClock } from "../../timing/FramedClock";
 
-describe("drawable layout", () => 
+describe("drawable layout", () =>
 {
-  it("relatively sizes itself", () => 
+  it("relatively sizes itself", () =>
   {
     let child1: Container;
     let child2: Container;
@@ -60,7 +60,7 @@ describe("drawable layout", () =>
     expect(child4.drawSize).toEqual({ x: 150, y: 100 });
   });
 
-  it("relatively sizes itself with a parent that has a relative size", () => 
+  it("relatively sizes itself with a parent that has a relative size", () =>
   {
     let a: Container;
     let b: Container;
@@ -109,7 +109,7 @@ describe("drawable layout", () =>
     expect(c.drawSize).toEqual({ x: 100, y: 100 });
   });
 
-  it("relatively positions itself", () => 
+  it("relatively positions itself", () =>
   {
     let child1: Container;
     let child2: Container;
@@ -162,7 +162,7 @@ describe("drawable layout", () =>
     expect(child4.drawPosition).toEqual({ x: 150, y: 100 });
   });
 
-  it("automatically updates draw node transform on invalidation", () => 
+  it("automatically updates draw node transform on invalidation", () =>
   {
     const drawable = Container.create({
       x: 50,

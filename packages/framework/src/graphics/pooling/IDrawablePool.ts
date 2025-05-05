@@ -1,6 +1,6 @@
 import type { PoolableDrawable } from "./PoolableDrawable";
 
-export interface IDrawablePool 
+export interface IDrawablePool
 {
   get: (setupAction?: (d: PoolableDrawable) => void) => PoolableDrawable;
 

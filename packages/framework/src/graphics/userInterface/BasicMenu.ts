@@ -5,36 +5,36 @@ import { Anchor, Direction } from "../drawables";
 import { SpriteText } from "../text";
 import { DrawableMenuItem, Menu } from "./Menu";
 
-export class BasicMenu extends Menu 
+export class BasicMenu extends Menu
 {
-  constructor(direction: Direction, topLevelMenu = false) 
+  constructor(direction: Direction, topLevelMenu = false)
   {
     super(direction, topLevelMenu);
 
     this.backgroundColor = "rgb(40, 65, 82)";
   }
 
-  protected override createSubmenu(): Menu 
+  protected override createSubmenu(): Menu
   {
     return new BasicMenu(Direction.Vertical).with({
       anchor: this.direction === Direction.Horizontal ? Anchor.BottomLeft : Anchor.TopRight,
     });
   }
 
-  protected override createDrawableMenuItem(item: MenuItem): DrawableMenuItem 
+  protected override createDrawableMenuItem(item: MenuItem): DrawableMenuItem
   {
     return new BasicDrawableMenuItem(item);
   }
 
-  protected override createScrollContainer(direction: Direction): ScrollContainer 
+  protected override createScrollContainer(direction: Direction): ScrollContainer
   {
     return new BasicScrollContainer(direction);
   }
 }
 
-class BasicDrawableMenuItem extends DrawableMenuItem 
+class BasicDrawableMenuItem extends DrawableMenuItem
 {
-  constructor(item: MenuItem) 
+  constructor(item: MenuItem)
   {
     super(item);
 
@@ -42,7 +42,7 @@ class BasicDrawableMenuItem extends DrawableMenuItem
     this.backgroundColorHover = "rgb(61, 98, 106)";
   }
 
-  override createContent(): Drawable 
+  override createContent(): Drawable
   {
     return new SpriteText({
       anchor: Anchor.CenterLeft,

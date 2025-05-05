@@ -4,7 +4,7 @@ import { barycentricLagrange, barycentricWeights } from "./Interpolation";
 /**
  * Ported from https://github.com/kionell/osu-classes/blob/c2e0fc184f5603cdf8d5d6240d437ec0a0499a91/src/Objects/Path/PathApproximator.ts
  */
-export class PathApproximator 
+export class PathApproximator
 {
   static readonly BEZIER_TOLERANCE = Math.fround(0.5);
   static readonly CIRCULAR_ARC_TOLERANCE = Math.fround(0.1);
@@ -20,12 +20,12 @@ export class PathApproximator
    * @param controlPoints The control points of the path.
    * @returns A list of vectors representing the piecewise-linear approximation.
    */
-  static approximateBezier(controlPoints: Vec2[]): Vec2[] 
+  static approximateBezier(controlPoints: Vec2[]): Vec2[]
   {
     return this.approximateBSpline(controlPoints);
   }
 
-  static approximateBSpline(controlPoints: Vec2[], p = 0): Vec2[] 
+  static approximateBSpline(controlPoints: Vec2[], p = 0): Vec2[]
   {
     const output = new List<Vec2>(100);
     const n = controlPoints.length - 1;
@@ -38,19 +38,19 @@ export class PathApproximator
 
     const points = controlPoints.slice();
 
-    if (p > 0 && p < n) 
+    if (p > 0 && p < n)
     {
       // Subdivide B-spline into bezier control points at knots.
-      for (let i = 0; i < n - p; ++i) 
+      for (let i = 0; i < n - p; ++i)
       {
         const subBezier: Vec2[] = [points[i]];
 
         // Destructively insert the knot p-1 times via Boehm's algorithm.
-        for (let j = 0; j < p - 1; ++j) 
+        for (let j = 0; j < p - 1; ++j)
         {
           subBezier[j + 1] = points[i + 1];
 
-          for (let k = 1; k < p - j; ++k) 
+          for (let k = 1; k < p - j; ++k)
           {
             const l = Math.min(k, n - p - i);
 
@@ -69,7 +69,7 @@ export class PathApproximator
       // Reverse the stack so elements can be accessed in order.
       toFlatten.reverse();
     }
-    else 
+    else
     {
       // B-spline subdivision unnecessary, degenerate to single bezier.
       p = n;
@@ -89,11 +89,11 @@ export class PathApproximator
 
     const leftChild = subdivisionBuffer2;
 
-    while (toFlatten.length > 0) 
+    while (toFlatten.length > 0)
     {
       const parent = toFlatten.pop() || [];
 
-      if (this._bezierIsFlatEnough(parent)) 
+      if (this._bezierIsFlatEnough(parent))
       {
         /**
          * If the control points we currently operate on are sufficiently "flat", we use
@@ -119,7 +119,7 @@ export class PathApproximator
        * We re-use the buffer of the parent for one of the children,
        * so that we save one allocation per iteration.
        */
-      for (let i = 0; i < p + 1; ++i) 
+      for (let i = 0; i < p + 1; ++i)
       {
         parent[i] = leftChild[i];
       }
@@ -138,12 +138,12 @@ export class PathApproximator
    * @param controlPoints The control points of the path.
    * @returns A list of vectors representing the piecewise-linear approximation.
    */
-  static approximateCatmull(controlPoints: Vec2[]): Vec2[] 
+  static approximateCatmull(controlPoints: Vec2[]): Vec2[]
   {
     const output = [];
     const controlPointsLength = controlPoints.length;
 
-    for (let i = 0; i < controlPointsLength - 1; i++) 
+    for (let i = 0; i < controlPointsLength - 1; i++)
     {
       const v1 = i > 0 ? controlPoints[i - 1] : controlPoints[i];
       const v2 = controlPoints[i];
@@ -155,7 +155,7 @@ export class PathApproximator
           ? controlPoints[i + 2]
           : v3.add(v3).sub(v2);
 
-      for (let c = 0; c < PathApproximator.CATMULL_DETAIL; c++) 
+      for (let c = 0; c < PathApproximator.CATMULL_DETAIL; c++)
       {
         output.push(
             PathApproximator._catmullFindPoint(v1, v2, v3, v4, Math.fround(Math.fround(c) / PathApproximator.CATMULL_DETAIL)),
@@ -175,11 +175,11 @@ export class PathApproximator
    * @param controlPoints The control points of the path.
    * @returns A list of vectors representing the piecewise-linear approximation.
    */
-  static approximateCircularArc(controlPoints: Vec2[]): Vec2[] 
+  static approximateCircularArc(controlPoints: Vec2[]): Vec2[]
   {
     const pr = this._circularArcProperties(controlPoints);
 
-    if (!pr.isValid) 
+    if (!pr.isValid)
     {
       return this.approximateBezier(controlPoints);
     }
@@ -193,7 +193,7 @@ export class PathApproximator
      */
     let amountPoints = 2;
 
-    if (2 * pr.radius > PathApproximator.CIRCULAR_ARC_TOLERANCE) 
+    if (2 * pr.radius > PathApproximator.CIRCULAR_ARC_TOLERANCE)
     {
       let angle = Math.fround(PathApproximator.CIRCULAR_ARC_TOLERANCE / pr.radius);
 
@@ -213,7 +213,7 @@ export class PathApproximator
 
     const output: Vec2[] = [];
 
-    for (let i = 0; i < amountPoints; ++i) 
+    for (let i = 0; i < amountPoints; ++i)
     {
       const fract = i / (amountPoints - 1);
       const theta = pr.thetaStart + pr.direction * fract * pr.thetaRange;
@@ -234,7 +234,7 @@ export class PathApproximator
    * @param controlPoints Three distinct points on the arc.
    * @returns The properties for approximation of the circular arc.
    */
-  static _circularArcProperties(controlPoints: Vec2[]): CircularArcProperties 
+  static _circularArcProperties(controlPoints: Vec2[]): CircularArcProperties
   {
     const a = controlPoints[0];
     const b = controlPoints[1];
@@ -249,7 +249,7 @@ export class PathApproximator
         - (b.x - a.x) * (c.y - a.y)
     );
 
-    if (Math.abs(sideLength) < 0.001) 
+    if (Math.abs(sideLength) < 0.001)
     {
       return new CircularArcProperties();
     }
@@ -283,7 +283,7 @@ export class PathApproximator
     const thetaStart = Math.atan2(dA.y, dA.x);
     let thetaEnd = Math.atan2(dC.y, dC.x);
 
-    while (thetaEnd < thetaStart) 
+    while (thetaEnd < thetaStart)
     {
       thetaEnd += 2 * Math.PI;
     }
@@ -299,7 +299,7 @@ export class PathApproximator
 
     orthoAtoC = new Vec2(orthoAtoC.y, -orthoAtoC.x);
 
-    if (orthoAtoC.dot(b.sub(a)) < 0) 
+    if (orthoAtoC.dot(b.sub(a)) < 0)
     {
       direction = -direction;
       thetaRange = 2 * Math.PI - thetaRange;
@@ -314,7 +314,7 @@ export class PathApproximator
    * @param controlPoints The control points of the path.
    * @returns A list of vectors representing the piecewise-linear approximation.
    */
-  static approximateLinear(controlPoints: Vec2[]): Vec2[] 
+  static approximateLinear(controlPoints: Vec2[]): Vec2[]
   {
     return controlPoints.slice();
   }
@@ -324,7 +324,7 @@ export class PathApproximator
    * @param controlPoints The control points of the path.
    * @returns A list of vectors representing the piecewise-linear approximation.
    */
-  static approximateLagrangePolynomial(controlPoints: Vec2[]): Vec2[] 
+  static approximateLagrangePolynomial(controlPoints: Vec2[]): Vec2[]
   {
     // TODO: add some smarter logic here, chebyshev nodes?
     const NUM_STEPS = 51;
@@ -336,7 +336,7 @@ export class PathApproximator
     let minX = controlPoints[0].x;
     let maxX = controlPoints[0].x;
 
-    for (let i = 1, len = controlPoints.length; i < len; i++) 
+    for (let i = 1, len = controlPoints.length; i < len; i++)
     {
       minX = Math.min(minX, controlPoints[i].x);
       maxX = Math.max(maxX, controlPoints[i].x);
@@ -344,7 +344,7 @@ export class PathApproximator
 
     const dx = maxX - minX;
 
-    for (let i = 0; i < NUM_STEPS; i++) 
+    for (let i = 0; i < NUM_STEPS; i++)
     {
       const x = minX + (dx / (NUM_STEPS - 1)) * i;
       const y = Math.fround(barycentricLagrange(controlPoints, weights, x));
@@ -363,17 +363,17 @@ export class PathApproximator
    * @param controlPoints The control points to check for flatness.
    * @returns Whether the control points are flat enough.
    */
-  private static _bezierIsFlatEnough(controlPoints: Vec2[]): boolean 
+  private static _bezierIsFlatEnough(controlPoints: Vec2[]): boolean
   {
     let Vec2;
 
-    for (let i = 1, len = controlPoints.length; i < len - 1; i++) 
+    for (let i = 1, len = controlPoints.length; i < len - 1; i++)
     {
       Vec2 = controlPoints[i - 1]
         .sub(controlPoints[i].scale(2))
         .add(controlPoints[i + 1]);
 
-      if (Vec2.lengthSq() > PathApproximator.BEZIER_TOLERANCE ** 2 * 4) 
+      if (Vec2.lengthSq() > PathApproximator.BEZIER_TOLERANCE ** 2 * 4)
       {
         return false;
       }
@@ -398,21 +398,21 @@ export class PathApproximator
     r: Vec2[],
     subdivisionBuffer: Vec2[],
     count: number,
-  ): void 
+  ): void
   {
     const midpoints = subdivisionBuffer;
 
-    for (let i = 0; i < count; ++i) 
+    for (let i = 0; i < count; ++i)
     {
       midpoints[i] = controlPoints[i];
     }
 
-    for (let i = 0; i < count; ++i) 
+    for (let i = 0; i < count; ++i)
     {
       l[i] = midpoints[0];
       r[count - i - 1] = midpoints[count - i - 1];
 
-      for (let j = 0; j < count - i - 1; j++) 
+      for (let j = 0; j < count - i - 1; j++)
       {
         midpoints[j] = midpoints[j].add(midpoints[j + 1]).divF(2);
       }
@@ -434,21 +434,21 @@ export class PathApproximator
     subdivisionBuffer1: Vec2[],
     subdivisionBuffer2: Vec2[],
     count: number,
-  ): void 
+  ): void
   {
     const l = subdivisionBuffer2;
     const r = subdivisionBuffer1;
 
     PathApproximator._bezierSubdivide(controlPoints, l, r, subdivisionBuffer1, count);
 
-    for (let i = 0; i < count - 1; ++i) 
+    for (let i = 0; i < count - 1; ++i)
     {
       l[count + i] = r[i + 1];
     }
 
     output.push(controlPoints[0]);
 
-    for (let i = 1; i < count - 1; ++i) 
+    for (let i = 1; i < count - 1; ++i)
     {
       const index = 2 * i;
       const p = l[index - 1]
@@ -475,7 +475,7 @@ export class PathApproximator
     vec3: Vec2,
     vec4: Vec2,
     t: number,
-  ): Vec2 
+  ): Vec2
   {
     const t2 = Math.fround(t * t);
     const t3 = Math.fround(t * t2);
@@ -488,7 +488,7 @@ export class PathApproximator
      * result.X = 0.5f * (2f * vec2.X + (-vec1.X + vec3.X) * t + (2f * vec1.X - 5f * vec2.X + 4f * vec3.X - vec4.X) * t2 + (-vec1.X + 3f * vec2.X - 3f * vec3.X + vec4.X) * t3);
      * result.Y = 0.5f * (2f * vec2.Y + (-vec1.Y + vec3.Y) * t + (2f * vec1.Y - 5f * vec2.Y + 4f * vec3.Y - vec4.Y) * t2 + (-vec1.Y + 3f * vec2.Y - 3f * vec3.Y + vec4.Y) * t3);
      */
-    for (let i = 0; i <= 1; ++i) 
+    for (let i = 0; i <= 1; ++i)
     {
       const value1 = i === 0 ? vec1.x : vec1.y;
       const value2 = i === 0 ? vec2.x : vec2.y;
@@ -533,7 +533,7 @@ export class PathApproximator
 /**
  * The properties for approximation of the circular arc.
  */
-export class CircularArcProperties 
+export class CircularArcProperties
 {
   /**
    * Whether the properties are valid.
@@ -565,7 +565,7 @@ export class CircularArcProperties
    */
   readonly centre: Vec2;
 
-  constructor(thetaStart?: number, thetaRange?: number, direction?: number, radius?: number, centre?: Vec2) 
+  constructor(thetaStart?: number, thetaRange?: number, direction?: number, radius?: number, centre?: Vec2)
   {
     this.isValid = !!(thetaStart || thetaRange || direction || radius || centre);
     this.thetaStart = thetaStart || 0;
@@ -575,7 +575,7 @@ export class CircularArcProperties
     this.centre = centre || new Vec2(0, 0);
   }
 
-  get thetaEnd(): number 
+  get thetaEnd(): number
   {
     return this.thetaStart + this.thetaRange * this.direction;
   }

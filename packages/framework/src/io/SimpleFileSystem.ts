@@ -1,12 +1,12 @@
 import { EventEmitter } from "pixi.js";
 import type { FileEvents, FileSystemEvents, IWritableFile, IWritableFileSystem } from "./IFileSystem";
 
-export interface SimpleFileSystemOptions 
+export interface SimpleFileSystemOptions
 {
   caseSensitive: boolean
 }
 
-export class SimpleFileSystem extends EventEmitter<FileSystemEvents> implements IWritableFileSystem 
+export class SimpleFileSystem extends EventEmitter<FileSystemEvents> implements IWritableFileSystem
 {
   public static defaultOptions = {
     caseSensitive: false,
@@ -16,7 +16,7 @@ export class SimpleFileSystem extends EventEmitter<FileSystemEvents> implements 
 
   private readonly _files: SimpleFile[] = [];
 
-  constructor(options: Partial<SimpleFileSystemOptions> = {}) 
+  constructor(options: Partial<SimpleFileSystemOptions> = {})
   {
     super();
 
@@ -25,12 +25,12 @@ export class SimpleFileSystem extends EventEmitter<FileSystemEvents> implements 
     this.caseSensitive = opts.caseSensitive;
   }
 
-  public entries(): IWritableFile[] 
+  public entries(): IWritableFile[]
   {
     return [...this._files];
   }
 
-  public get(path: string): IWritableFile | undefined 
+  public get(path: string): IWritableFile | undefined
   {
     path = this._normalizePath(path);
 
@@ -44,7 +44,7 @@ export class SimpleFileSystem extends EventEmitter<FileSystemEvents> implements 
     );
   }
 
-  async create(path: string, data: ArrayBuffer): Promise<IWritableFile> 
+  async create(path: string, data: ArrayBuffer): Promise<IWritableFile>
   {
     if (this.get(path))
       throw new Error(`File already exists: "${path}"`);
@@ -58,7 +58,7 @@ export class SimpleFileSystem extends EventEmitter<FileSystemEvents> implements 
     return file;
   }
 
-  async update(path: string, data: ArrayBuffer): Promise<IWritableFile> 
+  async update(path: string, data: ArrayBuffer): Promise<IWritableFile>
   {
     const file = this.get(path);
 
@@ -72,7 +72,7 @@ export class SimpleFileSystem extends EventEmitter<FileSystemEvents> implements 
     return file;
   }
 
-  async delete(path: string): Promise<boolean> 
+  async delete(path: string): Promise<boolean>
   {
     const file = this.get(path);
     if (!file)
@@ -86,7 +86,7 @@ export class SimpleFileSystem extends EventEmitter<FileSystemEvents> implements 
     return true;
   }
 
-  private _normalizePath(path: string) 
+  private _normalizePath(path: string)
   {
     path = path.trim();
 
@@ -94,30 +94,30 @@ export class SimpleFileSystem extends EventEmitter<FileSystemEvents> implements 
   }
 }
 
-export class SimpleFile extends EventEmitter<FileEvents> implements IWritableFile 
+export class SimpleFile extends EventEmitter<FileEvents> implements IWritableFile
 {
   constructor(
     private readonly fs: SimpleFileSystem,
     readonly path: string,
     private data: ArrayBuffer,
-  ) 
+  )
   {
     super();
   }
 
-  async read(): Promise<ArrayBuffer> 
+  async read(): Promise<ArrayBuffer>
   {
     return this.data;
   }
 
-  async write(data: ArrayBuffer): Promise<void> 
+  async write(data: ArrayBuffer): Promise<void>
   {
     this.data = data;
 
     this.fs.emit("changed", this.path, this);
   }
 
-  async delete() 
+  async delete()
   {
     return this.fs.delete(this.path);
   }

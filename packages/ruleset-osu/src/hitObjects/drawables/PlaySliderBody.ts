@@ -5,7 +5,7 @@ import { Color } from "pixi.js";
 import { OsuHitObject } from "../OsuHitObject";
 import { SnakingSliderBody } from "./SnakingSliderBody";
 
-export class PlaySliderBody extends SnakingSliderBody 
+export class PlaySliderBody extends SnakingSliderBody
 {
   scaleBindable!: Bindable<number>;
   accentColorBindable!: Bindable<Color>;
@@ -17,7 +17,7 @@ export class PlaySliderBody extends SnakingSliderBody
   borderColorBindable!: Bindable<Color | null>;
   sliderTrackOverrideBindable!: Bindable<Color | null>;
 
-  protected override load(dependencies: ReadonlyDependencyContainer) 
+  protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
 
@@ -40,17 +40,17 @@ export class PlaySliderBody extends SnakingSliderBody
     this.borderColorBindable.bindValueChanged(() => this.borderColor = this.getSliderBorder(), true);
   }
 
-  protected updateAccentColor() 
+  protected updateAccentColor()
   {
     this.accentColor = this.getBodyAccentColor(this.accentColorBindable.value);
   }
 
-  protected getBodyAccentColor(color: Color) 
+  protected getBodyAccentColor(color: Color)
   {
     return this.skin.getConfigValue("sliderTrackOverride") ?? color;
   }
 
-  protected getSliderBorder() 
+  protected getSliderBorder()
   {
     return this.borderColorBindable.value ?? new Color(0xffffff);
   }

@@ -1,9 +1,9 @@
 import type { InputState } from "../state/InputState";
 import { UIEvent } from "./UIEvent";
 
-export class HoverLostEvent extends UIEvent 
+export class HoverLostEvent extends UIEvent
 {
-  constructor(state: InputState) 
+  constructor(state: InputState)
   {
     super(state, "onHoverLost");
   }

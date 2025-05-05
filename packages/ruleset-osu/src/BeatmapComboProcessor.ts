@@ -1,9 +1,9 @@
 import type { Beatmap, BeatmapPostProcessor } from "@osucad/core";
 import type { OsuHitObject } from "./hitObjects/OsuHitObject";
 
-export class BeatmapComboProcessor implements BeatmapPostProcessor 
+export class BeatmapComboProcessor implements BeatmapPostProcessor
 {
-  public applyToBeatmap(beatmap: Beatmap) 
+  public applyToBeatmap(beatmap: Beatmap)
   {
     const hitObjects = beatmap.hitObjects as OsuHitObject[];
 
@@ -13,13 +13,13 @@ export class BeatmapComboProcessor implements BeatmapPostProcessor
     let forceNewCombo = false;
     const isSpinner: boolean = false; // TODO
 
-    for (const hitObject of hitObjects) 
+    for (const hitObject of hitObjects)
     {
-      if (isSpinner) 
+      if (isSpinner)
       {
         forceNewCombo = true;
       }
-      else if ((hitObject.newCombo && hitObject !== beatmap.hitObjects[0]) || forceNewCombo) 
+      else if ((hitObject.newCombo && hitObject !== beatmap.hitObjects[0]) || forceNewCombo)
       {
         comboIndex += 1 + hitObject.comboOffset;
         indexInCombo = 0;

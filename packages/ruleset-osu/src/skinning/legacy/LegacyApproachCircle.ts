@@ -2,9 +2,9 @@ import { ISkinSource } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
 import { Anchor, Axes, CompositeDrawable, DrawableSprite, resolved } from "@osucad/framework";
 
-export class LegacyApproachCircle extends CompositeDrawable 
+export class LegacyApproachCircle extends CompositeDrawable
 {
-  constructor() 
+  constructor()
   {
     super();
 
@@ -16,7 +16,7 @@ export class LegacyApproachCircle extends CompositeDrawable
   @resolved(ISkinSource)
   private skin!: ISkinSource;
 
-  protected override load(dependencies: ReadonlyDependencyContainer) 
+  protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
 

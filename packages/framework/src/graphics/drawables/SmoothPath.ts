@@ -4,21 +4,21 @@ import { Cached } from "../../caching/Cached";
 import type { ReadonlyDependencyContainer } from "../../di/DependencyContainer";
 import { Path } from "./Path";
 
-export class SmoothPath extends Path 
+export class SmoothPath extends Path
 {
-  protected override load(dependencies: ReadonlyDependencyContainer) 
+  protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
 
     this.#validateTexture();
   }
 
-  override get pathRadius() 
+  override get pathRadius()
   {
     return super.pathRadius;
   }
 
-  override set pathRadius(value) 
+  override set pathRadius(value)
   {
     if (this.pathRadius === value)
       return;
@@ -29,12 +29,12 @@ export class SmoothPath extends Path
 
   readonly #textureCache = new Cached();
 
-  protected invalidateTexture() 
+  protected invalidateTexture()
   {
     this.#textureCache.invalidate();
   }
 
-  #validateTexture() 
+  #validateTexture()
   {
     if (this.#textureCache.isValid)
       return;
@@ -43,7 +43,7 @@ export class SmoothPath extends Path
     const raw = new Float32Array(textureWidth * 4);
     const aa_portion = 0.02;
 
-    for (let i = 0; i < textureWidth; i++) 
+    for (let i = 0; i < textureWidth; i++)
     {
       const progress = i / (textureWidth - 1);
 
@@ -72,12 +72,12 @@ export class SmoothPath extends Path
     this.#textureCache.validate();
   }
 
-  colorAt(position: number): ColorSource 
+  colorAt(position: number): ColorSource
   {
     return 0xFFFFFF;
   }
 
-  override updateSubTreeTransforms(): boolean 
+  override updateSubTreeTransforms(): boolean
   {
     if (!super.updateSubTreeTransforms())
       return false;

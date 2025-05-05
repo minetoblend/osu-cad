@@ -3,13 +3,13 @@ import { FrameStatistics } from "../../statistics/FrameStatistics";
 import { StatisticsCounterType } from "../../statistics/StatisticsCounterType";
 import { InvalidationSource } from "./Drawable";
 
-export class LayoutMember 
+export class LayoutMember
 {
   constructor(
     readonly invalidation: Invalidation,
     readonly source: InvalidationSource = InvalidationSource.Default,
     readonly condition?: (drawable: Drawable, invalidation: Invalidation) => boolean,
-  ) 
+  )
   {
   }
 
@@ -17,12 +17,12 @@ export class LayoutMember
 
   #isValid = false;
 
-  get isValid() 
+  get isValid()
   {
     return this.#isValid;
   }
 
-  invalidate() 
+  invalidate()
   {
     if (!this.#isValid)
       return;
@@ -31,9 +31,9 @@ export class LayoutMember
     FrameStatistics.increment(StatisticsCounterType.Invalidations);
   }
 
-  validate() 
+  validate()
   {
-    if (!this.#isValid) 
+    if (!this.#isValid)
     {
       this.#isValid = true;
       if (this.validateParent)

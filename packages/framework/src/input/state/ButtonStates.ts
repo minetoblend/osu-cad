@@ -1,30 +1,30 @@
-export class ButtonStates<TButton> 
+export class ButtonStates<TButton>
 {
   #buttons = new Set<TButton>();
 
-  constructor(buttons?: TButton[]) 
+  constructor(buttons?: TButton[])
   {
-    if (buttons) 
+    if (buttons)
     {
       this.#buttons = new Set(buttons);
     }
   }
 
-  isPressed(button: TButton) 
+  isPressed(button: TButton)
   {
     return this.#buttons.has(button);
   }
 
-  setPressed(button: TButton, pressed: boolean): boolean 
+  setPressed(button: TButton, pressed: boolean): boolean
   {
     if (this.isPressed(button) === pressed)
       return false;
 
-    if (pressed) 
+    if (pressed)
     {
       this.#buttons.add(button);
     }
-    else 
+    else
     {
       this.#buttons.delete(button);
     }
@@ -32,24 +32,24 @@ export class ButtonStates<TButton>
     return true;
   }
 
-  get hasAnyButtonPressed() 
+  get hasAnyButtonPressed()
   {
     return this.#buttons.size > 0;
   }
 
-  add(button: TButton) 
+  add(button: TButton)
   {
     this.#buttons.add(button);
   }
 
-  get pressedButtons() 
+  get pressedButtons()
   {
     return this.#buttons as ReadonlySet<TButton>;
   }
 
-  enumerateDifference(lastButtons: ButtonStates<TButton>): ButtonStateDifference<TButton> 
+  enumerateDifference(lastButtons: ButtonStates<TButton>): ButtonStateDifference<TButton>
   {
-    if (!lastButtons.hasAnyButtonPressed) 
+    if (!lastButtons.hasAnyButtonPressed)
     {
       // if no buttons pressed anywhere, use static to avoid alloc.
       return !this.hasAnyButtonPressed
@@ -63,13 +63,13 @@ export class ButtonStates<TButton>
     const released = new Set<TButton>();
     const pressed = new Set<TButton>();
 
-    for (const b of this.pressedButtons) 
+    for (const b of this.pressedButtons)
     {
       if (!lastButtons.pressedButtons.has(b))
         pressed.add(b);
     }
 
-    for (const b of lastButtons.pressedButtons) 
+    for (const b of lastButtons.pressedButtons)
     {
       if (!this.pressedButtons.has(b))
         released.add(b);
@@ -79,15 +79,15 @@ export class ButtonStates<TButton>
   }
 }
 
-export class ButtonStateDifference<TButton> 
+export class ButtonStateDifference<TButton>
 {
   constructor(
     public readonly released: TButton[],
     public readonly pressed: TButton[],
-  ) 
+  )
   {}
 
-  get hasDifference() 
+  get hasDifference()
   {
     return this.released.length > 0 || this.pressed.length > 0;
   }

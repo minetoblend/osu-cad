@@ -6,51 +6,51 @@ import type { SkinConfigurationLookup, SkinConfigurationValue } from "./SkinConf
 import { SkinConfiguration } from "./SkinConfiguration";
 import { SkinTextureStore } from "./SkinTextureStore";
 
-export class Skin implements ISkin 
+export class Skin implements ISkin
 {
   readonly config = new SkinConfiguration();
 
   readonly textures: SkinTextureStore;
 
-  constructor(readonly files: IFileSystem) 
+  constructor(readonly files: IFileSystem)
   {
     this.textures = new SkinTextureStore(files);
   }
 
-  getTexture(lookup: string): Texture | null 
+  getTexture(lookup: string): Texture | null
   {
     return this.textures.get(lookup) ?? null;
   }
 
-  public getDrawableComponent(lookup: SkinComponentLookup): Drawable | null 
+  public getDrawableComponent(lookup: SkinComponentLookup): Drawable | null
   {
     return null;
   }
 
-  getConfigValue<T extends SkinConfigurationLookup>(lookup: T): SkinConfigurationValue<T> | null 
+  getConfigValue<T extends SkinConfigurationLookup>(lookup: T): SkinConfigurationValue<T> | null
   {
     return this.config.get(lookup);
   }
 
-  getConfigBindable<T extends SkinConfigurationLookup>(lookup: T): Bindable<SkinConfigurationValue<T> | null> 
+  getConfigBindable<T extends SkinConfigurationLookup>(lookup: T): Bindable<SkinConfigurationValue<T> | null>
   {
     return this.config.getBindable(lookup);
   }
 
-  get comboColors() 
+  get comboColors()
   {
     if (this.config.comboColors.length)
       return this.config.comboColors;
     return  [new Color("white")];
   }
 
-  getComboColor(comboIndex: number) 
+  getComboColor(comboIndex: number)
   {
     const colors = this.comboColors;
     return colors[Math.max(comboIndex, 0) % colors.length];
   }
 
-  dispose() 
+  dispose()
   {
     this.config.dispose();
     this.textures.dispose();

@@ -1,6 +1,6 @@
 import type { KeyCombination } from "./KeyCombination";
 
-export interface IKeyBinding 
+export interface IKeyBinding
 {
   keyCombination: KeyCombination;
 

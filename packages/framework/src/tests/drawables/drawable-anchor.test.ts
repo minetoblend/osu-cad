@@ -4,9 +4,9 @@ import { Anchor } from "../../graphics/drawables/Anchor";
 import { loadDrawable } from "../../graphics/drawables/Drawable";
 import { FramedClock } from "../../timing/FramedClock";
 
-describe("drawable anchor & origin", () => 
+describe("drawable anchor & origin", () =>
 {
-  it("correctly applies anchor", () => 
+  it("correctly applies anchor", () =>
   {
     let child: Container;
     let child2: Container;
@@ -59,7 +59,7 @@ describe("drawable anchor & origin", () =>
     expect(child.anchorPosition).toEqual({ x: 200, y: 100 });
   });
 
-  it("correctly applies origin", () => 
+  it("correctly applies origin", () =>
   {
     let child: Container;
     let child2: Container;

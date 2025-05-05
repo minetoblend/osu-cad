@@ -1,6 +1,6 @@
 import type { IClock } from "./IClock";
 
-export class ManualClock implements IClock 
+export class ManualClock implements IClock
 {
   currentTime = 0;
 

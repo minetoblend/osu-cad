@@ -7,14 +7,14 @@ import "./style.css";
 
 const host = new WebGameHost("demo");
 
-class DemoGame extends Game 
+class DemoGame extends Game
 {
-  constructor() 
+  constructor()
   {
     super();
   }
 
-  protected override load(dependencies: ReadonlyDependencyContainer) 
+  protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
 
@@ -25,7 +25,7 @@ class DemoGame extends Game
     ];
 
     this.add(
-        new DemoPath().adjust((p) => 
+        new DemoPath().adjust((p) =>
         {
           p.vertices = vertices;
           p.pathRadius = 20;
@@ -36,9 +36,9 @@ class DemoGame extends Game
   }
 }
 
-class DemoPath extends SmoothPath 
+class DemoPath extends SmoothPath
 {
-  override colorAt(position: number): ColorSource 
+  override colorAt(position: number): ColorSource
   {
     return position < 0.5 ? 0xFF0000 : 0xFFFFFF;
   }

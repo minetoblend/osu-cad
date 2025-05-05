@@ -1,4 +1,4 @@
-export interface IAnimation 
+export interface IAnimation
 {
   get duration(): number;
 

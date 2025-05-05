@@ -7,16 +7,16 @@ import { OsuHitObject } from "./OsuHitObject";
 import type { PathPoint } from "./PathPoint";
 import { SliderPath } from "./SliderPath";
 
-export interface SliderOptions extends OsuHitObjectOptions 
+export interface SliderOptions extends OsuHitObjectOptions
 {
   repeatCount?: number
   expectedDistance?: number
   controlPoints?: readonly PathPoint[]
 }
 
-export class Slider extends OsuHitObject 
+export class Slider extends OsuHitObject
 {
-  constructor(options: SliderOptions = {}) 
+  constructor(options: SliderOptions = {})
   {
     const { repeatCount, expectedDistance, controlPoints, ...rest } = options;
     super(rest);
@@ -34,7 +34,7 @@ export class Slider extends OsuHitObject
     this.positionBindable.bindValueChanged(this.#updateNestedPositions, this);
   }
 
-  #updateNestedPositions() 
+  #updateNestedPositions()
   {
     this.headCircle.position = this.position;
   }
@@ -46,17 +46,17 @@ export class Slider extends OsuHitObject
     .withPrecision(1);
 
 
-  get repeatCount() 
+  get repeatCount()
   {
     return this.repeatCountBindable.value;
   }
 
-  set repeatCount(value) 
+  set repeatCount(value)
   {
     this.repeatCountBindable.value = value;
   }
 
-  spanCount() 
+  spanCount()
   {
     return this.repeatCount + 1;
   }
@@ -64,34 +64,34 @@ export class Slider extends OsuHitObject
   readonly sliderVelocityBindable = new BindableNumber(1)
     .withMinValue(0);
 
-  get sliderVelocity() 
+  get sliderVelocity()
   {
     return this.sliderVelocityBindable.value;
   }
 
-  private set sliderVelocity(value: number) 
+  private set sliderVelocity(value: number)
   {
     this.sliderVelocityBindable.value = value;
   }
 
-  spanDuration() 
+  spanDuration()
   {
     return this.path.actualDistance / this.sliderVelocity;
   }
 
-  public override get duration(): number 
+  public override get duration(): number
   {
     return this.spanDuration() * this.spanCount();
   }
 
   #tickDistance = 1;
 
-  get tickDistance() 
+  get tickDistance()
   {
     return this.#tickDistance;
   }
 
-  public override applyDefaults(difficulty: BeatmapDifficultyInfo) 
+  public override applyDefaults(difficulty: BeatmapDifficultyInfo)
   {
     super.applyDefaults(difficulty);
 
@@ -110,12 +110,12 @@ export class Slider extends OsuHitObject
 
   readonly path = new SliderPath();
 
-  spanAt(progress: number) 
+  spanAt(progress: number)
   {
     return Math.floor(progress * this.spanCount());
   }
 
-  progressAt(progress: number): number 
+  progressAt(progress: number): number
   {
     let p = (progress * this.spanCount()) % 1;
     if (this.spanAt(progress) % 2 === 1)
@@ -123,12 +123,12 @@ export class Slider extends OsuHitObject
     return p;
   }
 
-  curvePositionAt(progress: number, out: Vec2 = new Vec2()): Vec2 
+  curvePositionAt(progress: number, out: Vec2 = new Vec2()): Vec2
   {
     return this.path.getPositionAt(this.progressAt(progress), out);
   }
 
-  public override get endPosition(): Vec2 
+  public override get endPosition(): Vec2
   {
     return this.position.add(this.curvePositionAt(1));
   }

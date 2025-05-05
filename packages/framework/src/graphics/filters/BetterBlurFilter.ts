@@ -2,9 +2,9 @@ import type { BlurFilterOptions } from "pixi.js";
 import { BlurFilter } from "pixi.js";
 import { BetterBlurFilterPass } from "./BetterBlurFilterPass";
 
-export class BetterBlurFilter extends BlurFilter 
+export class BetterBlurFilter extends BlurFilter
 {
-  constructor(options: BlurFilterOptions = {}) 
+  constructor(options: BlurFilterOptions = {})
   {
     super({
       antialias: "inherit",

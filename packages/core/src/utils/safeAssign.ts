@@ -1,9 +1,9 @@
 export function safeAssign<T extends object, U>(
   target: T,
   source: U,
-): T & U 
+): T & U
 {
-  for (const key in source) 
+  for (const key in source)
   {
     if (source[key] !== undefined)
       (target as any)[key] = source[key];

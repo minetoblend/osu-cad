@@ -13,16 +13,16 @@ import { Container } from "./Container";
 
 const sumOf = (values: number[]) => values.reduce((a, b) => a + b, 0);
 
-export interface GridContainerOptions extends CompositeDrawableOptions 
+export interface GridContainerOptions extends CompositeDrawableOptions
 {
   content?: GridContainerContent;
   rowDimensions?: readonly Dimension[];
   columnDimensions?: readonly Dimension[];
 }
 
-export class GridContainer extends CompositeDrawable 
+export class GridContainer extends CompositeDrawable
 {
-  constructor(options: GridContainerOptions = {}) 
+  constructor(options: GridContainerOptions = {})
   {
     super();
 
@@ -32,7 +32,7 @@ export class GridContainer extends CompositeDrawable
     this.with(options);
   }
 
-  protected override load(dependencies: ReadonlyDependencyContainer) 
+  protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
 
@@ -41,30 +41,30 @@ export class GridContainer extends CompositeDrawable
 
   #content?: GridContainerContent;
 
-  get content(): GridContainerContent | undefined 
+  get content(): GridContainerContent | undefined
   {
     return this.#content;
   }
 
-  set content(value: GridContainerContent) 
+  set content(value: GridContainerContent)
   {
     this.#content = value;
     this.#onContentChange();
   }
 
-  #onContentChange() 
+  #onContentChange()
   {
     this.#cellContent.invalidate();
   }
 
   #rowDimensions: readonly Dimension[] = [];
 
-  get rowDimensions(): readonly Dimension[] 
+  get rowDimensions(): readonly Dimension[]
   {
     return this.#rowDimensions;
   }
 
-  set rowDimensions(value: readonly Dimension[]) 
+  set rowDimensions(value: readonly Dimension[])
   {
     if (value === this.#rowDimensions)
       return;
@@ -75,12 +75,12 @@ export class GridContainer extends CompositeDrawable
 
   #columnDimensions: readonly Dimension[] = [];
 
-  get columnDimensions(): readonly Dimension[] 
+  get columnDimensions(): readonly Dimension[]
   {
     return this.#columnDimensions;
   }
 
-  set columnDimensions(value: readonly Dimension[]) 
+  set columnDimensions(value: readonly Dimension[])
   {
     if (value === this.#columnDimensions)
       return;
@@ -89,7 +89,7 @@ export class GridContainer extends CompositeDrawable
     this.#cellLayout.invalidate();
   }
 
-  override update() 
+  override update()
   {
     super.update();
 
@@ -103,17 +103,17 @@ export class GridContainer extends CompositeDrawable
 
   #cells: CellContainer[][] = [];
 
-  get #cellRows() 
+  get #cellRows()
   {
     return this.#cells.length;
   }
 
-  get #cellColumns() 
+  get #cellColumns()
   {
     return this.#cells[0]?.length ?? 0;
   }
 
-  #layoutContent() 
+  #layoutContent()
   {
     if (this.#cellContent.isValid)
       return;
@@ -135,9 +135,9 @@ export class GridContainer extends CompositeDrawable
 
     this.#cells = Array.from({ length: requiredRows }, () => Array.from({ length: requiredColumns }));
 
-    for (let r = 0; r < this.#cellRows; r++) 
+    for (let r = 0; r < this.#cellRows; r++)
     {
-      for (let c = 0; c < this.#cellColumns; c++) 
+      for (let c = 0; c < this.#cellColumns; c++)
       {
         this.#cells[r][c] = new CellContainer();
 
@@ -163,9 +163,9 @@ export class GridContainer extends CompositeDrawable
     this.#cellContent.validate();
   }
 
-  #layoutCells() 
+  #layoutCells()
   {
-    if (!this.#cellChildLayout.isValid) 
+    if (!this.#cellChildLayout.isValid)
     {
       this.#cellLayout.invalidate();
       this.#cellChildLayout.validate();
@@ -177,9 +177,9 @@ export class GridContainer extends CompositeDrawable
     const widths = this.#distribute(this.#columnDimensions, this.drawWidth - this.padding.totalHorizontal, this.#getCellSizesAlongAxis(Axes.X, this.drawWidth - this.padding.totalHorizontal));
     const heights = this.#distribute(this.#rowDimensions, this.drawHeight - this.padding.totalVertical, this.#getCellSizesAlongAxis(Axes.Y, this.drawHeight - this.padding.totalVertical));
 
-    for (let col = 0; col < this.#cellColumns; col++) 
+    for (let col = 0; col < this.#cellColumns; col++)
     {
-      for (let row = 0; row < this.#cellRows; row++) 
+      for (let row = 0; row < this.#cellRows; row++)
       {
         this.#cells[row][col].size = new Vec2(widths[col], heights[row]);
 
@@ -193,21 +193,21 @@ export class GridContainer extends CompositeDrawable
     this.#cellLayout.validate();
   }
 
-  #getCellSizesAlongAxis(axis: Axes, spanLength: number): number[] 
+  #getCellSizesAlongAxis(axis: Axes, spanLength: number): number[]
   {
     const spanDimensions = axis === Axes.X ? this.columnDimensions : this.rowDimensions;
     const spanCount = axis === Axes.X ? this.#cellColumns : this.#cellRows;
 
     const sizes: number[] = Array.from({ length: spanCount }, () => 0);
 
-    for (let i = 0; i < spanCount; i++) 
+    for (let i = 0; i < spanCount; i++)
     {
       if (i >= spanDimensions.length)
         continue;
 
       const dimension = spanDimensions[i];
 
-      switch (dimension.mode) 
+      switch (dimension.mode)
       {
       case GridSizeMode.Distributed:
         break;
@@ -222,9 +222,9 @@ export class GridContainer extends CompositeDrawable
 
       case GridSizeMode.AutoSize: {
         let size = 0;
-        if (axis === Axes.X) 
+        if (axis === Axes.X)
         {
-          for (let r = 0; r < this.#cellRows; r++) 
+          for (let r = 0; r < this.#cellRows; r++)
           {
             const cell = this.content![r][i];
             if (!cell || cell.relativeSizeAxes & axis)
@@ -233,9 +233,9 @@ export class GridContainer extends CompositeDrawable
             size = Math.max(size, this.#getCellWidth(cell));
           }
         }
-        else 
+        else
         {
-          for (let c = 0; c < this.#cellColumns; c++) 
+          for (let c = 0; c < this.#cellColumns; c++)
           {
             const cell = this.content![i][c];
             if (!cell || cell.relativeSizeAxes & axis)
@@ -256,22 +256,22 @@ export class GridContainer extends CompositeDrawable
     return sizes;
   }
 
-  #shouldConsiderCell(cell?: Drawable): boolean 
+  #shouldConsiderCell(cell?: Drawable): boolean
   {
     return !!cell && cell.isAlive && cell.isPresent;
   }
 
-  #getCellWidth(cell?: Drawable): number 
+  #getCellWidth(cell?: Drawable): number
   {
     return this.#shouldConsiderCell(cell) ? cell!.boundingBox.width : 0;
   }
 
-  #getCellHeight(cell?: Drawable): number 
+  #getCellHeight(cell?: Drawable): number
   {
     return this.#shouldConsiderCell(cell) ? cell!.boundingBox.height : 0;
   }
 
-  #distribute(dimensions: readonly Dimension[], spanLength: number, cellSizes: number[]): number[] 
+  #distribute(dimensions: readonly Dimension[], spanLength: number, cellSizes: number[]): number[]
   {
     const distributedIndices: number[] = Array.from({ length: cellSizes.length }, (_, i) => i).filter(i => i >= dimensions.length || dimensions[i].mode === GridSizeMode.Distributed);
 
@@ -288,7 +288,7 @@ export class GridContainer extends CompositeDrawable
     // Distribution size for _each_ distributed cell
     let distributionSize = Math.max(0, spanLength - requiredSize) / distributionCount;
 
-    for (const entry of distributedDimensions.sort((a, b) => a.dimension.range - b.dimension.range)) 
+    for (const entry of distributedDimensions.sort((a, b) => a.dimension.range - b.dimension.range))
     {
       // Cells start off at their minimum size, and the total size should not exceed their maximum size
       cellSizes[entry.index] = Math.min(entry.dimension.maxSize, entry.dimension.minSize + distributionSize);
@@ -303,13 +303,13 @@ export class GridContainer extends CompositeDrawable
   }
 }
 
-class CellContainer extends Container 
+class CellContainer extends Container
 {
-  override onInvalidate(invalidation: Invalidation, source: InvalidationSource): boolean 
+  override onInvalidate(invalidation: Invalidation, source: InvalidationSource): boolean
   {
     let result = super.onInvalidate(invalidation, source);
 
-    if (source === InvalidationSource.Child && (invalidation & (Invalidation.RequiredParentSizeToFit | Invalidation.Presence)) > 0) 
+    if (source === InvalidationSource.Child && (invalidation & (Invalidation.RequiredParentSizeToFit | Invalidation.Presence)) > 0)
     {
       if (this.parent?.invalidate(invalidation, InvalidationSource.Child))
         result = true;
@@ -319,24 +319,24 @@ class CellContainer extends Container
   }
 }
 
-export class Dimension 
+export class Dimension
 {
   constructor(
     readonly mode: GridSizeMode = GridSizeMode.Distributed,
     readonly size: number = 0,
     readonly minSize: number = 0,
     readonly maxSize: number = Number.MAX_VALUE,
-  ) 
+  )
   {
   }
 
-  get range() 
+  get range()
   {
     return this.maxSize - this.minSize;
   }
 }
 
-export enum GridSizeMode 
+export enum GridSizeMode
 {
   Distributed,
   Relative,
@@ -344,7 +344,7 @@ export enum GridSizeMode
   AutoSize,
 }
 
-export interface DimensionEntry 
+export interface DimensionEntry
 {
   index: number;
   dimension: Dimension;

@@ -10,16 +10,16 @@ import { OsucadBatcher } from "./OsucadBatcher";
 import { OsucadSpritePipe } from "./OsucadSpritePipe";
 import { OsucadUniformSystem } from "./OsucadUniformSystem";
 
-export interface RendererOptions 
+export interface RendererOptions
 {
   size: IVec2;
   environment: FrameworkEnvironment;
   rendererPreference?: "webgl" | "webgpu";
 }
 
-export class Renderer 
+export class Renderer
 {
-  async init(options: RendererOptions) 
+  async init(options: RendererOptions)
   {
 
 
@@ -93,33 +93,33 @@ export class Renderer
 
   #internalRenderer?: WebGLRenderer;
 
-  get internalRenderer() 
+  get internalRenderer()
   {
-    if (!this.#internalRenderer) 
+    if (!this.#internalRenderer)
     {
       throw new Error("Renderer not initialized");
     }
     return this.#internalRenderer;
   }
 
-  render(drawable: Drawable) 
+  render(drawable: Drawable)
   {
     this.internalRenderer.render(drawable.drawNode);
   }
 
-  get canvas(): HTMLCanvasElement 
+  get canvas(): HTMLCanvasElement
   {
     return this.internalRenderer.canvas;
   }
 
   #size: Vec2 = Vec2.zero();
 
-  get size(): Vec2 
+  get size(): Vec2
   {
     return this.#size;
   }
 
-  set size(value: IVec2) 
+  set size(value: IVec2)
   {
     if (this.#size.equals(value))
       return;

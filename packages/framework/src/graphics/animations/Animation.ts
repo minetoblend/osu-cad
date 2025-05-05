@@ -4,48 +4,48 @@ import { FrameData } from "../../timing/FrameData";
 import { clamp } from "../../utils";
 import { AnimationClockComposite } from "./AnimationClockComposite";
 
-export abstract class Animation<T> extends AnimationClockComposite implements IFramedAnimation 
+export abstract class Animation<T> extends AnimationClockComposite implements IFramedAnimation
 {
   defaultFrameLength = 1000 / 60;
 
   readonly #frameData: FrameData<T>[];
 
-  get frameCount() 
+  get frameCount()
   {
     return this.#frameData.length;
   }
 
   #currentFrameIndex = 0;
 
-  get currentFrameIndex() 
+  get currentFrameIndex()
   {
     return this.#currentFrameIndex;
   }
 
-  get currentFrame() 
+  get currentFrame()
   {
     return this.#frameData[this.currentFrameIndex].content;
   }
 
   readonly #currentFrameCache = new Cached();
 
-  protected constructor(startAtCurrentTime: boolean = true) 
+  protected constructor(startAtCurrentTime: boolean = true)
   {
     super(startAtCurrentTime);
     this.#frameData = [];
     this.loop = true;
   }
 
-  gotoFrame(frameIndex: number) 
+  gotoFrame(frameIndex: number)
   {
     this.seek(this.#frameData[clamp(frameIndex, 0, this.#frameData.length)].displayStartTime);
   }
 
   addFrame(content: T, displayDuration?: number): void;
   addFrame(frame: FrameData<T>): void;
-  addFrame(frame: T | FrameData<T>, displayDuration?: number) 
+  addFrame(frame: T | FrameData<T>, displayDuration?: number)
   {
-    if (!(frame instanceof FrameData)) 
+    if (!(frame instanceof FrameData))
     {
       frame = new FrameData<T>(frame, displayDuration ?? this.defaultFrameLength);
     }
@@ -59,28 +59,28 @@ export abstract class Animation<T> extends AnimationClockComposite implements IF
 
     this.onFrameAdded(frame.content, frame.duration);
 
-    if (this.#frameData.length === 1) 
+    if (this.#frameData.length === 1)
     {
       this.#currentFrameCache.invalidate();
     }
   }
 
-  addFrames(...frames: T[] | FrameData<T>[]): void 
+  addFrames(...frames: T[] | FrameData<T>[]): void
   {
-    for (const frame of frames) 
+    for (const frame of frames)
     {
-      if (frame instanceof FrameData) 
+      if (frame instanceof FrameData)
       {
         this.addFrame(frame.content, frame.duration);
       }
-      else 
+      else
       {
         this.addFrame(frame);
       }
     }
   }
 
-  clearFrames() 
+  clearFrames()
   {
     this.#frameData.length = 0;
     this.duration = 0;
@@ -93,47 +93,47 @@ export abstract class Animation<T> extends AnimationClockComposite implements IF
 
   protected abstract clearDisplay(): void;
 
-  protected onFrameAdded(content: T, duration: number) 
+  protected onFrameAdded(content: T, duration: number)
   {}
 
-  override update() 
+  override update()
   {
     super.update();
 
-    if (this.#frameData.length === 0) 
+    if (this.#frameData.length === 0)
     {
       return;
     }
 
     this.#updateFrameIndex();
 
-    if (!this.#currentFrameCache.isValid) 
+    if (!this.#currentFrameCache.isValid)
     {
       this.#updateCurrentFrame();
     }
   }
 
-  #updateFrameIndex() 
+  #updateFrameIndex()
   {
     const diff = this.playbackPosition - this.#frameData[this.currentFrameIndex].displayStartTime;
 
-    if (diff < 0) 
+    if (diff < 0)
     {
       while (
         this.currentFrameIndex > 0
         && this.playbackPosition < this.#frameData[this.currentFrameIndex].displayStartTime
-      ) 
+      )
       {
         this.#currentFrameIndex--;
         this.#currentFrameCache.invalidate();
       }
     }
-    else if (diff > 0) 
+    else if (diff > 0)
     {
       while (
         this.currentFrameIndex < this.#frameData.length - 1
         && this.playbackPosition >= this.#frameData[this.currentFrameIndex].displayEndTime
-      ) 
+      )
       {
         this.#currentFrameIndex++;
         this.#currentFrameCache.invalidate();
@@ -141,7 +141,7 @@ export abstract class Animation<T> extends AnimationClockComposite implements IF
     }
   }
 
-  #updateCurrentFrame() 
+  #updateCurrentFrame()
   {
     this.displayFrame(this.currentFrame);
 

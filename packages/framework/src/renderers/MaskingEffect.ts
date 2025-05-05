@@ -2,7 +2,7 @@ import type { Color, Effect } from "pixi.js";
 import type { CompositeDrawable } from "../graphics";
 import { Matrix } from "pixi.js";
 
-export class MaskingEffect implements Effect 
+export class MaskingEffect implements Effect
 {
   public pipe = "masking";
   public priority = 1;
@@ -14,13 +14,13 @@ export class MaskingEffect implements Effect
 
   constructor(
     readonly drawable: CompositeDrawable,
-  ) 
+  )
   {
   }
 
   readonly matrix = new Matrix();
 
-  destroy(): void 
+  destroy(): void
   {
   }
 }

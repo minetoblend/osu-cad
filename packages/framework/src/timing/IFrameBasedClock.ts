@@ -1,7 +1,7 @@
 import type { FrameTimeInfo } from "./FrameTimeInfo";
 import type { IClock } from "./IClock";
 
-export interface IFrameBasedClock extends IClock 
+export interface IFrameBasedClock extends IClock
 {
   get elapsedFrameTime(): number;
 
@@ -14,7 +14,7 @@ export interface IFrameBasedClock extends IClock
   isFrameBasedClock: true;
 }
 
-export function isFrameBasedClock(clock: IClock): clock is IFrameBasedClock 
+export function isFrameBasedClock(clock: IClock): clock is IFrameBasedClock
 {
   return (clock as IFrameBasedClock).isFrameBasedClock;
 }

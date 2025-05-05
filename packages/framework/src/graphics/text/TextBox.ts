@@ -36,59 +36,59 @@ import { EasingFunction } from "../transforms/EasingFunction";
 import { SpriteText } from "./SpriteText";
 import { TextSelectionType } from "./TextSelectionType";
 
-export abstract class TextBox extends TabbableContainer implements IKeyBindingHandler<PlatformAction> 
+export abstract class TextBox extends TabbableContainer implements IKeyBindingHandler<PlatformAction>
 {
   protected readonly textFlow: FillFlowContainer;
 
   protected readonly textContainer: Container;
 
-  override get handleNonPositionalInput(): boolean 
+  override get handleNonPositionalInput(): boolean
   {
     return this.hasFocus;
   }
 
-  protected get leftRightPadding() 
+  protected get leftRightPadding()
   {
     return 5;
   }
 
   lengthLimit: number | null = null;
 
-  protected get allowClipboardExport() 
+  protected get allowClipboardExport()
   {
     return true;
   }
 
-  protected get allowWordNavigation() 
+  protected get allowWordNavigation()
   {
     return true;
   }
 
   #doubleClickWord?: [number, number];
 
-  protected get handleLeftRightArrows() 
+  protected get handleLeftRightArrows()
   {
     return true;
   }
 
-  protected canAddCharacter(character: string) 
+  protected canAddCharacter(character: string)
   {
     return true;
   }
 
-  #canAddCharacter(character: string) 
+  #canAddCharacter(character: string)
   {
     return this.canAddCharacter(character);
   }
 
   #readonly = false;
 
-  get readonly() 
+  get readonly()
   {
     return this.#readonly;
   }
 
-  set readonly(value) 
+  set readonly(value)
   {
     this.#readonly = value;
     if (value)
@@ -99,7 +99,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
 
   commitOnFocusLost = true;
 
-  override get canBeTabbedTo(): boolean 
+  override get canBeTabbedTo(): boolean
   {
     return !this.readonly;
   }
@@ -113,22 +113,22 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
 
   #content: MaskingContainer;
 
-  override get content(): Container<Drawable> 
+  override get content(): Container<Drawable>
   {
     return this.#content;
   }
 
-  override get cornerRadius() 
+  override get cornerRadius()
   {
     return this.#content.cornerRadius;
   }
 
-  override set cornerRadius(value) 
+  override set cornerRadius(value)
   {
     this.#content.cornerRadius = value;
   }
 
-  constructor() 
+  constructor()
   {
     super();
 
@@ -146,12 +146,12 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
           origin: Anchor.CenterLeft,
           position: new Vec2(this.leftRightPadding, 0),
           children: [
-            this.placeholder = this.createPlaceholder().adjust((p) => 
+            this.placeholder = this.createPlaceholder().adjust((p) =>
             {
               p.anchor = Anchor.CenterLeft;
               p.origin = Anchor.CenterLeft;
             }),
-            this.#caret = this.createCaret().adjust((c) => 
+            this.#caret = this.createCaret().adjust((c) =>
             {
               c.anchor = Anchor.CenterLeft;
               c.origin = Anchor.CenterLeft;
@@ -167,7 +167,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
       ],
     });
 
-    this.current.valueChanged.addListener((e) => 
+    this.current.valueChanged.addListener((e) =>
     {
       if (this.text !== e.value)
         this.text = e.value;
@@ -177,7 +177,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     this.#caret.hide();
   }
 
-  protected override loadComplete() 
+  protected override loadComplete()
   {
     super.loadComplete();
 
@@ -188,12 +188,12 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
 
   readonly isKeyBindingHandler = true;
 
-  canHandleKeyBinding(binding: KeyBindingAction): boolean 
+  canHandleKeyBinding(binding: KeyBindingAction): boolean
   {
     return binding instanceof PlatformAction;
   }
 
-  onKeyBindingPressed(e: KeyBindingPressEvent<PlatformAction>): boolean 
+  onKeyBindingPressed(e: KeyBindingPressEvent<PlatformAction>): boolean
   {
     if (!this.hasFocus)
       return false;
@@ -203,7 +203,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
 
     const lastSelectionBounds = this.#getTextSelectionBounds();
 
-    switch (e.pressed) 
+    switch (e.pressed)
     {
     // TODO: copy/paste
     case PlatformAction.Copy:
@@ -220,11 +220,11 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
       return true;
 
     case PlatformAction.MoveBackwardChar:
-      if (this.#hasSelection) 
+      if (this.#hasSelection)
       {
         this.moveCursorBy(this.#selectionLeft - this.#selectionEnd);
       }
-      else 
+      else
       {
         this.moveCursorBy(-1);
       }
@@ -232,11 +232,11 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
       return true;
 
     case PlatformAction.MoveForwardChar:
-      if (this.#hasSelection) 
+      if (this.#hasSelection)
       {
         this.moveCursorBy(this.#selectionRight - this.#selectionEnd);
       }
-      else 
+      else
       {
         this.moveCursorBy(1);
       }
@@ -244,11 +244,11 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
       return true;
 
     case PlatformAction.MoveBackwardWord:
-      if (this.#hasSelection) 
+      if (this.#hasSelection)
       {
         this.moveCursorBy(this.#selectionLeft - this.#selectionEnd);
       }
-      else 
+      else
       {
         this.moveCursorBy(this.getBackwardWordAmount());
       }
@@ -256,11 +256,11 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
       return true;
 
     case PlatformAction.MoveForwardWord:
-      if (this.#hasSelection) 
+      if (this.#hasSelection)
       {
         this.moveCursorBy(this.#selectionRight - this.#selectionEnd);
       }
-      else 
+      else
       {
         this.moveCursorBy(this.getForwardWordAmount());
       }
@@ -333,7 +333,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     return false;
   }
 
-  selectAll() 
+  selectAll()
   {
     if (!this.hasFocus)
       return false;
@@ -344,7 +344,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     return true;
   }
 
-  protected getBackwardWordAmount() 
+  protected getBackwardWordAmount()
   {
     if (!this.allowWordNavigation)
       return -1;
@@ -356,7 +356,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     return lastSpace > 0 ? -(this.#selectionEnd - lastSpace - 1) : -this.#selectionEnd;
   }
 
-  protected getForwardWordAmount() 
+  protected getForwardWordAmount()
   {
     if (!this.allowWordNavigation)
       return 1;
@@ -368,17 +368,17 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     return (nextSpace >= 0 ? nextSpace : this.#text.length) - this.#selectionEnd;
   }
 
-  protected getBackwardLineAmount() 
+  protected getBackwardLineAmount()
   {
     return -this.text.length;
   }
 
-  protected getForwardLineAmount() 
+  protected getForwardLineAmount()
   {
     return this.text.length;
   }
 
-  protected moveCursorBy(amount: number) 
+  protected moveCursorBy(amount: number)
   {
     const lastSelectionBounds = this.#getTextSelectionBounds();
     this.#selectionStart = this.#selectionEnd;
@@ -387,25 +387,25 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     this.#onTextDeselected(lastSelectionBounds);
   }
 
-  protected expandSelectionBy(amount: number) 
+  protected expandSelectionBy(amount: number)
   {
     this.#moveSelection(amount, true);
   }
 
-  protected deleteBy(amount: number) 
+  protected deleteBy(amount: number)
   {
     return;
     if (this.#selectionLength === 0)
       this.#selectionEnd = clamp(this.#selectionStart + amount, 0, this.#text.length);
 
-    if (this.#hasSelection) 
+    if (this.#hasSelection)
     {
       const removedText = this.#removeSelection();
       this.onUserTextRemoved(removedText);
     }
   }
 
-  override dispose(isDisposing: boolean = true) 
+  override dispose(isDisposing: boolean = true)
   {
     this.#unbindInput();
 
@@ -416,7 +416,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
 
   #textAtLastLayout = "";
 
-  #updateCursorAndLayout() 
+  #updateCursorAndLayout()
   {
     this.#caret.height = this.fontSize;
     // TODO: Placeholder.Font = Placeholder.Font.With(size: FontSize);
@@ -433,7 +433,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
 
     const cursorRelativePositionAxesInBox = (cursorPosEnd - this.#textContainerPosX) / (this.drawWidth - 2 * this.leftRightPadding);
 
-    if (cursorRelativePositionAxesInBox < 0.1 || cursorRelativePositionAxesInBox > 0.9) 
+    if (cursorRelativePositionAxesInBox < 0.1 || cursorRelativePositionAxesInBox > 0.9)
     {
       this.#textContainerPosX = cursorPosEnd - this.drawWidth / 2 + this.leftRightPadding * 2;
     }
@@ -445,7 +445,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     if (this.#caretVisible)
       this.#caret.displayAt(new Vec2(cursorPos, 0), selectionWidth);
 
-    if (this.#textAtLastLayout.length === 0 || this.#text.length === 0) 
+    if (this.#textAtLastLayout.length === 0 || this.#text.length === 0)
     {
       if (this.#text.length === 0)
         this.placeholder.show();
@@ -456,34 +456,34 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     this.#textAtLastLayout = this.#text;
   }
 
-  override update() 
+  override update()
   {
     super.update();
 
     this.#textInputScheduler.update();
   }
 
-  override updateAfterChildren() 
+  override updateAfterChildren()
   {
     super.updateAfterChildren();
 
-    if (!this.#cursorAndLayout.isValid) 
+    if (!this.#cursorAndLayout.isValid)
     {
       this.#updateCaretVisibility();
 
       this.#updateCursorAndLayout();
       this.#cursorAndLayout.validate();
 
-      if (this.#textInputBound) 
+      if (this.#textInputBound)
       {
         this.textInput.setTextAndSelection(this.text, this.#selectionLeft, this.#selectionRight);
       }
     }
   }
 
-  #getPositionAt(index: number): number 
+  #getPositionAt(index: number): number
   {
-    if (index > 0) 
+    if (index > 0)
     {
       if (index < this.#text.length)
         return this.textFlow.children[index].drawPosition.x + this.textFlow.drawPosition.x;
@@ -495,13 +495,13 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     return 0;
   }
 
-  #getCharacterClosestTo(pos: Vec2) 
+  #getCharacterClosestTo(pos: Vec2)
   {
     pos = this.toSpaceOfOtherDrawable(pos, this.textFlow);
 
     let i = 0;
 
-    for (const d of this.textFlow.children) 
+    for (const d of this.textFlow.children)
     {
       if (d.drawPosition.x + d.drawSize.x / 2 > pos.x)
         break;
@@ -515,40 +515,40 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
   #selectionStart = 0;
   #selectionEnd = 0;
 
-  get #selectionLength() 
+  get #selectionLength()
   {
     return Math.abs(this.#selectionEnd - this.#selectionStart);
   }
 
-  get #hasSelection() 
+  get #hasSelection()
   {
     return this.#selectionLength > 0;
   }
 
-  get #selectionLeft() 
+  get #selectionLeft()
   {
     return Math.min(this.#selectionStart, this.#selectionEnd);
   }
 
-  get #selectionRight() 
+  get #selectionRight()
   {
     return Math.max(this.#selectionStart, this.#selectionEnd);
   }
 
   readonly #cursorAndLayout = new Cached();
 
-  #moveSelection(offset: number, expand: boolean) 
+  #moveSelection(offset: number, expand: boolean)
   {
     const oldStart = this.#selectionStart;
     const oldEnd = this.#selectionEnd;
 
-    if (expand) 
+    if (expand)
     {
       this.#selectionEnd = clamp(this.#selectionEnd + offset, 0, this.#text.length);
     }
-    else 
+    else
     {
-      if (this.#hasSelection && Math.abs(offset) <= 1) 
+      if (this.#hasSelection && Math.abs(offset) <= 1)
       {
         // we don't want to move the location when "removing" an existing selection, just set the new location.
         if (offset > 0)
@@ -556,13 +556,13 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
         else
           this.#selectionEnd = this.#selectionStart = this.#selectionLeft;
       }
-      else 
+      else
       {
         this.#selectionEnd = this.#selectionStart = clamp((offset > 0 ? this.#selectionRight : this.#selectionLeft) + offset, 0, this.#text.length);
       }
     }
 
-    if (oldStart !== this.#selectionStart || oldEnd !== this.#selectionEnd) 
+    if (oldStart !== this.#selectionStart || oldEnd !== this.#selectionEnd)
     {
       this.onCaretMoved(expand);
       this.#cursorAndLayout.invalidate();
@@ -571,7 +571,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
 
   #textChanging = false;
 
-  #beginTextChange() 
+  #beginTextChange()
   {
     if (this.#textChanging)
       return false;
@@ -579,7 +579,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     return this.#textChanging = true;
   }
 
-  #endTextChange(started: boolean) 
+  #endTextChange(started: boolean)
   {
     if (!started)
       return;
@@ -592,12 +592,12 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
 
   #ignoreOngoingDragSelection = false;
 
-  #removeSelection() 
+  #removeSelection()
   {
     return this.#removeCharacters(this.#selectionLength);
   }
 
-  #removeCharacters(number: number): string 
+  #removeCharacters(number: number): string
   {
     if (this.current.disabled || this.#text.length === 0)
       return "";
@@ -612,7 +612,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
 
     const beganChange = this.#beginTextChange();
 
-    for (const d of this.textFlow.children.slice(removeStart, removeStart + removeCount)) 
+    for (const d of this.textFlow.children.slice(removeStart, removeStart + removeCount))
     {
       this.textFlow.remove(d, false);
 
@@ -641,7 +641,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     return removedText;
   }
 
-  protected getDrawableCharacter(c: string): Drawable 
+  protected getDrawableCharacter(c: string): Drawable
   {
     return new SpriteText({
       text: c,
@@ -652,7 +652,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     });
   }
 
-  protected addCharacterToFlow(c: string): Drawable 
+  protected addCharacterToFlow(c: string): Drawable
   {
     const charsRight = this.textFlow.children.slice(this.#selectionLeft);
     this.textFlow.removeRange(charsRight, false);
@@ -671,44 +671,44 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     return ch;
   }
 
-  #getDepthForCharacterIndex(index: number) 
+  #getDepthForCharacterIndex(index: number)
   {
     return -index;
   }
 
   #customFontSize?: number;
 
-  get fontSize() 
+  get fontSize()
   {
     return this.#customFontSize ?? 14;// this.textFlow.drawSize.y;
   }
 
-  set fontSize(value) 
+  set fontSize(value)
   {
     // TODO: init only
     this.#customFontSize = value;
   }
 
-  insertString(value: string) 
+  insertString(value: string)
   {
     this.#insertString(value);
   }
 
-  #insertString(value: string, drawableCreationParameters?: (d: Drawable) => void) 
+  #insertString(value: string, drawableCreationParameters?: (d: Drawable) => void)
   {
     if (value === "")
       return;
 
-    if (this.current.disabled) 
+    if (this.current.disabled)
     {
       this.notifyInputError();
       return;
     }
 
     const beganChange = this.#beginTextChange();
-    for (const c of value) 
+    for (const c of value)
     {
-      if (!this.#canAddCharacter(c)) 
+      if (!this.#canAddCharacter(c))
       {
         this.notifyInputError();
         continue;
@@ -717,7 +717,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
       if (this.#hasSelection)
         this.#removeSelection();
 
-      if (this.lengthLimit !== null && this.#text.length + 1 > this.lengthLimit) 
+      if (this.lengthLimit !== null && this.#text.length + 1 > this.lengthLimit)
       {
         this.notifyInputError();
         break;
@@ -738,28 +738,28 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     this.#endTextChange(beganChange);
   }
 
-  protected notifyInputError() 
+  protected notifyInputError()
   {}
 
-  protected onUserTextAdded(added: string) 
+  protected onUserTextAdded(added: string)
   {}
 
-  protected onUserTextRemoved(removed: string) 
+  protected onUserTextRemoved(removed: string)
   {}
 
-  protected onTextCommitted(textChanged: boolean) 
+  protected onTextCommitted(textChanged: boolean)
   {}
 
-  protected onCaretMoved(selecting: boolean) 
+  protected onCaretMoved(selecting: boolean)
   {}
 
-  protected onTextSelectionChanged(selectionType: TextSelectionType) 
+  protected onTextSelectionChanged(selectionType: TextSelectionType)
   {}
 
-  protected onTextDeselected() 
+  protected onTextDeselected()
   {}
 
-  #onTextSelectionChanged(selectionType: TextSelectionType, lastSelectionBounds: [number, number]) 
+  #onTextSelectionChanged(selectionType: TextSelectionType, lastSelectionBounds: [number, number])
   {
     if (lastSelectionBounds[0] === this.#selectionStart && lastSelectionBounds[1] === this.#selectionEnd)
       return;
@@ -770,7 +770,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
       this.#onTextDeselected(lastSelectionBounds);
   }
 
-  #onTextDeselected(lastSelectionBounds: [number, number]) 
+  #onTextDeselected(lastSelectionBounds: [number, number])
   {
     if (lastSelectionBounds[0] === this.#selectionStart && lastSelectionBounds[1] === this.#selectionEnd)
       return;
@@ -779,12 +779,12 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
       this.onTextDeselected();
   }
 
-  #getTextSelectionBounds(): [number, number] 
+  #getTextSelectionBounds(): [number, number]
   {
     return [this.#selectionStart, this.#selectionEnd];
   }
 
-  protected createPlaceholder(): SpriteText 
+  protected createPlaceholder(): SpriteText
   {
     return new SpriteText({
       style: {
@@ -796,12 +796,12 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
 
   protected placeholder: SpriteText;
 
-  get placeholderText() 
+  get placeholderText()
   {
     return this.placeholder.text;
   }
 
-  set placeholderText(value) 
+  set placeholderText(value)
   {
     this.placeholder.text = value;
   }
@@ -810,11 +810,11 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
 
   #caretVisible = false;
 
-  #updateCaretVisibility() 
+  #updateCaretVisibility()
   {
     const newVisibility = this.hasFocus;
 
-    if (this.#caretVisible !== newVisibility) 
+    if (this.#caretVisible !== newVisibility)
     {
       this.#caretVisible = newVisibility;
 
@@ -829,24 +829,24 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
 
   readonly #current = new BindableWithCurrent("");
 
-  get current(): Bindable<string> 
+  get current(): Bindable<string>
   {
     return this.#current.current;
   }
 
-  set current(value: Bindable<string>) 
+  set current(value: Bindable<string>)
   {
     this.#current.current = value;
   }
 
   #text = "";
 
-  get text(): string 
+  get text(): string
   {
     return this.#text;
   }
 
-  set text(value: string | null) 
+  set text(value: string | null)
   {
     if (this.current.disabled)
       return;
@@ -864,7 +864,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     this.#setText(value);
   }
 
-  #setText(value: string) 
+  #setText(value: string)
   {
     const beganChange = this.#beginTextChange();
 
@@ -879,7 +879,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     this.#cursorAndLayout.invalidate();
   }
 
-  get selectedText() 
+  get selectedText()
   {
     return this.#hasSelection ? this.#text.substring(this.#selectionLeft, this.#selectionLeft + this.#selectionLength) : "";
   }
@@ -888,12 +888,12 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
 
   // region Input event handling
 
-  override onKeyDown(e: KeyDownEvent): boolean 
+  override onKeyDown(e: KeyDownEvent): boolean
   {
     if (this.readonly)
       return true;
 
-    switch (e.key) 
+    switch (e.key)
     {
     case Key.Escape:
       if (!e.repeat)
@@ -925,20 +925,20 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     return super.onKeyDown(e) || this.#textInputBlocking;
   }
 
-  protected killFocus() 
+  protected killFocus()
   {
     this.#killFocus();
   }
 
-  #killFocus() 
+  #killFocus()
   {
     if (this.getContainingInputManager()?.focusedDrawable === this)
       this.getContainingFocusManager()?.changeFocus(null);
   }
 
-  commit() 
+  commit()
   {
-    if (this.releaseFocusOnCommit && this.hasFocus) 
+    if (this.releaseFocusOnCommit && this.hasFocus)
     {
       this.#killFocus();
       if (this.commitOnFocusLost)
@@ -953,12 +953,12 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     this.onCommit.emit({ textBox: this, isNew });
   }
 
-  override onKeyUp(e: KeyUpEvent) 
+  override onKeyUp(e: KeyUpEvent)
   {
     this.scheduler.addOnce(this.#revertBlockingStateIfRequired, this);
   }
 
-  override onDragStart(e: DragStartEvent): boolean 
+  override onDragStart(e: DragStartEvent): boolean
   {
     this.#ignoreOngoingDragSelection = false;
 
@@ -969,7 +969,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     return Math.abs(posDiff.x) > Math.abs(posDiff.y);
   }
 
-  override onDrag(e: DragEvent): boolean 
+  override onDrag(e: DragEvent): boolean
   {
     if (this.readonly)
       return false;
@@ -979,29 +979,29 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
 
     const lastSelectionBounds = this.#getTextSelectionBounds();
 
-    if (this.#doubleClickWord) 
+    if (this.#doubleClickWord)
     {
       // select words at a time
-      if (this.#getCharacterClosestTo(e.mousePosition) > this.#doubleClickWord[1]) 
+      if (this.#getCharacterClosestTo(e.mousePosition) > this.#doubleClickWord[1])
       {
         this.#selectionStart = this.#doubleClickWord[0];
         this.#selectionEnd = this.#findSeparatorIndex(this.#text, this.#getCharacterClosestTo(e.mousePosition) - 1, 1);
         this.#selectionEnd = this.#selectionEnd >= 0 ? this.#selectionEnd : this.#text.length;
       }
-      else if (this.#getCharacterClosestTo(e.mousePosition) < this.#doubleClickWord[0]) 
+      else if (this.#getCharacterClosestTo(e.mousePosition) < this.#doubleClickWord[0])
       {
         this.#selectionStart = this.#doubleClickWord[1];
         this.#selectionEnd = this.#findSeparatorIndex(this.#text, this.#getCharacterClosestTo(e.mousePosition), -1);
         this.#selectionEnd = this.#selectionEnd >= 0 ? this.#selectionEnd + 1 : 0;
       }
-      else 
+      else
       {
         // in the middle
         this.#selectionStart = this.#doubleClickWord[0];
         this.#selectionEnd = this.#doubleClickWord[1];
       }
     }
-    else 
+    else
     {
       if (this.#text.length === 0)
         return false;
@@ -1017,14 +1017,14 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     return true;
   }
 
-  override onDoubleClick(e: DoubleClickEvent): boolean 
+  override onDoubleClick(e: DoubleClickEvent): boolean
   {
     const lastSelectionBounds = this.#getTextSelectionBounds();
 
     if (this.#text.length === 0)
       return true;
 
-    if (this.allowClipboardExport) 
+    if (this.allowClipboardExport)
     {
       const hover = Math.min(this.#text.length - 1, this.#getCharacterClosestTo(e.mousePosition));
 
@@ -1034,7 +1034,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
       this.#selectionStart = lastSeparator >= 0 ? lastSeparator + 1 : 0;
       this.#selectionEnd = nextSeparator >= 0 ? nextSeparator : this.#text.length;
     }
-    else 
+    else
     {
       this.#selectionStart = 0;
       this.#selectionEnd = this.#text.length;
@@ -1051,11 +1051,11 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
 
   #regexAlphanumeric = /[a-z0-9]/i;
 
-  #findSeparatorIndex(input: string, searchPos: number, direction: number) 
+  #findSeparatorIndex(input: string, searchPos: number, direction: number)
   {
     const isLetterOrDigit = this.#regexAlphanumeric.test(input[searchPos]);
 
-    for (let i = searchPos; i >= 0 && i < input.length; i += direction) 
+    for (let i = searchPos; i >= 0 && i < input.length; i += direction)
     {
       if (this.#regexAlphanumeric.test(input[i]) !== isLetterOrDigit)
         return i;
@@ -1064,7 +1064,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     return -1;
   }
 
-  override onMouseDown(e: MouseDownEvent): boolean 
+  override onMouseDown(e: MouseDownEvent): boolean
   {
     if (this.readonly)
       return true;
@@ -1080,12 +1080,12 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     return false;
   }
 
-  override onMouseUp(e: MouseUpEvent) 
+  override onMouseUp(e: MouseUpEvent)
   {
     this.#doubleClickWord = undefined;
   }
 
-  override onFocusLost(e: FocusLostEvent) 
+  override onFocusLost(e: FocusLostEvent)
   {
     this.#unbindInput(e.nextFocused instanceof TextBox ? e.nextFocused : undefined);
 
@@ -1095,12 +1095,12 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
       this.commit();
   }
 
-  override get acceptsFocus(): boolean 
+  override get acceptsFocus(): boolean
   {
     return true;
   }
 
-  override onClick(e: ClickEvent): boolean 
+  override onClick(e: ClickEvent): boolean
   {
     if (!this.readonly && this.#textInputBound)
       this.textInput.ensureActivated();
@@ -1108,7 +1108,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     return !this.readonly;
   }
 
-  override onFocus(e: FocusEvent) 
+  override onFocus(e: FocusEvent)
   {
     this.#bindInput(e.previouslyFocused instanceof TextBox ? e.previouslyFocused : undefined);
 
@@ -1120,18 +1120,18 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
 
   #textInputBound = false;
 
-  #bindInput(previous?: TextBox) 
+  #bindInput(previous?: TextBox)
   {
-    if (this.#textInputBound) 
+    if (this.#textInputBound)
     {
       this.textInput.ensureActivated();
     }
 
-    if (previous?.textInput === this.textInput) 
+    if (previous?.textInput === this.textInput)
     {
       this.textInput.ensureActivated();
     }
-    else 
+    else
     {
       this.textInput.activate();
     }
@@ -1142,14 +1142,14 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     this.#textInputBound = true;
   }
 
-  #unbindInput(next?: TextBox) 
+  #unbindInput(next?: TextBox)
   {
     if (!this.#textInputBound)
       return;
 
     this.#textInputBound = false;
 
-    if (this.textInput != null) 
+    if (this.textInput != null)
     {
       // see the comment above, in `bindInput(bool)`.
       if (next?.textInput !== this.textInput)
@@ -1163,9 +1163,9 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     this.#textInputBlocking = false;
   }
 
-  #handleTextInput(text: string) 
+  #handleTextInput(text: string)
   {
-    this.#textInputScheduler.add(() => 
+    this.#textInputScheduler.add(() =>
     {
       this.#textInputBlocking = true;
 
@@ -1179,9 +1179,9 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     });
   }
 
-  #handleTextRemoved(evt: TextRemovedEvent) 
+  #handleTextRemoved(evt: TextRemovedEvent)
   {
-    this.#textInputScheduler.add(() => 
+    this.#textInputScheduler.add(() =>
     {
       this.#selectionStart = evt.start;
       this.#selectionEnd = evt.start + evt.length;
@@ -1189,7 +1189,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     });
   }
 
-  #revertBlockingStateIfRequired() 
+  #revertBlockingStateIfRequired()
   {
     this.#textInputBlocking &&= this.getContainingInputManager()?.currentState.keyboard.keys.hasAnyButtonPressed === true;
   }
@@ -1201,7 +1201,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
   #lastCommitText = "";
 }
 
-export interface CommitEvent 
+export interface CommitEvent
 {
   textBox: TextBox;
   isNew: boolean;

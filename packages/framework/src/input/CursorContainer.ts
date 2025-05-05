@@ -7,9 +7,9 @@ import { Visibility, VisibilityContainer } from "../graphics/containers/Visibili
 import { Axes } from "../graphics/drawables/Axes";
 import { Graphics } from "pixi.js";
 
-export class CursorContainer extends VisibilityContainer 
+export class CursorContainer extends VisibilityContainer
 {
-  constructor() 
+  constructor()
   {
     super();
     this.depth = -Number.MAX_VALUE;
@@ -18,50 +18,50 @@ export class CursorContainer extends VisibilityContainer
     this.state.value = Visibility.Visible;
   }
 
-  createCursor(): Drawable 
+  createCursor(): Drawable
   {
     return new Cursor();
   }
 
   protected activeCursor!: Drawable;
 
-  protected override load(dependencies: ReadonlyDependencyContainer) 
+  protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
 
     this.add(this.activeCursor = this.createCursor());
   }
 
-  override popIn() 
+  override popIn()
   {
     this.alpha = 1;
   }
 
-  override popOut() 
+  override popOut()
   {
     this.alpha = 0;
   }
 
-  override onMouseMove(e: MouseMoveEvent): boolean 
+  override onMouseMove(e: MouseMoveEvent): boolean
   {
     this.activeCursor.position = e.mousePosition;
     return super.onMouseMove?.(e) ?? false;
   }
 
-  override receivePositionalInputAt(pos: Vec2): boolean 
+  override receivePositionalInputAt(pos: Vec2): boolean
   {
     return true;
   }
 
-  override receivePositionalInputAtLocal(localPosition: Vec2): boolean 
+  override receivePositionalInputAtLocal(localPosition: Vec2): boolean
   {
     return true;
   }
 }
 
-class Cursor extends Container 
+class Cursor extends Container
 {
-  override loadComplete() 
+  override loadComplete()
   {
     super.loadComplete();
 

@@ -8,18 +8,18 @@ const textureBatchBitGlCache: Record<number, HighShaderBit> = {};
  * @param bias - the lod bias to use when sampling the texture.
  * @returns a shader bit that will allow the shader to sample multiple textures AND round pixels.
  */
-function generateSampleLodGlSrc(maxTextures: number, bias: number): string 
+function generateSampleLodGlSrc(maxTextures: number, bias: number): string
 {
   const src = [];
 
-  for (let i = 0; i < maxTextures; i++) 
+  for (let i = 0; i < maxTextures; i++)
   {
-    if (i > 0) 
+    if (i > 0)
     {
       src.push("else");
     }
 
-    if (i < maxTextures - 1) 
+    if (i < maxTextures - 1)
     {
       src.push(`if(vTextureId < ${i}.5)`);
     }
@@ -32,9 +32,9 @@ function generateSampleLodGlSrc(maxTextures: number, bias: number): string
   return src.join("\n");
 }
 
-export function generateTextureLodBatchBitGl(maxTextures: number, bias: number = 0.0): HighShaderBit 
+export function generateTextureLodBatchBitGl(maxTextures: number, bias: number = 0.0): HighShaderBit
 {
-  if (!textureBatchBitGlCache[maxTextures]) 
+  if (!textureBatchBitGlCache[maxTextures])
   {
     textureBatchBitGlCache[maxTextures] = {
       name: "texture-batch-bit",

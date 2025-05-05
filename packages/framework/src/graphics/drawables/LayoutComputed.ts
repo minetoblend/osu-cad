@@ -1,14 +1,14 @@
 import { type Drawable, type Invalidation, InvalidationSource } from "./Drawable";
 import { LayoutMember } from "./LayoutMember";
 
-export class LayoutComputed<T> extends LayoutMember 
+export class LayoutComputed<T> extends LayoutMember
 {
   constructor(
     computeFn: () => T,
     invalidation: Invalidation,
     source: InvalidationSource = InvalidationSource.Default,
     condition?: (drawable: Drawable, invalidation: Invalidation) => boolean,
-  ) 
+  )
   {
     super(invalidation, source, condition);
     this.#computeFn = computeFn;
@@ -18,9 +18,9 @@ export class LayoutComputed<T> extends LayoutMember
 
   #value?: T;
 
-  get value() 
+  get value()
   {
-    if (!this.isValid) 
+    if (!this.isValid)
     {
       this.#value = this.#computeFn();
       this.validate();

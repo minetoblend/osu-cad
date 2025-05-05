@@ -1,8 +1,8 @@
 import { KeyBindingAction } from "./KeyBindingAction";
 
-export class PlatformAction extends KeyBindingAction 
+export class PlatformAction extends KeyBindingAction
 {
-  constructor(readonly name: string) 
+  constructor(readonly name: string)
   {
     super();
   }
@@ -50,9 +50,9 @@ export class PlatformAction extends KeyBindingAction
   static readonly ZoomOut = new PlatformAction("ZoomOut");
   static readonly ZoomDefault = new PlatformAction("ZoomDefault");
 
-  isCommonTextEditingAction() 
+  isCommonTextEditingAction()
   {
-    switch (this) 
+    switch (this)
     {
     case PlatformAction.Cut:
     case PlatformAction.Copy:

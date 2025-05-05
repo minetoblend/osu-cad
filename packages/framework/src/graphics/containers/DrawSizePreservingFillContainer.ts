@@ -3,20 +3,20 @@ import { type IVec2, Vec2 } from "../../math/Vec2";
 import { Axes } from "../drawables/Axes";
 import { Container, type ContainerOptions } from "./Container";
 
-export interface DrawSizePreservingFillContainerOptions<T extends Drawable = Drawable> extends ContainerOptions<T> 
+export interface DrawSizePreservingFillContainerOptions<T extends Drawable = Drawable> extends ContainerOptions<T>
 {
   strategy?: DrawSizePreservationStrategy;
   targetDrawSize?: IVec2;
 }
 
-export class DrawSizePreservingFillContainer<T extends Drawable = Drawable> extends Container<T> 
+export class DrawSizePreservingFillContainer<T extends Drawable = Drawable> extends Container<T>
 {
   strategy: DrawSizePreservationStrategy = DrawSizePreservationStrategy.Minimum;
   targetDrawSize = new Vec2(1024, 768);
 
   readonly #content: Container<T>;
 
-  constructor(options: DrawSizePreservingFillContainerOptions<T> = {}) 
+  constructor(options: DrawSizePreservingFillContainerOptions<T> = {})
   {
     super({
       relativeSizeAxes: Axes.Both,
@@ -31,11 +31,11 @@ export class DrawSizePreservingFillContainer<T extends Drawable = Drawable> exte
     this.with(options);
   }
 
-  override update() 
+  override update()
   {
     const drawSizeRatio = this.parent!.childSize.div(this.targetDrawSize);
 
-    switch (this.strategy) 
+    switch (this.strategy)
     {
     case DrawSizePreservationStrategy.Minimum:
       this.#content.scale = new Vec2(Math.min(drawSizeRatio.x, drawSizeRatio.y));
@@ -64,13 +64,13 @@ export class DrawSizePreservingFillContainer<T extends Drawable = Drawable> exte
     super.update();
   }
 
-  override get content() 
+  override get content()
   {
     return this.#content;
   }
 }
 
-export enum DrawSizePreservationStrategy 
+export enum DrawSizePreservationStrategy
 {
   Minimum,
   Maximum,

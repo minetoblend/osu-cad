@@ -13,14 +13,14 @@ import { TextBox } from "./TextBox";
 
 const caret_move_time = 60;
 
-export class BasicTextBox extends TextBox 
+export class BasicTextBox extends TextBox
 {
-  protected get caretWidth() 
+  protected get caretWidth()
   {
     return 2;
   }
 
-  protected get selectionColor() 
+  protected get selectionColor()
   {
     return new Color(0xADFF2F);
   }
@@ -32,7 +32,7 @@ export class BasicTextBox extends TextBox
 
   readonly #background: Drawable;
 
-  protected createBackground(): Drawable 
+  protected createBackground(): Drawable
   {
     return new Box({
       relativeSizeAxes: Axes.Both,
@@ -41,36 +41,36 @@ export class BasicTextBox extends TextBox
     });
   }
 
-  protected get backgroundFocused() 
+  protected get backgroundFocused()
   {
     return this.#backgroundFocused;
   }
 
-  protected set backgroundFocused(value) 
+  protected set backgroundFocused(value)
   {
     this.#backgroundFocused = value;
     if (this.hasFocus)
       this.#background.color = value;
   }
 
-  protected get backgroundUnfocused() 
+  protected get backgroundUnfocused()
   {
     return this.#backgroundUnfocused;
   }
 
-  protected set backgroundUnfocused(value) 
+  protected set backgroundUnfocused(value)
   {
     this.#backgroundUnfocused = value;
     if (!this.hasFocus)
       this.#background.color = value;
   }
 
-  protected get inputErrorColour() 
+  protected get inputErrorColour()
   {
     return new Color(0xFF0000);
   }
 
-  constructor() 
+  constructor()
   {
     super();
 
@@ -81,12 +81,12 @@ export class BasicTextBox extends TextBox
     this.textContainer.height = 0.75;
   }
 
-  protected override notifyInputError() 
+  protected override notifyInputError()
   {
     this.#background.flashColorTo(this.inputErrorColour, 200);
   }
 
-  protected override onTextCommitted(textChanged: boolean) 
+  protected override onTextCommitted(textChanged: boolean)
   {
     super.onTextCommitted(textChanged);
 
@@ -95,7 +95,7 @@ export class BasicTextBox extends TextBox
     this.#background.flashColorTo(this.backgroundCommit, 400);
   }
 
-  override onFocusLost(e: FocusLostEvent) 
+  override onFocusLost(e: FocusLostEvent)
   {
     super.onFocusLost(e);
 
@@ -104,7 +104,7 @@ export class BasicTextBox extends TextBox
     this.#background.fadeColor(this.backgroundUnfocused, 200, EasingFunction.OutExpo);
   }
 
-  override onFocus(e: FocusEvent) 
+  override onFocus(e: FocusEvent)
   {
     super.onFocus(e);
 
@@ -113,16 +113,16 @@ export class BasicTextBox extends TextBox
     this.#background.fadeColor(this.backgroundFocused, 200, EasingFunction.Out);
   }
 
-  protected override createCaret(): Caret 
+  protected override createCaret(): Caret
   {
-    return new BasicCaret().adjust((c) => 
+    return new BasicCaret().adjust((c) =>
     {
       c.caretWidth = this.caretWidth;
       c.selectionColor = this.selectionColor;
     });
   }
 
-  protected override getDrawableCharacter(c: string): Drawable 
+  protected override getDrawableCharacter(c: string): Drawable
   {
     return new FallingDownContainer({
       autoSizeAxes: Axes.Both,
@@ -130,15 +130,15 @@ export class BasicTextBox extends TextBox
     });
   }
 
-  protected getFallingChar(c: string) 
+  protected getFallingChar(c: string)
   {
     return super.getDrawableCharacter(c);
   }
 }
 
-class BasicCaret extends Caret 
+class BasicCaret extends Caret
 {
-  constructor() 
+  constructor()
   {
     super();
 
@@ -152,12 +152,12 @@ class BasicCaret extends Caret
     });
   }
 
-  override hide() 
+  override hide()
   {
     this.fadeOut(200);
   }
 
-  override show() 
+  override show()
   {
     super.show();
     this.#didShow = true;
@@ -169,9 +169,9 @@ class BasicCaret extends Caret
 
   selectionColor = new Color("white");
 
-  override displayAt(position: Vec2, selectionWidth: number | null): void 
+  override displayAt(position: Vec2, selectionWidth: number | null): void
   {
-    if (selectionWidth != null) 
+    if (selectionWidth != null)
     {
       this.moveTo(new Vec2(position.x, position.y), 60, EasingFunction.Out);
       this.resizeWidthTo(selectionWidth + this.caretWidth / 2, caret_move_time, EasingFunction.Out);
@@ -179,7 +179,7 @@ class BasicCaret extends Caret
         .fadeTo(0.5, 200, EasingFunction.Out)
         .fadeColor(this.selectionColor, 200, EasingFunction.Out);
     }
-    else 
+    else
     {
       this.moveTo(new Vec2(position.x - this.caretWidth / 2, position.y), 60, EasingFunction.Out);
       this.resizeWidthTo(this.caretWidth, caret_move_time, EasingFunction.Out);
@@ -188,7 +188,7 @@ class BasicCaret extends Caret
       // TODO: loop
     }
 
-    if (this.#didShow) 
+    if (this.#didShow)
     {
       this.finishTransforms();
       this.#didShow = false;
@@ -196,9 +196,9 @@ class BasicCaret extends Caret
   }
 }
 
-class FallingDownContainer extends Container 
+class FallingDownContainer extends Container
 {
-  override show() 
+  override show()
   {
     const col = this.color;
     this
@@ -206,7 +206,7 @@ class FallingDownContainer extends Container
       .fadeColor(col.setAlpha(1), caret_move_time * 2, EasingFunction.Out);
   }
 
-  override hide() 
+  override hide()
   {
     this.fadeOut(200);
     this.moveToY(this.drawSize.y, 200, EasingFunction.InQuad);

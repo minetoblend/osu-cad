@@ -3,7 +3,7 @@ import type { Bindable, ReadonlyDependencyContainer } from "@osucad/framework";
 import { Anchor, Axes, CompositeDrawable, DrawableSprite, EasingFunction, resolved } from "@osucad/framework";
 import { LegacyComboNumber } from "./LegacyComboNumber";
 
-export class LegacyCirclePiece extends CompositeDrawable 
+export class LegacyCirclePiece extends CompositeDrawable
 {
   @resolved(ISkinSource)
   skin!: ISkinSource;
@@ -11,7 +11,7 @@ export class LegacyCirclePiece extends CompositeDrawable
   @resolved(DrawableHitObject)
   hitObject!: DrawableHitObject;
 
-  constructor() 
+  constructor()
   {
     super();
 
@@ -24,7 +24,7 @@ export class LegacyCirclePiece extends CompositeDrawable
 
   private hitCircleOverlayAboveNumber!: Bindable<boolean | null>;
 
-  protected override load(dependencies: ReadonlyDependencyContainer) 
+  protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
 
@@ -46,7 +46,7 @@ export class LegacyCirclePiece extends CompositeDrawable
   }
 
 
-  protected override loadComplete() 
+  protected override loadComplete()
   {
     super.loadComplete();
 
@@ -59,14 +59,14 @@ export class LegacyCirclePiece extends CompositeDrawable
     );
   }
 
-  private applyCustomState() 
+  private applyCustomState()
   {
     this.applyTransformsAt(-Number.MAX_VALUE, true);
     this.clearTransformsAfter(-Number.MAX_VALUE, true);
 
     this.circleSprite.color = this.hitObject.accentColor.value;
 
-    this.absoluteSequence({ time: this.hitObject.hitStateUpdateTime, recursive: true }, () => 
+    this.absoluteSequence({ time: this.hitObject.hitStateUpdateTime, recursive: true }, () =>
     {
       this.circleSprite.fadeOut(240);
       this.circleSprite.scaleTo(1.4, 240, EasingFunction.Out);
@@ -78,7 +78,7 @@ export class LegacyCirclePiece extends CompositeDrawable
     });
   }
 
-  public override dispose(isDisposing: boolean = true) 
+  public override dispose(isDisposing: boolean = true)
   {
     super.dispose(isDisposing);
 

@@ -1,13 +1,13 @@
-export enum FillMode 
+export enum FillMode
 {
   Stretch = 0,
   Fill = 1,
   Fit = 2,
 }
 
-export function fillModeToString(fillMode: FillMode) 
+export function fillModeToString(fillMode: FillMode)
 {
-  switch (fillMode) 
+  switch (fillMode)
   {
   case FillMode.Fill:
     return "Fill";
@@ -24,7 +24,7 @@ const options: Record<string, FillMode> = {
   Stretch: FillMode.Stretch,
 };
 
-export function parseFillMode(fillMode: string) 
+export function parseFillMode(fillMode: string)
 {
   if (!(fillMode in options))
     throw new Error(`Unknown fill mode ${fillMode}`);

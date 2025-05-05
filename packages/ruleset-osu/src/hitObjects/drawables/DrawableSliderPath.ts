@@ -1,7 +1,7 @@
 import { SmoothPath } from "@osucad/framework";
 import { Color } from "pixi.js";
 
-export class DrawableSliderPath extends SmoothPath 
+export class DrawableSliderPath extends SmoothPath
 {
   static readonly BORDER_PORTION = 0.128;
   static readonly GRADIENT_PORTION = 1 - this.BORDER_PORTION;
@@ -11,12 +11,12 @@ export class DrawableSliderPath extends SmoothPath
 
   #borderColor = new Color(0xFFFFFF);
 
-  get borderColor() 
+  get borderColor()
   {
     return this.#borderColor;
   }
 
-  set borderColor(value) 
+  set borderColor(value)
   {
     if (this.#borderColor.toNumber() === value.toNumber())
       return;
@@ -27,12 +27,12 @@ export class DrawableSliderPath extends SmoothPath
 
   #accentColor = new Color(0xFFFFFF);
 
-  get accentColor() 
+  get accentColor()
   {
     return this.#accentColor;
   }
 
-  set accentColor(value) 
+  set accentColor(value)
   {
     if (this.#accentColor.toNumber() === value.toNumber())
       return;
@@ -43,12 +43,12 @@ export class DrawableSliderPath extends SmoothPath
 
   #borderSize = 1;
 
-  get borderSize() 
+  get borderSize()
   {
     return this.#borderSize;
   }
 
-  set borderSize(value) 
+  set borderSize(value)
   {
     if (this.#borderSize === value)
       return;
@@ -56,7 +56,7 @@ export class DrawableSliderPath extends SmoothPath
     this.invalidateTexture();
   }
 
-  protected get calculatedBorderPortion() 
+  protected get calculatedBorderPortion()
   {
     return this.borderSize * DrawableSliderPath.BORDER_PORTION;
   }

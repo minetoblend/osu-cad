@@ -3,9 +3,9 @@ import { Color } from "pixi.js";
 import { Interpolation } from "./Interpolation";
 import { TypedTransform } from "./Transform";
 
-export class TransformCustom<TValue, T extends ITransformable> extends TypedTransform<TValue, T> 
+export class TransformCustom<TValue, T extends ITransformable> extends TypedTransform<TValue, T>
 {
-  constructor(propertyOrFieldName: string, grouping?: string) 
+  constructor(propertyOrFieldName: string, grouping?: string)
   {
     super();
 
@@ -15,14 +15,14 @@ export class TransformCustom<TValue, T extends ITransformable> extends TypedTran
 
   override readonly targetMember: string;
 
-  override get targetGrouping(): string 
+  override get targetGrouping(): string
   {
     return this.#targetGrouping;
   }
 
   readonly #targetGrouping: string;
 
-  #valueAt(time: number): TValue 
+  #valueAt(time: number): TValue
   {
     if (time < this.startTime)
       return this.startValue;
@@ -32,22 +32,22 @@ export class TransformCustom<TValue, T extends ITransformable> extends TypedTran
     return Interpolation.valueAt(time, this.startValue, this.endValue, this.startTime, this.endTime, this.easing);
   }
 
-  override applyTo(target: T, time: number) 
+  override applyTo(target: T, time: number)
   {
     const value = this.#valueAt(time);
 
     Reflect.set(target, this.targetMember, value);
   }
 
-  override readIntoStartValueFrom(target: T) 
+  override readIntoStartValueFrom(target: T)
   {
     let startValue = Reflect.get(target, this.targetMember) as any;
 
-    if (startValue && typeof startValue === "object" && "clone" in startValue) 
+    if (startValue && typeof startValue === "object" && "clone" in startValue)
     {
       startValue = startValue.clone() as TValue;
     }
-    else if (typeof startValue === "object" && startValue instanceof Color) 
+    else if (typeof startValue === "object" && startValue instanceof Color)
     {
       startValue = new Color(startValue);
     }
@@ -55,7 +55,7 @@ export class TransformCustom<TValue, T extends ITransformable> extends TypedTran
     this.startValue = startValue;
   }
 
-  override clone(): TransformCustom<TValue, T> 
+  override clone(): TransformCustom<TValue, T>
   {
     const transform = new TransformCustom<TValue, T>(this.targetMember, this.#targetGrouping);
 

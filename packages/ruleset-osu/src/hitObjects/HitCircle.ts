@@ -1,9 +1,9 @@
 import type { OsuHitObjectOptions } from "./OsuHitObject";
 import { OsuHitObject } from "./OsuHitObject";
 
-export class HitCircle extends OsuHitObject 
+export class HitCircle extends OsuHitObject
 {
-  constructor(options?: OsuHitObjectOptions) 
+  constructor(options?: OsuHitObjectOptions)
   {
     super(options);
   }

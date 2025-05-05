@@ -18,7 +18,7 @@ export type GlobalUniformGroup = UniformGroup<{
   uMaskingBlendRange: { value: number; type: "f32" };
 }>;
 
-export interface GlobalUniformOptions 
+export interface GlobalUniformOptions
 {
   size?: number[];
   projectionMatrix?: Matrix;
@@ -36,7 +36,7 @@ export interface GlobalUniformOptions
   maskingBlendRange?: number;
 }
 
-export interface GlobalUniformData 
+export interface GlobalUniformData
 {
   projectionMatrix: Matrix;
   worldTransformMatrix: Matrix;
@@ -54,7 +54,7 @@ export interface GlobalUniformData
   maskingBlendRange: number;
 }
 
-export interface GlobalUniformRenderer 
+export interface GlobalUniformRenderer
 {
   renderTarget: GlRenderTargetSystem | GpuRenderTargetSystem;
   renderPipes: Renderer["renderPipes"];
@@ -62,7 +62,7 @@ export interface GlobalUniformRenderer
   type: RendererType;
 }
 
-export class OsucadUniformSystem implements System 
+export class OsucadUniformSystem implements System
 {
   /** @ignore */
   public static extension = {
@@ -88,21 +88,21 @@ export class OsucadUniformSystem implements System
 
   private _currentGlobalUniformData!: GlobalUniformData;
 
-  constructor(renderer: GlobalUniformRenderer) 
+  constructor(renderer: GlobalUniformRenderer)
   {
     this._renderer = renderer;
   }
 
-  public reset() 
+  public reset()
   {
     this._stackIndex = 0;
 
-    for (let i = 0; i < this._activeUniforms.length; i++) 
+    for (let i = 0; i < this._activeUniforms.length; i++)
     {
       this._uniformsPool.push(this._activeUniforms[i]);
     }
 
-    for (let i = 0; i < this._activeBindGroups.length; i++) 
+    for (let i = 0; i < this._activeBindGroups.length; i++)
     {
       this._bindGroupPool.push(this._activeBindGroups[i]);
     }
@@ -111,7 +111,7 @@ export class OsucadUniformSystem implements System
     this._activeBindGroups.length = 0;
   }
 
-  public start(options: GlobalUniformOptions): void 
+  public start(options: GlobalUniformOptions): void
   {
     this.reset();
 
@@ -132,7 +132,7 @@ export class OsucadUniformSystem implements System
     borderThickness,
     borderColor,
     maskingBlendRange,
-  }: GlobalUniformOptions) 
+  }: GlobalUniformOptions)
   {
     const renderTarget = this._renderer.renderTarget.renderTarget;
 
@@ -218,11 +218,11 @@ export class OsucadUniformSystem implements System
 
     let bindGroup: BindGroup;
 
-    if ((this._renderer as WebGPURenderer).renderPipes.uniformBatch) 
+    if ((this._renderer as WebGPURenderer).renderPipes.uniformBatch)
     {
       bindGroup = (this._renderer as WebGPURenderer).renderPipes.uniformBatch.getUniformBindGroup(uniformGroup, false);
     }
-    else 
+    else
     {
       bindGroup = this._bindGroupPool.pop() || new BindGroup();
       this._activeBindGroups.push(bindGroup);
@@ -234,41 +234,41 @@ export class OsucadUniformSystem implements System
     this._currentGlobalUniformData = globalUniformData;
   }
 
-  public push(options: GlobalUniformOptions) 
+  public push(options: GlobalUniformOptions)
   {
     this.bind(options);
 
     this._globalUniformDataStack[this._stackIndex++] = this._currentGlobalUniformData;
   }
 
-  public pop() 
+  public pop()
   {
     this._currentGlobalUniformData = this._globalUniformDataStack[--this._stackIndex - 1];
 
     // for webGL we need to update the uniform group here
     // as we are not using bind groups
-    if (this._renderer.type === RendererType.WEBGL) 
+    if (this._renderer.type === RendererType.WEBGL)
     {
       (this._currentGlobalUniformData.bindGroup.resources[0] as UniformGroup).update();
     }
   }
 
-  get bindGroup(): BindGroup 
+  get bindGroup(): BindGroup
   {
     return this._currentGlobalUniformData.bindGroup;
   }
 
-  get globalUniformData() 
+  get globalUniformData()
   {
     return this._currentGlobalUniformData;
   }
 
-  get uniformGroup() 
+  get uniformGroup()
   {
     return this._currentGlobalUniformData.bindGroup.resources[0] as UniformGroup;
   }
 
-  private _createUniforms(): GlobalUniformGroup 
+  private _createUniforms(): GlobalUniformGroup
   {
     const globalUniforms = new UniformGroup({
       uProjectionMatrix: { value: new Matrix(), type: "mat3x3<f32>" },
@@ -292,7 +292,7 @@ export class OsucadUniformSystem implements System
     return globalUniforms;
   }
 
-  public destroy() 
+  public destroy()
   {
     (this._renderer as any) = null;
   }

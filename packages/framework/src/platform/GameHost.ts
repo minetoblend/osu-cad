@@ -21,14 +21,14 @@ import { IRenderer, Renderer } from "../renderers/Renderer";
 import { FrameStatistics } from "../statistics/FrameStatistics";
 import { FramedClock } from "../timing/FramedClock";
 
-export interface GameHostOptions 
+export interface GameHostOptions
 {
   friendlyGameName?: string;
 }
 
-export abstract class GameHost 
+export abstract class GameHost
 {
-  get renderer(): Renderer 
+  get renderer(): Renderer
   {
     if (!this.#renderer)
       throw new Error("Renderer not initialized");
@@ -38,7 +38,7 @@ export abstract class GameHost
 
   #renderer?: Renderer;
 
-  get audioManager(): AudioManager 
+  get audioManager(): AudioManager
   {
     if (!this.#audioManager)
       throw new Error("AudioManager not initialized");
@@ -54,7 +54,7 @@ export abstract class GameHost
 
   readonly dependencies = new DependencyContainer();
 
-  protected constructor(gameName: string, options: GameHostOptions = {}) 
+  protected constructor(gameName: string, options: GameHostOptions = {})
   {
     this.name = options.friendlyGameName ?? `osucad framework running "${gameName}"`;
   }
@@ -67,7 +67,7 @@ export abstract class GameHost
 
   readonly afterRender = new Action();
 
-  update() 
+  update()
   {
     FrameStatistics.clear();
 
@@ -89,21 +89,21 @@ export abstract class GameHost
     FrameStatistics.updateSubTreeTransforms.stop(startTime);
   }
 
-  protected render() 
+  protected render()
   {
     FrameStatistics.draw.measure(() => this.renderer.render(this.root!));
   }
 
-  async takeScreenshot(): Promise<Blob> 
+  async takeScreenshot(): Promise<Blob>
   {
     throw new Error("Not implemented");
   }
 
   container!: HTMLElement;
 
-  async run(game: Game, container: HTMLElement = document.body) 
+  async run(game: Game, container: HTMLElement = document.body)
   {
-    if (this.executionState !== ExecutionState.Idle) 
+    if (this.executionState !== ExecutionState.Idle)
     {
       throw new Error("GameHost is already running");
     }
@@ -137,14 +137,14 @@ export abstract class GameHost
 
     this.executionState = ExecutionState.Running;
 
-    while (this.executionState === ExecutionState.Running) 
+    while (this.executionState === ExecutionState.Running)
     {
       const startTime = performance.now();
       this.update();
       this.render();
       FrameStatistics.frame.stop(startTime);
       this.afterRender.emit();
-      await new Promise((resolve) => 
+      await new Promise((resolve) =>
       {
         requestAnimationFrame(resolve);
         setTimeout(resolve, 100);
@@ -154,19 +154,19 @@ export abstract class GameHost
     this.#performExit();
   }
 
-  onUnhandledError(error: Error) 
+  onUnhandledError(error: Error)
   {
     console.error(error);
     return false;
   }
 
-  onUnhandledRejection(event: PromiseRejectionEvent) 
+  onUnhandledRejection(event: PromiseRejectionEvent)
   {
     console.error(event.reason);
     return false;
   }
 
-  async #chooseAndSetupRenderer() 
+  async #chooseAndSetupRenderer()
   {
     const renderer = new Renderer();
 
@@ -180,22 +180,22 @@ export abstract class GameHost
     this.#renderer = renderer;
   }
 
-  protected createAvailableInputHandlers() 
+  protected createAvailableInputHandlers()
   {
     return [new KeyboardHandler(), new TouchHandler(), new MouseHandler()];
   }
 
-  #populateInputHandlers() 
+  #populateInputHandlers()
   {
     this.availableInputHandlers = this.createAvailableInputHandlers();
   }
 
   availableInputHandlers!: InputHandler[];
 
-  #initializeInputHandlers() 
+  #initializeInputHandlers()
   {}
 
-  async #bootstrapSceneGraph(game: Game) 
+  async #bootstrapSceneGraph(game: Game)
   {
     // TODO: add root containers for input handling & safe area insets
     const root = new UserInputManager();
@@ -216,9 +216,9 @@ export abstract class GameHost
     this.root = root;
   }
 
-  #performExit() 
+  #performExit()
   {
-    if (this.executionState === ExecutionState.Running) 
+    if (this.executionState === ExecutionState.Running)
     {
       this.dispose();
     }
@@ -227,12 +227,12 @@ export abstract class GameHost
 
   #isDisposed = false;
 
-  get isDisposed() 
+  get isDisposed()
   {
     return this.#isDisposed;
   }
 
-  dispose(disposing: boolean = true) 
+  dispose(disposing: boolean = true)
   {
     if (this.isDisposed)
       return;
@@ -240,18 +240,18 @@ export abstract class GameHost
     this.root?.dispose();
   }
 
-  get platformKeyBindings(): KeyBinding[] 
+  get platformKeyBindings(): KeyBinding[]
   {
     return autoDetectPlatformActions();
   }
 
-  createTextInput(): TextInputSource 
+  createTextInput(): TextInputSource
   {
     return new TextInputSource();
   }
 }
 
-export enum ExecutionState 
+export enum ExecutionState
 {
   Idle = 0,
   Stopped = 1,

@@ -3,7 +3,7 @@ import type { SpriteDrawNode } from "../graphics/drawables/SpriteDrawNode";
 import { BigPool, ExtensionType } from "pixi.js";
 import { OsucadBatchableSprite } from "./OsucadBatchableSprite";
 
-export class OsucadSpritePipe implements RenderPipe<SpriteDrawNode> 
+export class OsucadSpritePipe implements RenderPipe<SpriteDrawNode>
 {
   /** @ignore */
   public static extension = {
@@ -19,13 +19,13 @@ export class OsucadSpritePipe implements RenderPipe<SpriteDrawNode>
   private _gpuSpriteHash: Record<number, OsucadBatchableSprite> = Object.create(null);
   private readonly _destroyRenderableBound = this.destroyRenderable.bind(this) as (renderable: Container<any>) => void;
 
-  constructor(renderer: Renderer) 
+  constructor(renderer: Renderer)
   {
     this._renderer = renderer;
     this._renderer.renderableGC.addManagedHash(this, "_gpuSpriteHash");
   }
 
-  public addRenderable(sprite: SpriteDrawNode, instructionSet: InstructionSet) 
+  public addRenderable(sprite: SpriteDrawNode, instructionSet: InstructionSet)
   {
     const gpuSprite = this._getGpuSprite(sprite);
 
@@ -36,7 +36,7 @@ export class OsucadSpritePipe implements RenderPipe<SpriteDrawNode>
     this._renderer.renderPipes.batch.addToBatch(gpuSprite, instructionSet);
   }
 
-  public updateRenderable(sprite: SpriteDrawNode) 
+  public updateRenderable(sprite: SpriteDrawNode)
   {
     const gpuSprite = this._gpuSpriteHash[sprite.uid];
 
@@ -46,12 +46,12 @@ export class OsucadSpritePipe implements RenderPipe<SpriteDrawNode>
     gpuSprite._batcher.updateElement(gpuSprite);
   }
 
-  public validateRenderable(sprite: SpriteDrawNode): boolean 
+  public validateRenderable(sprite: SpriteDrawNode): boolean
   {
     const texture = sprite._texture;
     const gpuSprite = this._getGpuSprite(sprite);
 
-    if (gpuSprite.texture._source !== texture._source) 
+    if (gpuSprite.texture._source !== texture._source)
     {
       return !gpuSprite._batcher.checkAndUpdateTexture(gpuSprite, texture);
     }
@@ -59,7 +59,7 @@ export class OsucadSpritePipe implements RenderPipe<SpriteDrawNode>
     return false;
   }
 
-  public destroyRenderable(sprite: SpriteDrawNode) 
+  public destroyRenderable(sprite: SpriteDrawNode)
   {
     const batchableSprite = this._gpuSpriteHash[sprite.uid];
 
@@ -71,18 +71,18 @@ export class OsucadSpritePipe implements RenderPipe<SpriteDrawNode>
     sprite.off("destroyed", this._destroyRenderableBound);
   }
 
-  private _updateBatchableSprite(sprite: SpriteDrawNode, batchableSprite: OsucadBatchableSprite) 
+  private _updateBatchableSprite(sprite: SpriteDrawNode, batchableSprite: OsucadBatchableSprite)
   {
     batchableSprite.bounds = sprite.visualBounds;
     batchableSprite.texture = sprite._texture;
   }
 
-  private _getGpuSprite(sprite: SpriteDrawNode): OsucadBatchableSprite 
+  private _getGpuSprite(sprite: SpriteDrawNode): OsucadBatchableSprite
   {
     return this._gpuSpriteHash[sprite.uid] || this._initGPUSprite(sprite);
   }
 
-  private _initGPUSprite(sprite: SpriteDrawNode): OsucadBatchableSprite 
+  private _initGPUSprite(sprite: SpriteDrawNode): OsucadBatchableSprite
   {
     const batchableSprite = BigPool.get(OsucadBatchableSprite);
 
@@ -101,9 +101,9 @@ export class OsucadSpritePipe implements RenderPipe<SpriteDrawNode>
     return batchableSprite;
   }
 
-  public destroy() 
+  public destroy()
   {
-    for (const i in this._gpuSpriteHash) 
+    for (const i in this._gpuSpriteHash)
     {
       BigPool.return(this._gpuSpriteHash[i] as PoolItem);
     }

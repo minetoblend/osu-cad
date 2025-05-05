@@ -6,9 +6,9 @@ import { FollowPoint } from "./FollowPoint";
 import { FollowPointConnection } from "./FollowPointConnection";
 import { FollowPointLifetimeEntry } from "./FollowPointLifetimeEntry";
 
-export class FollowPointRenderer extends PooledDrawableWithLifetimeContainer<FollowPointLifetimeEntry, FollowPointConnection> 
+export class FollowPointRenderer extends PooledDrawableWithLifetimeContainer<FollowPointLifetimeEntry, FollowPointConnection>
 {
-  constructor() 
+  constructor()
   {
     super();
 
@@ -19,7 +19,7 @@ export class FollowPointRenderer extends PooledDrawableWithLifetimeContainer<Fol
   #pointPool!: DrawablePool<FollowPoint>;
 
   #lifetimeEntries = new SortedList<FollowPointLifetimeEntry>({
-    compare(a: FollowPointLifetimeEntry, b: FollowPointLifetimeEntry): number 
+    compare(a: FollowPointLifetimeEntry, b: FollowPointLifetimeEntry): number
     {
       const comp = a.start.startTime - b.start.startTime;
 
@@ -32,7 +32,7 @@ export class FollowPointRenderer extends PooledDrawableWithLifetimeContainer<Fol
 
   #startTimeMap = new Map<OsuHitObject, Bindable<any>>();
 
-  protected override load(dependencies: ReadonlyDependencyContainer) 
+  protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
 
@@ -42,7 +42,7 @@ export class FollowPointRenderer extends PooledDrawableWithLifetimeContainer<Fol
     ];
   }
 
-  addFollowPoints(hitObject: OsuHitObject) 
+  addFollowPoints(hitObject: OsuHitObject)
   {
     this.#addEntry(hitObject);
 
@@ -51,7 +51,7 @@ export class FollowPointRenderer extends PooledDrawableWithLifetimeContainer<Fol
     this.#startTimeMap.set(hitObject, startTimeBindable);
   }
 
-  removeFollowPoints(hitObject: OsuHitObject) 
+  removeFollowPoints(hitObject: OsuHitObject)
   {
     this.#removeEntry(hitObject);
 
@@ -59,23 +59,23 @@ export class FollowPointRenderer extends PooledDrawableWithLifetimeContainer<Fol
     this.#startTimeMap.delete(hitObject);
   }
 
-  #addEntry(hitObject: OsuHitObject) 
+  #addEntry(hitObject: OsuHitObject)
   {
     const newEntry = new FollowPointLifetimeEntry(hitObject);
 
     const index = this.#lifetimeEntries.add(newEntry);
 
-    if (index < this.#lifetimeEntries.length - 1) 
+    if (index < this.#lifetimeEntries.length - 1)
     {
       const nextEntry = this.#lifetimeEntries.get(index + 1)!;
       newEntry.end = nextEntry.start;
     }
-    else 
+    else
     {
       newEntry.end = null;
     }
 
-    if (index > 0) 
+    if (index > 0)
     {
       const previousEntry = this.#lifetimeEntries.get(index - 1)!;
       previousEntry.end = newEntry.start;
@@ -84,7 +84,7 @@ export class FollowPointRenderer extends PooledDrawableWithLifetimeContainer<Fol
     this.addEntry(newEntry);
   }
 
-  #removeEntry(hitObject: OsuHitObject) 
+  #removeEntry(hitObject: OsuHitObject)
   {
     const index = this.#lifetimeEntries.findIndex(entry => entry.start === hitObject);
 
@@ -97,14 +97,14 @@ export class FollowPointRenderer extends PooledDrawableWithLifetimeContainer<Fol
     this.#lifetimeEntries.removeAt(index);
     this.removeEntry(entry);
 
-    if (index > 0) 
+    if (index > 0)
     {
       const previousEntry = this.#lifetimeEntries.get(index - 1)!;
       previousEntry.end = entry.end;
     }
   }
 
-  getDrawable(entry: FollowPointLifetimeEntry): FollowPointConnection 
+  getDrawable(entry: FollowPointLifetimeEntry): FollowPointConnection
   {
     const connection = this.#connectionPool.get();
     connection.pool = this.#pointPool;
@@ -112,13 +112,13 @@ export class FollowPointRenderer extends PooledDrawableWithLifetimeContainer<Fol
     return connection;
   }
 
-  #onStartTimeChanged(hitObject: OsuHitObject) 
+  #onStartTimeChanged(hitObject: OsuHitObject)
   {
     this.#removeEntry(hitObject);
     this.#addEntry(hitObject);
   }
 
-  override dispose(isDisposing: boolean = true) 
+  override dispose(isDisposing: boolean = true)
   {
     super.dispose(isDisposing);
 

@@ -16,18 +16,18 @@ import { BatchShader } from "./shaders/BatchShader";
 
 let shader: Shader = null!;
 
-export interface OsucadBatchableQuadElement extends DefaultBatchableQuadElement 
+export interface OsucadBatchableQuadElement extends DefaultBatchableQuadElement
 {
   textureRect: Rectangle;
   blendRange: Vec2;
 }
 
-export interface OsucadBatchableMeshElement extends DefaultBatchableMeshElement 
+export interface OsucadBatchableMeshElement extends DefaultBatchableMeshElement
 {
   textureRect: Rectangle;
 }
 
-export class OsucadBatcher extends Batcher 
+export class OsucadBatcher extends Batcher
 {
   public static extension = {
     type: [
@@ -43,7 +43,7 @@ export class OsucadBatcher extends Batcher
 
   protected override vertexSize: number = 6;
 
-  override packAttributes(element: OsucadBatchableMeshElement, float32View: Float32Array, uint32View: Uint32Array, index: number, textureId: number): void 
+  override packAttributes(element: OsucadBatchableMeshElement, float32View: Float32Array, uint32View: Uint32Array, index: number, textureId: number): void
   {
     const textureIdAndRound = (textureId << 16) | (element.roundPixels & 0xFFFF);
 
@@ -63,7 +63,7 @@ export class OsucadBatcher extends Batcher
     const offset = element.attributeOffset;
     const end = offset + element.attributeSize;
 
-    for (let i = offset; i < end; i++) 
+    for (let i = offset; i < end; i++)
     {
       const i2 = i * 2;
 
@@ -81,7 +81,7 @@ export class OsucadBatcher extends Batcher
     }
   }
 
-  override packQuadAttributes(element: OsucadBatchableQuadElement, float32View: Float32Array, uint32View: Uint32Array, index: number, textureId: number): void 
+  override packQuadAttributes(element: OsucadBatchableQuadElement, float32View: Float32Array, uint32View: Uint32Array, index: number, textureId: number): void
   {
     const texture = element.texture;
 

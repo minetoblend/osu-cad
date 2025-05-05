@@ -2,16 +2,16 @@ import type { BoundsData, Texture } from "pixi.js";
 import type { DrawableSprite } from "./DrawableSprite";
 import { Sprite } from "pixi.js";
 
-export class SpriteDrawNode extends Sprite 
+export class SpriteDrawNode extends Sprite
 {
-  constructor(readonly source: DrawableSprite) 
+  constructor(readonly source: DrawableSprite)
   {
     super();
   }
 
   override renderPipeId = "osucad-sprite";
 
-  protected override updateBounds() 
+  protected override updateBounds()
   {
     updateQuadBounds(this._bounds, this._texture);
   }
@@ -20,12 +20,12 @@ export class SpriteDrawNode extends Sprite
 export function updateQuadBounds(
   bounds: BoundsData,
   texture: Texture,
-) 
+)
 {
   const { width, height } = texture.orig;
   const trim = texture.trim;
 
-  if (trim) 
+  if (trim)
   {
     const sourceWidth = trim.width;
     const sourceHeight = trim.height;
@@ -37,7 +37,7 @@ export function updateQuadBounds(
     bounds.maxY = bounds.minY + sourceHeight;
   }
 
-  else 
+  else
   {
     bounds.minX = 0;
     bounds.maxX = bounds.minX + width;

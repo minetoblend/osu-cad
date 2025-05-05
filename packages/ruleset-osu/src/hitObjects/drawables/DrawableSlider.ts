@@ -10,9 +10,9 @@ import { DrawableSliderHead } from "./DrawableSliderHead";
 import { PlaySliderBody } from "./PlaySliderBody";
 
 @provide(DrawableSlider)
-export class DrawableSlider extends DrawableOsuHitObject<Slider> 
+export class DrawableSlider extends DrawableOsuHitObject<Slider>
 {
-  constructor() 
+  constructor()
   {
     super();
 
@@ -35,7 +35,7 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
 
   body!: SkinnableDrawable;
 
-  protected override load(dependencies: ReadonlyDependencyContainer) 
+  protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
 
@@ -48,7 +48,7 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
     this.scaleBindable.addOnChangeListener(scale => this.ball.scale = scale.value);
   }
 
-  protected override onApplied() 
+  protected override onApplied()
   {
     super.onApplied();
 
@@ -56,7 +56,7 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
     this.sliderHead.entry = new SyntheticHitObjectEntry(this.hitObject.headCircle);
   }
 
-  protected override onFreed() 
+  protected override onFreed()
   {
     super.onFreed();
 
@@ -65,23 +65,23 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
     this.sliderHead.entry = null;
   }
 
-  protected override updatePosition(): void 
+  protected override updatePosition(): void
   {
     this.position = this.hitObject.stackedPosition;
   }
 
-  protected override updateScale(): void 
+  protected override updateScale(): void
   {
   }
 
-  get sliderBody(): PlaySliderBody | null 
+  get sliderBody(): PlaySliderBody | null
   {
     if (this.body.drawable instanceof PlaySliderBody)
       return this.body.drawable;
     return null;
   }
 
-  public override updateAfterChildren() 
+  public override updateAfterChildren()
   {
     super.updateAfterChildren();
 
@@ -91,14 +91,14 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
     this.sliderBody?.updateProgress(completionProgress);
   }
 
-  protected override updateStartTimeTransforms() 
+  protected override updateStartTimeTransforms()
   {
     super.updateStartTimeTransforms();
 
     this.ball.fadeIn();
   }
 
-  protected override updateHitStateTransforms() 
+  protected override updateHitStateTransforms()
   {
     super.updateHitStateTransforms();
 

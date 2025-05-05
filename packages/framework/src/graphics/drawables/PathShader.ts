@@ -2,9 +2,9 @@ import { compileHighShaderGl, fragmentGlTemplate, globalUniformsBitGl, GlProgram
 
 let glProgram: GlProgram | undefined;
 
-export class PathShader extends Shader 
+export class PathShader extends Shader
 {
-  constructor() 
+  constructor()
   {
     const vertexTemplate = `
 
@@ -78,12 +78,12 @@ export class PathShader extends Shader
 
   #texture = Texture.WHITE;
 
-  get texture() 
+  get texture()
   {
     return this.#texture;
   }
 
-  set texture(value) 
+  set texture(value)
   {
     this.#texture = value;
     this.resources.uTexture = value.source;

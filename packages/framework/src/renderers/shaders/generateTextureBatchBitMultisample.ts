@@ -7,18 +7,18 @@ const textureBatchBitGlCache: Record<number, HighShaderBit> = {};
  * @param maxTextures - the max textures the shader can use.
  * @returns a shader bit that will allow the shader to sample multiple textures AND round pixels.
  */
-function generateSampleGlSrc(maxTextures: number): string 
+function generateSampleGlSrc(maxTextures: number): string
 {
   const src = [];
 
-  for (let i = 0; i < maxTextures; i++) 
+  for (let i = 0; i < maxTextures; i++)
   {
-    if (i > 0) 
+    if (i > 0)
     {
       src.push("else");
     }
 
-    if (i < maxTextures - 1) 
+    if (i < maxTextures - 1)
     {
       src.push(`if(vTextureId < ${i}.5)`);
     }
@@ -36,9 +36,9 @@ function generateSampleGlSrc(maxTextures: number): string
   return src.join("\n");
 }
 
-export function generateTextureMultisampleBatchBitGl(maxTextures: number): HighShaderBit 
+export function generateTextureMultisampleBatchBitGl(maxTextures: number): HighShaderBit
 {
-  if (!textureBatchBitGlCache[maxTextures]) 
+  if (!textureBatchBitGlCache[maxTextures])
   {
     textureBatchBitGlCache[maxTextures] = {
       name: "texture-batch-bit",

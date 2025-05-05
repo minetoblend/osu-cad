@@ -1,4 +1,4 @@
-export enum Anchor 
+export enum Anchor
 {
   x0 = 1,
   x1 = 1 << 1,
@@ -23,9 +23,9 @@ export enum Anchor
   BottomRight = x2 | y2,
 }
 
-export function anchorToString(anchor: Anchor) 
+export function anchorToString(anchor: Anchor)
 {
-  switch (anchor) 
+  switch (anchor)
   {
   case Anchor.Custom:
     return "Custom";
@@ -52,7 +52,7 @@ export function anchorToString(anchor: Anchor)
   }
 }
 
-export function parseAnchor(anchor: string) 
+export function parseAnchor(anchor: string)
 {
   if (anchor in Anchor)
     return Anchor[anchor as keyof typeof Anchor];

@@ -13,7 +13,7 @@ import { DragStartEvent } from "./events/DragStartEvent";
 import { MouseDownEvent } from "./events/MouseDownEvent";
 import { MouseUpEvent } from "./events/MouseUpEvent";
 
-export abstract class MouseButtonEventManager extends ButtonEventManager<MouseButton> 
+export abstract class MouseButtonEventManager extends ButtonEventManager<MouseButton>
 {
   abstract get enableDrag(): boolean;
 
@@ -35,30 +35,30 @@ export abstract class MouseButtonEventManager extends ButtonEventManager<MouseBu
 
   lastClickTime: number | null = null;
 
-  handlePositionChange(state: InputState, lastPosition: Vec2) 
+  handlePositionChange(state: InputState, lastPosition: Vec2)
   {
-    if (this.enableDrag) 
+    if (this.enableDrag)
     {
-      if (!this.dragStarted) 
+      if (!this.dragStarted)
       {
         const mouse = state.mouse;
         if (
           mouse.isPressed(this.button)
           && mouse.position.distance(this.mouseDownPosition ?? mouse.position) > this.clickDragDistance
-        ) 
+        )
         {
           this.#handleDragStart(state);
         }
       }
 
-      if (this.dragStarted) 
+      if (this.dragStarted)
       {
         this.#handleDrag(state, lastPosition);
       }
     }
   }
 
-  override handleButtonDown(state: InputState, targets: List<Drawable>): Drawable | null 
+  override handleButtonDown(state: InputState, targets: List<Drawable>): Drawable | null
   {
     debugAssert(state.mouse.isPressed(this.button), "Mouse button must be pressed");
 
@@ -70,9 +70,9 @@ export abstract class MouseButtonEventManager extends ButtonEventManager<MouseBu
         new MouseDownEvent(state, this.button, this.mouseDownPosition),
     );
 
-    if (this.lastClickTime !== null && this.inputManager.time.current - this.lastClickTime < this.doubleClickTime) 
+    if (this.lastClickTime !== null && this.inputManager.time.current - this.lastClickTime < this.doubleClickTime)
     {
-      if (this.#handleDoubleClick(state, targets)) 
+      if (this.#handleDoubleClick(state, targets))
       {
         // when we handle a double-click we want to block a normal click from firing.
         this.blockNextClick = true;
@@ -83,16 +83,16 @@ export abstract class MouseButtonEventManager extends ButtonEventManager<MouseBu
     return handledBy;
   }
 
-  override handleButtonUp(state: InputState, targets: Drawable[] | null): void 
+  override handleButtonUp(state: InputState, targets: Drawable[] | null): void
   {
     debugAssert(!state.mouse.isPressed(this.button), "Mouse button must be released");
 
     if (targets !== null)
       this.propagateButtonEvent(targets, new MouseUpEvent(state, this.button, this.mouseDownPosition));
 
-    if (this.enableClick && this.draggedDrawable?.dragBlocksClick !== true) 
+    if (this.enableClick && this.draggedDrawable?.dragBlocksClick !== true)
     {
-      if (!this.blockNextClick) 
+      if (!this.blockNextClick)
       {
         this.lastClickTime = this.inputManager.time.current;
         this.#handleClick(state, targets);
@@ -101,7 +101,7 @@ export abstract class MouseButtonEventManager extends ButtonEventManager<MouseBu
 
     this.blockNextClick = false;
 
-    if (this.enableDrag) 
+    if (this.enableDrag)
     {
       this.dragStarted = false;
       this.#handleDragDrawableEnd(state);
@@ -114,7 +114,7 @@ export abstract class MouseButtonEventManager extends ButtonEventManager<MouseBu
 
   clickedDrawable: WeakRef<Drawable> | null = null;
 
-  #handleClick(state: InputState, targets: Drawable[] | null) 
+  #handleClick(state: InputState, targets: Drawable[] | null)
   {
     if (targets === null)
       return;
@@ -124,22 +124,22 @@ export abstract class MouseButtonEventManager extends ButtonEventManager<MouseBu
 
     const clicked = this.propagateButtonEvent(drawables, new ClickEvent(state, this.button, this.mouseDownPosition));
 
-    if (clicked) 
+    if (clicked)
     {
       this.clickedDrawable = new WeakRef(clicked);
     }
-    else 
+    else
     {
       this.clickedDrawable = null;
     }
 
-    if (this.changeFocusOnClick) 
+    if (this.changeFocusOnClick)
     {
       this.inputManager.changeFocusFromClick(clicked);
     }
   }
 
-  #handleDoubleClick(state: InputState, targets: List<Drawable>): boolean 
+  #handleDoubleClick(state: InputState, targets: List<Drawable>): boolean
   {
     const clicked = this.clickedDrawable?.deref();
     if (!clicked)
@@ -151,7 +151,7 @@ export abstract class MouseButtonEventManager extends ButtonEventManager<MouseBu
     return this.propagateButtonEvent(targets, new DoubleClickEvent(state, this.button, this.mouseDownPosition)) !== null;
   }
 
-  #handleDrag(state: InputState, lastPosition: Vec2) 
+  #handleDrag(state: InputState, lastPosition: Vec2)
   {
     if (this.draggedDrawable === null)
       return;
@@ -162,7 +162,7 @@ export abstract class MouseButtonEventManager extends ButtonEventManager<MouseBu
     );
   }
 
-  #handleDragStart(state: InputState) 
+  #handleDragStart(state: InputState)
   {
     debugAssert(this.draggedDrawable === null, "Dragged drawable must be null");
     debugAssert(!this.dragStarted, "Drag must not be started");
@@ -180,16 +180,16 @@ export abstract class MouseButtonEventManager extends ButtonEventManager<MouseBu
       this.#handleDragDrawableBegin(draggable);
   }
 
-  #handleDragDrawableBegin(draggedDrawable: Drawable) 
+  #handleDragDrawableBegin(draggedDrawable: Drawable)
   {
     this.draggedDrawable = draggedDrawable;
     draggedDrawable.isDragged = true;
     draggedDrawable.invalidated.addListener(this.#draggedDrawableInvalidated, this);
   }
 
-  #draggedDrawableInvalidated([drawable, invalidation]: [Drawable, Invalidation]) 
+  #draggedDrawableInvalidated([drawable, invalidation]: [Drawable, Invalidation])
   {
-    if (invalidation & Invalidation.Parent) 
+    if (invalidation & Invalidation.Parent)
     {
       // end drag if no longer rooted.
       if (!drawable.isRootedAt(this.inputManager))
@@ -197,7 +197,7 @@ export abstract class MouseButtonEventManager extends ButtonEventManager<MouseBu
     }
   };
 
-  #handleDragDrawableEnd(state: InputState | null = null) 
+  #handleDragDrawableEnd(state: InputState | null = null)
   {
     const previousDragged = this.draggedDrawable;
 

@@ -1,9 +1,9 @@
 import type { ColorSource } from "pixi.js";
 import { Color } from "pixi.js";
 
-export class ColorUtils 
+export class ColorUtils
 {
-  static lighten(color: ColorSource, amount: number) 
+  static lighten(color: ColorSource, amount: number)
   {
     amount *= 0.5;
     color = new Color(color);
@@ -16,7 +16,7 @@ export class ColorUtils
     ]));
   }
 
-  static darken(color: ColorSource, amount: number) 
+  static darken(color: ColorSource, amount: number)
   {
     amount *= 0.5;
     color = new Color(color);
@@ -29,7 +29,7 @@ export class ColorUtils
     ]));
   }
 
-  static darkenSimple(color: ColorSource, amount: number) 
+  static darkenSimple(color: ColorSource, amount: number)
   {
     color = new Color(color);
 
@@ -43,7 +43,7 @@ export class ColorUtils
     ]);
   }
 
-  static redistribute(color: Color) 
+  static redistribute(color: Color)
   {
     const m = Math.max(color.red, color.green, color.blue);
     if (m <= 1)
@@ -65,7 +65,7 @@ export class ColorUtils
     ]);
   }
 
-  static getLuminosity(color: ColorSource) 
+  static getLuminosity(color: ColorSource)
   {
     color = new Color(color);
 

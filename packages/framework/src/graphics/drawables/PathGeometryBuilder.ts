@@ -3,12 +3,12 @@ import { Vec2 } from "../../math/Vec2";
 
 const max_res = 24;
 
-export class PathGeometryBuilder 
+export class PathGeometryBuilder
 {
   constructor(
     readonly radius: number,
     readonly segments: readonly Line[],
-  ) 
+  )
   {
   }
 
@@ -18,14 +18,14 @@ export class PathGeometryBuilder
   positions: number[] = [];
   texCoords: number[] = [];
 
-  build() 
+  build()
   {
     const { segments, radius } = this;
 
     let prevSegmentLeft: Line | undefined;
     let prevSegmentRight: Line | undefined;
 
-    for (let i = 0; i < segments.length; i++) 
+    for (let i = 0; i < segments.length; i++)
     {
       const currSegment = segments[i];
 
@@ -40,13 +40,13 @@ export class PathGeometryBuilder
 
       this.#addSegmentQuads(currSegment, currSegmentLeft, currSegmentRight);
 
-      if (i > 0) 
+      if (i > 0)
       {
         const thetaDiff = currSegment.theta - segments[i - 1].theta;
         this.#addSegmentCaps(thetaDiff, currSegmentLeft, currSegmentRight, prevSegmentLeft!, prevSegmentRight!);
       }
 
-      if (i === 0) 
+      if (i === 0)
       {
         const flippedLeft = new Line(currSegmentRight.endPoint, currSegmentRight.startPoint);
         const flippedRight = new Line(currSegmentLeft.endPoint, currSegmentLeft.startPoint);
@@ -54,7 +54,7 @@ export class PathGeometryBuilder
         this.#addSegmentCaps(Math.PI, currSegmentLeft, currSegmentRight, flippedLeft, flippedRight);
       }
 
-      if (i === segments.length - 1) 
+      if (i === segments.length - 1)
       {
         const flippedLeft = new Line(currSegmentRight.endPoint, currSegmentRight.startPoint);
         const flippedRight = new Line(currSegmentLeft.endPoint, currSegmentLeft.startPoint);
@@ -69,7 +69,7 @@ export class PathGeometryBuilder
     return this;
   }
 
-  #addSegmentQuads(segment: Line, segmentLeft: Line, segmentRight: Line) 
+  #addSegmentQuads(segment: Line, segmentLeft: Line, segmentRight: Line)
   {
     this.addTriangle(
         segmentRight.endPoint.x,
@@ -126,7 +126,7 @@ export class PathGeometryBuilder
     segmentRight: Line,
     prevSegmentLeft: Line,
     prevSegmentRight: Line,
-  ) 
+  )
   {
     if (Math.abs(thetaDiff) > Math.PI)
       thetaDiff = -Math.sign(thetaDiff) * 2 * Math.PI + thetaDiff;
@@ -144,7 +144,7 @@ export class PathGeometryBuilder
     const thetaStep = Math.sign(thetaDiff) * Math.PI / max_res;
     const stepCount = Math.ceil(thetaDiff / thetaStep);
 
-    for (let i = 1; i <= stepCount; i++) 
+    for (let i = 1; i <= stepCount; i++)
     {
       const next = i < stepCount ? origin.add(pointOnCircle(theta0 + i * thetaStep).scaleInPlace(this.radius)) : end;
 
@@ -178,7 +178,7 @@ export class PathGeometryBuilder
     x3: number,
     y3: number,
     z3: number,
-  ) 
+  )
   {
     this.positions.push(x1, y1, z1, x2, y2, z2, x3, y3, z3);
     this.texCoords.push(z1, 0.5, z2, 0.5, z3, 0.5);
@@ -193,14 +193,14 @@ export class PathGeometryBuilder
     z: number,
     u: number,
     v: number,
-  ) 
+  )
   {
     this.positions.push(x, y, z);
     this.texCoords.push(u, v);
   }
 }
 
-function pointOnCircle(angle: number) 
+function pointOnCircle(angle: number)
 {
   return new Vec2(
       Math.cos(angle),

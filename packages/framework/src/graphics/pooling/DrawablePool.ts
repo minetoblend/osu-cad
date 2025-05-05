@@ -5,9 +5,9 @@ import { dependencyLoader } from "../../di";
 import { CompositeDrawable } from "../containers";
 import { LoadState } from "../drawables";
 
-export class DrawablePool<T extends PoolableDrawable> extends CompositeDrawable implements IDrawablePool 
+export class DrawablePool<T extends PoolableDrawable> extends CompositeDrawable implements IDrawablePool
 {
-  constructor(drawableClass: NoArgsConstructor<T>, initialSize: number, maximumSize?: number) 
+  constructor(drawableClass: NoArgsConstructor<T>, initialSize: number, maximumSize?: number)
   {
     super();
 
@@ -25,7 +25,7 @@ export class DrawablePool<T extends PoolableDrawable> extends CompositeDrawable 
   readonly #pool: T[] = [];
 
   @dependencyLoader()
-  [Symbol("load")]() 
+  [Symbol("load")]()
   {
     this.#pool.length = this.#initialSize;
     for (let i = 0; i < this.#initialSize; i++)
@@ -34,31 +34,31 @@ export class DrawablePool<T extends PoolableDrawable> extends CompositeDrawable 
     this.loadComponents(this.#pool);
   }
 
-  return(drawable: PoolableDrawable): void 
+  return(drawable: PoolableDrawable): void
   {
-    if (!(drawable instanceof this.#drawableClass)) 
+    if (!(drawable instanceof this.#drawableClass))
     {
       throw new TypeError(`Invalid type ${drawable.constructor.name}`);
     }
 
-    if (drawable.parent !== null) 
+    if (drawable.parent !== null)
     {
       throw new Error("Drawable was attempted to be returned to pool while still in a hierarchy");
     }
 
-    if (drawable.isInUse) 
+    if (drawable.isInUse)
     {
       drawable.return();
       return;
     }
 
-    if (this.#maximumSize !== null && this.countAvailable > this.#maximumSize) 
+    if (this.#maximumSize !== null && this.countAvailable > this.#maximumSize)
     {
       drawable.setPool(null);
 
       drawable.dispose();
     }
-    else 
+    else
     {
       this.#pool.push(drawable);
     }
@@ -66,28 +66,28 @@ export class DrawablePool<T extends PoolableDrawable> extends CompositeDrawable 
     this.#countInUse--;
   }
 
-  get(setupAction?: (d: T) => void): T 
+  get(setupAction?: (d: T) => void): T
   {
-    if (this.loadState <= LoadState.Loading) 
+    if (this.loadState <= LoadState.Loading)
     {
       throw new Error("DrawablePool must be in a loaded state before retrieving pooled drawables.");
     }
 
     let drawable = this.#pool.pop();
-    if (!drawable) 
+    if (!drawable)
     {
       drawable = this.#create();
 
-      if (this.#maximumSize === null || this.#currentPoolSize < this.#maximumSize) 
+      if (this.#maximumSize === null || this.#currentPoolSize < this.#maximumSize)
       {
         this.#currentPoolSize++;
       }
-      else 
+      else
       {
         this.#countExcessConstructed++;
       }
 
-      if (this.loadState >= LoadState.Loading) 
+      if (this.loadState >= LoadState.Loading)
       {
         this.loadComponent(drawable);
       }
@@ -104,12 +104,12 @@ export class DrawablePool<T extends PoolableDrawable> extends CompositeDrawable 
     return drawable;
   }
 
-  protected createNewDrawable() 
+  protected createNewDrawable()
   {
     return new this.#drawableClass();
   }
 
-  #create(): T 
+  #create(): T
   {
     const drawable = this.createNewDrawable();
 
@@ -118,7 +118,7 @@ export class DrawablePool<T extends PoolableDrawable> extends CompositeDrawable 
     return drawable;
   }
 
-  override dispose(isDisposing: boolean = true) 
+  override dispose(isDisposing: boolean = true)
   {
     for (const p of this.#pool)
       p.dispose();
@@ -134,26 +134,26 @@ export class DrawablePool<T extends PoolableDrawable> extends CompositeDrawable 
 
   #currentPoolSize = 0;
 
-  get currentPoolSize() 
+  get currentPoolSize()
   {
     return this.#currentPoolSize;
   }
 
   #countInUse = 0;
 
-  get countInUse() 
+  get countInUse()
   {
     return this.#countInUse;
   }
 
   #countExcessConstructed = 0;
 
-  get countExcessConstructed() 
+  get countExcessConstructed()
   {
     return this.#countExcessConstructed;
   }
 
-  get countAvailable() 
+  get countAvailable()
   {
     return this.#pool.length;
   }

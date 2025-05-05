@@ -10,7 +10,7 @@ import { SpriteText } from "../text/SpriteText";
 import { EasingFunction } from "../transforms/EasingFunction";
 import { Button } from "./Button";
 
-export interface BasicButtonOptions extends DrawableOptions 
+export interface BasicButtonOptions extends DrawableOptions
 {
   text?: string;
   backgroundColor?: ColorSource;
@@ -22,58 +22,58 @@ export interface BasicButtonOptions extends DrawableOptions
   disabledFadeDuration?: number;
 }
 
-export class BasicButton extends Button 
+export class BasicButton extends Button
 {
-  get text() 
+  get text()
   {
     return this.spriteText.text;
   }
 
-  set text(value: string) 
+  set text(value: string)
   {
     this.spriteText.text = value;
   }
 
-  get backgroundColor(): Color 
+  get backgroundColor(): Color
   {
     return this.background.color;
   }
 
-  set backgroundColor(value: Color) 
+  set backgroundColor(value: Color)
   {
     this.background.color = value;
   }
 
   #flashColor?: Color;
 
-  get flashColor(): Color 
+  get flashColor(): Color
   {
     return this.#flashColor ?? this.backgroundColor;
   }
 
-  set flashColor(value: ColorSource) 
+  set flashColor(value: ColorSource)
   {
     this.#flashColor = new Color(value);
   }
 
-  get hoverColor() 
+  get hoverColor()
   {
     return this.hover.color;
   }
 
-  set hoverColor(value: ColorSource) 
+  set hoverColor(value: ColorSource)
   {
     this.hover.color = value;
   }
 
   #disabledColour = new Color("rgb(128,128,128)");
 
-  get disabledColor(): Color 
+  get disabledColor(): Color
   {
     return this.#disabledColour;
   }
 
-  set disabledColor(value: ColorSource) 
+  set disabledColor(value: ColorSource)
   {
     this.#disabledColour = new Color(value);
     this.enabled.triggerChange();
@@ -91,7 +91,7 @@ export class BasicButton extends Button
 
   hover: Box;
 
-  constructor(options: BasicButtonOptions = {}) 
+  constructor(options: BasicButtonOptions = {})
   {
     super();
     this.autoSizeAxes = Axes.Both;
@@ -113,7 +113,7 @@ export class BasicButton extends Button
         (this.spriteText = this.createText()),
     );
 
-    this.withScope(() => 
+    this.withScope(() =>
     {
       this.enabled.addOnChangeListener(this.#enabledChanged, {
         immediate: true,
@@ -123,7 +123,7 @@ export class BasicButton extends Button
     this.with(options);
   }
 
-  createText(): SpriteText 
+  createText(): SpriteText
   {
     return new SpriteText({
       anchor: Anchor.Center,
@@ -135,9 +135,9 @@ export class BasicButton extends Button
     });
   }
 
-  override onClick(e: ClickEvent): boolean 
+  override onClick(e: ClickEvent): boolean
   {
-    if (this.enabled.value) 
+    if (this.enabled.value)
     {
       this.background.flashColorTo(this.flashColor, this.flashDuration);
     }
@@ -145,9 +145,9 @@ export class BasicButton extends Button
     return super.onClick(e);
   }
 
-  override onHover(e: HoverEvent): boolean 
+  override onHover(e: HoverEvent): boolean
   {
-    if (this.enabled.value) 
+    if (this.enabled.value)
     {
       this.hover.fadeIn(this.hoverFadeDuration);
     }
@@ -155,9 +155,9 @@ export class BasicButton extends Button
     return super.onHover?.(e) ?? true;
   }
 
-  override onHoverLost(e: HoverEvent) 
+  override onHoverLost(e: HoverEvent)
   {
-    if (this.enabled.value) 
+    if (this.enabled.value)
     {
       this.hover.fadeOut(this.hoverFadeDuration);
     }
@@ -165,7 +165,7 @@ export class BasicButton extends Button
     super.onHoverLost?.(e);
   }
 
-  #enabledChanged = (event: ValueChangedEvent<boolean>) => 
+  #enabledChanged = (event: ValueChangedEvent<boolean>) =>
   {
     const color = event.value ? 0xFFFFFF : this.disabledColor;
 

@@ -1,24 +1,24 @@
 import type { IClock } from "./IClock";
 
-export class OffsetClock implements IClock 
+export class OffsetClock implements IClock
 {
   constructor(
     readonly underlyingClock: IClock,
     public offset = 0,
-  ) 
+  )
   {}
 
-  get currentTime(): number 
+  get currentTime(): number
   {
     return this.underlyingClock.currentTime + this.offset;
   }
 
-  get rate(): number 
+  get rate(): number
   {
     return this.underlyingClock.rate;
   }
 
-  get isRunning(): boolean 
+  get isRunning(): boolean
   {
     return this.underlyingClock.isRunning;
   }

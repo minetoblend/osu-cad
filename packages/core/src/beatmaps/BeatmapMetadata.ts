@@ -1,4 +1,4 @@
-export class BeatmapMetadata 
+export class BeatmapMetadata
 {
   artist = "";
   artistUnicode = "";

@@ -1,17 +1,17 @@
-export class CachedValue<T> 
+export class CachedValue<T>
 {
   #value?: T;
 
-  get value() 
+  get value()
   {
-    if (!this.isValid) 
+    if (!this.isValid)
     {
       throw new Error("Value is not valid");
     }
     return this.#value!;
   }
 
-  set value(value: T) 
+  set value(value: T)
   {
     this.#value = value;
     this.#isValid = true;
@@ -19,14 +19,14 @@ export class CachedValue<T>
 
   #isValid = false;
 
-  get isValid(): boolean 
+  get isValid(): boolean
   {
     return this.#isValid;
   }
 
-  invalidate(): boolean 
+  invalidate(): boolean
   {
-    if (this.isValid) 
+    if (this.isValid)
     {
       this.#isValid = false;
       return true;
@@ -35,18 +35,18 @@ export class CachedValue<T>
   }
 }
 
-export class Cached 
+export class Cached
 {
   #isValid = false;
 
-  get isValid() 
+  get isValid()
   {
     return this.#isValid;
   }
 
-  invalidate(): boolean 
+  invalidate(): boolean
   {
-    if (this.isValid) 
+    if (this.isValid)
     {
       this.#isValid = false;
       return true;
@@ -54,7 +54,7 @@ export class Cached
     return false;
   }
 
-  validate() 
+  validate()
   {
     this.#isValid = true;
   }

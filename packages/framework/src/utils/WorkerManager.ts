@@ -5,7 +5,7 @@ import ImageBitmapWorker from "./ImageBitmapWorker?worker&inline";
 let UUID = 0;
 let MAX_WORKERS: number;
 
-interface LoadImageBitmapResult 
+interface LoadImageBitmapResult
 {
   data?: ImageBitmap;
   error?: Error;
@@ -13,7 +13,7 @@ interface LoadImageBitmapResult
   id: string;
 }
 
-export interface LoadImageBitmapOptions 
+export interface LoadImageBitmapOptions
 {
   resize?: {
     width: number;
@@ -22,7 +22,7 @@ export interface LoadImageBitmapOptions
   };
 }
 
-class WorkerManagerClass 
+class WorkerManagerClass
 {
   public worker!: Worker;
   readonly #resolveHash: {
@@ -43,7 +43,7 @@ class WorkerManagerClass
   #initialized = false;
   #createdWorkers = 0;
 
-  constructor() 
+  constructor()
   {
     this.#workerPool = [];
     this.#queue = [];
@@ -51,12 +51,12 @@ class WorkerManagerClass
     this.#resolveHash = {};
   }
 
-  public loadImageBitmap(src: string | ArrayBuffer, asset?: ResolvedAsset<TextureSourceOptions>, options?: LoadImageBitmapOptions): Promise<ImageBitmap> 
+  public loadImageBitmap(src: string | ArrayBuffer, asset?: ResolvedAsset<TextureSourceOptions>, options?: LoadImageBitmapOptions): Promise<ImageBitmap>
   {
     return this.#run("loadImageBitmap", [src, asset?.data?.alphaMode, options]) as Promise<ImageBitmap>;
   }
 
-  async #initWorkers() 
+  async #initWorkers()
   {
     if (this.#initialized)
       return;
@@ -64,15 +64,15 @@ class WorkerManagerClass
     this.#initialized = true;
   }
 
-  #getWorker(): Worker 
+  #getWorker(): Worker
   {
-    if (MAX_WORKERS === undefined) 
+    if (MAX_WORKERS === undefined)
     {
       MAX_WORKERS = Math.min(navigator.hardwareConcurrency || 2, 2);
     }
     let worker = this.#workerPool.pop();
 
-    if (!worker && this.#createdWorkers < MAX_WORKERS) 
+    if (!worker && this.#createdWorkers < MAX_WORKERS)
     {
       // only create as many as MAX_WORKERS allows..
       this.#createdWorkers++;
@@ -88,7 +88,7 @@ class WorkerManagerClass
         id: "init",
       }, [offscreenCanvas]);
 
-      worker.addEventListener("message", (event: MessageEvent) => 
+      worker.addEventListener("message", (event: MessageEvent) =>
       {
         this.#complete(event.data);
 
@@ -100,18 +100,18 @@ class WorkerManagerClass
     return worker!;
   }
 
-  #returnWorker(worker: Worker) 
+  #returnWorker(worker: Worker)
   {
     this.#workerPool.push(worker);
   }
 
-  #complete(data: LoadImageBitmapResult): void 
+  #complete(data: LoadImageBitmapResult): void
   {
-    if (data.error !== undefined) 
+    if (data.error !== undefined)
     {
       this.#resolveHash[data.uuid].reject(data.error);
     }
-    else 
+    else
     {
       this.#resolveHash[data.uuid].resolve(data.data);
     }
@@ -119,12 +119,12 @@ class WorkerManagerClass
     delete this.#resolveHash[data.uuid];
   }
 
-  async #run(id: string, args: any[]): Promise<any> 
+  async #run(id: string, args: any[]): Promise<any>
   {
     await this.#initWorkers();
     // push into the queue...
 
-    const promise = new Promise((resolve, reject) => 
+    const promise = new Promise((resolve, reject) =>
     {
       this.#queue.push({ id, arguments: args, resolve, reject });
     });
@@ -134,7 +134,7 @@ class WorkerManagerClass
     return promise;
   }
 
-  #next(): void 
+  #next(): void
   {
     // nothing to do
     if (!this.#queue.length)
@@ -143,7 +143,7 @@ class WorkerManagerClass
     const worker = this.#getWorker();
 
     // no workers available...
-    if (!worker) 
+    if (!worker)
     {
       return;
     }

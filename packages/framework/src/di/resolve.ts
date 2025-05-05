@@ -2,10 +2,10 @@ import { getCurrentDrawablScope } from "../bindables/lifetimeScope";
 import { LoadState } from "../graphics/drawables/Drawable";
 import { debugAssert } from "../utils/debugAssert";
 
-export function resolve<T>(type: new (...args: any[]) => T): T 
+export function resolve<T>(type: new (...args: any[]) => T): T
 {
   const scope = getCurrentDrawablScope();
-  if (!scope) 
+  if (!scope)
   {
     throw new Error("No scope found");
   }

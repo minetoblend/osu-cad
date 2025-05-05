@@ -1,4 +1,4 @@
-class IterableWeakSet<T extends WeakKey> 
+class IterableWeakSet<T extends WeakKey>
 {
   static [Symbol.species] = IterableWeakSet;
   private finalizationRegistry = new FinalizationRegistry<WeakRef<T>>(this.cleanup.bind(this));
@@ -6,23 +6,23 @@ class IterableWeakSet<T extends WeakKey>
   private toRefWeakMap: WeakMap<T, WeakRef<T>> = new WeakMap();
   constructor(iterable: Iterable<T>);
   constructor(values?: readonly T[]);
-  constructor(iterable: Iterable<T> | readonly T[] = []) 
+  constructor(iterable: Iterable<T> | readonly T[] = [])
   {
     for (const value of iterable)
       this.add(value);
   }
 
-  private cleanup(ref: WeakRef<T>) 
+  private cleanup(ref: WeakRef<T>)
   {
     this.refSet.delete(ref);
   }
 
-  get size() 
+  get size()
   {
     return this.refSet.size;
   }
 
-  add(value: T) 
+  add(value: T)
   {
     if (this.has(value))
       return this;
@@ -33,13 +33,13 @@ class IterableWeakSet<T extends WeakKey>
     return this;
   }
 
-  clear() 
+  clear()
   {
     for (const value of this.values())
       this.delete(value!);
   }
 
-  delete(value: T) 
+  delete(value: T)
   {
     const ref = this.toRefWeakMap.get(value);
     if (!ref)
@@ -50,26 +50,26 @@ class IterableWeakSet<T extends WeakKey>
     return true;
   }
 
-  *entries(): Generator<[T, T], any, unknown> 
+  *entries(): Generator<[T, T], any, unknown>
   {
     for (const value of this.values())
       yield [value!, value!];
   }
 
-  forEach(callback: (currentValue: T, currentKey: T, set: this) => void, thisArg?: any) 
+  forEach(callback: (currentValue: T, currentKey: T, set: this) => void, thisArg?: any)
   {
     for (const value of this.values())
       callback.call(thisArg, value!, value!, this);
   }
 
-  has(value: T) 
+  has(value: T)
   {
     return this.toRefWeakMap.has(value);
   }
 
-  *values() 
+  *values()
   {
-    for (const ref of this.refSet.values()) 
+    for (const ref of this.refSet.values())
     {
       const value = ref.deref();
       if (value !== undefined)
@@ -78,7 +78,7 @@ class IterableWeakSet<T extends WeakKey>
   }
 }
 
-interface IterableWeakSet<T extends WeakKey> 
+interface IterableWeakSet<T extends WeakKey>
 {
   keys(): Generator<T, void, unknown>;
   [Symbol.iterator](): Generator<T, void, unknown>;

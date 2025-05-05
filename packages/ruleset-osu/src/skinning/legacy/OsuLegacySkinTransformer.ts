@@ -8,16 +8,16 @@ import { LegacyFollowCircle } from "./LegacyFollowCircle";
 import { LegacySliderBall } from "./LegacySliderBall";
 import { LegacySliderBody } from "./LegacySliderBody";
 
-export class OsuLegacySkinTransformer extends SkinTransformer 
+export class OsuLegacySkinTransformer extends SkinTransformer
 {
-  private constructor(source: Skin) 
+  private constructor(source: Skin)
   {
     super(source);
   }
 
   override source!: Skin;
 
-  public static async create(source: Skin) 
+  public static async create(source: Skin)
   {
     const skin = new OsuLegacySkinTransformer(source);
 
@@ -26,7 +26,7 @@ export class OsuLegacySkinTransformer extends SkinTransformer
     return skin;
   }
 
-  private async load() 
+  private async load()
   {
     const entries: LoadTextureEntry[] = [
       "hitcircle",
@@ -83,7 +83,7 @@ export class OsuLegacySkinTransformer extends SkinTransformer
 
     const prefixes = new Set([hitCirclePrefix, scorePrefix, comboPrefix]);
 
-    for (const prefix of prefixes) 
+    for (const prefix of prefixes)
     {
       for (let i = 0; i < 10; i++)
         entries.push(`${prefix}-${i}`);
@@ -92,9 +92,9 @@ export class OsuLegacySkinTransformer extends SkinTransformer
     await this.loadTextures(entries);
   }
 
-  public override getDrawableComponent(lookup: SkinComponentLookup): Drawable | null 
+  public override getDrawableComponent(lookup: SkinComponentLookup): Drawable | null
   {
-    switch (lookup) 
+    switch (lookup)
     {
     case OsuSkinComponents.FollowPoint:
       return this.getAnimation("followpoint", {

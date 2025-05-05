@@ -1,25 +1,25 @@
 import type { AudioChannel } from "../AudioChannel";
 import { Action } from "../../bindables";
 
-export class SamplePlayback 
+export class SamplePlayback
 {
   constructor(
     readonly source: AudioBufferSourceNode,
     readonly context: AudioContext,
     readonly channel: AudioChannel,
-  ) 
+  )
   {
     this.startTime = this.context.currentTime;
   }
 
   readonly startTime: number;
 
-  get currentTime() 
+  get currentTime()
   {
     return this.context.currentTime - this.startTime;
   }
 
-  stop() 
+  stop()
   {
     this.source.stop();
   }

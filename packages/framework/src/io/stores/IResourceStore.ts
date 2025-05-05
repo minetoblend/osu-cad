@@ -1,6 +1,6 @@
 import type { IDisposable } from "../../types";
 
-export interface IResourceStore<T> extends IDisposable 
+export interface IResourceStore<T> extends IDisposable
 {
   has(name: string): boolean;
 

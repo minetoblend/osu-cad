@@ -10,23 +10,23 @@ import { TouchMoveEvent } from "./events/TouchMoveEvent";
 import { TouchUpEvent } from "./events/TouchUpEvent";
 import { Touch } from "./handlers/Touch";
 
-export class TouchEventManager extends ButtonEventManager<TouchSource> 
+export class TouchEventManager extends ButtonEventManager<TouchSource>
 {
   touchDownPosition: Vec2 | null = null;
 
   heldDrawable: Drawable | null = null;
 
-  constructor(readonly source: TouchSource) 
+  constructor(readonly source: TouchSource)
   {
     super(source);
   }
 
-  handlePositionChange(state: InputState, lastPosition: Vec2) 
+  handlePositionChange(state: InputState, lastPosition: Vec2)
   {
     this.#handleTouchMove(state, state.touch.touchPositions[this.button], lastPosition);
   }
 
-  #handleTouchMove(state: InputState, position: Vec2, lastPosition: Vec2) 
+  #handleTouchMove(state: InputState, position: Vec2, lastPosition: Vec2)
   {
     this.propagateButtonEvent(
         this.buttonDownInputQueue!.filter(it => it.isRootedAt(this.inputManager)),
@@ -34,7 +34,7 @@ export class TouchEventManager extends ButtonEventManager<TouchSource>
     );
   }
 
-  override handleButtonDown(state: InputState, targets: List<Drawable>): Drawable | null 
+  override handleButtonDown(state: InputState, targets: List<Drawable>): Drawable | null
   {
     debugAssert(this.heldDrawable === null);
 
@@ -48,7 +48,7 @@ export class TouchEventManager extends ButtonEventManager<TouchSource>
     ));
   }
 
-  override handleButtonUp(state: InputState, targets: Drawable[]): void 
+  override handleButtonUp(state: InputState, targets: Drawable[]): void
   {
     const currentPosition = state.touch.touchPositions[this.button];
     this.propagateButtonEvent(

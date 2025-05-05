@@ -4,14 +4,14 @@ import { Box } from "../shapes";
 import { EasingFunction } from "../transforms/EasingFunction";
 import { ScrollbarContainer, ScrollContainer } from "./ScrollContainer";
 
-export class BasicScrollContainer extends ScrollContainer 
+export class BasicScrollContainer extends ScrollContainer
 {
-  constructor(direction: Direction = Direction.Vertical) 
+  constructor(direction: Direction = Direction.Vertical)
   {
     super(direction);
   }
 
-  protected override createScrollbar(direction: Direction): ScrollbarContainer 
+  protected override createScrollbar(direction: Direction): ScrollbarContainer
   {
     return new BasicScrollbar(direction);
   }
@@ -19,9 +19,9 @@ export class BasicScrollContainer extends ScrollContainer
 
 const dim_size = 8;
 
-class BasicScrollbar extends ScrollbarContainer 
+class BasicScrollbar extends ScrollbarContainer
 {
-  constructor(direction: Direction) 
+  constructor(direction: Direction)
   {
     super(direction);
 
@@ -31,19 +31,19 @@ class BasicScrollbar extends ScrollbarContainer
     });
   }
 
-  override resizeScrollbarTo(val: number, duration: number = 0, easing: EasingFunction = EasingFunction.Default): void 
+  override resizeScrollbarTo(val: number, duration: number = 0, easing: EasingFunction = EasingFunction.Default): void
   {
     let size: Vec2;
-    if (this.scrollDirection === Direction.Vertical) 
+    if (this.scrollDirection === Direction.Vertical)
     {
       size = new Vec2(dim_size, val);
     }
-    else 
+    else
     {
       size = new Vec2(val, dim_size);
     }
 
-    if (duration === 0) 
+    if (duration === 0)
     {
       this.size = size;
       return;

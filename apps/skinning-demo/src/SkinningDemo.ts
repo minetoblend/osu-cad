@@ -8,21 +8,21 @@ import oskFile from "./skin.osk?url";
 import { SkinVisualization } from "./SkinVisualization";
 import osufile from "./test.osu?raw";
 
-export class SkinningDemo extends Game 
+export class SkinningDemo extends Game
 {
-  constructor() 
+  constructor()
   {
     super();
   }
 
-  protected override load(dependencies: ReadonlyDependencyContainer) 
+  protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
 
     void this.setupSkinVisualizer();
   }
 
-  async setupSkinVisualizer() 
+  async setupSkinVisualizer()
   {
     const files = await fetch(oskFile)
       .then(res => res.arrayBuffer())
@@ -35,7 +35,7 @@ export class SkinningDemo extends Game
     skin.config.set("sliderTrackOverride", new Color("black"));
     skin.config.set("sliderBorder", new Color("rgb(50,50,50)"));
 
-    setInterval(() => 
+    setInterval(() =>
     {
       skin.config.set("sliderBorder", new Color([
         Math.random(),
@@ -50,7 +50,7 @@ export class SkinningDemo extends Game
     }, 1000);
 
     skin.config.comboColors = [
-      new Color("rgb(0,206,209)"),
+      new Color("rgb(255,206,209)"),
       new Color("rgb(32,178,170)"),
       new Color("rgb(64,224,208)"),
       new Color("rgb(0,255,255)"),

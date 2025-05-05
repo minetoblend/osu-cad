@@ -1,6 +1,6 @@
-export class Lazy<T> 
+export class Lazy<T>
 {
-  constructor(loader: () => T) 
+  constructor(loader: () => T)
   {
     this.#loader = loader;
   }
@@ -9,7 +9,7 @@ export class Lazy<T>
 
   #value?: T;
 
-  get value(): T 
+  get value(): T
   {
     this.#value ??= this.#loader();
 

@@ -5,7 +5,7 @@ import type { OsuHitObject } from "../OsuHitObject";
 @provide(IComboNumberReference)
 export abstract class DrawableOsuHitObject<out T extends OsuHitObject = OsuHitObject>
   extends DrawableHitObject<T>
-  implements IComboNumberReference 
+  implements IComboNumberReference
 {
   readonly positionBindable = new Bindable(Vec2.zero());
   readonly scaleBindable = new Bindable(1);
@@ -13,7 +13,7 @@ export abstract class DrawableOsuHitObject<out T extends OsuHitObject = OsuHitOb
   readonly comboIndexBindable = new Bindable(0);
   readonly stackHeightBindable = new Bindable(0);
 
-  protected override onApplied() 
+  protected override onApplied()
   {
     super.onApplied();
 
@@ -24,7 +24,7 @@ export abstract class DrawableOsuHitObject<out T extends OsuHitObject = OsuHitOb
     this.stackHeightBindable.bindTo(this.hitObject.stackHeightBindable);
   }
 
-  protected override onFreed() 
+  protected override onFreed()
   {
     super.onFreed();
 
@@ -35,7 +35,7 @@ export abstract class DrawableOsuHitObject<out T extends OsuHitObject = OsuHitOb
     this.stackHeightBindable.unbindFrom(this.hitObject.stackHeightBindable);
   }
 
-  protected override loadAsyncComplete() 
+  protected override loadAsyncComplete()
   {
     super.loadAsyncComplete();
 
@@ -52,7 +52,7 @@ export abstract class DrawableOsuHitObject<out T extends OsuHitObject = OsuHitOb
   @resolved(ISkinSource)
   protected skin!: ISkinSource;
 
-  protected override updateComboColor() 
+  protected override updateComboColor()
   {
     this.accentColor.value = this.skin.getComboColor(this.comboIndexBindable.value);
   }

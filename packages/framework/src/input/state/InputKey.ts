@@ -1,4 +1,4 @@
-export enum InputKey 
+export enum InputKey
 {
   None = 0,
   Shift = 1,
@@ -179,9 +179,9 @@ export enum InputKey
   RMeta,
 }
 
-function getOrder(key: InputKey): number | null 
+function getOrder(key: InputKey): number | null
 {
-  switch (key) 
+  switch (key)
   {
   case InputKey.None:
     return -1;
@@ -206,11 +206,11 @@ function getOrder(key: InputKey): number | null
   }
 }
 
-export function compareInputKeys(a: InputKey, b: InputKey): number 
+export function compareInputKeys(a: InputKey, b: InputKey): number
 {
   const orderA = getOrder(a);
   const orderB = getOrder(b);
-  if (orderA !== null && orderB !== null) 
+  if (orderA !== null && orderB !== null)
   {
     return orderA - orderB;
   }
@@ -218,9 +218,9 @@ export function compareInputKeys(a: InputKey, b: InputKey): number
   return a - b;
 }
 
-export function isVirtual(key: InputKey) 
+export function isVirtual(key: InputKey)
 {
-  switch (key) 
+  switch (key)
   {
   case InputKey.Shift:
   case InputKey.Control:
@@ -232,7 +232,7 @@ export function isVirtual(key: InputKey)
   return false;
 }
 
-export function isPhysical(key: InputKey) 
+export function isPhysical(key: InputKey)
 {
   return !isVirtual(key);
 }

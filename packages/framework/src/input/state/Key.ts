@@ -1,4 +1,4 @@
-export enum Key 
+export enum Key
 {
   Unidentified = "Unidentified",
   Escape = "Escape",

@@ -5,9 +5,9 @@ const asyncKey = Symbol("AsyncDependencyLoader");
 const injectKey = Symbol("Inject");
 const provideKey = Symbol("Provide");
 
-export function dependencyLoader(): MethodDecorator 
+export function dependencyLoader(): MethodDecorator
 {
-  return function (target: any, propertyKey: string | symbol) 
+  return function (target: any, propertyKey: string | symbol)
   {
     const loaders = getDependencyLoaders(target);
 
@@ -15,27 +15,27 @@ export function dependencyLoader(): MethodDecorator
   };
 }
 
-export function asyncDependencyLoader(): MethodDecorator 
+export function asyncDependencyLoader(): MethodDecorator
 {
-  return function (target: any, propertyKey: string | symbol) 
+  return function (target: any, propertyKey: string | symbol)
   {
     const loaders = getAsyncDependencyLoaders(target);
     Reflect.defineMetadata(asyncKey, [...loaders, propertyKey], target);
   };
 }
-export function getDependencyLoaders(target: any): string[] 
+export function getDependencyLoaders(target: any): string[]
 {
   return Reflect.getMetadata(key, target) ?? [];
 }
 
-export function getAsyncDependencyLoaders(target: any): (string | symbol)[] 
+export function getAsyncDependencyLoaders(target: any): (string | symbol)[]
 {
   return Reflect.getMetadata(asyncKey, target) ?? [];
 }
 
-export function resolved(type: any, optional = false): PropertyDecorator 
+export function resolved(type: any, optional = false): PropertyDecorator
 {
-  return function (target: any, propertyKey: string | symbol, parameterIndex?: number) 
+  return function (target: any, propertyKey: string | symbol, parameterIndex?: number)
   {
     const injections = getInjections(target);
 
@@ -43,9 +43,9 @@ export function resolved(type: any, optional = false): PropertyDecorator
   };
 }
 
-export function provide(type?: any, optional = false): PropertyDecorator & ClassDecorator 
+export function provide(type?: any, optional = false): PropertyDecorator & ClassDecorator
 {
-  return function (target: any, propertyKey?: string | symbol) 
+  return function (target: any, propertyKey?: string | symbol)
   {
     if (!propertyKey)
       target = target.prototype;
@@ -59,7 +59,7 @@ export function getInjections(target: any): {
   key: string | symbol;
   type: any;
   optional: boolean;
-}[] 
+}[]
 {
   return Reflect.getMetadata(injectKey, target) ?? [];
 }
@@ -67,7 +67,7 @@ export function getInjections(target: any): {
 export function getProviders(target: any): {
   key?: string | symbol;
   type?: any;
-}[] 
+}[]
 {
   return Reflect.getMetadata(provideKey, target) ?? [];
 }

@@ -2,16 +2,16 @@ import type { Graphics } from "pixi.js";
 import type { DrawableOptions } from "../drawables/Drawable";
 import { GraphicsDrawable } from "../drawables/GraphicsDrawable";
 
-export interface CircleSegmentOptions extends DrawableOptions 
+export interface CircleSegmentOptions extends DrawableOptions
 {
   startAngle?: number;
   endAngle?: number;
   hollowness?: number;
 }
 
-export class CircleSegment extends GraphicsDrawable 
+export class CircleSegment extends GraphicsDrawable
 {
-  constructor(options: CircleSegmentOptions = {}) 
+  constructor(options: CircleSegmentOptions = {})
   {
     super();
 
@@ -24,12 +24,12 @@ export class CircleSegment extends GraphicsDrawable
 
   #hollowness = 0;
 
-  get hollowness() 
+  get hollowness()
   {
     return this.#hollowness;
   }
 
-  set hollowness(value) 
+  set hollowness(value)
   {
     if (value === this.#hollowness)
       return;
@@ -38,12 +38,12 @@ export class CircleSegment extends GraphicsDrawable
     this.invalidateGraphics();
   }
 
-  get startAngle() 
+  get startAngle()
   {
     return this.#startAngle;
   }
 
-  set startAngle(value) 
+  set startAngle(value)
   {
     if (value === this.#startAngle)
       return;
@@ -53,12 +53,12 @@ export class CircleSegment extends GraphicsDrawable
     this.invalidateGraphics();
   }
 
-  get endAngle() 
+  get endAngle()
   {
     return this.#endAngle;
   }
 
-  set endAngle(value) 
+  set endAngle(value)
   {
     if (value === this.#endAngle)
       return;
@@ -68,7 +68,7 @@ export class CircleSegment extends GraphicsDrawable
     this.invalidateGraphics();
   }
 
-  override updateGraphics(g: Graphics) 
+  override updateGraphics(g: Graphics)
   {
     const radius = Math.min(
         this.drawWidth,

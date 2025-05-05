@@ -2,9 +2,9 @@ import type { LoadImageBitmapOptions } from "./WorkerManager";
 import { ImageSource, path, Texture, type TextureSourceOptions } from "pixi.js";
 import { WorkerManager } from "./WorkerManager";
 
-export async function loadTexture(src: string | ArrayBuffer, options: TextureSourceOptions = {}, opts2: LoadImageBitmapOptions = {}): Promise<Texture | null> 
+export async function loadTexture(src: string | ArrayBuffer, options: TextureSourceOptions = {}, opts2: LoadImageBitmapOptions = {}): Promise<Texture | null>
 {
-  try 
+  try
   {
     if (typeof src === "string")
       src = path.toAbsolute(src);
@@ -26,7 +26,7 @@ export async function loadTexture(src: string | ArrayBuffer, options: TextureSou
       label: typeof src === "string" ? src : options?.label,
     });
   }
-  catch (error) 
+  catch (error)
   {
     console.error("Failed to load texture", src, error);
     return null;

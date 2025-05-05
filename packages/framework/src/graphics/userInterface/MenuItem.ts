@@ -1,6 +1,6 @@
 import { Bindable } from "../../bindables";
 
-export interface MenuItemOptions 
+export interface MenuItemOptions
 {
   text: string;
   disabled?: boolean;
@@ -8,7 +8,7 @@ export interface MenuItemOptions
   items?: MenuItem[];
 }
 
-export class MenuItem 
+export class MenuItem
 {
   text = new Bindable<string>("");
 
@@ -18,7 +18,7 @@ export class MenuItem
 
   items: ReadonlyArray<MenuItem> = [];
 
-  constructor(options: MenuItemOptions) 
+  constructor(options: MenuItemOptions)
   {
     this.text.value = options.text;
     this.action.value = options.action;

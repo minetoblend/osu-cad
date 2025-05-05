@@ -2,17 +2,17 @@ import type { Matrix } from "pixi.js";
 import { Rectangle } from "./Rectangle";
 import { Vec2 } from "./Vec2";
 
-export class Quad 
+export class Quad
 {
   constructor(
     readonly topLeft: Vec2,
     readonly topRight: Vec2,
     readonly bottomLeft: Vec2,
     readonly bottomRight: Vec2,
-  ) 
+  )
   {}
 
-  static fromRectangle(rect: Rectangle): Quad 
+  static fromRectangle(rect: Rectangle): Quad
   {
     return new Quad(
         new Vec2(rect.left, rect.top),
@@ -22,7 +22,7 @@ export class Quad
     );
   }
 
-  transform(matrix: Matrix) 
+  transform(matrix: Matrix)
   {
     return new Quad(
         matrix.apply(this.topLeft, new Vec2()),
@@ -32,7 +32,7 @@ export class Quad
     );
   }
 
-  get AABB() 
+  get AABB()
   {
     const minX = Math.min(this.topLeft.x, this.topRight.x, this.bottomLeft.x, this.bottomRight.x);
     const minY = Math.min(this.topLeft.y, this.topRight.y, this.bottomLeft.y, this.bottomRight.y);

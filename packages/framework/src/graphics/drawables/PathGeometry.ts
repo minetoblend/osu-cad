@@ -1,8 +1,8 @@
 import { Buffer, BufferUsage, Geometry } from "pixi.js";
 
-export class PathGeometry extends Geometry 
+export class PathGeometry extends Geometry
 {
-  constructor() 
+  constructor()
   {
     const positionBuffer = new Buffer({
       data: new Float32Array(),
@@ -45,32 +45,32 @@ export class PathGeometry extends Geometry
     });
   }
 
-  get positions() 
+  get positions()
   {
     return this.attributes.aPosition.buffer.data as Float32Array;
   }
 
-  set positions(value) 
+  set positions(value)
   {
     this.attributes.aPosition.buffer.data = value;
   }
 
-  get texCoords() 
+  get texCoords()
   {
     return this.attributes.aUV.buffer.data as Float32Array;
   }
 
-  set texCoords(value) 
+  set texCoords(value)
   {
     this.attributes.aUV.buffer.data = value;
   }
 
-  get indices(): Uint32Array 
+  get indices(): Uint32Array
   {
     return this.indexBuffer.data as Uint32Array;
   }
 
-  set indices(value) 
+  set indices(value)
   {
     this.indexBuffer.data = value;
   }

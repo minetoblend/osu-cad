@@ -2,9 +2,9 @@ import type { InputKey } from "../state/InputKey";
 import type { IKeyBinding } from "./IKeyBinding";
 import { KeyCombination } from "./KeyCombination";
 
-export class KeyBinding implements IKeyBinding 
+export class KeyBinding implements IKeyBinding
 {
-  constructor(keys: KeyCombination, action: any) 
+  constructor(keys: KeyCombination, action: any)
   {
     this.keyCombination = keys;
     this.action = action;
@@ -14,12 +14,12 @@ export class KeyBinding implements IKeyBinding
 
   action: any;
 
-  getAction<T>(): T 
+  getAction<T>(): T
   {
     return this.action as T;
   }
 
-  static from(key: InputKey, action: any) 
+  static from(key: InputKey, action: any)
   {
     return new KeyBinding(KeyCombination.from(key), action);
   }

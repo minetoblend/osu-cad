@@ -2,9 +2,9 @@ import { colorBitGl, compileHighShaderGlProgram, getBatchSamplersUniformGroup, l
 import { generateTextureLodBatchBitGl } from "../../renderers/shaders/generateTextureBatchBit";
 import { maskingBitGl } from "../../renderers/shaders/maskingBit";
 
-export class TextShader extends Shader 
+export class TextShader extends Shader
 {
-  constructor(maxTextures: number) 
+  constructor(maxTextures: number)
   {
     const uniforms = new UniformGroup({
       uColor: { value: new Float32Array([1, 1, 1, 1]), type: "vec4<f32>" },

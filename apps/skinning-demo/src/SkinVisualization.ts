@@ -3,16 +3,16 @@ import { PlayfieldClock } from "@osucad/core";
 import type { ReadonlyDependencyContainer, StopwatchClock } from "@osucad/framework";
 import { Axes, CompositeDrawable, FramedClock, provide } from "@osucad/framework";
 
-export class SkinVisualization extends CompositeDrawable 
+export class SkinVisualization extends CompositeDrawable
 {
-  constructor(readonly beatmap: Beatmap) 
+  constructor(readonly beatmap: Beatmap)
   {
     super();
 
     this.relativeSizeAxes = Axes.Both;
   }
 
-  protected override load(dependencies: ReadonlyDependencyContainer) 
+  protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
 
@@ -24,17 +24,17 @@ export class SkinVisualization extends CompositeDrawable
   @provide(PlayfieldClock)
   protected readonly gameplayClock = new LoopingClock();
 
-  get startTime() 
+  get startTime()
   {
     return this.beatmap.hitObjects[0].startTime - 1000;
   }
 
-  get beatmapDuration() 
+  get beatmapDuration()
   {
     return this.beatmap.hitObjects[this.beatmap.hitObjects.length - 1].startTime + 1000;
   }
 
-  public override update() 
+  public override update()
   {
     super.update();
 
@@ -44,14 +44,14 @@ export class SkinVisualization extends CompositeDrawable
       this.gameplayClock.seek(this.startTime);
   }
 
-  async loadRuleset() 
+  async loadRuleset()
   {
     const drawableRuleset = await this.beatmap.beatmapInfo.ruleset?.createDrawableRuleset();
-    if (drawableRuleset) 
+    if (drawableRuleset)
     {
       this.addInternal(drawableRuleset);
 
-      for (const hitObject of this.beatmap.hitObjects) 
+      for (const hitObject of this.beatmap.hitObjects)
       {
         drawableRuleset.addHitObject(hitObject);
       }
@@ -61,9 +61,9 @@ export class SkinVisualization extends CompositeDrawable
   }
 }
 
-class LoopingClock extends FramedClock 
+class LoopingClock extends FramedClock
 {
-  public seek(value: number) 
+  public seek(value: number)
   {
     (this.source as StopwatchClock).seek(value);
     super.currentTime = this.lastFrameTime = value;

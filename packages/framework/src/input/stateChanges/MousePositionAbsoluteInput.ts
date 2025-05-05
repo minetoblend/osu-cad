@@ -4,16 +4,16 @@ import type { IInput } from "./IInput";
 import type { IInputStateChangeHandler } from "./IInputStateChangeHandler";
 import { MousePositionChangeEvent } from "./events/MousePositionChangeEvent";
 
-export class MousePositionAbsoluteInput implements IInput 
+export class MousePositionAbsoluteInput implements IInput
 {
-  constructor(readonly position: Vec2) 
+  constructor(readonly position: Vec2)
   {}
 
-  apply(state: InputState, handler: IInputStateChangeHandler): void 
+  apply(state: InputState, handler: IInputStateChangeHandler): void
   {
     const mouse = state.mouse;
 
-    if (!mouse.isPositionValid || !this.position.equals(mouse.position)) 
+    if (!mouse.isPositionValid || !this.position.equals(mouse.position))
     {
       const lastPosition = mouse.isPositionValid ? mouse.position : this.position;
       mouse.isPositionValid = true;

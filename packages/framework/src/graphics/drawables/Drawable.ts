@@ -55,7 +55,7 @@ import { LayoutComputed } from "./LayoutComputed";
 import { LayoutMember } from "./LayoutMember";
 import { MarginPadding, type MarginPaddingOptions } from "./MarginPadding";
 
-export interface DrawableOptions 
+export interface DrawableOptions
 {
   position?: IVec2;
   x?: number;
@@ -89,9 +89,9 @@ export interface DrawableOptions
 export const LOAD = Symbol("load");
 export const LOAD_FROM_ASYNC = Symbol("loadFromAsync");
 
-export abstract class Drawable extends Transformable implements IDisposable, IInputReceiver 
+export abstract class Drawable extends Transformable implements IDisposable, IInputReceiver
 {
-  constructor() 
+  constructor()
   {
     super();
     this.addLayout(this.#transformBacking);
@@ -107,13 +107,13 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
       Reflect.set(this, key, null);
   }
 
-  with(options: DrawableOptions): this 
+  with(options: DrawableOptions): this
   {
     Object.assign(this, options);
     return this;
   }
 
-  adjust(fn: (drawable: this) => void, ensureLoaded: boolean = false): this 
+  adjust(fn: (drawable: this) => void, ensureLoaded: boolean = false): this
   {
     if (ensureLoaded && this.loadState < LoadState.Ready)
       this.onLoadComplete.addListener(() => fn(this));
@@ -124,12 +124,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   label?: string;
 
-  get typeName() 
+  get typeName()
   {
     return this.constructor.name;
   }
 
-  public static mixin(source: Record<string, any>): void 
+  public static mixin(source: Record<string, any>): void
   {
     Object.defineProperties(Drawable.prototype, Object.getOwnPropertyDescriptors(source));
   }
@@ -140,14 +140,14 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   #drawNode?: PIXIContainer;
 
-  get drawNode() 
+  get drawNode()
   {
     this.#drawNode ??= this.createDrawNode();
     this.#drawNode.label = this.label ?? "";
     return this.#drawNode;
   }
 
-  get drawNodePosition(): Vec2 
+  get drawNodePosition(): Vec2
   {
     return Vec2.from(this.drawNode.position);
   }
@@ -158,12 +158,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   #x = 0;
 
-  get x() 
+  get x()
   {
     return this.#x;
   }
 
-  set x(value: number) 
+  set x(value: number)
   {
     if (this.#x === value)
       return;
@@ -176,12 +176,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   #y = 0;
 
-  get y() 
+  get y()
   {
     return this.#y;
   }
 
-  set y(value: number) 
+  set y(value: number)
   {
     if (this.#y === value)
       return;
@@ -192,7 +192,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     this.invalidate(Invalidation.Transform);
   }
 
-  get position(): Vec2 
+  get position(): Vec2
   {
     return new Vec2(this.x, this.y);
   }
@@ -201,7 +201,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   // #region size
 
-  set position(value: IVec2) 
+  set position(value: IVec2)
   {
     if (this.x === value.x && this.y === value.y)
       return;
@@ -218,12 +218,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   #width = 0;
 
-  get width() 
+  get width()
   {
     return this.#width;
   }
 
-  set width(value: number) 
+  set width(value: number)
   {
     if (this.#width === value)
       return;
@@ -237,12 +237,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   #height = 0;
 
-  get height() 
+  get height()
   {
     return this.#height;
   }
 
-  set height(value: number) 
+  set height(value: number)
   {
     if (this.#height === value)
       return;
@@ -254,21 +254,21 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     this.#invalidateParentSizeDependencies(Invalidation.DrawSize, Axes.Y);
   }
 
-  get size(): Vec2 
+  get size(): Vec2
   {
     return new Vec2(this.width, this.height);
   }
 
-  set size(value: IVec2 | number) 
+  set size(value: IVec2 | number)
   {
     // TODO: optimize this
 
-    if (typeof value === "number") 
+    if (typeof value === "number")
     {
       this.width = value;
       this.height = value;
     }
-    else 
+    else
     {
       this.width = value.x;
       this.height = value.y;
@@ -281,12 +281,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   #scale = new Vec2(1);
 
-  get scale(): Readonly<Vec2> 
+  get scale(): Readonly<Vec2>
   {
     return this.#scale;
   }
 
-  set scale(value: IVec2 | number) 
+  set scale(value: IVec2 | number)
   {
     if (typeof value === "number")
       value = { x: value, y: value };
@@ -302,17 +302,17 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     this.#parent?.invalidateChildrenSizeDependencies(Invalidation.Transform, Axes.Both, this);
   }
 
-  get drawScale() 
+  get drawScale()
   {
     return this.#scale;
   }
 
-  get scaleX() 
+  get scaleX()
   {
     return this.#scale.x;
   }
 
-  set scaleX(value: number) 
+  set scaleX(value: number)
   {
     if (this.#scale.x === value)
       return;
@@ -327,12 +327,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
       this.invalidate(Invalidation.Transform);
   }
 
-  get scaleY() 
+  get scaleY()
   {
     return this.#scale.y;
   }
 
-  set scaleY(value: number) 
+  set scaleY(value: number)
   {
     if (this.#scale.y === value)
       return;
@@ -341,11 +341,11 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
     this.#scale.y = value;
 
-    if (this.isPresent !== wasPresent) 
+    if (this.isPresent !== wasPresent)
     {
       this.invalidate(Invalidation.Transform | Invalidation.Presence);
     }
-    else 
+    else
     {
       this.invalidate(Invalidation.Transform);
     }
@@ -357,12 +357,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   #rotation = 0;
 
-  get rotation() 
+  get rotation()
   {
     return this.#rotation;
   }
 
-  set rotation(value: number) 
+  set rotation(value: number)
   {
     if (this.#rotation === value)
       return;
@@ -376,12 +376,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   // endregion
 
   // region skew
-  get skew() 
+  get skew()
   {
     return this.#skew;
   }
 
-  set skew(value: IVec2) 
+  set skew(value: IVec2)
   {
     if (this.#skew.equals(value))
       return;
@@ -397,12 +397,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   #color: Color = new Color(0xFFFFFF);
 
-  get color(): Color 
+  get color(): Color
   {
     return this.#color;
   }
 
-  set color(value: ColorSource) 
+  set color(value: ColorSource)
   {
     debugAssert(Color.isColorLike(value), "color must be a valid color-like value");
 
@@ -411,12 +411,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     this.updateDrawNodeColor();
   }
 
-  get tint() 
+  get tint()
   {
     return this.#color.toNumber();
   }
 
-  set tint(value: ColorSource) 
+  set tint(value: ColorSource)
   {
     debugAssert(Color.isColorLike(value), "tint must be a valid color-like value");
 
@@ -429,12 +429,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   #alpha = 1;
 
-  get alpha() 
+  get alpha()
   {
     return this.#alpha;
   }
 
-  set alpha(value: number) 
+  set alpha(value: number)
   {
     if (this.#alpha === value)
       return;
@@ -449,29 +449,29 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
       this.invalidate(Invalidation.Presence);
   }
 
-  get blendMode() 
+  get blendMode()
   {
     return this.drawNode.blendMode;
   }
 
-  set blendMode(value: BLEND_MODES) 
+  set blendMode(value: BLEND_MODES)
   {
     this.drawNode.blendMode = value;
   }
 
-  get isPresent() 
+  get isPresent()
   {
     return this.#alwaysPresent || this.#alpha > 0.0001;
   }
 
   #alwaysPresent = false;
 
-  get alwaysPresent() 
+  get alwaysPresent()
   {
     return this.#alwaysPresent;
   }
 
-  set alwaysPresent(value: boolean) 
+  set alwaysPresent(value: boolean)
   {
     if (this.#alwaysPresent === value)
       return;
@@ -480,7 +480,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
     this.#alwaysPresent = value;
 
-    if (this.isPresent !== wasPresent) 
+    if (this.isPresent !== wasPresent)
     {
       this.invalidate(Invalidation.Presence);
     }
@@ -490,27 +490,27 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   // #region layout
 
-  onSizingChanged() 
+  onSizingChanged()
   {
   }
 
   #relativeSizeAxes: Axes = Axes.None;
 
-  get relativeSizeAxes() 
+  get relativeSizeAxes()
   {
     return this.#relativeSizeAxes;
   }
 
-  set relativeSizeAxes(value: Axes) 
+  set relativeSizeAxes(value: Axes)
   {
     if (this.#relativeSizeAxes === value)
       return;
 
-    if (this.#fillMode !== FillMode.Stretch && (value === Axes.Both || this.#relativeSizeAxes === Axes.Both)) 
+    if (this.#fillMode !== FillMode.Stretch && (value === Axes.Both || this.#relativeSizeAxes === Axes.Both))
     {
       this.invalidate(Invalidation.DrawSize);
     }
-    else 
+    else
     {
       const conversion = this.#relativeToAbsoluteFactor;
       if ((value & Axes.X) > (this.#relativeSizeAxes & Axes.X))
@@ -540,12 +540,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   #relativePositionAxes: Axes = Axes.None;
 
-  get relativePositionAxes() 
+  get relativePositionAxes()
   {
     return this.#relativePositionAxes;
   }
 
-  set relativePositionAxes(value: Axes) 
+  set relativePositionAxes(value: Axes)
   {
     if (this.#relativePositionAxes === value)
       return;
@@ -567,9 +567,9 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     this.#updateBypassAutoSizeAxes();
   }
 
-  protected applyRelativeAxes(axes: Axes, v: Vec2, fillMode: FillMode): Readonly<Vec2> 
+  protected applyRelativeAxes(axes: Axes, v: Vec2, fillMode: FillMode): Readonly<Vec2>
   {
-    if (axes === Axes.None) 
+    if (axes === Axes.None)
     {
       return v;
     }
@@ -579,17 +579,17 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
     const conversion = this.#relativeToAbsoluteFactor;
 
-    if (axes & Axes.X) 
+    if (axes & Axes.X)
     {
       x *= conversion.x;
     }
 
-    if (axes & Axes.Y) 
+    if (axes & Axes.Y)
     {
       y *= conversion.y;
     }
 
-    if (this.relativeSizeAxes === Axes.Both && fillMode !== FillMode.Stretch) 
+    if (this.relativeSizeAxes === Axes.Both && fillMode !== FillMode.Stretch)
     {
       if (fillMode === FillMode.Fill)
         x = y = Math.max(x, y * this.#fillAspectRatio);
@@ -606,12 +606,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   #anchor: Anchor = Anchor.TopLeft;
 
-  get anchor(): Anchor 
+  get anchor(): Anchor
   {
     return this.#anchor;
   }
 
-  set anchor(value: Anchor) 
+  set anchor(value: Anchor)
   {
     if (this.#anchor === value)
       return;
@@ -621,25 +621,25 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     this.invalidate(Invalidation.Transform);
   }
 
-  get relativeAnchorPosition(): Vec2 
+  get relativeAnchorPosition(): Vec2
   {
     let x = 0;
     let y = 0;
 
-    if (this.#anchor & Anchor.x1) 
+    if (this.#anchor & Anchor.x1)
     {
       x = 0.5;
     }
-    else if (this.#anchor & Anchor.x2) 
+    else if (this.#anchor & Anchor.x2)
     {
       x = 1;
     }
 
-    if (this.#anchor & Anchor.y1) 
+    if (this.#anchor & Anchor.y1)
     {
       y = 0.5;
     }
-    else if (this.#anchor & Anchor.y2) 
+    else if (this.#anchor & Anchor.y2)
     {
       y = 1;
     }
@@ -647,9 +647,9 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return new Vec2(x, y);
   }
 
-  get anchorPosition(): Vec2 
+  get anchorPosition(): Vec2
   {
-    if (this.parent) 
+    if (this.parent)
     {
       return this.relativeAnchorPosition.mulInPlace(this.parent.childSize);
     }
@@ -659,12 +659,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   #origin: Anchor = Anchor.TopLeft;
 
-  get origin(): Anchor 
+  get origin(): Anchor
   {
     return this.#origin;
   }
 
-  set origin(value: Anchor) 
+  set origin(value: Anchor)
   {
     if (this.#origin === value)
       return;
@@ -674,24 +674,24 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     this.invalidate(Invalidation.Transform);
   }
 
-  get relativeOriginPosition(): Vec2 
+  get relativeOriginPosition(): Vec2
   {
     const v = Vec2.zero();
 
-    if (this.#origin & Anchor.x1) 
+    if (this.#origin & Anchor.x1)
     {
       v.x = 0.5;
     }
-    else if (this.#origin & Anchor.x2) 
+    else if (this.#origin & Anchor.x2)
     {
       v.x = 1;
     }
 
-    if (this.#origin & Anchor.y1) 
+    if (this.#origin & Anchor.y1)
     {
       v.y = 0.5;
     }
-    else if (this.#origin & Anchor.y2) 
+    else if (this.#origin & Anchor.y2)
     {
       v.y = 1;
     }
@@ -699,31 +699,31 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return v;
   }
 
-  get originPosition() 
+  get originPosition()
   {
     return this.relativeOriginPosition.mulInPlace(this.drawSize);
   }
 
   #margin: MarginPadding = new MarginPadding();
 
-  get margin(): MarginPadding 
+  get margin(): MarginPadding
   {
     return this.#margin;
   }
 
-  set margin(value: MarginPadding | MarginPaddingOptions) 
+  set margin(value: MarginPadding | MarginPaddingOptions)
   {
     this.#margin = MarginPadding.from(value);
   }
 
   #fillMode = FillMode.Stretch;
 
-  get fillMode() 
+  get fillMode()
   {
     return this.#fillMode;
   }
 
-  set fillMode(value: FillMode) 
+  set fillMode(value: FillMode)
   {
     if (this.#fillMode === value)
       return;
@@ -732,19 +732,19 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     this.invalidate(Invalidation.DrawSize);
   }
 
-  protected get hasAsyncLoader() 
+  protected get hasAsyncLoader()
   {
     return false;
   }
 
   #fillAspectRatio = 1;
 
-  get fillAspectRatio() 
+  get fillAspectRatio()
   {
     return this.#fillAspectRatio;
   }
 
-  set fillAspectRatio(value: number) 
+  set fillAspectRatio(value: number)
   {
     if (this.#fillAspectRatio === value)
       return;
@@ -756,7 +756,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
     this.#fillAspectRatio = value;
 
-    if (this.#fillMode !== FillMode.Stretch && this.relativeSizeAxes === Axes.Both) 
+    if (this.#fillMode !== FillMode.Stretch && this.relativeSizeAxes === Axes.Both)
     {
       this.invalidate(Invalidation.DrawSize);
     }
@@ -766,7 +766,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   // #region computed layout properties
 
-  get drawPosition(): Vec2 
+  get drawPosition(): Vec2
   {
     const position = this.applyRelativeAxes(this.#relativePositionAxes, this.position, FillMode.Stretch) as Vec2;
 
@@ -781,50 +781,50 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
       Invalidation.Transform | Invalidation.RequiredParentSizeToFit | Invalidation.Presence,
   );
 
-  get drawSize(): Vec2 
+  get drawSize(): Vec2
   {
     return this.#drawSizeBacking.value;
   }
 
-  get drawWidth() 
+  get drawWidth()
   {
     return this.drawSize.x;
   }
 
-  get drawHeight() 
+  get drawHeight()
   {
     return this.drawSize.y;
   }
 
-  get drawRectangle() 
+  get drawRectangle()
   {
     const s = this.drawSize;
     return new Rectangle(0, 0, s.x, s.y);
   }
 
-  get layoutSize(): Vec2 
+  get layoutSize(): Vec2
   {
     return this.drawSize.add(this.margin.total);
   }
 
-  get layoutRectangle(): Rectangle 
+  get layoutRectangle(): Rectangle
   {
     return new Rectangle(-this.margin.left, -this.margin.top, this.layoutSize.x, this.layoutSize.y);
   }
 
-  get boundingBox(): Rectangle 
+  get boundingBox(): Rectangle
   {
     return this.rectToParentSpace(this.layoutRectangle).AABB;
   }
 
-  get screenSpaceDrawQuad(): Quad 
+  get screenSpaceDrawQuad(): Quad
   {
     const rect = new Rectangle(0, 0, this.drawWidth, this.drawHeight);
 
     return Quad.fromRectangle(rect).transform(this.drawNode.worldTransform);
   }
 
-  #requiredParentSizeToFitBacking = new LayoutComputed(() => 
+  #requiredParentSizeToFitBacking = new LayoutComputed(() =>
   {
     const ap = this.anchorPosition;
     const rap = this.relativeAnchorPosition;
@@ -852,12 +852,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return topLeftSize1.componentMax(topLeftSize2).componentMax(bottomRightSize1).componentMax(bottomRightSize2);
   }, Invalidation.RequiredParentSizeToFit);
 
-  get requiredParentSizeToFit(): Vec2 
+  get requiredParentSizeToFit(): Vec2
   {
     return this.#requiredParentSizeToFitBacking.value;
   }
 
-  get #relativeToAbsoluteFactor(): Vec2 
+  get #relativeToAbsoluteFactor(): Vec2
   {
     return this.parent?.relativeToAbsoluteFactor ?? new Vec2(1);
   }
@@ -866,12 +866,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   // #region filters
 
-  get filters(): Filter[] 
+  get filters(): Filter[]
   {
     return this.drawNode.filters as Filter[];
   }
 
-  set filters(value: Filter[]) 
+  set filters(value: Filter[])
   {
     this.drawNode.filters = value;
   }
@@ -882,12 +882,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   lifetimeChanged = new Action<Drawable>();
 
-  get lifetimeStart() 
+  get lifetimeStart()
   {
     return this.#lifeTimeStart;
   }
 
-  set lifetimeStart(value: number) 
+  set lifetimeStart(value: number)
   {
     if (this.#lifeTimeStart === value)
       return;
@@ -897,17 +897,17 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     this.lifetimeChanged.emit(this);
   }
 
-  #onLifetimeChanged() 
+  #onLifetimeChanged()
   {
     this.#hasLifeTime = this.#lifeTimeStart !== -Number.MAX_VALUE || this.#lifeTimeEnd !== Number.MAX_VALUE;
   }
 
-  get lifetimeEnd() 
+  get lifetimeEnd()
   {
     return this.#lifeTimeEnd;
   }
 
-  set lifetimeEnd(value: number) 
+  set lifetimeEnd(value: number)
   {
     if (this.#lifeTimeEnd === value)
       return;
@@ -923,19 +923,19 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   #hasLifeTime = false;
 
-  hide() 
+  hide()
   {
     this.fadeOut();
   }
 
-  show() 
+  show()
   {
     this.fadeIn();
   }
 
   isAlive = false;
 
-  get shouldBeAlive(): boolean 
+  get shouldBeAlive(): boolean
   {
     if (!this.#hasLifeTime)
       return true;
@@ -943,31 +943,31 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return this.clock!.timeInfo.current >= this.#lifeTimeStart && this.clock!.timeInfo.current < this.#lifeTimeEnd;
   }
 
-  get removeWhenNotAlive() 
+  get removeWhenNotAlive()
   {
     return this.parent === null || this.clock!.timeInfo.current > this.#lifeTimeStart;
   }
 
-  get disposeOnDeathRemoval() 
+  get disposeOnDeathRemoval()
   {
     return this.removeCompletedTransforms;
   }
 
   loadState: LoadState = LoadState.NotLoaded;
 
-  get isLoaded() 
+  get isLoaded()
   {
     return this.loadState === LoadState.Loaded;
   }
 
   #dependencies!: ReadonlyDependencyContainer;
 
-  get dependencies() 
+  get dependencies()
   {
     return this.#dependencies;
   }
 
-  #loadComplete() 
+  #loadComplete()
   {
     if (this.loadState < LoadState.Ready)
       return;
@@ -986,9 +986,9 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     clock: IFrameBasedClock,
     dependencies: ReadonlyDependencyContainer,
     isDirectAsyncContext = false,
-  ) 
+  )
   {
-    try 
+    try
     {
       if (this.loadState !== LoadState.NotLoaded)
         return;
@@ -1007,7 +1007,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
       this.injectDependencies(dependencies);
       const dependencyLoaders = getDependencyLoaders(this);
 
-      for (const key of dependencyLoaders) 
+      for (const key of dependencyLoaders)
       {
         (this as any)[key](dependencies);
       }
@@ -1017,9 +1017,9 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
       this.onLoad();
 
       const asyncDependencyLoaders = getAsyncDependencyLoaders(this);
-      if (this.hasAsyncLoader || asyncDependencyLoaders.length > 0) 
+      if (this.hasAsyncLoader || asyncDependencyLoaders.length > 0)
       {
-        if (!isDirectAsyncContext) 
+        if (!isDirectAsyncContext)
         {
           throw new Error("Cannot load async dependencies in a non-async context");
         }
@@ -1034,7 +1034,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
       this.loadState = LoadState.Ready;
     }
-    finally 
+    finally
     {
       popDrawableScope();
     }
@@ -1042,7 +1042,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   #isLoadingFromAsync = false;
 
-  protected get isLoadingFromAsync() 
+  protected get isLoadingFromAsync()
   {
     return this.#isLoadingFromAsync;
   }
@@ -1051,9 +1051,9 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     clock: IFrameBasedClock,
     dependencies: ReadonlyDependencyContainer,
     isDirectAsyncContext = false,
-  ): Promise<boolean> 
+  ): Promise<boolean>
   {
-    if (this.isDisposed) 
+    if (this.isDisposed)
     {
       return false;
     }
@@ -1072,28 +1072,28 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   processCustomClock = false;
 
-  protected load(dependencies: ReadonlyDependencyContainer) 
+  protected load(dependencies: ReadonlyDependencyContainer)
   {
   }
 
-  protected async loadAsync(dependencies: ReadonlyDependencyContainer) 
+  protected async loadAsync(dependencies: ReadonlyDependencyContainer)
   {
   }
 
-  override get clock(): IFrameBasedClock | null 
+  override get clock(): IFrameBasedClock | null
   {
     return this.#clock;
   }
 
-  set clock(value: IFrameBasedClock) 
+  set clock(value: IFrameBasedClock)
   {
     this.#customClock = value;
     this.updateClock(value);
   }
 
-  expire(calculateLifetimeStart = false) 
+  expire(calculateLifetimeStart = false)
   {
-    if (this.#clock === null) 
+    if (this.#clock === null)
     {
       this.lifetimeEnd = -Number.MAX_VALUE;
       return;
@@ -1101,11 +1101,11 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
     this.lifetimeEnd = this.latestTransformEndTime;
 
-    if (calculateLifetimeStart) 
+    if (calculateLifetimeStart)
     {
       let min = Infinity;
 
-      for (const t of this.transforms) 
+      for (const t of this.transforms)
       {
         if (t.startTime < min)
           min = t.startTime;
@@ -1115,33 +1115,33 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     }
   }
 
-  updateClock(clock: IFrameBasedClock) 
+  updateClock(clock: IFrameBasedClock)
   {
     this.#clock = this.#customClock ?? clock;
     this.#scheduler?.updateClock(this.#clock);
   }
 
-  protected onLoad() 
+  protected onLoad()
   {
   }
 
-  protected loadComplete() 
+  protected loadComplete()
   {
   }
 
-  protected loadAsyncComplete() 
+  protected loadAsyncComplete()
   {
   }
 
   onLoadComplete = new Action<Drawable>();
 
-  protected injectDependencies(dependencies: ReadonlyDependencyContainer) 
+  protected injectDependencies(dependencies: ReadonlyDependencyContainer)
   {
     this.#dependencies ??= dependencies;
 
     const injections = getInjections(this);
     // eslint-disable-next-line prefer-const
-    for (let { key, type, optional } of injections) 
+    for (let { key, type, optional } of injections)
     {
       if (typeof type === "function" && type.name === "")
         type = type();
@@ -1152,7 +1152,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   isDisposed = false;
 
-  dispose(isDisposing = true): void 
+  dispose(isDisposing = true): void
   {
     if (this.isDisposed)
       return;
@@ -1162,15 +1162,15 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     this.invalidated.removeAllListeners();
 
     this.drawNode?.destroy({ children: true });
-    for (const callback of this.#onDispose) 
+    for (const callback of this.#onDispose)
     {
       callback();
     }
 
-    for (const key in this) 
+    for (const key in this)
     {
       const value = this[key];
-      if (value && typeof value === "object" && "unbindAll" in value && typeof value.unbindAll === "function") 
+      if (value && typeof value === "object" && "unbindAll" in value && typeof value.unbindAll === "function")
       {
         value.unbindAll();
       }
@@ -1181,7 +1181,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   #onDispose: (() => void)[] = [];
 
-  #invalidateParentSizeDependencies(invalidation: Invalidation, changedAxes: Axes) 
+  #invalidateParentSizeDependencies(invalidation: Invalidation, changedAxes: Axes)
   {
     this.invalidate(invalidation, InvalidationSource.Self, false);
 
@@ -1192,22 +1192,22 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   #bypassAutoSizeAdditionalAxes: Axes = Axes.None;
 
-  get bypassAutoSizeAxes(): Axes 
+  get bypassAutoSizeAxes(): Axes
   {
     return this.#bypassAutoSizeAxes;
   }
 
-  set bypassAutoSizeAxes(value: Axes) 
+  set bypassAutoSizeAxes(value: Axes)
   {
     this.#bypassAutoSizeAdditionalAxes = value;
     this.#updateBypassAutoSizeAxes();
   }
 
-  #updateBypassAutoSizeAxes() 
+  #updateBypassAutoSizeAxes()
   {
     const value = this.#relativePositionAxes | this.#relativeSizeAxes | this.#bypassAutoSizeAdditionalAxes;
 
-    if (this.#bypassAutoSizeAxes !== value) 
+    if (this.#bypassAutoSizeAxes !== value)
     {
       const changedAxes = this.#bypassAutoSizeAxes ^ value;
       this.#bypassAutoSizeAxes = value;
@@ -1216,19 +1216,19 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     }
   }
 
-  onDispose(callback: () => void): void 
+  onDispose(callback: () => void): void
   {
     this.#onDispose.push(callback);
   }
 
-  withScope<T>(callback: () => T): T 
+  withScope<T>(callback: () => T): T
   {
-    try 
+    try
     {
       pushDrawableScope(this);
       return callback();
     }
-    finally 
+    finally
     {
       popDrawableScope();
     }
@@ -1240,7 +1240,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   childId = 0;
 
-  protected get isPartOfComposite() 
+  protected get isPartOfComposite()
   {
     return this.childId !== 0;
   }
@@ -1249,14 +1249,14 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   #depth = 0;
 
-  get depth() 
+  get depth()
   {
     return this.#depth;
   }
 
-  set depth(value: number) 
+  set depth(value: number)
   {
-    if (this.isPartOfComposite) 
+    if (this.isPartOfComposite)
     {
       throw new Error("May not change depth while inside a parent CompositeDrawable.");
     }
@@ -1266,14 +1266,14 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     this.drawNode.zIndex = -value;
   }
 
-  get parent() 
+  get parent()
   {
     return this.#parent;
   }
 
-  set parent(value: CompositeDrawable | null) 
+  set parent(value: CompositeDrawable | null)
   {
-    if (value === null) 
+    if (value === null)
     {
       this.childId = 0;
     }
@@ -1286,13 +1286,13 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     this.invalidate(this.invalidationFromParentSize | Invalidation.Presence | Invalidation.Parent);
   }
 
-  findClosestParent<T extends Drawable>(predicate: (d: Drawable) => d is T): T | null 
+  findClosestParent<T extends Drawable>(predicate: (d: Drawable) => d is T): T | null
   {
     let parent = this.parent;
 
-    while (parent) 
+    while (parent)
     {
-      if (predicate(parent)) 
+      if (predicate(parent))
       {
         return parent;
       }
@@ -1303,13 +1303,13 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return null;
   }
 
-  findClosestParentOfType<T extends Drawable>(type: abstract new (...args: any[]) => T): T | null 
+  findClosestParentOfType<T extends Drawable>(type: abstract new (...args: any[]) => T): T | null
   {
     let parent = this.parent;
 
-    while (parent) 
+    while (parent)
     {
-      if (parent instanceof type) 
+      if (parent instanceof type)
       {
         return parent;
       }
@@ -1320,13 +1320,13 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return null;
   }
 
-  isRootedAt(parent: CompositeDrawable): boolean 
+  isRootedAt(parent: CompositeDrawable): boolean
   {
     let current: Drawable | null = this;
 
-    while (current) 
+    while (current)
     {
-      if (current === parent) 
+      if (current === parent)
       {
         return true;
       }
@@ -1343,9 +1343,9 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   #scheduler: Scheduler | null = null;
 
-  get scheduler(): Scheduler 
+  get scheduler(): Scheduler
   {
-    if (this.#scheduler) 
+    if (this.#scheduler)
     {
       return this.#scheduler;
     }
@@ -1354,12 +1354,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return this.#scheduler;
   }
 
-  schedule(action: () => void) 
+  schedule(action: () => void)
   {
     this.scheduler.add(action);
   }
 
-  updateSubTree(): boolean 
+  updateSubTree(): boolean
   {
     // if (this.isDisposed)
     //   throw new Error('Cannot update disposed drawable');
@@ -1378,7 +1378,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     if (!this.isPresent)
       return true;
 
-    if (this.#scheduler !== null) 
+    if (this.#scheduler !== null)
     {
       const amountScheduledTasks = this.#scheduler.update();
       FrameStatistics.add(StatisticsCounterType.ScheduleInvk, amountScheduledTasks);
@@ -1389,12 +1389,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return true;
   }
 
-  updateSubTreeTransforms(): boolean 
+  updateSubTreeTransforms(): boolean
   {
     if (!this.isPresent)
       return false;
 
-    if (!this.#transformBacking.isValid) 
+    if (!this.#transformBacking.isValid)
     {
       this.updateDrawNodeTransform();
       FrameStatistics.increment(StatisticsCounterType.DrawNodeTransforms);
@@ -1404,13 +1404,13 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return true;
   }
 
-  update() 
+  update()
   {
   }
 
   readonly #transformBacking = new LayoutMember(Invalidation.Transform | Invalidation.DrawSize | Invalidation.Presence);
 
-  updateDrawNodeTransform() 
+  updateDrawNodeTransform()
   {
     const {
       drawNode,
@@ -1423,7 +1423,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     let x = drawPosition.x + anchorPosition.x;
     let y = drawPosition.y + anchorPosition.y;
 
-    if (this.#parent) 
+    if (this.#parent)
     {
       const padding = this.#parent.padding;
 
@@ -1441,7 +1441,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     drawNode._onUpdate();
   }
 
-  updateDrawNodeColor() 
+  updateDrawNodeColor()
   {
     this.drawNode.alpha = this.alpha * this.#color.alpha;
     this.drawNode.tint = this.tint;
@@ -1449,7 +1449,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   #layoutMembers: LayoutMember[] = [];
 
-  addLayout(layout: LayoutMember) 
+  addLayout(layout: LayoutMember)
   {
     layout.parent = this;
     this.#layoutMembers.push(layout);
@@ -1459,14 +1459,14 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     invalidation: Invalidation,
     source: InvalidationSource = InvalidationSource.Self,
     propagateToParent = true,
-  ): boolean 
+  ): boolean
   {
-    if (propagateToParent && source === InvalidationSource.Self) 
+    if (propagateToParent && source === InvalidationSource.Self)
     {
       this.parent?.invalidate(invalidation, InvalidationSource.Child);
     }
 
-    if (!this.#invalidate(invalidation, source)) 
+    if (!this.#invalidate(invalidation, source))
     {
       return false;
     }
@@ -1474,16 +1474,16 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     let anyInvalidated = false;
 
     const layoutMembers = this.#layoutMembers;
-    for (let i = 0, len = layoutMembers.length; i < len; i++) 
+    for (let i = 0, len = layoutMembers.length; i < len; i++)
     {
       const layout = layoutMembers[i];
 
       if (!(source & layout.source))
         continue;
 
-      if (layout.invalidation & invalidation) 
+      if (layout.invalidation & invalidation)
       {
-        if (layout.isValid) 
+        if (layout.isValid)
         {
           layout.invalidate();
           anyInvalidated = true;
@@ -1501,26 +1501,26 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   readonly invalidated = new Action<[Drawable, Invalidation]>();
 
-  get invalidationFromParentSize(): Invalidation 
+  get invalidationFromParentSize(): Invalidation
   {
     let result = Invalidation.None;
-    if (this.relativeSizeAxes !== Axes.None) 
+    if (this.relativeSizeAxes !== Axes.None)
     {
       result |= Invalidation.DrawSize;
     }
-    if (this.relativePositionAxes !== Axes.None) 
+    if (this.relativePositionAxes !== Axes.None)
     {
       result |= Invalidation.Transform;
     }
     return result;
   }
 
-  get localTransform() 
+  get localTransform()
   {
     const transform = new Matrix();
     let pos = this.drawPosition.add(this.anchorPosition);
 
-    if (this.parent) 
+    if (this.parent)
     {
       pos = pos.add(this.parent.childOffset);
     }
@@ -1534,12 +1534,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return transform;
   }
 
-  onInvalidate(invalidation: Invalidation, source: InvalidationSource): boolean 
+  onInvalidate(invalidation: Invalidation, source: InvalidationSource): boolean
   {
     return false;
   }
 
-  validateSuperTree(invalidation: Invalidation) 
+  validateSuperTree(invalidation: Invalidation)
   {
     if (this.#validate(invalidation) && this.#parent !== null)
       this.#parent.validateSuperTree(invalidation);
@@ -1551,14 +1551,14 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   #requestsNonPositionalInput = false;
 
-  get requestsNonPositionalInput() 
+  get requestsNonPositionalInput()
   {
     return this.#requestsNonPositionalInput;
   }
 
   #requestsPositionalInput = false;
 
-  get requestsPositionalInput() 
+  get requestsPositionalInput()
   {
     return this.#requestsPositionalInput;
   }
@@ -1567,83 +1567,83 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   requestsPositionalInputSubTree = false;
 
-  get handlePositionalInput() 
+  get handlePositionalInput()
   {
     return this.requestsPositionalInput;
   }
 
-  get propagatePositionalInputSubTree() 
+  get propagatePositionalInputSubTree()
   {
     return this.requestsPositionalInputSubTree && this.isPresent;
   }
 
-  receivePositionalInputAt(screenSpacePosition: Vec2): boolean 
+  receivePositionalInputAt(screenSpacePosition: Vec2): boolean
   {
     return this.contains(screenSpacePosition);
   }
 
-  receivePositionalInputAtLocal(localPosition: Vec2): boolean 
+  receivePositionalInputAtLocal(localPosition: Vec2): boolean
   {
     return this.containsLocal(localPosition);
   }
 
-  toLocalSpace(screenSpacePosition: Vec2, target: Vec2 = new Vec2()): Vec2 
+  toLocalSpace(screenSpacePosition: Vec2, target: Vec2 = new Vec2()): Vec2
   {
     return this.drawNode.relativeGroupTransform.applyInverse(screenSpacePosition, target);
   }
 
-  toScreenSpace(localSpacePosition: Vec2, target: Vec2 = new Vec2()): Vec2 
+  toScreenSpace(localSpacePosition: Vec2, target: Vec2 = new Vec2()): Vec2
   {
     return this.drawNode.relativeGroupTransform.apply(localSpacePosition, target);
   }
 
-  toSpaceOfOtherDrawable(v: Vec2, other: Drawable): Vec2 
+  toSpaceOfOtherDrawable(v: Vec2, other: Drawable): Vec2
   {
     return other.toLocalSpace(this.toScreenSpace(v));
   }
 
-  toParentSpace(v: Vec2): Vec2 
+  toParentSpace(v: Vec2): Vec2
   {
     return this.toSpaceOfOtherDrawable(v, this.parent!);
   }
 
-  rectToParentSpace(rect: Rectangle): Quad 
+  rectToParentSpace(rect: Rectangle): Quad
   {
     this.updateDrawNodeTransform();
     return Quad.fromRectangle(rect).transform(this.localTransform);
   }
 
-  contains(screenSpacePosition: Vec2): boolean 
+  contains(screenSpacePosition: Vec2): boolean
   {
     const pos = this.toLocalSpace(screenSpacePosition, this._tempVec2);
 
     return this.containsLocal(pos);
   }
 
-  containsLocal(localPosition: Vec2): boolean 
+  containsLocal(localPosition: Vec2): boolean
   {
     return localPosition.x >= 0 && localPosition.x <= this.drawSize.x && localPosition.y >= 0 && localPosition.y <= this.drawSize.y;
   }
 
-  getContainingInputManager(): InputManager | null 
+  getContainingInputManager(): InputManager | null
   {
-    return this.findClosestParent((d): d is InputManager => 
+    return this.findClosestParent((d): d is InputManager =>
     {
       return !!("isInputManager" in d && d.isInputManager);
     });
   }
 
-  getContainingFocusManager(): InputManager | null 
+  getContainingFocusManager(): InputManager | null
   {
     return this.findClosestParent((d): d is InputManager => isFocusManager(d));
   }
 
-  buildPositionalInputQueue(screenSpacePos: Vec2, queue: List<Drawable>): boolean 
+  buildPositionalInputQueue(screenSpacePos: Vec2, queue: List<Drawable>): boolean
   {
     if (!this.propagatePositionalInputSubTree)
       return false;
 
-    if (this.handlePositionalInput && this.receivePositionalInputAt(screenSpacePos)) 
+    if (this.handlePositionalInput && this.receivePositionalInputAt(screenSpacePos))
     {
       queue.push(this);
     }
@@ -1653,12 +1653,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   _tempVec2 = new Vec2();
 
-  buildPositionalInputQueueLocal(localPos: Vec2, queue: List<Drawable>): boolean 
+  buildPositionalInputQueueLocal(localPos: Vec2, queue: List<Drawable>): boolean
   {
     if (!this.propagatePositionalInputSubTree)
       return false;
 
-    if (this.handlePositionalInput && this.receivePositionalInputAtLocal(localPos)) 
+    if (this.handlePositionalInput && this.receivePositionalInputAtLocal(localPos))
     {
       queue.push(this);
     }
@@ -1666,17 +1666,17 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return true;
   }
 
-  get handleNonPositionalInput() 
+  get handleNonPositionalInput()
   {
     return this.requestsNonPositionalInput;
   }
 
-  get propagateNonPositionalInputSubTree() 
+  get propagateNonPositionalInputSubTree()
   {
     return this.isPresent && this.requestsNonPositionalInputSubTree;
   }
 
-  buildNonPositionalInputQueue(queue: List<Drawable>, allowBlocking = true) 
+  buildNonPositionalInputQueue(queue: List<Drawable>, allowBlocking = true)
   {
     if (!this.propagateNonPositionalInputSubTree)
       return false;
@@ -1687,19 +1687,19 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return true;
   }
 
-  triggerEvent(e: UIEvent): boolean 
+  triggerEvent(e: UIEvent): boolean
   {
     e.target = this;
 
     return this[e.handler]?.(e as any) ?? this.handle(e) ?? false;
   }
 
-  get requiresHighFrequencyMousePosition() 
+  get requiresHighFrequencyMousePosition()
   {
     return false;
   }
 
-  handle(e: UIEvent) 
+  handle(e: UIEvent)
   {
     return false;
   }
@@ -1742,7 +1742,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   onDrop?(e: DropEvent): boolean;
 
-  get dragBlocksClick() 
+  get dragBlocksClick()
   {
     return true;
   }
@@ -1753,22 +1753,22 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   hasFocus = false;
 
-  get requestsFocus() 
+  get requestsFocus()
   {
     return false;
   }
 
-  get acceptsFocus() 
+  get acceptsFocus()
   {
     return false;
   }
 
-  get changeFocusOnClick() 
+  get changeFocusOnClick()
   {
     return true;
   }
 
-  doWhenLoaded(fn: (drawable: this) => void, fullyLoaded = false): this 
+  doWhenLoaded(fn: (drawable: this) => void, fullyLoaded = false): this
   {
     if (this.loadState >= (fullyLoaded ? LoadState.Loaded : LoadState.Ready))
       fn(this);
@@ -1780,73 +1780,73 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   // #endregion
 
   // #region transforms
-  delay(duration: number): TransformSequenceProxy<this> 
+  delay(duration: number): TransformSequenceProxy<this>
   {
     return new TransformSequence(this).delay(duration).asProxy();
   }
 
-  delayUntilTransformsFinished() 
+  delayUntilTransformsFinished()
   {
     return this.delay(Math.max(0, this.latestTransformEndTime - this.time.current));
   }
 
-  fadeTo(alpha: number, duration = 0, easing: EasingFunction = EasingFunction.Default) 
+  fadeTo(alpha: number, duration = 0, easing: EasingFunction = EasingFunction.Default)
   {
     return this.transformTo("alpha", alpha, duration, easing);
   }
 
-  fadeIn(duration = 0, easing: EasingFunction = EasingFunction.Default) 
+  fadeIn(duration = 0, easing: EasingFunction = EasingFunction.Default)
   {
     return this.fadeTo(1, duration, easing);
   }
 
-  fadeInFromZero(duration = 0, easing: EasingFunction = EasingFunction.Default) 
+  fadeInFromZero(duration = 0, easing: EasingFunction = EasingFunction.Default)
   {
     return this.fadeTo(0).fadeIn(duration, easing);
   }
 
-  fadeOut(duration = 0, easing: EasingFunction = EasingFunction.Default) 
+  fadeOut(duration = 0, easing: EasingFunction = EasingFunction.Default)
   {
     return this.fadeTo(0, duration, easing);
   }
 
-  fadeOutFromOne(duration = 0, easing: EasingFunction = EasingFunction.Default) 
+  fadeOutFromOne(duration = 0, easing: EasingFunction = EasingFunction.Default)
   {
     return this.fadeTo(1).fadeOut(duration, easing);
   }
 
-  fadeColor(color: ColorSource, duration = 0, easing: EasingFunction = EasingFunction.Default) 
+  fadeColor(color: ColorSource, duration = 0, easing: EasingFunction = EasingFunction.Default)
   {
     return this.transformTo("color", new Color(color), duration, easing);
   }
 
-  flashColorTo(color: ColorSource, duration = 0, easing: EasingFunction = EasingFunction.Default) 
+  flashColorTo(color: ColorSource, duration = 0, easing: EasingFunction = EasingFunction.Default)
   {
     const endValue = this.color;
     return this.fadeColor(color, duration, easing).fadeColor(endValue, duration, easing);
   }
 
-  moveTo(newPosition: Vec2, duration = 0, easing: EasingFunction = EasingFunction.Default) 
+  moveTo(newPosition: Vec2, duration = 0, easing: EasingFunction = EasingFunction.Default)
   {
     return this.transformTo("position", newPosition, duration, easing);
   }
 
-  moveToX(newX: number, duration = 0, easing: EasingFunction = EasingFunction.Default) 
+  moveToX(newX: number, duration = 0, easing: EasingFunction = EasingFunction.Default)
   {
     return this.transformTo("x", newX, duration, easing, "position");
   }
 
-  moveToY(newY: number, duration = 0, easing: EasingFunction = EasingFunction.Default) 
+  moveToY(newY: number, duration = 0, easing: EasingFunction = EasingFunction.Default)
   {
     return this.transformTo("y", newY, duration, easing, "position");
   }
 
-  rotateTo(newRotation: number, duration = 0, easing: EasingFunction = EasingFunction.Default) 
+  rotateTo(newRotation: number, duration = 0, easing: EasingFunction = EasingFunction.Default)
   {
     return this.transformTo("rotation", newRotation, duration, easing);
   }
 
-  scaleTo(newScale: number | Vec2, duration = 0, easing: EasingFunction = EasingFunction.Default) 
+  scaleTo(newScale: number | Vec2, duration = 0, easing: EasingFunction = EasingFunction.Default)
   {
     if (typeof newScale === "number")
       newScale = new Vec2(newScale);
@@ -1854,7 +1854,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return this.transformTo("scale", newScale, duration, easing);
   }
 
-  resizeTo(newSize: number | Vec2, duration = 0, easing: EasingFunction = EasingFunction.Default) 
+  resizeTo(newSize: number | Vec2, duration = 0, easing: EasingFunction = EasingFunction.Default)
   {
     if (typeof newSize === "number")
       newSize = new Vec2(newSize);
@@ -1862,12 +1862,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return this.transformTo("size", newSize, duration, easing);
   }
 
-  resizeWidthTo(newWidth: number, duration = 0, easing: EasingFunction = EasingFunction.Default) 
+  resizeWidthTo(newWidth: number, duration = 0, easing: EasingFunction = EasingFunction.Default)
   {
     return this.transformTo("width", newWidth, duration, easing, "size");
   }
 
-  resizeHeightTo(newHeight: number, duration = 0, easing: EasingFunction = EasingFunction.Default) 
+  resizeHeightTo(newHeight: number, duration = 0, easing: EasingFunction = EasingFunction.Default)
   {
     return this.transformTo("height", newHeight, duration, easing, "size");
   }
@@ -1878,7 +1878,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     duration = 0,
     easing: EasingFunction = EasingFunction.Default,
     grouping?: string,
-  ): TransformSequenceProxy<this> 
+  ): TransformSequenceProxy<this>
   {
     const result = new TransformSequence(this);
     const transform = this.makeTransform(propertyOrFieldName, newValue, duration, easing, grouping);
@@ -1894,7 +1894,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     newValue: TValue,
     duration: number,
     easing: EasingFunction = EasingFunction.Default,
-  ) 
+  )
   {
     const result = new TransformSequence(this);
 
@@ -1917,7 +1917,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     duration: number,
     easing: EasingFunction,
     grouping?: string,
-  ) 
+  )
   {
     return this.populateTransform<TValue>(
         new TransformCustom(propertyOrFieldName, grouping),
@@ -1932,12 +1932,12 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     newValue: TValue,
     duration: number,
     easing: EasingFunction = EasingFunction.Default,
-  ) 
+  )
   {
     if (duration < 0)
       throw new Error("Duration must be greater than or equal to 0");
 
-    if (transform.target) 
+    if (transform.target)
     {
       throw new Error("Transform already has a target");
     }
@@ -1962,9 +1962,9 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   #parentInvalidation = Invalidation.All;
   #childInvalidation = Invalidation.All;
 
-  #invalidate(flags: Invalidation, source: InvalidationSource): boolean 
+  #invalidate(flags: Invalidation, source: InvalidationSource): boolean
   {
-    switch (source) 
+    switch (source)
     {
     case InvalidationSource.Self:
       return this.#invalidateSelf(flags);
@@ -1977,7 +1977,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     }
   }
 
-  #invalidateSelf(flags: Invalidation): boolean 
+  #invalidateSelf(flags: Invalidation): boolean
   {
     const combined = this.#selfInvalidation | (flags & Invalidation.Layout);
     const result = (this.#selfInvalidation & flags) !== flags;
@@ -1985,7 +1985,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return result;
   }
 
-  #invalidateParent(flags: Invalidation): boolean 
+  #invalidateParent(flags: Invalidation): boolean
   {
     const combined = this.#parentInvalidation | (flags & Invalidation.Layout);
     const result = (this.#parentInvalidation & flags) !== flags;
@@ -1993,14 +1993,14 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return result;
   }
 
-  #invalidateChild(flags: Invalidation): boolean 
+  #invalidateChild(flags: Invalidation): boolean
   {
     const result = (this.#childInvalidation & flags) !== flags;
     this.#childInvalidation |= flags & Invalidation.Layout;
     return result;
   }
 
-  #validate(flags: Invalidation) 
+  #validate(flags: Invalidation)
   {
     const anyValidated = ((this.#selfInvalidation | this.#parentInvalidation | this.#childInvalidation) & flags) !== flags;
 
@@ -2018,7 +2018,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   // endregion
 }
 
-export function loadDrawable(drawable: Drawable, clock: IFrameBasedClock, dependencies: ReadonlyDependencyContainer) 
+export function loadDrawable(drawable: Drawable, clock: IFrameBasedClock, dependencies: ReadonlyDependencyContainer)
 {
   drawable[LOAD](clock, dependencies);
 }
@@ -2028,12 +2028,12 @@ export function loadDrawableFromAsync(
   clock: IFrameBasedClock,
   dependencies: ReadonlyDependencyContainer,
   isDirectAsyncContext: boolean,
-): Promise<boolean> 
+): Promise<boolean>
 {
   return drawable[LOAD_FROM_ASYNC](clock, dependencies, isDirectAsyncContext);
 }
 
-export enum LoadState 
+export enum LoadState
 {
   NotLoaded = 0,
   Loading = 1,
@@ -2041,7 +2041,7 @@ export enum LoadState
   Loaded = 3,
 }
 
-export enum Invalidation 
+export enum Invalidation
 {
   Transform = 1,
   DrawSize = 1 << 1,
@@ -2055,7 +2055,7 @@ export enum Invalidation
   None = 0,
 }
 
-export enum InvalidationSource 
+export enum InvalidationSource
 {
   Self = 1,
   Parent = 1 << 1,

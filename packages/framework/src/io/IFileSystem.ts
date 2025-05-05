@@ -1,20 +1,20 @@
 import type { EventEmitter } from "pixi.js";
 
-export interface FileSystemEvents 
+export interface FileSystemEvents
 {
   added: [string, IFile];
   changed: [string, IFile];
   removed: [string];
 }
 
-export interface IFileSystem extends EventEmitter<FileSystemEvents> 
+export interface IFileSystem extends EventEmitter<FileSystemEvents>
 {
   entries(): IFile[];
 
   get(path: string): IFile | undefined;
 }
 
-export interface IWritableFileSystem extends IFileSystem 
+export interface IWritableFileSystem extends IFileSystem
 {
   entries(): IWritableFile[];
 
@@ -27,20 +27,20 @@ export interface IWritableFileSystem extends IFileSystem
   delete(path: string): Promise<boolean>;
 }
 
-export interface FileEvents 
+export interface FileEvents
 {
   changed: [];
   removed: [];
 }
 
-export interface IFile extends EventEmitter<FileEvents> 
+export interface IFile extends EventEmitter<FileEvents>
 {
   readonly path: string;
 
   read(): Promise<ArrayBuffer>;
 }
 
-export interface IWritableFile extends IFile 
+export interface IWritableFile extends IFile
 {
   write(data: ArrayBuffer): Promise<void>;
 

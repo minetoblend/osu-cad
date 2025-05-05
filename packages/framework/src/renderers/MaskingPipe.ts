@@ -4,7 +4,7 @@ import { ExtensionType } from "pixi.js";
 
 export type MaskingAction = "pushMask" | "popMask";
 
-export class MaskingPipe implements InstructionPipe<MaskingInstruction> 
+export class MaskingPipe implements InstructionPipe<MaskingInstruction>
 {
   public static extension = {
     type: [
@@ -15,14 +15,14 @@ export class MaskingPipe implements InstructionPipe<MaskingInstruction>
     name: "masking",
   } as const;
 
-  constructor(renderer: Renderer) 
+  constructor(renderer: Renderer)
   {
     this._renderer = renderer;
   }
 
   _renderer: Renderer;
 
-  public push(maskingEffect: Effect, container: Container, instructionSet: InstructionSet): void 
+  public push(maskingEffect: Effect, container: Container, instructionSet: InstructionSet): void
   {
     const renderPipes = this._renderer.renderPipes;
 
@@ -37,7 +37,7 @@ export class MaskingPipe implements InstructionPipe<MaskingInstruction>
     } as MaskingInstruction);
   }
 
-  public pop(filterEffect: Effect, container: Container, instructionSet: InstructionSet): void 
+  public pop(filterEffect: Effect, container: Container, instructionSet: InstructionSet): void
   {
     this._renderer.renderPipes.batch.break(instructionSet);
 
@@ -48,34 +48,34 @@ export class MaskingPipe implements InstructionPipe<MaskingInstruction>
     });
   }
 
-  public execute(instruction: MaskingInstruction) 
+  public execute(instruction: MaskingInstruction)
   {
-    if (instruction.action === "pushMask") 
+    if (instruction.action === "pushMask")
     {
       this._renderer.masking.push(instruction);
     }
-    else if (instruction.action === "popMask") 
+    else if (instruction.action === "popMask")
     {
       this._renderer.masking.pop();
     }
   }
 
-  public destroy() 
+  public destroy()
   {
     this._renderer = null!;
   }
 }
 
-declare global 
+declare global
 {
-  namespace PixiMixins 
+  namespace PixiMixins
   {
-    interface RendererSystems 
+    interface RendererSystems
     {
       masking: import("./MaskingSystem").MaskingSystem;
     }
 
-    interface RendererPipes 
+    interface RendererPipes
     {
       masking: import("./MaskingPipe").MaskingPipe;
     }

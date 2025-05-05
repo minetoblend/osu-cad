@@ -5,7 +5,7 @@ import { OsuSkinComponents } from "../../skinning/OsuSkinComponents";
 import { OsuHitObject } from "../OsuHitObject";
 import { DrawableSlider } from "./DrawableSlider";
 
-export class DrawableSliderBall extends CompositeDrawable 
+export class DrawableSliderBall extends CompositeDrawable
 {
   static readonly FOLLOW_AREA = 2.4;
 
@@ -14,7 +14,7 @@ export class DrawableSliderBall extends CompositeDrawable
 
   private ball!: SkinnableDrawable;
 
-  protected override load(dependencies: ReadonlyDependencyContainer) 
+  protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
 
@@ -35,17 +35,17 @@ export class DrawableSliderBall extends CompositeDrawable
     );
   }
 
-  override clearTransformsAfter(time: number, propagateChildren?: boolean, targetMember?: string) 
+  override clearTransformsAfter(time: number, propagateChildren?: boolean, targetMember?: string)
   {
     super.clearTransformsAfter(time, false, targetMember);
   }
 
-  override applyTransformsAt(time: number) 
+  override applyTransformsAt(time: number)
   {
     super.applyTransformsAt(time, false);
   }
 
-  updateProgress(completionProgress: number) 
+  updateProgress(completionProgress: number)
   {
     const slider = this.drawableSlider.hitObject!;
 

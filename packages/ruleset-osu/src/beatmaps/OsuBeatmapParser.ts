@@ -5,9 +5,9 @@ import { HitCircle } from "../hitObjects/HitCircle";
 import { PathPoint, PathType } from "../hitObjects/PathPoint";
 import { Slider } from "../hitObjects/Slider";
 
-export class OsuBeatmapParser implements RulesetBeatmapParser 
+export class OsuBeatmapParser implements RulesetBeatmapParser
 {
-  parseHitObject(line: string, beatmap: Beatmap): HitObject | null 
+  parseHitObject(line: string, beatmap: Beatmap): HitObject | null
   {
     const values = line.split(",");
     if (values.length < 4)
@@ -20,7 +20,7 @@ export class OsuBeatmapParser implements RulesetBeatmapParser
     const newCombo = !!(type & HitType.NewCombo);
     const comboOffset = (type & HitType.ComboOffset) >> 4;
 
-    if (type & HitType.Normal) 
+    if (type & HitType.Normal)
     {
       return new HitCircle({
         startTime,
@@ -31,7 +31,7 @@ export class OsuBeatmapParser implements RulesetBeatmapParser
       });
     }
 
-    if (type & HitType.Slider) 
+    if (type & HitType.Slider)
     {
       return new Slider({
         startTime,
@@ -48,7 +48,7 @@ export class OsuBeatmapParser implements RulesetBeatmapParser
   }
 }
 
-function parseControlPoints(basePosition: Vec2, pathString: string): PathPoint[] 
+function parseControlPoints(basePosition: Vec2, pathString: string): PathPoint[]
 {
   const [pathTypeLetter, ...pathPoints] = pathString.split("|");
 
@@ -58,14 +58,14 @@ function parseControlPoints(basePosition: Vec2, pathString: string): PathPoint[]
     new PathPoint(Vec2.zero(), pathType),
   ];
 
-  for (const p of pathPoints) 
+  for (const p of pathPoints)
   {
     const [x, y] = p.split(":").map(it => Number.parseFloat(it));
     const position = new Vec2(x, y).sub(basePosition);
 
     const lastPoint = path[path.length - 1];
 
-    if (position.equals(lastPoint.position)) 
+    if (position.equals(lastPoint.position))
     {
       path.pop();
       path.push(new PathPoint(position, PathType.Bezier));
@@ -78,9 +78,9 @@ function parseControlPoints(basePosition: Vec2, pathString: string): PathPoint[]
   return path;
 }
 
-function parsePathType(pathTypeLetter: string) 
+function parsePathType(pathTypeLetter: string)
 {
-  switch (pathTypeLetter) 
+  switch (pathTypeLetter)
   {
   case "B":
     return PathType.Bezier;

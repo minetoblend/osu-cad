@@ -1,4 +1,4 @@
-export interface IClock 
+export interface IClock
 {
   get currentTime(): number;
 

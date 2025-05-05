@@ -6,9 +6,9 @@ import { ButtonEventManager } from "./ButtonEventManager";
 import { KeyDownEvent } from "./events/KeyDownEvent";
 import { KeyUpEvent } from "./events/KeyUpEvent";
 
-export class KeyEventManager extends ButtonEventManager<Key> 
+export class KeyEventManager extends ButtonEventManager<Key>
 {
-  public handleRepeat(state: InputState) 
+  public handleRepeat(state: InputState)
   {
     const inputQueue = new Set(this.getInputQueue());
 
@@ -17,12 +17,12 @@ export class KeyEventManager extends ButtonEventManager<Key>
     this.propagateButtonEvent(drawables, new KeyDownEvent(state, this.button, true));
   }
 
-  handleButtonDown(state: InputState, targets: List<Drawable>): Drawable | null 
+  handleButtonDown(state: InputState, targets: List<Drawable>): Drawable | null
   {
     return this.propagateButtonEvent(targets, new KeyDownEvent(state, this.button));
   }
 
-  handleButtonUp(state: InputState, targets: Drawable[]): void 
+  handleButtonUp(state: InputState, targets: Drawable[]): void
   {
     this.propagateButtonEvent(targets, new KeyUpEvent(state, this.button));
   }

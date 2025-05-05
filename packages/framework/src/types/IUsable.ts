@@ -1,23 +1,23 @@
 import type { IDisposable } from "./IDisposable";
 
-export interface IUsable extends IDisposable 
+export interface IUsable extends IDisposable
 {
   [Symbol.dispose]: () => void;
 }
 
-export abstract class Usable implements IUsable 
+export abstract class Usable implements IUsable
 {
   abstract dispose(): void;
 
-  [Symbol.dispose](): void 
+  [Symbol.dispose](): void
   {
     this.dispose();
   }
 }
 
-export class ValueInvokeOnDisposal extends Usable 
+export class ValueInvokeOnDisposal extends Usable
 {
-  constructor(dispose: () => void) 
+  constructor(dispose: () => void)
   {
     super();
     this.#dispose = dispose;
@@ -25,7 +25,7 @@ export class ValueInvokeOnDisposal extends Usable
 
   readonly #dispose: () => void;
 
-  dispose() 
+  dispose()
   {
     this.#dispose();
   }

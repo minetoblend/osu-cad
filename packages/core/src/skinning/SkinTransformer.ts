@@ -10,7 +10,7 @@ export type LoadTextureEntry =
     | { type: "texture", name: string }
     | ({ type: "animation", name: string } & AnimationOptions);
 
-export interface AnimationOptions 
+export interface AnimationOptions
 {
   animatable?: boolean
   animationSeparator?: string
@@ -21,30 +21,30 @@ export interface AnimationOptions
   maxSize?: number
 }
 
-export abstract class SkinTransformer implements ISkin 
+export abstract class SkinTransformer implements ISkin
 {
-  protected constructor(protected readonly source: ISkin) 
+  protected constructor(protected readonly source: ISkin)
   {
   }
 
-  getTexture(componentName: string): Texture | null 
+  getTexture(componentName: string): Texture | null
   {
     return this.source.getTexture(componentName);
   }
 
-  getConfigValue<T extends SkinConfigurationLookup>(lookup: T): SkinConfigurationValue<T> | null 
+  getConfigValue<T extends SkinConfigurationLookup>(lookup: T): SkinConfigurationValue<T> | null
   {
     return this.source.getConfigValue(lookup);
   }
 
-  getConfigBindable<T extends SkinConfigurationLookup>(lookup: T): Bindable<SkinConfigurationValue<T> | null> 
+  getConfigBindable<T extends SkinConfigurationLookup>(lookup: T): Bindable<SkinConfigurationValue<T> | null>
   {
     return this.source.getConfigBindable(lookup);
   }
 
-  protected async loadTextures(textures: LoadTextureEntry[]) 
+  protected async loadTextures(textures: LoadTextureEntry[])
   {
-    await Promise.all(textures.map(options => 
+    await Promise.all(textures.map(options =>
     {
       if (typeof options === "string")
         return this.textures.load(options);
@@ -59,7 +59,7 @@ export abstract class SkinTransformer implements ISkin
     }));
   }
 
-  async loadAnimation(componentName: string, options: AnimationOptions = {}): Promise<void> 
+  async loadAnimation(componentName: string, options: AnimationOptions = {}): Promise<void>
   {
     const {
       animationSeparator = "-",
@@ -68,9 +68,9 @@ export abstract class SkinTransformer implements ISkin
     const getFrameName = (frameIndex: number) => `${componentName}${animationSeparator}${frameIndex}`;
 
     let frameCount = 0;
-    while (true) 
+    while (true)
     {
-      if (!this.textures.canLoad(getFrameName(frameCount))) 
+      if (!this.textures.canLoad(getFrameName(frameCount)))
       {
         break;
       }
@@ -78,7 +78,7 @@ export abstract class SkinTransformer implements ISkin
       frameCount++;
     }
 
-    if (frameCount > 0) 
+    if (frameCount > 0)
     {
       const textures: Promise<any>[] = [];
       for (let i = 0; i < frameCount; i++)
@@ -86,13 +86,13 @@ export abstract class SkinTransformer implements ISkin
 
       await Promise.all(textures);
     }
-    else 
+    else
     {
       await this.textures.load(componentName);
     }
   }
 
-  getAnimation(componentName: string, options: AnimationOptions = {}) 
+  getAnimation(componentName: string, options: AnimationOptions = {})
   {
     const {
       animatable,
@@ -106,10 +106,10 @@ export abstract class SkinTransformer implements ISkin
     const getFrameName = (frameIndex: number) => `${componentName}${animationSeparator}${frameIndex}`;
 
     const textures: Texture[] = [];
-    if (animatable) 
+    if (animatable)
     {
       let frameCount = 0;
-      while (true) 
+      while (true)
       {
         const texture = this.getTexture(getFrameName(frameCount));
 
@@ -122,7 +122,7 @@ export abstract class SkinTransformer implements ISkin
       }
     }
 
-    if (textures.length === 0) 
+    if (textures.length === 0)
     {
       const texture = this.getTexture(componentName);
 
@@ -142,9 +142,9 @@ export abstract class SkinTransformer implements ISkin
     return animation;
   }
 
-  #getFrameLength(applyConfigFrameRate: boolean, textures: Texture[]) 
+  #getFrameLength(applyConfigFrameRate: boolean, textures: Texture[])
   {
-    if (applyConfigFrameRate) 
+    if (applyConfigFrameRate)
     {
       const iniRate = this.getConfigValue("animationFramerate");
 
@@ -158,22 +158,22 @@ export abstract class SkinTransformer implements ISkin
   }
 
 
-  get textures() 
+  get textures()
   {
     return this.source.textures;
   }
 
-  public getDrawableComponent(lookup: SkinComponentLookup): Drawable | null 
+  public getDrawableComponent(lookup: SkinComponentLookup): Drawable | null
   {
     return this.source.getDrawableComponent(lookup);
   }
 
-  public getComboColor(comboIndex: number): Color 
+  public getComboColor(comboIndex: number): Color
   {
     return this.source.getComboColor(comboIndex);
   }
 
-  public destroy() 
+  public destroy()
   {
   }
 }

@@ -8,15 +8,15 @@ import { Drawable, type DrawableOptions, Invalidation } from "./Drawable";
 import { LayoutComputed } from "./LayoutComputed";
 import { SpriteDrawNode } from "./SpriteDrawNode";
 
-export interface DrawableSpriteOptions extends DrawableOptions 
+export interface DrawableSpriteOptions extends DrawableOptions
 {
   texture?: Texture | null;
   edgeSmoothness?: number;
 }
 
-export class DrawableSprite extends Drawable 
+export class DrawableSprite extends Drawable
 {
-  constructor(options: DrawableSpriteOptions = {}) 
+  constructor(options: DrawableSpriteOptions = {})
   {
     super();
 
@@ -24,14 +24,14 @@ export class DrawableSprite extends Drawable
 
     this.with(options);
 
-    if (options.texture) 
+    if (options.texture)
     {
       if (
         !options.size
         && options.width === undefined
         && options.height === undefined
         && (options.relativeSizeAxes ?? Axes.None) === Axes.None
-      ) 
+      )
       {
         const size = new Vec2(options.texture.width, options.texture.height);
 
@@ -48,7 +48,7 @@ export class DrawableSprite extends Drawable
 
   resizeToTexture = false;
 
-  override createDrawNode() 
+  override createDrawNode()
   {
     return new PIXIContainer({
       children: [this.#sprite],
@@ -57,12 +57,12 @@ export class DrawableSprite extends Drawable
 
   #texture: Texture | null = null;
 
-  get texture(): Texture | null 
+  get texture(): Texture | null
   {
     return this.#texture;
   }
 
-  set texture(value: Texture | null) 
+  set texture(value: Texture | null)
   {
     if (this.#texture === value)
       return;
@@ -76,7 +76,7 @@ export class DrawableSprite extends Drawable
     this.invalidate(Invalidation.DrawSize | Invalidation.Transform);
   }
 
-  override updateDrawNodeTransform(): void 
+  override updateDrawNodeTransform(): void
   {
     super.updateDrawNodeTransform();
 
@@ -87,12 +87,12 @@ export class DrawableSprite extends Drawable
 
   #edgeSmoothness = new Vec2(0);
 
-  get edgeSmoothness(): Vec2 
+  get edgeSmoothness(): Vec2
   {
     return this.#edgeSmoothness;
   }
 
-  set edgeSmoothness(value: number | IVec2) 
+  set edgeSmoothness(value: number | IVec2)
   {
     value = typeof value === "number" ? new Vec2(value) : Vec2.from(value);
     if (this.#edgeSmoothness.equals(value))
@@ -103,14 +103,14 @@ export class DrawableSprite extends Drawable
     this.invalidate(Invalidation.Transform);
   }
 
-  get inflationAmount() 
+  get inflationAmount()
   {
     return this.#inflationAmountBacking.value;
   }
 
   #inflationAmountBacking = new LayoutComputed(() => this.#computeInflationAmount(), Invalidation.Transform);
 
-  #computeInflationAmount() 
+  #computeInflationAmount()
   {
     if (this.#edgeSmoothness.isZero)
       return Vec2.zero();

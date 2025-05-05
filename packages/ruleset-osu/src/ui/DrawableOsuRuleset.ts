@@ -4,19 +4,19 @@ import { DrawableRuleset } from "@osucad/core";
 import { OsuPlayfield } from "./OsuPlayfield";
 import { OsuPlayfieldAdjustmentContainer } from "./OsuPlayfieldAdjustmentContainer";
 
-export class DrawableOsuRuleset extends DrawableRuleset 
+export class DrawableOsuRuleset extends DrawableRuleset
 {
-  constructor() 
+  constructor()
   {
     super();
   }
 
-  protected override createPlayfield(): Playfield 
+  protected override createPlayfield(): Playfield
   {
     return new OsuPlayfield();
   }
 
-  protected override createPlayfieldAdjustmentContainer() 
+  protected override createPlayfieldAdjustmentContainer()
   {
     return new OsuPlayfieldAdjustmentContainer();
   }

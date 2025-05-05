@@ -14,26 +14,26 @@ import { InputState } from "../state/InputState";
 import { isKeyBindingHandler } from "./IKeyBindingHandler";
 import { KeyCombination, KeyCombinationMatchingMode } from "./KeyCombination";
 
-export abstract class BaseKeyBindingContainer extends Container 
+export abstract class BaseKeyBindingContainer extends Container
 {
   protected keyBindings: IKeyBinding[] | null = null;
 
   abstract get defaultKeyBindings(): IKeyBinding[];
 
-  protected override loadComplete(): void 
+  protected override loadComplete(): void
   {
     super.loadComplete();
 
     this.reloadMappings();
   }
 
-  protected reloadMappings(): void 
+  protected reloadMappings(): void
   {
     this.keyBindings = this.defaultKeyBindings;
   }
 }
 
-export abstract class KeyBindingContainer<T extends KeyBindingAction> extends BaseKeyBindingContainer 
+export abstract class KeyBindingContainer<T extends KeyBindingAction> extends BaseKeyBindingContainer
 {
   readonly #simultaneousMode: SimultaneousBindingMode;
   readonly #matchingMode: KeyCombinationMatchingMode;
@@ -41,7 +41,7 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
   protected constructor(
     simultaneousMode: SimultaneousBindingMode = SimultaneousBindingMode.None,
     matchingMode: KeyCombinationMatchingMode = KeyCombinationMatchingMode.Any,
-  ) 
+  )
   {
     super();
     this.relativeSizeAxes = Axes.Both;
@@ -50,12 +50,12 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
     this.#matchingMode = matchingMode;
   }
 
-  override get handlePositionalInput(): boolean 
+  override get handlePositionalInput(): boolean
   {
     return true;
   }
 
-  override get handleNonPositionalInput(): boolean 
+  override get handleNonPositionalInput(): boolean
   {
     return true;
   }
@@ -64,7 +64,7 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
 
   #pressedActions: T[] = [];
 
-  get pressedActions(): readonly T[] 
+  get pressedActions(): readonly T[]
   {
     return this.#pressedActions;
   }
@@ -75,7 +75,7 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
 
   #keyRepeatInputQueue: Drawable[] = [];
 
-  protected get keyBindingInputQueue(): List<Drawable> 
+  protected get keyBindingInputQueue(): List<Drawable>
   {
     this.#queue.clear();
     this.buildNonPositionalInputQueue(this.#queue, false);
@@ -84,24 +84,24 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
     return this.#queue;
   }
 
-  override update(): void 
+  override update(): void
   {
     super.update();
 
     this.#queue.clear();
   }
 
-  protected get prioritised() 
+  protected get prioritised()
   {
     return false;
   }
 
-  override buildNonPositionalInputQueue(queue: List<Drawable>, allowBlocking: boolean = true): boolean 
+  override buildNonPositionalInputQueue(queue: List<Drawable>, allowBlocking: boolean = true): boolean
   {
     if (!super.buildNonPositionalInputQueue(queue, allowBlocking))
       return false;
 
-    if (this.prioritised) 
+    if (this.prioritised)
     {
       queue.remove(this);
       queue.push(this);
@@ -110,15 +110,15 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
     return true;
   }
 
-  override buildPositionalInputQueue(screenSpacePos: Vec2, queue: List<Drawable>): boolean 
+  override buildPositionalInputQueue(screenSpacePos: Vec2, queue: List<Drawable>): boolean
   {
     if (!super.buildPositionalInputQueue(screenSpacePos, queue))
       return false;
 
-    if (this.prioritised) 
+    if (this.prioritised)
     {
       const index = queue.indexOf(this);
-      if (index !== -1) 
+      if (index !== -1)
       {
         queue.splice(index, 1);
       }
@@ -130,11 +130,11 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
 
   #pressedInputKeys = new Set<InputKey>();
 
-  override handle(e: UIEvent): boolean 
+  override handle(e: UIEvent): boolean
   {
     const state = e.state;
 
-    switch (e.constructor) 
+    switch (e.constructor)
     {
     case MouseDownEvent: {
       const mouseDown = e as MouseDownEvent;
@@ -149,7 +149,7 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
 
     case KeyDownEvent: {
       const keyDown = e as KeyDownEvent;
-      if (keyDown.repeat) 
+      if (keyDown.repeat)
       {
         this.#handleRepeat(state);
         return false;
@@ -175,9 +175,9 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
       const keys = KeyCombination.fromScrollDelta((e as ScrollEvent).scrollDelta);
       let handled = false;
 
-      for (const key of keys) 
+      for (const key of keys)
       {
-        if (this.#handleNewPressed(state, key, scroll.scrollDelta, scroll.isPrecise)) 
+        if (this.#handleNewPressed(state, key, scroll.scrollDelta, scroll.isPrecise))
         {
           handled = true;
           this.#handleNewReleased(state, key, scroll.scrollDelta, scroll.isPrecise);
@@ -195,7 +195,7 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
 
   readonly #newlyPressed: IKeyBinding[] = [];
 
-  #handleNewPressed(state: InputState, newKey: InputKey, scrollDelta?: Vec2, isPrecise: boolean = false): boolean 
+  #handleNewPressed(state: InputState, newKey: InputKey, scrollDelta?: Vec2, isPrecise: boolean = false): boolean
   {
     this.#pressedInputKeys.add(newKey);
 
@@ -207,27 +207,27 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
 
     this.#newlyPressed.length = 0;
 
-    if (this.keyBindings !== null) 
+    if (this.keyBindings !== null)
     {
-      for (const binding of this.keyBindings) 
+      for (const binding of this.keyBindings)
       {
-        if (this.#pressedBindings.includes(binding)) 
+        if (this.#pressedBindings.includes(binding))
         {
           continue;
         }
 
-        if (binding.keyCombination.isPressed(pressedCombination, state, this.#matchingMode)) 
+        if (binding.keyCombination.isPressed(pressedCombination, state, this.#matchingMode))
         {
           this.#newlyPressed.push(binding);
         }
       }
     }
 
-    if (KeyCombination.isModifierKey(newKey)) 
+    if (KeyCombination.isModifierKey(newKey))
     {
-      for (let i = 0; i < this.#newlyPressed.length; i++) 
+      for (let i = 0; i < this.#newlyPressed.length; i++)
       {
-        if (!this.#newlyPressed[i].keyCombination.keys.every(key => KeyCombination.isModifierKey(key))) 
+        if (!this.#newlyPressed[i].keyCombination.keys.every(key => KeyCombination.isModifierKey(key)))
         {
           this.#newlyPressed.splice(i--, 1);
         }
@@ -242,20 +242,20 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
       this.#simultaneousMode === SimultaneousBindingMode.None
       && (this.#matchingMode === KeyCombinationMatchingMode.Exact
         || this.#matchingMode === KeyCombinationMatchingMode.Modifiers)
-    ) 
+    )
     {
       if (
         this.#pressedBindings.length > 0
         && !this.#pressedBindings.some(m => m.keyCombination.isPressed(pressedCombination, state, this.#matchingMode))
-      ) 
+      )
       {
         this.#releasePressedActions(state);
       }
     }
 
-    for (const newBinding of this.#newlyPressed) 
+    for (const newBinding of this.#newlyPressed)
     {
-      if (this.#simultaneousMode === SimultaneousBindingMode.None) 
+      if (this.#simultaneousMode === SimultaneousBindingMode.None)
       {
         this.#releasePressedActions(state);
       }
@@ -264,7 +264,7 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
 
       const handledBy = this.propagatePressed(inputQueue, state, newBinding.getAction(), scrollAmount, isPrecise);
 
-      if (handledBy !== null) 
+      if (handledBy !== null)
       {
         // only drawables up to the one that handled the press should handle the release, so remove all subsequent drawables from the queue (for future use).
         const count = inputQueue.indexOf(handledBy) + 1;
@@ -283,9 +283,9 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
     return handled;
   }
 
-  #getScrollAmount(newKey: InputKey, scrollDelta?: Vec2): number 
+  #getScrollAmount(newKey: InputKey, scrollDelta?: Vec2): number
   {
-    switch (newKey) 
+    switch (newKey)
     {
     case InputKey.MouseWheelUp:
       return scrollDelta?.y ?? 0;
@@ -311,32 +311,32 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
     scrollAmount: number = 0,
     isPrecise: boolean = false,
     repeat: boolean = false,
-  ): Drawable | null 
+  ): Drawable | null
   {
     let handled: Drawable | null = null;
 
-    if (this.#simultaneousMode === SimultaneousBindingMode.All || !this.#pressedActions.includes(pressed)) 
+    if (this.#simultaneousMode === SimultaneousBindingMode.All || !this.#pressedActions.includes(pressed))
     {
       this.#pressedActions.push(pressed);
 
-      if (scrollAmount !== 0) 
+      if (scrollAmount !== 0)
       {
         const scrollEvent = new KeyBindingScrollEvent<T>(state, pressed, scrollAmount, isPrecise);
         handled = drawables.find(d => this.#triggerKeyBindingEvent(d, scrollEvent)) ?? null;
       }
 
-      if (handled === null) 
+      if (handled === null)
       {
         const pressEvent = new KeyBindingPressEvent<T>(state, pressed, repeat);
         handled = drawables.find(d => this.#triggerKeyBindingEvent(d, pressEvent)) ?? null;
       }
     }
 
-    if (handled) 
+    if (handled)
     {
       console.debug(`Keybinding ${JSON.stringify(pressed)} handled by ${handled.label ?? handled.constructor.name}`);
     }
-    else 
+    else
     {
       console.debug(`Keybinding ${JSON.stringify(pressed)} not handled`);
     }
@@ -344,15 +344,15 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
     return handled ?? null;
   }
 
-  #releasePressedActions(state: InputState): void 
+  #releasePressedActions(state: InputState): void
   {
-    for (const action of this.#pressedActions) 
+    for (const action of this.#pressedActions)
     {
       const releaseEvent = new KeyBindingReleaseEvent<T>(state, action);
 
-      for (const [binding, drawables] of this.#keyBindingQueues.entries()) 
+      for (const [binding, drawables] of this.#keyBindingQueues.entries())
       {
-        if (binding.getAction() === action) 
+        if (binding.getAction() === action)
         {
           drawables.forEach(d => this.#triggerKeyBindingEvent(d, releaseEvent));
         }
@@ -362,7 +362,7 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
     this.#pressedActions.length = 0;
   }
 
-  #handleNewReleased(state: InputState, releasedKey: InputKey, scrollDelta?: Vec2, isPrecise: boolean = false) 
+  #handleNewReleased(state: InputState, releasedKey: InputKey, scrollDelta?: Vec2, isPrecise: boolean = false)
   {
     this.#pressedInputKeys.delete(releasedKey);
 
@@ -372,14 +372,14 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
     // we don't want to consider exact matching here as we are dealing with bindings, not actions.
     const pressedCombination = KeyCombination.from(...this.#pressedInputKeys);
 
-    for (let i = 0; i < this.#pressedBindings.length; i++) 
+    for (let i = 0; i < this.#pressedBindings.length; i++)
     {
       const binding = this.#pressedBindings[i];
 
       if (
         this.#pressedInputKeys.size === 0
         || !binding.keyCombination.isPressed(pressedCombination, state, KeyCombinationMatchingMode.Any)
-      ) 
+      )
       {
         this.#pressedBindings.splice(i--, 1);
         this.propagateReleased(
@@ -388,7 +388,7 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
             binding.getAction(),
         );
         const queue = this.#keyBindingQueues.get(binding);
-        if (queue) 
+        if (queue)
         {
           queue.length = 0;
         }
@@ -396,32 +396,32 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
     }
   }
 
-  protected propagateReleased(drawables: Drawable[] | List<Drawable>, state: InputState, released: T) 
+  protected propagateReleased(drawables: Drawable[] | List<Drawable>, state: InputState, released: T)
   {
     if (
       this.#simultaneousMode === SimultaneousBindingMode.All
       || (this.#pressedActions.includes(released) && this.#pressedBindings.every(b => b.getAction() !== released))
-    ) 
+    )
     {
       const releaseEvent = new KeyBindingReleaseEvent<T>(state, released);
 
-      for (const d of drawables) 
+      for (const d of drawables)
       {
-        if (isKeyBindingHandler(d, released)) 
+        if (isKeyBindingHandler(d, released))
         {
           this.#triggerKeyBindingEvent(d, releaseEvent);
         }
       }
 
       const index = this.#pressedActions.indexOf(released);
-      if (index !== -1) 
+      if (index !== -1)
       {
         this.#pressedActions.splice(index, 1);
       }
     }
   }
 
-  triggerReleased(released: T) 
+  triggerReleased(released: T)
   {
     this.propagateReleased(
         this.keyBindingInputQueue,
@@ -430,11 +430,11 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
     );
   }
 
-  triggerPressed(pressed: T): Drawable | null 
+  triggerPressed(pressed: T): Drawable | null
   {
     const state = this.getContainingInputManager()?.currentState ?? new InputState();
 
-    if (this.#simultaneousMode === SimultaneousBindingMode.None) 
+    if (this.#simultaneousMode === SimultaneousBindingMode.None)
     {
       this.#releasePressedActions(state);
     }
@@ -442,16 +442,16 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
     return this.propagatePressed(this.keyBindingInputQueue, state, pressed);
   }
 
-  #getInputQueue(binding: IKeyBinding, rebuildIfEmpty: boolean = false): Drawable[] 
+  #getInputQueue(binding: IKeyBinding, rebuildIfEmpty: boolean = false): Drawable[]
   {
-    if (!this.#keyBindingQueues.has(binding)) 
+    if (!this.#keyBindingQueues.has(binding))
     {
       this.#keyBindingQueues.set(binding, []);
     }
 
     const currentQueue = this.#keyBindingQueues.get(binding)!;
 
-    if (rebuildIfEmpty && currentQueue.length === 0) 
+    if (rebuildIfEmpty && currentQueue.length === 0)
     {
       currentQueue.push(...this.keyBindingInputQueue);
     }
@@ -462,14 +462,14 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
   #triggerKeyBindingEvent(
     drawable: Drawable,
     e: KeyBindingPressEvent<T> | KeyBindingReleaseEvent<T> | KeyBindingScrollEvent<T>,
-  ): boolean 
+  ): boolean
   {
     e.target = drawable;
 
     if (!isKeyBindingHandler(drawable, e.pressed))
       return false;
 
-    switch (e.constructor) 
+    switch (e.constructor)
     {
     case KeyBindingPressEvent: {
       const press = e as KeyBindingPressEvent<T>;
@@ -492,19 +492,19 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
     }
   }
 
-  get handleRepeats() 
+  get handleRepeats()
   {
     return true;
   }
 
-  #handleRepeat(state: InputState) 
+  #handleRepeat(state: InputState)
   {
-    if (!this.handleRepeats) 
+    if (!this.handleRepeats)
     {
       return false;
     }
 
-    if (this.#pressedActions.length === 0) 
+    if (this.#pressedActions.length === 0)
     {
       return false;
     }
@@ -521,7 +521,7 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
   }
 }
 
-export enum SimultaneousBindingMode 
+export enum SimultaneousBindingMode
 {
   None,
   Unique,

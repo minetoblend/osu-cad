@@ -1,8 +1,8 @@
 import { isMobile } from "pixi.js";
 
-export class FrameworkEnvironment 
+export class FrameworkEnvironment
 {
-  get antialiasPreferred() 
+  get antialiasPreferred()
   {
     if (devicePixelRatio >= 2)
       return false;
@@ -16,7 +16,7 @@ export class FrameworkEnvironment
     return true;
   }
 
-  get webGpuSupported() 
+  get webGpuSupported()
   {
     return "gpu" in navigator && "requestAdapter" in navigator.gpu;
   }

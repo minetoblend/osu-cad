@@ -1,14 +1,14 @@
 import type { ContainerOptions } from "./Container";
 import { Container } from "./Container";
 
-export interface MaskingContainerOptions extends ContainerOptions 
+export interface MaskingContainerOptions extends ContainerOptions
 {
   cornerRadius?: number;
 }
 
-export class MaskingContainer extends Container 
+export class MaskingContainer extends Container
 {
-  constructor(options: MaskingContainerOptions = {}) 
+  constructor(options: MaskingContainerOptions = {})
   {
     super();
 

@@ -5,7 +5,7 @@ import type { SkinConfigurationLookup, SkinConfigurationValue } from "./SkinConf
 
 export type SkinComponentLookup = string;
 
-export interface ISkin 
+export interface ISkin
 {
   getTexture(componentName: string): Texture | null
 

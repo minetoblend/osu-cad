@@ -7,96 +7,96 @@ import { DependencyContainer } from "../../di/DependencyContainer";
 import { Invalidation } from "../drawables/Drawable";
 import { Container } from "./Container";
 
-export class ProxyContainer extends Container 
+export class ProxyContainer extends Container
 {
-  constructor(readonly source: CompositeDrawable) 
+  constructor(readonly source: CompositeDrawable)
   {
     super();
   }
 
-  override get shouldBeAlive() 
+  override get shouldBeAlive()
   {
     return !this.source.isDisposed && super.shouldBeAlive;
   }
 
-  protected override loadComplete() 
+  protected override loadComplete()
   {
     super.loadComplete();
 
     this.source.invalidated.addListener(this.#onSourceInvalidated, this);
   }
 
-  #onSourceInvalidated([_, invalidation]: [Drawable, Invalidation]) 
+  #onSourceInvalidated([_, invalidation]: [Drawable, Invalidation])
   {
     invalidation &= Invalidation.DrawSize;
 
-    if (invalidation !== Invalidation.None) 
+    if (invalidation !== Invalidation.None)
     {
       this.invalidate(invalidation);
     }
   }
 
-  override get padding(): MarginPadding 
+  override get padding(): MarginPadding
   {
     return this.source.padding;
   }
 
-  override set padding(value: MarginPaddingOptions | undefined) 
+  override set padding(value: MarginPaddingOptions | undefined)
   {
     throw new Error("May not change padding on a ProxyContainer");
   }
 
-  override get drawSize() 
+  override get drawSize()
   {
     return this.source.drawSize;
   }
 
-  override get childSize() 
+  override get childSize()
   {
     return this.source.childSize;
   }
 
-  override get relativeChildSize() 
+  override get relativeChildSize()
   {
     return this.source.relativeChildSize;
   }
 
-  override get relativeToAbsoluteFactor() 
+  override get relativeToAbsoluteFactor()
   {
     return this.source.relativeToAbsoluteFactor;
   }
 
-  override get childOffset() 
+  override get childOffset()
   {
     return this.source.childOffset;
   }
 
-  protected override createChildDependencies(parentDependencies: ReadonlyDependencyContainer): DependencyContainer 
+  protected override createChildDependencies(parentDependencies: ReadonlyDependencyContainer): DependencyContainer
   {
     return new DependencyContainer(this.source.dependencies);
   }
 
   #matrix = new Matrix();
 
-  override update() 
+  override update()
   {
     super.update();
 
     this.invalidate(Invalidation.Transform);
   }
 
-  override updateSubTreeTransforms(): boolean 
+  override updateSubTreeTransforms(): boolean
   {
     this.updateDrawNodeTransform();
 
-    for (const child of this.aliveInternalChildren) 
+    for (const child of this.aliveInternalChildren)
     {
       child.updateSubTreeTransforms();
     }
     return true;
   }
 
-  override updateDrawNodeTransform() 
+  override updateDrawNodeTransform()
   {
     if (this.source.isDisposed)
       return;

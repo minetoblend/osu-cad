@@ -1,7 +1,7 @@
 import { type IClock, StopwatchClock } from "../timing";
 import { ScheduledDelegate } from "./ScheduledDelegate";
 
-export class Scheduler 
+export class Scheduler
 {
   readonly #runQueue: ScheduledDelegate[] = [];
   readonly #timedTasks: ScheduledDelegate[] = [];
@@ -9,39 +9,39 @@ export class Scheduler
 
   #clock: IClock | null = null;
 
-  get #currentTime() 
+  get #currentTime()
   {
     return this.#clock?.currentTime ?? 0;
   }
 
-  get hasPendingTasks(): boolean 
+  get hasPendingTasks(): boolean
   {
     return this.totalPendingTasks > 0;
   }
 
-  get totalTasksRun(): number 
+  get totalTasksRun(): number
   {
     return this.#totalTasksRun;
   }
 
   #totalTasksRun: number = 0;
 
-  get totalPendingTasks(): number 
+  get totalPendingTasks(): number
   {
     return this.#runQueue.length + this.#timedTasks.length + this.#perUpdateTasks.length;
   }
 
-  constructor(clock: IClock | null = new StopwatchClock()) 
+  constructor(clock: IClock | null = new StopwatchClock())
   {
     this.#clock = clock;
   }
 
-  updateClock(newClock: IClock) 
+  updateClock(newClock: IClock)
   {
     if (newClock === this.#clock)
       return;
 
-    if (this.#clock === null) 
+    if (this.#clock === null)
     {
       // This is the first time we will get a valid time, so assume this is the
       // reference point everything scheduled so far starts from.
@@ -57,7 +57,7 @@ export class Scheduler
 
   readonly #tasksToRemove: ScheduledDelegate[] = [];
 
-  update(): number 
+  update(): number
   {
     this.#queueTimedTasks();
     this.#queuePerUpdateTasks();
@@ -67,7 +67,7 @@ export class Scheduler
     let countRun = 0;
 
     let task = this.#getNextTask();
-    while (task) 
+    while (task)
     {
       task.runTaskInternal();
 
@@ -82,32 +82,32 @@ export class Scheduler
     return countRun;
   }
 
-  #queueTimedTasks() 
+  #queueTimedTasks()
   {
-    if (this.#timedTasks.length !== 0) 
+    if (this.#timedTasks.length !== 0)
     {
       const currentTimeLocal = this.#currentTime;
 
       const tasks = this.#timedTasks;
 
-      for (let i = 0, len = tasks.length; i < len; i++) 
+      for (let i = 0, len = tasks.length; i < len; i++)
       {
         const sd = tasks[i];
-        if (sd.executionTime <= currentTimeLocal) 
+        if (sd.executionTime <= currentTimeLocal)
         {
           this.#tasksToRemove.push(sd);
 
           if (sd.cancelled)
             continue;
 
-          if (sd.repeatInterval === 0) 
+          if (sd.repeatInterval === 0)
           {
             // handling of every-frame tasks is slightly different to reduce overhead.
             this.#perUpdateTasks.push(sd);
             continue;
           }
 
-          if (sd.repeatInterval > 0) 
+          if (sd.repeatInterval > 0)
           {
             // if (this.#timedTasks.length > LOG_EXCESSSIVE_QUEUE_LENGTH_INTERVAL)
             //   throw new ArgumentException("Too many timed tasks are in the queue!");
@@ -122,7 +122,7 @@ export class Scheduler
       }
 
       const removeTasks = this.#tasksToRemove;
-      for (let i = 0, len = removeTasks.length; i < len; i++) 
+      for (let i = 0, len = removeTasks.length; i < len; i++)
       {
         const t = removeTasks[i];
         const index = this.#timedTasks.indexOf(t);
@@ -137,18 +137,18 @@ export class Scheduler
     }
   }
 
-  #queuePerUpdateTasks() 
+  #queuePerUpdateTasks()
   {
-    if (this.#perUpdateTasks.length > 0) 
+    if (this.#perUpdateTasks.length > 0)
     {
       const tasks = this.#perUpdateTasks;
-      for (let i = 0; i < tasks.length; i++) 
+      for (let i = 0; i < tasks.length; i++)
       {
         const task = tasks[i];
 
         task.setNextExecution(null);
 
-        if (task.cancelled) 
+        if (task.cancelled)
         {
           this.#perUpdateTasks.splice(i--, 1);
           continue;
@@ -159,14 +159,14 @@ export class Scheduler
     }
   }
 
-  #getNextTask(): ScheduledDelegate | null 
+  #getNextTask(): ScheduledDelegate | null
   {
     return this.#runQueue.shift() ?? null;
   }
 
-  cancelDelayedTasks() 
+  cancelDelayedTasks()
   {
-    for (const t of this.#timedTasks) 
+    for (const t of this.#timedTasks)
     {
       t.cancel();
     }
@@ -174,11 +174,11 @@ export class Scheduler
     this.#timedTasks.length = 0;
   }
 
-  add<T>(task: (() => void) | ScheduledDelegate, receiver?: T, forceScheduled = true): ScheduledDelegate | null 
+  add<T>(task: (() => void) | ScheduledDelegate, receiver?: T, forceScheduled = true): ScheduledDelegate | null
   {
-    if (task instanceof ScheduledDelegate) 
+    if (task instanceof ScheduledDelegate)
     {
-      if (task.completed) 
+      if (task.completed)
       {
         throw new Error("Task has already been completed");
       }
@@ -188,7 +188,7 @@ export class Scheduler
       return task;
     }
 
-    if (!forceScheduled) 
+    if (!forceScheduled)
     {
       // We are on the main thread already - don't need to schedule.
       task();
@@ -204,18 +204,18 @@ export class Scheduler
     return del;
   }
 
-  addDelayed(task: () => void, timeUntilRun: number, repeat: boolean = false) 
+  addDelayed(task: () => void, timeUntilRun: number, repeat: boolean = false)
   {
     const del = new ScheduledDelegate(task, this.#currentTime + timeUntilRun, repeat ? timeUntilRun : -1);
     this.add(del);
     return del;
   }
 
-  addOnce<T>(task: () => void, receiver?: T): boolean 
+  addOnce<T>(task: () => void, receiver?: T): boolean
   {
     const existing = this.#runQueue.find(sd => sd.task === task);
 
-    if (existing) 
+    if (existing)
     {
       return false;
     }
@@ -228,7 +228,7 @@ export class Scheduler
     return true;
   }
 
-  #enqueue(task: ScheduledDelegate) 
+  #enqueue(task: ScheduledDelegate)
   {
     this.#runQueue.push(task);
   }

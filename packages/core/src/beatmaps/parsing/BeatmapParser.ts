@@ -5,19 +5,19 @@ import { rulesets } from "../../rulesets/RulesetStore";
 import { nn } from "../../utils/nn";
 import { Beatmap } from "../Beatmap";
 
-export interface BeatmapParserOptions 
+export interface BeatmapParserOptions
 {
   rulesetStore?: RulesetStore
 }
 
-export interface RulesetBeatmapParser 
+export interface RulesetBeatmapParser
 {
   createBeatmap?(): Beatmap;
 
   parseHitObject(line: string, beatmap: Beatmap): HitObject | null;
 }
 
-enum BeatmapSection 
+enum BeatmapSection
 {
   General = "General",
   Editor = "Editor",
@@ -29,18 +29,18 @@ enum BeatmapSection
   HitObjects = "HitObjects",
 }
 
-export class BeatmapParser 
+export class BeatmapParser
 {
   rulesetStore: RulesetStore;
 
   constructor(
     options: BeatmapParserOptions = {},
-  ) 
+  )
   {
     this.rulesetStore = options.rulesetStore ?? rulesets;
   }
 
-  async parse(content: string | string[]) 
+  async parse(content: string | string[])
   {
     const lines = typeof content === "string"
         ? content.split("\n")
@@ -54,14 +54,14 @@ export class BeatmapParser
 
     const beatmap = new Beatmap();
 
-    const getRuleset = () => 
+    const getRuleset = () =>
     {
       if (!beatmap.beatmapInfo.ruleset)
         throw new Error("No ruleset" /* TODO: better error message */);
       return beatmap.beatmapInfo.ruleset;
     };
 
-    const getRulesetParser = async (): Promise<RulesetBeatmapParser> => 
+    const getRulesetParser = async (): Promise<RulesetBeatmapParser> =>
     {
       return await nn(
           getRuleset().createBeatmapParser?.(),
@@ -69,16 +69,16 @@ export class BeatmapParser
       );
     };
 
-    for (const line of lines) 
+    for (const line of lines)
     {
       const newSection = tryParseSectionHeader(line);
-      if (newSection) 
+      if (newSection)
       {
         currentSection = newSection;
         continue;
       }
 
-      switch (currentSection) 
+      switch (currentSection)
       {
       case BeatmapSection.General:
         parseGeneral(line, beatmap);
@@ -114,14 +114,14 @@ export class BeatmapParser
   }
 }
 
-function parseGeneral(line: string, { beatmapInfo }: Beatmap) 
+function parseGeneral(line: string, { beatmapInfo }: Beatmap)
 {
   const [key, value] = parseKeyValue(line);
 
   if (!key || !value)
     return;
 
-  switch (key) 
+  switch (key)
   {
   case "AudioFilename":
     beatmapInfo.audioFile = value;
@@ -187,14 +187,14 @@ function parseGeneral(line: string, { beatmapInfo }: Beatmap)
   }
 }
 
-function parseMetadata(line: string, beatmap: Beatmap) 
+function parseMetadata(line: string, beatmap: Beatmap)
 {
   const [key, value] = parseKeyValue(line);
 
   if (!key || !value)
     return;
 
-  switch (key) 
+  switch (key)
   {
   case "Title":
     beatmap.metadata.title = value;
@@ -229,14 +229,14 @@ function parseMetadata(line: string, beatmap: Beatmap)
   }
 }
 
-function parseDifficulty(line: string, beatmap: Beatmap) 
+function parseDifficulty(line: string, beatmap: Beatmap)
 {
   const [key, value] = parseKeyValue(line);
 
   if (!key || !value)
     return;
 
-  switch (key) 
+  switch (key)
   {
   case "HPDrainRate":
     beatmap.difficulty.drainRate = Number.parseFloat(value);
@@ -259,7 +259,7 @@ function parseDifficulty(line: string, beatmap: Beatmap)
   }
 }
 
-function parseVersionHeader(line: string) 
+function parseVersionHeader(line: string)
 {
   const match = line.match(/osu file format v(\d+)/);
 
@@ -274,26 +274,26 @@ function parseVersionHeader(line: string)
   throw Error(`Invalid version header: ${line}`);
 }
 
-function parseColors(line: string, beatmap: Beatmap) 
+function parseColors(line: string, beatmap: Beatmap)
 {
   const [key, value] = parseKeyValue(line);
 
   if (!key || !value)
     return;
 
-  const parseColorValue = () => 
+  const parseColorValue = () =>
   {
     const [r, g, b] = value.split(",").map(it => Number.parseInt(it));
 
     return new Color({ r, g, b });
   };
 
-  if (key.startsWith("Combo")) 
+  if (key.startsWith("Combo"))
   {
     beatmap.colors.addComboColor(parseColorValue());
   }
-  else 
-    switch (key) 
+  else
+    switch (key)
     {
     case "SliderTrackOverride":
       beatmap.colors.sliderTrackOverride = parseColorValue();
@@ -304,9 +304,9 @@ function parseColors(line: string, beatmap: Beatmap)
     }
 }
 
-function tryParseSectionHeader(line: string) 
+function tryParseSectionHeader(line: string)
 {
-  if (line.startsWith("[") && line.endsWith("]")) 
+  if (line.startsWith("[") && line.endsWith("]"))
   {
     const section = line.substring(1, line.length - 1);
     if (section in BeatmapSection)
@@ -316,7 +316,7 @@ function tryParseSectionHeader(line: string)
   return null;
 }
 
-function parseKeyValue(line: string): [string, string] | [] 
+function parseKeyValue(line: string): [string, string] | []
 {
   const index = line.indexOf(":");
   if (index === -1)

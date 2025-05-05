@@ -1,8 +1,8 @@
 import { Axes, Container } from "@osucad/framework";
 
-export class PlayfieldAdjustmentContainer extends Container 
+export class PlayfieldAdjustmentContainer extends Container
 {
-  constructor() 
+  constructor()
   {
     super({
       relativeSizeAxes: Axes.Both,

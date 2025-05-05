@@ -9,9 +9,9 @@ import { HitCircle } from "../hitObjects/HitCircle";
 import type { OsuHitObject } from "../hitObjects/OsuHitObject";
 import { Slider } from "../hitObjects/Slider";
 
-export class OsuPlayfield extends Playfield 
+export class OsuPlayfield extends Playfield
 {
-  protected override load(dependencies: ReadonlyDependencyContainer) 
+  protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
 
@@ -24,21 +24,21 @@ export class OsuPlayfield extends Playfield
 
   protected followPoints!: FollowPointRenderer;
 
-  protected override onHitObjectAdded(hitObject: HitObject) 
+  protected override onHitObjectAdded(hitObject: HitObject)
   {
     super.onHitObjectAdded(hitObject);
 
     this.followPoints.addFollowPoints(hitObject as OsuHitObject);
   }
 
-  protected override onHitObjectRemoved(hitObject: HitObject) 
+  protected override onHitObjectRemoved(hitObject: HitObject)
   {
     super.onHitObjectRemoved(hitObject);
 
     this.followPoints.removeFollowPoints(hitObject as OsuHitObject);
   }
 
-  protected override createLifetimeEntry(hitObject: HitObject): HitObjectLifetimeEntry 
+  protected override createLifetimeEntry(hitObject: HitObject): HitObjectLifetimeEntry
   {
     return new OsuHitObjectLifetimeEntry(hitObject as OsuHitObject);
   }

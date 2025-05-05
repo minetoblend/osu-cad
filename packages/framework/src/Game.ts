@@ -7,9 +7,9 @@ import { Anchor } from "./graphics/drawables/Anchor";
 import { Axes } from "./graphics/drawables/Axes";
 
 @provide(Game)
-export abstract class Game extends Container 
+export abstract class Game extends Container
 {
-  protected constructor() 
+  protected constructor()
   {
     super();
 
@@ -24,7 +24,7 @@ export abstract class Game extends Container
     );
   }
 
-  override addInternal<T extends Drawable>(child: T): T 
+  override addInternal<T extends Drawable>(child: T): T
   {
     throw new Error(`Cannot call addInternal on ${this.typeName}, use add() instead`);
   }
@@ -33,17 +33,17 @@ export abstract class Game extends Container
 
   #host?: GameHost;
 
-  set host(host: GameHost) 
+  set host(host: GameHost)
   {
     this.#host = host;
   }
 
-  get host(): GameHost | undefined 
+  get host(): GameHost | undefined
   {
     return this.#host;
   }
 
-  override get content() 
+  override get content()
   {
     return this.#content;
   }

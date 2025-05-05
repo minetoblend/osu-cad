@@ -10,9 +10,9 @@ import { PathGeometry } from "./PathGeometry";
 import { PathGeometryBuilder } from "./PathGeometryBuilder";
 import { PathShader } from "./PathShader";
 
-export class Path extends Drawable 
+export class Path extends Drawable
 {
-  protected override load(dependencies: ReadonlyDependencyContainer) 
+  protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
 
@@ -21,12 +21,12 @@ export class Path extends Drawable
 
   #vertices: readonly Vec2[] = [];
 
-  get vertices() 
+  get vertices()
   {
     return this.#vertices;
   }
 
-  set vertices(value) 
+  set vertices(value)
   {
     this.#vertices = value;
     this.#segmentsCache.invalidate();
@@ -35,11 +35,11 @@ export class Path extends Drawable
   readonly #segmentsBacking: Line[] = [];
   readonly #segmentsCache = new Cached();
 
-  #generateSegments(): Line[] 
+  #generateSegments(): Line[]
   {
     this.#segmentsBacking.length = Math.max(0, this.vertices.length - 1);
 
-    if (this.#vertices.length > 1) 
+    if (this.#vertices.length > 1)
     {
       for (let i = 0; i < this.#vertices.length - 1; ++i)
         this.#segmentsBacking[i] = new Line(this.#vertices[i], this.#vertices[i + 1]);
@@ -58,12 +58,12 @@ export class Path extends Drawable
     return this.#segmentsBacking;
   }
 
-  get texture() 
+  get texture()
   {
     return this.#pathShader.texture;
   }
 
-  set texture(value) 
+  set texture(value)
   {
     if (this.texture === value)
       return;
@@ -73,12 +73,12 @@ export class Path extends Drawable
 
   #pathRadius = 10;
 
-  get pathRadius() 
+  get pathRadius()
   {
     return this.#pathRadius;
   }
 
-  set pathRadius(value) 
+  set pathRadius(value)
   {
     if (this.#pathRadius === value)
       return;
@@ -100,12 +100,12 @@ export class Path extends Drawable
     filters: this.#alphaFilter,
   });
 
-  protected override createDrawNode(): PIXIContainer 
+  protected override createDrawNode(): PIXIContainer
   {
     return this.#mesh;
   }
 
-  override updateSubTreeTransforms(): boolean 
+  override updateSubTreeTransforms(): boolean
   {
     if (!super.updateSubTreeTransforms())
       return false;

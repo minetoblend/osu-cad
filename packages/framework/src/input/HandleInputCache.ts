@@ -3,17 +3,17 @@ import type { IKeyBindingHandler } from "./bindings";
 
 type DrawableConstructor = new (...args: any[]) => Drawable;
 
-export class HandleInputCache 
+export class HandleInputCache
 {
   private static positionalCachedValudes = new Map<DrawableConstructor, boolean>();
   private static nonPositionalCachedValues = new Map<DrawableConstructor, boolean>();
 
-  static requestsNonPositionalInput(drawable: Drawable): boolean 
+  static requestsNonPositionalInput(drawable: Drawable): boolean
   {
     return this.getViaReflection(drawable, this.nonPositionalCachedValues, false);
   }
 
-  static requestsPositionalInput(drawable: Drawable): boolean 
+  static requestsPositionalInput(drawable: Drawable): boolean
   {
     return this.getViaReflection(drawable, this.positionalCachedValudes, true);
   }
@@ -22,10 +22,10 @@ export class HandleInputCache
     drawable: Drawable,
     cache: Map<DrawableConstructor, boolean>,
     positional: boolean,
-  ): boolean 
+  ): boolean
   {
     const cached = cache.get(drawable.constructor as DrawableConstructor);
-    if (cached !== undefined) 
+    if (cached !== undefined)
     {
       return cached;
     }
@@ -60,13 +60,13 @@ export class HandleInputCache
     "onDrop",
   ];
 
-  private static computeViaReflection(drawable: Drawable, positional: boolean): boolean 
+  private static computeViaReflection(drawable: Drawable, positional: boolean): boolean
   {
     const inputMethods = positional ? this.positionalInputMethods : this.nonPositionalInputMethods;
 
-    for (const method of inputMethods) 
+    for (const method of inputMethods)
     {
-      if (method in drawable) 
+      if (method in drawable)
       {
         return true;
       }

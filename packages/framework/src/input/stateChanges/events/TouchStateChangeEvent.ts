@@ -4,9 +4,9 @@ import type { InputState } from "../../state/InputState";
 import type { TouchInput } from "../TouchInput";
 import { InputStateChangeEvent } from "./InputStateChangeEvent";
 
-export class TouchStateChangeEvent extends InputStateChangeEvent 
+export class TouchStateChangeEvent extends InputStateChangeEvent
 {
-  constructor(state: InputState, input: TouchInput, touch: Touch, activate: boolean | null, lastPosition: Vec2 | null) 
+  constructor(state: InputState, input: TouchInput, touch: Touch, activate: boolean | null, lastPosition: Vec2 | null)
   {
     super(state, input);
 

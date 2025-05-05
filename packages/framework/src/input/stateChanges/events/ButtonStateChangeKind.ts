@@ -1,4 +1,4 @@
-export enum ButtonStateChangeKind 
+export enum ButtonStateChangeKind
 {
   Pressed,
   Released,

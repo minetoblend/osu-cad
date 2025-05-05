@@ -6,9 +6,9 @@ import type { HitCircle } from "../HitCircle";
 import { OsuHitObject } from "../OsuHitObject";
 import { DrawableOsuHitObject } from "./DrawableOsuHitObject";
 
-export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle> 
+export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
 {
-  constructor(initialHitObject?: HitCircle) 
+  constructor(initialHitObject?: HitCircle)
   {
     super(initialHitObject);
 
@@ -18,7 +18,7 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
   private circlePiece!: SkinnableDrawable;
   private approachCircle!: SkinnableDrawable;
 
-  protected override load(dependencies: ReadonlyDependencyContainer) 
+  protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
 
@@ -38,12 +38,12 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
     ];
   }
 
-  protected override get initialLifetimeOffset(): number 
+  protected override get initialLifetimeOffset(): number
   {
     return this.hitObject.timePreempt;
   }
 
-  protected override updateInitialTransforms() 
+  protected override updateInitialTransforms()
   {
     this.circlePiece.fadeInFromZero(this.hitObject.timeFadeIn);
 
@@ -51,7 +51,7 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
     this.approachCircle.scaleTo(4).scaleTo(1, this.hitObject.timePreempt);
   }
 
-  protected override updateHitStateTransforms() 
+  protected override updateHitStateTransforms()
   {
     super.updateHitStateTransforms();
 
@@ -61,17 +61,17 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
     this.delay(800).fadeOut();
   }
 
-  protected override updatePosition() 
+  protected override updatePosition()
   {
     this.position = this.hitObject.stackedPosition;
   }
 
-  protected override updateScale() 
+  protected override updateScale()
   {
     this.scale = this.hitObject.scale;
   }
 
-  protected get componentLookup(): OsuSkinComponents 
+  protected get componentLookup(): OsuSkinComponents
   {
     return OsuSkinComponents.CirclePiece;
   }

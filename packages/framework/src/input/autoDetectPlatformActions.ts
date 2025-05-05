@@ -2,9 +2,9 @@ import { KeyBinding, KeyCombination } from "./bindings";
 import { PlatformAction } from "./PlatformAction";
 import { InputKey } from "./state/InputKey";
 
-export function autoDetectPlatformActions(): KeyBinding[] 
+export function autoDetectPlatformActions(): KeyBinding[]
 {
-  if (navigator.userAgent.includes("Mac")) 
+  if (navigator.userAgent.includes("Mac"))
   {
     return [
       new KeyBinding(KeyCombination.from(InputKey.Meta, InputKey.X), PlatformAction.Cut),

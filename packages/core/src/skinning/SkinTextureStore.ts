@@ -2,38 +2,38 @@ import type { IFile, IFileSystem, IVec2 } from "@osucad/framework";
 import { loadTexture } from "@osucad/framework";
 import type { Texture } from "pixi.js";
 
-export interface LoadTextureOptions 
+export interface LoadTextureOptions
 {
   maxSize?: IVec2
 }
 
-export class SkinTextureStore 
+export class SkinTextureStore
 {
   private readonly extensions = ["jpg", "jpeg", "png", "webp"];
 
   private readonly textures = new Map<string, Texture>();
   private readonly textureP = new Map<string, Promise<Texture | undefined>>();
 
-  constructor(readonly files: IFileSystem) 
+  constructor(readonly files: IFileSystem)
   {
   }
 
   allow2xLookup = true;
 
-  private getEntry(name: string): { file: IFile, resolution: number } | undefined 
+  private getEntry(name: string): { file: IFile, resolution: number } | undefined
   {
     name = name.trim().toLowerCase();
 
     const lookups = [{ name, resolution: 1 }];
 
-    if (this.allow2xLookup) 
+    if (this.allow2xLookup)
     {
       lookups.unshift({ name: name + "@2x", resolution: 2 });
     }
 
-    for (const lookup of lookups) 
+    for (const lookup of lookups)
     {
-      for (const extension of this.extensions) 
+      for (const extension of this.extensions)
       {
         const file = this.files.get(`${lookup.name}.${extension}`);
         if (file)
@@ -44,13 +44,13 @@ export class SkinTextureStore
     return undefined;
   }
 
-  canLoad(lookup: string): boolean 
+  canLoad(lookup: string): boolean
   {
     const entry = this.getEntry(lookup);
     return !!entry;
   }
 
-  async load(lookup: string, options?: LoadTextureOptions): Promise<Texture | undefined> 
+  async load(lookup: string, options?: LoadTextureOptions): Promise<Texture | undefined>
   {
     if (this.textureP.has(lookup))
       return this.textureP.get(lookup)!;
@@ -63,7 +63,7 @@ export class SkinTextureStore
 
     const textureP = file.read()
       .then(data => loadTexture(data, { resolution, label: file.path }))
-      .then(texture => 
+      .then(texture =>
       {
         if (!texture)
           return undefined;
@@ -77,14 +77,14 @@ export class SkinTextureStore
     return await textureP;
   }
 
-  get(lookup: string): Texture | undefined 
+  get(lookup: string): Texture | undefined
   {
     return this.textures.get(lookup);
   }
 
-  dispose() 
+  dispose()
   {
-    for (const [, texture] of this.textures) 
+    for (const [, texture] of this.textures)
     {
       texture.destroy(true);
     }
@@ -92,7 +92,7 @@ export class SkinTextureStore
     this.textures.clear();
   }
 
-  entries() 
+  entries()
   {
     return this.textures.keys();
   }

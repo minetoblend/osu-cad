@@ -1,18 +1,18 @@
 import { BindableNumber } from "@osucad/framework";
 
-export class BeatmapDifficultyInfo 
+export class BeatmapDifficultyInfo
 {
   readonly drainRateBindable = new BindableNumber(5)
     .withMinValue(0)
     .withMaxValue(10)
     .withPrecision(0.1);
 
-  get drainRate() 
+  get drainRate()
   {
     return this.drainRateBindable.value;
   }
 
-  set drainRate(value) 
+  set drainRate(value)
   {
     this.drainRateBindable.value = value;
   }
@@ -22,12 +22,12 @@ export class BeatmapDifficultyInfo
     .withMaxValue(10)
     .withPrecision(0.1);
 
-  get circleSize() 
+  get circleSize()
   {
     return this.circleSizeBindable.value;
   }
 
-  set circleSize(value) 
+  set circleSize(value)
   {
     this.circleSizeBindable.value = value;
   }
@@ -38,12 +38,12 @@ export class BeatmapDifficultyInfo
     .withMaxValue(10)
     .withPrecision(0.1);
 
-  get approachRate() 
+  get approachRate()
   {
     return this.approachRateBindable.value;
   }
 
-  set approachRate(value) 
+  set approachRate(value)
   {
     this.approachRateBindable.value = value;
   }
@@ -53,12 +53,12 @@ export class BeatmapDifficultyInfo
     .withMaxValue(10)
     .withPrecision(0.1);
 
-  get overallDifficulty() 
+  get overallDifficulty()
   {
     return this.overallDifficultyBindable.value;
   }
 
-  set overallDifficulty(value) 
+  set overallDifficulty(value)
   {
     this.overallDifficultyBindable.value = value;
   }
@@ -68,12 +68,12 @@ export class BeatmapDifficultyInfo
     .withMaxValue(3.6)
     .withPrecision(0.1);
 
-  get sliderMultiplier() 
+  get sliderMultiplier()
   {
     return this.sliderMultiplierBindable.value;
   }
 
-  set sliderMultiplier(value) 
+  set sliderMultiplier(value)
   {
     this.sliderMultiplierBindable.value = value;
   }
@@ -83,17 +83,17 @@ export class BeatmapDifficultyInfo
     .withMaxValue(4)
     .withPrecision(1);
 
-  get sliderTickRate() 
+  get sliderTickRate()
   {
     return this.sliderTickRateBindable.value;
   }
 
-  set sliderTickRate(value) 
+  set sliderTickRate(value)
   {
     this.sliderTickRateBindable.value = value;
   }
 
-  static difficultyRange(difficulty: number, min: number, mid: number, max: number) 
+  static difficultyRange(difficulty: number, min: number, mid: number, max: number)
   {
     if (difficulty > 5)
       return mid + (max - mid) * (difficulty - 5) / 5;
@@ -103,7 +103,7 @@ export class BeatmapDifficultyInfo
     return mid;
   }
 
-  calculateCircleSize(applyFudge: boolean) 
+  calculateCircleSize(applyFudge: boolean)
   {
     const broken_gamefield_rounding_allowance = 1.00041;
 

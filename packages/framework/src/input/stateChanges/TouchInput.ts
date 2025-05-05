@@ -4,19 +4,19 @@ import type { IInput } from "./IInput";
 import type { IInputStateChangeHandler } from "./IInputStateChangeHandler";
 import { TouchStateChangeEvent } from "./events/TouchStateChangeEvent";
 
-export class TouchInput implements IInput 
+export class TouchInput implements IInput
 {
   constructor(
     readonly touches: Touch[],
     readonly activate: boolean,
-  ) 
+  )
   {}
 
-  apply(state: InputState, handler: IInputStateChangeHandler): void 
+  apply(state: InputState, handler: IInputStateChangeHandler): void
   {
     const touches = state.touch;
 
-    for (const touch of this.touches) 
+    for (const touch of this.touches)
     {
       const lastPosition = touches.getTouchPosition(touch.source);
       touches.touchPositions[touch.source] = touch.position;
@@ -24,7 +24,7 @@ export class TouchInput implements IInput
       const activityChanged = touches.activeSources.setPressed(touch.source, this.activate);
       const positionChanged = lastPosition !== null && !touch.position.equals(lastPosition);
 
-      if (activityChanged || positionChanged) 
+      if (activityChanged || positionChanged)
       {
         handler.handleInputStateChange(
             new TouchStateChangeEvent(
