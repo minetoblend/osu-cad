@@ -3,9 +3,9 @@ import { Anchor, CompositeDrawable, EmptyDrawable, resolved } from "@osucad/fram
 import type { SkinComponentLookup } from "./ISkin";
 import { ISkinSource } from "./ISkinSource";
 
-export class SkinnableDrawable extends CompositeDrawable 
+export class SkinnableDrawable extends CompositeDrawable
 {
-  constructor(readonly lookup: SkinComponentLookup, readonly defaultImplementation?: () => Drawable) 
+  constructor(readonly lookup: SkinComponentLookup, readonly defaultImplementation?: () => Drawable)
   {
     super();
   }
@@ -13,7 +13,7 @@ export class SkinnableDrawable extends CompositeDrawable
   @resolved(ISkinSource)
   protected skin!: ISkinSource;
 
-  protected override loadAsyncComplete() 
+  protected override loadAsyncComplete()
   {
     super.loadAsyncComplete();
 
@@ -22,7 +22,7 @@ export class SkinnableDrawable extends CompositeDrawable
 
   drawable!: Drawable;
 
-  updateContent() 
+  updateContent()
   {
     this.clearInternal();
 
