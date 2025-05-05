@@ -1,49 +1,64 @@
-import type { SkinInfo } from './SkinInfo';
-import { Color } from 'pixi.js';
+import { Bindable } from "@osucad/framework"
+import { Color } from "pixi.js"
 
-export class SkinConfiguration {
-  readonly skinInfo: SkinInfo = {
-    name: '',
-    creator: '',
-  };
+export interface SkinConfigurationFields {
+  version: string
+  animationFramerate: number
 
-  version: string | null = null;
+  allowSliderBallTint: boolean
+  hitCircleOverlayAboveNumber: boolean
+  layeredHitSounds: boolean
+  sliderBallFlip: boolean
+  spinnerFadePlayfield: boolean
+  spinnerFrequencyModulate: boolean
+  spinnerNoBlink: boolean
 
-  allowDefaultComboColorsFallback = true;
+  sliderBall: Color
+  sliderBorder: Color
+  sliderTrackOverride: Color
+  spinnerBackground: Color
+  starBreakAdditive: boolean
 
-  static readonly defaultComboColors: Color[] = [
-    new Color('rgba(255, 192, 0, 255)'),
-    new Color('rgba(0, 202, 0, 255)'),
-    new Color('rgba(18, 124, 255, 255)'),
-    new Color('rgba(242, 24, 57, 255)'),
-  ];
-
-  customComboColors: Color[] = [];
-
-  get comboColors(): Color[] {
-    if (this.customComboColors.length > 0)
-      return this.customComboColors;
-    if (this.allowDefaultComboColorsFallback)
-      return SkinConfiguration.defaultComboColors;
-
-    return [];
-  }
-
-  readonly customColors = new Map<string, Color>();
-
-  readonly configMap = new Map<string, string>();
+  hitCirclePrefix: string
+  hitCircleOverlap: number
+  scorePrefix: string
+  scoreOverlap: string
+  comboPrefix: string
+  comboOverlap: number
 }
 
-export enum StableSkinSetting {
-  Version,
-  ComboPrefix,
-  ComboOverlap,
-  ScorePrefix,
-  ScoreOverlap,
-  HitCirclePrefix,
-  HitCircleOverlap,
-  AnimationFramerate,
-  LayeredHitSounds,
-  AllowSliderBallTint,
-  InputOverlayText,
+export type SkinConfigurationLookup = keyof SkinConfigurationFields
+export type SkinConfigurationValue<K extends SkinConfigurationLookup> = SkinConfigurationFields[K]
+
+export class SkinConfiguration {
+  comboColors: Color[] = []
+
+  private readonly _configValues = new Map<string, Bindable<any>>()
+
+  public get<K extends SkinConfigurationLookup>(lookup: K): SkinConfigurationValue<K> | null {
+    return this._configValues.get(lookup)?.value ?? null
+  }
+
+  public set<K extends SkinConfigurationLookup>(lookup: K, value: SkinConfigurationValue<K> | null) {
+    this.getOriginalBindable(lookup).value = value
+  }
+
+  public getBindable<K extends SkinConfigurationLookup>(lookup: K): Bindable<SkinConfigurationValue<K> | null> {
+    return this.getOriginalBindable(lookup).getBoundCopy()
+  }
+
+  private getOriginalBindable<K extends SkinConfigurationLookup>(lookup: K): Bindable<SkinConfigurationValue<K> | null> {
+    let bindable = this._configValues.get(lookup)
+    if (!bindable) {
+      this._configValues.set(lookup, bindable = new Bindable(null))
+    }
+    return bindable
+  }
+
+  dispose() {
+    for (const [, bindable] of this._configValues)
+      bindable.unbindAll()
+
+    this._configValues.clear()
+  }
 }

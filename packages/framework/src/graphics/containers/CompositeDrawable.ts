@@ -1,34 +1,23 @@
-import type { ColorSource } from 'pixi.js';
-import type { ReadonlyDependencyContainer } from '../../di';
-import type { PIXIGraphics } from '../../pixi';
-import type { Scheduler } from '../../scheduling/Scheduler';
-import type { IComparer } from '../../utils/IComparer';
-import type { AbsoluteSequenceSender } from '../transforms/AbsoluteSequenceSender';
-import { Color } from 'pixi.js';
+import type { ColorSource, Graphics as PIXIGraphics } from 'pixi.js';
+import { Color, Container as PIXIContainer } from 'pixi.js';
 import { Action } from '../../bindables/Action';
-import { compositeDrawableProps } from '../../devtools/compositeDrawableProps';
+import type { ReadonlyDependencyContainer } from '../../di';
 import { DependencyContainer } from '../../di';
 import { getProviders } from '../../di/decorators';
 import { type IVec2, Vec2 } from '../../math/Vec2';
-import { PIXIContainer } from '../../pixi';
 import { MaskingEffect } from '../../renderers/MaskingEffect';
+import type { Scheduler } from '../../scheduling/Scheduler';
 import { type IUsable, ValueInvokeOnDisposal } from '../../types/IUsable';
 import { debugAssert } from '../../utils/debugAssert';
+import type { IComparer } from '../../utils/IComparer';
 import { List } from '../../utils/List';
 import { SortedList } from '../../utils/SortedList';
 import { Anchor } from '../drawables';
 import { Axes } from '../drawables/Axes';
-import {
-  Drawable,
-  type DrawableOptions,
-  Invalidation,
-  InvalidationSource,
-  loadDrawable,
-  loadDrawableFromAsync,
-  LoadState,
-} from '../drawables/Drawable';
+import { Drawable, type DrawableOptions, Invalidation, InvalidationSource, loadDrawable, loadDrawableFromAsync, LoadState, } from '../drawables/Drawable';
 import { LayoutMember } from '../drawables/LayoutMember';
 import { MarginPadding, type MarginPaddingOptions } from '../drawables/MarginPadding';
+import type { AbsoluteSequenceSender } from '../transforms/AbsoluteSequenceSender';
 import { EasingFunction } from '../transforms/EasingFunction';
 
 export interface CompositeDrawableOptions extends DrawableOptions {
@@ -127,8 +116,6 @@ export class CompositeDrawable extends Drawable {
   }
 
   set borderColor(value: ColorSource) {
-    const color = Color.shared.setValue(value);
-
     if (!this.#maskingEffect)
       throw new Error('Cannot set borderRadius without enabling masking');
 
@@ -1176,21 +1163,6 @@ export class CompositeDrawable extends Drawable {
 
   transformPadding(newPadding: MarginPadding | MarginPaddingOptions, duration: number = 0, easing: EasingFunction = EasingFunction.Default) {
     return this.transformTo('padding', MarginPadding.from(newPadding), duration, easing);
-  }
-
-  override get devToolProps() {
-    return compositeDrawableProps;
-  }
-
-  override getDevtoolValue(prop: string): any {
-    switch (prop) {
-      case 'internalChildrenCount':
-        return this.internalChildren.length;
-      case 'aliveInternalChildrenCount':
-        return this.aliveInternalChildren.length;
-    }
-
-    return super.getDevtoolValue(prop);
   }
 }
 

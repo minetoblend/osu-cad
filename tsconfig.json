@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
+  "files": [],
+  "references": [
+    {
+      "path": "./packages/framework"
+    },
+    {
+      "path": "./packages/core"
+    },
+    {
+      "path": "./packages/ruleset-osu"
+    },
+    {
+      "path": "./apps/skinning-demo"
+    }
+  ]
+}

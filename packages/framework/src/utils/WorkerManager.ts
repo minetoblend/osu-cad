@@ -1,6 +1,6 @@
 import type { ResolvedAsset, TextureSourceOptions } from 'pixi.js';
 
-import ImageBitmapWorker from './ImageBitmapWorker?worker';
+import ImageBitmapWorker from './ImageBitmapWorker?worker&inline';
 
 let UUID = 0;
 let MAX_WORKERS: number;
@@ -16,7 +16,7 @@ export interface LoadImageBitmapOptions {
   resize?: {
     width: number;
     height: number;
-    mode: 'fit' | 'fill' | 'stretch';
+    mode: 'fit' | 'fill' | 'stretch' | 'max';
   };
 }
 

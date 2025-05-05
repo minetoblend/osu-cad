@@ -1,7 +1,7 @@
 import type { ReadonlyDependencyContainer } from '../../di/DependencyContainer';
 
 import type { Vec2 } from '../../math/Vec2';
-import type { PIXIContainer } from '../../pixi';
+import type { Container as PIXIContainer } from 'pixi.js';
 import { AlphaFilter, Mesh } from 'pixi.js';
 import { Cached } from '../../caching/Cached';
 import { Line } from '../../math/Line';
@@ -30,10 +30,6 @@ export class Path extends Drawable {
 
   readonly #segmentsBacking: Line[] = [];
   readonly #segmentsCache = new Cached();
-
-  get #segments() {
-    return this.#segmentsCache.isValid ? this.#segmentsBacking : this.#generateSegments();
-  }
 
   #generateSegments(): Line[] {
     this.#segmentsBacking.length = Math.max(0, this.vertices.length - 1);

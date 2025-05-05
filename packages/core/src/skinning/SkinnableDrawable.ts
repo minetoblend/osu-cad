@@ -1,101 +1,31 @@
-import type { Drawable } from '@osucad/framework';
-import type { ISkinComponentLookup } from './ISkinComponentLookup';
-import type { ISkinSource } from './ISkinSource';
-import { Anchor, Axes, Cached, EmptyDrawable, FillMode, Vec2 } from '@osucad/framework';
+import { Anchor, CompositeDrawable, Drawable, EmptyDrawable, resolved } from "@osucad/framework";
+import { SkinComponentLookup } from "./ISkin";
+import { ISkinSource } from "./ISkinSource";
 
-import { SkinReloadableDrawable } from './SkinReloadableDrawable';
-
-export enum ConfineMode {
-  NoScaling,
-  ScaleToFit,
-}
-
-export class SkinnableDrawable extends SkinReloadableDrawable {
-  #drawable!: Drawable;
-
-  get drawable() {
-    return this.#drawable;
+export class SkinnableDrawable extends CompositeDrawable {
+  constructor(readonly lookup: SkinComponentLookup, readonly defaultImplementation?: () => Drawable) {
+    super()
   }
 
-  get centerComponent() {
-    return true;
+  @resolved(ISkinSource)
+  protected skin!: ISkinSource
+
+  protected override loadAsyncComplete() {
+    super.loadAsyncComplete();
+
+    this.updateContent()
   }
 
-  protected readonly componentLookup: ISkinComponentLookup;
+  drawable!: Drawable
 
-  readonly #confineMode: ConfineMode;
+  updateContent() {
+    this.clearInternal()
 
-  constructor(lookup: ISkinComponentLookup, defaultImplementation?: (lookup: ISkinComponentLookup) => Drawable, confineMode: ConfineMode = ConfineMode.NoScaling) {
-    super();
+    const drawable = this.skin.getDrawableComponent(this.lookup) ?? this.defaultImplementation?.()
 
-    this.componentLookup = lookup;
-    this.#confineMode = confineMode;
+    this.drawable = this.internalChild = drawable ?? new EmptyDrawable()
 
-    this.relativeSizeAxes = Axes.Both;
-
-    this.#createDefault = defaultImplementation;
-  }
-
-  resetAnimation() {
-    // TODO
-  }
-
-  readonly #createDefault?: (lookup: ISkinComponentLookup) => Drawable;
-
-  readonly #scaling = new Cached();
-
-  #isDefault = false;
-
-  protected createDefault() {
-    return this.#createDefault?.(this.componentLookup) ?? new EmptyDrawable();
-  }
-
-  protected get applySizeRestrictionsToDefault() {
-    return false;
-  }
-
-  protected override skinChanged(skin: ISkinSource) {
-    const retrieved = skin.getDrawableComponent(this.componentLookup);
-
-    if (!retrieved) {
-      this.#drawable = this.createDefault();
-      this.#isDefault = true;
-    }
-    else {
-      this.#drawable = retrieved;
-      this.#isDefault = false;
-    }
-
-    this.#scaling.invalidate();
-
-    if (this.centerComponent) {
-      this.drawable.anchor = Anchor.Center;
-      this.drawable.origin = Anchor.Center;
-    }
-
-    this.internalChild = this.drawable;
-  }
-
-  override update() {
-    super.update();
-
-    if (!this.#scaling.isValid) {
-      try {
-        if (this.#isDefault && !this.applySizeRestrictionsToDefault)
-          return;
-
-        switch (this.#confineMode) {
-          case ConfineMode.ScaleToFit:
-            this.drawable.relativeSizeAxes = Axes.Both;
-            this.drawable.size = Vec2.one();
-            this.drawable.scale = Vec2.one();
-            this.drawable.fillMode = FillMode.Fit;
-            break;
-        }
-      }
-      finally {
-        this.#scaling.validate();
-      }
-    }
+    this.drawable.anchor = Anchor.Center;
+    this.drawable.origin = Anchor.Center;
   }
 }

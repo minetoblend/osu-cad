@@ -1,21 +1,19 @@
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "module": "ESNext",
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "noImplicitOverride": true,
-    "noFallthroughCasesInSwitch": true,
-    "allowImportingTsExtensions": false
-  },
   "files": [],
   "include": [],
   "references": [
     {
+      "path": "../framework"
+    },
+    {
+      "path": "../core"
+    },
+    {
       "path": "./tsconfig.lib.json"
     },
     {
-      "path": "./tsconfig.test.json"
+      "path": "./tsconfig.spec.json"
     }
   ]
 }

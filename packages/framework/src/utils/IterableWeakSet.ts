@@ -1,4 +1,3 @@
-// eslint-disable-next-line ts/no-unsafe-declaration-merging
 class IterableWeakSet<T extends WeakKey> {
   static [Symbol.species] = IterableWeakSet;
   private finalizationRegistry = new FinalizationRegistry<WeakRef<T>>(this.cleanup.bind(this));

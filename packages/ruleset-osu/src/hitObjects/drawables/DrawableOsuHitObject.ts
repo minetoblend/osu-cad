@@ -1,133 +1,54 @@
-import type { DependencyContainer, ReadonlyDependencyContainer } from '@osucad/framework';
-import type { ClickAction } from '../../ui/ClickAction';
-import type { OsuHitObject } from '../OsuHitObject';
-import { DrawableHitObject, HitResult, HitSample, IComboNumberReference, SampleSet, SampleType } from '@osucad/core';
-import { Bindable, dependencyLoader, provide, Vec2 } from '@osucad/framework';
-import { OsuActionInputManager } from '../../OsuActionInputManager';
-import { DrawableHitSound } from './DrawableHitSound';
+import { DrawableHitObject, IComboNumberReference, ISkinSource } from "@osucad/core";
+import { Bindable, provide, resolved, Vec2 } from "@osucad/framework";
+import { OsuHitObject } from "../OsuHitObject";
 
 @provide(IComboNumberReference)
-export class DrawableOsuHitObject<T extends OsuHitObject = OsuHitObject> extends DrawableHitObject implements IComboNumberReference {
-  constructor(hitObject?: T) {
-    super(hitObject);
-  }
-
-  positionBindable = new Bindable(new Vec2());
-
-  stackHeightBindable = new Bindable(0);
-
-  scaleBindable = new Bindable(1);
-
-  indexInComboBindable = new Bindable(0);
-
-  checkHittable: ((hitObject: DrawableHitObject, time: number, result: HitResult) => ClickAction) | null = null;
-
-  #osuActionInputManager: OsuActionInputManager | null = null;
-
-  get osuActionInputManager() {
-    this.#osuActionInputManager ??= this.findClosestParentOfType(OsuActionInputManager);
-
-    return this.#osuActionInputManager;
-  }
-
-  hitForcefully(timeOffset?: number) {
-    this.applyResult((r, h) => {
-      r.type = HitResult.Great;
-      if (timeOffset !== undefined) {
-        r.timeOffset = timeOffset;
-        r.rawTime = h.hitObject!.endTime + timeOffset;
-      }
-    });
-  }
-
-  missForcefully() {
-    this.applyResult(r => r.type = HitResult.Miss);
-  }
-
-  override get hitObject() {
-    return super.hitObject as T | undefined;
-  }
-
-  #dependencies!: DependencyContainer;
-
-  protected override createChildDependencies(parentDependencies: ReadonlyDependencyContainer): DependencyContainer {
-    return this.#dependencies = super.createChildDependencies(parentDependencies);
-  }
-
-  @dependencyLoader()
-  [Symbol('load')]() {
-    this.#dependencies.provide(DrawableOsuHitObject, this);
-
-    this.addInternal(this.drawableHitSound);
-  }
-
-  protected override playSamples() {
-    if (!this.result)
-      return;
-
-    this.drawableHitSound.play();
-  }
+export abstract class DrawableOsuHitObject<out T extends OsuHitObject = OsuHitObject>
+    extends DrawableHitObject<T>
+    implements IComboNumberReference {
+  readonly positionBindable = new Bindable(Vec2.zero())
+  readonly scaleBindable = new Bindable(1)
+  readonly indexInComboBindable = new Bindable(0)
+  readonly comboIndexBindable = new Bindable(0)
+  readonly stackHeightBindable = new Bindable(0)
 
   protected override onApplied() {
     super.onApplied();
 
-    this.positionBindable.bindTo(this.hitObject!.positionBindable);
-    this.stackHeightBindable.bindTo(this.hitObject!.stackHeightBindable);
-    this.scaleBindable.bindTo(this.hitObject!.scaleBindable);
-    this.indexInComboBindable.bindTo(this.hitObject!.indexInComboBindable);
-    this.accentColor.bindTo(this.hitObject!.comboColorBindable);
-
-    this.drawableHitSound.loadSamples();
+    this.positionBindable.bindTo(this.hitObject.positionBindable)
+    this.scaleBindable.bindTo(this.hitObject.scaleBindable)
+    this.indexInComboBindable.bindTo(this.hitObject.indexInComboBindable)
+    this.comboIndexBindable.bindTo(this.hitObject.comboIndexBindable)
+    this.stackHeightBindable.bindTo(this.hitObject.stackHeightBindable)
   }
 
   protected override onFreed() {
-    this.positionBindable.unbindFrom(this.hitObject!.positionBindable);
-    this.stackHeightBindable.unbindFrom(this.hitObject!.stackHeightBindable);
-    this.scaleBindable.unbindFrom(this.hitObject!.scaleBindable);
-    this.indexInComboBindable.unbindFrom(this.hitObject!.indexInComboBindable);
-    this.accentColor.unbindFrom(this.hitObject!.comboColorBindable);
+    super.onFreed();
+
+    this.positionBindable.unbindFrom(this.hitObject.positionBindable)
+    this.scaleBindable.unbindFrom(this.hitObject.scaleBindable)
+    this.indexInComboBindable.unbindFrom(this.hitObject.indexInComboBindable)
+    this.comboIndexBindable.unbindFrom(this.hitObject.comboIndexBindable)
+    this.stackHeightBindable.unbindFrom(this.hitObject.stackHeightBindable)
   }
 
-  override get initialLifetimeOffset(): number {
-    return this.hitObject!.timePreempt;
+  protected override loadAsyncComplete() {
+    super.loadAsyncComplete();
+
+    this.positionBindable.bindValueChanged(() => this.updatePosition())
+    this.stackHeightBindable.bindValueChanged(() => this.updatePosition())
+    this.scaleBindable.bindValueChanged(() => this.updateScale())
+    this.indexInComboBindable.bindValueChanged(() => this.scheduler.addOnce(this.updateComboColor, this))
   }
 
-  drawableHitSound = new DrawableHitSound();
+  protected abstract updatePosition(): void;
 
-  protected getHitSound() {
-    return this.hitObject!.hitSound;
-  }
+  protected abstract updateScale(): void;
 
-  * getHitSamples() {
-    const hitObject = this.hitObject!;
-    const hitSound = this.getHitSound();
+  @resolved(ISkinSource)
+  protected skin!: ISkinSource
 
-    const samplePoint = this.beatmap.controlPoints.samplePointAt(hitObject.startTime);
-
-    let sampleSet = hitSound.sampleSet;
-    if (sampleSet === SampleSet.Auto)
-      sampleSet = samplePoint.sampleSet;
-
-    yield new HitSample(
-      hitObject.startTime,
-      sampleSet,
-      SampleType.Normal,
-      samplePoint.volume,
-      samplePoint.sampleIndex,
-    );
-
-    let additionSampleSet = hitSound.additionSampleSet;
-    if (additionSampleSet === SampleSet.Auto)
-      additionSampleSet = sampleSet;
-
-    for (const sampleType of hitSound.getSampleTypes()) {
-      yield new HitSample(
-        hitObject.startTime,
-        additionSampleSet,
-        sampleType,
-        samplePoint.volume,
-        samplePoint.sampleIndex,
-      );
-    }
+  protected override updateComboColor() {
+    this.accentColor.value = this.skin.getComboColor(this.comboIndexBindable.value)
   }
 }

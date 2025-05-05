@@ -1,4 +1,4 @@
-import type { PIXIContainer } from '../../pixi';
+import type { Container as PIXIContainer } from 'pixi.js';
 import { Graphics } from 'pixi.js';
 import { Drawable, Invalidation } from './Drawable';
 import { LayoutMember } from './LayoutMember';

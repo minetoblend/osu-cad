@@ -1,42 +1,39 @@
-import * as path from 'node:path';
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 /// <reference types='vitest' />
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
+import * as path from 'path';
 
-export default defineConfig({
+export default defineConfig(() => ({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/packages/ruleset-osu',
-
-  plugins: [
-    nxViteTsPaths(),
-    dts({
-      entryRoot: 'src',
-      tsconfigPath: path.join(__dirname, 'tsconfig.lib.json'),
-    }),
-  ],
+  plugins: [dts({ entryRoot: 'src', tsconfigPath: path.join(__dirname, 'tsconfig.lib.json') })],
+  // Uncomment this if you are using workers.
+  // worker: {
+  //  plugins: [ nxViteTsPaths() ],
+  // },
+  // Configuration for building your library.
+  // See: https://vitejs.dev/guide/build.html#library-mode
   build: {
-    outDir: '../../dist/packages/ruleset-osu',
+    outDir: './dist',
     emptyOutDir: true,
     reportCompressedSize: true,
     commonjsOptions: {
       transformMixedEsModules: true,
     },
-    minify: false,
-    target: 'esnext',
     lib: {
-      entry: 'src/index.ts',
-      name: 'ruleset-osu',
-      fileName: 'index',
-      formats: ['es'],
+      // Could also be a dictionary or array of multiple entry points.
+      entry: [
+        'src/index.ts',
+        'src/init.ts'
+      ],
+      name: '@osucad/ruleset-osu',
+      // Change this to the formats you want to support.
+      // Don't forget to update your package.json as well.
+      formats: ['es' as const]
     },
     rollupOptions: {
-      external: [
-        '@osucad/framework',
-        '@osucad/core',
-        '@osucad/resources',
-        '@osucad/multiplayer',
-      ],
+      // External packages that should not be bundled into your library.
+      external: ['@osucad/core', '@osucad/framework', 'pixi.js'],
     },
-  },
-});
+  }
+}));

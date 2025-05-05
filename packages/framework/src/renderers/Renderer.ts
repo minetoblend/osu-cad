@@ -1,8 +1,7 @@
+import { type WebGLRenderer } from 'pixi.js';
 import type { InjectionToken } from '../di';
 import type { FrameworkEnvironment } from '../FrameworkEnvironment';
 import type { Drawable } from '../graphics/drawables/Drawable';
-import type { PIXIRenderer } from '../pixi';
-import { Batcher, DynamicBitmapFont, extensions, Filter, getMaxTexturesPerBatch, GlobalUniformSystem, isMobile, RenderTarget } from 'pixi.js';
 import { SpriteTextPipe } from '../graphics/text/SpriteTextPipe';
 import { type IVec2, Vec2 } from '../math';
 import { MaskingPipe } from './MaskingPipe';
@@ -19,9 +18,13 @@ export interface RendererOptions {
 
 export class Renderer {
   async init(options: RendererOptions) {
+
+
+    const { Batcher, isMobile, WebGLRenderer, RenderTarget, Filter, DynamicBitmapFont, GlobalUniformSystem, extensions, getMaxTexturesPerBatch } = await import('pixi.js')
+
+
     if (isMobile.any)
       Batcher.defaultOptions.maxTextures = Math.min(16, getMaxTexturesPerBatch());
-
     RenderTarget.defaultOptions.depth = true;
     RenderTarget.defaultOptions.stencil = true;
     Filter.defaultOptions.resolution = devicePixelRatio;
@@ -31,15 +34,14 @@ export class Renderer {
 
     extensions.remove(GlobalUniformSystem);
     extensions.add(
-      OsucadBatcher,
-      OsucadSpritePipe,
-      MaskingPipe,
-      MaskingSystem,
-      OsucadUniformSystem,
-      SpriteTextPipe,
+        OsucadBatcher,
+        OsucadSpritePipe,
+        MaskingPipe,
+        MaskingSystem,
+        OsucadUniformSystem,
+        SpriteTextPipe,
     );
 
-    const { autoDetectRenderer } = await import('pixi.js');
     const { size, environment } = options;
 
     this.#size = Vec2.from(size);
@@ -61,10 +63,11 @@ export class Renderer {
     if (!context)
       throw new Error('Webgl not supported');
 
-    this.#internalRenderer = await autoDetectRenderer({
+    this.#internalRenderer = new WebGLRenderer()
+
+    await this.#internalRenderer.init({
       canvas,
       context,
-      preference: 'webgl', // environment.webGpuSupported ? rendererPreference : "webgl",
       antialias: environment.antialiasPreferred,
       resolution: devicePixelRatio,
       width: this.#size.x,
@@ -85,7 +88,7 @@ export class Renderer {
     });
   }
 
-  #internalRenderer?: PIXIRenderer;
+  #internalRenderer?: WebGLRenderer;
 
   get internalRenderer() {
     if (!this.#internalRenderer) {
@@ -118,7 +121,6 @@ export class Renderer {
   }
 }
 
-export type IRenderer = PIXIRenderer;
+export type IRenderer = WebGLRenderer;
 
-// eslint-disable-next-line ts/no-redeclare
-export const IRenderer: InjectionToken<PIXIRenderer> = Symbol('IRenderer');
+export const IRenderer: InjectionToken<WebGLRenderer> = Symbol('IRenderer');

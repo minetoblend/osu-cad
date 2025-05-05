@@ -6,8 +6,6 @@ export class TransformSequence<T extends ITransformable> {
 
   readonly #origin: T;
 
-  readonly #startTime: number;
-
   #currentTime: number;
 
   #lastEndTime: number;
@@ -24,7 +22,7 @@ export class TransformSequence<T extends ITransformable> {
 
   constructor(origin: T) {
     this.#origin = origin;
-    this.#startTime = this.#currentTime = this.#lastEndTime = origin.transformStartTime;
+    this.#currentTime = this.#lastEndTime = origin.transformStartTime;
   }
 
   add(transform: Transform) {

@@ -1,5 +1,4 @@
 import type { Drawable } from '../drawables';
-import gsap from 'gsap';
 import { Action } from '../../bindables';
 import { type IVec2, Vec2 } from '../../math';
 import { Invalidation, InvalidationSource, LayoutMember } from '../drawables';
@@ -131,40 +130,12 @@ export abstract class FlowContainer<T extends Drawable = Drawable> extends Conta
     if (this.children.length === 0)
       return;
 
-    let processedCount = 0;
-
     const positions = this.computeLayoutPositions();
     const drawables = this.flowingChildren;
 
     for (let i = 0; i < drawables.length; i++) {
       const drawable = drawables[i];
       const pos = positions[i];
-
-      processedCount++;
-
-      let targetX: number | undefined;
-      let targetY: number | undefined;
-
-      for (const tween of gsap.getTweensOf(drawable)) {
-        if (!tween.isActive())
-          continue;
-
-        if (typeof tween.vars.x === 'number') {
-          targetX ??= tween.vars.x;
-        }
-
-        if (typeof tween.vars.y === 'number') {
-          targetY ??= tween.vars.y;
-        }
-
-        if (targetX !== undefined && targetY !== undefined)
-          break;
-      }
-
-      const currentTargetPos = new Vec2(targetX ?? drawable.position.x, targetY ?? drawable.position.y);
-
-      if (currentTargetPos.equals(pos))
-        continue;
 
       if (this.layoutDuration > 0) {
         drawable.moveTo(pos, this.layoutDuration, this.layoutEasing);

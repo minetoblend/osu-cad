@@ -59,7 +59,6 @@ export class MaskingPipe implements InstructionPipe<MaskingInstruction> {
 }
 
 declare global {
-  // eslint-disable-next-line ts/no-namespace
   namespace PixiMixins {
     interface RendererSystems {
       masking: import('./MaskingSystem').MaskingSystem;

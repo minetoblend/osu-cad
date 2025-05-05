@@ -1,12 +1,10 @@
-import type { Drawable } from '@osucad/framework';
-import type { DrawableHitObject } from '../../hitObjects/drawables/DrawableHitObject';
-import type { HitObjectLifetimeEntry } from '../../hitObjects/drawables/HitObjectLifetimeEntry';
-import type { HitObject } from '../../hitObjects/HitObject';
-import type { LifetimeEntry } from '../../pooling/LifetimeEntry';
-import type { JudgementResult } from '../judgements/JudgementResult';
-import { Action, Axes, Bindable, LoadState, resolved } from '@osucad/framework';
-import { IPooledHitObjectProvider } from '../../hitObjects/drawables/IPooledHitObjectProvider';
-import { PooledDrawableWithLifetimeContainer } from '../../pooling/PooledDrawableWithLifetimeContainer';
+import { Action, Axes, Bindable, Drawable, LoadState, resolved } from '@osucad/framework';
+import { LifetimeEntry } from "../../pooling/LifetimeEntry";
+import { PooledDrawableWithLifetimeContainer } from "../../pooling/PooledDrawableWithLifetimeContainer";
+import { DrawableHitObject } from '../hitObjects/drawables/DrawableHitObject';
+import { HitObjectLifetimeEntry } from "../hitObjects/drawables/HitObjectLifetimeEntry";
+import { HitObject } from '../hitObjects/HitObject';
+import { IPooledHitObjectProvider } from "./IPooledHitObjectProvider";
 
 export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitObjectLifetimeEntry, DrawableHitObject> {
   readonly hitObjectUsageBegan = new Action<HitObject>();
@@ -45,7 +43,7 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
       return drawable;
     drawable = this.pooledObjectProvider?.getPooledDrawableRepresentation(entry.hitObject);
     if (!drawable)
-      throw new Error('No drawable found for hit object');
+      throw new Error(`No drawable found for HitObject ${entry.hitObject.constructor.name}`);
 
     return drawable;
   }
@@ -55,7 +53,7 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
       return;
 
     this.#addDrawable(drawable);
-    this.hitObjectUsageBegan.emit(drawable.hitObject!);
+    this.hitObjectUsageBegan.emit(drawable.hitObject);
   }
 
   protected override removeDrawable(entry: HitObjectLifetimeEntry, drawable: DrawableHitObject) {
@@ -72,16 +70,8 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
     this.#startTimeMap.delete(drawable);
   }
 
-  newResult = new Action<[DrawableHitObject, JudgementResult]>();
-
-  #onNewResult([drawable, result]: [DrawableHitObject, JudgementResult]) {
-    this.newResult.emit([drawable, result]);
-  }
-
   #addDrawable(drawable: DrawableHitObject) {
     this.#bindStartTime(drawable);
-
-    drawable.onNewResult.addListener(this.#onNewResult, this);
 
     drawable.depth = this.getDrawableDepth(drawable);
     this.addInternal(drawable);
@@ -93,8 +83,6 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
 
   #removeDrawable(drawable: DrawableHitObject) {
     this.#unbindStartTime(drawable);
-
-    drawable.onNewResult.removeListener(this.#onNewResult, this);
 
     this.removeInternal(drawable, false);
   }
@@ -150,4 +138,6 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
 
     super.dispose(isDisposing);
   }
+
+
 }

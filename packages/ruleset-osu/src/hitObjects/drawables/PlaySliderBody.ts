@@ -1,55 +1,51 @@
-import type { ReadonlyDependencyContainer } from '@osucad/framework';
-import type { DrawableSlider } from '@osucad/ruleset-osu';
-import type { Color } from 'pixi.js';
-import { DrawableHitObject, ISkinSource, OsucadConfigManager, OsucadSettings, SkinConfig } from '@osucad/core';
-import { Bindable } from '@osucad/framework';
-import { OsuHitObject } from '@osucad/ruleset-osu';
-import { SnakingSliderBody } from './SnakingSliderBody';
-
-export enum SelectionType {
-  None,
-  HitObject,
-  Body,
-}
+import { ISkinSource } from "@osucad/core";
+import { Bindable, ReadonlyDependencyContainer, resolved } from "@osucad/framework";
+import { Color } from "pixi.js";
+import { OsuHitObject } from "../OsuHitObject";
+import { SnakingSliderBody } from "./SnakingSliderBody";
 
 export class PlaySliderBody extends SnakingSliderBody {
-  scaleBindable!: Bindable<number >;
+  scaleBindable!: Bindable<number>;
   accentColorBindable!: Bindable<Color>;
   pathVersion = new Bindable(0);
 
-  readonly selected = new Bindable<SelectionType>(SelectionType.None);
+  @resolved(ISkinSource)
+  protected skin!: ISkinSource
+
+  borderColorBindable!: Bindable<Color | null>
+  sliderTrackOverrideBindable!: Bindable<Color | null>
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
-    const drawableObject = dependencies.resolve(DrawableHitObject) as DrawableSlider;
-    const skin = dependencies.resolve(ISkinSource);
+    this.snakingIn.bindTo(this.drawableSlider.snakingIn);
+    this.snakingOut.bindTo(this.drawableSlider.snakingOut);
 
-    this.pathVersion.bindTo(drawableObject.pathVersion);
+    this.pathVersion.bindTo(this.drawableSlider.pathVersion);
     this.pathVersion.bindValueChanged(() => this.scheduler.addOnce(this.refresh, this));
 
-    this.scaleBindable = drawableObject.scaleBindable.getBoundCopy();
-    this.scaleBindable.bindValueChanged(scale => this.pathRadius = OsuHitObject.object_radius * scale.value, true);
+    this.sliderTrackOverrideBindable = this.skin.getConfigBindable('sliderTrackOverride')
+    this.sliderTrackOverrideBindable.bindValueChanged(this.updateAccentColor, this)
 
-    this.accentColorBindable = drawableObject.accentColor.getBoundCopy();
-    this.accentColorBindable.bindValueChanged(accent => this.accentColor = this.getBodyAccentColor(skin, accent.value), true);
+    this.accentColorBindable = this.drawableSlider.accentColor.getBoundCopy();
+    this.accentColorBindable.bindValueChanged(this.updateAccentColor, this, true);
 
-    const config = dependencies.resolve(OsucadConfigManager);
+    this.scaleBindable = this.drawableSlider.scaleBindable.getBoundCopy();
+    this.scaleBindable.bindValueChanged(scale => this.pathRadius = OsuHitObject.OBJECT_RADIUS * scale.value, true);
 
-    config.bindWith(OsucadSettings.SnakingOutSliders, this.snakingOut);
-    config.bindWith(OsucadSettings.SnakingInSliders, this.snakingIn);
+    this.borderColorBindable = this.skin.getConfigBindable('sliderBorder')
+    this.borderColorBindable.bindValueChanged(() => this.borderColor = this.getSliderBorder(), true)
   }
 
-  protected getBodyAccentColor(skin: ISkinSource, hitObjectAccentColour: Color) {
-    return skin.getConfig(SkinConfig.SliderTrackOverride) ?? hitObjectAccentColour;
+  protected updateAccentColor() {
+    this.accentColor = this.getBodyAccentColor(this.accentColorBindable.value)
   }
 
-  protected override loadComplete() {
-    super.loadComplete();
-
-    this.selected.bindValueChanged(selected => this.selectionChanged(selected.value), true);
+  protected getBodyAccentColor(color: Color) {
+    return this.skin.getConfigValue('sliderTrackOverride') ?? color
   }
 
-  protected selectionChanged(selection: SelectionType) {
+  protected getSliderBorder() {
+    return this.borderColorBindable.value ?? new Color(0xffffff)
   }
 }

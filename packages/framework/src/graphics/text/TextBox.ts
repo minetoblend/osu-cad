@@ -13,6 +13,7 @@ import type { MouseDownEvent } from '../../input/events/MouseDownEvent';
 import type { MouseUpEvent } from '../../input/events/MouseUpEvent';
 import type { KeyBindingAction } from '../../input/KeyBindingAction';
 import type { TextRemovedEvent } from '../../input/TextInputSource';
+import { debugAssert } from "../../utils/debugAssert";
 import type { MaskingContainer } from '../containers/MaskingContainer';
 import type { Drawable } from '../drawables/Drawable';
 import type { Caret } from './Caret';
@@ -542,11 +543,10 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     if (removeCount === 0)
       return '';
 
-    console.assert(this.#selectionLength === 0 || removeCount === this.#selectionLength);
+    debugAssert(this.#selectionLength === 0 || removeCount === this.#selectionLength);
 
     const beganChange = this.#beginTextChange();
 
-    const i = 0;
     for (const d of this.textFlow.children.slice(removeStart, removeStart + removeCount)) {
       this.textFlow.remove(d, false);
 

@@ -1,8 +1,6 @@
-import type { ReadonlyDependencyContainer, Vec2 } from '@osucad/framework';
-import type { DrawableSlider } from '@osucad/ruleset-osu';
-import { DrawableHitObject } from '@osucad/core';
-import { Bindable, clamp } from '@osucad/framework';
-import { SliderBody } from './SliderBody';
+import { Bindable, clamp, resolved, Vec2 } from "@osucad/framework";
+import { DrawableSlider } from "./DrawableSlider";
+import { SliderBody } from "./SliderBody";
 
 export class SnakingSliderBody extends SliderBody {
   currentCurve: Vec2[] = [];
@@ -34,19 +32,14 @@ export class SnakingSliderBody extends SliderBody {
     this.refresh();
   }
 
-  #drawableSlider!: DrawableSlider;
-
-  protected override load(dependencies: ReadonlyDependencyContainer) {
-    super.load(dependencies);
-
-    this.#drawableSlider = dependencies.resolve(DrawableHitObject) as DrawableSlider;
-  }
+  @resolved(() => DrawableSlider)
+  protected drawableSlider!: DrawableSlider;
 
   updateProgress(completionProgress: number) {
-    if (this.#drawableSlider.hitObject === undefined)
+    if (!this.drawableSlider.hitObject)
       return;
 
-    const slider = this.#drawableSlider.hitObject;
+    const slider = this.drawableSlider.hitObject;
 
     const span = slider.spanAt(completionProgress);
     const spanProgress = slider.progressAt(completionProgress);
@@ -54,8 +47,8 @@ export class SnakingSliderBody extends SliderBody {
     let start = 0;
     let end = this.snakingIn.value ? clamp((this.time.current - (slider.startTime - slider.timePreempt)) / (slider.timePreempt / 3), 0, 1) : 1;
 
-    if (span >= slider.spanCount - 1) {
-      if (Math.min(span, slider.spanCount - 1) % 2 === 1) {
+    if (span >= slider.spanCount() - 1) {
+      if (Math.min(span, slider.spanCount() - 1) % 2 === 1) {
         start = 0;
         end = this.snakingOut.value ? spanProgress : 1;
       }
@@ -68,15 +61,15 @@ export class SnakingSliderBody extends SliderBody {
   }
 
   refresh() {
-    if (this.#drawableSlider.hitObject === undefined)
+    if (!this.drawableSlider.hitObject)
       return;
 
-    const slider = this.#drawableSlider.hitObject;
+    const slider = this.drawableSlider.hitObject;
 
-    this.setVertices(this.currentCurve = slider.path.calculatedRange.path);
+    this.setVertices(this.currentCurve = slider.path.getRange(0, 1));
   }
 
-  #setRange(p0: number, p1: number) {
+  #setRange(p0: number, p1: number)  {
     if (p0 > p1)
       [p0, p1] = [p1, p0];
 
@@ -86,10 +79,10 @@ export class SnakingSliderBody extends SliderBody {
     this.#snakedStart = p0;
     this.#snakedEnd = p1;
 
-    const slider = this.#drawableSlider.hitObject!;
+    const slider = this.drawableSlider.hitObject;
 
-    const range = slider.path.getRange(p0 * slider.path.expectedDistance, p1 * slider.path.expectedDistance);
+    const range = slider.path.getRange(p0, p1);
 
-    this.setVertices(this.currentCurve = range.path);
+    this.setVertices(this.currentCurve = range);
   }
 }

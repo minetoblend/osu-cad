@@ -22,24 +22,22 @@ import type { TouchUpEvent } from '../../input/events/TouchUpEvent';
 import type { UIEvent } from '../../input/events/UIEvent';
 import type { IInputReceiver } from '../../input/IInputReceiver';
 import type { InputManager } from '../../input/InputManager';
-import type { BLEND_MODES, ColorSource, Filter, PIXIContainer } from '../../pixi';
+import type { BLEND_MODES, ColorSource, Filter, Container as PIXIContainer } from 'pixi.js';
 import type { IFrameBasedClock } from '../../timing/IFrameBasedClock';
 import type { IDisposable } from '../../types/IDisposable';
 import type { List } from '../../utils/List';
-import type { Container as DrawableContainer } from '../containers';
 import type { CompositeDrawable } from '../containers/CompositeDrawable';
 import type { TypedTransform } from '../transforms/Transform';
 import { Matrix } from 'pixi.js';
 import { Action } from '../../bindables/Action';
 import { popDrawableScope, pushDrawableScope } from '../../bindables/lifetimeScope';
-import { drawableProps, propertyToValue, valueToProperty } from '../../devtools/drawableProps';
 import { getAsyncDependencyLoaders, getDependencyLoaders, getInjections } from '../../di/decorators';
 import { HandleInputCache } from '../../input/HandleInputCache';
 import { isFocusManager } from '../../input/IFocusManager';
 import { Quad } from '../../math/Quad';
 import { Rectangle } from '../../math/Rectangle';
 import { type IVec2, Vec2 } from '../../math/Vec2';
-import { Color } from '../../pixi';
+import { Color } from 'pixi.js';
 import { Scheduler } from '../../scheduling/Scheduler';
 import { FrameStatistics } from '../../statistics/FrameStatistics';
 import { StatisticsCounterType } from '../../statistics/StatisticsCounterType';
@@ -653,14 +651,14 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     this.invalidate(Invalidation.DrawSize);
   }
 
+  protected get hasAsyncLoader() {
+    return false;
+  }
+
   #fillAspectRatio = 1;
 
   get fillAspectRatio() {
     return this.#fillAspectRatio;
-  }
-
-  protected get hasAsyncLoader() {
-    return false;
   }
 
   set fillAspectRatio(value: number) {
@@ -1008,6 +1006,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     this.#dependencies ??= dependencies;
 
     const injections = getInjections(this);
+    // eslint-disable-next-line prefer-const
     for (let { key, type, optional } of injections) {
       if (typeof type === 'function' && type.name === '')
         type = type();
@@ -1314,9 +1313,6 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
       anyInvalidated = true;
 
     this.invalidated.emit([this, invalidation]);
-
-    if (anyInvalidated)
-      this.#invalidationCount++;
 
     return anyInvalidated;
   }
@@ -1717,52 +1713,6 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   }
 
   // #endregion
-
-  get devToolProps() {
-    return drawableProps;
-  }
-
-  getDevtoolValue(prop: string): any {
-    let value = this[prop as keyof Drawable];
-
-    if (prop === 'type')
-      value = this.constructor.name;
-
-    if (propertyToValue[prop])
-      value = propertyToValue[prop](value);
-
-    return value;
-  }
-
-  setDevtoolValue(prop: string, value: any) {
-    if (prop === 'depth' && this.parent) {
-      (this.parent as DrawableContainer).changeChildDepth(this, value);
-      return;
-    }
-
-    if (prop in valueToProperty)
-      value = valueToProperty[prop](value);
-
-    ;(this as any)[prop] = value;
-  }
-
-  treeDepth = 1;
-
-  #invalidationCount = 0;
-
-  trackDevtoolsValue(state: Record<string, number>) {
-    state.drawables = (state.drawables ?? 0) + 1;
-
-    if (this.parent)
-      this.treeDepth = this.parent.treeDepth + 1;
-    else
-      this.treeDepth = 1;
-
-    state.treeDepth = Math.max(this.treeDepth, state.treeDepth ?? 0);
-
-    state.invalidations = (state.invalidations ?? 0) + this.#invalidationCount;
-    this.#invalidationCount = 0;
-  }
 
   // region InvalidationState
 

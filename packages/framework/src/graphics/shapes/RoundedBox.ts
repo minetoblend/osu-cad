@@ -1,5 +1,5 @@
 import { Matrix, type Texture } from 'pixi.js';
-import { Color, type ColorSource, PIXIGraphics } from '../../pixi';
+import { Color, type ColorSource, Graphics } from 'pixi.js';
 import { FillMode, LayoutMember } from '../drawables';
 import { Drawable, type DrawableOptions, Invalidation } from '../drawables/Drawable';
 
@@ -44,7 +44,7 @@ export class RoundedBox extends Drawable {
 
   #cornerRadius: number = 0;
 
-  #graphics!: PIXIGraphics;
+  #graphics!: Graphics;
 
   #graphicsBacking = new LayoutMember(Invalidation.DrawSize);
 
@@ -98,8 +98,8 @@ export class RoundedBox extends Drawable {
     this.#graphicsBacking.invalidate();
   }
 
-  override createDrawNode(): PIXIGraphics {
-    return (this.#graphics = new PIXIGraphics());
+  override createDrawNode(): Graphics {
+    return (this.#graphics = new Graphics());
   }
 
   override update() {

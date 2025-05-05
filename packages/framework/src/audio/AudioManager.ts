@@ -43,8 +43,6 @@ export class AudioManager {
       el.onerror = reject;
     });
 
-    console.log(el.duration);
-
     el.ondurationchange = () => console.log(el.duration);
 
     return new AudioElementTrack(this.context, channel, el);

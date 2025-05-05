@@ -78,6 +78,7 @@ describe('composite drawable layout', () => {
     });
 
     loadDrawable(parent, new FramedClock(), new DependencyContainer());
+    parent.updateSubTree()
 
     parent.updateSubTree();
     parent.updateSubTreeTransforms();

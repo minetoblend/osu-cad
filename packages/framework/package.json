@@ -1,29 +1,32 @@
 {
   "name": "@osucad/framework",
-  "version": "0.0.5",
-  "scripts": {
-    "build": "vite build",
-    "typecheck": "tsc --noEmit -p tsconfig.lib.json --composite false",
-    "lint": "eslint src",
-    "lint:fix": "eslint src --fix"
-  },
+  "version": "0.0.1",
   "type": "module",
-  "main": "./index.js",
-  "module": "./index.js",
-  "typings": "./index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
+    "./package.json": "./package.json",
     ".": {
-      "types": "./index.d.ts",
-      "import": "./index.js"
+      "development": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     }
   },
+  "files": [
+    "dist",
+    "!**/*.tsbuildinfo"
+  ],
   "dependencies": {
-    "@pixi/devtools": "^2.0.1",
     "diff": "^7.0.0",
-    "pixi-filters": "^6.0.4",
-    "pixi.js": "^8.9.1"
+    "pixi-filters": "^6.1.2",
+    "pixi.js": "^8.9.2",
+    "reflect-metadata": "^0.2.2",
+    "unzipit": "^1.4.3"
   },
   "devDependencies": {
-    "@types/diff": "^7.0.2"
+    "@types/diff": "^7.0.2",
+    "vite-plugin-conditional-compiler": "^0.3.1"
   }
 }

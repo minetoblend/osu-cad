@@ -1,4 +1,5 @@
-import { Line, Vec2 } from '@osucad/framework';
+import { Line } from "../../math/Line";
+import { Vec2 } from "../../math/Vec2";
 
 const max_res = 24;
 

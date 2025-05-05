@@ -1,11 +1,10 @@
 export { BasicScrollContainer } from './BasicScrollContainer';
-export { BlurContainer, type BlurContainerOptions } from './BlurContainer';
 export * from './CircularContainer';
 export { ButtonTrigger, ClickableContainer } from './ClickableContainer';
 export { Component } from './Component';
 export { CompositeDrawable, type CompositeDrawableOptions } from './CompositeDrawable';
 export { Container, type ContainerOptions } from './Container';
-export { DrawSizePreservingFillContainer } from './DrawSizePreservingFillContainer';
+export { DrawSizePreservingFillContainer, DrawSizePreservationStrategy } from './DrawSizePreservingFillContainer';
 export { FillDirection, FillFlowContainer } from './FillFlowContainer';
 export { FlowContainer } from './FlowContainer';
 export { Dimension, type DimensionEntry, GridContainer, GridSizeMode } from './GridContainer';

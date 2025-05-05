@@ -1,2 +1,1 @@
-export * from './OsuBeatmap';
-export * from './OsuBeatmapConverter';
+export * from './OsuBeatmapParser';

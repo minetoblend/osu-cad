@@ -1,10 +1,8 @@
-import type { Path } from '@osucad/framework';
-import type { ColorSource } from 'pixi.js';
-import { CompositeDrawable, Vec2 } from '@osucad/framework';
-import { Color } from 'pixi.js';
-import { DrawableSliderPath } from './DrawableSliderPath';
+import { CompositeDrawable, Path, Vec2 } from "@osucad/framework";
+import { Color, ColorSource } from "pixi.js";
+import { DrawableSliderPath } from "./DrawableSliderPath";
 
-export abstract class SliderBody extends CompositeDrawable {
+export class SliderBody extends CompositeDrawable {
   #path!: DrawableSliderPath;
 
   protected get path(): Path {
@@ -27,11 +25,11 @@ export abstract class SliderBody extends CompositeDrawable {
     this.#path.accentColor = value;
   }
 
-  get borderColor() {
+  override get borderColor() {
     return this.#path.borderColor;
   }
 
-  set borderColor(value) {
+  override set borderColor(value) {
     this.#path.borderColor = value;
   }
 
@@ -80,11 +78,8 @@ class DefaultDrawableSliderPath extends DrawableSliderPath {
 
     const { r, g, b, a } = this.accentColor.toRgba();
 
-    return new Color([
-      r,
-      g,
-      b,
-      (opacity_at_edge - (opacity_at_edge - opacity_at_centre) * position / DefaultDrawableSliderPath.GRADIENT_PORTION) * a,
-    ]);
+    const opacity = (opacity_at_edge - (opacity_at_edge - opacity_at_centre) * position / DefaultDrawableSliderPath.GRADIENT_PORTION);
+
+    return new Color([r, g, b, opacity * a]);
   }
 }

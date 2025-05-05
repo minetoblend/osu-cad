@@ -1,300 +1,158 @@
-import type { ControlPointInfo, HitWindows, IHasComboInformation, IHasXPosition, ISkin } from '@osucad/core';
-import type { IVec2 } from '@osucad/framework';
-import type { HitCircle } from './HitCircle';
-import type { Slider } from './Slider';
-import type { Spinner } from './Spinner';
-import { BeatmapDifficultyInfo, getSkinComboColor, HitObject, HitObjectProperty, HitSample, HitSound, hitsoundSerializer, SampleSet, SampleType, vec2Serializer } from '@osucad/core';
-import { Vec2 } from '@osucad/framework';
+import { BeatmapDifficultyInfo, HitObject, safeAssign } from "@osucad/core";
+import { Bindable, BindableBoolean, BindableNumber, IVec2, Vec2 } from "@osucad/framework";
 
-import { Color } from 'pixi.js';
-import { OsuHitWindows } from './OsuHitWindows';
+export interface OsuHitObjectOptions {
+  startTime?: number
+  position?: IVec2
+  x?: number
+  y?: number
+  newCombo?: boolean
+  comboOffset?: number
+}
 
-export abstract class OsuHitObject extends HitObject implements IHasComboInformation, IHasXPosition {
-  static readonly object_radius = 64;
+export abstract class OsuHitObject extends HitObject {
+  static readonly OBJECT_RADIUS = 64;
 
-  static readonly object_dimensions = new Vec2(OsuHitObject.object_radius * 2);
+  static readonly OBJECT_DIMENSIONS = new Vec2(OsuHitObject.OBJECT_RADIUS * 2);
 
-  static readonly base_scoring_distance = 100;
+  static readonly BASE_SCORING_DISTANCE = 100;
 
-  static readonly preempt_min = 450;
+  static readonly PREEMPT_MIN = 450;
 
-  static readonly preempt_mid = 1200;
+  static readonly PREEMPT_MID = 1200;
 
-  static readonly preempt_max = 1800;
+  static readonly PREEMPT_MAX = 1800;
 
-  #position = this.property('position', new Vec2(0, 0), vec2Serializer);
+  protected constructor(options: OsuHitObjectOptions = {}) {
+    super()
 
-  get positionBindable() {
-    return this.#position.bindable;
+    safeAssign(this, options)
   }
 
-  get position() {
-    return this.#position.value;
+  timePreempt = 600
+
+  timeFadeIn = 400
+
+  //#region position
+  readonly positionBindable = new Bindable(Vec2.zero())
+
+  get position(): Vec2 {
+    return this.positionBindable.value
   }
 
-  set position(value: Vec2) {
-    if (this.#position.value.equals(value))
-      return;
-
-    this.#position.value = value;
-  }
-
-  moveBy(delta: IVec2) {
-    this.position = this.position.add(delta);
+  set position(value: IVec2) {
+    this.positionBindable.value = Vec2.from(value)
   }
 
   get x() {
-    return this.position.x;
+    return this.position.x
+  }
+
+  set x(value: number) {
+    this.position = this.position.withX(value)
   }
 
   get y() {
-    return this.position.y;
+    return this.position.y
   }
 
-  get stackedPosition() {
-    return this.position.add(this.stackOffset);
+  set y(value: number) {
+    this.position = this.position.withY(value)
   }
 
-  get endPosition() {
-    return this.position;
+  //#endregion
+
+  //#region combo
+  readonly newComboBindable = new BindableBoolean()
+
+  get newCombo() {
+    return this.newComboBindable.value
   }
 
-  stackRoot?: string;
-
-  get stackedEndPosition() {
-    return this.endPosition.add(this.stackOffset);
+  set newCombo(value) {
+    this.newComboBindable.value = value
   }
 
-  #stackHeight = new HitObjectProperty(this, 'stackHeight', 0);
+  readonly comboOffsetBindable = new BindableNumber(0)
+      .withMinValue(0)
 
-  get stackHeightBindable() {
-    return this.#stackHeight.bindable;
+  get comboOffset() {
+    return this.comboOffsetBindable.value
   }
+
+  set comboOffset(value) {
+    this.comboOffsetBindable.value = value
+  }
+
+  readonly comboIndexBindable = new Bindable(0);
+
+  get comboIndex() {
+    return this.comboIndexBindable.value
+  }
+
+  set comboIndex(value) {
+    this.comboIndexBindable.value = value
+  }
+
+  readonly indexInComboBindable = new Bindable(0)
+
+  get indexInCombo() {
+    return this.indexInComboBindable.value;
+  }
+
+  set indexInCombo(value) {
+    this.indexInComboBindable.value = value;
+  }
+
+  //#endregion
+
+  readonly scaleBindable = new Bindable(1)
+
+  get scale() {
+    return this.scaleBindable.value
+  }
+
+  protected set scale(value) {
+    this.scaleBindable.value = value
+  }
+
+  public override applyDefaults(difficulty: BeatmapDifficultyInfo) {
+    super.applyDefaults(difficulty);
+
+    this.timePreempt = BeatmapDifficultyInfo.difficultyRange(difficulty.approachRate, OsuHitObject.PREEMPT_MAX, OsuHitObject.PREEMPT_MID, OsuHitObject.PREEMPT_MIN);
+
+    this.timeFadeIn = 400 * Math.min(1, this.timePreempt / OsuHitObject.PREEMPT_MIN);
+
+    this.scale = difficulty.calculateCircleSize(true);
+  }
+
+  // #region stacking
+  readonly stackHeightBindable = new Bindable(0)
 
   get stackHeight() {
-    return this.#stackHeight.value;
+    return this.stackHeightBindable.value
   }
 
-  set stackHeight(value: number) {
-    this.#stackHeight.value = value;
+  set stackHeight(value) {
+    this.stackHeightBindable.value = value
   }
 
   get stackOffset() {
     return new Vec2(this.stackHeight * this.scale * -6.4);
   }
 
-  get radius() {
-    return OsuHitObject.object_radius * this.scale;
+  get stackedPosition() {
+    return this.position.add(this.stackOffset)
   }
 
-  #scale = new HitObjectProperty(this, 'scale', 1);
-
-  get scaleBindable() {
-    return this.#scale.bindable;
+  get endPosition() {
+    // TODO
+    return this.position
   }
 
-  get scale() {
-    return this.#scale.value;
+  get stackedEndPosition() {
+    return this.endPosition.add(this.stackOffset)
   }
 
-  set scale(value: number) {
-    this.#scale.value = value;
-  }
-
-  readonly hasComboInformation = true;
-
-  #newCombo = this.property('newCombo', false);
-
-  get newComboBindable() {
-    return this.#newCombo.bindable;
-  }
-
-  get newCombo() {
-    return this.#newCombo.value;
-  }
-
-  set newCombo(value: boolean) {
-    this.#newCombo.value = value;
-  }
-
-  #comboOffset = this.property('comboOffset', 0);
-
-  get comboOffsetBindable() {
-    return this.#comboOffset.bindable;
-  }
-
-  get comboOffset() {
-    return this.#comboOffset.value;
-  }
-
-  set comboOffset(value: number) {
-    this.#comboOffset.value = value;
-  }
-
-  #indexInCurrentCombo = new HitObjectProperty(this, 'indexInCurrentCombo', 0);
-
-  get indexInComboBindable() {
-    return this.#indexInCurrentCombo.bindable;
-  }
-
-  get indexInCombo() {
-    return this.#indexInCurrentCombo.value;
-  }
-
-  set indexInCombo(value: number) {
-    this.#indexInCurrentCombo.value = value;
-  }
-
-  #comboIndex = new HitObjectProperty(this, 'comboIndex', 0);
-
-  get comboIndexBindable() {
-    return this.#comboIndex.bindable;
-  }
-
-  get comboIndex() {
-    return this.#comboIndex.value;
-  }
-
-  set comboIndex(value: number) {
-    this.#comboIndex.value = value;
-  }
-
-  #comboColor = new HitObjectProperty(this, 'comboColor', new Color(0xFFFFFF));
-
-  get comboColorBindable() {
-    return this.#comboColor.bindable;
-  }
-
-  set comboColor(value: Color) {
-    this.#comboColor.value = value;
-  }
-
-  get comboColor() {
-    return this.#comboColor.value;
-  }
-
-  #hitSound = this.property('hitSound', HitSound.Default, hitsoundSerializer);
-
-  get hitSoundBindable() {
-    return this.#hitSound.bindable;
-  }
-
-  get hitSound() {
-    return this.#hitSound.value;
-  }
-
-  set hitSound(value: HitSound) {
-    if (this.hitSound.equals(value))
-      return;
-
-    this.#hitSound.value = value;
-
-    this.requestApplyDefaults();
-  }
-
-  #hitSamples: HitSample[] = [];
-
-  get hitSamples(): readonly HitSample[] {
-    return this.#hitSamples;
-  }
-
-  protected addHitSample(...sample: HitSample[]) {
-    this.#hitSamples.push(...sample);
-  }
-
-  contains(position: IVec2): boolean {
-    return false;
-  }
-
-  isVisibleAtTime(time: number): boolean {
-    return time > this.startTime - this.timePreempt && time < this.endTime + 700;
-  }
-
-  protected override applyDefaultsToSelf(controlPointInfo: ControlPointInfo, difficulty: BeatmapDifficultyInfo) {
-    super.applyDefaultsToSelf(controlPointInfo, difficulty);
-
-    this.timePreempt = BeatmapDifficultyInfo.difficultyRange(difficulty.approachRate, OsuHitObject.preempt_max, OsuHitObject.preempt_mid, OsuHitObject.preempt_min);
-
-    this.timeFadeIn = 400 * Math.min(1, this.timePreempt / OsuHitObject.preempt_min);
-
-    this.scale = difficulty.calculateCircleSize(true);
-  }
-
-  override applyDefaults(controlPointInfo: ControlPointInfo, difficulty: BeatmapDifficultyInfo) {
-    super.applyDefaults(controlPointInfo, difficulty);
-
-    for (const g of this.nestedHitObjects) {
-      if (g instanceof OsuHitObject) {
-        g.comboColorBindable.bindTo(this.comboColorBindable);
-        g.stackHeightBindable.bindTo(this.stackHeightBindable);
-      }
-    }
-
-    this.#hitSamples = [];
-    this.createHitSamples(controlPointInfo);
-  }
-
-  protected createHitSamples(controlPointInfo: ControlPointInfo) {
-    const samplePoint = controlPointInfo.samplePointAt(this.startTime);
-
-    let sampleSet = this.hitSound.sampleSet;
-    if (sampleSet === SampleSet.Auto)
-      sampleSet = samplePoint.sampleSet;
-
-    const volume = controlPointInfo.volumeAt(this.startTime);
-
-    this.addHitSample(
-      new HitSample(
-        this.startTime,
-        sampleSet,
-        SampleType.Normal,
-        volume,
-        samplePoint.sampleIndex,
-      ),
-    );
-
-    let additionSampleSet = this.hitSound.additionSampleSet;
-    if (additionSampleSet === SampleSet.Auto)
-      additionSampleSet = sampleSet;
-
-    for (const sampleType of this.hitSound.getSampleTypes()) {
-      this.addHitSample(
-        new HitSample(
-          this.startTime,
-          additionSampleSet,
-          sampleType,
-          samplePoint.volume,
-          samplePoint.sampleIndex,
-        ),
-      );
-    }
-  }
-
-  isHitCircle(): this is HitCircle {
-    return false;
-  }
-
-  isSlider(): this is Slider {
-    return false;
-  }
-
-  isSpinner(): this is Spinner {
-    return false;
-  }
-
-  protected override createHitWindows(): HitWindows {
-    return new OsuHitWindows();
-  }
-
-  getComboColor(skin: ISkin): Color {
-    return getSkinComboColor(this, skin);
-  }
-
-  lazyEndPosition: Vec2 | null = null;
-
-  lazyTravelTime: number | null = null;
-
-  lazyTravelDistance = 0;
-
-  lazyTravelPath: { position: Vec2; time: number }[] | null = null;
+  // #endregion
 }

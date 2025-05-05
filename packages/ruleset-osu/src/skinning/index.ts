@@ -1,1 +1,2 @@
-export * from './stable';
+export * from './OsuSkinComponents';
+export * from './legacy';

@@ -1,13 +1,8 @@
-import type { Action, InjectionToken } from '@osucad/framework';
-import type { ISkin } from './ISkin';
+import { Action, injectionToken } from "@osucad/framework";
+import { ISkin } from "./ISkin";
 
 export interface ISkinSource extends ISkin {
-  sourceChanged: Action;
-
-  findProvider: (lookupFunction: (skin: ISkin) => boolean) => ISkin | null;
-
-  get allSources(): ISkin[];
+  readonly sourceChanged: Action
 }
 
-// eslint-disable-next-line ts/no-redeclare
-export const ISkinSource: InjectionToken<ISkinSource> = Symbol('ISkinSource');
+export const ISkinSource = injectionToken<ISkinSource>()

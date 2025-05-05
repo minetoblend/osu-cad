@@ -1,4 +1,4 @@
-import { PIXIContainer } from '../../pixi';
+import { Container as PIXIContainer } from 'pixi.js';
 import { Drawable } from './Drawable';
 
 export class EmptyDrawable extends Drawable {

@@ -11,38 +11,39 @@ describe('drawable layout', () => {
     let child3: Container;
     let child4: Container;
 
-    const parent = Container.create({
+    const parent = new Container({
       width: 100,
       height: 100,
       label: 'parent',
       children: [
-        (child1 = Container.create({
+        child1 = new Container({
           width: 50,
           height: 50,
           label: 'child1',
-        })),
-        (child2 = Container.create({
+        }),
+        child2 = new Container({
           relativeSizeAxes: Axes.X,
           width: 0.25,
           height: 50,
           label: 'child2',
-        })),
-        (child3 = Container.create({
+        }),
+        child3 = new Container({
           relativeSizeAxes: Axes.Y,
           width: 50,
           height: 0.5,
           label: 'child3',
-        })),
-        (child4 = Container.create({
+        }),
+        child4 = new Container({
           relativeSizeAxes: Axes.Both,
           width: 0.75,
           height: 1,
           label: 'child4',
-        })),
+        }),
       ],
     });
 
     loadDrawable(parent, new FramedClock(), new DependencyContainer());
+    parent.updateSubTree()
 
     expect(child1.drawSize).toEqual({ x: 50, y: 50 });
     expect(child2.drawSize).toEqual({ x: 25, y: 50 });
@@ -86,6 +87,7 @@ describe('drawable layout', () => {
     });
 
     loadDrawable(a, new FramedClock(), new DependencyContainer());
+    a.updateSubTree()
 
     expect(a.drawSize).toEqual({ x: 100, y: 100 });
     expect(b.drawSize).toEqual({ x: 50, y: 100 });

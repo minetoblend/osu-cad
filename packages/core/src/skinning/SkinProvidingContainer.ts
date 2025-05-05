@@ -1,234 +1,145 @@
-import type { AudioChannel, Drawable, ReadonlyDependencyContainer, Sample } from '@osucad/framework';
-import type { Texture } from 'pixi.js';
-import type { HitSample } from '../hitsounds/HitSample';
-import type { ISkin } from './ISkin';
-import type { ISkinComponentLookup } from './ISkinComponentLookup';
-import type { SkinConfigurationLookup } from './SkinConfigurationLookup';
-import { Action, Axes, Container, DependencyContainer, dependencyLoader } from '@osucad/framework';
-import { ISkinSource } from './ISkinSource';
-import { SkinComboColorLookup } from './SkinComboColorLookup';
+import { Action, Axes, Bindable, Container, ContainerOptions, Drawable, provide, ReadonlyDependencyContainer, ValueChangedEvent } from "@osucad/framework";
+import { Color, Texture } from "pixi.js";
+import { ISkin, SkinComponentLookup } from "./ISkin";
+import { ISkinSource } from "./ISkinSource";
+import { SkinConfigurationLookup, SkinConfigurationValue } from "./SkinConfiguration";
 
-export class SkinProvidingContainer extends Container implements ISkinSource {
-  readonly sourceChanged = new Action();
-
-  #parentSource!: ISkinSource | null;
-
-  get parentSource(): ISkinSource | null {
-    return this.#parentSource;
-  }
-
-  protected get allowFallingBackToParent(): boolean {
-    return true;
-  }
-
-  allowDrawableLookup(lookup: ISkinComponentLookup): boolean {
-    return true;
-  }
-
-  allowTextureLookup(componentName: string): boolean {
-    return true;
-  }
-
-  allowSampleLookup(sampleInfo: string | HitSample): boolean {
-    return true;
-  }
-
-  get allowConfigurationLookup(): boolean {
-    return true;
-  }
-
-  get allowColorLookup(): boolean {
-    return true;
-  }
-
-  #skinSources: { skin: ISkin; wrapped: DisableableSkinSource }[] = [];
-
-  constructor(skin?: ISkin) {
-    super();
-    this.relativeSizeAxes = Axes.Both;
-
-    if (skin)
-      this.setSources([skin]);
-  }
-
-  protected override createChildDependencies(parentDependencies: ReadonlyDependencyContainer): DependencyContainer {
-    const dependencies = new DependencyContainer(parentDependencies);
-
-    dependencies.provide(ISkinSource, this);
-
-    return dependencies;
-  }
-
-  @dependencyLoader()
-  [Symbol('load')](dependencies: DependencyContainer) {
-    this.#parentSource = dependencies.resolveOptional(ISkinSource);
-    if (this.#parentSource)
-      this.#parentSource.sourceChanged.addListener(this.triggerSourceChanged, this);
-
-    this.triggerSourceChanged();
-  }
-
-  findProvider(lookupFunction: (skin: ISkin) => boolean): ISkin | null {
-    for (const { skin, wrapped } of this.#skinSources) {
-      if (lookupFunction(wrapped))
-        return skin;
-    }
-
-    if (!this.allowFallingBackToParent)
-      return null;
-
-    return this.parentSource?.findProvider(lookupFunction) ?? null;
-  }
-
-  get allSources(): ISkin[] {
-    const sources: ISkin[] = [];
-    for (const { skin } of this.#skinSources)
-      sources.push(skin);
-
-    if (this.allowFallingBackToParent && this.parentSource)
-      sources.push(...this.parentSource.allSources);
-
-    return sources;
-  }
-
-  getDrawableComponent(lookup: ISkinComponentLookup): Drawable | null {
-    for (const { wrapped } of this.#skinSources) {
-      const sourceDrawable = wrapped.getDrawableComponent(lookup);
-      if (sourceDrawable != null)
-        return sourceDrawable;
-    }
-
-    if (!this.allowFallingBackToParent)
-      return null;
-
-    return this.parentSource?.getDrawableComponent(lookup) ?? null;
-  }
-
-  getTexture(componentName: string): Texture | null {
-    for (const { wrapped } of this.#skinSources) {
-      const sourceTexture = wrapped.getTexture(componentName);
-      if (sourceTexture != null)
-        return sourceTexture;
-    }
-
-    if (!this.allowFallingBackToParent)
-      return null;
-
-    return this.parentSource?.getTexture(componentName) ?? null;
-  }
-
-  getSample(channel: AudioChannel, sampleInfo: string | HitSample): Sample | null {
-    for (const { wrapped } of this.#skinSources) {
-      const sourceSample = wrapped.getSample(channel, sampleInfo);
-      if (sourceSample != null)
-        return sourceSample;
-    }
-
-    if (!this.allowFallingBackToParent)
-      return null;
-
-    return this.parentSource?.getSample(channel, sampleInfo) ?? null;
-  }
-
-  getConfig<T>(lookup: SkinConfigurationLookup<T>): T | null {
-    for (const { wrapped } of this.#skinSources) {
-      const sourceConfig = wrapped.getConfig(lookup);
-      if (sourceConfig != null)
-        return sourceConfig;
-    }
-
-    if (!this.allowFallingBackToParent)
-      return null;
-
-    return this.parentSource?.getConfig(lookup) ?? null;
-  }
-
-  protected setSources(sources: ISkin[]) {
-    for (const skin of this.#skinSources) {
-      if (this.#isSkinSource(skin.skin))
-        skin.skin.sourceChanged.removeListener(this.triggerSourceChanged, this);
-    }
-
-    this.#skinSources = sources.map(skin => ({
-      skin,
-      wrapped: new DisableableSkinSource(skin, this),
-    }));
-
-    for (const skin of this.#skinSources) {
-      if (this.#isSkinSource(skin.skin))
-        skin.skin.sourceChanged.addListener(this.triggerSourceChanged, this);
-    }
-  }
-
-  protected refreshSources() {}
-
-  protected triggerSourceChanged() {
-    this.refreshSources();
-
-    this.sourceChanged.emit();
-  }
-
-  override dispose(isDisposing: boolean = true) {
-    super.dispose(isDisposing);
-
-    this.sourceChanged.removeAllListeners();
-
-    if (this.parentSource !== null)
-      this.parentSource.sourceChanged.removeListener(this.triggerSourceChanged, this);
-
-    for (const skin of this.#skinSources) {
-      if (this.#isSkinSource(skin.skin))
-        skin.skin.sourceChanged.removeListener(this.triggerSourceChanged, this);
-    }
-  }
-
-  #isSkinSource(skin: ISkin): skin is ISkinSource {
-    return skin && 'sourceChanged' in skin;
-  }
+export interface SkinProvidingContainerOptions extends ContainerOptions {
+  skin?: ISkin
 }
 
-class DisableableSkinSource implements ISkin {
-  constructor(readonly skin: ISkin, readonly provider: SkinProvidingContainer) {}
+@provide(ISkinSource)
+export class SkinProvidingContainer extends Container implements ISkinSource {
+  constructor(options: SkinProvidingContainerOptions = {}) {
+    super();
 
-  getDrawableComponent(lookup: ISkinComponentLookup): Drawable | null {
-    if (this.provider.allowDrawableLookup(lookup))
-      return this.skin.getDrawableComponent(lookup);
+    this.with({
+      relativeSizeAxes: Axes.Both,
+      ...options
+    })
+  }
 
-    return null;
+  private readonly activeSkin = new Bindable<ISkin | null>(null)
+
+  get skin() {
+    return this.activeSkin.value
+  }
+
+  set skin(value) {
+    this.activeSkin.value = value
+  }
+
+  #parentSource?: ISkinSource
+
+  protected override load(dependencies: ReadonlyDependencyContainer) {
+    super.load(dependencies);
+
+    this.#parentSource = dependencies.resolveOptional(ISkinSource)
+  }
+
+  protected override loadComplete() {
+    super.loadComplete();
+
+    this.activeSkin.bindValueChanged(this.#skinChanged, this)
+  }
+
+  readonly sourceChanged = new Action();
+
+  protected get allSources() {
+    const sources: ISkin[] = []
+
+    if (this.skin)
+      sources.push(this.skin)
+
+    if (this.#parentSource)
+      sources.push(this.#parentSource)
+
+    return sources
   }
 
   getTexture(componentName: string): Texture | null {
-    if (this.provider.allowTextureLookup(componentName))
-      return this.skin.getTexture(componentName);
-
-    return null;
-  }
-
-  getSample(channel: AudioChannel, sampleInfo: string | HitSample): Sample | null {
-    if (this.provider.allowSampleLookup(sampleInfo))
-      return this.skin.getSample(channel, sampleInfo);
-
-    return null;
-  }
-
-  getConfig<T>(key: SkinConfigurationLookup<T>): T | null {
-    if (key instanceof SkinComboColorLookup) {
-      if (this.provider.allowColorLookup)
-        return this.skin.getConfig(key) as any;
-
-      return null;
+    for (const source of this.allSources) {
+      const texture = source.getTexture(componentName)
+      if (texture)
+        return texture
     }
 
-    if (this.provider.allowConfigurationLookup)
-      return this.skin.getConfig(key);
-
-    return null;
+    return null
   }
 
-  toString() {
-    return `DisableableSkinSource { Skin: ${this.skin} }`;
+  getDrawableComponent(lookup: SkinComponentLookup): Drawable | null {
+    for (const source of this.allSources) {
+      const drawable = source.getDrawableComponent(lookup)
+      if (drawable)
+        return drawable
+    }
+
+    return null
   }
 
-  dispose() {
+  getConfigValue<T extends SkinConfigurationLookup>(lookup: T): SkinConfigurationValue<T> | null {
+    for (const source of this.allSources) {
+      const value = source.getConfigValue(lookup)
+      if (value)
+        return value
+    }
+
+    return null
+  }
+
+  readonly #bindables = new Map<string, Bindable<any>>()
+  readonly #sourceBindables = new Map<string, Bindable<any>>()
+
+  getConfigBindable<T extends SkinConfigurationLookup>(lookup: T): Bindable<SkinConfigurationValue<T> | null> {
+    const cached = this.#bindables.get(lookup)
+    if (cached)
+      return cached.getBoundCopy();
+
+    const bindable = this.#getConfigBindable(lookup)
+    const newBindable = bindable.getBoundCopy()
+
+    this.#sourceBindables.set(lookup, bindable);
+    this.#bindables.set(lookup, newBindable);
+
+    return newBindable.getBoundCopy();
+  }
+
+  #getConfigBindable<T extends SkinConfigurationLookup>(lookup: T): Bindable<SkinConfigurationValue<T> | null> {
+    for (const source of this.allSources) {
+      const bindable = source.getConfigBindable(lookup)
+      if (bindable) {
+        return bindable
+      }
+    }
+
+    return new Bindable(null) as any
+  }
+
+  getComboColor(comboIndex: number): Color {
+    for (const source of this.allSources) {
+      const value = source.getComboColor(comboIndex)
+      if (value)
+        return value
+    }
+
+    return new Color(0xffffff)
+  }
+
+  #skinChanged(evt: ValueChangedEvent<ISkin | null>) {
+    for (const [lookup, bindable] of this.#bindables) {
+      const sourceBindable = this.#sourceBindables.get(lookup)
+
+      if (sourceBindable) {
+        bindable.unbindFrom(sourceBindable)
+        this.#sourceBindables.delete(lookup)
+      }
+
+      const newSourceBindable = this.#getConfigBindable(lookup as any)
+
+      bindable.bindTo(newSourceBindable)
+      this.#sourceBindables.set(lookup, newSourceBindable)
+    }
+
+    this.sourceChanged.emit()
   }
 }

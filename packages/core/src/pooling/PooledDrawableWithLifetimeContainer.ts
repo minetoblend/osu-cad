@@ -1,9 +1,8 @@
 import type { Drawable } from '@osucad/framework';
-import type { LifetimeEntry } from './LifetimeEntry';
 import { CompositeDrawable } from '@osucad/framework';
-import { DrawableHitObject } from '../hitObjects/drawables/DrawableHitObject';
 import { LifetimeBoundaryCrossingDirection } from './LifetimeBoundaryCrossingDirection';
 import { LifetimeBoundaryKind } from './LifetimeBoundaryKind';
+import type { LifetimeEntry } from './LifetimeEntry';
 import { LifetimeEntryManager } from './LifetimeEntryManager';
 
 export abstract class PooledDrawableWithLifetimeContainer<TEntry extends LifetimeEntry, TDrawable extends Drawable> extends CompositeDrawable {
@@ -21,12 +20,6 @@ export abstract class PooledDrawableWithLifetimeContainer<TEntry extends Lifetim
 
   get aliveObjects() {
     return this.#aliveDrawableMap.values();
-  }
-
-  get objects() {
-    return (this.internalChildren as DrawableHitObject[])
-      .filter(it => it instanceof DrawableHitObject)
-      .toSorted((a, b) => a.hitObject!.startTime - b.hitObject!.startTime);
   }
 
   #pastLifetimeExtension = 0;
@@ -110,7 +103,7 @@ export abstract class PooledDrawableWithLifetimeContainer<TEntry extends Lifetim
   };
 
   clear() {
-    for (const [entry, drawable] of [...this.entries.entries()]) {
+    for (const entry of [...this.entries.keys()]) {
       this.removeEntry(entry);
     }
 

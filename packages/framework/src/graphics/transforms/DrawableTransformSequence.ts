@@ -1,5 +1,5 @@
 import type { Vec2 } from '../../math';
-import type { ColorSource } from '../../pixi';
+import type { ColorSource } from 'pixi.js';
 import type { Drawable } from '../drawables/Drawable';
 import { EasingFunction } from './EasingFunction';
 import { TransformSequence } from './TransformSequence';

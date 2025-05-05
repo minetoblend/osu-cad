@@ -12,7 +12,7 @@ export async function loadTexture(src: string | ArrayBuffer, options: TextureSou
     const source = new ImageSource({
       resource: imageBitmap,
       alphaMode: 'premultiply-alpha-on-upload',
-      label: typeof src === 'string' ? src : undefined,
+      label: typeof src === 'string' ? src : options?.label,
       resolution: 1,
       ...options,
     });
@@ -21,7 +21,7 @@ export async function loadTexture(src: string | ArrayBuffer, options: TextureSou
 
     return new Texture({
       source,
-      label: typeof src === 'string' ? src : undefined,
+      label: typeof src === 'string' ? src : options?.label,
     });
   }
   catch (error) {

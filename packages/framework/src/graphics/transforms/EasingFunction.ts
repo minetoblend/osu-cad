@@ -13,7 +13,6 @@ const back_const2 = back_const * 1.525;
 
 const bounce_const = 1 / 2.75;
 
-// eslint-disable-next-line ts/no-redeclare,ts/no-namespace
 export namespace EasingFunction {
   export const None: EasingFunction = () => 1;
   export const Default: EasingFunction = time => time;

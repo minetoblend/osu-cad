@@ -1,36 +1,36 @@
-import type { DrawableSlider } from './DrawableSlider';
-import { DrawableHitObject, SkinnableDrawable } from '@osucad/core';
-import { Anchor, Axes, CompositeDrawable, type ReadonlyDependencyContainer, resolved } from '@osucad/framework';
-import { OsuSkinComponentLookup } from '../../skinning/stable/OsuSkinComponentLookup';
-import { OsuHitObject } from '../OsuHitObject';
+import { SkinnableDrawable } from "@osucad/core";
+import { Anchor, Axes, CompositeDrawable, ReadonlyDependencyContainer, resolved } from "@osucad/framework";
+import { OsuSkinComponents } from "../../skinning/OsuSkinComponents";
+import { OsuHitObject } from "../OsuHitObject";
+import { DrawableSlider } from "./DrawableSlider";
 
 export class DrawableSliderBall extends CompositeDrawable {
   static readonly FOLLOW_AREA = 2.4;
 
-  @resolved(DrawableHitObject)
-  drawableSlider!: DrawableSlider;
+  @resolved(() => DrawableSlider)
+  private drawableSlider!: DrawableSlider;
+
+  private ball!: SkinnableDrawable
 
   protected override load(dependencies: ReadonlyDependencyContainer) {
     super.load(dependencies);
 
-    this.size = OsuHitObject.object_dimensions;
+    this.size = OsuHitObject.OBJECT_DIMENSIONS;
     this.origin = Anchor.Center;
 
     this.addAllInternal(
-      new SkinnableDrawable(OsuSkinComponentLookup.SliderFollowCircle).with({
-        relativeSizeAxes: Axes.Both,
-        anchor: Anchor.Center,
-        origin: Anchor.Center,
-      }),
-      this.ball = new SkinnableDrawable(OsuSkinComponentLookup.SliderBall).with({
-        relativeSizeAxes: Axes.Both,
-        anchor: Anchor.Center,
-        origin: Anchor.Center,
-      }),
+        new SkinnableDrawable(OsuSkinComponents.SliderFollowCircle).with({
+          relativeSizeAxes: Axes.Both,
+          anchor: Anchor.Center,
+          origin: Anchor.Center,
+        }),
+        this.ball = new SkinnableDrawable(OsuSkinComponents.SliderBall).with({
+          relativeSizeAxes: Axes.Both,
+          anchor: Anchor.Center,
+          origin: Anchor.Center,
+        }),
     );
   }
-
-  protected ball!: SkinnableDrawable;
 
   override clearTransformsAfter(time: number, propagateChildren?: boolean, targetMember?: string) {
     super.clearTransformsAfter(time, false, targetMember);

@@ -1,4 +1,4 @@
-import { Color, type ColorSource } from '../pixi';
+import { Color, type ColorSource } from 'pixi.js';
 
 export function lerp(a: number, b: number, t: number): number {
   return a + (b - a) * t;

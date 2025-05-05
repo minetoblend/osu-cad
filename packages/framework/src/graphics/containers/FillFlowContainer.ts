@@ -1,8 +1,5 @@
-import type { Properties } from '@pixi/devtools';
 import type { EasingFunction } from '../transforms';
 import type { ContainerOptions } from './Container';
-import { compositeDrawableProps } from '../../devtools/compositeDrawableProps';
-import { DevToolProps, easingFunctionToString } from '../../devtools/devToolProps';
 import { type IVec2, Vec2 } from '../../math';
 import { definitelyBigger } from '../../utils/definitelyBigger';
 import { Anchor, Axes, axesToString, type Drawable } from '../drawables';
@@ -230,56 +227,6 @@ export class FillFlowContainer<T extends Drawable = Drawable> extends FlowContai
 
   protected forceNewRow(drawable: Drawable): boolean {
     return false;
-  }
-
-  override get devToolProps(): Properties[] {
-    return [
-      ...compositeDrawableProps,
-      {
-        prop: 'direction',
-        entry: {
-          type: 'select',
-          section: 'FillFlowContainer',
-          options: {
-            options: ['Full', 'Horizontal', 'Vertical'],
-          },
-        },
-      },
-      {
-        prop: 'spacing',
-        entry: {
-          type: 'vector2',
-          section: 'FillFlowContainer',
-          options: {
-            x: { label: 'x' },
-            y: { label: 'y' },
-          },
-        },
-      },
-      {
-        prop: 'layoutDuration',
-        entry: {
-          type: 'number',
-          section: 'FillFlowContainer',
-          options: {
-            x: { label: 'x' },
-            y: { label: 'y' },
-          },
-        },
-      },
-      DevToolProps.easingFunction('layoutEasing', 'FillFlowContainer'),
-    ];
-  }
-
-  override getDevtoolValue(prop: string): any {
-    switch (prop) {
-      case 'spacing':
-        return [this.spacing.x, this.spacing.y];
-      case 'layoutEasing':
-        return easingFunctionToString(this.layoutEasing);
-    }
-
-    return super.getDevtoolValue(prop);
   }
 }
 

@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://osucad.com">
-    <img width="200" src="./packages/resources/resources-raw/textures/logo-text.png">
+    <img width="200" src="docs/logo-text.png">
   </a>
 </p>
 
@@ -35,25 +35,13 @@ nx run <package-name>:serve
 ## Project structure
 
 ```tree
+apps
+├── skinning-demo       # A small demo for loading a skin & beatmap
 packages           
-├── beatmap-viewer      # An online beatmap viewer
-├── core              # Core logic for the editor & osu ruleset
-├── editor              # Legacy editor package, mostly moved to core package by now
-├── electron-app        # Osucad desktop client
+├── core                # Core logic for the editor & osu ruleset
 ├── framework           # Game engine that powers the project, a typescript port of osu-framework
-├── multiplayer         # Logic for keeping everything in sync during multiplayer
-├── resources           # Sprites & samples for the editor
-├── ruleset-mania       # Mania ruleset
-├── serialization       # Typescript port of kotlinx-serialization
-├── server              # Server that hosts the multiplayer logic
-└── web                 # Osucad web client
+└── ruleset-osu         # Osu ruleset
 ```
-
-Most things can be found in the [core](./packages/core) package.
-The editor package is currently being moved into the core package, with plans to completely remove it once that is completed.
-The osu ruleset is currently part of the core package, however it will eventually get its own package.
-
-The desktop client package is currently broken, until the migration to the core package is complete.
 
 ## Support this project
 

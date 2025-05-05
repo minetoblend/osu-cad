@@ -1,6 +1,5 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "defaultBase": "master",
   "namedInputs": {
     "default": [
       "{projectRoot}/**/*",
@@ -9,33 +8,33 @@
     "production": [
       "default",
       "!{projectRoot}/.eslintrc.json",
-      "!{projectRoot}/eslint.config.js",
+      "!{projectRoot}/eslint.config.mjs",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
       "!{projectRoot}/tsconfig.spec.json",
-      "!{projectRoot}/src/test-setup.[jt]s",
-      "!{projectRoot}/test-setup.[jt]s"
+      "!{projectRoot}/src/test-setup.[jt]s"
     ],
     "sharedGlobals": [
       "{workspaceRoot}/.github/workflows/ci.yml"
     ]
   },
-  "release": {
-    "projects": [
-      "packages/framework",
-      "packages/resources",
-      "packages/core",
-      "packages/ruleset-osu",
-      "packages/ruleset-mania",
-      "packages/multiplayer"
-    ],
-    "version": {
-      "generatorOptions": {
-        "packageRoot": "dist/packages/{projectName}",
-        "currentVersionResolver": "git-tag"
-      }
-    }
-  },
+  "nxCloudId": "681546f782a54f6d02131408",
   "plugins": [
+    {
+      "plugin": "@nx/js/typescript",
+      "options": {
+        "typecheck": {
+          "targetName": "typecheck"
+        },
+        "build": {
+          "targetName": "build",
+          "configName": "tsconfig.lib.json",
+          "buildDepsName": "build-deps",
+          "watchDepsName": "watch-deps"
+        }
+      },
+      "exclude": [
+      ]
+    },
     {
       "plugin": "@nx/eslint/plugin",
       "options": {
@@ -48,8 +47,22 @@
         "buildTargetName": "build",
         "testTargetName": "test",
         "serveTargetName": "serve",
+        "devTargetName": "dev",
         "previewTargetName": "preview",
-        "serveStaticTargetName": "serve-static"
+        "serveStaticTargetName": "serve-static",
+        "typecheckTargetName": "typecheck",
+        "buildDepsTargetName": "build-deps",
+        "watchDepsTargetName": "watch-deps"
+      }
+    },
+    {
+      "plugin": "@nx/js/typescript",
+      "include": [
+      ],
+      "options": {
+        "typecheck": {
+          "targetName": "typecheck"
+        }
       }
     }
   ],
@@ -57,43 +70,19 @@
     "@nx/web:application": {
       "style": "css",
       "linter": "eslint",
+      "unitTestRunner": "none",
       "e2eTestRunner": "none"
     }
   },
+  "release": {
+    "version": {
+      "preVersionCommand": "pnpm dlx nx run-many -t build"
+    }
+  },
   "targetDefaults": {
-    "nx-release-publish": {
-      "options": {
-        "packageRoot": "dist/packages/{projectName}"
-      }
-    },
-    "@nx/vite:build": {
-      "cache": true,
+    "test": {
       "dependsOn": [
         "^build"
-      ],
-      "inputs": [
-        "production",
-        "^production"
-      ]
-    },
-    "@nx/js:swc": {
-      "cache": true,
-      "dependsOn": [
-        "^build"
-      ],
-      "inputs": [
-        "production",
-        "^production"
-      ]
-    },
-    "@nx/esbuild:esbuild": {
-      "cache": true,
-      "dependsOn": [
-        "^build"
-      ],
-      "inputs": [
-        "production",
-        "^production"
       ]
     }
   }

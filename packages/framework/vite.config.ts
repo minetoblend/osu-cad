@@ -1,55 +1,53 @@
-import path from 'node:path';
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
-import { defineConfig } from 'vite';
-import dts from 'vite-plugin-dts';
 /// <reference types='vitest' />
+import * as path from 'path';
+import { defineConfig } from 'vite';
+import ConditionalCompile from "vite-plugin-conditional-compiler";
+import dts from 'vite-plugin-dts';
 
-export default defineConfig({
+export default defineConfig(() => ({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/packages/framework',
-
   plugins: [
-    nxViteTsPaths(),
-    dts({
-      entryRoot: 'src',
-      tsconfigPath: path.join(__dirname, 'tsconfig.lib.json'),
-    }),
+    dts({ entryRoot: 'src', tsconfigPath: path.join(__dirname, 'tsconfig.lib.json') }),
+    ConditionalCompile()
   ],
-
+  worker: {
+    format: 'es',
+  },
+  esbuild: {
+    target: 'chrome136',
+  },
   build: {
-    outDir: '../../dist/packages/framework',
+    outDir: './dist',
     emptyOutDir: true,
-    minify: false,
-    reportCompressedSize: false,
-    target: 'esnext',
+    reportCompressedSize: true,
+    commonjsOptions: {
+    },
     lib: {
       entry: 'src/index.ts',
-      name: 'framework',
-      fileName: 'index',
-      formats: ['es'],
+      name: '@osucad/framework',
+      fileName: (format, entryName) =>
+          `${entryName.replace(/node_modules\//g, 'external/')}.js`,
+      formats: ['es' as const],
     },
+    minify: false,
+    target: 'modules',
     rollupOptions: {
+      output: {
+      },
       // External packages that should not be bundled into your library.
-      external: [
-        'pixi.js',
-      ],
+      external: ['pixi.js', 'pixi-filters'],
     },
   },
-
-  esbuild: {
-    target: 'chrome113',
-  },
-
   test: {
     watch: false,
     globals: true,
     environment: 'node',
-    include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-
+    include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     reporters: ['default'],
     coverage: {
-      reportsDirectory: '../../coverage/packages/framework',
-      provider: 'v8',
-    },
+      reportsDirectory: './test-output/vitest/coverage',
+      provider: 'v8' as const,
+    }
   },
-});
+}));

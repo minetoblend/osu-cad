@@ -1,12 +1,11 @@
-import type { FontDefinition } from './FontDefinition';
-import { BitmapFontManager } from 'pixi.js';
+import { BitmapFontManager, BitmapText, Container, TextStyle, type TextStyleOptions } from 'pixi.js';
 import { Cached } from '../../caching';
-import { PIXIBitmapText, PIXIContainer, PIXITextStyle, type PIXITextStyleOptions } from '../../pixi';
 import { Drawable, type DrawableOptions, Invalidation } from '../drawables/Drawable';
+import type { FontDefinition } from './FontDefinition';
 
 export interface SpriteTextOptions extends DrawableOptions {
   text?: string;
-  style?: PIXITextStyle | PIXITextStyleOptions;
+  style?: TextStyle | TextStyleOptions;
   font?: FontDefinition;
 }
 
@@ -21,18 +20,16 @@ export class SpriteText extends Drawable {
     this.text = text ?? '';
 
     if (style) {
-      this.#textStyle = new PIXITextStyle(style);
-    }
-    else if (font) {
-      this.#textStyle = new PIXITextStyle(font.style);
-    }
-    else {
-      this.#textStyle = new PIXITextStyle();
+      this.#textStyle = new TextStyle(style);
+    } else if (font) {
+      this.#textStyle = new TextStyle(font.style);
+    } else {
+      this.#textStyle = new TextStyle();
     }
 
     this.#textStyle.on('update', () => this.#textBacking.invalidate());
 
-    this.#textDrawNode = new PIXIBitmapText({
+    this.#textDrawNode = new BitmapText({
       style: this.#textStyle,
     });
 
@@ -42,21 +39,21 @@ export class SpriteText extends Drawable {
     this.drawNode.addChild(this.#textDrawNode);
   }
 
-  readonly #textDrawNode: PIXIBitmapText;
+  readonly #textDrawNode: BitmapText;
 
-  createDrawNode(): PIXIContainer {
-    return new PIXIContainer();
+  createDrawNode(): Container {
+    return new Container();
   }
 
   #textBacking = new Cached();
 
-  #textStyle: PIXITextStyle;
+  #textStyle: TextStyle;
 
   get style() {
     return this.#textStyle;
   }
 
-  set style(value: PIXITextStyle) {
+  set style(value: TextStyle) {
     this.#textStyle = value;
     this.#textDrawNode.style = value;
     this.#textBacking.invalidate();

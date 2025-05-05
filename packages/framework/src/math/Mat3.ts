@@ -1,4 +1,3 @@
-/* eslint-disable style/max-statements-per-line */
 import type { Matrix } from 'pixi.js';
 import type { Quad } from './Quad';
 import { almostEquals } from '../utils';

@@ -180,7 +180,7 @@ export abstract class RangeConstrainedBindable<T> extends Bindable<T> {
     const ctor = this.constructor;
 
     // @ts-expect-error - doing stuff here that I probably shouldn't
-    // eslint-disable-next-line new-cap
+     
     const copy = new ctor(this.default);
 
     copy.bindTo(this);

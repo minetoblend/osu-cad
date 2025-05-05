@@ -48,9 +48,9 @@ export class PathApproximator {
             const l = Math.min(k, n - p - i);
 
             points[i + k] = (points[i + k]
-              .scale(l)
-              .add(points[i + k + 1]))
-              .divF(l + 1);
+                .scale(l)
+                .add(points[i + k + 1]))
+                .divF(l + 1);
           }
         }
 
@@ -135,20 +135,20 @@ export class PathApproximator {
       const v1 = i > 0 ? controlPoints[i - 1] : controlPoints[i];
       const v2 = controlPoints[i];
       const v3 = i < controlPointsLength - 1
-        ? controlPoints[i + 1]
-        : v2.add(v2).sub(v1);
+          ? controlPoints[i + 1]
+          : v2.add(v2).sub(v1);
 
       const v4 = i < controlPointsLength - 2
-        ? controlPoints[i + 2]
-        : v3.add(v3).sub(v2);
+          ? controlPoints[i + 2]
+          : v3.add(v3).sub(v2);
 
       for (let c = 0; c < PathApproximator.CATMULL_DETAIL; c++) {
         output.push(
-          PathApproximator._catmullFindPoint(v1, v2, v3, v4, Math.fround(Math.fround(c) / PathApproximator.CATMULL_DETAIL)),
+            PathApproximator._catmullFindPoint(v1, v2, v3, v4, Math.fround(Math.fround(c) / PathApproximator.CATMULL_DETAIL)),
         );
 
         output.push(
-          PathApproximator._catmullFindPoint(v1, v2, v3, v4, Math.fround(Math.fround(c + 1) / PathApproximator.CATMULL_DETAIL)),
+            PathApproximator._catmullFindPoint(v1, v2, v3, v4, Math.fround(Math.fround(c + 1) / PathApproximator.CATMULL_DETAIL)),
         );
       }
     }
@@ -201,8 +201,8 @@ export class PathApproximator {
       const theta = pr.thetaStart + pr.direction * fract * pr.thetaRange;
 
       const vector2 = new Vec2(
-        Math.fround(Math.cos(theta)),
-        Math.fround(Math.sin(theta)),
+          Math.fround(Math.cos(theta)),
+          Math.fround(Math.sin(theta)),
       );
 
       output.push(vector2.scale(pr.radius).add(pr.centre));
@@ -226,8 +226,8 @@ export class PathApproximator {
      * then give up and fallback to a more numerically stable method.
      */
     const sideLength = (
-      (b.y - a.y) * (c.x - a.x)
-      - (b.x - a.x) * (c.y - a.y)
+        (b.y - a.y) * (c.x - a.x)
+        - (b.x - a.x) * (c.y - a.y)
     );
 
     if (Math.abs(sideLength) < 0.001) {
@@ -235,9 +235,9 @@ export class PathApproximator {
     }
 
     const d = 2 * (
-      (a.x * (b.y - c.y))
-      + (b.x * (c.y - a.y))
-      + (c.x * (a.y - b.y))
+        (a.x * (b.y - c.y))
+        + (b.x * (c.y - a.y))
+        + (c.x * (a.y - b.y))
     );
 
     const aSq = a.lengthSq();
@@ -247,12 +247,12 @@ export class PathApproximator {
     const cSq = c.lengthSq();
 
     const centre = new Vec2(
-      aSq * (b.y - c.y)
-      + (bSq * (c.y - a.y))
-      + (cSq * (a.y - b.y)),
-      (aSq * (c.x - b.x))
-      + (bSq * (a.x - c.x))
-      + (cSq * (b.x - a.x)),
+        aSq * (b.y - c.y)
+        + (bSq * (c.y - a.y))
+        + (cSq * (a.y - b.y)),
+        (aSq * (c.x - b.x))
+        + (bSq * (a.x - c.x))
+        + (cSq * (b.x - a.x)),
     ).divF(d);
 
     const dA = a.sub(centre);
@@ -342,8 +342,8 @@ export class PathApproximator {
 
     for (let i = 1, len = controlPoints.length; i < len - 1; i++) {
       Vec2 = controlPoints[i - 1]
-        .sub(controlPoints[i].scale(2))
-        .add(controlPoints[i + 1]);
+          .sub(controlPoints[i].scale(2))
+          .add(controlPoints[i + 1]);
 
       if (Vec2.lengthSq() > PathApproximator.BEZIER_TOLERANCE ** 2 * 4) {
         return false;
@@ -364,11 +364,11 @@ export class PathApproximator {
    * @param count The number of control points in the original list.
    */
   private static _bezierSubdivide(
-    controlPoints: Vec2[],
-    l: Vec2[],
-    r: Vec2[],
-    subdivisionBuffer: Vec2[],
-    count: number,
+      controlPoints: Vec2[],
+      l: Vec2[],
+      r: Vec2[],
+      subdivisionBuffer: Vec2[],
+      count: number,
   ): void {
     const midpoints = subdivisionBuffer;
 
@@ -396,11 +396,11 @@ export class PathApproximator {
    * @param count The number of control points in the original list.
    */
   private static _bezierApproximate(
-    controlPoints: Vec2[],
-    output: List<Vec2>,
-    subdivisionBuffer1: Vec2[],
-    subdivisionBuffer2: Vec2[],
-    count: number,
+      controlPoints: Vec2[],
+      output: List<Vec2>,
+      subdivisionBuffer1: Vec2[],
+      subdivisionBuffer2: Vec2[],
+      count: number,
   ): void {
     const l = subdivisionBuffer2;
     const r = subdivisionBuffer1;
@@ -416,9 +416,9 @@ export class PathApproximator {
     for (let i = 1; i < count - 1; ++i) {
       const index = 2 * i;
       const p = l[index - 1]
-        .add(l[index].scale(2))
-        .add(l[index + 1])
-        .scale(Math.fround(0.25));
+          .add(l[index].scale(2))
+          .add(l[index + 1])
+          .scale(Math.fround(0.25));
 
       output.push(p);
     }
@@ -434,11 +434,11 @@ export class PathApproximator {
    * @returns The point on the spline at t.
    */
   private static _catmullFindPoint(
-    vec1: Vec2,
-    vec2: Vec2,
-    vec3: Vec2,
-    vec4: Vec2,
-    t: number,
+      vec1: Vec2,
+      vec2: Vec2,
+      vec3: Vec2,
+      vec4: Vec2,
+      t: number,
   ): Vec2 {
     const t2 = Math.fround(t * t);
     const t3 = Math.fround(t * t2);

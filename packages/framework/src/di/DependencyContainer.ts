@@ -1,10 +1,11 @@
-import type { Drawable } from '../graphics/drawables/Drawable';
 import { Bindable } from '../bindables/Bindable';
+import type { Drawable } from '../graphics/drawables/Drawable';
 
 export class DependencyContainer implements ReadonlyDependencyContainer {
   private readonly dependencies = new Map<any, any>();
 
-  constructor(private readonly parent?: ReadonlyDependencyContainer) {}
+  constructor(private readonly parent?: ReadonlyDependencyContainer) {
+  }
 
   public owner: Drawable | null = null;
 
@@ -59,8 +60,9 @@ export interface ReadonlyDependencyContainer {
   resolve: (<T>(key: new (...args: any[]) => T) => T) & (<T>(key: InjectionToken<T>) => T);
 }
 
-// eslint-disable-next-line ts/no-wrapper-object-types
-export interface InjectionToken<T> extends Symbol {}
+declare const typeKey: unique symbol
+
+export type InjectionToken<T> = symbol & { [typeKey]?: T }
 
 export function injectionToken<T>(description?: string): InjectionToken<T> {
   return Symbol(description);

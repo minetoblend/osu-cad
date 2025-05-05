@@ -1,7 +1,6 @@
-import type { Renderer } from 'pixi.js';
+import { RenderLayer } from 'pixi.js';
 import type { ReadonlyDependencyContainer } from '../../di/DependencyContainer';
-import type { PIXIContainer } from '../../pixi';
-import { RenderContainer, RenderLayer } from 'pixi.js';
+import type { Container as PIXIContainer } from 'pixi.js';
 import { Drawable } from '../drawables/Drawable';
 
 export class ProxyDrawable extends Drawable {
@@ -33,23 +32,5 @@ export class ProxyDrawable extends Drawable {
     super.dispose(isDisposing);
 
     this.#renderLayer.detachAll();
-  }
-}
-
-class ProxyDrawNode extends RenderContainer {
-  constructor(readonly sourceDrawNode: PIXIContainer) {
-    super({});
-
-    sourceDrawNode.renderable = false;
-    sourceDrawNode.enableRenderGroup();
-  }
-
-  override render(renderer: Renderer) {
-    const { sourceDrawNode } = this;
-
-    sourceDrawNode.renderable = true;
-    renderer.renderPipes.renderGroup.execute(sourceDrawNode.renderGroup);
-
-    sourceDrawNode.renderable = false;
   }
 }

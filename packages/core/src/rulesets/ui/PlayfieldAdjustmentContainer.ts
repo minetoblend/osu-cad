@@ -1,4 +1,4 @@
-import { Axes, Container } from '@osucad/framework';
+import { Axes, Container } from "@osucad/framework";
 
 export class PlayfieldAdjustmentContainer extends Container {
   constructor() {

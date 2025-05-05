@@ -1,3 +1,4 @@
+import * as util from 'util'
 import IterableWeakSet from '../utils/IterableWeakSet';
 import { Action } from './Action';
 
@@ -252,6 +253,18 @@ export class Bindable<T> implements ReadonlyBindable<T> {
   createInstance(): Bindable<T> {
     return new Bindable(this.default);
   }
+
+  // #v-ifdef VITEST
+
+  [util.inspect.custom](depth: number, options: util.InspectOptionsStylized, inspect: typeof util.inspect) {
+
+    return [
+      options.stylize('[Bindable]', 'special'),
+      inspect(this.value, options)
+    ].join(' ')
+  }
+
+  // #v-endif
 }
 
 export interface AddOnChangeListenerOptions {

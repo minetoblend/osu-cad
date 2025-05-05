@@ -1,5 +1,5 @@
-import { SmoothPath } from '@osucad/framework';
-import { Color } from 'pixi.js';
+import { SmoothPath } from "@osucad/framework";
+import { Color } from 'pixi.js'
 
 export class DrawableSliderPath extends SmoothPath {
   static readonly BORDER_PORTION = 0.128;

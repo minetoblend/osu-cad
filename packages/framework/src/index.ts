@@ -8,7 +8,6 @@ export * from './injectionTokens';
 export * from './input';
 export * from './io';
 export * from './math';
-export * from './pixi';
 export * from './platform';
 export * from './renderers/Renderer';
 export * from './scheduling';

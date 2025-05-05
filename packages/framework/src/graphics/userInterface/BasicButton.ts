@@ -2,7 +2,7 @@ import type { ValueChangedEvent } from '../../bindables/Bindable';
 import type { ClickEvent } from '../../input/events/ClickEvent';
 import type { HoverEvent } from '../../input/events/HoverEvent';
 import type { DrawableOptions } from '../drawables/Drawable';
-import { Color, type ColorSource } from '../../pixi';
+import { Color, type ColorSource } from 'pixi.js';
 import { Anchor } from '../drawables/Anchor';
 import { Axes } from '../drawables/Axes';
 import { Box } from '../shapes/Box';

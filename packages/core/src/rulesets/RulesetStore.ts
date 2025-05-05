@@ -1,36 +1,31 @@
-import type { HitObject } from '../hitObjects/HitObject';
-import type { NoArgsConstructor } from '../utils/Constructor';
-import type { RulesetInfo } from './RulesetInfo';
+import { Ruleset } from "./Ruleset";
 
 export class RulesetStore {
-  static readonly #legacyRulesets = new Map<number, RulesetInfo>();
+  private readonly _rulesets: Ruleset[] = [];
 
-  static readonly #rulesets = new Map<string, RulesetInfo>();
-
-  static HIT_OBJECT_CLASSES: Record<string, NoArgsConstructor<HitObject>> = {};
-
-  static register(rulesetInfo: RulesetInfo) {
-    const ruleset = rulesetInfo.createInstance();
-
-    this.#rulesets.set(ruleset.shortName, rulesetInfo);
-    if (ruleset.legacyId !== null) {
-      this.#legacyRulesets.set(ruleset.legacyId, rulesetInfo);
+  register(ruleset: Ruleset) {
+    if (this.get({ id: ruleset.id })) {
+      console.warn(`A ruleset with id ${ruleset.id} has already been registered.`)
+      return false;
     }
 
-    const hitObjectClasses = ruleset.getHitObjectClasses();
-
-    Object.assign(this.HIT_OBJECT_CLASSES, hitObjectClasses);
-
-    for (const [name, ctor] of Object.entries(hitObjectClasses)) {
-      (ctor as any).__typeName__ = name;
-    }
+    this._rulesets.push(ruleset)
+    return true
   }
 
-  static getByLegacyId(legacyId: number) {
-    return this.#legacyRulesets.get(legacyId) ?? null;
+  get(lookup: RulesetLookup): Ruleset | undefined {
+    if ('id' in lookup)
+      return this._rulesets.find(it => it.id === lookup.id)
+    if ('legacyId' in lookup)
+      return this._rulesets.find(it => it.legacyId === lookup.legacyId)
+    return undefined;
   }
 
-  static getByShortName(shortName: string) {
-    return this.#rulesets.get(shortName);
-  }
 }
+
+export type RulesetLookup =
+    | { id: string }
+    | { legacyId: number }
+
+export const rulesets = new RulesetStore();
+

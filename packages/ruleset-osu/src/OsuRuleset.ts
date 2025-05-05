@@ -1,97 +1,30 @@
-import type { Beatmap, BeatmapConverter, BeatmapProcessor, DifficultyCalculator, DrawableRuleset, EditorRuleset, HitObject, HitObjectComposer, IBeatmap, ISkin, NoArgsConstructor, SkinTransformer } from '@osucad/core';
-import type { IKeyBinding } from '@osucad/framework';
-import { ArgonSkin, Ruleset, StableSkin } from '@osucad/core';
-import { InputKey, KeyBinding, KeyCombination } from '@osucad/framework';
-import { OsuBeatmap } from './beatmaps/OsuBeatmap';
-import { OsuBeatmapConverter } from './beatmaps/OsuBeatmapConverter';
-import { ComboProcessor } from './ComboProcessor';
-import { OsuDifficultyCalculator } from './difficulty/OsuDifficultyCalculator';
-import { DrawableOsuEditorRuleset } from './DrawableOsuEditorRuleset';
-import { DrawableOsuRuleset } from './DrawableOsuRuleset';
-import { BeatmapComboProcessor } from './edit/BeatmapComboProcessor';
-import { OsuHitObjectComposer } from './edit/OsuHitObjectComposer';
-import { HitCircle } from './hitObjects/HitCircle';
-import { Slider } from './hitObjects/Slider';
-import { Spinner } from './hitObjects/Spinner';
-import { OsuAction } from './OsuAction';
-import { OsuEditorRuleset } from './OsuEditorRuleset';
-import { OsuArgonSkinTransformer } from './skinning/argon/OsuArgonSkinTransformer';
-import { StableOsuSkinTransformer } from './skinning/stable/StableOsuSkinTransformer';
-import { StackingProcessor } from './StackingProcessor';
-import { OsuBeatmapVerifier } from './verify/OsuBeatmapVerifier';
+import type { BeatmapPostProcessor, DrawableRuleset, Ruleset, RulesetBeatmapParser, Skin, SkinTransformer } from "@osucad/core";
 
-export class OsuRuleset extends Ruleset {
-  override get legacyId(): number | null {
-    return 0;
+export class OsuRuleset implements Ruleset {
+  readonly id = 'osu';
+  readonly title = 'osu!';
+  readonly legacyId = 0;
+
+  public async createDrawableRuleset(): Promise<DrawableRuleset> {
+    const { DrawableOsuRuleset } = await import('./ui/DrawableOsuRuleset')
+    return new DrawableOsuRuleset()
   }
 
-  override createBeatmap(): Beatmap<any> {
-    return new OsuBeatmap();
+  public async createBeatmapParser(): Promise<RulesetBeatmapParser> {
+    const { OsuBeatmapParser } = await import('./beatmaps/OsuBeatmapParser')
+    return new OsuBeatmapParser()
   }
 
-  override createEditorRuleset(): EditorRuleset {
-    return new OsuEditorRuleset(this);
+  public async createSkinTransformer(skin: Skin): Promise<SkinTransformer | null> {
+    const module = await import('./skinning/legacy/OsuLegacySkinTransformer')
+    console.log(module)
+
+    const { OsuLegacySkinTransformer } = module;
+    return await OsuLegacySkinTransformer.create(skin)
   }
 
-  override createDrawableRulesetWith(beatmap: IBeatmap) {
-    return new DrawableOsuRuleset(this, beatmap as IBeatmap<any>);
-  }
-
-  override createDrawableEditorRulesetWith(beatmap: IBeatmap): DrawableRuleset {
-    return new DrawableOsuEditorRuleset(this, beatmap as IBeatmap<any>);
-  }
-
-  override get shortName(): string {
-    return 'osu';
-  }
-
-  override createHitObjectComposer(): HitObjectComposer {
-    return new OsuHitObjectComposer();
-  }
-
-  override getDefaultKeyBindings(): IKeyBinding[] {
-    return [
-      new KeyBinding(KeyCombination.from(InputKey.X), OsuAction.LeftButton),
-      new KeyBinding(KeyCombination.from(InputKey.V), OsuAction.LeftButton),
-    ];
-  }
-
-  override createSkinTransformer(skin: ISkin, beatmap: IBeatmap): SkinTransformer | null {
-    if (skin instanceof StableSkin)
-      return new StableOsuSkinTransformer(skin);
-
-    if (skin instanceof ArgonSkin)
-      return new OsuArgonSkinTransformer(skin);
-
-    return null;
-  }
-
-  override postProcessBeatmap(beatmap: IBeatmap) {
-    super.postProcessBeatmap(beatmap);
-
-    new StackingProcessor().applyToBeatmap(beatmap);
-    new ComboProcessor().applyToBeatmap(beatmap);
-  }
-
-  override createBeatmapConverter(beatmap: IBeatmap): BeatmapConverter<any> {
-    return new OsuBeatmapConverter(beatmap, this);
-  }
-
-  override createDifficultyCalculator(beatmap: Beatmap): DifficultyCalculator<any> {
-    return new OsuDifficultyCalculator(beatmap);
-  }
-
-  override createBeatmapVerifier(): OsuBeatmapVerifier {
-    return new OsuBeatmapVerifier();
-  }
-
-  override createEditorBeatmapProcessors(): BeatmapProcessor[] {
-    return [
-      new BeatmapComboProcessor(),
-    ];
-  }
-
-  override getHitObjectClasses(): Record<string, NoArgsConstructor<HitObject>> {
-    return { HitCircle, Slider, Spinner };
+  public async createBeatmapPostProcessor(): Promise<BeatmapPostProcessor> {
+    const { OsuBeatmapPostProcessor } = await import('./OsuBeatmapPostProcessor')
+    return new OsuBeatmapPostProcessor()
   }
 }

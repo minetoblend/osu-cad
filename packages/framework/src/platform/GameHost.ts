@@ -3,10 +3,8 @@ import type { Container } from '../graphics/containers/Container';
 import type { InputHandler } from '../input';
 import type { KeyBinding } from '../input/bindings/KeyBinding';
 import type { IFrameBasedClock } from '../timing/IFrameBasedClock';
-import {} from '@pixi/devtools';
 import { AudioManager } from '../audio/AudioManager';
 import { Action } from '../bindables/Action';
-import { setupDevtools } from '../devtools/setupDevtools';
 import { DependencyContainer } from '../di/DependencyContainer';
 import { FrameworkEnvironment } from '../FrameworkEnvironment';
 import { loadDrawableFromAsync } from '../graphics/drawables/Drawable';
@@ -58,8 +56,6 @@ export abstract class GameHost {
 
   protected root: Container | null = null;
 
-  #frameCount = 0;
-
   executionState: ExecutionState = ExecutionState.Idle;
 
   abstract getWindowSize(): Vec2;
@@ -71,8 +67,6 @@ export abstract class GameHost {
 
     if (!this.root)
       return;
-
-    this.#frameCount++;
 
     this.renderer.size = this.getWindowSize();
 
@@ -132,8 +126,6 @@ export abstract class GameHost {
     container.appendChild(this.renderer.canvas);
 
     this.executionState = ExecutionState.Running;
-
-    setupDevtools(this.root!, this.renderer.internalRenderer);
 
     while (this.executionState === ExecutionState.Running) {
       const startTime = performance.now();

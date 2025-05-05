@@ -1,4 +1,4 @@
-import { isMobile } from './pixi';
+import { isMobile } from 'pixi.js';
 
 export class FrameworkEnvironment {
   get antialiasPreferred() {

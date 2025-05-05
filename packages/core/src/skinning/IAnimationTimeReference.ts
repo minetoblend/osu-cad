@@ -1,5 +1,4 @@
-import type { Bindable, IFrameBasedClock } from '@osucad/framework';
-import { injectionToken } from '@osucad/framework';
+import { Bindable, IFrameBasedClock, injectionToken } from "@osucad/framework";
 
 export interface IAnimationTimeReference {
   readonly clock: IFrameBasedClock | null;
@@ -7,5 +6,4 @@ export interface IAnimationTimeReference {
   readonly animationStartTime: Bindable<number>;
 }
 
-// eslint-disable-next-line ts/no-redeclare
-export const IAnimationTimeReference = injectionToken<IAnimationTimeReference>();
+export const IAnimationTimeReference = injectionToken<IAnimationTimeReference>()

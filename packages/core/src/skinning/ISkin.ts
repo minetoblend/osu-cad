@@ -1,17 +1,19 @@
-import type { AudioChannel, Drawable, Sample } from '@osucad/framework';
-import type { Texture } from 'pixi.js';
-import type { HitSample } from '../hitsounds/HitSample';
-import type { ISkinComponentLookup } from './ISkinComponentLookup';
-import type { SkinConfigurationLookup } from './SkinConfigurationLookup';
+import { Bindable, Drawable, injectionToken } from "@osucad/framework";
+import { Color, Texture } from "pixi.js";
+import { SkinConfigurationLookup, SkinConfigurationValue } from "./SkinConfiguration";
+
+export type SkinComponentLookup = string;
 
 export interface ISkin {
-  getDrawableComponent(lookup: ISkinComponentLookup): Drawable | null;
+  getTexture(componentName: string): Texture | null
 
-  getTexture(componentName: string): Texture | null;
+  getDrawableComponent(lookup: SkinComponentLookup): Drawable | null
 
-  getSample(channel: AudioChannel, sampleInfo: string | HitSample): Sample | null;
+  getConfigValue<T extends SkinConfigurationLookup>(lookup: T): SkinConfigurationValue<T> | null;
 
-  dispose(): void;
+  getConfigBindable<T extends SkinConfigurationLookup>(lookup: T): Bindable<SkinConfigurationValue<T> | null>;
 
-  getConfig<T>(key: SkinConfigurationLookup<T>): T | null;
+  getComboColor(comboIndex: number): Color;
 }
+
+export const ISkin = injectionToken<ISkin>()

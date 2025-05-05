@@ -1,32 +1,25 @@
 {
   "name": "@osucad/core",
-  "version": "0.0.5",
-  "scripts": {
-    "build": "vite build",
-    "typecheck": "tsc --noEmit -p tsconfig.lib.json --composite false",
-    "lint": "eslint src",
-    "lint:fix": "eslint src --fix"
-  },
+  "version": "0.0.1",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
-  "typings": "./dist/index.d.ts",
+  "types": "./dist/index.d.ts",
   "exports": {
+    "./package.json": "./package.json",
     ".": {
+      "development": "./src/index.ts",
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     }
   },
+  "files": [
+    "dist",
+    "!**/*.tsbuildinfo"
+  ],
   "dependencies": {
-    "@osucad/framework": "workspace:*",
-    "@osucad/multiplayer": "workspace:*",
-    "@osucad/resources": "workspace:*",
-    "audiobuffer-to-wav": "^1.0.0",
-    "bezier-easing": "^2.1.0",
-    "socket.io-client": "^4.8.1",
-    "unzipit": "^1.4.3"
-  },
-  "devDependencies": {
-    "@types/audiobuffer-to-wav": "^1.0.4"
+    "pixi.js": "^8.9.2",
+    "@osucad/framework": "workspace:^"
   }
 }

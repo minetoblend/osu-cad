@@ -1,7 +1,7 @@
 import type { IVec2 } from '../../math';
 import { Texture } from 'pixi.js';
 import { Vec2 } from '../../math';
-import { PIXIContainer } from '../../pixi';
+import { Container as PIXIContainer } from 'pixi.js';
 import { MatrixUtils } from '../../utils/MatrixUtils';
 import { Axes } from './Axes';
 import { Drawable, type DrawableOptions, Invalidation } from './Drawable';

@@ -5,7 +5,7 @@ import type { MouseMoveEvent } from './events/MouseMoveEvent';
 import { Container } from '../graphics/containers/Container';
 import { Visibility, VisibilityContainer } from '../graphics/containers/VisibilityContainer';
 import { Axes } from '../graphics/drawables/Axes';
-import { PIXIGraphics } from '../pixi';
+import { Graphics } from 'pixi.js';
 
 export class CursorContainer extends VisibilityContainer {
   constructor() {
@@ -54,7 +54,7 @@ class Cursor extends Container {
   override loadComplete() {
     super.loadComplete();
 
-    const g = new PIXIGraphics();
+    const g = new Graphics();
 
     g.circle(0, 0, 4).fill({ color: 0xFFFFFF }).stroke({
       color: 'rgb(247, 99, 164)',
