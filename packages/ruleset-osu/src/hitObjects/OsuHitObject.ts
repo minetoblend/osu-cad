@@ -1,7 +1,8 @@
 import { BeatmapDifficultyInfo, HitObject, safeAssign } from "@osucad/core";
 import { Bindable, BindableBoolean, BindableNumber, IVec2, Vec2 } from "@osucad/framework";
 
-export interface OsuHitObjectOptions {
+export interface OsuHitObjectOptions 
+{
   startTime?: number
   position?: IVec2
   x?: number
@@ -10,7 +11,8 @@ export interface OsuHitObjectOptions {
   comboOffset?: number
 }
 
-export abstract class OsuHitObject extends HitObject {
+export abstract class OsuHitObject extends HitObject 
+{
   static readonly OBJECT_RADIUS = 64;
 
   static readonly OBJECT_DIMENSIONS = new Vec2(OsuHitObject.OBJECT_RADIUS * 2);
@@ -23,100 +25,118 @@ export abstract class OsuHitObject extends HitObject {
 
   static readonly PREEMPT_MAX = 1800;
 
-  protected constructor(options: OsuHitObjectOptions = {}) {
-    super()
+  protected constructor(options: OsuHitObjectOptions = {}) 
+  {
+    super();
 
-    safeAssign(this, options)
+    safeAssign(this, options);
   }
 
-  timePreempt = 600
+  timePreempt = 600;
 
-  timeFadeIn = 400
+  timeFadeIn = 400;
 
   //#region position
-  readonly positionBindable = new Bindable(Vec2.zero())
+  readonly positionBindable = new Bindable(Vec2.zero());
 
-  get position(): Vec2 {
-    return this.positionBindable.value
+  get position(): Vec2 
+  {
+    return this.positionBindable.value;
   }
 
-  set position(value: IVec2) {
-    this.positionBindable.value = Vec2.from(value)
+  set position(value: IVec2) 
+  {
+    this.positionBindable.value = Vec2.from(value);
   }
 
-  get x() {
-    return this.position.x
+  get x() 
+  {
+    return this.position.x;
   }
 
-  set x(value: number) {
-    this.position = this.position.withX(value)
+  set x(value: number) 
+  {
+    this.position = this.position.withX(value);
   }
 
-  get y() {
-    return this.position.y
+  get y() 
+  {
+    return this.position.y;
   }
 
-  set y(value: number) {
-    this.position = this.position.withY(value)
+  set y(value: number) 
+  {
+    this.position = this.position.withY(value);
   }
 
   //#endregion
 
   //#region combo
-  readonly newComboBindable = new BindableBoolean()
+  readonly newComboBindable = new BindableBoolean();
 
-  get newCombo() {
-    return this.newComboBindable.value
+  get newCombo() 
+  {
+    return this.newComboBindable.value;
   }
 
-  set newCombo(value) {
-    this.newComboBindable.value = value
+  set newCombo(value) 
+  {
+    this.newComboBindable.value = value;
   }
 
   readonly comboOffsetBindable = new BindableNumber(0)
-      .withMinValue(0)
+    .withMinValue(0);
 
-  get comboOffset() {
-    return this.comboOffsetBindable.value
+  get comboOffset() 
+  {
+    return this.comboOffsetBindable.value;
   }
 
-  set comboOffset(value) {
-    this.comboOffsetBindable.value = value
+  set comboOffset(value) 
+  {
+    this.comboOffsetBindable.value = value;
   }
 
   readonly comboIndexBindable = new Bindable(0);
 
-  get comboIndex() {
-    return this.comboIndexBindable.value
+  get comboIndex() 
+  {
+    return this.comboIndexBindable.value;
   }
 
-  set comboIndex(value) {
-    this.comboIndexBindable.value = value
+  set comboIndex(value) 
+  {
+    this.comboIndexBindable.value = value;
   }
 
-  readonly indexInComboBindable = new Bindable(0)
+  readonly indexInComboBindable = new Bindable(0);
 
-  get indexInCombo() {
+  get indexInCombo() 
+  {
     return this.indexInComboBindable.value;
   }
 
-  set indexInCombo(value) {
+  set indexInCombo(value) 
+  {
     this.indexInComboBindable.value = value;
   }
 
   //#endregion
 
-  readonly scaleBindable = new Bindable(1)
+  readonly scaleBindable = new Bindable(1);
 
-  get scale() {
-    return this.scaleBindable.value
+  get scale() 
+  {
+    return this.scaleBindable.value;
   }
 
-  protected set scale(value) {
-    this.scaleBindable.value = value
+  protected set scale(value) 
+  {
+    this.scaleBindable.value = value;
   }
 
-  public override applyDefaults(difficulty: BeatmapDifficultyInfo) {
+  public override applyDefaults(difficulty: BeatmapDifficultyInfo) 
+  {
     super.applyDefaults(difficulty);
 
     this.timePreempt = BeatmapDifficultyInfo.difficultyRange(difficulty.approachRate, OsuHitObject.PREEMPT_MAX, OsuHitObject.PREEMPT_MID, OsuHitObject.PREEMPT_MIN);
@@ -127,31 +147,37 @@ export abstract class OsuHitObject extends HitObject {
   }
 
   // #region stacking
-  readonly stackHeightBindable = new Bindable(0)
+  readonly stackHeightBindable = new Bindable(0);
 
-  get stackHeight() {
-    return this.stackHeightBindable.value
+  get stackHeight() 
+  {
+    return this.stackHeightBindable.value;
   }
 
-  set stackHeight(value) {
-    this.stackHeightBindable.value = value
+  set stackHeight(value) 
+  {
+    this.stackHeightBindable.value = value;
   }
 
-  get stackOffset() {
+  get stackOffset() 
+  {
     return new Vec2(this.stackHeight * this.scale * -6.4);
   }
 
-  get stackedPosition() {
-    return this.position.add(this.stackOffset)
+  get stackedPosition() 
+  {
+    return this.position.add(this.stackOffset);
   }
 
-  get endPosition() {
+  get endPosition() 
+  {
     // TODO
-    return this.position
+    return this.position;
   }
 
-  get stackedEndPosition() {
-    return this.endPosition.add(this.stackOffset)
+  get stackedEndPosition() 
+  {
+    return this.endPosition.add(this.stackOffset);
   }
 
   // #endregion

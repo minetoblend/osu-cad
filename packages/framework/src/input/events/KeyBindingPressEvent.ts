@@ -1,13 +1,15 @@
-import type { KeyBindingAction } from '../KeyBindingAction';
-import type { InputState } from '../state/InputState';
-import { KeyBindingEvent } from './KeyBindingEvent';
+import type { KeyBindingAction } from "../KeyBindingAction";
+import type { InputState } from "../state/InputState";
+import { KeyBindingEvent } from "./KeyBindingEvent";
 
-export class KeyBindingPressEvent<T extends KeyBindingAction> extends KeyBindingEvent<T> {
+export class KeyBindingPressEvent<T extends KeyBindingAction> extends KeyBindingEvent<T> 
+{
   constructor(
     state: InputState,
     pressed: T,
     readonly repeat: boolean = false,
-  ) {
-    super(state, 'onKeyBindingPressed', pressed);
+  ) 
+  {
+    super(state, "onKeyBindingPressed", pressed);
   }
 }

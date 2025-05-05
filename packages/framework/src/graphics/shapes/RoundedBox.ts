@@ -1,9 +1,10 @@
-import { Matrix, type Texture } from 'pixi.js';
-import { Color, type ColorSource, Graphics } from 'pixi.js';
-import { FillMode, LayoutMember } from '../drawables';
-import { Drawable, type DrawableOptions, Invalidation } from '../drawables/Drawable';
+import { Matrix, type Texture } from "pixi.js";
+import { Color, type ColorSource, Graphics } from "pixi.js";
+import { FillMode, LayoutMember } from "../drawables";
+import { Drawable, type DrawableOptions, Invalidation } from "../drawables/Drawable";
 
-export interface RoundedBoxOptions extends DrawableOptions {
+export interface RoundedBoxOptions extends DrawableOptions 
+{
   cornerRadius?: number;
   outline?: OutlineInfo;
   outlines?: OutlineInfo[];
@@ -13,15 +14,18 @@ export interface RoundedBoxOptions extends DrawableOptions {
   textureFillMode?: FillMode;
 }
 
-export interface OutlineInfo {
+export interface OutlineInfo 
+{
   color: number;
   width?: number;
   alpha?: number;
   alignment?: number;
 }
 
-export class RoundedBox extends Drawable {
-  constructor(options: RoundedBoxOptions = {}) {
+export class RoundedBox extends Drawable 
+{
+  constructor(options: RoundedBoxOptions = {}) 
+  {
     super();
 
     this.addLayout(this.#graphicsBacking);
@@ -29,11 +33,13 @@ export class RoundedBox extends Drawable {
     this.with(options);
   }
 
-  get cornerRadius(): number {
+  get cornerRadius(): number 
+  {
     return this.#cornerRadius;
   }
 
-  set cornerRadius(value: number) {
+  set cornerRadius(value: number) 
+  {
     if (this.#cornerRadius === value)
       return;
 
@@ -48,11 +54,13 @@ export class RoundedBox extends Drawable {
 
   #graphicsBacking = new LayoutMember(Invalidation.DrawSize);
 
-  get texture(): Texture | null {
+  get texture(): Texture | null 
+  {
     return this.#texture;
   }
 
-  set texture(value: Texture | null) {
+  set texture(value: Texture | null) 
+  {
     if (this.#texture === value)
       return;
 
@@ -63,11 +71,13 @@ export class RoundedBox extends Drawable {
 
   #texture: Texture | null = null;
 
-  get textureFillMode(): FillMode {
+  get textureFillMode(): FillMode 
+  {
     return this.#textureFillMode;
   }
 
-  set textureFillMode(value: FillMode) {
+  set textureFillMode(value: FillMode) 
+  {
     if (this.#textureFillMode === value)
       return;
 
@@ -78,44 +88,53 @@ export class RoundedBox extends Drawable {
 
   #textureFillMode: FillMode = FillMode.Stretch;
 
-  get outlines(): OutlineInfo[] {
+  get outlines(): OutlineInfo[] 
+  {
     return this.#outlines;
   }
 
-  set outlines(value: OutlineInfo[]) {
+  set outlines(value: OutlineInfo[]) 
+  {
     this.#outlines = value;
     this.#graphicsBacking.invalidate();
   }
 
   #outlines: OutlineInfo[] = [];
 
-  get outline(): OutlineInfo | undefined {
+  get outline(): OutlineInfo | undefined 
+  {
     return this.#outlines[0];
   }
 
-  set outline(value: OutlineInfo | undefined) {
+  set outline(value: OutlineInfo | undefined) 
+  {
     this.#outlines = value ? [value] : [];
     this.#graphicsBacking.invalidate();
   }
 
-  override createDrawNode(): Graphics {
+  override createDrawNode(): Graphics 
+  {
     return (this.#graphics = new Graphics());
   }
 
-  override update() {
+  override update() 
+  {
     super.update();
 
-    if (!this.#graphicsBacking.isValid) {
+    if (!this.#graphicsBacking.isValid) 
+    {
       this.#updateGraphics();
       this.#graphicsBacking.validate();
     }
   }
 
-  get fillAlpha(): number {
+  get fillAlpha(): number 
+  {
     return this.#fillAlpha;
   }
 
-  set fillAlpha(value: number) {
+  set fillAlpha(value: number) 
+  {
     if (this.#fillAlpha === value)
       return;
 
@@ -126,11 +145,13 @@ export class RoundedBox extends Drawable {
 
   #fillAlpha = 1;
 
-  get fillColor(): Color {
+  get fillColor(): Color 
+  {
     return this.#fillColor;
   }
 
-  set fillColor(value: ColorSource) {
+  set fillColor(value: ColorSource) 
+  {
     this.#fillColor.setValue(value);
 
     this.#graphicsBacking.invalidate();
@@ -138,36 +159,46 @@ export class RoundedBox extends Drawable {
 
   #fillColor = new Color(0xFFFFFF);
 
-  #updateGraphics() {
+  #updateGraphics() 
+  {
     const g = this.#graphics;
 
     g.clear();
-    if (this.#cornerRadius > 0) {
+    if (this.#cornerRadius > 0) 
+    {
       g.roundRect(0, 0, this.drawSize.x, this.drawSize.y, this.#cornerRadius);
     }
-    else {
+    else 
+    {
       g.rect(0, 0, this.drawSize.x, this.drawSize.y);
     }
 
-    if (this.#texture) {
+    if (this.#texture) 
+    {
       let width = this.#texture.width;
       let height = this.#texture.height;
 
       const aspectRatio = this.drawSize.x / this.drawSize.y;
 
-      if (this.#textureFillMode === FillMode.Fill) {
-        if (width / height > aspectRatio) {
+      if (this.#textureFillMode === FillMode.Fill) 
+      {
+        if (width / height > aspectRatio) 
+        {
           width = height * aspectRatio;
         }
-        else {
+        else 
+        {
           height = width / aspectRatio;
         }
       }
-      else if (this.#textureFillMode === FillMode.Fit) {
-        if (width / height > aspectRatio) {
+      else if (this.#textureFillMode === FillMode.Fit) 
+      {
+        if (width / height > aspectRatio) 
+        {
           height = width / aspectRatio;
         }
-        else {
+        else 
+        {
           width = height * aspectRatio;
         }
       }
@@ -182,23 +213,27 @@ export class RoundedBox extends Drawable {
         matrix: new Matrix()
           .scale(width, height)
           .translate(
-            (this.drawSize.x - this.#texture.width * width) / 2,
-            (this.drawSize.y - this.#texture.height * height) / 2,
+              (this.drawSize.x - this.#texture.width * width) / 2,
+              (this.drawSize.y - this.#texture.height * height) / 2,
           ),
       });
     }
-    else {
+    else 
+    {
       g.fill({
         color: this.fillColor,
         alpha: this.#fillAlpha,
       });
     }
 
-    for (const outline of this.#outlines) {
-      if (this.#cornerRadius > 0) {
+    for (const outline of this.#outlines) 
+    {
+      if (this.#cornerRadius > 0) 
+      {
         g.roundRect(0, 0, this.drawSize.x, this.drawSize.y, this.#cornerRadius);
       }
-      else {
+      else 
+      {
         g.rect(0, 0, this.drawSize.x, this.drawSize.y);
       }
       g.stroke({

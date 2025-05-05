@@ -1,11 +1,13 @@
-import type { BlurFilterOptions } from 'pixi.js';
-import { BackdropBlurFilter } from 'pixi-filters';
-import { BetterBlurFilterPass } from './BetterBlurFilterPass';
+import type { BlurFilterOptions } from "pixi.js";
+import { BackdropBlurFilter } from "pixi-filters";
+import { BetterBlurFilterPass } from "./BetterBlurFilterPass";
 
-export class BetterBackdropBlurFilter extends BackdropBlurFilter {
-  constructor(options: BlurFilterOptions = {}) {
+export class BetterBackdropBlurFilter extends BackdropBlurFilter 
+{
+  constructor(options: BlurFilterOptions = {}) 
+  {
     super({
-      antialias: 'inherit',
+      antialias: "inherit",
       resolution: devicePixelRatio,
       ...options,
     });
@@ -14,12 +16,15 @@ export class BetterBackdropBlurFilter extends BackdropBlurFilter {
     this.blurYFilter = new BetterBlurFilterPass({ horizontal: false, ...options });
   }
 
-  protected override updatePadding() {
+  protected override updatePadding() 
+  {
     // @ts-expect-error private property
-    if (this._repeatEdgePixels) {
+    if (this._repeatEdgePixels) 
+    {
       this.padding = 0;
     }
-    else {
+    else 
+    {
       this.padding = Math.max(Math.abs(this.blurXFilter.blur), Math.abs(this.blurYFilter.blur)) * 2;
     }
   }

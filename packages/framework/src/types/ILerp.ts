@@ -1,3 +1,4 @@
-export interface ILerp<T> {
+export interface ILerp<T> 
+{
   lerp: (target: T, t: number) => T;
 }

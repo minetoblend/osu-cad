@@ -1,4 +1,5 @@
-export interface FrameTimeInfo {
+export interface FrameTimeInfo 
+{
   elapsed: number;
   current: number;
 }

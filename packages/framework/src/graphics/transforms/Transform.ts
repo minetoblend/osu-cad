@@ -1,10 +1,12 @@
-import type { IComparer } from '../../utils';
-import type { ITransformable } from './ITransformable';
-import { EasingFunction } from './EasingFunction';
+import type { IComparer } from "../../utils";
+import type { ITransformable } from "./ITransformable";
+import { EasingFunction } from "./EasingFunction";
 
-export abstract class Transform {
+export abstract class Transform 
+{
   static COMPARER: IComparer<Transform> = {
-    compare: (a, b) => {
+    compare: (a, b) => 
+    {
       let compare = a.startTime - b.startTime;
       if (compare !== 0)
         return compare;
@@ -21,7 +23,8 @@ export abstract class Transform {
 
   appliedToEnd = false;
 
-  get rewindable() {
+  get rewindable() 
+  {
     return true;
   }
 
@@ -31,7 +34,8 @@ export abstract class Transform {
 
   endTime = 0;
 
-  get isLooping() {
+  get isLooping() 
+  {
     return this.loopCount === -1 || this.loopCount > 0;
   }
 
@@ -45,52 +49,62 @@ export abstract class Transform {
 
   abstract readIntoStartValue(): void;
 
-  get targetGrouping(): string {
+  get targetGrouping(): string 
+  {
     return this.targetMember;
   }
 
   abstract apply(time: number): void;
 
-  triggerComplete() {}
+  triggerComplete() 
+  {}
 
   abstract clone(): Transform;
 }
 
-export abstract class TypedTransform<TValue, T extends ITransformable> extends Transform {
+export abstract class TypedTransform<TValue, T extends ITransformable> extends Transform 
+{
   #startValue?: TValue;
 
-  get startValue(): TValue {
+  get startValue(): TValue 
+  {
     return this.#startValue!;
   }
 
-  set startValue(value: TValue) {
+  set startValue(value: TValue) 
+  {
     this.#startValue = value;
   }
 
   #endValue?: TValue;
 
-  get endValue(): TValue {
+  get endValue(): TValue 
+  {
     return this.#endValue!;
   }
 
-  set endValue(value: TValue) {
+  set endValue(value: TValue) 
+  {
     this.#endValue = value;
   }
 
   target!: T;
 
-  override get targetTransformable(): ITransformable {
+  override get targetTransformable(): ITransformable 
+  {
     return this.target;
   }
 
   easing: EasingFunction = EasingFunction.Default;
 
-  override apply(time: number) {
+  override apply(time: number) 
+  {
     this.applyTo(this.target, time);
     this.applied = true;
   }
 
-  override readIntoStartValue() {
+  override readIntoStartValue() 
+  {
     this.readIntoStartValueFrom(this.target);
   }
 

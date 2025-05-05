@@ -1,14 +1,18 @@
-import { BlurFilterPass, type FilterSystem, RendererType, type RenderSurface, type Texture, TexturePool } from 'pixi.js';
+import { BlurFilterPass, type FilterSystem, RendererType, type RenderSurface, type Texture, TexturePool } from "pixi.js";
 
-export class BetterBlurFilterPass extends BlurFilterPass {
-  override apply(filterManager: FilterSystem, input: Texture, output: RenderSurface, clearMode: boolean) {
+export class BetterBlurFilterPass extends BlurFilterPass 
+{
+  override apply(filterManager: FilterSystem, input: Texture, output: RenderSurface, clearMode: boolean) 
+  {
     // @ts-expect-error private property
     this._uniforms.uStrength = this._calculateInitialStrength();
 
-    if (this.passes === 1) {
+    if (this.passes === 1) 
+    {
       filterManager.applyFilter(this, input, output, clearMode);
     }
-    else {
+    else 
+    {
       const tempTexture = TexturePool.getSameSizeTexture(input);
 
       let flip = input;
@@ -18,7 +22,8 @@ export class BetterBlurFilterPass extends BlurFilterPass {
 
       const shouldClear = filterManager.renderer.type === RendererType.WEBGPU;
 
-      for (let i = 0; i < this.passes - 1; i++) {
+      for (let i = 0; i < this.passes - 1; i++) 
+      {
         filterManager.applyFilter(this, flip, flop, i === 0 ? true : shouldClear);
 
         const temp = flop;
@@ -41,11 +46,13 @@ export class BetterBlurFilterPass extends BlurFilterPass {
    * strength.
    * @returns The strength for the initial blur pass.
    */
-  private _calculateInitialStrength(): number {
+  private _calculateInitialStrength(): number 
+  {
     let total = 1;
     let current = 0.5;
 
-    for (let i = 1; i < this.passes; i++) {
+    for (let i = 1; i < this.passes; i++) 
+    {
       total += current;
       current *= 0.5;
     }

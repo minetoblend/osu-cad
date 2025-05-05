@@ -1,10 +1,12 @@
-import { StatisticsCounterType } from './StatisticsCounterType';
-import { Timer } from './Timer';
+import { StatisticsCounterType } from "./StatisticsCounterType";
+import { Timer } from "./Timer";
 
-export class FrameStatistics {
+export class FrameStatistics 
+{
   private static COUNTERS = Array.from({ length: StatisticsCounterType.Length }, () => 0);
 
-  static clear() {
+  static clear() 
+  {
     this.COUNTERS.fill(0);
     this.draw.clear();
     this.positionalInputQueue.clear();
@@ -14,15 +16,18 @@ export class FrameStatistics {
     this.updateSubTreeTransforms.clear();
   }
 
-  static increment(counterType: StatisticsCounterType) {
+  static increment(counterType: StatisticsCounterType) 
+  {
     this.COUNTERS[counterType]++;
   }
 
-  static add(counterType: StatisticsCounterType, value: number) {
+  static add(counterType: StatisticsCounterType, value: number) 
+  {
     this.COUNTERS[counterType] += value;
   }
 
-  static get counters() {
+  static get counters() 
+  {
     return this.COUNTERS as Readonly<number[]>;
   }
 

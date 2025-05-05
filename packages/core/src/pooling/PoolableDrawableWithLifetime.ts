@@ -1,14 +1,17 @@
-import type { LifetimeEntry } from './LifetimeEntry';
-import { LoadState, PoolableDrawable } from '@osucad/framework';
+import type { LifetimeEntry } from "./LifetimeEntry";
+import { LoadState, PoolableDrawable } from "@osucad/framework";
 
-export abstract class PoolableDrawableWithLifetime<TEntry extends LifetimeEntry> extends PoolableDrawable {
+export abstract class PoolableDrawableWithLifetime<TEntry extends LifetimeEntry> extends PoolableDrawable 
+{
   #entry: TEntry | null = null;
 
-  get entry() {
+  get entry() 
+  {
     return this.#entry;
   }
 
-  set entry(value) {
+  set entry(value) 
+  {
     if (this.loadState === LoadState.NotLoaded)
       this.#entry = value;
     else if (value !== null)
@@ -19,79 +22,94 @@ export abstract class PoolableDrawableWithLifetime<TEntry extends LifetimeEntry>
 
   #hasEntryApplied = false;
 
-  protected get hasEntryApplied() {
+  protected get hasEntryApplied() 
+  {
     return this.#hasEntryApplied;
   }
 
-  override get lifetimeStart() {
+  override get lifetimeStart() 
+  {
     return super.lifetimeStart;
   }
 
-  override set lifetimeStart(value) {
+  override set lifetimeStart(value) 
+  {
     if (this.entry === null && this.lifetimeStart !== value)
-      throw new Error('Cannot modify lifetime of PoolableDrawableWithLifetime when entry is not set');
+      throw new Error("Cannot modify lifetime of PoolableDrawableWithLifetime when entry is not set");
 
     if (this.entry !== null)
       this.entry.lifetimeStart = value;
   }
 
-  override get lifetimeEnd() {
+  override get lifetimeEnd() 
+  {
     return super.lifetimeEnd;
   }
 
-  override set lifetimeEnd(value) {
+  override set lifetimeEnd(value) 
+  {
     if (this.entry === null && this.lifetimeEnd !== value)
-      throw new Error('Cannot modify lifetime of PoolableDrawableWithLifetime when entry is not set');
+      throw new Error("Cannot modify lifetime of PoolableDrawableWithLifetime when entry is not set");
 
     if (this.entry !== null)
       this.entry.lifetimeEnd = value;
   }
 
-  override get removeWhenNotAlive() {
+  override get removeWhenNotAlive() 
+  {
     return false;
   }
 
-  override get removeCompletedTransforms() {
+  override get removeCompletedTransforms() 
+  {
     return false;
   }
 
-  override set removeCompletedTransforms(value) {
+  override set removeCompletedTransforms(value) 
+  {
     // Do nothing
   }
 
-  protected constructor(initialEntry?: TEntry) {
+  protected constructor(initialEntry?: TEntry) 
+  {
     super();
     this.entry = initialEntry ?? null;
   }
 
-  protected override loadAsyncComplete() {
+  protected override loadAsyncComplete() 
+  {
     super.loadAsyncComplete();
 
     if (this.entry !== null && !this.hasEntryApplied)
       this.#apply(this.entry);
   }
 
-  apply(entry: TEntry) {
+  apply(entry: TEntry) 
+  {
     if (this.loadState === LoadState.Loading)
-      throw new Error('Cannot apply entry while currently loading');
+      throw new Error("Cannot apply entry while currently loading");
 
     this.#apply(entry);
   }
 
-  protected override freeAfterUse() {
+  protected override freeAfterUse() 
+  {
     super.freeAfterUse();
 
     if (this.hasEntryApplied && this.isInPool)
       this.#free();
   }
 
-  protected onApply(entry: TEntry) {
+  protected onApply(entry: TEntry) 
+  {
   }
 
-  protected onFree(entry: TEntry) {
+  protected onFree(entry: TEntry) 
+  {
   }
 
-  #apply(entry: TEntry) {
+  #apply(entry: TEntry) 
+  {
     if (this.hasEntryApplied)
       this.#free();
 
@@ -104,8 +122,9 @@ export abstract class PoolableDrawableWithLifetime<TEntry extends LifetimeEntry>
     this.#hasEntryApplied = true;
   }
 
-  #free() {
-    console.assert(this.hasEntryApplied, 'Cannot free entry that has not been applied');
+  #free() 
+  {
+    console.assert(this.hasEntryApplied, "Cannot free entry that has not been applied");
 
     this.onFree(this.entry!);
 
@@ -117,7 +136,8 @@ export abstract class PoolableDrawableWithLifetime<TEntry extends LifetimeEntry>
     this.#hasEntryApplied = false;
   }
 
-  #setLifetimeFromEntry = () => {
+  #setLifetimeFromEntry = () => 
+  {
     super.lifetimeStart = this.entry!.lifetimeStart;
     super.lifetimeEnd = this.entry!.lifetimeEnd;
   };

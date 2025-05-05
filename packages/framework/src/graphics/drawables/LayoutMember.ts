@@ -1,25 +1,29 @@
-import type { Drawable, Invalidation } from './Drawable';
-import { FrameStatistics } from '../../statistics/FrameStatistics';
-import { StatisticsCounterType } from '../../statistics/StatisticsCounterType';
-import { InvalidationSource } from './Drawable';
+import type { Drawable, Invalidation } from "./Drawable";
+import { FrameStatistics } from "../../statistics/FrameStatistics";
+import { StatisticsCounterType } from "../../statistics/StatisticsCounterType";
+import { InvalidationSource } from "./Drawable";
 
-export class LayoutMember {
+export class LayoutMember 
+{
   constructor(
     readonly invalidation: Invalidation,
     readonly source: InvalidationSource = InvalidationSource.Default,
     readonly condition?: (drawable: Drawable, invalidation: Invalidation) => boolean,
-  ) {
+  ) 
+  {
   }
 
   parent?: Drawable;
 
   #isValid = false;
 
-  get isValid() {
+  get isValid() 
+  {
     return this.#isValid;
   }
 
-  invalidate() {
+  invalidate() 
+  {
     if (!this.#isValid)
       return;
 
@@ -27,8 +31,10 @@ export class LayoutMember {
     FrameStatistics.increment(StatisticsCounterType.Invalidations);
   }
 
-  validate() {
-    if (!this.#isValid) {
+  validate() 
+  {
+    if (!this.#isValid) 
+    {
       this.#isValid = true;
       if (this.validateParent)
         this.parent?.validateSuperTree(this.invalidation);

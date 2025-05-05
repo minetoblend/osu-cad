@@ -26,6 +26,9 @@ importers:
       '@nx/web':
         specifier: 20.8.1
         version: 20.8.1(@swc-node/register@1.9.2)(@swc/core@1.5.29)(nx@20.8.1)(verdaccio@6.1.2)
+      '@stylistic/eslint-plugin-ts':
+        specifier: ^4.2.0
+        version: 4.2.0(eslint@9.26.0)(typescript@5.7.3)
       '@swc-node/register':
         specifier: ~1.9.1
         version: 1.9.2(@swc/core@1.5.29)(@swc/types@0.1.21)(typescript@5.7.3)
@@ -2338,6 +2341,21 @@ packages:
 
   /@sinclair/typebox@0.27.8:
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
+    dev: true
+
+  /@stylistic/eslint-plugin-ts@4.2.0(eslint@9.26.0)(typescript@5.7.3):
+    resolution: {integrity: sha512-j2o2GvOx9v66x8hmp/HJ+0T+nOppiO5ycGsCkifh7JPGgjxEhpkGmIGx3RWsoxpWbad3VCX8e8/T8n3+7ze1Zg==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      eslint: '>=9.0.0'
+    dependencies:
+      '@typescript-eslint/utils': 8.31.1(eslint@9.26.0)(typescript@5.7.3)
+      eslint: 9.26.0(jiti@2.4.2)
+      eslint-visitor-keys: 4.2.0
+      espree: 10.3.0
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
     dev: true
 
   /@swc-node/core@1.13.3(@swc/core@1.5.29)(@swc/types@0.1.21):

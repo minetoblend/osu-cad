@@ -1,4 +1,5 @@
-export enum TextSelectionType {
+export enum TextSelectionType 
+{
   All,
   Character,
   Word,

@@ -1,5 +1,6 @@
 import { Beatmap } from "../beatmaps/Beatmap";
 
-export interface BeatmapPostProcessor {
+export interface BeatmapPostProcessor 
+{
   applyToBeatmap(beatmap: Beatmap): void;
 }

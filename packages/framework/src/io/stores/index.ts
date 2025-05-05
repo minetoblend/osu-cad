@@ -1,2 +1,2 @@
-export * from './IResourceStore';
-export * from './ResourceStore';
+export * from "./IResourceStore";
+export * from "./ResourceStore";

@@ -1,11 +1,13 @@
-import type { AudioChannel } from '../AudioChannel';
+import type { AudioChannel } from "../AudioChannel";
 
-export class SampleFactory {
+export class SampleFactory 
+{
   constructor(
     data: AudioBuffer,
     readonly name: string,
     channel: AudioChannel,
-  ) {
+  ) 
+  {
     this.#data = data;
     this.#channel = channel;
   }
@@ -14,7 +16,8 @@ export class SampleFactory {
 
   readonly #channel: AudioChannel;
 
-  createSample() {
+  createSample() 
+  {
     return this.#channel.createSample(this.#data);
   }
 }

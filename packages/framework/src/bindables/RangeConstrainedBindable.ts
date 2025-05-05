@@ -1,8 +1,9 @@
-import type { Comparer } from '../utils/Comparer';
-import { Action } from './Action';
-import { Bindable } from './Bindable';
+import type { Comparer } from "../utils/Comparer";
+import { Action } from "./Action";
+import { Bindable } from "./Bindable";
 
-export abstract class RangeConstrainedBindable<T> extends Bindable<T> {
+export abstract class RangeConstrainedBindable<T> extends Bindable<T> 
+{
   readonly minValueChanged = new Action<T>();
   readonly maxValueChanged = new Action<T>();
 
@@ -10,12 +11,15 @@ export abstract class RangeConstrainedBindable<T> extends Bindable<T> {
 
   #minValue: T;
 
-  get minValue() {
+  get minValue() 
+  {
     return this.#minValue;
   }
 
-  set minValue(value: T) {
-    if (this.comparer.compare(value, this.#minValue) === 0) {
+  set minValue(value: T) 
+  {
+    if (this.comparer.compare(value, this.#minValue) === 0) 
+    {
       return;
     }
 
@@ -24,23 +28,28 @@ export abstract class RangeConstrainedBindable<T> extends Bindable<T> {
 
   #maxValue: T;
 
-  get maxValue() {
+  get maxValue() 
+  {
     return this.#maxValue;
   }
 
-  set maxValue(value: T) {
-    if (this.comparer.compare(value, this.#maxValue) === 0) {
+  set maxValue(value: T) 
+  {
+    if (this.comparer.compare(value, this.#maxValue) === 0) 
+    {
       return;
     }
 
     this.setMaxValue(value, true, this);
   }
 
-  override get value() {
+  override get value() 
+  {
     return super.value;
   }
 
-  override set value(value) {
+  override set value(value) 
+  {
     this.#setValue(value);
   }
 
@@ -48,14 +57,16 @@ export abstract class RangeConstrainedBindable<T> extends Bindable<T> {
 
   protected abstract get defaultMaxValue(): T;
 
-  get hasDefinedRange() {
+  get hasDefinedRange() 
+  {
     return !(
       this.comparer.equals(this.#minValue, this.defaultMinValue)
       || this.comparer.equals(this.#maxValue, this.defaultMaxValue)
     );
   }
 
-  protected constructor(defaultValue: T) {
+  protected constructor(defaultValue: T) 
+  {
     super(defaultValue);
 
     // @ts-expect-error - TS doesn't like abstract properties in constructors
@@ -66,7 +77,8 @@ export abstract class RangeConstrainedBindable<T> extends Bindable<T> {
     this.#setValue(defaultValue);
   }
 
-  get normalizedValue() {
+  get normalizedValue() 
+  {
     const min = this.#convertToSingle(this.#minValue);
     const max = this.#convertToSingle(this.#maxValue);
 
@@ -77,79 +89,98 @@ export abstract class RangeConstrainedBindable<T> extends Bindable<T> {
     return (val - min) / (max - min);
   }
 
-  #convertToSingle(value: T): number {
-    if (typeof value === 'number') {
+  #convertToSingle(value: T): number 
+  {
+    if (typeof value === "number") 
+    {
       return value;
     }
 
     throw new Error(`Cannot convert ${value} to single`);
   }
 
-  setMinValue(value: T, updateCurrentValue: boolean, source: RangeConstrainedBindable<T>) {
+  setMinValue(value: T, updateCurrentValue: boolean, source: RangeConstrainedBindable<T>) 
+  {
     this.#minValue = value;
     this.triggerMinValueChange(source);
 
-    if (updateCurrentValue) {
+    if (updateCurrentValue) 
+    {
       this.#setValue(this.value);
     }
   }
 
-  setMaxValue(value: T, updateCurrentValue: boolean, source: RangeConstrainedBindable<T>) {
+  setMaxValue(value: T, updateCurrentValue: boolean, source: RangeConstrainedBindable<T>) 
+  {
     this.#maxValue = value;
     this.triggerMaxValueChange(source);
 
-    if (updateCurrentValue) {
+    if (updateCurrentValue) 
+    {
       this.#setValue(this.value);
     }
   }
 
-  override triggerChange() {
+  override triggerChange() 
+  {
     super.triggerChange();
 
     this.triggerMinValueChange(this, false);
     this.triggerMaxValueChange(this, false);
   }
 
-  protected triggerMinValueChange(source?: RangeConstrainedBindable<T>, propagateToBindings = true) {
+  protected triggerMinValueChange(source?: RangeConstrainedBindable<T>, propagateToBindings = true) 
+  {
     const beforePropagation = this.#minValue;
 
-    if (propagateToBindings && this.bindings) {
-      for (const bindable of this.bindings) {
+    if (propagateToBindings && this.bindings) 
+    {
+      for (const bindable of this.bindings) 
+      {
         if (bindable === source)
           continue;
 
-        if (bindable && bindable instanceof RangeConstrainedBindable) {
+        if (bindable && bindable instanceof RangeConstrainedBindable) 
+        {
           bindable.setMinValue(this.#minValue, false, this);
         }
       }
     }
 
-    if (this.comparer.equals(beforePropagation, this.#minValue)) {
+    if (this.comparer.equals(beforePropagation, this.#minValue)) 
+    {
       this.minValueChanged.emit(this.#minValue);
     }
   }
 
-  protected triggerMaxValueChange(source?: RangeConstrainedBindable<T>, propagateToBindings = true) {
+  protected triggerMaxValueChange(source?: RangeConstrainedBindable<T>, propagateToBindings = true) 
+  {
     const beforePropagation = this.#maxValue;
 
-    if (propagateToBindings && this.bindings) {
-      for (const bindable of this.bindings) {
+    if (propagateToBindings && this.bindings) 
+    {
+      for (const bindable of this.bindings) 
+      {
         if (bindable === source)
           continue;
 
-        if (bindable && bindable instanceof RangeConstrainedBindable) {
+        if (bindable && bindable instanceof RangeConstrainedBindable) 
+        {
           bindable.setMaxValue(this.#maxValue, false, this);
         }
       }
     }
 
-    if (this.comparer.equals(beforePropagation, this.#maxValue)) {
+    if (this.comparer.equals(beforePropagation, this.#maxValue)) 
+    {
       this.maxValueChanged.emit(this.#maxValue);
     }
   }
 
-  override copyTo(bindable: Bindable<T>) {
-    if (bindable instanceof RangeConstrainedBindable) {
+  override copyTo(bindable: Bindable<T>) 
+  {
+    if (bindable instanceof RangeConstrainedBindable) 
+    {
       bindable.minValue = this.minValue;
       bindable.maxValue = this.maxValue;
     }
@@ -157,11 +188,14 @@ export abstract class RangeConstrainedBindable<T> extends Bindable<T> {
     super.copyTo(bindable);
   }
 
-  override bindTo(bindable: Bindable<T>) {
-    if (bindable instanceof RangeConstrainedBindable) {
-      if (!this.isValidRange(bindable.minValue, bindable.maxValue)) {
+  override bindTo(bindable: Bindable<T>) 
+  {
+    if (bindable instanceof RangeConstrainedBindable) 
+    {
+      if (!this.isValidRange(bindable.minValue, bindable.maxValue)) 
+      {
         throw new Error(
-          `The target bindable has specified an invalid range of [${bindable.minValue} - ${bindable.maxValue}].`,
+            `The target bindable has specified an invalid range of [${bindable.minValue} - ${bindable.maxValue}].`,
         );
       }
     }
@@ -169,18 +203,20 @@ export abstract class RangeConstrainedBindable<T> extends Bindable<T> {
     super.bindTo(bindable);
   }
 
-  override unbindEvents() {
+  override unbindEvents() 
+  {
     super.unbindEvents();
 
     this.minValueChanged.removeAllListeners();
     this.maxValueChanged.removeAllListeners();
   }
 
-  override getBoundCopy(): Bindable<T> {
+  override getBoundCopy(): Bindable<T> 
+  {
     const ctor = this.constructor;
 
     // @ts-expect-error - doing stuff here that I probably shouldn't
-     
+
     const copy = new ctor(this.default);
 
     copy.bindTo(this);
@@ -191,21 +227,25 @@ export abstract class RangeConstrainedBindable<T> extends Bindable<T> {
 
   protected abstract isValidRange(min: T, max: T): boolean;
 
-  #setValue(value: T) {
+  #setValue(value: T) 
+  {
     super.value = this.clampValue(value, this.#minValue, this.#maxValue);
   }
 
-  withMinValue(value: T): this {
+  withMinValue(value: T): this 
+  {
     this.minValue = value;
     return this;
   }
 
-  withMaxValue(value: T): this {
+  withMaxValue(value: T): this 
+  {
     this.maxValue = value;
     return this;
   }
 
-  withRange(min: T, max: T): this {
+  withRange(min: T, max: T): this 
+  {
     this.minValue = min;
     this.maxValue = max;
     return this;

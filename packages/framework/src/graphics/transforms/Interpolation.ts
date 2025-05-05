@@ -1,10 +1,11 @@
-import type { ILerp } from '../../types';
-import type { EasingFunction } from './EasingFunction';
-import { Color } from 'pixi.js';
-import { lerp } from '../../math';
-import { MarginPadding } from '../drawables/MarginPadding';
+import type { ILerp } from "../../types";
+import type { EasingFunction } from "./EasingFunction";
+import { Color } from "pixi.js";
+import { lerp } from "../../math";
+import { MarginPadding } from "../drawables/MarginPadding";
 
-export class Interpolation {
+export class Interpolation 
+{
   static valueAt<T>(
     time: number,
     startValue: T,
@@ -12,7 +13,8 @@ export class Interpolation {
     startTime: number,
     endTime: number,
     easing: EasingFunction,
-  ) {
+  ) 
+  {
     if (time < startTime)
       return startValue;
     if (time >= endTime)
@@ -22,17 +24,19 @@ export class Interpolation {
     return this.lerp(startValue, endValue, easing(t));
   }
 
-  private static lerp<T>(startValue: T, endValue: T, t: number): T {
-    if (typeof startValue === 'number')
+  private static lerp<T>(startValue: T, endValue: T, t: number): T 
+  {
+    if (typeof startValue === "number")
       return lerp(startValue, endValue as number, t) as T;
 
-    if (startValue && typeof startValue === 'object' && 'lerp' in startValue)
+    if (startValue && typeof startValue === "object" && "lerp" in startValue)
       return (startValue as ILerp<T>).lerp(endValue, t);
 
     if (startValue instanceof Color)
       return this.interpolateColor(startValue, endValue as Color, t) as T;
 
-    if (startValue instanceof MarginPadding && endValue instanceof MarginPadding) {
+    if (startValue instanceof MarginPadding && endValue instanceof MarginPadding) 
+    {
       return new MarginPadding({
         top: lerp(startValue.top, endValue.top, t),
         bottom: lerp(startValue.bottom, endValue.bottom, t),
@@ -41,10 +45,11 @@ export class Interpolation {
       }) as T;
     }
 
-    throw new Error('Unsupported interpolation type');
+    throw new Error("Unsupported interpolation type");
   }
 
-  static interpolateColor(start: Color, end: Color, t: number): Color {
+  static interpolateColor(start: Color, end: Color, t: number): Color 
+  {
     const startRgba = start.toRgba();
     const endRgba = end.toRgba();
 

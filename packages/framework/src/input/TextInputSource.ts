@@ -1,20 +1,23 @@
-import { diffChars } from 'diff';
-import { Action } from '../bindables/Action';
+import { diffChars } from "diff";
+import { Action } from "../bindables/Action";
 
-export class TextInputSource {
-  constructor() {
-    this.#inputElement.style.position = 'absolute';
-    this.#inputElement.style.left = '-1000px';
-    this.#inputElement.style.top = '-1000px';
+export class TextInputSource 
+{
+  constructor() 
+  {
+    this.#inputElement.style.position = "absolute";
+    this.#inputElement.style.left = "-1000px";
+    this.#inputElement.style.top = "-1000px";
 
     document.body.appendChild(this.#inputElement);
 
-    this.#inputElement.addEventListener('blur', () => {
+    this.#inputElement.addEventListener("blur", () => 
+    {
       if (this.isActive)
         this.#focusElement();
     });
 
-    let previousText = '';
+    let previousText = "";
 
     let previousSelection = {
       start: this.#inputElement.selectionStart,
@@ -22,7 +25,8 @@ export class TextInputSource {
       direction: this.#inputElement.selectionDirection,
     };
 
-    this.#inputElement.addEventListener('beforeinput', () => {
+    this.#inputElement.addEventListener("beforeinput", () => 
+    {
       previousText = this.#inputElement.value;
 
       previousSelection = {
@@ -32,7 +36,8 @@ export class TextInputSource {
       };
     });
 
-    this.#inputElement.addEventListener('input', (evt) => {
+    this.#inputElement.addEventListener("input", (evt) => 
+    {
       const newText: string | null = (evt as any).data;
 
       const { start, end } = previousSelection;
@@ -40,23 +45,28 @@ export class TextInputSource {
       if (
         start !== null
         && end !== null
-        && start !== end) {
+        && start !== end) 
+      {
         this.onTextRemoved.emit({ start, length: Math.abs(end - start) });
 
         if (newText === null)
           return;
       }
 
-      if (newText !== null) {
+      if (newText !== null) 
+      {
         this.onTextInput.emit(newText);
       }
-      else {
+      else 
+      {
         const changes = diffChars(previousText, this.#inputElement.value);
 
         let index = 0;
 
-        for (const change of changes) {
-          if (change.removed) {
+        for (const change of changes) 
+        {
+          if (change.removed) 
+          {
             this.onTextRemoved.emit({ start: index, length: change.count ?? 0 });
             return;
           }
@@ -67,11 +77,14 @@ export class TextInputSource {
     });
   }
 
-  #focusElement() {
+  #focusElement() 
+  {
     this.#inputElement.focus({ preventScroll: true });
 
-    if (document.activeElement !== this.#inputElement) {
-      requestAnimationFrame(() => {
+    if (document.activeElement !== this.#inputElement) 
+    {
+      requestAnimationFrame(() => 
+      {
         if (this.isActive)
           this.#focusElement();
       });
@@ -80,24 +93,27 @@ export class TextInputSource {
 
   #isActive = false;
 
-  get isActive() {
+  get isActive() 
+  {
     return this.#isActive;
   }
 
-  #inputElement = document.createElement('input');
+  #inputElement = document.createElement("input");
 
-  activate() {
+  activate() 
+  {
     if (this.isActive)
       return;
 
     this.#isActive = true;
 
-    this.#inputElement.value = '';
+    this.#inputElement.value = "";
 
     this.#focusElement();
   }
 
-  deactivate() {
+  deactivate() 
+  {
     if (!this.isActive)
       return;
 
@@ -106,7 +122,8 @@ export class TextInputSource {
     this.#inputElement.blur();
   }
 
-  ensureActivated() {
+  ensureActivated() 
+  {
     // TODO do this properly
     this.activate();
   }
@@ -119,11 +136,15 @@ export class TextInputSource {
     text: string,
     selectionStart: number,
     selectionEnd: number,
-  ) {
+  ) 
+  {
     this.#inputElement.value = text;
 
     this.#inputElement.setSelectionRange(selectionStart, selectionEnd);
   }
 }
 
-export interface TextRemovedEvent { start: number; length: number }
+export interface TextRemovedEvent 
+{
+  start: number; length: number 
+}

@@ -1,24 +1,29 @@
-import { Action } from '@osucad/framework';
-import { LifetimeEntryState } from './LifetimeEntryState';
+import { Action } from "@osucad/framework";
+import { LifetimeEntryState } from "./LifetimeEntryState";
 
-export class LifetimeEntry {
+export class LifetimeEntry 
+{
   #lifetimeStart = -Number.MAX_VALUE;
 
   #lifetimeEnd = Number.MAX_VALUE;
 
-  get lifetimeStart() {
+  get lifetimeStart() 
+  {
     return this.#lifetimeStart;
   }
 
-  set lifetimeStart(value: number) {
+  set lifetimeStart(value: number) 
+  {
     this.setLifetimeStart(value);
   }
 
-  get lifetimeEnd() {
+  get lifetimeEnd() 
+  {
     return this.#lifetimeEnd;
   }
 
-  set lifetimeEnd(value: number) {
+  set lifetimeEnd(value: number) 
+  {
     this.setLifetimeEnd(value);
   }
 
@@ -30,19 +35,24 @@ export class LifetimeEntry {
 
   lifetimeChanged = new Action<LifetimeEntry>();
 
-  protected setLifetimeStart(start: number) {
-    if (start !== this.#lifetimeStart) {
+  protected setLifetimeStart(start: number) 
+  {
+    if (start !== this.#lifetimeStart) 
+    {
       this.setLifetime(start, this.#lifetimeEnd);
     }
   }
 
-  protected setLifetimeEnd(end: number) {
-    if (end !== this.#lifetimeEnd) {
+  protected setLifetimeEnd(end: number) 
+  {
+    if (end !== this.#lifetimeEnd) 
+    {
       this.setLifetime(this.#lifetimeStart, end);
     }
   }
 
-  protected setLifetime(start: number, end: number) {
+  protected setLifetime(start: number, end: number) 
+  {
     this.requestLifetimeUpdate.emit(this);
     this.#lifetimeStart = start;
     this.#lifetimeEnd = end;

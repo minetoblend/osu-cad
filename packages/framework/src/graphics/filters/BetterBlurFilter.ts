@@ -1,11 +1,13 @@
-import type { BlurFilterOptions } from 'pixi.js';
-import { BlurFilter } from 'pixi.js';
-import { BetterBlurFilterPass } from './BetterBlurFilterPass';
+import type { BlurFilterOptions } from "pixi.js";
+import { BlurFilter } from "pixi.js";
+import { BetterBlurFilterPass } from "./BetterBlurFilterPass";
 
-export class BetterBlurFilter extends BlurFilter {
-  constructor(options: BlurFilterOptions = {}) {
+export class BetterBlurFilter extends BlurFilter 
+{
+  constructor(options: BlurFilterOptions = {}) 
+  {
     super({
-      antialias: 'inherit',
+      antialias: "inherit",
       resolution: devicePixelRatio,
       ...options,
     });

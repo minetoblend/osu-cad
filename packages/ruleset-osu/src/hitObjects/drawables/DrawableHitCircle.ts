@@ -5,8 +5,10 @@ import { HitCircle } from "../HitCircle";
 import { OsuHitObject } from "../OsuHitObject";
 import { DrawableOsuHitObject } from "./DrawableOsuHitObject";
 
-export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle> {
-  constructor(initialHitObject?: HitCircle) {
+export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle> 
+{
+  constructor(initialHitObject?: HitCircle) 
+  {
     super(initialHitObject);
 
     this.origin = Anchor.Center;
@@ -15,10 +17,11 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle> {
   private circlePiece!: SkinnableDrawable;
   private approachCircle!: SkinnableDrawable;
 
-  protected override load(dependencies: ReadonlyDependencyContainer) {
+  protected override load(dependencies: ReadonlyDependencyContainer) 
+  {
     super.load(dependencies);
 
-    this.size = OsuHitObject.OBJECT_DIMENSIONS
+    this.size = OsuHitObject.OBJECT_DIMENSIONS;
 
     this.internalChildren = [
       this.circlePiece = new SkinnableDrawable(OsuSkinComponents.CirclePiece).with({
@@ -29,40 +32,46 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle> {
         relativeSizeAxes: Axes.Both,
         anchor: Anchor.Center,
         origin: Anchor.Center,
-        alpha: 0
-      })
-    ]
+        alpha: 0,
+      }),
+    ];
   }
 
-  protected override get initialLifetimeOffset(): number {
+  protected override get initialLifetimeOffset(): number 
+  {
     return this.hitObject.timePreempt;
   }
 
-  protected override updateInitialTransforms() {
+  protected override updateInitialTransforms() 
+  {
     this.circlePiece.fadeInFromZero(this.hitObject.timeFadeIn);
 
     this.approachCircle.fadeOut().fadeTo(0.9, Math.min(this.hitObject.timeFadeIn * 2, this.hitObject.timePreempt));
-    this.approachCircle.scaleTo(4).scaleTo(1, this.hitObject.timePreempt)
+    this.approachCircle.scaleTo(4).scaleTo(1, this.hitObject.timePreempt);
   }
 
-  protected override updateHitStateTransforms() {
+  protected override updateHitStateTransforms() 
+  {
     super.updateHitStateTransforms();
 
-    this.circlePiece.fadeOut(700)
+    this.circlePiece.fadeOut(700);
     this.approachCircle.fadeOut();
 
-    this.delay(800).fadeOut()
+    this.delay(800).fadeOut();
   }
 
-  protected override updatePosition() {
+  protected override updatePosition() 
+  {
     this.position = this.hitObject.stackedPosition;
   }
 
-  protected override updateScale() {
+  protected override updateScale() 
+  {
     this.scale = this.hitObject.scale;
   }
 
-  protected get componentLookup(): OsuSkinComponents {
-    return OsuSkinComponents.CirclePiece
+  protected get componentLookup(): OsuSkinComponents 
+  {
+    return OsuSkinComponents.CirclePiece;
   }
 }

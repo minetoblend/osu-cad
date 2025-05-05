@@ -1,9 +1,11 @@
-import { compileHighShaderGl, fragmentGlTemplate, globalUniformsBitGl, GlProgram, localUniformBitGl, roundPixelsBitGl, Shader, Texture } from 'pixi.js';
+import { compileHighShaderGl, fragmentGlTemplate, globalUniformsBitGl, GlProgram, localUniformBitGl, roundPixelsBitGl, Shader, Texture } from "pixi.js";
 
 let glProgram: GlProgram | undefined;
 
-export class PathShader extends Shader {
-  constructor() {
+export class PathShader extends Shader 
+{
+  constructor() 
+  {
     const vertexTemplate = `
 
     in vec3 aPosition;
@@ -44,7 +46,7 @@ export class PathShader extends Shader {
     `;
 
     glProgram ??= new GlProgram({
-      name: 'path-shader',
+      name: "path-shader",
       ...compileHighShaderGl({
         template: {
           vertex: vertexTemplate,
@@ -55,10 +57,10 @@ export class PathShader extends Shader {
           localUniformBitGl,
           roundPixelsBitGl,
           {
-            name: 'texture-bit',
+            name: "texture-bit",
             fragment: {
-              header: 'uniform sampler2D uTexture;',
-              main: 'outColor = texture(uTexture, vUV);',
+              header: "uniform sampler2D uTexture;",
+              main: "outColor = texture(uTexture, vUV);",
             },
             vertex: {},
           },
@@ -76,11 +78,13 @@ export class PathShader extends Shader {
 
   #texture = Texture.WHITE;
 
-  get texture() {
+  get texture() 
+  {
     return this.#texture;
   }
 
-  set texture(value) {
+  set texture(value) 
+  {
     this.#texture = value;
     this.resources.uTexture = value.source;
   }

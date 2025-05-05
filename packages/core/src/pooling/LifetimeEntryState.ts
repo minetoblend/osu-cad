@@ -1,4 +1,5 @@
-export enum LifetimeEntryState {
+export enum LifetimeEntryState 
+{
   New,
   Future,
   Current,

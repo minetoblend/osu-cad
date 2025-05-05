@@ -1,9 +1,10 @@
 import { Bindable, IFrameBasedClock, injectionToken } from "@osucad/framework";
 
-export interface IAnimationTimeReference {
+export interface IAnimationTimeReference 
+{
   readonly clock: IFrameBasedClock | null;
 
   readonly animationStartTime: Bindable<number>;
 }
 
-export const IAnimationTimeReference = injectionToken<IAnimationTimeReference>()
+export const IAnimationTimeReference = injectionToken<IAnimationTimeReference>();

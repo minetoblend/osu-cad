@@ -1,10 +1,11 @@
-import * as util from 'util'
-import IterableWeakSet from '../utils/IterableWeakSet';
-import { Action } from './Action';
+import * as util from "util";
+import IterableWeakSet from "../utils/IterableWeakSet";
+import { Action } from "./Action";
 
 export type BindableListener<T> = (value: T) => void;
 
-export class Bindable<T> implements ReadonlyBindable<T> {
+export class Bindable<T> implements ReadonlyBindable<T> 
+{
   valueChanged = new Action<ValueChangedEvent<T>>();
 
   disabledChanged = new Action<boolean>();
@@ -17,41 +18,49 @@ export class Bindable<T> implements ReadonlyBindable<T> {
 
   #disabled: boolean = false;
 
-  constructor(defaultValue: T) {
+  constructor(defaultValue: T) 
+  {
     this.#value = this.#defaultValue = defaultValue;
   }
 
-  get disabled() {
+  get disabled() 
+  {
     return this.#disabled;
   }
 
-  set disabled(value) {
+  set disabled(value) 
+  {
     if (this.#disabled === value)
       return;
 
     this.setDisabled(value);
   }
 
-  protected setDisabled(value: boolean, bypassChecks = false, source?: Bindable<T>) {
+  protected setDisabled(value: boolean, bypassChecks = false, source?: Bindable<T>) 
+  {
     this.#disabled = value;
     this.triggerDisabledChange(source ?? this, true, bypassChecks);
   }
 
-  get isDefault() {
+  get isDefault() 
+  {
     return this.equals(this.#value, this.#defaultValue);
   }
 
-  setDefault() {
+  setDefault() 
+  {
     this.value = this.default;
   }
 
-  get value(): T {
+  get value(): T 
+  {
     return this.#value;
   }
 
-  set value(value: T) {
+  set value(value: T) 
+  {
     if (this.disabled)
-      throw new Error('Cannot set value on a disabled bindable');
+      throw new Error("Cannot set value on a disabled bindable");
 
     if (this.equals(this.#value, value))
       return;
@@ -59,29 +68,35 @@ export class Bindable<T> implements ReadonlyBindable<T> {
     this.setValue(this.#value, value);
   }
 
-  setValue(previousValue: T, value: T, bypassChecks = false, source?: Bindable<T>) {
+  setValue(previousValue: T, value: T, bypassChecks = false, source?: Bindable<T>) 
+  {
     this.#value = value;
     this.triggerValueChange(previousValue, source ?? this, true, bypassChecks);
   }
 
-  get default() {
+  get default() 
+  {
     return this.#defaultValue;
   }
 
-  set default(value: T) {
+  set default(value: T) 
+  {
     if (this.equals(this.#defaultValue, value))
       return;
 
     this.setDefaultValue(this.#defaultValue, value);
   }
 
-  protected setDefaultValue(previousValue: T, value: T, bypassChecks = false, source?: Bindable<T>) {
+  protected setDefaultValue(previousValue: T, value: T, bypassChecks = false, source?: Bindable<T>) 
+  {
     this.#defaultValue = value;
     this.triggerDefaultChange(previousValue, source ?? this, true, bypassChecks);
   }
 
-  bindValueChanged(listener: BindableListener<ValueChangedEvent<T>>, receiver?: any, runOnceImmediately?: boolean) {
-    if (typeof receiver === 'boolean' && runOnceImmediately === undefined) {
+  bindValueChanged(listener: BindableListener<ValueChangedEvent<T>>, receiver?: any, runOnceImmediately?: boolean) 
+  {
+    if (typeof receiver === "boolean" && runOnceImmediately === undefined) 
+    {
       runOnceImmediately = receiver;
       receiver = undefined;
     }
@@ -91,27 +106,34 @@ export class Bindable<T> implements ReadonlyBindable<T> {
       listener.call(receiver, { value: this.value, previousValue: this.value });
   }
 
-  addOnChangeListener(listener: BindableListener<ValueChangedEvent<T>>, options: AddOnChangeListenerOptions = {}) {
+  addOnChangeListener(listener: BindableListener<ValueChangedEvent<T>>, options: AddOnChangeListenerOptions = {}) 
+  {
     this.valueChanged.addListener(listener, options.scoped);
 
-    if (options.immediate) {
+    if (options.immediate) 
+    {
       listener({ value: this.value, previousValue: this.value });
     }
   }
 
-  removeOnChangeListener(listener: BindableListener<ValueChangedEvent<T>>): boolean {
+  removeOnChangeListener(listener: BindableListener<ValueChangedEvent<T>>): boolean 
+  {
     return this.valueChanged.removeListener(listener);
   }
 
-  removeAllListeners() {
+  removeAllListeners() 
+  {
     this.valueChanged.removeAllListeners();
   }
 
-  triggerValueChange(previousValue: T, source: Bindable<T>, propagateToBindings = true, bypassChecks = false) {
+  triggerValueChange(previousValue: T, source: Bindable<T>, propagateToBindings = true, bypassChecks = false) 
+  {
     const beforePropagation = this.#value;
 
-    if (propagateToBindings && this.bindings) {
-      for (const bindable of this.bindings) {
+    if (propagateToBindings && this.bindings) 
+    {
+      for (const bindable of this.bindings) 
+      {
         if (bindable === source)
           continue;
 
@@ -119,7 +141,8 @@ export class Bindable<T> implements ReadonlyBindable<T> {
       }
     }
 
-    if (this.equals(beforePropagation, this.#value)) {
+    if (this.equals(beforePropagation, this.#value)) 
+    {
       this.valueChanged.emit({
         value: this.#value,
         previousValue,
@@ -127,11 +150,14 @@ export class Bindable<T> implements ReadonlyBindable<T> {
     }
   }
 
-  triggerDefaultChange(previousValue: T, source: Bindable<T>, propagateToBindings = true, bypassChecks = false) {
+  triggerDefaultChange(previousValue: T, source: Bindable<T>, propagateToBindings = true, bypassChecks = false) 
+  {
     const beforePropagation = this.#defaultValue;
 
-    if (propagateToBindings && this.bindings) {
-      for (const bindable of this.bindings) {
+    if (propagateToBindings && this.bindings) 
+    {
+      for (const bindable of this.bindings) 
+      {
         if (bindable === source)
           continue;
 
@@ -139,7 +165,8 @@ export class Bindable<T> implements ReadonlyBindable<T> {
       }
     }
 
-    if (this.equals(beforePropagation, this.#defaultValue)) {
+    if (this.equals(beforePropagation, this.#defaultValue)) 
+    {
       this.defaultChanged.emit({
         value: this.#defaultValue,
         previousValue,
@@ -147,11 +174,14 @@ export class Bindable<T> implements ReadonlyBindable<T> {
     }
   }
 
-  triggerDisabledChange(source: Bindable<T>, propagateToBindings = true, bypassChecks = false) {
+  triggerDisabledChange(source: Bindable<T>, propagateToBindings = true, bypassChecks = false) 
+  {
     const beforePropagation = this.#disabled;
 
-    if (propagateToBindings && this.bindings) {
-      for (const bindable of this.bindings) {
+    if (propagateToBindings && this.bindings) 
+    {
+      for (const bindable of this.bindings) 
+      {
         if (bindable === source)
           continue;
 
@@ -159,38 +189,45 @@ export class Bindable<T> implements ReadonlyBindable<T> {
       }
     }
 
-    if (beforePropagation === this.#disabled) {
+    if (beforePropagation === this.#disabled) 
+    {
       this.disabledChanged.emit(this.#disabled);
     }
   }
 
-  unbindEvents() {
+  unbindEvents() 
+  {
     this.valueChanged.removeAllListeners();
     this.disabledChanged.removeAllListeners();
     this.defaultChanged.removeAllListeners();
   }
 
-  unbindBindings() {
+  unbindBindings() 
+  {
     if (!this.bindings)
       return;
 
-    for (const bindable of this.bindings) {
+    for (const bindable of this.bindings) 
+    {
       this.unbindFrom(bindable);
     }
   }
 
-  unbindAll() {
+  unbindAll() 
+  {
     this.unbindAllInternal();
   }
 
-  protected unbindAllInternal() {
+  protected unbindAllInternal() 
+  {
     // TODO: isLeased
 
     this.unbindEvents();
     this.unbindBindings();
   }
 
-  unbindFrom(bindable: Bindable<T>) {
+  unbindFrom(bindable: Bindable<T>) 
+  {
     if (!this.bindings)
       return false;
 
@@ -203,33 +240,39 @@ export class Bindable<T> implements ReadonlyBindable<T> {
 
   protected bindings?: IterableWeakSet<Bindable<T>>;
 
-  bindTo(bindable: Bindable<T>) {
+  bindTo(bindable: Bindable<T>) 
+  {
     bindable.copyTo(this);
 
     this.#addWeakReference(bindable);
     bindable.#addWeakReference(this);
   }
 
-  copyTo(bindable: Bindable<T>) {
+  copyTo(bindable: Bindable<T>) 
+  {
     bindable.value = this.value;
     bindable.default = this.default;
     bindable.setDisabled(this.disabled, true);
   }
 
-  #addWeakReference(weakReference: Bindable<T>) {
+  #addWeakReference(weakReference: Bindable<T>) 
+  {
     this.bindings ??= new IterableWeakSet();
     this.bindings.add(weakReference);
   }
 
-  #removeWeakReference(bindable: Bindable<T>) {
+  #removeWeakReference(bindable: Bindable<T>) 
+  {
     return this.bindings?.delete(bindable) ?? false;
   }
 
-  protected equals(a: T, b: T): boolean {
+  protected equals(a: T, b: T): boolean 
+  {
     return a === b;
   }
 
-  triggerChange() {
+  triggerChange() 
+  {
     this.triggerValueChange(this.#value, this, false);
     this.triggerDisabledChange(this, false);
   }
@@ -237,11 +280,13 @@ export class Bindable<T> implements ReadonlyBindable<T> {
   #weakReferenceInstance?: WeakRef<this>;
 
   /** @internal */
-  get weakReference() {
+  get weakReference() 
+  {
     return (this.#weakReferenceInstance ??= new WeakRef(this));
   }
 
-  getBoundCopy(): Bindable<T> {
+  getBoundCopy(): Bindable<T> 
+  {
     const copy = this.createInstance();
 
     copy.bindTo(this);
@@ -250,34 +295,39 @@ export class Bindable<T> implements ReadonlyBindable<T> {
   }
 
   /** @internal */
-  createInstance(): Bindable<T> {
+  createInstance(): Bindable<T> 
+  {
     return new Bindable(this.default);
   }
 
   // #v-ifdef VITEST
 
-  [util.inspect.custom](depth: number, options: util.InspectOptionsStylized, inspect: typeof util.inspect) {
+  [util.inspect.custom](depth: number, options: util.InspectOptionsStylized, inspect: typeof util.inspect) 
+  {
 
     return [
-      options.stylize('[Bindable]', 'special'),
-      inspect(this.value, options)
-    ].join(' ')
+      options.stylize("[Bindable]", "special"),
+      inspect(this.value, options),
+    ].join(" ");
   }
 
   // #v-endif
 }
 
-export interface AddOnChangeListenerOptions {
+export interface AddOnChangeListenerOptions 
+{
   scoped?: boolean;
   immediate?: boolean;
 }
 
-export interface ValueChangedEvent<T> {
+export interface ValueChangedEvent<T> 
+{
   readonly value: T;
   readonly previousValue: T;
 }
 
-export interface ReadonlyBindable<T> {
+export interface ReadonlyBindable<T> 
+{
   get value(): T;
 
   get disabled(): boolean;

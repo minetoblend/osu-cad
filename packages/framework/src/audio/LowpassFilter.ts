@@ -1,14 +1,17 @@
-import type { AudioManager } from './AudioManager';
-import { AudioFilter } from './AudioFilter';
+import type { AudioManager } from "./AudioManager";
+import { AudioFilter } from "./AudioFilter";
 
-export interface LowpassFilterOptions {
+export interface LowpassFilterOptions 
+{
   frequency?: number;
   gain?: number;
   q?: number;
 }
 
-export class LowpassFilter extends AudioFilter {
-  constructor(options: LowpassFilterOptions = {}) {
+export class LowpassFilter extends AudioFilter 
+{
+  constructor(options: LowpassFilterOptions = {}) 
+  {
     super();
 
     this.#frequency = options.frequency;
@@ -16,7 +19,8 @@ export class LowpassFilter extends AudioFilter {
     this.#q = options.q;
   }
 
-  override createNode(manager: AudioManager): AudioNode {
+  override createNode(manager: AudioManager): AudioNode 
+  {
     const node = (this.#node = manager.context.createBiquadFilter());
 
     if (this.#frequency !== undefined)
@@ -26,7 +30,7 @@ export class LowpassFilter extends AudioFilter {
     if (this.#q !== undefined)
       node.Q.value = this.#q;
 
-    node.type = 'lowpass';
+    node.type = "lowpass";
     return node;
   }
 
@@ -36,28 +40,32 @@ export class LowpassFilter extends AudioFilter {
   #gain?: number;
   #q?: number;
 
-  get frequency() {
+  get frequency() 
+  {
     if (!this.#node)
-      throw new Error('Filter not connected');
+      throw new Error("Filter not connected");
 
     return this.#node!.frequency;
   }
 
-  get gain() {
+  get gain() 
+  {
     if (!this.#node)
-      throw new Error('Filter not connected');
+      throw new Error("Filter not connected");
 
     return this.#node!.gain;
   }
 
-  get q() {
+  get q() 
+  {
     if (!this.#node)
-      throw new Error('Filter not connected');
+      throw new Error("Filter not connected");
 
     return this.#node!.Q;
   }
 
-  remove(): boolean {
+  remove(): boolean 
+  {
     if (!this.channel)
       return false;
 

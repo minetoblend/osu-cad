@@ -1,18 +1,19 @@
-import type { ClickEvent, HoverEvent, HoverLostEvent, MouseDownEvent } from '../../input';
-import type { FocusLostEvent } from '../../input/events/FocusLostEvent';
-import type { ScrollContainer } from '../containers';
-import type { FillFlowContainerOptions } from '../containers/FillFlowContainer';
-import type { Drawable } from '../drawables';
-import type { MenuItem } from './MenuItem';
-import { Color, type ColorSource } from 'pixi.js';
-import { Action } from '../../bindables';
-import { Vec2 } from '../../math';
-import { almostEquals } from '../../utils/almostEquals';
-import { CompositeDrawable, Container, FillDirection, FillFlowContainer } from '../containers';
-import { Anchor, Axes, Direction, Invalidation, InvalidationSource, LayoutMember, LoadState } from '../drawables';
-import { Box } from '../shapes';
+import type { ClickEvent, HoverEvent, HoverLostEvent, MouseDownEvent } from "../../input";
+import type { FocusLostEvent } from "../../input/events/FocusLostEvent";
+import type { ScrollContainer } from "../containers";
+import type { FillFlowContainerOptions } from "../containers/FillFlowContainer";
+import type { Drawable } from "../drawables";
+import type { MenuItem } from "./MenuItem";
+import { Color, type ColorSource } from "pixi.js";
+import { Action } from "../../bindables";
+import { Vec2 } from "../../math";
+import { almostEquals } from "../../utils/almostEquals";
+import { CompositeDrawable, Container, FillDirection, FillFlowContainer } from "../containers";
+import { Anchor, Axes, Direction, Invalidation, InvalidationSource, LayoutMember, LoadState } from "../drawables";
+import { Box } from "../shapes";
 
-export abstract class Menu extends CompositeDrawable {
+export abstract class Menu extends CompositeDrawable 
+{
   readonly stateChanged = new Action<MenuState>();
 
   protected hoverOpenDelay = 100;
@@ -21,7 +22,8 @@ export abstract class Menu extends CompositeDrawable {
 
   protected readonly contentContainer: ScrollContainer;
 
-  protected get itemsContainer(): FillFlowContainer {
+  protected get itemsContainer(): FillFlowContainer 
+  {
     return this.#itemsFlow;
   }
 
@@ -33,7 +35,8 @@ export abstract class Menu extends CompositeDrawable {
 
   // protected IReadOnlyList<DrawableMenuItem> Children => itemsFlow.Children;
 
-  protected get children() {
+  protected get children() 
+  {
     return this.#itemsFlow.children;
   }
 
@@ -42,11 +45,13 @@ export abstract class Menu extends CompositeDrawable {
   #parentMenu: Menu | null = null;
   #submenu: Menu | null = null;
 
-  get parentMenu(): Menu | null {
+  get parentMenu(): Menu | null 
+  {
     return this.#parentMenu;
   }
 
-  set parentMenu(value: Menu | null) {
+  set parentMenu(value: Menu | null) 
+  {
     this.#parentMenu = value;
   }
 
@@ -54,13 +59,15 @@ export abstract class Menu extends CompositeDrawable {
 
   readonly #submenuContainer: Container;
 
-  get submenuContainer() {
+  get submenuContainer() 
+  {
     return this.#submenuContainer;
   }
 
   protected readonly positionLayout = new LayoutMember(Invalidation.Transform | Invalidation.RequiredParentSizeToFit);
 
-  constructor(direction: Direction, topLevelMenu: boolean = false) {
+  constructor(direction: Direction, topLevelMenu: boolean = false) 
+  {
     super();
 
     this.direction = direction;
@@ -70,34 +77,35 @@ export abstract class Menu extends CompositeDrawable {
       this.#state = MenuState.Open;
 
     this.addAllInternal(
-      (this.maskingContainer = new Container({
-        label: 'Our contents',
-        relativeSizeAxes: Axes.Both,
-        masking: true,
-        children: [
-          (this.#background = this.createBackground()),
-          (this.contentContainer = this.createScrollContainer(direction).with({
-            relativeSizeAxes: Axes.Both,
-            masking: false,
-            child: (this.#itemsFlow = this.createItemsFlow(
+        (this.maskingContainer = new Container({
+          label: "Our contents",
+          relativeSizeAxes: Axes.Both,
+          masking: true,
+          children: [
+            (this.#background = this.createBackground()),
+            (this.contentContainer = this.createScrollContainer(direction).with({
+              relativeSizeAxes: Axes.Both,
+              masking: false,
+              child: (this.#itemsFlow = this.createItemsFlow(
               direction === Direction.Horizontal ? FillDirection.Horizontal : FillDirection.Vertical,
-            )),
-          })),
-        ],
-      })),
-      (this.#submenuContainer = new Container({
-        label: 'Sub menu container',
-        autoSizeAxes: Axes.Both,
-      })),
+              )),
+            })),
+          ],
+        })),
+        (this.#submenuContainer = new Container({
+          label: "Sub menu container",
+          autoSizeAxes: Axes.Both,
+        })),
     );
 
-    switch (direction) {
-      case Direction.Horizontal:
-        this.#itemsFlow.autoSizeAxes = Axes.X;
-        break;
-      case Direction.Vertical:
-        this.#itemsFlow.autoSizeAxes = Axes.Y;
-        break;
+    switch (direction) 
+    {
+    case Direction.Horizontal:
+      this.#itemsFlow.autoSizeAxes = Axes.X;
+      break;
+    case Direction.Vertical:
+      this.#itemsFlow.autoSizeAxes = Axes.Y;
+      break;
     }
 
     this.#itemsFlow.relativeSizeAxes = Axes.Both & ~this.#itemsFlow.autoSizeAxes;
@@ -105,54 +113,66 @@ export abstract class Menu extends CompositeDrawable {
     this.addLayout(this.positionLayout);
   }
 
-  protected override loadComplete() {
+  protected override loadComplete() 
+  {
     super.loadComplete();
     this.#updateState();
   }
 
-  protected createBackground(): Drawable {
+  protected createBackground(): Drawable 
+  {
     return new Box({
       relativeSizeAxes: Axes.Both,
-      color: 'black',
+      color: "black",
     });
   }
 
-  get items(): MenuItem[] {
+  get items(): MenuItem[] 
+  {
     return (this.#itemsFlow.children as DrawableMenuItem[]).map(r => r.item);
   }
 
-  set items(value: MenuItem[]) {
-    while (this.#itemsFlow.children.length > 0) {
+  set items(value: MenuItem[]) 
+  {
+    while (this.#itemsFlow.children.length > 0) 
+    {
       this.#itemsFlow.remove(this.#itemsFlow.children[0], true);
     }
-    for (const item of value) {
+    for (const item of value) 
+    {
       this.add(item);
     }
   }
 
-  get backgroundColor(): Color {
+  get backgroundColor(): Color 
+  {
     return this.#background.color;
   }
 
-  set backgroundColor(value: ColorSource) {
+  set backgroundColor(value: ColorSource) 
+  {
     this.#background.color = value;
   }
 
-  get scrollbarVisible() {
+  get scrollbarVisible() 
+  {
     return this.contentContainer.scrollbarVisible;
   }
 
-  set scrollbarVisible(value: boolean) {
+  set scrollbarVisible(value: boolean) 
+  {
     this.contentContainer.scrollbarVisible = value;
   }
 
   #maxWidth = Infinity;
 
-  get maxWidth() {
+  get maxWidth() 
+  {
     return this.#maxWidth;
   }
 
-  set maxWidth(value: number) {
+  set maxWidth(value: number) 
+  {
     if (almostEquals(this.#maxWidth, value))
       return;
 
@@ -163,11 +183,13 @@ export abstract class Menu extends CompositeDrawable {
 
   #maxHeight = Infinity;
 
-  get maxHeight() {
+  get maxHeight() 
+  {
     return this.#maxHeight;
   }
 
-  set maxHeight(value: number) {
+  set maxHeight(value: number) 
+  {
     if (almostEquals(this.#maxHeight, value))
       return;
 
@@ -178,12 +200,15 @@ export abstract class Menu extends CompositeDrawable {
 
   #state = MenuState.Closed;
 
-  get state() {
+  get state() 
+  {
     return this.#state;
   }
 
-  set state(value: MenuState) {
-    if (this.topLevelMenu) {
+  set state(value: MenuState) 
+  {
+    if (this.topLevelMenu) 
+    {
       this.#submenu?.close();
       return;
     }
@@ -197,36 +222,41 @@ export abstract class Menu extends CompositeDrawable {
     this.stateChanged.emit(value);
   }
 
-  #updateState() {
+  #updateState() 
+  {
     if (this.loadState < LoadState.Loaded)
       return;
 
     this.#resetState();
 
-    switch (this.state) {
-      case MenuState.Closed:
-        this.animateClose();
+    switch (this.state) 
+    {
+    case MenuState.Closed:
+      this.animateClose();
 
-        if (this.hasFocus) {
-          this.#scheduled.push(() => this.getContainingFocusManager()?.changeFocus(this.#parentMenu));
-        }
-        break;
+      if (this.hasFocus) 
+      {
+        this.#scheduled.push(() => this.getContainingFocusManager()?.changeFocus(this.#parentMenu));
+      }
+      break;
 
-      case MenuState.Open:
-        this.contentContainer.scrollToStart(false);
+    case MenuState.Open:
+      this.contentContainer.scrollToStart(false);
 
-        this.animateOpen();
+      this.animateOpen();
 
-        // We may not be present at this point, so must run on the next frame.
-        if (!this.topLevelMenu) {
-          this.#scheduled.push(() => this.getContainingFocusManager()!.changeFocus(this));
-        }
+      // We may not be present at this point, so must run on the next frame.
+      if (!this.topLevelMenu) 
+      {
+        this.#scheduled.push(() => this.getContainingFocusManager()!.changeFocus(this));
+      }
 
-        break;
+      break;
     }
   }
 
-  #resetState() {
+  #resetState() 
+  {
     if (this.loadState < LoadState.Loaded)
       return;
 
@@ -234,11 +264,13 @@ export abstract class Menu extends CompositeDrawable {
     this.#itemsFlow.sizeCache.invalidate();
   }
 
-  add(item: MenuItem) {
+  add(item: MenuItem) 
+  {
     this.insert(this.#itemsFlow.children.length, item);
   }
 
-  insert(position: number, item: MenuItem) {
+  insert(position: number, item: MenuItem) 
+  {
     const drawableItem = this.createDrawableMenuItem(item);
     drawableItem.clicked.addListener(this.#menuItemClicked);
     drawableItem.hovered.addListener(this.#menuItemHovered);
@@ -247,10 +279,11 @@ export abstract class Menu extends CompositeDrawable {
     drawableItem.setFlowDirection(this.direction);
 
     const items = this.children.toSorted(
-      (a, b) => this.#itemsFlow.getLayoutPosition(a) - this.#itemsFlow.getLayoutPosition(b),
+        (a, b) => this.#itemsFlow.getLayoutPosition(a) - this.#itemsFlow.getLayoutPosition(b),
     );
 
-    for (let i = position; i < items.length; i++) {
+    for (let i = position; i < items.length; i++) 
+    {
       this.#itemsFlow.setLayoutPosition(items[i], i + 1);
     }
 
@@ -258,7 +291,8 @@ export abstract class Menu extends CompositeDrawable {
     this.#itemsFlow.sizeCache.invalidate();
   }
 
-  #itemStateChanged(item: DrawableMenuItem, state: MenuItemState) {
+  #itemStateChanged(item: DrawableMenuItem, state: MenuItemState) 
+  {
     if (state !== MenuItemState.Selected)
       return;
 
@@ -268,17 +302,21 @@ export abstract class Menu extends CompositeDrawable {
     this.selectedItem = item;
   }
 
-  remove(item: MenuItem) {
+  remove(item: MenuItem) 
+  {
     const items = this.children.toSorted(
-      (a, b) => this.#itemsFlow.getLayoutPosition(a) - this.#itemsFlow.getLayoutPosition(b),
+        (a, b) => this.#itemsFlow.getLayoutPosition(a) - this.#itemsFlow.getLayoutPosition(b),
     );
     let removed = false;
 
-    for (let i = 0; i < items.length; i++) {
+    for (let i = 0; i < items.length; i++) 
+    {
       const d = items[i] as DrawableMenuItem;
 
-      if (d.item === item) {
-        for (let j = i + 1; j < items.length; j++) this.#itemsFlow.setLayoutPosition(items[j], j - 1);
+      if (d.item === item) 
+      {
+        for (let j = i + 1; j < items.length; j++) 
+          this.#itemsFlow.setLayoutPosition(items[j], j - 1);
 
         this.#itemsFlow.remove(d, true);
         items.splice(i--, 1);
@@ -292,33 +330,41 @@ export abstract class Menu extends CompositeDrawable {
 
   // TODO: clear()
 
-  open() {
+  open() 
+  {
     this.state = MenuState.Open;
   }
 
-  close() {
+  close() 
+  {
     this.state = MenuState.Closed;
   }
 
-  toggle() {
+  toggle() 
+  {
     this.state = this.state === MenuState.Open ? MenuState.Closed : MenuState.Open;
   }
 
-  animateOpen() {
+  animateOpen() 
+  {
     this.show();
   }
 
-  animateClose() {
+  animateClose() 
+  {
     this.hide();
   }
 
-  override update(): void {
+  override update(): void 
+  {
     super.update();
 
-    if (!this.positionLayout.isValid && this.state === MenuState.Open && this.#parentMenu !== null) {
+    if (!this.positionLayout.isValid && this.state === MenuState.Open && this.#parentMenu !== null) 
+    {
       const inputManager = this.getContainingInputManager()!;
 
-      if (this.triggeringItem?.isDisposed) {
+      if (this.triggeringItem?.isDisposed) 
+      {
         this.positionLayout.validate();
         this.close();
         return;
@@ -327,24 +373,27 @@ export abstract class Menu extends CompositeDrawable {
       const triggeringItemTopLeftPosition = this.triggeringItem!.toSpaceOfOtherDrawable(Vec2.zero(), this.#parentMenu);
 
       const menuMaximumPosition = this.triggeringItem!.toSpaceOfOtherDrawable(
-        new Vec2(this.triggeringItem!.drawSize.x + this.drawSize.x, this.triggeringItem!.drawSize.y + this.drawSize.y),
-        inputManager,
+          new Vec2(this.triggeringItem!.drawSize.x + this.drawSize.x, this.triggeringItem!.drawSize.y + this.drawSize.y),
+          inputManager,
       );
 
       const menuMinimumPosition = this.triggeringItem!.toSpaceOfOtherDrawable(
-        new Vec2(-this.drawScale.x, -this.drawScale.y),
-        inputManager,
+          new Vec2(-this.drawScale.x, -this.drawScale.y),
+          inputManager,
       );
 
       const parentSubmenuContainer = this.#parentMenu.submenuContainer;
 
-      if (this.#parentMenu.direction === Direction.Vertical) {
-        if (menuMaximumPosition.x > inputManager.drawSize.x && menuMinimumPosition.x > 0) {
+      if (this.#parentMenu.direction === Direction.Vertical) 
+      {
+        if (menuMaximumPosition.x > inputManager.drawSize.x && menuMinimumPosition.x > 0) 
+        {
           // switch the origin and position of the submenu container so that it's right-aligned to the left side of the triggering item.
           parentSubmenuContainer.origin = switchAxisAnchors(parentSubmenuContainer.origin, Anchor.x0, Anchor.x2);
           parentSubmenuContainer.x = triggeringItemTopLeftPosition.x;
         }
-        else {
+        else 
+        {
           // otherwise, switch the origin and position of the submenu container so that it's left-aligned to the right side of the triggering item.
           parentSubmenuContainer.origin = switchAxisAnchors(parentSubmenuContainer.origin, Anchor.x2, Anchor.x0);
           parentSubmenuContainer.x = triggeringItemTopLeftPosition.x + this.triggeringItem!.drawSize.x;
@@ -352,33 +401,40 @@ export abstract class Menu extends CompositeDrawable {
 
         // If this menu won't fit on the screen vertically if its top edge is aligned to the top of the triggering item,
         // but it will fit if its bottom edge is aligned to the bottom of the triggering item...
-        if (menuMaximumPosition.y > inputManager.drawSize.y && menuMinimumPosition.y > 0) {
+        if (menuMaximumPosition.y > inputManager.drawSize.y && menuMinimumPosition.y > 0) 
+        {
           // switch the origin and position of the submenu container so that it's bottom-aligned to the bottom of the triggering item.
           parentSubmenuContainer.origin = switchAxisAnchors(parentSubmenuContainer.origin, Anchor.y0, Anchor.y2);
           parentSubmenuContainer.y = triggeringItemTopLeftPosition.y + this.triggeringItem!.drawSize.y;
         }
-        else {
+        else 
+        {
           // otherwise, switch the origin and position of the submenu container so that it's top-aligned to the top of the triggering item.
           parentSubmenuContainer.origin = switchAxisAnchors(parentSubmenuContainer.origin, Anchor.y2, Anchor.y0);
           parentSubmenuContainer.y = triggeringItemTopLeftPosition.y;
         }
       }
       // the "horizontal" case is the same as above, but with the axes everywhere swapped.
-      else {
-        if (menuMaximumPosition.y > inputManager.drawSize.y && menuMinimumPosition.y > 0) {
+      else 
+      {
+        if (menuMaximumPosition.y > inputManager.drawSize.y && menuMinimumPosition.y > 0) 
+        {
           parentSubmenuContainer.origin = switchAxisAnchors(parentSubmenuContainer.origin, Anchor.y0, Anchor.y2);
           parentSubmenuContainer.y = triggeringItemTopLeftPosition.y;
         }
-        else {
+        else 
+        {
           parentSubmenuContainer.origin = switchAxisAnchors(parentSubmenuContainer.origin, Anchor.y2, Anchor.y0);
           parentSubmenuContainer.y = triggeringItemTopLeftPosition.y + this.triggeringItem!.drawSize.y;
         }
 
-        if (menuMaximumPosition.x > inputManager.drawSize.x && menuMinimumPosition.x > 0) {
+        if (menuMaximumPosition.x > inputManager.drawSize.x && menuMinimumPosition.x > 0) 
+        {
           parentSubmenuContainer.origin = switchAxisAnchors(parentSubmenuContainer.origin, Anchor.x0, Anchor.x2);
           parentSubmenuContainer.x = triggeringItemTopLeftPosition.x + this.triggeringItem!.drawSize.x;
         }
-        else {
+        else 
+        {
           parentSubmenuContainer.origin = switchAxisAnchors(parentSubmenuContainer.origin, Anchor.x2, Anchor.x0);
           parentSubmenuContainer.x = triggeringItemTopLeftPosition.x;
         }
@@ -387,20 +443,24 @@ export abstract class Menu extends CompositeDrawable {
       this.positionLayout.validate();
     }
 
-    for (const scheduled of this.#scheduled) {
+    for (const scheduled of this.#scheduled) 
+    {
       scheduled();
     }
     this.#scheduled.length = 0;
   }
 
-  override updateAfterChildren(): void {
+  override updateAfterChildren(): void 
+  {
     super.updateAfterChildren();
 
-    if (!this.#itemsFlow.sizeCache.isValid) {
+    if (!this.#itemsFlow.sizeCache.isValid) 
+    {
       let width = 0;
       let height = 0;
 
-      for (const item of this.children as DrawableMenuItem[]) {
+      for (const item of this.children as DrawableMenuItem[]) 
+      {
         width = Math.max(width, item.contentDrawWidth);
         height = Math.max(height, item.contentDrawHeight);
       }
@@ -414,10 +474,12 @@ export abstract class Menu extends CompositeDrawable {
       width = this.relativeSizeAxes & Axes.X ? this.width : width;
       height = this.relativeSizeAxes & Axes.Y ? this.height : height;
 
-      if (this.state === MenuState.Closed && this.direction === Direction.Horizontal) {
+      if (this.state === MenuState.Closed && this.direction === Direction.Horizontal) 
+      {
         width = 0;
       }
-      if (this.state === MenuState.Closed && this.direction === Direction.Vertical) {
+      if (this.state === MenuState.Closed && this.direction === Direction.Vertical) 
+      {
         height = 0;
       }
 
@@ -428,18 +490,22 @@ export abstract class Menu extends CompositeDrawable {
   }
 
 
-  protected updateSize(newSize: Vec2) {
+  protected updateSize(newSize: Vec2) 
+  {
     this.size = newSize;
   }
 
-  #menuItemClicked = (item: DrawableMenuItem) => {
-    if (this.topLevelMenu && this.#submenu?.state === MenuState.Open) {
+  #menuItemClicked = (item: DrawableMenuItem) => 
+  {
+    if (this.topLevelMenu && this.#submenu?.state === MenuState.Open) 
+    {
       this.#submenu.close();
       return;
     }
 
     // Check if there is a sub menu to display
-    if (item.item.items.length === 0) {
+    if (item.item.items.length === 0) 
+    {
       // This item must have attempted to invoke an action - close all menus if item allows
       if (item.closeMenuOnClick)
         this.#closeAll();
@@ -457,10 +523,12 @@ export abstract class Menu extends CompositeDrawable {
 
   triggeringItem: DrawableMenuItem | null = null;
 
-  #openSubmenuFor(item: DrawableMenuItem) {
+  #openSubmenuFor(item: DrawableMenuItem) 
+  {
     item.state = MenuItemState.Selected;
 
-    if (this.#submenu === null) {
+    if (this.#submenu === null) 
+    {
       this.#submenuContainer.add((this.#submenu = this.createSubmenu()));
       this.#submenu!.parentMenu = this;
       this.#submenu!.stateChanged.addListener(this.#submenuStateChanged);
@@ -471,106 +539,131 @@ export abstract class Menu extends CompositeDrawable {
 
     this.#submenu!.items = [...item.item.items];
 
-    if (item.item.items.length > 0) {
-      if (this.#submenu!.state === MenuState.Open) {
+    if (item.item.items.length > 0) 
+    {
+      if (this.#submenu!.state === MenuState.Open) 
+      {
         this.#scheduled.push(() => this.getContainingFocusManager()!.changeFocus(this.#submenu));
       }
-      else {
+      else 
+      {
         this.#submenu!.open();
       }
     }
-    else {
+    else 
+    {
       this.#submenu!.close();
     }
   }
 
-  #submenuStateChanged = (state: MenuState) => {
-    switch (state) {
-      case MenuState.Closed:
-        this.selectedItem!.state = MenuItemState.NotSelected;
-        break;
+  #submenuStateChanged = (state: MenuState) => 
+  {
+    switch (state) 
+    {
+    case MenuState.Closed:
+      this.selectedItem!.state = MenuItemState.NotSelected;
+      break;
 
-      case MenuState.Open:
-        this.selectedItem!.state = MenuItemState.Selected;
-        break;
+    case MenuState.Open:
+      this.selectedItem!.state = MenuItemState.Selected;
+      break;
     }
   };
 
   #openTimeout?: ReturnType<typeof setTimeout>;
 
-  protected get openOnHover() {
+  protected get openOnHover() 
+  {
     return !this.topLevelMenu;
   }
 
-  #menuItemHovered = (item: DrawableMenuItem) => {
-    if (!this.openOnHover && this.#submenu?.state !== MenuState.Open) {
+  #menuItemHovered = (item: DrawableMenuItem) => 
+  {
+    if (!this.openOnHover && this.#submenu?.state !== MenuState.Open) 
+    {
       return;
     }
 
-    if (this.#openTimeout) {
+    if (this.#openTimeout) 
+    {
       clearTimeout(this.#openTimeout);
       this.#openTimeout = undefined;
     }
 
-    if (this.topLevelMenu || this.hoverOpenDelay === 0) {
+    if (this.topLevelMenu || this.hoverOpenDelay === 0) 
+    {
       this.#openSubmenuFor(item);
     }
-    else {
-      this.#openTimeout = setTimeout(() => {
-        if (item.isHovered) {
+    else 
+    {
+      this.#openTimeout = setTimeout(() => 
+      {
+        if (item.isHovered) 
+        {
           this.#openSubmenuFor(item);
         }
       }, this.hoverOpenDelay);
     }
   };
 
-  override get handleNonPositionalInput() {
+  override get handleNonPositionalInput() 
+  {
     return this.state === MenuState.Open;
   }
 
   // TODO: OnKeyDown
 
-  override onMouseDown(e: MouseDownEvent): boolean {
+  override onMouseDown(e: MouseDownEvent): boolean 
+  {
     return true;
   }
 
-  override onClick(e: ClickEvent): boolean {
+  override onClick(e: ClickEvent): boolean 
+  {
     return true;
   }
 
-  override onHover(e: HoverEvent): boolean {
+  override onHover(e: HoverEvent): boolean 
+  {
     return true;
   }
 
-  override get acceptsFocus(): boolean {
+  override get acceptsFocus(): boolean 
+  {
     return !this.topLevelMenu;
   }
 
-  override get requestsFocus(): boolean {
+  override get requestsFocus(): boolean 
+  {
     return !this.topLevelMenu && this.state === MenuState.Open;
   }
 
-  override onFocusLost(e: FocusLostEvent): boolean {
+  override onFocusLost(e: FocusLostEvent): boolean 
+  {
     if (this.#submenu?.state === MenuState.Open)
       return false;
 
-    if (!this.topLevelMenu) {
+    if (!this.topLevelMenu) 
+    {
       this.#closeAll();
     }
 
     return false;
   }
 
-  #closeAll() {
+  #closeAll() 
+  {
     this.close();
     this.#parentMenu?.closeFromChild(this.triggeringItem!.item);
   }
 
-  closeFromChild(source: MenuItem) {
+  closeFromChild(source: MenuItem) 
+  {
     if (this.isHovered || (this.#parentMenu?.isHovered ?? false))
       return;
 
-    if (this.triggeringItem?.item.items.includes(source) ?? this.triggeringItem === null) {
+    if (this.triggeringItem?.item.items.includes(source) ?? this.triggeringItem === null) 
+    {
       this.close();
       this.#parentMenu?.closeFromChild(this.triggeringItem!.item);
     }
@@ -582,12 +675,14 @@ export abstract class Menu extends CompositeDrawable {
 
   protected abstract createScrollContainer(direction: Direction): ScrollContainer;
 
-  protected createItemsFlow(direction: FillDirection) {
+  protected createItemsFlow(direction: FillDirection) 
+  {
     return new ItemsFlow({ direction });
   }
 }
 
-export abstract class DrawableMenuItem extends CompositeDrawable {
+export abstract class DrawableMenuItem extends CompositeDrawable 
+{
   readonly stateChanged = new Action<MenuItemState>();
 
   readonly clicked = new Action<DrawableMenuItem>();
@@ -602,110 +697,130 @@ export abstract class DrawableMenuItem extends CompositeDrawable {
 
   protected foreground!: Drawable;
 
-  get closeMenuOnClick() {
+  get closeMenuOnClick() 
+  {
     return true;
   }
 
   #scheduled: (() => void)[] = [];
 
-  protected constructor(item: MenuItem) {
+  protected constructor(item: MenuItem) 
+  {
     super();
 
     this.item = item;
 
-    this.withScope(() => {
-      item.disabled.addOnChangeListener(() => {
+    this.withScope(() => 
+    {
+      item.disabled.addOnChangeListener(() => 
+      {
         this.updateBackgroundColor();
         this.updateForegroundColor();
       });
 
-      item.action.addOnChangeListener(() => {
+      item.action.addOnChangeListener(() => 
+      {
         this.updateBackgroundColor();
         this.updateForegroundColor();
       });
 
       this.addAllInternal(
-        (this.background = this.createBackground()),
-        (this.foreground = new Container({
-          autoSizeAxes: Axes.Both,
-          child: (this.content = this.createContent()),
-        })),
+          (this.background = this.createBackground()),
+          (this.foreground = new Container({
+            autoSizeAxes: Axes.Both,
+            child: (this.content = this.createContent()),
+          })),
       );
 
-      if ('text' in this.content) {
+      if ("text" in this.content) 
+      {
         this.content.text = item.text.value;
-        item.text.addOnChangeListener((e) => {
+        item.text.addOnChangeListener((e) => 
+        {
           (this.content as unknown as { text: string }).text = e.value;
         });
       }
     });
   }
 
-  override update(): void {
+  override update(): void 
+  {
     super.update();
 
-    for (const scheduled of this.#scheduled) {
+    for (const scheduled of this.#scheduled) 
+    {
       scheduled();
     }
     this.#scheduled.length = 0;
   }
 
-  setFlowDirection(direction: Direction) {
+  setFlowDirection(direction: Direction) 
+  {
     this.relativeSizeAxes = direction === Direction.Horizontal ? Axes.Y : Axes.X;
     this.autoSizeAxes = direction === Direction.Horizontal ? Axes.X : Axes.Y;
   }
 
-  #backgroundColor = new Color('rgb(47, 79, 79)');
+  #backgroundColor = new Color("rgb(47, 79, 79)");
 
-  get backgroundColor() {
+  get backgroundColor() 
+  {
     return this.#backgroundColor;
   }
 
-  set backgroundColor(value: ColorSource) {
+  set backgroundColor(value: ColorSource) 
+  {
     this.#backgroundColor.setValue(value);
     this.updateBackgroundColor();
   }
 
-  #foregroundColor = new Color('white');
+  #foregroundColor = new Color("white");
 
-  get foregroundColor() {
+  get foregroundColor() 
+  {
     return this.#foregroundColor;
   }
 
-  set foregroundColor(value: ColorSource) {
+  set foregroundColor(value: ColorSource) 
+  {
     this.#foregroundColor.setValue(value);
     this.updateForegroundColor();
   }
 
-  #backgroundColorHover = new Color('rgb(169, 169, 169)');
+  #backgroundColorHover = new Color("rgb(169, 169, 169)");
 
-  get backgroundColorHover() {
+  get backgroundColorHover() 
+  {
     return this.#backgroundColorHover;
   }
 
-  set backgroundColorHover(value: ColorSource) {
+  set backgroundColorHover(value: ColorSource) 
+  {
     this.#backgroundColorHover.setValue(value);
     this.updateBackgroundColor();
   }
 
-  #foregroundColorHover = new Color('white');
+  #foregroundColorHover = new Color("white");
 
-  get foregroundColorHover() {
+  get foregroundColorHover() 
+  {
     return this.#foregroundColorHover;
   }
 
-  set foregroundColorHover(value: ColorSource) {
+  set foregroundColorHover(value: ColorSource) 
+  {
     this.#foregroundColorHover.setValue(value);
     this.updateForegroundColor();
   }
 
   #state = MenuItemState.NotSelected;
 
-  get state() {
+  get state() 
+  {
     return this.#state;
   }
 
-  set state(value: MenuItemState) {
+  set state(value: MenuItemState) 
+  {
     this.#state = value;
 
     this.stateChanged.emit(value);
@@ -714,42 +829,52 @@ export abstract class DrawableMenuItem extends CompositeDrawable {
     this.updateForegroundColor();
   }
 
-  get contentDrawWidth() {
+  get contentDrawWidth() 
+  {
     return this.content.drawWidth;
   }
 
-  get contentDrawHeight() {
+  get contentDrawHeight() 
+  {
     return this.content.drawHeight;
   }
 
-  get isActionable() {
+  get isActionable() 
+  {
     return this.#hasSubmenu || (!this.item.disabled.value && this.item.action.value !== null);
   }
 
-  get #hasSubmenu() {
+  get #hasSubmenu() 
+  {
     return this.item.items.length > 0;
   }
 
-  updateBackgroundColor() {
+  updateBackgroundColor() 
+  {
     this.background.fadeColor(this.isHovered && this.isActionable ? this.backgroundColorHover : this.backgroundColor);
   }
 
-  updateForegroundColor() {
+  updateForegroundColor() 
+  {
     this.foreground.fadeColor(this.isHovered && this.isActionable ? this.foregroundColorHover : this.foregroundColor);
   }
 
-  override loadComplete(): void {
+  override loadComplete(): void 
+  {
     super.loadComplete();
     this.updateBackgroundColor();
     this.updateForegroundColor();
   }
 
-  override onHover(e: HoverEvent): boolean {
+  override onHover(e: HoverEvent): boolean 
+  {
     this.updateBackgroundColor();
     this.updateForegroundColor();
 
-    this.#scheduled.push(() => {
-      if (this.isHovered) {
+    this.#scheduled.push(() => 
+    {
+      if (this.isHovered) 
+      {
         this.hovered.emit(this);
       }
     });
@@ -757,15 +882,18 @@ export abstract class DrawableMenuItem extends CompositeDrawable {
     return false;
   }
 
-  override onHoverLost(e: HoverLostEvent) {
+  override onHoverLost(e: HoverLostEvent) 
+  {
     this.updateBackgroundColor();
     this.updateForegroundColor();
 
     super.onHoverLost?.(e);
   }
 
-  override onClick(): boolean {
-    if (this.#hasSubmenu) {
+  override onClick(): boolean 
+  {
+    if (this.#hasSubmenu) 
+    {
       this.clicked.emit(this);
       return true;
     }
@@ -779,7 +907,8 @@ export abstract class DrawableMenuItem extends CompositeDrawable {
     return true;
   }
 
-  createBackground(): Drawable {
+  createBackground(): Drawable 
+  {
     return new Box({
       relativeSizeAxes: Axes.Both,
     });
@@ -788,24 +917,29 @@ export abstract class DrawableMenuItem extends CompositeDrawable {
   abstract createContent(): Drawable;
 }
 
-export enum MenuState {
+export enum MenuState 
+{
   Open,
   Closed,
 }
 
-export enum MenuItemState {
+export enum MenuItemState 
+{
   NotSelected,
   Selected,
 }
 
-function switchAxisAnchors(originalValue: Anchor, toDisable: Anchor, toEnable: Anchor) {
+function switchAxisAnchors(originalValue: Anchor, toDisable: Anchor, toEnable: Anchor) 
+{
   return (originalValue & ~toDisable) | toEnable;
 }
 
-class ItemsFlow extends FillFlowContainer {
+class ItemsFlow extends FillFlowContainer 
+{
   sizeCache = new LayoutMember(Invalidation.RequiredParentSizeToFit, InvalidationSource.Self);
 
-  constructor(options: FillFlowContainerOptions = {}) {
+  constructor(options: FillFlowContainerOptions = {}) 
+  {
     super(options);
     this.addLayout(this.sizeCache);
   }

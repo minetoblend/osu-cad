@@ -3,22 +3,28 @@ import { Color, ColorSource } from "pixi.js";
 import { DrawableSliderPath } from "../../hitObjects/drawables/DrawableSliderPath";
 import { PlaySliderBody } from "../../hitObjects/drawables/PlaySliderBody";
 
-export class LegacySliderBody extends PlaySliderBody {
-  constructor() {
+export class LegacySliderBody extends PlaySliderBody 
+{
+  constructor() 
+  {
     super();
   }
 
-  protected override createSliderPath(): DrawableSliderPath {
-    return new LegacyDrawableSliderPath()
+  protected override createSliderPath(): DrawableSliderPath 
+  {
+    return new LegacyDrawableSliderPath();
   }
 
-  protected override getBodyAccentColor(color: Color): Color {
+  protected override getBodyAccentColor(color: Color): Color 
+  {
     return new Color(super.getBodyAccentColor(color)).setAlpha(0.7);
   }
 }
 
-class LegacyDrawableSliderPath extends DrawableSliderPath {
-  override colorAt(position: number): ColorSource {
+class LegacyDrawableSliderPath extends DrawableSliderPath 
+{
+  override colorAt(position: number): ColorSource 
+  {
     const aa_width = 0;
 
     const shadow = new Color(0x000000).setAlpha(0.25);
@@ -48,7 +54,8 @@ class LegacyDrawableSliderPath extends DrawableSliderPath {
 /// <summary>
 /// Interpolates between two sRGB <see cref="Colour4"/>s directly in sRGB space.
 /// </summary>
-function interpolateNonLinear(time: number, startColor: Color, endColor: Color, startTime: number, endTime: number, easing: EasingFunction = EasingFunction.Default) {
+function interpolateNonLinear(time: number, startColor: Color, endColor: Color, startTime: number, endTime: number, easing: EasingFunction = EasingFunction.Default) 
+{
   if (startColor.toNumber() === endColor.toNumber())
     return startColor;
 

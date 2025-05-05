@@ -4,33 +4,36 @@ import type {
   Geometry,
   Rectangle,
   Shader,
-} from 'pixi.js';
-import type { Vec2 } from '../math';
+} from "pixi.js";
+import type { Vec2 } from "../math";
 import {
   Batcher,
   ExtensionType,
-} from 'pixi.js';
+} from "pixi.js";
 
-import { OsucadBatchGeometry } from './OsucadBatchGeometry';
-import { BatchShader } from './shaders/BatchShader';
+import { OsucadBatchGeometry } from "./OsucadBatchGeometry";
+import { BatchShader } from "./shaders/BatchShader";
 
 let shader: Shader = null!;
 
-export interface OsucadBatchableQuadElement extends DefaultBatchableQuadElement {
+export interface OsucadBatchableQuadElement extends DefaultBatchableQuadElement 
+{
   textureRect: Rectangle;
   blendRange: Vec2;
 }
 
-export interface OsucadBatchableMeshElement extends DefaultBatchableMeshElement {
+export interface OsucadBatchableMeshElement extends DefaultBatchableMeshElement 
+{
   textureRect: Rectangle;
 }
 
-export class OsucadBatcher extends Batcher {
+export class OsucadBatcher extends Batcher 
+{
   public static extension = {
     type: [
       ExtensionType.Batcher,
     ],
-    name: 'osucad',
+    name: "osucad",
   };
 
   override name: string = OsucadBatcher.extension.name;
@@ -40,7 +43,8 @@ export class OsucadBatcher extends Batcher {
 
   protected override vertexSize: number = 6;
 
-  override packAttributes(element: OsucadBatchableMeshElement, float32View: Float32Array, uint32View: Uint32Array, index: number, textureId: number): void {
+  override packAttributes(element: OsucadBatchableMeshElement, float32View: Float32Array, uint32View: Uint32Array, index: number, textureId: number): void 
+  {
     const textureIdAndRound = (textureId << 16) | (element.roundPixels & 0xFFFF);
 
     const wt = element.transform;
@@ -59,7 +63,8 @@ export class OsucadBatcher extends Batcher {
     const offset = element.attributeOffset;
     const end = offset + element.attributeSize;
 
-    for (let i = offset; i < end; i++) {
+    for (let i = offset; i < end; i++) 
+    {
       const i2 = i * 2;
 
       const x = positions[i2];
@@ -76,7 +81,8 @@ export class OsucadBatcher extends Batcher {
     }
   }
 
-  override packQuadAttributes(element: OsucadBatchableQuadElement, float32View: Float32Array, uint32View: Uint32Array, index: number, textureId: number): void {
+  override packQuadAttributes(element: OsucadBatchableQuadElement, float32View: Float32Array, uint32View: Uint32Array, index: number, textureId: number): void 
+  {
     const texture = element.texture;
 
     const wt = element.transform;

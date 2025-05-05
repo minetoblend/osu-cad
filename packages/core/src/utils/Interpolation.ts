@@ -1,4 +1,4 @@
-import type { Vec2 } from '@osucad/framework';
+import type { Vec2 } from "@osucad/framework";
 
 /**
  * Calculates the Barycentric weights
@@ -7,15 +7,19 @@ import type { Vec2 } from '@osucad/framework';
  * to compute a Lagrange polynomial repeatedly.
  * @param points An array of coordinates. No two x should be the same.
  */
-export function barycentricWeights(points: Vec2[]): number[] {
+export function barycentricWeights(points: Vec2[]): number[] 
+{
   const n = points.length;
   const w = [];
 
-  for (let i = 0; i < n; i++) {
+  for (let i = 0; i < n; i++) 
+  {
     w[i] = 1;
 
-    for (let j = 0; j < n; j++) {
-      if (i !== j) {
+    for (let j = 0; j < n; j++) 
+    {
+      if (i !== j) 
+      {
         w[i] *= points[i].x - points[j].x;
       }
     }
@@ -38,24 +42,29 @@ export function barycentricLagrange(
   points: Vec2[],
   weights: number[],
   time: number,
-): number {
-  if (points === null || points.length === 0) {
-    throw new Error('points must contain at least one point');
+): number 
+{
+  if (points === null || points.length === 0) 
+  {
+    throw new Error("points must contain at least one point");
   }
 
-  if (points.length !== weights.length) {
-    throw new Error('points must contain exactly as many items as weights');
+  if (points.length !== weights.length) 
+  {
+    throw new Error("points must contain exactly as many items as weights");
   }
 
   let numerator = 0;
   let denominator = 0;
 
-  for (let i = 0, len = points.length; i < len; ++i) {
+  for (let i = 0, len = points.length; i < len; ++i) 
+  {
     /**
      * While this is not great with branch prediction,
      * it prevents NaN at control point X coordinates
      */
-    if (time === points[i].x) {
+    if (time === points[i].x) 
+    {
       return points[i].y;
     }
 

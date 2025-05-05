@@ -1,5 +1,6 @@
 import { HitObjectLifetimeEntry } from "./HitObjectLifetimeEntry";
 
-export class SyntheticHitObjectEntry extends HitObjectLifetimeEntry {
+export class SyntheticHitObjectEntry extends HitObjectLifetimeEntry 
+{
 
 }

@@ -1,1 +1,2 @@
-export abstract class KeyBindingAction {}
+export abstract class KeyBindingAction 
+{}

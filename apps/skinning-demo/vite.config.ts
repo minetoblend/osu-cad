@@ -1,35 +1,35 @@
 /// <reference types='vitest' />
-import { defineConfig } from 'vite';
+import { defineConfig } from "vite";
 import ConditionalCompile from "vite-plugin-conditional-compiler";
 
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: '../../node_modules/.vite/apps/web',
+  cacheDir: "../../node_modules/.vite/apps/web",
   server:{
     port: 4200,
-    host: 'localhost',
+    host: "localhost",
   },
   preview:{
     port: 4300,
-    host: 'localhost',
+    host: "localhost",
   },
   plugins: [ConditionalCompile()],
   worker: {
-    format: 'es' as const,
+    format: "es" as const,
   },
   esbuild: {
-    target: 'chrome138',
+    target: "chrome138",
   },
   build: {
-    outDir: './dist',
+    outDir: "./dist",
     emptyOutDir: true,
     reportCompressedSize: true,
-    target: 'esnext',
+    target: "esnext",
     minify: false,
     modulePreload: false,
     commonjsOptions: {},
     rollupOptions: {
 
-    }
+    },
   },
 }));

@@ -8,14 +8,16 @@ import {
   roundPixelsBit,
   roundPixelsBitGl,
   Shader,
-} from 'pixi.js';
-import { generateTextureLodBatchBitGl } from './generateTextureBatchBit';
-import { maskingBitGl } from './maskingBit';
+} from "pixi.js";
+import { generateTextureLodBatchBitGl } from "./generateTextureBatchBit";
+import { maskingBitGl } from "./maskingBit";
 
-export class BatchShader extends Shader {
-  constructor(maxTextures: number) {
+export class BatchShader extends Shader 
+{
+  constructor(maxTextures: number) 
+  {
     const glProgram = compileHighShaderGlProgram({
-      name: 'batch',
+      name: "batch",
       bits: [
         colorBitGl,
         generateTextureLodBatchBitGl(maxTextures, -1.0),
@@ -25,7 +27,7 @@ export class BatchShader extends Shader {
     });
 
     const gpuProgram = compileHighShaderGpuProgram({
-      name: 'batch',
+      name: "batch",
       bits: [
         colorBit,
         generateTextureBatchBit(maxTextures),

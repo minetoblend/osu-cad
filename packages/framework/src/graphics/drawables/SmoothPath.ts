@@ -1,21 +1,25 @@
-import type { ColorSource } from 'pixi.js';
-import { BufferImageSource, Color, Texture } from 'pixi.js';
+import type { ColorSource } from "pixi.js";
+import { BufferImageSource, Color, Texture } from "pixi.js";
 import { Cached } from "../../caching/Cached";
 import { ReadonlyDependencyContainer } from "../../di/DependencyContainer";
-import { Path } from './Path';
+import { Path } from "./Path";
 
-export class SmoothPath extends Path {
-  protected override load(dependencies: ReadonlyDependencyContainer) {
+export class SmoothPath extends Path 
+{
+  protected override load(dependencies: ReadonlyDependencyContainer) 
+  {
     super.load(dependencies);
 
     this.#validateTexture();
   }
 
-  override get pathRadius() {
+  override get pathRadius() 
+  {
     return super.pathRadius;
   }
 
-  override set pathRadius(value) {
+  override set pathRadius(value) 
+  {
     if (this.pathRadius === value)
       return;
 
@@ -25,11 +29,13 @@ export class SmoothPath extends Path {
 
   readonly #textureCache = new Cached();
 
-  protected invalidateTexture() {
+  protected invalidateTexture() 
+  {
     this.#textureCache.invalidate();
   }
 
-  #validateTexture() {
+  #validateTexture() 
+  {
     if (this.#textureCache.isValid)
       return;
 
@@ -37,7 +43,8 @@ export class SmoothPath extends Path {
     const raw = new Float32Array(textureWidth * 4);
     const aa_portion = 0.02;
 
-    for (let i = 0; i < textureWidth; i++) {
+    for (let i = 0; i < textureWidth; i++) 
+    {
       const progress = i / (textureWidth - 1);
 
       const { r, g, b, a } = new Color(this.colorAt(progress)).toRgba();
@@ -52,7 +59,7 @@ export class SmoothPath extends Path {
       resource: raw,
       width: textureWidth,
       height: 1,
-      format: 'rgba32float',
+      format: "rgba32float",
     });
 
     const prevTexture = this.texture;
@@ -65,11 +72,13 @@ export class SmoothPath extends Path {
     this.#textureCache.validate();
   }
 
-  colorAt(position: number): ColorSource {
+  colorAt(position: number): ColorSource 
+  {
     return 0xFFFFFF;
   }
 
-  override updateSubTreeTransforms(): boolean {
+  override updateSubTreeTransforms(): boolean 
+  {
     if (!super.updateSubTreeTransforms())
       return false;
 

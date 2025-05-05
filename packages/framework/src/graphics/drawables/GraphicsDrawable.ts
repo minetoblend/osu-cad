@@ -1,10 +1,12 @@
-import type { Container as PIXIContainer } from 'pixi.js';
-import { Graphics } from 'pixi.js';
-import { Drawable, Invalidation } from './Drawable';
-import { LayoutMember } from './LayoutMember';
+import type { Container as PIXIContainer } from "pixi.js";
+import { Graphics } from "pixi.js";
+import { Drawable, Invalidation } from "./Drawable";
+import { LayoutMember } from "./LayoutMember";
 
-export abstract class GraphicsDrawable extends Drawable {
-  protected constructor() {
+export abstract class GraphicsDrawable extends Drawable 
+{
+  protected constructor() 
+  {
     super();
 
     this.addLayout(this.#graphicsBacking);
@@ -14,14 +16,17 @@ export abstract class GraphicsDrawable extends Drawable {
 
   #graphicsBacking = new LayoutMember(Invalidation.DrawSize);
 
-  createDrawNode(): PIXIContainer {
+  createDrawNode(): PIXIContainer 
+  {
     return this.#graphics = new Graphics();
   }
 
-  override update() {
+  override update() 
+  {
     super.update();
 
-    if (!this.#graphicsBacking.isValid) {
+    if (!this.#graphicsBacking.isValid) 
+    {
       this.updateGraphics(this.#graphics);
       this.#graphicsBacking.validate();
     }
@@ -29,11 +34,13 @@ export abstract class GraphicsDrawable extends Drawable {
 
   abstract updateGraphics(g: Graphics): void;
 
-  invalidateGraphics() {
+  invalidateGraphics() 
+  {
     this.#graphicsBacking.invalidate();
   }
 
-  override dispose(isDisposing: boolean = true) {
+  override dispose(isDisposing: boolean = true) 
+  {
     super.dispose(isDisposing);
 
     this.#graphics.destroy();

@@ -1,27 +1,32 @@
-import type { Vec2 } from '../../math';
-import type { InputState } from '../state/InputState';
-import { debugAssert } from '../../utils/debugAssert';
-import { compareInputKeys, InputKey, isPhysical, isVirtual } from '../state/InputKey';
-import { Key } from '../state/Key';
-import { MouseButton } from '../state/MouseButton';
+import type { Vec2 } from "../../math";
+import type { InputState } from "../state/InputState";
+import { debugAssert } from "../../utils/debugAssert";
+import { compareInputKeys, InputKey, isPhysical, isVirtual } from "../state/InputKey";
+import { Key } from "../state/Key";
+import { MouseButton } from "../state/MouseButton";
 
-export class KeyCombination {
+export class KeyCombination 
+{
   readonly keys: readonly InputKey[];
 
   private static none: InputKey[] = [InputKey.None];
 
-  private constructor(keys: readonly InputKey[] = []) {
-    if (!keys.length) {
+  private constructor(keys: readonly InputKey[] = []) 
+  {
+    if (!keys.length) 
+    {
       this.keys = KeyCombination.none;
       return;
     }
 
     const keyBuilder: InputKey[] = [];
 
-    for (let i = 0; i < keys.length; i++) {
+    for (let i = 0; i < keys.length; i++) 
+    {
       const key = keys[i];
 
-      if (keyBuilder.includes(key)) {
+      if (keyBuilder.includes(key)) 
+      {
         continue;
       }
 
@@ -33,7 +38,8 @@ export class KeyCombination {
     this.keys = keyBuilder;
   }
 
-  isPressed(pressedKeys: KeyCombination, inputState: InputState, matchingMode: KeyCombinationMatchingMode): boolean {
+  isPressed(pressedKeys: KeyCombination, inputState: InputState, matchingMode: KeyCombinationMatchingMode): boolean 
+  {
     debugAssert(!pressedKeys.keys.includes(InputKey.None)); // Having None in pressed keys will break IsPressed
 
     if (arrayEquals(this.keys, pressedKeys.keys))
@@ -46,8 +52,10 @@ export class KeyCombination {
     return containsAll(this.keys, pressedKeys.keys, matchingMode);
   }
 
-  static isPressed(pressedPhysicalKeys: readonly InputKey[], candidateKey: InputKey) {
-    if (isPhysical(candidateKey)) {
+  static isPressed(pressedPhysicalKeys: readonly InputKey[], candidateKey: InputKey) 
+  {
+    if (isPhysical(candidateKey)) 
+    {
       return pressedPhysicalKeys.includes(candidateKey);
     }
 
@@ -55,22 +63,25 @@ export class KeyCombination {
     return pressedPhysicalKeys.some(k => this.getVirtualKey(k) === candidateKey);
   }
 
-  static from(...keys: InputKey[]): KeyCombination {
+  static from(...keys: InputKey[]): KeyCombination 
+  {
     return new KeyCombination(keys);
   }
 
-  static fromMouseButton(button: MouseButton): InputKey {
-    switch (button) {
-      case MouseButton.Left:
-        return InputKey.MouseLeftButton;
-      case MouseButton.Right:
-        return InputKey.MouseRightButton;
-      case MouseButton.Middle:
-        return InputKey.MouseMiddleButton;
-      default:
-        // TODO: Add the rest of the buttons
-        console.warn('Unknown mouse button:', button);
-        return InputKey.None;
+  static fromMouseButton(button: MouseButton): InputKey 
+  {
+    switch (button) 
+    {
+    case MouseButton.Left:
+      return InputKey.MouseLeftButton;
+    case MouseButton.Right:
+      return InputKey.MouseRightButton;
+    case MouseButton.Middle:
+      return InputKey.MouseMiddleButton;
+    default:
+      // TODO: Add the rest of the buttons
+      console.warn("Unknown mouse button:", button);
+      return InputKey.None;
     }
   }
 
@@ -222,11 +233,13 @@ export class KeyCombination {
     [Key.MediaSelect]: InputKey.None,
   };
 
-  static fromKey(key: Key): InputKey {
+  static fromKey(key: Key): InputKey 
+  {
     return KeyCombination.keyMap[key] ?? InputKey.None;
   }
 
-  static fromScrollDelta(delta: Vec2): InputKey[] {
+  static fromScrollDelta(delta: Vec2): InputKey[] 
+  {
     const keys: InputKey[] = [];
     if (delta.y > 0)
       keys.push(InputKey.MouseWheelUp);
@@ -239,75 +252,86 @@ export class KeyCombination {
     return keys;
   }
 
-  static isModifierKey(key: InputKey): boolean {
-    switch (key) {
-      case InputKey.LControl:
-      case InputKey.LShift:
-      case InputKey.LAlt:
-      case InputKey.LMeta:
-      case InputKey.RControl:
-      case InputKey.RShift:
-      case InputKey.RAlt:
-      case InputKey.RMeta:
-      case InputKey.Control:
-      case InputKey.Shift:
-      case InputKey.Alt:
-      case InputKey.Meta:
-        return true;
+  static isModifierKey(key: InputKey): boolean 
+  {
+    switch (key) 
+    {
+    case InputKey.LControl:
+    case InputKey.LShift:
+    case InputKey.LAlt:
+    case InputKey.LMeta:
+    case InputKey.RControl:
+    case InputKey.RShift:
+    case InputKey.RAlt:
+    case InputKey.RMeta:
+    case InputKey.Control:
+    case InputKey.Shift:
+    case InputKey.Alt:
+    case InputKey.Meta:
+      return true;
     }
 
     return false;
   }
 
-  static keyBindingContains(candidateKeyBinding: readonly InputKey[], physicalKey: InputKey): boolean {
+  static keyBindingContains(candidateKeyBinding: readonly InputKey[], physicalKey: InputKey): boolean 
+  {
     if (candidateKeyBinding.includes(physicalKey))
       return true;
 
     const virtualKey = this.getVirtualKey(physicalKey);
 
-    if (virtualKey !== null) {
+    if (virtualKey !== null) 
+    {
       return candidateKeyBinding.includes(virtualKey);
     }
 
     return false;
   }
 
-  static getVirtualKey(key: InputKey): InputKey | null {
-    switch (key) {
-      case InputKey.LShift:
-      case InputKey.RShift:
-        return InputKey.Shift;
+  static getVirtualKey(key: InputKey): InputKey | null 
+  {
+    switch (key) 
+    {
+    case InputKey.LShift:
+    case InputKey.RShift:
+      return InputKey.Shift;
 
-      case InputKey.LControl:
-      case InputKey.RControl:
-        return InputKey.Control;
+    case InputKey.LControl:
+    case InputKey.RControl:
+      return InputKey.Control;
 
-      case InputKey.LAlt:
-      case InputKey.RAlt:
-        return InputKey.Alt;
+    case InputKey.LAlt:
+    case InputKey.RAlt:
+      return InputKey.Alt;
 
-      case InputKey.LMeta:
-      case InputKey.RMeta:
-        return InputKey.Meta;
+    case InputKey.LMeta:
+    case InputKey.RMeta:
+      return InputKey.Meta;
     }
 
     return null;
   }
 }
 
-export enum KeyCombinationMatchingMode {
+export enum KeyCombinationMatchingMode 
+{
   Any,
   Exact,
   Modifiers,
 }
 
-function arrayEquals<T>(a: readonly T[], b: readonly T[]): boolean {
-  if (a.length !== b.length) {
+function arrayEquals<T>(a: readonly T[], b: readonly T[]): boolean 
+{
+  if (a.length !== b.length) 
+  {
     return false;
   }
 
-  for (let i = 0; i < a.length; i++) {
-    if (a[i] !== b[i]) {
+  for (let i = 0; i < a.length; i++) 
+  {
+    if (a[i] !== b[i]) 
+    {
       return false;
     }
   }
@@ -319,39 +343,47 @@ function containsAll(
   candidateKeyBinding: readonly InputKey[],
   pressedPhysicalKeys: readonly InputKey[],
   matchingMode: KeyCombinationMatchingMode,
-): boolean {
+): boolean 
+{
   debugAssert(pressedPhysicalKeys.every(key => isPhysical(key)));
 
-  for (const key of candidateKeyBinding) {
-    if (!KeyCombination.isPressed(pressedPhysicalKeys, key)) {
+  for (const key of candidateKeyBinding) 
+  {
+    if (!KeyCombination.isPressed(pressedPhysicalKeys, key)) 
+    {
       return false;
     }
   }
 
-  switch (matchingMode) {
-    case KeyCombinationMatchingMode.Exact:
-      for (const key of pressedPhysicalKeys) {
-        // in exact matching mode, every pressed key needs to be in the candidate.
-        if (!KeyCombination.keyBindingContains(candidateKeyBinding, key)) {
-          return false;
-        }
+  switch (matchingMode) 
+  {
+  case KeyCombinationMatchingMode.Exact:
+    for (const key of pressedPhysicalKeys) 
+    {
+      // in exact matching mode, every pressed key needs to be in the candidate.
+      if (!KeyCombination.keyBindingContains(candidateKeyBinding, key)) 
+      {
+        return false;
       }
+    }
 
-      break;
+    break;
 
-    case KeyCombinationMatchingMode.Modifiers:
-      for (const key of pressedPhysicalKeys) {
-        // in modifiers match mode, the same check applies as exact but only for modifier keys.
-        if (KeyCombination.isModifierKey(key) && !KeyCombination.keyBindingContains(candidateKeyBinding, key)) {
-          return false;
-        }
+  case KeyCombinationMatchingMode.Modifiers:
+    for (const key of pressedPhysicalKeys) 
+    {
+      // in modifiers match mode, the same check applies as exact but only for modifier keys.
+      if (KeyCombination.isModifierKey(key) && !KeyCombination.keyBindingContains(candidateKeyBinding, key)) 
+      {
+        return false;
       }
+    }
 
-      break;
+    break;
 
-    case KeyCombinationMatchingMode.Any:
-      // any match mode needs no further checks.
-      break;
+  case KeyCombinationMatchingMode.Any:
+    // any match mode needs no further checks.
+    break;
   }
 
   return true;

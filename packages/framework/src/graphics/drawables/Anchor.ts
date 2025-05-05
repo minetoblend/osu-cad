@@ -1,4 +1,5 @@
-export enum Anchor {
+export enum Anchor 
+{
   x0 = 1,
   x1 = 1 << 1,
   x2 = 1 << 2,
@@ -22,34 +23,37 @@ export enum Anchor {
   BottomRight = x2 | y2,
 }
 
-export function anchorToString(anchor: Anchor) {
-  switch (anchor) {
-    case Anchor.Custom:
-      return 'Custom';
-    case Anchor.TopLeft:
-      return 'TopLeft';
-    case Anchor.TopCenter:
-      return 'TopCenter';
-    case Anchor.TopRight:
-      return 'TopRight';
-    case Anchor.CenterLeft:
-      return 'CenterLeft';
-    case Anchor.Center:
-      return 'Center';
-    case Anchor.CenterRight:
-      return 'CenterRight';
-    case Anchor.BottomLeft:
-      return 'BottomLeft';
-    case Anchor.BottomCenter:
-      return 'BottomCenter';
-    case Anchor.BottomRight:
-      return 'BottomRight';
-    default:
-      throw new Error(`Unknown anchor type: ${anchor}`);
+export function anchorToString(anchor: Anchor) 
+{
+  switch (anchor) 
+  {
+  case Anchor.Custom:
+    return "Custom";
+  case Anchor.TopLeft:
+    return "TopLeft";
+  case Anchor.TopCenter:
+    return "TopCenter";
+  case Anchor.TopRight:
+    return "TopRight";
+  case Anchor.CenterLeft:
+    return "CenterLeft";
+  case Anchor.Center:
+    return "Center";
+  case Anchor.CenterRight:
+    return "CenterRight";
+  case Anchor.BottomLeft:
+    return "BottomLeft";
+  case Anchor.BottomCenter:
+    return "BottomCenter";
+  case Anchor.BottomRight:
+    return "BottomRight";
+  default:
+    throw new Error(`Unknown anchor type: ${anchor}`);
   }
 }
 
-export function parseAnchor(anchor: string) {
+export function parseAnchor(anchor: string) 
+{
   if (anchor in Anchor)
     return Anchor[anchor as keyof typeof Anchor];
 

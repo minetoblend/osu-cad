@@ -1,10 +1,12 @@
-import type { Bindable } from '../../bindables/Bindable';
-import type { ITransformable } from './ITransformable';
-import { Interpolation } from './Interpolation';
-import { TypedTransform } from './Transform';
+import type { Bindable } from "../../bindables/Bindable";
+import type { ITransformable } from "./ITransformable";
+import { Interpolation } from "./Interpolation";
+import { TypedTransform } from "./Transform";
 
-export class TransformBindable<TValue, T extends ITransformable> extends TypedTransform<TValue, T> {
-  constructor(readonly targetBindable: Bindable<TValue>) {
+export class TransformBindable<TValue, T extends ITransformable> extends TypedTransform<TValue, T> 
+{
+  constructor(readonly targetBindable: Bindable<TValue>) 
+  {
     super();
 
     this.targetMember = Math.random().toString();
@@ -12,7 +14,8 @@ export class TransformBindable<TValue, T extends ITransformable> extends TypedTr
 
   override readonly targetMember: string;
 
-  #valueAt(time: number): TValue {
+  #valueAt(time: number): TValue 
+  {
     if (time < this.startTime)
       return this.startValue;
     if (time >= this.endTime)
@@ -21,15 +24,18 @@ export class TransformBindable<TValue, T extends ITransformable> extends TypedTr
     return Interpolation.valueAt(time, this.startValue, this.endValue, this.startTime, this.endTime, this.easing);
   }
 
-  override applyTo(target: T, time: number) {
+  override applyTo(target: T, time: number) 
+  {
     this.targetBindable.value = this.#valueAt(time);
   }
 
-  override readIntoStartValueFrom(target: T) {
+  override readIntoStartValueFrom(target: T) 
+  {
     this.startValue = this.targetBindable.value;
   }
 
-  override clone(): TypedTransform<TValue, T> {
+  override clone(): TypedTransform<TValue, T> 
+  {
     return new TransformBindable<TValue, T>(this.targetBindable);
   }
 }

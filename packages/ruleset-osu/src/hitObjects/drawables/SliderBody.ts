@@ -2,72 +2,89 @@ import { CompositeDrawable, Path, Vec2 } from "@osucad/framework";
 import { Color, ColorSource } from "pixi.js";
 import { DrawableSliderPath } from "./DrawableSliderPath";
 
-export class SliderBody extends CompositeDrawable {
+export class SliderBody extends CompositeDrawable 
+{
   #path!: DrawableSliderPath;
 
-  protected get path(): Path {
+  protected get path(): Path 
+  {
     return this.#path;
   }
 
-  get pathRadius() {
+  get pathRadius() 
+  {
     return this.#path.pathRadius;
   }
 
-  set pathRadius(value) {
+  set pathRadius(value) 
+  {
     this.#path.pathRadius = value;
   }
 
-  get accentColor() {
+  get accentColor() 
+  {
     return this.#path.accentColor;
   }
 
-  set accentColor(value) {
+  set accentColor(value) 
+  {
     this.#path.accentColor = value;
   }
 
-  override get borderColor() {
+  override get borderColor() 
+  {
     return this.#path.borderColor;
   }
 
-  override set borderColor(value) {
+  override set borderColor(value) 
+  {
     this.#path.borderColor = value;
   }
 
-  get borderSize() {
+  get borderSize() 
+  {
     return this.#path.borderSize;
   }
 
-  set borderSize(value) {
+  set borderSize(value) 
+  {
     this.#path.borderSize = value;
   }
 
-  protected constructor() {
+  protected constructor() 
+  {
     super();
     this.recyclePath();
   }
 
-  recyclePath() {
-    this.internalChild = this.#path = this.createSliderPath().adjust((p) => {
+  recyclePath() 
+  {
+    this.internalChild = this.#path = this.createSliderPath().adjust((p) => 
+    {
       p.position = this.#path?.position ?? Vec2.zero();
       p.pathRadius = this.#path?.pathRadius ?? 10;
-      p.accentColor = this.#path?.accentColor ?? new Color('white');
-      p.borderColor = this.#path?.borderColor ?? new Color('white');
+      p.accentColor = this.#path?.accentColor ?? new Color("white");
+      p.borderColor = this.#path?.borderColor ?? new Color("white");
       p.borderSize = this.#path?.borderSize ?? 1;
       p.vertices = this.#path?.vertices ?? [];
     });
   }
 
-  protected setVertices(vertices: readonly Vec2[]) {
+  protected setVertices(vertices: readonly Vec2[]) 
+  {
     this.#path.vertices = vertices;
   }
 
-  protected createSliderPath(): DrawableSliderPath {
+  protected createSliderPath(): DrawableSliderPath 
+  {
     return new DefaultDrawableSliderPath();
   }
 }
 
-class DefaultDrawableSliderPath extends DrawableSliderPath {
-  override colorAt(position: number): ColorSource {
+class DefaultDrawableSliderPath extends DrawableSliderPath 
+{
+  override colorAt(position: number): ColorSource 
+  {
     if (this.calculatedBorderPortion !== 0 && position <= this.calculatedBorderPortion)
       return this.borderColor;
 

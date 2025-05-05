@@ -1,10 +1,13 @@
-import type { InputState } from '../state/InputState';
-import type { IInput } from './IInput';
+import type { InputState } from "../state/InputState";
+import type { IInput } from "./IInput";
 
-export class FileDropEnterInput implements IInput {
-  constructor(readonly files: FileList | null) {}
+export class FileDropEnterInput implements IInput 
+{
+  constructor(readonly files: FileList | null) 
+  {}
 
-  apply(state: InputState) {
+  apply(state: InputState) 
+  {
     state.draggedFiles = this.files;
   }
 }

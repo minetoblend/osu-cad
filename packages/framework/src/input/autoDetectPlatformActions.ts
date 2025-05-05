@@ -1,9 +1,11 @@
-import { KeyBinding, KeyCombination } from './bindings';
-import { PlatformAction } from './PlatformAction';
-import { InputKey } from './state/InputKey';
+import { KeyBinding, KeyCombination } from "./bindings";
+import { PlatformAction } from "./PlatformAction";
+import { InputKey } from "./state/InputKey";
 
-export function autoDetectPlatformActions(): KeyBinding[] {
-  if (navigator.userAgent.includes('Mac')) {
+export function autoDetectPlatformActions(): KeyBinding[] 
+{
+  if (navigator.userAgent.includes("Mac")) 
+  {
     return [
       new KeyBinding(KeyCombination.from(InputKey.Meta, InputKey.X), PlatformAction.Cut),
       new KeyBinding(KeyCombination.from(InputKey.Meta, InputKey.C), PlatformAction.Copy),
@@ -22,24 +24,24 @@ export function autoDetectPlatformActions(): KeyBinding[] {
       new KeyBinding(KeyCombination.from(InputKey.Alt, InputKey.BackSpace), PlatformAction.DeleteBackwardWord),
       new KeyBinding(KeyCombination.from(InputKey.Alt, InputKey.Delete), PlatformAction.DeleteForwardWord),
       new KeyBinding(
-        KeyCombination.from(InputKey.Alt, InputKey.Shift, InputKey.Left),
-        PlatformAction.SelectBackwardWord,
+          KeyCombination.from(InputKey.Alt, InputKey.Shift, InputKey.Left),
+          PlatformAction.SelectBackwardWord,
       ),
       new KeyBinding(
-        KeyCombination.from(InputKey.Alt, InputKey.Shift, InputKey.Right),
-        PlatformAction.SelectForwardWord,
+          KeyCombination.from(InputKey.Alt, InputKey.Shift, InputKey.Right),
+          PlatformAction.SelectForwardWord,
       ),
       new KeyBinding(KeyCombination.from(InputKey.Meta, InputKey.Left), PlatformAction.MoveBackwardLine),
       new KeyBinding(KeyCombination.from(InputKey.Meta, InputKey.Right), PlatformAction.MoveForwardLine),
       new KeyBinding(KeyCombination.from(InputKey.Meta, InputKey.BackSpace), PlatformAction.DeleteBackwardLine),
       new KeyBinding(KeyCombination.from(InputKey.Meta, InputKey.Delete), PlatformAction.DeleteForwardLine),
       new KeyBinding(
-        KeyCombination.from(InputKey.Meta, InputKey.Shift, InputKey.Left),
-        PlatformAction.SelectBackwardLine,
+          KeyCombination.from(InputKey.Meta, InputKey.Shift, InputKey.Left),
+          PlatformAction.SelectBackwardLine,
       ),
       new KeyBinding(
-        KeyCombination.from(InputKey.Meta, InputKey.Shift, InputKey.Right),
-        PlatformAction.SelectForwardLine,
+          KeyCombination.from(InputKey.Meta, InputKey.Shift, InputKey.Right),
+          PlatformAction.SelectForwardLine,
       ),
       new KeyBinding(KeyCombination.from(InputKey.Alt, InputKey.Meta, InputKey.Left), PlatformAction.DocumentPrevious),
       new KeyBinding(KeyCombination.from(InputKey.Alt, InputKey.Meta, InputKey.Right), PlatformAction.DocumentNext),
@@ -49,8 +51,8 @@ export function autoDetectPlatformActions(): KeyBinding[] {
       new KeyBinding(KeyCombination.from(InputKey.Meta, InputKey.Shift, InputKey.T), PlatformAction.TabRestore),
       new KeyBinding(KeyCombination.from(InputKey.Control, InputKey.Tab), PlatformAction.DocumentNext),
       new KeyBinding(
-        KeyCombination.from(InputKey.Control, InputKey.Shift, InputKey.Tab),
-        PlatformAction.DocumentPrevious,
+          KeyCombination.from(InputKey.Control, InputKey.Shift, InputKey.Tab),
+          PlatformAction.DocumentPrevious,
       ),
       new KeyBinding(KeyCombination.from(InputKey.Meta, InputKey.S), PlatformAction.Save),
       new KeyBinding(KeyCombination.from(InputKey.Meta, InputKey.Up), PlatformAction.MoveToListStart),
@@ -87,12 +89,12 @@ export function autoDetectPlatformActions(): KeyBinding[] {
     new KeyBinding(KeyCombination.from(InputKey.Control, InputKey.BackSpace), PlatformAction.DeleteBackwardWord),
     new KeyBinding(KeyCombination.from(InputKey.Control, InputKey.Delete), PlatformAction.DeleteForwardWord),
     new KeyBinding(
-      KeyCombination.from(InputKey.Control, InputKey.Shift, InputKey.Left),
-      PlatformAction.SelectBackwardWord,
+        KeyCombination.from(InputKey.Control, InputKey.Shift, InputKey.Left),
+        PlatformAction.SelectBackwardWord,
     ),
     new KeyBinding(
-      KeyCombination.from(InputKey.Control, InputKey.Shift, InputKey.Right),
-      PlatformAction.SelectForwardWord,
+        KeyCombination.from(InputKey.Control, InputKey.Shift, InputKey.Right),
+        PlatformAction.SelectForwardWord,
     ),
     new KeyBinding(KeyCombination.from(InputKey.Home), PlatformAction.MoveBackwardLine),
     new KeyBinding(KeyCombination.from(InputKey.End), PlatformAction.MoveForwardLine),
@@ -102,8 +104,8 @@ export function autoDetectPlatformActions(): KeyBinding[] {
     new KeyBinding(KeyCombination.from(InputKey.Control, InputKey.PageDown), PlatformAction.DocumentNext),
     new KeyBinding(KeyCombination.from(InputKey.Control, InputKey.Tab), PlatformAction.DocumentNext),
     new KeyBinding(
-      KeyCombination.from(InputKey.Control, InputKey.Shift, InputKey.Tab),
-      PlatformAction.DocumentPrevious,
+        KeyCombination.from(InputKey.Control, InputKey.Shift, InputKey.Tab),
+        PlatformAction.DocumentPrevious,
     ),
     new KeyBinding(KeyCombination.from(InputKey.Control, InputKey.W), PlatformAction.DocumentClose),
     new KeyBinding(KeyCombination.from(InputKey.Control, InputKey.F4), PlatformAction.DocumentClose),

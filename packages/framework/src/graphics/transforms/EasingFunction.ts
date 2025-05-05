@@ -13,7 +13,8 @@ const back_const2 = back_const * 1.525;
 
 const bounce_const = 1 / 2.75;
 
-export namespace EasingFunction {
+export namespace EasingFunction 
+{
   export const None: EasingFunction = () => 1;
   export const Default: EasingFunction = time => time;
 
@@ -23,44 +24,56 @@ export namespace EasingFunction {
   export const Out: EasingFunction = time => time * (2 - time);
   export const OutQuad = Out;
 
-  export const InOutQuad: EasingFunction = (time) => {
-    if (time < 0.5) {
+  export const InOutQuad: EasingFunction = (time) => 
+  {
+    if (time < 0.5) 
+    {
       return time * time * 2;
     }
-    else {
+    else 
+    {
       return --time * time * -2 + 1;
     }
   };
 
   export const InCubic: EasingFunction = time => time * time * time;
   export const OutCubic: EasingFunction = time => --time * time * time + 1;
-  export const InOutCubic: EasingFunction = (time) => {
-    if (time < 0.5) {
+  export const InOutCubic: EasingFunction = (time) => 
+  {
+    if (time < 0.5) 
+    {
       return time * time * time * 4;
     }
-    else {
+    else 
+    {
       return --time * time * time * 4 + 1;
     }
   };
 
   export const InQuart: EasingFunction = time => time * time * time * time;
   export const OutQuart: EasingFunction = time => 1 - --time * time * time * time;
-  export const InOutQuart: EasingFunction = (time) => {
-    if (time < 0.5) {
+  export const InOutQuart: EasingFunction = (time) => 
+  {
+    if (time < 0.5) 
+    {
       return time * time * time * time * 8;
     }
-    else {
+    else 
+    {
       return --time * time * time * time * -8 + 1;
     }
   };
 
   export const InQuint: EasingFunction = time => time * time * time * time * time;
   export const OutQuint: EasingFunction = time => --time * time * time * time * time + 1;
-  export const InOutQuint: EasingFunction = (time) => {
-    if (time < 0.5) {
+  export const InOutQuint: EasingFunction = (time) => 
+  {
+    if (time < 0.5) 
+    {
       return time * time * time * time * time * 16;
     }
-    else {
+    else 
+    {
       return --time * time * time * time * time * 16 + 1;
     }
   };
@@ -71,22 +84,28 @@ export namespace EasingFunction {
 
   export const InExpo: EasingFunction = time => 2 ** (10 * (time - 1)) + expo_offset * (time - 1);
   export const OutExpo: EasingFunction = time => -(2 ** (-10 * time)) + 1 + expo_offset * time;
-  export const InOutExpo: EasingFunction = (time) => {
-    if (time < 0.5) {
+  export const InOutExpo: EasingFunction = (time) => 
+  {
+    if (time < 0.5) 
+    {
       return (2 ** (20 * time - 10) + expo_offset * (10 * time - 5)) / 2;
     }
-    else {
+    else 
+    {
       return (2 - 2 ** (-20 * time + 10) - expo_offset * (10 * time - 5)) / 2;
     }
   };
 
   export const InCirc: EasingFunction = time => 1 - Math.sqrt(1 - time * time);
   export const OutCirc: EasingFunction = time => Math.sqrt(1 - --time * time);
-  export const InOutCirc: EasingFunction = (time) => {
-    if (time < 0.5) {
+  export const InOutCirc: EasingFunction = (time) => 
+  {
+    if (time < 0.5) 
+    {
       return (1 - Math.sqrt(1 - 4 * time * time)) / 2;
     }
-    else {
+    else 
+    {
       return (Math.sqrt(1 - -4 * time * time) + 1) / 2;
     }
   };
@@ -105,16 +124,20 @@ export namespace EasingFunction {
 
   export const InBack: EasingFunction = time => time * time * ((back_const + 1) * time - back_const);
   export const OutBack: EasingFunction = time => --time * time * ((back_const + 1) * time + back_const) + 1;
-  export const InOutBack: EasingFunction = (time) => {
-    if (time < 0.5) {
+  export const InOutBack: EasingFunction = (time) => 
+  {
+    if (time < 0.5) 
+    {
       return time * time * ((back_const2 + 1) * time - back_const2) * 2;
     }
-    else {
+    else 
+    {
       return (--time * time * ((back_const2 + 1) * time + back_const2) + 1) * 2;
     }
   };
 
-  export const InBounce: EasingFunction = (time) => {
+  export const InBounce: EasingFunction = (time) => 
+  {
     time = 1 - time;
     if (time < bounce_const)
       return 1 - 7.5625 * time * time;
@@ -126,11 +149,14 @@ export namespace EasingFunction {
     return 1 - (7.5625 * (time -= 2.625 * bounce_const) * time + 0.984375);
   };
   export const OutBounce: EasingFunction = time => 1 - InBounce(1 - time);
-  export const InOutBounce: EasingFunction = (time) => {
-    if (time < 0.5) {
+  export const InOutBounce: EasingFunction = (time) => 
+  {
+    if (time < 0.5) 
+    {
       return InBounce(time * 2) * 0.5;
     }
-    else {
+    else 
+    {
       return OutBounce(time * 2 - 1) * 0.5 + 0.5;
     }
   };

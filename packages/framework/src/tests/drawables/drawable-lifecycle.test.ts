@@ -1,12 +1,16 @@
-import { DependencyContainer } from '../../di/DependencyContainer';
-import { Container } from '../../graphics/containers/Container';
-import { loadDrawable, LoadState } from '../../graphics/drawables/Drawable';
-import { FramedClock } from '../../timing/FramedClock';
+import { DependencyContainer } from "../../di/DependencyContainer";
+import { Container } from "../../graphics/containers/Container";
+import { loadDrawable, LoadState } from "../../graphics/drawables/Drawable";
+import { FramedClock } from "../../timing/FramedClock";
 
-describe('drawable lifecycle', () => {
-  it('loads a drawable', () => {
-    class TestDrawable extends Container {
-      override onLoad() {
+describe("drawable lifecycle", () => 
+{
+  it("loads a drawable", () => 
+  {
+    class TestDrawable extends Container 
+    {
+      override onLoad() 
+      {
         expect(this.loadState).toBe(LoadState.Loading);
       }
     }
@@ -24,7 +28,8 @@ describe('drawable lifecycle', () => {
     expect(drawable.loadState).toBe(LoadState.Loaded);
   });
 
-  it('loads children', () => {
+  it("loads children", () => 
+  {
     let child: Container;
 
     const parent = Container.create({
@@ -45,7 +50,8 @@ describe('drawable lifecycle', () => {
     expect(child.loadState).toBe(LoadState.Loaded);
   });
 
-  it('loads a child when added if already loaded', () => {
+  it("loads a child when added if already loaded", () => 
+  {
     const parent = Container.create();
     const child = Container.create();
 
@@ -62,10 +68,13 @@ describe('drawable lifecycle', () => {
     expect(child.loadState).toBe(LoadState.Loaded);
   });
 
-  it('loads a child when added during loading', () => {
+  it("loads a child when added during loading", () => 
+  {
     let child: Container;
-    class TestContainer extends Container {
-      override onLoad() {
+    class TestContainer extends Container 
+    {
+      override onLoad() 
+      {
         this.add((child = Container.create()));
       }
     }
@@ -83,7 +92,8 @@ describe('drawable lifecycle', () => {
     expect(child!.loadState).toBe(LoadState.Loaded);
   });
 
-  it('does not load a child when added if not loaded', () => {
+  it("does not load a child when added if not loaded", () => 
+  {
     const parent = Container.create();
     const child = Container.create();
 
@@ -93,7 +103,8 @@ describe('drawable lifecycle', () => {
     expect(child.loadState).toBe(LoadState.NotLoaded);
   });
 
-  it('throws if trying to update when not loaded', () => {
+  it("throws if trying to update when not loaded", () => 
+  {
     const drawable = new Container();
 
     expect(drawable.updateSubTree()).toBe(false);

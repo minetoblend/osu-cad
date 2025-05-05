@@ -1,2 +1,2 @@
-export * from './FrameStatistics';
-export * from './StatisticsCounterType';
+export * from "./FrameStatistics";
+export * from "./StatisticsCounterType";

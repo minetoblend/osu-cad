@@ -1,4 +1,5 @@
-export enum StatisticsCounterType {
+export enum StatisticsCounterType 
+{
   Invalidations = 0,
   Refreshes,
   DrawNodeCtor,

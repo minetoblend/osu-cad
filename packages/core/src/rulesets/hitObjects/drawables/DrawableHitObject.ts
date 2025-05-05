@@ -8,72 +8,85 @@ import { SyntheticHitObjectEntry } from "./SyntheticHitObjectEntry";
 
 @provide(DrawableHitObject)
 export abstract class DrawableHitObject<out T extends HitObject = HitObject>
-    extends PoolableDrawableWithLifetime<HitObjectLifetimeEntry>
-    implements IAnimationTimeReference {
-  readonly animationStartTime = new Bindable(0)
+  extends PoolableDrawableWithLifetime<HitObjectLifetimeEntry>
+  implements IAnimationTimeReference 
+{
+  readonly animationStartTime = new Bindable(0);
 
-  protected constructor(initialHitObject?: T) {
+  protected constructor(initialHitObject?: T) 
+  {
     super();
 
-    if (initialHitObject) {
+    if (initialHitObject) 
+    {
       this.entry = new SyntheticHitObjectEntry(initialHitObject);
     }
   }
 
-  get hitObject(): T {
+  get hitObject(): T 
+  {
     return this.entry?.hitObject as T;
   }
 
-  readonly applyCustomUpdateState = new Action<DrawableHitObject>()
+  readonly applyCustomUpdateState = new Action<DrawableHitObject>();
 
-  readonly startTimeBindable = new Bindable(0)
+  readonly startTimeBindable = new Bindable(0);
 
-  readonly accentColor = new Bindable(new Color('red'))
+  readonly accentColor = new Bindable(new Color("red"));
 
-  get hitStateUpdateTime() {
-    return this.hitObject.endTime
+  get hitStateUpdateTime() 
+  {
+    return this.hitObject.endTime;
   }
 
-  override get requiresChildrenUpdate(): boolean {
+  override get requiresChildrenUpdate(): boolean 
+  {
     return true;
   }
 
-  override get isPresent(): boolean {
+  override get isPresent(): boolean 
+  {
     return super.isPresent || this.isIdle;
   }
 
-  get isIdle() {
+  get isIdle() 
+  {
     return this.clock !== null && this.clock.currentTime >= this.lifetimeStart;
   }
 
-  protected override onApply(entry: HitObjectLifetimeEntry) {
+  protected override onApply(entry: HitObjectLifetimeEntry) 
+  {
     super.onApply(entry);
 
     this.startTimeBindable.bindTo(this.hitObject.startTimeBindable);
 
-    this.onApplied()
+    this.onApplied();
 
-    this.updateComboColor()
-    this.applyStateTransforms()
+    this.updateComboColor();
+    this.applyStateTransforms();
   }
 
-  protected override onFree(entry: HitObjectLifetimeEntry) {
+  protected override onFree(entry: HitObjectLifetimeEntry) 
+  {
     super.onFree(entry);
 
-    this.startTimeBindable.unbindFrom(this.hitObject.startTimeBindable)
+    this.startTimeBindable.unbindFrom(this.hitObject.startTimeBindable);
 
-    this.onFreed()
+    this.onFreed();
 
-    this.#clearExistingStateTransforms()
+    this.#clearExistingStateTransforms();
   }
 
-  protected onApplied() {
+  protected onApplied() 
+  {
   }
 
-  protected onFreed() {
+  protected onFreed() 
+  {
   }
 
-  protected applyStateTransforms() {
+  protected applyStateTransforms() 
+  {
     this.lifetimeEnd = Number.MAX_VALUE;
 
     this.#clearExistingStateTransforms();
@@ -92,35 +105,44 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
     this.applyCustomUpdateState.emit(this);
   }
 
-  #clearExistingStateTransforms() {
+  #clearExistingStateTransforms() 
+  {
     super.applyTransformsAt(-Number.MAX_VALUE, true);
 
     super.clearTransformsAfter(-Number.MAX_VALUE, true);
   }
 
-  override clearTransformsAfter() {
+  override clearTransformsAfter() 
+  {
   }
 
-  override applyTransformsAt() {
+  override applyTransformsAt() 
+  {
   }
 
-  protected get initialLifetimeOffset() {
-    return 1000
+  protected get initialLifetimeOffset() 
+  {
+    return 1000;
   }
 
-  protected updateInitialTransforms() {
+  protected updateInitialTransforms() 
+  {
     this.fadeInFromZero();
   }
 
-  protected updateStartTimeTransforms() {
+  protected updateStartTimeTransforms() 
+  {
   }
 
-  protected updateHitStateTransforms() {
+  protected updateHitStateTransforms() 
+  {
   }
 
-  onKilled() {
+  onKilled() 
+  {
   }
 
-  protected updateComboColor() {
+  protected updateComboColor() 
+  {
   }
 }

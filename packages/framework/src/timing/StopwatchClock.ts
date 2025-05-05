@@ -1,8 +1,11 @@
-import type { IAdjustableClock } from './IAdjustableClock';
+import type { IAdjustableClock } from "./IAdjustableClock";
 
-export class StopwatchClock implements IAdjustableClock {
-  constructor(start = true) {
-    if (start) {
+export class StopwatchClock implements IAdjustableClock 
+{
+  constructor(start = true) 
+  {
+    if (start) 
+    {
       this.start();
     }
   }
@@ -13,8 +16,10 @@ export class StopwatchClock implements IAdjustableClock {
   #rateChangeAccumulated = 0;
   #isRunning = false;
 
-  get #stopwatchMilliseconds() {
-    if (!this.#isRunning) {
+  get #stopwatchMilliseconds() 
+  {
+    if (!this.#isRunning) 
+    {
       return 0;
     }
     return performance.now() - this.#startTime;
@@ -22,37 +27,44 @@ export class StopwatchClock implements IAdjustableClock {
 
   #startTime = 0;
 
-  get isRunning() {
+  get isRunning() 
+  {
     return this.#isRunning;
   }
 
-  get currentTime() {
+  get currentTime() 
+  {
     return this.#stopwatchCurrentTime + this.#seekOffset;
   }
 
-  get #stopwatchCurrentTime() {
+  get #stopwatchCurrentTime() 
+  {
     return (this.#stopwatchMilliseconds - this.#rateChangeUsed) * this.#rate + this.#rateChangeAccumulated;
   }
 
-  start() {
+  start() 
+  {
     if (this.#isRunning)
       return;
     this.#startTime = performance.now();
     this.#isRunning = true;
   }
 
-  stop() {
+  stop() 
+  {
     if (!this.#isRunning)
       return;
     this.#seekOffset = this.#stopwatchCurrentTime;
     this.#isRunning = false;
   }
 
-  get rate() {
+  get rate() 
+  {
     return this.#rate;
   }
 
-  set rate(value) {
+  set rate(value) 
+  {
     if (this.#rate === value)
       return;
 
@@ -63,21 +75,25 @@ export class StopwatchClock implements IAdjustableClock {
     this.#rate = value;
   }
 
-  reset() {
+  reset() 
+  {
     this.#resetAccumulatedRate();
   }
 
-  resetSpeedAdjustments() {
+  resetSpeedAdjustments() 
+  {
     this.rate = 1;
   }
 
-  seek(position: number) {
+  seek(position: number) 
+  {
     this.#seekOffset = position - this.#stopwatchCurrentTime;
 
     return true;
   }
 
-  #resetAccumulatedRate() {
+  #resetAccumulatedRate() 
+  {
     this.#rateChangeAccumulated = 0;
     this.#rateChangeUsed = 0;
   }

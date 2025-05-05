@@ -1,17 +1,19 @@
-import type { ReadonlyDependencyContainer } from '../../di/DependencyContainer';
+import type { ReadonlyDependencyContainer } from "../../di/DependencyContainer";
 
-import type { Vec2 } from '../../math/Vec2';
-import type { Container as PIXIContainer } from 'pixi.js';
-import { AlphaFilter, Mesh } from 'pixi.js';
-import { Cached } from '../../caching/Cached';
-import { Line } from '../../math/Line';
-import { Drawable } from './Drawable';
-import { PathGeometry } from './PathGeometry';
-import { PathGeometryBuilder } from './PathGeometryBuilder';
-import { PathShader } from './PathShader';
+import type { Vec2 } from "../../math/Vec2";
+import type { Container as PIXIContainer } from "pixi.js";
+import { AlphaFilter, Mesh } from "pixi.js";
+import { Cached } from "../../caching/Cached";
+import { Line } from "../../math/Line";
+import { Drawable } from "./Drawable";
+import { PathGeometry } from "./PathGeometry";
+import { PathGeometryBuilder } from "./PathGeometryBuilder";
+import { PathShader } from "./PathShader";
 
-export class Path extends Drawable {
-  protected override load(dependencies: ReadonlyDependencyContainer) {
+export class Path extends Drawable 
+{
+  protected override load(dependencies: ReadonlyDependencyContainer) 
+  {
     super.load(dependencies);
 
     this.#mesh.state.depthTest = true;
@@ -19,11 +21,13 @@ export class Path extends Drawable {
 
   #vertices: readonly Vec2[] = [];
 
-  get vertices() {
+  get vertices() 
+  {
     return this.#vertices;
   }
 
-  set vertices(value) {
+  set vertices(value) 
+  {
     this.#vertices = value;
     this.#segmentsCache.invalidate();
   }
@@ -31,17 +35,19 @@ export class Path extends Drawable {
   readonly #segmentsBacking: Line[] = [];
   readonly #segmentsCache = new Cached();
 
-  #generateSegments(): Line[] {
+  #generateSegments(): Line[] 
+  {
     this.#segmentsBacking.length = Math.max(0, this.vertices.length - 1);
 
-    if (this.#vertices.length > 1) {
+    if (this.#vertices.length > 1) 
+    {
       for (let i = 0; i < this.#vertices.length - 1; ++i)
         this.#segmentsBacking[i] = new Line(this.#vertices[i], this.#vertices[i + 1]);
     }
 
     const { positions, texCoords, indices } = new PathGeometryBuilder(
-      this.pathRadius,
-      this.#segmentsBacking,
+        this.pathRadius,
+        this.#segmentsBacking,
     ).build();
 
     this.#geometry.positions = new Float32Array(positions);
@@ -52,11 +58,13 @@ export class Path extends Drawable {
     return this.#segmentsBacking;
   }
 
-  get texture() {
+  get texture() 
+  {
     return this.#pathShader.texture;
   }
 
-  set texture(value) {
+  set texture(value) 
+  {
     if (this.texture === value)
       return;
 
@@ -65,11 +73,13 @@ export class Path extends Drawable {
 
   #pathRadius = 10;
 
-  get pathRadius() {
+  get pathRadius() 
+  {
     return this.#pathRadius;
   }
 
-  set pathRadius(value) {
+  set pathRadius(value) 
+  {
     if (this.#pathRadius === value)
       return;
     this.#pathRadius = value;
@@ -86,15 +96,17 @@ export class Path extends Drawable {
   readonly #mesh = new Mesh({
     geometry: this.#geometry,
     shader: this.#pathShader,
-    blendMode: 'none',
+    blendMode: "none",
     filters: this.#alphaFilter,
   });
 
-  protected override createDrawNode(): PIXIContainer {
+  protected override createDrawNode(): PIXIContainer 
+  {
     return this.#mesh;
   }
 
-  override updateSubTreeTransforms(): boolean {
+  override updateSubTreeTransforms(): boolean 
+  {
     if (!super.updateSubTreeTransforms())
       return false;
 

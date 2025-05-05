@@ -1,6 +1,7 @@
 import { Bindable, injectionToken } from "@osucad/framework";
 
-export interface IComboNumberReference {
+export interface IComboNumberReference 
+{
   readonly indexInComboBindable: Bindable<number>;
 }
 

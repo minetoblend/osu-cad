@@ -1,15 +1,18 @@
-import type { GameHost } from '../../platform/GameHost';
-import type { IDisposable } from '../../types/IDisposable';
-import type { IInput } from '../stateChanges/IInput';
-import { Action } from '../../bindables/Action';
-import { Bindable } from '../../bindables/Bindable';
+import type { GameHost } from "../../platform/GameHost";
+import type { IDisposable } from "../../types/IDisposable";
+import type { IInput } from "../stateChanges/IInput";
+import { Action } from "../../bindables/Action";
+import { Bindable } from "../../bindables/Bindable";
 
-export abstract class InputHandler implements IDisposable {
+export abstract class InputHandler implements IDisposable 
+{
   #isInitialized = false;
 
-  initialize(host: GameHost): boolean {
-    if (this.#isInitialized) {
-      throw new Error('InputHandler is already initialized');
+  initialize(host: GameHost): boolean 
+  {
+    if (this.#isInitialized) 
+    {
+      throw new Error("InputHandler is already initialized");
     }
 
     this.#isInitialized = true;
@@ -22,15 +25,18 @@ export abstract class InputHandler implements IDisposable {
 
   protected pendingInputs: IInput[] = [];
 
-  get isDisposed() {
+  get isDisposed() 
+  {
     return this.#isDisposed;
   }
 
-  dispose(isDisposing: boolean = true): void {
+  dispose(isDisposing: boolean = true): void 
+  {
     this.#isDisposed = true;
   }
 
-  collectPendingInputs(inputs: IInput[]): void {
+  collectPendingInputs(inputs: IInput[]): void 
+  {
     inputs.push(...this.pendingInputs);
     this.pendingInputs.length = 0;
   }

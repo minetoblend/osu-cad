@@ -1,9 +1,11 @@
-import { Bindable } from './Bindable';
+import { Bindable } from "./Bindable";
 
-export class AggregateBindable<T> {
+export class AggregateBindable<T> 
+{
   #aggregateFunction: (a: T, b: T) => T;
 
-  get result() {
+  get result() 
+  {
     return this.#result;
   }
 
@@ -11,7 +13,8 @@ export class AggregateBindable<T> {
 
   readonly #initialValue: T;
 
-  constructor(aggregateFunction: (a: T, b: T) => T, initialValue: T) {
+  constructor(aggregateFunction: (a: T, b: T) => T, initialValue: T) 
+  {
     this.#aggregateFunction = aggregateFunction;
     this.#result = new Bindable(initialValue);
 
@@ -20,8 +23,10 @@ export class AggregateBindable<T> {
 
   #sourceMapping: WeakRefPair<T>[] = [];
 
-  addSource(bindable: Bindable<T>) {
-    if (this.#findExistingPair(bindable)) {
+  addSource(bindable: Bindable<T>) 
+  {
+    if (this.#findExistingPair(bindable)) 
+    {
       return;
     }
 
@@ -33,9 +38,11 @@ export class AggregateBindable<T> {
     boundCopy.addOnChangeListener(this.#recalculateAggregate, { immediate: true });
   }
 
-  removeSource(bindable: Bindable<T>) {
+  removeSource(bindable: Bindable<T>) 
+  {
     const existing = this.#findExistingPair(bindable);
-    if (existing) {
+    if (existing) 
+    {
       existing.boundCopy.unbindAll();
       const index = this.#sourceMapping.indexOf(existing);
       this.#sourceMapping.splice(index, 1);
@@ -44,20 +51,25 @@ export class AggregateBindable<T> {
     this.#recalculateAggregate();
   }
 
-  #findExistingPair(bindable: Bindable<T>) {
+  #findExistingPair(bindable: Bindable<T>) 
+  {
     return this.#sourceMapping.find(pair => pair.weakReference.deref() === bindable);
   }
 
-  #recalculateAggregate = () => {
+  #recalculateAggregate = () => 
+  {
     let calculated = this.#initialValue;
-    for (let i = 0; i < this.#sourceMapping.length; i++) {
+    for (let i = 0; i < this.#sourceMapping.length; i++) 
+    {
       const pair = this.#sourceMapping[i];
 
-      if (!pair.weakReference.deref()) {
+      if (!pair.weakReference.deref()) 
+      {
         this.#sourceMapping.splice(i, 1);
         i--;
       }
-      else {
+      else 
+      {
         calculated = this.#aggregateFunction(calculated, pair.boundCopy.value);
       }
     }
@@ -65,17 +77,21 @@ export class AggregateBindable<T> {
     this.#result.value = calculated;
   };
 
-  removeAllSources() {
-    for (const mapping of this.#sourceMapping) {
+  removeAllSources() 
+  {
+    for (const mapping of this.#sourceMapping) 
+    {
       const b = mapping.weakReference.deref();
-      if (b) {
+      if (b) 
+      {
         this.removeSource(b);
       }
     }
   }
 }
 
-interface WeakRefPair<T> {
+interface WeakRefPair<T> 
+{
   weakReference: WeakRef<Bindable<T>>;
   boundCopy: Bindable<T>;
 }

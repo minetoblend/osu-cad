@@ -1,22 +1,24 @@
 import nx from "@nx/eslint-plugin";
+import { defineConfig } from "eslint/config";
+import stylisticTs from "@stylistic/eslint-plugin-ts";
 
-export default [
+export default defineConfig([
   ...nx.configs["flat/base"],
   ...nx.configs["flat/typescript"],
   ...nx.configs["flat/javascript"],
   {
-      "ignores": [
-        "**/dist",
-        "**/vite.config.*.timestamp*",
-        "**/vitest.config.*.timestamp*"
-      ]
+    "ignores": [
+      "**/dist",
+      "**/vite.config.*.timestamp*",
+      "**/vitest.config.*.timestamp*",
+    ],
   },
   {
     files: [
       "**/*.ts",
       "**/*.tsx",
       "**/*.js",
-      "**/*.jsx"
+      "**/*.jsx",
     ],
     rules: {
       "@nx/enforce-module-boundaries": [
@@ -24,19 +26,19 @@ export default [
         {
           enforceBuildableLibDependency: true,
           allow: [
-            "^.*/eslint(\\.base)?\\.config\\.[cm]?js$"
+            "^.*/eslint(\\.base)?\\.config\\.[cm]?js$",
           ],
           depConstraints: [
             {
               sourceTag: "*",
               onlyDependOnLibsWithTags: [
-                "*"
-              ]
-            }
-          ]
-        }
-      ]
-    }
+                "*",
+              ],
+            },
+          ],
+        },
+      ],
+    },
   },
   {
     files: [
@@ -47,9 +49,11 @@ export default [
       "**/*.js",
       "**/*.jsx",
       "**/*.cjs",
-      "**/*.mjs"
+      "**/*.mjs",
     ],
-    // Override or add rules here
+    plugins: {
+      "@stylistic": stylisticTs,
+    },
     rules: {
       "@typescript-eslint/no-inferrable-types": "off",
       "@typescript-eslint/no-empty-function": "off",
@@ -59,7 +63,33 @@ export default [
       "@typescript-eslint/no-unsafe-declaration-merging": "off",
       "@typescript-eslint/no-namespace": "off",
       "@typescript-eslint/no-this-alias": "off",
-      "ts/no-redeclare": "off"
-    }
-  }
-];
+      "ts/no-redeclare": "off",
+      "eol-last": ["error", "always"],
+      "no-tabs": ["error"],
+      "nonblock-statement-body-position": ["error", "below"],
+      "no-mixed-operators": ["error", {
+        groups: [
+          ["&&", "||"],
+        ],
+      }],
+      "@stylistic/indent": ["error", 2, {
+        ignoredNodes: ["ConditionalExpression"],
+        offsetTernaryExpressions: true,
+        CallExpression: { "arguments": 2 },
+      }],
+      "@stylistic/quotes": ["error", "double", {
+        avoidEscape: true,
+      }],
+      "@stylistic/semi": ["error", "always"],
+      "@stylistic/brace-style": ["error", "allman"],
+      "@stylistic/comma-dangle": ["error", "always-multiline"],
+      "@stylistic/object-curly-spacing": ["error", "always"],
+      "@stylistic/function-call-spacing": ["error", "never"],
+      "@stylistic/type-annotation-spacing": ["error", {
+        "before": false,
+        "after": true,
+        "overrides": { "arrow": { "before": true, "after": true } },
+      }],
+    },
+  },
+]);

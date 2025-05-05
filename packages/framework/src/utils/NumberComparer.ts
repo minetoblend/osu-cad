@@ -1,9 +1,11 @@
-import { Comparer } from './Comparer';
+import { Comparer } from "./Comparer";
 
-export class NumberComparer extends Comparer<number> {
+export class NumberComparer extends Comparer<number> 
+{
   static readonly Instance = new NumberComparer();
 
-  override compare(a: number, b: number): number {
+  override compare(a: number, b: number): number 
+  {
     if (a === b)
       return 0;
 

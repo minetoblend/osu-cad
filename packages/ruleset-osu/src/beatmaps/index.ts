@@ -1,1 +1,1 @@
-export * from './OsuBeatmapParser';
+export * from "./OsuBeatmapParser";

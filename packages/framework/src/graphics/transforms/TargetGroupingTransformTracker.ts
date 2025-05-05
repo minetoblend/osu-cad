@@ -1,17 +1,20 @@
-import type { Transformable } from './Transformable';
-import { SortedList } from '../../utils';
-import { debugAssert } from '../../utils/debugAssert';
-import { Transform } from './Transform';
+import type { Transformable } from "./Transformable";
+import { SortedList } from "../../utils";
+import { debugAssert } from "../../utils/debugAssert";
+import { Transform } from "./Transform";
 
-export class TargetGroupingTransformTracker {
+export class TargetGroupingTransformTracker
+{
   constructor(
     readonly transformable: Transformable,
     readonly targetGrouping: string,
-  ) {}
+  )
+  {}
 
   readonly #transforms = new SortedList(Transform.COMPARER);
 
-  get transforms(): readonly Transform[] {
+  get transforms(): readonly Transform[]
+  {
     return this.#transforms.items;
   }
 
@@ -21,19 +24,23 @@ export class TargetGroupingTransformTracker {
 
   #targetMembers = new Set<string>();
 
-  get targetMembers(): ReadonlySet<string> {
+  get targetMembers(): ReadonlySet<string>
+  {
     return this.#targetMembers;
   }
 
   #appliedToEndReverts?: Set<string>;
 
-  updateTransforms(time: number, rewinding: boolean) {
-    if (rewinding && !this.transformable.removeCompletedTransforms) {
+  updateTransforms(time: number, rewinding: boolean)
+  {
+    if (rewinding && !this.transformable.removeCompletedTransforms)
+    {
       this.#resetLastAppliedCache();
 
       this.#appliedToEndReverts?.clear();
 
-      for (let i = this.#transforms.length - 1; i >= 0; i--) {
+      for (let i = this.#transforms.length - 1; i >= 0; i--)
+      {
         const t = this.#transforms.get(i)!;
 
         // rewind logic needs to only run on transforms which have been applied at least once.
@@ -44,18 +51,21 @@ export class TargetGroupingTransformTracker {
         if (!t.rewindable)
           continue;
 
-        if (time >= t.startTime) {
+        if (time >= t.startTime)
+        {
           // we are in the middle of this transform, so we want to mark as not-completely-applied.
           // note that we should only do this for the last transform of each TargetMember to avoid incorrect application order.
           // the actual application will be in the main loop below now that AppliedToEnd is false.
-          if (this.#appliedToEndReverts?.has(t.targetMember) !== true) {
+          if (this.#appliedToEndReverts?.has(t.targetMember) !== true)
+          {
             t.appliedToEnd = false;
 
             this.#appliedToEndReverts ??= new Set<string>();
             this.#appliedToEndReverts.add(t.targetMember);
           }
         }
-        else {
+        else
+        {
           // we are before the start time of this transform, so we want to eagerly apply the value at current time and mark as not-yet-applied.
           // this transform will not be applied again unless we play forward in the future.
           t.apply(time);
@@ -67,7 +77,8 @@ export class TargetGroupingTransformTracker {
 
     const transforms = this.#transforms.items;
 
-    for (let i = this.#getLastAppliedIndex(); i < transforms.length; ++i) {
+    for (let i = this.#getLastAppliedIndex(); i < transforms.length; ++i)
+    {
       let t = transforms[i]!;
 
       const tCanRewind = !this.transformable.removeCompletedTransforms && t.rewindable;
@@ -77,13 +88,15 @@ export class TargetGroupingTransformTracker {
       if (time < t.startTime)
         break;
 
-      if (!t.applied) {
+      if (!t.applied)
+      {
         // This is the first time we are updating this transform.
         // We will find other still active transforms which act on the same target member and remove them.
         // Since following transforms acting on the same target member are immediately removed when a
         // new one is added, we can be sure that previous transforms were added before this one and can
         // be safely removed.
-        for (let j = this.#getLastAppliedIndex(t.targetMember); j < i; ++j) {
+        for (let j = this.#getLastAppliedIndex(t.targetMember); j < i; ++j)
+        {
           const u = transforms[j];
           if (u.targetMember !== t.targetMember)
             continue;
@@ -94,7 +107,8 @@ export class TargetGroupingTransformTracker {
             // so we should re-apply using its StartTime as a basis.
             u.apply(t.startTime);
 
-          if (!tCanRewind) {
+          if (!tCanRewind)
+          {
             this.#transforms.removeAt(j--);
             flushAppliedCache = true;
             i--;
@@ -102,24 +116,29 @@ export class TargetGroupingTransformTracker {
             // if (u.AbortTargetSequence !== null)
             //   removalActions.Enqueue((u.AbortTargetSequence, s => s.TransformAborted()));
           }
-          else {
+          else
+          {
             u.appliedToEnd = true;
           }
         }
       }
 
-      if (!t.hasStartValue) {
+      if (!t.hasStartValue)
+      {
         t.readIntoStartValue();
         t.hasStartValue = true;
       }
 
-      if (!t.appliedToEnd) {
+      if (!t.appliedToEnd)
+      {
         t.apply(time);
 
         t.appliedToEnd = time >= t.endTime;
 
-        if (t.appliedToEnd) {
-          if (!tCanRewind) {
+        if (t.appliedToEnd)
+        {
+          if (!tCanRewind)
+          {
             this.#transforms.removeAt(i--);
             flushAppliedCache = true;
           }
@@ -127,10 +146,12 @@ export class TargetGroupingTransformTracker {
           if (t.loopCount > 0)
             t.loopCount--;
 
-          if (t.isLooping) {
+          if (t.isLooping)
+          {
             const oldLoopCount = t.loopCount;
 
-            if (tCanRewind) {
+            if (tCanRewind)
+            {
               t.loopCount = 0;
               t = t.clone();
             }
@@ -165,31 +186,35 @@ export class TargetGroupingTransformTracker {
     this.#invokePendingRemovalActions();
   }
 
-  addTransform(transform: Transform, customTransformID?: number) {
+  addTransform(transform: Transform, customTransformID?: number)
+  {
     debugAssert(
-      !(transform.transformID === 0 && this.#transforms.includes(transform)),
-      'Zero-id Transforms should never be contained already.',
+        !(transform.transformID === 0 && this.#transforms.includes(transform)),
+        "Zero-id Transforms should never be contained already.",
     );
 
-    if (transform.targetGrouping !== this.targetGrouping) {
+    if (transform.targetGrouping !== this.targetGrouping)
+    {
       throw new Error(
-        `Target grouping "${transform.targetGrouping}" does not match this tracker's grouping "${this.targetGrouping}".`,
+          `Target grouping "${transform.targetGrouping}" does not match this tracker's grouping "${this.targetGrouping}".`,
       );
     }
 
     this.#targetMembers.add(transform.targetMember);
 
     if (transform.transformID !== 0 && this.#transforms.includes(transform))
-      throw new Error('Transformable may not contain the same Transform more than once.');
+      throw new Error("Transformable may not contain the same Transform more than once.");
 
     transform.transformID = customTransformID ?? ++this.#currentTransformID;
     const insertionIndex = this.#transforms.add(transform);
     this.#resetLastAppliedCache();
 
-    for (let i = insertionIndex + 1; i < this.#transforms.length; ++i) {
+    for (let i = insertionIndex + 1; i < this.#transforms.length; ++i)
+    {
       const t = this.#transforms.get(i)!;
 
-      if (t.targetMember === transform.targetMember) {
+      if (t.targetMember === transform.targetMember)
+      {
         this.#transforms.removeAt(i--);
         // if (t.AbortTargetSequence !== null) removalActions.Enqueue((t.AbortTargetSequence, (s) => s.TransformAborted()));
       }
@@ -198,30 +223,38 @@ export class TargetGroupingTransformTracker {
     this.#invokePendingRemovalActions();
   }
 
-  removeTransform(toRemove: Transform) {
+  removeTransform(toRemove: Transform)
+  {
     this.#transforms.remove(toRemove);
     this.#resetLastAppliedCache();
   }
 
-  clearTransformsAfter(time: number, targetMember?: string) {
+  clearTransformsAfter(time: number, targetMember?: string)
+  {
     this.#resetLastAppliedCache();
 
-    if (!targetMember) {
-      for (let i = 0; i < this.#transforms.length; i++) {
+    if (!targetMember)
+    {
+      for (let i = 0; i < this.#transforms.length; i++)
+      {
         const t = this.#transforms.get(i)!;
 
-        if (t.startTime >= time) {
+        if (t.startTime >= time)
+        {
           this.#transforms.removeAt(i--);
           // if (t.AbortTargetSequence !== null)
           //   removalActions.Enqueue((t.AbortTargetSequence, s => s.TransformAborted()));
         }
       }
     }
-    else {
-      for (let i = 0; i < this.#transforms.length; i++) {
+    else
+    {
+      for (let i = 0; i < this.#transforms.length; i++)
+      {
         const t = this.#transforms.get(i)!;
 
-        if (t.targetMember === targetMember && t.startTime >= time) {
+        if (t.targetMember === targetMember && t.startTime >= time)
+        {
           this.#transforms.removeAt(i--);
           // if (t.AbortTargetSequence !== null)
           //   removalActions.Enqueue((t.AbortTargetSequence, s => s.TransformAborted()));
@@ -232,11 +265,13 @@ export class TargetGroupingTransformTracker {
     this.#invokePendingRemovalActions();
   }
 
-  finishTransforms(targetMember?: string) {
+  finishTransforms(targetMember?: string)
+  {
     let toFlushPredicate: (t: Transform) => boolean;
     if (targetMember === null)
       toFlushPredicate = t => !t.isLooping;
-    else toFlushPredicate = t => !t.isLooping && (!targetMember || t.targetMember === targetMember);
+    else
+      toFlushPredicate = t => !t.isLooping && (!targetMember || t.targetMember === targetMember);
 
     // Flush is undefined for endlessly looping transforms
     const toFlush = this.#transforms.filter(toFlushPredicate);
@@ -244,8 +279,10 @@ export class TargetGroupingTransformTracker {
     this.#transforms.removeAll(t => toFlushPredicate(t));
     this.#resetLastAppliedCache();
 
-    for (const t of toFlush) {
-      if (!t.hasStartValue) {
+    for (const t of toFlush)
+    {
+      if (!t.hasStartValue)
+      {
         t.readIntoStartValue();
         t.hasStartValue = true;
       }
@@ -255,16 +292,20 @@ export class TargetGroupingTransformTracker {
     }
   }
 
-  #invokePendingRemovalActions() {
+  #invokePendingRemovalActions()
+  {
     // while (removalActions.TryDequeue(out var item))
     // item.action(item.sequence);
   }
 
-  #getLastAppliedIndex(targetMember?: string) {
-    if (!targetMember) {
+  #getLastAppliedIndex(targetMember?: string)
+  {
+    if (!targetMember)
+    {
       let min = Number.MAX_SAFE_INTEGER;
 
-      for (const key in this.#lastAppliedTransformIndices) {
+      for (const key in this.#lastAppliedTransformIndices)
+      {
         const value = this.#lastAppliedTransformIndices[key];
         if (value < min)
           min = value;
@@ -276,11 +317,14 @@ export class TargetGroupingTransformTracker {
     return this.#lastAppliedTransformIndices[targetMember] ?? 0;
   }
 
-  #setLastAppliedIndex(targetMember: string, index: number) {
+  #setLastAppliedIndex(targetMember: string, index: number)
+  {
     this.#lastAppliedTransformIndices[targetMember] = index;
   }
 
-  #resetLastAppliedCache() {
-    for (const tracked of this.#targetMembers) this.#lastAppliedTransformIndices[tracked] = 0;
+  #resetLastAppliedCache()
+  {
+    for (const tracked of this.#targetMembers)
+      this.#lastAppliedTransformIndices[tracked] = 0;
   }
 }

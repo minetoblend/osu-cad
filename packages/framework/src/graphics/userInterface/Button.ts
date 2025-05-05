@@ -1,3 +1,4 @@
-import { ClickableContainer } from '../containers/ClickableContainer';
+import { ClickableContainer } from "../containers/ClickableContainer";
 
-export class Button extends ClickableContainer {}
+export class Button extends ClickableContainer 
+{}

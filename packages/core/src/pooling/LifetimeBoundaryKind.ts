@@ -1,4 +1,5 @@
-export enum LifetimeBoundaryKind {
+export enum LifetimeBoundaryKind 
+{
   Start,
   End,
   Current,

@@ -1,6 +1,7 @@
 import { Vec2 } from "@osucad/framework";
 
-export enum PathType {
+export enum PathType 
+{
   Linear = 0,
   PerfectCurve = 1,
   Catmull = 2,
@@ -8,10 +9,12 @@ export enum PathType {
   BSpline = 4,
 }
 
-export class PathPoint {
+export class PathPoint 
+{
   constructor(
-      readonly position: Vec2,
-      readonly type: PathType | null = null
-  ) {
+    readonly position: Vec2,
+    readonly type: PathType | null = null,
+  ) 
+  {
   }
 }

@@ -1,20 +1,23 @@
-import type { DrawablePool } from '@osucad/framework';
-import type { FollowPoint } from './FollowPoint';
-import type { FollowPointLifetimeEntry } from './FollowPointLifetimeEntry';
-import { PoolableDrawableWithLifetime } from '@osucad/core';
-import { EasingFunction, Vec2 } from '@osucad/framework';
-import { OsuHitObject } from '../OsuHitObject';
+import type { DrawablePool } from "@osucad/framework";
+import type { FollowPoint } from "./FollowPoint";
+import type { FollowPointLifetimeEntry } from "./FollowPointLifetimeEntry";
+import { PoolableDrawableWithLifetime } from "@osucad/core";
+import { EasingFunction, Vec2 } from "@osucad/framework";
+import { OsuHitObject } from "../OsuHitObject";
 
 
-export class FollowPointConnection extends PoolableDrawableWithLifetime<FollowPointLifetimeEntry> {
+export class FollowPointConnection extends PoolableDrawableWithLifetime<FollowPointLifetimeEntry> 
+{
   static readonly SPACING = 32;
   static readonly PREEMPT = 800;
 
-  constructor() {
+  constructor() 
+  {
     super();
   }
 
-  protected override onApply(entry: FollowPointLifetimeEntry) {
+  protected override onApply(entry: FollowPointLifetimeEntry) 
+  {
     super.onApply(entry);
 
     entry.invalidated.addListener(this.#scheduleRefresh, this);
@@ -22,7 +25,8 @@ export class FollowPointConnection extends PoolableDrawableWithLifetime<FollowPo
     this.#scheduleRefresh();
   }
 
-  protected override onFree(entry: FollowPointLifetimeEntry) {
+  protected override onFree(entry: FollowPointLifetimeEntry) 
+  {
     super.onFree(entry);
 
     entry.invalidated.removeListener(this.#scheduleRefresh, this);
@@ -32,11 +36,13 @@ export class FollowPointConnection extends PoolableDrawableWithLifetime<FollowPo
 
   pool: DrawablePool<FollowPoint> | null = null;
 
-  #scheduleRefresh() {
+  #scheduleRefresh() 
+  {
     this.scheduler.addOnce(this.#refresh, this);
   }
 
-  #refresh() {
+  #refresh() 
+  {
     console.assert(this.pool !== null);
 
     const entry = this.entry;
@@ -60,7 +66,8 @@ export class FollowPointConnection extends PoolableDrawableWithLifetime<FollowPo
 
     let count = 0;
 
-    for (let d = Math.floor(FollowPointConnection.SPACING * 1.5); d < distance - FollowPointConnection.SPACING; d += FollowPointConnection.SPACING) {
+    for (let d = Math.floor(FollowPointConnection.SPACING * 1.5); d < distance - FollowPointConnection.SPACING; d += FollowPointConnection.SPACING) 
+    {
       const fraction = d / distance;
 
       const pointStartPosition = startPosition.add(distanceVector.scale(fraction - 0.1));
@@ -70,7 +77,8 @@ export class FollowPointConnection extends PoolableDrawableWithLifetime<FollowPo
 
       let fp: FollowPoint = this.internalChildren[count] as FollowPoint;
 
-      if (!fp) {
+      if (!fp) 
+      {
         this.addInternal(fp = this.pool!.get());
       }
 
@@ -83,7 +91,8 @@ export class FollowPointConnection extends PoolableDrawableWithLifetime<FollowPo
 
       fp.animationStartTime.value = fadeInTime;
 
-      fp.absoluteSequence(fadeInTime, () => {
+      fp.absoluteSequence(fadeInTime, () => 
+      {
         fp.fadeIn(end.timeFadeIn);
 
         fp.scaleTo(end.scale, end.timeFadeIn, EasingFunction.Out);
@@ -97,14 +106,16 @@ export class FollowPointConnection extends PoolableDrawableWithLifetime<FollowPo
       count++;
     }
 
-    while (this.internalChildren.length > count) {
+    while (this.internalChildren.length > count) 
+    {
       this.removeInternal(this.internalChildren[this.internalChildren.length - 1], false);
     }
 
     entry.lifetimeEnd = finalTransformEndTime;
   }
 
-  static getFadeTimes(start: OsuHitObject, end: OsuHitObject, fraction: number) {
+  static getFadeTimes(start: OsuHitObject, end: OsuHitObject, fraction: number) 
+  {
     const startTime = start.endTime;
     const duration = end.startTime - startTime;
 

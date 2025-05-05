@@ -1,10 +1,11 @@
-export class BeatmapMetadata {
-  artist = ''
-  artistUnicode = ''
-  title = ''
-  titleUnicode = ''
-  creator = ''
-  difficultyName = ''
-  source = ''
-  tags = ''
+export class BeatmapMetadata 
+{
+  artist = "";
+  artistUnicode = "";
+  title = "";
+  titleUnicode = "";
+  creator = "";
+  difficultyName = "";
+  source = "";
+  tags = "";
 }

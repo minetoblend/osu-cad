@@ -1,10 +1,13 @@
-import { Vec2 } from './Vec2';
+import { Vec2 } from "./Vec2";
 
-export class Line {
-  constructor(readonly startPoint: Vec2, readonly endPoint: Vec2) {
+export class Line 
+{
+  constructor(readonly startPoint: Vec2, readonly endPoint: Vec2) 
+  {
   }
 
-  closestPoint(position: Vec2) {
+  closestPoint(position: Vec2) 
+  {
     if (this.startPoint.equals(this.endPoint))
       return this.startPoint;
 
@@ -15,19 +18,23 @@ export class Line {
     return this.startPoint.add(dir.scale(d));
   }
 
-  get theta() {
+  get theta() 
+  {
     return Math.atan2(this.endPoint.y - this.startPoint.y, this.endPoint.x - this.startPoint.x);
   }
 
-  get direction() {
+  get direction() 
+  {
     return this.endPoint.sub(this.startPoint);
   }
 
-  get directionNormalized() {
+  get directionNormalized() 
+  {
     return this.direction.normalize();
   }
 
-  get orthogonalDirection() {
+  get orthogonalDirection() 
+  {
     const dir = this.directionNormalized;
     return new Vec2(-dir.y, dir.x);
   }

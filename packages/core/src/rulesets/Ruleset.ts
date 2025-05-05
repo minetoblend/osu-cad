@@ -5,7 +5,8 @@ import { Awaitable } from "../utils";
 import { BeatmapPostProcessor } from "./BeatmapPostProcessor";
 import { DrawableRuleset } from "./ui/DrawableRuleset";
 
-export interface Ruleset extends OsucadMixins.Ruleset {
+export interface Ruleset extends OsucadMixins.Ruleset 
+{
   readonly id: string;
   readonly title: string;
 

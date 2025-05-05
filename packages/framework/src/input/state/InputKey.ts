@@ -1,4 +1,5 @@
-export enum InputKey {
+export enum InputKey 
+{
   None = 0,
   Shift = 1,
   Control = 3,
@@ -178,53 +179,60 @@ export enum InputKey {
   RMeta,
 }
 
-function getOrder(key: InputKey): number | null {
-  switch (key) {
-    case InputKey.None:
-      return -1;
-    case InputKey.Shift:
-    case InputKey.LShift:
-    case InputKey.RShift:
-      return 3;
-    case InputKey.Control:
-    case InputKey.LControl:
-    case InputKey.RControl:
-      return 1;
-    case InputKey.Alt:
-    case InputKey.LAlt:
-    case InputKey.RAlt:
-      return 2;
-    case InputKey.Meta:
-    case InputKey.LMeta:
-    case InputKey.RMeta:
-      return 4;
-    default:
-      return null;
+function getOrder(key: InputKey): number | null 
+{
+  switch (key) 
+  {
+  case InputKey.None:
+    return -1;
+  case InputKey.Shift:
+  case InputKey.LShift:
+  case InputKey.RShift:
+    return 3;
+  case InputKey.Control:
+  case InputKey.LControl:
+  case InputKey.RControl:
+    return 1;
+  case InputKey.Alt:
+  case InputKey.LAlt:
+  case InputKey.RAlt:
+    return 2;
+  case InputKey.Meta:
+  case InputKey.LMeta:
+  case InputKey.RMeta:
+    return 4;
+  default:
+    return null;
   }
 }
 
-export function compareInputKeys(a: InputKey, b: InputKey): number {
+export function compareInputKeys(a: InputKey, b: InputKey): number 
+{
   const orderA = getOrder(a);
   const orderB = getOrder(b);
-  if (orderA !== null && orderB !== null) {
+  if (orderA !== null && orderB !== null) 
+  {
     return orderA - orderB;
   }
 
   return a - b;
 }
 
-export function isVirtual(key: InputKey) {
-  switch (key) {
-    case InputKey.Shift:
-    case InputKey.Control:
-    case InputKey.Alt:
-    case InputKey.Meta:
-      return true;
+export function isVirtual(key: InputKey) 
+{
+  switch (key) 
+  {
+  case InputKey.Shift:
+  case InputKey.Control:
+  case InputKey.Alt:
+  case InputKey.Meta:
+    return true;
   }
 
   return false;
 }
 
-export function isPhysical(key: InputKey) {
+export function isPhysical(key: InputKey) 
+{
   return !isVirtual(key);
 }

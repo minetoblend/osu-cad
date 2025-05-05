@@ -1,42 +1,51 @@
-import { debugAssert } from '../utils/debugAssert';
+import { debugAssert } from "../utils/debugAssert";
 
-export class ScheduledDelegate {
+export class ScheduledDelegate 
+{
   constructor(
     readonly task: () => void,
     public executionTime: number = 0,
     public repeatInterval: number = -1,
     public receiver?: any,
-  ) {}
+  ) 
+  {}
 
   performRepeatCatchUpExecutions = true;
 
-  public get completed() {
+  public get completed() 
+  {
     return this.state === RunState.Complete;
   }
 
-  get cancelled() {
+  get cancelled() 
+  {
     return this.state === RunState.Cancelled;
   }
 
   #state: RunState = RunState.Waiting;
 
-  get state(): RunState {
+  get state(): RunState 
+  {
     return this.#state;
   }
 
-  runTask() {
-    if (this.cancelled) {
-      throw new Error('Cannot run a canceled task');
+  runTask() 
+  {
+    if (this.cancelled) 
+    {
+      throw new Error("Cannot run a canceled task");
     }
 
-    if (this.completed) {
-      throw new Error('Cannot run a completed task');
+    if (this.completed) 
+    {
+      throw new Error("Cannot run a completed task");
     }
 
     this.runTaskInternal();
   }
 
-  runTaskInternal() {
+  runTaskInternal() 
+  {
     if (this.state !== RunState.Waiting)
       return;
 
@@ -53,26 +62,32 @@ export class ScheduledDelegate {
     this.#state = RunState.Complete;
   }
 
-  protected invokeTask() {
-    if (this.receiver) {
+  protected invokeTask() 
+  {
+    if (this.receiver) 
+    {
       this.task.call(this.receiver);
     }
-    else {
+    else 
+    {
       this.task();
     }
   }
 
-  cancel() {
+  cancel() 
+  {
     this.#state = RunState.Cancelled;
   }
 
-  setNextExecution(currentTime: number | null) {
+  setNextExecution(currentTime: number | null) 
+  {
     if (this.state === RunState.Cancelled)
       return;
 
     this.#state = RunState.Waiting;
 
-    if (currentTime !== null) {
+    if (currentTime !== null) 
+    {
       this.executionTime += this.repeatInterval;
 
       if (this.executionTime < currentTime && !this.performRepeatCatchUpExecutions)
@@ -81,7 +96,8 @@ export class ScheduledDelegate {
   }
 }
 
-export enum RunState {
+export enum RunState 
+{
   Waiting = 0,
   Running = 1,
   Complete = 2,

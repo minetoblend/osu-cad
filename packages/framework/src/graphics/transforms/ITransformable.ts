@@ -1,8 +1,9 @@
-import type { FrameTimeInfo } from '../../timing';
-import type { IUsable } from '../../types/IUsable';
-import type { Transform } from './Transform';
+import type { FrameTimeInfo } from "../../timing";
+import type { IUsable } from "../../types/IUsable";
+import type { Transform } from "./Transform";
 
-export interface ITransformable {
+export interface ITransformable 
+{
   beginDelayedSequence: (delay: number, recursive?: boolean) => IUsable;
 
   beginAbsoluteSequence: (newTransformStartTime: number, recursive?: boolean) => IUsable;

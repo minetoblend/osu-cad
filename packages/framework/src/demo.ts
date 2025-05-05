@@ -1,18 +1,21 @@
-import type { ColorSource } from 'pixi.js';
-import type { ReadonlyDependencyContainer } from './di/DependencyContainer';
+import type { ColorSource } from "pixi.js";
+import type { ReadonlyDependencyContainer } from "./di/DependencyContainer";
 
-import { Game, Vec2, WebGameHost } from '.';
-import { SmoothPath } from './graphics/drawables/SmoothPath';
-import './style.css';
+import { Game, Vec2, WebGameHost } from ".";
+import { SmoothPath } from "./graphics/drawables/SmoothPath";
+import "./style.css";
 
-const host = new WebGameHost('demo');
+const host = new WebGameHost("demo");
 
-class DemoGame extends Game {
-  constructor() {
+class DemoGame extends Game 
+{
+  constructor() 
+  {
     super();
   }
 
-  protected override load(dependencies: ReadonlyDependencyContainer) {
+  protected override load(dependencies: ReadonlyDependencyContainer) 
+  {
     super.load(dependencies);
 
     const vertices = [
@@ -22,18 +25,21 @@ class DemoGame extends Game {
     ];
 
     this.add(
-      new DemoPath().adjust((p) => {
-        p.vertices = vertices;
-        p.pathRadius = 20;
+        new DemoPath().adjust((p) => 
+        {
+          p.vertices = vertices;
+          p.pathRadius = 20;
 
-        addEventListener('pointerdown', () => p.pathRadius = 100);
-      }),
+          addEventListener("pointerdown", () => p.pathRadius = 100);
+        }),
     );
   }
 }
 
-class DemoPath extends SmoothPath {
-  override colorAt(position: number): ColorSource {
+class DemoPath extends SmoothPath 
+{
+  override colorAt(position: number): ColorSource 
+  {
     return position < 0.5 ? 0xFF0000 : 0xFFFFFF;
   }
 }

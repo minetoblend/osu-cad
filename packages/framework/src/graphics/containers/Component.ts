@@ -1,3 +1,4 @@
-import { CompositeDrawable } from './CompositeDrawable';
+import { CompositeDrawable } from "./CompositeDrawable";
 
-export abstract class Component extends CompositeDrawable {}
+export abstract class Component extends CompositeDrawable 
+{}

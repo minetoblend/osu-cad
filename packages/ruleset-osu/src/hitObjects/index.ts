@@ -1,3 +1,3 @@
-export * from './HitCircle';
-export * from './Slider';
-export * from './OsuHitObject';
+export * from "./HitCircle";
+export * from "./Slider";
+export * from "./OsuHitObject";

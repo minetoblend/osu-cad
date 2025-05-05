@@ -1,22 +1,24 @@
-import { Buffer, BufferUsage, Geometry } from 'pixi.js';
+import { Buffer, BufferUsage, Geometry } from "pixi.js";
 
 const placeHolderBufferData = new Float32Array(1);
 const placeHolderIndexData = new Uint32Array(1);
 
-export class OsucadBatchGeometry extends Geometry {
-  constructor() {
+export class OsucadBatchGeometry extends Geometry 
+{
+  constructor() 
+  {
     const vertexSize = 6;
 
     const attributeBuffer = new Buffer({
       data: placeHolderBufferData,
-      label: 'attribute-batch-buffer',
+      label: "attribute-batch-buffer",
       usage: BufferUsage.VERTEX | BufferUsage.COPY_DST,
       shrinkToFit: false,
     });
 
     const indexBuffer = new Buffer({
       data: placeHolderIndexData,
-      label: 'index-batch-buffer',
+      label: "index-batch-buffer",
       usage: BufferUsage.INDEX | BufferUsage.COPY_DST, // | BufferUsage.STATIC,
       shrinkToFit: false,
     });
@@ -27,25 +29,25 @@ export class OsucadBatchGeometry extends Geometry {
       attributes: {
         aPosition: {
           buffer: attributeBuffer,
-          format: 'float32x2',
+          format: "float32x2",
           stride,
           offset: 0,
         },
         aUV: {
           buffer: attributeBuffer,
-          format: 'float32x2',
+          format: "float32x2",
           stride,
           offset: 2 * 4,
         },
         aColor: {
           buffer: attributeBuffer,
-          format: 'unorm8x4',
+          format: "unorm8x4",
           stride,
           offset: 4 * 4,
         },
         aTextureIdAndRound: {
           buffer: attributeBuffer,
-          format: 'uint16x2',
+          format: "uint16x2",
           stride,
           offset: 5 * 4,
         },

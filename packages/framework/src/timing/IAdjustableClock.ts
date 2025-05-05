@@ -1,6 +1,7 @@
-import type { IClock } from './IClock';
+import type { IClock } from "./IClock";
 
-export interface IAdjustableClock extends IClock {
+export interface IAdjustableClock extends IClock 
+{
   reset: () => void;
   start: () => void;
   stop: () => void;

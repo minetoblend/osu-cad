@@ -4,8 +4,10 @@ import { HitCircle, Slider } from "./hitObjects";
 import { OsuHitObject } from "./hitObjects/OsuHitObject";
 import { Spinner } from "./hitObjects/Spinner";
 
-export class BeatmapStackingProcessor implements BeatmapPostProcessor {
-  applyToBeatmap(beatmap: Beatmap) {
+export class BeatmapStackingProcessor implements BeatmapPostProcessor 
+{
+  applyToBeatmap(beatmap: Beatmap) 
+  {
     this.#calculateStacking(
         beatmap.hitObjects as OsuHitObject[],
         beatmap.beatmapInfo.stackLeniency,
@@ -16,24 +18,29 @@ export class BeatmapStackingProcessor implements BeatmapPostProcessor {
   }
 
   #calculateStacking(
-      hitObjects: ReadonlyArray<OsuHitObject>,
-      stackLeniency: number,
-      stackDistance: number,
-      startIndex: number,
-      endIndex: number,
-  ) {
+    hitObjects: ReadonlyArray<OsuHitObject>,
+    stackLeniency: number,
+    stackDistance: number,
+    startIndex: number,
+    endIndex: number,
+  ) 
+  {
     let extendedEndIndex = endIndex;
 
-    for (let i = startIndex; i <= endIndex; i++) {
+    for (let i = startIndex; i <= endIndex; i++) 
+    {
       hitObjects[i].stackHeight = 0;
     }
     if (stackLeniency === 0)
       return;
 
-    if (endIndex < hitObjects.length - 1) {
-      for (let i = endIndex; i >= startIndex; i--) {
+    if (endIndex < hitObjects.length - 1) 
+    {
+      for (let i = endIndex; i >= startIndex; i--) 
+      {
         let stackBaseIndex = i;
-        for (let n = stackBaseIndex + 1; n < hitObjects.length; n++) {
+        for (let n = stackBaseIndex + 1; n < hitObjects.length; n++) 
+        {
           const stackBaseObject = hitObjects[stackBaseIndex];
           const objectN = hitObjects[n];
 
@@ -44,18 +51,20 @@ export class BeatmapStackingProcessor implements BeatmapPostProcessor {
             break;
 
           if (
-              Vec2.distance(stackBaseObject.position, objectN.position)
+            Vec2.distance(stackBaseObject.position, objectN.position)
               < stackDistance
               || (stackBaseObject instanceof Slider
                   && Vec2.distance(stackBaseObject.endPosition, objectN.position)
                   < stackDistance)
-          ) {
+          ) 
+          {
             stackBaseIndex = n;
             objectN.stackHeight = 0;
           }
         }
 
-        if (stackBaseIndex > extendedEndIndex) {
+        if (stackBaseIndex > extendedEndIndex) 
+        {
           extendedEndIndex = stackBaseIndex;
           if (extendedEndIndex === hitObjects.length - 1)
             break;
@@ -64,7 +73,8 @@ export class BeatmapStackingProcessor implements BeatmapPostProcessor {
     }
 
     let extendedStartIndex = startIndex;
-    for (let i = extendedEndIndex; i >= extendedStartIndex; i--) {
+    for (let i = extendedEndIndex; i >= extendedStartIndex; i--) 
+    {
       let n = i;
 
       let objectI = hitObjects[i];
@@ -73,8 +83,10 @@ export class BeatmapStackingProcessor implements BeatmapPostProcessor {
 
       const stackThreshold = objectI.timePreempt * stackLeniency;
 
-      if (objectI instanceof HitCircle) {
-        while (--n >= 0) {
+      if (objectI instanceof HitCircle) 
+      {
+        while (--n >= 0) 
+        {
           const objectN = hitObjects[n];
           if (objectN instanceof Spinner)
             continue;
@@ -84,23 +96,27 @@ export class BeatmapStackingProcessor implements BeatmapPostProcessor {
           if (objectI.startTime - endTime > stackThreshold)
             break;
 
-          if (n < extendedStartIndex) {
+          if (n < extendedStartIndex) 
+          {
             extendedStartIndex = n;
             objectN.stackHeight = 0;
           }
 
           if (
-              objectN instanceof Slider
+            objectN instanceof Slider
               && Vec2.distance(objectN.endPosition, objectI.position) < stackDistance
-          ) {
+          ) 
+          {
             const offset = objectI.stackHeight - objectN.stackHeight + 1;
 
-            for (let j = n + 1; j <= i; j++) {
+            for (let j = n + 1; j <= i; j++) 
+            {
               const objectJ = hitObjects[j];
               if (
-                  Vec2.distance(objectN.endPosition, objectJ.position)
+                Vec2.distance(objectN.endPosition, objectJ.position)
                   < stackDistance
-              ) {
+              ) 
+              {
                 objectJ.stackHeight -= offset;
               }
             }
@@ -109,23 +125,27 @@ export class BeatmapStackingProcessor implements BeatmapPostProcessor {
           }
 
           if (
-              Vec2.distance(objectN.position, objectI.position) < stackDistance
-          ) {
+            Vec2.distance(objectN.position, objectI.position) < stackDistance
+          ) 
+          {
             objectN.stackHeight = objectI.stackHeight + 1;
             objectI = objectN;
           }
         }
       }
-      else if (objectI instanceof Slider) {
-        while (--n >= startIndex) {
+      else if (objectI instanceof Slider) 
+      {
+        while (--n >= startIndex) 
+        {
           const objectN = hitObjects[n];
 
           if (objectI.startTime - objectN.endTime > stackThreshold)
             break;
 
           if (
-              Vec2.distance(objectN.endPosition, objectI.position) < stackDistance
-          ) {
+            Vec2.distance(objectN.endPosition, objectI.position) < stackDistance
+          ) 
+          {
             objectN.stackHeight = objectI.stackHeight + 1;
             objectI = objectN;
           }

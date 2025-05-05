@@ -2,7 +2,8 @@ import { Bindable, clamp, resolved, Vec2 } from "@osucad/framework";
 import { DrawableSlider } from "./DrawableSlider";
 import { SliderBody } from "./SliderBody";
 
-export class SnakingSliderBody extends SliderBody {
+export class SnakingSliderBody extends SliderBody 
+{
   currentCurve: Vec2[] = [];
 
   readonly snakingIn = new Bindable(false);
@@ -11,19 +12,23 @@ export class SnakingSliderBody extends SliderBody {
   #snakedStart?: number;
   #snakedEnd?: number;
 
-  get snakedStart() {
+  get snakedStart() 
+  {
     return this.#snakedStart;
   }
 
-  get snakedEnd() {
+  get snakedEnd() 
+  {
     return this.#snakedEnd;
   }
 
-  override get pathRadius() {
+  override get pathRadius() 
+  {
     return super.pathRadius;
   }
 
-  override set pathRadius(value: number) {
+  override set pathRadius(value: number) 
+  {
     if (super.pathRadius === value)
       return;
 
@@ -35,7 +40,8 @@ export class SnakingSliderBody extends SliderBody {
   @resolved(() => DrawableSlider)
   protected drawableSlider!: DrawableSlider;
 
-  updateProgress(completionProgress: number) {
+  updateProgress(completionProgress: number) 
+  {
     if (!this.drawableSlider.hitObject)
       return;
 
@@ -47,12 +53,15 @@ export class SnakingSliderBody extends SliderBody {
     let start = 0;
     let end = this.snakingIn.value ? clamp((this.time.current - (slider.startTime - slider.timePreempt)) / (slider.timePreempt / 3), 0, 1) : 1;
 
-    if (span >= slider.spanCount() - 1) {
-      if (Math.min(span, slider.spanCount() - 1) % 2 === 1) {
+    if (span >= slider.spanCount() - 1) 
+    {
+      if (Math.min(span, slider.spanCount() - 1) % 2 === 1) 
+      {
         start = 0;
         end = this.snakingOut.value ? spanProgress : 1;
       }
-      else {
+      else 
+      {
         start = this.snakingOut.value ? spanProgress : 0;
       }
     }
@@ -60,7 +69,8 @@ export class SnakingSliderBody extends SliderBody {
     this.#setRange(start, end);
   }
 
-  refresh() {
+  refresh() 
+  {
     if (!this.drawableSlider.hitObject)
       return;
 
@@ -69,7 +79,8 @@ export class SnakingSliderBody extends SliderBody {
     this.setVertices(this.currentCurve = slider.path.getRange(0, 1));
   }
 
-  #setRange(p0: number, p1: number)  {
+  #setRange(p0: number, p1: number)  
+  {
     if (p0 > p1)
       [p0, p1] = [p1, p0];
 

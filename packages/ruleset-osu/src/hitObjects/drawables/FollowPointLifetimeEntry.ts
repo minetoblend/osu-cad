@@ -1,16 +1,18 @@
-import type { OsuHitObject } from '../OsuHitObject';
-import { LifetimeEntry } from '@osucad/core';
-import { Action } from '@osucad/framework';
-import { Spinner } from '../Spinner';
-import { FollowPointConnection } from './FollowPointConnection';
+import type { OsuHitObject } from "../OsuHitObject";
+import { LifetimeEntry } from "@osucad/core";
+import { Action } from "@osucad/framework";
+import { Spinner } from "../Spinner";
+import { FollowPointConnection } from "./FollowPointConnection";
 
 let uid = 0;
 
-export class FollowPointLifetimeEntry extends LifetimeEntry {
+export class FollowPointLifetimeEntry extends LifetimeEntry 
+{
   readonly invalidated = new Action();
   readonly start: OsuHitObject;
 
-  constructor(start: OsuHitObject) {
+  constructor(start: OsuHitObject) 
+  {
     super();
 
     this.start = start;
@@ -20,11 +22,13 @@ export class FollowPointLifetimeEntry extends LifetimeEntry {
 
   #end: OsuHitObject | null = null;
 
-  get end() {
+  get end() 
+  {
     return this.#end;
   }
 
-  set end(value) {
+  set end(value) 
+  {
     this.unbindEvents();
 
     this.#end = value;
@@ -36,7 +40,8 @@ export class FollowPointLifetimeEntry extends LifetimeEntry {
 
   #wasBound = false;
 
-  #bindEvents() {
+  #bindEvents() 
+  {
     this.unbindEvents();
 
     if (!this.end)
@@ -52,7 +57,8 @@ export class FollowPointLifetimeEntry extends LifetimeEntry {
     this.#wasBound = true;
   }
 
-  unbindEvents() {
+  unbindEvents() 
+  {
     if (!this.#wasBound)
       return;
 
@@ -72,25 +78,31 @@ export class FollowPointLifetimeEntry extends LifetimeEntry {
   //   this.#refreshLifetimes();
   // }
 
-  #onEndDefaultsApplied() {
+  #onEndDefaultsApplied() 
+  {
     this.#refreshLifetimes();
   }
 
-  #onPositionChanged() {
+  #onPositionChanged() 
+  {
     this.#refreshLifetimes();
   }
 
-  #onEndPositionChanged() {
+  #onEndPositionChanged() 
+  {
     this.#refreshLifetimes();
   }
 
-  #refreshLifetimes() {
-    if (this.end === null || this.end.newCombo || this.start instanceof Spinner || this.end instanceof Spinner) {
+  #refreshLifetimes() 
+  {
+    if (this.end === null || this.end.newCombo || this.start instanceof Spinner || this.end instanceof Spinner) 
+    {
       this.lifetimeEnd = this.lifetimeStart;
       return;
     }
 
-    if (this.start.endTime === this.end.startTime) {
+    if (this.start.endTime === this.end.startTime) 
+    {
       this.lifetimeEnd = this.lifetimeStart;
       return;
     }

@@ -1,2 +1,2 @@
-export * from './HitType';
-export * from './BeatmapParser';
+export * from "./HitType";
+export * from "./BeatmapParser";

@@ -1,4 +1,5 @@
-export interface IAnimation {
+export interface IAnimation 
+{
   get duration(): number;
 
   get finishedPlaying(): boolean;

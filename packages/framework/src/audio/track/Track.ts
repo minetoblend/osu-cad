@@ -1,8 +1,9 @@
-import type { IDisposable } from '../../types';
-import type { ITrack } from './ITrack';
-import { Action } from '../../bindables';
+import type { IDisposable } from "../../types";
+import type { ITrack } from "./ITrack";
+import { Action } from "../../bindables";
 
-export abstract class Track implements ITrack, IDisposable {
+export abstract class Track implements ITrack, IDisposable 
+{
   completed = new Action();
 
   looping: boolean = false;
@@ -11,11 +12,13 @@ export abstract class Track implements ITrack, IDisposable {
 
   hasCompleted: boolean = false;
 
-  protected raiseCompleted() {
+  protected raiseCompleted() 
+  {
     this.completed.emit();
   }
 
-  reset(): void {
+  reset(): void 
+  {
     // TODO: this.volume.value = 1;
 
     this.resetSpeedAdjustments();
@@ -24,7 +27,8 @@ export abstract class Track implements ITrack, IDisposable {
     this.seek(0);
   }
 
-  restart(): void {
+  restart(): void 
+  {
     this.stop();
     this.seek(this.restartPoint);
     this.start();
@@ -46,11 +50,13 @@ export abstract class Track implements ITrack, IDisposable {
 
   abstract set rate(value: number);
 
-  get isReversed(): boolean {
+  get isReversed(): boolean 
+  {
     return this.rate < 0;
   }
 
-  resetSpeedAdjustments(): void {
+  resetSpeedAdjustments(): void 
+  {
     this.rate = 1;
   }
 

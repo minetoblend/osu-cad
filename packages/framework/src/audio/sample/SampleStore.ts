@@ -1,34 +1,39 @@
-import type { IResourceStore } from '../../io/stores/IResourceStore';
-import type { AudioChannel } from '../AudioChannel';
-import type { ISampleStore } from './ISampleStore';
-import type { Sample } from './Sample';
-import { ResourceStore } from '../../io/stores/ResourceStore';
-import { SampleFactory } from './SampleFactory';
+import type { IResourceStore } from "../../io/stores/IResourceStore";
+import type { AudioChannel } from "../AudioChannel";
+import type { ISampleStore } from "./ISampleStore";
+import type { Sample } from "./Sample";
+import { ResourceStore } from "../../io/stores/ResourceStore";
+import { SampleFactory } from "./SampleFactory";
 
-export class SampleStore implements ISampleStore {
+export class SampleStore implements ISampleStore 
+{
   readonly #store: ResourceStore<ArrayBuffer>;
 
   readonly #channel: AudioChannel;
 
   readonly #factories = new Map<string, SampleFactory | null>();
 
-  constructor(store: IResourceStore<ArrayBuffer>, channel: AudioChannel) {
+  constructor(store: IResourceStore<ArrayBuffer>, channel: AudioChannel) 
+  {
     this.#store = new ResourceStore(store);
     this.#channel = channel;
 
-    this.addExtension('wav');
-    this.addExtension('mp3');
+    this.addExtension("wav");
+    this.addExtension("mp3");
   }
 
-  addExtension(extension: string) {
+  addExtension(extension: string) 
+  {
     this.#store.addExtension(extension);
   }
 
-  canLoad(name: string) {
+  canLoad(name: string) 
+  {
     return this.#store.canLoad(name);
   }
 
-  async load(name: string) {
+  async load(name: string) 
+  {
     if (this.#factories.has(name))
       return;
 
@@ -40,23 +45,28 @@ export class SampleStore implements ISampleStore {
     this.#factories.set(name, new SampleFactory(audioBuffer, name, this.#channel));
   }
 
-  get(name: string): Sample | null {
+  get(name: string): Sample | null 
+  {
     const factory = this.#factories.get(name);
 
     return factory?.createSample() ?? null;
   }
 
-  async getAsync(name: string) {
+  async getAsync(name: string) 
+  {
     return this.get(name);
   }
 
-  has(name: string) {
+  has(name: string) 
+  {
     return this.#store.has(name);
   }
 
-  getAvailableResources() {
+  getAvailableResources() 
+  {
     return this.#store.getAvailableResources();
   }
 
-  dispose(): void {}
+  dispose(): void 
+  {}
 }

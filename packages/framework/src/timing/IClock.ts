@@ -1,4 +1,5 @@
-export interface IClock {
+export interface IClock 
+{
   get currentTime(): number;
 
   get rate(): number;

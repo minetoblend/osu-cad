@@ -1,14 +1,16 @@
-import type { FrameTimeInfo } from './FrameTimeInfo';
-import type { IClock } from './IClock';
-import { type IFrameBasedClock, isFrameBasedClock } from './IFrameBasedClock';
-import { StopwatchClock } from './StopwatchClock';
+import type { FrameTimeInfo } from "./FrameTimeInfo";
+import type { IClock } from "./IClock";
+import { type IFrameBasedClock, isFrameBasedClock } from "./IFrameBasedClock";
+import { StopwatchClock } from "./StopwatchClock";
 
 const fps_calculation_interval = 250;
 
-export class FramedClock implements IFrameBasedClock {
+export class FramedClock implements IFrameBasedClock 
+{
   source!: IClock;
 
-  constructor(source: IClock = new StopwatchClock(), processSource: boolean = true) {
+  constructor(source: IClock = new StopwatchClock(), processSource: boolean = true) 
+  {
     this.#processSource = processSource;
     this.changeSource(source);
   }
@@ -19,45 +21,54 @@ export class FramedClock implements IFrameBasedClock {
 
   #framesPerSecond = 0;
 
-  get framesPerSecond(): number {
+  get framesPerSecond(): number 
+  {
     return this.#framesPerSecond;
   }
 
   #jitter = 0;
 
-  protected set jitter(value: number) {
+  protected set jitter(value: number) 
+  {
     this.#jitter = value;
   }
 
-  get jitter() {
+  get jitter() 
+  {
     return this.#jitter;
   }
 
   #currentTime = 0;
 
-  get currentTime(): number {
+  get currentTime(): number 
+  {
     return this.#currentTime;
   }
 
-  protected set currentTime(value: number) {
+  protected set currentTime(value: number) 
+  {
     this.#currentTime = value;
   }
 
   lastFrameTime = 0;
 
-  get rate() {
+  get rate() 
+  {
     return this.source.rate;
   }
 
-  get sourceTime() {
+  get sourceTime() 
+  {
     return this.source.currentTime;
   }
 
-  get elapsedFrameTime(): number {
+  get elapsedFrameTime(): number 
+  {
     return this.currentTime - this.lastFrameTime;
   }
 
-  get isRunning() {
+  get isRunning() 
+  {
     return this.source.isRunning;
   }
 
@@ -67,34 +78,41 @@ export class FramedClock implements IFrameBasedClock {
   #timeSinceLastCalculation = 0;
   #framesSinceLastCalculation = 0;
 
-  changeSource(source: IClock) {
+  changeSource(source: IClock) 
+  {
     this.source = source;
     this.currentTime = this.lastFrameTime = source.currentTime;
   }
 
-  processFrame(): void {
+  processFrame(): void 
+  {
     this.#betweenFrameTimes[this.#totalFramesProcessed % this.#betweenFrameTimes.length]
       = this.currentTime - this.lastFrameTime;
     this.#totalFramesProcessed++;
 
-    if (this.#processSource && isFrameBasedClock(this.source)) {
+    if (this.#processSource && isFrameBasedClock(this.source)) 
+    {
       this.source.processFrame();
     }
 
-    if (this.#timeUntilNextCalculation <= 0) {
+    if (this.#timeUntilNextCalculation <= 0) 
+    {
       this.#timeUntilNextCalculation += fps_calculation_interval;
 
-      if (this.#framesSinceLastCalculation === 0) {
+      if (this.#framesSinceLastCalculation === 0) 
+      {
         this.#framesPerSecond = 0;
         this.jitter = 0;
       }
-      else {
+      else 
+      {
         this.#framesPerSecond = Math.ceil((this.#framesSinceLastCalculation * 1000.0) / this.#timeSinceLastCalculation);
 
         let sum = 0;
         let sumOfSquares = 0;
 
-        for (const time of this.#betweenFrameTimes) {
+        for (const time of this.#betweenFrameTimes) 
+        {
           sum += time;
           sumOfSquares += time * time;
         }
@@ -124,7 +142,8 @@ export class FramedClock implements IFrameBasedClock {
     current: 0,
   };
 
-  get timeInfo(): FrameTimeInfo {
+  get timeInfo(): FrameTimeInfo 
+  {
     return this.#timeInfo;
   }
 

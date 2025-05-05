@@ -1,108 +1,127 @@
 import { PathApproximator } from "@osucad/core";
 import { Bindable, CachedValue, Vec2 } from "@osucad/framework";
-import { CalculatedPath } from './CalculatedPath'
+import { CalculatedPath } from "./CalculatedPath";
 import { PathPoint, PathType } from "./PathPoint";
 
-export interface PathSegment {
+export interface PathSegment 
+{
   readonly type: PathType
   readonly points: PathPoint[]
 }
 
-export class SliderPath {
+export class SliderPath 
+{
   readonly version = new Bindable(0);
 
-  constructor() {
-    this.controlPointsBindable.bindValueChanged(this.invalidatePath, this)
+  constructor() 
+  {
+    this.controlPointsBindable.bindValueChanged(this.invalidatePath, this);
   }
 
-  invalidatePath() {
-    this.version.value++
+  invalidatePath() 
+  {
+    this.version.value++;
   }
 
   readonly expectedDistanceBindable = new Bindable(0);
 
-  get actualDistance() {
-    return Math.min(this.expectedDistance, this.calculatedDistance)
+  get actualDistance() 
+  {
+    return Math.min(this.expectedDistance, this.calculatedDistance);
   }
 
-  get expectedDistance() {
+  get expectedDistance() 
+  {
     return this.expectedDistanceBindable.value;
   }
 
-  set expectedDistance(value: number) {
-    this.expectedDistanceBindable.value = value
+  set expectedDistance(value: number) 
+  {
+    this.expectedDistanceBindable.value = value;
   }
 
-  get calculatedDistance() {
+  get calculatedDistance() 
+  {
     return this.calculatedPath.totalDistance;
   }
 
-  readonly controlPointsBindable = new Bindable<readonly PathPoint[]>([])
+  readonly controlPointsBindable = new Bindable<readonly PathPoint[]>([]);
 
-  get controlPoints() {
-    return this.controlPointsBindable.value
+  get controlPoints() 
+  {
+    return this.controlPointsBindable.value;
   }
 
-  set controlPoints(value: readonly PathPoint[]) {
-    this.controlPointsBindable.value = value
+  set controlPoints(value: readonly PathPoint[]) 
+  {
+    this.controlPointsBindable.value = value;
   }
 
-  readonly #calculatedPath = new CachedValue<CalculatedPath>()
+  readonly #calculatedPath = new CachedValue<CalculatedPath>();
 
-  get calculatedPath(): CalculatedPath {
-    this.#ensureValid()
-    return this.#calculatedPath.value
+  get calculatedPath(): CalculatedPath 
+  {
+    this.#ensureValid();
+    return this.#calculatedPath.value;
   }
 
-  getPositionAtDistance(distance: number, out = new Vec2()) {
-    return this.calculatedPath.getPositionAtDistance(distance, out)
+  getPositionAtDistance(distance: number, out = new Vec2()) 
+  {
+    return this.calculatedPath.getPositionAtDistance(distance, out);
   }
 
-  getRange(startProgress: number, endProgress: number) {
-    const maxDistance = Math.min(this.expectedDistance, this.calculatedDistance)
+  getRange(startProgress: number, endProgress: number) 
+  {
+    const maxDistance = Math.min(this.expectedDistance, this.calculatedDistance);
 
-    return this.calculatedPath.getRange(startProgress * maxDistance, endProgress * maxDistance)
+    return this.calculatedPath.getRange(startProgress * maxDistance, endProgress * maxDistance);
   }
 
-  #ensureValid() {
+  #ensureValid() 
+  {
     if (!this.#calculatedPath.isValid)
-      this.#calculatedPath.value = this.#calculatePath()
+      this.#calculatedPath.value = this.#calculatePath();
   }
 
-  #calculatePath() {
-    if (this.controlPoints.length <= 1) {
+  #calculatePath() 
+  {
+    if (this.controlPoints.length <= 1) 
+    {
       return new CalculatedPath();
     }
 
     const points: Vec2[] = [Vec2.zero()];
     const cumulativeDistance: number[] = [0];
 
-    for (const segment of this.pathSegments) {
+    for (const segment of this.pathSegments) 
+    {
       const segmentPoints = segment.points.map(p => p.position.clone());
       let calculatedSegment: Vec2[];
 
-      switch (segment.type) {
-        case PathType.Catmull:
-          calculatedSegment = PathApproximator.approximateCatmull(segmentPoints);
-          break;
-        case PathType.Linear:
-          calculatedSegment = segmentPoints;
-          break;
-        case PathType.BSpline:
-          calculatedSegment = PathApproximator.approximateBSpline(segmentPoints, 3);
-          break;
-        case PathType.PerfectCurve:
-          if (segmentPoints.length === 3)
-            calculatedSegment = PathApproximator.approximateCircularArc(segmentPoints);
-          else
-            calculatedSegment = PathApproximator.approximateBezier(segmentPoints);
-          break
-        default:
+      switch (segment.type) 
+      {
+      case PathType.Catmull:
+        calculatedSegment = PathApproximator.approximateCatmull(segmentPoints);
+        break;
+      case PathType.Linear:
+        calculatedSegment = segmentPoints;
+        break;
+      case PathType.BSpline:
+        calculatedSegment = PathApproximator.approximateBSpline(segmentPoints, 3);
+        break;
+      case PathType.PerfectCurve:
+        if (segmentPoints.length === 3)
+          calculatedSegment = PathApproximator.approximateCircularArc(segmentPoints);
+        else
           calculatedSegment = PathApproximator.approximateBezier(segmentPoints);
-          break;
+        break;
+      default:
+        calculatedSegment = PathApproximator.approximateBezier(segmentPoints);
+        break;
       }
 
-      for (const p of calculatedSegment) {
+      for (const p of calculatedSegment) 
+      {
         const last = points[points.length - 1];
         const distance = last.distance(p);
 
@@ -117,16 +136,19 @@ export class SliderPath {
     return new CalculatedPath(points, cumulativeDistance);
   }
 
-  get pathSegments(): PathSegment[] {
+  get pathSegments(): PathSegment[] 
+  {
     const segments: PathSegment[] = [];
 
     let segmentStart = 0;
     let segmentType = this.controlPoints[0].type!;
 
-    for (let i = 1; i < this.controlPoints.length; i++) {
+    for (let i = 1; i < this.controlPoints.length; i++) 
+    {
       const controlPoint = this.controlPoints[i];
 
-      if (controlPoint.type !== null || i === this.controlPoints.length - 1) {
+      if (controlPoint.type !== null || i === this.controlPoints.length - 1) 
+      {
         segments.push({
           type: segmentType,
           points: this.controlPoints.slice(segmentStart, i + 1),
@@ -140,7 +162,8 @@ export class SliderPath {
     return segments;
   }
 
-  getPositionAt(progress: number, out: Vec2 = new Vec2()) {
+  getPositionAt(progress: number, out: Vec2 = new Vec2()) 
+  {
     return this.calculatedPath.getPositionAtDistance(progress * this.expectedDistance, out);
   }
 }

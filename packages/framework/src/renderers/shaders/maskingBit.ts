@@ -1,7 +1,7 @@
-import type { HighShaderBit } from 'pixi.js';
+import type { HighShaderBit } from "pixi.js";
 
 export const maskingBitGl: HighShaderBit = {
-  name: 'masking',
+  name: "masking",
   vertex: {
     header: `
       uniform mat3 uToMaskingSpace;

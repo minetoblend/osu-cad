@@ -1,11 +1,13 @@
-import type { TouchStateChangeEvent } from './events/TouchStateChangeEvent';
+import type { TouchStateChangeEvent } from "./events/TouchStateChangeEvent";
 
-export interface ISourcedFromTouch {
+export interface ISourcedFromTouch 
+{
   readonly sourcedFromTouch: true;
 
   readonly touchEvent: TouchStateChangeEvent;
 }
 
-export function isSourcedFromTouch(obj: any): obj is ISourcedFromTouch {
+export function isSourcedFromTouch(obj: any): obj is ISourcedFromTouch 
+{
   return !!(obj?.sourcedFromTouch);
 }

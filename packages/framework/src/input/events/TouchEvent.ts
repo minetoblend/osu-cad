@@ -1,11 +1,13 @@
-import type { Vec2 } from '../../math/Vec2';
-import type { Touch } from '../handlers/Touch';
-import type { IInputReceiver } from '../IInputReceiver';
-import type { InputState } from '../state/InputState';
-import { UIEvent } from './UIEvent';
+import type { Vec2 } from "../../math/Vec2";
+import type { Touch } from "../handlers/Touch";
+import type { IInputReceiver } from "../IInputReceiver";
+import type { InputState } from "../state/InputState";
+import { UIEvent } from "./UIEvent";
 
-export class TouchEvent extends UIEvent {
-  constructor(state: InputState, handler: keyof IInputReceiver, touch: Touch, screenSpaceTouchDownPosition: Vec2 | null = null) {
+export class TouchEvent extends UIEvent 
+{
+  constructor(state: InputState, handler: keyof IInputReceiver, touch: Touch, screenSpaceTouchDownPosition: Vec2 | null = null) 
+  {
     super(state, handler);
 
     this.screenSpaceTouch = touch;
@@ -16,7 +18,8 @@ export class TouchEvent extends UIEvent {
 
   readonly screenSpaceTouchDownPosition: Vec2 | null;
 
-  isActive(touch: Touch) {
+  isActive(touch: Touch) 
+  {
     return this.state.touch.isActive(touch.source);
   }
 }

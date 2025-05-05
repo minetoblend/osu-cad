@@ -1,7 +1,8 @@
-import type { Action } from '../../bindables';
-import type { IAdjustableClock } from '../../timing';
+import type { Action } from "../../bindables";
+import type { IAdjustableClock } from "../../timing";
 
-export interface ITrack extends IAdjustableClock {
+export interface ITrack extends IAdjustableClock 
+{
   readonly completed: Action;
 
   looping: boolean;

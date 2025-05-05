@@ -1,3 +1,4 @@
-export function loadSymbol() {
-  return Symbol('load');
+export function loadSymbol() 
+{
+  return Symbol("load");
 }

@@ -4,32 +4,35 @@ import type {
   Renderable,
   Renderer,
   System,
-} from 'pixi.js';
-import type { MaskingEffect } from './MaskingEffect';
-import type { MaskingAction } from './MaskingPipe';
-import type { OsucadUniformSystem } from './OsucadUniformSystem';
+} from "pixi.js";
+import type { MaskingEffect } from "./MaskingEffect";
+import type { MaskingAction } from "./MaskingPipe";
+import type { OsucadUniformSystem } from "./OsucadUniformSystem";
 
-import { Color, ExtensionType, Rectangle } from 'pixi.js';
-import { MatrixUtils } from '../utils/MatrixUtils';
+import { Color, ExtensionType, Rectangle } from "pixi.js";
+import { MatrixUtils } from "../utils/MatrixUtils";
 
-export interface MaskingInstruction extends Instruction {
-  renderPipeId: 'masking';
+export interface MaskingInstruction extends Instruction 
+{
+  renderPipeId: "masking";
   action: MaskingAction;
   container?: Container;
   renderables?: Renderable[];
   maskingEffect: MaskingEffect;
 }
 
-export class MaskingSystem implements System {
+export class MaskingSystem implements System 
+{
   public static extension = {
     type: [
       ExtensionType.WebGLSystem,
       ExtensionType.WebGPUSystem,
     ],
-    name: 'masking',
+    name: "masking",
   } as const;
 
-  constructor(renderer: Renderer) {
+  constructor(renderer: Renderer) 
+  {
     this.renderer = renderer;
   }
 
@@ -37,7 +40,8 @@ export class MaskingSystem implements System {
 
   public destroy?: () => void;
 
-  push(instruction: MaskingInstruction) {
+  push(instruction: MaskingInstruction) 
+  {
     const renderer = this.renderer;
 
     const maskingInfo = instruction.maskingEffect;
@@ -51,7 +55,7 @@ export class MaskingSystem implements System {
     const color
       = maskingInfo.borderColor
         ? Color.shared.setValue(maskingInfo.borderColor).setAlpha(maskingInfo.borderColor.alpha * instruction.container!.groupAlpha)
-        : Color.shared.setValue('transparent');
+        : Color.shared.setValue("transparent");
 
     const bgr = color.toBgrNumber();
 
@@ -73,7 +77,8 @@ export class MaskingSystem implements System {
     });
   }
 
-  pop() {
+  pop() 
+  {
     const renderer = this.renderer;
 
     renderer.globalUniforms.pop();

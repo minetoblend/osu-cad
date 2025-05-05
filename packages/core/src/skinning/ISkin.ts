@@ -4,7 +4,8 @@ import { SkinConfigurationLookup, SkinConfigurationValue } from "./SkinConfigura
 
 export type SkinComponentLookup = string;
 
-export interface ISkin {
+export interface ISkin 
+{
   getTexture(componentName: string): Texture | null
 
   getDrawableComponent(lookup: SkinComponentLookup): Drawable | null
@@ -16,4 +17,4 @@ export interface ISkin {
   getComboColor(comboIndex: number): Color;
 }
 
-export const ISkin = injectionToken<ISkin>()
+export const ISkin = injectionToken<ISkin>();

@@ -1,4 +1,5 @@
-export enum LifetimeBoundaryCrossingDirection {
+export enum LifetimeBoundaryCrossingDirection 
+{
   Forward,
   Backward,
 }
