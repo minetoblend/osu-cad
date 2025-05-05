@@ -3,6 +3,7 @@ import { Color } from "pixi.js";
 import { PoolableDrawableWithLifetime } from "../../../pooling/PoolableDrawableWithLifetime";
 import type { IAnimationTimeReference } from "../../../skinning/IAnimationTimeReference";
 import type { HitObject } from "../HitObject";
+import { ArmedState } from "./ArmedState";
 import type { HitObjectLifetimeEntry } from "./HitObjectLifetimeEntry";
 import { SyntheticHitObjectEntry } from "./SyntheticHitObjectEntry";
 
@@ -12,6 +13,18 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
   implements IAnimationTimeReference
 {
   readonly animationStartTime = new Bindable(0);
+
+  readonly #state = new Bindable(ArmedState.Idle);
+
+  get state()
+  {
+    return this.#state.value;
+  }
+
+  set state(value)
+  {
+    this.updateState(value);
+  }
 
   protected constructor(initialHitObject?: T)
   {
@@ -63,7 +76,7 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
     this.onApplied();
 
     this.updateComboColor();
-    this.applyStateTransforms();
+    this.updateState(ArmedState.Idle);
   }
 
   protected override onFree(entry: HitObjectLifetimeEntry)
@@ -85,8 +98,13 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
   {
   }
 
-  protected applyStateTransforms()
+  protected updateState(state: ArmedState)
   {
+    if (state === this.state)
+      return;
+
+    this.#state.value = state;
+
     this.lifetimeEnd = Number.MAX_VALUE;
 
     this.#clearExistingStateTransforms();
@@ -97,7 +115,10 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
 
     this.absoluteSequence({ time: initialTransformsTime, recursive: true }, () => this.updateInitialTransforms());
     this.absoluteSequence({ time: this.hitObject.startTime, recursive: true }, () => this.updateStartTimeTransforms());
-    this.absoluteSequence({ time: this.hitObject.endTime, recursive: true }, () => this.updateHitStateTransforms());
+    this.absoluteSequence({
+      time: this.hitObject.endTime,
+      recursive: true,
+    }, () => this.updateHitStateTransforms(state));
 
     if (this.lifetimeEnd === Number.MAX_VALUE)
       this.lifetimeEnd = Math.max(this.latestTransformEndTime, this.hitObject!.endTime);
@@ -134,7 +155,7 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
   {
   }
 
-  protected updateHitStateTransforms()
+  protected updateHitStateTransforms(state: ArmedState)
   {
   }
 
