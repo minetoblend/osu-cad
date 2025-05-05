@@ -4,6 +4,7 @@ import type { RulesetStore } from "../../rulesets/RulesetStore";
 import { rulesets } from "../../rulesets/RulesetStore";
 import { nn } from "../../utils/nn";
 import { Beatmap } from "../Beatmap";
+import { LegacyTimingPoint } from "../timing/LegacyTimingPoint";
 
 export interface BeatmapParserOptions
 {
@@ -89,6 +90,9 @@ export class BeatmapParser
       case BeatmapSection.Difficulty:
         parseDifficulty(line, beatmap);
         break;
+      case BeatmapSection.TimingPoints:
+        parseTimingPoint(line, beatmap);
+        break;
       case BeatmapSection.Colours:
         parseColors(line, beatmap);
         break;
@@ -104,7 +108,7 @@ export class BeatmapParser
     beatmap.hitObjects.sort((a, b) => a.startTime - b.startTime);
 
     for (const h of beatmap.hitObjects)
-      h.applyDefaults(beatmap.difficulty);
+      h.applyDefaults(beatmap.difficulty, beatmap.timing);
 
     const postProcessor = await getRuleset().createBeatmapPostProcessor?.();
     if (postProcessor)
@@ -257,6 +261,39 @@ function parseDifficulty(line: string, beatmap: Beatmap)
     beatmap.difficulty.sliderTickRate = Number.parseFloat(value);
     break;
   }
+}
+
+function parseTimingPoint(line: string, beatmap: Beatmap)
+{
+  const values = line.split(",");
+  if (values.length <= 1)
+    return;
+
+  const uninherited = values[6] === "1";
+
+  const startTime = Number.parseInt(values[0]);
+
+  const timingPoint = new LegacyTimingPoint();
+  timingPoint.startTime = startTime;
+
+  if (uninherited)
+  {
+    const beatDuration = Number.parseFloat(values[1]);
+    const signature = Number.parseInt(values[2]);
+
+    timingPoint.timingInfo = {
+      beatLength: beatDuration,
+      signature,
+    };
+  }
+  else
+  {
+    const sliderVelocity = -100 / Number.parseFloat(values[1]);
+
+    timingPoint.sliderVelocity = sliderVelocity;
+  }
+
+  beatmap.timing.timingPoints.push(timingPoint);
 }
 
 function parseVersionHeader(line: string)

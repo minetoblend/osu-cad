@@ -1,4 +1,4 @@
-import type { BeatmapDifficultyInfo } from "@osucad/core";
+import type { BeatmapDifficultyInfo, IBeatmapTiming } from "@osucad/core";
 import { safeAssign } from "@osucad/core";
 import { BindableNumber, Vec2 } from "@osucad/framework";
 import { HitCircle } from "./HitCircle";
@@ -91,17 +91,17 @@ export class Slider extends OsuHitObject
     return this.#tickDistance;
   }
 
-  public override applyDefaults(difficulty: BeatmapDifficultyInfo)
+  public override applyDefaults(difficulty: BeatmapDifficultyInfo, timing: IBeatmapTiming)
   {
-    super.applyDefaults(difficulty);
+    super.applyDefaults(difficulty, timing);
 
-    const timingPoint = { beatLength: 60_000 / 180 };
+    const timingPoint = timing.getTimingInfoAt(this.startTime + 1);
 
     const baseVelocity = Slider.BASE_SCORING_DISTANCE * difficulty.sliderMultiplier / timingPoint.beatLength;
 
-    const difficultyPoint = { sliderVelocity: 1 };
+    const sliderVelocity = timing.getSliderVelocityAt(this.startTime + 1);
 
-    this.sliderVelocity = baseVelocity * difficultyPoint.sliderVelocity;
+    this.sliderVelocity = baseVelocity * sliderVelocity;
 
     const scoringDistance = this.sliderVelocity * timingPoint.beatLength;
 

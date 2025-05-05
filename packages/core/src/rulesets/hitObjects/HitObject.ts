@@ -1,5 +1,6 @@
 import { Bindable } from "@osucad/framework";
 import type { BeatmapDifficultyInfo } from "../../beatmaps/BeatmapDifficultyInfo";
+import type { IBeatmapTiming } from "../../beatmaps/timing/IBeatmapTiming";
 
 export class HitObject
 {
@@ -25,7 +26,7 @@ export class HitObject
     return this.startTime + this.duration;
   }
 
-  applyDefaults(difficulty: BeatmapDifficultyInfo)
+  applyDefaults(difficulty: BeatmapDifficultyInfo, timing: IBeatmapTiming)
   {
   }
 }

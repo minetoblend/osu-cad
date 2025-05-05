@@ -4,3 +4,4 @@ export * from "./BeatmapColors";
 export * from "./parsing";
 export * from "./BeatmapMetadata";
 export * from "./BeatmapDifficultyInfo";
+export * from "./timing";
