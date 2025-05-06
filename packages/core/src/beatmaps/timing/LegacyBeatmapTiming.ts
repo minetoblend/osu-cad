@@ -7,11 +7,32 @@ const defaultTimingInfo: ITimingInfo = { beatLength: 60_000 / 180, signature: 4,
 
 export class LegacyBeatmapTiming implements IBeatmapTiming
 {
-  readonly timingPoints: LegacyTimingPoint[] = [];
+  private readonly _timingPoints: LegacyTimingPoint[] = [];
+
+  get timingPoints(): readonly LegacyTimingPoint[]
+  {
+    return this._timingPoints as readonly LegacyTimingPoint[];
+  }
+
+  public add(timingPoint: LegacyTimingPoint)
+  {
+    this._timingPoints.push(timingPoint);
+    this._timingPoints.sort((a, b) => a.startTime - b.startTime);
+  }
+
+  public remove(timingPoint: LegacyTimingPoint)
+  {
+    const index = this._timingPoints.indexOf(timingPoint);
+    if (index < 0)
+      return false;
+
+    this._timingPoints.splice(index, 1);
+    return true;
+  }
 
   public getTimingInfoAt(time: number): ITimingInfo
   {
-    const timingPoint = this.timingPoints.findLast(timingPoint =>
+    const timingPoint = this._timingPoints.findLast(timingPoint =>
     {
       if (!timingPoint.timingInfo)
         return false;
@@ -27,7 +48,7 @@ export class LegacyBeatmapTiming implements IBeatmapTiming
 
   public getSliderVelocityAt(time: number): number
   {
-    const timingPoint = this.timingPoints.findLast(
+    const timingPoint = this._timingPoints.findLast(
         timingPoint => timingPoint.startTime <= time,
     );
 

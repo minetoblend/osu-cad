@@ -1,0 +1,70 @@
+{
+  "name": "@osucad/storybook-renderer",
+  "version": "0.0.1",
+  "private": true,
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "*.js",
+    "*.d.ts"
+  ],
+  "scripts": {
+    "build": "tsup"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./preview": {
+      "types": "./dist/config.d.ts",
+      "require": "./dist/config.js",
+      "import": "./dist/config.mjs"
+    },
+    "./package.json": {
+      "types": "./package.json",
+      "require": "./package.json",
+      "import": "./package.json"
+    }
+  },
+  "dependencies": {
+    "@storybook/csf": "~0.1.2",
+    "@storybook/types": "^8.0.0",
+    "global": "^4.4.0"
+  },
+  "devDependencies": {
+    "@types/deep-equal": "^1.0.4",
+    "@types/webpack-env": "^1.18.4",
+    "pixi.js": "^8.0.0",
+    "tsup": "^8.4.0",
+    "typescript": "~5.3.3"
+  },
+  "peerDependencies": {
+    "@osucad/framework": "workspace:^"
+  },
+  "bundler": {
+    "entries": [
+      "./src/index.ts",
+      "./src/config.ts"
+    ],
+    "platform": "browser"
+  },
+  "nx": {
+    "targets": {
+      "build": {
+        "dependsOn": [
+          {
+            "projects": [
+              "@osucad/framework"
+            ],
+            "target": "build"
+          }
+        ]
+      }
+    }
+  }
+}

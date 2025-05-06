@@ -1,4 +1,3 @@
-import * as util from "util";
 import IterableWeakSet from "../utils/IterableWeakSet";
 import { Action } from "./Action";
 
@@ -93,6 +92,8 @@ export class Bindable<T> implements ReadonlyBindable<T>
     this.triggerDefaultChange(previousValue, source ?? this, true, bypassChecks);
   }
 
+  bindValueChanged(listener: BindableListener<ValueChangedEvent<T>>, runOnceImmediately?: boolean): void;
+  bindValueChanged(listener: BindableListener<ValueChangedEvent<T>>, receiver: any, runOnceImmediately?: boolean): void;
   bindValueChanged(listener: BindableListener<ValueChangedEvent<T>>, receiver?: any, runOnceImmediately?: boolean)
   {
     if (typeof receiver === "boolean" && runOnceImmediately === undefined)
@@ -299,19 +300,6 @@ export class Bindable<T> implements ReadonlyBindable<T>
   {
     return new Bindable(this.default);
   }
-
-  // #v-ifdef VITEST
-
-  [util.inspect.custom](depth: number, options: util.InspectOptionsStylized, inspect: typeof util.inspect)
-  {
-
-    return [
-      options.stylize("[Bindable]", "special"),
-      inspect(this.value, options),
-    ].join(" ");
-  }
-
-  // #v-endif
 }
 
 export interface AddOnChangeListenerOptions

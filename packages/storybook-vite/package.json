@@ -1,0 +1,76 @@
+{
+  "name": "@osucad/storybook-vite",
+  "version": "0.0.1",
+  "private": true,
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "*.js",
+    "*.d.ts"
+  ],
+  "scripts": {
+    "build": "tsup"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./preset": {
+      "types": "./dist/preset.d.ts",
+      "require": "./dist/preset.js",
+      "import": "./dist/preset.mjs"
+    },
+    "./package.json": {
+      "types": "./package.json",
+      "require": "./package.json",
+      "import": "./package.json"
+    }
+  },
+  "dependencies": {
+    "@osucad/storybook-preset-vite": "workspace:^",
+    "@osucad/storybook-renderer": "workspace:^",
+    "@storybook/builder-vite": "^8.0.0",
+    "@storybook/core-common": "^8.0.0",
+    "@storybook/types": "^8.0.0",
+    "@types/node": "^18.0.0",
+    "@types/offscreencanvas": "^2019.7.0",
+    "global": "^4.4.0",
+    "react": "16.14.0",
+    "react-dom": "16.14.0",
+    "tsup": "^8.4.0"
+  },
+  "devDependencies": {
+  },
+  "peerDependencies": {
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "bundler": {
+    "entries": [
+      "./src/index.ts",
+      "./src/preset.ts"
+    ],
+    "platform": "node"
+  },
+  "nx": {
+    "targets": {
+      "build": {
+        "dependsOn": [
+          {
+            "projects": [
+              "@osucad/storybook-renderer",
+              "@osucad/storybook-preset-vite"
+            ],
+            "target": "build"
+          }
+        ]
+      }
+    }
+  }
+}

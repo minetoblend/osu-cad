@@ -1,0 +1,59 @@
+{
+  "name": "@osucad/storybook-preset-vite",
+  "version": "0.0.1",
+  "private": true,
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./preset": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./package.json": {
+      "types": "./package.json",
+      "require": "./package.json",
+      "import": "./package.json"
+    }
+  },
+  "dependencies": {
+    "@storybook/builder-vite": "^8.0.0",
+    "@storybook/types": "^8.0.0",
+    "@types/node": "^18.0.0",
+    "react": "16.14.0",
+    "react-dom": "16.14.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.4.0"
+  },
+  "peerDependencies": {
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "bundler": {
+    "entries": [
+      "./src/index.ts"
+    ],
+    "platform": "node"
+  },
+  "nx": {
+    "targets": {
+      "build": {
+        "dependsOn": [{ "projects": ["@osucad/storybook-renderer"], "target": "build" }]
+      }
+    }
+  }
+}

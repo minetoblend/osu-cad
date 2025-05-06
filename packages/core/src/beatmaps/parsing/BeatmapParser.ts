@@ -293,7 +293,7 @@ function parseTimingPoint(line: string, beatmap: Beatmap)
     timingPoint.sliderVelocity = sliderVelocity;
   }
 
-  beatmap.timing.timingPoints.push(timingPoint);
+  beatmap.timing.add(timingPoint);
 }
 
 function parseVersionHeader(line: string)

@@ -1,5 +1,5 @@
-import { DrawableHitObject, IComboNumberReference, ISkinSource } from "@osucad/core";
-import { Bindable, provide, resolved, Vec2 } from "@osucad/framework";
+import { DrawableHitObject, IComboNumberReference } from "@osucad/core";
+import { Bindable, provide, Vec2 } from "@osucad/framework";
 import type { OsuHitObject } from "../OsuHitObject";
 
 @provide(IComboNumberReference)
@@ -48,9 +48,6 @@ export abstract class DrawableOsuHitObject<out T extends OsuHitObject = OsuHitOb
   protected abstract updatePosition(): void;
 
   protected abstract updateScale(): void;
-
-  @resolved(ISkinSource)
-  protected skin!: ISkinSource;
 
   protected override updateComboColor()
   {

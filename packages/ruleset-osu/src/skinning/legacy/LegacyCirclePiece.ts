@@ -1,9 +1,10 @@
 import { DrawableHitObject, ISkinSource } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
-import { Anchor, Axes, CompositeDrawable, DrawableSprite, EasingFunction, resolved } from "@osucad/framework";
+import { Anchor, Axes, Bindable, CompositeDrawable, DrawableSprite, EasingFunction, resolved } from "@osucad/framework";
 import { LegacyComboNumber } from "./LegacyComboNumber";
 import type { ComputedRef } from "@osucad/framework";
 import { computed, watch, withEffectScope } from "@osucad/framework";
+import { Color } from "pixi.js";
 
 export class LegacyCirclePiece extends CompositeDrawable
 {
@@ -25,6 +26,8 @@ export class LegacyCirclePiece extends CompositeDrawable
   private comboNumber?: LegacyComboNumber;
 
   private hitCircleOverlayAboveNumber!: ComputedRef<boolean>;
+
+  readonly accentColor = new Bindable(new Color(0xffffff));
 
   @withEffectScope()
   protected override load(dependencies: ReadonlyDependencyContainer)
@@ -57,6 +60,9 @@ export class LegacyCirclePiece extends CompositeDrawable
     this.hitObject.applyCustomUpdateState.addListener(this.applyCustomState, this);
     this.applyCustomState();
 
+    this.accentColor.bindTo(this.hitObject.accentColor);
+    this.accentColor.bindValueChanged(color => this.circleSprite.color = color.value, true);
+
     watch(this.hitCircleOverlayAboveNumber,
         value => this.changeInternalChildDepth(this.overlaySprite, value ? -Number.MAX_VALUE : 0),
         { immediate: true },
@@ -67,8 +73,6 @@ export class LegacyCirclePiece extends CompositeDrawable
   {
     this.applyTransformsAt(-Number.MAX_VALUE, true);
     this.clearTransformsAfter(-Number.MAX_VALUE, true);
-
-    this.circleSprite.color = this.hitObject.accentColor.value;
 
     this.absoluteSequence({ time: this.hitObject.hitStateUpdateTime, recursive: true }, () =>
     {

@@ -19,8 +19,8 @@ export class ZipArchiveFileSystem extends EventEmitter<FileSystemEvents> impleme
     const { unzip, setOptions } = await import("unzipit");
 
     setOptions({
-      workerURL: new URL("unzipit/dist/unzipit-worker.js", import.meta.url).href,
-      numWorkers: 4,
+      // workerURL: new URL("unzipit/dist/unzipit-worker.js", import.meta.url).href,
+      // numWorkers: 4,
     });
 
     const { entries } = await unzip(buffer);

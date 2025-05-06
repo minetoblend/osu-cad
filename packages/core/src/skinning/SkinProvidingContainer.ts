@@ -23,7 +23,22 @@ export class SkinProvidingContainer extends Container implements ISkinSource
       relativeSizeAxes: Axes.Both,
       ...options,
     });
+
+    this.texturesChanged.addListener(() => this.sourceChanged.emit());
+
+    watch(this.#allSources, (newSources: ISkin[], oldSources: ISkin[]) =>
+    {
+      for (const source of (oldSources ?? []))
+        source.texturesChanged.removeListener(this.#triggerTexturesChanged);
+
+      for (const source of newSources)
+        source.texturesChanged.addListener(this.#triggerTexturesChanged);
+    }, { immediate: true });
   }
+
+  #triggerTexturesChanged = () => this.texturesChanged.emit();
+
+  readonly texturesChanged = new Action();
 
   private readonly activeSkin = ref<ISkin | null>(null);
 
