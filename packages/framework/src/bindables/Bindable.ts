@@ -92,6 +92,8 @@ export class Bindable<T> implements ReadonlyBindable<T>
     this.triggerDefaultChange(previousValue, source ?? this, true, bypassChecks);
   }
 
+  bindValueChanged(listener: BindableListener<ValueChangedEvent<T>>, runOnceImmediately?: boolean): void;
+  bindValueChanged(listener: BindableListener<ValueChangedEvent<T>>, receiver: any, runOnceImmediately?: boolean): void;
   bindValueChanged(listener: BindableListener<ValueChangedEvent<T>>, receiver?: any, runOnceImmediately?: boolean)
   {
     if (typeof receiver === "boolean" && runOnceImmediately === undefined)
