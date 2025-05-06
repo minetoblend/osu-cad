@@ -48,5 +48,12 @@
       "./src/index.ts"
     ],
     "platform": "node"
+  },
+  "nx": {
+    "targets": {
+      "build": {
+        "dependsOn": [{ "projects": ["@osucad/storybook-renderer"], "target": "build" }]
+      }
+    }
   }
 }

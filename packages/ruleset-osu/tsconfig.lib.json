@@ -24,9 +24,6 @@
     },
     {
       "path": "../core/tsconfig.lib.json"
-    },
-    {
-      "path": "../storybook-vite"
     }
   ],
   "exclude": [
