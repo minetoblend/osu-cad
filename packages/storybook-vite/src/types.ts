@@ -3,7 +3,7 @@ import type {
   StorybookConfig as StorybookConfigBase,
   StorybookConfigVite,
   TypescriptOptions as TypescriptOptionsBuilder,
-} from "../../storybook-preset-vite/src/types";
+} from "@osucad/storybook-preset-vite";
 
 type FrameworkName = "@osucad/storybook-vite";
 type BuilderName = "@storybook/builder-vite";

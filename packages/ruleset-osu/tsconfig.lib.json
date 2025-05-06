@@ -17,10 +17,16 @@
   ],
   "references": [
     {
+      "path": "../storybook-renderer"
+    },
+    {
       "path": "../framework/tsconfig.lib.json"
     },
     {
       "path": "../core/tsconfig.lib.json"
+    },
+    {
+      "path": "../storybook-vite"
     }
   ],
   "exclude": [
@@ -36,7 +42,6 @@
     "src/**/*.spec.js",
     "src/**/*.test.jsx",
     "src/**/*.spec.jsx",
-    "**/*.stories.ts",
-    "**/*.stories.js"
+    "src/stories/**/*"
   ]
 }
