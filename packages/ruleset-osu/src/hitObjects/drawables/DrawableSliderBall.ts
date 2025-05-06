@@ -53,16 +53,15 @@ export class DrawableSliderBall extends CompositeDrawable
   updateProgress(completionProgress: number)
   {
     const slider = this.drawableSlider.hitObject!;
+    if (this.sliderBallFlip.value == false)
+      this.ball.scaleX = slider.spanAt(completionProgress) % 2 == 1 ? -1 : 1;
 
     const position = this.position = slider.curvePositionAt(completionProgress);
-
     const diff = position.sub(slider.curvePositionAt(Math.min(1, completionProgress + 0.1 / slider.path.expectedDistance)));
 
     if (diff.length() < 0.05)
       return;
 
-    this.ball.rotation = this.sliderBallFlip.value == true
-        ? -Math.atan2(diff.x, diff.y) - Math.PI * 0.5
-        : -Math.atan2(diff.x, diff.y) - Math.PI * 0.5; // FIXME: i have no clue how to make it go only direction
+    this.ball.rotation = -Math.atan2(diff.x, diff.y) - Math.PI * 0.5;
   }
 }
