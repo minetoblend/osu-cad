@@ -52,5 +52,19 @@
       "./src/config.ts"
     ],
     "platform": "browser"
+  },
+  "nx": {
+    "targets": {
+      "build": {
+        "dependsOn": [
+          {
+            "projects": [
+              "@osucad/framework"
+            ],
+            "target": "build"
+          }
+        ]
+      }
+    }
   }
 }
