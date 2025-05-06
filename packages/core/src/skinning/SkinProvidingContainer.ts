@@ -133,7 +133,7 @@ export class SkinProvidingContainer extends Container implements ISkinSource
     for (const source of this.allSources)
     {
       const value = source.getConfig(lookup);
-      if (value != null)
+      if (value !== null)
         return value;
     }
 
