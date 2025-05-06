@@ -38,7 +38,7 @@ export class PlaySliderBody extends SnakingSliderBody
     this.scaleBindable.bindValueChanged(scale => this.pathRadius = OsuHitObject.OBJECT_RADIUS * scale.value, true);
 
     watch(this.sliderTrackOverride, () => this.updateAccentColor());
-    watch(this.sliderBorder, () => this.borderColor = this.getSliderBorder());
+    watch(this.sliderBorder, () => this.borderColor = this.getSliderBorder(), { immediate: true });
   }
 
   protected updateAccentColor()

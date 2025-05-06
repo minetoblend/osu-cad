@@ -1,4 +1,4 @@
-import { BeatmapDifficultyInfo, HitObject, safeAssign } from "@osucad/core";
+import { BeatmapDifficultyInfo, HitObject, type IBeatmapTiming, safeAssign } from "@osucad/core";
 import type { IVec2 } from "@osucad/framework";
 import { Bindable, BindableBoolean, BindableNumber, Vec2 } from "@osucad/framework";
 
@@ -136,9 +136,9 @@ export abstract class OsuHitObject extends HitObject
     this.scaleBindable.value = value;
   }
 
-  public override applyDefaults(difficulty: BeatmapDifficultyInfo)
+  public override applyDefaults(difficulty: BeatmapDifficultyInfo, timing: IBeatmapTiming)
   {
-    super.applyDefaults(difficulty);
+    super.applyDefaults(difficulty, timing);
 
     this.timePreempt = BeatmapDifficultyInfo.difficultyRange(difficulty.approachRate, OsuHitObject.PREEMPT_MAX, OsuHitObject.PREEMPT_MID, OsuHitObject.PREEMPT_MIN);
 

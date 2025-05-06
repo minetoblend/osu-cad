@@ -1,5 +1,6 @@
 export * from "./audio";
 export * from "./beatmaps";
+export * from "./containers";
 export * from "./io";
 export * from "./pooling";
 export * from "./rulesets";
