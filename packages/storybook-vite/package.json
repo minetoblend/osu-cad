@@ -61,7 +61,15 @@
   "nx": {
     "targets": {
       "build": {
-        "dependsOn": [{ "projects": ["@osucad/storybook-renderer"], "target": "build" }]
+        "dependsOn": [
+          {
+            "projects": [
+              "@osucad/storybook-renderer",
+              "@osucad/storybook-preset-vite"
+            ],
+            "target": "build"
+          }
+        ]
       }
     }
   }
