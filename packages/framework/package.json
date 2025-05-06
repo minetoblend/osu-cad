@@ -29,5 +29,19 @@
   "devDependencies": {
     "@types/diff": "^7.0.2",
     "vite-plugin-conditional-compiler": "^0.3.1"
+  },
+  "nx": {
+    "targets": {
+      "build": {
+        "dependsOn": [
+          {
+            "projects": [
+              "@osucad/framework"
+            ],
+            "target": "build"
+          }
+        ]
+      }
+    }
   }
 }
