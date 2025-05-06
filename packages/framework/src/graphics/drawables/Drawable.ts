@@ -322,14 +322,13 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     if (this.#scale.x === value)
       return;
 
-    const wasPresent = this.isPresent;
-
     this.#scale.x = value;
 
-    if (this.isPresent !== wasPresent)
-      this.invalidate(Invalidation.Transform | Invalidation.Presence);
-    else
-      this.invalidate(Invalidation.Transform);
+    const scale = this.drawNode.scale;
+    if (scale)
+      scale.x = value;
+
+    this.#parent?.invalidateChildrenSizeDependencies(Invalidation.Transform, Axes.X, this);
   }
 
   get scaleY()
@@ -342,18 +341,13 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     if (this.#scale.y === value)
       return;
 
-    const wasPresent = this.isPresent;
-
     this.#scale.y = value;
 
-    if (this.isPresent !== wasPresent)
-    {
-      this.invalidate(Invalidation.Transform | Invalidation.Presence);
-    }
-    else
-    {
-      this.invalidate(Invalidation.Transform);
-    }
+    const scale = this.drawNode.scale;
+    if (scale)
+      scale.x = value;
+
+    this.#parent?.invalidateChildrenSizeDependencies(Invalidation.Transform, Axes.Y, this);
   }
 
   // #endregion
