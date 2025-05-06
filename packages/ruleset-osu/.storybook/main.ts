@@ -1,9 +1,9 @@
 import type { StorybookConfig } from "@osucad/storybook-vite";
-
+const path = require("path");
 
 const config: StorybookConfig = {
   stories: [
-    "../src/stories/**/*.@(mdx|stories.@(js|jsx|ts|tsx))",
+    path.resolve(__dirname, "../src/stories/**/*.@(mdx|stories.@(js|jsx|ts|tsx))").replaceAll("\\", "/"),
   ],
   addons: ["@storybook/addon-essentials" ],
   framework: {

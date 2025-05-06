@@ -4,11 +4,15 @@ import type { StorybookConfig } from "./types";
 
 export const addons: PresetProperty<"addons", StorybookConfig> = [
   path.dirname(
-      require.resolve(path.join("@osucad/storybook-preset-vite", "package.json")),
-  ),
+      require.resolve(
+          path.join("@osucad/storybook-preset-vite", "package.json"),
+      ),
+  ).replaceAll("\\", "/"),
   path.dirname(
-      require.resolve(path.join("@osucad/storybook-renderer", "package.json")),
-  ),
+      require.resolve(
+          path.normalize(path.join("@osucad/storybook-renderer", "package.json")),
+      ),
+  ).replaceAll("\\", "/"),
 ];
 
 export const core: PresetPropertyFn<"core", StorybookConfig> = async (
