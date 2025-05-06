@@ -53,4 +53,9 @@ export abstract class DrawableOsuHitObject<out T extends OsuHitObject = OsuHitOb
   {
     this.accentColor.value = this.skin.getComboColor(this.comboIndexBindable.value);
   }
+
+  protected override get initialLifetimeOffset(): number
+  {
+    return this.hitObject.timePreempt;
+  }
 }

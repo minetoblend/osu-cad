@@ -92,6 +92,13 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
     this.sliderBody?.updateProgress(completionProgress);
   }
 
+  protected override updateInitialTransforms()
+  {
+    super.updateInitialTransforms();
+
+    this.body.fadeInFromZero(this.hitObject.timeFadeIn);
+  }
+
   protected override updateStartTimeTransforms()
   {
     super.updateStartTimeTransforms();
