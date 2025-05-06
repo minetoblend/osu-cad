@@ -1172,9 +1172,13 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
       callback();
     }
 
-    for (const key in this)
+    const descriptors = Object.getOwnPropertyDescriptors(this);
+
+    for (const key in descriptors)
     {
-      const value = this[key];
+      const descriptor = descriptors[key];
+
+      const value = descriptor.value;
       if (value && typeof value === "object" && "unbindAll" in value && typeof value.unbindAll === "function")
       {
         value.unbindAll();
