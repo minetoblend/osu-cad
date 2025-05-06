@@ -48,7 +48,6 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
   {
     this.circlePiece.fadeInFromZero(this.hitObject.timeFadeIn);
 
-    this.approachCircle.color = this.accentColor.value;
     this.approachCircle.fadeOut().fadeTo(0.9, Math.min(this.hitObject.timeFadeIn * 2, this.hitObject.timePreempt));
     this.approachCircle.scaleTo(4).scaleTo(1, this.hitObject.timePreempt);
   }
