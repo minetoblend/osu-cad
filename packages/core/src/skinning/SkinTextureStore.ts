@@ -312,7 +312,9 @@ class ReactiveAnimationEntry
   {
     const data = await entry.file.read();
 
-    return loadTexture(data);
+    const is2xTexture = entry.file.path.includes("@2x");
+
+    return loadTexture(data, { resolution: is2xTexture ? 2 : 1, label: entry.file.path });
   }
 
   isLoaded = deferredPromise<void>();
