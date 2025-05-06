@@ -16,8 +16,8 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
     this.origin = Anchor.Center;
   }
 
-  private circlePiece!: SkinnableDrawable;
-  private approachCircle!: SkinnableDrawable;
+  circlePiece!: SkinnableDrawable;
+  approachCircle!: SkinnableDrawable;
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {

@@ -25,14 +25,14 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
     this.ball.bypassAutoSizeAxes = Axes.Both;
   }
 
-  readonly snakingIn = new Bindable(true);
+  readonly snakingIn = new Bindable(false);
   readonly snakingOut = new Bindable(false);
 
   readonly pathVersion = new Bindable(-1);
 
   readonly ball: DrawableSliderBall;
 
-  sliderHead!: DrawableHitCircle;
+  sliderHead!: DrawableSliderHead;
 
   body!: SkinnableDrawable;
 
