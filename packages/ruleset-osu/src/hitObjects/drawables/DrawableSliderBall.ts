@@ -1,6 +1,6 @@
-import { SkinnableDrawable } from "@osucad/core";
+import { ISkinSource, SkinnableDrawable } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
-import { Anchor, Axes, CompositeDrawable, resolved } from "@osucad/framework";
+import { Anchor, Axes, CompositeDrawable, computed, resolved } from "@osucad/framework";
 import { OsuSkinComponents } from "../../skinning/OsuSkinComponents";
 import { OsuHitObject } from "../OsuHitObject";
 import { DrawableSlider } from "./DrawableSlider";
@@ -12,7 +12,12 @@ export class DrawableSliderBall extends CompositeDrawable
   @resolved(() => DrawableSlider)
   private drawableSlider!: DrawableSlider;
 
+  @resolved(ISkinSource)
+  private skin!: ISkinSource;
+
   private ball!: SkinnableDrawable;
+
+  readonly sliderBallFlip = computed(() => this.skin.getConfig("sliderBallFlip"));
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
@@ -56,6 +61,8 @@ export class DrawableSliderBall extends CompositeDrawable
     if (diff.length() < 0.05)
       return;
 
-    this.ball.rotation = -Math.atan2(diff.x, diff.y) - Math.PI * 0.5;
+    this.ball.rotation = this.sliderBallFlip.value == true
+        ? -Math.atan2(diff.x, diff.y) - Math.PI * 0.5
+        : -Math.atan2(diff.x, diff.y) - Math.PI * 0.5; // FIXME: i have no clue how to make it go only direction
   }
 }
