@@ -26,7 +26,7 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
     this.size = OsuHitObject.OBJECT_DIMENSIONS;
 
     this.internalChildren = [
-      this.circlePiece = new SkinnableDrawable(OsuSkinComponents.CirclePiece).with({
+      this.circlePiece = new SkinnableDrawable(this.componentLookup).with({
         relativeSizeAxes: Axes.Both,
         alpha: 0,
       }),

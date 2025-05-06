@@ -27,8 +27,12 @@ export class SkinningDemo extends OsucadGameBase
 
     const skin = new Skin(files, this);
 
-    skin.config.set("sliderTrackOverride", new Color("black"));
-    skin.config.set("sliderBorder", new Color("rgb(50,50,50)"));
+    skin.config.set("sliderBallFlip", false);
+    skin.config.set("hitCircleOverlap", 66);
+    skin.config.set("scoreOverlap", 6);
+    skin.config.set("comboOverlap", 50);
+    skin.config.set("sliderBorder", new Color("rgb(255,181,102)"));
+    skin.config.set("sliderTrackOverride", new Color("rgb(35,24,11)"));
 
     setInterval(() =>
     {
@@ -45,11 +49,9 @@ export class SkinningDemo extends OsucadGameBase
     }, 1000);
 
     skin.config.comboColors = [
-      new Color("rgb(255,206,209)"),
-      new Color("rgb(32,178,170)"),
-      new Color("rgb(64,224,208)"),
-      new Color("rgb(0,255,255)"),
-      new Color("rgb(0,191,255)"),
+      new Color("rgb(255,198,138)"),
+      new Color("rgb(196,196,196)"),
+      new Color("rgb(193,157,192)"),
     ];
 
     const osuSkin = await beatmap.beatmapInfo.ruleset?.createSkinTransformer?.(skin);

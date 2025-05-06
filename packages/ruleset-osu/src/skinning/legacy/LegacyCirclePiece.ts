@@ -14,12 +14,15 @@ export class LegacyCirclePiece extends CompositeDrawable
   @resolved(DrawableHitObject)
   hitObject!: DrawableHitObject;
 
-  constructor()
+  constructor(priorityLookupPrefix: string | null = null)
   {
     super();
 
+    this.#priorityLookup = priorityLookupPrefix;
     this.relativeSizeAxes = Axes.Both;
   }
+
+  readonly #priorityLookup: string | null = null;
 
   private circleSprite!: DrawableSprite;
   private overlaySprite!: DrawableSprite;
@@ -34,14 +37,16 @@ export class LegacyCirclePiece extends CompositeDrawable
   {
     super.load(dependencies);
 
+    const circleName = this.#priorityLookup && this.skin.getTexture(this.#priorityLookup) ? this.#priorityLookup : "hitcircle";
+
     this.internalChildren = [
       this.circleSprite = new DrawableSprite({
-        texture: this.skin.getTexture("hitcircle"),
+        texture: this.skin.getTexture(circleName),
         anchor: Anchor.Center,
         origin: Anchor.Center,
       }),
       this.overlaySprite = new DrawableSprite({
-        texture: this.skin.getTexture("hitcircleoverlay"),
+        texture: this.skin.getTexture(`${circleName}overlay`),
         anchor: Anchor.Center,
         origin: Anchor.Center,
       }),

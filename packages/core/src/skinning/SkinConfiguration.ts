@@ -23,7 +23,7 @@ export interface SkinConfigurationFields
   hitCirclePrefix: string;
   hitCircleOverlap: number;
   scorePrefix: string;
-  scoreOverlap: string;
+  scoreOverlap: number;
   comboPrefix: string;
   comboOverlap: number;
 }

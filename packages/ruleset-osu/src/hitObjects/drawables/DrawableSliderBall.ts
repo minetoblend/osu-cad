@@ -1,6 +1,6 @@
-import { SkinnableDrawable } from "@osucad/core";
+import { ISkinSource, SkinnableDrawable } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
-import { Anchor, Axes, CompositeDrawable, resolved } from "@osucad/framework";
+import { Anchor, Axes, CompositeDrawable, computed, resolved } from "@osucad/framework";
 import { OsuSkinComponents } from "../../skinning/OsuSkinComponents";
 import { OsuHitObject } from "../OsuHitObject";
 import { DrawableSlider } from "./DrawableSlider";
@@ -12,7 +12,12 @@ export class DrawableSliderBall extends CompositeDrawable
   @resolved(() => DrawableSlider)
   private drawableSlider!: DrawableSlider;
 
+  @resolved(ISkinSource)
+  private skin!: ISkinSource;
+
   private ball!: SkinnableDrawable;
+
+  readonly sliderBallFlip = computed(() => this.skin.getConfig("sliderBallFlip"));
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
@@ -48,9 +53,10 @@ export class DrawableSliderBall extends CompositeDrawable
   updateProgress(completionProgress: number)
   {
     const slider = this.drawableSlider.hitObject!;
+    if (this.sliderBallFlip.value == false)
+      this.ball.scaleX = slider.spanAt(completionProgress) % 2 == 1 ? -1 : 1;
 
     const position = this.position = slider.curvePositionAt(completionProgress);
-
     const diff = position.sub(slider.curvePositionAt(Math.min(1, completionProgress + 0.1 / slider.path.expectedDistance)));
 
     if (diff.length() < 0.05)

@@ -56,13 +56,14 @@ export class Skin implements ISkin
   {
     if (this.config.comboColors.length)
       return this.config.comboColors;
+
     return [new Color("white")];
   }
 
   getComboColor(comboIndex: number)
   {
     const colors = this.comboColors;
-    return colors[Math.max(comboIndex, 0) % colors.length];
+    return colors[Math.max(comboIndex + 1, 0) % colors.length];
   }
 
   dispose()

@@ -4,7 +4,6 @@ import type { ReadonlyDependencyContainer } from "@osucad/framework";
 import { Anchor, Axes, Bindable, clamp, provide } from "@osucad/framework";
 import { OsuSkinComponents } from "../../skinning/OsuSkinComponents";
 import type { Slider } from "../Slider";
-import type { DrawableHitCircle } from "./DrawableHitCircle";
 import { DrawableOsuHitObject } from "./DrawableOsuHitObject";
 import { DrawableSliderBall } from "./DrawableSliderBall";
 import { DrawableSliderHead } from "./DrawableSliderHead";
@@ -25,14 +24,14 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
     this.ball.bypassAutoSizeAxes = Axes.Both;
   }
 
-  readonly snakingIn = new Bindable(true);
+  readonly snakingIn = new Bindable(false);
   readonly snakingOut = new Bindable(false);
 
   readonly pathVersion = new Bindable(-1);
 
   readonly ball: DrawableSliderBall;
 
-  sliderHead!: DrawableHitCircle;
+  sliderHead!: DrawableSliderHead;
 
   body!: SkinnableDrawable;
 
