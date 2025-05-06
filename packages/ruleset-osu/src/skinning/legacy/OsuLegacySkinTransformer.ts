@@ -16,37 +16,40 @@ export class OsuLegacySkinTransformer extends SkinTransformer
 
     this.textureStore = new SkinTextureStore(source, computed(() =>
     {
-      const hitCirclePrefix = this.getConfig("hitCirclePrefix") ?? "default";
+      const textureNames = new Set([
+        "hitcircle",
+        "hitcircleoverlay",
+        "approachcircle",
+        "sliderscorepoint",
+        "sliderstartcircle",
+        "sliderstartcircleoverlay",
+        "sliderendcircle",
+        "sliderendcircleoverlay",
+        "reversearrow",
+        "sliderb-spec",
+        "hitcircleselect",
+        "spinner-approachcircle",
+        "spinner-background",
+        "spinner-bottom",
+        "spinner-glow",
+        "spinner-middle",
+        "spinner-middle2",
+        "spinner-top",
+        "cursor",
+        "cursortrail",
+      ]);
 
-      const comboNumbers: string[] = [];
+      const hitCirclePrefix = this.getConfig("hitCirclePrefix") ?? "default";
+      const scorePrefix = this.getConfig("scorePrefix") ?? "score";
 
       for(let i = 0; i < 10; i++)
-        comboNumbers.push(`${hitCirclePrefix}-${i}`);
+        textureNames.add(`${hitCirclePrefix}-${i}`);
+
+      for(let i = 0; i < 10; i++)
+        textureNames.add(`${scorePrefix}-${i}`);
 
       return {
-        textures: [
-          "hitcircle",
-          "hitcircleoverlay",
-          "approachcircle",
-          "sliderscorepoint",
-          "sliderstartcircle",
-          "sliderstartcircleoverlay",
-          "sliderendcircle",
-          "sliderendcircleoverlay",
-          "reversearrow",
-          "sliderb-spec",
-          "hitcircleselect",
-          "spinner-approachcircle",
-          "spinner-background",
-          "spinner-bottom",
-          "spinner-glow",
-          "spinner-middle",
-          "spinner-middle2",
-          "spinner-top",
-          "cursor",
-          "cursortrail",
-          ...comboNumbers,
-        ],
+        textures: [...textureNames],
         animations: [
           {
             name: "followpoint",
