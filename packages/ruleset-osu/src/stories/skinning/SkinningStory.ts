@@ -8,7 +8,7 @@ import { PlayfieldClock } from "@osucad/core";
 import type { StopwatchClock } from "@osucad/framework";
 import { Axes, CompositeDrawable, FramedClock, provide } from "@osucad/framework";
 
-import "../init";
+import "../../init";
 
 import oskFile from "./skin.osk?url";
 import osufile from "./test.osu?raw";
