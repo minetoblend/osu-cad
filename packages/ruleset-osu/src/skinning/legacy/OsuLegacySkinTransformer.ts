@@ -7,7 +7,6 @@ import { LegacyCirclePiece } from "./LegacyCirclePiece";
 import { LegacyFollowCircle } from "./LegacyFollowCircle";
 import { LegacySliderBall } from "./LegacySliderBall";
 import { LegacySliderBody } from "./LegacySliderBody";
-import { LegacySliderCirclePiece } from "./LegacySliderCirclePiece";
 
 export class OsuLegacySkinTransformer extends SkinTransformer
 {
@@ -122,7 +121,7 @@ export class OsuLegacySkinTransformer extends SkinTransformer
     case OsuSkinComponents.CirclePiece:
       return new LegacyCirclePiece();
     case OsuSkinComponents.SliderHead:
-      return new LegacySliderCirclePiece();
+      return new LegacyCirclePiece("sliderstartcircle");
     case OsuSkinComponents.ApproachCircle:
       return new LegacyApproachCircle();
     case OsuSkinComponents.SliderBody:

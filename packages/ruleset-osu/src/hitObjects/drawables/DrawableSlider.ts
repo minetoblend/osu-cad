@@ -4,7 +4,6 @@ import type { ReadonlyDependencyContainer } from "@osucad/framework";
 import { Anchor, Axes, Bindable, clamp, provide } from "@osucad/framework";
 import { OsuSkinComponents } from "../../skinning/OsuSkinComponents";
 import type { Slider } from "../Slider";
-import type { DrawableHitCircle } from "./DrawableHitCircle";
 import { DrawableOsuHitObject } from "./DrawableOsuHitObject";
 import { DrawableSliderBall } from "./DrawableSliderBall";
 import { DrawableSliderHead } from "./DrawableSliderHead";

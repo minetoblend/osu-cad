@@ -1,7 +1,6 @@
 export * from "./LegacySliderBall";
 export * from "./LegacySliderBody";
 export * from "./LegacyCirclePiece";
-export * from "./LegacySliderCirclePiece";
 export * from "./LegacyComboNumber";
 export * from "./LegacyFollowCircle";
 export * from "./LegacyApproachCircle";
