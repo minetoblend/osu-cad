@@ -1,4 +1,4 @@
-import { Action, Bindable, provide } from "@osucad/framework";
+import { Action, Bindable, provide, resolved } from "@osucad/framework";
 import { Color } from "pixi.js";
 import { PoolableDrawableWithLifetime } from "../../../pooling/PoolableDrawableWithLifetime";
 import type { IAnimationTimeReference } from "../../../skinning/IAnimationTimeReference";
@@ -6,6 +6,7 @@ import type { HitObject } from "../HitObject";
 import { ArmedState } from "./ArmedState";
 import type { HitObjectLifetimeEntry } from "./HitObjectLifetimeEntry";
 import { SyntheticHitObjectEntry } from "./SyntheticHitObjectEntry";
+import { ISkinSource } from "../../../skinning/ISkinSource";
 
 @provide(DrawableHitObject)
 export abstract class DrawableHitObject<out T extends HitObject = HitObject>
@@ -34,6 +35,17 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
     {
       this.entry = new SyntheticHitObjectEntry(initialHitObject);
     }
+  }
+
+  @resolved(ISkinSource)
+  protected skin!: ISkinSource;
+
+  protected override loadComplete()
+  {
+    super.loadComplete();
+
+    this.skin.sourceChanged.addListener(this.skinChanged, this);
+
   }
 
   get hitObject(): T
@@ -165,5 +177,17 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
 
   protected updateComboColor()
   {
+  }
+
+  protected skinChanged()
+  {
+    this.updateComboColor();
+  }
+
+  override dispose(isDisposing?: boolean)
+  {
+    super.dispose(isDisposing);
+
+    this.skin.sourceChanged.removeListener(this.skinChanged, this);
   }
 }

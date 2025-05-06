@@ -5,7 +5,10 @@
     "emitDeclarationOnly": true,
     "importHelpers": true,
     "isolatedModules": true,
-    "lib": ["ESNext", "DOM"],
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
     "module": "ESNext",
     "moduleResolution": "bundler",
     "noEmitOnError": true,
@@ -18,6 +21,8 @@
     "strict": true,
     "target": "es2022",
     "useDefineForClassFields": false,
-    "customConditions": ["development"]
+    "customConditions": [
+      "development"
+    ]
   }
 }
