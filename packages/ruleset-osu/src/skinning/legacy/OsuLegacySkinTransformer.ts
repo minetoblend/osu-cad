@@ -1,6 +1,6 @@
-import type { LoadTextureEntry, Skin, SkinComponentLookup } from "@osucad/core";
-import { SkinTransformer } from "@osucad/core";
-import type { Drawable } from "@osucad/framework";
+import type { Skin, SkinComponentLookup } from "@osucad/core";
+import { SkinTextureStore, SkinTransformer } from "@osucad/core";
+import { computed, type Drawable } from "@osucad/framework";
 import { OsuSkinComponents } from "../OsuSkinComponents";
 import { LegacyApproachCircle } from "./LegacyApproachCircle";
 import { LegacyCirclePiece } from "./LegacyCirclePiece";
@@ -13,7 +13,74 @@ export class OsuLegacySkinTransformer extends SkinTransformer
   private constructor(source: Skin)
   {
     super(source);
+
+    this.textureStore = new SkinTextureStore(source, computed(() =>
+    {
+      const hitCirclePrefix = this.getConfig("hitCirclePrefix") ?? "default";
+
+      const comboNumbers: string[] = [];
+
+      for(let i = 0; i < 10; i++)
+        comboNumbers.push(`${hitCirclePrefix}-${i}`);
+
+      return {
+        textures: [
+          "hitcircle",
+          "hitcircleoverlay",
+          "approachcircle",
+          "sliderscorepoint",
+          "sliderstartcircle",
+          "sliderstartcircleoverlay",
+          "sliderendcircle",
+          "sliderendcircleoverlay",
+          "reversearrow",
+          "sliderb-spec",
+          "hitcircleselect",
+          "spinner-approachcircle",
+          "spinner-background",
+          "spinner-bottom",
+          "spinner-glow",
+          "spinner-middle",
+          "spinner-middle2",
+          "spinner-top",
+          "cursor",
+          "cursortrail",
+          ...comboNumbers,
+        ],
+        animations: [
+          {
+            name: "followpoint",
+            looping: false,
+            applyConfigFrameRate: true,
+          },
+          {
+            name: "sliderb",
+            animationSeparator: "",
+            looping: true,
+          },
+          {
+            name: "sliderfollowcircle",
+            looping: true,
+            applyConfigFrameRate: true,
+          },
+          {
+            name: "hit0",
+          },
+          {
+            name: "hit50",
+          },
+          {
+            name: "hit100",
+          },
+          {
+            name: "hit300",
+          },
+        ],
+      };
+    }));
   }
+
+  readonly textureStore: SkinTextureStore;
 
   public static async create(source: Skin)
   {
@@ -26,71 +93,20 @@ export class OsuLegacySkinTransformer extends SkinTransformer
 
   private async load()
   {
-    const entries: LoadTextureEntry[] = [
-      "hitcircle",
-      "hitcircleoverlay",
-      "approachcircle",
-      "sliderfollowcircle",
-      "sliderscorepoint",
-      "sliderstartcircle",
-      "sliderstartcircleoverlay",
-      "sliderendcircle",
-      "sliderendcircleoverlay",
-      "reversearrow",
-      "sliderb-spec",
-      "hitcircleselect",
-      "spinner-approachcircle",
-      "spinner-background",
-      "spinner-bottom",
-      "spinner-glow",
-      "spinner-middle",
-      "spinner-middle2",
-      "spinner-top",
-      "cursor",
-      "cursortrail",
-      {
-        name: "followpoint",
-        type: "animation",
-      },
-      {
-        name: "sliderb",
-        type: "animation",
-        animationSeparator: "",
-      },
-      {
-        name: "hit0",
-        type: "animation",
-      },
-      {
-        name: "hit50",
-        type: "animation",
-      },
-      {
-        name: "hit100",
-        type: "animation",
-      },
-      {
-        name: "hit300",
-        type: "animation",
-      },
-    ];
-
-    const hitCirclePrefix = this.source.getConfig("hitCirclePrefix") ?? "default";
-    const scorePrefix = this.source.getConfig("scorePrefix") ?? "score";
-    const comboPrefix = this.source.getConfig("comboPrefix") ?? "score";
-
-    const prefixes = new Set([hitCirclePrefix, scorePrefix, comboPrefix]);
-
-    for (const prefix of prefixes)
-    {
-      for (let i = 0; i < 10; i++)
-        entries.push(`${prefix}-${i}`);
-    }
-
     await Promise.all([
-      this.loadTextures(entries),
       this.source.samples.loadAll(),
+      this.textureStore.load(),
     ]);
+  }
+
+  override getTexture(componentName: string)
+  {
+    return this.textureStore.getTexture(componentName) ?? this.source.getTexture(componentName);
+  }
+
+  getAnimation(name: string)
+  {
+    return this.textureStore.getAnimation(name);
   }
 
   public override getDrawableComponent(lookup: SkinComponentLookup): Drawable | null
@@ -98,11 +114,7 @@ export class OsuLegacySkinTransformer extends SkinTransformer
     switch (lookup)
     {
     case OsuSkinComponents.FollowPoint:
-      return this.getAnimation("followpoint", {
-        animatable: true,
-        looping: false,
-        applyConfigFrameRate: true,
-      });
+      return this.getAnimation("followpoint");
     case OsuSkinComponents.CirclePiece:
       return new LegacyCirclePiece();
     case OsuSkinComponents.SliderHead:
@@ -112,18 +124,11 @@ export class OsuLegacySkinTransformer extends SkinTransformer
     case OsuSkinComponents.SliderBody:
       return new LegacySliderBody();
     case OsuSkinComponents.SliderBall:
-      return new LegacySliderBall(this.getAnimation("sliderb", {
-        animatable: true,
-        looping: true,
-        animationSeparator: "",
-      }));
+      return new LegacySliderBall(this.getAnimation("sliderb"));
     case OsuSkinComponents.SliderFollowCircle: {
-      const followCircleContent = this.getAnimation("sliderfollowcircle", {
-        animatable: true,
-        looping: true,
-        applyConfigFrameRate: true,
-      });
+      const followCircleContent = this.getAnimation("sliderfollowcircle");
 
+      // TODO: logic is actually supposed to be different here
       if (followCircleContent)
         return new LegacyFollowCircle(followCircleContent);
     }

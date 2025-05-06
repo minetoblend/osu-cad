@@ -1,4 +1,4 @@
-import type { Drawable, IFileSystem, Sample } from "@osucad/framework";
+import { Action, type Drawable, type IFileSystem, type Sample } from "@osucad/framework";
 import type { Texture } from "pixi.js";
 import { Color } from "pixi.js";
 import type { ISampleInfo } from "../audio/ISampleInfo";
@@ -7,19 +7,17 @@ import type { ISkin, SkinComponentLookup } from "./ISkin";
 import type { SkinConfigurationLookup, SkinConfigurationValue } from "./SkinConfiguration";
 import { SkinConfiguration } from "./SkinConfiguration";
 import { SkinSampleStore } from "./SkinSampleStore";
-import { SkinTextureStore } from "./SkinTextureStore";
 
 export class Skin implements ISkin
 {
   readonly config = new SkinConfiguration();
 
-  readonly textures: SkinTextureStore;
-
   readonly samples: SkinSampleStore;
+
+  readonly texturesChanged = new Action();
 
   constructor(readonly files: IFileSystem, resourcesProvider: IResourcesProvider)
   {
-    this.textures = new SkinTextureStore(files);
     this.samples = new SkinSampleStore(
         files,
         resourcesProvider.audioManager,
@@ -29,7 +27,7 @@ export class Skin implements ISkin
 
   getTexture(lookup: string): Texture | null
   {
-    return this.textures.get(lookup) ?? null;
+    return null;
   }
 
   getSample(sampleInfo: ISampleInfo): Sample | null
@@ -70,6 +68,5 @@ export class Skin implements ISkin
   dispose()
   {
     this.config.dispose();
-    this.textures.dispose();
   }
 }

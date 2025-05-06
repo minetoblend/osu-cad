@@ -1,7 +1,7 @@
 import type { IResourcesProvider } from "@osucad/core";
 import { AudioMixer, BeatmapParser, Skin, SkinProvidingContainer } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
-import { AudioManager, Container, resolved, ZipArchiveFileSystem } from "@osucad/framework";
+import { AudioManager, Container, resolved, SimpleFileSystem, ZipArchiveFileSystem } from "@osucad/framework";
 import type { StoryDrawable } from "@osucad/storybook-renderer";
 import type { Beatmap } from "@osucad/core";
 import { PlayfieldClock } from "@osucad/core";
@@ -9,7 +9,6 @@ import type { StopwatchClock } from "@osucad/framework";
 import { Axes, CompositeDrawable, FramedClock, provide } from "@osucad/framework";
 
 import "../init";
-
 
 import oskFile from "./skin.osk?url";
 import osufile from "./test.osu?raw";
@@ -20,6 +19,7 @@ export interface SkinArgs
   comboColor1: string;
   comboColor2: string;
   comboColor3: string;
+  hitcircle?: string[]
 }
 
 export class SkinningStory extends Container implements IResourcesProvider, StoryDrawable<SkinArgs>
@@ -42,9 +42,18 @@ export class SkinningStory extends Container implements IResourcesProvider, Stor
 
   async setup()
   {
-    const files = await fetch(oskFile)
+    const zipFile = await fetch(oskFile)
       .then(res => res.arrayBuffer())
       .then(data => ZipArchiveFileSystem.createMutable(data));
+
+    const files = new SimpleFileSystem();
+
+    await Promise.all(
+        zipFile.entries().map(async file => files.create(file.path, await file.read())),
+    );
+
+    this.files = files;
+
 
     const beatmap = await new BeatmapParser().parse(osufile);
 
@@ -69,6 +78,8 @@ export class SkinningStory extends Container implements IResourcesProvider, Stor
 
   skinProvidingContainer?: SkinProvidingContainer;
 
+  files!: SimpleFileSystem;
+
   updateArgs(args: SkinArgs)
   {
     this.skinArgs = args;
@@ -87,6 +98,19 @@ export class SkinningStory extends Container implements IResourcesProvider, Stor
       new Color(args.comboColor2),
       new Color(args.comboColor3),
     ];
+
+    if (args.hitcircle?.length)
+    {
+      fetch(args.hitcircle[0])
+        .then(res => res.arrayBuffer())
+        .then(data =>
+        {
+          if (this.files.get("hitcircle@2x.png"))
+            this.files.update("hitcircle@2x.png", data);
+          else
+            this.files.create("hitcircle@2x.png", data);
+        });
+    }
   }
 }
 

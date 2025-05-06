@@ -115,6 +115,7 @@ export class SimpleFile extends EventEmitter<FileEvents> implements IWritableFil
     this.data = data;
 
     this.fs.emit("changed", this.path, this);
+    this.emit("changed");
   }
 
   async delete()

@@ -4,20 +4,19 @@
     "outDir": "out-tsc/storybook",
     "module": "esnext",
     "moduleResolution": "bundler",
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "types": [
+      "vite/client"
+    ]
   },
   "exclude": [
     "src/**/*.spec.ts",
     "src/**/*.test.ts"
   ],
   "include": [
-    "src/**/*.stories.ts",
-    "src/**/*.stories.js",
-    "src/**/*.stories.jsx",
-    "src/**/*.stories.tsx",
-    "src/**/*.stories.mdx",
+    "src/stories/**/*.ts",
     ".storybook/*.js",
-    ".storybook/*.ts"
+    ".storybook/*.ts",
   ],
   "references": [
     {

@@ -31,6 +31,11 @@ const meta: Meta<SkinArgs> = {
         type: "color",
       },
     },
+    hitcircle: {
+      control: {
+        type: "file",
+      },
+    },
   },
 };
 

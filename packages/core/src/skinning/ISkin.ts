@@ -1,4 +1,4 @@
-import type { Drawable, Sample } from "@osucad/framework";
+import type { Action, Drawable, Sample } from "@osucad/framework";
 import { injectionToken } from "@osucad/framework";
 import type { Color, Texture } from "pixi.js";
 import type { ISampleInfo } from "../audio/ISampleInfo";
@@ -8,6 +8,8 @@ export type SkinComponentLookup = string;
 
 export interface ISkin
 {
+  readonly texturesChanged: Action;
+
   getTexture(componentName: string): Texture | null
 
   getSample(sampleInfo: ISampleInfo): Sample | null

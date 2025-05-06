@@ -65,7 +65,7 @@ export const renderToDOM: RenderToCanvas<OsucadRenderer> = (
       }
     }
 
-    if (!instance)
+    if (!instance || forceRemount)
     {
       instance = new storyObject();
       game.storyContainer.child = instance;
