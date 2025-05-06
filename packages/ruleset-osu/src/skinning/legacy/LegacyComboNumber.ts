@@ -11,7 +11,7 @@ export class LegacyComboNumber extends CompositeDrawable
 
     this.origin = Anchor.Center;
     this.anchor = Anchor.Center;
-    this.scale = 0.7;
+    this.scale = 0.8;
   }
 
   indexInComboBindable = new Bindable(0);
