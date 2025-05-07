@@ -46,14 +46,18 @@ export class SimpleFileSystem extends EventEmitter<FileSystemEvents> implements 
 
   async create(path: string, data: ArrayBuffer): Promise<IWritableFile>
   {
-    if (this.get(path))
-      throw new Error(`File already exists: "${path}"`);
+    let file = this.get(path);
 
-    const file = new SimpleFile(this, path, data);
+    if (!file)
+    {
+      this._files.push(file = new SimpleFile(this, path, data));
 
-    this._files.push(file);
-
-    this.emit("added", path, file);
+      this.emit("added", path, file);
+    }
+    else
+    {
+      await file.write(data);
+    }
 
     return file;
   }
