@@ -1,5 +1,5 @@
 import type { ILerp } from "../../types";
-import type { EasingFunction } from "./EasingFunction";
+import { EasingFunction } from "./EasingFunction";
 import { Color } from "pixi.js";
 import { lerp } from "../../math";
 import { MarginPadding } from "../drawables/MarginPadding";
@@ -12,7 +12,7 @@ export class Interpolation
     endValue: T,
     startTime: number,
     endTime: number,
-    easing: EasingFunction,
+    easing: EasingFunction = EasingFunction.Default,
   )
   {
     if (time < startTime)

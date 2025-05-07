@@ -157,4 +157,9 @@ export class SkinProvidingContainer extends Container implements ISkinSource
   {
     this.sourceChanged.emit();
   }
+
+  public findProvider(predicate: (skin: ISkin) => boolean): ISkin | null
+  {
+    return this.allSources.find(predicate) ?? null;
+  }
 }

@@ -10,7 +10,7 @@ import { Axes, CompositeDrawable, FramedClock, provide } from "@osucad/framework
 
 import "../../init";
 
-import oskFile from "./skin.osk?url";
+import oskFile from "./skin2.osk?url";
 import osufile from "./test.osu?raw";
 import { Color } from "pixi.js";
 

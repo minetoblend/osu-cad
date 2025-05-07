@@ -1,4 +1,5 @@
 import type { ILerp } from "../types/ILerp";
+import { almostEquals } from "../utils";
 
 export class Vec2 implements ILerp<Vec2>
 {
@@ -226,6 +227,11 @@ export class Vec2 implements ILerp<Vec2>
   static equals(a: IVec2, b: IVec2): boolean
   {
     return a.x === b.x && a.y === b.y;
+  }
+
+  static almostEquals(a: IVec2, b: IVec2, epsilon?: number): boolean
+  {
+    return almostEquals(a.x, b.x, epsilon) && almostEquals(a.y, b.y, epsilon);
   }
 
   static distance(a: IVec2, b: IVec2): number

@@ -41,7 +41,7 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
   private repeatContainer!: Container<DrawableSliderRepeat>;
   private headContainer!: Container<DrawableSliderHead>;
 
-  private body!: SkinnableDrawable;
+  body!: SkinnableDrawable;
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
@@ -136,6 +136,11 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
 
     this.ball.updateProgress(completionProgress);
     this.sliderBody?.updateProgress(completionProgress);
+
+    for (const repeat of this.repeatContainer.children)
+    {
+      repeat.updateSnakingPosition(this.hitObject.path.positionAt(this.sliderBody?.snakedStart ?? 0), this.hitObject.path.positionAt(this.sliderBody?.snakedEnd ?? 0));
+    }
   }
 
   protected override updateInitialTransforms()

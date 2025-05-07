@@ -8,6 +8,7 @@ import { LegacyFollowCircle } from "./LegacyFollowCircle";
 import { LegacySliderBall } from "./LegacySliderBall";
 import { LegacySliderBody } from "./LegacySliderBody";
 import { LegacySliderHeadHitCircle } from "./LegacySliderHeadHitCircle";
+import { LegacyReverseArrow } from "./LegacyReverseArrow";
 
 export class OsuLegacySkinTransformer extends SkinTransformer
 {
@@ -133,6 +134,8 @@ export class OsuLegacySkinTransformer extends SkinTransformer
         return new LegacyApproachCircle();
       case OsuSkinComponents.SliderBody:
         return new LegacySliderBody();
+      case OsuSkinComponents.ReverseArrow:
+        return new LegacyReverseArrow();
       case OsuSkinComponents.SliderBall:
         return new LegacySliderBall(this.getAnimation("sliderb"));
       case OsuSkinComponents.SliderFollowCircle: {
