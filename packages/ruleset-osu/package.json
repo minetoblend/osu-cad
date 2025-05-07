@@ -1,6 +1,6 @@
 {
   "name": "@osucad/ruleset-osu",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -26,7 +26,7 @@
   ],
   "dependencies": {
     "pixi.js": "^8.9.2",
-    "@osucad/core": "1.0.1",
-    "@osucad/framework": "1.0.1"
+    "@osucad/core": "1.0.2",
+    "@osucad/framework": "1.0.2"
   }
 }
