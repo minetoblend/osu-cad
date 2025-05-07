@@ -1,5 +1,5 @@
 import type { DrawableHitObject } from "@osucad/core";
-import { ArmedState, ISkinSource } from "@osucad/core";
+import { ISkinSource } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
 import { Anchor, Axes, Bindable, CompositeDrawable, DrawableSprite, EasingFunction, Interpolation, ProxyDrawable, resolved } from "@osucad/framework";
 import { DrawableSliderRepeat } from "../../hitObjects/drawables/DrawableSliderRepeat";
@@ -68,7 +68,9 @@ export class LegacyReverseArrow extends CompositeDrawable
   {
     super.update();
 
-    if (this.time.current >= this.drawableRepeat.hitStateUpdateTime && this.drawableRepeat.state === ArmedState.Hit)
+    const isHit = true; // TODO
+
+    if (this.time.current >= this.drawableRepeat.hitStateUpdateTime && isHit)
     {
       const animDuration = Math.min(300, this.drawableRepeat.hitObject.spanDuration);
       this.#arrow.scale = Interpolation.valueAt(

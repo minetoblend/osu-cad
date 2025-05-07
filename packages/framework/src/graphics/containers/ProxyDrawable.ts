@@ -1,7 +1,7 @@
 import type { Container as PIXIContainer } from "pixi.js";
 import { RenderLayer } from "pixi.js";
 import type { ReadonlyDependencyContainer } from "../../di/DependencyContainer";
-import { Drawable, Invalidation } from "../drawables/Drawable";
+import { Drawable } from "../drawables/Drawable";
 
 export class ProxyDrawable extends Drawable
 {
@@ -10,7 +10,32 @@ export class ProxyDrawable extends Drawable
     super();
   }
 
-  #renderLayer = new RenderLayer();
+  override get isPresent(): boolean
+  {
+    return false;
+  }
+
+  override get shouldBeAlive(): boolean
+  {
+    return this.source.shouldBeAlive;
+  }
+
+  override get removeWhenNotAlive(): boolean
+  {
+    return this.source.removeWhenNotAlive;
+  }
+
+  override get lifetimeStart(): number
+  {
+    return this.source.lifetimeStart;
+  }
+
+  override get lifetimeEnd(): number
+  {
+    return this.source.lifetimeEnd;
+  }
+
+  readonly #renderLayer = new RenderLayer();
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
@@ -18,25 +43,7 @@ export class ProxyDrawable extends Drawable
 
     this.#renderLayer.attach(this.source.drawNode);
 
-    this.source.invalidated.addListener(this.#onInvalidated, this);
-
-    this.source.onDispose(() =>
-    {
-      this.#renderLayer.detachAll();
-      this.expire();
-    });
-  }
-
-  #onInvalidated(drawable: Drawable, invalidation: Invalidation)
-  {
-    if (!(invalidation & Invalidation.Parent))
-      return;
-
-    if (!drawable.parent)
-    {
-      this.#renderLayer.detachAll();
-      this.expire();
-    }
+    this.source.lifetimeChanged.addListener(() => this.lifetimeChanged.emit(this));
   }
 
   override createDrawNode(): PIXIContainer

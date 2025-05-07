@@ -91,6 +91,8 @@ export class DrawableSliderRepeat extends DrawableOsuHitObject<SliderRepeat>
   {
     super.onApplied();
 
+    this.position = this.hitObject.position.sub(this.drawableSlider!.position);
+
     this.#hasRotation = false;
   }
 
@@ -103,7 +105,7 @@ export class DrawableSliderRepeat extends DrawableOsuHitObject<SliderRepeat>
     const animDuration = Math.min(300, this.hitObject.spanDuration);
 
     // TODO: handle different states
-    this.fadeOut(animDuration);
+    this.fadeOut(animDuration, EasingFunction.Out);
   }
 
   updateSnakingPosition(start: Vec2, end: Vec2)

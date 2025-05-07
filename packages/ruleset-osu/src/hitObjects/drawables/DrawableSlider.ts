@@ -83,6 +83,8 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
     this.tickContainer.clear(false);
     this.repeatContainer.clear(false);
     this.headContainer.clear(false);
+
+    this.overlayElementContainer.clear(false);
   }
 
   protected override addNestedHitObject(hitObject: DrawableHitObject)
