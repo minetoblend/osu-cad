@@ -1,10 +1,16 @@
 /// <reference types='vitest' />
-import { defineConfig } from "vite";
+import { defaultClientConditions, defineConfig } from "vite";
 import ConditionalCompile from "vite-plugin-conditional-compiler";
 
 export default defineConfig(() => ({
   root: __dirname,
   cacheDir: "../../node_modules/.vite/apps/web",
+  resolve: {
+    conditions: [
+      ...defaultClientConditions,
+      ...(process.env.NODE_ENV === "development" ? ["source"] : []),
+    ],
+  },
   server:{
     port: 4200,
     host: "localhost",

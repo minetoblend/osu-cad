@@ -284,6 +284,8 @@ importers:
         specifier: ^8.4.0
         version: 8.4.0(@swc/core@1.5.29)(jiti@2.4.2)(typescript@5.7.3)
 
+  packages/test: {}
+
 packages:
 
   /@ampproject/remapping@2.3.0:

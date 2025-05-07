@@ -99,6 +99,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   constructor()
   {
     super();
+
     this.addLayout(this.#transformBacking);
     this.addLayout(this.#drawSizeBacking);
     this.addLayout(this.#requiredParentSizeToFitBacking);

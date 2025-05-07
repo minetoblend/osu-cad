@@ -1,6 +1,6 @@
 /// <reference types='vitest' />
 import * as path from "path";
-import { defineConfig } from "vite";
+import { defaultClientConditions, defineConfig } from "vite";
 import ConditionalCompile from "vite-plugin-conditional-compiler";
 import dts from "vite-plugin-dts";
 
@@ -13,6 +13,12 @@ export default defineConfig(() => ({
     dts({ entryRoot: "src", tsconfigPath: path.join(__dirname, "tsconfig.lib.json") }),
     ConditionalCompile(),
   ],
+  resolve: {
+    conditions: [
+      ...defaultClientConditions,
+      ...(process.env.NODE_ENV === "development" ? ["source"] : []),
+    ],
+  },
   worker: {
     format: "es",
   },
