@@ -8,6 +8,9 @@
     },
     {
       "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.build.json"
     }
   ]
 }

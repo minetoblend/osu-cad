@@ -3,6 +3,8 @@ import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 import * as path from "path";
 
+import { dependencies } from "./package.json";
+
 export default defineConfig(() => ({
   root: __dirname,
   cacheDir: "../../node_modules/.vite/packages/core",
@@ -31,7 +33,9 @@ export default defineConfig(() => ({
     },
     rollupOptions: {
       // External packages that should not be bundled into your library.
-      external: ["@osucad/framework", "pixi.js"],
+      external: [
+        ...Object.keys(dependencies),
+      ],
     },
   },
 }));

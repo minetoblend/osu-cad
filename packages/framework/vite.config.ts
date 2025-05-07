@@ -4,6 +4,8 @@ import { defineConfig } from "vite";
 import ConditionalCompile from "vite-plugin-conditional-compiler";
 import dts from "vite-plugin-dts";
 
+import { dependencies } from "./package.json";
+
 export default defineConfig(() => ({
   root: __dirname,
   cacheDir: "../../node_modules/.vite/packages/framework",
@@ -36,7 +38,9 @@ export default defineConfig(() => ({
       output: {
       },
       // External packages that should not be bundled into your library.
-      external: ["pixi.js", "pixi-filters"],
+      external: [
+        ...Object.keys(dependencies),
+      ],
     },
   },
   test: {
