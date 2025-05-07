@@ -16,32 +16,29 @@ export class LegacySliderHeadHitCircle extends LegacyCirclePiece
   {
     super.loadComplete();
 
-    if (this.drawableHitObject && this.drawableHitObject instanceof DrawableSliderHead)
-    {
-      this.proxiedOverlayLayer = new ProxyDrawable(this.overlayLayer);
-      this.drawableHitObject.hitObjectApplied.addListener(this.#hitObjectApplied, this);
-      this.drawableHitObject.hitObjectFreed.addListener(this.#hitObjectFreed, this);
-    }
+
   }
 
   #hitObjectApplied(hitObject: DrawableHitObject)
   {
-    asSliderHead(hitObject)?.drawableSlider?.overlayElementContainer.add(this.proxiedOverlayLayer.with({
-      depth: -Number.MAX_VALUE,
-    }));
-  }
+    const sliderHead = asSliderHead(hitObject);
+    if (sliderHead)
+    {
+      this.proxiedOverlayLayer = new ProxyDrawable(this.overlayLayer);
+      this.drawableHitObject.hitObjectApplied.addListener(this.#hitObjectApplied, this);
 
-  #hitObjectFreed(hitObject: DrawableHitObject)
-  {
-    asSliderHead(hitObject)?.drawableSlider?.overlayElementContainer.remove(this.proxiedOverlayLayer, false);
+      sliderHead.drawableSlider?.overlayElementContainer.add(this.proxiedOverlayLayer.with({
+        depth: -Number.MIN_VALUE,
+      }));
+    }
+
   }
 
   public override dispose(isDisposing: boolean = true): void
   {
     super.dispose(isDisposing);
 
-    this.drawableHitObject.hitObjectApplied.addListener(this.#hitObjectApplied, this);
-    this.drawableHitObject.hitObjectFreed.addListener(this.#hitObjectFreed, this);
+    this.drawableHitObject.hitObjectApplied.removeListener(this.#hitObjectApplied, this);
   }
 }
 

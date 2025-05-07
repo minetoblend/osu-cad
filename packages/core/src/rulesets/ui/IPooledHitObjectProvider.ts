@@ -4,7 +4,7 @@ import type { HitObject } from "../hitObjects/HitObject";
 
 export interface IPooledHitObjectProvider
 {
-  getPooledDrawableRepresentation(hitObject: HitObject): DrawableHitObject | undefined;
+  getPooledDrawableRepresentation(hitObject: HitObject, parent?: DrawableHitObject): DrawableHitObject | undefined;
 }
 
 export const IPooledHitObjectProvider = injectionToken<IPooledHitObjectProvider>();

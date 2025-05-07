@@ -30,12 +30,12 @@ export class LegacyFollowCircle extends CompositeDrawable
     this.applyCustomStateTransforms(this.parentObject);
   }
 
-  protected applyCustomStateTransforms(drawableObject: DrawableHitObject)
+  protected applyCustomStateTransforms(_: DrawableHitObject)
   {
     this.applyTransformsAt(-Number.MAX_VALUE, true);
     this.clearTransformsAfter(-Number.MAX_VALUE, true);
 
-    const slider = drawableObject.hitObject as Slider;
+    const slider = this.parentObject.hitObject as Slider;
 
     const remainingTime = slider.duration;
 

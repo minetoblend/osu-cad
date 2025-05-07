@@ -7,20 +7,22 @@ import { ArmedState } from "./ArmedState";
 import type { HitObjectLifetimeEntry } from "./HitObjectLifetimeEntry";
 import { SyntheticHitObjectEntry } from "./SyntheticHitObjectEntry";
 import { ISkinSource } from "../../../skinning/ISkinSource";
+import { IPooledHitObjectProvider } from "../../ui/IPooledHitObjectProvider";
 
 @provide(DrawableHitObject)
 export abstract class DrawableHitObject<out T extends HitObject = HitObject>
   extends PoolableDrawableWithLifetime<HitObjectLifetimeEntry>
   implements IAnimationTimeReference
 {
+  readonly defaultsApplied = new Action<DrawableHitObject>();
+
   readonly animationStartTime = new Bindable(0);
 
   readonly hitObjectApplied = new Action<DrawableHitObject>();
-  readonly hitObjectFreed = new Action<DrawableHitObject>();
 
   readonly #state = new Bindable(ArmedState.Idle);
 
-
+  parentHitObject: DrawableHitObject | null = null;
 
   get state()
   {
@@ -58,7 +60,7 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
     return this.entry?.hitObject as T;
   }
 
-  readonly applyCustomUpdateState = new Action<DrawableHitObject>();
+  readonly applyCustomUpdateState = new Action<[DrawableHitObject, ArmedState]>();
 
   readonly startTimeBindable = new Bindable(0);
 
@@ -84,17 +86,53 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
     return this.clock !== null && this.clock.currentTime >= this.lifetimeStart;
   }
 
+  @resolved(IPooledHitObjectProvider, true)
+  private pooledObjectProvider?: IPooledHitObjectProvider;
+
+  readonly onNestedDrawableCreated = new Action<DrawableHitObject>();
+
+  #nestedHitObjects: DrawableHitObject[] = [];
+
   protected override onApply(entry: HitObjectLifetimeEntry)
   {
     super.onApply(entry);
 
+    if (entry instanceof SyntheticHitObjectEntry)
+      this.lifetimeStart = entry.lifetimeStart - this.initialLifetimeOffset;
+
+    for (const h of this.hitObject.nestedHitObjects)
+    {
+      const pooledDrawableNested = this.pooledObjectProvider?.getPooledDrawableRepresentation(h, this);
+
+      const drawableNested = pooledDrawableNested ?? this.createNestedHitObject(h);
+
+      if (!drawableNested)
+        throw new Error(`createNestedHitObject returned null for ${h.constructor.name}.`);
+
+      if (pooledDrawableNested === null)
+        this.onNestedDrawableCreated.emit(drawableNested);
+
+      drawableNested.applyCustomUpdateState.addListener(this.#onApplyCustomUpdateState, this);
+
+      drawableNested.parentHitObject = this;
+
+      this.#nestedHitObjects.push(drawableNested);
+
+      if (drawableNested.entry instanceof SyntheticHitObjectEntry)
+        entry.nestedEntries.add(drawableNested.entry);
+
+      this.addNestedHitObject(drawableNested);
+    }
+
     this.startTimeBindable.bindTo(this.hitObject.startTimeBindable);
+
+    this.hitObject.defaultsApplied.addListener(this.#onDefaultsApplied);
 
     this.onApplied();
     this.hitObjectApplied.emit(this);
 
-    this.updateComboColor();
     this.updateState(ArmedState.Idle, true);
+    this.updateComboColor();
   }
 
   protected override onFree(entry: HitObjectLifetimeEntry)
@@ -103,8 +141,23 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
 
     this.startTimeBindable.unbindFrom(this.hitObject.startTimeBindable);
 
+    for (const obj of this.#nestedHitObjects)
+      obj.applyCustomUpdateState.removeListener(this.#onApplyCustomUpdateState, this);
+
+    this.#nestedHitObjects = [];
+    for (const nestedEntry of [...entry.nestedEntries])
+    {
+      if (nestedEntry instanceof SyntheticHitObjectEntry)
+      {
+        entry.nestedEntries.delete(nestedEntry);
+      }
+    }
+    this.clearNestedHitObjects();
+    this.hitObject.defaultsApplied.removeListener(this.#onDefaultsApplied, this);
+
     this.onFreed();
-    this.hitObjectFreed.emit(this);
+
+    this.parentHitObject = null;
 
     this.#clearExistingStateTransforms();
   }
@@ -115,6 +168,32 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
 
   protected onFreed()
   {
+  }
+
+  #onDefaultsApplied(hitObject: HitObject)
+  {
+    console.assert(this.entry !== null);
+    this.apply(this.entry!);
+
+    this.defaultsApplied.emit(this);
+  }
+
+  protected createNestedHitObject(hitObject: HitObject): DrawableHitObject | null
+  {
+    return null;
+  }
+
+  protected addNestedHitObject(hitObject: DrawableHitObject)
+  {
+  }
+
+  protected clearNestedHitObjects()
+  {
+  }
+
+  #onApplyCustomUpdateState(drawableHitObject: DrawableHitObject, state: ArmedState)
+  {
+    this.applyCustomUpdateState.emit(drawableHitObject, state);
   }
 
   protected updateState(state: ArmedState, force = false)
@@ -142,7 +221,7 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
     if (this.lifetimeEnd === Number.MAX_VALUE)
       this.lifetimeEnd = Math.max(this.latestTransformEndTime, this.hitObject!.endTime);
 
-    this.applyCustomUpdateState.emit(this);
+    this.applyCustomUpdateState.emit(this, state);
   }
 
   #clearExistingStateTransforms()

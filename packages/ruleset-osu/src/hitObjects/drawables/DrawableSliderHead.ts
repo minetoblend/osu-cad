@@ -1,13 +1,14 @@
-import { DrawableHitObject } from "@osucad/core";
 import { OsuSkinComponents } from "../../skinning/OsuSkinComponents";
 import { DrawableHitCircle } from "./DrawableHitCircle";
 import { DrawableSlider } from "./DrawableSlider";
-import { resolved } from "@osucad/framework";
+import type { SliderHeadCircle } from "../SliderHeadCircle";
 
 export class DrawableSliderHead extends DrawableHitCircle
 {
-  @resolved(DrawableHitObject, true)
-  parentHitObject?: DrawableHitObject;
+  constructor(initialHitObject?: SliderHeadCircle)
+  {
+    super(initialHitObject);
+  }
 
   get drawableSlider(): DrawableSlider | null
   {

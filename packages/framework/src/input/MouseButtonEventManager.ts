@@ -187,7 +187,7 @@ export abstract class MouseButtonEventManager extends ButtonEventManager<MouseBu
     draggedDrawable.invalidated.addListener(this.#draggedDrawableInvalidated, this);
   }
 
-  #draggedDrawableInvalidated([drawable, invalidation]: [Drawable, Invalidation])
+  #draggedDrawableInvalidated(drawable: Drawable, invalidation: Invalidation)
   {
     if (invalidation & Invalidation.Parent)
     {

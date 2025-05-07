@@ -1,11 +1,15 @@
 import type { BeatmapDifficultyInfo, IBeatmapTiming } from "@osucad/core";
 import { safeAssign } from "@osucad/core";
 import { BindableNumber, Vec2 } from "@osucad/framework";
-import { HitCircle } from "./HitCircle";
 import type { OsuHitObjectOptions } from "./OsuHitObject";
 import { OsuHitObject } from "./OsuHitObject";
 import type { PathPoint } from "./PathPoint";
 import { SliderPath } from "./SliderPath";
+import { SliderHeadCircle } from "./SliderHeadCircle";
+import { SliderTailCircle } from "./SliderTailCircle";
+import { SliderRepeat } from "./SliderRepeat";
+import { SliderEventGenerator, SliderEventType } from "./SliderEventGenerator";
+import { SliderTick } from "./SliderTick";
 
 export interface SliderOptions extends OsuHitObjectOptions
 {
@@ -25,21 +29,32 @@ export class Slider extends OsuHitObject
 
     safeAssign(this.path, { expectedDistance, controlPoints });
 
-    this.headCircle.startTimeBindable.bindTo(this.startTimeBindable);
-    this.headCircle.indexInComboBindable.bindTo(this.indexInComboBindable);
-    this.headCircle.comboIndexBindable.bindTo(this.comboIndexBindable);
-    this.headCircle.stackHeightBindable.bindTo(this.stackHeightBindable);
-    this.headCircle.scaleBindable.bindTo(this.scaleBindable);
-
     this.positionBindable.bindValueChanged(this.#updateNestedPositions, this);
   }
 
   #updateNestedPositions()
   {
-    this.headCircle.position = this.position;
+    for (const nested of this.nestedHitObjects)
+    {
+      if (nested instanceof SliderHeadCircle)
+        nested.position = this.position;
+      else if (nested instanceof SliderTailCircle)
+        nested.position = this.position;
+      else if (nested instanceof SliderRepeat)
+        nested.position = this.position.add(this.path.positionAt(nested.pathProgress));
+      else if (nested instanceof SliderTick)
+        nested.position = this.position.add(this.path.positionAt(nested.pathProgress));
+    }
+
+    if (this.headCircle)
+      this.headCircle.position = this.position;
+    if (this.tailCircle)
+      this.tailCircle.position = this.endPosition;
   }
 
-  readonly headCircle = new HitCircle();
+  headCircle: SliderHeadCircle | null = null;
+
+  tailCircle: SliderTailCircle | null = null;
 
   readonly repeatCountBindable = new BindableNumber(0)
     .withMinValue(0)
@@ -64,19 +79,19 @@ export class Slider extends OsuHitObject
   readonly sliderVelocityBindable = new BindableNumber(1)
     .withMinValue(0);
 
-  get sliderVelocity()
+  get velocity()
   {
     return this.sliderVelocityBindable.value;
   }
 
-  private set sliderVelocity(value: number)
+  private set velocity(value: number)
   {
     this.sliderVelocityBindable.value = value;
   }
 
   spanDuration()
   {
-    return this.path.actualDistance / this.sliderVelocity;
+    return this.path.distance / this.velocity;
   }
 
   public override get duration(): number
@@ -91,9 +106,9 @@ export class Slider extends OsuHitObject
     return this.#tickDistance;
   }
 
-  public override applyDefaults(difficulty: BeatmapDifficultyInfo, timing: IBeatmapTiming)
+  protected override applyDefaultsToSelf(difficulty: BeatmapDifficultyInfo, timing: IBeatmapTiming)
   {
-    super.applyDefaults(difficulty, timing);
+    super.applyDefaultsToSelf(difficulty, timing);
 
     const timingPoint = timing.getTimingInfoAt(this.startTime + 1);
 
@@ -101,9 +116,9 @@ export class Slider extends OsuHitObject
 
     const sliderVelocity = timing.getSliderVelocityAt(this.startTime + 1);
 
-    this.sliderVelocity = baseVelocity * sliderVelocity;
+    this.velocity = baseVelocity * sliderVelocity;
 
-    const scoringDistance = this.sliderVelocity * timingPoint.beatLength;
+    const scoringDistance = this.velocity * timingPoint.beatLength;
 
     this.#tickDistance = scoringDistance / difficulty.sliderTickRate;
   }
@@ -125,11 +140,57 @@ export class Slider extends OsuHitObject
 
   curvePositionAt(progress: number, out: Vec2 = new Vec2()): Vec2
   {
-    return this.path.getPositionAt(this.progressAt(progress), out);
+    return this.path.positionAt(this.progressAt(progress), out);
   }
 
   public override get endPosition(): Vec2
   {
     return this.position.add(this.curvePositionAt(1));
+  }
+
+  protected override createNestedHitObjects()
+  {
+    super.createNestedHitObjects();
+
+    for (const e of SliderEventGenerator.generate(this.startTime, this.spanDuration(), this.velocity, this.tickDistance, this.path.distance, this.spanCount()))
+    {
+      switch (e.type)
+      {
+      case SliderEventType.Tick:
+        this.addNested(new SliderTick({
+          spanIndex: e.spanIndex,
+          spanStartTime: e.spanStartTime,
+          startTime: e.time,
+          position: this.position.add(this.path.positionAt(e.pathProgress)),
+          pathProgress: e.pathProgress,
+          stackHeight: this.stackHeight,
+        }));
+        break;
+      case SliderEventType.Head:
+        this.addNested(this.headCircle = new SliderHeadCircle({
+          startTime: e.time,
+          position: this.position,
+          stackHeight: this.stackHeight,
+        }));
+        break;
+      case SliderEventType.Tail:
+        this.addNested(this.tailCircle = new SliderTailCircle(this, {
+          repeatIndex: e.spanIndex,
+          startTime: e.time,
+          position: this.endPosition,
+          stackHeight: this.stackHeight,
+        }));
+        break;
+      case SliderEventType.Repeat:
+        this.addNested(new SliderRepeat(this, {
+          repeatIndex: e.spanIndex,
+          startTime: this.startTime + (e.spanIndex + 1) * this.spanDuration(),
+          position: this.position.add(this.path.positionAt(e.pathProgress)),
+          stackHeight: this.stackHeight,
+          pathProgress: e.pathProgress,
+        }));
+        break;
+      }
+    }
   }
 }

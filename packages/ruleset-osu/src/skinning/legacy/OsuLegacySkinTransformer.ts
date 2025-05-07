@@ -126,7 +126,7 @@ export class OsuLegacySkinTransformer extends SkinTransformer
       case OsuSkinComponents.HitCircle:
         return new LegacyCirclePiece();
       case OsuSkinComponents.SliderTailHitCircle:
-        return new LegacyCirclePiece("sliderendcircle");
+        return new LegacyCirclePiece("sliderendcircle", false);
       case OsuSkinComponents.SliderHeadHitCircle:
         return new LegacySliderHeadHitCircle();
       case OsuSkinComponents.ApproachCircle:

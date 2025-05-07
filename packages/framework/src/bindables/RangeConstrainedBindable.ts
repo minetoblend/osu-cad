@@ -4,8 +4,8 @@ import { Bindable } from "./Bindable";
 
 export abstract class RangeConstrainedBindable<T> extends Bindable<T>
 {
-  readonly minValueChanged = new Action<T>();
-  readonly maxValueChanged = new Action<T>();
+  readonly minValueChanged = new Action<[T]>();
+  readonly maxValueChanged = new Action<[T]>();
 
   protected abstract get comparer(): Comparer<T>;
 

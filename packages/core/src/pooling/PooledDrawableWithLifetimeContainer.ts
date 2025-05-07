@@ -113,7 +113,7 @@ export abstract class PooledDrawableWithLifetimeContainer<TEntry extends Lifetim
     this.removeInternal(drawable, false);
   }
 
-  #entryCrossedBoundary([lifetimeEntry, kind, direction]: [LifetimeEntry, LifetimeBoundaryKind, LifetimeBoundaryCrossingDirection])
+  #entryCrossedBoundary(lifetimeEntry: LifetimeEntry, kind: LifetimeBoundaryKind, direction: LifetimeBoundaryCrossingDirection)
   {
     if (this.removeRewoundEntries && kind === LifetimeBoundaryKind.Start && direction === LifetimeBoundaryCrossingDirection.Backward)
       this.removeEntry(lifetimeEntry as TEntry);

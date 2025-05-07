@@ -1497,7 +1497,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     if (this.onInvalidate(invalidation, source))
       anyInvalidated = true;
 
-    this.invalidated.emit([this, invalidation]);
+    this.invalidated.emit(this, invalidation);
 
     return anyInvalidated;
   }

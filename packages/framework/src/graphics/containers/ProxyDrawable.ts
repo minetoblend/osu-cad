@@ -1,7 +1,7 @@
+import type { Container as PIXIContainer } from "pixi.js";
 import { RenderLayer } from "pixi.js";
 import type { ReadonlyDependencyContainer } from "../../di/DependencyContainer";
-import type { Container as PIXIContainer } from "pixi.js";
-import { Drawable } from "../drawables/Drawable";
+import { Drawable, Invalidation } from "../drawables/Drawable";
 
 export class ProxyDrawable extends Drawable
 {
@@ -18,11 +18,25 @@ export class ProxyDrawable extends Drawable
 
     this.#renderLayer.attach(this.source.drawNode);
 
+    this.source.invalidated.addListener(this.#onInvalidated, this);
+
     this.source.onDispose(() =>
     {
       this.#renderLayer.detachAll();
       this.expire();
     });
+  }
+
+  #onInvalidated(drawable: Drawable, invalidation: Invalidation)
+  {
+    if (!(invalidation & Invalidation.Parent))
+      return;
+
+    if (!drawable.parent)
+    {
+      this.#renderLayer.detachAll();
+      this.expire();
+    }
   }
 
   override createDrawNode(): PIXIContainer

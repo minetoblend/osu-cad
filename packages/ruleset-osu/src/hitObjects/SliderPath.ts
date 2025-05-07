@@ -26,7 +26,7 @@ export class SliderPath
 
   readonly expectedDistanceBindable = new Bindable(0);
 
-  get actualDistance()
+  get distance()
   {
     return Math.min(this.expectedDistance, this.calculatedDistance);
   }
@@ -163,7 +163,7 @@ export class SliderPath
     return segments;
   }
 
-  getPositionAt(progress: number, out: Vec2 = new Vec2())
+  positionAt(progress: number, out: Vec2 = new Vec2())
   {
     return this.calculatedPath.getPositionAtDistance(progress * this.expectedDistance, out);
   }

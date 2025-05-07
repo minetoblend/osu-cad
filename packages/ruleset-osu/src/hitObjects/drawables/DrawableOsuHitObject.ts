@@ -41,13 +41,13 @@ export abstract class DrawableOsuHitObject<out T extends OsuHitObject = OsuHitOb
 
     this.positionBindable.bindValueChanged(() => this.updatePosition());
     this.stackHeightBindable.bindValueChanged(() => this.updatePosition());
-    this.scaleBindable.bindValueChanged(() => this.updateScale());
+    this.scaleBindable.bindValueChanged((scale) => this.updateScale(scale.value));
     this.indexInComboBindable.bindValueChanged(() => this.scheduler.addOnce(this.updateComboColor, this));
   }
 
   protected abstract updatePosition(): void;
 
-  protected abstract updateScale(): void;
+  protected abstract updateScale(scale: number): void;
 
   protected override updateComboColor()
   {

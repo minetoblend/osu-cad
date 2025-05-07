@@ -10,6 +10,7 @@ export interface OsuHitObjectOptions
   y?: number
   newCombo?: boolean
   comboOffset?: number
+  stackHeight?: number
 }
 
 export abstract class OsuHitObject extends HitObject
@@ -136,9 +137,24 @@ export abstract class OsuHitObject extends HitObject
     this.scaleBindable.value = value;
   }
 
-  public override applyDefaults(difficulty: BeatmapDifficultyInfo, timing: IBeatmapTiming)
+  override applyDefaults(difficulty: BeatmapDifficultyInfo, timing: IBeatmapTiming)
   {
     super.applyDefaults(difficulty, timing);
+
+    for (const h of this.nestedHitObjects)
+    {
+
+      if (h instanceof OsuHitObject)
+      {
+        h.comboIndexBindable.bindTo(this.comboIndexBindable);
+        h.indexInComboBindable.bindTo(this.indexInComboBindable);
+      }
+    }
+  }
+
+  protected override applyDefaultsToSelf(difficulty: BeatmapDifficultyInfo, timing: IBeatmapTiming)
+  {
+    super.applyDefaultsToSelf(difficulty, timing);
 
     this.timePreempt = BeatmapDifficultyInfo.difficultyRange(difficulty.approachRate, OsuHitObject.PREEMPT_MAX, OsuHitObject.PREEMPT_MID, OsuHitObject.PREEMPT_MIN);
 

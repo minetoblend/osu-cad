@@ -1,9 +1,13 @@
 import { getCurrentDrawablScope } from "./lifetimeScope";
 
+export type ListenerArgs<T> = T extends [...infer U] ? U : [T];
+
+export type ListenerFn<T> = (...args: ListenerArgs<T>) => void;
+
 class Listener<T>
 {
   constructor(
-    readonly fn: (value: T) => void,
+    readonly fn: ListenerFn<T>,
     readonly receiver?: any,
     readonly once: boolean = false,
   )
@@ -14,7 +18,7 @@ export class Action<T = void>
 {
   #listeners: Listener<T>[] = [];
 
-  addListener(fn: (value: T) => void, receiver?: any, scoped: boolean = true)
+  addListener(fn: ListenerFn<T>, receiver?: any, scoped: boolean = true)
   {
     this.#listeners.push(new Listener(fn, receiver));
     if (scoped)
@@ -27,7 +31,7 @@ export class Action<T = void>
     }
   }
 
-  removeListener(fn: (value: T) => void, receiver?: any): boolean
+  removeListener(fn: ListenerFn<T>, receiver?: any): boolean
   {
     for (let i = 0; i < this.#listeners.length; i++)
     {
@@ -49,23 +53,23 @@ export class Action<T = void>
     this.#listeners.length = 0;
   }
 
-  once(listener: (value: T) => void, receiver?: any)
+  once(listener: ListenerFn<T>, receiver?: any)
   {
     this.#listeners.push(new Listener(listener, receiver, true));
   }
 
-  emit(value: T)
+  emit(...args: ListenerArgs<T>)
   {
     for (let i = 0; i < this.#listeners.length; i++)
     {
       const listener = this.#listeners[i];
       if (listener.receiver)
       {
-        listener.fn.call(listener.receiver, value);
+        listener.fn.call(listener.receiver, ...args);
       }
       else
       {
-        listener.fn(value);
+        listener.fn(...args);
       }
 
       if (listener.once)

@@ -189,8 +189,8 @@ export class LifetimeEntryManager
 
     while (this.#eventQueue.length !== 0)
     {
-      const entry = this.#eventQueue.shift()!;
-      this.entryCrossedBoundary.emit(entry);
+      const [entry, boundaryKind, crossingDirection] = this.#eventQueue.shift()!;
+      this.entryCrossedBoundary.emit(entry, boundaryKind, crossingDirection);
     }
 
     return aliveEntriesChanged;

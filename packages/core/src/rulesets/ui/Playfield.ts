@@ -6,18 +6,13 @@ import type { HitObject } from "../hitObjects/HitObject";
 import { HitObjectContainer } from "./HitObjectContainer";
 import { IPooledHitObjectProvider } from "./IPooledHitObjectProvider";
 import { PlayfieldClock } from "./PlayfieldClock";
+import type { HitObjectEntryManagerEvent } from "../../pooling/HitObjectEntryManager";
+import { HitObjectEntryManager } from "../../pooling/HitObjectEntryManager";
 
 @provide(IPooledHitObjectProvider)
 @provide(Playfield)
 export abstract class Playfield extends CompositeDrawable implements IPooledHitObjectProvider
 {
-  constructor()
-  {
-    super();
-
-    this.relativeSizeAxes = Axes.Both;
-  }
-
   readonly hitObjectUsageBegan = new Action<HitObject>();
 
   readonly hitObjectUsageFinished = new Action<HitObject>();
@@ -35,6 +30,18 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
   get hitObjectContainer()
   {
     return this.#hitObjectContainer.value;
+  }
+
+  readonly #entryManager =new HitObjectEntryManager();
+
+  protected constructor()
+  {
+    super();
+
+    this.relativeSizeAxes = Axes.Both;
+
+    this.#entryManager.onEntryAdded.addListener(this.#onEntryAdded, this);
+    this.#entryManager.onEntryRemoved.addListener(this.#onEntryRemoved, this);
   }
 
   @resolved(PlayfieldClock)
@@ -61,24 +68,48 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
     return new HitObjectContainer();
   }
 
-  readonly #lifetimeEntries = new Map<HitObject, HitObjectLifetimeEntry>();
-
   addHitObject(hitObject: HitObject)
   {
     const entry = this.createLifetimeEntry(hitObject);
-    this.#lifetimeEntries.set(hitObject, entry);
-    this.hitObjectContainer.addEntry(entry);
-    this.onHitObjectAdded(hitObject);
+    this.#entryManager.add(entry);
   }
 
   removeHitObject(hitObject: HitObject)
   {
-    const entry = this.#lifetimeEntries.get(hitObject);
-    if (!entry)
+    const entry = this.#entryManager.get(hitObject);
+    if (entry)
+    {
+      this.#entryManager.remove(entry);
+      return true;
+    }
+
+    return false;
+  }
+
+  #onEntryAdded({ entry, parent }: HitObjectEntryManagerEvent)
+  {
+    if (parent)
+      return;
+
+    this.hitObjectContainer.addEntry(entry);
+    this.onHitObjectAdded(entry.hitObject);
+  }
+
+  #onEntryRemoved({ entry, parent }: HitObjectEntryManagerEvent)
+  {
+    if (parent)
       return;
 
     this.hitObjectContainer.removeEntry(entry);
-    this.onHitObjectRemoved(hitObject);
+    this.onHitObjectRemoved(entry.hitObject);
+  }
+
+  protected onHitObjectAdded(hitObject: HitObject)
+  {
+  }
+
+  protected onHitObjectRemoved(hitObject: HitObject)
+  {
   }
 
   protected createLifetimeEntry(hitObject: HitObject)
@@ -104,7 +135,7 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
     this.addInternal(pool);
   }
 
-  getPooledDrawableRepresentation(hitObject: HitObject): DrawableHitObject | undefined
+  getPooledDrawableRepresentation(hitObject: HitObject, parent?: DrawableHitObject): DrawableHitObject | undefined
   {
     const pool = this.#prepareDrawableHitObjectPool(hitObject);
 
@@ -112,13 +143,14 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
     {
       const dho = drawable as DrawableHitObject;
 
-
-      let entry = this.#lifetimeEntries.get(hitObject);
+      let entry = this.#entryManager.get(hitObject);
       if (!entry)
       {
         entry = this.createLifetimeEntry(hitObject);
+        this.#entryManager.add(entry, parent?.hitObject);
       }
 
+      dho.parentHitObject = parent ?? null;
       dho.apply(entry);
     });
   }
@@ -142,10 +174,4 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
 
     return pool;
   }
-
-  protected onHitObjectAdded(hitObject: HitObject)
-  {}
-
-  protected onHitObjectRemoved(hitObject: HitObject)
-  {}
 }

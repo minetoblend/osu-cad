@@ -7,6 +7,8 @@ export class HitObjectLifetimeEntry extends LifetimeEntry
 
   readonly #startTimeBindable = new Bindable(0);
 
+  nestedEntries = new Set<HitObjectLifetimeEntry>();
+
   constructor(readonly hitObject: HitObject)
   {
     super();

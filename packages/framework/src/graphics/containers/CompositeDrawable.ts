@@ -422,12 +422,17 @@ export class CompositeDrawable extends Drawable
       this.#loadChild(children[i]);
   }
 
-  protected addAllInternal(...children: Drawable[]): this
+  protected addRangeInternal(children: Drawable[]): this
   {
     for (let i = 0, len = children.length; i < len; i++)
       this.addInternal(children[i]);
 
     return this;
+  }
+
+  protected addAllInternal(...children: Drawable[]): this
+  {
+    return this.addRangeInternal(children);
   }
 
   protected removeInternal(drawable: Drawable, disposeImmediately: boolean = true): boolean

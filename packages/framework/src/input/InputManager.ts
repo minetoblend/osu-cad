@@ -774,7 +774,7 @@ export abstract class InputManager extends Container implements IInputStateChang
   {
     this.#touchLongPressPosition = e.touch.position;
 
-    this.touchLongPressBegan.emit([e.touch.position, touch_right_click_delay]);
+    this.touchLongPressBegan.emit(e.touch.position, touch_right_click_delay);
     this.#touchLongPressTimeout = setTimeout(() =>
     {
       new MousePositionAbsoluteInputFromTouch(e, e.touch.position).apply(this.currentState, this);

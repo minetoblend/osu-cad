@@ -26,7 +26,7 @@ export class ProxyContainer extends Container
     this.source.invalidated.addListener(this.#onSourceInvalidated, this);
   }
 
-  #onSourceInvalidated([_, invalidation]: [Drawable, Invalidation])
+  #onSourceInvalidated(_: Drawable, invalidation: Invalidation)
   {
     invalidation &= Invalidation.DrawSize;
 

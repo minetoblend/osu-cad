@@ -3,9 +3,9 @@ import { SortedList } from "./SortedList";
 
 export class ObservableSortedList<T> extends SortedList<T>
 {
-  added = new Action<T>();
+  added = new Action<[T]>();
 
-  removed = new Action<T>();
+  removed = new Action<[T]>();
 
   sorted = new Action();
 

@@ -1,5 +1,5 @@
-import type { ArmedState } from "@osucad/core";
-import { SkinnableDrawable, SyntheticHitObjectEntry } from "@osucad/core";
+import type { ArmedState, DrawableHitObject } from "@osucad/core";
+import { SkinnableDrawable } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
 import { Anchor, Axes, Bindable, clamp, Container, provide } from "@osucad/framework";
 import { OsuSkinComponents } from "../../skinning/OsuSkinComponents";
@@ -8,6 +8,9 @@ import { DrawableOsuHitObject } from "./DrawableOsuHitObject";
 import { DrawableSliderBall } from "./DrawableSliderBall";
 import { DrawableSliderHead } from "./DrawableSliderHead";
 import { PlaySliderBody } from "./PlaySliderBody";
+import { DrawableSliderTail } from "./DrawableSliderTail";
+import { DrawableSliderRepeat } from "./DrawableSliderRepeat";
+import { DrawableSliderTick } from "./DrawableSliderTick";
 
 @provide(DrawableSlider)
 export class DrawableSlider extends DrawableOsuHitObject<Slider>
@@ -33,7 +36,10 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
 
   public overlayElementContainer!: Container;
 
-  private sliderHead!: DrawableSliderHead;
+  private tailContainer!: Container<DrawableSliderTail>;
+  private tickContainer!: Container<DrawableSliderTick>;
+  private repeatContainer!: Container<DrawableSliderRepeat>;
+  private headContainer!: Container<DrawableSliderHead>;
 
   private body!: SkinnableDrawable;
 
@@ -43,7 +49,10 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
 
     this.internalChildren = [
       this.body = new SkinnableDrawable(OsuSkinComponents.SliderBody),
-      this.sliderHead = new DrawableSliderHead(),
+      this.tailContainer = new Container({ relativeSizeAxes: Axes.Both }),
+      this.tickContainer =  new Container({ relativeSizeAxes: Axes.Both }),
+      this.repeatContainer = new Container({ relativeSizeAxes: Axes.Both }),
+      this.headContainer = new Container({ relativeSizeAxes: Axes.Both }),
       this.overlayElementContainer = new Container({ relativeSizeAxes: Axes.Both }),
       this.ball,
     ];
@@ -56,7 +65,6 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
     super.onApplied();
 
     this.pathVersion.bindTo(this.hitObject.path.version);
-    this.sliderHead.entry = new SyntheticHitObjectEntry(this.hitObject.headCircle);
   }
 
   protected override onFreed()
@@ -65,7 +73,43 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
 
     this.pathVersion.unbindFrom(this.hitObject.path.version);
     this.pathVersion.value = -1;
-    this.sliderHead.entry = null;
+  }
+
+  protected override clearNestedHitObjects()
+  {
+    super.clearNestedHitObjects();
+
+    this.tailContainer.clear(false);
+    this.tickContainer.clear(false);
+    this.repeatContainer.clear(false);
+    this.headContainer.clear(false);
+  }
+
+  protected override addNestedHitObject(hitObject: DrawableHitObject)
+  {
+    if (hitObject instanceof DrawableSliderHead)
+    {
+      this.headContainer.child = hitObject;
+      return;
+    }
+
+    if (hitObject instanceof DrawableSliderTail)
+    {
+      this.tailContainer.child = hitObject;
+      return;
+    }
+
+    if (hitObject instanceof DrawableSliderRepeat)
+    {
+      this.repeatContainer.add(hitObject);
+      return;
+    }
+
+    if (hitObject instanceof DrawableSliderTick)
+    {
+      this.tickContainer.add(hitObject);
+      return;
+    }
   }
 
   protected override updatePosition(): void
