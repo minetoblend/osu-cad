@@ -15,7 +15,12 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
 {
   readonly animationStartTime = new Bindable(0);
 
+  readonly hitObjectApplied = new Action<DrawableHitObject>();
+  readonly hitObjectFreed = new Action<DrawableHitObject>();
+
   readonly #state = new Bindable(ArmedState.Idle);
+
+
 
   get state()
   {
@@ -86,6 +91,7 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
     this.startTimeBindable.bindTo(this.hitObject.startTimeBindable);
 
     this.onApplied();
+    this.hitObjectApplied.emit(this);
 
     this.updateComboColor();
     this.updateState(ArmedState.Idle, true);
@@ -98,6 +104,7 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
     this.startTimeBindable.unbindFrom(this.hitObject.startTimeBindable);
 
     this.onFreed();
+    this.hitObjectFreed.emit(this);
 
     this.#clearExistingStateTransforms();
   }

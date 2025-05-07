@@ -3,9 +3,10 @@ import { Action, Axes, computed, Container, provide, ref, watch, withEffectScope
 import type { Texture } from "pixi.js";
 import { Color } from "pixi.js";
 import type { ISampleInfo } from "../audio/ISampleInfo";
-import type { ISkin, SkinComponentLookup } from "./ISkin";
+import type { ISkin } from "./ISkin";
 import { ISkinSource } from "./ISkinSource";
 import type { SkinConfigurationLookup, SkinConfigurationValue } from "./SkinConfiguration";
+import type { SkinComponentLookup } from "./SkinComponentLookup";
 
 export interface SkinProvidingContainerOptions extends ContainerOptions
 {

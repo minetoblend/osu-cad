@@ -3,8 +3,7 @@ import { injectionToken } from "@osucad/framework";
 import type { Color, Texture } from "pixi.js";
 import type { ISampleInfo } from "../audio/ISampleInfo";
 import type { SkinConfigurationLookup, SkinConfigurationValue } from "./SkinConfiguration";
-
-export type SkinComponentLookup = string;
+import type { SkinComponentLookup } from "./SkinComponentLookup";
 
 export interface ISkin
 {

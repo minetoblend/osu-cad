@@ -74,7 +74,7 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
 
   protected get componentLookup(): OsuSkinComponents
   {
-    return OsuSkinComponents.CirclePiece;
+    return OsuSkinComponents.HitCircle;
   }
 
   public override update()

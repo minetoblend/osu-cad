@@ -7,6 +7,7 @@ import { LegacyCirclePiece } from "./LegacyCirclePiece";
 import { LegacyFollowCircle } from "./LegacyFollowCircle";
 import { LegacySliderBall } from "./LegacySliderBall";
 import { LegacySliderBody } from "./LegacySliderBody";
+import { LegacySliderHeadHitCircle } from "./LegacySliderHeadHitCircle";
 
 export class OsuLegacySkinTransformer extends SkinTransformer
 {
@@ -42,10 +43,10 @@ export class OsuLegacySkinTransformer extends SkinTransformer
       const hitCirclePrefix = this.getConfig("hitCirclePrefix") ?? "default";
       const scorePrefix = this.getConfig("scorePrefix") ?? "score";
 
-      for(let i = 0; i < 10; i++)
+      for (let i = 0; i < 10; i++)
         textureNames.add(`${hitCirclePrefix}-${i}`);
 
-      for(let i = 0; i < 10; i++)
+      for (let i = 0; i < 10; i++)
         textureNames.add(`${scorePrefix}-${i}`);
 
       return {
@@ -55,6 +56,7 @@ export class OsuLegacySkinTransformer extends SkinTransformer
             name: "followpoint",
             looping: false,
             applyConfigFrameRate: true,
+            startAtCurrentTime: false,
           },
           {
             name: "sliderb",
@@ -114,27 +116,33 @@ export class OsuLegacySkinTransformer extends SkinTransformer
 
   public override getDrawableComponent(lookup: SkinComponentLookup): Drawable | null
   {
-    switch (lookup)
+    if (lookup instanceof OsuSkinComponents)
     {
-    case OsuSkinComponents.FollowPoint:
-      return this.getAnimation("followpoint");
-    case OsuSkinComponents.CirclePiece:
-      return new LegacyCirclePiece();
-    case OsuSkinComponents.SliderHead:
-      return new LegacyCirclePiece("sliderstartcircle");
-    case OsuSkinComponents.ApproachCircle:
-      return new LegacyApproachCircle();
-    case OsuSkinComponents.SliderBody:
-      return new LegacySliderBody();
-    case OsuSkinComponents.SliderBall:
-      return new LegacySliderBall(this.getAnimation("sliderb"));
-    case OsuSkinComponents.SliderFollowCircle: {
-      const followCircleContent = this.getAnimation("sliderfollowcircle");
 
-      // TODO: logic is actually supposed to be different here
-      if (followCircleContent)
-        return new LegacyFollowCircle(followCircleContent);
-    }
+      switch (lookup)
+      {
+      case OsuSkinComponents.FollowPoint:
+        return this.getAnimation("followpoint");
+      case OsuSkinComponents.HitCircle:
+        return new LegacyCirclePiece();
+      case OsuSkinComponents.SliderTailHitCircle:
+        return new LegacyCirclePiece("sliderendcircle");
+      case OsuSkinComponents.SliderHeadHitCircle:
+        return new LegacySliderHeadHitCircle();
+      case OsuSkinComponents.ApproachCircle:
+        return new LegacyApproachCircle();
+      case OsuSkinComponents.SliderBody:
+        return new LegacySliderBody();
+      case OsuSkinComponents.SliderBall:
+        return new LegacySliderBall(this.getAnimation("sliderb"));
+      case OsuSkinComponents.SliderFollowCircle: {
+        const followCircleContent = this.getAnimation("sliderfollowcircle");
+
+        // TODO: logic is actually supposed to be different here
+        if (followCircleContent)
+          return new LegacyFollowCircle(followCircleContent);
+      }
+      }
     }
 
     return super.getDrawableComponent(lookup);

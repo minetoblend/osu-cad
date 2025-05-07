@@ -1,7 +1,7 @@
 import type { ArmedState } from "@osucad/core";
 import { SkinnableDrawable, SyntheticHitObjectEntry } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
-import { Anchor, Axes, Bindable, clamp, provide } from "@osucad/framework";
+import { Anchor, Axes, Bindable, clamp, Container, provide } from "@osucad/framework";
 import { OsuSkinComponents } from "../../skinning/OsuSkinComponents";
 import type { Slider } from "../Slider";
 import { DrawableOsuHitObject } from "./DrawableOsuHitObject";
@@ -31,9 +31,11 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
 
   readonly ball: DrawableSliderBall;
 
-  sliderHead!: DrawableSliderHead;
+  public overlayElementContainer!: Container;
 
-  body!: SkinnableDrawable;
+  private sliderHead!: DrawableSliderHead;
+
+  private body!: SkinnableDrawable;
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
@@ -42,6 +44,7 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
     this.internalChildren = [
       this.body = new SkinnableDrawable(OsuSkinComponents.SliderBody),
       this.sliderHead = new DrawableSliderHead(),
+      this.overlayElementContainer = new Container({ relativeSizeAxes: Axes.Both }),
       this.ball,
     ];
 

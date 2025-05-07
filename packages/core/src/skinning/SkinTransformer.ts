@@ -1,9 +1,10 @@
 import type { Drawable, Sample } from "@osucad/framework";
 import type { Color, Texture } from "pixi.js";
 import type { ISampleInfo } from "../audio/ISampleInfo";
-import type { ISkin, SkinComponentLookup } from "./ISkin";
+import type { ISkin } from "./ISkin";
 import type { Skin } from "./Skin";
 import type { SkinConfigurationLookup, SkinConfigurationValue } from "./SkinConfiguration";
+import type { SkinComponentLookup } from "./SkinComponentLookup";
 
 export type LoadTextureEntry =
     | string

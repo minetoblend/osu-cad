@@ -3,10 +3,11 @@ import type { Texture } from "pixi.js";
 import { Color } from "pixi.js";
 import type { ISampleInfo } from "../audio/ISampleInfo";
 import type { IResourcesProvider } from "../io/IResourcesProvider";
-import type { ISkin, SkinComponentLookup } from "./ISkin";
+import type { ISkin } from "./ISkin";
 import type { SkinConfigurationLookup, SkinConfigurationValue } from "./SkinConfiguration";
 import { SkinConfiguration } from "./SkinConfiguration";
 import { SkinSampleStore } from "./SkinSampleStore";
+import type { SkinComponentLookup } from "./SkinComponentLookup";
 
 export class Skin implements ISkin
 {
