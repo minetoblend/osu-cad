@@ -136,7 +136,7 @@ importers:
   packages/core:
     dependencies:
       '@osucad/framework':
-        specifier: 1.0.0
+        specifier: 1.0.1
         version: link:../framework
       '@vueuse/core':
         specifier: ^13.1.0
@@ -186,10 +186,10 @@ importers:
   packages/ruleset-osu:
     dependencies:
       '@osucad/core':
-        specifier: 1.0.0
+        specifier: 1.0.1
         version: link:../core
       '@osucad/framework':
-        specifier: 1.0.0
+        specifier: 1.0.1
         version: link:../framework
       pixi.js:
         specifier: ^8.9.2
@@ -283,8 +283,6 @@ importers:
       tsup:
         specifier: ^8.4.0
         version: 8.4.0(@swc/core@1.5.29)(jiti@2.4.2)(typescript@5.7.3)
-
-  packages/test: {}
 
 packages:
 
