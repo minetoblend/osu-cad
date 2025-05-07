@@ -30,6 +30,7 @@ export class LegacySliderBall extends CompositeDrawable
     super.load(dependencies);
 
     this.relativeSizeAxes = Axes.Both;
+
     if (this.sliderb instanceof SkinnableTextureAnimation || (this.sliderb instanceof DrawableSprite && this.sliderb.texture))
     {
       this.internalChildren = [
@@ -55,9 +56,12 @@ export class LegacySliderBall extends CompositeDrawable
 
     watch(this.#allowSliderBallTint, () => this.#updateColors());
 
-    this.accentColor.valueChanged.addListener(this.#updateColors, this, true);
+    this.accentColor.bindValueChanged(this.#updateColors, this, true);
+
+    this.alwaysPresent = true;
 
     this.drawableHitObject.applyCustomUpdateState.addListener(this.#updateStateTransforms, this);
+    this.#updateStateTransforms(this.drawableHitObject);
   }
 
   #updateColors()
@@ -67,19 +71,14 @@ export class LegacySliderBall extends CompositeDrawable
 
   #updateStateTransforms(drawableObject: DrawableHitObject)
   {
-    this.clearTransformsAfter(-Number.MAX_VALUE);
+
+    this.applyTransformsAt(-Number.MAX_VALUE, true);
+    this.clearTransformsAfter(-Number.MAX_VALUE, true);
 
     const slider = drawableObject.hitObject;
 
     this.absoluteSequence(slider.startTime, () => this.fadeIn());
     this.absoluteSequence(slider.endTime, () => this.fadeOut());
-  }
-
-  public override dispose(isDisposing: boolean = true)
-  {
-    super.dispose(isDisposing);
-
-    this.drawableHitObject.applyCustomUpdateState.removeListener(this.#updateStateTransforms, this);
   }
 
   public override updateAfterChildren()
@@ -88,5 +87,12 @@ export class LegacySliderBall extends CompositeDrawable
 
     if (this.#specular)
       this.#specular.rotation = -this.parent!.rotation;
+  }
+
+  public override dispose(isDisposing: boolean = true)
+  {
+    super.dispose(isDisposing);
+
+    this.drawableHitObject.applyCustomUpdateState.removeListener(this.#updateStateTransforms, this);
   }
 }
