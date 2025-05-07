@@ -1,6 +1,6 @@
 {
   "name": "@osucad/core",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -19,7 +19,7 @@
     "!**/*.tsbuildinfo"
   ],
   "dependencies": {
-    "@osucad/framework": "workspace:^",
+    "@osucad/framework": "1.0.0",
     "@vueuse/core": "^13.1.0",
     "async": "^3.2.6",
     "mpg123-decoder": "^1.0.1",
