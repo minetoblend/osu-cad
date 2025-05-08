@@ -8,6 +8,7 @@ import type { HitObjectLifetimeEntry } from "./HitObjectLifetimeEntry";
 import { SyntheticHitObjectEntry } from "./SyntheticHitObjectEntry";
 import { ISkinSource } from "../../../skinning/ISkinSource";
 import { IPooledHitObjectProvider } from "../../ui/IPooledHitObjectProvider";
+import { HitSampleInfo } from "../../../audio/HitSampleInfo";
 
 @provide(DrawableHitObject)
 export abstract class DrawableHitObject<out T extends HitObject = HitObject>
@@ -23,6 +24,8 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
   readonly #state = new Bindable(ArmedState.Idle);
 
   parentHitObject: DrawableHitObject | null = null;
+
+  isInitialized = false;
 
   get state()
   {
@@ -68,7 +71,27 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
 
   get hitStateUpdateTime()
   {
-    return this.hitObject.endTime;
+    return this.result?.timeAbsolute ?? this.hitObject.endTime;
+  }
+
+  get result()
+  {
+    return this.entry?.result ?? null;
+  }
+
+  get isHit()
+  {
+    return this.result?.isHit ?? false;
+  }
+
+  get judged()
+  {
+    return this.entry?.judged ?? false;
+  }
+
+  get allJudged()
+  {
+    return this.entry?.allJudged ?? false;
   }
 
   override get requiresChildrenUpdate(): boolean
@@ -92,6 +115,11 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
   readonly onNestedDrawableCreated = new Action<DrawableHitObject>();
 
   #nestedHitObjects: DrawableHitObject[] = [];
+
+  get nestedHitObjects()
+  {
+    return this.#nestedHitObjects as readonly DrawableHitObject[];
+  }
 
   protected override onApply(entry: HitObjectLifetimeEntry)
   {
@@ -196,7 +224,7 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
     this.applyCustomUpdateState.emit(drawableHitObject, state);
   }
 
-  protected updateState(state: ArmedState, force = false)
+  updateState(state: ArmedState, force = false)
   {
     if (state === this.state && !force)
       return;
@@ -211,17 +239,16 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
 
     this.animationStartTime.value = initialTransformsTime;
 
-    this.absoluteSequence({ time: initialTransformsTime, recursive: true }, () => this.updateInitialTransforms());
-    this.absoluteSequence({ time: this.hitObject.startTime, recursive: true }, () => this.updateStartTimeTransforms());
-    this.absoluteSequence({
-      time: this.hitObject.endTime,
-      recursive: true,
-    }, () => this.updateHitStateTransforms(state));
+    this.absoluteSequence(initialTransformsTime, () => this.updateInitialTransforms());
+    this.absoluteSequence(this.hitObject.startTime, () => this.updateStartTimeTransforms());
+    this.absoluteSequence(this.hitStateUpdateTime, () => this.updateHitStateTransforms(state));
 
     if (this.lifetimeEnd === Number.MAX_VALUE)
       this.lifetimeEnd = Math.max(this.latestTransformEndTime, this.hitObject!.endTime);
 
     this.applyCustomUpdateState.emit(this, state);
+    if (!force && state === ArmedState.Hit)
+      this.playSamples();
   }
 
   #clearExistingStateTransforms()
@@ -275,5 +302,13 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
     super.dispose(isDisposing);
 
     this.skin.sourceChanged.removeListener(this.skinChanged, this);
+  }
+
+  protected playSamples()
+  {
+    const sample = this.skin.getSample(new HitSampleInfo(HitSampleInfo.HIT_NORMAL, HitSampleInfo.BANK_SOFT));
+
+    if (sample)
+      sample.play();
   }
 }

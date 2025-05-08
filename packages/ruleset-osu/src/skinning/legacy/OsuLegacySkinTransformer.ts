@@ -4,7 +4,7 @@ import { computed, type Drawable } from "@osucad/framework";
 import { OsuSkinComponents } from "../OsuSkinComponents";
 import { LegacyApproachCircle } from "./LegacyApproachCircle";
 import { LegacyCirclePiece } from "./LegacyCirclePiece";
-import { LegacyFollowCircle } from "./LegacyFollowCircle";
+import { LegacyFollowCircle } from "./LegacyFollowCircle2";
 import { LegacySliderBall } from "./LegacySliderBall";
 import { LegacySliderBody } from "./LegacySliderBody";
 import { LegacySliderHeadHitCircle } from "./LegacySliderHeadHitCircle";

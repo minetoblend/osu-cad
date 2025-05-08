@@ -1,7 +1,7 @@
 import type { ArmedState, DrawableHitObject } from "@osucad/core";
 import { SkinnableDrawable } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
-import { Anchor, Axes, Bindable, clamp, Container, provide } from "@osucad/framework";
+import { Anchor, Axes, Bindable, BindableBoolean, clamp, Container, provide } from "@osucad/framework";
 import { OsuSkinComponents } from "../../skinning/OsuSkinComponents";
 import type { Slider } from "../Slider";
 import { DrawableOsuHitObject } from "./DrawableOsuHitObject";
@@ -42,6 +42,23 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
   private headContainer!: Container<DrawableSliderHead>;
 
   body!: SkinnableDrawable;
+
+  readonly tracking = new BindableBoolean();
+
+  get sliderHead(): DrawableSliderHead
+  {
+    return this.headContainer.child;
+  }
+
+  get sliderTail(): DrawableSliderTail
+  {
+    return this.tailContainer.child;
+  }
+
+  get repeats()
+  {
+    return this.repeatContainer.children;
+  }
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {

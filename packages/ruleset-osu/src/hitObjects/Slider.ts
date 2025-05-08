@@ -1,5 +1,5 @@
 import type { BeatmapDifficultyInfo, IBeatmapTiming } from "@osucad/core";
-import { safeAssign } from "@osucad/core";
+import { HitWindows, safeAssign } from "@osucad/core";
 import { BindableNumber, Vec2 } from "@osucad/framework";
 import type { OsuHitObjectOptions } from "./OsuHitObject";
 import { OsuHitObject } from "./OsuHitObject";
@@ -192,5 +192,10 @@ export class Slider extends OsuHitObject
         break;
       }
     }
+  }
+
+  protected override createHitWindows()
+  {
+    return HitWindows.Empty;
   }
 }

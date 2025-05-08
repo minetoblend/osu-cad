@@ -1,12 +1,11 @@
-import type { IResourcesProvider } from "@osucad/core";
+import { GameplayClock } from "@osucad/core";
 import { AudioMixer, BeatmapParser, Skin, SkinProvidingContainer } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
 import { AudioManager, Container, resolved, SimpleFileSystem, ZipArchiveFileSystem } from "@osucad/framework";
 import type { StoryDrawable } from "@osucad/storybook-renderer";
-import type { Beatmap } from "@osucad/core";
+import type { Beatmap , IResourcesProvider } from "@osucad/core";
 import { PlayfieldClock } from "@osucad/core";
-import type { StopwatchClock } from "@osucad/framework";
-import { Axes, CompositeDrawable, FramedClock, provide } from "@osucad/framework";
+import { Axes, CompositeDrawable, provide } from "@osucad/framework";
 
 import "../../init";
 
@@ -128,13 +127,11 @@ export class SkinVisualization extends CompositeDrawable
   {
     super.load(dependencies);
 
-    this.gameplayClock.seek(this.startTime);
-
     void this.loadRuleset();
   }
 
   @provide(PlayfieldClock)
-  protected readonly gameplayClock = new LoopingClock();
+  protected readonly gameplayClock = new GameplayClock();
 
   get startTime()
   {
@@ -166,19 +163,8 @@ export class SkinVisualization extends CompositeDrawable
       for (const hitObject of this.beatmap.hitObjects)
         drawableRuleset.addHitObject(hitObject);
     }
-  }
-}
 
-class LoopingClock extends FramedClock
-{
-  constructor()
-  {
-    super();
-  }
-
-  public seek(value: number)
-  {
-    (this.source as StopwatchClock).seek(value);
-    super.currentTime = this.lastFrameTime = value;
+    this.gameplayClock.seek(this.startTime);
+    this.gameplayClock.start();
   }
 }

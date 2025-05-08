@@ -1,5 +1,5 @@
-import { Action } from "@osucad/framework";
 import { LifetimeEntryState } from "./LifetimeEntryState";
+import { Action } from "../../bindables/Action";
 
 export class LifetimeEntry
 {

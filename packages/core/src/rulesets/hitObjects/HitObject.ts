@@ -2,6 +2,8 @@ import type { ValueChangedEvent } from "@osucad/framework";
 import { Action, Bindable } from "@osucad/framework";
 import type { BeatmapDifficultyInfo } from "../../beatmaps/BeatmapDifficultyInfo";
 import type { IBeatmapTiming } from "../../beatmaps/timing/IBeatmapTiming";
+import { HitWindows } from "../scoring/HitWindows";
+import { HitResult } from "../scoring";
 
 export class HitObject
 {
@@ -58,6 +60,8 @@ export class HitObject
 
   protected applyDefaultsToSelf(difficulty: BeatmapDifficultyInfo, timing: IBeatmapTiming)
   {
+    this.hitWindows ??= this.createHitWindows();
+    this.hitWindows.setDifficulty(difficulty.overallDifficulty);
   }
 
   protected createNestedHitObjects()
@@ -75,6 +79,18 @@ export class HitObject
 
     for(const h of this.#nestedHitObjects)
       h.startTime += offset;
+  }
+
+  hitWindows: HitWindows | null = null;
+
+  protected createHitWindows(): HitWindows
+  {
+    return new HitWindows();
+  }
+
+  get maximumJudgementOffset()
+  {
+    return this.hitWindows?.windowFor(HitResult.Miss) ?? 0;
   }
 }
 

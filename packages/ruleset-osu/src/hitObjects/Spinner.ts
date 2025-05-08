@@ -1,7 +1,7 @@
 import { BindableNumber, Vec2 } from "@osucad/framework";
 import type { OsuHitObjectOptions } from "./OsuHitObject";
 import { OsuHitObject } from "./OsuHitObject";
-import { safeAssign } from "@osucad/core";
+import { HitWindows, safeAssign } from "@osucad/core";
 
 const zero_vector = Vec2.zero();
 
@@ -48,5 +48,10 @@ export class Spinner extends OsuHitObject
   override get stackOffset()
   {
     return zero_vector;
+  }
+
+  protected override createHitWindows()
+  {
+    return HitWindows.Empty;
   }
 }

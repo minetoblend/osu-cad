@@ -1,16 +1,17 @@
 import { BeatmapDifficultyInfo, HitObject, type IBeatmapTiming, safeAssign } from "@osucad/core";
 import type { IVec2 } from "@osucad/framework";
 import { Bindable, BindableBoolean, BindableNumber, Vec2 } from "@osucad/framework";
+import { OsuHitWindows } from "../scoring/OsuHitWindows";
 
 export interface OsuHitObjectOptions
 {
-  startTime?: number
-  position?: IVec2
-  x?: number
-  y?: number
-  newCombo?: boolean
-  comboOffset?: number
-  stackHeight?: number
+  startTime?: number;
+  position?: IVec2;
+  x?: number;
+  y?: number;
+  newCombo?: boolean;
+  comboOffset?: number;
+  stackHeight?: number;
 }
 
 export abstract class OsuHitObject extends HitObject
@@ -198,4 +199,9 @@ export abstract class OsuHitObject extends HitObject
   }
 
   // #endregion
+
+  protected override createHitWindows()
+  {
+    return new OsuHitWindows();
+  }
 }

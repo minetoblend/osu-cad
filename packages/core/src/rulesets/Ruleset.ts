@@ -4,6 +4,7 @@ import type { SkinTransformer } from "../skinning/SkinTransformer";
 import type { Awaitable } from "../utils";
 import type { BeatmapPostProcessor } from "./BeatmapPostProcessor";
 import type { DrawableRuleset } from "./ui/DrawableRuleset";
+import type { GameplayProcessor } from "./ui/GameplayProcessor";
 
 export interface Ruleset extends OsucadMixins.Ruleset
 {
@@ -19,4 +20,6 @@ export interface Ruleset extends OsucadMixins.Ruleset
   createSkinTransformer?(skin: Skin): Awaitable<SkinTransformer | null>;
 
   createBeatmapPostProcessor?(): Awaitable<BeatmapPostProcessor>
+
+  createAutoGameplayProcessor?(): Awaitable<GameplayProcessor>
 }

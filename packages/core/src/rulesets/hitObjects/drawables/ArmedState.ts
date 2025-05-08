@@ -1,6 +1,6 @@
 export enum ArmedState
 {
-  Idle,
-  Hit,
-  Miss,
+  Idle = "Idle",
+  Hit = "Hit",
+  Miss = "Miss",
 }

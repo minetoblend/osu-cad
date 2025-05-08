@@ -2,7 +2,7 @@ import type { AudioChannel, AudioManager, IFileSystem, Sample } from "@osucad/fr
 
 export class SkinSampleStore
 {
-  private readonly _extensions = ["mp3", "wav"];
+  private readonly _extensions = ["mp3", "wav", "ogg"];
 
   constructor(
     readonly files: IFileSystem,

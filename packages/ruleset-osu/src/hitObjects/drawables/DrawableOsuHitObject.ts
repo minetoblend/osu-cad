@@ -58,4 +58,8 @@ export abstract class DrawableOsuHitObject<out T extends OsuHitObject = OsuHitOb
   {
     return this.hitObject.timePreempt;
   }
+
+  public shake()
+  {
+  }
 }

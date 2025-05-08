@@ -44,6 +44,8 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
     this.#entryManager.onEntryRemoved.addListener(this.#onEntryRemoved, this);
   }
 
+  readonly hitObjectApplied = new Action<DrawableHitObject>();
+
   @resolved(PlayfieldClock)
   protected playfieldClock!: IFrameBasedClock;
 
@@ -143,6 +145,11 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
     {
       const dho = drawable as DrawableHitObject;
 
+      if (!dho.isInitialized)
+      {
+        this.#onNewDrawableHitObject(dho);
+      }
+
       let entry = this.#entryManager.get(hitObject);
       if (!entry)
       {
@@ -152,7 +159,23 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
 
       dho.parentHitObject = parent ?? null;
       dho.apply(entry);
+
+      this.hitObjectApplied.emit(dho);
     });
+  }
+
+  #onNewDrawableHitObject(d: DrawableHitObject)
+  {
+    d.onNestedDrawableCreated.addListener(this.#onNewDrawableHitObject, this);
+
+    this.onNewDrawableHitObject(d);
+
+    console.assert(!d.isInitialized);
+    d.isInitialized = true;
+  }
+
+  protected onNewDrawableHitObject(drawableHitObject: DrawableHitObject)
+  {
   }
 
   #prepareDrawableHitObjectPool(hitObject: HitObject)

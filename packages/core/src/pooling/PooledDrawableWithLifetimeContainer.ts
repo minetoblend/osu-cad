@@ -1,9 +1,5 @@
-import type { Drawable } from "@osucad/framework";
-import { CompositeDrawable } from "@osucad/framework";
-import { LifetimeBoundaryCrossingDirection } from "./LifetimeBoundaryCrossingDirection";
-import { LifetimeBoundaryKind } from "./LifetimeBoundaryKind";
-import type { LifetimeEntry } from "./LifetimeEntry";
-import { LifetimeEntryManager } from "./LifetimeEntryManager";
+import type { Drawable, LifetimeEntry } from "@osucad/framework";
+import { CompositeDrawable, LifetimeEntryManager, LifetimeBoundaryCrossingDirection, LifetimeBoundaryKind } from "@osucad/framework";
 
 export abstract class PooledDrawableWithLifetimeContainer<TEntry extends LifetimeEntry, TDrawable extends Drawable> extends CompositeDrawable
 {
@@ -20,11 +16,6 @@ export abstract class PooledDrawableWithLifetimeContainer<TEntry extends Lifetim
   get removeRewoundEntries()
   {
     return false;
-  }
-
-  get aliveObjects()
-  {
-    return this.#aliveDrawableMap.values();
   }
 
   #pastLifetimeExtension = 0;

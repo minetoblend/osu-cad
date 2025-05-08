@@ -1,13 +1,13 @@
-import type { HitObject, HitObjectLifetimeEntry } from "@osucad/core";
+import type { DrawableHitObject, HitObject, HitObjectLifetimeEntry } from "@osucad/core";
 import { Playfield } from "@osucad/core";
-import type { ReadonlyDependencyContainer } from "@osucad/framework";
+import { Axes, type Drawable, LifetimeManagementContainer, ProxyDrawable, type ReadonlyDependencyContainer } from "@osucad/framework";
 import { DrawableHitCircle } from "../hitObjects/drawables/DrawableHitCircle";
 import { DrawableSlider } from "../hitObjects/drawables/DrawableSlider";
 import { DrawableSpinner } from "../hitObjects/drawables/DrawableSpinner";
 import { FollowPointRenderer } from "../hitObjects/drawables/FollowPointRenderer";
 import { OsuHitObjectLifetimeEntry } from "../hitObjects/drawables/OsuHitObjectLifetimeEntry";
 import { HitCircle } from "../hitObjects/HitCircle";
-import type  { OsuHitObject } from "../hitObjects/OsuHitObject";
+import type { OsuHitObject } from "../hitObjects/OsuHitObject";
 import { Slider } from "../hitObjects/Slider";
 import { Spinner } from "../hitObjects/Spinner";
 import { SliderHeadCircle } from "../hitObjects/SliderHeadCircle";
@@ -26,6 +26,8 @@ export class OsuPlayfield extends Playfield
     super();
   }
 
+  private approachCircles!: ProxyContainer;
+
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
@@ -41,6 +43,7 @@ export class OsuPlayfield extends Playfield
     this.addRangeInternal([
       this.followPoints = new FollowPointRenderer(),
       this.hitObjectContainer,
+      this.approachCircles = new ProxyContainer({ relativeSizeAxes: Axes.Both }),
     ]);
   }
 
@@ -63,5 +66,26 @@ export class OsuPlayfield extends Playfield
   protected override createLifetimeEntry(hitObject: HitObject): HitObjectLifetimeEntry
   {
     return new OsuHitObjectLifetimeEntry(hitObject as OsuHitObject);
+  }
+
+  protected override onNewDrawableHitObject(drawableHitObject: DrawableHitObject)
+  {
+    drawableHitObject.onLoadComplete.addListener(this.#onDrawableHitObjectLoaded, this);
+  }
+
+  #onDrawableHitObjectLoaded(drawable: Drawable)
+  {
+    if (drawable instanceof DrawableHitCircle)
+    {
+      this.approachCircles.add(new ProxyDrawable(drawable.proxiedLayer));
+    }
+  }
+}
+
+class ProxyContainer extends LifetimeManagementContainer
+{
+  public add(child: Drawable)
+  {
+    return this.addInternal(child);
   }
 }

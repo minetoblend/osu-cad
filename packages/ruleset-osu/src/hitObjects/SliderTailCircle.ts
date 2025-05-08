@@ -1,4 +1,4 @@
-import { safeAssign, type BeatmapDifficultyInfo, type IBeatmapTiming } from "@osucad/core";
+import { type BeatmapDifficultyInfo, HitWindows, type IBeatmapTiming, safeAssign } from "@osucad/core";
 import { HitCircle } from "./HitCircle";
 import type { Slider } from "./Slider";
 import type { OsuHitObjectOptions } from "./OsuHitObject";
@@ -40,5 +40,10 @@ export class SliderTailCircle extends HitCircle
     {
       this.timePreempt += this.startTime - this.slider.startTime;
     }
+  }
+
+  protected override createHitWindows()
+  {
+    return HitWindows.Empty;
   }
 }

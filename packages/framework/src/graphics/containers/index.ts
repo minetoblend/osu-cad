@@ -14,3 +14,4 @@ export { ProxyDrawable } from "./ProxyDrawable";
 export { ScrollbarContainer, ScrollContainer } from "./ScrollContainer";
 export { TabbableContainer } from "./TabbableContainer";
 export { Visibility, VisibilityContainer } from "./VisibilityContainer";
+export * from "./LifetimeManagementContainer";

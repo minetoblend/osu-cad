@@ -1,11 +1,16 @@
 import type { Drawable } from "@osucad/framework";
 import { Action, Axes, Bindable, LoadState, resolved } from "@osucad/framework";
-import type { LifetimeEntry } from "../../pooling/LifetimeEntry";
+import type { LifetimeEntry } from "@osucad/framework";
 import { PooledDrawableWithLifetimeContainer } from "../../pooling/PooledDrawableWithLifetimeContainer";
 import type { DrawableHitObject } from "../hitObjects/drawables/DrawableHitObject";
 import type { HitObjectLifetimeEntry } from "../hitObjects/drawables/HitObjectLifetimeEntry";
 import type { HitObject } from "../hitObjects/HitObject";
 import { IPooledHitObjectProvider } from "./IPooledHitObjectProvider";
+
+function compareStartTime(a: DrawableHitObject, b: DrawableHitObject)
+{
+  return a.hitObject.startTime - b.hitObject.startTime;
+}
 
 export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitObjectLifetimeEntry, DrawableHitObject>
 {
@@ -19,6 +24,16 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
 
   @resolved(IPooledHitObjectProvider, true)
   private pooledObjectProvider?: IPooledHitObjectProvider;
+
+  get objects()
+  {
+    return (this.internalChildren as DrawableHitObject[]).toSorted(compareStartTime);
+  }
+
+  get aliveObjects()
+  {
+    return [...this.aliveEntries.values()].sort(compareStartTime);
+  }
 
   constructor()
   {
@@ -160,6 +175,4 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
 
     super.dispose(isDisposing);
   }
-
-
 }

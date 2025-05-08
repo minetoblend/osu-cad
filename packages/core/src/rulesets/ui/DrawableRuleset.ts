@@ -3,6 +3,7 @@ import { Axes, Container } from "@osucad/framework";
 import type { HitObject } from "../hitObjects/HitObject";
 import type { Playfield } from "./Playfield";
 import type { PlayfieldAdjustmentContainer } from "./PlayfieldAdjustmentContainer";
+import type { GameplayProcessor } from "./GameplayProcessor";
 
 export abstract class DrawableRuleset extends Container
 {
@@ -18,15 +19,29 @@ export abstract class DrawableRuleset extends Container
     super.load(dependencies);
 
     this.addInternal(
-        this.createPlayfieldAdjustmentContainer().with({
-          children: [
-            this.playfield = this.createPlayfield(),
-          ],
-        }),
+        this.playfieldContainer = this.createPlayfieldAdjustmentContainer()
+          .with({
+            children: [
+              this.playfield = this.createPlayfield(),
+            ],
+          }),
     );
+
+    this.gameplayProcessor = this.createGameplayProcessor(this.playfield);
+    if (this.gameplayProcessor)
+      this.playfieldContainer.add(this.gameplayProcessor.with({ depth: Number.MAX_VALUE }));
   }
 
   playfield!: Playfield;
+
+  playfieldContainer!: PlayfieldAdjustmentContainer;
+
+  protected gameplayProcessor: GameplayProcessor | null = null;
+
+  protected createGameplayProcessor(playfield: Playfield): GameplayProcessor | null
+  {
+    return null;
+  }
 
   protected abstract createPlayfieldAdjustmentContainer(): PlayfieldAdjustmentContainer;
 

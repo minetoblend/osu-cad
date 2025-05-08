@@ -1,3 +1,4 @@
+import { ArmedState } from "@osucad/core";
 import { DrawableHitObject, ISkinSource } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
 import { Anchor, Axes, Bindable, CompositeDrawable, Container, DrawableSprite, EasingFunction, resolved, watch, withEffectScope } from "@osucad/framework";
@@ -72,27 +73,32 @@ export class LegacyCirclePiece extends CompositeDrawable
   {
     super.loadComplete();
 
-    this.drawableHitObject.applyCustomUpdateState.addListener(this.applyCustomState, this);
-    this.applyCustomState();
+    this.drawableHitObject.applyCustomUpdateState.addListener(this.updateStateTransforms, this);
+    this.updateStateTransforms(this.drawableHitObject, this.drawableHitObject.state);
 
     this.accentColor.bindTo(this.drawableHitObject.accentColor);
     this.accentColor.bindValueChanged(color => this.circleSprite.color = color.value, true);
   }
 
-  private applyCustomState()
+  private updateStateTransforms(drawable: DrawableHitObject, state: ArmedState)
   {
     this.applyTransformsAt(-Number.MAX_VALUE, true);
     this.clearTransformsAfter(-Number.MAX_VALUE, true);
 
     this.absoluteSequence({ time: this.drawableHitObject.hitStateUpdateTime, recursive: true }, () =>
     {
-      this.circleSprite.fadeOut(240);
-      this.circleSprite.scaleTo(1.4, 240, EasingFunction.Out);
+      switch (state)
+      {
+      case ArmedState.Hit:
+        this.circleSprite.fadeOut(240);
+        this.circleSprite.scaleTo(1.4, 240, EasingFunction.Out);
 
-      this.overlaySprite.fadeOutFromOne(240);
-      this.overlaySprite.scaleTo(1.4, 240, EasingFunction.Out);
+        this.overlaySprite.fadeOutFromOne(240);
+        this.overlaySprite.scaleTo(1.4, 240, EasingFunction.Out);
 
-      this.comboNumber?.fadeOut(50);
+        this.comboNumber?.fadeOut(50);
+        break;
+      }
     });
   }
 
@@ -100,6 +106,6 @@ export class LegacyCirclePiece extends CompositeDrawable
   {
     super.dispose(isDisposing);
 
-    this.drawableHitObject.applyCustomUpdateState.removeListener(this.applyCustomState, this);
+    this.drawableHitObject.applyCustomUpdateState.removeListener(this.updateStateTransforms, this);
   }
 }

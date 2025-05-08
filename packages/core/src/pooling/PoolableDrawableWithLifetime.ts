@@ -1,4 +1,4 @@
-import type { LifetimeEntry } from "./LifetimeEntry";
+import type { LifetimeEntry } from "@osucad/framework";
 import { LoadState, PoolableDrawable } from "@osucad/framework";
 
 export abstract class PoolableDrawableWithLifetime<TEntry extends LifetimeEntry> extends PoolableDrawable

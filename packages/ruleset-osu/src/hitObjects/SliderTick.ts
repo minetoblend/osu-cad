@@ -1,4 +1,4 @@
-import { safeAssign } from "@osucad/core";
+import { HitWindows, safeAssign } from "@osucad/core";
 import type { OsuHitObjectOptions } from "./OsuHitObject";
 import { OsuHitObject } from "./OsuHitObject";
 
@@ -24,5 +24,10 @@ export class SliderTick extends OsuHitObject
     super(rest);
 
     safeAssign(this, { spanIndex, spanStartTime, pathProgress });
+  }
+
+  protected override createHitWindows()
+  {
+    return HitWindows.Empty;
   }
 }
