@@ -1,14 +1,14 @@
 import type { LifetimeEntry } from "./LifetimeEntry";
-import { Action, List, SortedList } from "@osucad/framework";
+import { Action, SortedList } from "@osucad/framework";
 import { LifetimeBoundaryCrossingDirection } from "./LifetimeBoundaryCrossingDirection";
 import { LifetimeBoundaryKind } from "./LifetimeBoundaryKind";
 import { LifetimeEntryState } from "./LifetimeEntryState";
 
 export class LifetimeEntryManager
 {
-  #newEntries = new List<LifetimeEntry>(0);
+  #newEntries= new Set<LifetimeEntry>();
 
-  #activeEntries = new List<LifetimeEntry>(0);
+  #activeEntries = new Set<LifetimeEntry>();
 
   get activeEntries()
   {
@@ -45,7 +45,7 @@ export class LifetimeEntryManager
     entry.childId = ++this.#currentChildId;
     entry.state = LifetimeEntryState.New;
 
-    this.#newEntries.push(entry);
+    this.#newEntries.add(entry);
   }
 
   removeEntry(entry: LifetimeEntry)
@@ -56,11 +56,11 @@ export class LifetimeEntryManager
     switch (entry.state)
     {
     case LifetimeEntryState.New:
-      removed = this.#newEntries.remove(entry);
+      removed = this.#newEntries.delete(entry);
       break;
 
     case LifetimeEntryState.Current:
-      removed = this.#activeEntries.remove(entry);
+      removed = this.#activeEntries.delete(entry);
 
       if (removed)
         this.entryBecameDead.emit(entry);
@@ -69,12 +69,12 @@ export class LifetimeEntryManager
 
     case LifetimeEntryState.Past:
       // Past entries may be found in the newEntries set after a lifetime change (see requestLifetimeUpdate).
-      removed = this.#pastEntries.remove(entry) || this.#newEntries.remove(entry);
+      removed = this.#pastEntries.remove(entry) || this.#newEntries.delete(entry);
       break;
 
     case LifetimeEntryState.Future:
       // Future entries may be found in the newEntries set after a lifetime change (see requestLifetimeUpdate).
-      removed = this.#futureEntries.remove(entry) || this.#newEntries.remove(entry);
+      removed = this.#futureEntries.remove(entry) || this.#newEntries.delete(entry);
       break;
     }
 
@@ -121,7 +121,7 @@ export class LifetimeEntryManager
     if (futureOrPastSet?.remove(entry))
     {
       // Enqueue the entry to be processed in the next Update().
-      this.#newEntries.push(entry);
+      this.#newEntries.add(entry);
     }
   };
 
@@ -185,7 +185,11 @@ export class LifetimeEntryManager
         aliveEntriesChanged = true;
     }
 
-    this.#activeEntries.removeAll(e => e.state !== LifetimeEntryState.Current);
+    for (const e of this.#activeEntries)
+    {
+      if (e.state !== LifetimeEntryState.Current)
+        this.#activeEntries.delete(e);
+    }
 
     while (this.#eventQueue.length !== 0)
     {
@@ -228,7 +232,7 @@ export class LifetimeEntryManager
     if (newState === LifetimeEntryState.Current)
     {
       if (mutateActiveEntries)
-        this.#activeEntries.push(entry);
+        this.#activeEntries.add(entry);
 
       this.entryBecameAlive.emit(entry);
       aliveEntriesChanged = true;
@@ -236,7 +240,7 @@ export class LifetimeEntryManager
     else if (oldState === LifetimeEntryState.Current)
     {
       if (mutateActiveEntries)
-        this.#activeEntries.remove(entry);
+        this.#activeEntries.delete(entry);
 
       this.entryBecameDead.emit(entry);
       aliveEntriesChanged = true;

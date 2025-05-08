@@ -17,13 +17,20 @@ export class SkinnableDrawable extends CompositeDrawable
   {
     super.loadAsyncComplete();
 
-    this.skin.sourceChanged.addListener(this.#skinChanged, this);
     this.updateContent();
+  }
+
+  protected override loadComplete()
+  {
+    super.loadComplete();
+
+    this.skin.sourceChanged.addListener(this.#skinChanged, this);
   }
 
   #skinChanged()
   {
-    this.scheduler.addOnce(this.onSkinChanged, this);
+    // this.scheduler.addOnce(this.onSkinChanged, this);
+    this.onSkinChanged();
   }
 
   protected onSkinChanged()

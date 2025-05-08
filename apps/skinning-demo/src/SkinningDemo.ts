@@ -7,6 +7,7 @@ import { Color } from "pixi.js";
 import oskFile from "./skin.osk?url";
 import { SkinVisualization } from "./SkinVisualization";
 import osufile from "./test.osu?raw";
+import { PerformanceOverlay } from "./PerformanceOverlay";
 
 export class SkinningDemo extends OsucadGameBase
 {
@@ -34,20 +35,6 @@ export class SkinningDemo extends OsucadGameBase
     skin.config.set("sliderBorder", new Color("rgb(255,181,102)"));
     skin.config.set("sliderTrackOverride", new Color("rgb(35,24,11)"));
 
-    setInterval(() =>
-    {
-      skin.config.set("sliderBorder", new Color([
-        Math.random(),
-        Math.random(),
-        Math.random(),
-      ]));
-      skin.config.set("sliderTrackOverride", new Color([
-        Math.random(),
-        Math.random(),
-        Math.random(),
-      ]));
-    }, 1000);
-
     skin.config.comboColors = [
       new Color("rgb(255,198,138)"),
       new Color("rgb(196,196,196)"),
@@ -60,5 +47,7 @@ export class SkinningDemo extends OsucadGameBase
       skin: osuSkin ?? skin,
       child: new SkinVisualization(beatmap),
     }));
+
+    this.add(new PerformanceOverlay());
   }
 }

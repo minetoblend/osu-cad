@@ -29,7 +29,7 @@ export class LegacyComboNumber extends CompositeDrawable
 
     watch([this.hitCircleOverlap, this.prefix], () => this.generateObjects());
 
-    this.indexInComboBindable.addOnChangeListener(e => this.comboNumber = e.value + 1, { immediate: true });
+    this.indexInComboBindable.bindValueChanged(e => this.comboNumber = e.value + 1, true);
   }
 
   #comboNumber = 1;
@@ -58,13 +58,17 @@ export class LegacyComboNumber extends CompositeDrawable
     const digits: DrawableSprite[] = [];
     let number = this.#comboNumber;
 
+    const children = this.internalChildren;
+
+    let i = 0;
+
     while (number > 0)
     {
       const currentDigit = number % 10;
       number = Math.floor(number / 10);
 
       digits.unshift(
-          new DrawableSprite({
+          (children[i++] as DrawableSprite) ?? new DrawableSprite({
             texture: this.skin.getTexture(`${this.prefix.value}-${currentDigit}`),
             origin: Anchor.Center,
             anchor: Anchor.Center,
@@ -72,7 +76,14 @@ export class LegacyComboNumber extends CompositeDrawable
       );
     }
 
-    this.addAllInternal(...digits);
+    if (digits.length > children.length)
+      this.addRangeInternal(digits.slice(children.length));
+    else if (digits.length < children.length)
+    {
+      const count = children.length - digits.length;
+      for (let i = 0; i < count; i++)
+        this.removeInternal(children[children.length - 1]);
+    }
 
     let totalWidth = digits.reduce((acc, digit) => acc + digit.drawWidth, 0);
 

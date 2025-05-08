@@ -144,10 +144,10 @@ export abstract class GameHost
       this.render();
       FrameStatistics.frame.stop(startTime);
       this.afterRender.emit();
+
       await new Promise((resolve) =>
       {
         requestAnimationFrame(resolve);
-        setTimeout(resolve, 100);
       });
     }
 

@@ -82,8 +82,6 @@ export class SkinProvidingContainer extends Container implements ISkinSource
     super.loadComplete();
 
     watch(this.activeSkin, () => this.#skinChanged());
-
-    setInterval(() => this.#skinChanged(), 1000);
   }
 
   readonly sourceChanged = new Action();
