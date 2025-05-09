@@ -1,13 +1,19 @@
-import { ArmedState, HitSampleInfo, ShakeContainer, SkinnableDrawable } from "@osucad/core";
-import type { ReadonlyDependencyContainer } from "@osucad/framework";
-import { Anchor, Axes } from "@osucad/framework";
+import { ArmedState, HitResult, HitSampleInfo, ShakeContainer, SkinnableDrawable } from "@osucad/core";
+import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer } from "@osucad/framework";
+import { Anchor, Axes, CompositeDrawable } from "@osucad/framework";
 import { OsuSkinComponents } from "../../skinning/OsuSkinComponents";
 import type { HitCircle } from "../HitCircle";
 import { OsuHitObject } from "../OsuHitObject";
 import { DrawableOsuHitObject } from "./DrawableOsuHitObject";
+import { OsuAction } from "../../ui/OsuAction";
 
 export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
 {
+  get hitAction()
+  {
+    return this.hitArea.hitAction;
+  }
+
   constructor(initialHitObject?: HitCircle)
   {
     super(initialHitObject);
@@ -18,6 +24,7 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
   private circlePiece!: SkinnableDrawable;
   private approachCircle!: SkinnableDrawable;
   private shakeContainer!: ShakeContainer;
+  private hitArea!: HitReceptor;
 
   get proxiedLayer()
   {
@@ -31,6 +38,10 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
     this.size = OsuHitObject.OBJECT_DIMENSIONS;
 
     this.internalChildren = [
+      this.hitArea = new HitReceptor(
+          () => !this.allJudged,
+          () => this.updateResult(true),
+      ),
       this.shakeContainer = new ShakeContainer({
         shakeDuration: 30,
         relativeSizeAxes: Axes.Both,
@@ -58,6 +69,9 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
 
   protected override updateInitialTransforms()
   {
+    // TODO: figure out why we need this
+    this.alpha = 1;
+
     this.circlePiece.fadeInFromZero(this.hitObject.timeFadeIn);
 
     this.approachCircle.fadeTo(0.9, Math.min(this.hitObject.timeFadeIn * 2, this.hitObject.timePreempt));
@@ -124,6 +138,33 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
     if (sample)
       sample.play();
   }
+
+  protected override checkForResult(userTriggered: boolean, timeOffset: number)
+  {
+    super.checkForResult(userTriggered, timeOffset);
+
+    if (!userTriggered)
+    {
+      if (!this.hitObject.hitWindows!.canBeHit(timeOffset))
+      {
+        this.applyMinResult();
+      }
+
+      return;
+    }
+
+    const result = this.resultFor(timeOffset);
+
+    if (result === HitResult.None)
+      return;
+
+    this.applyResult(result);
+  }
+
+  protected resultFor(timeOffset: number)
+  {
+    return this.hitObject.hitWindows!.resultFor(timeOffset);
+  }
 }
 
 class ProxyableSkinnableDrawable extends SkinnableDrawable
@@ -131,5 +172,63 @@ class ProxyableSkinnableDrawable extends SkinnableDrawable
   override get removeWhenNotAlive()
   {
     return false;
+  }
+}
+
+class HitReceptor extends CompositeDrawable implements IKeyBindingHandler<OsuAction>
+{
+  hitAction: OsuAction | null = null;
+
+  constructor(
+    readonly canBeHit: () => boolean,
+    readonly hit: () => void,
+  )
+  {
+    super();
+
+    this.size = OsuHitObject.OBJECT_DIMENSIONS;
+
+    this.anchor = Anchor.Center;
+    this.origin = Anchor.Center;
+
+    this.cornerExponent = 2;
+    this.cornerRadius = OsuHitObject.OBJECT_RADIUS;
+  }
+
+  readonly isKeyBindingHandler = true;
+
+  override get handlePositionalInput(): boolean
+  {
+    return true;
+  }
+
+  canHandleKeyBinding(binding: KeyBindingAction): boolean
+  {
+    return binding instanceof OsuAction;
+  }
+
+  onKeyBindingPressed(e: KeyBindingPressEvent<OsuAction>): boolean
+  {
+    if (!this.canBeHit())
+      return false;
+
+    switch (e.pressed)
+    {
+    case OsuAction.LeftButton:
+    case OsuAction.RightButton:
+      if (this.isHovered)
+      {
+        this.hit();
+        this.hitAction ??= e.pressed;
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  reset()
+  {
+    this.hitAction = null;
   }
 }

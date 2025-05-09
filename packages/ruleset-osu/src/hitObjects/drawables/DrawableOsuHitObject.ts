@@ -1,6 +1,7 @@
 import { DrawableHitObject, IComboNumberReference } from "@osucad/core";
 import { Bindable, provide, Vec2 } from "@osucad/framework";
 import type { OsuHitObject } from "../OsuHitObject";
+import { OsuInputManager } from "../../ui/OsuInputManager";
 
 @provide(IComboNumberReference)
 export abstract class DrawableOsuHitObject<out T extends OsuHitObject = OsuHitObject>
@@ -45,6 +46,11 @@ export abstract class DrawableOsuHitObject<out T extends OsuHitObject = OsuHitOb
     this.indexInComboBindable.bindValueChanged(() => this.scheduler.addOnce(this.updateComboColor, this));
   }
 
+  protected override loadComplete()
+  {
+    super.loadComplete();
+  }
+
   protected abstract updatePosition(): void;
 
   protected abstract updateScale(scale: number): void;
@@ -59,7 +65,32 @@ export abstract class DrawableOsuHitObject<out T extends OsuHitObject = OsuHitOb
     return this.hitObject.timePreempt;
   }
 
-  public shake()
+  public override shake()
   {
   }
+
+  hitForcefully()
+  {
+    this.applyMaxResult();
+  }
+
+  missForcefully()
+  {
+    this.applyMinResult();
+  }
+
+  #osuActionInputManager: OsuInputManager | null = null;
+
+  get osuActionInputManager()
+  {
+    if (!this.#osuActionInputManager)
+    {
+      const inputManager = this.getContainingInputManager();
+      if (inputManager instanceof OsuInputManager)
+        this.#osuActionInputManager = inputManager;
+    }
+
+    return this.#osuActionInputManager;
+  }
+
 }

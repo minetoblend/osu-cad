@@ -1,5 +1,5 @@
-import type { ReadonlyDependencyContainer } from "@osucad/framework";
-import { Axes, Container } from "@osucad/framework";
+import type { PassThroughInputManager, ReadonlyDependencyContainer } from "@osucad/framework";
+import { Axes, Container, Lazy } from "@osucad/framework";
 import type { HitObject } from "../hitObjects/HitObject";
 import type { Playfield } from "./Playfield";
 import type { PlayfieldAdjustmentContainer } from "./PlayfieldAdjustmentContainer";
@@ -12,31 +12,37 @@ export abstract class DrawableRuleset extends Container
     super({
       relativeSizeAxes: Axes.Both,
     });
+
+    this.keybindingInputManager = this.createInputManager();
+    this.#playfieldAdjustmentContainer = this.createPlayfieldAdjustmentContainer();
+    this.#playfield = new Lazy(() => this.createPlayfield().adjust(p =>
+    {
+      // TODO
+    }));
   }
+
+  readonly #playfieldAdjustmentContainer: PlayfieldAdjustmentContainer;
+  readonly #playfield: Lazy<Playfield>;
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
 
-    this.addInternal(
-        this.playfieldContainer = this.createPlayfieldAdjustmentContainer()
-          .with({
-            children: [
-              this.playfield = this.createPlayfield(),
-            ],
-          }),
-    );
-
-    this.gameplayProcessor = this.createGameplayProcessor(this.playfield);
-    if (this.gameplayProcessor)
-      this.playfieldContainer.add(this.gameplayProcessor.with({ depth: Number.MAX_VALUE }));
+    this.internalChild = this.keybindingInputManager.with({
+      child: this.#playfieldAdjustmentContainer.with({
+        child: this.playfield,
+      }),
+    });
   }
 
-  playfield!: Playfield;
+  get playfield()
+  {
+    return this.#playfield.value;
+  }
 
-  playfieldContainer!: PlayfieldAdjustmentContainer;
+  keybindingInputManager: PassThroughInputManager;
 
-  protected gameplayProcessor: GameplayProcessor | null = null;
+  protected abstract createInputManager(): PassThroughInputManager;
 
   protected createGameplayProcessor(playfield: Playfield): GameplayProcessor | null
   {

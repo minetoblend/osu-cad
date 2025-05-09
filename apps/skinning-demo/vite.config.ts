@@ -15,9 +15,9 @@ export default defineConfig(() => ({
     port: 4200,
     host: "localhost",
   },
-  preview:{
-    port: 4300,
-    host: "localhost",
+  preview: {
+    port: 80,
+    host: "0.0.0.0",
   },
   plugins: [ConditionalCompile()],
   worker: {

@@ -27,6 +27,9 @@ export abstract class FollowCircle extends CompositeDrawable
     this.tracking.bindTo(this.parentObject.tracking);
     this.tracking.bindValueChanged(tracking =>
     {
+      if (this.parentObject.judged)
+        return;
+
       this.absoluteSequence(Math.max(this.time.current, this.parentObject.hitObject?.startTime ?? 0), () =>
       {
         if (tracking.value)
@@ -34,7 +37,7 @@ export abstract class FollowCircle extends CompositeDrawable
         else
           this.onSliderRelease();
       });
-    });
+    }, true);
   }
 
   protected override loadComplete()

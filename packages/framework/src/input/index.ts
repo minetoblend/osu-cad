@@ -10,9 +10,8 @@ export { PassThroughInputManager } from "./PassThroughInputManager";
 
 export { PlatformAction } from "./PlatformAction";
 export { PlatformActionContainer } from "./PlatformActionContainer";
-export { InputKey } from "./state/InputKey";
-export { Key } from "./state/Key";
-export { MouseButton } from "./state/MouseButton";
+export * from "./state";
+export * from "./stateChanges";
 
 export { type ISourcedFromTouch, isSourcedFromTouch } from "./stateChanges/ISourcedFromTouch";
 export { TextInputSource } from "./TextInputSource";

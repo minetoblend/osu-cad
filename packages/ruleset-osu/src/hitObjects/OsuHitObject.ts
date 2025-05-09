@@ -1,7 +1,9 @@
+import type { Judgement } from "@osucad/core";
 import { BeatmapDifficultyInfo, HitObject, type IBeatmapTiming, safeAssign } from "@osucad/core";
 import type { IVec2 } from "@osucad/framework";
 import { Bindable, BindableBoolean, BindableNumber, Vec2 } from "@osucad/framework";
 import { OsuHitWindows } from "../scoring/OsuHitWindows";
+import { OsuJudgement } from "../judgements/OsuJudgement";
 
 export interface OsuHitObjectOptions
 {
@@ -138,6 +140,11 @@ export abstract class OsuHitObject extends HitObject
     this.scaleBindable.value = value;
   }
 
+  get radius()
+  {
+    return OsuHitObject.OBJECT_RADIUS * this.scale;
+  }
+
   override applyDefaults(difficulty: BeatmapDifficultyInfo, timing: IBeatmapTiming)
   {
     super.applyDefaults(difficulty, timing);
@@ -189,7 +196,6 @@ export abstract class OsuHitObject extends HitObject
 
   get endPosition()
   {
-    // TODO
     return this.position;
   }
 
@@ -203,5 +209,10 @@ export abstract class OsuHitObject extends HitObject
   protected override createHitWindows()
   {
     return new OsuHitWindows();
+  }
+
+  override createJudgement(): Judgement
+  {
+    return new OsuJudgement();
   }
 }

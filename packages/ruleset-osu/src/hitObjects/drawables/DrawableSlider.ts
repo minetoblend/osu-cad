@@ -1,7 +1,8 @@
 import type { ArmedState, DrawableHitObject } from "@osucad/core";
+import { HitResult, ShakeContainer } from "@osucad/core";
 import { SkinnableDrawable } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
-import { Anchor, Axes, Bindable, BindableBoolean, clamp, Container, provide } from "@osucad/framework";
+import { Anchor, Axes, Bindable, BindableBoolean, clamp, Container, provide, ProxyDrawable } from "@osucad/framework";
 import { OsuSkinComponents } from "../../skinning/OsuSkinComponents";
 import type { Slider } from "../Slider";
 import { DrawableOsuHitObject } from "./DrawableOsuHitObject";
@@ -11,13 +12,18 @@ import { PlaySliderBody } from "./PlaySliderBody";
 import { DrawableSliderTail } from "./DrawableSliderTail";
 import { DrawableSliderRepeat } from "./DrawableSliderRepeat";
 import { DrawableSliderTick } from "./DrawableSliderTick";
+import { SliderInputManager } from "./SliderInputManager";
 
 @provide(DrawableSlider)
 export class DrawableSlider extends DrawableOsuHitObject<Slider>
 {
+  readonly sliderInputManager: SliderInputManager;
+
   constructor()
   {
     super();
+
+    this.sliderInputManager = new SliderInputManager(this);
 
     this.origin = Anchor.Center;
 
@@ -27,7 +33,7 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
     this.ball.bypassAutoSizeAxes = Axes.Both;
   }
 
-  readonly snakingIn = new Bindable(false);
+  readonly snakingIn = new Bindable(true);
   readonly snakingOut = new Bindable(false);
 
   readonly pathVersion = new Bindable(-1);
@@ -40,6 +46,7 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
   private tickContainer!: Container<DrawableSliderTick>;
   private repeatContainer!: Container<DrawableSliderRepeat>;
   private headContainer!: Container<DrawableSliderHead>;
+  private shakeContainer!: ShakeContainer;
 
   body!: SkinnableDrawable;
 
@@ -64,11 +71,21 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
   {
     super.load(dependencies);
 
+    this.tailContainer = new Container({ relativeSizeAxes: Axes.Both });
+
     this.internalChildren = [
-      this.body = new SkinnableDrawable(OsuSkinComponents.SliderBody),
-      this.tailContainer = new Container({ relativeSizeAxes: Axes.Both }),
-      this.tickContainer =  new Container({ relativeSizeAxes: Axes.Both }),
-      this.repeatContainer = new Container({ relativeSizeAxes: Axes.Both }),
+      this.sliderInputManager,
+      this.shakeContainer = new ShakeContainer({
+        shakeDuration: 30,
+        relativeSizeAxes: Axes.Both,
+        children: [
+          this.body = new SkinnableDrawable(OsuSkinComponents.SliderBody),
+          new ProxyDrawable(this.tailContainer),
+          this.tickContainer =  new Container({ relativeSizeAxes: Axes.Both }),
+          this.repeatContainer = new Container({ relativeSizeAxes: Axes.Both }),
+          this.tailContainer,
+        ],
+      }),
       this.headContainer = new Container({ relativeSizeAxes: Axes.Both }),
       this.overlayElementContainer = new Container({ relativeSizeAxes: Axes.Both }),
       this.ball,
@@ -147,6 +164,13 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
     return null;
   }
 
+  override update()
+  {
+    super.update();
+
+    this.tracking.value = this.sliderInputManager.tracking;
+  }
+
   public override updateAfterChildren()
   {
     super.updateAfterChildren();
@@ -182,5 +206,47 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
 
     this.fadeOut(240);
     this.expire();
+  }
+
+  protected override playSamples()
+  {
+  }
+
+  override shake()
+  {
+    this.shakeContainer.shake();
+  }
+
+  protected override checkForResult(userTriggered: boolean, timeOffset: number)
+  {
+    if (userTriggered || !this.sliderTail.judged || this.time.current < this.hitObject.endTime)
+      return;
+
+    const classicSliderBehavior = false; // TODO
+    if (classicSliderBehavior)
+    {
+      this.applyResult((r) =>
+      {
+        const totalTicks = this.nestedHitObjects.length;
+        const hitTicks = this.nestedHitObjects.filter(h => h.isHit).length;
+
+        if (hitTicks === totalTicks)
+          r.type = HitResult.Great;
+        else if (hitTicks == 0)
+          r.type = HitResult.Miss;
+        else
+        {
+          const hitFraction = hitTicks / totalTicks;
+          r.type = hitFraction >= 0.5 ? HitResult.Ok : HitResult.Meh;
+        }
+      });
+    }
+    else
+    {
+      this.applyResult(r =>
+      {
+        r.type = this.nestedHitObjects.some(h => h.result!.isHit) ? r.judgement.maxResult : r.judgement.minResult;
+      });
+    }
   }
 }

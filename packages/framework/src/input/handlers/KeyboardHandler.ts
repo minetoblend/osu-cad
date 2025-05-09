@@ -100,6 +100,8 @@ export class KeyboardHandler extends InputHandler
 
   #shouldPreventDefault(event: KeyboardEvent): boolean
   {
+    return false;
+
     // We generally don't want to prevent the default behavior if there is active text input
     if (this.#textInputSource.isActive)
     {

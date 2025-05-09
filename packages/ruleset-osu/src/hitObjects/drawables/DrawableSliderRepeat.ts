@@ -152,4 +152,9 @@ export class DrawableSliderRepeat extends DrawableOsuHitObject<SliderRepeat>
       this.arrow.rotation = Interpolation.valueAt(clamp(this.clock!.elapsedFrameTime, 0, 100), this.arrow.rotation, aimRotation, 0, 50, EasingFunction.OutQuint);
     }
   }
+
+  protected override checkForResult(userTriggered: boolean, timeOffset: number)
+  {
+    this.drawableSlider?.sliderInputManager.tryJudgeNestedObject(this, timeOffset);
+  }
 }

@@ -2,6 +2,7 @@ import { OsuSkinComponents } from "../../skinning/OsuSkinComponents";
 import { DrawableHitCircle } from "./DrawableHitCircle";
 import { DrawableSlider } from "./DrawableSlider";
 import type { SliderHeadCircle } from "../SliderHeadCircle";
+import { HitResult } from "@osucad/core";
 
 export class DrawableSliderHead extends DrawableHitCircle
 {
@@ -9,6 +10,8 @@ export class DrawableSliderHead extends DrawableHitCircle
   {
     super(initialHitObject);
   }
+
+  classicSliderBehavior = false;
 
   get drawableSlider(): DrawableSlider | null
   {
@@ -24,4 +27,26 @@ export class DrawableSliderHead extends DrawableHitCircle
 
   protected override updatePosition()
   {}
+
+  protected override resultFor(timeOffset: number): HitResult
+  {
+    if (this.classicSliderBehavior)
+    {
+      return super.resultFor(timeOffset) ? HitResult.LargeTickHit : HitResult.LargeTickMiss;
+    }
+
+    return super.resultFor(timeOffset);
+  }
+
+  protected override checkForResult(userTriggered: boolean, timeOffset: number)
+  {
+    super.checkForResult(userTriggered, timeOffset);
+    this.drawableSlider?.sliderInputManager.postProcessHeadJudgement(this);
+  }
+
+  override shake()
+  {
+    super.shake();
+    this.drawableSlider?.shake();
+  }
 }

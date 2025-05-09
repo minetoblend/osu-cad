@@ -17,4 +17,9 @@ export class DrawableSliderTick extends DrawableOsuHitObject<SliderTick>
   {
     this.scale = scale;
   }
+
+  protected override checkForResult(userTriggered: boolean, timeOffset: number)
+  {
+    // this.drawableSlider?.sliderInputManager.tryJudgeNestedObject(this, timeOffset);
+  }
 }

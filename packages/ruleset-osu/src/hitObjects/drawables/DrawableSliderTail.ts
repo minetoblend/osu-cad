@@ -61,4 +61,9 @@ export class DrawableSliderTail extends DrawableOsuHitObject<SliderTailCircle>
 
     this.delay(800).fadeOut();
   }
+
+  protected override checkForResult(userTriggered: boolean, timeOffset: number)
+  {
+    this.drawableSlider?.sliderInputManager.tryJudgeNestedObject(this, timeOffset);
+  }
 }

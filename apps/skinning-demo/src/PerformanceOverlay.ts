@@ -1,4 +1,4 @@
-import { Anchor, Axes, Container, SpriteText } from "@osucad/framework";
+import { Anchor, Axes, Bindable, Container, EasingFunction, SpriteText } from "@osucad/framework";
 
 export class PerformanceOverlay extends Container
 {
@@ -24,18 +24,26 @@ export class PerformanceOverlay extends Container
 
   lastFrame = 0;
 
+  fps = new Bindable(0);
+
+  fpsInterpolated = new Bindable(0);
+
+  protected override loadComplete()
+  {
+    super.loadComplete();
+
+    this.fps.bindValueChanged((fps) =>
+    {
+      this.transformBindableTo(this.fpsInterpolated, fps.value, 300, EasingFunction.OutExpo);
+    });
+  }
+
   override update()
   {
     super.update();
 
-    const now = performance.now();
+    this.fps.value = this.clock!.framesPerSecond;
 
-    const frameTime = now- this.lastFrame;
-
-    this.lastFrame = now;
-
-    const fps = 1000 / frameTime;
-
-    this.fpsText.text = `${frameTime.toFixed(1)}ms (${fps.toFixed(0)}fps)`;
+    this.fpsText.text = `${this.clock!.elapsedFrameTime.toFixed(1)}ms (${this.fpsInterpolated.value.toFixed(0)}fps)`;
   }
 }

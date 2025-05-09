@@ -8,6 +8,7 @@ import { IPooledHitObjectProvider } from "./IPooledHitObjectProvider";
 import { PlayfieldClock } from "./PlayfieldClock";
 import type { HitObjectEntryManagerEvent } from "../../pooling/HitObjectEntryManager";
 import { HitObjectEntryManager } from "../../pooling/HitObjectEntryManager";
+import type { JudgementResult } from "../judgements/JudgementResult";
 
 @provide(IPooledHitObjectProvider)
 @provide(Playfield)
@@ -17,10 +18,13 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
 
   readonly hitObjectUsageFinished = new Action<HitObject>();
 
+  readonly newResult = new Action<[DrawableHitObject, JudgementResult]>();
+
   readonly #hitObjectContainer = new Lazy(() =>
   {
     const container = this.createHitObjectContainer();
 
+    container.newResult.addListener(this.#onNewResult, this);
     container.hitObjectUsageBegan.addListener(hitObject => this.hitObjectUsageBegan.emit(hitObject));
     container.hitObjectUsageFinished.addListener(hitObject => this.hitObjectUsageFinished.emit(hitObject));
 
@@ -68,6 +72,11 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
   protected createHitObjectContainer(): HitObjectContainer
   {
     return new HitObjectContainer();
+  }
+
+  #onNewResult(hitObject: DrawableHitObject, result: JudgementResult)
+  {
+    this.newResult.emit(hitObject, result);
   }
 
   addHitObject(hitObject: HitObject)

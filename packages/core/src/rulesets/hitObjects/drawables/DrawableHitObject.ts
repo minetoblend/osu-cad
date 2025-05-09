@@ -9,6 +9,9 @@ import { SyntheticHitObjectEntry } from "./SyntheticHitObjectEntry";
 import { ISkinSource } from "../../../skinning/ISkinSource";
 import { IPooledHitObjectProvider } from "../../ui/IPooledHitObjectProvider";
 import { HitSampleInfo } from "../../../audio/HitSampleInfo";
+import { JudgementResult } from "../../judgements/JudgementResult";
+import type { Judgement } from "../../judgements/Judgement";
+import type { HitResult } from "../../scoring/HitResult";
 
 @provide(DrawableHitObject)
 export abstract class DrawableHitObject<out T extends HitObject = HitObject>
@@ -20,6 +23,8 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
   readonly animationStartTime = new Bindable(0);
 
   readonly hitObjectApplied = new Action<DrawableHitObject>();
+
+  readonly onNewResult = new Action<[DrawableHitObject, JudgementResult]>();
 
   readonly #state = new Bindable(ArmedState.Idle);
 
@@ -44,6 +49,7 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
     if (initialHitObject)
     {
       this.entry = new SyntheticHitObjectEntry(initialHitObject);
+      this.#ensureEntryHasResult();
     }
   }
 
@@ -56,6 +62,7 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
 
     this.skin.sourceChanged.addListener(this.skinChanged, this);
 
+    this.#updateStateFromResult();
   }
 
   get hitObject(): T
@@ -128,6 +135,8 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
     if (entry instanceof SyntheticHitObjectEntry)
       this.lifetimeStart = entry.lifetimeStart - this.initialLifetimeOffset;
 
+    this.#ensureEntryHasResult();
+
     for (const h of this.hitObject.nestedHitObjects)
     {
       const pooledDrawableNested = this.pooledObjectProvider?.getPooledDrawableRepresentation(h, this);
@@ -159,8 +168,11 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
     this.onApplied();
     this.hitObjectApplied.emit(this);
 
-    this.updateState(ArmedState.Idle, true);
-    this.updateComboColor();
+    if(this.isLoaded)
+    {
+      this.#updateStateFromResult();
+      this.updateComboColor();
+    }
   }
 
   protected override onFree(entry: HitObjectLifetimeEntry)
@@ -266,6 +278,13 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
   {
   }
 
+  override updateAfterChildren()
+  {
+    super.updateAfterChildren();
+
+    this.updateResult(false);
+  }
+
   protected get initialLifetimeOffset()
   {
     return 1000;
@@ -286,6 +305,10 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
 
   onKilled()
   {
+    for (const nested of this.nestedHitObjects)
+      nested.onKilled();
+
+    this.updateResult(false);
   }
 
   protected updateComboColor()
@@ -310,5 +333,81 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
 
     if (sample)
       sample.play();
+  }
+
+  protected applyMaxResult()
+  {
+    this.applyResult(r => r.type = r.judgement.maxResult);
+  }
+
+  protected applyMinResult()
+  {
+    this.applyResult(r => r.type = r.judgement.minResult);
+  }
+
+  protected applyResult(type: HitResult): void;
+  protected applyResult(application: (result: JudgementResult) => void): void;
+  protected applyResult(application: ((result: JudgementResult) => void) | HitResult)
+  {
+    if (typeof application !== "function")
+    {
+      this.applyResult(result => result.type = application);
+      return;
+    }
+
+    const result = this.result!;
+
+    if (result.hasResult)
+      throw new Error("Cannot apply result on a hitobject that already has a result.");
+
+    application(result);
+
+    if (!result.hasResult)
+      throw new Error(`${this.constructor.name} applied a JudgementResult but did not update JudgementResult.Type.`);
+
+    result.rawTime = this.time.current;
+
+    if (result.hasResult)
+      this.updateState(result.isHit ? ArmedState.Hit : ArmedState.Miss);
+
+    this.onNewResult.emit(this, result);
+  }
+
+  protected updateResult(userTriggered: boolean)
+  {
+    // TODO:
+    // if ((Clock as IGameplayClock)?.IsRewinding == true)
+    //                 return false;
+
+    if (this.judged)
+      return false;
+
+    this.checkForResult(userTriggered, this.time.current - this.hitObject.endTime);
+
+    return this.judged;
+  }
+
+  protected checkForResult(userTriggered: boolean, timeOffset: number)
+  {
+  }
+
+  protected createResult(judgement: Judgement): JudgementResult
+  {
+    return new JudgementResult(this.hitObject, judgement);
+  }
+
+  #ensureEntryHasResult()
+  {
+    this.entry!.result ??= this.createResult(this.hitObject.judgement);
+  }
+
+  #updateStateFromResult()
+  {
+    if (this.result!.isHit)
+      this.updateState(ArmedState.Hit, true);
+    else if (this.result!.hasResult)
+      this.updateState(ArmedState.Miss, true);
+    else
+      this.updateState(ArmedState.Idle, true);
   }
 }

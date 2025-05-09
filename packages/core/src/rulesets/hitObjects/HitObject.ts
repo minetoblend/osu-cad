@@ -4,6 +4,7 @@ import type { BeatmapDifficultyInfo } from "../../beatmaps/BeatmapDifficultyInfo
 import type { IBeatmapTiming } from "../../beatmaps/timing/IBeatmapTiming";
 import { HitWindows } from "../scoring/HitWindows";
 import { HitResult } from "../scoring";
+import { Judgement } from "../judgements/Judgement";
 
 export class HitObject
 {
@@ -80,6 +81,23 @@ export class HitObject
     for(const h of this.#nestedHitObjects)
       h.startTime += offset;
   }
+
+
+
+  #judgement: Judgement | null = null;
+
+  get judgement(): Judgement
+  {
+    this.#judgement ??= this.createJudgement();
+    return this.#judgement;
+  }
+
+  createJudgement(): Judgement
+  {
+    return new Judgement();
+  }
+
+
 
   hitWindows: HitWindows | null = null;
 

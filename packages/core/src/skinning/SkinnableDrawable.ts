@@ -58,4 +58,9 @@ export class SkinnableDrawable extends CompositeDrawable
 
     this.skin.sourceChanged.removeListener(this.#skinChanged, this);
   }
+
+  resetAnimation()
+  {
+    // TODO
+  }
 }

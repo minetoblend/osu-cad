@@ -6,6 +6,7 @@ import type { DrawableHitObject } from "../hitObjects/drawables/DrawableHitObjec
 import type { HitObjectLifetimeEntry } from "../hitObjects/drawables/HitObjectLifetimeEntry";
 import type { HitObject } from "../hitObjects/HitObject";
 import { IPooledHitObjectProvider } from "./IPooledHitObjectProvider";
+import type { JudgementResult } from "../judgements/JudgementResult";
 
 function compareStartTime(a: DrawableHitObject, b: DrawableHitObject)
 {
@@ -17,6 +18,8 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
   readonly hitObjectUsageBegan = new Action<HitObject>();
 
   readonly hitObjectUsageFinished = new Action<HitObject>();
+
+  readonly newResult = new Action<[DrawableHitObject, JudgementResult]>();
 
   readonly #startTimeMap = new Map<DrawableHitObject, Bindable<number>>();
 

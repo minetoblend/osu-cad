@@ -1,8 +1,8 @@
 import "@osucad/ruleset-osu/init";
 import { BeatmapParser, OsucadGameBase, Skin, SkinProvidingContainer } from "@osucad/core";
 
-import type { ReadonlyDependencyContainer } from "@osucad/framework";
-import { ZipArchiveFileSystem } from "@osucad/framework";
+import type { Drawable, ReadonlyDependencyContainer } from "@osucad/framework";
+import { CursorContainer, ZipArchiveFileSystem } from "@osucad/framework";
 import { Color } from "pixi.js";
 import oskFile from "./skin.osk?url";
 import { SkinVisualization } from "./SkinVisualization";
@@ -49,5 +49,15 @@ export class SkinningDemo extends OsucadGameBase
     }));
 
     this.add(new PerformanceOverlay());
+
+    this.add(new TestCursorContainer());
+  }
+}
+
+class TestCursorContainer extends CursorContainer
+{
+  override createCursor(): Drawable
+  {
+    return super.createCursor().adjust(cursor => cursor.scale = 4);
   }
 }

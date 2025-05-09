@@ -117,11 +117,7 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
 
     if (this.prioritised)
     {
-      const index = queue.indexOf(this);
-      if (index !== -1)
-      {
-        queue.splice(index, 1);
-      }
+      queue.remove(this);
       queue.push(this);
     }
 

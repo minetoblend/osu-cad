@@ -95,7 +95,7 @@ export class HitWindows
     }
   }
 
-  resultFor(timeOffset: number)
+  resultFor(timeOffset: number): HitResult
   {
     timeOffset = Math.abs(timeOffset);
 

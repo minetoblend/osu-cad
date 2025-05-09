@@ -72,6 +72,12 @@ export class HandleInputCache
       }
     }
 
+    if (positional)
+    {
+      if(drawable.handlePositionalInput)
+        return true;
+    }
+
     return false;
   }
 }
