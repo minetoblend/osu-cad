@@ -12,9 +12,9 @@ export class SimpleFileSystem extends EventEmitter<FileSystemEvents> implements 
     caseSensitive: false,
   } satisfies SimpleFileSystemOptions;
 
-  public caseSensitive: boolean;
+  public readonly caseSensitive: boolean;
 
-  private readonly _files: SimpleFile[] = [];
+  private readonly _files = new Map<string, SimpleFile>();
 
   constructor(options: Partial<SimpleFileSystemOptions> = {})
   {
@@ -27,30 +27,25 @@ export class SimpleFileSystem extends EventEmitter<FileSystemEvents> implements 
 
   public entries(): IWritableFile[]
   {
-    return [...this._files];
+    return [...this._files.values()];
   }
 
   public get(path: string): IWritableFile | undefined
   {
     path = this._normalizePath(path);
 
-    if (!this.caseSensitive)
-      path = path.toLowerCase();
-
-    return this._files.find(file =>
-        this.caseSensitive
-            ? file.path === path
-            : file.path.toLowerCase() === path,
-    );
+    return this._files.get(path);
   }
 
   async create(path: string, data: ArrayBuffer): Promise<IWritableFile>
   {
+    path = this._normalizePath(path);
+
     let file = this.get(path);
 
     if (!file)
     {
-      this._files.push(file = new SimpleFile(this, path, data));
+      this._files.set(path, file = new SimpleFile(this, path, data));
 
       this.emit("added", path, file);
     }
@@ -64,6 +59,8 @@ export class SimpleFileSystem extends EventEmitter<FileSystemEvents> implements 
 
   async update(path: string, data: ArrayBuffer): Promise<IWritableFile>
   {
+    path = this._normalizePath(path);
+
     const file = this.get(path);
 
     if (!file)
@@ -78,12 +75,13 @@ export class SimpleFileSystem extends EventEmitter<FileSystemEvents> implements 
 
   async delete(path: string): Promise<boolean>
   {
+    path = this._normalizePath(path);
+
     const file = this.get(path);
     if (!file)
       return false;
 
-    const index = this._files.indexOf(file as SimpleFile);
-    this._files.splice(index, 1);
+    this._files.delete(path);
 
     this.emit("removed", file.path);
     file.emit("removed");
@@ -94,6 +92,9 @@ export class SimpleFileSystem extends EventEmitter<FileSystemEvents> implements 
   private _normalizePath(path: string)
   {
     path = path.trim();
+
+    if (!this.caseSensitive)
+      path = path.toLowerCase();
 
     return path;
   }
