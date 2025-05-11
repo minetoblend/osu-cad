@@ -39,13 +39,11 @@ export class SimpleFileSystem extends EventEmitter<FileSystemEvents> implements 
 
   async create(path: string, data: ArrayBuffer): Promise<IWritableFile>
   {
-    path = this._normalizePath(path);
-
-    let file = this.get(path);
+    let file = this.get(this._normalizePath(path));
 
     if (!file)
     {
-      this._files.set(path, file = new SimpleFile(this, path, data));
+      this._files.set(this._normalizePath(path), file = new SimpleFile(this, path, data));
 
       this.emit("added", path, file);
     }
