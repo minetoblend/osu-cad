@@ -1,5 +1,5 @@
 import type { IInput, PassThroughInputManager, ReadonlyDependencyContainer } from "@osucad/framework";
-import { Component, resolved } from "@osucad/framework";
+import { almostEquals, Component, resolved } from "@osucad/framework";
 import type { DrawableHitObject } from "../hitObjects/drawables/DrawableHitObject";
 import type { Playfield } from "./Playfield";
 import { PlayfieldClock } from "./PlayfieldClock";
@@ -37,6 +37,9 @@ export abstract class AutoPlayController<T extends DrawableHitObject = DrawableH
   override update()
   {
     super.update();
+
+    if (almostEquals(this.time.elapsed, 0) || !this.clock!.isRunning)
+      return;
 
     const hitObjects = this.hitObjects.filter(it => this.canProcess(it));
     if (hitObjects.length === 0)
