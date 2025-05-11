@@ -13,7 +13,6 @@ export { PlatformActionContainer } from "./PlatformActionContainer";
 export * from "./state";
 export * from "./stateChanges";
 
-export { type ISourcedFromTouch, isSourcedFromTouch } from "./stateChanges/ISourcedFromTouch";
 export { TextInputSource } from "./TextInputSource";
 
 export { UserInputManager } from "./UserInputManager";

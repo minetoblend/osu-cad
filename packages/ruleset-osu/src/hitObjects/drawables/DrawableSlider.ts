@@ -1,4 +1,5 @@
 import type { ArmedState, DrawableHitObject } from "@osucad/core";
+import { HitSampleInfo } from "@osucad/core";
 import { HitResult, ShakeContainer } from "@osucad/core";
 import { SkinnableDrawable } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
@@ -210,6 +211,10 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
 
   protected override playSamples()
   {
+    const sample = this.skin.getSample(new HitSampleInfo(HitSampleInfo.HIT_NORMAL, HitSampleInfo.BANK_SOFT));
+
+    if (sample)
+      sample.play();
   }
 
   override shake()

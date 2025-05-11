@@ -6,6 +6,8 @@ import { OsuPlayfieldAdjustmentContainer } from "./OsuPlayfieldAdjustmentContain
 import { OsuInputManager } from "./OsuInputManager";
 import { OsuRuleset } from "../OsuRuleset";
 import type { PassThroughInputManager } from "@osucad/framework";
+import { OsuCursorContainer } from "./OsuCursor";
+import { OsuAutoPlayController } from "../gameplay/OsuAutoPlayController";
 
 export class DrawableOsuRuleset extends DrawableRuleset
 {
@@ -27,5 +29,18 @@ export class DrawableOsuRuleset extends DrawableRuleset
   protected override createInputManager(): PassThroughInputManager
   {
     return new OsuInputManager(new OsuRuleset());
+  }
+
+  protected override loadComplete()
+  {
+    super.loadComplete();
+
+    this.playfieldContainer.add(
+        new OsuCursorContainer(),
+    );
+
+    this.keybindingInputManager.useParentInput = false;
+
+    this.playfieldContainer.add(new OsuAutoPlayController(this.playfield, this.keybindingInputManager));
   }
 }

@@ -86,6 +86,7 @@ export class SimpleFileSystem extends EventEmitter<FileSystemEvents> implements 
     this._files.splice(index, 1);
 
     this.emit("removed", file.path);
+    file.emit("removed");
 
     return true;
   }

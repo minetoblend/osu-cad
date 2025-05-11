@@ -1,6 +1,6 @@
 import { ArmedState, HitResult, HitSampleInfo, ShakeContainer, SkinnableDrawable } from "@osucad/core";
 import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer } from "@osucad/framework";
-import { Anchor, Axes, CompositeDrawable } from "@osucad/framework";
+import { Anchor, Axes, CompositeDrawable, EasingFunction } from "@osucad/framework";
 import { OsuSkinComponents } from "../../skinning/OsuSkinComponents";
 import type { HitCircle } from "../HitCircle";
 import { OsuHitObject } from "../OsuHitObject";
@@ -39,7 +39,7 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
 
     this.internalChildren = [
       this.hitArea = new HitReceptor(
-          () => !this.allJudged,
+          () =>  !this.allJudged,
           () => this.updateResult(true),
       ),
       this.shakeContainer = new ShakeContainer({
@@ -76,14 +76,14 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
 
     this.approachCircle.fadeTo(0.9, Math.min(this.hitObject.timeFadeIn * 2, this.hitObject.timePreempt));
     this.approachCircle.scaleTo(1, this.hitObject.timePreempt);
-    this.approachCircle.expire(true);
   }
 
   protected override updateStartTimeTransforms()
   {
     super.updateStartTimeTransforms();
 
-    this.approachCircle.fadeOut(50);
+    this.approachCircle.fadeOut(700);
+    this.approachCircle.scaleTo(1.1, 150, EasingFunction.Out);
   }
 
   protected override updateHitStateTransforms(state: ArmedState)
@@ -95,12 +95,13 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
     switch (state)
     {
     case ArmedState.Idle:
+      this.hitArea.reset();
       break;
     case ArmedState.Miss:
       this.fadeOut(100);
       break;
     default:
-      this.approachCircle.fadeOut();
+      // this.approachCircle.fadeOut();
     }
 
     this.expire();

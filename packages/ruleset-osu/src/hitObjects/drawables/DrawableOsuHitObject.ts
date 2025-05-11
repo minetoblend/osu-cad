@@ -1,7 +1,9 @@
 import { DrawableHitObject, IComboNumberReference } from "@osucad/core";
-import { Bindable, provide, Vec2 } from "@osucad/framework";
+import { Bindable, type Drawable, provide, Vec2 } from "@osucad/framework";
 import type { OsuHitObject } from "../OsuHitObject";
 import { OsuInputManager } from "../../ui/OsuInputManager";
+import type { DrawableSlider } from "./DrawableSlider";
+import type { SliderTailCircle } from "../SliderTailCircle";
 
 @provide(IComboNumberReference)
 export abstract class DrawableOsuHitObject<out T extends OsuHitObject = OsuHitObject>
@@ -93,4 +95,23 @@ export abstract class DrawableOsuHitObject<out T extends OsuHitObject = OsuHitOb
     return this.#osuActionInputManager;
   }
 
+  protected applyRepeatFadeIn(target: Drawable, fadeTime: number)
+  {
+    const slider = this.parentHitObject as DrawableSlider;
+
+    const repeatIndex = (this.hitObject as unknown as SliderTailCircle).repeatIndex;
+
+    console.assert(slider !== null);
+
+    // When snaking in is enabled, the first end circle needs to be delayed until the snaking completes.
+    const delayFadeIn = slider.sliderBody?.snakingIn.value == true && repeatIndex == 0;
+
+    if (repeatIndex > 0)
+      fadeTime = Math.min(slider.hitObject.spanDuration(), fadeTime);
+
+    target
+      .fadeOut()
+      .delay(delayFadeIn ? (slider.hitObject.timePreempt) / 3 : 0)
+      .fadeIn(fadeTime);
+  }
 }

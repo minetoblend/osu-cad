@@ -3,5 +3,5 @@ import type { IInputStateChangeHandler } from "./IInputStateChangeHandler";
 
 export interface IInput
 {
-  apply: (state: InputState, handler: IInputStateChangeHandler) => void;
+  apply(state: InputState, handler: IInputStateChangeHandler): void;
 }

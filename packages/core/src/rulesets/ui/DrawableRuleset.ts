@@ -40,6 +40,11 @@ export abstract class DrawableRuleset extends Container
     return this.#playfield.value;
   }
 
+  protected get playfieldContainer()
+  {
+    return this.#playfieldAdjustmentContainer;
+  }
+
   keybindingInputManager: PassThroughInputManager;
 
   protected abstract createInputManager(): PassThroughInputManager;
