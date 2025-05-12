@@ -1,6 +1,6 @@
 import { ISkinSource, PlayfieldClock } from "@osucad/core";
 import type { Drawable, ReadonlyDependencyContainer } from "@osucad/framework";
-import { computed, Vec2, watch, withEffectScope } from "@osucad/framework";
+import { Vec2, watch, withEffectScope } from "@osucad/framework";
 import { Anchor, Container, CursorContainer, DrawableSprite, resolved } from "@osucad/framework";
 
 export class OsuCursorContainer extends CursorContainer
@@ -73,15 +73,13 @@ export class OsuCursor extends Container
   @resolved(ISkinSource)
   skin!: ISkinSource;
 
-  #cursor!: DrawableSprite;
-
   #cursorRotate: boolean = true;
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
 
-    this.addInternal(this.#cursor = new DrawableSprite({
+    this.addInternal(new DrawableSprite({
       origin: Anchor.Center,
       texture: this.skin.getTexture("cursor"),
       rotation: 0,
@@ -93,7 +91,7 @@ export class OsuCursor extends Container
   {
     super.loadComplete();
 
-    watch(() => this.skin.getConfig("cursorRotate") ?? true, value => this.#cursorRotate = value);
+    watch(() => this.skin.getConfig("cursorRotate") ?? true, value => this.#cursorRotate = value, { immediate: true });
   }
 
   override update()
@@ -101,8 +99,8 @@ export class OsuCursor extends Container
     super.update();
 
     if (this.#cursorRotate)
-      this.#cursor.rotation += (this.time.elapsed / 10000) * (Math.PI * 2);
+      this.rotation += (this.time.elapsed / 10000) * (Math.PI * 2);
     else
-      this.#cursor.rotation = 0;
+      this.rotation = 0;
   }
 }
