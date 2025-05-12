@@ -166,6 +166,8 @@ export class SliderInputManager extends Component
   {
     // TODO: clock is rewinding...
 
+    const wasTracking = this.tracking;
+
     const headCircleHitAction = this.#getInitialHitAction();
 
     if (headCircleHitAction === null)
@@ -203,6 +205,13 @@ export class SliderInputManager extends Component
           // valid action
           && validTrackingAction;
 
+    if (wasTracking !== this.tracking)
+    {
+      this.#slider.result.trackingHistory.push({
+        time: this.time.current,
+        tracking: this.tracking,
+      });
+    }
   }
 
   //private OsuAction? getInitialHitAction() => slider.HeadCircle?.HitAction;

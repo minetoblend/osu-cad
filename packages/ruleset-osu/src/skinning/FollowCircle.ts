@@ -30,7 +30,7 @@ export abstract class FollowCircle extends CompositeDrawable
       if (this.parentObject.judged)
         return;
 
-      this.absoluteSequence(Math.max(this.time.current, this.parentObject.hitObject?.startTime ?? 0), () =>
+      this.absoluteSequence(this.lastTrackingChangeTime, () =>
       {
         if (tracking.value)
           this.onSliderPress();
@@ -38,6 +38,16 @@ export abstract class FollowCircle extends CompositeDrawable
           this.onSliderRelease();
       });
     }, true);
+  }
+
+  get lastTrackingChangeTime()
+  {
+    let entry = this.parentObject.result?.trackingHistory.findLast(it => it.time < this.time.current);
+
+    if (!isFinite(entry?.time ?? 0))
+      entry = undefined;
+
+    return entry?.time ?? this.parentObject.hitObject?.startTime ?? this.time.current;
   }
 
   protected override loadComplete()
@@ -56,6 +66,8 @@ export abstract class FollowCircle extends CompositeDrawable
     this.scaleTo(1).fadeOut();
 
     this.finishTransforms(true);
+
+    this.tracking.triggerChange();
   }
 
   #updateStateTransforms(drawableObject: DrawableHitObject, state: ArmedState)
