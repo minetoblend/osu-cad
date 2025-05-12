@@ -1,4 +1,4 @@
-import type { ArmedState, DrawableHitObject } from "@osucad/core";
+import type { ArmedState, DrawableHitObject, Judgement } from "@osucad/core";
 import { HitSampleInfo } from "@osucad/core";
 import { HitResult, ShakeContainer } from "@osucad/core";
 import { SkinnableDrawable } from "@osucad/core";
@@ -14,6 +14,7 @@ import { DrawableSliderTail } from "./DrawableSliderTail";
 import { DrawableSliderRepeat } from "./DrawableSliderRepeat";
 import { DrawableSliderTick } from "./DrawableSliderTick";
 import { SliderInputManager } from "./SliderInputManager";
+import { OsuSliderJudgementResult } from "../../judgements/OsuSliderJudgementResult";
 
 @provide(DrawableSlider)
 export class DrawableSlider extends DrawableOsuHitObject<Slider>
@@ -253,5 +254,15 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
         r.type = this.nestedHitObjects.some(h => h.result!.isHit) ? r.judgement.maxResult : r.judgement.minResult;
       });
     }
+  }
+
+  override get result()
+  {
+    return super.result as OsuSliderJudgementResult;
+  }
+
+  protected override createResult(judgement: Judgement)
+  {
+    return new OsuSliderJudgementResult(this.hitObject, judgement);
   }
 }
