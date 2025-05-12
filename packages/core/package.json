@@ -1,6 +1,6 @@
 {
   "name": "@osucad/core",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "type": "module",
   "repository": {
     "type": "git",
@@ -24,7 +24,7 @@
     "!**/*.tsbuildinfo"
   ],
   "dependencies": {
-    "@osucad/framework": "1.0.6",
+    "@osucad/framework": "1.0.7",
     "@vueuse/core": "^13.1.0",
     "async": "^3.2.6",
     "mpg123-decoder": "^1.0.1",
