@@ -1,6 +1,6 @@
 import { ISkinSource, PlayfieldClock } from "@osucad/core";
 import type { Drawable, ReadonlyDependencyContainer } from "@osucad/framework";
-import { computed, Vec2, watch } from "@osucad/framework";
+import { computed, Vec2, watch, withEffectScope } from "@osucad/framework";
 import { Anchor, Container, CursorContainer, DrawableSprite, resolved } from "@osucad/framework";
 
 export class OsuCursorContainer extends CursorContainer
@@ -63,7 +63,7 @@ export class OsuCursorContainer extends CursorContainer
         position: position,
       });
       this.addInternal(sprite);
-      sprite.fadeOut(400 / (this.clock!.rate ?? 1)).expire();
+      sprite.fadeOut(400).expire();
     }
   }
 }
@@ -75,7 +75,7 @@ export class OsuCursor extends Container
 
   #cursor!: DrawableSprite;
 
-  readonly cursorRotate = computed(() => this.skin.getConfig("cursorRotate"));
+  #cursorRotate: boolean = true;
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
@@ -88,20 +88,21 @@ export class OsuCursor extends Container
     }));
   }
 
-  protected override loadAsyncComplete(): void
+  @withEffectScope()
+  protected override loadComplete(): void
   {
-    watch(this.cursorRotate, v =>
-    {
-      if (v == false)
-        this.#cursor.rotateTo(0, 200);
-    });
+    super.loadComplete();
+
+    watch(() => this.skin.getConfig("cursorRotate") ?? true, value => this.#cursorRotate = value);
   }
 
   override update()
   {
     super.update();
 
-    if (this.cursorRotate.value)
+    if (this.#cursorRotate)
       this.#cursor.rotation += (this.time.elapsed / 10000) * (Math.PI * 2);
+    else
+      this.#cursor.rotation = 0;
   }
 }
