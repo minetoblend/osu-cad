@@ -6,6 +6,11 @@ export interface SkinConfigurationFields
   version: string;
   animationFramerate: number;
 
+  cursorCentre: boolean;
+  cursorExpand: boolean;
+  cursorRotate: boolean;
+  cursorTrailRotate: boolean;
+
   allowSliderBallTint: boolean;
   hitCircleOverlayAboveNumber: boolean;
   layeredHitSounds: boolean;
