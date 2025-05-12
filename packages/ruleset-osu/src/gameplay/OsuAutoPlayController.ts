@@ -107,6 +107,16 @@ export class OsuAutoPlayController extends AutoPlayController<DrawableOsuHitObje
         response: 0.9 * fadeIn,
       });
     }
+    else
+    {
+      const position = next?.hitObject.stackedPosition ?? this.cursorPos.current;
+
+      yield this.moveCursor(position, {
+        frequency: 2,
+        damping: 0.5,
+        response: 0.5,
+      });
+    }
 
     if (current && this.didPassStartTime(current))
     {
