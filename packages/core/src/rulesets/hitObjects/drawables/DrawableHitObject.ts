@@ -56,6 +56,12 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
   @resolved(ISkinSource)
   protected skin!: ISkinSource;
 
+  protected override loadAsyncComplete(): void
+  {
+    super.loadAsyncComplete();
+    this.skinChanged();
+  }
+
   protected override loadComplete()
   {
     super.loadComplete();
@@ -74,7 +80,7 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
 
   readonly startTimeBindable = new Bindable(0);
 
-  readonly accentColor = new Bindable(new Color("red"));
+  readonly accentColor = new Bindable(new Color(0xffffff));
 
   get hitStateUpdateTime()
   {
