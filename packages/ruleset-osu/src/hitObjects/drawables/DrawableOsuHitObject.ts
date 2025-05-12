@@ -45,7 +45,7 @@ export abstract class DrawableOsuHitObject<out T extends OsuHitObject = OsuHitOb
     this.positionBindable.bindValueChanged(() => this.updatePosition());
     this.stackHeightBindable.bindValueChanged(() => this.updatePosition());
     this.scaleBindable.bindValueChanged((scale) => this.updateScale(scale.value));
-    this.indexInComboBindable.bindValueChanged(() => this.scheduler.addOnce(this.updateComboColor, this));
+    this.comboIndexBindable.bindValueChanged(() => this.scheduler.addOnce(this.updateComboColor, this));
   }
 
   protected override loadComplete()
