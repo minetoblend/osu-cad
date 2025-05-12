@@ -3,6 +3,7 @@ import type { Drawable, ReadonlyDependencyContainer } from "@osucad/framework";
 import { Anchor, Axes, Bindable, CompositeDrawable, DrawableSprite, resolved } from "@osucad/framework";
 import { computed, watch, withEffectScope } from "@osucad/framework";
 import { Color } from "pixi.js";
+import { DrawableSlider } from "../../hitObjects/drawables/DrawableSlider";
 
 export class LegacySliderBall extends CompositeDrawable
 {
@@ -71,14 +72,16 @@ export class LegacySliderBall extends CompositeDrawable
 
   #updateStateTransforms(drawableObject: DrawableHitObject)
   {
+    if (!(drawableObject instanceof DrawableSlider))
+      return;
 
     this.applyTransformsAt(-Number.MAX_VALUE, true);
     this.clearTransformsAfter(-Number.MAX_VALUE, true);
 
     const slider = drawableObject.hitObject;
 
-    this.absoluteSequence(slider.startTime, () => this.fadeIn());
-    this.absoluteSequence(slider.endTime, () => this.fadeOut());
+    this.absoluteSequence(slider.startTime, () => this.fadeInFromZero());
+    this.absoluteSequence(slider.endTime, () => this.fadeOutFromOne());
   }
 
   public override updateAfterChildren()
