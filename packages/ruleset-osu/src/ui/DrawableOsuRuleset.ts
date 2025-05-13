@@ -22,7 +22,7 @@ export class DrawableOsuRuleset extends DrawableRuleset
     return new OsuPlayfield();
   }
 
-  protected override createPlayfieldAdjustmentContainer()
+  override createPlayfieldAdjustmentContainer()
   {
     return new OsuPlayfieldAdjustmentContainer();
   }
