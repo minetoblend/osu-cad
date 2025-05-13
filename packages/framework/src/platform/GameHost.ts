@@ -139,20 +139,22 @@ export abstract class GameHost
 
     while (this.executionState === ExecutionState.Running)
     {
-      const startTime = performance.now();
-      this.update();
-      this.render();
-      FrameStatistics.frame.stop(startTime);
-      this.afterRender.emit();
-
-      await new Promise((resolve) =>
+      if (!this.paused)
       {
-        requestAnimationFrame(resolve);
-      });
+        const startTime = performance.now();
+        this.update();
+        this.render();
+        FrameStatistics.frame.stop(startTime);
+        this.afterRender.emit();
+      }
+
+      await new Promise((resolve) => requestAnimationFrame(resolve));
     }
 
     this.#performExit();
   }
+
+  paused = false;
 
   onUnhandledError(error: Error)
   {
