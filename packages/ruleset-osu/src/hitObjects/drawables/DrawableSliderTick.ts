@@ -3,6 +3,8 @@ import type { SliderTick } from "../SliderTick";
 
 export class DrawableSliderTick extends DrawableOsuHitObject<SliderTick>
 {
+  static readonly ANIM_DURATION = 150;
+
   constructor(initialObject?: SliderTick)
   {
     super(initialObject);

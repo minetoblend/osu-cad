@@ -11,11 +11,16 @@ import { PerformanceOverlay } from "./PerformanceOverlay";
 
 export class SkinningDemo extends OsucadGameBase
 {
-  protected override load(dependencies: ReadonlyDependencyContainer)
+  protected override get hasAsyncLoader(): boolean
   {
-    super.load(dependencies);
+    return true;
+  }
 
-    void this.setupSkinVisualizer();
+  protected override async loadAsync(dependencies: ReadonlyDependencyContainer): Promise<void>
+  {
+    await super.loadAsync(dependencies);
+
+    await this.setupSkinVisualizer();
   }
 
   async setupSkinVisualizer()
@@ -34,12 +39,23 @@ export class SkinningDemo extends OsucadGameBase
       new Color("rgb(193,157,192)"),
     ];
 
+    skin.config.set("hitCircleOverlap", 50);
+
     const osuSkin = await beatmap.beatmapInfo.ruleset?.createSkinTransformer?.(skin);
 
-    this.add(new SkinProvidingContainer({
+    const skinContainer = new SkinProvidingContainer({
       skin: osuSkin ?? skin,
-      child: new SkinVisualization(beatmap),
-    }));
+    });
+
+    const visualizer = new SkinVisualization(beatmap);
+
+    await this.loadComponentAsync(skinContainer);
+
+    await skinContainer.loadComponentAsync(visualizer);
+
+    skinContainer.add(visualizer);
+
+    this.add(skinContainer);
 
     this.add(new PerformanceOverlay());
   }

@@ -228,7 +228,7 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
     if (userTriggered || !this.sliderTail.judged || this.time.current < this.hitObject.endTime)
       return;
 
-    const classicSliderBehavior = false; // TODO
+    const classicSliderBehavior = true; // TODO
     if (classicSliderBehavior)
     {
       this.applyResult((r) =>

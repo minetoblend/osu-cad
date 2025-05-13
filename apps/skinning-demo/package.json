@@ -7,6 +7,8 @@
     "@osucad/core": "workspace:^",
     "@osucad/framework": "workspace:^",
     "@osucad/ruleset-osu": "workspace:^",
+    "osu-classes": "^3.1.0",
+    "osu-parsers": "^4.1.7",
     "pixi.js": "^8.9.2"
   },
   "devDependencies": {

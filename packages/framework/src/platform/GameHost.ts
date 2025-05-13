@@ -67,7 +67,7 @@ export abstract class GameHost
 
   readonly afterRender = new Action();
 
-  update()
+  protected update()
   {
     FrameStatistics.clear();
 
@@ -103,35 +103,9 @@ export abstract class GameHost
 
   async run(game: Game, container: HTMLElement = document.body)
   {
-    if (this.executionState !== ExecutionState.Idle)
-    {
-      throw new Error("GameHost is already running");
-    }
-
     this.container = container;
 
-    // window.addEventListener('error', (event) => {
-    //   this.onUnhandledError(event.error);
-    // });
-    // window.addEventListener('unhandledrejection', (event) => {
-    //   this.onUnhandledRejection(event);
-    // });
-
-    this.dependencies.provide(GAME_HOST, this);
-
-    this.#populateInputHandlers();
-
-    await this.#chooseAndSetupRenderer();
-
-    this.#initializeInputHandlers();
-
-    this.#audioManager = new AudioManager();
-
-    this.dependencies.provide(this.renderer);
-    this.dependencies.provide(this.audioManager);
-    this.dependencies.provide(TextInputSource, this.createTextInput());
-
-    await this.#bootstrapSceneGraph(game);
+    await this.init(game);
 
     container.appendChild(this.renderer.canvas);
 
@@ -152,6 +126,30 @@ export abstract class GameHost
     }
 
     this.#performExit();
+  }
+
+  protected async init(game: Game)
+  {
+    if (this.executionState !== ExecutionState.Idle)
+    {
+      throw new Error("GameHost is already running");
+    }
+
+    this.dependencies.provide(GAME_HOST, this);
+
+    this.#populateInputHandlers();
+
+    await this.#chooseAndSetupRenderer();
+
+    this.#initializeInputHandlers();
+
+    this.#audioManager = new AudioManager();
+
+    this.dependencies.provide(this.renderer);
+    this.dependencies.provide(this.audioManager);
+    this.dependencies.provide(TextInputSource, this.createTextInput());
+
+    await this.#bootstrapSceneGraph(game);
   }
 
   paused = false;
@@ -213,9 +211,14 @@ export abstract class GameHost
 
     game.host = this;
 
-    await loadDrawableFromAsync(root, (this.clock = new FramedClock()), this.dependencies, true);
+    await loadDrawableFromAsync(root, (this.clock = this.createClock()), this.dependencies, true);
 
     this.root = root;
+  }
+
+  protected createClock(): IFrameBasedClock
+  {
+    return new FramedClock();
   }
 
   #performExit()

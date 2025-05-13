@@ -5,6 +5,9 @@ import ConditionalCompile from "vite-plugin-conditional-compiler";
 export default defineConfig(() => ({
   root: __dirname,
   cacheDir: "../../node_modules/.vite/apps/web",
+  optimizeDeps: {
+    exclude: ["mp4-wasm"],
+  },
   resolve: {
     conditions: [
       ...defaultClientConditions,

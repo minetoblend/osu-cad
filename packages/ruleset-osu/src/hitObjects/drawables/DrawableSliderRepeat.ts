@@ -8,6 +8,7 @@ import { DrawableOsuHitObject } from "./DrawableOsuHitObject";
 import { DrawableSlider } from "./DrawableSlider";
 import type { SliderRepeat } from "../SliderRepeat";
 import type { PlaySliderBody } from "./PlaySliderBody";
+import type { Slider } from "../Slider";
 
 @provide(DrawableSliderRepeat)
 export class DrawableSliderRepeat extends DrawableOsuHitObject<SliderRepeat>
@@ -23,6 +24,11 @@ export class DrawableSliderRepeat extends DrawableOsuHitObject<SliderRepeat>
       return this.parentHitObject;
 
     return null;
+  }
+
+  get slider(): Slider | null
+  {
+    return this.drawableSlider?.hitObject ?? null;
   }
 
   circlePiece!: SkinnableDrawable;

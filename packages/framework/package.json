@@ -26,13 +26,16 @@
   "dependencies": {
     "@vue/reactivity": "^3.5.13",
     "diff": "^7.0.0",
+    "mp4-muxer": "^5.2.1",
     "pixi-filters": "^6.1.2",
     "pixi.js": "^8.9.2",
     "reflect-metadata": "^0.2.2",
+    "streamsaver": "^2.0.6",
     "unzipit": "^1.4.3"
   },
   "devDependencies": {
     "@types/diff": "^7.0.2",
+    "@types/streamsaver": "^2.0.5",
     "vite-plugin-conditional-compiler": "^0.3.1"
   }
 }

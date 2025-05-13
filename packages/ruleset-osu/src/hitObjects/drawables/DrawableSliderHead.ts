@@ -11,7 +11,7 @@ export class DrawableSliderHead extends DrawableHitCircle
     super(initialHitObject);
   }
 
-  classicSliderBehavior = false;
+  classicSliderBehavior = true;
 
   get drawableSlider(): DrawableSlider | null
   {

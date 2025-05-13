@@ -53,19 +53,25 @@ export class KeyVisualizer extends CompositeDrawable implements IKeyBindingHandl
     {
     case OsuAction.LeftButton:
       this.leftContainer.add(
-          this.leftBox = new Box({
+          this.leftBox = new Container({
             relativeSizeAxes: Axes.X,
             anchor: Anchor.BottomLeft,
             origin: Anchor.BottomLeft,
+            masking: true,
+            cornerRadius: 10,
+            child: new Box({ relativeSizeAxes: Axes.Both }),
           }),
       );
       break;
     case OsuAction.RightButton:
       this.rightContainer.add(
-          this.rightBox = new Box({
+          this.rightBox = new Container({
             relativeSizeAxes: Axes.X,
             anchor: Anchor.BottomLeft,
             origin: Anchor.BottomLeft,
+            masking: true,
+            cornerRadius: 10,
+            child: new Box({ relativeSizeAxes: Axes.Both }),
           }),
       );
       break;
@@ -79,23 +85,37 @@ export class KeyVisualizer extends CompositeDrawable implements IKeyBindingHandl
     switch (e.pressed)
     {
     case OsuAction.LeftButton:
-      this.leftBox?.moveToY(-this.drawHeight, this.drawHeight  * 2).expire();
       this.leftBox = undefined;
       break;
     case OsuAction.RightButton:
-      this.rightBox?.moveToY(-this.drawHeight, this.drawHeight  * 2).expire();
       this.rightBox = undefined;
       break;
     }
   }
 
-  override update()
+  override updateAfterChildren()
   {
-    super.update();
+    super.updateAfterChildren();
 
     if (this.leftBox)
-      this.leftBox.height += this.time.elapsed * 0.5;
+      this.leftBox.height = Math.min(this.leftBox.height + this.time.elapsed * 0.5, this.drawHeight);
     if (this.rightBox)
-      this.rightBox.height += this.time.elapsed * 0.5;
+      this.rightBox.height = Math.min(this.rightBox.height + this.time.elapsed * 0.5, this.drawHeight);
+
+    for (const c of [...this.leftContainer.children, ...this.rightContainer.children] as Drawable[])
+    {
+      if (c === this.leftBox || c === this.rightBox)
+        continue;
+
+      c.y -= this.time.elapsed * 0.5;
+
+      const topEdge = c.y + this.drawHeight - c.drawHeight;
+
+      if (topEdge < 0)
+        c.height += topEdge;
+
+      if (c.height < 0)
+        c.expire();
+    }
   }
 }

@@ -1,7 +1,9 @@
 import type { Beatmap } from "@osucad/core";
 import { PlayfieldClock } from "@osucad/core";
-import type { ReadonlyDependencyContainer, StopwatchClock } from "@osucad/framework";
+import type { ReadonlyDependencyContainer } from "@osucad/framework";
 import { Axes, CompositeDrawable, FramedClock, provide } from "@osucad/framework";
+import { ReplayPlayer } from "./ReplayPlayer";
+import { applyHiddenMod } from "./hidden";
 
 export class SkinVisualization extends CompositeDrawable
 {
@@ -12,17 +14,24 @@ export class SkinVisualization extends CompositeDrawable
     this.relativeSizeAxes = Axes.Both;
   }
 
-  protected override load(dependencies: ReadonlyDependencyContainer)
+  protected override get hasAsyncLoader(): boolean
   {
-    super.load(dependencies);
+    return true;
+  }
+
+  protected override async loadAsync(dependencies: ReadonlyDependencyContainer): Promise<void>
+  {
+    await super.loadAsync(dependencies);
+
+    this.gameplayClock.changeSource(this.clock!);
 
     this.gameplayClock.seek(this.startTime);
 
-    void this.loadRuleset();
+    await this.loadRuleset();
   }
 
   @provide(PlayfieldClock)
-  protected readonly gameplayClock = new LoopingClock();
+  protected readonly gameplayClock = new LoopingClock(undefined, false);
 
   get startTime()
   {
@@ -47,25 +56,40 @@ export class SkinVisualization extends CompositeDrawable
   async loadRuleset()
   {
     const drawableRuleset = await this.beatmap.beatmapInfo.ruleset?.createDrawableRuleset();
+
     if (drawableRuleset)
     {
-      this.addInternal(drawableRuleset);
+      const replayPlayer = new ReplayPlayer(drawableRuleset, drawableRuleset.playfield);
+      await this.loadComponentAsync(replayPlayer);
+
+      applyHiddenMod(this.beatmap, drawableRuleset);
+
+      this.addInternal(replayPlayer);
 
       for (const hitObject of this.beatmap.hitObjects)
-      {
         drawableRuleset.addHitObject(hitObject);
-      }
 
-      console.log(drawableRuleset);
     }
   }
 }
 
 class LoopingClock extends FramedClock
 {
+  offset = 0;
+
+  override get sourceTime(): number
+  {
+    return (super.sourceTime + this.offset) * this.rate;
+  }
+
+  override get rate()
+  {
+    return 1.5;
+  }
+
   public seek(value: number)
   {
-    (this.source as StopwatchClock).seek(value);
+    this.offset = (super.sourceTime / this.rate) - value;
     super.currentTime = this.lastFrameTime = value;
   }
 }

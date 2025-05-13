@@ -32,13 +32,13 @@ export class OsuPlayfield extends Playfield
   {
     super.load(dependencies);
 
-    this.registerPool(HitCircle, DrawableHitCircle, 10, 100);
-    this.registerPool(Slider, DrawableSlider, 10, 20);
+    this.registerPool(HitCircle, DrawableHitCircle, 20, 100);
+    this.registerPool(Slider, DrawableSlider, 20, 100);
     this.registerPool(Spinner, DrawableSpinner, 3, 10);
-    this.registerPool(SliderHeadCircle, DrawableSliderHead, 10, 100);
-    this.registerPool(SliderTailCircle, DrawableSliderTail, 10, 100);
-    this.registerPool(SliderRepeat, DrawableSliderRepeat, 20, 100);
-    this.registerPool(SliderTick, DrawableSliderTick, 20, 100);
+    this.registerPool(SliderHeadCircle, DrawableSliderHead, 20, 100);
+    this.registerPool(SliderTailCircle, DrawableSliderTail, 20, 100);
+    this.registerPool(SliderRepeat, DrawableSliderRepeat, 40, 200);
+    this.registerPool(SliderTick, DrawableSliderTick, 40, 200);
 
     this.addRangeInternal([
       this.followPoints = new FollowPointRenderer(),

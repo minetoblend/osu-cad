@@ -125,6 +125,12 @@ importers:
       '@osucad/ruleset-osu':
         specifier: workspace:^
         version: link:../../packages/ruleset-osu
+      osu-classes:
+        specifier: ^3.1.0
+        version: 3.1.0
+      osu-parsers:
+        specifier: ^4.1.7
+        version: 4.1.7(osu-classes@3.1.0)
       pixi.js:
         specifier: ^8.9.2
         version: 8.9.2
@@ -163,6 +169,9 @@ importers:
       diff:
         specifier: ^7.0.0
         version: 7.0.0
+      mp4-muxer:
+        specifier: ^5.2.1
+        version: 5.2.1
       pixi-filters:
         specifier: ^6.1.2
         version: 6.1.2(pixi.js@8.9.2)
@@ -172,6 +181,9 @@ importers:
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
+      streamsaver:
+        specifier: ^2.0.6
+        version: 2.0.6
       unzipit:
         specifier: ^1.4.3
         version: 1.4.3
@@ -179,6 +191,9 @@ importers:
       '@types/diff':
         specifier: ^7.0.2
         version: 7.0.2
+      '@types/streamsaver':
+        specifier: ^2.0.5
+        version: 2.0.5
       vite-plugin-conditional-compiler:
         specifier: ^0.3.1
         version: 0.3.1(esbuild@0.25.3)(vite@6.3.4)(webpack@5.99.7)
@@ -2959,6 +2974,10 @@ packages:
     resolution: {integrity: sha512-JSWRMozjFKsGlEjiiKajUjIJVKuKdE3oVy2DNtK+fUo8q82nhFZ2CPQwicAIkXrofahDXrWJ7mjelvZphMS98Q==}
     dev: true
 
+  /@types/dom-webcodecs@0.1.15:
+    resolution: {integrity: sha512-omOlCPvTWyPm4ZE5bZUhlSvnHM2ZWM2U+1cPiYFL/e8aV5O9MouELp+L4dMKNTON0nTeHqEg+KWDfFQMY5Wkaw==}
+    dev: false
+
   /@types/earcut@2.1.4:
     resolution: {integrity: sha512-qp3m9PPz4gULB9MhjGID7wpo3gJ4bTGXm7ltNDsmOvsPduTeHp8wSW9YckBj3mljeOh4F0m2z/0JKAALRKbmLQ==}
 
@@ -2994,6 +3013,12 @@ packages:
   /@types/node@18.16.9:
     resolution: {integrity: sha512-IeB32oIV4oGArLrd7znD2rkHQ6EDCM+2Sr76dJnrHwv9OHBTTM6nuDLK9bmikXzPa0ZlWMWtRGo/Uw4mrzQedA==}
 
+  /@types/node@20.17.46:
+    resolution: {integrity: sha512-0PQHLhZPWOxGW4auogW0eOQAuNIlCYvibIpG67ja0TOJ6/sehu+1en7sfceUn+QQtx4Rk3GxbLNwPh0Cav7TWw==}
+    dependencies:
+      undici-types: 6.19.8
+    dev: false
+
   /@types/offscreencanvas@2019.7.3:
     resolution: {integrity: sha512-ieXiYmgSRXUDeOntE1InxjWyvEelZGP63M+cGuquuRLuIKKT1osnkXjxev9B7d1nXSug5vpunx+gNlbVxMlC9A==}
     dev: false
@@ -3008,6 +3033,10 @@ packages:
       csstype: 3.1.3
     dev: true
 
+  /@types/streamsaver@2.0.5:
+    resolution: {integrity: sha512-93o0zjV8swEhR2YI57h/2ytbJF8bJh7sI9GNB02TLJHdM4fWDxZuChwfWhyD8vt2ub4kw4rsfZ0C0yAUX+3gcg==}
+    dev: true
+
   /@types/uuid@9.0.8:
     resolution: {integrity: sha512-jg+97EGIcY9AGHJJRaaPVgetKDsrTgbRjQ5Msgjh/DQKEFl0DtyRr/VCOyD1T2R1MNeWPK/u7JoGhlDZnKBAfA==}
     dev: true
@@ -3019,6 +3048,10 @@ packages:
   /@types/webpack-env@1.18.8:
     resolution: {integrity: sha512-G9eAoJRMLjcvN4I08wB5I7YofOb/kaJNd5uoCMX+LbKXTPCF+ZIHuqTnFaK9Jz1rgs035f9JUPUhNFtqgucy/A==}
     dev: true
+
+  /@types/wicg-file-system-access@2020.9.8:
+    resolution: {integrity: sha512-ggMz8nOygG7d/stpH40WVaNvBwuyYLnrg5Mbyf6bmsj/8+gb6Ei4ZZ9/4PNpcPNTT8th9Q8sM8wYmWGjMWLX/A==}
+    dev: false
 
   /@typescript-eslint/eslint-plugin@8.31.1(@typescript-eslint/parser@8.31.1)(eslint@9.26.0)(typescript@5.7.3):
     resolution: {integrity: sha512-oUlH4h1ABavI4F0Xnl8/fOtML/eu8nI2A1nYd+f+55XI0BLu+RIqKoCiZKNo6DtqZBEQm5aNKA20G3Z5w3R6GQ==}
@@ -6270,6 +6303,12 @@ packages:
     engines: {node: '>=12'}
     dev: true
 
+  /lzma-js-simple-v2@1.2.3:
+    resolution: {integrity: sha512-6kgy86Q3YLolV6dOwCqdQXg3V07e3XJJ6wqfrN8/s65mvCfqkr+jMJkfiSZNvk+u2ig+G8rLdtaoW/g1oJiwow==}
+    dependencies:
+      '@types/node': 20.17.46
+    dev: false
+
   /magic-string@0.30.17:
     resolution: {integrity: sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==}
     dependencies:
@@ -6463,6 +6502,13 @@ packages:
       pkg-types: 1.3.1
       ufo: 1.6.1
     dev: true
+
+  /mp4-muxer@5.2.1:
+    resolution: {integrity: sha512-O9eNqyzUivPJvNinPzBtEnPo7epPeYrryiCB+/+3/ktIXgTIeIB7o8tC+5i+8Zi3JthKGDws9jx7ceIY3PKhXw==}
+    dependencies:
+      '@types/dom-webcodecs': 0.1.15
+      '@types/wicg-file-system-access': 2020.9.8
+    dev: false
 
   /mpg123-decoder@1.0.1:
     resolution: {integrity: sha512-6WPXPjEHVWm5KOYWNh9kyqLXEF6mxaSf+MoVSAPqmTN7TY1BcM2C/GDbYo9930h2TLLzUmRgfylFEpyv820CFA==}
@@ -6707,6 +6753,19 @@ packages:
       strip-ansi: 6.0.1
       wcwidth: 1.0.1
     dev: true
+
+  /osu-classes@3.1.0:
+    resolution: {integrity: sha512-kz38FWMGnz5lr6ofovUrNaDAcs1gNpwlDc1qHjW86ILQZXG44w/+NflV7EyFomkI05XCADGfltE4FVoPwrkrmg==}
+    dev: false
+
+  /osu-parsers@4.1.7(osu-classes@3.1.0):
+    resolution: {integrity: sha512-b8aYJy9vK0Yk8zVbxVN+HSChGnXufSxePb3gABG8s5YGCY+31CKJTUHDAVRST0kX4lyeI4Z3iRxsCRftHFHEug==}
+    peerDependencies:
+      osu-classes: ^3.1.0
+    dependencies:
+      lzma-js-simple-v2: 1.2.3
+      osu-classes: 3.1.0
+    dev: false
 
   /p-limit@3.1.0:
     resolution: {integrity: sha512-TYOanM3wGwNGsZN2cVTYPArw454xnXj5qmWF1bEoAc4+cU/ol7GVh7odevjp1FNHduHc3KZMcFduxU5Xc6uJRQ==}
@@ -7670,6 +7729,10 @@ packages:
     resolution: {integrity: sha512-76ORR0DO1o1hlKwTbi/DM3EXWGf3ZJYO8cXX5RJwnul2DEg2oyoZyjLNoQM8WsvZiFKCRfC1O0J7iCvie3RZmQ==}
     dev: true
 
+  /streamsaver@2.0.6:
+    resolution: {integrity: sha512-LK4e7TfCV8HzuM0PKXuVUfKyCB1FtT9L0EGxsFk5Up8njj0bXK8pJM9+Wq2Nya7/jslmCQwRK39LFm55h7NBTw==}
+    dev: false
+
   /streamx@2.22.0:
     resolution: {integrity: sha512-sLh1evHOzBy/iWRiR6d1zRcLao4gGZr3C1kzNz4fopCOKJb6xD9ub8Mpi9Mr1R6id5o43S+d93fI48UC5uM9aw==}
     dependencies:
@@ -8221,6 +8284,10 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /undici-types@6.19.8:
+    resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
+    dev: false
 
   /unicode-canonical-property-names-ecmascript@2.0.1:
     resolution: {integrity: sha512-dA8WbNeb2a6oQzAQ55YlT5vQAWGV9WXOsi3SskE3bcCdM0P4SDd+24zS/OCacdRq5BkdsRj9q3Pg6YyQoxIGqg==}

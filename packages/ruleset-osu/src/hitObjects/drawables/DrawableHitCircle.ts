@@ -22,7 +22,7 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
   }
 
   private circlePiece!: SkinnableDrawable;
-  private approachCircle!: SkinnableDrawable;
+  approachCircle!: SkinnableDrawable;
   private shakeContainer!: ShakeContainer;
   private hitArea!: HitReceptor;
 

@@ -720,6 +720,9 @@ export class CompositeDrawable extends Drawable
 
     this.updateAfterChildrenLife();
 
+    if (!this.requiresChildrenUpdate)
+      return true;
+
     const children = this.#aliveInternalChildren.items;
     for (let i = 0, len = children.length; i < len; i++)
       children[i].updateSubTree();

@@ -58,7 +58,7 @@ export class Renderer
       antialias: environment.antialiasPreferred,
       depth: true,
       powerPreference: "high-performance",
-      desynchronized: true,
+      // desynchronized: true,
       preserveDrawingBuffer: true,
       stencil: true,
     });
