@@ -121,9 +121,11 @@ export class OsuAutoPlayController extends AutoPlayController<DrawableOsuHitObje
     if (current && this.didPassStartTime(current))
     {
       this.#currentHitObject = current;
-      yield new ReplayState([OsuAction.LeftButton]);
+      yield new ReplayState([this.#buttonIndex++ % 2 === 0 ? OsuAction.LeftButton : OsuAction.RightButton]);
     }
   }
+
+  #buttonIndex = 0;
 
   protected moveCursor(position: Vec2, dynamics: DynamicsParameters)
   {
