@@ -30,7 +30,7 @@ export class LegacyTimingPoint
   readonly sliderVelocityBindable = new BindableNumber(1)
     .withMinValue(0.1)
     .withMaxValue(10)
-    .withPrecision(0.1);
+    .withPrecision(0.01);
 
   get sliderVelocity()
   {
