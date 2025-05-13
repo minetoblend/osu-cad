@@ -54,7 +54,7 @@ export abstract class DrawableRuleset extends Container
     return null;
   }
 
-  protected abstract createPlayfieldAdjustmentContainer(): PlayfieldAdjustmentContainer;
+  abstract createPlayfieldAdjustmentContainer(): PlayfieldAdjustmentContainer;
 
   protected abstract createPlayfield(): Playfield;
 
