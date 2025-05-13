@@ -1,8 +1,9 @@
 import type { IDisposable } from "../../types";
 import type { ITrack } from "./ITrack";
 import { Action } from "../../bindables";
+import type { IClock } from "../../timing/IClock";
 
-export abstract class Track implements ITrack, IDisposable
+export abstract class Track implements ITrack, IDisposable, IClock
 {
   completed = new Action();
 
