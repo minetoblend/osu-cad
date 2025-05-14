@@ -33,6 +33,7 @@ export class SkinningDemo extends OsucadGameBase
       new Color("rgb(196,196,196)"),
       new Color("rgb(193,157,192)"),
     ];
+    skin.config.set("hitCircleOverlap", 50);
 
     const osuSkin = await beatmap.beatmapInfo.ruleset?.createSkinTransformer?.(skin);
 
