@@ -29,8 +29,7 @@ export class SkinnableDrawable extends CompositeDrawable
 
   #skinChanged()
   {
-    // this.scheduler.addOnce(this.onSkinChanged, this);
-    this.onSkinChanged();
+    this.scheduler.addOnce(this.onSkinChanged, this);
   }
 
   protected onSkinChanged()

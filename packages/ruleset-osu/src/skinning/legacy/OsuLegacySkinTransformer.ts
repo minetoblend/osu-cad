@@ -103,6 +103,8 @@ export class OsuLegacySkinTransformer extends SkinTransformer
       this.source.samples.loadAll(),
       this.textureStore.load(),
     ]);
+
+    this.textureStore.textureChanged.addListener(() => this.texturesChanged.emit());
   }
 
   override getTexture(componentName: string)
