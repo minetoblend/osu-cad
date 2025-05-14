@@ -1,5 +1,5 @@
 import type { ComputedRef } from "@osucad/framework";
-import { Action, computed, DrawableSprite, type IFile, loadTexture, reactive, unref, watch } from "@osucad/framework";
+import { Action, computed, DrawableSprite, type IFile, loadTexture, reactive, ref, unref, watch } from "@osucad/framework";
 import { computedAsync } from "@vueuse/core";
 import { deferredPromise } from "../utils/DeferredPromise";
 import type { Texture } from "pixi.js";
@@ -256,6 +256,11 @@ class ReactiveAnimationEntry
     readonly manifest: AnimationManifestEntry,
   )
   {
+    watch(this.entries, (entries: ReactiveFileEntry[], oldEntries: ReactiveFileEntry[]) =>
+    {
+      if (entries.length !== oldEntries.length || entries.every((entry, index) => entry !== oldEntries[index]))
+        this.entriesDebounced.value = entries;
+    });
   }
 
   entries = computed(() =>
@@ -292,11 +297,13 @@ class ReactiveAnimationEntry
     return entries;
   });
 
+  entriesDebounced = ref<ReactiveFileEntry[]>([]);
+
   readonly textures = computedAsync(async () =>
   {
     try
     {
-      const entries = this.entries.value;
+      const entries = this.entriesDebounced.value;
 
       const textures = await Promise.all(entries.map(entry => this.#loadTexture(entry)));
 
