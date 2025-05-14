@@ -1,4 +1,4 @@
-import type { Drawable } from "@osucad/framework";
+import type { Drawable, ReadonlyDependencyContainer } from "@osucad/framework";
 import { Anchor, CompositeDrawable, EmptyDrawable, resolved } from "@osucad/framework";
 import { ISkinSource } from "./ISkinSource";
 import type { SkinComponentLookup } from "./SkinComponentLookup";
@@ -13,18 +13,18 @@ export class SkinnableDrawable extends CompositeDrawable
   @resolved(ISkinSource)
   protected skin!: ISkinSource;
 
+  protected override load(dependencies: ReadonlyDependencyContainer)
+  {
+    super.load(dependencies);
+
+    this.skin.sourceChanged.addListener(this.#skinChanged, this);
+  }
+
   protected override loadAsyncComplete()
   {
     super.loadAsyncComplete();
 
     this.updateContent();
-  }
-
-  protected override loadComplete()
-  {
-    super.loadComplete();
-
-    this.skin.sourceChanged.addListener(this.#skinChanged, this);
   }
 
   #skinChanged()
