@@ -258,9 +258,13 @@ class ReactiveAnimationEntry
   {
     watch(this.entries, (entries: ReactiveFileEntry[], oldEntries: ReactiveFileEntry[]) =>
     {
-      if (entries.length !== oldEntries.length || entries.every((entry, index) => entry !== oldEntries[index]))
+      if (!oldEntries
+          || this.entriesDebounced.value.length === 0
+          || entries.length !== oldEntries.length
+          || entries.some((entry, index) => entry !== oldEntries[index])
+      )
         this.entriesDebounced.value = entries;
-    });
+    }, { immediate: true });
   }
 
   entries = computed(() =>
