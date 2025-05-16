@@ -8,7 +8,7 @@ import { MaskingPipe } from "./MaskingPipe";
 import { MaskingSystem } from "./MaskingSystem";
 import { OsucadBatcher } from "./OsucadBatcher";
 import { OsucadSpritePipe } from "./OsucadSpritePipe";
-import { OsucadUniformSystem } from "./OsucadUniformSystem";
+import { MaskingUniformSystem } from "./MaskingUniformSystem";
 
 export interface RendererOptions
 {
@@ -23,7 +23,7 @@ export class Renderer
   {
 
 
-    const { Batcher, isMobile, WebGLRenderer, RenderTarget, Filter, DynamicBitmapFont, GlobalUniformSystem, extensions, getMaxTexturesPerBatch } = await import("pixi.js");
+    const { Batcher, isMobile, WebGLRenderer, RenderTarget, Filter, DynamicBitmapFont, extensions, getMaxTexturesPerBatch } = await import("pixi.js");
 
 
     if (isMobile.any)
@@ -35,14 +35,13 @@ export class Renderer
     DynamicBitmapFont.defaultOptions.textureSize = 1024;
     DynamicBitmapFont.defaultOptions.padding = 6;
 
-    extensions.remove(GlobalUniformSystem);
     extensions.add(
         OsucadBatcher,
         OsucadSpritePipe,
         MaskingPipe,
         MaskingSystem,
-        OsucadUniformSystem,
         SpriteTextPipe,
+        MaskingUniformSystem,
     );
 
     const { size, environment } = options;

@@ -39,7 +39,7 @@ export class OsucadBatcher extends Batcher
   override name: string = OsucadBatcher.extension.name;
 
   override geometry: Geometry = new OsucadBatchGeometry();
-  override shader: Shader = shader ?? (shader = new BatchShader(this.maxTextures));
+  override shader: BatchShader = shader ?? (shader = new BatchShader(this.maxTextures));
 
   protected override vertexSize: number = 6;
 

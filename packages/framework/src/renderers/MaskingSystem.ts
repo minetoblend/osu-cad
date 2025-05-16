@@ -1,15 +1,7 @@
-import type {
-  Container,
-  Instruction,
-  Renderable,
-  Renderer,
-  System,
-} from "pixi.js";
+import type { Container, Instruction, Renderable, Renderer, System } from "pixi.js";
+import { Color, ExtensionType, Rectangle } from "pixi.js";
 import type { MaskingEffect } from "./MaskingEffect";
 import type { MaskingAction } from "./MaskingPipe";
-import type { OsucadUniformSystem } from "./OsucadUniformSystem";
-
-import { Color, ExtensionType, Rectangle } from "pixi.js";
 import { MatrixUtils } from "../utils/MatrixUtils";
 
 export interface MaskingInstruction extends Instruction
@@ -46,7 +38,7 @@ export class MaskingSystem implements System
 
     const maskingInfo = instruction.maskingEffect;
 
-    const uniformSystem = renderer.globalUniforms as unknown as OsucadUniformSystem;
+    const uniformSystem = renderer.maskingUniforms;
 
     const maskingRect = maskingInfo.drawable.drawSize;
 
@@ -74,6 +66,7 @@ export class MaskingSystem implements System
       borderThickness: maskingInfo.borderThickness / maskingBlendRange,
       borderColor: bgr + (((color.alpha * 255) | 0) << 24),
       maskingBlendRange,
+      offset: renderer.globalUniforms.globalUniformData.offset,
     });
   }
 
@@ -81,6 +74,6 @@ export class MaskingSystem implements System
   {
     const renderer = this.renderer;
 
-    renderer.globalUniforms.pop();
+    renderer.maskingUniforms.pop();
   }
 }
