@@ -65,9 +65,13 @@ export class DependencyContainer implements ReadonlyDependencyContainer
 
 export interface ReadonlyDependencyContainer
 {
-  resolveOptional: (<T>(key: new (...args: any[]) => T) => T | undefined) & (<T>(key: InjectionToken<T>) => T | undefined);
+  resolveOptional<T>(key: { prototype: T }): T | undefined;
 
-  resolve: (<T>(key: new (...args: any[]) => T) => T) & (<T>(key: InjectionToken<T>) => T);
+  resolveOptional<T>(key: InjectionToken<T>): T | undefined;
+
+  resolve<T>(key: { prototype: T }): T;
+
+  resolve<T>(key: InjectionToken<T>): T;
 }
 
 declare const typeKey: unique symbol;
