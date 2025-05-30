@@ -1,3 +1,7 @@
+## 1.0.13 (2025-05-30)
+
+This was a version bump only for @osucad/framework to align it with other projects, there were no code changes.
+
 ## 1.0.12 (2025-05-30)
 
 This was a version bump only for @osucad/framework to align it with other projects, there were no code changes.
