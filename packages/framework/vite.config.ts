@@ -40,6 +40,7 @@ export default defineConfig(() => ({
     },
     minify: false,
     target: "modules",
+    sourcemap: true,
     rollupOptions: {
       output: {
       },

@@ -35,6 +35,7 @@ export default defineConfig(() => ({
     },
     minify: false,
     target: "modules",
+    sourcemap: true,
     rollupOptions: {
       // External packages that should not be bundled into your library.
       external: [
