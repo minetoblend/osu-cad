@@ -31,6 +31,8 @@ export default defineConfig(() => ({
       // Don't forget to update your package.json as well.
       formats: ["es" as const],
     },
+    minify: false,
+    target: "modules",
     rollupOptions: {
       // External packages that should not be bundled into your library.
       external: [
