@@ -21,10 +21,7 @@ export class Renderer
 {
   async init(options: RendererOptions)
   {
-
-
     const { Batcher, isMobile, WebGLRenderer, RenderTarget, Filter, DynamicBitmapFont, GlobalUniformSystem, extensions, getMaxTexturesPerBatch } = await import("pixi.js");
-
 
     if (isMobile.any)
       Batcher.defaultOptions.maxTextures = Math.min(16, getMaxTexturesPerBatch());
