@@ -9,6 +9,10 @@ import { LegacySliderBall } from "./LegacySliderBall";
 import { LegacySliderBody } from "./LegacySliderBody";
 import { LegacySliderHeadHitCircle } from "./LegacySliderHeadHitCircle";
 import { LegacyReverseArrow } from "./LegacyReverseArrow";
+import { LegacyOldStyleSpinner } from "./LegacyOldStyleSpinner";
+import { LegacyFont } from "../../LegacyFont";
+import { getFontPrefix, LegacySpriteText } from "../../LegacySpriteText";
+import { OsuHitObject } from "../../hitObjects/OsuHitObject";
 
 export class OsuLegacySkinTransformer extends SkinTransformer
 {
@@ -37,6 +41,9 @@ export class OsuLegacySkinTransformer extends SkinTransformer
         "spinner-middle",
         "spinner-middle2",
         "spinner-top",
+        "spinner-circle",
+        "spinner-metre",
+        "spinner-rpm",
         "cursor",
         "cursortrail",
       ]);
@@ -138,8 +145,25 @@ export class OsuLegacySkinTransformer extends SkinTransformer
         return new LegacySliderBody();
       case OsuSkinComponents.ReverseArrow:
         return new LegacyReverseArrow();
+      case OsuSkinComponents.SpinnerBody:
+        return new LegacyOldStyleSpinner();
       case OsuSkinComponents.SliderBall:
         return new LegacySliderBall(this.getAnimation("sliderb"));
+      case OsuSkinComponents.HitCircleText: {
+        if (!this.hasFont(LegacyFont.HitCircle))
+          return null;
+
+        const hitcircle_text_scale = 0.8;
+        return new LegacySpriteText(
+            {
+              font: LegacyFont.HitCircle,
+              // stable applies a blanket 0.8x scale to hitcircle fonts
+              scale: hitcircle_text_scale,
+              maxSizePerGlyph: OsuHitObject.OBJECT_DIMENSIONS.scale(2 / hitcircle_text_scale),
+            });
+      }
+
+
       case OsuSkinComponents.SliderFollowCircle: {
         const followCircleContent = this.getAnimation("sliderfollowcircle");
 
@@ -151,5 +175,10 @@ export class OsuLegacySkinTransformer extends SkinTransformer
     }
 
     return super.getDrawableComponent(lookup);
+  }
+
+  hasFont(font: LegacyFont)
+  {
+    return this.getTexture(`${getFontPrefix(this, font)}-0`) !== null;
   }
 }

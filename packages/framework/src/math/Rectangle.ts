@@ -114,4 +114,10 @@ export class Rectangle
   {
     return new Rectangle(this.x - amount, this.y - amount, this.width + amount * 2, this.height + amount * 2);
   }
+
+  offset(x: number, y: number)
+  {
+    this.x += x;
+    this.y += y;
+  }
 }

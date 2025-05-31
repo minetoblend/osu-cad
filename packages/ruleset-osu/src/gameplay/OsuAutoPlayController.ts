@@ -11,6 +11,7 @@ import { Slider } from "../hitObjects/Slider";
 import { DrawableSliderBall } from "../hitObjects/drawables/DrawableSliderBall";
 import { CursorPosition } from "./CursorPosition";
 import type { DynamicsParameters } from "./SecondOrderDynamics";
+import { DrawableSpinner } from "../hitObjects/drawables/DrawableSpinner";
 
 export class OsuAutoPlayController extends AutoPlayController<DrawableOsuHitObject>
 {
@@ -35,7 +36,29 @@ export class OsuAutoPlayController extends AutoPlayController<DrawableOsuHitObje
       }
     }
 
-    if (current instanceof DrawableSlider && this.isActive(current))
+    if (current instanceof DrawableSpinner && this.isActive(current))
+    {
+      const angle = (this.time.current - current.hitObject.startTime) * 0.05;
+
+      const spinCount = Math.floor(current.rotationTracker.rotation / Math.PI + 0.5);
+
+      const scaleX = 0.5 + random(new Vec2(spinCount, 0)) * 0.4;
+      const scaleY = 0.8 + random(new Vec2(spinCount, 1)) * 0.6;
+
+      const position = new Vec2(256, 192).add(
+          new Vec2(0, 75)
+            .rotate(angle)
+            .mul({ x: scaleX, y: scaleY })
+            .rotate(Math.PI * (0.2 + random(new Vec2(spinCount, 12)) * 0.1)),
+      );
+
+      yield this.moveCursor(position, {
+        frequency: 4 + Math.random(),
+        damping: 0.8 + Math.random(),
+        response: 0.5,
+      });
+    }
+    else if (current instanceof DrawableSlider && this.isActive(current))
     {
       const position = this.getSliderPosition(current, this.time.current + 36);
       yield this.moveCursor(position, {
@@ -129,7 +152,7 @@ export class OsuAutoPlayController extends AutoPlayController<DrawableOsuHitObje
 
   protected moveCursor(position: Vec2, dynamics: DynamicsParameters)
   {
-    position = this.cursorPos.update(position, this.time.elapsed, dynamics);
+    position = this.cursorPos.update(position, Math.min(this.time.elapsed, 100), dynamics);
     return new MousePositionAbsoluteInput(this.positionToAbsolute(position));
   }
 

@@ -6,6 +6,14 @@ import { MarginPadding } from "../drawables/MarginPadding";
 
 export class Interpolation
 {
+  public static damp(start: number, final: number, base: number, exponent: number): number
+  {
+    if (base < 0 || base > 1)
+      throw new Error("base has to lie in [0,1], but is {@base}.");
+
+    return this.lerp(start, final, 1 - Math.pow(base, exponent));
+  }
+
   static valueAt<T>(
     time: number,
     startValue: T,

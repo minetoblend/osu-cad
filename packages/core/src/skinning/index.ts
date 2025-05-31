@@ -11,3 +11,4 @@ export * from "./IAnimationTimeReference";
 export * from "./SkinnableTextureAnimation";
 export * from "./SkinSampleStore";
 export * from "./SkinComponentLookup";
+export * from "./SkinnableSpriteText";

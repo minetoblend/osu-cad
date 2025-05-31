@@ -54,6 +54,7 @@ import { FillMode } from "./FillMode";
 import { LayoutComputed } from "./LayoutComputed";
 import { LayoutMember } from "./LayoutMember";
 import { MarginPadding, type MarginPaddingOptions } from "./MarginPadding";
+import { PositionOffsetTransform } from "./PositionOffsetTransform";
 
 export interface DrawableOptions
 {
@@ -1843,6 +1844,17 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   moveToY(newY: number, duration = 0, easing: EasingFunction = EasingFunction.Default)
   {
     return this.transformTo("y", newY, duration, easing, "position");
+  }
+
+  moveToOffset(offset: Vec2, duration = 0, easing: EasingFunction = EasingFunction.Default)
+  {
+    const result = new TransformSequence(this);
+    const transform = this.populateTransform(new PositionOffsetTransform<this>(offset), new Vec2(), duration, easing);
+
+    result.add(transform);
+    this.addTransform(transform);
+
+    return result.asProxy();
   }
 
   rotateTo(newRotation: number, duration = 0, easing: EasingFunction = EasingFunction.Default)

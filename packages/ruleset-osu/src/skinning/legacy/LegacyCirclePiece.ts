@@ -1,9 +1,10 @@
-import { ArmedState } from "@osucad/core";
-import { DrawableHitObject, ISkinSource } from "@osucad/core";
+import { ArmedState, DrawableHitObject, ISkinSource, SkinnableSpriteText } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
 import { Anchor, Axes, Bindable, CompositeDrawable, Container, DrawableSprite, EasingFunction, resolved, watch, withEffectScope } from "@osucad/framework";
-import { LegacyComboNumber } from "./LegacyComboNumber";
 import { Color } from "pixi.js";
+import { OsuSkinComponents } from "../OsuSkinComponents";
+import { DrawableOsuHitObject } from "../../hitObjects/drawables/DrawableOsuHitObject";
+import { OsuHitObject } from "../../hitObjects/OsuHitObject";
 
 export class LegacyCirclePiece extends CompositeDrawable
 {
@@ -12,6 +13,8 @@ export class LegacyCirclePiece extends CompositeDrawable
 
   @resolved(DrawableHitObject)
   protected drawableHitObject!: DrawableHitObject;
+
+  private readonly indexInCurrentCombo: Bindable<number> = new Bindable(0);
 
   constructor(
     priorityLookupPrefix: string | null = null,
@@ -29,7 +32,7 @@ export class LegacyCirclePiece extends CompositeDrawable
   private circleSprite!: DrawableSprite;
   private overlaySprite!: DrawableSprite;
   protected overlayLayer!: Container;
-  private comboNumber?: LegacyComboNumber;
+  private hitCircleText?: SkinnableSpriteText;
 
   readonly accentColor = new Bindable(new Color(0xffffff));
 
@@ -40,9 +43,11 @@ export class LegacyCirclePiece extends CompositeDrawable
 
     const circleName = this.#priorityLookup && this.skin.getTexture(this.#priorityLookup) ? this.#priorityLookup : "hitcircle";
 
+    const maxSize = OsuHitObject.OBJECT_DIMENSIONS.scale(2);
+
     this.internalChildren = [
       this.circleSprite = new DrawableSprite({
-        texture: this.skin.getTexture(circleName),
+        texture: this.skin.getTexture(circleName)?.withMaximumSize(maxSize),
         anchor: Anchor.Center,
         origin: Anchor.Center,
       }),
@@ -50,7 +55,7 @@ export class LegacyCirclePiece extends CompositeDrawable
         anchor: Anchor.Center,
         origin: Anchor.Center,
         child: this.overlaySprite = new DrawableSprite({
-          texture: this.skin.getTexture(`${circleName}overlay`),
+          texture: this.skin.getTexture(`${circleName}overlay`)?.withMaximumSize(maxSize),
           anchor: Anchor.Center,
           origin: Anchor.Center,
         }),
@@ -59,13 +64,19 @@ export class LegacyCirclePiece extends CompositeDrawable
 
     if (this.hasNumber)
     {
-      this.overlayLayer.add(this.comboNumber = new LegacyComboNumber());
+      this.overlayLayer.add(this.hitCircleText = new SkinnableSpriteText(OsuSkinComponents.HitCircleText).with({
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
+      }));
 
       watch(() => this.skin.getConfig("hitCircleOverlayAboveNumber") ?? true,
           value => this.overlayLayer.changeChildDepth(this.overlaySprite, value ? -Number.MAX_VALUE : 0),
           { immediate: true },
       );
     }
+
+    if (this.drawableHitObject instanceof DrawableOsuHitObject)
+      this.indexInCurrentCombo.bindTo(this.drawableHitObject.indexInComboBindable);
   }
 
 
@@ -75,6 +86,9 @@ export class LegacyCirclePiece extends CompositeDrawable
 
     this.drawableHitObject.applyCustomUpdateState.addListener(this.updateStateTransforms, this);
     this.updateStateTransforms(this.drawableHitObject, this.drawableHitObject.state);
+
+    if (this.hasNumber)
+      this.indexInCurrentCombo.bindValueChanged(index => this.hitCircleText!.text = `${index.value + 1}`, true);
 
     this.accentColor.bindTo(this.drawableHitObject.accentColor);
     this.accentColor.bindValueChanged(color => this.circleSprite.color = color.value, true);
@@ -96,7 +110,7 @@ export class LegacyCirclePiece extends CompositeDrawable
         this.overlaySprite.fadeOutFromOne(240);
         this.overlaySprite.scaleTo(1.4, 240, EasingFunction.Out);
 
-        this.comboNumber?.fadeOut(50);
+        this.hitCircleText?.fadeOut(50);
         break;
       }
     });
@@ -107,5 +121,12 @@ export class LegacyCirclePiece extends CompositeDrawable
     super.dispose(isDisposing);
 
     this.drawableHitObject.applyCustomUpdateState.removeListener(this.updateStateTransforms, this);
+  }
+
+  override updateDrawNodeTransform()
+  {
+    super.updateDrawNodeTransform();
+
+    this.drawNode!.scale.copyFrom(this.drawScale);
   }
 }

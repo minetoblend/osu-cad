@@ -25,6 +25,8 @@ export class MarginPadding implements ILerp<MarginPadding>
   readonly top: number;
   readonly bottom: number;
 
+  static readonly Default = new MarginPadding();
+
   constructor(options?: MarginPaddingOptions)
   {
     if (typeof options === "number")

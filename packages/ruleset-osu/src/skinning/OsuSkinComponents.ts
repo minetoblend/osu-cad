@@ -17,4 +17,5 @@ export class OsuSkinComponents extends SkinComponentLookup
   static readonly ReverseArrow = new OsuSkinComponents("ReverseArrow");
   static readonly FollowPoint = new OsuSkinComponents("FollowPoint");
   static readonly SpinnerBody = new OsuSkinComponents("SpinnerBody");
+  static readonly HitCircleText = new OsuSkinComponents("HitCircleText");
 }

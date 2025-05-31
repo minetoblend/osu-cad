@@ -1,4 +1,4 @@
-import type { Judgement } from "@osucad/core";
+import type { HitWindows, Judgement } from "@osucad/core";
 import { BeatmapDifficultyInfo, HitObject, type IBeatmapTiming, safeAssign } from "@osucad/core";
 import type { IVec2 } from "@osucad/framework";
 import { Bindable, BindableBoolean, BindableNumber, Vec2 } from "@osucad/framework";
@@ -206,7 +206,7 @@ export abstract class OsuHitObject extends HitObject
 
   // #endregion
 
-  protected override createHitWindows()
+  protected override createHitWindows(): HitWindows
   {
     return new OsuHitWindows();
   }

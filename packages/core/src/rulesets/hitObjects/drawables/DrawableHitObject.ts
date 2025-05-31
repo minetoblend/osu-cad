@@ -62,6 +62,8 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
     this.skinChanged();
   }
 
+  public handleUserInput = true;
+
   protected override loadComplete()
   {
     super.loadComplete();
