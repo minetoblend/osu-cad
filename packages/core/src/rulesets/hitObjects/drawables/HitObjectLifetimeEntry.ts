@@ -1,4 +1,4 @@
-import { Bindable } from "@osucad/framework";
+import { Action, Bindable } from "@osucad/framework";
 import { LifetimeEntry } from "@osucad/framework";
 import type { HitObject } from "../HitObject";
 import type { JudgementResult } from "../../judgements/JudgementResult";
@@ -7,6 +7,8 @@ export class HitObjectLifetimeEntry extends LifetimeEntry
 {
 
   readonly #startTimeBindable = new Bindable(0);
+
+  readonly revertResult = new Action();
 
   nestedEntries = new Set<HitObjectLifetimeEntry>();
 
@@ -55,4 +57,10 @@ export class HitObjectLifetimeEntry extends LifetimeEntry
   {
     this.lifetimeStart = this.hitObject.startTime - this.initialLifetimeOffset;
   }
+
+  onRevertResult()
+  {
+    this.revertResult.emit();
+  }
+
 }

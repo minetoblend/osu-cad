@@ -74,11 +74,6 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
     return new HitObjectContainer();
   }
 
-  #onNewResult(hitObject: DrawableHitObject, result: JudgementResult)
-  {
-    this.newResult.emit(hitObject, result);
-  }
-
   addHitObject(hitObject: HitObject)
   {
     const entry = this.createLifetimeEntry(hitObject);
@@ -205,5 +200,44 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
     }
 
     return pool;
+  }
+
+  override update()
+  {
+    super.update();
+
+    while (this.#judgedEntries.length > 0)
+    {
+      const result = this.#judgedEntries[this.#judgedEntries.length-1].result;
+      console.assert(result?.rawTime != null);
+
+      if (this.time.current >= result!.rawTime!)
+        break;
+
+      this.#revertResult(this.#judgedEntries.pop()!);
+    }
+  }
+
+  readonly revertResult = new Action<JudgementResult>();
+
+  readonly #judgedEntries: HitObjectLifetimeEntry[] = [];
+
+  #onNewResult(drawable: DrawableHitObject, result: JudgementResult)
+  {
+    console.assert(result !== null && drawable.entry?.result === result && result.rawTime !== null);
+    this.#judgedEntries.push(drawable.entry!);
+
+    this.newResult.emit(drawable, result);
+  }
+
+  #revertResult(entry: HitObjectLifetimeEntry)
+  {
+    const result = entry.result!;
+    console.assert(result !== null);
+
+    this.revertResult.emit(result);
+    entry.onRevertResult();
+
+    result.reset();
   }
 }

@@ -64,6 +64,16 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
 
   public handleUserInput = true;
 
+  override get propagatePositionalInputSubTree(): boolean
+  {
+    return this.handleUserInput;
+  }
+
+  override get propagateNonPositionalInputSubTree(): boolean
+  {
+    return this.handleUserInput;
+  }
+
   protected override loadComplete()
   {
     super.loadComplete();
