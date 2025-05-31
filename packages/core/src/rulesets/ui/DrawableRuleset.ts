@@ -23,7 +23,6 @@ export abstract class DrawableRuleset extends Container
     {
       p.newResult.addListener((_, r) => this.newResult.emit(r));
       p.revertResult.addListener(r => this.revertResult.emit(r));
-      // TODO
     }));
   }
 
