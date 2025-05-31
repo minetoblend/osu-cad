@@ -67,7 +67,8 @@ export class LegacySliderBall extends CompositeDrawable
 
   #updateColors()
   {
-    this.sliderBall.color = this.#allowSliderBallTint.value ? this.drawableHitObject.accentColor.value : 0xFFFFFF;
+    if (this.sliderBall)
+      this.sliderBall.color = this.#allowSliderBallTint.value ? this.drawableHitObject.accentColor.value : 0xFFFFFF;
   }
 
   #updateStateTransforms(drawableObject: DrawableHitObject)
