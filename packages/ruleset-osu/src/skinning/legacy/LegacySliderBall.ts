@@ -18,7 +18,7 @@ export class LegacySliderBall extends CompositeDrawable
   @resolved(DrawableHitObject)
   drawableHitObject!: DrawableHitObject;
 
-  #sliderBall!: Drawable;
+  sliderBall!: Drawable;
 
   #specular!: Drawable;
 
@@ -35,7 +35,7 @@ export class LegacySliderBall extends CompositeDrawable
     if (this.sliderb instanceof SkinnableTextureAnimation || (this.sliderb instanceof DrawableSprite && this.sliderb.texture))
     {
       this.internalChildren = [
-        this.#sliderBall = this.sliderb.with({
+        this.sliderBall = this.sliderb.with({
           anchor: Anchor.Center,
           origin: Anchor.Center,
         }),
@@ -67,7 +67,7 @@ export class LegacySliderBall extends CompositeDrawable
 
   #updateColors()
   {
-    this.#sliderBall.color = this.#allowSliderBallTint.value ? this.drawableHitObject.accentColor.value : 0xFFFFFF;
+    this.sliderBall.color = this.#allowSliderBallTint.value ? this.drawableHitObject.accentColor.value : 0xFFFFFF;
   }
 
   #updateStateTransforms(drawableObject: DrawableHitObject)
