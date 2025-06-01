@@ -23,7 +23,7 @@ export interface SkinConfigurationFields
   sliderBorder: Color;
   sliderTrackOverride: Color;
   spinnerBackground: Color;
-  starBreakAdditive: boolean;
+  starBreakAdditive: Color;
 
   hitCirclePrefix: string;
   hitCircleOverlap: number;

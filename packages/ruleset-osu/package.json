@@ -19,7 +19,7 @@
       "default": "./dist/index.js"
     },
     "./init": {
-      "development": "./src/init.ts",
+      "source": "./src/init.ts",
       "types": "./dist/init.d.ts",
       "import": "./dist/init.js",
       "default": "./dist/init.js"
