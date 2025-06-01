@@ -23,6 +23,7 @@ export class LegacySliderBall extends CompositeDrawable
   #specular!: Drawable;
 
   readonly #allowSliderBallTint = computed(() => this.skin.getConfig("allowSliderBallTint"));
+  readonly #sliderBallColor = computed(() => this.skin.getConfig("sliderBall"));
 
   readonly accentColor = new Bindable<Color>(new Color(0xFFFFFF));
 
@@ -56,6 +57,7 @@ export class LegacySliderBall extends CompositeDrawable
     super.loadComplete();
 
     watch(this.#allowSliderBallTint, () => this.#updateColors());
+    watch(this.#sliderBallColor, () => this.#updateColors());
 
     this.accentColor.bindValueChanged(this.#updateColors, this, true);
 
@@ -68,7 +70,7 @@ export class LegacySliderBall extends CompositeDrawable
   #updateColors()
   {
     if (this.sliderBall)
-      this.sliderBall.color = this.#allowSliderBallTint.value ? this.drawableHitObject.accentColor.value : 0xFFFFFF;
+      this.sliderBall.color = this.#allowSliderBallTint.value ? this.drawableHitObject.accentColor.value : this.#sliderBallColor.value ?? 0xFFFFFF;
   }
 
   #updateStateTransforms(drawableObject: DrawableHitObject)
