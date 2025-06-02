@@ -53,7 +53,7 @@ export class DrawableSliderBall extends CompositeDrawable
   updateProgress(completionProgress: number)
   {
     const slider = this.drawableSlider.hitObject!;
-    if (this.sliderBallFlip.value == false)
+    if (slider.spanCount() > 1 && this.sliderBallFlip.value == false)
       this.ball.scaleX = slider.spanAt(completionProgress) % 2 == 1 ? -1 : 1;
 
     const position = this.position = slider.curvePositionAt(completionProgress);

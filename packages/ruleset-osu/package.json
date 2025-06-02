@@ -1,6 +1,6 @@
 {
   "name": "@osucad/ruleset-osu",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "type": "module",
   "repository": {
     "type": "git",
@@ -19,7 +19,7 @@
       "default": "./dist/index.js"
     },
     "./init": {
-      "development": "./src/init.ts",
+      "source": "./src/init.ts",
       "types": "./dist/init.d.ts",
       "import": "./dist/init.js",
       "default": "./dist/init.js"
@@ -31,7 +31,7 @@
   ],
   "dependencies": {
     "pixi.js": "^8.9.2",
-    "@osucad/core": "1.0.14",
-    "@osucad/framework": "1.0.14"
+    "@osucad/core": "1.0.15",
+    "@osucad/framework": "1.0.15"
   }
 }
