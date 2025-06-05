@@ -13,6 +13,8 @@ import { LegacyOldStyleSpinner } from "./LegacyOldStyleSpinner";
 import { LegacyFont } from "../../LegacyFont";
 import { getFontPrefix, LegacySpriteText } from "../../LegacySpriteText";
 import { OsuHitObject } from "../../hitObjects/OsuHitObject";
+import { LegacyCursor } from "./LegacyCursor";
+import { LegacyCursorTrail } from "../../ui/LegacyCursorTrail";
 
 export class OsuLegacySkinTransformer extends SkinTransformer
 {
@@ -45,6 +47,7 @@ export class OsuLegacySkinTransformer extends SkinTransformer
         "spinner-metre",
         "spinner-rpm",
         "cursor",
+        "cursormiddle",
         "cursortrail",
       ]);
 
@@ -149,6 +152,10 @@ export class OsuLegacySkinTransformer extends SkinTransformer
         return new LegacyOldStyleSpinner();
       case OsuSkinComponents.SliderBall:
         return new LegacySliderBall(this.getAnimation("sliderb"));
+      case OsuSkinComponents.Cursor:
+        return new LegacyCursor(this);
+      case OsuSkinComponents.CursorTrail:
+        return new LegacyCursorTrail(this);
       case OsuSkinComponents.HitCircleText: {
         if (!this.hasFont(LegacyFont.HitCircle))
           return null;

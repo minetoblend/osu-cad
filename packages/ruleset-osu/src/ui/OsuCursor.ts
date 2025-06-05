@@ -1,106 +1,79 @@
-import { ISkinSource, PlayfieldClock } from "@osucad/core";
+import type { ISkinSource } from "@osucad/core";
+import { SkinnableDrawable, SkinReloadableDrawable } from "@osucad/core";
 import type { Drawable, ReadonlyDependencyContainer } from "@osucad/framework";
-import { Vec2, watch, withEffectScope } from "@osucad/framework";
-import { Anchor, Container, CursorContainer, DrawableSprite, resolved } from "@osucad/framework";
+import { Anchor, Axes, Container, Vec2 } from "@osucad/framework";
+import type { SkinnableCursor } from "./SkinnableCursor";
+import { OsuSkinComponents } from "../skinning/OsuSkinComponents";
 
-export class OsuCursorContainer extends CursorContainer
+export class OsuCursor extends SkinReloadableDrawable
 {
-  override createCursor(): Drawable
+  public static readonly SIZE = 20;
+
+  #cursorExpand = false;
+
+  #cursorSprite!: SkinnableDrawable;
+
+  protected override skinChanged(skin: ISkinSource)
   {
-    return new OsuCursor();
+    super.skinChanged(skin);
+
+    this.#cursorExpand = skin.getConfig("cursorExpand") ?? true;
   }
 
-  @resolved(PlayfieldClock)
-  protected playfieldClock!: PlayfieldClock;
+  get #skinnableCursor(): SkinnableCursor
+  {
+    return this.#cursorSprite.drawable as SkinnableCursor;
+  }
+
+  get currentExpandedScale(): Vec2
+  {
+    return this.#skinnableCursor.expandTarget?.scale ?? Vec2.one();
+  }
+
+  get currentRotation()
+  {
+    return this.#skinnableCursor.expandTarget?.rotation ?? 0;
+  }
+
+  public constructor()
+  {
+    super();
+
+    this.origin= Anchor.Center;
+    this.size = new Vec2(OsuCursor.SIZE);
+  }
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
 
-    this.clock = this.playfieldClock;
+    this.internalChild = this.createCursorContent();
   }
 
-  @resolved(ISkinSource)
-  skin!: ISkinSource;
-
-  #lastPos?: Vec2;
-
-  override update()
+  private createCursorContent(): Drawable
   {
-    super.update();
+    return new Container({
+      relativeSizeAxes: Axes.Both,
+      origin: Anchor.Center,
+      anchor: Anchor.Center,
+      child: this.#cursorSprite = new SkinnableDrawable(OsuSkinComponents.Cursor).with({
+        origin: Anchor.Center,
+        anchor: Anchor.Center,
+      }),
+    });
+  }
 
-    this.#lastPos ??= this.activeCursor.position;
-
-    const currentPos = this.activeCursor.position;
-
-    const distance = this.#lastPos!.distance(currentPos);
-
-    const step = 10;
-
-    if (distance < step)
+  public expand()
+  {
+    if (!this.#cursorExpand)
       return;
 
-    for (let d = step; d <= distance; d += step)
-    {
-      const pos = Vec2.lerp(this.#lastPos, currentPos, d / distance);
-
-      this.addTrailParticleAt(pos);
-
-      this.#lastPos = pos;
-    }
+    this.#skinnableCursor.expand();
   }
 
-  addTrailParticleAt(position: Vec2)
+  public contract()
   {
-    const texture = this.skin.getTexture("cursortrail");
-    if (texture)
-    {
-      const sprite = new DrawableSprite({
-        origin: Anchor.Center,
-        depth: 1,
-        texture,
-        alpha: 0.25,
-        position: position,
-      });
-      this.addInternal(sprite);
-      sprite.fadeOut(400).expire();
-    }
+    this.#skinnableCursor.contract();
   }
 }
 
-export class OsuCursor extends Container
-{
-  @resolved(ISkinSource)
-  skin!: ISkinSource;
-
-  #cursorRotate: boolean = true;
-
-  protected override load(dependencies: ReadonlyDependencyContainer)
-  {
-    super.load(dependencies);
-
-    this.addInternal(new DrawableSprite({
-      origin: Anchor.Center,
-      texture: this.skin.getTexture("cursor"),
-      rotation: 0,
-    }));
-  }
-
-  @withEffectScope()
-  protected override loadComplete(): void
-  {
-    super.loadComplete();
-
-    watch(() => this.skin.getConfig("cursorRotate") ?? true, value => this.#cursorRotate = value, { immediate: true });
-  }
-
-  override update()
-  {
-    super.update();
-
-    if (this.#cursorRotate)
-      this.rotation += (this.time.elapsed / 10000) * (Math.PI * 2);
-    else
-      this.rotation = 0;
-  }
-}

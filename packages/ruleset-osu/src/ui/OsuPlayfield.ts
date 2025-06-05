@@ -1,4 +1,4 @@
-import type { DrawableHitObject, HitObject, HitObjectLifetimeEntry } from "@osucad/core";
+import type { DrawableHitObject, GameplayCursorContainer, HitObject, HitObjectLifetimeEntry } from "@osucad/core";
 import { Playfield } from "@osucad/core";
 import { Axes, type Drawable, LifetimeManagementContainer, ProxyDrawable, type ReadonlyDependencyContainer } from "@osucad/framework";
 import { DrawableHitCircle } from "../hitObjects/drawables/DrawableHitCircle";
@@ -18,6 +18,7 @@ import { SliderRepeat } from "../hitObjects/SliderRepeat";
 import { DrawableSliderRepeat } from "../hitObjects/drawables/DrawableSliderRepeat";
 import { SliderTick } from "../hitObjects/SliderTick";
 import { DrawableSliderTick } from "../hitObjects/drawables/DrawableSliderTick";
+import { OsuCursorContainer } from "./OsuCursorContainer";
 
 export class OsuPlayfield extends Playfield
 {
@@ -79,6 +80,11 @@ export class OsuPlayfield extends Playfield
     {
       this.approachCircles.add(new ProxyDrawable(drawable.proxiedLayer));
     }
+  }
+
+  protected override createCursor(): GameplayCursorContainer | null
+  {
+    return new OsuCursorContainer();
   }
 }
 

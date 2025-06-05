@@ -9,6 +9,7 @@ import { PlayfieldClock } from "./PlayfieldClock";
 import type { HitObjectEntryManagerEvent } from "../../pooling/HitObjectEntryManager";
 import { HitObjectEntryManager } from "../../pooling/HitObjectEntryManager";
 import type { JudgementResult } from "../judgements/JudgementResult";
+import type { GameplayCursorContainer } from "./GameplayCursorContainer";
 
 @provide(IPooledHitObjectProvider)
 @provide(Playfield)
@@ -56,6 +57,15 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
+
+    this.#cursor= this.createCursor();
+
+    if (this.cursor !== null)
+    {
+      // TODO: this.cursor.hide();
+
+      this.addInternal(this.cursor);
+    }
 
     this.clock = this.playfieldClock;
     this.processCustomClock = false;
@@ -239,5 +249,17 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
     entry.onRevertResult();
 
     result.reset();
+  }
+
+  #cursor: GameplayCursorContainer | null = null;
+
+  get cursor(): GameplayCursorContainer | null
+  {
+    return this.#cursor;
+  }
+
+  protected createCursor(): GameplayCursorContainer | null
+  {
+    return null;
   }
 }

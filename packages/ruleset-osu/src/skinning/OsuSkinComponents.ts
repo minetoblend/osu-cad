@@ -18,4 +18,7 @@ export class OsuSkinComponents extends SkinComponentLookup
   static readonly FollowPoint = new OsuSkinComponents("FollowPoint");
   static readonly SpinnerBody = new OsuSkinComponents("SpinnerBody");
   static readonly HitCircleText = new OsuSkinComponents("HitCircleText");
+  static readonly Cursor = new OsuSkinComponents("Cursor");
+  static readonly CursorTrail = new OsuSkinComponents("CursorTrail");
+  static readonly CursorParticles = new OsuSkinComponents("CursorParticles");
 }
