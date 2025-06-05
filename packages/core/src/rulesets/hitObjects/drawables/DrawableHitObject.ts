@@ -20,15 +20,24 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
 {
   readonly defaultsApplied = new Action<DrawableHitObject>();
 
-  readonly animationStartTime = new Bindable(0);
-
   readonly hitObjectApplied = new Action<DrawableHitObject>();
+
+  get hitObject(): T
+  {
+    return this.entry?.hitObject as T;
+  }
+
+  parentHitObject: DrawableHitObject | null = null;
+
+  readonly accentColor = new Bindable(new Color(0xffffff));
+
+  readonly animationStartTime = new Bindable(0);
 
   readonly onNewResult = new Action<[DrawableHitObject, JudgementResult]>();
 
-  readonly #state = new Bindable(ArmedState.Idle);
+  readonly onRevertResult = new Action<[DrawableHitObject, JudgementResult]>();
 
-  parentHitObject: DrawableHitObject | null = null;
+  readonly #state = new Bindable(ArmedState.Idle);
 
   isInitialized = false;
 
@@ -83,16 +92,9 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
     this.#updateStateFromResult();
   }
 
-  get hitObject(): T
-  {
-    return this.entry?.hitObject as T;
-  }
-
   readonly applyCustomUpdateState = new Action<[DrawableHitObject, ArmedState]>();
 
   readonly startTimeBindable = new Bindable(0);
-
-  readonly accentColor = new Bindable(new Color(0xffffff));
 
   get hitStateUpdateTime()
   {
@@ -155,6 +157,8 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
 
     this.#ensureEntryHasResult();
 
+    entry.revertResult.addListener(this.#onRevertResult, this);
+
     for (const h of this.hitObject.nestedHitObjects)
     {
       const pooledDrawableNested = this.pooledObjectProvider?.getPooledDrawableRepresentation(h, this);
@@ -167,6 +171,8 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
       if (pooledDrawableNested === null)
         this.onNestedDrawableCreated.emit(drawableNested);
 
+      drawableNested.onNewResult.addListener(this.#onNewResult, this);
+      drawableNested.onRevertResult.addListener(this.#onNestedRevertResult, this);
       drawableNested.applyCustomUpdateState.addListener(this.#onApplyCustomUpdateState, this);
 
       drawableNested.parentHitObject = this;
@@ -200,18 +206,22 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
     this.startTimeBindable.unbindFrom(this.hitObject.startTimeBindable);
 
     for (const obj of this.#nestedHitObjects)
+    {
       obj.applyCustomUpdateState.removeListener(this.#onApplyCustomUpdateState, this);
-
+      obj.onNewResult.removeListener(this.#onNewResult, this);
+      obj.onRevertResult.removeListener(this.#onNestedRevertResult, this);
+    }
     this.#nestedHitObjects = [];
+
     for (const nestedEntry of [...entry.nestedEntries])
     {
       if (nestedEntry instanceof SyntheticHitObjectEntry)
-      {
         entry.nestedEntries.delete(nestedEntry);
-      }
     }
     this.clearNestedHitObjects();
     this.hitObject.defaultsApplied.removeListener(this.#onDefaultsApplied, this);
+
+    entry.revertResult.removeListener(this.#onRevertResult, this);
 
     this.onFreed();
 
@@ -226,6 +236,22 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
 
   protected onFreed()
   {
+  }
+
+  #onNewResult(drawableHitObject: DrawableHitObject, result: JudgementResult)
+  {
+    this.onNewResult.emit(drawableHitObject, result);
+  }
+
+  #onRevertResult()
+  {
+    this.updateState(ArmedState.Idle);
+    this.onRevertResult.emit(this, this.result!);
+  }
+
+  #onNestedRevertResult(drawableHitObject: DrawableHitObject, result: JudgementResult)
+  {
+    this.onRevertResult.emit(drawableHitObject, result);
   }
 
   #onDefaultsApplied(hitObject: HitObject)

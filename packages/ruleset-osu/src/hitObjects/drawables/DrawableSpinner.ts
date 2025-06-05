@@ -1,5 +1,5 @@
 import type { ArmedState, DrawableHitObject, HitObject, Judgement, JudgementResult } from "@osucad/core";
-import { AspectContainer, SkinnableDrawable } from "@osucad/core";
+import { AspectContainer, HitResult, SkinnableDrawable } from "@osucad/core";
 import { OsuSkinComponents } from "../../skinning/OsuSkinComponents";
 import type { Spinner } from "../Spinner";
 import { DrawableOsuHitObject } from "./DrawableOsuHitObject";
@@ -225,5 +225,33 @@ export class DrawableSpinner extends DrawableOsuHitObject<Spinner>
   override get result(): OsuSpinnerJudgementResult
   {
     return super.result as OsuSpinnerJudgementResult;
+  }
+
+  protected override checkForResult(userTriggered: boolean, timeOffset: number)
+  {
+    if (this.time.current < this.hitObject.startTime)
+      return;
+
+    if (this.progress >= 1)
+      this.result.timeCompleted ??= this.time.current;
+
+    if (userTriggered || this.time.current < this.hitObject.endTime)
+      return;
+
+    // Trigger a miss result for remaining ticks to avoid infinite gameplay.
+    for (const tick of this.#ticks.children.filter(t => !t.result!.hasResult))
+      tick.triggerResult(false);
+
+    this.applyResult(r =>
+    {
+      if (this.progress >= 1)
+        r.type = HitResult.Great;
+      else if (this.progress > .9)
+        r.type = HitResult.Ok;
+      else if (this.progress > .75)
+        r.type = HitResult.Meh;
+      else if (this.time.current >= this.hitObject.endTime)
+        r.type = r.judgement.minResult;
+    });
   }
 }

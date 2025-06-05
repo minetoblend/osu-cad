@@ -11,7 +11,16 @@ export class OsuSpinnerJudgementResult extends OsuJudgementResult
     return this.history.totalRotation;
   }
 
-  public readonly history = new SpinnerSpinHistory();
+  public history = new SpinnerSpinHistory();
 
   public timeStarted?: number;
+
+  public timeCompleted?: number;
+
+  override reset()
+  {
+    super.reset();
+
+    this.history = new SpinnerSpinHistory();
+  }
 }

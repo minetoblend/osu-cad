@@ -99,6 +99,8 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
 
   #addDrawable(drawable: DrawableHitObject)
   {
+    drawable.onNewResult.addListener(this.#onNewResult, this);
+
     this.#bindStartTime(drawable);
 
     drawable.depth = this.getDrawableDepth(drawable);
@@ -112,9 +114,16 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
 
   #removeDrawable(drawable: DrawableHitObject)
   {
+    drawable.onNewResult.removeListener(this.#onNewResult, this);
+
     this.#unbindStartTime(drawable);
 
     this.removeInternal(drawable, false);
+  }
+
+  #onNewResult(d: DrawableHitObject, result: JudgementResult)
+  {
+    this.newResult.emit(d, result);
   }
 
   add(hitObject: DrawableHitObject)
