@@ -46,7 +46,7 @@ export class OsuAutoPlayController extends AutoPlayController<DrawableOsuHitObje
       const scaleY = 0.8 + random(new Vec2(spinCount, 1)) * 0.6;
 
       const position = new Vec2(256, 192).add(
-          new Vec2(0, 75)
+          new Vec2(0, 120)
             .rotate(angle)
             .mul({ x: scaleX, y: scaleY })
             .rotate(Math.PI * (0.2 + random(new Vec2(spinCount, 12)) * 0.1)),
