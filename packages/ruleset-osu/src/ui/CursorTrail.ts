@@ -111,6 +111,7 @@ export abstract class CursorTrail extends CompositeDrawable
       origin: this.trailOrigin,
       position: localSpacePosition,
       scale: this.newPartScale.scale(this.globalPartScale),
+      blendMode: "inherit",
     });
 
     this.addInternal(sprite);
