@@ -1,3 +1,7 @@
+## 1.0.16 (2025-06-05)
+
+This was a version bump only for @osucad/core to align it with other projects, there were no code changes.
+
 ## 1.0.15 (2025-06-01)
 
 This was a version bump only for @osucad/core to align it with other projects, there were no code changes.
