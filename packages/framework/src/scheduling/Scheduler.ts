@@ -194,7 +194,7 @@ export class Scheduler {
 
     const debounceTime: number = typeof receiverOrDebounceTime === 'number' ? receiverOrDebounceTime : time!;
 
-    const del = new ScheduledDelegate(task, this.#currentTime + debounceTime, debounceTime);
+    const del = new ScheduledDelegate(task, this.#currentTime + debounceTime, -1);
     del.receiver = receiver;
 
     this.#enqueue(del);
