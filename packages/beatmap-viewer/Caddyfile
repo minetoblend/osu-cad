@@ -1,24 +1,12 @@
-{
-  debug
-	log {
-		format console
-		output stderr
-		level DEBUG
-	}
-}
-
 :8081 {
   reverse_proxy /beatmaps/* https://assets.ppy.sh {
     header_up Host {upstream_hostport}
   }
   reverse_proxy /preview/* https://catboy.best {
     header_up Host {upstream_hostport}
+    header_up -X-Forwarded-For
   }
   reverse_proxy /ordr/* https://apis.issou.best {
-    header_up Host {upstream_hostport}
-  }
-
-  reverse_proxy /api/ratelimits https://catboy.best {
     header_up Host {upstream_hostport}
   }
 
