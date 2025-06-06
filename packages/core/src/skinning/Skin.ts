@@ -22,7 +22,6 @@ export class Skin implements ISkin
     this.samples = new SkinSampleStore(
         files,
         resourcesProvider.audioManager,
-        resourcesProvider.audioMixer.hitSounds,
     );
   }
 

@@ -41,5 +41,7 @@ export class FrameStatistics
 
   static readonly updateSubTreeTransforms = new Timer();
 
+  static readonly audio = new Timer();
+
   static readonly frame = new Timer();
 }

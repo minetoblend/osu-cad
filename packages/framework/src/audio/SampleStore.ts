@@ -1,22 +1,21 @@
-import type { IResourceStore } from "../../io/stores/IResourceStore";
-import type { AudioChannel } from "../AudioChannel";
+import type { IResourceStore } from "../io/stores/IResourceStore";
+import { ResourceStore } from "../io/stores/ResourceStore";
+import type { IAudioDestination } from "./IAudioDestination";
 import type { ISampleStore } from "./ISampleStore";
-import type { Sample } from "./Sample";
-import { ResourceStore } from "../../io/stores/ResourceStore";
-import { SampleFactory } from "./SampleFactory";
+import { Sample } from "./Sample";
 
 export class SampleStore implements ISampleStore
 {
   readonly #store: ResourceStore<ArrayBuffer>;
 
-  readonly #channel: AudioChannel;
+  readonly #destination: IAudioDestination;
 
-  readonly #factories = new Map<string, SampleFactory | null>();
+  readonly #buffers = new Map<string, AudioBuffer>();
 
-  constructor(store: IResourceStore<ArrayBuffer>, channel: AudioChannel)
+  constructor(readonly context: AudioContext, store: IResourceStore<ArrayBuffer>, destination: IAudioDestination)
   {
     this.#store = new ResourceStore(store);
-    this.#channel = channel;
+    this.#destination = destination;
 
     this.addExtension("wav");
     this.addExtension("mp3");
@@ -34,22 +33,27 @@ export class SampleStore implements ISampleStore
 
   async load(name: string)
   {
-    if (this.#factories.has(name))
+    if (this.#buffers.has(name))
       return;
 
     const data = await this.#store.getAsync(name);
     if (data === null)
       return;
 
-    const audioBuffer = await this.#channel.manager.context.decodeAudioData(data);
-    this.#factories.set(name, new SampleFactory(audioBuffer, name, this.#channel));
+    const audioBuffer = await this.context.decodeAudioData(data);
+    this.#buffers.set(name, audioBuffer);
   }
 
   get(name: string): Sample | null
   {
-    const factory = this.#factories.get(name);
+    const buffer = this.#buffers.get(name);
+    if (!buffer)
+      return null;
 
-    return factory?.createSample() ?? null;
+    const sample = new Sample(name, buffer, this.context);
+    this.#destination.connect(sample);
+
+    return sample;
   }
 
   async getAsync(name: string)
@@ -68,5 +72,6 @@ export class SampleStore implements ISampleStore
   }
 
   dispose(): void
-  {}
+  {
+  }
 }

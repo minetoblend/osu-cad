@@ -1,15 +1,14 @@
-import type { AudioChannel } from "../AudioChannel";
 import { Track } from "./Track";
 
 export class AudioBufferTrack extends Track
 {
   constructor(
+    name: string,
     readonly context: AudioContext,
-    readonly channel: AudioChannel,
     readonly buffer: AudioBuffer,
   )
   {
-    super();
+    super(name, context);
   }
 
   get length()
@@ -133,7 +132,7 @@ export class AudioBufferTrack extends Track
 
     source.playbackRate.value = this.rate;
 
-    source.connect(this.channel.input);
+    source.connect(this.output);
 
     return source;
   }

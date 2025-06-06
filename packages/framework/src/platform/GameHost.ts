@@ -87,6 +87,10 @@ export abstract class GameHost
     startTime = FrameStatistics.updateSubTreeTransforms.start();
     this.root.updateSubTreeTransforms();
     FrameStatistics.updateSubTreeTransforms.stop(startTime);
+
+    startTime = FrameStatistics.audio.start();
+    this.audioManager.update();
+    FrameStatistics.audio.stop(startTime);
   }
 
   protected render()

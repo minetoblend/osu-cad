@@ -1,11 +1,15 @@
-export { AudioChannel } from "./AudioChannel";
-export { AudioFilter } from "./AudioFilter";
-export { AudioManager } from "./AudioManager";
-export { LowpassFilter, type LowpassFilterOptions } from "./LowpassFilter";
-export { type ISampleStore } from "./sample/ISampleStore";
-export { Sample, type SamplePlayOptions } from "./sample/Sample";
-export { SamplePlayback } from "./sample/SamplePlayback";
-export { SampleStore } from "./sample/SampleStore";
-export { AudioBufferTrack } from "./track/AudioBufferTrack";
-export { type ITrack } from "./track/ITrack";
-export { Track } from "./track/Track";
+export * from "./Track";
+export * from "./ITrack";
+export * from "./Sample";
+export * from "./AudioMixer";
+export * from "./SampleStore";
+export * from "./AudioManager";
+export * from "./IAudioSource";
+export * from "./ISampleStore";
+export * from "./SampleChannel";
+export * from "./AudioComponent";
+export * from "./IAudioComponent";
+export * from "./AudioBufferTrack";
+export * from "./AudioDestination";
+export * from "./IAudioDestination";
+

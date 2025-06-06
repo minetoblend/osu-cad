@@ -1,5 +1,5 @@
-export * from "./audio";
 export * from "./bindables";
+export * from "./audio";
 export * from "./caching";
 export * from "./di";
 export { Game } from "./Game";

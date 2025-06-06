@@ -1,4 +1,4 @@
-import type { AudioChannel, AudioManager, IFileSystem, Sample } from "@osucad/framework";
+import type { AudioManager, IFileSystem, Sample } from "@osucad/framework";
 
 export class SkinSampleStore
 {
@@ -7,7 +7,6 @@ export class SkinSampleStore
   constructor(
     readonly files: IFileSystem,
     readonly audioManager: AudioManager,
-    readonly channel: AudioChannel,
   )
   {
   }
@@ -22,7 +21,9 @@ export class SkinSampleStore
     if (!buffer)
       return null;
 
-    return this.audioManager.createSample(this.channel, buffer);
+    const sample = this.audioManager.createSample(buffer, this.audioManager.sampleMixer, name);
+
+    return sample;
   }
 
   private readonly _audioBuffers = new Map<string, AudioBuffer>();
@@ -44,7 +45,7 @@ export class SkinSampleStore
     if (!audioBuffer)
       return null;
 
-    return this.audioManager.createSample(this.channel, audioBuffer);
+    return this.audioManager.createSample(audioBuffer);
   }
 
 

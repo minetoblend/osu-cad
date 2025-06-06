@@ -1,125 +1,69 @@
-import { AudioChannel } from "./AudioChannel";
-import { Sample } from "./sample/Sample";
-import { AudioBufferTrack } from "./track/AudioBufferTrack";
-import { AudioElementTrack } from "./track/AudioElementTrack";
+import { BindableNumber } from "../bindables/BindableNumber";
+import { AudioDestination } from "./AudioDestination";
+import { AudioMixer } from "./AudioMixer";
+import type { IAudioDestination } from "./IAudioDestination";
+import { Sample } from "./Sample";
 
-export class AudioManager
+export class AudioManager extends AudioDestination implements IAudioDestination
 {
+  readonly context: AudioContext;
+
+  readonly volume = new BindableNumber(1)
+    .withMinValue(0)
+    .withMaxValue(1);
+
+  readonly sampleMixer: AudioMixer;
+
+  readonly trackMixer: AudioMixer;
+
+  readonly #gain: GainNode;
+
   constructor()
   {
+    super("Audio Manager");
+
     this.context = new AudioContext({ latencyHint: "interactive" });
-    this.#setupContextAutostart();
 
     this.#gain = this.context.createGain();
     this.#gain.connect(this.context.destination);
+
+    this.sampleMixer = this.createMixer("Samples Mixer");
+    this.trackMixer = this.createMixer("Track Mixer");
+
+    this.volume.bindValueChanged(volume => this.#gain.gain.value = volume.value);
   }
 
-  readonly context: AudioContext;
-
-  createTrack(channel: AudioChannel, buffer: AudioBuffer)
-  {
-    return new AudioBufferTrack(this.context, channel, buffer);
-  }
-
-  async createTrackFromArrayBuffer(channel: AudioChannel, buffer: ArrayBuffer)
-  {
-    const dest = new ArrayBuffer(buffer.byteLength);
-    new Uint8Array(dest).set(new Uint8Array(buffer));
-
-    return this.context.decodeAudioData(dest).then(audioBuffer => this.createTrack(channel, audioBuffer));
-  }
-
-  createTrackFromUrl(channel: AudioChannel, url: string)
-  {
-    return fetch(url)
-      .then(res => res.arrayBuffer())
-      .then(data => this.context.decodeAudioData(data))
-      .then(buffer => this.createTrack(channel, buffer));
-  }
-
-  async createStreamedTrackFromUrl(channel: AudioChannel, url: string)
-  {
-    const el = document.createElement("audio");
-    el.src = url;
-
-    el.load();
-
-    await new Promise((resolve, reject) =>
-    {
-      el.onloadedmetadata = resolve;
-      el.onerror = reject;
-    });
-
-    el.ondurationchange = () => console.log(el.duration);
-
-    return new AudioElementTrack(this.context, channel, el);
-  }
-
-  createSample(channel: AudioChannel, buffer: AudioBuffer)
-  {
-    return new Sample(this.context, channel, buffer);
-  }
-
-  async createSampleFromArrayBuffer(channel: AudioChannel, buffer: ArrayBuffer)
-  {
-    const dest = new ArrayBuffer(buffer.byteLength);
-    new Uint8Array(dest).set(new Uint8Array(buffer));
-
-    return this.context.decodeAudioData(dest).then(buffer => this.createSample(channel, buffer));
-  }
-
-  createSampleFromUrl(channel: AudioChannel, url: string)
-  {
-    return fetch(url)
-      .then(res => res.arrayBuffer())
-      .then(data => this.context.decodeAudioData(data))
-      .then(buffer => this.createSample(channel, buffer));
-  }
-
-  #resumed = new AbortController();
-
-  #channels = new Set<AudioChannel>();
-
-  createChannel(): AudioChannel
-  {
-    const channel = new AudioChannel(this);
-    this.#channels.add(channel);
-    return channel;
-  }
-
-  #setupContextAutostart()
-  {
-    document.addEventListener("keydown", this.#resumeContext.bind(this), {
-      signal: this.#resumed.signal,
-    });
-    document.addEventListener("mousedown", this.#resumeContext.bind(this), {
-      signal: this.#resumed.signal,
-    });
-  }
-
-  #resumeContext()
-  {
-    if (this.context.state === "running")
-      return;
-
-    this.context.resume();
-    this.#resumed.abort();
-  }
-
-  #gain: GainNode;
-
-  get destination()
+  protected override get input(): AudioNode
   {
     return this.#gain;
   }
 
-  get masterVolume(): number
+  public createMixer(name: string = "Mixer")
   {
-    return this.#gain.gain.value;
+    const mixer = new AudioMixer(name, this.context);
+
+    this.connect(mixer);
+
+    return mixer;
   }
 
-  set masterVolume(value: number)
+  public createSample(buffer: AudioBuffer, mixer?: AudioMixer, name: string = "Sample")
   {
-    this.#gain.gain.value = value;
+    const sample = new Sample(name, buffer, this.context);
+
+    mixer?.connect(sample);
+
+    return sample;
+  }
+
+  public override dispose()
+  {
+    super.dispose();
+
+    this.#gain.disconnect();
+
+    this.volume.unbindAll();
+
+    void this.context.close();
   }
 }

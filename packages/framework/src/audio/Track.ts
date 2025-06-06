@@ -1,17 +1,34 @@
-import type { IDisposable } from "../../types";
+import { Action } from "../bindables/Action";
+import { AudioComponent } from "./AudioComponent";
 import type { ITrack } from "./ITrack";
-import { Action } from "../../bindables";
-import type { IClock } from "../../timing/IClock";
 
-export abstract class Track implements ITrack, IDisposable, IClock
+export abstract class Track extends AudioComponent implements ITrack
 {
-  completed = new Action();
+  readonly completed = new Action();
 
-  looping: boolean = false;
+  // TODO: actually loop
+  public looping: boolean = false;
 
-  restartPoint: number = 0;
+  public restartPoint: number = 0;
 
-  hasCompleted: boolean = false;
+  readonly #gain: GainNode;
+
+  get output(): AudioNode
+  {
+    return this.#gain;
+  }
+
+  public override get hasCompleted(): boolean
+  {
+    return false;
+  }
+
+  protected constructor(name: string, context: AudioContext)
+  {
+    super(name);
+
+    this.#gain = new GainNode(context);
+  }
 
   protected raiseCompleted()
   {
@@ -60,6 +77,4 @@ export abstract class Track implements ITrack, IDisposable, IClock
   {
     this.rate = 1;
   }
-
-  abstract dispose(): void;
 }
