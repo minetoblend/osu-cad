@@ -18,12 +18,19 @@
     header_up Host {upstream_hostport}
   }
 
+  reverse_proxy /api/ratelimits https://catboy.best {
+    header_up Host {upstream_hostport}
+  }
+
   @notProxy {
       not {
           path /beatmaps/*
       }
       not {
           path /preview/*
+      }
+      not {
+          path /api/*
       }
   }
 
