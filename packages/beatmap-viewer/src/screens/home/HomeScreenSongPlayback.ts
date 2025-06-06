@@ -65,5 +65,8 @@ export class HomeScreenSongPlayback extends Component {
     super.dispose(isDisposing);
 
     this.#source.disconnect();
+
+    this.audioEl.pause();
+    this.audioEl.src = "";
   }
 }
