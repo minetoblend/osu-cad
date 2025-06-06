@@ -185,11 +185,12 @@ export class Scheduler {
   addDebounced<T>(task: () => void, receiver: T, debounceTime: number): void;
   addDebounced<T>(task: () => void, debounceTimes: number): void;
   addDebounced<T>(task: () => void, receiverOrDebounceTime: T | number, time?: number) {
-    const receiver = typeof receiverOrDebounceTime !== 'number' ? receiverOrDebounceTime : undefined;
+    const receiver = typeof receiverOrDebounceTime === 'number' ? undefined : receiverOrDebounceTime;
 
-    const existing = this.#runQueue.find(sd => sd.task === task && sd.receiver === receiver);
-    if (existing) {
-      existing.cancel();
+    const index = this.#timedTasks.findIndex(sd => sd.task === task && sd.receiver === receiver);
+    if (index >= 0) {
+      this.#timedTasks[index].cancel();
+      this.#timedTasks.splice(index, 1);
     }
 
     const debounceTime: number = typeof receiverOrDebounceTime === 'number' ? receiverOrDebounceTime : time!;
@@ -197,7 +198,7 @@ export class Scheduler {
     const del = new ScheduledDelegate(task, this.#currentTime + debounceTime, -1);
     del.receiver = receiver;
 
-    this.#enqueue(del);
+    this.add(del);
   }
 
   addOnce<T>(task: () => void, receiver?: T): boolean {

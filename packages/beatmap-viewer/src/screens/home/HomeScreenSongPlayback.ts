@@ -1,10 +1,10 @@
-import { AudioMixer } from "@osucad/core";
-import { AudioManager, Bindable, Component, resolved, ScheduledDelegate } from "@osucad/framework";
+import { AudioMixer } from '@osucad/core';
+import { AudioManager, Bindable, Component, resolved } from '@osucad/framework';
 
 export class HomeScreenSongPlayback extends Component {
   readonly audioUrl = new Bindable<string | null>(null);
 
-  audioEl = document.createElement("audio");
+  audioEl = document.createElement('audio');
 
   constructor() {
     super();
@@ -27,9 +27,8 @@ export class HomeScreenSongPlayback extends Component {
   protected loadComplete() {
     super.loadComplete();
 
-    this.audioUrl.bindValueChanged((url) => {
-      this.scheduler.addDebounced(this.#updateUrl, this, 250)
-    }, true);
+    this.audioUrl.bindValueChanged(() => this.scheduler.addDebounced(this.#updateUrl, this, 250));
+    this.#updateUrl();
 
     this.#source = this.audioManager.context.createMediaElementSource(this.audioEl);
     this.#source.connect(this.mixer.music.input);
@@ -39,9 +38,10 @@ export class HomeScreenSongPlayback extends Component {
     if (this.audioUrl.value) {
       this.audioEl.src = this.audioUrl.value;
       this.audioEl.autoplay = !this.#paused;
-    } else {
+    }
+    else {
       this.audioEl.pause();
-      this.audioEl.src = "";
+      this.audioEl.src = '';
     }
   }
 
@@ -50,7 +50,8 @@ export class HomeScreenSongPlayback extends Component {
     this.audioEl.autoplay = true;
     try {
       this.audioEl.play().catch();
-    } catch (e) {
+    }
+    catch (e) {
       // noop
     }
   }
@@ -67,6 +68,6 @@ export class HomeScreenSongPlayback extends Component {
     this.#source.disconnect();
 
     this.audioEl.pause();
-    this.audioEl.src = "";
+    this.audioEl.src = '';
   }
 }
