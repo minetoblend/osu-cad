@@ -53,11 +53,21 @@ export class Sample extends AudioDestination<SampleChannel> implements IAudioSou
     this.balance.bindValueChanged(balance => this.#pan.pan.value = balance.value);
   }
 
+  get length()
+  {
+    return this.buffer.duration * 1000;
+  }
+
   play()
   {
-    const channel = this.createChannel();
+    const channel = this.getChannel();
     channel.play();
     return channel;
+  }
+
+  public getChannel()
+  {
+    return this.createChannel();
   }
 
   protected createChannel()

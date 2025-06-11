@@ -1,3 +1,4 @@
+import type { ReadonlyDependencyContainer } from "@osucad/framework";
 import { Action, Bindable, provide, resolved } from "@osucad/framework";
 import { Color } from "pixi.js";
 import { PoolableDrawableWithLifetime } from "../../../pooling/PoolableDrawableWithLifetime";
@@ -8,10 +9,11 @@ import type { HitObjectLifetimeEntry } from "./HitObjectLifetimeEntry";
 import { SyntheticHitObjectEntry } from "./SyntheticHitObjectEntry";
 import { ISkinSource } from "../../../skinning/ISkinSource";
 import { IPooledHitObjectProvider } from "../../ui/IPooledHitObjectProvider";
-import { HitSampleInfo } from "../../../audio/HitSampleInfo";
+import type { HitSampleInfo } from "../../../audio/HitSampleInfo";
 import { JudgementResult } from "../../judgements/JudgementResult";
 import type { Judgement } from "../../judgements/Judgement";
 import type { HitResult } from "../../scoring/HitResult";
+import { SkinnableSound } from "../../../skinning/SkinnableSound";
 
 @provide(DrawableHitObject)
 export abstract class DrawableHitObject<out T extends HitObject = HitObject>
@@ -30,6 +32,15 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
   parentHitObject: DrawableHitObject | null = null;
 
   readonly accentColor = new Bindable(new Color(0xffffff));
+
+  protected samples!: SkinnableSound;
+
+  #samplesLoaded = false;
+
+  protected getSamples()
+  {
+    return this.samplesBindable.value;
+  }
 
   readonly animationStartTime = new Bindable(0);
 
@@ -65,6 +76,13 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
   @resolved(ISkinSource)
   protected skin!: ISkinSource;
 
+  protected override load(dependencies: ReadonlyDependencyContainer)
+  {
+    super.load(dependencies);
+
+    super.addInternal(this.samples = new SkinnableSound().adjust(t => t.minimumSampleVolume = 5));
+  }
+
   protected override loadAsyncComplete(): void
   {
     super.loadAsyncComplete();
@@ -89,12 +107,20 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
 
     this.skin.sourceChanged.addListener(this.skinChanged, this);
 
+    this.samplesBindable.bindValueChanged(() =>
+    {
+      if (this.#samplesLoaded)
+        this.loadSamples();
+    });
+
     this.#updateStateFromResult();
   }
 
   readonly applyCustomUpdateState = new Action<[DrawableHitObject, ArmedState]>();
 
   readonly startTimeBindable = new Bindable(0);
+
+  readonly samplesBindable = new Bindable<HitSampleInfo[]>([]);
 
   get hitStateUpdateTime()
   {
@@ -187,12 +213,13 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
 
     this.startTimeBindable.bindTo(this.hitObject.startTimeBindable);
 
+    this.samplesBindable.bindTo(this.hitObject.samplesBindable);
     this.hitObject.defaultsApplied.addListener(this.#onDefaultsApplied);
 
     this.onApplied();
     this.hitObjectApplied.emit(this);
 
-    if(this.isLoaded)
+    if (this.isLoaded)
     {
       this.#updateStateFromResult();
       this.updateComboColor();
@@ -204,6 +231,11 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
     super.onFree(entry);
 
     this.startTimeBindable.unbindFrom(this.hitObject.startTimeBindable);
+
+    this.samplesBindable.unbindFrom(this.hitObject.samplesBindable);
+
+    this.#samplesLoaded = false;
+    this.samples?.clearSamples();
 
     for (const obj of this.#nestedHitObjects)
     {
@@ -236,6 +268,16 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
 
   protected onFreed()
   {
+  }
+
+  protected loadSamples()
+  {
+    const samples = this.getSamples();
+
+    if (samples.length <= 0)
+      return;
+
+    this.samples.samples = [...samples];
   }
 
   #onNewResult(drawableHitObject: DrawableHitObject, result: JudgementResult)
@@ -322,6 +364,17 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
   {
   }
 
+  override update()
+  {
+    if (!this.#samplesLoaded)
+    {
+      this.#samplesLoaded = true;
+      this.loadSamples();
+    }
+
+    super.update();
+  }
+
   override updateAfterChildren()
   {
     super.updateAfterChildren();
@@ -373,10 +426,13 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
 
   protected playSamples()
   {
-    const sample = this.skin.getSample(new HitSampleInfo(HitSampleInfo.HIT_NORMAL, HitSampleInfo.BANK_SOFT));
+    this.samples?.play();
+  }
 
-    if (sample)
-      sample.play();
+  stopAllSamples()
+  {
+    if (this.samples?.looping === true)
+      this.samples.stop();
   }
 
   protected applyMaxResult()

@@ -1,9 +1,16 @@
 import type { IBeatmapTiming } from "./IBeatmapTiming";
 import type { ITimingInfo } from "./ITimingInfo";
 import type { LegacyTimingPoint } from "./LegacyTimingPoint";
+import { SampleSet } from "../../audio/SampleSet";
 
 const defaultTimingInfo: ITimingInfo = { beatLength: 60_000 / 180, signature: 4, startTime: 0 };
 
+export interface ISampleInfo
+{
+  volume: number,
+  sampleSet: SampleSet,
+  sampleIndex: number,
+}
 
 export class LegacyBeatmapTiming implements IBeatmapTiming
 {
@@ -44,6 +51,26 @@ export class LegacyBeatmapTiming implements IBeatmapTiming
       return defaultTimingInfo;
 
     return { ...timingPoint.timingInfo, startTime: timingPoint.startTime };
+  }
+
+  public getSampleInfoAt(time: number): ISampleInfo
+  {
+    const timingPoint = this._timingPoints.findLast(timingPoint => timingPoint.startTime <= time);
+
+    if (!timingPoint)
+    {
+      return {
+        volume: 100,
+        sampleSet: SampleSet.Normal,
+        sampleIndex: 0,
+      };
+    }
+
+    return {
+      volume: timingPoint.volume,
+      sampleSet: timingPoint.sampleSet,
+      sampleIndex: timingPoint.sampleIndex,
+    };
   }
 
   public getSliderVelocityAt(time: number): number

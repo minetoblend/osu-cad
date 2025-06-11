@@ -1,7 +1,7 @@
 import { BindableNumber, Vec2 } from "@osucad/framework";
 import type { OsuHitObjectOptions } from "./OsuHitObject";
 import { OsuHitObject } from "./OsuHitObject";
-import type { IBeatmapTiming, Judgement } from "@osucad/core";
+import type { HitSampleInfo, IBeatmapTiming, Judgement } from "@osucad/core";
 import { BeatmapDifficultyInfo, HitWindows, safeAssign } from "@osucad/core";
 import { SpinnerTick } from "./SpinnerTick";
 import { SpinnerBonusTick } from "./SpinnerBonusTick";
@@ -139,5 +139,14 @@ export class Spinner extends OsuHitObject
   protected override createHitWindows()
   {
     return HitWindows.Empty;
+  }
+
+  createSpinningSamples(): HitSampleInfo[]
+  {
+    const referenceSample = this.samples[0];
+    if (!referenceSample)
+      return [];
+
+    return [referenceSample.with("spinnerspin")];
   }
 }

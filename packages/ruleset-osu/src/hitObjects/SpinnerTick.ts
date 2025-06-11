@@ -1,5 +1,5 @@
 import { OsuHitObject } from "./OsuHitObject";
-import type { Judgement } from "@osucad/core";
+import type { HitSampleInfo, IBeatmapTiming, Judgement } from "@osucad/core";
 import { HitResult, HitWindows } from "@osucad/core";
 import { OsuJudgement } from "../judgements/OsuJudgement";
 
@@ -20,6 +20,11 @@ export class SpinnerTick extends OsuHitObject
   override get maximumJudgementOffset(): number
   {
     return this.spinnerDuration;
+  }
+
+  protected override createSamples(timing: IBeatmapTiming): HitSampleInfo[]
+  {
+    return [];
   }
 }
 

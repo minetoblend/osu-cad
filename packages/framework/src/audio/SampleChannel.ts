@@ -9,6 +9,16 @@ export class SampleChannel extends AudioComponent implements IAudioSource
 {
   readonly onPlay = new Action<SampleChannel>();
 
+  get looping()
+  {
+    return this.#source.loop;
+  }
+
+  set looping(value: boolean)
+  {
+    this.#source.loop = value;
+  }
+
   readonly #rate: Bindable<number>;
 
   readonly #source: AudioBufferSourceNode;
@@ -22,7 +32,6 @@ export class SampleChannel extends AudioComponent implements IAudioSource
     super(`SampleChannel (${sample.name})`);
 
     const { buffer, context, looping } = this.sample;
-
 
     this.#source = new AudioBufferSourceNode(context, {
       buffer,
@@ -52,6 +61,12 @@ export class SampleChannel extends AudioComponent implements IAudioSource
     return true;
   }
 
+  public stop()
+  {
+    this.#source.stop();
+    this.#playing = false;
+  }
+
   get playing()
   {
     return this.#playing;
@@ -76,6 +91,8 @@ export class SampleChannel extends AudioComponent implements IAudioSource
 
   public override dispose()
   {
+    this.stop();
+
     this.#rate.unbindAll();
 
     super.dispose();

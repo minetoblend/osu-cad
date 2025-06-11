@@ -1,4 +1,4 @@
-import type { HitWindows, Judgement } from "@osucad/core";
+import type { HitSoundInfo, HitWindows, Judgement } from "@osucad/core";
 import { BeatmapDifficultyInfo, HitObject, type IBeatmapTiming, safeAssign } from "@osucad/core";
 import type { IVec2 } from "@osucad/framework";
 import { Bindable, BindableBoolean, BindableNumber, Vec2 } from "@osucad/framework";
@@ -14,6 +14,7 @@ export interface OsuHitObjectOptions
   newCombo?: boolean;
   comboOffset?: number;
   stackHeight?: number;
+  hitSound?: HitSoundInfo
 }
 
 export abstract class OsuHitObject extends HitObject

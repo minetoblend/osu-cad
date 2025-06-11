@@ -12,4 +12,4 @@ export * from "./IAudioComponent";
 export * from "./AudioBufferTrack";
 export * from "./AudioDestination";
 export * from "./IAudioDestination";
-
+export * from "./DrawableSample";

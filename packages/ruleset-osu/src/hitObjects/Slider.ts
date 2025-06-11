@@ -1,6 +1,6 @@
-import type { BeatmapDifficultyInfo, IBeatmapTiming } from "@osucad/core";
-import { HitWindows, safeAssign } from "@osucad/core";
-import { BindableNumber, Vec2 } from "@osucad/framework";
+import type { BeatmapDifficultyInfo, HitSoundInfo, IBeatmapTiming } from "@osucad/core";
+import { HitSampleInfo, HitWindows, safeAssign, SampleAdditions, SampleSet, sampleSetToBank } from "@osucad/core";
+import { Bindable, BindableNumber, Vec2 } from "@osucad/framework";
 import type { OsuHitObjectOptions } from "./OsuHitObject";
 import { OsuHitObject } from "./OsuHitObject";
 import type { PathPoint } from "./PathPoint";
@@ -16,6 +16,7 @@ export interface SliderOptions extends OsuHitObjectOptions
   repeatCount?: number
   expectedDistance?: number
   controlPoints?: readonly PathPoint[]
+  nodeSamples?: readonly HitSoundInfo[]
 }
 
 export class Slider extends OsuHitObject
@@ -106,6 +107,18 @@ export class Slider extends OsuHitObject
     return this.#tickDistance;
   }
 
+  readonly nodeHitSoundsBindable = new Bindable<readonly HitSoundInfo[]>([]);
+
+  get nodeHitSounds()
+  {
+    return this.nodeHitSoundsBindable.value;
+  }
+
+  set nodeHitSounds(value)
+  {
+    this.nodeHitSoundsBindable.value = value;
+  }
+
   protected override applyDefaultsToSelf(difficulty: BeatmapDifficultyInfo, timing: IBeatmapTiming)
   {
     super.applyDefaultsToSelf(difficulty, timing);
@@ -171,6 +184,7 @@ export class Slider extends OsuHitObject
           startTime: e.time,
           position: this.position,
           stackHeight: this.stackHeight,
+          hitSound: this.nodeHitSounds[0],
         }));
         break;
       case SliderEventType.Tail:
@@ -179,6 +193,7 @@ export class Slider extends OsuHitObject
           startTime: e.time,
           position: this.endPosition,
           stackHeight: this.stackHeight,
+          hitSound: this.nodeHitSounds[this.spanCount()],
         }));
         break;
       case SliderEventType.Repeat:
@@ -188,6 +203,7 @@ export class Slider extends OsuHitObject
           position: this.position.add(this.path.positionAt(e.pathProgress)),
           stackHeight: this.stackHeight,
           pathProgress: e.pathProgress,
+          hitSound: this.nodeHitSounds[e.spanIndex + 1],
         }));
         break;
       }
@@ -197,5 +213,26 @@ export class Slider extends OsuHitObject
   protected override createHitWindows()
   {
     return HitWindows.Empty;
+  }
+
+  protected override createSamples(timing: IBeatmapTiming)
+  {
+    const sampleInfo = timing.getSampleInfoAt(this.startTime);
+
+    const sampleSet = this.hitSound.sampleSet !== SampleSet.None ? this.hitSound.sampleSet : sampleInfo.sampleSet;
+    const additionSampleSet = this.hitSound.additionSampleSet !== SampleSet.None ? this.hitSound.sampleSet : sampleSet;
+
+    const suffix = sampleInfo.sampleIndex > 0 ? sampleInfo.sampleIndex.toString() : undefined;
+
+    const samples: HitSampleInfo[] = [
+      new HitSampleInfo("sliderslide", sampleSetToBank(sampleSet), suffix, sampleInfo.volume),
+    ];
+
+    if (this.hitSound.additions && SampleAdditions.Whistle)
+    {
+      samples.push(new HitSampleInfo("sliderwhistle", sampleSetToBank(additionSampleSet), suffix, sampleInfo.volume));
+    }
+
+    return samples;
   }
 }
