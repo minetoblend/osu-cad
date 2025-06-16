@@ -1,5 +1,5 @@
-import type { Beatmap, HitObject, RulesetBeatmapParser } from "@osucad/core";
-import { HitType } from "@osucad/core";
+import type { Beatmap, HitObject, RulesetBeatmapParser, SampleAdditions } from "@osucad/core";
+import { HitSoundInfo, HitType, SampleSet } from "@osucad/core";
 import { Vec2 } from "@osucad/framework";
 import { HitCircle } from "../hitObjects/HitCircle";
 import { PathPoint, PathType } from "../hitObjects/PathPoint";
@@ -21,6 +21,10 @@ export class OsuBeatmapParser implements RulesetBeatmapParser
     const newCombo = !!(type & HitType.NewCombo);
     const comboOffset = (type & HitType.ComboOffset) >> 4;
 
+    const additions: SampleAdditions = Number.parseInt(values[4]);
+
+    const hitSound = parseHitSound(values[5], additions, startTime, beatmap);
+
     if (type & HitType.Normal)
     {
       return new HitCircle({
@@ -28,20 +32,24 @@ export class OsuBeatmapParser implements RulesetBeatmapParser
         position: { x, y },
         newCombo,
         comboOffset,
-        // TODO: HitSound
+        hitSound,
       });
     }
 
     if (type & HitType.Slider)
     {
+      const spanCount = Number.parseInt(values[6]);
+
       return new Slider({
         startTime,
         position: { x, y },
         newCombo,
         comboOffset,
         controlPoints: parseControlPoints(Vec2.from({ x, y }), values[5]),
-        repeatCount: Number.parseInt(values[6]) - 1,
+        repeatCount: spanCount - 1,
         expectedDistance: Number.parseFloat(values[7]),
+        hitSound,
+        nodeSamples: parseSliderNodeSamples(hitSound, values[8], values[9], spanCount),
       });
     }
 
@@ -55,6 +63,7 @@ export class OsuBeatmapParser implements RulesetBeatmapParser
         newCombo,
         comboOffset,
         duration,
+        hitSound,
       });
     }
 
@@ -107,4 +116,55 @@ function parsePathType(pathTypeLetter: string)
   default:
     throw new Error(`Unknown path type: ${pathTypeLetter}`);
   }
+}
+
+function parseHitSound(str: string, additions: SampleAdditions, time: number, beatmap: Beatmap): HitSoundInfo
+{
+  const sampleInfo = beatmap.timing.getSampleInfoAt(time);
+
+  if (str.length === 0)
+    return new HitSoundInfo(sampleInfo.sampleSet, sampleInfo.sampleSet, additions);
+
+  const values = str.split(":");
+
+  let sampleSet = Number.parseInt(values[0]);
+  if (!(sampleSet in SampleSet))
+    sampleSet = SampleSet.Normal;
+
+  let addSampleSet = Number.parseInt(values[1]);
+  if (!(addSampleSet in SampleSet))
+    addSampleSet = SampleSet.Normal;
+
+
+  return new HitSoundInfo(sampleSet, addSampleSet, additions);
+}
+
+function parseSliderNodeSamples(hitSound: HitSoundInfo, edgeSoundsString: string | undefined, edgeSetsString: string | undefined, spanCount: number): HitSoundInfo[]
+{
+  const samples: HitSoundInfo[] = [];
+
+  const edgeSounds = edgeSoundsString?.split("|").map(s => Number.parseInt(s) as SampleAdditions) ?? [];
+
+  const edgeSets = edgeSetsString?.split("|").map(s =>
+  {
+    const [normalSet, additionSet] = s.split(":");
+
+    return {
+      normalSet: Number.parseInt(normalSet) as SampleSet,
+      additionSet: Number.parseInt(additionSet) as SampleSet,
+    };
+  }) ?? [];
+
+  for (let i = 0; i <= spanCount; i++)
+  {
+    const additions = edgeSounds[i] ?? hitSound.additions;
+
+    const edgeSet = edgeSets[i];
+    const sampleSet = edgeSet?.normalSet ?? hitSound.sampleSet;
+    const additionSet = edgeSet?.additionSet ?? hitSound.additionSampleSet;
+
+    samples.push(new HitSoundInfo(sampleSet, additionSet, additions));
+  }
+
+  return samples;
 }

@@ -1,4 +1,4 @@
-import { ArmedState, HitResult, HitSampleInfo, ShakeContainer, SkinnableDrawable } from "@osucad/core";
+import { ArmedState, HitResult, ShakeContainer, SkinnableDrawable } from "@osucad/core";
 import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer } from "@osucad/framework";
 import { Anchor, Axes, CompositeDrawable } from "@osucad/framework";
 import { OsuSkinComponents } from "../../skinning/OsuSkinComponents";
@@ -37,7 +37,7 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
 
     this.size = OsuHitObject.OBJECT_DIMENSIONS;
 
-    this.internalChildren = [
+    this.addRangeInternal([
       this.hitArea = new HitReceptor(
           () =>  !this.allJudged,
           () => this.updateResult(true),
@@ -59,7 +59,7 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
           }),
         ],
       }),
-    ];
+    ]);
   }
 
   protected override get initialLifetimeOffset(): number
@@ -130,14 +130,6 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
   public override shake(): void
   {
     this.shakeContainer.shake();
-  }
-
-  protected override playSamples()
-  {
-    const sample = this.skin.getSample(new HitSampleInfo(HitSampleInfo.HIT_NORMAL, HitSampleInfo.BANK_SOFT));
-
-    if (sample)
-      sample.play();
   }
 
   protected override checkForResult(userTriggered: boolean, timeOffset: number)

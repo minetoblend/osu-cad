@@ -33,5 +33,4 @@ export class DrawableSpinnerTick extends DrawableOsuHitObject<SpinnerTick>
   protected override updateScale(scale: number): void
   {
   }
-
 }

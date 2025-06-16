@@ -5,6 +5,8 @@ import type { IBeatmapTiming } from "../../beatmaps/timing/IBeatmapTiming";
 import { HitWindows } from "../scoring/HitWindows";
 import { HitResult } from "../scoring";
 import { Judgement } from "../judgements/Judgement";
+import { HitSoundInfo } from "../../audio/HitSoundInfo";
+import type { HitSampleInfo } from "../../audio/HitSampleInfo";
 
 export class HitObject
 {
@@ -43,6 +45,8 @@ export class HitObject
   {
     this.applyDefaultsToSelf(difficulty, timing);
 
+    this.samplesBindable.value = this.createSamples(timing);
+
     if (this.#nestedHitObjects.length > 0)
       this.#nestedHitObjects = [];
 
@@ -78,10 +82,9 @@ export class HitObject
   {
     const offset = time.value - time.previousValue;
 
-    for(const h of this.#nestedHitObjects)
+    for (const h of this.#nestedHitObjects)
       h.startTime += offset;
   }
-
 
 
   #judgement: Judgement | null = null;
@@ -98,7 +101,6 @@ export class HitObject
   }
 
 
-
   hitWindows: HitWindows | null = null;
 
   protected createHitWindows(): HitWindows
@@ -109,6 +111,30 @@ export class HitObject
   get maximumJudgementOffset()
   {
     return this.hitWindows?.windowFor(HitResult.Miss) ?? 0;
+  }
+
+  readonly hitSoundBindable = new Bindable<HitSoundInfo>(new HitSoundInfo());
+
+  get hitSound()
+  {
+    return this.hitSoundBindable.value;
+  }
+
+  set hitSound(value: HitSoundInfo)
+  {
+    this.hitSoundBindable.value = value;
+  }
+
+  readonly samplesBindable = new Bindable<HitSampleInfo[]>([]);
+
+  get samples()
+  {
+    return this.samplesBindable.value;
+  }
+
+  protected createSamples(timing: IBeatmapTiming): HitSampleInfo[]
+  {
+    return this.hitSound.getSamples(this.startTime, timing);
   }
 }
 

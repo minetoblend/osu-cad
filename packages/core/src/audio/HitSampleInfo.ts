@@ -48,4 +48,9 @@ export class HitSampleInfo implements ISampleInfo
         && this.volume === other.volume
         && this.editorAutoBank === other.editorAutoBank;
   }
+
+  public with(name: string)
+  {
+    return new HitSampleInfo(name, this.bank, this.suffix, this.volume, this.editorAutoBank);
+  }
 }

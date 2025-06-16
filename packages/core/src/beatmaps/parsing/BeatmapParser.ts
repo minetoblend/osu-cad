@@ -5,6 +5,7 @@ import { rulesets } from "../../rulesets/RulesetStore";
 import { nn } from "../../utils/nn";
 import { Beatmap } from "../Beatmap";
 import { LegacyTimingPoint } from "../timing/LegacyTimingPoint";
+import { SampleSet } from "../../audio/SampleSet";
 
 export interface BeatmapParserOptions
 {
@@ -99,16 +100,16 @@ export class BeatmapParser
       case BeatmapSection.HitObjects: {
         const hitObject = (rulesetParser ??= await getRulesetParser()).parseHitObject(line, beatmap);
         if (hitObject)
+        {
+          hitObject.applyDefaults(beatmap.difficulty, beatmap.timing);
           beatmap.hitObjects.push(hitObject);
+        }
         break;
       }
       }
     }
 
     beatmap.hitObjects.sort((a, b) => a.startTime - b.startTime);
-
-    for (const h of beatmap.hitObjects)
-      h.applyDefaults(beatmap.difficulty, beatmap.timing);
 
     const postProcessor = await getRuleset().createBeatmapPostProcessor?.();
     if (postProcessor)
@@ -275,6 +276,17 @@ function parseTimingPoint(line: string, beatmap: Beatmap)
 
   const timingPoint = new LegacyTimingPoint();
   timingPoint.startTime = startTime;
+
+  timingPoint.sampleSet = SampleSet.Normal;
+
+  if (values.length >= 4)
+    timingPoint.sampleSet = Number.parseInt(values[3]);
+
+  if (values.length >= 5)
+    timingPoint.sampleIndex = Number.parseInt(values[4]);
+
+  if (values.length >= 6)
+    timingPoint.volume = Number.parseInt(values[5]);
 
   if (uninherited)
   {

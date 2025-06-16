@@ -152,7 +152,11 @@ export abstract class GameHost
         this.afterRender.emit();
       }
 
-      await new Promise((resolve) => requestAnimationFrame(resolve));
+      await new Promise((resolve) =>
+      {
+        requestAnimationFrame(resolve);
+        setTimeout(resolve, 17);
+      });
     }
 
     this.#performExit();

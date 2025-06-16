@@ -1,8 +1,10 @@
 import type { ArmedState, DrawableHitObject, HitObject, Judgement, JudgementResult } from "@osucad/core";
+import { SampleInfo, SkinnableSound } from "@osucad/core";
 import { AspectContainer, HitResult, SkinnableDrawable } from "@osucad/core";
 import { OsuSkinComponents } from "../../skinning/OsuSkinComponents";
 import type { Spinner } from "../Spinner";
 import { DrawableOsuHitObject } from "./DrawableOsuHitObject";
+import type { ValueChangedEvent } from "@osucad/framework";
 import { Anchor, Axes, Bindable, clamp, Container, type ReadonlyDependencyContainer } from "@osucad/framework";
 import { SpinnerRotationTracker } from "./SpinnerRotationTracker";
 import { OsuAction } from "../../ui/OsuAction";
@@ -16,6 +18,7 @@ import { OsuScoreProcessor } from "../../scoring/OsuScoreProcessor";
 
 const fade_out_duration = 240;
 const score_per_tick =  new OsuScoreProcessor().getBaseScoreForResult(new OsuSpinnerBonusTickJudgement().maxResult);
+const spinning_sample_modulated_base_frequency = 0.5;
 
 export class DrawableSpinner extends DrawableOsuHitObject<Spinner>
 {
@@ -34,6 +37,9 @@ export class DrawableSpinner extends DrawableOsuHitObject<Spinner>
   #ticks!: Container<DrawableSpinnerTick>;
 
   isSpinning!: Bindable<boolean>;
+
+  #spinningSample!: SkinnableSound;
+  #maxBonusSample!: SkinnableSound;
 
   get currentBonusScore()
   {
@@ -69,6 +75,12 @@ export class DrawableSpinner extends DrawableOsuHitObject<Spinner>
           this.rotationTracker = new SpinnerRotationTracker(this),
         ],
       }),
+      this.#spinningSample = new SkinnableSound().adjust(it =>
+      {
+        it.looping = true;
+        it.minimumSampleVolume = 5;
+      }),
+      this.#maxBonusSample = new SkinnableSound().adjust(it => it.minimumSampleVolume = 5),
     ]);
 
     this.spinsPerMinute.bindTo(this.#spmCalculator.result);
@@ -79,6 +91,7 @@ export class DrawableSpinner extends DrawableOsuHitObject<Spinner>
     super.loadComplete();
 
     this.isSpinning = this.rotationTracker.isSpinning.getBoundCopy();
+    this.isSpinning.bindValueChanged(this.#updateSpinningSample, this);
   }
 
   protected override addNestedHitObject(hitObject: DrawableHitObject)
@@ -135,6 +148,8 @@ export class DrawableSpinner extends DrawableOsuHitObject<Spinner>
   override update()
   {
     super.update();
+
+    this.#spinningSample.rate.value = spinning_sample_modulated_base_frequency + this.progress;
 
     if (this.handleUserInput)
       this.rotationTracker.tracking = this.rotationTracker.isSpinnableTime && this.#isCorrectButtonPressed() && !this.allJudged;
@@ -253,5 +268,34 @@ export class DrawableSpinner extends DrawableOsuHitObject<Spinner>
       else if (this.time.current >= this.hitObject.endTime)
         r.type = r.judgement.minResult;
     });
+  }
+
+  protected override onFreed()
+  {
+    super.onFreed();
+
+    this.#spinningSample.clearSamples();
+    this.#maxBonusSample.clearSamples();
+  }
+
+  protected override loadSamples()
+  {
+    super.loadSamples();
+
+    this.#spinningSample.samples = this.hitObject.createSpinningSamples();
+    this.#maxBonusSample.samples = [new SampleInfo("spinnerbonus-max")];
+  }
+
+  #updateSpinningSample(tracking: ValueChangedEvent<boolean>)
+  {
+    if (tracking.value)
+    {
+      if (!this.#spinningSample.isPlaying)
+      {
+        this.#spinningSample.play();
+      }
+    }
+    else if(this.#spinningSample.isPlaying)
+      this.#spinningSample.stop();
   }
 }

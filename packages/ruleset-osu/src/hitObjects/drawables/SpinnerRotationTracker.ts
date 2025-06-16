@@ -73,7 +73,7 @@ export class SpinnerRotationTracker extends CircularContainer
       this.#lastAngle = thisAngle;
     }
 
-    this.isSpinning.value = this.isSpinnableTime && Math.abs(this.#currentRotation - this.rotation) > 10;
+    this.isSpinning.value = this.isSpinnableTime && Math.abs(this.#currentRotation - this.rotation) > (10 / (2 * Math.PI));
     this.rotation = Interpolation.damp(this.rotation, this.#currentRotation, 0.99, Math.abs(this.time.elapsed));
   }
 

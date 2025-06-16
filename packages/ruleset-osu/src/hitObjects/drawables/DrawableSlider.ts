@@ -1,7 +1,5 @@
 import type { ArmedState, DrawableHitObject, Judgement } from "@osucad/core";
-import { HitSampleInfo } from "@osucad/core";
-import { HitResult, ShakeContainer } from "@osucad/core";
-import { SkinnableDrawable } from "@osucad/core";
+import { HitResult, ShakeContainer, SkinnableDrawable } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
 import { Anchor, Axes, Bindable, BindableBoolean, clamp, Container, provide, ProxyDrawable } from "@osucad/framework";
 import { OsuSkinComponents } from "../../skinning/OsuSkinComponents";
@@ -73,9 +71,11 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
   {
     super.load(dependencies);
 
+    this.samples.looping = true;
+
     this.tailContainer = new Container({ relativeSizeAxes: Axes.Both });
 
-    this.internalChildren = [
+    this.addRangeInternal([
       this.sliderInputManager,
       this.shakeContainer = new ShakeContainer({
         shakeDuration: 30,
@@ -91,7 +91,7 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
       this.headContainer = new Container({ relativeSizeAxes: Axes.Both }),
       this.overlayElementContainer = new Container({ relativeSizeAxes: Axes.Both }),
       this.ball,
-    ];
+    ]);
 
     this.scaleBindable.addOnChangeListener(scale => this.ball.scale = scale.value);
   }
@@ -171,6 +171,14 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
     super.update();
 
     this.tracking.value = this.sliderInputManager.tracking;
+
+    if (this.tracking.value && this.time.current >= this.hitObject.startTime)
+    {
+      if (!this.samples.isPlaying)
+        this.samples.play();
+    }
+    else if (this.samples.isPlaying)
+      this.samples.stop();
   }
 
   public override updateAfterChildren()
@@ -208,14 +216,6 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
 
     this.fadeOut(240);
     this.expire();
-  }
-
-  protected override playSamples()
-  {
-    const sample = this.skin.getSample(new HitSampleInfo(HitSampleInfo.HIT_NORMAL, HitSampleInfo.BANK_SOFT));
-
-    if (sample)
-      sample.play();
   }
 
   override shake()
