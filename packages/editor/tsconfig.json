@@ -4,9 +4,6 @@
   "include": [],
   "references": [
     {
-      "path": "../editor"
-    },
-    {
       "path": "../framework"
     },
     {
@@ -14,15 +11,6 @@
     },
     {
       "path": "./tsconfig.lib.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
-    },
-    {
-      "path": "./tsconfig.build.json"
-    },
-    {
-      "path": "./tsconfig.storybook.json"
     }
   ]
 }

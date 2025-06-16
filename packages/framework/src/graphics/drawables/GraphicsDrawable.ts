@@ -32,7 +32,7 @@ export abstract class GraphicsDrawable extends Drawable
     }
   }
 
-  abstract updateGraphics(g: Graphics): void;
+  protected abstract updateGraphics(g: Graphics): void;
 
   invalidateGraphics()
   {

@@ -90,7 +90,7 @@
     "changelog": {
       "projectChangelogs": {
         "renderOptions": {
-          "authors":true,
+          "authors": true,
           "commitReferences": true,
           "versionTitleDate": true,
           "applyUsernameToAuthors": true
@@ -98,7 +98,7 @@
       },
       "workspaceChangelog": {
         "renderOptions": {
-          "authors":true,
+          "authors": true,
           "commitReferences": true,
           "versionTitleDate": true,
           "applyUsernameToAuthors": true

@@ -5,6 +5,7 @@ import type { Awaitable } from "../utils";
 import type { BeatmapPostProcessor } from "./BeatmapPostProcessor";
 import type { DrawableRuleset } from "./ui/DrawableRuleset";
 import type { GameplayProcessor } from "./ui/GameplayProcessor";
+import { injectionToken } from "@osucad/framework";
 
 export interface Ruleset extends OsucadMixins.Ruleset
 {
@@ -23,3 +24,5 @@ export interface Ruleset extends OsucadMixins.Ruleset
 
   createAutoGameplayProcessor?(): Awaitable<GameplayProcessor>
 }
+
+export const Ruleset = injectionToken<Ruleset>("Ruleset");

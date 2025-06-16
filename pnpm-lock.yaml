@@ -114,6 +114,28 @@ importers:
         specifier: ^3.0.0
         version: 3.1.2(@types/node@18.16.9)(@vitest/ui@3.1.2)(jiti@2.4.2)(jsdom@22.1.0)
 
+  apps/editor-playground:
+    dependencies:
+      '@osucad/core':
+        specifier: workspace:^
+        version: link:../../packages/core
+      '@osucad/editor':
+        specifier: workspace:^
+        version: link:../../packages/editor
+      '@osucad/framework':
+        specifier: workspace:^
+        version: link:../../packages/framework
+      '@osucad/ruleset-osu':
+        specifier: workspace:^
+        version: link:../../packages/ruleset-osu
+      pixi.js:
+        specifier: ^8.9.2
+        version: 8.9.2
+    devDependencies:
+      vite-plugin-conditional-compiler:
+        specifier: ^0.3.1
+        version: 0.3.1(esbuild@0.25.3)(vite@6.3.4)(webpack@5.99.7)
+
   apps/skinning-demo:
     dependencies:
       '@osucad/core':
@@ -155,6 +177,15 @@ importers:
         specifier: ^3.2.24
         version: 3.2.24
 
+  packages/editor:
+    dependencies:
+      '@osucad/core':
+        specifier: workspace:^
+        version: link:../core
+      '@osucad/framework':
+        specifier: workspace:^
+        version: link:../framework
+
   packages/framework:
     dependencies:
       '@vue/reactivity':
@@ -188,6 +219,9 @@ importers:
       '@osucad/core':
         specifier: 1.0.16
         version: link:../core
+      '@osucad/editor':
+        specifier: workspace:^
+        version: link:../editor
       '@osucad/framework':
         specifier: 1.0.16
         version: link:../framework

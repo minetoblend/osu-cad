@@ -1,0 +1,16 @@
+{
+  "name": "@osucad/editor-playground",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@osucad/core": "workspace:^",
+    "@osucad/framework": "workspace:^",
+    "@osucad/ruleset-osu": "workspace:^",
+    "@osucad/editor": "workspace:^",
+    "pixi.js": "^8.9.2"
+  },
+  "devDependencies": {
+    "vite-plugin-conditional-compiler": "^0.3.1"
+  }
+}

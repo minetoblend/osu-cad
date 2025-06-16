@@ -6,8 +6,7 @@
       "node"
     ],
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "noEmit": true
+    "resolveJsonModule": true
   },
   "include": [
     "vite.config.ts",
@@ -15,19 +14,10 @@
   ],
   "references": [
     {
-      "path": "../storybook-renderer"
-    },
-    {
-      "path": "../editor/tsconfig.build.json"
-    },
-    {
       "path": "../framework/tsconfig.lib.json"
     },
     {
       "path": "../core/tsconfig.build.json"
-    },
-    {
-      "path": "../storybook-vite"
     }
   ]
 }

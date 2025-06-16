@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "../../packages/editor"
+    },
+    {
+      "path": "../../packages/ruleset-osu"
+    },
+    {
+      "path": "../../packages/framework"
+    },
+    {
+      "path": "../../packages/core"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    }
+  ]
+}
