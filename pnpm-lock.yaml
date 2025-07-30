@@ -158,7 +158,7 @@ importers:
   packages/core:
     dependencies:
       '@osucad/framework':
-        specifier: 1.0.16
+        specifier: 1.0.17
         version: link:../framework
       '@vueuse/core':
         specifier: ^13.1.0
@@ -180,10 +180,10 @@ importers:
   packages/editor:
     dependencies:
       '@osucad/core':
-        specifier: workspace:^
+        specifier: 1.0.17
         version: link:../core
       '@osucad/framework':
-        specifier: workspace:^
+        specifier: 1.0.17
         version: link:../framework
 
   packages/framework:
@@ -217,13 +217,13 @@ importers:
   packages/ruleset-osu:
     dependencies:
       '@osucad/core':
-        specifier: 1.0.16
+        specifier: 1.0.17
         version: link:../core
       '@osucad/editor':
-        specifier: workspace:^
+        specifier: 0.0.2
         version: link:../editor
       '@osucad/framework':
-        specifier: 1.0.16
+        specifier: 1.0.17
         version: link:../framework
       pixi.js:
         specifier: ^8.9.2
