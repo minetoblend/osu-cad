@@ -19,7 +19,7 @@ import { LayoutMember } from "../drawables/LayoutMember";
 import { MarginPadding, type MarginPaddingOptions } from "../drawables/MarginPadding";
 import type { AbsoluteSequenceSender } from "../transforms/AbsoluteSequenceSender";
 import { EasingFunction } from "../transforms/EasingFunction";
-import {IFrameBasedClock} from "../../timing";
+import type { IFrameBasedClock } from "../../timing";
 
 export interface CompositeDrawableOptions extends DrawableOptions
 {
@@ -738,7 +738,7 @@ export class CompositeDrawable extends Drawable
     for (let i = 0, len = children.length; i < len; i++)
       children[i].updateSubTree();
 
-    this.#schedulerAfterChildren?.update()
+    this.#schedulerAfterChildren?.update();
 
     this.updateAfterChildren();
 
@@ -747,15 +747,16 @@ export class CompositeDrawable extends Drawable
     return true;
   }
 
-  override updateClock(clock: IFrameBasedClock) {
+  override updateClock(clock: IFrameBasedClock)
+  {
     if (clock === this.clock)
-      return
+      return;
 
     super.updateClock(clock);
-    for (let child of this.#internalChildren)
-      child.updateClock(clock)
+    for (const child of this.#internalChildren)
+      child.updateClock(clock);
 
-    this.#schedulerAfterChildren?.updateClock()
+    this.#schedulerAfterChildren?.updateClock(clock);
   }
 
   override updateSubTreeTransforms(): boolean
