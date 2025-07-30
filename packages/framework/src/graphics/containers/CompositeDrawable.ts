@@ -6,7 +6,7 @@ import { DependencyContainer } from "../../di";
 import { getProviders } from "../../di/decorators";
 import { type IVec2, Vec2 } from "../../math/Vec2";
 import { MaskingEffect } from "../../renderers/MaskingEffect";
-import type { Scheduler } from "../../scheduling/Scheduler";
+import { Scheduler } from "../../scheduling/Scheduler";
 import { type IUsable, ValueInvokeOnDisposal } from "../../types/IUsable";
 import { debugAssert } from "../../utils/debugAssert";
 import type { IComparer } from "../../utils/IComparer";
@@ -19,6 +19,7 @@ import { LayoutMember } from "../drawables/LayoutMember";
 import { MarginPadding, type MarginPaddingOptions } from "../drawables/MarginPadding";
 import type { AbsoluteSequenceSender } from "../transforms/AbsoluteSequenceSender";
 import { EasingFunction } from "../transforms/EasingFunction";
+import {IFrameBasedClock} from "../../timing";
 
 export interface CompositeDrawableOptions extends DrawableOptions
 {
@@ -708,6 +709,19 @@ export class CompositeDrawable extends Drawable
       this.#childrenSizeDependencies.validate();
   }
 
+  #schedulerAfterChildren: Scheduler | null = null;
+
+  protected get schedulerAfterChildren(): Scheduler
+  {
+    if (this.#schedulerAfterChildren)
+    {
+      return this.#schedulerAfterChildren;
+    }
+
+    this.#schedulerAfterChildren = new Scheduler(this.clock);
+    return this.#schedulerAfterChildren;
+  }
+
   override updateSubTree(): boolean
   {
     if (!super.updateSubTree())
@@ -724,11 +738,24 @@ export class CompositeDrawable extends Drawable
     for (let i = 0, len = children.length; i < len; i++)
       children[i].updateSubTree();
 
+    this.#schedulerAfterChildren?.update()
+
     this.updateAfterChildren();
 
     this.#updateChildrenSizeDependencies();
 
     return true;
+  }
+
+  override updateClock(clock: IFrameBasedClock) {
+    if (clock === this.clock)
+      return
+
+    super.updateClock(clock);
+    for (let child of this.#internalChildren)
+      child.updateClock(clock)
+
+    this.#schedulerAfterChildren?.updateClock()
   }
 
   override updateSubTreeTransforms(): boolean
