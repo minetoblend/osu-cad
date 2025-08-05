@@ -1,6 +1,6 @@
 {
   "name": "@osucad/editor",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -19,7 +19,7 @@
     "!**/*.tsbuildinfo"
   ],
   "dependencies": {
-    "@osucad/core": "1.0.17",
-    "@osucad/framework": "1.0.17"
+    "@osucad/core": "1.1.0",
+    "@osucad/framework": "1.1.0"
   }
 }
