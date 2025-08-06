@@ -10,7 +10,7 @@ export class ComposeScreen extends EditorScreen
   }
 
   @resolved(Ruleset)
-  ruleset!: Ruleset;
+  accessor ruleset!: Ruleset;
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {

@@ -15,10 +15,10 @@ export abstract class HitObjectComposer extends CompositeDrawable
   }
 
   @resolved(Ruleset)
-  ruleset!: Ruleset;
+  accessor ruleset!: Ruleset;
 
   @resolved(EditorBeatmap)
-  beatmap!: EditorBeatmap;
+  accessor beatmap!: EditorBeatmap;
 
   protected drawableRuleset!: DrawableRuleset;
 
