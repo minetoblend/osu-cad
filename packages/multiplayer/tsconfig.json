@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "../editor"
+    },
+    {
+      "path": "../framework"
+    },
+    {
+      "path": "../core"
+    },
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.build.json"
+    }
+  ]
+}

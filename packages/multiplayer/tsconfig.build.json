@@ -1,0 +1,27 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": [
+      "vite/client",
+      "node"
+    ],
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "noEmit": true
+  },
+  "include": [
+    "vite.config.ts",
+    "package.json"
+  ],
+  "references": [
+    {
+      "path": "../editor/tsconfig.build.json"
+    },
+    {
+      "path": "../framework/tsconfig.lib.json"
+    },
+    {
+      "path": "../core/tsconfig.build.json"
+    }
+  ]
+}

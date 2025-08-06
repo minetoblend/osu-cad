@@ -1,8 +1,5 @@
-import { HitObjectComposer } from "@osucad/editor";
-import type { ReadonlyDependencyContainer } from "@osucad/framework";
-import { PlayfieldGrid } from "./PlayfieldGrid";
-import { DrawableOsuRuleset } from "../ui";
-import type { DrawableRuleset } from "@osucad/core";
+import { EditorIcons, HitObjectComposer } from "@osucad/editor";
+import { SelectTool } from "./tools/select/SelectTool";
 
 export class OsuHitObjectComposer extends HitObjectComposer
 {
@@ -11,15 +8,14 @@ export class OsuHitObjectComposer extends HitObjectComposer
     super();
   }
 
-  protected override async loadAsync(dependencies: ReadonlyDependencyContainer)
+  protected override getTools()
   {
-    await super.loadAsync(dependencies);
-
-    this.layerBelowRuleset.add(new PlayfieldGrid());
-  }
-
-  protected override createDrawableRuleset(): DrawableRuleset
-  {
-    return new DrawableOsuRuleset();
+    return [
+      {
+        name: "Select",
+        icon: EditorIcons.select,
+        tool: SelectTool,
+      },
+    ];
   }
 }

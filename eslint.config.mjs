@@ -94,6 +94,7 @@ export default defineConfig([
         "after": true,
         "overrides": { "arrow": { "before": true, "after": true } },
       }],
+      "no-unused-private-class-members": "off",
     },
   },
 ]);

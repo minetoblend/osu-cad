@@ -24,7 +24,6 @@ export class RulesetStore
       return this._rulesets.find(it => it.legacyId === lookup.legacyId);
     return undefined;
   }
-
 }
 
 export type RulesetLookup =
@@ -32,4 +31,3 @@ export type RulesetLookup =
     | { legacyId: number };
 
 export const rulesets = new RulesetStore();
-

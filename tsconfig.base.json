@@ -16,7 +16,7 @@
     "experimentalDecorators": false,
     "noImplicitOverride": true,
     "noImplicitReturns": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "skipLibCheck": true,
     "strict": true,
     "target": "es2022",

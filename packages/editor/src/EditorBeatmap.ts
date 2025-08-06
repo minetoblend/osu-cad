@@ -30,6 +30,5 @@ export class EditorBeatmap
   public get hitObjects(): readonly HitObject[]
   {
     return this.beatmap.hitObjects;
-
   }
 }

@@ -20,6 +20,12 @@
     },
     {
       "path": "./apps/editor-playground"
+    },
+    {
+      "path": "./apps/editor-web"
+    },
+    {
+      "path": "./packages/multiplayer"
     }
   ],
   "ts-node": {

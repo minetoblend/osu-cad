@@ -9,4 +9,4 @@ export interface ISkinSource extends ISkin
   findProvider(predicate: (skin: ISkin) => boolean): ISkin | null
 }
 
-export const ISkinSource = injectionToken<ISkinSource>();
+export const ISkinSource = injectionToken<ISkinSource>("ISkinSource");

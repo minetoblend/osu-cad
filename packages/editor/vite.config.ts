@@ -15,6 +15,9 @@ export default defineConfig(() => ({
       ...(process.env.NODE_ENV === "development" ? ["source"] : []),
     ],
   },
+  esbuild: {
+    target: ["chrome138"],
+  },
   build: {
     outDir: "./dist",
     emptyOutDir: true,
@@ -32,7 +35,7 @@ export default defineConfig(() => ({
       formats: ["es" as const],
     },
     minify: false,
-    target: "modules",
+    target: "esnext",
     sourcemap: true,
     rollupOptions: {
       // External packages that should not be bundled into your library.
