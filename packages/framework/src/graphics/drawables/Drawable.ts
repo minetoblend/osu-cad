@@ -22,22 +22,22 @@ import type { TouchUpEvent } from "../../input/events/TouchUpEvent";
 import type { UIEvent } from "../../input/events/UIEvent";
 import type { IInputReceiver } from "../../input/IInputReceiver";
 import type { InputManager } from "../../input/InputManager";
-import type { BLEND_MODES, ColorSource, Filter, Container as PIXIContainer } from "pixi.js";
+import type { BLEND_MODES, ColorSource, Container as PIXIContainer, Filter } from "pixi.js";
+import { Color, Matrix } from "pixi.js";
 import type { IFrameBasedClock } from "../../timing/IFrameBasedClock";
 import type { IDisposable } from "../../types/IDisposable";
 import type { List } from "../../utils/List";
 import type { CompositeDrawable } from "../containers/CompositeDrawable";
 import type { TypedTransform } from "../transforms/Transform";
-import { Matrix } from "pixi.js";
 import { Action } from "../../bindables/Action";
 import { popDrawableScope, pushDrawableScope } from "../../bindables/lifetimeScope";
-import { getAsyncDependencyLoaders, getDependencyLoaders, getInjections } from "../../di/decorators";
+import type { InjectionMetadata } from "../../di/decorators";
+import { asyncDependencyLoadersKey, dependencyLoadersKey, injectionsKey } from "../../di/decorators";
 import { HandleInputCache } from "../../input/HandleInputCache";
 import { isFocusManager } from "../../input/IFocusManager";
 import { Quad } from "../../math/Quad";
 import { Rectangle } from "../../math/Rectangle";
 import { type IVec2, Vec2 } from "../../math/Vec2";
-import { Color } from "pixi.js";
 import { Scheduler } from "../../scheduling/Scheduler";
 import { FrameStatistics } from "../../statistics/FrameStatistics";
 import { StatisticsCounterType } from "../../statistics/StatisticsCounterType";
@@ -97,6 +97,10 @@ export interface Drawable extends OsucadMixins.Drawable
 
 export abstract class Drawable extends Transformable implements IDisposable, IInputReceiver
 {
+  readonly [injectionsKey]: InjectionMetadata[] = [];
+  readonly [dependencyLoadersKey]: (() => void)[] = [];
+  readonly [asyncDependencyLoadersKey]: (() => Promise<void>)[] = [];
+
   constructor()
   {
     super();
@@ -108,10 +112,6 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     this.#transformBacking.validateParent = false;
 
     this.label = this.constructor.name;
-
-    const injections = getInjections(this);
-    for (const { key } of injections)
-      Reflect.set(this, key, null);
   }
 
   with(options: DrawableOptions): this
@@ -1006,18 +1006,15 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
       this.requestsPositionalInputSubTree = this.requestsPositionalInput;
 
       this.injectDependencies(dependencies);
-      const dependencyLoaders = getDependencyLoaders(this);
 
-      for (const key of dependencyLoaders)
-      {
-        (this as any)[key](dependencies);
-      }
+      for (const fn of this[dependencyLoadersKey])
+        fn();
 
       this.load(dependencies);
 
       this.onLoad();
 
-      const asyncDependencyLoaders = getAsyncDependencyLoaders(this);
+      const asyncDependencyLoaders = this[asyncDependencyLoadersKey];
       if (this.hasAsyncLoader || asyncDependencyLoaders.length > 0)
       {
         if (!isDirectAsyncContext)
@@ -1025,10 +1022,10 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
           throw new Error("Cannot load async dependencies in a non-async context");
         }
 
-        await Promise.all([
-          this.loadAsync(dependencies),
-          ...asyncDependencyLoaders.map(key => (this as any)[key](this.dependencies)),
-        ]);
+        await this.loadAsync(dependencies);
+
+        for (const loader of asyncDependencyLoaders)
+          await loader();
       }
 
       this.loadAsyncComplete();
@@ -1140,14 +1137,13 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   {
     this.#dependencies ??= dependencies;
 
-    const injections = getInjections(this);
-    // eslint-disable-next-line prefer-const
-    for (let { key, type, optional } of injections)
+    for (const injection of this[injectionsKey])
     {
-      if (typeof type === "function" && type.name === "")
-        type = type();
+      const type = typeof injection.type === "function" && injection.type.name === "" ? injection.type() : injection.type;
 
-      Reflect.set(this, key, optional ? this.dependencies.resolveOptional(type) : this.dependencies.resolve(type));
+      const value = injection.optional ?this.dependencies.resolveOptional(type) : this.dependencies.resolve(type);
+
+      injection.set(value);
     }
   }
 

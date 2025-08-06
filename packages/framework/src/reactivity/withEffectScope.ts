@@ -1,17 +1,12 @@
 import type { Drawable } from "../graphics";
 
-export function withEffectScope(): MethodDecorator
+export function withEffectScope<This extends Drawable, Value extends (this: This, ...args: any) => any>()
 {
-  return (target, propertyKey, descriptor) =>
+  return (target: Value,context: ClassMethodDecoratorContext<This, Value>): (this: This, ...args: any) => any =>
   {
-    const method = descriptor.value! as (...args: any[]) => any;
-
-    descriptor.value = function(this: Drawable, ...args: any[])
+    return function (...args)
     {
-      return this.effectScope.run(() =>
-      {
-        method.call(this, ...args);
-      });
-    } as any;
+      this.effectScope.run(() => target.call(this, ...args));
+    };
   };
 }

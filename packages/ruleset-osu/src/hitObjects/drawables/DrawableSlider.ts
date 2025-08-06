@@ -1,7 +1,7 @@
 import type { ArmedState, DrawableHitObject, Judgement } from "@osucad/core";
 import { HitResult, ShakeContainer, SkinnableDrawable } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
-import { Anchor, Axes, Bindable, BindableBoolean, clamp, Container, provide, ProxyDrawable } from "@osucad/framework";
+import { Anchor, Axes, Bindable, BindableBoolean, clamp, Container, provideSelf, ProxyDrawable } from "@osucad/framework";
 import { OsuSkinComponents } from "../../skinning/OsuSkinComponents";
 import type { Slider } from "../Slider";
 import { DrawableOsuHitObject } from "./DrawableOsuHitObject";
@@ -14,7 +14,7 @@ import { DrawableSliderTick } from "./DrawableSliderTick";
 import { SliderInputManager } from "./SliderInputManager";
 import { OsuSliderJudgementResult } from "../../judgements/OsuSliderJudgementResult";
 
-@provide(DrawableSlider)
+@provideSelf()
 export class DrawableSlider extends DrawableOsuHitObject<Slider>
 {
   readonly sliderInputManager: SliderInputManager;

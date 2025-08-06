@@ -5,7 +5,7 @@ import { Game, Vec2, WebGameHost } from ".";
 import { SmoothPath } from "./graphics/drawables/SmoothPath";
 import "./style.css";
 
-const host = new WebGameHost("demo");
+const host = new WebGameHost();
 
 class DemoGame extends Game
 {

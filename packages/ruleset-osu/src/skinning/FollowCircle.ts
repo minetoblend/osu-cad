@@ -9,7 +9,7 @@ import { DrawableSliderRepeat } from "../hitObjects/drawables/DrawableSliderRepe
 export abstract class FollowCircle extends CompositeDrawable
 {
   @resolved(() => DrawableSlider)
-  parentObject!: DrawableSlider;
+  accessor parentObject!: DrawableSlider;
 
   private readonly tracking = new Bindable(false);
 

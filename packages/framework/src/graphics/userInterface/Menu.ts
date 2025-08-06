@@ -1,19 +1,22 @@
 import type { ClickEvent, HoverEvent, HoverLostEvent, MouseDownEvent } from "../../input";
 import type { FocusLostEvent } from "../../input/events/FocusLostEvent";
 import type { ScrollContainer } from "../containers";
+import { CompositeDrawable, Container, FillDirection, FillFlowContainer } from "../containers";
 import type { FillFlowContainerOptions } from "../containers/FillFlowContainer";
 import type { Drawable } from "../drawables";
+import { Anchor, Axes, Direction, Invalidation, InvalidationSource, LayoutMember, LoadState } from "../drawables";
 import type { MenuItem } from "./MenuItem";
 import { Color, type ColorSource } from "pixi.js";
 import { Action } from "../../bindables";
 import { Vec2 } from "../../math";
 import { almostEquals } from "../../utils/almostEquals";
-import { CompositeDrawable, Container, FillDirection, FillFlowContainer } from "../containers";
-import { Anchor, Axes, Direction, Invalidation, InvalidationSource, LayoutMember, LoadState } from "../drawables";
 import { Box } from "../shapes";
+import { provide, provideSelf } from "../../di/decorators";
 
+@provideSelf()
 export abstract class Menu extends CompositeDrawable
 {
+  @provide()
   readonly stateChanged = new Action<MenuState>();
 
   protected hoverOpenDelay = 100;

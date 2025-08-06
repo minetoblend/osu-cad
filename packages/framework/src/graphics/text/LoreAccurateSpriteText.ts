@@ -19,7 +19,7 @@ export class LoreAccurateSpriteText extends Drawable
   private static readonly default_never_fixed_width_characters = [".", ",", ":", " ", "\u00A0", "\u202F"];
 
   @resolved(FontStore, true)
-  private store?: FontStore;
+  accessor #store!: FontStore | undefined;
 
   protected override createDrawNode(): Container
   {
@@ -403,7 +403,7 @@ export class LoreAccurateSpriteText extends Drawable
   #getTextBuilder(): TextBuilder
   {
     if (!this.#textBuilderCache.isValid)
-      this.#textBuilderCache.value = this.createTextBuilder(this.store!);
+      this.#textBuilderCache.value = this.createTextBuilder(this.#store!);
 
     return this.#textBuilderCache.value;
   }

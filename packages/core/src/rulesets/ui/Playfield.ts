@@ -1,5 +1,5 @@
 import type { IFrameBasedClock, NoArgsConstructor, ReadonlyDependencyContainer } from "@osucad/framework";
-import { Action, Axes, CompositeDrawable, DrawablePool, Lazy, provide, resolved } from "@osucad/framework";
+import { Action, Axes, CompositeDrawable, DrawablePool, Lazy, provideSelf, resolved } from "@osucad/framework";
 import type { DrawableHitObject } from "../hitObjects/drawables/DrawableHitObject";
 import { HitObjectLifetimeEntry } from "../hitObjects/drawables/HitObjectLifetimeEntry";
 import type { HitObject } from "../hitObjects/HitObject";
@@ -11,8 +11,8 @@ import { HitObjectEntryManager } from "../../pooling/HitObjectEntryManager";
 import type { JudgementResult } from "../judgements/JudgementResult";
 import type { GameplayCursorContainer } from "./GameplayCursorContainer";
 
-@provide(IPooledHitObjectProvider)
-@provide(Playfield)
+@provideSelf(IPooledHitObjectProvider)
+@provideSelf()
 export abstract class Playfield extends CompositeDrawable implements IPooledHitObjectProvider
 {
   readonly hitObjectUsageBegan = new Action<HitObject>();
@@ -39,7 +39,8 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
 
   readonly #entryManager =new HitObjectEntryManager();
 
-  protected constructor()
+  // noinspection TypeScriptAbstractClassConstructorCanBeMadeProtected
+  constructor()
   {
     super();
 
@@ -52,7 +53,7 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
   readonly hitObjectApplied = new Action<DrawableHitObject>();
 
   @resolved(PlayfieldClock)
-  protected playfieldClock!: IFrameBasedClock;
+  protected accessor playfieldClock!: IFrameBasedClock;
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {

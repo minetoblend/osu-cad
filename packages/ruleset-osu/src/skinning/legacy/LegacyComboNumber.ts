@@ -16,16 +16,16 @@ export class LegacyComboNumber extends CompositeDrawable
 
   indexInComboBindable = new Bindable(0);
 
-  hitCircleOverlap = computed(() => this.skin.getConfig("hitCircleOverlap") ?? -2);
-  prefix = computed(() => this.skin.getConfig("hitCirclePrefix") ?? "default");
+  hitCircleOverlap = computed(() => this.#skin.getConfig("hitCircleOverlap") ?? -2);
+  prefix = computed(() => this.#skin.getConfig("hitCirclePrefix") ?? "default");
 
   @withEffectScope()
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
 
-    if (this.referenceObject)
-      this.indexInComboBindable.bindTo(this.referenceObject.indexInComboBindable);
+    if (this.#referenceObject)
+      this.indexInComboBindable.bindTo(this.#referenceObject.indexInComboBindable);
 
     watch([this.hitCircleOverlap, this.prefix], () => this.generateObjects());
 
@@ -46,10 +46,10 @@ export class LegacyComboNumber extends CompositeDrawable
   }
 
   @resolved(IComboNumberReference, true)
-  referenceObject?: IComboNumberReference;
+  accessor #referenceObject!: IComboNumberReference | undefined;
 
   @resolved(ISkinSource)
-  private skin!: ISkinSource;
+  accessor #skin!: ISkinSource;
 
   generateObjects()
   {
@@ -69,7 +69,7 @@ export class LegacyComboNumber extends CompositeDrawable
 
       digits.unshift(
           (children[i++] as DrawableSprite) ?? new DrawableSprite({
-            texture: this.skin.getTexture(`${this.prefix.value}-${currentDigit}`),
+            texture: this.#skin.getTexture(`${this.prefix.value}-${currentDigit}`),
             origin: Anchor.Center,
             anchor: Anchor.Center,
           }),

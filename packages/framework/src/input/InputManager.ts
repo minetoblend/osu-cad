@@ -116,7 +116,7 @@ export abstract class InputManager extends Container implements IInputStateChang
   }
 
   @resolved(GAME_HOST)
-  host!: GameHost;
+  accessor host!: GameHost;
 
   focusedDrawable: Drawable | null = null;
 

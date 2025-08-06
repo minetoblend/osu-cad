@@ -1,15 +1,15 @@
 import type { Drawable } from "./graphics/drawables/Drawable";
 import type { GameHost } from "./platform/GameHost";
 import { Bindable } from "./bindables/Bindable";
-import { provide } from "./di/decorators";
+import { provideSelf } from "./di/decorators";
 import { Container } from "./graphics/containers/Container";
 import { Anchor } from "./graphics/drawables/Anchor";
 import { Axes } from "./graphics/drawables/Axes";
 
-@provide(Game)
-export abstract class Game extends Container
+@provideSelf()
+export class Game extends Container
 {
-  protected constructor()
+  constructor()
   {
     super();
 

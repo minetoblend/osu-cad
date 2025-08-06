@@ -3,7 +3,6 @@ import { Color, Container as PIXIContainer } from "pixi.js";
 import { Action } from "../../bindables/Action";
 import type { ReadonlyDependencyContainer } from "../../di";
 import { DependencyContainer } from "../../di";
-import { getProviders } from "../../di/decorators";
 import { type IVec2, Vec2 } from "../../math/Vec2";
 import { MaskingEffect } from "../../renderers/MaskingEffect";
 import { Scheduler } from "../../scheduling/Scheduler";
@@ -20,6 +19,9 @@ import { MarginPadding, type MarginPaddingOptions } from "../drawables/MarginPad
 import type { AbsoluteSequenceSender } from "../transforms/AbsoluteSequenceSender";
 import { EasingFunction } from "../transforms/EasingFunction";
 import type { IFrameBasedClock } from "../../timing";
+import type { ProviderMetadata } from "../../di/decorators";
+import { metadataKey } from "../../di/decorators";
+import { providersKey } from "../../di/decorators";
 
 export interface CompositeDrawableOptions extends DrawableOptions
 {
@@ -48,6 +50,8 @@ export class ChildComparer implements IComparer<Drawable>
 
 export class CompositeDrawable extends Drawable
 {
+  readonly [providersKey]: ProviderMetadata[] = [];
+
   constructor()
   {
     super();
@@ -804,20 +808,28 @@ export class CompositeDrawable extends Drawable
     if (childDependencies !== dependencies)
       childDependencies.owner = this;
 
-    const providers = getProviders(this);
-    for (const { key, type } of providers)
+    const selfProviders: ProviderMetadata[] | undefined = (this.constructor as any)[metadataKey]?.[providersKey];
+
+    if (selfProviders)
     {
-      // if no key was provided the decorator was added to the class itself
-      const value = key ? Reflect.get(this, key) : this;
+      for (const { type } of selfProviders)
+      {
+        if (type)
+          childDependencies.provide(type, this);
+        else
+          childDependencies.provide(this);
+      }
+    }
+
+    const providers = this[providersKey];
+    for (const { get, type } of providers)
+    {
+      const value = get.call(this);
 
       if (type)
-      {
         childDependencies.provide(type, value);
-      }
       else
-      {
         childDependencies.provide(value);
-      }
     }
 
     super.injectDependencies(dependencies);

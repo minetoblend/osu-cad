@@ -13,7 +13,7 @@ export class SkinnableDrawable extends CompositeDrawable
   }
 
   @resolved(ISkinSource)
-  protected skin!: ISkinSource;
+  protected accessor skin!: ISkinSource;
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {

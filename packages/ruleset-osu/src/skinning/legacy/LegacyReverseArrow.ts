@@ -8,12 +8,12 @@ import { Color } from "pixi.js";
 export class LegacyReverseArrow extends CompositeDrawable
 {
   @resolved(() => DrawableSliderRepeat)
-  private drawableRepeat!: DrawableSliderRepeat;
+  accessor #drawableRepeat!: DrawableSliderRepeat;
 
   private readonly accentColor = new Bindable(new Color(0xffffff));
 
   @resolved(ISkinSource)
-  private skinSource!: ISkinSource;
+  accessor #skinSource!: ISkinSource;
 
 
   #arrow!: DrawableSprite;
@@ -30,7 +30,7 @@ export class LegacyReverseArrow extends CompositeDrawable
 
     this.autoSizeAxes = Axes.Both;
 
-    const skin = this.skinSource.findProvider(s => s.getTexture(lookup_name) !== null);
+    const skin = this.#skinSource.findProvider(s => s.getTexture(lookup_name) !== null);
 
     this.internalChild = this.#arrow = new DrawableSprite({
       anchor: Anchor.Center,
@@ -45,12 +45,12 @@ export class LegacyReverseArrow extends CompositeDrawable
 
     this.#proxy = new ProxyDrawable(this);
 
-    this.drawableRepeat.hitObjectApplied.addListener(this.#onHitObjectApplied, this);
-    this.#onHitObjectApplied(this.drawableRepeat);
+    this.#drawableRepeat.hitObjectApplied.addListener(this.#onHitObjectApplied, this);
+    this.#onHitObjectApplied(this.#drawableRepeat);
 
     const textureIsDefaultSkin = true; // TODO
 
-    this.accentColor.bindTo(this.drawableRepeat.accentColor);
+    this.accentColor.bindTo(this.#drawableRepeat.accentColor);
     this.accentColor.bindValueChanged(c =>
     {
       this.#arrow.color = textureIsDefaultSkin && c.value.red + c.value.green + c.value.blue > (600 / 255) ? 0x000000 : 0xFFFFFF;
@@ -61,7 +61,7 @@ export class LegacyReverseArrow extends CompositeDrawable
   {
     console.assert(!this.#proxy.parent);
 
-    this.drawableRepeat.drawableSlider?.overlayElementContainer.add(this.#proxy);
+    this.#drawableRepeat.drawableSlider?.overlayElementContainer.add(this.#proxy);
   }
 
   override update()
@@ -70,15 +70,15 @@ export class LegacyReverseArrow extends CompositeDrawable
 
     const isHit = true; // TODO
 
-    if (this.time.current >= this.drawableRepeat.hitStateUpdateTime && isHit)
+    if (this.time.current >= this.#drawableRepeat.hitStateUpdateTime && isHit)
     {
-      const animDuration = Math.min(300, this.drawableRepeat.hitObject.spanDuration);
+      const animDuration = Math.min(300, this.#drawableRepeat.hitObject.spanDuration);
       this.#arrow.scale = Interpolation.valueAt(
           this.time.current,
           1,
           1.4,
-          this.drawableRepeat.hitStateUpdateTime,
-          this.drawableRepeat.hitStateUpdateTime + animDuration,
+          this.#drawableRepeat.hitStateUpdateTime,
+          this.#drawableRepeat.hitStateUpdateTime + animDuration,
           EasingFunction.Out,
       );
     }
@@ -87,7 +87,7 @@ export class LegacyReverseArrow extends CompositeDrawable
       const  duration = 300;
       const  rotation = 0.098654736;
 
-      const loopCurrentTime = (this.time.current - this.drawableRepeat.animationStartTime.value) % duration;
+      const loopCurrentTime = (this.time.current - this.#drawableRepeat.animationStartTime.value) % duration;
 
       // Reference: https://github.com/peppy/osu-stable-reference/blob/2280c4c436f80d04f9c79d3c905db00ac2902273/osu!/GameplayElements/HitObjects/Osu/HitCircleSliderEnd.cs#L79-L96
       if (this.#shouldRotate)
@@ -106,7 +106,7 @@ export class LegacyReverseArrow extends CompositeDrawable
   {
     super.dispose(isDisposing);
 
-    if (this.drawableRepeat)
-      this.drawableRepeat.hitObjectApplied.removeListener(this.#onHitObjectApplied, this);
+    if (this.#drawableRepeat)
+      this.#drawableRepeat.hitObjectApplied.removeListener(this.#onHitObjectApplied, this);
   }
 }

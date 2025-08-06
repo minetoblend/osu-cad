@@ -1,11 +1,11 @@
 import { DrawableHitObject, IComboNumberReference } from "@osucad/core";
-import { Bindable, type Drawable, provide, Vec2 } from "@osucad/framework";
+import { Bindable, type Drawable, provideSelf, Vec2 } from "@osucad/framework";
 import type { OsuHitObject } from "../OsuHitObject";
 import { OsuInputManager } from "../../ui/OsuInputManager";
 import type { DrawableSlider } from "./DrawableSlider";
 import type { SliderTailCircle } from "../SliderTailCircle";
 
-@provide(IComboNumberReference)
+@provideSelf(IComboNumberReference)
 export abstract class DrawableOsuHitObject<out T extends OsuHitObject = OsuHitObject>
   extends DrawableHitObject<T>
   implements IComboNumberReference

@@ -1,8 +1,8 @@
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
-import { AudioManager, Game, provide, resolved } from "@osucad/framework";
+import { AudioManager, Game, provide, provideSelf } from "@osucad/framework";
 import { IResourcesProvider } from "./io/IResourcesProvider";
 
-@provide(IResourcesProvider)
+@provideSelf(IResourcesProvider)
 export class OsucadGameBase extends Game implements IResourcesProvider
 {
   constructor()
@@ -10,7 +10,7 @@ export class OsucadGameBase extends Game implements IResourcesProvider
     super();
   }
 
-  @resolved(AudioManager)
+  @provide(AudioManager)
   audioManager!: AudioManager;
 
   protected override load(dependencies: ReadonlyDependencyContainer)

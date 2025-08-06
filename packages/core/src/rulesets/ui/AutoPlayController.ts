@@ -15,7 +15,7 @@ export abstract class AutoPlayController<T extends DrawableHitObject = DrawableH
   }
 
   @resolved(PlayfieldClock)
-  protected playfieldClock!: PlayfieldClock;
+  protected accessor playfieldClock!: PlayfieldClock;
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {

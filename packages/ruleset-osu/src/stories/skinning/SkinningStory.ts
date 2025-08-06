@@ -1,11 +1,8 @@
-import { GameplayClock } from "@osucad/core";
-import { AudioMixer, BeatmapParser, Skin, SkinProvidingContainer } from "@osucad/core";
-import type { ReadonlyDependencyContainer } from "@osucad/framework";
-import { AudioManager, Container, resolved, SimpleFileSystem, ZipArchiveFileSystem } from "@osucad/framework";
+import type { Beatmap, IResourcesProvider } from "@osucad/core";
+import { BeatmapParser, GameplayClock, PlayfieldClock, Skin, SkinProvidingContainer } from "@osucad/core";
+import type { ReadonlyDependencyContainer , AudioMixer } from "@osucad/framework";
+import { AudioManager, Axes, CompositeDrawable, Container, provide, resolved, SimpleFileSystem, ZipArchiveFileSystem } from "@osucad/framework";
 import type { StoryDrawable } from "@osucad/storybook-renderer";
-import type { Beatmap , IResourcesProvider } from "@osucad/core";
-import { PlayfieldClock } from "@osucad/core";
-import { Axes, CompositeDrawable, provide } from "@osucad/framework";
 
 import "../../init";
 
@@ -24,7 +21,7 @@ export interface SkinArgs
 export class SkinningStory extends Container implements IResourcesProvider, StoryDrawable<SkinArgs>
 {
   @resolved(AudioManager)
-  audioManager!: AudioManager;
+  accessor audioManager!: AudioManager;
 
   audioMixer!: AudioMixer;
 
@@ -34,7 +31,7 @@ export class SkinningStory extends Container implements IResourcesProvider, Stor
 
     this.relativeSizeAxes = Axes.Both;
 
-    this.audioMixer = new AudioMixer(this.audioManager);
+    this.audioMixer = this.audioManager.createMixer();
 
     void this.setup();
   }

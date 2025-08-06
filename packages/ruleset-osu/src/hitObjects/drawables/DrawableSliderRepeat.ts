@@ -1,5 +1,5 @@
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
-import { Anchor, clamp, EasingFunction, Interpolation, provide, Vec2 } from "@osucad/framework";
+import { Anchor, clamp, EasingFunction, Interpolation, provideSelf, Vec2 } from "@osucad/framework";
 import { OsuHitObject } from "../OsuHitObject";
 import type { ArmedState } from "@osucad/core";
 import { SkinnableDrawable } from "@osucad/core";
@@ -9,7 +9,7 @@ import { DrawableSlider } from "./DrawableSlider";
 import type { SliderRepeat } from "../SliderRepeat";
 import type { PlaySliderBody } from "./PlaySliderBody";
 
-@provide(DrawableSliderRepeat)
+@provideSelf()
 export class DrawableSliderRepeat extends DrawableOsuHitObject<SliderRepeat>
 {
   constructor()
@@ -25,7 +25,7 @@ export class DrawableSliderRepeat extends DrawableOsuHitObject<SliderRepeat>
     return null;
   }
 
-  circlePiece!: SkinnableDrawable;
+  circlePiece: SkinnableDrawable = null!;
 
   arrow!: SkinnableDrawable;
 

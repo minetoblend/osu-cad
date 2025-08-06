@@ -19,7 +19,7 @@ export class SpinnerRotationTracker extends CircularContainer
   #rotationTransferred = false;
 
   @resolved(PlayfieldClock, true)
-  private gameplayClock?: PlayfieldClock;
+  accessor #gameplayClock!: PlayfieldClock | undefined;
 
   constructor(drawableSpinner: DrawableSpinner)
   {
@@ -90,7 +90,7 @@ export class SpinnerRotationTracker extends CircularContainer
 
     console.assert(Math.abs(delta) <= Math.PI);
 
-    const rate = this.gameplayClock?.rate ?? this.clock!.rate;
+    const rate = this.#gameplayClock?.rate ?? this.clock!.rate;
     delta = (delta * Math.abs(rate));
 
     this.#currentRotation += delta;

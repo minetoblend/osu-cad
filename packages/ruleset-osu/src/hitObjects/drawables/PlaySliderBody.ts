@@ -15,7 +15,7 @@ export class PlaySliderBody extends SnakingSliderBody
   pathVersion = new Bindable(0);
 
   @resolved(ISkinSource)
-  protected skin!: ISkinSource;
+  protected accessor skin!: ISkinSource;
 
   protected readonly sliderBorder = computed(() => this.skin.getConfig("sliderBorder"));
   protected readonly sliderTrackOverride = computed(() => this.skin.getConfig("sliderTrackOverride"));

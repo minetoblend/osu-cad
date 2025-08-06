@@ -6,7 +6,7 @@ export class SkinnableTextureAnimation extends TextureAnimation
   readonly #animationStartTime = new Bindable(0);
 
   @resolved(IAnimationTimeReference, true)
-  protected timeReference?: IAnimationTimeReference;
+  protected accessor timeReference: IAnimationTimeReference | undefined;
 
   constructor(readonly startAtCurrentTime: boolean = true)
   {

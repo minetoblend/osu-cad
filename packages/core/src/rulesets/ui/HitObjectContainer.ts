@@ -26,7 +26,7 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
   readonly #nonPooledHitObjectDrawableMap = new Map<LifetimeEntry, DrawableHitObject>();
 
   @resolved(IPooledHitObjectProvider, true)
-  private pooledObjectProvider?: IPooledHitObjectProvider;
+  accessor #pooledObjectProvider: IPooledHitObjectProvider | undefined;
 
   get objects()
   {
@@ -65,7 +65,7 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
     let drawable = this.#nonPooledHitObjectDrawableMap.get(entry);
     if (drawable)
       return drawable;
-    drawable = this.pooledObjectProvider?.getPooledDrawableRepresentation(entry.hitObject);
+    drawable = this.#pooledObjectProvider?.getPooledDrawableRepresentation(entry.hitObject);
     if (!drawable)
       throw new Error(`No drawable found for HitObject ${entry.hitObject.constructor.name}`);
 

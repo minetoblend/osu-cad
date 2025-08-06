@@ -5,7 +5,7 @@ import type { OsucadRenderer, StoryDrawable } from "./types/types";
 
 let game: StorybookGame | undefined;
 
-const host = new WebGameHost("storybook");
+const host = new WebGameHost();
 const container = document.createElement("div");
 container.style.width = "100vw";
 container.style.height = "100vh";

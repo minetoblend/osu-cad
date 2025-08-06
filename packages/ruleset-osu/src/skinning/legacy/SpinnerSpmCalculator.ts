@@ -10,13 +10,13 @@ export class SpinnerSpmCalculator extends Component
   readonly result = new BindableNumber();
 
   @resolved(DrawableHitObject)
-  private drawableSpinner!: DrawableHitObject;
+  accessor #drawableSpinner!: DrawableHitObject;
 
   protected override loadComplete()
   {
     super.loadComplete();
 
-    this.drawableSpinner.hitObjectApplied.addListener(this.#resetState, this);
+    this.#drawableSpinner.hitObjectApplied.addListener(this.#resetState, this);
   }
 
   #lastRecord: RotationRecord = {
@@ -56,7 +56,7 @@ export class SpinnerSpmCalculator extends Component
   {
     super.dispose(isDisposing);
 
-    this.drawableSpinner.hitObjectApplied.removeListener(this.#resetState);
+    this.#drawableSpinner.hitObjectApplied.removeListener(this.#resetState);
   }
 }
 

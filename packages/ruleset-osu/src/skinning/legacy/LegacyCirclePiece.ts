@@ -9,10 +9,10 @@ import { OsuHitObject } from "../../hitObjects/OsuHitObject";
 export class LegacyCirclePiece extends CompositeDrawable
 {
   @resolved(ISkinSource)
-  private skin!: ISkinSource;
+  accessor #skin!: ISkinSource;
 
   @resolved(DrawableHitObject)
-  protected drawableHitObject!: DrawableHitObject;
+  protected accessor drawableHitObject!: DrawableHitObject;
 
   private readonly indexInCurrentCombo: Bindable<number> = new Bindable(0);
 
@@ -41,13 +41,13 @@ export class LegacyCirclePiece extends CompositeDrawable
   {
     super.load(dependencies);
 
-    const circleName = this.#priorityLookup && this.skin.getTexture(this.#priorityLookup) ? this.#priorityLookup : "hitcircle";
+    const circleName = this.#priorityLookup && this.#skin.getTexture(this.#priorityLookup) ? this.#priorityLookup : "hitcircle";
 
     const maxSize = OsuHitObject.OBJECT_DIMENSIONS.scale(2);
 
     this.internalChildren = [
       this.circleSprite = new DrawableSprite({
-        texture: this.skin.getTexture(circleName)?.withMaximumSize(maxSize),
+        texture: this.#skin.getTexture(circleName)?.withMaximumSize(maxSize),
         anchor: Anchor.Center,
         origin: Anchor.Center,
       }),
@@ -55,7 +55,7 @@ export class LegacyCirclePiece extends CompositeDrawable
         anchor: Anchor.Center,
         origin: Anchor.Center,
         child: this.overlaySprite = new DrawableSprite({
-          texture: this.skin.getTexture(`${circleName}overlay`)?.withMaximumSize(maxSize),
+          texture: this.#skin.getTexture(`${circleName}overlay`)?.withMaximumSize(maxSize),
           anchor: Anchor.Center,
           origin: Anchor.Center,
         }),
@@ -69,7 +69,7 @@ export class LegacyCirclePiece extends CompositeDrawable
         origin: Anchor.Center,
       }));
 
-      watch(() => this.skin.getConfig("hitCircleOverlayAboveNumber") ?? true,
+      watch(() => this.#skin.getConfig("hitCircleOverlayAboveNumber") ?? true,
           value => this.overlayLayer.changeChildDepth(this.overlaySprite, value ? -Number.MAX_VALUE : 0),
           { immediate: true },
       );

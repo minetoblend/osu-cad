@@ -1,5 +1,5 @@
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
-import { Action, Bindable, provide, resolved } from "@osucad/framework";
+import { Action, Bindable, provideSelf, resolved } from "@osucad/framework";
 import { Color } from "pixi.js";
 import { PoolableDrawableWithLifetime } from "../../../pooling/PoolableDrawableWithLifetime";
 import type { IAnimationTimeReference } from "../../../skinning/IAnimationTimeReference";
@@ -15,8 +15,8 @@ import type { Judgement } from "../../judgements/Judgement";
 import type { HitResult } from "../../scoring/HitResult";
 import { SkinnableSound } from "../../../skinning/SkinnableSound";
 
-@provide(DrawableHitObject)
-export abstract class DrawableHitObject<out T extends HitObject = HitObject>
+@provideSelf()
+export class DrawableHitObject<out T extends HitObject = HitObject>
   extends PoolableDrawableWithLifetime<HitObjectLifetimeEntry>
   implements IAnimationTimeReference
 {
@@ -62,7 +62,7 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
     this.updateState(value);
   }
 
-  protected constructor(initialHitObject?: T)
+  constructor(initialHitObject?: T)
   {
     super();
 
@@ -74,7 +74,7 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
   }
 
   @resolved(ISkinSource)
-  protected skin!: ISkinSource;
+  protected accessor skin!: ISkinSource;
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
@@ -163,7 +163,7 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
   }
 
   @resolved(IPooledHitObjectProvider, true)
-  private pooledObjectProvider?: IPooledHitObjectProvider;
+  accessor #pooledObjectProvider!: IPooledHitObjectProvider | undefined;
 
   readonly onNestedDrawableCreated = new Action<DrawableHitObject>();
 
@@ -187,7 +187,7 @@ export abstract class DrawableHitObject<out T extends HitObject = HitObject>
 
     for (const h of this.hitObject.nestedHitObjects)
     {
-      const pooledDrawableNested = this.pooledObjectProvider?.getPooledDrawableRepresentation(h, this);
+      const pooledDrawableNested = this.#pooledObjectProvider?.getPooledDrawableRepresentation(h, this);
 
       const drawableNested = pooledDrawableNested ?? this.createNestedHitObject(h);
 

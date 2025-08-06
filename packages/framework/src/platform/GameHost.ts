@@ -50,13 +50,10 @@ export abstract class GameHost
 
   clock!: IFrameBasedClock;
 
-  name: string;
-
   readonly dependencies = new DependencyContainer();
 
-  protected constructor(gameName: string, options: GameHostOptions = {})
+  protected constructor(options: GameHostOptions = {})
   {
-    this.name = options.friendlyGameName ?? `osucad framework running "${gameName}"`;
   }
 
   protected root: Container | null = null;

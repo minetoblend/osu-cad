@@ -9,7 +9,7 @@ import { KeyCombinationMatchingMode } from "./bindings/KeyCombination";
 export class PlatformActionContainer extends KeyBindingContainer<PlatformAction>
 {
   @resolved(GAME_HOST)
-  protected host!: GameHost;
+  protected accessor host!: GameHost;
 
   constructor()
   {

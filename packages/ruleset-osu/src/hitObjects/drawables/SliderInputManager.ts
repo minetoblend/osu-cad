@@ -18,7 +18,7 @@ export class SliderInputManager extends Component
   public tracking = false;
 
   @resolved(PlayfieldClock, true)
-  playfieldClock?: PlayfieldClock;
+  accessor playfieldClock!: PlayfieldClock | undefined;
 
   #timeToAcceptAnyKeyAfter: number | null = null;
   #screenSpaceMousePosition: Vec2 | null = null;

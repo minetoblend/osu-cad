@@ -13,16 +13,16 @@ export class LegacySliderBall extends CompositeDrawable
   }
 
   @resolved(ISkinSource)
-  private skin!: ISkinSource;
+  accessor #skin!: ISkinSource;
 
   @resolved(DrawableHitObject)
-  drawableHitObject!: DrawableHitObject;
+  accessor #drawableHitObject!: DrawableHitObject;
 
   sliderBall!: Drawable;
 
   #specular!: Drawable;
 
-  readonly #allowSliderBallTint = computed(() => this.skin.getConfig("allowSliderBallTint"));
+  readonly #allowSliderBallTint = computed(() => this.#skin.getConfig("allowSliderBallTint"));
 
   readonly accentColor = new Bindable<Color>(new Color(0xFFFFFF));
 
@@ -40,7 +40,7 @@ export class LegacySliderBall extends CompositeDrawable
           origin: Anchor.Center,
         }),
         this.#specular = new DrawableSprite({
-          texture: this.skin.getTexture("sliderb-spec"),
+          texture: this.#skin.getTexture("sliderb-spec"),
           relativeSizeAxes: Axes.Both,
           blendMode: "add",
           anchor: Anchor.Center,
@@ -61,14 +61,14 @@ export class LegacySliderBall extends CompositeDrawable
 
     this.alwaysPresent = true;
 
-    this.drawableHitObject.applyCustomUpdateState.addListener(this.#updateStateTransforms, this);
-    this.#updateStateTransforms(this.drawableHitObject);
+    this.#drawableHitObject.applyCustomUpdateState.addListener(this.#updateStateTransforms, this);
+    this.#updateStateTransforms(this.#drawableHitObject);
   }
 
   #updateColors()
   {
     if (this.sliderBall)
-      this.sliderBall.color = this.#allowSliderBallTint.value ? this.drawableHitObject.accentColor.value : 0xFFFFFF;
+      this.sliderBall.color = this.#allowSliderBallTint.value ? this.#drawableHitObject.accentColor.value : 0xFFFFFF;
   }
 
   #updateStateTransforms(drawableObject: DrawableHitObject)
@@ -97,6 +97,6 @@ export class LegacySliderBall extends CompositeDrawable
   {
     super.dispose(isDisposing);
 
-    this.drawableHitObject.applyCustomUpdateState.removeListener(this.#updateStateTransforms, this);
+    this.#drawableHitObject.applyCustomUpdateState.removeListener(this.#updateStateTransforms, this);
   }
 }

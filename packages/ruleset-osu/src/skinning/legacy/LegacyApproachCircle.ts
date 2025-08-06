@@ -6,7 +6,7 @@ import { Color } from "pixi.js";
 export class LegacyApproachCircle extends CompositeDrawable
 {
   @resolved(DrawableHitObject)
-  hitObject!: DrawableHitObject;
+  accessor #hitObject!: DrawableHitObject;
 
   constructor()
   {
@@ -18,7 +18,7 @@ export class LegacyApproachCircle extends CompositeDrawable
   }
 
   @resolved(ISkinSource)
-  private skin!: ISkinSource;
+  accessor #skin!: ISkinSource;
 
   readonly accentColor = new Bindable(new Color(0xffffff));
 
@@ -28,7 +28,7 @@ export class LegacyApproachCircle extends CompositeDrawable
 
     this.addInternal(
         new DrawableSprite({
-          texture: this.skin.getTexture("approachcircle"),
+          texture: this.#skin.getTexture("approachcircle"),
           anchor: Anchor.Center,
           origin: Anchor.Center,
         }),
@@ -39,7 +39,7 @@ export class LegacyApproachCircle extends CompositeDrawable
   {
     super.loadComplete();
 
-    this.accentColor.bindTo(this.hitObject.accentColor);
+    this.accentColor.bindTo(this.#hitObject.accentColor);
     this.accentColor.bindValueChanged(color => this.color = color.value, true);
   }
 }

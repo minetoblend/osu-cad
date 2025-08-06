@@ -7,9 +7,9 @@
     "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo",
     "emitDeclarationOnly": true,
     "forceConsistentCasingInFileNames": true,
+    "strictPropertyInitialization": false,
     "moduleResolution": "bundler",
     "module": "ESNext",
-    "experimentalDecorators": true,
     "lib": ["DOM", "ESNext"],
     "types": [
       "vite/client",

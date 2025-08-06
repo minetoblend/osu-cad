@@ -15,8 +15,8 @@ export class WebGameHost extends GameHost
     }
   }
 
-  constructor(gameName: string, options: GameHostOptions = {})
+  constructor(options: GameHostOptions = {})
   {
-    super(gameName, options);
+    super(options);
   }
 }

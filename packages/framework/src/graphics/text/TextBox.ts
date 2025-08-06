@@ -105,7 +105,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
   }
 
   @resolved(TextInputSource)
-  private textInput!: TextInputSource;
+  private accessor textInput!: TextInputSource;
 
   readonly #caret: Caret;
 

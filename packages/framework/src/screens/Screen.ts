@@ -2,8 +2,6 @@ import type { IFrameBasedClock } from "../timing";
 import type { IScreen } from "./IScreen";
 import type { ScreenExitEvent } from "./ScreenExitEvent";
 import type { ScreenTransitionEvent } from "./ScreenTransitionEvent";
-import { resolved } from "../di";
-import { Game } from "../Game";
 import { Axes, CompositeDrawable } from "../graphics";
 import { ScreenStack } from "./ScreenStack";
 
@@ -19,9 +17,6 @@ export abstract class Screen extends CompositeDrawable implements IScreen
   {
     return false;
   }
-
-  @resolved(Game)
-  game!: Game;
 
   constructor()
   {

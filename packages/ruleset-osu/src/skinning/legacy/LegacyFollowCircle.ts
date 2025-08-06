@@ -7,7 +7,7 @@ import type { Slider } from "../../hitObjects/Slider";
 export class LegacyFollowCircle extends CompositeDrawable
 {
   @resolved(() => DrawableSlider)
-  parentObject!: DrawableSlider;
+  accessor parentObject!: DrawableSlider;
 
   constructor(animationContent: Drawable)
   {

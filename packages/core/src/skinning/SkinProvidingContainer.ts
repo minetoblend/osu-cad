@@ -1,5 +1,5 @@
 import type { ContainerOptions, Drawable, ReadonlyDependencyContainer, Sample } from "@osucad/framework";
-import { Action, Axes, computed, Container, provide, ref, watch, withEffectScope } from "@osucad/framework";
+import { Action, Axes, computed, Container, provideSelf, ref, watch, withEffectScope } from "@osucad/framework";
 import type { Texture } from "pixi.js";
 import { Color } from "pixi.js";
 import type { ISampleInfo } from "../audio/ISampleInfo";
@@ -13,7 +13,7 @@ export interface SkinProvidingContainerOptions extends ContainerOptions
   skin?: ISkin
 }
 
-@provide(ISkinSource)
+@provideSelf(ISkinSource)
 export class SkinProvidingContainer extends Container implements ISkinSource
 {
   constructor(options: SkinProvidingContainerOptions = {})

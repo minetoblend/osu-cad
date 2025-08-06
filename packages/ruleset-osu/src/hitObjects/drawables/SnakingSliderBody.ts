@@ -39,7 +39,7 @@ export class SnakingSliderBody extends SliderBody
   }
 
   @resolved(() => DrawableSlider)
-  protected drawableSlider!: DrawableSlider;
+  protected accessor drawableSlider!: DrawableSlider;
 
   updateProgress(completionProgress: number)
   {
