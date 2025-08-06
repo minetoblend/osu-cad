@@ -33,6 +33,6 @@
     "pixi.js": "^8.9.2",
     "@osucad/core": "1.1.1",
     "@osucad/framework": "1.1.1",
-    "@osucad/editor": "0.1.1"
+    "@osucad/editor": "1.1.1"
   }
 }
