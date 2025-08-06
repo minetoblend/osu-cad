@@ -185,9 +185,6 @@ importers:
       '@osucad/framework':
         specifier: 1.1.2
         version: link:../framework
-      '@osucad/multiplayer':
-        specifier: workspace:^
-        version: link:../multiplayer
       '@vueuse/core':
         specifier: ^13.1.0
         version: 13.1.0(vue@3.5.13)
