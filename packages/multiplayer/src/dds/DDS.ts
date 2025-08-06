@@ -28,7 +28,9 @@ export abstract class DDS
 
   abstract load(reader: BinaryReader, version: number): void;
 
-  abstract process(reader: BinaryReader, local: boolean): void;
+  abstract process(delta: Delta, local: boolean): void;
+
+  abstract decodeDelta(reader: BinaryReader): Delta;
 
   abstract replayDelta(delta: Delta): void;
 

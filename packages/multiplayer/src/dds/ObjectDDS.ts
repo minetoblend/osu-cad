@@ -46,11 +46,17 @@ export class ObjectDDS extends DDS
     }
   }
 
-  public override process(reader: BinaryReader, local: boolean): void
+  public override decodeDelta(reader: BinaryReader): Delta
   {
-    const properties = this[propertiesKey];
+    return ObjectDelta.decode(reader, this);
+  }
 
-    const delta = ObjectDelta.decode(reader, this);
+  public override process(delta: Delta, local: boolean): void
+  {
+    if (!(delta instanceof ObjectDelta))
+      return;
+
+    const properties = this[propertiesKey];
 
     for (const { index, value } of delta.entries)
     {
@@ -125,7 +131,10 @@ export class ObjectDDS extends DDS
 
 export class ObjectDelta extends Delta
 {
-  constructor(readonly target: ObjectDDS, public version: number, readonly entries: { index: number, value: unknown }[] = [])
+  constructor(readonly target: ObjectDDS, public version: number, readonly entries: {
+    index: number,
+    value: unknown
+  }[] = [])
   {
     super(target.id);
   }

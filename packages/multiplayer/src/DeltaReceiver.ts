@@ -1,33 +1,30 @@
 import { Component } from "@osucad/framework";
 import type { IConnection } from "./IConnection";
 import type { Runtime } from "./Runtime";
-import { BinaryReader } from "./serialization";
+import type { BinaryReader } from "./serialization";
+import { ServerDeltasMessage } from "./messages/ServerDeltasMessage";
 
 export class DeltaReceiver extends Component
 {
   constructor(
     readonly runtime: Runtime,
-    readonly connection: IConnection,
+    readonly clientId: number,
   )
   {
     super();
   }
 
-  process(data: ArrayBuffer)
+  process(reader: BinaryReader)
   {
-    const reader = new BinaryReader(data);
+    const { clientId, deltas } = ServerDeltasMessage.decode(reader, this.runtime);
 
-    const clientId = reader.readVarInt();
+    const local = clientId === this.clientId;
 
-    const count = reader.readVarInt();
-    for (let i = 0; i < count; i++)
+    for (const delta of deltas)
     {
-      const target = this.runtime.getObject(reader.readUuid());
-      const length = reader.readVarInt();
+      const target = this.runtime.getObject(delta.targetId);
 
-      const delta = reader.readBytes(length);
-
-      target?.process(new BinaryReader(delta.buffer), clientId === this.connection.clientId);
+      target?.process(delta, local);
     }
   }
 }
