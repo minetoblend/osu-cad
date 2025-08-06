@@ -30,7 +30,6 @@
     "!**/*.tsbuildinfo"
   ],
   "dependencies": {
-    "@osucad/editor": "1.1.2",
     "@osucad/framework": "1.1.2",
     "pixi.js": "^8.9.2",
     "uuid": "^11.1.0"

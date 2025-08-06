@@ -17,13 +17,7 @@
   ],
   "references": [
     {
-      "path": "../editor/tsconfig.lib.json"
-    },
-    {
       "path": "../framework/tsconfig.lib.json"
-    },
-    {
-      "path": "../core/tsconfig.lib.json"
     }
   ],
   "exclude": [

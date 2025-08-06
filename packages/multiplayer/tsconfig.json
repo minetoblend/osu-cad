@@ -4,13 +4,7 @@
   "include": [],
   "references": [
     {
-      "path": "../editor"
-    },
-    {
       "path": "../framework"
-    },
-    {
-      "path": "../core"
     },
     {
       "path": "./tsconfig.lib.json"

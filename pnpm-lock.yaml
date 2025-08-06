@@ -244,9 +244,6 @@ importers:
 
   packages/multiplayer:
     dependencies:
-      '@osucad/editor':
-        specifier: 1.1.2
-        version: link:../editor
       '@osucad/framework':
         specifier: 1.1.2
         version: link:../framework
