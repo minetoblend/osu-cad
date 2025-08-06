@@ -1,6 +1,6 @@
 {
   "name": "@osucad/ruleset-osu",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "type": "module",
   "repository": {
     "type": "git",
@@ -31,8 +31,8 @@
   ],
   "dependencies": {
     "pixi.js": "^8.9.2",
-    "@osucad/core": "1.1.1",
-    "@osucad/framework": "1.1.1",
-    "@osucad/editor": "1.1.1"
+    "@osucad/core": "1.1.2",
+    "@osucad/framework": "1.1.2",
+    "@osucad/editor": "1.1.2"
   }
 }
