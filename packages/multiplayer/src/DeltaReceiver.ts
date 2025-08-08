@@ -1,5 +1,4 @@
 import { Component } from "@osucad/framework";
-import type { IConnection } from "./IConnection";
 import type { Runtime } from "./Runtime";
 import type { BinaryReader } from "./serialization";
 import { ServerDeltasMessage } from "./messages/ServerDeltasMessage";

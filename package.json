@@ -9,12 +9,13 @@
     "@nx/eslint": "20.8.1",
     "@nx/eslint-plugin": "20.8.1",
     "@nx/js": "20.8.1",
+    "@nx/node": "20.8.1",
     "@nx/storybook": "20.8.1",
     "@nx/vite": "20.8.1",
     "@nx/web": "20.8.1",
-    "@osucad/storybook-vite": "workspace:^",
-    "@osucad/storybook-renderer": "workspace:^",
     "@osucad/storybook-preset-vite": "workspace:^",
+    "@osucad/storybook-renderer": "workspace:^",
+    "@osucad/storybook-vite": "workspace:^",
     "@storybook/addon-essentials": "^8.6.11",
     "@storybook/core-server": "^8.6.11",
     "@stylistic/eslint-plugin-ts": "^4.2.0",
@@ -54,6 +55,5 @@
         }
       }
     }
-  },
-  "dependencies": {}
+  }
 }
