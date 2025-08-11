@@ -26,6 +26,9 @@
     },
     {
       "path": "./packages/multiplayer"
+    },
+    {
+      "path": "./multiplayer/core"
     }
   ],
   "ts-node": {

@@ -1,0 +1,29 @@
+{
+  "name": "@osucad/multiplayer-core",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "!**/*.tsbuildinfo"
+  ],
+  "dependencies": {
+    "tslib": "^2.3.0",
+    "uuid": "^11.1.0",
+    "vitest": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/uuid": "^10.0.0",
+    "vitest": "^3.1.2"
+  }
+}
