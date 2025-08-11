@@ -89,52 +89,52 @@ export function createTypeDecorator<T extends SerializerMap>(serializers: T)
 export const builtinTypes = {
   boolean: {
     descriptor: primitiveDescriptor,
-    serialize: (encoder, value) => encoder.encodeBoolean(value),
+    serialize: (encoder, value: boolean) => encoder.encodeBoolean(value),
     deserialize: decoder => decoder.decodeBoolean(),
   },
   uint8: {
     descriptor: primitiveDescriptor,
-    serialize: (encoder, value) => encoder.encodeUint8(value),
+    serialize: (encoder, value: number) => encoder.encodeUint8(value),
     deserialize: decoder => decoder.decodeUint8(),
   },
   uint16: {
     descriptor: primitiveDescriptor,
-    serialize: (encoder, value) => encoder.encodeUint16(value),
+    serialize: (encoder, value: number) => encoder.encodeUint16(value),
     deserialize: decoder => decoder.decodeUint16(),
   },
   uint32: {
     descriptor: primitiveDescriptor,
-    serialize: (encoder, value) => encoder.encodeUint32(value),
+    serialize: (encoder, value: number) => encoder.encodeUint32(value),
     deserialize: decoder => decoder.decodeUint32(),
   },
   int8: {
     descriptor: primitiveDescriptor,
-    serialize: (encoder, value) => encoder.encodeInt8(value),
+    serialize: (encoder, value: number) => encoder.encodeInt8(value),
     deserialize: decoder => decoder.decodeInt8(),
   },
   int16: {
     descriptor: primitiveDescriptor,
-    serialize: (encoder, value) => encoder.encodeInt16(value),
+    serialize: (encoder, value: number) => encoder.encodeInt16(value),
     deserialize: decoder => decoder.decodeInt16(),
   },
   int32: {
     descriptor: primitiveDescriptor,
-    serialize: (encoder, value) => encoder.encodeInt32(value),
+    serialize: (encoder, value: number) => encoder.encodeInt32(value),
     deserialize: decoder => decoder.decodeInt32(),
   },
   float32: {
     descriptor: primitiveDescriptor,
-    serialize: (encoder, value) => encoder.encodeFloat32(value),
+    serialize: (encoder, value: number) => encoder.encodeFloat32(value),
     deserialize: decoder => decoder.decodeFloat32(),
   },
   float64: {
     descriptor: primitiveDescriptor,
-    serialize: (encoder, value) => encoder.encodeFloat64(value),
+    serialize: (encoder, value: number) => encoder.encodeFloat64(value),
     deserialize: decoder => decoder.decodeFloat64(),
   },
   string: {
     descriptor: primitiveDescriptor,
-    serialize: (encoder, value) => encoder.encodeString(value),
+    serialize: (encoder, value: string) => encoder.encodeString(value),
     deserialize: decoder => decoder.decodeString(),
   },
 } satisfies SerializerMap;
