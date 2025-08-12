@@ -16,6 +16,19 @@ export class DDSFactoryRegistry
     }
   }
 
+  types(): DDSFactory<DDS>[]
+  {
+    return [...this.ddsFactories.values()];
+  }
+
+  register(factory: DDSFactoryOrConstructor<DDS>)
+  {
+    factory = toDDSFactory(factory);
+
+    if (!this.ddsFactories.has(factory.attributes.type))
+      this.ddsFactories.set(factory.attributes.type, factory);
+  }
+
   get(attributes: DDSAttributes)
   {
     const factory = this.ddsFactories.get(attributes.type);

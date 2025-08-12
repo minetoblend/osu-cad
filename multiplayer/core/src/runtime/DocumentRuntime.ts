@@ -4,6 +4,7 @@ import type { Delta, IEncodedDelta } from "../dds/Delta.js";
 import type { IDocumentSummary } from "./summary.js";
 import { Decoder, Encoder } from "../serialization/types.js";
 import { DDSPool } from "./DDSPool.js";
+import { DDSFactoryRegistry } from "./DDSFactoryRegistry.js";
 
 export interface DocumentRuntimeEvents
 {
@@ -12,7 +13,7 @@ export interface DocumentRuntimeEvents
 
 export class DocumentRuntime extends EventEmitter<DocumentRuntimeEvents>
 {
-  constructor(types: DDSFactoryOrConstructor<DDS>[])
+  protected constructor(types: DDSFactoryOrConstructor<DDS>[])
   {
     super();
 
@@ -51,6 +52,15 @@ export class DocumentRuntime extends EventEmitter<DocumentRuntimeEvents>
     });
 
     root.createSummary(encoder);
+
+    return runtime;
+  }
+
+  static load(summary: IDocumentSummary, types: DDSFactoryOrConstructor<DDS>[])
+  {
+    const runtime = new DocumentRuntime(types);
+
+    runtime.load(summary);
 
     return runtime;
   }
@@ -96,5 +106,8 @@ export class DocumentRuntime extends EventEmitter<DocumentRuntimeEvents>
     this.#objectPool.create(dds);
   }
 
-
+  clone()
+  {
+    return DocumentRuntime.load(this.createSummary(), this.typeRegistry.types());
+  }
 }

@@ -26,9 +26,7 @@ describe("DocumentRuntime", () =>
 
     foo.count = 10;
 
-    const runtime2 = new DocumentRuntime([Foo]);
-
-    runtime2.load(runtime.createSummary());
+    const runtime2 = DocumentRuntime.load(runtime.createSummary(), [Foo]);
 
     expect(runtime2.root).toBeInstanceOf(Foo);
     const foo2 = runtime2.root as Foo;
@@ -65,12 +63,10 @@ describe("DocumentRuntime", () =>
       }
     }
 
-    const runtime1 = DocumentRuntime.create(new Foo(), [Foo, Bar]);
-    const runtime2 = new DocumentRuntime([Foo]);
-    const runtime3 = new DocumentRuntime([Foo, Bar]);
+    const runtime = DocumentRuntime.create(new Foo(), [Foo, Bar]);
 
-    expect(() => runtime2.load(runtime1.createSummary())).toThrow();
-    expect(() => runtime3.load(runtime1.createSummary())).not.toThrow();
+    expect(() => DocumentRuntime.load(runtime.createSummary(), [Foo])).toThrow();
+    expect(() => DocumentRuntime.load(runtime.createSummary(), [Foo, Bar])).not.toThrow();
   });
 
   it("processes encoded deltas", () =>
@@ -94,8 +90,7 @@ describe("DocumentRuntime", () =>
     const foo1 = new Foo();
 
     const runtime1 = DocumentRuntime.create(foo1, [Foo]);
-    const runtime2 = new DocumentRuntime([Foo]);
-    runtime2.load(runtime1.createSummary());
+    const runtime2 = DocumentRuntime.load(runtime1.createSummary(), [Foo]);
 
     const foo2 = runtime2.root as Foo;
 

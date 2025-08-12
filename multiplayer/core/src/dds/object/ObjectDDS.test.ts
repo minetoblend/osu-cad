@@ -125,8 +125,7 @@ describe("ObjectDDS", () =>
 
     foo.bar.count = 10;
 
-    const runtime2 = new DocumentRuntime([Foo, Bar]);
-    runtime2.load(runtime.createSummary());
+    const runtime2 = runtime.clone();
 
     const foo2 = runtime2.root as Foo;
     expect(foo2.bar.count).toBe(10);
