@@ -11,7 +11,7 @@ export interface DocumentHistoryEvents
   redo(): void
 }
 
-export class DocumentHistory extends EventEmitter
+export class DocumentHistory extends EventEmitter<DocumentHistoryEvents>
 {
   #activeTransaction = new Transaction();
 

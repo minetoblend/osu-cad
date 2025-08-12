@@ -19,6 +19,9 @@
   ],
   "references": [
     {
+      "path": "../../multiplayer/core/tsconfig.lib.json"
+    },
+    {
       "path": "../framework/tsconfig.lib.json"
     },
     {

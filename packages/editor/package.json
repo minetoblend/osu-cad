@@ -10,6 +10,9 @@
     "url": "https://github.com/minetoblend/osu-cad.git",
     "directory": "packages/editor"
   },
+  "scripts": {
+    "test": "vitest run"
+  },
   "exports": {
     "./package.json": "./package.json",
     ".": {
@@ -26,6 +29,10 @@
   "dependencies": {
     "@osucad/core": "1.1.2",
     "@osucad/framework": "1.1.2",
+    "@osucad/multiplayer-core": "workspace:^",
     "pixi.js": "^8.9.2"
+  },
+  "devDependencies": {
+    "vitest": "^3.0.0"
   }
 }

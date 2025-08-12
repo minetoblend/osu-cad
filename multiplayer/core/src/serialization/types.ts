@@ -1,6 +1,7 @@
-import type { DDS } from "../dds/index.js";
+import type  { DDS } from "../dds/index.js";
 import { nn } from "../utils/nn.js";
 import { EventEmitter } from "eventemitter3";
+import type { IDDSSummary } from "../runtime/index.js";
 
 export interface DDSRef
 {
@@ -14,7 +15,7 @@ export interface IEncoder
 
 export interface IDecoder
 {
-  decodeDDS(ref: DDSRef): DDS;
+  decodeDDS(ref: DDSRef): DDS | undefined;
 }
 
 export interface EncoderEvents
@@ -38,8 +39,8 @@ export class Decoder implements IDecoder
   {
   }
 
-  decodeDDS(ref: DDSRef): DDS
+  decodeDDS(ref: DDSRef): DDS | undefined
   {
-    return nn(this.ddsSource.getObject(ref.$ref));
+    return this.ddsSource.getObject(ref.$ref);
   }
 }

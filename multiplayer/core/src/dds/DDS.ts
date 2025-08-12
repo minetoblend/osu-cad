@@ -3,13 +3,15 @@ import type { DDSChannel } from "./DDSChannel.js";
 import type { Delta, IEncodedDelta } from "./Delta.js";
 import type { IDecoder, IEncoder } from "../serialization/types.js";
 import { Encoder } from "../serialization/types.js";
+import { EventEmitter } from "eventemitter3";
 
 const defaultEncoder = new Encoder();
 
-export abstract class DDS
+export abstract class DDS extends EventEmitter
 {
   protected constructor(readonly attributes: DDSAttributes)
   {
+    super();
   }
 
   #channel: DDSChannel | null = null;
@@ -22,6 +24,11 @@ export abstract class DDS
   get isAttached()
   {
     return this.#channel !== null;
+  }
+
+  protected get runtime()
+  {
+    return this.#channel?.runtime;
   }
 
   protected get encoder()

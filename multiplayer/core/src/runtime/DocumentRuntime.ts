@@ -1,17 +1,16 @@
 import { EventEmitter } from "eventemitter3";
-import type { DDS, DDSFactory, DDSFactoryOrConstructor } from "../dds/index.js";
+import type { DDS, DDSFactoryOrConstructor } from "../dds/index.js";
 import type { Delta, IEncodedDelta } from "../dds/Delta.js";
 import type { IDocumentSummary } from "./summary.js";
 import { Decoder, Encoder } from "../serialization/types.js";
 import { DDSPool } from "./DDSPool.js";
-import { DDSFactoryRegistry } from "./DDSFactoryRegistry.js";
 
 export interface DocumentRuntimeEvents
 {
   deltaSubmitted(dds: DDS, delta: Delta, undo: Delta | null): void;
 }
 
-export class DocumentRuntime extends EventEmitter<DocumentRuntimeEvents>
+export class DocumentRuntime<T extends DDS = DDS> extends EventEmitter<DocumentRuntimeEvents>
 {
   protected constructor(types: DDSFactoryOrConstructor<DDS>[])
   {
@@ -22,9 +21,9 @@ export class DocumentRuntime extends EventEmitter<DocumentRuntimeEvents>
 
   readonly #objectPool: DDSPool;
 
-  get root()
+  get root(): T
   {
-    return this.#objectPool.root;
+    return this.#objectPool.root as T;
   }
 
   get objects()
@@ -37,9 +36,9 @@ export class DocumentRuntime extends EventEmitter<DocumentRuntimeEvents>
     return this.#objectPool.typeRegistry;
   }
 
-  static create(root: DDS, types: DDSFactoryOrConstructor<DDS>[])
+  static create<T extends DDS>(root: T, types: DDSFactoryOrConstructor<DDS>[])
   {
-    const runtime = new DocumentRuntime(types);
+    const runtime = new DocumentRuntime<T>(types);
 
     runtime.#objectPool.root = root;
     runtime.#objectPool.attachDDS(root, "root");
@@ -56,11 +55,11 @@ export class DocumentRuntime extends EventEmitter<DocumentRuntimeEvents>
     return runtime;
   }
 
-  static load(summary: IDocumentSummary, types: DDSFactoryOrConstructor<DDS>[])
+  static async load(summary: IDocumentSummary, types: DDSFactoryOrConstructor<DDS>[])
   {
     const runtime = new DocumentRuntime(types);
 
-    runtime.load(summary);
+    await runtime.load(summary);
 
     return runtime;
   }
@@ -70,7 +69,7 @@ export class DocumentRuntime extends EventEmitter<DocumentRuntimeEvents>
     return this.#objectPool.createSummary();
   }
 
-  load(summary: IDocumentSummary)
+  async load(summary: IDocumentSummary)
   {
     this.#objectPool.load(summary, 0, new Decoder(this.#objectPool));
   }
@@ -109,5 +108,11 @@ export class DocumentRuntime extends EventEmitter<DocumentRuntimeEvents>
   clone()
   {
     return DocumentRuntime.load(this.createSummary(), this.typeRegistry.types());
+  }
+
+  dispose()
+  {
+    this.#objectPool.dispose();
+    (this.#objectPool as unknown) = null;
   }
 }

@@ -7,7 +7,7 @@ import { Delta } from "../dds/Delta.js";
 
 describe("DocumentRuntime", () =>
 {
-  it("creates and loads summaries", () =>
+  it("creates and loads summaries", async () =>
   {
     class Foo extends ObjectDDS
     {
@@ -26,7 +26,7 @@ describe("DocumentRuntime", () =>
 
     foo.count = 10;
 
-    const runtime2 = DocumentRuntime.load(runtime.createSummary(), [Foo]);
+    const runtime2 = await DocumentRuntime.load(runtime.createSummary(), [Foo]);
 
     expect(runtime2.root).toBeInstanceOf(Foo);
     const foo2 = runtime2.root as Foo;
@@ -41,7 +41,7 @@ describe("DocumentRuntime", () =>
     expect(foo2.count).toBe(20);
   });
 
-  it("validates required types", () =>
+  it("validates required types", async () =>
   {
     class Foo extends ObjectDDS
     {
@@ -65,11 +65,11 @@ describe("DocumentRuntime", () =>
 
     const runtime = DocumentRuntime.create(new Foo(), [Foo, Bar]);
 
-    expect(() => DocumentRuntime.load(runtime.createSummary(), [Foo])).toThrow();
-    expect(() => DocumentRuntime.load(runtime.createSummary(), [Foo, Bar])).not.toThrow();
+    await expect(DocumentRuntime.load(runtime.createSummary(), [Foo])).rejects.toThrow();
+    await expect(DocumentRuntime.load(runtime.createSummary(), [Foo, Bar])).resolves.not.toThrow();
   });
 
-  it("processes encoded deltas", () =>
+  it("processes encoded deltas",  async () =>
   {
     class Foo extends ObjectDDS
     {
@@ -90,9 +90,9 @@ describe("DocumentRuntime", () =>
     const foo1 = new Foo();
 
     const runtime1 = DocumentRuntime.create(foo1, [Foo]);
-    const runtime2 = DocumentRuntime.load(runtime1.createSummary(), [Foo]);
+    const runtime2 = await DocumentRuntime.load(runtime1.createSummary(), [Foo]);
 
-    const foo2 = runtime2.root as Foo;
+    const foo2 =  runtime2.root as Foo;
 
     runtime1.on("deltaSubmitted", (dds, delta) =>
     {

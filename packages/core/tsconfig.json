@@ -4,6 +4,9 @@
   "include": [],
   "references": [
     {
+      "path": "../../multiplayer/core"
+    },
+    {
       "path": "../framework"
     },
     {

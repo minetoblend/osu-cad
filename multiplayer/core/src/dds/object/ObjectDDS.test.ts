@@ -84,7 +84,7 @@ describe("ObjectDDS", () =>
     }).toThrowError();
   });
 
-  it("supports nested dds objects", () =>
+  it("supports nested dds objects", async () =>
   {
     class Bar extends ObjectDDS
     {
@@ -125,9 +125,9 @@ describe("ObjectDDS", () =>
 
     foo.bar.count = 10;
 
-    const runtime2 = runtime.clone();
+    const runtime2 = await runtime.clone();
 
-    const foo2 = runtime2.root as Foo;
+    const foo2 =  runtime2.root as Foo;
     expect(foo2.bar.count).toBe(10);
 
     expect(foo.bar.id).toEqual(foo2.bar.id);

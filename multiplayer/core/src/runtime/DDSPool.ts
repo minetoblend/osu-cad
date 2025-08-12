@@ -1,7 +1,7 @@
-import type { IEncodedDelta } from "src/dds/Delta.js";
-import { Delta } from "src/dds/Delta.js";
-import type { IDecoder } from "src/serialization/types.js";
-import { Encoder } from "src/serialization/types.js";
+import type { IEncodedDelta } from "../dds/Delta.js";
+import { Delta } from "../dds/Delta.js";
+import type { IDecoder } from "../serialization/types.js";
+import { Encoder } from "../serialization/types.js";
 import type { DDSFactoryOrConstructor } from "../dds/index.js";
 import { DDS } from "../dds/index.js";
 import type { IDDSSummary, IDocumentSummary } from "./summary.js";
@@ -13,13 +13,23 @@ import { DDSFactoryRegistry } from "./DDSFactoryRegistry.js";
 
 export class DDSPool extends DDS
 {
-  constructor(readonly runtime: DocumentRuntime, types: DDSFactoryOrConstructor<DDS>[])
+
+  constructor(runtime: DocumentRuntime, types: DDSFactoryOrConstructor<DDS>[])
   {
     super({ type: "builtin:object-pool", version: 0 });
 
+    this.#runtime = runtime;
+
     this.typeRegistry = new DDSFactoryRegistry(types);
 
-    this.attachDDS(this, "/");
+    this.attachDDS(this, "runtime");
+  }
+
+  readonly #runtime: DocumentRuntime;
+
+  override get runtime()
+  {
+    return this.#runtime;
   }
 
   readonly typeRegistry: DDSFactoryRegistry;
@@ -194,6 +204,14 @@ export class DDSPool extends DDS
 
       this.detachDDS(channel.target);
     }
+  }
+
+  dispose()
+  {
+    for (const channel of [...this.#channels.values()])
+      this.detachDDS(channel.target);
+
+    (this.runtime as unknown) = null;
   }
 }
 

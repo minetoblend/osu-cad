@@ -24,7 +24,7 @@ export default defineConfig([
       "@nx/enforce-module-boundaries": [
         "error",
         {
-          enforceBuildableLibDependency: true,
+          enforceBuildableLibDependency: false,
           allow: [
             "^.*/eslint(\\.base)?\\.config\\.[cm]?js$",
           ],

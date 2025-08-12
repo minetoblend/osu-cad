@@ -7,22 +7,18 @@ import { HitResult } from "../scoring";
 import { Judgement } from "../judgements/Judgement";
 import { HitSoundInfo } from "../../audio/HitSoundInfo";
 import type { HitSampleInfo } from "../../audio/HitSampleInfo";
+import { ObjectDDS, type } from "@osucad/multiplayer-core";
+import { bindableBacked } from "../../utils/bindableBacked";
 
-export class HitObject
+export class HitObject extends ObjectDDS
 {
   readonly defaultsApplied = new Action<HitObject>();
 
   readonly startTimeBindable = new Bindable(0);
 
-  get startTime()
-  {
-    return this.startTimeBindable.value;
-  }
-
-  set startTime(value)
-  {
-    this.startTimeBindable.value = value;
-  }
+  @type("float64")
+  @bindableBacked("startTimeBindable")
+  accessor startTime = 0;
 
   get duration()
   {
