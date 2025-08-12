@@ -1,10 +1,12 @@
 import { DDS } from "../DDS.js";
 import { ObjectDDSMetadata } from "./ObjectDDSMetadata.js";
 import type { DDSAttributes } from "../DDSAttributes.js";
-import type { Delta } from "../Delta.js";
+import type  { Delta, IEncodedDelta } from "../Delta.js";
+import type { ObjectDeltaEntry } from "./ObjectDelta.js";
 import { ObjectDelta } from "./ObjectDelta.js";
 import type { ObjectDDSPropertyMetadata } from "./metadata.js";
 import type { IDecoder, IEncoder } from "../../serialization/types.js";
+import { nn } from "../../utils/nn.js";
 
 export class ObjectDDS extends DDS
 {
@@ -30,7 +32,11 @@ export class ObjectDDS extends DDS
     if (!local)
     {
       for (const entry of delta.entries)
-        this.#setValue(entry.property, entry.value);
+      {
+        const value = entry.property.serializer.deserialize(entry.value, this.decoder);
+
+        this.#setValue(entry.property, value);
+      }
 
       return;
     }
@@ -111,5 +117,23 @@ export class ObjectDDS extends DDS
 
       set(this, serializer.deserialize(value, decoder));
     }
+  }
+
+  public override decodeDelta(delta: IEncodedDelta): Delta
+  {
+    if (delta.type !== "set")
+      throw new Error(`Unknown delta type "${delta.type}"`);
+
+    const content = delta.content as Record<string, unknown>;
+    const entries: ObjectDeltaEntry[] = [];
+
+    for(const key in content)
+    {
+      const property = nn(this.metadata.getPropertyByName(key), `Unknown property "${key}" in delta`);
+
+      entries.push({ property, value: content[key] });
+    }
+
+    return new ObjectDelta(entries);
   }
 }

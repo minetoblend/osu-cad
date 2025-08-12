@@ -69,7 +69,7 @@ export function typeDecorator<This extends ObjectDDS, Value>(serializer: ISerial
 
 export type SerializerMap = { [key: string]: ISerializer<any> };
 
-export interface ISerializerOptions<This, Value, Nullable extends boolean = false>
+export interface ISerializerOptions<Nullable extends boolean = false>
 {
   nullable?: Nullable;
   since?: number;
@@ -79,7 +79,7 @@ export type UnwrapSerializer<T> = T extends ISerializer<infer U> ? U : never;
 
 export function createTypeDecorator<T extends SerializerMap>(serializers: T)
 {
-  return function <This extends ObjectDDS, Key extends keyof T, Nullable extends boolean = false>(key: Key, options: ISerializerOptions<This, UnwrapSerializer<T[Key]>, Nullable> = {}):
+  return function <This extends ObjectDDS, Key extends keyof T, Nullable extends boolean = false>(key: Key, options: ISerializerOptions<Nullable> = {}):
       Nullable extends true
           ? AccessorDecorator<This, UnwrapSerializer<T[Key]> | null>
           : AccessorDecorator<This, UnwrapSerializer<T[Key]>>
@@ -108,10 +108,15 @@ export const builtinTypes = {
 
 export const type = createTypeDecorator(builtinTypes);
 
-export function nested<This extends ObjectDDS, Value extends DDS>(type: new () => Value): AccessorDecorator<This, Value>
+export function nested<This extends ObjectDDS, Value extends DDS, Nullable extends boolean = false>(type: (new () => Value) | (() => (new () => Value)), options: ISerializerOptions<Nullable> = {}):
+    Nullable extends true
+        ? AccessorDecorator<This, Value | null>
+        : AccessorDecorator<This, Value>
 {
-  return typeDecorator({
+  const serializer: ISerializer<Value> = {
     serialize: (value: Value, encoder) => encoder.encodeDDS(value),
     deserialize: (value, decoder) => decoder.decodeDDS(value) as Value,
-  });
+  };
+
+  return typeDecorator((options.nullable ? new NullableSerializer(serializer) : serializer) as any, options) as any;
 }

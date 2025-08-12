@@ -1,6 +1,6 @@
 import { EventEmitter } from "eventemitter3";
 import type { DDS, DDSFactory } from "../dds/index.js";
-import type { Delta } from "../dds/Delta.js";
+import type { Delta, IEncodedDelta } from "../dds/Delta.js";
 import type { IDocumentSummary } from "./summary.js";
 import { Decoder, Encoder } from "../serialization/types.js";
 import { DDSPool } from "./DDSPool.js";
@@ -24,6 +24,11 @@ export class DocumentRuntime extends EventEmitter<DocumentRuntimeEvents>
   get root()
   {
     return this.#objectPool.root;
+  }
+
+  get objects()
+  {
+    return this.#objectPool;
   }
 
   get typeRegistry()
@@ -75,13 +80,21 @@ export class DocumentRuntime extends EventEmitter<DocumentRuntimeEvents>
     this.#objectPool.getChannel(targetId)?.replay(delta);
   }
 
-  process(targetId: string, delta: Delta, local: boolean)
+  process(targetId: string, delta: IEncodedDelta, local: boolean)
   {
-    this.#objectPool.getChannel(targetId)?.process(delta, local);
+    const channel = this.#objectPool.getChannel(targetId);
+    if (!channel)
+      return false;
+
+    channel.process(channel.target.decodeDelta(delta), local);
+
+    return true;
   }
 
   ensureCreated(dds: DDS)
   {
     this.#objectPool.create(dds);
   }
+
+
 }

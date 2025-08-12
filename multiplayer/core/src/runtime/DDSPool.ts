@@ -1,5 +1,7 @@
+import type { IEncodedDelta } from "src/dds/Delta.js";
 import { Delta } from "src/dds/Delta.js";
 import type { IDecoder } from "src/serialization/types.js";
+import { Encoder } from "src/serialization/types.js";
 import { DDS, type DDSFactory } from "../dds/index.js";
 import type { IDDSSummary, IDocumentSummary } from "./summary.js";
 import { summarizeDocument } from "./summarizeDocument.js";
@@ -25,8 +27,27 @@ export class DDSPool extends DDS
 
   readonly #channels = new Map<string, DDSChannel>();
 
+  get objectCount()
+  {
+    return this.#channels.size - 1;
+  }
+
   protected override process(delta: Delta, local: boolean): void
   {
+    if (delta instanceof CreateObjectDelta)
+    {
+      let object = this.getObject(delta.id);
+      if (object)
+        return;
+
+      const factory = nn(this.typeRegistry.get(delta.summary.attributes));
+
+      object = factory.create();
+
+      this.attachDDS(object, delta.id);
+
+      nn(this.getChannel(delta.id)).load(delta.summary.content, delta.summary.attributes.version, this.decoder);
+    }
   }
 
   protected override replay(delta: Delta): void
@@ -132,12 +153,61 @@ export class DDSPool extends DDS
   {
     return this.#channels.get(id);
   }
+
+  public override decodeDelta(delta: IEncodedDelta): Delta
+  {
+    if (delta.type !== "create")
+      throw new Error(`Unknown delta type "${delta.type}"`);
+
+    const content = delta.content as { id: string, summary: IDDSSummary };
+
+    return new CreateObjectDelta(content.id, content.summary);
+  }
+
+  collectGarbage()
+  {
+    const trackedIds = new Set<string>([nn(this.id), nn(this.root.id)]);
+
+    const encoder = new Encoder();
+
+    encoder.on("ddsEncoded", dds =>
+    {
+      const id = nn(dds.id);
+
+      if (!trackedIds.has(id))
+      {
+        trackedIds.add(id);
+        dds.createSummary(encoder);
+      }
+    });
+
+    this.root.createSummary(encoder);
+
+    const toDelete = new Set(this.#channels.keys());
+    for (const id of trackedIds)
+      toDelete.delete(id);
+
+    for (const id of toDelete)
+    {
+      const channel = nn(this.#channels.get(id)!);
+
+      this.detachDDS(channel.target);
+    }
+  }
 }
+
 
 class CreateObjectDelta extends Delta
 {
   constructor(readonly id: string, readonly summary: IDDSSummary)
   {
-    super();
+    super("create");
+  }
+
+  public override encode(): unknown
+  {
+    const { id, summary } = this;
+
+    return { id, summary };
   }
 }

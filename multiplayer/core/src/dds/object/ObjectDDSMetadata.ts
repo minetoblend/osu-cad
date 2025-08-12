@@ -18,8 +18,17 @@ export class ObjectDDSMetadata
 
   readonly properties: ObjectDDSPropertyMetadata[];
 
+  readonly #nameToProperty = new Map<string, ObjectDDSPropertyMetadata>();
+
   constructor(target: ObjectDDS)
   {
     this.properties = getObjectDDSProperties(target);
+    for (const property of this.properties)
+      this.#nameToProperty.set(property.name, property);
+  }
+
+  getPropertyByName(name: string)
+  {
+    return this.#nameToProperty.get(name);
   }
 }

@@ -10,7 +10,19 @@ export class ObjectDelta extends Delta
 
   constructor(readonly entries: ObjectDeltaEntry[])
   {
-    super();
+    super("set");
+  }
+
+  public override encode(): unknown
+  {
+    const content: Record<string, unknown> = {};
+
+    for (const entry of this.entries)
+    {
+      content[entry.property.name] = entry.value;
+    }
+
+    return content;
   }
 }
 

@@ -1,6 +1,6 @@
 import type { DDSAttributes } from "./DDSAttributes.js";
 import type { DDSChannel } from "./DDSChannel.js";
-import type { Delta } from "./Delta.js";
+import type { Delta, IEncodedDelta } from "./Delta.js";
 import type { IDecoder, IEncoder } from "../serialization/types.js";
 import { Encoder } from "../serialization/types.js";
 
@@ -59,7 +59,9 @@ export abstract class DDS
 
   abstract load(summary: unknown, version: number, decoder: IDecoder): void;
 
-  submitDelta(delta: Delta, undo: Delta | null = null)
+  abstract decodeDelta(content: IEncodedDelta): Delta;
+
+  protected submitDelta(delta: Delta, undo: Delta | null = null)
   {
     this.#channel?.submitDelta(delta, undo);
   }

@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import type { DDSAttributes } from "../dds/index.js";
+import { nested } from "../dds/index.js";
 import { ObjectDDS, type } from "../dds/index.js";
 import { DocumentRuntime } from "./DocumentRuntime.js";
+import { nn } from "../utils/nn.js";
+import { Delta, type IEncodedDelta } from "../dds/Delta.js";
 
 describe("DocumentRuntime", () =>
 {
@@ -69,5 +72,60 @@ describe("DocumentRuntime", () =>
 
     expect(() => runtime2.load(runtime1.createSummary())).toThrow();
     expect(() => runtime3.load(runtime1.createSummary())).not.toThrow();
+  });
+
+  it("processes encoded deltas", () =>
+  {
+    class Foo extends ObjectDDS
+    {
+      static attributes: DDSAttributes = { type: "foo", version: 0 };
+
+      constructor()
+      {
+        super(Foo.attributes);
+      }
+
+      @type("int32")
+      accessor count = 0
+
+      @nested(() => Foo, { nullable: true })
+      accessor foo: Foo | null = null
+    }
+
+    const foo1 = new Foo();
+
+    const runtime1 = DocumentRuntime.create(foo1, [Foo]);
+    const runtime2 = new DocumentRuntime([Foo]);
+    runtime2.load(runtime1.createSummary());
+
+    const foo2 = runtime2.root as Foo;
+
+    runtime1.on("deltaSubmitted", (dds, delta) =>
+    {
+      const encoded = Delta.encode(delta);
+
+      runtime2.process(nn(dds.id), encoded, false);
+    });
+
+    foo1.count = 10;
+    expect(foo2.count).toBe(10);
+    expect(foo2.foo).toBe(null);
+
+    foo1.foo = new Foo();
+    expect(foo2.foo).toBeInstanceOf(Foo);
+
+    foo1.foo.count = 20;
+    expect(foo2.foo!.count).toBe(20);
+
+    foo1.foo = null;
+    expect(foo2.foo).toBe(null);
+
+    expect(runtime1.objects.objectCount).toBe(2);
+    runtime1.objects.collectGarbage();
+    expect(runtime1.objects.objectCount).toBe(1);
+
+    expect(runtime2.objects.objectCount).toBe(2);
+    runtime2.objects.collectGarbage();
+    expect(runtime2.objects.objectCount).toBe(1);
   });
 });
