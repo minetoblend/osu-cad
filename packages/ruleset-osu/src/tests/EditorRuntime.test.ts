@@ -45,8 +45,8 @@ describe("EditorRuntime", () =>
     slider2.path.expectedDistance = 100;
 
     expect(slider1.path.calculatedPath.vertices).toStrictEqual([
-      new Vec2(0,0),
-      new Vec2(100,0),
+      new Vec2(0, 0),
+      new Vec2(100, 0),
     ]);
 
     console.log(inspect(runtime2.createSummary(), { depth: 4 }));

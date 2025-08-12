@@ -13,6 +13,6 @@ export function syncRuntimes(runtime1: DocumentRuntime, runtime2: DocumentRuntim
   runtime2.on("deltaSubmitted", (dds, delta) =>
   {
     runtime1.process(nn(dds.id), Delta.encode(delta), false);
-    runtime2.process(nn(dds.id), Delta.encode(delta), false);
+    runtime2.process(nn(dds.id), Delta.encode(delta), true);
   });
 }

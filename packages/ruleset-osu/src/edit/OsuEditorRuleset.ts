@@ -16,8 +16,8 @@ export class OsuEditorRuleset implements EditorRuleset
     ],
   };
 
-  createHitObjectComposer(): HitObjectComposer
+  async createHitObjectComposer(): Promise<HitObjectComposer>
   {
-    return new OsuHitObjectComposer();
+    return import("./OsuHitObjectComposer").then(m => new m.OsuHitObjectComposer());
   }
 }
