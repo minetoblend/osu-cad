@@ -4,6 +4,9 @@ import { nested, type } from "./decorator.js";
 import type { DDSAttributes } from "../DDSAttributes.js";
 import { DocumentRuntime } from "../../runtime/index.js";
 import { Decoder, Encoder } from "../../serialization/types.js";
+import { nn } from "../../utils/nn.js";
+import { ObjectDelta } from "./ObjectDelta.js";
+import { Delta } from "../Delta.js";
 
 describe("ObjectDDS", () =>
 {
@@ -96,7 +99,7 @@ describe("ObjectDDS", () =>
       }
 
       @type("int32")
-      accessor count = 0
+      accessor count = 0;
     }
 
     class Foo extends ObjectDDS
@@ -112,13 +115,13 @@ describe("ObjectDDS", () =>
       }
 
       @nested(Bar)
-      accessor bar = new Bar()
+      accessor bar = new Bar();
     }
 
     const foo = new Foo();
     const runtime = DocumentRuntime.create(foo, [Foo, Bar]);
 
-    runtime.on("deltaSubmitted", (dds, delta) => console.log(`dds: ${dds.id}` , delta));
+    runtime.on("deltaSubmitted", (dds, delta) => console.log(`dds: ${dds.id}`, delta));
 
     foo.bar.count = 10;
 
@@ -142,5 +145,41 @@ describe("ObjectDDS", () =>
     expect(foo.bar.isAttached).toBe(true);
     expect(foo2.bar.id).not.toEqual(oldBar.id);
     expect(foo.bar.id).toEqual(foo2.bar.id);
+  });
+
+  it("ignores changes for pending properties", () =>
+  {
+    class Counter extends ObjectDDS
+    {
+      static readonly attributes: DDSAttributes = { type: "counter", version: 0 };
+
+      constructor()
+      {
+        super(Counter.attributes);
+      }
+
+      @type("uint32") accessor value = 0;
+    }
+
+    const counter = new Counter();
+    const runtime = DocumentRuntime.create(counter, [Counter]);
+
+    counter.value = 10;
+
+    const delta = Delta.encode(ObjectDelta.from(0, counter.metadata.getPropertyByName("value")!, 20));
+
+    runtime.process(nn(counter.id), delta, false);
+
+    expect(counter.value).toBe(10);
+
+    const localDelta = Delta.encode(ObjectDelta.from(1, counter.metadata.getPropertyByName("value")!, 10));
+
+    runtime.process(nn(counter.id), localDelta, true);
+
+    expect(counter.value).toBe(10);
+
+    runtime.process(nn(counter.id), delta, false);
+
+    expect(counter.value).toBe(20);
   });
 });

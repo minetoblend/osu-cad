@@ -1,7 +1,7 @@
 import { DDS } from "../DDS.js";
 import { ObjectDDSMetadata } from "./ObjectDDSMetadata.js";
 import type { DDSAttributes } from "../DDSAttributes.js";
-import type  { Delta, IEncodedDelta } from "../Delta.js";
+import type { Delta, IEncodedDelta } from "../Delta.js";
 import type { ObjectDeltaEntry } from "./ObjectDelta.js";
 import { ObjectDelta } from "./ObjectDelta.js";
 import type { ObjectDDSPropertyMetadata } from "./metadata.js";
@@ -28,12 +28,23 @@ export class ObjectDDS extends DDS
     {
       for (const entry of delta.entries)
       {
+        if (this.#pendingProperties.has(entry.property.name))
+          continue;
+
         const value = entry.property.serializer.deserialize(entry.value, this.decoder);
 
         this.#setValue(entry.property, value);
       }
 
       return;
+    }
+
+    for (const entry of delta.entries)
+    {
+      const pendingVersion = this.#pendingProperties.get(entry.property.name);
+
+      if (pendingVersion !== undefined && delta.version >= pendingVersion)
+        this.#pendingProperties.delete(entry.property.name);
     }
   }
 
@@ -50,6 +61,9 @@ export class ObjectDDS extends DDS
     }
   }
 
+  #version = 0;
+  readonly #pendingProperties = new Map<string, number>();
+
   setValue(property: ObjectDDSPropertyMetadata, newValue: unknown)
   {
     let oldValue = property.get(this);
@@ -65,8 +79,12 @@ export class ObjectDDS extends DDS
     newValue = property.serializer.serialize(newValue, this.encoder);
     oldValue = property.serializer.serialize(oldValue, this.encoder);
 
-    const delta = ObjectDelta.from(property, newValue);
-    const undo = ObjectDelta.from(property, oldValue);
+    const version = ++this.#version;
+
+    this.#pendingProperties.set(property.name, version);
+
+    const delta = ObjectDelta.from(version, property, newValue);
+    const undo = ObjectDelta.from(version, property, oldValue);
 
     this.submitDelta(delta, undo);
   }
@@ -114,21 +132,21 @@ export class ObjectDDS extends DDS
     }
   }
 
-  public override decodeDelta(delta: IEncodedDelta): Delta
+  public override decodeDelta(content: IEncodedDelta): Delta
   {
-    if (delta.type !== "set")
-      throw new Error(`Unknown delta type "${delta.type}"`);
+    if (content.type !== "set")
+      throw new Error(`Unknown delta type "${content.type}"`);
 
-    const content = delta.content as Record<string, unknown>;
+    const delta = content.content as { version: number, content: Record<string, unknown> };
     const entries: ObjectDeltaEntry[] = [];
 
-    for(const key in content)
+    for (const key in delta.content)
     {
       const property = nn(this.metadata.getPropertyByName(key), `Unknown property "${key}" in delta`);
 
-      entries.push({ property, value: content[key] });
+      entries.push({ property, value: delta.content[key] });
     }
 
-    return new ObjectDelta(entries);
+    return new ObjectDelta(delta.version, entries);
   }
 }

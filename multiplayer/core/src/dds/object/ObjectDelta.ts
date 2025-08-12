@@ -3,12 +3,12 @@ import type { ObjectDDSPropertyMetadata } from "./metadata.js";
 
 export class ObjectDelta extends Delta
 {
-  static from(property: ObjectDDSPropertyMetadata, value: unknown)
+  static from(version: number, property: ObjectDDSPropertyMetadata, value: unknown)
   {
-    return new ObjectDelta([{ property, value }]);
+    return new ObjectDelta(version, [{ property, value }]);
   }
 
-  constructor(readonly entries: ObjectDeltaEntry[])
+  constructor(readonly version: number, readonly entries: ObjectDeltaEntry[])
   {
     super("set");
   }
@@ -22,7 +22,7 @@ export class ObjectDelta extends Delta
       content[entry.property.name] = entry.value;
     }
 
-    return content;
+    return { version: this.version, content };
   }
 }
 
