@@ -51,7 +51,7 @@ export class DDSPool extends DDS
       if (object)
         return;
 
-      const factory = nn(this.typeRegistry.get(delta.summary.attributes));
+      const factory = nn(this.typeRegistry.get(delta.summary.attributes), `Unsupported dds type "${delta.summary.attributes.type}"`);
 
       object = factory.create();
 

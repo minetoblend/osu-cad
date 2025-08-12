@@ -10,7 +10,7 @@ import { SliderTailCircle } from "./SliderTailCircle";
 import { SliderRepeat } from "./SliderRepeat";
 import { SliderEventGenerator, SliderEventType } from "./SliderEventGenerator";
 import { SliderTick } from "./SliderTick";
-import { type, type DDSAttributes } from "@osucad/multiplayer-core";
+import { nested, type, type DDSAttributes } from "@osucad/multiplayer-core";
 
 export interface SliderOptions extends OsuHitObjectOptions
 {
@@ -136,7 +136,8 @@ export class Slider extends OsuHitObject
     this.#tickDistance = scoringDistance / difficulty.sliderTickRate;
   }
 
-  readonly path = new SliderPath();
+  @nested(SliderPath)
+  accessor path = new SliderPath();
 
   spanAt(progress: number)
   {

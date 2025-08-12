@@ -1,8 +1,10 @@
-import { PathApproximator } from "@osucad/core";
+import { bindableBacked, PathApproximator } from "@osucad/core";
 import { Bindable, CachedValue, Vec2 } from "@osucad/framework";
 import { CalculatedPath } from "./CalculatedPath";
-import type { PathPoint } from "./PathPoint";
+import { PathPoint } from "./PathPoint";
 import { PathType } from "./PathPoint";
+import type { DDSAttributes } from "@osucad/multiplayer-core";
+import { ObjectDDS, serializer, type, typeDecorator } from "@osucad/multiplayer-core";
 
 export interface PathSegment
 {
@@ -10,12 +12,23 @@ export interface PathSegment
   readonly points: PathPoint[]
 }
 
-export class SliderPath
+const pathPointSerializer = serializer<readonly PathPoint[], [number, number, PathType | null][]>({
+  serialize: value => value.map(p => [p.position.x, p.position.y, p.type]),
+  deserialize: value => value.map(([x, y, type]) => new PathPoint(new Vec2(x, y), type)),
+});
+
+export class SliderPath extends ObjectDDS
 {
   readonly version = new Bindable(0);
 
+  static readonly attributes: DDSAttributes = {
+    type: "@osucad/slider-path",
+    version: 0,
+  };
+
   constructor()
   {
+    super(SliderPath.attributes);
     this.controlPointsBindable.bindValueChanged(this.invalidatePath, this);
   }
 
@@ -31,15 +44,9 @@ export class SliderPath
     return Math.min(this.expectedDistance, this.calculatedDistance);
   }
 
-  get expectedDistance()
-  {
-    return this.expectedDistanceBindable.value;
-  }
-
-  set expectedDistance(value: number)
-  {
-    this.expectedDistanceBindable.value = value;
-  }
+  @type("float64")
+  @bindableBacked("expectedDistanceBindable")
+  accessor expectedDistance!: number
 
   get calculatedDistance()
   {
@@ -48,15 +55,9 @@ export class SliderPath
 
   readonly controlPointsBindable = new Bindable<readonly PathPoint[]>([]);
 
-  get controlPoints()
-  {
-    return this.controlPointsBindable.value;
-  }
-
-  set controlPoints(value: readonly PathPoint[])
-  {
-    this.controlPointsBindable.value = value;
-  }
+  @typeDecorator(pathPointSerializer)
+  @bindableBacked("controlPointsBindable")
+  accessor controlPoints!: readonly PathPoint[]
 
   readonly #calculatedPath = new CachedValue<CalculatedPath>();
 
