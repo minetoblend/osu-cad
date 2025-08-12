@@ -5,7 +5,9 @@ import type { DDS } from "../DDS.js";
 import type { ISerializer } from "src/serialization/ISerializer.js";
 import { plainSerializer } from "src/serialization/ISerializer.js";
 import { NullableSerializer } from "src/serialization/NullableSerializer.js";
-import type { DDSFactoryOrConstructor } from "../DDSFactory.js";
+import type { DDSFactory, DDSFactoryOrConstructor } from "../DDSFactory.js";
+import { toDDSFactory } from "../DDSFactory.js";
+import { Lazy } from "../../utils/Lazy.js";
 
 export type AccessorDecorator<This, Value> = (
   target: ClassAccessorDecoratorTarget<This, Value>,
@@ -114,9 +116,28 @@ export function nested<This extends ObjectDDS, Value extends DDS, Nullable exten
         ? AccessorDecorator<This, Value | null>
         : AccessorDecorator<This, Value>
 {
+  const resolvedType = new Lazy<DDSFactory<Value>>(() =>
+  {
+    if (typeof type === "function")
+    {
+      if (!type.toString().startsWith("class"))
+        type = (type as () => DDSFactoryOrConstructor<Value>)();
+    }
+
+    return toDDSFactory(type as DDSFactoryOrConstructor<Value>);
+  });
+
   const serializer: ISerializer<Value> = {
     serialize: (value: Value, encoder) => encoder.encodeDDS(value),
-    deserialize: (value, decoder) => decoder.decodeDDS(value) as Value,
+    deserialize: (value, decoder) =>
+    {
+      const dds = decoder.decodeDDS(value) as Value;
+
+      if (resolvedType.value.attributes.type !== dds.attributes.type)
+        throw new Error(`Unexpected dds type ${JSON.stringify(dds.attributes.type)}. Expected type is ${JSON.stringify(resolvedType.value.attributes.type)}`);
+
+      return dds;
+    },
   };
 
   return typeDecorator((options.nullable ? new NullableSerializer(serializer) : serializer) as any, options) as any;
