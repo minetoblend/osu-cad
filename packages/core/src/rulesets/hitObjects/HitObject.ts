@@ -1,14 +1,15 @@
 import type { ValueChangedEvent } from "@osucad/framework";
 import { Action, Bindable } from "@osucad/framework";
+import { ObjectDDS, type } from "@osucad/multiplayer-core";
+import type { HitSampleInfo } from "../../audio/HitSampleInfo";
+import { HitSoundInfo } from "../../audio/HitSoundInfo";
 import type { BeatmapDifficultyInfo } from "../../beatmaps/BeatmapDifficultyInfo";
 import type { IBeatmapTiming } from "../../beatmaps/timing/IBeatmapTiming";
-import { HitWindows } from "../scoring/HitWindows";
-import { HitResult } from "../scoring";
-import { Judgement } from "../judgements/Judgement";
-import { HitSoundInfo } from "../../audio/HitSoundInfo";
-import type { HitSampleInfo } from "../../audio/HitSampleInfo";
-import { ObjectDDS, type } from "@osucad/multiplayer-core";
 import { bindableBacked } from "../../utils/bindableBacked";
+import { customType } from "../../utils/decorator";
+import { Judgement } from "../judgements/Judgement";
+import { HitResult } from "../scoring";
+import { HitWindows } from "../scoring/HitWindows";
 
 export class HitObject extends ObjectDDS
 {
@@ -18,7 +19,7 @@ export class HitObject extends ObjectDDS
 
   @type("float64")
   @bindableBacked("startTimeBindable")
-  accessor startTime = 0;
+  accessor startTime!: number
 
   get duration()
   {
@@ -111,15 +112,9 @@ export class HitObject extends ObjectDDS
 
   readonly hitSoundBindable = new Bindable<HitSoundInfo>(new HitSoundInfo());
 
-  get hitSound()
-  {
-    return this.hitSoundBindable.value;
-  }
-
-  set hitSound(value: HitSoundInfo)
-  {
-    this.hitSoundBindable.value = value;
-  }
+  @customType("hitSoundInfo")
+  @bindableBacked("hitSoundBindable")
+  accessor hitSound!: HitSoundInfo
 
   readonly samplesBindable = new Bindable<HitSampleInfo[]>([]);
 

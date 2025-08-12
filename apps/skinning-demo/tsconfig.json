@@ -7,9 +7,6 @@
       "path": "../../packages/ruleset-osu"
     },
     {
-      "path": "../../packages/core"
-    },
-    {
       "path": "../../packages/framework"
     },
     {

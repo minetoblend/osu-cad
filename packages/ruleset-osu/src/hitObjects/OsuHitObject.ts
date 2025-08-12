@@ -1,9 +1,11 @@
 import type { HitSoundInfo, HitWindows, Judgement } from "@osucad/core";
-import { BeatmapDifficultyInfo, HitObject, type IBeatmapTiming, safeAssign } from "@osucad/core";
+import { BeatmapDifficultyInfo, bindableBacked, customType, HitObject, type IBeatmapTiming, safeAssign } from "@osucad/core";
 import type { IVec2 } from "@osucad/framework";
 import { Bindable, BindableBoolean, BindableNumber, Vec2 } from "@osucad/framework";
 import { OsuHitWindows } from "../scoring/OsuHitWindows";
 import { OsuJudgement } from "../judgements/OsuJudgement";
+import { type, type DDSAttributes } from "@osucad/multiplayer-core";
+
 
 export interface OsuHitObjectOptions
 {
@@ -31,9 +33,9 @@ export abstract class OsuHitObject extends HitObject
 
   static readonly PREEMPT_MAX = 1800;
 
-  protected constructor(options: OsuHitObjectOptions = {})
+  protected constructor(attributes: DDSAttributes, options: OsuHitObjectOptions = {})
   {
-    super();
+    super(attributes);
 
     safeAssign(this, options);
   }
@@ -45,15 +47,9 @@ export abstract class OsuHitObject extends HitObject
   //#region position
   readonly positionBindable = new Bindable(Vec2.zero());
 
-  get position(): Vec2
-  {
-    return this.positionBindable.value;
-  }
-
-  set position(value: IVec2)
-  {
-    this.positionBindable.value = Vec2.from(value);
-  }
+  @customType("vec2")
+  @bindableBacked("positionBindable")
+  accessor position!: Vec2
 
   get x()
   {
@@ -75,33 +71,27 @@ export abstract class OsuHitObject extends HitObject
     this.position = this.position.withY(value);
   }
 
+  moveBy(x: number, y: number)
+  {
+    this.position = new Vec2(this.x + x, this.y + y);
+  }
+
   //#endregion
 
   //#region combo
   readonly newComboBindable = new BindableBoolean();
 
-  get newCombo()
-  {
-    return this.newComboBindable.value;
-  }
-
-  set newCombo(value)
-  {
-    this.newComboBindable.value = value;
-  }
+  @type("boolean")
+  @bindableBacked("newComboBindable")
+  accessor newCombo!: boolean
 
   readonly comboOffsetBindable = new BindableNumber(0)
     .withMinValue(0);
 
-  get comboOffset()
-  {
-    return this.comboOffsetBindable.value;
-  }
+  @type("uint8")
+  @bindableBacked("comboOffsetBindable")
+  accessor comboOffset!: number
 
-  set comboOffset(value)
-  {
-    this.comboOffsetBindable.value = value;
-  }
 
   readonly comboIndexBindable = new Bindable(0);
 
@@ -217,3 +207,4 @@ export abstract class OsuHitObject extends HitObject
     return new OsuJudgement();
   }
 }
+

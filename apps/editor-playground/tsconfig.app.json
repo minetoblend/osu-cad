@@ -31,9 +31,6 @@
     },
     {
       "path": "../../packages/framework/tsconfig.lib.json"
-    },
-    {
-      "path": "../../packages/core/tsconfig.lib.json"
     }
   ]
 }

@@ -298,6 +298,9 @@ importers:
       '@osucad/framework':
         specifier: 1.1.2
         version: link:../framework
+      '@osucad/multiplayer-core':
+        specifier: workspace:^
+        version: link:../../multiplayer/core
       pixi.js:
         specifier: ^8.9.2
         version: 8.9.2

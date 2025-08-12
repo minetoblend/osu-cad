@@ -1,5 +1,6 @@
 import { nn, type Ruleset, type RulesetStore, rulesets } from "@osucad/core";
 import type { DDS, DDSFactoryOrConstructor, IDocumentSummary } from "@osucad/multiplayer-core";
+import { Encoder } from "@osucad/multiplayer-core";
 import { DocumentHistory } from "@osucad/multiplayer-core";
 import { DocumentRuntime } from "@osucad/multiplayer-core";
 import type { EditorRuleset } from "../EditorRuleset";
@@ -16,7 +17,7 @@ export interface EditorRuntimeConfig
   readonly types: readonly DDSFactoryOrConstructor<DDS>[]
 }
 
-export class EditorRuntime extends DocumentRuntime
+export class EditorRuntime extends DocumentRuntime<EditorBeatmap>
 {
   constructor(readonly rulesetStore: RulesetStore = rulesets)
   {
@@ -38,6 +39,34 @@ export class EditorRuntime extends DocumentRuntime
       rulesetId: this.ruleset.id,
       ...summary,
     };
+  }
+
+  static async createEmpty(ruleset: Ruleset)
+  {
+    const runtime = new EditorRuntime();
+
+    const editorRuleset = nn(await ruleset.createEditorRuleset?.());
+
+    runtime.ruleset = ruleset;
+    runtime.editorRuleset = editorRuleset;
+
+    for (const type of editorRuleset.runtimeConfig.types)
+      runtime.typeRegistry.register(type);
+
+    const root = new EditorBeatmap();
+    runtime.objects.root = root;
+    runtime.objects.attachDDS(root);
+
+    const encoder = new Encoder();
+    encoder.on("ddsEncoded", other =>
+    {
+      runtime.objects.attachDDS(other);
+      other.createSummary(encoder);
+    });
+
+    root.createSummary(encoder);
+
+    return runtime;
   }
 
   override async load(summary: IDocumentSummary)

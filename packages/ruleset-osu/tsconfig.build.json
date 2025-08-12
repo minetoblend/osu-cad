@@ -18,6 +18,9 @@
       "path": "../storybook-renderer"
     },
     {
+      "path": "../../multiplayer/core/tsconfig.lib.json"
+    },
+    {
       "path": "../editor/tsconfig.build.json"
     },
     {

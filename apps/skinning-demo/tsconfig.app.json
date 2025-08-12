@@ -27,9 +27,6 @@
       "path": "../../packages/ruleset-osu/tsconfig.lib.json"
     },
     {
-      "path": "../../packages/core/tsconfig.lib.json"
-    },
-    {
       "path": "../../packages/framework/tsconfig.lib.json"
     }
   ]

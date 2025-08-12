@@ -39,6 +39,7 @@ describe("HitObjectCollection", () =>
     expect(hitObjects1.length).toBe(1);
     expect(hitObjects2.length).toBe(1);
 
+    expect(hitObjects1.hitObjects[0].startTime).toBe(0);
     expect(hitObjects2.hitObjects[0]).toBeInstanceOf(TestHitObject);
 
     hitObjects1.hitObjects[0].startTime = 10;

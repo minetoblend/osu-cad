@@ -1,11 +1,12 @@
+import type { HitSampleInfo, IBeatmapTiming, Judgement } from "@osucad/core";
+import { BeatmapDifficultyInfo, bindableBacked, HitWindows, safeAssign } from "@osucad/core";
 import { BindableNumber, Vec2 } from "@osucad/framework";
+import { type, type DDSAttributes } from "@osucad/multiplayer-core";
+import { OsuJudgement } from "../judgements/OsuJudgement";
 import type { OsuHitObjectOptions } from "./OsuHitObject";
 import { OsuHitObject } from "./OsuHitObject";
-import type { HitSampleInfo, IBeatmapTiming, Judgement } from "@osucad/core";
-import { BeatmapDifficultyInfo, HitWindows, safeAssign } from "@osucad/core";
-import { SpinnerTick } from "./SpinnerTick";
 import { SpinnerBonusTick } from "./SpinnerBonusTick";
-import { OsuJudgement } from "../judgements/OsuJudgement";
+import { SpinnerTick } from "./SpinnerTick";
 
 const zero_vector = Vec2.zero();
 
@@ -28,11 +29,16 @@ export interface SpinnerOptions extends OsuHitObjectOptions
 
 export class Spinner extends OsuHitObject
 {
+  static readonly attributes: DDSAttributes = {
+    type: "@osucad/spinner",
+    version: 0,
+  };
+
   constructor(options: SpinnerOptions = {})
   {
     const { duration, ...rest } = options;
 
-    super(rest);
+    super(Spinner.attributes, rest);
 
     safeAssign(this, { duration });
   }
@@ -40,15 +46,9 @@ export class Spinner extends OsuHitObject
   readonly durationBindable = new BindableNumber(0)
     .withMinValue(0);
 
-  override get duration()
-  {
-    return this.durationBindable.value;
-  }
-
-  override set duration(value: number)
-  {
-    this.durationBindable.value = value;
-  }
+  @type("float64")
+  @bindableBacked("durationBindable")
+  override accessor duration!: number
 
   override get endTime()
   {
@@ -104,7 +104,7 @@ export class Spinner extends OsuHitObject
 
     const secondsDuration = this.duration / 1000;
 
-    const  duration_error = 0.0001;
+    const duration_error = 0.0001;
 
     this.spinsRequired = Math.floor(minRps * secondsDuration + duration_error);
     this.maximumBonusSpins = Math.max(0, Math.floor(maxRps * secondsDuration + duration_error) - this.spinsRequired - bonus_spins_gap);

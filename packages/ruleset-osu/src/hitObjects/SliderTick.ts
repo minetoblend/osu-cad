@@ -21,7 +21,7 @@ export class SliderTick extends OsuHitObject
   {
     const { spanIndex, spanStartTime, pathProgress, ...rest } = options;
 
-    super(rest);
+    super({ type: "@osucad/slider-tick",version: 0 }, rest);
 
     safeAssign(this, { spanIndex, spanStartTime, pathProgress });
   }

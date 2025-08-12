@@ -13,9 +13,6 @@
       "path": "../../packages/framework"
     },
     {
-      "path": "../../packages/core"
-    },
-    {
       "path": "./tsconfig.app.json"
     }
   ]

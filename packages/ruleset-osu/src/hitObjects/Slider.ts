@@ -1,5 +1,5 @@
 import type { BeatmapDifficultyInfo, HitSoundInfo, IBeatmapTiming } from "@osucad/core";
-import { HitSampleInfo, HitWindows, safeAssign, SampleAdditions, SampleSet, sampleSetToBank } from "@osucad/core";
+import { bindableBacked, HitSampleInfo, HitWindows, safeAssign, SampleAdditions, SampleSet, sampleSetToBank } from "@osucad/core";
 import { Bindable, BindableNumber, Vec2 } from "@osucad/framework";
 import type { OsuHitObjectOptions } from "./OsuHitObject";
 import { OsuHitObject } from "./OsuHitObject";
@@ -10,6 +10,7 @@ import { SliderTailCircle } from "./SliderTailCircle";
 import { SliderRepeat } from "./SliderRepeat";
 import { SliderEventGenerator, SliderEventType } from "./SliderEventGenerator";
 import { SliderTick } from "./SliderTick";
+import { type, type DDSAttributes } from "@osucad/multiplayer-core";
 
 export interface SliderOptions extends OsuHitObjectOptions
 {
@@ -21,10 +22,15 @@ export interface SliderOptions extends OsuHitObjectOptions
 
 export class Slider extends OsuHitObject
 {
+  static readonly attributes: DDSAttributes = {
+    type: "@osucad/slider",
+    version: 0,
+  };
+
   constructor(options: SliderOptions = {})
   {
     const { repeatCount, expectedDistance, controlPoints, ...rest } = options;
-    super(rest);
+    super(Slider.attributes, rest);
 
     safeAssign(this, { repeatCount });
 
@@ -62,15 +68,9 @@ export class Slider extends OsuHitObject
     .withPrecision(1);
 
 
-  get repeatCount()
-  {
-    return this.repeatCountBindable.value;
-  }
-
-  set repeatCount(value)
-  {
-    this.repeatCountBindable.value = value;
-  }
+  @type("uint32")
+  @bindableBacked("repeatCountBindable")
+  accessor repeatCount!: number
 
   spanCount()
   {

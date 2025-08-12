@@ -1,5 +1,4 @@
-import { EditorIcons, HitObjectComposer } from "@osucad/editor";
-import { SelectTool } from "./tools/select/SelectTool";
+import { HitObjectComposer } from "@osucad/editor";
 
 export class OsuHitObjectComposer extends HitObjectComposer
 {
@@ -8,14 +7,8 @@ export class OsuHitObjectComposer extends HitObjectComposer
     super();
   }
 
-  protected override getTools()
+  getTools()
   {
-    return [
-      {
-        name: "Select",
-        icon: EditorIcons.select,
-        tool: SelectTool,
-      },
-    ];
+    return [];
   }
 }

@@ -1,6 +1,10 @@
 import type { Bindable } from "@osucad/framework";
 
-export function bindableBacked<This, Value>(key: keyof This)
+type KeysMatching<T extends object, V> = {
+  [K in keyof T]-?: T[K] extends V ? K : never
+}[keyof T];
+
+export function bindableBacked<This extends object, Value>(key: KeysMatching<This, Bindable<Value>>)
 {
   return (
     target: ClassAccessorDecoratorTarget<This, Value>,

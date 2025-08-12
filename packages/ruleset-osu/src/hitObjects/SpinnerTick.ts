@@ -5,6 +5,11 @@ import { OsuJudgement } from "../judgements/OsuJudgement";
 
 export class SpinnerTick extends OsuHitObject
 {
+  constructor()
+  {
+    super({ type: "@osucad/spinner-tick", version: 0 });
+  }
+
   public spinnerDuration: number = 0;
 
   override createJudgement(): Judgement
