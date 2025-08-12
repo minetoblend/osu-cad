@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { DocumentRuntime } from "./DocumentRuntime.js";
 import { DocumentHistory } from "./DocumentHistory.js";
 import { ObjectDDS, type } from "../dds/index.js";

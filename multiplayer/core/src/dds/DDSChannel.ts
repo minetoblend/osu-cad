@@ -2,8 +2,7 @@ import type { DocumentRuntime } from "../runtime/index.js";
 import type { DDS } from "./DDS.js";
 import type { Delta } from "./Delta.js";
 import type { IDecoder } from "../serialization/types.js";
-import { Decoder } from "../serialization/types.js";
-import { Encoder } from "../serialization/types.js";
+import { Decoder, Encoder } from "../serialization/types.js";
 
 export class DDSChannel
 {

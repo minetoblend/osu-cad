@@ -2,7 +2,6 @@ import { EventEmitter } from "eventemitter3";
 import type { DDS, DDSFactory } from "../dds/index.js";
 import type { Delta } from "../dds/Delta.js";
 import type { IDocumentSummary } from "./summary.js";
-import { DDSFactoryRegistry } from "./DDSFactoryRegistry.js";
 import { Decoder, Encoder } from "../serialization/types.js";
 import { DDSPool } from "./DDSPool.js";
 

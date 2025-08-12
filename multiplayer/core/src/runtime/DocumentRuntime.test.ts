@@ -1,7 +1,6 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import type { DDSAttributes } from "../dds/index.js";
-import { type } from "../dds/index.js";
-import { ObjectDDS } from "../dds/index.js";
+import { ObjectDDS, type } from "../dds/index.js";
 import { DocumentRuntime } from "./DocumentRuntime.js";
 
 describe("DocumentRuntime", () =>

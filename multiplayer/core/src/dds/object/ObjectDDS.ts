@@ -2,12 +2,9 @@ import { DDS } from "../DDS.js";
 import { ObjectDDSMetadata } from "./ObjectDDSMetadata.js";
 import type { DDSAttributes } from "../DDSAttributes.js";
 import type { Delta } from "../Delta.js";
-import type { ObjectDeltaEntry } from "./ObjectDelta.js";
 import { ObjectDelta } from "./ObjectDelta.js";
 import type { ObjectDDSPropertyMetadata } from "./metadata.js";
 import type { IDecoder, IEncoder } from "../../serialization/types.js";
-import { Encoder } from "../../serialization/types.js";
-import { nn } from "../../utils/nn.js";
 
 export class ObjectDDS extends DDS
 {
