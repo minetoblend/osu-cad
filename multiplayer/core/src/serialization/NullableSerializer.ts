@@ -1,36 +1,25 @@
-import type { ISerializer } from "./types.js";
-import type { IEncoder } from "./encoding/IEncoder.js";
-import type { IDecoder } from "./decoding/IDecoder.js";
-import type { SerialDescriptor } from "./descriptor/SerialDescriptor.js";
+import type { ISerializer } from "./ISerializer.js";
+import type { IDecoder, IEncoder } from "./types.js";
 
 export class NullableSerializer<T> implements ISerializer<T | null>
 {
-  constructor(
-    readonly serializer: ISerializer<T>,
-  )
+  constructor(readonly serializer: ISerializer<T>)
   {
-    this.descriptor = serializer.descriptor;
   }
 
-  descriptor: SerialDescriptor;
-
-  serialize(encoder: IEncoder, value: T | null): void
+  serialize(value: T | null, encoder: IEncoder)
   {
     if (value === null)
-    {
-      encoder.encodeNull();
-    }
-    else
-    {
-      encoder.encodeNotNullMark();
-      this.serializer.serialize(encoder, value);
-    }
-  }
-  deserialize(decoder: IDecoder): T | null
-  {
-    if (decoder.decodeNotNullMark())
-      return this.serializer.deserialize(decoder);
+      return null;
 
-    return decoder.decodeNull();
+    return this.serializer.serialize(value, encoder);
+  }
+
+  deserialize(value: unknown, decoder: IDecoder): T | null
+  {
+    if (value === null)
+      return value;
+
+    return this.serializer.deserialize(value, decoder);
   }
 }

@@ -1,19 +1,45 @@
-import type { IEncoder } from "./encoding/IEncoder.js";
-import type { IDecoder } from "./decoding/IDecoder.js";
-import type { SerialDescriptor } from "./descriptor/SerialDescriptor.js";
+import type { DDS } from "../dds/index.js";
+import { nn } from "../utils/nn.js";
+import { EventEmitter } from "eventemitter3";
 
-export interface ISerializationStrategy<in T>
+export interface DDSRef
 {
-  descriptor: SerialDescriptor
-  serialize(encoder: IEncoder, value: T): void
+  $ref: string;
 }
 
-export interface IDeserializationStrategy<out T>
+export interface IEncoder
 {
-  descriptor: SerialDescriptor
-  deserialize(decoder: IDecoder): T
+  encodeDDS(dds: DDS): DDSRef;
 }
 
-export interface ISerializer<T> extends ISerializationStrategy<T>, IDeserializationStrategy<T>
+export interface IDecoder
 {
+  decodeDDS(ref: DDSRef): DDS;
+}
+
+export interface EncoderEvents
+{
+  ddsEncoded(dds: DDS): void;
+}
+
+export class Encoder extends EventEmitter<EncoderEvents> implements IEncoder
+{
+  encodeDDS(dds: DDS): DDSRef
+  {
+    this.emit("ddsEncoded", dds);
+
+    return { $ref: nn(dds.id) };
+  }
+}
+
+export class Decoder implements IDecoder
+{
+  constructor(readonly ddsSource: { getObject(id: string): DDS | undefined } = { getObject: () => undefined })
+  {
+  }
+
+  decodeDDS(ref: DDSRef): DDS
+  {
+    return nn(this.ddsSource.getObject(ref.$ref));
+  }
 }

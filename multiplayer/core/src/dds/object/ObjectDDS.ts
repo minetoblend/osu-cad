@@ -1,55 +1,118 @@
 import { DDS } from "../DDS.js";
-import type { IEncoder } from "../../serialization/encoding/IEncoder.js";
-import type { IDecoder } from "../../serialization/decoding/IDecoder.js";
-import { ObjectDDSDescriptor } from "./ObjectDDSDescriptor.js";
+import { ObjectDDSMetadata } from "./ObjectDDSMetadata.js";
 import type { DDSAttributes } from "../DDSAttributes.js";
+import type { Delta } from "../Delta.js";
+import type { ObjectDeltaEntry } from "./ObjectDelta.js";
+import { ObjectDelta } from "./ObjectDelta.js";
+import type { ObjectDDSPropertyMetadata } from "./metadata.js";
+import type { IDecoder, IEncoder } from "../../serialization/types.js";
+import { Encoder } from "../../serialization/types.js";
+import { nn } from "../../utils/nn.js";
 
 export class ObjectDDS extends DDS
 {
-  readonly descriptor: ObjectDDSDescriptor;
+  readonly metadata: ObjectDDSMetadata;
 
   constructor(attributes: DDSAttributes)
   {
     super(attributes);
 
-    this.descriptor = ObjectDDSDescriptor.for(this);
+    this.metadata = ObjectDDSMetadata.for(this);
+  }
+
+  static create(): InstanceType<typeof this>
+  {
+    return new (this as any)();
+  }
+
+  protected override process(delta: Delta, local: boolean): void
+  {
+    if (!(delta instanceof ObjectDelta))
+      return;
+
+    if (!local)
+    {
+      for (const entry of delta.entries)
+        this.#setValue(entry.property, entry.value);
+
+      return;
+    }
+  }
+
+  protected override replay(delta: Delta): void
+  {
+    if (!(delta instanceof ObjectDelta))
+      return;
+
+    for (const entry of delta.entries)
+    {
+      const value = entry.property.serializer.deserialize(entry.value, this.decoder);
+
+      this.setValue(entry.property, value);
+    }
+  }
+
+  setValue(property: ObjectDDSPropertyMetadata, newValue: unknown)
+  {
+    let oldValue = property.get(this);
+
+    if (oldValue === newValue)
+      return;
+
+    this.#setValue(property, newValue);
+
+    if (!this.isAttached)
+      return;
+
+    newValue = property.serializer.serialize(newValue, this.encoder);
+    oldValue = property.serializer.serialize(oldValue, this.encoder);
+
+    const delta = ObjectDelta.from(property, newValue);
+    const undo = ObjectDelta.from(property, oldValue);
+
+    this.submitDelta(delta, undo);
+  }
+
+  #setValue(property: ObjectDDSPropertyMetadata, value: unknown)
+  {
+    // TODO: emit event
+    property.set(this, value);
   }
 
   override createSummary(encoder: IEncoder)
   {
-    const descriptor = this.descriptor;
-    const properties = descriptor.properties;
+    const properties = this.metadata.properties;
 
-    encoder.encodeObject(struct =>
+    const entries: Record<string, unknown> = {};
+
+    for (const { name, get, serializer } of properties)
     {
-      for (const { index, serializer, get } of properties)
-      {
-        const value = get(this);
+      entries[name] = serializer.serialize(get(this), encoder);
+    }
 
-        struct.encodeSerializableElement(descriptor, index, serializer, value);
-      }
-    });
+    return entries;
   }
 
-  override load(decoder: IDecoder, version: number): void
+  override load(summary: unknown, version: number, decoder: IDecoder): void
   {
     if (version > this.attributes.version)
       throw new Error(`Cannot load summary with version ${version} (version=${this.attributes.version})`);
 
-    const descriptor = new ObjectDDSDescriptor(this);
-    const properties = descriptor.properties;
+    const entries = summary as Record<string, unknown>;
 
-    decoder.decodeObject(struct =>
+    const properties = this.metadata.properties;
+
+    for (const { name, set, serializer, since, nullable } of properties)
     {
-      for (const { index, serializer, set, since } of properties)
-      {
-        if (since !== undefined && since > version)
-          continue;
+      if (since !== undefined && since > version)
+        continue;
 
-        const value = struct.decodeSerializableElement(descriptor, index, serializer);
+      const value = entries[name];
 
-        set(this, value);
-      }
-    });
+      if ((value === undefined || value === null) && !nullable)
+        throw new Error("Unexpected null value");
+
+      set(this, serializer.deserialize(value, decoder));
+    }
   }
 }

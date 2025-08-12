@@ -1,9 +1,10 @@
 import type { ObjectDDS } from "./ObjectDDS.js";
 import type { ObjectDDSPropertyMetadata } from "./metadata.js";
 import { metadataKey, propertiesKey } from "./metadata.js";
-import type { ISerializer } from "../../serialization/types.js";
-import { primitiveDescriptor } from "../../serialization/descriptor/PrimitiveDescriptor.js";
-import { NullableSerializer } from "../../serialization/NullableSerializer.js";
+import type { DDS } from "../DDS.js";
+import type { ISerializer } from "src/serialization/ISerializer.js";
+import { plainSerializer } from "src/serialization/ISerializer.js";
+import { NullableSerializer } from "src/serialization/NullableSerializer.js";
 
 export type AccessorDecorator<This, Value> = (
   target: ClassAccessorDecoratorTarget<This, Value>,
@@ -19,11 +20,11 @@ export function getObjectDDSProperties(dds: ObjectDDS)
 
 export interface TypeDecoratorOptions
 {
-  nullable?: boolean
-  since?: number
+  nullable?: boolean;
+  since?: number;
 }
 
-export function typeDecorator<This extends ObjectDDS, Value>(serializer: ISerializer<Value>, options: TypeDecoratorOptions): AccessorDecorator<This, Value>
+export function typeDecorator<This extends ObjectDDS, Value>(serializer: ISerializer<Value>, options: TypeDecoratorOptions = {}): AccessorDecorator<This, Value>
 {
   return ({ get, set }, context) =>
   {
@@ -31,7 +32,10 @@ export function typeDecorator<This extends ObjectDDS, Value>(serializer: ISerial
 
     const index = properties.length;
 
-    context.metadata[propertiesKey] = [...properties, {
+    if (typeof context.name !== "string")
+      throw new Error("Only string properties are supported");
+
+    const property: ObjectDDSPropertyMetadata = {
       name: context.name,
       index,
       get(target: This)
@@ -43,9 +47,11 @@ export function typeDecorator<This extends ObjectDDS, Value>(serializer: ISerial
         set.call(target, value as Value);
       },
       serializer,
-      nullable: options.nullable,
+      nullable: options.nullable ?? false,
       since: options.since,
-    }];
+    };
+
+    context.metadata[propertiesKey] = [...properties, property];
 
     return {
       get(): Value
@@ -54,6 +60,7 @@ export function typeDecorator<This extends ObjectDDS, Value>(serializer: ISerial
       },
       set(value: Value): void
       {
+        this.setValue(property, value);
         set.call(this, value);
       },
     };
@@ -65,7 +72,7 @@ export type SerializerMap = { [key: string]: ISerializer<any> };
 export interface ISerializerOptions<This, Value, Nullable extends boolean = false>
 {
   nullable?: Nullable;
-  since?: number
+  since?: number;
 }
 
 export type UnwrapSerializer<T> = T extends ISerializer<infer U> ? U : never;
@@ -87,56 +94,24 @@ export function createTypeDecorator<T extends SerializerMap>(serializers: T)
 }
 
 export const builtinTypes = {
-  boolean: {
-    descriptor: primitiveDescriptor,
-    serialize: (encoder, value: boolean) => encoder.encodeBoolean(value),
-    deserialize: decoder => decoder.decodeBoolean(),
-  },
-  uint8: {
-    descriptor: primitiveDescriptor,
-    serialize: (encoder, value: number) => encoder.encodeUint8(value),
-    deserialize: decoder => decoder.decodeUint8(),
-  },
-  uint16: {
-    descriptor: primitiveDescriptor,
-    serialize: (encoder, value: number) => encoder.encodeUint16(value),
-    deserialize: decoder => decoder.decodeUint16(),
-  },
-  uint32: {
-    descriptor: primitiveDescriptor,
-    serialize: (encoder, value: number) => encoder.encodeUint32(value),
-    deserialize: decoder => decoder.decodeUint32(),
-  },
-  int8: {
-    descriptor: primitiveDescriptor,
-    serialize: (encoder, value: number) => encoder.encodeInt8(value),
-    deserialize: decoder => decoder.decodeInt8(),
-  },
-  int16: {
-    descriptor: primitiveDescriptor,
-    serialize: (encoder, value: number) => encoder.encodeInt16(value),
-    deserialize: decoder => decoder.decodeInt16(),
-  },
-  int32: {
-    descriptor: primitiveDescriptor,
-    serialize: (encoder, value: number) => encoder.encodeInt32(value),
-    deserialize: decoder => decoder.decodeInt32(),
-  },
-  float32: {
-    descriptor: primitiveDescriptor,
-    serialize: (encoder, value: number) => encoder.encodeFloat32(value),
-    deserialize: decoder => decoder.decodeFloat32(),
-  },
-  float64: {
-    descriptor: primitiveDescriptor,
-    serialize: (encoder, value: number) => encoder.encodeFloat64(value),
-    deserialize: decoder => decoder.decodeFloat64(),
-  },
-  string: {
-    descriptor: primitiveDescriptor,
-    serialize: (encoder, value: string) => encoder.encodeString(value),
-    deserialize: decoder => decoder.decodeString(),
-  },
+  boolean: plainSerializer<boolean>(),
+  uint8: plainSerializer<number>(),
+  uint16: plainSerializer<number>(),
+  uint32: plainSerializer<number>(),
+  int8: plainSerializer<number>(),
+  int16: plainSerializer<number>(),
+  int32: plainSerializer<number>(),
+  float32: plainSerializer<number>(),
+  float64: plainSerializer<number>(),
+  string: plainSerializer<string>(),
 } satisfies SerializerMap;
 
 export const type = createTypeDecorator(builtinTypes);
+
+export function nested<This extends ObjectDDS, Value extends DDS>(type: new () => Value): AccessorDecorator<This, Value>
+{
+  return typeDecorator({
+    serialize: (value: Value, encoder) => encoder.encodeDDS(value),
+    deserialize: (value, decoder) => decoder.decodeDDS(value) as Value,
+  });
+}

@@ -1,10 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { ObjectDDS } from "./ObjectDDS.js";
-import { type } from "./decorator.js";
-import { createBinarySummary, createJsonSummary } from "./testUtils.js";
-import { BinaryWriter } from "../../serialization/binary/BinaryWriter.js";
-import { JsonDecoder } from "../../serialization/json/JsonDecoder.js";
-import { BinaryDecoder } from "../../serialization/binary/BinaryDecoder.js";
+import { nested, type } from "./decorator.js";
+import type { DDSAttributes } from "../DDSAttributes.js";
+import { DocumentRuntime } from "../../runtime/index.js";
+import { Decoder, Encoder } from "../../serialization/types.js";
 
 describe("ObjectDDS", () =>
 {
@@ -26,35 +25,16 @@ describe("ObjectDDS", () =>
 
     counter.value = 10;
 
-    const jsonSummary = createJsonSummary(counter);
+    const summary = counter.createSummary(new Encoder());
 
-    expect(jsonSummary).toStrictEqual({ value: 10, foo: "bar" });
+    expect(summary).toStrictEqual({ value: 10, foo: "bar" });
 
-    const binarySummary = createBinarySummary(counter);
+    const decoder = new Decoder();
 
-    expect(binarySummary).toStrictEqual(
-        new BinaryWriter()
-          .writeUint32(10)
-          .writeString("bar")
-          .buffer);
-
-    const jsonDecoder = new JsonDecoder({ value: 20, foo: "1234" });
-
-    counter.load(jsonDecoder, 0);
+    counter.load({ value: 20, foo: "1234" }, 0, decoder);
 
     expect(counter.value).toBe(20);
     expect(counter.foo).toBe("1234");
-
-    const binaryDecoder = new BinaryDecoder(
-        new BinaryWriter()
-          .writeUint32(100)
-          .writeString("test")
-          .asReader());
-
-    counter.load(binaryDecoder, 0);
-
-    expect(counter.value).toBe(100);
-    expect(counter.foo).toBe("test");
   });
 
   it("correctly handles versioned properties", () =>
@@ -78,26 +58,89 @@ describe("ObjectDDS", () =>
 
     const obj1 = new TestObject();
 
-    obj1.load(new JsonDecoder({ foo: "bar" }), 0);
+    obj1.load({ foo: "bar" }, 0, new Decoder());
 
     expect(obj1.foo).toEqual("bar");
     expect(obj1.bar).toEqual("");
 
     const obj2 = new TestObject();
 
-    obj2.load(new JsonDecoder({ foo: "foo", bar: "bar" }), 1);
+    obj2.load({ foo: "foo", bar: "bar" }, 1, new Decoder());
 
     expect(obj2.foo).toEqual("foo");
     expect(obj2.bar).toEqual("bar");
 
     expect(() =>
     {
-      new TestObject().load(new JsonDecoder({ foo: "bar" }), 1);
+      new TestObject().load({ foo: "bar" }, 1, new Decoder());
     }).toThrowError();
 
     expect(() =>
     {
-      new TestObject().load(new JsonDecoder({ foo: "foo", bar: "bar" }), 2);
+      new TestObject().load({ foo: "foo", bar: "bar" }, 2, new Decoder());
     }).toThrowError();
+  });
+
+  it("supports nested dds objects", () =>
+  {
+    class Bar extends ObjectDDS
+    {
+      static readonly attributes: DDSAttributes = {
+        type: "bar",
+        version: 0,
+      };
+
+      constructor()
+      {
+        super(Bar.attributes);
+      }
+
+      @type("int32")
+      accessor count = 0
+    }
+
+    class Foo extends ObjectDDS
+    {
+      static readonly attributes: DDSAttributes = {
+        type: "foo",
+        version: 0,
+      };
+
+      constructor()
+      {
+        super(Foo.attributes);
+      }
+
+      @nested(Bar)
+      accessor bar = new Bar()
+    }
+
+    const foo = new Foo();
+    const runtime = DocumentRuntime.create(foo, [Foo, Bar]);
+
+    runtime.on("deltaSubmitted", (dds, delta) => console.log(`dds: ${dds.id}` , delta));
+
+    foo.bar.count = 10;
+
+    const runtime2 = new DocumentRuntime([Foo, Bar]);
+    runtime2.load(runtime.createSummary());
+
+    const foo2 = runtime2.root as Foo;
+    expect(foo2.bar.count).toBe(10);
+
+    expect(foo.bar.id).toEqual(foo2.bar.id);
+
+    runtime.on("deltaSubmitted", (dds, delta) =>
+    {
+      runtime2.replayDelta(dds.id!, delta);
+    });
+
+    const oldBar = foo.bar;
+
+    foo.bar = new Bar();
+
+    expect(foo.bar.isAttached).toBe(true);
+    expect(foo2.bar.id).not.toEqual(oldBar.id);
+    expect(foo.bar.id).toEqual(foo2.bar.id);
   });
 });

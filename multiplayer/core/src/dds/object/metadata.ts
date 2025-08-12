@@ -1,5 +1,5 @@
 import type { ObjectDDS } from "./ObjectDDS.js";
-import type { ISerializer } from "../../serialization/types.js";
+import type { ISerializer } from "../../serialization/ISerializer.js";
 
 export const metadataKey = Symbol.for("Symbol.metadata");
 export const propertiesKey = Symbol("ObjectDDS.properties");
