@@ -5,6 +5,7 @@ import type { DDS } from "../DDS.js";
 import type { ISerializer } from "src/serialization/ISerializer.js";
 import { plainSerializer } from "src/serialization/ISerializer.js";
 import { NullableSerializer } from "src/serialization/NullableSerializer.js";
+import type { DDSFactoryOrConstructor } from "../DDSFactory.js";
 
 export type AccessorDecorator<This, Value> = (
   target: ClassAccessorDecoratorTarget<This, Value>,
@@ -108,7 +109,7 @@ export const builtinTypes = {
 
 export const type = createTypeDecorator(builtinTypes);
 
-export function nested<This extends ObjectDDS, Value extends DDS, Nullable extends boolean = false>(type: (new () => Value) | (() => (new () => Value)), options: ISerializerOptions<Nullable> = {}):
+export function nested<This extends ObjectDDS, Value extends DDS, Nullable extends boolean = false>(type: DDSFactoryOrConstructor<Value> | (() => DDSFactoryOrConstructor<Value>), options: ISerializerOptions<Nullable> = {}):
     Nullable extends true
         ? AccessorDecorator<This, Value | null>
         : AccessorDecorator<This, Value>

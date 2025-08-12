@@ -2,7 +2,8 @@ import type { IEncodedDelta } from "src/dds/Delta.js";
 import { Delta } from "src/dds/Delta.js";
 import type { IDecoder } from "src/serialization/types.js";
 import { Encoder } from "src/serialization/types.js";
-import { DDS, type DDSFactory } from "../dds/index.js";
+import type { DDSFactoryOrConstructor } from "../dds/index.js";
+import { DDS } from "../dds/index.js";
 import type { IDDSSummary, IDocumentSummary } from "./summary.js";
 import { summarizeDocument } from "./summarizeDocument.js";
 import type { DocumentRuntime } from "./DocumentRuntime.js";
@@ -12,7 +13,7 @@ import { DDSFactoryRegistry } from "./DDSFactoryRegistry.js";
 
 export class DDSPool extends DDS
 {
-  constructor(readonly runtime: DocumentRuntime, types: DDSFactory<DDS>[])
+  constructor(readonly runtime: DocumentRuntime, types: DDSFactoryOrConstructor<DDS>[])
   {
     super({ type: "builtin:object-pool", version: 0 });
 

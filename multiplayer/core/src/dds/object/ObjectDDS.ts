@@ -19,11 +19,6 @@ export class ObjectDDS extends DDS
     this.metadata = ObjectDDSMetadata.for(this);
   }
 
-  static create(): InstanceType<typeof this>
-  {
-    return new (this as any)();
-  }
-
   protected override process(delta: Delta, local: boolean): void
   {
     if (!(delta instanceof ObjectDelta))

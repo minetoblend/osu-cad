@@ -1,17 +1,18 @@
-import type { DDS, DDSAttributes, DDSFactory } from "../dds/index.js";
+import type { DDS, DDSAttributes, DDSFactory, DDSFactoryOrConstructor } from "../dds/index.js";
+import { toDDSFactory } from "../dds/index.js";
 
 export class DDSFactoryRegistry
 {
   readonly ddsFactories = new Map<string, DDSFactory<DDS>>();
 
-  constructor(factories: DDSFactory<DDS>[])
+  constructor(factories: DDSFactoryOrConstructor<DDS>[])
   {
     for (const factory of factories)
     {
       if (this.ddsFactories.has(factory.attributes.type))
         throw new Error(`Duplicate entry for factory type ${factory.attributes.type}`);
 
-      this.ddsFactories.set(factory.attributes.type, factory);
+      this.ddsFactories.set(factory.attributes.type, toDDSFactory(factory));
     }
   }
 

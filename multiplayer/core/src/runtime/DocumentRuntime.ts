@@ -1,5 +1,5 @@
 import { EventEmitter } from "eventemitter3";
-import type { DDS, DDSFactory } from "../dds/index.js";
+import type { DDS, DDSFactory, DDSFactoryOrConstructor } from "../dds/index.js";
 import type { Delta, IEncodedDelta } from "../dds/Delta.js";
 import type { IDocumentSummary } from "./summary.js";
 import { Decoder, Encoder } from "../serialization/types.js";
@@ -12,7 +12,7 @@ export interface DocumentRuntimeEvents
 
 export class DocumentRuntime extends EventEmitter<DocumentRuntimeEvents>
 {
-  constructor(types: DDSFactory<DDS>[])
+  constructor(types: DDSFactoryOrConstructor<DDS>[])
   {
     super();
 
@@ -36,7 +36,7 @@ export class DocumentRuntime extends EventEmitter<DocumentRuntimeEvents>
     return this.#objectPool.typeRegistry;
   }
 
-  static create(root: DDS, types: DDSFactory<DDS>[])
+  static create(root: DDS, types: DDSFactoryOrConstructor<DDS>[])
   {
     const runtime = new DocumentRuntime(types);
 

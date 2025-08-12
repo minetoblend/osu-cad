@@ -1,10 +1,9 @@
 import { describe, expect, it } from "vitest";
 import type { DDSAttributes } from "../dds/index.js";
-import { nested } from "../dds/index.js";
-import { ObjectDDS, type } from "../dds/index.js";
+import { nested, ObjectDDS, type } from "../dds/index.js";
 import { DocumentRuntime } from "./DocumentRuntime.js";
 import { nn } from "../utils/nn.js";
-import { Delta, type IEncodedDelta } from "../dds/Delta.js";
+import { Delta } from "../dds/Delta.js";
 
 describe("DocumentRuntime", () =>
 {
@@ -102,9 +101,7 @@ describe("DocumentRuntime", () =>
 
     runtime1.on("deltaSubmitted", (dds, delta) =>
     {
-      const encoded = Delta.encode(delta);
-
-      runtime2.process(nn(dds.id), encoded, false);
+      runtime2.process(nn(dds.id), Delta.encode(delta), false);
     });
 
     foo1.count = 10;
