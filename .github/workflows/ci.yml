@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - dev
+      - multiplayer
   pull_request:
 
 permissions:
