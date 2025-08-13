@@ -34,15 +34,17 @@ export default defineConfig(() => ({
     lib: {
       entry: "src/index.ts",
       name: "@osucad/framework",
-      fileName: (format, entryName) =>
-        `${entryName.replace(/node_modules\//g, "external/")}.js`,
-      formats: ["es" as const],
+      fileName: (format, entryName) => `${entryName.replace(/node_modules\//g, "external/")}.js`,
+      formats: ["es" as const] as const,
     },
     minify: false,
-    target: "modules",
+    target: "esnext",
     sourcemap: true,
     rollupOptions: {
+      treeshake: false,
       output: {
+        preserveModules: true,
+        preserveModulesRoot: path.join(__dirname, "src"),
       },
       // External packages that should not be bundled into your library.
       external: [

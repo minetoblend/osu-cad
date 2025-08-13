@@ -24,6 +24,10 @@ export async function acceptConnections(io: Server)
   circle.startTime = 200;
   runtime.root.hitObjects.add(circle);
 
+  const circle2 = new HitCircle();
+  circle2.startTime = 220;
+  runtime.root.hitObjects.add(circle2);
+
   const timingPoint = new TimingControlPoint();
 
   timingPoint.bpm = 180;

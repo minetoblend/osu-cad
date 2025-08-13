@@ -1,5 +1,5 @@
 import type { ITimingInfo } from "./ITimingInfo";
-import type { ISampleInfo } from "./LegacyBeatmapTiming";
+import type { ISamplePointInfo } from "./LegacyBeatmapTiming";
 
 export interface IBeatmapTiming
 {
@@ -7,5 +7,5 @@ export interface IBeatmapTiming
 
   getSliderVelocityAt(time: number): number;
 
-  getSampleInfoAt(time: number): ISampleInfo
+  getSampleInfoAt(time: number): ISamplePointInfo
 }

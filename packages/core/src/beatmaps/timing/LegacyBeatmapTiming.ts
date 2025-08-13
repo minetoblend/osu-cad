@@ -5,7 +5,7 @@ import { SampleSet } from "../../audio/SampleSet";
 
 const defaultTimingInfo: ITimingInfo = { beatLength: 60_000 / 180, signature: 4, startTime: 0 };
 
-export interface ISampleInfo
+export interface ISamplePointInfo
 {
   volume: number,
   sampleSet: SampleSet,
@@ -53,7 +53,7 @@ export class LegacyBeatmapTiming implements IBeatmapTiming
     return { ...timingPoint.timingInfo, startTime: timingPoint.startTime };
   }
 
-  public getSampleInfoAt(time: number): ISampleInfo
+  public getSampleInfoAt(time: number): ISamplePointInfo
   {
     const timingPoint = this._timingPoints.findLast(timingPoint => timingPoint.startTime <= time);
 

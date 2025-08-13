@@ -175,6 +175,8 @@ export abstract class GameHost
 
   async #chooseAndSetupRenderer()
   {
+    await import("../init");
+
     const renderer = new Renderer();
 
     await renderer.init({

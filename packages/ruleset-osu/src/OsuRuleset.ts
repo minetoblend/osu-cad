@@ -1,6 +1,5 @@
 import type { BeatmapPostProcessor, DrawableRuleset, DrawableRulesetOptions, Ruleset, RulesetBeatmapParser, Skin, SkinTransformer } from "@osucad/core";
 import type { OsuHitObjectComposer } from "./edit";
-import { OsuEditorRuleset } from "./edit/OsuEditorRuleset";
 import type { EditorRuleset } from "@osucad/editor";
 
 export class OsuRuleset implements Ruleset
@@ -44,6 +43,8 @@ export class OsuRuleset implements Ruleset
 
   async createEditorRuleset(): Promise<EditorRuleset>
   {
+    const { OsuEditorRuleset } = await import("./edit/OsuEditorRuleset");
+
     return new OsuEditorRuleset();
   }
 }

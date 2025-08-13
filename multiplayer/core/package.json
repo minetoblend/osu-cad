@@ -20,6 +20,7 @@
     "dist",
     "!**/*.tsbuildinfo"
   ],
+  "sideEffects": false,
   "dependencies": {
     "@osucad/multiplayer-protocol": "workspace:^",
     "eventemitter3": "^5.0.1",

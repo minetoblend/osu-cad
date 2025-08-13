@@ -15,9 +15,6 @@
   ],
   "references": [
     {
-      "path": "../storybook-renderer"
-    },
-    {
       "path": "../../multiplayer/core/tsconfig.lib.json"
     },
     {
@@ -28,9 +25,6 @@
     },
     {
       "path": "../core/tsconfig.build.json"
-    },
-    {
-      "path": "../storybook-vite"
     }
   ]
 }

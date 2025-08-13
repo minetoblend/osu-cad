@@ -4,10 +4,10 @@
   "include": [],
   "references": [
     {
-      "path": "../../packages/framework"
+      "path": "../../packages/ruleset-osu"
     },
     {
-      "path": "../../packages/ruleset-osu"
+      "path": "../../packages/framework"
     },
     {
       "path": "../../multiplayer/core"

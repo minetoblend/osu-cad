@@ -17,6 +17,7 @@
     "dist",
     "!**/*.tsbuildinfo"
   ],
+  "sideEffects":false,
   "dependencies": {
     "tslib": "^2.3.0"
   }

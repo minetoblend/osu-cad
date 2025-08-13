@@ -1,13 +1,15 @@
 import type { Awaitable } from "@osucad/core";
 import type { HitObjectComposer } from "./compose/HitObjectComposer";
 import type { EditorRuntimeConfig } from "./runtime/EditorRuntime";
-import { injectionToken } from "@osucad/framework";
+import type { Editor } from "./Editor";
 
-export interface EditorRuleset
+export abstract class EditorRuleset
 {
-  runtimeConfig: EditorRuntimeConfig
+  abstract readonly runtimeConfig: EditorRuntimeConfig;
 
-  createHitObjectComposer(): Awaitable<HitObjectComposer>
+  abstract createHitObjectComposer(): Awaitable<HitObjectComposer>;
+
+  setupEditor(editor: Editor)
+  {
+  }
 }
-
-export const EditorRuleset = injectionToken<EditorRuleset>("EditorRuleset");

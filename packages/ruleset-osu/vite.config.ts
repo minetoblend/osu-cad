@@ -37,7 +37,9 @@ export default defineConfig(() => ({
     target: "modules",
     sourcemap: true,
     rollupOptions: {
-      // External packages that should not be bundled into your library.
+      output: {
+        preserveModules: true,
+      },
       external: [
         ...Object.keys(dependencies),
       ],

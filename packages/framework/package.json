@@ -7,6 +7,13 @@
     "url": "https://github.com/minetoblend/osu-cad.git",
     "directory": "packages/framework"
   },
+  "sideEffects": [
+    "./dist/reactivity/init.*",
+    "./dist/reactivity/DrawableMixin.*",
+    "./dist/TextureMixins.*",
+    "./dist/renderers/init.*",
+    "./dist/init.*"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -17,6 +24,12 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./init": {
+      "source": "./src/init.ts",
+      "types": "./dist/init.d.ts",
+      "import": "./dist/init.js",
+      "default": "./dist/init.js"
     }
   },
   "files": [

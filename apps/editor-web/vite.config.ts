@@ -2,7 +2,7 @@
 import { defaultClientConditions, defineConfig } from "vite";
 import ConditionalCompile from "vite-plugin-conditional-compiler";
 
-export default defineConfig(() => ({
+export default defineConfig({
   root: __dirname,
   cacheDir: "../../node_modules/.vite/apps/web",
   resolve: {
@@ -22,8 +22,14 @@ export default defineConfig(() => ({
     },
   },
   preview: {
-    port: 80,
-    host: "0.0.0.0",
+    port: 4200,
+    host: "localhost",
+    proxy: {
+      "/socket.io/": {
+        target: "http://localhost:3000",
+        ws: true,
+      },
+    },
   },
   plugins: [ConditionalCompile()],
   worker: {
@@ -31,6 +37,8 @@ export default defineConfig(() => ({
   },
   esbuild: {
     target: "chrome138",
+    platform: "browser",
+    treeShaking: true,
   },
   build: {
     outDir: "./dist",
@@ -38,8 +46,13 @@ export default defineConfig(() => ({
     reportCompressedSize: true,
     target: "esnext",
     minify: true,
+    rollupOptions: {
+      output: {
+        esModule: true,
+      },
+    },
     commonjsOptions: {
       transformMixedEsModules: true,
     },
   },
-}));
+});

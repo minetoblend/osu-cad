@@ -1,8 +1,8 @@
 import { ISkinSource, rulesets } from "@osucad/core";
-import { Editor, EditorMultiplayerClient } from "@osucad/editor";
-import { dependencyLoader, Game, provide, ScreenStack } from "@osucad/framework";
+import { asyncDependencyLoader, Game, provide, ScreenStack } from "@osucad/framework";
 import { OsuRuleset } from "@osucad/ruleset-osu";
 import { SkinManager } from "./SkinManager";
+import type { EditorMultiplayerClient } from "@osucad/editor";
 
 export class OsucadGame extends Game
 {
@@ -12,12 +12,21 @@ export class OsucadGame extends Game
   @provide(SkinManager)
   readonly skinManager = new SkinManager();
 
-  readonly client = new EditorMultiplayerClient();
+  client!: EditorMultiplayerClient;
 
-  @dependencyLoader()
-  #load()
+  @asyncDependencyLoader()
+  async #load()
   {
     rulesets.register(new OsuRuleset());
+
+    const { EditorMultiplayerClient } = await import("@osucad/editor");
+
+    this.client = new EditorMultiplayerClient();
+
+    await Promise.all([
+      this.loadComponentAsync(this.client),
+      this.loadComponentAsync(this.skinManager),
+    ]);
 
     this.addRange([
       this.#screenStack = new ScreenStack(),
@@ -29,6 +38,13 @@ export class OsucadGame extends Game
   protected override loadComplete()
   {
     super.loadComplete();
+
+    void this.loadEditor();
+  }
+
+  async loadEditor()
+  {
+    const { Editor } = await import("@osucad/editor/editor");
 
     this.#screenStack.push(new Editor({ runtime: this.client.runtime }));
   }

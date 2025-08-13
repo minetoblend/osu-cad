@@ -7,14 +7,19 @@
     "@osucad/core": "workspace:^",
     "@osucad/editor": "workspace:^",
     "@osucad/framework": "workspace:^",
-    "@osucad/ruleset-osu": "workspace:^",
     "@osucad/multiplayer-core": "workspace:^",
+    "@osucad/ruleset-osu": "workspace:^",
     "async": "^3.2.6",
     "pixi.js": "^8.9.2",
     "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
     "@types/async": "^3.2.24",
+    "acorn": "^8.15.0",
+    "estree-walker": "^3.0.3",
+    "magic-string": "^0.30.17",
+    "rollup": "^4.46.2",
+    "terser": "^5.43.1",
     "vite-plugin-conditional-compiler": "^0.3.1"
   }
 }

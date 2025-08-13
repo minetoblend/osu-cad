@@ -2,13 +2,7 @@ import { type WebGLRenderer } from "pixi.js";
 import type { InjectionToken } from "../di";
 import type { FrameworkEnvironment } from "../FrameworkEnvironment";
 import type { Drawable } from "../graphics/drawables/Drawable";
-import { SpriteTextPipe } from "../graphics/text/SpriteTextPipe";
 import { type IVec2, Vec2 } from "../math";
-import { MaskingPipe } from "./MaskingPipe";
-import { MaskingSystem } from "./MaskingSystem";
-import { OsucadBatcher } from "./OsucadBatcher";
-import { OsucadSpritePipe } from "./OsucadSpritePipe";
-import { OsucadUniformSystem } from "./OsucadUniformSystem";
 
 export interface RendererOptions
 {
@@ -21,26 +15,9 @@ export class Renderer
 {
   async init(options: RendererOptions)
   {
-    const { Batcher, isMobile, WebGLRenderer, RenderTarget, Filter, DynamicBitmapFont, GlobalUniformSystem, extensions, getMaxTexturesPerBatch } = await import("pixi.js");
+    await import("./init");
 
-    if (isMobile.any)
-      Batcher.defaultOptions.maxTextures = Math.min(16, getMaxTexturesPerBatch());
-    RenderTarget.defaultOptions.depth = true;
-    RenderTarget.defaultOptions.stencil = true;
-    Filter.defaultOptions.resolution = devicePixelRatio;
-    Filter.defaultOptions.antialias = "inherit";
-    DynamicBitmapFont.defaultOptions.textureSize = 1024;
-    DynamicBitmapFont.defaultOptions.padding = 6;
-
-    extensions.remove(GlobalUniformSystem);
-    extensions.add(
-        OsucadBatcher,
-        OsucadSpritePipe,
-        MaskingPipe,
-        MaskingSystem,
-        OsucadUniformSystem,
-        SpriteTextPipe,
-    );
+    const { WebGLRenderer } = await import("pixi.js");
 
     const { size, environment } = options;
 
@@ -79,6 +56,7 @@ export class Renderer
       clearBeforeRender: true,
       depth: true,
       eventMode: "none",
+      skipExtensionImports: true,
       eventFeatures: {
         click: false,
         globalMove: false,

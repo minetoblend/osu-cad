@@ -1,9 +1,9 @@
 import type { ScrollEvent } from "@osucad/framework";
-import { asyncDependencyLoader, FramedClock, lerp, ManualClock, provide, resolved, Screen } from "@osucad/framework";
+import { asyncDependencyLoader, lerp, provide, resolved, Screen } from "@osucad/framework";
 import { EditorRuntime } from "./runtime";
 import { EditorBeatmap } from "./EditorBeatmap";
 import type { Skin } from "@osucad/core";
-import { BeatmapDifficultyInfo, ISkinSource, LegacyBeatmapTiming, LegacyTimingPoint, PlayfieldClock, Ruleset, SkinProvidingContainer } from "@osucad/core";
+import { ISkinSource, PlayfieldClock, Ruleset, SkinProvidingContainer } from "@osucad/core";
 import { EditorRuleset } from "./EditorRuleset";
 import { EditorClock } from "./EditorClock";
 

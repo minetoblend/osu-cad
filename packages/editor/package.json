@@ -5,6 +5,7 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "sideEffects":false,
   "repository": {
     "type": "git",
     "url": "https://github.com/minetoblend/osu-cad.git",
@@ -20,6 +21,18 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./editor": {
+      "source": "./src/Editor.ts",
+      "types": "./dist/Editor.d.ts",
+      "import": "./dist/Editor.js",
+      "default": "./dist/Editor.js"
+    },
+    "./runtime": {
+      "source": "./src/runtime/index.ts",
+      "types": "./dist/runtime/index.d.ts",
+      "import": "./dist/runtime/index.js",
+      "default": "./dist/runtime/index.js"
     }
   },
   "files": [

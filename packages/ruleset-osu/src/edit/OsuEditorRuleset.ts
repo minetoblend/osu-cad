@@ -1,11 +1,11 @@
-import type { EditorRuleset, EditorRuntimeConfig, HitObjectComposer } from "@osucad/editor";
+import type { Editor, EditorRuntimeConfig, HitObjectComposer } from "@osucad/editor";
+import { EditorRuleset } from "@osucad/editor";
 import { HitCircle } from "../hitObjects/HitCircle";
 import { Slider } from "../hitObjects/Slider";
 import { SliderPath } from "../hitObjects/SliderPath";
 import { Spinner } from "../hitObjects/Spinner";
-import { OsuHitObjectComposer } from "./OsuHitObjectComposer";
 
-export class OsuEditorRuleset implements EditorRuleset
+export class OsuEditorRuleset extends EditorRuleset
 {
   readonly runtimeConfig: EditorRuntimeConfig = {
     types: [
@@ -16,8 +16,12 @@ export class OsuEditorRuleset implements EditorRuleset
     ],
   };
 
-  async createHitObjectComposer(): Promise<HitObjectComposer>
+  override async createHitObjectComposer(): Promise<HitObjectComposer>
   {
     return import("./OsuHitObjectComposer").then(m => new m.OsuHitObjectComposer());
+  }
+
+  override setupEditor(editor: Editor)
+  {
   }
 }
