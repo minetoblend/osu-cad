@@ -1,7 +1,6 @@
 import type { ScrollEvent } from "@osucad/framework";
 import { asyncDependencyLoader, lerp, provide, resolved, Screen } from "@osucad/framework";
-import { EditorRuntime } from "./runtime";
-import { EditorBeatmap } from "./EditorBeatmap";
+import { EditorBeatmap, EditorRuntime } from "./runtime";
 import type { Skin } from "@osucad/core";
 import { ISkinSource, PlayfieldClock, Ruleset, SkinProvidingContainer } from "@osucad/core";
 import { EditorRuleset } from "./EditorRuleset";
@@ -57,36 +56,23 @@ export class Editor extends Screen
 
     const skinTransformer = await this.ruleset.createSkinTransformer?.(skin);
 
-    const drawableRuleset = await this.ruleset.createDrawableRuleset({ cursor: false, useInput: false });
-
     this.addInternal(new SkinProvidingContainer({
       skin: skinTransformer ?? skin,
       children: [
-        drawableRuleset,
       ],
     }));
-
-    for (const hitObject of this.editorBeatmap.hitObjects)
-    {
-      hitObject.applyDefaults(this.editorBeatmap.difficulty, this.editorBeatmap.controlPointInfo);
-      drawableRuleset.addHitObject(hitObject);
-    }
   }
 
   override update()
   {
     super.update();
 
-    this.editorClock.seek(lerp(this.targetTime, this.editorClock.currentTime, Math.exp(-0.03 * this.time.elapsed)));
-
     this.editorClock.processFrame();
   }
 
-  targetTime = 0;
-
   override onScroll(e: ScrollEvent): boolean
   {
-    this.targetTime -= e.scrollDelta.y * 100;
+    this.editorClock.seek(this.editorClock.currentTime + e.scrollDelta.y * 100);
 
     return true;
   }

@@ -1,6 +1,6 @@
 import { Ruleset } from "@osucad/core";
 import { Axes, CompositeDrawable, dependencyLoader, provide, resolved } from "@osucad/framework";
-import { EditorBeatmap } from "../EditorBeatmap";
+import { EditorBeatmap } from "../runtime/dds/EditorBeatmap";
 import type { ComposeToolInfo } from "./tools";
 import { ComposeToolbar } from "./tools";
 import { ActiveToolBindable } from "./tools/ActiveToolBindable";

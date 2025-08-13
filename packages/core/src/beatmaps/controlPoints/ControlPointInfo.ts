@@ -92,6 +92,25 @@ export class ControlPointInfo extends DDS<IControlPointInfoDelta>
     return this.#listFor(type, false)?.controlPointAt(time);
   }
 
+  snap(time: number, divisor: number)
+  {
+    const timingPoint = this.timingPointAt(time);
+
+    if (!timingPoint)
+      return time;
+
+    const beatSnapLength = timingPoint.beatLength / divisor;
+    const beats = (Math.max(time, 0) - timingPoint.time) / beatSnapLength;
+
+    const closestBeat = beats < 0 ? -Math.round(-beats) : Math.round(beats);
+    const snappedTime = timingPoint.time + closestBeat * beatSnapLength;
+
+    if (snappedTime >= 0)
+      return snappedTime;
+
+    return  snappedTime + beatSnapLength;
+  }
+
   add(controlPoint: ControlPoint)
   {
     const ref = this.encoder.encodeDDS(controlPoint);
