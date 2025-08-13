@@ -1,5 +1,7 @@
+import { MultiValueMap } from "../utils/index.js";
 import type { DocumentRuntime } from "./DocumentRuntime.js";
 import type { DDS } from "../dds/index.js";
+import { MergeableDelta } from "../dds/index.js";
 import type { Delta } from "../dds/Delta.js";
 import { nn } from "../utils/nn.js";
 import { EventEmitter } from "eventemitter3";
@@ -113,19 +115,38 @@ export class DocumentHistory extends EventEmitter<DocumentHistoryEvents>
   }
 }
 
-interface HistoryEntry
+interface HistoryEntry<T extends Delta = Delta>
 {
   readonly targetId: string,
-  readonly delta: Delta,
+  readonly delta: T,
 }
 
 
 class Transaction
 {
   readonly entries: HistoryEntry[] = [];
+  readonly #mergeMap = new MultiValueMap<string, HistoryEntry<MergeableDelta>>();
 
   add(entry: HistoryEntry)
   {
+    if (!(entry.delta instanceof MergeableDelta))
+      return void this.entries.push(entry);
+
+    const entries = this.#mergeMap.get(entry.targetId);
+
+    for (let i = 0; i < entries.length; i++)
+    {
+      const other = entries[i];
+      if (entry.delta.tryAppend(other.delta))
+      {
+        const index = this.entries.indexOf(other);
+        this.entries.splice(index, 1);
+        this.#mergeMap.delete(entry.targetId, other);
+        break;
+      }
+    }
+
+    this.#mergeMap.add(entry.targetId, entry as HistoryEntry<MergeableDelta>);
     this.entries.push(entry);
   }
 

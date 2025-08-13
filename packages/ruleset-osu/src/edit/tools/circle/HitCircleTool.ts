@@ -34,4 +34,14 @@ export class HitCircleTool extends ComposeTool<HitCircle>
   {
     return this.getContainingInputManager()!.currentState.mouse.position;
   }
+
+  override dispose()
+  {
+    if (this.circle)
+    {
+      this.beatmap.hitObjects.remove(this.circle);
+    }
+
+    super.dispose();
+  }
 }

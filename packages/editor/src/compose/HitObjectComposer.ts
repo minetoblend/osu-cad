@@ -76,6 +76,10 @@ export abstract class HitObjectComposer extends CompositeDrawable
       h.applyDefaults(this.beatmap.difficulty, this.beatmap.controlPointInfo);
       this.drawableRuleset.addHitObject(h);
     });
+    this.beatmap.hitObjects.removed.addListener(h =>
+    {
+      this.drawableRuleset.removeHitObject(h);
+    });
   }
 
   protected override loadComplete()

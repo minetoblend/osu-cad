@@ -1,10 +1,10 @@
-import { describe, expect, it } from "vitest";
-import { ObjectDDS, objectDDSMetadata } from "./ObjectDDS.js";
-import { nested, type } from "./decorator.js";
 import type { DDSAttributes } from "@osucad/multiplayer-protocol";
+import { describe, expect, it } from "vitest";
 import { DocumentRuntime } from "../../runtime/index.js";
 import { Decoder, Encoder } from "../../serialization/types.js";
 import { nn } from "../../utils/nn.js";
+import { nested, type } from "./decorator.js";
+import { ObjectDDS, objectDDSMetadata } from "./ObjectDDS.js";
 import { ObjectDelta } from "./ObjectDelta.js";
 
 describe("ObjectDDS", () =>
@@ -126,7 +126,7 @@ describe("ObjectDDS", () =>
 
     const runtime2 = await runtime.clone();
 
-    const foo2 =  runtime2.root as Foo;
+    const foo2 = runtime2.root as Foo;
     expect(foo2.bar.count).toBe(10);
 
     expect(foo.bar.id).toEqual(foo2.bar.id);

@@ -41,8 +41,6 @@ export class ProxyDrawable extends Drawable
   {
     super.load(dependencies);
 
-    this.#renderLayer.attach(this.source.drawNode);
-
     this.source.lifetimeChanged.addListener(() => this.lifetimeChanged.emit(this));
   }
 
@@ -51,8 +49,20 @@ export class ProxyDrawable extends Drawable
     return this.#renderLayer as any;
   }
 
+  #isAttached = false;
+
   override updateDrawNodeTransform()
   {
+    if (this.source.isAlive && !this.#isAttached)
+    {
+      this.#renderLayer.attach(this.source.drawNode);
+      this.#isAttached = true;
+    }
+    else if (!this.source.isAlive && this.#isAttached)
+    {
+      this.#renderLayer.detach(this.source.drawNode);
+      this.#isAttached = false;
+    }
   }
 
   override dispose(isDisposing: boolean = true)
