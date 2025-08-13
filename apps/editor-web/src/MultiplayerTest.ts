@@ -61,8 +61,8 @@ export class MultiplayerTest extends Screen
       spacing: new Vec2(10),
       direction: FillDirection.Horizontal,
       children: [
-        new Button("Undo", () => this.runtime.history.undo()),
-        new Button("Redo", () => this.runtime.history.redo()),
+        new Button("Undo", this.runtime.history.canUndoBindable, () => this.runtime.history.undo()),
+        new Button("Redo", this.runtime.history.canRedoBindable, () => this.runtime.history.redo()),
       ],
     }));
   }
@@ -81,7 +81,7 @@ export class MultiplayerTest extends Screen
 
 class Button extends CompositeDrawable
 {
-  constructor(text: string, readonly action: () => void)
+  constructor(text: string, readonly enabled: Bindable<boolean>, readonly action: () => void)
   {
     super();
 
@@ -98,6 +98,8 @@ class Button extends CompositeDrawable
         },
       }),
     ];
+
+    enabled.bindValueChanged(e => this.alpha = e.value ? 1 : 0.5, true);
   }
 
   override onClick()

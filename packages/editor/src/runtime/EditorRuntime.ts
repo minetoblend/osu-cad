@@ -1,10 +1,9 @@
-import { nn, type Ruleset, type RulesetStore, rulesets } from "@osucad/core";
-import type { DDS, DDSFactoryOrConstructor, IDocumentSummary } from "@osucad/multiplayer-core";
-import { Encoder } from "@osucad/multiplayer-core";
-import { DocumentHistory } from "@osucad/multiplayer-core";
-import { DocumentRuntime } from "@osucad/multiplayer-core";
-import type { EditorRuleset } from "../EditorRuleset";
+import { nn, type Ruleset, rulesets, type RulesetStore } from "@osucad/core";
+import type { DDS, DDSFactoryOrConstructor, DocumentHistory, IDocumentSummary } from "@osucad/multiplayer-core";
+import { DocumentRuntime, Encoder } from "@osucad/multiplayer-core";
 import { EditorBeatmap } from "../EditorMap";
+import type { EditorRuleset } from "../EditorRuleset";
+import { EditorHistory } from "./EditorHistory";
 import { HitObjectCollection } from "./HitObjectCollection";
 
 export interface IEditorDocumentSummary extends IDocumentSummary
@@ -23,10 +22,10 @@ export class EditorRuntime extends DocumentRuntime<EditorBeatmap>
   {
     super([EditorBeatmap, HitObjectCollection]);
 
-    this.history = new DocumentHistory(this);
+    this.history = new EditorHistory(this);
   }
 
-  readonly history: DocumentHistory;
+  readonly history: EditorHistory;
 
   ruleset!: Ruleset;
   editorRuleset!: EditorRuleset;
