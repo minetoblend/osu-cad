@@ -1,20 +1,26 @@
-import { rulesets } from "@osucad/core";
 import { EditorRuntime } from "@osucad/editor";
 import { OsuRuleset } from "@osucad/ruleset-osu";
+import type { Server } from "socket.io";
 
 
-export class Room
+export async function acceptConnections(io: Server)
 {
-  constructor(readonly runtime: EditorRuntime)
+  const runtime = await EditorRuntime.createEmpty(new OsuRuleset());
+
+  let nextClientId = 0;
+
+  io.on("connect", socket =>
   {
+    const clientId = ++nextClientId;
 
-  }
+    socket.emit("init", { summary: runtime.createSummary() });
 
-  static async create()
-  {
-    const runtime = await EditorRuntime.createEmpty(new OsuRuleset());
+    socket.on("delta", delta =>
+    {
+      runtime.process(delta.targetId, delta.content, false);
 
-    return new Room(runtime);
-  }
+      io.emit("delta", clientId, delta);
+    });
+  });
 }
 

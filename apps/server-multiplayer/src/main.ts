@@ -1,8 +1,7 @@
 import express from "express";
-import { run } from "node:test";
-import { Room } from "./room.js";
-import { EditorRuntime } from "@osucad/editor";
-import { OsuRuleset } from "@osucad/ruleset-osu";
+import http from "node:http";
+import { Server } from "socket.io";
+import { acceptConnections } from "./room.js";
 
 void main();
 
@@ -12,10 +11,10 @@ async function main()
   const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 
   const app = express();
+  const server = http.createServer(app);
+  const io = new Server(server);
 
-  const room = await Room.create();
-
-  app.get("/", (req, res) => res.json(room.runtime.createSummary()));
+  await acceptConnections(io);
 
   app.listen(port, host, () =>
   {
