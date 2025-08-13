@@ -5,6 +5,8 @@ import type { Skin } from "@osucad/core";
 import { ISkinSource, PlayfieldClock, Ruleset, SkinProvidingContainer } from "@osucad/core";
 import { EditorRuleset } from "./EditorRuleset";
 import { EditorClock } from "./EditorClock";
+import { ComposeScreen } from "./compose";
+import { BindableBeatDivisor } from "./BindableBeatDivisor";
 
 export interface EditorOptions
 {
@@ -45,12 +47,17 @@ export class Editor extends Screen
   accessor #skinSource!: ISkinSource
 
   @provide(PlayfieldClock)
+  @provide(EditorClock)
   readonly editorClock = new EditorClock(false);
 
+  @provide(BindableBeatDivisor)
+  readonly beatDivisor = new BindableBeatDivisor(4);
 
   @asyncDependencyLoader()
   async #load()
   {
+    this.editorRuleset.setupEditor(this);
+
     // TODO: fix whatever the fuck this is
     const skin = (this.#skinSource as any).skin as Skin;
 
@@ -59,6 +66,7 @@ export class Editor extends Screen
     this.addInternal(new SkinProvidingContainer({
       skin: skinTransformer ?? skin,
       children: [
+        new ComposeScreen(),
       ],
     }));
   }
@@ -72,7 +80,10 @@ export class Editor extends Screen
 
   override onScroll(e: ScrollEvent): boolean
   {
-    this.editorClock.seek(this.editorClock.currentTime + e.scrollDelta.y * 100);
+    if (e.controlPressed || e.shiftPressed || e.altPressed)
+      return false;
+
+    this.editorClock.seek(this.editorClock.currentTime - e.scrollDelta.y * 100);
 
     return true;
   }

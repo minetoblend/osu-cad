@@ -19,6 +19,9 @@ export class ComposeToolContainer extends CompositeDrawable
 
     this.#activeTool.bindValueChanged(e =>
     {
+      if (!e.value)
+        return;
+
       this.internalChild = new e.value.tool();
     }, true);
   }

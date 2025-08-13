@@ -5,11 +5,11 @@ import type { Editor } from "./Editor";
 
 export abstract class EditorRuleset
 {
-  abstract readonly runtimeConfig: EditorRuntimeConfig;
+  public abstract readonly runtimeConfig: EditorRuntimeConfig;
 
-  abstract createHitObjectComposer(): Awaitable<HitObjectComposer>;
+  public abstract createHitObjectComposer(): Awaitable<HitObjectComposer>;
 
-  setupEditor(editor: Editor)
+  public setupEditor(editor: Editor)
   {
   }
 }

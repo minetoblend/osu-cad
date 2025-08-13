@@ -3,6 +3,7 @@ import { asyncDependencyLoader, Game, provide, ScreenStack } from "@osucad/frame
 import { OsuRuleset } from "@osucad/ruleset-osu";
 import { SkinManager } from "./SkinManager";
 import type { EditorMultiplayerClient } from "@osucad/editor";
+import { UIScaleContainer } from "./UIScaleContainer";
 
 export class OsucadGame extends Game
 {
@@ -29,7 +30,9 @@ export class OsucadGame extends Game
     ]);
 
     this.addRange([
-      this.#screenStack = new ScreenStack(),
+      new UIScaleContainer({
+        child: this.#screenStack = new ScreenStack(),
+      }),
       this.skinManager,
       this.client,
     ]);

@@ -26,6 +26,11 @@ export abstract class HitObjectComposer extends CompositeDrawable
   @resolved(EditorBeatmap)
   accessor beatmap!: EditorBeatmap;
 
+  get hasTimeline()
+  {
+    return true;
+  }
+
   @dependencyLoader()
   #load()
   {

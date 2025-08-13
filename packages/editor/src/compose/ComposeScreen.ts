@@ -1,6 +1,7 @@
-import { Anchor, resolved, SpriteText, type ReadonlyDependencyContainer } from "@osucad/framework";
+import { Anchor, Axes, Container, resolved, SpriteText, type ReadonlyDependencyContainer } from "@osucad/framework";
 import { EditorScreen } from "../EditorScreen";
 import { Ruleset } from "@osucad/core";
+import { ComposeTimeline } from "./timeline/ComposeTimeline";
 
 export class ComposeScreen extends EditorScreen
 {
@@ -29,7 +30,15 @@ export class ComposeScreen extends EditorScreen
       {
         await this.loadComponentAsync(composer);
 
-        this.addInternal(composer);
+
+        this.addInternal(new Container({
+          relativeSizeAxes: Axes.Both,
+          padding: { top: composer.hasTimeline ? ComposeTimeline.HEIGHT : 0 },
+          child: composer,
+        }));
+
+        if (composer.hasTimeline)
+          this.addTimeline();
         return;
       }
     }
@@ -44,5 +53,10 @@ export class ComposeScreen extends EditorScreen
       anchor: Anchor.Center,
       origin: Anchor.Center,
     }));
+  }
+
+  addTimeline()
+  {
+    this.addInternal(new ComposeTimeline());
   }
 }
