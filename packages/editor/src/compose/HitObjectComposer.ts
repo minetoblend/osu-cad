@@ -1,5 +1,9 @@
+import { DrawableRuleset, Playfield } from "@osucad/core";
 import { Ruleset } from "@osucad/core";
-import { Axes, CompositeDrawable, dependencyLoader, provide, resolved } from "@osucad/framework";
+import type { ReadonlyDependencyContainer } from "@osucad/framework";
+import { DependencyContainer } from "@osucad/framework";
+import { Container } from "@osucad/framework";
+import { asyncDependencyLoader, Axes, CompositeDrawable, dependencyLoader, provide, resolved } from "@osucad/framework";
 import { EditorBeatmap } from "../runtime/dds/EditorBeatmap";
 import type { ComposeToolInfo } from "./tools";
 import { ComposeToolbar } from "./tools";
@@ -31,19 +35,47 @@ export abstract class HitObjectComposer extends CompositeDrawable
     return true;
   }
 
-  @dependencyLoader()
-  #load()
+  drawableRuleset!: DrawableRuleset;
+  rulesetContainer!: Container;
+
+  #dependencies!: DependencyContainer;
+
+  override createChildDependencies(parentDependencies: ReadonlyDependencyContainer)
   {
+    return this.#dependencies = new DependencyContainer(parentDependencies);
+  }
+
+  @asyncDependencyLoader()
+  async #load()
+  {
+    this.drawableRuleset = await this.ruleset.createDrawableRuleset({ cursor: false, useInput: false });
+
+    this.#dependencies.provide(DrawableRuleset, this.drawableRuleset);
+    this.#dependencies.provide(Playfield, this.drawableRuleset.playfield);
+
     this.internalChildren = [
+      this.rulesetContainer = new Container({
+        relativeSizeAxes: Axes.Both,
+        child: this.drawableRuleset,
+      }),
       new ComposeToolContainer(),
       this.#toolbar = new ComposeToolbar(),
     ];
 
-    const tools = this.getTools();
+    const tools = await this.getTools();
     this.activeTool.value = tools[0];
 
     for (const tool of tools)
       this.#toolbar.addTool(tool);
+
+    for (const hitObject of this.beatmap.hitObjects)
+      this.drawableRuleset.addHitObject(hitObject);
+
+    this.beatmap.hitObjects.added.addListener(h =>
+    {
+      h.applyDefaults(this.beatmap.difficulty, this.beatmap.controlPointInfo);
+      this.drawableRuleset.addHitObject(h);
+    });
   }
 
   protected override loadComplete()
@@ -51,5 +83,5 @@ export abstract class HitObjectComposer extends CompositeDrawable
     super.loadComplete();
   }
 
-  protected abstract getTools(): ComposeToolInfo[];
+  protected abstract getTools(): ComposeToolInfo[] | Promise<ComposeToolInfo[]>;
 }

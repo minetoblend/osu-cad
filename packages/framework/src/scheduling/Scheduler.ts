@@ -9,6 +9,11 @@ export class Scheduler
 
   #clock: IClock | null = null;
 
+  get clock()
+  {
+    return this.#clock;
+  }
+
   get #currentTime()
   {
     return this.#clock?.currentTime ?? 0;

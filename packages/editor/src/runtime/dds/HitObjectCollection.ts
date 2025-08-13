@@ -242,12 +242,17 @@ export class HitObjectCollection extends DDS<IHitObjectCollectionDelta> implemen
     return this.hitObjects.filter(predicate, thisArg);
   }
 
-  ofType<T extends Constructor<HitObject>[]>(...types: T): { [K in keyof T]: InstanceType<T[K]> }[number][]
+  find(predicate: (value: HitObject, index: number, obj: readonly HitObject[]) => boolean, thisArg?: any): HitObject | undefined
+  {
+    return this.hitObjects.find(predicate, thisArg);
+  }
+
+  ofType<T extends Constructor<HitObject>[]>(...types: T): { [K in keyof T]: InstanceOf<T[K]> }[number][]
   {
     return this.hitObjects.filter(hitObject =>
     {
       for (const type of types)
-        if (hitObject instanceof type)
+        if (hitObject instanceof (type as abstract new (...args: any[]) => HitObject))
           return true;
 
       return false;
@@ -267,4 +272,5 @@ export class HitObjectCollection extends DDS<IHitObjectCollectionDelta> implemen
   }
 }
 
-type Constructor<T> = (new (...args: any[]) => T);
+type Constructor<T> = { prototype: T };
+type InstanceOf<T> = T extends Constructor<infer U> ? U : never;

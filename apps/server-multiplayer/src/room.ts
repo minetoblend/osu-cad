@@ -41,12 +41,12 @@ export async function acceptConnections(io: Server)
 
     socket.emit("init", { clientId, summary: runtime.createSummary() });
 
-    socket.on("delta", deltas =>
+    socket.on("deltas", deltas =>
     {
       for (const delta of deltas)
         runtime.process(delta.targetId, delta.content, false);
 
-      io.emit("delta", clientId, deltas);
+      io.emit("deltas", clientId, deltas);
     });
   });
 }

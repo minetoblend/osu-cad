@@ -3,6 +3,8 @@ import { MultiplayerConnection } from "./MultiplayerConnection";
 import { EditorRuntime } from "./EditorRuntime";
 import type { ClientMessages, ServerMessages } from "@osucad/multiplayer-protocol";
 import type { EditorBeatmap } from "./dds/EditorBeatmap";
+import type { Delta } from "@osucad/multiplayer-core";
+import { nn } from "@osucad/multiplayer-core";
 
 interface IQueuedDeltas
 {
@@ -23,7 +25,7 @@ export class EditorMultiplayerClient extends Component
   clientId!: number;
 
   receivedDeltas: IQueuedDeltas[] = [];
-  sendBuffer: ClientMessages.Delta[] = [];
+  sendBuffer: { targetId: string, delta: Delta }[] = [];
 
   @asyncDependencyLoader()
   async #connect()
@@ -56,7 +58,11 @@ export class EditorMultiplayerClient extends Component
   {
     super.loadComplete();
 
-    this.scheduler.addDelayed(() => this.#flushSendBuffer(), 50, true);
+    this.runtime.on("deltaSubmitted", (dds, delta) =>
+    {
+      this.sendBuffer.push({ targetId: nn(dds.id), delta });
+    });
+    this.scheduler.addDelayed(() => this.#flushSendBuffer(), 20, true);
   }
 
   override update()
@@ -87,7 +93,7 @@ export class EditorMultiplayerClient extends Component
     if (this.sendBuffer.length === 0)
       return;
 
-    this.connection.send("deltas", this.sendBuffer);
+    this.connection.send("deltas", this.sendBuffer.map(it => ({ targetId: it.targetId, content: it.delta.encode() })));
 
     this.sendBuffer = [];
   }

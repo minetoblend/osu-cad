@@ -1,5 +1,5 @@
 import { BeatmapDifficultyInfo, BeatmapMetadata, ControlPointInfo, nn, type Ruleset, rulesets, type RulesetStore, SampleControlPoint, TimingControlPoint } from "@osucad/core";
-import type { DDS, DDSFactoryOrConstructor, DocumentHistory, IDocumentSummary } from "@osucad/multiplayer-core";
+import type { DDS, DDSFactoryOrConstructor, IDocumentSummary } from "@osucad/multiplayer-core";
 import { DocumentRuntime, Encoder } from "@osucad/multiplayer-core";
 import { EditorBeatmap } from "./dds/EditorBeatmap";
 import type { EditorRuleset } from "../EditorRuleset";

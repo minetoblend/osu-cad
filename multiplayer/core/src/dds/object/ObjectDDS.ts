@@ -34,7 +34,7 @@ export class ObjectDDS extends DDS<IObjectDelta>
 
         const value = property.serializer.deserialize(values[key], this.decoder);
 
-        this.#setValue(property, value);
+        this.#setValue(property, value, false);
       }
 
       return;
@@ -71,7 +71,7 @@ export class ObjectDDS extends DDS<IObjectDelta>
 
   setValue(property: ObjectDDSPropertyMetadata, newValue: unknown)
   {
-    let oldValue = this.#setValue(property, newValue);
+    let oldValue = this.#setValue(property, newValue, true);
 
     if (!this.isAttached)
       return;
@@ -89,11 +89,11 @@ export class ObjectDDS extends DDS<IObjectDelta>
     this.submitDelta(delta, undo);
   }
 
-  #setValue(property: ObjectDDSPropertyMetadata, value: unknown): unknown
+  #setValue(property: ObjectDDSPropertyMetadata, value: unknown, local: boolean): unknown
   {
     const oldValue = property.get(this);
 
-    property.set(this, value);
+    property.set(this, value, local);
 
     this.emit(`update:${property.name}`, value, oldValue);
     return oldValue;

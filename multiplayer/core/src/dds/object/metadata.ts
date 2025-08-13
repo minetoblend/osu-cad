@@ -9,7 +9,7 @@ export interface ObjectDDSPropertyMetadata
   readonly name: string
   readonly index: number
   get(target: ObjectDDS): unknown
-  set(target: ObjectDDS, value: unknown): void
+  set(target: ObjectDDS, value: unknown, local?: boolean): void
   readonly serializer: ISerializer<any>
   readonly nullable: boolean
   readonly since?: number

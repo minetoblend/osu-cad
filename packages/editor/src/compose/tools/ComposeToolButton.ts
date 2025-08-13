@@ -90,7 +90,12 @@ export class ComposeToolButton extends Container
 
   override onClick(e: ClickEvent)
   {
-    this.#activeTool.value = this.tool;
+    this.select();
     return true;
+  }
+
+  select()
+  {
+    this.#activeTool.value = this.tool;
   }
 }

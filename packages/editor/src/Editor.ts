@@ -1,5 +1,5 @@
 import type { ScrollEvent } from "@osucad/framework";
-import { asyncDependencyLoader, lerp, provide, resolved, Screen } from "@osucad/framework";
+import { asyncDependencyLoader, provide, resolved, Screen } from "@osucad/framework";
 import { EditorBeatmap, EditorRuntime } from "./runtime";
 import type { Skin } from "@osucad/core";
 import { ISkinSource, PlayfieldClock, Ruleset, SkinProvidingContainer } from "@osucad/core";
@@ -57,6 +57,9 @@ export class Editor extends Screen
   async #load()
   {
     this.editorRuleset.setupEditor(this);
+
+    for (const hitObject of this.editorBeatmap.hitObjects)
+      hitObject.applyDefaults(this.editorBeatmap.difficulty, this.editorBeatmap.controlPointInfo);
 
     // TODO: fix whatever the fuck this is
     const skin = (this.#skinSource as any).skin as Skin;

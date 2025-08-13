@@ -27,7 +27,7 @@ export abstract class DDS<TDelta = unknown> extends EventEmitter
     return this.#channel !== null;
   }
 
-  protected get runtime()
+  get runtime()
   {
     return this.#channel?.runtime;
   }
