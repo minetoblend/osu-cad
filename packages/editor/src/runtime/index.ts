@@ -1,2 +1,6 @@
 export * from "./EditorRuntime";
-export * from "./HitObjectCollection";
+export * from "./dds";
+export * from "./EditorMultiplayerClient";
+export * from "./MultiplayerConnection";
+export * from "./EditorHistory";
+export * from "./EditorMultiplayerClient";

@@ -1,4 +1,4 @@
-import type { Playfield } from "@osucad/core";
+import type { DrawableRulesetOptions, Playfield, PlayfieldOptions } from "@osucad/core";
 import { DrawableRuleset } from "@osucad/core";
 
 import { OsuPlayfield } from "./OsuPlayfield";
@@ -10,14 +10,14 @@ import { OsuAutoPlayController } from "../gameplay/OsuAutoPlayController";
 
 export class DrawableOsuRuleset extends DrawableRuleset
 {
-  constructor()
+  constructor(options: DrawableRulesetOptions = {})
   {
-    super();
+    super(options);
   }
 
-  protected override createPlayfield(): Playfield
+  protected override createPlayfield(options: PlayfieldOptions): Playfield
   {
-    return new OsuPlayfield();
+    return new OsuPlayfield(options);
   }
 
   override createPlayfieldAdjustmentContainer()
@@ -33,9 +33,5 @@ export class DrawableOsuRuleset extends DrawableRuleset
   protected override loadComplete()
   {
     super.loadComplete();
-
-    this.keybindingInputManager.useParentInput = false;
-
-    this.playfieldContainer.add(new OsuAutoPlayController(this.playfield, this.keybindingInputManager));
   }
 }

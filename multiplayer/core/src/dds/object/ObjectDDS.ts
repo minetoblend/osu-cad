@@ -1,24 +1,24 @@
 import { DDS } from "../DDS.js";
 import { ObjectDDSMetadata } from "./ObjectDDSMetadata.js";
-import type { DDSAttributes } from "../DDSAttributes.js";
-import type { Delta, IEncodedDelta } from "../Delta.js";
-import type { IObjectDelta, ObjectDeltaEntry } from "./ObjectDelta.js";
+import type { DDSAttributes } from "@osucad/multiplayer-protocol";
+import type { Delta } from "../Delta.js";
+import type { IObjectDelta } from "./ObjectDelta.js";
 import { ObjectDelta } from "./ObjectDelta.js";
 import type { ObjectDDSPropertyMetadata } from "./metadata.js";
 import type { IDecoder, IEncoder } from "../../serialization/types.js";
 import { nn } from "../../utils/nn.js";
 
-
+export const objectDDSMetadata = Symbol("ObjectDDS.metadata");
 
 export class ObjectDDS extends DDS<IObjectDelta>
 {
-  readonly metadata: ObjectDDSMetadata;
+  readonly [objectDDSMetadata]: ObjectDDSMetadata;
 
   constructor(attributes: DDSAttributes)
   {
     super(attributes);
 
-    this.metadata = ObjectDDSMetadata.for(this);
+    this[objectDDSMetadata] = ObjectDDSMetadata.for(this);
   }
 
   protected override process([version, values]: IObjectDelta, local: boolean): void
@@ -30,7 +30,7 @@ export class ObjectDDS extends DDS<IObjectDelta>
         if (this.#pendingProperties.has(key))
           continue;
 
-        const property = nn(this.metadata.getPropertyByName(key));
+        const property = nn(this[objectDDSMetadata].getPropertyByName(key));
 
         const value = property.serializer.deserialize(values[key], this.decoder);
 
@@ -42,7 +42,7 @@ export class ObjectDDS extends DDS<IObjectDelta>
 
     for (const key in values)
     {
-      const property = nn(this.metadata.getPropertyByName(key));
+      const property = nn(this[objectDDSMetadata].getPropertyByName(key));
 
       const pendingVersion = this.#pendingProperties.get(property.name);
 
@@ -58,7 +58,7 @@ export class ObjectDDS extends DDS<IObjectDelta>
 
     for (const key in delta.values)
     {
-      const property = nn(this.metadata.getPropertyByName(key));
+      const property = nn(this[objectDDSMetadata].getPropertyByName(key));
 
       const value = property.serializer.deserialize(delta.values[key], this.decoder);
 
@@ -101,7 +101,7 @@ export class ObjectDDS extends DDS<IObjectDelta>
 
   override createSummary(encoder: IEncoder)
   {
-    const properties = this.metadata.properties;
+    const properties = this[objectDDSMetadata].properties;
 
     const entries: Record<string, unknown> = {};
 
@@ -120,7 +120,7 @@ export class ObjectDDS extends DDS<IObjectDelta>
 
     const entries = summary as Record<string, unknown>;
 
-    const properties = this.metadata.properties;
+    const properties = this[objectDDSMetadata].properties;
 
     for (const { name, set, serializer, since, nullable } of properties)
     {

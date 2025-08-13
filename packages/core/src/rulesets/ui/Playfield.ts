@@ -11,6 +11,11 @@ import { HitObjectEntryManager } from "../../pooling/HitObjectEntryManager";
 import type { JudgementResult } from "../judgements/JudgementResult";
 import type { GameplayCursorContainer } from "./GameplayCursorContainer";
 
+export interface PlayfieldOptions
+{
+  cursor?: boolean
+}
+
 @provideSelf(IPooledHitObjectProvider)
 @provideSelf()
 export abstract class Playfield extends CompositeDrawable implements IPooledHitObjectProvider
@@ -40,7 +45,7 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
   readonly #entryManager =new HitObjectEntryManager();
 
   // noinspection TypeScriptAbstractClassConstructorCanBeMadeProtected
-  constructor()
+  constructor(protected readonly options: PlayfieldOptions = {})
   {
     super();
 
@@ -59,7 +64,8 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
   {
     super.load(dependencies);
 
-    this.#cursor= this.createCursor();
+    if (this.options.cursor !== false)
+      this.#cursor= this.createCursor();
 
     if (this.cursor !== null)
     {

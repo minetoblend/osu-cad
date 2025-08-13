@@ -1,5 +1,5 @@
 import { OsuHitObject } from "./OsuHitObject";
-import type { HitSampleInfo, IBeatmapTiming, Judgement } from "@osucad/core";
+import type { ControlPointInfo, HitSampleInfo, Judgement } from "@osucad/core";
 import { HitResult, HitWindows } from "@osucad/core";
 import { OsuJudgement } from "../judgements/OsuJudgement";
 
@@ -27,7 +27,7 @@ export class SpinnerTick extends OsuHitObject
     return this.spinnerDuration;
   }
 
-  protected override createSamples(timing: IBeatmapTiming): HitSampleInfo[]
+  protected override createSamples(controlPoints: ControlPointInfo): HitSampleInfo[]
   {
     return [];
   }

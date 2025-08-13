@@ -1,32 +1,38 @@
 import type { PassThroughInputManager, ReadonlyDependencyContainer } from "@osucad/framework";
 import { Action, Axes, Container, Lazy } from "@osucad/framework";
 import type { HitObject } from "../hitObjects/HitObject";
-import type { Playfield } from "./Playfield";
+import type { Playfield, PlayfieldOptions } from "./Playfield";
 import type { PlayfieldAdjustmentContainer } from "./PlayfieldAdjustmentContainer";
 import type { GameplayProcessor } from "./GameplayProcessor";
 import type { JudgementResult } from "../judgements/JudgementResult";
+
+export interface DrawableRulesetOptions
+{
+  cursor?: boolean
+  useInput?: boolean
+}
 
 export abstract class DrawableRuleset extends Container
 {
   readonly newResult = new Action<JudgementResult>();
   readonly revertResult = new Action<JudgementResult>();
 
-  protected constructor()
+  protected constructor(options: DrawableRulesetOptions = {})
   {
     super({
       relativeSizeAxes: Axes.Both,
     });
 
     this.keybindingInputManager = this.createInputManager();
+    this.keybindingInputManager.useParentInput = options.useInput ?? true;
+
     this.#playfieldAdjustmentContainer = this.createPlayfieldAdjustmentContainer();
-    this.#playfield = new Lazy(() => this.createPlayfield().adjust(p =>
+    this.#playfield = new Lazy(() => this.createPlayfield({ cursor: options.cursor }).adjust(p =>
     {
       p.newResult.addListener((_, r) => this.newResult.emit(r));
       p.revertResult.addListener(r => this.revertResult.emit(r));
     }));
   }
-
-
 
   readonly #playfieldAdjustmentContainer: PlayfieldAdjustmentContainer;
   readonly #playfield: Lazy<Playfield>;
@@ -63,7 +69,7 @@ export abstract class DrawableRuleset extends Container
 
   abstract createPlayfieldAdjustmentContainer(): PlayfieldAdjustmentContainer;
 
-  protected abstract createPlayfield(): Playfield;
+  protected abstract createPlayfield(options: PlayfieldOptions): Playfield;
 
   addHitObject(hitObject: HitObject)
   {

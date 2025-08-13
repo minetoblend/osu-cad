@@ -1,4 +1,4 @@
-import type { BeatmapPostProcessor, DrawableRuleset, Ruleset, RulesetBeatmapParser, Skin, SkinTransformer } from "@osucad/core";
+import type { BeatmapPostProcessor, DrawableRuleset, DrawableRulesetOptions, Ruleset, RulesetBeatmapParser, Skin, SkinTransformer } from "@osucad/core";
 import type { OsuHitObjectComposer } from "./edit";
 import { OsuEditorRuleset } from "./edit/OsuEditorRuleset";
 import type { EditorRuleset } from "@osucad/editor";
@@ -9,10 +9,10 @@ export class OsuRuleset implements Ruleset
   readonly title = "osu!";
   readonly legacyId = 0;
 
-  public async createDrawableRuleset(): Promise<DrawableRuleset>
+  public async createDrawableRuleset(options: DrawableRulesetOptions): Promise<DrawableRuleset>
   {
     const { DrawableOsuRuleset } = await import("./ui/DrawableOsuRuleset");
-    return new DrawableOsuRuleset();
+    return new DrawableOsuRuleset(options);
   }
 
   public async createBeatmapParser(): Promise<RulesetBeatmapParser>

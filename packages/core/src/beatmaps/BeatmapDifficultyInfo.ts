@@ -1,36 +1,38 @@
 import { BindableNumber } from "@osucad/framework";
+import type { DDSAttributes } from "@osucad/multiplayer-core";
+import { ObjectDDS, type } from "@osucad/multiplayer-core";
+import { bindableBacked } from "../utils/bindableBacked";
 
-export class BeatmapDifficultyInfo
+export class BeatmapDifficultyInfo extends ObjectDDS
 {
+  static readonly attributes: DDSAttributes = {
+    type: "@osucad/beatmap-difficulty-info",
+    version: 0,
+  };
+
+  constructor()
+  {
+    super(BeatmapDifficultyInfo.attributes);
+  }
+
   readonly drainRateBindable = new BindableNumber(5)
     .withMinValue(0)
     .withMaxValue(10)
     .withPrecision(0.1);
 
-  get drainRate()
-  {
-    return this.drainRateBindable.value;
-  }
+  @type("float32")
+  @bindableBacked("drainRateBindable")
+  accessor drainRate!: number
 
-  set drainRate(value)
-  {
-    this.drainRateBindable.value = value;
-  }
 
   readonly circleSizeBindable = new BindableNumber(5)
     .withMinValue(0)
     .withMaxValue(10)
     .withPrecision(0.1);
 
-  get circleSize()
-  {
-    return this.circleSizeBindable.value;
-  }
-
-  set circleSize(value)
-  {
-    this.circleSizeBindable.value = value;
-  }
+  @type("float32")
+  @bindableBacked("circleSizeBindable")
+  accessor circleSize!: number
 
 
   readonly approachRateBindable = new BindableNumber(5)
@@ -38,60 +40,36 @@ export class BeatmapDifficultyInfo
     .withMaxValue(10)
     .withPrecision(0.1);
 
-  get approachRate()
-  {
-    return this.approachRateBindable.value;
-  }
-
-  set approachRate(value)
-  {
-    this.approachRateBindable.value = value;
-  }
+  @type("float32")
+  @bindableBacked("approachRateBindable")
+  accessor approachRate!: number
 
   readonly overallDifficultyBindable = new BindableNumber(5)
     .withMinValue(0)
     .withMaxValue(10)
     .withPrecision(0.1);
 
-  get overallDifficulty()
-  {
-    return this.overallDifficultyBindable.value;
-  }
-
-  set overallDifficulty(value)
-  {
-    this.overallDifficultyBindable.value = value;
-  }
+  @type("float32")
+  @bindableBacked("overallDifficultyBindable")
+  accessor overallDifficulty!: number
 
   readonly sliderMultiplierBindable = new BindableNumber(1.4)
     .withMinValue(0.4)
     .withMaxValue(3.6)
     .withPrecision(0.1);
 
-  get sliderMultiplier()
-  {
-    return this.sliderMultiplierBindable.value;
-  }
-
-  set sliderMultiplier(value)
-  {
-    this.sliderMultiplierBindable.value = value;
-  }
+  @type("float32")
+  @bindableBacked("sliderMultiplierBindable")
+  accessor sliderMultiplier!: number
 
   readonly sliderTickRateBindable = new BindableNumber(1)
     .withMinValue(1)
     .withMaxValue(4)
     .withPrecision(1);
 
-  get sliderTickRate()
-  {
-    return this.sliderTickRateBindable.value;
-  }
-
-  set sliderTickRate(value)
-  {
-    this.sliderTickRateBindable.value = value;
-  }
+  @type("int8")
+  @bindableBacked("sliderTickRateBindable")
+  accessor sliderTickRate!: number
 
   static difficultyRange(difficulty: number, min: number, mid: number, max: number)
   {

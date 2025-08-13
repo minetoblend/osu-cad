@@ -1,26 +1,35 @@
-import { Beatmap, ISkinSource, rulesets } from "@osucad/core";
-import { Editor } from "@osucad/editor";
-import { ScreenStack } from "@osucad/framework";
-import { dependencyLoader, Game } from "@osucad/framework";
+import { ISkinSource, rulesets } from "@osucad/core";
+import { Editor, EditorMultiplayerClient } from "@osucad/editor";
+import { dependencyLoader, Game, provide, ScreenStack } from "@osucad/framework";
 import { OsuRuleset } from "@osucad/ruleset-osu";
-import { MultiplayerTest } from "./MultiplayerTest";
+import { SkinManager } from "./SkinManager";
 
 export class OsucadGame extends Game
 {
   #screenStack!: ScreenStack;
 
+  @provide(ISkinSource)
+  @provide(SkinManager)
+  readonly skinManager = new SkinManager();
+
+  readonly client = new EditorMultiplayerClient();
+
   @dependencyLoader()
   #load()
   {
-    this.add(this.#screenStack = new ScreenStack());
+    rulesets.register(new OsuRuleset());
+
+    this.addRange([
+      this.#screenStack = new ScreenStack(),
+      this.skinManager,
+      this.client,
+    ]);
   }
 
   protected override loadComplete()
   {
     super.loadComplete();
 
-    rulesets.register(new OsuRuleset());
-
-    this.#screenStack.push(new MultiplayerTest());
+    this.#screenStack.push(new Editor({ runtime: this.client.runtime }));
   }
 }

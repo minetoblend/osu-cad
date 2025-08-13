@@ -10,6 +10,7 @@ import { customType } from "../../utils/decorator";
 import { Judgement } from "../judgements/Judgement";
 import { HitResult } from "../scoring";
 import { HitWindows } from "../scoring/HitWindows";
+import type { ControlPointInfo } from "../../beatmaps";
 
 export class HitObject extends ObjectDDS
 {
@@ -38,11 +39,11 @@ export class HitObject extends ObjectDDS
     return this.#nestedHitObjects;
   }
 
-  public applyDefaults(difficulty: BeatmapDifficultyInfo, timing: IBeatmapTiming)
+  public applyDefaults(difficulty: BeatmapDifficultyInfo, controlPoints: ControlPointInfo)
   {
-    this.applyDefaultsToSelf(difficulty, timing);
+    this.applyDefaultsToSelf(difficulty, controlPoints);
 
-    this.samplesBindable.value = this.createSamples(timing);
+    this.samplesBindable.value = this.createSamples(controlPoints);
 
     if (this.#nestedHitObjects.length > 0)
       this.#nestedHitObjects = [];
@@ -52,7 +53,7 @@ export class HitObject extends ObjectDDS
     this.#nestedHitObjects.sort(compareStartTime);
 
     for (const h of this.#nestedHitObjects)
-      h.applyDefaults(difficulty, timing);
+      h.applyDefaults(difficulty, controlPoints);
 
     this.startTimeBindable.valueChanged.removeListener(this.#onStartTimeChanged, this);
     this.startTimeBindable.valueChanged.addListener(this.#onStartTimeChanged, this);
@@ -60,7 +61,7 @@ export class HitObject extends ObjectDDS
     this.defaultsApplied.emit(this);
   }
 
-  protected applyDefaultsToSelf(difficulty: BeatmapDifficultyInfo, timing: IBeatmapTiming)
+  protected applyDefaultsToSelf(difficulty: BeatmapDifficultyInfo, controlPoints: ControlPointInfo)
   {
     this.hitWindows ??= this.createHitWindows();
     this.hitWindows.setDifficulty(difficulty.overallDifficulty);
@@ -123,9 +124,9 @@ export class HitObject extends ObjectDDS
     return this.samplesBindable.value;
   }
 
-  protected createSamples(timing: IBeatmapTiming): HitSampleInfo[]
+  protected createSamples(controlPoints: ControlPointInfo): HitSampleInfo[]
   {
-    return this.hitSound.getSamples(this.startTime, timing);
+    return this.hitSound.getSamples(this.startTime, controlPoints);
   }
 }
 

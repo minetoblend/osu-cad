@@ -4,7 +4,8 @@ import { DependencyContainer } from "@osucad/framework";
 import { Anchor, AudioManager, Container, dependencyLoader, FramedClock, ManualClock, resolved } from "@osucad/framework";
 import { asyncDependencyLoader, Axes, Box, CompositeDrawable, FillDirection, FillFlowContainer, Screen, SpriteText, Vec2, ZipArchiveFileSystem } from "@osucad/framework";
 import { Delta } from "@osucad/multiplayer-core";
-import { PathPoint, type HitCircle, type Slider } from "@osucad/ruleset-osu";
+import type { Slider } from "@osucad/ruleset-osu";
+import { HitCircle, PathPoint } from "@osucad/ruleset-osu";
 import { queue } from "async";
 import type { Socket } from "socket.io-client";
 import { io } from "socket.io-client";
@@ -103,7 +104,7 @@ export class MultiplayerTest extends Screen implements IResourcesProvider
     const framedClock = new FramedClock(clock);
     this.#dependencies.provide(PlayfieldClock, framedClock);
 
-    const drawableRuleset = await runtime.ruleset.createDrawableRuleset();
+    const drawableRuleset = await runtime.ruleset.createDrawableRuleset({ cursor: false });
 
     this.addInternal(new SkinProvidingContainer({
       skin: rulesetSkin ?? skin,
@@ -114,7 +115,7 @@ export class MultiplayerTest extends Screen implements IResourcesProvider
       }),
     }));
 
-    const slider = runtime.root.hitObjects.hitObjects[0] as Slider;
+    const slider = runtime.root.hitObjects[0] as Slider;
 
     const difficulty = new BeatmapDifficultyInfo();
     difficulty.approachRate = 9;
@@ -126,11 +127,12 @@ export class MultiplayerTest extends Screen implements IResourcesProvider
     timingPoint.timingInfo = { beatLength: 60000 / 180, signature: 4 };
     timing.add(timingPoint);
 
-    slider.applyDefaults(difficulty, timing);
 
-    drawableRuleset.addHitObject(slider);
-
-
+    for (const hitObject of runtime.root.hitObjects)
+    {
+      hitObject.applyDefaults(difficulty, timing);
+      drawableRuleset.addHitObject(hitObject);
+    }
 
     this.addInternal(drawableRuleset.createPlayfieldAdjustmentContainer().with({
       child: new MovableBox(slider, runtime),

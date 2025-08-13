@@ -1,4 +1,5 @@
-import { type BeatmapDifficultyInfo, HitWindows, type IBeatmapTiming, safeAssign } from "@osucad/core";
+import type { ControlPointInfo } from "@osucad/core";
+import { type BeatmapDifficultyInfo, HitWindows, safeAssign } from "@osucad/core";
 import { HitCircle } from "./HitCircle";
 import type { Slider } from "./Slider";
 import type { OsuHitObjectOptions } from "./OsuHitObject";
@@ -27,9 +28,9 @@ export class SliderTailCircle extends HitCircle
   }
 
 
-  public override applyDefaults(difficulty: BeatmapDifficultyInfo, timing: IBeatmapTiming): void
+  public override applyDefaults(difficulty: BeatmapDifficultyInfo, controlPoints: ControlPointInfo): void
   {
-    super.applyDefaults(difficulty, timing);
+    super.applyDefaults(difficulty, controlPoints);
 
     if (this.repeatIndex > 0)
     {

@@ -1,3 +1,4 @@
+import { TimingControlPoint } from "@osucad/core";
 import { EditorRuntime } from "@osucad/editor";
 import { Vec2 } from "@osucad/framework";
 import { HitCircle, OsuRuleset, PathPoint, PathType, Slider } from "@osucad/ruleset-osu";
@@ -18,6 +19,15 @@ export async function acceptConnections(io: Server)
   slider.path.expectedDistance = slider.path.calculatedDistance;
 
   runtime.root.hitObjects.add(slider);
+
+  const circle = new HitCircle();
+  circle.startTime = 200;
+  runtime.root.hitObjects.add(circle);
+
+  const timingPoint = new TimingControlPoint();
+
+  timingPoint.bpm = 180;
+  runtime.root.controlPointInfo.add(timingPoint);
 
   let nextClientId = 0;
 

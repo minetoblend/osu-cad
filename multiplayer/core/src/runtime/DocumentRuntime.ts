@@ -1,7 +1,7 @@
 import { EventEmitter } from "eventemitter3";
 import type { DDS, DDSFactoryOrConstructor } from "../dds/index.js";
-import type { Delta, IEncodedDelta } from "../dds/Delta.js";
-import type { IDocumentSummary } from "./summary.js";
+import type { Delta } from "../dds/Delta.js";
+import type { IDocumentSummary } from "@osucad/multiplayer-protocol";
 import { Decoder, Encoder } from "../serialization/types.js";
 import { DDSPool } from "./DDSPool.js";
 

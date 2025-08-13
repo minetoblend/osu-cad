@@ -2,6 +2,7 @@ import { SampleSet } from "./SampleSet";
 import { SampleAdditions } from "./SampleAdditions";
 import { HitSampleInfo } from "./HitSampleInfo";
 import type { IBeatmapTiming } from "../beatmaps/timing/IBeatmapTiming";
+import type { ControlPointInfo } from "../beatmaps";
 
 export class HitSoundInfo
 {
@@ -13,27 +14,27 @@ export class HitSoundInfo
   {
   }
 
-  getSamples(time: number, timing: IBeatmapTiming): HitSampleInfo[]
+  getSamples(time: number, controlPoints: ControlPointInfo): HitSampleInfo[]
   {
     const samples: HitSampleInfo[] = [];
 
-    const sampleInfo = timing.getSampleInfoAt(time);
+    const samplePoint = controlPoints.samplePointAt(time);
 
-    const sampleSet = this.sampleSet !== SampleSet.None ? this.sampleSet : sampleInfo.sampleSet;
+    const sampleSet = this.sampleSet !== SampleSet.None ? this.sampleSet : samplePoint.sampleSet;
     const additionSampleSet = this.additionSampleSet !== SampleSet.None ? this.additionSampleSet : sampleSet;
 
-    const suffix = sampleInfo.sampleIndex > 0 ? sampleInfo.sampleIndex.toString() : undefined;
+    const suffix = samplePoint.sampleIndex > 0 ? samplePoint.sampleIndex.toString() : undefined;
 
-    samples.push(new HitSampleInfo(HitSampleInfo.HIT_NORMAL, sampleSetToBank(sampleSet), suffix, sampleInfo.volume));
+    samples.push(new HitSampleInfo(HitSampleInfo.HIT_NORMAL, sampleSetToBank(sampleSet), suffix, samplePoint.volume));
 
     if (this.additions & SampleAdditions.Whistle)
-      samples.push(new HitSampleInfo(HitSampleInfo.HIT_WHISTLE, sampleSetToBank(additionSampleSet), suffix, sampleInfo.volume));
+      samples.push(new HitSampleInfo(HitSampleInfo.HIT_WHISTLE, sampleSetToBank(additionSampleSet), suffix, samplePoint.volume));
 
     if (this.additions & SampleAdditions.Finish)
-      samples.push(new HitSampleInfo(HitSampleInfo.HIT_FINISH, sampleSetToBank(additionSampleSet), suffix, sampleInfo.volume));
+      samples.push(new HitSampleInfo(HitSampleInfo.HIT_FINISH, sampleSetToBank(additionSampleSet), suffix, samplePoint.volume));
 
     if (this.additions & SampleAdditions.Clap)
-      samples.push(new HitSampleInfo(HitSampleInfo.HIT_CLAP, sampleSetToBank(additionSampleSet), suffix, sampleInfo.volume));
+      samples.push(new HitSampleInfo(HitSampleInfo.HIT_CLAP, sampleSetToBank(additionSampleSet), suffix, samplePoint.volume));
 
     return samples;
   }

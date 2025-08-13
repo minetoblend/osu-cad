@@ -1,5 +1,5 @@
 import type { DocumentRuntime } from "./DocumentRuntime.js";
-import type { IDDSSummary, IDocumentSummary } from "./summary.js";
+import type { IDDSSummary, IDocumentSummary } from "@osucad/multiplayer-protocol";
 import { Encoder } from "../serialization/types.js";
 import type { DDS } from "../dds/index.js";
 import { nn } from "../utils/nn.js";

@@ -1,4 +1,5 @@
-import type { DDS, DDSAttributes, DDSFactory, DDSFactoryOrConstructor } from "../dds/index.js";
+import type { DDSAttributes } from "@osucad/multiplayer-protocol";
+import type { DDS, DDSFactory, DDSFactoryOrConstructor } from "../dds/index.js";
 import { toDDSFactory } from "../dds/index.js";
 
 export class DDSFactoryRegistry

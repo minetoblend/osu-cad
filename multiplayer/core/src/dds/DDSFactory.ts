@@ -1,5 +1,5 @@
 import type { DDS } from "./DDS.js";
-import type { DDSAttributes } from "./DDSAttributes.js";
+import type { DDSAttributes } from "@osucad/multiplayer-protocol";
 
 export interface DDSFactory<out T extends DDS>
 {

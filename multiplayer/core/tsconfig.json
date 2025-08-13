@@ -4,6 +4,9 @@
   "include": [],
   "references": [
     {
+      "path": "../protocol"
+    },
+    {
       "path": "./tsconfig.lib.json"
     }
   ]

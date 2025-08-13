@@ -1,4 +1,4 @@
-import type { BeatmapDifficultyInfo, HitSoundInfo, IBeatmapTiming } from "@osucad/core";
+import type { BeatmapDifficultyInfo, ControlPointInfo, HitSoundInfo } from "@osucad/core";
 import { bindableBacked, HitSampleInfo, HitWindows, safeAssign, SampleAdditions, SampleSet, sampleSetToBank } from "@osucad/core";
 import { Bindable, BindableNumber, Vec2 } from "@osucad/framework";
 import type { OsuHitObjectOptions } from "./OsuHitObject";
@@ -10,7 +10,8 @@ import { SliderTailCircle } from "./SliderTailCircle";
 import { SliderRepeat } from "./SliderRepeat";
 import { SliderEventGenerator, SliderEventType } from "./SliderEventGenerator";
 import { SliderTick } from "./SliderTick";
-import { nested, type, type DDSAttributes } from "@osucad/multiplayer-core";
+import { type DDSAttributes, nested, type } from "@osucad/multiplayer-core";
+import { SliderVelocityPoint } from "../beatmaps";
 
 export interface SliderOptions extends OsuHitObjectOptions
 {
@@ -119,15 +120,17 @@ export class Slider extends OsuHitObject
     this.nodeHitSoundsBindable.value = value;
   }
 
-  protected override applyDefaultsToSelf(difficulty: BeatmapDifficultyInfo, timing: IBeatmapTiming)
+  protected override applyDefaultsToSelf(difficulty: BeatmapDifficultyInfo, controlPoints: ControlPointInfo)
   {
-    super.applyDefaultsToSelf(difficulty, timing);
+    super.applyDefaultsToSelf(difficulty, controlPoints);
 
-    const timingPoint = timing.getTimingInfoAt(this.startTime + 1);
+    const timingPoint = controlPoints.timingPointAt(this.startTime + 1);
 
     const baseVelocity = Slider.BASE_SCORING_DISTANCE * difficulty.sliderMultiplier / timingPoint.beatLength;
 
-    const sliderVelocity = timing.getSliderVelocityAt(this.startTime + 1);
+    const velocityPoint = controlPoints.controlPointAt(SliderVelocityPoint, this.startTime + 1);
+
+    const sliderVelocity = velocityPoint?.velocity ?? 1;
 
     this.velocity = baseVelocity * sliderVelocity;
 
@@ -216,22 +219,22 @@ export class Slider extends OsuHitObject
     return HitWindows.Empty;
   }
 
-  protected override createSamples(timing: IBeatmapTiming)
+  protected override createSamples(controlPoints: ControlPointInfo)
   {
-    const sampleInfo = timing.getSampleInfoAt(this.startTime);
+    const samplePoint = controlPoints.samplePointAt(this.startTime);
 
-    const sampleSet = this.hitSound.sampleSet !== SampleSet.None ? this.hitSound.sampleSet : sampleInfo.sampleSet;
+    const sampleSet = this.hitSound.sampleSet !== SampleSet.None ? this.hitSound.sampleSet : samplePoint.sampleSet;
     const additionSampleSet = this.hitSound.additionSampleSet !== SampleSet.None ? this.hitSound.sampleSet : sampleSet;
 
-    const suffix = sampleInfo.sampleIndex > 0 ? sampleInfo.sampleIndex.toString() : undefined;
+    const suffix = samplePoint.sampleIndex > 0 ? samplePoint.sampleIndex.toString() : undefined;
 
     const samples: HitSampleInfo[] = [
-      new HitSampleInfo("sliderslide", sampleSetToBank(sampleSet), suffix, sampleInfo.volume),
+      new HitSampleInfo("sliderslide", sampleSetToBank(sampleSet), suffix, samplePoint.volume),
     ];
 
     if (this.hitSound.additions && SampleAdditions.Whistle)
     {
-      samples.push(new HitSampleInfo("sliderwhistle", sampleSetToBank(additionSampleSet), suffix, sampleInfo.volume));
+      samples.push(new HitSampleInfo("sliderwhistle", sampleSetToBank(additionSampleSet), suffix, samplePoint.volume));
     }
 
     return samples;

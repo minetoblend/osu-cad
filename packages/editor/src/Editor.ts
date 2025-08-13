@@ -1,16 +1,15 @@
-import { PlayfieldClock } from "@osucad/core";
-import type { Beatmap } from "@osucad/core";
-import { nn, Ruleset } from "@osucad/core";
-import type { ReadonlyDependencyContainer } from "@osucad/framework";
-import { Anchor, Axes, Container, provide, Screen } from "@osucad/framework";
-import { ComposeScreen } from "./compose/ComposeScreen";
-import { EditorClock } from "./EditorClock";
+import type { ScrollEvent } from "@osucad/framework";
+import { asyncDependencyLoader, FramedClock, lerp, ManualClock, provide, resolved, Screen } from "@osucad/framework";
+import { EditorRuntime } from "./runtime";
 import { EditorBeatmap } from "./EditorBeatmap";
-import { StatusBar } from "./StatusBar";
+import type { Skin } from "@osucad/core";
+import { BeatmapDifficultyInfo, ISkinSource, LegacyBeatmapTiming, LegacyTimingPoint, PlayfieldClock, Ruleset, SkinProvidingContainer } from "@osucad/core";
+import { EditorRuleset } from "./EditorRuleset";
+import { EditorClock } from "./EditorClock";
 
 export interface EditorOptions
 {
-  readonly beatmap: Beatmap;
+  readonly runtime: EditorRuntime
 }
 
 export class Editor extends Screen
@@ -19,49 +18,76 @@ export class Editor extends Screen
   {
     super();
 
-    const { beatmap } = options;
-
-    this.ruleset = nn(beatmap.beatmapInfo.ruleset, "Beatmap has no known ruleset");
-
-    this.editorClock = new EditorClock(true);
-
-    this.editorBeatmap = new EditorBeatmap(beatmap);
+    this.runtime = options.runtime;
   }
 
+  @provide(EditorRuntime)
+  readonly runtime: EditorRuntime;
+
   @provide(EditorBeatmap)
-  readonly editorBeatmap: EditorBeatmap;
+  get editorBeatmap()
+  {
+    return this.runtime.root;
+  }
 
   @provide(Ruleset)
-  readonly ruleset: Ruleset;
-
-  @provide(EditorClock)
-  @provide(PlayfieldClock)
-  editorClock: EditorClock;
-
-  @provide()
-  readonly #statusBar = new StatusBar();
-
-  protected override load(dependencies: ReadonlyDependencyContainer)
+  get ruleset()
   {
-    super.load(dependencies);
+    return this.runtime.ruleset;
+  }
 
-    this.addRangeInternal([
-      new Container({
-        relativeSizeAxes: Axes.Both,
-        padding: { bottom: StatusBar.HEIGHT },
-        child: new ComposeScreen(),
-      }),
-      this.#statusBar.with({
-        anchor: Anchor.BottomLeft,
-        origin: Anchor.BottomLeft,
-      }),
-    ]);
+  @provide(EditorRuleset)
+  get editorRuleset()
+  {
+    return this.runtime.editorRuleset;
+  }
+
+  @resolved(ISkinSource)
+  accessor #skinSource!: ISkinSource
+
+  @provide(PlayfieldClock)
+  readonly editorClock = new EditorClock(false);
+
+
+  @asyncDependencyLoader()
+  async #load()
+  {
+    // TODO: fix whatever the fuck this is
+    const skin = (this.#skinSource as any).skin as Skin;
+
+    const skinTransformer = await this.ruleset.createSkinTransformer?.(skin);
+
+    const drawableRuleset = await this.ruleset.createDrawableRuleset({ cursor: false, useInput: false });
+
+    this.addInternal(new SkinProvidingContainer({
+      skin: skinTransformer ?? skin,
+      children: [
+        drawableRuleset,
+      ],
+    }));
+
+    for (const hitObject of this.editorBeatmap.hitObjects)
+    {
+      hitObject.applyDefaults(this.editorBeatmap.difficulty, this.editorBeatmap.controlPointInfo);
+      drawableRuleset.addHitObject(hitObject);
+    }
   }
 
   override update()
   {
     super.update();
 
+    this.editorClock.seek(lerp(this.targetTime, this.editorClock.currentTime, Math.exp(-0.03 * this.time.elapsed)));
+
     this.editorClock.processFrame();
+  }
+
+  targetTime = 0;
+
+  override onScroll(e: ScrollEvent): boolean
+  {
+    this.targetTime -= e.scrollDelta.y * 100;
+
+    return true;
   }
 }

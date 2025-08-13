@@ -121,7 +121,7 @@ export class Container<T extends Drawable = Drawable> extends CompositeDrawable
   {
     if (this.children.length !== 1)
     {
-      throw new Error("Cannot get child when there are multiple children");
+      throw new Error(`Cannot get child when there are ${this.children.length === 0 ? "no" : "multiple"} children`);
     }
 
     return this.children[0];

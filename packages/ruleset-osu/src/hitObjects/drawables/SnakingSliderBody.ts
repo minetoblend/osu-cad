@@ -72,8 +72,6 @@ export class SnakingSliderBody extends SliderBody
 
   refresh()
   {
-    console.log("refresh");
-
     if (!this.drawableSlider.hitObject)
       return;
 

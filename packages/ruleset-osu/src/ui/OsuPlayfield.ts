@@ -1,4 +1,4 @@
-import type { DrawableHitObject, GameplayCursorContainer, HitObject, HitObjectLifetimeEntry } from "@osucad/core";
+import type { DrawableHitObject, GameplayCursorContainer, HitObject, HitObjectLifetimeEntry, PlayfieldOptions } from "@osucad/core";
 import { Playfield } from "@osucad/core";
 import { Axes, type Drawable, LifetimeManagementContainer, ProxyDrawable, type ReadonlyDependencyContainer } from "@osucad/framework";
 import { DrawableHitCircle } from "../hitObjects/drawables/DrawableHitCircle";
@@ -22,9 +22,9 @@ import { OsuCursorContainer } from "./OsuCursorContainer";
 
 export class OsuPlayfield extends Playfield
 {
-  constructor()
+  constructor(options: PlayfieldOptions = {})
   {
-    super();
+    super(options);
   }
 
   private approachCircles!: ProxyContainer;

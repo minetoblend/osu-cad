@@ -1,9 +1,10 @@
-import type { DDSAttributes } from "./DDSAttributes.js";
+
 import type { DDSChannel } from "./DDSChannel.js";
-import type { Delta, IEncodedDelta } from "./Delta.js";
+import type { Delta } from "./Delta.js";
 import type { IDecoder, IEncoder } from "../serialization/types.js";
 import { Encoder } from "../serialization/types.js";
 import { EventEmitter } from "eventemitter3";
+import type { DDSAttributes } from "@osucad/multiplayer-protocol";
 
 const defaultEncoder = new Encoder();
 

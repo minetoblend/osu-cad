@@ -4,7 +4,7 @@ import type { IDecoder } from "../serialization/types.js";
 import { Encoder } from "../serialization/types.js";
 import type { DDSFactoryOrConstructor } from "../dds/index.js";
 import { DDS } from "../dds/index.js";
-import type { IDDSSummary, IDocumentSummary } from "./summary.js";
+import type { IDDSSummary, IDocumentSummary } from "@osucad/multiplayer-protocol";
 import { summarizeDocument } from "./summarizeDocument.js";
 import type { DocumentRuntime } from "./DocumentRuntime.js";
 import { DDSChannel } from "../dds/DDSChannel.js";

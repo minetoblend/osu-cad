@@ -30,7 +30,10 @@
     "@osucad/core": "1.1.2",
     "@osucad/framework": "1.1.2",
     "@osucad/multiplayer-core": "workspace:^",
-    "pixi.js": "^8.9.2"
+    "@osucad/multiplayer-protocol": "workspace:^",
+    "eventemitter3": "^5.0.1",
+    "pixi.js": "^8.9.2",
+    "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
     "vitest": "^3.0.0"

@@ -1,7 +1,8 @@
 import type { DDSAttributes, DDSRef, IDDSSummary, IDecoder, IEncodedDelta, IEncoder } from "@osucad/multiplayer-core";
 import { DDS, Delta, nn } from "@osucad/multiplayer-core";
 import { HitObject } from "@osucad/core";
-import { Action } from "@osucad/framework";
+import { Action, Lazy } from "@osucad/framework";
+import { createHitObjectCollectionProxy } from "./HitObjectCollectionProxy";
 
 enum OpType
 {
@@ -59,7 +60,12 @@ class RemoveHitObjectDelta extends Delta<IRemoveHitObjectDelta>
 }
 
 
-export class HitObjectCollection extends DDS<IHitObjectCollectionDelta>
+export interface HitObjectCollection
+{
+  readonly [n: number]: HitObject;
+}
+
+export class HitObjectCollection extends DDS<IHitObjectCollectionDelta> implements Iterable<HitObject>
 {
   readonly added = new Action<HitObject>();
   readonly removed = new Action<HitObject>();
@@ -218,4 +224,47 @@ export class HitObjectCollection extends DDS<IHitObjectCollectionDelta>
       this.#add(hitObject);
     }
   }
+
+  forEach(callbackfn: (value: HitObject, index: number, array: readonly HitObject[]) => void, thisArg?: any)
+  {
+    this.hitObjects.forEach(callbackfn, thisArg);
+  }
+
+  map<U>(callbackfn: (value: HitObject, index: number, array: readonly HitObject[]) => U, thisArg?: any): U[]
+  {
+    return this.hitObjects.map(callbackfn, thisArg);
+  }
+
+  filter<S extends HitObject>(predicate: (value: HitObject, index: number, array: readonly HitObject[]) => value is S, thisArg?: any): S[];
+  filter(predicate: (value: HitObject, index: number, array: readonly HitObject[]) => unknown, thisArg?: any): HitObject[];
+  filter(predicate: (value: HitObject, index: number, array: readonly HitObject[]) => boolean, thisArg?: any)
+  {
+    return this.hitObjects.filter(predicate, thisArg);
+  }
+
+  ofType<T extends Constructor<HitObject>[]>(...types: T): { [K in keyof T]: InstanceType<T[K]> }[number][]
+  {
+    return this.hitObjects.filter(hitObject =>
+    {
+      for (const type of types)
+        if (hitObject instanceof type)
+          return true;
+
+      return false;
+    }) as any;
+  }
+
+  public [Symbol.iterator](): ArrayIterator<HitObject>
+  {
+    return this.hitObjects[Symbol.iterator]();
+  }
+
+  #proxy = new Lazy(() => createHitObjectCollectionProxy(this));
+
+  get proxy()
+  {
+    return this.#proxy.value;
+  }
 }
+
+type Constructor<T> = (new (...args: any[]) => T);

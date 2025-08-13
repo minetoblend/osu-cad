@@ -29,6 +29,9 @@
     },
     {
       "path": "./apps/server-multiplayer"
+    },
+    {
+      "path": "./multiplayer/protocol"
     }
   ],
   "ts-node": {

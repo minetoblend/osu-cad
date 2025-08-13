@@ -1,7 +1,6 @@
 import type  { DDS } from "../dds/index.js";
 import { nn } from "../utils/nn.js";
 import { EventEmitter } from "eventemitter3";
-import type { IDDSSummary } from "../runtime/index.js";
 
 export interface DDSRef
 {

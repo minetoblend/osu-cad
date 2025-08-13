@@ -1,10 +1,10 @@
-import type { HitSoundInfo, HitWindows, Judgement } from "@osucad/core";
-import { BeatmapDifficultyInfo, bindableBacked, customType, HitObject, type IBeatmapTiming, safeAssign } from "@osucad/core";
+import type { ControlPointInfo, HitSoundInfo, HitWindows, Judgement } from "@osucad/core";
+import { BeatmapDifficultyInfo, bindableBacked, customType, HitObject, safeAssign } from "@osucad/core";
 import type { IVec2 } from "@osucad/framework";
 import { Bindable, BindableBoolean, BindableNumber, Vec2 } from "@osucad/framework";
 import { OsuHitWindows } from "../scoring/OsuHitWindows";
 import { OsuJudgement } from "../judgements/OsuJudgement";
-import { type, type DDSAttributes } from "@osucad/multiplayer-core";
+import { type DDSAttributes, type } from "@osucad/multiplayer-core";
 
 
 export interface OsuHitObjectOptions
@@ -136,9 +136,9 @@ export abstract class OsuHitObject extends HitObject
     return OsuHitObject.OBJECT_RADIUS * this.scale;
   }
 
-  override applyDefaults(difficulty: BeatmapDifficultyInfo, timing: IBeatmapTiming)
+  override applyDefaults(difficulty: BeatmapDifficultyInfo, controlPoints: ControlPointInfo)
   {
-    super.applyDefaults(difficulty, timing);
+    super.applyDefaults(difficulty, controlPoints);
 
     for (const h of this.nestedHitObjects)
     {
@@ -151,9 +151,9 @@ export abstract class OsuHitObject extends HitObject
     }
   }
 
-  protected override applyDefaultsToSelf(difficulty: BeatmapDifficultyInfo, timing: IBeatmapTiming)
+  protected override applyDefaultsToSelf(difficulty: BeatmapDifficultyInfo, controlPoints: ControlPointInfo)
   {
-    super.applyDefaultsToSelf(difficulty, timing);
+    super.applyDefaultsToSelf(difficulty, controlPoints);
 
     this.timePreempt = BeatmapDifficultyInfo.difficultyRange(difficulty.approachRate, OsuHitObject.PREEMPT_MAX, OsuHitObject.PREEMPT_MID, OsuHitObject.PREEMPT_MIN);
 

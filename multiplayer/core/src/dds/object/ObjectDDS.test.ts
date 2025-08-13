@@ -1,12 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { ObjectDDS } from "./ObjectDDS.js";
+import { ObjectDDS, objectDDSMetadata } from "./ObjectDDS.js";
 import { nested, type } from "./decorator.js";
-import type { DDSAttributes } from "../DDSAttributes.js";
+import type { DDSAttributes } from "@osucad/multiplayer-protocol";
 import { DocumentRuntime } from "../../runtime/index.js";
 import { Decoder, Encoder } from "../../serialization/types.js";
 import { nn } from "../../utils/nn.js";
 import { ObjectDelta } from "./ObjectDelta.js";
-import { Delta } from "../Delta.js";
 
 describe("ObjectDDS", () =>
 {
@@ -165,13 +164,13 @@ describe("ObjectDDS", () =>
 
     counter.value = 10;
 
-    const delta = ObjectDelta.from(0, counter.metadata.getPropertyByName("value")!, 20).encode();
+    const delta = ObjectDelta.from(0, counter[objectDDSMetadata].getPropertyByName("value")!, 20).encode();
 
     runtime.process(nn(counter.id), delta, false);
 
     expect(counter.value).toBe(10);
 
-    const localDelta = ObjectDelta.from(1, counter.metadata.getPropertyByName("value")!, 10).encode();
+    const localDelta = ObjectDelta.from(1, counter[objectDDSMetadata].getPropertyByName("value")!, 10).encode();
 
     runtime.process(nn(counter.id), localDelta, true);
 

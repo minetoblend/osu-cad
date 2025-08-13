@@ -1,4 +1,4 @@
-import type { HitSampleInfo, IBeatmapTiming, Judgement } from "@osucad/core";
+import type { ControlPointInfo, HitSampleInfo, Judgement } from "@osucad/core";
 import { BeatmapDifficultyInfo, bindableBacked, HitWindows, safeAssign } from "@osucad/core";
 import { BindableNumber, Vec2 } from "@osucad/framework";
 import { type, type DDSAttributes } from "@osucad/multiplayer-core";
@@ -94,9 +94,9 @@ export class Spinner extends OsuHitObject
     return zero_vector;
   }
 
-  protected override applyDefaultsToSelf(difficulty: BeatmapDifficultyInfo, timing: IBeatmapTiming)
+  protected override applyDefaultsToSelf(difficulty: BeatmapDifficultyInfo, controlPoints: ControlPointInfo)
   {
-    super.applyDefaultsToSelf(difficulty, timing);
+    super.applyDefaultsToSelf(difficulty, controlPoints);
 
     const minRps = BeatmapDifficultyInfo.difficultyRange(difficulty.overallDifficulty, clear_rpm_range.min, clear_rpm_range.mid, clear_rpm_range.max) / 60;
 
