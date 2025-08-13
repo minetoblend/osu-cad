@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "../../packages/ruleset-osu"
+    },
+    {
+      "path": "../../packages/core"
+    },
+    {
+      "path": "../../packages/editor"
+    },
+    {
+      "path": "../../multiplayer/core"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    }
+  ]
+}
