@@ -34,6 +34,7 @@ export class SliderPath extends ObjectDDS
 
   invalidatePath()
   {
+    this.#calculatedPath.invalidate();
     this.version.value++;
   }
 
