@@ -7,7 +7,7 @@ import { EventEmitter } from "eventemitter3";
 
 const defaultEncoder = new Encoder();
 
-export abstract class DDS extends EventEmitter
+export abstract class DDS<TDelta = unknown> extends EventEmitter
 {
   protected constructor(readonly attributes: DDSAttributes)
   {
@@ -46,7 +46,7 @@ export abstract class DDS extends EventEmitter
     this.#channel = channel;
 
     channel.setHandler({
-      process: (delta, local) => this.process(delta, local),
+      process: (delta, local) => this.process(delta as TDelta, local),
       replay: delta => this.replay(delta),
       load: (summary, version, decoder) => this.load(summary, version, decoder),
     });
@@ -58,7 +58,7 @@ export abstract class DDS extends EventEmitter
       this.#channel = null;
   }
 
-  protected abstract process(delta: Delta, local: boolean): void;
+  protected abstract process(delta: TDelta, local: boolean): void;
 
   protected abstract replay(delta: Delta): void;
 
@@ -66,9 +66,7 @@ export abstract class DDS extends EventEmitter
 
   abstract load(summary: unknown, version: number, decoder: IDecoder): void;
 
-  abstract decodeDelta(content: IEncodedDelta): Delta;
-
-  protected submitDelta(delta: Delta, undo: Delta | null = null)
+  protected submitDelta(delta: Delta<TDelta>, undo: Delta<TDelta> | null = null)
   {
     this.#channel?.submitDelta(delta, undo);
   }

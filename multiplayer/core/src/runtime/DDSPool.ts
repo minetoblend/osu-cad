@@ -11,7 +11,25 @@ import { DDSChannel } from "../dds/DDSChannel.js";
 import { nn } from "../utils/nn.js";
 import { DDSFactoryRegistry } from "./DDSFactoryRegistry.js";
 
-export class DDSPool extends DDS
+export type ICreateObjectDelta = [id: string, summary: IDDSSummary];
+
+class CreateObjectDelta extends Delta<ICreateObjectDelta>
+{
+  constructor(readonly id: string, readonly summary: IDDSSummary)
+  {
+    super();
+  }
+
+  public override encode(): ICreateObjectDelta
+  {
+    const { id, summary } = this;
+
+    return [id, summary];
+  }
+}
+
+
+export class DDSPool extends DDS<ICreateObjectDelta>
 {
 
   constructor(runtime: DocumentRuntime, types: DDSFactoryOrConstructor<DDS>[])
@@ -43,22 +61,20 @@ export class DDSPool extends DDS
     return this.#channels.size - 1;
   }
 
-  protected override process(delta: Delta, local: boolean): void
+  protected override process([id, summary]: ICreateObjectDelta, local: boolean): void
   {
-    if (delta instanceof CreateObjectDelta)
-    {
-      let object = this.getObject(delta.id);
-      if (object)
-        return;
+    let object = this.getObject(id);
+    if (object)
+      return;
 
-      const factory = nn(this.typeRegistry.get(delta.summary.attributes), `Unsupported dds type "${delta.summary.attributes.type}"`);
+    const factory = nn(this.typeRegistry.get(summary.attributes), `Unsupported dds type "${summary.attributes.type}"`);
 
-      object = factory.create();
+    object = factory.create();
 
-      this.attachDDS(object, delta.id);
+    this.attachDDS(object, id);
 
-      nn(this.getChannel(delta.id)).load(delta.summary.content, delta.summary.attributes.version, this.decoder);
-    }
+    nn(this.getChannel(id)).load(summary.content, summary.attributes.version, this.decoder);
+
   }
 
   protected override replay(delta: Delta): void
@@ -165,16 +181,6 @@ export class DDSPool extends DDS
     return this.#channels.get(id);
   }
 
-  public override decodeDelta(delta: IEncodedDelta): Delta
-  {
-    if (delta.type !== "create")
-      throw new Error(`Unknown delta type "${delta.type}"`);
-
-    const content = delta.content as { id: string, summary: IDDSSummary };
-
-    return new CreateObjectDelta(content.id, content.summary);
-  }
-
   collectGarbage()
   {
     const trackedIds = new Set<string>([nn(this.id), nn(this.root.id)]);
@@ -212,21 +218,5 @@ export class DDSPool extends DDS
       this.detachDDS(channel.target);
 
     (this.runtime as unknown) = null;
-  }
-}
-
-
-class CreateObjectDelta extends Delta
-{
-  constructor(readonly id: string, readonly summary: IDDSSummary)
-  {
-    super("create");
-  }
-
-  public override encode(): unknown
-  {
-    const { id, summary } = this;
-
-    return { id, summary };
   }
 }

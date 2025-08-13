@@ -4,19 +4,7 @@ export interface IEncodedDelta
   content: unknown
 }
 
-export abstract class Delta
+export abstract class Delta<out T = unknown>
 {
-  protected constructor(readonly type: string)
-  {
-  }
-
-  abstract encode(): unknown;
-
-  static encode(delta: Delta): IEncodedDelta
-  {
-    return {
-      type: delta.type,
-      content: delta.encode(),
-    };
-  }
+  abstract encode(): T;
 }

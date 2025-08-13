@@ -1,28 +1,25 @@
 import { Delta } from "../Delta.js";
 import type { ObjectDDSPropertyMetadata } from "./metadata.js";
 
-export class ObjectDelta extends Delta
+export type IObjectDelta = [number, Record<string, unknown>];
+
+export class ObjectDelta extends Delta<IObjectDelta>
 {
   static from(version: number, property: ObjectDDSPropertyMetadata, value: unknown)
   {
-    return new ObjectDelta(version, [{ property, value }]);
+    return new ObjectDelta(version, { [property.name]: value });
   }
 
-  constructor(readonly version: number, readonly entries: ObjectDeltaEntry[])
+  constructor(readonly version: number, readonly values: Record<string, unknown>)
   {
-    super("set");
+    super();
   }
 
-  public override encode(): unknown
+  public override encode(): IObjectDelta
   {
-    const content: Record<string, unknown> = {};
+    const { version, values } = this;
 
-    for (const entry of this.entries)
-    {
-      content[entry.property.name] = entry.value;
-    }
-
-    return { version: this.version, content };
+    return [version, values];
   }
 }
 

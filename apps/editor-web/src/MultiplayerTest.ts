@@ -88,7 +88,7 @@ export class MultiplayerTest extends Screen implements IResourcesProvider
 
     runtime.on("deltaSubmitted", (dds, delta) =>
     {
-      this.buffer.push({ targetId: dds.id!, content: Delta.encode(delta) });
+      this.buffer.push({ targetId: dds.id!, content: delta.encode() });
     });
 
     await runtime.load(summary);

@@ -2,13 +2,15 @@ import { DDS } from "../DDS.js";
 import { ObjectDDSMetadata } from "./ObjectDDSMetadata.js";
 import type { DDSAttributes } from "../DDSAttributes.js";
 import type { Delta, IEncodedDelta } from "../Delta.js";
-import type { ObjectDeltaEntry } from "./ObjectDelta.js";
+import type { IObjectDelta, ObjectDeltaEntry } from "./ObjectDelta.js";
 import { ObjectDelta } from "./ObjectDelta.js";
 import type { ObjectDDSPropertyMetadata } from "./metadata.js";
 import type { IDecoder, IEncoder } from "../../serialization/types.js";
 import { nn } from "../../utils/nn.js";
 
-export class ObjectDDS extends DDS
+
+
+export class ObjectDDS extends DDS<IObjectDelta>
 {
   readonly metadata: ObjectDDSMetadata;
 
@@ -19,32 +21,33 @@ export class ObjectDDS extends DDS
     this.metadata = ObjectDDSMetadata.for(this);
   }
 
-  protected override process(delta: Delta, local: boolean): void
+  protected override process([version, values]: IObjectDelta, local: boolean): void
   {
-    if (!(delta instanceof ObjectDelta))
-      return;
-
     if (!local)
     {
-      for (const entry of delta.entries)
+      for (const key in values)
       {
-        if (this.#pendingProperties.has(entry.property.name))
+        if (this.#pendingProperties.has(key))
           continue;
 
-        const value = entry.property.serializer.deserialize(entry.value, this.decoder);
+        const property = nn(this.metadata.getPropertyByName(key));
 
-        this.#setValue(entry.property, value);
+        const value = property.serializer.deserialize(values[key], this.decoder);
+
+        this.#setValue(property, value);
       }
 
       return;
     }
 
-    for (const entry of delta.entries)
+    for (const key in values)
     {
-      const pendingVersion = this.#pendingProperties.get(entry.property.name);
+      const property = nn(this.metadata.getPropertyByName(key));
 
-      if (pendingVersion !== undefined && delta.version >= pendingVersion)
-        this.#pendingProperties.delete(entry.property.name);
+      const pendingVersion = this.#pendingProperties.get(property.name);
+
+      if (pendingVersion !== undefined && version >= pendingVersion)
+        this.#pendingProperties.delete(property.name);
     }
   }
 
@@ -53,11 +56,13 @@ export class ObjectDDS extends DDS
     if (!(delta instanceof ObjectDelta))
       return;
 
-    for (const entry of delta.entries)
+    for (const key in delta.values)
     {
-      const value = entry.property.serializer.deserialize(entry.value, this.decoder);
+      const property = nn(this.metadata.getPropertyByName(key));
 
-      this.setValue(entry.property, value);
+      const value = property.serializer.deserialize(delta.values[key], this.decoder);
+
+      this.setValue(property, value);
     }
   }
 
@@ -66,12 +71,7 @@ export class ObjectDDS extends DDS
 
   setValue(property: ObjectDDSPropertyMetadata, newValue: unknown)
   {
-    let oldValue = property.get(this);
-
-    if (oldValue === newValue)
-      return;
-
-    this.#setValue(property, newValue);
+    let oldValue = this.#setValue(property, newValue);
 
     if (!this.isAttached)
       return;
@@ -89,10 +89,14 @@ export class ObjectDDS extends DDS
     this.submitDelta(delta, undo);
   }
 
-  #setValue(property: ObjectDDSPropertyMetadata, value: unknown)
+  #setValue(property: ObjectDDSPropertyMetadata, value: unknown): unknown
   {
-    // TODO: emit event
+    const oldValue = property.get(this);
+
     property.set(this, value);
+
+    this.emit(`update:${property.name}`, value, oldValue);
+    return oldValue;
   }
 
   override createSummary(encoder: IEncoder)
@@ -130,23 +134,5 @@ export class ObjectDDS extends DDS
 
       set(this, serializer.deserialize(value, decoder));
     }
-  }
-
-  public override decodeDelta(content: IEncodedDelta): Delta
-  {
-    if (content.type !== "set")
-      throw new Error(`Unknown delta type "${content.type}"`);
-
-    const delta = content.content as { version: number, content: Record<string, unknown> };
-    const entries: ObjectDeltaEntry[] = [];
-
-    for (const key in delta.content)
-    {
-      const property = nn(this.metadata.getPropertyByName(key), `Unknown property "${key}" in delta`);
-
-      entries.push({ property, value: delta.content[key] });
-    }
-
-    return new ObjectDelta(delta.version, entries);
   }
 }

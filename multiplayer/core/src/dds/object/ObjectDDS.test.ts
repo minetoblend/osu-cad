@@ -165,13 +165,13 @@ describe("ObjectDDS", () =>
 
     counter.value = 10;
 
-    const delta = Delta.encode(ObjectDelta.from(0, counter.metadata.getPropertyByName("value")!, 20));
+    const delta = ObjectDelta.from(0, counter.metadata.getPropertyByName("value")!, 20).encode();
 
     runtime.process(nn(counter.id), delta, false);
 
     expect(counter.value).toBe(10);
 
-    const localDelta = Delta.encode(ObjectDelta.from(1, counter.metadata.getPropertyByName("value")!, 10));
+    const localDelta = ObjectDelta.from(1, counter.metadata.getPropertyByName("value")!, 10).encode();
 
     runtime.process(nn(counter.id), localDelta, true);
 

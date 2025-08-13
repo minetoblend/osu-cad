@@ -89,13 +89,13 @@ export class DocumentRuntime<T extends DDS = DDS> extends EventEmitter<DocumentR
     this.#objectPool.getChannel(targetId)?.replay(delta);
   }
 
-  process(targetId: string, delta: IEncodedDelta, local: boolean)
+  process(targetId: string, delta: unknown, local: boolean)
   {
     const channel = this.#objectPool.getChannel(targetId);
     if (!channel)
       return false;
 
-    channel.process(channel.target.decodeDelta(delta), local);
+    channel.process(delta, local);
 
     return true;
   }

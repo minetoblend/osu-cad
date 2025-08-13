@@ -96,7 +96,7 @@ describe("DocumentRuntime", () =>
 
     runtime1.on("deltaSubmitted", (dds, delta) =>
     {
-      runtime2.process(nn(dds.id), Delta.encode(delta), false);
+      runtime2.process(nn(dds.id), delta.encode(), false);
     });
 
     foo1.count = 10;

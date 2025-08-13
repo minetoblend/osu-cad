@@ -3,7 +3,63 @@ import { DDS, Delta, nn } from "@osucad/multiplayer-core";
 import { HitObject } from "@osucad/core";
 import { Action } from "@osucad/framework";
 
-export class HitObjectCollection extends DDS
+enum OpType
+{
+  Add = 0,
+  Remove = 1,
+}
+
+export type IAddHitObjectDelta = [OpType.Add, DDSRef];
+export type IRemoveHitObjectDelta = [OpType.Remove, DDSRef];
+export type IHitObjectCollectionDelta = IAddHitObjectDelta | IRemoveHitObjectDelta;
+
+class AddHitObjectDelta extends Delta<IAddHitObjectDelta>
+{
+  static create(hitObject: HitObject, encoder: IEncoder)
+  {
+    const ref = encoder.encodeDDS(hitObject);
+
+    const summary: IDDSSummary = {
+      attributes: hitObject.attributes,
+      content: hitObject.createSummary(encoder),
+    };
+
+    return new AddHitObjectDelta(ref, summary);
+  }
+
+  constructor(readonly ref: DDSRef, readonly summary: IDDSSummary)
+  {
+    super();
+  }
+
+  encode(): IAddHitObjectDelta
+  {
+    return [OpType.Add, this.ref];
+  }
+}
+
+class RemoveHitObjectDelta extends Delta<IRemoveHitObjectDelta>
+{
+  static create(hitObject: HitObject, encoder: IEncoder)
+  {
+    const ref = encoder.encodeDDS(hitObject);
+
+    return new RemoveHitObjectDelta(ref);
+  }
+
+  constructor(readonly ref: DDSRef)
+  {
+    super();
+  }
+
+  encode(): IRemoveHitObjectDelta
+  {
+    return [OpType.Remove, this.ref];
+  }
+}
+
+
+export class HitObjectCollection extends DDS<IHitObjectCollectionDelta>
 {
   readonly added = new Action<HitObject>();
   readonly removed = new Action<HitObject>();
@@ -92,22 +148,22 @@ export class HitObjectCollection extends DDS
     return true;
   }
 
-  protected override process(delta: Delta, local: boolean): void
+  protected override process([opType, ref]: IHitObjectCollectionDelta, local: boolean): void
   {
     if (local)
       return;
 
-    if (delta instanceof AddHitObjectDelta)
+    if (opType === OpType.Add)
     {
-      const hitObject = nn(this.decoder.decodeDDS(delta.ref));
+      const hitObject = nn(this.decoder.decodeDDS(ref));
       if (!(hitObject instanceof HitObject))
         throw new Error("Not a HitObject");
 
       this.#add(hitObject);
     }
-    else if (delta instanceof RemoveHitObjectDelta)
+    else if (opType === OpType.Remove)
     {
-      const hitObject = this.#idMap.get(delta.ref.$ref);
+      const hitObject = this.#idMap.get(ref.$ref);
       if (hitObject)
         this.#remove(hitObject);
     }
@@ -161,69 +217,5 @@ export class HitObjectCollection extends DDS
 
       this.#add(hitObject);
     }
-  }
-
-  override decodeDelta(delta: IEncodedDelta): Delta
-  {
-    switch (delta.type)
-    {
-    case "add": {
-      const ref = delta.content as DDSRef;
-
-      return new AddHitObjectDelta(ref, null);
-    }
-    case "remove": {
-      const { ref } = delta.content as RemoveHitObjectDelta;
-
-      return new RemoveHitObjectDelta(ref);
-    }
-    default:
-      throw new Error(`Invalid delta type "${delta.type}"`);
-    }
-  }
-}
-
-class AddHitObjectDelta extends Delta
-{
-  static create(hitObject: HitObject, encoder: IEncoder)
-  {
-    const ref = encoder.encodeDDS(hitObject);
-
-    const summary: IDDSSummary = {
-      attributes: hitObject.attributes,
-      content: hitObject.createSummary(encoder),
-    };
-
-    return new AddHitObjectDelta(ref, summary);
-  }
-
-  constructor(readonly ref: DDSRef, readonly summary: IDDSSummary | null)
-  {
-    super("add");
-  }
-
-  encode()
-  {
-    return this.ref;
-  }
-}
-
-class RemoveHitObjectDelta extends Delta
-{
-  static create(hitObject: HitObject, encoder: IEncoder)
-  {
-    const ref = encoder.encodeDDS(hitObject);
-
-    return new RemoveHitObjectDelta(ref);
-  }
-
-  constructor(readonly ref: DDSRef)
-  {
-    super("remove");
-  }
-
-  encode()
-  {
-    return { ref: this.ref };
   }
 }

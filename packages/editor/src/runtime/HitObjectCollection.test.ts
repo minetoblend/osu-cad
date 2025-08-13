@@ -26,7 +26,7 @@ describe("HitObjectCollection", () =>
 
     runtime1.on("deltaSubmitted", (dds, delta) =>
     {
-      console.log(inspect({ target: dds.id, content: Delta.encode(delta) }, { depth: 4 }));
+      console.log(inspect({ target: dds.id, content: delta.encode() }, { depth: 4 }));
     });
 
     const hitObjects1 = runtime1.root;
