@@ -11,7 +11,7 @@ export abstract class EditorBeatmapProcessor extends Component
     super();
   }
 
-  protected abstract process(): void;
+  protected abstract process(beatmap: EditorBeatmap): void;
 
   @resolved(EditorBeatmap)
   protected accessor beatmap!: EditorBeatmap;
@@ -72,7 +72,7 @@ export abstract class EditorBeatmapProcessor extends Component
 
     if (!this.#valid)
     {
-      this.process();
+      this.process(this.beatmap);
       this.#valid = true;
     }
   }

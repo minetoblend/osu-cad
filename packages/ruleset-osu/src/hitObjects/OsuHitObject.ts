@@ -5,6 +5,7 @@ import { Bindable, BindableBoolean, BindableNumber, Vec2 } from "@osucad/framewo
 import { OsuHitWindows } from "../scoring/OsuHitWindows";
 import { OsuJudgement } from "../judgements/OsuJudgement";
 import { type DDSAttributes, type } from "@osucad/multiplayer-core";
+import type { Spinner } from "./Spinner";
 
 export interface OsuHitObjectOptions
 {
@@ -110,6 +111,10 @@ export abstract class OsuHitObject extends HitObject
     this.comboIndexBindable.value = value;
   }
 
+  comboIndexWithOffsets = 0;
+
+  lastInCombo = false;
+
   readonly indexInComboBindable = new Bindable(0);
 
   get indexInCombo()
@@ -120,6 +125,34 @@ export abstract class OsuHitObject extends HitObject
   set indexInCombo(value)
   {
     this.indexInComboBindable.value = value;
+  }
+
+  protected isSpinner(): this is Spinner
+  {
+    return false;
+  }
+
+  updateComboInformation(lastObj?: OsuHitObject)
+  {
+    let index = lastObj?.comboIndex ?? 0;
+    let indexWithOffsets = lastObj?.comboIndexWithOffsets ?? 0;
+    let inCurrentCombo = lastObj ? lastObj.indexInCombo + 1 : 0;
+
+    this.lastInCombo = false;
+
+    if (!this.isSpinner() && (this.newCombo || lastObj == null || lastObj.isSpinner()))
+    {
+      inCurrentCombo = 0;
+      index++;
+      indexWithOffsets += this.comboOffset + 1;
+
+      if (lastObj)
+        lastObj.lastInCombo = true;
+    }
+
+    this.comboIndex = index;
+    this.comboIndexWithOffsets = indexWithOffsets;
+    this.indexInCombo = inCurrentCombo;
   }
 
   //#endregion

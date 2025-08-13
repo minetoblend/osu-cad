@@ -214,7 +214,7 @@ export class DrawableHitObject<out T extends HitObject = HitObject>
     this.startTimeBindable.bindTo(this.hitObject.startTimeBindable);
 
     this.samplesBindable.bindTo(this.hitObject.samplesBindable);
-    this.hitObject.defaultsApplied.addListener(this.#onDefaultsApplied);
+    this.hitObject.defaultsApplied.addListener(this.#onDefaultsApplied, this);
 
     this.onApplied();
     this.hitObjectApplied.emit(this);

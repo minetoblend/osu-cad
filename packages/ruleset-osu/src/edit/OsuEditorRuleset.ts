@@ -4,6 +4,9 @@ import { HitCircle } from "../hitObjects/HitCircle";
 import { Slider } from "../hitObjects/Slider";
 import { SliderPath } from "../hitObjects/SliderPath";
 import { Spinner } from "../hitObjects/Spinner";
+import type { Component } from "@osucad/framework";
+import { EditorStackingProcessor } from "./EditorStackingProcessor";
+import { EditorComboProcessor } from "./EditorComboProcessor";
 
 export class OsuEditorRuleset extends EditorRuleset
 {
@@ -21,7 +24,11 @@ export class OsuEditorRuleset extends EditorRuleset
     return import("./OsuHitObjectComposer").then(m => new m.OsuHitObjectComposer());
   }
 
-  override setupEditor(editor: Editor)
+  public override createBackgroundProcessors(): Component[]
   {
+    return [
+      new EditorComboProcessor(),
+      new EditorStackingProcessor(),
+    ];
   }
 }

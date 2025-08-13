@@ -1,3 +1,3 @@
-import "./TextureMixins";
+import "./textures";
 import "./reactivity/init";
 import "./renderers/init";

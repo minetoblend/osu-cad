@@ -140,10 +140,16 @@ export class HitObjectCollection
     this.#hitObjects.push(hitObject);
 
     hitObject.invalidated.addListener(this.#onInvalidated, this);
+    hitObject.startTimeBindable.valueChanged.addListener(this.#startTimeChanged, this);
 
     this.added.emit(hitObject);
 
     return true;
+  }
+
+  #startTimeChanged()
+  {
+    this.#hitObjects.sort((a, b) => a.startTime - b.startTime);
   }
 
   remove(hitObject: HitObject)
@@ -170,6 +176,7 @@ export class HitObjectCollection
     this.#hitObjects.splice(index, 1);
 
     hitObject.invalidated.removeListener(this.#onInvalidated, this);
+    hitObject.startTimeBindable.valueChanged.removeListener(this.#startTimeChanged, this);
 
     this.removed.emit(hitObject);
 
@@ -323,6 +330,11 @@ export class HitObjectCollection
   ): HitObject | undefined
   {
     return this.hitObjects.find(predicate, thisArg);
+  }
+
+  unsafeCast<T extends HitObject>(): readonly T[]
+  {
+    return this.hitObjects as readonly T[];
   }
 
   ofType<T extends Constructor<HitObject>[]>(

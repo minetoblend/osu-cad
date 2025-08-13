@@ -1,5 +1,6 @@
 import type { HitObject, HitObjectInivalidationType } from "@osucad/core";
 import { EditorBeatmapProcessor } from "./EditorBeatmapProcessor";
+import type { EditorBeatmap } from "./runtime";
 
 export class DefaultsApplier extends EditorBeatmapProcessor
 {
@@ -28,12 +29,11 @@ export class DefaultsApplier extends EditorBeatmapProcessor
     this.#hitObjects.delete(hitObject);
   }
 
-  protected override process(): void
+  protected override process(beatmap: EditorBeatmap): void
   {
+    const { difficulty, controlPointInfo } = beatmap;
+
     for (const hitObject of this.#hitObjects)
-      hitObject.applyDefaults(
-          this.beatmap.difficulty,
-          this.beatmap.controlPointInfo,
-      );
+      hitObject.applyDefaults(difficulty, controlPointInfo);
   }
 }

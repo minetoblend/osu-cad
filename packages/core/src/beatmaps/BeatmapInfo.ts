@@ -1,32 +1,64 @@
-import type { Ruleset } from "../rulesets/Ruleset";
-import { BeatmapDifficultyInfo } from "./BeatmapDifficultyInfo";
-import { BeatmapMetadata } from "./BeatmapMetadata";
+import type { DDSAttributes } from "@osucad/multiplayer-core";
+import { ObjectDDS, type } from "@osucad/multiplayer-core";
 
-export class BeatmapInfo
+export class BeatmapInfo extends ObjectDDS
 {
-  public metadata = new BeatmapMetadata();
-  public difficulty = new BeatmapDifficultyInfo();
-
-  public audioFile = "";
-  public audioLeadIn = 0;
-  public previewTime = -1;
-  public countdownType = -1;
-  public sampleSet = "Normal";
-  public stackLeniency = 0;
-  public ruleset: Ruleset | undefined;
-  public letterboxInBreaks = false;
-  public useSkinSprites = false;
-  public alwaysShowPlayfield = false;
-  public overlayPosition = "";
-  public skinPreference = "";
-  public epilepsyWarning = false;
-  public countdownOffset = 0;
-  public specialStyle = false;
-  public widescreenStoryboard = false;
-  public samplesMatchingPlaybackRate = false;
-
-  public readonly onlineInfo = {
-    id: -1,
-    beatmapSetId: -1,
+  static readonly attributes: DDSAttributes = {
+    type: "@osucad/beatmap-info",
+    version: 0,
   };
+
+  constructor()
+  {
+    super(BeatmapInfo.attributes);
+  }
+
+  @type("string")
+  public accessor audioFile = "";
+
+  @type("float32")
+  public accessor audioLeadIn = 0;
+
+  @type("float32")
+  public accessor previewTime = -1;
+
+  @type("int32")
+  public accessor countdownType = -1;
+
+  @type("string")
+  public accessor sampleSet = "Normal";
+
+  @type("float32")
+  public accessor stackLeniency = 0.7;
+
+  @type("boolean")
+  public accessor letterboxInBreaks = false;
+
+  @type("boolean")
+  public accessor useSkinSprites = false;
+
+  @type("boolean")
+  public accessor alwaysShowPlayfield = false;
+
+  @type("string")
+  public accessor overlayPosition = "";
+
+  @type("string")
+  public accessor skinPreference = "";
+
+  @type("boolean")
+  public accessor epilepsyWarning = false;
+
+  @type("int32")
+  public accessor countdownOffset = 0;
+
+  @type("boolean")
+  public accessor specialStyle = false;
+
+  @type("boolean")
+  public accessor widescreenStoryboard = false;
+
+  @type("boolean")
+  public accessor samplesMatchingPlaybackRate = false;
+
 }

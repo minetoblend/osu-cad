@@ -1,7 +1,7 @@
 import type { ValueChangedEvent } from "@osucad/framework";
 import { Action, Bindable } from "@osucad/framework";
 import type { DDSAttributes, ObjectDDSPropertyMetadata } from "@osucad/multiplayer-core";
-import { MultiValueMap, ObjectDDS, type } from "@osucad/multiplayer-core";
+import { ObjectDDS, type } from "@osucad/multiplayer-core";
 import type { HitSampleInfo } from "../../audio/HitSampleInfo";
 import { HitSoundInfo } from "../../audio/HitSoundInfo";
 import type { ControlPointInfo } from "../../beatmaps";

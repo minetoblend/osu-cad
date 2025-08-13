@@ -1,6 +1,8 @@
 import type { HitObject } from "../rulesets/hitObjects/HitObject";
 import { BeatmapColors } from "./BeatmapColors";
+import { BeatmapDifficultyInfo } from "./BeatmapDifficultyInfo";
 import { BeatmapInfo } from "./BeatmapInfo";
+import { BeatmapMetadata } from "./BeatmapMetadata";
 import { LegacyBeatmapTiming } from "./timing/LegacyBeatmapTiming";
 
 export class Beatmap<T extends HitObject = HitObject>
@@ -10,17 +12,9 @@ export class Beatmap<T extends HitObject = HitObject>
     public hitObjects: T[] = [],
     public colors = new BeatmapColors(),
     readonly timing = new LegacyBeatmapTiming(),
+    readonly metadata = new BeatmapMetadata(),
+    readonly difficulty = new BeatmapDifficultyInfo(),
   )
   {
-  }
-
-  get metadata()
-  {
-    return this.beatmapInfo.metadata;
-  }
-
-  get difficulty()
-  {
-    return this.beatmapInfo.difficulty;
   }
 }
