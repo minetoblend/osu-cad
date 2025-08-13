@@ -163,9 +163,6 @@ importers:
       '@osucad/framework':
         specifier: workspace:^
         version: link:../../packages/framework
-      '@osucad/multiplayer':
-        specifier: workspace:^
-        version: link:../../packages/multiplayer
       '@osucad/ruleset-osu':
         specifier: workspace:^
         version: link:../../packages/ruleset-osu
@@ -298,22 +295,6 @@ importers:
       vite-plugin-conditional-compiler:
         specifier: ^0.3.1
         version: 0.3.1(esbuild@0.19.12)(vite@6.3.4)(webpack@5.99.7)
-
-  packages/multiplayer:
-    dependencies:
-      '@osucad/framework':
-        specifier: 1.1.2
-        version: link:../framework
-      pixi.js:
-        specifier: ^8.9.2
-        version: 8.9.2
-      uuid:
-        specifier: ^11.1.0
-        version: 11.1.0
-    devDependencies:
-      '@types/uuid':
-        specifier: ^10.0.0
-        version: 10.0.0
 
   packages/ruleset-osu:
     dependencies:
