@@ -194,6 +194,9 @@ importers:
       '@osucad/editor':
         specifier: workspace:^
         version: link:../../packages/editor
+      '@osucad/framework':
+        specifier: workspace:^
+        version: link:../../packages/framework
       '@osucad/multiplayer-core':
         specifier: workspace:^
         version: link:../../multiplayer/core
