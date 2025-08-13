@@ -318,9 +318,6 @@ importers:
       '@osucad/multiplayer-protocol':
         specifier: workspace:^
         version: link:../../multiplayer/protocol
-      eventemitter3:
-        specifier: ^5.0.1
-        version: 5.0.1
       pixi.js:
         specifier: ^8.9.2
         version: 8.9.2
