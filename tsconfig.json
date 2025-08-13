@@ -25,9 +25,6 @@
       "path": "./apps/editor-web"
     },
     {
-      "path": "./packages/multiplayer"
-    },
-    {
       "path": "./multiplayer/core"
     },
     {

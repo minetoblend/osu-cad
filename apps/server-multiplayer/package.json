@@ -4,10 +4,11 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@osucad/multiplayer-core": "workspace:^",
-    "@osucad/editor": "workspace:^",
     "@osucad/core": "workspace:^",
-    "@osucad/ruleset-osu": "workspace:^"
+    "@osucad/editor": "workspace:^",
+    "@osucad/multiplayer-core": "workspace:^",
+    "@osucad/ruleset-osu": "workspace:^",
+    "socket.io": "^4.8.1"
   },
   "nx": {
     "targets": {

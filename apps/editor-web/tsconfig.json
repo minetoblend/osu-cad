@@ -4,9 +4,6 @@
   "include": [],
   "references": [
     {
-      "path": "../../packages/multiplayer"
-    },
-    {
       "path": "../../packages/editor"
     },
     {
@@ -14,6 +11,9 @@
     },
     {
       "path": "../../packages/framework"
+    },
+    {
+      "path": "../../packages/core"
     },
     {
       "path": "./tsconfig.app.json"
