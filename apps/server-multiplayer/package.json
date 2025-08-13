@@ -8,6 +8,7 @@
     "@osucad/editor": "workspace:^",
     "@osucad/multiplayer-core": "workspace:^",
     "@osucad/ruleset-osu": "workspace:^",
+    "cors": "^2.8.5",
     "socket.io": "^4.8.1"
   },
   "nx": {
@@ -71,5 +72,8 @@
         }
       }
     }
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19"
   }
 }

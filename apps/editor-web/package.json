@@ -5,12 +5,16 @@
   "type": "module",
   "dependencies": {
     "@osucad/core": "workspace:^",
+    "@osucad/editor": "workspace:^",
     "@osucad/framework": "workspace:^",
     "@osucad/ruleset-osu": "workspace:^",
-    "@osucad/editor": "workspace:^",
-    "pixi.js": "^8.9.2"
+    "@osucad/multiplayer-core": "workspace:^",
+    "async": "^3.2.6",
+    "pixi.js": "^8.9.2",
+    "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
+    "@types/async": "^3.2.24",
     "vite-plugin-conditional-compiler": "^0.3.1"
   }
 }

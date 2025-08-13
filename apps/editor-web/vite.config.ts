@@ -14,6 +14,12 @@ export default defineConfig(() => ({
   server:{
     port: 4200,
     host: "localhost",
+    proxy: {
+      "/socket.io/": {
+        target: "http://localhost:3000",
+        ws: true,
+      },
+    },
   },
   preview: {
     port: 80,

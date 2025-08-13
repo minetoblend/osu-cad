@@ -98,7 +98,7 @@ export class DocumentHistory extends EventEmitter<DocumentHistoryEvents>
 
     if (!this.#activeTransaction.isEmpty())
     {
-      this.#redoStack.push(this.#activeTransaction);
+      this.#undoStack.push(this.#activeTransaction);
       this.#activeTransaction = new Transaction();
     }
 

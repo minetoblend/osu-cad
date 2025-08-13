@@ -1,8 +1,9 @@
-import { Beatmap, ISkinSource } from "@osucad/core";
+import { Beatmap, ISkinSource, rulesets } from "@osucad/core";
 import { Editor } from "@osucad/editor";
 import { ScreenStack } from "@osucad/framework";
 import { dependencyLoader, Game } from "@osucad/framework";
 import { OsuRuleset } from "@osucad/ruleset-osu";
+import { MultiplayerTest } from "./MultiplayerTest";
 
 export class OsucadGame extends Game
 {
@@ -18,9 +19,8 @@ export class OsucadGame extends Game
   {
     super.loadComplete();
 
-    const beatmap = new Beatmap();
-    beatmap.beatmapInfo.ruleset = new OsuRuleset();
+    rulesets.register(new OsuRuleset());
 
-    this.#screenStack.push(new Editor({ beatmap }));
+    this.#screenStack.push(new MultiplayerTest());
   }
 }
