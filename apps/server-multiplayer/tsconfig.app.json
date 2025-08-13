@@ -20,16 +20,19 @@
   ],
   "references": [
     {
+      "path": "../../packages/framework/tsconfig.lib.json"
+    },
+    {
       "path": "../../packages/ruleset-osu/tsconfig.lib.json"
     },
     {
-      "path": "../../packages/core/tsconfig.lib.json"
+      "path": "../../multiplayer/core/tsconfig.lib.json"
     },
     {
       "path": "../../packages/editor/tsconfig.lib.json"
     },
     {
-      "path": "../../multiplayer/core/tsconfig.lib.json"
+      "path": "../../packages/core/tsconfig.lib.json"
     }
   ]
 }

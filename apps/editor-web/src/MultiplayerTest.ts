@@ -1,14 +1,24 @@
 import { EditorRuntime } from "@osucad/editor";
-import type { Bindable, DragEndEvent, DragEvent, DragStartEvent } from "@osucad/framework";
-import { asyncDependencyLoader, Axes, Box, CompositeDrawable, FillDirection, FillFlowContainer, Screen, SpriteText, Vec2 } from "@osucad/framework";
+import type { Bindable, DragEndEvent, DragEvent, DragStartEvent, ReadonlyDependencyContainer } from "@osucad/framework";
+import { DependencyContainer } from "@osucad/framework";
+import { Anchor, AudioManager, Container, dependencyLoader, FramedClock, ManualClock, resolved } from "@osucad/framework";
+import { asyncDependencyLoader, Axes, Box, CompositeDrawable, FillDirection, FillFlowContainer, Screen, SpriteText, Vec2, ZipArchiveFileSystem } from "@osucad/framework";
 import { Delta } from "@osucad/multiplayer-core";
-import type { HitCircle } from "@osucad/ruleset-osu";
+import { PathPoint, type HitCircle, type Slider } from "@osucad/ruleset-osu";
 import { queue } from "async";
 import type { Socket } from "socket.io-client";
 import { io } from "socket.io-client";
+import { Color } from "pixi.js";
+import oskFile from "./skin.osk?url";
+import type { IResourcesProvider } from "@osucad/core";
+import { BeatmapDifficultyInfo, LegacyBeatmapTiming, LegacyTimingPoint, PlayfieldClock, Skin, SkinProvidingContainer } from "@osucad/core";
 
-export class MultiplayerTest extends Screen
+export class MultiplayerTest extends Screen implements IResourcesProvider
 {
+
+  @resolved(AudioManager)
+  accessor audioManager!: AudioManager;
+
   socket!: Socket;
   clientId!: number;
   runtime!: EditorRuntime;
@@ -22,9 +32,40 @@ export class MultiplayerTest extends Screen
 
   buffer: any[] = [];
 
-  @asyncDependencyLoader()
+  #dependencies!: DependencyContainer;
+
+  override createChildDependencies(parentDependencies: ReadonlyDependencyContainer)
+  {
+    return this.#dependencies = new DependencyContainer(parentDependencies);
+  }
+
+  @dependencyLoader()
   async #load()
   {
+    const loadingText = new SpriteText({
+      text: "loading skin...",
+      style: { fill: 0xffffff },
+      anchor: Anchor.Center,
+      origin: Anchor.Center,
+    });
+
+    this.addInternal(loadingText);
+
+    const files = await fetch(oskFile)
+      .then(res => res.arrayBuffer())
+      .then(data => ZipArchiveFileSystem.createMutable(data));
+
+    const skin = new Skin(files, this);
+
+    skin.config.comboColors = [
+      new Color("rgb(255,198,138)"),
+      new Color("rgb(196,196,196)"),
+      new Color("rgb(193,157,192)"),
+    ];
+    skin.config.set("hitCircleOverlap", 66);
+
+    this.removeInternal(loadingText);
+
     this.queue.pause();
 
     const socket = this.socket = io("/", { transports: ["websocket"] });
@@ -53,7 +94,47 @@ export class MultiplayerTest extends Screen
     await runtime.load(summary);
     this.queue.resume();
 
-    this.addInternal(new MovableBox(runtime.root.hitObjects.hitObjects[0] as HitCircle, runtime));
+    const rulesetSkin = await runtime.ruleset.createSkinTransformer?.(skin);
+
+    const clock = new ManualClock();
+    clock.currentTime = -200;
+    clock.isRunning =false;
+
+    const framedClock = new FramedClock(clock);
+    this.#dependencies.provide(PlayfieldClock, framedClock);
+
+    const drawableRuleset = await runtime.ruleset.createDrawableRuleset();
+
+    this.addInternal(new SkinProvidingContainer({
+      skin: rulesetSkin ?? skin,
+      child: new Container({
+        relativeSizeAxes: Axes.Both,
+        clock: new FramedClock(clock),
+        child: drawableRuleset,
+      }),
+    }));
+
+    const slider = runtime.root.hitObjects.hitObjects[0] as Slider;
+
+    const difficulty = new BeatmapDifficultyInfo();
+    difficulty.approachRate = 9;
+    difficulty.circleSize = 4;
+
+    const timing = new LegacyBeatmapTiming();
+    const timingPoint = new LegacyTimingPoint();
+    timingPoint.startTime = 0;
+    timingPoint.timingInfo = { beatLength: 60000 / 180, signature: 4 };
+    timing.add(timingPoint);
+
+    slider.applyDefaults(difficulty, timing);
+
+    drawableRuleset.addHitObject(slider);
+
+
+
+    this.addInternal(drawableRuleset.createPlayfieldAdjustmentContainer().with({
+      child: new MovableBox(slider, runtime),
+    }));
 
     this.addInternal(new FillFlowContainer({
       autoSizeAxes: Axes.Both,
@@ -111,14 +192,13 @@ class Button extends CompositeDrawable
 
 class MovableBox extends CompositeDrawable
 {
-  constructor(readonly object: HitCircle, readonly runtime: EditorRuntime)
+  constructor(readonly object: Slider, readonly runtime: EditorRuntime)
   {
     super();
 
     this.positionBindable = object.positionBindable.getBoundCopy();
 
-    this.size = new Vec2(100);
-    this.internalChild = new Box({ relativeSizeAxes: Axes.Both });
+    object.path.controlPoints.forEach((_, index) => this.addInternal(new PathHandle(object, index, runtime)));
   }
 
   positionBindable!: Bindable<Vec2>;
@@ -137,7 +217,60 @@ class MovableBox extends CompositeDrawable
 
   override onDrag(ev: DragEvent): boolean
   {
-    this.object.moveBy(ev.delta.x, ev.delta.y);
+    const delta = this.parent!.toLocalSpace(ev.screenSpaceMousePosition).sub(this.parent!.toLocalSpace(ev.screenSpaceLastMousePosition));
+
+    this.object.moveBy(delta.x, delta.y);
+
+    return true;
+  }
+
+  override onDragEnd(ev: DragEndEvent)
+  {
+    this.runtime.history.commit();
+  }
+}
+
+class PathHandle extends CompositeDrawable
+{
+  constructor(readonly slider: Slider, readonly index: number, readonly runtime: EditorRuntime)
+  {
+    super();
+
+    this.origin = Anchor.Center;
+    this.size = new Vec2(10);
+    this.internalChild = new Box({ relativeSizeAxes: Axes.Both });
+
+    slider.path.version.bindValueChanged(() =>
+    {
+      this.position = slider.path.controlPoints[index].position;
+    }, true);
+  }
+
+  override onDragStart(e: DragStartEvent): boolean
+  {
+    return true;
+  }
+
+  override onDrag(ev: DragEvent): boolean
+  {
+    const delta = this.parent!.toLocalSpace(ev.screenSpaceMousePosition).sub(this.parent!.toLocalSpace(ev.screenSpaceLastMousePosition));
+
+    const path = [...this.slider.path.controlPoints];
+
+    if (this.index === 0)
+    {
+      this.slider.moveBy(delta.x, delta.y);
+
+      for (let i = 1; i < path.length; i++)
+        path[i] = new PathPoint(path[i].position.sub(delta), path[i].type);
+    }
+    else
+    {
+      path[this.index] = new PathPoint(path[this.index].position.add(delta), path[this.index].type);
+    }
+
+    this.slider.path.controlPoints = path;
+    this.slider.path.expectedDistance = this.slider.path.calculatedDistance;
 
     return true;
   }

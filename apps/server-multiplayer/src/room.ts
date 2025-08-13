@@ -1,5 +1,6 @@
 import { EditorRuntime } from "@osucad/editor";
-import { HitCircle, OsuRuleset } from "@osucad/ruleset-osu";
+import { Vec2 } from "@osucad/framework";
+import { HitCircle, OsuRuleset, PathPoint, PathType, Slider } from "@osucad/ruleset-osu";
 import type { Server } from "socket.io";
 
 
@@ -7,7 +8,16 @@ export async function acceptConnections(io: Server)
 {
   const runtime = await EditorRuntime.createEmpty(new OsuRuleset());
 
-  runtime.root.hitObjects.add(new HitCircle());
+  const slider = new Slider();
+  slider.position = new Vec2(100);
+  slider.path.controlPoints = [
+    new PathPoint(new Vec2(), PathType.PerfectCurve),
+    new PathPoint(new Vec2(50, -20)),
+    new PathPoint(new Vec2(100, 50)),
+  ];
+  slider.path.expectedDistance = slider.path.calculatedDistance;
+
+  runtime.root.hitObjects.add(slider);
 
   let nextClientId = 0;
 
