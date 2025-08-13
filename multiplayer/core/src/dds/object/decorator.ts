@@ -81,12 +81,12 @@ export type UnwrapSerializer<T> = T extends ISerializer<infer U> ? U : never;
 
 export function createTypeDecorator<T extends SerializerMap>(serializers: T)
 {
-  return function <This extends ObjectDDS, Key extends keyof T, Nullable extends boolean = false>(key: Key, options: ISerializerOptions<Nullable> = {}):
+  return function <This extends ObjectDDS, Key extends keyof T, Nullable extends boolean = false>(type: Key, options: ISerializerOptions<Nullable> = {}):
       Nullable extends true
           ? AccessorDecorator<This, UnwrapSerializer<T[Key]> | null>
           : AccessorDecorator<This, UnwrapSerializer<T[Key]>>
   {
-    let serializer: ISerializer<any> = serializers[key];
+    let serializer: ISerializer<any> = serializers[type];
 
     if (options.nullable)
       serializer = new NullableSerializer(serializer);

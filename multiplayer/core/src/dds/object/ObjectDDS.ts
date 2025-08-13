@@ -95,6 +95,8 @@ export class ObjectDDS extends DDS<IObjectDelta>
 
     property.set(this, value, local);
 
+    this.onPropertyChanged(property, value, oldValue);
+
     this.emit(`update:${property.name}`, value, oldValue);
     return oldValue;
   }
@@ -134,5 +136,9 @@ export class ObjectDDS extends DDS<IObjectDelta>
 
       set(this, serializer.deserialize(value, decoder));
     }
+  }
+
+  protected onPropertyChanged(property: ObjectDDSPropertyMetadata, newValue: unknown, oldValue: unknown)
+  {
   }
 }

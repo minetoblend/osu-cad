@@ -1,8 +1,17 @@
-import type { DDSAttributes, DDSRef, IDDSSummary, IDecoder, IEncodedDelta, IEncoder } from "@osucad/multiplayer-core";
+import type {
+  DDSAttributes,
+  DDSRef,
+  IDDSSummary,
+  IDecoder,
+  IEncodedDelta,
+  IEncoder,
+} from "@osucad/multiplayer-core";
 import { DDS, Delta, nn } from "@osucad/multiplayer-core";
+import type { HitObjectInivalidationType } from "@osucad/core";
 import { HitObject } from "@osucad/core";
 import { Action, Lazy } from "@osucad/framework";
 import { createHitObjectCollectionProxy } from "./HitObjectCollectionProxy";
+import { EventEmitter } from "eventemitter3";
 
 enum OpType
 {
@@ -12,7 +21,9 @@ enum OpType
 
 export type IAddHitObjectDelta = [OpType.Add, DDSRef];
 export type IRemoveHitObjectDelta = [OpType.Remove, DDSRef];
-export type IHitObjectCollectionDelta = IAddHitObjectDelta | IRemoveHitObjectDelta;
+export type IHitObjectCollectionDelta =
+  | IAddHitObjectDelta
+  | IRemoveHitObjectDelta;
 
 class AddHitObjectDelta extends Delta<IAddHitObjectDelta>
 {
@@ -59,16 +70,25 @@ class RemoveHitObjectDelta extends Delta<IRemoveHitObjectDelta>
   }
 }
 
-
 export interface HitObjectCollection
 {
   readonly [n: number]: HitObject;
 }
 
-export class HitObjectCollection extends DDS<IHitObjectCollectionDelta> implements Iterable<HitObject>
+export type HitObjectInvalidationEvents = {
+  all: (hitObject: HitObject) => void;
+} & {
+  [K in HitObjectInivalidationType]: (hitObject: HitObject) => void;
+};
+
+export class HitObjectCollection
+  extends DDS<IHitObjectCollectionDelta>
+  implements Iterable<HitObject>
 {
   readonly added = new Action<HitObject>();
   readonly removed = new Action<HitObject>();
+
+  readonly invalidated = new EventEmitter<HitObjectInvalidationEvents>();
 
   static readonly attributes: DDSAttributes = {
     type: "@osucad/hitobject-collection",
@@ -100,7 +120,6 @@ export class HitObjectCollection extends DDS<IHitObjectCollectionDelta> implemen
 
     if (this.isAttached)
     {
-
       const delta = AddHitObjectDelta.create(hitObject, this.encoder);
       const undo = RemoveHitObjectDelta.create(hitObject, this.encoder);
 
@@ -120,6 +139,8 @@ export class HitObjectCollection extends DDS<IHitObjectCollectionDelta> implemen
     this.#idMap.set(id, hitObject);
     this.#hitObjects.push(hitObject);
 
+    hitObject.invalidated.addListener(this.#onInvalidated, this);
+
     this.added.emit(hitObject);
 
     return true;
@@ -132,7 +153,6 @@ export class HitObjectCollection extends DDS<IHitObjectCollectionDelta> implemen
 
     if (this.isAttached)
     {
-
       const delta = RemoveHitObjectDelta.create(hitObject, this.encoder);
       const undo = AddHitObjectDelta.create(hitObject, this.encoder);
 
@@ -149,12 +169,26 @@ export class HitObjectCollection extends DDS<IHitObjectCollectionDelta> implemen
     const index = this.#hitObjects.indexOf(hitObject);
     this.#hitObjects.splice(index, 1);
 
+    hitObject.invalidated.removeListener(this.#onInvalidated, this);
+
     this.removed.emit(hitObject);
 
     return true;
   }
 
-  protected override process([opType, ref]: IHitObjectCollectionDelta, local: boolean): void
+  #onInvalidated(
+    hitObject: HitObject,
+    invalidation: HitObjectInivalidationType,
+  )
+  {
+    this.invalidated.emit(invalidation, hitObject);
+    this.invalidated.emit("all", hitObject);
+  }
+
+  protected override process(
+    [opType, ref]: IHitObjectCollectionDelta,
+    local: boolean,
+  ): void
   {
     if (local)
       return;
@@ -183,7 +217,9 @@ export class HitObjectCollection extends DDS<IHitObjectCollectionDelta> implemen
 
       if (!hitObject)
       {
-        const factory = nn(this.runtime!.typeRegistry.get(delta.summary!.attributes));
+        const factory = nn(
+            this.runtime!.typeRegistry.get(delta.summary!.attributes),
+        );
 
         hitObject = factory.create();
       }
@@ -225,34 +261,81 @@ export class HitObjectCollection extends DDS<IHitObjectCollectionDelta> implemen
     }
   }
 
-  forEach(callbackfn: (value: HitObject, index: number, array: readonly HitObject[]) => void, thisArg?: any)
+  forEach(
+    callbackfn: (
+      value: HitObject,
+      index: number,
+      array: readonly HitObject[]
+    ) => void,
+    thisArg?: any,
+  )
   {
     this.hitObjects.forEach(callbackfn, thisArg);
   }
 
-  map<U>(callbackfn: (value: HitObject, index: number, array: readonly HitObject[]) => U, thisArg?: any): U[]
+  map<U>(
+    callbackfn: (
+      value: HitObject,
+      index: number,
+      array: readonly HitObject[]
+    ) => U,
+    thisArg?: any,
+  ): U[]
   {
     return this.hitObjects.map(callbackfn, thisArg);
   }
 
-  filter<S extends HitObject>(predicate: (value: HitObject, index: number, array: readonly HitObject[]) => value is S, thisArg?: any): S[];
-  filter(predicate: (value: HitObject, index: number, array: readonly HitObject[]) => unknown, thisArg?: any): HitObject[];
-  filter(predicate: (value: HitObject, index: number, array: readonly HitObject[]) => boolean, thisArg?: any)
+  filter<S extends HitObject>(
+    predicate: (
+      value: HitObject,
+      index: number,
+      array: readonly HitObject[]
+    ) => value is S,
+    thisArg?: any
+  ): S[];
+  filter(
+    predicate: (
+      value: HitObject,
+      index: number,
+      array: readonly HitObject[]
+    ) => unknown,
+    thisArg?: any
+  ): HitObject[];
+  filter(
+    predicate: (
+      value: HitObject,
+      index: number,
+      array: readonly HitObject[]
+    ) => boolean,
+    thisArg?: any,
+  )
   {
     return this.hitObjects.filter(predicate, thisArg);
   }
 
-  find(predicate: (value: HitObject, index: number, obj: readonly HitObject[]) => boolean, thisArg?: any): HitObject | undefined
+  find(
+    predicate: (
+      value: HitObject,
+      index: number,
+      obj: readonly HitObject[]
+    ) => boolean,
+    thisArg?: any,
+  ): HitObject | undefined
   {
     return this.hitObjects.find(predicate, thisArg);
   }
 
-  ofType<T extends Constructor<HitObject>[]>(...types: T): { [K in keyof T]: InstanceOf<T[K]> }[number][]
+  ofType<T extends Constructor<HitObject>[]>(
+    ...types: T
+  ): { [K in keyof T]: InstanceOf<T[K]> }[number][]
   {
-    return this.hitObjects.filter(hitObject =>
+    return this.hitObjects.filter((hitObject) =>
     {
       for (const type of types)
-        if (hitObject instanceof (type as abstract new (...args: any[]) => HitObject))
+        if (
+          hitObject instanceof
+          (type as abstract new (...args: any[]) => HitObject)
+        )
           return true;
 
       return false;

@@ -7,6 +7,7 @@ import { EditorRuleset } from "./EditorRuleset";
 import { EditorClock } from "./EditorClock";
 import { ComposeScreen } from "./compose";
 import { BindableBeatDivisor } from "./BindableBeatDivisor";
+import { DefaultsApplier } from "./DefaultsApplier";
 
 export interface EditorOptions
 {
@@ -20,6 +21,7 @@ export class Editor extends Screen
     super();
 
     this.runtime = options.runtime;
+    this.editorClock = new EditorClock(options.runtime.root.controlPointInfo);
   }
 
   @provide(EditorRuntime)
@@ -48,7 +50,7 @@ export class Editor extends Screen
 
   @provide(PlayfieldClock)
   @provide(EditorClock)
-  readonly editorClock = new EditorClock(false);
+  readonly editorClock: EditorClock;
 
   @provide(BindableBeatDivisor)
   readonly beatDivisor = new BindableBeatDivisor(4);
@@ -66,19 +68,19 @@ export class Editor extends Screen
 
     const skinTransformer = await this.ruleset.createSkinTransformer?.(skin);
 
-    this.addInternal(new SkinProvidingContainer({
-      skin: skinTransformer ?? skin,
-      children: [
-        new ComposeScreen(),
-      ],
-    }));
-  }
+    this.addInternal(new DefaultsApplier());
+    for (const processor of this.editorRuleset.createBackgroundProcessors())
+      this.addInternal(processor);
 
-  override update()
-  {
-    super.update();
-
-    this.editorClock.processFrame();
+    this.addRangeInternal([
+      this.editorClock.with({ depth: Number.MIN_VALUE }),
+      new SkinProvidingContainer({
+        skin: skinTransformer ?? skin,
+        children: [
+          new ComposeScreen(),
+        ],
+      }),
+    ]);
   }
 
   override onScroll(e: ScrollEvent): boolean

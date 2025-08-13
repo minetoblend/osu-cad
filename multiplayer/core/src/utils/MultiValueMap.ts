@@ -1,6 +1,11 @@
 export class MultiValueMap<K, V>
 {
-  readonly #map = new Map<K, V[]>();
+  constructor(entries?: readonly (readonly [K, V[]])[] | null)
+  {
+    this.#map = new Map<K, V[]>(entries);
+  }
+
+  readonly #map: Map<K, V[]>;
 
   get(key: K)
   {

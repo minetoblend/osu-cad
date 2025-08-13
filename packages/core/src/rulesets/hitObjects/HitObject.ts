@@ -1,26 +1,43 @@
 import type { ValueChangedEvent } from "@osucad/framework";
 import { Action, Bindable } from "@osucad/framework";
-import { ObjectDDS, type } from "@osucad/multiplayer-core";
+import type { DDSAttributes, ObjectDDSPropertyMetadata } from "@osucad/multiplayer-core";
+import { MultiValueMap, ObjectDDS, type } from "@osucad/multiplayer-core";
 import type { HitSampleInfo } from "../../audio/HitSampleInfo";
 import { HitSoundInfo } from "../../audio/HitSoundInfo";
+import type { ControlPointInfo } from "../../beatmaps";
 import type { BeatmapDifficultyInfo } from "../../beatmaps/BeatmapDifficultyInfo";
-import type { IBeatmapTiming } from "../../beatmaps/timing/IBeatmapTiming";
 import { bindableBacked } from "../../utils/bindableBacked";
 import { customType } from "../../utils/decorator";
 import { Judgement } from "../judgements/Judgement";
 import { HitResult } from "../scoring";
 import { HitWindows } from "../scoring/HitWindows";
-import type { ControlPointInfo } from "../../beatmaps";
+import type { HitObjectInivalidationType, HitObjectInvalidations } from "./invalidations";
+import { getInvalidations, invalidations } from "./invalidations";
 
+@invalidations({
+  startTime: ["applyDefaults", "combo"],
+  hitSound: ["applyDefaults"],
+})
 export class HitObject extends ObjectDDS
 {
+  protected readonly invalidations: HitObjectInvalidations<this>;
+
+  constructor(attributes: DDSAttributes)
+  {
+    super(attributes);
+
+    this.invalidations = getInvalidations(this);
+  }
+
   readonly defaultsApplied = new Action<HitObject>();
+
+  readonly invalidated = new Action<[HitObject, HitObjectInivalidationType]>();
 
   readonly startTimeBindable = new Bindable(0);
 
   @type("float64")
   @bindableBacked("startTimeBindable")
-  accessor startTime!: number
+  accessor startTime!: number;
 
   get duration()
   {
@@ -39,7 +56,10 @@ export class HitObject extends ObjectDDS
     return this.#nestedHitObjects;
   }
 
-  public applyDefaults(difficulty: BeatmapDifficultyInfo, controlPoints: ControlPointInfo)
+  public applyDefaults(
+    difficulty: BeatmapDifficultyInfo,
+    controlPoints: ControlPointInfo,
+  )
   {
     this.applyDefaultsToSelf(difficulty, controlPoints);
 
@@ -55,21 +75,29 @@ export class HitObject extends ObjectDDS
     for (const h of this.#nestedHitObjects)
       h.applyDefaults(difficulty, controlPoints);
 
-    this.startTimeBindable.valueChanged.removeListener(this.#onStartTimeChanged, this);
-    this.startTimeBindable.valueChanged.addListener(this.#onStartTimeChanged, this);
+    this.startTimeBindable.valueChanged.removeListener(
+        this.#onStartTimeChanged,
+        this,
+    );
+    this.startTimeBindable.valueChanged.addListener(
+        this.#onStartTimeChanged,
+        this,
+    );
 
     this.defaultsApplied.emit(this);
   }
 
-  protected applyDefaultsToSelf(difficulty: BeatmapDifficultyInfo, controlPoints: ControlPointInfo)
+  protected applyDefaultsToSelf(
+    difficulty: BeatmapDifficultyInfo,
+    controlPoints: ControlPointInfo,
+  )
   {
     this.hitWindows ??= this.createHitWindows();
     this.hitWindows.setDifficulty(difficulty.overallDifficulty);
   }
 
   protected createNestedHitObjects()
-  {
-  }
+  {}
 
   protected addNested(hitObject: HitObject)
   {
@@ -84,7 +112,6 @@ export class HitObject extends ObjectDDS
       h.startTime += offset;
   }
 
-
   #judgement: Judgement | null = null;
 
   get judgement(): Judgement
@@ -97,7 +124,6 @@ export class HitObject extends ObjectDDS
   {
     return new Judgement();
   }
-
 
   hitWindows: HitWindows | null = null;
 
@@ -115,7 +141,7 @@ export class HitObject extends ObjectDDS
 
   @customType("hitSoundInfo")
   @bindableBacked("hitSoundBindable")
-  accessor hitSound!: HitSoundInfo
+  accessor hitSound!: HitSoundInfo;
 
   readonly samplesBindable = new Bindable<HitSampleInfo[]>([]);
 
@@ -128,8 +154,21 @@ export class HitObject extends ObjectDDS
   {
     return this.hitSound.getSamples(this.startTime, controlPoints);
   }
-}
 
+  protected override onPropertyChanged(
+    property: ObjectDDSPropertyMetadata,
+    newValue: unknown,
+    oldValue: unknown,
+  ): void
+  {
+    const invalidations = this.invalidations[property.name as keyof this];
+    if (invalidations)
+    {
+      for (const invalidation of invalidations)
+        this.invalidated.emit(this, invalidation);
+    }
+  }
+}
 
 function compareStartTime(a: HitObject, b: HitObject)
 {

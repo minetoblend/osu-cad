@@ -6,3 +6,4 @@ export * from "./EditorRuleset";
 export * from "./runtime";
 export * from "./compose";
 export * from "./assets";
+export * from "./EditorBeatmapProcessor";

@@ -6,6 +6,12 @@ declare global
     interface Ruleset
     {
     }
+
+    interface HitObjectInvalidations
+    {
+      applyDefaults: unknown
+      combo: unknown
+    }
   }
 }
 

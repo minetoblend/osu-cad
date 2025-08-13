@@ -1,5 +1,5 @@
 import type { BeatmapDifficultyInfo, ControlPointInfo, HitSoundInfo } from "@osucad/core";
-import { bindableBacked, HitSampleInfo, HitWindows, safeAssign, SampleAdditions, SampleSet, sampleSetToBank } from "@osucad/core";
+import { bindableBacked, HitSampleInfo, HitWindows, invalidations, safeAssign, SampleAdditions, SampleSet, sampleSetToBank } from "@osucad/core";
 import { Bindable, BindableNumber, Vec2 } from "@osucad/framework";
 import type { OsuHitObjectOptions } from "./OsuHitObject";
 import { OsuHitObject } from "./OsuHitObject";
@@ -21,6 +21,10 @@ export interface SliderOptions extends OsuHitObjectOptions
   nodeSamples?: readonly HitSoundInfo[]
 }
 
+@invalidations({
+  repeatCount: ["applyDefaults", "stacking"],
+  nodeHitSounds: ["applyDefaults"],
+})
 export class Slider extends OsuHitObject
 {
   static readonly attributes: DDSAttributes = {

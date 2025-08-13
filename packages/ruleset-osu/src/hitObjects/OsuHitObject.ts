@@ -1,11 +1,10 @@
 import type { ControlPointInfo, HitSoundInfo, HitWindows, Judgement } from "@osucad/core";
-import { BeatmapDifficultyInfo, bindableBacked, customType, HitObject, safeAssign } from "@osucad/core";
+import { BeatmapDifficultyInfo, bindableBacked, customType, HitObject, invalidations, safeAssign } from "@osucad/core";
 import type { IVec2 } from "@osucad/framework";
 import { Bindable, BindableBoolean, BindableNumber, Vec2 } from "@osucad/framework";
 import { OsuHitWindows } from "../scoring/OsuHitWindows";
 import { OsuJudgement } from "../judgements/OsuJudgement";
 import { type DDSAttributes, type } from "@osucad/multiplayer-core";
-
 
 export interface OsuHitObjectOptions
 {
@@ -19,6 +18,12 @@ export interface OsuHitObjectOptions
   hitSound?: HitSoundInfo
 }
 
+@invalidations({
+  startTime: ["stacking", "combo"],
+  position: ["applyDefaults", "stacking"],
+  newCombo: ["combo"],
+  comboOffset: ["combo"],
+})
 export abstract class OsuHitObject extends HitObject
 {
   static readonly OBJECT_RADIUS = 64;
@@ -33,7 +38,7 @@ export abstract class OsuHitObject extends HitObject
 
   static readonly PREEMPT_MAX = 1800;
 
-  protected constructor(attributes: DDSAttributes, options: OsuHitObjectOptions = {})
+  constructor(attributes: DDSAttributes, options: OsuHitObjectOptions = {})
   {
     super(attributes);
 

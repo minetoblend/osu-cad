@@ -2,6 +2,7 @@ import type { Awaitable } from "@osucad/core";
 import type { HitObjectComposer } from "./compose/HitObjectComposer";
 import type { EditorRuntimeConfig } from "./runtime/EditorRuntime";
 import type { Editor } from "./Editor";
+import type { Component } from "@osucad/framework";
 
 export abstract class EditorRuleset
 {
@@ -11,5 +12,10 @@ export abstract class EditorRuleset
 
   public setupEditor(editor: Editor)
   {
+  }
+
+  public createBackgroundProcessors(): Component[]
+  {
+    return [];
   }
 }
