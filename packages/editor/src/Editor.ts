@@ -68,11 +68,9 @@ export class Editor extends Screen
 
     const skinTransformer = await this.ruleset.createSkinTransformer?.(skin);
 
-    this.addInternal(new DefaultsApplier());
-    for (const processor of this.editorRuleset.createBackgroundProcessors())
-      this.addInternal(processor);
-
     this.addRangeInternal([
+      new DefaultsApplier(),
+      ...this.editorRuleset.createBackgroundProcessors(),
       this.editorClock.with({ depth: Number.MIN_VALUE }),
       new SkinProvidingContainer({
         skin: skinTransformer ?? skin,

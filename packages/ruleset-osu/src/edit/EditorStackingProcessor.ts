@@ -14,7 +14,7 @@ export class EditorStackingProcessor extends EditorBeatmapProcessor
   {
     calculateStacking(
         beatmap.hitObjects.unsafeCast<OsuHitObject>(),
-        beatmap.beatmapInfo .stackLeniency,
+        beatmap.beatmapInfo.stackLeniency,
         3,
         0,
         beatmap.hitObjects.length - 1,
