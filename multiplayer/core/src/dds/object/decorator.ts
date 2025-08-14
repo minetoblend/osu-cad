@@ -110,7 +110,7 @@ export const builtinTypes = {
 
 export const type = createTypeDecorator(builtinTypes);
 
-export function nested<This extends ObjectDDS, Value extends DDS, Nullable extends boolean = false>(type: DDSFactoryOrConstructor<Value> | (() => DDSFactoryOrConstructor<Value>), options: ISerializerOptions<Nullable> = {}):
+export function nested<This extends ObjectDDS, Value extends DDS<unknown>, Nullable extends boolean = false>(type: DDSFactoryOrConstructor<Value> | (() => DDSFactoryOrConstructor<Value>), options: ISerializerOptions<Nullable> = {}):
     Nullable extends true
         ? AccessorDecorator<This, Value | null>
         : AccessorDecorator<This, Value>

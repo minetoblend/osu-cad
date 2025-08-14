@@ -8,6 +8,7 @@ import { DDSPool } from "./DDSPool.js";
 export interface DocumentRuntimeEvents
 {
   deltaSubmitted(dds: DDS, delta: Delta, undo: Delta | null): void;
+  signalSubmitted(dds: DDS, type: string, signal: unknown): void;
 }
 
 export class DocumentRuntime<T extends DDS = DDS> extends EventEmitter<DocumentRuntimeEvents>
@@ -84,6 +85,11 @@ export class DocumentRuntime<T extends DDS = DDS> extends EventEmitter<DocumentR
     this.emit("deltaSubmitted", target, delta, undo);
   }
 
+  submitSignal(target: DDS, type: string, signal: unknown): void
+  {
+    this.emit("signalSubmitted", target, type, signal);
+  }
+
   replayDelta(targetId: string, delta: Delta)
   {
     this.#objectPool.getChannel(targetId)?.replay(delta);
@@ -96,6 +102,17 @@ export class DocumentRuntime<T extends DDS = DDS> extends EventEmitter<DocumentR
       return false;
 
     channel.process(delta, local);
+
+    return true;
+  }
+
+  processSignal(clientId: number, targetId: string, type: string, signal: unknown)
+  {
+    const channel = this.#objectPool.getChannel(targetId);
+    if (!channel)
+      return false;
+
+    channel.processSignal(clientId, type, signal);
 
     return true;
   }

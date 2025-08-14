@@ -52,6 +52,8 @@ export abstract class HitObjectPlacementTool<T extends OsuHitObject> extends Com
     const position = this.playfield.toLocalSpace(this.#inputManager.currentState.mouse.position);
 
     this.updateTimeAndPosition(this.hitObject, this.editorClock.currentTime, position);
+
+    this.#hitObject.applyDefaults(this.beatmap.difficulty, this.beatmap.controlPointInfo);
   }
 
   beginPlacement()
@@ -61,8 +63,7 @@ export abstract class HitObjectPlacementTool<T extends OsuHitObject> extends Com
 
     this.#state = PlacementState.Active;
 
-    this.beatmap.hitObjects.remove(this.#hitObject);
-    this.beatmap.hitObjects.add(this.#hitObject);
+    this.beatmap.hitObjects.ensureAttached(this.#hitObject);
 
     this.onPlacementBegin();
     return true;

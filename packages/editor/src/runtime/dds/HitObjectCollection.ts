@@ -132,6 +132,23 @@ export class HitObjectCollection
     return true;
   }
 
+  ensureAttached(hitObject: HitObject)
+  {
+    if (hitObject.isAttached)
+      return;
+
+    if (this.add(hitObject))
+      return;
+
+    if (this.isAttached)
+    {
+      const delta = AddHitObjectDelta.create(hitObject, this.encoder);
+      const undo = RemoveHitObjectDelta.create(hitObject, this.encoder);
+
+      this.submitDelta(delta, undo);
+    }
+  }
+
   #add(hitObject: HitObject)
   {
     if (this.#set.has(hitObject))

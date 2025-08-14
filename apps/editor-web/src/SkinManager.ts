@@ -24,7 +24,7 @@ export class SkinManager extends Component implements ISkinSource, IResourcesPro
       new Color("rgb(196,196,196)"),
       new Color("rgb(193,157,192)"),
     ];
-    this.skin.config.set("hitCircleOverlap", 66);
+    this.skin.config.set("hitCircleOverlap", 38);
   }
 
   skin!: Skin;

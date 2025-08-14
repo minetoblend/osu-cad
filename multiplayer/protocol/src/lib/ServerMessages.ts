@@ -5,6 +5,8 @@ export interface ServerMessages
   init(message: ServerMessages.Init): void;
 
   deltas(clientId: number, deltas: ServerMessages.Delta[]): void;
+
+  signal(clientId: number, target: string, type: string, signal: unknown): void
 }
 
 export namespace ServerMessages

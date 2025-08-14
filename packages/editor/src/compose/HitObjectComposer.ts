@@ -54,11 +54,11 @@ export abstract class HitObjectComposer extends CompositeDrawable
     this.#dependencies.provide(Playfield, this.drawableRuleset.playfield);
 
     this.internalChildren = [
+      new ComposeToolContainer(),
       this.rulesetContainer = new Container({
         relativeSizeAxes: Axes.Both,
         child: this.drawableRuleset,
       }),
-      new ComposeToolContainer(),
       this.#toolbar = new ComposeToolbar(),
     ];
 
@@ -73,7 +73,6 @@ export abstract class HitObjectComposer extends CompositeDrawable
 
     this.beatmap.hitObjects.added.addListener(h =>
     {
-      h.applyDefaults(this.beatmap.difficulty, this.beatmap.controlPointInfo);
       this.drawableRuleset.addHitObject(h);
     });
     this.beatmap.hitObjects.removed.addListener(h =>

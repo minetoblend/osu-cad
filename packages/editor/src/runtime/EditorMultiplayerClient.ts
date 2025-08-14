@@ -5,6 +5,7 @@ import type { ServerMessages } from "@osucad/multiplayer-protocol";
 import type { EditorBeatmap } from "./dds/EditorBeatmap";
 import { EditorRuntime } from "./EditorRuntime";
 import { MultiplayerConnection } from "./MultiplayerConnection";
+import { sign } from "crypto";
 
 interface IQueuedDeltas
 {
@@ -92,7 +93,20 @@ export class EditorMultiplayerClient extends Component
       this.#mergeMap.add(entry.targetId, entry);
       this.sendBuffer.push(entry);
     });
-    this.scheduler.addDelayed(() => this.#flushSendBuffer(), 100, true);
+
+    this.runtime.on("signalSubmitted", (dds, type,signal) =>
+      this.connection.send("signal", nn(dds.id), type, signal),
+    );
+
+    this.connection.on("signal", (clientId, target, type, signal) =>
+    {
+      if (clientId === this.clientId)
+        return;
+
+      this.runtime.processSignal(clientId, target, type, signal);
+    });
+
+    this.scheduler.addDelayed(() => this.#flushSendBuffer(), 35, true);
   }
 
   override update()

@@ -1,8 +1,10 @@
 import { TimingControlPoint } from "@osucad/core";
 import { EditorRuntime } from "@osucad/editor";
 import { Vec2 } from "@osucad/framework";
+import type { ServerMessages } from "@osucad/multiplayer-core";
+import type { ClientMessages } from "@osucad/multiplayer-core";
 import { HitCircle, OsuRuleset, PathPoint, PathType, Slider } from "@osucad/ruleset-osu";
-import type { Server } from "socket.io";
+import type { Server, Socket } from "socket.io";
 
 
 export async function acceptConnections(io: Server)
@@ -35,7 +37,7 @@ export async function acceptConnections(io: Server)
 
   let nextClientId = 0;
 
-  io.on("connect", socket =>
+  io.on("connect", (socket: Socket<ClientMessages, ServerMessages>) =>
   {
     const clientId = ++nextClientId;
 
@@ -47,6 +49,11 @@ export async function acceptConnections(io: Server)
         runtime.process(delta.targetId, delta.content, false);
 
       io.emit("deltas", clientId, deltas);
+    });
+
+    socket.on("signal", (target, type, signal) =>
+    {
+      io.emit("signal", clientId, target, type, signal);
     });
   });
 }

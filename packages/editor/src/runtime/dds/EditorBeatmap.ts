@@ -1,5 +1,5 @@
 import type { DDSAttributes, IDecoder } from "@osucad/multiplayer-core";
-import { nested, nn, ObjectDDS } from "@osucad/multiplayer-core";
+import { nested, nn, ObjectDDS, Signaler } from "@osucad/multiplayer-core";
 import { EditorRuntime } from "../EditorRuntime";
 import { BeatmapDifficultyInfo, BeatmapInfo, BeatmapMetadata, ControlPointInfo, type Ruleset } from "@osucad/core";
 import type { EditorRuleset } from "../../EditorRuleset";
@@ -39,6 +39,9 @@ export class EditorBeatmap extends ObjectDDS
 
   @nested(BeatmapInfo)
   accessor beatmapInfo = new BeatmapInfo()
+
+  @nested(Signaler)
+  accessor signals = new Signaler()
 
   override load(summary: unknown, version: number, decoder: IDecoder)
   {

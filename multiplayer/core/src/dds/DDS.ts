@@ -8,7 +8,7 @@ import type { DDSAttributes } from "@osucad/multiplayer-protocol";
 
 const defaultEncoder = new Encoder();
 
-export abstract class DDS<TDelta = unknown> extends EventEmitter
+export abstract class DDS<TDelta = unknown, EventTypes extends EventEmitter.ValidEventTypes = any> extends EventEmitter<EventTypes>
 {
   protected constructor(readonly attributes: DDSAttributes)
   {
@@ -48,6 +48,7 @@ export abstract class DDS<TDelta = unknown> extends EventEmitter
 
     channel.setHandler({
       process: (delta, local) => this.process(delta as TDelta, local),
+      processSignal: (clientId, type, signal) => this.processSignal(type, signal, clientId),
       replay: delta => this.replay(delta),
       load: (summary, version, decoder) => this.load(summary, version, decoder),
     });
@@ -67,8 +68,18 @@ export abstract class DDS<TDelta = unknown> extends EventEmitter
 
   abstract load(summary: unknown, version: number, decoder: IDecoder): void;
 
+  protected processSignal(type: string, signal: unknown, clientId: number)
+  {
+
+  }
+
   protected submitDelta(delta: Delta<TDelta>, undo: Delta<TDelta> | null = null)
   {
     this.#channel?.submitDelta(delta, undo);
+  }
+
+  protected submitSignal(type: string, signal: unknown)
+  {
+    this.#channel?.submitSignal(type, signal);
   }
 }
