@@ -1,31 +1,13 @@
-import type { MouseDownEvent } from "@osucad/framework";
-import { Anchor, Axes, Bindable, Box, CircularContainer, dependencyLoader, EasingFunction, PoolableDrawable, Vec2 } from "@osucad/framework";
+import { Anchor, Axes, Bindable, Box, CircularContainer, dependencyLoader, Vec2 } from "@osucad/framework";
 import type { HitCircle } from "../../../hitObjects/HitCircle";
 import { OsuHitObject } from "../../../hitObjects/OsuHitObject";
-import type { DrawableHitObject } from "@osucad/core";
+import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
 
-export class HitCircleSelectionBlueprint extends PoolableDrawable
+export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<HitCircle>
 {
-  constructor(readonly hitObject: HitCircle)
-  {
-    super();
-
-    this.alwaysPresent = true;
-    this.alpha = 0;
-  }
-
   readonly scaleBindable = new Bindable(1);
   readonly positionBindable = new Bindable(new Vec2());
   readonly stackHeightBindable = new Bindable(0);
-
-  selected = false;
-
-  drawableHitObject: DrawableHitObject | null = null;
-
-  override get shouldBeAlive(): boolean
-  {
-    return this.selected || !!this.drawableHitObject;
-  }
 
   override update(): void
   {
@@ -38,6 +20,7 @@ export class HitCircleSelectionBlueprint extends PoolableDrawable
   {
     this.origin = Anchor.Center;
     this.size = OsuHitObject.OBJECT_DIMENSIONS;
+    this.cornerRadius = OsuHitObject.OBJECT_RADIUS;
 
     this.scaleBindable.bindTo(this.hitObject.scaleBindable);
     this.positionBindable.bindTo(this.hitObject.positionBindable);
@@ -69,14 +52,15 @@ export class HitCircleSelectionBlueprint extends PoolableDrawable
     this.stackHeightBindable.bindValueChanged(e => this.position = this.hitObject.stackedPosition);
   }
 
-  override receivePositionalInputAt(screenSpacePosition: Vec2): boolean
+  get #effectiveCornerRadius()
   {
-    return this.toLocalSpace(screenSpacePosition).distanceSq(this.drawSize.scale(0.5)) < this.hitObject.radius * this.hitObject.radius;
-  }
+    const cornerRadius = this.cornerRadius;
 
-  override onMouseDown(e: MouseDownEvent): boolean
-  {
-    this.selected = !this.selected;
-    return true;
+    if (cornerRadius === 0)
+      return 0;
+
+    const { drawWidth, drawHeight } = this;
+
+    return Math.min(cornerRadius , drawWidth / 2, drawHeight / 2);
   }
 }

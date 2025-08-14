@@ -18,6 +18,23 @@ export class Line
     return this.startPoint.add(dir.scale(d));
   }
 
+  static closestPoint(startPoint: Vec2, endPoint: Vec2, position: Vec2)
+  {
+    if (startPoint.equals(endPoint))
+      return startPoint;
+
+    const dir = endPoint.sub(startPoint).normalize();
+
+    const v = position.sub(startPoint);
+    const d = v.dot(dir);
+    return startPoint.add(dir.scaleInPlace(d));
+  }
+
+  static distance(startPoint: Vec2, endPoint: Vec2, position: Vec2)
+  {
+    return this.closestPoint(startPoint, endPoint, position).distance(position);
+  }
+
   get theta()
   {
     return Math.atan2(this.endPoint.y - this.startPoint.y, this.endPoint.x - this.startPoint.x);
@@ -37,5 +54,10 @@ export class Line
   {
     const dir = this.directionNormalized;
     return new Vec2(-dir.y, dir.x);
+  }
+
+  distanceToPoint(p: Vec2)
+  {
+    return this.closestPoint(p).distance(p);
   }
 }

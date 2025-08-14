@@ -245,6 +245,9 @@ export abstract class OsuHitObject extends HitObject
     return new OsuJudgement();
   }
 
-
+  contains(position: Vec2)
+  {
+    return Vec2.closerThan(this.stackedPosition, position, this.radius);
+  }
 }
 

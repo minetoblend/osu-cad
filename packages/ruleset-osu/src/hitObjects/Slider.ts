@@ -1,6 +1,6 @@
 import type { BeatmapDifficultyInfo, ControlPointInfo, HitSoundInfo } from "@osucad/core";
 import { bindableBacked, HitSampleInfo, HitWindows, invalidations, safeAssign, SampleAdditions, SampleSet, sampleSetToBank } from "@osucad/core";
-import { Bindable, BindableNumber, Vec2 } from "@osucad/framework";
+import { Bindable, BindableNumber, Line, Vec2 } from "@osucad/framework";
 import type { OsuHitObjectOptions } from "./OsuHitObject";
 import { OsuHitObject } from "./OsuHitObject";
 import type { PathPoint } from "./PathPoint";
@@ -169,6 +169,16 @@ export class Slider extends OsuHitObject
     return this.position.add(this.curvePositionAt(1));
   }
 
+  get pathEndPosition()
+  {
+    return this.path.positionAt(1).addInPlace(this.position);
+  }
+
+  get stackedPathEndPosition()
+  {
+    return this.pathEndPosition.addInPlace(this.stackOffset);
+  }
+
   protected override createNestedHitObjects()
   {
     super.createNestedHitObjects();
@@ -242,5 +252,27 @@ export class Slider extends OsuHitObject
     }
 
     return samples;
+  }
+
+  override contains(position: Vec2): boolean
+  {
+    if (
+      Vec2.closerThan(position, this.stackedPosition, this.radius)
+      || Vec2.closerThan(position, this.stackedPathEndPosition, this.radius)
+    )
+    {
+      return true;
+    }
+
+    const vertices = this.path.getRange(0, 1);
+
+    for (let i = 0; i < vertices.length - 1; i++)
+    {
+      const distance = Line.distance(vertices[i], vertices[i + 1], position);
+      if (distance < this.radius)
+        return true;
+    }
+
+    return false;
   }
 }

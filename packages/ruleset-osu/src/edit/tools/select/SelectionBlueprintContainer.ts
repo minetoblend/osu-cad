@@ -1,10 +1,11 @@
 import type { DrawableHitObject, HitObject } from "@osucad/core";
 import { Playfield } from "@osucad/core";
 import type { Drawable } from "@osucad/framework";
-import { Axes, CompositeDrawable, resolved } from "@osucad/framework";
+import { Axes, CompositeDrawable, provideSelf, resolved } from "@osucad/framework";
 import { HitCircle } from "../../../hitObjects";
 import { HitCircleSelectionBlueprint } from "./HitCircleSelectionBlueprint";
 
+@provideSelf()
 export class SelectionBlueprintContainer extends CompositeDrawable
 {
   constructor()
