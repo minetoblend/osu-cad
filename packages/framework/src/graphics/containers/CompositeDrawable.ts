@@ -1380,6 +1380,40 @@ export class CompositeDrawable extends Drawable
   {
     return this.transformTo("padding", MarginPadding.from(newPadding), duration, easing);
   }
+
+  get #effectiveCornerRadius()
+  {
+    const cornerRadius = this.cornerRadius;
+
+    if (cornerRadius === 0)
+      return 0;
+
+    const { drawWidth, drawHeight } = this;
+
+    return Math.min(cornerRadius , drawWidth / 2, drawHeight / 2);
+  }
+
+  override containsLocal(localPosition: Vec2): boolean
+  {
+    const radius = this.#effectiveCornerRadius;
+
+    if (radius === 0.0)
+      return super.containsLocal(localPosition);
+
+    const exponent = this.cornerExponent;
+
+    const left = radius;
+    const top = radius;
+    const right = this.drawWidth - radius;
+    const bottom = this.drawHeight - radius;
+
+    const distX = Math.max(0.0,localPosition.x - right, left - localPosition.x);
+    const distY = Math.max(0.0,localPosition.y - bottom, top - localPosition.y);
+
+    const distance = Math.pow(distX, exponent) + Math.pow(distY, exponent);
+
+    return distance < Math.pow(radius, exponent);
+  }
 }
 
 enum ChildLifeStateChange
