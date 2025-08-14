@@ -1,5 +1,5 @@
 import type { HitObject } from "@osucad/core";
-import { Playfield } from "@osucad/core";
+import { DrawableRuleset, Playfield } from "@osucad/core";
 import { Axes, CompositeDrawable, dependencyLoader, resolved } from "@osucad/framework";
 import { EditorBeatmap, EditorHistory } from "../../runtime";
 import { EditorClock } from "../../EditorClock";
@@ -25,6 +25,9 @@ export abstract class ComposeTool<THitObject extends HitObject = HitObject> exte
 
   @resolved(Playfield)
   protected accessor playfield!: Playfield
+
+  @resolved(DrawableRuleset)
+  protected accessor drawableRuleset!: DrawableRuleset
 
   @resolved(EditorHistory)
   protected accessor history!: EditorHistory

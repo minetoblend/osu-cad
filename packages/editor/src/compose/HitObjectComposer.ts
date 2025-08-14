@@ -1,7 +1,7 @@
 import { DrawableRuleset, Playfield } from "@osucad/core";
 import { Ruleset } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
-import { DependencyContainer } from "@osucad/framework";
+import { DependencyContainer, ProxyDrawable } from "@osucad/framework";
 import { Container } from "@osucad/framework";
 import { asyncDependencyLoader, Axes, CompositeDrawable, dependencyLoader, provide, resolved } from "@osucad/framework";
 import { EditorBeatmap } from "../runtime/dds/EditorBeatmap";
@@ -54,12 +54,13 @@ export abstract class HitObjectComposer extends CompositeDrawable
     this.#dependencies.provide(Playfield, this.drawableRuleset.playfield);
 
     this.internalChildren = [
-      new ComposeToolContainer(),
       this.rulesetContainer = new Container({
         relativeSizeAxes: Axes.Both,
         child: this.drawableRuleset,
       }),
+      new ComposeToolContainer(),
       this.#toolbar = new ComposeToolbar(),
+      new ProxyDrawable(this.rulesetContainer).with({ depth: 1 }),
     ];
 
     const tools = await this.getTools();

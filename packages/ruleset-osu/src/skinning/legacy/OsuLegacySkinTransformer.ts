@@ -1,6 +1,6 @@
 import type { Skin, SkinComponentLookup } from "@osucad/core";
 import { SkinTextureStore, SkinTransformer } from "@osucad/core";
-import { computed, type Drawable } from "@osucad/framework";
+import { computed, DrawableSprite, type Drawable } from "@osucad/framework";
 import { OsuSkinComponents } from "../OsuSkinComponents";
 import { LegacyApproachCircle } from "./LegacyApproachCircle";
 import { LegacyCirclePiece } from "./LegacyCirclePiece";
@@ -156,6 +156,8 @@ export class OsuLegacySkinTransformer extends SkinTransformer
         return new LegacyCursor(this);
       case OsuSkinComponents.CursorTrail:
         return new LegacyCursorTrail(this);
+      case OsuSkinComponents.HitCircleSelect:
+        return new DrawableSprite({ texture: this.getTexture("hitcircleselect") });
       case OsuSkinComponents.HitCircleText: {
         if (!this.hasFont(LegacyFont.HitCircle))
           return null;

@@ -19,6 +19,9 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
 
   readonly hitObjectUsageFinished = new Action<HitObject>();
 
+  readonly drawableHitObjectBecameAlive = new Action<DrawableHitObject>();
+
+
   readonly newResult = new Action<[DrawableHitObject, JudgementResult]>();
 
   readonly #startTimeMap = new Map<DrawableHitObject, Bindable<number>>();
@@ -78,7 +81,8 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
       return;
 
     this.#addDrawable(drawable);
-    this.hitObjectUsageBegan.emit(drawable.hitObject);
+    this.hitObjectUsageBegan.emit(entry.hitObject);
+    this.drawableHitObjectBecameAlive.emit(drawable);
   }
 
   protected override removeDrawable(entry: HitObjectLifetimeEntry, drawable: DrawableHitObject)

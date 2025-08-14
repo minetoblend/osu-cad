@@ -46,10 +46,10 @@ export class FollowPointLifetimeEntry extends LifetimeEntry
     if (!this.end)
       return;
 
-    // this.start.defaultsApplied.addListener(this.#onDefaultsApplied, this);
+    this.start.defaultsApplied.addListener(this.#onDefaultsApplied, this);
     this.start.positionBindable.valueChanged.addListener(this.#onPositionChanged, this);
 
-    // this.end!.defaultsApplied.addListener(this.#onEndDefaultsApplied, this);
+    this.end!.defaultsApplied.addListener(this.#onEndDefaultsApplied, this);
     this.end!.positionBindable.valueChanged.addListener(this.#onEndPositionChanged, this);
     this.end!.newComboBindable.valueChanged.addListener(this.#onEndDefaultsApplied, this);
 
@@ -63,19 +63,20 @@ export class FollowPointLifetimeEntry extends LifetimeEntry
 
     console.assert(this.end !== null);
 
-    // this.start.defaultsApplied.removeListener(this.#onDefaultsApplied, this);
+    this.start.defaultsApplied.removeListener(this.#onDefaultsApplied, this);
     this.start.positionBindable.valueChanged.removeListener(this.#onPositionChanged, this);
 
-    // this.end!.defaultsApplied.removeListener(this.#onEndDefaultsApplied, this);
+    this.end!.defaultsApplied.removeListener(this.#onEndDefaultsApplied, this);
     this.end!.positionBindable.valueChanged.removeListener(this.#onEndPositionChanged, this);
     this.end!.newComboBindable.valueChanged.removeListener(this.#onEndDefaultsApplied, this);
 
     this.#wasBound = false;
   }
 
-  // #onDefaultsApplied() {
-  //   this.#refreshLifetimes();
-  // }
+  #onDefaultsApplied()
+  {
+    this.#refreshLifetimes();
+  }
 
   #onEndDefaultsApplied()
   {

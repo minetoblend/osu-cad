@@ -21,4 +21,5 @@ export class OsuSkinComponents extends SkinComponentLookup
   static readonly Cursor = new OsuSkinComponents("Cursor");
   static readonly CursorTrail = new OsuSkinComponents("CursorTrail");
   static readonly CursorParticles = new OsuSkinComponents("CursorParticles");
+  static readonly HitCircleSelect = new OsuSkinComponents("HitCircleSelect");
 }
