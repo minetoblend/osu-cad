@@ -1,7 +1,7 @@
 import { TimingControlPoint } from "@osucad/core";
 import { EditorRuntime } from "@osucad/editor";
 import { Vec2 } from "@osucad/framework";
-import type { ServerMessages } from "@osucad/multiplayer-core";
+import type { IClient, IUser, ServerMessages } from "@osucad/multiplayer-core";
 import type { ClientMessages } from "@osucad/multiplayer-core";
 import { HitCircle, OsuRuleset, PathPoint, PathType, Slider } from "@osucad/ruleset-osu";
 import type { Server, Socket } from "socket.io";
@@ -35,13 +35,24 @@ export async function acceptConnections(io: Server)
   timingPoint.bpm = 180;
   runtime.root.controlPointInfo.add(timingPoint);
 
+  const clients = new Map<number, RoomClient>();
+
   let nextClientId = 0;
 
   io.on("connect", (socket: Socket<ClientMessages, ServerMessages>) =>
   {
     const clientId = ++nextClientId;
 
-    socket.emit("init", { clientId, summary: runtime.createSummary() });
+    const client = new RoomClient(clientId, { id: "foo", username: "Guest" });
+
+    clients.set(clientId, client);
+
+    socket.emit("init", {
+      clientId,
+      summary: runtime.createSummary(),
+      clients: [...clients.values().map(c => c.encode())],
+    });
+    socket.emit("clientJoin", client.encode());
 
     socket.on("deltas", deltas =>
     {
@@ -55,6 +66,29 @@ export async function acceptConnections(io: Server)
     {
       io.emit("signal", clientId, target, type, signal);
     });
+
+    socket.on("disconnect", () =>
+    {
+      if (clients.delete(clientId))
+        socket.emit("clientLeave", client.encode());
+    });
   });
+}
+
+class RoomClient
+{
+  constructor(
+    readonly clientId: number,
+    readonly user: IUser,
+  )
+  {
+  }
+
+  encode(): IClient
+  {
+    const { clientId, user } = this;
+
+    return { clientId, user };
+  }
 }
 

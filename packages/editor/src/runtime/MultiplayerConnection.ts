@@ -9,9 +9,7 @@ export class MultiplayerConnection extends EventEmitter<ServerMessages>
   {
     super();
 
-    socket.on("init", (...args) => this.emit("init", ...args));
-    socket.on("deltas", (...args) => this.emit("deltas", ...args));
-    socket.on("signal", (...args) => this.emit("signal", ...args));
+    socket.onAny((type, ...args) => this.emit(type, ...args));
   }
 
   static async create()

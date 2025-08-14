@@ -1,4 +1,5 @@
 import type { IDocumentSummary } from "./Summary.js";
+import type { IClient } from "./IClient.js";
 
 export interface ServerMessages
 {
@@ -7,6 +8,10 @@ export interface ServerMessages
   deltas(clientId: number, deltas: ServerMessages.Delta[]): void;
 
   signal(clientId: number, target: string, type: string, signal: unknown): void
+
+  clientJoin(client: IClient): void
+
+  clientLeave(client: IClient): void
 }
 
 export namespace ServerMessages
@@ -15,6 +20,7 @@ export namespace ServerMessages
   {
     readonly clientId: number;
     readonly summary: IDocumentSummary;
+    readonly clients: IClient[]
   }
 
   export interface Delta
