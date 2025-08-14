@@ -1,10 +1,10 @@
 import { asyncDependencyLoader, Component } from "@osucad/framework";
-import { MultiplayerConnection } from "./MultiplayerConnection";
-import { EditorRuntime } from "./EditorRuntime";
-import type { ClientMessages, ServerMessages } from "@osucad/multiplayer-protocol";
-import type { EditorBeatmap } from "./dds/EditorBeatmap";
 import type { Delta } from "@osucad/multiplayer-core";
 import { MergeableDelta, MultiValueMap, nn } from "@osucad/multiplayer-core";
+import type { ServerMessages } from "@osucad/multiplayer-protocol";
+import type { EditorBeatmap } from "./dds/EditorBeatmap";
+import { EditorRuntime } from "./EditorRuntime";
+import { MultiplayerConnection } from "./MultiplayerConnection";
 
 interface IQueuedDeltas
 {
@@ -20,7 +20,7 @@ interface SendBufferEntry
 
 export class EditorMultiplayerClient extends Component
 {
-  readonly runtime = new EditorRuntime();
+  runtime!: EditorRuntime;
 
   get editorBeatmap(): EditorBeatmap
   {
@@ -37,6 +37,8 @@ export class EditorMultiplayerClient extends Component
   @asyncDependencyLoader()
   async #connect()
   {
+    this.runtime = new EditorRuntime();
+
     this.connection = await MultiplayerConnection.create();
 
     console.log("Established connection");
@@ -80,17 +82,17 @@ export class EditorMultiplayerClient extends Component
         const otherDelta = other.delta as MergeableDelta;
         if (otherDelta.tryAppend(delta))
         {
-          this.#mergeMap.delete(entry.targetId, other);
           const index = this.sendBuffer.indexOf(other);
           this.sendBuffer.splice(index, 1);
-          break;
+          this.sendBuffer.push(other);
+          return;
         }
       }
 
       this.#mergeMap.add(entry.targetId, entry);
       this.sendBuffer.push(entry);
     });
-    this.scheduler.addDelayed(() => this.#flushSendBuffer(), 50, true);
+    this.scheduler.addDelayed(() => this.#flushSendBuffer(), 100, true);
   }
 
   override update()
@@ -122,8 +124,6 @@ export class EditorMultiplayerClient extends Component
       return;
 
     this.connection.send("deltas", this.sendBuffer.map(it => ({ targetId: it.targetId, content: it.delta.encode() })));
-
-    console.log(this.sendBuffer.length);
 
     this.sendBuffer = [];
     this.#mergeMap.clear();

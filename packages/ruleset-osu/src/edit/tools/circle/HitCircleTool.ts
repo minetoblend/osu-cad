@@ -1,59 +1,34 @@
-import { ComposeTool } from "@osucad/editor";
+import type { MouseUpEvent } from "@osucad/framework";
+import { MouseButton, type MouseDownEvent, type Vec2 } from "@osucad/framework";
 import { HitCircle } from "../../../hitObjects";
-import type { MouseDownEvent } from "@osucad/framework";
-import { MouseButton } from "@osucad/framework";
+import { HitObjectPlacementTool, PlacementState } from "../HitObjectPlacementTool";
 
-export class HitCircleTool extends ComposeTool<HitCircle>
+export class HitCircleTool extends HitObjectPlacementTool<HitCircle>
 {
-  circle!: HitCircle;
-
-  createObject()
+  protected override createHitObject(): HitCircle
   {
-    const circle = new HitCircle();
-
-    circle.startTime = this.beatmap.controlPointInfo.snap(this.editorClock.currentTime, this.beatDivisor.value);
-    circle.position = this.playfield.toLocalSpace(this.mousePosition);
-
-    this.beatmap.hitObjects.add(this.circle = circle);
+    return new HitCircle();
   }
 
-  protected override loadComplete()
+  protected override updateTimeAndPosition(hitObject: HitCircle, time: number, position: Vec2): void
   {
-    super.loadComplete();
-
-    this.createObject();
-  }
-
-  override update()
-  {
-    super.update();
-
-    this.circle.startTime = this.editorClock.currentTime;
-    this.circle.position = this.playfield.toLocalSpace(this.mousePosition);
-  }
-
-  get mousePosition()
-  {
-    return this.getContainingInputManager()!.currentState.mouse.position;
+    hitObject.position = position;
+    hitObject.startTime = time;
   }
 
   override onMouseDown(e: MouseDownEvent): boolean
   {
-    if (e.button === MouseButton.Right)
-    {
-      this.circle.newCombo = !this.circle.newCombo;
-    }
+    if (e.button === MouseButton.Left && this.state === PlacementState.Idle)
+      this.beginPlacement();
 
     return true;
   }
 
-  override dispose()
+  override onMouseUp(e: MouseUpEvent): void
   {
-    if (this.circle)
+    if (e.button === MouseButton.Left && this.isPlacementActive)
     {
-      this.beatmap.hitObjects.remove(this.circle);
+      this.endPlacement(true);
     }
-
-    super.dispose();
   }
 }

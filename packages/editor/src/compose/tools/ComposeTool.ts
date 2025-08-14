@@ -1,9 +1,10 @@
 import type { HitObject } from "@osucad/core";
 import { Playfield } from "@osucad/core";
 import { Axes, CompositeDrawable, dependencyLoader, resolved } from "@osucad/framework";
-import { EditorBeatmap } from "../../runtime";
+import { EditorBeatmap, EditorHistory } from "../../runtime";
 import { EditorClock } from "../../EditorClock";
 import { BindableBeatDivisor } from "../../BindableBeatDivisor";
+import { ComposeToolContainer } from "./ComposeToolContainer";
 
 export abstract class ComposeTool<THitObject extends HitObject = HitObject> extends CompositeDrawable
 {
@@ -25,8 +26,19 @@ export abstract class ComposeTool<THitObject extends HitObject = HitObject> exte
   @resolved(Playfield)
   protected accessor playfield!: Playfield
 
+  @resolved(EditorHistory)
+  protected accessor history!: EditorHistory
+
+  @resolved(ComposeToolContainer)
+  accessor #toolContainer!: ComposeToolContainer
+
   protected get hitObjects(): readonly THitObject[]
   {
     return this.beatmap.hitObjects.hitObjects as readonly THitObject[];
+  }
+
+  recreate()
+  {
+    this.#toolContainer.refresh();
   }
 }

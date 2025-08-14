@@ -4,6 +4,7 @@ export interface ISerializer<Value, Plain = any>
 {
   serialize: (value: Value, encoder: IEncoder) => Plain
   deserialize: (value: Plain, decoder: IDecoder) => Value
+  equals?: (a: Value, b: Value) => boolean
 }
 
 export function serializer<Value, Plain>(serializer: ISerializer<Value, Plain>): ISerializer<Value, Plain>

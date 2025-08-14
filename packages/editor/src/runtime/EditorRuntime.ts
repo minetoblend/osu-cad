@@ -1,9 +1,9 @@
 import { BeatmapDifficultyInfo, BeatmapInfo, BeatmapMetadata, ControlPointInfo, nn, type Ruleset, rulesets, type RulesetStore, SampleControlPoint, TimingControlPoint } from "@osucad/core";
 import type { DDS, DDSFactoryOrConstructor, IDocumentSummary } from "@osucad/multiplayer-core";
 import { DocumentRuntime, Encoder } from "@osucad/multiplayer-core";
-import { EditorBeatmap } from "./dds/EditorBeatmap";
 import type { EditorRuleset } from "../EditorRuleset";
 import { EditorHistory } from "./EditorHistory";
+import { EditorBeatmap } from "./dds/EditorBeatmap";
 import { HitObjectCollection } from "./dds/HitObjectCollection";
 
 export interface IEditorDocumentSummary extends IDocumentSummary

@@ -159,8 +159,11 @@ export class HitObject extends ObjectDDS
     property: ObjectDDSPropertyMetadata,
     newValue: unknown,
     oldValue: unknown,
+    local: boolean,
   ): void
   {
+    super.onPropertyChanged(property, newValue, oldValue, local);
+
     const invalidations = this.invalidations[property.name as keyof this];
     if (invalidations)
     {

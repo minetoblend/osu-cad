@@ -39,6 +39,16 @@ export class DocumentHistory extends EventEmitter<DocumentHistoryEvents>
     return !this.#activeTransaction.isEmpty();
   }
 
+  discardUncommittedChanges()
+  {
+    if(!this.hasUncommittedChanges())
+      return false;
+
+    this.commit();
+    this.undo();
+    return true;
+  }
+
   get canUndo()
   {
     return this.#undoStack.length > 0;

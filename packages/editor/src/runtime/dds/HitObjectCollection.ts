@@ -101,7 +101,7 @@ export class HitObjectCollection
   }
 
   readonly #hitObjects: HitObject[] = [];
-  readonly #idMap = new Map<string, HitObject>();
+  readonly #set = new Set<HitObject>();
 
   get hitObjects(): readonly HitObject[]
   {
@@ -113,10 +113,13 @@ export class HitObjectCollection
     return this.#hitObjects.length;
   }
 
-  add(hitObject: HitObject)
+  add(hitObject: HitObject, local = false)
   {
-    if (!this.#add(hitObject))
-      return;
+    if (this.isAttached && !local)
+      this.encoder.encodeDDS(hitObject);
+
+    if (!this.#add(hitObject) || local)
+      return false;
 
     if (this.isAttached)
     {
@@ -125,18 +128,16 @@ export class HitObjectCollection
 
       this.submitDelta(delta, undo);
     }
+
+    return true;
   }
 
   #add(hitObject: HitObject)
   {
-    this.encoder.encodeDDS(hitObject);
-
-    const id = nn(hitObject.id);
-
-    if (this.#idMap.has(id))
+    if (this.#set.has(hitObject))
       return false;
 
-    this.#idMap.set(id, hitObject);
+    this.#set.add(hitObject);
     this.#hitObjects.push(hitObject);
 
     hitObject.invalidated.addListener(this.#onInvalidated, this);
@@ -155,21 +156,22 @@ export class HitObjectCollection
   remove(hitObject: HitObject)
   {
     if (!this.#remove(hitObject))
-      return;
+      return false;
 
-    if (this.isAttached)
+    if (this.isAttached && hitObject.isAttached)
     {
       const delta = RemoveHitObjectDelta.create(hitObject, this.encoder);
       const undo = AddHitObjectDelta.create(hitObject, this.encoder);
 
       this.submitDelta(delta, undo);
     }
+
+    return true;
   }
 
   #remove(hitObject: HitObject)
   {
-    const id = nn(hitObject.id);
-    if (!this.#idMap.delete(id))
+    if (!this.#set.delete(hitObject))
       return false;
 
     const index = this.#hitObjects.indexOf(hitObject);
@@ -210,8 +212,8 @@ export class HitObjectCollection
     }
     else if (opType === OpType.Remove)
     {
-      const hitObject = this.#idMap.get(ref.$ref);
-      if (hitObject)
+      const hitObject = this.decoder.decodeDDS(ref);
+      if (hitObject instanceof HitObject)
         this.#remove(hitObject);
     }
   }
@@ -238,8 +240,8 @@ export class HitObjectCollection
     }
     else if (delta instanceof RemoveHitObjectDelta)
     {
-      const hitObject = this.#idMap.get(delta.ref.$ref);
-      if (hitObject)
+      const hitObject = this.decoder.decodeDDS(delta.ref);
+      if (hitObject instanceof HitObject)
         this.remove(hitObject);
     }
   }

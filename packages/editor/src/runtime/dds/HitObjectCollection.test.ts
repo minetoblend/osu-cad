@@ -1,8 +1,8 @@
+import { HitObject } from "@osucad/core";
+import { DocumentRuntime, syncRuntimes, type DDSAttributes } from "@osucad/multiplayer-core";
+import { inspect } from "node:util";
 import { describe, expect, it } from "vitest";
 import { HitObjectCollection } from "./HitObjectCollection";
-import { HitObject } from "@osucad/core";
-import { Delta, DocumentRuntime, nn, syncRuntimes, type DDSAttributes } from "@osucad/multiplayer-core";
-import { inspect } from"node:util";
 
 describe("HitObjectCollection", () =>
 {

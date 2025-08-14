@@ -1,6 +1,7 @@
-import { Axes, CompositeDrawable, resolved } from "@osucad/framework";
+import { Axes, CompositeDrawable, provideSelf, resolved } from "@osucad/framework";
 import { ActiveToolBindable } from "./ActiveToolBindable";
 
+@provideSelf()
 export class ComposeToolContainer extends CompositeDrawable
 {
   @resolved(ActiveToolBindable)
@@ -24,5 +25,10 @@ export class ComposeToolContainer extends CompositeDrawable
 
       this.internalChild = new e.value.tool();
     }, true);
+  }
+
+  refresh()
+  {
+    this.#activeTool.triggerChange();
   }
 }

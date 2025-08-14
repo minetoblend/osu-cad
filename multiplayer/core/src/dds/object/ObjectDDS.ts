@@ -93,9 +93,9 @@ export class ObjectDDS extends DDS<IObjectDelta>
   {
     const oldValue = property.get(this);
 
-    property.set(this, value, local);
+    property.set(this, value);
 
-    this.onPropertyChanged(property, value, oldValue);
+    this.onPropertyChanged(property, value, oldValue, local);
 
     this.emit(`update:${property.name}`, value, oldValue);
     return oldValue;
@@ -138,7 +138,7 @@ export class ObjectDDS extends DDS<IObjectDelta>
     }
   }
 
-  protected onPropertyChanged(property: ObjectDDSPropertyMetadata, newValue: unknown, oldValue: unknown)
+  protected onPropertyChanged(property: ObjectDDSPropertyMetadata, newValue: unknown, oldValue: unknown, local: boolean)
   {
   }
 }

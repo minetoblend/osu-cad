@@ -2,9 +2,9 @@ import type { ControlPointInfo, HitSoundInfo, HitWindows, Judgement } from "@osu
 import { BeatmapDifficultyInfo, bindableBacked, customType, HitObject, invalidations, safeAssign } from "@osucad/core";
 import type { IVec2 } from "@osucad/framework";
 import { Bindable, BindableBoolean, BindableNumber, Vec2 } from "@osucad/framework";
-import { OsuHitWindows } from "../scoring/OsuHitWindows";
-import { OsuJudgement } from "../judgements/OsuJudgement";
 import { type DDSAttributes, type } from "@osucad/multiplayer-core";
+import { OsuJudgement } from "../judgements/OsuJudgement";
+import { OsuHitWindows } from "../scoring/OsuHitWindows";
 import type { Spinner } from "./Spinner";
 
 export interface OsuHitObjectOptions
@@ -244,5 +244,7 @@ export abstract class OsuHitObject extends HitObject
   {
     return new OsuJudgement();
   }
+
+
 }
 

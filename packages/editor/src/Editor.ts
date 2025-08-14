@@ -1,13 +1,13 @@
-import type { ScrollEvent } from "@osucad/framework";
-import { asyncDependencyLoader, provide, resolved, Screen } from "@osucad/framework";
-import { EditorBeatmap, EditorRuntime } from "./runtime";
 import type { Skin } from "@osucad/core";
 import { ISkinSource, PlayfieldClock, Ruleset, SkinProvidingContainer } from "@osucad/core";
-import { EditorRuleset } from "./EditorRuleset";
-import { EditorClock } from "./EditorClock";
-import { ComposeScreen } from "./compose";
+import type { ScrollEvent } from "@osucad/framework";
+import { asyncDependencyLoader, provide, resolved, Screen } from "@osucad/framework";
 import { BindableBeatDivisor } from "./BindableBeatDivisor";
 import { DefaultsApplier } from "./DefaultsApplier";
+import { EditorClock } from "./EditorClock";
+import { EditorRuleset } from "./EditorRuleset";
+import { ComposeScreen } from "./compose";
+import { EditorBeatmap, EditorHistory, EditorRuntime } from "./runtime";
 
 export interface EditorOptions
 {
@@ -54,6 +54,12 @@ export class Editor extends Screen
 
   @provide(BindableBeatDivisor)
   readonly beatDivisor = new BindableBeatDivisor(4);
+
+  @provide(EditorHistory)
+  get history()
+  {
+    return this.runtime.history;
+  }
 
   @asyncDependencyLoader()
   async #load()
