@@ -91,7 +91,7 @@ export class CompositeDrawable extends Drawable
       this.#maskingEffect.cornerRadius = value;
   }
 
-  #cornerExponent = 0;
+  #cornerExponent = 2;
 
   get cornerExponent()
   {
