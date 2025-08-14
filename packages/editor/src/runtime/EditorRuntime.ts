@@ -1,10 +1,11 @@
 import { BeatmapDifficultyInfo, BeatmapInfo, BeatmapMetadata, ControlPointInfo, nn, type Ruleset, rulesets, type RulesetStore, SampleControlPoint, TimingControlPoint } from "@osucad/core";
-import type { DDS, DDSFactoryOrConstructor, IDocumentSummary } from "@osucad/multiplayer-core";
-import { DocumentRuntime, Encoder, Signaler } from "@osucad/multiplayer-core";
+import type { DDS, DDSFactoryOrConstructor, IDDSSummary, IDocumentSummary } from "@osucad/multiplayer-core";
+import { DocumentRuntime, Encoder, Signaler, UUIDGenerator } from "@osucad/multiplayer-core";
 import type { EditorRuleset } from "../EditorRuleset";
 import { EditorHistory } from "./EditorHistory";
 import { EditorBeatmap } from "./dds/EditorBeatmap";
 import { HitObjectCollection } from "./dds/HitObjectCollection";
+import { DDSFactoryRegistry } from "@osucad/multiplayer-core";
 
 export interface IEditorDocumentSummary extends IDocumentSummary
 {
@@ -20,17 +21,20 @@ export class EditorRuntime extends DocumentRuntime<EditorBeatmap>
 {
   constructor(readonly rulesetStore: RulesetStore = rulesets)
   {
-    super([
-      Signaler,
-      EditorBeatmap,
-      HitObjectCollection,
-      BeatmapDifficultyInfo,
-      BeatmapMetadata,
-      ControlPointInfo,
-      TimingControlPoint,
-      SampleControlPoint,
-      BeatmapInfo,
-    ]);
+    super({
+      typeRegistry: new DDSFactoryRegistry([
+        Signaler,
+        EditorBeatmap,
+        HitObjectCollection,
+        BeatmapDifficultyInfo,
+        BeatmapMetadata,
+        ControlPointInfo,
+        TimingControlPoint,
+        SampleControlPoint,
+        BeatmapInfo,
+      ]),
+      idGenerator: new UUIDGenerator(),
+    });
 
     this.history = new EditorHistory(this);
   }
@@ -78,7 +82,7 @@ export class EditorRuntime extends DocumentRuntime<EditorBeatmap>
     return runtime;
   }
 
-  override async load(summary: IDocumentSummary)
+  override async load(summary: Record<string, IDDSSummary>)
   {
     if (!("rulesetId" in summary) || typeof summary.rulesetId !== "string")
       throw new Error("Invalid document summary");

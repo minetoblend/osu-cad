@@ -1,13 +1,10 @@
 {
-  "name": "@osucad/multiplayer-core",
+  "name": "@osucad/multiplayer-client",
   "version": "0.0.1",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "scripts": {
-    "test": "vitest run"
-  },
   "exports": {
     "./package.json": "./package.json",
     ".": {
@@ -20,20 +17,12 @@
     "dist",
     "!**/*.tsbuildinfo"
   ],
-  "sideEffects": false,
   "dependencies": {
-    "@osucad/multiplayer-protocol": "workspace:^",
     "@osucad/multiplayer-client-definitions": "workspace:^",
-    "async": "^3.2.6",
+    "@osucad/multiplayer-core": "workspace:^",
+    "@osucad/multiplayer-protocol": "workspace:^",
     "eventemitter3": "^5.0.1",
     "socket.io-client": "^4.8.1",
-    "tslib": "^2.3.0",
-    "uuid": "^11.1.0",
-    "vitest": "^3.0.0"
-  },
-  "devDependencies": {
-    "@types/async": "^3.2.24",
-    "@types/uuid": "^10.0.0",
-    "vitest": "^3.1.2"
+    "tslib": "^2.3.0"
   }
 }

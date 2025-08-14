@@ -1,9 +1,12 @@
 import { EventEmitter } from "eventemitter3";
 import type { DDS, DDSFactoryOrConstructor } from "../dds/index.js";
 import type { Delta } from "../dds/Delta.js";
-import type { IDocumentSummary } from "@osucad/multiplayer-protocol";
+import type { IDDSSummary } from "@osucad/multiplayer-protocol";
 import { Decoder, Encoder } from "../serialization/types.js";
 import { DDSPool } from "./DDSPool.js";
+import { DDSFactoryRegistry } from "./DDSFactoryRegistry.js";
+import type { IdGenerator } from "./IdGenerator.js";
+import { UUIDGenerator } from "./IdGenerator.js";
 
 export interface DocumentRuntimeEvents
 {
@@ -11,14 +14,30 @@ export interface DocumentRuntimeEvents
   signalSubmitted(dds: DDS, type: string, signal: unknown): void;
 }
 
+export interface DocumentRuntimeOptions
+{
+  readonly typeRegistry: DDSFactoryRegistry
+  readonly idGenerator: IdGenerator
+}
+
 export class DocumentRuntime<T extends DDS = DDS> extends EventEmitter<DocumentRuntimeEvents>
 {
-  protected constructor(types: DDSFactoryOrConstructor<DDS>[])
+  constructor({
+    typeRegistry,
+    idGenerator,
+  }: DocumentRuntimeOptions)
   {
     super();
 
-    this.#objectPool = new DDSPool(this, types);
+    this.typeRegistry = typeRegistry;
+    this.idGenerator = idGenerator;
+
+    this.#objectPool = new DDSPool(this);
   }
+
+  readonly typeRegistry: DDSFactoryRegistry;
+
+  readonly idGenerator: IdGenerator;
 
   readonly #objectPool: DDSPool;
 
@@ -32,14 +51,12 @@ export class DocumentRuntime<T extends DDS = DDS> extends EventEmitter<DocumentR
     return this.#objectPool;
   }
 
-  get typeRegistry()
+  static create<T extends DDS>(root: T, types: DDSFactoryOrConstructor[])
   {
-    return this.#objectPool.typeRegistry;
-  }
-
-  static create<T extends DDS>(root: T, types: DDSFactoryOrConstructor<DDS>[])
-  {
-    const runtime = new DocumentRuntime<T>(types);
+    const runtime = new DocumentRuntime<T>({
+      typeRegistry: new DDSFactoryRegistry(types),
+      idGenerator: new UUIDGenerator(),
+    });
 
     runtime.#objectPool.root = root;
     runtime.#objectPool.attachDDS(root, "root");
@@ -56,21 +73,12 @@ export class DocumentRuntime<T extends DDS = DDS> extends EventEmitter<DocumentR
     return runtime;
   }
 
-  static async load(summary: IDocumentSummary, types: DDSFactoryOrConstructor<DDS>[])
-  {
-    const runtime = new DocumentRuntime(types);
-
-    await runtime.load(summary);
-
-    return runtime;
-  }
-
   createSummary()
   {
     return this.#objectPool.createSummary();
   }
 
-  async load(summary: IDocumentSummary)
+  async load(summary: Record<string, IDDSSummary>)
   {
     this.#objectPool.load(summary, 0, new Decoder(this.#objectPool));
   }
@@ -122,14 +130,14 @@ export class DocumentRuntime<T extends DDS = DDS> extends EventEmitter<DocumentR
     this.#objectPool.create(dds);
   }
 
-  clone()
-  {
-    return DocumentRuntime.load(this.createSummary(), this.typeRegistry.types());
-  }
-
   dispose()
   {
     this.#objectPool.dispose();
     (this.#objectPool as unknown) = null;
+  }
+
+  public attach(dds: DDS): boolean
+  {
+    return this.#objectPool.attachDDS(dds);
   }
 }

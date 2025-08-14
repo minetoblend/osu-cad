@@ -8,7 +8,9 @@ export interface IDDSSummary
 
 export interface IDocumentSummary
 {
-  readonly types: DDSAttributes[];
-  readonly root: string;
-  readonly entries: Record<string, IDDSSummary>;
+  readonly schema: {
+    readonly types: DDSAttributes[];
+    readonly root: { [key: string]: string }
+  }
+  readonly objects: Record<string, IDDSSummary>;
 }

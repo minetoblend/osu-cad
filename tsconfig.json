@@ -32,6 +32,12 @@
     },
     {
       "path": "./multiplayer/protocol"
+    },
+    {
+      "path": "./multiplayer/client-definitions"
+    },
+    {
+      "path": "./multiplayer/client"
     }
   ],
   "ts-node": {

@@ -1,6 +1,7 @@
 import type { IEncodedDelta } from "../dds/Delta.js";
 import { Delta } from "../dds/Delta.js";
 import type { IDecoder } from "../serialization/types.js";
+import { Decoder } from "../serialization/types.js";
 import { Encoder } from "../serialization/types.js";
 import type { DDSFactoryOrConstructor } from "../dds/index.js";
 import { DDS } from "../dds/index.js";
@@ -9,7 +10,8 @@ import { summarizeDocument } from "./summarizeDocument.js";
 import type { DocumentRuntime } from "./DocumentRuntime.js";
 import { DDSChannel } from "../dds/DDSChannel.js";
 import { nn } from "../utils/nn.js";
-import { DDSFactoryRegistry } from "./DDSFactoryRegistry.js";
+import type { DDSFactoryRegistry } from "./DDSFactoryRegistry.js";
+import type { IdGenerator } from "./IdGenerator.js";
 
 export type ICreateObjectDelta = [id: string, summary: IDDSSummary];
 
@@ -32,13 +34,11 @@ class CreateObjectDelta extends Delta<ICreateObjectDelta>
 export class DDSPool extends DDS<ICreateObjectDelta>
 {
 
-  constructor(runtime: DocumentRuntime, types: DDSFactoryOrConstructor<DDS>[])
+  constructor(runtime: DocumentRuntime)
   {
     super({ type: "builtin:object-pool", version: 0 });
 
     this.#runtime = runtime;
-
-    this.typeRegistry = new DDSFactoryRegistry(types);
 
     this.attachDDS(this, "runtime");
   }
@@ -50,7 +50,15 @@ export class DDSPool extends DDS<ICreateObjectDelta>
     return this.#runtime;
   }
 
-  readonly typeRegistry: DDSFactoryRegistry;
+  protected get typeRegistry()
+  {
+    return this.runtime.typeRegistry;
+  }
+
+  protected get idGenerator()
+  {
+    return this.runtime.idGenerator;
+  }
 
   root!: DDS;
 
@@ -100,13 +108,11 @@ export class DDSPool extends DDS<ICreateObjectDelta>
 
   override load(content: unknown, version: number, decoder: IDecoder): void
   {
-    const summary = content as IDocumentSummary;
+    const entries = content as Record<string, IDDSSummary>;
 
-    this.typeRegistry.ensureSupported(summary.types);
-
-    for (const id in summary.entries)
+    for (const id in entries)
     {
-      const entry = summary.entries[id];
+      const entry = entries[id];
 
       const factory = this.typeRegistry.get(entry.attributes);
       if (!factory)
@@ -117,18 +123,16 @@ export class DDSPool extends DDS<ICreateObjectDelta>
       this.attachDDS(dds, id);
     }
 
-    for (const id in summary.entries)
+    for (const id in entries)
     {
-      const entry = summary.entries[id];
-      const channel = nn(this.#channels.get(id));
+      const entry = entries[id];
+      const channel = nn(this.getChannel(id));
 
       channel.load(entry.content, entry.attributes.version, decoder);
     }
-
-    this.root = nn(this.getObject(summary.root), `Could not find entrypoint with id "${summary.root}"`);
   }
 
-  attachDDS(dds: DDS, id: string = crypto.randomUUID()): boolean
+  attachDDS(dds: DDS, id: string = this.idGenerator.next(dds)): boolean
   {
     if (dds.isAttached)
       return false;

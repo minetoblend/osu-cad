@@ -1,6 +1,6 @@
 export interface IClient
 {
-  clientId: number
+  clientId: string
   user: IUser
 }
 

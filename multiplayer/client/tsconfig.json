@@ -4,10 +4,13 @@
   "include": [],
   "references": [
     {
-      "path": "../client-definitions"
+      "path": "../protocol"
     },
     {
-      "path": "../protocol"
+      "path": "../core"
+    },
+    {
+      "path": "../client-definitions"
     },
     {
       "path": "./tsconfig.lib.json"

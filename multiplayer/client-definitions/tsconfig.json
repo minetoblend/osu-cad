@@ -4,9 +4,6 @@
   "include": [],
   "references": [
     {
-      "path": "../client-definitions"
-    },
-    {
       "path": "../protocol"
     },
     {

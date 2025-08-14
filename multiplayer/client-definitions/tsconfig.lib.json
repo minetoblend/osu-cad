@@ -14,9 +14,6 @@
   "include": ["src/**/*.ts"],
   "references": [
     {
-      "path": "../client-definitions/tsconfig.lib.json"
-    },
-    {
       "path": "../protocol/tsconfig.lib.json"
     }
   ]
