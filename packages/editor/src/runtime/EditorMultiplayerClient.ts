@@ -21,7 +21,7 @@ export class EditorMultiplayerClient extends Component
   }
 
   connection!: MultiplayerConnection;
-  clientId!: number;
+  clientId!: string;
 
   receivedDeltas: IQueuedDeltas[] = [];
 

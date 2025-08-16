@@ -7,7 +7,7 @@ export interface ServerMessages
 
   deltas(deltas: IRemoteDocumentMessage[]): void;
 
-  signal(clientId: number, target: string, type: string, signal: unknown): void
+  signal(clientId: string, target: string, type: string, signal: unknown): void
 }
 
 export namespace ServerMessages

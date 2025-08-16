@@ -68,7 +68,7 @@ export abstract class DDS<TDelta = unknown, EventTypes extends EventEmitter.Vali
 
   abstract load(summary: unknown, version: number, decoder: IDecoder): void;
 
-  protected processSignal(type: string, signal: unknown, clientId: number)
+  protected processSignal(type: string, signal: unknown, clientId: string)
   {
 
   }

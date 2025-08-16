@@ -105,7 +105,7 @@ export class DocumentRuntime<T extends DDS = DDS> extends EventEmitter<DocumentR
     }
   }
 
-  processSignal(clientId: number, targetId: string, type: string, signal: unknown)
+  processSignal(clientId: string, targetId: string, type: string, signal: unknown)
   {
     const channel = this.#channelCollection.getChannel(targetId);
     if (!channel)

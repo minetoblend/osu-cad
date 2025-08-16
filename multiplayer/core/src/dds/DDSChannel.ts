@@ -59,7 +59,7 @@ export class DDSChannel
     this.#handler.process(delta, local);
   }
 
-  processSignal(clientId: number, type: string, signal: unknown)
+  processSignal(clientId: string, type: string, signal: unknown)
   {
     this.#handler.processSignal(clientId, type, signal);
   }
@@ -68,7 +68,7 @@ export class DDSChannel
 export interface IDeltaHandler
 {
   process: (delta: unknown, local: boolean) => void;
-  processSignal: (clientId: number, type: string, signal: unknown) => void;
+  processSignal: (clientId: string, type: string, signal: unknown) => void;
   replay: (delta: Delta) => void;
   load: (summary: unknown, version: number, decoder: IDecoder) => void;
 }

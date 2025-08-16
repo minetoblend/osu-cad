@@ -18,7 +18,7 @@ export class Signaler<Signals extends { [key: string]:  (...args: any[]) => void
     this.submitSignal(type as string, args);
   }
 
-  protected override processSignal(type: string, signal: unknown, clientId: number): void
+  protected override processSignal(type: string, signal: unknown, clientId: string): void
   {
     this.emit(type as any, ...(signal as any));
   }
