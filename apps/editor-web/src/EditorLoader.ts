@@ -1,6 +1,5 @@
-import type { EditorRuntime } from "@osucad/editor";
-import { MultiplayerClient, type Document } from "@osucad/multiplayer-client";
-import { Anchor, asyncDependencyLoader, dependencyLoader, EasingFunction, Screen, type ScreenTransitionEvent } from "@osucad/framework";
+import type { Document } from "@osucad/multiplayer-client";
+import { Anchor, dependencyLoader, Screen, type ScreenTransitionEvent } from "@osucad/framework";
 import { LoadingSpinner } from "./LoadingSpinner";
 
 const editorRuntimeFactory = async () =>
@@ -37,6 +36,8 @@ export class EditorLoader extends Screen
 
   async loadEditor()
   {
+    const { MultiplayerClient } = await import("@osucad/multiplayer-client");
+
     const client = new MultiplayerClient();
 
     this.#document = await client.load("beatmap", { runtimeFactory: editorRuntimeFactory });
