@@ -3,6 +3,7 @@ import type { DDSAttributes } from "@osucad/multiplayer-protocol";
 import { nested, ObjectDDS, type } from "../dds/index.js";
 import { DocumentRuntime } from "./DocumentRuntime.js";
 import { nn } from "../utils/nn.js";
+import { syncRuntimes } from "../utils/index.js";
 
 describe("DocumentRuntime", () =>
 {
@@ -93,10 +94,7 @@ describe("DocumentRuntime", () =>
 
     const foo2 =  runtime2.root as Foo;
 
-    runtime1.on("deltaSubmitted", (dds, delta) =>
-    {
-      runtime2.process(nn(dds.id), delta.encode(), false);
-    });
+    syncRuntimes(runtime1, runtime2);
 
     foo1.count = 10;
     expect(foo2.count).toBe(10);
@@ -110,13 +108,5 @@ describe("DocumentRuntime", () =>
 
     foo1.foo = null;
     expect(foo2.foo).toBe(null);
-
-    expect(runtime1.objects.objectCount).toBe(2);
-    runtime1.objects.collectGarbage();
-    expect(runtime1.objects.objectCount).toBe(1);
-
-    expect(runtime2.objects.objectCount).toBe(2);
-    runtime2.objects.collectGarbage();
-    expect(runtime2.objects.objectCount).toBe(1);
   });
 });

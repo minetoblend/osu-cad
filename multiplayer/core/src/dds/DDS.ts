@@ -22,7 +22,7 @@ export abstract class DDS<TDelta = unknown, EventTypes extends EventEmitter.Vali
     return this.#channel?.id ?? null;
   }
 
-  get isAttached()
+  isAttached(): this is Attached<this>
   {
     return this.#channel !== null;
   }
@@ -83,3 +83,7 @@ export abstract class DDS<TDelta = unknown, EventTypes extends EventEmitter.Vali
     this.#channel?.submitSignal(type, signal);
   }
 }
+
+export type Attached<T extends DDS> = T & {
+  readonly id: string
+};

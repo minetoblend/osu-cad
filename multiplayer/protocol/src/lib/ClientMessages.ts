@@ -1,6 +1,8 @@
+import type { IDocumentMessage } from "./messages.js";
+
 export interface ClientMessages
 {
-  deltas(deltas: ClientMessages.Delta[]): void
+  deltas(deltas: IDocumentMessage[]): void
   signal(target: string, type: string, signal: unknown): void
 }
 

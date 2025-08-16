@@ -115,13 +115,13 @@ export class HitObjectCollection
 
   add(hitObject: HitObject, local = false)
   {
-    if (this.isAttached && !local)
+    if (this.isAttached() && !local)
       this.encoder.encodeDDS(hitObject);
 
     if (!this.#add(hitObject) || local)
       return false;
 
-    if (this.isAttached)
+    if (this.isAttached())
     {
       const delta = AddHitObjectDelta.create(hitObject, this.encoder);
       const undo = RemoveHitObjectDelta.create(hitObject, this.encoder);
@@ -134,13 +134,13 @@ export class HitObjectCollection
 
   ensureAttached(hitObject: HitObject)
   {
-    if (hitObject.isAttached)
+    if (hitObject.isAttached())
       return;
 
     if (this.add(hitObject))
       return;
 
-    if (this.isAttached)
+    if (this.isAttached())
     {
       const delta = AddHitObjectDelta.create(hitObject, this.encoder);
       const undo = RemoveHitObjectDelta.create(hitObject, this.encoder);
@@ -175,7 +175,7 @@ export class HitObjectCollection
     if (!this.#remove(hitObject))
       return false;
 
-    if (this.isAttached && hitObject.isAttached)
+    if (this.isAttached() && hitObject.isAttached())
     {
       const delta = RemoveHitObjectDelta.create(hitObject, this.encoder);
       const undo = AddHitObjectDelta.create(hitObject, this.encoder);

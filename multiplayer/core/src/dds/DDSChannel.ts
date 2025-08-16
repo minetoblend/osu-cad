@@ -1,24 +1,27 @@
 import type { DocumentRuntime } from "../runtime/index.js";
-import type { DDS } from "./DDS.js";
+import type { Attached, DDS } from "./DDS.js";
 import type { Delta } from "./Delta.js";
 import type { IDecoder } from "../serialization/types.js";
 import { Decoder, Encoder } from "../serialization/types.js";
 import { sign } from "crypto";
+import type { IDDSSummary } from "@osucad/multiplayer-protocol";
 
 export class DDSChannel
 {
   constructor(
     readonly id: string,
     readonly runtime: DocumentRuntime,
-    readonly target: DDS,
+    target: DDS,
   )
   {
+    this.target = target as Attached<DDS>;
     this.encoder = new Encoder();
-    this.encoder.on("ddsEncoded", dds => runtime.ensureCreated(dds));
+    this.encoder.on("ddsEncoded", dds => runtime.objects.attach(dds));
 
-    this.decoder = new Decoder(runtime);
+    this.decoder = new Decoder(runtime.objects);
   }
 
+  readonly target: Attached<DDS>;
   readonly encoder: Encoder;
   readonly decoder: Decoder;
 
@@ -39,9 +42,11 @@ export class DDSChannel
     this.#handler = handler;
   }
 
-  load(summary: unknown, version: number, decoder: IDecoder)
+  load(summary: IDDSSummary)
   {
-    this.#handler.load(summary, version, decoder);
+    const { content, attributes } = summary;
+
+    this.#handler.load(content, attributes.version, this.decoder);
   }
 
   replay(delta: Delta)

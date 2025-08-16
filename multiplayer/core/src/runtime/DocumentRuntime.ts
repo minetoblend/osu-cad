@@ -1,13 +1,16 @@
 import { EventEmitter } from "eventemitter3";
-import type { DDS, DDSFactoryOrConstructor } from "../dds/index.js";
+import type { Attached, DDS, DDSFactoryOrConstructor } from "../dds/index.js";
 import type { Delta } from "../dds/Delta.js";
-import type { IDocumentSummary } from "@osucad/multiplayer-protocol";
-import { Decoder, Encoder } from "../serialization/types.js";
-import { DDSPool } from "./DDSPool.js";
+import type { IAttachMessage, IDDSSummary, IDocumentMessage, IRemoteDocumentMessage } from "@osucad/multiplayer-protocol";
+import { type IDocumentSummary, MessageType } from "@osucad/multiplayer-protocol";
+import { ChannelCollection } from "./ChannelCollection.js";
 
 export interface DocumentRuntimeEvents
 {
-  deltaSubmitted(dds: DDS, delta: Delta, undo: Delta | null): void;
+  deltaSubmitted(dds: Attached<DDS>, delta: Delta, undo: Delta | null): void;
+
+  attached(dds: Attached<DDS>, summary: IDDSSummary): void
+
   signalSubmitted(dds: DDS, type: string, signal: unknown): void;
 }
 
@@ -17,41 +20,37 @@ export class DocumentRuntime<T extends DDS = DDS> extends EventEmitter<DocumentR
   {
     super();
 
-    this.#objectPool = new DDSPool(this, types);
+    this.#channelCollection = new ChannelCollection(this, types);
   }
 
-  readonly #objectPool: DDSPool;
+  readonly #channelCollection: ChannelCollection;
 
   get root(): T
   {
-    return this.#objectPool.root as T;
+    return this.#channelCollection.root as T;
   }
 
   get objects()
   {
-    return this.#objectPool;
+    return this.#channelCollection;
   }
 
   get typeRegistry()
   {
-    return this.#objectPool.typeRegistry;
+    return this.#channelCollection.typeRegistry;
+  }
+
+  public generateUniqueId()
+  {
+    return crypto.randomUUID();
   }
 
   static create<T extends DDS>(root: T, types: DDSFactoryOrConstructor<DDS>[])
   {
     const runtime = new DocumentRuntime<T>(types);
 
-    runtime.#objectPool.root = root;
-    runtime.#objectPool.attachDDS(root, "root");
-
-    const encoder = new Encoder();
-    encoder.on("ddsEncoded", other =>
-    {
-      runtime.#objectPool.attachDDS(other);
-      other.createSummary(encoder);
-    });
-
-    root.createSummary(encoder);
+    runtime.#channelCollection.root = root;
+    runtime.#channelCollection.attach(root);
 
     return runtime;
   }
@@ -67,22 +66,22 @@ export class DocumentRuntime<T extends DDS = DDS> extends EventEmitter<DocumentR
 
   createSummary()
   {
-    return this.#objectPool.createSummary();
+    return this.#channelCollection.createSummary();
   }
 
   async load(summary: IDocumentSummary)
   {
-    this.#objectPool.load(summary, 0, new Decoder(this.#objectPool));
+    this.#channelCollection.load(summary);
   }
 
-  getObject(id: string)
-  {
-    return this.#objectPool.getObject(id);
-  }
-
-  submitDelta(target: DDS, delta: Delta, undo: Delta | null): void
+  submitDelta(target: Attached<DDS>, delta: Delta, undo: Delta | null): void
   {
     this.emit("deltaSubmitted", target, delta, undo);
+  }
+
+  submitAttachMessage(target: Attached<DDS>, summary: IDDSSummary)
+  {
+    this.emit("attached", target, summary);
   }
 
   submitSignal(target: DDS, type: string, signal: unknown): void
@@ -92,34 +91,29 @@ export class DocumentRuntime<T extends DDS = DDS> extends EventEmitter<DocumentR
 
   replayDelta(targetId: string, delta: Delta)
   {
-    this.#objectPool.getChannel(targetId)?.replay(delta);
+    this.#channelCollection.getChannel(targetId)?.replay(delta);
   }
 
-  process(targetId: string, delta: unknown, local: boolean)
+  process(message: IDocumentMessage, local: boolean)
   {
-    const channel = this.#objectPool.getChannel(targetId);
-    if (!channel)
-      return false;
-
-    channel.process(delta, local);
-
-    return true;
+    switch (message.type)
+    {
+    case MessageType.Delta:
+    case MessageType.Attach:
+      this.#channelCollection.process(message, local);
+      break;
+    }
   }
 
   processSignal(clientId: number, targetId: string, type: string, signal: unknown)
   {
-    const channel = this.#objectPool.getChannel(targetId);
+    const channel = this.#channelCollection.getChannel(targetId);
     if (!channel)
       return false;
 
     channel.processSignal(clientId, type, signal);
 
     return true;
-  }
-
-  ensureCreated(dds: DDS)
-  {
-    this.#objectPool.create(dds);
   }
 
   clone()
@@ -129,7 +123,7 @@ export class DocumentRuntime<T extends DDS = DDS> extends EventEmitter<DocumentR
 
   dispose()
   {
-    this.#objectPool.dispose();
-    (this.#objectPool as unknown) = null;
+    this.#channelCollection.dispose();
+    (this.#channelCollection as unknown) = null;
   }
 }

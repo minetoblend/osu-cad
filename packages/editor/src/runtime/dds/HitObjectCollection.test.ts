@@ -22,15 +22,19 @@ describe("HitObjectCollection", () =>
     }
 
     const runtime1 = DocumentRuntime.create(new HitObjectCollection(), [HitObjectCollection, TestHitObject]);
-    const runtime2 = DocumentRuntime.create(new HitObjectCollection(), [HitObjectCollection, TestHitObject]);
+    const runtime2 = await DocumentRuntime.load(runtime1.createSummary(), [HitObjectCollection, TestHitObject]);
 
+    runtime1.on("attached", (dds, summary) =>
+    {
+      console.log("attach", dds.id, inspect(summary, { depth: 4 }));
+    });
     runtime1.on("deltaSubmitted", (dds, delta) =>
     {
-      console.log(inspect({ target: dds.id, content: delta.encode() }, { depth: 4 }));
+      console.log("delta", inspect({ target: dds.id, content: delta.encode() }, { depth: 4 }));
     });
 
     const hitObjects1 = runtime1.root;
-    const hitObjects2 = runtime2.root;
+    const hitObjects2 = runtime2.root as HitObjectCollection;
 
     syncRuntimes(runtime1, runtime2);
 

@@ -1,4 +1,4 @@
-import type { DDSAttributes } from "@osucad/multiplayer-protocol";
+import { MessageType, type DDSAttributes } from "@osucad/multiplayer-protocol";
 import { describe, expect, it } from "vitest";
 import { DocumentRuntime } from "../../runtime/index.js";
 import { Decoder, Encoder } from "../../serialization/types.js";
@@ -6,6 +6,7 @@ import { nn } from "../../utils/nn.js";
 import { nested, type } from "./decorator.js";
 import { ObjectDDS, objectDDSMetadata } from "./ObjectDDS.js";
 import { ObjectDelta } from "./ObjectDelta.js";
+import { syncRuntimes } from "../../utils/index.js";
 
 describe("ObjectDDS", () =>
 {
@@ -131,16 +132,13 @@ describe("ObjectDDS", () =>
 
     expect(foo.bar.id).toEqual(foo2.bar.id);
 
-    runtime.on("deltaSubmitted", (dds, delta) =>
-    {
-      runtime2.replayDelta(dds.id!, delta);
-    });
+    syncRuntimes(runtime, runtime2);
 
     const oldBar = foo.bar;
 
     foo.bar = new Bar();
 
-    expect(foo.bar.isAttached).toBe(true);
+    expect(foo.bar.isAttached()).toBe(true);
     expect(foo2.bar.id).not.toEqual(oldBar.id);
     expect(foo.bar.id).toEqual(foo2.bar.id);
   });
@@ -164,19 +162,33 @@ describe("ObjectDDS", () =>
 
     counter.value = 10;
 
-    const delta = ObjectDelta.from(0, counter[objectDDSMetadata].getPropertyByName("value")!, 20).encode();
-
-    runtime.process(nn(counter.id), delta, false);
-
-    expect(counter.value).toBe(10);
-
-    const localDelta = ObjectDelta.from(1, counter[objectDDSMetadata].getPropertyByName("value")!, 10).encode();
-
-    runtime.process(nn(counter.id), localDelta, true);
+    runtime.process({
+      type: MessageType.Delta,
+      deltas: [{
+        target: nn(counter.id),
+        content: [0, { value: 20 }],
+      }],
+    }, false);
 
     expect(counter.value).toBe(10);
 
-    runtime.process(nn(counter.id), delta, false);
+    runtime.process({
+      type: MessageType.Delta,
+      deltas: [{
+        target: nn(counter.id),
+        content: [1, { value: 10 }],
+      }],
+    }, true);
+
+    expect(counter.value).toBe(10);
+
+    runtime.process({
+      type: MessageType.Delta,
+      deltas: [{
+        target: nn(counter.id),
+        content: [0, { value: 20 }],
+      }],
+    }, false);
 
     expect(counter.value).toBe(20);
   });

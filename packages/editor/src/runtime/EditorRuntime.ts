@@ -64,16 +64,7 @@ export class EditorRuntime extends DocumentRuntime<EditorBeatmap>
 
     const root = new EditorBeatmap();
     runtime.objects.root = root;
-    runtime.objects.attachDDS(root);
-
-    const encoder = new Encoder();
-    encoder.on("ddsEncoded", other =>
-    {
-      runtime.objects.attachDDS(other);
-      other.createSummary(encoder);
-    });
-
-    root.createSummary(encoder);
+    runtime.objects.attach(root);
 
     return runtime;
   }

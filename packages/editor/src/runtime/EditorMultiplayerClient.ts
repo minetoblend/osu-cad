@@ -1,22 +1,14 @@
 import { asyncDependencyLoader, Component } from "@osucad/framework";
-import type { Delta } from "@osucad/multiplayer-core";
-import { MergeableDelta, MultiValueMap, nn } from "@osucad/multiplayer-core";
-import type { ServerMessages } from "@osucad/multiplayer-protocol";
-import type { EditorBeatmap } from "./dds/EditorBeatmap";
+import type { IDDSSummary, IDocumentMessage, IRemoteDocumentMessage } from "@osucad/multiplayer-core";
+import { DeltaCompressor, MessageType, nn } from "@osucad/multiplayer-core";
+import type { EditorBeatmap } from "./dds";
 import { EditorRuntime } from "./EditorRuntime";
 import { MultiplayerConnection } from "./MultiplayerConnection";
-import { sign } from "crypto";
 
 interface IQueuedDeltas
 {
   local: boolean;
-  deltas: ServerMessages.Delta[];
-}
-
-interface SendBufferEntry
-{
-  targetId: string,
-  delta: Delta
+  content: IRemoteDocumentMessage;
 }
 
 export class EditorMultiplayerClient extends Component
@@ -32,8 +24,10 @@ export class EditorMultiplayerClient extends Component
   clientId!: number;
 
   receivedDeltas: IQueuedDeltas[] = [];
-  sendBuffer: SendBufferEntry[] = [];
-  readonly #mergeMap = new MultiValueMap<string, SendBufferEntry>();
+
+  readonly deltaCompressor = new DeltaCompressor();
+
+  attachedObjects: { id: string, summary: IDDSSummary }[] = [];
 
   @asyncDependencyLoader()
   async #connect()
@@ -57,44 +51,23 @@ export class EditorMultiplayerClient extends Component
     console.log("EditorRuntime loaded");
   }
 
-  #onDeltasReceived(clientId: number, deltas: ServerMessages.Delta[])
+  #onDeltasReceived(messages: IRemoteDocumentMessage[])
   {
-    const local = clientId === this.clientId;
-
-    this.receivedDeltas.push({ local, deltas });
+    for (const message of messages)
+    {
+      const local = message.clientId === this.clientId;
+      this.receivedDeltas.push({ local, content: message });
+    }
   }
 
   protected override loadComplete()
   {
     super.loadComplete();
 
-    this.runtime.on("deltaSubmitted", (dds, delta) =>
-    {
-      const entry: SendBufferEntry = { targetId: nn(dds.id), delta };
+    this.runtime.on("deltaSubmitted", (dds, delta) => this.deltaCompressor.push(dds.id, delta));
+    this.runtime.on("attached", (dds, summary) => this.attachedObjects.push({ id: dds.id, summary }));
 
-      if (!(delta instanceof MergeableDelta))
-        return void this.sendBuffer.push(entry);
-
-      const entries = this.#mergeMap.get(entry.targetId);
-
-      for (let i = entries.length - 1; i >= 0; i--)
-      {
-        const other = entries[i];
-        const otherDelta = other.delta as MergeableDelta;
-        if (otherDelta.tryAppend(delta))
-        {
-          const index = this.sendBuffer.indexOf(other);
-          this.sendBuffer.splice(index, 1);
-          this.sendBuffer.push(other);
-          return;
-        }
-      }
-
-      this.#mergeMap.add(entry.targetId, entry);
-      this.sendBuffer.push(entry);
-    });
-
-    this.runtime.on("signalSubmitted", (dds, type,signal) =>
+    this.runtime.on("signalSubmitted", (dds, type, signal) =>
       this.connection.send("signal", nn(dds.id), type, signal),
     );
 
@@ -121,26 +94,37 @@ export class EditorMultiplayerClient extends Component
     if (this.receivedDeltas.length === 0)
       return;
 
-    for (const { local, deltas } of this.receivedDeltas)
-    {
-      for (const { targetId, content } of deltas)
-      {
-        this.runtime.process(targetId, content, local);
-      }
-    }
+    for (const { local, content } of this.receivedDeltas)
+      this.runtime.process(content, local);
 
     this.receivedDeltas = [];
   }
 
   #flushSendBuffer()
   {
-    if (this.sendBuffer.length === 0)
+    if (!this.deltaCompressor.hasDeltas() && this.attachedObjects.length === 0)
       return;
 
-    this.connection.send("deltas", this.sendBuffer.map(it => ({ targetId: it.targetId, content: it.delta.encode() })));
+    const messages: IDocumentMessage[] = [];
 
-    this.sendBuffer = [];
-    this.#mergeMap.clear();
+    if (this.attachedObjects.length > 0)
+    {
+      messages.push({
+        type: MessageType.Attach,
+        content: this.attachedObjects,
+      });
+      this.attachedObjects = [];
+    }
+
+    if (this.deltaCompressor.hasDeltas())
+    {
+      messages.push({
+        type: MessageType.Delta,
+        deltas: this.deltaCompressor.process(),
+      });
+    }
+
+    this.connection.send("deltas", messages);
   }
 
   override dispose()

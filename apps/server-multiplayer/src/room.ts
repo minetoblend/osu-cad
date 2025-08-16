@@ -1,8 +1,7 @@
 import { TimingControlPoint } from "@osucad/core";
 import { EditorRuntime } from "@osucad/editor";
 import { Vec2 } from "@osucad/framework";
-import type { ServerMessages } from "@osucad/multiplayer-core";
-import type { ClientMessages } from "@osucad/multiplayer-core";
+import type { ServerMessages, ClientMessages, IRemoteDocumentMessage } from "@osucad/multiplayer-core";
 import { HitCircle, OsuRuleset, PathPoint, PathType, Slider } from "@osucad/ruleset-osu";
 import type { Server, Socket } from "socket.io";
 
@@ -43,12 +42,20 @@ export async function acceptConnections(io: Server)
 
     socket.emit("init", { clientId, summary: runtime.createSummary() });
 
-    socket.on("deltas", deltas =>
+    socket.on("deltas", messages =>
     {
-      for (const delta of deltas)
-        runtime.process(delta.targetId, delta.content, false);
+      const processed: IRemoteDocumentMessage[] = [];
 
-      io.emit("deltas", clientId, deltas);
+      for (const message of messages)
+      {
+        runtime.process(message, false);
+        processed.push({
+          ...message,
+          clientId,
+        });
+      }
+
+      io.emit("deltas", processed);
     });
 
     socket.on("signal", (target, type, signal) =>
