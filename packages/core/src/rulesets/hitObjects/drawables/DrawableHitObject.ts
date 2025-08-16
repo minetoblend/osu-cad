@@ -473,6 +473,8 @@ export class DrawableHitObject<out T extends HitObject = HitObject>
     this.onNewResult.emit(this, result);
   }
 
+  autoMode = false;
+
   protected updateResult(userTriggered: boolean)
   {
     // TODO:
@@ -481,6 +483,13 @@ export class DrawableHitObject<out T extends HitObject = HitObject>
 
     if (this.judged)
       return false;
+
+    if (this.autoMode)
+    {
+      if (this.time.current - this.hitObject.endTime > 0)
+        this.applyMaxResult();
+      return;
+    }
 
     this.checkForResult(userTriggered, this.time.current - this.hitObject.endTime);
 

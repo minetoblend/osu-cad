@@ -10,6 +10,7 @@ export interface DrawableRulesetOptions
 {
   cursor?: boolean
   useInput?: boolean
+  autoMode?: boolean
 }
 
 export abstract class DrawableRuleset extends Container
@@ -27,7 +28,7 @@ export abstract class DrawableRuleset extends Container
     this.keybindingInputManager.useParentInput = options.useInput ?? true;
 
     this.#playfieldAdjustmentContainer = this.createPlayfieldAdjustmentContainer();
-    this.#playfield = new Lazy(() => this.createPlayfield({ cursor: options.cursor }).adjust(p =>
+    this.#playfield = new Lazy(() => this.createPlayfield({ cursor: options.cursor, autoMode: options.autoMode }).adjust(p =>
     {
       p.newResult.addListener((_, r) => this.newResult.emit(r));
       p.revertResult.addListener(r => this.revertResult.emit(r));

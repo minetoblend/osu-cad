@@ -1542,8 +1542,15 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   validateSuperTree(invalidation: Invalidation)
   {
-    if (this.#validate(invalidation) && this.#parent !== null)
-      this.#parent.validateSuperTree(invalidation);
+    let current: Drawable | null = this;
+
+    while (current)
+    {
+      if (!current.validate(invalidation))
+        break;
+
+      current = current.#parent;
+    }
   }
 
   // #endregion
@@ -2012,7 +2019,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     return result;
   }
 
-  #validate(flags: Invalidation)
+  private validate(flags: Invalidation)
   {
     const anyValidated = ((this.#selfInvalidation | this.#parentInvalidation | this.#childInvalidation) & flags) !== flags;
 

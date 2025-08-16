@@ -1,5 +1,5 @@
 import type { Vec2 } from "@osucad/framework";
-import { Axes, Box, CompositeDrawable, dependencyLoader, provideSelf, resolved } from "@osucad/framework";
+import { Anchor, Axes, Box, CompositeDrawable, dependencyLoader, provideSelf, resolved } from "@osucad/framework";
 import { EditorClock } from "../../EditorClock";
 import { TimelineTickDisplay } from "./TimelineTickDisplay";
 
@@ -24,6 +24,13 @@ export class ComposeTimeline extends CompositeDrawable
         alpha: 0.6,
       }),
       new TimelineTickDisplay(),
+      new Box({
+        relativeSizeAxes: Axes.Y,
+        width: 2,
+        anchor: Anchor.TopCenter,
+        origin: Anchor.TopCenter,
+        color: "red",
+      }),
     ];
   }
 

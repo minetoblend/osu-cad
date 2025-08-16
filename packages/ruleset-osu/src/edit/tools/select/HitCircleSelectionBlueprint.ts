@@ -1,6 +1,6 @@
 import { Anchor, Axes, Bindable, Box, CircularContainer, dependencyLoader, Vec2 } from "@osucad/framework";
-import type { HitCircle } from "../../../hitObjects/HitCircle";
-import { OsuHitObject } from "../../../hitObjects/OsuHitObject";
+import type { HitCircle } from "../../../hitObjects";
+import { OsuHitObject } from "../../../hitObjects";
 import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
 import { SkinnableDrawable } from "@osucad/core";
 import { OsuSkinComponents } from "../../../skinning";
@@ -43,17 +43,5 @@ export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<Hit
     this.scaleBindable.bindValueChanged(e => this.scale = e.value, true);
     this.positionBindable.bindValueChanged(e => this.position = this.hitObject.stackedPosition, true);
     this.stackHeightBindable.bindValueChanged(e => this.position = this.hitObject.stackedPosition);
-  }
-
-  get #effectiveCornerRadius()
-  {
-    const cornerRadius = this.cornerRadius;
-
-    if (cornerRadius === 0)
-      return 0;
-
-    const { drawWidth, drawHeight } = this;
-
-    return Math.min(cornerRadius , drawWidth / 2, drawHeight / 2);
   }
 }

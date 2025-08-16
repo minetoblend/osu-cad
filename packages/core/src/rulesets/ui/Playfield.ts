@@ -14,6 +14,7 @@ import type { GameplayCursorContainer } from "./GameplayCursorContainer";
 export interface PlayfieldOptions
 {
   cursor?: boolean
+  autoMode?: boolean
 }
 
 @provideSelf(IPooledHitObjectProvider)
@@ -187,6 +188,8 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
 
   #onNewDrawableHitObject(d: DrawableHitObject)
   {
+    d.autoMode = this.options.autoMode ?? false;
+
     d.onNestedDrawableCreated.addListener(this.#onNewDrawableHitObject, this);
 
     this.onNewDrawableHitObject(d);

@@ -52,7 +52,7 @@ export abstract class HitObjectComposer extends CompositeDrawable
   @asyncDependencyLoader()
   async #load()
   {
-    this.drawableRuleset = await this.ruleset.createDrawableRuleset({ cursor: false, useInput: false });
+    this.drawableRuleset = await this.ruleset.createDrawableRuleset({ cursor: false, useInput: false, autoMode: true });
 
     this.#dependencies.provide(DrawableRuleset, this.drawableRuleset);
     this.#dependencies.provide(Playfield, this.drawableRuleset.playfield);

@@ -2,7 +2,7 @@ import type { DrawableHitObject, HitObject } from "@osucad/core";
 import type { ClickEvent, MouseDownEvent } from "@osucad/framework";
 import { MouseButton, PoolableDrawable, resolved } from "@osucad/framework";
 import { SelectionBlueprintContainer } from "./SelectionBlueprintContainer";
-import { EditorBeatmap } from "@osucad/editor";
+import { EditorBeatmap, EditorHistory } from "@osucad/editor";
 
 export class HitObjectSelectionBlueprint<T extends HitObject> extends PoolableDrawable
 {
@@ -35,11 +35,16 @@ export class HitObjectSelectionBlueprint<T extends HitObject> extends PoolableDr
     this.alpha = this.selected ? 1 : 0;
   }
 
+  @resolved(EditorHistory)
+    protected accessor history!: EditorHistory
+
   override onMouseDown(e: MouseDownEvent): boolean
   {
-    if (e.button === MouseButton.Right)
+    if (e.button === MouseButton.Right && !e.anyModifierPressed)
     {
       this.beatmap.hitObjects.remove(this.hitObject);
+      this.history.commit();
+
       return true;
     }
 
