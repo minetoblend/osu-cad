@@ -1,7 +1,10 @@
-import { Anchor, Axes, Container, resolved, SpriteText, type ReadonlyDependencyContainer } from "@osucad/framework";
+import type { KeyDownEvent } from "@osucad/framework";
+import { Anchor, Axes, Container, Key, resolved, SpriteText, type ReadonlyDependencyContainer } from "@osucad/framework";
 import { EditorScreen } from "../EditorScreen";
 import { Ruleset } from "@osucad/core";
 import { ComposeTimeline } from "./timeline/ComposeTimeline";
+import { EditorBeatmap } from "../runtime";
+import { EditorClock } from "../EditorClock";
 
 export class ComposeScreen extends EditorScreen
 {
@@ -58,5 +61,27 @@ export class ComposeScreen extends EditorScreen
   addTimeline()
   {
     this.addInternal(new ComposeTimeline());
+  }
+
+  @resolved(EditorBeatmap)
+  accessor #editorBeatmap!: EditorBeatmap;
+
+  @resolved(EditorClock)
+  accessor #editorClock!: EditorClock;
+
+  override onKeyDown(e: KeyDownEvent): boolean
+  {
+    switch(e.key)
+    {
+    case Key.KeyZ:{
+      const first = this.#editorBeatmap.hitObjects[0];
+      if (first && this.#editorClock.currentTime !== first.startTime)
+        this.#editorClock.seek(first.startTime);
+      else
+        this.#editorClock.seek(0);
+      break;}
+    }
+
+    return false;
   }
 }
