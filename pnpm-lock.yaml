@@ -175,6 +175,9 @@ importers:
       '@osucad/framework':
         specifier: workspace:^
         version: link:../../packages/framework
+      '@osucad/multiplayer-client':
+        specifier: workspace:^
+        version: link:../../multiplayer/client
       '@osucad/multiplayer-core':
         specifier: workspace:^
         version: link:../../multiplayer/core
@@ -259,6 +262,31 @@ importers:
       vite-plugin-conditional-compiler:
         specifier: ^0.3.1
         version: 0.3.1(esbuild@0.19.12)(rollup@4.46.2)(vite@6.3.4)(webpack@5.99.7)
+
+  multiplayer/client:
+    dependencies:
+      '@osucad/multiplayer-core':
+        specifier: workspace:^
+        version: link:../core
+      '@osucad/multiplayer-protocol':
+        specifier: workspace:^
+        version: link:../protocol
+      double-ended-queue:
+        specifier: 2.1.0-0
+        version: 2.1.0-0
+      eventemitter3:
+        specifier: ^5.0.1
+        version: 5.0.1
+      socket.io-client:
+        specifier: ^4.8.1
+        version: 4.8.1
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
+    devDependencies:
+      '@types/double-ended-queue':
+        specifier: ^2.1.7
+        version: 2.1.7
 
   multiplayer/core:
     dependencies:
@@ -3963,6 +3991,10 @@ packages:
     resolution: {integrity: sha512-JSWRMozjFKsGlEjiiKajUjIJVKuKdE3oVy2DNtK+fUo8q82nhFZ2CPQwicAIkXrofahDXrWJ7mjelvZphMS98Q==}
     dev: true
 
+  /@types/double-ended-queue@2.1.7:
+    resolution: {integrity: sha512-OVbdb2iOJakEg/Ou6dVZsH0LLxlO+GFjc1FB2W8/jT7bnhoFVJwnZOqi/H26ospeMBaEbGiX3Qy2a7r6pfZKXQ==}
+    dev: true
+
   /@types/earcut@2.1.4:
     resolution: {integrity: sha512-qp3m9PPz4gULB9MhjGID7wpo3gJ4bTGXm7ltNDsmOvsPduTeHp8wSW9YckBj3mljeOh4F0m2z/0JKAALRKbmLQ==}
 
@@ -5992,6 +6024,10 @@ packages:
     resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
     engines: {node: '>=12'}
     dev: true
+
+  /double-ended-queue@2.1.0-0:
+    resolution: {integrity: sha512-+BNfZ+deCo8hMNpDqDnvT+c0XpJ5cUa6mqYq89bho2Ifze4URTqRkcwR399hWoTrTkbZ/XJYDgP6rc7pRgffEQ==}
+    dev: false
 
   /dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}

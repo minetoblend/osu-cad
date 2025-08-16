@@ -2,8 +2,9 @@ import { ISkinSource, rulesets } from "@osucad/core";
 import { asyncDependencyLoader, Game, provide, ScreenStack } from "@osucad/framework";
 import { OsuRuleset } from "@osucad/ruleset-osu";
 import { SkinManager } from "./SkinManager";
-import type { EditorMultiplayerClient } from "@osucad/editor";
 import { UIScaleContainer } from "./UIScaleContainer";
+import { MultiplayerClient } from "@osucad/multiplayer-client";
+import type { EditorRuntime } from "@osucad/editor";
 
 export class OsucadGame extends Game
 {
@@ -13,19 +14,12 @@ export class OsucadGame extends Game
   @provide(SkinManager)
   readonly skinManager = new SkinManager();
 
-  client!: EditorMultiplayerClient;
-
   @asyncDependencyLoader()
   async #load()
   {
     rulesets.register(new OsuRuleset());
 
-    const { EditorMultiplayerClient } = await import("@osucad/editor");
-
-    this.client = new EditorMultiplayerClient();
-
     await Promise.all([
-      this.loadComponentAsync(this.client),
       this.loadComponentAsync(this.skinManager),
     ]);
 
@@ -34,7 +28,6 @@ export class OsucadGame extends Game
         child: this.#screenStack = new ScreenStack(),
       }),
       this.skinManager,
-      this.client,
     ]);
   }
 
@@ -47,8 +40,14 @@ export class OsucadGame extends Game
 
   async loadEditor()
   {
-    const { Editor } = await import("@osucad/editor/editor");
+    const { Editor, EditorRuntime } = await import("@osucad/editor");
 
-    this.#screenStack.push(new Editor({ runtime: this.client.runtime }));
+    const client = new MultiplayerClient();
+
+    const document = await client.load("beatmap", {
+      runtimeFactory: async () => new EditorRuntime(),
+    });
+
+    this.#screenStack.push(new Editor({ runtime: document.runtime as EditorRuntime }));
   }
 }

@@ -1,4 +1,4 @@
-import type { IDDSSummary } from "./Summary.js";
+import type { IDDSSummary, IDocumentSummary } from "./Summary.js";
 
 export enum MessageType
 {
@@ -17,6 +17,7 @@ export interface IDocumentMessageBase<Type extends MessageType>
 
 export type IRemoteDocumentMessage<T extends IDocumentMessage = IDocumentMessage> = T & {
   clientId: string
+  sequenceNumber: number
 };
 
 export interface IDeltaMessage extends IDocumentMessageBase<MessageType.Delta>
@@ -40,4 +41,17 @@ export interface IAttachInfo
 {
   readonly id: string
   readonly summary: IDDSSummary
+}
+
+export interface IConnect
+{
+  documentId: string
+}
+
+export interface IConnected
+{
+  readonly documentId: string
+  readonly clientId: string;
+  readonly sequenceNumber: number
+  readonly summary: IDocumentSummary;
 }

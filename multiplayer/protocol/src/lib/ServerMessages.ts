@@ -1,5 +1,5 @@
 import type { IDocumentSummary } from "./Summary.js";
-import type { IDocumentMessage, IRemoteDocumentMessage } from "./messages.js";
+import type { IRemoteDocumentMessage } from "./messages.js";
 
 export interface ServerMessages
 {

@@ -6,10 +6,10 @@ import type { BroadcastOperator, Server, Socket } from "socket.io";
 
 export class Room
 {
-  static async create(io: Server)
-  {
-    const documentId = crypto.randomUUID();
+  sequenceNumber = 0;
 
+  static async create(documentId: string, io: Server)
+  {
     const runtime = await EditorRuntime.createEmpty(new OsuRuleset());
 
     const timingPoint = new TimingControlPoint();
@@ -37,20 +37,26 @@ export class Room
       processed.push({
         ...message,
         clientId,
+        sequenceNumber: ++this.sequenceNumber,
       });
     }
 
     this.broadcast.emit("deltas", processed);
   }
 
-  accept(socket: Socket<ClientMessages, ServerMessages>)
+  async accept(socket: Socket<ClientMessages, ServerMessages>)
   {
     const clientId = crypto.randomUUID();
-
-    socket.emit("init", { clientId, summary: this.runtime.createSummary() });
 
     socket.join(this.documentId);
 
     socket.on("deltas", deltas => this.process(clientId, deltas));
+
+    return {
+      documentId: this.documentId,
+      clientId,
+      sequenceNumber: this.sequenceNumber,
+      summary: this.runtime.createSummary(),
+    };
   }
 }

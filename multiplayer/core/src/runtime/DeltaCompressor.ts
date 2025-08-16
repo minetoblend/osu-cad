@@ -1,5 +1,6 @@
 import type { IEncodedDelta } from "@osucad/multiplayer-protocol";
-import type { Delta } from "../dds/index.js";
+import { MergeableDelta, type Delta } from "../dds/index.js";
+import { MultiValueMap } from "../utils/index.js";
 
 export interface IDeltaEntry
 {
@@ -15,10 +16,35 @@ function encodeEntry({ target, delta }: IDeltaEntry): IEncodedDelta
 export class DeltaCompressor
 {
   #deltas: IDeltaEntry[] = [];
+  #mergeMap = new MultiValueMap<string, IDeltaEntry>();
 
   push(target: string, delta: Delta)
   {
-    this.#deltas.push({ target, delta });
+    const entry: IDeltaEntry = { target, delta };
+
+    if (!(delta instanceof MergeableDelta))
+    {
+      this.#deltas.push(entry);
+      return;
+    }
+
+    const entries = this.#mergeMap.get(entry.target);
+
+    for (let i = entries.length - 1; i >= 0; i--)
+    {
+      const other = entries[i];
+      const otherDelta = other.delta as MergeableDelta;
+      if (otherDelta.tryAppend(delta))
+      {
+        const index = this.#deltas.indexOf(other);
+        this.#deltas.splice(index, 1);
+        this.#deltas.push(other);
+        return;
+      }
+    }
+
+    this.#mergeMap.add(entry.target, entry);
+    this.#deltas.push(entry);
   }
 
   hasDeltas()
@@ -31,6 +57,7 @@ export class DeltaCompressor
     const deltas = this.#deltas.map(encodeEntry);
 
     this.#deltas = [];
+    this.#mergeMap.clear();
 
     return deltas;
   }

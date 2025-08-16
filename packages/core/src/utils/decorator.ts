@@ -5,10 +5,15 @@ import { HitSoundInfo } from "../audio/HitSoundInfo";
 import type { SampleAdditions } from "../audio/SampleAdditions";
 import type { SampleSet } from "../audio/SampleSet";
 
+
 export const customType = createTypeDecorator({
-  vec2: serializer<Vec2, [number, number]>({
-    serialize: value => [value.x, value.y],
-    deserialize: value => new Vec2(value[0], value[1]),
+  vec2: serializer<Vec2, string>({
+    serialize: value => [value.x.toFixed(1), value.y.toFixed(1)].join(","),
+    deserialize: value =>
+    {
+      const [x, y] = value.split(",");
+      return new Vec2(Number.parseFloat(x), Number.parseFloat(y));
+    },
   }),
   hitSoundInfo: serializer<HitSoundInfo, [SampleSet, SampleSet, SampleAdditions]>({
     serialize: value => [value.sampleSet, value.additionSampleSet, value.additions],
