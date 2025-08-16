@@ -111,6 +111,7 @@ export class TimelineTickDisplay extends Container<PointVisualization>
         line.width = TICK_WIDTH * size.x;
         line.height = size.y;
         line.color = color;
+        line.alpha = 1;
 
         beat++;
 
