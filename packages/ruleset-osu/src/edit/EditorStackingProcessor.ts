@@ -16,7 +16,8 @@ export class EditorStackingProcessor extends EditorBeatmapProcessor
     this.refresh();
   }
 
-  protected override onHitObjectRemoved(hitObject: HitObject): void {
+  protected override onHitObjectRemoved(hitObject: HitObject): void
+  {
     this.refresh();
   }
 
