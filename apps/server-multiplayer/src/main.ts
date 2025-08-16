@@ -50,31 +50,8 @@ async function main()
 
   app.get("/api/deltas/:id", (req, res) =>
   {
-    const room = rooms[req.params.id];
-    if (!room)
-    {
-      res.sendStatus(404);
-      return;
-    }
-
-    if (typeof req.query.since !== "string")
-    {
-      res.sendStatus(400);
-      return;
-    }
-
-
-    const since = Number.parseInt(req.query.since);
-
-    if (!Number.isFinite(since))
-    {
-      res.sendStatus(400);
-      return;
-    }
-
-    const deltas = room.deltas.filter(it => it.sequenceNumber >= since);
-
-    res.json(deltas);
+    // TODO
+    res.json([]);
   });
 
   server.listen(port, host, () =>
