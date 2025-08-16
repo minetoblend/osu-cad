@@ -162,6 +162,8 @@ export class HitObjectCollection
 
     this.added.emit(hitObject);
 
+    this.#startTimeChanged();
+
     return true;
   }
 
