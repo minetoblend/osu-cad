@@ -1,67 +1,56 @@
 import { TimingControlPoint } from "@osucad/core";
 import { EditorRuntime } from "@osucad/editor";
-import { Vec2 } from "@osucad/framework";
-import type { ServerMessages, ClientMessages, IRemoteDocumentMessage } from "@osucad/multiplayer-core";
-import { HitCircle, OsuRuleset, PathPoint, PathType, Slider } from "@osucad/ruleset-osu";
-import type { Server, Socket } from "socket.io";
+import type { ClientMessages, IDocumentMessage, IRemoteDocumentMessage, ServerMessages } from "@osucad/multiplayer-core";
+import { OsuRuleset } from "@osucad/ruleset-osu";
+import type { BroadcastOperator, Server, Socket } from "socket.io";
 
-
-export async function acceptConnections(io: Server)
+export class Room
 {
-  const runtime = await EditorRuntime.createEmpty(new OsuRuleset());
-
-  const slider = new Slider();
-  slider.position = new Vec2(100);
-  slider.path.controlPoints = [
-    new PathPoint(new Vec2(), PathType.PerfectCurve),
-    new PathPoint(new Vec2(50, -20)),
-    new PathPoint(new Vec2(100, 50)),
-  ];
-  slider.path.expectedDistance = slider.path.calculatedDistance;
-
-  runtime.root.hitObjects.add(slider);
-
-  const circle = new HitCircle();
-  circle.startTime = 200;
-  runtime.root.hitObjects.add(circle);
-
-  const circle2 = new HitCircle();
-  circle2.startTime = 220;
-  runtime.root.hitObjects.add(circle2);
-
-  const timingPoint = new TimingControlPoint();
-
-  timingPoint.bpm = 180;
-  runtime.root.controlPointInfo.add(timingPoint);
-
-  let nextClientId = 0;
-
-  io.on("connect", (socket: Socket<ClientMessages, ServerMessages>) =>
+  static async create(io: Server)
   {
-    const clientId = ++nextClientId;
+    const documentId = crypto.randomUUID();
 
-    socket.emit("init", { clientId, summary: runtime.createSummary() });
+    const runtime = await EditorRuntime.createEmpty(new OsuRuleset());
 
-    socket.on("deltas", messages =>
+    const timingPoint = new TimingControlPoint();
+    timingPoint.bpm = 180;
+    runtime.root.controlPointInfo.add(timingPoint);
+
+    return new Room(documentId, runtime, io.to(documentId));
+  }
+
+  constructor(
+    readonly documentId: string,
+    readonly runtime: EditorRuntime,
+    readonly broadcast: BroadcastOperator<ServerMessages, any>,
+  )
+  {
+  }
+
+  process(clientId: string, deltas: IDocumentMessage[])
+  {
+    const processed: IRemoteDocumentMessage[] = [];
+
+    for (const message of deltas)
     {
-      const processed: IRemoteDocumentMessage[] = [];
+      this.runtime.process(message, false);
+      processed.push({
+        ...message,
+        clientId,
+      });
+    }
 
-      for (const message of messages)
-      {
-        runtime.process(message, false);
-        processed.push({
-          ...message,
-          clientId,
-        });
-      }
+    this.broadcast.emit("deltas", processed);
+  }
 
-      io.emit("deltas", processed);
-    });
+  accept(socket: Socket<ClientMessages, ServerMessages>)
+  {
+    const clientId = crypto.randomUUID();
 
-    socket.on("signal", (target, type, signal) =>
-    {
-      io.emit("signal", clientId, target, type, signal);
-    });
-  });
+    socket.emit("init", { clientId, summary: this.runtime.createSummary() });
+
+    socket.join(this.documentId);
+
+    socket.on("deltas", deltas => this.process(clientId, deltas));
+  }
 }
-

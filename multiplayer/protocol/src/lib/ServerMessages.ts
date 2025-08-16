@@ -5,7 +5,7 @@ export interface ServerMessages
 {
   init(message: ServerMessages.Init): void;
 
-  deltas(deltas: IRemoteDocumentMessage<IDocumentMessage>[]): void;
+  deltas(deltas: IRemoteDocumentMessage[]): void;
 
   signal(clientId: number, target: string, type: string, signal: unknown): void
 }
@@ -14,7 +14,7 @@ export namespace ServerMessages
 {
   export interface Init
   {
-    readonly clientId: number;
+    readonly clientId: string;
     readonly summary: IDocumentSummary;
   }
 }

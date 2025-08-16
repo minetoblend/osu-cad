@@ -2,7 +2,7 @@ import express from "express";
 import http from "node:http";
 import cors from "cors";
 import { Server } from "socket.io";
-import { acceptConnections } from "./room.js";
+import { Room } from "./room.js";
 
 void main();
 
@@ -17,7 +17,9 @@ async function main()
   const server = http.createServer(app);
   const io = new Server(server);
 
-  await acceptConnections(io);
+  const room = await Room.create(io);
+
+  io.on("connect", socket => room.accept(socket));
 
   server.listen(port, host, () =>
   {

@@ -16,7 +16,7 @@ export interface IDocumentMessageBase<Type extends MessageType>
 }
 
 export type IRemoteDocumentMessage<T extends IDocumentMessage = IDocumentMessage> = T & {
-  clientId: number
+  clientId: string
 };
 
 export interface IDeltaMessage extends IDocumentMessageBase<MessageType.Delta>
