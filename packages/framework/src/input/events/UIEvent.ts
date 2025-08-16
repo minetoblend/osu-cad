@@ -43,8 +43,9 @@ export class UIEvent
     return this.state.keyboard.metaPressed;
   }
 
-  get anyModifierPressed() {
-    return this.controlPressed || this.shiftPressed || this.altPressed || this.metaPressed
+  get anyModifierPressed()
+  {
+    return this.controlPressed || this.shiftPressed || this.altPressed || this.metaPressed;
   }
 
   get draggedFiles()
