@@ -1,6 +1,6 @@
-import { DeltaConnection } from "./DeltaConnection";
-import { DocumentStorageService } from "./DocumentStorageService";
-import { DeltaStorageService } from "./DeltaStorageService";
+import { DeltaConnection } from "./DeltaConnection.js";
+import { DocumentStorageService } from "./DocumentStorageService.js";
+import { DeltaStorageService } from "./DeltaStorageService.js";
 
 export class DocumentService
 {

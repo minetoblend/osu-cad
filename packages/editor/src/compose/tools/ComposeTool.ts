@@ -40,6 +40,11 @@ export abstract class ComposeTool<THitObject extends HitObject = HitObject> exte
     return this.beatmap.hitObjects.hitObjects as readonly THitObject[];
   }
 
+  getPresence(): unknown
+  {
+    return null;
+  }
+
   recreate()
   {
     this.#toolContainer.refresh();

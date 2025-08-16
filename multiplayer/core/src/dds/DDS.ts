@@ -4,7 +4,7 @@ import type { Delta } from "./Delta.js";
 import type { IDecoder, IEncoder } from "../serialization/types.js";
 import { Encoder } from "../serialization/types.js";
 import { EventEmitter } from "eventemitter3";
-import type { DDSAttributes } from "@osucad/multiplayer-protocol";
+import type { DDSAttributes, IRemoteSignalMessage } from "@osucad/multiplayer-protocol";
 
 const defaultEncoder = new Encoder();
 
@@ -48,7 +48,7 @@ export abstract class DDS<TDelta = unknown, EventTypes extends EventEmitter.Vali
 
     channel.setHandler({
       process: (delta, local) => this.process(delta as TDelta, local),
-      processSignal: (clientId, type, signal) => this.processSignal(type, signal, clientId),
+      processSignal: (message, local) => this.processSignal(message, local),
       replay: delta => this.replay(delta),
       load: (summary, version, decoder) => this.load(summary, version, decoder),
     });
@@ -68,9 +68,8 @@ export abstract class DDS<TDelta = unknown, EventTypes extends EventEmitter.Vali
 
   abstract load(summary: unknown, version: number, decoder: IDecoder): void;
 
-  protected processSignal(type: string, signal: unknown, clientId: string)
+  protected processSignal(message: IRemoteSignalMessage, local: boolean)
   {
-
   }
 
   protected submitDelta(delta: Delta<TDelta>, undo: Delta<TDelta> | null = null)

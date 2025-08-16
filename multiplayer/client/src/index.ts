@@ -1,3 +1,4 @@
-export * from "./DeltaConnection";
-export * from "./MultiplayerClient";
-export * from "./Document";
+export * from "./DeltaConnection.js";
+export * from "./MultiplayerClient.js";
+export * from "./Document.js";
+export * from "./Audience.js";

@@ -71,9 +71,15 @@ export class ObjectDDS extends DDS<IObjectDelta>
 
   setValue(property: ObjectDDSPropertyMetadata, newValue: unknown)
   {
-    let oldValue = this.#setValue(property, newValue, true);
+    let oldValue = property.get(this);
 
-    if (!this.isAttached)
+    if (property.serializer.equals?.(oldValue, newValue) ?? oldValue === newValue)
+      return;
+
+
+    this.#setValue(property, newValue, true);
+
+    if (!this.isAttached())
       return;
 
     newValue = property.serializer.serialize(newValue, this.encoder);

@@ -8,10 +8,13 @@ import { EditorClock } from "./EditorClock";
 import { EditorRuleset } from "./EditorRuleset";
 import { ComposeScreen } from "./compose";
 import { EditorBeatmap, EditorHistory, EditorRuntime } from "./runtime";
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { Document } from "@osucad/multiplayer-client";
+import { IAudience } from "./injectionTokens";
 
 export interface EditorOptions
 {
-  readonly runtime: EditorRuntime
+  readonly document: Document
 }
 
 export class Editor extends Screen
@@ -20,9 +23,13 @@ export class Editor extends Screen
   {
     super();
 
-    this.runtime = options.runtime;
-    this.editorClock = new EditorClock(options.runtime.root.controlPointInfo);
+    this.document = options.document;
+    this.runtime = this.document.runtime as EditorRuntime;
+    this.editorClock = new EditorClock(this.editorBeatmap.controlPointInfo);
   }
+
+  @provide(Document)
+  readonly document: Document;
 
   @provide(EditorRuntime)
   readonly runtime: EditorRuntime;
@@ -31,6 +38,12 @@ export class Editor extends Screen
   get editorBeatmap()
   {
     return this.runtime.root;
+  }
+
+  @provide(IAudience)
+  get audience(): IAudience
+  {
+    return this.document.audience;
   }
 
   @provide(Ruleset)

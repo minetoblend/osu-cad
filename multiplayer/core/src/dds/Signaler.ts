@@ -1,7 +1,7 @@
-import type { DDSAttributes } from "@osucad/multiplayer-protocol";
+import type { DDSAttributes, IRemoteSignalMessage } from "@osucad/multiplayer-protocol";
 import { NoopDDS } from "./NoopDDS.js";
 
-export class Signaler<Signals extends { [key: string]:  (...args: any[]) => void } = { [key: string]: (...args: any[]) => void }> extends NoopDDS<Signals>
+export class Signaler<Signals extends { [key: string]: (content: any, clientId: string) => void } = { [key: string]: (content: unknown, clientId: string) => void }> extends NoopDDS<Signals>
 {
   static readonly attributes: DDSAttributes = {
     type: "@osucad/signaler",
@@ -13,13 +13,16 @@ export class Signaler<Signals extends { [key: string]:  (...args: any[]) => void
     super(Signaler.attributes);
   }
 
-  send<T extends keyof Signals>(type: T, ...args: Parameters<Signals[T]>)
+  send<T extends keyof Signals>(type: T, content: Parameters<Signals[T]>[0])
   {
-    this.submitSignal(type as string, args);
+    this.submitSignal(type as string, content);
   }
 
-  protected override processSignal(type: string, signal: unknown, clientId: string): void
+  protected override processSignal(message: IRemoteSignalMessage, local: boolean): void
   {
-    this.emit(type as any, ...(signal as any));
+    if (local)
+      return;
+
+    (this as any).emit(message.type, message.content, message.clientId);
   }
 }

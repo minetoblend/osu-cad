@@ -113,6 +113,9 @@ export class TimelineTickDisplay extends Container<PointVisualization>
         line.color = color;
 
         beat++;
+
+        if (t > range.max)
+          break;
       }
     }
 

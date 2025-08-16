@@ -1,6 +1,6 @@
 import type { DocumentRuntime } from "@osucad/multiplayer-core";
-import { Document } from "./Document";
-import { DocumentServiceFactory } from "./DocumentService";
+import { Document } from "./Document.js";
+import { DocumentServiceFactory } from "./DocumentService.js";
 
 export interface IMultiplayerClientLoadOptions
 {

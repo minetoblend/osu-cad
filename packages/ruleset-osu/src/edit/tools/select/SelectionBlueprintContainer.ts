@@ -1,6 +1,5 @@
 import type { DrawableHitObject, HitObject } from "@osucad/core";
 import { Playfield } from "@osucad/core";
-import type { Drawable } from "@osucad/framework";
 import { Axes, CompositeDrawable, provideSelf, resolved } from "@osucad/framework";
 import { HitCircle } from "../../../hitObjects";
 import { HitCircleSelectionBlueprint } from "./HitCircleSelectionBlueprint";
@@ -37,6 +36,11 @@ export class SelectionBlueprintContainer extends CompositeDrawable
   }
 
   #blueprints = new Map<HitObject, HitCircleSelectionBlueprint>();
+
+  get selectedObjects()
+  {
+    return this.#blueprints.values().filter(it => it.selected);
+  }
 
   #addHitObject(drawable: DrawableHitObject)
   {

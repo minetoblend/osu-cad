@@ -43,6 +43,7 @@
     "@osucad/core": "1.1.2",
     "@osucad/framework": "1.1.2",
     "@osucad/multiplayer-core": "workspace:^",
+    "@osucad/multiplayer-client": "workspace:^",
     "@osucad/multiplayer-protocol": "workspace:^",
     "eventemitter3": "^5.0.1",
     "pixi.js": "^8.9.2",

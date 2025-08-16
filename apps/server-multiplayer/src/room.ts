@@ -1,6 +1,6 @@
 import { TimingControlPoint } from "@osucad/core";
-import { EditorRuntime } from "@osucad/editor";
-import type { ClientMessages, IDocumentMessage, IRemoteDocumentMessage, ServerMessages } from "@osucad/multiplayer-core";
+import { EditorRuntime } from "@osucad/editor/runtime";
+import type { IClient, ClientMessages, IConnected, IDocumentMessage, IRemoteDocumentMessage, ServerMessages } from "@osucad/multiplayer-core";
 import { OsuRuleset } from "@osucad/ruleset-osu";
 import type { BroadcastOperator, Server, Socket } from "socket.io";
 
@@ -44,19 +44,37 @@ export class Room
     this.broadcast.emit("deltas", processed);
   }
 
-  async accept(socket: Socket<ClientMessages, ServerMessages>)
+  #clients = new Map<string, IClient>();
+
+  async accept(socket: Socket<ClientMessages, ServerMessages>): Promise<IConnected>
   {
     const clientId = crypto.randomUUID();
+
+    const client: IClient = { clientId };
+
+    this.#clients.set(clientId, client);
+
+    this.broadcast.emit("clientJoin", client);
 
     socket.join(this.documentId);
 
     socket.on("deltas", deltas => this.process(clientId, deltas));
+
+    socket.on("signal", (signal) => this.broadcast.emit("signal", { ...signal, clientId }));
+
+    socket.on("disconnect", () =>
+    {
+      this.#clients.delete(clientId);
+      this.broadcast.emit("clientLeave", client);
+    });
+
 
     return {
       documentId: this.documentId,
       clientId,
       sequenceNumber: this.sequenceNumber,
       summary: this.runtime.createSummary(),
+      clients: [...this.#clients.values()],
     };
   }
 }

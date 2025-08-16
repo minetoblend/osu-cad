@@ -1,13 +1,13 @@
 import type { IDocumentSummary } from "./Summary.js";
-import type { IRemoteDocumentMessage } from "./messages.js";
+import type { IClient, IRemoteDocumentMessage, IRemoteSignalMessage } from "./messages.js";
 
 export interface ServerMessages
 {
   init(message: ServerMessages.Init): void;
-
   deltas(deltas: IRemoteDocumentMessage[]): void;
-
-  signal(clientId: string, target: string, type: string, signal: unknown): void
+  signal(message: IRemoteSignalMessage): void
+  clientJoin(client: IClient): void
+  clientLeave(client: IClient): void
 }
 
 export namespace ServerMessages

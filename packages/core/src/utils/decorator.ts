@@ -14,6 +14,7 @@ export const customType = createTypeDecorator({
       const [x, y] = value.split(",");
       return new Vec2(Number.parseFloat(x), Number.parseFloat(y));
     },
+    equals: (a, b) => a.equals(b),
   }),
   hitSoundInfo: serializer<HitSoundInfo, [SampleSet, SampleSet, SampleAdditions]>({
     serialize: value => [value.sampleSet, value.additionSampleSet, value.additions],

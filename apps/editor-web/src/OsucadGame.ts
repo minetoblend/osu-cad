@@ -3,8 +3,8 @@ import { asyncDependencyLoader, Game, provide, ScreenStack } from "@osucad/frame
 import { OsuRuleset } from "@osucad/ruleset-osu";
 import { SkinManager } from "./SkinManager";
 import { UIScaleContainer } from "./UIScaleContainer";
-import { MultiplayerClient } from "@osucad/multiplayer-client";
-import type { EditorRuntime } from "@osucad/editor";
+import { EditorLoader } from "./EditorLoader";
+import { PerformanceOverlay } from "./PerformanceOverlay";
 
 export class OsucadGame extends Game
 {
@@ -28,6 +28,7 @@ export class OsucadGame extends Game
         child: this.#screenStack = new ScreenStack(),
       }),
       this.skinManager,
+      new PerformanceOverlay(),
     ]);
   }
 
@@ -35,19 +36,6 @@ export class OsucadGame extends Game
   {
     super.loadComplete();
 
-    void this.loadEditor();
-  }
-
-  async loadEditor()
-  {
-    const { Editor, EditorRuntime } = await import("@osucad/editor");
-
-    const client = new MultiplayerClient();
-
-    const document = await client.load("beatmap", {
-      runtimeFactory: async () => new EditorRuntime(),
-    });
-
-    this.#screenStack.push(new Editor({ runtime: document.runtime as EditorRuntime }));
+    this.#screenStack.push(new EditorLoader());
   }
 }

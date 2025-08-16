@@ -4,7 +4,7 @@ import type { Drawable, Sample } from "@osucad/framework";
 import { Action, asyncDependencyLoader, AudioManager, Component, resolved, ZipArchiveFileSystem } from "@osucad/framework";
 import type { Texture } from "pixi.js";
 import { Color } from "pixi.js";
-import oskFile from "./skin.osk?url";
+import oskFile from "./skin.zip?url";
 
 export class SkinManager extends Component implements ISkinSource, IResourcesProvider
 {
@@ -24,7 +24,7 @@ export class SkinManager extends Component implements ISkinSource, IResourcesPro
       new Color("rgb(196,196,196)"),
       new Color("rgb(193,157,192)"),
     ];
-    this.skin.config.set("hitCircleOverlap", 38);
+    // this.skin.config.set("hitCircleOverlap", 38);
   }
 
   skin!: Skin;

@@ -1,8 +1,8 @@
-import { EventEmitter } from "eventemitter3";
-import type { Attached, DDS, DDSFactoryOrConstructor } from "../dds/index.js";
-import type { Delta } from "../dds/Delta.js";
-import type { IAttachMessage, IDDSSummary, IDocumentMessage, IRemoteDocumentMessage } from "@osucad/multiplayer-protocol";
+import type { IDDSSummary, IDocumentMessage, IRemoteSignalMessage } from "@osucad/multiplayer-protocol";
 import { type IDocumentSummary, MessageType } from "@osucad/multiplayer-protocol";
+import { EventEmitter } from "eventemitter3";
+import type { Delta } from "../dds/Delta.js";
+import type { Attached, DDS, DDSFactoryOrConstructor } from "../dds/index.js";
 import { ChannelCollection } from "./ChannelCollection.js";
 
 export interface DocumentRuntimeEvents
@@ -11,7 +11,7 @@ export interface DocumentRuntimeEvents
 
   attached(dds: Attached<DDS>, summary: IDDSSummary): void
 
-  signalSubmitted(dds: DDS, type: string, signal: unknown): void;
+  signalSubmitted(dds: Attached<DDS>, type: string, signal: unknown): void;
 }
 
 export class DocumentRuntime<T extends DDS = DDS> extends EventEmitter<DocumentRuntimeEvents>
@@ -84,7 +84,7 @@ export class DocumentRuntime<T extends DDS = DDS> extends EventEmitter<DocumentR
     this.emit("attached", target, summary);
   }
 
-  submitSignal(target: DDS, type: string, signal: unknown): void
+  submitSignal(target: Attached<DDS>, type: string, signal: unknown): void
   {
     this.emit("signalSubmitted", target, type, signal);
   }
@@ -105,13 +105,14 @@ export class DocumentRuntime<T extends DDS = DDS> extends EventEmitter<DocumentR
     }
   }
 
-  processSignal(clientId: string, targetId: string, type: string, signal: unknown)
+  processSignal(message: IRemoteSignalMessage, local: boolean)
   {
-    const channel = this.#channelCollection.getChannel(targetId);
+    const channel = this.#channelCollection.getChannel(message.target);
+
     if (!channel)
       return false;
 
-    channel.processSignal(clientId, type, signal);
+    channel.processSignal(message, local);
 
     return true;
   }

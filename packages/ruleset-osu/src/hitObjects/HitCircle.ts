@@ -1,4 +1,4 @@
-import type { DDSAttributes, ObjectDDSPropertyMetadata } from "@osucad/multiplayer-core";
+import type { DDSAttributes } from "@osucad/multiplayer-core";
 import type { OsuHitObjectOptions } from "./OsuHitObject";
 import { OsuHitObject } from "./OsuHitObject";
 

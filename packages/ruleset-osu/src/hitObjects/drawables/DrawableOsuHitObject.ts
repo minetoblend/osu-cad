@@ -25,6 +25,8 @@ export abstract class DrawableOsuHitObject<out T extends OsuHitObject = OsuHitOb
     this.indexInComboBindable.bindTo(this.hitObject.indexInComboBindable);
     this.comboIndexBindable.bindTo(this.hitObject.comboIndexBindable);
     this.stackHeightBindable.bindTo(this.hitObject.stackHeightBindable);
+
+    this.scheduler.addOnce(this.updateComboColor, this);
   }
 
   protected override onFreed()

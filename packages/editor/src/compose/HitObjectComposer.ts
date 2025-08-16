@@ -1,7 +1,7 @@
 import { DrawableRuleset, Playfield } from "@osucad/core";
 import { Ruleset } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
-import { DependencyContainer, ProxyDrawable } from "@osucad/framework";
+import { DependencyContainer, provideSelf, ProxyDrawable } from "@osucad/framework";
 import { Container } from "@osucad/framework";
 import { asyncDependencyLoader, Axes, CompositeDrawable, dependencyLoader, provide, resolved } from "@osucad/framework";
 import { EditorBeatmap } from "../runtime/dds/EditorBeatmap";
@@ -9,10 +9,12 @@ import type { ComposeToolInfo } from "./tools";
 import { ComposeToolbar } from "./tools";
 import { ActiveToolBindable } from "./tools/ActiveToolBindable";
 import { ComposeToolContainer } from "./tools/ComposeToolContainer";
+import { ComposePresenceContainer } from "./tools/ToolPresenceContainer";
 
+@provideSelf()
 export abstract class HitObjectComposer extends CompositeDrawable
 {
-  protected constructor()
+  constructor()
   {
     super();
 
@@ -29,6 +31,8 @@ export abstract class HitObjectComposer extends CompositeDrawable
 
   @resolved(EditorBeatmap)
   accessor beatmap!: EditorBeatmap;
+
+  composeToolContainer!: ComposeToolContainer;
 
   get hasTimeline()
   {
@@ -58,12 +62,13 @@ export abstract class HitObjectComposer extends CompositeDrawable
         relativeSizeAxes: Axes.Both,
         child: this.drawableRuleset,
       }),
-      new ComposeToolContainer(),
+      this.composeToolContainer = new ComposeToolContainer(),
+      new ComposePresenceContainer(),
       this.#toolbar = new ComposeToolbar(),
       new ProxyDrawable(this.rulesetContainer).with({ depth: 1 }),
     ];
 
-    const tools = await this.getTools();
+    const tools = this.tools = await this.getTools();
     this.activeTool.value = tools[0];
 
     for (const tool of tools)
@@ -86,6 +91,8 @@ export abstract class HitObjectComposer extends CompositeDrawable
   {
     super.loadComplete();
   }
+
+  tools!: ComposeToolInfo[];
 
   protected abstract getTools(): ComposeToolInfo[] | Promise<ComposeToolInfo[]>;
 }

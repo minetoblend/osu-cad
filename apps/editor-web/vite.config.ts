@@ -14,6 +14,7 @@ export default defineConfig({
   server:{
     port: 4200,
     host: "localhost",
+    allowedHosts: ["personalized-empty-pickup-magnitude.trycloudflare.com"],
     proxy: {
       "/socket.io/": {
         target: "http://localhost:3000",

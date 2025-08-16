@@ -1,7 +1,9 @@
 import { type DocumentRuntime } from "@osucad/multiplayer-core";
-import type { DocumentService, DocumentServiceFactory } from "./DocumentService";
-import type { DeltaConnection } from "./DeltaConnection";
-import { DeltaManager } from "./DeltaManager";
+import type { DocumentService, DocumentServiceFactory } from "./DocumentService.js";
+import type { DeltaConnection } from "./DeltaConnection.js";
+import { DeltaManager } from "./DeltaManager.js";
+import type { IAudience } from "./Audience.js";
+import { Audience } from "./Audience.js";
 
 export interface DocumentOptions
 {
@@ -17,13 +19,18 @@ export class Document
   }: DocumentOptions)
   {
     this.#serviceFactory = serviceFactory;
+    this.#audience = new Audience();
     this.runtime = runtime;
 
-    this.#deltaManager= new DeltaManager(this.runtime);
+    this.#deltaManager = new DeltaManager(
+        this.runtime,
+        this.#audience,
+    );
   }
 
   readonly #serviceFactory: DocumentServiceFactory;
   readonly #deltaManager: DeltaManager;
+  readonly #audience: Audience;
   readonly runtime: DocumentRuntime;
   #service!: DocumentService;
   #connection?: DeltaConnection;
@@ -31,6 +38,11 @@ export class Document
   get root()
   {
     return this.runtime.root;
+  }
+
+  get audience(): IAudience
+  {
+    return this.#audience;
   }
 
   static async load(options: {

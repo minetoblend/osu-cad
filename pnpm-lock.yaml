@@ -349,6 +349,9 @@ importers:
       '@osucad/framework':
         specifier: 1.1.2
         version: link:../framework
+      '@osucad/multiplayer-client':
+        specifier: workspace:^
+        version: link:../../multiplayer/client
       '@osucad/multiplayer-core':
         specifier: workspace:^
         version: link:../../multiplayer/core

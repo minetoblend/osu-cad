@@ -1,18 +1,23 @@
-import type { IAttachInfo, IDocumentMessage } from "@osucad/multiplayer-protocol";
+import type { IAttachInfo, IDocumentMessage, IRemoteSignalMessage } from "@osucad/multiplayer-protocol";
 import { type IRemoteDocumentMessage, MessageType } from "@osucad/multiplayer-protocol";
-import { DeltaQueue } from "./DeltaQueue";
+import { DeltaQueue } from "./DeltaQueue.js";
 import { DeltaCompressor, type DocumentRuntime } from "@osucad/multiplayer-core";
-import type { DeltaConnection } from "./DeltaConnection";
+import type { DeltaConnection } from "./DeltaConnection.js";
+import type { Audience } from "./Audience.js";
 
 export class DeltaManager
 {
   readonly deltaCompressor = new DeltaCompressor();
   attachedObjects: IAttachInfo[] = [];
 
-  constructor(readonly runtime: DocumentRuntime)
+  constructor(
+    readonly runtime: DocumentRuntime,
+    readonly audience: Audience,
+  )
   {
     runtime.on("deltaSubmitted", (dds, delta) => this.deltaCompressor.push(dds.id, delta));
     runtime.on("attached", (dds, summary) => this.attachedObjects.push({ id: dds.id, summary }));
+    runtime.on("signalSubmitted", (dds, type, content) => this.#connection?.submitSignal({ target: dds.id, type, content }));
   }
 
   #connection?: DeltaConnection;
@@ -20,10 +25,16 @@ export class DeltaManager
   setConnected(connection: DeltaConnection)
   {
     this.#connection = connection;
-    this.#connection.on("deltas", deltas =>
-    {
-      this.inbound.push(deltas);
-    });
+
+    for (const client of connection.clients)
+      this.audience.addMember(client);
+
+    this.audience.setOwnClientId(connection.clientId);
+
+    connection.on("deltas", deltas => this.inbound.push(deltas));
+    connection.on("signal", signal => this.inboundSignal.push(signal));
+    connection.on("clientJoin", client => this.audience.addMember(client));
+    connection.on("clientLeave", client => this.audience.removeMember(client.clientId));
   }
 
   readonly inbound = new DeltaQueue<IRemoteDocumentMessage[]>((messages) =>
@@ -35,9 +46,15 @@ export class DeltaManager
     }
   });
 
+  readonly inboundSignal = new DeltaQueue<IRemoteSignalMessage>(message =>
+  {
+    this.runtime.processSignal(message, message.clientId === this.#connection!.clientId);
+  });
+
   resume()
   {
     this.inbound.resume();
+    this.inboundSignal.resume();
 
     setInterval(() =>
     {

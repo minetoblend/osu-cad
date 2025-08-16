@@ -54,4 +54,22 @@ export interface IConnected
   readonly clientId: string;
   readonly sequenceNumber: number
   readonly summary: IDocumentSummary;
+  readonly clients: IClient[]
+}
+
+export interface IClient
+{
+  readonly clientId: string
+}
+
+export interface ISignalMessage
+{
+  target: string
+  type: string
+  content: unknown
+}
+
+export interface IRemoteSignalMessage extends ISignalMessage
+{
+  clientId: string
 }

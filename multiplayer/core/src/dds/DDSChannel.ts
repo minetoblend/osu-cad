@@ -4,7 +4,7 @@ import type { Delta } from "./Delta.js";
 import type { IDecoder } from "../serialization/types.js";
 import { Decoder, Encoder } from "../serialization/types.js";
 import { sign } from "crypto";
-import type { IDDSSummary } from "@osucad/multiplayer-protocol";
+import type { IDDSSummary, IRemoteSignalMessage } from "@osucad/multiplayer-protocol";
 
 export class DDSChannel
 {
@@ -59,16 +59,16 @@ export class DDSChannel
     this.#handler.process(delta, local);
   }
 
-  processSignal(clientId: string, type: string, signal: unknown)
+  processSignal(message: IRemoteSignalMessage, local: boolean)
   {
-    this.#handler.processSignal(clientId, type, signal);
+    this.#handler.processSignal(message, local);
   }
 }
 
 export interface IDeltaHandler
 {
   process: (delta: unknown, local: boolean) => void;
-  processSignal: (clientId: string, type: string, signal: unknown) => void;
+  processSignal: (message: IRemoteSignalMessage, local: boolean) => void;
   replay: (delta: Delta) => void;
   load: (summary: unknown, version: number, decoder: IDecoder) => void;
 }
