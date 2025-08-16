@@ -1,5 +1,4 @@
-import type { Drawable } from "@osucad/framework";
-import { Axes, CompositeDrawable, dependencyLoader, resolved } from "@osucad/framework";
+import { Axes, CompositeDrawable, dependencyLoader, Interpolation, resolved } from "@osucad/framework";
 import type { ISelf } from "@osucad/multiplayer-client";
 import type { Signaler } from "@osucad/multiplayer-core";
 import type { IClient } from "@osucad/multiplayer-protocol";
@@ -8,10 +7,12 @@ import { EditorBeatmap } from "../../runtime";
 import { HitObjectComposer } from "../HitObjectComposer";
 import { ActiveToolBindable } from "./ActiveToolBindable";
 import type { ComposeToolPresenceOverlay } from "./ComposeToolPresenceOverlay";
+import { EditorClock } from "../../EditorClock";
 
 export interface IToolPresence
 {
   tool: string
+  currentTime: number
   details: unknown
 }
 
@@ -28,6 +29,9 @@ export class ComposePresenceContainer extends CompositeDrawable
 
   @resolved(() => HitObjectComposer)
   accessor #composer!: HitObjectComposer;
+
+  @resolved(() => EditorClock)
+  accessor #editorClock!: EditorClock;
 
   #signaler!: Signaler;
 
@@ -105,6 +109,7 @@ export class ComposePresenceContainer extends CompositeDrawable
 
     const presence: IToolPresence =  {
       tool: id,
+      currentTime: this.#editorClock.currentTime,
       details: tool.getPresence(),
     };
 
@@ -124,6 +129,9 @@ class ComposeUserPresenceContainer extends CompositeDrawable
   @resolved(() => HitObjectComposer)
   accessor #composer!: HitObjectComposer;
 
+  @resolved(() => EditorClock)
+  accessor #editorClock!: EditorClock;
+
   #currentToolId?: string;
   #currentOverlay?: ComposeToolPresenceOverlay;
 
@@ -138,14 +146,19 @@ class ComposeUserPresenceContainer extends CompositeDrawable
 
       const tool = this.#composer.tools.find(it => it.id === presence.tool);
 
-
-
       if (tool?.presenceOverlay)
       {
         this.addInternal(this.#currentOverlay = new tool.presenceOverlay());
       }
     }
 
-    this.#currentOverlay?.updatePresence(presence.details);
+    const timeDifference = Math.abs(this.#editorClock.currentTime - presence.currentTime);
+
+    const targetAlpha = Interpolation.valueAt(timeDifference, 1, 0, 1000, 2000);
+
+    this.fadeTo(targetAlpha, 300);
+
+    if (this.isPresent)
+      this.#currentOverlay?.updatePresence(presence.details);
   }
 }
