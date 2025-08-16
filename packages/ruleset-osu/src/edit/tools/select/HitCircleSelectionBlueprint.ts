@@ -2,6 +2,8 @@ import { Anchor, Axes, Bindable, Box, CircularContainer, dependencyLoader, Vec2 
 import type { HitCircle } from "../../../hitObjects/HitCircle";
 import { OsuHitObject } from "../../../hitObjects/OsuHitObject";
 import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
+import { SkinnableDrawable } from "@osucad/core";
+import { OsuSkinComponents } from "../../../skinning";
 
 export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<HitCircle>
 {
@@ -27,19 +29,10 @@ export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<Hit
     this.stackHeightBindable.bindTo(this.hitObject.stackHeightBindable);
 
     this.internalChildren = [
-      new CircularContainer({
-        relativeSizeAxes: Axes.Both,
+      new SkinnableDrawable(OsuSkinComponents.HitCircleSelect).with({
         anchor: Anchor.Center,
         origin: Anchor.Center,
-        masking: true,
-        child: new Box({
-          relativeSizeAxes: Axes.Both,
-          alpha: 0.2,
-        }),
       }),
-      // new SkinnableDrawable(OsuSkinComponents.HitCircleSelect).with({
-      //   relativeSizeAxes: Axes.Both,
-      // }),
     ];
   }
 

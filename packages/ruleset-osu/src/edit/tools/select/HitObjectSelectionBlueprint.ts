@@ -1,7 +1,8 @@
 import type { DrawableHitObject, HitObject } from "@osucad/core";
-import type { ClickEvent } from "@osucad/framework";
-import { PoolableDrawable, resolved } from "@osucad/framework";
+import type { ClickEvent, MouseDownEvent } from "@osucad/framework";
+import { MouseButton, PoolableDrawable, resolved } from "@osucad/framework";
 import { SelectionBlueprintContainer } from "./SelectionBlueprintContainer";
+import { EditorBeatmap } from "@osucad/editor";
 
 export class HitObjectSelectionBlueprint<T extends HitObject> extends PoolableDrawable
 {
@@ -20,6 +21,9 @@ export class HitObjectSelectionBlueprint<T extends HitObject> extends PoolableDr
   @resolved(() => SelectionBlueprintContainer)
   protected accessor blueprintContainer!: SelectionBlueprintContainer
 
+  @resolved(() => EditorBeatmap)
+  protected accessor beatmap!: EditorBeatmap
+
   override get shouldBeAlive(): boolean
   {
     return this.selected || !!this.drawableHitObject;
@@ -29,6 +33,17 @@ export class HitObjectSelectionBlueprint<T extends HitObject> extends PoolableDr
   {
     super.update();
     this.alpha = this.selected ? 1 : 0;
+  }
+
+  override onMouseDown(e: MouseDownEvent): boolean
+  {
+    if (e.button === MouseButton.Right)
+    {
+      this.beatmap.hitObjects.remove(this.hitObject);
+      return true;
+    }
+
+    return false;
   }
 
   override onClick(e: ClickEvent): boolean

@@ -3,6 +3,7 @@ import { Playfield } from "@osucad/core";
 import { Axes, CompositeDrawable, provideSelf, resolved } from "@osucad/framework";
 import { HitCircle } from "../../../hitObjects";
 import { HitCircleSelectionBlueprint } from "./HitCircleSelectionBlueprint";
+import { EditorBeatmap } from "@osucad/editor";
 
 @provideSelf()
 export class SelectionBlueprintContainer extends CompositeDrawable
@@ -24,6 +25,9 @@ export class SelectionBlueprintContainer extends CompositeDrawable
   @resolved(Playfield)
   accessor #playfield!: Playfield;
 
+  @resolved(EditorBeatmap)
+  accessor #beatmap!: EditorBeatmap;
+
   protected override loadComplete(): void
   {
     super.loadComplete();
@@ -32,6 +36,7 @@ export class SelectionBlueprintContainer extends CompositeDrawable
       this.#addHitObject(drawable);
 
     this.#playfield.hitObjectContainer.drawableHitObjectBecameAlive.addListener(this.#addHitObject, this);
+    this.#beatmap.hitObjects.removed.addListener(h => this.#removeHitObject(h, true), this);
     this.#playfield.hitObjectUsageFinished.addListener(this.#removeHitObject, this);
   }
 
@@ -58,7 +63,7 @@ export class SelectionBlueprintContainer extends CompositeDrawable
     this.addInternal(blueprint);
   }
 
-  #removeHitObject(hitObject: HitObject)
+  #removeHitObject(hitObject: HitObject, force = false)
   {
     const blueprint = this.#blueprints.get(hitObject);
 
@@ -66,6 +71,9 @@ export class SelectionBlueprintContainer extends CompositeDrawable
       return;
 
     blueprint.drawableHitObject = null;
+
+    if (force)
+      this.removeInternal(blueprint);
   }
 
   getBlueprintFor(hitObject: HitObject)
