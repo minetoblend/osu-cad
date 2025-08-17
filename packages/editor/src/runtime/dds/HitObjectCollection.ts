@@ -113,12 +113,12 @@ export class HitObjectCollection
     return this.#hitObjects.length;
   }
 
-  add(hitObject: HitObject, local = false)
+  add(hitObject: HitObject, localOnly = false)
   {
-    if (this.isAttached() && !local)
+    if (this.isAttached() && !localOnly)
       this.encoder.encodeDDS(hitObject);
 
-    if (!this.#add(hitObject) || local)
+    if (!this.#add(hitObject) || localOnly)
       return false;
 
     if (this.isAttached())
@@ -377,7 +377,7 @@ export class HitObjectCollection
 
   public [Symbol.iterator](): ArrayIterator<HitObject>
   {
-    return this.hitObjects[Symbol.iterator]();
+    return this.hitObjects.values();
   }
 
   #proxy = new Lazy(() => createHitObjectCollectionProxy(this));
