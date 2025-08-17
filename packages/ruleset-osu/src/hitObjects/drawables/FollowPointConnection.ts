@@ -66,7 +66,7 @@ export class FollowPointConnection extends PoolableDrawableWithLifetime<FollowPo
 
     let count = 0;
 
-    for (let d = Math.floor(FollowPointConnection.SPACING * 1.5); d < distance - FollowPointConnection.SPACING; d += FollowPointConnection.SPACING)
+    for (let d = Math.floor(FollowPointConnection.SPACING * 1.5); d < distance - FollowPointConnection.SPACING && count < 20; d += FollowPointConnection.SPACING)
     {
       const fraction = d / distance;
 
