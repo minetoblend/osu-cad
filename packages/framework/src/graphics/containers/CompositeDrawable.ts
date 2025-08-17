@@ -558,7 +558,7 @@ export class CompositeDrawable extends Drawable
 
   get relativeToAbsoluteFactor()
   {
-    return this.childSize.div(this.relativeChildSize);
+    return this.childSize.div(this.#relativeChildSize);
   }
 
   override get relativeSizeAxes(): Axes
@@ -569,9 +569,8 @@ export class CompositeDrawable extends Drawable
   override set relativeSizeAxes(value: Axes)
   {
     if (value & this.autoSizeAxes)
-    {
       throw new Error("Cannot set relativeSizeAxes to include auto-size axes");
-    }
+
     super.relativeSizeAxes = value;
   }
 

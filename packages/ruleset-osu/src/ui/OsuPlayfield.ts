@@ -78,7 +78,8 @@ export class OsuPlayfield extends Playfield
   {
     if (drawable instanceof DrawableHitCircle)
     {
-      this.approachCircles.add(new ProxyDrawable(drawable.proxiedLayer));
+      // TODO: fix this
+      // this.approachCircles.add(new ProxyDrawable(drawable.proxiedLayer));
     }
   }
 

@@ -9,4 +9,5 @@ export * from "./Lazy";
 export * from "./List";
 export * from "./loadTexture";
 export * from "./ObservableSortedList";
+export * from "./ObservableSet";
 export * from "./SortedList";

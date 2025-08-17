@@ -21,7 +21,7 @@ export interface OsuHitObjectOptions
 
 @invalidations({
   startTime: ["stacking", "combo"],
-  position: ["applyDefaults", "stacking"],
+  position: ["stacking"],
   newCombo: ["combo"],
   comboOffset: ["combo"],
 })

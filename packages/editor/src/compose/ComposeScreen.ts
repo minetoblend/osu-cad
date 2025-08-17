@@ -74,7 +74,7 @@ export class ComposeScreen extends EditorScreen
     switch(e.key)
     {
     case Key.KeyZ:{
-      const first = this.#editorBeatmap.hitObjects[0];
+      const first = this.#editorBeatmap.hitObjects.first;
       if (first && this.#editorClock.currentTime !== first.startTime)
         this.#editorClock.seek(first.startTime);
       else

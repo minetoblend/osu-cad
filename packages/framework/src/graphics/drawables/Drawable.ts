@@ -220,7 +220,6 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     this.#y = value.y;
 
     this.invalidate(Invalidation.Transform);
-    this.updateDrawNodeTransform();
   }
 
   #width = 0;
@@ -462,7 +461,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   get isPresent()
   {
-    return this.#alwaysPresent || this.#alpha > 0.0001;
+    return this.#alpha > 0.0001 || this.#alwaysPresent;
   }
 
   #alwaysPresent = false;
@@ -571,9 +570,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   protected applyRelativeAxes(axes: Axes, v: Vec2, fillMode: FillMode): Readonly<Vec2>
   {
     if (axes === Axes.None)
-    {
       return v;
-    }
 
     let x = v.x;
     let y = v.y;
@@ -581,14 +578,10 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     const conversion = this.#relativeToAbsoluteFactor;
 
     if (axes & Axes.X)
-    {
       x *= conversion.x;
-    }
 
     if (axes & Axes.Y)
-    {
       y *= conversion.y;
-    }
 
     if (this.relativeSizeAxes === Axes.Both && fillMode !== FillMode.Stretch)
     {
@@ -679,23 +672,18 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   {
     const v = Vec2.zero();
 
-    if (this.#origin & Anchor.x1)
-    {
-      v.x = 0.5;
-    }
-    else if (this.#origin & Anchor.x2)
-    {
-      v.x = 1;
-    }
+    const origin = this.#origin;
 
-    if (this.#origin & Anchor.y1)
-    {
+    if (origin & Anchor.x1)
+      v.x = 0.5;
+    else if (origin & Anchor.x2)
+      v.x = 1;
+
+
+    if (origin & Anchor.y1)
       v.y = 0.5;
-    }
-    else if (this.#origin & Anchor.y2)
-    {
+    else if (origin & Anchor.y2)
       v.y = 1;
-    }
 
     return v;
   }
@@ -778,7 +766,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   }
 
   #drawSizeBacking = new LayoutComputed(
-      () => this.applyRelativeAxes(this.relativeSizeAxes, this.size, this.fillMode),
+      () => this.applyRelativeAxes(this.#relativeSizeAxes, new Vec2(this.#width, this.#height), this.#fillMode),
       Invalidation.Transform | Invalidation.RequiredParentSizeToFit | Invalidation.Presence,
   );
 
@@ -831,13 +819,13 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     const rap = this.relativeAnchorPosition;
 
     const ratio1 = new Vec2(
-      rap.x <= 0 ? 0 : 1 / rap.x,
-      rap.y <= 0 ? 0 : 1 / rap.y,
+        rap.x <= 0 ? 0 : 1 / rap.x,
+        rap.y <= 0 ? 0 : 1 / rap.y,
     );
 
     const ratio2 = new Vec2(
-      rap.x >= 1 ? 0 : 1 / (1 - rap.x),
-      rap.y >= 1 ? 0 : 1 / (1 - rap.y),
+        rap.x >= 1 ? 0 : 1 / (1 - rap.x),
+        rap.y >= 1 ? 0 : 1 / (1 - rap.y),
     );
 
     const bbox = this.boundingBox;
@@ -860,7 +848,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   get #relativeToAbsoluteFactor(): Vec2
   {
-    return this.parent?.relativeToAbsoluteFactor ?? new Vec2(1);
+    return this.#parent?.relativeToAbsoluteFactor ?? new Vec2(1);
   }
 
   // #endregion
@@ -1141,7 +1129,7 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
     {
       const type = typeof injection.type === "function" && injection.type.name === "" ? injection.type() : injection.type;
 
-      const value = injection.optional ?this.dependencies.resolveOptional(type) : this.dependencies.resolve(type);
+      const value = injection.optional ? this.dependencies.resolveOptional(type) : this.dependencies.resolve(type);
 
       injection.set(value);
     }
@@ -1544,13 +1532,8 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   {
     let current: Drawable | null = this;
 
-    while (current)
-    {
-      if (!current.validate(invalidation))
-        break;
-
+    while (current?.validate(invalidation))
       current = current.#parent;
-    }
   }
 
   // #endregion

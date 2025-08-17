@@ -1,5 +1,6 @@
 import type { HitObject } from "@osucad/core";
 import { DrawableRuleset, Playfield } from "@osucad/core";
+import type { InputManager, MouseButton } from "@osucad/framework";
 import { Axes, CompositeDrawable, dependencyLoader, resolved } from "@osucad/framework";
 import { EditorBeatmap, EditorHistory } from "../../runtime";
 import { EditorClock } from "../../EditorClock";
@@ -13,6 +14,15 @@ export abstract class ComposeTool<THitObject extends HitObject = HitObject> exte
   {
     this.relativeSizeAxes = Axes.Both;
   }
+
+  protected override loadComplete(): void
+  {
+    super.loadComplete();
+
+    this.inputManager = this.getContainingInputManager()!;
+  }
+
+  protected inputManager!: InputManager;
 
   @resolved(EditorBeatmap)
   protected accessor beatmap!: EditorBeatmap
@@ -35,9 +45,29 @@ export abstract class ComposeTool<THitObject extends HitObject = HitObject> exte
   @resolved(ComposeToolContainer)
   accessor #toolContainer!: ComposeToolContainer
 
+  protected get screenSpaceMousePosition()
+  {
+    return this.inputManager.currentState.mouse.position;
+  }
+
+  protected get playfieldMousePosition()
+  {
+    return this.playfield.toLocalSpace(this.screenSpaceMousePosition);
+  }
+
   protected get hitObjects(): readonly THitObject[]
   {
     return this.beatmap.hitObjects.hitObjects as readonly THitObject[];
+  }
+
+  protected isMouseButtonPressed(button: MouseButton)
+  {
+    return this.inputManager.currentState.mouse.buttons.isPressed(button);
+  }
+
+  protected createPlayfieldAdjustmentContainer()
+  {
+    return this.drawableRuleset.createPlayfieldAdjustmentContainer();
   }
 
   getPresence(): unknown

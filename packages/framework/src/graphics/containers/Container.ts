@@ -37,9 +37,15 @@ export class Container<T extends Drawable = Drawable> extends CompositeDrawable
 
     if (children)
     {
-      this.addAll(...children);
+      this.addRange(children);
     }
 
+    return this;
+  }
+
+  public withChild(child: T): this
+  {
+    this.child = child;
     return this;
   }
 

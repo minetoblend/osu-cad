@@ -380,6 +380,16 @@ export class HitObjectCollection
     return this.hitObjects.values();
   }
 
+  get first(): HitObject | undefined
+  {
+    return this.#hitObjects[0];
+  }
+
+  get last(): HitObject | undefined
+  {
+    return this.#hitObjects[this.#hitObjects.length - 1];
+  }
+
   #proxy = new Lazy(() => createHitObjectCollectionProxy(this));
 
   get proxy()

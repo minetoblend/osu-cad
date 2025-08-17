@@ -25,7 +25,7 @@ export class EditorBeatmap extends ObjectDDS
 
   get hitObjects()
   {
-    return this.#hitObjects.proxy;
+    return this.#hitObjects;
   }
 
   @nested(BeatmapDifficultyInfo)

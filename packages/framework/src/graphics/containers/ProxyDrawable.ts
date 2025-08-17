@@ -51,7 +51,7 @@ export class ProxyDrawable extends Drawable
 
   #isAttached = false;
 
-  override updateDrawNodeTransform()
+  override updateSubTreeTransforms(): boolean
   {
     if (this.source.isAlive && !this.#isAttached)
     {
@@ -63,6 +63,8 @@ export class ProxyDrawable extends Drawable
       this.#renderLayer.detach(this.source.drawNode);
       this.#isAttached = false;
     }
+
+    return super.updateSubTreeTransforms();
   }
 
   override dispose(isDisposing: boolean = true)

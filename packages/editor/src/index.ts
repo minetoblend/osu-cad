@@ -1,4 +1,5 @@
 export * from "./Editor";
+export * from "./EditorClock";
 export * from "./EditorScreen";
 export * from "./EditorMixins";
 export * from "./EditorRuleset";

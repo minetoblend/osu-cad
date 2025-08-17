@@ -1,5 +1,5 @@
 import { DrawableHitObject, IComboNumberReference } from "@osucad/core";
-import { Bindable, type Drawable, provideSelf, Vec2 } from "@osucad/framework";
+import { Axes, Bindable, type Drawable, provideSelf, Vec2, Container } from "@osucad/framework";
 import type { OsuHitObject } from "../OsuHitObject";
 import { OsuInputManager } from "../../ui/OsuInputManager";
 import type { DrawableSlider } from "./DrawableSlider";
@@ -15,6 +15,19 @@ export abstract class DrawableOsuHitObject<out T extends OsuHitObject = OsuHitOb
   readonly indexInComboBindable = new Bindable(0);
   readonly comboIndexBindable = new Bindable(0);
   readonly stackHeightBindable = new Bindable(0);
+
+  readonly proxyLayer = new Container({
+    relativeSizeAxes: Axes.Both,
+    depth: -Number.MAX_VALUE,
+  });
+
+  // noinspection TypeScriptAbstractClassConstructorCanBeMadeProtected
+  constructor(hitObject?: T)
+  {
+    super(hitObject);
+
+    this.addInternal(this.proxyLayer);
+  }
 
   protected override onApplied()
   {
