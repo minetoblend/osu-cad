@@ -1,5 +1,6 @@
-import type { ControlPointInfo } from "@osucad/core";
-import { Component, lerp, type FrameTimeInfo, type IFrameBasedClock } from "@osucad/framework";
+import type { ControlPointInfo, TimingControlPoint } from "@osucad/core";
+import { almostEquals, Component, lerp, resolved, type FrameTimeInfo, type IFrameBasedClock } from "@osucad/framework";
+import { BindableBeatDivisor } from "./BindableBeatDivisor";
 
 export class EditorClock extends Component implements IFrameBasedClock
 {
@@ -14,6 +15,9 @@ export class EditorClock extends Component implements IFrameBasedClock
   {
     super();
   }
+
+  @resolved(BindableBeatDivisor)
+  accessor #beatDivisor!: BindableBeatDivisor
 
   get elapsedFrameTime(): number
   {
@@ -84,6 +88,56 @@ export class EditorClock extends Component implements IFrameBasedClock
   seekBy(duration: number)
   {
     this.seek(this.currentTime + duration);
+  }
+
+  seekBeats(direction: number, snapped = false, amount = 1)
+  {
+    const timingPoint = this.controlPointInfo.timingPointAt(this.#targetTime);
+
+    const beatSnapLength
+      = timingPoint.beatLength / this.#beatDivisor.value;
+
+    let newPosition = this.#targetTime + direction * amount * beatSnapLength;
+
+    if (almostEquals(newPosition, timingPoint.time, 1))
+    {
+      newPosition = timingPoint.time;
+    }
+    else if (newPosition < timingPoint.time)
+    {
+      const previousTimingPoint = this.controlPointInfo.timingPointAt(newPosition);
+
+      newPosition = this.currentTime + direction * amount * (previousTimingPoint.beatLength / this.#beatDivisor.value);
+    }
+
+    if (snapped)
+      this.seekSnapped(newPosition);
+    else
+      this.seek(newPosition);
+  }
+
+  seekSnapped(position: number)
+  {
+    const timingPoint = this.controlPointInfo.timingPointAt(position);
+
+    position -= timingPoint.time;
+
+    const beatSnapLength
+      = timingPoint.beatLength / this.#beatDivisor.value;
+
+    const closestBeat = Math.round(position / beatSnapLength);
+    position = timingPoint.time + closestBeat * beatSnapLength;
+
+    const nextTimingPoint = this.controlPointInfo.timingPoints.find(
+        t => t.time > timingPoint.time,
+    ) as TimingControlPoint | undefined;
+
+    if (nextTimingPoint && position > nextTimingPoint?.time)
+      position = nextTimingPoint.time;
+
+    position = Math.floor(position);
+
+    this.seek(position);
   }
 
   override update(): void

@@ -101,6 +101,9 @@ export class ComposePresenceContainer extends CompositeDrawable
 
   #sendOwnPresence()
   {
+    if (this.#audience.getMembers().size === 1)
+      return;
+
     const tool = this.#composer.composeToolContainer.activeTool;
     if (!this.#activeTool.value || !tool)
       return;

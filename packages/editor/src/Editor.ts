@@ -99,14 +99,4 @@ export class Editor extends Screen
       }),
     ]);
   }
-
-  override onScroll(e: ScrollEvent): boolean
-  {
-    if (e.controlPressed || e.shiftPressed || e.altPressed)
-      return false;
-
-    this.editorClock.seek(this.editorClock.currentTime - e.scrollDelta.y * 100);
-
-    return true;
-  }
 }

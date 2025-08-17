@@ -188,6 +188,12 @@ export class HitObjectCollection
     return true;
   }
 
+  removeRange(hitObjects: Iterable<HitObject>)
+  {
+    for (const h of hitObjects)
+      this.remove(h);
+  }
+
   #remove(hitObject: HitObject)
   {
     if (!this.#set.delete(hitObject))

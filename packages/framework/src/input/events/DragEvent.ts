@@ -23,7 +23,7 @@ export class DragEvent extends UIEvent
 
   get delta()
   {
-    return this.state.mouse.position.sub(this.screenSpaceLastMousePosition);
+    return this.target!.parent!.toLocalSpace(this.screenSpaceMousePosition).sub(this.target!.parent!.toLocalSpace(this.screenSpaceLastMousePosition));
   }
 
   get screenSpaceDelta(): Vec2

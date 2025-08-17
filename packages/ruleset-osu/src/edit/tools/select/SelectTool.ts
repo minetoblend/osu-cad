@@ -1,15 +1,18 @@
 import { ComposeTool } from "@osucad/editor";
-import type { ClickEvent, InputManager, KeyDownEvent, MouseDownEvent, MouseMoveEvent, MouseUpEvent } from "@osucad/framework";
-import { dependencyLoader, Key, MouseButton, ObservableSet } from "@osucad/framework";
+import type { ClickEvent, DragEvent, KeyDownEvent, MouseDownEvent, MouseMoveEvent, MouseUpEvent } from "@osucad/framework";
+import { dependencyLoader, Key, MouseButton, ObservableSet, provide, provideSelf } from "@osucad/framework";
 import type { SelectionBlueprintContainer } from "./SelectionBlueprintContainer";
 import type { HitObject } from "@osucad/core";
 import type { OsuHitObject } from "../../../hitObjects";
 import { OsuSelectionBlueprintContainer } from "./OsuSelectionBlueprintContainer";
 import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
+import { HitObjectSelection } from "./HitObjectSelection";
 
+@provideSelf()
 export class SelectTool extends ComposeTool
 {
-  readonly selection = new ObservableSet<OsuHitObject>();
+  @provide()
+  readonly selection = new HitObjectSelection<OsuHitObject>();
 
   selectionContainer!: SelectionBlueprintContainer<OsuHitObject>;
 
@@ -61,54 +64,16 @@ export class SelectTool extends ComposeTool
     return this.inputManager.hoveredDrawables.filter(it => it instanceof HitObjectSelectionBlueprint) as HitObjectSelectionBlueprint<OsuHitObject>[];
   }
 
-  #hoveredHitObjectsOnMouseDown: OsuHitObject[] = [];
-  #draggingHitObjects?: OsuHitObject[];
-
-  #performMouseDownSelectionActions(e: MouseDownEvent)
-  {
-    const blueprints = this.hoveredBlueprints;
-    this.#hoveredHitObjectsOnMouseDown = blueprints.map(it => it.hitObject);
-
-    if (blueprints.length > 0)
-    {
-      if (!e.controlPressed)
-      {
-        if (blueprints.some(it => it.selected))
-          return;
-
-        this.selection.clear();
-      }
-
-      this.selection.add(blueprints[0].hitObject);
-    }
-  }
-
-  #getHitObjectsToRemove()
+  cycleSelection(source: HitObjectSelectionBlueprint<OsuHitObject>)
   {
     const blueprints = this.hoveredBlueprints;
 
-    if (this.selection.size > 0 && blueprints.some(it => it.selected))
-      return [...this.selection];
+    if (blueprints.length <= 1)
+      return;
 
-    if(blueprints.length > 0)
-      return [blueprints[0].hitObject];
-
-    return [];
-  }
-
-  override onMouseDown(e: MouseDownEvent): boolean
-  {
-    switch (e.button)
-    {
-    case MouseButton.Left:
-      this.#performMouseDownSelectionActions(e);
-      return true;
-    case MouseButton.Right:
-      this.#remove(this.#getHitObjectsToRemove());
-      return true;
-    default:
-      return true;
-    }
+    const index = blueprints.indexOf(source);
+    const newIndex = (index + 1) % blueprints.length;
+    blueprints[newIndex]?.selectExclusive();
   }
 
   override onClick(e: ClickEvent): boolean
@@ -124,57 +89,35 @@ export class SelectTool extends ComposeTool
     return true;
   }
 
-  #select(hitObject: HitObject)
+  moveFromDrag(e: DragEvent, objects: OsuHitObject[])
   {
-    this.selection.clear();
-    this.selection.add(hitObject as OsuHitObject);
+    const delta = e.delta;
+
+    for (const d of objects)
+      d.position = d.position.add(delta);
   }
 
-  #remove(hitObjects: HitObject[])
+  override onKeyDown(e: KeyDownEvent): boolean
   {
-    if (hitObjects.length > 0)
+    if (e.key === Key.KeyA && e.controlPressed)
     {
-      for (const h of hitObjects)
-        this.beatmap.hitObjects.remove(h);
-
-      this.history.commit();
-    }
-  }
-
-  override onMouseMove(e: MouseMoveEvent): boolean
-  {
-    if (this.#draggingHitObjects)
-    {
-      if (e.lastPosition)
-      {
-        const delta = this.playfield.toLocalSpace(e.screenSpaceMousePosition).sub(this.playfield.toLocalSpace(e.lastPosition));
-        for (const h of this.#draggingHitObjects)
-          h.position = h.position.add(delta);
-      }
+      this.selection.addRange(this.hitObjects as Iterable<OsuHitObject>);
       return true;
     }
 
-    if (this.#hoveredHitObjectsOnMouseDown.length > 0 && this.isMouseButtonPressed(MouseButton.Left))
+    if (e.key === Key.Delete || e.key === Key.Backspace)
     {
-      this.#draggingHitObjects = [...this.selection];
-      if (e.lastPosition)
-      {
-        const delta = this.playfield.toLocalSpace(e.screenSpaceMousePosition).sub(this.playfield.toLocalSpace(e.lastPosition));
-        for (const h of this.#draggingHitObjects)
-          h.position = h.position.add(delta);
-      }
+      this.hitObjects.removeRange(this.selection);
+      this.history.commit();
       return true;
     }
 
-    return true;
-  }
-
-  override onMouseUp(e: MouseUpEvent): void
-  {
-    if (e.button === MouseButton.Left && this.#draggingHitObjects)
+    if (e.key === Key.KeyZ && e.controlPressed)
     {
-      this.#draggingHitObjects = undefined;
-      this.history.commit();
+      this.history.undo();
+      return true;
     }
+
+    return false;
   }
 }

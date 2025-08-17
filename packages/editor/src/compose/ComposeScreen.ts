@@ -1,4 +1,4 @@
-import type { KeyDownEvent } from "@osucad/framework";
+import type { KeyDownEvent, ScrollEvent } from "@osucad/framework";
 import { Anchor, Axes, Container, Key, resolved, SpriteText, type ReadonlyDependencyContainer } from "@osucad/framework";
 import { EditorScreen } from "../EditorScreen";
 import { Ruleset } from "@osucad/core";
@@ -81,6 +81,21 @@ export class ComposeScreen extends EditorScreen
         this.#editorClock.seek(0);
       break;}
     }
+
+    return false;
+  }
+
+  override onScroll(e: ScrollEvent): boolean
+  {
+    const y = e.scrollDelta.y;
+
+    const amount = e.shiftPressed ? 4 : 1;
+
+    this.#editorClock.seekBeats(
+        -Math.sign(y),
+        !this.#editorClock.isRunning,
+        amount * (this.#editorClock.isRunning ? 2.5 : 1),
+    );
 
     return false;
   }

@@ -1,7 +1,9 @@
 import type { DrawableHitObject, HitObject } from "@osucad/core";
-import { PoolableDrawable, resolved } from "@osucad/framework";
+import type { DragEvent, DragStartEvent, MouseDownEvent } from "@osucad/framework";
+import { MouseButton, PoolableDrawable, resolved } from "@osucad/framework";
 import { SelectionBlueprintContainer } from "./SelectionBlueprintContainer";
 import { EditorBeatmap, EditorHistory } from "@osucad/editor";
+import { HitObjectSelection } from "./HitObjectSelection";
 
 export class HitObjectSelectionBlueprint<T extends HitObject> extends PoolableDrawable
 {
@@ -11,6 +13,9 @@ export class HitObjectSelectionBlueprint<T extends HitObject> extends PoolableDr
 
     this.alwaysPresent = true;
   }
+
+  @resolved(HitObjectSelection as typeof HitObjectSelection<T>)
+  protected accessor selection!: HitObjectSelection<T>;
 
   #selected = false;
 
@@ -42,8 +47,66 @@ export class HitObjectSelectionBlueprint<T extends HitObject> extends PoolableDr
   @resolved(EditorHistory)
   protected accessor history!: EditorHistory
 
-  override get requestsPositionalInput()
+  protected performMouseDownSelectionActions(e: MouseDownEvent)
   {
-    return true;
+    if (e.controlPressed)
+    {
+      this.selection.toggle(this.hitObject);
+      return;
+    }
+
+    if (!this.selected)
+      this.selectExclusive();
+  }
+
+  override onMouseDown(e: MouseDownEvent): boolean
+  {
+    if (e.button === MouseButton.Left)
+    {
+      if (this.getContainingInputManager()?.hoveredDrawables.some(bp =>
+        bp instanceof HitObjectSelectionBlueprint
+        && bp.selected
+        && bp !== this,
+      ))
+      {
+        return false;
+      }
+
+      this.performMouseDownSelectionActions(e);
+      return true;
+    }
+
+    if (e.button === MouseButton.Right)
+    {
+      if (this.selected)
+        this.beatmap.hitObjects.removeRange(this.selection);
+      else
+        this.beatmap.hitObjects.remove(this.hitObject);
+
+      this.history.commit();
+
+      return true;
+    }
+
+    return false;
+  }
+
+  select()
+  {
+    return this.selection.add(this.hitObject);
+  }
+
+  deselect()
+  {
+    return this.selection.remove(this.hitObject);
+  }
+
+  selectExclusive()
+  {
+    if (this.selection.size === 1 && this.#selected)
+      return;
+
+    this.selection.clear();
+    this.selection.add(this.hitObject);
   }
 }

@@ -53,7 +53,7 @@ export abstract class HitObjectPlacementTool<T extends OsuHitObject> extends Com
 
     this.updateTimeAndPosition(this.hitObject, this.editorClock.currentTime, position);
 
-    // this.#hitObject.applyDefaults(this.beatmap.difficulty, this.beatmap.controlPointInfo);
+    this.#hitObject.applyDefaults(this.beatmap.difficulty, this.beatmap.controlPointInfo);
   }
 
   beginPlacement()

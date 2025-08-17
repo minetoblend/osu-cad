@@ -124,6 +124,9 @@ export class DrawableHitObject<out T extends HitObject = HitObject>
 
   get hitStateUpdateTime()
   {
+    if (this.autoMode)
+      return this.hitObject.endTime;
+
     return this.result?.timeAbsolute ?? this.hitObject.endTime;
   }
 

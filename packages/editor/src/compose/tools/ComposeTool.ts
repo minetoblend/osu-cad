@@ -55,9 +55,9 @@ export abstract class ComposeTool<THitObject extends HitObject = HitObject> exte
     return this.playfield.toLocalSpace(this.screenSpaceMousePosition);
   }
 
-  protected get hitObjects(): readonly THitObject[]
+  protected get hitObjects()
   {
-    return this.beatmap.hitObjects.hitObjects as readonly THitObject[];
+    return this.beatmap.hitObjects;
   }
 
   protected isMouseButtonPressed(button: MouseButton)
