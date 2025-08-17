@@ -17,5 +17,6 @@ export function plainSerializer<Value>(): ISerializer<Value, Value>
   return {
     serialize: value => value,
     deserialize: value => value,
+    equals: (a, b) => a === b,
   };
 }
