@@ -1,8 +1,6 @@
 import type { HitObject, HitObjectInivalidationType } from "@osucad/core";
 import { EditorBeatmapProcessor } from "./EditorBeatmapProcessor";
 import type { EditorBeatmap } from "./runtime";
-import { resolved } from "@osucad/framework";
-import { EditorClock } from "./EditorClock";
 
 export class DefaultsApplier extends EditorBeatmapProcessor
 {
