@@ -1,3 +1,4 @@
+import type { HitObject } from "@osucad/core";
 import type { Vec2 } from "@osucad/framework";
 
 export interface ISnapOptions
