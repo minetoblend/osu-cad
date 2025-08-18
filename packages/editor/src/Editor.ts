@@ -1,6 +1,7 @@
 import type { Skin } from "@osucad/core";
 import { ISkinSource, PlayfieldClock, Ruleset, SkinProvidingContainer } from "@osucad/core";
-import type { ScrollEvent } from "@osucad/framework";
+import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyBindingReleaseEvent, KeyBindingScrollEvent } from "@osucad/framework";
+import { PlatformAction, ScrollEvent } from "@osucad/framework";
 import { asyncDependencyLoader, provide, resolved, Screen } from "@osucad/framework";
 import { BindableBeatDivisor } from "./BindableBeatDivisor";
 import { DefaultsApplier } from "./DefaultsApplier";
@@ -17,7 +18,7 @@ export interface EditorOptions
   readonly document: Document
 }
 
-export class Editor extends Screen
+export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
 {
   constructor(options: EditorOptions)
   {
@@ -27,6 +28,7 @@ export class Editor extends Screen
     this.runtime = this.document.runtime as EditorRuntime;
     this.editorClock = new EditorClock(this.editorBeatmap.controlPointInfo);
   }
+
 
   @provide(Document)
   readonly document: Document;
@@ -98,5 +100,26 @@ export class Editor extends Screen
         ],
       }),
     ]);
+  }
+
+  readonly isKeyBindingHandler = true;
+
+  canHandleKeyBinding(binding: KeyBindingAction): boolean
+  {
+    return binding instanceof PlatformAction;
+  }
+
+  onKeyBindingPressed?(e: KeyBindingPressEvent<PlatformAction>): boolean
+  {
+    switch (e.pressed)
+    {
+    case PlatformAction.Undo:
+      this.history.undo();
+      return true;
+    case PlatformAction.Redo:
+      this.history.undo();
+      return true;
+    }
+    return false;
   }
 }
