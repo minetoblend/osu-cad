@@ -4,6 +4,7 @@ import { EventEmitter } from "eventemitter3";
 import type { Delta } from "../dds/Delta.js";
 import type { Attached, DDS, DDSFactoryOrConstructor } from "../dds/index.js";
 import { ChannelCollection } from "./ChannelCollection.js";
+import { UUIDGenerator } from "./IdGenerator.js";
 
 export interface DocumentRuntimeEvents
 {
@@ -40,9 +41,11 @@ export class DocumentRuntime<T extends DDS = DDS> extends EventEmitter<DocumentR
     return this.#channelCollection.typeRegistry;
   }
 
+  idGenerator = new UUIDGenerator();
+
   public generateUniqueId()
   {
-    return crypto.randomUUID();
+    return this.idGenerator.next();
   }
 
   static create<T extends DDS>(root: T, types: DDSFactoryOrConstructor<DDS>[])
