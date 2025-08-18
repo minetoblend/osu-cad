@@ -141,6 +141,7 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
       this.selection.addRange(this.hitObjects as Iterable<OsuHitObject>);
       return true;
     case PlatformAction.Delete:
+    case PlatformAction.DeleteBackwardChar:
       this.hitObjects.removeRange(this.selection);
       this.history.commit();
       return true;
