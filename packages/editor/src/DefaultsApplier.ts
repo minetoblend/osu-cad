@@ -1,6 +1,8 @@
-import type { HitObject, HitObjectInivalidationType } from "@osucad/core";
+import { HitObject, HitObjectInivalidationType } from "@osucad/core";
 import { EditorBeatmapProcessor } from "./EditorBeatmapProcessor";
 import type { EditorBeatmap } from "./runtime";
+import { resolved } from "@osucad/framework";
+import { EditorClock } from "./EditorClock";
 
 export class DefaultsApplier extends EditorBeatmapProcessor
 {
@@ -35,5 +37,7 @@ export class DefaultsApplier extends EditorBeatmapProcessor
 
     for (const hitObject of this.#hitObjects)
       hitObject.applyDefaults(difficulty, controlPointInfo);
+
+    this.#hitObjects.clear();
   }
 }
