@@ -58,14 +58,14 @@ export abstract class HitObjectComposer extends CompositeDrawable
     this.#dependencies.provide(Playfield, this.drawableRuleset.playfield);
 
     this.internalChildren = [
+      this.composeToolContainer = new ComposeToolContainer(),
       this.rulesetContainer = new Container({
         relativeSizeAxes: Axes.Both,
         child: this.drawableRuleset,
       }),
-      this.composeToolContainer = new ComposeToolContainer(),
+      new ProxyDrawable(this.composeToolContainer),
       new ComposePresenceContainer(),
       this.#toolbar = new ComposeToolbar(),
-      new ProxyDrawable(this.rulesetContainer).with({ depth: 1 }),
     ];
 
     const tools = this.tools = await this.getTools();

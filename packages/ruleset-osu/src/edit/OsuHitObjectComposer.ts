@@ -5,6 +5,7 @@ import { PlayfieldGrid } from "./PlayfieldGrid";
 import { HitCircleTool } from "./tools/circle/HitCircleTool";
 import { HitCircleToolPresenceOverlay } from "./tools/circle/HitCircleToolPresence";
 import { SelectToolPresenceOverlay } from "./tools/select/SelectToolPresenceOverlay";
+import { SliderTool } from "./tools/slider/SliderTool";
 
 export class OsuHitObjectComposer extends HitObjectComposer
 {
@@ -29,6 +30,12 @@ export class OsuHitObjectComposer extends HitObjectComposer
         tool: HitCircleTool,
         icon: await loadTexture(new URL("./tools/circle/circle.png", import.meta.url).href),
         presenceOverlay: HitCircleToolPresenceOverlay,
+      },
+      {
+        id: "slider",
+        name: "Slider",
+        tool: SliderTool,
+        icon: await loadTexture(new URL("./tools/slider/slider.png", import.meta.url).href),
       },
     ];
   }

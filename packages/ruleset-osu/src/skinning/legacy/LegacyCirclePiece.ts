@@ -99,7 +99,7 @@ export class LegacyCirclePiece extends CompositeDrawable
     this.applyTransformsAt(-Number.MAX_VALUE, true);
     this.clearTransformsAfter(-Number.MAX_VALUE, true);
 
-    this.absoluteSequence({ time: this.drawableHitObject.hitStateUpdateTime, recursive: true }, () =>
+    this.absoluteSequence(this.drawableHitObject.hitStateUpdateTime, () =>
     {
       switch (state)
       {
