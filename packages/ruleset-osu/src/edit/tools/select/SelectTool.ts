@@ -1,12 +1,14 @@
-import { ComposeTool } from "@osucad/editor";
-import type { ClickEvent, DragEvent, KeyDownEvent, MouseDownEvent, MouseMoveEvent, MouseUpEvent } from "@osucad/framework";
-import { dependencyLoader, Key, MouseButton, ObservableSet, provide, provideSelf } from "@osucad/framework";
-import type { SelectionBlueprintContainer } from "./SelectionBlueprintContainer";
 import type { HitObject } from "@osucad/core";
+import { ComposeTool } from "@osucad/editor";
+import type { ClickEvent, DragEvent, KeyDownEvent, Vec2 } from "@osucad/framework";
+import { dependencyLoader, Key, MouseButton, provide, provideSelf } from "@osucad/framework";
 import type { OsuHitObject } from "../../../hitObjects";
-import { OsuSelectionBlueprintContainer } from "./OsuSelectionBlueprintContainer";
-import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
 import { HitObjectSelection } from "./HitObjectSelection";
+import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
+import { OsuSelectionBlueprintContainer } from "./OsuSelectionBlueprintContainer";
+import type { SelectionBlueprintContainer } from "./SelectionBlueprintContainer";
+import { HitObjectSnapProvider } from "../../SelectionSnapProvider";
+import type { SnapResult } from "src/edit/SnapProvider";
 
 @provideSelf()
 export class SelectTool extends ComposeTool
@@ -16,10 +18,13 @@ export class SelectTool extends ComposeTool
 
   selectionContainer!: SelectionBlueprintContainer<OsuHitObject>;
 
+  snapProvider = new HitObjectSnapProvider();
+
   @dependencyLoader()
   #load()
   {
     this.addRangeInternal([
+      this.snapProvider,
       this.createPlayfieldAdjustmentContainer()
         .withChild(this.selectionContainer = new OsuSelectionBlueprintContainer(this.selection)),
     ]);
@@ -89,12 +94,32 @@ export class SelectTool extends ComposeTool
     return true;
   }
 
-  moveFromDrag(e: DragEvent, objects: OsuHitObject[])
+  moveObjects(movement: Vec2, objects: OsuHitObject[], startPositions: Vec2[])
   {
-    const delta = e.delta;
+    for (let i = 0; i < objects.length; i++)
+      objects[i].position = startPositions[i].add(movement);
 
-    for (const d of objects)
-      d.position = d.position.add(delta);
+    const snapTargets = objects.flatMap((it, index) => it.getSnapTargets());
+
+    let closestDistance = Number.MAX_VALUE;
+    let closest: SnapResult | undefined;
+    for (const result of this.snapProvider.getSnapResults(snapTargets, { ignore: objects }))
+    {
+      const dist = result.distance;
+      if (dist < closestDistance)
+      {
+        closestDistance = dist;
+        closest = result;
+      }
+    }
+
+    if (closest && closest.distance < 5)
+    {
+      for (let i = 0; i < objects.length; i++)
+      {
+        objects[i].position = objects[i].position.add(closest.offset);
+      }
+    }
   }
 
   override onKeyDown(e: KeyDownEvent): boolean

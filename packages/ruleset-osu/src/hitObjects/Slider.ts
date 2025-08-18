@@ -275,4 +275,9 @@ export class Slider extends OsuHitObject
 
     return false;
   }
+
+  override getSnapTargets(): Vec2[]
+  {
+    return [this.position, this.pathEndPosition];
+  }
 }

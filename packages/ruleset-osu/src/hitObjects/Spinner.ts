@@ -154,4 +154,9 @@ export class Spinner extends OsuHitObject
   {
     return true;
   }
+
+  override getSnapTargets(): Vec2[]
+  {
+    return [];
+  }
 }

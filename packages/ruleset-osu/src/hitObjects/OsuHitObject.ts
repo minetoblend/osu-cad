@@ -249,5 +249,10 @@ export abstract class OsuHitObject extends HitObject
   {
     return Vec2.closerThan(this.stackedPosition, position, this.radius);
   }
+
+  getSnapTargets(): Vec2[]
+  {
+    return [this.position];
+  }
 }
 

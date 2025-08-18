@@ -49,6 +49,8 @@ export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<Hit
   #proxy: ProxyDrawable | null = null;
   #drawableHitObject: DrawableHitCircle | null = null;
 
+  #dragPositions!: Vec2[];
+  #dragStartPosition!: Vec2;
   #draggedHitObjects!: OsuHitObject[];
 
   @resolved(() => SelectTool)
@@ -59,14 +61,20 @@ export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<Hit
     if (!this.selected)
       this.selectExclusive();
 
+
+    this.#dragStartPosition = this.parent!.toLocalSpace(e.screenSpaceMousePosition);
     this.#draggedHitObjects = [...this.selection];
+    this.#dragPositions = this.#draggedHitObjects.map(it => it.position);
 
     return true;
   }
 
   override onDrag(e: DragEvent): boolean
   {
-    this.#selectTool.moveFromDrag(e, this.#draggedHitObjects);
+    const delta = this.parent!.toLocalSpace(e.screenSpaceMousePosition).sub(this.#dragStartPosition);
+
+
+    this.#selectTool.moveObjects(delta, this.#draggedHitObjects, this.#dragPositions);
 
     return true;
   }
