@@ -1,8 +1,8 @@
 import { ComposeToolPresenceOverlay } from "@osucad/editor";
-import { dependencyLoader, DrawableSprite, loadTexture, resolved, Vec2, type IVec2 } from "@osucad/framework";
+import { dependencyLoader, DrawableSprite, type IVec2, loadTexture, resolved, Vec2 } from "@osucad/framework";
 import type { Texture } from "pixi.js";
 import iconUrl from "./select.png";
-import { DrawableRuleset, Playfield } from "@osucad/core";
+import { DrawableRuleset } from "@osucad/core";
 
 export interface ISelectToolPresence
 {

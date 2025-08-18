@@ -1,8 +1,7 @@
 import { DrawableRuleset, type HitObject } from "@osucad/core";
 import { ComposeTool } from "@osucad/editor";
-import type { ClickEvent, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyDownEvent, Vec2 } from "@osucad/framework";
-import { DragEvent, PlatformAction, resolved } from "@osucad/framework";
-import { dependencyLoader, Key, MouseButton, provide, provideSelf } from "@osucad/framework";
+import type { ClickEvent, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, Vec2 } from "@osucad/framework";
+import { dependencyLoader, MouseButton, PlatformAction, provide, provideSelf, resolved } from "@osucad/framework";
 import type { OsuHitObject } from "../../../hitObjects";
 import { HitObjectSelection } from "./HitObjectSelection";
 import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
