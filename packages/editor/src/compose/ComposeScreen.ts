@@ -80,6 +80,12 @@ export class ComposeScreen extends EditorScreen
       else
         this.#editorClock.seek(0);
       break;}
+    case Key.ArrowRight:
+      this.#editorClock.seekBeats(1, true);
+      break;
+    case Key.ArrowLeft:
+      this.#editorClock.seekBeats(-1, true);
+      break;
     }
 
     return false;
