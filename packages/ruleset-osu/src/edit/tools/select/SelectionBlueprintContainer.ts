@@ -170,6 +170,11 @@ export abstract class SelectionBlueprintContainer<T extends HitObject> extends C
     return drawable.hitObject.startTime;
   }
 
+  get allBlueprints()
+  {
+    return this.#blueprints.values();
+  }
+
   get selectedObjects()
   {
     return this.#blueprints.values().filter(it => it.selected);

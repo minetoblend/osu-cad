@@ -1,5 +1,5 @@
 import type { DrawableHitObject, HitObject } from "@osucad/core";
-import type { DragEvent, DragStartEvent, MouseDownEvent } from "@osucad/framework";
+import type { DragEvent, DragStartEvent, MouseDownEvent, Rectangle } from "@osucad/framework";
 import { MouseButton, PoolableDrawable, resolved } from "@osucad/framework";
 import { SelectionBlueprintContainer } from "./SelectionBlueprintContainer";
 import { EditorBeatmap, EditorHistory } from "@osucad/editor";
@@ -108,5 +108,10 @@ export class HitObjectSelectionBlueprint<T extends HitObject> extends PoolableDr
 
     this.selection.clear();
     this.selection.add(this.hitObject);
+  }
+
+  isInSelectionRect(rectangle: Rectangle)
+  {
+    return false;
   }
 }

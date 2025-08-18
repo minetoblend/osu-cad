@@ -1,4 +1,4 @@
-import type { ClickEvent, DragEndEvent, DragEvent, DragStartEvent, Drawable, MouseDownEvent } from "@osucad/framework";
+import type { ClickEvent, DragEndEvent, DragEvent, DragStartEvent, Drawable, MouseDownEvent, Rectangle } from "@osucad/framework";
 import { MouseButton, ProxyDrawable, resolved } from "@osucad/framework";
 import { Anchor, Bindable, dependencyLoader, Vec2 } from "@osucad/framework";
 import type { HitCircle } from "../../../hitObjects";
@@ -128,6 +128,11 @@ export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<Hit
       drawableHitObject.proxyLayer.remove(this.#proxy);
       this.#proxy = null;
     }
+  }
+
+  override isInSelectionRect(rectangle: Rectangle): boolean
+  {
+    return rectangle.contains(this.hitObject.stackedPosition);
   }
 
   override dispose()

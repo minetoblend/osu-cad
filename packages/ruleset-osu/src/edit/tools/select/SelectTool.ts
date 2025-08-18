@@ -6,9 +6,10 @@ import type { OsuHitObject } from "../../../hitObjects";
 import { HitObjectSelection } from "./HitObjectSelection";
 import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
 import { OsuSelectionBlueprintContainer } from "./OsuSelectionBlueprintContainer";
-import type { SelectionBlueprintContainer } from "./SelectionBlueprintContainer";
+import { SelectionBlueprintContainer } from "./SelectionBlueprintContainer";
 import { HitObjectSnapProvider } from "../../SelectionSnapProvider";
 import type { SnapResult } from "src/edit/SnapProvider";
+import { SelectBox } from "./SelectBox";
 
 @provideSelf()
 export class SelectTool extends ComposeTool
@@ -16,7 +17,8 @@ export class SelectTool extends ComposeTool
   @provide()
   readonly selection = new HitObjectSelection<OsuHitObject>();
 
-  selectionContainer!: SelectionBlueprintContainer<OsuHitObject>;
+  @provide(SelectionBlueprintContainer)
+  selectionContainer = new OsuSelectionBlueprintContainer(this.selection);
 
   snapProvider = new HitObjectSnapProvider();
 
@@ -25,8 +27,9 @@ export class SelectTool extends ComposeTool
   {
     this.addRangeInternal([
       this.snapProvider,
+      new SelectBox(),
       this.createPlayfieldAdjustmentContainer()
-        .withChild(this.selectionContainer = new OsuSelectionBlueprintContainer(this.selection)),
+        .withChild(this.selectionContainer),
     ]);
   }
 
