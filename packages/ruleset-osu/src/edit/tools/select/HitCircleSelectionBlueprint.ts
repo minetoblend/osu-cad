@@ -63,7 +63,7 @@ export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<Hit
 
 
     this.#dragStartPosition = this.parent!.toLocalSpace(e.screenSpaceMousePosition);
-    this.#draggedHitObjects = [...this.selection];
+    this.#draggedHitObjects = [...this.selection] as OsuHitObject[];
     this.#dragPositions = this.#draggedHitObjects.map(it => it.position);
 
     return true;

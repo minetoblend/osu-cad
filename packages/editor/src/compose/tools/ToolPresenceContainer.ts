@@ -105,7 +105,7 @@ export class ComposePresenceContainer extends CompositeDrawable
       return;
 
     const tool = this.#composer.composeToolContainer.activeTool;
-    if (!this.#activeTool.value || !tool)
+    if (!this.#activeTool.value || !tool?.isLoaded)
       return;
 
     const id = this.#activeTool.value.id;

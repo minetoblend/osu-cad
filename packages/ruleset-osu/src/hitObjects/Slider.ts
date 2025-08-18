@@ -266,9 +266,12 @@ export class Slider extends OsuHitObject
 
     const vertices = this.path.getRange(0, 1);
 
+    position = position.sub(this.stackedPosition);
+
     for (let i = 0; i < vertices.length - 1; i++)
     {
       const distance = Line.distance(vertices[i], vertices[i + 1], position);
+
       if (distance < this.radius)
         return true;
     }

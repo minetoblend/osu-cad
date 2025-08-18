@@ -177,7 +177,7 @@ export class PathApproximator
    */
   static approximateCircularArc(controlPoints: Vec2[]): Vec2[]
   {
-    const pr = this._circularArcProperties(controlPoints);
+    const pr = this.getCircularArcProperties(controlPoints);
 
     if (!pr.isValid)
     {
@@ -234,7 +234,7 @@ export class PathApproximator
    * @param controlPoints Three distinct points on the arc.
    * @returns The properties for approximation of the circular arc.
    */
-  static _circularArcProperties(controlPoints: Vec2[]): CircularArcProperties
+  static getCircularArcProperties(controlPoints: Vec2[]): CircularArcProperties
   {
     const a = controlPoints[0];
     const b = controlPoints[1];
@@ -578,5 +578,18 @@ export class CircularArcProperties
   get thetaEnd(): number
   {
     return this.thetaStart + this.thetaRange * this.direction;
+  }
+
+  pointOnCircle(theta: number)
+  {
+    return new Vec2(
+        this.centre.x + Math.cos(theta) * this.radius,
+        this.centre.y + Math.sin(theta) * this.radius,
+    );
+  }
+
+  pointAtProgress(progress: number)
+  {
+    return this.pointOnCircle(this.thetaStart + this.thetaRange * progress);
   }
 }

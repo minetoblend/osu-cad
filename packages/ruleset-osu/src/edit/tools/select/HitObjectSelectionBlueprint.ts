@@ -5,7 +5,7 @@ import { SelectionBlueprintContainer } from "./SelectionBlueprintContainer";
 import { EditorBeatmap, EditorHistory } from "@osucad/editor";
 import { HitObjectSelection } from "./HitObjectSelection";
 
-export class HitObjectSelectionBlueprint<T extends HitObject> extends PoolableDrawable
+export class HitObjectSelectionBlueprint<out T extends HitObject> extends PoolableDrawable
 {
   constructor(readonly hitObject: T)
   {
@@ -14,8 +14,8 @@ export class HitObjectSelectionBlueprint<T extends HitObject> extends PoolableDr
     this.alwaysPresent = true;
   }
 
-  @resolved(HitObjectSelection as typeof HitObjectSelection<T>)
-  protected accessor selection!: HitObjectSelection<T>;
+  @resolved(HitObjectSelection as typeof HitObjectSelection)
+  protected accessor selection!: HitObjectSelection<HitObject>;
 
   #selected = false;
 

@@ -3,6 +3,7 @@ import { PathPoint, PathType, Slider } from "../../../hitObjects";
 import type { ClickEvent, MouseDownEvent } from "@osucad/framework";
 import { MouseButton, Vec2 } from "@osucad/framework";
 import { SliderPathVisualizer } from "./SliderPathVisualizer";
+import { getBezierSlice } from "./pathManipulation";
 
 export class SliderTool extends HitObjectPlacementTool<Slider>
 {
@@ -18,7 +19,7 @@ export class SliderTool extends HitObjectPlacementTool<Slider>
     this.addInternal(new SliderPathVisualizer(this.hitObject));
   }
 
-  path: PathPoint[] = [new PathPoint(new Vec2(), PathType.Bezier)];
+  path: PathPoint[] = [new PathPoint(Vec2.zero(), PathType.Bezier)];
 
   private get segmentStart()
   {
