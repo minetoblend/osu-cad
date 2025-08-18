@@ -1,8 +1,7 @@
 import type { KeyDownEvent } from "@osucad/framework";
 import { Axes, Container, FillFlowContainer, Vec2 } from "@osucad/framework";
-import type { ComposeToolInfo } from "./ComposeToolInfo";
 import { ComposeToolButton } from "./ComposeToolButton";
-import type { ComposeTool } from "./ComposeTool";
+import type { ComposeToolInfo } from "./ComposeToolInfo";
 
 export class ComposeToolbar extends Container
 {
@@ -44,6 +43,7 @@ export class ComposeToolbar extends Container
       if (Number.isFinite(index) && this.children[index - 1])
       {
         (this.children[index - 1] as ComposeToolButton).select();
+        return true;
       }
     }
 
