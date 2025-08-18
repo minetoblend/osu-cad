@@ -3,6 +3,7 @@ import { Anchor, Box, resolved, Vec2 } from "@osucad/framework";
 import { Axes, Container } from "@osucad/framework";
 import { CompositeDrawable } from "@osucad/framework";
 import type { Slider } from "../../../hitObjects";
+import { PathType } from "../../../hitObjects";
 import { Playfield } from "@osucad/core";
 
 export class SliderPathVisualizer extends CompositeDrawable
@@ -47,10 +48,15 @@ export class SliderPathVisualizer extends CompositeDrawable
 
     const positions = controlPoints.map(p => this.#playfield.toSpaceOfOtherDrawable(this.slider.position.add(p.position), this));
 
+    let currentColor = SliderPathVisualizer.getColor(null);
+
     for (let i = 0; i < controlPoints.length - 1; i++)
     {
       const current = positions[i];
       const next = positions[i + 1];
+
+      if (controlPoints[i].type !== null)
+        currentColor = SliderPathVisualizer.getColor(controlPoints[i].type);
 
       let segment = this.#segments.children[i];
       if (!segment)
@@ -65,6 +71,7 @@ export class SliderPathVisualizer extends CompositeDrawable
       segment.position = current;
       segment.rotation = next.sub(current).angle();
       segment.width = current.distance(next);
+      segment.color = currentColor;
     }
 
     while (this.#segments.children.length > Math.max(controlPoints.length - 1, 0))
@@ -78,10 +85,30 @@ export class SliderPathVisualizer extends CompositeDrawable
         this.#points.add(handle = new PathHandle());
 
       handle.position = positions[i];
+      handle.color = SliderPathVisualizer.getColor(controlPoints[i].type);
     }
 
     while (this.#points.children.length > Math.max(controlPoints.length, 0))
       this.#points.remove(this.#points.children[this.#points.children.length - 1]);
+  }
+
+  static getColor(type: PathType | null)
+  {
+    switch (type)
+    {
+    case PathType.Bezier:
+      return 0x00FF00;
+    case PathType.Catmull:
+      return 0xFF0000;
+    case PathType.PerfectCurve:
+      return 0x324dfc;
+    case PathType.Linear:
+      return 0xff6efd;
+    case PathType.BSpline:
+      return 0x00FFFF;
+    default:
+      return 0xCCCCCC;
+    }
   }
 }
 

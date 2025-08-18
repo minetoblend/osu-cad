@@ -1,5 +1,5 @@
 import { DrawableRuleset } from "@osucad/core";
-import { ComposeToolPresenceOverlay, EditorBeatmap } from "@osucad/editor";
+import { ComposeToolPresenceOverlay } from "@osucad/editor";
 import type { Container, IVec2 } from "@osucad/framework";
 import { Anchor, Axes, Box, CircularContainer, dependencyLoader, resolved, Vec2 } from "@osucad/framework";
 import { OsuHitObject } from "../../../hitObjects";
@@ -9,7 +9,7 @@ export interface IHitCircleToolPresence
 {
   state: PlacementState
   position: IVec2
-  startTime: number
+  scale: number
 }
 
 export class HitCircleToolPresenceOverlay extends ComposeToolPresenceOverlay
@@ -22,8 +22,6 @@ export class HitCircleToolPresenceOverlay extends ComposeToolPresenceOverlay
   @resolved(DrawableRuleset)
   accessor #drawableRuleset!: DrawableRuleset
 
-  @resolved(EditorBeatmap)
-  accessor #beatmap!: EditorBeatmap
 
   @dependencyLoader()
   #load()
@@ -51,23 +49,11 @@ export class HitCircleToolPresenceOverlay extends ComposeToolPresenceOverlay
       return;
     }
 
-    const{ position, startTime, state } = content as IHitCircleToolPresence;
+    const{ position, scale, state } = content as IHitCircleToolPresence;
 
-    if (state === PlacementState.Idle)
-    {
-      this.#circle.scale = this.#beatmap.difficulty.calculateCircleSize(true);
-      this.#circle.moveTo(Vec2.from(position), 100);
+    this.#circle.alpha = state === PlacementState.Idle ? 1 : 0;
 
-      if (this.#circle.alpha === 0)
-      {
-        this.#circle.finishTransforms();
-        this.#circle.show();
-      }
-
-    }
-    else
-    {
-      this.#circle.hide();
-    }
+    this.#circle.scale = scale;
+    this.#circle.moveTo(Vec2.from(position), 100);
   }
 }

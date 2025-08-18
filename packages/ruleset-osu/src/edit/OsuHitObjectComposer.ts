@@ -6,6 +6,7 @@ import { HitCircleTool } from "./tools/circle/HitCircleTool";
 import { HitCircleToolPresenceOverlay } from "./tools/circle/HitCircleToolPresence";
 import { SelectToolPresenceOverlay } from "./tools/select/SelectToolPresenceOverlay";
 import { SliderTool } from "./tools/slider/SliderTool";
+import { SliderToolPresenceOverlay } from "./tools/slider/HitCircleToolPresence";
 
 export class OsuHitObjectComposer extends HitObjectComposer
 {
@@ -36,6 +37,7 @@ export class OsuHitObjectComposer extends HitObjectComposer
         name: "Slider",
         tool: SliderTool,
         icon: await loadTexture(new URL("./tools/slider/slider.png", import.meta.url).href),
+        presenceOverlay: SliderToolPresenceOverlay,
       },
     ];
   }

@@ -64,8 +64,8 @@ export class HitCircleTool extends HitObjectPlacementTool<HitCircle>
   {
     return {
       state: this.state,
+      scale: this.hitObject.scale,
       position: { ...this.hitObject.position },
-      startTime: this.hitObject.startTime,
     };
   }
 }

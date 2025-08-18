@@ -15,16 +15,33 @@ export namespace PathType
   {
     switch (type)
     {
-    case PathType.Linear:
-      return PathType.Bezier;
-    case PathType.PerfectCurve:
-      return PathType.Bezier;
     case PathType.Bezier:
+      return PathType.PerfectCurve;
+    case PathType.PerfectCurve:
+      return PathType.Linear;
+    case PathType.Linear:
       return PathType.BSpline;
     case PathType.BSpline:
       return PathType.Catmull;
     case PathType.Catmull:
+      return PathType.Bezier;
+    }
+  }
+
+  export function previous(type: PathType)
+  {
+    switch (type)
+    {
+    case PathType.Bezier:
+      return PathType.Catmull;
+    case PathType.Catmull:
+      return PathType.BSpline;
+    case PathType.BSpline:
       return PathType.Linear;
+    case PathType.Linear:
+      return PathType.PerfectCurve;
+    case PathType.PerfectCurve:
+      return PathType.Bezier;
     }
   }
 
@@ -33,7 +50,7 @@ export namespace PathType
     switch (type)
     {
     case null:
-      return PathType.Linear;
+      return PathType.Bezier;
     case PathType.Catmull:
       return null;
     default:
