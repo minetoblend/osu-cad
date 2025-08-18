@@ -1,4 +1,4 @@
-import type { ClickEvent, DragEvent, DragStartEvent, Drawable, MouseDownEvent } from "@osucad/framework";
+import type { ClickEvent, DragEndEvent, DragEvent, DragStartEvent, Drawable, MouseDownEvent } from "@osucad/framework";
 import { MouseButton, ProxyDrawable, resolved } from "@osucad/framework";
 import { Anchor, Bindable, dependencyLoader, Vec2 } from "@osucad/framework";
 import type { HitCircle } from "../../../hitObjects";
@@ -77,6 +77,11 @@ export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<Hit
     this.#selectTool.moveObjects(delta, this.#draggedHitObjects, this.#dragPositions);
 
     return true;
+  }
+
+  override onDragEnd(e: DragEndEvent): void
+  {
+    this.history.commit();
   }
 
   #canCycleSelection = false;
