@@ -1,9 +1,13 @@
+import type { Debugger } from "debug";
+import debug, { Debug } from "debug";
 import type { Drawable } from "../graphics/drawables/Drawable";
 import type { List } from "../utils/List";
 import type { UIEvent } from "./events/UIEvent";
 import type { InputManager } from "./InputManager";
 import type { InputState } from "./state/InputState";
 import { ButtonStateChangeKind } from "./stateChanges/events/ButtonStateChangeKind";
+
+const log = debug("ButtonEventManager");
 
 export abstract class ButtonEventManager<TButton>
 {
@@ -20,7 +24,8 @@ export abstract class ButtonEventManager<TButton>
   }
 
   constructor(public button: TButton)
-  {}
+  {
+  }
 
   inputManager!: InputManager;
   getInputQueue!: () => List<Drawable>;
@@ -75,7 +80,8 @@ export abstract class ButtonEventManager<TButton>
       }
     }
 
-    console.debug("Event ", e.toString(), " handled by ", handledBy?.label ?? handledBy?.constructor.name ?? null);
+    if (log.enabled)
+      log("Event ", e.toString(), " handled by ", handledBy?.label ?? handledBy?.constructor.name ?? null);
 
     return handledBy;
   }

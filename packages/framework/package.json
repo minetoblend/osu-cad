@@ -38,12 +38,14 @@
   ],
   "dependencies": {
     "@vue/reactivity": "^3.5.13",
+    "debug": "^4.4.1",
     "diff": "^7.0.0",
     "pixi-filters": "^6.1.2",
     "pixi.js": "^8.9.2",
     "unzipit": "^1.4.3"
   },
   "devDependencies": {
+    "@types/debug": "^4.1.12",
     "@types/diff": "^7.0.2",
     "vite-plugin-conditional-compiler": "^0.3.1"
   }
