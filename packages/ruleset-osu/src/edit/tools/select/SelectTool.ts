@@ -1,7 +1,7 @@
-import type { HitObject } from "@osucad/core";
+import { DrawableRuleset, type HitObject } from "@osucad/core";
 import { ComposeTool } from "@osucad/editor";
 import type { ClickEvent, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyDownEvent, Vec2 } from "@osucad/framework";
-import { DragEvent, PlatformAction } from "@osucad/framework";
+import { DragEvent, PlatformAction, resolved } from "@osucad/framework";
 import { dependencyLoader, Key, MouseButton, provide, provideSelf } from "@osucad/framework";
 import type { OsuHitObject } from "../../../hitObjects";
 import { HitObjectSelection } from "./HitObjectSelection";
@@ -20,6 +20,9 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
 
   @provide(SelectionBlueprintContainer)
   selectionContainer = new OsuSelectionBlueprintContainer(this.selection);
+
+  @resolved(DrawableRuleset)
+  accessor #drawableRuleset!: DrawableRuleset
 
   snapProvider = new HitObjectSnapProvider();
 
@@ -54,10 +57,7 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
       buttons: {
         left: this.isMouseButtonPressed(MouseButton.Left),
       },
-      mousePosition: {
-        x: Math.round(mousePosition.x),
-        y: Math.round(mousePosition.y),
-      },
+      position: mousePosition.round(),
     };
   }
 

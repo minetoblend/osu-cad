@@ -11,9 +11,9 @@ import { EditorClock } from "../../EditorClock";
 
 export interface IToolPresence
 {
-  tool: string
-  currentTime: number
-  details: unknown
+  tool: string;
+  currentTime: number;
+  details: unknown;
 }
 
 export class ComposePresenceContainer extends CompositeDrawable
@@ -22,10 +22,10 @@ export class ComposePresenceContainer extends CompositeDrawable
   accessor #audience!: IAudience;
 
   @resolved(EditorBeatmap)
-  accessor #beatmap!: EditorBeatmap
+  accessor #beatmap!: EditorBeatmap;
 
   @resolved(ActiveToolBindable)
-  accessor #activeTool!: ActiveToolBindable
+  accessor #activeTool!: ActiveToolBindable;
 
   @resolved(() => HitObjectComposer)
   accessor #composer!: HitObjectComposer;
@@ -137,9 +137,28 @@ class ComposeUserPresenceContainer extends CompositeDrawable
 
   #currentToolId?: string;
   #currentOverlay?: ComposeToolPresenceOverlay;
+  #lastPresence?: IToolPresence;
 
   updatePresence(presence: IToolPresence)
   {
+    this.#lastPresence = presence;
+
+    const timeDifference = Math.abs(this.#editorClock.currentTime - presence.currentTime);
+
+    const targetAlpha = Interpolation.valueAt(timeDifference, 1, 0, 1000, 2000);
+
+    this.fadeTo(targetAlpha, 300);
+
+    this.scheduler.addOnce(this.#updateOverlay, this);
+  }
+
+  #updateOverlay()
+  {
+    const presence = this.#lastPresence;
+
+    if (!presence)
+      return;
+
     if (presence.tool !== this.#currentToolId)
     {
       this.#currentOverlay?.expire();
@@ -152,16 +171,12 @@ class ComposeUserPresenceContainer extends CompositeDrawable
       if (tool?.presenceOverlay)
       {
         this.addInternal(this.#currentOverlay = new tool.presenceOverlay());
+        this.#currentOverlay.updatePresence(presence.details);
+        this.#currentOverlay.finishTransforms(true);
+        return;
       }
     }
 
-    const timeDifference = Math.abs(this.#editorClock.currentTime - presence.currentTime);
-
-    const targetAlpha = Interpolation.valueAt(timeDifference, 1, 0, 1000, 2000);
-
-    this.fadeTo(targetAlpha, 300);
-
-    if (this.isPresent)
-      this.#currentOverlay?.updatePresence(presence.details);
+    this.#currentOverlay?.updatePresence(presence.details);
   }
 }

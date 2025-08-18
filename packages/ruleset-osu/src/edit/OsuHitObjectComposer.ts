@@ -4,6 +4,7 @@ import { asyncDependencyLoader, loadTexture } from "@osucad/framework";
 import { PlayfieldGrid } from "./PlayfieldGrid";
 import { HitCircleTool } from "./tools/circle/HitCircleTool";
 import { HitCircleToolPresenceOverlay } from "./tools/circle/HitCircleToolPresence";
+import { SelectToolPresenceOverlay } from "./tools/select/SelectToolPresenceOverlay";
 
 export class OsuHitObjectComposer extends HitObjectComposer
 {
@@ -20,6 +21,7 @@ export class OsuHitObjectComposer extends HitObjectComposer
         name: "Select",
         tool: SelectTool,
         icon: await loadTexture(new URL("./tools/select/select.png", import.meta.url).href),
+        presenceOverlay: SelectToolPresenceOverlay,
       },
       {
         id: "circle",

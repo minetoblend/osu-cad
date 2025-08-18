@@ -144,6 +144,11 @@ export class Vec2 implements ILerp<Vec2>
     return (this.x - v.x) ** 2 + (this.y - v.y) ** 2;
   }
 
+  round()
+  {
+    return new Vec2(Math.round(this.x), Math.round(this.y));
+  }
+
   clone(): Vec2
   {
     return new Vec2(this.x, this.y);

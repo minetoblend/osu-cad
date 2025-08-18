@@ -20,7 +20,7 @@ export class HitCircleToolPresenceOverlay extends ComposeToolPresenceOverlay
   }
 
   @resolved(DrawableRuleset)
-  accessor #drawableRulset!: DrawableRuleset
+  accessor #drawableRuleset!: DrawableRuleset
 
   @resolved(EditorBeatmap)
   accessor #beatmap!: EditorBeatmap
@@ -28,7 +28,7 @@ export class HitCircleToolPresenceOverlay extends ComposeToolPresenceOverlay
   @dependencyLoader()
   #load()
   {
-    this.addInternal(this.#drawableRulset.createPlayfieldAdjustmentContainer().with({
+    this.addInternal(this.#drawableRuleset.createPlayfieldAdjustmentContainer().with({
       child: this.#circle = new CircularContainer({
         origin: Anchor.Center,
         size: OsuHitObject.OBJECT_DIMENSIONS,
