@@ -2,13 +2,20 @@ import { HitObjectPlacementTool, PlacementState } from "../HitObjectPlacementToo
 import { PathPoint, PathType, Slider } from "../../../hitObjects";
 import type { ClickEvent, MouseDownEvent } from "@osucad/framework";
 import { MouseButton, Vec2 } from "@osucad/framework";
-import { SelectTool } from "../select/SelectTool";
+import { SliderPathVisualizer } from "./SliderPathVisualizer";
 
 export class SliderTool extends HitObjectPlacementTool<Slider>
 {
   protected override createHitObject(): Slider
   {
     return new Slider();
+  }
+
+  protected override loadComplete(): void
+  {
+    super.loadComplete();
+
+    this.addInternal(new SliderPathVisualizer(this.hitObject));
   }
 
   path: PathPoint[] = [new PathPoint(new Vec2(), PathType.Bezier)];
@@ -34,6 +41,7 @@ export class SliderTool extends HitObjectPlacementTool<Slider>
     if (position.distance(lastPoint.position) < 10)
     {
       this.hitObject.path.controlPoints = this.path.slice(0, -1).concat(lastPoint.withNextType(this.path.length - 1));
+      this.hitObject.snapPathLength(this.beatmap.controlPointInfo, this.beatDivisor.value);
       return;
     }
 
@@ -42,7 +50,7 @@ export class SliderTool extends HitObjectPlacementTool<Slider>
     this.applyAutomaticPathType(path);
 
     this.hitObject.path.controlPoints = path;
-    this.hitObject.path.expectedDistance = this.hitObject.path.calculatedDistance;
+    this.hitObject.snapPathLength(this.beatmap.controlPointInfo, this.beatDivisor.value);
   }
 
   private applyAutomaticPathType(path: PathPoint[])

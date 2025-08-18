@@ -280,4 +280,23 @@ export class Slider extends OsuHitObject
   {
     return [this.position, this.pathEndPosition];
   }
+
+  snapPathLength(controlPointInfo: ControlPointInfo, divisor: number)
+  {
+    const length = this.path.calculatedDistance;
+    const duration = Math.ceil(length / this.velocity);
+    let time = controlPointInfo.snap(
+        this.startTime + duration,
+        divisor,
+    );
+
+    if (time > this.startTime + duration)
+    {
+      const beatLength = controlPointInfo.timingPointAt(this.startTime).beatLength;
+
+      time -= beatLength / divisor;
+    }
+
+    this.path.expectedDistance = Math.max(0, this.velocity * (time - this.startTime));
+  }
 }
