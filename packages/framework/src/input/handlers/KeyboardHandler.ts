@@ -76,7 +76,8 @@ export class KeyboardHandler extends InputHandler
     if (key !== null)
     {
       this.#pressedKeys.add(key);
-      this.#enqueueInput(KeyboardKeyInput.create(key, true));
+      this.#enqueueInput(KeyboardKeyInput.create(key, true, event));
+      this.flush.emit();
 
       // On Mac OS we don't receive key up events while super key is pressed, so we need to simulate them
       if (this.#isMac && this.#superPressed && key !== Key.MetaLeft)
@@ -93,7 +94,7 @@ export class KeyboardHandler extends InputHandler
           return;
         }
 
-        this.#enqueueInput(KeyboardKeyInput.create(key, false));
+        this.#enqueueInput(KeyboardKeyInput.create(key, false, event));
       }
     }
   };

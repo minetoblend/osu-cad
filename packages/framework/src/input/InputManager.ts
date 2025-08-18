@@ -438,8 +438,9 @@ export abstract class InputManager extends Container implements IInputStateChang
     const state = keyboardKeyStateChange.state;
     const key = keyboardKeyStateChange.button;
     const kind = keyboardKeyStateChange.kind;
+    const event = keyboardKeyStateChange.event;
 
-    this.getKeyEventManagerFor(key).handleButtonStateChange(state, kind);
+    this.getKeyEventManagerFor(key).handleButtonStateChange(state, kind, event);
 
     if (kind === ButtonStateChangeKind.Pressed)
     {

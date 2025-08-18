@@ -10,6 +10,7 @@ export class ButtonStateChangeEvent<TButton> extends InputStateChangeEvent
     input: ButtonInput<TButton>,
     public button: TButton,
     public kind: ButtonStateChangeKind,
+    readonly event?: UIEvent,
   )
   {
     super(state, input);

@@ -1,6 +1,7 @@
 import type { HitObject } from "@osucad/core";
 import { ComposeTool } from "@osucad/editor";
-import type { ClickEvent, DragEvent, KeyDownEvent, Vec2 } from "@osucad/framework";
+import type { ClickEvent, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyDownEvent, Vec2 } from "@osucad/framework";
+import { DragEvent, PlatformAction } from "@osucad/framework";
 import { dependencyLoader, Key, MouseButton, provide, provideSelf } from "@osucad/framework";
 import type { OsuHitObject } from "../../../hitObjects";
 import { HitObjectSelection } from "./HitObjectSelection";
@@ -12,7 +13,7 @@ import type { SnapResult } from "src/edit/SnapProvider";
 import { SelectBox } from "./SelectBox";
 
 @provideSelf()
-export class SelectTool extends ComposeTool
+export class SelectTool extends ComposeTool implements IKeyBindingHandler<PlatformAction>
 {
   @provide()
   readonly selection = new HitObjectSelection<OsuHitObject>();
@@ -125,24 +126,23 @@ export class SelectTool extends ComposeTool
     }
   }
 
-  override onKeyDown(e: KeyDownEvent): boolean
+  readonly isKeyBindingHandler = true;
+
+  canHandleKeyBinding(binding: KeyBindingAction): boolean
   {
-    if (e.key === Key.KeyA && e.controlPressed)
+    return true;
+  }
+
+  onKeyBindingPressed(e: KeyBindingPressEvent<PlatformAction>): boolean
+  {
+    switch(e.pressed)
     {
+    case PlatformAction.SelectAll:
       this.selection.addRange(this.hitObjects as Iterable<OsuHitObject>);
       return true;
-    }
-
-    if (e.key === Key.Delete || e.key === Key.Backspace)
-    {
+    case PlatformAction.Delete:
       this.hitObjects.removeRange(this.selection);
       this.history.commit();
-      return true;
-    }
-
-    if (e.key === Key.KeyZ && e.controlPressed)
-    {
-      this.history.undo();
       return true;
     }
 

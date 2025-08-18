@@ -7,11 +7,11 @@ import { ButtonStateChangeKind } from "./stateChanges/events/ButtonStateChangeKi
 
 export abstract class ButtonEventManager<TButton>
 {
-  handleButtonStateChange(state: InputState, kind: ButtonStateChangeKind)
+  handleButtonStateChange(state: InputState, kind: ButtonStateChangeKind, event?: globalThis.UIEvent)
   {
     if (kind === ButtonStateChangeKind.Pressed)
     {
-      this.#handleButtonDown(state);
+      this.#handleButtonDown(state, event);
     }
     else
     {
@@ -27,7 +27,7 @@ export abstract class ButtonEventManager<TButton>
 
   buttonDownInputQueue: Drawable[] | null = null;
 
-  #handleButtonDown(state: InputState): boolean
+  #handleButtonDown(state: InputState, event?: globalThis.UIEvent): boolean
   {
     const inputQueue = this.getInputQueue();
     const handledBy = this.handleButtonDown(state, inputQueue);
@@ -37,6 +37,8 @@ export abstract class ButtonEventManager<TButton>
       // only drawables up to the one that handled mouse down should handle mouse up, so remove all subsequent drawables from the queue (for future use).
       const count = inputQueue.indexOf(handledBy) + 1;
       inputQueue.splice(count, inputQueue.length - count);
+
+      event?.preventDefault();
     }
 
     this.buttonDownInputQueue = [...inputQueue];
