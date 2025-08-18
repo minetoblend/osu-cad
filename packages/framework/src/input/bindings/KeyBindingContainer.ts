@@ -13,6 +13,9 @@ import { InputKey } from "../state/InputKey";
 import { InputState } from "../state/InputState";
 import { isKeyBindingHandler } from "./IKeyBindingHandler";
 import { KeyCombination, KeyCombinationMatchingMode } from "./KeyCombination";
+import debug from "debug";
+
+const log = debug("KeyBindingContainer");
 
 export abstract class BaseKeyBindingContainer extends Container
 {
@@ -328,13 +331,12 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
       }
     }
 
-    if (handled)
+    if (log.enabled)
     {
-      console.debug(`Keybinding ${JSON.stringify(pressed)} handled by ${handled.label ?? handled.constructor.name}`);
-    }
-    else
-    {
-      console.debug(`Keybinding ${JSON.stringify(pressed)} not handled`);
+      if (handled && log.enabled)
+        log(`Keybinding ${JSON.stringify(pressed)} handled by ${handled.label ?? handled.constructor.name}`);
+      else
+        log(`Keybinding ${JSON.stringify(pressed)} not handled`);
     }
 
     return handled ?? null;

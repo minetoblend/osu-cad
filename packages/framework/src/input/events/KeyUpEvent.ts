@@ -14,6 +14,6 @@ export class KeyUpEvent extends UIEvent
 
   override toString(): string
   {
-    return `${super.toString()} (${this.key})`;
+    return `KeyDownEvent(${this.key})`;
   }
 }

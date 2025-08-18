@@ -1,6 +1,6 @@
 import type { Vec2 } from "../../math";
 import type { InputState } from "../state/InputState";
-import type { MouseButton } from "../state/MouseButton";
+import { MouseButton } from "../state/MouseButton";
 import { MouseEvent } from "./MouseEvent";
 
 export class MouseDownEvent extends MouseEvent
@@ -12,5 +12,10 @@ export class MouseDownEvent extends MouseEvent
   )
   {
     super(state, "onMouseDown");
+  }
+
+  override toString(): string
+  {
+    return `MouseDownEvent(${MouseButton[this.button]})`;
   }
 }

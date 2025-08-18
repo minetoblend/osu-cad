@@ -1,6 +1,6 @@
 import type { Vec2 } from "../../math";
 import type { InputState } from "../state/InputState";
-import type { MouseButton } from "../state/MouseButton";
+import { MouseButton } from "../state/MouseButton";
 import { UIEvent } from "./UIEvent";
 
 export class ClickEvent extends UIEvent
@@ -12,5 +12,10 @@ export class ClickEvent extends UIEvent
   )
   {
     super(state, "onClick");
+  }
+
+  override toString(): string
+  {
+    return `ClickEvent(${MouseButton[this.button]})`;
   }
 }

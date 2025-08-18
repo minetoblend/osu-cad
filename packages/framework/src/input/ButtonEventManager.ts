@@ -81,7 +81,7 @@ export abstract class ButtonEventManager<TButton>
     }
 
     if (log.enabled)
-      log("Event ", e.toString(), " handled by ", handledBy?.label ?? handledBy?.constructor.name ?? null);
+      log(`Event ${e.toString()} handled by ${handledBy?.label ?? handledBy?.constructor.name ?? null}`);
 
     return handledBy;
   }
