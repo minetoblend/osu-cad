@@ -1,6 +1,5 @@
 import type { ClickEvent, DragEndEvent, DragEvent, DragStartEvent, Drawable, MouseDownEvent, Rectangle } from "@osucad/framework";
-import { MouseButton, ProxyDrawable, resolved } from "@osucad/framework";
-import { Anchor, Bindable, dependencyLoader, Vec2 } from "@osucad/framework";
+import { Anchor, Bindable, dependencyLoader, ProxyDrawable, resolved, Vec2 } from "@osucad/framework";
 import type { HitCircle } from "../../../hitObjects";
 import { OsuHitObject } from "../../../hitObjects";
 import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
