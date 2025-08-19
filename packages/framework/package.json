@@ -11,6 +11,7 @@
     "./dist/reactivity/init.*",
     "./dist/reactivity/DrawableMixin.*",
     "./dist/TextureMixins.*",
+    "./dist/textures.*",
     "./dist/renderers/init.*",
     "./dist/init.*"
   ],
