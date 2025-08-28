@@ -5,7 +5,6 @@ import type { Key } from "./state/Key";
 import { ButtonEventManager } from "./ButtonEventManager";
 import { KeyDownEvent } from "./events/KeyDownEvent";
 import { KeyUpEvent } from "./events/KeyUpEvent";
-import debug from "debug";
 
 export class KeyEventManager extends ButtonEventManager<Key>
 {

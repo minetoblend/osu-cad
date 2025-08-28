@@ -1,9 +1,6 @@
-import { DrawableRuleset, Playfield } from "@osucad/core";
-import { Ruleset } from "@osucad/core";
+import { DrawableRuleset, Playfield, Ruleset } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
-import { DependencyContainer, provideSelf, ProxyDrawable } from "@osucad/framework";
-import { Container } from "@osucad/framework";
-import { asyncDependencyLoader, Axes, CompositeDrawable, dependencyLoader, provide, resolved } from "@osucad/framework";
+import { asyncDependencyLoader, Axes, CompositeDrawable, Container, DependencyContainer, provide, provideSelf, ProxyDrawable, resolved } from "@osucad/framework";
 import { EditorBeatmap } from "../runtime/dds/EditorBeatmap";
 import type { ComposeToolInfo } from "./tools";
 import { ComposeToolbar } from "./tools";

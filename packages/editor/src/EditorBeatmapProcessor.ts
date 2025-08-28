@@ -1,4 +1,4 @@
-import { Cached, Component, resolved } from "@osucad/framework";
+import { Component, resolved } from "@osucad/framework";
 import { EditorBeatmap } from "./runtime";
 import type { HitObject, HitObjectInivalidationType } from "@osucad/core";
 

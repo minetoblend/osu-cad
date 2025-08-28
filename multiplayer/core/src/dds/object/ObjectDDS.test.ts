@@ -1,11 +1,10 @@
-import { MessageType, type DDSAttributes } from "@osucad/multiplayer-protocol";
+import { type DDSAttributes, MessageType } from "@osucad/multiplayer-protocol";
 import { describe, expect, it } from "vitest";
 import { DocumentRuntime } from "../../runtime/index.js";
 import { Decoder, Encoder } from "../../serialization/types.js";
 import { nn } from "../../utils/nn.js";
 import { nested, type } from "./decorator.js";
-import { ObjectDDS, objectDDSMetadata } from "./ObjectDDS.js";
-import { ObjectDelta } from "./ObjectDelta.js";
+import { ObjectDDS } from "./ObjectDDS.js";
 import { syncRuntimes } from "../../utils/index.js";
 
 describe("ObjectDDS", () =>

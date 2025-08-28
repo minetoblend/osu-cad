@@ -1,5 +1,5 @@
 import type { DrawableHitObject, HitObject } from "@osucad/core";
-import type { DragEvent, DragStartEvent, MouseDownEvent, Rectangle } from "@osucad/framework";
+import type { MouseDownEvent, Rectangle } from "@osucad/framework";
 import { MouseButton, PoolableDrawable, resolved } from "@osucad/framework";
 import { SelectionBlueprintContainer } from "./SelectionBlueprintContainer";
 import { EditorBeatmap, EditorHistory } from "@osucad/editor";

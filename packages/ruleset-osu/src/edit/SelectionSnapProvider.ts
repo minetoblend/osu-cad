@@ -4,10 +4,6 @@ import type { ISnapOptions, ISnapProvider } from "./SnapProvider";
 import { SnapResult } from "./SnapProvider";
 import { Playfield } from "@osucad/core";
 import type { DrawableOsuHitObject } from "../hitObjects/drawables/DrawableOsuHitObject";
-import { DrawableSlider } from "src/hitObjects/drawables/DrawableSlider";
-import { DrawableSpinner } from "src/hitObjects/drawables/DrawableSpinner";
-import type { HitObjectSelection } from "./tools/select/HitObjectSelection";
-import type { OsuHitObject } from "src/hitObjects";
 
 export class HitObjectSnapProvider extends Component implements ISnapProvider
 {

@@ -1,6 +1,4 @@
 import type { DocumentRuntime } from "../runtime/index.js";
-import { nn } from "./nn.js";
-import { Delta } from "../dds/index.js";
 import type { IDocumentMessage } from "@osucad/multiplayer-protocol";
 import { MessageType } from "@osucad/multiplayer-protocol";
 

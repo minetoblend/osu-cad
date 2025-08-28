@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import type { DDSAttributes } from "@osucad/multiplayer-protocol";
 import { nested, ObjectDDS, type } from "../dds/index.js";
 import { DocumentRuntime } from "./DocumentRuntime.js";
-import { nn } from "../utils/nn.js";
 import { syncRuntimes } from "../utils/index.js";
 
 describe("DocumentRuntime", () =>

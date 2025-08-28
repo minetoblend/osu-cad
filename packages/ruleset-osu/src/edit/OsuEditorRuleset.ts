@@ -1,4 +1,4 @@
-import type { Editor, EditorRuntimeConfig, HitObjectComposer } from "@osucad/editor";
+import type { EditorRuntimeConfig, HitObjectComposer } from "@osucad/editor";
 import { EditorRuleset } from "@osucad/editor";
 import { HitCircle } from "../hitObjects/HitCircle";
 import { Slider } from "../hitObjects/Slider";

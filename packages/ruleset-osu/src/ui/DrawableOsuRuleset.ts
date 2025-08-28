@@ -6,7 +6,6 @@ import { OsuPlayfieldAdjustmentContainer } from "./OsuPlayfieldAdjustmentContain
 import { OsuInputManager } from "./OsuInputManager";
 import { OsuRuleset } from "../OsuRuleset";
 import type { PassThroughInputManager } from "@osucad/framework";
-import { OsuAutoPlayController } from "../gameplay/OsuAutoPlayController";
 
 export class DrawableOsuRuleset extends DrawableRuleset
 {

@@ -217,7 +217,7 @@ export class Scheduler
   }
 
   addDebounced<T>(task: () => void, receiver: T, debounceTime: number): void;
-  addDebounced<T>(task: () => void, debounceTimes: number): void;
+  addDebounced(task: () => void, debounceTimes: number): void;
   addDebounced<T>(task: () => void, receiverOrDebounceTime: T | number, time?: number)
   {
     const receiver = typeof receiverOrDebounceTime !== "number" ? receiverOrDebounceTime : undefined;

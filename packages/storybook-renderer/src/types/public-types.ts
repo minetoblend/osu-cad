@@ -1,5 +1,5 @@
-import type { Args, ComponentAnnotations, StoryAnnotations, AnnotatedStoryFn } from "@storybook/csf";
-import type { OsucadRenderer, StoryDrawable } from "./types";
+import type { AnnotatedStoryFn, Args, ComponentAnnotations, StoryAnnotations } from "@storybook/csf";
+import type { OsucadRenderer } from "./types";
 
 export type { Args, ArgTypes, Parameters } from "@storybook/csf";
 

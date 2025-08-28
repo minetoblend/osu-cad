@@ -3,7 +3,6 @@ import type { Attached, DDS } from "./DDS.js";
 import type { Delta } from "./Delta.js";
 import type { IDecoder } from "../serialization/types.js";
 import { Decoder, Encoder } from "../serialization/types.js";
-import { sign } from "crypto";
 import type { IDDSSummary, IRemoteSignalMessage } from "@osucad/multiplayer-protocol";
 
 export class DDSChannel

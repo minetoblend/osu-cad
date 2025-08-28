@@ -3,7 +3,6 @@ import { GraphicsDrawable, Rectangle, resolved, Vec2 } from "@osucad/framework";
 import type { Graphics } from "pixi.js";
 import type { OsuHitObject } from "src/hitObjects";
 import { HitObjectSelection } from "./HitObjectSelection";
-import { Playfield } from "@osucad/core";
 import { SelectionBlueprintContainer } from "./SelectionBlueprintContainer";
 
 export class SelectBox extends GraphicsDrawable

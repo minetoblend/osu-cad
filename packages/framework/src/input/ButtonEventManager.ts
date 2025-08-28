@@ -1,5 +1,4 @@
-import type { Debugger } from "debug";
-import debug, { Debug } from "debug";
+import debug from "debug";
 import type { Drawable } from "../graphics/drawables/Drawable";
 import type { List } from "../utils/List";
 import type { UIEvent } from "./events/UIEvent";

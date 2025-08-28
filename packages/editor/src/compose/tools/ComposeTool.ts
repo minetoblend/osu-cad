@@ -1,4 +1,3 @@
-import type { HitObject } from "@osucad/core";
 import { DrawableRuleset, Playfield } from "@osucad/core";
 import type { InputManager, MouseButton } from "@osucad/framework";
 import { Axes, CompositeDrawable, dependencyLoader, resolved } from "@osucad/framework";
@@ -7,7 +6,7 @@ import { EditorClock } from "../../EditorClock";
 import { BindableBeatDivisor } from "../../BindableBeatDivisor";
 import { ComposeToolContainer } from "./ComposeToolContainer";
 
-export abstract class ComposeTool<THitObject extends HitObject = HitObject> extends CompositeDrawable
+export abstract class ComposeTool extends CompositeDrawable
 {
   @dependencyLoader()
   #load()

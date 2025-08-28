@@ -1,6 +1,6 @@
 import type { DrawableHitObject, GameplayCursorContainer, HitObject, HitObjectLifetimeEntry, PlayfieldOptions } from "@osucad/core";
 import { Playfield } from "@osucad/core";
-import { Axes, type Drawable, LifetimeManagementContainer, ProxyDrawable, type ReadonlyDependencyContainer } from "@osucad/framework";
+import { Axes, type Drawable, LifetimeManagementContainer, type ReadonlyDependencyContainer } from "@osucad/framework";
 import { DrawableHitCircle } from "../hitObjects/drawables/DrawableHitCircle";
 import { DrawableSlider } from "../hitObjects/drawables/DrawableSlider";
 import { DrawableSpinner } from "../hitObjects/drawables/DrawableSpinner";

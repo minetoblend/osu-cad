@@ -1,7 +1,7 @@
 import type { DrawableHitObject, HitObject } from "@osucad/core";
 import { HitObjectLifetimeEntry, Playfield } from "@osucad/core";
-import type { ObservableSet , Bindable } from "@osucad/framework";
-import { Axes, Box, CompositeDrawable, LifetimeEntryManager, LoadState, provideSelf, resolved } from "@osucad/framework";
+import type { Bindable, ObservableSet } from "@osucad/framework";
+import { Axes, CompositeDrawable, LifetimeEntryManager, LoadState, provideSelf, resolved } from "@osucad/framework";
 import { EditorBeatmap, EditorClock } from "@osucad/editor";
 import type { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
 

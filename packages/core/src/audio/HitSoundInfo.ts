@@ -1,7 +1,6 @@
 import { SampleSet } from "./SampleSet";
 import { SampleAdditions } from "./SampleAdditions";
 import { HitSampleInfo } from "./HitSampleInfo";
-import type { IBeatmapTiming } from "../beatmaps/timing/IBeatmapTiming";
 import type { ControlPointInfo } from "../beatmaps";
 
 export class HitSoundInfo

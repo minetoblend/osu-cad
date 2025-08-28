@@ -1,4 +1,4 @@
-import { almostEquals, Axes, Cached, CompositeDrawable, Container, dependencyLoader, resolved } from "@osucad/framework";
+import { almostEquals, Axes, Cached, Container, resolved } from "@osucad/framework";
 import { ComposeTimeline } from "./ComposeTimeline";
 import { PointVisualization } from "./PointVisualization";
 import { EditorBeatmap } from "../../runtime";
