@@ -63,9 +63,12 @@ export abstract class HitObjectPlacementTool<T extends HitObject> extends Compos
 
     this.#state = PlacementState.Active;
 
-    this.beatmap.hitObjects.ensureAttached(this.#hitObject);
+    this.beatmap.hitObjects.remove(this.#hitObject);
 
     this.onPlacementBegin();
+
+    this.beatmap.hitObjects.add(this.#hitObject);
+
     return true;
   }
 

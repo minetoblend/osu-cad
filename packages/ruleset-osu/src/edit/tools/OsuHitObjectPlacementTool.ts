@@ -14,4 +14,9 @@ export abstract class OsuHitObjectPlacementTool<T extends OsuHitObject> extends 
 
     this.#comboProcessor.refresh(true);
   }
+
+  protected override onPlacementBegin(): void
+  {
+    this.hitObjects.removeHitObjectsWithStartTime(this.hitObject.startTime);
+  }
 }

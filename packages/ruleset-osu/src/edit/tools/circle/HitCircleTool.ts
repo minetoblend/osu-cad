@@ -1,5 +1,5 @@
 import type { MouseUpEvent } from "@osucad/framework";
-import { almostEquals, MouseButton, type MouseDownEvent, type Vec2 } from "@osucad/framework";
+import { MouseButton, type MouseDownEvent, type Vec2 } from "@osucad/framework";
 import type { OsuHitObject } from "../../../hitObjects";
 import { HitCircle } from "../../../hitObjects";
 import { PlacementState } from "../HitObjectPlacementTool";
@@ -49,16 +49,6 @@ export class HitCircleTool extends OsuHitObjectPlacementTool<HitCircle>
     {
       this.endPlacement(true);
     }
-  }
-
-  protected override onPlacementBegin(): void
-  {
-    const time = this.hitObject.startTime;
-
-    const toDelete = this.beatmap.hitObjects.filter(it => almostEquals(it.startTime, time, 1) && it !== this.hitObject);
-
-    for (const h of toDelete)
-      this.beatmap.hitObjects.remove(h);
   }
 
   override getPresence(): IHitCircleToolPresence

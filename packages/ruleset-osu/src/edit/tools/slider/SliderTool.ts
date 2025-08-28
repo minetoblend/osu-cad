@@ -1,7 +1,7 @@
 import { PlacementState } from "../HitObjectPlacementTool";
 import { PathPoint, PathType, Slider } from "../../../hitObjects";
 import type { ClickEvent, MouseDownEvent, ScrollEvent } from "@osucad/framework";
-import { almostEquals, Anchor, Axes, Box, CompositeDrawable, dependencyLoader, MouseButton, SpriteText, Vec2 } from "@osucad/framework";
+import { Anchor, Axes, Box, CompositeDrawable, dependencyLoader, MouseButton, SpriteText, Vec2 } from "@osucad/framework";
 import { SliderPathVisualizer } from "./SliderPathVisualizer";
 import type { ISliderToolPresence } from "./HitCircleToolPresence";
 import type { ColorSource } from "pixi.js";
@@ -79,16 +79,6 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
   get pathPosition()
   {
     return this.playfieldMousePosition.sub(this.hitObject.stackedPosition);
-  }
-
-  protected override onPlacementBegin(): void
-  {
-    const time = this.hitObject.startTime;
-
-    const toDelete = this.beatmap.hitObjects.filter(it => almostEquals(it.startTime, time, 1) && it !== this.hitObject);
-
-    for (const h of toDelete)
-      this.beatmap.hitObjects.remove(h);
   }
 
   override onMouseDown(e: MouseDownEvent)

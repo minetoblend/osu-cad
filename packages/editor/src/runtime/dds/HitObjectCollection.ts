@@ -1,15 +1,8 @@
-import type {
-  DDSAttributes,
-  DDSRef,
-  IDDSSummary,
-  IDecoder,
-  IEncodedDelta,
-  IEncoder,
-} from "@osucad/multiplayer-core";
+import type { DDSAttributes, DDSRef, IDDSSummary, IDecoder, IEncoder } from "@osucad/multiplayer-core";
 import { DDS, Delta, nn } from "@osucad/multiplayer-core";
 import type { HitObjectInivalidationType } from "@osucad/core";
 import { HitObject } from "@osucad/core";
-import { Action, Lazy } from "@osucad/framework";
+import { Action, almostEquals, Lazy } from "@osucad/framework";
 import { createHitObjectCollectionProxy } from "./HitObjectCollectionProxy";
 import { EventEmitter } from "eventemitter3";
 
@@ -293,6 +286,16 @@ export class HitObjectCollection
 
       this.#add(hitObject);
     }
+  }
+
+  hitObjectsWithStartTime(startTime: number, leniency: number = 1e-3)
+  {
+    return this.filter(hitObject => almostEquals(hitObject.startTime, startTime, leniency));
+  }
+
+  removeHitObjectsWithStartTime(startTime: number, leniency: number = 1)
+  {
+    this.removeRange(this.hitObjectsWithStartTime(startTime, leniency));
   }
 
   forEach(
