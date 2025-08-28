@@ -130,8 +130,12 @@ export abstract class PooledDrawableWithLifetimeContainer<TEntry extends Lifetim
     if (!this.isPresent)
       return false;
 
-    let aliveChanged = super.checkChildrenLife();
-    if (this.#lifetimeManager.update(this.currentTime - this.pastLifetimeExtension, this.currentTime + this.futureLifetimeExtension))
+    let aliveChanged = this.#lifetimeManager.update(
+        this.currentTime - this.pastLifetimeExtension,
+        this.currentTime + this.futureLifetimeExtension,
+    );
+
+    if (super.checkChildrenLife())
       aliveChanged = true;
 
     return aliveChanged;
