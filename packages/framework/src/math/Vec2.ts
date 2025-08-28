@@ -1,5 +1,6 @@
 import type { ILerp } from "../types/ILerp";
-import { almostEquals } from "../utils";
+import { almostEquals, clamp } from "../utils";
+import type { Rectangle } from "./Rectangle";
 
 export class Vec2 implements ILerp<Vec2>
 {
@@ -279,6 +280,16 @@ export class Vec2 implements ILerp<Vec2>
   get isOne(): boolean
   {
     return this.x === 1 && this.y === 1;
+  }
+
+  clamp(bounds: Rectangle)
+  {
+    const { x, y, width, height } = bounds;
+
+    return new Vec2(
+        clamp(this.x, x, x + width),
+        clamp(this.y, y, y + height),
+    );
   }
 }
 

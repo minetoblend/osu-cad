@@ -6,6 +6,7 @@ import { SliderPathVisualizer } from "./SliderPathVisualizer";
 import type { ISliderToolPresence } from "./HitCircleToolPresence";
 import type { ColorSource } from "pixi.js";
 import { OsuHitObjectPlacementTool } from "../OsuHitObjectPlacementTool";
+import { OsuPlayfield } from "../../../ui";
 
 export class SliderTool extends OsuHitObjectPlacementTool<Slider>
 {
@@ -42,7 +43,7 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
   {
     if (this.state === PlacementState.Idle)
     {
-      hitObject.position = position;
+      hitObject.position = position.clamp(OsuPlayfield.BOUNDS);
       hitObject.startTime = time;
       return;
     }

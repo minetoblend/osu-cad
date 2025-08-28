@@ -5,6 +5,7 @@ import { HitCircle } from "../../../hitObjects";
 import { PlacementState } from "../HitObjectPlacementTool";
 import type { IHitCircleToolPresence } from "./HitCircleToolPresence";
 import { OsuHitObjectPlacementTool } from "../OsuHitObjectPlacementTool";
+import { OsuPlayfield } from "../../../ui";
 
 
 export class HitCircleTool extends OsuHitObjectPlacementTool<HitCircle>
@@ -30,6 +31,8 @@ export class HitCircleTool extends OsuHitObjectPlacementTool<HitCircle>
         break;
       }
     }
+
+    position = position.clamp(OsuPlayfield.BOUNDS);
 
     hitObject.position = position;
     hitObject.startTime = time;

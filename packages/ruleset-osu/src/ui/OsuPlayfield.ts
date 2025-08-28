@@ -1,6 +1,6 @@
 import type { DrawableHitObject, GameplayCursorContainer, HitObject, HitObjectLifetimeEntry, PlayfieldOptions } from "@osucad/core";
 import { Playfield } from "@osucad/core";
-import { Axes, type Drawable, LifetimeManagementContainer, type ReadonlyDependencyContainer } from "@osucad/framework";
+import { Axes, type Drawable, LifetimeManagementContainer, type ReadonlyDependencyContainer, Vec2 } from "@osucad/framework";
 import { DrawableHitCircle } from "../hitObjects/drawables/DrawableHitCircle";
 import { DrawableSlider } from "../hitObjects/drawables/DrawableSlider";
 import { DrawableSpinner } from "../hitObjects/drawables/DrawableSpinner";
@@ -19,9 +19,14 @@ import { DrawableSliderRepeat } from "../hitObjects/drawables/DrawableSliderRepe
 import { SliderTick } from "../hitObjects/SliderTick";
 import { DrawableSliderTick } from "../hitObjects/drawables/DrawableSliderTick";
 import { OsuCursorContainer } from "./OsuCursorContainer";
+import { Rectangle } from "@osucad/framework";
 
 export class OsuPlayfield extends Playfield
 {
+  static readonly SIZE: Readonly<Vec2> = new Vec2(512, 384);
+
+  static readonly BOUNDS: Readonly<Rectangle> = new Rectangle(0, 0, this.SIZE.x, this.SIZE.y);
+
   constructor(options: PlayfieldOptions = {})
   {
     super(options);
