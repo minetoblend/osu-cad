@@ -1,7 +1,7 @@
+import type { HitObject } from "@osucad/core";
 import { ComposeTool } from "@osucad/editor";
 import type { InputManager, Vec2 } from "@osucad/framework";
 import { nn } from "@osucad/multiplayer-core";
-import type { OsuHitObject } from "src/hitObjects";
 
 export enum PlacementState
 {
@@ -10,7 +10,7 @@ export enum PlacementState
   Completed,
 }
 
-export abstract class HitObjectPlacementTool<T extends OsuHitObject> extends ComposeTool
+export abstract class HitObjectPlacementTool<T extends HitObject> extends ComposeTool
 {
   #state = PlacementState.Idle;
   #hitObject!: T;

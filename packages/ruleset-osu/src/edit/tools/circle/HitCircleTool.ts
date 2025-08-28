@@ -2,11 +2,12 @@ import type { MouseUpEvent } from "@osucad/framework";
 import { almostEquals, MouseButton, type MouseDownEvent, type Vec2 } from "@osucad/framework";
 import type { OsuHitObject } from "../../../hitObjects";
 import { HitCircle } from "../../../hitObjects";
-import { HitObjectPlacementTool, PlacementState } from "../HitObjectPlacementTool";
+import { PlacementState } from "../HitObjectPlacementTool";
 import type { IHitCircleToolPresence } from "./HitCircleToolPresence";
+import { OsuHitObjectPlacementTool } from "../OsuHitObjectPlacementTool";
 
 
-export class HitCircleTool extends HitObjectPlacementTool<HitCircle>
+export class HitCircleTool extends OsuHitObjectPlacementTool<HitCircle>
 {
   protected override createHitObject(): HitCircle
   {

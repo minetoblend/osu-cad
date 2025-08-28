@@ -61,8 +61,20 @@ export abstract class EditorBeatmapProcessor extends Component
   )
   {}
 
-  refresh()
+  #process()
   {
+    this.process(this.beatmap);
+    this.#valid = true;
+  }
+
+  refresh(immediately = false)
+  {
+    if (immediately)
+    {
+      this.#process();
+      return;
+    }
+
     this.#valid = false;
   }
 
@@ -71,10 +83,7 @@ export abstract class EditorBeatmapProcessor extends Component
     super.update();
 
     if (!this.#valid)
-    {
-      this.process(this.beatmap);
-      this.#valid = true;
-    }
+      this.#process();
   }
 
   override dispose(isDisposing?: boolean): void

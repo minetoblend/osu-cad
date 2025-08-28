@@ -1,12 +1,13 @@
-import { HitObjectPlacementTool, PlacementState } from "../HitObjectPlacementTool";
+import { PlacementState } from "../HitObjectPlacementTool";
 import { PathPoint, PathType, Slider } from "../../../hitObjects";
 import type { ClickEvent, MouseDownEvent, ScrollEvent } from "@osucad/framework";
 import { almostEquals, Anchor, Axes, Box, CompositeDrawable, dependencyLoader, MouseButton, SpriteText, Vec2 } from "@osucad/framework";
 import { SliderPathVisualizer } from "./SliderPathVisualizer";
 import type { ISliderToolPresence } from "./HitCircleToolPresence";
 import type { ColorSource } from "pixi.js";
+import { OsuHitObjectPlacementTool } from "../OsuHitObjectPlacementTool";
 
-export class SliderTool extends HitObjectPlacementTool<Slider>
+export class SliderTool extends OsuHitObjectPlacementTool<Slider>
 {
   protected override createHitObject(): Slider
   {

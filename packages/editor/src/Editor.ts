@@ -1,6 +1,7 @@
 import type { Skin } from "@osucad/core";
 import { ISkinSource, PlayfieldClock, Ruleset, SkinProvidingContainer } from "@osucad/core";
-import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, KeyBindingReleaseEvent, KeyBindingScrollEvent } from "@osucad/framework";
+import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer } from "@osucad/framework";
+import { DependencyContainer, KeyBindingReleaseEvent, KeyBindingScrollEvent } from "@osucad/framework";
 import { PlatformAction, ScrollEvent } from "@osucad/framework";
 import { asyncDependencyLoader, provide, resolved, Screen } from "@osucad/framework";
 import { BindableBeatDivisor } from "./BindableBeatDivisor";
@@ -9,7 +10,7 @@ import { EditorClock } from "./EditorClock";
 import { EditorRuleset } from "./EditorRuleset";
 import { ComposeScreen } from "./compose";
 import { EditorBeatmap, EditorHistory, EditorRuntime } from "./runtime";
-// eslint-disable-next-line @nx/enforce-module-boundaries
+
 import { Document } from "@osucad/multiplayer-client";
 import { IAudience } from "./injectionTokens";
 
@@ -76,6 +77,13 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
     return this.runtime.history;
   }
 
+  #dependencies!: DependencyContainer;
+
+  protected override createChildDependencies(dependencies: ReadonlyDependencyContainer)
+  {
+    return this.#dependencies = new DependencyContainer(dependencies);
+  }
+
   @asyncDependencyLoader()
   async #load()
   {
@@ -89,9 +97,16 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
 
     const skinTransformer = await this.ruleset.createSkinTransformer?.(skin);
 
-    this.addRangeInternal([
+    const beatmapProcessors = [
       new DefaultsApplier(),
       ...this.editorRuleset.createBackgroundProcessors(),
+    ];
+
+    for (const processor of beatmapProcessors)
+      this.#dependencies.provide(processor);
+
+    this.addRangeInternal([
+      ...beatmapProcessors,
       this.editorClock.with({ depth: Number.MIN_VALUE }),
       new SkinProvidingContainer({
         skin: skinTransformer ?? skin,
