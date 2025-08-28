@@ -43,7 +43,9 @@
     "tsup": "^8.4.0",
     "typescript": "~5.3.3"
   },
-  "peerDependencies": {},
+  "peerDependencies": {
+    "@osucad/framework": "workspace:^"
+  },
   "bundler": {
     "entries": [
       "./src/index.ts",

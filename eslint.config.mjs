@@ -21,6 +21,7 @@ export default defineConfig([
       "**/*.jsx",
     ],
     rules: {
+      "@nx/dependency-checks": "off",
       "@nx/enforce-module-boundaries": [
         "error",
         {

@@ -18,6 +18,8 @@
     "!**/*.tsbuildinfo"
   ],
   "dependencies": {
+    "@osucad/multiplayer-core": "workspace:^",
+    "@osucad/multiplayer-protocol": "workspace:^",
     "double-ended-queue": "2.1.0-0",
     "eventemitter3": "^5.0.1",
     "socket.io-client": "^4.8.1",
