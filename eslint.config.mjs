@@ -22,23 +22,7 @@ export default defineConfig([
     ],
     rules: {
       "@nx/dependency-checks": "off",
-      "@nx/enforce-module-boundaries": [
-        "error",
-        {
-          enforceBuildableLibDependency: false,
-          allow: [
-            "^.*/eslint(\\.base)?\\.config\\.[cm]?js$",
-          ],
-          depConstraints: [
-            {
-              sourceTag: "*",
-              onlyDependOnLibsWithTags: [
-                "*",
-              ],
-            },
-          ],
-        },
-      ],
+      "@nx/enforce-module-boundaries": "off",
     },
   },
   {
