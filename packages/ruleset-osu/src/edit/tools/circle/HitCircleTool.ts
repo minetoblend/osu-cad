@@ -43,6 +43,9 @@ export class HitCircleTool extends OsuHitObjectPlacementTool<HitCircle>
     if (e.button === MouseButton.Left && this.state === PlacementState.Idle)
       this.beginPlacement();
 
+    if (e.button === MouseButton.Right && !this.isPlacementActive)
+      this.hitObject.newCombo = !this.hitObject.newCombo;
+
     return true;
   }
 

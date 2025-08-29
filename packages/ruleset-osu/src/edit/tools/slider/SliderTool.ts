@@ -88,7 +88,10 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
   {
     if (e.button === MouseButton.Right)
     {
-      this.endPlacement(true);
+      if (!this.isPlacementActive)
+        this.hitObject.newCombo = !this.hitObject.newCombo;
+      else
+        this.endPlacement(true);
     }
 
     return true;
