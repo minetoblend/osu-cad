@@ -4,7 +4,7 @@ import type { Ruleset } from "../Ruleset";
 
 export abstract class RulesetInputManager<T extends KeyBindingAction> extends PassThroughInputManager
 {
-  override get allowRightClickFromLongTouch(): boolean
+  protected override get allowRightClickFromLongTouch(): boolean
   {
     return false;
   }
@@ -16,7 +16,7 @@ export abstract class RulesetInputManager<T extends KeyBindingAction> extends Pa
     return new RulesetInputManagerInputState(super.createInitialState());
   }
 
-  override get content(): Container
+  protected override get content(): Container
   {
     return this.#content;
   }
@@ -35,7 +35,7 @@ export abstract class RulesetInputManager<T extends KeyBindingAction> extends Pa
 
   protected abstract createKeyBindingContainer(ruleset: Ruleset, unique: SimultaneousBindingMode): KeyBindingContainer<T>;
 
-  override handleInputStateChange(event: InputStateChangeEvent)
+  public override handleInputStateChange(event: InputStateChangeEvent)
   {
     if (event instanceof ReplayStateChangeEvent)
     {
@@ -52,9 +52,9 @@ export abstract class RulesetInputManager<T extends KeyBindingAction> extends Pa
 
 class RulesetInputManagerInputState<T extends KeyBindingAction> extends InputState
 {
-  lastReplayState: ReplayState<T> | null = null;
+  public lastReplayState: ReplayState<T> | null = null;
 
-  constructor(state: InputState)
+  public constructor(state: InputState)
   {
     super(state);
   }
@@ -62,13 +62,11 @@ class RulesetInputManagerInputState<T extends KeyBindingAction> extends InputSta
 
 export class ReplayState<T extends KeyBindingAction> implements IInput
 {
-  constructor(
-    readonly pressedActions: readonly T[],
-  )
+  public constructor(public readonly pressedActions: readonly T[])
   {
   }
 
-  apply(state: InputState, handler: IInputStateChangeHandler)
+  public apply(state: InputState, handler: IInputStateChangeHandler)
   {
     if (!(state instanceof RulesetInputManagerInputState))
       throw new Error("ReplayState should only be applied to a RulesetInputManagerInputState");
@@ -100,7 +98,12 @@ export class ReplayState<T extends KeyBindingAction> implements IInput
 
 export class ReplayStateChangeEvent<T extends KeyBindingAction> extends InputStateChangeEvent
 {
-  constructor(state: InputState, input: IInput, readonly pressedActions: readonly T[], readonly  releasedActions: readonly T[])
+  public constructor(
+    state: InputState,
+    input: IInput,
+    public readonly pressedActions: readonly T[],
+    public readonly  releasedActions: readonly T[],
+  )
   {
     super(state, input);
   }

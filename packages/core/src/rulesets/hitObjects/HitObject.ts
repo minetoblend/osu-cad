@@ -22,38 +22,41 @@ export class HitObject extends ObjectDDS
 {
   protected readonly invalidations: HitObjectInvalidations<this>;
 
-  uid = 0;
+  /**
+   * @internal
+   */
+  public uid = 0;
 
-  constructor(attributes: DDSAttributes)
+  public constructor(attributes: DDSAttributes)
   {
     super(attributes);
 
     this.invalidations = getInvalidations(this);
   }
 
-  readonly defaultsApplied = new Action<HitObject>();
+  public readonly defaultsApplied = new Action<HitObject>();
 
-  readonly invalidated = new Action<[HitObject, HitObjectInivalidationType]>();
+  public readonly invalidated = new Action<[HitObject, HitObjectInivalidationType]>();
 
-  readonly startTimeBindable = new Bindable(0);
+  public readonly startTimeBindable = new Bindable(0);
 
   @type("float64")
   @bindableBacked("startTimeBindable")
-  accessor startTime!: number;
+  public accessor startTime!: number;
 
-  get duration()
+  public get duration()
   {
     return 0;
   }
 
-  get endTime()
+  public get endTime()
   {
     return this.startTime + this.duration;
   }
 
   #nestedHitObjects: HitObject[] = [];
 
-  get nestedHitObjects(): readonly HitObject[]
+  public get nestedHitObjects(): readonly HitObject[]
   {
     return this.#nestedHitObjects;
   }
@@ -116,38 +119,38 @@ export class HitObject extends ObjectDDS
 
   #judgement: Judgement | null = null;
 
-  get judgement(): Judgement
+  public get judgement(): Judgement
   {
     this.#judgement ??= this.createJudgement();
     return this.#judgement;
   }
 
-  createJudgement(): Judgement
+  public createJudgement(): Judgement
   {
     return new Judgement();
   }
 
-  hitWindows: HitWindows | null = null;
+  public hitWindows: HitWindows | null = null;
 
   protected createHitWindows(): HitWindows
   {
     return new HitWindows();
   }
 
-  get maximumJudgementOffset()
+  public get maximumJudgementOffset()
   {
     return this.hitWindows?.windowFor(HitResult.Miss) ?? 0;
   }
 
-  readonly hitSoundBindable = new Bindable<HitSoundInfo>(new HitSoundInfo());
+  public readonly hitSoundBindable = new Bindable<HitSoundInfo>(new HitSoundInfo());
 
   @customType("hitSoundInfo")
   @bindableBacked("hitSoundBindable")
-  accessor hitSound!: HitSoundInfo;
+  public accessor hitSound!: HitSoundInfo;
 
-  readonly samplesBindable = new Bindable<HitSampleInfo[]>([]);
+  public readonly samplesBindable = new Bindable<HitSampleInfo[]>([]);
 
-  get samples()
+  public get samples()
   {
     return this.samplesBindable.value;
   }

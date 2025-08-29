@@ -15,8 +15,8 @@ export interface DrawableRulesetOptions
 
 export abstract class DrawableRuleset extends Container
 {
-  readonly newResult = new Action<JudgementResult>();
-  readonly revertResult = new Action<JudgementResult>();
+  public readonly newResult = new Action<JudgementResult>();
+  public readonly revertResult = new Action<JudgementResult>();
 
   protected constructor(options: DrawableRulesetOptions = {})
   {
@@ -49,7 +49,7 @@ export abstract class DrawableRuleset extends Container
     });
   }
 
-  get playfield()
+  public get playfield()
   {
     return this.#playfield.value;
   }
@@ -59,7 +59,7 @@ export abstract class DrawableRuleset extends Container
     return this.#playfieldAdjustmentContainer;
   }
 
-  keybindingInputManager: PassThroughInputManager;
+  public keybindingInputManager: PassThroughInputManager;
 
   protected abstract createInputManager(): PassThroughInputManager;
 
@@ -68,16 +68,16 @@ export abstract class DrawableRuleset extends Container
     return null;
   }
 
-  abstract createPlayfieldAdjustmentContainer(): PlayfieldAdjustmentContainer;
+  public abstract createPlayfieldAdjustmentContainer(): PlayfieldAdjustmentContainer;
 
   protected abstract createPlayfield(options: PlayfieldOptions): Playfield;
 
-  addHitObject(hitObject: HitObject)
+  public addHitObject(hitObject: HitObject)
   {
     this.playfield.addHitObject(hitObject);
   }
 
-  removeHitObject(hitObject: HitObject)
+  public removeHitObject(hitObject: HitObject)
   {
     this.playfield.removeHitObject(hitObject);
   }

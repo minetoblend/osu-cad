@@ -18,15 +18,15 @@ type IRemoveControlPointDelta = [opType: OpType.Remove, ref: DDSRef];
 
 class AddControlPointDelta extends Delta<IAddControlPointDelta>
 {
-  constructor(
-    readonly ref: DDSRef,
-    readonly controlPoint: ControlPoint,
+  public constructor(
+    public readonly ref: DDSRef,
+    public readonly controlPoint: ControlPoint,
   )
   {
     super();
   }
 
-  encode(): IAddControlPointDelta
+  public encode(): IAddControlPointDelta
   {
     return [OpType.Add, this.ref];
   }
@@ -34,12 +34,12 @@ class AddControlPointDelta extends Delta<IAddControlPointDelta>
 
 class RemoveControlPointDelta extends Delta<IRemoveControlPointDelta>
 {
-  constructor(readonly ref: DDSRef)
+  public constructor(public readonly ref: DDSRef)
   {
     super();
   }
 
-  encode(): IRemoveControlPointDelta
+  public encode(): IRemoveControlPointDelta
   {
     return [OpType.Remove, this.ref];
   }
@@ -51,12 +51,12 @@ export type IControlPointInfoSummary = DDSRef[];
 
 export class ControlPointInfo extends DDS<IControlPointInfoDelta>
 {
-  static readonly attributes: DDSAttributes = {
+  public static readonly attributes: DDSAttributes = {
     type: "@osucad/control-point-info",
     version: 0,
   };
 
-  constructor()
+  public constructor()
   {
     super(ControlPointInfo.attributes);
 
@@ -64,35 +64,35 @@ export class ControlPointInfo extends DDS<IControlPointInfoDelta>
     this.samplePoints = this.#listFor(SampleControlPoint);
   }
 
-  readonly added = new Action<ControlPoint>();
-  readonly removed = new Action<ControlPoint>();
+  public readonly added = new Action<ControlPoint>();
+  public readonly removed = new Action<ControlPoint>();
 
   readonly #controlPoints: ControlPoint[] = [];
   readonly #idMap = new Map<string, ControlPoint>();
 
-  readonly timingPoints: ControlPointList<TimingControlPoint>;
-  readonly samplePoints: ControlPointList<SampleControlPoint>;
+  public readonly timingPoints: ControlPointList<TimingControlPoint>;
+  public readonly samplePoints: ControlPointList<SampleControlPoint>;
 
-  timingPointAt(time: number)
+  public timingPointAt(time: number)
   {
     const timingPoint = this.timingPoints.controlPointAt(time);
 
     return timingPoint ?? TimingControlPoint.Default;
   }
 
-  samplePointAt(time: number)
+  public samplePointAt(time: number)
   {
     const timingPoint = this.samplePoints.controlPointAt(time);
 
     return timingPoint ?? SampleControlPoint.Default;
   }
 
-  controlPointAt<T extends ControlPoint>(type: new () => T, time: number): T | undefined
+  public controlPointAt<T extends ControlPoint>(type: new () => T, time: number): T | undefined
   {
     return this.#listFor(type, false)?.controlPointAt(time);
   }
 
-  snap(time: number, divisor: number)
+  public snap(time: number, divisor: number)
   {
     const timingPoint = this.timingPointAt(time);
 
@@ -111,7 +111,7 @@ export class ControlPointInfo extends DDS<IControlPointInfoDelta>
     return  snappedTime + beatSnapLength;
   }
 
-  add(controlPoint: ControlPoint)
+  public add(controlPoint: ControlPoint)
   {
     const ref = this.encoder.encodeDDS(controlPoint);
 
@@ -126,7 +126,7 @@ export class ControlPointInfo extends DDS<IControlPointInfoDelta>
     return true;
   }
 
-  remove(controlPoint: ControlPoint)
+  public remove(controlPoint: ControlPoint)
   {
     const ref = this.encoder.encodeDDS(controlPoint);
 
@@ -234,12 +234,12 @@ export class ControlPointInfo extends DDS<IControlPointInfoDelta>
     }
   }
 
-  override createSummary(encoder: IEncoder): IControlPointInfoSummary
+  public override createSummary(encoder: IEncoder): IControlPointInfoSummary
   {
     return this.#controlPoints.map(it => encoder.encodeDDS(it));
   }
 
-  override load(summary: unknown, version: number, decoder: IDecoder): void
+  public override load(summary: unknown, version: number, decoder: IDecoder): void
   {
     for (const ref of (summary as IControlPointInfoSummary))
     {

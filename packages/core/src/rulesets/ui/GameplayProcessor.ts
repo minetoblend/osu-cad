@@ -11,7 +11,7 @@ export abstract class GameplayProcessor<TPlayfield extends Playfield = Playfield
     super();
   }
 
-  override load(dependencies: ReadonlyDependencyContainer)
+  protected override load(dependencies: ReadonlyDependencyContainer)
   {
     super.load(dependencies);
 
@@ -30,18 +30,18 @@ export abstract class GameplayProcessor<TPlayfield extends Playfield = Playfield
   protected onHitObjectApplied(hitObject: DrawableHitObject)
   {}
 
-  override update()
+  protected override update()
   {
     super.update();
 
     this.processFrame(this.time.current, this.playfield.hitObjectContainer.aliveObjects);
   }
 
-  override dispose(isDisposing?: boolean)
+  public override dispose()
   {
-    super.dispose(isDisposing);
-
     this.playfield.hitObjectApplied.removeListener(this.onHitObjectApplied, this);
+
+    super.dispose();
   }
 
 }

@@ -9,9 +9,9 @@ export class HitObjectEntryManager
     return this.#entryMap.values();
   }
 
-  readonly onEntryAdded = new Action<HitObjectEntryManagerEvent>();
+  public readonly onEntryAdded = new Action<HitObjectEntryManagerEvent>();
 
-  readonly onEntryRemoved = new Action<HitObjectEntryManagerEvent>();
+  public readonly onEntryRemoved = new Action<HitObjectEntryManagerEvent>();
 
   readonly #entryMap = new Map<HitObject, HitObjectLifetimeEntry>();
 
@@ -80,7 +80,7 @@ export class HitObjectEntryManager
       this.remove(nested);
   }
 
-  get(hitObject: HitObject)
+  public get(hitObject: HitObject)
   {
     return this.#entryMap.get(hitObject);
   }

@@ -8,7 +8,7 @@ export class EmptyHitWindows extends HitWindows
     new DifficultyRange(HitResult.Miss, 0, 0, 0),
   ];
 
-  override isHitResultAllowed(result: HitResult): boolean
+  public override isHitResultAllowed(result: HitResult): boolean
   {
     switch (result)
     {
@@ -20,7 +20,7 @@ export class EmptyHitWindows extends HitWindows
     }
   }
 
-  override getRanges(): DifficultyRange[]
+  public override getRanges(): DifficultyRange[]
   {
     return EmptyHitWindows.ranges;
   }

@@ -6,13 +6,13 @@ import { barycentricLagrange, barycentricWeights } from "./Interpolation";
  */
 export class PathApproximator
 {
-  static readonly BEZIER_TOLERANCE = Math.fround(0.5);
-  static readonly CIRCULAR_ARC_TOLERANCE = Math.fround(0.1);
+  public static readonly BEZIER_TOLERANCE = Math.fround(0.5);
+  public static readonly CIRCULAR_ARC_TOLERANCE = Math.fround(0.1);
 
   /**
    * The amount of pieces to calculate for each control point quadruplet.
    */
-  static readonly CATMULL_DETAIL = 50;
+  public static readonly CATMULL_DETAIL = 50;
 
   /**
    * Creates a piecewise-linear approximation of a Bézier curve, by adaptively repeatedly subdividing
@@ -20,12 +20,12 @@ export class PathApproximator
    * @param controlPoints The control points of the path.
    * @returns A list of vectors representing the piecewise-linear approximation.
    */
-  static approximateBezier(controlPoints: Vec2[]): Vec2[]
+  public static approximateBezier(controlPoints: Vec2[]): Vec2[]
   {
     return this.approximateBSpline(controlPoints);
   }
 
-  static approximateBSpline(controlPoints: Vec2[], p = 0): Vec2[]
+  public static approximateBSpline(controlPoints: Vec2[], p = 0): Vec2[]
   {
     const output = new List<Vec2>(100);
     const n = controlPoints.length - 1;
@@ -138,7 +138,7 @@ export class PathApproximator
    * @param controlPoints The control points of the path.
    * @returns A list of vectors representing the piecewise-linear approximation.
    */
-  static approximateCatmull(controlPoints: Vec2[]): Vec2[]
+  public static approximateCatmull(controlPoints: Vec2[]): Vec2[]
   {
     const output = [];
     const controlPointsLength = controlPoints.length;
@@ -175,7 +175,7 @@ export class PathApproximator
    * @param controlPoints The control points of the path.
    * @returns A list of vectors representing the piecewise-linear approximation.
    */
-  static approximateCircularArc(controlPoints: Vec2[]): Vec2[]
+  public static approximateCircularArc(controlPoints: Vec2[]): Vec2[]
   {
     const pr = this.getCircularArcProperties(controlPoints);
 
@@ -234,7 +234,7 @@ export class PathApproximator
    * @param controlPoints Three distinct points on the arc.
    * @returns The properties for approximation of the circular arc.
    */
-  static getCircularArcProperties(controlPoints: Vec2[]): CircularArcProperties
+  public static getCircularArcProperties(controlPoints: Vec2[]): CircularArcProperties
   {
     const a = controlPoints[0];
     const b = controlPoints[1];
@@ -314,7 +314,7 @@ export class PathApproximator
    * @param controlPoints The control points of the path.
    * @returns A list of vectors representing the piecewise-linear approximation.
    */
-  static approximateLinear(controlPoints: Vec2[]): Vec2[]
+  public static approximateLinear(controlPoints: Vec2[]): Vec2[]
   {
     return controlPoints.slice();
   }
@@ -324,7 +324,7 @@ export class PathApproximator
    * @param controlPoints The control points of the path.
    * @returns A list of vectors representing the piecewise-linear approximation.
    */
-  static approximateLagrangePolynomial(controlPoints: Vec2[]): Vec2[]
+  public static approximateLagrangePolynomial(controlPoints: Vec2[]): Vec2[]
   {
     // TODO: add some smarter logic here, chebyshev nodes?
     const NUM_STEPS = 51;
@@ -538,34 +538,34 @@ export class CircularArcProperties
   /**
    * Whether the properties are valid.
    */
-  readonly isValid: boolean;
+  public readonly isValid: boolean;
 
   /**
    * Starting angle of the circle.
    */
-  readonly thetaStart: number;
+  public readonly thetaStart: number;
 
   /**
    * The angle of the drawn circle.
    */
-  readonly thetaRange: number;
+  public readonly thetaRange: number;
 
   /**
    * The direction in which the circle will be drawn.
    */
-  readonly direction: number;
+  public readonly direction: number;
 
   /**
    * The radius of a circle.
    */
-  readonly radius: number;
+  public readonly radius: number;
 
   /**
    * The centre position of a circle.
    */
-  readonly centre: Vec2;
+  public readonly centre: Vec2;
 
-  constructor(thetaStart?: number, thetaRange?: number, direction?: number, radius?: number, centre?: Vec2)
+  public constructor(thetaStart?: number, thetaRange?: number, direction?: number, radius?: number, centre?: Vec2)
   {
     this.isValid = !!(thetaStart || thetaRange || direction || radius || centre);
     this.thetaStart = thetaStart || 0;
@@ -575,12 +575,12 @@ export class CircularArcProperties
     this.centre = centre || new Vec2(0, 0);
   }
 
-  get thetaEnd(): number
+  public get thetaEnd(): number
   {
     return this.thetaStart + this.thetaRange * this.direction;
   }
 
-  pointOnCircle(theta: number)
+  public pointOnCircle(theta: number)
   {
     return new Vec2(
         this.centre.x + Math.cos(theta) * this.radius,
@@ -588,7 +588,7 @@ export class CircularArcProperties
     );
   }
 
-  pointAtProgress(progress: number)
+  public pointAtProgress(progress: number)
   {
     return this.pointOnCircle(this.thetaStart + this.thetaRange * progress);
   }

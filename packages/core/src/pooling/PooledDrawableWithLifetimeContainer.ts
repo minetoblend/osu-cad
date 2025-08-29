@@ -3,17 +3,17 @@ import { CompositeDrawable, LifetimeEntryManager, LifetimeBoundaryCrossingDirect
 
 export abstract class PooledDrawableWithLifetimeContainer<TEntry extends LifetimeEntry, TDrawable extends Drawable> extends CompositeDrawable
 {
-  get entries()
+  public get entries()
   {
     return this.#allEntries;
   }
 
-  get aliveEntries(): ReadonlyMap<TEntry, TDrawable>
+  public get aliveEntries(): ReadonlyMap<TEntry, TDrawable>
   {
     return this.#aliveDrawableMap;
   }
 
-  get removeRewoundEntries()
+  protected get removeRewoundEntries()
   {
     return false;
   }
@@ -22,22 +22,22 @@ export abstract class PooledDrawableWithLifetimeContainer<TEntry extends Lifetim
 
   #futureLifetimeExtension = 0;
 
-  get pastLifetimeExtension()
+  public get pastLifetimeExtension()
   {
     return this.#pastLifetimeExtension;
   }
 
-  set pastLifetimeExtension(value)
+  public set pastLifetimeExtension(value)
   {
     this.#pastLifetimeExtension = value;
   }
 
-  get futureLifetimeExtension()
+  public get futureLifetimeExtension()
   {
     return this.#futureLifetimeExtension;
   }
 
-  set futureLifetimeExtension(value)
+  public set futureLifetimeExtension(value)
   {
     this.#futureLifetimeExtension = value;
   }
@@ -57,13 +57,13 @@ export abstract class PooledDrawableWithLifetimeContainer<TEntry extends Lifetim
     this.#lifetimeManager.entryCrossedBoundary.addListener(this.#entryCrossedBoundary, this);
   }
 
-  addEntry(entry: TEntry)
+  public addEntry(entry: TEntry)
   {
     this.#allEntries.add(entry);
     this.#lifetimeManager.addEntry(entry);
   }
 
-  removeEntry(entry: TEntry): boolean
+  public removeEntry(entry: TEntry): boolean
   {
     if (!this.#lifetimeManager.removeEntry(entry))
       return false;
@@ -72,7 +72,7 @@ export abstract class PooledDrawableWithLifetimeContainer<TEntry extends Lifetim
     return true;
   }
 
-  abstract getDrawable(entry: TEntry): TDrawable;
+  protected abstract getDrawable(entry: TEntry): TDrawable;
 
   #entryBecameAlive(lifetimeEntry: LifetimeEntry)
   {
@@ -110,12 +110,10 @@ export abstract class PooledDrawableWithLifetimeContainer<TEntry extends Lifetim
       this.removeEntry(lifetimeEntry as TEntry);
   };
 
-  clear()
+  public clear()
   {
     for (const entry of [...this.entries.keys()])
-    {
       this.removeEntry(entry);
-    }
 
     console.assert(this.#aliveDrawableMap.size === 0);
   }
@@ -125,7 +123,7 @@ export abstract class PooledDrawableWithLifetimeContainer<TEntry extends Lifetim
     return this.time.current;
   }
 
-  override checkChildrenLife(): boolean
+  protected override checkChildrenLife(): boolean
   {
     if (!this.isPresent)
       return false;

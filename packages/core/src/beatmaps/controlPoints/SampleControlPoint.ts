@@ -5,26 +5,26 @@ import { SampleSet } from "../../audio";
 
 export class SampleControlPoint extends ControlPoint
 {
-  static readonly attributes: DDSAttributes = {
+  public static readonly attributes: DDSAttributes = {
     type: "@osucad/sample-control-point",
     version: 0,
   };
 
-  static readonly Default = new SampleControlPoint();
+  public static readonly Default = new SampleControlPoint();
 
-  constructor()
+  public constructor()
   {
     super(SampleControlPoint.attributes);
   }
 
-  readonly beatLengthBindable = new Bindable(60_000 / 120);
+  public readonly beatLengthBindable = new Bindable(60_000 / 120);
 
   @type("int32")
-  accessor volume: number = 100
+  public accessor volume: number = 100
 
   @type("uint8")
-  accessor sampleSet: SampleSet = SampleSet.Soft
+  public accessor sampleSet: SampleSet = SampleSet.Soft
 
   @type("uint16")
-  accessor sampleIndex: number = 0
+  public accessor sampleIndex: number = 0
 }

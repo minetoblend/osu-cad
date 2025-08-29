@@ -4,14 +4,14 @@ import { Color } from "pixi.js";
 
 export class BeatmapColors
 {
-  readonly comboColorsBindable = new Bindable<readonly Color[]>([]);
+  public readonly comboColorsBindable = new Bindable<readonly Color[]>([]);
 
-  get comboColors()
+  public get comboColors()
   {
     return this.comboColorsBindable.value;
   }
 
-  set comboColors(value)
+  public set comboColors(value)
   {
     this.comboColorsBindable.value = value;
   }
@@ -21,26 +21,26 @@ export class BeatmapColors
     this.comboColors = [...this.comboColors, color];
   }
 
-  readonly sliderTrackOverrideBindable = new Bindable<Color | null>(null);
+  public readonly sliderTrackOverrideBindable = new Bindable<Color | null>(null);
 
-  get sliderTrackOverride(): Color | null
+  public get sliderTrackOverride(): Color | null
   {
     return this.sliderTrackOverrideBindable.value;
   }
 
-  set sliderTrackOverride(value: ColorSource | null)
+  public set sliderTrackOverride(value: ColorSource | null)
   {
     this.sliderTrackOverrideBindable.value = value ? new Color(value) : null;
   }
 
-  readonly sliderBorderBindable = new Bindable<Color | null>(null);
+  public readonly sliderBorderBindable = new Bindable<Color | null>(null);
 
-  get sliderBorder(): Color | null
+  public get sliderBorder(): Color | null
   {
     return this.sliderBorderBindable.value;
   }
 
-  set sliderBorder(value: ColorSource | null)
+  public set sliderBorder(value: ColorSource | null)
   {
     this.sliderBorderBindable.value = value ? new Color(value) : null;
   }

@@ -12,9 +12,9 @@ export class JudgementResult
   /**
    * @internal
    */
-  rawTime: number | null = null;
+  public rawTime: number | null = null;
 
-  get timeOffset()
+  public get timeOffset()
   {
     return this.rawTime !== null ? Math.min(this.rawTime - this.hitObject.endTime, this.hitObject.maximumJudgementOffset): 0;
   }
@@ -23,22 +23,22 @@ export class JudgementResult
    * @internal
    * @param value
    */
-  set timeOffset(value)
+  public set timeOffset(value)
   {
     this.rawTime = this.hitObject.endTime + value;
   }
 
-  get timeAbsolute()
+  public get timeAbsolute()
   {
     return this.rawTime !== null ? Math.min(this.rawTime, this.hitObject.endTime + this.hitObject.maximumJudgementOffset) : this.hitObject.endTime;
   }
 
-  get hasResult()
+  public get hasResult()
   {
     return this.type > HitResult.None;
   }
 
-  get isHit()
+  public get isHit()
   {
     switch (this.type)
     {
@@ -55,15 +55,15 @@ export class JudgementResult
     }
   }
 
-  constructor(
-    readonly hitObject: HitObject,
-    readonly judgement: Judgement,
+  public constructor(
+    public readonly hitObject: HitObject,
+    public readonly judgement: Judgement,
   )
   {
     this.reset();
   }
 
-  reset()
+  public reset()
   {
     this.type = HitResult.None;
     this.rawTime =null;

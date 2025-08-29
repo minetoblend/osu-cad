@@ -43,12 +43,12 @@ interface ReactiveFileEntry
 
 export class SkinTextureStore
 {
-  readonly textureChanged = new Action();
+  public readonly textureChanged = new Action();
 
-  allow2xTextureLookup = true;
+  public allow2xTextureLookup = true;
 
-  constructor(
-    readonly skin: Skin,
+  public constructor(
+    public readonly skin: Skin,
     manifest: TextureStoreManifestRaw | ComputedRef<TextureStoreManifestRaw>,
   )
   {
@@ -109,7 +109,7 @@ export class SkinTextureStore
     });
   }
 
-  readonly manifest: ComputedRef<TextureStoreManifest>;
+  public readonly manifest: ComputedRef<TextureStoreManifest>;
 
   private _counter = 0;
 
@@ -133,7 +133,7 @@ export class SkinTextureStore
     });
   }
 
-  async load()
+  public async load()
   {
     await Promise.all([
       ...this._textures.map(entry => entry.load()),
@@ -146,14 +146,14 @@ export class SkinTextureStore
     });
   }
 
-  readonly filesReactive = reactive<ReactiveFileEntry[]>([]);
+  public readonly filesReactive = reactive<ReactiveFileEntry[]>([]);
 
   private readonly _textures: ReactiveTextureEntry[];
   private readonly _animations: ReactiveAnimationEntry[];
 
-  readonly extensions: string[] = ["jpg", "jpeg", "png", "webp"];
+  public readonly extensions: string[] = ["jpg", "jpeg", "png", "webp"];
 
-  getEntry(name: string)
+  public getEntry(name: string)
   {
     const lookupNames = this.allow2xTextureLookup ? [`${name}@2x`, name] : name;
 
@@ -172,14 +172,14 @@ export class SkinTextureStore
     return null;
   }
 
-  getTexture(name: string)
+  public getTexture(name: string)
   {
     const entry = this._textures.find(it => it.manifest.name === name);
 
     return entry?.texture.value ?? null;
   }
 
-  getAnimation(name: string)
+  public getAnimation(name: string)
   {
     const entry = this._animations.find(it => it.manifest.name === name);
     if (!entry)
@@ -191,16 +191,16 @@ export class SkinTextureStore
 
 class ReactiveTextureEntry
 {
-  constructor(
-    readonly store: SkinTextureStore,
-    readonly manifest: TextureManifestEntry,
+  public constructor(
+    public readonly store: SkinTextureStore,
+    public readonly manifest: TextureManifestEntry,
   )
   {
   }
 
-  readonly entry = computed(() => this.store.getEntry(this.manifest.name));
+  public readonly entry = computed(() => this.store.getEntry(this.manifest.name));
 
-  readonly texture = computedAsync(async () =>
+  public readonly texture = computedAsync(async () =>
   {
     try
     {
@@ -221,9 +221,9 @@ class ReactiveTextureEntry
     }
   }, null, { lazy: false });
 
-  isLoaded = deferredPromise<void>();
+  public isLoaded = deferredPromise<void>();
 
-  async load()
+  public async load()
   {
     await this.isLoaded;
 
@@ -251,9 +251,9 @@ export function normalizeAnimationManifestEntry(value: AnimationManifestEntry | 
 
 class ReactiveAnimationEntry
 {
-  constructor(
-    readonly store: SkinTextureStore,
-    readonly manifest: AnimationManifestEntry,
+  public constructor(
+    public readonly store: SkinTextureStore,
+    public readonly manifest: AnimationManifestEntry,
   )
   {
     watch(this.entries, (entries: ReactiveFileEntry[], oldEntries: ReactiveFileEntry[]) =>
@@ -267,7 +267,7 @@ class ReactiveAnimationEntry
     }, { immediate: true });
   }
 
-  entries = computed(() =>
+  public entries = computed(() =>
   {
     const {
       animationSeparator = "-",
@@ -301,9 +301,9 @@ class ReactiveAnimationEntry
     return entries;
   });
 
-  entriesDebounced = ref<ReactiveFileEntry[]>([]);
+  public entriesDebounced = ref<ReactiveFileEntry[]>([]);
 
-  readonly textures = computedAsync(async () =>
+  public readonly textures = computedAsync(async () =>
   {
     try
     {
@@ -328,9 +328,9 @@ class ReactiveAnimationEntry
     return loadTexture(data, { resolution: is2xTexture ? 2 : 1, label: entry.file.path });
   }
 
-  isLoaded = deferredPromise<void>();
+  public readonly isLoaded = deferredPromise<void>();
 
-  async load()
+  public async load()
   {
     await this.isLoaded;
 
@@ -340,7 +340,7 @@ class ReactiveAnimationEntry
     });
   }
 
-  getAnimation()
+  public getAnimation()
   {
     const {
       looping = false,

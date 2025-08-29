@@ -4,14 +4,14 @@ export class SkinSampleStore
 {
   private readonly _extensions = ["mp3", "wav", "ogg"];
 
-  constructor(
-    readonly files: IFileSystem,
-    readonly audioManager: AudioManager,
+  public constructor(
+    public readonly files: IFileSystem,
+    public readonly audioManager: AudioManager,
   )
   {
   }
 
-  get(name: string)
+  public get(name: string)
   {
     const entry = this._getEntry(name);
     if (!entry)
@@ -21,16 +21,14 @@ export class SkinSampleStore
     if (!buffer)
       return null;
 
-    const sample = this.audioManager.createSample(buffer, this.audioManager.sampleMixer, name);
-
-    return sample;
+    return this.audioManager.createSample(buffer, this.audioManager.sampleMixer, name);
   }
 
   private readonly _audioBuffers = new Map<string, AudioBuffer>();
 
   private readonly _sampleP = new Map<string, Promise<AudioBuffer | null>>();
 
-  async load(name: string): Promise<Sample | null>
+  public async load(name: string): Promise<Sample | null>
   {
     let sampleP = this._sampleP.get(name);
 
@@ -49,7 +47,7 @@ export class SkinSampleStore
   }
 
 
-  async loadAll()
+  public async loadAll()
   {
     const files = this.files.entries()
       .filter(it =>

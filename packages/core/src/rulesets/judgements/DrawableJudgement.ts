@@ -14,19 +14,19 @@ export class DrawableJudgement extends PoolableDrawable
 {
   #result: JudgementResult | null = null;
 
-  get result()
+  public get result()
   {
     return this.#result;
   }
 
   #judgedHitObject: HitObject | null = null;
 
-  get judgedHitObject()
+  public get judgedHitObject()
   {
     return this.#judgedHitObject;
   }
 
-  override get removeCompletedTransforms(): boolean
+  public override get removeCompletedTransforms(): boolean
   {
     return false;
   }
@@ -42,12 +42,12 @@ export class DrawableJudgement extends PoolableDrawable
 
   readonly #proxiedAboveHitObjectsContent: Lazy<Drawable>;
 
-  get proxiedAboveHitObjectsContent()
+  public get proxiedAboveHitObjectsContent()
   {
     return this.#proxiedAboveHitObjectsContent.value;
   }
 
-  constructor()
+  public constructor()
   {
     super();
 
@@ -79,7 +79,7 @@ export class DrawableJudgement extends PoolableDrawable
   {
   }
 
-  apply(result: JudgementResult, judgedObject?: DrawableHitObject)
+  public apply(result: JudgementResult, judgedObject?: DrawableHitObject)
   {
     this.#result = result;
     this.#judgedHitObject = judgedObject?.hitObject ?? null;

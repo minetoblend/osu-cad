@@ -4,9 +4,9 @@ import { bindableBacked } from "../../utils";
 
 export abstract class ControlPoint extends ObjectDDS
 {
-  static readonly COMPARER = new class extends Comparer<ControlPoint>
+  public static readonly COMPARER = new class extends Comparer<ControlPoint>
   {
-    compare(a: ControlPoint, b: ControlPoint)
+    public compare(a: ControlPoint, b: ControlPoint)
     {
       const result = a.time - b.time;
       if (result !== 0)
@@ -16,12 +16,11 @@ export abstract class ControlPoint extends ObjectDDS
     }
   }();
 
-  uid = 0;
+  public uid = 0;
 
-
-  readonly timeBindable = new Bindable(0);
+  public readonly timeBindable = new Bindable(0);
 
   @type("float64")
   @bindableBacked("timeBindable")
-  accessor time!: number;
+  public accessor time!: number;
 }

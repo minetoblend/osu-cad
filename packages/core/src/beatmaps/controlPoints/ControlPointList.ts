@@ -3,7 +3,7 @@ import { ControlPoint } from "./ControlPoint";
 
 export class ControlPointList<T extends ControlPoint> extends ObservableSortedList<T>
 {
-  constructor()
+  public constructor()
   {
     super(ControlPoint.COMPARER);
   }

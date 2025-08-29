@@ -17,11 +17,11 @@ export class PoolableSkinnableSample extends SkinReloadableDrawable
 
   readonly #sampleContainer: Container<DrawableSample>;
 
-  readonly volume = new Bindable(1);
+  public readonly volume = new Bindable(1);
 
-  readonly rate = new Bindable(1);
+  public readonly rate = new Bindable(1);
 
-  constructor(sampleInfo?: ISampleInfo)
+  public constructor(sampleInfo?: ISampleInfo)
   {
     super();
 
@@ -33,7 +33,7 @@ export class PoolableSkinnableSample extends SkinReloadableDrawable
       this.apply(sampleInfo);
   }
 
-  apply(sampleInfo: ISampleInfo)
+  public apply(sampleInfo: ISampleInfo)
   {
     console.assert(this.#sampleInfo === null);
     this.#sampleInfo = sampleInfo;
@@ -85,7 +85,7 @@ export class PoolableSkinnableSample extends SkinReloadableDrawable
       this.play();
   }
 
-  play()
+  public play()
   {
     this.flushPendingSkinChanges();
 
@@ -99,32 +99,32 @@ export class PoolableSkinnableSample extends SkinReloadableDrawable
     this.#played = true;
   }
 
-  stop()
+  public stop()
   {
     this.#activeChannel?.stop();
     this.#activeChannel = null;
   }
 
-  get playing()
+  public get playing()
   {
     return this.#activeChannel?.playing ?? false;
   }
 
   #played = false;
 
-  get played()
+  public get played()
   {
     return this.#played;
   }
 
   #looping = false;
 
-  get looping()
+  public get looping()
   {
     return this.#looping;
   }
 
-  set looping(value)
+  public set looping(value)
   {
     this.#looping = value;
 

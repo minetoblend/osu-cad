@@ -16,7 +16,7 @@ export interface SkinProvidingContainerOptions extends ContainerOptions
 @provideSelf(ISkinSource)
 export class SkinProvidingContainer extends Container implements ISkinSource
 {
-  constructor(options: SkinProvidingContainerOptions = {})
+  public constructor(options: SkinProvidingContainerOptions = {})
   {
     super();
 
@@ -39,7 +39,7 @@ export class SkinProvidingContainer extends Container implements ISkinSource
 
   #triggerTexturesChanged = () => this.texturesChanged.emit();
 
-  readonly texturesChanged = new Action();
+  public readonly texturesChanged = new Action();
 
   private readonly activeSkin = ref<ISkin | null>(null);
 
@@ -57,12 +57,12 @@ export class SkinProvidingContainer extends Container implements ISkinSource
   });
 
 
-  get skin()
+  public get skin()
   {
     return this.activeSkin.value;
   }
 
-  set skin(value)
+  public set skin(value)
   {
     this.activeSkin.value = value;
   }
@@ -84,14 +84,14 @@ export class SkinProvidingContainer extends Container implements ISkinSource
     watch(this.activeSkin, () => this.#skinChanged());
   }
 
-  readonly sourceChanged = new Action();
+  public readonly sourceChanged = new Action();
 
   protected get allSources()
   {
     return this.#allSources.value;
   }
 
-  getTexture(componentName: string): Texture | null
+  public getTexture(componentName: string): Texture | null
   {
     for (const source of this.allSources)
     {
@@ -103,7 +103,7 @@ export class SkinProvidingContainer extends Container implements ISkinSource
     return null;
   }
 
-  getSample(sampleInfo: ISampleInfo): Sample | null
+  public getSample(sampleInfo: ISampleInfo): Sample | null
   {
     for (const source of this.allSources)
     {
@@ -115,7 +115,7 @@ export class SkinProvidingContainer extends Container implements ISkinSource
     return null;
   }
 
-  getDrawableComponent(lookup: SkinComponentLookup): Drawable | null
+  public getDrawableComponent(lookup: SkinComponentLookup): Drawable | null
   {
     for (const source of this.allSources)
     {
@@ -127,7 +127,7 @@ export class SkinProvidingContainer extends Container implements ISkinSource
     return null;
   }
 
-  getConfig<T extends SkinConfigurationLookup>(lookup: T): SkinConfigurationValue<T> | null
+  public getConfig<T extends SkinConfigurationLookup>(lookup: T): SkinConfigurationValue<T> | null
   {
     for (const source of this.allSources)
     {
@@ -139,7 +139,7 @@ export class SkinProvidingContainer extends Container implements ISkinSource
     return null;
   }
 
-  getComboColor(comboIndex: number): Color
+  public getComboColor(comboIndex: number): Color
   {
     for (const source of this.allSources)
     {

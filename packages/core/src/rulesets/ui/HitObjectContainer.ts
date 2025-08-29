@@ -15,14 +15,13 @@ function compareStartTime(a: DrawableHitObject, b: DrawableHitObject)
 
 export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitObjectLifetimeEntry, DrawableHitObject>
 {
-  readonly hitObjectUsageBegan = new Action<HitObject>();
+  public readonly hitObjectUsageBegan = new Action<HitObject>();
 
-  readonly hitObjectUsageFinished = new Action<HitObject>();
+  public readonly hitObjectUsageFinished = new Action<HitObject>();
 
-  readonly drawableHitObjectBecameAlive = new Action<DrawableHitObject>();
+  public readonly drawableHitObjectBecameAlive = new Action<DrawableHitObject>();
 
-
-  readonly newResult = new Action<[DrawableHitObject, JudgementResult]>();
+  public readonly newResult = new Action<[DrawableHitObject, JudgementResult]>();
 
   readonly #startTimeMap = new Map<DrawableHitObject, Bindable<number>>();
 
@@ -31,24 +30,24 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
   @resolved(IPooledHitObjectProvider, true)
   accessor #pooledObjectProvider: IPooledHitObjectProvider | undefined;
 
-  get objects()
+  public get objects()
   {
     return (this.internalChildren as DrawableHitObject[]).toSorted(compareStartTime);
   }
 
-  get aliveObjects()
+  public get aliveObjects()
   {
     return [...this.aliveEntries.values()].sort(compareStartTime);
   }
 
-  constructor()
+  public constructor()
   {
     super();
 
     this.relativeSizeAxes = Axes.Both;
   }
 
-  override removeEntry(entry: HitObjectLifetimeEntry): boolean
+  public override removeEntry(entry: HitObjectLifetimeEntry): boolean
   {
     if (!super.removeEntry(entry))
       return false;
@@ -63,7 +62,7 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
     return true;
   }
 
-  getDrawable(entry: HitObjectLifetimeEntry): DrawableHitObject
+  public getDrawable(entry: HitObjectLifetimeEntry): DrawableHitObject
   {
     let drawable = this.#nonPooledHitObjectDrawableMap.get(entry);
     if (drawable)
@@ -111,7 +110,7 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
     this.addInternal(drawable);
   }
 
-  getDrawableDepth(drawable: DrawableHitObject)
+  public getDrawableDepth(drawable: DrawableHitObject)
   {
     return drawable.startTimeBindable.value;
   }
@@ -130,7 +129,7 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
     this.newResult.emit(d, result);
   }
 
-  add(hitObject: DrawableHitObject)
+  public add(hitObject: DrawableHitObject)
   {
     if (!hitObject.entry)
       throw new Error("May not add a hit object without a lifetime entry");
@@ -140,17 +139,17 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
     this.addEntry(hitObject.entry);
   }
 
-  addCustom(drawable: Drawable)
+  public addCustom(drawable: Drawable)
   {
     this.addInternal(drawable);
   }
 
-  removeCustom(drawable: Drawable, disposeImmediately: boolean = true)
+  public removeCustom(drawable: Drawable, disposeImmediately: boolean = true)
   {
     this.removeInternal(drawable, disposeImmediately);
   }
 
-  remove(hitObject: DrawableHitObject)
+  public remove(hitObject: DrawableHitObject)
   {
     if (!hitObject.entry)
       return false;
@@ -158,7 +157,7 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
     return this.removeEntry(hitObject.entry);
   }
 
-  indexOf(hitObject: DrawableHitObject)
+  public indexOf(hitObject: DrawableHitObject)
   {
     return this.indexOfInternal(hitObject);
   }
@@ -173,7 +172,7 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
       if (this.loadState >= LoadState.Ready)
       {
         if (drawable.parent)
-          drawable.parent.changeInternalChildDepth(drawable, this.getDrawableDepth(drawable));
+          this.changeInternalChildDepth(drawable, this.getDrawableDepth(drawable));
         else
           drawable.depth = this.getDrawableDepth(drawable);
       }
@@ -182,13 +181,11 @@ export class HitObjectContainer extends PooledDrawableWithLifetimeContainer<HitO
     this.#startTimeMap.set(drawable, bindable);
   }
 
-  override dispose(isDisposing: boolean = true)
+  public override dispose()
   {
     for (const entry of [...this.aliveEntries.keys()])
-    {
       this.removeEntry(entry);
-    }
 
-    super.dispose(isDisposing);
+    super.dispose();
   }
 }

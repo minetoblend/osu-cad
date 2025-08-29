@@ -33,16 +33,16 @@ enum BeatmapSection
 
 export class BeatmapParser
 {
-  rulesetStore: RulesetStore;
+  public rulesetStore: RulesetStore;
 
-  constructor(
+  public constructor(
     options: BeatmapParserOptions = {},
   )
   {
     this.rulesetStore = options.rulesetStore ?? rulesets;
   }
 
-  async parse(content: string | string[])
+  public async parse(content: string | string[])
   {
     const lines = typeof content === "string"
         ? content.split(/\r?\n/)

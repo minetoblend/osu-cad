@@ -34,12 +34,12 @@ export class Mp3Decoder
     }
   }, 4);
 
-  decode(data: ArrayBuffer): Promise<MPEGDecodedAudio>
+  public decode(data: ArrayBuffer): Promise<MPEGDecodedAudio>
   {
     return this.queue.push(data);
   }
 
-  dispose()
+  public dispose()
   {
     this.decoders.forEach(it => it.free());
     this.decoders.length = 0;

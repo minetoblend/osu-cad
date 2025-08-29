@@ -2,19 +2,19 @@ import type { ISampleInfo } from "./ISampleInfo";
 
 export class SampleInfo implements ISampleInfo
 {
-  readonly sampleNames: string[];
+  public readonly sampleNames: string[];
 
-  constructor(...sampleNames: string[])
+  public constructor(...sampleNames: string[])
   {
     this.sampleNames = sampleNames.sort();
   }
 
-  get lookupNames()
+  public get lookupNames()
   {
     return this.sampleNames;
   }
 
-  get volume()
+  public get volume()
   {
     return 100;
   }

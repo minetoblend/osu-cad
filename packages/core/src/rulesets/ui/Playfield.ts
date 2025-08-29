@@ -21,11 +21,11 @@ export interface PlayfieldOptions
 @provideSelf()
 export abstract class Playfield extends CompositeDrawable implements IPooledHitObjectProvider
 {
-  readonly hitObjectUsageBegan = new Action<HitObject>();
+  public readonly hitObjectUsageBegan = new Action<HitObject>();
 
-  readonly hitObjectUsageFinished = new Action<HitObject>();
+  public readonly hitObjectUsageFinished = new Action<HitObject>();
 
-  readonly newResult = new Action<[DrawableHitObject, JudgementResult]>();
+  public readonly newResult = new Action<[DrawableHitObject, JudgementResult]>();
 
   readonly #hitObjectContainer = new Lazy(() =>
   {
@@ -38,7 +38,7 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
     return container;
   });
 
-  get hitObjectContainer()
+  public get hitObjectContainer()
   {
     return this.#hitObjectContainer.value;
   }
@@ -46,7 +46,7 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
   readonly #entryManager =new HitObjectEntryManager();
 
   // noinspection TypeScriptAbstractClassConstructorCanBeMadeProtected
-  constructor(protected readonly options: PlayfieldOptions = {})
+  public constructor(protected readonly options: PlayfieldOptions = {})
   {
     super();
 
@@ -56,7 +56,7 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
     this.#entryManager.onEntryRemoved.addListener(this.#onEntryRemoved, this);
   }
 
-  readonly hitObjectApplied = new Action<DrawableHitObject>();
+  public readonly hitObjectApplied = new Action<DrawableHitObject>();
 
   @resolved(PlayfieldClock)
   protected accessor playfieldClock!: IFrameBasedClock;
@@ -92,13 +92,13 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
     return new HitObjectContainer();
   }
 
-  addHitObject(hitObject: HitObject)
+  public addHitObject(hitObject: HitObject)
   {
     const entry = this.createLifetimeEntry(hitObject);
     this.#entryManager.add(entry);
   }
 
-  removeHitObject(hitObject: HitObject)
+  public removeHitObject(hitObject: HitObject)
   {
     const entry = this.#entryManager.get(hitObject);
     if (entry)
@@ -159,7 +159,7 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
     this.addInternal(pool);
   }
 
-  getPooledDrawableRepresentation(hitObject: HitObject, parent?: DrawableHitObject): DrawableHitObject | undefined
+  public getPooledDrawableRepresentation(hitObject: HitObject, parent?: DrawableHitObject): DrawableHitObject | undefined
   {
     const pool = this.#prepareDrawableHitObjectPool(hitObject);
 
@@ -222,7 +222,7 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
     return pool;
   }
 
-  override update()
+  protected override update()
   {
     super.update();
 
@@ -238,7 +238,7 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
     }
   }
 
-  readonly revertResult = new Action<JudgementResult>();
+  public readonly revertResult = new Action<JudgementResult>();
 
   readonly #judgedEntries: HitObjectLifetimeEntry[] = [];
 
@@ -263,7 +263,7 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
 
   #cursor: GameplayCursorContainer | null = null;
 
-  get cursor(): GameplayCursorContainer | null
+  public get cursor(): GameplayCursorContainer | null
   {
     return this.#cursor;
   }

@@ -14,13 +14,13 @@ export class GameplayClock implements IFrameBasedClock
   #offset = 0;
   #startTime = 0;
 
-  constructor(autoStart = false)
+  public constructor(autoStart = false)
   {
     if (autoStart)
       this.start();
   }
 
-  processFrame(): void
+  public processFrame(): void
   {
     if (!this.#isRunning)
     {
@@ -36,39 +36,39 @@ export class GameplayClock implements IFrameBasedClock
     };
   }
 
-  get timeInfo(): FrameTimeInfo
+  public get timeInfo(): FrameTimeInfo
   {
     return this.#currentFrame;
   }
 
-  get currentTime(): number
+  public get currentTime(): number
   {
     return this.#currentFrame.current;
   }
 
-  get elapsedFrameTime(): number
+  public get elapsedFrameTime(): number
   {
     return this.#currentFrame.elapsed;
   }
 
-  get framesPerSecond(): number
+  public get framesPerSecond(): number
   {
     throw new Error("Method not implemented.");
   }
 
-  readonly isFrameBasedClock = true;
+  public readonly isFrameBasedClock = true;
 
-  get isRunning(): boolean
+  public get isRunning(): boolean
   {
     return this.#isRunning;
   }
 
-  get rate(): number
+  public get rate(): number
   {
     return this.#rate;
   }
 
-  set rate(value)
+  public set rate(value)
   {
     const wasRunning = this.isRunning;
     if (wasRunning)

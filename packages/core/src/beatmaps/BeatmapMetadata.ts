@@ -3,37 +3,37 @@ import { ObjectDDS, type } from "@osucad/multiplayer-core";
 
 export class BeatmapMetadata extends ObjectDDS
 {
-  static readonly attributes: DDSAttributes = {
+  public static readonly attributes: DDSAttributes = {
     type: "@osucad/beatmap-metadata",
     version: 0,
   };
 
-  constructor()
+  public constructor()
   {
     super(BeatmapMetadata.attributes);
   }
 
   @type("string")
-  accessor artist = "";
+  public accessor artist = "";
 
   @type("string")
-  accessor artistUnicode = "";
+  public accessor artistUnicode = "";
 
   @type("string")
-  accessor title = "";
+  public accessor title = "";
 
   @type("string")
-  accessor titleUnicode = "";
+  public accessor titleUnicode = "";
 
   @type("string")
-  accessor creator = "";
+  public accessor creator = "";
 
   @type("string")
-  accessor difficultyName = "";
+  public accessor difficultyName = "";
 
   @type("string")
-  accessor source = "";
+  public accessor source = "";
 
   @type("string")
-  accessor tags = "";
+  public accessor tags = "";
 }

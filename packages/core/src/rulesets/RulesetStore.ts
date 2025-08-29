@@ -4,7 +4,7 @@ export class RulesetStore
 {
   private readonly _rulesets: Ruleset[] = [];
 
-  register(ruleset: Ruleset)
+  public register(ruleset: Ruleset)
   {
     if (this.get({ id: ruleset.id }))
     {
@@ -16,7 +16,7 @@ export class RulesetStore
     return true;
   }
 
-  get(lookup: RulesetLookup): Ruleset | undefined
+  public get(lookup: RulesetLookup): Ruleset | undefined
   {
     if ("id" in lookup)
       return this._rulesets.find(it => it.id === lookup.id);

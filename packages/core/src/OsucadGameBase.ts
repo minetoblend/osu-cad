@@ -5,13 +5,13 @@ import { IResourcesProvider } from "./io/IResourcesProvider";
 @provideSelf(IResourcesProvider)
 export class OsucadGameBase extends Game implements IResourcesProvider
 {
-  constructor()
+  public constructor()
   {
     super();
   }
 
   @provide(AudioManager)
-  audioManager!: AudioManager;
+  public readonly audioManager!: AudioManager;
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {

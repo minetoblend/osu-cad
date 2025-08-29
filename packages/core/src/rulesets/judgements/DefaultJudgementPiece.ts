@@ -4,7 +4,7 @@ import type { HitResult } from "../scoring/HitResult";
 // TODO
 export class DefaultJudgementPiece extends CompositeDrawable
 {
-  constructor(readonly result: HitResult)
+  public constructor(public readonly result: HitResult)
   {
     super();
   }

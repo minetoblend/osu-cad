@@ -7,8 +7,8 @@ import { PlayfieldClock } from "./PlayfieldClock";
 export abstract class AutoPlayController<T extends DrawableHitObject = DrawableHitObject> extends Component
 {
   protected constructor(
-    readonly playfield: Playfield,
-    readonly inputManager: PassThroughInputManager,
+    protected readonly playfield: Playfield,
+    protected readonly inputManager: PassThroughInputManager,
   )
   {
     super();
@@ -34,7 +34,7 @@ export abstract class AutoPlayController<T extends DrawableHitObject = DrawableH
     return true;
   }
 
-  override update()
+  protected override update()
   {
     super.update();
 

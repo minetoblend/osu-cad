@@ -5,15 +5,15 @@ import type { ControlPointInfo } from "../beatmaps";
 
 export class HitSoundInfo
 {
-  constructor(
-    readonly sampleSet: SampleSet = SampleSet.Normal,
-    readonly additionSampleSet: SampleSet = SampleSet.Normal,
-    readonly additions: SampleAdditions = SampleAdditions.None,
+  public constructor(
+    public readonly sampleSet: SampleSet = SampleSet.Normal,
+    public readonly additionSampleSet: SampleSet = SampleSet.Normal,
+    public readonly additions: SampleAdditions = SampleAdditions.None,
   )
   {
   }
 
-  getSamples(time: number, controlPoints: ControlPointInfo): HitSampleInfo[]
+  public getSamples(time: number, controlPoints: ControlPointInfo): HitSampleInfo[]
   {
     const samples: HitSampleInfo[] = [];
 

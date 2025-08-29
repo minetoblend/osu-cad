@@ -29,7 +29,7 @@ export class SkinReloadableDrawable extends PoolableDrawable
     this.#skinChanged();
   }
 
-  flushPendingSkinChanges()
+  protected flushPendingSkinChanges()
   {
     if (!this.#pendingSkinChange)
       return;
@@ -56,12 +56,12 @@ export class SkinReloadableDrawable extends PoolableDrawable
     this.#pendingSkinChange = undefined;
   }
 
-  override dispose(isDisposing: boolean = true)
+  public override dispose()
   {
-    super.dispose(isDisposing);
-
     this.currentSkin.sourceChanged.removeListener(this.#onChange, this);
 
     this.onSkinChanged.removeAllListeners();
+
+    super.dispose();
   }
 }

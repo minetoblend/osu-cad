@@ -8,7 +8,7 @@ export class SkinnableTextureAnimation extends TextureAnimation
   @resolved(IAnimationTimeReference, true)
   protected accessor timeReference: IAnimationTimeReference | undefined;
 
-  constructor(readonly startAtCurrentTime: boolean = true)
+  public constructor(public readonly startAtCurrentTime: boolean = true)
   {
     super(startAtCurrentTime);
   }

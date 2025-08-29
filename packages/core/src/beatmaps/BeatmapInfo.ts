@@ -3,12 +3,12 @@ import { ObjectDDS, type } from "@osucad/multiplayer-core";
 
 export class BeatmapInfo extends ObjectDDS
 {
-  static readonly attributes: DDSAttributes = {
+  public static readonly attributes: DDSAttributes = {
     type: "@osucad/beatmap-info",
     version: 0,
   };
 
-  constructor()
+  public constructor()
   {
     super(BeatmapInfo.attributes);
   }

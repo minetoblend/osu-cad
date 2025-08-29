@@ -28,12 +28,12 @@ export abstract class SkinTransformer implements ISkin
   {
   }
 
-  get texturesChanged()
+  public get texturesChanged()
   {
     return this.source.texturesChanged;
   }
 
-  getTexture(componentName: string): Texture | null
+  public getTexture(componentName: string): Texture | null
   {
     return this.source.getTexture(componentName);
   }
@@ -43,7 +43,7 @@ export abstract class SkinTransformer implements ISkin
     return this.source.getSample(sampleInfo);
   }
 
-  getConfig<T extends SkinConfigurationLookup>(lookup: T): SkinConfigurationValue<T> | null
+  public getConfig<T extends SkinConfigurationLookup>(lookup: T): SkinConfigurationValue<T> | null
   {
     return this.source.getConfig(lookup);
   }

@@ -16,7 +16,7 @@ export class LegacyBeatmapTiming implements IBeatmapTiming
 {
   private readonly _timingPoints: LegacyTimingPoint[] = [];
 
-  get timingPoints(): readonly LegacyTimingPoint[]
+  public get timingPoints(): readonly LegacyTimingPoint[]
   {
     return this._timingPoints as readonly LegacyTimingPoint[];
   }

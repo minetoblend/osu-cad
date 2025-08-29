@@ -1076,9 +1076,9 @@ export abstract class Drawable extends Transformable implements IDisposable
   {
   }
 
-  public override get clock(): IFrameBasedClock | null
+  public override get clock(): IFrameBasedClock
   {
-    return this.#clock;
+    return this.#clock!;
   }
 
   public set clock(value: IFrameBasedClock)

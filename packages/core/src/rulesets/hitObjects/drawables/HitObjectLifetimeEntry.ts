@@ -8,18 +8,18 @@ export class HitObjectLifetimeEntry extends LifetimeEntry
 
   readonly #startTimeBindable = new Bindable(0);
 
-  readonly revertResult = new Action();
+  public readonly revertResult = new Action();
 
-  nestedEntries = new Set<HitObjectLifetimeEntry>();
+  public nestedEntries = new Set<HitObjectLifetimeEntry>();
 
-  result: JudgementResult | null = null;
+  public result: JudgementResult | null = null;
 
-  get judged()
+  public get judged()
   {
     return this.result?.hasResult ?? false;
   }
 
-  get allJudged()
+  public get allJudged()
   {
     if (!this.judged)
       return false;
@@ -33,7 +33,7 @@ export class HitObjectLifetimeEntry extends LifetimeEntry
     return true;
   }
 
-  constructor(readonly hitObject: HitObject)
+  public constructor(public readonly hitObject: HitObject)
   {
     super();
 
@@ -64,12 +64,12 @@ export class HitObjectLifetimeEntry extends LifetimeEntry
 
   #keepAlive = false;
 
-  get keepAlive()
+  public get keepAlive()
   {
     return this.#keepAlive;
   }
 
-  set keepAlive(value)
+  public set keepAlive(value)
   {
     if (this.#keepAlive === value)
       return;
@@ -81,7 +81,7 @@ export class HitObjectLifetimeEntry extends LifetimeEntry
       this.setLifetime(this.#realLifetimeStart, this.#realLifetimeEnd);
   }
 
-  get initialLifetimeOffset()
+  public get initialLifetimeOffset()
   {
     return 10_000;
   }
@@ -91,7 +91,7 @@ export class HitObjectLifetimeEntry extends LifetimeEntry
     this.lifetimeStart = this.hitObject.startTime - this.initialLifetimeOffset;
   }
 
-  onRevertResult()
+  public onRevertResult()
   {
     this.revertResult.emit();
   }

@@ -20,18 +20,18 @@ export class DrawableHitObject<out T extends HitObject = HitObject>
   extends PoolableDrawableWithLifetime<HitObjectLifetimeEntry>
   implements IAnimationTimeReference
 {
-  readonly defaultsApplied = new Action<DrawableHitObject>();
+  public readonly defaultsApplied = new Action<DrawableHitObject>();
 
-  readonly hitObjectApplied = new Action<DrawableHitObject>();
+  public readonly hitObjectApplied = new Action<DrawableHitObject>();
 
-  get hitObject(): T
+  public get hitObject(): T
   {
     return this.entry?.hitObject as T;
   }
 
-  parentHitObject: DrawableHitObject | null = null;
+  public parentHitObject: DrawableHitObject | null = null;
 
-  readonly accentColor = new Bindable(new Color(0xffffff));
+  public readonly accentColor = new Bindable(new Color(0xffffff));
 
   protected samples!: SkinnableSound;
 
@@ -42,27 +42,27 @@ export class DrawableHitObject<out T extends HitObject = HitObject>
     return this.samplesBindable.value;
   }
 
-  readonly animationStartTime = new Bindable(0);
+  public readonly animationStartTime = new Bindable(0);
 
-  readonly onNewResult = new Action<[DrawableHitObject, JudgementResult]>();
+  public readonly onNewResult = new Action<[DrawableHitObject, JudgementResult]>();
 
-  readonly onRevertResult = new Action<[DrawableHitObject, JudgementResult]>();
+  public readonly onRevertResult = new Action<[DrawableHitObject, JudgementResult]>();
 
   readonly #state = new Bindable(ArmedState.Idle);
 
-  isInitialized = false;
+  public isInitialized = false;
 
-  get state()
+  public get state()
   {
     return this.#state.value;
   }
 
-  set state(value)
+  public set state(value)
   {
     this.updateState(value);
   }
 
-  constructor(initialHitObject?: T)
+  public constructor(initialHitObject?: T)
   {
     super();
 
@@ -91,12 +91,12 @@ export class DrawableHitObject<out T extends HitObject = HitObject>
 
   public handleUserInput = true;
 
-  override get propagatePositionalInputSubTree(): boolean
+  public override get propagatePositionalInputSubTree(): boolean
   {
     return this.handleUserInput;
   }
 
-  override get propagateNonPositionalInputSubTree(): boolean
+  public override get propagateNonPositionalInputSubTree(): boolean
   {
     return this.handleUserInput;
   }
@@ -116,13 +116,13 @@ export class DrawableHitObject<out T extends HitObject = HitObject>
     this.#updateStateFromResult();
   }
 
-  readonly applyCustomUpdateState = new Action<[DrawableHitObject, ArmedState]>();
+  public readonly applyCustomUpdateState = new Action<[DrawableHitObject, ArmedState]>();
 
-  readonly startTimeBindable = new Bindable(0);
+  public readonly startTimeBindable = new Bindable(0);
 
-  readonly samplesBindable = new Bindable<HitSampleInfo[]>([]);
+  public readonly samplesBindable = new Bindable<HitSampleInfo[]>([]);
 
-  get hitStateUpdateTime()
+  public get hitStateUpdateTime()
   {
     if (this.autoMode)
       return this.hitObject.endTime;
@@ -130,37 +130,37 @@ export class DrawableHitObject<out T extends HitObject = HitObject>
     return this.result?.timeAbsolute ?? this.hitObject.endTime;
   }
 
-  get result()
+  public get result()
   {
     return this.entry?.result ?? null;
   }
 
-  get isHit()
+  public get isHit()
   {
     return this.result?.isHit ?? false;
   }
 
-  get judged()
+  public get judged()
   {
     return this.entry?.judged ?? false;
   }
 
-  get allJudged()
+  public get allJudged()
   {
     return this.entry?.allJudged ?? false;
   }
 
-  override get requiresChildrenUpdate(): boolean
+  public override get requiresChildrenUpdate(): boolean
   {
     return true;
   }
 
-  override get isPresent(): boolean
+  public override get isPresent(): boolean
   {
     return super.isPresent || this.isIdle;
   }
 
-  get isIdle()
+  public get isIdle()
   {
     return this.clock !== null && this.clock.currentTime >= this.lifetimeStart;
   }
@@ -168,11 +168,11 @@ export class DrawableHitObject<out T extends HitObject = HitObject>
   @resolved(IPooledHitObjectProvider, true)
   accessor #pooledObjectProvider!: IPooledHitObjectProvider | undefined;
 
-  readonly onNestedDrawableCreated = new Action<DrawableHitObject>();
+  public readonly onNestedDrawableCreated = new Action<DrawableHitObject>();
 
   #nestedHitObjects: DrawableHitObject[] = [];
 
-  get nestedHitObjects()
+  public get nestedHitObjects()
   {
     return this.#nestedHitObjects as readonly DrawableHitObject[];
   }
@@ -325,7 +325,7 @@ export class DrawableHitObject<out T extends HitObject = HitObject>
     this.applyCustomUpdateState.emit(drawableHitObject, state);
   }
 
-  updateState(state: ArmedState, force = false)
+  public updateState(state: ArmedState, force = false)
   {
     if (state === this.state && !force)
       return;
@@ -359,15 +359,15 @@ export class DrawableHitObject<out T extends HitObject = HitObject>
     super.clearTransformsAfter(-Number.MAX_VALUE, true);
   }
 
-  override clearTransformsAfter()
+  public override clearTransformsAfter()
   {
   }
 
-  override applyTransformsAt()
+  public override applyTransformsAt()
   {
   }
 
-  override update()
+  protected override update()
   {
     if (!this.#samplesLoaded)
     {
@@ -403,7 +403,7 @@ export class DrawableHitObject<out T extends HitObject = HitObject>
   {
   }
 
-  onKilled()
+  public onKilled()
   {
     for (const nested of this.nestedHitObjects)
       nested.onKilled();
@@ -420,11 +420,11 @@ export class DrawableHitObject<out T extends HitObject = HitObject>
     this.updateComboColor();
   }
 
-  override dispose(isDisposing?: boolean)
+  public override dispose()
   {
-    super.dispose(isDisposing);
-
     this.skin.sourceChanged.removeListener(this.skinChanged, this);
+
+    super.dispose();
   }
 
   protected playSamples()
@@ -432,7 +432,7 @@ export class DrawableHitObject<out T extends HitObject = HitObject>
     this.samples?.play();
   }
 
-  stopAllSamples()
+  public stopAllSamples()
   {
     if (this.samples?.looping === true)
       this.samples.stop();
@@ -476,7 +476,7 @@ export class DrawableHitObject<out T extends HitObject = HitObject>
     this.onNewResult.emit(this, result);
   }
 
-  autoMode = false;
+  public autoMode = false;
 
   protected updateResult(userTriggered: boolean)
   {

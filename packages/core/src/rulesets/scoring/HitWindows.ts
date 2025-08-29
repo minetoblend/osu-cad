@@ -1,14 +1,14 @@
-import { HitResult } from "./HitResult";
 import { BeatmapDifficultyInfo } from "../../beatmaps";
 import type { EmptyHitWindows } from "./EmptyHitWindows";
+import { HitResult } from "./HitResult";
 
 export class DifficultyRange
 {
-  constructor(
-    readonly result: HitResult,
-    readonly min: number,
-    readonly average: number,
-    readonly max: number,
+  public constructor(
+    public readonly result: HitResult,
+    public readonly min: number,
+    public readonly average: number,
+    public readonly max: number,
   )
   {
   }
@@ -17,9 +17,9 @@ export class DifficultyRange
 
 export class HitWindows
 {
-  declare static readonly Empty: EmptyHitWindows;
+  public declare static readonly Empty: EmptyHitWindows;
 
-  static readonly base_ranges = [
+  public static readonly base_ranges = [
     new DifficultyRange(HitResult.Perfect, 22.4, 19.4, 13.9),
     new DifficultyRange(HitResult.Great, 64, 49, 34),
     new DifficultyRange(HitResult.Good, 97, 82, 67),
@@ -46,7 +46,7 @@ export class HitWindows
     return HitResult.None;
   }
 
-  * getAvailableWindows()
+  public* getAvailableWindows()
   {
     for (let result = HitResult.Meh; result <= HitResult.Perfect; result++)
     {
@@ -55,12 +55,12 @@ export class HitWindows
     }
   }
 
-  isHitResultAllowed(result: HitResult): boolean
+  public isHitResultAllowed(result: HitResult): boolean
   {
     return true;
   }
 
-  setDifficulty(difficulty: number)
+  public setDifficulty(difficulty: number)
   {
     for (const range of this.getRanges())
     {
@@ -95,7 +95,7 @@ export class HitWindows
     }
   }
 
-  resultFor(timeOffset: number): HitResult
+  public resultFor(timeOffset: number): HitResult
   {
     timeOffset = Math.abs(timeOffset);
 
@@ -108,7 +108,7 @@ export class HitWindows
     return HitResult.None;
   }
 
-  windowFor(result: HitResult)
+  public windowFor(result: HitResult)
   {
     switch (result)
     {
@@ -135,12 +135,12 @@ export class HitWindows
     }
   }
 
-  canBeHit(timeOffset: number)
+  public canBeHit(timeOffset: number)
   {
     return timeOffset <= this.windowFor(this.lowestSuccessfulHitResult());
   }
 
-  getRanges(): DifficultyRange[]
+  public getRanges(): DifficultyRange[]
   {
     return HitWindows.base_ranges;
   }

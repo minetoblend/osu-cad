@@ -14,17 +14,17 @@ export class HitSampleInfo implements ISampleInfo
   public static readonly ALL_ADDITIONS = [this.HIT_WHISTLE, this.HIT_FINISH, this.HIT_CLAP];
   public static readonly ALL_BANKS = [this.BANK_NORMAL, this.BANK_SOFT, this.BANK_DRUM];
 
-  constructor(
-    readonly name: string,
-    readonly bank = HitSampleInfo.BANK_NORMAL,
-    readonly suffix?: string,
-    readonly volume = 100,
-    readonly editorAutoBank = true,
+  public constructor(
+    public readonly name: string,
+    public readonly bank = HitSampleInfo.BANK_NORMAL,
+    public readonly suffix?: string,
+    public readonly volume = 100,
+    public readonly editorAutoBank = true,
   )
   {
   }
 
-  get lookupNames(): string[]
+  public get lookupNames(): string[]
   {
     const { suffix, bank, name } = this;
 

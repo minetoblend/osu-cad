@@ -5,73 +5,73 @@ import { bindableBacked } from "../utils/bindableBacked";
 
 export class BeatmapDifficultyInfo extends ObjectDDS
 {
-  static readonly attributes: DDSAttributes = {
+  public static readonly attributes: DDSAttributes = {
     type: "@osucad/beatmap-difficulty-info",
     version: 0,
   };
 
-  constructor()
+  public constructor()
   {
     super(BeatmapDifficultyInfo.attributes);
   }
 
-  readonly drainRateBindable = new BindableNumber(5)
+  public readonly drainRateBindable = new BindableNumber(5)
     .withMinValue(0)
     .withMaxValue(10)
     .withPrecision(0.1);
 
   @type("float32")
   @bindableBacked("drainRateBindable")
-  accessor drainRate!: number
+  public accessor drainRate!: number
 
 
-  readonly circleSizeBindable = new BindableNumber(5)
+  public readonly circleSizeBindable = new BindableNumber(5)
     .withMinValue(0)
     .withMaxValue(10)
     .withPrecision(0.1);
 
   @type("float32")
   @bindableBacked("circleSizeBindable")
-  accessor circleSize!: number
+  public accessor circleSize!: number
 
 
-  readonly approachRateBindable = new BindableNumber(5)
+  public readonly approachRateBindable = new BindableNumber(5)
     .withMinValue(0)
     .withMaxValue(10)
     .withPrecision(0.1);
 
   @type("float32")
   @bindableBacked("approachRateBindable")
-  accessor approachRate!: number
+  public accessor approachRate!: number
 
-  readonly overallDifficultyBindable = new BindableNumber(5)
+  public readonly overallDifficultyBindable = new BindableNumber(5)
     .withMinValue(0)
     .withMaxValue(10)
     .withPrecision(0.1);
 
   @type("float32")
   @bindableBacked("overallDifficultyBindable")
-  accessor overallDifficulty!: number
+  public accessor overallDifficulty!: number
 
-  readonly sliderMultiplierBindable = new BindableNumber(1.4)
+  public readonly sliderMultiplierBindable = new BindableNumber(1.4)
     .withMinValue(0.4)
     .withMaxValue(3.6)
     .withPrecision(0.1);
 
   @type("float32")
   @bindableBacked("sliderMultiplierBindable")
-  accessor sliderMultiplier!: number
+  public accessor sliderMultiplier!: number
 
-  readonly sliderTickRateBindable = new BindableNumber(1)
+  public readonly sliderTickRateBindable = new BindableNumber(1)
     .withMinValue(1)
     .withMaxValue(4)
     .withPrecision(1);
 
   @type("int8")
   @bindableBacked("sliderTickRateBindable")
-  accessor sliderTickRate!: number
+  public accessor sliderTickRate!: number
 
-  static difficultyRange(difficulty: number, min: number, mid: number, max: number)
+  public static difficultyRange(difficulty: number, min: number, mid: number, max: number)
   {
     if (difficulty > 5)
       return mid + (max - mid) * (difficulty - 5) / 5;
@@ -81,7 +81,7 @@ export class BeatmapDifficultyInfo extends ObjectDDS
     return mid;
   }
 
-  calculateCircleSize(applyFudge: boolean)
+  public calculateCircleSize(applyFudge: boolean)
   {
     const broken_gamefield_rounding_allowance = 1.00041;
 

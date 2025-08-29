@@ -5,7 +5,7 @@ import type { SpriteText } from "@osucad/framework";
 export class SkinnableSpriteText extends SkinnableDrawable
 {
 
-  constructor(lookup: SkinComponentLookup, defaultImplementation?: () => SpriteText)
+  public constructor(lookup: SkinComponentLookup, defaultImplementation?: () => SpriteText)
   {
     super(lookup, defaultImplementation);
   }
@@ -20,12 +20,12 @@ export class SkinnableSpriteText extends SkinnableDrawable
 
   #text = "";
 
-  get text()
+  public get text()
   {
     return this.#text;
   }
 
-  set text(value: string)
+  public set text(value: string)
   {
     if(this.#text === value)
       return;

@@ -7,17 +7,17 @@ export class SkinnableSound extends SkinReloadableDrawable
 {
   public minimumSampleVolume = 0;
 
-  override get removeWhenNotAlive(): boolean
+  public override get removeWhenNotAlive(): boolean
   {
     return false;
   }
 
-  override get removeCompletedTransforms(): boolean
+  public override get removeCompletedTransforms(): boolean
   {
     return false;
   }
 
-  override set removeCompletedTransforms(value: boolean)
+  public override set removeCompletedTransforms(value: boolean)
   {
     // noop
   }
@@ -27,14 +27,14 @@ export class SkinnableSound extends SkinReloadableDrawable
     return this.looping;
   }
 
-  get drawableSamples()
+  public get drawableSamples()
   {
     return this.#samplesContainer.children.map(it => it.sample).filter(it => it !== null);
   }
 
   readonly #samplesContainer: Container<PoolableSkinnableSample>;
 
-  readonly rate = new Bindable(1);
+  public readonly rate = new Bindable(1);
 
   public constructor(samples?: ISampleInfo | ISampleInfo[])
   {
@@ -64,19 +64,19 @@ export class SkinnableSound extends SkinReloadableDrawable
       this.#updateSamples();
   }
 
-  clearSamples()
+  public clearSamples()
   {
     this.samples = [];
   }
 
   #looping: boolean = false;
 
-  get looping(): boolean
+  public get looping(): boolean
   {
     return this.#looping;
   }
 
-  set looping(value: boolean)
+  public set looping(value: boolean)
   {
     if (this.#looping === value)
       return;
@@ -87,7 +87,7 @@ export class SkinnableSound extends SkinReloadableDrawable
       s.looping = value;
   }
 
-  play()
+  public play()
   {
     this.flushPendingSkinChanges();
 
@@ -109,7 +109,7 @@ export class SkinnableSound extends SkinReloadableDrawable
     super.loadAsyncComplete();
   }
 
-  stop()
+  public stop()
   {
     for (const c of this.#samplesContainer.children)
       c.stop();
@@ -141,7 +141,7 @@ export class SkinnableSound extends SkinReloadableDrawable
       this.play();
   }
 
-  get isPlaying()
+  public get isPlaying()
   {
     for (const c of this.#samplesContainer.children)
     {

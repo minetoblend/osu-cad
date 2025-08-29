@@ -2,12 +2,12 @@ import { HitResult } from "../scoring/HitResult";
 
 export class Judgement
 {
-  get maxResult(): HitResult
+  public get maxResult(): HitResult
   {
     return HitResult.Perfect;
   }
 
-  get minResult()
+  public get minResult()
   {
     switch (this.maxResult)
     {

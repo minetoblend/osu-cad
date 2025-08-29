@@ -40,7 +40,7 @@ export class SkinConfiguration
 {
   #scope = effectScope(true);
 
-  constructor()
+  public constructor()
   {
     this.#scope.run(() =>
     {
@@ -48,7 +48,7 @@ export class SkinConfiguration
     });
   }
 
-  comboColors: Color[] = [];
+  public comboColors: Color[] = [];
 
   private configValues!: Partial<SkinConfigurationFields>;
 
@@ -62,7 +62,7 @@ export class SkinConfiguration
     this.configValues[lookup] = value ?? undefined;
   }
 
-  dispose()
+  public dispose()
   {
     this.#scope.stop();
   }

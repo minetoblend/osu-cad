@@ -2,7 +2,7 @@ import { Axes, Container } from "@osucad/framework";
 
 export class AspectContainer extends Container
 {
-  override update()
+  public override update()
   {
     super.update();
     if (this.relativeSizeAxes === Axes.X)

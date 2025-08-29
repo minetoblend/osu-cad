@@ -7,13 +7,13 @@ import { LegacyBeatmapTiming } from "./timing/LegacyBeatmapTiming";
 
 export class Beatmap<T extends HitObject = HitObject>
 {
-  constructor(
+  public constructor(
     public beatmapInfo: BeatmapInfo = new BeatmapInfo(),
     public hitObjects: T[] = [],
     public colors = new BeatmapColors(),
-    readonly timing = new LegacyBeatmapTiming(),
-    readonly metadata = new BeatmapMetadata(),
-    readonly difficulty = new BeatmapDifficultyInfo(),
+    public readonly timing = new LegacyBeatmapTiming(),
+    public readonly metadata = new BeatmapMetadata(),
+    public readonly difficulty = new BeatmapDifficultyInfo(),
   )
   {
   }

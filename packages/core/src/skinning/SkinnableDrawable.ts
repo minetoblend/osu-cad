@@ -5,7 +5,7 @@ import type { SkinComponentLookup } from "./SkinComponentLookup";
 
 export class SkinnableDrawable extends CompositeDrawable
 {
-  constructor(readonly lookup: SkinComponentLookup, readonly defaultImplementation?: () => Drawable)
+  public constructor(protected readonly lookup: SkinComponentLookup, protected readonly defaultImplementation?: () => Drawable)
   {
     super();
 
@@ -39,9 +39,9 @@ export class SkinnableDrawable extends CompositeDrawable
     this.updateContent();
   }
 
-  drawable!: Drawable;
+  public drawable!: Drawable;
 
-  updateContent()
+  protected updateContent()
   {
     this.clearInternal();
 
@@ -53,14 +53,14 @@ export class SkinnableDrawable extends CompositeDrawable
     this.drawable.origin = Anchor.Center;
   }
 
-  override dispose(isDisposing?: boolean)
+  public override dispose()
   {
-    super.dispose(isDisposing);
-
     this.skin.sourceChanged.removeListener(this.#skinChanged, this);
+
+    super.dispose();
   }
 
-  resetAnimation()
+  public resetAnimation()
   {
     // TODO
   }

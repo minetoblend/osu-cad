@@ -8,7 +8,7 @@ export interface ShakeContainerOptions extends ContainerOptions
 
 export class ShakeContainer extends Container
 {
-  constructor(options: ShakeContainerOptions = {})
+  public constructor(options: ShakeContainerOptions = {})
   {
     const { shakeDuration, ...rest } = options;
 
@@ -19,7 +19,7 @@ export class ShakeContainer extends Container
 
   public shakeDuration: number;
 
-  override shake(maximumLength?: number)
+  public override shake(maximumLength?: number)
   {
     super.shake(this.shakeDuration, undefined, maximumLength);
   }

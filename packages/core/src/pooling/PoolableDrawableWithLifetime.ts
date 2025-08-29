@@ -5,12 +5,12 @@ export abstract class PoolableDrawableWithLifetime<TEntry extends LifetimeEntry>
 {
   #entry: TEntry | null = null;
 
-  get entry()
+  public get entry()
   {
     return this.#entry;
   }
 
-  set entry(value)
+  public set entry(value)
   {
     if (this.loadState === LoadState.NotLoaded)
       this.#entry = value;
@@ -27,12 +27,12 @@ export abstract class PoolableDrawableWithLifetime<TEntry extends LifetimeEntry>
     return this.#hasEntryApplied;
   }
 
-  override get lifetimeStart()
+  public override get lifetimeStart()
   {
     return super.lifetimeStart;
   }
 
-  override set lifetimeStart(value)
+  public override set lifetimeStart(value)
   {
     if (this.entry === null && this.lifetimeStart !== value)
       throw new Error("Cannot modify lifetime of PoolableDrawableWithLifetime when entry is not set");
@@ -41,12 +41,12 @@ export abstract class PoolableDrawableWithLifetime<TEntry extends LifetimeEntry>
       this.entry.lifetimeStart = value;
   }
 
-  override get lifetimeEnd()
+  public override get lifetimeEnd()
   {
     return super.lifetimeEnd;
   }
 
-  override set lifetimeEnd(value)
+  public override set lifetimeEnd(value)
   {
     if (this.entry === null && this.lifetimeEnd !== value)
       throw new Error("Cannot modify lifetime of PoolableDrawableWithLifetime when entry is not set");
@@ -55,17 +55,17 @@ export abstract class PoolableDrawableWithLifetime<TEntry extends LifetimeEntry>
       this.entry.lifetimeEnd = value;
   }
 
-  override get removeWhenNotAlive()
+  public override get removeWhenNotAlive()
   {
     return false;
   }
 
-  override get removeCompletedTransforms()
+  public override get removeCompletedTransforms()
   {
     return false;
   }
 
-  override set removeCompletedTransforms(value)
+  public override set removeCompletedTransforms(value)
   {
     // Do nothing
   }
@@ -84,7 +84,7 @@ export abstract class PoolableDrawableWithLifetime<TEntry extends LifetimeEntry>
       this.#apply(this.entry);
   }
 
-  apply(entry: TEntry)
+  public apply(entry: TEntry)
   {
     if (this.loadState === LoadState.Loading)
       throw new Error("Cannot apply entry while currently loading");

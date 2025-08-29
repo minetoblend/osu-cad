@@ -4,7 +4,7 @@ export class GameplayCursorContainer extends CursorContainer
 {
   public lastFrameState: Visibility = Visibility.Hidden;
 
-  override update()
+  protected override update()
   {
     super.update();
 
