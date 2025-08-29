@@ -13,7 +13,7 @@ export class Line
 
     const dir = this.endPoint.sub(this.startPoint).normalize();
 
-    const v = position.sub(this.startPoint);
+    const v = position.sub(this.startPoint).normalize();
     const d = v.dot(dir);
     return this.startPoint.add(dir.scale(d));
   }
@@ -25,7 +25,7 @@ export class Line
 
     const dir = endPoint.sub(startPoint).normalize();
 
-    const v = position.sub(startPoint);
+    const v = position.sub(startPoint).normalize();
     const d = v.dot(dir);
     return startPoint.add(dir.scaleInPlace(d));
   }
