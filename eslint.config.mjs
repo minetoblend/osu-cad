@@ -53,6 +53,7 @@ export default defineConfig([
       "@typescript-eslint/consistent-type-imports": ["error", {
         disallowTypeAnnotations: false,
       }],
+      "@typescript-eslint/explicit-member-accessibility": "error",
       "ts/no-redeclare": "off",
       "eol-last": ["error", "always"],
       "no-tabs": ["error"],
