@@ -1,7 +1,5 @@
 import type { Bindable } from "@osucad/framework";
-import { Anchor, Box, resolved, Vec2 } from "@osucad/framework";
-import { Axes, Container } from "@osucad/framework";
-import { CompositeDrawable } from "@osucad/framework";
+import { Anchor, Axes, Box, CompositeDrawable, Container, resolved, Vec2 } from "@osucad/framework";
 import type { Slider } from "../../../hitObjects";
 import { PathType } from "../../../hitObjects";
 import { Playfield } from "@osucad/core";
@@ -48,7 +46,7 @@ export class SliderPathVisualizer extends CompositeDrawable
 
     const positions = controlPoints.map(p => this.#playfield.toSpaceOfOtherDrawable(this.slider.position.add(p.position), this));
 
-    let currentColor = SliderPathVisualizer.getColor(null);
+    let currentColor = 0xCCCCCC;
 
     for (let i = 0; i < controlPoints.length - 1; i++)
     {

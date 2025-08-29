@@ -1,7 +1,7 @@
 import { PlacementState } from "../HitObjectPlacementTool";
 import { PathPoint, PathType, Slider } from "../../../hitObjects";
-import type { ClickEvent, MouseDownEvent, ScrollEvent } from "@osucad/framework";
-import { Anchor, Axes, Box, CompositeDrawable, dependencyLoader, MouseButton, SpriteText, Vec2 } from "@osucad/framework";
+import type { ClickEvent, KeyDownEvent, MouseDownEvent, ScrollEvent } from "@osucad/framework";
+import { Anchor, Axes, Box, CompositeDrawable, dependencyLoader, Key, MouseButton, SpriteText, Vec2 } from "@osucad/framework";
 import { SliderPathVisualizer } from "./SliderPathVisualizer";
 import type { ISliderToolPresence } from "./HitCircleToolPresence";
 import type { ColorSource } from "pixi.js";
@@ -132,6 +132,17 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
       position: { ...this.hitObject.position },
       id: this.hitObject.id,
     };
+  }
+
+  override onKeyDown(e: KeyDownEvent)
+  {
+    if (e.key === Key.Backspace)
+    {
+      if (this.path.length > 1)
+        this.path = this.path.slice(0, -1);
+    }
+
+    return false;
   }
 
   override onScroll(e: ScrollEvent)
