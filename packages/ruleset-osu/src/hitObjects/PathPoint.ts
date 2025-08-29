@@ -69,24 +69,24 @@ export namespace PathType
 
 export class PathPoint
 {
-  constructor(
-    readonly position: Vec2,
-    readonly type: PathType | null = null,
+  public constructor(
+    public readonly position: Vec2,
+    public readonly type: PathType | null = null,
   )
   {
   }
 
-  withPosition(position: Vec2)
+  public withPosition(position: Vec2)
   {
     return new PathPoint(position, this.type);
   }
 
-  withType(type: PathType | null)
+  public withType(type: PathType | null)
   {
     return new PathPoint(this.position, type);
   }
 
-  withNextType(index: number)
+  public withNextType(index: number)
   {
     return this.withType(PathType.nextAtIndex(this.type, index));
   }

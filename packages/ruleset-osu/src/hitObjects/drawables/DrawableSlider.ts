@@ -17,9 +17,9 @@ import { OsuSliderJudgementResult } from "../../judgements/OsuSliderJudgementRes
 @provideSelf()
 export class DrawableSlider extends DrawableOsuHitObject<Slider>
 {
-  readonly sliderInputManager: SliderInputManager;
+  public readonly sliderInputManager: SliderInputManager;
 
-  constructor()
+  public constructor()
   {
     super();
 
@@ -33,12 +33,12 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
     this.ball.bypassAutoSizeAxes = Axes.Both;
   }
 
-  readonly snakingIn = new Bindable(true);
-  readonly snakingOut = new Bindable(false);
+  public readonly snakingIn = new Bindable(true);
+  public readonly snakingOut = new Bindable(false);
 
-  readonly pathVersion = new Bindable(-1);
+  public readonly pathVersion = new Bindable(-1);
 
-  readonly ball: DrawableSliderBall;
+  public readonly ball: DrawableSliderBall;
 
   public overlayElementContainer!: Container;
 
@@ -48,21 +48,21 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
   private headContainer!: Container<DrawableSliderHead>;
   private shakeContainer!: ShakeContainer;
 
-  body!: SkinnableDrawable;
+  public body!: SkinnableDrawable;
 
-  readonly tracking = new BindableBoolean();
+  public readonly tracking = new BindableBoolean();
 
-  get sliderHead(): DrawableSliderHead
+  public get sliderHead(): DrawableSliderHead
   {
     return this.headContainer.child;
   }
 
-  get sliderTail(): DrawableSliderTail
+  public get sliderTail(): DrawableSliderTail
   {
     return this.tailContainer.child;
   }
 
-  get repeats()
+  public get repeats()
   {
     return this.repeatContainer.children;
   }
@@ -159,14 +159,14 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
   {
   }
 
-  get sliderBody(): PlaySliderBody | null
+  public get sliderBody(): PlaySliderBody | null
   {
     if (this.body.drawable instanceof PlaySliderBody)
       return this.body.drawable;
     return null;
   }
 
-  override update()
+  protected override update()
   {
     super.update();
 
@@ -218,7 +218,7 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
     this.expire();
   }
 
-  override shake()
+  public override shake()
   {
     this.shakeContainer.shake();
   }
@@ -256,7 +256,7 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
     }
   }
 
-  override get result()
+  public override get result()
   {
     return super.result as OsuSliderJudgementResult;
   }

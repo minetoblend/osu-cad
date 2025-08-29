@@ -4,12 +4,12 @@ import { OsuHitObject } from "./OsuHitObject";
 
 export class HitCircle extends OsuHitObject
 {
-  static readonly attributes: DDSAttributes = {
+  public static readonly attributes: DDSAttributes = {
     type: "@osucad/hitcircle",
     version: 0,
   };
 
-  constructor(options?: OsuHitObjectOptions)
+  public constructor(options?: OsuHitObjectOptions)
   {
     super(HitCircle.attributes, options);
   }

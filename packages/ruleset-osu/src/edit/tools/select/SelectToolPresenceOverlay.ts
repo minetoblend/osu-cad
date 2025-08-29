@@ -13,7 +13,7 @@ let icon: Promise<Texture | null> | undefined;
 
 export class SelectToolPresenceOverlay extends ComposeToolPresenceOverlay
 {
-  constructor()
+  public constructor()
   {
     super();
   }
@@ -41,7 +41,7 @@ export class SelectToolPresenceOverlay extends ComposeToolPresenceOverlay
     });
   }
 
-  override updatePresence(content: unknown): void
+  public override updatePresence(content: unknown): void
   {
     const { position } = content as ISelectToolPresence;
 

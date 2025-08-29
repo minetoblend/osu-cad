@@ -25,12 +25,12 @@ export class OsuCursor extends SkinReloadableDrawable
     return this.#cursorSprite.drawable as SkinnableCursor;
   }
 
-  get currentExpandedScale(): Vec2
+  public get currentExpandedScale(): Vec2
   {
     return this.#skinnableCursor.expandTarget?.scale ?? Vec2.one();
   }
 
-  get currentRotation()
+  public get currentRotation()
   {
     return this.#skinnableCursor.expandTarget?.rotation ?? 0;
   }

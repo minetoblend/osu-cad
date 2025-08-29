@@ -7,7 +7,7 @@ import type { DrawableOsuHitObject } from "../hitObjects/drawables/DrawableOsuHi
 
 export class HitObjectSnapProvider extends Component implements ISnapProvider
 {
-  constructor()
+  public constructor()
   {
     super();
   }
@@ -15,7 +15,7 @@ export class HitObjectSnapProvider extends Component implements ISnapProvider
   @resolved(Playfield)
   accessor #playfield!: Playfield;
 
-  * getSnapResults(targets: Vec2[], options?: ISnapOptions): Iterable<SnapResult>
+  public* getSnapResults(targets: Vec2[], options?: ISnapOptions): Iterable<SnapResult>
   {
     const ignore = options?.ignore ?? [];
 

@@ -9,12 +9,12 @@ import { OsuAction } from "../../ui/OsuAction";
 
 export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
 {
-  get hitAction()
+  public get hitAction()
   {
     return this.hitArea.hitAction;
   }
 
-  constructor(initialHitObject?: HitCircle)
+  public constructor(initialHitObject?: HitCircle)
   {
     super(initialHitObject);
 
@@ -26,7 +26,7 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
   private shakeContainer!: ShakeContainer;
   private hitArea!: HitReceptor;
 
-  get proxiedLayer()
+  public get proxiedLayer()
   {
     return this.approachCircle;
   }
@@ -162,7 +162,7 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
 
 class ProxyableSkinnableDrawable extends SkinnableDrawable
 {
-  override get removeWhenNotAlive()
+  public override get removeWhenNotAlive()
   {
     return false;
   }
@@ -170,11 +170,11 @@ class ProxyableSkinnableDrawable extends SkinnableDrawable
 
 class HitReceptor extends CompositeDrawable implements IKeyBindingHandler<OsuAction>
 {
-  hitAction: OsuAction | null = null;
+  public hitAction: OsuAction | null = null;
 
-  constructor(
-    readonly canBeHit: () => boolean,
-    readonly hit: () => void,
+  public constructor(
+    public readonly canBeHit: () => boolean,
+    public readonly hit: () => void,
   )
   {
     super();
@@ -188,19 +188,19 @@ class HitReceptor extends CompositeDrawable implements IKeyBindingHandler<OsuAct
     this.cornerRadius = OsuHitObject.OBJECT_RADIUS;
   }
 
-  readonly isKeyBindingHandler = true;
+  public readonly isKeyBindingHandler = true;
 
-  override get handlePositionalInput(): boolean
+  public override get handlePositionalInput(): boolean
   {
     return true;
   }
 
-  canHandleKeyBinding(binding: KeyBindingAction): boolean
+  public canHandleKeyBinding(binding: KeyBindingAction): boolean
   {
     return binding instanceof OsuAction;
   }
 
-  onKeyBindingPressed(e: KeyBindingPressEvent<OsuAction>): boolean
+  public onKeyBindingPressed(e: KeyBindingPressEvent<OsuAction>): boolean
   {
     if (!this.canBeHit())
       return false;
@@ -220,7 +220,7 @@ class HitReceptor extends CompositeDrawable implements IKeyBindingHandler<OsuAct
     return false;
   }
 
-  reset()
+  public reset()
   {
     this.hitAction = null;
   }

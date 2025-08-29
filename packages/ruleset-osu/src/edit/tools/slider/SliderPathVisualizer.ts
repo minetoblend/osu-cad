@@ -11,7 +11,7 @@ export class SliderPathVisualizer extends CompositeDrawable
 
   private pathVersion!: Bindable<number>;
 
-  constructor(readonly slider: Slider)
+  public constructor(public readonly slider: Slider)
   {
     super();
 
@@ -90,7 +90,7 @@ export class SliderPathVisualizer extends CompositeDrawable
       this.#points.remove(this.#points.children[this.#points.children.length - 1]);
   }
 
-  static getColor(type: PathType | null)
+  public static getColor(type: PathType | null)
   {
     switch (type)
     {
@@ -112,7 +112,7 @@ export class SliderPathVisualizer extends CompositeDrawable
 
 class PathHandle extends CompositeDrawable
 {
-  constructor()
+  public constructor()
   {
     super();
 

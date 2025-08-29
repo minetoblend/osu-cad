@@ -13,42 +13,42 @@ export class SliderBody extends CompositeDrawable
     return this.#path;
   }
 
-  get pathRadius()
+  public get pathRadius()
   {
     return this.#path.pathRadius;
   }
 
-  set pathRadius(value)
+  public set pathRadius(value)
   {
     this.#path.pathRadius = value;
   }
 
-  get accentColor()
+  public get accentColor()
   {
     return this.#path.accentColor;
   }
 
-  set accentColor(value)
+  public set accentColor(value)
   {
     this.#path.accentColor = value;
   }
 
-  override get borderColor()
+  public override get borderColor()
   {
     return this.#path.borderColor;
   }
 
-  override set borderColor(value)
+  public override set borderColor(value)
   {
     this.#path.borderColor = value;
   }
 
-  get borderSize()
+  public get borderSize()
   {
     return this.#path.borderSize;
   }
 
-  set borderSize(value)
+  public set borderSize(value)
   {
     this.#path.borderSize = value;
   }
@@ -56,10 +56,11 @@ export class SliderBody extends CompositeDrawable
   protected constructor()
   {
     super();
+
     this.recyclePath();
   }
 
-  recyclePath()
+  public recyclePath()
   {
     this.internalChild = this.#path = this.createSliderPath().adjust((p) =>
     {
@@ -85,7 +86,7 @@ export class SliderBody extends CompositeDrawable
 
 class DefaultDrawableSliderPath extends DrawableSliderPath
 {
-  override colorAt(position: number): ColorSource
+  protected override colorAt(position: number): ColorSource
   {
     if (this.calculatedBorderPortion !== 0 && position <= this.calculatedBorderPortion)
       return this.borderColor;

@@ -5,14 +5,14 @@ import { OsuJudgement } from "../judgements/OsuJudgement";
 
 export class SpinnerTick extends OsuHitObject
 {
-  constructor()
+  public constructor()
   {
     super({ type: "@osucad/spinner-tick", version: 0 });
   }
 
   public spinnerDuration: number = 0;
 
-  override createJudgement(): Judgement
+  public override createJudgement(): Judgement
   {
     return new OsuSpinnerTickJudgement();
   }
@@ -22,7 +22,7 @@ export class SpinnerTick extends OsuHitObject
     return HitWindows.Empty;
   }
 
-  override get maximumJudgementOffset(): number
+  public override get maximumJudgementOffset(): number
   {
     return this.spinnerDuration;
   }
@@ -35,7 +35,7 @@ export class SpinnerTick extends OsuHitObject
 
 export class OsuSpinnerTickJudgement extends OsuJudgement
 {
-  override get maxResult(): HitResult
+  public override get maxResult(): HitResult
   {
     return HitResult.SmallBonus;
   }

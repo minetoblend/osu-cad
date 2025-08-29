@@ -18,7 +18,7 @@ export class SliderInputManager extends Component
   public tracking = false;
 
   @resolved(PlayfieldClock, true)
-  accessor playfieldClock!: PlayfieldClock | undefined;
+  public accessor playfieldClock!: PlayfieldClock | undefined;
 
   #timeToAcceptAnyKeyAfter: number | null = null;
   #screenSpaceMousePosition: Vec2 | null = null;
@@ -27,32 +27,32 @@ export class SliderInputManager extends Component
 
   readonly #lastPressedActions: OsuAction[] = [];
 
-  constructor(drawableSlider: DrawableSlider)
+  public constructor(drawableSlider: DrawableSlider)
   {
     super();
     this.#slider = drawableSlider;
     drawableSlider.hitObjectApplied.addListener(this.#resetState, this);
   }
 
-  override receivePositionalInputAt(screenSpacePosition: Vec2): boolean
+  public override receivePositionalInputAt(screenSpacePosition: Vec2): boolean
   {
     return true;
   }
 
-  override onMouseMove(e: MouseMoveEvent): boolean
+  protected override onMouseMove(e: MouseMoveEvent): boolean
   {
     this.#screenSpaceMousePosition = e.screenSpaceMousePosition;
     return false;
   }
 
-  override update()
+  protected override update()
   {
     super.update();
 
     this.#updateTracking(this.isMouseInFollowArea(this.tracking));
   }
 
-  postProcessHeadJudgement(head: DrawableSliderHead)
+  public postProcessHeadJudgement(head: DrawableSliderHead)
   {
     if (!head.judged || !head.result!.isHit)
       return;
@@ -108,7 +108,7 @@ export class SliderInputManager extends Component
     this.#updateTracking(allTicksInRange || this.isMouseInFollowArea(false));
   }
 
-  tryJudgeNestedObject(nestedObject: DrawableOsuHitObject, timeOffset: number)
+  public tryJudgeNestedObject(nestedObject: DrawableOsuHitObject, timeOffset: number)
   {
     if (nestedObject instanceof DrawableSliderRepeat || nestedObject instanceof DrawableSliderTick)
     {
@@ -138,7 +138,7 @@ export class SliderInputManager extends Component
       nestedObject.missForcefully();
   }
 
-  isMouseInFollowArea(expanded: boolean)
+  public isMouseInFollowArea(expanded: boolean)
   {
     if (!this.#screenSpaceMousePosition)
       return false;
@@ -240,9 +240,9 @@ export class SliderInputManager extends Component
     this.#screenSpaceMousePosition = null;
   }
 
-  override dispose(isDisposing: boolean = true)
+  public override dispose()
   {
-    super.dispose(isDisposing);
+    super.dispose();
 
     this.#slider.hitObjectApplied.removeListener(this.#resetState, this);
   }

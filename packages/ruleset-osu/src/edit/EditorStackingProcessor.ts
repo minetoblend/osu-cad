@@ -6,7 +6,7 @@ import type { HitObject } from "@osucad/core";
 
 export class EditorStackingProcessor extends EditorBeatmapProcessor
 {
-  constructor()
+  public constructor()
   {
     super(["stacking"]);
   }

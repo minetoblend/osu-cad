@@ -19,59 +19,59 @@ const pathPointSerializer = serializer<readonly PathPoint[], [number, number, Pa
 
 export class SliderPath extends ObjectDDS
 {
-  readonly version = new Bindable(0);
-
-  static readonly attributes: DDSAttributes = {
+  public static readonly attributes: DDSAttributes = {
     type: "@osucad/slider-path",
     version: 0,
   };
 
-  constructor()
+  public readonly version = new Bindable(0);
+
+  public constructor()
   {
     super(SliderPath.attributes);
     this.controlPointsBindable.bindValueChanged(this.invalidatePath, this);
     this.expectedDistanceBindable.bindValueChanged(() => this.#fullRange.invalidate());
   }
 
-  invalidatePath()
+  public invalidatePath()
   {
     this.#calculatedPath.invalidate();
     this.#fullRange.invalidate();
     this.version.value++;
   }
 
-  readonly expectedDistanceBindable = new Bindable(0);
+  public readonly expectedDistanceBindable = new Bindable(0);
 
-  get distance()
+  public get distance()
   {
     return Math.min(this.expectedDistance, this.calculatedDistance);
   }
 
   @type("float64")
   @bindableBacked("expectedDistanceBindable")
-  accessor expectedDistance!: number
+  public accessor expectedDistance!: number
 
-  get calculatedDistance()
+  public get calculatedDistance()
   {
     return this.calculatedPath.totalDistance;
   }
 
-  readonly controlPointsBindable = new Bindable<readonly PathPoint[]>([]);
+  public readonly controlPointsBindable = new Bindable<readonly PathPoint[]>([]);
 
   @typeDecorator(pathPointSerializer)
   @bindableBacked("controlPointsBindable")
-  accessor controlPoints!: readonly PathPoint[]
+  public accessor controlPoints!: readonly PathPoint[]
 
   readonly #calculatedPath = new CachedValue<CalculatedPath>();
   readonly #fullRange = new CachedValue<readonly Vec2[]>();
 
-  get calculatedPath(): CalculatedPath
+  public get calculatedPath(): CalculatedPath
   {
     this.#ensureValid();
     return this.#calculatedPath.value;
   }
 
-  get calculatedRange(): readonly Vec2[]
+  public get calculatedRange(): readonly Vec2[]
   {
     if (!this.#fullRange.isValid)
       this.#fullRange.value = this.getRange(0, 1);
@@ -79,12 +79,12 @@ export class SliderPath extends ObjectDDS
     return this.#fullRange.value;
   }
 
-  getPositionAtDistance(distance: number, out = new Vec2())
+  public getPositionAtDistance(distance: number, out = new Vec2())
   {
     return this.calculatedPath.getPositionAtDistance(distance, out);
   }
 
-  getRange(startProgress: number, endProgress: number)
+  public getRange(startProgress: number, endProgress: number)
   {
     const maxDistance = Math.min(this.expectedDistance, this.calculatedDistance);
 
@@ -150,7 +150,7 @@ export class SliderPath extends ObjectDDS
     return new CalculatedPath(points, cumulativeDistance);
   }
 
-  get pathSegments(): PathSegment[]
+  public get pathSegments(): PathSegment[]
   {
     const segments: PathSegment[] = [];
 
@@ -176,7 +176,7 @@ export class SliderPath extends ObjectDDS
     return segments;
   }
 
-  positionAt(progress: number, out: Vec2 = new Vec2())
+  public positionAt(progress: number, out: Vec2 = new Vec2())
   {
     return this.calculatedPath.getPositionAtDistance(progress * this.expectedDistance, out);
   }

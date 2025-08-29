@@ -6,7 +6,7 @@ import { PlaySliderBody } from "../../hitObjects/drawables/PlaySliderBody";
 
 export class LegacySliderBody extends PlaySliderBody
 {
-  constructor()
+  public constructor()
   {
     super();
   }
@@ -24,7 +24,7 @@ export class LegacySliderBody extends PlaySliderBody
 
 class LegacyDrawableSliderPath extends DrawableSliderPath
 {
-  override colorAt(position: number): ColorSource
+  protected override colorAt(position: number): ColorSource
   {
     const aa_width = 0;
 

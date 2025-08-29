@@ -6,9 +6,9 @@ import { OsuSkinComponents } from "../../skinning/OsuSkinComponents";
 @provideSelf(IAnimationTimeReference)
 export class FollowPoint extends PoolableDrawable implements IAnimationTimeReference
 {
-  animationStartTime = new BindableNumber(0);
+  public animationStartTime = new BindableNumber(0);
 
-  override get removeWhenNotAlive()
+  public override get removeWhenNotAlive()
   {
     return false;
   }

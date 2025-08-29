@@ -96,7 +96,7 @@ export class OsuLegacySkinTransformer extends SkinTransformer
     }));
   }
 
-  readonly textureStore: SkinTextureStore;
+  public readonly textureStore: SkinTextureStore;
 
   public static async create(source: Skin)
   {
@@ -117,12 +117,12 @@ export class OsuLegacySkinTransformer extends SkinTransformer
     this.textureStore.textureChanged.addListener(() => this.texturesChanged.emit());
   }
 
-  override getTexture(componentName: string)
+  public override getTexture(componentName: string)
   {
     return this.textureStore.getTexture(componentName) ?? this.source.getTexture(componentName);
   }
 
-  getAnimation(name: string)
+  public getAnimation(name: string)
   {
     return this.textureStore.getAnimation(name);
   }
@@ -186,7 +186,7 @@ export class OsuLegacySkinTransformer extends SkinTransformer
     return super.getDrawableComponent(lookup);
   }
 
-  hasFont(font: LegacyFont)
+  protected hasFont(font: LegacyFont)
   {
     return this.getTexture(`${getFontPrefix(this, font)}-0`) !== null;
   }

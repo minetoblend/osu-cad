@@ -2,7 +2,7 @@ import { OsuJudgementResult } from "./OsuJudgementResult";
 
 export class OsuSliderJudgementResult extends OsuJudgementResult
 {
-  trackingHistory: TrackingEntry[] = [
+  public trackingHistory: TrackingEntry[] = [
     {
       time: Number.NEGATIVE_INFINITY,
       tracking: false,

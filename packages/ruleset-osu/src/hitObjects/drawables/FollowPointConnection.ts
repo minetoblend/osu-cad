@@ -8,10 +8,10 @@ import { OsuHitObject } from "../OsuHitObject";
 
 export class FollowPointConnection extends PoolableDrawableWithLifetime<FollowPointLifetimeEntry>
 {
-  static readonly SPACING = 32;
-  static readonly PREEMPT = 800;
+  public static readonly SPACING = 32;
+  public static readonly PREEMPT = 800;
 
-  constructor()
+  public constructor()
   {
     super();
   }
@@ -34,7 +34,7 @@ export class FollowPointConnection extends PoolableDrawableWithLifetime<FollowPo
     this.clearInternal(false);
   }
 
-  pool: DrawablePool<FollowPoint> | null = null;
+  public pool: DrawablePool<FollowPoint> | null = null;
 
   #scheduleRefresh()
   {
@@ -111,7 +111,7 @@ export class FollowPointConnection extends PoolableDrawableWithLifetime<FollowPo
     entry.lifetimeEnd = finalTransformEndTime;
   }
 
-  static getFadeTimes(start: OsuHitObject, end: OsuHitObject, fraction: number)
+  public static getFadeTimes(start: OsuHitObject, end: OsuHitObject, fraction: number)
   {
     const startTime = start.endTime;
     const duration = end.startTime - startTime;

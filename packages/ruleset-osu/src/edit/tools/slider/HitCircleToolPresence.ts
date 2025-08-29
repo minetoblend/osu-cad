@@ -13,7 +13,7 @@ export interface ISliderToolPresence extends IHitCircleToolPresence
 
 export class SliderToolPresenceOverlay extends HitCircleToolPresenceOverlay
 {
-  constructor()
+  public constructor()
   {
     super();
   }
@@ -45,7 +45,7 @@ export class SliderToolPresenceOverlay extends HitCircleToolPresenceOverlay
     });
   }
 
-  override updatePresence(content: unknown): void
+  public override updatePresence(content: unknown): void
   {
     super.updatePresence(content);
 

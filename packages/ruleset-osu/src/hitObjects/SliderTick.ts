@@ -11,13 +11,13 @@ export interface SliderTickOptions extends OsuHitObjectOptions
 
 export class SliderTick extends OsuHitObject
 {
-  spanIndex = 0;
+  public spanIndex = 0;
 
-  spanStartTime = 0;
+  public spanStartTime = 0;
 
-  pathProgress = 0;
+  public pathProgress = 0;
 
-  constructor(options: SliderTickOptions = {})
+  public constructor(options: SliderTickOptions = {})
   {
     const { spanIndex, spanStartTime, pathProgress, ...rest } = options;
 

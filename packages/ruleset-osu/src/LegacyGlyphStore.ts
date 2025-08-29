@@ -10,7 +10,7 @@ export class LegacyGlyphStore implements ITexturedGlyphLookupStore
 
   readonly #cache = new Map<string, ITexturedCharacterGlyph | null>();
 
-  constructor(fontName: string, skin: ISkin, maxSize: Vec2 | null)
+  public constructor(fontName: string, skin: ISkin, maxSize: Vec2 | null)
   {
     this.#fontName = fontName;
     this.#skin = skin;
@@ -18,7 +18,7 @@ export class LegacyGlyphStore implements ITexturedGlyphLookupStore
   }
 
 
-  get(fontName: string | null, character: string): ITexturedCharacterGlyph | null
+  public get(fontName: string | null, character: string): ITexturedCharacterGlyph | null
   {
     if (fontName !== this.#fontName)
       return null;

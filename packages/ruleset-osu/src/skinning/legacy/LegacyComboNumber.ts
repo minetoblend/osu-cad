@@ -5,7 +5,7 @@ import { computed, watch, withEffectScope } from "@osucad/framework";
 
 export class LegacyComboNumber extends CompositeDrawable
 {
-  constructor()
+  public constructor()
   {
     super();
 
@@ -14,10 +14,10 @@ export class LegacyComboNumber extends CompositeDrawable
     this.scale = 0.8;
   }
 
-  indexInComboBindable = new Bindable(0);
+  public readonly indexInComboBindable = new Bindable(0);
 
-  hitCircleOverlap = computed(() => this.#skin.getConfig("hitCircleOverlap") ?? -2);
-  prefix = computed(() => this.#skin.getConfig("hitCirclePrefix") ?? "default");
+  public readonly hitCircleOverlap = computed(() => this.#skin.getConfig("hitCircleOverlap") ?? -2);
+  public readonly prefix = computed(() => this.#skin.getConfig("hitCirclePrefix") ?? "default");
 
   @withEffectScope()
   protected override load(dependencies: ReadonlyDependencyContainer)
@@ -27,22 +27,22 @@ export class LegacyComboNumber extends CompositeDrawable
     if (this.#referenceObject)
       this.indexInComboBindable.bindTo(this.#referenceObject.indexInComboBindable);
 
-    watch([this.hitCircleOverlap, this.prefix], () => this.generateObjects());
+    watch([this.hitCircleOverlap, this.prefix], () => this.#generateObjects());
 
     this.indexInComboBindable.bindValueChanged(e => this.comboNumber = e.value + 1, true);
   }
 
   #comboNumber = 1;
 
-  get comboNumber()
+  public get comboNumber()
   {
     return this.#comboNumber;
   }
 
-  set comboNumber(value: number)
+  public set comboNumber(value: number)
   {
     this.#comboNumber = value;
-    this.generateObjects();
+    this.#generateObjects();
   }
 
   @resolved(IComboNumberReference, true)
@@ -51,7 +51,7 @@ export class LegacyComboNumber extends CompositeDrawable
   @resolved(ISkinSource)
   accessor #skin!: ISkinSource;
 
-  generateObjects()
+  #generateObjects()
   {
     this.clearInternal();
 
@@ -99,10 +99,10 @@ export class LegacyComboNumber extends CompositeDrawable
     }
   }
 
-  override dispose(isDisposing: boolean = true)
+  public override dispose()
   {
     this.indexInComboBindable.unbindAll();
 
-    super.dispose(isDisposing);
+    super.dispose();
   }
 }

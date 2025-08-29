@@ -10,19 +10,19 @@ export abstract class DrawableOsuHitObject<out T extends OsuHitObject = OsuHitOb
   extends DrawableHitObject<T>
   implements IComboNumberReference
 {
-  readonly positionBindable = new Bindable(Vec2.zero());
-  readonly scaleBindable = new Bindable(1);
-  readonly indexInComboBindable = new Bindable(0);
-  readonly comboIndexBindable = new Bindable(0);
-  readonly stackHeightBindable = new Bindable(0);
+  public readonly positionBindable = new Bindable(Vec2.zero());
+  public readonly scaleBindable = new Bindable(1);
+  public readonly indexInComboBindable = new Bindable(0);
+  public readonly comboIndexBindable = new Bindable(0);
+  public readonly stackHeightBindable = new Bindable(0);
 
-  readonly proxyLayer = new Container({
+  public readonly proxyLayer = new Container({
     relativeSizeAxes: Axes.Both,
     depth: -Number.MAX_VALUE,
   });
 
   // noinspection TypeScriptAbstractClassConstructorCanBeMadeProtected
-  constructor(hitObject?: T)
+  public constructor(hitObject?: T)
   {
     super(hitObject);
 
@@ -86,19 +86,19 @@ export abstract class DrawableOsuHitObject<out T extends OsuHitObject = OsuHitOb
   {
   }
 
-  hitForcefully()
+  public hitForcefully()
   {
     this.applyMaxResult();
   }
 
-  missForcefully()
+  public missForcefully()
   {
     this.applyMinResult();
   }
 
   #osuActionInputManager: OsuInputManager | null = null;
 
-  get osuActionInputManager()
+  public get osuActionInputManager()
   {
     if (!this.#osuActionInputManager)
     {

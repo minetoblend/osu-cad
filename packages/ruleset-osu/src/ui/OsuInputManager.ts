@@ -7,12 +7,12 @@ import { InputKey, KeyBinding, KeyBindingContainer, SimultaneousBindingMode } fr
 export class OsuInputManager extends RulesetInputManager<OsuAction>
 {
 
-  constructor(ruleset: Ruleset)
+  public constructor(ruleset: Ruleset)
   {
     super(ruleset, SimultaneousBindingMode.Unique);
   }
 
-  get pressedActions()
+  public get pressedActions()
   {
     return this.keyBindingContainer.pressedActions as readonly OsuAction[];
   }
@@ -25,12 +25,12 @@ export class OsuInputManager extends RulesetInputManager<OsuAction>
 
 class OsuKeybindingContainer extends KeyBindingContainer<OsuAction>
 {
-  constructor(unique: SimultaneousBindingMode)
+  public constructor(unique: SimultaneousBindingMode)
   {
     super(unique);
   }
 
-  override get defaultKeyBindings(): IKeyBinding[]
+  protected override get defaultKeyBindings(): IKeyBinding[]
   {
     return [
       // KeyBinding.from(InputKey.MouseLeftButton, OsuAction.LeftButton),

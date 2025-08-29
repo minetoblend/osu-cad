@@ -5,7 +5,7 @@ import { PlayfieldClock } from "@osucad/core";
 
 export class SpinnerRotationTracker extends CircularContainer
 {
-  override get isPresent(): boolean
+  public override get isPresent(): boolean
   {
     return true;
   }
@@ -21,7 +21,7 @@ export class SpinnerRotationTracker extends CircularContainer
   @resolved(PlayfieldClock, true)
   accessor #gameplayClock!: PlayfieldClock | undefined;
 
-  constructor(drawableSpinner: DrawableSpinner)
+  public constructor(drawableSpinner: DrawableSpinner)
   {
     super();
 
@@ -31,7 +31,7 @@ export class SpinnerRotationTracker extends CircularContainer
     this.relativeSizeAxes = Axes.Both;
   }
 
-  override receivePositionalInputAt(screenSpacePosition: Vec2): boolean
+  public override receivePositionalInputAt(screenSpacePosition: Vec2): boolean
   {
     return true;
   }
@@ -40,18 +40,18 @@ export class SpinnerRotationTracker extends CircularContainer
 
   public readonly isSpinning = new Bindable(false);
 
-  get isSpinnableTime(): boolean
+  public get isSpinnableTime(): boolean
   {
     return this.#drawableSpinner.hitObject.startTime <= this.time.current && this.#drawableSpinner.hitObject.endTime > this.time.current;
   }
 
-  override onMouseMove(e: MouseMoveEvent): boolean
+  protected override onMouseMove(e: MouseMoveEvent): boolean
   {
     this.#mousePosition = this.parent!.toLocalSpace(e.screenSpaceMousePosition);
     return false;
   }
 
-  override update()
+  protected override update()
   {
     super.update();
 
@@ -108,10 +108,10 @@ export class SpinnerRotationTracker extends CircularContainer
     this.#rotationTransferred = false;
   }
 
-  override dispose(isDisposing: boolean = true)
+  public override dispose()
   {
-    super.dispose(isDisposing);
-
     this.#drawableSpinner.hitObjectApplied.addListener(this.#resetState, this);
+
+    super.dispose();
   }
 }

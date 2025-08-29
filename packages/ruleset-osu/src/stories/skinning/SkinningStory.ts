@@ -21,9 +21,9 @@ export interface SkinArgs
 export class SkinningStory extends Container implements IResourcesProvider, StoryDrawable<SkinArgs>
 {
   @resolved(AudioManager)
-  accessor audioManager!: AudioManager;
+  public accessor audioManager!: AudioManager;
 
-  audioMixer!: AudioMixer;
+  public audioMixer!: AudioMixer;
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
@@ -36,7 +36,7 @@ export class SkinningStory extends Container implements IResourcesProvider, Stor
     void this.setup();
   }
 
-  async setup()
+  public async setup()
   {
     const zipFile = await fetch(oskFile)
       .then(res => res.arrayBuffer())
@@ -68,15 +68,15 @@ export class SkinningStory extends Container implements IResourcesProvider, Stor
     }));
   }
 
-  skin?: Skin;
+  public skin?: Skin;
 
-  skinArgs?: SkinArgs;
+  public skinArgs?: SkinArgs;
 
-  skinProvidingContainer?: SkinProvidingContainer;
+  public skinProvidingContainer?: SkinProvidingContainer;
 
-  files!: SimpleFileSystem;
+  public files!: SimpleFileSystem;
 
-  updateArgs(args: SkinArgs)
+  public updateArgs(args: SkinArgs)
   {
     this.skinArgs = args;
 
@@ -87,7 +87,7 @@ export class SkinningStory extends Container implements IResourcesProvider, Stor
       this.skinProvidingContainer.sourceChanged.emit();
   }
 
-  updateSkin(skin: Skin, args: SkinArgs)
+  public updateSkin(skin: Skin, args: SkinArgs)
   {
     skin.config.comboColors = [
       new Color(args.comboColor1),
@@ -113,7 +113,7 @@ export class SkinningStory extends Container implements IResourcesProvider, Stor
 
 export class SkinVisualization extends CompositeDrawable
 {
-  constructor(readonly beatmap: Beatmap)
+  public constructor(public readonly beatmap: Beatmap)
   {
     super();
 
@@ -130,12 +130,12 @@ export class SkinVisualization extends CompositeDrawable
   @provide(PlayfieldClock)
   protected readonly gameplayClock = new GameplayClock();
 
-  get startTime()
+  public get startTime()
   {
     return this.beatmap.hitObjects[0].startTime - 1000;
   }
 
-  get beatmapDuration()
+  public get beatmapDuration()
   {
     return this.beatmap.hitObjects[this.beatmap.hitObjects.length - 1].startTime + 1000;
   }
@@ -150,7 +150,7 @@ export class SkinVisualization extends CompositeDrawable
       this.gameplayClock.seek(this.startTime);
   }
 
-  async loadRuleset()
+  public async loadRuleset()
   {
     const drawableRuleset = await this.beatmap.beatmapInfo.ruleset?.createDrawableRuleset();
     if (drawableRuleset)

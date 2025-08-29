@@ -8,7 +8,7 @@ import { Spinner } from "../hitObjects/Spinner";
 
 export class OsuBeatmapParser implements RulesetBeatmapParser
 {
-  parseHitObject(line: string, beatmap: Beatmap): HitObject | null
+  public parseHitObject(line: string, beatmap: Beatmap): HitObject | null
   {
     const values = line.split(",");
     if (values.length < 4)

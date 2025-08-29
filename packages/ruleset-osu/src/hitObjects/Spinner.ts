@@ -29,12 +29,12 @@ export interface SpinnerOptions extends OsuHitObjectOptions
 
 export class Spinner extends OsuHitObject
 {
-  static readonly attributes: DDSAttributes = {
+  public static readonly attributes: DDSAttributes = {
     type: "@osucad/spinner",
     version: 0,
   };
 
-  constructor(options: SpinnerOptions = {})
+  public constructor(options: SpinnerOptions = {})
   {
     const { duration, ...rest } = options;
 
@@ -43,19 +43,19 @@ export class Spinner extends OsuHitObject
     safeAssign(this, { duration });
   }
 
-  readonly durationBindable = new BindableNumber(0)
+  public readonly durationBindable = new BindableNumber(0)
     .withMinValue(0);
 
   @type("float64")
   @bindableBacked("durationBindable")
-  override accessor duration!: number
+  public override accessor duration!: number
 
-  override get endTime()
+  public override get endTime()
   {
     return this.startTime + this.duration;
   }
 
-  override set endTime(value: number)
+  public override set endTime(value: number)
   {
     this.duration = value - this.startTime;
   }
@@ -72,7 +72,7 @@ export class Spinner extends OsuHitObject
     this.#spinsRequired = value;
   }
 
-  get spinsRequiredForBonus()
+  public get spinsRequiredForBonus()
   {
     return this.spinsRequired + bonus_spins_gap;
   }
@@ -89,7 +89,7 @@ export class Spinner extends OsuHitObject
     this.#maximumBonusSpins = value;
   }
 
-  override get stackOffset()
+  public override get stackOffset()
   {
     return zero_vector;
   }
@@ -131,7 +131,7 @@ export class Spinner extends OsuHitObject
     }
   }
 
-  override createJudgement(): Judgement
+  public override createJudgement(): Judgement
   {
     return new OsuJudgement();
   }
@@ -141,7 +141,7 @@ export class Spinner extends OsuHitObject
     return HitWindows.Empty;
   }
 
-  createSpinningSamples(): HitSampleInfo[]
+  public createSpinningSamples(): HitSampleInfo[]
   {
     const referenceSample = this.samples[0];
     if (!referenceSample)
@@ -155,7 +155,7 @@ export class Spinner extends OsuHitObject
     return true;
   }
 
-  override getSnapTargets(): Vec2[]
+  public override getSnapTargets(): Vec2[]
   {
     return [];
   }

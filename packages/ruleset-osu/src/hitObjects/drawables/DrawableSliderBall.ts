@@ -7,7 +7,7 @@ import { DrawableSlider } from "./DrawableSlider";
 
 export class DrawableSliderBall extends CompositeDrawable
 {
-  static readonly FOLLOW_AREA = 2.4;
+  public static readonly FOLLOW_AREA = 2.4;
 
   @resolved(() => DrawableSlider)
   accessor #drawableSlider!: DrawableSlider;
@@ -17,7 +17,7 @@ export class DrawableSliderBall extends CompositeDrawable
 
   private ball!: SkinnableDrawable;
 
-  readonly sliderBallFlip = computed(() => this.#skin.getConfig("sliderBallFlip"));
+  public readonly sliderBallFlip = computed(() => this.#skin.getConfig("sliderBallFlip"));
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
@@ -40,17 +40,17 @@ export class DrawableSliderBall extends CompositeDrawable
     );
   }
 
-  override clearTransformsAfter(time: number, propagateChildren?: boolean, targetMember?: string)
+  public override clearTransformsAfter(time: number, propagateChildren?: boolean, targetMember?: string)
   {
     super.clearTransformsAfter(time, false, targetMember);
   }
 
-  override applyTransformsAt(time: number)
+  public override applyTransformsAt(time: number)
   {
     super.applyTransformsAt(time, false);
   }
 
-  updateProgress(completionProgress: number)
+  public updateProgress(completionProgress: number)
   {
     const slider = this.#drawableSlider.hitObject!;
     if (slider.spanCount() > 1 && this.sliderBallFlip.value == false)

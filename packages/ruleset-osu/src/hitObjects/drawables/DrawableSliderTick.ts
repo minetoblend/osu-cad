@@ -3,7 +3,7 @@ import type { SliderTick } from "../SliderTick";
 
 export class DrawableSliderTick extends DrawableOsuHitObject<SliderTick>
 {
-  constructor(initialObject?: SliderTick)
+  public constructor(initialObject?: SliderTick)
   {
     super(initialObject);
   }

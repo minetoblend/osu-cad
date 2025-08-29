@@ -8,13 +8,13 @@ import { DrawableSlider } from "./DrawableSlider";
 
 export class DrawableOsuJudgement extends DrawableJudgement
 {
-  readonly accentColor = new Bindable(new Color(0xffffff));
+  public readonly accentColor = new Bindable(new Color(0xffffff));
 
   // TODO: lighting
 
   #screenSpacePosition!: Vec2;
 
-  override apply(result: JudgementResult, judgedObject?: DrawableHitObject)
+  public override apply(result: JudgementResult, judgedObject?: DrawableHitObject)
   {
     super.apply(result, judgedObject);
 

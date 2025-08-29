@@ -10,7 +10,7 @@ export class OsuCursorContainer extends GameplayCursorContainer implements IKeyB
 {
   readonly #cursorTrail: SkinnableDrawable;
 
-  constructor()
+  public constructor()
   {
     super();
 
@@ -23,9 +23,9 @@ export class OsuCursorContainer extends GameplayCursorContainer implements IKeyB
     });
   }
 
-  declare activeCursor: OsuCursor;
+  public declare activeCursor: OsuCursor;
 
-  override createCursor(): Drawable
+  public override createCursor(): Drawable
   {
     return new OsuCursor();
   }
@@ -40,7 +40,7 @@ export class OsuCursorContainer extends GameplayCursorContainer implements IKeyB
       this.activeCursor.contract();
   }
 
-  override update()
+  public override update()
   {
     super.update();
 
@@ -50,14 +50,14 @@ export class OsuCursorContainer extends GameplayCursorContainer implements IKeyB
     }
   }
 
-  readonly isKeyBindingHandler = true;
+  public readonly isKeyBindingHandler = true;
 
-  canHandleKeyBinding(binding: KeyBindingAction): boolean
+  public canHandleKeyBinding(binding: KeyBindingAction): boolean
   {
     return binding instanceof OsuAction;
   }
 
-  onKeyBindingPressed(e: KeyBindingPressEvent<OsuAction>): boolean
+  public onKeyBindingPressed(e: KeyBindingPressEvent<OsuAction>): boolean
   {
 
     switch (e.pressed)
@@ -72,7 +72,7 @@ export class OsuCursorContainer extends GameplayCursorContainer implements IKeyB
     return false;
   }
 
-  onKeyBindingReleased(e: KeyBindingReleaseEvent<OsuAction>): boolean
+  public onKeyBindingReleased(e: KeyBindingReleaseEvent<OsuAction>): boolean
   {
 
     switch (e.pressed)
@@ -89,17 +89,17 @@ export class OsuCursorContainer extends GameplayCursorContainer implements IKeyB
     return false;
   }
 
-  override get handlePositionalInput(): boolean
+  public override get handlePositionalInput(): boolean
   {
     return true;
   }
 
-  override popIn()
+  protected override popIn()
   {
     super.popIn();
   }
 
-  override popOut()
+  protected override popOut()
   {
     super.popOut();
   }

@@ -23,11 +23,11 @@ import { Rectangle } from "@osucad/framework";
 
 export class OsuPlayfield extends Playfield
 {
-  static readonly SIZE: Readonly<Vec2> = new Vec2(512, 384);
+  public static readonly SIZE: Readonly<Vec2> = new Vec2(512, 384);
 
-  static readonly BOUNDS: Readonly<Rectangle> = new Rectangle(0, 0, this.SIZE.x, this.SIZE.y);
+  public static readonly BOUNDS: Readonly<Rectangle> = new Rectangle(0, 0, this.SIZE.x, this.SIZE.y);
 
-  constructor(options: PlayfieldOptions = {})
+  public constructor(options: PlayfieldOptions = {})
   {
     super(options);
   }

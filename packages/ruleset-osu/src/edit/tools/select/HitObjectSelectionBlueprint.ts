@@ -7,7 +7,7 @@ import { HitObjectSelection } from "./HitObjectSelection";
 
 export class HitObjectSelectionBlueprint<out T extends HitObject> extends PoolableDrawable
 {
-  constructor(readonly hitObject: T)
+  public constructor(public readonly hitObject: T)
   {
     super();
 
@@ -19,22 +19,22 @@ export class HitObjectSelectionBlueprint<out T extends HitObject> extends Poolab
 
   #selected = false;
 
-  get selected()
+  public get selected()
   {
     return this.#selected;
   }
 
-  setSelected(selected: boolean)
+  public setSelected(selected: boolean)
   {
     this.#selected = selected;
     this.alpha = selected ? 1 : 0;
   }
 
-  drawableBecameAlive(drawableHitObject: DrawableHitObject)
+  public drawableBecameAlive(drawableHitObject: DrawableHitObject)
   {
   }
 
-  drawableBecameDead(drawableHitObject: DrawableHitObject)
+  public drawableBecameDead(drawableHitObject: DrawableHitObject)
   {
   }
 
@@ -59,7 +59,7 @@ export class HitObjectSelectionBlueprint<out T extends HitObject> extends Poolab
       this.selectExclusive();
   }
 
-  override onMouseDown(e: MouseDownEvent): boolean
+  protected override onMouseDown(e: MouseDownEvent): boolean
   {
     if (e.button === MouseButton.Left)
     {
@@ -91,17 +91,17 @@ export class HitObjectSelectionBlueprint<out T extends HitObject> extends Poolab
     return false;
   }
 
-  select()
+  public select()
   {
     return this.selection.add(this.hitObject);
   }
 
-  deselect()
+  public deselect()
   {
     return this.selection.remove(this.hitObject);
   }
 
-  selectExclusive()
+  public selectExclusive()
   {
     if (this.selection.size === 1 && this.#selected)
       return;
@@ -110,7 +110,7 @@ export class HitObjectSelectionBlueprint<out T extends HitObject> extends Poolab
     this.selection.add(this.hitObject);
   }
 
-  isInSelectionRect(rectangle: Rectangle)
+  public isInSelectionRect(rectangle: Rectangle)
   {
     return false;
   }

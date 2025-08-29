@@ -15,15 +15,15 @@ import { SelectBox } from "./SelectBox";
 export class SelectTool extends ComposeTool implements IKeyBindingHandler<PlatformAction>
 {
   @provide()
-  readonly selection = new HitObjectSelection<OsuHitObject>();
+  public readonly selection = new HitObjectSelection<OsuHitObject>();
 
   @provide(SelectionBlueprintContainer)
-  selectionContainer = new OsuSelectionBlueprintContainer(this.selection);
+  public selectionContainer = new OsuSelectionBlueprintContainer(this.selection);
 
   @resolved(DrawableRuleset)
   accessor #drawableRuleset!: DrawableRuleset
 
-  snapProvider = new HitObjectSnapProvider();
+  public snapProvider = new HitObjectSnapProvider();
 
   @dependencyLoader()
   #load()
@@ -48,7 +48,7 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     this.selection.remove(hitObject as OsuHitObject);
   }
 
-  override getPresence()
+  public override getPresence()
   {
     const mousePosition = this.playfieldMousePosition;
 
@@ -60,19 +60,19 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     };
   }
 
-  override dispose()
+  public override dispose()
   {
     this.beatmap.hitObjects.removed.removeListener(this.#hitObjectRemoved, this);
 
     super.dispose();
   }
 
-  get hoveredBlueprints()
+  public get hoveredBlueprints()
   {
     return this.inputManager.hoveredDrawables.filter(it => it instanceof HitObjectSelectionBlueprint) as HitObjectSelectionBlueprint<OsuHitObject>[];
   }
 
-  cycleSelection(source: HitObjectSelectionBlueprint<OsuHitObject>)
+  public cycleSelection(source: HitObjectSelectionBlueprint<OsuHitObject>)
   {
     const blueprints = this.hoveredBlueprints;
 
@@ -84,7 +84,7 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     blueprints[newIndex]?.selectExclusive();
   }
 
-  override onClick(e: ClickEvent): boolean
+  protected override onClick(e: ClickEvent): boolean
   {
     const blueprints = this.inputManager.hoveredDrawables.filter(it => it instanceof HitObjectSelectionBlueprint);
 
@@ -97,7 +97,7 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     return true;
   }
 
-  moveObjects(movement: Vec2, objects: OsuHitObject[], startPositions: Vec2[])
+  public moveObjects(movement: Vec2, objects: OsuHitObject[], startPositions: Vec2[])
   {
     for (let i = 0; i < objects.length; i++)
       objects[i].position = startPositions[i].add(movement);
@@ -125,14 +125,14 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     }
   }
 
-  readonly isKeyBindingHandler = true;
+  public readonly isKeyBindingHandler = true;
 
-  canHandleKeyBinding(binding: KeyBindingAction): boolean
+  public canHandleKeyBinding(binding: KeyBindingAction): boolean
   {
     return true;
   }
 
-  onKeyBindingPressed(e: KeyBindingPressEvent<PlatformAction>): boolean
+  public onKeyBindingPressed(e: KeyBindingPressEvent<PlatformAction>): boolean
   {
     switch(e.pressed)
     {

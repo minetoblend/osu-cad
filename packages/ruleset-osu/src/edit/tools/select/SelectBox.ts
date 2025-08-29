@@ -10,7 +10,7 @@ export class SelectBox extends GraphicsDrawable
   #dragOrigin = Vec2.zero();
   #dragPosition = Vec2.zero();
 
-  constructor()
+  public constructor()
   {
     super();
   }
@@ -21,19 +21,19 @@ export class SelectBox extends GraphicsDrawable
   @resolved(SelectionBlueprintContainer as typeof SelectionBlueprintContainer<OsuHitObject>)
   accessor #selectionContainer!: SelectionBlueprintContainer<OsuHitObject>;
 
-  override receivePositionalInputAt(screenSpacePosition: Vec2): boolean
+  public override receivePositionalInputAt(screenSpacePosition: Vec2): boolean
   {
     return true;
   }
 
-  override onDragStart(e: DragStartEvent): boolean
+  protected override onDragStart(e: DragStartEvent): boolean
   {
     this.#dragOrigin = e.mousePosition;
     this.#selection.clear();
     return true;
   }
 
-  override onDrag(e: DragEvent): boolean
+  protected override onDrag(e: DragEvent): boolean
   {
     this.#dragPosition = e.mousePosition;
     this.invalidateGraphics();
@@ -53,7 +53,7 @@ export class SelectBox extends GraphicsDrawable
     return true;
   }
 
-  override onDragEnd(e: DragEndEvent): void
+  protected override onDragEnd(e: DragEndEvent): void
   {
     this.invalidateGraphics();
   }

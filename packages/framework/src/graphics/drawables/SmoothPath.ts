@@ -72,7 +72,7 @@ export class SmoothPath extends Path
     this.#textureCache.validate();
   }
 
-  public colorAt(position: number): ColorSource
+  protected colorAt(position: number): ColorSource
   {
     return 0xFFFFFF;
   }

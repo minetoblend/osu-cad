@@ -5,7 +5,7 @@ import { type OsuHitObject } from "src/hitObjects";
 
 export class EditorComboProcessor extends EditorBeatmapProcessor
 {
-  constructor()
+  public constructor()
   {
     super(["combo"]);
   }

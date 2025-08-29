@@ -16,9 +16,9 @@ export class LegacyCirclePiece extends CompositeDrawable
 
   private readonly indexInCurrentCombo: Bindable<number> = new Bindable(0);
 
-  constructor(
+  public constructor(
     priorityLookupPrefix: string | null = null,
-    readonly hasNumber: boolean = true,
+    public readonly hasNumber: boolean = true,
   )
   {
     super();
@@ -34,7 +34,7 @@ export class LegacyCirclePiece extends CompositeDrawable
   protected overlayLayer!: Container;
   private hitCircleText?: SkinnableSpriteText;
 
-  readonly accentColor = new Bindable(new Color(0xffffff));
+  public readonly accentColor = new Bindable(new Color(0xffffff));
 
   @withEffectScope()
   protected override load(dependencies: ReadonlyDependencyContainer)
@@ -116,14 +116,14 @@ export class LegacyCirclePiece extends CompositeDrawable
     });
   }
 
-  public override dispose(isDisposing: boolean = true)
+  public override dispose()
   {
-    super.dispose(isDisposing);
-
     this.drawableHitObject.applyCustomUpdateState.removeListener(this.updateStateTransforms, this);
+
+    super.dispose();
   }
 
-  override updateDrawNodeTransform()
+  protected override updateDrawNodeTransform()
   {
     super.updateDrawNodeTransform();
 

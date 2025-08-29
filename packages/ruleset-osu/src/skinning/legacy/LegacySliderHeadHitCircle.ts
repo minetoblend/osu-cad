@@ -5,7 +5,7 @@ import type { DrawableHitObject } from "@osucad/core";
 
 export class LegacySliderHeadHitCircle extends LegacyCirclePiece
 {
-  constructor()
+  public constructor()
   {
     super("sliderstartcircle");
   }

@@ -7,9 +7,9 @@ import type { Slider } from "../../hitObjects/Slider";
 export class LegacyFollowCircle extends CompositeDrawable
 {
   @resolved(() => DrawableSlider)
-  accessor parentObject!: DrawableSlider;
+  protected accessor parentObject!: DrawableSlider;
 
-  constructor(animationContent: Drawable)
+  public constructor(animationContent: Drawable)
   {
     super();
 
@@ -60,10 +60,10 @@ export class LegacyFollowCircle extends CompositeDrawable
     });
   }
 
-  public override dispose(isDisposing: boolean = true)
+  public override dispose()
   {
-    super.dispose(isDisposing);
-
     this.parentObject.applyCustomUpdateState.removeListener(this.applyCustomStateTransforms, this);
+
+    super.dispose();
   }
 }

@@ -11,9 +11,9 @@ export interface SliderTailOptions extends OsuHitObjectOptions
 
 export class SliderTailCircle extends HitCircle
 {
-  repeatIndex = 0;
+  public repeatIndex = 0;
 
-  constructor(readonly slider: Slider, options: SliderTailOptions)
+  public constructor(public readonly slider: Slider, options: SliderTailOptions)
   {
     const{ repeatIndex, ...rest } = options;
 
@@ -22,7 +22,7 @@ export class SliderTailCircle extends HitCircle
     safeAssign(this, { repeatIndex });
   }
 
-  get spanDuration()
+  public get spanDuration()
   {
     return this.slider.spanDuration();
   }

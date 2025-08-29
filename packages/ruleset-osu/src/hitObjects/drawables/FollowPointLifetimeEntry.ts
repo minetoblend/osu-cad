@@ -7,26 +7,26 @@ let uid = 0;
 
 export class FollowPointLifetimeEntry extends LifetimeEntry
 {
-  readonly invalidated = new Action();
-  readonly start: OsuHitObject;
+  public readonly invalidated = new Action();
+  public readonly start: OsuHitObject;
 
-  constructor(start: OsuHitObject)
+  public constructor(start: OsuHitObject)
   {
     super();
 
     this.start = start;
   }
 
-  uid = uid++;
+  public uid = uid++;
 
   #end: OsuHitObject | null = null;
 
-  get end()
+  public get end()
   {
     return this.#end;
   }
 
-  set end(value)
+  public set end(value)
   {
     this.unbindEvents();
 
@@ -56,7 +56,7 @@ export class FollowPointLifetimeEntry extends LifetimeEntry
     this.#wasBound = true;
   }
 
-  unbindEvents()
+  public unbindEvents()
   {
     if (!this.#wasBound)
       return;

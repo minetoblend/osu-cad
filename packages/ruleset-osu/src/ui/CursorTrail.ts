@@ -52,13 +52,13 @@ export abstract class CursorTrail extends CompositeDrawable
     return 1.7;
   }
 
-  override onMouseMove(e: MouseMoveEvent): boolean
+  protected override onMouseMove(e: MouseMoveEvent): boolean
   {
     this.addTrail(e.screenSpaceMousePosition);
     return false;
   }
 
-  override receivePositionalInputAt(screenSpacePosition: Vec2): boolean
+  public override receivePositionalInputAt(screenSpacePosition: Vec2): boolean
   {
     return true;
   }
@@ -119,7 +119,7 @@ export abstract class CursorTrail extends CompositeDrawable
 
   #time = 0;
 
-  override update()
+  protected override update()
   {
     super.update();
 
@@ -147,8 +147,8 @@ export abstract class CursorTrail extends CompositeDrawable
 
 class TrailPart extends DrawableSprite
 {
-  constructor(
-    readonly startTime: number,
+  public constructor(
+    public readonly startTime: number,
     options: DrawableSpriteOptions,
   )
   {

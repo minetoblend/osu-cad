@@ -362,7 +362,7 @@ export abstract class InputManager extends Container implements IInputStateChang
   #hoveredDrawables: Drawable[] = [];
   #lastHoverHandledDrawables: Drawable[] = [];
 
-  protected get hoveredDrawables(): readonly Drawable[]
+  public get hoveredDrawables(): readonly Drawable[]
   {
     return this.#hoveredDrawables;
   }

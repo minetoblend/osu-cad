@@ -7,14 +7,14 @@ export interface DynamicsParameters
 
 export class SecondOrderDynamics
 {
-  previous: number;
-  current: number;
-  velocity: number;
+  public previous: number;
+  public current: number;
+  public velocity: number;
   private k1!: number;
   private k2!: number;
   private k3!: number;
 
-  constructor(initialValue: number, parameters: DynamicsParameters)
+  public constructor(initialValue: number, parameters: DynamicsParameters)
   {
     this.setParameters(parameters);
 
@@ -24,7 +24,7 @@ export class SecondOrderDynamics
     this.velocity = 0;
   }
 
-  setParameters({ frequency, damping, response }: DynamicsParameters)
+  public setParameters({ frequency, damping, response }: DynamicsParameters)
   {
     this.k1 = damping / (Math.PI * frequency);
     this.k2 = 1 / (2 * Math.PI * frequency * (2 * Math.PI * frequency));

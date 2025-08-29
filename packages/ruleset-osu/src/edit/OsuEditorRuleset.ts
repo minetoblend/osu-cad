@@ -10,7 +10,7 @@ import { EditorComboProcessor } from "./EditorComboProcessor";
 
 export class OsuEditorRuleset extends EditorRuleset
 {
-  readonly runtimeConfig: EditorRuntimeConfig = {
+  public readonly runtimeConfig: EditorRuntimeConfig = {
     types: [
       HitCircle,
       Slider,
@@ -19,7 +19,7 @@ export class OsuEditorRuleset extends EditorRuleset
     ],
   };
 
-  override async createHitObjectComposer(): Promise<HitObjectComposer>
+  public override async createHitObjectComposer(): Promise<HitObjectComposer>
   {
     return import("./OsuHitObjectComposer").then(m => new m.OsuHitObjectComposer());
   }

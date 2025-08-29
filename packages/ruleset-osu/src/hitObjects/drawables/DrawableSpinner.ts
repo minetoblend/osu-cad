@@ -23,7 +23,7 @@ const spinning_sample_modulated_base_frequency = 0.5;
 export class DrawableSpinner extends DrawableOsuHitObject<Spinner>
 {
 
-  constructor(initialHitObject?: Spinner)
+  public constructor(initialHitObject?: Spinner)
   {
     super(initialHitObject);
   }
@@ -36,17 +36,17 @@ export class DrawableSpinner extends DrawableOsuHitObject<Spinner>
 
   #ticks!: Container<DrawableSpinnerTick>;
 
-  isSpinning!: Bindable<boolean>;
+  public isSpinning!: Bindable<boolean>;
 
   #spinningSample!: SkinnableSound;
   #maxBonusSample!: SkinnableSound;
 
-  get currentBonusScore()
+  public get currentBonusScore()
   {
     return score_per_tick * clamp(this.completedFullSpins.value - this.hitObject.spinsRequiredForBonus, 0, this.hitObject.maximumBonusSpins);
   }
 
-  get maximumBonusScore()
+  public get maximumBonusScore()
   {
     return score_per_tick * this.hitObject.maximumBonusSpins;
   }
@@ -145,7 +145,7 @@ export class DrawableSpinner extends DrawableOsuHitObject<Spinner>
     return false;
   }
 
-  override update()
+  protected override update()
   {
     super.update();
 
@@ -224,7 +224,7 @@ export class DrawableSpinner extends DrawableOsuHitObject<Spinner>
   {
   }
 
-  get progress(): number
+  public get progress(): number
   {
     if (this.hitObject.spinsRequired === 0)
       return 1;
@@ -237,7 +237,7 @@ export class DrawableSpinner extends DrawableOsuHitObject<Spinner>
     return new OsuSpinnerJudgementResult(this.hitObject, judgement);
   }
 
-  override get result(): OsuSpinnerJudgementResult
+  public override get result(): OsuSpinnerJudgementResult
   {
     return super.result as OsuSpinnerJudgementResult;
   }

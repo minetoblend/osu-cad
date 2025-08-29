@@ -155,7 +155,7 @@ export abstract class LegacySpinner extends CompositeDrawable
     }
   }
 
-  override update()
+  protected override update()
   {
     super.update();
 
@@ -198,10 +198,10 @@ export abstract class LegacySpinner extends CompositeDrawable
     }
   }
 
-  override dispose(isDisposing: boolean = true)
+  public override dispose()
   {
-    super.dispose(isDisposing);
-
     this.drawableSpinner.applyCustomUpdateState.removeListener(this.updateStateTransforms, this);
+
+    super.dispose();
   }
 }

@@ -5,7 +5,7 @@ import { FollowCircle } from "../FollowCircle";
 export class LegacyFollowCircle extends FollowCircle
 {
 
-  constructor(animationContent: Drawable)
+  public constructor(animationContent: Drawable)
   {
     super();
 

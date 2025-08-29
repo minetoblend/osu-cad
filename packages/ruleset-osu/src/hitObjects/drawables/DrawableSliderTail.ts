@@ -8,7 +8,7 @@ import { OsuSkinComponents } from "../../skinning";
 
 export class DrawableSliderTail extends DrawableOsuHitObject<SliderTailCircle>
 {
-  constructor(initialObject?: SliderTailCircle)
+  public constructor(initialObject?: SliderTailCircle)
   {
     super(initialObject);
   }
@@ -21,12 +21,12 @@ export class DrawableSliderTail extends DrawableOsuHitObject<SliderTailCircle>
     return null;
   }
 
-  get slider()
+  public get slider()
   {
     return this.drawableSlider?.hitObject ?? null;
   }
 
-  circlePiece!: SkinnableDrawable;
+  public circlePiece!: SkinnableDrawable;
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {

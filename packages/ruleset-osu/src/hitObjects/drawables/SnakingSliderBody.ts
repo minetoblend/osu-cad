@@ -5,30 +5,30 @@ import { SliderBody } from "./SliderBody";
 
 export class SnakingSliderBody extends SliderBody
 {
-  currentCurve: Vec2[] = [];
+  public currentCurve: Vec2[] = [];
 
-  readonly snakingIn = new Bindable(false);
-  readonly snakingOut = new Bindable(false);
+  public readonly snakingIn = new Bindable(false);
+  public readonly snakingOut = new Bindable(false);
 
   #snakedStart?: number;
   #snakedEnd?: number;
 
-  get snakedStart()
+  public get snakedStart()
   {
     return this.#snakedStart;
   }
 
-  get snakedEnd()
+  public get snakedEnd()
   {
     return this.#snakedEnd;
   }
 
-  override get pathRadius()
+  public override get pathRadius()
   {
     return super.pathRadius;
   }
 
-  override set pathRadius(value: number)
+  public override set pathRadius(value: number)
   {
     if (super.pathRadius === value)
       return;
@@ -41,7 +41,7 @@ export class SnakingSliderBody extends SliderBody
   @resolved(() => DrawableSlider)
   protected accessor drawableSlider!: DrawableSlider;
 
-  updateProgress(completionProgress: number)
+  public updateProgress(completionProgress: number)
   {
     if (!this.drawableSlider.hitObject)
       return;
@@ -70,7 +70,7 @@ export class SnakingSliderBody extends SliderBody
     this.#setRange(start, end);
   }
 
-  refresh()
+  protected refresh()
   {
     if (!this.drawableSlider.hitObject)
       return;

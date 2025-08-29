@@ -3,20 +3,20 @@ import { Color } from "pixi.js";
 
 export class DrawableSliderPath extends SmoothPath
 {
-  static readonly BORDER_PORTION = 0.128;
-  static readonly GRADIENT_PORTION = 1 - this.BORDER_PORTION;
+  public static readonly BORDER_PORTION = 0.128;
+  public static readonly GRADIENT_PORTION = 1 - this.BORDER_PORTION;
 
-  static readonly border_max_size = 8;
-  static readonly border_min_size = 0;
+  public static readonly border_max_size = 8;
+  public static readonly border_min_size = 0;
 
   #borderColor = new Color(0xFFFFFF);
 
-  get borderColor()
+  public get borderColor()
   {
     return this.#borderColor;
   }
 
-  set borderColor(value)
+  public set borderColor(value)
   {
     if (this.#borderColor.toNumber() === value.toNumber())
       return;
@@ -27,12 +27,12 @@ export class DrawableSliderPath extends SmoothPath
 
   #accentColor = new Color(0xFFFFFF);
 
-  get accentColor()
+  public get accentColor()
   {
     return this.#accentColor;
   }
 
-  set accentColor(value)
+  public set accentColor(value)
   {
     if (this.#accentColor.toNumber() === value.toNumber())
       return;
@@ -43,12 +43,12 @@ export class DrawableSliderPath extends SmoothPath
 
   #borderSize = 1;
 
-  get borderSize()
+  public get borderSize()
   {
     return this.#borderSize;
   }
 
-  set borderSize(value)
+  public set borderSize(value)
   {
     if (this.#borderSize === value)
       return;

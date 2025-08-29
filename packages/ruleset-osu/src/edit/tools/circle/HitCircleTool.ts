@@ -38,7 +38,7 @@ export class HitCircleTool extends OsuHitObjectPlacementTool<HitCircle>
     hitObject.startTime = time;
   }
 
-  override onMouseDown(e: MouseDownEvent): boolean
+  protected override onMouseDown(e: MouseDownEvent): boolean
   {
     if (e.button === MouseButton.Left && this.state === PlacementState.Idle)
       this.beginPlacement();
@@ -49,15 +49,13 @@ export class HitCircleTool extends OsuHitObjectPlacementTool<HitCircle>
     return true;
   }
 
-  override onMouseUp(e: MouseUpEvent): void
+  protected override onMouseUp(e: MouseUpEvent): void
   {
     if (e.button === MouseButton.Left && this.isPlacementActive)
-    {
       this.endPlacement(true);
-    }
   }
 
-  override getPresence(): IHitCircleToolPresence
+  public override getPresence(): IHitCircleToolPresence
   {
     return {
       state: this.state,

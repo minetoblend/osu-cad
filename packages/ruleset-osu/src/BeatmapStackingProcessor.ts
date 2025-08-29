@@ -4,7 +4,7 @@ import { calculateStacking } from "./stacking";
 
 export class BeatmapStackingProcessor implements BeatmapPostProcessor
 {
-  applyToBeatmap(beatmap: Beatmap)
+  public applyToBeatmap(beatmap: Beatmap)
   {
     calculateStacking(
         beatmap.hitObjects as OsuHitObject[],

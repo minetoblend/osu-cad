@@ -7,7 +7,7 @@ import { ISkinSource } from "@osucad/core";
 import { Color } from "pixi.js";
 import { DrawableSpinner } from "../../hitObjects/drawables/DrawableSpinner";
 
-export class LegacyOldStyleSpinner extends  LegacySpinner
+export class LegacyOldStyleSpinner extends LegacySpinner
 {
   #disc!: DrawableSprite;
   #metreSprite!: DrawableSprite;
@@ -15,8 +15,8 @@ export class LegacyOldStyleSpinner extends  LegacySpinner
 
   #spinnerBlink = false;
 
-  static readonly final_metre_height = 692 * this.SPRITE_SCALE;
-  static readonly total_bars = 10;
+  public static readonly final_metre_height = 692 * this.SPRITE_SCALE;
+  public static readonly total_bars = 10;
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
@@ -82,7 +82,7 @@ export class LegacyOldStyleSpinner extends  LegacySpinner
     );
   }
 
-  override update()
+  protected override update()
   {
     super.update();
 

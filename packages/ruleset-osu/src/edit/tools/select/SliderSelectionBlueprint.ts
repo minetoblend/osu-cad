@@ -14,9 +14,9 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
   #sliderHead!: SkinnableDrawable;
   #sliderTail!: SkinnableDrawable;
 
-  readonly scaleBindable = new Bindable(1);
-  readonly positionBindable = new Bindable(new Vec2());
-  readonly stackHeightBindable = new Bindable(0);
+  public readonly scaleBindable = new Bindable(1);
+  public readonly positionBindable = new Bindable(new Vec2());
+  public readonly stackHeightBindable = new Bindable(0);
 
   @dependencyLoader()
   #load()
@@ -78,7 +78,7 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
     }
   }
 
-  override drawableBecameAlive(drawableHitObject: DrawableHitObject)
+  public override drawableBecameAlive(drawableHitObject: DrawableHitObject)
   {
     if (drawableHitObject instanceof DrawableSlider)
       this.#drawableSlider = drawableHitObject;
@@ -86,12 +86,12 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
     this.#updateSelection();
   }
 
-  override drawableBecameDead(drawableHitObject: DrawableHitObject)
+  public override drawableBecameDead(drawableHitObject: DrawableHitObject)
   {
     this.#drawableSlider = undefined;
   }
 
-  override containsLocal(position: Vec2): boolean
+  protected override containsLocal(position: Vec2): boolean
   {
     return this.hitObject.contains(position.add(this.position));
   }
@@ -103,7 +103,7 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
   #dragStartPosition!: Vec2;
   #draggedHitObjects!: OsuHitObject[];
 
-  override onDragStart(e: DragStartEvent): boolean
+  protected override onDragStart(e: DragStartEvent): boolean
   {
     if (!this.selected)
       this.selectExclusive();
@@ -116,7 +116,7 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
     return true;
   }
 
-  override onDrag(e: DragEvent): boolean
+  protected override onDrag(e: DragEvent): boolean
   {
     const delta = this.parent!.toLocalSpace(e.screenSpaceMousePosition).sub(this.#dragStartPosition);
 
@@ -132,14 +132,15 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
       || rectangle.contains(this.hitObject.stackedPathEndPosition);
   }
 
-  override onDragEnd(e: DragEndEvent): void
+  protected override onDragEnd(e: DragEndEvent): void
   {
     this.history.commit();
   }
 
-  override dispose()
+  public override dispose()
   {
     this.hitObject.defaultsApplied.removeListener(this.#updateTail, this);
+
     super.dispose();
   }
 }

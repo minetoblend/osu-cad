@@ -5,19 +5,19 @@ import { SecondOrderDynamics } from "./SecondOrderDynamics";
 
 export class CursorPosition
 {
-  cursorX = new SecondOrderDynamics(0, {
+  public cursorX = new SecondOrderDynamics(0, {
     frequency: 1,
     damping: 1,
     response: 1,
   });
-  cursorY = new SecondOrderDynamics(0, {
+  public cursorY = new SecondOrderDynamics(0, {
     frequency: 1,
     damping: 1,
     response: 1,
   });
 
 
-  update(target: Vec2, dt: number, parameters: DynamicsParameters)
+  public update(target: Vec2, dt: number, parameters: DynamicsParameters)
   {
     dt /= 1000;
 
@@ -30,12 +30,12 @@ export class CursorPosition
     );
   }
 
-  get current()
+  public get current()
   {
     return new Vec2(this.cursorX.current, this.cursorY.current);
   }
 
-  get velocity()
+  public get velocity()
   {
     return new Vec2(this.cursorX.velocity, this.cursorY.velocity);
   }

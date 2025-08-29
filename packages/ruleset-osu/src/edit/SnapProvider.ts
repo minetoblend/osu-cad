@@ -13,16 +13,16 @@ export interface ISnapProvider
 
 export class SnapResult
 {
-  constructor(readonly source: Vec2, readonly target: Vec2)
+  public constructor(public readonly source: Vec2, public readonly target: Vec2)
   {
   }
 
-  get distance()
+  public get distance()
   {
     return this.source.distance(this.target);
   }
 
-  get offset()
+  public get offset()
   {
     return this.target.sub(this.source);
   }

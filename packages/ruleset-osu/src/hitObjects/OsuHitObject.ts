@@ -27,57 +27,57 @@ export interface OsuHitObjectOptions
 })
 export abstract class OsuHitObject extends HitObject
 {
-  static readonly OBJECT_RADIUS = 64;
+  public static readonly OBJECT_RADIUS = 64;
 
-  static readonly OBJECT_DIMENSIONS = new Vec2(OsuHitObject.OBJECT_RADIUS * 2);
+  public static readonly OBJECT_DIMENSIONS = new Vec2(OsuHitObject.OBJECT_RADIUS * 2);
 
-  static readonly BASE_SCORING_DISTANCE = 100;
+  public static readonly BASE_SCORING_DISTANCE = 100;
 
-  static readonly PREEMPT_MIN = 450;
+  public static readonly PREEMPT_MIN = 450;
 
-  static readonly PREEMPT_MID = 1200;
+  public static readonly PREEMPT_MID = 1200;
 
-  static readonly PREEMPT_MAX = 1800;
+  public static readonly PREEMPT_MAX = 1800;
 
-  constructor(attributes: DDSAttributes, options: OsuHitObjectOptions = {})
+  public constructor(attributes: DDSAttributes, options: OsuHitObjectOptions = {})
   {
     super(attributes);
 
     safeAssign(this, options);
   }
 
-  timePreempt = 600;
+  public timePreempt = 600;
 
-  timeFadeIn = 400;
+  public timeFadeIn = 400;
 
   //#region position
-  readonly positionBindable = new Bindable(Vec2.zero());
+  public readonly positionBindable = new Bindable(Vec2.zero());
 
   @customType("vec2")
   @bindableBacked("positionBindable")
-  accessor position!: Vec2
+  public accessor position!: Vec2
 
-  get x()
+  public get x()
   {
     return this.position.x;
   }
 
-  set x(value: number)
+  public set x(value: number)
   {
     this.position = this.position.withX(value);
   }
 
-  get y()
+  public get y()
   {
     return this.position.y;
   }
 
-  set y(value: number)
+  public set y(value: number)
   {
     this.position = this.position.withY(value);
   }
 
-  moveBy(x: number, y: number)
+  public moveBy(x: number, y: number)
   {
     this.position = new Vec2(this.x + x, this.y + y);
   }
@@ -85,44 +85,44 @@ export abstract class OsuHitObject extends HitObject
   //#endregion
 
   //#region combo
-  readonly newComboBindable = new BindableBoolean();
+  public readonly newComboBindable = new BindableBoolean();
 
   @type("boolean")
   @bindableBacked("newComboBindable")
-  accessor newCombo!: boolean
+  public accessor newCombo!: boolean
 
-  readonly comboOffsetBindable = new BindableNumber(0)
+  public readonly comboOffsetBindable = new BindableNumber(0)
     .withMinValue(0);
 
   @type("uint8")
   @bindableBacked("comboOffsetBindable")
-  accessor comboOffset!: number
+  public accessor comboOffset!: number
 
 
-  readonly comboIndexBindable = new Bindable(0);
+  public readonly comboIndexBindable = new Bindable(0);
 
-  get comboIndex()
+  public get comboIndex()
   {
     return this.comboIndexBindable.value;
   }
 
-  set comboIndex(value)
+  public set comboIndex(value)
   {
     this.comboIndexBindable.value = value;
   }
 
-  comboIndexWithOffsets = 0;
+  public comboIndexWithOffsets = 0;
 
-  lastInCombo = false;
+  public lastInCombo = false;
 
-  readonly indexInComboBindable = new Bindable(0);
+  public readonly indexInComboBindable = new Bindable(0);
 
-  get indexInCombo()
+  public get indexInCombo()
   {
     return this.indexInComboBindable.value;
   }
 
-  set indexInCombo(value)
+  public set indexInCombo(value)
   {
     this.indexInComboBindable.value = value;
   }
@@ -132,7 +132,7 @@ export abstract class OsuHitObject extends HitObject
     return false;
   }
 
-  updateComboInformation(lastObj?: OsuHitObject)
+  public updateComboInformation(lastObj?: OsuHitObject)
   {
     let index = lastObj?.comboIndex ?? 0;
     let indexWithOffsets = lastObj?.comboIndexWithOffsets ?? 0;
@@ -157,9 +157,9 @@ export abstract class OsuHitObject extends HitObject
 
   //#endregion
 
-  readonly scaleBindable = new Bindable(1);
+  public readonly scaleBindable = new Bindable(1);
 
-  get scale()
+  public get scale()
   {
     return this.scaleBindable.value;
   }
@@ -169,18 +169,17 @@ export abstract class OsuHitObject extends HitObject
     this.scaleBindable.value = value;
   }
 
-  get radius()
+  public get radius()
   {
     return OsuHitObject.OBJECT_RADIUS * this.scale;
   }
 
-  override applyDefaults(difficulty: BeatmapDifficultyInfo, controlPoints: ControlPointInfo)
+  public override applyDefaults(difficulty: BeatmapDifficultyInfo, controlPoints: ControlPointInfo)
   {
     super.applyDefaults(difficulty, controlPoints);
 
     for (const h of this.nestedHitObjects)
     {
-
       if (h instanceof OsuHitObject)
       {
         h.comboIndexBindable.bindTo(this.comboIndexBindable);
@@ -201,34 +200,34 @@ export abstract class OsuHitObject extends HitObject
   }
 
   // #region stacking
-  readonly stackHeightBindable = new Bindable(0);
+  public readonly stackHeightBindable = new Bindable(0);
 
-  get stackHeight()
+  public get stackHeight()
   {
     return this.stackHeightBindable.value;
   }
 
-  set stackHeight(value)
+  public set stackHeight(value)
   {
     this.stackHeightBindable.value = value;
   }
 
-  get stackOffset()
+  public get stackOffset()
   {
     return new Vec2(this.stackHeight * this.scale * -6.4);
   }
 
-  get stackedPosition()
+  public get stackedPosition()
   {
     return this.position.add(this.stackOffset);
   }
 
-  get endPosition()
+  public get endPosition()
   {
     return this.position;
   }
 
-  get stackedEndPosition()
+  public get stackedEndPosition()
   {
     return this.endPosition.add(this.stackOffset);
   }
@@ -240,17 +239,17 @@ export abstract class OsuHitObject extends HitObject
     return new OsuHitWindows();
   }
 
-  override createJudgement(): Judgement
+  public override createJudgement(): Judgement
   {
     return new OsuJudgement();
   }
 
-  contains(position: Vec2)
+  public contains(position: Vec2)
   {
     return Vec2.closerThan(this.stackedPosition, position, this.radius);
   }
 
-  getSnapTargets(): Vec2[]
+  public getSnapTargets(): Vec2[]
   {
     return [this.position];
   }

@@ -110,7 +110,7 @@ export class LegacyNewStyleSpinner extends LegacySpinner
     }
   }
 
-  override update()
+  protected override update()
   {
     super.update();
 

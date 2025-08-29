@@ -4,7 +4,7 @@ import type { Graphics } from "pixi.js";
 export class PlayfieldGrid extends GraphicsDrawable
 {
 
-  constructor()
+  public constructor()
   {
     super();
 

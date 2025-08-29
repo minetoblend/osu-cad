@@ -9,7 +9,7 @@ import { DrawableSliderRepeat } from "../hitObjects/drawables/DrawableSliderRepe
 export abstract class FollowCircle extends CompositeDrawable
 {
   @resolved(() => DrawableSlider)
-  accessor parentObject!: DrawableSlider;
+  public accessor parentObject!: DrawableSlider;
 
   private readonly tracking = new Bindable(false);
 
@@ -40,7 +40,7 @@ export abstract class FollowCircle extends CompositeDrawable
     }, true);
   }
 
-  get lastTrackingChangeTime()
+  public get lastTrackingChangeTime()
   {
     let entry = this.parentObject.result?.trackingHistory.findLast(it => it.time < this.time.current);
 
@@ -88,12 +88,12 @@ export abstract class FollowCircle extends CompositeDrawable
     }
   }
 
-  override dispose(isDisposing: boolean = true)
+  public override dispose()
   {
-    super.dispose(isDisposing);
-
     this.parentObject.hitObjectApplied.removeListener(this.#onHitObjectApplied, this);
     this.parentObject.applyCustomUpdateState.removeListener(this.#updateStateTransforms, this);
+
+    super.dispose();
   }
 
   protected abstract onSliderPress(): void;

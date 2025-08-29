@@ -17,7 +17,7 @@ export class OsuSpinnerJudgementResult extends OsuJudgementResult
 
   public timeCompleted?: number;
 
-  override reset()
+  public override reset()
   {
     super.reset();
 

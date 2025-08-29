@@ -10,12 +10,12 @@ import { SliderToolPresenceOverlay } from "./tools/slider/HitCircleToolPresence"
 
 export class OsuHitObjectComposer extends HitObjectComposer
 {
-  constructor()
+  public constructor()
   {
     super();
   }
 
-  async getTools(): Promise<ComposeToolInfo[]>
+  public async getTools(): Promise<ComposeToolInfo[]>
   {
     return [
       {

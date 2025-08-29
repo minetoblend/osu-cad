@@ -17,9 +17,9 @@ export class LegacySpriteText extends LoreAccurateSpriteText
 {
   private static readonly fixedWidthExcludeCharacters = [",", ".", "%", "x"];
 
-  readonly maxSizePerGlyph: Vec2 | null;
+  public readonly maxSizePerGlyph: Vec2 | null;
 
-  readonly fixedWidth: boolean;
+  public readonly fixedWidth: boolean;
 
   readonly #font: LegacyFont;
 
@@ -35,7 +35,7 @@ export class LegacySpriteText extends LoreAccurateSpriteText
     return LegacySpriteText.fixedWidthExcludeCharacters;
   }
 
-  constructor(options: LegacySpriteTextOptions)
+  public constructor(options: LegacySpriteTextOptions)
   {
     super();
 

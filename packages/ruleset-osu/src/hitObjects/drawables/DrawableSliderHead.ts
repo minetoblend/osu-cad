@@ -6,14 +6,14 @@ import { HitResult } from "@osucad/core";
 
 export class DrawableSliderHead extends DrawableHitCircle
 {
-  constructor(initialHitObject?: SliderHeadCircle)
+  public constructor(initialHitObject?: SliderHeadCircle)
   {
     super(initialHitObject);
   }
 
-  classicSliderBehavior = false;
+  public classicSliderBehavior = false;
 
-  get drawableSlider(): DrawableSlider | null
+  public get drawableSlider(): DrawableSlider | null
   {
     if (this.parentHitObject instanceof DrawableSlider)
       return this.parentHitObject;
@@ -44,7 +44,7 @@ export class DrawableSliderHead extends DrawableHitCircle
     this.drawableSlider?.sliderInputManager.postProcessHeadJudgement(this);
   }
 
-  override shake()
+  public override shake()
   {
     super.shake();
     this.drawableSlider?.shake();

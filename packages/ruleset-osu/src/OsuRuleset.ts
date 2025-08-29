@@ -4,9 +4,9 @@ import type { EditorRuleset } from "@osucad/editor";
 
 export class OsuRuleset implements Ruleset
 {
-  readonly id = "osu";
-  readonly title = "osu!";
-  readonly legacyId = 0;
+  public readonly id = "osu";
+  public readonly title = "osu!";
+  public readonly legacyId = 0;
 
   public async createDrawableRuleset(options: DrawableRulesetOptions): Promise<DrawableRuleset>
   {
@@ -41,7 +41,7 @@ export class OsuRuleset implements Ruleset
     return new OsuHitObjectComposer();
   }
 
-  async createEditorRuleset(): Promise<EditorRuleset>
+  public async createEditorRuleset(): Promise<EditorRuleset>
   {
     const { OsuEditorRuleset } = await import("./edit/OsuEditorRuleset");
 

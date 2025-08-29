@@ -56,7 +56,7 @@ export abstract class HitObjectPlacementTool<T extends HitObject> extends Compos
     this.#hitObject.applyDefaults(this.beatmap.difficulty, this.beatmap.controlPointInfo);
   }
 
-  beginPlacement()
+  protected beginPlacement()
   {
     if (this.#state !== PlacementState.Idle)
       return false;
@@ -72,7 +72,7 @@ export abstract class HitObjectPlacementTool<T extends HitObject> extends Compos
     return true;
   }
 
-  endPlacement(commit: boolean)
+  protected endPlacement(commit: boolean)
   {
     if (this.#state === PlacementState.Idle)
     {
@@ -102,7 +102,7 @@ export abstract class HitObjectPlacementTool<T extends HitObject> extends Compos
     this.recreate();
   }
 
-  override update(): void
+  protected override update(): void
   {
     if (this.#state === PlacementState.Completed)
       return this.recreate();
@@ -120,7 +120,7 @@ export abstract class HitObjectPlacementTool<T extends HitObject> extends Compos
   {
   }
 
-  override dispose(isDisposing?: boolean): void
+  public override dispose(): void
   {
     if (this.#state !== PlacementState.Completed)
       this.endPlacement(false);

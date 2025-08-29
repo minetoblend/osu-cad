@@ -8,8 +8,7 @@ import type { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint"
 @provideSelf()
 export abstract class SelectionBlueprintContainer<T extends HitObject> extends CompositeDrawable
 {
-  // noinspection TypeScriptAbstractClassConstructorCanBeMadeProtected
-  constructor(readonly selection: ObservableSet<T>)
+  public constructor(public readonly selection: ObservableSet<T>)
   {
     super();
 
@@ -130,7 +129,7 @@ export abstract class SelectionBlueprintContainer<T extends HitObject> extends C
       if (this.loadState >= LoadState.Ready)
       {
         if (blueprint.parent)
-          blueprint.parent.changeInternalChildDepth(blueprint, this.getDrawableDepth(blueprint));
+          this.changeInternalChildDepth(blueprint, this.getDrawableDepth(blueprint));
         else
           blueprint.depth = this.getDrawableDepth(blueprint);
       }
@@ -170,12 +169,12 @@ export abstract class SelectionBlueprintContainer<T extends HitObject> extends C
     return drawable.hitObject.startTime;
   }
 
-  get allBlueprints()
+  public get allBlueprints()
   {
     return this.#blueprints.values();
   }
 
-  get selectedObjects()
+  public get selectedObjects()
   {
     return this.#blueprints.values().filter(it => it.selected);
   }
@@ -187,7 +186,7 @@ export abstract class SelectionBlueprintContainer<T extends HitObject> extends C
 
   protected abstract getBlueprintFor(hitObject: T): HitObjectSelectionBlueprint<T> | null;
 
-  override checkChildrenLife(): boolean
+  public override checkChildrenLife(): boolean
   {
     if (!this.isPresent)
       return false;
@@ -199,7 +198,7 @@ export abstract class SelectionBlueprintContainer<T extends HitObject> extends C
     return aliveChanged;
   }
 
-  override dispose()
+  public override dispose()
   {
     this.#beatmap.hitObjects.added.removeListener(this.#addHitObject, this);
     this.#beatmap.hitObjects.removed.removeListener(this.#removeHitObject, this);

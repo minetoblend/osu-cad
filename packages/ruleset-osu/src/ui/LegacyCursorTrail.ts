@@ -13,16 +13,16 @@ export class LegacyCursorTrail extends CursorTrail
   #currentPosition: Vec2 | null = null;
   #lastTrailTime = Number.NEGATIVE_INFINITY;
 
-  constructor(skin: ISkin)
+  public constructor(skin: ISkin)
   {
     super();
 
     this.#skin = skin;
   }
 
-  allowPartRotation = false;
+  public allowPartRotation = false;
 
-  disjointTrail = false;
+  public disjointTrail = false;
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
@@ -71,7 +71,7 @@ export class LegacyCursorTrail extends CursorTrail
     return !this.disjointTrail;
   }
 
-  override update()
+  protected override update()
   {
     super.update();
 
@@ -85,7 +85,7 @@ export class LegacyCursorTrail extends CursorTrail
     }
   }
 
-  override onMouseMove(e: MouseMoveEvent): boolean
+  public override onMouseMove(e: MouseMoveEvent): boolean
   {
     if (!this.disjointTrail)
       return super.onMouseMove(e);

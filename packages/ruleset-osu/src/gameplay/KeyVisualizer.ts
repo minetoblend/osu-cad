@@ -40,14 +40,14 @@ export class KeyVisualizer extends CompositeDrawable implements IKeyBindingHandl
   private leftBox?: Drawable;
   private rightBox?: Drawable;
 
-  readonly isKeyBindingHandler = true;
+  public readonly isKeyBindingHandler = true;
 
-  canHandleKeyBinding(binding: KeyBindingAction): boolean
+  public canHandleKeyBinding(binding: KeyBindingAction): boolean
   {
     return binding instanceof OsuAction;
   }
 
-  onKeyBindingPressed(e: KeyBindingPressEvent<OsuAction>): boolean
+  public onKeyBindingPressed(e: KeyBindingPressEvent<OsuAction>): boolean
   {
     switch (e.pressed)
     {
@@ -74,7 +74,7 @@ export class KeyVisualizer extends CompositeDrawable implements IKeyBindingHandl
     return false;
   }
 
-  onKeyBindingReleased(e: KeyBindingReleaseEvent<OsuAction>)
+  public onKeyBindingReleased(e: KeyBindingReleaseEvent<OsuAction>)
   {
     switch (e.pressed)
     {
@@ -89,7 +89,7 @@ export class KeyVisualizer extends CompositeDrawable implements IKeyBindingHandl
     }
   }
 
-  override update()
+  public override update()
   {
     super.update();
 

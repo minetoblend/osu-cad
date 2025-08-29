@@ -12,12 +12,12 @@ import type { PlaySliderBody } from "./PlaySliderBody";
 @provideSelf()
 export class DrawableSliderRepeat extends DrawableOsuHitObject<SliderRepeat>
 {
-  constructor()
+  public constructor()
   {
     super();
   }
 
-  get drawableSlider(): DrawableSlider | null
+  public get drawableSlider(): DrawableSlider | null
   {
     if (this.parentHitObject instanceof DrawableSlider)
       return this.parentHitObject;
@@ -25,9 +25,9 @@ export class DrawableSliderRepeat extends DrawableOsuHitObject<SliderRepeat>
     return null;
   }
 
-  circlePiece: SkinnableDrawable = null!;
+  public circlePiece: SkinnableDrawable = null!;
 
-  arrow!: SkinnableDrawable;
+  public arrow!: SkinnableDrawable;
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
@@ -88,7 +88,7 @@ export class DrawableSliderRepeat extends DrawableOsuHitObject<SliderRepeat>
     this.fadeOut(animDuration, EasingFunction.Out);
   }
 
-  updateSnakingPosition(start: Vec2, end: Vec2)
+  public updateSnakingPosition(start: Vec2, end: Vec2)
   {
     if (this.time.current > this.hitObject.endTime)
       return;

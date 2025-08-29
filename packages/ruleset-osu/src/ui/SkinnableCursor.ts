@@ -12,10 +12,10 @@ export class SkinnableCursor extends CompositeDrawable
       .scaleTo(pressed_scale, 400, EasingFunction.OutElasticHalf);
   }
 
-  contract()
+  public contract()
   {
     this.expandTarget?.scaleTo(released_scale, 400, EasingFunction.OutQuad);
   }
 
-  expandTarget?: Drawable;
+  public expandTarget?: Drawable;
 }

@@ -4,7 +4,7 @@ import { Anchor, Container, DrawSizePreservingFillContainer } from "@osucad/fram
 
 export class OsuPlayfieldAdjustmentContainer extends PlayfieldAdjustmentContainer
 {
-  constructor()
+  public constructor()
   {
     super();
 
@@ -26,9 +26,9 @@ export class OsuPlayfieldAdjustmentContainer extends PlayfieldAdjustmentContaine
     );
   }
 
-  readonly _content: Container;
+  public readonly _content: Container;
 
-  override get content(): Container<Drawable>
+  protected override get content(): Container<Drawable>
   {
     return this._content;
   }

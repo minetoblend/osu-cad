@@ -1,21 +1,19 @@
-import type { ClickEvent, DragEndEvent, DragEvent, DragStartEvent, Drawable, MouseDownEvent, Rectangle } from "@osucad/framework";
+import type { DrawableHitObject } from "@osucad/core";
+import { SkinnableDrawable } from "@osucad/core";
+import type { ClickEvent, DragEndEvent, DragEvent, DragStartEvent, MouseDownEvent, Rectangle } from "@osucad/framework";
 import { Anchor, Bindable, dependencyLoader, ProxyDrawable, resolved, Vec2 } from "@osucad/framework";
 import type { HitCircle } from "../../../hitObjects";
 import { OsuHitObject } from "../../../hitObjects";
-import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
-import type { DrawableHitObject } from "@osucad/core";
-import { SkinnableDrawable } from "@osucad/core";
-import { OsuSkinComponents } from "../../../skinning";
 import { DrawableHitCircle } from "../../../hitObjects/drawables/DrawableHitCircle";
+import { OsuSkinComponents } from "../../../skinning";
+import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
 import { SelectTool } from "./SelectTool";
 
 export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<HitCircle>
 {
-  readonly scaleBindable = new Bindable(1);
-  readonly positionBindable = new Bindable(new Vec2());
-  readonly stackHeightBindable = new Bindable(0);
-
-  #content!: Drawable;
+  public readonly scaleBindable = new Bindable(1);
+  public readonly positionBindable = new Bindable(new Vec2());
+  public readonly stackHeightBindable = new Bindable(0);
 
   @dependencyLoader()
   #load()
@@ -29,7 +27,7 @@ export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<Hit
     this.stackHeightBindable.bindTo(this.hitObject.stackHeightBindable);
 
     this.internalChildren = [
-      this.#content = new SkinnableDrawable(OsuSkinComponents.HitCircleSelect).with({
+      new SkinnableDrawable(OsuSkinComponents.HitCircleSelect).with({
         anchor: Anchor.Center,
         origin: Anchor.Center,
       }),
@@ -55,7 +53,7 @@ export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<Hit
   @resolved(() => SelectTool)
   accessor #selectTool!: SelectTool
 
-  override onDragStart(e: DragStartEvent): boolean
+  protected override onDragStart(e: DragStartEvent): boolean
   {
     if (!this.selected)
       this.selectExclusive();
@@ -68,7 +66,7 @@ export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<Hit
     return true;
   }
 
-  override onDrag(e: DragEvent): boolean
+  protected override onDrag(e: DragEvent): boolean
   {
     const delta = this.parent!.toLocalSpace(e.screenSpaceMousePosition).sub(this.#dragStartPosition);
 
@@ -78,7 +76,7 @@ export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<Hit
     return true;
   }
 
-  override onDragEnd(e: DragEndEvent): void
+  protected override onDragEnd(e: DragEndEvent): void
   {
     this.history.commit();
   }
@@ -99,7 +97,7 @@ export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<Hit
       this.#canCycleSelection = true;
   }
 
-  override onClick(e: ClickEvent): boolean
+  public override onClick(e: ClickEvent): boolean
   {
     if (this.#canCycleSelection)
     {
@@ -110,7 +108,7 @@ export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<Hit
     return false;
   }
 
-  override drawableBecameAlive(drawableHitObject: DrawableHitObject)
+  public override drawableBecameAlive(drawableHitObject: DrawableHitObject)
   {
     if (drawableHitObject instanceof DrawableHitCircle)
     {
@@ -119,7 +117,7 @@ export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<Hit
     }
   }
 
-  override drawableBecameDead(drawableHitObject: DrawableHitObject)
+  public override drawableBecameDead(drawableHitObject: DrawableHitObject)
   {
     if (this.#proxy && drawableHitObject instanceof DrawableHitCircle)
     {
@@ -129,12 +127,12 @@ export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<Hit
     }
   }
 
-  override isInSelectionRect(rectangle: Rectangle): boolean
+  public override isInSelectionRect(rectangle: Rectangle): boolean
   {
     return rectangle.contains(this.hitObject.stackedPosition);
   }
 
-  override dispose()
+  public override dispose()
   {
     if (this.#proxy)
       this.#drawableHitObject?.proxyLayer.remove(this.#proxy);

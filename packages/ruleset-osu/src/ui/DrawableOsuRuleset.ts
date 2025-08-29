@@ -9,7 +9,7 @@ import type { PassThroughInputManager } from "@osucad/framework";
 
 export class DrawableOsuRuleset extends DrawableRuleset
 {
-  constructor(options: DrawableRulesetOptions = {})
+  public constructor(options: DrawableRulesetOptions = {})
   {
     super(options);
   }
@@ -19,7 +19,7 @@ export class DrawableOsuRuleset extends DrawableRuleset
     return new OsuPlayfield(options);
   }
 
-  override createPlayfieldAdjustmentContainer()
+  public override createPlayfieldAdjustmentContainer()
   {
     return new OsuPlayfieldAdjustmentContainer();
   }

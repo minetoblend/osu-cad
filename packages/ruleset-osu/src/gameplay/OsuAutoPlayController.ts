@@ -15,14 +15,14 @@ import { DrawableSpinner } from "../hitObjects/drawables/DrawableSpinner";
 
 export class OsuAutoPlayController extends AutoPlayController<DrawableOsuHitObject>
 {
-  constructor(playfield: Playfield, inputManager: PassThroughInputManager)
+  public constructor(playfield: Playfield, inputManager: PassThroughInputManager)
   {
     super(playfield, inputManager);
   }
 
   #currentHitObject?: DrawableOsuHitObject;
 
-  readonly cursorPos = new CursorPosition();
+  public readonly cursorPos = new CursorPosition();
 
   protected override* process({ current, next }: AutoPlayFrameContext<DrawableOsuHitObject>)
   {

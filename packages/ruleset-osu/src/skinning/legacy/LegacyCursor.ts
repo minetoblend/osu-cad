@@ -13,7 +13,7 @@ export class LegacyCursor extends SkinnableCursor
   readonly #skin: ISkin;
   #spin = false;
 
-  constructor(skin: ISkin)
+  public constructor(skin: ISkin)
   {
     super();
 
@@ -53,7 +53,7 @@ export class LegacyCursor extends SkinnableCursor
     ];
   }
 
-  override update()
+  protected override update()
   {
     super.update();
 
@@ -61,13 +61,13 @@ export class LegacyCursor extends SkinnableCursor
       this.expandTarget!.rotation += (this.time.elapsed / LegacyCursor.REVOLUTION_DURATION) * 2 * Math.PI;
   }
 
-  override expand()
+  public override expand()
   {
     this.expandTarget?.scaleTo(released_scale)
       .scaleTo(pressed_scale, 100, EasingFunction.Out);
   }
 
-  override contract()
+  public override contract()
   {
     this.expandTarget?.scaleTo(released_scale, 100, EasingFunction.Out);
   }

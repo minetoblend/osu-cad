@@ -12,7 +12,7 @@ export class SliderRepeat extends SliderTailCircle
 {
 
 
-  constructor(slider: Slider, options: SliderRepeatOptions = {})
+  public constructor(slider: Slider, options: SliderRepeatOptions = {})
   {
     const { pathProgress, ...rest } = options;
 
@@ -21,5 +21,5 @@ export class SliderRepeat extends SliderTailCircle
     safeAssign(this, { pathProgress });
   }
 
-  pathProgress = 0;
+  public pathProgress = 0;
 }

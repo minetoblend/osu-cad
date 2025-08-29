@@ -10,9 +10,9 @@ const WHITE = new Color(0xffffff);
 
 export class PlaySliderBody extends SnakingSliderBody
 {
-  scaleBindable!: Bindable<number>;
-  accentColorBindable!: Bindable<Color>;
-  pathVersion = new Bindable(0);
+  public scaleBindable!: Bindable<number>;
+  public accentColorBindable!: Bindable<Color>;
+  public pathVersion = new Bindable(0);
 
   @resolved(ISkinSource)
   protected accessor skin!: ISkinSource;

@@ -112,9 +112,9 @@ function* generateTicks(
 
 export class SliderEventGenerator
 {
-  static readonly TAIL_LENIENCY = TAIL_LENIENCY;
+  public static readonly TAIL_LENIENCY = TAIL_LENIENCY;
 
-  static readonly generate = generate;
+  public static readonly generate = generate;
 }
 
 export interface SliderEventDescriptor

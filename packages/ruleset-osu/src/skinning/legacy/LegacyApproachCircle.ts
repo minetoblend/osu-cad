@@ -8,7 +8,7 @@ export class LegacyApproachCircle extends CompositeDrawable
   @resolved(DrawableHitObject)
   accessor #hitObject!: DrawableHitObject;
 
-  constructor()
+  public constructor()
   {
     super();
 
@@ -20,7 +20,7 @@ export class LegacyApproachCircle extends CompositeDrawable
   @resolved(ISkinSource)
   accessor #skin!: ISkinSource;
 
-  readonly accentColor = new Bindable(new Color(0xffffff));
+  public readonly accentColor = new Bindable(new Color(0xffffff));
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {

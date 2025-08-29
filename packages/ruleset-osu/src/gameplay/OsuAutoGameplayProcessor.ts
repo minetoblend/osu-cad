@@ -9,7 +9,7 @@ type BaseDrawableHitObject = DrawableHitCircle | DrawableSlider | DrawableSpinne
 
 export class OsuAutoGameplayProcessor extends GameplayProcessor<OsuPlayfield>
 {
-  constructor(playfield: OsuPlayfield)
+  public constructor(playfield: OsuPlayfield)
   {
     super(playfield);
   }
@@ -59,7 +59,7 @@ export class OsuAutoGameplayProcessor extends GameplayProcessor<OsuPlayfield>
     // TODO
   }
 
-  override onHitObjectApplied(hitObject: DrawableHitObject)
+  public override onHitObjectApplied(hitObject: DrawableHitObject)
   {
     if (this.time.current > hitObject.hitObject.endTime)
       hitObject.updateState(ArmedState.Hit, true);

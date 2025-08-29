@@ -19,7 +19,7 @@ export class SpinnerSpinHistory
 
   #lastReportTime = Number.NEGATIVE_INFINITY;
 
-  reportDelta(currentTime: number, delta: number)
+  public reportDelta(currentTime: number, delta: number)
   {
     if (delta === 0)
       return;
@@ -58,7 +58,10 @@ export class SpinnerSpinHistory
 
 class CompletedSpin
 {
-  constructor(readonly completionTime: number, readonly direction: number)
+  public constructor(
+    public readonly completionTime: number,
+    public readonly direction: number,
+  )
   {
   }
 }

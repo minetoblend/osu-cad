@@ -33,11 +33,11 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
     }));
   }
 
-  path: PathPoint[] = [new PathPoint(Vec2.zero(), PathType.Bezier)];
+  #path: PathPoint[] = [new PathPoint(Vec2.zero(), PathType.Bezier)];
 
   private get segmentStart()
   {
-    return this.path.findLastIndex(it => it.type !== null);
+    return this.#path.findLastIndex(it => it.type !== null);
   }
 
   protected override updateTimeAndPosition(hitObject: Slider, time: number, position: Vec2): void
@@ -51,16 +51,16 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
 
     position = position.sub(hitObject.stackedPosition);
 
-    const lastPoint = this.path[this.path.length - 1];
+    const lastPoint = this.#path[this.#path.length - 1];
 
     if (position.distance(lastPoint.position) < 10)
     {
-      this.hitObject.path.controlPoints = [...this.path];
+      this.hitObject.path.controlPoints = [...this.#path];
       this.hitObject.snapPathLength(this.beatmap.controlPointInfo, this.beatDivisor.value);
       return;
     }
 
-    const path = [...this.path, new PathPoint(position)];
+    const path = [...this.#path, new PathPoint(position)];
 
     if (!this.#explicitPathType)
       this.applyAutomaticPathType(path);
@@ -79,12 +79,12 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
       path[segmentStart] = path[segmentStart].withType(PathType.Bezier);
   }
 
-  get pathPosition()
+  public get pathPosition()
   {
     return this.playfieldMousePosition.sub(this.hitObject.stackedPosition);
   }
 
-  override onMouseDown(e: MouseDownEvent)
+  protected override onMouseDown(e: MouseDownEvent)
   {
     if (e.button === MouseButton.Right)
     {
@@ -97,7 +97,7 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
     return true;
   }
 
-  override onClick(e: ClickEvent): boolean
+  protected override onClick(e: ClickEvent): boolean
   {
     if (!this.isPlacementActive)
     {
@@ -106,28 +106,28 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
     }
 
     const position = this.pathPosition;
-    if (position.distance(this.path[this.path.length - 1].position) < 10)
+    if (position.distance(this.#path[this.#path.length - 1].position) < 10)
     {
-      const lastIndex = this.path.length - 1;
+      const lastIndex = this.#path.length - 1;
 
-      this.path[lastIndex] = this.path[lastIndex].withNextType(lastIndex);
+      this.#path[lastIndex] = this.#path[lastIndex].withNextType(lastIndex);
 
 
-      if (this.path[lastIndex].type !== null)
-        this.#flashPathType(this.path[lastIndex].type, this.path[lastIndex].position);
+      if (this.#path[lastIndex].type !== null)
+        this.#flashPathType(this.#path[lastIndex].type, this.#path[lastIndex].position);
       return true;
     }
 
-    this.path.push(new PathPoint(position));
+    this.#path.push(new PathPoint(position));
 
-    this.applyAutomaticPathType(this.path);
+    this.applyAutomaticPathType(this.#path);
 
     this.#explicitPathType = false;
 
     return true;
   }
 
-  override getPresence(): ISliderToolPresence
+  public override getPresence(): ISliderToolPresence
   {
     return {
       state: this.state,
@@ -137,18 +137,18 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
     };
   }
 
-  override onKeyDown(e: KeyDownEvent)
+  protected override onKeyDown(e: KeyDownEvent)
   {
     if (e.key === Key.Backspace)
     {
-      if (this.path.length > 1)
-        this.path = this.path.slice(0, -1);
+      if (this.#path.length > 1)
+        this.#path = this.#path.slice(0, -1);
     }
 
     return false;
   }
 
-  override onScroll(e: ScrollEvent)
+  protected override onScroll(e: ScrollEvent)
   {
     if (e.shiftPressed && e.scrollDelta.y !== 0)
     {
@@ -156,7 +156,7 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
       if (segmentStart < 0)
         return true;
 
-      const path = [...this.path, new PathPoint(this.pathPosition)];
+      const path = [...this.#path, new PathPoint(this.pathPosition)];
 
       if (!this.#explicitPathType)
         this.applyAutomaticPathType(path);
@@ -169,7 +169,7 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
 
       path[segmentStart] = point.withType(newType);
 
-      this.path = path.slice(0, -1);
+      this.#path = path.slice(0, -1);
 
       this.#flashPathType(newType, point.position);
 
@@ -206,7 +206,7 @@ class PathText extends CompositeDrawable
   readonly #text: SpriteText;
   readonly #background: Box;
 
-  constructor()
+  public constructor()
   {
     super();
 
@@ -230,17 +230,17 @@ class PathText extends CompositeDrawable
     ];
   }
 
-  get text()
+  public get text()
   {
     return this.#text.text;
   }
 
-  set text(value)
+  public set text(value)
   {
     this.#text.text = value;
   }
 
-  set accentColor(value: ColorSource)
+  public set accentColor(value: ColorSource)
   {
     this.#background.color = value;
   }

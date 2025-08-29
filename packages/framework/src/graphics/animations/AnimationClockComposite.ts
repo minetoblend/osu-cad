@@ -40,7 +40,7 @@ export abstract class AnimationClockComposite extends CustomisableSizeCompositeD
     );
   }
 
-  public override get clock(): IFrameBasedClock | null
+  public override get clock(): IFrameBasedClock
   {
     return super.clock;
   }

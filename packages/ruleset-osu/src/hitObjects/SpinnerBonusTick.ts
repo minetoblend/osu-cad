@@ -4,7 +4,7 @@ import { OsuSpinnerTickJudgement, SpinnerTick } from "./SpinnerTick";
 
 export class SpinnerBonusTick extends SpinnerTick
 {
-  override createJudgement(): Judgement
+  public override createJudgement(): Judgement
   {
     return super.createJudgement();
   }
@@ -17,7 +17,7 @@ export class SpinnerBonusTick extends SpinnerTick
 
 export class OsuSpinnerBonusTickJudgement extends OsuSpinnerTickJudgement
 {
-  override get maxResult(): HitResult
+  public override get maxResult(): HitResult
   {
     return HitResult.LargeBonus;
   }

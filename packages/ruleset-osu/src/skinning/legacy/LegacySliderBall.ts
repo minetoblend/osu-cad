@@ -7,7 +7,7 @@ import { DrawableSlider } from "../../hitObjects/drawables/DrawableSlider";
 
 export class LegacySliderBall extends CompositeDrawable
 {
-  constructor(readonly sliderb: Drawable | null)
+  public constructor(public readonly sliderb: Drawable | null)
   {
     super();
   }
@@ -18,13 +18,13 @@ export class LegacySliderBall extends CompositeDrawable
   @resolved(DrawableHitObject)
   accessor #drawableHitObject!: DrawableHitObject;
 
-  sliderBall!: Drawable;
+  public sliderBall!: Drawable;
 
   #specular!: Drawable;
 
   readonly #allowSliderBallTint = computed(() => this.#skin.getConfig("allowSliderBallTint"));
 
-  readonly accentColor = new Bindable<Color>(new Color(0xFFFFFF));
+  public readonly accentColor = new Bindable<Color>(new Color(0xFFFFFF));
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
@@ -93,10 +93,10 @@ export class LegacySliderBall extends CompositeDrawable
       this.#specular.rotation = -this.parent!.rotation;
   }
 
-  public override dispose(isDisposing: boolean = true)
+  public override dispose()
   {
-    super.dispose(isDisposing);
-
     this.#drawableHitObject.applyCustomUpdateState.removeListener(this.#updateStateTransforms, this);
+
+    super.dispose();
   }
 }

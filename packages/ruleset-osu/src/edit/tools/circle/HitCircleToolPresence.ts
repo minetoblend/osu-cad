@@ -14,7 +14,7 @@ export interface IHitCircleToolPresence
 
 export class HitCircleToolPresenceOverlay extends ComposeToolPresenceOverlay
 {
-  constructor()
+  public constructor()
   {
     super();
   }
@@ -41,7 +41,7 @@ export class HitCircleToolPresenceOverlay extends ComposeToolPresenceOverlay
 
   #circle!: Container;
 
-  override updatePresence(content: unknown): void
+  public override updatePresence(content: unknown): void
   {
     if (typeof content !== "object" || !content || !("position" in content))
     {

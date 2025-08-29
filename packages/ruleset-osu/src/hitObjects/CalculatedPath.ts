@@ -3,24 +3,24 @@ import { clamp, Vec2 } from "@osucad/framework";
 
 export class CalculatedPath
 {
-  constructor(
-    readonly vertices: Vec2[] = [],
-    readonly cumulativeDistance: number[] = [],
+  public constructor(
+    public readonly vertices: Vec2[] = [],
+    public readonly cumulativeDistance: number[] = [],
   )
   {
   }
 
-  get length()
+  public get length()
   {
     return this.vertices.length;
   }
 
-  get totalDistance()
+  public get totalDistance()
   {
     return this.cumulativeDistance[this.cumulativeDistance.length - 1] ?? 0;
   }
 
-  getPositionAtDistance<T extends IVec2>(d: number, out: T): T
+  public getPositionAtDistance<T extends IVec2>(d: number, out: T): T
   {
     if (this.vertices.length <= 1)
     {
@@ -58,7 +58,7 @@ export class CalculatedPath
     return out;
   }
 
-  getRange(d0: number, d1: number)
+  public getRange(d0: number, d1: number)
   {
 
     const vertices = this.vertices;

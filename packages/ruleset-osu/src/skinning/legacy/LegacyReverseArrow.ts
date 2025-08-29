@@ -64,7 +64,7 @@ export class LegacyReverseArrow extends CompositeDrawable
     this.#drawableRepeat.drawableSlider?.overlayElementContainer.add(this.#proxy);
   }
 
-  override update()
+  protected override update()
   {
     super.update();
 
@@ -102,11 +102,11 @@ export class LegacyReverseArrow extends CompositeDrawable
     }
   }
 
-  override dispose(isDisposing: boolean = true)
+  public override dispose()
   {
-    super.dispose(isDisposing);
-
     if (this.#drawableRepeat)
       this.#drawableRepeat.hitObjectApplied.removeListener(this.#onHitObjectApplied, this);
+
+    super.dispose();
   }
 }

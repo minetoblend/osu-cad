@@ -27,12 +27,12 @@ export interface SliderOptions extends OsuHitObjectOptions
 })
 export class Slider extends OsuHitObject
 {
-  static readonly attributes: DDSAttributes = {
+  public static readonly attributes: DDSAttributes = {
     type: "@osucad/slider",
     version: 0,
   };
 
-  constructor(options: SliderOptions = {})
+  public constructor(options: SliderOptions = {})
   {
     const { repeatCount, expectedDistance, controlPoints, ...rest } = options;
     super(Slider.attributes, rest);
@@ -64,28 +64,28 @@ export class Slider extends OsuHitObject
       this.tailCircle.position = this.endPosition;
   }
 
-  headCircle: SliderHeadCircle | null = null;
+  public headCircle: SliderHeadCircle | null = null;
 
-  tailCircle: SliderTailCircle | null = null;
+  public tailCircle: SliderTailCircle | null = null;
 
-  readonly repeatCountBindable = new BindableNumber(0)
+  public readonly repeatCountBindable = new BindableNumber(0)
     .withMinValue(0)
     .withPrecision(1);
 
 
   @type("uint32")
   @bindableBacked("repeatCountBindable")
-  accessor repeatCount!: number
+  public accessor repeatCount!: number
 
-  spanCount()
+  public spanCount()
   {
     return this.repeatCount + 1;
   }
 
-  readonly sliderVelocityBindable = new BindableNumber(1)
+  public readonly sliderVelocityBindable = new BindableNumber(1)
     .withMinValue(0);
 
-  get velocity()
+  public get velocity()
   {
     return this.sliderVelocityBindable.value;
   }
@@ -95,7 +95,7 @@ export class Slider extends OsuHitObject
     this.sliderVelocityBindable.value = value;
   }
 
-  spanDuration()
+  public spanDuration()
   {
     return this.path.distance / this.velocity;
   }
@@ -107,19 +107,19 @@ export class Slider extends OsuHitObject
 
   #tickDistance = 1;
 
-  get tickDistance()
+  public get tickDistance()
   {
     return this.#tickDistance;
   }
 
-  readonly nodeHitSoundsBindable = new Bindable<readonly HitSoundInfo[]>([]);
+  public readonly nodeHitSoundsBindable = new Bindable<readonly HitSoundInfo[]>([]);
 
-  get nodeHitSounds()
+  public get nodeHitSounds()
   {
     return this.nodeHitSoundsBindable.value;
   }
 
-  set nodeHitSounds(value)
+  public set nodeHitSounds(value)
   {
     this.nodeHitSoundsBindable.value = value;
   }
@@ -144,14 +144,14 @@ export class Slider extends OsuHitObject
   }
 
   @nested(SliderPath)
-  accessor path = new SliderPath();
+  public accessor path = new SliderPath();
 
-  spanAt(progress: number)
+  public spanAt(progress: number)
   {
     return Math.floor(progress * this.spanCount());
   }
 
-  progressAt(progress: number): number
+  public progressAt(progress: number): number
   {
     let p = (progress * this.spanCount()) % 1;
     if (this.spanAt(progress) % 2 === 1)
@@ -159,7 +159,7 @@ export class Slider extends OsuHitObject
     return p;
   }
 
-  curvePositionAt(progress: number, out: Vec2 = new Vec2()): Vec2
+  public curvePositionAt(progress: number, out: Vec2 = new Vec2()): Vec2
   {
     return this.path.positionAt(this.progressAt(progress), out);
   }
@@ -169,12 +169,12 @@ export class Slider extends OsuHitObject
     return this.position.add(this.curvePositionAt(1));
   }
 
-  get pathEndPosition()
+  public get pathEndPosition()
   {
     return this.path.positionAt(1).addInPlace(this.position);
   }
 
-  get stackedPathEndPosition()
+  public get stackedPathEndPosition()
   {
     return this.pathEndPosition.addInPlace(this.stackOffset);
   }
@@ -254,7 +254,7 @@ export class Slider extends OsuHitObject
     return samples;
   }
 
-  override contains(position: Vec2): boolean
+  public override contains(position: Vec2): boolean
   {
     const radiusSquared = this.radius * this.radius;
 
@@ -279,12 +279,12 @@ export class Slider extends OsuHitObject
     return false;
   }
 
-  override getSnapTargets(): Vec2[]
+  public override getSnapTargets(): Vec2[]
   {
     return [this.position, this.pathEndPosition];
   }
 
-  snapPathLength(controlPointInfo: ControlPointInfo, divisor: number)
+  public snapPathLength(controlPointInfo: ControlPointInfo, divisor: number)
   {
     const length = this.path.calculatedDistance;
     const duration = Math.ceil(length / this.velocity);
