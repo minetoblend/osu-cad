@@ -12,7 +12,7 @@ import { InputHandler } from "./InputHandler";
 
 export class MouseHandler extends InputHandler
 {
-  override initialize(host: GameHost): boolean
+  public override initialize(host: GameHost): boolean
   {
     if (!super.initialize(host))
     {
@@ -143,9 +143,9 @@ export class MouseHandler extends InputHandler
     this.pendingInputs.push(input);
   }
 
-  override dispose(isDisposing: boolean = true): void
+  public override dispose(): void
   {
-    super.dispose(isDisposing);
+    super.dispose();
     this.enabled.value = false;
   }
 

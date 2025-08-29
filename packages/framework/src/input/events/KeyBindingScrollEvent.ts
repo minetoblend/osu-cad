@@ -4,11 +4,11 @@ import { KeyBindingEvent } from "./KeyBindingEvent";
 
 export class KeyBindingScrollEvent<T extends KeyBindingAction> extends KeyBindingEvent<T>
 {
-  constructor(
+  public constructor(
     state: InputState,
     pressed: T,
-    readonly scrollAmount: number,
-    readonly isPrecise: boolean,
+    public readonly scrollAmount: number,
+    public readonly isPrecise: boolean,
   )
   {
     super(state, "onScrollKeyBinding", pressed);

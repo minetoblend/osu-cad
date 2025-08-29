@@ -1,23 +1,23 @@
 export class Timer
 {
-  total = 0;
+  public total = 0;
 
-  start()
+  public start()
   {
     return performance.now();
   }
 
-  stop(start: number)
+  public stop(start: number)
   {
     this.total += performance.now() - start;
   }
 
-  clear()
+  public clear()
   {
     this.total = 0;
   }
 
-  measure<T>(fn: () => T): T
+  public measure<T>(fn: () => T): T
   {
     const start = performance.now();
 

@@ -2,9 +2,9 @@ import type { IClock } from "./IClock";
 
 export class ManualClock implements IClock
 {
-  currentTime = 0;
+  public currentTime = 0;
 
-  rate = 1;
+  public rate = 1;
 
-  isRunning = false;
+  public isRunning = false;
 }

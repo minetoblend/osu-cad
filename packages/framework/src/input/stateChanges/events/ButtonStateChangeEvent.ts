@@ -5,12 +5,12 @@ import { InputStateChangeEvent } from "./InputStateChangeEvent";
 
 export class ButtonStateChangeEvent<TButton> extends InputStateChangeEvent
 {
-  constructor(
+  public constructor(
     state: InputState,
     input: ButtonInput<TButton>,
     public button: TButton,
     public kind: ButtonStateChangeKind,
-    readonly event?: UIEvent,
+    public readonly event?: UIEvent,
   )
   {
     super(state, input);

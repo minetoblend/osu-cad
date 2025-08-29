@@ -7,9 +7,9 @@ const fps_calculation_interval = 250;
 
 export class FramedClock implements IFrameBasedClock
 {
-  source!: IClock;
+  public source!: IClock;
 
-  constructor(source: IClock = new StopwatchClock(), processSource: boolean = true)
+  public constructor(source: IClock = new StopwatchClock(), processSource: boolean = true)
   {
     this.#processSource = processSource;
     this.changeSource(source);
@@ -21,7 +21,7 @@ export class FramedClock implements IFrameBasedClock
 
   #framesPerSecond = 0;
 
-  get framesPerSecond(): number
+  public get framesPerSecond(): number
   {
     return this.#framesPerSecond;
   }
@@ -33,14 +33,14 @@ export class FramedClock implements IFrameBasedClock
     this.#jitter = value;
   }
 
-  get jitter()
+  public get jitter()
   {
     return this.#jitter;
   }
 
   #currentTime = 0;
 
-  get currentTime(): number
+  public get currentTime(): number
   {
     return this.#currentTime;
   }
@@ -50,24 +50,24 @@ export class FramedClock implements IFrameBasedClock
     this.#currentTime = value;
   }
 
-  lastFrameTime = 0;
+  public lastFrameTime = 0;
 
-  get rate()
+  public get rate()
   {
     return this.source.rate;
   }
 
-  get sourceTime()
+  public get sourceTime()
   {
     return this.source.currentTime;
   }
 
-  get elapsedFrameTime(): number
+  public get elapsedFrameTime(): number
   {
     return this.currentTime - this.lastFrameTime;
   }
 
-  get isRunning()
+  public get isRunning()
   {
     return this.source.isRunning;
   }
@@ -78,22 +78,20 @@ export class FramedClock implements IFrameBasedClock
   #timeSinceLastCalculation = 0;
   #framesSinceLastCalculation = 0;
 
-  changeSource(source: IClock)
+  public changeSource(source: IClock)
   {
     this.source = source;
     this.currentTime = this.lastFrameTime = source.currentTime;
   }
 
-  processFrame(): void
+  public processFrame(): void
   {
     this.#betweenFrameTimes[this.#totalFramesProcessed % this.#betweenFrameTimes.length]
       = this.currentTime - this.lastFrameTime;
     this.#totalFramesProcessed++;
 
     if (this.#processSource && isFrameBasedClock(this.source))
-    {
       this.source.processFrame();
-    }
 
     if (this.#timeUntilNextCalculation <= 0)
     {
@@ -142,10 +140,10 @@ export class FramedClock implements IFrameBasedClock
     current: 0,
   };
 
-  get timeInfo(): FrameTimeInfo
+  public get timeInfo(): FrameTimeInfo
   {
     return this.#timeInfo;
   }
 
-  readonly isFrameBasedClock = true;
+  public readonly isFrameBasedClock = true;
 }

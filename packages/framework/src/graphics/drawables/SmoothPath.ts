@@ -13,12 +13,12 @@ export class SmoothPath extends Path
     this.#validateTexture();
   }
 
-  override get pathRadius()
+  public override get pathRadius()
   {
     return super.pathRadius;
   }
 
-  override set pathRadius(value)
+  public override set pathRadius(value)
   {
     if (this.pathRadius === value)
       return;
@@ -72,12 +72,12 @@ export class SmoothPath extends Path
     this.#textureCache.validate();
   }
 
-  colorAt(position: number): ColorSource
+  public colorAt(position: number): ColorSource
   {
     return 0xFFFFFF;
   }
 
-  override updateSubTreeTransforms(): boolean
+  public override updateSubTreeTransforms(): boolean
   {
     if (!super.updateSubTreeTransforms())
       return false;

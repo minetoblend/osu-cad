@@ -2,55 +2,55 @@ import { KeyBindingAction } from "./KeyBindingAction";
 
 export class PlatformAction extends KeyBindingAction
 {
-  constructor(readonly name: string)
+  public constructor(public readonly name: string)
   {
     super();
   }
 
-  static readonly Cut = new PlatformAction("Cut");
-  static readonly Copy = new PlatformAction("Copy");
-  static readonly Paste = new PlatformAction("Paste");
-  static readonly Delete = new PlatformAction("Delete");
-  static readonly SelectAll = new PlatformAction("SelectAll");
-  static readonly Save = new PlatformAction("Save");
-  static readonly Undo = new PlatformAction("Undo");
-  static readonly Redo = new PlatformAction("Redo");
-  static readonly Exit = new PlatformAction("Exit");
-  static readonly MoveToListStart = new PlatformAction("MoveToListStart");
-  static readonly MoveToListEnd = new PlatformAction("MoveToListEnd");
-  static readonly DocumentNew = new PlatformAction("DocumentNew");
-  static readonly DocumentPrevious = new PlatformAction("DocumentPrevious");
-  static readonly DocumentNext = new PlatformAction("DocumentNext");
-  static readonly DocumentClose = new PlatformAction("DocumentClose");
-  static readonly TabNew = new PlatformAction("TabNew");
-  static readonly TabRestore = new PlatformAction("TabRestore");
+  public static readonly Cut = new PlatformAction("Cut");
+  public static readonly Copy = new PlatformAction("Copy");
+  public static readonly Paste = new PlatformAction("Paste");
+  public static readonly Delete = new PlatformAction("Delete");
+  public static readonly SelectAll = new PlatformAction("SelectAll");
+  public static readonly Save = new PlatformAction("Save");
+  public static readonly Undo = new PlatformAction("Undo");
+  public static readonly Redo = new PlatformAction("Redo");
+  public static readonly Exit = new PlatformAction("Exit");
+  public static readonly MoveToListStart = new PlatformAction("MoveToListStart");
+  public static readonly MoveToListEnd = new PlatformAction("MoveToListEnd");
+  public static readonly DocumentNew = new PlatformAction("DocumentNew");
+  public static readonly DocumentPrevious = new PlatformAction("DocumentPrevious");
+  public static readonly DocumentNext = new PlatformAction("DocumentNext");
+  public static readonly DocumentClose = new PlatformAction("DocumentClose");
+  public static readonly TabNew = new PlatformAction("TabNew");
+  public static readonly TabRestore = new PlatformAction("TabRestore");
 
-  static readonly MoveBackwardChar = new PlatformAction("MoveBackwardChar");
-  static readonly MoveForwardChar = new PlatformAction("MoveForwardChar");
-  static readonly DeleteBackwardChar = new PlatformAction("DeleteBackwardChar");
-  static readonly DeleteForwardChar = new PlatformAction("DeleteForwardChar");
-  static readonly SelectBackwardChar = new PlatformAction("SelectBackwardChar");
-  static readonly SelectForwardChar = new PlatformAction("SelectForwardChar");
+  public static readonly MoveBackwardChar = new PlatformAction("MoveBackwardChar");
+  public static readonly MoveForwardChar = new PlatformAction("MoveForwardChar");
+  public static readonly DeleteBackwardChar = new PlatformAction("DeleteBackwardChar");
+  public static readonly DeleteForwardChar = new PlatformAction("DeleteForwardChar");
+  public static readonly SelectBackwardChar = new PlatformAction("SelectBackwardChar");
+  public static readonly SelectForwardChar = new PlatformAction("SelectForwardChar");
 
-  static readonly MoveBackwardWord = new PlatformAction("MoveBackwardWord");
-  static readonly MoveForwardWord = new PlatformAction("MoveForwardWord");
-  static readonly DeleteBackwardWord = new PlatformAction("DeleteBackwardWord");
-  static readonly DeleteForwardWord = new PlatformAction("DeleteForwardWord");
-  static readonly SelectBackwardWord = new PlatformAction("SelectBackwardWord");
-  static readonly SelectForwardWord = new PlatformAction("SelectForwardWord");
+  public static readonly MoveBackwardWord = new PlatformAction("MoveBackwardWord");
+  public static readonly MoveForwardWord = new PlatformAction("MoveForwardWord");
+  public static readonly DeleteBackwardWord = new PlatformAction("DeleteBackwardWord");
+  public static readonly DeleteForwardWord = new PlatformAction("DeleteForwardWord");
+  public static readonly SelectBackwardWord = new PlatformAction("SelectBackwardWord");
+  public static readonly SelectForwardWord = new PlatformAction("SelectForwardWord");
 
-  static readonly MoveBackwardLine = new PlatformAction("MoveBackwardLine");
-  static readonly MoveForwardLine = new PlatformAction("MoveForwardLine");
-  static readonly DeleteBackwardLine = new PlatformAction("DeleteBackwardLine");
-  static readonly DeleteForwardLine = new PlatformAction("DeleteForwardLine");
-  static readonly SelectBackwardLine = new PlatformAction("SelectBackwardLine");
-  static readonly SelectForwardLine = new PlatformAction("SelectForwardLine");
+  public static readonly MoveBackwardLine = new PlatformAction("MoveBackwardLine");
+  public static readonly MoveForwardLine = new PlatformAction("MoveForwardLine");
+  public static readonly DeleteBackwardLine = new PlatformAction("DeleteBackwardLine");
+  public static readonly DeleteForwardLine = new PlatformAction("DeleteForwardLine");
+  public static readonly SelectBackwardLine = new PlatformAction("SelectBackwardLine");
+  public static readonly SelectForwardLine = new PlatformAction("SelectForwardLine");
 
-  static readonly ZoomIn = new PlatformAction("ZoomIn");
-  static readonly ZoomOut = new PlatformAction("ZoomOut");
-  static readonly ZoomDefault = new PlatformAction("ZoomDefault");
+  public static readonly ZoomIn = new PlatformAction("ZoomIn");
+  public static readonly ZoomOut = new PlatformAction("ZoomOut");
+  public static readonly ZoomDefault = new PlatformAction("ZoomDefault");
 
-  isCommonTextEditingAction()
+  public isCommonTextEditingAction()
   {
     switch (this)
     {

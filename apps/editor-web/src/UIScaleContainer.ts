@@ -5,12 +5,12 @@ export class UIScaleContainer extends Container
 {
   readonly #content: Container;
 
-  override get content()
+  protected override get content()
   {
     return this.#content;
   }
 
-  constructor(options: ContainerOptions = {})
+  public constructor(options: ContainerOptions = {})
   {
     super();
 
@@ -27,7 +27,7 @@ export class UIScaleContainer extends Container
 
   #targetScale = 1;
 
-  readonly scaleBindable = new Bindable(1);
+  private readonly scaleBindable = new Bindable(1);
 
   protected override loadComplete()
   {
@@ -40,7 +40,7 @@ export class UIScaleContainer extends Container
     });
   }
 
-  override onKeyDown(e: KeyDownEvent)
+  public override onKeyDown(e: KeyDownEvent)
   {
     if (e.controlPressed)
     {

@@ -36,14 +36,14 @@ export class OsucadBatcher extends Batcher
     name: "osucad",
   };
 
-  override name: string = OsucadBatcher.extension.name;
+  public override name: string = OsucadBatcher.extension.name;
 
-  override geometry: Geometry = new OsucadBatchGeometry();
-  override shader: Shader = shader ?? (shader = new BatchShader(this.maxTextures));
+  public override geometry: Geometry = new OsucadBatchGeometry();
+  public override shader: Shader = shader ?? (shader = new BatchShader(this.maxTextures));
 
   protected override vertexSize: number = 6;
 
-  override packAttributes(element: OsucadBatchableMeshElement, float32View: Float32Array, uint32View: Uint32Array, index: number, textureId: number): void
+  public override packAttributes(element: OsucadBatchableMeshElement, float32View: Float32Array, uint32View: Uint32Array, index: number, textureId: number): void
   {
     const textureIdAndRound = (textureId << 16) | (element.roundPixels & 0xFFFF);
 
@@ -81,7 +81,7 @@ export class OsucadBatcher extends Batcher
     }
   }
 
-  override packQuadAttributes(element: OsucadBatchableQuadElement, float32View: Float32Array, uint32View: Uint32Array, index: number, textureId: number): void
+  public override packQuadAttributes(element: OsucadBatchableQuadElement, float32View: Float32Array, uint32View: Uint32Array, index: number, textureId: number): void
   {
     const texture = element.texture;
 

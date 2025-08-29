@@ -6,13 +6,13 @@ import { MouseScrollChangeEvent } from "./events/MouseScrollChangeEvent";
 
 export class MouseScrollRelativeInput implements IInput
 {
-  constructor(
-    readonly delta: Vec2,
-    readonly isPrecise: boolean,
+  public constructor(
+    public readonly delta: Vec2,
+    public readonly isPrecise: boolean,
   )
   {}
 
-  apply(state: InputState, handler: IInputStateChangeHandler): void
+  public apply(state: InputState, handler: IInputStateChangeHandler): void
   {
     const mouse = state.mouse;
 

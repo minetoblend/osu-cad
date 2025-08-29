@@ -7,7 +7,7 @@ export class OsucadBatchableSprite extends BatchableSprite implements OsucadBatc
 {
   public textureRect = new Rectangle();
 
-  override batcherName = OsucadBatcher.extension.name;
+  public override batcherName = OsucadBatcher.extension.name;
 
-  readonly blendRange = new Vec2(0.1, 0.1);
+  public readonly blendRange = new Vec2(0.1, 0.1);
 }

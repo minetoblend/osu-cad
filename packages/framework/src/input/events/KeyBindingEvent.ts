@@ -6,10 +6,10 @@ import { UIEvent } from "./UIEvent";
 
 export class KeyBindingEvent<T extends KeyBindingAction> extends UIEvent
 {
-  constructor(
+  public constructor(
     state: InputState,
     handler: keyof IInputReceiver | keyof IKeyBindingHandler<any>,
-    readonly pressed: T,
+    public readonly pressed: T,
   )
   {
     super(state, handler as keyof IInputReceiver);

@@ -6,19 +6,19 @@ import { Sample } from "./Sample";
 
 export class AudioManager extends AudioDestination implements IAudioDestination
 {
-  readonly context: AudioContext;
+  public readonly context: AudioContext;
 
-  readonly volume = new BindableNumber(1)
+  public readonly volume = new BindableNumber(1)
     .withMinValue(0)
     .withMaxValue(1);
 
-  readonly sampleMixer: AudioMixer;
+  public readonly sampleMixer: AudioMixer;
 
-  readonly trackMixer: AudioMixer;
+  public readonly trackMixer: AudioMixer;
 
   readonly #gain: GainNode;
 
-  constructor()
+  public constructor()
   {
     super("Audio Manager");
 

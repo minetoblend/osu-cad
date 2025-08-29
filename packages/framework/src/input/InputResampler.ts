@@ -8,7 +8,7 @@ export class InputResampler
 
   #isRawInput = false;
 
-  resampleRawInput = false;
+  public resampleRawInput = false;
 
   #returnedPositions: Vec2[] = [];
 

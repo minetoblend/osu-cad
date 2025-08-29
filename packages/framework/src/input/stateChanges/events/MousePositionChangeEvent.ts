@@ -5,10 +5,10 @@ import { InputStateChangeEvent } from "./InputStateChangeEvent";
 
 export class MousePositionChangeEvent extends InputStateChangeEvent
 {
-  constructor(
+  public constructor(
     state: InputState,
     input: IInput,
-    readonly lastPosition: Vec2,
+    public readonly lastPosition: Vec2,
   )
   {
     super(state, input);

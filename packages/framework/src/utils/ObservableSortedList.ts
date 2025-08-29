@@ -3,13 +3,13 @@ import { SortedList } from "./SortedList";
 
 export class ObservableSortedList<T> extends SortedList<T>
 {
-  added = new Action<[T]>();
+  public readonly added = new Action<[T]>();
 
-  removed = new Action<[T]>();
+  public readonly removed = new Action<[T]>();
 
-  sorted = new Action();
+  public readonly sorted = new Action();
 
-  override set(index: number, item: T)
+  public override set(index: number, item: T)
   {
     const oldValue = this.get(index);
     if (item !== oldValue)
@@ -25,14 +25,14 @@ export class ObservableSortedList<T> extends SortedList<T>
     super.set(index, item);
   }
 
-  override add(item: T): number
+  public override add(item: T): number
   {
     const result = super.add(item);
     this.onAdded(item);
     return result;
   }
 
-  override remove(item: T): boolean
+  public override remove(item: T): boolean
   {
     if (super.remove(item))
     {
@@ -42,7 +42,7 @@ export class ObservableSortedList<T> extends SortedList<T>
     return false;
   }
 
-  override removeAt(index: number)
+  public override removeAt(index: number)
   {
     const item = this.get(index);
 
@@ -54,7 +54,7 @@ export class ObservableSortedList<T> extends SortedList<T>
     }
   }
 
-  override removeAll(match: (item: T) => boolean)
+  public override removeAll(match: (item: T) => boolean)
   {
     const toRemove = new Set<T>();
 
@@ -74,7 +74,7 @@ export class ObservableSortedList<T> extends SortedList<T>
     }
   }
 
-  override clear()
+  public override clear()
   {
     const items = [...this.items];
 
@@ -96,7 +96,7 @@ export class ObservableSortedList<T> extends SortedList<T>
     this.removed.emit(item);
   }
 
-  override sort()
+  public override sort()
   {
     super.sort();
     this.sorted.emit();

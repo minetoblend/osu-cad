@@ -24,7 +24,7 @@ export interface OutlineInfo
 
 export class RoundedBox extends Drawable
 {
-  constructor(options: RoundedBoxOptions = {})
+  public constructor(options: RoundedBoxOptions = {})
   {
     super();
 
@@ -33,12 +33,12 @@ export class RoundedBox extends Drawable
     this.with(options);
   }
 
-  get cornerRadius(): number
+  public get cornerRadius(): number
   {
     return this.#cornerRadius;
   }
 
-  set cornerRadius(value: number)
+  public set cornerRadius(value: number)
   {
     if (this.#cornerRadius === value)
       return;
@@ -54,12 +54,12 @@ export class RoundedBox extends Drawable
 
   #graphicsBacking = new LayoutMember(Invalidation.DrawSize);
 
-  get texture(): Texture | null
+  public get texture(): Texture | null
   {
     return this.#texture;
   }
 
-  set texture(value: Texture | null)
+  public set texture(value: Texture | null)
   {
     if (this.#texture === value)
       return;
@@ -71,12 +71,12 @@ export class RoundedBox extends Drawable
 
   #texture: Texture | null = null;
 
-  get textureFillMode(): FillMode
+  public get textureFillMode(): FillMode
   {
     return this.#textureFillMode;
   }
 
-  set textureFillMode(value: FillMode)
+  public set textureFillMode(value: FillMode)
   {
     if (this.#textureFillMode === value)
       return;
@@ -88,12 +88,12 @@ export class RoundedBox extends Drawable
 
   #textureFillMode: FillMode = FillMode.Stretch;
 
-  get outlines(): OutlineInfo[]
+  public get outlines(): OutlineInfo[]
   {
     return this.#outlines;
   }
 
-  set outlines(value: OutlineInfo[])
+  public set outlines(value: OutlineInfo[])
   {
     this.#outlines = value;
     this.#graphicsBacking.invalidate();
@@ -101,23 +101,23 @@ export class RoundedBox extends Drawable
 
   #outlines: OutlineInfo[] = [];
 
-  get outline(): OutlineInfo | undefined
+  public get outline(): OutlineInfo | undefined
   {
     return this.#outlines[0];
   }
 
-  set outline(value: OutlineInfo | undefined)
+  public set outline(value: OutlineInfo | undefined)
   {
     this.#outlines = value ? [value] : [];
     this.#graphicsBacking.invalidate();
   }
 
-  override createDrawNode(): Graphics
+  protected override createDrawNode(): Graphics
   {
     return (this.#graphics = new Graphics());
   }
 
-  override update()
+  protected override update()
   {
     super.update();
 
@@ -128,12 +128,12 @@ export class RoundedBox extends Drawable
     }
   }
 
-  get fillAlpha(): number
+  public get fillAlpha(): number
   {
     return this.#fillAlpha;
   }
 
-  set fillAlpha(value: number)
+  public set fillAlpha(value: number)
   {
     if (this.#fillAlpha === value)
       return;
@@ -145,12 +145,12 @@ export class RoundedBox extends Drawable
 
   #fillAlpha = 1;
 
-  get fillColor(): Color
+  public get fillColor(): Color
   {
     return this.#fillColor;
   }
 
-  set fillColor(value: ColorSource)
+  public set fillColor(value: ColorSource)
   {
     this.#fillColor.setValue(value);
 
@@ -183,24 +183,16 @@ export class RoundedBox extends Drawable
       if (this.#textureFillMode === FillMode.Fill)
       {
         if (width / height > aspectRatio)
-        {
           width = height * aspectRatio;
-        }
         else
-        {
           height = width / aspectRatio;
-        }
       }
       else if (this.#textureFillMode === FillMode.Fit)
       {
         if (width / height > aspectRatio)
-        {
           height = width / aspectRatio;
-        }
         else
-        {
           width = height * aspectRatio;
-        }
       }
 
       width = this.drawSize.x / width;

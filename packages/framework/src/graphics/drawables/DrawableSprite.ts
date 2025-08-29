@@ -16,7 +16,7 @@ export interface DrawableSpriteOptions extends DrawableOptions
 
 export class DrawableSprite extends Drawable
 {
-  constructor(options: DrawableSpriteOptions = {})
+  public constructor(options: DrawableSpriteOptions = {})
   {
     super();
 
@@ -46,9 +46,9 @@ export class DrawableSprite extends Drawable
 
   readonly #sprite = new SpriteDrawNode(this);
 
-  resizeToTexture = false;
+  public resizeToTexture = false;
 
-  override createDrawNode()
+  public override createDrawNode()
   {
     return new PIXIContainer({
       children: [this.#sprite],
@@ -57,12 +57,12 @@ export class DrawableSprite extends Drawable
 
   #texture: Texture | null = null;
 
-  get texture(): Texture | null
+  public get texture(): Texture | null
   {
     return this.#texture;
   }
 
-  set texture(value: Texture | null)
+  public set texture(value: Texture | null)
   {
     if (this.#texture === value)
       return;
@@ -76,7 +76,7 @@ export class DrawableSprite extends Drawable
     this.invalidate(Invalidation.DrawSize | Invalidation.Transform);
   }
 
-  override updateDrawNodeTransform(): void
+  protected override updateDrawNodeTransform(): void
   {
     super.updateDrawNodeTransform();
 
@@ -87,12 +87,12 @@ export class DrawableSprite extends Drawable
 
   #edgeSmoothness = new Vec2(0);
 
-  get edgeSmoothness(): Vec2
+  public get edgeSmoothness(): Vec2
   {
     return this.#edgeSmoothness;
   }
 
-  set edgeSmoothness(value: number | IVec2)
+  public set edgeSmoothness(value: number | IVec2)
   {
     value = typeof value === "number" ? new Vec2(value) : Vec2.from(value);
     if (this.#edgeSmoothness.equals(value))
@@ -103,7 +103,7 @@ export class DrawableSprite extends Drawable
     this.invalidate(Invalidation.Transform);
   }
 
-  get inflationAmount()
+  public get inflationAmount()
   {
     return this.#inflationAmountBacking.value;
   }

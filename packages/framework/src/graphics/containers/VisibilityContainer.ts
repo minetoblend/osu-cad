@@ -3,7 +3,8 @@ import { Container } from "./Container";
 
 export abstract class VisibilityContainer extends Container
 {
-  readonly state = new Bindable<Visibility>(Visibility.Hidden);
+  public readonly state = new Bindable<Visibility>(Visibility.Hidden);
+
   #didInitialHide = false;
 
   protected get startHidden()
@@ -25,41 +26,41 @@ export abstract class VisibilityContainer extends Container
 
   protected override loadComplete()
   {
-    this.state.bindValueChanged(this.updateState, this.state.value === Visibility.Hidden && !this.#didInitialHide);
+    this.state.bindValueChanged(this.#updateState, this, this.state.value === Visibility.Hidden && !this.#didInitialHide);
 
     super.loadComplete();
   }
 
-  override show()
+  public override show()
   {
     this.state.value = Visibility.Visible;
   }
 
-  override hide()
+  public override hide()
   {
     this.state.value = Visibility.Hidden;
   }
 
-  toggleVisibility()
+  public toggleVisibility()
   {
     this.state.value = this.state.value === Visibility.Visible ? Visibility.Hidden : Visibility.Visible;
   }
 
-  override get propagateNonPositionalInputSubTree()
+  public override get propagateNonPositionalInputSubTree()
   {
     return this.state.value === Visibility.Visible;
   }
 
-  override get propagatePositionalInputSubTree()
+  public override get propagatePositionalInputSubTree()
   {
     return this.state.value === Visibility.Visible;
   }
 
-  abstract popIn(): void;
+  protected abstract popIn(): void;
 
-  abstract popOut(): void;
+  protected abstract popOut(): void;
 
-  updateState = (event: ValueChangedEvent<Visibility>) =>
+  #updateState(event: ValueChangedEvent<Visibility>)
   {
     switch (event.value)
     {

@@ -2,11 +2,11 @@ import type { IAudioComponent } from "./IAudioComponent";
 
 export abstract class AudioComponent implements IAudioComponent
 {
-  protected constructor(readonly name: string)
+  protected constructor(public readonly name: string)
   {
   }
 
-  update()
+  public update()
   {
     if (this.isDisposed)
       throw new Error(`Disposed AudioComponent ${this.constructor.name}`);
@@ -23,29 +23,29 @@ export abstract class AudioComponent implements IAudioComponent
   {
   }
 
-  get isLoaded()
+  public get isLoaded()
   {
     return true;
   }
 
-  get hasCompleted()
+  public get hasCompleted()
   {
     return !this.isAlive;
   }
 
-  get isAlive()
+  public get isAlive()
   {
     return !this.isDisposed;
   }
 
   #isDisposed = false;
 
-  get isDisposed()
+  public get isDisposed()
   {
     return this.#isDisposed;
   }
 
-  dispose()
+  public dispose()
   {
     this.#isDisposed = true;
   }

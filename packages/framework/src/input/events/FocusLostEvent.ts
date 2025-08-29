@@ -4,9 +4,9 @@ import { UIEvent } from "./UIEvent";
 
 export class FocusLostEvent extends UIEvent
 {
-  constructor(
+  public constructor(
     state: InputState,
-    readonly nextFocused: Drawable | null,
+    public readonly nextFocused: Drawable | null,
   )
   {
     super(state, "onFocusLost");

@@ -1,12 +1,12 @@
 class IterableWeakSet<T extends WeakKey>
 {
-  static [Symbol.species] = IterableWeakSet;
+  public static [Symbol.species] = IterableWeakSet;
   private finalizationRegistry = new FinalizationRegistry<WeakRef<T>>(this.cleanup.bind(this));
   private refSet: Set<WeakRef<T>> = new Set();
   private toRefWeakMap: WeakMap<T, WeakRef<T>> = new WeakMap();
-  constructor(iterable: Iterable<T>);
-  constructor(values?: readonly T[]);
-  constructor(iterable: Iterable<T> | readonly T[] = [])
+  public constructor(iterable: Iterable<T>);
+  public constructor(values?: readonly T[]);
+  public constructor(iterable: Iterable<T> | readonly T[] = [])
   {
     for (const value of iterable)
       this.add(value);
@@ -17,12 +17,12 @@ class IterableWeakSet<T extends WeakKey>
     this.refSet.delete(ref);
   }
 
-  get size()
+  public get size()
   {
     return this.refSet.size;
   }
 
-  add(value: T)
+  public add(value: T)
   {
     if (this.has(value))
       return this;
@@ -33,13 +33,13 @@ class IterableWeakSet<T extends WeakKey>
     return this;
   }
 
-  clear()
+  public clear()
   {
     for (const value of this.values())
       this.delete(value!);
   }
 
-  delete(value: T)
+  public delete(value: T)
   {
     const ref = this.toRefWeakMap.get(value);
     if (!ref)
@@ -50,24 +50,24 @@ class IterableWeakSet<T extends WeakKey>
     return true;
   }
 
-  *entries(): Generator<[T, T], any, unknown>
+  public *entries(): Generator<[T, T], any, unknown>
   {
     for (const value of this.values())
       yield [value!, value!];
   }
 
-  forEach(callback: (currentValue: T, currentKey: T, set: this) => void, thisArg?: any)
+  public forEach(callback: (currentValue: T, currentKey: T, set: this) => void, thisArg?: any)
   {
     for (const value of this.values())
       callback.call(thisArg, value!, value!, this);
   }
 
-  has(value: T)
+  public has(value: T)
   {
     return this.toRefWeakMap.has(value);
   }
 
-  *values()
+  public *values()
   {
     for (const ref of this.refSet.values())
     {

@@ -15,7 +15,7 @@ export class ManualInputManager extends PassThroughInputManager
 {
   readonly #handler: ManualInputHandler;
 
-  override get content(): Container
+  public override get content(): Container
   {
     return this.#content;
   }
@@ -24,12 +24,12 @@ export class ManualInputManager extends PassThroughInputManager
 
   #showVisualCursorGuide = true;
 
-  get showVisualCursorGuide(): boolean
+  public get showVisualCursorGuide(): boolean
   {
     return this.#showVisualCursorGuide;
   }
 
-  set showVisualCursorGuide(value: boolean)
+  public set showVisualCursorGuide(value: boolean)
   {
     if (value === this.#showVisualCursorGuide)
       return;
@@ -42,7 +42,7 @@ export class ManualInputManager extends PassThroughInputManager
 
   // TODO:  readonly platformActionContainer: LocalPlatformActionContainer;
 
-  constructor()
+  public constructor()
   {
     super();
 
@@ -58,34 +58,34 @@ export class ManualInputManager extends PassThroughInputManager
     this.useParentInput = true;
   }
 
-  input(input: IInput)
+  public input(input: IInput)
   {
     this.useParentInput = false;
     this.#handler.enqueueInput(input);
   }
 
-  moveMouseToDrawable(drawable: Drawable, offset: Vec2 | null = null)
+  public moveMouseToDrawable(drawable: Drawable, offset: Vec2 | null = null)
   {
     this.moveMouseTo(drawable.toScreenSpace(drawable.layoutRectangle.center).add(offset ?? Vec2.zero()));
   }
 
-  moveMouseTo(position: Vec2)
+  public moveMouseTo(position: Vec2)
   {
     this.input(new MousePositionAbsoluteInput(position));
   }
 
-  click(button: MouseButton)
+  public click(button: MouseButton)
   {
     this.pressButton(button);
     this.releaseButton(button);
   }
 
-  pressButton(button: MouseButton)
+  public pressButton(button: MouseButton)
   {
     this.input(MouseButtonInput.create(button, true));
   }
 
-  releaseButton(button: MouseButton)
+  public releaseButton(button: MouseButton)
   {
     this.input(MouseButtonInput.create(button, false));
   }

@@ -5,7 +5,7 @@ import { TouchEvent } from "./TouchEvent";
 
 export class TouchUpEvent extends TouchEvent
 {
-  constructor(
+  public constructor(
     state: InputState,
     touch: Touch,
     screenSpaceTouchDownPosition: Vec2 | null,

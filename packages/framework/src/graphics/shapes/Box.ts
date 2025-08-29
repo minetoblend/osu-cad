@@ -4,7 +4,7 @@ import { DrawableSprite } from "../drawables/DrawableSprite";
 
 export class Box extends DrawableSprite
 {
-  constructor(options: Omit<DrawableSpriteOptions, "texture"> = {})
+  public constructor(options: Omit<DrawableSpriteOptions, "texture"> = {})
   {
     super({ texture: Texture.WHITE });
 

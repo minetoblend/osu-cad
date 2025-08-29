@@ -24,74 +24,74 @@ export interface BasicButtonOptions extends DrawableOptions
 
 export class BasicButton extends Button
 {
-  get text()
+  public get text()
   {
     return this.spriteText.text;
   }
 
-  set text(value: string)
+  public set text(value: string)
   {
     this.spriteText.text = value;
   }
 
-  get backgroundColor(): Color
+  public get backgroundColor(): Color
   {
     return this.background.color;
   }
 
-  set backgroundColor(value: Color)
+  public set backgroundColor(value: Color)
   {
     this.background.color = value;
   }
 
   #flashColor?: Color;
 
-  get flashColor(): Color
+  public get flashColor(): Color
   {
     return this.#flashColor ?? this.backgroundColor;
   }
 
-  set flashColor(value: ColorSource)
+  public set flashColor(value: ColorSource)
   {
     this.#flashColor = new Color(value);
   }
 
-  get hoverColor()
+  public get hoverColor()
   {
     return this.hover.color;
   }
 
-  set hoverColor(value: ColorSource)
+  public set hoverColor(value: ColorSource)
   {
     this.hover.color = value;
   }
 
   #disabledColour = new Color("rgb(128,128,128)");
 
-  get disabledColor(): Color
+  public get disabledColor(): Color
   {
     return this.#disabledColour;
   }
 
-  set disabledColor(value: ColorSource)
+  public set disabledColor(value: ColorSource)
   {
     this.#disabledColour = new Color(value);
     this.enabled.triggerChange();
   }
 
-  hoverFadeDuration = 200;
+  public hoverFadeDuration = 200;
 
-  flashDuration = 200;
+  public flashDuration = 200;
 
-  disabledFadeDuration = 200;
+  public disabledFadeDuration = 200;
 
-  spriteText: SpriteText;
+  public spriteText: SpriteText;
 
-  background: Box;
+  public background: Box;
 
-  hover: Box;
+  public hover: Box;
 
-  constructor(options: BasicButtonOptions = {})
+  public constructor(options: BasicButtonOptions = {})
   {
     super();
     this.autoSizeAxes = Axes.Both;
@@ -123,7 +123,7 @@ export class BasicButton extends Button
     this.with(options);
   }
 
-  createText(): SpriteText
+  protected createText(): SpriteText
   {
     return new SpriteText({
       anchor: Anchor.Center,
@@ -135,7 +135,7 @@ export class BasicButton extends Button
     });
   }
 
-  override onClick(e: ClickEvent): boolean
+  protected override onClick(e: ClickEvent): boolean
   {
     if (this.enabled.value)
     {
@@ -145,7 +145,7 @@ export class BasicButton extends Button
     return super.onClick(e);
   }
 
-  override onHover(e: HoverEvent): boolean
+  protected override onHover(e: HoverEvent): boolean
   {
     if (this.enabled.value)
     {
@@ -155,7 +155,7 @@ export class BasicButton extends Button
     return super.onHover?.(e) ?? true;
   }
 
-  override onHoverLost(e: HoverEvent)
+  protected override onHoverLost(e: HoverEvent)
   {
     if (this.enabled.value)
     {

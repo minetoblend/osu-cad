@@ -7,12 +7,15 @@ import { ButtonStateChangeEvent } from "./events";
 
 export class KeyboardKeyInput extends ButtonInput<Key>
 {
-  constructor(entries: ButtonInputEntry<Key>[], readonly event?: KeyboardEvent)
+  public constructor(
+    entries: ButtonInputEntry<Key>[],
+    public readonly event?: KeyboardEvent,
+  )
   {
     super(entries);
   }
 
-  static create(key: Key, isPressed: boolean, event?: KeyboardEvent): KeyboardKeyInput
+  public static create(key: Key, isPressed: boolean, event?: KeyboardEvent): KeyboardKeyInput
   {
     return new KeyboardKeyInput([new ButtonInputEntry(key, isPressed)], event);
   }

@@ -2,23 +2,23 @@ import { Track } from "./Track";
 
 export class AudioBufferTrack extends Track
 {
-  constructor(
+  public constructor(
     name: string,
-    readonly context: AudioContext,
-    readonly buffer: AudioBuffer,
+    public readonly context: AudioContext,
+    public readonly buffer: AudioBuffer,
   )
   {
     super(name, context);
   }
 
-  get length()
+  public get length()
   {
     return this.buffer.duration * 1000;
   }
 
   #source: AudioBufferSourceNode | null = null;
 
-  override get currentTime(): number
+  public override get currentTime(): number
   {
     if (!this.isRunning)
       return this.#offset;
@@ -26,7 +26,7 @@ export class AudioBufferTrack extends Track
     return this.#timeAtStart + (this.contextTimeMillis - this.#contextTimeAtStart) * this.rate;
   }
 
-  override seek(position: number): boolean
+  public override seek(position: number): boolean
   {
     if (position > this.length)
       return false;
@@ -52,7 +52,7 @@ export class AudioBufferTrack extends Track
     return this.context.currentTime * 1000;
   }
 
-  override start(): void
+  public override start(): void
   {
     if (this.isRunning)
       return;
@@ -83,7 +83,7 @@ export class AudioBufferTrack extends Track
     };
   }
 
-  override stop(): void
+  public override stop(): void
   {
     if (!this.#source)
       return;
@@ -95,19 +95,19 @@ export class AudioBufferTrack extends Track
     this.#offset = (this.contextTimeMillis - this.#contextTimeAtStart) * this.rate + this.#timeAtStart;
   }
 
-  override get isRunning(): boolean
+  public override get isRunning(): boolean
   {
     return this.#source !== null;
   }
 
   #rate = 1;
 
-  override get rate(): number
+  public override get rate(): number
   {
     return this.#rate;
   }
 
-  override set rate(value: number)
+  public override set rate(value: number)
   {
     if (!this.isRunning)
     {
@@ -137,8 +137,10 @@ export class AudioBufferTrack extends Track
     return source;
   }
 
-  override dispose(): void
+  public override dispose(): void
   {
     this.stop();
+
+    super.dispose();
   }
 }

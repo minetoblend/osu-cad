@@ -4,10 +4,10 @@ import { KeyBindingEvent } from "./KeyBindingEvent";
 
 export class KeyBindingPressEvent<T extends KeyBindingAction> extends KeyBindingEvent<T>
 {
-  constructor(
+  public constructor(
     state: InputState,
     pressed: T,
-    readonly repeat: boolean = false,
+    public readonly repeat: boolean = false,
   )
   {
     super(state, "onKeyBindingPressed", pressed);

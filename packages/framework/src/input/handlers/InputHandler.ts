@@ -8,7 +8,7 @@ export abstract class InputHandler implements IDisposable
 {
   #isInitialized = false;
 
-  initialize(host: GameHost): boolean
+  public initialize(host: GameHost): boolean
   {
     if (this.#isInitialized)
     {
@@ -19,27 +19,27 @@ export abstract class InputHandler implements IDisposable
     return true;
   }
 
-  readonly enabled = new Bindable(true);
+  public  readonly enabled = new Bindable(true);
 
   #isDisposed: boolean = false;
 
   protected pendingInputs: IInput[] = [];
 
-  get isDisposed()
+  public get isDisposed()
   {
     return this.#isDisposed;
   }
 
-  dispose(isDisposing: boolean = true): void
+  public dispose(): void
   {
     this.#isDisposed = true;
   }
 
-  collectPendingInputs(inputs: IInput[]): void
+  public collectPendingInputs(inputs: IInput[]): void
   {
     inputs.push(...this.pendingInputs);
     this.pendingInputs.length = 0;
   }
 
-  readonly flush = new Action();
+  public readonly flush = new Action();
 }

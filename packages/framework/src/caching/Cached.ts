@@ -2,16 +2,15 @@ export class CachedValue<T>
 {
   #value?: T;
 
-  get value()
+  public get value()
   {
     if (!this.isValid)
-    {
       throw new Error("Value is not valid");
-    }
+
     return this.#value!;
   }
 
-  set value(value: T)
+  public set value(value: T)
   {
     this.#value = value;
     this.#isValid = true;
@@ -19,12 +18,12 @@ export class CachedValue<T>
 
   #isValid = false;
 
-  get isValid(): boolean
+  public get isValid(): boolean
   {
     return this.#isValid;
   }
 
-  invalidate(): boolean
+  public invalidate(): boolean
   {
     if (this.isValid)
     {
@@ -39,12 +38,12 @@ export class Cached
 {
   #isValid = false;
 
-  get isValid()
+  public get isValid()
   {
     return this.#isValid;
   }
 
-  invalidate(): boolean
+  public invalidate(): boolean
   {
     if (this.isValid)
     {
@@ -54,7 +53,7 @@ export class Cached
     return false;
   }
 
-  validate()
+  public validate()
   {
     this.#isValid = true;
   }

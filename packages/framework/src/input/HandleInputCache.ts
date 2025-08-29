@@ -1,5 +1,6 @@
-import type { Drawable } from "../graphics/drawables/Drawable";
+import { Drawable } from "../graphics/drawables/Drawable";
 import type { IKeyBindingHandler } from "./bindings";
+import type { IInputReceiver } from "./IInputReceiver";
 
 type DrawableConstructor = new (...args: any[]) => Drawable;
 
@@ -8,12 +9,12 @@ export class HandleInputCache
   private static positionalCachedValudes = new Map<DrawableConstructor, boolean>();
   private static nonPositionalCachedValues = new Map<DrawableConstructor, boolean>();
 
-  static requestsNonPositionalInput(drawable: Drawable): boolean
+  public static requestsNonPositionalInput(drawable: Drawable): boolean
   {
     return this.getViaReflection(drawable, this.nonPositionalCachedValues, false);
   }
 
-  static requestsPositionalInput(drawable: Drawable): boolean
+  public static requestsPositionalInput(drawable: Drawable): boolean
   {
     return this.getViaReflection(drawable, this.positionalCachedValudes, true);
   }
@@ -26,9 +27,8 @@ export class HandleInputCache
   {
     const cached = cache.get(drawable.constructor as DrawableConstructor);
     if (cached !== undefined)
-    {
       return cached;
-    }
+
 
     const value = this.computeViaReflection(drawable, positional);
     cache.set(drawable.constructor as DrawableConstructor, value);
@@ -36,7 +36,7 @@ export class HandleInputCache
     return value;
   }
 
-  private static readonly nonPositionalInputMethods: (keyof Drawable | keyof IKeyBindingHandler<any>)[] = [
+  private static readonly nonPositionalInputMethods: (keyof IInputReceiver | keyof IKeyBindingHandler<any>)[] = [
     "onKeyDown",
     "onKeyUp",
     "onKeyBindingPressed",
@@ -44,7 +44,7 @@ export class HandleInputCache
     "onScrollKeyBinding",
   ];
 
-  private static readonly positionalInputMethods: (keyof Drawable)[] = [
+  private static readonly positionalInputMethods: (keyof IInputReceiver)[] = [
     "onMouseDown",
     "onMouseUp",
     "onClick",
@@ -66,18 +66,13 @@ export class HandleInputCache
 
     for (const method of inputMethods)
     {
-      if (method in drawable)
-      {
+      if ((drawable as any)[method] !== (Drawable.prototype as any)[method])
         return true;
-      }
     }
 
     if (positional)
-    {
-      if(drawable.handlePositionalInput)
-        return true;
-    }
-
-    return false;
+      return drawable.handlePositionalInput;
+    else
+      return drawable.requestsNonPositionalInput;
   }
 }

@@ -145,3 +145,18 @@ export enum Key
   LaunchMail = "LaunchMail",
   MediaSelect = "MediaSelect",
 }
+
+export namespace Key
+{
+  export function isModifierKey(key: Key)
+  {
+    return key === Key.ShiftLeft
+    || key === Key.ShiftRight
+    || key === Key.ControlLeft
+    || key === Key.ControlRight
+    || key === Key.AltLeft
+    || key === Key.AltRight
+    || key === Key.MetaLeft
+    || key === Key.MetaRight;
+  }
+}

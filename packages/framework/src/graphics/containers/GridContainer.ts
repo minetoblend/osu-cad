@@ -22,7 +22,7 @@ export interface GridContainerOptions extends CompositeDrawableOptions
 
 export class GridContainer extends CompositeDrawable
 {
-  constructor(options: GridContainerOptions = {})
+  public constructor(options: GridContainerOptions = {})
   {
     super();
 
@@ -41,12 +41,12 @@ export class GridContainer extends CompositeDrawable
 
   #content?: GridContainerContent;
 
-  get content(): GridContainerContent | undefined
+  public get content(): GridContainerContent | undefined
   {
     return this.#content;
   }
 
-  set content(value: GridContainerContent)
+  public set content(value: GridContainerContent)
   {
     this.#content = value;
     this.#onContentChange();
@@ -59,12 +59,12 @@ export class GridContainer extends CompositeDrawable
 
   #rowDimensions: readonly Dimension[] = [];
 
-  get rowDimensions(): readonly Dimension[]
+  public get rowDimensions(): readonly Dimension[]
   {
     return this.#rowDimensions;
   }
 
-  set rowDimensions(value: readonly Dimension[])
+  public set rowDimensions(value: readonly Dimension[])
   {
     if (value === this.#rowDimensions)
       return;
@@ -75,12 +75,12 @@ export class GridContainer extends CompositeDrawable
 
   #columnDimensions: readonly Dimension[] = [];
 
-  get columnDimensions(): readonly Dimension[]
+  public get columnDimensions(): readonly Dimension[]
   {
     return this.#columnDimensions;
   }
 
-  set columnDimensions(value: readonly Dimension[])
+  public set columnDimensions(value: readonly Dimension[])
   {
     if (value === this.#columnDimensions)
       return;
@@ -89,7 +89,7 @@ export class GridContainer extends CompositeDrawable
     this.#cellLayout.invalidate();
   }
 
-  override update()
+  protected override update()
   {
     super.update();
 
@@ -305,7 +305,7 @@ export class GridContainer extends CompositeDrawable
 
 class CellContainer extends Container
 {
-  override onInvalidate(invalidation: Invalidation, source: InvalidationSource): boolean
+  protected override onInvalidate(invalidation: Invalidation, source: InvalidationSource): boolean
   {
     let result = super.onInvalidate(invalidation, source);
 
@@ -321,16 +321,16 @@ class CellContainer extends Container
 
 export class Dimension
 {
-  constructor(
-    readonly mode: GridSizeMode = GridSizeMode.Distributed,
-    readonly size: number = 0,
-    readonly minSize: number = 0,
-    readonly maxSize: number = Number.MAX_VALUE,
+  public constructor(
+    public readonly mode: GridSizeMode = GridSizeMode.Distributed,
+    public readonly size: number = 0,
+    public readonly minSize: number = 0,
+    public readonly maxSize: number = Number.MAX_VALUE,
   )
   {
   }
 
-  get range()
+  public get range()
   {
     return this.maxSize - this.minSize;
   }

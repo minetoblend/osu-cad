@@ -6,7 +6,7 @@ import { Container } from "./Container";
 
 export abstract class FlowContainer<T extends Drawable = Drawable> extends Container<T>
 {
-  readonly onLayout = new Action();
+  public readonly onLayout = new Action();
 
   protected constructor()
   {
@@ -16,34 +16,34 @@ export abstract class FlowContainer<T extends Drawable = Drawable> extends Conta
     this.addLayout(this.#childLayout);
   }
 
-  get layoutEasing(): this["autoSizeEasing"]
+  public get layoutEasing(): this["autoSizeEasing"]
   {
     return this.autoSizeEasing;
   }
 
-  set layoutEasing(easing: this["autoSizeEasing"])
+  public set layoutEasing(easing: this["autoSizeEasing"])
   {
     this.autoSizeEasing = easing;
   }
 
-  get layoutDuration(): number
+  public get layoutDuration(): number
   {
     return this.autoSizeDuration * 2;
   }
 
-  set layoutDuration(duration: number)
+  public set layoutDuration(duration: number)
   {
     this.autoSizeDuration = duration / 2;
   }
 
   #maximumSize = new Vec2();
 
-  get maximumSize(): Vec2
+  public get maximumSize(): Vec2
   {
     return this.#maximumSize;
   }
 
-  set maximumSize(size: IVec2)
+  public set maximumSize(size: IVec2)
   {
     if (this.#maximumSize.equals(size))
       return;
@@ -59,7 +59,7 @@ export abstract class FlowContainer<T extends Drawable = Drawable> extends Conta
       InvalidationSource.Child,
   );
 
-  override get requiresChildrenUpdate(): boolean
+  public override get requiresChildrenUpdate(): boolean
   {
     return super.requiresChildrenUpdate || !this.#layout.isValid;
   }
@@ -87,7 +87,7 @@ export abstract class FlowContainer<T extends Drawable = Drawable> extends Conta
     return super.removeInternal(drawable, disposeImmediately);
   }
 
-  setLayoutPosition(drawable: T, newPosition: number): void
+  public setLayoutPosition(drawable: T, newPosition: number): void
   {
     if (!this.#layoutChildren.has(drawable))
     {
@@ -100,13 +100,13 @@ export abstract class FlowContainer<T extends Drawable = Drawable> extends Conta
     this.invalidateLayout();
   }
 
-  insert(position: number, drawable: T): void
+  public insert(position: number, drawable: T): void
   {
     this.add(drawable);
     this.setLayoutPosition(drawable, position);
   }
 
-  getLayoutPosition(drawable: T): number
+  protected getLayoutPosition(drawable: T): number
   {
     if (!this.#layoutChildren.has(drawable))
     {
@@ -118,7 +118,7 @@ export abstract class FlowContainer<T extends Drawable = Drawable> extends Conta
     return this.#layoutChildren.get(drawable)!;
   }
 
-  override updateChildrenLife(): boolean
+  protected override updateChildrenLife(): boolean
   {
     const changed = super.updateChildrenLife();
 
@@ -130,7 +130,7 @@ export abstract class FlowContainer<T extends Drawable = Drawable> extends Conta
     return changed;
   }
 
-  get flowingChildren()
+  protected get flowingChildren()
   {
     return (this.aliveInternalChildren as ReadonlyArray<T>)
       .filter(d => d.isPresent)
@@ -143,7 +143,7 @@ export abstract class FlowContainer<T extends Drawable = Drawable> extends Conta
       });
   }
 
-  abstract computeLayoutPositions(): Vec2[];
+  protected abstract computeLayoutPositions(): Vec2[];
 
   #performLayout(): void
   {

@@ -6,12 +6,12 @@ import { ButtonInput, ButtonInputEntry } from "./ButtonInput";
 
 export class MouseButtonInput extends ButtonInput<MouseButton>
 {
-  constructor(entries: ButtonInputEntry<MouseButton>[])
+  public constructor(entries: ButtonInputEntry<MouseButton>[])
   {
     super(entries);
   }
 
-  static create(button: MouseButton, isPressed: boolean): MouseButtonInput
+  public static create(button: MouseButton, isPressed: boolean): MouseButtonInput
   {
     return new MouseButtonInput([new ButtonInputEntry(button, isPressed)]);
   }
@@ -21,7 +21,7 @@ export class MouseButtonInput extends ButtonInput<MouseButton>
     return state.mouse.buttons;
   }
 
-  override apply(state: InputState, handler: IInputStateChangeHandler)
+  public override apply(state: InputState, handler: IInputStateChangeHandler)
   {
     super.apply(state, handler);
     state.mouse.lastSource = this;

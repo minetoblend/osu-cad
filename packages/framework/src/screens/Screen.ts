@@ -7,24 +7,24 @@ import { ScreenStack } from "./ScreenStack";
 
 export abstract class Screen extends CompositeDrawable implements IScreen
 {
-  readonly isScreen = true;
+  public readonly isScreen = true;
 
-  validForResume = true;
+  public validForResume = true;
 
-  validForPush = true;
+  public validForPush = true;
 
-  override get removeWhenNotAlive()
+  public override get removeWhenNotAlive()
   {
     return false;
   }
 
-  constructor()
+  public constructor()
   {
     super();
     this.relativeSizeAxes = Axes.Both;
   }
 
-  override updateClock(clock: IFrameBasedClock)
+  public override updateClock(clock: IFrameBasedClock)
   {
     super.updateClock(clock);
 
@@ -36,18 +36,18 @@ export abstract class Screen extends CompositeDrawable implements IScreen
     }
   }
 
-  onEntering(e: ScreenTransitionEvent)
+  public onEntering(e: ScreenTransitionEvent)
   {}
 
-  onExiting(e: ScreenExitEvent): boolean
+  public onExiting(e: ScreenExitEvent): boolean
   {
     return false;
   }
 
-  onResuming(e: ScreenTransitionEvent)
+  public onResuming(e: ScreenTransitionEvent)
   {}
 
-  onSuspending(e: ScreenTransitionEvent)
+  public onSuspending(e: ScreenTransitionEvent)
   {}
 
   protected get screenStack()
@@ -62,7 +62,7 @@ export abstract class Screen extends CompositeDrawable implements IScreen
     return screenStack;
   }
 
-  exit()
+  public exit()
   {
     this.screenStack.exit(this);
   }

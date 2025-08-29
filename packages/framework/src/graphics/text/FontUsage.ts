@@ -8,25 +8,28 @@ export interface FontUsageOptions
 
 export class FontUsage
 {
-  static readonly defaultOptions = {
+  public static readonly defaultOptions = {
     size: 20,
     italics: false,
     fixedWidth: false,
   } satisfies FontUsageOptions;
 
-  static readonly Default = new FontUsage(null);
+  public static readonly Default = new FontUsage(null);
 
-  readonly size: number;
+  public readonly size: number;
 
-  readonly weight: string | null;
+  public readonly weight: string | null;
 
-  readonly italics: boolean;
+  public readonly italics: boolean;
 
-  readonly fixedWidth: boolean;
+  public readonly fixedWidth: boolean;
 
-  readonly fontName: string;
+  public readonly fontName: string;
 
-  constructor(readonly family: string | null = null, options: FontUsageOptions = {})
+  public constructor(
+    public readonly family: string | null = null,
+    options: FontUsageOptions = {},
+  )
   {
     const {
       size,

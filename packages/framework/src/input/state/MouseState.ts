@@ -5,24 +5,24 @@ import { ButtonStates } from "./ButtonStates";
 
 export class MouseState
 {
-  readonly buttons = new ButtonStates<MouseButton>();
+  public readonly buttons = new ButtonStates<MouseButton>();
 
-  position = new Vec2();
+  public position = new Vec2();
 
-  isPositionValid = false;
+  public isPositionValid = false;
 
-  scroll = new Vec2();
+  public scroll = new Vec2();
 
-  pressure = 1;
+  public pressure = 1;
 
-  lastSource?: IInput;
+  public lastSource?: IInput;
 
-  isPressed(button: MouseButton)
+  public isPressed(button: MouseButton)
   {
     return this.buttons.isPressed(button);
   }
 
-  setPressed(button: MouseButton, pressed: boolean)
+  public setPressed(button: MouseButton, pressed: boolean)
   {
     this.buttons.setPressed(button, pressed);
   }

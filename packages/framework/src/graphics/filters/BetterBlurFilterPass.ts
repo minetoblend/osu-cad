@@ -2,7 +2,7 @@ import { BlurFilterPass, type FilterSystem, RendererType, type RenderSurface, ty
 
 export class BetterBlurFilterPass extends BlurFilterPass
 {
-  override apply(filterManager: FilterSystem, input: Texture, output: RenderSurface, clearMode: boolean)
+  public override apply(filterManager: FilterSystem, input: Texture, output: RenderSurface, clearMode: boolean)
   {
     // @ts-expect-error private property
     this._uniforms.uStrength = this._calculateInitialStrength();

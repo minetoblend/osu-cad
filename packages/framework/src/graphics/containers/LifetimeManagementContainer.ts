@@ -15,7 +15,7 @@ export class LifetimeManagementContainer extends CompositeDrawable
 
   #unmanagedDrawablesToProcess: Drawable[] = [];
 
-  constructor(options: DrawableOptions = {})
+  public constructor(options: DrawableOptions = {})
   {
     super();
 
@@ -113,7 +113,7 @@ export class LifetimeManagementContainer extends CompositeDrawable
 
 class DrawableLifetimeEntry extends LifetimeEntry
 {
-  constructor(readonly drawable: Drawable)
+  public constructor(public readonly drawable: Drawable)
   {
     super();
 
@@ -127,7 +127,7 @@ class DrawableLifetimeEntry extends LifetimeEntry
     this.lifetimeEnd = drawable.lifetimeEnd;
   }
 
-  dispose()
+  public dispose()
   {
     this.drawable.lifetimeChanged.removeListener(this.#drawableLifetimeChanged, this);
   }

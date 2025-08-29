@@ -8,12 +8,12 @@ export class ClickableContainer<T extends Drawable = Drawable> extends Container
 {
   #action: (() => void) | null = null;
 
-  get action()
+  public get action()
   {
     return this.#action;
   }
 
-  set action(value)
+  public set action(value)
   {
     this.#action = value;
     this.enabled.value = this.#action !== null;
@@ -23,14 +23,14 @@ export class ClickableContainer<T extends Drawable = Drawable> extends Container
 
   public readonly enabled = new BindableBoolean();
 
-  override onClick(e: ClickEvent): boolean
+  protected override onClick(e: ClickEvent): boolean
   {
     if (this.enabled.value && this.trigger === ButtonTrigger.Click)
       this.triggerAction();
     return true;
   }
 
-  override onMouseDown(e: MouseDownEvent): boolean
+  protected override onMouseDown(e: MouseDownEvent): boolean
   {
     if (this.enabled.value && this.trigger === ButtonTrigger.MouseDown && e.button === MouseButton.Left)
     {

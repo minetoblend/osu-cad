@@ -2,7 +2,7 @@ import type { IAdjustableClock } from "./IAdjustableClock";
 
 export class StopwatchClock implements IAdjustableClock
 {
-  constructor(start = true)
+  public constructor(start = true)
   {
     if (start)
     {
@@ -27,12 +27,12 @@ export class StopwatchClock implements IAdjustableClock
 
   #startTime = 0;
 
-  get isRunning()
+  public get isRunning()
   {
     return this.#isRunning;
   }
 
-  get currentTime()
+  public get currentTime()
   {
     return this.#stopwatchCurrentTime + this.#seekOffset;
   }
@@ -42,7 +42,7 @@ export class StopwatchClock implements IAdjustableClock
     return (this.#stopwatchMilliseconds - this.#rateChangeUsed) * this.#rate + this.#rateChangeAccumulated;
   }
 
-  start()
+  public start()
   {
     if (this.#isRunning)
       return;
@@ -50,7 +50,7 @@ export class StopwatchClock implements IAdjustableClock
     this.#isRunning = true;
   }
 
-  stop()
+  public stop()
   {
     if (!this.#isRunning)
       return;
@@ -58,12 +58,12 @@ export class StopwatchClock implements IAdjustableClock
     this.#isRunning = false;
   }
 
-  get rate()
+  public get rate()
   {
     return this.#rate;
   }
 
-  set rate(value)
+  public set rate(value)
   {
     if (this.#rate === value)
       return;
@@ -75,17 +75,17 @@ export class StopwatchClock implements IAdjustableClock
     this.#rate = value;
   }
 
-  reset()
+  public reset()
   {
     this.#resetAccumulatedRate();
   }
 
-  resetSpeedAdjustments()
+  public resetSpeedAdjustments()
   {
     this.rate = 1;
   }
 
-  seek(position: number)
+  public seek(position: number)
   {
     this.#seekOffset = position - this.#stopwatchCurrentTime;
 

@@ -5,21 +5,21 @@ import { UIEvent } from "./UIEvent";
 
 export class DragStartEvent extends UIEvent
 {
-  constructor(
+  public constructor(
     state: InputState,
-    readonly button: MouseButton,
-    readonly screenSpaceMouseDownPosition: Vec2 | null = null,
+    public readonly button: MouseButton,
+    public readonly screenSpaceMouseDownPosition: Vec2 | null = null,
   )
   {
     super(state, "onDragStart");
   }
 
-  get delta()
+  public get delta()
   {
     return this.state.mouse.position.sub(this.screenSpaceMouseDownPosition ?? this.state.mouse.position);
   }
 
-  get mouseDownPosition()
+  public get mouseDownPosition()
   {
     return this.target!.toLocalSpace(this.screenSpaceMouseDownPosition ?? this.screenSpaceMousePosition);
   }

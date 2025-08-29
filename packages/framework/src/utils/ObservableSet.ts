@@ -4,11 +4,11 @@ export class ObservableSet<T>
 {
   readonly #set = new Set<T>();
 
-  readonly added = new Action<[T]>();
+  public readonly added = new Action<[T]>();
 
-  readonly removed = new Action<[T]>();
+  public readonly removed = new Action<[T]>();
 
-  add(value: T): boolean
+  public add(value: T): boolean
   {
     if (this.#set.has(value))
       return false;
@@ -19,13 +19,13 @@ export class ObservableSet<T>
     return true;
   }
 
-  addRange(values: Iterable<T>)
+  public addRange(values: Iterable<T>)
   {
     for (const value of values)
       this.add(value);
   }
 
-  remove(value: T): boolean
+  public remove(value: T): boolean
   {
     if (!this.#set.delete(value))
       return false;
@@ -34,13 +34,13 @@ export class ObservableSet<T>
     return true;
   }
 
-  removeRange(values: Iterable<T>)
+  public removeRange(values: Iterable<T>)
   {
     for (const value of values)
       this.remove(value);
   }
 
-  toggle(value: T): boolean
+  public toggle(value: T): boolean
   {
     if (this.has(value))
     {
@@ -52,7 +52,7 @@ export class ObservableSet<T>
     return true;
   }
 
-  clear(): void
+  public clear(): void
   {
     const values = [...this.#set.values()];
     this.#set.clear();
@@ -60,17 +60,17 @@ export class ObservableSet<T>
       this.removed.emit(value);
   }
 
-  has(value: T): boolean
+  public has(value: T): boolean
   {
     return this.#set.has(value);
   }
 
-  get size(): number
+  public get size(): number
   {
     return this.#set.size;
   }
 
-  [Symbol.iterator]()
+  public [Symbol.iterator]()
   {
     return this.#set.values();
   }

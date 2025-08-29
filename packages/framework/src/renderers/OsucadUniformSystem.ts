@@ -88,7 +88,7 @@ export class OsucadUniformSystem implements System
 
   private _currentGlobalUniformData!: GlobalUniformData;
 
-  constructor(renderer: GlobalUniformRenderer)
+  public constructor(renderer: GlobalUniformRenderer)
   {
     this._renderer = renderer;
   }
@@ -253,17 +253,17 @@ export class OsucadUniformSystem implements System
     }
   }
 
-  get bindGroup(): BindGroup
+  public get bindGroup(): BindGroup
   {
     return this._currentGlobalUniformData.bindGroup;
   }
 
-  get globalUniformData()
+  public get globalUniformData()
   {
     return this._currentGlobalUniformData;
   }
 
-  get uniformGroup()
+  public get uniformGroup()
   {
     return this._currentGlobalUniformData.bindGroup.resources[0] as UniformGroup;
   }

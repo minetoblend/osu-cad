@@ -10,26 +10,22 @@ const log = debug("ButtonEventManager");
 
 export abstract class ButtonEventManager<TButton>
 {
-  handleButtonStateChange(state: InputState, kind: ButtonStateChangeKind, event?: globalThis.UIEvent)
+  public handleButtonStateChange(state: InputState, kind: ButtonStateChangeKind, event?: globalThis.UIEvent)
   {
     if (kind === ButtonStateChangeKind.Pressed)
-    {
       this.#handleButtonDown(state, event);
-    }
     else
-    {
       this.#handleButtonUp(state);
-    }
   }
 
-  constructor(public button: TButton)
+  public constructor(public button: TButton)
   {
   }
 
-  inputManager!: InputManager;
-  getInputQueue!: () => List<Drawable>;
+  public inputManager!: InputManager;
+  public getInputQueue!: () => List<Drawable>;
 
-  buttonDownInputQueue: Drawable[] | null = null;
+  public buttonDownInputQueue: Drawable[] | null = null;
 
   #handleButtonDown(state: InputState, event?: globalThis.UIEvent): boolean
   {
@@ -50,7 +46,7 @@ export abstract class ButtonEventManager<TButton>
     return handledBy !== null;
   }
 
-  abstract handleButtonDown(state: InputState, targets: List<Drawable>): Drawable | null;
+  protected abstract handleButtonDown(state: InputState, targets: List<Drawable>): Drawable | null;
 
   #handleButtonUp(state: InputState)
   {
@@ -64,7 +60,7 @@ export abstract class ButtonEventManager<TButton>
     this.buttonDownInputQueue = null;
   }
 
-  abstract handleButtonUp(state: InputState, targets: Drawable[]): void;
+  protected abstract handleButtonUp(state: InputState, targets: Drawable[]): void;
 
   protected propagateButtonEvent(drawables: Iterable<Drawable>, e: UIEvent): Drawable | null
   {

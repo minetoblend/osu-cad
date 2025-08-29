@@ -7,7 +7,7 @@ import { LoadState } from "../drawables";
 
 export class DrawablePool<T extends PoolableDrawable> extends CompositeDrawable implements IDrawablePool
 {
-  constructor(drawableClass: NoArgsConstructor<T>, initialSize: number, maximumSize?: number)
+  public constructor(drawableClass: NoArgsConstructor<T>, initialSize: number, maximumSize?: number)
   {
     super();
 
@@ -25,7 +25,7 @@ export class DrawablePool<T extends PoolableDrawable> extends CompositeDrawable 
   readonly #pool: T[] = [];
 
   @dependencyLoader()
-  [Symbol("load")]()
+  #load()
   {
     this.#pool.length = this.#initialSize;
     for (let i = 0; i < this.#initialSize; i++)
@@ -34,7 +34,7 @@ export class DrawablePool<T extends PoolableDrawable> extends CompositeDrawable 
     this.loadComponents(this.#pool);
   }
 
-  return(drawable: PoolableDrawable): void
+  public return(drawable: PoolableDrawable): void
   {
     if (!(drawable instanceof this.#drawableClass))
     {
@@ -66,7 +66,7 @@ export class DrawablePool<T extends PoolableDrawable> extends CompositeDrawable 
     this.#countInUse--;
   }
 
-  get(setupAction?: (d: T) => void): T
+  public get(setupAction?: (d: T) => void): T
   {
     if (this.loadState <= LoadState.Loading)
     {
@@ -118,7 +118,7 @@ export class DrawablePool<T extends PoolableDrawable> extends CompositeDrawable 
     return drawable;
   }
 
-  override dispose(isDisposing: boolean = true)
+  public override dispose()
   {
     for (const p of this.#pool)
       p.dispose();
@@ -129,31 +129,31 @@ export class DrawablePool<T extends PoolableDrawable> extends CompositeDrawable 
     this.#countExcessConstructed = 0;
     this.#currentPoolSize = 0;
 
-    super.dispose(isDisposing);
+    super.dispose();
   }
 
   #currentPoolSize = 0;
 
-  get currentPoolSize()
+  public get currentPoolSize()
   {
     return this.#currentPoolSize;
   }
 
   #countInUse = 0;
 
-  get countInUse()
+  public get countInUse()
   {
     return this.#countInUse;
   }
 
   #countExcessConstructed = 0;
 
-  get countExcessConstructed()
+  public get countExcessConstructed()
   {
     return this.#countExcessConstructed;
   }
 
-  get countAvailable()
+  public get countAvailable()
   {
     return this.#pool.length;
   }

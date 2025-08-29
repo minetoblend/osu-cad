@@ -10,18 +10,18 @@ export class ResourceStore<T> implements IResourceStore<T>
 
   #isDisposed = false;
 
-  constructor(store?: IResourceStore<T>)
+  public constructor(store?: IResourceStore<T>)
   {
     if (store)
       this.addStore(store);
   }
 
-  addStore(store: IResourceStore<T>)
+  public addStore(store: IResourceStore<T>)
   {
     this.#stores.push(store);
   }
 
-  removeStore(store: IResourceStore<T>): boolean
+  public removeStore(store: IResourceStore<T>): boolean
   {
     const index = this.#stores.indexOf(store);
     if (index >= 0)
@@ -33,7 +33,7 @@ export class ResourceStore<T> implements IResourceStore<T>
     return false;
   }
 
-  has(name: string): boolean
+  public has(name: string): boolean
   {
     const filenames = this.getFilenames(name);
     const stores = this.#getStores();
@@ -50,7 +50,7 @@ export class ResourceStore<T> implements IResourceStore<T>
     return false;
   }
 
-  async getAsync(name: string): Promise<T | null>
+  public async getAsync(name: string): Promise<T | null>
   {
     const filenames = this.getFilenames(name);
     const stores = this.#getStores();
@@ -68,7 +68,7 @@ export class ResourceStore<T> implements IResourceStore<T>
     return null;
   }
 
-  canLoad(name: string)
+  public canLoad(name: string)
   {
     const filenames = this.getFilenames(name);
     const stores = this.#getStores();
@@ -85,7 +85,7 @@ export class ResourceStore<T> implements IResourceStore<T>
     return false;
   }
 
-  get(name: string): T | null
+  public get(name: string): T | null
   {
     const filenames = this.getFilenames(name);
     const stores = this.#getStores();
@@ -112,7 +112,7 @@ export class ResourceStore<T> implements IResourceStore<T>
     }
   }
 
-  bindReload(name: string, onReload: () => void)
+  public bindReload(name: string, onReload: () => void)
   {
     if (this.#actionList.has(name))
       throw new Error(`A reload delegate is already bound to the resource '${name}'`);
@@ -120,14 +120,14 @@ export class ResourceStore<T> implements IResourceStore<T>
     this.#actionList.set(name, onReload);
   }
 
-  addExtension(extension: string)
+  public addExtension(extension: string)
   {
     extension = extension.replace(/^\./, "");
     if (!this.#searchExtensions.includes(extension))
       this.#searchExtensions.push(extension);
   }
 
-  getAvailableResources(): string[]
+  public getAvailableResources(): string[]
   {
     return this.#stores.flatMap(store => store.getAvailableResources());
   }
@@ -137,15 +137,14 @@ export class ResourceStore<T> implements IResourceStore<T>
     return this.#stores;
   }
 
-  dispose(disposing = true)
+  public dispose(disposing = true)
   {
     if (this.#isDisposed)
       return;
+
     this.#isDisposed = true;
 
     for (const store of this.#stores)
-    {
       store.dispose();
-    }
   }
 }

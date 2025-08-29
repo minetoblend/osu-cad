@@ -3,11 +3,11 @@ import { Mat3 } from "../math/Mat3";
 
 export class DrawInfo
 {
-  localMatrix: Mat3;
-  matrix: Mat3;
-  matrixInverse: Mat3;
+  public readonly localMatrix: Mat3;
+  public readonly matrix: Mat3;
+  public readonly matrixInverse: Mat3;
 
-  constructor(
+  public constructor(
     localMatrix: Mat3 = new Mat3(),
     matrix: Mat3 = new Mat3(),
     matrixInverse: Mat3 = new Mat3(),
@@ -18,14 +18,14 @@ export class DrawInfo
     this.matrixInverse = matrixInverse;
   }
 
-  reset()
+  public reset()
   {
     this.localMatrix.identity();
     this.matrix.identity();
     this.matrixInverse.identity();
   }
 
-  applyTransform(
+  public applyTransform(
     translation: Vec2,
     scale: Vec2,
     rotation: number,
@@ -77,7 +77,7 @@ export class DrawInfo
     }
   }
 
-  setFrom(other: DrawInfo)
+  public setFrom(other: DrawInfo)
   {
     this.matrix.copyFrom(other.matrix);
     this.matrixInverse.copyFrom(other.matrixInverse);

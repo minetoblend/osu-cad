@@ -2,29 +2,27 @@ import { Bindable } from "./Bindable";
 
 export class BindableWithCurrent<T> extends Bindable<T>
 {
-  constructor(defaultValue: T)
+  public constructor(defaultValue: T)
   {
     super(defaultValue);
   }
 
   #currentBound?: Bindable<T>;
 
-  get current()
+  public get current()
   {
     return this;
   }
 
-  set current(value: Bindable<T>)
+  public set current(value: Bindable<T>)
   {
     if (this.#currentBound)
-    {
       this.unbindFrom(this.#currentBound);
-    }
 
     this.bindTo((this.#currentBound = value));
   }
 
-  unbindFromCurrent()
+  public unbindFromCurrent()
   {
     if (this.#currentBound)
     {

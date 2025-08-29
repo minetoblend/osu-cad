@@ -4,16 +4,16 @@ import { UIEvent } from "./UIEvent";
 
 export class KeyDownEvent extends UIEvent
 {
-  constructor(
+  public constructor(
     state: InputState,
-    readonly key: Key,
-    readonly repeat: boolean = false,
+    public readonly key: Key,
+    public readonly repeat: boolean = false,
   )
   {
     super(state, "onKeyDown");
   }
 
-  override toString(): string
+  public override toString(): string
   {
     return `KeyDownEvent(${this.key})`;
   }

@@ -21,7 +21,7 @@ export abstract class BaseKeyBindingContainer extends Container
 {
   protected keyBindings: IKeyBinding[] | null = null;
 
-  abstract get defaultKeyBindings(): IKeyBinding[];
+  protected abstract get defaultKeyBindings(): IKeyBinding[];
 
   protected override loadComplete(): void
   {
@@ -53,12 +53,12 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
     this.#matchingMode = matchingMode;
   }
 
-  override get handlePositionalInput(): boolean
+  public override get handlePositionalInput(): boolean
   {
     return true;
   }
 
-  override get handleNonPositionalInput(): boolean
+  public override get handleNonPositionalInput(): boolean
   {
     return true;
   }
@@ -67,7 +67,7 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
 
   #pressedActions: T[] = [];
 
-  get pressedActions(): readonly T[]
+  public get pressedActions(): readonly T[]
   {
     return this.#pressedActions;
   }
@@ -87,7 +87,7 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
     return this.#queue;
   }
 
-  override update(): void
+  public override update(): void
   {
     super.update();
 
@@ -99,7 +99,7 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
     return false;
   }
 
-  override buildNonPositionalInputQueue(queue: List<Drawable>, allowBlocking: boolean = true): boolean
+  public override buildNonPositionalInputQueue(queue: List<Drawable>, allowBlocking: boolean = true): boolean
   {
     if (!super.buildNonPositionalInputQueue(queue, allowBlocking))
       return false;
@@ -113,7 +113,7 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
     return true;
   }
 
-  override buildPositionalInputQueue(screenSpacePos: Vec2, queue: List<Drawable>): boolean
+  public override buildPositionalInputQueue(screenSpacePos: Vec2, queue: List<Drawable>): boolean
   {
     if (!super.buildPositionalInputQueue(screenSpacePos, queue))
       return false;
@@ -129,7 +129,7 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
 
   #pressedInputKeys = new Set<InputKey>();
 
-  override handle(e: UIEvent): boolean
+  protected override handle(e: UIEvent): boolean
   {
     const state = e.state;
 
@@ -419,7 +419,7 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
     }
   }
 
-  triggerReleased(released: T)
+  public triggerReleased(released: T)
   {
     this.propagateReleased(
         this.keyBindingInputQueue,
@@ -428,14 +428,12 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
     );
   }
 
-  triggerPressed(pressed: T): Drawable | null
+  public triggerPressed(pressed: T): Drawable | null
   {
     const state = this.getContainingInputManager()?.currentState ?? new InputState();
 
     if (this.#simultaneousMode === SimultaneousBindingMode.None)
-    {
       this.#releasePressedActions(state);
-    }
 
     return this.propagatePressed(this.keyBindingInputQueue, state, pressed);
   }
@@ -490,7 +488,7 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
     }
   }
 
-  get handleRepeats()
+  public get handleRepeats()
   {
     return true;
   }

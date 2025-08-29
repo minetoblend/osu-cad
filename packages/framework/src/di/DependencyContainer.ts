@@ -5,13 +5,13 @@ export class DependencyContainer implements ReadonlyDependencyContainer
 {
   private readonly dependencies = new Map<any, any>();
 
-  constructor(private readonly parent?: ReadonlyDependencyContainer)
+  public constructor(private readonly parent?: ReadonlyDependencyContainer)
   {
   }
 
   public owner: Drawable | null = null;
 
-  provide(keyOrValue: any, value?: any): void
+  public provide(keyOrValue: any, value?: any): void
   {
     if (!value && typeof keyOrValue === "object" && "constructor" in keyOrValue)
     {
@@ -22,9 +22,9 @@ export class DependencyContainer implements ReadonlyDependencyContainer
     this.dependencies.set(keyOrValue, value);
   }
 
-  resolveOptional<T>(key: new (...args: any[]) => T): T;
-  resolveOptional<T>(key: InjectionToken<T>): T;
-  resolveOptional<T>(key: any): T | undefined
+  public resolveOptional<T>(key: new (...args: any[]) => T): T;
+  public resolveOptional<T>(key: InjectionToken<T>): T;
+  public resolveOptional<T>(key: any): T | undefined
   {
     if (this.dependencies.has(key))
     {
@@ -39,9 +39,9 @@ export class DependencyContainer implements ReadonlyDependencyContainer
     return this.parent?.resolveOptional<T>(key);
   }
 
-  resolve<T>(key: new (...args: any[]) => T): T;
-  resolve<T>(key: InjectionToken<T>): T;
-  resolve<T>(key: any): T
+  public resolve<T>(key: new (...args: any[]) => T): T;
+  public resolve<T>(key: InjectionToken<T>): T;
+  public resolve<T>(key: any): T
   {
     const value = this.resolveOptional<T>(key);
 

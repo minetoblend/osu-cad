@@ -9,7 +9,7 @@ export class Scheduler
 
   #clock: IClock | null = null;
 
-  get clock()
+  public get clock()
   {
     return this.#clock;
   }
@@ -19,29 +19,29 @@ export class Scheduler
     return this.#clock?.currentTime ?? 0;
   }
 
-  get hasPendingTasks(): boolean
+  public get hasPendingTasks(): boolean
   {
     return this.totalPendingTasks > 0;
   }
 
-  get totalTasksRun(): number
+  public get totalTasksRun(): number
   {
     return this.#totalTasksRun;
   }
 
   #totalTasksRun: number = 0;
 
-  get totalPendingTasks(): number
+  public get totalPendingTasks(): number
   {
     return this.#runQueue.length + this.#timedTasks.length + this.#perUpdateTasks.length;
   }
 
-  constructor(clock: IClock | null = new StopwatchClock())
+  public constructor(clock: IClock | null = new StopwatchClock())
   {
     this.#clock = clock;
   }
 
-  updateClock(newClock: IClock)
+  public updateClock(newClock: IClock)
   {
     if (newClock === this.#clock)
       return;
@@ -62,7 +62,7 @@ export class Scheduler
 
   readonly #tasksToRemove: ScheduledDelegate[] = [];
 
-  update(): number
+  public update(): number
   {
     this.#queueTimedTasks();
     this.#queuePerUpdateTasks();
@@ -169,7 +169,7 @@ export class Scheduler
     return this.#runQueue.shift() ?? null;
   }
 
-  cancelDelayedTasks()
+  public cancelDelayedTasks()
   {
     for (const t of this.#timedTasks)
     {
@@ -179,7 +179,7 @@ export class Scheduler
     this.#timedTasks.length = 0;
   }
 
-  add<T>(task: (() => void) | ScheduledDelegate, receiver?: T, forceScheduled = true): ScheduledDelegate | null
+  public add<T>(task: (() => void) | ScheduledDelegate, receiver?: T, forceScheduled = true): ScheduledDelegate | null
   {
     if (task instanceof ScheduledDelegate)
     {
@@ -209,16 +209,16 @@ export class Scheduler
     return del;
   }
 
-  addDelayed(task: () => void, timeUntilRun: number, repeat: boolean = false)
+  public addDelayed(task: () => void, timeUntilRun: number, repeat: boolean = false)
   {
     const del = new ScheduledDelegate(task, this.#currentTime + timeUntilRun, repeat ? timeUntilRun : -1);
     this.add(del);
     return del;
   }
 
-  addDebounced<T>(task: () => void, receiver: T, debounceTime: number): void;
-  addDebounced(task: () => void, debounceTimes: number): void;
-  addDebounced<T>(task: () => void, receiverOrDebounceTime: T | number, time?: number)
+  public addDebounced<T>(task: () => void, receiver: T, debounceTime: number): void;
+  public addDebounced(task: () => void, debounceTimes: number): void;
+  public addDebounced<T>(task: () => void, receiverOrDebounceTime: T | number, time?: number)
   {
     const receiver = typeof receiverOrDebounceTime !== "number" ? receiverOrDebounceTime : undefined;
 
@@ -236,7 +236,7 @@ export class Scheduler
     this.#enqueue(del);
   }
 
-  addOnce<T>(task: () => void, receiver?: T): boolean
+  public addOnce<T>(task: () => void, receiver?: T): boolean
   {
     const existing = this.#runQueue.find(sd => sd.task === task);
 

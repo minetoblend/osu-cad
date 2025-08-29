@@ -12,16 +12,16 @@ import { Touch } from "./handlers/Touch";
 
 export class TouchEventManager extends ButtonEventManager<TouchSource>
 {
-  touchDownPosition: Vec2 | null = null;
+  public touchDownPosition: Vec2 | null = null;
 
-  heldDrawable: Drawable | null = null;
+  public heldDrawable: Drawable | null = null;
 
-  constructor(readonly source: TouchSource)
+  public constructor(public readonly source: TouchSource)
   {
     super(source);
   }
 
-  handlePositionChange(state: InputState, lastPosition: Vec2)
+  public handlePositionChange(state: InputState, lastPosition: Vec2)
   {
     this.#handleTouchMove(state, state.touch.touchPositions[this.button], lastPosition);
   }
@@ -34,7 +34,7 @@ export class TouchEventManager extends ButtonEventManager<TouchSource>
     );
   }
 
-  override handleButtonDown(state: InputState, targets: List<Drawable>): Drawable | null
+  public override handleButtonDown(state: InputState, targets: List<Drawable>): Drawable | null
   {
     debugAssert(this.heldDrawable === null);
 
@@ -48,7 +48,7 @@ export class TouchEventManager extends ButtonEventManager<TouchSource>
     ));
   }
 
-  override handleButtonUp(state: InputState, targets: Drawable[]): void
+  public override handleButtonUp(state: InputState, targets: Drawable[]): void
   {
     const currentPosition = state.touch.touchPositions[this.button];
     this.propagateButtonEvent(

@@ -7,14 +7,14 @@ import type { Sample } from "./Sample";
 
 export class SampleChannel extends AudioComponent implements IAudioSource
 {
-  readonly onPlay = new Action<SampleChannel>();
+  public readonly onPlay = new Action<SampleChannel>();
 
-  get looping()
+  public get looping()
   {
     return this.#source.loop;
   }
 
-  set looping(value: boolean)
+  public set looping(value: boolean)
   {
     this.#source.loop = value;
   }
@@ -27,7 +27,7 @@ export class SampleChannel extends AudioComponent implements IAudioSource
 
   #played = false;
 
-  constructor(readonly sample: Sample)
+  public constructor(public readonly sample: Sample)
   {
     super(`SampleChannel (${sample.name})`);
 
@@ -67,22 +67,22 @@ export class SampleChannel extends AudioComponent implements IAudioSource
     this.#playing = false;
   }
 
-  get playing()
+  public get playing()
   {
     return this.#playing;
   }
 
-  override get isAlive()
+  public override get isAlive()
   {
     return super.isAlive && this.playing;
   }
 
-  get output(): AudioNode
+  public get output(): AudioNode
   {
     return this.#source;
   }
 
-  destination?: IAudioDestination;
+  public destination?: IAudioDestination;
 
   #onEnded()
   {

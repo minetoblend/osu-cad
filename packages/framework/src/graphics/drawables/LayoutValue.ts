@@ -4,7 +4,7 @@ export class LayoutValue<T> extends LayoutMember
 {
   #value?: T;
 
-  get value(): T
+  public get value(): T
   {
     if (!this.isValid)
       throw new Error("May not query value of an invalid LayoutValue.");
@@ -12,7 +12,7 @@ export class LayoutValue<T> extends LayoutMember
     return this.#value!;
   }
 
-  set value(value: T)
+  public set value(value: T)
   {
     this.#value = value;
     this.validate();

@@ -9,12 +9,12 @@ import { Container } from "./Container";
 
 export class ProxyContainer extends Container
 {
-  constructor(readonly source: CompositeDrawable)
+  public constructor(public readonly source: CompositeDrawable)
   {
     super();
   }
 
-  override get shouldBeAlive()
+  public override get shouldBeAlive()
   {
     return !this.source.isDisposed && super.shouldBeAlive;
   }
@@ -36,37 +36,37 @@ export class ProxyContainer extends Container
     }
   }
 
-  override get padding(): MarginPadding
+  public override get padding(): MarginPadding
   {
     return this.source.padding;
   }
 
-  override set padding(value: MarginPaddingOptions | undefined)
+  public override set padding(value: MarginPaddingOptions | undefined)
   {
     throw new Error("May not change padding on a ProxyContainer");
   }
 
-  override get drawSize()
+  public override get drawSize()
   {
     return this.source.drawSize;
   }
 
-  override get childSize()
+  public override get childSize()
   {
     return this.source.childSize;
   }
 
-  override get relativeChildSize()
+  public override get relativeChildSize()
   {
     return this.source.relativeChildSize;
   }
 
-  override get relativeToAbsoluteFactor()
+  public override get relativeToAbsoluteFactor()
   {
     return this.source.relativeToAbsoluteFactor;
   }
 
-  override get childOffset()
+  public override get childOffset()
   {
     return this.source.childOffset;
   }
@@ -78,14 +78,14 @@ export class ProxyContainer extends Container
 
   #matrix = new Matrix();
 
-  override update()
+  protected override update()
   {
     super.update();
 
     this.invalidate(Invalidation.Transform);
   }
 
-  override updateSubTreeTransforms(): boolean
+  public override updateSubTreeTransforms(): boolean
   {
     this.updateDrawNodeTransform();
 
@@ -96,7 +96,7 @@ export class ProxyContainer extends Container
     return true;
   }
 
-  override updateDrawNodeTransform()
+  protected override updateDrawNodeTransform()
   {
     if (this.source.isDisposed)
       return;

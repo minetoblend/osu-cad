@@ -5,20 +5,20 @@ const max_res = 24;
 
 export class PathGeometryBuilder
 {
-  constructor(
-    readonly radius: number,
-    readonly segments: readonly Line[],
+  public constructor(
+    public readonly radius: number,
+    public readonly segments: readonly Line[],
   )
   {
   }
 
-  index = 0;
+  public index = 0;
 
-  indices: number[] = [];
-  positions: number[] = [];
-  texCoords: number[] = [];
+  public readonly indices: number[] = [];
+  public readonly positions: number[] = [];
+  public readonly texCoords: number[] = [];
 
-  build()
+  public build()
   {
     const { segments, radius } = this;
 
@@ -166,7 +166,7 @@ export class PathGeometryBuilder
     }
   }
 
-  addTriangle(
+  public addTriangle(
     x1: number,
     y1: number,
     z1: number,
@@ -187,7 +187,7 @@ export class PathGeometryBuilder
     this.index += 3;
   }
 
-  addVertex(
+  public addVertex(
     x: number,
     y: number,
     z: number,

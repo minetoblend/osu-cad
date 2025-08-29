@@ -4,11 +4,11 @@ import type { IInputStateChangeHandler } from "./IInputStateChangeHandler";
 
 export class PressureInput implements IInput
 {
-  constructor(readonly pressure: number)
+  public constructor(public readonly pressure: number)
   {
   }
 
-  apply(state: InputState, handler: IInputStateChangeHandler)
+  public apply(state: InputState, handler: IInputStateChangeHandler)
   {
     state.mouse.pressure = this.pressure;
   }

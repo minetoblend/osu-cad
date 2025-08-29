@@ -11,7 +11,7 @@ export interface CircleSegmentOptions extends DrawableOptions
 
 export class CircleSegment extends GraphicsDrawable
 {
-  constructor(options: CircleSegmentOptions = {})
+  public constructor(options: CircleSegmentOptions = {})
   {
     super();
 
@@ -24,12 +24,12 @@ export class CircleSegment extends GraphicsDrawable
 
   #hollowness = 0;
 
-  get hollowness()
+  public get hollowness()
   {
     return this.#hollowness;
   }
 
-  set hollowness(value)
+  public set hollowness(value)
   {
     if (value === this.#hollowness)
       return;
@@ -38,12 +38,12 @@ export class CircleSegment extends GraphicsDrawable
     this.invalidateGraphics();
   }
 
-  get startAngle()
+  public get startAngle()
   {
     return this.#startAngle;
   }
 
-  set startAngle(value)
+  public set startAngle(value)
   {
     if (value === this.#startAngle)
       return;
@@ -53,12 +53,12 @@ export class CircleSegment extends GraphicsDrawable
     this.invalidateGraphics();
   }
 
-  get endAngle()
+  public get endAngle()
   {
     return this.#endAngle;
   }
 
-  set endAngle(value)
+  public set endAngle(value)
   {
     if (value === this.#endAngle)
       return;
@@ -68,7 +68,7 @@ export class CircleSegment extends GraphicsDrawable
     this.invalidateGraphics();
   }
 
-  override updateGraphics(g: Graphics)
+  protected override updateGraphics(g: Graphics)
   {
     const radius = Math.min(
         this.drawWidth,

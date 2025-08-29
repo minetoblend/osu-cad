@@ -19,7 +19,7 @@ export class OsucadSpritePipe implements RenderPipe<SpriteDrawNode>
   private _gpuSpriteHash: Record<number, OsucadBatchableSprite> = Object.create(null);
   private readonly _destroyRenderableBound = this.destroyRenderable.bind(this) as (renderable: Container<any>) => void;
 
-  constructor(renderer: Renderer)
+  public constructor(renderer: Renderer)
   {
     this._renderer = renderer;
     this._renderer.renderableGC.addManagedHash(this, "_gpuSpriteHash");

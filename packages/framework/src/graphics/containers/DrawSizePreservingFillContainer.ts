@@ -11,12 +11,12 @@ export interface DrawSizePreservingFillContainerOptions<T extends Drawable = Dra
 
 export class DrawSizePreservingFillContainer<T extends Drawable = Drawable> extends Container<T>
 {
-  strategy: DrawSizePreservationStrategy = DrawSizePreservationStrategy.Minimum;
-  targetDrawSize = new Vec2(1024, 768);
+  public strategy: DrawSizePreservationStrategy = DrawSizePreservationStrategy.Minimum;
+  public targetDrawSize = new Vec2(1024, 768);
 
   readonly #content: Container<T>;
 
-  constructor(options: DrawSizePreservingFillContainerOptions<T> = {})
+  public constructor(options: DrawSizePreservingFillContainerOptions<T> = {})
   {
     super({
       relativeSizeAxes: Axes.Both,
@@ -31,7 +31,7 @@ export class DrawSizePreservingFillContainer<T extends Drawable = Drawable> exte
     this.with(options);
   }
 
-  override update()
+  protected override update()
   {
     const drawSizeRatio = this.parent!.childSize.div(this.targetDrawSize);
 
@@ -64,7 +64,7 @@ export class DrawSizePreservingFillContainer<T extends Drawable = Drawable> exte
     super.update();
   }
 
-  override get content()
+  protected override get content()
   {
     return this.#content;
   }

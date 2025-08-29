@@ -17,12 +17,12 @@ export class KeyEventManager extends ButtonEventManager<Key>
     this.propagateButtonEvent(drawables, new KeyDownEvent(state, this.button, true));
   }
 
-  handleButtonDown(state: InputState, targets: List<Drawable>): Drawable | null
+  protected handleButtonDown(state: InputState, targets: List<Drawable>): Drawable | null
   {
     return this.propagateButtonEvent(targets, new KeyDownEvent(state, this.button));
   }
 
-  handleButtonUp(state: InputState, targets: Drawable[]): void
+  protected handleButtonUp(state: InputState, targets: Drawable[]): void
   {
     this.propagateButtonEvent(targets, new KeyUpEvent(state, this.button));
   }

@@ -3,10 +3,10 @@ import type { IInput } from "./IInput";
 
 export class FileDropEnterInput implements IInput
 {
-  constructor(readonly files: FileList | null)
+  public constructor(public readonly files: FileList | null)
   {}
 
-  apply(state: InputState)
+  public apply(state: InputState)
   {
     state.draggedFiles = this.files;
   }

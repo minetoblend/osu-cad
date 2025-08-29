@@ -5,11 +5,11 @@ import { InputStateChangeEvent } from "./InputStateChangeEvent";
 
 export class MouseScrollChangeEvent extends InputStateChangeEvent
 {
-  constructor(
+  public constructor(
     state: InputState,
     input: IInput,
-    readonly lastScroll: Vec2,
-    readonly isPrecise: boolean,
+    public readonly lastScroll: Vec2,
+    public readonly isPrecise: boolean,
   )
   {
     super(state, input);

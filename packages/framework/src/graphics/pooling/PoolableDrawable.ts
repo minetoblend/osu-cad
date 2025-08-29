@@ -4,19 +4,19 @@ import { Invalidation, InvalidationSource } from "../drawables";
 
 export abstract class PoolableDrawable extends CompositeDrawable
 {
-  override get disposeOnDeathRemoval(): boolean
+  public override get disposeOnDeathRemoval(): boolean
   {
     return this.#pool === null && super.disposeOnDeathRemoval;
   }
 
   #isInUse = false;
 
-  get isInUse()
+  public get isInUse()
   {
     return this.#isInUse;
   }
 
-  get isInPool()
+  public get isInPool()
   {
     return this.#pool !== null;
   }
@@ -25,7 +25,7 @@ export abstract class PoolableDrawable extends CompositeDrawable
 
   #waitingForPrepare = false;
 
-  override get isPresent()
+  public override get isPresent()
   {
     return this.#waitingForPrepare || super.isPresent;
   }
@@ -40,7 +40,7 @@ export abstract class PoolableDrawable extends CompositeDrawable
     }
   }
 
-  return()
+  public return()
   {
     if (!this.isInUse)
     {
@@ -61,7 +61,7 @@ export abstract class PoolableDrawable extends CompositeDrawable
   protected freeAfterUse()
   {}
 
-  setPool(pool: IDrawablePool | null)
+  public setPool(pool: IDrawablePool | null)
   {
     if (this.isInUse)
       throw new Error("This PoolableDrawable is still in use");
@@ -72,7 +72,7 @@ export abstract class PoolableDrawable extends CompositeDrawable
     this.#pool = pool;
   }
 
-  assign()
+  public assign()
   {
     if (this.isInUse)
       throw new Error("This PoolableDrawable is already in use");
@@ -82,7 +82,7 @@ export abstract class PoolableDrawable extends CompositeDrawable
     this.#waitingForPrepare = true;
   }
 
-  override update()
+  protected override update()
   {
     if (this.#waitingForPrepare)
     {
@@ -93,7 +93,7 @@ export abstract class PoolableDrawable extends CompositeDrawable
     super.update();
   }
 
-  override onInvalidate(invalidation: Invalidation, source: InvalidationSource): boolean
+  protected override onInvalidate(invalidation: Invalidation, source: InvalidationSource): boolean
   {
     if (source !== InvalidationSource.Child && invalidation & Invalidation.Parent)
     {

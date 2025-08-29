@@ -6,7 +6,7 @@ import { UIEvent } from "./UIEvent";
 
 export class TouchEvent extends UIEvent
 {
-  constructor(state: InputState, handler: keyof IInputReceiver, touch: Touch, screenSpaceTouchDownPosition: Vec2 | null = null)
+  public constructor(state: InputState, handler: keyof IInputReceiver, touch: Touch, screenSpaceTouchDownPosition: Vec2 | null = null)
   {
     super(state, handler);
 
@@ -14,11 +14,11 @@ export class TouchEvent extends UIEvent
     this.screenSpaceTouchDownPosition = screenSpaceTouchDownPosition;
   }
 
-  readonly screenSpaceTouch: Touch;
+  public readonly screenSpaceTouch: Touch;
 
-  readonly screenSpaceTouchDownPosition: Vec2 | null;
+  public readonly screenSpaceTouchDownPosition: Vec2 | null;
 
-  isActive(touch: Touch)
+  public isActive(touch: Touch)
   {
     return this.state.touch.isActive(touch.source);
   }

@@ -4,7 +4,10 @@ import { BindableNumber } from "../bindables/BindableNumber";
 
 export class DrawableSample extends CompositeDrawable
 {
-  constructor(readonly sample: Sample, readonly disposeSampleOnDisposal = true)
+  public constructor(
+    public readonly sample: Sample,
+    public readonly disposeSampleOnDisposal = true,
+  )
   {
     super();
 
@@ -12,27 +15,27 @@ export class DrawableSample extends CompositeDrawable
     sample.rate.bindTo(this.rate);
   }
 
-  play()
+  public play()
   {
     this.getChannel().play();
   }
 
-  getChannel()
+  public getChannel()
   {
     return this.sample.getChannel();
   }
 
-  override dispose(isDisposing: boolean = true)
+  public override dispose()
   {
     if (this.disposeSampleOnDisposal)
       this.sample.dispose();
 
-    super.dispose(isDisposing);
+    super.dispose();
   }
 
-  readonly volume = new BindableNumber(1)
+  public readonly volume = new BindableNumber(1)
     .withMinValue(0)
     .withMaxValue(1);
 
-  readonly rate = new BindableNumber(1);
+  public readonly rate = new BindableNumber(1);
 }

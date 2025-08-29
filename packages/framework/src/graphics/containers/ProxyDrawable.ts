@@ -5,32 +5,32 @@ import { Drawable } from "../drawables/Drawable";
 
 export class ProxyDrawable extends Drawable
 {
-  constructor(readonly source: Drawable)
+  public constructor(public readonly source: Drawable)
   {
     super();
   }
 
-  override get isPresent(): boolean
+  public override get isPresent(): boolean
   {
     return false;
   }
 
-  override get shouldBeAlive(): boolean
+  public override get shouldBeAlive(): boolean
   {
     return this.source.shouldBeAlive;
   }
 
-  override get removeWhenNotAlive(): boolean
+  public override get removeWhenNotAlive(): boolean
   {
     return this.source.removeWhenNotAlive;
   }
 
-  override get lifetimeStart(): number
+  public override get lifetimeStart(): number
   {
     return this.source.lifetimeStart;
   }
 
-  override get lifetimeEnd(): number
+  public override get lifetimeEnd(): number
   {
     return this.source.lifetimeEnd;
   }
@@ -44,14 +44,14 @@ export class ProxyDrawable extends Drawable
     this.source.lifetimeChanged.addListener(() => this.lifetimeChanged.emit(this));
   }
 
-  override createDrawNode(): PIXIContainer
+  public override createDrawNode(): PIXIContainer
   {
     return this.#renderLayer as any;
   }
 
   #isAttached = false;
 
-  override updateSubTreeTransforms(): boolean
+  public override updateSubTreeTransforms(): boolean
   {
     if (this.source.isAlive && !this.#isAttached)
     {
@@ -67,9 +67,9 @@ export class ProxyDrawable extends Drawable
     return super.updateSubTreeTransforms();
   }
 
-  override dispose(isDisposing: boolean = true)
+  public override dispose()
   {
-    super.dispose(isDisposing);
+    super.dispose();
 
     this.#renderLayer.detachAll();
   }

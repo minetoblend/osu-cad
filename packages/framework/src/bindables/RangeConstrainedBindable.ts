@@ -4,19 +4,19 @@ import { Bindable } from "./Bindable";
 
 export abstract class RangeConstrainedBindable<T> extends Bindable<T>
 {
-  readonly minValueChanged = new Action<[T]>();
-  readonly maxValueChanged = new Action<[T]>();
+  public readonly minValueChanged = new Action<[T]>();
+  public readonly maxValueChanged = new Action<[T]>();
 
   protected abstract get comparer(): Comparer<T>;
 
   #minValue: T;
 
-  get minValue()
+  public get minValue()
   {
     return this.#minValue;
   }
 
-  set minValue(value: T)
+  public set minValue(value: T)
   {
     if (this.comparer.compare(value, this.#minValue) === 0)
     {
@@ -28,12 +28,12 @@ export abstract class RangeConstrainedBindable<T> extends Bindable<T>
 
   #maxValue: T;
 
-  get maxValue()
+  public get maxValue()
   {
     return this.#maxValue;
   }
 
-  set maxValue(value: T)
+  public set maxValue(value: T)
   {
     if (this.comparer.compare(value, this.#maxValue) === 0)
     {
@@ -43,12 +43,12 @@ export abstract class RangeConstrainedBindable<T> extends Bindable<T>
     this.setMaxValue(value, true, this);
   }
 
-  override get value()
+  public override get value()
   {
     return super.value;
   }
 
-  override set value(value)
+  public override set value(value)
   {
     this.#setValue(value);
   }
@@ -57,7 +57,7 @@ export abstract class RangeConstrainedBindable<T> extends Bindable<T>
 
   protected abstract get defaultMaxValue(): T;
 
-  get hasDefinedRange()
+  public get hasDefinedRange()
   {
     return !(
       this.comparer.equals(this.#minValue, this.defaultMinValue)
@@ -77,7 +77,7 @@ export abstract class RangeConstrainedBindable<T> extends Bindable<T>
     this.#setValue(defaultValue);
   }
 
-  get normalizedValue()
+  public get normalizedValue()
   {
     const min = this.#convertToSingle(this.#minValue);
     const max = this.#convertToSingle(this.#maxValue);
@@ -99,7 +99,7 @@ export abstract class RangeConstrainedBindable<T> extends Bindable<T>
     throw new Error(`Cannot convert ${value} to single`);
   }
 
-  setMinValue(value: T, updateCurrentValue: boolean, source: RangeConstrainedBindable<T>)
+  public setMinValue(value: T, updateCurrentValue: boolean, source: RangeConstrainedBindable<T>)
   {
     this.#minValue = value;
     this.triggerMinValueChange(source);
@@ -110,7 +110,7 @@ export abstract class RangeConstrainedBindable<T> extends Bindable<T>
     }
   }
 
-  setMaxValue(value: T, updateCurrentValue: boolean, source: RangeConstrainedBindable<T>)
+  public setMaxValue(value: T, updateCurrentValue: boolean, source: RangeConstrainedBindable<T>)
   {
     this.#maxValue = value;
     this.triggerMaxValueChange(source);
@@ -121,7 +121,7 @@ export abstract class RangeConstrainedBindable<T> extends Bindable<T>
     }
   }
 
-  override triggerChange()
+  public override triggerChange()
   {
     super.triggerChange();
 
@@ -177,7 +177,7 @@ export abstract class RangeConstrainedBindable<T> extends Bindable<T>
     }
   }
 
-  override copyTo(bindable: Bindable<T>)
+  public override copyTo(bindable: Bindable<T>)
   {
     if (bindable instanceof RangeConstrainedBindable)
     {
@@ -188,7 +188,7 @@ export abstract class RangeConstrainedBindable<T> extends Bindable<T>
     super.copyTo(bindable);
   }
 
-  override bindTo(bindable: Bindable<T>)
+  public override bindTo(bindable: Bindable<T>)
   {
     if (bindable instanceof RangeConstrainedBindable)
     {
@@ -203,7 +203,7 @@ export abstract class RangeConstrainedBindable<T> extends Bindable<T>
     super.bindTo(bindable);
   }
 
-  override unbindEvents()
+  public override unbindEvents()
   {
     super.unbindEvents();
 
@@ -211,7 +211,7 @@ export abstract class RangeConstrainedBindable<T> extends Bindable<T>
     this.maxValueChanged.removeAllListeners();
   }
 
-  override getBoundCopy(): Bindable<T>
+  public override getBoundCopy(): Bindable<T>
   {
     const ctor = this.constructor;
 
@@ -232,19 +232,19 @@ export abstract class RangeConstrainedBindable<T> extends Bindable<T>
     super.value = this.clampValue(value, this.#minValue, this.#maxValue);
   }
 
-  withMinValue(value: T): this
+  public withMinValue(value: T): this
   {
     this.minValue = value;
     return this;
   }
 
-  withMaxValue(value: T): this
+  public withMaxValue(value: T): this
   {
     this.maxValue = value;
     return this;
   }
 
-  withRange(min: T, max: T): this
+  public withRange(min: T, max: T): this
   {
     this.minValue = min;
     this.maxValue = max;

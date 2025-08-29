@@ -11,12 +11,12 @@ export class PlatformActionContainer extends KeyBindingContainer<PlatformAction>
   @resolved(GAME_HOST)
   protected accessor host!: GameHost;
 
-  constructor()
+  public constructor()
   {
     super(SimultaneousBindingMode.None, KeyCombinationMatchingMode.Any);
   }
 
-  override get defaultKeyBindings(): IKeyBinding[]
+  public override get defaultKeyBindings(): IKeyBinding[]
   {
     return this.host.platformKeyBindings;
   }

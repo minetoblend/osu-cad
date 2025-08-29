@@ -6,7 +6,7 @@ import { Touch, TouchSource } from "./Touch";
 
 export class TouchHandler extends InputHandler
 {
-  override initialize(host: GameHost): boolean
+  public override initialize(host: GameHost): boolean
   {
     if (!super.initialize(host))
     {

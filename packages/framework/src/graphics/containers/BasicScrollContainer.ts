@@ -6,7 +6,7 @@ import { ScrollbarContainer, ScrollContainer } from "./ScrollContainer";
 
 export class BasicScrollContainer extends ScrollContainer
 {
-  constructor(direction: Direction = Direction.Vertical)
+  public constructor(direction: Direction = Direction.Vertical)
   {
     super(direction);
   }
@@ -21,7 +21,7 @@ const dim_size = 8;
 
 class BasicScrollbar extends ScrollbarContainer
 {
-  constructor(direction: Direction)
+  public constructor(direction: Direction)
   {
     super(direction);
 
@@ -31,7 +31,7 @@ class BasicScrollbar extends ScrollbarContainer
     });
   }
 
-  override resizeScrollbarTo(val: number, duration: number = 0, easing: EasingFunction = EasingFunction.Default): void
+  public override resizeScrollbarTo(val: number, duration: number = 0, easing: EasingFunction = EasingFunction.Default): void
   {
     let size: Vec2;
     if (this.scrollDirection === Direction.Vertical)

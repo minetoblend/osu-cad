@@ -1,14 +1,14 @@
 export class FrameData<T>
 {
-  constructor(
+  public constructor(
     public content: T,
     public duration: number,
   )
   {}
 
-  displayStartTime = 0;
+  public displayStartTime = 0;
 
-  get displayEndTime()
+  public get displayEndTime()
   {
     return this.displayStartTime + this.duration;
   }

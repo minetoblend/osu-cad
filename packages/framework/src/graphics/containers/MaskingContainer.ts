@@ -8,7 +8,7 @@ export interface MaskingContainerOptions extends ContainerOptions
 
 export class MaskingContainer extends Container
 {
-  constructor(options: MaskingContainerOptions = {})
+  public constructor(options: MaskingContainerOptions = {})
   {
     super();
 

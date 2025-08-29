@@ -4,9 +4,9 @@ import { MouseEvent } from "./MouseEvent";
 
 export class MouseMoveEvent extends MouseEvent
 {
-  constructor(
+  public constructor(
     state: InputState,
-    readonly lastPosition?: Vec2,
+    public readonly lastPosition?: Vec2,
   )
   {
     super(state, "onMouseMove");

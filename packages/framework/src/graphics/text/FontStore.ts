@@ -3,7 +3,7 @@ import type { ITexturedGlyphLookupStore } from "./ITexturedGlyphLookupStore";
 
 export class FontStore implements ITexturedGlyphLookupStore
 {
-  get(fontName: string | null, character: string): ITexturedCharacterGlyph | null
+  public get(fontName: string | null, character: string): ITexturedCharacterGlyph | null
   {
     return null;
   }

@@ -11,7 +11,7 @@ export class KeyboardHandler extends InputHandler
 {
   #textInputSource!: TextInputSource;
 
-  override initialize(host: GameHost): boolean
+  public override initialize(host: GameHost): boolean
   {
     if (!super.initialize(host))
       return false;
@@ -139,7 +139,7 @@ export class KeyboardHandler extends InputHandler
     }
   };
 
-  onInput = new Action();
+  public readonly onInput = new Action();
 
   #enqueueInput(input: IInput)
   {

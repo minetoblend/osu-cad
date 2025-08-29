@@ -3,7 +3,7 @@ import { Vec2 } from "../math/Vec2";
 
 export class MatrixUtils
 {
-  static extractScale(matrix: Matrix): Vec2
+  public static extractScale(matrix: Matrix): Vec2
   {
     const { a, b, c, d } = matrix;
 

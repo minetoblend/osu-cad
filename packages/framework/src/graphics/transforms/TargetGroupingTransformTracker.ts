@@ -5,15 +5,15 @@ import { Transform } from "./Transform";
 
 export class TargetGroupingTransformTracker
 {
-  constructor(
-    readonly transformable: Transformable,
-    readonly targetGrouping: string,
+  public constructor(
+    private readonly transformable: Transformable,
+    public readonly targetGrouping: string,
   )
   {}
 
   readonly #transforms = new SortedList(Transform.COMPARER);
 
-  get transforms(): readonly Transform[]
+  public get transforms(): readonly Transform[]
   {
     return this.#transforms.items;
   }
@@ -24,14 +24,14 @@ export class TargetGroupingTransformTracker
 
   #targetMembers = new Set<string>();
 
-  get targetMembers(): ReadonlySet<string>
+  public get targetMembers(): ReadonlySet<string>
   {
     return this.#targetMembers;
   }
 
   #appliedToEndReverts?: Set<string>;
 
-  updateTransforms(time: number, rewinding: boolean)
+  public updateTransforms(time: number, rewinding: boolean)
   {
     if (rewinding && !this.transformable.removeCompletedTransforms)
     {
@@ -186,7 +186,7 @@ export class TargetGroupingTransformTracker
     this.#invokePendingRemovalActions();
   }
 
-  addTransform(transform: Transform, customTransformID?: number)
+  public addTransform(transform: Transform, customTransformID?: number)
   {
     debugAssert(
         !(transform.transformID === 0 && this.#transforms.includes(transform)),
@@ -223,13 +223,13 @@ export class TargetGroupingTransformTracker
     this.#invokePendingRemovalActions();
   }
 
-  removeTransform(toRemove: Transform)
+  public removeTransform(toRemove: Transform)
   {
     this.#transforms.remove(toRemove);
     this.#resetLastAppliedCache();
   }
 
-  clearTransformsAfter(time: number, targetMember?: string)
+  public clearTransformsAfter(time: number, targetMember?: string)
   {
     this.#resetLastAppliedCache();
 
@@ -265,7 +265,7 @@ export class TargetGroupingTransformTracker
     this.#invokePendingRemovalActions();
   }
 
-  finishTransforms(targetMember?: string)
+  public finishTransforms(targetMember?: string)
   {
     let toFlushPredicate: (t: Transform) => boolean;
     if (targetMember === null)

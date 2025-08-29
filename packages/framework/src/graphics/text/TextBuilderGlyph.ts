@@ -4,12 +4,12 @@ import { Rectangle } from "../../math/Rectangle";
 
 export class TextBuilderGlyph implements ITexturedCharacterGlyph
 {
-  get texture()
+  public get texture()
   {
     return this.glyph.texture;
   }
 
-  get xOffset()
+  public get xOffset()
   {
     if (this.fixedWidth !== undefined)
       return (this.fixedWidth - this.glyph.width) / 2 * this.textSize;
@@ -17,22 +17,22 @@ export class TextBuilderGlyph implements ITexturedCharacterGlyph
     return this.glyph.xOffset * this.textSize;
   }
 
-  get xAdvance()
+  public get xAdvance()
   {
     return (this.fixedWidth ?? this.glyph.xAdvance) * this.textSize;
   }
 
-  get width()
+  public get width()
   {
     return this.glyph.width * this.textSize;
   }
 
-  get character()
+  public get character()
   {
     return this.glyph.character;
   }
 
-  get yOffset()
+  public get yOffset()
   {
     if (this.useFontSizeAsHeight)
       return this.glyph.yOffset * this.textSize;
@@ -40,7 +40,7 @@ export class TextBuilderGlyph implements ITexturedCharacterGlyph
     return 0;
   }
 
-  get baseline()
+  public get baseline()
   {
     if (this.useFontSizeAsHeight)
       return this.glyph.baseline * this.textSize;
@@ -48,7 +48,7 @@ export class TextBuilderGlyph implements ITexturedCharacterGlyph
     return (this.glyph.baseline - this.glyph.yOffset) * this.textSize;
   }
 
-  get height()
+  public get height()
   {
     if (isWhiteSpace(this.glyph))
       return 0;
@@ -56,17 +56,22 @@ export class TextBuilderGlyph implements ITexturedCharacterGlyph
     return this.glyph.height * this.textSize;
   }
 
-  drawRectangle = new Rectangle(0, 0, 0, 0);
+  public drawRectangle = new Rectangle(0, 0, 0, 0);
 
-  linePosition = 0;
+  public linePosition = 0;
 
-  onNewLine = false;
+  public onNewLine = false;
 
-  constructor(readonly glyph: ITexturedCharacterGlyph, readonly textSize: number, readonly fixedWidth?: number, readonly useFontSizeAsHeight: boolean = true)
+  public constructor(
+    public readonly glyph: ITexturedCharacterGlyph,
+    public readonly textSize: number,
+    public readonly fixedWidth?: number,
+    public readonly useFontSizeAsHeight: boolean = true,
+  )
   {
   }
 
-  getKerning(last: ICharacterGlyph): number
+  public getKerning(last: ICharacterGlyph): number
   {
     return this.fixedWidth !== undefined ? 0 : this.glyph.getKerning(last);
   }

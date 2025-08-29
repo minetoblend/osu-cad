@@ -4,13 +4,13 @@ import { TouchState } from "./TouchState";
 
 export class InputState
 {
-  readonly mouse = new MouseState();
-  readonly keyboard = new KeyboardState();
-  readonly touch = new TouchState();
+  public readonly mouse = new MouseState();
+  public readonly keyboard = new KeyboardState();
+  public readonly touch = new TouchState();
 
-  draggedFiles: FileList | null = null;
+  public draggedFiles: FileList | null = null;
 
-  constructor(
+  public constructor(
     other?: InputState,
   )
   {

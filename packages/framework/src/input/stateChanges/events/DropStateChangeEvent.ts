@@ -4,12 +4,12 @@ import { InputStateChangeEvent } from "./InputStateChangeEvent";
 
 export class DropStateChangeEvent extends InputStateChangeEvent
 {
-  constructor(state: InputState, input: FileDropInput)
+  public constructor(state: InputState, input: FileDropInput)
   {
     super(state, input);
 
     this.files = input.files;
   }
 
-  readonly files: FileList;
+  public readonly files: FileList;
 }

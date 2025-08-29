@@ -3,9 +3,9 @@ import { InputManager } from "./InputManager";
 
 export class CustomInputManager extends InputManager
 {
-  override inputHandlers: ReadonlyArray<InputHandler> = [];
+  protected override inputHandlers: ReadonlyArray<InputHandler> = [];
 
-  addHandler(handler: InputHandler)
+  public addHandler(handler: InputHandler)
   {
     if (!handler.initialize(this.host))
       return;
@@ -13,18 +13,16 @@ export class CustomInputManager extends InputManager
     this.inputHandlers = [...this.inputHandlers, handler];
   }
 
-  removeHandler(handler: InputHandler)
+  public removeHandler(handler: InputHandler)
   {
     this.inputHandlers = this.inputHandlers.filter(h => h !== handler);
   }
 
-  override dispose(isDisposing: boolean = true)
+  public override dispose()
   {
     for (const handler of this.inputHandlers)
-    {
       handler.dispose();
-    }
 
-    super.dispose(isDisposing);
+    super.dispose();
   }
 }

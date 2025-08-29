@@ -16,12 +16,12 @@ export abstract class GraphicsDrawable extends Drawable
 
   #graphicsBacking = new LayoutMember(Invalidation.DrawSize);
 
-  createDrawNode(): PIXIContainer
+  protected createDrawNode(): PIXIContainer
   {
     return this.#graphics = new Graphics();
   }
 
-  override update()
+  protected override update()
   {
     super.update();
 
@@ -34,14 +34,14 @@ export abstract class GraphicsDrawable extends Drawable
 
   protected abstract updateGraphics(g: Graphics): void;
 
-  invalidateGraphics()
+  public invalidateGraphics()
   {
     this.#graphicsBacking.invalidate();
   }
 
-  override dispose(isDisposing: boolean = true)
+  public override dispose()
   {
-    super.dispose(isDisposing);
+    super.dispose();
 
     this.#graphics.destroy();
   }

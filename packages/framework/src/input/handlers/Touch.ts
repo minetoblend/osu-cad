@@ -2,11 +2,12 @@ import type { Vec2 } from "../../math";
 
 export class Touch
 {
-  constructor(
-    readonly source: TouchSource,
-    readonly position: Vec2,
+  public constructor(
+    public readonly source: TouchSource,
+    public readonly position: Vec2,
   )
-  {}
+  {
+  }
 }
 
 export enum TouchSource

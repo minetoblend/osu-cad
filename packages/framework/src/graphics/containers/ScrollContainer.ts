@@ -18,12 +18,12 @@ const distance_decay_clamping = 0.012;
 
 export abstract class ScrollContainer<T extends Drawable = Drawable> extends Container<T>
 {
-  get scrollbarAnchor(): Anchor
+  public get scrollbarAnchor(): Anchor
   {
     return this.scrollbar.anchor;
   }
 
-  set scrollbarAnchor(value: Anchor)
+  public set scrollbarAnchor(value: Anchor)
   {
     this.scrollbar.anchor = value;
     this.scrollbar.origin = value;
@@ -32,12 +32,12 @@ export abstract class ScrollContainer<T extends Drawable = Drawable> extends Con
 
   #scrollbarVisible = true;
 
-  get scrollbarVisible(): boolean
+  public get scrollbarVisible(): boolean
   {
     return this.#scrollbarVisible;
   }
 
-  set scrollbarVisible(value: boolean)
+  public set scrollbarVisible(value: boolean)
   {
     this.#scrollbarVisible = value;
     this.#scrollbarCache.invalidate();
@@ -47,47 +47,47 @@ export abstract class ScrollContainer<T extends Drawable = Drawable> extends Con
 
   #scrollbarOverlapsContent = true;
 
-  get scrollbarOverlapsContent(): boolean
+  public get scrollbarOverlapsContent(): boolean
   {
     return this.#scrollbarOverlapsContent;
   }
 
-  set scrollbarOverlapsContent(value: boolean)
+  public set scrollbarOverlapsContent(value: boolean)
   {
     this.#scrollbarOverlapsContent = value;
     this.#updatePadding();
   }
 
-  get availableContent(): number
+  public get availableContent(): number
   {
     return this.scrollContent.drawSize[this.scrollDim];
   }
 
-  get displayableContent(): number
+  public get displayableContent(): number
   {
     return this.childSize[this.scrollDim];
   }
 
-  scrollDistance = 80;
+  public scrollDistance = 80;
 
-  clampExtension = 300;
+  public clampExtension = 300;
 
-  distanceDecayDrag = 0.0035;
+  public distanceDecayDrag = 0.0035;
 
-  distanceDecayScroll = 0.01;
+  public distanceDecayScroll = 0.01;
 
-  distanceDecayJump = 0.01;
+  public distanceDecayJump = 0.01;
 
   #distanceDecay = 0;
 
-  get current(): number
+  public get current(): number
   {
     return this.#current;
   }
 
   #current = 0;
 
-  get target(): number
+  public get target(): number
   {
     return this.#target;
   }
@@ -99,37 +99,37 @@ export abstract class ScrollContainer<T extends Drawable = Drawable> extends Con
 
   #target = 0;
 
-  get scrollableExtent(): number
+  public get scrollableExtent(): number
   {
     return Math.max(this.availableContent - this.displayableContent, 0);
   }
 
-  get scrollbarMovementExtent(): number
+  public get scrollbarMovementExtent(): number
   {
     return Math.max(this.displayableContent - this.scrollbar.drawSize[this.scrollDim], 0);
   }
 
   protected clamp(position: number, extension = 0): number
   {
-    return Math.max(Math.min(position, this.scrollableExtent + extension), -extension);
+    return clamp(position, -extension, this.scrollableExtent + extension);
   }
 
-  override get content(): Container<T>
+  protected override get content(): Container<T>
   {
     return this.scrollContent;
   }
 
-  isScrolledToStart(lenience = 0.0001): boolean
+  public isScrolledToStart(lenience = 0.0001): boolean
   {
     return almostBigger(0, this.target, lenience);
   }
 
-  isScrolledToEnd(lenience = 0.0001): boolean
+  public isScrolledToEnd(lenience = 0.0001): boolean
   {
     return almostBigger(this.target, this.scrollableExtent, lenience);
   }
 
-  readonly scrollContent: Container<T>;
+  public readonly scrollContent: Container<T>;
 
   #isDragging = false;
 
@@ -138,7 +138,7 @@ export abstract class ScrollContainer<T extends Drawable = Drawable> extends Con
     return this.#isDragging;
   }
 
-  readonly scrollDirection: Direction;
+  public readonly scrollDirection: Direction;
 
   protected get scrollDim(): "x" | "y"
   {
@@ -150,7 +150,7 @@ export abstract class ScrollContainer<T extends Drawable = Drawable> extends Con
       Invalidation.Parent,
   );
 
-  constructor(direction: Direction = Direction.Vertical)
+  public constructor(direction: Direction = Direction.Vertical)
   {
     super();
     this.scrollDirection = direction;
@@ -243,7 +243,7 @@ export abstract class ScrollContainer<T extends Drawable = Drawable> extends Con
     // }
   }
 
-  override onDragStart(e: DragStartEvent): boolean
+  protected override onDragStart(e: DragStartEvent): boolean
   {
     if (this.isDragging || e.button !== MouseButton.Left || this.content.aliveInternalChildren.length === 0)
       return false;
@@ -268,7 +268,7 @@ export abstract class ScrollContainer<T extends Drawable = Drawable> extends Con
     return true;
   }
 
-  override onMouseDown(e: MouseDownEvent): boolean
+  public override onMouseDown(e: MouseDownEvent): boolean
   {
     if (this.isDragging || e.button !== MouseButton.Left)
       return false;
@@ -286,12 +286,12 @@ export abstract class ScrollContainer<T extends Drawable = Drawable> extends Con
 
   #dragBlocksClick = false;
 
-  override get dragBlocksClick(): boolean
+  public override get dragBlocksClick(): boolean
   {
     return this.#dragBlocksClick;
   }
 
-  override onDrag(e: DragEvent): boolean
+  protected override onDrag(e: DragEvent): boolean
   {
     debugAssert(this.isDragging, "onDrag called when not dragging");
 
@@ -326,7 +326,7 @@ export abstract class ScrollContainer<T extends Drawable = Drawable> extends Con
     return true;
   }
 
-  override onDragEnd(e: DragEndEvent): boolean
+  protected override onDragEnd(e: DragEndEvent): boolean
   {
     debugAssert(this.isDragging, "We should never receive OnDragEnd if we are not dragging.");
 
@@ -352,7 +352,7 @@ export abstract class ScrollContainer<T extends Drawable = Drawable> extends Con
     return true;
   }
 
-  override onScroll(e: ScrollEvent): boolean
+  protected override onScroll(e: ScrollEvent): boolean
   {
     if (this.content.aliveInternalChildren.length === 0 || e.altPressed || e.controlPressed)
       return false;
@@ -390,7 +390,7 @@ export abstract class ScrollContainer<T extends Drawable = Drawable> extends Con
     this.onUserScroll(this.clamp(this.#fromScrollbarPosition(value)), false);
   };
 
-  offsetScrollPosition(offset: number)
+  public offsetScrollPosition(offset: number)
   {
     this.#target += offset;
     this.#current += offset;
@@ -401,15 +401,13 @@ export abstract class ScrollContainer<T extends Drawable = Drawable> extends Con
     this.onUserScroll(this.target + value, animated, distanceDecay);
   }
 
-  scrollToStart(animated = true, allowDuringDrag = false)
+  public scrollToStart(animated = true, allowDuringDrag = false)
   {
     if (!this.isDragging || allowDuringDrag)
-    {
       this.#scrollTo(0, animated, this.distanceDecayJump);
-    }
   }
 
-  scrollToEnd(animated = true, allowDuringDrag = false)
+  public scrollToEnd(animated = true, allowDuringDrag = false)
   {
     if (!this.isDragging || allowDuringDrag)
     {
@@ -417,17 +415,17 @@ export abstract class ScrollContainer<T extends Drawable = Drawable> extends Con
     }
   }
 
-  scrollBy(value: number, animated = true)
+  public scrollBy(value: number, animated = true)
   {
     this.#scrollTo(this.target + value, animated);
   }
 
-  onUserScroll(value: number, animated = true, distanceDecay?: number)
+  protected onUserScroll(value: number, animated = true, distanceDecay?: number)
   {
     this.scrollTo(value, animated, distanceDecay);
   }
 
-  scrollTo(value: number, animated = true, distanceDecay?: number)
+  public scrollTo(value: number, animated = true, distanceDecay?: number)
   {
     this.#scrollTo(value, animated, distanceDecay ?? this.distanceDecayJump);
   }
@@ -437,16 +435,12 @@ export abstract class ScrollContainer<T extends Drawable = Drawable> extends Con
     this.#target = this.clamp(value, this.clampExtension);
 
     if (animated)
-    {
       this.#distanceDecay = distanceDecay;
-    }
     else
-    {
       this.#current = this.target;
-    }
   }
 
-  scrollIntoView(d: Drawable, animated = true)
+  public scrollIntoView(d: Drawable, animated = true)
   {
     const childPos0 = this.getChildPosInContent(d);
     const childPos1 = this.getChildPosInContent(d, d.drawSize);
@@ -460,7 +454,7 @@ export abstract class ScrollContainer<T extends Drawable = Drawable> extends Con
       this.scrollTo(maxPos - this.displayableContent, animated);
   }
 
-  getChildPosInContent(d: Drawable, offset: Vec2 = Vec2.zero())
+  public getChildPosInContent(d: Drawable, offset: Vec2 = Vec2.zero())
   {
     return d.toSpaceOfOtherDrawable(offset, this.scrollContent)[this.scrollDim];
   }
@@ -573,16 +567,16 @@ export abstract class ScrollbarContainer extends Container
 {
   #dragOffset = 0;
 
-  readonly dragged = new Action<number>();
+  public readonly dragged = new Action<number>();
 
-  readonly scrollDirection: Direction;
+  public readonly scrollDirection: Direction;
 
-  get minimumDimSize(): number
+  public get minimumDimSize(): number
   {
     return this.size[this.scrollDirection === Direction.Vertical ? "x" : "y"];
   }
 
-  constructor(direction: Direction)
+  public constructor(direction: Direction)
   {
     super();
     this.scrollDirection = direction;
@@ -590,14 +584,14 @@ export abstract class ScrollbarContainer extends Container
     this.relativeSizeAxes = direction === Direction.Horizontal ? Axes.X : Axes.Y;
   }
 
-  abstract resizeScrollbarTo(val: number, duration?: number, easing?: EasingFunction): void;
+  public abstract resizeScrollbarTo(val: number, duration?: number, easing?: EasingFunction): void;
 
-  override onClick(e: ClickEvent): boolean
+  protected override onClick(e: ClickEvent): boolean
   {
     return true;
   }
 
-  override onDragStart(e: DragStartEvent): boolean
+  protected override onDragStart(e: DragStartEvent): boolean
   {
     if (e.button !== MouseButton.Left)
       return false;
@@ -608,7 +602,7 @@ export abstract class ScrollbarContainer extends Container
     return true;
   }
 
-  override onMouseDown(e: MouseDownEvent): boolean
+  protected override onMouseDown(e: MouseDownEvent): boolean
   {
     if (e.button !== MouseButton.Left)
       return false;
@@ -620,7 +614,7 @@ export abstract class ScrollbarContainer extends Container
     return true;
   }
 
-  override onDrag(e: DragEvent): boolean
+  protected override onDrag(e: DragEvent): boolean
   {
     const dim = this.scrollDirection === Direction.Horizontal ? "x" : "y";
     this.dragged.emit(this.parent!.toLocalSpace(e.screenSpaceMousePosition)[dim] - this.#dragOffset);

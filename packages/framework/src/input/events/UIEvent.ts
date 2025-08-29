@@ -5,65 +5,65 @@ import type { InputState } from "../state/InputState";
 
 export class UIEvent
 {
-  constructor(
-    readonly state: InputState,
-    readonly handler: keyof IInputReceiver,
+  public constructor(
+    public readonly state: InputState,
+    public readonly handler: keyof IInputReceiver,
   )
   {}
 
-  target: Drawable | null = null;
+  public target: Drawable | null = null;
 
-  get mousePosition(): Vec2
+  public get mousePosition(): Vec2
   {
     return this.target!.toLocalSpace(this.screenSpaceMousePosition);
   }
 
-  get screenSpaceMousePosition()
+  public get screenSpaceMousePosition()
   {
     return this.state.mouse.position;
   }
 
-  get controlPressed()
+  public get controlPressed()
   {
     return this.state.keyboard.controlPressed;
   }
 
-  get shiftPressed()
+  public get shiftPressed()
   {
     return this.state.keyboard.shiftPressed;
   }
 
-  get altPressed()
+  public get altPressed()
   {
     return this.state.keyboard.altPressed;
   }
 
-  get metaPressed()
+  public get metaPressed()
   {
     return this.state.keyboard.metaPressed;
   }
 
-  get anyModifierPressed()
+  public get anyModifierPressed()
   {
     return this.controlPressed || this.shiftPressed || this.altPressed || this.metaPressed;
   }
 
-  get draggedFiles()
+  public get draggedFiles()
   {
     return this.state.draggedFiles;
   }
 
-  get touchCount()
+  public get touchCount()
   {
     return this.state.touch.activeSources.pressedButtons.size;
   }
 
-  get pressure()
+  public get pressure()
   {
     return this.state.mouse.pressure;
   }
 
-  toString()
+  public toString()
   {
     return this.constructor.name;
   }

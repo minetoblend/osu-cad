@@ -11,7 +11,7 @@ export class LifetimeEntryManager
 
   #activeEntries = new Set<LifetimeEntry>();
 
-  get activeEntries()
+  public get activeEntries(): ReadonlySet<LifetimeEntry>
   {
     return this.#activeEntries;
   }
@@ -34,13 +34,13 @@ export class LifetimeEntryManager
 
   #currentChildId = 0;
 
-  readonly entryBecameAlive = new Action<LifetimeEntry>();
+  public readonly entryBecameAlive = new Action<LifetimeEntry>();
 
-  readonly entryBecameDead = new Action<LifetimeEntry>();
+  public readonly entryBecameDead = new Action<LifetimeEntry>();
 
-  readonly entryCrossedBoundary = new Action<[LifetimeEntry, LifetimeBoundaryKind, LifetimeBoundaryCrossingDirection]>();
+  public readonly entryCrossedBoundary = new Action<[LifetimeEntry, LifetimeBoundaryKind, LifetimeBoundaryCrossingDirection]>();
 
-  addEntry(entry: LifetimeEntry)
+  public addEntry(entry: LifetimeEntry)
   {
     entry.requestLifetimeUpdate.addListener(this.#requestLifetimeUpdate);
     entry.childId = ++this.#currentChildId;
@@ -49,7 +49,7 @@ export class LifetimeEntryManager
     this.#newEntries.add(entry);
   }
 
-  removeEntry(entry: LifetimeEntry)
+  public removeEntry(entry: LifetimeEntry)
   {
     entry.requestLifetimeUpdate.removeListener(this.#requestLifetimeUpdate);
 
@@ -86,7 +86,7 @@ export class LifetimeEntryManager
     return true;
   }
 
-  clearEntries()
+  public clearEntries()
   {
     for (const entry of this.#newEntries)
     {
@@ -141,7 +141,7 @@ export class LifetimeEntryManager
     }
   }
 
-  update(startTime: number, endTime: number = startTime): boolean
+  public update(startTime: number, endTime: number = startTime): boolean
   {
     endTime = Math.max(endTime, startTime);
 

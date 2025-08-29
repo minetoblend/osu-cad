@@ -6,14 +6,14 @@ import { Container } from "./Container";
 
 export class TabbableContainer<T extends Drawable = Drawable> extends Container<T>
 {
-  get canBeTabbedTo(): boolean
+  public get canBeTabbedTo(): boolean
   {
     return true;
   }
 
-  tabbableContentContainer: CompositeDrawable | null = null;
+  public tabbableContentContainer: CompositeDrawable | null = null;
 
-  override onKeyDown(e: KeyDownEvent): boolean
+  protected override onKeyDown(e: KeyDownEvent): boolean
   {
     if (this.tabbableContentContainer === null || e.key !== Key.Tab)
       return false;
@@ -71,7 +71,7 @@ export class TabbableContainer<T extends Drawable = Drawable> extends Container<
     return null;
   }
 
-  withTabbableContentContainer(value: CompositeDrawable): this
+  public withTabbableContentContainer(value: CompositeDrawable): this
   {
     this.tabbableContentContainer = value;
     return this;

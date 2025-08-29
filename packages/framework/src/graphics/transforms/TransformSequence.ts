@@ -23,13 +23,13 @@ export class TransformSequence<T extends ITransformable>
     return this.#endTime !== Infinity;
   }
 
-  constructor(origin: T)
+  public constructor(origin: T)
   {
     this.#origin = origin;
     this.#currentTime = this.#lastEndTime = origin.transformStartTime;
   }
 
-  add(transform: Transform)
+  public add(transform: Transform)
   {
     if (transform.targetTransformable !== this.#origin)
       throw new Error("Transform does not target the origin of this sequence");
@@ -43,7 +43,7 @@ export class TransformSequence<T extends ITransformable>
     }
   }
 
-  append(generator: (o: T) => TransformSequence<T>)
+  public append(generator: (o: T) => TransformSequence<T>)
   {
     let child: TransformSequence<T>;
     {
@@ -63,24 +63,24 @@ export class TransformSequence<T extends ITransformable>
     return this;
   }
 
-  get origin()
+  public get origin()
   {
     return this.#origin;
   }
 
-  get transforms(): ReadonlyArray<Transform>
+  public get transforms(): ReadonlyArray<Transform>
   {
     return this.#transforms;
   }
 
-  delay(duration: number): this
+  public delay(duration: number): this
   {
     this.#currentTime += duration;
 
     return this;
   }
 
-  then(delay = 0): this
+  public then(delay = 0): this
   {
     if (!this.#hasEnd)
     {
@@ -92,7 +92,7 @@ export class TransformSequence<T extends ITransformable>
     return this.delay(delay);
   }
 
-  asProxy(): TransformSequenceProxy<T>
+  public asProxy(): TransformSequenceProxy<T>
   {
     const isProxy = "__is_proxy__";
     if ((this as any)[isProxy])

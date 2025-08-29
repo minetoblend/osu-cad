@@ -12,7 +12,7 @@ export interface SpriteTextOptions extends DrawableOptions
 
 export class SpriteText extends Drawable
 {
-  constructor(options: SpriteTextOptions = {})
+  public constructor(options: SpriteTextOptions = {})
   {
     const { text, font, style, ...rest } = options;
 
@@ -49,7 +49,7 @@ export class SpriteText extends Drawable
 
   readonly #textDrawNode: BitmapText;
 
-  createDrawNode(): Container
+  protected createDrawNode(): Container
   {
     return new Container();
   }
@@ -58,12 +58,12 @@ export class SpriteText extends Drawable
 
   #textStyle: TextStyle;
 
-  get style()
+  public get style()
   {
     return this.#textStyle;
   }
 
-  set style(value: TextStyle)
+  public set style(value: TextStyle)
   {
     this.#textStyle = value;
     this.#textDrawNode.style = value;
@@ -77,12 +77,12 @@ export class SpriteText extends Drawable
 
   #text: string = "";
 
-  get text()
+  public get text()
   {
     return this.#text;
   }
 
-  set text(value: string)
+  public set text(value: string)
   {
     if (value === this.#text)
       return;
@@ -93,7 +93,7 @@ export class SpriteText extends Drawable
     this.invalidate(Invalidation.DrawSize);
   }
 
-  override update()
+  protected override update()
   {
     super.update();
 

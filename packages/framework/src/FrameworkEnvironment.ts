@@ -2,7 +2,7 @@ import { isMobile } from "pixi.js";
 
 export class FrameworkEnvironment
 {
-  get antialiasPreferred()
+  public get antialiasPreferred()
   {
     if (devicePixelRatio >= 2)
       return false;
@@ -16,7 +16,7 @@ export class FrameworkEnvironment
     return true;
   }
 
-  get webGpuSupported()
+  public get webGpuSupported()
   {
     return "gpu" in navigator && "requestAdapter" in navigator.gpu;
   }

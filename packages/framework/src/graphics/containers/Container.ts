@@ -9,18 +9,18 @@ export interface ContainerOptions<T extends Drawable = Drawable> extends Composi
 
 export class Container<T extends Drawable = Drawable> extends CompositeDrawable
 {
-  constructor(options: ContainerOptions<T> = {})
+  public constructor(options: ContainerOptions<T> = {})
   {
     super();
     this.with(options);
   }
 
-  static create<T extends Drawable = Drawable>(options: ContainerOptions<T> = {}): Container
+  public static create<T extends Drawable = Drawable>(options: ContainerOptions<T> = {}): Container
   {
     return new Container().with(options);
   }
 
-  override with(options: ContainerOptions<T>): this
+  public override with(options: ContainerOptions<T>): this
   {
     const { children, child, ...rest } = options;
     super.with(rest);
@@ -49,12 +49,12 @@ export class Container<T extends Drawable = Drawable> extends CompositeDrawable
     return this;
   }
 
-  get content(): Container<T>
+  protected get content(): Container<T>
   {
     return this;
   }
 
-  get children(): ReadonlyArray<T>
+  public get children(): ReadonlyArray<T>
   {
     if (this.content === this)
     {
@@ -63,13 +63,13 @@ export class Container<T extends Drawable = Drawable> extends CompositeDrawable
     return this.content.children;
   }
 
-  set children(value: Iterable<T>)
+  public set children(value: Iterable<T>)
   {
     this.clear();
     this.addAll(...value);
   }
 
-  add<U extends T>(child: U): U | undefined
+  public add<U extends T>(child: U): U | undefined
   {
     if (this.content === this)
       return this.addInternal(child);
@@ -77,7 +77,7 @@ export class Container<T extends Drawable = Drawable> extends CompositeDrawable
       return this.content.add(child);
   }
 
-  addRange(children: Iterable<T>)
+  public addRange(children: Iterable<T>)
   {
     for (const child of children)
       this.add(child);
@@ -87,7 +87,7 @@ export class Container<T extends Drawable = Drawable> extends CompositeDrawable
    * @deprecated use `addRange` instead
    * @param children
    */
-  addAll(...children: T[]): this
+  public addAll(...children: T[]): this
   {
     for (const child of children)
     {
@@ -96,7 +96,7 @@ export class Container<T extends Drawable = Drawable> extends CompositeDrawable
     return this;
   }
 
-  remove(child: T, disposeImmediately: boolean = true): boolean
+  public remove(child: T, disposeImmediately: boolean = true): boolean
   {
     if (this.content === this)
     {
@@ -108,13 +108,13 @@ export class Container<T extends Drawable = Drawable> extends CompositeDrawable
     }
   }
 
-  removeRange(children: T[], disposeImmediately: boolean = true)
+  public removeRange(children: T[], disposeImmediately: boolean = true)
   {
     for (const child of children)
       this.remove(child, disposeImmediately);
   }
 
-  clear(disposeImmediately: boolean = true)
+  public clear(disposeImmediately: boolean = true)
   {
     // TODO: Add more efficient clear method
     while (this.children.length > 0)
@@ -123,7 +123,7 @@ export class Container<T extends Drawable = Drawable> extends CompositeDrawable
     }
   }
 
-  get child(): T
+  public get child(): T
   {
     if (this.children.length !== 1)
     {
@@ -133,7 +133,7 @@ export class Container<T extends Drawable = Drawable> extends CompositeDrawable
     return this.children[0];
   }
 
-  set child(child: T)
+  public set child(child: T)
   {
     if (this.isDisposed)
       return;
@@ -142,7 +142,7 @@ export class Container<T extends Drawable = Drawable> extends CompositeDrawable
     this.add(child);
   }
 
-  changeChildDepth(child: T, depth: number)
+  public changeChildDepth(child: T, depth: number)
   {
     if (this.content === this)
     {

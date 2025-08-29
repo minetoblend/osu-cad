@@ -10,7 +10,7 @@ export interface FastRoundedBoxOptions extends DrawableOptions
 
 export class FastRoundedBox extends CompositeDrawable
 {
-  constructor(options: FastRoundedBoxOptions = {})
+  public constructor(options: FastRoundedBoxOptions = {})
   {
     super();
 

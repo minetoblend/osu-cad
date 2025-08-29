@@ -4,7 +4,7 @@ import type { ITrack } from "./ITrack";
 
 export abstract class Track extends AudioComponent implements ITrack
 {
-  readonly completed = new Action();
+  public readonly completed = new Action();
 
   // TODO: actually loop
   public looping: boolean = false;
@@ -13,7 +13,7 @@ export abstract class Track extends AudioComponent implements ITrack
 
   readonly #gain: GainNode;
 
-  get output(): AudioNode
+  public get output(): AudioNode
   {
     return this.#gain;
   }
@@ -35,7 +35,7 @@ export abstract class Track extends AudioComponent implements ITrack
     this.completed.emit();
   }
 
-  reset(): void
+  public reset(): void
   {
     // TODO: this.volume.value = 1;
 
@@ -45,35 +45,35 @@ export abstract class Track extends AudioComponent implements ITrack
     this.seek(0);
   }
 
-  restart(): void
+  public restart(): void
   {
     this.stop();
     this.seek(this.restartPoint);
     this.start();
   }
 
-  abstract get currentTime(): number;
+  public abstract get currentTime(): number;
 
-  abstract get length(): number;
+  public abstract get length(): number;
 
-  abstract seek(position: number): boolean;
+  public abstract seek(position: number): boolean;
 
-  abstract start(): void;
+  public abstract start(): void;
 
-  abstract stop(): void;
+  public abstract stop(): void;
 
-  abstract get isRunning(): boolean;
+  public abstract get isRunning(): boolean;
 
-  abstract get rate(): number;
+  public abstract get rate(): number;
 
-  abstract set rate(value: number);
+  public abstract set rate(value: number);
 
-  get isReversed(): boolean
+  public get isReversed(): boolean
   {
     return this.rate < 0;
   }
 
-  resetSpeedAdjustments(): void
+  public resetSpeedAdjustments(): void
   {
     this.rate = 1;
   }

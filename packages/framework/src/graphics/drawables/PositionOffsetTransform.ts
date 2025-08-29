@@ -6,12 +6,12 @@ import { Interpolation } from "../transforms/Interpolation";
 export class PositionOffsetTransform<T extends Drawable> extends TypedTransform<Vec2, T>
 {
 
-  override get targetMember(): string
+  public override get targetMember(): string
   {
     return "position";
   }
 
-  constructor(readonly offset: Vec2)
+  public constructor(public readonly offset: Vec2)
   {
     super();
   }
@@ -26,18 +26,18 @@ export class PositionOffsetTransform<T extends Drawable> extends TypedTransform<
     return Interpolation.valueAt(time, this.startValue, this.endValue, this.startTime, this.endTime, this.easing);
   }
 
-  override applyTo(target: Drawable, time: number)
+  protected override applyTo(target: Drawable, time: number)
   {
     target.position = this.#positionAt(time);
   }
 
-  override readIntoStartValueFrom(target: Drawable)
+  protected override readIntoStartValueFrom(target: Drawable)
   {
     this.startValue = target.position;
     this.endValue = target.position.add(this.offset);
   }
 
-  override clone(): TypedTransform<Vec2, T>
+  public override clone(): TypedTransform<Vec2, T>
   {
     const transform = new PositionOffsetTransform<T>(this.offset);
 

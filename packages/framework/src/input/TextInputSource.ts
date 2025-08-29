@@ -3,7 +3,7 @@ import { Action } from "../bindables/Action";
 
 export class TextInputSource
 {
-  constructor()
+  public constructor()
   {
     this.#inputElement.style.position = "absolute";
     this.#inputElement.style.left = "-1000px";
@@ -93,14 +93,14 @@ export class TextInputSource
 
   #isActive = false;
 
-  get isActive()
+  public get isActive()
   {
     return this.#isActive;
   }
 
   #inputElement = document.createElement("input");
 
-  activate()
+  public activate()
   {
     if (this.isActive)
       return;
@@ -112,7 +112,7 @@ export class TextInputSource
     this.#focusElement();
   }
 
-  deactivate()
+  public deactivate()
   {
     if (!this.isActive)
       return;
@@ -122,17 +122,17 @@ export class TextInputSource
     this.#inputElement.blur();
   }
 
-  ensureActivated()
+  public ensureActivated()
   {
     // TODO do this properly
     this.activate();
   }
 
-  onTextInput = new Action<string>();
+  public readonly onTextInput = new Action<string>();
 
-  onTextRemoved = new Action<TextRemovedEvent>();
+  public readonly onTextRemoved = new Action<TextRemovedEvent>();
 
-  setTextAndSelection(
+  public setTextAndSelection(
     text: string,
     selectionStart: number,
     selectionEnd: number,

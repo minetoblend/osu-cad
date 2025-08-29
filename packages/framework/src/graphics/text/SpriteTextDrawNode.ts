@@ -3,12 +3,12 @@ import type { LoreAccurateSpriteText } from "./LoreAccurateSpriteText";
 
 export class SpriteTextDrawNode extends Graphics
 {
-  constructor(readonly source: LoreAccurateSpriteText)
+  public constructor(public readonly source: LoreAccurateSpriteText)
   {
     super({});
   }
 
-  updateGeometry()
+  public updateGeometry()
   {
     const context = this.context;
     context.clear();

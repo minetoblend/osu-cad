@@ -10,31 +10,31 @@ import { TargetGroupingTransformTracker } from "./TargetGroupingTransformTracker
 
 export abstract class Transformable implements ITransformable
 {
-  abstract get clock(): IFrameBasedClock | null;
+  protected abstract get clock(): IFrameBasedClock | null;
 
-  get time(): FrameTimeInfo
+  public get time(): FrameTimeInfo
   {
     return this.clock!.timeInfo;
   }
 
-  get transformStartTime(): number
+  public get transformStartTime(): number
   {
     return (this.clock?.currentTime ?? 0) + this.transformDelay;
   }
 
-  transformDelay = 0;
+  public transformDelay = 0;
 
-  get transforms(): Transform[]
+  public get transforms(): Transform[]
   {
     return this.#targetGroupingTrackers?.flatMap(t => t.transforms) ?? [];
   }
 
-  transformsForTargetMember(targetMember: string)
+  public transformsForTargetMember(targetMember: string)
   {
     return this.#getTrackerFor(targetMember)?.transforms ?? [];
   }
 
-  get latestTransformEndTime()
+  public get latestTransformEndTime()
   {
     let max = this.transformStartTime;
     if (this.#targetGroupingTrackers !== null)
@@ -45,9 +45,7 @@ export abstract class Transformable implements ITransformable
         {
           const transform = tracker.transforms[i];
           if (transform.endTime > max)
-          {
             max = transform.endTime + 1;
-          }
         }
       }
     }
@@ -56,12 +54,12 @@ export abstract class Transformable implements ITransformable
 
   #removeCompletedTransforms = true;
 
-  get removeCompletedTransforms(): boolean
+  public get removeCompletedTransforms(): boolean
   {
     return this.#removeCompletedTransforms;
   }
 
-  set removeCompletedTransforms(value: boolean)
+  public set removeCompletedTransforms(value: boolean)
   {
     this.#removeCompletedTransforms = value;
   }
@@ -128,19 +126,19 @@ export abstract class Transformable implements ITransformable
       this.#targetGroupingTrackers[i].updateTransforms(time, rewinding);
   }
 
-  removeTransform(toRemove: Transform): void
+  public removeTransform(toRemove: Transform): void
   {
     this.#getTrackerForGrouping(toRemove.targetGrouping, false)?.removeTransform(toRemove);
 
     // toRemove.triggerAbort()
   }
 
-  clearTransforms(propagateChildren: boolean = false, targetMember?: string)
+  public clearTransforms(propagateChildren: boolean = false, targetMember?: string)
   {
     this.clearTransformsAfter(-Number.MAX_VALUE, propagateChildren, targetMember);
   }
 
-  clearTransformsAfter(time: number, propagateChildren: boolean = false, targetMember?: string)
+  public clearTransformsAfter(time: number, propagateChildren: boolean = false, targetMember?: string)
   {
     if (this.#targetGroupingTrackers === null)
       return;
@@ -158,7 +156,7 @@ export abstract class Transformable implements ITransformable
     }
   }
 
-  applyTransformsAt(time: number, propagateChildren: boolean = false)
+  public applyTransformsAt(time: number, propagateChildren: boolean = false)
   {
     if (this.removeCompletedTransforms)
     {
@@ -168,7 +166,7 @@ export abstract class Transformable implements ITransformable
     this.#updateTransforms(time);
   }
 
-  finishTransforms(propagateChildren: boolean = false, targetMember?: string)
+  public finishTransforms(propagateChildren: boolean = false, targetMember?: string)
   {
     if (this.#targetGroupingTrackers === null)
       return;
@@ -189,12 +187,12 @@ export abstract class Transformable implements ITransformable
     }
   }
 
-  addDelay(duration: number, propagateChildren: boolean = false)
+  public addDelay(duration: number, propagateChildren: boolean = false)
   {
     this.transformDelay += duration;
   }
 
-  beginDelayedSequence(delay: number, recursive: boolean = true): IUsable
+  public beginDelayedSequence(delay: number, recursive: boolean = true): IUsable
   {
     if (delay === 0)
     {
@@ -218,12 +216,12 @@ export abstract class Transformable implements ITransformable
     });
   }
 
-  beginAbsoluteSequence(newTransformStartTime: number, recursive: boolean = true): IUsable
+  public beginAbsoluteSequence(newTransformStartTime: number, recursive: boolean = true): IUsable
   {
     return this.createAbsoluteSequenceAction(newTransformStartTime);
   }
 
-  absoluteSequence(options: number | { time: number; recursive?: boolean }, block: () => void)
+  public absoluteSequence(options: number | { time: number; recursive?: boolean }, block: () => void)
   {
     options = typeof options === "number" ? { time: options, recursive: true } : options;
 
@@ -232,7 +230,7 @@ export abstract class Transformable implements ITransformable
     sender.dispose();
   }
 
-  addTransform(transform: Transform, customTransformID?: number): void
+  public addTransform(transform: Transform, customTransformID?: number): void
   {
     if (transform.targetTransformable !== this)
     {
@@ -272,7 +270,7 @@ export abstract class Transformable implements ITransformable
     return new AbsoluteSequenceSender(this, oldTransformDelay, newTransformDelay);
   }
 
-  collectAbsoluteSequenceActionsFromSubTree(newTransformStartTime: number, actions: List<AbsoluteSequenceSender>)
+  public collectAbsoluteSequenceActionsFromSubTree(newTransformStartTime: number, actions: List<AbsoluteSequenceSender>)
   {
     actions.push(this.createAbsoluteSequenceAction(newTransformStartTime));
   }

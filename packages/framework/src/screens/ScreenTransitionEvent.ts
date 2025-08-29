@@ -2,6 +2,7 @@ import type { IScreen } from "./IScreen";
 
 export class ScreenTransitionEvent
 {
-  constructor(readonly source: null | IScreen, readonly newScreen: IScreen | null)
-  {}
+  public constructor(public readonly source: null | IScreen, public readonly newScreen: IScreen | null)
+  {
+  }
 }

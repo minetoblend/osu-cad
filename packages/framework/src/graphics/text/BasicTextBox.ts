@@ -25,7 +25,7 @@ export class BasicTextBox extends TextBox
     return new Color(0xADFF2F);
   }
 
-  backgroundCommit = new Color("rgb(57, 110, 102)");
+  public backgroundCommit = new Color("rgb(57, 110, 102)");
 
   #backgroundFocused = new Color("rgba(100, 100, 100, 255)");
   #backgroundUnfocused = new Color("rgba(100, 100, 100, 120)");
@@ -70,7 +70,7 @@ export class BasicTextBox extends TextBox
     return new Color(0xFF0000);
   }
 
-  constructor()
+  public constructor()
   {
     super();
 
@@ -95,7 +95,7 @@ export class BasicTextBox extends TextBox
     this.#background.flashColorTo(this.backgroundCommit, 400);
   }
 
-  override onFocusLost(e: FocusLostEvent)
+  protected override onFocusLost(e: FocusLostEvent)
   {
     super.onFocusLost(e);
 
@@ -104,7 +104,7 @@ export class BasicTextBox extends TextBox
     this.#background.fadeColor(this.backgroundUnfocused, 200, EasingFunction.OutExpo);
   }
 
-  override onFocus(e: FocusEvent)
+  protected override onFocus(e: FocusEvent)
   {
     super.onFocus(e);
 
@@ -138,7 +138,7 @@ export class BasicTextBox extends TextBox
 
 class BasicCaret extends Caret
 {
-  constructor()
+  public constructor()
   {
     super();
 
@@ -152,12 +152,12 @@ class BasicCaret extends Caret
     });
   }
 
-  override hide()
+  public override hide()
   {
     this.fadeOut(200);
   }
 
-  override show()
+  public override show()
   {
     super.show();
     this.#didShow = true;
@@ -165,11 +165,11 @@ class BasicCaret extends Caret
 
   #didShow = false;
 
-  caretWidth = 0;
+  public caretWidth = 0;
 
-  selectionColor = new Color("white");
+  public selectionColor = new Color("white");
 
-  override displayAt(position: Vec2, selectionWidth: number | null): void
+  public override displayAt(position: Vec2, selectionWidth: number | null): void
   {
     if (selectionWidth != null)
     {
@@ -198,7 +198,7 @@ class BasicCaret extends Caret
 
 class FallingDownContainer extends Container
 {
-  override show()
+  public override show()
   {
     const col = this.color;
     this
@@ -206,7 +206,7 @@ class FallingDownContainer extends Container
       .fadeColor(col.setAlpha(1), caret_move_time * 2, EasingFunction.Out);
   }
 
-  override hide()
+  public override hide()
   {
     this.fadeOut(200);
     this.moveToY(this.drawSize.y, 200, EasingFunction.InQuad);

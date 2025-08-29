@@ -6,23 +6,23 @@ import { AnimationClockComposite } from "./AnimationClockComposite";
 
 export abstract class Animation<T> extends AnimationClockComposite implements IFramedAnimation
 {
-  defaultFrameLength = 1000 / 60;
+  public defaultFrameLength = 1000 / 60;
 
   readonly #frameData: FrameData<T>[];
 
-  get frameCount()
+  public get frameCount()
   {
     return this.#frameData.length;
   }
 
   #currentFrameIndex = 0;
 
-  get currentFrameIndex()
+  public get currentFrameIndex()
   {
     return this.#currentFrameIndex;
   }
 
-  get currentFrame()
+  public get currentFrame()
   {
     return this.#frameData[this.currentFrameIndex].content;
   }
@@ -36,14 +36,14 @@ export abstract class Animation<T> extends AnimationClockComposite implements IF
     this.loop = true;
   }
 
-  gotoFrame(frameIndex: number)
+  public gotoFrame(frameIndex: number)
   {
     this.seek(this.#frameData[clamp(frameIndex, 0, this.#frameData.length)].displayStartTime);
   }
 
-  addFrame(content: T, displayDuration?: number): void;
-  addFrame(frame: FrameData<T>): void;
-  addFrame(frame: T | FrameData<T>, displayDuration?: number)
+  public addFrame(content: T, displayDuration?: number): void;
+  public addFrame(frame: FrameData<T>): void;
+  public addFrame(frame: T | FrameData<T>, displayDuration?: number)
   {
     if (!(frame instanceof FrameData))
     {
@@ -60,27 +60,21 @@ export abstract class Animation<T> extends AnimationClockComposite implements IF
     this.onFrameAdded(frame.content, frame.duration);
 
     if (this.#frameData.length === 1)
-    {
       this.#currentFrameCache.invalidate();
-    }
   }
 
-  addFrames(...frames: T[] | FrameData<T>[]): void
+  public addFrames(...frames: T[] | FrameData<T>[]): void
   {
     for (const frame of frames)
     {
       if (frame instanceof FrameData)
-      {
         this.addFrame(frame.content, frame.duration);
-      }
       else
-      {
         this.addFrame(frame);
-      }
     }
   }
 
-  clearFrames()
+  public clearFrames()
   {
     this.#frameData.length = 0;
     this.duration = 0;
@@ -96,7 +90,7 @@ export abstract class Animation<T> extends AnimationClockComposite implements IF
   protected onFrameAdded(content: T, duration: number)
   {}
 
-  override update()
+  protected override update()
   {
     super.update();
 

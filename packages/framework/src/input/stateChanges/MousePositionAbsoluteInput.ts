@@ -6,10 +6,10 @@ import { MousePositionChangeEvent } from "./events/MousePositionChangeEvent";
 
 export class MousePositionAbsoluteInput implements IInput
 {
-  constructor(readonly position: Vec2)
+  public constructor(public readonly position: Vec2)
   {}
 
-  apply(state: InputState, handler: IInputStateChangeHandler): void
+  public apply(state: InputState, handler: IInputStateChangeHandler): void
   {
     const mouse = state.mouse;
 

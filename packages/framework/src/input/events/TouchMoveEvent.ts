@@ -5,11 +5,11 @@ import { TouchEvent } from "./TouchEvent";
 
 export class TouchMoveEvent extends TouchEvent
 {
-  constructor(
+  public constructor(
     state: InputState,
     touch: Touch,
     screenSpaceTouchDownPosition: Vec2 | null,
-    readonly screenSpaceLastTouchPosition: Vec2,
+    public readonly screenSpaceLastTouchPosition: Vec2,
   )
   {
     super(state, "onTouchMove", touch, screenSpaceTouchDownPosition);

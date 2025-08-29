@@ -6,17 +6,17 @@ import { ScreenTransitionEvent } from "./ScreenTransitionEvent";
 
 export class ScreenStack extends CompositeDrawable
 {
-  readonly screenPushed = new Action<{
+  public readonly screenPushed = new Action<{
     lastScreen: IScreen | null;
     newScreen: IScreen;
   }>();
 
-  readonly screenExited = new Action<{
+  public readonly screenExited = new Action<{
     lastScreen: IScreen;
     newScreen: IScreen | null;
   }>();
 
-  constructor(baseScreen?: IScreen, suspendImmediately: boolean = false)
+  public constructor(baseScreen?: IScreen, suspendImmediately: boolean = false)
   {
     super();
     this.relativeSizeAxes = Axes.Both;
@@ -31,7 +31,7 @@ export class ScreenStack extends CompositeDrawable
     this.screenExited.addListener(({ lastScreen, newScreen }) => this.#onExited(lastScreen, newScreen));
   }
 
-  get currentScreen(): IScreen | null
+  public get currentScreen(): IScreen | null
   {
     return this.#stack[this.#stack.length - 1] ?? null;
   }
@@ -42,7 +42,7 @@ export class ScreenStack extends CompositeDrawable
 
   readonly #suspendImmediately: boolean;
 
-  push(screen: IScreen)
+  public push(screen: IScreen)
   {
     this.#push(this.currentScreen, screen);
   }
@@ -174,7 +174,7 @@ export class ScreenStack extends CompositeDrawable
     });
   }
 
-  exit(source: IScreen)
+  public exit(source: IScreen)
   {
     if (!this.#stack.includes(source as IScreen))
     {
@@ -189,7 +189,7 @@ export class ScreenStack extends CompositeDrawable
     return !this.#exitFrom(null);
   }
 
-  makeCurrent(target: IScreen)
+  public makeCurrent(target: IScreen)
   {
     if (this.currentScreen === target)
       return;
@@ -233,12 +233,12 @@ export class ScreenStack extends CompositeDrawable
     }
   }
 
-  isCurrentScreen(screen: IScreen)
+  public isCurrentScreen(screen: IScreen)
   {
     return this.currentScreen === screen;
   }
 
-  getParentScreen(screen: IScreen)
+  public getParentScreen(screen: IScreen)
   {
     const index = this.#stack.indexOf(screen);
     if (index === -1)
@@ -246,7 +246,7 @@ export class ScreenStack extends CompositeDrawable
     return this.#stack[index - 1] ?? null;
   }
 
-  getChildScreen(screen: IScreen)
+  public getChildScreen(screen: IScreen)
   {
     const index = this.#stack.indexOf(screen);
     if (index === -1)
@@ -254,7 +254,7 @@ export class ScreenStack extends CompositeDrawable
     return this.#stack[index + 1] ?? null;
   }
 
-  get allScreens(): ReadonlyArray<IScreen>
+  public get allScreens(): ReadonlyArray<IScreen>
   {
     return [...this.#stack];
   }
@@ -346,7 +346,7 @@ export class ScreenStack extends CompositeDrawable
     return super.shouldBeConsideredForInput(child) && (!isScreen(child) || (child as IScreen).validForResume);
   }
 
-  override updateChildrenLife(): boolean
+  public override updateChildrenLife(): boolean
   {
     if (!super.updateChildrenLife())
       return false;
@@ -366,7 +366,7 @@ export class ScreenStack extends CompositeDrawable
     return true;
   }
 
-  override dispose(isDisposing: boolean = true)
+  public override dispose()
   {
     for (const s of this.#exited)
     {
@@ -382,6 +382,6 @@ export class ScreenStack extends CompositeDrawable
 
     this.#stack.length = 0;
 
-    super.dispose(isDisposing);
+    super.dispose();
   }
 }

@@ -7,7 +7,7 @@ import { MouseButton } from "../state/MouseButton";
 
 export class KeyCombination
 {
-  readonly keys: readonly InputKey[];
+  public readonly keys: readonly InputKey[];
 
   private static none: InputKey[] = [InputKey.None];
 
@@ -38,7 +38,7 @@ export class KeyCombination
     this.keys = keyBuilder;
   }
 
-  isPressed(pressedKeys: KeyCombination, inputState: InputState, matchingMode: KeyCombinationMatchingMode): boolean
+  public isPressed(pressedKeys: KeyCombination, inputState: InputState, matchingMode: KeyCombinationMatchingMode): boolean
   {
     debugAssert(!pressedKeys.keys.includes(InputKey.None)); // Having None in pressed keys will break IsPressed
 
@@ -52,7 +52,7 @@ export class KeyCombination
     return containsAll(this.keys, pressedKeys.keys, matchingMode);
   }
 
-  static isPressed(pressedPhysicalKeys: readonly InputKey[], candidateKey: InputKey)
+  public static isPressed(pressedPhysicalKeys: readonly InputKey[], candidateKey: InputKey)
   {
     if (isPhysical(candidateKey))
     {
@@ -63,12 +63,12 @@ export class KeyCombination
     return pressedPhysicalKeys.some(k => this.getVirtualKey(k) === candidateKey);
   }
 
-  static from(...keys: InputKey[]): KeyCombination
+  public static from(...keys: InputKey[]): KeyCombination
   {
     return new KeyCombination(keys);
   }
 
-  static fromMouseButton(button: MouseButton): InputKey
+  public static fromMouseButton(button: MouseButton): InputKey
   {
     switch (button)
     {
@@ -85,7 +85,7 @@ export class KeyCombination
     }
   }
 
-  static keyMap: Record<Key, InputKey> = {
+  public static keyMap: Record<Key, InputKey> = {
     [Key.ShiftLeft]: InputKey.LShift,
     [Key.ShiftRight]: InputKey.RShift,
     [Key.ControlLeft]: InputKey.LControl,
@@ -233,12 +233,12 @@ export class KeyCombination
     [Key.MediaSelect]: InputKey.None,
   };
 
-  static fromKey(key: Key): InputKey
+  public static fromKey(key: Key): InputKey
   {
     return KeyCombination.keyMap[key] ?? InputKey.None;
   }
 
-  static fromScrollDelta(delta: Vec2): InputKey[]
+  public static fromScrollDelta(delta: Vec2): InputKey[]
   {
     const keys: InputKey[] = [];
     if (delta.y > 0)
@@ -252,7 +252,7 @@ export class KeyCombination
     return keys;
   }
 
-  static isModifierKey(key: InputKey): boolean
+  public static isModifierKey(key: InputKey): boolean
   {
     switch (key)
     {
@@ -274,7 +274,7 @@ export class KeyCombination
     return false;
   }
 
-  static keyBindingContains(candidateKeyBinding: readonly InputKey[], physicalKey: InputKey): boolean
+  public static keyBindingContains(candidateKeyBinding: readonly InputKey[], physicalKey: InputKey): boolean
   {
     if (candidateKeyBinding.includes(physicalKey))
       return true;
@@ -289,7 +289,7 @@ export class KeyCombination
     return false;
   }
 
-  static getVirtualKey(key: InputKey): InputKey | null
+  public static getVirtualKey(key: InputKey): InputKey | null
   {
     switch (key)
     {

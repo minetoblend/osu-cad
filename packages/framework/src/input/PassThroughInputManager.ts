@@ -27,12 +27,12 @@ import { TouchInput } from "./stateChanges/TouchInput";
 
 export class PassThroughInputManager extends CustomInputManager
 {
-  get useParentInput(): boolean
+  public get useParentInput(): boolean
   {
     return this.#useParentInput;
   }
 
-  set useParentInput(value: boolean)
+  public set useParentInput(value: boolean)
   {
     if (this.#useParentInput === value)
       return;
@@ -45,7 +45,7 @@ export class PassThroughInputManager extends CustomInputManager
 
   #useParentInput: boolean = true;
 
-  override get handleHoverEvents(): boolean
+  protected override get handleHoverEvents(): boolean
   {
     if (this.useParentInput && this.#parentInputManager?.handleHoverEvents)
       return true;
@@ -53,7 +53,7 @@ export class PassThroughInputManager extends CustomInputManager
     return super.handleHoverEvents;
   }
 
-  override buildNonPositionalInputQueue(queue: List<Drawable>, allowBlocking: boolean = true): boolean
+  public override buildNonPositionalInputQueue(queue: List<Drawable>, allowBlocking: boolean = true): boolean
   {
     if (!this.propagateNonPositionalInputSubTree)
       return false;
@@ -66,7 +66,7 @@ export class PassThroughInputManager extends CustomInputManager
     return false;
   }
 
-  override buildPositionalInputQueue(screenSpacePos: Vec2, queue: List<Drawable>)
+  public override buildPositionalInputQueue(screenSpacePos: Vec2, queue: List<Drawable>)
   {
     if (!this.propagatePositionalInputSubTree)
       return false;
@@ -75,7 +75,7 @@ export class PassThroughInputManager extends CustomInputManager
     return false;
   }
 
-  override getPendingInputs()
+  protected override getPendingInputs()
   {
     const pendingInputs = super.getPendingInputs();
 
@@ -85,7 +85,7 @@ export class PassThroughInputManager extends CustomInputManager
     return pendingInputs;
   }
 
-  override handle(event: UIEvent): boolean
+  protected override handle(event: UIEvent): boolean
   {
     if (!this.useParentInput)
       return false;
@@ -147,14 +147,14 @@ export class PassThroughInputManager extends CustomInputManager
 
   #parentInputManager: InputManager | null = null;
 
-  override loadComplete()
+  protected override loadComplete()
   {
     super.loadComplete();
 
     this.sync();
   }
 
-  override update()
+  protected override update()
   {
     super.update();
 
@@ -164,7 +164,7 @@ export class PassThroughInputManager extends CustomInputManager
     }
   }
 
-  sync(useCachedParentInputManager = false)
+  protected sync(useCachedParentInputManager = false)
   {
     if (!this.useParentInput)
       return;
@@ -191,7 +191,7 @@ export class PassThroughInputManager extends CustomInputManager
     // TODO: Add the remaining events
   }
 
-  override get requiresHighFrequencyMousePosition()
+  public override get requiresHighFrequencyMousePosition()
   {
     return true;
   }

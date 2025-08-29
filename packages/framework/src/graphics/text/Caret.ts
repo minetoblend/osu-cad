@@ -3,5 +3,5 @@ import { CompositeDrawable } from "../containers/CompositeDrawable";
 
 export abstract class Caret extends CompositeDrawable
 {
-  abstract displayAt(position: Vec2, selectionWidth: number | null): void;
+  public abstract displayAt(position: Vec2, selectionWidth: number | null): void;
 }

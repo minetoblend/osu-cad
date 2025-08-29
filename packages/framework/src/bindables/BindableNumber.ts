@@ -7,9 +7,9 @@ import { RangeConstrainedBindable } from "./RangeConstrainedBindable";
 
 export class BindableNumber extends RangeConstrainedBindable<number>
 {
-  readonly precisionChanged = new Action<number>();
+  public readonly precisionChanged = new Action<number>();
 
-  constructor(defaultValue: number = 0)
+  public constructor(defaultValue: number = 0)
   {
     super(defaultValue);
 
@@ -20,12 +20,12 @@ export class BindableNumber extends RangeConstrainedBindable<number>
 
   #precision: number;
 
-  get precision()
+  public get precision()
   {
     return this.#precision;
   }
 
-  set precision(value: number)
+  public set precision(value: number)
   {
     if (this.#precision === value)
       return;
@@ -38,7 +38,7 @@ export class BindableNumber extends RangeConstrainedBindable<number>
     this.setPrecision(value, true, this);
   }
 
-  setPrecision(precision: number, updateCurrentValue: boolean, source: BindableNumber)
+  public setPrecision(precision: number, updateCurrentValue: boolean, source: BindableNumber)
   {
     this.#precision = precision;
     this.triggerPrecisionChange(source);
@@ -49,12 +49,12 @@ export class BindableNumber extends RangeConstrainedBindable<number>
     }
   }
 
-  override get value()
+  public override get value()
   {
     return super.value;
   }
 
-  override set value(value: number)
+  public override set value(value: number)
   {
     this.#setValue(value);
   }
@@ -89,7 +89,7 @@ export class BindableNumber extends RangeConstrainedBindable<number>
     return Number.EPSILON;
   }
 
-  override triggerChange()
+  public override triggerChange()
   {
     super.triggerChange();
 
@@ -108,44 +108,38 @@ export class BindableNumber extends RangeConstrainedBindable<number>
           continue;
 
         if (bindable && bindable instanceof BindableNumber)
-        {
           bindable.setPrecision(this.#precision, false, this);
-        }
       }
     }
 
     if (this.comparer.equals(beforePropagation, this.#precision))
-    {
       this.precisionChanged.emit(this.#precision);
-    }
   }
 
-  override copyTo(bindable: Bindable<number>)
+  public override copyTo(bindable: Bindable<number>)
   {
     if (bindable instanceof BindableNumber)
-    {
       bindable.precision = this.precision;
-    }
 
     super.copyTo(bindable);
   }
 
-  override getBoundCopy(): BindableNumber
+  public override getBoundCopy(): BindableNumber
   {
     return super.getBoundCopy() as BindableNumber;
   }
 
-  set(value: number)
+  public set(value: number)
   {
     this.value = value;
   }
 
-  add(value: number)
+  public add(value: number)
   {
     this.value += value;
   }
 
-  setProportional(amt: number, snap: number = 0)
+  public setProportional(amt: number, snap: number = 0)
   {
     const min = this.minValue;
     const max = this.maxValue;
@@ -157,7 +151,7 @@ export class BindableNumber extends RangeConstrainedBindable<number>
     this.set(value);
   }
 
-  override unbindEvents()
+  public override unbindEvents()
   {
     super.unbindEvents();
 
@@ -179,7 +173,7 @@ export class BindableNumber extends RangeConstrainedBindable<number>
     return min <= max;
   }
 
-  withPrecision(value: number): this
+  public withPrecision(value: number): this
   {
     this.precision = value;
     return this;

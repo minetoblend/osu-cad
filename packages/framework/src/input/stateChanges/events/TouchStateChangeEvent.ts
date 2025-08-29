@@ -6,7 +6,7 @@ import { InputStateChangeEvent } from "./InputStateChangeEvent";
 
 export class TouchStateChangeEvent extends InputStateChangeEvent
 {
-  constructor(state: InputState, input: TouchInput, touch: Touch, activate: boolean | null, lastPosition: Vec2 | null)
+  public constructor(state: InputState, input: TouchInput, touch: Touch, activate: boolean | null, lastPosition: Vec2 | null)
   {
     super(state, input);
 
@@ -15,7 +15,7 @@ export class TouchStateChangeEvent extends InputStateChangeEvent
     this.lastPosition = lastPosition;
   }
 
-  readonly touch: Touch;
-  readonly isActive: boolean | null;
-  readonly lastPosition: Vec2 | null;
+  public readonly touch: Touch;
+  public readonly isActive: boolean | null;
+  public readonly lastPosition: Vec2 | null;
 }

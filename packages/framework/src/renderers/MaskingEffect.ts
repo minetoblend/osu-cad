@@ -12,15 +12,15 @@ export class MaskingEffect implements Effect
   public borderThickness: number = 0;
   public borderColor?: Color;
 
-  constructor(
-    readonly drawable: CompositeDrawable,
+  public constructor(
+    public readonly drawable: CompositeDrawable,
   )
   {
   }
 
-  readonly matrix = new Matrix();
+  public readonly matrix = new Matrix();
 
-  destroy(): void
+  public destroy(): void
   {
   }
 }

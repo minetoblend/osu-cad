@@ -4,7 +4,7 @@ let glProgram: GlProgram | undefined;
 
 export class PathShader extends Shader
 {
-  constructor()
+  public constructor()
   {
     const vertexTemplate = `
 
@@ -78,12 +78,12 @@ export class PathShader extends Shader
 
   #texture = Texture.WHITE;
 
-  get texture()
+  public get texture()
   {
     return this.#texture;
   }
 
-  set texture(value)
+  public set texture(value)
   {
     this.#texture = value;
     this.resources.uTexture = value.source;

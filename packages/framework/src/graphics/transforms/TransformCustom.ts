@@ -5,7 +5,7 @@ import { TypedTransform } from "./Transform";
 
 export class TransformCustom<TValue, T extends ITransformable> extends TypedTransform<TValue, T>
 {
-  constructor(propertyOrFieldName: string, grouping?: string)
+  public constructor(propertyOrFieldName: string, grouping?: string)
   {
     super();
 
@@ -13,9 +13,9 @@ export class TransformCustom<TValue, T extends ITransformable> extends TypedTran
     this.#targetGrouping = grouping ?? propertyOrFieldName;
   }
 
-  override readonly targetMember: string;
+  public override readonly targetMember: string;
 
-  override get targetGrouping(): string
+  public override get targetGrouping(): string
   {
     return this.#targetGrouping;
   }
@@ -32,14 +32,14 @@ export class TransformCustom<TValue, T extends ITransformable> extends TypedTran
     return Interpolation.valueAt(time, this.startValue, this.endValue, this.startTime, this.endTime, this.easing);
   }
 
-  override applyTo(target: T, time: number)
+  protected override applyTo(target: T, time: number)
   {
     const value = this.#valueAt(time);
 
     Reflect.set(target, this.targetMember, value);
   }
 
-  override readIntoStartValueFrom(target: T)
+  protected override readIntoStartValueFrom(target: T)
   {
     let startValue = Reflect.get(target, this.targetMember) as any;
 
@@ -55,7 +55,7 @@ export class TransformCustom<TValue, T extends ITransformable> extends TypedTran
     this.startValue = startValue;
   }
 
-  override clone(): TransformCustom<TValue, T>
+  public override clone(): TransformCustom<TValue, T>
   {
     const transform = new TransformCustom<TValue, T>(this.targetMember, this.#targetGrouping);
 

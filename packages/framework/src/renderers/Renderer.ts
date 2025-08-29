@@ -13,7 +13,7 @@ export interface RendererOptions
 
 export class Renderer
 {
-  async init(options: RendererOptions)
+  public async init(options: RendererOptions)
   {
     await import("./init");
 
@@ -68,7 +68,7 @@ export class Renderer
 
   #internalRenderer?: WebGLRenderer;
 
-  get internalRenderer()
+  public get internalRenderer()
   {
     if (!this.#internalRenderer)
     {
@@ -77,24 +77,24 @@ export class Renderer
     return this.#internalRenderer;
   }
 
-  render(drawable: Drawable)
+  public render(drawable: Drawable)
   {
     this.internalRenderer.render(drawable.drawNode);
   }
 
-  get canvas(): HTMLCanvasElement
+  public get canvas(): HTMLCanvasElement
   {
     return this.internalRenderer.canvas;
   }
 
   #size: Vec2 = Vec2.zero();
 
-  get size(): Vec2
+  public get size(): Vec2
   {
     return this.#size;
   }
 
-  set size(value: IVec2)
+  public set size(value: IVec2)
   {
     if (this.#size.equals(value))
       return;

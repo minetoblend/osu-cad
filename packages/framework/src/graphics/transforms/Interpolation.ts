@@ -14,7 +14,7 @@ export class Interpolation
     return this.lerp(start, final, 1 - Math.pow(base, exponent));
   }
 
-  static valueAt<T>(
+  public static valueAt<T>(
     time: number,
     startValue: T,
     endValue: T,
@@ -56,7 +56,7 @@ export class Interpolation
     throw new Error("Unsupported interpolation type");
   }
 
-  static interpolateColor(start: Color, end: Color, t: number): Color
+  public static interpolateColor(start: Color, end: Color, t: number): Color
   {
     const startRgba = start.toRgba();
     const endRgba = end.toRgba();

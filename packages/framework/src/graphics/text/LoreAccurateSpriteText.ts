@@ -26,7 +26,7 @@ export class LoreAccurateSpriteText extends Drawable
     return new SpriteTextDrawNode(this);
   }
 
-  constructor()
+  public constructor()
   {
     super();
 
@@ -36,12 +36,12 @@ export class LoreAccurateSpriteText extends Drawable
 
   #text = "";
 
-  get text(): string
+  public get text(): string
   {
     return this.#text;
   }
 
-  set text(value: string)
+  public set text(value: string)
   {
     if (this.#text === value)
       return;
@@ -52,12 +52,12 @@ export class LoreAccurateSpriteText extends Drawable
 
   #font = FontUsage.Default;
 
-  get font(): FontUsage
+  public get font(): FontUsage
   {
     return this.#font;
   }
 
-  set font(value: FontUsage)
+  public set font(value: FontUsage)
   {
     if (this.#font === value)
       return;
@@ -68,12 +68,12 @@ export class LoreAccurateSpriteText extends Drawable
 
   #allowMultiLine = true;
 
-  get allowMultiLine(): boolean
+  public get allowMultiLine(): boolean
   {
     return this.#allowMultiLine;
   }
 
-  set allowMultiLine(value: boolean)
+  public set allowMultiLine(value: boolean)
   {
     if (this.#allowMultiLine == value)
       return;
@@ -88,12 +88,12 @@ export class LoreAccurateSpriteText extends Drawable
 
   #useFullGlyphHeight = true;
 
-  get useFullGlyphHeight(): boolean
+  public get useFullGlyphHeight(): boolean
   {
     return this.#useFullGlyphHeight;
   }
 
-  set useFullGlyphHeight(value: boolean)
+  public set useFullGlyphHeight(value: boolean)
   {
     if (this.#useFullGlyphHeight == value)
       return;
@@ -105,12 +105,12 @@ export class LoreAccurateSpriteText extends Drawable
 
   #truncate = false;
 
-  get truncate(): boolean
+  public get truncate(): boolean
   {
     return this.#truncate;
   }
 
-  set truncate(value: boolean)
+  public set truncate(value: boolean)
   {
     if (this.#truncate === value)
       return;
@@ -124,12 +124,12 @@ export class LoreAccurateSpriteText extends Drawable
 
   #ellipsisString = "…";
 
-  get ellipsisString(): string
+  public get ellipsisString(): string
   {
     return this.#ellipsisString;
   }
 
-  set ellipsisString(value: string)
+  public set ellipsisString(value: string)
   {
     if (this.#ellipsisString === value)
       return;
@@ -140,7 +140,7 @@ export class LoreAccurateSpriteText extends Drawable
 
   #isTruncated = false;
 
-  get isTruncated()
+  public get isTruncated()
   {
     return this.#isTruncated;
   }
@@ -157,7 +157,7 @@ export class LoreAccurateSpriteText extends Drawable
 
   #explicitWidth: number | null = null;
 
-  override get width(): number
+  public override get width(): number
   {
     if (this.#requiresAutoSizedWidth)
       this.#computeCharacters();
@@ -165,7 +165,7 @@ export class LoreAccurateSpriteText extends Drawable
     return super.width;
   }
 
-  override set width(value: number)
+  public override set width(value: number)
   {
     if (this.#explicitWidth === value)
       return;
@@ -178,12 +178,12 @@ export class LoreAccurateSpriteText extends Drawable
 
   #maxWidth: number = Number.POSITIVE_INFINITY;
 
-  get maxWidth(): number
+  public get maxWidth(): number
   {
     return this.#maxWidth;
   }
 
-  set maxWidth(value: number)
+  public set maxWidth(value: number)
   {
     if (this.#maxWidth === value)
       return;
@@ -194,7 +194,7 @@ export class LoreAccurateSpriteText extends Drawable
 
   #explicitHeight: number | null = null;
 
-  override get height(): number
+  public override get height(): number
   {
     if (this.#requiresAutoSizedHeight)
       this.#computeCharacters();
@@ -202,7 +202,7 @@ export class LoreAccurateSpriteText extends Drawable
     return super.height;
   }
 
-  override set height(value: number)
+  public override set height(value: number)
   {
     if (this.#explicitHeight === value)
       return;
@@ -213,7 +213,7 @@ export class LoreAccurateSpriteText extends Drawable
     this.#invalidate(true, true);
   }
 
-  override get size(): Vec2
+  public override get size(): Vec2
   {
     if (this.#requiresAutoSizedWidth || this.#requiresAutoSizedHeight)
       this.#computeCharacters();
@@ -221,7 +221,7 @@ export class LoreAccurateSpriteText extends Drawable
     return super.size;
   }
 
-  override set size(value: IVec2 | number)
+  public override set size(value: IVec2 | number)
   {
     if (typeof value === "number")
     {
@@ -237,12 +237,12 @@ export class LoreAccurateSpriteText extends Drawable
 
   #spacing: Vec2 = Vec2.zero();
 
-  get spacing(): Vec2
+  public get spacing(): Vec2
   {
     return this.#spacing;
   }
 
-  set spacing(value: IVec2 | number)
+  public set spacing(value: IVec2 | number)
   {
     const v = typeof value === "number"
         ? new Vec2(value)
@@ -257,12 +257,12 @@ export class LoreAccurateSpriteText extends Drawable
 
   #padding: MarginPadding = MarginPadding.Default;
 
-  get padding(): MarginPadding
+  public get padding(): MarginPadding
   {
     return this.#padding;
   }
 
-  set padding(value: MarginPaddingOptions)
+  public set padding(value: MarginPaddingOptions)
   {
     const padding = MarginPadding.from(value);
 
@@ -273,7 +273,7 @@ export class LoreAccurateSpriteText extends Drawable
     this.#invalidate(true, true);
   }
 
-  override get isPresent(): boolean
+  public override get isPresent(): boolean
   {
     return super.isPresent || (this.alwaysPresent || this.#text.length > 0);
   }
@@ -287,7 +287,7 @@ export class LoreAccurateSpriteText extends Drawable
   /**
    * @internal
    */
-  get characters()
+  public get characters()
   {
     this.#computeCharacters();
     return this.#charactersBacking;
@@ -408,13 +408,13 @@ export class LoreAccurateSpriteText extends Drawable
     return this.#textBuilderCache.value;
   }
 
-  get lineBaseHeight()
+  public get lineBaseHeight()
   {
     this.#computeCharacters();
     return this.#textBuilderCache.value.lineBaseHeight;
   }
 
-  override updateSubTreeTransforms(): boolean
+  public override updateSubTreeTransforms(): boolean
   {
     if (!super.updateSubTreeTransforms())
       return false;

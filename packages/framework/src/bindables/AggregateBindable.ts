@@ -2,9 +2,9 @@ import { Bindable } from "./Bindable";
 
 export class AggregateBindable<T>
 {
-  #aggregateFunction: (a: T, b: T) => T;
+  readonly #aggregateFunction: (a: T, b: T) => T;
 
-  get result()
+  public get result()
   {
     return this.#result;
   }
@@ -13,7 +13,7 @@ export class AggregateBindable<T>
 
   readonly #initialValue: T;
 
-  constructor(aggregateFunction: (a: T, b: T) => T, initialValue: T)
+  public constructor(aggregateFunction: (a: T, b: T) => T, initialValue: T)
   {
     this.#aggregateFunction = aggregateFunction;
     this.#result = new Bindable(initialValue);
@@ -23,12 +23,10 @@ export class AggregateBindable<T>
 
   #sourceMapping: WeakRefPair<T>[] = [];
 
-  addSource(bindable: Bindable<T>)
+  public addSource(bindable: Bindable<T>)
   {
     if (this.#findExistingPair(bindable))
-    {
       return;
-    }
 
     const boundCopy = bindable.getBoundCopy();
     this.#sourceMapping.push({
@@ -38,7 +36,7 @@ export class AggregateBindable<T>
     boundCopy.addOnChangeListener(this.#recalculateAggregate, { immediate: true });
   }
 
-  removeSource(bindable: Bindable<T>)
+  public removeSource(bindable: Bindable<T>)
   {
     const existing = this.#findExistingPair(bindable);
     if (existing)
@@ -64,20 +62,15 @@ export class AggregateBindable<T>
       const pair = this.#sourceMapping[i];
 
       if (!pair.weakReference.deref())
-      {
-        this.#sourceMapping.splice(i, 1);
-        i--;
-      }
+        this.#sourceMapping.splice(i--, 1);
       else
-      {
         calculated = this.#aggregateFunction(calculated, pair.boundCopy.value);
-      }
     }
 
     this.#result.value = calculated;
   };
 
-  removeAllSources()
+  public removeAllSources()
   {
     for (const mapping of this.#sourceMapping)
     {

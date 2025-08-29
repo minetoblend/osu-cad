@@ -9,7 +9,7 @@ import { Axes } from "./graphics/drawables/Axes";
 @provideSelf()
 export class Game extends Container
 {
-  constructor()
+  public constructor()
   {
     super();
 
@@ -24,7 +24,7 @@ export class Game extends Container
     );
   }
 
-  override addInternal<T extends Drawable>(child: T): T
+  public override addInternal<T extends Drawable>(child: T): T
   {
     throw new Error(`Cannot call addInternal on ${this.typeName}, use add() instead`);
   }
@@ -33,20 +33,20 @@ export class Game extends Container
 
   #host?: GameHost;
 
-  set host(host: GameHost)
+  public set host(host: GameHost)
   {
     this.#host = host;
   }
 
-  get host(): GameHost | undefined
+  public get host(): GameHost | undefined
   {
     return this.#host;
   }
 
-  override get content()
+  public override get content()
   {
     return this.#content;
   }
 
-  readonly isActive = new Bindable(false);
+  public readonly isActive = new Bindable(false);
 }

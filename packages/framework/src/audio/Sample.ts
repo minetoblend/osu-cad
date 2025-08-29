@@ -7,21 +7,21 @@ import { SampleChannel } from "./SampleChannel";
 
 export class Sample extends AudioDestination<SampleChannel> implements IAudioSource
 {
-  readonly onPlay = new Action<Sample>();
+  public readonly onPlay = new Action<Sample>();
 
-  readonly volume = new BindableNumber(1)
+  public readonly volume = new BindableNumber(1)
     .withMinValue(0)
     .withMaxValue(1);
 
-  readonly balance = new BindableNumber(0)
+  public readonly balance = new BindableNumber(0)
     .withMinValue(-1)
     .withMaxValue(1);
 
-  readonly rate = new BindableNumber(1);
+  public readonly rate = new BindableNumber(1);
 
   public looping = false;
 
-  get output(): AudioNode
+  public get output(): AudioNode
   {
     return this.#gain;
   }
@@ -31,15 +31,15 @@ export class Sample extends AudioDestination<SampleChannel> implements IAudioSou
     return this.#pan;
   }
 
-  destination?: IAudioDestination | undefined;
+  public destination?: IAudioDestination | undefined;
 
   readonly #gain: GainNode;
   readonly #pan: StereoPannerNode;
 
-  constructor(
+  public constructor(
     name: string,
-    readonly buffer: AudioBuffer,
-    readonly context: AudioContext,
+    public readonly buffer: AudioBuffer,
+    public readonly context: AudioContext,
   )
   {
     super(name);
@@ -53,12 +53,12 @@ export class Sample extends AudioDestination<SampleChannel> implements IAudioSou
     this.balance.bindValueChanged(balance => this.#pan.pan.value = balance.value);
   }
 
-  get length()
+  public get length()
   {
     return this.buffer.duration * 1000;
   }
 
-  play()
+  public play()
   {
     const channel = this.getChannel();
     channel.play();

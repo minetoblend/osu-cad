@@ -4,10 +4,10 @@ import { UIEvent } from "./UIEvent";
 
 export class ScrollEvent extends UIEvent
 {
-  constructor(
+  public constructor(
     state: InputState,
-    readonly scrollDelta: Vec2,
-    readonly isPrecise: boolean = false,
+    public readonly scrollDelta: Vec2,
+    public readonly isPrecise: boolean = false,
   )
   {
     super(state, "onScroll");

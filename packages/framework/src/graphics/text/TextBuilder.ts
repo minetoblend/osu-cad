@@ -11,12 +11,12 @@ export class TextBuilder
 {
   #bounds = new Vec2();
 
-  get bounds(): Vec2
+  public get bounds(): Vec2
   {
     return this.#bounds;
   }
 
-  readonly characters: TextBuilderGlyph[] = [];
+  public readonly characters: TextBuilderGlyph[] = [];
 
   readonly #neverFixedWidthCharacters: string[];
   readonly #fallbackCharacter: string;
@@ -33,7 +33,7 @@ export class TextBuilder
   #currentLineBase: number | null = null;
   #currentNewLine = true;
 
-  get lineBaseHeight()
+  public get lineBaseHeight()
   {
     if (this.#currentPos.y > this.#startOffset.y)
       throw new Error("Cannot return a lineBaseHeight from a text builder with multiple lines.");
@@ -41,7 +41,7 @@ export class TextBuilder
     return this.#currentLineBase ?? 0;
   }
 
-  constructor(
+  public constructor(
     store: ITexturedGlyphLookupStore,
     font: FontUsage,
     maxWidth: number = Number.MAX_VALUE,
@@ -162,7 +162,7 @@ export class TextBuilder
     return true;
   }
 
-  addNewLine()
+  public addNewLine()
   {
     if (this.#currentNewLine)
       this.#currentLineHeight = this.#font.size;

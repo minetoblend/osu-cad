@@ -14,7 +14,7 @@ import { maskingBitGl } from "./maskingBit";
 
 export class BatchShader extends Shader
 {
-  constructor(maxTextures: number)
+  public constructor(maxTextures: number)
   {
     const glProgram = compileHighShaderGlProgram({
       name: "batch",

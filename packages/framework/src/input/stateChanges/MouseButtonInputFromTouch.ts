@@ -6,14 +6,14 @@ import { MouseButtonInput } from "./MouseButtonInput";
 
 export class MouseButtonInputFromTouch extends MouseButtonInput implements ISourcedFromTouch
 {
-  constructor(
+  public constructor(
     button: MouseButton,
     isPressed: boolean,
-    readonly touchEvent: TouchStateChangeEvent,
+    public readonly touchEvent: TouchStateChangeEvent,
   )
   {
     super([new ButtonInputEntry(button, isPressed)]);
   }
 
-  readonly sourcedFromTouch = true;
+  public readonly sourcedFromTouch = true;
 }

@@ -17,7 +17,7 @@ export interface FillFlowContainerOptions<T extends Drawable = Drawable> extends
 
 export class FillFlowContainer<T extends Drawable = Drawable> extends FlowContainer<T>
 {
-  constructor(options: FillFlowContainerOptions<T> = {})
+  public constructor(options: FillFlowContainerOptions<T> = {})
   {
     super();
 
@@ -26,12 +26,12 @@ export class FillFlowContainer<T extends Drawable = Drawable> extends FlowContai
 
   #direction = FillDirection.Full;
 
-  get direction(): FillDirection
+  public get direction(): FillDirection
   {
     return this.#direction;
   }
 
-  set direction(direction: FillDirection)
+  public set direction(direction: FillDirection)
   {
     if (direction === this.#direction)
       return;
@@ -42,12 +42,12 @@ export class FillFlowContainer<T extends Drawable = Drawable> extends FlowContai
 
   #spacing = new Vec2();
 
-  get spacing(): Vec2
+  public get spacing(): Vec2
   {
     return this.#spacing;
   }
 
-  set spacing(spacing: IVec2)
+  public set spacing(spacing: IVec2)
   {
     if (this.#spacing.equals(spacing))
       return;
@@ -73,7 +73,7 @@ export class FillFlowContainer<T extends Drawable = Drawable> extends FlowContai
     return result;
   }
 
-  override computeLayoutPositions(): Vec2[]
+  protected override computeLayoutPositions(): Vec2[]
   {
     const max = this.maximumSize;
 

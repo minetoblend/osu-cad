@@ -3,29 +3,27 @@ import { BindableNumber } from "./BindableNumber";
 
 export class BindableNumberWithCurrent extends BindableNumber
 {
-  constructor(defaultValue: number)
+  public constructor(defaultValue: number)
   {
     super(defaultValue);
   }
 
   #currentBound?: Bindable<number>;
 
-  get current(): BindableNumber
+  public get current(): BindableNumber
   {
     return this;
   }
 
-  set current(value: Bindable<number>)
+  public set current(value: Bindable<number>)
   {
     if (this.#currentBound)
-    {
       this.unbindFrom(this.#currentBound);
-    }
 
     this.bindTo((this.#currentBound = value));
   }
 
-  unbindFromCurrent()
+  public unbindFromCurrent()
   {
     if (this.#currentBound)
     {

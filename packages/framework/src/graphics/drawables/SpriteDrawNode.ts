@@ -4,12 +4,12 @@ import { Sprite } from "pixi.js";
 
 export class SpriteDrawNode extends Sprite
 {
-  constructor(readonly source: DrawableSprite)
+  public constructor(public readonly source: DrawableSprite)
   {
     super();
   }
 
-  override renderPipeId = "osucad-sprite";
+  public override renderPipeId = "osucad-sprite";
 
   protected override updateBounds()
   {

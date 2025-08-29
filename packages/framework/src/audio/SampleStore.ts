@@ -12,7 +12,11 @@ export class SampleStore implements ISampleStore
 
   readonly #buffers = new Map<string, AudioBuffer>();
 
-  constructor(readonly context: AudioContext, store: IResourceStore<ArrayBuffer>, destination: IAudioDestination)
+  public constructor(
+    public readonly context: AudioContext,
+    store: IResourceStore<ArrayBuffer>,
+    destination: IAudioDestination,
+  )
   {
     this.#store = new ResourceStore(store);
     this.#destination = destination;
@@ -21,17 +25,17 @@ export class SampleStore implements ISampleStore
     this.addExtension("mp3");
   }
 
-  addExtension(extension: string)
+  public addExtension(extension: string)
   {
     this.#store.addExtension(extension);
   }
 
-  canLoad(name: string)
+  public canLoad(name: string)
   {
     return this.#store.canLoad(name);
   }
 
-  async load(name: string)
+  public async load(name: string)
   {
     if (this.#buffers.has(name))
       return;
@@ -44,7 +48,7 @@ export class SampleStore implements ISampleStore
     this.#buffers.set(name, audioBuffer);
   }
 
-  get(name: string): Sample | null
+  public get(name: string): Sample | null
   {
     const buffer = this.#buffers.get(name);
     if (!buffer)
@@ -56,22 +60,22 @@ export class SampleStore implements ISampleStore
     return sample;
   }
 
-  async getAsync(name: string)
+  public async getAsync(name: string)
   {
     return this.get(name);
   }
 
-  has(name: string)
+  public has(name: string)
   {
     return this.#store.has(name);
   }
 
-  getAvailableResources()
+  public getAvailableResources()
   {
     return this.#store.getAvailableResources();
   }
 
-  dispose(): void
+  public dispose(): void
   {
   }
 }

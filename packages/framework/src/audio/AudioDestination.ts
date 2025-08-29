@@ -7,7 +7,7 @@ export abstract class AudioDestination<T extends IAudioSource = IAudioSource> ex
 
   protected abstract get input(): AudioNode;
 
-  connect(source: T): void
+  public connect(source: T): void
   {
     if (source.destination)
       source.destination.disconnect(source);
@@ -17,7 +17,7 @@ export abstract class AudioDestination<T extends IAudioSource = IAudioSource> ex
     source.output.connect(this.input);
   }
 
-  disconnect(source: T): boolean
+  public disconnect(source: T): boolean
   {
     const index = this.items.indexOf(source);
     if (index < 0)

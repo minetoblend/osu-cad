@@ -4,7 +4,7 @@ import { KeyBindingEvent } from "./KeyBindingEvent";
 
 export class KeyBindingReleaseEvent<T extends KeyBindingAction> extends KeyBindingEvent<T>
 {
-  constructor(state: InputState, pressed: T)
+  public constructor(state: InputState, pressed: T)
   {
     super(state, "onKeyBindingReleased", pressed);
   }

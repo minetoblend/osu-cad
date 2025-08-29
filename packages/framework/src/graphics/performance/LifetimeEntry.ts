@@ -7,33 +7,33 @@ export class LifetimeEntry
 
   #lifetimeEnd = Number.MAX_VALUE;
 
-  get lifetimeStart()
+  public get lifetimeStart()
   {
     return this.#lifetimeStart;
   }
 
-  set lifetimeStart(value: number)
+  public set lifetimeStart(value: number)
   {
     this.setLifetimeStart(value);
   }
 
-  get lifetimeEnd()
+  public get lifetimeEnd()
   {
     return this.#lifetimeEnd;
   }
 
-  set lifetimeEnd(value: number)
+  public set lifetimeEnd(value: number)
   {
     this.setLifetimeEnd(value);
   }
 
-  state: LifetimeEntryState = LifetimeEntryState.New;
+  public state: LifetimeEntryState = LifetimeEntryState.New;
 
-  childId: number = 0;
+  public childId: number = 0;
 
-  requestLifetimeUpdate = new Action<LifetimeEntry>();
+  public readonly requestLifetimeUpdate = new Action<LifetimeEntry>();
 
-  lifetimeChanged = new Action<LifetimeEntry>();
+  public readonly lifetimeChanged = new Action<LifetimeEntry>();
 
   protected setLifetimeStart(start: number)
   {

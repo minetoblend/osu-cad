@@ -4,46 +4,50 @@ import type { CharacterGlyph } from "./CharacterGlyph";
 
 export class TexturedCharacterGlyph implements ITexturedCharacterGlyph
 {
-  get xOffset(): number
+  public get xOffset(): number
   {
     return this.glyph.xOffset * this.scale;
   }
 
-  get yOffset(): number
+  public get yOffset(): number
   {
     return this.glyph.yOffset * this.scale;
   }
 
-  get xAdvance(): number
+  public get xAdvance(): number
   {
     return this.glyph.xAdvance * this.scale;
   }
 
-  get baseline(): number
+  public get baseline(): number
   {
     return this.glyph.baseline * this.scale;
   }
 
-  get character(): string
+  public get character(): string
   {
     return this.glyph.character;
   }
 
-  get width(): number
+  public get width(): number
   {
     return this.texture.width * this.scale;
   }
 
-  get height(): number
+  public get height(): number
   {
     return this.texture.height * this.scale;
   }
 
-  constructor(readonly glyph: CharacterGlyph, readonly texture: Texture, readonly scale: number = 1)
+  public constructor(
+    public readonly glyph: CharacterGlyph,
+    public readonly texture: Texture,
+    public readonly scale: number = 1,
+  )
   {
   }
 
-  getKerning(last: ICharacterGlyph): number
+  public getKerning(last: ICharacterGlyph): number
   {
     return this.glyph.getKerning(last);
   }

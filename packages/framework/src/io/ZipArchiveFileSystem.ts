@@ -5,7 +5,7 @@ import { SimpleFileSystem } from "./SimpleFileSystem";
 
 export class ZipArchiveFileSystem extends EventEmitter<FileSystemEvents> implements IFileSystem
 {
-  static async create(buffer: ArrayBuffer | Blob)
+  public static async create(buffer: ArrayBuffer | Blob)
   {
     const { unzip } = await import("unzipit");
 
@@ -14,7 +14,7 @@ export class ZipArchiveFileSystem extends EventEmitter<FileSystemEvents> impleme
     return new ZipArchiveFileSystem(entries);
   }
 
-  static async createMutable(buffer: ArrayBuffer | Blob): Promise<SimpleFileSystem>
+  public static async createMutable(buffer: ArrayBuffer | Blob): Promise<SimpleFileSystem>
   {
     const { unzip, setOptions } = await import("unzipit");
 
@@ -56,7 +56,7 @@ export class ZipArchiveFileSystem extends EventEmitter<FileSystemEvents> impleme
     return [...this._entries.values()];
   }
 
-  get(path: string): IFile | undefined
+  public get(path: string): IFile | undefined
   {
     return this._entries.get(path);
   }
@@ -64,21 +64,19 @@ export class ZipArchiveFileSystem extends EventEmitter<FileSystemEvents> impleme
 
 export class ZipArchiveFile extends EventEmitter<FileEvents> implements IFile
 {
-  constructor(
-    private readonly entry: ZipEntry,
-  )
+  public constructor(private readonly entry: ZipEntry)
   {
     super();
   }
 
   private _dataP?: Promise<ArrayBuffer>;
 
-  get path()
+  public get path()
   {
     return this.entry.name;
   }
 
-  read(): Promise<ArrayBuffer>
+  public read(): Promise<ArrayBuffer>
   {
     this._dataP ??= this.entry.arrayBuffer();
     return this._dataP;

@@ -1,17 +1,11 @@
-import type { Drawable } from "../graphics/drawables/Drawable";
-import type { GameHost } from "../platform/GameHost";
-import type { UIEvent } from "./events/UIEvent";
-import type { InputHandler } from "./handlers/InputHandler";
-import type { IFocusManager } from "./IFocusManager";
-import type { InputStateChangeEvent } from "./stateChanges/events/InputStateChangeEvent";
-import type { IInput } from "./stateChanges/IInput";
-import type { IInputStateChangeHandler } from "./stateChanges/IInputStateChangeHandler";
 import { Action } from "../bindables";
 import { resolved } from "../di/decorators";
 import { Container } from "../graphics/containers/Container";
 import { Axes } from "../graphics/drawables/Axes";
+import type { Drawable } from "../graphics/drawables/Drawable";
 import { GAME_HOST } from "../injectionTokens";
 import { Vec2 } from "../math";
+import type { GameHost } from "../platform/GameHost";
 import { FrameStatistics } from "../statistics/FrameStatistics";
 import { StatisticsCounterType } from "../statistics/StatisticsCounterType";
 import { debugAssert } from "../utils/debugAssert";
@@ -23,8 +17,11 @@ import { HoverEvent } from "./events/HoverEvent";
 import { HoverLostEvent } from "./events/HoverLostEvent";
 import { MouseMoveEvent } from "./events/MouseMoveEvent";
 import { ScrollEvent } from "./events/ScrollEvent";
+import type { UIEvent } from "./events/UIEvent";
+import type { InputHandler } from "./handlers/InputHandler";
 import { KeyboardHandler } from "./handlers/KeyboardHandler";
 import { TouchSource } from "./handlers/Touch";
+import type { IFocusManager } from "./IFocusManager";
 import { KeyEventManager } from "./KeyEventManager";
 import { MouseButtonEventManager } from "./MouseButtonEventManager";
 import { InputState } from "./state/InputState";
@@ -33,9 +30,12 @@ import { MouseButton } from "./state/MouseButton";
 import { ButtonStateChangeEvent } from "./stateChanges/events/ButtonStateChangeEvent";
 import { ButtonStateChangeKind } from "./stateChanges/events/ButtonStateChangeKind";
 import { DropStateChangeEvent } from "./stateChanges/events/DropStateChangeEvent";
+import type { InputStateChangeEvent } from "./stateChanges/events/InputStateChangeEvent";
 import { MousePositionChangeEvent } from "./stateChanges/events/MousePositionChangeEvent";
 import { MouseScrollChangeEvent } from "./stateChanges/events/MouseScrollChangeEvent";
 import { TouchStateChangeEvent } from "./stateChanges/events/TouchStateChangeEvent";
+import type { IInput } from "./stateChanges/IInput";
+import type { IInputStateChangeHandler } from "./stateChanges/IInputStateChangeHandler";
 import { KeyboardKeyInput } from "./stateChanges/KeyboardKeyInput";
 import { MouseButtonInput } from "./stateChanges/MouseButtonInput";
 import { MouseButtonInputFromTouch } from "./stateChanges/MouseButtonInputFromTouch";
@@ -47,21 +47,21 @@ const repeat_initial_delay = 250;
 
 export abstract class InputManager extends Container implements IInputStateChangeHandler, IFocusManager
 {
-  currentState = this.createInitialState();
+  public currentState = this.createInitialState();
 
   protected createInitialState(): InputState
   {
     return new InputState();
   }
 
-  abstract inputHandlers: ReadonlyArray<InputHandler>;
+  protected abstract inputHandlers: ReadonlyArray<InputHandler>;
 
   #keyboardRepeatTime = 0;
   #keyboardRepeatKey: Key | null = null;
 
-  readonly isFocusManger = true;
+  public readonly isFocusManger = true;
 
-  constructor()
+  public constructor()
   {
     super();
 
@@ -78,7 +78,7 @@ export abstract class InputManager extends Container implements IInputStateChang
     }
   }
 
-  createMouseButtonEventManager(button: MouseButton)
+  protected createMouseButtonEventManager(button: MouseButton)
   {
     if (button === MouseButton.Left)
     {
@@ -88,14 +88,14 @@ export abstract class InputManager extends Container implements IInputStateChang
     return new MouseMinorButtonEventManager(button);
   }
 
-  getMouseButtonEventManagerFor(button: MouseButton)
+  public getMouseButtonEventManagerFor(button: MouseButton)
   {
     return this.#mouseButtonEventManagers[button];
   }
 
   #keyButtonEventManagers: Record<Key, KeyEventManager> = {} as any;
 
-  getKeyEventManagerFor(key: Key): KeyEventManager
+  protected getKeyEventManagerFor(key: Key): KeyEventManager
   {
     if (!this.#keyButtonEventManagers[key])
     {
@@ -116,11 +116,11 @@ export abstract class InputManager extends Container implements IInputStateChang
   }
 
   @resolved(GAME_HOST)
-  accessor host!: GameHost;
+  protected accessor host!: GameHost;
 
-  focusedDrawable: Drawable | null = null;
+  public focusedDrawable: Drawable | null = null;
 
-  override onLoad()
+  protected override onLoad()
   {
     super.onLoad();
 
@@ -135,9 +135,9 @@ export abstract class InputManager extends Container implements IInputStateChang
     }
   }
 
-  isInputManager = true;
+  public readonly isInputManager = true;
 
-  override update(): void
+  protected override update(): void
   {
     this.#unfocusIfNoLongerValid();
     this.#inputQueue.clear();
@@ -190,14 +190,14 @@ export abstract class InputManager extends Container implements IInputStateChang
     super.update();
   }
 
-  changeFocus(potentialFocusTarget: Drawable | null, state: InputState = this.currentState): boolean
+  public changeFocus(potentialFocusTarget: Drawable | null, state: InputState = this.currentState): boolean
   {
     if (potentialFocusTarget === this.focusedDrawable)
       return true;
 
     if (
       potentialFocusTarget !== null
-      && (!this.#isDrawableValidForFocus(potentialFocusTarget) || !potentialFocusTarget.acceptsFocus)
+        && (!this.#isDrawableValidForFocus(potentialFocusTarget) || !potentialFocusTarget.acceptsFocus)
     )
     {
       return false;
@@ -213,9 +213,7 @@ export abstract class InputManager extends Container implements IInputStateChang
       previousFocus.triggerEvent(new FocusLostEvent(state, potentialFocusTarget));
 
       if (this.focusedDrawable !== null)
-      {
         throw new Error("Focus cannot be changed inside OnFocusLost.");
-      }
     }
 
     this.focusedDrawable = potentialFocusTarget;
@@ -267,7 +265,7 @@ export abstract class InputManager extends Container implements IInputStateChang
     }
   }
 
-  getPendingInputs(): IInput[]
+  public getPendingInputs(): IInput[]
   {
     const inputs: IInput[] = [];
     for (const h of this.inputHandlers)
@@ -277,7 +275,7 @@ export abstract class InputManager extends Container implements IInputStateChang
     return inputs;
   }
 
-  handleInputStateChange(event: InputStateChangeEvent): void
+  public handleInputStateChange(event: InputStateChangeEvent): void
   {
     if (event instanceof MousePositionChangeEvent)
     {
@@ -288,14 +286,12 @@ export abstract class InputManager extends Container implements IInputStateChang
     if (event instanceof ButtonStateChangeEvent)
     {
       const buttonEvent = event as ButtonStateChangeEvent<any>;
+
       if (buttonEvent.input instanceof MouseButtonInput)
-      {
         this.handleMouseButtonStateChange(buttonEvent as ButtonStateChangeEvent<MouseButton>);
-      }
       else if (buttonEvent.input instanceof KeyboardKeyInput)
-      {
         this.handleKeyboardKeyStateChange(buttonEvent as ButtonStateChangeEvent<Key>);
-      }
+
       return;
     }
 
@@ -329,7 +325,7 @@ export abstract class InputManager extends Container implements IInputStateChang
     }
   }
 
-  handleMousePositionChange(event: MousePositionChangeEvent): void
+  protected handleMousePositionChange(event: MousePositionChangeEvent): void
   {
     const state = event.state;
 
@@ -349,7 +345,7 @@ export abstract class InputManager extends Container implements IInputStateChang
     );
   }
 
-  handleMouseScrollChange(e: MouseScrollChangeEvent): void
+  protected handleMouseScrollChange(e: MouseScrollChangeEvent): void
   {
     this.#handleScroll(e.state, e.lastScroll, e.isPrecise);
   }
@@ -366,12 +362,12 @@ export abstract class InputManager extends Container implements IInputStateChang
   #hoveredDrawables: Drawable[] = [];
   #lastHoverHandledDrawables: Drawable[] = [];
 
-  get hoveredDrawables(): readonly Drawable[]
+  protected get hoveredDrawables(): readonly Drawable[]
   {
     return this.#hoveredDrawables;
   }
 
-  get handleHoverEvents()
+  protected get handleHoverEvents()
   {
     return true;
   }
@@ -427,13 +423,13 @@ export abstract class InputManager extends Container implements IInputStateChang
     this.#hoverEventsUpdated = true;
   }
 
-  handleMouseButtonStateChange(event: ButtonStateChangeEvent<MouseButton>)
+  protected handleMouseButtonStateChange(event: ButtonStateChangeEvent<MouseButton>)
   {
     const handler = this.#mouseButtonEventManagers[event.button];
     handler?.handleButtonStateChange(this.currentState, event.kind);
   }
 
-  handleKeyboardKeyStateChange(keyboardKeyStateChange: ButtonStateChangeEvent<Key>)
+  protected handleKeyboardKeyStateChange(keyboardKeyStateChange: ButtonStateChangeEvent<Key>)
   {
     const state = keyboardKeyStateChange.state;
     const key = keyboardKeyStateChange.button;
@@ -444,7 +440,7 @@ export abstract class InputManager extends Container implements IInputStateChang
 
     if (kind === ButtonStateChangeKind.Pressed)
     {
-      if (!this.#isModifierKey(key))
+      if (!Key.isModifierKey(key))
       {
         this.#keyboardRepeatKey = key;
         this.#keyboardRepeatTime = repeat_initial_delay;
@@ -460,20 +456,6 @@ export abstract class InputManager extends Container implements IInputStateChang
     }
   }
 
-  #isModifierKey(key: Key)
-  {
-    return (
-      key === Key.ShiftLeft
-      || key === Key.ShiftRight
-      || key === Key.ControlLeft
-      || key === Key.ControlRight
-      || key === Key.AltLeft
-      || key === Key.AltRight
-      || key === Key.MetaLeft
-      || key === Key.MetaRight
-    );
-  }
-
   #mouseButtonEventManagers: Record<MouseButton, MouseButtonEventManager> = {} as any;
 
   #lastMouseMove: MouseMoveEvent | null = null;
@@ -482,7 +464,7 @@ export abstract class InputManager extends Container implements IInputStateChang
   #inputQueue = new List<Drawable>(250);
   #positionalInputQueue = new List<Drawable>(20);
 
-  get positionalInputQueue(): List<Drawable>
+  public get positionalInputQueue(): List<Drawable>
   {
     if (this.#positionalInputQueue.length > 0)
       return this.#positionalInputQueue;
@@ -490,7 +472,7 @@ export abstract class InputManager extends Container implements IInputStateChang
     return this.#buildPositionalInputQueue(this.currentState.mouse.position);
   }
 
-  get nonPositionalInputQueue(): List<Drawable>
+  public get nonPositionalInputQueue(): List<Drawable>
   {
     return this.#buildNonPositionalInputQueue();
   }
@@ -549,12 +531,12 @@ export abstract class InputManager extends Container implements IInputStateChang
     });
   }
 
-  override buildPositionalInputQueue(screenSpacePos: Vec2, queue: List<Drawable>): boolean
+  public override buildPositionalInputQueue(screenSpacePos: Vec2, queue: List<Drawable>): boolean
   {
     return false;
   }
 
-  override buildNonPositionalInputQueue(queue: List<Drawable>, allowBlocking: boolean = true)
+  public override buildNonPositionalInputQueue(queue: List<Drawable>, allowBlocking: boolean = true)
   {
     if (!allowBlocking)
       super.buildNonPositionalInputQueue(queue, false);
@@ -564,7 +546,7 @@ export abstract class InputManager extends Container implements IInputStateChang
 
   private readonly highFrequencyDrawables: Drawable[] = [];
 
-  propagateBlockableEvent(drawables: Iterable<Drawable>, e: UIEvent): boolean
+  protected propagateBlockableEvent(drawables: Iterable<Drawable>, e: UIEvent): boolean
   {
     for (const d of drawables)
     {
@@ -607,7 +589,7 @@ export abstract class InputManager extends Container implements IInputStateChang
     this.changeFocus(null);
   }
 
-  changeFocusFromClick(clickedDrawable: Drawable | null)
+  public changeFocusFromClick(clickedDrawable: Drawable | null)
   {
     let focusTarget: Drawable | null = null;
     if (clickedDrawable !== null)
@@ -635,7 +617,7 @@ export abstract class InputManager extends Container implements IInputStateChang
           }
 
           if (focusTarget === search)
-            // we have a common parent, so let's keep focus on the previously focused target.
+          // we have a common parent, so let's keep focus on the previously focused target.
             focusTarget = previousFocused;
         }
       }
@@ -646,7 +628,7 @@ export abstract class InputManager extends Container implements IInputStateChang
 
   #touchEventManagers: Record<TouchSource, TouchEventManager> = {} as any;
 
-  getTouchButtonEventManagerFor(source: TouchSource)
+  public getTouchButtonEventManagerFor(source: TouchSource)
   {
     const existing = this.#touchEventManagers[source];
     if (existing !== undefined)
@@ -676,7 +658,7 @@ export abstract class InputManager extends Container implements IInputStateChang
     {
       manager.handleButtonStateChange(
           e.state,
-        e.isActive ? ButtonStateChangeKind.Pressed : ButtonStateChangeKind.Released,
+          e.isActive ? ButtonStateChangeKind.Pressed : ButtonStateChangeKind.Released,
       );
     }
   }
@@ -686,16 +668,16 @@ export abstract class InputManager extends Container implements IInputStateChang
     return true;
   }
 
-  get allowRightClickFromLongTouch(): boolean
+  protected get allowRightClickFromLongTouch(): boolean
   {
     return true;
   }
 
   readonly #mouseMappedTouchesDown = new Set<TouchSource>();
 
-  readonly touchLongPressBegan = new Action<[Vec2, number]>();
+  public readonly touchLongPressBegan = new Action<[Vec2, number]>();
 
-  readonly touchLongPressCancelled = new Action();
+  public readonly touchLongPressCancelled = new Action();
 
   #touchLongPressTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -712,9 +694,7 @@ export abstract class InputManager extends Container implements IInputStateChang
       return false;
 
     if (e.isActive === true || e.lastPosition !== null)
-    {
       new MousePositionAbsoluteInputFromTouch(e, e.touch.position).apply(this.currentState, this);
-    }
 
     if (e.isActive !== null)
     {
@@ -809,17 +789,17 @@ const touch_right_click_distance = 50;
 
 class MouseLeftButtonEventManager extends MouseButtonEventManager
 {
-  override get enableClick(): boolean
+  protected override get enableClick(): boolean
   {
     return true;
   }
 
-  override get enableDrag(): boolean
+  protected override get enableDrag(): boolean
   {
     return true;
   }
 
-  override get changeFocusOnClick(): boolean
+  protected override get changeFocusOnClick(): boolean
   {
     return true;
   }
@@ -827,17 +807,17 @@ class MouseLeftButtonEventManager extends MouseButtonEventManager
 
 class MouseMinorButtonEventManager extends MouseButtonEventManager
 {
-  override get enableClick(): boolean
+  protected override get enableClick(): boolean
   {
     return false;
   }
 
-  override get enableDrag(): boolean
+  protected override get enableDrag(): boolean
   {
     return false;
   }
 
-  override get changeFocusOnClick(): boolean
+  protected override get changeFocusOnClick(): boolean
   {
     return false;
   }

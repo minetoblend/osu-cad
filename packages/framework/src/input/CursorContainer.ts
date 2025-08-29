@@ -9,7 +9,7 @@ import { Graphics } from "pixi.js";
 
 export class CursorContainer extends VisibilityContainer
 {
-  constructor()
+  public constructor()
   {
     super();
     this.depth = -Number.MAX_VALUE;
@@ -18,7 +18,7 @@ export class CursorContainer extends VisibilityContainer
     this.state.value = Visibility.Visible;
   }
 
-  createCursor(): Drawable
+  protected createCursor(): Drawable
   {
     return new Cursor();
   }
@@ -32,28 +32,28 @@ export class CursorContainer extends VisibilityContainer
     this.add(this.activeCursor = this.createCursor());
   }
 
-  override popIn()
+  protected override popIn()
   {
     this.alpha = 1;
   }
 
-  override popOut()
+  protected override popOut()
   {
     this.alpha = 0;
   }
 
-  override onMouseMove(e: MouseMoveEvent): boolean
+  protected override onMouseMove(e: MouseMoveEvent): boolean
   {
     this.activeCursor.position = e.mousePosition;
     return super.onMouseMove?.(e) ?? false;
   }
 
-  override receivePositionalInputAt(pos: Vec2): boolean
+  public override receivePositionalInputAt(pos: Vec2): boolean
   {
     return true;
   }
 
-  override receivePositionalInputAtLocal(localPosition: Vec2): boolean
+  public override receivePositionalInputAtLocal(localPosition: Vec2): boolean
   {
     return true;
   }
@@ -61,7 +61,7 @@ export class CursorContainer extends VisibilityContainer
 
 class Cursor extends Container
 {
-  override loadComplete()
+  protected override loadComplete()
   {
     super.loadComplete();
 

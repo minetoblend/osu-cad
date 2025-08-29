@@ -8,7 +8,7 @@ export class TextureAnimation extends Animation<Texture>
 {
   #textureHolder!: DrawableSprite;
 
-  constructor(startAtCurrentTime: boolean = true)
+  public constructor(startAtCurrentTime: boolean = true)
   {
     super(startAtCurrentTime);
   }

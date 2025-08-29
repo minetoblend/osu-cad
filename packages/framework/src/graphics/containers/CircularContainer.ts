@@ -3,7 +3,7 @@ import { Container } from "./Container";
 
 export class CircularContainer<T extends Drawable = Drawable> extends Container<T>
 {
-  override update()
+  protected override update()
   {
     super.update();
 

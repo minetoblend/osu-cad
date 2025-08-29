@@ -6,10 +6,10 @@ export type ListenerFn<T> = (...args: ListenerArgs<T>) => void;
 
 class Listener<T>
 {
-  constructor(
-    readonly fn: ListenerFn<T>,
-    readonly receiver?: any,
-    readonly once: boolean = false,
+  public constructor(
+    public readonly fn: ListenerFn<T>,
+    public readonly receiver?: any,
+    public readonly once: boolean = false,
   )
   {}
 }
@@ -18,7 +18,7 @@ export class Action<T = void>
 {
   #listeners: Listener<T>[] = [];
 
-  addListener(fn: ListenerFn<T>, receiver?: any, scoped: boolean = true)
+  public addListener(fn: ListenerFn<T>, receiver?: any, scoped: boolean = true)
   {
     this.#listeners.push(new Listener(fn, receiver));
     if (scoped)
@@ -31,7 +31,7 @@ export class Action<T = void>
     }
   }
 
-  removeListener(fn: ListenerFn<T>, receiver?: any): boolean
+  public removeListener(fn: ListenerFn<T>, receiver?: any): boolean
   {
     for (let i = 0; i < this.#listeners.length; i++)
     {
@@ -48,17 +48,17 @@ export class Action<T = void>
     return false;
   }
 
-  removeAllListeners()
+  public removeAllListeners()
   {
     this.#listeners.length = 0;
   }
 
-  once(listener: ListenerFn<T>, receiver?: any)
+  public once(listener: ListenerFn<T>, receiver?: any)
   {
     this.#listeners.push(new Listener(listener, receiver, true));
   }
 
-  emit(...args: ListenerArgs<T>)
+  public emit(...args: ListenerArgs<T>)
   {
     for (let i = 0; i < this.#listeners.length; i++)
     {

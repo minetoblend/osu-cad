@@ -4,16 +4,16 @@ import { almostEquals } from "../../utils";
 
 export class AbsoluteSequenceSender extends Usable
 {
-  constructor(
-    readonly sender: Transformable,
-    readonly oldTransformDelay: number,
-    readonly newTransformDelay: number,
+  public constructor(
+    public readonly sender: Transformable,
+    public readonly oldTransformDelay: number,
+    public readonly newTransformDelay: number,
   )
   {
     super();
   }
 
-  dispose(): void
+  public dispose(): void
   {
     if (!almostEquals(this.newTransformDelay, this.sender.transformDelay))
     {

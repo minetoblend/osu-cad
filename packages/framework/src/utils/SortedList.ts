@@ -4,31 +4,31 @@ export class SortedList<T>
 {
   #items: T[] = [];
 
-  constructor(private readonly comparer: IComparer<T>)
+  public constructor(private readonly comparer: IComparer<T>)
   {
   }
 
-  get length()
+  public get length()
   {
     return this.#items.length;
   }
 
-  get(index: number): T | undefined
+  public get(index: number): T | undefined
   {
     return this.#items[index];
   }
 
-  set(index: number, item: T)
+  public set(index: number, item: T)
   {
     this.#items[index] = item;
   }
 
-  add(item: T): number
+  public add(item: T): number
   {
     return this.#addInternal(item);
   }
 
-  addRange(items: readonly T[])
+  public addRange(items: readonly T[])
   {
     for (const item of items)
     {
@@ -63,7 +63,7 @@ export class SortedList<T>
     return index;
   }
 
-  remove(item: T)
+  public remove(item: T)
   {
     // Items often get removed right from the start/end, so we're checking for those first before we look at the rest of the array
     if (item === this.#items[0])
@@ -99,27 +99,27 @@ export class SortedList<T>
     return true;
   }
 
-  removeAt(index: number)
+  public removeAt(index: number)
   {
     this.#items.splice(index, 1);
   }
 
-  removeAll(match: (item: T) => boolean)
+  public removeAll(match: (item: T) => boolean)
   {
     this.#items = this.#items.filter(item => !match(item));
   }
 
-  clear()
+  public clear()
   {
     this.#items.length = 0;
   }
 
-  includes(item: T)
+  public includes(item: T)
   {
     return this.#items.includes(item);
   }
 
-  binarySearch(item: T)
+  public binarySearch(item: T)
   {
     let left = 0;
     let right = this.#items.length - 1;
@@ -130,33 +130,27 @@ export class SortedList<T>
       const compare = this.comparer.compare(this.#items[middle], item);
 
       if (compare < 0)
-      {
         left = middle + 1;
-      }
       else if (compare > 0)
-      {
         right = middle - 1;
-      }
       else
-      {
         return middle;
-      }
     }
 
     return ~left;
   }
 
-  find(predicate: (value: T, index: number, obj: T[]) => unknown): T | undefined
+  public find(predicate: (value: T, index: number, obj: T[]) => unknown): T | undefined
   {
     return this.#items.find(predicate);
   }
 
-  filter(predicate: (value: T, index: number, obj: T[]) => unknown): T[]
+  public filter(predicate: (value: T, index: number, obj: T[]) => unknown): T[]
   {
     return this.#items.filter(predicate);
   }
 
-  findLast(predicate: (value: T, index: number, obj: T[]) => unknown): T | undefined
+  public findLast(predicate: (value: T, index: number, obj: T[]) => unknown): T | undefined
   {
     for (let i = this.#items.length - 1; i >= 0; i--)
     {
@@ -167,37 +161,37 @@ export class SortedList<T>
     return undefined;
   }
 
-  findIndex(predicate: (value: T, index: number, obj: T[]) => unknown): number
+  public findIndex(predicate: (value: T, index: number, obj: T[]) => unknown): number
   {
     return this.#items.findIndex(predicate);
   }
 
-  sort()
+  public sort()
   {
     this.#items.sort(this.comparer.compare);
   }
 
-  indexOf(item: T)
+  public indexOf(item: T)
   {
     return this.binarySearch(item);
   }
 
-  get first(): T | undefined
+  public get first(): T | undefined
   {
     return this.#items[0];
   }
 
-  get last(): T | undefined
+  public get last(): T | undefined
   {
     return this.#items[this.#items.length - 1];
   }
 
-  [Symbol.iterator]()
+  public [Symbol.iterator]()
   {
     return this.#items[Symbol.iterator]();
   }
 
-  get items(): ReadonlyArray<T>
+  public get items(): ReadonlyArray<T>
   {
     return this.#items;
   }

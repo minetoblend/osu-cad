@@ -3,7 +3,7 @@ import { UIEvent } from "./UIEvent";
 
 export class HoverEvent extends UIEvent
 {
-  constructor(state: InputState)
+  public constructor(state: InputState)
   {
     super(state, "onHover");
   }

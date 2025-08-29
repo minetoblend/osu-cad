@@ -3,7 +3,7 @@ import { LayoutMember } from "./LayoutMember";
 
 export class LayoutComputed<T> extends LayoutMember
 {
-  constructor(
+  public constructor(
     computeFn: () => T,
     invalidation: Invalidation,
     source: InvalidationSource = InvalidationSource.Default,
@@ -14,11 +14,11 @@ export class LayoutComputed<T> extends LayoutMember
     this.#computeFn = computeFn;
   }
 
-  #computeFn: () => T;
+  readonly #computeFn: () => T;
 
   #value?: T;
 
-  get value()
+  public get value()
   {
     if (!this.isValid)
     {

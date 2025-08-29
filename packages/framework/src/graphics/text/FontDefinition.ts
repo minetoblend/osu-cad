@@ -3,14 +3,14 @@ import { TextStyle } from "pixi.js";
 
 export class FontDefinition
 {
-  constructor(style: TextStyleOptions)
+  public constructor(style: TextStyleOptions)
   {
     this.style = new TextStyle(style);
   }
 
-  readonly style: TextStyle;
+  public readonly style: TextStyle;
 
-  async load()
+  public async load()
   {
     await document.fonts.load(`${this.style.fontWeight} 100px ${this.style.fontFamily}`);
   }

@@ -7,7 +7,7 @@ import { DrawableMenuItem, Menu } from "./Menu";
 
 export class BasicMenu extends Menu
 {
-  constructor(direction: Direction, topLevelMenu = false)
+  public constructor(direction: Direction, topLevelMenu = false)
   {
     super(direction, topLevelMenu);
 
@@ -34,7 +34,7 @@ export class BasicMenu extends Menu
 
 class BasicDrawableMenuItem extends DrawableMenuItem
 {
-  constructor(item: MenuItem)
+  public constructor(item: MenuItem)
   {
     super(item);
 
@@ -42,7 +42,7 @@ class BasicDrawableMenuItem extends DrawableMenuItem
     this.backgroundColorHover = "rgb(61, 98, 106)";
   }
 
-  override createContent(): Drawable
+  public override createContent(): Drawable
   {
     return new SpriteText({
       anchor: Anchor.CenterLeft,

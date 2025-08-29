@@ -5,14 +5,14 @@ import { TypedTransform } from "./Transform";
 
 export class TransformBindable<TValue, T extends ITransformable> extends TypedTransform<TValue, T>
 {
-  constructor(readonly targetBindable: Bindable<TValue>)
+  public constructor(public readonly targetBindable: Bindable<TValue>)
   {
     super();
 
     this.targetMember = Math.random().toString();
   }
 
-  override readonly targetMember: string;
+  public override readonly targetMember: string;
 
   #valueAt(time: number): TValue
   {
@@ -24,17 +24,17 @@ export class TransformBindable<TValue, T extends ITransformable> extends TypedTr
     return Interpolation.valueAt(time, this.startValue, this.endValue, this.startTime, this.endTime, this.easing);
   }
 
-  override applyTo(target: T, time: number)
+  protected override applyTo(target: T, time: number)
   {
     this.targetBindable.value = this.#valueAt(time);
   }
 
-  override readIntoStartValueFrom(target: T)
+  protected override readIntoStartValueFrom(target: T)
   {
     this.startValue = this.targetBindable.value;
   }
 
-  override clone(): TypedTransform<TValue, T>
+  public override clone(): TypedTransform<TValue, T>
   {
     return new TransformBindable<TValue, T>(this.targetBindable);
   }

@@ -9,7 +9,7 @@ describe("drawable lifecycle", () =>
   {
     class TestDrawable extends Container
     {
-      override onLoad()
+      protected override onLoad()
       {
         expect(this.loadState).toBe(LoadState.Loading);
       }
@@ -73,7 +73,7 @@ describe("drawable lifecycle", () =>
     let child: Container;
     class TestContainer extends Container
     {
-      override onLoad()
+      protected override onLoad()
       {
         this.add((child = Container.create()));
       }

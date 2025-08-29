@@ -7,7 +7,7 @@ import { ButtonStateChangeKind } from "./events/ButtonStateChangeKind";
 
 export abstract class ButtonInput<TButton> implements IInput
 {
-  constructor(public readonly entries: ButtonInputEntry<TButton>[])
+  protected constructor(public readonly entries: ButtonInputEntry<TButton>[])
   {}
 
   protected abstract getButtonStates(state: InputState): ButtonStates<TButton>;
@@ -21,7 +21,7 @@ export abstract class ButtonInput<TButton> implements IInput
     return new ButtonStateChangeEvent<TButton>(state, this, button, kind);
   }
 
-  apply(state: InputState, handler: IInputStateChangeHandler): void
+  public apply(state: InputState, handler: IInputStateChangeHandler): void
   {
     const buttonStates = this.getButtonStates(state);
 
@@ -42,7 +42,7 @@ export abstract class ButtonInput<TButton> implements IInput
 
 export class ButtonInputEntry<TButton>
 {
-  constructor(
+  public constructor(
     public button: TButton,
     public isPressed: boolean,
   )

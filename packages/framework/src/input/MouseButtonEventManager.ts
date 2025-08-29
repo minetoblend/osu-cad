@@ -1,8 +1,6 @@
+import { type Drawable, Invalidation } from "../graphics/drawables/Drawable";
 import type { Vec2 } from "../math";
 import type { List } from "../utils";
-import type { InputState } from "./state/InputState";
-import type { MouseButton } from "./state/MouseButton";
-import { type Drawable, Invalidation } from "../graphics/drawables/Drawable";
 import { debugAssert } from "../utils/debugAssert";
 import { ButtonEventManager } from "./ButtonEventManager";
 import { ClickEvent } from "./events/ClickEvent";
@@ -12,30 +10,32 @@ import { DragEvent } from "./events/DragEvent";
 import { DragStartEvent } from "./events/DragStartEvent";
 import { MouseDownEvent } from "./events/MouseDownEvent";
 import { MouseUpEvent } from "./events/MouseUpEvent";
+import type { InputState } from "./state/InputState";
+import type { MouseButton } from "./state/MouseButton";
 
 export abstract class MouseButtonEventManager extends ButtonEventManager<MouseButton>
 {
-  abstract get enableDrag(): boolean;
+  protected abstract get enableDrag(): boolean;
 
-  abstract get enableClick(): boolean;
+  protected abstract get enableClick(): boolean;
 
-  abstract get changeFocusOnClick(): boolean;
+  protected abstract get changeFocusOnClick(): boolean;
 
-  blockNextClick = false;
+  public blockNextClick = false;
 
-  mouseDownPosition: Vec2 | null = null;
+  private mouseDownPosition: Vec2 | null = null;
 
   protected dragStarted = false;
 
-  draggedDrawable: Drawable | null = null;
+  private draggedDrawable: Drawable | null = null;
 
-  doubleClickTime = 150;
+  private doubleClickTime = 150;
 
-  clickDragDistance = 10;
+  public clickDragDistance = 10;
 
-  lastClickTime: number | null = null;
+  private lastClickTime: number | null = null;
 
-  handlePositionChange(state: InputState, lastPosition: Vec2)
+  public handlePositionChange(state: InputState, lastPosition: Vec2)
   {
     if (this.enableDrag)
     {
@@ -44,7 +44,7 @@ export abstract class MouseButtonEventManager extends ButtonEventManager<MouseBu
         const mouse = state.mouse;
         if (
           mouse.isPressed(this.button)
-          && mouse.position.distance(this.mouseDownPosition ?? mouse.position) > this.clickDragDistance
+            && mouse.position.distance(this.mouseDownPosition ?? mouse.position) > this.clickDragDistance
         )
         {
           this.#handleDragStart(state);
@@ -58,7 +58,7 @@ export abstract class MouseButtonEventManager extends ButtonEventManager<MouseBu
     }
   }
 
-  override handleButtonDown(state: InputState, targets: List<Drawable>): Drawable | null
+  protected override handleButtonDown(state: InputState, targets: List<Drawable>): Drawable | null
   {
     debugAssert(state.mouse.isPressed(this.button), "Mouse button must be pressed");
 
@@ -83,7 +83,7 @@ export abstract class MouseButtonEventManager extends ButtonEventManager<MouseBu
     return handledBy;
   }
 
-  override handleButtonUp(state: InputState, targets: Drawable[] | null): void
+  protected override handleButtonUp(state: InputState, targets: Drawable[] | null): void
   {
     debugAssert(!state.mouse.isPressed(this.button), "Mouse button must be released");
 
@@ -112,7 +112,7 @@ export abstract class MouseButtonEventManager extends ButtonEventManager<MouseBu
     this.mouseDownPosition = null;
   }
 
-  clickedDrawable: WeakRef<Drawable> | null = null;
+  private clickedDrawable: WeakRef<Drawable> | null = null;
 
   #handleClick(state: InputState, targets: Drawable[] | null)
   {
@@ -134,9 +134,7 @@ export abstract class MouseButtonEventManager extends ButtonEventManager<MouseBu
     }
 
     if (this.changeFocusOnClick)
-    {
       this.inputManager.changeFocusFromClick(clicked);
-    }
   }
 
   #handleDoubleClick(state: InputState, targets: List<Drawable>): boolean

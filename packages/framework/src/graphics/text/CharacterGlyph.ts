@@ -6,12 +6,12 @@ export class CharacterGlyph implements ICharacterGlyph
 {
   readonly #containingStore?: IGlyphStore;
 
-  constructor(
-    readonly character: string,
-    readonly xOffset: number,
-    readonly yOffset: number,
-    readonly xAdvance: number,
-    readonly baseline: number,
+  public constructor(
+    public readonly character: string,
+    public readonly xOffset: number,
+    public readonly yOffset: number,
+    public readonly xAdvance: number,
+    public readonly baseline: number,
     containingStore?: IGlyphStore,
   )
   {
@@ -19,9 +19,8 @@ export class CharacterGlyph implements ICharacterGlyph
   }
 
 
-  getKerning(last: ICharacterGlyph): number
+  public getKerning(last: ICharacterGlyph): number
   {
     return this.#containingStore?.getKerning(last.character, this.character) ?? 0;
   }
-
 }

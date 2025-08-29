@@ -5,10 +5,10 @@ import { UIEvent } from "./UIEvent";
 
 export class DragEndEvent extends UIEvent
 {
-  constructor(
+  public constructor(
     state: InputState,
-    readonly button: MouseButton,
-    readonly screenSpaceMouseDownPosition: Vec2 | null = null,
+    public readonly button: MouseButton,
+    public readonly screenSpaceMouseDownPosition: Vec2 | null = null,
   )
   {
     super(state, "onDragEnd");

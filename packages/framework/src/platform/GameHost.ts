@@ -28,7 +28,7 @@ export interface GameHostOptions
 
 export abstract class GameHost
 {
-  get renderer(): Renderer
+  public get renderer(): Renderer
   {
     if (!this.#renderer)
       throw new Error("Renderer not initialized");
@@ -38,7 +38,7 @@ export abstract class GameHost
 
   #renderer?: Renderer;
 
-  get audioManager(): AudioManager
+  public get audioManager(): AudioManager
   {
     if (!this.#audioManager)
       throw new Error("AudioManager not initialized");
@@ -48,9 +48,9 @@ export abstract class GameHost
 
   #audioManager?: AudioManager;
 
-  clock!: IFrameBasedClock;
+  public clock!: IFrameBasedClock;
 
-  readonly dependencies = new DependencyContainer();
+  public readonly dependencies = new DependencyContainer();
 
   protected constructor(options: GameHostOptions = {})
   {
@@ -58,13 +58,13 @@ export abstract class GameHost
 
   protected root: Container | null = null;
 
-  executionState: ExecutionState = ExecutionState.Idle;
+  public executionState: ExecutionState = ExecutionState.Idle;
 
-  abstract getWindowSize(): Vec2;
+  public abstract getWindowSize(): Vec2;
 
-  readonly afterRender = new Action();
+  public readonly afterRender = new Action();
 
-  update()
+  public update()
   {
     FrameStatistics.clear();
 
@@ -95,14 +95,14 @@ export abstract class GameHost
     FrameStatistics.draw.measure(() => this.renderer.render(this.root!));
   }
 
-  async takeScreenshot(): Promise<Blob>
+  public async takeScreenshot(): Promise<Blob | undefined>
   {
-    throw new Error("Not implemented");
+    return this.#renderer?.internalRenderer.extract.canvas(this.root!.drawNode).convertToBlob?.();
   }
 
-  container!: HTMLElement;
+  public container!: HTMLElement;
 
-  async run(game: Game, container: HTMLElement = document.body)
+  public async run(game: Game, container: HTMLElement = document.body)
   {
     if (this.executionState !== ExecutionState.Idle)
     {
@@ -159,15 +159,15 @@ export abstract class GameHost
     this.#performExit();
   }
 
-  paused = false;
+  public paused = false;
 
-  onUnhandledError(error: Error)
+  public onUnhandledError(error: Error)
   {
     console.error(error);
     return false;
   }
 
-  onUnhandledRejection(event: PromiseRejectionEvent)
+  public onUnhandledRejection(event: PromiseRejectionEvent)
   {
     console.error(event.reason);
     return false;
@@ -199,7 +199,7 @@ export abstract class GameHost
     this.availableInputHandlers = this.createAvailableInputHandlers();
   }
 
-  availableInputHandlers!: InputHandler[];
+  public availableInputHandlers!: InputHandler[];
 
   #initializeInputHandlers()
   {}
@@ -236,12 +236,12 @@ export abstract class GameHost
 
   #isDisposed = false;
 
-  get isDisposed()
+  public get isDisposed()
   {
     return this.#isDisposed;
   }
 
-  dispose(disposing: boolean = true)
+  public dispose(disposing: boolean = true)
   {
     if (this.isDisposed)
       return;
@@ -249,12 +249,12 @@ export abstract class GameHost
     this.root?.dispose();
   }
 
-  get platformKeyBindings(): KeyBinding[]
+  public get platformKeyBindings(): KeyBinding[]
   {
     return autoDetectPlatformActions();
   }
 
-  createTextInput(): TextInputSource
+  public createTextInput(): TextInputSource
   {
     return new TextInputSource();
   }

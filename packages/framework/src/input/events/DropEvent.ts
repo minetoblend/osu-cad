@@ -3,9 +3,9 @@ import { UIEvent } from "./UIEvent";
 
 export class DropEvent extends UIEvent
 {
-  constructor(
+  public constructor(
     state: InputState,
-    readonly files: FileList,
+    public readonly files: FileList,
   )
   {
     super(state, "onDrop");

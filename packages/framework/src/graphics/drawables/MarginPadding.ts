@@ -20,14 +20,14 @@ export type MarginPaddingOptionsVertical =
 
 export class MarginPadding implements ILerp<MarginPadding>
 {
-  readonly left: number;
-  readonly right: number;
-  readonly top: number;
-  readonly bottom: number;
+  public readonly left: number;
+  public readonly right: number;
+  public readonly top: number;
+  public readonly bottom: number;
 
-  static readonly Default = new MarginPadding();
+  public static readonly Default = new MarginPadding();
 
-  constructor(options?: MarginPaddingOptions)
+  public constructor(options?: MarginPaddingOptions)
   {
     if (typeof options === "number")
     {
@@ -61,25 +61,25 @@ export class MarginPadding implements ILerp<MarginPadding>
     }
   }
 
-  get totalHorizontal()
+  public get totalHorizontal()
   {
     return this.left + this.right;
   }
 
-  get totalVertical()
+  public get totalVertical()
   {
     return this.top + this.bottom;
   }
 
   #total: Vec2 | null = null;
 
-  get total(): Vec2
+  public get total(): Vec2
   {
     this.#total ??= new Vec2(this.totalHorizontal, this.totalVertical);
     return this.#total;
   }
 
-  lerp(target: MarginPadding, t: number): MarginPadding
+  public lerp(target: MarginPadding, t: number): MarginPadding
   {
     return new MarginPadding({
       left: lerp(this.left, target.left, t),
@@ -89,7 +89,7 @@ export class MarginPadding implements ILerp<MarginPadding>
     });
   }
 
-  clone(): MarginPadding
+  public clone(): MarginPadding
   {
     return new MarginPadding({
       left: this.left,
@@ -99,24 +99,24 @@ export class MarginPadding implements ILerp<MarginPadding>
     });
   }
 
-  equals(other: MarginPadding): boolean
+  public equals(other: MarginPadding): boolean
   {
     return (
       this.left === other.left && this.right === other.right && this.top === other.top && this.bottom === other.bottom
     );
   }
 
-  isZero(): boolean
+  public isZero(): boolean
   {
     return this.left === 0 && this.right === 0 && this.top === 0 && this.bottom === 0;
   }
 
-  toString(): string
+  public toString(): string
   {
     return `MarginPadding(${this.left}, ${this.right}, ${this.top}, ${this.bottom})`;
   }
 
-  static from(options?: MarginPadding | MarginPaddingOptions): MarginPadding
+  public static from(options?: MarginPadding | MarginPaddingOptions): MarginPadding
   {
     if (options instanceof MarginPadding)
     {

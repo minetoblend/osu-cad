@@ -21,12 +21,12 @@ export class Path extends Drawable
 
   #vertices: readonly Vec2[] = [];
 
-  get vertices()
+  public get vertices()
   {
     return this.#vertices;
   }
 
-  set vertices(value)
+  public set vertices(value)
   {
     this.#vertices = value;
     this.#segmentsCache.invalidate();
@@ -58,12 +58,12 @@ export class Path extends Drawable
     return this.#segmentsBacking;
   }
 
-  get texture()
+  public get texture()
   {
     return this.#pathShader.texture;
   }
 
-  set texture(value)
+  public set texture(value)
   {
     if (this.texture === value)
       return;
@@ -73,12 +73,12 @@ export class Path extends Drawable
 
   #pathRadius = 10;
 
-  get pathRadius()
+  public get pathRadius()
   {
     return this.#pathRadius;
   }
 
-  set pathRadius(value)
+  public set pathRadius(value)
   {
     if (this.#pathRadius === value)
       return;
@@ -105,7 +105,7 @@ export class Path extends Drawable
     return this.#mesh;
   }
 
-  override updateSubTreeTransforms(): boolean
+  public override updateSubTreeTransforms(): boolean
   {
     if (!super.updateSubTreeTransforms())
       return false;

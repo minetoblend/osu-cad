@@ -5,24 +5,24 @@ import { InvalidationSource } from "./Drawable";
 
 export class LayoutMember
 {
-  constructor(
-    readonly invalidation: Invalidation,
-    readonly source: InvalidationSource = InvalidationSource.Default,
-    readonly condition?: (drawable: Drawable, invalidation: Invalidation) => boolean,
+  public constructor(
+    public readonly invalidation: Invalidation,
+    public readonly source: InvalidationSource = InvalidationSource.Default,
+    public readonly condition?: (drawable: Drawable, invalidation: Invalidation) => boolean,
   )
   {
   }
 
-  parent?: Drawable;
+  public parent?: Drawable;
 
   #isValid = false;
 
-  get isValid()
+  public get isValid()
   {
     return this.#isValid;
   }
 
-  invalidate()
+  public invalidate()
   {
     if (!this.#isValid)
       return;
@@ -31,7 +31,7 @@ export class LayoutMember
     FrameStatistics.increment(StatisticsCounterType.Invalidations);
   }
 
-  validate()
+  public validate()
   {
     if (!this.#isValid)
     {
@@ -42,5 +42,5 @@ export class LayoutMember
     }
   }
 
-  validateParent = true;
+  public validateParent = true;
 }

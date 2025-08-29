@@ -4,12 +4,12 @@ import { InputHandler } from "./InputHandler";
 
 export class ManualInputHandler extends InputHandler
 {
-  override initialize(host: GameHost): boolean
+  public override initialize(host: GameHost): boolean
   {
     return super.initialize(host);
   }
 
-  enqueueInput(input: IInput)
+  public enqueueInput(input: IInput)
   {
     this.pendingInputs.push(input);
   }

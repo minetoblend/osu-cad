@@ -4,7 +4,7 @@ import { BetterBlurFilterPass } from "./BetterBlurFilterPass";
 
 export class BetterBackdropBlurFilter extends BackdropBlurFilter
 {
-  constructor(options: BlurFilterOptions = {})
+  public constructor(options: BlurFilterOptions = {})
   {
     super({
       antialias: "inherit",

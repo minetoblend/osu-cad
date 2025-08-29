@@ -43,7 +43,7 @@ class WorkerManagerClass
   #initialized = false;
   #createdWorkers = 0;
 
-  constructor()
+  public constructor()
   {
     this.#workerPool = [];
     this.#queue = [];

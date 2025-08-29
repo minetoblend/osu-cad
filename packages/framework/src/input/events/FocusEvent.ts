@@ -4,9 +4,9 @@ import { UIEvent } from "./UIEvent";
 
 export class FocusEvent extends UIEvent
 {
-  constructor(
+  public constructor(
     state: InputState,
-    readonly previouslyFocused: Drawable | null,
+    public readonly previouslyFocused: Drawable | null,
   )
   {
     super(state, "onFocus");

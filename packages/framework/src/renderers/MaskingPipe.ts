@@ -15,12 +15,12 @@ export class MaskingPipe implements InstructionPipe<MaskingInstruction>
     name: "masking",
   } as const;
 
-  constructor(renderer: Renderer)
+  public constructor(renderer: Renderer)
   {
     this._renderer = renderer;
   }
 
-  _renderer: Renderer;
+  private _renderer: Renderer;
 
   public push(maskingEffect: Effect, container: Container, instructionSet: InstructionSet): void
   {

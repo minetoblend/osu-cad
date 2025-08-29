@@ -1,8 +1,8 @@
 export class ButtonStates<TButton>
 {
-  #buttons = new Set<TButton>();
+  readonly #buttons = new Set<TButton>();
 
-  constructor(buttons?: TButton[])
+  public constructor(buttons?: TButton[])
   {
     if (buttons)
     {
@@ -10,44 +10,40 @@ export class ButtonStates<TButton>
     }
   }
 
-  isPressed(button: TButton)
+  public isPressed(button: TButton)
   {
     return this.#buttons.has(button);
   }
 
-  setPressed(button: TButton, pressed: boolean): boolean
+  public setPressed(button: TButton, pressed: boolean): boolean
   {
     if (this.isPressed(button) === pressed)
       return false;
 
     if (pressed)
-    {
       this.#buttons.add(button);
-    }
     else
-    {
       this.#buttons.delete(button);
-    }
 
     return true;
   }
 
-  get hasAnyButtonPressed()
+  public get hasAnyButtonPressed()
   {
     return this.#buttons.size > 0;
   }
 
-  add(button: TButton)
+  public add(button: TButton)
   {
     this.#buttons.add(button);
   }
 
-  get pressedButtons()
+  public get pressedButtons()
   {
     return this.#buttons as ReadonlySet<TButton>;
   }
 
-  enumerateDifference(lastButtons: ButtonStates<TButton>): ButtonStateDifference<TButton>
+  public enumerateDifference(lastButtons: ButtonStates<TButton>): ButtonStateDifference<TButton>
   {
     if (!lastButtons.hasAnyButtonPressed)
     {
@@ -81,16 +77,16 @@ export class ButtonStates<TButton>
 
 export class ButtonStateDifference<TButton>
 {
-  constructor(
+  public constructor(
     public readonly released: TButton[],
     public readonly pressed: TButton[],
   )
   {}
 
-  get hasDifference()
+  public get hasDifference()
   {
     return this.released.length > 0 || this.pressed.length > 0;
   }
 
-  static readonly EMPTY = new ButtonStateDifference<any>([], []);
+  public static readonly EMPTY = new ButtonStateDifference<any>([], []);
 }

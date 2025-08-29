@@ -6,28 +6,28 @@ export class List<T> implements Iterable<T>
 
   readonly #initialCapacity: number;
 
-  constructor(capacity: number)
+  public constructor(capacity: number)
   {
     this.#items = Array.from({ length: capacity });
     this.#initialCapacity = capacity;
   }
 
-  get(index: number): T | undefined
+  public get(index: number): T | undefined
   {
     return this.#items[index];
   }
 
-  get length(): number
+  public get length(): number
   {
     return this.#length;
   }
 
-  get capacity()
+  public get capacity()
   {
     return this.#items.length;
   }
 
-  ensureCapacity(capacity: number)
+  public ensureCapacity(capacity: number)
   {
     if (this.capacity < capacity)
     {
@@ -35,17 +35,17 @@ export class List<T> implements Iterable<T>
     }
   }
 
-  get last(): T | undefined
+  public get last(): T | undefined
   {
     return this.#items[this.#length - 1];
   }
 
-  get first(): T | undefined
+  public get first(): T | undefined
   {
     return this.#items[0];
   }
 
-  push(item: T)
+  public push(item: T)
   {
     if (this.capacity < this.#length + 1)
     {
@@ -55,7 +55,7 @@ export class List<T> implements Iterable<T>
     this.#items[this.#length++] = item;
   }
 
-  pushAll(item: T[])
+  public pushAll(item: T[])
   {
     if (this.capacity < this.#length + item.length)
     {
@@ -68,7 +68,7 @@ export class List<T> implements Iterable<T>
     }
   }
 
-  pop(): T | undefined
+  public pop(): T | undefined
   {
     if (this.#length === 0)
       return undefined;
@@ -83,7 +83,7 @@ export class List<T> implements Iterable<T>
     return item;
   }
 
-  clear()
+  public clear()
   {
     this.#items.length = this.#initialCapacity;
     this.#length = 0;
@@ -94,7 +94,7 @@ export class List<T> implements Iterable<T>
     }
   }
 
-  reverse()
+  public reverse()
   {
     const items = this.#items;
     let left: number | undefined;
@@ -108,7 +108,7 @@ export class List<T> implements Iterable<T>
     }
   }
 
-  indexOf(item: T): number
+  public indexOf(item: T): number
   {
     for (let i = 0; i < this.#length; i++)
     {
@@ -119,12 +119,12 @@ export class List<T> implements Iterable<T>
     return -1;
   }
 
-  contains(item: T): boolean
+  public contains(item: T): boolean
   {
     return this.#items.includes(item);
   }
 
-  splice(start: number, deleteCount: number, ...items: T[]): T[]
+  public splice(start: number, deleteCount: number, ...items: T[]): T[]
   {
     deleteCount = Math.min(deleteCount, this.#length - start);
 
@@ -134,7 +134,7 @@ export class List<T> implements Iterable<T>
     return deletedItems as T[];
   }
 
-  remove(item: T): boolean
+  public remove(item: T): boolean
   {
     const index = this.indexOf(item);
     if (index === -1)
@@ -144,7 +144,7 @@ export class List<T> implements Iterable<T>
     return true;
   }
 
-  removeAll(predicate: (value: T, index: number, obj: T[]) => unknown): T[]
+  public removeAll(predicate: (value: T, index: number, obj: T[]) => unknown): T[]
   {
     const removedItems: T[] = [];
     for (let i = 0; i < this.#length; i++)
@@ -160,7 +160,7 @@ export class List<T> implements Iterable<T>
     return removedItems;
   }
 
-  find(predicate: (value: T, index: number, obj: T[]) => unknown): T | undefined
+  public find(predicate: (value: T, index: number, obj: T[]) => unknown): T | undefined
   {
     for (let i = 0; i < this.#length; i++)
     {
@@ -171,7 +171,7 @@ export class List<T> implements Iterable<T>
     return undefined;
   }
 
-  filter(predicate: (value: T, index: number, obj: T[]) => unknown): T[]
+  public filter(predicate: (value: T, index: number, obj: T[]) => unknown): T[]
   {
     const result: T[] = [];
     for (let i = 0; i < this.#length; i++)
@@ -183,7 +183,7 @@ export class List<T> implements Iterable<T>
     return result;
   }
 
-  [Symbol.iterator](): Iterator<T>
+  public [Symbol.iterator](): Iterator<T>
   {
     let index = 0;
     return {
@@ -205,7 +205,7 @@ export class List<T> implements Iterable<T>
     };
   }
 
-  get array(): T[]
+  public get array(): T[]
   {
     return this.#items.slice(0, this.#length) as T[];
   }

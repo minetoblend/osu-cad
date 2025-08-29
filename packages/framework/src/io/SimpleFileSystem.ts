@@ -16,7 +16,7 @@ export class SimpleFileSystem extends EventEmitter<FileSystemEvents> implements 
 
   private readonly _files = new Map<string, SimpleFile>();
 
-  constructor(options: Partial<SimpleFileSystemOptions> = {})
+  public constructor(options: Partial<SimpleFileSystemOptions> = {})
   {
     super();
 
@@ -37,7 +37,7 @@ export class SimpleFileSystem extends EventEmitter<FileSystemEvents> implements 
     return this._files.get(path);
   }
 
-  async create(path: string, data: ArrayBuffer): Promise<IWritableFile>
+  public async create(path: string, data: ArrayBuffer): Promise<IWritableFile>
   {
     let file = this.get(this._normalizePath(path));
 
@@ -55,7 +55,7 @@ export class SimpleFileSystem extends EventEmitter<FileSystemEvents> implements 
     return file;
   }
 
-  async update(path: string, data: ArrayBuffer): Promise<IWritableFile>
+  public async update(path: string, data: ArrayBuffer): Promise<IWritableFile>
   {
     path = this._normalizePath(path);
 
@@ -71,7 +71,7 @@ export class SimpleFileSystem extends EventEmitter<FileSystemEvents> implements 
     return file;
   }
 
-  async delete(path: string): Promise<boolean>
+  public async delete(path: string): Promise<boolean>
   {
     path = this._normalizePath(path);
 
@@ -100,21 +100,21 @@ export class SimpleFileSystem extends EventEmitter<FileSystemEvents> implements 
 
 export class SimpleFile extends EventEmitter<FileEvents> implements IWritableFile
 {
-  constructor(
+  public constructor(
     private readonly fs: SimpleFileSystem,
-    readonly path: string,
+    public readonly path: string,
     private data: ArrayBuffer,
   )
   {
     super();
   }
 
-  async read(): Promise<ArrayBuffer>
+  public async read(): Promise<ArrayBuffer>
   {
     return this.data;
   }
 
-  async write(data: ArrayBuffer): Promise<void>
+  public async write(data: ArrayBuffer): Promise<void>
   {
     this.data = data;
 
@@ -122,7 +122,7 @@ export class SimpleFile extends EventEmitter<FileEvents> implements IWritableFil
     this.emit("changed");
   }
 
-  async delete()
+  public async delete()
   {
     return this.fs.delete(this.path);
   }

@@ -6,12 +6,12 @@ export abstract class CustomisableSizeCompositeDrawable extends CompositeDrawabl
 {
   #hasCustomWidth: boolean = false;
 
-  override get width(): number
+  public override get width(): number
   {
     return super.width;
   }
 
-  override set width(value: number)
+  public override set width(value: number)
   {
     super.width = value;
     this.#hasCustomWidth = true;
@@ -19,23 +19,23 @@ export abstract class CustomisableSizeCompositeDrawable extends CompositeDrawabl
 
   #hasCustomHeight = false;
 
-  override get height(): number
+  public override get height(): number
   {
     return super.height;
   }
 
-  override set height(value: number)
+  public override set height(value: number)
   {
     super.height = value;
     this.#hasCustomHeight = true;
   }
 
-  override get size(): Vec2
+  public override get size(): Vec2
   {
     return super.size;
   }
 
-  override set size(value: IVec2)
+  public override set size(value: IVec2)
   {
     this.width = value.x;
     this.height = value.y;

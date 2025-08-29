@@ -23,13 +23,13 @@ export abstract class AnimationClockComposite extends CustomisableSizeCompositeD
     this.#startAtCurrentTime = startAtCurrentTime;
   }
 
-  get finishedPlaying(): boolean
+  public get finishedPlaying(): boolean
   {
     return !this.loop && this.playbackPosition > this.duration;
   }
 
   @dependencyLoader()
-  [Symbol("load")]()
+  #load()
   {
     super.addInternal(
         new Container({
@@ -40,12 +40,12 @@ export abstract class AnimationClockComposite extends CustomisableSizeCompositeD
     );
   }
 
-  override get clock(): IFrameBasedClock | null
+  public override get clock(): IFrameBasedClock | null
   {
     return super.clock;
   }
 
-  override set clock(value: IFrameBasedClock)
+  public override set clock(value: IFrameBasedClock)
   {
     super.clock = value;
     this.#consumeClockTime();
@@ -72,7 +72,7 @@ export abstract class AnimationClockComposite extends CustomisableSizeCompositeD
 
   #lastConsumedTime = 0;
 
-  override update()
+  protected override update()
   {
     super.update();
 
@@ -83,7 +83,7 @@ export abstract class AnimationClockComposite extends CustomisableSizeCompositeD
     }
   }
 
-  get playbackPosition()
+  public get playbackPosition()
   {
     let current = this.#manualClock.currentTime;
 
@@ -93,7 +93,7 @@ export abstract class AnimationClockComposite extends CustomisableSizeCompositeD
     return clamp(current, 0, this.duration);
   }
 
-  set playbackPosition(value: number)
+  public set playbackPosition(value: number)
   {
     this.#hasSeeked = true;
 
@@ -107,7 +107,7 @@ export abstract class AnimationClockComposite extends CustomisableSizeCompositeD
 
   #duration = 0;
 
-  get duration()
+  public get duration()
   {
     return this.#duration;
   }
@@ -117,11 +117,11 @@ export abstract class AnimationClockComposite extends CustomisableSizeCompositeD
     this.#duration = value;
   }
 
-  isPlaying = true;
+  public isPlaying = true;
 
-  loop = false;
+  public loop = false;
 
-  seek(time: number)
+  public seek(time: number)
   {
     this.playbackPosition = time;
   }

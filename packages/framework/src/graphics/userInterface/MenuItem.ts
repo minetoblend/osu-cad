@@ -10,15 +10,15 @@ export interface MenuItemOptions
 
 export class MenuItem
 {
-  text = new Bindable<string>("");
+  public readonly text = new Bindable<string>("");
 
-  action = new Bindable<(() => void) | undefined>(undefined);
+  public readonly action = new Bindable<(() => void) | undefined>(undefined);
 
-  disabled = new Bindable<boolean>(false);
+  public readonly disabled = new Bindable<boolean>(false);
 
-  items: ReadonlyArray<MenuItem> = [];
+  public readonly items: ReadonlyArray<MenuItem> = [];
 
-  constructor(options: MenuItemOptions)
+  public constructor(options: MenuItemOptions)
   {
     this.text.value = options.text;
     this.action.value = options.action;

@@ -20,23 +20,23 @@ import type { TouchUpEvent } from "./events/TouchUpEvent";
 
 export interface IInputReceiver
 {
-  onMouseMove?: (e: MouseMoveEvent) => boolean;
-  onHover?: (e: HoverEvent) => boolean;
-  onMouseDown?: (e: MouseDownEvent) => boolean;
-  onMouseUp?: (e: MouseUpEvent) => void;
-  onClick?: (e: ClickEvent) => boolean;
-  onDoubleClick?: (e: DoubleClickEvent) => boolean;
-  onHoverLost?: (e: HoverLostEvent) => void;
-  onDragStart?: (e: DragStartEvent) => boolean;
-  onDrag?: (e: DragEvent) => boolean;
-  onDragEnd?: (e: DragEndEvent) => void;
-  onScroll?: (e: ScrollEvent) => boolean;
-  onFocus?: (e: FocusEvent) => void;
-  onFocusLost?: (e: FocusLostEvent) => void;
-  onKeyDown?: (e: KeyDownEvent) => boolean;
-  onKeyUp?: (e: KeyUpEvent) => void;
-  onTouchMove?: (e: TouchMoveEvent) => boolean;
-  onTouchDown?: (e: TouchDownEvent) => boolean;
-  onTouchUp?: (e: TouchUpEvent) => void;
-  onDrop?: (e: DropEvent) => boolean;
+  onMouseMove: (e: MouseMoveEvent) => boolean;
+  onHover: (e: HoverEvent) => boolean;
+  onMouseDown: (e: MouseDownEvent) => boolean;
+  onMouseUp: (e: MouseUpEvent) => void;
+  onClick: (e: ClickEvent) => boolean;
+  onDoubleClick: (e: DoubleClickEvent) => boolean;
+  onHoverLost: (e: HoverLostEvent) => void;
+  onDragStart: (e: DragStartEvent) => boolean;
+  onDrag: (e: DragEvent) => boolean;
+  onDragEnd: (e: DragEndEvent) => void;
+  onScroll: (e: ScrollEvent) => boolean;
+  onFocus: (e: FocusEvent) => void;
+  onFocusLost: (e: FocusLostEvent) => void;
+  onKeyDown: (e: KeyDownEvent) => boolean;
+  onKeyUp: (e: KeyUpEvent) => void;
+  onTouchMove: (e: TouchMoveEvent) => boolean;
+  onTouchDown: (e: TouchDownEvent) => boolean;
+  onTouchUp: (e: TouchUpEvent) => void;
+  onDrop: (e: DropEvent) => boolean;
 }

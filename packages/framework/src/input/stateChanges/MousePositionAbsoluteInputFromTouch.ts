@@ -5,13 +5,13 @@ import { MousePositionAbsoluteInput } from "./MousePositionAbsoluteInput";
 
 export class MousePositionAbsoluteInputFromTouch extends MousePositionAbsoluteInput implements ISourcedFromTouch
 {
-  constructor(
-    readonly touchEvent: TouchStateChangeEvent,
+  public constructor(
+    public readonly touchEvent: TouchStateChangeEvent,
     position: Vec2,
   )
   {
     super(position);
   }
 
-  readonly sourcedFromTouch = true;
+  public readonly sourcedFromTouch = true;
 }

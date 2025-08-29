@@ -5,7 +5,7 @@ const placeHolderIndexData = new Uint32Array(1);
 
 export class OsucadBatchGeometry extends Geometry
 {
-  constructor()
+  public constructor()
   {
     const vertexSize = 6;
 

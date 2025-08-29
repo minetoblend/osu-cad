@@ -7,9 +7,9 @@ export interface IUsable extends IDisposable
 
 export abstract class Usable implements IUsable
 {
-  abstract dispose(): void;
+  public abstract dispose(): void;
 
-  [Symbol.dispose](): void
+  public [Symbol.dispose](): void
   {
     this.dispose();
   }
@@ -17,7 +17,7 @@ export abstract class Usable implements IUsable
 
 export class ValueInvokeOnDisposal extends Usable
 {
-  constructor(dispose: () => void)
+  public constructor(dispose: () => void)
   {
     super();
     this.#dispose = dispose;
@@ -25,7 +25,7 @@ export class ValueInvokeOnDisposal extends Usable
 
   readonly #dispose: () => void;
 
-  dispose()
+  public dispose()
   {
     this.#dispose();
   }

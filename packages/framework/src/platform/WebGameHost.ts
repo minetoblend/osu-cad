@@ -3,7 +3,7 @@ import { GameHost, type GameHostOptions } from "./GameHost";
 
 export class WebGameHost extends GameHost
 {
-  override getWindowSize(): Vec2
+  public override getWindowSize(): Vec2
   {
     if (this.container === document.body)
     {
@@ -15,7 +15,7 @@ export class WebGameHost extends GameHost
     }
   }
 
-  constructor(options: GameHostOptions = {})
+  public constructor(options: GameHostOptions = {})
   {
     super(options);
   }

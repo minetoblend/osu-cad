@@ -38,16 +38,16 @@ export interface CompositeDrawableOptions extends DrawableOptions
 
 export class ChildComparer implements IComparer<Drawable>
 {
-  constructor(private readonly owner: CompositeDrawable)
+  public constructor(private readonly owner: CompositeDrawable)
   {
   }
 
-  compare = (a: Drawable, b: Drawable) =>
+  public compare = (a: Drawable, b: Drawable) =>
   {
     return this.owner.compare(a, b);
   };
 
-  compareDrawNodes = (a: PIXIContainer, b: PIXIContainer) =>
+  public compareDrawNodes = (a: PIXIContainer, b: PIXIContainer) =>
   {
     return this.owner.compare(
         (a as any).drawable,
@@ -56,11 +56,11 @@ export class ChildComparer implements IComparer<Drawable>
   };
 }
 
-export class CompositeDrawable extends Drawable
+export abstract class CompositeDrawable extends Drawable
 {
-  readonly [providersKey]: ProviderMetadata[] = [];
+  public readonly [providersKey]: ProviderMetadata[] = [];
 
-  constructor()
+  public constructor()
   {
     super();
 
@@ -72,9 +72,9 @@ export class CompositeDrawable extends Drawable
     this.addLayout(this.#childrenSizeDependencies);
   }
 
-  #childComparer: ChildComparer;
+  readonly #childComparer: ChildComparer;
 
-  override createDrawNode(): PIXIContainer
+  protected override createDrawNode(): PIXIContainer
   {
     return new PIXIContainer();
   }
@@ -83,12 +83,12 @@ export class CompositeDrawable extends Drawable
 
   #cornerRadius = 0;
 
-  get cornerRadius()
+  public get cornerRadius()
   {
     return this.#cornerRadius;
   }
 
-  set cornerRadius(value)
+  public set cornerRadius(value)
   {
     if (value < 0)
       value = 0;
@@ -103,12 +103,12 @@ export class CompositeDrawable extends Drawable
 
   #cornerExponent = 2;
 
-  get cornerExponent()
+  public get cornerExponent()
   {
     return this.#cornerExponent;
   }
 
-  set cornerExponent(value)
+  public set cornerExponent(value)
   {
     if (value < 0)
       value = 0;
@@ -123,12 +123,12 @@ export class CompositeDrawable extends Drawable
 
   #borderThickness = 0;
 
-  get borderThickness()
+  public get borderThickness()
   {
     return this.#borderThickness;
   }
 
-  set borderThickness(value)
+  public set borderThickness(value)
   {
     this.#borderThickness = value;
     if (!this.#maskingEffect)
@@ -139,12 +139,12 @@ export class CompositeDrawable extends Drawable
 
   #borderColor = new Color("transparent");
 
-  get borderColor(): Color
+  public get borderColor(): Color
   {
     return this.#borderColor;
   }
 
-  set borderColor(value: ColorSource)
+  public set borderColor(value: ColorSource)
   {
     if (!this.#maskingEffect)
       throw new Error("Cannot set borderRadius without enabling masking");
@@ -154,26 +154,26 @@ export class CompositeDrawable extends Drawable
     this.#maskingEffect.borderColor = this.#borderColor;
   }
 
-  readonly childBecameAlive = new Action<Drawable>();
+  public readonly childBecameAlive = new Action<Drawable>();
 
-  readonly childDied = new Action<Drawable>();
+  public readonly childDied = new Action<Drawable>();
 
   readonly #internalChildren: SortedList<Drawable>;
 
   #aliveInternalChildren: SortedList<Drawable>;
 
-  get internalChildren(): ReadonlyArray<Drawable>
+  public get internalChildren(): ReadonlyArray<Drawable>
   {
     return this.#internalChildren.items;
   }
 
-  set internalChildren(value)
+  protected set internalChildren(value)
   {
     this.clearInternal();
     this.addAllInternal(...value);
   }
 
-  get internalChild(): Drawable
+  public get internalChild(): Drawable
   {
     if (this.internalChildren.length !== 1)
     {
@@ -185,7 +185,7 @@ export class CompositeDrawable extends Drawable
     return this.internalChildren[0];
   }
 
-  set internalChild(value: Drawable)
+  protected set internalChild(value: Drawable)
   {
     if (this.isDisposed)
       return;
@@ -194,14 +194,14 @@ export class CompositeDrawable extends Drawable
     this.addInternal(value);
   }
 
-  get aliveInternalChildren(): ReadonlyArray<Drawable>
+  public get aliveInternalChildren(): ReadonlyArray<Drawable>
   {
     return this.#aliveInternalChildren.items;
   }
 
   #currentChildId = 0;
 
-  override with(options: CompositeDrawableOptions)
+  public override with(options: CompositeDrawableOptions)
   {
     return super.with(options);
   }
@@ -241,7 +241,7 @@ export class CompositeDrawable extends Drawable
     return drawable;
   }
 
-  compare(a: Drawable, b: Drawable)
+  public compare(a: Drawable, b: Drawable)
   {
     const i = b.depth - a.depth;
     if (i !== 0)
@@ -252,7 +252,7 @@ export class CompositeDrawable extends Drawable
 
   #childDepthChanged = false;
 
-  changeInternalChildDepth(child: Drawable, newDepth: number)
+  protected changeInternalChildDepth(child: Drawable, newDepth: number)
   {
     if (child.depth === newDepth)
       return;
@@ -299,7 +299,7 @@ export class CompositeDrawable extends Drawable
     return index;
   }
 
-  childDepthChanged = new Action<Drawable>();
+  public readonly childDepthChanged = new Action<Drawable>();
 
   readonly #childrenLoadPromises: Promise<any>[] = [];
 
@@ -354,16 +354,18 @@ export class CompositeDrawable extends Drawable
     }
   }
 
-  loadComponentAsync<TLoadable extends Drawable>(
+  public async loadComponentAsync<TLoadable extends Drawable>(
     component: TLoadable,
     signal?: AbortSignal,
     scheduler?: Scheduler,
   ): Promise<TLoadable>
   {
-    return this.loadComponentsAsync([component], signal, scheduler).then(([loaded]) => loaded);
+    const [loaded] = await this.loadComponentsAsync([component], signal, scheduler);
+
+    return loaded;
   }
 
-  loadComponentsAsync<TLoadable extends Drawable>(
+  public loadComponentsAsync<TLoadable extends Drawable>(
     components: TLoadable[],
     signal?: AbortSignal,
     scheduler?: Scheduler,
@@ -430,7 +432,7 @@ export class CompositeDrawable extends Drawable
   #disposalAbortController: AbortController | null = null;
   #loadingComponents: WeakSet<Drawable> | null = null;
 
-  override onLoad()
+  protected override onLoad()
   {
     const children = this.#internalChildren.items;
     for (let i = 0, len = children.length; i < len; i++)
@@ -534,19 +536,19 @@ export class CompositeDrawable extends Drawable
     // });
   }
 
-  get childSize(): Vec2
+  public get childSize(): Vec2
   {
     return this.drawSize.sub(this.padding.total);
   }
 
   #relativeChildSize = new Vec2(1);
 
-  get relativeChildSize(): Vec2
+  public get relativeChildSize(): Vec2
   {
     return this.#relativeChildSize;
   }
 
-  set relativeChildSize(value: IVec2)
+  public set relativeChildSize(value: IVec2)
   {
     if (this.#relativeChildSize.equals(value))
       return;
@@ -566,17 +568,17 @@ export class CompositeDrawable extends Drawable
     }
   }
 
-  get relativeToAbsoluteFactor()
+  public get relativeToAbsoluteFactor()
   {
     return this.childSize.div(this.#relativeChildSize);
   }
 
-  override get relativeSizeAxes(): Axes
+  public override get relativeSizeAxes(): Axes
   {
     return super.relativeSizeAxes;
   }
 
-  override set relativeSizeAxes(value: Axes)
+  public override set relativeSizeAxes(value: Axes)
   {
     if (value & this.autoSizeAxes)
       throw new Error("Cannot set relativeSizeAxes to include auto-size axes");
@@ -584,7 +586,7 @@ export class CompositeDrawable extends Drawable
     super.relativeSizeAxes = value;
   }
 
-  override onInvalidate(invalidation: Invalidation, source: InvalidationSource): boolean
+  protected override onInvalidate(invalidation: Invalidation, source: InvalidationSource): boolean
   {
     let anyInvalidated = super.onInvalidate(invalidation, source);
 
@@ -634,12 +636,12 @@ export class CompositeDrawable extends Drawable
 
   #padding: MarginPadding = new MarginPadding();
 
-  get padding(): MarginPadding
+  public get padding(): MarginPadding
   {
     return this.#padding;
   }
 
-  set padding(value: MarginPaddingOptions | undefined)
+  public set padding(value: MarginPaddingOptions | undefined)
   {
     if (this.#padding === value)
       return;
@@ -659,19 +661,19 @@ export class CompositeDrawable extends Drawable
     }
   }
 
-  get childOffset(): Vec2
+  public get childOffset(): Vec2
   {
     return new Vec2(this.padding.left, this.padding.top);
   }
 
   #autoSizeAxes: Axes = Axes.None;
 
-  get autoSizeAxes(): Axes
+  public get autoSizeAxes(): Axes
   {
     return this.#autoSizeAxes;
   }
 
-  set autoSizeAxes(value: Axes)
+  public set autoSizeAxes(value: Axes)
   {
     if (value === this.#autoSizeAxes)
       return;
@@ -695,16 +697,16 @@ export class CompositeDrawable extends Drawable
     this.onSizingChanged();
   }
 
-  autoSizeDuration = 0;
+  public autoSizeDuration = 0;
 
-  autoSizeEasing: EasingFunction = EasingFunction.Default;
+  public autoSizeEasing: EasingFunction = EasingFunction.Default;
 
   #childrenSizeDependencies = new LayoutMember(
       Invalidation.RequiredParentSizeToFit | Invalidation.Presence,
       InvalidationSource.Child,
   );
 
-  invalidateChildrenSizeDependencies(invalidation: Invalidation, axes: Axes, source: Drawable)
+  public invalidateChildrenSizeDependencies(invalidation: Invalidation, axes: Axes, source: Drawable)
   {
     const wasValid = this.#childrenSizeDependencies.isValid;
 
@@ -735,7 +737,7 @@ export class CompositeDrawable extends Drawable
     return this.#schedulerAfterChildren;
   }
 
-  override updateSubTree(): boolean
+  public override updateSubTree(): boolean
   {
     if (!super.updateSubTree())
       return false;
@@ -760,7 +762,7 @@ export class CompositeDrawable extends Drawable
     return true;
   }
 
-  override updateClock(clock: IFrameBasedClock)
+  public override updateClock(clock: IFrameBasedClock)
   {
     if (clock === this.clock)
       return;
@@ -772,7 +774,7 @@ export class CompositeDrawable extends Drawable
     this.#schedulerAfterChildren?.updateClock(clock);
   }
 
-  override updateSubTreeTransforms(): boolean
+  public override updateSubTreeTransforms(): boolean
   {
     if (!super.updateSubTreeTransforms())
       return false;
@@ -790,7 +792,7 @@ export class CompositeDrawable extends Drawable
     return true;
   }
 
-  get requiresChildrenUpdate(): boolean
+  protected get requiresChildrenUpdate(): boolean
   {
     /* TODO: replace with !this.isMaskedAway || !this.#childrenSizeDependencies.isValid */
     return true;
@@ -804,29 +806,30 @@ export class CompositeDrawable extends Drawable
   {
   }
 
-  protected createChildDependencies(parentDependencies: ReadonlyDependencyContainer): DependencyContainer
+  protected createChildDependencies(parentDependencies: ReadonlyDependencyContainer): ReadonlyDependencyContainer
   {
-    return new DependencyContainer(parentDependencies);
+    return parentDependencies;
   }
 
   #dependencies!: ReadonlyDependencyContainer;
 
-  override get dependencies(): ReadonlyDependencyContainer
+  public override get dependencies()
   {
     return this.#dependencies;
   }
 
   protected override injectDependencies(dependencies: ReadonlyDependencyContainer)
   {
-    const childDependencies = this.#dependencies = this.createChildDependencies(dependencies);
+    dependencies = this.createChildDependencies(dependencies);
 
-    if (childDependencies !== dependencies)
-      childDependencies.owner = this;
+    let childDependencies: DependencyContainer | undefined = undefined;
 
     const selfProviders: ProviderMetadata[] | undefined = (this.constructor as any)[metadataKey]?.[providersKey];
 
-    if (selfProviders)
+    if (selfProviders?.length)
     {
+      childDependencies ??= new DependencyContainer(dependencies);
+
       for (const { type } of selfProviders)
       {
         if (type)
@@ -837,20 +840,27 @@ export class CompositeDrawable extends Drawable
     }
 
     const providers = this[providersKey];
-    for (const { get, type } of providers)
+    if (providers.length > 0)
     {
-      const value = get.call(this);
+      childDependencies ??= new DependencyContainer(dependencies);
 
-      if (type)
-        childDependencies.provide(type, value);
-      else
-        childDependencies.provide(value);
+      for (const { get, type } of providers)
+      {
+        const value = get.call(this);
+
+        if (type)
+          childDependencies.provide(type, value);
+        else
+          childDependencies.provide(value);
+      }
     }
+
+    this.#dependencies = childDependencies ?? dependencies;
 
     super.injectDependencies(dependencies);
   }
 
-  updateChildrenLife(): boolean
+  protected updateChildrenLife(): boolean
   {
     if (this.loadState < LoadState.Ready)
       return false;
@@ -861,7 +871,7 @@ export class CompositeDrawable extends Drawable
     return true;
   }
 
-  checkChildrenLife(): boolean
+  protected checkChildrenLife(): boolean
   {
     let anyAliveChanged = 0;
 
@@ -913,7 +923,7 @@ export class CompositeDrawable extends Drawable
     return state;
   }
 
-  override buildPositionalInputQueue(screenSpacePos: Vec2, queue: List<Drawable>): boolean
+  public override buildPositionalInputQueue(screenSpacePos: Vec2, queue: List<Drawable>): boolean
   {
     if (!super.buildPositionalInputQueue(screenSpacePos, queue))
       return false;
@@ -928,7 +938,7 @@ export class CompositeDrawable extends Drawable
     return true;
   }
 
-  override buildPositionalInputQueueLocal(localPos: Vec2, queue: List<Drawable>): boolean
+  public override buildPositionalInputQueueLocal(localPos: Vec2, queue: List<Drawable>): boolean
   {
     if (!super.buildPositionalInputQueueLocal(localPos, queue))
       return false;
@@ -956,7 +966,7 @@ export class CompositeDrawable extends Drawable
     return !this.#masking || this.receivePositionalInputAt(screenSpacePos);
   }
 
-  childrenWillGoOutOfBounds = true;
+  public childrenWillGoOutOfBounds = true;
 
   protected receivePositionalInputAtSubTreeLocal(localPos: Vec2): boolean
   {
@@ -968,7 +978,7 @@ export class CompositeDrawable extends Drawable
     return child.loadState === LoadState.Loaded;
   }
 
-  override buildNonPositionalInputQueue(queue: List<Drawable>, allowBlocking?: boolean): boolean
+  public override buildNonPositionalInputQueue(queue: List<Drawable>, allowBlocking?: boolean): boolean
   {
     if (!super.buildNonPositionalInputQueue(queue, allowBlocking))
       return false;
@@ -985,7 +995,7 @@ export class CompositeDrawable extends Drawable
     return true;
   }
 
-  makeChildAlive(child: Drawable)
+  protected makeChildAlive(child: Drawable)
   {
     debugAssert(!child.isAlive && child.loadState >= LoadState.Ready);
 
@@ -1024,7 +1034,7 @@ export class CompositeDrawable extends Drawable
     this.invalidate(Invalidation.Presence, InvalidationSource.Child);
   }
 
-  makeChildDead(child: Drawable): boolean
+  protected makeChildDead(child: Drawable): boolean
   {
     if (child.isAlive)
     {
@@ -1057,42 +1067,42 @@ export class CompositeDrawable extends Drawable
 
   #isComputingChildrenSizeDependencies = false;
 
-  override get width()
+  public override get width()
   {
     if (!this.#isComputingChildrenSizeDependencies && this.autoSizeAxes & Axes.X)
       this.#updateChildrenSizeDependencies();
     return super.width;
   }
 
-  override set width(value: number)
+  public override set width(value: number)
   {
     if (this.autoSizeAxes & Axes.X)
       throw new Error("Cannot set width on a CompositeDrawable with autoSizeAxes.X");
     super.width = value;
   }
 
-  override get height()
+  public override get height()
   {
     if (!this.#isComputingChildrenSizeDependencies && this.autoSizeAxes & Axes.Y)
       this.#updateChildrenSizeDependencies();
     return super.height;
   }
 
-  override set height(value: number)
+  public override set height(value: number)
   {
     if (this.autoSizeAxes & Axes.Y)
       throw new Error("Cannot set height on a CompositeDrawable with autoSizeAxes.Y");
     super.height = value;
   }
 
-  override get size(): Vec2
+  public override get size(): Vec2
   {
     if (!this.#isComputingChildrenSizeDependencies && this.autoSizeAxes !== Axes.None)
       this.#updateChildrenSizeDependencies();
     return super.size;
   }
 
-  override set size(value: IVec2)
+  public override set size(value: IVec2)
   {
     if (this.autoSizeAxes & Axes.Both)
       throw new Error("Cannot set size on a CompositeDrawable with autoSizeAxes");
@@ -1186,32 +1196,44 @@ export class CompositeDrawable extends Drawable
     }
   }
 
-  get baseWidth()
+  /**
+   * @internal
+   */
+  public get baseWidth()
   {
     return super.width;
   }
 
-  set baseWidth(value: number)
+  /**
+   * @internal
+   */
+  public set baseWidth(value: number)
   {
     super.width = value;
   }
 
-  get baseHeight()
+  /**
+   * @internal
+   */
+  public get baseHeight()
   {
     return super.height;
   }
 
-  set baseHeight(value: number)
+  /**
+   * @internal
+   */
+  public set baseHeight(value: number)
   {
     super.height = value;
   }
 
-  get masking(): boolean
+  public get masking(): boolean
   {
     return this.#masking;
   }
 
-  set masking(value: boolean)
+  public set masking(value: boolean)
   {
     if (this.#masking === value)
       return;
@@ -1232,14 +1254,14 @@ export class CompositeDrawable extends Drawable
   #masking = false;
   #maskingContainer: PIXIGraphics | null = null;
 
-  override updateDrawNodeTransform(): void
+  protected override updateDrawNodeTransform(): void
   {
     super.updateDrawNodeTransform();
 
     this.#maskingContainer?.scale.copyFrom(this.drawSize);
   }
 
-  override dispose(isDisposing: boolean = true)
+  public override dispose()
   {
     this.#disposalAbortController?.abort();
     const children = this.#internalChildren.items;
@@ -1249,48 +1271,42 @@ export class CompositeDrawable extends Drawable
       const child = children[i];
       child.childId = 0;
       child.parent = null;
-      child.dispose(isDisposing);
+      child.dispose();
     }
 
-    super.dispose(isDisposing);
+    super.dispose();
   }
 
-  override applyTransformsAt(time: number, propagateChildren: boolean = false)
+  public override applyTransformsAt(time: number, propagateChildren: boolean = false)
   {
     super.applyTransformsAt(time, propagateChildren);
     if (!propagateChildren)
-    {
       return;
-    }
 
     const children = this.#internalChildren.items;
     for (let i = 0, len = children.length; i < len; i++)
       children[i].applyTransformsAt(time, true);
   }
 
-  override finishTransforms(propagateChildren: boolean = false, targetMember?: string)
+  public override finishTransforms(propagateChildren: boolean = false, targetMember?: string)
   {
     super.finishTransforms(propagateChildren, targetMember);
     if (!propagateChildren)
-    {
       return;
-    }
 
     const children = this.#internalChildren.items;
     for (let i = 0, len = children.length; i < len; i++)
       children[i].finishTransforms(true);
   }
 
-  override clearTransformsAfter(time: number, propagateChildren: boolean = false, targetMember?: string)
+  public override clearTransformsAfter(time: number, propagateChildren: boolean = false, targetMember?: string)
   {
     super.clearTransformsAfter(time, propagateChildren, targetMember);
     if (this.autoSizeAxes !== 0 && this.autoSizeDuration > 0)
       this.#childrenSizeDependencies.invalidate();
 
     if (!propagateChildren)
-    {
       return;
-    }
 
     const children = this.#internalChildren.items;
     for (let i = 0, len = children.length; i < len; i++)
@@ -1300,7 +1316,7 @@ export class CompositeDrawable extends Drawable
     }
   }
 
-  override addDelay(duration: number, propagateChildren: boolean = false)
+  public override addDelay(duration: number, propagateChildren: boolean = false)
   {
     if (duration === 0)
     {
@@ -1309,9 +1325,7 @@ export class CompositeDrawable extends Drawable
 
     super.addDelay(duration, propagateChildren);
     if (!propagateChildren)
-    {
       return;
-    }
 
     const children = this.#internalChildren.items;
     for (let i = 0, len = children.length; i < len; i++)
@@ -1321,12 +1335,10 @@ export class CompositeDrawable extends Drawable
     }
   }
 
-  override beginAbsoluteSequence(newTransformStartTime: number, recursive: boolean = true): IUsable
+  public override beginAbsoluteSequence(newTransformStartTime: number, recursive: boolean = true): IUsable
   {
     if (!recursive || this.#internalChildren.length === 0)
-    {
       return super.beginAbsoluteSequence(newTransformStartTime, false);
-    }
 
     const absoluteSequenceActions = new List<AbsoluteSequenceSender>(this.#internalChildren.length + 1);
 
@@ -1338,18 +1350,16 @@ export class CompositeDrawable extends Drawable
     return new ValueInvokeOnDisposal(() =>
     {
       for (const a of absoluteSequenceActions)
-      {
         a.dispose();
-      }
     });
   }
 
-  override get removeCompletedTransforms()
+  public override get removeCompletedTransforms()
   {
     return super.removeCompletedTransforms;
   }
 
-  override set removeCompletedTransforms(value)
+  public override set removeCompletedTransforms(value)
   {
     if (this.removeCompletedTransforms === value)
       return;
@@ -1361,7 +1371,7 @@ export class CompositeDrawable extends Drawable
       children[i].removeCompletedTransforms = value;
   }
 
-  override collectAbsoluteSequenceActionsFromSubTree(
+  public override collectAbsoluteSequenceActionsFromSubTree(
     newTransformStartTime: number,
     actions: List<AbsoluteSequenceSender>,
   )
@@ -1373,7 +1383,7 @@ export class CompositeDrawable extends Drawable
       children[i].collectAbsoluteSequenceActionsFromSubTree(newTransformStartTime, actions);
   }
 
-  findChildrenOfType<T extends Drawable>(type: abstract new (...args: any[]) => T): T[]
+  public findChildrenOfType<T extends Drawable>(type: abstract new (...args: any[]) => T): T[]
   {
     const result: T[] = [];
 
@@ -1392,7 +1402,7 @@ export class CompositeDrawable extends Drawable
     return result;
   }
 
-  transformPadding(newPadding: MarginPadding | MarginPaddingOptions, duration: number = 0, easing: EasingFunction = EasingFunction.Default)
+  public transformPadding(newPadding: MarginPadding | MarginPaddingOptions, duration: number = 0, easing: EasingFunction = EasingFunction.Default)
   {
     return this.transformTo("padding", MarginPadding.from(newPadding), duration, easing);
   }
@@ -1409,7 +1419,7 @@ export class CompositeDrawable extends Drawable
     return Math.min(cornerRadius , drawWidth / 2, drawHeight / 2);
   }
 
-  override containsLocal(localPosition: Vec2): boolean
+  protected override containsLocal(localPosition: Vec2): boolean
   {
     const radius = this.#effectiveCornerRadius;
 

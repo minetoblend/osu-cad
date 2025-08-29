@@ -31,16 +31,16 @@ export class MaskingSystem implements System
     name: "masking",
   } as const;
 
-  constructor(renderer: Renderer)
+  public constructor(renderer: Renderer)
   {
     this.renderer = renderer;
   }
 
-  readonly renderer: Renderer;
+  public readonly renderer: Renderer;
 
   public destroy?: () => void;
 
-  push(instruction: MaskingInstruction)
+  public push(instruction: MaskingInstruction)
   {
     const renderer = this.renderer;
 
@@ -77,7 +77,7 @@ export class MaskingSystem implements System
     });
   }
 
-  pop()
+  public pop()
   {
     const renderer = this.renderer;
 

@@ -4,7 +4,7 @@ import { EasingFunction } from "./EasingFunction";
 
 export abstract class Transform
 {
-  static COMPARER: IComparer<Transform> = {
+  public static readonly COMPARER: IComparer<Transform> = {
     compare: (a, b) =>
     {
       let compare = a.startTime - b.startTime;
@@ -17,100 +17,100 @@ export abstract class Transform
     },
   };
 
-  transformID: number = 0;
+  public transformID: number = 0;
 
-  applied = false;
+  public applied = false;
 
-  appliedToEnd = false;
+  public appliedToEnd = false;
 
-  get rewindable()
+  public get rewindable()
   {
     return true;
   }
 
-  abstract get targetTransformable(): ITransformable;
+  public abstract get targetTransformable(): ITransformable;
 
-  startTime = 0;
+  public startTime = 0;
 
-  endTime = 0;
+  public endTime = 0;
 
-  get isLooping()
+  public get isLooping()
   {
     return this.loopCount === -1 || this.loopCount > 0;
   }
 
-  loopDelay = 0;
+  public loopDelay = 0;
 
-  loopCount = 0;
+  public loopCount = 0;
 
-  hasStartValue = false;
+  public hasStartValue = false;
 
-  abstract get targetMember(): string;
+  public abstract get targetMember(): string;
 
-  abstract readIntoStartValue(): void;
+  public abstract readIntoStartValue(): void;
 
-  get targetGrouping(): string
+  public get targetGrouping(): string
   {
     return this.targetMember;
   }
 
-  abstract apply(time: number): void;
+  public abstract apply(time: number): void;
 
-  triggerComplete()
+  public triggerComplete()
   {}
 
-  abstract clone(): Transform;
+  public abstract clone(): Transform;
 }
 
 export abstract class TypedTransform<TValue, T extends ITransformable> extends Transform
 {
   #startValue?: TValue;
 
-  get startValue(): TValue
+  public get startValue(): TValue
   {
     return this.#startValue!;
   }
 
-  set startValue(value: TValue)
+  public set startValue(value: TValue)
   {
     this.#startValue = value;
   }
 
   #endValue?: TValue;
 
-  get endValue(): TValue
+  public get endValue(): TValue
   {
     return this.#endValue!;
   }
 
-  set endValue(value: TValue)
+  public set endValue(value: TValue)
   {
     this.#endValue = value;
   }
 
-  target!: T;
+  public target!: T;
 
-  override get targetTransformable(): ITransformable
+  public override get targetTransformable(): ITransformable
   {
     return this.target;
   }
 
-  easing: EasingFunction = EasingFunction.Default;
+  public easing: EasingFunction = EasingFunction.Default;
 
-  override apply(time: number)
+  public override apply(time: number)
   {
     this.applyTo(this.target, time);
     this.applied = true;
   }
 
-  override readIntoStartValue()
+  public override readIntoStartValue()
   {
     this.readIntoStartValueFrom(this.target);
   }
 
-  abstract applyTo(target: T, time: number): void;
+  protected abstract applyTo(target: T, time: number): void;
 
-  abstract readIntoStartValueFrom(target: T): void;
+  protected abstract readIntoStartValueFrom(target: T): void;
 
-  abstract override clone(): TypedTransform<TValue, T>;
+  public abstract override clone(): TypedTransform<TValue, T>;
 }

@@ -6,13 +6,13 @@ import { TouchStateChangeEvent } from "./events/TouchStateChangeEvent";
 
 export class TouchInput implements IInput
 {
-  constructor(
-    readonly touches: Touch[],
-    readonly activate: boolean,
+  public constructor(
+    public readonly touches: Touch[],
+    public readonly activate: boolean,
   )
   {}
 
-  apply(state: InputState, handler: IInputStateChangeHandler): void
+  public apply(state: InputState, handler: IInputStateChangeHandler): void
   {
     const touches = state.touch;
 

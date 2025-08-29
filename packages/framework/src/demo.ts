@@ -9,7 +9,7 @@ const host = new WebGameHost();
 
 class DemoGame extends Game
 {
-  constructor()
+  public constructor()
   {
     super();
   }
@@ -38,7 +38,7 @@ class DemoGame extends Game
 
 class DemoPath extends SmoothPath
 {
-  override colorAt(position: number): ColorSource
+  public override colorAt(position: number): ColorSource
   {
     return position < 0.5 ? 0xFF0000 : 0xFFFFFF;
   }

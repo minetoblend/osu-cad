@@ -2,34 +2,34 @@ import { debugAssert } from "../utils/debugAssert";
 
 export class ScheduledDelegate
 {
-  constructor(
-    readonly task: () => void,
+  public constructor(
+    public readonly task: () => void,
     public executionTime: number = 0,
     public repeatInterval: number = -1,
     public receiver?: any,
   )
   {}
 
-  performRepeatCatchUpExecutions = true;
+  public performRepeatCatchUpExecutions = true;
 
   public get completed()
   {
     return this.state === RunState.Complete;
   }
 
-  get cancelled()
+  public get cancelled()
   {
     return this.state === RunState.Cancelled;
   }
 
   #state: RunState = RunState.Waiting;
 
-  get state(): RunState
+  public get state(): RunState
   {
     return this.#state;
   }
 
-  runTask()
+  public runTask()
   {
     if (this.cancelled)
     {
@@ -44,7 +44,7 @@ export class ScheduledDelegate
     this.runTaskInternal();
   }
 
-  runTaskInternal()
+  public runTaskInternal()
   {
     if (this.state !== RunState.Waiting)
       return;
@@ -74,12 +74,12 @@ export class ScheduledDelegate
     }
   }
 
-  cancel()
+  public cancel()
   {
     this.#state = RunState.Cancelled;
   }
 
-  setNextExecution(currentTime: number | null)
+  public setNextExecution(currentTime: number | null)
   {
     if (this.state === RunState.Cancelled)
       return;

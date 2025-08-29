@@ -4,7 +4,7 @@ import type { IAudioSource } from "./IAudioSource";
 
 export class AudioMixer extends AudioDestination implements IAudioSource
 {
-  constructor(name: string, readonly context: AudioContext)
+  public constructor(name: string, public readonly context: AudioContext)
   {
     super(name);
 
@@ -15,11 +15,11 @@ export class AudioMixer extends AudioDestination implements IAudioSource
 
   readonly #gain: GainNode;
 
-  readonly volume = new BindableNumber(1)
+  public readonly volume = new BindableNumber(1)
     .withMinValue(0)
     .withMaxValue(1);
 
-  get output()
+  public get output()
   {
     return this.#gain;
   }

@@ -19,7 +19,7 @@ export class SpriteTextPipe implements RenderPipe<BitmapText>
   private readonly _destroyRenderableBound = this.destroyRenderable.bind(this) as (renderable: Container) => void;
   private readonly _textShader: TextShader;
 
-  constructor(renderer: Renderer)
+  public constructor(renderer: Renderer)
   {
     this._renderer = renderer;
     this._renderer.renderableGC.addManagedHash(this, "_gpuBitmapText");

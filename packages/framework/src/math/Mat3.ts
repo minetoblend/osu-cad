@@ -5,7 +5,7 @@ import { Vec2 } from "./Vec2";
 
 export class Mat3
 {
-  constructor(
+  public constructor(
     public m00 = 1,
     public m01 = 0,
     public m02 = 0,
@@ -19,7 +19,7 @@ export class Mat3
   {
   }
 
-  translateFromLeft(x: number, y: number)
+  public translateFromLeft(x: number, y: number)
   {
     // col2 += col0 * x + col1 * y;
     this.m02 += this.m00 * x + this.m01 * y;
@@ -27,7 +27,7 @@ export class Mat3
     this.m22 += this.m20 * x + this.m21 * y;
   }
 
-  translateFromRight(x: number, y: number)
+  public translateFromRight(x: number, y: number)
   {
     // row0 += row2 * v.x
     this.m00 += this.m20 * x;
@@ -40,7 +40,7 @@ export class Mat3
     this.m12 += this.m22 * y;
   }
 
-  rotateFromLeft(angle: number)
+  public rotateFromLeft(angle: number)
   {
     const cos = Math.cos(angle);
     const sin = Math.sin(angle);
@@ -58,7 +58,7 @@ export class Mat3
     this.m20 = m20;
   }
 
-  rotateFromRight(angle: number)
+  public rotateFromRight(angle: number)
   {
     const cos = Math.cos(angle);
     const sin = Math.sin(angle);
@@ -76,7 +76,7 @@ export class Mat3
     this.m02 = m02;
   }
 
-  scaleFromLeft(x: number, y: number)
+  public scaleFromLeft(x: number, y: number)
   {
     this.m00 *= x;
     this.m10 *= x;
@@ -87,7 +87,7 @@ export class Mat3
     this.m21 *= y;
   }
 
-  scaleFromRight(x: number, y: number)
+  public scaleFromRight(x: number, y: number)
   {
     this.m00 *= x;
     this.m01 *= x;
@@ -98,7 +98,7 @@ export class Mat3
     this.m12 *= y;
   }
 
-  shearFromLeft(x: number, y: number)
+  public shearFromLeft(x: number, y: number)
   {
     const xy = x * y;
 
@@ -116,7 +116,7 @@ export class Mat3
     this.m20 = m20;
   }
 
-  shearFromRight(x: number, y: number)
+  public shearFromRight(x: number, y: number)
   {
     const xy = x * y;
 
@@ -133,7 +133,7 @@ export class Mat3
     this.m02 = m02;
   }
 
-  fastInvert()
+  public fastInvert()
   {
     const a00 = this.m00; const a01 = this.m01; const a02 = this.m02;
     const a10 = this.m10; const a11 = this.m11; const a12 = this.m12;
@@ -166,7 +166,7 @@ export class Mat3
     return this;
   }
 
-  setZero()
+  public setZero()
   {
     this.m00 = 0;
     this.m01 = 0;
@@ -181,7 +181,7 @@ export class Mat3
     this.m22 = 0;
   }
 
-  identity()
+  public identity()
   {
     this.m00 = 1;
     this.m01 = 0;
@@ -196,7 +196,7 @@ export class Mat3
     this.m22 = 1;
   }
 
-  apply(pos: Vec2, target: Vec2 = new Vec2())
+  public apply(pos: Vec2, target: Vec2 = new Vec2())
   {
     const x = (this.m00 * pos.x) + (this.m01 * pos.y) + (this.m02);
     const y = (this.m10 * pos.x) + (this.m11 * pos.y) + (this.m12);
@@ -207,7 +207,7 @@ export class Mat3
     return target;
   }
 
-  copyFrom(other: Mat3)
+  public copyFrom(other: Mat3)
   {
     this.m00 = other.m00;
     this.m01 = other.m01;
@@ -221,7 +221,7 @@ export class Mat3
     return this;
   }
 
-  equals(other: Mat3)
+  public equals(other: Mat3)
   {
     return almostEquals(this.m00, other.m00)
       && almostEquals(this.m01, other.m01)
@@ -234,7 +234,7 @@ export class Mat3
       && almostEquals(this.m22, other.m22);
   }
 
-  clone()
+  public clone()
   {
     return new Mat3(
         this.m00,
@@ -249,7 +249,7 @@ export class Mat3
     );
   }
 
-  applyToQuad(quad: Quad, target: Quad = quad)
+  public applyToQuad(quad: Quad, target: Quad = quad)
   {
     this.apply(quad.topLeft, target.topLeft);
     this.apply(quad.topRight, target.topRight);
@@ -259,7 +259,7 @@ export class Mat3
     return target;
   }
 
-  multiply(other: Mat3)
+  public multiply(other: Mat3)
   {
     const a00 = this.m00 * other.m00 + this.m01 * other.m10 + this.m02 * other.m20;
     const a01 = this.m00 * other.m01 + this.m01 * other.m11 + this.m02 * other.m21;
@@ -284,7 +284,7 @@ export class Mat3
     return this;
   }
 
-  copyToPixiMatrix(matrix: Matrix)
+  public copyToPixiMatrix(matrix: Matrix)
   {
     matrix.a = this.m00;
     matrix.b = this.m01;
