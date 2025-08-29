@@ -11,7 +11,7 @@ import { ComposePresenceContainer } from "./tools/ToolPresenceContainer";
 @provideSelf()
 export abstract class HitObjectComposer extends CompositeDrawable
 {
-  constructor()
+  public constructor()
   {
     super();
 
@@ -21,27 +21,27 @@ export abstract class HitObjectComposer extends CompositeDrawable
   #toolbar!: ComposeToolbar;
 
   @provide()
-  readonly activeTool = new ActiveToolBindable(null!);
+  public readonly activeTool = new ActiveToolBindable(null!);
 
   @resolved(Ruleset)
-  accessor ruleset!: Ruleset;
+  protected accessor ruleset!: Ruleset;
 
   @resolved(EditorBeatmap)
-  accessor beatmap!: EditorBeatmap;
+  protected accessor beatmap!: EditorBeatmap;
 
-  composeToolContainer!: ComposeToolContainer;
+  public composeToolContainer!: ComposeToolContainer;
 
-  get hasTimeline()
+  public get hasTimeline()
   {
     return true;
   }
 
-  drawableRuleset!: DrawableRuleset;
-  rulesetContainer!: Container;
+  public drawableRuleset!: DrawableRuleset;
+  public rulesetContainer!: Container;
 
   #dependencies!: DependencyContainer;
 
-  override createChildDependencies(parentDependencies: ReadonlyDependencyContainer)
+  protected override createChildDependencies(parentDependencies: ReadonlyDependencyContainer)
   {
     return this.#dependencies = new DependencyContainer(parentDependencies);
   }
@@ -89,7 +89,7 @@ export abstract class HitObjectComposer extends CompositeDrawable
     super.loadComplete();
   }
 
-  tools!: ComposeToolInfo[];
+  public tools!: ComposeToolInfo[];
 
   protected abstract getTools(): ComposeToolInfo[] | Promise<ComposeToolInfo[]>;
 }

@@ -22,7 +22,7 @@ let uid = 0;
 
 class AddHitObjectDelta extends Delta<IAddHitObjectDelta>
 {
-  static create(hitObject: HitObject, encoder: IEncoder)
+  public static create(hitObject: HitObject, encoder: IEncoder)
   {
     const ref = encoder.encodeDDS(hitObject);
 
@@ -34,12 +34,12 @@ class AddHitObjectDelta extends Delta<IAddHitObjectDelta>
     return new AddHitObjectDelta(ref, summary);
   }
 
-  constructor(readonly ref: DDSRef, readonly summary: IDDSSummary)
+  public constructor(public readonly ref: DDSRef, public readonly summary: IDDSSummary)
   {
     super();
   }
 
-  encode(): IAddHitObjectDelta
+  public encode(): IAddHitObjectDelta
   {
     return [OpType.Add, this.ref];
   }
@@ -47,19 +47,19 @@ class AddHitObjectDelta extends Delta<IAddHitObjectDelta>
 
 class RemoveHitObjectDelta extends Delta<IRemoveHitObjectDelta>
 {
-  static create(hitObject: HitObject, encoder: IEncoder)
+  public static create(hitObject: HitObject, encoder: IEncoder)
   {
     const ref = encoder.encodeDDS(hitObject);
 
     return new RemoveHitObjectDelta(ref);
   }
 
-  constructor(readonly ref: DDSRef)
+  public constructor(public readonly ref: DDSRef)
   {
     super();
   }
 
-  encode(): IRemoveHitObjectDelta
+  public encode(): IRemoveHitObjectDelta
   {
     return [OpType.Remove, this.ref];
   }
@@ -80,17 +80,17 @@ export class HitObjectCollection
   extends DDS<IHitObjectCollectionDelta>
   implements Iterable<HitObject>
 {
-  readonly added = new Action<HitObject>();
-  readonly removed = new Action<HitObject>();
+  public readonly added = new Action<HitObject>();
+  public readonly removed = new Action<HitObject>();
 
-  readonly invalidated = new EventEmitter<HitObjectInvalidationEvents>();
+  public readonly invalidated = new EventEmitter<HitObjectInvalidationEvents>();
 
-  static readonly attributes: DDSAttributes = {
+  public static readonly attributes: DDSAttributes = {
     type: "@osucad/hitobject-collection",
     version: 0,
   };
 
-  constructor()
+  public constructor()
   {
     super(HitObjectCollection.attributes);
   }
@@ -98,17 +98,17 @@ export class HitObjectCollection
   readonly #hitObjects: HitObject[] = [];
   readonly #set = new Set<HitObject>();
 
-  get hitObjects(): readonly HitObject[]
+  public get hitObjects(): readonly HitObject[]
   {
     return this.#hitObjects;
   }
 
-  get length()
+  public get length()
   {
     return this.#hitObjects.length;
   }
 
-  add(hitObject: HitObject, localOnly = false)
+  public add(hitObject: HitObject, localOnly = false)
   {
     if (this.isAttached() && !localOnly)
       this.encoder.encodeDDS(hitObject);
@@ -127,7 +127,7 @@ export class HitObjectCollection
     return true;
   }
 
-  ensureAttached(hitObject: HitObject)
+  public ensureAttached(hitObject: HitObject)
   {
     if (hitObject.isAttached())
       return;
@@ -176,7 +176,7 @@ export class HitObjectCollection
     });
   }
 
-  remove(hitObject: HitObject)
+  public remove(hitObject: HitObject)
   {
     if (!this.#remove(hitObject))
       return false;
@@ -192,7 +192,7 @@ export class HitObjectCollection
     return true;
   }
 
-  removeRange(hitObjects: Iterable<HitObject>)
+  public removeRange(hitObjects: Iterable<HitObject>)
   {
     for (const h of hitObjects)
       this.remove(h);
@@ -275,7 +275,7 @@ export class HitObjectCollection
     }
   }
 
-  override createSummary(encoder: IEncoder): unknown
+  public override createSummary(encoder: IEncoder): unknown
   {
     const entries: DDSRef[] = [];
 
@@ -285,7 +285,7 @@ export class HitObjectCollection
     return entries;
   }
 
-  override load(summary: unknown, version: number, decoder: IDecoder): void
+  public override load(summary: unknown, version: number, decoder: IDecoder): void
   {
     const entries = summary as DDSRef[];
 
@@ -299,17 +299,17 @@ export class HitObjectCollection
     }
   }
 
-  hitObjectsWithStartTime(startTime: number, leniency: number = 1e-3)
+  public hitObjectsWithStartTime(startTime: number, leniency: number = 1e-3)
   {
     return this.filter(hitObject => almostEquals(hitObject.startTime, startTime, leniency));
   }
 
-  removeHitObjectsWithStartTime(startTime: number, leniency: number = 1)
+  public removeHitObjectsWithStartTime(startTime: number, leniency: number = 1)
   {
     this.removeRange(this.hitObjectsWithStartTime(startTime, leniency));
   }
 
-  forEach(
+  public forEach(
     callbackfn: (
       value: HitObject,
       index: number,
@@ -321,7 +321,7 @@ export class HitObjectCollection
     this.hitObjects.forEach(callbackfn, thisArg);
   }
 
-  map<U>(
+  public map<U>(
     callbackfn: (
       value: HitObject,
       index: number,
@@ -333,7 +333,7 @@ export class HitObjectCollection
     return this.hitObjects.map(callbackfn, thisArg);
   }
 
-  filter<S extends HitObject>(
+  public filter<S extends HitObject>(
     predicate: (
       value: HitObject,
       index: number,
@@ -341,7 +341,7 @@ export class HitObjectCollection
     ) => value is S,
     thisArg?: any
   ): S[];
-  filter(
+  public filter(
     predicate: (
       value: HitObject,
       index: number,
@@ -349,7 +349,7 @@ export class HitObjectCollection
     ) => unknown,
     thisArg?: any
   ): HitObject[];
-  filter(
+  public filter(
     predicate: (
       value: HitObject,
       index: number,
@@ -361,7 +361,7 @@ export class HitObjectCollection
     return this.hitObjects.filter(predicate, thisArg);
   }
 
-  find(
+  public find(
     predicate: (
       value: HitObject,
       index: number,
@@ -373,12 +373,12 @@ export class HitObjectCollection
     return this.hitObjects.find(predicate, thisArg);
   }
 
-  unsafeCast<T extends HitObject>(): readonly T[]
+  public unsafeCast<T extends HitObject>(): readonly T[]
   {
     return this.hitObjects as readonly T[];
   }
 
-  ofType<T extends Constructor<HitObject>[]>(
+  public ofType<T extends Constructor<HitObject>[]>(
     ...types: T
   ): { [K in keyof T]: InstanceOf<T[K]> }[number][]
   {
@@ -400,19 +400,19 @@ export class HitObjectCollection
     return this.hitObjects.values();
   }
 
-  get first(): HitObject | undefined
+  public get first(): HitObject | undefined
   {
     return this.#hitObjects[0];
   }
 
-  get last(): HitObject | undefined
+  public get last(): HitObject | undefined
   {
     return this.#hitObjects[this.#hitObjects.length - 1];
   }
 
   #proxy = new Lazy(() => createHitObjectCollectionProxy(this));
 
-  get proxy()
+  public get proxy()
   {
     return this.#proxy.value;
   }

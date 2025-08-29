@@ -10,12 +10,12 @@ describe("HitObjectCollection", () =>
   {
     class TestHitObject extends HitObject
     {
-      static readonly attributes: DDSAttributes = {
+      public static readonly attributes: DDSAttributes = {
         type: "test",
         version: 0,
       };
 
-      constructor()
+      public constructor()
       {
         super(TestHitObject.attributes);
       }

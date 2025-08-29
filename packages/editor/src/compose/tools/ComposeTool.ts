@@ -69,12 +69,12 @@ export abstract class ComposeTool extends CompositeDrawable
     return this.drawableRuleset.createPlayfieldAdjustmentContainer();
   }
 
-  getPresence(): unknown
+  public getPresence(): unknown
   {
     return null;
   }
 
-  recreate()
+  public recreate()
   {
     this.#toolContainer.refresh();
   }

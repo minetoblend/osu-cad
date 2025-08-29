@@ -8,5 +8,5 @@ export abstract class ComposeToolPresenceOverlay extends CompositeDrawable
     this.relativeSizeAxes = Axes.Both;
   }
 
-  abstract updatePresence(content: unknown): void;
+  public abstract updatePresence(content: unknown): void;
 }

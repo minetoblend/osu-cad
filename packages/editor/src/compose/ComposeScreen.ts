@@ -8,13 +8,13 @@ import { EditorClock } from "../EditorClock";
 
 export class ComposeScreen extends EditorScreen
 {
-  constructor()
+  public constructor()
   {
     super();
   }
 
   @resolved(Ruleset)
-  accessor ruleset!: Ruleset;
+  protected accessor ruleset!: Ruleset;
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
@@ -23,7 +23,7 @@ export class ComposeScreen extends EditorScreen
     void this.loadComposer();
   }
 
-  async loadComposer()
+  protected async loadComposer()
   {
     try
     {
@@ -58,7 +58,7 @@ export class ComposeScreen extends EditorScreen
     }));
   }
 
-  addTimeline()
+  protected addTimeline()
   {
     this.addInternal(new ComposeTimeline());
   }
@@ -69,7 +69,7 @@ export class ComposeScreen extends EditorScreen
   @resolved(EditorClock)
   accessor #editorClock!: EditorClock;
 
-  override onKeyDown(e: KeyDownEvent): boolean
+  protected override onKeyDown(e: KeyDownEvent): boolean
   {
     switch(e.key)
     {
@@ -91,7 +91,7 @@ export class ComposeScreen extends EditorScreen
     return false;
   }
 
-  override onScroll(e: ScrollEvent): boolean
+  public override onScroll(e: ScrollEvent): boolean
   {
     const y = e.scrollDelta.y;
 

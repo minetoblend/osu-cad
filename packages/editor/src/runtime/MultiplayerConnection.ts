@@ -5,7 +5,7 @@ import { EventEmitter } from "pixi.js";
 
 export class MultiplayerConnection extends EventEmitter<ServerMessages>
 {
-  constructor(readonly socket: Socket<ServerMessages, ClientMessages>)
+  public constructor(public readonly socket: Socket<ServerMessages, ClientMessages>)
   {
     super();
 
@@ -14,7 +14,7 @@ export class MultiplayerConnection extends EventEmitter<ServerMessages>
     socket.on("signal", (...args) => this.emit("signal", ...args));
   }
 
-  static async create()
+  public static async create()
   {
     const socket = io("/", { transports: ["websocket"] });
 
@@ -27,12 +27,12 @@ export class MultiplayerConnection extends EventEmitter<ServerMessages>
     return new MultiplayerConnection(socket);
   }
 
-  send<T extends keyof ClientMessages>(message: T, ...args: Parameters<ClientMessages[T]>)
+  public send<T extends keyof ClientMessages>(message: T, ...args: Parameters<ClientMessages[T]>)
   {
     this.socket.emit(message, ...args);
   }
 
-  async next<T extends keyof ServerMessages>(message: T): Promise<Parameters<ServerMessages[T]>>
+  public async next<T extends keyof ServerMessages>(message: T): Promise<Parameters<ServerMessages[T]>>
   {
     return new Promise((resolve) => this.socket.once(message as any, (...args: any[]) => resolve(args as any)));
   }

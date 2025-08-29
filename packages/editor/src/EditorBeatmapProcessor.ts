@@ -67,7 +67,7 @@ export abstract class EditorBeatmapProcessor extends Component
     this.#valid = true;
   }
 
-  refresh(immediately = false)
+  public refresh(immediately = false)
   {
     if (immediately)
     {
@@ -78,7 +78,7 @@ export abstract class EditorBeatmapProcessor extends Component
     this.#valid = false;
   }
 
-  override update(): void
+  protected override update(): void
   {
     super.update();
 
@@ -86,11 +86,11 @@ export abstract class EditorBeatmapProcessor extends Component
       this.#process();
   }
 
-  override dispose(isDisposing?: boolean): void
+  public override dispose(): void
   {
     this.beatmap.hitObjects.added.removeListener(this.onHitObjectAdded, this);
     this.beatmap.hitObjects.removed.removeListener(this.onHitObjectRemoved, this);
 
-    super.dispose(isDisposing);
+    super.dispose();
   }
 }

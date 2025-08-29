@@ -3,7 +3,7 @@ import type { ComposeToolInfo } from "./ComposeToolInfo";
 
 export class ActiveToolBindable extends Bindable<ComposeToolInfo>
 {
-  override createInstance()
+  public override createInstance()
   {
     return new ActiveToolBindable(this.value);
   }

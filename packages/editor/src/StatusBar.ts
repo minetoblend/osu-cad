@@ -2,9 +2,9 @@ import { Axes, Box, CompositeDrawable } from "@osucad/framework";
 
 export class StatusBar extends CompositeDrawable
 {
-  static readonly HEIGHT = 24;
+  public static readonly HEIGHT = 24;
 
-  constructor()
+  public constructor()
   {
     super();
 

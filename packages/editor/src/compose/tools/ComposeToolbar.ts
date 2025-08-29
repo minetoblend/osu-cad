@@ -5,16 +5,16 @@ import type { ComposeToolInfo } from "./ComposeToolInfo";
 
 export class ComposeToolbar extends Container
 {
-  static readonly WIDTH = 50;
+  public static readonly WIDTH = 50;
 
   readonly #content!: FillFlowContainer;
 
-  override get content()
+  public override get content()
   {
     return this.#content;
   }
 
-  constructor()
+  public constructor()
   {
     super();
 
@@ -30,12 +30,12 @@ export class ComposeToolbar extends Container
     }));
   }
 
-  addTool(tool: ComposeToolInfo)
+  public addTool(tool: ComposeToolInfo)
   {
     this.add(new ComposeToolButton(tool));
   }
 
-  override onKeyDown(e: KeyDownEvent): boolean
+  protected override onKeyDown(e: KeyDownEvent): boolean
   {
     if (e.key.startsWith("Digit"))
     {

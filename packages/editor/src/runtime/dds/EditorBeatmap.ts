@@ -7,15 +7,15 @@ import { HitObjectCollection } from "./HitObjectCollection";
 
 export class EditorBeatmap extends ObjectDDS
 {
-  static readonly attributes: DDSAttributes = {
+  public static readonly attributes: DDSAttributes = {
     type: "@osucad/editor-beatmap",
     version: 0,
   };
 
-  ruleset!: Ruleset;
-  editorRuleset!: EditorRuleset;
+  public ruleset!: Ruleset;
+  public editorRuleset!: EditorRuleset;
 
-  constructor()
+  public constructor()
   {
     super(EditorBeatmap.attributes);
   }
@@ -23,27 +23,27 @@ export class EditorBeatmap extends ObjectDDS
   @nested(HitObjectCollection)
   accessor #hitObjects = new HitObjectCollection()
 
-  get hitObjects()
+  public get hitObjects()
   {
     return this.#hitObjects;
   }
 
   @nested(BeatmapDifficultyInfo)
-  accessor difficulty = new BeatmapDifficultyInfo()
+  public accessor difficulty = new BeatmapDifficultyInfo()
 
   @nested(ControlPointInfo)
-  accessor controlPointInfo = new ControlPointInfo()
+  public accessor controlPointInfo = new ControlPointInfo()
 
   @nested(BeatmapMetadata)
-  accessor metadata = new BeatmapMetadata()
+  public accessor metadata = new BeatmapMetadata()
 
   @nested(BeatmapInfo)
-  accessor beatmapInfo = new BeatmapInfo()
+  public accessor beatmapInfo = new BeatmapInfo()
 
   @nested(Signaler)
-  accessor signals = new Signaler()
+  public accessor signals = new Signaler()
 
-  override load(summary: unknown, version: number, decoder: IDecoder)
+  public override load(summary: unknown, version: number, decoder: IDecoder)
   {
     const runtime = nn(this.runtime);
     if (!(runtime instanceof EditorRuntime))

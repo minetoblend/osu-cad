@@ -6,7 +6,7 @@ import { TimelineTickDisplay } from "./TimelineTickDisplay";
 @provideSelf()
 export class ComposeTimeline extends CompositeDrawable
 {
-  static readonly HEIGHT = 80;
+  public static readonly HEIGHT = 80;
 
   @resolved(EditorClock)
   accessor #clock!: EditorClock
@@ -34,31 +34,31 @@ export class ComposeTimeline extends CompositeDrawable
     ];
   }
 
-  zoom = 1;
+  public zoom = 1;
 
-  get visibleDuration()
+  public get visibleDuration()
   {
     return this.zoom * 4000;
   }
 
-  get startTime()
+  public get startTime()
   {
     return this.#clock.currentTime - this.visibleDuration * 0.5;
   }
 
-  get endTime()
+  public get endTime()
   {
     return this.#clock.currentTime + this.visibleDuration * 0.5;
   }
 
-  timeAt(screenSpacePosition: Vec2)
+  public timeAt(screenSpacePosition: Vec2)
   {
     const local = this.toLocalSpace(screenSpacePosition);
 
     return this.startTime + (local.x / this.drawWidth) * this.visibleDuration;
   }
 
-  positionAt(time: number)
+  public positionAt(time: number)
   {
     return (time - this.startTime) / this.visibleDuration * this.drawWidth;
   }

@@ -4,7 +4,7 @@ import type { EditorBeatmap } from "./runtime";
 
 export class DefaultsApplier extends EditorBeatmapProcessor
 {
-  constructor()
+  public constructor()
   {
     super(["applyDefaults"]);
   }

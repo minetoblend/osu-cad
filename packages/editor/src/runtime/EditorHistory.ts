@@ -4,10 +4,10 @@ import { DocumentHistory } from "@osucad/multiplayer-core";
 
 export class EditorHistory extends DocumentHistory
 {
-  readonly canUndoBindable = new Bindable(false);
-  readonly canRedoBindable = new Bindable(false);
+  public readonly canUndoBindable = new Bindable(false);
+  public readonly canRedoBindable = new Bindable(false);
 
-  constructor(runtime: DocumentRuntime)
+  public constructor(runtime: DocumentRuntime)
   {
     super(runtime);
 

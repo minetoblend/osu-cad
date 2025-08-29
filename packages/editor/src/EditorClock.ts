@@ -11,7 +11,7 @@ export class EditorClock extends Component implements IFrameBasedClock
 
   #targetTime = 0;
 
-  constructor(readonly controlPointInfo: ControlPointInfo)
+  public constructor(public readonly controlPointInfo: ControlPointInfo)
   {
     super();
   }
@@ -19,22 +19,22 @@ export class EditorClock extends Component implements IFrameBasedClock
   @resolved(BindableBeatDivisor)
   accessor #beatDivisor!: BindableBeatDivisor
 
-  get elapsedFrameTime(): number
+  public get elapsedFrameTime(): number
   {
     return this.#frameTimeInfo.elapsed;
   }
 
-  get framesPerSecond(): number
+  public get framesPerSecond(): number
   {
     throw new Error("Not supporteds");
   }
 
-  get timeInfo(): FrameTimeInfo
+  public get timeInfo(): FrameTimeInfo
   {
     return this.#frameTimeInfo;
   }
 
-  processFrame(): void
+  public processFrame(): void
   {
     if (!this.#isRunning)
     {
@@ -55,42 +55,42 @@ export class EditorClock extends Component implements IFrameBasedClock
     }
   }
 
-  readonly isFrameBasedClock = true;
+  public readonly isFrameBasedClock = true;
 
-  get currentTime(): number
+  public get currentTime(): number
   {
     return this.#frameTimeInfo.current;
   }
 
-  get rate(): number
+  public get rate(): number
   {
     return 1;
   }
 
   #isRunning = false;
 
-  get isRunning(): boolean
+  public get isRunning(): boolean
   {
     return this.#isRunning;
   }
 
-  get trackLength()
+  public get trackLength()
   {
     // TODO
     return 100_000;
   }
 
-  seek(position: number)
+  public seek(position: number)
   {
     this.#targetTime = position;
   }
 
-  seekBy(duration: number)
+  public seekBy(duration: number)
   {
     this.seek(this.currentTime + duration);
   }
 
-  seekBeats(direction: number, snapped = false, amount = 1)
+  public seekBeats(direction: number, snapped = false, amount = 1)
   {
     const timingPoint = this.controlPointInfo.timingPointAt(this.#targetTime);
 
@@ -116,7 +116,7 @@ export class EditorClock extends Component implements IFrameBasedClock
       this.seek(newPosition);
   }
 
-  seekSnapped(position: number)
+  public seekSnapped(position: number)
   {
     const timingPoint = this.controlPointInfo.timingPointAt(position);
 
@@ -140,7 +140,7 @@ export class EditorClock extends Component implements IFrameBasedClock
     this.seek(position);
   }
 
-  override update(): void
+  public override update(): void
   {
     super.update();
     this.processFrame();

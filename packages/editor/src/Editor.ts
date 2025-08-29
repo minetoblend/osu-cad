@@ -19,7 +19,7 @@ export interface EditorOptions
 
 export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
 {
-  constructor(options: EditorOptions)
+  public constructor(options: EditorOptions)
   {
     super();
 
@@ -30,31 +30,31 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
 
 
   @provide(Document)
-  readonly document: Document;
+  protected readonly document: Document;
 
   @provide(EditorRuntime)
-  readonly runtime: EditorRuntime;
+  protected readonly runtime: EditorRuntime;
 
   @provide(EditorBeatmap)
-  get editorBeatmap()
+  protected get editorBeatmap()
   {
     return this.runtime.root;
   }
 
   @provide(IAudience)
-  get audience(): IAudience
+  protected get audience(): IAudience
   {
     return this.document.audience;
   }
 
   @provide(Ruleset)
-  get ruleset()
+  protected get ruleset()
   {
     return this.runtime.ruleset;
   }
 
   @provide(EditorRuleset)
-  get editorRuleset()
+  protected get editorRuleset()
   {
     return this.runtime.editorRuleset;
   }
@@ -64,13 +64,13 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
 
   @provide(PlayfieldClock)
   @provide(EditorClock)
-  readonly editorClock: EditorClock;
+  protected readonly editorClock: EditorClock;
 
   @provide(BindableBeatDivisor)
-  readonly beatDivisor = new BindableBeatDivisor(4);
+  protected readonly beatDivisor = new BindableBeatDivisor(4);
 
   @provide(EditorHistory)
-  get history()
+  protected get history()
   {
     return this.runtime.history;
   }
@@ -115,14 +115,14 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
     ]);
   }
 
-  readonly isKeyBindingHandler = true;
+  public readonly isKeyBindingHandler = true;
 
-  canHandleKeyBinding(binding: KeyBindingAction): boolean
+  public canHandleKeyBinding(binding: KeyBindingAction): boolean
   {
     return binding instanceof PlatformAction;
   }
 
-  onKeyBindingPressed?(e: KeyBindingPressEvent<PlatformAction>): boolean
+  public onKeyBindingPressed?(e: KeyBindingPressEvent<PlatformAction>): boolean
   {
     switch (e.pressed)
     {

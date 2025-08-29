@@ -10,12 +10,12 @@ export class ComposeToolContainer extends CompositeDrawable
 
   #activeTool?: ComposeTool | undefined;
 
-  get activeTool()
+  public get activeTool()
   {
     return this.#activeTool;
   }
 
-  constructor()
+  public constructor()
   {
     super();
 
@@ -35,7 +35,7 @@ export class ComposeToolContainer extends CompositeDrawable
     }, true);
   }
 
-  refresh()
+  public refresh()
   {
     this.#activeToolBindable.triggerChange();
   }

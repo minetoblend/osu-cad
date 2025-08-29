@@ -7,7 +7,7 @@ import { EditorColors } from "../../EditorColors";
 
 export class ComposeToolButton extends Container
 {
-  constructor(readonly tool: ComposeToolInfo)
+  public constructor(public readonly tool: ComposeToolInfo)
   {
     super();
 
@@ -69,7 +69,7 @@ export class ComposeToolButton extends Container
     }, true);
   }
 
-  override onMouseDown(e: MouseDownEvent)
+  protected override onMouseDown(e: MouseDownEvent)
   {
     if (e.button !== MouseButton.Left)
       return true;
@@ -79,7 +79,7 @@ export class ComposeToolButton extends Container
     return true;
   }
 
-  override onMouseUp(e: MouseUpEvent)
+  protected override onMouseUp(e: MouseUpEvent)
   {
     if (e.button !== MouseButton.Left)
       return;
@@ -88,13 +88,13 @@ export class ComposeToolButton extends Container
     this.#icon.scaleTo(1, 400, EasingFunction.OutElasticHalf);
   }
 
-  override onClick(e: ClickEvent)
+  protected override onClick(e: ClickEvent)
   {
     this.select();
     return true;
   }
 
-  select()
+  public select()
   {
     this.#activeTool.value = this.tool;
   }

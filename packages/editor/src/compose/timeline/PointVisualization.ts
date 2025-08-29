@@ -2,9 +2,9 @@ import { Anchor, Axes, Box } from "@osucad/framework";
 
 export class PointVisualization extends Box
 {
-  static readonly MAX_WIDTH = 2;
+  public static readonly MAX_WIDTH = 2;
 
-  constructor()
+  public constructor()
   {
     super({
       relativePositionAxes: Axes.Both,

@@ -17,7 +17,7 @@ export interface EditorRuntimeConfig
 
 export class EditorRuntime extends DocumentRuntime<EditorBeatmap>
 {
-  constructor(readonly rulesetStore: RulesetStore = rulesets)
+  public constructor(public readonly rulesetStore: RulesetStore = rulesets)
   {
     super([
       Signaler,
@@ -34,12 +34,12 @@ export class EditorRuntime extends DocumentRuntime<EditorBeatmap>
     this.history = new EditorHistory(this);
   }
 
-  readonly history: EditorHistory;
+  public readonly history: EditorHistory;
 
-  ruleset!: Ruleset;
-  editorRuleset!: EditorRuleset;
+  public ruleset!: Ruleset;
+  public editorRuleset!: EditorRuleset;
 
-  override createSummary(): IEditorDocumentSummary
+  public override createSummary(): IEditorDocumentSummary
   {
     const summary = super.createSummary();
 
@@ -49,7 +49,7 @@ export class EditorRuntime extends DocumentRuntime<EditorBeatmap>
     };
   }
 
-  static async createEmpty(ruleset: Ruleset)
+  public static async createEmpty(ruleset: Ruleset)
   {
     const runtime = new EditorRuntime();
 
@@ -68,7 +68,7 @@ export class EditorRuntime extends DocumentRuntime<EditorBeatmap>
     return runtime;
   }
 
-  override async load(summary: IDocumentSummary)
+  public override async load(summary: IDocumentSummary)
   {
     if (!("rulesetId" in summary) || typeof summary.rulesetId !== "string")
       throw new Error("Invalid document summary");
@@ -84,7 +84,7 @@ export class EditorRuntime extends DocumentRuntime<EditorBeatmap>
     await super.load(summary);
   }
 
-  override dispose()
+  public override dispose()
   {
     this.history.dispose();
     (this.history as unknown) = null;

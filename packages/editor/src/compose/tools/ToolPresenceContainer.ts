@@ -122,7 +122,7 @@ export class ComposePresenceContainer extends CompositeDrawable
 
 class ComposeUserPresenceContainer extends CompositeDrawable
 {
-  constructor(readonly client: IClient)
+  public constructor(public readonly client: IClient)
   {
     super();
 
@@ -139,7 +139,7 @@ class ComposeUserPresenceContainer extends CompositeDrawable
   #currentOverlay?: ComposeToolPresenceOverlay;
   #lastPresence?: IToolPresence;
 
-  updatePresence(presence: IToolPresence)
+  public updatePresence(presence: IToolPresence)
   {
     this.#lastPresence = presence;
 

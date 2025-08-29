@@ -9,7 +9,7 @@ const TICK_WIDTH = 2;
 
 export class TimelineTickDisplay extends Container<PointVisualization>
 {
-  constructor()
+  public constructor()
   {
     super();
 
@@ -40,7 +40,7 @@ export class TimelineTickDisplay extends Container<PointVisualization>
   @resolved(BindableBeatDivisor)
   accessor #beatDivisor!: BindableBeatDivisor
 
-  override update()
+  protected override update()
   {
     super.update();
 
@@ -140,14 +140,14 @@ export class TimelineTickDisplay extends Container<PointVisualization>
 
 class Range
 {
-  constructor(
-    readonly min: number,
-    readonly max: number,
+  public constructor(
+    public readonly min: number,
+    public readonly max: number,
   )
   {
   }
 
-  equals(other: Range)
+  public equals(other: Range)
   {
     return almostEquals(this.min, other.min) && almostEquals(this.max, other.max);
   }
