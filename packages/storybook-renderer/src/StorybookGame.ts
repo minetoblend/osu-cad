@@ -3,12 +3,12 @@ import { Axes, Container, Game } from "@osucad/framework";
 
 export class StorybookGame extends Game
 {
-  constructor()
+  public constructor()
   {
     super();
   }
 
-  readonly storyContainer = new Container({
+  public readonly storyContainer = new Container({
     relativeSizeAxes: Axes.Both,
   });
 
