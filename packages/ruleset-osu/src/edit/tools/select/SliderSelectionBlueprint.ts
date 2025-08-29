@@ -1,11 +1,13 @@
 import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
-import type { Slider } from "../../../hitObjects";
-import { Anchor, Bindable, dependencyLoader, Vec2 } from "@osucad/framework";
+import type { OsuHitObject, Slider } from "../../../hitObjects";
+import type { DragStartEvent, DragEvent, DragEndEvent } from "@osucad/framework";
+import { Anchor, Bindable, dependencyLoader, resolved, Vec2 } from "@osucad/framework";
 import { OsuSkinComponents } from "../../../skinning";
 import type { DrawableHitObject } from "@osucad/core";
 import { SkinnableDrawable } from "@osucad/core";
 import { DrawableSlider } from "../../../hitObjects/drawables/DrawableSlider";
 import { Color } from "pixi.js";
+import { SelectTool } from "./SelectTool";
 
 export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider>
 {
@@ -89,10 +91,44 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
     this.#drawableSlider = undefined;
   }
 
-
   override containsLocal(position: Vec2): boolean
   {
     return this.hitObject.contains(position.add(this.position));
+  }
+
+  @resolved(() => SelectTool)
+  accessor #selectTool!: SelectTool
+
+  #dragPositions!: Vec2[];
+  #dragStartPosition!: Vec2;
+  #draggedHitObjects!: OsuHitObject[];
+
+  override onDragStart(e: DragStartEvent): boolean
+  {
+    if (!this.selected)
+      this.selectExclusive();
+
+
+    this.#dragStartPosition = this.parent!.toLocalSpace(e.screenSpaceMousePosition);
+    this.#draggedHitObjects = [...this.selection] as OsuHitObject[];
+    this.#dragPositions = this.#draggedHitObjects.map(it => it.position);
+
+    return true;
+  }
+
+  override onDrag(e: DragEvent): boolean
+  {
+    const delta = this.parent!.toLocalSpace(e.screenSpaceMousePosition).sub(this.#dragStartPosition);
+
+
+    this.#selectTool.moveObjects(delta, this.#draggedHitObjects, this.#dragPositions);
+
+    return true;
+  }
+
+  override onDragEnd(e: DragEndEvent): void
+  {
+    this.history.commit();
   }
 
   override dispose()
