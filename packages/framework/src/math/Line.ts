@@ -1,3 +1,4 @@
+import { clamp } from "../utils/clamp";
 import { Vec2 } from "./Vec2";
 
 export class Line
@@ -8,26 +9,30 @@ export class Line
 
   closestPoint(position: Vec2)
   {
-    if (this.startPoint.equals(this.endPoint))
-      return this.startPoint;
-
-    const dir = this.endPoint.sub(this.startPoint).normalize();
-
-    const v = position.sub(this.startPoint).normalize();
-    const d = v.dot(dir);
-    return this.startPoint.add(dir.scale(d));
+    return Line.closestPoint(this.startPoint, this.endPoint, position);
   }
 
   static closestPoint(startPoint: Vec2, endPoint: Vec2, position: Vec2)
   {
-    if (startPoint.equals(endPoint))
+    const d2 = startPoint.distanceSq(endPoint);
+
+    if (d2 === 0)
       return startPoint;
 
-    const dir = endPoint.sub(startPoint).normalize();
+    const t = clamp((
+      (position.x - startPoint.x) * (endPoint.x - startPoint.x) +
+      (position.y - startPoint.y) * (endPoint.y - startPoint.y)
+    ) / d2, 0, 1);
 
-    const v = position.sub(startPoint).normalize();
-    const d = v.dot(dir);
-    return startPoint.add(dir.scaleInPlace(d));
+    return new Vec2(
+        startPoint.x + (endPoint.x - startPoint.x) * t,
+        startPoint.y + (endPoint.y - startPoint.y) * t,
+    );
+  }
+
+  static distanceSq(startPoint: Vec2, endPoint: Vec2, position: Vec2)
+  {
+    return this.closestPoint(startPoint, endPoint, position).distanceSq(position);
   }
 
   static distance(startPoint: Vec2, endPoint: Vec2, position: Vec2)
@@ -56,8 +61,8 @@ export class Line
     return new Vec2(-dir.y, dir.x);
   }
 
-  distanceToPoint(p: Vec2)
+  distance(p: Vec2)
   {
-    return this.closestPoint(p).distance(p);
+    return Line.distance(this.startPoint, this.endPoint, p);
   }
 }

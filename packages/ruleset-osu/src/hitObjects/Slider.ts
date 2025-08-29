@@ -256,23 +256,23 @@ export class Slider extends OsuHitObject
 
   override contains(position: Vec2): boolean
   {
+    const radiusSquared = this.radius * this.radius;
+
     if (
-      Vec2.closerThan(position, this.stackedPosition, this.radius)
-      || Vec2.closerThan(position, this.stackedPathEndPosition, this.radius)
+      Vec2.closerThanSq(position, this.stackedPosition, this.radius)
+      || Vec2.closerThanSq(position, this.stackedPathEndPosition, this.radius)
     )
     {
       return true;
     }
 
-    const vertices = this.path.getRange(0, 1);
+    const vertices = this.path.calculatedRange;
 
     position = position.sub(this.stackedPosition);
 
     for (let i = 0; i < vertices.length - 1; i++)
     {
-      const distance = Line.distance(vertices[i], vertices[i + 1], position);
-
-      if (distance < this.radius)
+      if (Line.distanceSq(vertices[i], vertices[i + 1], position) < radiusSquared)
         return true;
     }
 

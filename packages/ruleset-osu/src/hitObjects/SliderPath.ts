@@ -30,11 +30,13 @@ export class SliderPath extends ObjectDDS
   {
     super(SliderPath.attributes);
     this.controlPointsBindable.bindValueChanged(this.invalidatePath, this);
+    this.expectedDistanceBindable.bindValueChanged(() => this.#fullRange.invalidate());
   }
 
   invalidatePath()
   {
     this.#calculatedPath.invalidate();
+    this.#fullRange.invalidate();
     this.version.value++;
   }
 
@@ -61,11 +63,20 @@ export class SliderPath extends ObjectDDS
   accessor controlPoints!: readonly PathPoint[]
 
   readonly #calculatedPath = new CachedValue<CalculatedPath>();
+  readonly #fullRange = new CachedValue<readonly Vec2[]>();
 
   get calculatedPath(): CalculatedPath
   {
     this.#ensureValid();
     return this.#calculatedPath.value;
+  }
+
+  get calculatedRange(): readonly Vec2[]
+  {
+    if (!this.#fullRange.isValid)
+      this.#fullRange.value = this.getRange(0, 1);
+
+    return this.#fullRange.value;
   }
 
   getPositionAtDistance(distance: number, out = new Vec2())
