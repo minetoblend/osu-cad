@@ -172,7 +172,7 @@ export abstract class FlowContainer<T extends Drawable = Drawable> extends Conta
     }
   }
 
-  override updateAfterChildren(): void
+  protected override updateAfterChildren()
   {
     super.updateAfterChildren();
 

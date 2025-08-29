@@ -453,7 +453,7 @@ export abstract class Menu extends CompositeDrawable
     this.#scheduled.length = 0;
   }
 
-  override updateAfterChildren(): void
+  protected override updateAfterChildren()
   {
     super.updateAfterChildren();
 

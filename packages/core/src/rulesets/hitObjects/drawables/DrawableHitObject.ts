@@ -378,7 +378,7 @@ export class DrawableHitObject<out T extends HitObject = HitObject>
     super.update();
   }
 
-  override updateAfterChildren()
+  protected override updateAfterChildren()
   {
     super.updateAfterChildren();
 

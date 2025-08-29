@@ -149,8 +149,13 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
 
   get drawNode()
   {
-    this.#drawNode ??= this.createDrawNode();
-    this.#drawNode.label = this.label ?? "";
+    if (!this.#drawNode)
+    {
+      this.#drawNode = this.createDrawNode();
+      this.#drawNode.label = this.label ?? "";
+      (this.#drawNode as unknown as { drawable: Drawable }).drawable = this;
+    }
+
     return this.#drawNode;
   }
 
@@ -1246,13 +1251,11 @@ export abstract class Drawable extends Transformable implements IDisposable, IIn
   set depth(value: number)
   {
     if (this.isPartOfComposite)
-    {
       throw new Error("May not change depth while inside a parent CompositeDrawable.");
-    }
 
     this.#depth = value;
 
-    this.drawNode.zIndex = -value;
+    // this.drawNode.zIndex = -value;
   }
 
   get parent()

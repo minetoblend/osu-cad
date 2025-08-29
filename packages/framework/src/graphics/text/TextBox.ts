@@ -463,7 +463,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     this.#textInputScheduler.update();
   }
 
-  override updateAfterChildren()
+  protected override updateAfterChildren()
   {
     super.updateAfterChildren();
 

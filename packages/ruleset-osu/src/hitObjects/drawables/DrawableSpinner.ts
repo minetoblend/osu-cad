@@ -169,7 +169,7 @@ export class DrawableSpinner extends DrawableOsuHitObject<Spinner>
       nextTick.lifetimeStart = this.hitObject.startTime;
   }
 
-  override updateAfterChildren()
+  protected override updateAfterChildren()
   {
     super.updateAfterChildren();
 

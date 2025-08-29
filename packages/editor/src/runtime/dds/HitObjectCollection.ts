@@ -18,6 +18,8 @@ export type IHitObjectCollectionDelta =
   | IAddHitObjectDelta
   | IRemoveHitObjectDelta;
 
+let uid = 0;
+
 class AddHitObjectDelta extends Delta<IAddHitObjectDelta>
 {
   static create(hitObject: HitObject, encoder: IEncoder)
@@ -147,6 +149,8 @@ export class HitObjectCollection
     if (this.#set.has(hitObject))
       return false;
 
+    hitObject.uid = ++uid;
+
     this.#set.add(hitObject);
     this.#hitObjects.push(hitObject);
 
@@ -162,7 +166,14 @@ export class HitObjectCollection
 
   #startTimeChanged()
   {
-    this.#hitObjects.sort((a, b) => a.startTime - b.startTime);
+    this.#hitObjects.sort((a, b) =>
+    {
+      const diff = a.startTime - b.startTime;
+      if (diff !== 0)
+        return diff;
+
+      return b.uid - a.uid;
+    });
   }
 
   remove(hitObject: HitObject)

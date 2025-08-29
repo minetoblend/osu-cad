@@ -85,7 +85,7 @@ export class LegacySliderBall extends CompositeDrawable
     this.absoluteSequence(slider.endTime, () => this.fadeOutFromOne());
   }
 
-  public override updateAfterChildren()
+  protected override updateAfterChildren()
   {
     super.updateAfterChildren();
 

@@ -22,6 +22,8 @@ export class HitObject extends ObjectDDS
 {
   protected readonly invalidations: HitObjectInvalidations<this>;
 
+  uid = 0;
+
   constructor(attributes: DDSAttributes)
   {
     super(attributes);

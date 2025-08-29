@@ -181,7 +181,7 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
       this.samples.stop();
   }
 
-  public override updateAfterChildren()
+  protected override updateAfterChildren()
   {
     super.updateAfterChildren();
 

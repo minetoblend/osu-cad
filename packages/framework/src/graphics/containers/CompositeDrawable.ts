@@ -46,6 +46,14 @@ export class ChildComparer implements IComparer<Drawable>
   {
     return this.owner.compare(a, b);
   };
+
+  compareDrawNodes = (a: PIXIContainer, b: PIXIContainer) =>
+  {
+    return this.owner.compare(
+        (a as any).drawable,
+        (b as any).drawable,
+    );
+  };
 }
 
 export class CompositeDrawable extends Drawable
@@ -56,13 +64,15 @@ export class CompositeDrawable extends Drawable
   {
     super();
 
-    const comparer = new ChildComparer(this);
+    this.#childComparer = new ChildComparer(this);
 
-    this.#internalChildren = new SortedList<Drawable>(comparer);
-    this.#aliveInternalChildren = new SortedList<Drawable>(comparer);
+    this.#internalChildren = new SortedList<Drawable>(this.#childComparer);
+    this.#aliveInternalChildren = new SortedList<Drawable>(this.#childComparer);
 
     this.addLayout(this.#childrenSizeDependencies);
   }
+
+  #childComparer: ChildComparer;
 
   override createDrawNode(): PIXIContainer
   {
@@ -240,6 +250,8 @@ export class CompositeDrawable extends Drawable
     return a.childId - b.childId;
   }
 
+  #childDepthChanged = false;
+
   changeInternalChildDepth(child: Drawable, newDepth: number)
   {
     if (child.depth === newDepth)
@@ -252,9 +264,7 @@ export class CompositeDrawable extends Drawable
     this.#internalChildren.removeAt(index);
     const aliveIndex = this.#aliveInternalChildren.indexOf(child);
     if (aliveIndex >= 0)
-    {
       this.#aliveInternalChildren.removeAt(aliveIndex);
-    }
 
     const childId = child.childId;
     child.childId = 0;
@@ -263,9 +273,9 @@ export class CompositeDrawable extends Drawable
 
     this.#internalChildren.add(child);
     if (aliveIndex >= 0)
-    {
       this.#aliveInternalChildren.add(child);
-    }
+
+    this.#childDepthChanged = true;
 
     this.childDepthChanged.emit(child);
   }
@@ -767,6 +777,12 @@ export class CompositeDrawable extends Drawable
     if (!super.updateSubTreeTransforms())
       return false;
 
+    if (this.#childDepthChanged)
+    {
+      this.drawNode!.children.sort(this.#childComparer.compareDrawNodes);
+      this.#childDepthChanged = false;
+    }
+
     const children = this.#aliveInternalChildren.items;
     for (let i = 0, len = children.length; i < len; i++)
       children[i].updateSubTreeTransforms();
@@ -780,11 +796,11 @@ export class CompositeDrawable extends Drawable
     return true;
   }
 
-  updateAfterChildrenLife()
+  protected updateAfterChildrenLife()
   {
   }
 
-  updateAfterChildren()
+  protected updateAfterChildren()
   {
   }
 
@@ -998,6 +1014,7 @@ export class CompositeDrawable extends Drawable
     this.#aliveInternalChildren.add(child);
     child.isAlive = true;
 
+    this.#childDepthChanged = true;
     this.childBecameAlive.emit(child);
 
     child.invalidate(Invalidation.Layout, InvalidationSource.Parent);

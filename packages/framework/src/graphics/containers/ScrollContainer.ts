@@ -509,7 +509,7 @@ export abstract class ScrollContainer<T extends Drawable = Drawable> extends Con
     }
   }
 
-  override updateAfterChildren(): void
+  protected override updateAfterChildren()
   {
     super.updateAfterChildren();
 
