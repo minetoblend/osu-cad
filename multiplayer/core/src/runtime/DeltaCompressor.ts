@@ -18,7 +18,7 @@ export class DeltaCompressor
   #deltas: IDeltaEntry[] = [];
   #mergeMap = new MultiValueMap<string, IDeltaEntry>();
 
-  push(target: string, delta: Delta)
+  public push(target: string, delta: Delta)
   {
     const entry: IDeltaEntry = { target, delta };
 
@@ -47,12 +47,12 @@ export class DeltaCompressor
     this.#deltas.push(entry);
   }
 
-  hasDeltas()
+  public hasDeltas()
   {
     return this.#deltas.length > 0;
   }
 
-  process(): IEncodedDelta[]
+  public process(): IEncodedDelta[]
   {
     const deltas = this.#deltas.map(encodeEntry);
 

@@ -7,12 +7,12 @@ import type { Audience } from "./Audience.js";
 
 export class DeltaManager
 {
-  readonly deltaCompressor = new DeltaCompressor();
-  attachedObjects: IAttachInfo[] = [];
+  public readonly deltaCompressor = new DeltaCompressor();
+  public attachedObjects: IAttachInfo[] = [];
 
-  constructor(
-    readonly runtime: DocumentRuntime,
-    readonly audience: Audience,
+  public constructor(
+    public readonly runtime: DocumentRuntime,
+    public readonly audience: Audience,
   )
   {
     runtime.on("deltaSubmitted", (dds, delta) => this.deltaCompressor.push(dds.id, delta));
@@ -22,7 +22,7 @@ export class DeltaManager
 
   #connection?: DeltaConnection;
 
-  setConnected(connection: DeltaConnection)
+  public setConnected(connection: DeltaConnection)
   {
     this.#connection = connection;
 
@@ -37,7 +37,7 @@ export class DeltaManager
     connection.on("clientLeave", client => this.audience.removeMember(client.clientId));
   }
 
-  readonly inbound = new DeltaQueue<IRemoteDocumentMessage[]>((messages) =>
+  public readonly inbound = new DeltaQueue<IRemoteDocumentMessage[]>((messages) =>
   {
     for (const message of messages)
     {
@@ -46,12 +46,12 @@ export class DeltaManager
     }
   });
 
-  readonly inboundSignal = new DeltaQueue<IRemoteSignalMessage>(message =>
+  public readonly inboundSignal = new DeltaQueue<IRemoteSignalMessage>(message =>
   {
     this.runtime.processSignal(message, message.clientId === this.#connection!.clientId);
   });
 
-  resume()
+  public resume()
   {
     this.inbound.resume();
     this.inboundSignal.resume();

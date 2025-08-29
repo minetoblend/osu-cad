@@ -12,9 +12,9 @@ export const objectDDSMetadata = Symbol("ObjectDDS.metadata");
 
 export class ObjectDDS extends DDS<IObjectDelta>
 {
-  readonly [objectDDSMetadata]: ObjectDDSMetadata;
+  public readonly [objectDDSMetadata]: ObjectDDSMetadata;
 
-  constructor(attributes: DDSAttributes)
+  public constructor(attributes: DDSAttributes)
   {
     super(attributes);
 
@@ -69,7 +69,7 @@ export class ObjectDDS extends DDS<IObjectDelta>
   #version = 0;
   readonly #pendingProperties = new Map<string, number>();
 
-  setValue(property: ObjectDDSPropertyMetadata, newValue: unknown)
+  public setValue(property: ObjectDDSPropertyMetadata, newValue: unknown)
   {
     let oldValue = property.get(this);
 
@@ -107,7 +107,7 @@ export class ObjectDDS extends DDS<IObjectDelta>
     return oldValue;
   }
 
-  override createSummary(encoder: IEncoder)
+  public override createSummary(encoder: IEncoder)
   {
     const properties = this[objectDDSMetadata].properties;
 
@@ -121,7 +121,7 @@ export class ObjectDDS extends DDS<IObjectDelta>
     return entries;
   }
 
-  override load(summary: unknown, version: number, decoder: IDecoder): void
+  public override load(summary: unknown, version: number, decoder: IDecoder): void
   {
     if (version > this.attributes.version)
       throw new Error(`Cannot load summary with version ${version} (version=${this.attributes.version})`);

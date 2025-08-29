@@ -20,7 +20,7 @@ export class DocumentHistory extends EventEmitter<DocumentHistoryEvents>
   #undoStack: Transaction[] = [];
   #redoStack: Transaction[] = [];
 
-  constructor(readonly runtime: DocumentRuntime)
+  public constructor(public readonly runtime: DocumentRuntime)
   {
     super();
     runtime.on("deltaSubmitted", this.#onLocalDelta, this);
@@ -34,12 +34,12 @@ export class DocumentHistory extends EventEmitter<DocumentHistoryEvents>
     this.#activeTransaction.add({ targetId: nn(dds.id), delta: undo });
   }
 
-  hasUncommittedChanges()
+  public hasUncommittedChanges()
   {
     return !this.#activeTransaction.isEmpty();
   }
 
-  discardUncommittedChanges()
+  public discardUncommittedChanges()
   {
     if(!this.hasUncommittedChanges())
       return false;
@@ -49,17 +49,17 @@ export class DocumentHistory extends EventEmitter<DocumentHistoryEvents>
     return true;
   }
 
-  get canUndo()
+  public get canUndo()
   {
     return this.#undoStack.length > 0;
   }
 
-  get canRedo()
+  public get canRedo()
   {
     return this.#redoStack.length > 0;
   }
 
-  commit()
+  public commit()
   {
     if (this.#activeTransaction.isEmpty())
       return false;
@@ -75,7 +75,7 @@ export class DocumentHistory extends EventEmitter<DocumentHistoryEvents>
     return true;
   }
 
-  undo()
+  public undo()
   {
     this.commit();
 
@@ -97,7 +97,7 @@ export class DocumentHistory extends EventEmitter<DocumentHistoryEvents>
     return true;
   }
 
-  redo()
+  public redo()
   {
     this.commit();
 
@@ -119,7 +119,7 @@ export class DocumentHistory extends EventEmitter<DocumentHistoryEvents>
     return true;
   }
 
-  dispose()
+  public dispose()
   {
     this.runtime.off("deltaSubmitted", this.#onLocalDelta, this);
   }
@@ -134,10 +134,10 @@ interface HistoryEntry<T extends Delta = Delta>
 
 class Transaction
 {
-  readonly entries: HistoryEntry[] = [];
+  public readonly entries: HistoryEntry[] = [];
   readonly #mergeMap = new MultiValueMap<string, HistoryEntry<MergeableDelta>>();
 
-  add(entry: HistoryEntry)
+  public add(entry: HistoryEntry)
   {
     if (!(entry.delta instanceof MergeableDelta))
       return void this.entries.push(entry);
@@ -160,7 +160,7 @@ class Transaction
     this.entries.push(entry);
   }
 
-  isEmpty()
+  public isEmpty()
   {
     return this.entries.length === 0;
   }

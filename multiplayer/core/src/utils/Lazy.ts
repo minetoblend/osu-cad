@@ -1,12 +1,12 @@
 export class Lazy<T>
 {
-  constructor(readonly compute: () => T)
+  public constructor(public readonly compute: () => T)
   {
   }
 
   #value?: T;
 
-  get value(): T
+  public get value(): T
   {
     if (this.#value === undefined)
       this.#value = this.compute();

@@ -3,11 +3,11 @@ import type { IDecoder, IEncoder } from "./types.js";
 
 export class NullableSerializer<T, Plain> implements ISerializer<T | null, Plain | null>
 {
-  constructor(readonly serializer: ISerializer<T, Plain>)
+  public constructor(public readonly serializer: ISerializer<T, Plain>)
   {
   }
 
-  serialize(value: T | null, encoder: IEncoder): Plain | null
+  public serialize(value: T | null, encoder: IEncoder): Plain | null
   {
     if (value === null)
       return null;
@@ -15,7 +15,7 @@ export class NullableSerializer<T, Plain> implements ISerializer<T | null, Plain
     return this.serializer.serialize(value, encoder);
   }
 
-  deserialize(value: Plain | null, decoder: IDecoder): T | null
+  public deserialize(value: Plain | null, decoder: IDecoder): T | null
   {
     if (value === null)
       return null;

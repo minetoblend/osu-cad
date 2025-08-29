@@ -10,24 +10,24 @@ const defaultEncoder = new Encoder();
 
 export abstract class DDS<TDelta = unknown, EventTypes extends EventEmitter.ValidEventTypes = any> extends EventEmitter<EventTypes>
 {
-  protected constructor(readonly attributes: DDSAttributes)
+  protected constructor(public readonly attributes: DDSAttributes)
   {
     super();
   }
 
   #channel: DDSChannel | null = null;
 
-  get id(): string | null
+  public get id(): string | null
   {
     return this.#channel?.id ?? null;
   }
 
-  isAttached(): this is Attached<this>
+  public isAttached(): this is Attached<this>
   {
     return this.#channel !== null;
   }
 
-  get runtime()
+  public get runtime()
   {
     return this.#channel?.runtime;
   }
@@ -42,7 +42,7 @@ export abstract class DDS<TDelta = unknown, EventTypes extends EventEmitter.Vali
     return this.#channel!.decoder!;
   }
 
-  attach(channel: DDSChannel)
+  public attach(channel: DDSChannel)
   {
     this.#channel = channel;
 
@@ -54,7 +54,7 @@ export abstract class DDS<TDelta = unknown, EventTypes extends EventEmitter.Vali
     });
   }
 
-  detach(channel: DDSChannel)
+  public detach(channel: DDSChannel)
   {
     if (channel === this.#channel)
       this.#channel = null;
@@ -64,9 +64,9 @@ export abstract class DDS<TDelta = unknown, EventTypes extends EventEmitter.Vali
 
   protected abstract replay(delta: Delta): void;
 
-  abstract createSummary(encoder: IEncoder): unknown;
+  public abstract createSummary(encoder: IEncoder): unknown;
 
-  abstract load(summary: unknown, version: number, decoder: IDecoder): void;
+  public abstract load(summary: unknown, version: number, decoder: IDecoder): void;
 
   protected processSignal(message: IRemoteSignalMessage, local: boolean)
   {

@@ -1,18 +1,18 @@
 export class MultiValueMap<K, V>
 {
-  constructor(entries?: readonly (readonly [K, V[]])[] | null)
+  public constructor(entries?: readonly (readonly [K, V[]])[] | null)
   {
     this.#map = new Map<K, V[]>(entries);
   }
 
   readonly #map: Map<K, V[]>;
 
-  get(key: K)
+  public get(key: K)
   {
     return this.#map.get(key) ?? [];
   }
 
-  add(key: K, value: V)
+  public add(key: K, value: V)
   {
     const values = this.#map.get(key);
     if (values !== undefined)
@@ -21,7 +21,7 @@ export class MultiValueMap<K, V>
       this.#map.set(key, [value]);
   }
 
-  delete(key: K, value?: V)
+  public delete(key: K, value?: V)
   {
     if (value !== undefined)
     {
@@ -46,27 +46,27 @@ export class MultiValueMap<K, V>
     return this.#map.delete(key);
   }
 
-  clear()
+  public clear()
   {
     this.#map.clear();
   }
 
-  entries()
+  public entries()
   {
     return this.#map.entries();
   }
 
-  keys()
+  public keys()
   {
     return this.#map.keys();
   }
 
-  values()
+  public values()
   {
     return this.#map.values();
   }
 
-  [Symbol.iterator](): MapIterator<[K, V[]]>
+  public [Symbol.iterator](): MapIterator<[K, V[]]>
   {
     return this.#map[Symbol.iterator]();
   }

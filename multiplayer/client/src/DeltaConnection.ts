@@ -13,9 +13,9 @@ export interface DeltaConnectionEvents
 
 export class DeltaConnection extends EventEmitter<DeltaConnectionEvents>
 {
-  constructor(
-    readonly documentId: string,
-    readonly socket: Socket<ServerMessages, ClientMessages>,
+  public constructor(
+    public readonly documentId: string,
+    public readonly socket: Socket<ServerMessages, ClientMessages>,
   )
   {
     super();
@@ -26,7 +26,7 @@ export class DeltaConnection extends EventEmitter<DeltaConnectionEvents>
     socket.on("clientLeave", client => this.emit("clientLeave", client));
   }
 
-  static async create(documentId: string, timeout: number = 20000)
+  public static async create(documentId: string, timeout: number = 20000)
   {
     const socket = io("/", {
       transports: ["websocket"],
@@ -52,37 +52,37 @@ export class DeltaConnection extends EventEmitter<DeltaConnectionEvents>
     return this.#details;
   }
 
-  get clientId()
+  public get clientId()
   {
     return this.details.clientId;
   }
 
-  get summary()
+  public get summary()
   {
     return this.details.summary;
   }
 
-  get clients()
+  public get clients()
   {
     return this.details.clients;
   }
 
-  get sequenceNumber()
+  public get sequenceNumber()
   {
     return this.details.sequenceNumber;
   }
 
-  async connect(connectMessage: IConnect)
+  public async connect(connectMessage: IConnect)
   {
     this.#details = await this.socket.emitWithAck("connectDocument", connectMessage);
   }
 
-  submitDeltas(deltas: IDocumentMessage[])
+  public submitDeltas(deltas: IDocumentMessage[])
   {
     this.socket.emit("deltas", deltas);
   }
 
-  submitSignal(signal: ISignalMessage)
+  public submitSignal(signal: ISignalMessage)
   {
     this.socket.emit("signal", signal);
   }

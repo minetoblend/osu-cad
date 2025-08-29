@@ -8,7 +8,7 @@ import "@osucad/ruleset-osu/init";
 
 export class EditorPlayground extends OsucadGameBase
 {
-  constructor()
+  public constructor()
   {
     super();
   }

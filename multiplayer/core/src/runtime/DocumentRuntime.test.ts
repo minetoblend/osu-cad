@@ -10,14 +10,14 @@ describe("DocumentRuntime", () =>
   {
     class Foo extends ObjectDDS
     {
-      static attributes: DDSAttributes = { type: "foo", version: 0 };
+      public static attributes: DDSAttributes = { type: "foo", version: 0 };
 
-      constructor()
+      public constructor()
       {
         super(Foo.attributes);
       }
 
-      @type("int32") accessor count = 0;
+      @type("int32") public accessor count = 0;
     }
 
     const foo = new Foo();
@@ -44,9 +44,9 @@ describe("DocumentRuntime", () =>
   {
     class Foo extends ObjectDDS
     {
-      static attributes: DDSAttributes = { type: "foo", version: 0 };
+      public static attributes: DDSAttributes = { type: "foo", version: 0 };
 
-      constructor()
+      public constructor()
       {
         super(Foo.attributes);
       }
@@ -54,9 +54,9 @@ describe("DocumentRuntime", () =>
 
     class Bar extends ObjectDDS
     {
-      static attributes: DDSAttributes = { type: "bar", version: 0 };
+      public static attributes: DDSAttributes = { type: "bar", version: 0 };
 
-      constructor()
+      public constructor()
       {
         super(Bar.attributes);
       }
@@ -72,18 +72,18 @@ describe("DocumentRuntime", () =>
   {
     class Foo extends ObjectDDS
     {
-      static attributes: DDSAttributes = { type: "foo", version: 0 };
+      public static attributes: DDSAttributes = { type: "foo", version: 0 };
 
-      constructor()
+      public constructor()
       {
         super(Foo.attributes);
       }
 
       @type("int32")
-      accessor count = 0
+      public accessor count = 0
 
       @nested(() => Foo, { nullable: true })
-      accessor foo: Foo | null = null
+      public accessor foo: Foo | null = null
     }
 
     const foo1 = new Foo();

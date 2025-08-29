@@ -9,11 +9,11 @@ export interface IMultiplayerClientLoadOptions
 
 export class MultiplayerClient
 {
-  constructor()
+  public constructor()
   {
   }
 
-  async load(documentId: string, options: IMultiplayerClientLoadOptions)
+  public async load(documentId: string, options: IMultiplayerClientLoadOptions)
   {
     const document = await Document.load({
       documentId,

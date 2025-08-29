@@ -18,7 +18,7 @@ export class SkinningDemo extends OsucadGameBase
     void this.setupSkinVisualizer();
   }
 
-  async setupSkinVisualizer()
+  public async setupSkinVisualizer()
   {
     const files = await fetch(oskFile)
       .then(res => res.arrayBuffer())

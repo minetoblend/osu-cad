@@ -5,12 +5,12 @@ export type IObjectDelta = [number, Record<string, unknown>];
 
 export class ObjectDelta extends MergeableDelta<IObjectDelta>
 {
-  static from(version: number, property: ObjectDDSPropertyMetadata, value: unknown)
+  public static from(version: number, property: ObjectDDSPropertyMetadata, value: unknown)
   {
     return new ObjectDelta(version, { [property.name]: value });
   }
 
-  constructor(public version: number, public values: Record<string, unknown>)
+  public constructor(public version: number, public values: Record<string, unknown>)
   {
     super();
   }

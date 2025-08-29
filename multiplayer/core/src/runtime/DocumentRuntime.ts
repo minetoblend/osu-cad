@@ -26,29 +26,29 @@ export class DocumentRuntime<T extends DDS = DDS> extends EventEmitter<DocumentR
 
   readonly #channelCollection: ChannelCollection;
 
-  get root(): T
+  public get root(): T
   {
     return this.#channelCollection.root as T;
   }
 
-  get objects()
+  public get objects()
   {
     return this.#channelCollection;
   }
 
-  get typeRegistry()
+  public get typeRegistry()
   {
     return this.#channelCollection.typeRegistry;
   }
 
-  idGenerator = new UUIDGenerator();
+  public idGenerator = new UUIDGenerator();
 
   public generateUniqueId()
   {
     return this.idGenerator.next();
   }
 
-  static create<T extends DDS>(root: T, types: DDSFactoryOrConstructor<DDS>[])
+  public static create<T extends DDS>(root: T, types: DDSFactoryOrConstructor<DDS>[])
   {
     const runtime = new DocumentRuntime<T>(types);
 
@@ -58,7 +58,7 @@ export class DocumentRuntime<T extends DDS = DDS> extends EventEmitter<DocumentR
     return runtime;
   }
 
-  static async load(summary: IDocumentSummary, types: DDSFactoryOrConstructor<DDS>[])
+  public static async load(summary: IDocumentSummary, types: DDSFactoryOrConstructor<DDS>[])
   {
     const runtime = new DocumentRuntime(types);
 
@@ -67,37 +67,37 @@ export class DocumentRuntime<T extends DDS = DDS> extends EventEmitter<DocumentR
     return runtime;
   }
 
-  createSummary()
+  public createSummary()
   {
     return this.#channelCollection.createSummary();
   }
 
-  async load(summary: IDocumentSummary)
+  public async load(summary: IDocumentSummary)
   {
     this.#channelCollection.load(summary);
   }
 
-  submitDelta(target: Attached<DDS>, delta: Delta, undo: Delta | null): void
+  public submitDelta(target: Attached<DDS>, delta: Delta, undo: Delta | null): void
   {
     this.emit("deltaSubmitted", target, delta, undo);
   }
 
-  submitAttachMessage(target: Attached<DDS>, summary: IDDSSummary)
+  public submitAttachMessage(target: Attached<DDS>, summary: IDDSSummary)
   {
     this.emit("attached", target, summary);
   }
 
-  submitSignal(target: Attached<DDS>, type: string, signal: unknown): void
+  public submitSignal(target: Attached<DDS>, type: string, signal: unknown): void
   {
     this.emit("signalSubmitted", target, type, signal);
   }
 
-  replayDelta(targetId: string, delta: Delta)
+  public replayDelta(targetId: string, delta: Delta)
   {
     this.#channelCollection.getChannel(targetId)?.replay(delta);
   }
 
-  process(message: IDocumentMessage, local: boolean)
+  public process(message: IDocumentMessage, local: boolean)
   {
     switch (message.type)
     {
@@ -108,7 +108,7 @@ export class DocumentRuntime<T extends DDS = DDS> extends EventEmitter<DocumentR
     }
   }
 
-  processSignal(message: IRemoteSignalMessage, local: boolean)
+  public processSignal(message: IRemoteSignalMessage, local: boolean)
   {
     const channel = this.#channelCollection.getChannel(message.target);
 
@@ -120,12 +120,12 @@ export class DocumentRuntime<T extends DDS = DDS> extends EventEmitter<DocumentR
     return true;
   }
 
-  clone()
+  public clone()
   {
     return DocumentRuntime.load(this.createSummary(), this.typeRegistry.types());
   }
 
-  dispose()
+  public dispose()
   {
     this.#channelCollection.dispose();
     (this.#channelCollection as unknown) = null;

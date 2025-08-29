@@ -10,28 +10,28 @@ import { assert } from "../utils/assert.js";
 
 export class ChannelCollection
 {
-  constructor(readonly runtime: DocumentRuntime, types: DDSFactoryOrConstructor<DDS>[])
+  public constructor(public readonly runtime: DocumentRuntime, types: DDSFactoryOrConstructor<DDS>[])
   {
     this.typeRegistry = new DDSFactoryRegistry(types);
   }
 
-  readonly typeRegistry: DDSFactoryRegistry;
+  public readonly typeRegistry: DDSFactoryRegistry;
 
-  root!: DDS;
+  public root!: DDS;
 
   readonly #channels = new Map<string, DDSChannel>();
 
-  get objectCount()
+  public get objectCount()
   {
     return this.#channels.size - 1;
   }
 
-  createSummary(): IDocumentSummary
+  public createSummary(): IDocumentSummary
   {
     return summarizeDocument(this.runtime);
   }
 
-  load(summary: IDocumentSummary): void
+  public load(summary: IDocumentSummary): void
   {
     this.typeRegistry.ensureSupported(summary.types);
 
@@ -45,7 +45,7 @@ export class ChannelCollection
     this.root = nn(this.getObject(summary.root));
   }
 
-  attach(dds: DDS): boolean
+  public attach(dds: DDS): boolean
   {
     if (dds.isAttached())
       return false;
@@ -66,7 +66,7 @@ export class ChannelCollection
     return true;
   }
 
-  detach(dds: DDS): boolean
+  public detach(dds: DDS): boolean
   {
     if (!dds.isAttached())
       return false;
@@ -84,17 +84,17 @@ export class ChannelCollection
     return true;
   }
 
-  getObject(id: string)
+  public getObject(id: string)
   {
     return this.#channels.get(id)?.target;
   }
 
-  getChannel(id: string)
+  public getChannel(id: string)
   {
     return this.#channels.get(id);
   }
 
-  process(message: IDocumentMessage, local: boolean)
+  public process(message: IDocumentMessage, local: boolean)
   {
     switch (message.type)
     {
@@ -147,7 +147,7 @@ export class ChannelCollection
     }
   }
 
-  dispose()
+  public dispose()
   {
     for (const channel of [...this.#channels.values()])
       this.detach(channel.target);

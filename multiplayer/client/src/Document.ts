@@ -13,7 +13,7 @@ export interface DocumentOptions
 
 export class Document
 {
-  constructor({
+  public constructor({
     runtime,
     serviceFactory,
   }: DocumentOptions)
@@ -31,21 +31,21 @@ export class Document
   readonly #serviceFactory: DocumentServiceFactory;
   readonly #deltaManager: DeltaManager;
   readonly #audience: Audience;
-  readonly runtime: DocumentRuntime;
+  public readonly runtime: DocumentRuntime;
   #service!: DocumentService;
   #connection?: DeltaConnection;
 
-  get root()
+  public get root()
   {
     return this.runtime.root;
   }
 
-  get audience(): IAudience
+  public get audience(): IAudience
   {
     return this.#audience;
   }
 
-  static async load(options: {
+  public static async load(options: {
     documentId: string,
     serviceFactory: DocumentServiceFactory,
     runtimeFactory: () => Promise<DocumentRuntime>

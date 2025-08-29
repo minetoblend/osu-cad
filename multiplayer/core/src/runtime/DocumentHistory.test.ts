@@ -10,7 +10,7 @@ describe("DocumentHistory", () =>
 
     class Test extends ObjectDDS
     {
-      constructor()
+      public constructor()
       {
         super({
           type: "test",
@@ -19,7 +19,7 @@ describe("DocumentHistory", () =>
       }
 
       @type("int32")
-      accessor value = 0;
+      public accessor value = 0;
     }
 
     const test = new Test();

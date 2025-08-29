@@ -4,9 +4,9 @@ import { toDDSFactory } from "../dds/index.js";
 
 export class DDSFactoryRegistry
 {
-  readonly ddsFactories = new Map<string, DDSFactory<DDS>>();
+  public readonly ddsFactories = new Map<string, DDSFactory<DDS>>();
 
-  constructor(factories: DDSFactoryOrConstructor<DDS>[])
+  public constructor(factories: DDSFactoryOrConstructor<DDS>[])
   {
     for (const factory of factories)
     {
@@ -17,12 +17,12 @@ export class DDSFactoryRegistry
     }
   }
 
-  types(): DDSFactory<DDS>[]
+  public types(): DDSFactory<DDS>[]
   {
     return [...this.ddsFactories.values()];
   }
 
-  register(factory: DDSFactoryOrConstructor<DDS>)
+  public register(factory: DDSFactoryOrConstructor<DDS>)
   {
     factory = toDDSFactory(factory);
 
@@ -30,7 +30,7 @@ export class DDSFactoryRegistry
       this.ddsFactories.set(factory.attributes.type, factory);
   }
 
-  get(attributes: DDSAttributes)
+  public get(attributes: DDSAttributes)
   {
     const factory = this.ddsFactories.get(attributes.type);
 
@@ -40,7 +40,7 @@ export class DDSFactoryRegistry
     return undefined;
   }
 
-  ensureSupported(attributeList: DDSAttributes[])
+  public ensureSupported(attributeList: DDSAttributes[])
   {
     const unsupported: DDSAttributes[] = [];
     for (const attributes of attributeList)

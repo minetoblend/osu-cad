@@ -11,11 +11,12 @@ export abstract class NoopDDS<EventTypes extends EventEmitter.ValidEventTypes = 
   protected override replay(delta: Delta): void
   {
   }
-  override createSummary(encoder: IEncoder): unknown
+
+  public override createSummary(encoder: IEncoder): unknown
   {
     return null;
   }
-  override load(summary: unknown, version: number, decoder: IDecoder): void
+  public override load(summary: unknown, version: number, decoder: IDecoder): void
   {
   }
 }

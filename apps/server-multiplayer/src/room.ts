@@ -6,9 +6,9 @@ import type { BroadcastOperator, Server, Socket } from "socket.io";
 
 export class Room
 {
-  sequenceNumber = 0;
+  public sequenceNumber = 0;
 
-  static async create(documentId: string, io: Server)
+  public static async create(documentId: string, io: Server)
   {
     const runtime = await EditorRuntime.createEmpty(new OsuRuleset());
 
@@ -19,15 +19,15 @@ export class Room
     return new Room(documentId, runtime, io.to(documentId));
   }
 
-  constructor(
-    readonly documentId: string,
-    readonly runtime: EditorRuntime,
-    readonly broadcast: BroadcastOperator<ServerMessages, any>,
+  public constructor(
+    public readonly documentId: string,
+    public readonly runtime: EditorRuntime,
+    public readonly broadcast: BroadcastOperator<ServerMessages, any>,
   )
   {
   }
 
-  process(clientId: string, deltas: IDocumentMessage[])
+  public process(clientId: string, deltas: IDocumentMessage[])
   {
     const processed: IRemoteDocumentMessage[] = [];
 
@@ -46,7 +46,7 @@ export class Room
 
   #clients = new Map<string, IClient>();
 
-  async accept(socket: Socket<ClientMessages, ServerMessages>): Promise<IConnected>
+  public async accept(socket: Socket<ClientMessages, ServerMessages>): Promise<IConnected>
   {
     const clientId = crypto.randomUUID();
 

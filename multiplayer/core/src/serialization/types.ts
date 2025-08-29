@@ -24,7 +24,7 @@ export interface EncoderEvents
 
 export class Encoder extends EventEmitter<EncoderEvents> implements IEncoder
 {
-  encodeDDS(dds: DDS): DDSRef
+  public encodeDDS(dds: DDS): DDSRef
   {
     this.emit("ddsEncoded", dds);
 
@@ -34,11 +34,11 @@ export class Encoder extends EventEmitter<EncoderEvents> implements IEncoder
 
 export class Decoder implements IDecoder
 {
-  constructor(readonly ddsSource: { getObject(id: string): DDS | undefined } = { getObject: () => undefined })
+  public constructor(public readonly ddsSource: { getObject(id: string): DDS | undefined } = { getObject: () => undefined })
   {
   }
 
-  decodeDDS(ref: DDSRef): DDS | undefined
+  public decodeDDS(ref: DDSRef): DDS | undefined
   {
     return this.ddsSource.getObject(ref.$ref);
   }

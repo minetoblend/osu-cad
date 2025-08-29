@@ -5,7 +5,7 @@ import { Axes, CompositeDrawable, FramedClock, provide } from "@osucad/framework
 
 export class SkinVisualization extends CompositeDrawable
 {
-  constructor(readonly beatmap: Beatmap)
+  public constructor(public readonly beatmap: Beatmap)
   {
     super();
 
@@ -24,12 +24,12 @@ export class SkinVisualization extends CompositeDrawable
   @provide(PlayfieldClock)
   protected readonly gameplayClock = new LoopingClock();
 
-  get startTime()
+  public get startTime()
   {
     return this.beatmap.hitObjects[0].startTime - 1000;
   }
 
-  get beatmapDuration()
+  public get beatmapDuration()
   {
     return this.beatmap.hitObjects[this.beatmap.hitObjects.length - 1].startTime + 1000;
   }
@@ -44,7 +44,7 @@ export class SkinVisualization extends CompositeDrawable
       this.gameplayClock.seek(this.startTime);
   }
 
-  async loadRuleset()
+  public async loadRuleset()
   {
     const drawableRuleset = await this.beatmap.beatmapInfo.ruleset?.createDrawableRuleset();
     if (drawableRuleset)

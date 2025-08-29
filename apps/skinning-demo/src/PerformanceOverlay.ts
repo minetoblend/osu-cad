@@ -2,7 +2,7 @@ import { Anchor, Axes, Bindable, Container, EasingFunction, SpriteText } from "@
 
 export class PerformanceOverlay extends Container
 {
-  constructor()
+  public constructor()
   {
     super({
       relativeSizeAxes: Axes.Both,
@@ -13,7 +13,7 @@ export class PerformanceOverlay extends Container
     this.add(this.fpsText);
   }
 
-  fpsText = new SpriteText({
+  public fpsText = new SpriteText({
     text: "",
     anchor: Anchor.BottomRight,
     origin: Anchor.BottomRight,
@@ -22,11 +22,11 @@ export class PerformanceOverlay extends Container
     },
   });
 
-  lastFrame = 0;
+  public lastFrame = 0;
 
-  fps = new Bindable(0);
+  public fps = new Bindable(0);
 
-  fpsInterpolated = new Bindable(0);
+  public fpsInterpolated = new Bindable(0);
 
   protected override loadComplete()
   {
@@ -38,7 +38,7 @@ export class PerformanceOverlay extends Container
     });
   }
 
-  override update()
+  public override update()
   {
     super.update();
 

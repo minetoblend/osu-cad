@@ -34,7 +34,7 @@ export class EditorLoader extends Screen
     void this.loadEditor();
   }
 
-  async loadEditor()
+  protected async loadEditor()
   {
     const { MultiplayerClient } = await import("@osucad/multiplayer-client");
 
@@ -47,14 +47,14 @@ export class EditorLoader extends Screen
     await this.pushEditor();
   }
 
-  async pushEditor()
+  protected async pushEditor()
   {
     const { Editor } = await import("@osucad/editor");
 
     this.screenStack.push(new Editor({ document: this.#document }));
   }
 
-  override onSuspending(e: ScreenTransitionEvent)
+  public override onSuspending(e: ScreenTransitionEvent)
   {
     super.onSuspending(e);
 

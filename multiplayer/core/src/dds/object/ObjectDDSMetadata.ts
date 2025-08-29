@@ -6,7 +6,7 @@ export class ObjectDDSMetadata
 {
   static readonly #metadataMap = new Map<any, ObjectDDSMetadata>();
 
-  static for(dds: ObjectDDS): ObjectDDSMetadata
+  public static for(dds: ObjectDDS): ObjectDDSMetadata
   {
     let metadata = this.#metadataMap.get(dds.constructor);
 
@@ -16,18 +16,18 @@ export class ObjectDDSMetadata
     return metadata;
   }
 
-  readonly properties: ObjectDDSPropertyMetadata[];
+  public readonly properties: ObjectDDSPropertyMetadata[];
 
   readonly #nameToProperty = new Map<string, ObjectDDSPropertyMetadata>();
 
-  constructor(target: ObjectDDS)
+  public constructor(target: ObjectDDS)
   {
     this.properties = getObjectDDSProperties(target);
     for (const property of this.properties)
       this.#nameToProperty.set(property.name, property);
   }
 
-  getPropertyByName(name: string)
+  public getPropertyByName(name: string)
   {
     return this.#nameToProperty.get(name);
   }

@@ -12,7 +12,7 @@ export class OsucadGame extends Game
 
   @provide(ISkinSource)
   @provide(SkinManager)
-  readonly skinManager = new SkinManager();
+  public readonly skinManager = new SkinManager();
 
   @asyncDependencyLoader()
   async #load()

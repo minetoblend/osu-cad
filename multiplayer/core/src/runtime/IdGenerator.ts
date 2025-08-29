@@ -5,7 +5,7 @@ export interface IdGenerator
 
 export class UUIDGenerator implements IdGenerator
 {
-  next(): string
+  public next(): string
   {
     return crypto.randomUUID();
   }

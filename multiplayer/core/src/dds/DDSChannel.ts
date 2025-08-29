@@ -7,9 +7,9 @@ import type { IDDSSummary, IRemoteSignalMessage } from "@osucad/multiplayer-prot
 
 export class DDSChannel
 {
-  constructor(
-    readonly id: string,
-    readonly runtime: DocumentRuntime,
+  public constructor(
+    public readonly id: string,
+    public readonly runtime: DocumentRuntime,
     target: DDS,
   )
   {
@@ -20,45 +20,45 @@ export class DDSChannel
     this.decoder = new Decoder(runtime.objects);
   }
 
-  readonly target: Attached<DDS>;
-  readonly encoder: Encoder;
-  readonly decoder: Decoder;
+  public readonly target: Attached<DDS>;
+  public readonly encoder: Encoder;
+  public readonly decoder: Decoder;
 
-  submitDelta(delta: Delta, undo: Delta | null)
+  public submitDelta(delta: Delta, undo: Delta | null)
   {
     this.runtime.submitDelta(this.target, delta, undo);
   }
 
-  submitSignal(type: string, signal: unknown)
+  public submitSignal(type: string, signal: unknown)
   {
     this.runtime.submitSignal(this.target, type, signal);
   }
 
   #handler!: IDeltaHandler;
 
-  setHandler(handler: IDeltaHandler)
+  public setHandler(handler: IDeltaHandler)
   {
     this.#handler = handler;
   }
 
-  load(summary: IDDSSummary)
+  public load(summary: IDDSSummary)
   {
     const { content, attributes } = summary;
 
     this.#handler.load(content, attributes.version, this.decoder);
   }
 
-  replay(delta: Delta)
+  public replay(delta: Delta)
   {
     this.#handler.replay(delta);
   }
 
-  process(delta: unknown, local: boolean)
+  public process(delta: unknown, local: boolean)
   {
     this.#handler.process(delta, local);
   }
 
-  processSignal(message: IRemoteSignalMessage, local: boolean)
+  public processSignal(message: IRemoteSignalMessage, local: boolean)
   {
     this.#handler.processSignal(message, local);
   }

@@ -45,48 +45,48 @@ export class DeltaQueue<T> extends EventEmitter<IDeltaQueueEvents<T>> implements
   #processingPromise: Promise<{ count: number; duration: number }> | undefined;
   readonly #worker: (task: T) => void;
 
-  constructor(worker: (task: T) => void)
+  public constructor(worker: (task: T) => void)
   {
     super();
     this.#worker = worker;
   }
 
-  get paused()
+  public get paused()
   {
     return this.#pauseCount > 0;
   }
 
-  get length()
+  public get length()
   {
     return this.#q.length;
   }
 
-  get idle()
+  public get idle()
   {
     return this.#processingPromise === undefined && this.#q.length === 0;
   }
 
-  async waitTillProcessingDone(): Promise<{ count: number; duration: number }>
+  public async waitTillProcessingDone(): Promise<{ count: number; duration: number }>
   {
     return this.#processingPromise ?? { count: 0, duration: 0 };
   }
 
-  clear()
+  public clear()
   {
     this.#q.clear();
   }
 
-  peek(): T | undefined
+  public peek(): T | undefined
   {
     return this.#q.peekFront();
   }
 
-  toArray(): T[]
+  public toArray(): T[]
   {
     return this.#q.toArray();
   }
 
-  push(task: T)
+  public push(task: T)
   {
     try
     {
@@ -100,13 +100,13 @@ export class DeltaQueue<T> extends EventEmitter<IDeltaQueueEvents<T>> implements
     }
   }
 
-  async pause()
+  public async pause()
   {
     this.#pauseCount++;
     await this.waitTillProcessingDone();
   }
 
-  resume()
+  public resume()
   {
     assert(
         this.#pauseCount > 0,

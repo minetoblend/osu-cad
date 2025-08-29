@@ -2,11 +2,11 @@ import type { IDocumentSummary } from "@osucad/multiplayer-protocol";
 
 export class DocumentStorageService
 {
-  constructor(readonly documentId: string)
+  public constructor(public readonly documentId: string)
   {
   }
 
-  async getSummary(): Promise<{
+  public async getSummary(): Promise<{
     summary: IDocumentSummary,
     sequenceNumber: number
   }>

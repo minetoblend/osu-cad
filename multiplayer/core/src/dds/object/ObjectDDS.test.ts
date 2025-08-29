@@ -13,14 +13,14 @@ describe("ObjectDDS", () =>
   {
     class Counter extends ObjectDDS
     {
-      constructor()
+      public constructor()
       {
         super({ type: "counter", version: 0 });
       }
 
-      @type("uint32") accessor value = 0;
+      @type("uint32") public accessor value = 0;
 
-      @type("string") accessor foo = "bar";
+      @type("string") public accessor foo = "bar";
     }
 
     const counter = new Counter();
@@ -43,7 +43,7 @@ describe("ObjectDDS", () =>
   {
     class TestObject extends ObjectDDS
     {
-      constructor()
+      public constructor()
       {
         super({
           type: "test",
@@ -52,10 +52,10 @@ describe("ObjectDDS", () =>
       }
 
       @type("string")
-      accessor foo = "";
+      public accessor foo = "";
 
       @type("string", { since: 1 })
-      accessor bar = "";
+      public accessor bar = "";
     }
 
     const obj1 = new TestObject();
@@ -87,34 +87,34 @@ describe("ObjectDDS", () =>
   {
     class Bar extends ObjectDDS
     {
-      static readonly attributes: DDSAttributes = {
+      public static readonly attributes: DDSAttributes = {
         type: "bar",
         version: 0,
       };
 
-      constructor()
+      public constructor()
       {
         super(Bar.attributes);
       }
 
       @type("int32")
-      accessor count = 0;
+      public accessor count = 0;
     }
 
     class Foo extends ObjectDDS
     {
-      static readonly attributes: DDSAttributes = {
+      public static readonly attributes: DDSAttributes = {
         type: "foo",
         version: 0,
       };
 
-      constructor()
+      public constructor()
       {
         super(Foo.attributes);
       }
 
       @nested(Bar)
-      accessor bar = new Bar();
+      public accessor bar = new Bar();
     }
 
     const foo = new Foo();
@@ -146,14 +146,14 @@ describe("ObjectDDS", () =>
   {
     class Counter extends ObjectDDS
     {
-      static readonly attributes: DDSAttributes = { type: "counter", version: 0 };
+      public static readonly attributes: DDSAttributes = { type: "counter", version: 0 };
 
-      constructor()
+      public constructor()
       {
         super(Counter.attributes);
       }
 
-      @type("uint32") accessor value = 0;
+      @type("uint32") public accessor value = 0;
     }
 
     const counter = new Counter();

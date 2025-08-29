@@ -30,17 +30,17 @@ export class Audience extends EventEmitter<IAudienceEvents> implements IAudience
   readonly #members = new Map<string, IClient>();
   #ownClientId: string | undefined = undefined;
 
-  getMembers(): ReadonlyMap<string, IClient>
+  public getMembers(): ReadonlyMap<string, IClient>
   {
     return this.#members;
   }
 
-  getMember(id: string)
+  public getMember(id: string)
   {
     return this.#members.get(id);
   }
 
-  setOwnClientId(clientId: string)
+  public setOwnClientId(clientId: string)
   {
     if (this.#ownClientId !== clientId)
     {
@@ -49,7 +49,7 @@ export class Audience extends EventEmitter<IAudienceEvents> implements IAudience
     }
   }
 
-  addMember(client: IClient)
+  public addMember(client: IClient)
   {
     if (!this.#members.has(client.clientId))
     {
@@ -58,7 +58,7 @@ export class Audience extends EventEmitter<IAudienceEvents> implements IAudience
     }
   }
 
-  removeMember(clientId: string)
+  public removeMember(clientId: string)
   {
     const client = this.#members.get(clientId);
 
@@ -71,7 +71,7 @@ export class Audience extends EventEmitter<IAudienceEvents> implements IAudience
     return true;
   }
 
-  getSelf(): ISelf | undefined
+  public getSelf(): ISelf | undefined
   {
     if (!this.#ownClientId)
       return undefined;

@@ -4,7 +4,7 @@ import { Graphics } from "pixi.js";
 
 export class LoadingSpinner extends Drawable
 {
-  constructor(options: DrawableOptions = {})
+  public constructor(options: DrawableOptions = {})
   {
     super();
     this.with({
@@ -13,21 +13,21 @@ export class LoadingSpinner extends Drawable
     });
   }
 
-  createDrawNode()
+  public createDrawNode()
   {
     return this.#graphics = new Graphics();
   }
 
   #graphics!: Graphics;
 
-  override update()
+  protected override update()
   {
     super.update();
 
     this.#updateGraphics(this.#graphics);
   }
 
-  animationSpeed = 2;
+  public animationSpeed = 2;
 
   #updateGraphics(g: Graphics)
   {
