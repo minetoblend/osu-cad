@@ -99,11 +99,11 @@ export class SliderPathVisualizer extends CompositeDrawable
     case PathType.Bezier:
       return 0x00FF00;
     case PathType.Catmull:
-      return 0xFF0000;
+      return 0xff6efd;
     case PathType.PerfectCurve:
       return 0x324dfc;
     case PathType.Linear:
-      return 0xff6efd;
+      return 0xFF0000;
     case PathType.BSpline:
       return 0x00FFFF;
     default:

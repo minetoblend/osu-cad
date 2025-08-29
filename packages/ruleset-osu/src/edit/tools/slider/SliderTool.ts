@@ -16,6 +16,7 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
   }
 
   #pathText!: PathText;
+  #explicitPathType = false;
 
   @dependencyLoader()
   #load()
@@ -61,7 +62,8 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
 
     const path = [...this.path, new PathPoint(position)];
 
-    this.applyAutomaticPathType(path);
+    if (!this.#explicitPathType)
+      this.applyAutomaticPathType(path);
 
     this.hitObject.path.controlPoints = path;
     this.hitObject.snapPathLength(this.beatmap.controlPointInfo, this.beatDivisor.value);
@@ -117,6 +119,8 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
 
     this.applyAutomaticPathType(this.path);
 
+    this.#explicitPathType = false;
+
     return true;
   }
 
@@ -138,11 +142,20 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
       if (segmentStart < 0)
         return true;
 
-      const point = this.path[segmentStart];
+      const path = [...this.path, new PathPoint(this.pathPosition)];
+
+      if (!this.#explicitPathType)
+        this.applyAutomaticPathType(path);
+
+      this.#explicitPathType = true;
+
+      const point = path[segmentStart];
 
       const newType = e.scrollDelta.y > 0 ? PathType.next(point.type!) : PathType.previous(point.type!);
 
-      this.path[segmentStart] = point.withType(newType);
+      path[segmentStart] = point.withType(newType);
+
+      this.path = path.slice(0, -1);
 
       this.#flashPathType(newType, point.position);
 
