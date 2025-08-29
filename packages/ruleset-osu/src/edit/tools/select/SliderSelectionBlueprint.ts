@@ -1,6 +1,6 @@
 import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
 import type { OsuHitObject, Slider } from "../../../hitObjects";
-import type { DragStartEvent, DragEvent, DragEndEvent } from "@osucad/framework";
+import type { DragStartEvent, DragEvent, DragEndEvent, Rectangle } from "@osucad/framework";
 import { Anchor, Bindable, dependencyLoader, resolved, Vec2 } from "@osucad/framework";
 import { OsuSkinComponents } from "../../../skinning";
 import type { DrawableHitObject } from "@osucad/core";
@@ -124,6 +124,12 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
     this.#selectTool.moveObjects(delta, this.#draggedHitObjects, this.#dragPositions);
 
     return true;
+  }
+
+  public override isInSelectionRect(rectangle: Rectangle): boolean
+  {
+    return rectangle.contains(this.hitObject.stackedPosition)
+      || rectangle.contains(this.hitObject.stackedPathEndPosition);
   }
 
   override onDragEnd(e: DragEndEvent): void
