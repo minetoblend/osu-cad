@@ -30,7 +30,7 @@ export class FollowPointRenderer extends PooledDrawableWithLifetimeContainer<Fol
     },
   });
 
-  #startTimeMap = new Map<OsuHitObject, Bindable<any>>();
+  readonly #startTimeMap = new Map<OsuHitObject, Bindable<number>>();
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {

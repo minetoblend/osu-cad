@@ -64,6 +64,7 @@ export default defineConfig([
         ],
       }],
       "no-trailing-spaces": "error",
+      "no-multi-spaces": "error",
       "@stylistic/indent": ["error", 2, {
         ignoredNodes: ["ConditionalExpression"],
         offsetTernaryExpressions: true,

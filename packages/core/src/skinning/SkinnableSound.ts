@@ -91,7 +91,7 @@ export class SkinnableSound extends SkinReloadableDrawable
   {
     this.flushPendingSkinChanges();
 
-    for (const c  of this.#samplesContainer.children)
+    for (const c of this.#samplesContainer.children)
     {
       if (this.playWhenZeroVolume || c.volume.value > 0)
       {

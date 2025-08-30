@@ -15,6 +15,7 @@ import { getFontPrefix, LegacySpriteText } from "../../LegacySpriteText";
 import { OsuHitObject } from "../../hitObjects/OsuHitObject";
 import { LegacyCursor } from "./LegacyCursor";
 import { LegacyCursorTrail } from "../../ui/LegacyCursorTrail";
+import { LegacyTimelineCirclePiece } from "./LegacyTimelineCirclePiece";
 
 export class OsuLegacySkinTransformer extends SkinTransformer
 {
@@ -179,7 +180,14 @@ export class OsuLegacySkinTransformer extends SkinTransformer
         // TODO: logic is actually supposed to be different here
         if (followCircleContent)
           return new LegacyFollowCircle(followCircleContent);
+        break;
       }
+
+      case OsuSkinComponents.TimelineHitCircle:
+      case OsuSkinComponents.TimelineSliderHead:
+        return new LegacyTimelineCirclePiece();
+      case OsuSkinComponents.TimelineSliderTail:
+        return new LegacyTimelineCirclePiece(false);
       }
     }
 

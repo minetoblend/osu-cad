@@ -60,7 +60,7 @@ export class SkinReloadableDrawable extends PoolableDrawable
   {
     this.currentSkin.sourceChanged.removeListener(this.#onChange, this);
 
-    this.onSkinChanged.removeAllListeners();
+    (this.onSkinChanged as any) = null;
 
     super.dispose();
   }

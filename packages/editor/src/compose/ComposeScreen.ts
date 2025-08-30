@@ -71,15 +71,24 @@ export class ComposeScreen extends EditorScreen
 
   protected override onKeyDown(e: KeyDownEvent): boolean
   {
-    switch(e.key)
+    switch (e.key)
     {
-    case Key.KeyZ:{
+    case Key.KeyZ: {
       const first = this.#editorBeatmap.hitObjects.first;
       if (first && this.#editorClock.currentTime !== first.startTime)
-        this.#editorClock.seek(first.startTime);
+        this.#editorClock.seekSmoothlyTo(first.startTime);
       else
-        this.#editorClock.seek(0);
-      break;}
+        this.#editorClock.seekSmoothlyTo(0);
+      break;
+    }
+    case Key.KeyV: {
+      const last = this.#editorBeatmap.hitObjects.last;
+      if (last && this.#editorClock.currentTime !== last.endTime)
+        this.#editorClock.seekSmoothlyTo(last.endTime);
+      else
+        this.#editorClock.seekSmoothlyTo(this.#editorClock.trackLength);
+      break;
+    }
     case Key.ArrowRight:
       this.#editorClock.seekBeats(1, true);
       break;

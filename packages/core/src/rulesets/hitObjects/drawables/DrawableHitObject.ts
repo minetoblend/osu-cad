@@ -1,19 +1,19 @@
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
 import { Action, Bindable, provideSelf, resolved } from "@osucad/framework";
 import { Color } from "pixi.js";
+import type { HitSampleInfo } from "../../../audio/HitSampleInfo";
 import { PoolableDrawableWithLifetime } from "../../../pooling/PoolableDrawableWithLifetime";
+import { PausableSkinnableSound } from "../../../skinning";
 import type { IAnimationTimeReference } from "../../../skinning/IAnimationTimeReference";
+import { ISkinSource } from "../../../skinning/ISkinSource";
+import type { Judgement } from "../../judgements/Judgement";
+import { JudgementResult } from "../../judgements/JudgementResult";
+import type { HitResult } from "../../scoring/HitResult";
+import { IPooledHitObjectProvider } from "../../ui/IPooledHitObjectProvider";
 import type { HitObject } from "../HitObject";
 import { ArmedState } from "./ArmedState";
 import type { HitObjectLifetimeEntry } from "./HitObjectLifetimeEntry";
 import { SyntheticHitObjectEntry } from "./SyntheticHitObjectEntry";
-import { ISkinSource } from "../../../skinning/ISkinSource";
-import { IPooledHitObjectProvider } from "../../ui/IPooledHitObjectProvider";
-import type { HitSampleInfo } from "../../../audio/HitSampleInfo";
-import { JudgementResult } from "../../judgements/JudgementResult";
-import type { Judgement } from "../../judgements/Judgement";
-import type { HitResult } from "../../scoring/HitResult";
-import { SkinnableSound } from "../../../skinning/SkinnableSound";
 
 @provideSelf()
 export class DrawableHitObject<out T extends HitObject = HitObject>
@@ -33,7 +33,7 @@ export class DrawableHitObject<out T extends HitObject = HitObject>
 
   public readonly accentColor = new Bindable(new Color(0xffffff));
 
-  protected samples!: SkinnableSound;
+  protected samples!: PausableSkinnableSound;
 
   #samplesLoaded = false;
 
@@ -80,7 +80,7 @@ export class DrawableHitObject<out T extends HitObject = HitObject>
   {
     super.load(dependencies);
 
-    super.addInternal(this.samples = new SkinnableSound().adjust(t => t.minimumSampleVolume = 5));
+    super.addInternal(this.samples = new PausableSkinnableSound().adjust(t => t.minimumSampleVolume = 5));
   }
 
   protected override loadAsyncComplete(): void
@@ -238,7 +238,7 @@ export class DrawableHitObject<out T extends HitObject = HitObject>
     this.samplesBindable.unbindFrom(this.hitObject.samplesBindable);
 
     this.#samplesLoaded = false;
-    this.samples?.clearSamples();
+    // this.samples?.clearSamples();
 
     for (const obj of this.#nestedHitObjects)
     {

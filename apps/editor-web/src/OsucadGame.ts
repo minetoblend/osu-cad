@@ -5,6 +5,8 @@ import { SkinManager } from "./SkinManager";
 import { UIScaleContainer } from "./UIScaleContainer";
 import { EditorLoader } from "./EditorLoader";
 import { PerformanceOverlay } from "./PerformanceOverlay";
+import{ initDevtools } from "@pixi/devtools";
+import * as pixi from "pixi.js";
 
 export class OsucadGame extends Game
 {
@@ -17,6 +19,12 @@ export class OsucadGame extends Game
   @asyncDependencyLoader()
   async #load()
   {
+    initDevtools({
+      renderer: this.host!.renderer.internalRenderer,
+      stage: this.drawNode,
+      pixi: pixi,
+    });
+
     rulesets.register(new OsuRuleset());
 
     await Promise.all([

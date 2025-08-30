@@ -1,7 +1,7 @@
 import type { Skin } from "@osucad/core";
-import { ISkinSource, PlayfieldClock, Ruleset, SkinProvidingContainer } from "@osucad/core";
-import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer } from "@osucad/framework";
-import { asyncDependencyLoader, DependencyContainer, PlatformAction, provide, resolved, Screen } from "@osucad/framework";
+import { ISamplePlaybackDisabler, ISkinSource, PlayfieldClock, Ruleset, SkinProvidingContainer } from "@osucad/core";
+import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer, ScheduledDelegate } from "@osucad/framework";
+import { asyncDependencyLoader, Bindable, DependencyContainer, PlatformAction, provide, provideSelf, resolved, Screen } from "@osucad/framework";
 import { BindableBeatDivisor } from "./BindableBeatDivisor";
 import { DefaultsApplier } from "./DefaultsApplier";
 import { EditorClock } from "./EditorClock";
@@ -17,7 +17,8 @@ export interface EditorOptions
   readonly document: Document
 }
 
-export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
+@provideSelf(ISamplePlaybackDisabler)
+export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>, ISamplePlaybackDisabler
 {
   public constructor(options: EditorOptions)
   {
@@ -28,6 +29,7 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
     this.editorClock = new EditorClock(this.editorBeatmap.controlPointInfo);
   }
 
+  public readonly samplePlaybackDisabled = new Bindable(false);
 
   @provide(Document)
   protected readonly document: Document;
@@ -113,6 +115,8 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
         ],
       }),
     ]);
+
+    this.editorClock.seekingOrStopped.bindValueChanged(() => this.#updateSampleDisabledState(), true);
   }
 
   public readonly isKeyBindingHandler = true;
@@ -134,5 +138,25 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
       return true;
     }
     return false;
+  }
+
+  #playbackDisabledDebounce?: ScheduledDelegate;
+
+  #updateSampleDisabledState()
+  {
+    const shouldDisableSamples = this.editorClock.seekingOrStopped.value;
+
+    this.#playbackDisabledDebounce?.cancel();
+
+    if (shouldDisableSamples)
+    {
+      this.samplePlaybackDisabled.value = true;
+    }
+    else
+    {
+      // Debounce re-enabling arbitrarily high enough to avoid flip-flopping during beatmap updates
+      // or rapid user seeks.
+      this.#playbackDisabledDebounce = this.scheduler.addDelayed(() => this.samplePlaybackDisabled.value = false, 50);
+    }
   }
 }

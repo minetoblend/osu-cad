@@ -1,5 +1,5 @@
 import type { GameHost } from "@osucad/framework";
-import { Anchor, Axes, Bindable, Container, EasingFunction, FrameStatistics, GAME_HOST, resolved, SpriteText } from "@osucad/framework";
+import { Anchor, Axes, Bindable, Container, FrameStatistics, GAME_HOST, lerp, resolved, SpriteText } from "@osucad/framework";
 
 export class PerformanceOverlay extends Container
 {
@@ -32,14 +32,11 @@ export class PerformanceOverlay extends Container
   @resolved(() => GAME_HOST)
   accessor #host!: GameHost
 
+  #frameTime = 0;
+
   protected override loadComplete()
   {
     super.loadComplete();
-
-    this.fps.bindValueChanged((fps) =>
-    {
-      this.transformBindableTo(this.fpsInterpolated, fps.value, 300, EasingFunction.OutExpo);
-    });
 
     this.#host.afterRender.addListener(() =>
     {
@@ -47,7 +44,11 @@ export class PerformanceOverlay extends Container
 
       const frameTime = FrameStatistics.frame.total;
 
-      this.fpsText.text = `${frameTime.toFixed(1)}ms (${this.fpsInterpolated.value.toFixed(0)}fps)`;
+      this.#frameTime = lerp(frameTime, this.#frameTime, Math.exp(-0.01 * this.time.elapsed));
+
+      this.fpsInterpolated.value = lerp(this.fps.value, this.fpsInterpolated.value, Math.exp(-0.01 * this.time.elapsed));
+
+      this.fpsText.text = `${this.#frameTime.toFixed(1)}ms (${this.fpsInterpolated.value.toFixed(0)}fps)`;
     });
 
   }

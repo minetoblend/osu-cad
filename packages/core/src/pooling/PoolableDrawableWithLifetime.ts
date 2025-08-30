@@ -114,7 +114,7 @@ export abstract class PoolableDrawableWithLifetime<TEntry extends LifetimeEntry>
       this.#free();
 
     this.#entry = entry;
-    entry.lifetimeChanged.addListener(this.#setLifetimeFromEntry);
+    entry.lifetimeChanged.addListener(this.#setLifetimeFromEntry, this);
     this.#setLifetimeFromEntry();
 
     this.onApply(entry);
@@ -128,7 +128,7 @@ export abstract class PoolableDrawableWithLifetime<TEntry extends LifetimeEntry>
 
     this.onFree(this.entry!);
 
-    this.entry!.lifetimeChanged.removeListener(this.#setLifetimeFromEntry);
+    this.entry!.lifetimeChanged.removeListener(this.#setLifetimeFromEntry, this);
     this.#entry = null;
     super.lifetimeStart = -Number.MAX_VALUE;
     super.lifetimeEnd = Number.MAX_VALUE;
@@ -136,7 +136,7 @@ export abstract class PoolableDrawableWithLifetime<TEntry extends LifetimeEntry>
     this.#hasEntryApplied = false;
   }
 
-  #setLifetimeFromEntry = () =>
+  #setLifetimeFromEntry()
   {
     super.lifetimeStart = this.entry!.lifetimeStart;
     super.lifetimeEnd = this.entry!.lifetimeEnd;

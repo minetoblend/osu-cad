@@ -1,13 +1,15 @@
-import { almostEquals, Axes, Cached, Container, resolved } from "@osucad/framework";
-import { ComposeTimeline } from "./ComposeTimeline";
-import { PointVisualization } from "./PointVisualization";
-import { EditorBeatmap } from "../../runtime";
+import { almostEquals, Axes, Cached, CompositeDrawable, resolved } from "@osucad/framework";
 import { BindableBeatDivisor } from "../../BindableBeatDivisor";
 import { EditorClock } from "../../EditorClock";
+import { EditorBeatmap } from "../../runtime";
+import { ComposeTimeline } from "./ComposeTimeline";
+import { PointVisualization } from "./PointVisualization";
+import type { Container } from "pixi.js";
+import { TimelinePart } from "./TimelinePart";
 
 const TICK_WIDTH = 2;
 
-export class TimelineTickDisplay extends Container<PointVisualization>
+export class TimelineTickDisplay extends TimelinePart<PointVisualization>
 {
   public constructor()
   {
@@ -44,7 +46,7 @@ export class TimelineTickDisplay extends Container<PointVisualization>
   {
     super.update();
 
-    const newRange = new Range(this.#timeline.startTime, this.#timeline.endTime);
+    const newRange = new Range(Math.floor(this.#timeline.startTime / 1000) * 1000, Math.ceil(this.#timeline.endTime / 1000) * 1000);
     if (!this.#visibleRange.equals(newRange))
     {
       this.#visibleRange = newRange;
@@ -86,7 +88,7 @@ export class TimelineTickDisplay extends Container<PointVisualization>
     {
       const point = timingPoints.get(i)!;
       const next = timingPoints.get(i + 1);
-      const until = next?.time ??  this.#editorClock.trackLength;
+      const until = Math.min(next?.time ?? this.#editorClock.trackLength, range.max);
 
       const step = point.beatLength / beatDivisor;
 
@@ -99,7 +101,7 @@ export class TimelineTickDisplay extends Container<PointVisualization>
 
       for (let t = point.time; t < until; t += step)
       {
-        const xPos = (t - range.min) / (range.max - range.min);
+        const xPos = t;
 
         const divisor = BindableBeatDivisor.getDivisorForBeatIndex(beat, beatDivisor);
         const color = 0xffffff;

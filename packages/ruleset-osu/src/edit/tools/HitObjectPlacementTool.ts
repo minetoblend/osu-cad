@@ -33,7 +33,7 @@ export abstract class HitObjectPlacementTool<T extends HitObject> extends Compos
 
   protected abstract createHitObject(): T;
 
-  protected abstract updateTimeAndPosition(hitObject: T,  time: number, position: Vec2): void;
+  protected abstract updateTimeAndPosition(hitObject: T, time: number, position: Vec2): void;
 
   protected override loadComplete(): void
   {

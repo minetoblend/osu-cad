@@ -13,5 +13,6 @@ export * from "./SkinSampleStore";
 export * from "./SkinComponentLookup";
 export * from "./SkinnableSpriteText";
 export * from "./SkinnableSound";
+export * from "./PausableSkinnableSound";
 export * from "./PoolableSkinnableSample";
 export * from "./SkinReloadableDrawable";

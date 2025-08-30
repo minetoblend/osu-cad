@@ -54,6 +54,7 @@ import { LayoutComputed } from "./LayoutComputed";
 import { LayoutMember } from "./LayoutMember";
 import { MarginPadding, type MarginPaddingOptions } from "./MarginPadding";
 import { PositionOffsetTransform } from "./PositionOffsetTransform";
+import type { ScheduledDelegate } from "../../scheduling";
 
 export interface DrawableOptions
 {
@@ -1347,9 +1348,9 @@ export abstract class Drawable extends Transformable implements IDisposable
     return this.#scheduler;
   }
 
-  protected schedule(action: () => void)
+  protected schedule(action: () => void): ScheduledDelegate
   {
-    this.scheduler.add(action);
+    return this.scheduler.add(action)!;
   }
 
   public updateSubTree(): boolean

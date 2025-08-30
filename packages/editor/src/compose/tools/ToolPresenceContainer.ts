@@ -110,7 +110,7 @@ export class ComposePresenceContainer extends CompositeDrawable
 
     const id = this.#activeTool.value.id;
 
-    const presence: IToolPresence =  {
+    const presence: IToolPresence = {
       tool: id,
       currentTime: this.#editorClock.currentTime,
       details: tool.getPresence(),

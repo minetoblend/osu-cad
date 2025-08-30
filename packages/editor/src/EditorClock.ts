@@ -1,6 +1,8 @@
 import type { ControlPointInfo, TimingControlPoint } from "@osucad/core";
-import { almostEquals, Component, lerp, resolved, type FrameTimeInfo, type IFrameBasedClock } from "@osucad/framework";
+import type { ReadonlyBindable } from "@osucad/framework";
+import { almostEquals, Bindable, clamp, Component, EasingFunction, Interpolation, resolved, TypedTransform, type FrameTimeInfo, type IFrameBasedClock } from "@osucad/framework";
 import { BindableBeatDivisor } from "./BindableBeatDivisor";
+
 
 export class EditorClock extends Component implements IFrameBasedClock
 {
@@ -9,8 +11,6 @@ export class EditorClock extends Component implements IFrameBasedClock
     elapsed: 0,
   };
 
-  #targetTime = 0;
-
   public constructor(public readonly controlPointInfo: ControlPointInfo)
   {
     super();
@@ -18,6 +18,13 @@ export class EditorClock extends Component implements IFrameBasedClock
 
   @resolved(BindableBeatDivisor)
   accessor #beatDivisor!: BindableBeatDivisor
+
+  #isSeeking = false;
+
+  public get isSeeking()
+  {
+    return this.#isSeeking;
+  }
 
   public get elapsedFrameTime(): number
   {
@@ -36,23 +43,7 @@ export class EditorClock extends Component implements IFrameBasedClock
 
   public processFrame(): void
   {
-    if (!this.#isRunning)
-    {
-      const previous = this.#frameTimeInfo.current;
-      const target = this.#targetTime;
 
-      let time = lerp(target, previous, Math.exp(-.03 * this.time.elapsed));
-
-      if (Math.abs(time - previous) < 1)
-        time = target;
-
-      this.#frameTimeInfo.current = time;
-      this.#frameTimeInfo.elapsed = time - previous;
-    }
-    else
-    {
-      // TODO
-    }
   }
 
   public readonly isFrameBasedClock = true;
@@ -60,6 +51,13 @@ export class EditorClock extends Component implements IFrameBasedClock
   public get currentTime(): number
   {
     return this.#frameTimeInfo.current;
+  }
+
+  public get currentTimeAccurate(): number
+  {
+    const [...transforms] = this.transformsIterable().filter(it => it instanceof TransformSeek);
+
+    return transforms[transforms.length - 1]?.endValue ?? this.currentTime;
   }
 
   public get rate(): number
@@ -80,24 +78,21 @@ export class EditorClock extends Component implements IFrameBasedClock
     return 100_000;
   }
 
-  public seek(position: number)
-  {
-    this.#targetTime = position;
-  }
+
 
   public seekBy(duration: number)
   {
-    this.seek(this.currentTime + duration);
+    this.seek(this.currentTimeAccurate + duration);
   }
 
   public seekBeats(direction: number, snapped = false, amount = 1)
   {
-    const timingPoint = this.controlPointInfo.timingPointAt(this.#targetTime);
+    const timingPoint = this.controlPointInfo.timingPointAt(this.currentTimeAccurate);
 
     const beatSnapLength
       = timingPoint.beatLength / this.#beatDivisor.value;
 
-    let newPosition = this.#targetTime + direction * amount * beatSnapLength;
+    let newPosition = this.currentTimeAccurate + direction * amount * beatSnapLength;
 
     if (almostEquals(newPosition, timingPoint.time, 1))
     {
@@ -114,6 +109,46 @@ export class EditorClock extends Component implements IFrameBasedClock
       this.seekSnapped(newPosition);
     else
       this.seek(newPosition);
+  }
+
+  readonly #seekingOrStopped = new Bindable(true);
+
+  public get seekingOrStopped(): ReadonlyBindable<boolean>
+  {
+    return this.#seekingOrStopped;
+  }
+
+  #updateSeekingState()
+  {
+    if (this.#seekingOrStopped.value)
+    {
+      if (this.#isSeeking && this.transforms.length === 0)
+        this.#isSeeking = false;
+
+      if (!this.isRunning)
+        return;
+
+      this.#seekingOrStopped.value = this.#isSeeking;
+    }
+  }
+
+  public seek(position: number)
+  {
+    this.#seekingOrStopped.value = this.#isSeeking = true;
+
+    this.clearTransforms();
+
+    this.#frameTimeInfo.current = clamp(position, 0, this.trackLength);
+  }
+
+  public seekSmoothlyTo(seekDestination: number)
+  {
+    this.#seekingOrStopped.value = true;
+
+    if (this.isRunning)
+      this.seek(seekDestination);
+    else
+      this.#transoformSeekTo(seekDestination, 300, EasingFunction.OutExpo);
   }
 
   public seekSnapped(position: number)
@@ -137,12 +172,58 @@ export class EditorClock extends Component implements IFrameBasedClock
 
     position = Math.floor(position);
 
-    this.seek(position);
+    this.seekSmoothlyTo(position);
+  }
+
+  #transoformSeekTo(seek: number, duration = 0, easing: EasingFunction = EasingFunction.Default)
+  {
+    this.addTransform(
+        this.populateTransform(new TransformSeek(time => this.#frameTimeInfo.current = time), clamp(seek, 0, this.trackLength), duration, easing),
+    );
   }
 
   public override update(): void
   {
     super.update();
-    this.processFrame();
+
+    this.#updateSeekingState();
+  }
+}
+
+class TransformSeek<T extends EditorClock> extends TypedTransform<number, T>
+{
+  public constructor(private readonly setter: (time: number) => void)
+  {
+    super();
+  }
+
+  public override get targetMember(): string
+  {
+    return "startTime";
+  }
+
+  protected override readIntoStartValueFrom(target: EditorClock): void
+  {
+    this.startValue = target.currentTime;
+  }
+
+  #valueAt(time: number)
+  {
+    if (time < this.startTime)
+      return this.startValue;
+    if (time > this.endTime)
+      return this.endValue;
+
+    return Interpolation.valueAt(time, this.startValue, this.endValue, this.startTime, this.endTime, this.easing);
+  }
+
+  protected override applyTo(target: EditorClock, time: number): void
+  {
+    this.setter(this.#valueAt(time));
+  }
+
+  public override clone(): TypedTransform<number, T>
+  {
+    return new TransformSeek(this.setter);
   }
 }

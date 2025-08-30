@@ -7,11 +7,12 @@
     "@osucad/core": "workspace:^",
     "@osucad/editor": "workspace:^",
     "@osucad/framework": "workspace:^",
-    "@osucad/multiplayer-core": "workspace:^",
     "@osucad/multiplayer-client": "workspace:^",
+    "@osucad/multiplayer-core": "workspace:^",
     "@osucad/ruleset-osu": "workspace:^",
+    "@pixi/devtools": "^2.0.1",
     "async": "^3.2.6",
-    "pixi.js": "^8.9.2",
+    "pixi.js": "^8.12.0",
     "socket.io-client": "^4.8.1"
   },
   "devDependencies": {

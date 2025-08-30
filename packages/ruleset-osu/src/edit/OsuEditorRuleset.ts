@@ -1,4 +1,4 @@
-import type { EditorRuntimeConfig, HitObjectComposer } from "@osucad/editor";
+import type { EditorRuntimeConfig, HitObjectComposer, TimelineBlueprintContainer } from "@osucad/editor";
 import { EditorRuleset } from "@osucad/editor";
 import { HitCircle } from "../hitObjects/HitCircle";
 import { Slider } from "../hitObjects/Slider";
@@ -7,6 +7,7 @@ import { Spinner } from "../hitObjects/Spinner";
 import type { Component } from "@osucad/framework";
 import { EditorStackingProcessor } from "./EditorStackingProcessor";
 import { EditorComboProcessor } from "./EditorComboProcessor";
+import { OsuTimelineBlueprintContainer } from "./timeline/OsuTimelineBlueprintContainer";
 
 export class OsuEditorRuleset extends EditorRuleset
 {
@@ -30,5 +31,10 @@ export class OsuEditorRuleset extends EditorRuleset
       new EditorComboProcessor(),
       new EditorStackingProcessor(),
     ];
+  }
+
+  public override createTimelineBlueprintContainer(): TimelineBlueprintContainer | null
+  {
+    return new OsuTimelineBlueprintContainer();
   }
 }

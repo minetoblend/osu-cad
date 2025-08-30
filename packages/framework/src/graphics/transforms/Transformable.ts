@@ -29,6 +29,15 @@ export abstract class Transformable implements ITransformable
     return this.#targetGroupingTrackers?.flatMap(t => t.transforms) ?? [];
   }
 
+  public *transformsIterable()
+  {
+    if (this.#targetGroupingTrackers)
+    {
+      for (const group of this.#targetGroupingTrackers)
+        yield* group.transforms;
+    }
+  }
+
   public transformsForTargetMember(targetMember: string)
   {
     return this.#getTrackerFor(targetMember)?.transforms ?? [];

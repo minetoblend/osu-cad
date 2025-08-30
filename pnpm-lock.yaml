@@ -157,8 +157,8 @@ importers:
         specifier: workspace:^
         version: link:../../packages/ruleset-osu
       pixi.js:
-        specifier: ^8.9.2
-        version: 8.9.2
+        specifier: ^8.12.0
+        version: 8.12.0
     devDependencies:
       vite-plugin-conditional-compiler:
         specifier: ^0.3.1
@@ -184,12 +184,15 @@ importers:
       '@osucad/ruleset-osu':
         specifier: workspace:^
         version: link:../../packages/ruleset-osu
+      '@pixi/devtools':
+        specifier: ^2.0.1
+        version: 2.0.1(pixi.js@8.12.0)
       async:
         specifier: ^3.2.6
         version: 3.2.6
       pixi.js:
-        specifier: ^8.9.2
-        version: 8.9.2
+        specifier: ^8.12.0
+        version: 8.12.0
       socket.io-client:
         specifier: ^4.8.1
         version: 4.8.1
@@ -256,8 +259,8 @@ importers:
         specifier: workspace:^
         version: link:../../packages/ruleset-osu
       pixi.js:
-        specifier: ^8.9.2
-        version: 8.9.2
+        specifier: ^8.12.0
+        version: 8.12.0
     devDependencies:
       vite-plugin-conditional-compiler:
         specifier: ^0.3.1
@@ -334,8 +337,8 @@ importers:
         specifier: ^1.0.1
         version: 1.0.1
       pixi.js:
-        specifier: ^8.9.2
-        version: 8.9.2
+        specifier: ^8.12.0
+        version: 8.12.0
     devDependencies:
       '@types/async':
         specifier: ^3.2.24
@@ -362,8 +365,8 @@ importers:
         specifier: ^5.0.1
         version: 5.0.1
       pixi.js:
-        specifier: ^8.9.2
-        version: 8.9.2
+        specifier: ^8.12.0
+        version: 8.12.0
       socket.io-client:
         specifier: ^4.8.1
         version: 4.8.1
@@ -385,10 +388,10 @@ importers:
         version: 7.0.0
       pixi-filters:
         specifier: ^6.1.2
-        version: 6.1.2(pixi.js@8.9.2)
+        version: 6.1.2(pixi.js@8.12.0)
       pixi.js:
-        specifier: ^8.9.2
-        version: 8.9.2
+        specifier: ^8.12.0
+        version: 8.12.0
       unzipit:
         specifier: ^1.4.3
         version: 1.4.3
@@ -418,8 +421,8 @@ importers:
         specifier: workspace:^
         version: link:../../multiplayer/core
       pixi.js:
-        specifier: ^8.9.2
-        version: 8.9.2
+        specifier: ^8.12.0
+        version: 8.12.0
 
   packages/storybook-preset-vite:
     dependencies:
@@ -3098,6 +3101,14 @@ packages:
   /@pixi/colord@2.9.6:
     resolution: {integrity: sha512-nezytU2pw587fQstUu1AsJZDVEynjskwOL+kibwcdxsMBFqPsFFNA7xl0ii/gXuDi6M0xj3mfRJj8pBSc2jCfA==}
 
+  /@pixi/devtools@2.0.1(pixi.js@8.12.0):
+    resolution: {integrity: sha512-TFCqNkJoLNYHDELgQ3bKWvA33twWpoUhQB8Y+hneBdDBunRsqZ5ZzwH7+6E5eVaVn7eeLAXHs9QGRGsxM0fRlw==}
+    peerDependencies:
+      pixi.js: ^7 || ^8
+    dependencies:
+      pixi.js: 8.12.0
+    dev: false
+
   /@pkgjs/parseargs@0.11.0:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
@@ -4012,6 +4023,11 @@ packages:
 
   /@types/earcut@2.1.4:
     resolution: {integrity: sha512-qp3m9PPz4gULB9MhjGID7wpo3gJ4bTGXm7ltNDsmOvsPduTeHp8wSW9YckBj3mljeOh4F0m2z/0JKAALRKbmLQ==}
+    dev: true
+
+  /@types/earcut@3.0.0:
+    resolution: {integrity: sha512-k/9fOUGO39yd2sCjrbAJvGDEQvRwRnQIZlBz43roGwUZo5SHAmyVvSFyaVVZkicRVCaDXPKlbxrUcBuJoSWunQ==}
+    dev: false
 
   /@types/eslint-scope@3.7.7:
     resolution: {integrity: sha512-MzMFlSLBqNF2gcHWO0G1vP/YQyfvrxZ0bF+u7mzUdZ1/xK4A4sru+nraZz5i3iEIk1l1uyicaDVTB4QbbEkAYg==}
@@ -6079,6 +6095,11 @@ packages:
 
   /earcut@2.2.4:
     resolution: {integrity: sha512-/pjZsA1b4RPHbeWZQn66SWS8nZZWLQQ23oE3Eam7aroEFGEvwKAsJfZ9ytiEMycfzXWpca4FA9QIOehf7PocBQ==}
+    dev: true
+
+  /earcut@3.0.2:
+    resolution: {integrity: sha512-X7hshQbLyMJ/3RPhyObLARM2sNxxmRALLKx1+NVFFnQ9gKzmCrxm9+uLIAdBcvc8FNLpctqlQ2V6AE92Ol9UDQ==}
+    dev: false
 
   /eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
@@ -8807,13 +8828,28 @@ packages:
     resolution: {integrity: sha512-TfySrs/5nm8fQJDcBDuUng3VOUKsd7S+zqvbOTiGXHfxX4wK31ard+hoNuvkicM/2YFzlpDgABOevKSsB4G/FA==}
     engines: {node: '>= 6'}
 
-  /pixi-filters@6.1.2(pixi.js@8.9.2):
+  /pixi-filters@6.1.2(pixi.js@8.12.0):
     resolution: {integrity: sha512-zGyrMTcfapSIS8We+8RPzxIYkrUhn0KamRFA9qWwxggOk/guJcW05djg8xNvmNsCxn6LzxK5sODeEFIf9SF5Xg==}
     peerDependencies:
       pixi.js: '>=8.0.0-0'
     dependencies:
       '@types/gradient-parser': 0.1.5
-      pixi.js: 8.9.2
+      pixi.js: 8.12.0
+    dev: false
+
+  /pixi.js@8.12.0:
+    resolution: {integrity: sha512-or7vrH7WajLevu/JnGMdD80JaSpTlXfjwCLtzhg2BL60LWPf1pF0w08Qleiqr1Saj012gevguM//+6HzzVlnfA==}
+    dependencies:
+      '@pixi/colord': 2.9.6
+      '@types/css-font-loading-module': 0.0.12
+      '@types/earcut': 3.0.0
+      '@webgpu/types': 0.1.60
+      '@xmldom/xmldom': 0.8.10
+      earcut: 3.0.2
+      eventemitter3: 5.0.1
+      gifuct-js: 2.1.2
+      ismobilejs: 1.1.1
+      parse-svg-path: 0.1.2
     dev: false
 
   /pixi.js@8.9.2:
@@ -8829,6 +8865,7 @@ packages:
       gifuct-js: 2.1.2
       ismobilejs: 1.1.1
       parse-svg-path: 0.1.2
+    dev: true
 
   /pkce-challenge@5.0.0:
     resolution: {integrity: sha512-ueGLflrrnvwB3xuo/uGob5pd5FN7l0MsLf0Z87o/UQmRtwjvfylfc9MurIxRAWywCYTgrvpXBcqjV4OfCYGCIQ==}

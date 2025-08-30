@@ -1,5 +1,5 @@
 import { bindableBacked, PathApproximator } from "@osucad/core";
-import { Bindable, CachedValue, Vec2 } from "@osucad/framework";
+import { Bindable, BoundsBuilder, CachedValue, Rectangle, Vec2 } from "@osucad/framework";
 import { CalculatedPath } from "./CalculatedPath";
 import { PathPoint } from "./PathPoint";
 import { PathType } from "./PathPoint";
@@ -62,6 +62,7 @@ export class SliderPath extends ObjectDDS
   @bindableBacked("controlPointsBindable")
   public accessor controlPoints!: readonly PathPoint[]
 
+  #bounds = new Rectangle(0,0,0,0);
   readonly #calculatedPath = new CachedValue<CalculatedPath>();
   readonly #fullRange = new CachedValue<readonly Vec2[]>();
 
@@ -69,6 +70,12 @@ export class SliderPath extends ObjectDDS
   {
     this.#ensureValid();
     return this.#calculatedPath.value;
+  }
+
+  public get bounds()
+  {
+    this.#ensureValid();
+    return this.#bounds;
   }
 
   public get calculatedRange(): readonly Vec2[]
@@ -101,11 +108,15 @@ export class SliderPath extends ObjectDDS
   {
     if (this.controlPoints.length <= 1)
     {
+      this.#bounds = new Rectangle(0,0,0,0);
       return new CalculatedPath();
     }
 
     const points: Vec2[] = [Vec2.zero()];
     const cumulativeDistance: number[] = [0];
+    const bounds = new BoundsBuilder();
+
+    bounds.addPoint(points[0]);
 
     for (const segment of this.pathSegments)
     {
@@ -142,6 +153,7 @@ export class SliderPath extends ObjectDDS
         if (distance === 0)
           continue;
 
+        bounds.addPoint(p);
         points.push(p);
         cumulativeDistance.push(cumulativeDistance[cumulativeDistance.length - 1] + distance);
       }
