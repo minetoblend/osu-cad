@@ -1,4 +1,4 @@
-import type  { DDS } from "../dds/index.js";
+import type { DDS } from "../dds/index.js";
 import { nn } from "../utils/nn.js";
 import { EventEmitter } from "eventemitter3";
 

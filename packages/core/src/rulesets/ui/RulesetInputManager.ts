@@ -102,7 +102,7 @@ export class ReplayStateChangeEvent<T extends KeyBindingAction> extends InputSta
     state: InputState,
     input: IInput,
     public readonly pressedActions: readonly T[],
-    public readonly  releasedActions: readonly T[],
+    public readonly releasedActions: readonly T[],
   )
   {
     super(state, input);

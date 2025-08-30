@@ -108,7 +108,7 @@ export class ControlPointInfo extends DDS<IControlPointInfoDelta>
     if (snappedTime >= 0)
       return snappedTime;
 
-    return  snappedTime + beatSnapLength;
+    return snappedTime + beatSnapLength;
   }
 
   public add(controlPoint: ControlPoint)

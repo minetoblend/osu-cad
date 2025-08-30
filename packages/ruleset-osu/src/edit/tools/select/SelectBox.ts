@@ -42,7 +42,7 @@ export class SelectBox extends GraphicsDrawable
     const position = this.toSpaceOfOtherDrawable(this.#dragPosition, this.#selectionContainer);
 
     const min = origin.componentMin(position);
-    const max =  origin.componentMax(position);
+    const max = origin.componentMax(position);
     const rect = new Rectangle(min.x, min.y, max.x - min.x, max.y - min.y);
 
     const hitObjects = this.#selectionContainer.allBlueprints.filter(it => it.isInSelectionRect(rect)).map(it => it.hitObject);

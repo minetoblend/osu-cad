@@ -11,7 +11,7 @@ import { OsuRuleset } from "../OsuRuleset";
 
 describe("EditorRuntime", () =>
 {
-  it("works",  async () =>
+  it("works", async () =>
   {
     rulesets.register(new OsuRuleset());
 

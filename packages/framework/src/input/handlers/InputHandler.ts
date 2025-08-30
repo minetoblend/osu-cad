@@ -19,7 +19,7 @@ export abstract class InputHandler implements IDisposable
     return true;
   }
 
-  public  readonly enabled = new Bindable(true);
+  public readonly enabled = new Bindable(true);
 
   #isDisposed: boolean = false;
 

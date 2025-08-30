@@ -1,10 +1,9 @@
-import { almostEquals, Axes, Cached, CompositeDrawable, resolved } from "@osucad/framework";
+import { almostEquals, Axes, Cached, resolved } from "@osucad/framework";
 import { BindableBeatDivisor } from "../../BindableBeatDivisor";
 import { EditorClock } from "../../EditorClock";
 import { EditorBeatmap } from "../../runtime";
 import { ComposeTimeline } from "./ComposeTimeline";
 import { PointVisualization } from "./PointVisualization";
-import type { Container } from "pixi.js";
 import { TimelinePart } from "./TimelinePart";
 
 const TICK_WIDTH = 2;

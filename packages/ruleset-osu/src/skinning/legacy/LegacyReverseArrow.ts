@@ -84,8 +84,8 @@ export class LegacyReverseArrow extends CompositeDrawable
     }
     else
     {
-      const  duration = 300;
-      const  rotation = 0.098654736;
+      const duration = 300;
+      const rotation = 0.098654736;
 
       const loopCurrentTime = (this.time.current - this.#drawableRepeat.animationStartTime.value) % duration;
 

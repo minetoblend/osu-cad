@@ -68,7 +68,7 @@ describe("DocumentRuntime", () =>
     await expect(DocumentRuntime.load(runtime.createSummary(), [Foo, Bar])).resolves.not.toThrow();
   });
 
-  it("processes encoded deltas",  async () =>
+  it("processes encoded deltas", async () =>
   {
     class Foo extends ObjectDDS
     {
@@ -91,7 +91,7 @@ describe("DocumentRuntime", () =>
     const runtime1 = DocumentRuntime.create(foo1, [Foo]);
     const runtime2 = await DocumentRuntime.load(runtime1.createSummary(), [Foo]);
 
-    const foo2 =  runtime2.root as Foo;
+    const foo2 = runtime2.root as Foo;
 
     syncRuntimes(runtime1, runtime2);
 

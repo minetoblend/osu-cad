@@ -39,7 +39,7 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
 
     this.addRangeInternal([
       this.hitArea = new HitReceptor(
-          () =>  !this.allJudged,
+          () => !this.allJudged,
           () => this.updateResult(true),
       ),
       this.shakeContainer = new ShakeContainer({

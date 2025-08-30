@@ -1,6 +1,6 @@
 import "./style.css";
 
-const config =  {
+const config = {
   layout: "fullscreen",
 };
 

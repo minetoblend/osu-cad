@@ -17,7 +17,7 @@ import { DrawableSpinnerTick } from "./DrawableSpinnerTick";
 import { OsuScoreProcessor } from "../../scoring/OsuScoreProcessor";
 
 const fade_out_duration = 240;
-const score_per_tick =  new OsuScoreProcessor().getBaseScoreForResult(new OsuSpinnerBonusTickJudgement().maxResult);
+const score_per_tick = new OsuScoreProcessor().getBaseScoreForResult(new OsuSpinnerBonusTickJudgement().maxResult);
 const spinning_sample_modulated_base_frequency = 0.5;
 
 export class DrawableSpinner extends DrawableOsuHitObject<Spinner>

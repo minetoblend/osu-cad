@@ -6,7 +6,7 @@ import { OsuJudgement } from "../judgements/OsuJudgement";
 import type { OsuHitObjectOptions } from "./OsuHitObject";
 import { OsuHitObject } from "./OsuHitObject";
 import { SpinnerBonusTick } from "./SpinnerBonusTick";
-import { SpinnerTick } from "./SpinnerTick" with {  };
+import { SpinnerTick } from "./SpinnerTick" with { };
 
 const zero_vector = Vec2.zero();
 

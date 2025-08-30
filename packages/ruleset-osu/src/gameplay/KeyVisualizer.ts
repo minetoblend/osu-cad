@@ -79,11 +79,11 @@ export class KeyVisualizer extends CompositeDrawable implements IKeyBindingHandl
     switch (e.pressed)
     {
     case OsuAction.LeftButton:
-      this.leftBox?.moveToY(-this.drawHeight, this.drawHeight  * 2).expire();
+      this.leftBox?.moveToY(-this.drawHeight, this.drawHeight * 2).expire();
       this.leftBox = undefined;
       break;
     case OsuAction.RightButton:
-      this.rightBox?.moveToY(-this.drawHeight, this.drawHeight  * 2).expire();
+      this.rightBox?.moveToY(-this.drawHeight, this.drawHeight * 2).expire();
       this.rightBox = undefined;
       break;
     }

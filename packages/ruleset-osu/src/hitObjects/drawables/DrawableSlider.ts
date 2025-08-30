@@ -83,7 +83,7 @@ export class DrawableSlider extends DrawableOsuHitObject<Slider>
         children: [
           this.body = new SkinnableDrawable(OsuSkinComponents.SliderBody),
           new ProxyDrawable(this.tailContainer),
-          this.tickContainer =  new Container({ relativeSizeAxes: Axes.Both }),
+          this.tickContainer = new Container({ relativeSizeAxes: Axes.Both }),
           this.repeatContainer = new Container({ relativeSizeAxes: Axes.Both }),
           this.tailContainer,
         ],
