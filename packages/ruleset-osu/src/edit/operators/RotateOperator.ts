@@ -38,7 +38,7 @@ export class RotateOperator extends TransformOperator
     this.clampToBounds = clampToBounds;
   }
 
-  @Operator.parameter.float({ precision: 0.1 })
+  @Operator.parameter.float({ precision: 0.1 }, "Angle")
   public accessor angleDegrees
 
   @Operator.parameter()
