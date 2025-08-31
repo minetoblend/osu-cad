@@ -21,7 +21,6 @@ export abstract class TransformOperator extends Operator
 
   public override get isValid(): boolean
   {
-    console.log(this.objects.length);
     return this.objects.length > 0;
   }
 

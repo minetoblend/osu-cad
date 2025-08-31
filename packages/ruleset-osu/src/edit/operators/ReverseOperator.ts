@@ -84,8 +84,6 @@ export class ReverseOperator extends Operator
           }
         }
 
-        console.log(segments);
-
         for (let i = segments.length - 1; i >= 0; i--)
         {
           const segment = segments[i];
@@ -101,8 +99,6 @@ export class ReverseOperator extends Operator
               ),
           );
         }
-
-        console.log(reversed);
 
         object.path.controlPoints = reversed;
         object.moveBy(lastPoint.position.x, lastPoint.position.y);

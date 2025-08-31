@@ -91,8 +91,6 @@ export abstract class HitObjectComposer extends CompositeDrawable
   {
     super.loadComplete();
 
-    // this.#history.on("commit", () => console.trace("commit"));
-
     this.#history.on("undo", () =>
     {
       if (this.#isApplyingOperation)
@@ -131,7 +129,6 @@ export abstract class HitObjectComposer extends CompositeDrawable
       },
       invalidate: () =>
       {
-        console.log("invalidate");
         this.scheduler.addOnce(this.#applyOperator, this);
       },
     }, ...args);
