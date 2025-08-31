@@ -1,6 +1,7 @@
 import { Drawable } from "../graphics/drawables/Drawable";
-import { getKeyBindingHandlers, keyBindingHandlersKey, type } from "./bindings/decorator";
+import { getKeyBindingHandlers } from "./bindings/decorator";
 import type { IInputReceiver } from "./IInputReceiver";
+import type { IKeyBindingHandler } from "./bindings";
 
 type DrawableConstructor = new (...args: any[]) => Drawable;
 
