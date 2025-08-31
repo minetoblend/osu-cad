@@ -1,7 +1,10 @@
 import { DrawableRuleset, Playfield, Ruleset } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
-import { asyncDependencyLoader, Axes, CompositeDrawable, Container, DependencyContainer, provide, provideSelf, ProxyDrawable, resolved } from "@osucad/framework";
+import { Anchor, asyncDependencyLoader, Axes, CompositeDrawable, Container, DependencyContainer, provide, provideSelf, ProxyDrawable, resolved } from "@osucad/framework";
+import { EditorHistory, EditorRuntime } from "../runtime";
 import { EditorBeatmap } from "../runtime/dds/EditorBeatmap";
+import type { Operator, OperatorContext } from "./operators";
+import { OperatorBox } from "./operators/OperatorBox";
 import type { ComposeToolInfo } from "./tools";
 import { ComposeToolbar } from "./tools";
 import { ActiveToolBindable } from "./tools/ActiveToolBindable";
@@ -87,9 +90,136 @@ export abstract class HitObjectComposer extends CompositeDrawable
   protected override loadComplete()
   {
     super.loadComplete();
+
+    // this.#history.on("commit", () => console.trace("commit"));
+
+    this.#history.on("undo", () =>
+    {
+      if (this.#isApplyingOperation)
+        return;
+
+      this.completeActiveOperator();
+    });
+
+    this.activeTool.bindValueChanged(() => this.completeActiveOperator());
   }
 
   public tools!: ComposeToolInfo[];
 
   protected abstract getTools(): ComposeToolInfo[] | Promise<ComposeToolInfo[]>;
+
+  #activeOperator?: Operator;
+  #activeOperatorBox?: OperatorBox;
+
+  public get activeOperator()
+  {
+    return this.#activeOperator;
+  }
+
+  public beginOperator<T extends Operator, Args extends unknown[]>(operatorClass: new (context: OperatorContext, ...args: Args) => T, ...args: Readonly<Args>)
+  {
+    const operator = new operatorClass({
+      complete: commit =>
+      {
+        if (this.#activeOperator !== operator)
+          return;
+
+        if (commit)
+          this.completeActiveOperator();
+        else
+          this.cancelActiveOperator();
+      },
+      invalidate: () =>
+      {
+        console.log("invalidate");
+        this.scheduler.addOnce(this.#applyOperator, this);
+      },
+    }, ...args);
+
+    if (!operator.isValid)
+    {
+      operator.dispose();
+      return;
+    }
+
+    this.completeActiveOperator();
+
+    this.#activeOperator = operator;
+
+    this.#applyOperator();
+
+    this.#activeOperatorBox?.expire();
+    this.addInternal(
+        this.#activeOperatorBox = new OperatorBox(operator).with({
+          anchor: Anchor.BottomLeft,
+          origin: Anchor.BottomLeft,
+          x: 20,
+          y: -20,
+        }),
+    );
+
+    return operator;
+  }
+
+  public applyOperator<T extends Operator, Args extends unknown[]>(operatorClass: new (context: OperatorContext, ...args: Args) => T, ...args: Args)
+  {
+    this.beginOperator(operatorClass, ...args);
+
+    this.completeActiveOperator();
+  }
+
+  @resolved(EditorHistory)
+  accessor #history!: EditorHistory
+
+  @resolved(EditorRuntime)
+  accessor #runtime!: EditorRuntime
+
+  public completeActiveOperator()
+  {
+    if (!this.#activeOperator)
+      return false;
+
+    this.#activeOperator.onComplete();
+    this.#activeOperator.dispose();
+    this.#activeOperator = undefined;
+    this.#activeOperatorBox?.expire();
+
+    this.#history.commit();
+
+    return true;
+  }
+
+  public cancelActiveOperator(discardChanges = true)
+  {
+    if (!this.#activeOperator)
+      return false;
+
+    this.#activeOperator.onCancel();
+    this.#activeOperator.dispose();
+    this.#activeOperator = undefined;
+    this.#activeOperatorBox?.expire();
+
+    if (discardChanges)
+      this.#history.discardUncommittedChanges();
+
+    return true;
+  }
+
+  #isApplyingOperation = false;
+
+  #applyOperator()
+  {
+    this.#isApplyingOperation = true;
+
+    try
+    {
+      this.#history.discardUncommittedChanges();
+
+      this.#activeOperator?.apply();
+    }
+    finally
+    {
+      this.#isApplyingOperation = false;
+    }
+  }
 }

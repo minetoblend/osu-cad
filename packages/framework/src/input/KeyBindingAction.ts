@@ -5,8 +5,8 @@ export abstract class KeyBindingAction
     return JSON.stringify(this);
   }
 
-  public equals(other: KeyBindingAction)
+  public equals(other: KeyBindingAction | (new (...args: any) => KeyBindingAction))
   {
-    return this === other;
+    return this === other || (typeof other === "function" && this instanceof other);
   }
 }

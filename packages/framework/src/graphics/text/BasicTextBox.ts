@@ -74,7 +74,7 @@ export class BasicTextBox extends TextBox
   {
     super();
 
-    this.add(this.#background = this.createBackground());
+    this.add(this.#background = this.createBackground().with({ depth: 1 }));
 
     this.backgroundFocused = new Color("rgba(51, 88, 96, 255)");
     this.backgroundUnfocused = new Color("rgba(29, 49, 52, 255)");

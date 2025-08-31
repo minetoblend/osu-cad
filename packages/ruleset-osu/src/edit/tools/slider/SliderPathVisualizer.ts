@@ -10,6 +10,7 @@ export class SliderPathVisualizer extends CompositeDrawable
   readonly #points: Container<PathHandle>;
 
   private pathVersion!: Bindable<number>;
+  private pathPosition!: Bindable<Vec2>;
 
   public constructor(public readonly slider: Slider)
   {
@@ -32,9 +33,18 @@ export class SliderPathVisualizer extends CompositeDrawable
     super.loadComplete();
 
     this.pathVersion = this.slider.path.version.getBoundCopy();
+    this.pathPosition = this.slider.positionBindable.getBoundCopy();
 
-    this.pathVersion.bindValueChanged(() => this.scheduler.addOnce(this.#updatePath, this), true);
+    this.slider.defaultsApplied.addListener(this.#defaultsApplied, this);
+    this.pathPosition.bindValueChanged(() => this.scheduler.addOnce(this.#updatePath, this));
+    this.pathVersion.bindValueChanged(() => this.#updatePath());
+
     this.scheduler.addDelayed(() => this.#updatePath(), 1);
+  }
+
+  #defaultsApplied()
+  {
+    this.#updatePath();
   }
 
   @resolved(Playfield)
@@ -107,6 +117,13 @@ export class SliderPathVisualizer extends CompositeDrawable
     default:
       return 0xCCCCCC;
     }
+  }
+
+  public override dispose(): void
+  {
+    this.slider.defaultsApplied.removeListener(this.#defaultsApplied, this);
+
+    super.dispose();
   }
 }
 

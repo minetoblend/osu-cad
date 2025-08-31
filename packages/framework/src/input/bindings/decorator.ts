@@ -13,13 +13,15 @@ export type KeyBindingType = "press" | "release";
 
 export interface KeyBindingHandlerMetadata
 {
-  action: KeyBindingAction;
+  action: ActionOrActionType;
   type: KeyBindingType;
   invoke(target: Drawable, event: KeyBindingEvent<KeyBindingAction>): boolean;
 }
 
+export type ActionOrActionType<T extends KeyBindingAction = KeyBindingAction> = T | (new (...args: any[]) => T);
+
 export function keyBindingHandler<This extends Drawable, Action extends KeyBindingAction, Type extends KeyBindingType>(
-  action: Action | Action[],
+  action: ActionOrActionType<Action> | ActionOrActionType<Action>[],
   type?: Type,
 )
 {

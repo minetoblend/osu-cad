@@ -175,11 +175,11 @@ export class PathApproximator
    * @param controlPoints The control points of the path.
    * @returns A list of vectors representing the piecewise-linear approximation.
    */
-  public static approximateCircularArc(controlPoints: Vec2[]): Vec2[]
+  public static approximateCircularArc(controlPoints: Vec2[], maxRadius?: number): Vec2[]
   {
     const pr = this.getCircularArcProperties(controlPoints);
 
-    if (!pr.isValid)
+    if (!pr.isValid || (maxRadius !== undefined && pr.radius > maxRadius))
     {
       return this.approximateBezier(controlPoints);
     }
@@ -590,6 +590,6 @@ export class CircularArcProperties
 
   public pointAtProgress(progress: number)
   {
-    return this.pointOnCircle(this.thetaStart + this.thetaRange * progress);
+    return this.pointOnCircle(this.thetaStart + this.thetaRange * this.direction * progress);
   }
 }

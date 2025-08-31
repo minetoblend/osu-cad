@@ -119,5 +119,19 @@ export class Rectangle
   {
     this.x += x;
     this.y += y;
+
+    return this;
+  }
+
+  public clone()
+  {
+    const { x, y, width, height } = this;
+
+    return new Rectangle(x, y, width, height);
+  }
+
+  public withOffset(x: number, y: number)
+  {
+    return this.clone().offset(x, y);
   }
 }

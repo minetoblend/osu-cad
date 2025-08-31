@@ -1,4 +1,5 @@
-import type { Vec2 } from "@osucad/framework";
+import { Vec2 } from "@osucad/framework";
+import type { Matrix } from "pixi.js";
 
 export enum PathType
 {
@@ -81,6 +82,11 @@ export class PathPoint
     return new PathPoint(position, this.type);
   }
 
+  public movedBy(offset: Vec2)
+  {
+    return this.withPosition(this.position.add(offset));
+  }
+
   public rotated(angle: number)
   {
     return this.withPosition(this.position.rotate(angle));
@@ -94,5 +100,10 @@ export class PathPoint
   public withNextType(index: number)
   {
     return this.withType(PathType.nextAtIndex(this.type, index));
+  }
+
+  public transform(matrix: Matrix)
+  {
+    return this.withPosition(matrix.apply(this.position, new Vec2()));
   }
 }

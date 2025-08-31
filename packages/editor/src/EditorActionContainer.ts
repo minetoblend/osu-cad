@@ -10,7 +10,7 @@ export class EditorActionContainer extends KeyBindingContainer<EditorAction>
 
   public constructor(options: ContainerOptions = {})
   {
-    super(SimultaneousBindingMode.None, KeyCombinationMatchingMode.Any);
+    super(SimultaneousBindingMode.None, KeyCombinationMatchingMode.Modifiers);
 
     this.with(options);
   }

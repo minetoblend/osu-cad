@@ -17,9 +17,9 @@ export class KeyEventManager extends ButtonEventManager<Key>
     this.propagateButtonEvent(drawables, new KeyDownEvent(state, this.button, true));
   }
 
-  protected handleButtonDown(state: InputState, targets: List<Drawable>): Drawable | null
+  protected handleButtonDown(state: InputState, targets: List<Drawable>, nativeEvent?: globalThis.UIEvent): Drawable | null
   {
-    return this.propagateButtonEvent(targets, new KeyDownEvent(state, this.button));
+    return this.propagateButtonEvent(targets, new KeyDownEvent(state, this.button, false, nativeEvent));
   }
 
   protected handleButtonUp(state: InputState, targets: Drawable[]): void

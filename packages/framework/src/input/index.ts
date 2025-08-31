@@ -17,3 +17,4 @@ export { TextInputSource } from "./TextInputSource";
 
 export { UserInputManager } from "./UserInputManager";
 export * from "./InputResampler";
+export * from "./IInputReceiver";

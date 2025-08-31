@@ -9,7 +9,9 @@ import { EventEmitter } from "eventemitter3";
 export interface DocumentHistoryEvents
 {
   commit(): void
+  beforeUndo(): void
   undo(): void
+  beforeRedo(): void
   redo(): void
 }
 
@@ -44,8 +46,11 @@ export class DocumentHistory extends EventEmitter<DocumentHistoryEvents>
     if(!this.hasUncommittedChanges())
       return false;
 
-    this.commit();
+    this.#undoStack.push(this.#activeTransaction);
+    this.#activeTransaction = new Transaction();
+
     this.undo();
+
     return true;
   }
 
@@ -79,6 +84,8 @@ export class DocumentHistory extends EventEmitter<DocumentHistoryEvents>
   {
     this.commit();
 
+    this.emit("beforeUndo");
+
     const transaction = this.#undoStack.pop();
     if (!transaction)
       return false;
@@ -100,6 +107,8 @@ export class DocumentHistory extends EventEmitter<DocumentHistoryEvents>
   public redo()
   {
     this.commit();
+
+    this.emit("beforeRedo");
 
     const transaction = this.#redoStack.pop();
     if (!transaction)

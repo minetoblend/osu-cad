@@ -158,7 +158,12 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
       if (inputKey === InputKey.None)
         return false;
 
-      return this.#handleNewPressed(state, inputKey);
+      if (!this.#handleNewPressed(state, inputKey))
+        return false;
+
+      keyDown.preventDefault();
+
+      return true;
     }
 
     case KeyUpEvent: {
@@ -469,7 +474,7 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
     {
       for (const handler of handlers)
       {
-        if (!handler.action.equals(e.pressed))
+        if (!e.pressed.equals(handler.action))
           continue;
 
         if (handler.type === "press" && e instanceof KeyBindingPressEvent && handler.invoke(drawable, e))

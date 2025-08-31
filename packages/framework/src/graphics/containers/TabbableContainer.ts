@@ -22,7 +22,7 @@ export class TabbableContainer<T extends Drawable = Drawable> extends Container<
     if (nextTab !== null)
       this.getContainingInputManager()!.changeFocus(nextTab);
 
-    return true;
+    return false;
   }
 
   #nextTabStop(target: CompositeDrawable, reverse: boolean): Drawable | null

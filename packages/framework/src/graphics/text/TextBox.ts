@@ -260,11 +260,11 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
       return true;
 
     case PlatformAction.DeleteBackwardChar:
-      this.deleteBy(-1);
+      // this.deleteBy(-1);
       return true;
 
     case PlatformAction.DeleteForwardChar:
-      this.deleteBy(1);
+      // this.deleteBy(1);
       return true;
 
     case PlatformAction.DeleteBackwardWord:
@@ -881,7 +881,7 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
   protected override onKeyDown(e: KeyDownEvent): boolean
   {
     if (this.readonly)
-      return true;
+      return super.onKeyDown(e) || true;
 
     switch (e.key)
     {
@@ -908,11 +908,21 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
       if (e.controlPressed)
         return false;
       return true;
+
+    case Key.Tab:
+    case Key.ControlLeft:
+    case Key.ControlRight:
+    case Key.ShiftLeft:
+    case Key.ShiftRight:
+      return false;
     }
 
     this.#textInputScheduler.update();
 
-    return super.onKeyDown(e) || this.#textInputBlocking;
+
+    super.onKeyDown(e);
+
+    return true;
   }
 
   protected killFocus()
@@ -1156,10 +1166,9 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
 
   #handleTextInput(text: string)
   {
+    this.#textInputBlocking = true;
     this.#textInputScheduler.add(() =>
     {
-      this.#textInputBlocking = true;
-
       this.insertString(text);
       this.onUserTextAdded(text);
 

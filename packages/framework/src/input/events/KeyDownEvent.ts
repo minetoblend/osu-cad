@@ -8,6 +8,7 @@ export class KeyDownEvent extends UIEvent
     state: InputState,
     public readonly key: Key,
     public readonly repeat: boolean = false,
+    public readonly nativeEvent?: globalThis.UIEvent,
   )
   {
     super(state, "onKeyDown");
@@ -16,5 +17,15 @@ export class KeyDownEvent extends UIEvent
   public override toString(): string
   {
     return `KeyDownEvent(${this.key})`;
+  }
+
+  public preventDefault()
+  {
+    this.nativeEvent?.preventDefault();
+  }
+
+  public stopPropagation()
+  {
+    this.nativeEvent?.stopPropagation();
   }
 }

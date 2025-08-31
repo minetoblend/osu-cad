@@ -42,14 +42,15 @@ export class OsuEditorRuleset extends EditorRuleset
   public override getDefaultKeyBindings(): KeyBinding[]
   {
     return [
-      keyBinding("Control+Left", OsuEditorAction.NudgeLeft),
-      keyBinding("Control+Right", OsuEditorAction.NudgeRight),
-      keyBinding("Control+Up", OsuEditorAction.NudgeUp),
-      keyBinding("Control+Down", OsuEditorAction.NudgeDown),
+      keyBinding("Control+Left", new OsuEditorAction.NudgePosition(-1, 0)),
+      keyBinding("Control+Right", new OsuEditorAction.NudgePosition(1, 0)),
+      keyBinding("Control+Up", new OsuEditorAction.NudgePosition(0, -1)),
+      keyBinding("Control+Down", new OsuEditorAction.NudgePosition(0, 1)),
       keyBinding("Control+Period", OsuEditorAction.RotateClockwise),
       keyBinding("Control+Comma", OsuEditorAction.RotateCounterClockwise),
       keyBinding("Control+H", OsuEditorAction.FlipHorizontal),
       keyBinding("Control+J", OsuEditorAction.FlipVertical),
+      keyBinding("Control+G", OsuEditorAction.ReverseSelection),
     ];
   }
 }

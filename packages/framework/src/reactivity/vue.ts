@@ -20,6 +20,10 @@ export {
   toValue,
   watch,
   shallowReadArray,
+  track,
+  trigger,
+  TrackOpTypes,
+  TriggerOpTypes,
 } from "@vue/reactivity";
 export type {
   WatchHandle,

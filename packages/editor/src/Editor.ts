@@ -70,7 +70,7 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
   protected readonly editorClock: EditorClock;
 
   @provide(BindableBeatDivisor)
-  protected readonly beatDivisor = new BindableBeatDivisor(4);
+  protected readonly beatDivisor = new BindableBeatDivisor(2);
 
   @provide(EditorHistory)
   protected get history()
@@ -139,7 +139,7 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
   @keyBindingHandler(PlatformAction.Redo)
   public redo()
   {
-    this.history.undo();
+    this.history.redo();
     return true;
   }
 

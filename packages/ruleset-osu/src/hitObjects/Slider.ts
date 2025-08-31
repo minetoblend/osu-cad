@@ -148,7 +148,6 @@ export class Slider extends OsuHitObject
     path.version.bindValueChanged(() =>
     {
       this.invalidated.emit(this, "applyDefaults");
-      console.log("foo");
     });
   }
 
@@ -324,5 +323,14 @@ export class Slider extends OsuHitObject
     }
 
     this.path.expectedDistance = Math.max(0, this.velocity * (time - this.startTime));
+  }
+
+  public applyToPath(updateFn: (point: PathPoint, index: number, path: readonly PathPoint[]) => PathPoint)
+  {
+    const controlPoints = this.path.controlPoints;
+
+    this.path.controlPoints = controlPoints.map((p, i) =>
+      i === 0 ? p : updateFn(p, i, controlPoints),
+    );
   }
 }

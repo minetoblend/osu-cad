@@ -9,3 +9,4 @@ export * from "./assets";
 export * from "./EditorAction";
 export * from "./EditorActionContainer";
 export * from "./EditorBeatmapProcessor";
+export * from "./userInterface";

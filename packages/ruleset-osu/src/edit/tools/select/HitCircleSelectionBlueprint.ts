@@ -1,11 +1,13 @@
 import type { DrawableHitObject } from "@osucad/core";
 import { SkinnableDrawable } from "@osucad/core";
-import type { ClickEvent, DragEndEvent, DragEvent, DragStartEvent, MouseDownEvent, Rectangle } from "@osucad/framework";
+import { HitObjectComposer } from "@osucad/editor";
+import type { ClickEvent, DragEvent, DragStartEvent, MouseDownEvent, Rectangle } from "@osucad/framework";
 import { Anchor, Bindable, dependencyLoader, ProxyDrawable, resolved, Vec2 } from "@osucad/framework";
 import type { HitCircle } from "../../../hitObjects";
 import { OsuHitObject } from "../../../hitObjects";
 import { DrawableHitCircle } from "../../../hitObjects/drawables/DrawableHitCircle";
 import { OsuSkinComponents } from "../../../skinning";
+import { MoveOperator } from "../../operators/MoveOperator";
 import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
 import { SelectTool } from "./SelectTool";
 
@@ -46,39 +48,42 @@ export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<Hit
   #proxy: ProxyDrawable | null = null;
   #drawableHitObject: DrawableHitCircle | null = null;
 
-  #dragPositions!: Vec2[];
   #dragStartPosition!: Vec2;
-  #draggedHitObjects!: OsuHitObject[];
 
   @resolved(() => SelectTool)
   accessor #selectTool!: SelectTool
+
+  @resolved(HitObjectComposer)
+  accessor #composer!: HitObjectComposer
+
+  #moveOperator?: MoveOperator;
 
   protected override onDragStart(e: DragStartEvent): boolean
   {
     if (!this.selected)
       this.selectExclusive();
 
+    if (this.#moveOperator?.isDisposed !== false)
+    {
+      this.#moveOperator = this.#composer.beginOperator(MoveOperator, [...this.selection] as OsuHitObject[]);
 
-    this.#dragStartPosition = this.parent!.toLocalSpace(e.screenSpaceMousePosition);
-    this.#draggedHitObjects = [...this.selection] as OsuHitObject[];
-    this.#dragPositions = this.#draggedHitObjects.map(it => it.position);
+      this.#dragStartPosition = this.parent!.toLocalSpace(e.screenSpaceMousePosition);
+    }
+    else
+    {
+      this.#dragStartPosition = this.parent!.toLocalSpace(e.screenSpaceMousePosition).sub(this.#moveOperator.movement);
+    }
 
     return true;
   }
 
   protected override onDrag(e: DragEvent): boolean
   {
-    const delta = this.parent!.toLocalSpace(e.screenSpaceMousePosition).sub(this.#dragStartPosition);
+    const movement = this.parent!.toLocalSpace(e.screenSpaceMousePosition).sub(this.#dragStartPosition);
 
-
-    this.#selectTool.moveObjects(delta, this.#draggedHitObjects, this.#dragPositions);
+    this.#moveOperator?.setMovement(movement);
 
     return true;
-  }
-
-  protected override onDragEnd(e: DragEndEvent): void
-  {
-    this.history.commit();
   }
 
   #canCycleSelection = false;

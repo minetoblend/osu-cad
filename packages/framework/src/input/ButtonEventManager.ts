@@ -30,15 +30,13 @@ export abstract class ButtonEventManager<TButton>
   #handleButtonDown(state: InputState, event?: globalThis.UIEvent): boolean
   {
     const inputQueue = this.getInputQueue();
-    const handledBy = this.handleButtonDown(state, inputQueue);
+    const handledBy = this.handleButtonDown(state, inputQueue, event);
 
     if (handledBy !== null)
     {
       // only drawables up to the one that handled mouse down should handle mouse up, so remove all subsequent drawables from the queue (for future use).
       const count = inputQueue.indexOf(handledBy) + 1;
       inputQueue.splice(count, inputQueue.length - count);
-
-      event?.preventDefault();
     }
 
     this.buttonDownInputQueue = [...inputQueue];
@@ -46,7 +44,7 @@ export abstract class ButtonEventManager<TButton>
     return handledBy !== null;
   }
 
-  protected abstract handleButtonDown(state: InputState, targets: List<Drawable>): Drawable | null;
+  protected abstract handleButtonDown(state: InputState, targets: List<Drawable>, nativeEvent?: globalThis.UIEvent): Drawable | null;
 
   #handleButtonUp(state: InputState)
   {

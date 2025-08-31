@@ -370,7 +370,13 @@ importers:
       socket.io-client:
         specifier: ^4.8.1
         version: 4.8.1
+      voca:
+        specifier: ^1.4.1
+        version: 1.4.1
     devDependencies:
+      '@types/voca':
+        specifier: ^1.4.6
+        version: 1.4.6
       vitest:
         specifier: ^3.0.0
         version: 3.1.2(@types/node@18.16.9)(@vitest/ui@3.1.2)(jiti@2.4.2)(jsdom@22.1.0)(terser@5.43.1)
@@ -4170,6 +4176,10 @@ packages:
 
   /@types/uuid@9.0.8:
     resolution: {integrity: sha512-jg+97EGIcY9AGHJJRaaPVgetKDsrTgbRjQ5Msgjh/DQKEFl0DtyRr/VCOyD1T2R1MNeWPK/u7JoGhlDZnKBAfA==}
+    dev: true
+
+  /@types/voca@1.4.6:
+    resolution: {integrity: sha512-ubfCfFxlTOhBBUP2v8lzD8AQVKKu9erZ2t9/8hLpuYHYib3CM/lOwTII3mi527j5UeRDaVjIiAx+iTIWgVCWKQ==}
     dev: true
 
   /@types/web-bluetooth@0.0.21:
@@ -10744,6 +10754,10 @@ packages:
       - terser
       - tsx
       - yaml
+
+  /voca@1.4.1:
+    resolution: {integrity: sha512-NJC/BzESaHT1p4B5k4JykxedeltmNbau4cummStd4RjFojgq/kLew5TzYge9N2geeWyI2w8T30wUET5v+F7ZHA==}
+    dev: false
 
   /vscode-uri@3.1.0:
     resolution: {integrity: sha512-/BpdSx+yCQGnCvecbyXdxHDkuk55/G3xwnC0GqY4gmQ3j+A+g8kzzgB4Nk/SINjqn6+waqw3EgbVF2QKExkRxQ==}

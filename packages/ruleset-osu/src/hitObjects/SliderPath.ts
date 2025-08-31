@@ -1,16 +1,11 @@
-import { bindableBacked, PathApproximator } from "@osucad/core";
+import { bindableBacked } from "@osucad/core";
 import { Bindable, BoundsBuilder, CachedValue, Rectangle, Vec2 } from "@osucad/framework";
-import { CalculatedPath } from "./CalculatedPath";
-import { PathPoint } from "./PathPoint";
-import { PathType } from "./PathPoint";
 import type { DDSAttributes } from "@osucad/multiplayer-core";
 import { ObjectDDS, serializer, type, typeDecorator } from "@osucad/multiplayer-core";
-
-export interface PathSegment
-{
-  readonly type: PathType
-  readonly points: PathPoint[]
-}
+import { CalculatedPath } from "./CalculatedPath";
+import { PathType } from "./PathPoint";
+import { PathPoint } from "./PathPoint";
+import { PathSegment } from "./PathSegment";
 
 const pathPointSerializer = serializer<readonly PathPoint[], [number, number, PathType | null][]>({
   serialize: value => value.map(p => [p.position.x, p.position.y, p.type]),
@@ -120,32 +115,7 @@ export class SliderPath extends ObjectDDS
 
     for (const segment of this.pathSegments)
     {
-      const segmentPoints = segment.points.map(p => p.position.clone());
-      let calculatedSegment: Vec2[];
-
-      switch (segment.type)
-      {
-      case PathType.Catmull:
-        calculatedSegment = PathApproximator.approximateCatmull(segmentPoints);
-        break;
-      case PathType.Linear:
-        calculatedSegment = segmentPoints;
-        break;
-      case PathType.BSpline:
-        calculatedSegment = PathApproximator.approximateBSpline(segmentPoints, 3);
-        break;
-      case PathType.PerfectCurve:
-        if (segmentPoints.length === 3)
-          calculatedSegment = PathApproximator.approximateCircularArc(segmentPoints);
-        else
-          calculatedSegment = PathApproximator.approximateBezier(segmentPoints);
-        break;
-      default:
-        calculatedSegment = PathApproximator.approximateBezier(segmentPoints);
-        break;
-      }
-
-      for (const p of calculatedSegment)
+      for (const p of segment.vertices)
       {
         const last = points[points.length - 1];
         const distance = last.distance(p);
@@ -159,6 +129,8 @@ export class SliderPath extends ObjectDDS
       }
     }
 
+    this.#bounds = bounds.rect() ?? new Rectangle(0,0,0,0);
+
     return new CalculatedPath(points, cumulativeDistance);
   }
 
@@ -167,7 +139,7 @@ export class SliderPath extends ObjectDDS
     const segments: PathSegment[] = [];
 
     let segmentStart = 0;
-    let segmentType = this.controlPoints[0].type!;
+    let segmentType = this.controlPoints[0].type ?? PathType.Bezier;
 
     for (let i = 1; i < this.controlPoints.length; i++)
     {
@@ -175,10 +147,9 @@ export class SliderPath extends ObjectDDS
 
       if (controlPoint.type !== null || i === this.controlPoints.length - 1)
       {
-        segments.push({
-          type: segmentType,
-          points: this.controlPoints.slice(segmentStart, i + 1),
-        });
+        const points = this.controlPoints.slice(segmentStart, i + 1);
+
+        segments.push( new PathSegment(segmentType, points));
 
         segmentStart = i;
         segmentType = controlPoint.type!;

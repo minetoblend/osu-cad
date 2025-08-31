@@ -42,14 +42,16 @@
   "dependencies": {
     "@osucad/core": "1.1.2",
     "@osucad/framework": "1.1.2",
-    "@osucad/multiplayer-core": "workspace:^",
     "@osucad/multiplayer-client": "workspace:^",
+    "@osucad/multiplayer-core": "workspace:^",
     "@osucad/multiplayer-protocol": "workspace:^",
     "eventemitter3": "^5.0.1",
     "pixi.js": "^8.12.0",
-    "socket.io-client": "^4.8.1"
+    "socket.io-client": "^4.8.1",
+    "voca": "^1.4.1"
   },
   "devDependencies": {
+    "@types/voca": "^1.4.6",
     "vitest": "^3.0.0"
   }
 }
