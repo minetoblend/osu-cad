@@ -36,6 +36,7 @@ export class OsuLegacySkinTransformer extends SkinTransformer
         "sliderendcircleoverlay",
         "reversearrow",
         "sliderb-spec",
+        "sliderb-nd",
         "hitcircleselect",
         "spinner-approachcircle",
         "spinner-background",
