@@ -1,17 +1,20 @@
 import { SkinnableDrawable } from "@osucad/core";
 import { TimelineBlueprint } from "@osucad/editor";
 import type { Drawable } from "@osucad/framework";
+import { Container } from "@osucad/framework";
 import { Anchor, Axes, Box, dependencyLoader, Vec2 } from "@osucad/framework";
 import type { Slider } from "../../hitObjects";
 import { OsuHitObject } from "../../hitObjects";
 import { OsuSkinComponents } from "../../skinning";
 import { OsuTimelineBlueprint } from "./OsuTimelineBlueprint";
+import { SliderRepeat } from "../../hitObjects/SliderRepeat";
 
 export class SliderTimelineBlueprint extends OsuTimelineBlueprint<Slider>
 {
   #headCircle!: SkinnableDrawable;
   #tailCircle!: SkinnableDrawable;
   #body!: Drawable;
+  #repeats!: Container;
 
   @dependencyLoader()
   #load()
@@ -31,6 +34,9 @@ export class SliderTimelineBlueprint extends OsuTimelineBlueprint<Slider>
         anchor: Anchor.CenterRight,
         origin: Anchor.Center,
         scale: new Vec2(TimelineBlueprint.SIZE).divInPlace(OsuHitObject.OBJECT_DIMENSIONS),
+      }),
+      this.#repeats = new Container({
+        relativeSizeAxes: Axes.Both,
       }),
       this.#headCircle = new SkinnableDrawable(OsuSkinComponents.TimelineSliderHead).with({
         relativeSizeAxes: Axes.Both,
@@ -52,5 +58,40 @@ export class SliderTimelineBlueprint extends OsuTimelineBlueprint<Slider>
   {
     this.size = new Vec2(this.hitObject.duration, TimelineBlueprint.SIZE);
     this.origin = Anchor.CenterLeft;
+
+    this.#updateRepeats();
+  }
+
+  #updateRepeats()
+  {
+    let drawableIndex = 0;
+
+    for (const h of this.hitObject.nestedHitObjects)
+    {
+      if (!(h instanceof SliderRepeat))
+        continue;
+
+      let repeat = this.#repeats.children[drawableIndex++];
+
+      if (!repeat)
+      {
+        this.#repeats.add(
+            repeat = new SkinnableDrawable(OsuSkinComponents.TimelineSliderRepeat).with({
+              relativeSizeAxes: Axes.Both,
+              relativePositionAxes: Axes.X,
+              anchor: Anchor.CenterLeft,
+              origin: Anchor.Center,
+              scale: new Vec2(TimelineBlueprint.SIZE).divInPlace(OsuHitObject.OBJECT_DIMENSIONS),
+            }),
+        );
+      }
+
+      repeat.x = this.hitObject.duration === 0
+        ? 0
+        : (h.startTime - this.hitObject.startTime) / this.hitObject.duration;
+    }
+
+    while (drawableIndex < this.#repeats.children.length)
+      this.#repeats.children[drawableIndex++]?.expire();
   }
 }

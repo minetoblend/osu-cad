@@ -1,15 +1,18 @@
 import { DrawableRuleset, type HitObject } from "@osucad/core";
 import { ComposeTool } from "@osucad/editor";
-import type { ClickEvent, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, Vec2 } from "@osucad/framework";
-import { dependencyLoader, MouseButton, PlatformAction, provide, provideSelf, resolved } from "@osucad/framework";
-import type { OsuHitObject } from "../../../hitObjects";
+import type { ClickEvent, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent } from "@osucad/framework";
+import { Vec2 } from "@osucad/framework";
+import { BoundsBuilder, dependencyLoader, keyBindingHandler, MouseButton, PlatformAction, provide, provideSelf, resolved } from "@osucad/framework";
+import type { SnapResult } from "src/edit/SnapProvider";
+import { Slider, Spinner, type OsuHitObject } from "../../../hitObjects";
+import { OsuEditorAction } from "../../OsuEditorAction";
+import { HitObjectSnapProvider } from "../../SelectionSnapProvider";
 import { HitObjectSelection } from "./HitObjectSelection";
 import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
 import { OsuSelectionBlueprintContainer } from "./OsuSelectionBlueprintContainer";
-import { SelectionBlueprintContainer } from "./SelectionBlueprintContainer";
-import { HitObjectSnapProvider } from "../../SelectionSnapProvider";
-import type { SnapResult } from "src/edit/SnapProvider";
 import { SelectBox } from "./SelectBox";
+import { SelectionBlueprintContainer } from "./SelectionBlueprintContainer";
+import { OsuPlayfield } from "../../../ui";
 
 @provideSelf()
 export class SelectTool extends ComposeTool implements IKeyBindingHandler<PlatformAction>
@@ -118,11 +121,13 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
 
     if (closest && closest.distance < 5)
     {
+      const { offset } = closest;
+
       for (let i = 0; i < objects.length; i++)
-      {
-        objects[i].position = objects[i].position.add(closest.offset);
-      }
+        objects[i].moveBy(offset.x, offset.y);
     }
+
+    this.moveIntoBounds(objects);
   }
 
   public readonly isKeyBindingHandler = true;
@@ -147,5 +152,163 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     }
 
     return false;
+  }
+
+  public nudgeSelection(x: number, y: number)
+  {
+    for (const h of this.selection)
+      h.moveBy(x, y);
+
+    this.moveIntoBounds([...this.selection]);
+
+    this.history.commit();
+  }
+
+  @keyBindingHandler([
+    OsuEditorAction.NudgeLeft,
+    OsuEditorAction.NudgeRight,
+    OsuEditorAction.NudgeUp,
+    OsuEditorAction.NudgeDown,
+  ])
+  #nudgeSelection(event: KeyBindingPressEvent<OsuEditorAction>)
+  {
+    switch(event.pressed)
+    {
+    case OsuEditorAction.NudgeLeft:
+      this.nudgeSelection(-1, 0);
+      break;
+    case OsuEditorAction.NudgeRight:
+      this.nudgeSelection(1, 0);
+      break;
+    case OsuEditorAction.NudgeUp:
+      this.nudgeSelection(0, -1);
+      break;
+    case OsuEditorAction.NudgeDown:
+      this.nudgeSelection(0, 1);
+      break;
+    }
+
+    return true;
+  }
+
+  public rotateSelection(angle: number, center: Vec2)
+  {
+    for (const h of this.selection)
+    {
+      if (h instanceof Spinner)
+        continue;
+
+      h.position = h.position
+        .sub(center)
+        .rotate(angle)
+        .add(center);
+
+      if (h instanceof Slider)
+      {
+        h.path.controlPoints = h.path.controlPoints.map(p => p.rotated(angle));
+      }
+    }
+
+
+
+    this.history.commit();
+  }
+
+  @keyBindingHandler(OsuEditorAction.RotateClockwise)
+  public rotateClockwise()
+  {
+    this.rotateSelection(Math.PI / 2, OsuPlayfield.BOUNDS.center);
+
+    return true;
+  }
+
+  @keyBindingHandler(OsuEditorAction.RotateCounterClockwise)
+  public rotateCounterClockwise()
+  {
+    this.rotateSelection(-Math.PI / 2, OsuPlayfield.BOUNDS.center);
+
+    return true;
+  }
+
+  @keyBindingHandler(OsuEditorAction.FlipHorizontal)
+  public flipHorizontal()
+  {
+    for (const h of this.selection)
+    {
+      if (h instanceof Spinner)
+        continue;
+
+      h.x = OsuPlayfield.SIZE.x - h.x;
+
+      if (h instanceof Slider)
+      {
+        h.path.controlPoints = h.path.controlPoints.map(p => p.withPosition(p.position.mul({ x: -1, y: 1 })));
+      }
+    }
+    this.history.commit();
+
+    return true;
+  }
+
+  @keyBindingHandler(OsuEditorAction.FlipHorizontal)
+  public flipVertical()
+  {
+    for (const h of this.selection)
+    {
+      if (h instanceof Spinner)
+        continue;
+
+      h.y = OsuPlayfield.SIZE.y - h.y;
+
+      if (h instanceof Slider)
+      {
+        h.path.controlPoints = h.path.controlPoints.map(p => p.withPosition(p.position.mul({ x: 1, y: -1 })),
+        );
+      }
+    }
+    this.history.commit();
+
+    return true;
+  }
+
+  public moveIntoBounds(hitObjects: OsuHitObject[])
+  {
+    const bounds = new BoundsBuilder();
+
+    for (const h of hitObjects)
+    {
+      if (h instanceof Spinner)
+        continue;
+
+      bounds.addPoint(h.position);
+
+      if (h instanceof Slider)
+        bounds.addPoint(h.pathEndPosition);
+    }
+
+    const rect = bounds.rect();
+
+    if (!rect)
+      return;
+
+    const offset = new Vec2();
+
+    if (rect.left < 0 && rect.right < OsuPlayfield.BOUNDS.right)
+      offset.x = -rect.left;
+
+    if (rect.left > 0 && rect.right > OsuPlayfield.BOUNDS.right)
+      offset.x = OsuPlayfield.BOUNDS.right - rect.right;
+
+    if (rect.top < 0 && rect.bottom < OsuPlayfield.BOUNDS.bottom)
+      offset.y = -rect.top;
+
+    if (rect.top > 0 && rect.bottom > OsuPlayfield.BOUNDS.bottom)
+      offset.y = OsuPlayfield.BOUNDS.bottom - rect.bottom;
+
+    if (!offset.isZero)
+    {
+      for (const h of hitObjects)
+        h.moveBy(offset.x, offset.y);
+    }
   }
 }

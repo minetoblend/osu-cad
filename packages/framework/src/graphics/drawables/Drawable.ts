@@ -1687,7 +1687,7 @@ export abstract class Drawable extends Transformable implements IDisposable
   {
     e.target = this;
 
-    return this[e.handler](e as any) ?? this.handle(e) ?? false;
+    return this[e.handler](e as any) || this.handle(e) || false;
   }
 
   public get requiresHighFrequencyMousePosition()

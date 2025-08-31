@@ -1,9 +1,8 @@
-import type { DragEndEvent, DragEvent, DragStartEvent, Vec2 } from "@osucad/framework";
-import { Action, Anchor, Axes, Box, CompositeDrawable, Container, dependencyLoader, Invalidation, LayoutMember, MouseButton, provideSelf, resolved } from "@osucad/framework";
+import type { DragEndEvent, DragEvent, DragStartEvent, ScrollEvent, Vec2 } from "@osucad/framework";
+import { Action, Anchor, Axes, Box, clamp, CompositeDrawable, Container, dependencyLoader, Invalidation, LayoutMember, MouseButton, provideSelf, resolved } from "@osucad/framework";
 import { EditorClock } from "../../EditorClock";
 import { EditorRuleset } from "../../EditorRuleset";
 import { TimelineTickDisplay } from "./TimelineTickDisplay";
-import { BindableBeatDivisor } from "../../BindableBeatDivisor";
 
 @provideSelf()
 export class ComposeTimeline extends CompositeDrawable
@@ -104,7 +103,7 @@ export class ComposeTimeline extends CompositeDrawable
       return;
 
     this.#zoom = value;
-    this.zoomChanged.emit(value);
+    this.#zoomedContentWidthCache.invalidate();
   }
 
   public get visibleDuration()
@@ -156,11 +155,20 @@ export class ComposeTimeline extends CompositeDrawable
     return true;
   }
 
-  @resolved(BindableBeatDivisor)
-  accessor #beatDivisor!: BindableBeatDivisor
-
   protected override onDragEnd(e: DragEndEvent): void
   {
     this.#editorClock.seekSnapped(this.#editorClock.currentTimeAccurate);
+  }
+
+  protected override onScroll(e: ScrollEvent): boolean
+  {
+    if (e.controlPressed)
+    {
+      this.zoom = clamp(this.zoom + e.scrollDelta.y * 0.01, 0.2, 2);
+
+      return true;
+    }
+
+    return false;
   }
 }

@@ -3,3 +3,4 @@ export { type IKeyBindingHandler, isKeyBindingHandler } from "./IKeyBindingHandl
 export { KeyBinding } from "./KeyBinding";
 export { BaseKeyBindingContainer, KeyBindingContainer, SimultaneousBindingMode } from "./KeyBindingContainer";
 export { KeyCombination, KeyCombinationMatchingMode } from "./KeyCombination";
+export * from "./decorator";

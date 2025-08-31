@@ -7,7 +7,7 @@ import { Color } from "pixi.js";
 @provideSelf()
 export class TimelineBlueprint<T extends HitObject = HitObject> extends PoolableDrawableWithLifetime<HitObjectLifetimeEntry>
 {
-  public static readonly SIZE = 60;
+  public static readonly SIZE = 70;
 
   @resolved(() => ComposeTimeline)
   accessor #timeline!: ComposeTimeline
@@ -24,6 +24,14 @@ export class TimelineBlueprint<T extends HitObject = HitObject> extends Poolable
 
     this.relativePositionAxes = Axes.X;
     this.anchor = Anchor.CenterLeft;
+    this.alwaysPresent = true;
+  }
+
+  protected override update(): void
+  {
+    super.update();
+
+    this.alpha = this.hitObject.isAttached() ? 1 : 0;
   }
 
   protected get hitObject(): T

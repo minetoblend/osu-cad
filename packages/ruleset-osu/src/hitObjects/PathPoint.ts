@@ -81,6 +81,11 @@ export class PathPoint
     return new PathPoint(position, this.type);
   }
 
+  public rotated(angle: number)
+  {
+    return this.withPosition(this.position.rotate(angle));
+  }
+
   public withType(type: PathType | null)
   {
     return new PathPoint(this.position, type);

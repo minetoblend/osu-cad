@@ -1,3 +1,4 @@
+import type { Drawable } from "../../graphics";
 import type { KeyBindingPressEvent } from "../events/KeyBindingPressEvent";
 import type { KeyBindingReleaseEvent } from "../events/KeyBindingReleaseEvent";
 import type { KeyBindingScrollEvent } from "../events/KeyBindingScrollEvent";
@@ -16,7 +17,7 @@ export interface IKeyBindingHandler<T extends KeyBindingAction>
   onScrollKeyBinding?(e: KeyBindingScrollEvent<T>): boolean;
 }
 
-export function isKeyBindingHandler<T extends KeyBindingAction>(obj: any, binding: T): obj is IKeyBindingHandler<T>
+export function isKeyBindingHandler<D extends Drawable, T extends KeyBindingAction>(obj: D, binding: T): obj is D & IKeyBindingHandler<T>
 {
-  return obj.isKeyBindingHandler && obj.canHandleKeyBinding(binding);
+  return (obj as any).isKeyBindingHandler && (obj as any).canHandleKeyBinding(binding);
 }

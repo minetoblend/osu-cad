@@ -143,7 +143,30 @@ export class Slider extends OsuHitObject
     this.#tickDistance = scoringDistance / difficulty.sliderTickRate;
   }
 
+  private bindPathVersion(path: SliderPath)
+  {
+    path.version.bindValueChanged(() =>
+    {
+      this.invalidated.emit(this, "applyDefaults");
+      console.log("foo");
+    });
+  }
+
   @nested(SliderPath)
+  @(({ set }) => ({
+    init(value)
+    {
+      this.bindPathVersion(value);
+
+      return value;
+    },
+    set(value)
+    {
+      this.bindPathVersion(value);
+
+      set.call(this, value);
+    },
+  }))
   public accessor path = new SliderPath();
 
   public spanAt(progress: number)

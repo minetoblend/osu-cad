@@ -26,4 +26,5 @@ export class OsuSkinComponents extends SkinComponentLookup
   public static readonly TimelineHitCircle = new OsuSkinComponents("TimelineHitCircle");
   public static readonly TimelineSliderHead = new OsuSkinComponents("TimelineSliderHead");
   public static readonly TimelineSliderTail = new OsuSkinComponents("TimelineSliderTail");
+  public static readonly TimelineSliderRepeat = new OsuSkinComponents("TimelineSliderRepeat");
 }

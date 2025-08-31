@@ -1,5 +1,5 @@
 import { Drawable } from "../graphics/drawables/Drawable";
-import type { IKeyBindingHandler } from "./bindings";
+import { getKeyBindingHandlers, keyBindingHandlersKey, type } from "./bindings/decorator";
 import type { IInputReceiver } from "./IInputReceiver";
 
 type DrawableConstructor = new (...args: any[]) => Drawable;
@@ -72,7 +72,10 @@ export class HandleInputCache
 
     if (positional)
       return drawable.handlePositionalInput;
-    else
-      return drawable.requestsNonPositionalInput;
+
+    if (getKeyBindingHandlers(drawable)?.length)
+      return true;
+
+    return drawable.requestsNonPositionalInput;
   }
 }

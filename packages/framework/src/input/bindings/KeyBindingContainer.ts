@@ -1,19 +1,20 @@
-import type { Drawable } from "../../graphics/drawables/Drawable";
-import type { Vec2 } from "../../math";
-import type { KeyBindingAction } from "../KeyBindingAction";
-import type { IKeyBinding } from "./IKeyBinding";
+import debug from "debug";
 import { Container } from "../../graphics/containers/Container";
 import { Axes } from "../../graphics/drawables/Axes";
+import type { Drawable } from "../../graphics/drawables/Drawable";
+import type { Vec2 } from "../../math";
 import { List } from "../../utils";
 import { KeyDownEvent, KeyUpEvent, MouseDownEvent, MouseUpEvent, ScrollEvent, type UIEvent } from "../events";
 import { KeyBindingPressEvent } from "../events/KeyBindingPressEvent";
 import { KeyBindingReleaseEvent } from "../events/KeyBindingReleaseEvent";
 import { KeyBindingScrollEvent } from "../events/KeyBindingScrollEvent";
+import type { KeyBindingAction } from "../KeyBindingAction";
 import { InputKey } from "../state/InputKey";
 import { InputState } from "../state/InputState";
+import { getKeyBindingHandlers } from "./decorator";
+import type { IKeyBinding } from "./IKeyBinding";
 import { isKeyBindingHandler } from "./IKeyBindingHandler";
 import { KeyCombination, KeyCombinationMatchingMode } from "./KeyCombination";
-import debug from "debug";
 
 const log = debug("KeyBindingContainer");
 
@@ -334,9 +335,9 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
     if (log.enabled)
     {
       if (handled && log.enabled)
-        log(`Keybinding ${JSON.stringify(pressed)} handled by ${handled.label ?? handled.constructor.name}`);
+        log(`Keybinding ${pressed.toString()} handled by ${handled.label ?? handled.constructor.name}`);
       else
-        log(`Keybinding ${JSON.stringify(pressed)} not handled`);
+        log(`Keybinding ${pressed.toString()} not handled`);
     }
 
     return handled ?? null;
@@ -461,6 +462,23 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
   ): boolean
   {
     e.target = drawable;
+
+    const handlers = getKeyBindingHandlers(drawable);
+
+    if (handlers)
+    {
+      for (const handler of handlers)
+      {
+        if (!handler.action.equals(e.pressed))
+          continue;
+
+        if (handler.type === "press" && e instanceof KeyBindingPressEvent && handler.invoke(drawable, e))
+          return true;
+
+        if (handler.type === "release" && e instanceof KeyBindingReleaseEvent && handler.invoke(drawable, e))
+          return true;
+      }
+    }
 
     if (!isKeyBindingHandler(drawable, e.pressed))
       return false;

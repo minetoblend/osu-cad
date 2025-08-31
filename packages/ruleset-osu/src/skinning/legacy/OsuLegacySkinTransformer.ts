@@ -188,6 +188,8 @@ export class OsuLegacySkinTransformer extends SkinTransformer
         return new LegacyTimelineCirclePiece();
       case OsuSkinComponents.TimelineSliderTail:
         return new LegacyTimelineCirclePiece(false);
+      case OsuSkinComponents.TimelineSliderRepeat:
+        return new LegacyTimelineCirclePiece(false, true);
       }
     }
 

@@ -1,7 +1,7 @@
 import type { Skin } from "@osucad/core";
 import { ISamplePlaybackDisabler, ISkinSource, PlayfieldClock, Ruleset, SkinProvidingContainer } from "@osucad/core";
-import type { IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer, ScheduledDelegate } from "@osucad/framework";
-import { asyncDependencyLoader, Bindable, DependencyContainer, PlatformAction, provide, provideSelf, resolved, Screen } from "@osucad/framework";
+import type { IKeyBindingHandler, KeyBindingAction, ReadonlyDependencyContainer, ScheduledDelegate } from "@osucad/framework";
+import { asyncDependencyLoader, Bindable, DependencyContainer, keyBindingHandler, PlatformAction, provide, provideSelf, resolved, Screen } from "@osucad/framework";
 import { BindableBeatDivisor } from "./BindableBeatDivisor";
 import { DefaultsApplier } from "./DefaultsApplier";
 import { EditorClock } from "./EditorClock";
@@ -10,6 +10,7 @@ import { ComposeScreen } from "./compose";
 import { EditorBeatmap, EditorHistory, EditorRuntime } from "./runtime";
 
 import { Document } from "@osucad/multiplayer-client";
+import { EditorActionContainer } from "./EditorActionContainer";
 import { IAudience } from "./injectionTokens";
 
 export interface EditorOptions
@@ -108,11 +109,13 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
     this.addRangeInternal([
       ...beatmapProcessors,
       this.editorClock.with({ depth: Number.MIN_VALUE }),
-      new SkinProvidingContainer({
-        skin: skinTransformer ?? skin,
-        children: [
-          new ComposeScreen(),
-        ],
+      new EditorActionContainer({
+        child: new SkinProvidingContainer({
+          skin: skinTransformer ?? skin,
+          children: [
+            new ComposeScreen(),
+          ],
+        }),
       }),
     ]);
 
@@ -126,18 +129,18 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
     return binding instanceof PlatformAction;
   }
 
-  public onKeyBindingPressed?(e: KeyBindingPressEvent<PlatformAction>): boolean
+  @keyBindingHandler(PlatformAction.Undo)
+  public undo()
   {
-    switch (e.pressed)
-    {
-    case PlatformAction.Undo:
-      this.history.undo();
-      return true;
-    case PlatformAction.Redo:
-      this.history.undo();
-      return true;
-    }
-    return false;
+    this.history.undo();
+    return true;
+  }
+
+  @keyBindingHandler(PlatformAction.Redo)
+  public redo()
+  {
+    this.history.undo();
+    return true;
   }
 
   #playbackDisabledDebounce?: ScheduledDelegate;

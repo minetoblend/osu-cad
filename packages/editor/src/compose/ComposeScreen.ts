@@ -1,10 +1,11 @@
-import type { KeyDownEvent, ScrollEvent } from "@osucad/framework";
-import { Anchor, Axes, Container, Key, resolved, SpriteText, type ReadonlyDependencyContainer } from "@osucad/framework";
-import { EditorScreen } from "../EditorScreen";
 import { Ruleset } from "@osucad/core";
-import { ComposeTimeline } from "./timeline/ComposeTimeline";
-import { EditorBeatmap } from "../runtime";
+import type { KeyBindingEvent, ScrollEvent } from "@osucad/framework";
+import { almostEquals, Anchor, Axes, Container, DependencyContainer, keyBindingHandler, resolved, SpriteText, type ReadonlyDependencyContainer } from "@osucad/framework";
+import { EditorAction } from "../EditorAction";
 import { EditorClock } from "../EditorClock";
+import { EditorScreen } from "../EditorScreen";
+import { EditorBeatmap } from "../runtime";
+import { ComposeTimeline } from "./timeline/ComposeTimeline";
 
 export class ComposeScreen extends EditorScreen
 {
@@ -23,6 +24,13 @@ export class ComposeScreen extends EditorScreen
     void this.loadComposer();
   }
 
+  #dependencies!: DependencyContainer;
+
+  protected override createChildDependencies(parentDependencies: ReadonlyDependencyContainer): ReadonlyDependencyContainer
+  {
+    return this.#dependencies = new DependencyContainer(parentDependencies);
+  }
+
   protected async loadComposer()
   {
     try
@@ -33,15 +41,14 @@ export class ComposeScreen extends EditorScreen
       {
         await this.loadComponentAsync(composer);
 
+        if (composer.hasTimeline)
+          this.addTimeline();
 
         this.addInternal(new Container({
           relativeSizeAxes: Axes.Both,
           padding: { top: composer.hasTimeline ? ComposeTimeline.HEIGHT : 0 },
           child: composer,
         }));
-
-        if (composer.hasTimeline)
-          this.addTimeline();
         return;
       }
     }
@@ -60,7 +67,10 @@ export class ComposeScreen extends EditorScreen
 
   protected addTimeline()
   {
-    this.addInternal(new ComposeTimeline());
+    const timeline = new ComposeTimeline().with({ depth: -1 });
+
+    this.#dependencies.provide(ComposeTimeline, timeline);
+    this.addInternal(timeline);
   }
 
   @resolved(EditorBeatmap)
@@ -69,35 +79,43 @@ export class ComposeScreen extends EditorScreen
   @resolved(EditorClock)
   accessor #editorClock!: EditorClock;
 
-  protected override onKeyDown(e: KeyDownEvent): boolean
+  @keyBindingHandler(EditorAction.SeekToStart)
+  public seekToStart()
   {
-    switch (e.key)
-    {
-    case Key.KeyZ: {
-      const first = this.#editorBeatmap.hitObjects.first;
-      if (first && this.#editorClock.currentTime !== first.startTime)
-        this.#editorClock.seekSmoothlyTo(first.startTime);
-      else
-        this.#editorClock.seekSmoothlyTo(0);
-      break;
-    }
-    case Key.KeyV: {
-      const last = this.#editorBeatmap.hitObjects.last;
-      if (last && this.#editorClock.currentTime !== last.endTime)
-        this.#editorClock.seekSmoothlyTo(last.endTime);
-      else
-        this.#editorClock.seekSmoothlyTo(this.#editorClock.trackLength);
-      break;
-    }
-    case Key.ArrowRight:
-      this.#editorClock.seekBeats(1, true);
-      break;
-    case Key.ArrowLeft:
-      this.#editorClock.seekBeats(-1, true);
-      break;
-    }
+    const first = this.#editorBeatmap.hitObjects.first;
 
-    return false;
+    if (first && !almostEquals(this.#editorClock.currentTimeAccurate, first.startTime))
+      this.#editorClock.seekSmoothlyTo(first.startTime);
+    else
+      this.#editorClock.seekSmoothlyTo(0);
+
+    return true;
+  }
+
+  @keyBindingHandler(EditorAction.SeekToEnd)
+  public seekToEnd()
+  {
+    const last = this.#editorBeatmap.hitObjects.last;
+    if (last && !almostEquals(this.#editorClock.currentTimeAccurate, last.endTime))
+      this.#editorClock.seekSmoothlyTo(last.endTime);
+    else
+      this.#editorClock.seekSmoothlyTo(this.#editorClock.trackLength);
+
+    return true;
+  }
+
+  @keyBindingHandler(EditorAction.SeekForward)
+  public seekForward(e: KeyBindingEvent<EditorAction>)
+  {
+    this.#editorClock.seekBeats(1, true);
+    return true;
+  }
+
+  @keyBindingHandler(EditorAction.SeekBackward)
+  public seekBackward(e: KeyBindingEvent<EditorAction>)
+  {
+    this.#editorClock.seekBeats(-1, true);
+    return true;
   }
 
   public override onScroll(e: ScrollEvent): boolean

@@ -2,7 +2,7 @@ import type { Awaitable } from "@osucad/core";
 import type { HitObjectComposer } from "./compose/HitObjectComposer";
 import type { EditorRuntimeConfig } from "./runtime/EditorRuntime";
 import type { Editor } from "./Editor";
-import type { Component } from "@osucad/framework";
+import type { Component, KeyBinding } from "@osucad/framework";
 import type { TimelineBlueprintContainer } from "./compose/timeline";
 
 export abstract class EditorRuleset
@@ -23,5 +23,10 @@ export abstract class EditorRuleset
   public createTimelineBlueprintContainer(): TimelineBlueprintContainer | null
   {
     return null;
+  }
+
+  public getDefaultKeyBindings(): KeyBinding[]
+  {
+    return [];
   }
 }

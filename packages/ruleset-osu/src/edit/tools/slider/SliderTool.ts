@@ -67,6 +67,13 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
 
     this.hitObject.path.controlPoints = path;
     this.hitObject.snapPathLength(this.beatmap.controlPointInfo, this.beatDivisor.value);
+
+    let repeatCount = 0;
+
+    if (time - this.hitObject.startTime > 0)
+      repeatCount = Math.floor((time - this.hitObject.startTime) / this.hitObject.spanDuration());
+
+    this.hitObject.repeatCount = Math.max(repeatCount, 0);
   }
 
   private applyAutomaticPathType(path: PathPoint[])

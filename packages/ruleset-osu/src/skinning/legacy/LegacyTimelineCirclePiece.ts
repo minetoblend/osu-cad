@@ -7,7 +7,10 @@ import { OsuSkinComponents } from "../OsuSkinComponents";
 
 export class LegacyTimelineCirclePiece extends CompositeDrawable
 {
-  public constructor(private readonly hasNumber = true)
+  public constructor(
+    private readonly hasNumber = true,
+    private readonly hasArrow = false,
+  )
   {
     super();
   }
@@ -56,6 +59,15 @@ export class LegacyTimelineCirclePiece extends CompositeDrawable
       }));
 
       this.indexInComboBindable.bindValueChanged(e => this.#circleText!.text = (e.value + 1).toString(), true);
+    }
+
+    if (this.hasArrow)
+    {
+      this.addInternal(new DrawableSprite({
+        texture: this.#skin.getTexture("reversearrow")?.withMaximumSize(maxSize),
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
+      }));
     }
   }
 

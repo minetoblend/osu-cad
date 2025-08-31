@@ -45,13 +45,19 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
     this.positionBindable.bindValueChanged(e => this.position = this.hitObject.stackedPosition, true);
     this.stackHeightBindable.bindValueChanged(e => this.position = this.hitObject.stackedPosition);
 
-    this.hitObject.defaultsApplied.addListener(this.#updateTail, this);
+    this.hitObject.defaultsApplied.addListener(this.#defaultsApplied, this);
+    this.#updateTail();
+  }
+
+  #defaultsApplied()
+  {
     this.#updateTail();
   }
 
   #updateTail()
   {
     this.#sliderTail.position = this.hitObject.path.positionAt(1);
+    console.log(this.#sliderTail.position);
   }
 
   #drawableSlider?: DrawableSlider;
@@ -139,7 +145,7 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
 
   public override dispose()
   {
-    this.hitObject.defaultsApplied.removeListener(this.#updateTail, this);
+    this.hitObject.defaultsApplied.removeListener(this.#defaultsApplied, this);
 
     super.dispose();
   }
