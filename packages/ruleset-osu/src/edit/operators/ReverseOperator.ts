@@ -6,8 +6,6 @@ import { Slider, type OsuHitObject } from "../../hitObjects";
 import { OsuOperatorUtils } from "./OsuOperatorUtils";
 import { PathSegment } from "../../hitObjects/PathSegment";
 
-let wasExact = false;
-
 export class ReverseOperator extends Operator
 {
   public override title = "Reverse";
@@ -15,8 +13,6 @@ export class ReverseOperator extends Operator
   public constructor(context: OperatorContext, public readonly objects: readonly OsuHitObject[])
   {
     super(context);
-
-    this.exact = wasExact;
   }
 
   public override get isValid(): boolean
@@ -24,7 +20,7 @@ export class ReverseOperator extends Operator
     return this.objects.length > 0;
   }
 
-  // @Operator.parameter.checkbox("Slider bodies")
+  @Operator.parameter.checkbox("Reverse slider bodies")
   public accessor reverseSliders = true
 
   @Operator.parameter.checkbox("Preserve slider shapes")
@@ -32,8 +28,6 @@ export class ReverseOperator extends Operator
 
   public override apply(): void
   {
-    wasExact = this.exact;
-
     const objects = this.objects;
 
     const startTime = Math.min(...objects.map(o => o.startTime));
@@ -83,8 +77,6 @@ export class ReverseOperator extends Operator
             segmentType = controlPoint.type!;
           }
         }
-
-        console.log(segments);
 
         for (let i = segments.length - 1; i >= 0; i--)
         {
