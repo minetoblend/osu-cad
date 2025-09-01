@@ -28,10 +28,10 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
   }
 
   @resolved(Playfield)
-  accessor #playfield!: Playfield
+  accessor #playfield!: Playfield;
 
   @resolved(HitObjectSelection)
-  accessor #selection!: HitObjectSelection<HitObject>
+  accessor #selection!: HitObjectSelection<HitObject>;
 
   protected override createSliderPathHandle(index: number): SliderPathHandle
   {
@@ -56,12 +56,17 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
         this.#insertionLine1 = new Box({
           height: 1,
           origin: Anchor.CenterLeft,
+          alpha: 0.5,
         }),
         this.#insertionLine2 = new Box({
           height: 1,
           origin: Anchor.CenterLeft,
+          alpha: 0.5,
         }),
-        this.#insertionBox = new Box(),
+        this.#insertionBox = new Box({
+          size: 10,
+          origin: Anchor.Center,
+        }),
       ],
     }));
   }
@@ -79,12 +84,44 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
     {
       this.#updateInsertionIndex();
 
+      if (this.#insertionIndex > 0)
+      {
+        const [p1, center, p2] = [
+          this.slider.path.controlPoints[this.insertionIndex - 1].position,
+          this.#insertionPosition,
+          this.slider.path.controlPoints[this.insertionIndex]?.position,
+        ].filter(it => !!it)
+          .map(p =>
+            this.#playfield.toSpaceOfOtherDrawable(p.add(this.slider.stackedPosition), this),
+          );
+
+        this.#insertionBox.position = center;
+
+        this.#insertionLine1.position = p1;
+        this.#insertionLine1.width = p1.distance(center);
+        this.#insertionLine1.rotation = center.sub(p1).angle();
+
+        if (p2)
+        {
+          this.#insertionLine2.alpha = 0.5;
+          this.#insertionLine2.position = p2;
+          this.#insertionLine2.width = p2.distance(center);
+          this.#insertionLine2.rotation = center.sub(p2).angle();
+        }
+        else
+        {
+          this.#insertionLine2.alpha = 0;
+        }
+      }
+
       this.invalidatePath();
     }
     else
     {
       this.#insertionIndex = -1;
     }
+
+    this.#insertionPointContainer.alpha = this.insertionIndex > 0 ? 1 : 0;
 
     super.update();
   }
@@ -105,7 +142,7 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
         this.#selection.add(this.slider);
       }
 
-      this.slider.path.controlPoints =this.slider.path.controlPoints.toSpliced(this.#insertionIndex, 0, new PathPoint(this.#insertionPosition, null));
+      this.slider.path.controlPoints = this.slider.path.controlPoints.toSpliced(this.#insertionIndex, 0, new PathPoint(this.#insertionPosition, null));
 
       this.#insertedIndex = this.#insertionIndex;
 
@@ -121,13 +158,13 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
   }
 
   @resolved(EditorBeatmap)
-  accessor #beatmap!: EditorBeatmap
+  accessor #beatmap!: EditorBeatmap;
 
   @resolved(BindableBeatDivisor)
-  accessor #beatDivisor!: BindableBeatDivisor
+  accessor #beatDivisor!: BindableBeatDivisor;
 
   @resolved(EditorHistory)
-  accessor #history!: EditorHistory
+  accessor #history!: EditorHistory;
 
   protected override onDrag(e: DragEvent): boolean
   {
@@ -229,16 +266,16 @@ export class SelectToolSliderPathHandle extends SliderPathHandle
   }
 
   @resolved(Playfield)
-  accessor #playfield!: Playfield
+  accessor #playfield!: Playfield;
 
   @resolved(EditorBeatmap)
-  accessor #beatmap!: EditorBeatmap
+  accessor #beatmap!: EditorBeatmap;
 
   @resolved(BindableBeatDivisor)
-  accessor #beatDivisor!: BindableBeatDivisor
+  accessor #beatDivisor!: BindableBeatDivisor;
 
   @resolved(EditorHistory)
-  accessor #history!: EditorHistory
+  accessor #history!: EditorHistory;
 
   protected override onMouseDown(e: MouseDownEvent)
   {
