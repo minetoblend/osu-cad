@@ -41,7 +41,6 @@
     "nx": "20.8.1",
     "storybook": "^8.6.11",
     "swc-loader": "0.1.15",
-    "terser": "^5.43.1",
     "ts-node": "10.9.1",
     "tslib": "^2.3.0",
     "typescript": "~5.7.2",

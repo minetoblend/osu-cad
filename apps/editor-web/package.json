@@ -21,7 +21,6 @@
     "estree-walker": "^3.0.3",
     "magic-string": "^0.30.17",
     "rollup": "^4.46.2",
-    "terser": "^5.43.1",
     "vite-plugin-conditional-compiler": "^0.3.1"
   }
 }

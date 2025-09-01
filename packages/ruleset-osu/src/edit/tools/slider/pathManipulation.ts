@@ -91,7 +91,7 @@ export function getLinearSlice(points: Vec2[], progress: number)
 
 /**
  * I have no idea how this works atp but the result seems to be correct ¯\_(ツ)_/¯
- * @remarks this will modify the original array
+ * @remarks this will modify the original array including the vectors it holds
  */
 export function getBezierSlice(points: Vec2[], progress: number)
 {

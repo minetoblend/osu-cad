@@ -8,5 +8,6 @@ export * from "./compose";
 export * from "./assets";
 export * from "./EditorAction";
 export * from "./EditorActionContainer";
+export * from "./BindableBeatDivisor";
 export * from "./EditorBeatmapProcessor";
 export * from "./userInterface";

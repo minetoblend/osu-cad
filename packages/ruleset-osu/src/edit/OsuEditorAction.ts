@@ -21,11 +21,14 @@ export namespace OsuEditorAction
     {
       super("NudgePosition");
     }
-  };
+  }
 
   export const FlipHorizontal = new OsuEditorAction("FlipHorizontal");
   export const FlipVertical = new OsuEditorAction("FlipVertical");
   export const RotateClockwise = new OsuEditorAction.RotateSelection(90, TransformOrigin.playfield());
   export const RotateCounterClockwise = new OsuEditorAction.RotateSelection(-90, TransformOrigin.playfield());
   export const ReverseSelection = new OsuEditorAction("ReverseSelection");
+  export const ToggleNewCombo = new OsuEditorAction("ToggleNewCombo");
+  export const NudgeForward = new OsuEditorAction("NudgeForward");
+  export const NudgeBackward = new OsuEditorAction("NudgeBackward");
 }

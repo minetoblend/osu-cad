@@ -69,7 +69,7 @@ export class DrawableHitCircle extends DrawableOsuHitObject<HitCircle>
 
   protected override updateInitialTransforms()
   {
-    // TODO: figure out why we need this
+    // TODO: figure out why things break if this isn't here
     this.alpha = 1;
 
     this.circlePiece.fadeInFromZero(this.hitObject.timeFadeIn);

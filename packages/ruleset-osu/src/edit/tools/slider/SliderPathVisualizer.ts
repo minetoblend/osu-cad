@@ -1,5 +1,5 @@
 import type { Bindable } from "@osucad/framework";
-import { Anchor, Axes, Box, CompositeDrawable, Container, resolved, Vec2 } from "@osucad/framework";
+import { Anchor, Axes, Box, Cached, CompositeDrawable, Container, resolved, Vec2 } from "@osucad/framework";
 import type { Slider } from "../../../hitObjects";
 import { PathType } from "../../../hitObjects";
 import { Playfield } from "@osucad/core";
@@ -7,10 +7,14 @@ import { Playfield } from "@osucad/core";
 export class SliderPathVisualizer extends CompositeDrawable
 {
   readonly #segments: Container<Box>;
-  readonly #points: Container<PathHandle>;
+  readonly #points: Container<SliderPathHandle>;
 
   private pathVersion!: Bindable<number>;
   private pathPosition!: Bindable<Vec2>;
+  readonly #path = new Cached();
+
+  @resolved(Playfield)
+  accessor #playfield!: Playfield
 
   public constructor(public readonly slider: Slider)
   {
@@ -35,24 +39,34 @@ export class SliderPathVisualizer extends CompositeDrawable
     this.pathVersion = this.slider.path.version.getBoundCopy();
     this.pathPosition = this.slider.positionBindable.getBoundCopy();
 
-    this.slider.defaultsApplied.addListener(this.#defaultsApplied, this);
-    this.pathPosition.bindValueChanged(() => this.scheduler.addOnce(this.#updatePath, this));
-    this.pathVersion.bindValueChanged(() => this.#updatePath());
+    this.slider.defaultsApplied.addListener(this.invalidatePath, this);
+    this.pathPosition.bindValueChanged(this.invalidatePath, this);
+    this.pathVersion.bindValueChanged(this.invalidatePath, this);
 
     this.scheduler.addDelayed(() => this.#updatePath(), 1);
   }
 
-  #defaultsApplied()
+  protected invalidatePath()
   {
-    this.#updatePath();
+    this.#path.invalidate();
   }
 
-  @resolved(Playfield)
-  accessor #playfield!: Playfield
+  protected override update()
+  {
+    super.update();
+
+    if (!this.#path.isValid)
+      this.#updatePath();
+  }
+
+  protected get controlPoints()
+  {
+    return this.slider.path.controlPoints;
+  }
 
   #updatePath()
   {
-    const { controlPoints } = this.slider.path;
+    const { controlPoints } = this;
 
     const positions = controlPoints.map(p => this.#playfield.toSpaceOfOtherDrawable(this.slider.position.add(p.position), this));
 
@@ -90,7 +104,7 @@ export class SliderPathVisualizer extends CompositeDrawable
       let handle = this.#points.children[i];
 
       if (!handle)
-        this.#points.add(handle = new PathHandle());
+        this.#points.add(handle = this.createSliderPathHandle(i));
 
       handle.position = positions[i];
       handle.color = SliderPathVisualizer.getColor(controlPoints[i].type);
@@ -98,6 +112,13 @@ export class SliderPathVisualizer extends CompositeDrawable
 
     while (this.#points.children.length > Math.max(controlPoints.length, 0))
       this.#points.remove(this.#points.children[this.#points.children.length - 1]);
+
+    this.#path.validate();
+  }
+
+  protected createSliderPathHandle(index: number)
+  {
+    return new SliderPathHandle();
   }
 
   public static getColor(type: PathType | null)
@@ -121,13 +142,13 @@ export class SliderPathVisualizer extends CompositeDrawable
 
   public override dispose(): void
   {
-    this.slider.defaultsApplied.removeListener(this.#defaultsApplied, this);
+    this.slider.defaultsApplied.removeListener(this.invalidatePath, this);
 
     super.dispose();
   }
 }
 
-class PathHandle extends CompositeDrawable
+export class SliderPathHandle extends CompositeDrawable
 {
   public constructor()
   {

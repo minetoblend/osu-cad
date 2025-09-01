@@ -1,7 +1,7 @@
 import { DrawableRuleset, type HitObject } from "@osucad/core";
 import { ComposeTool, HitObjectComposer } from "@osucad/editor";
 import type { ClickEvent, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent } from "@osucad/framework";
-import { Vec2 } from "@osucad/framework";
+import { Bindable, Vec2 } from "@osucad/framework";
 import { BoundsBuilder, dependencyLoader, keyBindingHandler, MouseButton, PlatformAction, provide, provideSelf, resolved } from "@osucad/framework";
 import type { SnapResult } from "src/edit/SnapProvider";
 import { Slider, Spinner, type OsuHitObject } from "../../../hitObjects";
@@ -17,7 +17,9 @@ import { MoveOperator } from "../../operators/MoveOperator";
 import { RotateOperator } from "../../operators/RotateOperator";
 import { FlipOperator } from "../../operators/FlipOperator";
 import { ReverseOperator } from "../../operators/ReverseOperator";
-import { SliderPathVisualizer } from "../slider/SliderPathVisualizer";
+import type { SliderPathVisualizer } from "../slider/SliderPathVisualizer";
+import { SliderSelectionBlueprint } from "./SliderSelectionBlueprint";
+import { SelectToolSliderPathVisualizer } from "./SelectToolSliderPathVisualizer";
 
 @provideSelf()
 export class SelectTool extends ComposeTool implements IKeyBindingHandler<PlatformAction>
@@ -29,7 +31,7 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
   public selectionContainer = new OsuSelectionBlueprintContainer(this.selection);
 
   @resolved(DrawableRuleset)
-  accessor #drawableRuleset!: DrawableRuleset
+  accessor #drawableRuleset!: DrawableRuleset;
 
   public snapProvider = new HitObjectSnapProvider();
 
@@ -44,7 +46,9 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     ]);
   }
 
-  readonly #pathVisualizers = new Map<Slider, SliderPathVisualizer>();
+  readonly #hoveredSlider = new Bindable<Slider | undefined>(undefined);
+
+  #sliderVisualizer?: SliderPathVisualizer;
 
   protected override loadComplete(): void
   {
@@ -52,28 +56,35 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
 
     this.beatmap.hitObjects.removed.addListener(this.#hitObjectRemoved, this);
 
-    this.selection.added.addListener(h =>
+    this.#hoveredSlider.bindValueChanged(e =>
     {
-      if (h instanceof Slider)
-      {
-        const visualizer = new SliderPathVisualizer(h);
-        this.addInternal(visualizer);
-        this.#pathVisualizers.set(h, visualizer);
-      }
-    });
+      this.#sliderVisualizer?.expire();
+      this.#sliderVisualizer = undefined;
 
-    this.selection.removed.addListener(h =>
-    {
-      if (h instanceof Slider)
-      {
-        const visualizer = this.#pathVisualizers.get(h);
-        if (visualizer)
-        {
-          this.removeInternal(visualizer);
-          this.#pathVisualizers.delete(h);
-        }
-      }
+      if (e.value)
+        this.addInternal(this.#sliderVisualizer = new SelectToolSliderPathVisualizer(e.value));
     });
+  }
+
+  protected override update()
+  {
+    super.update();
+
+    const hoveredSliders = this.inputManager.hoveredDrawables.filter(it => it instanceof SliderSelectionBlueprint);
+
+    let slider = hoveredSliders.find(it => it.selected)?.hitObject;
+    if (!slider)
+    {
+      const selectedSliders = [...this.selectionContainer.allBlueprints.filter(it => it.selected && it.hitObject instanceof Slider)];
+      if (selectedSliders.length === 1)
+        slider = selectedSliders[0].hitObject as Slider;
+
+      if (!slider)
+        slider = hoveredSliders[0]?.hitObject;
+    }
+
+
+    this.#hoveredSlider.value = slider;
   }
 
   #hitObjectRemoved(hitObject: HitObject)
@@ -169,7 +180,7 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
 
   public onKeyBindingPressed(e: KeyBindingPressEvent<PlatformAction>): boolean
   {
-    switch(e.pressed)
+    switch (e.pressed)
     {
     case PlatformAction.SelectAll:
       this.selection.addRange(this.hitObjects as Iterable<OsuHitObject>);
@@ -185,7 +196,7 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
   }
 
   @resolved(HitObjectComposer)
-  accessor #composer!: HitObjectComposer
+  accessor #composer!: HitObjectComposer;
 
   public nudgeSelection(x: number, y: number)
   {
@@ -200,9 +211,53 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     this.#composer.beginOperator(MoveOperator, [...this.selection] as OsuHitObject[], new Vec2(x, y));
   }
 
-  @keyBindingHandler([
-    OsuEditorAction.NudgePosition,
-  ])
+  @keyBindingHandler(OsuEditorAction.ToggleNewCombo)
+  public toggleNewCombo()
+  {
+    const objects = [...this.selection];
+
+    if (objects.length === 0)
+      return true;
+
+    const newCombo = objects.some(it => !it.newCombo);
+
+    for (const o of objects)
+      o.newCombo = newCombo;
+
+    this.history.commit();
+
+    return true;
+  }
+
+  @keyBindingHandler([OsuEditorAction.NudgeForward, OsuEditorAction.NudgeBackward])
+  #nudgeForward(e: KeyBindingPressEvent<OsuEditorAction>)
+  {
+    const objects = [...this.selection];
+    if (objects.length === 0)
+      return true;
+
+    const direction = e.pressed === OsuEditorAction.NudgeForward ? 1 : -1;
+
+    const firstObjectTime = Math.min(...objects.map(it => it.startTime));
+
+    const timingPoint = this.beatmap.controlPointInfo.timingPointAt(firstObjectTime);
+
+    let time = firstObjectTime + timingPoint.beatLength / this.beatDivisor.value * direction;
+
+    time = this.beatmap.controlPointInfo.snap(time, this.beatDivisor.value);
+
+    const offset = time - firstObjectTime;
+
+    for (const o of objects)
+      o.startTime += offset;
+
+    this.history.commit();
+
+    return true;
+  }
+
+
+  @keyBindingHandler(OsuEditorAction.NudgePosition)
   #nudgeSelection(event: KeyBindingPressEvent<OsuEditorAction.NudgePosition>)
   {
     this.nudgeSelection(event.pressed.x, event.pressed.y);

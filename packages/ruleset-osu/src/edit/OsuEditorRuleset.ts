@@ -51,6 +51,9 @@ export class OsuEditorRuleset extends EditorRuleset
       keyBinding("Control+H", OsuEditorAction.FlipHorizontal),
       keyBinding("Control+J", OsuEditorAction.FlipVertical),
       keyBinding("Control+G", OsuEditorAction.ReverseSelection),
+      keyBinding("Q", OsuEditorAction.ToggleNewCombo),
+      keyBinding("J", OsuEditorAction.NudgeBackward),
+      keyBinding("K", OsuEditorAction.NudgeForward),
     ];
   }
 }
