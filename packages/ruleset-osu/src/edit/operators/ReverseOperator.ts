@@ -93,19 +93,11 @@ export class ReverseOperator extends Operator
               ),
           );
         }
-
-        console.log(reversed);
-
         object.path.controlPoints = reversed;
         object.moveBy(lastPoint.position.x, lastPoint.position.y);
-
-        object.invalidated.emit(object, "applyDefaults");
       }
+
+      this.applyDefaults(object);
     }
-
-    const { difficulty, controlPointInfo } = this.context.editorBeatmap;
-
-    for (const o of this.objects)
-      o.applyDefaults(difficulty, controlPointInfo);
   }
 }

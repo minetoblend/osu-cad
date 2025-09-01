@@ -5,6 +5,7 @@ import { Checkbox } from "../../userInterface";
 import { OsucadTextBox } from "../../userInterface/OsucadTextBox";
 import { LabelledOperator } from "./LabelledOperator";
 import type { EditorBeatmap } from "src/runtime";
+import type { HitObject } from "@osucad/core";
 
 
 export interface OperatorContext
@@ -57,6 +58,13 @@ export abstract class Operator
   public get isValid()
   {
     return true;
+  }
+
+  protected applyDefaults(hitObject: HitObject)
+  {
+    const { difficulty, controlPointInfo } = this.context.editorBeatmap;
+
+    hitObject.applyDefaults(difficulty, controlPointInfo);
   }
 
   public createContent(): Drawable
