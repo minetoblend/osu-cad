@@ -1,7 +1,7 @@
 import { SliderPathHandle, SliderPathVisualizer } from "../slider/SliderPathVisualizer";
 import type { Slider } from "../../../hitObjects";
 import { PathPoint } from "../../../hitObjects";
-import type { DragEndEvent, DragEvent, DragStartEvent, InputManager, KeyUpEvent, MouseDownEvent } from "@osucad/framework";
+import type { DragEndEvent, DragEvent, DragStartEvent, InputManager, KeyUpEvent, MouseDownEvent, MouseUpEvent } from "@osucad/framework";
 import { almostEquals, Anchor, Axes, Box, Container, dependencyLoader, type HoverEvent, type HoverLostEvent, Key, Line, MouseButton, resolved, SmoothPath, Vec2 } from "@osucad/framework";
 import type { HitObject } from "@osucad/core";
 import { Playfield } from "@osucad/core";
@@ -182,8 +182,6 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
 
   protected override onMouseDown(e: MouseDownEvent): boolean
   {
-    this.#insertedIndex = -1;
-
     if (e.button === MouseButton.Left && e.controlPressed)
     {
       this.#updateInsertionIndex();
@@ -206,6 +204,15 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
     }
 
     return false;
+  }
+
+  protected override onMouseUp(e: MouseUpEvent)
+  {
+    if (this.#insertedIndex >= 0 && e.button === MouseButton.Left)
+    {
+      this.#insertedIndex = -1;
+      this.#history.commit();
+    }
   }
 
   protected override onDragStart(e: DragStartEvent): boolean
