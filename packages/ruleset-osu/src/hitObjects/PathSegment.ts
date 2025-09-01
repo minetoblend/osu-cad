@@ -12,6 +12,34 @@ export class PathSegment
   {
   }
 
+  public static fromPathPoints(controlPoints: PathPoint[])
+  {
+    let segmentStart = 0;
+    let segmentType = controlPoints[0]?.type ?? PathType.Bezier;
+
+    const segments: PathSegment[] = [];
+
+    for (let i = 0; i< controlPoints.length; i++)
+    {
+      const controlPoint = controlPoints[i];
+
+      if (controlPoint.type !== null || i === controlPoints.length - 1)
+      {
+        const points = controlPoints.slice(segmentStart, i + 1);
+
+        if (points.length < 2)
+          continue;
+
+        segments.push( new PathSegment(segmentType, points));
+
+        segmentStart = i;
+        segmentType = controlPoint.type!;
+      }
+    }
+
+    return segments;
+  }
+
   public get points()
   {
     return this.pathPoints.map(it => it.position.clone());

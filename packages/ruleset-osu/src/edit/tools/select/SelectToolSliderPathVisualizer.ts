@@ -2,13 +2,25 @@ import { SliderPathHandle, SliderPathVisualizer } from "../slider/SliderPathVisu
 import type { Slider } from "../../../hitObjects";
 import { PathPoint } from "../../../hitObjects";
 import type { DragEndEvent, DragEvent, DragStartEvent, InputManager, KeyUpEvent, MouseDownEvent } from "@osucad/framework";
-import { Anchor, Box } from "@osucad/framework";
+import { Anchor, Box, Drawable } from "@osucad/framework";
 import { Axes, Container } from "@osucad/framework";
 import { almostEquals, dependencyLoader, type HoverEvent, type HoverLostEvent, Key, Line, MouseButton, resolved, Vec2 } from "@osucad/framework";
 import type { HitObject } from "@osucad/core";
 import { Playfield } from "@osucad/core";
 import { BindableBeatDivisor, EditorBeatmap, EditorHistory } from "@osucad/editor";
 import { HitObjectSelection } from "./HitObjectSelection";
+import { Graphics, Matrix } from "pixi.js";
+import { PathSegment } from "../../../hitObjects/PathSegment";
+
+class PathPreviewDrawable extends Drawable
+{
+  public readonly graphics = new Graphics();
+
+  protected override createDrawNode()
+  {
+    return this.graphics;
+  }
+}
 
 export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
 {
@@ -21,6 +33,7 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
   #insertedIndex = -1;
   #insertionIndex = -1;
   #inputManager!: InputManager;
+  #pathPreview!: PathPreviewDrawable;
 
   public get insertionIndex()
   {
@@ -53,15 +66,14 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
     this.addInternal(this.#insertionPointContainer = new Container({
       relativeSizeAxes: Axes.Both,
       children: [
+        this.#pathPreview = new PathPreviewDrawable(),
         this.#insertionLine1 = new Box({
           height: 1,
           origin: Anchor.CenterLeft,
-          alpha: 0.5,
         }),
         this.#insertionLine2 = new Box({
           height: 1,
           origin: Anchor.CenterLeft,
-          alpha: 0.5,
         }),
         this.#insertionBox = new Box({
           size: 10,
@@ -69,6 +81,13 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
         }),
       ],
     }));
+  }
+
+  protected override updateSegmentStyle(segment: Box, index: number): void
+  {
+    super.updateSegmentStyle(segment, index);
+
+    segment.alpha = index === this.#insertionIndex - 1 ? 0 : 1;
   }
 
   protected override loadComplete()
@@ -86,6 +105,60 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
 
       if (this.#insertionIndex > 0)
       {
+        const controlPoints = this.slider.path.controlPoints.toSpliced(this.#insertionIndex, 0, new PathPoint(this.#insertionPosition, null));
+
+        const g = this.#pathPreview.graphics;
+
+        g.clear();
+
+        const matrix = this.drawNode.relativeGroupTransform
+          .clone()
+          .invert()
+          .append(this.#playfield.drawNode.relativeGroupTransform);
+
+        const segments = PathSegment.fromPathPoints(controlPoints);
+
+        let lastPoint: Vec2 | undefined = undefined;
+
+        let index = 0;
+
+        let color = 0xffffff;
+
+        for (const segment of segments)
+        {
+          if (this.#insertionIndex > index && this.#insertionIndex < index + segment.pathPoints.length)
+          {
+            color = SliderPathVisualizer.getColor(segment.type);
+
+            for (const p of segment.vertices)
+            {
+              matrix.apply(p.addInPlace(this.slider.stackedPosition), p);
+
+              if (!lastPoint)
+              {
+                g.moveTo(p.x, p.y);
+                lastPoint = p;
+                continue;
+              }
+
+              if (p.distance(lastPoint) > 0)
+                g.lineTo(p.x, p.y);
+              lastPoint = p;
+            }
+
+            g.stroke({
+              color: 0xffffff,
+              alpha: 0.5,
+              alignment: 0.5,
+              width: 2,
+            });
+          }
+
+          index += segment.pathPoints.length - 1;
+        }
+
+
+
         const [p1, center, p2] = [
           this.slider.path.controlPoints[this.insertionIndex - 1].position,
           this.#insertionPosition,
@@ -100,13 +173,15 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
         this.#insertionLine1.position = p1;
         this.#insertionLine1.width = p1.distance(center);
         this.#insertionLine1.rotation = center.sub(p1).angle();
+        this.#insertionLine1.color = color;
 
         if (p2)
         {
-          this.#insertionLine2.alpha = 0.5;
+          this.#insertionLine2.alpha = 1;
           this.#insertionLine2.position = p2;
           this.#insertionLine2.width = p2.distance(center);
           this.#insertionLine2.rotation = center.sub(p2).angle();
+          this.#insertionLine2.color = color;
         }
         else
         {
@@ -142,7 +217,9 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
         this.#selection.add(this.slider);
       }
 
-      this.slider.path.controlPoints = this.slider.path.controlPoints.toSpliced(this.#insertionIndex, 0, new PathPoint(this.#insertionPosition, null));
+      this.slider.path.controlPoints = this.slider.path.controlPoints
+        .toSpliced(this.#insertionIndex, 0, new PathPoint(this.#insertionPosition, null));
+      this.slider.snapPathLength(this.#beatmap.controlPointInfo, this.#beatDivisor.value);
 
       this.#insertedIndex = this.#insertionIndex;
 

@@ -94,6 +94,7 @@ export class SliderPathVisualizer extends CompositeDrawable
       segment.rotation = next.sub(current).angle();
       segment.width = current.distance(next);
       segment.color = currentColor;
+      this.updateSegmentStyle(segment, i);
     }
 
     while (this.#segments.children.length > Math.max(controlPoints.length - 1, 0))
@@ -116,12 +117,17 @@ export class SliderPathVisualizer extends CompositeDrawable
     this.#path.validate();
   }
 
+  protected updateSegmentStyle(segment: Box, index: number)
+  {
+
+  }
+
   protected createSliderPathHandle(index: number)
   {
     return new SliderPathHandle();
   }
 
-  public static getColor(type: PathType | null)
+  public static getColor(type: PathType | null): number
   {
     switch (type)
     {
