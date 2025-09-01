@@ -102,5 +102,10 @@ export class ReverseOperator extends Operator
         object.invalidated.emit(object, "applyDefaults");
       }
     }
+
+    const { difficulty, controlPointInfo } = this.context.editorBeatmap;
+
+    for (const o of this.objects)
+      o.applyDefaults(difficulty, controlPointInfo);
   }
 }

@@ -152,6 +152,7 @@ export class MouseHandler extends InputHandler
   #handleWheel = (event: WheelEvent) =>
   {
     event.preventDefault();
+    console.log(event);
     this.#enqueueInput(new MouseScrollRelativeInput(new Vec2(event.deltaX / 100, -event.deltaY / 100), false));
   };
 

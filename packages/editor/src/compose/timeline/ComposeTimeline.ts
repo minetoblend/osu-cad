@@ -90,7 +90,7 @@ export class ComposeTimeline extends CompositeDrawable
 
   public readonly zoomChanged = new Action<number>();
 
-  #zoom = 0.2;
+  #zoom = 0.5;
 
   public get zoom()
   {
