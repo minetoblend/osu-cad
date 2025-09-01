@@ -36,7 +36,7 @@ export class MoveOperator extends TransformOperator
 
     if (this.clampToBounds)
     {
-      movement = OsuOperatorUtils.restrictMovement(this.objects, movement, true);
+      movement = OsuOperatorUtils.restrictMovement(this.objects, movement);
     }
 
     return m.translate(movement.x, movement.y);

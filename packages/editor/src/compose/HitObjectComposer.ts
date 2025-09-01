@@ -131,6 +131,7 @@ export abstract class HitObjectComposer extends CompositeDrawable
       {
         this.scheduler.addOnce(this.#applyOperator, this);
       },
+      editorBeatmap: this.beatmap,
     }, ...args);
 
     if (!operator.isValid)

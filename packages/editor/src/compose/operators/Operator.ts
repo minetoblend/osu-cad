@@ -4,12 +4,15 @@ import v from "voca";
 import { Checkbox } from "../../userInterface";
 import { OsucadTextBox } from "../../userInterface/OsucadTextBox";
 import { LabelledOperator } from "./LabelledOperator";
+import type { EditorBeatmap } from "src/runtime";
+import type { HitObject } from "@osucad/core";
 
 
 export interface OperatorContext
 {
   invalidate: () => void
   complete: (commit: boolean) => void
+  editorBeatmap: EditorBeatmap
 }
 
 export abstract class Operator
@@ -48,13 +51,20 @@ export abstract class Operator
   }
 
 
-  public constructor(private readonly context: OperatorContext)
+  public constructor(protected readonly context: OperatorContext)
   {
   }
 
   public get isValid()
   {
     return true;
+  }
+
+  protected applyDefaults(hitObject: HitObject)
+  {
+    const { difficulty, controlPointInfo } = this.context.editorBeatmap;
+
+    hitObject.applyDefaults(difficulty, controlPointInfo);
   }
 
   public createContent(): Drawable

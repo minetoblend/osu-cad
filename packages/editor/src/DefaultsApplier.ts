@@ -22,9 +22,18 @@ export class DefaultsApplier extends EditorBeatmapProcessor
   protected override onHitObjectAdded(hitObject: HitObject): void
   {
     hitObject.applyDefaults(this.beatmap.difficulty, this.beatmap.controlPointInfo);
+
+    hitObject.defaultsApplied.addListener(this.#defaultsApplied, this);
   }
 
   protected override onHitObjectRemoved(hitObject: HitObject): void
+  {
+    this.#hitObjects.delete(hitObject);
+
+    hitObject.defaultsApplied.removeListener(this.#defaultsApplied, this);
+  }
+
+  #defaultsApplied(hitObject: HitObject)
   {
     this.#hitObjects.delete(hitObject);
   }
