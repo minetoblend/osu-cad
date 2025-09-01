@@ -260,11 +260,11 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
       return true;
 
     case PlatformAction.DeleteBackwardChar:
-      // this.deleteBy(-1);
+      this.deleteBy(-1);
       return true;
 
     case PlatformAction.DeleteForwardChar:
-      // this.deleteBy(1);
+      this.deleteBy(1);
       return true;
 
     case PlatformAction.DeleteBackwardWord:
@@ -918,7 +918,6 @@ export abstract class TextBox extends TabbableContainer implements IKeyBindingHa
     }
 
     this.#textInputScheduler.update();
-
 
     super.onKeyDown(e);
 
