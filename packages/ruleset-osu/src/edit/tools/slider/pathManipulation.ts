@@ -20,7 +20,7 @@ function getDistance(points: Vec2[])
 export function bezierDistanceToProgress(
   points: Vec2[],
   distance: number,
-  tolerance = 0.5,
+  tolerance = 0.01,
 )
 {
 
@@ -43,6 +43,8 @@ export function bezierDistanceToProgress(
 
     current = min + (max - min) / 2;
     currentDistance = d;
+
+    console.log(distance - currentDistance);
 
     if (iteration++ > 50)
       break;
