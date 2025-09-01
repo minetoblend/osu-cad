@@ -2,14 +2,12 @@ import { SliderPathHandle, SliderPathVisualizer } from "../slider/SliderPathVisu
 import type { Slider } from "../../../hitObjects";
 import { PathPoint } from "../../../hitObjects";
 import type { DragEndEvent, DragEvent, DragStartEvent, InputManager, KeyUpEvent, MouseDownEvent } from "@osucad/framework";
-import { Anchor, Box, Drawable } from "@osucad/framework";
-import { Axes, Container } from "@osucad/framework";
-import { almostEquals, dependencyLoader, type HoverEvent, type HoverLostEvent, Key, Line, MouseButton, resolved, Vec2 } from "@osucad/framework";
+import { almostEquals, Anchor, Axes, Box, Container, dependencyLoader, Drawable, type HoverEvent, type HoverLostEvent, Key, Line, MouseButton, resolved, Vec2 } from "@osucad/framework";
 import type { HitObject } from "@osucad/core";
 import { Playfield } from "@osucad/core";
 import { BindableBeatDivisor, EditorBeatmap, EditorHistory } from "@osucad/editor";
 import { HitObjectSelection } from "./HitObjectSelection";
-import { Graphics, Matrix } from "pixi.js";
+import { Graphics } from "pixi.js";
 import { PathSegment } from "../../../hitObjects/PathSegment";
 
 class PathPreviewDrawable extends Drawable
@@ -24,15 +22,15 @@ class PathPreviewDrawable extends Drawable
 
 export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
 {
-  #insertionPointContainer!: Container;
-  #insertionLine1!: Box;
-  #insertionLine2!: Box;
-  #insertionBox!: Box;
-
   #insertionPosition = new Vec2();
   #insertedIndex = -1;
   #insertionIndex = -1;
   #inputManager!: InputManager;
+
+  #insertionPointContainer!: Container;
+  #insertionLine1!: Box;
+  #insertionLine2!: Box;
+  #insertionBox!: Box;
   #pathPreview!: PathPreviewDrawable;
 
   public get insertionIndex()
