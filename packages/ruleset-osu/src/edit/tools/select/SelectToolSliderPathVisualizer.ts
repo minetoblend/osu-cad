@@ -2,21 +2,26 @@ import { SliderPathHandle, SliderPathVisualizer } from "../slider/SliderPathVisu
 import type { Slider } from "../../../hitObjects";
 import { PathPoint } from "../../../hitObjects";
 import type { DragEndEvent, DragEvent, DragStartEvent, InputManager, KeyUpEvent, MouseDownEvent } from "@osucad/framework";
-import { almostEquals, Anchor, Axes, Box, Container, dependencyLoader, Drawable, type HoverEvent, type HoverLostEvent, Key, Line, MouseButton, resolved, Vec2 } from "@osucad/framework";
+import { almostEquals, Anchor, Axes, Box, Container, dependencyLoader, type HoverEvent, type HoverLostEvent, Key, Line, MouseButton, resolved, SmoothPath, Vec2 } from "@osucad/framework";
 import type { HitObject } from "@osucad/core";
 import { Playfield } from "@osucad/core";
 import { BindableBeatDivisor, EditorBeatmap, EditorHistory } from "@osucad/editor";
 import { HitObjectSelection } from "./HitObjectSelection";
-import { Graphics } from "pixi.js";
+import { Color } from "pixi.js";
 import { PathSegment } from "../../../hitObjects/PathSegment";
+import { OsuPlayfieldAdjustmentContainer } from "../../../ui";
 
-class PathPreviewDrawable extends Drawable
+
+class PreviewPath extends SmoothPath
 {
-  public readonly graphics = new Graphics();
-
-  protected override createDrawNode()
+  protected override colorAt(position: number)
   {
-    return this.graphics;
+    const ratio = 59 / 64;
+
+    if (Math.abs((1 - position) - ratio) < 0.01)
+      return 0xffffff;
+
+    return new Color(0).setAlpha(0);
   }
 }
 
@@ -31,7 +36,7 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
   #insertionLine1!: Box;
   #insertionLine2!: Box;
   #insertionBox!: Box;
-  #pathPreview!: PathPreviewDrawable;
+  #previewPath!: PreviewPath;
 
   public get insertionIndex()
   {
@@ -64,7 +69,7 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
     this.addInternal(this.#insertionPointContainer = new Container({
       relativeSizeAxes: Axes.Both,
       children: [
-        this.#pathPreview = new PathPreviewDrawable(),
+        new OsuPlayfieldAdjustmentContainer().withChild(this.#previewPath = new PreviewPath().with({ alpha: 0.75 })),
         this.#insertionLine1 = new Box({
           height: 1,
           origin: Anchor.CenterLeft,
@@ -105,55 +110,31 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
       {
         const controlPoints = this.slider.path.controlPoints.toSpliced(this.#insertionIndex, 0, new PathPoint(this.#insertionPosition, null));
 
-        const g = this.#pathPreview.graphics;
-
-        g.clear();
-
-        const matrix = this.drawNode.relativeGroupTransform
-          .clone()
-          .invert()
-          .append(this.#playfield.drawNode.relativeGroupTransform);
-
         const segments = PathSegment.fromPathPoints(controlPoints);
 
         let lastPoint: Vec2 | undefined = undefined;
 
-        let index = 0;
-
         let color = 0xffffff;
+
+        const points: Vec2[] = [];
 
         for (const segment of segments)
         {
-          if (this.#insertionIndex > index && this.#insertionIndex < index + segment.pathPoints.length)
+
+          color = SliderPathVisualizer.getColor(segment.type);
+
+          for (const p of segment.vertices)
           {
-            color = SliderPathVisualizer.getColor(segment.type);
+            if (!lastPoint || p.distance(lastPoint) > 0)
+              points.push(p);
 
-            for (const p of segment.vertices)
-            {
-              matrix.apply(p.addInPlace(this.slider.stackedPosition), p);
-
-              if (!lastPoint)
-              {
-                g.moveTo(p.x, p.y);
-                lastPoint = p;
-                continue;
-              }
-
-              if (p.distance(lastPoint) > 0)
-                g.lineTo(p.x, p.y);
-              lastPoint = p;
-            }
-
-            g.stroke({
-              color: 0xffffff,
-              alpha: 0.5,
-              alignment: 0.5,
-              width: 2,
-            });
+            lastPoint = p;
           }
-
-          index += segment.pathPoints.length - 1;
         }
+
+        this.#previewPath.pathRadius = this.slider.radius;
+        this.#previewPath.vertices = points;
+        this.#previewPath.position = this.slider.stackedPosition;
 
 
 
