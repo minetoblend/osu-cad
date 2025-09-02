@@ -16,9 +16,9 @@ class PreviewPath extends SmoothPath
 {
   protected override colorAt(position: number)
   {
-    const ratio = 59 / 64;
+    const border = 1 - 59 / 64;
 
-    if (Math.abs((1 - position) - ratio) < 0.01)
+    if (Math.abs(position - border) < 0.01)
       return 0xffffff;
 
     return new Color(0).setAlpha(0);
