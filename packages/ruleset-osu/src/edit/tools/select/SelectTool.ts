@@ -1,13 +1,11 @@
-import { DrawableRuleset, type HitObject } from "@osucad/core";
-import { ComposeTool, HitObjectComposer } from "@osucad/editor";
+import { type HitObject } from "@osucad/core";
+import { ComposeTool, HitObjectComposer, HitObjectSelection } from "@osucad/editor";
 import type { ClickEvent, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer } from "@osucad/framework";
-import { Bindable, DependencyContainer, Vec2 } from "@osucad/framework";
-import { BoundsBuilder, dependencyLoader, keyBindingHandler, MouseButton, PlatformAction, provide, provideSelf, resolved } from "@osucad/framework";
+import { Bindable, BoundsBuilder, DependencyContainer, dependencyLoader, keyBindingHandler, MouseButton, PlatformAction, provideSelf, resolved, Vec2 } from "@osucad/framework";
 import type { SnapResult } from "src/edit/SnapProvider";
-import { Slider, Spinner, type OsuHitObject } from "../../../hitObjects";
+import { type OsuHitObject, Slider, Spinner } from "../../../hitObjects";
 import { OsuEditorAction } from "../../OsuEditorAction";
 import { HitObjectSnapProvider } from "../../SelectionSnapProvider";
-import { HitObjectSelection } from "@osucad/editor";
 import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
 import { OsuSelectionBlueprintContainer } from "./OsuSelectionBlueprintContainer";
 import { SelectBox } from "./SelectBox";
@@ -28,11 +26,7 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
   @resolved(HitObjectSelection)
   public accessor selection!: HitObjectSelection<OsuHitObject>;
 
-
   public selectionContainer!: OsuSelectionBlueprintContainer;
-
-  @resolved(DrawableRuleset)
-  accessor #drawableRuleset!: DrawableRuleset;
 
   public snapProvider = new HitObjectSnapProvider();
 
