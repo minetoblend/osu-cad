@@ -1,5 +1,5 @@
 import type { ContainerOptions, IKeyBinding, KeyCombinationString } from "@osucad/framework";
-import { InputKey, KeyBinding, KeyBindingContainer, KeyCombination, KeyCombinationMatchingMode, resolved, SimultaneousBindingMode } from "@osucad/framework";
+import { KeyBinding, KeyBindingContainer, KeyCombination, KeyCombinationMatchingMode, resolved, SimultaneousBindingMode } from "@osucad/framework";
 import { EditorAction } from "./EditorAction";
 import { EditorRuleset } from "./EditorRuleset";
 
