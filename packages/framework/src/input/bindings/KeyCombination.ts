@@ -1,5 +1,4 @@
 import type { Vec2 } from "../../math";
-import type { InputState } from "../state/InputState";
 import { debugAssert } from "../../utils/debugAssert";
 import { compareInputKeys, InputKey, isPhysical, isVirtual } from "../state/InputKey";
 import { Key } from "../state/Key";
@@ -38,7 +37,7 @@ export class KeyCombination
     this.keys = keyBuilder;
   }
 
-  public isPressed(pressedKeys: KeyCombination, inputState: InputState, matchingMode: KeyCombinationMatchingMode): boolean
+  public isPressed(pressedKeys: KeyCombination, matchingMode: KeyCombinationMatchingMode): boolean
   {
     debugAssert(!pressedKeys.keys.includes(InputKey.None)); // Having None in pressed keys will break IsPressed
 
@@ -85,7 +84,7 @@ export class KeyCombination
     }
   }
 
-  public static keyMap: Record<Key, InputKey> = {
+  public static readonly keyMap: Record<Key, InputKey> = {
     [Key.ShiftLeft]: InputKey.LShift,
     [Key.ShiftRight]: InputKey.RShift,
     [Key.ControlLeft]: InputKey.LControl,
@@ -312,6 +311,19 @@ export class KeyCombination
 
     return null;
   }
+
+  public static parse(keyCombination: KeyCombinationString)
+  {
+    const keys: InputKey[] = [];
+
+    for (const key of keyCombination.split("+"))
+    {
+      keys.push(InputKey[key as keyof typeof InputKey]);
+    }
+    console.assert(keys.length > 0);
+
+    return KeyCombination.from(...keys);
+  }
 }
 
 export enum KeyCombinationMatchingMode
@@ -388,3 +400,12 @@ function containsAll(
 
   return true;
 }
+
+
+export type KeyCombinationString =
+    | `${"Control+" | ""}${"Shift+" | ""}${"Alt+" | ""}${Exclude<keyof typeof InputKey, "Control" | "Shift" | "Alt">}`
+    | `${"Control+" | ""}${"Shift+" | ""}Alt`
+    | `${"Control+" | ""}Shift`
+    | "Control";
+
+

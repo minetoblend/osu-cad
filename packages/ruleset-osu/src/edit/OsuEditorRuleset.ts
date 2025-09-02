@@ -54,6 +54,7 @@ export class OsuEditorRuleset extends EditorRuleset
       keyBinding("Q", OsuEditorAction.ToggleNewCombo),
       keyBinding("J", OsuEditorAction.NudgeBackward),
       keyBinding("K", OsuEditorAction.NudgeForward),
+      keyBinding("G", OsuEditorAction.MoveSelection),
     ];
   }
 }

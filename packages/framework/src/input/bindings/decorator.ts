@@ -6,8 +6,8 @@ export const keyBindingHandlersKey = Symbol("keyBindingHandlers");
 
 export type KeyBindingHandlerMethod<Action extends KeyBindingAction, Type extends KeyBindingType, This> =
   Type extends "press"
-    ? (this: This, event: KeyBindingPressEvent<Action>) => boolean
-    : (this: This, event: KeyBindingReleaseEvent<Action>) => boolean;
+    ? (this: This, event: KeyBindingPressEvent<Action>) => boolean | void
+    : (this: This, event: KeyBindingReleaseEvent<Action>) => boolean | void;
 
 export type KeyBindingType = "press" | "release";
 
@@ -15,7 +15,7 @@ export interface KeyBindingHandlerMetadata
 {
   action: ActionOrActionType;
   type: KeyBindingType;
-  invoke(target: Drawable, event: KeyBindingEvent<KeyBindingAction>): boolean;
+  invoke(target: Drawable, event: KeyBindingEvent<KeyBindingAction>): boolean | void;
 }
 
 export type ActionOrActionType<T extends KeyBindingAction = KeyBindingAction> = T | (new (...args: any[]) => T);

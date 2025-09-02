@@ -6,7 +6,7 @@ import { almostEquals, Anchor, Axes, Box, Container, dependencyLoader, type Hove
 import type { HitObject } from "@osucad/core";
 import { Playfield } from "@osucad/core";
 import { BindableBeatDivisor, EditorBeatmap, EditorHistory } from "@osucad/editor";
-import { HitObjectSelection } from "./HitObjectSelection";
+import { HitObjectSelection } from "@osucad/editor";
 import { Color } from "pixi.js";
 import { PathSegment } from "../../../hitObjects/PathSegment";
 import { OsuPlayfieldAdjustmentContainer } from "../../../ui";

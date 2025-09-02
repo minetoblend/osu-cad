@@ -31,4 +31,5 @@ export namespace OsuEditorAction
   export const ToggleNewCombo = new OsuEditorAction("ToggleNewCombo");
   export const NudgeForward = new OsuEditorAction("NudgeForward");
   export const NudgeBackward = new OsuEditorAction("NudgeBackward");
+  export const MoveSelection = new OsuEditorAction("MoveSelection");
 }

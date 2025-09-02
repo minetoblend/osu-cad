@@ -11,12 +11,29 @@ export class PlayfieldGrid extends GraphicsDrawable
     this.relativeSizeAxes = Axes.Both;
   }
 
+  #pixelWidth = 1;
+
+  protected override update()
+  {
+    super.update();
+
+    const pixelWidth = 1 / this.drawNode.relativeGroupTransform.a;
+
+    if (this.#pixelWidth !== pixelWidth)
+    {
+      this.invalidateGraphics();
+      this.#pixelWidth = pixelWidth;
+    }
+  }
+
   protected override updateGraphics(g: Graphics): void
   {
+
+
     g.clear()
       .rect(0, 0, this.drawWidth, this.drawHeight)
       .stroke({
-        width: 0.5,
+        width: this.#pixelWidth * 2,
         color: 0xffffff,
         alpha: 0.5,
       });
@@ -30,7 +47,7 @@ export class PlayfieldGrid extends GraphicsDrawable
       g.moveTo(0, y).lineTo(512, y);
 
     g.stroke({
-      width: 0.5,
+      width: this.#pixelWidth,
       color: 0xffffff,
       alpha: 0.25,
     });

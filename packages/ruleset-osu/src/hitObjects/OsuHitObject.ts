@@ -77,9 +77,14 @@ export abstract class OsuHitObject extends HitObject
     this.position = this.position.withY(value);
   }
 
-  public moveBy(x: number, y: number)
+  public moveBy(x: number, y: number): void;
+  public moveBy(delta: IVec2): void;
+  public moveBy(x: number | IVec2, y?: number)
   {
-    this.position = new Vec2(this.x + x, this.y + y);
+    if (typeof x === "number")
+      this.position = new Vec2(this.x + x, this.y + y!);
+    else
+      this.position = this.position.add(x);
   }
 
   //#endregion

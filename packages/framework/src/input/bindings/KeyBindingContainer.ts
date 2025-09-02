@@ -221,7 +221,7 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
           continue;
         }
 
-        if (binding.keyCombination.isPressed(pressedCombination, state, this.#matchingMode))
+        if (binding.keyCombination.isPressed(pressedCombination, this.#matchingMode))
         {
           this.#newlyPressed.push(binding);
         }
@@ -251,7 +251,7 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
     {
       if (
         this.#pressedBindings.length > 0
-        && !this.#pressedBindings.some(m => m.keyCombination.isPressed(pressedCombination, state, this.#matchingMode))
+        && !this.#pressedBindings.some(m => m.keyCombination.isPressed(pressedCombination, this.#matchingMode))
       )
       {
         this.#releasePressedActions(state);
@@ -382,7 +382,7 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
 
       if (
         this.#pressedInputKeys.size === 0
-        || !binding.keyCombination.isPressed(pressedCombination, state, KeyCombinationMatchingMode.Any)
+        || !binding.keyCombination.isPressed(pressedCombination, KeyCombinationMatchingMode.Any)
       )
       {
         this.#pressedBindings.splice(i--, 1);
@@ -477,10 +477,10 @@ export abstract class KeyBindingContainer<T extends KeyBindingAction> extends Ba
         if (!e.pressed.equals(handler.action))
           continue;
 
-        if (handler.type === "press" && e instanceof KeyBindingPressEvent && handler.invoke(drawable, e))
+        if (handler.type === "press" && e instanceof KeyBindingPressEvent && handler.invoke(drawable, e) !== false)
           return true;
 
-        if (handler.type === "release" && e instanceof KeyBindingReleaseEvent && handler.invoke(drawable, e))
+        if (handler.type === "release" && e instanceof KeyBindingReleaseEvent && handler.invoke(drawable, e) !== false)
           return true;
       }
     }

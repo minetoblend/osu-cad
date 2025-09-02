@@ -20,8 +20,7 @@ import type { AbsoluteSequenceSender } from "../transforms/AbsoluteSequenceSende
 import { EasingFunction } from "../transforms/EasingFunction";
 import type { IFrameBasedClock } from "../../timing";
 import type { ProviderMetadata } from "../../di/decorators";
-import { metadataKey } from "../../di/decorators";
-import { providersKey } from "../../di/decorators";
+import { metadataKey, providersKey } from "../../di/decorators";
 
 export interface CompositeDrawableOptions extends DrawableOptions
 {
