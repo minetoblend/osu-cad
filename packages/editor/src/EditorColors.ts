@@ -19,5 +19,4 @@ export namespace EditorColors
   export const yellowDarker = color("#664905");
   export const purple = color("#653BDB");
   export const purpleDark = color("#2A1073");
-
 }

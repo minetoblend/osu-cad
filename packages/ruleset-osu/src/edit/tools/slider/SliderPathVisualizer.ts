@@ -68,7 +68,7 @@ export class SliderPathVisualizer extends CompositeDrawable
   {
     const { controlPoints } = this;
 
-    const positions = controlPoints.map(p => this.#playfield.toSpaceOfOtherDrawable(this.slider.position.add(p.position), this));
+    const positions = controlPoints.map(p => this.#playfield.toSpaceOfOtherDrawable(this.slider.stackedPosition.add(p.position), this));
 
     let currentColor = 0xCCCCCC;
 

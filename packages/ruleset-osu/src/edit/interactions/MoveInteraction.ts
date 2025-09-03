@@ -5,6 +5,8 @@ import { Anchor, Axes, Bindable, BindableBoolean, Box, dependencyLoader, Key, ke
 import type { OsuHitObject } from "../../hitObjects";
 import { MoveOperator } from "../operators/MoveOperator";
 import { OsuOperatorUtils } from "../operators/OsuOperatorUtils";
+import { PickSnapTargetsInteraction } from "./PickSnapTargetsInteraction";
+import { SnapTargetContainer } from "./SnapTargetContainer";
 
 
 export class MoveInteraction extends Interaction
@@ -17,6 +19,9 @@ export class MoveInteraction extends Interaction
 
   #xAxisMarker!: Box;
   #yAxisMarker!: Box;
+
+  #snapTargetContainer!: SnapTargetContainer;
+  #snapTargets: Vec2[] = [];
 
   @resolved(HitObjectSelection)
   accessor #selection!: HitObjectSelection<OsuHitObject>;
@@ -48,6 +53,26 @@ export class MoveInteraction extends Interaction
         : null;
   }
 
+  @Interaction.invokeOnKey("B")
+  private pickSnapTargets()
+  {
+    console.log(this.history.discardUncommittedChanges());
+
+    this.push(new PickSnapTargetsInteraction()).then(result =>
+    {
+      this.#snapTargets = result ?? [];
+      this.#snapTargetContainer.clear();
+      for (const p of this.#snapTargets)
+        this.#snapTargetContainer.addMarker(p);
+
+
+      this.#mousePosition = this.#playfield.toLocalSpace(this.getContainingInputManager()!.currentState.mouse.position);
+      this.#inputString = "";
+
+      this.invalidateState();
+    });
+  }
+
   @Interaction.invokeOnKey("Y")
   private toggleYAxis()
   {
@@ -74,6 +99,7 @@ export class MoveInteraction extends Interaction
         color: 0x55f267,
         alpha: 0,
       }),
+      this.#snapTargetContainer = new SnapTargetContainer({ relativeSizeAxes: Axes.Both }),
       this.#statusBar = new ComposerStatusBar(),
     ];
 
@@ -87,11 +113,11 @@ export class MoveInteraction extends Interaction
 
     this.#mousePosition = this.#playfield.toLocalSpace(this.getContainingInputManager()!.currentState.mouse.position);
 
-    this.snapped.bindValueChanged(this.updateState, this);
-    this.axis.bindValueChanged(this.updateState, this);
-    this.negative.bindValueChanged(this.updateState, this);
+    this.snapped.bindValueChanged(this.invalidateState, this);
+    this.axis.bindValueChanged(this.invalidateState, this);
+    this.negative.bindValueChanged(this.invalidateState, this);
 
-    this.updateState();
+    this.invalidateState();
   }
 
   protected override onKeyDown(e: KeyDownEvent): boolean
@@ -103,7 +129,7 @@ export class MoveInteraction extends Interaction
       if (Number.isFinite(newValue))
       {
         this.#inputString = newValue.toString();
-        this.updateState();
+        this.invalidateState();
         return true;
       }
     }
@@ -113,7 +139,7 @@ export class MoveInteraction extends Interaction
     case Key.Period:
       if (!this.#inputString.includes("."))
         this.#inputString += ".";
-      this.updateState();
+      this.invalidateState();
       return true;
     }
 
@@ -123,8 +149,7 @@ export class MoveInteraction extends Interaction
   @keyBindingHandler(PlatformAction.DeleteBackwardChar)
   private removeLastCharacter()
   {
-    this.#inputString = this.#inputString.slice(0, -1);
-    this.updateState();
+    this.invalidateState();
   }
 
   protected override onMouseMove(e: MouseMoveEvent): boolean
@@ -140,7 +165,7 @@ export class MoveInteraction extends Interaction
 
     this.#mouseDelta = this.#mouseDelta.add(delta);
 
-    this.updateState();
+    this.invalidateState();
 
     return true;
   }
@@ -194,7 +219,26 @@ export class MoveInteraction extends Interaction
     }
   }
 
-  private updateState()
+  #needsUpdate = false;
+  #lastDelta = Vec2.zero();
+
+  private invalidateState()
+  {
+    this.#needsUpdate = true;
+  }
+
+  protected override update()
+  {
+    super.update();
+
+    if (this.#needsUpdate)
+    {
+      this.#updateState();
+      this.#needsUpdate = false;
+    }
+  }
+
+  #updateState()
   {
     if (this.completed)
       return;
@@ -233,6 +277,42 @@ export class MoveInteraction extends Interaction
     {
       this.#xAxisMarker.hide();
       this.#yAxisMarker.hide();
+
+      let closestDistance = Number.MAX_VALUE;
+      let closestOffset = Vec2.zero();
+
+      let snapTargets = this.#snapTargets;
+      if (snapTargets.length === 0)
+        snapTargets = [...this.#selection].flatMap(it => it.getSnapTargets());
+
+      snapTargets = snapTargets.map(p => p.add(delta));
+
+      for (const dho of this.#playfield.hitObjectContainer.aliveObjects)
+      {
+        const hitObject = dho.hitObject as OsuHitObject;
+
+        if (this.#selection.has(hitObject))
+          continue;
+
+        for (const ownTarget of snapTargets)
+        {
+          for (const target of hitObject.getSnapTargets())
+          {
+            const distance = target.distance(ownTarget);
+
+            if (distance < closestDistance)
+            {
+              closestDistance = distance;
+              closestOffset = target.sub(ownTarget);
+            }
+          }
+        }
+      }
+
+      if (closestDistance < 5)
+      {
+        delta = delta.add(closestOffset);
+      }
     }
 
 
@@ -253,8 +333,12 @@ export class MoveInteraction extends Interaction
         this.#statusBar.text = `Dx: ${this.#formatNumber(delta.x)}px Dy: ${this.#formatNumber(delta.y)}px (${this.#formatNumber(delta.length())}px)${didClamp ? " (clamped)" : ""}`;
     }
 
+    this.#snapTargetContainer.offset = delta;
+
     for (const h of this.#selection)
       h.moveBy(delta);
+
+    this.#lastDelta = delta;
   }
 
   #formatNumber(value: number)
@@ -266,8 +350,6 @@ export class MoveInteraction extends Interaction
   {
     this.history.discardUncommittedChanges();
 
-    const delta = this.parseInputString() ?? this.getMouseDelta();
-
-    this.#composer.beginOperator(MoveOperator, [...this.#selection], delta);
+    this.#composer.beginOperator(MoveOperator, [...this.#selection], this.#lastDelta);
   }
 }

@@ -1,8 +1,16 @@
-import type { Bindable, KeyCombinationString, KeyDownEvent, KeyUpEvent, MouseDownEvent, MouseUpEvent } from "@osucad/framework";
+import type { Bindable, KeyCombinationString, KeyDownEvent, KeyUpEvent, MouseDownEvent, MouseUpEvent, ScreenTransitionEvent } from "@osucad/framework";
 import { InputKey, Key, KeyCombination, KeyCombinationMatchingMode, MouseButton, resolved, Screen } from "@osucad/framework";
 import { EditorHistory } from "../../runtime";
 import type { KeyReceiver } from "./KeyReceiver";
 import { InteractionContainer } from "./InteractionContainer";
+import { deferredPromise, type DeferredPromise } from "@osucad/core";
+import type { ModalInteraction } from "./ModalInteraction";
+
+export interface ModalInteractionCallback
+{
+  interaction: Interaction
+  promise: DeferredPromise<unknown>
+}
 
 export abstract class Interaction extends Screen
 {
@@ -47,9 +55,35 @@ export abstract class Interaction extends Screen
     return screenStack;
   }
 
-  protected push(interaction: Interaction)
+  readonly #callbacks: ModalInteractionCallback[] = [];
+
+  protected push<T extends Interaction>(interaction: T): Promise<T extends ModalInteraction<infer U> ? U | undefined : void>
   {
+    const promise = deferredPromise<unknown>();
+
+    this.#callbacks.push({ interaction, promise });
+
     this.interactionContainer.push(interaction);
+
+    return promise as Promise<T extends ModalInteraction<infer U> ? U : void>;
+  }
+
+  public override onResuming(e: ScreenTransitionEvent)
+  {
+    for (let i = 0; i < this.#callbacks.length; i++)
+    {
+      const callback = this.#callbacks[i];
+
+      if (callback.interaction === e.source)
+      {
+        const result = "result" in e.source ? e.source.result : undefined;
+
+        callback.promise.resolve(result);
+        this.#callbacks.splice(i--, 1);
+      }
+    }
+
+    super.onResuming(e);
   }
 
   #onKeyPressed(inputKey: InputKey)

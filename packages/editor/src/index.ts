@@ -10,4 +10,5 @@ export * from "./EditorAction";
 export * from "./EditorActionContainer";
 export * from "./BindableBeatDivisor";
 export * from "./EditorBeatmapProcessor";
+export * from "./EditorColors";
 export * from "./userInterface";
