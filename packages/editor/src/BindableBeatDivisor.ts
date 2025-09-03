@@ -1,5 +1,6 @@
 import type { Bindable } from "@osucad/framework";
 import { BindableNumber, Vec2 } from "@osucad/framework";
+import { EditorColors } from "./EditorColors";
 
 export class BindableBeatDivisor extends BindableNumber
 {
@@ -32,46 +33,47 @@ export class BindableBeatDivisor extends BindableNumber
     return 0;
   }
 
-  // static getColorFor(beatDivisor: number)
-  // {
-  //   switch (beatDivisor)
-  //   {
-  //   case 1:
-  //     return OsucadColors.white;
-  //   case 2:
-  //     return OsucadColors.red;
-  //   case 4:
-  //     return OsucadColors.blue;
-  //   case 8:
-  //     return OsucadColors.yellow;
-  //   case 16:
-  //     return OsucadColors.purpleDark;
-  //   case 3:
-  //     return OsucadColors.purple;
-  //   case 6:
-  //     return OsucadColors.yellowDark;
-  //   case 12:
-  //     return OsucadColors.yellowDarker;
-  //   default:
-  //     return 0xFF0000;
-  //   }
-  // }
+  public static getColorFor(beatDivisor: number)
+  {
+    switch (beatDivisor)
+    {
+    case 1:
+      return EditorColors.white;
+    case 2:
+      return EditorColors.red;
+    case 4:
+      return EditorColors.blue;
+    case 8:
+      return EditorColors.yellow;
+    case 16:
+      return EditorColors.purpleDark;
+    case 3:
+      return EditorColors.purple;
+    case 6:
+      return EditorColors.yellowDark;
+    case 12:
+      return EditorColors.yellowDarker;
+    default:
+      return 0xFF0000;
+    }
+  }
 
   public static getSize(beatDivisor: number): Vec2
   {
     switch (beatDivisor)
     {
     case 1:
+      return new Vec2(1, 0.2);
     case 2:
-      return new Vec2(1, 0.9);
+      return new Vec2(1, 0.15);
     case 3:
     case 4:
-      return new Vec2(0.8, 0.8);
+      return new Vec2(0.8, 0.1);
     case 6:
     case 8:
-      return new Vec2(0.8, 0.7);
+      return new Vec2(0.8, 0.1);
     default:
-      return new Vec2(0.8, 0.6);
+      return new Vec2(0.8, 0.1);
     }
   }
 }

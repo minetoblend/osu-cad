@@ -102,10 +102,15 @@ export class TimelineTickDisplay extends TimelinePart<PointVisualization>
       {
         const xPos = t;
 
+        const indexInBar = beat % (point.signature * beatDivisor);
+
         const divisor = BindableBeatDivisor.getDivisorForBeatIndex(beat, beatDivisor);
-        const color = 0xffffff;
+        const color = BindableBeatDivisor.getColorFor(divisor);
 
         const size = BindableBeatDivisor.getSize(divisor);
+
+        if (indexInBar === 0)
+          size.y *= 2;
 
         const line = getNextUsableLine();
         line.x = xPos;
