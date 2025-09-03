@@ -11,6 +11,7 @@ import { ComposeToolbar } from "./tools";
 import { ActiveToolBindable } from "./tools/ActiveToolBindable";
 import { ComposeToolContainer } from "./tools/ComposeToolContainer";
 import { ComposePresenceContainer } from "./tools/ToolPresenceContainer";
+import { InteractionContainer } from "./interactions/InteractionContainer";
 
 @provideSelf()
 export abstract class HitObjectComposer extends CompositeDrawable
@@ -75,6 +76,7 @@ export abstract class HitObjectComposer extends CompositeDrawable
         },
         child: this.#toolbar = new ComposeToolbar(),
       }),
+      this.#interactionStack = new InteractionContainer(),
     ];
 
     const tools = this.tools = await this.getTools();
@@ -124,12 +126,15 @@ export abstract class HitObjectComposer extends CompositeDrawable
     return this.#activeOperator;
   }
 
+  #interactionStack!: InteractionContainer;
+
   public beginInteraction(interaction: Interaction)
   {
     this.completeActiveOperator();
     this.completeActiveInteraction();
 
-    this.addInternal( this.#activeInteraction = interaction);
+    this.#interactionStack.exitAll();
+    this.#interactionStack.push(interaction);
   }
 
   public completeActiveInteraction()

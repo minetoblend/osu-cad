@@ -52,18 +52,18 @@ export abstract class Screen extends CompositeDrawable implements IScreen
 
   protected get screenStack()
   {
-    const screenStack = this.findClosestParentOfType(ScreenStack);
+    return this.findClosestParentOfType(ScreenStack);
+  }
+
+  public exit()
+  {
+    const screenStack = this.screenStack;
 
     if (screenStack === null)
     {
       throw new Error("Cannot exit a screen that is not in a ScreenStack");
     }
 
-    return screenStack;
-  }
-
-  public exit()
-  {
-    this.screenStack.exit(this);
+    screenStack.exit(this);
   }
 }

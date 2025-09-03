@@ -78,7 +78,7 @@ export class MoveInteraction extends Interaction
     ];
 
     if (this.#selection.size === 0)
-      this.expire();
+      this.exit();
   }
 
   protected override loadComplete()

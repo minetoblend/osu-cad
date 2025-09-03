@@ -1,19 +1,16 @@
 import type { Bindable, KeyCombinationString, KeyDownEvent, KeyUpEvent, MouseDownEvent, MouseUpEvent } from "@osucad/framework";
-import { InputKey } from "@osucad/framework";
-import { KeyCombinationMatchingMode } from "@osucad/framework";
-import { Axes, CompositeDrawable, Key, KeyCombination, MouseButton, resolved } from "@osucad/framework";
+import { InputKey, Key, KeyCombination, KeyCombinationMatchingMode, MouseButton, resolved, Screen } from "@osucad/framework";
 import { EditorHistory } from "../../runtime";
 import type { KeyReceiver } from "./KeyReceiver";
+import { InteractionContainer } from "./InteractionContainer";
 
-export abstract class Interaction extends CompositeDrawable
+export abstract class Interaction extends Screen
 {
   public readonly inputListeners: KeyReceiver[] = [];
 
   public constructor()
   {
     super();
-
-    this.relativeSizeAxes = Axes.Both;
   }
 
   @resolved(EditorHistory)
@@ -38,6 +35,21 @@ export abstract class Interaction extends CompositeDrawable
     default:
       return false;
     }
+  }
+
+  protected get interactionContainer(): InteractionContainer
+  {
+    const screenStack = this.screenStack;
+
+    if (!(screenStack instanceof InteractionContainer))
+      throw new Error("Cannot push an interaction when not child of an InteractionContainer");
+
+    return screenStack;
+  }
+
+  protected push(interaction: Interaction)
+  {
+    this.interactionContainer.push(interaction);
   }
 
   #onKeyPressed(inputKey: InputKey)
@@ -145,7 +157,7 @@ export abstract class Interaction extends CompositeDrawable
     this.#completed = true;
     this.onComplete();
 
-    this.expire();
+    this.exit();
   }
 
   protected onComplete()
@@ -161,7 +173,7 @@ export abstract class Interaction extends CompositeDrawable
     this.#completed = true;
     this.onCancel();
 
-    this.expire();
+    this.exit();
   }
 
   protected onCancel()
