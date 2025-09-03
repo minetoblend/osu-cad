@@ -111,7 +111,7 @@ export class RotateInteraction extends Interaction
 
     this.transformOrigin.bindValueChanged(this.invalidateState, this);
     this.snapped.bindValueChanged(this.invalidateState, this);
-    this.stringValue.bindValueChanged(this.invalidateState, this);
+    this.stringValue.bindValueChanged(this.#updateState, this);
 
     this.invalidateState();
   }
