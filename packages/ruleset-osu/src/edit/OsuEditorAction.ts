@@ -32,4 +32,5 @@ export namespace OsuEditorAction
   export const NudgeForward = new OsuEditorAction("NudgeForward");
   export const NudgeBackward = new OsuEditorAction("NudgeBackward");
   export const MoveSelection = new OsuEditorAction("MoveSelection");
+  export const Rotate = new OsuEditorAction("Rotate");
 }

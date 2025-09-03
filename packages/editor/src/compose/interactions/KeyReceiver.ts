@@ -1,30 +1,11 @@
-import { BindableBoolean, type KeyCombination } from "@osucad/framework";
+import type { InputKey } from "@osucad/framework";
+import { type KeyCombination } from "@osucad/framework";
 
 export interface KeyReceiver
 {
-  readonly keyCombination: KeyCombination
+  test(key: InputKey, keyCombination: KeyCombination): boolean
 
-  onPressed(): boolean
+  onPressed(key: InputKey, keyCombination: KeyCombination): boolean
 
-  onReleased(): void
-}
-
-export class KeyCombinationToggle extends BindableBoolean implements KeyReceiver
-{
-  public constructor(public readonly keyCombination: KeyCombination)
-  {
-    super(false);
-  }
-
-  public onPressed(): boolean
-  {
-    this.toggle();
-
-    return true;
-  }
-
-  public onReleased(): void
-  {
-    this.toggle();
-  }
+  onReleased(key: InputKey,): void
 }

@@ -19,6 +19,7 @@ import type { SliderPathVisualizer } from "../slider/SliderPathVisualizer";
 import { SliderSelectionBlueprint } from "./SliderSelectionBlueprint";
 import { SelectToolSliderPathVisualizer } from "./SelectToolSliderPathVisualizer";
 import { MoveInteraction } from "../../interactions/MoveInteraction";
+import { RotateInteraction } from "../../interactions/RotateInteraction";
 
 @provideSelf()
 export class SelectTool extends ComposeTool implements IKeyBindingHandler<PlatformAction>
@@ -267,6 +268,15 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
   {
     if (this.selection.size > 0)
       this.#composer.beginInteraction(new MoveInteraction());
+
+    return true;
+  }
+
+  @keyBindingHandler(OsuEditorAction.Rotate)
+  #rotate()
+  {
+    if (this.selection.size > 0)
+      this.#composer.beginInteraction(new RotateInteraction());
 
     return true;
   }

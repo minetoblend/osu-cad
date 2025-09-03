@@ -1,4 +1,5 @@
-import type { Bindable, InputKey, KeyCombinationString, KeyDownEvent, KeyUpEvent, MouseDownEvent, MouseUpEvent } from "@osucad/framework";
+import type { Bindable, KeyCombinationString, KeyDownEvent, KeyUpEvent, MouseDownEvent, MouseUpEvent } from "@osucad/framework";
+import { InputKey } from "@osucad/framework";
 import { KeyCombinationMatchingMode } from "@osucad/framework";
 import { Axes, CompositeDrawable, Key, KeyCombination, MouseButton, resolved } from "@osucad/framework";
 import { EditorHistory } from "../../runtime";
@@ -19,7 +20,7 @@ export abstract class Interaction extends CompositeDrawable
   protected accessor history!: EditorHistory
 
   #pressedKeys = new Set<InputKey>();
-  #pressedListeners = new Set<KeyReceiver>();
+  #pressedListeners: KeyReceiver[] = [];
 
   protected override onKeyDown(e: KeyDownEvent): boolean
   {
@@ -49,11 +50,11 @@ export abstract class Interaction extends CompositeDrawable
 
       for (const listener of this.inputListeners)
       {
-        if (listener.keyCombination.isPressed(combination, KeyCombinationMatchingMode.Modifiers))
+        if (listener.test(inputKey, combination))
         {
-          if (!this.#pressedListeners.has(listener) && listener.onPressed())
+          if (listener.onPressed(inputKey, combination))
           {
-            this.#pressedListeners.add(listener);
+            this.#pressedListeners.push(listener);
             return true;
           }
         }
@@ -74,12 +75,14 @@ export abstract class Interaction extends CompositeDrawable
     {
       const keyCombination = KeyCombination.from(...this.#pressedKeys, inputKey);
 
-      for (const listener of this.#pressedListeners)
+      for (let i = 0; i < this.#pressedListeners.length; i++)
       {
-        if (listener.keyCombination.isPressed(keyCombination, KeyCombinationMatchingMode.Modifiers))
+        const listener = this.#pressedListeners[i];
+
+        if (listener.test(inputKey, keyCombination))
         {
-          this.#pressedListeners.delete(listener);
-          listener.onReleased();
+          this.#pressedListeners.splice(i--, 1);
+          listener.onReleased(inputKey);
         }
       }
     }
@@ -128,6 +131,11 @@ export abstract class Interaction extends CompositeDrawable
   }
 
   #completed = false;
+
+  public get completed()
+  {
+    return this.#completed;
+  }
 
   public complete()
   {
@@ -186,8 +194,10 @@ export namespace Interaction
       {
         const bindable = context.access.get(this);
 
+        const keyCombination = parseKeys(keys);
+
         this.inputListeners.push({
-          keyCombination: parseKeys(keys),
+          test: (key, combination) => keyCombination.isPressed(combination, KeyCombinationMatchingMode.Modifiers),
           onPressed: () =>
           {
             bindable.value = !bindable.value;
@@ -210,8 +220,10 @@ export namespace Interaction
       {
         const bindable = context.access.get(this);
 
+        const keyCombination = parseKeys(keys);
+
         this.inputListeners.push({
-          keyCombination: parseKeys(keys),
+          test: (key, combination) => keyCombination.isPressed(combination, KeyCombinationMatchingMode.Modifiers),
           onPressed: () =>
           {
             bindable.value = !bindable.value;
@@ -234,12 +246,91 @@ export namespace Interaction
     {
       context.addInitializer(function()
       {
+        const keyCombination = parseKeys(keys);
+
         this.inputListeners.push({
-          keyCombination: parseKeys(keys),
+          test: (key, combination) => keyCombination.isPressed(combination, KeyCombinationMatchingMode.Modifiers),
           onPressed: () =>
           {
             target.call(this);
             return true;
+          },
+          onReleased: () =>
+          {
+          },
+        });
+      });
+    };
+  }
+
+  export function inputNumberString()
+  {
+    return (
+      target: unknown,
+      context: ClassFieldDecoratorContext<Interaction, Bindable<string>>,
+    ) =>
+    {
+      context.addInitializer(function()
+      {
+        const bindable = context.access.get(this);
+
+        function getDigit(key: InputKey)
+        {
+          if (InputKey[key].startsWith("Number") && InputKey[key].length === "Number".length + 1)
+            return InputKey[key].slice("Number".length);
+
+          return undefined;
+        }
+
+        this.inputListeners.push({
+          test: key =>
+          {
+            if (key === InputKey.Period)
+              return true;
+
+            if (key === InputKey.Minus)
+              return true;
+
+            if (key === InputKey.BackSpace)
+              return true;
+
+            if (getDigit(key) !== undefined)
+              return true;
+
+            return false;
+          },
+          onPressed: (key) =>
+          {
+            if (key === InputKey.Period)
+            {
+              if (!bindable.value.includes("."))
+                bindable.value += ".";
+              return true;
+            }
+
+            if (key === InputKey.Minus)
+            {
+              if (bindable.value.startsWith("-"))
+                bindable.value = bindable.value.slice(1);
+              else
+                bindable.value = `-${bindable.value}`;
+              return true;
+            }
+
+            const digit = getDigit(key);
+            if (digit !== undefined)
+            {
+              bindable.value = Number.parseFloat(bindable.value + digit).toString();
+              return true;
+            }
+
+            if (key === InputKey.BackSpace)
+            {
+              bindable.value = bindable.value.slice(0, -1);
+              return true;
+            }
+
+            return false;
           },
           onReleased: () =>
           {

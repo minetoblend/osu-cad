@@ -1,5 +1,5 @@
 import { ComposeToolPresenceOverlay } from "@osucad/editor";
-import { dependencyLoader, DrawableSprite, type IVec2, loadTexture, resolved, Vec2 } from "@osucad/framework";
+import { dependencyLoader, DrawableSprite, EasingFunction, type IVec2, loadTexture, resolved, Vec2 } from "@osucad/framework";
 import type { Texture } from "pixi.js";
 import iconUrl from "./select.png";
 import { DrawableRuleset } from "@osucad/core";
@@ -45,6 +45,6 @@ export class SelectToolPresenceOverlay extends ComposeToolPresenceOverlay
   {
     const { position } = content as ISelectToolPresence;
 
-    this.#cursor.moveTo(Vec2.from(position), 100);
+    this.#cursor.moveTo(Vec2.from(position), 100, EasingFunction.Out);
   }
 }

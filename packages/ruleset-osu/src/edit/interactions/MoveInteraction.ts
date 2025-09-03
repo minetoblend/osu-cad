@@ -1,10 +1,10 @@
+import { Playfield } from "@osucad/core";
+import { ComposerStatusBar, HitObjectComposer, HitObjectSelection, Interaction } from "@osucad/editor";
 import type { KeyDownEvent, MouseMoveEvent } from "@osucad/framework";
 import { Anchor, Axes, Bindable, BindableBoolean, Box, dependencyLoader, Key, keyBindingHandler, PlatformAction, resolved, Vec2 } from "@osucad/framework";
-import { ComposerStatusBar, HitObjectComposer, HitObjectSelection, Interaction } from "@osucad/editor";
 import type { OsuHitObject } from "../../hitObjects";
-import { Playfield } from "@osucad/core";
-import { OsuOperatorUtils } from "../operators/OsuOperatorUtils";
 import { MoveOperator } from "../operators/MoveOperator";
+import { OsuOperatorUtils } from "../operators/OsuOperatorUtils";
 
 
 export class MoveInteraction extends Interaction
@@ -196,6 +196,9 @@ export class MoveInteraction extends Interaction
 
   private updateState()
   {
+    if (this.completed)
+      return;
+
     this.history.discardUncommittedChanges();
 
     if (this.#selection.size === 0)
@@ -206,7 +209,7 @@ export class MoveInteraction extends Interaction
 
     const bounds = OsuOperatorUtils.getBounds(this.#selection);
 
-    const delta = this.parseInputString() ?? this.getMouseDelta();
+    let delta = this.parseInputString() ?? this.getMouseDelta();
 
     if (bounds && this.axis.value)
     {
@@ -232,16 +235,22 @@ export class MoveInteraction extends Interaction
       this.#yAxisMarker.hide();
     }
 
+
+    const clamped = OsuOperatorUtils.restrictMovement([...this.#selection], delta);
+    const didClamp = !delta.equals(clamped);
+
+    delta = clamped;
+
     if (this.#inputString.length > 0 && this.axis.value !== null)
     {
-      this.#statusBar.text = `[${this.negative.value ? "-" : ""}${this.#inputString}|] = ${this.#formatNumber(delta[this.axis.value])}px along ${this.axis.value.toUpperCase()} axis`;
+      this.#statusBar.text = `[${this.negative.value ? "-" : ""}${this.#inputString}|] = ${this.#formatNumber(delta[this.axis.value])}px along ${this.axis.value.toUpperCase()} axis${didClamp ? " (clamped)" : ""}`;
     }
     else
     {
       if (this.axis.value !== null)
-        this.#statusBar.text = `${this.#formatNumber(delta[this.axis.value])}px along ${this.axis.value.toUpperCase()} axis`;
+        this.#statusBar.text = `${this.#formatNumber(delta[this.axis.value])}px along ${this.axis.value.toUpperCase()} axis${didClamp ? " (clamped)" : ""}`;
       else
-        this.#statusBar.text = `Dx: ${this.#formatNumber(delta.x)}px Dy: ${this.#formatNumber(delta.y)}px (${this.#formatNumber(delta.length())}px)`;
+        this.#statusBar.text = `Dx: ${this.#formatNumber(delta.x)}px Dy: ${this.#formatNumber(delta.y)}px (${this.#formatNumber(delta.length())}px)${didClamp ? " (clamped)" : ""}`;
     }
 
     for (const h of this.#selection)
