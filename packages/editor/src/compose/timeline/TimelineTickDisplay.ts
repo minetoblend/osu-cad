@@ -6,7 +6,7 @@ import { ComposeTimeline } from "./ComposeTimeline";
 import { PointVisualization } from "./PointVisualization";
 import { TimelinePart } from "./TimelinePart";
 
-const TICK_WIDTH = 2;
+const TICK_WIDTH = 1;
 
 export class TimelineTickDisplay extends TimelinePart<PointVisualization>
 {
