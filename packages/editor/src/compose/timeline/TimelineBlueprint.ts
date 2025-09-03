@@ -21,8 +21,8 @@ export class TimelineBlueprint<T extends HitObject = HitObject> extends Poolable
   @resolved(ISkinSource)
   accessor #skin!: ISkinSource
 
-  @resolved(HitObjectSelection)
-  protected accessor selection!: HitObjectSelection<HitObject>
+  @resolved(HitObjectSelection, true)
+  protected accessor selection!: HitObjectSelection<HitObject> | undefined
 
   @resolved(EditorBeatmap)
   protected accessor beatmap!: EditorBeatmap
@@ -107,17 +107,20 @@ export class TimelineBlueprint<T extends HitObject = HitObject> extends Poolable
     switch(e.button)
     {
     case MouseButton.Left:
-      if (e.controlPressed)
+      if (this.selection)
       {
-        this.selection.toggle(this.hitObject);
-        return true;
-      }
+        if (e.controlPressed)
+        {
+          this.selection.toggle(this.hitObject);
+          return true;
+        }
 
-      if (!this.selected.value)
-      {
-        this.selection.clear();
-        this.selection.add(this.hitObject);
-        return true;
+        if (!this.selected.value)
+        {
+          this.selection.clear();
+          this.selection.add(this.hitObject);
+          return true;
+        }
       }
       break;
     case MouseButton.Right:

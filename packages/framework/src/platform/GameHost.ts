@@ -56,7 +56,7 @@ export abstract class GameHost
   {
   }
 
-  protected root: Container | null = null;
+  public root: Container | null = null;
 
   public executionState: ExecutionState = ExecutionState.Idle;
 

@@ -22,8 +22,8 @@ export abstract class TimelineBlueprintContainer extends PooledDrawableWithLifet
   @resolved(() => ComposeTimeline)
   accessor #timeline!: ComposeTimeline
 
-  @resolved(HitObjectSelection)
-  accessor #selection!: HitObjectSelection<HitObject>
+  @resolved(HitObjectSelection, true)
+  accessor #selection!: HitObjectSelection<HitObject> | undefined
 
   readonly #content: TimelinePart<TimelineBlueprint>;
 
@@ -53,15 +53,16 @@ export abstract class TimelineBlueprintContainer extends PooledDrawableWithLifet
     this.#beatmap.hitObjects.added.addListener(this.#addHitObject, this);
     this.#beatmap.hitObjects.removed.addListener(this.#removeHitObject, this);
 
-    this.#selection.added.addListener(this.#hitObjectSelected, this);
-    this.#selection.removed.addListener(this.#hitObjectDeselected, this);
+    this.#selection?.added.addListener(this.#hitObjectSelected, this);
+    this.#selection?.removed.addListener(this.#hitObjectDeselected, this);
   }
 
   #addHitObject(hitObject: HitObject)
   {
     const entry = new TimelineLifetimeEntry(hitObject);
 
-    entry.selected.value = this.#selection.has(hitObject);
+    if (this.#selection)
+      entry.selected.value = this.#selection.has(hitObject);
 
     this.#entryMap.set(hitObject, entry);
     this.addEntry(entry);
@@ -114,8 +115,8 @@ export abstract class TimelineBlueprintContainer extends PooledDrawableWithLifet
     this.#beatmap.hitObjects.added.removeListener(this.#addHitObject, this);
     this.#beatmap.hitObjects.removed.removeListener(this.#removeHitObject, this);
 
-    this.#selection.added.removeListener(this.#hitObjectSelected, this);
-    this.#selection.removed.removeListener(this.#hitObjectDeselected, this);
+    this.#selection?.added.removeListener(this.#hitObjectSelected, this);
+    this.#selection?.removed.removeListener(this.#hitObjectDeselected, this);
 
     super.dispose();
   }
