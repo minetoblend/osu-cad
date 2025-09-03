@@ -4,7 +4,7 @@ import { Anchor, Axes, Box, Container, dependencyLoader, resolved, type Drawable
 import { SliderPathHandle } from "../tools/slider/SliderPathVisualizer";
 import type { OsuHitObject } from "../../hitObjects";
 
-export class PickPointIneration extends ModalInteraction<Vec2>
+export class PickPointInteraction extends ModalInteraction<Vec2>
 {
   public override result: Vec2 | undefined = undefined;
 

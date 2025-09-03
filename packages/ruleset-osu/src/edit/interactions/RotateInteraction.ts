@@ -7,7 +7,7 @@ import { Slider, Spinner, type OsuHitObject } from "../../hitObjects";
 import { OsuPlayfield } from "../../ui";
 import { OsuOperatorUtils } from "../operators/OsuOperatorUtils";
 import { DashedLine } from "./DashedLine";
-import { PickPointIneration } from "./PickPointInteraction";
+import { PickPointInteraction } from "./PickPointInteraction";
 
 export type TransformOrigin =
   | { type: "custom", value: Vec2 }
@@ -74,7 +74,7 @@ export class RotateInteraction extends Interaction
   {
     this.#history.discardUncommittedChanges();
 
-    this.push(new PickPointIneration()).then(result =>
+    this.push(new PickPointInteraction()).then(result =>
     {
       if (result)
         this.transformOrigin.value = { type: "custom", value: result };
