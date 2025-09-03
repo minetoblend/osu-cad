@@ -62,7 +62,7 @@ export class ComposeTimeline extends CompositeDrawable
     const blueprintContainer = this.#editorRulest.createTimelineBlueprintContainer();
 
     if (blueprintContainer)
-      this.#zoomedContent.add(blueprintContainer);
+      this.#zoomedContent.add(blueprintContainer.with({ depth: 1 }));
   }
 
   protected override loadComplete(): void

@@ -1,9 +1,9 @@
-import type { HitObject } from "@osucad/core";
 import { DrawableRuleset, Playfield, Ruleset } from "@osucad/core";
 import type { ReadonlyDependencyContainer } from "@osucad/framework";
 import { Anchor, asyncDependencyLoader, Axes, CompositeDrawable, Container, DependencyContainer, provide, provideSelf, ProxyDrawable, resolved } from "@osucad/framework";
 import { EditorHistory, EditorRuntime } from "../runtime";
 import { EditorBeatmap } from "../runtime/dds/EditorBeatmap";
+import type { Interaction } from "./interactions/Interaction";
 import type { Operator, OperatorContext } from "./operators";
 import { OperatorBox } from "./operators/OperatorBox";
 import type { ComposeToolInfo } from "./tools";
@@ -11,8 +11,6 @@ import { ComposeToolbar } from "./tools";
 import { ActiveToolBindable } from "./tools/ActiveToolBindable";
 import { ComposeToolContainer } from "./tools/ComposeToolContainer";
 import { ComposePresenceContainer } from "./tools/ToolPresenceContainer";
-import type { Interaction } from "./interactions/Interaction";
-import { HitObjectSelection } from "./HitObjectSelection";
 
 @provideSelf()
 export abstract class HitObjectComposer extends CompositeDrawable
@@ -23,9 +21,6 @@ export abstract class HitObjectComposer extends CompositeDrawable
 
     this.relativeSizeAxes = Axes.Both;
   }
-
-  @provide(HitObjectSelection)
-  public readonly selection = new HitObjectSelection<HitObject>();
 
   #toolbar!: ComposeToolbar;
 

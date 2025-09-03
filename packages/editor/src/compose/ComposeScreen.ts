@@ -1,11 +1,13 @@
+import type { HitObject } from "@osucad/core";
 import { Ruleset } from "@osucad/core";
 import type { KeyBindingEvent, ScrollEvent } from "@osucad/framework";
-import { almostEquals, Anchor, Axes, Container, DependencyContainer, keyBindingHandler, resolved, SpriteText, type ReadonlyDependencyContainer } from "@osucad/framework";
+import { almostEquals, Anchor, Axes, Container, DependencyContainer, keyBindingHandler, provide, resolved, SpriteText, type ReadonlyDependencyContainer } from "@osucad/framework";
 import { EditorAction } from "../EditorAction";
 import { EditorClock } from "../EditorClock";
 import { EditorScreen } from "../EditorScreen";
 import { EditorBeatmap } from "../runtime";
 import { ComposeTimeline } from "./timeline/ComposeTimeline";
+import { HitObjectSelection } from "./HitObjectSelection";
 
 export class ComposeScreen extends EditorScreen
 {
@@ -16,6 +18,9 @@ export class ComposeScreen extends EditorScreen
 
   @resolved(Ruleset)
   protected accessor ruleset!: Ruleset;
+
+  @provide(HitObjectSelection)
+  public readonly selection = new HitObjectSelection<HitObject>();
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
