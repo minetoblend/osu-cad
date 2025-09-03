@@ -96,7 +96,10 @@ export class SkinTextureStore
         if (this._textures.some(it => it.manifest.name === entry.name))
           continue;
 
-        this._textures.push(new ReactiveTextureEntry(this, entry));
+        const textureEntry = new ReactiveTextureEntry(this, entry);
+        this._textures.push(textureEntry);
+
+        textureEntry.isLoaded.then(() => this.textureChanged.emit());
       }
 
       for (const entry of newManifest.animations)
@@ -104,7 +107,10 @@ export class SkinTextureStore
         if (this._animations.some(it => it.manifest.name === entry.name))
           continue;
 
-        this._animations.push(new ReactiveAnimationEntry(this, entry));
+        const animationEntry = new ReactiveAnimationEntry(this, entry);
+        this._animations.push(animationEntry);
+
+        animationEntry.isLoaded.then(() => this.textureChanged.emit());
       }
     });
   }
