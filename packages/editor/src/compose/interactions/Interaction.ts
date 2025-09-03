@@ -1,10 +1,11 @@
-import type { Bindable, KeyCombinationString, KeyDownEvent, KeyUpEvent, MouseDownEvent, MouseUpEvent, ScreenTransitionEvent } from "@osucad/framework";
+import type { Bindable, Drawable, KeyCombinationString, KeyDownEvent, KeyUpEvent, MouseDownEvent, MouseUpEvent, ScreenTransitionEvent } from "@osucad/framework";
 import { InputKey, Key, KeyCombination, KeyCombinationMatchingMode, MouseButton, resolved, Screen } from "@osucad/framework";
 import { EditorHistory } from "../../runtime";
-import type { KeyReceiver } from "./KeyReceiver";
+import type { ToolHotkey } from "./ToolHotkey";
 import { InteractionContainer } from "./InteractionContainer";
 import { deferredPromise, type DeferredPromise } from "@osucad/core";
 import type { ModalInteraction } from "./ModalInteraction";
+import { DrawableToolHotKey } from "./DrawableToolHotkey";
 
 export interface ModalInteractionCallback
 {
@@ -14,18 +15,21 @@ export interface ModalInteractionCallback
 
 export abstract class Interaction extends Screen
 {
-  public readonly inputListeners: KeyReceiver[] = [];
+  public readonly hotkeys: ToolHotkey[] = [];
 
   public constructor()
   {
     super();
+
+    if (this.completeOnMouseDown)
+      this.hotkeys.push(new CompleteOnMouseLeftHotkey(this), new CancelOnMouseRightHotkey(this));
   }
 
   @resolved(EditorHistory)
   protected accessor history!: EditorHistory
 
   #pressedKeys = new Set<InputKey>();
-  #pressedListeners: KeyReceiver[] = [];
+  #pressedHotkeys: ToolHotkey[] = [];
 
   protected override onKeyDown(e: KeyDownEvent): boolean
   {
@@ -88,19 +92,21 @@ export abstract class Interaction extends Screen
 
   #onKeyPressed(inputKey: InputKey)
   {
+    console.log(InputKey[inputKey], [...this.#pressedKeys].map(key => InputKey[key]));
+
     if (!this.#pressedKeys.has(inputKey))
     {
       this.#pressedKeys.add(inputKey);
 
       const combination = KeyCombination.from(...this.#pressedKeys);
 
-      for (const listener of this.inputListeners)
+      for (const listener of this.hotkeys)
       {
         if (listener.test(inputKey, combination))
         {
           if (listener.onPressed(inputKey, combination))
           {
-            this.#pressedListeners.push(listener);
+            this.#pressedHotkeys.push(listener);
             return true;
           }
         }
@@ -121,24 +127,25 @@ export abstract class Interaction extends Screen
     {
       const keyCombination = KeyCombination.from(...this.#pressedKeys, inputKey);
 
-      for (let i = 0; i < this.#pressedListeners.length; i++)
+      for (let i = 0; i < this.#pressedHotkeys.length; i++)
       {
-        const listener = this.#pressedListeners[i];
+        const listener = this.#pressedHotkeys[i];
 
         if (listener.test(inputKey, keyCombination))
         {
-          this.#pressedListeners.splice(i--, 1);
+          this.#pressedHotkeys.splice(i--, 1);
           listener.onReleased(inputKey);
         }
       }
     }
   }
 
-  protected get completeOnMouseDown()
+  public get completeOnMouseDown()
   {
     return true;
   }
-  protected get cancelOnRightMouseDown()
+
+  public get cancelOnRightMouseDown()
   {
     return true;
   }
@@ -148,25 +155,7 @@ export abstract class Interaction extends Screen
     if (this.#onKeyPressed(KeyCombination.fromMouseButton(e.button)))
       return true;
 
-    switch (e.button)
-    {
-    case MouseButton.Left:
-      if (this.completeOnMouseDown)
-      {
-        this.complete();
-        return true;
-      }
-      break;
-    case MouseButton.Right:
-      if (this.cancelOnRightMouseDown)
-      {
-        this.cancel();
-        return true;
-      }
-      break;
-    }
-
-    return false;
+    return super.onMouseDown(e);
   }
 
   protected override onMouseUp(e: MouseUpEvent)
@@ -218,18 +207,21 @@ export abstract class Interaction extends Screen
 
 export namespace Interaction
 {
-  export type InputKeysOrString = InputKey[] | [KeyCombinationString];
+  export type InputKeysOrString = InputKey[] | KeyCombinationString | { or: InputKeysOrString[] };
 
-  function parseKeys(keys: InputKeysOrString)
+  function parseKeys(keys: InputKeysOrString): KeyCombination[]
   {
-    if (typeof keys[0] === "string")
-      return KeyCombination.parse(keys[0]);
+    if (typeof keys === "string")
+      return [KeyCombination.parse(keys)];
 
-    return KeyCombination.from(...keys as InputKey[]);
+    if ("or" in keys)
+      return keys.or.flatMap(parseKeys);
+
+    return [KeyCombination.from(...keys as InputKey[])];
   }
 
 
-  export function toggleOnKey(...keys: InputKeysOrString)
+  export function toggleOnKey(keys: InputKeysOrString, description?: string)
   {
     return (
       target: unknown,
@@ -240,22 +232,29 @@ export namespace Interaction
       {
         const bindable = context.access.get(this);
 
-        const keyCombination = parseKeys(keys);
+        const keyCombinations = parseKeys(keys);
 
-        this.inputListeners.push({
-          test: (key, combination) => keyCombination.isPressed(combination, KeyCombinationMatchingMode.Modifiers),
+        this.hotkeys.push({
+          test: (key, combination) => keyCombinations.some(it => it.isPressed(combination, KeyCombinationMatchingMode.Modifiers)),
           onPressed: () =>
           {
             bindable.value = !bindable.value;
             return true;
           },
           onReleased: () => bindable.value = !bindable.value,
+          createDrawable: () =>
+          {
+            if (description)
+              return new DrawableToolHotKey(keyCombinations, description);
+
+            return undefined;
+          },
         });
       });
     };
   }
 
-  export function toggleOnKeyDown(...keys: InputKeysOrString)
+  export function toggleOnKeyDown(keys: InputKeysOrString, description?: string)
   {
     return (
       target: unknown,
@@ -266,10 +265,10 @@ export namespace Interaction
       {
         const bindable = context.access.get(this);
 
-        const keyCombination = parseKeys(keys);
+        const keyCombinations = parseKeys(keys);
 
-        this.inputListeners.push({
-          test: (key, combination) => keyCombination.isPressed(combination, KeyCombinationMatchingMode.Modifiers),
+        this.hotkeys.push({
+          test: (key, combination) => keyCombinations.some(it => it.isPressed(combination, KeyCombinationMatchingMode.Modifiers)),
           onPressed: () =>
           {
             bindable.value = !bindable.value;
@@ -278,31 +277,45 @@ export namespace Interaction
           onReleased: () =>
           {
           },
+          createDrawable: () =>
+          {
+            if (description)
+              return new DrawableToolHotKey(keyCombinations, description);
+
+            return undefined;
+          },
         });
       });
     };
   }
 
-  export function invokeOnKey(...keys: InputKeysOrString)
+  export function invokeOnKey(keys: InputKeysOrString, description?: string)
   {
     return (
-      target: (this: Interaction) => boolean | void,
-      context: ClassMethodDecoratorContext<Interaction, () => boolean | void>,
+      target: (this: Interaction, key: InputKey) => boolean | void,
+      context: ClassMethodDecoratorContext<Interaction, (key: InputKey) => boolean | void>,
     ) =>
     {
       context.addInitializer(function()
       {
-        const keyCombination = parseKeys(keys);
+        const keyCombinations = parseKeys(keys);
 
-        this.inputListeners.push({
-          test: (key, combination) => keyCombination.isPressed(combination, KeyCombinationMatchingMode.Modifiers),
-          onPressed: () =>
+        this.hotkeys.push({
+          test: (key, combination) => keyCombinations.some(it => it.isPressed(combination, KeyCombinationMatchingMode.Modifiers)),
+          onPressed: (key) =>
           {
-            target.call(this);
+            target.call(this, key);
             return true;
           },
           onReleased: () =>
           {
+          },
+          createDrawable: () =>
+          {
+            if (description)
+              return new DrawableToolHotKey(keyCombinations, description);
+
+            return undefined;
           },
         });
       });
@@ -328,7 +341,7 @@ export namespace Interaction
           return undefined;
         }
 
-        this.inputListeners.push({
+        this.hotkeys.push({
           test: key =>
           {
             if (key === InputKey.Period)
@@ -384,5 +397,66 @@ export namespace Interaction
         });
       });
     };
+  }
+}
+
+class CompleteOnMouseLeftHotkey implements ToolHotkey
+{
+  public constructor(public readonly interaction: Interaction)
+  {
+  }
+
+  public test(key: InputKey, keyCombination: KeyCombination): boolean
+  {
+    return this.interaction.completeOnMouseDown && key === InputKey.MouseLeftButton;
+  }
+
+  public onPressed(key: InputKey, keyCombination: KeyCombination): boolean
+  {
+    this.interaction.complete();
+    return true;
+  }
+
+  public onReleased(key: InputKey): void
+  {
+  }
+
+  public createDrawable?(): Drawable | undefined
+  {
+    if (this.interaction.completeOnMouseDown)
+      return new DrawableToolHotKey([KeyCombination.from(KeyCombination.fromMouseButton(MouseButton.Left))], "Confirm");
+
+    return undefined;
+  }
+}
+
+
+class CancelOnMouseRightHotkey implements ToolHotkey
+{
+  public constructor(public readonly interaction: Interaction)
+  {
+  }
+
+  public test(key: InputKey, keyCombination: KeyCombination): boolean
+  {
+    return this.interaction.cancelOnRightMouseDown && key === InputKey.MouseRightButton;
+  }
+
+  public onPressed(key: InputKey, keyCombination: KeyCombination): boolean
+  {
+    this.interaction.cancel();
+    return true;
+  }
+
+  public onReleased(key: InputKey): void
+  {
+  }
+
+  public createDrawable?(): Drawable | undefined
+  {
+    if (this.interaction.cancelOnRightMouseDown)
+      return new DrawableToolHotKey([KeyCombination.from(KeyCombination.fromMouseButton(MouseButton.Right))], "Cancel");
+
+    return undefined;
   }
 }

@@ -1,27 +1,48 @@
 import { Playfield } from "@osucad/core";
-import { ComposerStatusBar, HitObjectComposer, HitObjectSelection, Interaction } from "@osucad/editor";
-import type { KeyDownEvent, MouseMoveEvent } from "@osucad/framework";
-import { Anchor, Axes, Bindable, BindableBoolean, Box, dependencyLoader, Key, keyBindingHandler, PlatformAction, resolved, Vec2 } from "@osucad/framework";
+import { ComposerStatusBar, HitObjectComposer, HitObjectSelection, HotkeyBar, Interaction } from "@osucad/editor";
+import type { InputManager, KeyDownEvent, MouseMoveEvent } from "@osucad/framework";
+import { InputKey } from "@osucad/framework";
+import { Anchor, Axes, Bindable, BindableBoolean, Box, dependencyLoader, Key, keyBindingHandler, MouseButton, PlatformAction, resolved, Vec2 } from "@osucad/framework";
 import type { OsuHitObject } from "../../hitObjects";
 import { MoveOperator } from "../operators/MoveOperator";
 import { OsuOperatorUtils } from "../operators/OsuOperatorUtils";
 import { PickSnapTargetsInteraction } from "./PickSnapTargetsInteraction";
 import { SnapTargetContainer } from "./SnapTargetContainer";
 
+export interface MoveInteractionOptions
+{
+  completeOnMouseUp?: boolean
+}
 
 export class MoveInteraction extends Interaction
 {
-  #inputString = "";
-  #statusBar!: ComposerStatusBar;
+  public completeOnMouseUp = false;
 
+  public constructor(options: MoveInteractionOptions = {})
+  {
+    super();
+
+    const {
+      completeOnMouseUp = false,
+    } = options;
+
+    this.completeOnMouseUp = completeOnMouseUp;
+  }
+
+  #needsUpdate = false;
+
+  #inputString = "";
   #mousePosition!: Vec2;
   #mouseDelta = new Vec2();
+  #lastDelta = Vec2.zero();
 
   #xAxisMarker!: Box;
   #yAxisMarker!: Box;
-
+  #statusBar!: ComposerStatusBar;
   #snapTargetContainer!: SnapTargetContainer;
   #snapTargets: Vec2[] = [];
+
+  #inputManager!: InputManager;
 
   @resolved(HitObjectSelection)
   accessor #selection!: HitObjectSelection<OsuHitObject>;
@@ -36,27 +57,29 @@ export class MoveInteraction extends Interaction
   @Interaction.toggleOnKeyDown("KeypadMinus")
   private readonly negative = new BindableBoolean(false);
 
-  @Interaction.toggleOnKey("Control")
-  @Interaction.toggleOnKeyDown("Shift+Tab")
+  @Interaction.toggleOnKeyDown("T", "Grid Snap")
   private readonly snapped = new BindableBoolean(false);
 
-  @Interaction.toggleOnKey("Shift")
+  @Interaction.toggleOnKey("Shift", "Precision Mode")
   private readonly preciseMode = new BindableBoolean(false);
 
   private readonly axis = new Bindable<"x" | "y" | null>(null);
 
-  @Interaction.invokeOnKey("X")
-  private toggleXAxis()
+  @Interaction.invokeOnKey({ or: ["X", "Y"] }, "Axis")
+  private toggleAxis(key: InputKey)
   {
-    this.axis.value = this.axis.value !== "x"
-        ? "x"
+    const axis = key === InputKey.X ? "x" : "y";
+
+    this.axis.value = this.axis.value !== axis
+        ? axis
         : null;
   }
 
-  @Interaction.invokeOnKey("B")
+  @Interaction.invokeOnKey("B", "Pick Snap Targets")
   private pickSnapTargets()
   {
-    console.log(this.history.discardUncommittedChanges());
+    this.history.discardUncommittedChanges();
+    this.completeOnMouseUp = false;
 
     this.push(new PickSnapTargetsInteraction()).then(result =>
     {
@@ -65,20 +88,11 @@ export class MoveInteraction extends Interaction
       for (const p of this.#snapTargets)
         this.#snapTargetContainer.addMarker(p);
 
-
       this.#mousePosition = this.#playfield.toLocalSpace(this.getContainingInputManager()!.currentState.mouse.position);
       this.#inputString = "";
 
       this.invalidateState();
     });
-  }
-
-  @Interaction.invokeOnKey("Y")
-  private toggleYAxis()
-  {
-    this.axis.value = this.axis.value !== "y"
-        ? "y"
-        : null;
   }
 
   @dependencyLoader()
@@ -101,6 +115,7 @@ export class MoveInteraction extends Interaction
       }),
       this.#snapTargetContainer = new SnapTargetContainer({ relativeSizeAxes: Axes.Both }),
       this.#statusBar = new ComposerStatusBar(),
+      new HotkeyBar(this),
     ];
 
     if (this.#selection.size === 0)
@@ -112,6 +127,8 @@ export class MoveInteraction extends Interaction
     super.loadComplete();
 
     this.#mousePosition = this.#playfield.toLocalSpace(this.getContainingInputManager()!.currentState.mouse.position);
+
+    this.#inputManager = this.getContainingInputManager()!;
 
     this.snapped.bindValueChanged(this.invalidateState, this);
     this.axis.bindValueChanged(this.invalidateState, this);
@@ -219,9 +236,6 @@ export class MoveInteraction extends Interaction
     }
   }
 
-  #needsUpdate = false;
-  #lastDelta = Vec2.zero();
-
   private invalidateState()
   {
     this.#needsUpdate = true;
@@ -230,6 +244,12 @@ export class MoveInteraction extends Interaction
   protected override update()
   {
     super.update();
+
+    if (this.completeOnMouseUp && !this.#inputManager.currentState.mouse.isPressed(MouseButton.Left))
+    {
+      this.complete();
+      return;
+    }
 
     if (this.#needsUpdate)
     {

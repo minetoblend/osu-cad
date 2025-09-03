@@ -1,13 +1,13 @@
 import type { DrawableHitObject } from "@osucad/core";
 import { SkinnableDrawable } from "@osucad/core";
 import { HitObjectComposer } from "@osucad/editor";
-import type { ClickEvent, DragEvent, DragStartEvent, MouseDownEvent, Rectangle } from "@osucad/framework";
+import type { ClickEvent, DragStartEvent, MouseDownEvent, Rectangle } from "@osucad/framework";
 import { Anchor, Bindable, dependencyLoader, ProxyDrawable, resolved, Vec2 } from "@osucad/framework";
 import type { HitCircle } from "../../../hitObjects";
 import { OsuHitObject } from "../../../hitObjects";
 import { DrawableHitCircle } from "../../../hitObjects/drawables/DrawableHitCircle";
 import { OsuSkinComponents } from "../../../skinning";
-import { MoveOperator } from "../../operators/MoveOperator";
+import { MoveInteraction } from "../../interactions/MoveInteraction";
 import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
 import { SelectTool } from "./SelectTool";
 
@@ -56,32 +56,12 @@ export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<Hit
   @resolved(HitObjectComposer)
   accessor #composer!: HitObjectComposer
 
-  #moveOperator?: MoveOperator;
-
   protected override onDragStart(e: DragStartEvent): boolean
   {
     if (!this.selected)
       this.selectExclusive();
 
-    if (this.#moveOperator?.isDisposed !== false)
-    {
-      this.#moveOperator = this.#composer.beginOperator(MoveOperator, [...this.selection] as OsuHitObject[]);
-
-      this.#dragStartPosition = this.parent!.toLocalSpace(e.screenSpaceMousePosition);
-    }
-    else
-    {
-      this.#dragStartPosition = this.parent!.toLocalSpace(e.screenSpaceMousePosition).sub(this.#moveOperator.movement);
-    }
-
-    return true;
-  }
-
-  protected override onDrag(e: DragEvent): boolean
-  {
-    const movement = this.parent!.toLocalSpace(e.screenSpaceMousePosition).sub(this.#dragStartPosition);
-
-    this.#moveOperator?.setMovement(movement);
+    this.#composer.beginInteraction(new MoveInteraction());
 
     return true;
   }

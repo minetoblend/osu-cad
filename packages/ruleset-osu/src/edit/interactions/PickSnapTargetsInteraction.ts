@@ -1,5 +1,5 @@
 import { Playfield } from "@osucad/core";
-import { EditorColors, HitObjectSelection, Interaction, ModalInteraction } from "@osucad/editor";
+import { EditorColors, HitObjectSelection, HotkeyBar, Interaction, ModalInteraction } from "@osucad/editor";
 import type { InputManager, MouseDownEvent, MouseMoveEvent , Container } from "@osucad/framework";
 import { Anchor, Axes, Box, CompositeDrawable, dependencyLoader, MouseButton, resolved, Vec2 } from "@osucad/framework";
 import type { OsuHitObject } from "../../hitObjects";
@@ -30,10 +30,11 @@ export class PickSnapTargetsInteraction extends ModalInteraction<Vec2[]>
     this.internalChildren = [
       this.#cursor = new SnapTargetCursor(),
       this.#snapTargetContainer = new SnapTargetContainer({ relativeSizeAxes: Axes.Both }),
+      new HotkeyBar(this),
     ];
   }
 
-  @Interaction.invokeOnKey("A")
+  @Interaction.invokeOnKey("A", "Add Snap Point")
   #addSnapTarget()
   {
     const position = this.snapTargetAtMousePosition.position;
@@ -43,6 +44,15 @@ export class PickSnapTargetsInteraction extends ModalInteraction<Vec2[]>
 
     this.result.push(position);
     this.#snapTargetContainer.add(new SnapTargetMarker(position));
+  }
+
+  @Interaction.invokeOnKey("Alt+A", "Remove Last Snap Point")
+  #removeLastSnapTarget()
+  {
+    if (this.result.length === 0)
+      return;
+
+    this.#snapTargetContainer.children[this.#snapTargetContainer.children.length -1]?.expire();
   }
 
   protected override loadComplete(): void

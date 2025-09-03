@@ -1,13 +1,13 @@
 import type { DrawableHitObject } from "@osucad/core";
 import { SkinnableDrawable } from "@osucad/core";
 import { HitObjectComposer } from "@osucad/editor";
-import type { DragEvent, DragStartEvent, Rectangle } from "@osucad/framework";
+import type { DragStartEvent, Rectangle } from "@osucad/framework";
 import { Anchor, Bindable, dependencyLoader, resolved, Vec2 } from "@osucad/framework";
 import { Color } from "pixi.js";
-import type { OsuHitObject, Slider } from "../../../hitObjects";
+import type { Slider } from "../../../hitObjects";
 import { DrawableSlider } from "../../../hitObjects/drawables/DrawableSlider";
 import { OsuSkinComponents } from "../../../skinning";
-import { MoveOperator } from "../../operators/MoveOperator";
+import { MoveInteraction } from "../../interactions/MoveInteraction";
 import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
 
 export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider>
@@ -110,40 +110,18 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
     return this.hitObject.contains(position.add(this.position));
   }
 
-  #dragStartPosition!: Vec2;
-
   @resolved(HitObjectComposer)
     accessor #composer!: HitObjectComposer
 
-  #moveOperator?: MoveOperator;
 
   protected override onDragStart(e: DragStartEvent): boolean
   {
     if (!this.selected)
       this.selectExclusive();
 
-    if (this.#moveOperator?.isDisposed !== false)
-    {
-      this.#moveOperator = this.#composer.beginOperator(MoveOperator, [...this.selection] as OsuHitObject[]);
+    this.#composer.beginInteraction(new MoveInteraction({ completeOnMouseUp: true }));
 
-      this.#dragStartPosition = this.parent!.toLocalSpace(e.screenSpaceMousePosition);
-    }
-    else
-    {
-      this.#dragStartPosition = this.parent!.toLocalSpace(e.screenSpaceMousePosition).sub(this.#moveOperator.movement);
-    }
-
-    return true;
-  }
-
-  protected override onDrag(e: DragEvent): boolean
-  {
-    if (this.#moveOperator)
-    {
-      this.#moveOperator.setMovement(this.parent!.toLocalSpace(e.screenSpaceMousePosition).sub(this.#dragStartPosition));
-    }
-
-    return true;
+    return false;
   }
 
   public override isInSelectionRect(rectangle: Rectangle): boolean
