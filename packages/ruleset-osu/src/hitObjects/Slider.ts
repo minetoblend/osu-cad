@@ -306,9 +306,12 @@ export class Slider extends OsuHitObject
     return [this.position, this.pathEndPosition];
   }
 
-  public snapPathLength(controlPointInfo: ControlPointInfo, divisor: number)
+  public getSnappedPathLength(
+    controlPointInfo: ControlPointInfo,
+    divisor: number,
+    length = this.path.calculatedDistance,
+  )
   {
-    const length = this.path.calculatedDistance;
     const duration = Math.ceil(length / this.velocity);
     let time = controlPointInfo.snap(
         this.startTime + duration,
@@ -322,7 +325,12 @@ export class Slider extends OsuHitObject
       time -= beatLength / divisor;
     }
 
-    this.path.expectedDistance = Math.max(0, this.velocity * (time - this.startTime));
+    return Math.max(0, this.velocity * (time - this.startTime));
+  }
+
+  public snapPathLength(controlPointInfo: ControlPointInfo, divisor: number)
+  {
+    this.path.expectedDistance = this.getSnappedPathLength(controlPointInfo, divisor);
   }
 
   public applyToPath(updateFn: (point: PathPoint, index: number, path: readonly PathPoint[]) => PathPoint)

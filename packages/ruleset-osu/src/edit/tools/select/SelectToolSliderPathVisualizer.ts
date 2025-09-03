@@ -2,7 +2,7 @@ import { SliderPathHandle, SliderPathVisualizer } from "../slider/SliderPathVisu
 import type { Slider } from "../../../hitObjects";
 import { PathPoint } from "../../../hitObjects";
 import type { DragEndEvent, DragEvent, DragStartEvent, InputManager, KeyUpEvent, MouseDownEvent, MouseUpEvent } from "@osucad/framework";
-import { almostEquals, Anchor, Axes, Box, Container, dependencyLoader, type HoverEvent, type HoverLostEvent, Key, Line, MouseButton, resolved, SmoothPath, Vec2 } from "@osucad/framework";
+import { almostEquals, Anchor, Axes, Box, Container, dependencyLoader, type HoverEvent, type HoverLostEvent, Key, Line, MouseButton, provide, resolved, SmoothPath, Vec2 } from "@osucad/framework";
 import type { HitObject } from "@osucad/core";
 import { Playfield } from "@osucad/core";
 import { BindableBeatDivisor, EditorBeatmap, EditorHistory } from "@osucad/editor";
@@ -10,20 +10,9 @@ import { HitObjectSelection } from "./HitObjectSelection";
 import { Color } from "pixi.js";
 import { PathSegment } from "../../../hitObjects/PathSegment";
 import { OsuPlayfieldAdjustmentContainer } from "../../../ui";
+import { PathTypeChangeIndicator } from "../slider/PathTypeChangeIndicator";
+import { CalculatedPath } from "../../../hitObjects/CalculatedPath";
 
-
-class PreviewPath extends SmoothPath
-{
-  protected override colorAt(position: number)
-  {
-    const ratio = 59 / 64;
-
-    if (Math.abs((1 - position) - ratio) < 0.01)
-      return 0xffffff;
-
-    return new Color(0).setAlpha(0);
-  }
-}
 
 export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
 {
@@ -31,6 +20,8 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
   #insertedIndex = -1;
   #insertionIndex = -1;
   #inputManager!: InputManager;
+  @provide()
+  readonly #pathTypeIndicator = new PathTypeChangeIndicator();
 
   #insertionPointContainer!: Container;
   #insertionLine1!: Box;
@@ -66,24 +57,27 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
   @dependencyLoader()
   #load()
   {
-    this.addInternal(this.#insertionPointContainer = new Container({
-      relativeSizeAxes: Axes.Both,
-      children: [
-        new OsuPlayfieldAdjustmentContainer().withChild(this.#previewPath = new PreviewPath().with({ alpha: 0.75 })),
-        this.#insertionLine1 = new Box({
-          height: 1,
-          origin: Anchor.CenterLeft,
-        }),
-        this.#insertionLine2 = new Box({
-          height: 1,
-          origin: Anchor.CenterLeft,
-        }),
-        this.#insertionBox = new Box({
-          size: 10,
-          origin: Anchor.Center,
-        }),
-      ],
-    }));
+    this.addRangeInternal([
+      this.#insertionPointContainer = new Container({
+        relativeSizeAxes: Axes.Both,
+        children: [
+          new OsuPlayfieldAdjustmentContainer().withChild(this.#previewPath = new PreviewPath().with({ alpha: 0.75 })),
+          this.#insertionLine1 = new Box({
+            height: 1,
+            origin: Anchor.CenterLeft,
+          }),
+          this.#insertionLine2 = new Box({
+            height: 1,
+            origin: Anchor.CenterLeft,
+          }),
+          this.#insertionBox = new Box({
+            size: 10,
+            origin: Anchor.Center,
+          }),
+        ],
+      }),
+      this.#pathTypeIndicator,
+    ]);
   }
 
   protected override updateSegmentStyle(segment: Box, index: number): void
@@ -112,31 +106,37 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
 
         const segments = PathSegment.fromPathPoints(controlPoints);
 
-        let lastPoint: Vec2 | undefined = undefined;
+        const color = 0xffffff;
 
-        let color = 0xffffff;
+        const points: Vec2[] = [new Vec2()];
+        const cumulativeDistance: number[] = [0];
+        let totalDistance = 0;
 
-        const points: Vec2[] = [];
+        let lastPoint = points[0];
 
         for (const segment of segments)
         {
-
-          color = SliderPathVisualizer.getColor(segment.type);
-
           for (const p of segment.vertices)
           {
-            if (!lastPoint || p.distance(lastPoint) > 0)
+            const distance = p.distance(lastPoint);
+
+            if (distance > 0)
+            {
               points.push(p);
+
+              totalDistance += distance;
+              cumulativeDistance.push(totalDistance);
+            }
 
             lastPoint = p;
           }
         }
 
+        const snappedPathLength = this.slider.getSnappedPathLength(this.#beatmap.controlPointInfo, this.#beatDivisor.value, totalDistance);
+
         this.#previewPath.pathRadius = this.slider.radius;
-        this.#previewPath.vertices = points;
+        this.#previewPath.vertices = new CalculatedPath(points, cumulativeDistance).getRange(0, snappedPathLength);
         this.#previewPath.position = this.slider.stackedPosition;
-
-
 
         const [p1, center, p2] = [
           this.slider.path.controlPoints[this.insertionIndex - 1].position,
@@ -304,6 +304,20 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
   }
 }
 
+class PreviewPath extends SmoothPath
+{
+  protected override colorAt(position: number)
+  {
+    const shadowPortion = 1 - (59 / 64);
+    const borderPortion = 0.1875;
+
+    if (position > shadowPortion && position < borderPortion)
+      return new Color(0xffffff).setAlpha(0.5);
+
+    return new Color(0).setAlpha(0);
+  }
+}
+
 export class SelectToolSliderPathHandle extends SliderPathHandle
 {
   public constructor(
@@ -340,9 +354,11 @@ export class SelectToolSliderPathHandle extends SliderPathHandle
   @resolved(EditorHistory)
   accessor #history!: EditorHistory;
 
+  @resolved(PathTypeChangeIndicator)
+  accessor #pathTypeIndicator!: PathTypeChangeIndicator
+
   protected override onMouseDown(e: MouseDownEvent)
   {
-
     if (e.button === MouseButton.Left && e.controlPressed)
     {
       this.#cyclePathType();
@@ -390,7 +406,12 @@ export class SelectToolSliderPathHandle extends SliderPathHandle
     if (this.index > controlPoints.length)
       return;
 
-    controlPoints[this.index] = controlPoints[this.index].withNextType(this.index);
+    const newPoint = controlPoints[this.index].withNextType(this.index);
+
+    controlPoints[this.index] = newPoint;
+
+    if (newPoint.type !== null)
+      this.#pathTypeIndicator.flashPathType(newPoint.type, this.toScreenSpace(Vec2.zero()));
 
     this.slider.path.controlPoints = controlPoints;
     this.slider.snapPathLength(this.#beatmap.controlPointInfo, this.#beatDivisor.value);

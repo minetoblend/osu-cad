@@ -1,12 +1,12 @@
 import { PlacementState } from "../HitObjectPlacementTool";
 import { PathPoint, PathType, Slider } from "../../../hitObjects";
 import type { ClickEvent, KeyDownEvent, MouseDownEvent, ScrollEvent } from "@osucad/framework";
-import { Anchor, Axes, Box, CompositeDrawable, dependencyLoader, Key, MouseButton, SpriteText, Vec2 } from "@osucad/framework";
+import { dependencyLoader, Key, MouseButton, Vec2 } from "@osucad/framework";
 import { SliderPathVisualizer } from "./SliderPathVisualizer";
 import type { ISliderToolPresence } from "./HitCircleToolPresence";
-import type { ColorSource } from "pixi.js";
 import { OsuHitObjectPlacementTool } from "../OsuHitObjectPlacementTool";
 import { OsuPlayfield } from "../../../ui";
+import { PathTypeChangeIndicator } from "./PathTypeChangeIndicator";
 
 export class SliderTool extends OsuHitObjectPlacementTool<Slider>
 {
@@ -15,13 +15,13 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
     return new Slider();
   }
 
-  #pathText!: PathText;
+  #pathText!: PathTypeChangeIndicator;
   #explicitPathType = false;
 
   @dependencyLoader()
   #load()
   {
-    this.addInternal(this.#pathText = new PathText());
+    this.addInternal(this.#pathText = new PathTypeChangeIndicator());
   }
 
   protected override loadComplete(): void
@@ -188,67 +188,7 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
 
   #flashPathType(type: PathType, position: Vec2)
   {
-    switch (type)
-    {
-    case PathType.PerfectCurve:
-      this.#pathText.text = "Perfect Curve";
-      break;
-    case PathType.BSpline:
-      this.#pathText.text = "B-Spline";
-      break;
-    default:
-      this.#pathText.text = PathType[type];
-      break;
-    }
-
-
-    this.#pathText.position = this.playfield.toSpaceOfOtherDrawable(this.hitObject.stackedPosition.add(position), this).add(new Vec2(5, -5));
-    this.#pathText.fadeOutFromOne(750);
-    this.#pathText.accentColor = SliderPathVisualizer.getColor(type);
+    this.#pathText.flashPathType(type, this.playfield.toScreenSpace(this.hitObject.stackedPosition.add(position)));
   }
 }
 
-class PathText extends CompositeDrawable
-{
-  readonly #text: SpriteText;
-  readonly #background: Box;
-
-  public constructor()
-  {
-    super();
-
-    this.origin = Anchor.BottomLeft;
-    this.autoSizeAxes = Axes.Both;
-    this.masking = true;
-    this.cornerRadius = 3;
-    this.alpha = 0;
-
-    this.internalChildren = [
-      this.#background = new Box({
-        relativeSizeAxes: Axes.Both,
-      }),
-      this.#text = new SpriteText({
-        margin: 3,
-        style: {
-          fill: 0xffffff,
-          fontSize: 14,
-        },
-      }),
-    ];
-  }
-
-  public get text()
-  {
-    return this.#text.text;
-  }
-
-  public set text(value)
-  {
-    this.#text.text = value;
-  }
-
-  public set accentColor(value: ColorSource)
-  {
-    this.#background.color = value;
-  }
-}
