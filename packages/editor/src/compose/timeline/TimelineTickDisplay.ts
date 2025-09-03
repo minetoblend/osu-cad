@@ -6,7 +6,7 @@ import { ComposeTimeline } from "./ComposeTimeline";
 import { PointVisualization } from "./PointVisualization";
 import { TimelinePart } from "./TimelinePart";
 
-const TICK_WIDTH = 2;
+const TICK_WIDTH = 1;
 
 export class TimelineTickDisplay extends TimelinePart<PointVisualization>
 {
@@ -100,19 +100,27 @@ export class TimelineTickDisplay extends TimelinePart<PointVisualization>
 
       for (let t = point.time; t < until; t += step)
       {
-        const xPos = t;
+        if (t > range.min)
+        {
+          const xPos = t;
 
-        const divisor = BindableBeatDivisor.getDivisorForBeatIndex(beat, beatDivisor);
-        const color = 0xffffff;
+          const indexInBar = beat % (point.signature * beatDivisor);
 
-        const size = BindableBeatDivisor.getSize(divisor);
+          const divisor = BindableBeatDivisor.getDivisorForBeatIndex(beat, beatDivisor);
+          const color = BindableBeatDivisor.getColorFor(divisor);
 
-        const line = getNextUsableLine();
-        line.x = xPos;
-        line.width = TICK_WIDTH * size.x;
-        line.height = size.y;
-        line.color = color;
-        line.alpha = 1;
+          const size = BindableBeatDivisor.getSize(divisor);
+
+          if (indexInBar === 0)
+            size.y *= 2;
+
+          const line = getNextUsableLine();
+          line.x = xPos;
+          line.width = TICK_WIDTH * size.x;
+          line.height = size.y;
+          line.color = color;
+          line.alpha = 1;
+        }
 
         beat++;
 

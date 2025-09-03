@@ -7,6 +7,8 @@ import { OsuTimelineBlueprint } from "./OsuTimelineBlueprint";
 
 export class HitCircleTimelineBlueprint extends OsuTimelineBlueprint<HitCircle>
 {
+  #selectionOverlay!: SkinnableDrawable;
+
   @dependencyLoader()
   #load()
   {
@@ -20,6 +22,20 @@ export class HitCircleTimelineBlueprint extends OsuTimelineBlueprint<HitCircle>
         origin: Anchor.Center,
         scale: new Vec2(TimelineBlueprint.SIZE).divInPlace(OsuHitObject.OBJECT_DIMENSIONS),
       }),
+      this.#selectionOverlay = new SkinnableDrawable(OsuSkinComponents.HitCircleSelect).with({
+        relativeSizeAxes: Axes.Both,
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
+        scale: new Vec2(TimelineBlueprint.SIZE).divInPlace(OsuHitObject.OBJECT_DIMENSIONS),
+        alpha: 0,
+      }),
     ];
+  }
+
+  protected override loadComplete(): void
+  {
+    super.loadComplete();
+
+    this.selected.bindValueChanged(selected => this.#selectionOverlay.alpha = selected.value ? 1 : 0, true);
   }
 }

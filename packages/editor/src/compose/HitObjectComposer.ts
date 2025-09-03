@@ -3,6 +3,7 @@ import type { ReadonlyDependencyContainer } from "@osucad/framework";
 import { Anchor, asyncDependencyLoader, Axes, CompositeDrawable, Container, DependencyContainer, provide, provideSelf, ProxyDrawable, resolved } from "@osucad/framework";
 import { EditorHistory, EditorRuntime } from "../runtime";
 import { EditorBeatmap } from "../runtime/dds/EditorBeatmap";
+import type { Interaction } from "./interactions/Interaction";
 import type { Operator, OperatorContext } from "./operators";
 import { OperatorBox } from "./operators/OperatorBox";
 import type { ComposeToolInfo } from "./tools";
@@ -65,7 +66,15 @@ export abstract class HitObjectComposer extends CompositeDrawable
       }),
       new ProxyDrawable(this.composeToolContainer),
       new ComposePresenceContainer(),
-      this.#toolbar = new ComposeToolbar(),
+      new Container({
+        relativeSizeAxes: Axes.Y,
+        padding: {
+          top: 30,
+          left: 10,
+          bottom: 10,
+        },
+        child: this.#toolbar = new ComposeToolbar(),
+      }),
     ];
 
     const tools = this.tools = await this.getTools();
@@ -108,10 +117,26 @@ export abstract class HitObjectComposer extends CompositeDrawable
 
   #activeOperator?: Operator;
   #activeOperatorBox?: OperatorBox;
+  #activeInteraction?: Interaction;
 
   public get activeOperator()
   {
     return this.#activeOperator;
+  }
+
+  public beginInteraction(interaction: Interaction)
+  {
+    this.completeActiveOperator();
+    this.completeActiveInteraction();
+
+    this.addInternal( this.#activeInteraction = interaction);
+  }
+
+  public completeActiveInteraction()
+  {
+    this.#activeInteraction?.complete();
+    this.#activeInteraction?.expire();
+    this.#activeInteraction = undefined;
   }
 
   public beginOperator<T extends Operator, Args extends unknown[]>(operatorClass: new (context: OperatorContext, ...args: Args) => T, ...args: Readonly<Args>)
@@ -141,6 +166,7 @@ export abstract class HitObjectComposer extends CompositeDrawable
     }
 
     this.completeActiveOperator();
+    this.completeActiveInteraction();
 
     this.#activeOperator = operator;
 

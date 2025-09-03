@@ -1,13 +1,11 @@
-import { DrawableRuleset, type HitObject } from "@osucad/core";
-import { ComposeTool, HitObjectComposer } from "@osucad/editor";
-import type { ClickEvent, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent } from "@osucad/framework";
-import { Bindable, Vec2 } from "@osucad/framework";
-import { BoundsBuilder, dependencyLoader, keyBindingHandler, MouseButton, PlatformAction, provide, provideSelf, resolved } from "@osucad/framework";
+import { type HitObject } from "@osucad/core";
+import { ComposeTool, HitObjectComposer, HitObjectSelection } from "@osucad/editor";
+import type { ClickEvent, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer } from "@osucad/framework";
+import { Bindable, BoundsBuilder, DependencyContainer, dependencyLoader, keyBindingHandler, MouseButton, PlatformAction, provideSelf, resolved, Vec2 } from "@osucad/framework";
 import type { SnapResult } from "src/edit/SnapProvider";
-import { Slider, Spinner, type OsuHitObject } from "../../../hitObjects";
+import { type OsuHitObject, Slider, Spinner } from "../../../hitObjects";
 import { OsuEditorAction } from "../../OsuEditorAction";
 import { HitObjectSnapProvider } from "../../SelectionSnapProvider";
-import { HitObjectSelection } from "./HitObjectSelection";
 import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
 import { OsuSelectionBlueprintContainer } from "./OsuSelectionBlueprintContainer";
 import { SelectBox } from "./SelectBox";
@@ -20,24 +18,34 @@ import { ReverseOperator } from "../../operators/ReverseOperator";
 import type { SliderPathVisualizer } from "../slider/SliderPathVisualizer";
 import { SliderSelectionBlueprint } from "./SliderSelectionBlueprint";
 import { SelectToolSliderPathVisualizer } from "./SelectToolSliderPathVisualizer";
+import { MoveInteraction } from "../../interactions/MoveInteraction";
+import { RotateInteraction } from "../../interactions/RotateInteraction";
 
 @provideSelf()
 export class SelectTool extends ComposeTool implements IKeyBindingHandler<PlatformAction>
 {
-  @provide()
-  public readonly selection = new HitObjectSelection<OsuHitObject>();
+  @resolved(HitObjectSelection)
+  public accessor selection!: HitObjectSelection<OsuHitObject>;
 
-  @provide(SelectionBlueprintContainer)
-  public selectionContainer = new OsuSelectionBlueprintContainer(this.selection);
-
-  @resolved(DrawableRuleset)
-  accessor #drawableRuleset!: DrawableRuleset;
+  public selectionContainer!: OsuSelectionBlueprintContainer;
 
   public snapProvider = new HitObjectSnapProvider();
+
+  #dependencies!: DependencyContainer;
+
+  protected override createChildDependencies(dependencies: ReadonlyDependencyContainer)
+  {
+    return this.#dependencies = new DependencyContainer(dependencies);
+  }
 
   @dependencyLoader()
   #load()
   {
+    this.#dependencies.provide(
+        SelectionBlueprintContainer,
+        this.selectionContainer = new OsuSelectionBlueprintContainer(this.selection),
+    );
+
     this.addRangeInternal([
       this.snapProvider,
       new SelectBox(),
@@ -186,7 +194,6 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
       this.selection.addRange(this.hitObjects as Iterable<OsuHitObject>);
       return true;
     case PlatformAction.Delete:
-    case PlatformAction.DeleteBackwardChar:
       this.hitObjects.removeRange(this.selection);
       this.history.commit();
       return true;
@@ -256,6 +263,23 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
     return true;
   }
 
+  @keyBindingHandler(OsuEditorAction.MoveSelection)
+  #moveSelection()
+  {
+    if (this.selection.size > 0)
+      this.#composer.beginInteraction(new MoveInteraction());
+
+    return true;
+  }
+
+  @keyBindingHandler(OsuEditorAction.Rotate)
+  #rotate()
+  {
+    if (this.selection.size > 0)
+      this.#composer.beginInteraction(new RotateInteraction());
+
+    return true;
+  }
 
   @keyBindingHandler(OsuEditorAction.NudgePosition)
   #nudgeSelection(event: KeyBindingPressEvent<OsuEditorAction.NudgePosition>)

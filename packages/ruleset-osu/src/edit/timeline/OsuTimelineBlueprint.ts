@@ -1,5 +1,5 @@
-import type { HitObjectLifetimeEntry } from "@osucad/core";
 import { ISkinSource } from "@osucad/core";
+import type { TimelineLifetimeEntry } from "@osucad/editor";
 import { TimelineBlueprint } from "@osucad/editor";
 import { Bindable, provideSelf, resolved } from "@osucad/framework";
 import type { OsuHitObject } from "../../hitObjects";
@@ -13,12 +13,12 @@ export class OsuTimelineBlueprint<T extends OsuHitObject = OsuHitObject> extends
   public readonly comboIndexBindable = new Bindable(0);
   public readonly indexInComboBindable = new Bindable(0);
 
-  public constructor(entry: HitObjectLifetimeEntry)
+  public constructor(entry: TimelineLifetimeEntry)
   {
     super(entry);
   }
 
-  protected override onApply(entry: HitObjectLifetimeEntry): void
+  protected override onApply(entry: TimelineLifetimeEntry): void
   {
     super.onApply(entry);
 
@@ -27,7 +27,7 @@ export class OsuTimelineBlueprint<T extends OsuHitObject = OsuHitObject> extends
     this.updateComboColor();
   }
 
-  protected override onFree(entry: HitObjectLifetimeEntry): void
+  protected override onFree(entry: TimelineLifetimeEntry): void
   {
     super.onFree(entry);
 

@@ -21,8 +21,6 @@ export class ComposeToolbar extends Container
     this.relativeSizeAxes = Axes.Y;
     this.width = ComposeToolbar.WIDTH;
 
-    this.margin = 10;
-
     this.addInternal(this.#content = new FillFlowContainer({
       relativeSizeAxes: Axes.X,
       autoSizeAxes: Axes.Y,

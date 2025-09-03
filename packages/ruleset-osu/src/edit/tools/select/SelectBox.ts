@@ -1,9 +1,9 @@
 import type { DragEndEvent, DragEvent, DragStartEvent } from "@osucad/framework";
 import { GraphicsDrawable, Rectangle, resolved, Vec2 } from "@osucad/framework";
 import type { Graphics } from "pixi.js";
-import type { OsuHitObject } from "src/hitObjects";
-import { HitObjectSelection } from "./HitObjectSelection";
+import { HitObjectSelection } from "@osucad/editor";
 import { SelectionBlueprintContainer } from "./SelectionBlueprintContainer";
+import type { OsuHitObject } from "../../../hitObjects";
 
 export class SelectBox extends GraphicsDrawable
 {
@@ -15,7 +15,7 @@ export class SelectBox extends GraphicsDrawable
     super();
   }
 
-  @resolved(HitObjectSelection as typeof HitObjectSelection<OsuHitObject>)
+  @resolved(HitObjectSelection)
   accessor #selection!: HitObjectSelection<OsuHitObject>
 
   @resolved(SelectionBlueprintContainer as typeof SelectionBlueprintContainer<OsuHitObject>)

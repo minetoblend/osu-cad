@@ -1,13 +1,19 @@
-import type { HitObject, HitObjectLifetimeEntry } from "@osucad/core";
+import type { HitObject } from "@osucad/core";
 import { ISkinSource, PoolableDrawableWithLifetime } from "@osucad/core";
-import { Anchor, Axes, Bindable, provideSelf, resolved } from "@osucad/framework";
-import { ComposeTimeline } from "./ComposeTimeline";
+import type { MouseDownEvent } from "@osucad/framework";
+import { Anchor, Axes, Bindable, MouseButton, provideSelf, resolved } from "@osucad/framework";
 import { Color } from "pixi.js";
+import { ComposeTimeline } from "./ComposeTimeline";
+import type { TimelineLifetimeEntry } from "./TimelineLifetimeEntry";
+import { HitObjectSelection } from "../HitObjectSelection";
+import { EditorBeatmap } from "../../runtime";
 
 @provideSelf()
-export class TimelineBlueprint<T extends HitObject = HitObject> extends PoolableDrawableWithLifetime<HitObjectLifetimeEntry>
+export class TimelineBlueprint<T extends HitObject = HitObject> extends PoolableDrawableWithLifetime<TimelineLifetimeEntry>
 {
   public static readonly SIZE = 70;
+
+  public readonly selected = new Bindable(false);
 
   @resolved(() => ComposeTimeline)
   accessor #timeline!: ComposeTimeline
@@ -15,10 +21,16 @@ export class TimelineBlueprint<T extends HitObject = HitObject> extends Poolable
   @resolved(ISkinSource)
   accessor #skin!: ISkinSource
 
+  @resolved(HitObjectSelection, true)
+  protected accessor selection!: HitObjectSelection<HitObject> | undefined
+
+  @resolved(EditorBeatmap)
+  protected accessor beatmap!: EditorBeatmap
+
   public readonly accentColor = new Bindable(new Color(0xffffff));
   public readonly startTimeBindable = new Bindable(0);
 
-  public constructor(entry: HitObjectLifetimeEntry)
+  public constructor(entry: TimelineLifetimeEntry)
   {
     super(entry);
 
@@ -47,16 +59,17 @@ export class TimelineBlueprint<T extends HitObject = HitObject> extends Poolable
     this.updateComboColor();
   }
 
-  protected override onApply(entry: HitObjectLifetimeEntry): void
+  protected override onApply(entry: TimelineLifetimeEntry): void
   {
     super.onApply(entry);
 
+    this.selected.bindTo(entry.selected);
 
     entry.hitObject.defaultsApplied.addListener(this.#defaultsApplied, this);
     this.#defaultsApplied();
   }
 
-  protected override onFree(entry: HitObjectLifetimeEntry): void
+  protected override onFree(entry: TimelineLifetimeEntry): void
   {
     super.onFree(entry);
 
@@ -87,6 +100,35 @@ export class TimelineBlueprint<T extends HitObject = HitObject> extends Poolable
   public override get shouldBeAlive(): boolean
   {
     return true;
+  }
+
+  protected override onMouseDown(e: MouseDownEvent): boolean
+  {
+    switch(e.button)
+    {
+    case MouseButton.Left:
+      if (this.selection)
+      {
+        if (e.controlPressed)
+        {
+          this.selection.toggle(this.hitObject);
+          return true;
+        }
+
+        if (!this.selected.value)
+        {
+          this.selection.clear();
+          this.selection.add(this.hitObject);
+          return true;
+        }
+      }
+      break;
+    case MouseButton.Right:
+      this.beatmap.hitObjects.remove(this.hitObject);
+      return true;
+    }
+
+    return super.onMouseDown(e);
   }
 
   public override dispose(): void

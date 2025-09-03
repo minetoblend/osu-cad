@@ -13,8 +13,8 @@ export class PointVisualization extends Box
       width: PointVisualization.MAX_WIDTH,
       height: 0.4,
 
-      anchor: Anchor.CenterLeft,
-      origin: Anchor.Center,
+      anchor: Anchor.BottomLeft,
+      origin: Anchor.BottomCenter,
 
       edgeSmoothness: 0.5,
     });

@@ -8,7 +8,7 @@ export class OsuPlayfieldAdjustmentContainer extends PlayfieldAdjustmentContaine
   {
     super();
 
-    this.padding = 100;
+    this.padding = 50;
 
     this.addInternal(
         new DrawSizePreservingFillContainer({

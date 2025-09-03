@@ -3,7 +3,7 @@ import type { MouseDownEvent, Rectangle } from "@osucad/framework";
 import { MouseButton, PoolableDrawable, resolved } from "@osucad/framework";
 import { SelectionBlueprintContainer } from "./SelectionBlueprintContainer";
 import { EditorBeatmap, EditorHistory } from "@osucad/editor";
-import { HitObjectSelection } from "./HitObjectSelection";
+import { HitObjectSelection } from "@osucad/editor";
 
 export class HitObjectSelectionBlueprint<out T extends HitObject> extends PoolableDrawable
 {

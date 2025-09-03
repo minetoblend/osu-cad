@@ -11,8 +11,10 @@ import { SliderRepeat } from "../../hitObjects/SliderRepeat";
 
 export class SliderTimelineBlueprint extends OsuTimelineBlueprint<Slider>
 {
-  #headCircle!: SkinnableDrawable;
-  #tailCircle!: SkinnableDrawable;
+  #headCircle!: Container;
+  #tailCircle!: Container;
+  #headSelectionOverlay!: SkinnableDrawable;
+  #tailSelectionOverlay!: SkinnableDrawable;
   #body!: Drawable;
   #repeats!: Container;
 
@@ -29,20 +31,42 @@ export class SliderTimelineBlueprint extends OsuTimelineBlueprint<Slider>
         origin: Anchor.Center,
         height: 0.9,
       }),
-      this.#tailCircle = new SkinnableDrawable(OsuSkinComponents.TimelineSliderTail).with({
+      this.#tailCircle = new Container({
         relativeSizeAxes: Axes.Both,
-        anchor: Anchor.CenterRight,
-        origin: Anchor.Center,
-        scale: new Vec2(TimelineBlueprint.SIZE).divInPlace(OsuHitObject.OBJECT_DIMENSIONS),
+        children: [
+          new SkinnableDrawable(OsuSkinComponents.TimelineSliderTail).with({
+            relativeSizeAxes: Axes.Both,
+            anchor: Anchor.CenterRight,
+            origin: Anchor.Center,
+            scale: new Vec2(TimelineBlueprint.SIZE).divInPlace(OsuHitObject.OBJECT_DIMENSIONS),
+          }),
+          this.#tailSelectionOverlay = new SkinnableDrawable(OsuSkinComponents.HitCircleSelect).with({
+            relativeSizeAxes: Axes.Both,
+            anchor: Anchor.CenterRight,
+            origin: Anchor.Center,
+            scale: new Vec2(TimelineBlueprint.SIZE).divInPlace(OsuHitObject.OBJECT_DIMENSIONS),
+          }),
+        ],
       }),
       this.#repeats = new Container({
         relativeSizeAxes: Axes.Both,
       }),
-      this.#headCircle = new SkinnableDrawable(OsuSkinComponents.TimelineSliderHead).with({
+      this.#headCircle = new Container({
         relativeSizeAxes: Axes.Both,
-        anchor: Anchor.CenterLeft,
-        origin: Anchor.Center,
-        scale: new Vec2(TimelineBlueprint.SIZE).divInPlace(OsuHitObject.OBJECT_DIMENSIONS),
+        children: [
+          new SkinnableDrawable(OsuSkinComponents.TimelineSliderHead).with({
+            relativeSizeAxes: Axes.Both,
+            anchor: Anchor.CenterLeft,
+            origin: Anchor.Center,
+            scale: new Vec2(TimelineBlueprint.SIZE).divInPlace(OsuHitObject.OBJECT_DIMENSIONS),
+          }),
+          this.#headSelectionOverlay = new SkinnableDrawable(OsuSkinComponents.HitCircleSelect).with({
+            relativeSizeAxes: Axes.Both,
+            anchor: Anchor.CenterLeft,
+            origin: Anchor.Center,
+            scale: new Vec2(TimelineBlueprint.SIZE).divInPlace(OsuHitObject.OBJECT_DIMENSIONS),
+          }),
+        ],
       }),
     ];
   }
@@ -52,6 +76,11 @@ export class SliderTimelineBlueprint extends OsuTimelineBlueprint<Slider>
     super.loadComplete();
 
     this.accentColor.bindValueChanged(color => this.#body.color = color.value, true);
+    this.selected.bindValueChanged(selected =>
+    {
+      this.#headSelectionOverlay.alpha = selected.value ? 1 : 0;
+      this.#tailSelectionOverlay.alpha = selected.value ? 1 : 0;
+    }, true);
   }
 
   protected override defaultsApplied(): void

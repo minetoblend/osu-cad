@@ -6,13 +6,25 @@ import { almostEquals, Anchor, Axes, Box, Container, dependencyLoader, type Hove
 import type { HitObject } from "@osucad/core";
 import { Playfield } from "@osucad/core";
 import { BindableBeatDivisor, EditorBeatmap, EditorHistory } from "@osucad/editor";
-import { HitObjectSelection } from "./HitObjectSelection";
+import { HitObjectSelection } from "@osucad/editor";
 import { Color } from "pixi.js";
 import { PathSegment } from "../../../hitObjects/PathSegment";
 import { OsuPlayfieldAdjustmentContainer } from "../../../ui";
 import { PathTypeChangeIndicator } from "../slider/PathTypeChangeIndicator";
 import { CalculatedPath } from "../../../hitObjects/CalculatedPath";
 
+class PreviewPath extends SmoothPath
+{
+  protected override colorAt(position: number)
+  {
+    const border = 1 - 59 / 64;
+
+    if (Math.abs(position - border) < 0.01)
+      return 0xffffff;
+
+    return new Color(0).setAlpha(0);
+  }
+}
 
 export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
 {
@@ -301,20 +313,6 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
     {
       this.#insertionIndex = -1;
     }
-  }
-}
-
-class PreviewPath extends SmoothPath
-{
-  protected override colorAt(position: number)
-  {
-    const shadowPortion = 1 - (59 / 64);
-    const borderPortion = 0.1875;
-
-    if (position > shadowPortion && position < borderPortion)
-      return new Color(0xffffff).setAlpha(0.5);
-
-    return new Color(0).setAlpha(0);
   }
 }
 

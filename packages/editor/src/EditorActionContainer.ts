@@ -1,5 +1,5 @@
-import type { ContainerOptions, IKeyBinding } from "@osucad/framework";
-import { InputKey, KeyBinding, KeyBindingContainer, KeyCombination, KeyCombinationMatchingMode, resolved, SimultaneousBindingMode } from "@osucad/framework";
+import type { ContainerOptions, IKeyBinding, KeyCombinationString } from "@osucad/framework";
+import { KeyBinding, KeyBindingContainer, KeyCombination, KeyCombinationMatchingMode, resolved, SimultaneousBindingMode } from "@osucad/framework";
 import { EditorAction } from "./EditorAction";
 import { EditorRuleset } from "./EditorRuleset";
 
@@ -34,26 +34,10 @@ export class EditorActionContainer extends KeyBindingContainer<EditorAction>
   }
 }
 
-export type KeyCombinationString =
-  | `${"Control+" | ""}${"Shift+" | ""}${"Alt+" | ""}${Exclude<keyof typeof InputKey, "Control" | "Shift" | "Alt">}`;
-
-export function parseKeyCombination(keyCombination: KeyCombinationString)
-{
-  const keys: InputKey[] = [];
-
-  for (const key of keyCombination.split("+"))
-  {
-    keys.push(InputKey[key as keyof typeof InputKey]);
-  }
-  console.assert(keys.length > 0);
-
-  return KeyCombination.from(...keys);
-}
-
 export function keyBinding(keyCombination: KeyCombinationString, action: EditorAction | keyof typeof EditorAction)
 {
   return new KeyBinding(
-      parseKeyCombination(keyCombination),
+      KeyCombination.parse(keyCombination),
       action instanceof EditorAction
         ? action
         : EditorAction[action],

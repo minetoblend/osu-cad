@@ -19,12 +19,6 @@ export class OsucadGame extends Game
   @asyncDependencyLoader()
   async #load()
   {
-    initDevtools({
-      renderer: this.host!.renderer.internalRenderer,
-      stage: this.drawNode,
-      pixi: pixi,
-    });
-
     rulesets.register(new OsuRuleset());
 
     await Promise.all([
@@ -43,6 +37,12 @@ export class OsucadGame extends Game
   protected override loadComplete()
   {
     super.loadComplete();
+
+    initDevtools({
+      renderer: this.host!.renderer.internalRenderer,
+      stage: this.host!.root!.drawNode,
+      pixi: pixi,
+    });
 
     this.#screenStack.push(new EditorLoader());
   }

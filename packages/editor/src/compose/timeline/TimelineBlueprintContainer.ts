@@ -1,15 +1,17 @@
-import type { HitObject } from "@osucad/core";
-import { HitObjectLifetimeEntry, PooledDrawableWithLifetimeContainer } from "@osucad/core";
+import type { HitObject , HitObjectLifetimeEntry } from "@osucad/core";
+import { PooledDrawableWithLifetimeContainer } from "@osucad/core";
 import { Axes, dependencyLoader, resolved } from "@osucad/framework";
 import { EditorClock } from "../../EditorClock";
 import { EditorBeatmap } from "../../runtime";
 import { ComposeTimeline } from "./ComposeTimeline";
 import type { TimelineBlueprint } from "./TimelineBlueprint";
 import { TimelinePart } from "./TimelinePart";
+import { HitObjectSelection } from "../HitObjectSelection";
+import { TimelineLifetimeEntry } from "./TimelineLifetimeEntry";
 
-export abstract class TimelineBlueprintContainer extends PooledDrawableWithLifetimeContainer<HitObjectLifetimeEntry, TimelineBlueprint>
+export abstract class TimelineBlueprintContainer extends PooledDrawableWithLifetimeContainer<TimelineLifetimeEntry, TimelineBlueprint>
 {
-  readonly #entryMap = new Map<HitObject, HitObjectLifetimeEntry>();
+  readonly #entryMap = new Map<HitObject, TimelineLifetimeEntry>();
 
   @resolved(EditorBeatmap)
   accessor #beatmap!: EditorBeatmap
@@ -19,6 +21,9 @@ export abstract class TimelineBlueprintContainer extends PooledDrawableWithLifet
 
   @resolved(() => ComposeTimeline)
   accessor #timeline!: ComposeTimeline
+
+  @resolved(HitObjectSelection, true)
+  accessor #selection!: HitObjectSelection<HitObject> | undefined
 
   readonly #content: TimelinePart<TimelineBlueprint>;
 
@@ -47,11 +52,17 @@ export abstract class TimelineBlueprintContainer extends PooledDrawableWithLifet
 
     this.#beatmap.hitObjects.added.addListener(this.#addHitObject, this);
     this.#beatmap.hitObjects.removed.addListener(this.#removeHitObject, this);
+
+    this.#selection?.added.addListener(this.#hitObjectSelected, this);
+    this.#selection?.removed.addListener(this.#hitObjectDeselected, this);
   }
 
   #addHitObject(hitObject: HitObject)
   {
     const entry = new TimelineLifetimeEntry(hitObject);
+
+    if (this.#selection)
+      entry.selected.value = this.#selection.has(hitObject);
 
     this.#entryMap.set(hitObject, entry);
     this.addEntry(entry);
@@ -66,6 +77,20 @@ export abstract class TimelineBlueprintContainer extends PooledDrawableWithLifet
     this.#entryMap.delete(hitObject);
 
     this.removeEntry(entry);
+  }
+
+  #hitObjectSelected(hitObject: HitObject)
+  {
+    const entry = this.#entryMap.get(hitObject);
+    if (entry)
+      entry.selected.value = true;
+  }
+
+  #hitObjectDeselected(hitObject: HitObject)
+  {
+    const entry = this.#entryMap.get(hitObject);
+    if (entry)
+      entry.selected.value = false;
   }
 
   protected override addDrawable(entry: HitObjectLifetimeEntry, drawable: TimelineBlueprint<HitObject>): void
@@ -90,27 +115,11 @@ export abstract class TimelineBlueprintContainer extends PooledDrawableWithLifet
     this.#beatmap.hitObjects.added.removeListener(this.#addHitObject, this);
     this.#beatmap.hitObjects.removed.removeListener(this.#removeHitObject, this);
 
+    this.#selection?.added.removeListener(this.#hitObjectSelected, this);
+    this.#selection?.removed.removeListener(this.#hitObjectDeselected, this);
+
     super.dispose();
   }
 }
 
-class TimelineLifetimeEntry extends HitObjectLifetimeEntry
-{
-  public constructor(hitObject: HitObject)
-  {
-    super(hitObject);
 
-    hitObject.defaultsApplied.addListener(this.setInitialLifetime, this);
-  }
-
-  protected override setInitialLifetime(): void
-  {
-    super.setInitialLifetime();
-    this.lifetimeEnd = this.hitObject.endTime;
-  }
-
-  public override get initialLifetimeOffset(): number
-  {
-    return 0;
-  }
-}
