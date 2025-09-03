@@ -1,4 +1,3 @@
-import type { KeyDownEvent } from "@osucad/framework";
 import { Axes, Container, FillFlowContainer, Vec2 } from "@osucad/framework";
 import { ComposeToolButton } from "./ComposeToolButton";
 import type { ComposeToolInfo } from "./ComposeToolInfo";
@@ -31,20 +30,5 @@ export class ComposeToolbar extends Container
   public addTool(tool: ComposeToolInfo)
   {
     this.add(new ComposeToolButton(tool));
-  }
-
-  protected override onKeyDown(e: KeyDownEvent): boolean
-  {
-    if (e.key.startsWith("Digit"))
-    {
-      const index = Number.parseInt(e.key.slice("Digit".length));
-      if (Number.isFinite(index) && this.children[index - 1])
-      {
-        (this.children[index - 1] as ComposeToolButton).select();
-        return true;
-      }
-    }
-
-    return false;
   }
 }

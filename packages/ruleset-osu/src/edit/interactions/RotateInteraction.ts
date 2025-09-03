@@ -7,6 +7,7 @@ import { Slider, Spinner, type OsuHitObject } from "../../hitObjects";
 import { OsuPlayfield } from "../../ui";
 import { OsuOperatorUtils } from "../operators/OsuOperatorUtils";
 import { DashedLine } from "./DashedLine";
+import { PickPointIneration } from "./PickPointInteraction";
 
 export type TransformOrigin =
   | { type: "custom", value: Vec2 }
@@ -68,6 +69,21 @@ export class RotateInteraction extends Interaction
 
   private readonly transformOrigin = new Bindable<TransformOrigin>({ type: "playfield_center" });
 
+  @Interaction.invokeOnKey("B", "Pick Rotation Origin")
+  #pickOrigin()
+  {
+    this.#history.discardUncommittedChanges();
+
+    this.push(new PickPointIneration()).then(result =>
+    {
+      if (result)
+        this.transformOrigin.value = { type: "custom", value: result };
+
+      this.#lastMousePosition = undefined;
+      this.#cumulativeAngle = 0;
+    });
+  }
+
   @Interaction.invokeOnKey("P", "Rotate around Playfield Center")
   #setOriginToPlayfieldCenter()
   {
@@ -93,11 +109,11 @@ export class RotateInteraction extends Interaction
   {
     super.loadComplete();
 
-    this.transformOrigin.bindValueChanged(this.updateState, this);
-    this.snapped.bindValueChanged(this.updateState, this);
-    this.stringValue.bindValueChanged(this.updateState, this);
+    this.transformOrigin.bindValueChanged(this.invalidateState, this);
+    this.snapped.bindValueChanged(this.invalidateState, this);
+    this.stringValue.bindValueChanged(this.invalidateState, this);
 
-    this.updateState();
+    this.invalidateState();
   }
 
   private resolveOrigin()
@@ -119,6 +135,9 @@ export class RotateInteraction extends Interaction
 
   protected override onMouseMove(e: MouseMoveEvent): boolean
   {
+    if (!this.screenStack?.isCurrentScreen(this))
+      return true;
+
     const position = this.#playfield.toLocalSpace(e.screenSpaceMousePosition);
 
     if (!this.#lastMousePosition)
@@ -147,7 +166,7 @@ export class RotateInteraction extends Interaction
 
     this.#cumulativeAngle += delta;
 
-    this.updateState();
+    this.#updateState();
 
     this.#lastMousePosition = position;
 
@@ -155,12 +174,31 @@ export class RotateInteraction extends Interaction
   }
 
   #lastOrigin!: Vec2;
+  #needsUpdate = true;
 
-  private updateState()
+  private invalidateState()
+  {
+    this.#needsUpdate = true;
+  }
+
+  protected override update(): void
+  {
+    super.update();
+
+    if (this.#needsUpdate)
+    {
+      this.#updateState();
+      this.#needsUpdate = false;
+    }
+  }
+
+  #updateState()
   {
     this.#history.discardUncommittedChanges();
 
     const origin = this.#lastOrigin = this.resolveOrigin();
+
+    this.#originBox.position = this.#playfield.toSpaceOfOtherDrawable(origin, this);
 
     let angle = this.#cumulativeAngle;
 
@@ -195,11 +233,11 @@ export class RotateInteraction extends Interaction
 
     if (this.stringValue.value.length > 0)
     {
-      this.#statusBar.text = `[${this.stringValue.value}|] = ${Math.round(angleDegrees / 10) * 10}°`;
+      this.#statusBar.text = `[${this.stringValue.value}|] = ${Math.round(angleDegrees * 10) / 10}°`;
     }
     else
     {
-      this.#statusBar.text = `${Math.round(angleDegrees / 10) * 10}°`;
+      this.#statusBar.text = `${Math.round(angleDegrees * 10) / 10}°` + (this.snapped.value ? " (snapped)" : "");
     }
 
     for (const obj of this.#selection)

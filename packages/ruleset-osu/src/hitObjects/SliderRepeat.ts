@@ -10,8 +10,6 @@ export interface SliderRepeatOptions extends SliderTailOptions
 
 export class SliderRepeat extends SliderTailCircle
 {
-
-
   public constructor(slider: Slider, options: SliderRepeatOptions = {})
   {
     const { pathProgress, ...rest } = options;

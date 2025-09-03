@@ -5,7 +5,7 @@ import type { DragEndEvent, DragEvent, DragStartEvent, InputManager, KeyUpEvent,
 import { almostEquals, Anchor, Axes, Box, Container, dependencyLoader, type HoverEvent, type HoverLostEvent, Key, Line, MouseButton, provide, resolved, SmoothPath, Vec2 } from "@osucad/framework";
 import type { HitObject } from "@osucad/core";
 import { Playfield } from "@osucad/core";
-import { BindableBeatDivisor, EditorBeatmap, EditorHistory } from "@osucad/editor";
+import { BindableBeatDivisor, EditorBeatmap, EditorHistory, HitObjectComposer } from "@osucad/editor";
 import { HitObjectSelection } from "@osucad/editor";
 import { Color } from "pixi.js";
 import { PathSegment } from "../../../hitObjects/PathSegment";
@@ -106,9 +106,12 @@ export class SelectToolSliderPathVisualizer extends SliderPathVisualizer
     this.#inputManager = this.getContainingInputManager()!;
   }
 
+  @resolved(HitObjectComposer)
+  accessor #composer!: HitObjectComposer
+
   protected override update()
   {
-    if (this.#inputManager.currentState.keyboard.controlPressed)
+    if (this.#inputManager.currentState.keyboard.controlPressed && !this.#composer.activeInteraction)
     {
       this.#updateInsertionIndex();
 

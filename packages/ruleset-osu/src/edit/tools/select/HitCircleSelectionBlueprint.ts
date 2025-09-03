@@ -61,7 +61,7 @@ export class HitCircleSelectionBlueprint extends HitObjectSelectionBlueprint<Hit
     if (!this.selected)
       this.selectExclusive();
 
-    this.#composer.beginInteraction(new MoveInteraction());
+    this.#composer.beginInteraction(new MoveInteraction({ completeOnMouseUp: true }));
 
     return true;
   }

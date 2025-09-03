@@ -30,7 +30,7 @@ export class OsucadGame extends Game
         child: this.#screenStack = new ScreenStack(),
       }),
       this.skinManager,
-      new PerformanceOverlay(),
+      new PerformanceOverlay().with({ alpha: 0 }),
     ]);
   }
 

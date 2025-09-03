@@ -1,12 +1,13 @@
-import { type ComposeToolInfo, HitObjectComposer } from "@osucad/editor";
-import { SelectTool } from "./tools/select/SelectTool";
-import { asyncDependencyLoader, loadTexture } from "@osucad/framework";
+import { type ComposeToolInfo, HitObjectComposer, HitObjectSelection } from "@osucad/editor";
+import { asyncDependencyLoader, loadTexture, resolved } from "@osucad/framework";
+import type { OsuHitObject } from "../hitObjects";
 import { PlayfieldGrid } from "./PlayfieldGrid";
 import { HitCircleTool } from "./tools/circle/HitCircleTool";
 import { HitCircleToolPresenceOverlay } from "./tools/circle/HitCircleToolPresence";
+import { SelectTool } from "./tools/select/SelectTool";
 import { SelectToolPresenceOverlay } from "./tools/select/SelectToolPresenceOverlay";
-import { SliderTool } from "./tools/slider/SliderTool";
 import { SliderToolPresenceOverlay } from "./tools/slider/HitCircleToolPresence";
+import { SliderTool } from "./tools/slider/SliderTool";
 
 export class OsuHitObjectComposer extends HitObjectComposer
 {
@@ -49,5 +50,19 @@ export class OsuHitObjectComposer extends HitObjectComposer
       depth: 1,
       child: new PlayfieldGrid(),
     }));
+  }
+
+  @resolved(HitObjectSelection)
+  accessor #selection!: HitObjectSelection<OsuHitObject>;
+
+  protected override loadComplete(): void
+  {
+    super.loadComplete();
+
+    this.activeTool.bindValueChanged(tool =>
+    {
+      if (tool.value.id !== "select")
+        this.#selection.clear();
+    });
   }
 }

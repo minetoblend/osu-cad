@@ -174,6 +174,9 @@ export class MoveInteraction extends Interaction
 
   protected override onMouseMove(e: MouseMoveEvent): boolean
   {
+    if (!this.screenStack?.isCurrentScreen(this))
+      return true;
+
     const newPosition = this.#playfield.toLocalSpace(e.screenSpaceMousePosition);
 
     let delta = newPosition.sub(this.#mousePosition);
@@ -185,7 +188,7 @@ export class MoveInteraction extends Interaction
 
     this.#mouseDelta = this.#mouseDelta.add(delta);
 
-    this.invalidateState();
+    this.#updateState();
 
     return true;
   }

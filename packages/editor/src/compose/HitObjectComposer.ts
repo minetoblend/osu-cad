@@ -1,5 +1,5 @@
 import { DrawableRuleset, Playfield, Ruleset } from "@osucad/core";
-import type { ReadonlyDependencyContainer } from "@osucad/framework";
+import type { KeyDownEvent, ReadonlyDependencyContainer } from "@osucad/framework";
 import { Anchor, asyncDependencyLoader, Axes, CompositeDrawable, Container, DependencyContainer, provide, provideSelf, ProxyDrawable, resolved } from "@osucad/framework";
 import { EditorHistory, EditorRuntime } from "../runtime";
 import { EditorBeatmap } from "../runtime/dds/EditorBeatmap";
@@ -61,11 +61,13 @@ export abstract class HitObjectComposer extends CompositeDrawable
 
     this.internalChildren = [
       this.composeToolContainer = new ComposeToolContainer(),
+      this.#interactionContainer = new InteractionContainer(),
       this.rulesetContainer = new Container({
         relativeSizeAxes: Axes.Both,
         child: this.drawableRuleset,
       }),
       new ProxyDrawable(this.composeToolContainer),
+      new ProxyDrawable(this.#interactionContainer),
       new ComposePresenceContainer(),
       new Container({
         relativeSizeAxes: Axes.Y,
@@ -76,7 +78,6 @@ export abstract class HitObjectComposer extends CompositeDrawable
         },
         child: this.#toolbar = new ComposeToolbar(),
       }),
-      this.#interactionStack = new InteractionContainer(),
     ];
 
     const tools = this.tools = await this.getTools();
@@ -113,6 +114,22 @@ export abstract class HitObjectComposer extends CompositeDrawable
     this.activeTool.bindValueChanged(() => this.completeActiveOperator());
   }
 
+  // needs to be handled here to make sure the interaction container can handle it first
+  protected override onKeyDown(e: KeyDownEvent): boolean
+  {
+    if (e.key.startsWith("Digit"))
+    {
+      const index = Number.parseInt(e.key.slice("Digit".length));
+      if (Number.isFinite(index) && this.tools[index - 1])
+      {
+        this.activeTool.value = this.tools[index - 1];
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   public tools!: ComposeToolInfo[];
 
   protected abstract getTools(): ComposeToolInfo[] | Promise<ComposeToolInfo[]>;
@@ -126,15 +143,20 @@ export abstract class HitObjectComposer extends CompositeDrawable
     return this.#activeOperator;
   }
 
-  #interactionStack!: InteractionContainer;
+  #interactionContainer!: InteractionContainer;
+
+  public get activeInteraction()
+  {
+    return this.#interactionContainer.currentScreen as Interaction | null;
+  }
 
   public beginInteraction(interaction: Interaction)
   {
     this.completeActiveOperator();
     this.completeActiveInteraction();
 
-    this.#interactionStack.exitAll();
-    this.#interactionStack.push(interaction);
+    this.#interactionContainer.exitAll();
+    this.#interactionContainer.push(interaction);
   }
 
   public completeActiveInteraction()
