@@ -100,24 +100,27 @@ export class TimelineTickDisplay extends TimelinePart<PointVisualization>
 
       for (let t = point.time; t < until; t += step)
       {
-        const xPos = t;
+        if (t > range.min)
+        {
+          const xPos = t;
 
-        const indexInBar = beat % (point.signature * beatDivisor);
+          const indexInBar = beat % (point.signature * beatDivisor);
 
-        const divisor = BindableBeatDivisor.getDivisorForBeatIndex(beat, beatDivisor);
-        const color = BindableBeatDivisor.getColorFor(divisor);
+          const divisor = BindableBeatDivisor.getDivisorForBeatIndex(beat, beatDivisor);
+          const color = BindableBeatDivisor.getColorFor(divisor);
 
-        const size = BindableBeatDivisor.getSize(divisor);
+          const size = BindableBeatDivisor.getSize(divisor);
 
-        if (indexInBar === 0)
-          size.y *= 2;
+          if (indexInBar === 0)
+            size.y *= 2;
 
-        const line = getNextUsableLine();
-        line.x = xPos;
-        line.width = TICK_WIDTH * size.x;
-        line.height = size.y;
-        line.color = color;
-        line.alpha = 1;
+          const line = getNextUsableLine();
+          line.x = xPos;
+          line.width = TICK_WIDTH * size.x;
+          line.height = size.y;
+          line.color = color;
+          line.alpha = 1;
+        }
 
         beat++;
 
