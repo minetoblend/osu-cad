@@ -1,8 +1,7 @@
 import { Playfield } from "@osucad/core";
-import { ComposerStatusBar, EditorHistory, HitObjectSelection } from "@osucad/editor";
-import { Interaction } from "@osucad/editor";
+import { ComposerStatusBar, EditorHistory, HitObjectComposer, HitObjectSelection, HotkeyBar, Interaction } from "@osucad/editor";
 import type { Drawable, MouseMoveEvent } from "@osucad/framework";
-import { Anchor, Axes, Bindable, BindableBoolean, Box, Container, InputKey, resolved, Vec2 } from "@osucad/framework";
+import { Anchor, Axes, Bindable, BindableBoolean, Box, Container, dependencyLoader, resolved, Vec2 } from "@osucad/framework";
 import { Color, Matrix } from "pixi.js";
 import { Slider, Spinner, type OsuHitObject } from "../../hitObjects";
 import { OsuPlayfield } from "../../ui";
@@ -24,6 +23,9 @@ export class RotateInteraction extends Interaction
 
   @resolved(Playfield)
   accessor #playfield!: Playfield
+
+  @resolved(HitObjectComposer)
+  accessor #composer!: HitObjectComposer
 
   @Interaction.inputNumberString()
   private readonly stringValue = new Bindable<string>("");
@@ -57,27 +59,34 @@ export class RotateInteraction extends Interaction
     ];
   }
 
-  @Interaction.toggleOnKey(InputKey.Shift)
+  @Interaction.toggleOnKey("Shift", "Precision Mode")
   private readonly precise = new BindableBoolean(false);
 
-  @Interaction.toggleOnKey(InputKey.Control)
+  @Interaction.toggleOnKey("Control", "Snap Invert")
+  @Interaction.toggleOnKeyDown("Shift+Tab", "Snap")
   private readonly snapped = new BindableBoolean(false);
 
   private readonly transformOrigin = new Bindable<TransformOrigin>({ type: "playfield_center" });
 
-  @Interaction.invokeOnKey(InputKey.P)
+  @Interaction.invokeOnKey("P", "Rotate around Playfield Center")
   #setOriginToPlayfieldCenter()
   {
     this.transformOrigin.value = { type: "playfield_center" };
   }
 
-  @Interaction.invokeOnKey(InputKey.S)
+  @Interaction.invokeOnKey("S", "Rotate around Selection Center")
   #setOriginToSelectionCenter()
   {
     if (OsuOperatorUtils.getBounds(this.#selection)?.size.isZero !== false)
       return;
 
     this.transformOrigin.value = { type: "selection_center" };
+  }
+
+  @dependencyLoader()
+  #load()
+  {
+    this.addInternal(new HotkeyBar(this));
   }
 
   protected override loadComplete(): void

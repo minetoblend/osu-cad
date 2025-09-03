@@ -1,11 +1,12 @@
 import type { Bindable, Drawable, KeyCombinationString, KeyDownEvent, KeyUpEvent, MouseDownEvent, MouseUpEvent, ScreenTransitionEvent } from "@osucad/framework";
-import { InputKey, Key, KeyCombination, KeyCombinationMatchingMode, MouseButton, resolved, Screen } from "@osucad/framework";
+import { dependencyLoader, InputKey, Key, KeyCombination, KeyCombinationMatchingMode, MouseButton, resolved, Screen } from "@osucad/framework";
 import { EditorHistory } from "../../runtime";
 import type { ToolHotkey } from "./ToolHotkey";
 import { InteractionContainer } from "./InteractionContainer";
 import { deferredPromise, type DeferredPromise } from "@osucad/core";
 import type { ModalInteraction } from "./ModalInteraction";
 import { DrawableToolHotKey } from "./DrawableToolHotkey";
+import { HotkeyBar } from "./HotkeyBar";
 
 export interface ModalInteractionCallback
 {
@@ -90,6 +91,19 @@ export abstract class Interaction extends Screen
     super.onResuming(e);
   }
 
+  @dependencyLoader()
+  #load()
+  {
+    this.hotkeys.push(...Interaction.getHotkeys(this));
+  }
+
+  protected override loadComplete(): void
+  {
+    super.loadComplete();
+
+    this.addInternal(new HotkeyBar(this).with({ depth: -Number.MAX_VALUE }));
+  }
+
   #onKeyPressed(inputKey: InputKey)
   {
     console.log(InputKey[inputKey], [...this.#pressedKeys].map(key => InputKey[key]));
@@ -104,7 +118,7 @@ export abstract class Interaction extends Screen
       {
         if (listener.test(inputKey, combination))
         {
-          if (listener.onPressed(inputKey, combination))
+          if (listener.onPressed.call(this, inputKey, combination))
           {
             this.#pressedHotkeys.push(listener);
             return true;
@@ -134,7 +148,7 @@ export abstract class Interaction extends Screen
         if (listener.test(inputKey, keyCombination))
         {
           this.#pressedHotkeys.splice(i--, 1);
-          listener.onReleased(inputKey);
+          listener.onReleased.call(this, inputKey);
         }
       }
     }
@@ -209,6 +223,15 @@ export namespace Interaction
 {
   export type InputKeysOrString = InputKey[] | KeyCombinationString | { or: InputKeysOrString[] };
 
+  const hotkeysKey = Symbol("hotkeys");
+
+  const symbolMetadata = Symbol.for("Symbol.metadata");
+
+  export function getHotkeys(target: Interaction): ToolHotkey[]
+  {
+    return (target as any).constructor[symbolMetadata]?.[hotkeysKey] ?? [];
+  }
+
   function parseKeys(keys: InputKeysOrString): KeyCombination[]
   {
     if (typeof keys === "string")
@@ -223,102 +246,113 @@ export namespace Interaction
 
   export function toggleOnKey(keys: InputKeysOrString, description?: string)
   {
+    const keyCombinations = parseKeys(keys);
+
     return (
       target: unknown,
       context: ClassFieldDecoratorContext<Interaction, Bindable<boolean>>,
     ) =>
     {
-      context.addInitializer(function()
-      {
-        const bindable = context.access.get(this);
+      console.log("toggleOnKey", description);
 
-        const keyCombinations = parseKeys(keys);
+      const hotkeys = (context.metadata[hotkeysKey] ?? []) as ToolHotkey[];
 
-        this.hotkeys.push({
-          test: (key, combination) => keyCombinations.some(it => it.isPressed(combination, KeyCombinationMatchingMode.Modifiers)),
-          onPressed: () =>
-          {
-            bindable.value = !bindable.value;
-            return true;
-          },
-          onReleased: () => bindable.value = !bindable.value,
-          createDrawable: () =>
-          {
-            if (description)
-              return new DrawableToolHotKey(keyCombinations, description);
+      const hotKey = {
+        test: (key, combination) => keyCombinations.some(it => it.isPressed(combination, KeyCombinationMatchingMode.Modifiers)),
+        onPressed()
+        {
+          const bindable = context.access.get(this);
+          bindable.value = !bindable.value;
+          return true;
+        },
+        onReleased()
+        {
+          const bindable = context.access.get(this);
+          bindable.value = !bindable.value;
+        },
+        createDrawable: () =>
+        {
+          if (description)
+            return new DrawableToolHotKey(keyCombinations, description);
 
-            return undefined;
-          },
-        });
-      });
+          return undefined;
+        },
+      } as ToolHotkey;
+
+      context.metadata[hotkeysKey] = [ ...hotkeys, hotKey ];
     };
   }
 
   export function toggleOnKeyDown(keys: InputKeysOrString, description?: string)
   {
+    const keyCombinations = parseKeys(keys);
+
     return (
       target: unknown,
       context: ClassFieldDecoratorContext<Interaction, Bindable<boolean>>,
     ) =>
     {
-      context.addInitializer(function()
-      {
-        const bindable = context.access.get(this);
+      console.log("toggleOnKeyDown", description);
 
-        const keyCombinations = parseKeys(keys);
+      const hotkeys = (context.metadata[hotkeysKey] ?? []) as ToolHotkey[];
 
-        this.hotkeys.push({
-          test: (key, combination) => keyCombinations.some(it => it.isPressed(combination, KeyCombinationMatchingMode.Modifiers)),
-          onPressed: () =>
-          {
-            bindable.value = !bindable.value;
-            return true;
-          },
-          onReleased: () =>
-          {
-          },
-          createDrawable: () =>
-          {
-            if (description)
-              return new DrawableToolHotKey(keyCombinations, description);
+      const hotKey = {
+        test: (key, combination) => keyCombinations.some(it => it.isPressed(combination, KeyCombinationMatchingMode.Modifiers)),
+        onPressed()
+        {
+          const bindable = context.access.get(this);
+          bindable.value = !bindable.value;
+          return true;
+        },
+        onReleased()
+        {
+        },
+        createDrawable: () =>
+        {
+          if (description)
+            return new DrawableToolHotKey(keyCombinations, description);
 
-            return undefined;
-          },
-        });
-      });
+          return undefined;
+        },
+      } as ToolHotkey;
+
+      context.metadata[hotkeysKey] = [ ...hotkeys, hotKey ];
     };
   }
 
   export function invokeOnKey(keys: InputKeysOrString, description?: string)
   {
+    const keyCombinations = parseKeys(keys);
+
     return (
       target: (this: Interaction, key: InputKey) => boolean | void,
       context: ClassMethodDecoratorContext<Interaction, (key: InputKey) => boolean | void>,
     ) =>
     {
-      context.addInitializer(function()
-      {
-        const keyCombinations = parseKeys(keys);
+      console.log("invokeOnKey", description);
 
-        this.hotkeys.push({
-          test: (key, combination) => keyCombinations.some(it => it.isPressed(combination, KeyCombinationMatchingMode.Modifiers)),
-          onPressed: (key) =>
-          {
-            target.call(this, key);
-            return true;
-          },
-          onReleased: () =>
-          {
-          },
-          createDrawable: () =>
-          {
-            if (description)
-              return new DrawableToolHotKey(keyCombinations, description);
+      const hotkeys = (context.metadata[hotkeysKey] ?? []) as ToolHotkey[];
 
-            return undefined;
-          },
-        });
-      });
+      const hotKey = {
+        test: (key, combination) => keyCombinations.some(it => it.isPressed(combination, KeyCombinationMatchingMode.Modifiers)),
+        onPressed(key)
+        {
+          target.call(this, key);
+          return true;
+        },
+        onReleased()
+        {
+        },
+        createDrawable: () =>
+        {
+          if (description)
+            return new DrawableToolHotKey(keyCombinations, description);
+
+          return undefined;
+        },
+      } as ToolHotkey;
+
+      context.metadata[hotkeysKey] = [ ...hotkeys, hotKey ];
     };
   }
 
@@ -411,15 +445,15 @@ class CompleteOnMouseLeftHotkey implements ToolHotkey
     return this.interaction.completeOnMouseDown && key === InputKey.MouseLeftButton;
   }
 
-  public onPressed(key: InputKey, keyCombination: KeyCombination): boolean
+  public onPressed = (key: InputKey, keyCombination: KeyCombination) =>
   {
     this.interaction.complete();
     return true;
-  }
+  };
 
-  public onReleased(key: InputKey): void
+  public onReleased = (key: InputKey) =>
   {
-  }
+  };
 
   public createDrawable?(): Drawable | undefined
   {
@@ -442,15 +476,15 @@ class CancelOnMouseRightHotkey implements ToolHotkey
     return this.interaction.cancelOnRightMouseDown && key === InputKey.MouseRightButton;
   }
 
-  public onPressed(key: InputKey, keyCombination: KeyCombination): boolean
+  public onPressed = (key: InputKey, keyCombination: KeyCombination) =>
   {
     this.interaction.cancel();
     return true;
-  }
+  };
 
-  public onReleased(key: InputKey): void
+  public onReleased = (key: InputKey) =>
   {
-  }
+  };
 
   public createDrawable?(): Drawable | undefined
   {

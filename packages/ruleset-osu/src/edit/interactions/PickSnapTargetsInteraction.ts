@@ -49,10 +49,10 @@ export class PickSnapTargetsInteraction extends ModalInteraction<Vec2[]>
   @Interaction.invokeOnKey("Alt+A", "Remove Last Snap Point")
   #removeLastSnapTarget()
   {
-    if (this.result.length === 0)
-      return;
+    const point = this.result.pop();
 
-    this.#snapTargetContainer.children[this.#snapTargetContainer.children.length -1]?.expire();
+    if (point)
+      this.#snapTargetContainer.children[this.#snapTargetContainer.children.length -1]?.expire();
   }
 
   protected override loadComplete(): void
