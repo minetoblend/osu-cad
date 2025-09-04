@@ -1,5 +1,4 @@
-import type { ReadonlyDependencyContainer } from "@osucad/framework";
-import { AudioManager, Game, resolved, provideSelf } from "@osucad/framework";
+import { AudioManager, Game, provideSelf, resolved } from "@osucad/framework";
 import { IResourcesProvider } from "./io/IResourcesProvider";
 
 @provideSelf(IResourcesProvider)
