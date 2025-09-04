@@ -38,7 +38,7 @@ export class SnapManager extends Component
 {
   public readonly hitObjects = new Bindable(true);
 
-  public readonly sliderAnchors = new Bindable(false);
+  public readonly sliderAnchors = new Bindable(true);
 
   public readonly blankets = new Bindable(true);
 
