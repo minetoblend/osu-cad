@@ -1,4 +1,4 @@
-import type { IDDSSummary, IDocumentSummary } from "./Summary.js";
+import type { IDDSSummary } from "./Summary.js";
 
 export enum MessageType
 {

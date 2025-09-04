@@ -1,4 +1,3 @@
-import type { IRemoteDocumentMessage } from "@osucad/multiplayer-core";
 import { type DocumentRuntime } from "@osucad/multiplayer-core";
 import type { DocumentService, DocumentServiceFactory } from "./DocumentService.js";
 import type { DeltaConnection } from "./DeltaConnection.js";
