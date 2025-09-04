@@ -6,9 +6,10 @@
   "dependencies": {
     "@osucad/core": "workspace:^",
     "@osucad/editor": "workspace:^",
-    "@osucad/multiplayer-core": "workspace:^",
     "@osucad/framework": "workspace:^",
+    "@osucad/multiplayer-core": "workspace:^",
     "@osucad/ruleset-osu": "workspace:^",
+    "async": "^3.2.6",
     "cors": "^2.8.5",
     "socket.io": "^4.8.1"
   },
@@ -75,6 +76,7 @@
     }
   },
   "devDependencies": {
+    "@types/async": "^3.2.24",
     "@types/cors": "^2.8.19"
   }
 }

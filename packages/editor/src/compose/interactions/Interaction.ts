@@ -253,8 +253,6 @@ export namespace Interaction
       context: ClassFieldDecoratorContext<Interaction, Bindable<boolean>>,
     ) =>
     {
-      console.log("toggleOnKey", description);
-
       const hotkeys = (context.metadata[hotkeysKey] ?? []) as ToolHotkey[];
 
       const hotKey = {
@@ -292,8 +290,6 @@ export namespace Interaction
       context: ClassFieldDecoratorContext<Interaction, Bindable<boolean>>,
     ) =>
     {
-      console.log("toggleOnKeyDown", description);
-
       const hotkeys = (context.metadata[hotkeysKey] ?? []) as ToolHotkey[];
 
       const hotKey = {
@@ -329,8 +325,6 @@ export namespace Interaction
       context: ClassMethodDecoratorContext<Interaction, (key: InputKey) => boolean | void>,
     ) =>
     {
-      console.log("invokeOnKey", description);
-
       const hotkeys = (context.metadata[hotkeysKey] ?? []) as ToolHotkey[];
 
       const hotKey = {

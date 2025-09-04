@@ -57,11 +57,6 @@ export class DeltaConnection extends EventEmitter<DeltaConnectionEvents>
     return this.details.clientId;
   }
 
-  public get summary()
-  {
-    return this.details.summary;
-  }
-
   public get clients()
   {
     return this.details.clients;

@@ -53,7 +53,6 @@ export interface IConnected
   readonly documentId: string
   readonly clientId: string;
   readonly sequenceNumber: number
-  readonly summary: IDocumentSummary;
   readonly clients: IClient[]
 }
 

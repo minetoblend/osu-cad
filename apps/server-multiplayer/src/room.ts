@@ -3,12 +3,18 @@ import { EditorRuntime } from "@osucad/editor/runtime";
 import type { IClient, ClientMessages, IConnected, IDocumentMessage, IRemoteDocumentMessage, ServerMessages } from "@osucad/multiplayer-core";
 import { OsuRuleset } from "@osucad/ruleset-osu";
 import type { BroadcastOperator, Server, Socket } from "socket.io";
+import type { IDeltaStorage } from "./services/deltas.js";
+import { queue } from "async";
 
 export class Room
 {
   public sequenceNumber = 0;
 
-  public static async create(documentId: string, io: Server)
+  private readonly queue = queue(async ({ clientId, deltas }: { clientId: string, deltas: IDocumentMessage[] }) =>
+    await this.process(clientId, deltas),
+  );
+
+  public static async create(documentId: string, io: Server, deltaStore: IDeltaStorage)
   {
     const runtime = await EditorRuntime.createEmpty(new OsuRuleset());
 
@@ -16,30 +22,32 @@ export class Room
     timingPoint.bpm = 180;
     runtime.root.controlPointInfo.add(timingPoint);
 
-    return new Room(documentId, runtime, io.to(documentId));
+    return new Room(documentId, runtime, io.to(documentId), deltaStore);
   }
 
   public constructor(
     public readonly documentId: string,
     public readonly runtime: EditorRuntime,
     public readonly broadcast: BroadcastOperator<ServerMessages, any>,
+    private readonly deltaStore: IDeltaStorage,
   )
   {
   }
 
-  public process(clientId: string, deltas: IDocumentMessage[])
+  public async process(clientId: string, deltas: IDocumentMessage[])
   {
     const processed: IRemoteDocumentMessage[] = [];
 
     for (const message of deltas)
     {
-      this.runtime.process(message, false);
       processed.push({
         ...message,
         clientId,
         sequenceNumber: ++this.sequenceNumber,
       });
     }
+
+    await this.deltaStore.append(this.documentId, processed);
 
     this.broadcast.emit("deltas", processed);
   }
@@ -58,7 +66,7 @@ export class Room
 
     socket.join(this.documentId);
 
-    socket.on("deltas", deltas => this.process(clientId, deltas));
+    socket.on("deltas", deltas => this.queue.push({ clientId, deltas }));
 
     socket.on("signal", (signal) => this.broadcast.emit("signal", { ...signal, clientId }));
 
@@ -68,12 +76,10 @@ export class Room
       this.broadcast.emit("clientLeave", client);
     });
 
-
     return {
       documentId: this.documentId,
       clientId,
       sequenceNumber: this.sequenceNumber,
-      summary: this.runtime.createSummary(),
       clients: [...this.#clients.values()],
     };
   }

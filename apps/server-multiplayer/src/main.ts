@@ -5,6 +5,8 @@ import type { Socket } from "socket.io";
 import { Server } from "socket.io";
 import { Room } from "./room.js";
 import type { ClientMessages, ServerMessages } from "@osucad/multiplayer-core";
+import { LocalDeltaStore } from "./services/deltas.js";
+import { LocalDocumentStorage } from "./services/storage.js";
 
 void main();
 
@@ -19,9 +21,14 @@ async function main()
   const server = http.createServer(app);
   const io = new Server(server);
 
+  const deltaStore = new LocalDeltaStore();
+  const documentStorage = new LocalDocumentStorage();
+
   const rooms: Record<string, Room> = {
-    beatmap: await Room.create("beatmap", io),
+    beatmap: await Room.create("beatmap", io, deltaStore),
   };
+
+  await documentStorage.writeSummary("beatmap", rooms["beatmap"].runtime.createSummary(), rooms["beatmap"].sequenceNumber);
 
   io.on("connect", (socket: Socket<ClientMessages, ServerMessages>) =>
   {
@@ -33,25 +40,27 @@ async function main()
     });
   });
 
-  app.get("/api/summary/:id", (req, res) =>
+  app.get("/api/summary/:id", async (req, res) =>
   {
-    const room = rooms[req.params.id];
-    if (!room)
+    const summary = await documentStorage.readSummary(req.params.id);
+
+    if (!summary)
     {
       res.sendStatus(404);
       return;
     }
 
-    res.json({
-      sequenceNumber: room.sequenceNumber,
-      summary: room.runtime.createSummary(),
-    });
+    res.json(summary);
   });
 
-  app.get("/api/deltas/:id", (req, res) =>
+  app.get("/api/deltas/:id", async (req, res) =>
   {
-    // TODO
-    res.json([]);
+    const deltas = await deltaStore.getDeltas(req.params.id, {
+      start: typeof req.query.start === "string" ? Number.parseInt(req.query.start) : undefined,
+      end: typeof req.query.end === "string" ? Number.parseInt(req.query.end) : undefined,
+    });
+
+    res.json(deltas);
   });
 
   server.listen(port, host, () =>
