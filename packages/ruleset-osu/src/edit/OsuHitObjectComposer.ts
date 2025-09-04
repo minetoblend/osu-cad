@@ -1,5 +1,5 @@
 import { type ComposeToolInfo, HitObjectComposer, HitObjectSelection } from "@osucad/editor";
-import { asyncDependencyLoader, loadTexture, resolved } from "@osucad/framework";
+import { asyncDependencyLoader, loadTexture, provide, resolved } from "@osucad/framework";
 import type { OsuHitObject } from "../hitObjects";
 import { PlayfieldGrid } from "./PlayfieldGrid";
 import { HitCircleTool } from "./tools/circle/HitCircleTool";
@@ -8,9 +8,13 @@ import { SelectTool } from "./tools/select/SelectTool";
 import { SelectToolPresenceOverlay } from "./tools/select/SelectToolPresenceOverlay";
 import { SliderToolPresenceOverlay } from "./tools/slider/HitCircleToolPresence";
 import { SliderTool } from "./tools/slider/SliderTool";
+import { SnapManager } from "./SnapManager";
 
 export class OsuHitObjectComposer extends HitObjectComposer
 {
+  @provide()
+  public readonly snapManager = new SnapManager();
+
   public constructor()
   {
     super();
@@ -46,6 +50,8 @@ export class OsuHitObjectComposer extends HitObjectComposer
   @asyncDependencyLoader()
   async #load()
   {
+    this.addInternal(this.snapManager);
+
     this.rulesetContainer.add(this.drawableRuleset.createPlayfieldAdjustmentContainer().with({
       depth: 1,
       child: new PlayfieldGrid(),

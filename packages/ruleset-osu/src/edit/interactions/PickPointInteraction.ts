@@ -1,8 +1,7 @@
 import { Playfield } from "@osucad/core";
 import { EditorColors, ModalInteraction } from "@osucad/editor";
 import { Anchor, Axes, Box, Container, dependencyLoader, resolved, type Drawable, type InputManager, type Vec2 } from "@osucad/framework";
-import { SliderPathHandle } from "../tools/slider/SliderPathVisualizer";
-import type { OsuHitObject } from "../../hitObjects";
+import { SnapManager } from "../SnapManager";
 
 export class PickPointInteraction extends ModalInteraction<Vec2>
 {
@@ -14,6 +13,9 @@ export class PickPointInteraction extends ModalInteraction<Vec2>
 
   @resolved(Playfield)
   accessor #playfield!: Playfield
+
+  @resolved(SnapManager)
+  accessor #snapManager!: SnapManager
 
   @dependencyLoader()
   #load()
@@ -43,41 +45,15 @@ export class PickPointInteraction extends ModalInteraction<Vec2>
   {
     const mousePosition = this.#playfield.toLocalSpace(this.#inputManager.currentState.mouse.position);
 
-    let closestDistance = Number.MAX_VALUE;
-    let closestTarget: Vec2| undefined;
+    const snapResult = this.#snapManager.getClosestSnapResult({
+      points: [mousePosition],
+      maxDistance: 5,
+    });
 
-    for (const dho of this.#playfield.hitObjectContainer.aliveObjects)
-    {
-      for (const target of (dho.hitObject as OsuHitObject).getSnapTargets())
-      {
-        const distance = target.distance(mousePosition);
-        if (distance < closestDistance)
-        {
-          closestDistance = distance;
-          closestTarget = target;
-        }
-      }
-    }
-
-    for (const d of this.#inputManager.hoveredDrawables)
-    {
-      if (d instanceof SliderPathHandle)
-      {
-        const position = this.#playfield.toLocalSpace(d.screenSpaceDrawQuad.AABB.center);
-        const distance = position.distance(mousePosition);
-
-        if (distance < closestDistance)
-        {
-          closestDistance = distance;
-          closestTarget = position;
-        }
-      }
-    }
-
-    if (closestDistance < 5)
+    if (snapResult)
     {
       return {
-        position: closestTarget!,
+        position: snapResult.position,
         snapped: true,
       };
     }

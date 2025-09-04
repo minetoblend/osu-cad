@@ -7,6 +7,7 @@ import { MoveOperator } from "../operators/MoveOperator";
 import { OsuOperatorUtils } from "../operators/OsuOperatorUtils";
 import { PickSnapTargetsInteraction } from "./PickSnapTargetsInteraction";
 import { SnapTargetContainer } from "./SnapTargetContainer";
+import { SnapManager } from "../SnapManager";
 
 export interface MoveInteractionOptions
 {
@@ -45,6 +46,9 @@ export class MoveInteraction extends Interaction
 
   @resolved(HitObjectSelection)
   accessor #selection!: HitObjectSelection<OsuHitObject>;
+
+  @resolved(SnapManager)
+  accessor #snapManager!: SnapManager
 
   @resolved(Playfield)
   accessor #playfield!: Playfield;
@@ -273,7 +277,7 @@ export class MoveInteraction extends Interaction
 
     if (this.#selection.size === 0)
     {
-      this.expire();
+      this.complete();
       return;
     }
 
@@ -304,41 +308,23 @@ export class MoveInteraction extends Interaction
       this.#xAxisMarker.hide();
       this.#yAxisMarker.hide();
 
-      let closestDistance = Number.MAX_VALUE;
-      let closestOffset = Vec2.zero();
+      const snapResult = this.#snapManager.getClosestSnapResult({
+        ...(
+          this.#snapTargets.length > 0
+          ? { points: this.#snapTargets }
+          : { hitObjects: this.#selection }
+        ),
+        offset: delta,
+        maxDistance: 5,
+        snapTo: {
+          hitObjects: {
+            exclude: this.#selection,
+          },
+        },
+      });
 
-      let snapTargets = this.#snapTargets;
-      if (snapTargets.length === 0)
-        snapTargets = [...this.#selection].flatMap(it => it.getSnapTargets());
-
-      snapTargets = snapTargets.map(p => p.add(delta));
-
-      for (const dho of this.#playfield.hitObjectContainer.aliveObjects)
-      {
-        const hitObject = dho.hitObject as OsuHitObject;
-
-        if (this.#selection.has(hitObject))
-          continue;
-
-        for (const ownTarget of snapTargets)
-        {
-          for (const target of hitObject.getSnapTargets())
-          {
-            const distance = target.distance(ownTarget);
-
-            if (distance < closestDistance)
-            {
-              closestDistance = distance;
-              closestOffset = target.sub(ownTarget);
-            }
-          }
-        }
-      }
-
-      if (closestDistance < 5)
-      {
-        delta = delta.add(closestOffset);
-      }
+      if (snapResult)
+        delta = delta.add(snapResult.offset);
     }
 
 

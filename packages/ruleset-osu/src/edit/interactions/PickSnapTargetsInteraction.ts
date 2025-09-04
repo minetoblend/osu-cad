@@ -1,11 +1,11 @@
 import { Playfield } from "@osucad/core";
 import { EditorColors, HitObjectSelection, HotkeyBar, Interaction, ModalInteraction } from "@osucad/editor";
-import type { InputManager, MouseDownEvent, MouseMoveEvent , Container } from "@osucad/framework";
+import type { Container, InputManager, MouseDownEvent, MouseMoveEvent } from "@osucad/framework";
 import { Anchor, Axes, Box, CompositeDrawable, dependencyLoader, MouseButton, resolved, Vec2 } from "@osucad/framework";
 import type { OsuHitObject } from "../../hitObjects";
-import { SliderPathHandle } from "../tools/slider/SliderPathVisualizer";
-import { SnapTargetMarker } from "./SnapTargetMarker";
+import { SnapManager } from "../SnapManager";
 import { SnapTargetContainer } from "./SnapTargetContainer";
+import { SnapTargetMarker } from "./SnapTargetMarker";
 
 
 export class PickSnapTargetsInteraction extends ModalInteraction<Vec2[]>
@@ -16,6 +16,9 @@ export class PickSnapTargetsInteraction extends ModalInteraction<Vec2[]>
 
   @resolved(HitObjectSelection)
   accessor #selection!: HitObjectSelection<OsuHitObject>
+
+  @resolved(SnapManager)
+  accessor #snapManager!: SnapManager
 
   @resolved(Playfield)
   accessor #playfield!: Playfield
@@ -85,41 +88,15 @@ export class PickSnapTargetsInteraction extends ModalInteraction<Vec2[]>
   {
     const mousePosition = this.#mousePosition;
 
-    let closestDistance = Number.MAX_VALUE;
-    let closestTarget: Vec2| undefined;
+    const snapResult = this.#snapManager.getClosestSnapResult({
+      points: [mousePosition],
+      maxDistance: 5,
+    });
 
-    for (const dho of this.#playfield.hitObjectContainer.aliveObjects)
-    {
-      for (const target of (dho.hitObject as OsuHitObject).getSnapTargets())
-      {
-        const distance = target.distance(mousePosition);
-        if (distance < closestDistance)
-        {
-          closestDistance = distance;
-          closestTarget = target;
-        }
-      }
-    }
-
-    for (const d of this.#inputManager.hoveredDrawables)
-    {
-      if (d instanceof SliderPathHandle)
-      {
-        const position = this.#playfield.toLocalSpace(d.screenSpaceDrawQuad.AABB.center);
-        const distance = position.distance(mousePosition);
-
-        if (distance < closestDistance)
-        {
-          closestDistance = distance;
-          closestTarget = position;
-        }
-      }
-    }
-
-    if (closestDistance < 5)
+    if (snapResult)
     {
       return {
-        position: closestTarget!,
+        position: snapResult.position,
         snapped: true,
       };
     }
