@@ -53,9 +53,9 @@ export abstract class LegacySpinner extends CompositeDrawable
           y: LegacySpinner.SPINNER_TOP_OFFSET + 335,
         }),
         this.#clear = new DrawableSprite({
-          alpha: 0,
           anchor: Anchor.TopCenter,
           origin: Anchor.Center,
+          alwaysPresent: true,
           texture: source.getTexture("spinner-clear"),
           scale: new Vec2(LegacySpinner.SPRITE_SCALE),
           y: LegacySpinner.SPINNER_TOP_OFFSET + 115,
@@ -159,8 +159,7 @@ export abstract class LegacySpinner extends CompositeDrawable
   {
     super.update();
 
-    // TODO: should be >= DrawableSpinner.Result.TimeCompleted
-    this.#completed.value = this.time.current >= this.drawableSpinner.hitObject.endTime;
+    this.#completed.value = this.drawableSpinner.result.timeCompleted !== undefined && this.time.current >= this.drawableSpinner.result.timeCompleted;
   }
 
   protected updateStateTransforms(drawableHitObject: DrawableHitObject, state: ArmedState)
