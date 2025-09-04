@@ -39,6 +39,7 @@ export class OsuLegacySkinTransformer extends SkinTransformer
         "spinner-approachcircle",
         "spinner-background",
         "spinner-bottom",
+        "spinner-clear",
         "spinner-glow",
         "spinner-middle",
         "spinner-middle2",
