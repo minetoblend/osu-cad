@@ -105,7 +105,7 @@ export class SnapManager extends Component
     const hitObjects = this.selectHitObjects(query.snapTo?.hitObjects);
 
     for (const h of hitObjects)
-      yield* this.getHitObjectSnapFeatures(h, true);
+      yield* this.getHitObjectSnapFeatures(h, false);
   }
 
   private *getHitObjectSnapFeatures(hitObject: OsuHitObject, stacked: boolean)
