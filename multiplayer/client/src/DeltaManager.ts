@@ -4,6 +4,7 @@ import { DeltaQueue } from "./DeltaQueue.js";
 import { DeltaCompressor, type DocumentRuntime } from "@osucad/multiplayer-core";
 import type { DeltaConnection } from "./DeltaConnection.js";
 import type { Audience } from "./Audience.js";
+import type { DocumentStorageService } from "./DocumentStorageService.js";
 
 export class DeltaManager
 {
@@ -21,10 +22,12 @@ export class DeltaManager
   }
 
   #connection?: DeltaConnection;
+  #storage?: DocumentStorageService;
 
-  public setConnected(connection: DeltaConnection)
+  public setConnected(connection: DeltaConnection, storageService: DocumentStorageService)
   {
     this.#connection = connection;
+    this.#storage = storageService;
 
     for (const client of connection.clients)
       this.audience.addMember(client);
@@ -43,6 +46,11 @@ export class DeltaManager
     {
       const local = this.#connection!.clientId === message.clientId;
       this.runtime.process(message, local);
+      this.#sequenceNumber = message.sequenceNumber;
+      if (local)
+      {
+        this.#deltasInFlight--;
+      }
     }
   });
 
@@ -50,6 +58,9 @@ export class DeltaManager
   {
     this.runtime.processSignal(message, message.clientId === this.#connection!.clientId);
   });
+
+  #deltasInFlight = 0;
+  #sequenceNumber = 0;
 
   public resume()
   {
@@ -81,6 +92,32 @@ export class DeltaManager
       }
 
       this.#connection!.submitDeltas(messages);
+      this.#deltasInFlight += messages.length;
     }, 50);
+
+    setTimeout(this.#submitSummary, 30_000);
   }
+
+  #submitSummary = async() =>
+  {
+    if (this.#deltasInFlight !== 0 || this.deltaCompressor.hasDeltas())
+    {
+      setTimeout(this.#submitSummary, 5_000);
+      return;
+    }
+
+    try
+    {
+      const summary = this.runtime.createSummary();
+
+      await this.#storage?.createSummary(summary, this.#sequenceNumber);
+    }
+    catch (e)
+    {
+      // TODO
+      console.error(e);
+    }
+
+    setTimeout(this.#submitSummary, 30_000);
+  };
 }

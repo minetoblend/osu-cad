@@ -7,6 +7,7 @@ import { Room } from "./room.js";
 import type { ClientMessages, ServerMessages } from "@osucad/multiplayer-core";
 import { LocalDeltaStore } from "./services/deltas.js";
 import { LocalDocumentStorage } from "./services/storage.js";
+import { createTestBeatmapSummary } from "./testBeatmap.js";
 
 void main();
 
@@ -17,6 +18,7 @@ async function main()
 
   const app = express();
   app.use(cors());
+  app.use(express.json());
 
   const server = http.createServer(app);
   const io = new Server(server);
@@ -24,11 +26,11 @@ async function main()
   const deltaStore = new LocalDeltaStore();
   const documentStorage = new LocalDocumentStorage();
 
+  await documentStorage.writeSummary("beatmap", await createTestBeatmapSummary(), 0);
+
   const rooms: Record<string, Room> = {
     beatmap: await Room.create("beatmap", io, deltaStore),
   };
-
-  await documentStorage.writeSummary("beatmap", rooms["beatmap"].runtime.createSummary(), rooms["beatmap"].sequenceNumber);
 
   io.on("connect", (socket: Socket<ClientMessages, ServerMessages>) =>
   {
@@ -51,6 +53,15 @@ async function main()
     }
 
     res.json(summary);
+  });
+
+  app.post("/api/summary/:id", async (req, res) =>
+  {
+    const { summary, sequenceNumber } = req.body;
+
+    const version = await documentStorage.writeSummary(req.params.id, summary, sequenceNumber);
+
+    res.json(version);
   });
 
   app.get("/api/deltas/:id", async (req, res) =>

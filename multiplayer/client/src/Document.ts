@@ -80,7 +80,7 @@ export class Document
 
     this.#connection = await this.#service.connectToDeltaStream();
 
-    this.#deltaManager.setConnected(this.#connection);
+    this.#deltaManager.setConnected(this.#connection, storage);
 
     await this.runtime.load(summary);
 
@@ -103,8 +103,6 @@ export class Document
 
       } while(lastObservedSequenceNumber !== this.#connection!.sequenceNumber);
     }
-
-    console.log(this.#connection?.sequenceNumber);
 
     this.#deltaManager.resume();
   }
