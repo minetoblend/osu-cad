@@ -1,5 +1,5 @@
 import { Playfield } from "@osucad/core";
-import { ComposerStatusBar, HitObjectComposer, HitObjectSelection, HotkeyBar, Interaction } from "@osucad/editor";
+import { ComposerStatusBar, HitObjectComposer, HitObjectSelection, Interaction } from "@osucad/editor";
 import type { InputManager, KeyDownEvent, MouseMoveEvent } from "@osucad/framework";
 import { Anchor, Axes, Bindable, BindableBoolean, Box, dependencyLoader, InputKey, Key, keyBindingHandler, MouseButton, PlatformAction, resolved, Vec2 } from "@osucad/framework";
 import type { OsuHitObject } from "../../hitObjects";
@@ -7,7 +7,9 @@ import { MoveOperator } from "../operators/MoveOperator";
 import { OsuOperatorUtils } from "../operators/OsuOperatorUtils";
 import { PickSnapTargetsInteraction } from "./PickSnapTargetsInteraction";
 import { SnapTargetContainer } from "./SnapTargetContainer";
+import type { SnapResultQuery } from "../SnapManager";
 import { SnapManager } from "../SnapManager";
+import { SnapTargetVisualizer } from "../SnapTargetVisualizer";
 
 export interface MoveInteractionOptions
 {
@@ -40,6 +42,7 @@ export class MoveInteraction extends Interaction
   #yAxisMarker!: Box;
   #statusBar!: ComposerStatusBar;
   #snapTargetContainer!: SnapTargetContainer;
+  #snapTargetVisualizer!: SnapTargetVisualizer;
   #snapTargets: Vec2[] = [];
 
   #inputManager!: InputManager;
@@ -60,6 +63,8 @@ export class MoveInteraction extends Interaction
   @Interaction.toggleOnKeyDown("KeypadMinus")
   private readonly negative = new BindableBoolean(false);
 
+  @Interaction.toggleOnKey("Shift", "Show Snap Targets")
+  private readonly showSnapTargets = new BindableBoolean(false);
 
   private readonly axis = new Bindable<"x" | "y" | null>(null);
 
@@ -122,7 +127,7 @@ export class MoveInteraction extends Interaction
       }),
       this.#snapTargetContainer = new SnapTargetContainer({ relativeSizeAxes: Axes.Both }),
       this.#statusBar = new ComposerStatusBar(),
-      new HotkeyBar(this),
+      this.#snapTargetVisualizer = new SnapTargetVisualizer(),
     ];
 
     if (this.#selection.size === 0)
@@ -140,6 +145,14 @@ export class MoveInteraction extends Interaction
     this.snapped.bindValueChanged(this.invalidateState, this);
     this.axis.bindValueChanged(this.invalidateState, this);
     this.negative.bindValueChanged(this.invalidateState, this);
+
+    this.showSnapTargets.bindValueChanged(e =>
+    {
+      if (!e.value)
+        this.#snapTargetVisualizer.clear();
+      else
+        this.invalidateState();
+    });
 
     this.invalidateState();
   }
@@ -308,11 +321,11 @@ export class MoveInteraction extends Interaction
       this.#xAxisMarker.hide();
       this.#yAxisMarker.hide();
 
-      const snapResult = this.#snapManager.getClosestSnapResult({
+      const snapQuery: SnapResultQuery = {
         ...(
-          this.#snapTargets.length > 0
-          ? { points: this.#snapTargets }
-          : { hitObjects: this.#selection }
+            this.#snapTargets.length > 0
+                ? { points: this.#snapTargets }
+                : { hitObjects: this.#selection }
         ),
         offset: delta,
         maxDistance: 5,
@@ -321,7 +334,14 @@ export class MoveInteraction extends Interaction
             exclude: this.#selection,
           },
         },
-      });
+      };
+
+      const snapResult = this.#snapManager.getClosestSnapResult(snapQuery);
+
+      if (this.showSnapTargets.value)
+      {
+        this.#snapTargetVisualizer.updateContent(snapQuery);
+      }
 
       if (snapResult)
         delta = delta.add(snapResult.offset);

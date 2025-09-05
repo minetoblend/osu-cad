@@ -88,7 +88,7 @@ export class SnapManager extends Component
     return bestResult;
   }
 
-  private *collectReferenceFeatures(query: SnapResultQuery)
+  public *collectReferenceFeatures(query: SnapResultQuery)
   {
     if ("points" in query)
     {
@@ -100,7 +100,7 @@ export class SnapManager extends Component
       yield* this.getHitObjectSnapFeatures(h, false);
   }
 
-  private *collectTargetFeatures(query: SnapResultQuery)
+  public *collectTargetFeatures(query: SnapResultQuery)
   {
     const hitObjects = this.selectHitObjects(query.snapTo?.hitObjects);
 
