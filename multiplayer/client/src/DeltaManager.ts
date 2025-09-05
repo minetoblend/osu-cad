@@ -60,7 +60,8 @@ export class DeltaManager
   });
 
   #deltasInFlight = 0;
-  #sequenceNumber = 0;
+  #sequenceNumber = -1;
+  #lastSummarySequenceNumber = -1;
 
   public resume()
   {
@@ -100,7 +101,7 @@ export class DeltaManager
 
   #submitSummary = async() =>
   {
-    if (this.#deltasInFlight !== 0 || this.deltaCompressor.hasDeltas())
+    if (this.#deltasInFlight !== 0 || this.#sequenceNumber < 0 || this.#sequenceNumber !== this.#lastSummarySequenceNumber || this.deltaCompressor.hasDeltas())
     {
       setTimeout(this.#submitSummary, 5_000);
       return;
@@ -109,6 +110,8 @@ export class DeltaManager
     try
     {
       const summary = this.runtime.createSummary();
+
+      this.#lastSummarySequenceNumber = this.#sequenceNumber;
 
       await this.#storage?.createSummary(summary, this.#sequenceNumber);
     }
