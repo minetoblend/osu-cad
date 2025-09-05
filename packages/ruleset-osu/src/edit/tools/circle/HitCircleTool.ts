@@ -66,11 +66,13 @@ export class HitCircleTool extends OsuHitObjectPlacementTool<HitCircle>
   }
 }
 
+import iconUrl from "./icon.png";
+
 export namespace HitCircleTool
 {
   export const id = "circle";
   export const label = "Hitcircle";
   export const tool = HitCircleTool;
-  export const icon = new URL("./icon.png", import.meta.url).href;
+  export const icon = iconUrl;
   export const presenceOverlay = HitCircleToolPresenceOverlay;
 }

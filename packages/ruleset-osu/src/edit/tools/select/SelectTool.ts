@@ -390,11 +390,13 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
   }
 }
 
+import iconUrl from "./icon.png";
+
 export namespace SelectTool
 {
   export const id = "select";
   export const label = "Select";
-  export const icon = new URL("./icon.png", import.meta.url).href;
+  export const icon = iconUrl;
   export const tool = SelectTool;
   export const presenceOverlay = SelectToolPresenceOverlay;
 }

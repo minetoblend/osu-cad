@@ -193,11 +193,13 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
   }
 }
 
+import iconUrl from "./icon.png";
+
 export namespace SliderTool
 {
   export const id = "slider";
   export const label = "Slider";
   export const tool = SliderTool;
-  export const icon = new URL("./icon.png", import.meta.url).href;
+  export const icon = iconUrl;
   export const presenceOverlay = SliderToolPresenceOverlay;
 }
