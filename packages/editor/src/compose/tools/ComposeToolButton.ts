@@ -1,9 +1,10 @@
-import type { ClickEvent, MouseDownEvent, MouseUpEvent } from "@osucad/framework";
-import { Anchor, Axes, Box, Container, DrawableSprite, EasingFunction, FillMode, MouseButton, resolved, Vec2 } from "@osucad/framework";
+import type { ClickEvent, MouseDownEvent, MouseUpEvent , DrawableSprite, Drawable } from "@osucad/framework";
+import { Anchor, Axes, Box, Container, EasingFunction, FillMode, MouseButton, resolved, Vec2 } from "@osucad/framework";
 import { ComposeToolbar } from "../tools";
 import type { ComposeToolInfo } from "./ComposeToolInfo";
 import { ActiveToolBindable } from "./ActiveToolBindable";
 import { EditorColors } from "../../EditorColors";
+import { LazyIcon } from "../../graphics";
 
 export class ComposeToolButton extends Container
 {
@@ -32,12 +33,9 @@ export class ComposeToolButton extends Container
           size: 0.7,
           anchor: Anchor.Center,
           origin: Anchor.Center,
-          child: this.#icon = new DrawableSprite({
-            texture: this.tool.icon,
+          child: this.#icon = new LazyIcon({
+            url: this.tool.icon,
             relativeSizeAxes: Axes.Both,
-            fillMode: FillMode.Fit,
-            anchor: Anchor.Center,
-            origin: Anchor.Center,
           }),
         }),
       ],
@@ -45,7 +43,7 @@ export class ComposeToolButton extends Container
   }
 
   readonly #content: Container;
-  readonly #icon: DrawableSprite;
+  readonly #icon: Drawable;
 
   @resolved(ActiveToolBindable)
   accessor #activeTool!: ActiveToolBindable

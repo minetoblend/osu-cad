@@ -63,7 +63,7 @@ export class MoveInteraction extends Interaction
   @Interaction.toggleOnKeyDown("KeypadMinus")
   private readonly negative = new BindableBoolean(false);
 
-  @Interaction.toggleOnKey("Shift", "Show Snap Targets")
+  @Interaction.invertOnKey("Shift", "Show Snap Targets")
   private readonly showSnapTargets = new BindableBoolean(false);
 
   private readonly axis = new Bindable<"x" | "y" | null>(null);
@@ -100,10 +100,10 @@ export class MoveInteraction extends Interaction
   }
 
   @Interaction.toggleOnKeyDown("T", "Grid Snap")
-  @Interaction.toggleOnKey("Control", "Grid Snap Invert")
+  @Interaction.invertOnKey("Control", "Grid Snap Invert")
   private readonly snapped = new BindableBoolean(false);
 
-  @Interaction.toggleOnKey("Shift", "Precision Mode")
+  @Interaction.invertOnKey("Shift", "Precision Mode")
   private readonly preciseMode = new BindableBoolean(false);
 
 

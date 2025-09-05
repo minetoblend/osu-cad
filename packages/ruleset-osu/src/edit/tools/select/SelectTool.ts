@@ -20,6 +20,7 @@ import { SliderSelectionBlueprint } from "./SliderSelectionBlueprint";
 import { SelectToolSliderPathVisualizer } from "./SelectToolSliderPathVisualizer";
 import { MoveInteraction } from "../../interactions/MoveInteraction";
 import { RotateInteraction } from "../../interactions/RotateInteraction";
+import { SelectToolPresenceOverlay } from "./SelectToolPresenceOverlay";
 
 @provideSelf()
 export class SelectTool extends ComposeTool implements IKeyBindingHandler<PlatformAction>
@@ -387,4 +388,17 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
         h.moveBy(offset.x, offset.y);
     }
   }
+}
+
+
+
+import iconUrl from "./select.png";
+
+export namespace SelectTool
+{
+  export const id = "select";
+  export const label = "Select";
+  export const icon = iconUrl;
+  export const tool = SelectTool;
+  export const presenceOverlay = SelectToolPresenceOverlay;
 }

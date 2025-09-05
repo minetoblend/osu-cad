@@ -6,6 +6,7 @@ export * from "./EditorRuleset";
 export * from "./runtime";
 export * from "./compose";
 export * from "./assets";
+export * from "./graphics";
 export * from "./EditorAction";
 export * from "./EditorActionContainer";
 export * from "./BindableBeatDivisor";

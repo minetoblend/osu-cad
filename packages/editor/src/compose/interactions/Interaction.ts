@@ -244,7 +244,7 @@ export namespace Interaction
   }
 
 
-  export function toggleOnKey(keys: InputKeysOrString, description?: string)
+  export function invertOnKey(keys: InputKeysOrString, description?: string)
   {
     const keyCombinations = parseKeys(keys);
 

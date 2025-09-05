@@ -20,28 +20,22 @@ export class OsuHitObjectComposer extends HitObjectComposer
     super();
   }
 
-  public async getTools(): Promise<ComposeToolInfo[]>
+  public getTools(): ComposeToolInfo[]
   {
     return [
-      {
-        id: "select",
-        name: "Select",
-        tool: SelectTool,
-        icon: await loadTexture(new URL("./tools/select/select.png", import.meta.url).href),
-        presenceOverlay: SelectToolPresenceOverlay,
-      },
+      SelectTool,
       {
         id: "circle",
-        name: "Hitcircle",
+        label: "Hitcircle",
         tool: HitCircleTool,
-        icon: await loadTexture(new URL("./tools/circle/circle.png", import.meta.url).href),
+        icon: new URL("./tools/circle/circle.png", import.meta.url).href,
         presenceOverlay: HitCircleToolPresenceOverlay,
       },
       {
         id: "slider",
-        name: "Slider",
+        label: "Slider",
         tool: SliderTool,
-        icon: await loadTexture(new URL("./tools/slider/slider.png", import.meta.url).href),
+        icon: new URL("./tools/slider/slider.png", import.meta.url).href,
         presenceOverlay: SliderToolPresenceOverlay,
       },
     ];

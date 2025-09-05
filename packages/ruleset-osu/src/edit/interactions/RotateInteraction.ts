@@ -60,10 +60,10 @@ export class RotateInteraction extends Interaction
     ];
   }
 
-  @Interaction.toggleOnKey("Shift", "Precision Mode")
+  @Interaction.invertOnKey("Shift", "Precision Mode")
   private readonly precise = new BindableBoolean(false);
 
-  @Interaction.toggleOnKey("Control", "Snap Invert")
+  @Interaction.invertOnKey("Control", "Snap Invert")
   @Interaction.toggleOnKeyDown("Shift+Tab", "Snap")
   private readonly snapped = new BindableBoolean(false);
 
