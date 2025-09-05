@@ -1,4 +1,4 @@
-import type { HitObject , HitObjectLifetimeEntry } from "@osucad/core";
+import type { HitObject } from "@osucad/core";
 import { PooledDrawableWithLifetimeContainer } from "@osucad/core";
 import type { Bindable } from "@osucad/framework";
 import { Axes, dependencyLoader, resolved } from "@osucad/framework";

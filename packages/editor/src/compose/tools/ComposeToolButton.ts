@@ -1,5 +1,5 @@
-import type { ClickEvent, MouseDownEvent, MouseUpEvent , DrawableSprite, Drawable } from "@osucad/framework";
-import { Anchor, Axes, Box, Container, EasingFunction, FillMode, MouseButton, resolved, Vec2 } from "@osucad/framework";
+import type { ClickEvent, Drawable, MouseDownEvent, MouseUpEvent } from "@osucad/framework";
+import { Anchor, Axes, Box, Container, EasingFunction, MouseButton, resolved, Vec2 } from "@osucad/framework";
 import { ComposeToolbar } from "../tools";
 import type { ComposeToolInfo } from "./ComposeToolInfo";
 import { ActiveToolBindable } from "./ActiveToolBindable";

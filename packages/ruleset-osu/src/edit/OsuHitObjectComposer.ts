@@ -1,11 +1,10 @@
 import { type ComposeToolInfo, HitObjectComposer, HitObjectSelection } from "@osucad/editor";
-import { asyncDependencyLoader, loadTexture, provide, resolved } from "@osucad/framework";
+import { asyncDependencyLoader, provide, resolved } from "@osucad/framework";
 import type { OsuHitObject } from "../hitObjects";
 import { PlayfieldGrid } from "./PlayfieldGrid";
 import { HitCircleTool } from "./tools/circle/HitCircleTool";
 import { HitCircleToolPresenceOverlay } from "./tools/circle/HitCircleToolPresence";
 import { SelectTool } from "./tools/select/SelectTool";
-import { SelectToolPresenceOverlay } from "./tools/select/SelectToolPresenceOverlay";
 import { SliderToolPresenceOverlay } from "./tools/slider/HitCircleToolPresence";
 import { SliderTool } from "./tools/slider/SliderTool";
 import { SnapManager } from "./SnapManager";
