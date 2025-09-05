@@ -4,6 +4,7 @@ import type { ClickEvent, KeyDownEvent, MouseDownEvent, ScrollEvent } from "@osu
 import { dependencyLoader, Key, MouseButton, Vec2 } from "@osucad/framework";
 import { SliderPathVisualizer } from "./SliderPathVisualizer";
 import type { ISliderToolPresence } from "./HitCircleToolPresence";
+import { SliderToolPresenceOverlay } from "./HitCircleToolPresence";
 import { OsuHitObjectPlacementTool } from "../OsuHitObjectPlacementTool";
 import { OsuPlayfield } from "../../../ui";
 import { PathTypeChangeIndicator } from "./PathTypeChangeIndicator";
@@ -192,3 +193,13 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
   }
 }
 
+import iconUrl from "./icon.png";
+
+export namespace SliderTool
+{
+  export const id = "slider";
+  export const label = "Slider";
+  export const tool = SliderTool;
+  export const icon = iconUrl;
+  export const presenceOverlay = SliderToolPresenceOverlay;
+}

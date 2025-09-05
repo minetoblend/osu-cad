@@ -390,9 +390,7 @@ export class SelectTool extends ComposeTool implements IKeyBindingHandler<Platfo
   }
 }
 
-
-
-import iconUrl from "./select.png";
+import iconUrl from "./icon.png";
 
 export namespace SelectTool
 {

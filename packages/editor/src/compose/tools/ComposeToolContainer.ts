@@ -31,7 +31,7 @@ export class ComposeToolContainer extends CompositeDrawable
       if (!e.value)
         return;
 
-      this.internalChild = this.#activeTool = new e.value.tool();
+      this.internalChild = this.#activeTool = new e.value();
     }, true);
   }
 

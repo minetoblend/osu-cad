@@ -4,6 +4,7 @@ import type { OsuHitObject } from "../../../hitObjects";
 import { HitCircle } from "../../../hitObjects";
 import { PlacementState } from "../HitObjectPlacementTool";
 import type { IHitCircleToolPresence } from "./HitCircleToolPresence";
+import { HitCircleToolPresenceOverlay } from "./HitCircleToolPresence";
 import { OsuHitObjectPlacementTool } from "../OsuHitObjectPlacementTool";
 import { OsuPlayfield } from "../../../ui";
 
@@ -63,4 +64,15 @@ export class HitCircleTool extends OsuHitObjectPlacementTool<HitCircle>
       position: { ...this.hitObject.position },
     };
   }
+}
+
+import iconUrl from "./icon.png";
+
+export namespace HitCircleTool
+{
+  export const id = "circle";
+  export const label = "Hitcircle";
+  export const tool = HitCircleTool;
+  export const icon = iconUrl;
+  export const presenceOverlay = HitCircleToolPresenceOverlay;
 }

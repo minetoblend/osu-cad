@@ -23,20 +23,8 @@ export class OsuHitObjectComposer extends HitObjectComposer
   {
     return [
       SelectTool,
-      {
-        id: "circle",
-        label: "Hitcircle",
-        tool: HitCircleTool,
-        icon: new URL("./tools/circle/circle.png", import.meta.url).href,
-        presenceOverlay: HitCircleToolPresenceOverlay,
-      },
-      {
-        id: "slider",
-        label: "Slider",
-        tool: SliderTool,
-        icon: new URL("./tools/slider/slider.png", import.meta.url).href,
-        presenceOverlay: SliderToolPresenceOverlay,
-      },
+      HitCircleTool,
+      SliderTool,
     ];
   }
 
