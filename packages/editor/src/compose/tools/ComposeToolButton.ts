@@ -36,6 +36,8 @@ export class ComposeToolButton extends Container
           child: this.#icon = new LazyIcon({
             url: this.tool.icon,
             relativeSizeAxes: Axes.Both,
+            anchor: Anchor.Center,
+            origin: Anchor.Center,
           }),
         }),
       ],
