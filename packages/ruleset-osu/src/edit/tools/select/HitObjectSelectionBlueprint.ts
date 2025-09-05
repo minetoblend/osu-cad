@@ -63,7 +63,7 @@ export class HitObjectSelectionBlueprint<out T extends HitObject> extends Poolab
   {
     if (e.button === MouseButton.Left)
     {
-      if (this.getContainingInputManager()?.hoveredDrawables.some(bp =>
+      if (!this.selected && this.getContainingInputManager()?.hoveredDrawables.some(bp =>
         bp instanceof HitObjectSelectionBlueprint
         && bp.selected
         && bp !== this,

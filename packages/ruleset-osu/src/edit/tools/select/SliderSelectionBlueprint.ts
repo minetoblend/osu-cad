@@ -2,16 +2,19 @@ import type { DrawableHitObject } from "@osucad/core";
 import { SkinnableDrawable } from "@osucad/core";
 import { HitObjectComposer } from "@osucad/editor";
 import type { DragStartEvent, Rectangle } from "@osucad/framework";
-import { Anchor, Bindable, dependencyLoader, resolved, Vec2 } from "@osucad/framework";
+import { ProxyDrawable } from "@osucad/framework";
+import { Anchor, Axes, Bindable, Container, dependencyLoader, resolved, Vec2 } from "@osucad/framework";
 import { Color } from "pixi.js";
 import type { Slider } from "../../../hitObjects";
 import { DrawableSlider } from "../../../hitObjects/drawables/DrawableSlider";
 import { OsuSkinComponents } from "../../../skinning";
 import { MoveInteraction } from "../../interactions/MoveInteraction";
 import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
+import { DrawableHitCircle } from "../../../hitObjects/drawables/DrawableHitCircle";
 
 export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider>
 {
+  #content!: Container;
   #sliderHead!: SkinnableDrawable;
   #sliderTail!: SkinnableDrawable;
 
@@ -23,16 +26,19 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
   @dependencyLoader()
   #load()
   {
-    this.addRangeInternal([
-      this.#sliderTail = new SkinnableDrawable(OsuSkinComponents.HitCircleSelect).with({
-        anchor: Anchor.Center,
-        origin: Anchor.Center,
-      }),
-      this.#sliderHead = new SkinnableDrawable(OsuSkinComponents.HitCircleSelect).with({
-        anchor: Anchor.Center,
-        origin: Anchor.Center,
-      }),
-    ]);
+    this.addInternal(this.#content = new Container({
+      relativeSizeAxes: Axes.Both,
+      children: [
+        this.#sliderTail = new SkinnableDrawable(OsuSkinComponents.HitCircleSelect).with({
+          anchor: Anchor.Center,
+          origin: Anchor.Center,
+        }),
+        this.#sliderHead = new SkinnableDrawable(OsuSkinComponents.HitCircleSelect).with({
+          anchor: Anchor.Center,
+          origin: Anchor.Center,
+        }),
+      ],
+    }));
 
     this.scaleBindable.bindTo(this.hitObject.scaleBindable);
     this.positionBindable.bindTo(this.hitObject.positionBindable);
@@ -48,7 +54,7 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
     this.positionBindable.bindValueChanged(e =>
     {
       this.position = this.hitObject.stackedPosition;
-      this.updateDrawNodeTransform();
+      // this.updateDrawNodeTransform();
     }, true);
     this.stackHeightBindable.bindValueChanged(e => this.position = this.hitObject.stackedPosition);
 
@@ -95,7 +101,11 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
   public override drawableBecameAlive(drawableHitObject: DrawableHitObject)
   {
     if (drawableHitObject instanceof DrawableSlider)
+    {
       this.#drawableSlider = drawableHitObject;
+
+      drawableHitObject.proxyLayer.add(this.#proxy = new ProxyDrawable(this));
+    }
 
     this.#updateSelection();
   }
@@ -103,6 +113,12 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
   public override drawableBecameDead(drawableHitObject: DrawableHitObject)
   {
     this.#drawableSlider = undefined;
+
+    if (this.#proxy && drawableHitObject instanceof DrawableHitCircle)
+    {
+      drawableHitObject.proxyLayer.remove(this.#proxy);
+      this.#proxy = null;
+    }
   }
 
   protected override containsLocal(position: Vec2): boolean
@@ -129,6 +145,8 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
     return rectangle.contains(this.hitObject.stackedPosition)
       || rectangle.contains(this.hitObject.stackedPathEndPosition);
   }
+
+  #proxy: ProxyDrawable | null = null;
 
   public override dispose()
   {
