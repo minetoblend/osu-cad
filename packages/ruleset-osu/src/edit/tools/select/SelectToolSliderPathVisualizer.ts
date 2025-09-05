@@ -328,6 +328,7 @@ export class SelectToolSliderPathHandle extends SliderPathHandle
   )
   {
     super();
+    this.size = new Vec2(20);
   }
 
   protected override onHover(e: HoverEvent): boolean

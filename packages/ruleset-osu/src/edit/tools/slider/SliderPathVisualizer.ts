@@ -168,6 +168,8 @@ export class SliderPathHandle extends CompositeDrawable
         size: 8,
         color: 0x000000,
         alpha: 0.5,
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
       }),
       new Box({
         size: 7,
