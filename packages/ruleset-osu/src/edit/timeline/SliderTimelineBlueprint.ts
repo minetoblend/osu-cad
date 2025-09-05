@@ -8,13 +8,13 @@ import { OsuHitObject } from "../../hitObjects";
 import { OsuSkinComponents } from "../../skinning";
 import { OsuTimelineBlueprint } from "./OsuTimelineBlueprint";
 import { SliderRepeat } from "../../hitObjects/SliderRepeat";
+import { TimelineSliderTail } from "./TimelineSliderTail";
 
 export class SliderTimelineBlueprint extends OsuTimelineBlueprint<Slider>
 {
   #headCircle!: Container;
-  #tailCircle!: Container;
+  #tailCircle!: TimelineSliderTail;
   #headSelectionOverlay!: SkinnableDrawable;
-  #tailSelectionOverlay!: SkinnableDrawable;
   #body!: Drawable;
   #repeats!: Container;
 
@@ -31,23 +31,7 @@ export class SliderTimelineBlueprint extends OsuTimelineBlueprint<Slider>
         origin: Anchor.Center,
         height: 0.9,
       }),
-      this.#tailCircle = new Container({
-        relativeSizeAxes: Axes.Both,
-        children: [
-          new SkinnableDrawable(OsuSkinComponents.TimelineSliderTail).with({
-            relativeSizeAxes: Axes.Both,
-            anchor: Anchor.CenterRight,
-            origin: Anchor.Center,
-            scale: new Vec2(TimelineBlueprint.SIZE).divInPlace(OsuHitObject.OBJECT_DIMENSIONS),
-          }),
-          this.#tailSelectionOverlay = new SkinnableDrawable(OsuSkinComponents.HitCircleSelect).with({
-            relativeSizeAxes: Axes.Both,
-            anchor: Anchor.CenterRight,
-            origin: Anchor.Center,
-            scale: new Vec2(TimelineBlueprint.SIZE).divInPlace(OsuHitObject.OBJECT_DIMENSIONS),
-          }),
-        ],
-      }),
+      this.#tailCircle = new TimelineSliderTail(this),
       this.#repeats = new Container({
         relativeSizeAxes: Axes.Both,
       }),
@@ -79,7 +63,7 @@ export class SliderTimelineBlueprint extends OsuTimelineBlueprint<Slider>
     this.selected.bindValueChanged(selected =>
     {
       this.#headSelectionOverlay.alpha = selected.value ? 1 : 0;
-      this.#tailSelectionOverlay.alpha = selected.value ? 1 : 0;
+      this.#tailCircle.selected = selected.value;
     }, true);
   }
 
@@ -123,4 +107,5 @@ export class SliderTimelineBlueprint extends OsuTimelineBlueprint<Slider>
     while (drawableIndex < this.#repeats.children.length)
       this.#repeats.children[drawableIndex++]?.expire();
   }
+
 }

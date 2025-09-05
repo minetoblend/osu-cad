@@ -131,11 +131,11 @@ export class ComposeTimeline extends CompositeDrawable
     return time * this.zoom;
   }
 
-  public timeAt(screenSpacePosition: Vec2)
+  public timeAtScreenSpacePosition(screenSpacePosition: Vec2)
   {
     const local = this.toLocalSpace(screenSpacePosition);
 
-    return this.startTime + (local.x / this.drawWidth) * this.visibleDuration;
+    return this.timeAtPosition(local.x) + this.startTime;
   }
 
   public positionAt(time: number)

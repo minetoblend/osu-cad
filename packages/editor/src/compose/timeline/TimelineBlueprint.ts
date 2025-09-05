@@ -1,12 +1,13 @@
 import type { HitObject } from "@osucad/core";
 import { ISkinSource, PoolableDrawableWithLifetime } from "@osucad/core";
-import type { MouseDownEvent } from "@osucad/framework";
+import type { DragStartEvent, DragEvent, MouseDownEvent, DragEndEvent } from "@osucad/framework";
 import { Anchor, Axes, Bindable, MouseButton, provideSelf, resolved } from "@osucad/framework";
 import { Color } from "pixi.js";
 import { ComposeTimeline } from "./ComposeTimeline";
 import type { TimelineLifetimeEntry } from "./TimelineLifetimeEntry";
 import { HitObjectSelection } from "../HitObjectSelection";
-import { EditorBeatmap } from "../../runtime";
+import { EditorBeatmap, EditorHistory } from "../../runtime";
+import { BindableBeatDivisor } from "../../BindableBeatDivisor";
 
 @provideSelf()
 export class TimelineBlueprint<T extends HitObject = HitObject> extends PoolableDrawableWithLifetime<TimelineLifetimeEntry>
@@ -46,7 +47,7 @@ export class TimelineBlueprint<T extends HitObject = HitObject> extends Poolable
     this.alpha = this.hitObject.isAttached() ? 1 : 0;
   }
 
-  protected get hitObject(): T
+  public get hitObject(): T
   {
     return this.entry!.hitObject as T;
   }
@@ -129,6 +130,56 @@ export class TimelineBlueprint<T extends HitObject = HitObject> extends Poolable
     }
 
     return super.onMouseDown(e);
+  }
+
+  #dragStartTime = 0;
+
+  @resolved(EditorHistory, true)
+  accessor #history!: EditorHistory | undefined
+
+  @resolved(BindableBeatDivisor)
+  accessor #beatDivisor!: BindableBeatDivisor
+
+  protected override onDragStart(e: DragStartEvent)
+  {
+    if (!this.selection)
+      return true;
+
+    this.entry!.keepAlive = true;
+
+    this.#dragStartTime = this.#timeline.timeAtScreenSpacePosition(e.screenSpaceMousePosition);
+    return true;
+  }
+
+  protected override onDrag(e: DragEvent)
+  {
+    this.#history?.discardUncommittedChanges();
+
+    const time = this.#timeline.timeAtScreenSpacePosition(e.screenSpaceMousePosition);
+
+    const newStartTime = this.beatmap.controlPointInfo.snap(this.hitObject.startTime + time - this.#dragStartTime, this.#beatDivisor.value);
+
+    const delta = newStartTime - this.hitObject.startTime;
+
+    if (this.selection)
+    {
+      for (const hitObject of this.selection!)
+        hitObject.startTime += delta;
+    }
+    else
+    {
+      this.hitObject.startTime += delta;
+    }
+
+    return true;
+  }
+
+  protected override onDragEnd(e: DragEndEvent)
+  {
+    this.#history?.commit();
+
+    if (this.entry)
+      this.entry.keepAlive = false;
   }
 
   public override dispose(): void

@@ -1,5 +1,6 @@
 import type { HitObject , HitObjectLifetimeEntry } from "@osucad/core";
 import { PooledDrawableWithLifetimeContainer } from "@osucad/core";
+import type { Bindable } from "@osucad/framework";
 import { Axes, dependencyLoader, resolved } from "@osucad/framework";
 import { EditorClock } from "../../EditorClock";
 import { EditorBeatmap } from "../../runtime";
@@ -93,14 +94,39 @@ export abstract class TimelineBlueprintContainer extends PooledDrawableWithLifet
       entry.selected.value = false;
   }
 
-  protected override addDrawable(entry: HitObjectLifetimeEntry, drawable: TimelineBlueprint<HitObject>): void
+  protected override addDrawable(entry: TimelineLifetimeEntry, drawable: TimelineBlueprint<HitObject>): void
   {
     this.#content.add(drawable);
+    this.#bindStartTime(entry, drawable);
   }
 
-  protected override removeDrawable(entry: HitObjectLifetimeEntry, drawable: TimelineBlueprint<HitObject>): void
+  protected override removeDrawable(entry: TimelineLifetimeEntry, drawable: TimelineBlueprint<HitObject>): void
   {
     this.#content.remove(drawable, false);
+    this.#unbindStartTime(entry);
+  }
+
+  readonly #startTimeMap = new Map<TimelineLifetimeEntry, Bindable<number>>;
+
+  #bindStartTime(entry: TimelineLifetimeEntry, drawable: TimelineBlueprint<HitObject>)
+  {
+    const startTime = entry.hitObject.startTimeBindable.getBoundCopy();
+    startTime.bindValueChanged(e =>
+    {
+      this.#content.changeChildDepth(drawable, e.value);
+    }, true);
+
+    this.#startTimeMap.set(entry, startTime);
+  }
+
+  #unbindStartTime(entry: TimelineLifetimeEntry)
+  {
+    const bindable = this.#startTimeMap.get(entry);
+    if (bindable)
+    {
+      this.#startTimeMap.delete(entry);
+      bindable.unbindAll();
+    }
   }
 
   protected override update(): void
