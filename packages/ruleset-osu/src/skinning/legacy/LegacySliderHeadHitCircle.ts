@@ -34,9 +34,9 @@ export class LegacySliderHeadHitCircle extends LegacyCirclePiece
 
   }
 
-  public override dispose(isDisposing: boolean = true): void
+  public override dispose(): void
   {
-    super.dispose(isDisposing);
+    super.dispose();
 
     this.drawableHitObject.hitObjectApplied.removeListener(this.#hitObjectApplied, this);
   }
