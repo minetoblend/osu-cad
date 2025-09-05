@@ -80,7 +80,7 @@ export abstract class HitObjectComposer extends CompositeDrawable
       }),
     ];
 
-    const tools = this.tools = await this.getTools();
+    const tools = this.tools = this.getTools();
     this.activeTool.value = tools[0];
 
     for (const tool of tools)
@@ -132,7 +132,7 @@ export abstract class HitObjectComposer extends CompositeDrawable
 
   public tools!: ComposeToolInfo[];
 
-  protected abstract getTools(): ComposeToolInfo[] | Promise<ComposeToolInfo[]>;
+  protected abstract getTools(): ComposeToolInfo[];
 
   #activeOperator?: Operator;
   #activeOperatorBox?: OperatorBox;
