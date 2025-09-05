@@ -48,7 +48,7 @@ export class OsuHitObjectComposer extends HitObjectComposer
 
     this.activeTool.bindValueChanged(tool =>
     {
-      if (tool.value.id !== "select")
+      if (!(tool.value instanceof SelectTool))
         this.#selection.clear();
     });
   }
