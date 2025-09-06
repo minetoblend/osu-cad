@@ -140,6 +140,9 @@ export class SliderInputManager extends Component
 
   public isMouseInFollowArea(expanded: boolean)
   {
+    if (this.#slider.autoMode)
+      return true;
+
     if (!this.#screenSpaceMousePosition)
       return false;
 
@@ -166,6 +169,12 @@ export class SliderInputManager extends Component
   {
     // TODO: clock is rewinding...
 
+    if (this.#slider.autoMode)
+    {
+      this.tracking = this.time.current >= this.#slider.hitObject.startTime && this.time.current < this.#slider.hitObject.endTime;
+      return;
+    }
+
     const wasTracking = this.tracking;
 
     const headCircleHitAction = this.#getInitialHitAction();
@@ -181,7 +190,7 @@ export class SliderInputManager extends Component
         this.#timeToAcceptAnyKeyAfter = this.time.current;
     }
 
-    if (this.#slider.osuActionInputManager == null)
+    if (this.#slider.osuActionInputManager === null)
       return;
 
     this.#lastPressedActions.length = 0;
