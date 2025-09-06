@@ -35,6 +35,9 @@
     },
     {
       "path": "./multiplayer/client"
+    },
+    {
+      "path": "./multiplayer/server"
     }
   ],
   "ts-node": {

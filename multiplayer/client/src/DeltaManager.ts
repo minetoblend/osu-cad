@@ -3,8 +3,8 @@ import { type IRemoteDocumentMessage, MessageType } from "@osucad/multiplayer-pr
 import { DeltaQueue } from "./DeltaQueue.js";
 import { DeltaCompressor, type DocumentRuntime } from "@osucad/multiplayer-core";
 import type { DeltaConnection } from "./DeltaConnection.js";
-import type { Audience } from "./Audience.js";
 import type { DocumentStorageService } from "./DocumentStorageService.js";
+import type { ProtocolHandler } from "./ProtocolHandler.js";
 
 export class DeltaManager
 {
@@ -13,7 +13,7 @@ export class DeltaManager
 
   public constructor(
     public readonly runtime: DocumentRuntime,
-    public readonly audience: Audience,
+    private readonly protocolHandler: ProtocolHandler,
   )
   {
     runtime.on("deltaSubmitted", (dds, delta) => this.deltaCompressor.push(dds.id, delta));
@@ -29,39 +29,22 @@ export class DeltaManager
     this.#connection = connection;
     this.#storage = storageService;
 
-    for (const client of connection.clients)
-      this.audience.addMember(client);
-
-    this.audience.setOwnClientId(connection.clientId);
+    this.inbound.push(connection.initialDeltas);
 
     connection.on("deltas", deltas => this.inbound.push(deltas));
     connection.on("signal", signal => this.inboundSignal.push(signal));
-    connection.on("clientJoin", client => this.audience.addMember(client));
-    connection.on("clientLeave", client => this.audience.removeMember(client.clientId));
   }
 
   public readonly inbound = new DeltaQueue<IRemoteDocumentMessage[]>((messages) =>
   {
     for (const message of messages)
-    {
-      const local = this.#connection!.clientId === message.clientId;
-      this.runtime.process(message, local);
-      this.#sequenceNumber = message.sequenceNumber;
-      if (local)
-      {
-        this.#deltasInFlight--;
-      }
-    }
+      this.protocolHandler.process(message);
   });
 
   public readonly inboundSignal = new DeltaQueue<IRemoteSignalMessage>(message =>
   {
     this.runtime.processSignal(message, message.clientId === this.#connection!.clientId);
   });
-
-  #deltasInFlight = 0;
-  #sequenceNumber = -1;
-  #lastSummarySequenceNumber = -1;
 
   public resume()
   {
@@ -93,34 +76,6 @@ export class DeltaManager
       }
 
       this.#connection!.submitDeltas(messages);
-      this.#deltasInFlight += messages.length;
     }, 50);
-
-    setTimeout(this.#submitSummary, 30_000);
   }
-
-  #submitSummary = async() =>
-  {
-    if (this.#deltasInFlight !== 0 || this.#sequenceNumber < 0 || this.#sequenceNumber !== this.#lastSummarySequenceNumber || this.deltaCompressor.hasDeltas())
-    {
-      setTimeout(this.#submitSummary, 5_000);
-      return;
-    }
-
-    try
-    {
-      const summary = this.runtime.createSummary();
-
-      this.#lastSummarySequenceNumber = this.#sequenceNumber;
-
-      await this.#storage?.createSummary(summary, this.#sequenceNumber);
-    }
-    catch (e)
-    {
-      // TODO
-      console.error(e);
-    }
-
-    setTimeout(this.#submitSummary, 30_000);
-  };
 }

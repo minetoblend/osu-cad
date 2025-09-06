@@ -50,15 +50,15 @@ export class LocalDeltaStore implements IDeltaStorage
 
     const { start, end } = options;
 
-    if (!start && !end)
+    if (start === undefined && end === undefined)
       return deltas;
 
     return deltas.filter(delta =>
     {
-      if (start && delta.sequenceNumber < start)
+      if (start !== undefined && delta.sequenceNumber < start)
         return false;
 
-      if (end && delta.sequenceNumber >= end)
+      if (end !== undefined && delta.sequenceNumber >= end)
         return false;
 
       return true;

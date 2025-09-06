@@ -1,9 +1,12 @@
+import type { IFullDocumentSummary } from "@osucad/multiplayer-core";
 import { type DocumentRuntime } from "@osucad/multiplayer-core";
 import type { DocumentService, DocumentServiceFactory } from "./DocumentService.js";
 import type { DeltaConnection } from "./DeltaConnection.js";
 import { DeltaManager } from "./DeltaManager.js";
 import type { IAudience } from "./Audience.js";
 import { Audience } from "./Audience.js";
+import { ProtocolHandler } from "./ProtocolHandler.js";
+import type { DeltaStorageService } from "./DeltaStorageService.js";
 
 export interface DocumentOptions
 {
@@ -19,18 +22,20 @@ export class Document
   }: DocumentOptions)
   {
     this.#serviceFactory = serviceFactory;
-    this.#audience = new Audience();
     this.runtime = runtime;
+    this.#audience = new Audience();
+    this.#protocolHandler = new ProtocolHandler(this.runtime, this.#audience, () => this.#connection!);
 
     this.#deltaManager = new DeltaManager(
         this.runtime,
-        this.#audience,
+        this.#protocolHandler,
     );
   }
 
   readonly #serviceFactory: DocumentServiceFactory;
   readonly #deltaManager: DeltaManager;
   readonly #audience: Audience;
+  readonly #protocolHandler: ProtocolHandler;
   public readonly runtime: DocumentRuntime;
   #service!: DocumentService;
   #connection?: DeltaConnection;
@@ -73,25 +78,41 @@ export class Document
   {
     this.#service = await this.#serviceFactory.createDocumentService(documentId);
 
+    const connectionP = this.#service.connectToDeltaStream();
     const storage = await this.#service.connectToStorage();
     const deltas = await this.#service.connectToDeltaStorage();
 
-    const { summary, sequenceNumber } = await storage.getSummary();
+    const firstReceivedSequenceNumberP = connectionP
+      .then(c => c.initialDeltas.length > 0
+          ? c.initialDeltas[0].sequenceNumber
+          : new Promise<number>(resolve => c.once("deltas", message => resolve(message[0].sequenceNumber))),
+      );
 
-    this.#connection = await this.#service.connectToDeltaStream();
+    const { summary } = await storage.getSummary();
+
+    console.log(summary);
+
+    await this.#initializeFromSummary(summary);
+
+    this.#connection = await connectionP;
+
+    this.#audience.setOwnClientId(this.#connection!.clientId);
 
     this.#deltaManager.setConnected(this.#connection, storage);
 
-    await this.runtime.load(summary);
+    const firstReceivedSequenceNumber = await firstReceivedSequenceNumberP;
 
-    if (sequenceNumber !== this.#connection?.sequenceNumber)
+    this.#catchUp(deltas, summary.sequenceNumber, firstReceivedSequenceNumber)
+      .then(() => this.#deltaManager.resume());
+  }
+
+  async #catchUp(deltas: DeltaStorageService, lastObservedSequenceNumber: number, firstReceivedSequenceNumber: number)
+  {
+    if (lastObservedSequenceNumber !== firstReceivedSequenceNumber)
     {
-      let lastObservedSequenceNumber = sequenceNumber;
-
       do
       {
-        const batch = (await deltas.getDeltas(lastObservedSequenceNumber + 1))
-          .filter(m => m.sequenceNumber <= this.#connection!.sequenceNumber);
+        const batch = await deltas.getDeltas(lastObservedSequenceNumber + 1, firstReceivedSequenceNumber);
 
         if (batch.length === 0)
           continue;
@@ -99,11 +120,17 @@ export class Document
         lastObservedSequenceNumber = batch[batch.length - 1].sequenceNumber;
 
         for (const message of batch)
-          this.runtime.process(message, false);
+          this.#protocolHandler.process(message);
 
-      } while(lastObservedSequenceNumber !== this.#connection!.sequenceNumber);
+      } while(lastObservedSequenceNumber !== firstReceivedSequenceNumber - 1);
     }
+  }
 
-    this.#deltaManager.resume();
+  async #initializeFromSummary(summary: IFullDocumentSummary)
+  {
+    await this.runtime.load(summary);
+
+    for (const client of summary.audience.clients)
+      this.#audience.addMember(client);
   }
 }

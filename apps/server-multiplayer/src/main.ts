@@ -3,11 +3,13 @@ import http from "node:http";
 import cors from "cors";
 import type { Socket } from "socket.io";
 import { Server } from "socket.io";
-import { Room } from "./room.js";
 import type { ClientMessages, ServerMessages } from "@osucad/multiplayer-core";
 import { LocalDeltaStore } from "./services/deltas.js";
 import { LocalDocumentStorage } from "./services/storage.js";
 import { createTestBeatmapSummary } from "./testBeatmap.js";
+import { MessageProcessorFactory } from "./MessageProcessorFactory.js";
+import { PartitionManager } from "@osucad/multiplayer-server";
+import { connectDocument } from "./connectDocument.js";
 
 void main();
 
@@ -26,19 +28,19 @@ async function main()
   const deltaStore = new LocalDeltaStore();
   const documentStorage = new LocalDocumentStorage();
 
-  await documentStorage.writeSummary("beatmap", await createTestBeatmapSummary(), 0);
+  const processorFactory = new MessageProcessorFactory(io, deltaStore);
 
-  const rooms: Record<string, Room> = {
-    beatmap: await Room.create("beatmap", io, deltaStore),
-  };
+  const partitionManager = new PartitionManager(processorFactory);
+
+  await documentStorage.writeSummary("beatmap", await createTestBeatmapSummary());
 
   io.on("connect", (socket: Socket<ClientMessages, ServerMessages>) =>
   {
     socket.on("connectDocument", async (message, callback) =>
     {
-      const room = rooms[message.documentId];
+      const response = await connectDocument(socket, partitionManager, message);
 
-      callback(await room.accept(socket));
+      callback(response);
     });
   });
 
@@ -57,9 +59,9 @@ async function main()
 
   app.post("/api/summary/:id", async (req, res) =>
   {
-    const { summary, sequenceNumber } = req.body;
+    const { summary } = req.body;
 
-    const version = await documentStorage.writeSummary(req.params.id, summary, sequenceNumber);
+    const version = await documentStorage.writeSummary(req.params.id, summary);
 
     res.json(version);
   });

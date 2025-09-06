@@ -1,23 +1,23 @@
-import type { IEditorDocumentSummary } from "@osucad/editor";
 
-export interface ISummaryWithSequenceNumber
+import type { IFullDocumentSummary } from "@osucad/multiplayer-core";
+
+export interface IVersionedSummary
 {
-  summary: IEditorDocumentSummary
-  sequenceNumber: number
+  summary: IFullDocumentSummary
   version: number
 }
+
 export class LocalDocumentStorage
 {
-  #summaries = new Map<string, ISummaryWithSequenceNumber[]>();
+  #summaries = new Map<string, IVersionedSummary[]>();
 
-  public async writeSummary(documentId: string, summary: IEditorDocumentSummary, sequenceNumber: number)
+  public async writeSummary(documentId: string, summary: IFullDocumentSummary)
   {
     const summaries = this.#summaries.get(documentId);
 
     if (!summaries)
     {
       this.#summaries.set(documentId, [{
-        sequenceNumber,
         summary,
         version: 1,
       }]);
@@ -29,7 +29,6 @@ export class LocalDocumentStorage
       const version = (summaries[summaries.length - 1]?.version ?? 0) + 1;
 
       summaries.push({
-        sequenceNumber,
         summary,
         version,
       });
@@ -38,7 +37,7 @@ export class LocalDocumentStorage
     }
   }
 
-  public async readSummary(documentId: string, version?: number)
+  public async readSummary(documentId: string, version?: number): Promise<IVersionedSummary | undefined>
   {
     const summaries = this.#summaries.get(documentId);
 

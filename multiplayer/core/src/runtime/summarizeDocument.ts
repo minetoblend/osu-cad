@@ -34,6 +34,7 @@ export function summarizeDocument(runtime: DocumentRuntime): IDocumentSummary
   }
 
   return {
+    attributes: {},
     types: [...runtime.typeRegistry.ddsFactories.values()].map(it => it.attributes),
     root: nn(runtime.root.id),
     entries,

@@ -1,0 +1,30 @@
+{
+  "name": "@osucad/multiplayer-server",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "!**/*.tsbuildinfo"
+  ],
+  "sideEffects": false,
+  "dependencies": {
+    "@osucad/multiplayer-protocol": "workspace:^",
+    "async": "^3.2.6",
+    "eventemitter3": "^5.0.1",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@types/async": "^3.2.24"
+  }
+}

@@ -5,11 +5,6 @@ import type { EditorRuleset } from "../EditorRuleset";
 import { EditorHistory } from "./EditorHistory";
 import { EditorBeatmap, HitObjectCollection } from "./dds";
 
-export interface IEditorDocumentSummary extends IDocumentSummary
-{
-  rulesetId: string
-}
-
 export interface EditorRuntimeConfig
 {
   readonly types: readonly DDSFactoryOrConstructor<DDS>[]
@@ -39,13 +34,16 @@ export class EditorRuntime extends DocumentRuntime<EditorBeatmap>
   public ruleset!: Ruleset;
   public editorRuleset!: EditorRuleset;
 
-  public override createSummary(): IEditorDocumentSummary
+  public override createSummary(): IDocumentSummary
   {
     const summary = super.createSummary();
 
     return {
-      rulesetId: this.ruleset.id,
       ...summary,
+      attributes: {
+        ...summary.attributes,
+        rulesetId: this.ruleset.id,
+      },
     };
   }
 
@@ -70,11 +68,11 @@ export class EditorRuntime extends DocumentRuntime<EditorBeatmap>
 
   public override async load(summary: IDocumentSummary)
   {
-    if (!("rulesetId" in summary) || typeof summary.rulesetId !== "string")
+    if (!("rulesetId" in summary.attributes) || typeof summary.attributes.rulesetId !== "string")
       throw new Error("Invalid document summary");
 
-    this.ruleset = nn(this.rulesetStore.get({ id: summary.rulesetId }), `Ruleset "${summary.rulesetId}" is not supported`);
-    this.editorRuleset = nn(await this.ruleset.createEditorRuleset?.(), `Ruleset "${summary.rulesetId}" is not supported`);
+    this.ruleset = nn(this.rulesetStore.get({ id: summary.attributes.rulesetId }), `Ruleset "${summary.attributes.rulesetId}" is not supported`);
+    this.editorRuleset = nn(await this.ruleset.createEditorRuleset?.(), `Ruleset "${summary.attributes.rulesetId}" is not supported`);
 
     const config = this.editorRuleset.runtimeConfig;
 

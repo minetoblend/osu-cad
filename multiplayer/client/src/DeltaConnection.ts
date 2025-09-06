@@ -26,6 +26,8 @@ export class DeltaConnection extends EventEmitter<DeltaConnectionEvents>
     socket.on("clientLeave", client => this.emit("clientLeave", client));
   }
 
+  public readonly initialDeltas: IRemoteDocumentMessage[] = [];
+
   public static async create(documentId: string, timeout: number = 20000)
   {
     const socket = io("/", {
@@ -69,7 +71,13 @@ export class DeltaConnection extends EventEmitter<DeltaConnectionEvents>
 
   public async connect(connectMessage: IConnect)
   {
+    const onDeltas = (deltas: IRemoteDocumentMessage[]) => this.initialDeltas.push(...deltas);
+
+    this.socket.on("deltas", onDeltas);
+
     this.#details = await this.socket.emitWithAck("connectDocument", connectMessage);
+
+    this.socket.off("deltas", onDeltas);
   }
 
   public submitDeltas(deltas: IDocumentMessage[])

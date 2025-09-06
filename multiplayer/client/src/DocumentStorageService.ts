@@ -1,4 +1,4 @@
-import type { IDocumentSummary } from "@osucad/multiplayer-protocol";
+import type { IFullDocumentSummary } from "@osucad/multiplayer-protocol";
 
 export class DocumentStorageService
 {
@@ -7,15 +7,15 @@ export class DocumentStorageService
   }
 
   public async getSummary(): Promise<{
-    summary: IDocumentSummary,
-    sequenceNumber: number
+    summary: IFullDocumentSummary,
+    version: number
   }>
   {
     return await fetch(`/api/summary/${this.documentId}`).then(res => res.json());
   }
 
   public async createSummary(
-    summary: IDocumentSummary,
+    summary: IFullDocumentSummary,
     sequenceNumber: number,
   ): Promise<number>
   {

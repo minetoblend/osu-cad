@@ -4,6 +4,8 @@ export enum MessageType
 {
   Delta = "delta",
   Attach = "attach",
+  ClientJoin = "client_join",
+  ClientLeave = "client_leave",
 }
 
 export type IDocumentMessage =
@@ -14,11 +16,6 @@ export interface IDocumentMessageBase<Type extends MessageType>
 {
   type: Type
 }
-
-export type IRemoteDocumentMessage<T extends IDocumentMessage = IDocumentMessage> = T & {
-  clientId: string
-  sequenceNumber: number
-};
 
 export interface IDeltaMessage extends IDocumentMessageBase<MessageType.Delta>
 {
@@ -35,6 +32,16 @@ export interface IEncodedDelta
 export interface IAttachMessage extends IDocumentMessageBase<MessageType.Attach>
 {
   readonly content: IAttachInfo[]
+}
+
+export interface IClientJoin extends IDocumentMessageBase<MessageType.ClientJoin>
+{
+  client: IClient
+}
+
+export interface IClientLeave extends IDocumentMessageBase<MessageType.ClientLeave>
+{
+  clientId: string
 }
 
 export interface IAttachInfo
@@ -71,4 +78,35 @@ export interface ISignalMessage
 export interface IRemoteSignalMessage extends ISignalMessage
 {
   clientId: string
+}
+
+
+export type IRemoteDocumentMessage =
+    | IRemoteDocumentMessage.Deltas
+    | IRemoteDocumentMessage.ClientJoin
+    | IRemoteDocumentMessage.ClientLeave;
+
+export namespace IRemoteDocumentMessage
+{
+  export interface Deltas
+  {
+    type: "deltas"
+    clientId: string
+    content: IDocumentMessage[]
+    sequenceNumber: number
+  }
+
+  export interface ClientJoin
+  {
+    type: "client_join"
+    content: IClient
+    sequenceNumber: number
+  }
+
+  export interface ClientLeave
+  {
+    type: "client_leave"
+    content: string
+    sequenceNumber: number
+  }
 }
