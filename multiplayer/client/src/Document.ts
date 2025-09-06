@@ -102,16 +102,26 @@ export class Document
 
     const firstReceivedSequenceNumber = await firstReceivedSequenceNumberP;
 
-    this.#catchUp(deltas, summary.sequenceNumber, firstReceivedSequenceNumber)
-      .then(() => this.#deltaManager.resume());
+    const abortController = new AbortController();
+
+    const timeout = setTimeout(() => abortController.abort("timeout"), 10_000);
+
+    await this.#catchUp(deltas, summary.sequenceNumber, firstReceivedSequenceNumber, abortController.signal);
+
+    clearTimeout(timeout);
+
+
+    this.#deltaManager.resume();
   }
 
-  async #catchUp(deltas: DeltaStorageService, lastObservedSequenceNumber: number, firstReceivedSequenceNumber: number)
+  async #catchUp(deltas: DeltaStorageService, lastObservedSequenceNumber: number, firstReceivedSequenceNumber: number, signal?: AbortSignal)
   {
     if (lastObservedSequenceNumber !== firstReceivedSequenceNumber)
     {
-      do
+      while (true)
       {
+        signal?.throwIfAborted();
+
         const batch = await deltas.getDeltas(lastObservedSequenceNumber + 1, firstReceivedSequenceNumber);
 
         if (batch.length === 0)
@@ -122,7 +132,11 @@ export class Document
         for (const message of batch)
           this.#protocolHandler.process(message);
 
-      } while(lastObservedSequenceNumber !== firstReceivedSequenceNumber - 1);
+        if (lastObservedSequenceNumber === firstReceivedSequenceNumber - 1)
+          break;
+
+        await new Promise<void>(resolve => setTimeout(resolve, 200));
+      }
     }
   }
 
