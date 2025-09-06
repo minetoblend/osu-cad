@@ -90,8 +90,6 @@ export class Document
 
     const { summary } = await storage.getSummary();
 
-    console.log(summary);
-
     await this.#initializeFromSummary(summary);
 
     this.#connection = await connectionP;
@@ -116,7 +114,7 @@ export class Document
 
   async #catchUp(deltas: DeltaStorageService, lastObservedSequenceNumber: number, firstReceivedSequenceNumber: number, signal?: AbortSignal)
   {
-    if (lastObservedSequenceNumber !== firstReceivedSequenceNumber)
+    if (lastObservedSequenceNumber !== firstReceivedSequenceNumber - 1)
     {
       while (true)
       {
@@ -124,16 +122,18 @@ export class Document
 
         const batch = await deltas.getDeltas(lastObservedSequenceNumber + 1, firstReceivedSequenceNumber);
 
-        if (batch.length === 0)
-          continue;
+        if (batch.length > 0)
+        {
+          lastObservedSequenceNumber = batch[batch.length - 1].sequenceNumber;
 
-        lastObservedSequenceNumber = batch[batch.length - 1].sequenceNumber;
+          for (const message of batch)
+            this.#protocolHandler.process(message);
 
-        for (const message of batch)
-          this.#protocolHandler.process(message);
+          if (lastObservedSequenceNumber === firstReceivedSequenceNumber - 1)
+            break;
+        }
 
-        if (lastObservedSequenceNumber === firstReceivedSequenceNumber - 1)
-          break;
+
 
         await new Promise<void>(resolve => setTimeout(resolve, 200));
       }
