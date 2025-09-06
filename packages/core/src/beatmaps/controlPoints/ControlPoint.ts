@@ -23,4 +23,9 @@ export abstract class ControlPoint extends ObjectDDS
   @type("float64")
   @bindableBacked("timeBindable")
   public accessor time!: number;
+
+  public isRedundant(other: ControlPoint): boolean
+  {
+    return false;
+  }
 }

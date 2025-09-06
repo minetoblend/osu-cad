@@ -61,4 +61,9 @@ export class BeatmapInfo extends ObjectDDS
   @type("boolean")
   public accessor samplesMatchingPlaybackRate = false;
 
+  @type("int32")
+  public accessor onlineId = -1
+
+  @type("int32")
+  public accessor onlineBeatmapSetId = -1
 }

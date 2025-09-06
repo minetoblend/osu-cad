@@ -367,7 +367,7 @@ export abstract class InputManager extends Container implements IInputStateChang
     return this.#hoveredDrawables;
   }
 
-  protected get handleHoverEvents()
+  public get handleHoverEvents()
   {
     return true;
   }

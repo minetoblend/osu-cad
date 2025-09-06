@@ -6,6 +6,8 @@ import { nn } from "../../utils/nn";
 import { Beatmap } from "../Beatmap";
 import { LegacyTimingPoint } from "../timing/LegacyTimingPoint";
 import { SampleSet } from "../../audio/SampleSet";
+import type { ControlPoint } from "../controlPoints";
+import { TimingControlPoint } from "../controlPoints";
 
 export interface BeatmapParserOptions
 {
@@ -17,6 +19,8 @@ export interface RulesetBeatmapParser
   createBeatmap?(): Beatmap;
 
   parseHitObject(line: string, beatmap: Beatmap): HitObject | null;
+
+  convertTimingPoint(timingPoint: LegacyTimingPoint): Iterable<ControlPoint>
 }
 
 enum BeatmapSection
@@ -58,9 +62,9 @@ export class BeatmapParser
 
     const getRuleset = () =>
     {
-      if (!beatmap.beatmapInfo.ruleset)
+      if (!beatmap.ruleset)
         throw new Error("No ruleset" /* TODO: better error message */);
-      return beatmap.beatmapInfo.ruleset;
+      return beatmap.ruleset;
     };
 
     const getRulesetParser = async (): Promise<RulesetBeatmapParser> =>
@@ -92,7 +96,7 @@ export class BeatmapParser
         parseDifficulty(line, beatmap);
         break;
       case BeatmapSection.TimingPoints:
-        parseTimingPoint(line, beatmap);
+        parseTimingPoint(line, beatmap, await getRulesetParser());
         break;
       case BeatmapSection.Colours:
         parseColors(line, beatmap);
@@ -101,7 +105,7 @@ export class BeatmapParser
         const hitObject = (rulesetParser ??= await getRulesetParser()).parseHitObject(line, beatmap);
         if (hitObject)
         {
-          hitObject.applyDefaults(beatmap.difficulty, beatmap.timing);
+          hitObject.applyDefaults(beatmap.difficulty, beatmap.controlPointInfo);
           beatmap.hitObjects.push(hitObject);
         }
         break;
@@ -119,8 +123,10 @@ export class BeatmapParser
   }
 }
 
-function parseGeneral(line: string, { beatmapInfo }: Beatmap)
+function parseGeneral(line: string, beatmap: Beatmap)
 {
+  const { beatmapInfo } = beatmap;
+
   const [key, value] = parseKeyValue(line);
 
   if (!key || !value)
@@ -151,7 +157,7 @@ function parseGeneral(line: string, { beatmapInfo }: Beatmap)
     beatmapInfo.stackLeniency = Number.parseFloat(value);
     break;
   case "Mode":
-    beatmapInfo.ruleset = nn(
+    beatmap.ruleset = nn(
         rulesets.get({ legacyId: Number.parseInt(value) }),
         `No ruleset found for Mode: ${value} `,
     );
@@ -226,10 +232,10 @@ function parseMetadata(line: string, beatmap: Beatmap)
     beatmap.metadata.tags = value;
     break;
   case "BeatmapID":
-    beatmap.beatmapInfo.onlineInfo.id = Number.parseInt(value);
+    beatmap.beatmapInfo.onlineId = Number.parseInt(value);
     break;
   case "BeatmapSetID":
-    beatmap.beatmapInfo.onlineInfo.beatmapSetId = Number.parseInt(value);
+    beatmap.beatmapInfo.onlineBeatmapSetId = Number.parseInt(value);
     break;
   }
 }
@@ -264,7 +270,7 @@ function parseDifficulty(line: string, beatmap: Beatmap)
   }
 }
 
-function parseTimingPoint(line: string, beatmap: Beatmap)
+function parseTimingPoint(line: string, beatmap: Beatmap, rulesetParser: RulesetBeatmapParser)
 {
   const values = line.split(",");
   if (values.length <= 1)
@@ -305,7 +311,18 @@ function parseTimingPoint(line: string, beatmap: Beatmap)
     timingPoint.sliderVelocity = sliderVelocity;
   }
 
-  beatmap.timing.add(timingPoint);
+  if (timingPoint.timingInfo)
+  {
+    const controlPoint = new TimingControlPoint();
+    controlPoint.time = timingPoint.startTime;
+    controlPoint.beatLength = timingPoint.timingInfo.beatLength;
+    controlPoint.signature = timingPoint.timingInfo.signature;
+
+    beatmap.controlPointInfo.add(controlPoint);
+  }
+
+  for (const controlPoint of rulesetParser.convertTimingPoint(timingPoint))
+    beatmap.controlPointInfo.add(controlPoint, true);
 }
 
 function parseVersionHeader(line: string)

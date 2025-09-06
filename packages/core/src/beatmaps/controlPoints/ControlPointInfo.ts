@@ -68,7 +68,7 @@ export class ControlPointInfo extends DDS<IControlPointInfoDelta>
   public readonly removed = new Action<ControlPoint>();
 
   readonly #controlPoints: ControlPoint[] = [];
-  readonly #idMap = new Map<string, ControlPoint>();
+  readonly #idMap = new Map<number, ControlPoint>();
 
   public readonly timingPoints: ControlPointList<TimingControlPoint>;
   public readonly samplePoints: ControlPointList<SampleControlPoint>;
@@ -111,17 +111,28 @@ export class ControlPointInfo extends DDS<IControlPointInfoDelta>
     return snappedTime + beatSnapLength;
   }
 
-  public add(controlPoint: ControlPoint)
+  public add(controlPoint: ControlPoint, skipIfRedundant = false)
   {
-    const ref = this.encoder.encodeDDS(controlPoint);
+    if (skipIfRedundant)
+    {
+      const list = this.#listFor(controlPoint);
+      const existing = list.controlPointAt(controlPoint.time);
+      if (existing && controlPoint.isRedundant(existing))
+        return false;
+    }
 
     if (!this.#add(controlPoint))
       return false;
 
-    const delta = new AddControlPointDelta(ref, controlPoint);
-    const undo = new RemoveControlPointDelta(ref);
+    if (this.isAttached())
+    {
+      const ref = this.encoder.encodeDDS(controlPoint);
 
-    this.submitDelta(delta, undo);
+      const delta = new AddControlPointDelta(ref, controlPoint);
+      const undo = new RemoveControlPointDelta(ref);
+
+      this.submitDelta(delta, undo);
+    }
 
     return true;
   }
@@ -143,7 +154,7 @@ export class ControlPointInfo extends DDS<IControlPointInfoDelta>
 
   #add(controlPoint: ControlPoint)
   {
-    const id = nn(controlPoint.id);
+    const id = controlPoint.uid;
 
     if (this.#idMap.has(id))
       return false;
@@ -160,7 +171,7 @@ export class ControlPointInfo extends DDS<IControlPointInfoDelta>
 
   #remove(controlPoint: ControlPoint)
   {
-    const id = nn(controlPoint.id);
+    const id = controlPoint.uid;
 
     if (!this.#idMap.has(id))
       return false;
@@ -213,9 +224,9 @@ export class ControlPointInfo extends DDS<IControlPointInfoDelta>
     }
     else if (opType === OpType.Remove)
     {
-      const object = this.#idMap.get(ref.$ref);
+      const object = this.decoder.decodeDDS(ref);
 
-      if (object)
+      if (object instanceof ControlPoint)
         this.#remove(object);
     }
   }
@@ -228,8 +239,8 @@ export class ControlPointInfo extends DDS<IControlPointInfoDelta>
     }
     else if (delta instanceof RemoveControlPointDelta)
     {
-      const object = this.#idMap.get(delta.ref.$ref);
-      if (object)
+      const object = this.decoder.decodeDDS(delta.ref);
+      if (object instanceof ControlPoint)
         this.remove(object);
     }
   }

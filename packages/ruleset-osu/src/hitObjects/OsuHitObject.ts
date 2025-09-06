@@ -10,7 +10,7 @@ import type { Spinner } from "./Spinner";
 export interface OsuHitObjectOptions
 {
   startTime?: number;
-  position?: IVec2;
+  position?: Vec2;
   x?: number;
   y?: number;
   newCombo?: boolean;

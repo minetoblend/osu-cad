@@ -227,6 +227,9 @@ importers:
       '@osucad/multiplayer-core':
         specifier: workspace:^
         version: link:../../multiplayer/core
+      '@osucad/multiplayer-protocol':
+        specifier: workspace:^
+        version: link:../../multiplayer/protocol
       '@osucad/multiplayer-server':
         specifier: workspace:^
         version: link:../../multiplayer/server

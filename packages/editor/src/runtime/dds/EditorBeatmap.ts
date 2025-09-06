@@ -1,8 +1,9 @@
+import type { Beatmap } from "@osucad/core";
+import { BeatmapDifficultyInfo, BeatmapInfo, BeatmapMetadata, ControlPointInfo, type Ruleset } from "@osucad/core";
 import type { DDSAttributes, IDecoder } from "@osucad/multiplayer-core";
 import { nested, nn, ObjectDDS, Signaler } from "@osucad/multiplayer-core";
-import { EditorRuntime } from "../EditorRuntime";
-import { BeatmapDifficultyInfo, BeatmapInfo, BeatmapMetadata, ControlPointInfo, type Ruleset } from "@osucad/core";
 import type { EditorRuleset } from "../../EditorRuleset";
+import { EditorRuntime } from "../EditorRuntime";
 import { HitObjectCollection } from "./HitObjectCollection";
 
 export class EditorBeatmap extends ObjectDDS
@@ -53,5 +54,29 @@ export class EditorBeatmap extends ObjectDDS
     this.editorRuleset = nn(runtime.editorRuleset);
 
     super.load(summary, version, decoder);
+  }
+}
+
+export namespace EditorBeatmap
+{
+  export async function fromBeatmap(beatmap: Beatmap)
+  {
+    if (!beatmap.ruleset)
+      throw new Error("Beatmap has no ruleset");
+
+    const editorBeatmap = new EditorBeatmap();
+
+    editorBeatmap.ruleset = beatmap.ruleset;
+    editorBeatmap.editorRuleset = nn(await beatmap.ruleset.createEditorRuleset?.(), "Ruleset does not provide an editor ruleset");
+
+    editorBeatmap.controlPointInfo = beatmap.controlPointInfo;
+    editorBeatmap.difficulty = beatmap.difficulty;
+    editorBeatmap.metadata = beatmap.metadata;
+    editorBeatmap.beatmapInfo = beatmap.beatmapInfo;
+
+    for (const hitObject of beatmap.hitObjects)
+      editorBeatmap.hitObjects.add(hitObject);
+
+    return editorBeatmap;
   }
 }

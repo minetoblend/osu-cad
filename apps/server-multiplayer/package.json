@@ -8,6 +8,7 @@
     "@osucad/editor": "workspace:^",
     "@osucad/framework": "workspace:^",
     "@osucad/multiplayer-core": "workspace:^",
+    "@osucad/multiplayer-protocol": "workspace:^",
     "@osucad/multiplayer-server": "workspace:^",
     "@osucad/ruleset-osu": "workspace:^",
     "async": "^3.2.6",

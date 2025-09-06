@@ -1,3 +1,4 @@
+import type { Beatmap } from "@osucad/core";
 import { BeatmapDifficultyInfo, BeatmapInfo, BeatmapMetadata, ControlPointInfo, nn, type Ruleset, rulesets, type RulesetStore, SampleControlPoint, TimingControlPoint } from "@osucad/core";
 import type { DDS, DDSFactoryOrConstructor, IDocumentSummary } from "@osucad/multiplayer-core";
 import { DocumentRuntime, Signaler } from "@osucad/multiplayer-core";
@@ -60,6 +61,24 @@ export class EditorRuntime extends DocumentRuntime<EditorBeatmap>
       runtime.typeRegistry.register(type);
 
     const root = new EditorBeatmap();
+    runtime.objects.root = root;
+    runtime.objects.attach(root);
+
+    return runtime;
+  }
+
+  public static async createEmptyFromBeatmap(beatmap: Beatmap)
+  {
+    const runtime = new EditorRuntime();
+
+    const root = await EditorBeatmap.fromBeatmap(beatmap);
+
+    runtime.ruleset = root.ruleset;
+    runtime.editorRuleset = root.editorRuleset;
+
+    for (const type of root.editorRuleset.runtimeConfig.types)
+      runtime.typeRegistry.register(type);
+
     runtime.objects.root = root;
     runtime.objects.attach(root);
 

@@ -122,6 +122,15 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
     this.editorClock.seekingOrStopped.bindValueChanged(() => this.#updateSampleDisabledState(), true);
   }
 
+  protected override loadComplete(): void
+  {
+    super.loadComplete();
+
+    const time = this.editorBeatmap.hitObjects.first?.startTime;
+    if (time)
+      this.editorClock.seek(time);
+  }
+
   public readonly isKeyBindingHandler = true;
 
   public canHandleKeyBinding(binding: KeyBindingAction): boolean

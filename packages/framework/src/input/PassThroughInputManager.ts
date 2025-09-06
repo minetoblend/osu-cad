@@ -45,7 +45,7 @@ export class PassThroughInputManager extends CustomInputManager
 
   #useParentInput: boolean = true;
 
-  protected override get handleHoverEvents(): boolean
+  public override get handleHoverEvents(): boolean
   {
     if (this.useParentInput && this.#parentInputManager?.handleHoverEvents)
       return true;
@@ -75,7 +75,7 @@ export class PassThroughInputManager extends CustomInputManager
     return false;
   }
 
-  protected override getPendingInputs()
+  public override getPendingInputs()
   {
     const pendingInputs = super.getPendingInputs();
 

@@ -15,4 +15,14 @@ export class SliderVelocityPoint extends ControlPoint
 
   @type("float32")
   public accessor velocity = 1
+
+  public override isRedundant(other: ControlPoint): boolean
+  {
+    if (other instanceof SliderVelocityPoint)
+    {
+      return this.velocity === other.velocity;
+    }
+
+    return false;
+  }
 }

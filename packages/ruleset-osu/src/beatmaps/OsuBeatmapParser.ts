@@ -1,10 +1,11 @@
-import type { Beatmap, HitObject, RulesetBeatmapParser, SampleAdditions } from "@osucad/core";
+import type { Beatmap, ControlPoint, HitObject, LegacyTimingPoint, RulesetBeatmapParser, SampleAdditions } from "@osucad/core";
 import { HitSoundInfo, HitType, SampleSet } from "@osucad/core";
 import { Vec2 } from "@osucad/framework";
 import { HitCircle } from "../hitObjects/HitCircle";
 import { PathPoint, PathType } from "../hitObjects/PathPoint";
 import { Slider } from "../hitObjects/Slider";
 import { Spinner } from "../hitObjects/Spinner";
+import { SliderVelocityPoint } from "./SliderVelocityPoint";
 
 export class OsuBeatmapParser implements RulesetBeatmapParser
 {
@@ -29,7 +30,7 @@ export class OsuBeatmapParser implements RulesetBeatmapParser
     {
       return new HitCircle({
         startTime,
-        position: { x, y },
+        position: new Vec2(x, y),
         newCombo,
         comboOffset,
         hitSound,
@@ -42,7 +43,7 @@ export class OsuBeatmapParser implements RulesetBeatmapParser
 
       return new Slider({
         startTime,
-        position: { x, y },
+        position: new Vec2(x, y),
         newCombo,
         comboOffset,
         controlPoints: parseControlPoints(Vec2.from({ x, y }), values[5]),
@@ -59,7 +60,7 @@ export class OsuBeatmapParser implements RulesetBeatmapParser
 
       return new Spinner({
         startTime,
-        position: { x, y }, // TODO: is this actually needed?
+        position: new Vec2(x, y),
         newCombo,
         comboOffset,
         duration,
@@ -68,6 +69,17 @@ export class OsuBeatmapParser implements RulesetBeatmapParser
     }
 
     return null;
+  }
+
+  public *convertTimingPoint(timingPoint: LegacyTimingPoint): Iterable<ControlPoint>
+  {
+    if (timingPoint.sliderVelocity)
+    {
+      const velocityPoint = new SliderVelocityPoint();
+      velocityPoint.time = timingPoint.startTime;
+      velocityPoint.velocity = timingPoint.sliderVelocity;
+      yield velocityPoint;
+    }
   }
 }
 
@@ -120,10 +132,10 @@ function parsePathType(pathTypeLetter: string)
 
 function parseHitSound(str: string, additions: SampleAdditions, time: number, beatmap: Beatmap): HitSoundInfo
 {
-  const sampleInfo = beatmap.timing.getSampleInfoAt(time);
+  const samplePoint = beatmap.controlPointInfo.samplePointAt(time);
 
   if (str.length === 0)
-    return new HitSoundInfo(sampleInfo.sampleSet, sampleInfo.sampleSet, additions);
+    return new HitSoundInfo(samplePoint.sampleSet, samplePoint.sampleSet, additions);
 
   const values = str.split(":");
 
