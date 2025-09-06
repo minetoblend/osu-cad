@@ -20,6 +20,10 @@ import { SliderTick } from "../hitObjects/SliderTick";
 import { DrawableSliderTick } from "../hitObjects/drawables/DrawableSliderTick";
 import { OsuCursorContainer } from "./OsuCursorContainer";
 import { Rectangle } from "@osucad/framework";
+import { SpinnerTick } from "../hitObjects/SpinnerTick";
+import { DrawableSpinnerTick } from "../hitObjects/drawables/DrawableSpinnerTick";
+import { SpinnerBonusTick } from "../hitObjects/SpinnerBonusTick";
+import { DrawableSpinnerBonusTick } from "../hitObjects/drawables/DrawableSpinnerBonusTick";
 
 export class OsuPlayfield extends Playfield
 {
@@ -45,6 +49,8 @@ export class OsuPlayfield extends Playfield
     this.registerPool(SliderTailCircle, DrawableSliderTail, 10, 100);
     this.registerPool(SliderRepeat, DrawableSliderRepeat, 20, 100);
     this.registerPool(SliderTick, DrawableSliderTick, 20, 100);
+    this.registerPool(SpinnerBonusTick, DrawableSpinnerBonusTick, 10, 50);
+    this.registerPool(SpinnerTick, DrawableSpinnerTick, 20, 100);
 
     this.addRangeInternal([
       this.followPoints = new FollowPointRenderer(),
