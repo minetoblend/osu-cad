@@ -114,6 +114,7 @@ export class RotateInteraction extends Interaction
     this.stringValue.bindValueChanged(this.#updateState, this);
 
     this.invalidateState();
+    this.scheduler.addDelayed(() => this.invalidateState(), 1);
   }
 
   private resolveOrigin()
