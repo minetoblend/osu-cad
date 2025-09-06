@@ -164,7 +164,7 @@ export class ComposeTimeline extends CompositeDrawable
   {
     if (e.controlPressed)
     {
-      this.zoom = clamp(this.zoom + e.scrollDelta.y * 0.01, 0.2, 2);
+      this.zoom = clamp(this.zoom + e.scrollDelta.y * 0.03, 0.2, 2);
 
       return true;
     }
