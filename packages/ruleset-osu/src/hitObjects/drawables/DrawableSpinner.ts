@@ -1,5 +1,5 @@
-import type { ArmedState, DrawableHitObject, HitObject, Judgement, JudgementResult } from "@osucad/core";
-import { SampleInfo, SkinnableSound } from "@osucad/core";
+import type { ArmedState, DrawableHitObject, HitObject, Judgement, JudgementResult , SkinnableSound } from "@osucad/core";
+import { PausableSkinnableSound, SampleInfo } from "@osucad/core";
 import { AspectContainer, HitResult, SkinnableDrawable } from "@osucad/core";
 import { OsuSkinComponents } from "../../skinning/OsuSkinComponents";
 import type { Spinner } from "../Spinner";
@@ -75,12 +75,12 @@ export class DrawableSpinner extends DrawableOsuHitObject<Spinner>
           this.rotationTracker = new SpinnerRotationTracker(this),
         ],
       }),
-      this.#spinningSample = new SkinnableSound().adjust(it =>
+      this.#spinningSample = new PausableSkinnableSound().adjust(it =>
       {
         it.looping = true;
         it.minimumSampleVolume = 5;
       }),
-      this.#maxBonusSample = new SkinnableSound().adjust(it => it.minimumSampleVolume = 5),
+      this.#maxBonusSample = new PausableSkinnableSound().adjust(it => it.minimumSampleVolume = 5),
     ]);
 
     this.spinsPerMinute.bindTo(this.#spmCalculator.result);
@@ -133,6 +133,9 @@ export class DrawableSpinner extends DrawableOsuHitObject<Spinner>
 
   #isCorrectButtonPressed()
   {
+    if (this.autoMode)
+      return true;
+
     if (!this.osuActionInputManager)
       return false;
 

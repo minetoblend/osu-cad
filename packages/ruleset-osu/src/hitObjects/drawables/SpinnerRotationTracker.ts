@@ -1,4 +1,5 @@
-import type { MouseMoveEvent, Vec2 } from "@osucad/framework";
+import type { MouseMoveEvent } from "@osucad/framework";
+import { Vec2 } from "@osucad/framework";
 import { Axes, Bindable, CircularContainer, Interpolation, resolved } from "@osucad/framework";
 import type { DrawableSpinner } from "./DrawableSpinner";
 import { PlayfieldClock } from "@osucad/core";
@@ -55,6 +56,15 @@ export class SpinnerRotationTracker extends CircularContainer
   {
     super.update();
 
+    if (this.#drawableSpinner.autoMode)
+    {
+      const angle = (this.time.current - this.#drawableSpinner.hitObject.startTime) / 100;
+      this.#mousePosition = new Vec2(
+          this.drawSize.x / 2 + Math.cos(angle) * 100,
+          this.drawSize.y / 2 + Math.sin(angle) * 100,
+      );
+    }
+
     if (this.#mousePosition)
     {
       const pos = this.#mousePosition;
@@ -94,7 +104,9 @@ export class SpinnerRotationTracker extends CircularContainer
     delta = (delta * Math.abs(rate));
 
     this.#currentRotation += delta;
-    this.#drawableSpinner.result.history.reportDelta(this.time.current, delta * 180 / Math.PI);
+
+    if (!this.#drawableSpinner.autoMode)
+      this.#drawableSpinner.result.history.reportDelta(this.time.current, delta * 180 / Math.PI);
   }
 
   #resetState()
