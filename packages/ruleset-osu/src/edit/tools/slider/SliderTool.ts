@@ -1,7 +1,7 @@
 import { PlacementState } from "../HitObjectPlacementTool";
 import { PathPoint, PathType, Slider } from "../../../hitObjects";
 import type { ClickEvent, KeyDownEvent, MouseDownEvent, ScrollEvent } from "@osucad/framework";
-import { dependencyLoader, Key, MouseButton, Vec2 } from "@osucad/framework";
+import { dependencyLoader, Key, MouseButton, resolved, Vec2 } from "@osucad/framework";
 import { SliderPathVisualizer } from "./SliderPathVisualizer";
 import type { ISliderToolPresence } from "./HitCircleToolPresence";
 import { SliderToolPresenceOverlay } from "./HitCircleToolPresence";
@@ -18,6 +18,9 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
 
   #pathText!: PathTypeChangeIndicator;
   #explicitPathType = false;
+
+  @resolved(SnapManager)
+  accessor #snapManager!: SnapManager
 
   @dependencyLoader()
   #load()
@@ -45,6 +48,19 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
   {
     if (this.state === PlacementState.Idle)
     {
+      const snapResult = this.#snapManager.getClosestSnapResult({
+        points: [position],
+        snapTo: {
+          hitObjects: {
+            exclude: [this.hitObject],
+          },
+        },
+        maxDistance: 10,
+      });
+
+      if (snapResult)
+        position = snapResult.position;
+
       hitObject.position = position.clamp(OsuPlayfield.BOUNDS);
       hitObject.startTime = time;
       return;
@@ -194,6 +210,7 @@ export class SliderTool extends OsuHitObjectPlacementTool<Slider>
 }
 
 import iconUrl from "./icon.png";
+import { SnapManager } from "../../SnapManager";
 
 export namespace SliderTool
 {

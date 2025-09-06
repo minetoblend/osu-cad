@@ -1,12 +1,13 @@
 import type { MouseUpEvent } from "@osucad/framework";
-import { MouseButton, type MouseDownEvent, type Vec2 } from "@osucad/framework";
-import type { OsuHitObject } from "../../../hitObjects";
+import { MouseButton, type MouseDownEvent, resolved, type Vec2 } from "@osucad/framework";
 import { HitCircle } from "../../../hitObjects";
 import { PlacementState } from "../HitObjectPlacementTool";
 import type { IHitCircleToolPresence } from "./HitCircleToolPresence";
 import { HitCircleToolPresenceOverlay } from "./HitCircleToolPresence";
 import { OsuHitObjectPlacementTool } from "../OsuHitObjectPlacementTool";
 import { OsuPlayfield } from "../../../ui";
+import iconUrl from "./icon.png";
+import { SnapManager } from "../../SnapManager";
 
 
 export class HitCircleTool extends OsuHitObjectPlacementTool<HitCircle>
@@ -16,22 +17,23 @@ export class HitCircleTool extends OsuHitObjectPlacementTool<HitCircle>
     return new HitCircle();
   }
 
+  @resolved(SnapManager)
+  accessor #snapManager!: SnapManager
+
   protected override updateTimeAndPosition(hitObject: HitCircle, time: number, position: Vec2): void
   {
-    for (const obj of this.playfield.hitObjectContainer.aliveObjects)
-    {
-      const h = obj.hitObject as OsuHitObject;
+    const snapResult = this.#snapManager.getClosestSnapResult({
+      points: [position],
+      snapTo: {
+        hitObjects: {
+          exclude: [this.hitObject],
+        },
+      },
+      maxDistance: 10,
+    });
 
-      if (obj.hitObject === hitObject)
-        continue;
-
-      const distance = this.playfield.toSpaceOfOtherDrawable(h.position, this).distance(this.playfield.toSpaceOfOtherDrawable(position, this));
-      if (distance < 10)
-      {
-        position = h.position;
-        break;
-      }
-    }
+    if (snapResult)
+      position = snapResult.position;
 
     position = position.clamp(OsuPlayfield.BOUNDS);
 
@@ -65,8 +67,6 @@ export class HitCircleTool extends OsuHitObjectPlacementTool<HitCircle>
     };
   }
 }
-
-import iconUrl from "./icon.png";
 
 export namespace HitCircleTool
 {
