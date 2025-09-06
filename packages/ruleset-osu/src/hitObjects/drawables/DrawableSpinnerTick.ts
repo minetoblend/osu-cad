@@ -4,7 +4,7 @@ import { Anchor } from "@osucad/framework";
 
 export class DrawableSpinnerTick extends DrawableOsuHitObject<SpinnerTick>
 {
-  public constructor(initialHitObject: SpinnerTick)
+  public constructor(initialHitObject?: SpinnerTick)
   {
     super(initialHitObject);
 

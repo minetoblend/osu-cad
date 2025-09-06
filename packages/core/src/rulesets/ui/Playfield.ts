@@ -1,5 +1,5 @@
 import type { IFrameBasedClock, NoArgsConstructor, ReadonlyDependencyContainer } from "@osucad/framework";
-import { Action, Axes, CompositeDrawable, DrawablePool, Lazy, provideSelf, resolved } from "@osucad/framework";
+import { Action, Axes, CompositeDrawable, DrawablePool, FramedClock, Lazy, provideSelf, resolved } from "@osucad/framework";
 import type { DrawableHitObject } from "../hitObjects/drawables/DrawableHitObject";
 import { HitObjectLifetimeEntry } from "../hitObjects/drawables/HitObjectLifetimeEntry";
 import type { HitObject } from "../hitObjects/HitObject";
@@ -75,8 +75,9 @@ export abstract class Playfield extends CompositeDrawable implements IPooledHitO
       this.addInternal(this.cursor);
     }
 
-    this.clock = this.playfieldClock;
-    this.processCustomClock = false;
+    // TODO: this is a dumb workaround around the editor clock not giving us a valid elapsedFrameTime value
+    this.clock = new FramedClock(this.playfieldClock);
+    this.processCustomClock = true;
   }
 
   protected override loadComplete()

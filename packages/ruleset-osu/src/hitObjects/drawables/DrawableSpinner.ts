@@ -116,7 +116,7 @@ export class DrawableSpinner extends DrawableOsuHitObject<Spinner>
   {
     super.clearNestedHitObjects();
 
-    this.#ticks.clear();
+    this.#ticks.clear(false);
   }
 
   protected override createNestedHitObject(hitObject: HitObject): DrawableHitObject | null
