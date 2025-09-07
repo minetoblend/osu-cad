@@ -13,6 +13,7 @@
     "@osucad/ruleset-osu": "workspace:^",
     "async": "^3.2.6",
     "cors": "^2.8.5",
+    "isomorphic-git": "^1.33.1",
     "socket.io": "^4.8.1"
   },
   "nx": {

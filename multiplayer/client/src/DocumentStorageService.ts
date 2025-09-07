@@ -27,4 +27,25 @@ export class DocumentStorageService
       body: JSON.stringify({ summary, sequenceNumber }),
     }).then(res => res.json());
   }
+
+  public async readBlob(sha: string): Promise<ArrayBuffer>
+  {
+    const response = await fetch(`/api/blobs/${sha}`);
+
+    if (!response.ok)
+      throw new Error(`Blob ${sha} not found`);
+
+    return response.arrayBuffer();
+  }
+
+  public async writeBlob(data: ArrayBuffer): Promise<{ sha: string }>
+  {
+    return await fetch("/api/blobs", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/octet-stream",
+      },
+      body: data,
+    }).then(res => res.json());
+  }
 }

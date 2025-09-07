@@ -108,7 +108,6 @@ export class Document
 
     clearTimeout(timeout);
 
-
     this.#deltaManager.resume();
   }
 
@@ -132,8 +131,6 @@ export class Document
           if (lastObservedSequenceNumber === firstReceivedSequenceNumber - 1)
             break;
         }
-
-
 
         await new Promise<void>(resolve => setTimeout(resolve, 200));
       }

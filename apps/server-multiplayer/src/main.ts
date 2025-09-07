@@ -10,6 +10,7 @@ import { createTestBeatmapSummary } from "./testBeatmap.js";
 import { MessageProcessorFactory } from "./MessageProcessorFactory.js";
 import { PartitionManager } from "@osucad/multiplayer-server";
 import { connectDocument } from "./connectDocument.js";
+import { BlobStorage } from "./services/blobs.js";
 
 void main();
 
@@ -27,6 +28,7 @@ async function main()
 
   const deltaStore = new LocalDeltaStore();
   const documentStorage = new LocalDocumentStorage();
+  const blobStorage = await BlobStorage.create();
 
   const processorFactory = new MessageProcessorFactory(io, deltaStore);
 
@@ -75,6 +77,39 @@ async function main()
 
     res.json(deltas);
   });
+
+  app.get("/api/blobs/:sha", async (req, res) =>
+  {
+    const blob = await blobStorage.readBlob(req.params.sha);
+
+    if (!blob)
+    {
+      res.sendStatus(404);
+    }
+    else
+    {
+      res.send(Buffer.from(blob));
+    }
+  });
+
+  app.post(
+      "/api/blobs",
+      express.raw({ type: "application/octet-stream", limit: "10mb" }),
+      async (req, res) =>
+      {
+        if (!(req.body instanceof Buffer))
+        {
+          res.sendStatus(400);
+          return;
+        }
+
+        const data = new Uint8Array(req.body.buffer, req.body.byteOffset, req.body.byteLength);
+
+        const sha = await blobStorage.writeBlob(data);
+
+        res.json({ sha });
+      },
+  );
 
   server.listen(port, host, () =>
   {
