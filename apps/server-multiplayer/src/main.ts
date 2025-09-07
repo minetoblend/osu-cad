@@ -82,14 +82,10 @@ async function main()
   {
     const blob = await blobStorage.readBlob(req.params.sha);
 
-    if (!blob)
-    {
-      res.sendStatus(404);
-    }
-    else
-    {
+    if (blob)
       res.send(Buffer.from(blob));
-    }
+    else
+      res.sendStatus(404);
   });
 
   app.post(
