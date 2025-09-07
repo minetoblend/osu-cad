@@ -28,24 +28,28 @@ export class DocumentStorageService
     }).then(res => res.json());
   }
 
-  public async readBlob(sha: string): Promise<ArrayBuffer>
+  public async readBlob(id: string): Promise<ArrayBuffer>
   {
-    const response = await fetch(`/api/blobs/${sha}`);
+    const response = await fetch(`/api/blobs/${id}`);
 
     if (!response.ok)
-      throw new Error(`Blob ${sha} not found`);
+      throw new Error(`Blob ${id} not found`);
 
     return response.arrayBuffer();
   }
 
-  public async writeBlob(data: ArrayBuffer): Promise<{ sha: string }>
+  public async createBlob(data: ArrayBufferLike): Promise<{ id: string }>
   {
+    const buffer = new ArrayBuffer(data.byteLength);
+
+    new Uint8Array(buffer).set(new Uint8Array(data));
+
     return await fetch("/api/blobs", {
       method: "POST",
       headers: {
         "Content-Type": "application/octet-stream",
       },
-      body: data,
+      body: buffer,
     }).then(res => res.json());
   }
 }

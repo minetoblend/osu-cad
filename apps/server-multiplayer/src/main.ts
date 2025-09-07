@@ -78,9 +78,9 @@ async function main()
     res.json(deltas);
   });
 
-  app.get("/api/blobs/:sha", async (req, res) =>
+  app.get("/api/blobs/:id", async (req, res) =>
   {
-    const blob = await blobStorage.readBlob(req.params.sha);
+    const blob = await blobStorage.readBlob(req.params.id);
 
     if (blob)
       res.send(Buffer.from(blob));
@@ -103,7 +103,7 @@ async function main()
 
         const sha = await blobStorage.writeBlob(data);
 
-        res.json({ sha });
+        res.json({ id: sha });
       },
   );
 
