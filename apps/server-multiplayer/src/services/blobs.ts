@@ -12,7 +12,7 @@ export class BlobStorage
 
   public static async create()
   {
-    const dataDir = resolve(cwd(), ".data");
+    const dataDir = resolve(cwd(), ".data/git");
 
     await mkdir(dataDir, { recursive: true });
 
