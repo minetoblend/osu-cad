@@ -50,9 +50,9 @@ export class EditorBackground extends CompositeDrawable
     this.blob.value = e.value?.blobHandle;
   }
 
-  #fileUpdated(file: RemoteFile, blob: BlobHandle)
+  #fileUpdated()
   {
-    this.blob.value = blob;
+    this.blob.value = this.file.value?.blobHandle;
   }
 
   async #blobChanged(e: ValueChangedEvent<BlobHandle | undefined>)
