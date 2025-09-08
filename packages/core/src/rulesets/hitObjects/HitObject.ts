@@ -14,6 +14,8 @@ import { HitWindows } from "../scoring/HitWindows";
 import type { HitObjectInivalidationType, HitObjectInvalidations } from "./invalidations";
 import { getInvalidations, invalidations } from "./invalidations";
 
+let uid = 0;
+
 @invalidations({
   startTime: ["applyDefaults", "combo"],
   hitSound: ["applyDefaults"],
@@ -25,7 +27,7 @@ export class HitObject extends ObjectDDS
   /**
    * @internal
    */
-  public uid = 0;
+  public uid = ++uid;
 
   public constructor(attributes: DDSAttributes)
   {
