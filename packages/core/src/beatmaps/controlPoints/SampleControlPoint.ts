@@ -1,7 +1,6 @@
 import { type, type DDSAttributes } from "@osucad/multiplayer-core";
-import { ControlPoint } from "./ControlPoint";
-import { Bindable } from "@osucad/framework";
 import { SampleSet } from "../../audio";
+import { ControlPoint } from "./ControlPoint";
 
 export class SampleControlPoint extends ControlPoint
 {
@@ -16,8 +15,6 @@ export class SampleControlPoint extends ControlPoint
   {
     super(SampleControlPoint.attributes);
   }
-
-  public readonly beatLengthBindable = new Bindable(60_000 / 120);
 
   @type("int32")
   public accessor volume: number = 100

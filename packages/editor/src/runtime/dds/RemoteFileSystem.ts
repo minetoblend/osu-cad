@@ -1,3 +1,4 @@
+import type { IFile, IFileSystem } from "@osucad/framework";
 import type { BlobHandle, BlobRef, DDSAttributes, IDecoder, IEncoder } from "@osucad/multiplayer-core";
 import { Delta } from "@osucad/multiplayer-core";
 import { DDS } from "@osucad/multiplayer-core";
@@ -70,7 +71,7 @@ class DeleteFileDelta extends Delta<IDeleteFile>
 }
 
 
-export class RemoteFileSystem extends DDS<RemoteFileSystemMessage>
+export class RemoteFileSystem extends DDS<RemoteFileSystemMessage> implements IFileSystem
 {
   public static attributes: DDSAttributes = {
     type: "@osucad/filesystem",
@@ -82,11 +83,16 @@ export class RemoteFileSystem extends DDS<RemoteFileSystemMessage>
     super(RemoteFileSystem.attributes);
   }
 
-  private readonly entries: RemoteFile[] = [];
+  readonly #files: RemoteFile[] = [];
+
+  public entries(): IFile[]
+  {
+    return this.#files;
+  }
 
   public get(path: string)
   {
-    return this.entries.find(it => it.path === path);
+    return this.#files.find(it => it.path === path);
   }
 
   public async write(
@@ -106,7 +112,7 @@ export class RemoteFileSystem extends DDS<RemoteFileSystemMessage>
     if (local)
       return;
 
-    const entry = this.entries.find(it => it.path === delta.path);
+    const entry = this.#files.find(it => it.path === delta.path);
 
     if (delta.type === "write")
     {
@@ -120,7 +126,7 @@ export class RemoteFileSystem extends DDS<RemoteFileSystemMessage>
       else
       {
         const file = new RemoteFile(this, delta.path, blob);
-        this.entries.push();
+        this.#files.push();
         this.emit("created", file);
       }
     }
@@ -146,7 +152,7 @@ export class RemoteFileSystem extends DDS<RemoteFileSystemMessage>
     blob: BlobHandle,
   )
   {
-    const entry = this.entries.find(it => it.path === path);
+    const entry = this.#files.find(it => it.path === path);
 
     if (entry)
     {
@@ -164,7 +170,7 @@ export class RemoteFileSystem extends DDS<RemoteFileSystemMessage>
     {
       const entry = new RemoteFile(this, path, blob);
 
-      this.entries.push(entry);
+      this.#files.push(entry);
 
       this.submitDelta(
           new WriteFileDelta(path, this.encoder.encodeBlob(blob)),
@@ -175,13 +181,13 @@ export class RemoteFileSystem extends DDS<RemoteFileSystemMessage>
 
   public delete(path: string): boolean
   {
-    const index = this.entries.findIndex(it => it.path === path);
+    const index = this.#files.findIndex(it => it.path === path);
 
     if (index < 0)
       return false;
 
-    const entry = this.entries[index];
-    this.entries.splice(index, 1);
+    const entry = this.#files[index];
+    this.#files.splice(index, 1);
 
     this.submitDelta(
         new DeleteFileDelta(path),
@@ -194,7 +200,7 @@ export class RemoteFileSystem extends DDS<RemoteFileSystemMessage>
   public override createSummary(encoder: IEncoder): IRemoteFileSystemSummary
   {
     return {
-      files: this.entries.map(it => it.createSummary(encoder)),
+      files: this.#files.map(it => it.createSummary(encoder)),
     };
   }
 
@@ -202,8 +208,8 @@ export class RemoteFileSystem extends DDS<RemoteFileSystemMessage>
   {
     const { files } = summary as IRemoteFileSystemSummary;
 
-    this.entries.length = 0;
-    this.entries.push(...files.map(file =>
+    this.#files.length = 0;
+    this.#files.push(...files.map(file =>
       new RemoteFile(
           this,
           file.path,
@@ -215,10 +221,11 @@ export class RemoteFileSystem extends DDS<RemoteFileSystemMessage>
 
 export interface RemoteFileEvents
 {
-  changed(file: RemoteFile, blob: BlobHandle): void
+  changed(): void
+  removed(): void
 }
 
-export class RemoteFile extends EventEmitter<RemoteFileEvents>
+export class RemoteFile extends EventEmitter<RemoteFileEvents> implements IFile
 {
   public constructor(
     public readonly fs: RemoteFileSystem,
@@ -235,13 +242,18 @@ export class RemoteFile extends EventEmitter<RemoteFileEvents>
       return false;
 
     this.blobHandle = handle;
-    this.emit("changed", this, handle);
+    this.emit("changed");
     return true;
   }
 
-  public async read(): Promise<ArrayBufferLike>
+  public async read(): Promise<ArrayBuffer>
   {
-    return this.blobHandle.get();
+    const data = await this.blobHandle.get();
+
+    const copy = new ArrayBuffer(data.byteLength);
+    new Uint8Array(copy).set(new Uint8Array(data));
+
+    return copy;
   }
 
   public createSummary(encoder: IEncoder): IRemoteFileSummary

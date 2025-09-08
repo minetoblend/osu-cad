@@ -29,7 +29,13 @@ export class HitSampleInfo implements ISampleInfo
     const { suffix, bank, name } = this;
 
     if (suffix && suffix.length > 0)
-      return [`${bank}-${name}${suffix}`];
+    {
+      return [
+        `${bank}-${name}${suffix}`,
+        `${bank}-${name}`,
+        name,
+      ];
+    }
 
     return [
       `${bank}-${name}`,

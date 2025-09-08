@@ -1,14 +1,15 @@
 import { BeatmapParser, rulesets, TimingControlPoint } from "@osucad/core";
 import { EditorRuntime } from "@osucad/editor/runtime";
+import { CountingIdGenerator } from "@osucad/multiplayer-core";
 import type { IFullDocumentSummary } from "@osucad/multiplayer-protocol";
 import { OsuRuleset } from "@osucad/ruleset-osu";
 import { readdir, readFile } from "node:fs/promises";
+import { resolve } from "node:path";
 import { cwd } from "node:process";
 import type { BlobStorage } from "./services/blobs.js";
-import { resolve } from "node:path";
-import { CountingIdGenerator } from "@osucad/multiplayer-core";
+import type { LocalDocumentStorage } from "./services/storage.js";
 
-export async function createTestBeatmapSummary(storage: BlobStorage): Promise<IFullDocumentSummary>
+export async function createTestBeatmapSummary(storage: BlobStorage, documentStorage: LocalDocumentStorage)
 {
   rulesets.register(new OsuRuleset());
 
@@ -52,11 +53,17 @@ export async function createTestBeatmapSummary(storage: BlobStorage): Promise<IF
     await runtime.root.fileSystem.write(file, data.buffer);
   }
 
-  return {
+  const summary: IFullDocumentSummary = {
     ...runtime.createSummary(),
     audience: {
       clients: [],
     },
     sequenceNumber: 0,
   };
+
+  const buffer = new TextEncoder().encode(JSON.stringify(summary));
+
+  const blobId = await storage.writeBlob(buffer);
+
+  await documentStorage.writeSummary("beatmap", blobId, 0);
 }

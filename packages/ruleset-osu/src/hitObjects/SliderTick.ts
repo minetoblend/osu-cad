@@ -1,4 +1,5 @@
-import { HitWindows, safeAssign } from "@osucad/core";
+import type { ControlPointInfo } from "@osucad/core";
+import { HitSampleInfo, HitWindows, safeAssign } from "@osucad/core";
 import type { OsuHitObjectOptions } from "./OsuHitObject";
 import { OsuHitObject } from "./OsuHitObject";
 
@@ -29,5 +30,14 @@ export class SliderTick extends OsuHitObject
   protected override createHitWindows()
   {
     return HitWindows.Empty;
+  }
+
+  protected override createSamples(controlPoints: ControlPointInfo): HitSampleInfo[]
+  {
+    const samples = super.createSamples(controlPoints);
+
+    const sample = samples.find(it => it.name === HitSampleInfo.HIT_NORMAL) ?? samples[0];
+
+    return sample? [sample.with("slidertick")] : [];
   }
 }

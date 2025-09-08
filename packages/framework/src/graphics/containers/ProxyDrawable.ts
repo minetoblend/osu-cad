@@ -69,8 +69,8 @@ export class ProxyDrawable extends Drawable
 
   public override dispose()
   {
-    super.dispose();
-
     this.#renderLayer.detachAll();
+
+    super.dispose();
   }
 }

@@ -1,24 +1,25 @@
 
-import type { IFullDocumentSummary } from "@osucad/multiplayer-core";
 
-export interface IVersionedSummary
+export interface ISummaryReference
 {
-  summary: IFullDocumentSummary
+  blobId: string
+  sequenceNumber: number
   version: number
 }
 
 export class LocalDocumentStorage
 {
-  #summaries = new Map<string, IVersionedSummary[]>();
+  #summaries = new Map<string, ISummaryReference[]>();
 
-  public async writeSummary(documentId: string, summary: IFullDocumentSummary)
+  public async writeSummary(documentId: string, blobId: string, sequenceNumber: number)
   {
     const summaries = this.#summaries.get(documentId);
 
     if (!summaries)
     {
       this.#summaries.set(documentId, [{
-        summary,
+        blobId,
+        sequenceNumber,
         version: 1,
       }]);
 
@@ -29,7 +30,8 @@ export class LocalDocumentStorage
       const version = (summaries[summaries.length - 1]?.version ?? 0) + 1;
 
       summaries.push({
-        summary,
+        blobId,
+        sequenceNumber,
         version,
       });
 
@@ -37,7 +39,7 @@ export class LocalDocumentStorage
     }
   }
 
-  public async readSummary(documentId: string, version?: number): Promise<IVersionedSummary | undefined>
+  public async readSummary(documentId: string, version?: number): Promise<ISummaryReference | undefined>
   {
     const summaries = this.#summaries.get(documentId);
 

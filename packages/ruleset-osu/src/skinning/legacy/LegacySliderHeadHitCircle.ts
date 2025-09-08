@@ -3,6 +3,7 @@ import { ProxyDrawable } from "@osucad/framework";
 import { DrawableSliderHead } from "../../hitObjects/drawables/DrawableSliderHead";
 import type { DrawableHitObject } from "@osucad/core";
 
+
 export class LegacySliderHeadHitCircle extends LegacyCirclePiece
 {
   public constructor()
@@ -16,16 +17,19 @@ export class LegacySliderHeadHitCircle extends LegacyCirclePiece
   {
     super.loadComplete();
 
-
+    this.proxiedOverlayLayer = new ProxyDrawable(this.overlayLayer);
+    this.drawableHitObject.hitObjectApplied.addListener(this.#hitObjectApplied, this);
   }
+
+
 
   #hitObjectApplied(hitObject: DrawableHitObject)
   {
+
     const sliderHead = asSliderHead(hitObject);
     if (sliderHead)
     {
-      this.proxiedOverlayLayer = new ProxyDrawable(this.overlayLayer);
-      this.drawableHitObject.hitObjectApplied.addListener(this.#hitObjectApplied, this);
+
 
       sliderHead.drawableSlider?.overlayElementContainer.add(this.proxiedOverlayLayer.with({
         depth: -Number.MIN_VALUE,

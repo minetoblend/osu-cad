@@ -7,7 +7,7 @@ import { Beatmap } from "../Beatmap";
 import { LegacyTimingPoint } from "../timing/LegacyTimingPoint";
 import { SampleSet } from "../../audio/SampleSet";
 import type { ControlPoint } from "../controlPoints";
-import { TimingControlPoint } from "../controlPoints";
+import { SampleControlPoint, TimingControlPoint } from "../controlPoints";
 
 export interface BeatmapParserOptions
 {
@@ -323,6 +323,15 @@ function parseTimingPoint(line: string, beatmap: Beatmap, rulesetParser: Ruleset
 
     beatmap.controlPointInfo.add(controlPoint);
   }
+
+  const samplePoint= new SampleControlPoint();
+  samplePoint.time = timingPoint.startTime;
+  samplePoint.sampleIndex = timingPoint.sampleIndex;
+  samplePoint.sampleSet = timingPoint.sampleSet;
+  samplePoint.volume = timingPoint.volume;
+
+
+  beatmap.controlPointInfo.add(samplePoint, true);
 
   for (const controlPoint of rulesetParser.convertTimingPoint(timingPoint))
   {

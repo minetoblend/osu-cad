@@ -1,10 +1,10 @@
-import type { EventEmitter } from "pixi.js";
+import type { EventEmitter } from "eventemitter3";
 
 export interface FileSystemEvents
 {
-  added: [string, IFile];
-  changed: [string, IFile];
-  removed: [string];
+  added(path: string, file: IFile): void;
+  changed(path: string, file: IFile): void;
+  removed(path: string): void
 }
 
 export interface IFileSystem extends EventEmitter<FileSystemEvents>
@@ -29,8 +29,8 @@ export interface IWritableFileSystem extends IFileSystem
 
 export interface FileEvents
 {
-  changed: [];
-  removed: [];
+  changed(): void
+  removed(): void
 }
 
 export interface IFile extends EventEmitter<FileEvents>

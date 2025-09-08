@@ -1,4 +1,5 @@
-import type { BeatmapDifficultyInfo, ControlPointInfo, HitSoundInfo } from "@osucad/core";
+import type { BeatmapDifficultyInfo, ControlPointInfo } from "@osucad/core";
+import { HitSoundInfo } from "@osucad/core";
 import { bindableBacked, HitSampleInfo, HitWindows, invalidations, safeAssign, SampleAdditions, SampleSet, sampleSetToBank } from "@osucad/core";
 import { Bindable, BindableNumber, Line, Vec2 } from "@osucad/framework";
 import type { OsuHitObjectOptions } from "./OsuHitObject";
@@ -10,7 +11,7 @@ import { SliderTailCircle } from "./SliderTailCircle";
 import { SliderRepeat } from "./SliderRepeat";
 import { SliderEventGenerator, SliderEventType } from "./SliderEventGenerator";
 import { SliderTick } from "./SliderTick";
-import { type DDSAttributes, nested, type } from "@osucad/multiplayer-core";
+import { type DDSAttributes, nested, serializer, type, typeDecorator } from "@osucad/multiplayer-core";
 import { SliderVelocityPoint } from "../beatmaps";
 
 export interface SliderOptions extends OsuHitObjectOptions
@@ -18,8 +19,13 @@ export interface SliderOptions extends OsuHitObjectOptions
   repeatCount?: number
   expectedDistance?: number
   controlPoints?: readonly PathPoint[]
-  nodeSamples?: readonly HitSoundInfo[]
+  nodeHitSounds?: readonly HitSoundInfo[]
 }
+
+const nodeHitSoundsSerializer = serializer<readonly HitSoundInfo[], [SampleSet, SampleSet, SampleAdditions][]>({
+  serialize: values => values.map(value => [value.sampleSet, value.additionSampleSet, value.additions]),
+  deserialize: values => values.map(value => new HitSoundInfo(value[0], value[1], value[2])),
+});
 
 @invalidations({
   repeatCount: ["applyDefaults", "stacking"],
@@ -34,10 +40,10 @@ export class Slider extends OsuHitObject
 
   public constructor(options: SliderOptions = {})
   {
-    const { repeatCount, expectedDistance, controlPoints, ...rest } = options;
+    const { repeatCount, expectedDistance, controlPoints, nodeHitSounds, ...rest } = options;
     super(Slider.attributes, rest);
 
-    safeAssign(this, { repeatCount });
+    safeAssign(this, { repeatCount, nodeHitSounds });
 
     safeAssign(this.path, { expectedDistance, controlPoints });
 
@@ -114,15 +120,9 @@ export class Slider extends OsuHitObject
 
   public readonly nodeHitSoundsBindable = new Bindable<readonly HitSoundInfo[]>([]);
 
-  public get nodeHitSounds()
-  {
-    return this.nodeHitSoundsBindable.value;
-  }
-
-  public set nodeHitSounds(value)
-  {
-    this.nodeHitSoundsBindable.value = value;
-  }
+  @typeDecorator(nodeHitSoundsSerializer)
+  @bindableBacked("nodeHitSoundsBindable")
+  public accessor nodeHitSounds!: readonly HitSoundInfo[]
 
   protected override applyDefaultsToSelf(difficulty: BeatmapDifficultyInfo, controlPoints: ControlPointInfo)
   {
@@ -268,7 +268,7 @@ export class Slider extends OsuHitObject
       new HitSampleInfo("sliderslide", sampleSetToBank(sampleSet), suffix, samplePoint.volume),
     ];
 
-    if (this.hitSound.additions && SampleAdditions.Whistle)
+    if (this.hitSound.additions & SampleAdditions.Whistle)
     {
       samples.push(new HitSampleInfo("sliderwhistle", sampleSetToBank(additionSampleSet), suffix, samplePoint.volume));
     }

@@ -1,5 +1,4 @@
-import type { Skin } from "@osucad/core";
-import { ISamplePlaybackDisabler, ISkinSource, PlayfieldClock, Ruleset, SkinProvidingContainer } from "@osucad/core";
+import { IResourcesProvider, ISamplePlaybackDisabler, ISkinSource, PlayfieldClock, Ruleset, Skin, SkinProvidingContainer } from "@osucad/core";
 import type { IKeyBindingHandler, KeyBindingAction, ReadonlyDependencyContainer, ScheduledDelegate } from "@osucad/framework";
 import { asyncDependencyLoader, AudioManager, Bindable, DependencyContainer, keyBindingHandler, PlatformAction, provide, provideSelf, resolved, Screen } from "@osucad/framework";
 import { BindableBeatDivisor } from "./BindableBeatDivisor";
@@ -11,9 +10,9 @@ import { EditorBeatmap, EditorHistory, EditorRuntime } from "./runtime";
 
 import { Document } from "@osucad/multiplayer-client";
 import { EditorActionContainer } from "./EditorActionContainer";
+import { EditorBackground } from "./EditorBackground";
 import { IAudience } from "./injectionTokens";
 import { TrackLoader } from "./TrackLoader";
-import { EditorBackground } from "./EditorBackground";
 
 export interface EditorOptions
 {
@@ -111,6 +110,10 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
 
     const skinTransformer = await this.ruleset.createSkinTransformer?.(skin);
 
+    const beatmapSkin = new Skin(this.editorBeatmap.fileSystem, this.dependencies.resolve(IResourcesProvider));
+
+    const beatmapSkinTransformer = await this.ruleset.createSkinTransformer?.(skin);
+
     const beatmapProcessors = [
       new DefaultsApplier(),
       ...this.editorRuleset.createBackgroundProcessors(),
@@ -126,7 +129,10 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
         child: new SkinProvidingContainer({
           skin: skinTransformer ?? skin,
           children: [
-            new ComposeScreen(),
+            new SkinProvidingContainer({
+              skin: beatmapSkinTransformer ?? beatmapSkin,
+              child: new ComposeScreen(),
+            }),
           ],
         }),
       }),

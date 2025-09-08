@@ -11,7 +11,16 @@ export class DocumentStorageService
     version: number
   }>
   {
-    return await fetch(`/api/summary/${this.documentId}`).then(res => res.json());
+    const { blobId, version } = await fetch(`/api/summary/${this.documentId}`).then(res => res.json());
+
+    const data = await this.readBlob(blobId);
+
+    const text = new TextDecoder().decode(data);
+
+    return {
+      version,
+      summary: JSON.parse(text),
+    };
   }
 
   public async createSummary(

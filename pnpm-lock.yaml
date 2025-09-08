@@ -426,6 +426,9 @@ importers:
       diff:
         specifier: ^7.0.0
         version: 7.0.0
+      eventemitter3:
+        specifier: ^5.0.1
+        version: 5.0.1
       pixi-filters:
         specifier: ^6.1.2
         version: 6.1.2(pixi.js@8.12.0)

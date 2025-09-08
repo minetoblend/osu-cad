@@ -39,7 +39,7 @@ async function main()
 
   const partitionManager = new PartitionManager(processorFactory);
 
-  await documentStorage.writeSummary("beatmap", await createTestBeatmapSummary(blobStorage));
+  await createTestBeatmapSummary(blobStorage, documentStorage);
 
   io.on("connect", (socket: Socket<ClientMessages, ServerMessages>) =>
   {
@@ -66,9 +66,9 @@ async function main()
 
   app.post("/api/summary/:id", async (req, res) =>
   {
-    const { summary } = req.body;
+    const { blobId, sequenceNumber } = req.body;
 
-    const version = await documentStorage.writeSummary(req.params.id, summary);
+    const version = await documentStorage.writeSummary(req.params.id, blobId, sequenceNumber);
 
     res.json(version);
   });
