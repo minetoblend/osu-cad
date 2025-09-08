@@ -7,6 +7,7 @@ import type { IAudience } from "./Audience.js";
 import { Audience } from "./Audience.js";
 import { ProtocolHandler } from "./ProtocolHandler.js";
 import type { DeltaStorageService } from "./DeltaStorageService.js";
+import type { DocumentStorageService } from "./DocumentStorageService.js";
 
 export interface DocumentOptions
 {
@@ -53,7 +54,9 @@ export class Document
   public static async load(options: {
     documentId: string,
     serviceFactory: DocumentServiceFactory,
-    runtimeFactory: () => Promise<DocumentRuntime>
+    runtimeFactory: (
+      storage: DocumentStorageService
+    ) => Promise<DocumentRuntime>
   })
   {
     const {
@@ -62,7 +65,9 @@ export class Document
       runtimeFactory,
     } = options;
 
-    const runtime = await runtimeFactory();
+    const documentService = await serviceFactory.createDocumentService(documentId);
+
+    const runtime = await runtimeFactory(await documentService.connectToStorage());
 
     const document = new Document({
       serviceFactory,
@@ -74,7 +79,9 @@ export class Document
     return document;
   }
 
-  async #load(documentId: string)
+  async #load(
+    documentId: string,
+  )
   {
     this.#service = await this.#serviceFactory.createDocumentService(documentId);
 

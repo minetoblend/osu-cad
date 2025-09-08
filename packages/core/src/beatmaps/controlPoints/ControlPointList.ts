@@ -47,6 +47,8 @@ export class ControlPointList<T extends ControlPoint> extends ObservableSortedLi
     if (index < 0)
       return undefined;
 
-    return this.get(index);
+    const controlPoint = this.get(index);
+
+    return controlPoint;
   }
 }

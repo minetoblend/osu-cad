@@ -1,5 +1,5 @@
 import type { ControlPointInfo, TimingControlPoint } from "@osucad/core";
-import type { ReadonlyBindable } from "@osucad/framework";
+import type { ReadonlyBindable, Track } from "@osucad/framework";
 import { almostEquals, Bindable, clamp, Component, EasingFunction, Interpolation, resolved, TypedTransform, type FrameTimeInfo, type IFrameBasedClock } from "@osucad/framework";
 import { BindableBeatDivisor } from "./BindableBeatDivisor";
 
@@ -11,7 +11,10 @@ export class EditorClock extends Component implements IFrameBasedClock
     elapsed: 0,
   };
 
-  public constructor(public readonly controlPointInfo: ControlPointInfo)
+  public constructor(
+    public readonly controlPointInfo: ControlPointInfo,
+    public readonly source: Track,
+  )
   {
     super();
   }
@@ -38,7 +41,10 @@ export class EditorClock extends Component implements IFrameBasedClock
 
   public get timeInfo(): FrameTimeInfo
   {
-    return this.#frameTimeInfo;
+    return {
+      current: this.currentTime,
+      elapsed: 0, // TODO
+    };
   }
 
   public processFrame(): void
@@ -50,7 +56,7 @@ export class EditorClock extends Component implements IFrameBasedClock
 
   public get currentTime(): number
   {
-    return this.#frameTimeInfo.current;
+    return this.source.currentTime;
   }
 
   public get currentTimeAccurate(): number
@@ -69,13 +75,12 @@ export class EditorClock extends Component implements IFrameBasedClock
 
   public get isRunning(): boolean
   {
-    return this.#isRunning;
+    return this.source.isRunning;
   }
 
   public get trackLength()
   {
-    // TODO
-    return 100_000;
+    return this.source.length;
   }
 
 
@@ -118,6 +123,20 @@ export class EditorClock extends Component implements IFrameBasedClock
     return this.#seekingOrStopped;
   }
 
+  public start()
+  {
+    this.clearTransforms();
+
+    this.source.start();
+  }
+
+  public stop()
+  {
+    this.#seekingOrStopped.value = true;
+
+    this.source.stop();
+  }
+
   #updateSeekingState()
   {
     if (this.#seekingOrStopped.value)
@@ -138,7 +157,7 @@ export class EditorClock extends Component implements IFrameBasedClock
 
     this.clearTransforms();
 
-    this.#frameTimeInfo.current = clamp(position, 0, this.trackLength);
+    this.source.seek(position);
   }
 
   public seekSmoothlyTo(seekDestination: number)
@@ -178,7 +197,7 @@ export class EditorClock extends Component implements IFrameBasedClock
   #transoformSeekTo(seek: number, duration = 0, easing: EasingFunction = EasingFunction.Default)
   {
     this.addTransform(
-        this.populateTransform(new TransformSeek(time => this.#frameTimeInfo.current = time), clamp(seek, 0, this.trackLength), duration, easing),
+        this.populateTransform(new TransformSeek(time => this.source.seek(time)), clamp(seek, 0, this.trackLength), duration, easing),
     );
   }
 

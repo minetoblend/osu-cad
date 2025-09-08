@@ -9,6 +9,7 @@ import { EditorComboProcessor } from "./EditorComboProcessor";
 import { EditorStackingProcessor } from "./EditorStackingProcessor";
 import { OsuTimelineBlueprintContainer } from "./timeline/OsuTimelineBlueprintContainer";
 import { OsuEditorAction } from "./OsuEditorAction";
+import { SliderVelocityPoint } from "../beatmaps";
 
 export class OsuEditorRuleset extends EditorRuleset
 {
@@ -18,6 +19,7 @@ export class OsuEditorRuleset extends EditorRuleset
       Slider,
       Spinner,
       SliderPath,
+      SliderVelocityPoint,
     ],
   };
 

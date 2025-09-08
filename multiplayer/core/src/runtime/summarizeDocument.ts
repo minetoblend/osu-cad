@@ -4,7 +4,7 @@ import { Encoder } from "../serialization/types.js";
 import type { DDS } from "../dds/index.js";
 import { nn } from "../utils/nn.js";
 
-export function summarizeDocument(runtime: DocumentRuntime): IDocumentSummary
+export function summarizeDocument(runtime: DocumentRuntime): Omit<IDocumentSummary, "blobs">
 {
   const remaining: DDS[] =[];
   const tracked = new Set([runtime.root]);

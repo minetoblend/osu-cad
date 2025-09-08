@@ -4,8 +4,9 @@ export class AudioBufferTrack extends Track
 {
   public constructor(
     name: string,
-    public readonly context: AudioContext,
     public readonly buffer: AudioBuffer,
+    public readonly context: AudioContext,
+
   )
   {
     super(name, context);

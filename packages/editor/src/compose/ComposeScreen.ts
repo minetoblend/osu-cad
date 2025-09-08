@@ -123,6 +123,17 @@ export class ComposeScreen extends EditorScreen
     return true;
   }
 
+  @keyBindingHandler(EditorAction.TogglePlayback)
+  public togglePlayback()
+  {
+    if (this.#editorClock.isRunning)
+      this.#editorClock.stop();
+    else
+      this.#editorClock.start();
+
+    return true;
+  }
+
   public override onScroll(e: ScrollEvent): boolean
   {
     const y = e.scrollDelta.y;

@@ -34,7 +34,7 @@ async function main()
 
   const partitionManager = new PartitionManager(processorFactory);
 
-  await documentStorage.writeSummary("beatmap", await createTestBeatmapSummary());
+  await documentStorage.writeSummary("beatmap", await createTestBeatmapSummary(blobStorage));
 
   io.on("connect", (socket: Socket<ClientMessages, ServerMessages>) =>
   {

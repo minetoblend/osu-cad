@@ -5,6 +5,7 @@ import { nested, nn, ObjectDDS, Signaler } from "@osucad/multiplayer-core";
 import type { EditorRuleset } from "../../EditorRuleset";
 import { EditorRuntime } from "../EditorRuntime";
 import { HitObjectCollection } from "./HitObjectCollection";
+import { RemoteFileSystem } from "./RemoteFileSystem";
 
 export class EditorBeatmap extends ObjectDDS
 {
@@ -40,6 +41,9 @@ export class EditorBeatmap extends ObjectDDS
 
   @nested(BeatmapInfo)
   public accessor beatmapInfo = new BeatmapInfo()
+
+  @nested(RemoteFileSystem)
+  public accessor fileSystem = new RemoteFileSystem()
 
   @nested(Signaler)
   public accessor signals = new Signaler()

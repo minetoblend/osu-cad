@@ -73,13 +73,10 @@ export class OsuBeatmapParser implements RulesetBeatmapParser
 
   public *convertTimingPoint(timingPoint: LegacyTimingPoint): Iterable<ControlPoint>
   {
-    if (timingPoint.sliderVelocity)
-    {
-      const velocityPoint = new SliderVelocityPoint();
-      velocityPoint.time = timingPoint.startTime;
-      velocityPoint.velocity = timingPoint.sliderVelocity;
-      yield velocityPoint;
-    }
+    const velocityPoint = new SliderVelocityPoint();
+    velocityPoint.time = timingPoint.startTime;
+    velocityPoint.velocity = timingPoint.sliderVelocity;
+    yield velocityPoint;
   }
 }
 

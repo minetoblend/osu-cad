@@ -4,6 +4,7 @@ export enum MessageType
 {
   Delta = "delta",
   Attach = "attach",
+  BlobAttach = "blob_attach",
   ClientJoin = "client_join",
   ClientLeave = "client_leave",
 }
@@ -32,6 +33,11 @@ export interface IEncodedDelta
 export interface IAttachMessage extends IDocumentMessageBase<MessageType.Attach>
 {
   readonly content: IAttachInfo[]
+}
+
+export interface IBlobAttachMessagae extends IDocumentMessageBase<MessageType.BlobAttach>
+{
+  id: string
 }
 
 export interface IClientJoin extends IDocumentMessageBase<MessageType.ClientJoin>

@@ -322,7 +322,9 @@ function parseTimingPoint(line: string, beatmap: Beatmap, rulesetParser: Ruleset
   }
 
   for (const controlPoint of rulesetParser.convertTimingPoint(timingPoint))
+  {
     beatmap.controlPointInfo.add(controlPoint, true);
+  }
 }
 
 function parseVersionHeader(line: string)

@@ -1,9 +1,9 @@
+import type { IDDSSummary, IRemoteSignalMessage } from "@osucad/multiplayer-protocol";
 import type { DocumentRuntime } from "../runtime/index.js";
-import type { Attached, DDS } from "./DDS.js";
-import type { Delta } from "./Delta.js";
 import type { IDecoder } from "../serialization/types.js";
 import { Decoder, Encoder } from "../serialization/types.js";
-import type { IDDSSummary, IRemoteSignalMessage } from "@osucad/multiplayer-protocol";
+import type { Attached, DDS } from "./DDS.js";
+import type { Delta } from "./Delta.js";
 
 export class DDSChannel
 {
@@ -17,7 +17,7 @@ export class DDSChannel
     this.encoder = new Encoder();
     this.encoder.on("ddsEncoded", dds => runtime.objects.attach(dds));
 
-    this.decoder = new Decoder(runtime.objects);
+    this.decoder = new Decoder(runtime);
   }
 
   public readonly target: Attached<DDS>;

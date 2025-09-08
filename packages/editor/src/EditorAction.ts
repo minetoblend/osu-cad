@@ -12,7 +12,7 @@ export class EditorAction extends KeyBindingAction
     return `EditorAction::${this.name}`;
   }
 
-  public static readonly TogglePlayback = new EditorAction("SeekForward");
+  public static readonly TogglePlayback = new EditorAction("TogglePlayback");
   public static readonly SeekForward = new EditorAction("SeekForward");
   public static readonly SeekBackward = new EditorAction("SeekBackward");
   public static readonly SeekToStart = new EditorAction("SeekToStart");

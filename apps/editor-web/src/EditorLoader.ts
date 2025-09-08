@@ -1,12 +1,12 @@
-import type { Document } from "@osucad/multiplayer-client";
+import type { Document, DocumentStorageService } from "@osucad/multiplayer-client";
 import { Anchor, dependencyLoader, Screen, type ScreenTransitionEvent } from "@osucad/framework";
 import { LoadingSpinner } from "./LoadingSpinner";
 
-const editorRuntimeFactory = async () =>
+const editorRuntimeFactory = async (storage: DocumentStorageService) =>
 {
   const { EditorRuntime } = await import("@osucad/editor");
 
-  return new EditorRuntime();
+  return new EditorRuntime(storage);
 };
 
 export class EditorLoader extends Screen
@@ -51,7 +51,7 @@ export class EditorLoader extends Screen
   {
     const { Editor } = await import("@osucad/editor");
 
-    this.screenStack.push(new Editor({ document: this.#document }));
+    this.screenStack?.push(new Editor({ document: this.#document }));
   }
 
   public override onSuspending(e: ScreenTransitionEvent)

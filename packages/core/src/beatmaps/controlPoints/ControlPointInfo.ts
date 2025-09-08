@@ -73,6 +73,11 @@ export class ControlPointInfo extends DDS<IControlPointInfoDelta>
   public readonly timingPoints: ControlPointList<TimingControlPoint>;
   public readonly samplePoints: ControlPointList<SampleControlPoint>;
 
+  public get allControlPoints()
+  {
+    return this.#controlPoints;
+  }
+
   public timingPointAt(time: number)
   {
     const timingPoint = this.timingPoints.controlPointAt(time);
@@ -119,6 +124,9 @@ export class ControlPointInfo extends DDS<IControlPointInfoDelta>
       const existing = list.controlPointAt(controlPoint.time);
       if (existing && controlPoint.isRedundant(existing))
         return false;
+
+      if (existing && existing.time === controlPoint.time)
+        this.remove(existing);
     }
 
     if (!this.#add(controlPoint))
@@ -139,15 +147,18 @@ export class ControlPointInfo extends DDS<IControlPointInfoDelta>
 
   public remove(controlPoint: ControlPoint)
   {
-    const ref = this.encoder.encodeDDS(controlPoint);
-
     if (!this.#remove(controlPoint))
       return false;
 
-    const delta = new RemoveControlPointDelta(ref);
-    const undo = new AddControlPointDelta(ref, controlPoint);
+    if (this.isAttached())
+    {
+      const ref = this.encoder.encodeDDS(controlPoint);
 
-    this.submitDelta(delta, undo);
+      const delta = new RemoveControlPointDelta(ref);
+      const undo = new AddControlPointDelta(ref, controlPoint);
+
+      this.submitDelta(delta, undo);
+    }
 
     return true;
   }

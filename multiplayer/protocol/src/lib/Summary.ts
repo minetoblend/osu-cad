@@ -13,6 +13,7 @@ export interface IDocumentSummary
   readonly types: DDSAttributes[];
   readonly root: string;
   readonly entries: Record<string, IDDSSummary>;
+  readonly blobs: string[];
 }
 
 export interface IFullDocumentSummary extends IDocumentSummary

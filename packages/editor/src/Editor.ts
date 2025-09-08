@@ -1,17 +1,18 @@
 import type { Skin } from "@osucad/core";
 import { ISamplePlaybackDisabler, ISkinSource, PlayfieldClock, Ruleset, SkinProvidingContainer } from "@osucad/core";
 import type { IKeyBindingHandler, KeyBindingAction, ReadonlyDependencyContainer, ScheduledDelegate } from "@osucad/framework";
-import { asyncDependencyLoader, Bindable, DependencyContainer, keyBindingHandler, PlatformAction, provide, provideSelf, resolved, Screen } from "@osucad/framework";
+import { asyncDependencyLoader, AudioManager, Bindable, DependencyContainer, keyBindingHandler, PlatformAction, provide, provideSelf, resolved, Screen } from "@osucad/framework";
 import { BindableBeatDivisor } from "./BindableBeatDivisor";
+import { ComposeScreen } from "./compose";
 import { DefaultsApplier } from "./DefaultsApplier";
 import { EditorClock } from "./EditorClock";
 import { EditorRuleset } from "./EditorRuleset";
-import { ComposeScreen } from "./compose";
 import { EditorBeatmap, EditorHistory, EditorRuntime } from "./runtime";
 
 import { Document } from "@osucad/multiplayer-client";
 import { EditorActionContainer } from "./EditorActionContainer";
 import { IAudience } from "./injectionTokens";
+import { TrackLoader } from "./TrackLoader";
 
 export interface EditorOptions
 {
@@ -27,7 +28,6 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
 
     this.document = options.document;
     this.runtime = this.document.runtime as EditorRuntime;
-    this.editorClock = new EditorClock(this.editorBeatmap.controlPointInfo);
   }
 
   public readonly samplePlaybackDisabled = new Bindable(false);
@@ -65,9 +65,7 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
   @resolved(ISkinSource)
   accessor #skinSource!: ISkinSource
 
-  @provide(PlayfieldClock)
-  @provide(EditorClock)
-  protected readonly editorClock: EditorClock;
+  protected editorClock!: EditorClock;
 
   @provide(BindableBeatDivisor)
   protected readonly beatDivisor = new BindableBeatDivisor(4);
@@ -77,6 +75,8 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
   {
     return this.runtime.history;
   }
+
+  #trackLoader!: TrackLoader;
 
   #dependencies!: DependencyContainer;
 
@@ -92,6 +92,16 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
 
     for (const hitObject of this.editorBeatmap.hitObjects)
       hitObject.applyDefaults(this.editorBeatmap.difficulty, this.editorBeatmap.controlPointInfo);
+
+    this.#trackLoader = new TrackLoader(this.editorBeatmap, this.dependencies.resolve(AudioManager));
+
+    await this.#trackLoader.load();
+
+
+    this.editorClock = new EditorClock(this.editorBeatmap.controlPointInfo, this.#trackLoader.track.value!);
+
+    this.#dependencies.provide(EditorClock, this.editorClock);
+    this.#dependencies.provide(PlayfieldClock, this.editorClock);
 
     // TODO: fix whatever the fuck this is
     const skin = (this.#skinSource as any).skin as Skin;
@@ -118,6 +128,8 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
         }),
       }),
     ]);
+
+    console.log(this.editorBeatmap.controlPointInfo.allControlPoints);
 
     this.editorClock.seekingOrStopped.bindValueChanged(() => this.#updateSampleDisabledState(), true);
   }
@@ -157,6 +169,8 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
   #updateSampleDisabledState()
   {
     const shouldDisableSamples = this.editorClock.seekingOrStopped.value;
+
+    console.log(shouldDisableSamples);
 
     this.#playbackDisabledDebounce?.cancel();
 

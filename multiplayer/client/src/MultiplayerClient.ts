@@ -1,10 +1,13 @@
 import type { DocumentRuntime } from "@osucad/multiplayer-core";
 import { Document } from "./Document.js";
 import { DocumentServiceFactory } from "./DocumentService.js";
+import type { DocumentStorageService } from "./DocumentStorageService.js";
 
 export interface IMultiplayerClientLoadOptions
 {
-  runtimeFactory: () => Promise<DocumentRuntime>
+  runtimeFactory: (
+    storage: DocumentStorageService
+  ) => Promise<DocumentRuntime>
 }
 
 export class MultiplayerClient

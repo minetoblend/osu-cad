@@ -1,4 +1,5 @@
 import { BindableNumber } from "../bindables/BindableNumber";
+import { AudioBufferTrack } from "./AudioBufferTrack";
 import { AudioDestination } from "./AudioDestination";
 import { AudioMixer } from "./AudioMixer";
 import type { IAudioDestination } from "./IAudioDestination";
@@ -54,6 +55,15 @@ export class AudioManager extends AudioDestination implements IAudioDestination
     mixer?.connect(sample);
 
     return sample;
+  }
+
+  public createTrack(buffer: AudioBuffer, mixer: AudioMixer = this.trackMixer, name: string = "Track")
+  {
+    const track = new AudioBufferTrack(name, buffer, this.context);
+
+    mixer.connect(track);
+
+    return track;
   }
 
   public override dispose()

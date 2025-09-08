@@ -1,10 +1,11 @@
 import type { Beatmap } from "@osucad/core";
 import { BeatmapDifficultyInfo, BeatmapInfo, BeatmapMetadata, ControlPointInfo, nn, type Ruleset, rulesets, type RulesetStore, SampleControlPoint, TimingControlPoint } from "@osucad/core";
-import type { DDS, DDSFactoryOrConstructor, IDocumentSummary } from "@osucad/multiplayer-core";
-import { DocumentRuntime, Signaler } from "@osucad/multiplayer-core";
+import type { DDS, DDSFactoryOrConstructor, IBlobStorage, IDocumentSummary } from "@osucad/multiplayer-core";
+import { DocumentRuntime, MemoryBlobStorage, Signaler } from "@osucad/multiplayer-core";
 import type { EditorRuleset } from "../EditorRuleset";
 import { EditorHistory } from "./EditorHistory";
 import { EditorBeatmap, HitObjectCollection } from "./dds";
+import { RemoteFileSystem } from "./dds/RemoteFileSystem";
 
 export interface EditorRuntimeConfig
 {
@@ -13,7 +14,10 @@ export interface EditorRuntimeConfig
 
 export class EditorRuntime extends DocumentRuntime<EditorBeatmap>
 {
-  public constructor(public readonly rulesetStore: RulesetStore = rulesets)
+  public constructor(
+    storage: IBlobStorage = new MemoryBlobStorage(),
+    public readonly rulesetStore: RulesetStore = rulesets,
+  )
   {
     super([
       Signaler,
@@ -25,7 +29,8 @@ export class EditorRuntime extends DocumentRuntime<EditorBeatmap>
       TimingControlPoint,
       SampleControlPoint,
       BeatmapInfo,
-    ]);
+      RemoteFileSystem,
+    ], storage);
 
     this.history = new EditorHistory(this);
   }
@@ -67,9 +72,9 @@ export class EditorRuntime extends DocumentRuntime<EditorBeatmap>
     return runtime;
   }
 
-  public static async createEmptyFromBeatmap(beatmap: Beatmap)
+  public static async createEmptyFromBeatmap(beatmap: Beatmap, storage?: IBlobStorage)
   {
-    const runtime = new EditorRuntime();
+    const runtime = new EditorRuntime(storage);
 
     const root = await EditorBeatmap.fromBeatmap(beatmap);
 

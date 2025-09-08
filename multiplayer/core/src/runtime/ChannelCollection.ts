@@ -26,7 +26,7 @@ export class ChannelCollection
     return this.#channels.size - 1;
   }
 
-  public createSummary(): IDocumentSummary
+  public createSummary(): Omit<IDocumentSummary, "blobs">
   {
     return summarizeDocument(this.runtime);
   }

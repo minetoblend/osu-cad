@@ -18,6 +18,7 @@ export class EditorActionContainer extends KeyBindingContainer<EditorAction>
   protected override get defaultKeyBindings(): IKeyBinding[]
   {
     const keyBindings = [
+      keyBinding("Space", EditorAction.TogglePlayback),
       keyBinding("Left", EditorAction.SeekBackward),
       keyBinding("Right", EditorAction.SeekForward),
       keyBinding("Z", EditorAction.SeekToStart),
