@@ -7,7 +7,7 @@
     "@osucad/core": "workspace:^",
     "@osucad/framework": "workspace:^",
     "@osucad/ruleset-osu": "workspace:^",
-    "pixi.js": "^8.12.0"
+    "pixi.js": "^8.13.1"
   },
   "devDependencies": {
     "vite-plugin-conditional-compiler": "^0.3.1"
