@@ -215,10 +215,10 @@ export class RemoteFileSystem extends DDS<RemoteFileSystemMessage>
 
 export interface RemoteFileEvents
 {
-  changed(): void
+  changed(file: RemoteFile, blob: BlobHandle): void
 }
 
-class RemoteFile extends EventEmitter<RemoteFileEvents>
+export class RemoteFile extends EventEmitter<RemoteFileEvents>
 {
   public constructor(
     public readonly fs: RemoteFileSystem,
@@ -235,7 +235,7 @@ class RemoteFile extends EventEmitter<RemoteFileEvents>
       return false;
 
     this.blobHandle = handle;
-    this.emit("changed");
+    this.emit("changed", this, handle);
     return true;
   }
 

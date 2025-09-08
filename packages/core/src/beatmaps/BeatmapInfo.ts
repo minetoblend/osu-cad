@@ -1,5 +1,7 @@
+import { Bindable } from "@osucad/framework";
 import type { DDSAttributes } from "@osucad/multiplayer-core";
 import { ObjectDDS, type } from "@osucad/multiplayer-core";
+import { bindableBacked } from "../utils";
 
 export class BeatmapInfo extends ObjectDDS
 {
@@ -15,6 +17,12 @@ export class BeatmapInfo extends ObjectDDS
 
   @type("string")
   public accessor audioFile = "";
+
+  public readonly backgroundFileBindable = new Bindable("");
+
+  @type("string")
+  @bindableBacked("backgroundFileBindable")
+  public accessor backgroundFile!: string
 
   @type("float32")
   public accessor audioLeadIn = 0;

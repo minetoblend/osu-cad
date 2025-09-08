@@ -13,6 +13,7 @@ import { Document } from "@osucad/multiplayer-client";
 import { EditorActionContainer } from "./EditorActionContainer";
 import { IAudience } from "./injectionTokens";
 import { TrackLoader } from "./TrackLoader";
+import { EditorBackground } from "./EditorBackground";
 
 export interface EditorOptions
 {
@@ -88,6 +89,8 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
   @asyncDependencyLoader()
   async #load()
   {
+    this.addInternal(new EditorBackground());
+
     this.editorRuleset.setupEditor(this);
 
     for (const hitObject of this.editorBeatmap.hitObjects)
@@ -129,8 +132,6 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
       }),
     ]);
 
-    console.log(this.editorBeatmap.controlPointInfo.allControlPoints);
-
     this.editorClock.seekingOrStopped.bindValueChanged(() => this.#updateSampleDisabledState(), true);
   }
 
@@ -169,8 +170,6 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
   #updateSampleDisabledState()
   {
     const shouldDisableSamples = this.editorClock.seekingOrStopped.value;
-
-    console.log(shouldDisableSamples);
 
     this.#playbackDisabledDebounce?.cancel();
 

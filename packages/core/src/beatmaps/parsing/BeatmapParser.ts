@@ -101,6 +101,9 @@ export class BeatmapParser
       case BeatmapSection.Colours:
         parseColors(line, beatmap);
         break;
+      case BeatmapSection.Events:
+        parseEvents(line, beatmap);
+        break;
       case BeatmapSection.HitObjects: {
         const hitObject = (rulesetParser ??= await getRulesetParser()).parseHitObject(line, beatmap);
         if (hitObject)
@@ -370,6 +373,16 @@ function parseColors(line: string, beatmap: Beatmap)
       beatmap.colors.sliderBorder = parseColorValue();
       break;
     }
+}
+
+function parseEvents(line: string, beatmap: Beatmap)
+{
+  const [type, time, filename] = line.split(",");
+
+  if (type ==="0" && time === "0")
+  {
+    beatmap.beatmapInfo.backgroundFile = JSON.parse(filename);
+  }
 }
 
 function tryParseSectionHeader(line: string)
