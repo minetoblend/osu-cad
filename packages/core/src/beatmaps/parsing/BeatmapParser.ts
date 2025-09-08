@@ -154,7 +154,7 @@ function parseGeneral(line: string, beatmap: Beatmap)
     beatmapInfo.countdownType = Number.parseInt(value);
     break;
   case "SampleSet":
-    beatmapInfo.sampleSet = value;
+    beatmapInfo.sampleSet = SampleSet[value as keyof typeof SampleSet] ?? beatmapInfo.sampleSet;
     break;
   case "StackLeniency":
     beatmapInfo.stackLeniency = Number.parseFloat(value);
@@ -286,7 +286,7 @@ function parseTimingPoint(line: string, beatmap: Beatmap, rulesetParser: Ruleset
   const timingPoint = new LegacyTimingPoint();
   timingPoint.startTime = startTime;
 
-  timingPoint.sampleSet = SampleSet.Normal;
+  timingPoint.sampleSet = beatmap.beatmapInfo.sampleSet;
 
   if (values.length >= 4)
     timingPoint.sampleSet = Number.parseInt(values[3]);

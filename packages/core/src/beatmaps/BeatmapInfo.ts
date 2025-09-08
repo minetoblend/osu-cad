@@ -2,6 +2,7 @@ import { Bindable } from "@osucad/framework";
 import type { DDSAttributes } from "@osucad/multiplayer-core";
 import { ObjectDDS, type } from "@osucad/multiplayer-core";
 import { bindableBacked } from "../utils";
+import { SampleSet } from "../audio";
 
 export class BeatmapInfo extends ObjectDDS
 {
@@ -33,8 +34,8 @@ export class BeatmapInfo extends ObjectDDS
   @type("int32")
   public accessor countdownType = -1;
 
-  @type("string")
-  public accessor sampleSet = "Normal";
+  @type("uint8")
+  public accessor sampleSet: SampleSet = SampleSet.Normal
 
   @type("float32")
   public accessor stackLeniency = 0.7;

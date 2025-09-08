@@ -141,6 +141,9 @@ function parseHitSound(str: string, additions: SampleAdditions, time: number, be
   if (!(sampleSet in SampleSet))
     sampleSet = SampleSet.Normal;
 
+  if (sampleSet == SampleSet.None)
+    sampleSet = beatmap.beatmapInfo.sampleSet;
+
   let addSampleSet = Number.parseInt(values[1]);
   if (!(addSampleSet in SampleSet))
     addSampleSet = SampleSet.Normal;
