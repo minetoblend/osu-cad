@@ -9,7 +9,10 @@ out-tsc
 node_modules
 
 # IDEs and editors
-/.idea
+/.idea/*
+!.idea/osu-cad.iml
+
+
 .project
 .classpath
 .c9/
