@@ -113,7 +113,9 @@
       ]
     },
     "@osucad/nx:vite-tsgo": {
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "@nx/esbuild:esbuild": {
       "cache": true,
@@ -135,5 +137,6 @@
         "^production"
       ]
     }
-  }
+  },
+  "nxCloudId": "68bf39046807be68c5eff762"
 }
