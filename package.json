@@ -13,6 +13,7 @@
     "@nx/eslint-plugin": "20.8.1",
     "@nx/js": "20.8.1",
     "@nx/node": "20.8.1",
+    "@nx/plugin": "20.8.1",
     "@nx/storybook": "20.8.1",
     "@nx/vite": "20.8.1",
     "@nx/web": "20.8.1",
