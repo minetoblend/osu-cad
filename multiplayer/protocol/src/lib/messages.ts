@@ -21,7 +21,13 @@ export interface IDocumentMessageBase<Type extends MessageType>
 export interface IDeltaMessage extends IDocumentMessageBase<MessageType.Delta>
 {
   readonly type: MessageType.Delta
-  readonly deltas: IEncodedDelta[]
+  readonly deltas: IEncodedDeltas
+}
+
+export interface IEncodedDeltas
+{
+  content: string
+  symbols?: string[]
 }
 
 export interface IEncodedDelta

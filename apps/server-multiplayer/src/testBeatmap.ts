@@ -6,6 +6,7 @@ import { readdir, readFile } from "node:fs/promises";
 import { cwd } from "node:process";
 import type { BlobStorage } from "./services/blobs.js";
 import { resolve } from "node:path";
+import { CountingIdGenerator } from "@osucad/multiplayer-core";
 
 export async function createTestBeatmapSummary(storage: BlobStorage): Promise<IFullDocumentSummary>
 {
@@ -23,15 +24,18 @@ export async function createTestBeatmapSummary(storage: BlobStorage): Promise<IF
 
 
   const runtime = await EditorRuntime.createEmptyFromBeatmap(beatmap, {
-    readBlob: id => storage.readBlob(id).then(data =>
-    {
-      if (data)
-        return data.buffer;
+    idGenerator: new CountingIdGenerator(),
+    storage: {
+      readBlob: id => storage.readBlob(id).then(data =>
+      {
+        if (data)
+          return data.buffer;
 
-      throw new Error("Not found");
-    }),
-    createBlob: blob => storage.writeBlob(new Uint8Array(blob))
-      .then(id => ({ id })),
+        throw new Error("Not found");
+      }),
+      createBlob: blob => storage.writeBlob(new Uint8Array(blob))
+        .then(id => ({ id })),
+    },
   });
 
   const timingPoint = new TimingControlPoint();

@@ -163,30 +163,36 @@ describe("ObjectDDS", () =>
 
     runtime.process({
       type: MessageType.Delta,
-      deltas: [{
-        target: nn(counter.id),
-        content: [0, { value: 20 }],
-      }],
+      deltas: {
+        content: JSON.stringify([{
+          target: nn(counter.id),
+          content: [0, { value: 20 }],
+        }]),
+      },
     }, false);
 
     expect(counter.value).toBe(10);
 
     runtime.process({
       type: MessageType.Delta,
-      deltas: [{
-        target: nn(counter.id),
-        content: [1, { value: 10 }],
-      }],
+      deltas: {
+        content: JSON.stringify([{
+          target: nn(counter.id),
+          content: [1, { value: 10 }],
+        }]),
+      },
     }, true);
 
     expect(counter.value).toBe(10);
 
     runtime.process({
       type: MessageType.Delta,
-      deltas: [{
-        target: nn(counter.id),
-        content: [0, { value: 20 }],
-      }],
+      deltas: {
+        content: JSON.stringify([{
+          target: nn(counter.id),
+          content: [0, { value: 20 }],
+        }]),
+      },
     }, false);
 
     expect(counter.value).toBe(20);

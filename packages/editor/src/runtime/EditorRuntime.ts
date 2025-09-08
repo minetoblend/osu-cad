@@ -6,6 +6,7 @@ import type { EditorRuleset } from "../EditorRuleset";
 import { EditorHistory } from "./EditorHistory";
 import { EditorBeatmap, HitObjectCollection } from "./dds";
 import { RemoteFileSystem } from "./dds/RemoteFileSystem";
+import type { IdGenerator } from "@osucad/multiplayer-core";
 
 export interface EditorRuntimeConfig
 {
@@ -72,9 +73,17 @@ export class EditorRuntime extends DocumentRuntime<EditorBeatmap>
     return runtime;
   }
 
-  public static async createEmptyFromBeatmap(beatmap: Beatmap, storage?: IBlobStorage)
+  public static async createEmptyFromBeatmap(beatmap: Beatmap,
+    options?: {
+      storage?: IBlobStorage,
+      idGenerator?: IdGenerator,
+    },
+  )
   {
-    const runtime = new EditorRuntime(storage);
+    const runtime = new EditorRuntime(options?.storage);
+
+    if (options?.idGenerator)
+      runtime.idGenerator = options.idGenerator;
 
     const root = await EditorBeatmap.fromBeatmap(beatmap);
 

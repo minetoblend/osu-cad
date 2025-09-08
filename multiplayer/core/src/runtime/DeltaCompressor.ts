@@ -1,4 +1,4 @@
-import type { IEncodedDelta } from "@osucad/multiplayer-protocol";
+import type { IEncodedDelta, IEncodedDeltas } from "@osucad/multiplayer-protocol";
 import { MergeableDelta, type Delta } from "../dds/index.js";
 import { MultiValueMap } from "../utils/index.js";
 
@@ -52,13 +52,50 @@ export class DeltaCompressor
     return this.#deltas.length > 0;
   }
 
-  public process(): IEncodedDelta[]
+  public process(): IEncodedDeltas
   {
     const deltas = this.#deltas.map(encodeEntry);
 
     this.#deltas = [];
     this.#mergeMap.clear();
 
-    return deltas;
+    const nameCount = new Map<string, number>();
+
+    let encoded = JSON.stringify(deltas, (key, value) =>
+    {
+      if (key.length > 4)
+      {
+        nameCount.set(
+            key,
+            (nameCount.get(key) ?? 0) + 1,
+        );
+      }
+      return value;
+    });
+
+    let index = 0;
+    const symbols: string[] = [];
+
+    for (const [name, count] of nameCount)
+    {
+      if (count < 5)
+        continue;
+
+      const placeholder = DeltaCompressor.encodeIndex(index++);
+
+      encoded = encoded.replaceAll(`"${name}"`, placeholder);
+
+      symbols.push(name);
+    }
+
+    return {
+      content: encoded,
+      symbols: symbols.length > 0 ? symbols : undefined,
+    };
+  }
+
+  public static encodeIndex(index: number)
+  {
+    return `\\${(index).toString(36)}`;
   }
 }

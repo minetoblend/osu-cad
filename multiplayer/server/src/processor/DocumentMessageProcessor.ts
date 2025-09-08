@@ -1,9 +1,9 @@
 import type { IRemoteSignalMessage } from "@osucad/multiplayer-protocol";
-import { type IRemoteDocumentMessage, MessageType } from "@osucad/multiplayer-protocol";
+import { type IRemoteDocumentMessage } from "@osucad/multiplayer-protocol";
 import type { IProducer } from "../types/index.js";
-import type { QueuedMessage } from "./QueuedMessage.js";
-import type { IProcessorSnapshot } from "./IProcessorSnapshot.js";
 import { ClientManager } from "./ClientManager.js";
+import type { IProcessorSnapshot } from "./IProcessorSnapshot.js";
+import type { QueuedMessage } from "./QueuedMessage.js";
 
 
 export class DocumentMessageProcessor
@@ -87,7 +87,7 @@ export class DocumentMessageProcessor
       return;
 
     await this.deltasProducer.send({
-      type: MessageType.ClientLeave,
+      type: "client_leave",
       content: message.clientId,
       sequenceNumber: this.nextSequenceNumber(),
     });

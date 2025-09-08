@@ -7,6 +7,7 @@ import { DDSChannel } from "../dds/DDSChannel.js";
 import { nn } from "../utils/nn.js";
 import { DDSFactoryRegistry } from "./DDSFactoryRegistry.js";
 import { assert } from "../utils/assert.js";
+import { DeltaDecompressor } from "./DeltaDecompressor.js";
 
 export class ChannelCollection
 {
@@ -107,9 +108,13 @@ export class ChannelCollection
     }
   }
 
+  private readonly deltaDecompressor = new DeltaDecompressor();
+
   protected processDeltaMessage(message: IDeltaMessage, local: boolean)
   {
-    for (const { target, content } of message.deltas)
+    const deltas = this.deltaDecompressor.decompress(message.deltas);
+
+    for (const { target, content } of deltas)
     {
       this.#channels.get(target)?.process(content, local);
     }

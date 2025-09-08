@@ -8,7 +8,9 @@ export function syncRuntimes(runtime1: DocumentRuntime, runtime2: DocumentRuntim
   {
     const message: IDocumentMessage = {
       type: MessageType.Delta,
-      deltas: [{ target: dds.id, content: delta.encode() }],
+      deltas: {
+        content: JSON.stringify([{ target: dds.id, content: delta.encode() }]),
+      },
     };
 
     runtime1.process(message, true);
@@ -19,7 +21,9 @@ export function syncRuntimes(runtime1: DocumentRuntime, runtime2: DocumentRuntim
   {
     const message: IDocumentMessage = {
       type: MessageType.Delta,
-      deltas: [{ target: dds.id, content: delta.encode() }],
+      deltas: {
+        content: JSON.stringify([{ target: dds.id, content: delta.encode() }]),
+      },
     };
 
     runtime1.process(message, false);

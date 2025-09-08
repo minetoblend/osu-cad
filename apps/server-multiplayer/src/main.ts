@@ -11,6 +11,7 @@ import { MessageProcessorFactory } from "./MessageProcessorFactory.js";
 import { PartitionManager } from "@osucad/multiplayer-server";
 import { connectDocument } from "./connectDocument.js";
 import { BlobStorage } from "./services/blobs.js";
+import compression from "compression";
 
 void main();
 
@@ -22,9 +23,13 @@ async function main()
   const app = express();
   app.use(cors());
   app.use(express.json());
+  app.use(compression());
 
   const server = http.createServer(app);
-  const io = new Server(server);
+  const io = new Server(server, {
+    transports: ["websocket"],
+    perMessageDeflate: true,
+  });
 
   const deltaStore = new LocalDeltaStore();
   const documentStorage = new LocalDocumentStorage();

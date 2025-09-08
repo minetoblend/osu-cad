@@ -8,7 +8,7 @@ import { PathPoint } from "./PathPoint";
 import { PathSegment } from "./PathSegment";
 
 const pathPointSerializer = serializer<readonly PathPoint[], [number, number, PathType | null][]>({
-  serialize: value => value.map(p => [p.position.x, p.position.y, p.type]),
+  serialize: value => value.map(p => [Math.round(p.position.x), Math.round(p.position.y), p.type]),
   deserialize: value => value.map(([x, y, type]) => new PathPoint(new Vec2(x, y), type)),
 });
 
