@@ -11,7 +11,8 @@ export enum MessageType
 
 export type IDocumentMessage =
   | IDeltaMessage
-  | IAttachMessage;
+  | IAttachMessage
+  | IBlobAttachMessagae;
 
 export interface IDocumentMessageBase<Type extends MessageType>
 {

@@ -126,7 +126,7 @@ export class RemoteFileSystem extends DDS<RemoteFileSystemMessage> implements IF
       else
       {
         const file = new RemoteFile(this, delta.path, blob);
-        this.#files.push();
+        this.#files.push(file);
         this.emit("created", file);
       }
     }

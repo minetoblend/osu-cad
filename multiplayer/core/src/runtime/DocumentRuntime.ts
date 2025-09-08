@@ -129,6 +129,8 @@ export class DocumentRuntime<T extends DDS = DDS> extends EventEmitter<DocumentR
     case MessageType.Attach:
       this.channelCollection.process(message, local);
       break;
+    case MessageType.BlobAttach:
+      this.blobManager.processBlobAttachMessage(message, local);
     }
   }
 

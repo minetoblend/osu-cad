@@ -50,7 +50,7 @@ export class BlobManager
     return handle;
   }
 
-  public procesBlobAttachMessage(message: IBlobAttachMessagae, local: boolean)
+  public processBlobAttachMessage(message: IBlobAttachMessagae, local: boolean)
   {
     if (!local)
     {
