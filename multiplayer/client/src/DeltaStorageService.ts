@@ -11,6 +11,6 @@ export class DeltaStorageService
 
   public async getDeltas(start: number, end?: number): Promise<IRemoteDocumentMessage[]>
   {
-    return await fetch(`${this.endpoint}/api/blobs/api/deltas/${this.documentId}?start=${start}${end ? `&end=${end}` : ""}`).then(res => res.json());
+    return await fetch(`${this.endpoint}/api/deltas/${this.documentId}?start=${start}${end ? `&end=${end}` : ""}`).then(res => res.json());
   }
 }
