@@ -2,8 +2,7 @@ import type { DDSAttributes, DDSRef, IDDSSummary, IDecoder, IEncoder } from "@os
 import { DDS, Delta, nn } from "@osucad/multiplayer-core";
 import type { HitObjectInivalidationType } from "@osucad/core";
 import { HitObject } from "@osucad/core";
-import { Action, almostEquals, Lazy } from "@osucad/framework";
-import { createHitObjectCollectionProxy } from "./HitObjectCollectionProxy";
+import { Action, almostEquals } from "@osucad/framework";
 import { EventEmitter } from "eventemitter3";
 
 enum OpType
@@ -408,13 +407,6 @@ export class HitObjectCollection
   public get last(): HitObject | undefined
   {
     return this.#hitObjects[this.#hitObjects.length - 1];
-  }
-
-  #proxy = new Lazy(() => createHitObjectCollectionProxy(this));
-
-  public get proxy()
-  {
-    return this.#proxy.value;
   }
 }
 
