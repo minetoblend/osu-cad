@@ -82,4 +82,11 @@ export class EditorBackground extends CompositeDrawable
 
     return await loadTexture(copy);
   }
+
+  public override dispose(): void
+  {
+    this.file.value?.removeListener("changed", this.#fileUpdated, this);
+
+    super.dispose();
+  }
 }
