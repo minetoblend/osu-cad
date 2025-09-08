@@ -42,7 +42,7 @@ export class KeyboardHandler extends InputHandler
 
   #getKey(event: KeyboardEvent): Key | null
   {
-    const key = Key[event.code as keyof typeof Key];
+    const key = Key[event.code as keyof typeof Key] as Key;
 
     if (key === undefined)
     {

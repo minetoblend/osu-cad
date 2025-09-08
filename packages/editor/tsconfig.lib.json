@@ -1,7 +1,6 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "rootDir": "src",
     "outDir": "dist",
     "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo",
@@ -22,10 +21,10 @@
       "path": "../../multiplayer/protocol/tsconfig.lib.json"
     },
     {
-      "path": "../../multiplayer/client/tsconfig.lib.json"
+      "path": "../../multiplayer/core/tsconfig.lib.json"
     },
     {
-      "path": "../../multiplayer/core/tsconfig.lib.json"
+      "path": "../../multiplayer/client/tsconfig.lib.json"
     },
     {
       "path": "../framework/tsconfig.lib.json"

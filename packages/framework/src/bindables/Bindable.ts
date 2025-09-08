@@ -1,9 +1,10 @@
 import IterableWeakSet from "../utils/IterableWeakSet";
 import { Action } from "./Action";
+import type { IUnbindable } from "./IUnbindable";
 
 export type BindableListener<T> = (value: T) => void;
 
-export class Bindable<T> implements ReadonlyBindable<T>
+export class Bindable<T> implements ReadonlyBindable<T>, IUnbindable
 {
   public valueChanged = new Action<ValueChangedEvent<T>>();
 

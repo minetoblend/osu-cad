@@ -1,0 +1,14 @@
+{
+  "executors": {
+    "tsgo": {
+      "implementation": "./dist/executors/tsgo/tsgo",
+      "schema": "./dist/executors/tsgo/schema.json",
+      "description": "tsgo executor"
+    },
+    "vite-tsgo": {
+      "implementation": "./dist/executors/tsgo/vite-tsgo",
+      "schema": "./dist/executors/tsgo/schema.json",
+      "description": "vite-tsgo executor"
+    }
+  }
+}

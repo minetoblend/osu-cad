@@ -1,0 +1,21 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "@osucad/multiplayer-protocol",
+  "targets": {
+    "build": {
+      "executor": "@osucad/nx:tsgo",
+      "cache": true,
+      "inputs": [
+        "production"
+      ],
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "multiplayer/protocol/dist",
+        "tsConfig": "multiplayer/protocol/tsconfig.lib.json",
+        "rootDir": "multiplayer/protocol/src"
+      }
+    }
+  }
+}

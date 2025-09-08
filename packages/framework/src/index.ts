@@ -18,3 +18,4 @@ export * from "./types";
 export * from "./utils";
 export * from "./reactivity";
 export type * from "./mixins";
+export type * from "./textures";

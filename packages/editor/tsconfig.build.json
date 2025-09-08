@@ -17,10 +17,10 @@
       "path": "../../multiplayer/protocol/tsconfig.lib.json"
     },
     {
-      "path": "../../multiplayer/client/tsconfig.lib.json"
+      "path": "../../multiplayer/core/tsconfig.lib.json"
     },
     {
-      "path": "../../multiplayer/core/tsconfig.lib.json"
+      "path": "../../multiplayer/client/tsconfig.lib.json"
     },
     {
       "path": "../framework/tsconfig.lib.json"

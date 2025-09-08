@@ -1,0 +1,23 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "@osucad/core",
+
+  "targets": {
+    "build": {
+      "executor": "@osucad/nx:vite-tsgo",
+      "cache": true,
+      "inputs": [
+        "production"
+      ],
+      "outputs": [
+        "{projectRoot}/dist"
+      ],
+      "options": {
+        "outputPath": "packages/core/dist",
+        "tsConfig": "packages/core/tsconfig.lib.json",
+        "rootDir": "packages/core/src",
+        "generatePackageJson": false
+      }
+    }
+  }
+}

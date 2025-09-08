@@ -36,7 +36,6 @@ import { Scheduler } from "../../scheduling/Scheduler";
 import { FrameStatistics } from "../../statistics/FrameStatistics";
 import { StatisticsCounterType } from "../../statistics/StatisticsCounterType";
 import type { IFrameBasedClock } from "../../timing/IFrameBasedClock";
-import type { IDisposable } from "../../types/IDisposable";
 import { almostEquals } from "../../utils/almostEquals";
 import { debugAssert } from "../../utils/debugAssert";
 import type { List } from "../../utils/List";
@@ -55,6 +54,9 @@ import { LayoutMember } from "./LayoutMember";
 import { MarginPadding, type MarginPaddingOptions } from "./MarginPadding";
 import { PositionOffsetTransform } from "./PositionOffsetTransform";
 import type { ScheduledDelegate } from "../../scheduling";
+import type { IDrawable } from "./IDrawable";
+import { UnbindActionCache } from "../../bindables/UnbindActionCache";
+import getUnbindAction = UnbindActionCache.getUnbindAction;
 
 export interface DrawableOptions
 {
@@ -95,7 +97,7 @@ export interface Drawable extends OsucadMixins.Drawable
 {
 }
 
-export abstract class Drawable extends Transformable implements IDisposable
+export abstract class Drawable extends Transformable implements IDrawable
 {
   public readonly [injectionsKey]: InjectionMetadata[] = [];
   public readonly [dependencyLoadersKey]: (() => void)[] = [];
@@ -139,6 +141,11 @@ export abstract class Drawable extends Transformable implements IDisposable
   public static mixin(source: Record<string, any>): void
   {
     Object.defineProperties(Drawable.prototype, Object.getOwnPropertyDescriptors(source));
+  }
+
+  public asDrawable(): Drawable
+  {
+    return this;
   }
 
   // #region drawNode
@@ -1159,22 +1166,11 @@ export abstract class Drawable extends Transformable implements IDisposable
 
     this.drawNode?.destroy({ children: true });
     for (const callback of this.#onDispose)
-    {
       callback();
-    }
 
-    const descriptors = Object.getOwnPropertyDescriptors(this);
+    const unbindAction = getUnbindAction(this);
 
-    for (const key in descriptors)
-    {
-      const descriptor = descriptors[key];
-
-      const value = descriptor.value;
-      if (value && typeof value === "object" && "unbindAll" in value && typeof value.unbindAll === "function")
-      {
-        value.unbindAll();
-      }
-    }
+    unbindAction(this);
 
     this.isDisposed = true;
   }

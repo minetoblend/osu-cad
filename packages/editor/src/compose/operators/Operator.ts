@@ -1,6 +1,5 @@
-import type { Drawable } from "@osucad/framework";
+import type { Drawable, EffectScope } from "@osucad/framework";
 import { Action, Axes, Bindable, Dimension, effect, effectScope, FillDirection, FillFlowContainer, GridContainer, GridSizeMode, track, TrackOpTypes, trigger, TriggerOpTypes, Vec2 } from "@osucad/framework";
-import v from "voca";
 import { Checkbox } from "../../userInterface";
 import { OsucadTextBox } from "../../userInterface/OsucadTextBox";
 import { LabelledOperator } from "./LabelledOperator";
@@ -15,6 +14,19 @@ export interface OperatorContext
   editorBeatmap: EditorBeatmap
 }
 
+function readableParameterName(name: string): string
+{
+  const wordRegex = /[A-Z]?[a-z]+|[0-9]+|[A-Z]+(?![a-z])/g;
+  const result = name.match(wordRegex);
+
+  if (!result)
+    return "";
+
+  return result.map(word =>
+    word[0].toUpperCase() + word.slice(1).toLowerCase(),
+  ).join(" ");
+}
+
 export abstract class Operator
 {
   public abstract readonly title: string;
@@ -23,7 +35,7 @@ export abstract class Operator
 
   public readonly parameters: Operator.ParameterMetadata[] = [];
 
-  public readonly effectScope = effectScope();
+  public readonly effectScope: EffectScope = effectScope();
 
   public invalidate()
   {
@@ -149,7 +161,7 @@ export namespace Operator
         context.addInitializer(function()
         {
           this.parameters.push({
-            name: name ?? v.titleCase(context.name as string),
+            name: name ?? readableParameterName(context.name as string),
             parameter,
             get: () =>
             {

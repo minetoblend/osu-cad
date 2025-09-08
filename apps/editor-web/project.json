@@ -1,5 +1,6 @@
 {
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "@osucad/editor-web",
   "targets": {
     "serve": {
       "continuous": true

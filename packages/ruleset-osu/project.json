@@ -1,8 +1,22 @@
 {
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "@osucad/ruleset-osu",
   "targets": {
-    "build":{
-      "dependsOn": []
+    "build": {
+      "executor": "@osucad/nx:vite-tsgo",
+      "cache": true,
+      "inputs": [
+        "production"
+      ],
+      "outputs": [
+        "{projectRoot}/dist"
+      ],
+      "options": {
+        "outputPath": "packages/ruleset-osu/dist",
+        "tsConfig": "packages/ruleset-osu/tsconfig.lib.json",
+        "rootDir": "packages/ruleset-osu/src",
+        "generatePackageJson": false
+      }
     }
   },
   "implicitDependencies": [

@@ -1,7 +1,7 @@
-import { effectScope } from "./vue";
+import { effectScope, type EffectScope } from "./vue";
 import type { Drawable } from "../graphics";
 
-export function drawableEffectScope(drawable: Drawable)
+export function drawableEffectScope(drawable: Drawable): EffectScope
 {
   const scope = effectScope(true);
 

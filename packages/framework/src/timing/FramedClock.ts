@@ -145,5 +145,5 @@ export class FramedClock implements IFrameBasedClock
     return this.#timeInfo;
   }
 
-  public readonly isFrameBasedClock = true;
+  public readonly isFrameBasedClock = true as const;
 }

@@ -17,7 +17,7 @@ export class DrawableSliderBall extends CompositeDrawable
 
   private ball!: SkinnableDrawable;
 
-  public readonly sliderBallFlip = computed(() => this.#skin.getConfig("sliderBallFlip"));
+  readonly #sliderBallFlip = computed(() => this.#skin.getConfig("sliderBallFlip"));
 
   protected override load(dependencies: ReadonlyDependencyContainer)
   {
@@ -53,7 +53,7 @@ export class DrawableSliderBall extends CompositeDrawable
   public updateProgress(completionProgress: number)
   {
     const slider = this.#drawableSlider.hitObject!;
-    if (slider.spanCount() > 1 && this.sliderBallFlip.value == false)
+    if (slider.spanCount() > 1 && this.#sliderBallFlip.value == false)
       this.ball.scaleX = slider.spanAt(completionProgress) % 2 == 1 ? -1 : 1;
 
     const position = this.position = slider.curvePositionAt(completionProgress);

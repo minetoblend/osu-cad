@@ -4,13 +4,13 @@
   "include": [],
   "references": [
     {
-      "path": "../../multiplayer/protocol"
-    },
-    {
       "path": "../../packages/ruleset-osu"
     },
     {
       "path": "../../multiplayer/server"
+    },
+    {
+      "path": "../../multiplayer/protocol"
     },
     {
       "path": "../../multiplayer/core"

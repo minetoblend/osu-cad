@@ -11,7 +11,7 @@ export class DocumentStorageService
     version: number
   }>
   {
-    const { blobId, version } = await fetch(`/api/summary/${this.documentId}`).then(res => res.json());
+    const { blobId, version } = await fetch(`http://localhost:3000/api/summary/${this.documentId}`).then(res => res.json());
 
     const data = await this.readBlob(blobId);
 
@@ -28,7 +28,7 @@ export class DocumentStorageService
     sequenceNumber: number,
   ): Promise<number>
   {
-    return await fetch(`/api/summary/${this.documentId}`, {
+    return await fetch(`http://localhost:3000/api/summary/${this.documentId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -39,7 +39,7 @@ export class DocumentStorageService
 
   public async readBlob(id: string): Promise<ArrayBuffer>
   {
-    const response = await fetch(`/api/blobs/${id}`);
+    const response = await fetch(`http://localhost:3000/api/blobs/${id}`);
 
     if (!response.ok)
       throw new Error(`Blob ${id} not found`);
@@ -53,7 +53,7 @@ export class DocumentStorageService
 
     new Uint8Array(buffer).set(new Uint8Array(data));
 
-    return await fetch("/api/blobs", {
+    return await fetch("http://localhost:3000/api/blobs", {
       method: "POST",
       headers: {
         "Content-Type": "application/octet-stream",

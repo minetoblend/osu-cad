@@ -1,8 +1,9 @@
-import type { Drawable } from "../graphics";
 import type { ScreenExitEvent } from "./ScreenExitEvent";
 import type { ScreenTransitionEvent } from "./ScreenTransitionEvent";
+import type { IDrawable } from "../graphics/drawables/IDrawable";
+import type { Drawable } from "../graphics/drawables/Drawable";
 
-export interface IScreen extends Drawable
+export interface IScreen extends IDrawable
 {
   readonly isScreen: true;
 
@@ -17,6 +18,8 @@ export interface IScreen extends Drawable
   onResuming: (e: ScreenTransitionEvent) => void;
 
   onSuspending: (e: ScreenTransitionEvent) => void;
+
+  asDrawable(): Drawable
 }
 
 export function isScreen(obj: any): obj is IScreen

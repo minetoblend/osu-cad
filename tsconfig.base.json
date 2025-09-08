@@ -22,7 +22,6 @@
     "target": "es2022",
     "useDefineForClassFields": false,
     "customConditions": [
-      "source"
     ]
   }
 }

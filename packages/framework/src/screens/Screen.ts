@@ -7,7 +7,7 @@ import { ScreenStack } from "./ScreenStack";
 
 export abstract class Screen extends CompositeDrawable implements IScreen
 {
-  public readonly isScreen = true;
+  public readonly isScreen = true as const;
 
   public validForResume = true;
 

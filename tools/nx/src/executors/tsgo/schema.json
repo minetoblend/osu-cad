@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "version": 2,
+  "title": "tsgo executor",
+  "description": "",
+  "type": "object",
+  "properties": {
+    "outputPath":{
+      "type": "string"
+    },
+    "rootDir": {
+      "type": "string"
+    },
+    "tsConfig":{
+      "type":"string"
+    },
+    "emitDeclarationOnly":{
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "outputPath",
+    "tsConfig"
+  ]
+}

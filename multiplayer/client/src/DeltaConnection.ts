@@ -30,7 +30,7 @@ export class DeltaConnection extends EventEmitter<DeltaConnectionEvents>
 
   public static async create(documentId: string, timeout: number = 20000)
   {
-    const socket = io("/", {
+    const socket = io("http://localhost:3000", {
       transports: ["websocket"],
       reconnection: false,
       timeout,

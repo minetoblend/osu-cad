@@ -1,6 +1,5 @@
-import type { HitObjectLifetimeEntry } from "@osucad/core";
-import { TimelineBlueprint } from "@osucad/editor";
-import { TimelineBlueprintContainer } from "@osucad/editor";
+import type { TimelineLifetimeEntry } from "@osucad/editor";
+import { TimelineBlueprint, TimelineBlueprintContainer } from "@osucad/editor";
 import { HitCircle, Slider } from "../../hitObjects";
 import { HitCircleTimelineBlueprint } from "./HitCircleTimelineBlueprint";
 import { SliderTimelineBlueprint } from "./SliderTimelineBlueprint";
@@ -12,7 +11,7 @@ export class OsuTimelineBlueprintContainer extends TimelineBlueprintContainer
     super();
   }
 
-  protected override getDrawable(entry: HitObjectLifetimeEntry): TimelineBlueprint
+  protected override getDrawable(entry: TimelineLifetimeEntry): TimelineBlueprint
   {
     if (entry.hitObject instanceof HitCircle)
       return new HitCircleTimelineBlueprint(entry);

@@ -1,6 +1,5 @@
 /// <reference types='vitest' />
 import { defaultClientConditions, defineConfig } from "vite";
-import dts from "vite-plugin-dts";
 import * as path from "path";
 
 import { dependencies } from "./package.json";
@@ -8,7 +7,7 @@ import { dependencies } from "./package.json";
 export default defineConfig(() => ({
   root: __dirname,
   cacheDir: "../../node_modules/.vite/packages/core",
-  plugins: [dts({ entryRoot: "src", tsconfigPath: path.join(__dirname, "tsconfig.lib.json") })],
+  // plugins: [dts({ entryRoot: "src", tsconfigPath: path.join(__dirname, "tsconfig.lib.json") })],
   resolve: {
     conditions: [
       ...defaultClientConditions,
@@ -17,24 +16,27 @@ export default defineConfig(() => ({
   },
   build: {
     outDir: "./dist",
-    emptyOutDir: true,
+    emptyOutDir: false,
     reportCompressedSize: true,
     commonjsOptions: {
       transformMixedEsModules: true,
     },
     lib: {
-      // Could also be a dictionary or array of multiple entry points.
-      entry: "src/index.ts",
+      entry: [
+        "src/index.ts",
+      ],
       name: "@osucad/core",
-      fileName: "index",
-      // Change this to the formats you want to support.
-      // Don't forget to update your package.json as well.
+      fileName: (format, entryName) => `${entryName.replace(/node_modules\//g, "external/")}.js`,
       formats: ["es" as const],
     },
     minify: false,
     target: "modules",
     sourcemap: true,
     rollupOptions: {
+      output: {
+        preserveModules: true,
+        preserveModulesRoot: path.join(__dirname, "src"),
+      },
       // External packages that should not be bundled into your library.
       external: [
         ...Object.keys(dependencies),

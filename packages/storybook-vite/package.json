@@ -57,20 +57,5 @@
       "./src/preset.ts"
     ],
     "platform": "node"
-  },
-  "nx": {
-    "targets": {
-      "build": {
-        "dependsOn": [
-          {
-            "projects": [
-              "@osucad/storybook-renderer",
-              "@osucad/storybook-preset-vite"
-            ],
-            "target": "build"
-          }
-        ]
-      }
-    }
   }
 }

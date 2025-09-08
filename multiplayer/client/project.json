@@ -1,0 +1,21 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "@osucad/multiplayer-client",
+  "targets": {
+    "build": {
+      "executor": "@osucad/nx:tsgo",
+      "cache": true,
+      "inputs": [
+        "production"
+      ],
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "multiplayer/client/dist",
+        "tsConfig": "multiplayer/client/tsconfig.lib.json",
+        "rootDir": "multiplayer/client/src"
+      }
+    }
+  }
+}

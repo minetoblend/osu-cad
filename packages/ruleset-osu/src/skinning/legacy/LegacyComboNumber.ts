@@ -1,5 +1,5 @@
 import { IComboNumberReference, ISkinSource } from "@osucad/core";
-import type { ReadonlyDependencyContainer } from "@osucad/framework";
+import type { ComputedRef, ReadonlyDependencyContainer } from "@osucad/framework";
 import { Anchor, Bindable, CompositeDrawable, DrawableSprite, resolved } from "@osucad/framework";
 import { computed, watch, withEffectScope } from "@osucad/framework";
 
@@ -16,8 +16,8 @@ export class LegacyComboNumber extends CompositeDrawable
 
   public readonly indexInComboBindable = new Bindable(0);
 
-  public readonly hitCircleOverlap = computed(() => this.#skin.getConfig("hitCircleOverlap") ?? -2);
-  public readonly prefix = computed(() => this.#skin.getConfig("hitCirclePrefix") ?? "default");
+  public readonly hitCircleOverlap: ComputedRef<number> = computed(() => this.#skin.getConfig("hitCircleOverlap") ?? -2);
+  public readonly prefix: ComputedRef<string> = computed(() => this.#skin.getConfig("hitCirclePrefix") ?? "default");
 
   @withEffectScope()
   protected override load(dependencies: ReadonlyDependencyContainer)

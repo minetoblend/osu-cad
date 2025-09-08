@@ -47,11 +47,9 @@
     "@osucad/multiplayer-protocol": "workspace:^",
     "eventemitter3": "^5.0.1",
     "pixi.js": "^8.13.1",
-    "socket.io-client": "^4.8.1",
-    "voca": "^1.4.1"
+    "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
-    "@types/voca": "^1.4.6",
     "vitest": "^3.0.0"
   }
 }

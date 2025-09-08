@@ -1,5 +1,5 @@
 import { ISkinSource } from "@osucad/core";
-import type { ReadonlyDependencyContainer } from "@osucad/framework";
+import type { ComputedRef, ReadonlyDependencyContainer } from "@osucad/framework";
 import { Bindable, resolved } from "@osucad/framework";
 import { Color } from "pixi.js";
 import { OsuHitObject } from "../OsuHitObject";
@@ -17,8 +17,8 @@ export class PlaySliderBody extends SnakingSliderBody
   @resolved(ISkinSource)
   protected accessor skin!: ISkinSource;
 
-  protected readonly sliderBorder = computed(() => this.skin.getConfig("sliderBorder"));
-  protected readonly sliderTrackOverride = computed(() => this.skin.getConfig("sliderTrackOverride"));
+  protected readonly sliderBorder: ComputedRef<Color | null> = computed(() => this.skin.getConfig("sliderBorder"));
+  protected readonly sliderTrackOverride: ComputedRef<Color | null> = computed(() => this.skin.getConfig("sliderTrackOverride"));
 
   @withEffectScope()
   protected override load(dependencies: ReadonlyDependencyContainer)

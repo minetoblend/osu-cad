@@ -13,13 +13,7 @@
       "path": "./packages/ruleset-osu"
     },
     {
-      "path": "./apps/skinning-demo"
-    },
-    {
       "path": "./packages/editor"
-    },
-    {
-      "path": "./apps/editor-playground"
     },
     {
       "path": "./apps/editor-web"
@@ -38,6 +32,9 @@
     },
     {
       "path": "./multiplayer/server"
+    },
+    {
+      "path": "./tools/nx"
     }
   ],
   "ts-node": {

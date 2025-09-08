@@ -1,8 +1,6 @@
 /// <reference types='vitest' />
 import * as path from "path";
 import { defaultClientConditions, defineConfig } from "vite";
-import ConditionalCompile from "vite-plugin-conditional-compiler";
-import dts from "vite-plugin-dts";
 
 import { dependencies } from "./package.json";
 
@@ -10,8 +8,6 @@ export default defineConfig(() => ({
   root: __dirname,
   cacheDir: "../../node_modules/.vite/packages/framework",
   plugins: [
-    dts({ entryRoot: "src", tsconfigPath: path.join(__dirname, "tsconfig.lib.json") }),
-    ConditionalCompile(),
   ],
   resolve: {
     conditions: [
@@ -27,7 +23,7 @@ export default defineConfig(() => ({
   },
   build: {
     outDir: "./dist",
-    emptyOutDir: true,
+    emptyOutDir: false,
     reportCompressedSize: true,
     commonjsOptions: {
     },

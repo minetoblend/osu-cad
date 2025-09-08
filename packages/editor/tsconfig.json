@@ -7,10 +7,10 @@
       "path": "../../multiplayer/protocol"
     },
     {
-      "path": "../../multiplayer/client"
+      "path": "../../multiplayer/core"
     },
     {
-      "path": "../../multiplayer/core"
+      "path": "../../multiplayer/client"
     },
     {
       "path": "../framework"

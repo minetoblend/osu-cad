@@ -1,5 +1,5 @@
 import { BeatmapParser, rulesets, TimingControlPoint } from "@osucad/core";
-import { EditorRuntime } from "@osucad/editor/runtime";
+import { EditorRuntime } from "@osucad/editor";
 import { CountingIdGenerator } from "@osucad/multiplayer-core";
 import type { IFullDocumentSummary } from "@osucad/multiplayer-protocol";
 import { OsuRuleset } from "@osucad/ruleset-osu";
@@ -27,14 +27,14 @@ export async function createTestBeatmapSummary(storage: BlobStorage, documentSto
   const runtime = await EditorRuntime.createEmptyFromBeatmap(beatmap, {
     idGenerator: new CountingIdGenerator(),
     storage: {
-      readBlob: id => storage.readBlob(id).then(data =>
+      readBlob: (id: string) => storage.readBlob(id).then(data =>
       {
         if (data)
           return data.buffer;
 
         throw new Error("Not found");
       }),
-      createBlob: blob => storage.writeBlob(new Uint8Array(blob))
+      createBlob: (blob: ArrayBufferLike) => storage.writeBlob(new Uint8Array(blob))
         .then(id => ({ id })),
     },
   });

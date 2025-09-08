@@ -100,7 +100,7 @@ export class ScreenStack extends CompositeDrawable
     }
     else
     {
-      this.loadScreen(source as unknown as CompositeDrawable, newScreen).then(() =>
+      this.loadScreen(source.asDrawable() as CompositeDrawable, newScreen).then(() =>
         this.#finishPush(source, newScreen),
       );
     }
@@ -125,7 +125,7 @@ export class ScreenStack extends CompositeDrawable
       this.#suspend(parent, child);
     }
 
-    this.addInternal(child);
+    this.addInternal(child.asDrawable());
   }
 
   #suspend(from: IScreen | null, to: IScreen)
@@ -164,7 +164,7 @@ export class ScreenStack extends CompositeDrawable
       {
         if (loader && loader?.loadState >= LoadState.Ready)
         {
-          loader.loadComponentAsync(toLoad, undefined, this.scheduler).then(() => resolve());
+          loader.loadComponentAsync(toLoad.asDrawable(), undefined, this.scheduler).then(() => resolve());
         }
         else
         {
@@ -302,7 +302,7 @@ export class ScreenStack extends CompositeDrawable
       toExit.expire();
     }
 
-    this.#exited.push(toExit);
+    this.#exited.push(toExit.asDrawable());
 
     this.screenExited.emit({
       lastScreen: toExit,

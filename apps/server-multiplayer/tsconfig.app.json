@@ -1,13 +1,14 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "baseUrl": ".",
     "outDir": "dist",
-    "module": "nodenext",
+    "module": "esnext",
     "types": [
       "node"
     ],
     "rootDir": "src",
-    "moduleResolution": "nodenext",
+    "moduleResolution": "bundler",
     "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo"
   },
   "include": [
@@ -20,13 +21,13 @@
   ],
   "references": [
     {
-      "path": "../../multiplayer/protocol/tsconfig.lib.json"
-    },
-    {
       "path": "../../packages/ruleset-osu/tsconfig.lib.json"
     },
     {
       "path": "../../multiplayer/server/tsconfig.lib.json"
+    },
+    {
+      "path": "../../multiplayer/protocol/tsconfig.lib.json"
     },
     {
       "path": "../../multiplayer/core/tsconfig.lib.json"

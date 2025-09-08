@@ -117,7 +117,7 @@ export class SpriteTextPipe implements RenderPipe<BitmapText>
     {
       if (!context.customShader)
       {
-        context.customShader = BigPool.get(SdfShader);
+        context.customShader = new SdfShader(this._renderer.limits.maxBatchableTextures);
       }
     }
     else

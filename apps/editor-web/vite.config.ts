@@ -1,16 +1,24 @@
 /// <reference types='vitest' />
 import { defaultClientConditions, defineConfig } from "vite";
-import ConditionalCompile from "vite-plugin-conditional-compiler";
+import { moduleReplacer } from "./moduleReplacer";
+
 
 export default defineConfig({
   root: __dirname,
-  cacheDir: "../../node_modules/.vite/apps/web",
+  // cacheDir: "../../node_modules/.vite/apps/editor-web",
   resolve: {
     conditions: [
       ...defaultClientConditions,
-      ...(process.env.NODE_ENV === "development" ? ["source"] : []),
+      ...(process.env.NODE_ENV === "development" ? ["source"] : ["source"]),
     ],
   },
+  optimizeDeps: {
+  },
+  plugins: [
+    moduleReplacer({
+      "@xmldom/xmldom": "export class DOMParser { }",
+    }),
+  ],
   server:{
     port: 4200,
     host: "localhost",
@@ -38,7 +46,6 @@ export default defineConfig({
       },
     },
   },
-  plugins: [ConditionalCompile()],
   worker: {
     format: "es" as const,
   },

@@ -5,8 +5,6 @@ import { SkinManager } from "./SkinManager";
 import { UIScaleContainer } from "./UIScaleContainer";
 import { EditorLoader } from "./EditorLoader";
 import { PerformanceOverlay } from "./PerformanceOverlay";
-import{ initDevtools } from "@pixi/devtools";
-import * as pixi from "pixi.js";
 
 export class OsucadGame extends Game
 {
@@ -37,12 +35,6 @@ export class OsucadGame extends Game
   protected override loadComplete()
   {
     super.loadComplete();
-
-    initDevtools({
-      renderer: this.host!.renderer.internalRenderer,
-      stage: this.host!.root!.drawNode,
-      pixi: pixi,
-    });
 
     this.#screenStack.push(new EditorLoader());
   }

@@ -7,10 +7,10 @@
       "path": "../../packages/ruleset-osu"
     },
     {
-      "path": "../../multiplayer/client"
+      "path": "../../multiplayer/core"
     },
     {
-      "path": "../../multiplayer/core"
+      "path": "../../multiplayer/client"
     },
     {
       "path": "../../packages/framework"

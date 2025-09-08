@@ -17,68 +17,6 @@
     "isomorphic-git": "^1.33.1",
     "socket.io": "^4.8.1"
   },
-  "nx": {
-    "targets": {
-      "build": {
-        "executor": "@nx/esbuild:esbuild",
-        "outputs": [
-          "{options.outputPath}"
-        ],
-        "defaultConfiguration": "production",
-        "options": {
-          "platform": "node",
-          "outputPath": "apps/server-multiplayer/dist",
-          "format": [
-            "esm"
-          ],
-          "bundle": false,
-          "main": "apps/server-multiplayer/src/main.ts",
-          "tsConfig": "apps/server-multiplayer/tsconfig.app.json",
-          "assets": [
-            "apps/server-multiplayer/src/assets"
-          ],
-          "skipTypeCheck": true,
-          "declaration": false,
-          "esbuildOptions": {
-            "sourcemap": true,
-            "outExtension": {
-              ".js": ".js"
-            }
-          }
-        },
-        "configurations": {
-          "development": {},
-          "production": {
-            "esbuildOptions": {
-              "sourcemap": false,
-              "outExtension": {
-                ".js": ".js"
-              }
-            }
-          }
-        }
-      },
-      "serve": {
-        "executor": "@nx/js:node",
-        "defaultConfiguration": "development",
-        "dependsOn": [
-          "build"
-        ],
-        "options": {
-          "buildTarget": "@osucad/server-multiplayer:build",
-          "runBuildTargetDependencies": false
-        },
-        "configurations": {
-          "development": {
-            "buildTarget": "@osucad/server-multiplayer:build:development"
-          },
-          "production": {
-            "buildTarget": "@osucad/server-multiplayer:build:production"
-          }
-        }
-      }
-    }
-  },
   "devDependencies": {
     "@types/async": "^3.2.24",
     "@types/compression": "^1.8.1",
