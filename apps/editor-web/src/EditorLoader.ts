@@ -49,7 +49,7 @@ export class EditorLoader extends Screen
     const { MultiplayerClient } = await import("@osucad/multiplayer-client");
 
     const client = new MultiplayerClient({
-      endpoint: "http://localhost:3000",
+      endpoint: import.meta.env.VITE_API_BASEURL,
     });
 
     this.#document = await client.load("beatmap", { runtimeFactory: editorRuntimeFactory });
