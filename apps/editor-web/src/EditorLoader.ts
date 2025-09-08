@@ -31,7 +31,17 @@ export class EditorLoader extends Screen
   {
     super.loadComplete();
 
-    void this.loadEditor();
+    void this.loadEditor().catch((e) =>
+    {
+      while(this.screenStack)
+      {
+        this.screenStack.exit(this.screenStack.currentScreen!);
+      }
+
+      console.error(e);
+
+      // TODO: display error notification
+    });
   }
 
   protected async loadEditor()
