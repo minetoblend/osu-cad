@@ -28,9 +28,13 @@ export class DeltaConnection extends EventEmitter<DeltaConnectionEvents>
 
   public readonly initialDeltas: IRemoteDocumentMessage[] = [];
 
-  public static async create(documentId: string, timeout: number = 20000)
+  public static async create(
+    documentId: string,
+    url: string,
+    timeout: number = 20000,
+  )
   {
-    const socket = io("http://localhost:3000", {
+    const socket = io(url, {
       transports: ["websocket"],
       reconnection: false,
       timeout,

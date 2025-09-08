@@ -3,6 +3,11 @@ import { Document } from "./Document.js";
 import { DocumentServiceFactory } from "./DocumentService.js";
 import type { DocumentStorageService } from "./DocumentStorageService.js";
 
+export interface IMultiplayerClientOptions
+{
+  readonly endpoint: string
+}
+
 export interface IMultiplayerClientLoadOptions
 {
   runtimeFactory: (
@@ -12,18 +17,19 @@ export interface IMultiplayerClientLoadOptions
 
 export class MultiplayerClient
 {
-  public constructor()
+  public constructor(options: IMultiplayerClientOptions)
   {
+    this.endpoint = options.endpoint;
   }
+
+  private readonly endpoint: string;
 
   public async load(documentId: string, options: IMultiplayerClientLoadOptions)
   {
-    const document = await Document.load({
+    return await Document.load({
       documentId,
-      serviceFactory: new DocumentServiceFactory(),
+      serviceFactory: new DocumentServiceFactory(this.endpoint),
       runtimeFactory: options.runtimeFactory,
     });
-
-    return document;
   }
 }

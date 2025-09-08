@@ -2,12 +2,15 @@ import type { IRemoteDocumentMessage } from "@osucad/multiplayer-protocol";
 
 export class DeltaStorageService
 {
-  public constructor(public readonly documentId: string)
+  public constructor(
+    public readonly documentId: string,
+    private readonly endpoint: string,
+  )
   {
   }
 
   public async getDeltas(start: number, end?: number): Promise<IRemoteDocumentMessage[]>
   {
-    return await fetch(`http://localhost:3000/api/deltas/${this.documentId}?start=${start}${end ? `&end=${end}` : ""}`).then(res => res.json());
+    return await fetch(`${this.endpoint}/api/blobs/api/deltas/${this.documentId}?start=${start}${end ? `&end=${end}` : ""}`).then(res => res.json());
   }
 }

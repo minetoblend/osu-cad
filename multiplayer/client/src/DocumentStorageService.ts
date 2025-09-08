@@ -2,7 +2,10 @@ import type { IFullDocumentSummary } from "@osucad/multiplayer-protocol";
 
 export class DocumentStorageService
 {
-  public constructor(public readonly documentId: string)
+  public constructor(
+    public readonly documentId: string,
+    private readonly endpoint: string,
+  )
   {
   }
 
@@ -11,7 +14,7 @@ export class DocumentStorageService
     version: number
   }>
   {
-    const { blobId, version } = await fetch(`http://localhost:3000/api/summary/${this.documentId}`).then(res => res.json());
+    const { blobId, version } = await fetch(`${this.endpoint}/api/summary/${this.documentId}`).then(res => res.json());
 
     const data = await this.readBlob(blobId);
 
@@ -28,7 +31,7 @@ export class DocumentStorageService
     sequenceNumber: number,
   ): Promise<number>
   {
-    return await fetch(`http://localhost:3000/api/summary/${this.documentId}`, {
+    return await fetch(`${this.endpoint}/api/summary/${this.documentId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -39,7 +42,7 @@ export class DocumentStorageService
 
   public async readBlob(id: string): Promise<ArrayBuffer>
   {
-    const response = await fetch(`http://localhost:3000/api/blobs/${id}`);
+    const response = await fetch(`${this.endpoint}/api/blobs/${id}`);
 
     if (!response.ok)
       throw new Error(`Blob ${id} not found`);
@@ -53,7 +56,7 @@ export class DocumentStorageService
 
     new Uint8Array(buffer).set(new Uint8Array(data));
 
-    return await fetch("http://localhost:3000/api/blobs", {
+    return await fetch(`${this.endpoint}/api/blobs`, {
       method: "POST",
       headers: {
         "Content-Type": "application/octet-stream",
