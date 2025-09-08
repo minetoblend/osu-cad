@@ -4,7 +4,7 @@ import v from "voca";
 import { Checkbox } from "../../userInterface";
 import { OsucadTextBox } from "../../userInterface/OsucadTextBox";
 import { LabelledOperator } from "./LabelledOperator";
-import type { EditorBeatmap } from "src/runtime";
+import type { EditorBeatmap } from "../../runtime";
 import type { HitObject } from "@osucad/core";
 
 

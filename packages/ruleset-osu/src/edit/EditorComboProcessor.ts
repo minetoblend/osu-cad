@@ -1,7 +1,7 @@
 import type { HitObject } from "@osucad/core";
 import type { EditorBeatmap } from "@osucad/editor";
 import { EditorBeatmapProcessor } from "@osucad/editor";
-import { type OsuHitObject } from "src/hitObjects";
+import { type OsuHitObject } from "../hitObjects";
 
 export class EditorComboProcessor extends EditorBeatmapProcessor
 {

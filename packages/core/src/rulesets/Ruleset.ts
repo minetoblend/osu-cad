@@ -1,4 +1,4 @@
-import type { Skin } from "src/skinning/Skin";
+import type { Skin } from "../skinning/Skin";
 import type { RulesetBeatmapParser } from "../beatmaps/parsing/BeatmapParser";
 import type { SkinTransformer } from "../skinning/SkinTransformer";
 import type { Awaitable } from "../utils";

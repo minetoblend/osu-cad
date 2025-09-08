@@ -2,7 +2,7 @@ import { type HitObject } from "@osucad/core";
 import { ComposeTool, HitObjectComposer, HitObjectSelection } from "@osucad/editor";
 import type { ClickEvent, IKeyBindingHandler, KeyBindingAction, KeyBindingPressEvent, ReadonlyDependencyContainer } from "@osucad/framework";
 import { Bindable, BoundsBuilder, DependencyContainer, dependencyLoader, keyBindingHandler, MouseButton, PlatformAction, provideSelf, resolved, Vec2 } from "@osucad/framework";
-import type { SnapResult } from "src/edit/SnapProvider";
+import type { SnapResult } from "../../../edit/SnapProvider";
 import { type OsuHitObject, Slider, Spinner } from "../../../hitObjects";
 import { OsuEditorAction } from "../../OsuEditorAction";
 import { HitObjectSnapProvider } from "../../SelectionSnapProvider";

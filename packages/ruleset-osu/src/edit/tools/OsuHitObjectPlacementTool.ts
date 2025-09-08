@@ -1,4 +1,4 @@
-import type { OsuHitObject } from "src/hitObjects";
+import type { OsuHitObject } from "../../hitObjects";
 import { HitObjectPlacementTool } from "./HitObjectPlacementTool";
 import { resolved } from "@osucad/framework";
 import { EditorComboProcessor } from "../EditorComboProcessor";

@@ -1,4 +1,4 @@
-import type { IEncoder, IDecoder } from "src/serialization/types.js";
+import type { IEncoder, IDecoder } from "../serialization/types.js";
 import { DDS } from "./DDS.js";
 import type { Delta } from "./Delta.js";
 import type{ EventEmitter } from "eventemitter3";
