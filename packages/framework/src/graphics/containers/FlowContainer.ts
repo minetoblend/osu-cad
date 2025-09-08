@@ -106,7 +106,7 @@ export abstract class FlowContainer<T extends Drawable = Drawable> extends Conta
     this.setLayoutPosition(drawable, position);
   }
 
-  protected getLayoutPosition(drawable: T): number
+  public getLayoutPosition(drawable: T): number
   {
     if (!this.#layoutChildren.has(drawable))
     {
