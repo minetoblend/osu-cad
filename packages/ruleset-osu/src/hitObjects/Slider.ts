@@ -260,7 +260,7 @@ export class Slider extends OsuHitObject
     const samplePoint = controlPoints.samplePointAt(this.startTime);
 
     const sampleSet = this.hitSound.sampleSet !== SampleSet.None ? this.hitSound.sampleSet : samplePoint.sampleSet;
-    const additionSampleSet = this.hitSound.additionSampleSet !== SampleSet.None ? this.hitSound.sampleSet : sampleSet;
+    const additionSampleSet = this.hitSound.additionSampleSet !== SampleSet.None ? this.hitSound.additionSampleSet : sampleSet;
 
     const suffix = samplePoint.sampleIndex > 0 ? samplePoint.sampleIndex.toString() : undefined;
 
