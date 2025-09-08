@@ -24,7 +24,7 @@ export default defineConfig(() => ({
   build: {
     outDir: "./dist",
     emptyOutDir: false,
-    reportCompressedSize: true,
+    reportCompressedSize: false,
     commonjsOptions: {
     },
     lib: {
