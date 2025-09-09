@@ -1,11 +1,7 @@
-import type { ValueChangedEvent } from "@osucad/framework";
-import { Anchor, Axes, DrawableSprite, FillMode } from "@osucad/framework";
-import { Bindable, CompositeDrawable, dependencyLoader, loadTexture, resolved } from "@osucad/framework";
+import { Anchor, Axes, CompositeDrawable, dependencyLoader, DrawableSprite, FillMode, loadTexture, resolved } from "@osucad/framework";
 import type { Texture } from "pixi.js";
 import { EditorFileReference } from "./EditorFileReference";
 import { EditorBeatmap } from "./runtime";
-import type { BlobHandle } from "@osucad/multiplayer-core";
-import type { RemoteFile } from "./runtime/dds/RemoteFileSystem";
 
 export class EditorBackground extends CompositeDrawable
 {
