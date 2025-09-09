@@ -11,6 +11,7 @@
       <sourceFolder url="file://$MODULE_DIR$/packages/editor/dist" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/packages/framework/dist" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/packages/ruleset-osu/dist" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/apps/editor-web/dist" isTestSource="false" generated="true" />
       <excludeFolder url="file://$MODULE_DIR$/.nx" />
     </content>
     <orderEntry type="inheritedJdk" />
