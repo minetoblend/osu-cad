@@ -1,4 +1,3 @@
-import type { ValueChangedEvent } from "@osucad/framework";
 import { Bindable } from "@osucad/framework";
 import type { RemoteFile, RemoteFileSystem } from "./runtime/dds/RemoteFileSystem";
 
