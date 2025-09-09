@@ -1,14 +1,19 @@
+import { IResourcesProvider } from "@osucad/core";
 import { ISkinSource, rulesets } from "@osucad/core";
-import { asyncDependencyLoader, Game, provide, ScreenStack } from "@osucad/framework";
+import { asyncDependencyLoader, AudioManager, Game, provide, provideSelf, resolved, ScreenStack } from "@osucad/framework";
 import { OsuRuleset } from "@osucad/ruleset-osu";
 import { SkinManager } from "./SkinManager";
 import { UIScaleContainer } from "./UIScaleContainer";
 import { EditorLoader } from "./EditorLoader";
 import { PerformanceOverlay } from "./PerformanceOverlay";
 
-export class OsucadGame extends Game
+@provideSelf(IResourcesProvider)
+export class OsucadGame extends Game implements IResourcesProvider
 {
   #screenStack!: ScreenStack;
+
+  @resolved(AudioManager)
+  public accessor audioManager!: AudioManager
 
   @provide(ISkinSource)
   @provide(SkinManager)
