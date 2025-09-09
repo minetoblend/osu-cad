@@ -33,7 +33,7 @@ export class EditorLoader extends Screen
 
     void this.loadEditor().catch((e) =>
     {
-      while(this.screenStack)
+      while(this.screenStack && this.screenStack.currentScreen!)
       {
         this.screenStack.exit(this.screenStack.currentScreen!);
       }
