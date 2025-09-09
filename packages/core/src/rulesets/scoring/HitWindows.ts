@@ -1,5 +1,5 @@
 import { BeatmapDifficultyInfo } from "../../beatmaps";
-import type { EmptyHitWindows } from "./EmptyHitWindows";
+
 import { HitResult } from "./HitResult";
 
 export class DifficultyRange
@@ -17,7 +17,10 @@ export class DifficultyRange
 
 export class HitWindows
 {
-  public declare static readonly Empty: EmptyHitWindows;
+  public static get Empty()
+  {
+    return new EmptyHitWindows();
+  }
 
   public static readonly base_ranges = [
     new DifficultyRange(HitResult.Perfect, 22.4, 19.4, 13.9),
@@ -146,3 +149,27 @@ export class HitWindows
   }
 }
 
+export class EmptyHitWindows extends HitWindows
+{
+  private static readonly ranges: DifficultyRange[] = [
+    new DifficultyRange(HitResult.Perfect, 0, 0, 0),
+    new DifficultyRange(HitResult.Miss, 0, 0, 0),
+  ];
+
+  public override isHitResultAllowed(result: HitResult): boolean
+  {
+    switch (result)
+    {
+    case HitResult.Perfect:
+    case HitResult.Miss:
+      return true;
+    default:
+      return false;
+    }
+  }
+
+  public override getRanges(): DifficultyRange[]
+  {
+    return EmptyHitWindows.ranges;
+  }
+}

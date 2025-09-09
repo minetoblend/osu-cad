@@ -9,7 +9,7 @@ export default defineConfig({
   resolve: {
     conditions: [
       ...defaultClientConditions,
-      ...(process.env.NODE_ENV === "development" ? ["source"] : ["source"]),
+      ...(process.env.NODE_ENV === "development" ? ["source"] : []),
     ],
   },
   optimizeDeps: {
@@ -59,10 +59,15 @@ export default defineConfig({
     emptyOutDir: true,
     reportCompressedSize: true,
     target: "esnext",
-    minify: true,
+    minify: false,
     rollupOptions: {
+      treeshake: {
+        preset: "smallest",
+        moduleSideEffects: false,
+      },
       output: {
         esModule: true,
+        hoistTransitiveImports: false,
       },
     },
     commonjsOptions: {
