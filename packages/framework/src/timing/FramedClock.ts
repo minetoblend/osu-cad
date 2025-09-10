@@ -1,11 +1,12 @@
 import type { FrameTimeInfo } from "./FrameTimeInfo";
 import type { IClock } from "./IClock";
 import { type IFrameBasedClock, isFrameBasedClock } from "./IFrameBasedClock";
+import type { ISourceChangeableClock } from "./ISourceChangeableClock";
 import { StopwatchClock } from "./StopwatchClock";
 
 const fps_calculation_interval = 250;
 
-export class FramedClock implements IFrameBasedClock
+export class FramedClock implements IFrameBasedClock, ISourceChangeableClock
 {
   public source!: IClock;
 

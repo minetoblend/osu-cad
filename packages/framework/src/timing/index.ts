@@ -6,3 +6,5 @@ export { type IFrameBasedClock } from "./IFrameBasedClock";
 export { ManualClock } from "./ManualClock";
 export { OffsetClock } from "./OffsetClock";
 export { StopwatchClock } from "./StopwatchClock";
+export { type ISourceChangeableClock } from "./ISourceChangeableClock";
+export { DecouplingFramedClock } from "./DecouplingFramedClock";
