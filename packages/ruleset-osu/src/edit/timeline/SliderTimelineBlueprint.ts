@@ -95,6 +95,7 @@ export class SliderTimelineBlueprint extends OsuTimelineBlueprint<Slider>
               anchor: Anchor.CenterLeft,
               origin: Anchor.Center,
               scale: new Vec2(TimelineBlueprint.SIZE).divInPlace(OsuHitObject.OBJECT_DIMENSIONS),
+              depth: drawableIndex,
             }),
         );
       }
