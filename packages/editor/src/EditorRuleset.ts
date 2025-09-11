@@ -1,4 +1,4 @@
-import type { Awaitable } from "@osucad/core";
+import type { Awaitable, Ruleset } from "@osucad/core";
 import type { HitObjectComposer } from "./compose/HitObjectComposer";
 import type { EditorRuntimeConfig } from "./runtime/EditorRuntime";
 import type { Editor } from "./Editor";
@@ -7,6 +7,8 @@ import type { TimelineBlueprintContainer } from "./compose/timeline";
 
 export abstract class EditorRuleset
 {
+  public abstract readonly ruleset: Ruleset;
+
   public abstract readonly runtimeConfig: EditorRuntimeConfig;
 
   public abstract createHitObjectComposer(): Awaitable<HitObjectComposer>;

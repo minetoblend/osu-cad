@@ -12,7 +12,7 @@ import { Document } from "@osucad/multiplayer-client";
 import { EditorActionContainer } from "./EditorActionContainer";
 import { EditorBackground } from "./EditorBackground";
 import { IAudience } from "./injectionTokens";
-import { TrackLoader } from "./TrackLoader";
+import { EditorAudioTrack } from "./TrackLoader";
 
 export interface EditorOptions
 {
@@ -76,7 +76,7 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
     return this.runtime.history;
   }
 
-  #trackLoader!: TrackLoader;
+  #track!: EditorAudioTrack;
 
   #dependencies!: DependencyContainer;
 
@@ -95,12 +95,9 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
     for (const hitObject of this.editorBeatmap.hitObjects)
       hitObject.applyDefaults(this.editorBeatmap.difficulty, this.editorBeatmap.controlPointInfo);
 
-    this.#trackLoader = new TrackLoader(this.editorBeatmap, this.dependencies.resolve(AudioManager));
+    this.#track = new EditorAudioTrack(this.editorBeatmap, this.dependencies.resolve(AudioManager));
 
-    await this.#trackLoader.load();
-
-
-    this.editorClock = new EditorClock(this.editorBeatmap.controlPointInfo, this.#trackLoader.track.value!);
+    this.editorClock = new EditorClock(this.editorBeatmap.controlPointInfo, this.beatDivisor);
 
     this.#dependencies.provide(EditorClock, this.editorClock);
     this.#dependencies.provide(PlayfieldClock, this.editorClock);
@@ -144,6 +141,12 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
   protected override loadComplete(): void
   {
     super.loadComplete();
+
+    this.#track.bindValueChanged(e =>
+    {
+      if (e.value)
+        this.editorClock.changeSource(e.value);
+    }, true);
 
     const time = this.editorBeatmap.hitObjects.first?.startTime;
     if (time)

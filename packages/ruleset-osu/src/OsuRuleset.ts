@@ -45,6 +45,6 @@ export class OsuRuleset implements Ruleset
   {
     const { OsuEditorRuleset } = await import("./edit/OsuEditorRuleset");
 
-    return new OsuEditorRuleset();
+    return new OsuEditorRuleset(this);
   }
 }

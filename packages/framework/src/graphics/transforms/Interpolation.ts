@@ -14,6 +14,12 @@ export class Interpolation
     return this.lerp(start, final, 1 - Math.pow(base, exponent));
   }
 
+  public static dampContinuously(current: number, target: number, halfTime: number, elapsedTime: number)
+  {
+    const exponent = elapsedTime / halfTime;
+    return this.damp(current, target, 0.5, exponent);
+  }
+
   public static valueAt<T>(
     time: number,
     startValue: T,

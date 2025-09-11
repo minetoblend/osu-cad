@@ -1,26 +1,33 @@
 import type { ControlPointInfo, TimingControlPoint } from "@osucad/core";
-import type { ReadonlyBindable, Track } from "@osucad/framework";
-import { almostEquals, Bindable, clamp, Component, EasingFunction, Interpolation, resolved, TypedTransform, type FrameTimeInfo, type IFrameBasedClock } from "@osucad/framework";
+import { FramedBeatmapClock } from "@osucad/core";
+import type { IClock, ReadonlyBindable } from "@osucad/framework";
+import { Track } from "@osucad/framework";
+import { Action, almostEquals, Bindable, clamp, Component, EasingFunction, type FrameTimeInfo, type IFrameBasedClock, Interpolation, TypedTransform } from "@osucad/framework";
 import { BindableBeatDivisor } from "./BindableBeatDivisor";
-
 
 export class EditorClock extends Component implements IFrameBasedClock
 {
-  #frameTimeInfo: FrameTimeInfo = {
-    current: 0,
-    elapsed: 0,
-  };
+  public readonly trackChanged = new Action();
 
-  public constructor(
-    public readonly controlPointInfo: ControlPointInfo,
-    public readonly source: Track,
-  )
+  private readonly track = new Bindable<Track | undefined>(undefined);
+
+  public get trackLength()
   {
-    super();
+    return this.track.value?.length ?? 60_000;
   }
 
-  @resolved(BindableBeatDivisor)
-  accessor #beatDivisor!: BindableBeatDivisor
+  private readonly beatDivisor: BindableBeatDivisor;
+
+  readonly #underlyingClock: FramedBeatmapClock;
+
+  #playbackFinished = false;
+
+  readonly #seekingOrStopped = new Bindable(true);
+
+  public get seekingOrStopped(): ReadonlyBindable<boolean>
+  {
+    return this.#seekingOrStopped;
+  }
 
   #isSeeking = false;
 
@@ -29,14 +36,127 @@ export class EditorClock extends Component implements IFrameBasedClock
     return this.#isSeeking;
   }
 
+
+  public constructor(
+    public readonly controlPoints: ControlPointInfo,
+    beatDivisor?: BindableBeatDivisor,
+  )
+  {
+    super();
+
+    this.beatDivisor = beatDivisor ?? new BindableBeatDivisor();
+    this.#underlyingClock = new FramedBeatmapClock(true);
+    this.addInternal(this.#underlyingClock);
+
+    this.track.bindValueChanged(e => this.trackChanged.emit());
+  }
+
+  public seekSnapped(position: number)
+  {
+    const timingPoint = this.controlPoints.timingPointAt(position);
+
+    position -= timingPoint.time;
+
+    const beatSnapLength
+        = timingPoint.beatLength / this.beatDivisor.value;
+
+    const closestBeat = Math.round(position / beatSnapLength);
+    position = timingPoint.time + closestBeat * beatSnapLength;
+
+    const nextTimingPoint = this.controlPoints.timingPoints.find(
+        t => t.time > timingPoint.time,
+    ) as TimingControlPoint | undefined;
+
+    if (nextTimingPoint && position > nextTimingPoint?.time)
+      position = nextTimingPoint.time;
+
+    position = Math.floor(position);
+
+    this.seekSmoothlyTo(position);
+  }
+
+  public seekBackward(snapped = false, amount = 1)
+  {
+    this.#seek(-1, snapped, amount + (this.isRunning ? 1.5 : 0));
+  }
+
+  public seekForward(snapped = false, amount = 1)
+  {
+    this.#seek(-1, snapped, amount + (this.isRunning ? 1.5 : 0));
+  }
+
+  #seek(direction: number, snapped: boolean, amount = 1)
+  {
+    const current = this.currentTimeAccurate;
+
+    if (amount <= 0)
+      throw new Error("Value should be greater than zero");
+
+    let timingPoint = this.controlPoints.timingPointAt(current);
+
+    if (direction < 0 && timingPoint.time === current)
+    // When going backwards and we're at the boundary of two timing points, we compute the seek distance with the timing point which we are seeking into
+      timingPoint = this.controlPoints.timingPointAt(current - 1);
+
+    const seekAmount = timingPoint.beatLength / this.beatDivisor.value * amount;
+    let seekTime = current + seekAmount * direction;
+
+    if (!snapped || this.controlPoints.timingPoints.length === 0)
+    {
+      this.seekSmoothlyTo(seekTime);
+      return;
+    }
+
+    // We will be snapping to beats within timingPoint
+    seekTime -= timingPoint.time;
+
+    // Determine the index from timingPoint of the closest beat to seekTime, accounting for scrolling direction
+    let closestBeat;
+    if (direction > 0)
+      closestBeat = Math.floor(seekTime / seekAmount);
+    else
+      closestBeat = Math.ceil(seekTime / seekAmount);
+
+    seekTime = timingPoint.time + closestBeat * seekAmount;
+
+    // limit forward seeking to only up to the next timing point's start time.
+    const nextTimingPoint = this.controlPoints.timingPointAfter(timingPoint.time);
+    if (nextTimingPoint && seekTime > nextTimingPoint?.time)
+      seekTime = nextTimingPoint.time;
+
+    // Due to the rounding above, we may end up on the current beat. This will effectively cause 0 seeking to happen, but we don't want this.
+    // Instead, we'll go to the next beat in the direction when this is the case
+    if (almostEquals(current, seekTime, 0.5))
+    {
+      closestBeat += direction > 0 ? 1 : -1;
+      seekTime = timingPoint.time + closestBeat * seekAmount;
+    }
+
+    if (seekTime < timingPoint.time && timingPoint !== this.controlPoints.timingPoints.first)
+      seekTime = timingPoint.time;
+
+    this.seekSmoothlyTo(seekTime);
+  }
+
+  public seekBy(duration: number)
+  {
+    this.seek(this.currentTimeAccurate + duration);
+  }
+
   public get elapsedFrameTime(): number
   {
-    return this.#frameTimeInfo.elapsed;
+    return this.#underlyingClock.elapsedFrameTime;
   }
 
   public get framesPerSecond(): number
   {
     throw new Error("Not supporteds");
+  }
+
+  public changeSource(source?: IClock)
+  {
+    this.track.value = source instanceof Track ? source : undefined;
+    this.#underlyingClock.changeSource(source);
   }
 
   public get timeInfo(): FrameTimeInfo
@@ -56,7 +176,7 @@ export class EditorClock extends Component implements IFrameBasedClock
 
   public get currentTime(): number
   {
-    return this.source.currentTime;
+    return this.#underlyingClock.currentTime;
   }
 
   public get currentTimeAccurate(): number
@@ -75,27 +195,19 @@ export class EditorClock extends Component implements IFrameBasedClock
 
   public get isRunning(): boolean
   {
-    return this.source.isRunning;
-  }
-
-  public get trackLength()
-  {
-    return this.source.length;
+    return this.#underlyingClock.isRunning;
   }
 
 
 
-  public seekBy(duration: number)
-  {
-    this.seek(this.currentTimeAccurate + duration);
-  }
+
 
   public seekBeats(direction: number, snapped = false, amount = 1)
   {
-    const timingPoint = this.controlPointInfo.timingPointAt(this.currentTimeAccurate);
+    const timingPoint = this.controlPoints.timingPointAt(this.currentTimeAccurate);
 
     const beatSnapLength
-      = timingPoint.beatLength / this.#beatDivisor.value;
+      = timingPoint.beatLength / this.beatDivisor.value;
 
     let newPosition = this.currentTimeAccurate + direction * amount * beatSnapLength;
 
@@ -105,9 +217,9 @@ export class EditorClock extends Component implements IFrameBasedClock
     }
     else if (newPosition < timingPoint.time)
     {
-      const previousTimingPoint = this.controlPointInfo.timingPointAt(newPosition);
+      const previousTimingPoint = this.controlPoints.timingPointAt(newPosition);
 
-      newPosition = this.currentTime + direction * amount * (previousTimingPoint.beatLength / this.#beatDivisor.value);
+      newPosition = this.currentTime + direction * amount * (previousTimingPoint.beatLength / this.beatDivisor.value);
     }
 
     if (snapped)
@@ -116,25 +228,20 @@ export class EditorClock extends Component implements IFrameBasedClock
       this.seek(newPosition);
   }
 
-  readonly #seekingOrStopped = new Bindable(true);
 
-  public get seekingOrStopped(): ReadonlyBindable<boolean>
-  {
-    return this.#seekingOrStopped;
-  }
 
   public start()
   {
     this.clearTransforms();
 
-    this.source.start();
+    this.#underlyingClock.start();
   }
 
   public stop()
   {
     this.#seekingOrStopped.value = true;
 
-    this.source.stop();
+    this.#underlyingClock.stop();
   }
 
   #updateSeekingState()
@@ -157,7 +264,7 @@ export class EditorClock extends Component implements IFrameBasedClock
 
     this.clearTransforms();
 
-    this.source.seek(position);
+    this.#underlyingClock.seek(position);
   }
 
   public seekSmoothlyTo(seekDestination: number)
@@ -167,37 +274,15 @@ export class EditorClock extends Component implements IFrameBasedClock
     if (this.isRunning)
       this.seek(seekDestination);
     else
-      this.#transoformSeekTo(seekDestination, 300, EasingFunction.OutExpo);
+      this.#transformSeekTo(seekDestination, 300, EasingFunction.OutExpo);
   }
 
-  public seekSnapped(position: number)
-  {
-    const timingPoint = this.controlPointInfo.timingPointAt(position);
 
-    position -= timingPoint.time;
 
-    const beatSnapLength
-      = timingPoint.beatLength / this.#beatDivisor.value;
-
-    const closestBeat = Math.round(position / beatSnapLength);
-    position = timingPoint.time + closestBeat * beatSnapLength;
-
-    const nextTimingPoint = this.controlPointInfo.timingPoints.find(
-        t => t.time > timingPoint.time,
-    ) as TimingControlPoint | undefined;
-
-    if (nextTimingPoint && position > nextTimingPoint?.time)
-      position = nextTimingPoint.time;
-
-    position = Math.floor(position);
-
-    this.seekSmoothlyTo(position);
-  }
-
-  #transoformSeekTo(seek: number, duration = 0, easing: EasingFunction = EasingFunction.Default)
+  #transformSeekTo(seek: number, duration = 0, easing: EasingFunction = EasingFunction.Default)
   {
     this.addTransform(
-        this.populateTransform(new TransformSeek(time => this.source.seek(time)), clamp(seek, 0, this.trackLength), duration, easing),
+        this.populateTransform(new TransformSeek(time => this.#underlyingClock.seek(time)), clamp(seek, 0, this.trackLength), duration, easing),
     );
   }
 
