@@ -82,7 +82,7 @@ export class EditorClock extends Component implements IFrameBasedClock
 
   public seekForward(snapped = false, amount = 1)
   {
-    this.#seek(-1, snapped, amount + (this.isRunning ? 1.5 : 0));
+    this.#seek(1, snapped, amount + (this.isRunning ? 1.5 : 0));
   }
 
   #seek(direction: number, snapped: boolean, amount = 1)
