@@ -2,15 +2,13 @@ import type { DrawableHitObject } from "@osucad/core";
 import { SkinnableDrawable } from "@osucad/core";
 import { HitObjectComposer } from "@osucad/editor";
 import type { DragStartEvent, Rectangle } from "@osucad/framework";
-import { ProxyDrawable } from "@osucad/framework";
-import { Anchor, Axes, Bindable, Container, dependencyLoader, resolved, Vec2 } from "@osucad/framework";
+import { Anchor, Axes, Bindable, Container, dependencyLoader, ProxyDrawable, resolved, Vec2 } from "@osucad/framework";
 import { Color } from "pixi.js";
 import type { Slider } from "../../../hitObjects";
 import { DrawableSlider } from "../../../hitObjects/drawables/DrawableSlider";
 import { OsuSkinComponents } from "../../../skinning";
 import { MoveInteraction } from "../../interactions/MoveInteraction";
 import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
-import { DrawableHitCircle } from "../../../hitObjects/drawables/DrawableHitCircle";
 
 export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider>
 {
