@@ -12,7 +12,6 @@ import { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
 
 export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider>
 {
-  #content!: Container;
   #sliderHead!: SkinnableDrawable;
   #sliderTail!: SkinnableDrawable;
 
@@ -24,19 +23,16 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
   @dependencyLoader()
   #load()
   {
-    this.addInternal(this.#content = new Container({
-      relativeSizeAxes: Axes.Both,
-      children: [
-        this.#sliderTail = new SkinnableDrawable(OsuSkinComponents.HitCircleSelect).with({
-          anchor: Anchor.Center,
-          origin: Anchor.Center,
-        }),
-        this.#sliderHead = new SkinnableDrawable(OsuSkinComponents.HitCircleSelect).with({
-          anchor: Anchor.Center,
-          origin: Anchor.Center,
-        }),
-      ],
-    }));
+    this.addRangeInternal([
+      this.#sliderTail = new SkinnableDrawable(OsuSkinComponents.HitCircleSelect).with({
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
+      }),
+      this.#sliderHead = new SkinnableDrawable(OsuSkinComponents.HitCircleSelect).with({
+        anchor: Anchor.Center,
+        origin: Anchor.Center,
+      }),
+    ]);
 
     this.scaleBindable.bindTo(this.hitObject.scaleBindable);
     this.positionBindable.bindTo(this.hitObject.positionBindable);
