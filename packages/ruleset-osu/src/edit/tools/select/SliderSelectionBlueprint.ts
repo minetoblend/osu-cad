@@ -114,7 +114,7 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
   {
     this.#drawableSlider = undefined;
 
-    if (this.#proxy && drawableHitObject instanceof DrawableHitCircle)
+    if (this.#proxy && drawableHitObject instanceof DrawableSlider)
     {
       drawableHitObject.proxyLayer.remove(this.#proxy);
       this.#proxy = null;
