@@ -2,7 +2,7 @@ import type { DrawableHitObject } from "@osucad/core";
 import { SkinnableDrawable } from "@osucad/core";
 import { HitObjectComposer } from "@osucad/editor";
 import type { DragStartEvent, Rectangle } from "@osucad/framework";
-import { Anchor, Axes, Bindable, Container, dependencyLoader, ProxyDrawable, resolved, Vec2 } from "@osucad/framework";
+import { Anchor, Bindable, dependencyLoader, ProxyDrawable, resolved, Vec2 } from "@osucad/framework";
 import { Color } from "pixi.js";
 import type { Slider } from "../../../hitObjects";
 import { DrawableSlider } from "../../../hitObjects/drawables/DrawableSlider";
