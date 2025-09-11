@@ -36,11 +36,18 @@ nx run <package-name>:serve
 
 ```tree
 apps
-├── skinning-demo       # A small demo for loading a skin & beatmap
+├── editor-web          # Web client for the editor
+└── server-multiplayer  # Development server for multiplayer editing
 packages           
-├── core                # Core logic for the editor & osu ruleset
+├── core                # Core logic for beatmaps & hitobjects
+├── editor              # Provides anything needed to build a ruleset editor
 ├── framework           # Game engine that powers the project, a typescript port of osu-framework
-└── ruleset-osu         # Osu ruleset
+└── ruleset-osu         # Osu gameplay & editor logic
+multiplayer
+├── client              # Multiplayer client 
+├── core                # Implementation of multiplayer runtime & core data structures
+├── protocol            # Type definitions for all communication between multiplayer client & server 
+└── server              # Implementation of specific server-side multiplayer services  
 ```
 
 ## Support this project
