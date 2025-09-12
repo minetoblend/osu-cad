@@ -31,7 +31,7 @@ export class TimelineBlueprint<T extends HitObject = HitObject> extends Poolable
   public readonly accentColor = new Bindable(new Color(0xffffff));
   public readonly startTimeBindable = new Bindable(0);
 
-  public constructor(entry: TimelineLifetimeEntry)
+  public constructor(entry?: TimelineLifetimeEntry)
   {
     super(entry);
 
@@ -73,6 +73,8 @@ export class TimelineBlueprint<T extends HitObject = HitObject> extends Poolable
   protected override onFree(entry: TimelineLifetimeEntry): void
   {
     super.onFree(entry);
+
+    this.selected.unbindFrom(entry.selected);
 
     entry.hitObject.defaultsApplied.removeListener(this.#defaultsApplied, this);
   }

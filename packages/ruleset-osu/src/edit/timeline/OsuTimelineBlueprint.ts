@@ -13,7 +13,7 @@ export class OsuTimelineBlueprint<T extends OsuHitObject = OsuHitObject> extends
   public readonly comboIndexBindable = new Bindable(0);
   public readonly indexInComboBindable = new Bindable(0);
 
-  public constructor(entry: TimelineLifetimeEntry)
+  public constructor(entry?: TimelineLifetimeEntry)
   {
     super(entry);
   }
