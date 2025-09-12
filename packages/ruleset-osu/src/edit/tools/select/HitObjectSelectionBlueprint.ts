@@ -1,17 +1,22 @@
-import type { DrawableHitObject, HitObject } from "@osucad/core";
+import type { DrawableHitObject, HitObject, HitObjectLifetimeEntry } from "@osucad/core";
+import { PoolableDrawableWithLifetime } from "@osucad/core";
 import type { MouseDownEvent, Rectangle } from "@osucad/framework";
-import { MouseButton, PoolableDrawable, resolved } from "@osucad/framework";
+import { MouseButton, resolved } from "@osucad/framework";
 import { SelectionBlueprintContainer } from "./SelectionBlueprintContainer";
-import { EditorBeatmap, EditorHistory } from "@osucad/editor";
-import { HitObjectSelection } from "@osucad/editor";
+import { EditorBeatmap, EditorHistory, HitObjectSelection } from "@osucad/editor";
 
-export class HitObjectSelectionBlueprint<out T extends HitObject> extends PoolableDrawable
+export class HitObjectSelectionBlueprint<out T extends HitObject> extends PoolableDrawableWithLifetime<HitObjectLifetimeEntry>
 {
-  public constructor(public readonly hitObject: T)
+  public constructor(entry?: HitObjectLifetimeEntry)
   {
-    super();
+    super(entry);
 
     this.alwaysPresent = true;
+  }
+
+  public get hitObject(): T
+  {
+    return this.entry!.hitObject as T;
   }
 
   @resolved(HitObjectSelection as typeof HitObjectSelection)

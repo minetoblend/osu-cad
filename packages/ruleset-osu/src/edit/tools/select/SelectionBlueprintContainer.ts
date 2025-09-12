@@ -1,6 +1,7 @@
 import type { DrawableHitObject, HitObject } from "@osucad/core";
 import { HitObjectLifetimeEntry, Playfield } from "@osucad/core";
 import type { Bindable, ObservableSet } from "@osucad/framework";
+import { dependencyLoader } from "@osucad/framework";
 import { Axes, CompositeDrawable, LifetimeEntryManager, LoadState, provideSelf, resolved } from "@osucad/framework";
 import { EditorBeatmap, EditorClock } from "@osucad/editor";
 import type { HitObjectSelectionBlueprint } from "./HitObjectSelectionBlueprint";
@@ -29,6 +30,12 @@ export abstract class SelectionBlueprintContainer<T extends HitObject> extends C
   readonly #entryMap = new Map<HitObject, HitObjectLifetimeEntry>();
   readonly #startTimeMap = new Map<HitObjectSelectionBlueprint<any>, Bindable<number>>();
   readonly #drawableHitObjects = new Map<HitObject, DrawableHitObject>();
+
+  @dependencyLoader()
+  #load()
+  {
+    this.clock = this.#editorClock;
+  }
 
   protected override loadComplete(): void
   {
@@ -72,7 +79,7 @@ export abstract class SelectionBlueprintContainer<T extends HitObject> extends C
 
   #entryBecameAlive(entry: HitObjectLifetimeEntry)
   {
-    const blueprint = this.getBlueprintFor(entry.hitObject as T);
+    const blueprint = this.getBlueprintFor(entry);
     if (!blueprint)
       return;
 
@@ -96,7 +103,7 @@ export abstract class SelectionBlueprintContainer<T extends HitObject> extends C
       return;
 
     this.#blueprints.delete(entry.hitObject);
-    this.removeInternal(blueprint);
+    this.removeInternal(blueprint, false);
 
     this.#unbindStartTime(blueprint);
   }
@@ -184,7 +191,7 @@ export abstract class SelectionBlueprintContainer<T extends HitObject> extends C
     return new HitObjectLifetimeEntry(hitObject);
   }
 
-  protected abstract getBlueprintFor(hitObject: T): HitObjectSelectionBlueprint<T> | null;
+  protected abstract getBlueprintFor(entry: HitObjectLifetimeEntry): HitObjectSelectionBlueprint<T> | null;
 
   public override checkChildrenLife(): boolean
   {

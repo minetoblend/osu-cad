@@ -1,4 +1,4 @@
-import type { DrawableHitObject } from "@osucad/core";
+import type { DrawableHitObject, HitObjectLifetimeEntry } from "@osucad/core";
 import { SkinnableDrawable } from "@osucad/core";
 import { HitObjectComposer } from "@osucad/editor";
 import type { DragStartEvent, Rectangle } from "@osucad/framework";
@@ -20,6 +20,30 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
   public readonly stackHeightBindable = new Bindable(0);
   public readonly pathVersion = new Bindable(0);
 
+  protected override onApply(entry: HitObjectLifetimeEntry)
+  {
+    super.onApply(entry);
+
+    this.scaleBindable.bindTo(this.hitObject.scaleBindable);
+    this.positionBindable.bindTo(this.hitObject.positionBindable);
+    this.stackHeightBindable.bindTo(this.hitObject.stackHeightBindable);
+    this.pathVersion.bindTo(this.hitObject.path.version);
+
+    this.hitObject.defaultsApplied.addListener(this.#defaultsApplied, this);
+  }
+
+  protected override onFree(entry: HitObjectLifetimeEntry)
+  {
+    super.onFree(entry);
+
+    this.scaleBindable.unbindFrom(this.hitObject.scaleBindable);
+    this.positionBindable.unbindFrom(this.hitObject.positionBindable);
+    this.stackHeightBindable.unbindFrom(this.hitObject.stackHeightBindable);
+    this.pathVersion.unbindFrom(this.hitObject.path.version);
+
+    this.hitObject.defaultsApplied.removeListener(this.#defaultsApplied, this);
+  }
+
   @dependencyLoader()
   #load()
   {
@@ -33,11 +57,6 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
         origin: Anchor.Center,
       }),
     ]);
-
-    this.scaleBindable.bindTo(this.hitObject.scaleBindable);
-    this.positionBindable.bindTo(this.hitObject.positionBindable);
-    this.stackHeightBindable.bindTo(this.hitObject.stackHeightBindable);
-    this.pathVersion.bindTo(this.hitObject.path.version);
   }
 
   protected override loadComplete(): void
@@ -51,8 +70,6 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
       // this.updateDrawNodeTransform();
     }, true);
     this.stackHeightBindable.bindValueChanged(e => this.position = this.hitObject.stackedPosition);
-
-    this.hitObject.defaultsApplied.addListener(this.#defaultsApplied, this);
     this.pathVersion.bindValueChanged(() => this.scheduler.addOnce(this.#updateTail, this));
 
     this.#updateTail();
@@ -141,11 +158,4 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
   }
 
   #proxy: ProxyDrawable | null = null;
-
-  public override dispose()
-  {
-    this.hitObject.defaultsApplied.removeListener(this.#defaultsApplied, this);
-
-    super.dispose();
-  }
 }
