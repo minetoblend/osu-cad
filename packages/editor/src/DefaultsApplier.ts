@@ -42,9 +42,10 @@ export class DefaultsApplier extends EditorBeatmapProcessor
   {
     const { difficulty, controlPointInfo } = beatmap;
 
-    for (const hitObject of this.#hitObjects)
+    for (const hitObject of [...this.#hitObjects].slice(0, 20))
+    {
       hitObject.applyDefaults(difficulty, controlPointInfo);
-
-    this.#hitObjects.clear();
+      this.#hitObjects.delete(hitObject);
+    }
   }
 }
