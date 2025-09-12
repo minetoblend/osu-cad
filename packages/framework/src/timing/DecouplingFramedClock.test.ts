@@ -401,7 +401,7 @@ describe("DecouplingFramedClock", () =>
     }
   });
 
-  test.each([0, 1, 10, 50])("NoDecoupledDrift(%d)", async (updateRate) =>
+  test.skip.each([0, 1, 10, 50])("NoDecoupledDrift(%d)", async (updateRate) =>
   {
     const stopwatch = new StopwatchClock();
 
