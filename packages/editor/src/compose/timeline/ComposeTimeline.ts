@@ -173,7 +173,7 @@ export class ComposeTimeline extends CompositeDrawable
     return false;
   }
 
-  override dispose()
+  public override dispose()
   {
     this.#editorClock.trackChanged.removeListener(this.#updateZoomedContentWidth, this);
 
