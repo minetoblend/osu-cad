@@ -10,6 +10,7 @@ export class DeltaManager
 {
   public readonly deltaCompressor = new DeltaCompressor();
   public attachedObjects: IAttachInfo[] = [];
+  public attachedBlobs: string[]= [];
 
   public constructor(
     public readonly runtime: DocumentRuntime,
@@ -19,6 +20,7 @@ export class DeltaManager
     runtime.on("deltaSubmitted", (dds, delta) => this.deltaCompressor.push(dds.id, delta));
     runtime.on("attached", (dds, summary) => this.attachedObjects.push({ id: dds.id, summary }));
     runtime.on("signalSubmitted", (dds, type, content) => this.#connection?.submitSignal({ target: dds.id, type, content }));
+    runtime.on("blobAttachSubmitted", id => this.attachedBlobs.push(id));
   }
 
   #connection?: DeltaConnection;
@@ -57,6 +59,19 @@ export class DeltaManager
         return;
 
       const messages: IDocumentMessage[] = [];
+
+      if (this.attachedBlobs.length > 0)
+      {
+        for (const id of this.attachedBlobs)
+        {
+          messages.push({
+            type: MessageType.BlobAttach,
+            id,
+          });
+        }
+
+        this.attachedBlobs = [];
+      }
 
       if (this.attachedObjects.length > 0)
       {
