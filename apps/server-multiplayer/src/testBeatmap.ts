@@ -8,6 +8,7 @@ import { resolve } from "node:path";
 import { cwd } from "node:process";
 import type { BlobStorage } from "./services/blobs.js";
 import type { LocalDocumentStorage } from "./services/storage.js";
+import * as util from "node:util";
 
 export async function createTestBeatmapSummary(storage: BlobStorage, documentStorage: LocalDocumentStorage)
 {
@@ -23,7 +24,6 @@ export async function createTestBeatmapSummary(storage: BlobStorage, documentSto
 
   const beatmap = await new BeatmapParser().parse(await readFile(resolve(directory, beatmapFile), "utf8"));
 
-
   const runtime = await EditorRuntime.createEmptyFromBeatmap(beatmap, {
     idGenerator: new CountingIdGenerator(),
     storage: {
@@ -38,10 +38,6 @@ export async function createTestBeatmapSummary(storage: BlobStorage, documentSto
         .then(id => ({ id })),
     },
   });
-
-  const timingPoint = new TimingControlPoint();
-  timingPoint.bpm = 180;
-  runtime.root.controlPointInfo.add(timingPoint);
 
   for (const file of files)
   {
