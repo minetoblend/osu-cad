@@ -38,6 +38,8 @@ export class TimelinePart<T extends Drawable = Drawable> extends Container<T>
   {
     super.loadComplete();
 
+    this.#editorClock.trackChanged.addListener(this.#updateRelativeChildSize, this);
+
     this.#timeline.zoomChanged.addListener(this.#updateRelativeChildSize, this);
   }
 
@@ -51,6 +53,7 @@ export class TimelinePart<T extends Drawable = Drawable> extends Container<T>
   public override dispose(): void
   {
     this.#timeline.zoomChanged.removeListener(this.#updateRelativeChildSize, this);
+    this.#editorClock.trackChanged.removeListener(this.#updateRelativeChildSize, this);
 
     super.dispose();
   }

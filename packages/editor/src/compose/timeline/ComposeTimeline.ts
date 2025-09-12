@@ -68,6 +68,10 @@ export class ComposeTimeline extends CompositeDrawable
   protected override loadComplete(): void
   {
     super.loadComplete();
+
+    this.#updateZoomedContentWidth();
+
+    this.#editorClock.trackChanged.addListener(this.#updateZoomedContentWidth, this);
   }
 
 
@@ -76,12 +80,9 @@ export class ComposeTimeline extends CompositeDrawable
     super.updateAfterChildren();
 
     this.#zoomedContent.x = -this.positionAtTime(this.#editorClock.currentTime) + this.drawWidth / 2;
-
-    if (!this.#zoomedContentWidthCache.isValid)
-      this.#udpateZoomedContentWidth();
   }
 
-  #udpateZoomedContentWidth()
+  #updateZoomedContentWidth()
   {
     this.#zoomedContent.width = this.#editorClock.trackLength * this.zoom;
 
@@ -103,7 +104,7 @@ export class ComposeTimeline extends CompositeDrawable
       return;
 
     this.#zoom = value;
-    this.#zoomedContentWidthCache.invalidate();
+    this.#updateZoomedContentWidth();
   }
 
   public get visibleDuration()
@@ -170,5 +171,12 @@ export class ComposeTimeline extends CompositeDrawable
     }
 
     return false;
+  }
+
+  override dispose()
+  {
+    this.#editorClock.trackChanged.removeListener(this.#updateZoomedContentWidth, this);
+
+    super.dispose();
   }
 }
