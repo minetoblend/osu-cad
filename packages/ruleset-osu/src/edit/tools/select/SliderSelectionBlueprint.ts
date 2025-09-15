@@ -30,6 +30,8 @@ export class SliderSelectionBlueprint extends HitObjectSelectionBlueprint<Slider
     this.pathVersion.bindTo(this.hitObject.path.version);
 
     this.hitObject.defaultsApplied.addListener(this.#defaultsApplied, this);
+
+    this.#updateTail();
   }
 
   protected override onFree(entry: HitObjectLifetimeEntry)
