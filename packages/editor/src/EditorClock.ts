@@ -155,8 +155,12 @@ export class EditorClock extends Component implements IFrameBasedClock
 
   public changeSource(source?: IClock)
   {
+    const currentTime = this.currentTime;
+
     this.track.value = source instanceof Track ? source : undefined;
     this.#underlyingClock.changeSource(source);
+
+    this.seek(currentTime);
   }
 
   public get timeInfo(): FrameTimeInfo
@@ -260,6 +264,8 @@ export class EditorClock extends Component implements IFrameBasedClock
 
   public seek(position: number)
   {
+    console.trace("seek");
+
     this.#seekingOrStopped.value = this.#isSeeking = true;
 
     this.clearTransforms();

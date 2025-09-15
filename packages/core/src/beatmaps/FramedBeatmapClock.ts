@@ -1,4 +1,5 @@
 import type { FrameTimeInfo, IAdjustableClock, IClock, IFrameBasedClock, ISourceChangeableClock } from "@osucad/framework";
+import { StopwatchClock } from "@osucad/framework";
 import { InterpolatingFramedClock } from "@osucad/framework";
 import { Component, DecouplingFramedClock } from "@osucad/framework";
 
@@ -21,7 +22,7 @@ export class FramedBeatmapClock extends Component implements IFrameBasedClock, I
   {
     super();
 
-    this.#decoupledTrack = new DecouplingFramedClock(source);
+    this.#decoupledTrack = new DecouplingFramedClock(source ?? new StopwatchClock(false));
     this.#decoupledTrack.allowDecoupling = requireDecoupling;
 
     this.#interpolatedTrack = new InterpolatingFramedClock(this.#decoupledTrack);
