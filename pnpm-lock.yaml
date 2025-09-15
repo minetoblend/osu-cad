@@ -108,6 +108,9 @@ importers:
       glob:
         specifier: ^11.0.3
         version: 11.0.3
+      is-in-ci:
+        specifier: ^2.0.0
+        version: 2.0.0
       jiti:
         specifier: 2.4.2
         version: 2.4.2
@@ -7812,6 +7815,12 @@ packages:
   /is-gzip@1.0.0:
     resolution: {integrity: sha512-rcfALRIb1YewtnksfRIHGcIY93QnK8BIQ/2c9yDYcG/Y6+vRoJuTWBmmSEbyLLYtXm7q35pHOHbZFQBaLrhlWQ==}
     engines: {node: '>=0.10.0'}
+    dev: true
+
+  /is-in-ci@2.0.0:
+    resolution: {integrity: sha512-cFeerHriAnhrQSbpAxL37W1wcJKUUX07HyLWZCW1URJT/ra3GyUTzBgUnh24TMVfNTV2Hij2HLxkPHFZfOZy5w==}
+    engines: {node: '>=20'}
+    hasBin: true
     dev: true
 
   /is-interactive@1.0.0:

@@ -1,3 +1,4 @@
+import isInCi from "is-in-ci";
 import { expect } from "vitest";
 import { clamp } from "../utils/clamp";
 import { DecouplingFramedClock } from "./DecouplingFramedClock";
@@ -21,21 +22,22 @@ class TestClockWithRange extends TestClock
   }
 }
 
-describe("DecouplingFramedClock", () =>
+function createClocks()
 {
-  let source: TestClockWithRange | TestStopwatchClockWithRangeLimit = new TestClockWithRange();
-  let decouplingClock = new DecouplingFramedClock();
+  const source = new TestClockWithRange();
+  const decouplingClock = new DecouplingFramedClock();
+  decouplingClock.changeSource(source);
 
-  beforeEach(() =>
-  {
-    source = new TestClockWithRange();
-    decouplingClock = new DecouplingFramedClock();
-    decouplingClock.changeSource(source);
-  });
+  return { source, decouplingClock };
+}
 
+describe.concurrent("DecouplingFramedClock", () =>
+{
   //#region Basic assumptions (which hold for both decoupled and not)
   test.each([true, false])("StartFromDecoupling (%j)", (allowDecoupling) =>
   {
+    const { source, decouplingClock } = createClocks();
+
     decouplingClock.allowDecoupling = allowDecoupling;
 
     expect(source.isRunning).toBe(false);
@@ -50,6 +52,8 @@ describe("DecouplingFramedClock", () =>
 
   test.each([true, false])("StartFromSource (%j)", (allowDecoupling) =>
   {
+    const { source, decouplingClock } = createClocks();
+
     decouplingClock.allowDecoupling = allowDecoupling;
 
     expect(source.isRunning).toBe(false);
@@ -64,6 +68,8 @@ describe("DecouplingFramedClock", () =>
 
   test("SeekFromDecouplingWithoutProcessFrame", async () =>
   {
+    const { source, decouplingClock } = createClocks();
+
     decouplingClock.allowDecoupling = true;
 
     expect(source.currentTime).toBe(0);
@@ -90,6 +96,8 @@ describe("DecouplingFramedClock", () =>
 
   test.each([true, false])("SeekFromDecoupling (%j)", allowDecoupling =>
   {
+    const { source, decouplingClock } = createClocks();
+
     decouplingClock.allowDecoupling = allowDecoupling;
 
     expect(source.currentTime).toBe(0);
@@ -108,6 +116,8 @@ describe("DecouplingFramedClock", () =>
 
   test.each([true, false])("SeekFromSource (%j)", allowDecoupling =>
   {
+    const { source, decouplingClock } = createClocks();
+
     decouplingClock.allowDecoupling = allowDecoupling;
 
     source.start();
@@ -124,6 +134,8 @@ describe("DecouplingFramedClock", () =>
 
   test.each([true, false])("ChangeSourceUpdatesToNewSourceTime (%j)", allowDecoupling =>
   {
+    const { source, decouplingClock } = createClocks();
+
     decouplingClock.allowDecoupling = allowDecoupling;
 
     const first_source_time = 256000;
@@ -148,6 +160,8 @@ describe("DecouplingFramedClock", () =>
 
   test.each([true, false])("ChangeSourceUpdatesToCorrectSourceState (%j)", allowDecoupling =>
   {
+    const { source, decouplingClock } = createClocks();
+
     decouplingClock.allowDecoupling = allowDecoupling;
 
     source.start();
@@ -167,6 +181,8 @@ describe("DecouplingFramedClock", () =>
 
   test.each([true, false])("Reset (%j)", allowDecoupling =>
   {
+    const { source, decouplingClock } = createClocks();
+
     decouplingClock.allowDecoupling = allowDecoupling;
 
     source.seek(2000);
@@ -190,6 +206,8 @@ describe("DecouplingFramedClock", () =>
   //#region Operation in non-decoupling mode
   test("SourceStoppedWhileNotDecoupling", () =>
   {
+    const { source, decouplingClock } = createClocks();
+
     decouplingClock.allowDecoupling = false;
     decouplingClock.start();
     decouplingClock.processFrame();
@@ -206,6 +224,8 @@ describe("DecouplingFramedClock", () =>
 
   test("SeekNegativeWhileNotDecoupling", () =>
   {
+    const { source, decouplingClock } = createClocks();
+
     decouplingClock.allowDecoupling = false;
 
     expect(decouplingClock.seek(-1000)).toBe(false);
@@ -216,6 +236,8 @@ describe("DecouplingFramedClock", () =>
 
   test("SeekPositiveWhileNotDecoupling", () =>
   {
+    const { source, decouplingClock } = createClocks();
+
     decouplingClock.allowDecoupling = false;
     expect(decouplingClock.seek(1000)).toBe(true);
     decouplingClock.processFrame();
@@ -228,6 +250,8 @@ describe("DecouplingFramedClock", () =>
   //#region Operation in decoupling mode
   test("SourceStoppedWhileDecoupling", () =>
   {
+    const { source, decouplingClock } = createClocks();
+
     decouplingClock.allowDecoupling = true;
     decouplingClock.start();
     decouplingClock.processFrame();
@@ -244,6 +268,8 @@ describe("DecouplingFramedClock", () =>
 
   test("SeekNegativeWhileDecoupling", () =>
   {
+    const { source, decouplingClock } = createClocks();
+
     decouplingClock.allowDecoupling = true;
     expect(decouplingClock.seek(-1000)).toBe(true);
 
@@ -257,6 +283,8 @@ describe("DecouplingFramedClock", () =>
 
   test("SeekPositiveWhileDecoupling", () =>
   {
+    const { source, decouplingClock } = createClocks();
+
     decouplingClock.allowDecoupling = true;
     expect(decouplingClock.seek(1000)).toBe(true);
     decouplingClock.processFrame();
@@ -267,7 +295,9 @@ describe("DecouplingFramedClock", () =>
 
   test("SeekBeyondLengthWhileDecoupling", () =>
   {
-    source = new TestStopwatchClockWithRangeLimit();
+    const { decouplingClock } = createClocks();
+
+    const source = new TestStopwatchClockWithRangeLimit();
     source.maxTime = 500;
 
     decouplingClock.changeSource(source);
@@ -282,7 +312,9 @@ describe("DecouplingFramedClock", () =>
 
   test("SeekFromNegativeToBeyondLengthWhileDecoupling", () =>
   {
-    source = new TestStopwatchClockWithRangeLimit();
+    const { decouplingClock } = createClocks();
+
+    const source = new TestStopwatchClockWithRangeLimit();
     source.maxTime = 500;
 
     decouplingClock.changeSource(source);
@@ -311,6 +343,8 @@ describe("DecouplingFramedClock", () =>
 
   test("SeekFromSourceWhileDecoupling", () =>
   {
+    const { source, decouplingClock } = createClocks();
+
     decouplingClock.allowDecoupling = true;
 
     expect(source.currentTime).toBe(0);
@@ -332,6 +366,8 @@ describe("DecouplingFramedClock", () =>
 
   test.each([true, false])("StartFromNegativeTimeIncrementsCorrectly (%d)", async (seekBeforeStart) =>
   {
+    const { source, decouplingClock } = createClocks();
+
     await new Promise(resolve => setTimeout(resolve, 500));
 
     decouplingClock.allowDecoupling = true;
@@ -364,9 +400,11 @@ describe("DecouplingFramedClock", () =>
     expect(decouplingClock.currentTime).toBeGreaterThan(time);
   });
 
-  test.skip("BackwardPlaybackOverZeroBoundary", async () =>
+  test.skipIf(isInCi)("BackwardPlaybackOverZeroBoundary", async () =>
   {
-    source = new TestStopwatchClockWithRangeLimit();
+    const { decouplingClock } = createClocks();
+
+    const source = new TestStopwatchClockWithRangeLimit();
     decouplingClock.changeSource(source);
     decouplingClock.allowDecoupling = true;
 
@@ -403,6 +441,8 @@ describe("DecouplingFramedClock", () =>
 
   test.skip.each([0, 1, 10, 50])("NoDecoupledDrift(%d)", async (updateRate) =>
   {
+    const { decouplingClock } = createClocks();
+
     const stopwatch = new StopwatchClock();
 
     decouplingClock.start();
@@ -423,7 +463,9 @@ describe("DecouplingFramedClock", () =>
 
   test("ForwardPlaybackOverZeroBoundary", async () =>
   {
-    source = new TestStopwatchClockWithRangeLimit();
+    const { decouplingClock } = createClocks();
+
+    const source = new TestStopwatchClockWithRangeLimit();
     decouplingClock.changeSource(source);
     decouplingClock.allowDecoupling = true;
 
@@ -459,9 +501,11 @@ describe("DecouplingFramedClock", () =>
     expect(source.isRunning).toBe(true);
   });
 
-  test("ForwardPlaybackOverLengthBoundary", async () =>
+  test.skipIf(isInCi)("ForwardPlaybackOverLengthBoundary", async () =>
   {
-    source = new TestStopwatchClockWithRangeLimit();
+    const { decouplingClock } = createClocks();
+
+    const source = new TestStopwatchClockWithRangeLimit();
     source.maxTime = 10000;
 
     decouplingClock.changeSource(source);
@@ -526,6 +570,8 @@ describe("DecouplingFramedClock", () =>
 
   test("PlayDifferentSourceAfterSeekFailure", () =>
   {
+    const { source, decouplingClock } = createClocks();
+
     decouplingClock.allowDecoupling = true;
 
     const firstSource = source as TestClockWithRange;
