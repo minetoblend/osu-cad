@@ -1,5 +1,7 @@
+import { ISamplePlaybackDisabler } from "@osucad/core";
 import { DrawableRuleset, Playfield, Ruleset } from "@osucad/core";
 import type { KeyDownEvent, ReadonlyDependencyContainer } from "@osucad/framework";
+import { Bindable } from "@osucad/framework";
 import { Anchor, asyncDependencyLoader, Axes, CompositeDrawable, Container, DependencyContainer, provide, provideSelf, ProxyDrawable, resolved } from "@osucad/framework";
 import { EditorHistory, EditorRuntime } from "../runtime";
 import { EditorBeatmap } from "../runtime/dds/EditorBeatmap";
@@ -14,7 +16,7 @@ import { ComposePresenceContainer } from "./tools/ToolPresenceContainer";
 import { InteractionContainer } from "./interactions/InteractionContainer";
 
 @provideSelf()
-export abstract class HitObjectComposer extends CompositeDrawable
+export abstract class HitObjectComposer extends CompositeDrawable implements ISamplePlaybackDisabler
 {
   public constructor()
   {
@@ -22,6 +24,8 @@ export abstract class HitObjectComposer extends CompositeDrawable
 
     this.relativeSizeAxes = Axes.Both;
   }
+
+  public readonly samplePlaybackDisabled = new Bindable(true);
 
   #toolbar!: ComposeToolbar;
 
@@ -33,6 +37,9 @@ export abstract class HitObjectComposer extends CompositeDrawable
 
   @resolved(EditorBeatmap)
   protected accessor beatmap!: EditorBeatmap;
+
+  @resolved(ISamplePlaybackDisabler)
+  accessor #samplePlaybackDisabler!: ISamplePlaybackDisabler
 
   public composeToolContainer!: ComposeToolContainer;
 
@@ -54,6 +61,8 @@ export abstract class HitObjectComposer extends CompositeDrawable
   @asyncDependencyLoader()
   async #load()
   {
+    this.#dependencies.provide(ISamplePlaybackDisabler, this);
+
     this.drawableRuleset = await this.ruleset.createDrawableRuleset({ cursor: false, useInput: false, autoMode: true });
 
     this.#dependencies.provide(DrawableRuleset, this.drawableRuleset);
@@ -112,6 +121,11 @@ export abstract class HitObjectComposer extends CompositeDrawable
     });
 
     this.activeTool.bindValueChanged(() => this.completeActiveOperator());
+
+    this.schedulerAfterChildren.add(() =>
+    {
+      this.samplePlaybackDisabled.bindTo(this.#samplePlaybackDisabler.samplePlaybackDisabled);
+    });
   }
 
   // needs to be handled here to make sure the interaction container can handle it first
