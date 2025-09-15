@@ -2,7 +2,6 @@ import { IResourcesProvider, ISamplePlaybackDisabler, ISkinSource, PlayfieldCloc
 import type { IKeyBindingHandler, KeyBindingAction, ReadonlyDependencyContainer, ScheduledDelegate } from "@osucad/framework";
 import { asyncDependencyLoader, AudioManager, Bindable, DependencyContainer, keyBindingHandler, PlatformAction, provide, provideSelf, resolved, Screen } from "@osucad/framework";
 import { BindableBeatDivisor } from "./BindableBeatDivisor";
-import { ComposeScreen } from "./compose";
 import { DefaultsApplier } from "./DefaultsApplier";
 import { EditorClock } from "./EditorClock";
 import { EditorRuleset } from "./EditorRuleset";
