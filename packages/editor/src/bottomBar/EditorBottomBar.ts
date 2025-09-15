@@ -1,10 +1,11 @@
 import { Anchor, Axes, Box, CompositeDrawable, dependencyLoader, Dimension, GridContainer, GridSizeMode } from "@osucad/framework";
 import { TimingInfoDisplay } from "./TimingInfoDisplay";
 import { PlayButton } from "./PlayButton";
+import { OverviewTimeline } from "./OverviewTimeline";
 
 export class EditorBottomBar extends CompositeDrawable
 {
-  public static readonly HEIGHT = 80;
+  public static readonly HEIGHT = 70;
 
   public constructor()
   {
@@ -29,6 +30,7 @@ export class EditorBottomBar extends CompositeDrawable
         columnDimensions: [
           new Dimension(GridSizeMode.AutoSize),
           new Dimension(GridSizeMode.AutoSize),
+          new Dimension(),
         ],
         content: [
           [
@@ -40,6 +42,7 @@ export class EditorBottomBar extends CompositeDrawable
               anchor: Anchor.CenterLeft,
               origin: Anchor.CenterLeft,
             }),
+            new OverviewTimeline(),
           ],
         ],
       }),
