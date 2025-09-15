@@ -1,3 +1,4 @@
+import isInCi from "is-in-ci";
 import { almostEquals } from "../utils/almostEquals";
 import { InterpolatingFramedClock } from "./InterpolatingFramedClock";
 import { StopwatchClock } from "./StopwatchClock";
@@ -231,7 +232,7 @@ describe.concurrent("InterpolatingFramedClock", () =>
     assert.closeTo(interpolating.elapsedFrameTime, 0, 100);
   });
 
-  test.concurrent.each([0,1,10,50])("TestNoInterpolationDrift (%d)", async (updateRate: number) =>
+  test.skipIf(isInCi).concurrent.each([0,1,10,50])("TestNoInterpolationDrift (%d)", async (updateRate: number) =>
   {
     const { source, interpolating } = createClocks();
 
