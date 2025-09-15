@@ -13,6 +13,8 @@ import { EditorActionContainer } from "./EditorActionContainer";
 import { EditorBackground } from "./EditorBackground";
 import { IAudience } from "./injectionTokens";
 import { EditorAudioTrack } from "./TrackLoader";
+import { EditorLayout } from "./EditorLayout";
+import { IBeatSyncProvider } from "./IBeatSyncProvider";
 
 export interface EditorOptions
 {
@@ -101,6 +103,7 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
 
     this.#dependencies.provide(EditorClock, this.editorClock);
     this.#dependencies.provide(PlayfieldClock, this.editorClock);
+    this.#dependencies.provide(IBeatSyncProvider, this.editorClock);
 
     // TODO: fix whatever the fuck this is
     const skin = (this.#skinSource as any).skin as Skin;
@@ -128,7 +131,7 @@ export class Editor extends Screen implements IKeyBindingHandler<PlatformAction>
           children: [
             new SkinProvidingContainer({
               skin: beatmapSkinTransformer ?? beatmapSkin,
-              child: new ComposeScreen(),
+              child: new EditorLayout(),
             }),
           ],
         }),

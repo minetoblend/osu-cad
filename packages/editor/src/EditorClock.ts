@@ -3,8 +3,9 @@ import { FramedBeatmapClock } from "@osucad/core";
 import type { IClock, ReadonlyBindable } from "@osucad/framework";
 import { Action, almostEquals, Bindable, clamp, Component, EasingFunction, type FrameTimeInfo, type IFrameBasedClock, Interpolation, StopwatchClock, Track, TypedTransform } from "@osucad/framework";
 import { BindableBeatDivisor } from "./BindableBeatDivisor";
+import type { IBeatSyncProvider } from "./IBeatSyncProvider";
 
-export class EditorClock extends Component implements IFrameBasedClock
+export class EditorClock extends Component implements IFrameBasedClock, IBeatSyncProvider
 {
   public readonly trackChanged = new Action();
 
@@ -263,8 +264,6 @@ export class EditorClock extends Component implements IFrameBasedClock
 
   public seek(position: number)
   {
-    console.trace("seek");
-
     this.#seekingOrStopped.value = this.#isSeeking = true;
 
     this.clearTransforms();
@@ -296,7 +295,41 @@ export class EditorClock extends Component implements IFrameBasedClock
     super.update();
 
     this.#updateSeekingState();
+    this.#updateBeatSyncState();
   }
+
+  //#region IBeatSyncProvider
+  public readonly activeTimingPoint = new Bindable<TimingControlPoint>(null!);
+
+  public get beatIndex()
+  {
+    return this.#beatIndex;
+  }
+
+  public get beatProgress()
+  {
+    return this.#beatProgress;
+  }
+
+  #beatIndex = 0;
+  #beatProgress = 0;
+
+  #updateBeatSyncState()
+  {
+    const timingPoint = this.activeTimingPoint.value = this.controlPoints.timingPointAt(this.currentTime);
+
+    const timeSinceStart = this.currentTime - timingPoint.time;
+    if (timeSinceStart < 0)
+    {
+      this.#beatIndex = 0;
+      this.#beatProgress = 0;
+      return;
+    }
+
+    this.#beatIndex = Math.floor(timeSinceStart / timingPoint.beatLength);
+    this.#beatProgress = timeSinceStart - this.#beatIndex * timingPoint.beatLength;
+  }
+  //#endregion
 }
 
 class TransformSeek<T extends EditorClock> extends TypedTransform<number, T>
