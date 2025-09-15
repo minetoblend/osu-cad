@@ -5,8 +5,11 @@ export namespace TimestampFormatter
     return value.toString().padStart(zeroes, "0");
   }
 
-  export function format(time: number)
+  export function format(time: number): string
   {
+    if (time < 0)
+      return `-${format(-time)}`;
+
     const minutes = Math.floor(time / 60_000);
     const seconds = Math.floor(time / 1000) % 60;
     const milliseconds = Math.floor(time % 1000);
