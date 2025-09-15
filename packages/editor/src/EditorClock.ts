@@ -1,6 +1,7 @@
 import type { ControlPointInfo, TimingControlPoint } from "@osucad/core";
 import { FramedBeatmapClock } from "@osucad/core";
 import type { IClock, ReadonlyBindable } from "@osucad/framework";
+import { StopwatchClock } from "@osucad/framework";
 import { Track } from "@osucad/framework";
 import { Action, almostEquals, Bindable, clamp, Component, EasingFunction, type FrameTimeInfo, type IFrameBasedClock, Interpolation, TypedTransform } from "@osucad/framework";
 import { BindableBeatDivisor } from "./BindableBeatDivisor";
@@ -45,7 +46,7 @@ export class EditorClock extends Component implements IFrameBasedClock
     super();
 
     this.beatDivisor = beatDivisor ?? new BindableBeatDivisor();
-    this.#underlyingClock = new FramedBeatmapClock(true);
+    this.#underlyingClock = new FramedBeatmapClock(true, new StopwatchClock(false));
     this.addInternal(this.#underlyingClock);
 
     this.track.bindValueChanged(e => this.trackChanged.emit());

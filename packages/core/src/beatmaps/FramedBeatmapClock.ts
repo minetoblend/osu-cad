@@ -22,7 +22,7 @@ export class FramedBeatmapClock extends Component implements IFrameBasedClock, I
   {
     super();
 
-    this.#decoupledTrack = new DecouplingFramedClock(source ?? new StopwatchClock(false));
+    this.#decoupledTrack = new DecouplingFramedClock(source);
     this.#decoupledTrack.allowDecoupling = requireDecoupling;
 
     this.#interpolatedTrack = new InterpolatingFramedClock(this.#decoupledTrack);
